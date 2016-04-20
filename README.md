@@ -14,7 +14,7 @@ npm install
 ```
 
 
-## Available Commands
+## Available Commandos
 ```bash
 # Start for development
 npm start # or
