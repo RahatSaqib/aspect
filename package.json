@@ -1,0 +1,21 @@
+{
+  "name": "aspect-api",
+  "version": "1.0.0",
+  "description": "The API for aspect clients",
+  "main": "server.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node server.js"
+  },
+  "author": "SystemOne",
+  "license": "ISC",
+  "dependencies": {
+    "body-parser": "^1.15.0",
+    "express": "^4.13.4",
+    "jsonwebtoken": "^5.7.0",
+    "morgan": "^1.7.0"
+  },
+  "devDependencies": {
+    "eslint": "^2.8.0"
+  }
+}
