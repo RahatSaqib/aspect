@@ -1,28 +1,21 @@
 require('styles/App.css');
 import React from 'react';
+import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider';
+import getMuiTheme from 'material-ui/styles/getMuiTheme';
 
-import Nav from './shared/Nav';
-import SideNav from './shared/SideNav'
+import theme from '../theme';
 
 class App extends React.Component {
 
   constructor(props) {
     super(props);
-    this.state = {drawerOpen: false};
   }
-
-  handleHamburger = () => this.setState({drawerOpen: !this.state.drawerOpen})
-
-  handleSideClose = () => this.setState({drawerOpen: false})
 
   render() {
     return (
-      <div>
-        <SideNav  open={this.state.drawerOpen}
-                  handleClose={this.handleSideClose}
-                  handleRequestChange={(drawerOpen) => this.setState({drawerOpen})} />
-        <Nav handleHamburger={this.handleHamburger} />
-      </div>
+      <MuiThemeProvider muiTheme={getMuiTheme(theme)}>
+        {this.props.children}
+      </MuiThemeProvider>
     );
   }
 }
