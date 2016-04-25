@@ -1,10 +1,12 @@
 import 'core-js/fn/object/assign';
 import React from 'react';
 import ReactDOM from 'react-dom';
-import {Router, Route, hashHistory} from 'react-router';
+import {Router, Route, browserHistory} from 'react-router';
 
 import App from './components/App';
 import Dashboard from './components/Dashboard';
+import Login from './components/Login';
+
 import LoggedInShell from './components/LoggedInShell';
 
 // This won't be necessary when facebook updates react
@@ -12,24 +14,25 @@ import LoggedInShell from './components/LoggedInShell';
 import injectTapEventPlugin from 'react-tap-event-plugin';
 injectTapEventPlugin();
 
-// Render the App component into the dom
-// ReactDOM.render(
-//   <MuiThemeProvider muiTheme={getMuiTheme(theme)}>
-//     <App/>
-//   </MuiThemeProvider>,
-//   document.getElementById('app'));
-
-  // <Route component={Login} path="login" />
-
+function requireAuth(nextState, replace) {
+  // TODO: Actually check if user is logged in here
+  if (true) {
+    replace({
+      pathname: '/login',
+      state: { nextPathname: nextState.location.pathname }
+    })
+  }
+}
 
 const routes =
 <Route component={App}>
-  <Route component={LoggedInShell}>
-    <Route path="/" component={Dashboard} />
+  <Route component={Login} path="login" />
+    <Route component={LoggedInShell} onEnter={requireAuth}>
+      <Route path="/" component={Dashboard} />
   </Route>
 </Route>;
 
 ReactDOM.render(
-  <Router history={hashHistory}>{routes}</Router>,
+  <Router history={browserHistory}>{routes}</Router>,
   document.getElementById('app')
 );
