@@ -27,6 +27,7 @@
       1,
       "single"
     ],
+    "no-var": 1,
     "no-undef": 1,
     "global-strict": 0,
     "no-extra-semi": 1,

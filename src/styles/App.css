@@ -1,5 +1,6 @@
 /* Base Application Styles */
 body {
-  color: #fff;
-  background: #222;
+  padding: 0;
+  margin: 0;
+  font-family: 'Roboto'
 }

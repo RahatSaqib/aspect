@@ -1,0 +1,41 @@
+import {
+  green100,
+  green500,
+  green700,
+  deepOrange100,
+  deepOrange500,
+  deepOrange700
+} from 'material-ui/styles/colors';
+
+export default {
+  spacing: {
+    // iconSize: 24,
+    // desktopGutter: 24,
+    // desktopGutterMore: 32,
+    // desktopGutterLess: 16,
+    // desktopGutterMini: 8,
+    // desktopKeylineIncrement: 64,
+    // desktopDropDownMenuItemHeight: 32,
+    // desktopDropDownMenuFontSize: 15,
+    // desktopDrawerMenuItemHeight: 48,
+    // desktopSubheaderHeight: 48,
+    // desktopToolbarHeight: 77
+  },
+  fontFamily: 'Roboto, sans-serif',
+  palette: {
+    primary1Color: green500,
+    primary2Color: green700,
+    primary3Color: green100,
+    accent1Color: deepOrange500,
+    accent2Color: deepOrange700,
+    accent3Color: deepOrange100
+      // textColor: black,
+      // alternateTextColor: white,
+      // canvasColor: white,
+      // borderColor: grey300,
+      // disabledColor: ColorManipulator.fade(darkBlack, 0.3),
+      // pickerHeaderColor: cyan500,
+      // clockCircleColor: ColorManipulator.fade(darkBlack, 0.07),
+      // shadowColor: fullBlack,
+  }
+}

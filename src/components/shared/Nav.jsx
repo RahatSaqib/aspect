@@ -11,27 +11,26 @@ class Nav extends React.Component {
 
   render() {
     return (
-        <AppBar title="Aspect"
+        <AppBar onLeftIconButtonTouchTap={this.props.handleHamburger} title="aspect"
           children={
+            <div>
               <Badge
       badgeContent={4}
       primary={true}
+      badgeStyle={{top: 8, right: 8}}
     >
-      <NotificationsIcon />
+      <NotificationsIcon color={'#fff'} />
     </Badge>
-          }
-        iconElementRight={
-          <IconMenu
+    <IconMenu
             iconButtonElement={
-              <IconButton><MoreVertIcon /></IconButton>
+              <IconButton><MoreVertIcon color={'#fff'} /></IconButton>
             }
-            targetOrigin={{horizontal: 'right', vertical: 'top'}}
-            anchorOrigin={{horizontal: 'right', vertical: 'top'}}
           >
             <MenuItem primaryText="Refresh" />
             <MenuItem primaryText="Help" />
             <MenuItem primaryText="Sign out" />
           </IconMenu>
+          </div>
           }
         />
     );
