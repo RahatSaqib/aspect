@@ -18,14 +18,13 @@ class App extends React.Component {
   render() {
     return (
       <div>
-        <SideNav open={this.state.drawerOpen} handleClose={this.handleSideClose} handleRequestChange={(drawerOpen) => this.setState({drawerOpen})} />
+        <SideNav  open={this.state.drawerOpen}
+                  handleClose={this.handleSideClose}
+                  handleRequestChange={(drawerOpen) => this.setState({drawerOpen})} />
         <Nav handleHamburger={this.handleHamburger} />
       </div>
     );
   }
 }
-
-App.defaultProps = {
-};
 
 export default App;

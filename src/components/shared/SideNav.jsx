@@ -2,7 +2,7 @@ import React from 'react';
 import Drawer from 'material-ui/Drawer';
 import MenuItem from 'material-ui/MenuItem';
 
-export default class SideNav extends React.Component {
+class SideNav extends React.Component {
 
   constructor(props) {
     super(props);
@@ -17,3 +17,10 @@ export default class SideNav extends React.Component {
     );
   }
 }
+
+SideNav.propTypes = {
+  open: React.PropTypes.bool.isRequired,
+  handleClose: React.PropTypes.func.isRequired
+};
+
+export default SideNav;
