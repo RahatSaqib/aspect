@@ -16,7 +16,7 @@ injectTapEventPlugin();
 
 function requireAuth(nextState, replace) {
   // TODO: Actually check if user is logged in here
-  if (true) {
+  if (!window.sessionStorage.accessToken) {
     replace({
       pathname: '/login',
       state: { nextPathname: nextState.location.pathname }
@@ -28,7 +28,7 @@ const routes =
 <Route component={App}>
   <Route component={Login} path="login" />
     <Route component={LoggedInShell} onEnter={requireAuth}>
-      <Route path="/" component={Dashboard} />
+      <Route path="/(:login)" component={Dashboard} />
   </Route>
 </Route>;
 

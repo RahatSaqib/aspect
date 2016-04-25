@@ -9,6 +9,14 @@ import NotificationsIcon from 'material-ui/svg-icons/social/notifications';
 
 class Nav extends React.Component {
 
+  handleSignOut = () => {
+
+    // TODO: delete the JWT cookie instead
+    window.sessionStorage.accessToken = '';
+
+    this.context.router.push('/login');
+  }
+
   render() {
     return (
         <AppBar onLeftIconButtonTouchTap={this.props.handleHamburger}
@@ -23,8 +31,8 @@ class Nav extends React.Component {
                         <MoreVertIcon color={'#fff'} />
                       </IconButton>}>
                       <MenuItem primaryText="Refresh" />
-                      <MenuItem primaryText="Help" />
-                      <MenuItem primaryText="Sign out" />
+                      <MenuItem primaryText="Help" linkButton={true} href="/" />
+                      <MenuItem primaryText="Sign out" onTouchTap={this.handleSignOut} />
                     </IconMenu>
                     </div>
                   }/>
@@ -35,5 +43,9 @@ class Nav extends React.Component {
 Nav.propTypes = {
   handleHamburger: React.PropTypes.func.isRequired
 };
+
+Nav.contextTypes =  {
+  router: React.PropTypes.object.isRequired
+}
 
 export default Nav;

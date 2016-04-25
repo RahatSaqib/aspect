@@ -23,9 +23,15 @@ class Login extends React.Component {
     this.setState({ error_user: this.state.user ? '' : 'Please enter your username' });
     this.setState({ error_password: this.state.password ? '' : 'Please enter your password' });
 
-    if (this.state.error_user || this.state.error_password){
+    if (!this.state.user || !this.state.password){
       return;
     }
+
+    // TODO: GET the JWT here and store as a cookie. For now, put any username in local storage:
+    window.sessionStorage.accessToken = this.state.user;
+
+
+    this.context.router.push({ pathName: '/', query: { fl: '1' } })
   }
 
   handleUserChange = (e) => {
@@ -60,6 +66,10 @@ class Login extends React.Component {
       </div>
     );
   }
+}
+
+Login.contextTypes =  {
+  router: React.PropTypes.object.isRequired
 }
 
 export default Login;
