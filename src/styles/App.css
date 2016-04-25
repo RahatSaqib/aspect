@@ -6,4 +6,28 @@ body {
   font-family: Roboto, sans-serif;
   padding: 0;
   margin: 0;
+  background-color: #edecec;
 }
+
+.content{
+  padding: 0 50px;
+}
+
+.content-h1{
+  color: #777;
+  font-size: 1rem;
+  font-weight: 300;
+  text-transform: uppercase;
+  margin: 30px 15px 25px 15px;
+}
+
+.paper-padded{
+  padding: 30px 20px 10px 20px;
+}
+
+.pure-g > div {
+        -webkit-box-sizing: border-box;
+        -moz-box-sizing: border-box;
+        box-sizing: border-box;
+        padding-left: 10px;
+    }
