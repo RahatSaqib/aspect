@@ -3,6 +3,8 @@ import Paper from 'material-ui/Paper';
 import Snackbar from 'material-ui/Snackbar';
 import { Sparklines, SparklinesLine, SparklinesSpots } from 'react-sparklines';
 
+require('./../styles/Charts.css');
+
 class Dashboard extends React.Component {
 
   constructor(props) {
