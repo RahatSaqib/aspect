@@ -16,10 +16,10 @@ class Dashboard extends React.Component {
       <div className="content">
         <h1 className="content-h1">Dashboard</h1>
         <div className="pure-g">
-          <div className="pure-u-md-1-4">
+          <div className="pure-u-lg-1-4 pure-u-md-1-3 pure-u-sm-1-2">
             <Paper className="col-margin" style={{backgroundColor: '#00bcd4'}}>
               <div className="minichart-chart">
-                <Sparklines data={[1, 8, 15, 40, 45, 80, 90, 155]} width={105} height={80} margin={15} >
+                <Sparklines data={[1, 8, 15, 40, 45, 80, 90, 155]} width={100} height={80} margin={15} >
                     <SparklinesLine color={'#fff'} style={{fill: 'none'}} />
                     <SparklinesSpots style={{ fill: '#fff' }}  />
                 </Sparklines>
@@ -31,7 +31,7 @@ class Dashboard extends React.Component {
               <div className="clear-fix" ></div>
             </Paper>
           </div>
-          <div className="pure-u-md-1-4">
+          <div className="pure-u-lg-1-4 pure-u-md-1-3 pure-u-sm-1-2">
             <Paper className="col-margin" style={{backgroundColor: '#8bc34a'}}>
               <div className="minichart-chart">
                 <Sparklines data={[1000, 2000, 4000, 10000, 5000, 50000, 100000, 120000, 110000]} width={100} height={80} margin={15} >
@@ -46,7 +46,7 @@ class Dashboard extends React.Component {
               <div className="clear-fix" ></div>
             </Paper>
           </div>
-          <div className="pure-u-md-1-4">
+          <div className="pure-u-lg-1-4 pure-u-md-1-3 pure-u-sm-1-2">
             <Paper className="col-margin" style={{backgroundColor: '#ff9800'}}>
               <div className="minichart-chart">
                 <Sparklines data={[25, 12, 8, 2, 1]} width={105} height={80} margin={15} >
@@ -55,13 +55,13 @@ class Dashboard extends React.Component {
                 </Sparklines>
               </div>
               <div className="minichart-count">
-                  <small>Average Error Rate</small>
+                  <small>Avg Error Rate</small>
                   <span>12%</span>
               </div>
               <div className="clear-fix" ></div>
             </Paper>
           </div>
-          <div className="pure-u-md-1-4">
+          <div className="pure-u-lg-1-4 pure-u-md-1-3 pure-u-sm-1-2">
             <Paper className="col-margin" style={{backgroundColor: '#607d8b'}}>
               <div className="minichart-chart">
                 <Sparklines data={[1000, 1200, 700, 500, 400, 500, 600, 780, 1200, 1456]} width={100} height={80} margin={15} >
