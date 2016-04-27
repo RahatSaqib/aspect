@@ -13,7 +13,7 @@ npm install
 
 Then, set up secret and db connection string in config.js
 
-The project is using some ES6 features, so for now, you'll have to start it with the --use_strict flag:
+The project is using some ES6 features, so you'll have to add the --use_strict flag (unless you're using node 6 or above)
 
 ```bash
 node --use_strict server.js
