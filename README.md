@@ -1,4 +1,4 @@
-# aspect-api
+# Aspect API
 
 This is the web api for all aspect clients. 
 It's using express as the middleware and JWT (jwt.io) for authentication.
