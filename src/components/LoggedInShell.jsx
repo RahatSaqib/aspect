@@ -10,8 +10,10 @@ class LoggedInShell extends React.Component {
     this.state = {drawerOpen: false};
   }
 
+  // user clicked on the menu-icon in the header
   handleHamburger = () => this.setState({drawerOpen: !this.state.drawerOpen})
 
+  // user wants to close the side drawer
   handleSideClose = () => this.setState({drawerOpen: false})
 
   render() {

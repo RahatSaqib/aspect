@@ -1,3 +1,5 @@
+// This file contains all possible settings for
+// customizing the material-ui theme
 import {
   green100,
   green500,

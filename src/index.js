@@ -1,3 +1,4 @@
+// This is the entry point for our app
 import 'core-js/fn/object/assign';
 import React from 'react';
 import ReactDOM from 'react-dom';
@@ -16,6 +17,8 @@ injectTapEventPlugin();
 
 function requireAuth(nextState, replace) {
   // TODO: Actually check if user is logged in here
+  // Right now, just checking if an access token was
+  // set in local storage.
   if (!window.sessionStorage.accessToken) {
     replace({
       pathname: '/login',
@@ -24,6 +27,7 @@ function requireAuth(nextState, replace) {
   }
 }
 
+// set up routes for react-router
 const routes =
 <Route component={App}>
   <Route component={Login} path="login" />
