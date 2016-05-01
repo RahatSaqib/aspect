@@ -31,47 +31,13 @@ module.exports = function (secret) {
 
         // TODO: Fill token with roles/fullname of user
 
+        // TODO: Add refresh token
+
         // return the information including token as JSON
         res.json({
           token: token
         });
       }
-
-    }
-  });
-
-  // route for refreshing a token
-  routes.put('/', function (req, res) {
-
-    // check header or url parameters or post parameters for token
-    let token = req.headers['x-access-token'];
-
-    // decode token
-    if (token) {
-
-      // verifies secret and checks exp
-      jwt.verify(token, secret, function (err) {
-        if (err) {
-          return res.status(401).json({ message: 'Failed to authenticate token.' });
-        } else {
-          // if everything is good, return the refreshed token
-          let originalDecoded = jwt.decode(token, { complete: true });
-
-          let refreshedToken = jwt.sign(originalDecoded.payload, secret, {
-            expiresInMinutes: 60 // expires in 1 hour
-          });
-
-          res.json({
-            token: refreshedToken
-          });
-        }
-      });
-
-    } else {
-
-      return res.status(403).send({
-        message: 'No token provided.'
-      });
 
     }
   });
