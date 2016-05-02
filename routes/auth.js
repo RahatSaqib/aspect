@@ -1,31 +1,31 @@
-let express = require('express');
-let jwt = require('jsonwebtoken');
+let express = require('express')
+let jwt = require('jsonwebtoken')
 
 let jwtmiddleware = require('./jwtmiddleware')
 
 module.exports = function (secret) {
 
-  let routes = express.Router();
+  let routes = express.Router()
 
   // route to authenticate a user
   routes.post('/', function (req, res) {
 
     // TODO: find the user in the db, make sure he has access to audience
-    let user = { name: req.body.name, password: req.body.password };
+    let user = { name: req.body.name, password: req.body.password }
 
     if (!user) {
-      res.status(401).json({ message: 'Authentication failed. User not found.' });
+      res.status(401).json({ message: 'Authentication failed. User not found.' })
     } else if (user) {
 
       // TODO: check if password matches
       if (user.name !== user.password) {
-        res.status(401).json({ message: 'Authentication failed. Wrong password.' });
+        res.status(401).json({ message: 'Authentication failed. Wrong password.' })
       } else {
 
         // if user is found and password is right create a token
         let token = jwt.sign(user, secret, {
           expiresInMinutes: 60 // expires in 1 hour
-        });
+        })
 
         // TODO: Add audience to token
 
@@ -36,19 +36,19 @@ module.exports = function (secret) {
         // return the information including token as JSON
         res.json({
           token: token
-        });
+        })
       }
 
     }
-  });
+  })
 
   // all routes after this will require a token
-  routes.use((req, res, next) => jwtmiddleware(req, res, next, secret));
+  routes.use((req, res, next) => jwtmiddleware(req, res, next, secret))
 
   // route to test that token works
   routes.get('/', function (req, res) {
-    res.json({ message: 'Welcome to the coolest API on earth! Looks like you have a valid token!' });
-  });
+    res.json({ message: 'Welcome to the coolest API on earth! Looks like you have a valid token!' })
+  })
 
-  return routes;
+  return routes
 }
