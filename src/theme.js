@@ -1,13 +1,13 @@
 // This file contains all possible settings for
 // customizing the material-ui theme
 import {
-  green100,
+  green300,
   green500,
   green700,
-  deepOrange100,
+  deepOrange300,
   deepOrange500,
   deepOrange700
-} from 'material-ui/styles/colors';
+} from 'material-ui/styles/colors'
 
 export default {
   spacing: {
@@ -27,10 +27,10 @@ export default {
   palette: {
     primary1Color: green500,
     primary2Color: green700,
-    primary3Color: green100,
+    primary3Color: green300,
     accent1Color: deepOrange500,
     accent2Color: deepOrange700,
-    accent3Color: deepOrange100
+    accent3Color: deepOrange300
       // textColor: black,
       // alternateTextColor: white,
       // canvasColor: white,
