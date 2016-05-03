@@ -32,18 +32,22 @@ module.exports = function(secret, db) {
           res.status(401).json({ message: 'Authentication failed. Wrong password.' })
         } else {
 
-          // if user is found and password is right create a token
-          let token = jwt.sign(user, secret, {
-            expiresInMinutes: 60 // expires in 1 hour
-          })
+          db.query('select r.name from role r inner join user_role ur on r.id = ur.role_id where ?', { user_id: user.id }, (result) => {
+            // if user is found and password is right create a token
+            let token = jwt.sign({  name: user.name,
+                                    modules: ['inv', 'mai'],
+                                    roles: result.data.map((a) => { return a.name }) },
+                                    secret, {
+                                      expiresIn: '1 hour',
+                                      issuer: 'https://www.aspect.id'
+                                    })
 
-          // TODO: Fill token with roles/fullname of user
+            // TODO: Add refresh token
 
-          // TODO: Add refresh token
-
-          // return the information including token as JSON
-          res.json({
-            token: token
+            // return the information including token as JSON
+            res.json({
+              token: token
+            })
           })
         }
       }

@@ -99,3 +99,9 @@ module.exports.update = function(tableName, params, callback) {
   exec(query, params, callback, 'update')
 
 }
+
+module.exports.query = function(query, params, callback) {
+
+  exec(query, params, callback, 'find')
+
+}
