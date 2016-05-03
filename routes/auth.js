@@ -37,8 +37,6 @@ module.exports = function(secret, db) {
             expiresInMinutes: 60 // expires in 1 hour
           })
 
-          // TODO: Add audience to token
-
           // TODO: Fill token with roles/fullname of user
 
           // TODO: Add refresh token

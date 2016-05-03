@@ -8,8 +8,6 @@ let db = require('./db')
 
 let app = express()
 
-let crypto = require('crypto')
-
 
 // =======================
 // configuration =========
