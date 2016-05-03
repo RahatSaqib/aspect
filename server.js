@@ -4,8 +4,12 @@ let morgan = require('morgan')
 
 let authRoutes = require('./routes/auth')
 let config = require('./config')
+let db = require('./db')
 
 let app = express()
+
+let crypto = require('crypto')
+
 
 // =======================
 // configuration =========
@@ -28,7 +32,16 @@ app.get('/', function (req, res) {
 })
 
 // apply the routes to our application with the prefix /api
-app.use('/api/auth', authRoutes(config.secret))
+app.use('/api/auth', authRoutes(config.secret, db))
+
+// app.get('/', function(req, res) {
+
+//   db.update('person', [{name: 'Klaus Baumgartner'}, {id: 94}], function(result){
+//     res.send(result)
+//   })
+
+// })
+
 
 // =======================
 // start the server ======

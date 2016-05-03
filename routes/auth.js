@@ -3,50 +3,60 @@ let jwt = require('jsonwebtoken')
 
 let jwtmiddleware = require('./jwtmiddleware')
 
-module.exports = function (secret) {
+module.exports = function(secret, db) {
 
   let routes = express.Router()
 
   // route to authenticate a user
-  routes.post('/', function (req, res) {
+  routes.post('/', function(req, res) {
 
-    // TODO: find the user in the db, make sure he has access to audience
-    let user = { name: req.body.name, password: req.body.password }
-
-    if (!user) {
-      res.status(401).json({ message: 'Authentication failed. User not found.' })
-    } else if (user) {
-
-      // TODO: check if password matches
-      if (user.name !== user.password) {
-        res.status(401).json({ message: 'Authentication failed. Wrong password.' })
-      } else {
-
-        // if user is found and password is right create a token
-        let token = jwt.sign(user, secret, {
-          expiresInMinutes: 60 // expires in 1 hour
-        })
-
-        // TODO: Add audience to token
-
-        // TODO: Fill token with roles/fullname of user
-
-        // TODO: Add refresh token
-
-        // return the information including token as JSON
-        res.json({
-          token: token
-        })
-      }
-
+    if (!req.body.name) {
+      res.status(400).json({ message: 'No user name provided' })
     }
+
+    if (!req.body.password) {
+      res.status(400).json({ message: 'No password provided' })
+    }
+
+    // find the user in the db
+    db.findOne('user', ['id', 'name', 'password', 'password_key'], { name: req.body.name }, function(result) {
+
+      let user = result.data
+
+      if (!user) {
+        res.status(401).json({ message: 'Authentication failed. User not found.' })
+      } else if (user) {
+
+        // TODO: check if password matches
+        if (req.body.password !== 'test07') {
+          res.status(401).json({ message: 'Authentication failed. Wrong password.' })
+        } else {
+
+          // if user is found and password is right create a token
+          let token = jwt.sign(user, secret, {
+            expiresInMinutes: 60 // expires in 1 hour
+          })
+
+          // TODO: Add audience to token
+
+          // TODO: Fill token with roles/fullname of user
+
+          // TODO: Add refresh token
+
+          // return the information including token as JSON
+          res.json({
+            token: token
+          })
+        }
+      }
+    })
   })
 
   // all routes after this will require a token
   routes.use((req, res, next) => jwtmiddleware(req, res, next, secret))
 
   // route to test that token works
-  routes.get('/', function (req, res) {
+  routes.get('/', function(req, res) {
     res.json({ message: 'Welcome to the coolest API on earth! Looks like you have a valid token!' })
   })
 
