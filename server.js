@@ -49,7 +49,7 @@ app.get('/', apiLimiter, function (req, res) {
 })
 
 // apply the routes to our application with the prefix /api
-app.use('/api/auth', authLimiter, authRoutes(config.secret, db))
+app.use('/api/auth', authLimiter, authRoutes(config, db))
 
 // app.get('/', function(req, res) {
 

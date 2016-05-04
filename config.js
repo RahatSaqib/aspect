@@ -7,5 +7,6 @@ module.exports = {
     password: '96loETfSyBSF6PLX',
     database: 'aspect',
     debug: false
-  }
+  },
+  'passwordAttempts': 5
 }
