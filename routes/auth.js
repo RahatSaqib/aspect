@@ -1,4 +1,7 @@
+let async = require('async')
+let crypto = require('crypto')
 let express = require('express')
+let moment = require('moment')
 let jwt = require('jsonwebtoken')
 
 let jwtmiddleware = require('./jwtmiddleware')
@@ -20,10 +23,25 @@ module.exports = function(config, db) {
       return
     }
 
-    // find the user in the db
-    db.findOne('user', '*', { name: req.body.name }, function(result) {
+    if (!req.body.clientId) {
+      res.status(400).json({ message: 'No client ID provided' })
+      return
+    }
 
-      let user = result.data
+    if (!req.body.clientName) {
+      res.status(400).json({ message: 'No client name provided' })
+      return
+    }
+
+    // find the user in the db
+    db.findOne('user', '*', { name: req.body.name }, function(response) {
+
+      if (response.result !== 'success') {
+        res.status(500).json({ message: 'Server error' })
+        return
+      }
+
+      let user = response.data
 
       if (!user) {
         res.status(401).json({ message: 'User not found.' })
@@ -40,39 +58,65 @@ module.exports = function(config, db) {
 
         let lock = user.failed_password_attempts >= config.passwordAttempts ? 1 : 0
 
-        db.update(  'user',
-                    [{failed_password_attempts: user.failed_password_attempts + 1,
-                      locked_out: lock }, { id: user.id }],
+        db.update('user', [{
+          failed_password_attempts: user.failed_password_attempts + 1,
+          locked_out: lock
+          }, { id: user.id }],
           () => {
             res.status(401).json({ message: 'Authentication failed. Wrong password.' })
           })
       } else {
 
-        db.update('user', [{ failed_password_attempts: 0 }, { id: user.id }], () => {
+        // upsert refresh token
+        let refresh_token = crypto.randomBytes(48).toString('base64')
+        let expires = moment().utc().add(7, 'days').format('YYYY-MM-DD HH:mm:ss')
 
-          db.query( 'select r.name from role r inner join user_role ur on r.id = ur.role_id where ?',
-                    { user_id: user.id }, (result) => {
-                      // if user is found and password is right create a token
-                      let token = jwt.sign({
-                        name: user.name,
-                        modules: ['inv', 'mai'],
-                        roles: result.data.map((a) => {
-                          return a.name
-                        })
-                      },
-                      config.secret, {
-                        expiresIn: '1 hour',
-                        issuer: 'https://www.aspect.id'
-                      })
+        // some of these db calls can happen in parallel...
+        async.parallel([
+          function(callback) {
+            db.query('INSERT INTO refresh_token set ? ON DUPLICATE KEY UPDATE ?', [{
+              user_id: user.id,
+              client_id: req.body.clientId,
+              client_name: req.body.clientName,
+              token: refresh_token,
+              expires: expires
+            }, {
+              token: refresh_token,
+              expires: expires
+            }], callback)
+          },
+          function(callback) {
+            db.update('user', [{ failed_password_attempts: 0 }, { id: user.id }], callback)
+          }],
+          function(r) {
 
-                      // TODO: Add refresh token
+            // this happens after the db calls above are complete
+            if (r.result !== 'success') {
+              res.status(500).json({ message: 'Server error' })
+              return
+            }
 
-                      // return the information including token as JSON
-                      res.json({
-                        token: token
-                      })
-                    })
-        })
+            db.query('select r.name from role r inner join user_role ur on r.id = ur.role_id where ?', { user_id: user.id }, (result) => {
+              // if user is found and password is right create a token
+              let token = jwt.sign({
+                name: user.name,
+                modules: ['inv', 'mai'],
+                roles: result.data.map((a) => {
+                  return a.name
+                })
+              },
+              config.secret, {
+                expiresIn: '1 hour',
+                issuer: 'https://www.aspect.id'
+              })
+
+              // return the information including token as JSON
+              res.json({
+                access: token,
+                refresh: refresh_token
+              })
+            })
+          })
       }
     })
   })
