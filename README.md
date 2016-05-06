@@ -31,8 +31,8 @@ nodemon --use_strict server.js
 
 ```GET '/'```: Will return hello! (for testing)
 
-```POST '/api/auth'```: Send name and password in x-www-form-urlencoded format and if credentials are OK returns a JWT.
+```POST '/api/auth'```: Send name, password, client_id, and client_name in x-www-form-urlencoded format and if credentials are OK returns a JWT.
 
-```PUT '/api/auth'```: Post a JWT in the "x-access-token" header, and this endpoint will return a refreshed JWT.
+```POST '/api/auth/refresh'```: Post a refresh token in the "x-access-token" header, and this endpoint will return a refreshed JWT.
 
 ```GET '/api/auth'```: When valid JWT is in header, returns a welcome-message (for testing that auth works)
