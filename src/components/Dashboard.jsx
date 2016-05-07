@@ -1,17 +1,24 @@
-import React from 'react';
-import Snackbar from 'material-ui/Snackbar';
-import MiniChart from './shared/MiniChart';
+import React from 'react'
+import Snackbar from 'material-ui/Snackbar'
+import PureRenderMixin from 'react-addons-pure-render-mixin'
+import {connect} from 'react-redux'
+
+import MiniChart from './shared/MiniChart'
 
 class Dashboard extends React.Component {
 
   constructor(props) {
-    super(props);
+    super(props)
+    this.shouldComponentUpdate = PureRenderMixin.shouldComponentUpdate.bind(this)
   }
 
   render() {
+
+    let userName = this.props.user ? this.props.user.toObject().name : ''
+
     return (
       <div className="content">
-        <h1 className="content-h1">Dashboard</h1>
+        <h1 className="content-h1">{userName}</h1>
         <div className="pure-g">
           <div className="pure-u-lg-1-4 pure-u-md-1-3 pure-u-sm-1-2">
             <MiniChart data={[1, 8, 15, 40, 45, 80, 90, 155]} label={"Total Devices"} number={155} bgcolor={'#00bcd4'} />
@@ -26,13 +33,20 @@ class Dashboard extends React.Component {
             <MiniChart data={[1000, 1200, 700, 500, 400, 500, 600, 780, 1200, 1456]} label={"Cartridges"} number={1456} bgcolor={'#607d8b'} />
           </div>
         </div>
+        {userName}
         <Snackbar
             open={this.props.location.search.indexOf('fl') !== -1}
             autoHideDuration={3000}
-            message={'Welcome, ' + window.sessionStorage.accessToken + '!'}  />
+            message={'Welcome, ' + userName + '!'}  />
       </div>
-    );
+    )
   }
 }
 
-export default Dashboard;
+function mapStateToProps(state) {
+  return {
+    user: state.get('user')
+  }
+}
+
+export default connect(mapStateToProps)(Dashboard)

@@ -1,0 +1,6 @@
+module.exports = {
+  SET_STATE: 'SET_STATE',
+  LOGGING_IN: 'LOGGING_IN',
+  LOGGED_IN: 'LOGGED_IN',
+  LOG_OUT: 'LOG_OUT'
+}

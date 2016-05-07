@@ -1,13 +1,15 @@
-import React from 'react';
+import React from 'react'
+import PureRenderMixin from 'react-addons-pure-render-mixin'
 
-import Nav from './shared/Nav';
+import Nav from './shared/Nav'
 import SideNav from './shared/SideNav'
 
 class LoggedInShell extends React.Component {
 
   constructor(props) {
-    super(props);
-    this.state = {drawerOpen: false};
+    super(props)
+    this.shouldComponentUpdate = PureRenderMixin.shouldComponentUpdate.bind(this)
+    this.state = {drawerOpen: false}
   }
 
   // user clicked on the menu-icon in the header
@@ -25,8 +27,8 @@ class LoggedInShell extends React.Component {
         <Nav handleHamburger={this.handleHamburger} />
         {this.props.children}
       </div>
-    );
+    )
   }
 }
 
-export default LoggedInShell;
+export default LoggedInShell

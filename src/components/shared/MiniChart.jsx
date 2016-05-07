@@ -1,13 +1,15 @@
-import React from 'react';
-import Paper from 'material-ui/Paper';
-import { Sparklines, SparklinesLine, SparklinesSpots } from 'react-sparklines';
+import React from 'react'
+import Paper from 'material-ui/Paper'
+import PureRenderMixin from 'react-addons-pure-render-mixin'
+import { Sparklines, SparklinesLine, SparklinesSpots } from 'react-sparklines'
 
-require('./../../styles/Charts.css');
+require('./../../styles/Charts.css')
 
 class MiniChart extends React.Component {
 
   constructor(props) {
-    super(props);
+    super(props)
+    this.shouldComponentUpdate = PureRenderMixin.shouldComponentUpdate.bind(this)
   }
 
   render() {
@@ -25,7 +27,7 @@ class MiniChart extends React.Component {
         </div>
         <div className="clear-fix" ></div>
       </Paper>
-      );
+      )
   }
 }
 
@@ -34,6 +36,6 @@ MiniChart.propTypes = {
   data: React.PropTypes.array.isRequired,
   label: React.PropTypes.string.isRequired,
   number: React.PropTypes.any.isRequired
-};
+}
 
-export default MiniChart;
+export default MiniChart

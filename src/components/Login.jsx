@@ -1,47 +1,49 @@
-import React from 'react';
-import Paper from 'material-ui/Paper';
-import FloatingActionButton from 'material-ui/FloatingActionButton';
-import Arrow from 'material-ui/svg-icons/navigation/arrow-forward';
-import TextField from 'material-ui/TextField';
+import React from 'react'
+import PureRenderMixin from 'react-addons-pure-render-mixin'
+import Paper from 'material-ui/Paper'
+import FloatingActionButton from 'material-ui/FloatingActionButton'
+import Arrow from 'material-ui/svg-icons/navigation/arrow-forward'
+import TextField from 'material-ui/TextField'
 
 class Login extends React.Component {
 
   constructor(props) {
-    super(props);
+    super(props)
+    this.shouldComponentUpdate = PureRenderMixin.shouldComponentUpdate.bind(this)
     this.state = {  user: '',
                     password: '',
                     error_user: '',
-                    error_password: ''};
+                    error_password: ''}
   }
 
-  componentDidMount = () => { setTimeout(() => {this.refs.user.focus();}, 500) }
+  componentDidMount = () => { setTimeout(() => { this.refs.user.focus() }, 500) }
 
   handleSubmit = (e) => {
 
-    e.preventDefault();
+    e.preventDefault()
 
-    this.setState({ error_user: this.state.user ? '' : 'Please enter your username' });
-    this.setState({ error_password: this.state.password ? '' : 'Please enter your password' });
+    this.setState({ error_user: this.state.user ? '' : 'Please enter your username' })
+    this.setState({ error_password: this.state.password ? '' : 'Please enter your password' })
 
     if (!this.state.user || !this.state.password){
-      return;
+      return
     }
 
     // TODO: GET the JWT here and store as a cookie. For now, put any username in local storage:
-    window.sessionStorage.accessToken = this.state.user;
+    window.sessionStorage.accessToken = this.state.user
 
 
     this.context.router.push({ pathName: '/', query: { fl: '1' } })
   }
 
   handleUserChange = (e) => {
-    this.setState({ user: e.target.value });
-    this.setState({ error_user: e.target.value ? '' : 'Please enter your username' });
+    this.setState({ user: e.target.value })
+    this.setState({ error_user: e.target.value ? '' : 'Please enter your username' })
   }
 
   handlePasswordChange = (e) => {
-    this.setState({ password: e.target.value });
-    this.setState({ error_password: e.target.value ? '' : 'Please enter your password' });
+    this.setState({ password: e.target.value })
+    this.setState({ error_password: e.target.value ? '' : 'Please enter your password' })
   }
 
   render() {
@@ -64,7 +66,7 @@ class Login extends React.Component {
             </form>
         </Paper>
       </div>
-    );
+    )
   }
 }
 
@@ -72,4 +74,4 @@ Login.contextTypes =  {
   router: React.PropTypes.object.isRequired
 }
 
-export default Login;
+export default Login

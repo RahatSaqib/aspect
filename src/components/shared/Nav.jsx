@@ -1,20 +1,36 @@
-import React from 'react';
-import AppBar from 'material-ui/AppBar';
-import IconButton from 'material-ui/IconButton';
-import IconMenu from 'material-ui/IconMenu';
-import MenuItem from 'material-ui/MenuItem';
-import MoreVertIcon from 'material-ui/svg-icons/navigation/more-vert';
-import Badge from 'material-ui/Badge';
-import NotificationsIcon from 'material-ui/svg-icons/social/notifications';
+import React from 'react'
+import AppBar from 'material-ui/AppBar'
+import IconButton from 'material-ui/IconButton'
+import IconMenu from 'material-ui/IconMenu'
+import MenuItem from 'material-ui/MenuItem'
+import MoreVertIcon from 'material-ui/svg-icons/navigation/more-vert'
+import Badge from 'material-ui/Badge'
+import NotificationsIcon from 'material-ui/svg-icons/social/notifications'
+import PureRenderMixin from 'react-addons-pure-render-mixin'
+import {connect} from 'react-redux'
+import * as actionCreators from '../../action_creators/action_creators'
+
+let createHandlers = function(dispatch) {
+  let signOut = function() {
+    dispatch(actionCreators.logOut())
+
+    // TODO: delete the JWT cookie
+    // window.sessionStorage.accessToken = ''
+
+    // this.context.router.push('/login')
+  }
+
+  return {
+    signOut
+  }
+}
 
 class Nav extends React.Component {
 
-  handleSignOut = () => {
-
-    // TODO: delete the JWT cookie instead
-    window.sessionStorage.accessToken = '';
-
-    this.context.router.push('/login');
+  constructor(props) {
+    super(props)
+    this.handlers = createHandlers(this.props.dispatch)
+    this.shouldComponentUpdate = PureRenderMixin.shouldComponentUpdate.bind(this)
   }
 
   render() {
@@ -32,20 +48,28 @@ class Nav extends React.Component {
                       </IconButton>}>
                       <MenuItem primaryText="Refresh" />
                       <MenuItem primaryText="Help" linkButton={true} href="/" />
-                      <MenuItem primaryText="Sign out" onTouchTap={this.handleSignOut} />
+                      <MenuItem primaryText="Sign out" onTouchTap={this.handlers.signOut} />
                     </IconMenu>
                     </div>
                   }/>
-    );
+    )
   }
 }
 
 Nav.propTypes = {
   handleHamburger: React.PropTypes.func.isRequired
-};
+}
 
 Nav.contextTypes =  {
   router: React.PropTypes.object.isRequired
 }
 
-export default Nav;
+const mapStateToProps = (state) => {
+  return {
+    user: state.get('user')
+  }
+}
+
+export default connect(
+  mapStateToProps
+)(Nav)
