@@ -4,9 +4,11 @@ import types from './../constants/action_types'
 
 function setState(state, newState) {
 
-  if (!state){
-    state = new Map()
-  }
+  // doing this here because redux doesn't support being initialized
+  // with an immutable.
+  // if (!state || typeof(state.merge) !== 'function' || !state.merge){
+  //   state = new Map()
+  // }
 
   return state.merge(newState)
 }

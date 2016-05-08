@@ -31,11 +31,11 @@ function requireAuth(nextState, replace) {
   }
 }
 
-// our redux store
-const store = createStore(reducer, null, compose(
-  // applyMiddleware(...middleware),
+// our redux store with dev tools
+const createStoreWithDevTools = compose(
   window.devToolsExtension ? window.devToolsExtension() : f => f
-))
+)(createStore)
+const store = createStoreWithDevTools(reducer)
 
 // set initial state
 store.dispatch(actionCreators.setState({user: {
