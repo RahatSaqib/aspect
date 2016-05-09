@@ -96,7 +96,7 @@ module.exports = function(config, db) {
               return
             }
 
-            getToken(user.id, user.name, res, refresh_token)
+            getToken(db, config, user.id, user.name, res, refresh_token)
 
           })
       }
@@ -117,58 +117,37 @@ module.exports = function(config, db) {
     }
 
     // find the token in the db
-    db.query('select rt.user_id, rt.expires, u.name from refresh_token rt inner join user u on rt.user_Id = u.id where client_id = ? and token = ? and revoked = 0', [req.body.clientId, req.body.token], function(rows) {
-      if (rows.result !== 'success' || rows.length !== 1) {
-        res.status(400).json({ message: 'Unable to find token or token revoked' })
-        return
-      }
+    db.query( 'select rt.user_id, rt.expires, u.name ' +
+              'from refresh_token rt inner join user u on rt.user_Id = u.id ' +
+              'where client_id = ? and token = ? and revoked = 0',
+              [req.body.clientId, req.body.token],
+              (rows) => {
+                if (rows.result !== 'success' || rows.length !== 1) {
+                  res.status(400).json({ message: 'Unable to find token or token revoked' })
+                  return
+                }
 
-      if (rows.data[0].expires < moment().utc()) {
-        res.status(400).json({ message: 'Token expired' })
-        return
-      }
+                if (rows.data[0].expires < moment().utc()) {
+                  res.status(400).json({ message: 'Token expired' })
+                  return
+                }
 
-      // looks like we have a valid refresh token. set new one in db
-      // and return jwt:
-      // upsert refresh token
-      let refresh_token = crypto.randomBytes(48).toString('base64')
-      let expires = moment().utc().add(7, 'days').format('YYYY-MM-DD HH:mm:ss')
+                // looks like we have a valid refresh token. set new one in db
+                // and return jwt:
+                // upsert refresh token
+                let refresh_token = crypto.randomBytes(48).toString('base64')
+                let expires = moment().utc().add(7, 'days').format('YYYY-MM-DD HH:mm:ss')
 
-      db.query('update refresh_token set ? where ?', [{
-        token: refresh_token,
-        expires: expires
-      }, {
-        token: req.body.token
-      }], () => {
-        getToken(rows.data[0].user_id, rows.data[0].name, res, refresh_token)
-      })
-
-    })
+                db.query('update refresh_token set ? where ?', [{
+                  token: refresh_token,
+                  expires: expires
+                }, {
+                  token: req.body.token
+                }], () => {
+                  getToken(db, config, rows.data[0].user_id, rows.data[0].name, res, refresh_token)
+                })
+              })
   })
-
-  function getToken(userId, userName, res, refresh_token) {
-    db.query('select r.name from role r inner join user_role ur on r.id = ur.role_id where ?', { user_id: userId }, (result) => {
-
-      // create a new token
-      let token = jwt.sign({
-        name: userName,
-        modules: ['inv', 'mai'],
-        roles: result.data.map((a) => {
-          return a.name
-        })
-      },
-      config.secret, {
-        expiresIn: '1 hour',
-        issuer: 'https://www.aspect.id'
-      })
-
-      // return the information including token as JSON
-      res.json({
-        access: token,
-        refresh: refresh_token
-      })
-    })
-  }
 
   // all routes after this will require a token
   routes.use((req, res, next) => jwtmiddleware(req, res, next, config.secret))
@@ -179,4 +158,29 @@ module.exports = function(config, db) {
   })
 
   return routes
+}
+
+function getToken(db, config, userId, userName, res, refresh_token) {
+  db.query( 'select r.name from role r inner join user_role ur on r.id = ur.role_id where ?',
+            { user_id: userId },
+            (result) => {
+              // create a new token
+              let token = jwt.sign({
+                name: userName,
+                modules: ['inv', 'mai'],
+                roles: result.data.map((a) => {
+                  return a.name
+                })
+              },
+              config.secret, {
+                expiresIn: '1 hour',
+                issuer: 'https://www.aspect.id'
+              })
+
+              // return the information including token as JSON
+              res.json({
+                access: token,
+                refresh: refresh_token
+              })
+            })
 }
