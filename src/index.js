@@ -9,7 +9,7 @@ import {createStore, compose} from 'redux'
 import App from './components/App'
 import Dashboard from './components/Dashboard'
 import Login from './components/Login'
-import reducer from './reducers/reducer'
+import rootReducer from './reducers/root'
 import * as actionCreators from './action_creators/action_creators'
 
 import LoggedInShell from './components/LoggedInShell'
@@ -35,14 +35,7 @@ function requireAuth(nextState, replace) {
 const createStoreWithDevTools = compose(
   window.devToolsExtension ? window.devToolsExtension() : f => f
 )(createStore)
-const store = createStoreWithDevTools(reducer)
-
-// set initial state
-store.dispatch(actionCreators.setState({user: {
-  name: 'Stefan',
-  loggingIn: false,
-  loggedIn: false
-}}))
+const store = createStoreWithDevTools(rootReducer)
 
 // set up routes for react-router
 const routes =

@@ -1,15 +1,34 @@
 import React from 'react'
 import PureRenderMixin from 'react-addons-pure-render-mixin'
 import Paper from 'material-ui/Paper'
+import LinearProgress from 'material-ui/LinearProgress'
 import FloatingActionButton from 'material-ui/FloatingActionButton'
 import Arrow from 'material-ui/svg-icons/navigation/arrow-forward'
 import TextField from 'material-ui/TextField'
+import * as actionCreators from '../action_creators/action_creators'
+import {connect} from 'react-redux'
+
+
+let createHandlers = function(dispatch, router) {
+  let logIn = function() {
+    dispatch(actionCreators.loginRequest())
+
+    setTimeout(() => {
+      dispatch(actionCreators.loginSuccess('Stefan'))
+      router.push({ pathName: '/', query: { fl: '1' } }) }, 1000)
+  }
+
+  return {
+    logIn
+  }
+}
 
 class Login extends React.Component {
 
-  constructor(props) {
+  constructor(props, context) {
     super(props)
     this.shouldComponentUpdate = PureRenderMixin.shouldComponentUpdate.bind(this)
+    this.handlers = createHandlers(props.dispatch, context.router)
     this.state = {  user: '',
                     password: '',
                     error_user: '',
@@ -29,11 +48,12 @@ class Login extends React.Component {
       return
     }
 
+    this.handlers.logIn()
+
     // TODO: GET the JWT here and store as a cookie. For now, put any username in local storage:
-    window.sessionStorage.accessToken = this.state.user
+    // window.sessionStorage.accessToken = this.state.user
 
-
-    this.context.router.push({ pathName: '/', query: { fl: '1' } })
+    // this.context.router.push({ pathName: '/', query: { fl: '1' } })
   }
 
   handleUserChange = (e) => {
@@ -47,12 +67,15 @@ class Login extends React.Component {
   }
 
   render() {
+
+    let progress = this.props.user && this.props.user.toObject().loggingIn == true ? <LinearProgress /> : ''
+
     return (
       <div style={{height: '100%'}}>
         <div style={{backgroundColor: '#4CAF50', height: '50%'}}>
           &nbsp;
         </div>
-        <Paper style={{ width: '400px', height: '180px', padding: '10px 20px', margin: 'auto', marginTop: '-90px'}} zDepth={1} >
+        <Paper style={{ width: '400px', height: '180px', padding: '10px 20px 0 20px', margin: 'auto', marginTop: '-90px'}} zDepth={1} >
             <form onSubmit={this.handleSubmit}>
               <div style={{width: '85%', float: 'left'}}>
                 <TextField ref="user" errorStyle={{ float: 'left' }} value={this.state.user} floatingLabelText="Username" errorText={this.state.error_user} onChange={this.handleUserChange} />
@@ -65,6 +88,9 @@ class Login extends React.Component {
             </div>
             </form>
         </Paper>
+        <div style={{width: '400px', margin: 'auto'}}>
+          {progress}
+        </div>
       </div>
     )
   }
@@ -74,4 +100,10 @@ Login.contextTypes =  {
   router: React.PropTypes.object.isRequired
 }
 
-export default Login
+const mapStateToProps = (state) => {
+  return {
+    user: state.get('user')
+  }
+}
+
+export default connect(mapStateToProps)(Login)

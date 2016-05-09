@@ -10,14 +10,14 @@ import PureRenderMixin from 'react-addons-pure-render-mixin'
 import {connect} from 'react-redux'
 import * as actionCreators from '../../action_creators/action_creators'
 
-let createHandlers = function(dispatch) {
+let createHandlers = function(dispatch, router) {
   let signOut = function() {
     dispatch(actionCreators.logOut())
 
     // TODO: delete the JWT cookie
     // window.sessionStorage.accessToken = ''
 
-    // this.context.router.push('/login')
+    router.push('/login')
   }
 
   return {
@@ -27,9 +27,9 @@ let createHandlers = function(dispatch) {
 
 class Nav extends React.Component {
 
-  constructor(props) {
+  constructor(props, context) {
     super(props)
-    this.handlers = createHandlers(this.props.dispatch)
+    this.handlers = createHandlers(props.dispatch, context.router)
     this.shouldComponentUpdate = PureRenderMixin.shouldComponentUpdate.bind(this)
   }
 
@@ -70,6 +70,4 @@ const mapStateToProps = (state) => {
   }
 }
 
-export default connect(
-  mapStateToProps
-)(Nav)
+export default connect(mapStateToProps)(Nav)
