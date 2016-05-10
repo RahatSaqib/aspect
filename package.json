@@ -10,12 +10,13 @@
   "author": "SystemOne",
   "license": "ISC",
   "dependencies": {
-    "async": "^2.0.0-rc.3",
-    "body-parser": "^1.15.0",
+    "async": "^2.0.0-rc.4",
+    "body-parser": "^1.15.1",
     "cors": "^2.7.1",
+    "eslint": "^2.9.0",
     "express": "^4.13.4",
     "express-rate-limit": "^2.2.0",
-    "jsonwebtoken": "^5.7.0",
+    "jsonwebtoken": "^6.2.0",
     "moment": "^2.13.0",
     "morgan": "^1.7.0",
     "mysql": "^2.10.2"

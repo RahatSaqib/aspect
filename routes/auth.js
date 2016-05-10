@@ -37,7 +37,7 @@ module.exports = function(config, db) {
     db.findOne('user', '*', { name: req.body.name }, function(response) {
 
       if (response.result !== 'success') {
-        res.status(500).json({ message: 'Server error' })
+        res.status(500).json({ message: response.message })
         return
       }
 

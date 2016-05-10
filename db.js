@@ -31,7 +31,8 @@ function exec(query, params, callback, mode) {
           case 'findOne':
             callback({
               result: result.length == 1 ? 'success' : 'error',
-              data: result.length == 1 ? result[0] : null
+              data: result.length == 1 ? result[0] : null,
+              message: result.length == 1 ? null : 'Not found'
             })
             break
 
