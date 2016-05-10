@@ -12,8 +12,8 @@ export function loginSuccess(name) {
     name,
     meta: {
       transition: () => ({
-        pathname: '/'
-        // search: '?fl=1'
+        pathname: '/',
+        search: '?fl=1'
       })
     }
   }
@@ -29,6 +29,19 @@ export function loginFailure(err) {
 export function logOut() {
   return {
     type: types.LOG_OUT
+  }
+}
+
+export function addError(title, desc, obj){
+  return {
+    type: types.ADD_ERROR,
+    error: { title: title, desc: desc, obj: obj }
+  }
+}
+
+export function removeError(){
+  return {
+    type: types.REMOVE_ERROR
   }
 }
 
@@ -75,9 +88,9 @@ export function loginStart(user, password) {
         // Here, we update the app state with the results of the API call.
         dispatch(loginSuccess(user, '/'))
       })
-      .catch(err =>
-        // dispatch(loginFailure(err))
-        console.log('error: ' + err)
-      )
+      .catch(err => {
+        dispatch(loginFailure(err))
+        dispatch(addError('Login Failed', err.message, err))
+      })
   }
 }

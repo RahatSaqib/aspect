@@ -7,15 +7,11 @@ function loginRequest(state){
 }
 
 function loginSuccess(state, name){
-  console.log(name)
   return state.merge({ name: name, loggedIn: true, loggingIn: false })
 }
 
-function loginFailure(state, error){
-
-  // let error = { error: {title: error.title, body: error.body} }
-
-  return state.merge({ name: '', loggedIn: false, loggingIn: false, error: error })
+function loginFailure(state){
+  return state.merge({ name: '', loggedIn: false, loggingIn: false })
 }
 
 function logOut(state){
@@ -29,7 +25,7 @@ const login = function(state = Map(), action) {
   case types.LOGIN_SUCCESS:
     return loginSuccess(state, action.name)
   case types.LOGIN_FAILURE:
-    return loginFailure(state, action.error)
+    return loginFailure(state)
   case types.LOG_OUT:
     return logOut(state)
   }

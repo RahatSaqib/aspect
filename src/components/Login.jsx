@@ -7,9 +7,9 @@ import Arrow from 'material-ui/svg-icons/navigation/arrow-forward'
 import TextField from 'material-ui/TextField'
 import * as actionCreators from '../action_creators/action_creators'
 import {connect} from 'react-redux'
+import ErrorDisplay from './shared/ErrorDisplay'
 
-
-let createHandlers = function(dispatch, router) {
+let createHandlers = function(dispatch) {
 
   let logIn = function(user, password) {
     // dispatch login, redirect to dashboard when done
@@ -23,10 +23,10 @@ let createHandlers = function(dispatch, router) {
 
 class Login extends React.Component {
 
-  constructor(props, context) {
+  constructor(props) {
     super(props)
     this.shouldComponentUpdate = PureRenderMixin.shouldComponentUpdate.bind(this)
-    this.handlers = createHandlers(props.dispatch, context.router)
+    this.handlers = createHandlers(props.dispatch)
     this.state = {  user: '',
                     password: '',
                     error_user: '',
@@ -65,6 +65,7 @@ class Login extends React.Component {
 
     return (
       <div style={{height: '100%'}}>
+        <ErrorDisplay />
         <div style={{backgroundColor: '#4CAF50', height: '50%'}}>
           &nbsp;
         </div>

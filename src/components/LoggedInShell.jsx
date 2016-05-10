@@ -3,6 +3,7 @@ import PureRenderMixin from 'react-addons-pure-render-mixin'
 
 import Nav from './shared/Nav'
 import SideNav from './shared/SideNav'
+import ErrorDisplay from './shared/ErrorDisplay'
 
 class LoggedInShell extends React.Component {
 
@@ -21,6 +22,7 @@ class LoggedInShell extends React.Component {
   render() {
     return (
       <div>
+        <ErrorDisplay />
         <SideNav  open={this.state.drawerOpen}
                   handleClose={this.handleSideClose}
                   handleRequestChange={(drawerOpen) => this.setState({drawerOpen})} />
