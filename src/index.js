@@ -3,53 +3,28 @@ import 'core-js/fn/object/assign'
 import React from 'react'
 import thunk from 'redux-thunk'
 import ReactDOM from 'react-dom'
-import {Router, Route, browserHistory} from 'react-router'
 import {Provider} from 'react-redux'
 import {createStore, compose, applyMiddleware} from 'redux'
-
-import App from './components/App'
-import Dashboard from './components/Dashboard'
-import Login from './components/Login'
+import handleTransitions from 'redux-history-transitions'
 import rootReducer from './reducers/root'
-
-import LoggedInShell from './components/LoggedInShell'
+import { Routes, browserHistory } from './routes'
 
 // This won't be necessary when facebook updates react
 // http://stackoverflow.com/a/34015469/988941
 import injectTapEventPlugin from 'react-tap-event-plugin'
 injectTapEventPlugin()
 
-function requireAuth(nextState, replace) {
-  // TODO: Actually check if user is logged in here
-  // Right now, just checking if an access token was
-  // set in local storage.
-  if (!window.sessionStorage.accessToken) {
-    replace({
-      pathname: '/login',
-      state: { nextPathname: nextState.location.pathname }
-    })
-  }
-}
-
 // our redux store with dev tools
 const createStoreWithDevTools = compose(
   applyMiddleware(thunk),
-  window.devToolsExtension ? window.devToolsExtension() : f => f
+  handleTransitions(browserHistory),
+  window.devToolsExtension ? window.devToolsExtension() : f => f,
 )(createStore)
 const store = createStoreWithDevTools(rootReducer)
 
-// set up routes for react-router
-const routes =
-<Route component={App}>
-  <Route component={Login} path="login" />
-    <Route component={LoggedInShell} onEnter={requireAuth}>
-      <Route path="/(:login)" component={Dashboard} />
-  </Route>
-</Route>
-
 ReactDOM.render(
   <Provider store={store}>
-    <Router history={browserHistory}>{routes}</Router>
+    <Routes />
   </Provider>,
   document.getElementById('app')
 )

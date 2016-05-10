@@ -77,6 +77,7 @@
     "react-sparklines": "^1.5.2",
     "react-tap-event-plugin": "^1.0.0",
     "redux": "^3.5.2",
+    "redux-history-transitions": "^2.2.0",
     "redux-immutable": "^3.0.6",
     "redux-thunk": "^2.0.1"
   }

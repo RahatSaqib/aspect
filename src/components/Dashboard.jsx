@@ -34,7 +34,8 @@ class Dashboard extends React.Component {
           </div>
         </div>
         <Snackbar
-            open={this.props.location.search.indexOf('fl') !== -1}
+            // open={this.props.location.search.indexOf('fl') !== -1}
+            open={true}
             autoHideDuration={3000}
             message={'Welcome, ' + userName + '!'}  />
       </div>

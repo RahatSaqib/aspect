@@ -9,7 +9,13 @@ export function loginRequest() {
 export function loginSuccess(name) {
   return {
     type: types.LOGIN_SUCCESS,
-    name
+    name,
+    meta: {
+      transition: () => ({
+        pathname: '/'
+        // search: '?fl=1'
+      })
+    }
   }
 }
 
@@ -38,7 +44,7 @@ function handleError(resp) {
   }
 }
 
-export function loginStart(name, password) {
+export function loginStart(user, password) {
 
   return function (dispatch) {
 
@@ -55,22 +61,23 @@ export function loginStart(name, password) {
                   { method: 'POST',
                     mode: 'cors',
                     headers: {  'Content-Type': 'application/json' },
-                    body:  JSON.stringify({  name: name,
+                    body:  JSON.stringify({  name: user,
                               password: password,
                               clientId: 'Browser XYZ',
                               clientName: 'Stefans machine' })})
       .then(handleError)
-      .then(json =>
+      .then(json => {
 
         // TODO: Store jwt and refresh token
+        console.log(json)
 
         // We can dispatch many times!
         // Here, we update the app state with the results of the API call.
-        dispatch(loginSuccess(name))
-      )
+        dispatch(loginSuccess(user, '/'))
+      })
       .catch(err =>
         // dispatch(loginFailure(err))
-        console.log(err)
+        console.log('error: ' + err)
       )
   }
 }

@@ -11,11 +11,9 @@ import {connect} from 'react-redux'
 
 let createHandlers = function(dispatch, router) {
 
-  let logIn = function() {
+  let logIn = function(user, password) {
     // dispatch login, redirect to dashboard when done
-    dispatch(actionCreators.loginStart('sbaumgartner', 'test07')).then(() => {
-      router.push({ pathName: '/', query: { fl: '1' } })
-    })
+    dispatch(actionCreators.loginStart(user, password))
   }
 
   return {
@@ -48,12 +46,7 @@ class Login extends React.Component {
       return
     }
 
-    this.handlers.logIn()
-
-    // TODO: GET the JWT here and store as a cookie. For now, put any username in local storage:
-    // window.sessionStorage.accessToken = this.state.user
-
-    // this.context.router.push({ pathName: '/', query: { fl: '1' } })
+    this.handlers.logIn(this.state.user, this.state.password)
   }
 
   handleUserChange = (e) => {

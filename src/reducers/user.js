@@ -7,6 +7,7 @@ function loginRequest(state){
 }
 
 function loginSuccess(state, name){
+  console.log(name)
   return state.merge({ name: name, loggedIn: true, loggingIn: false })
 }
 
