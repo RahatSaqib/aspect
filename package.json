@@ -68,6 +68,7 @@
     "core-js": "^2.4.0",
     "immutable": "^3.8.1",
     "isomorphic-fetch": "^2.2.1",
+    "jwt-decode": "^2.0.1",
     "material-ui": "^0.15.0",
     "react": "^15.0.0",
     "react-addons-pure-render-mixin": "^15.0.2",

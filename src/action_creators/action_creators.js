@@ -1,4 +1,6 @@
+import jwt_decode from 'jwt-decode'
 import types from './../constants/action_types'
+import util from './../util'
 
 export function loginRequest() {
   return {
@@ -45,18 +47,6 @@ export function removeError(){
   }
 }
 
-// TODO: turn this into a dispatch on a new error-object that
-// all components have access to.
-// that way, we can display a nice error message in the browser
-function handleError(resp) {
-  let json = resp.json()
-  if (resp.ok) {
-    return json
-  } else {
-    return json.then(Promise.reject.bind(Promise))
-  }
-}
-
 export function loginStart(user, password) {
 
   return function (dispatch) {
@@ -70,23 +60,28 @@ export function loginStart(user, password) {
 
     // In this case, we return a promise to wait for.
     // This is not required by thunk middleware, but it is convenient for us.
+    let clientName = util.getBrowserNameAndVersion() + ' on ' + window.navigator.platform
+
     return fetch('http://localhost:8080/api/auth',
                   { method: 'POST',
                     mode: 'cors',
                     headers: {  'Content-Type': 'application/json' },
                     body:  JSON.stringify({  name: user,
                               password: password,
-                              clientId: 'Browser XYZ',
-                              clientName: 'Stefans machine' })})
-      .then(handleError)
+                              clientId: window.localStorage.clientId,
+                              clientName: clientName })})
+      .then(util.handleFetchError)
       .then(json => {
 
-        // TODO: Store jwt and refresh token
-        console.log(json)
+        // Store jwt, refresh token, and clientId
+        window.localStorage.access = json.access
+        window.localStorage.access_expires = jwt_decode(json.access).exp
+        window.localStorage.refresh = json.refresh
+        window.localStorage.clientId = json.clientId
 
         // We can dispatch many times!
         // Here, we update the app state with the results of the API call.
-        dispatch(loginSuccess(user, '/'))
+        dispatch(loginSuccess(user))
       })
       .catch(err => {
         dispatch(loginFailure(err))

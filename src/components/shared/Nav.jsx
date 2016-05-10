@@ -14,8 +14,10 @@ let createHandlers = function(dispatch, router) {
   let signOut = function() {
     dispatch(actionCreators.logOut())
 
-    // TODO: delete the JWT cookie
-    // window.sessionStorage.accessToken = ''
+    // remove access and refresh tokens
+    window.localStorage.removeItem('access')
+    window.localStorage.removeItem('access_expires')
+    window.localStorage.removeItem('refresh')
 
     router.push('/login')
   }

@@ -24,7 +24,7 @@ class ErrorDisplay extends React.Component {
         <Snackbar
             open={true}
             message={error.title}
-            action="View Details..."
+            action="View Details"
             autoHideDuration={4000}
             onActionTouchTap={() => this.handleActionTouchTap(error)}
             onRequestClose={() => this.props.handleClose()}
