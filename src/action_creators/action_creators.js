@@ -85,13 +85,7 @@ export function loginStart(user, password) {
       .then(util.handleFetchError)
       .then(json => {
 
-        // Store jwt, refresh token, and clientId
-        let jwt = jwt_decode(json.access)
-        window.localStorage.access = json.access
-        window.localStorage.access_expires = jwt.exp
-        window.localStorage.refresh = json.refresh
-        window.localStorage.clientId = json.clientId
-        window.localStorage.user = jwt.name
+        storeAccess(json)
 
         // We can dispatch many times!
         // Here, we update the app state with the results of the API call.
@@ -114,8 +108,36 @@ export function logoutStart() {
     window.localStorage.removeItem('refresh')
     window.localStorage.removeItem('user')
 
-    // First dispatch: the app state is updated to inform
-    // that the API call is starting.
+    // let the app know that we're now logged out
     dispatch(logoutSuccess())
   }
+}
+
+export function refreshStart(){
+  return function (dispatch) {
+    // try to get a new access token:
+    fetch('http://localhost:8080/api/auth/refresh',
+                { method: 'POST',
+                  mode: 'cors',
+                  headers: {  'Content-Type': 'application/json' },
+                  body:  JSON.stringify({  token: window.localStorage.refresh,
+                            clientId: window.localStorage.clientId })})
+    .then(util.handleFetchError)
+    .then(json => {
+      storeAccess(json)
+    })
+    .catch(() => {
+      dispatch(logoutStart())
+    })
+  }
+}
+
+function storeAccess(json){
+  // Store jwt, refresh token, and clientId
+  let jwt = jwt_decode(json.access)
+  window.localStorage.access = json.access
+  window.localStorage.access_expires = jwt.exp
+  window.localStorage.refresh = json.refresh
+  window.localStorage.clientId = json.clientId
+  window.localStorage.user = jwt.name
 }
