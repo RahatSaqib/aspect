@@ -10,12 +10,12 @@ import {connect} from 'react-redux'
 
 
 let createHandlers = function(dispatch, router) {
-  let logIn = function() {
-    dispatch(actionCreators.loginRequest())
 
-    setTimeout(() => {
-      dispatch(actionCreators.loginSuccess('Stefan'))
-      router.push({ pathName: '/', query: { fl: '1' } }) }, 1000)
+  let logIn = function() {
+    // dispatch login, redirect to dashboard when done
+    dispatch(actionCreators.loginStart('sbaumgartner', 'test07')).then(() => {
+      router.push({ pathName: '/', query: { fl: '1' } })
+    })
   }
 
   return {

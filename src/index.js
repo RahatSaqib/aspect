@@ -1,16 +1,16 @@
 // This is the entry point for our app
 import 'core-js/fn/object/assign'
 import React from 'react'
+import thunk from 'redux-thunk'
 import ReactDOM from 'react-dom'
 import {Router, Route, browserHistory} from 'react-router'
 import {Provider} from 'react-redux'
-import {createStore, compose} from 'redux'
+import {createStore, compose, applyMiddleware} from 'redux'
 
 import App from './components/App'
 import Dashboard from './components/Dashboard'
 import Login from './components/Login'
 import rootReducer from './reducers/root'
-import * as actionCreators from './action_creators/action_creators'
 
 import LoggedInShell from './components/LoggedInShell'
 
@@ -33,6 +33,7 @@ function requireAuth(nextState, replace) {
 
 // our redux store with dev tools
 const createStoreWithDevTools = compose(
+  applyMiddleware(thunk),
   window.devToolsExtension ? window.devToolsExtension() : f => f
 )(createStore)
 const store = createStoreWithDevTools(rootReducer)
