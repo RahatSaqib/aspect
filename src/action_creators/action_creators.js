@@ -2,6 +2,13 @@ import jwt_decode from 'jwt-decode'
 import types from './../constants/action_types'
 import util from './../util'
 
+export function init(name){
+  return {
+    type: types.LOGIN_SUCCESS,
+    name
+  }
+}
+
 export function loginRequest() {
   return {
     type: types.LOGIN_REQUEST
@@ -79,10 +86,12 @@ export function loginStart(user, password) {
       .then(json => {
 
         // Store jwt, refresh token, and clientId
+        let jwt = jwt_decode(json.access)
         window.localStorage.access = json.access
-        window.localStorage.access_expires = jwt_decode(json.access).exp
+        window.localStorage.access_expires = jwt.exp
         window.localStorage.refresh = json.refresh
         window.localStorage.clientId = json.clientId
+        window.localStorage.user = jwt.name
 
         // We can dispatch many times!
         // Here, we update the app state with the results of the API call.
@@ -103,6 +112,7 @@ export function logoutStart() {
     window.localStorage.removeItem('access')
     window.localStorage.removeItem('access_expires')
     window.localStorage.removeItem('refresh')
+    window.localStorage.removeItem('user')
 
     // First dispatch: the app state is updated to inform
     // that the API call is starting.

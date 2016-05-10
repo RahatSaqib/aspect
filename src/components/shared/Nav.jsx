@@ -12,7 +12,7 @@ import * as actionCreators from '../../action_creators/action_creators'
 
 class Nav extends React.Component {
 
-  constructor(props, context) {
+  constructor(props) {
     super(props)
     this.shouldComponentUpdate = PureRenderMixin.shouldComponentUpdate.bind(this)
   }

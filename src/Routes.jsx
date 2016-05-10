@@ -35,12 +35,15 @@ function requireAuth(nextState, replace) {
       .then(util.handleFetchError)
       .then(json => {
         // Store jwt, refresh token, and clientId
+        let jwt = jwt_decode(json.access)
         window.localStorage.access = json.access
-        window.localStorage.access_expires = jwt_decode(json.access).exp
+        window.localStorage.access_expires = jwt.exp
         window.localStorage.refresh = json.refresh
         window.localStorage.clientId = json.clientId
+        window.localStorage.user = jwt.name
       })
       .catch(() => {
+        // error when trying to get a new access token. go to login page.
         replace({
           pathname: '/login',
           state: { nextPathname: nextState.location.pathname }

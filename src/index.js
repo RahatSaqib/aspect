@@ -8,6 +8,7 @@ import {createStore, compose, applyMiddleware} from 'redux'
 import handleTransitions from 'redux-history-transitions'
 import rootReducer from './reducers/root'
 import { Routes, browserHistory } from './routes'
+import { init } from './action_creators/action_creators'
 
 // This won't be necessary when facebook updates react
 // http://stackoverflow.com/a/34015469/988941
@@ -21,6 +22,12 @@ const createStoreWithDevTools = compose(
   window.devToolsExtension ? window.devToolsExtension() : f => f,
 )(createStore)
 const store = createStoreWithDevTools(rootReducer)
+
+// initialize user store with name (if we have one in local storage)
+let user = window.localStorage.user
+if (user){
+  store.dispatch(init(user))
+}
 
 ReactDOM.render(
   <Provider store={store}>
