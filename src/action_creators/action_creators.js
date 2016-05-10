@@ -1,3 +1,4 @@
+import config from 'config'
 import jwt_decode from 'jwt-decode'
 import types from './../constants/action_types'
 import util from './../util'
@@ -74,7 +75,7 @@ export function loginStart(user, password) {
     // This is not required by thunk middleware, but it is convenient for us.
     let clientName = util.getBrowserNameAndVersion() + ' on ' + window.navigator.platform
 
-    return fetch('http://localhost:8080/api/auth',
+    return fetch(config.aspectApi + '/auth',
                   { method: 'POST',
                     mode: 'cors',
                     headers: {  'Content-Type': 'application/json' },
@@ -116,7 +117,7 @@ export function logoutStart() {
 export function refreshStart(){
   return function (dispatch) {
     // try to get a new access token:
-    fetch('http://localhost:8080/api/auth/refresh',
+    fetch(config.aspectApi + '/auth/refresh',
                 { method: 'POST',
                   mode: 'cors',
                   headers: {  'Content-Type': 'application/json' },
