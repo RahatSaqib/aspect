@@ -19,7 +19,8 @@
     "jsonwebtoken": "^6.2.0",
     "moment": "^2.13.0",
     "morgan": "^1.7.0",
-    "mysql": "^2.10.2"
+    "mysql": "^2.10.2",
+    "node-uuid": "^1.4.7"
   },
   "devDependencies": {
     "eslint": "^2.8.0"

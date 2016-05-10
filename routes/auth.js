@@ -3,6 +3,7 @@ let crypto = require('crypto')
 let express = require('express')
 let moment = require('moment')
 let jwt = require('jsonwebtoken')
+let uuid = require('node-uuid')
 
 let jwtmiddleware = require('./jwtmiddleware')
 
@@ -20,11 +21,6 @@ module.exports = function(config, db) {
 
     if (!req.body.password) {
       res.status(400).json({ message: 'No password provided' })
-      return
-    }
-
-    if (!req.body.clientId) {
-      res.status(400).json({ message: 'No client ID provided' })
       return
     }
 
@@ -70,13 +66,14 @@ module.exports = function(config, db) {
         // upsert refresh token
         let refresh_token = crypto.randomBytes(48).toString('base64')
         let expires = moment().utc().add(7, 'days').format('YYYY-MM-DD HH:mm:ss')
+        let clientId = req.body.clientId || uuid.v4()
 
         // some of these db calls can happen in parallel...
         async.parallel([
           function(callback) {
             db.query('INSERT INTO refresh_token set ? ON DUPLICATE KEY UPDATE ?', [{
               user_id: user.id,
-              client_id: req.body.clientId,
+              client_id: clientId,
               client_name: req.body.clientName,
               token: refresh_token,
               expires: expires
@@ -96,7 +93,7 @@ module.exports = function(config, db) {
               return
             }
 
-            getToken(db, config, user.id, user.name, res, refresh_token)
+            getToken(db, config, user.id, user.name, res, refresh_token, clientId)
 
           })
       }
@@ -144,7 +141,7 @@ module.exports = function(config, db) {
                 }, {
                   token: req.body.token
                 }], () => {
-                  getToken(db, config, rows.data[0].user_id, rows.data[0].name, res, refresh_token)
+                  getToken(db, config, rows.data[0].user_id, rows.data[0].name, res, refresh_token, req.body.clientId)
                 })
               })
   })
@@ -160,7 +157,7 @@ module.exports = function(config, db) {
   return routes
 }
 
-function getToken(db, config, userId, userName, res, refresh_token) {
+function getToken(db, config, userId, userName, res, refresh_token, clientId) {
   db.query( 'select r.name from role r inner join user_role ur on r.id = ur.role_id where ?',
             { user_id: userId },
             (result) => {
@@ -180,7 +177,8 @@ function getToken(db, config, userId, userName, res, refresh_token) {
               // return the information including token as JSON
               res.json({
                 access: token,
-                refresh: refresh_token
+                refresh: refresh_token,
+                clientId: clientId
               })
             })
 }
