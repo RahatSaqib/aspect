@@ -2,13 +2,6 @@ import jwt_decode from 'jwt-decode'
 import types from './../constants/action_types'
 import util from './../util'
 
-export function init(name){
-  return {
-    type: types.LOGIN_SUCCESS,
-    name
-  }
-}
-
 export function loginRequest() {
   return {
     type: types.LOGIN_REQUEST
@@ -25,6 +18,13 @@ export function loginSuccess(name) {
         search: '?fl=1'
       })
     }
+  }
+}
+
+export function refreshSuccess(name) {
+  return {
+    type: types.LOGIN_SUCCESS,
+    name
   }
 }
 
@@ -125,6 +125,8 @@ export function refreshStart(){
     .then(util.handleFetchError)
     .then(json => {
       storeAccess(json)
+
+      dispatch(refreshSuccess(window.localStorage.user))
     })
     .catch(() => {
       dispatch(logoutStart())

@@ -8,16 +8,13 @@ import LoggedInShell from './components/LoggedInShell'
 import { refreshStart } from './action_creators/action_creators'
 
 function requireAuth(nextState, replace, store) {
-  // TODO: Actually check if user is logged in here
-  // Right now, just checking if an access token was
-  // set in local storage.
+  // TODO: check access level based on tokens/roles in jwt
   if (!window.localStorage.access ||
       !window.localStorage.access_expires ||
       window.localStorage.access_expires < Math.floor(Date.now() / 1000) - 600) {
 
     // if no access token or it is expired or expires within 10 minutes (600s),
-    // try to refresh
-    // do we have a refresh token to get a new access token?
+    // try to refresh if we have a refresh token
     if (!window.localStorage.refresh){
       replace({
         pathname: '/login',

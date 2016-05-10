@@ -14,7 +14,7 @@ class Dashboard extends React.Component {
 
   render() {
 
-    let userName = this.props.user ? this.props.user.toObject().name : ''
+    let userName = this.props.user && this.props.user.toObject().name !== undefined ? this.props.user.toObject().name : null
 
     return (
       <div className="content">
@@ -35,7 +35,7 @@ class Dashboard extends React.Component {
         </div>
         <Snackbar
             // open={this.props.location.search.indexOf('fl') !== -1}
-            open={true}
+            open={userName != null}
             autoHideDuration={3000}
             message={'Welcome, ' + userName + '!'}  />
       </div>
