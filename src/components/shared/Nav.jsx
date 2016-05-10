@@ -10,28 +10,10 @@ import PureRenderMixin from 'react-addons-pure-render-mixin'
 import {connect} from 'react-redux'
 import * as actionCreators from '../../action_creators/action_creators'
 
-let createHandlers = function(dispatch, router) {
-  let signOut = function() {
-    dispatch(actionCreators.logOut())
-
-    // remove access and refresh tokens
-    window.localStorage.removeItem('access')
-    window.localStorage.removeItem('access_expires')
-    window.localStorage.removeItem('refresh')
-
-    router.push('/login')
-  }
-
-  return {
-    signOut
-  }
-}
-
 class Nav extends React.Component {
 
   constructor(props, context) {
     super(props)
-    this.handlers = createHandlers(props.dispatch, context.router)
     this.shouldComponentUpdate = PureRenderMixin.shouldComponentUpdate.bind(this)
   }
 
@@ -50,7 +32,7 @@ class Nav extends React.Component {
                       </IconButton>}>
                       <MenuItem primaryText="Refresh" />
                       <MenuItem primaryText="Help" linkButton={true} href="/" />
-                      <MenuItem primaryText="Sign out" onTouchTap={this.handlers.signOut} />
+                      <MenuItem primaryText="Sign out" onTouchTap={this.props.handleSignOut} />
                     </IconMenu>
                     </div>
                   }/>
@@ -72,4 +54,12 @@ const mapStateToProps = (state) => {
   }
 }
 
-export default connect(mapStateToProps)(Nav)
+const mapDispatchToProps = (dispatch) => {
+  return {
+    handleSignOut: () => {
+      dispatch(actionCreators.logoutStart())
+    }
+  }
+}
+
+export default connect(mapStateToProps, mapDispatchToProps)(Nav)

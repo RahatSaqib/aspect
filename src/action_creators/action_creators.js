@@ -28,9 +28,14 @@ export function loginFailure(err) {
   }
 }
 
-export function logOut() {
+export function logoutSuccess() {
   return {
-    type: types.LOG_OUT
+    type: types.LOGOUT_SUCCESS,
+    meta: {
+      transition: () => ({
+        pathname: '/login'
+      })
+    }
   }
 }
 
@@ -87,5 +92,20 @@ export function loginStart(user, password) {
         dispatch(loginFailure(err))
         dispatch(addError('Login Failed', err.message, err))
       })
+  }
+}
+
+export function logoutStart() {
+
+  return function (dispatch) {
+
+    // remove access and refresh tokens
+    window.localStorage.removeItem('access')
+    window.localStorage.removeItem('access_expires')
+    window.localStorage.removeItem('refresh')
+
+    // First dispatch: the app state is updated to inform
+    // that the API call is starting.
+    dispatch(logoutSuccess())
   }
 }

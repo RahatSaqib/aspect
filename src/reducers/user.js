@@ -26,7 +26,7 @@ const login = function(state = Map(), action) {
     return loginSuccess(state, action.name)
   case types.LOGIN_FAILURE:
     return loginFailure(state)
-  case types.LOG_OUT:
+  case types.LOGOUT_SUCCESS:
     return logOut(state)
   }
   return state
