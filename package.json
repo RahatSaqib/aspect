@@ -12,6 +12,7 @@
   "dependencies": {
     "async": "^2.0.0-rc.3",
     "body-parser": "^1.15.0",
+    "cors": "^2.7.1",
     "express": "^4.13.4",
     "express-rate-limit": "^2.2.0",
     "jsonwebtoken": "^5.7.0",
