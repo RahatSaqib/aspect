@@ -95,6 +95,7 @@ module.exports = function(config, db) {
               return
             }
 
+            // finally, return the access token...
             getToken(db, config, user.id, user.name, res, refresh_token, clientId)
 
           })
@@ -132,8 +133,6 @@ module.exports = function(config, db) {
                 }
 
                 // looks like we have a valid refresh token. set new one in db
-                // and return jwt:
-                // upsert refresh token
                 let refresh_token = crypto.randomBytes(48).toString('base64')
                 let expires = moment().utc().add(7, 'days').format('YYYY-MM-DD HH:mm:ss')
 
@@ -143,7 +142,9 @@ module.exports = function(config, db) {
                 }, {
                   token: req.body.token
                 }], () => {
-                  getToken(db, config, rows.data[0].user_id, rows.data[0].name, res, refresh_token, req.body.clientId)
+                  // return the token
+                  let data = rows.data[0];
+                  getToken(db, config, data.user_id, data.name, res, refresh_token, req.body.clientId)
                 })
               })
   })
@@ -161,26 +162,26 @@ module.exports = function(config, db) {
 
 function getToken(db, config, userId, userName, res, refresh_token, clientId) {
   db.query( 'select r.name from role r inner join user_role ur on r.id = ur.role_id where ?',
-            { user_id: userId },
-            (result) => {
-              // create a new token
-              let token = jwt.sign({
-                name: userName,
-                modules: ['inv', 'mai'],
-                roles: result.data.map((a) => {
-                  return a.name
-                })
-              },
-              config.secret, {
-                expiresIn: '1 hour',
-                issuer: 'https://www.aspect.id'
-              })
+    { user_id: userId },
+    (result) => {
+      // create a new token
+      let token = jwt.sign({
+        name: userName,
+        modules: ['inv', 'mai'],
+        roles: result.data.map((a) => {
+          return a.name
+        })
+      },
+      config.secret, {
+        expiresIn: '1 hour',
+        issuer: 'https://www.aspect.id'
+      })
 
-              // return the information including token as JSON
-              res.json({
-                access: token,
-                refresh: refresh_token,
-                clientId: clientId
-              })
-            })
+      // return the information including token as JSON
+      res.json({
+        access: token,
+        refresh: refresh_token,
+        clientId: clientId
+      })
+    })
 }

@@ -8,7 +8,7 @@ module.exports = function (req, res, next, secret) {
   // decode token
   if (token) {
 
-    // verifies secret and checks exp
+    // verify secret and check expiration date
     jwt.verify(token, secret, function (err, decoded) {
       if (err) {
         return res.status(401).json({ message: 'Failed to authenticate token.' })
