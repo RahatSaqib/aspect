@@ -5,8 +5,8 @@ let moment = require('moment')
 let jwt = require('jsonwebtoken')
 let uuid = require('node-uuid')
 
-let util = require('./../util')
 let jwtmiddleware = require('./jwtmiddleware')
+let util = require('./../util')
 
 module.exports = function(config, db) {
 
