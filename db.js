@@ -22,7 +22,7 @@ module.exports.findOne = function(tableName, columns, params, callback) {
 
   let query = 'select ' + columns + ' from ' + tableName + ' where ?'
 
-  exec(query, params, callback, 'findOne')
+  exec(query, params, callback, 'findOne', tableName)
 
 }
 
@@ -52,7 +52,7 @@ module.exports.query = function(query, params, callback) {
 }
 
 // execute a databsae query
-function exec(query, params, callback, mode) {
+function exec(query, params, callback, mode, tableName) {
   pool.getConnection(function(err, connection) {
     if (err) {
 
@@ -75,7 +75,7 @@ function exec(query, params, callback, mode) {
             callback({
               result: ok ? 'success' : 'error',
               data: ok ? result[0] : null,
-              message: ok ? null : 'Not found'
+              message: ok ? null : tableName + ' not found'
             })
             break
           case 'insert':

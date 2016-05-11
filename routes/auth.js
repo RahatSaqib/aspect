@@ -34,16 +34,11 @@ module.exports = function(config, db) {
     db.findOne('user', '*', { name: req.body.name }, function(response) {
 
       if (response.result !== 'success') {
-        res.status(500).json({ message: response.message })
+        res.status(400).json({ message: response.message })
         return
       }
 
       let user = response.data
-
-      if (!user) {
-        res.status(401).json({ message: 'User not found.' })
-        return
-      }
 
       if (user.locked_out === 1) {
         res.status(401).json({ message: 'Your account is locked.' })
@@ -68,6 +63,7 @@ module.exports = function(config, db) {
         let refresh_token = crypto.randomBytes(48).toString('base64')
         let expires = moment().utc().add(7, 'days').format('YYYY-MM-DD HH:mm:ss')
         let clientId = req.body.clientId || uuid.v4()
+        let now = util.getUtcNowForMySql()
 
         // some of these db calls can happen in parallel...
         async.parallel([
@@ -78,14 +74,14 @@ module.exports = function(config, db) {
               client_name: req.body.clientName,
               token: refresh_token,
               expires: expires,
-              created_on: util.getUtcNowForMySql()
+              created_on: now
             }, {
               token: refresh_token,
               expires: expires
             }], callback)
           },
           function(callback) {
-            db.update('user', [{ failed_password_attempts: 0 }, { id: user.id }], callback)
+            db.update('user', [{ failed_password_attempts: 0, last_login: now, last_active: now }, { id: user.id }], callback)
           }],
           function(r) {
 
@@ -143,7 +139,7 @@ module.exports = function(config, db) {
                   token: req.body.token
                 }], () => {
                   // return the token
-                  let data = rows.data[0];
+                  let data = rows.data[0]
                   getToken(db, config, data.user_id, data.name, res, refresh_token, req.body.clientId)
                 })
               })

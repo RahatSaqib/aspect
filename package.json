@@ -4,7 +4,7 @@
   "description": "The API for aspect clients",
   "main": "server.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
+    "test": "mocha",
     "start": "node server.js"
   },
   "author": "SystemOne",
@@ -22,6 +22,9 @@
     "node-uuid": "^1.4.7"
   },
   "devDependencies": {
-    "eslint": "^2.9.0"
+    "chai": "^3.5.0",
+    "eslint": "^2.9.0",
+    "mocha": "^2.4.5",
+    "supertest": "^1.2.0"
   }
 }

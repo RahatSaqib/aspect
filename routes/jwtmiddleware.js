@@ -11,7 +11,7 @@ module.exports = function (req, res, next, secret) {
     // verify secret and check expiration date
     jwt.verify(token, secret, function (err, decoded) {
       if (err) {
-        return res.status(401).json({ message: 'Failed to authenticate token.' })
+        return res.status(401).json({ message: 'Failed to authenticate token' })
       } else {
         // if everything is good, save to request for use in other routes
         req.decoded = decoded
@@ -23,7 +23,7 @@ module.exports = function (req, res, next, secret) {
 
     // if there is no token return an error
     return res.status(403).send({
-      message: 'No token provided.'
+      message: 'No token provided'
     })
 
   }

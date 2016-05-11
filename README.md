@@ -36,3 +36,8 @@ nodemon --use_strict server.js
 ```POST '/api/auth/refresh'```: Post a refresh token in the "x-access-token" header, and this endpoint will return a refreshed JWT.
 
 ```GET '/api/auth'```: When valid JWT is in header, returns a welcome-message (for testing that auth works)
+
+
+##Tests
+Tests are in /test and written in Mocha/Chai
+To run tests, start the server and then run `mocha` or `npm test` in another terminal

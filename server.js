@@ -31,14 +31,14 @@ let apiLimiter = new rateLimit({
 })
 
 // limiter for auth related actions
-// allows 5 calls within 15 minutes, then starts slowing down response
-// by 3 second increments. completely blocks after 10 attempts
+// allows 10 calls within 15 minutes, then starts slowing down response
+// by 3 second increments. completely blocks after 15 attempts
 let throttleAuthMessage = 'Too many login attempts from this IP. Please try again in 15 minutes.'
 let authLimiter = new rateLimit({
   windowMs: 15*60*1000,
-  delayAfter: 5,
+  delayAfter: 10,
   delayMs: 3*1000,
-  max: 10,
+  max: 20,
   message: throttleAuthMessage,
   handler: function (req, res) {
     res.format({
@@ -46,6 +46,15 @@ let authLimiter = new rateLimit({
         res.status(429).json({ message: throttleAuthMessage })
       }
     })
+  },
+  keyGenerator: function(req ,res){
+
+    // disable for localhost so we can run our unit tests...
+    if (req.ip.indexOf('127.0.0.1') !== -1){
+      return Math.random()
+    }
+
+    return req.ip
   }
 })
 
@@ -69,7 +78,7 @@ app.use(morgan('dev'))
 // =======================
 // basic route
 app.get('/', apiLimiter, function (req, res) {
-  res.send('Hello! The API ist at http://localhost:' + port + '/api')
+  res.send('Hello! The API is at /api.')
 })
 
 // auth routes (get access token, refresh...)
