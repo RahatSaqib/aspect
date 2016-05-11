@@ -13,16 +13,10 @@ npm install
 
 Then, set up secret and db connection string in config.js
 
-The project is using some ES6 features, so you'll have to add the --use_strict flag (unless you're using node 6 or above)
+It's best to install nodemon globally and use that to run the project so that the server restarts automatically on any change:
 
 ```bash
-node --use_strict server.js
-```
-
-Alternatively, use nodemon, so you don't have to restart the server after every change:
-
-```bash
-nodemon --use_strict server.js
+nodemon
 ```
 
 
@@ -36,6 +30,7 @@ nodemon --use_strict server.js
 ```POST '/api/auth/refresh'```: Post a refresh token in the "x-access-token" header, and this endpoint will return a refreshed JWT.
 
 ```GET '/api/auth'```: When valid JWT is in header, returns a welcome-message (for testing that auth works)
+
 
 
 ##Tests
