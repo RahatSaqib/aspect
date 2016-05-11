@@ -5,6 +5,7 @@ let moment = require('moment')
 let jwt = require('jsonwebtoken')
 let uuid = require('node-uuid')
 
+let util = require('./../util')
 let jwtmiddleware = require('./jwtmiddleware')
 
 module.exports = function(config, db) {
@@ -76,7 +77,8 @@ module.exports = function(config, db) {
               client_id: clientId,
               client_name: req.body.clientName,
               token: refresh_token,
-              expires: expires
+              expires: expires,
+              created_on: util.getUtcNowForMySql()
             }, {
               token: refresh_token,
               expires: expires

@@ -31,7 +31,7 @@ let apiLimiter = new rateLimit({
 // limiter for auth related actions
 let authLimiter = new rateLimit({
   windowMs: 15*60*1000, // 15 minute window
-  delayAfter: 50, // begin slowing down responses after the fifth request
+  delayAfter: 5, // begin slowing down responses after the fifth request
   delayMs: 3*1000, // slow down subsequent responses by 3 seconds per request
   max: 8, // start blocking after 8 requests
   message: 'Too many login attempts from this IP. Please try again in 15 minutes.',
