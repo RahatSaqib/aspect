@@ -38,6 +38,7 @@ module.exports = function(config, db) {
         return
       }
 
+
       let user = response.data
 
       if (!user) {
