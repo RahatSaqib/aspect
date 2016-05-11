@@ -8,7 +8,7 @@ import {createStore, compose, applyMiddleware} from 'redux'
 import handleTransitions from 'redux-history-transitions'
 import rootReducer from './reducers/root'
 import { Routes, browserHistory } from './routes'
-import { refreshStart } from './action_creators/action_creators'
+import { refreshStart } from './action_creators/user_creators'
 
 // This won't be necessary when facebook updates react
 // http://stackoverflow.com/a/34015469/988941
@@ -23,7 +23,7 @@ const createStoreWithDevTools = compose(
 )(createStore)
 const store = createStoreWithDevTools(rootReducer)
 
-// get new access token
+// get new access token on refresh/startup
 if (window.localStorage.refresh){
   store.dispatch(refreshStart())
 }

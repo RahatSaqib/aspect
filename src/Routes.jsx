@@ -5,7 +5,7 @@ import App from './components/App'
 import Dashboard from './components/Dashboard'
 import Login from './components/Login'
 import LoggedInShell from './components/LoggedInShell'
-import { refreshStart } from './action_creators/action_creators'
+import { refreshStart } from './action_creators/user_creators'
 
 function requireAuth(nextState, replace, store) {
   // TODO: check access level based on tokens/roles in jwt
@@ -37,8 +37,9 @@ class Routes extends React.Component {
       <Router history={browserHistory}>
         <Route component={App}>
           <Route component={Login} path="login" />
-            <Route component={LoggedInShell} onEnter={(nextState, replace) => requireAuth(nextState, replace, this.props.store)}>
-              <Route path="/(:login)" component={Dashboard} />
+            <Route component={LoggedInShell}
+              onEnter={(nextState, replace) => requireAuth(nextState, replace, this.props.store)}>
+              <Route path="/" component={Dashboard} />
           </Route>
         </Route>
       </Router>

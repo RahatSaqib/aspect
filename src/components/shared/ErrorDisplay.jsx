@@ -1,8 +1,8 @@
 import React from 'react'
 import PureRenderMixin from 'react-addons-pure-render-mixin'
 import Snackbar from 'material-ui/Snackbar'
-import {connect} from 'react-redux'
-import * as actionCreators from '../../action_creators/action_creators'
+import { connect } from 'react-redux'
+import { removeError } from '../../action_creators/error_creators'
 
 class ErrorDisplay extends React.Component {
 
@@ -36,6 +36,11 @@ class ErrorDisplay extends React.Component {
   }
 }
 
+ErrorDisplay.propTypes = {
+  error: React.PropTypes.object,
+  handleClose: React.PropTypes.func.isRequired
+}
+
 function mapStateToProps(state) {
   return {
     error: state.get('error')
@@ -45,7 +50,7 @@ function mapStateToProps(state) {
 const mapDispatchToProps = (dispatch) => {
   return {
     handleClose: () => {
-      dispatch(actionCreators.removeError())
+      dispatch(removeError())
     }
   }
 }

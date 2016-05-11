@@ -33,4 +33,8 @@ class LoggedInShell extends React.Component {
   }
 }
 
+LoggedInShell.propTypes = {
+  children: React.PropTypes.object.isRequired
+}
+
 export default LoggedInShell

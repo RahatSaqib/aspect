@@ -1,36 +1,21 @@
 import React from 'react'
+import { connect } from 'react-redux'
 import PureRenderMixin from 'react-addons-pure-render-mixin'
 import Paper from 'material-ui/Paper'
 import LinearProgress from 'material-ui/LinearProgress'
 import FloatingActionButton from 'material-ui/FloatingActionButton'
 import Arrow from 'material-ui/svg-icons/navigation/arrow-forward'
 import TextField from 'material-ui/TextField'
-import * as actionCreators from '../action_creators/action_creators'
-import {connect} from 'react-redux'
+
+import { loginStart } from '../action_creators/user_creators'
 import ErrorDisplay from './shared/ErrorDisplay'
-
-let createHandlers = function(dispatch) {
-
-  let logIn = function(user, password) {
-    // dispatch login, redirect to dashboard when done
-    dispatch(actionCreators.loginStart(user, password))
-  }
-
-  return {
-    logIn
-  }
-}
 
 class Login extends React.Component {
 
   constructor(props) {
     super(props)
     this.shouldComponentUpdate = PureRenderMixin.shouldComponentUpdate.bind(this)
-    this.handlers = createHandlers(props.dispatch)
-    this.state = {  user: '',
-                    password: '',
-                    error_user: '',
-                    error_password: ''}
+    this.state = {  user: '', password: '', error_user: '', error_password: ''}
   }
 
   componentDidMount = () => { setTimeout(() => { this.refs.user.focus() }, 500) }
@@ -46,7 +31,7 @@ class Login extends React.Component {
       return
     }
 
-    this.handlers.logIn(this.state.user, this.state.password)
+    this.props.handleLogin(this.state.user, this.state.password)
   }
 
   handleUserChange = (e) => {
@@ -90,6 +75,11 @@ class Login extends React.Component {
   }
 }
 
+Login.propTypes = {
+  user: React.PropTypes.object,
+  handleLogin: React.PropTypes.func.isRequired
+}
+
 Login.contextTypes =  {
   router: React.PropTypes.object.isRequired
 }
@@ -100,4 +90,12 @@ const mapStateToProps = (state) => {
   }
 }
 
-export default connect(mapStateToProps)(Login)
+const mapDispatchToProps = (dispatch) => {
+  return {
+    handleLogin: (user, password) => {
+      dispatch(loginStart(user, password))
+    }
+  }
+}
+
+export default connect(mapStateToProps, mapDispatchToProps)(Login)

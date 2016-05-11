@@ -2,6 +2,7 @@ import config from 'config'
 import jwt_decode from 'jwt-decode'
 import types from './../constants/action_types'
 import util from './../util'
+import { addError } from './error_creators'
 
 export function loginRequest() {
   return {
@@ -44,19 +45,6 @@ export function logoutSuccess() {
         pathname: '/login'
       })
     }
-  }
-}
-
-export function addError(title, desc, obj){
-  return {
-    type: types.ADD_ERROR,
-    error: { title: title, desc: desc, obj: obj }
-  }
-}
-
-export function removeError(){
-  return {
-    type: types.REMOVE_ERROR
   }
 }
 

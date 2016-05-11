@@ -1,4 +1,5 @@
 import React from 'react'
+import { connect } from 'react-redux'
 import AppBar from 'material-ui/AppBar'
 import IconButton from 'material-ui/IconButton'
 import IconMenu from 'material-ui/IconMenu'
@@ -7,8 +8,7 @@ import MoreVertIcon from 'material-ui/svg-icons/navigation/more-vert'
 import Badge from 'material-ui/Badge'
 import NotificationsIcon from 'material-ui/svg-icons/social/notifications'
 import PureRenderMixin from 'react-addons-pure-render-mixin'
-import {connect} from 'react-redux'
-import * as actionCreators from '../../action_creators/action_creators'
+import { logoutStart } from '../../action_creators/user_creators'
 
 class Nav extends React.Component {
 
@@ -41,7 +41,8 @@ class Nav extends React.Component {
 }
 
 Nav.propTypes = {
-  handleHamburger: React.PropTypes.func.isRequired
+  handleHamburger: React.PropTypes.func.isRequired,
+  handleSignOut: React.PropTypes.func.isRequired
 }
 
 Nav.contextTypes =  {
@@ -57,7 +58,7 @@ const mapStateToProps = (state) => {
 const mapDispatchToProps = (dispatch) => {
   return {
     handleSignOut: () => {
-      dispatch(actionCreators.logoutStart())
+      dispatch(logoutStart())
     }
   }
 }
