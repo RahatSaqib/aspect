@@ -13,32 +13,37 @@ let app = express()
  // need this for express-rate-limit to work on AWS ELB
 app.enable('trust proxy')
 
-// limiter for api calls
+// rate limiter for api calls
+// allow 100 calls per minute
+let throttleApiMessage = 'Too many requests from this IP. Please try again in 5 minutes.'
 let apiLimiter = new rateLimit({
-  windowMs: 5*60*1000, // 5 minutes
+  windowMs: 5*60*1000,
   max: 100,
-  delayMs: 0, // disabled
-  message: 'Too many requests from this IP. Please try again in 5 minutes.',
+  delayMs: 0,
+  message: throttleApiMessage,
   handler: function (req, res) {
     res.format({
       json: function(){
-        res.status(429).json({ message: 'Too many requests from this IP. Please try again in 5 minutes.' })
+        res.status(429).json({ message: throttleApiMessage })
       }
     })
   }
 })
 
 // limiter for auth related actions
+// allows 5 calls within 15 minutes, then starts slowing down response
+// by 3 second increments. completely blocks after 10 attempts
+let throttleAuthMessage = 'Too many login attempts from this IP. Please try again in 15 minutes.'
 let authLimiter = new rateLimit({
-  windowMs: 15*60*1000, // 15 minute window
-  delayAfter: 5, // begin slowing down responses after the fifth request
-  delayMs: 3*1000, // slow down subsequent responses by 3 seconds per request
-  max: 8, // start blocking after 8 requests
-  message: 'Too many login attempts from this IP. Please try again in 15 minutes.',
+  windowMs: 15*60*1000,
+  delayAfter: 5,
+  delayMs: 3*1000,
+  max: 10,
+  message: throttleAuthMessage,
   handler: function (req, res) {
     res.format({
       json: function(){
-        res.status(429).json({ message: 'Too many login attempts from this IP. Please try again in 15 minutes.' })
+        res.status(429).json({ message: throttleAuthMessage })
       }
     })
   }
@@ -53,9 +58,8 @@ let port = process.env.PORT || 8080
 app.use(bodyParser.urlencoded({ extended: false }))
 app.use(bodyParser.json())
 
-// enable cross origin requests for localhost (dev)
-// will need to add production URL here
-app.use(cors({ origin: 'http://localhost:8000' }))
+// enable cross origin requests
+app.use(cors())
 
 // use morgan to log requests to the console
 app.use(morgan('dev'))
@@ -68,17 +72,8 @@ app.get('/', apiLimiter, function (req, res) {
   res.send('Hello! The API ist at http://localhost:' + port + '/api')
 })
 
-// apply the routes to our application with the prefix /api
+// auth routes (get access token, refresh...)
 app.use('/api/auth', authLimiter, authRoutes(config, db))
-
-// app.get('/', function(req, res) {
-
-//   db.update('person', [{name: 'Klaus Baumgartner'}, {id: 94}], function(result){
-//     res.send(result)
-//   })
-
-// })
-
 
 // =======================
 // start the server ======
