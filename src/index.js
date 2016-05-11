@@ -26,6 +26,11 @@ const store = createStoreWithDevTools(rootReducer)
 // get new access token on refresh/startup
 if (window.localStorage.refresh){
   store.dispatch(refreshStart())
+
+  // also refresh the access token every 30 minutes.
+  // this could probably be done more elegantly in a component
+  // but it works for now
+  setInterval(() => { store.dispatch(refreshStart()) }, 30*60*1000)
 }
 
 ReactDOM.render(
