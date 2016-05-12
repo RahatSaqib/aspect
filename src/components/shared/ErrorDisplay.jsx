@@ -4,7 +4,7 @@ import Snackbar from 'material-ui/Snackbar'
 import { connect } from 'react-redux'
 import { removeError } from '../../action_creators/error_creators'
 
-class ErrorDisplay extends React.Component {
+export class ErrorDisplay extends React.Component {
 
   constructor(props) {
     super(props)
@@ -55,4 +55,4 @@ const mapDispatchToProps = (dispatch) => {
   }
 }
 
-export default connect(mapStateToProps, mapDispatchToProps)(ErrorDisplay)
+export const ErrorDisplayContainer = connect(mapStateToProps, mapDispatchToProps)(ErrorDisplay)

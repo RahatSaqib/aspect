@@ -8,7 +8,7 @@ import Arrow from 'material-ui/svg-icons/navigation/arrow-forward'
 import TextField from 'material-ui/TextField'
 
 import { loginStart } from '../action_creators/user_creators'
-import ErrorDisplay from './shared/ErrorDisplay'
+import { ErrorDisplayContainer } from './shared/ErrorDisplay'
 
 class Login extends React.Component {
 
@@ -50,7 +50,7 @@ class Login extends React.Component {
 
     return (
       <div style={{height: '100%'}}>
-        <ErrorDisplay />
+        <ErrorDisplayContainer />
         <div style={{backgroundColor: '#4CAF50', height: '50%'}}>
           &nbsp;
         </div>
