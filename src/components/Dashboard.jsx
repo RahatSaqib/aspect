@@ -5,7 +5,7 @@ import PureRenderMixin from 'react-addons-pure-render-mixin'
 
 import MiniChart from './shared/MiniChart'
 
-class Dashboard extends React.Component {
+export class Dashboard extends React.Component {
 
   constructor(props) {
     super(props)
@@ -40,7 +40,6 @@ class Dashboard extends React.Component {
         </div>
         <Snackbar
             open={this.props.location.search.indexOf('fl') !== -1}
-            open={userName != null}
             autoHideDuration={3000}
             message={'Welcome, ' + userName + '!'}  />
       </div>
@@ -59,4 +58,4 @@ function mapStateToProps(state) {
   }
 }
 
-export default connect(mapStateToProps)(Dashboard)
+export const DashboardContainer = connect(mapStateToProps)(Dashboard)

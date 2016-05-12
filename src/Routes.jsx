@@ -2,7 +2,7 @@ import React from 'react'
 import {Router, Route, browserHistory} from 'react-router'
 
 import App from './components/App'
-import Dashboard from './components/Dashboard'
+import { DashboardContainer } from './components/Dashboard'
 import Login from './components/Login'
 import LoggedInShell from './components/LoggedInShell'
 
@@ -26,7 +26,7 @@ const routes = <Router history={browserHistory}>
       <Route component={Login} path="login" />
         <Route component={LoggedInShell}
           onEnter={(nextState, replace) => requireAuth(nextState, replace)}>
-          <Route path="/" component={Dashboard} />
+          <Route path="/" component={DashboardContainer} />
       </Route>
     </Route>
   </Router>
