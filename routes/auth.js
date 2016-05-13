@@ -31,72 +31,74 @@ module.exports = function(config, db) {
     }
 
     // find the user in the db
-    db.findOne('user', '*', { name: req.body.name }, function(response) {
+    db.query('select u.locked_out, u.failed_password_attempts, u.id, u.name, p.culture ' +
+              'from user u inner join person p on u.id = p.user_id ' +
+              'where u.name = ?', req.body.name,
+      function(response) {
+        if (response.result !== 'success' || response.data.length !== 1) {
+          res.status(400).json({ message: response.message })
+          return
+        }
 
-      if (response.result !== 'success') {
-        res.status(400).json({ message: response.message })
-        return
-      }
+        let user = response.data[0]
 
-      let user = response.data
+        if (user.locked_out === 1) {
+          res.status(401).json({ message: 'Your account is locked.' })
+          return
+        }
 
-      if (user.locked_out === 1) {
-        res.status(401).json({ message: 'Your account is locked.' })
-        return
-      }
+        // TODO: check if password matches
+        if (req.body.password !== 'test07') {
 
-      // TODO: check if password matches
-      if (req.body.password !== 'test07') {
+          let lock = user.failed_password_attempts >= config.passwordAttempts ? 1 : 0
 
-        let lock = user.failed_password_attempts >= config.passwordAttempts ? 1 : 0
+          db.update('user', [{
+            failed_password_attempts: user.failed_password_attempts + 1,
+            locked_out: lock
+          }, { id: user.id }],
+            () => {
+              res.status(401).json({ message: 'Authentication failed. Wrong password.' })
+            })
+        } else {
 
-        db.update('user', [{
-          failed_password_attempts: user.failed_password_attempts + 1,
-          locked_out: lock
-        }, { id: user.id }],
-          () => {
-            res.status(401).json({ message: 'Authentication failed. Wrong password.' })
-          })
-      } else {
+          // upsert refresh token
+          let refresh_token = crypto.randomBytes(48).toString('base64')
+          let expires = moment().utc().add(7, 'days').format('YYYY-MM-DD HH:mm:ss')
+          let clientId = req.body.clientId || uuid.v4()
+          let now = util.getUtcNowForMySql()
 
-        // upsert refresh token
-        let refresh_token = crypto.randomBytes(48).toString('base64')
-        let expires = moment().utc().add(7, 'days').format('YYYY-MM-DD HH:mm:ss')
-        let clientId = req.body.clientId || uuid.v4()
-        let now = util.getUtcNowForMySql()
+          // some of these db calls can happen in parallel...
+          async.parallel([
+            function(callback) {
+              db.query('INSERT INTO refresh_token set ? ON DUPLICATE KEY UPDATE ?', [{
+                user_id: user.id,
+                client_id: clientId,
+                client_name: req.body.clientName,
+                token: refresh_token,
+                expires: expires,
+                created_on: now
+              }, {
+                token: refresh_token,
+                expires: expires
+              }], callback)
+            },
+            function(callback) {
+              db.update('user', [{ failed_password_attempts: 0, last_login: now, last_active: now }, { id: user.id }], callback)
+            }],
+            function(r) {
 
-        // some of these db calls can happen in parallel...
-        async.parallel([
-          function(callback) {
-            db.query('INSERT INTO refresh_token set ? ON DUPLICATE KEY UPDATE ?', [{
-              user_id: user.id,
-              client_id: clientId,
-              client_name: req.body.clientName,
-              token: refresh_token,
-              expires: expires,
-              created_on: now
-            }, {
-              token: refresh_token,
-              expires: expires
-            }], callback)
-          },
-          function(callback) {
-            db.update('user', [{ failed_password_attempts: 0, last_login: now, last_active: now }, { id: user.id }], callback)
-          }],
-          function(r) {
+              // this happens after the db calls above are complete
+              if (r.result !== 'success') {
+                res.status(500).json({ message: 'Server error' })
+                return
+              }
 
-            // this happens after the db calls above are complete
-            if (r.result !== 'success') {
-              res.status(500).json({ message: 'Server error' })
-              return
-            }
+              // finally, return the access token...
+              getToken(db, config, user.id, user.name, res, refresh_token, clientId, user.culture)
 
-            // finally, return the access token...
-            getToken(db, config, user.id, user.name, res, refresh_token, clientId)
-
-          })
-      }
-    })
+            })
+        }
+      })
   })
 
   // get a new access token by sending refresh:
@@ -113,8 +115,9 @@ module.exports = function(config, db) {
     }
 
     // find the token in the db
-    db.query( 'select rt.user_id, rt.expires, u.name ' +
+    db.query( 'select rt.user_id, rt.expires, u.name, p.culture ' +
               'from refresh_token rt inner join user u on rt.user_Id = u.id ' +
+              'inner join person p on u.id = p.user_id ' +
               'where client_id = ? and token = ? and revoked = 0',
               [req.body.clientId, req.body.token],
               (rows) => {
@@ -140,7 +143,7 @@ module.exports = function(config, db) {
                 }], () => {
                   // return the token
                   let data = rows.data[0]
-                  getToken(db, config, data.user_id, data.name, res, refresh_token, req.body.clientId)
+                  getToken(db, config, data.user_id, data.name, res, refresh_token, req.body.clientId, data.culture)
                 })
               })
   })
@@ -156,7 +159,7 @@ module.exports = function(config, db) {
   return routes
 }
 
-function getToken(db, config, userId, userName, res, refresh_token, clientId) {
+function getToken(db, config, userId, userName, res, refresh_token, clientId, culture) {
   db.query( 'select r.name from role r inner join user_role ur on r.id = ur.role_id where ?',
     { user_id: userId },
     (result) => {
@@ -166,7 +169,8 @@ function getToken(db, config, userId, userName, res, refresh_token, clientId) {
         modules: ['inv', 'mai'],
         roles: result.data.map((a) => {
           return a.name
-        })
+        }),
+        culture: culture || 'en-US'
       },
       config.secret, {
         expiresIn: '1 hour',
