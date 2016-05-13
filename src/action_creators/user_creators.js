@@ -10,10 +10,11 @@ export function loginRequest() {
   }
 }
 
-export function loginSuccess(name) {
+export function loginSuccess(name, lang) {
   return {
     type: types.LOGIN_SUCCESS,
     name,
+    lang,
     meta: {
       transition: () => ({
         pathname: '/',
@@ -23,10 +24,19 @@ export function loginSuccess(name) {
   }
 }
 
-export function refreshSuccess(name) {
+export function refreshSuccess(name, lang) {
   return {
     type: types.LOGIN_SUCCESS,
-    name
+    name,
+    lang
+  }
+}
+
+export function hydrateFromLocalStorage() {
+  return {
+    type: types.LOGIN_SUCCESS,
+    name: window.localStorage.user,
+    lang: window.localStorage.lang
   }
 }
 
@@ -45,6 +55,16 @@ export function logoutSuccess() {
         pathname: '/login'
       })
     }
+  }
+}
+
+export function changeLanguage(lang){
+
+  window.localStorage.lang = lang
+
+  return{
+    type: types.CHANGE_LANGUAGE,
+    lang
   }
 }
 
@@ -78,7 +98,7 @@ export function loginStart(user, password) {
 
         // We can dispatch many times!
         // Here, we update the app state with the results of the API call.
-        dispatch(loginSuccess(user))
+        dispatch(loginSuccess(user, window.localStorage.lang))
       })
       .catch(err => {
         dispatch(loginFailure(err))
@@ -96,6 +116,7 @@ export function logoutStart() {
     window.localStorage.removeItem('access_expires')
     window.localStorage.removeItem('refresh')
     window.localStorage.removeItem('user')
+    window.localStorage.removeItem('lang')
 
     // let the app know that we're now logged out
     dispatch(logoutSuccess())
@@ -115,7 +136,7 @@ export function refreshStart(){
     .then(json => {
       storeAccess(json)
 
-      dispatch(refreshSuccess(window.localStorage.user))
+      dispatch(refreshSuccess(window.localStorage.user, window.localStorage.lang))
     })
     .catch(() => {
       dispatch(logoutStart())
@@ -131,4 +152,5 @@ function storeAccess(json){
   window.localStorage.refresh = json.refresh
   window.localStorage.clientId = json.clientId
   window.localStorage.user = jwt.name
+  window.localStorage.lang = jwt.culture.substring(0, 2)
 }

@@ -7,8 +7,8 @@ import {Provider} from 'react-redux'
 import {createStore, compose, applyMiddleware} from 'redux'
 import handleTransitions from 'redux-history-transitions'
 import rootReducer from './reducers/root'
-import { Routes, browserHistory } from './routes'
-import { refreshStart } from './action_creators/user_creators'
+import { Routes, browserHistory } from './Routes'
+import { refreshStart, hydrateFromLocalStorage } from './action_creators/user_creators'
 
 // This won't be necessary when facebook updates react
 // http://stackoverflow.com/a/34015469/988941
@@ -25,12 +25,17 @@ const store = createStoreWithDevTools(rootReducer)
 
 // get new access token on refresh/startup
 if (window.localStorage.refresh){
+
+  // let's see if we can get user name and language from local storage
+  store.dispatch(hydrateFromLocalStorage())
+
+  // get new access token
   store.dispatch(refreshStart())
 
   // also refresh the access token every 30 minutes.
   // this could probably be done more elegantly in a component
   // but it works for now
-  setInterval(() => { store.dispatch(refreshStart()) }, 30*60*1000)
+  setInterval(() => { store.dispatch(refreshStart()) }, 30 * 60 * 1000)
 }
 
 ReactDOM.render(

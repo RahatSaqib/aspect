@@ -4,6 +4,7 @@ import Snackbar from 'material-ui/Snackbar'
 import PureRenderMixin from 'react-addons-pure-render-mixin'
 
 import MiniChart from './shared/MiniChart'
+import translate from '../i18n/translate'
 
 export class Dashboard extends React.Component {
 
@@ -13,13 +14,11 @@ export class Dashboard extends React.Component {
   }
 
   render() {
-
     let hasUser = this.props.user && this.props.user.toObject().name !== undefined
     let userName = hasUser ? this.props.user.toObject().name : null
-
     return (
       <div className="content">
-        <h1 className="content-h1">Dashboard</h1>
+        <h1 className="content-h1">{ this.props.strings.title }</h1>
         <div className="pure-g">
           <div className="pure-u-lg-1-4 pure-u-md-1-3 pure-u-sm-1-2">
             <MiniChart  data={[1, 8, 15, 40, 45, 80, 90, 155]}
@@ -49,7 +48,14 @@ export class Dashboard extends React.Component {
 
 Dashboard.propTypes = {
   user: React.PropTypes.object,
-  location: React.PropTypes.object.isRequired
+  location: React.PropTypes.object.isRequired,
+  strings: React.PropTypes.object
+}
+
+Dashboard.defaultProps = {
+  strings: {
+    title: 'Dashboard'
+  }
 }
 
 function mapStateToProps(state) {
@@ -58,4 +64,7 @@ function mapStateToProps(state) {
   }
 }
 
-export const DashboardContainer = connect(mapStateToProps)(Dashboard)
+const DashboardTranslated = translate('Dashboard')(Dashboard)
+export const DashboardContainer = connect(mapStateToProps)(DashboardTranslated)
+
+
