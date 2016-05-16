@@ -39,12 +39,12 @@ App.propTypes = {
 }
 
 App.childContextTypes = {
-  currentLanguage: React.PropTypes.string.isRequired
+  currentLanguage: React.PropTypes.string
 }
 
 function mapStateToProps(state) {
   return {
-    currentLanguage: state.get('user').toObject().lang
+    currentLanguage: state.getIn(['user', 'lang'])
   }
 }
 

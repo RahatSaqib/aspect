@@ -12,7 +12,7 @@ export class ErrorDisplay extends React.Component {
   }
 
   handleActionTouchTap = (error) => {
-    alert(JSON.stringify(error.desc, null, '\t'))
+    alert(error && error.desc ? JSON.stringify(error.desc, null, '\t') : 'No error details')
   }
 
   render() {

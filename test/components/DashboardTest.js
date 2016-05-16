@@ -8,13 +8,13 @@ import {
   findRenderedDOMComponentWithClass,
   findRenderedComponentWithType
 } from 'react-addons-test-utils'
-import {Map} from 'immutable'
+import Immutable from 'immutable'
 import {Dashboard} from '../../src/components/Dashboard'
 import {assert} from 'chai'
 
 describe('Dashboard', () => {
 
-  let user = new Map({ name: 'Stefan Baumgartner' })
+  let user = new Immutable.Map({ name: 'Stefan Baumgartner' })
 
   it('renders an h1 with the class "content-h1" that says "Dashboard"', () => {
 

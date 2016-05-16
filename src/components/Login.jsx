@@ -18,7 +18,7 @@ class Login extends React.Component {
     this.state = {  user: '', password: '', error_user: '', error_password: ''}
   }
 
-  componentDidMount = () => { setTimeout(() => { this.refs.user.focus() }, 500) }
+  componentDidMount = () => { setTimeout(() => { if (this.refs.user) { this.refs.user.focus() } }, 500) }
 
   handleSubmit = (e) => {
 
@@ -46,7 +46,7 @@ class Login extends React.Component {
 
   render() {
 
-    let progress = this.props.user && this.props.user.toObject().loggingIn == true ? <LinearProgress /> : ''
+    let progress = this.props.loggingIn ? <LinearProgress /> : ''
 
     return (
       <div style={{height: '100%'}}>
@@ -76,7 +76,7 @@ class Login extends React.Component {
 }
 
 Login.propTypes = {
-  user: React.PropTypes.object,
+  loggingIn: React.PropTypes.bool,
   handleLogin: React.PropTypes.func.isRequired
 }
 
@@ -86,7 +86,7 @@ Login.contextTypes =  {
 
 const mapStateToProps = (state) => {
   return {
-    user: state.get('user')
+    loggingIn: state.getIn(['user', 'loggingIn'])
   }
 }
 

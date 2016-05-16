@@ -14,8 +14,6 @@ export class Dashboard extends React.Component {
   }
 
   render() {
-    let hasUser = this.props.user && this.props.user.toObject().name !== undefined
-    let userName = hasUser ? this.props.user.toObject().name : null
     return (
       <div className="content">
         <h1 className="content-h1">{ this.props.strings.title }</h1>
@@ -40,14 +38,14 @@ export class Dashboard extends React.Component {
         <Snackbar
             open={this.props.location.search.indexOf('fl') !== -1}
             autoHideDuration={3000}
-            message={'Welcome, ' + userName + '!'}  />
+            message={'Welcome, ' + this.props.userName + '!'}  />
       </div>
     )
   }
 }
 
 Dashboard.propTypes = {
-  user: React.PropTypes.object,
+  userName: React.PropTypes.string,
   location: React.PropTypes.object.isRequired,
   strings: React.PropTypes.object
 }
@@ -60,7 +58,7 @@ Dashboard.defaultProps = {
 
 function mapStateToProps(state) {
   return {
-    user: state.get('user')
+    userName: state.getIn(['user', 'name'])
   }
 }
 

@@ -1,4 +1,4 @@
-import { Map } from 'immutable'
+import Immutable from 'immutable'
 
 import types from './../constants/action_types'
 
@@ -14,7 +14,7 @@ function removeError(state){
   return state.clear()
 }
 
-const error = function(state = Map(), action) {
+const error = function(state = Immutable.Map(), action) {
   switch (action.type) {
   case types.ADD_ERROR:
     return addError(state, action.error)

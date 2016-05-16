@@ -1,4 +1,4 @@
-import { Map } from 'immutable'
+import Immutable from 'immutable'
 
 import types from './../constants/action_types'
 
@@ -22,7 +22,7 @@ function changeLanguage(state, lang){
   return state.merge({ lang: lang })
 }
 
-const login = function(state = Map(), action) {
+const login = function(state = Immutable.Map(), action) {
   switch (action.type) {
   case types.LOGIN_REQUEST:
     return loginRequest(state)
