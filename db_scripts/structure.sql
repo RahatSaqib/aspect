@@ -1,4 +1,4 @@
--- MySQL dump 10.13  Distrib 5.7.9, for osx10.9 (x86_64)
+-- MySQL dump 10.13  Distrib 5.6.24, for Win64 (x86_64)
 --
 -- Host: aspect-dev.ckp1z7tdqhiy.us-east-1.rds.amazonaws.com    Database: aspect
 -- ------------------------------------------------------
@@ -110,7 +110,7 @@ CREATE TABLE `person` (
   CONSTRAINT `person_x_person_level` FOREIGN KEY (`person_level_id`) REFERENCES `person_level` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION,
   CONSTRAINT `person_x_state` FOREIGN KEY (`state_id`) REFERENCES `state` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION,
   CONSTRAINT `person_x_user` FOREIGN KEY (`user_id`) REFERENCES `user` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION
-) ENGINE=InnoDB AUTO_INCREMENT=94 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=96 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -128,6 +128,26 @@ CREATE TABLE `person_level` (
   `level` int(11) NOT NULL,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=22 DEFAULT CHARSET=utf8;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Table structure for table `refresh_token`
+--
+
+DROP TABLE IF EXISTS `refresh_token`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `refresh_token` (
+  `user_id` int(11) NOT NULL,
+  `client_id` varchar(128) NOT NULL,
+  `client_name` varchar(255) NOT NULL,
+  `token` varchar(255) NOT NULL,
+  `expires` datetime NOT NULL,
+  `revoked` tinyint(1) NOT NULL DEFAULT '0',
+  `created_on` datetime NOT NULL,
+  PRIMARY KEY (`user_id`,`client_id`),
+  CONSTRAINT `refresh_token_x_user` FOREIGN KEY (`user_id`) REFERENCES `user` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -174,12 +194,12 @@ CREATE TABLE `user` (
   `name` varchar(255) NOT NULL,
   `password` varchar(128) NOT NULL,
   `password_key` char(32) NOT NULL,
-  `approved` bit(1) NOT NULL,
+  `approved` tinyint(1) NOT NULL,
   `last_active` datetime DEFAULT NULL,
   `last_login` datetime DEFAULT NULL,
   `last_password_change` datetime DEFAULT NULL,
   `created_on` datetime NOT NULL,
-  `locked_out` bit(1) NOT NULL,
+  `locked_out` tinyint(1) NOT NULL,
   `failed_password_attempts` int(11) NOT NULL,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=16 DEFAULT CHARSET=latin1;
@@ -211,4 +231,4 @@ CREATE TABLE `user_role` (
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2016-05-02 16:59:02
+-- Dump completed on 2016-05-16 10:53:17
