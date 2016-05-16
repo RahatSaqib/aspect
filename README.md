@@ -36,3 +36,9 @@ nodemon
 ##Tests
 Tests are in /test and written in Mocha/Chai
 To run tests, start the server and then run `mocha` or `npm test` in another terminal
+
+##Deploying
+We're serving the API through AWS beanstalk. Install the eb cli tools and commit changes, then:
+
+eb deploy aspect-api-dev
+eb open
