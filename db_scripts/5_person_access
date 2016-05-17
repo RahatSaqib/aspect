@@ -1,0 +1,55 @@
+-- be sure to run this one only once per country
+-- otherwise, you'll get a duplicate key error (no big deal)
+
+set @bpCountryId = 1;
+set @aspectCountryId = 1;
+
+-- Country
+select @aspectCountryId, ap.id, bpc.isAdmin
+from bigpicture.personcountry bpc
+inner join bigpicture.person bp on bpc.personid = bp.personid
+inner join aspect.person ap on bp.email = ap.email 
+where bpc.countryId = @bpcountryId
+and bp.countryId = @bpCountryId
+and bp.email is not null;
+
+-- state
+select sa.id, ap.id
+from bigpicture.personstate bps
+inner join bigpicture.state s on bps.stateId = s.stateId
+inner join bigpicture.person bp on bps.personid = bp.personid
+inner join aspect.person ap on bp.email = ap.email 
+inner join aspect.state sa on sa.name = s.name and sa.country_id = @aspectCountryId
+where s.countryId = @bpcountryId
+and bp.countryId = @bpCountryId
+and bp.email is not null;
+
+
+-- lga
+select la.id, ap.id
+from bigpicture.personlga bpl
+inner join bigpicture.lga l on bpl.lgaId = l.lgaId
+inner join bigpicture.state s on l.stateId = s.stateId
+inner join bigpicture.person bp on bpl.personid = bp.personid
+inner join aspect.person ap on bp.email = ap.email 
+inner join aspect.lga la on la.name = l.name
+inner join aspect.state sa on la.state_id = sa.id and sa.country_id = @aspectCountryId
+where s.countryId = @bpcountryId
+and bp.countryId = @bpCountryId
+and bp.email is not null;
+
+-- location
+select dev.location_id, ap.id
+from bigpicture.persondeployment bpd
+inner join bigpicture.deployment d on d.DeploymentId = bpd.DeploymentId
+inner join bigpicture.device bd on d.DeploymentId = bd.CurrentDeploymentId
+inner join bigpicture.country c on d.Countryid = c.CountryId
+inner join bigpicture.person bp on bpd.personid = bp.personid
+inner join aspect.person ap on bp.email = ap.email 
+inner join aspect.device dev on ifnull(dev.id1, 'asdfZY') = bd.ComputerId OR 
+                                ifnull(dev.id2, 'asdfZY') = concat(concat(c.Abbreviation, '_'), concat(bd.Serial, concat('_', bd.HostId))) OR
+                                ifnull(dev.id3, 'asdfZY') = concat(concat(c.Abbreviation, '_'), bd.Serial) OR
+                                ifnull(dev.id4, 'asdfZY') = concat(concat(c.Abbreviation, '_'), bd.HostId)
+where d.countryId = @bpcountryId
+and bp.countryId = @bpCountryId
+and bp.email is not null;
