@@ -5,7 +5,8 @@ set @bpCountryId = 1;
 set @aspectCountryId = 1;
 
 -- Country
-select @aspectCountryId, ap.id, bpc.isAdmin
+insert aspect.person_country (country_id, person_id, admin)
+select @aspectCountryId, ap.id, ifnull(bpc.isAdmin, 0)
 from bigpicture.personcountry bpc
 inner join bigpicture.person bp on bpc.personid = bp.personid
 inner join aspect.person ap on bp.email = ap.email 
@@ -14,6 +15,7 @@ and bp.countryId = @bpCountryId
 and bp.email is not null;
 
 -- state
+insert aspect.person_state (state_id, person_id)
 select sa.id, ap.id
 from bigpicture.personstate bps
 inner join bigpicture.state s on bps.stateId = s.stateId
@@ -26,6 +28,7 @@ and bp.email is not null;
 
 
 -- lga
+insert aspect.person_lga (lga_id, person_id)
 select la.id, ap.id
 from bigpicture.personlga bpl
 inner join bigpicture.lga l on bpl.lgaId = l.lgaId
@@ -39,6 +42,7 @@ and bp.countryId = @bpCountryId
 and bp.email is not null;
 
 -- location
+insert aspect.person_location (location_id, person_id)
 select dev.location_id, ap.id
 from bigpicture.persondeployment bpd
 inner join bigpicture.deployment d on d.DeploymentId = bpd.DeploymentId
