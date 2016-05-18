@@ -55,7 +55,7 @@ describe('Authentication routes',function(){
       .send({ name: 'MickeyMouse', password: 'password', clientName: 'Mocha/Chai' })
       .end(function(err,res){
         assert.equal(res.status, 400)
-        assert.equal(res.body.message, 'user not found')
+        assert.equal(res.body.message, 'User not found')
         done()
       })
     })

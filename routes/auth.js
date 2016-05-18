@@ -36,7 +36,7 @@ module.exports = function(config, db) {
               'where u.name = ?', req.body.name,
       function(response) {
         if (response.result !== 'success' || response.data.length !== 1) {
-          res.status(400).json({ message: response.message })
+          res.status(400).json({ message: 'User not found' })
           return
         }
 

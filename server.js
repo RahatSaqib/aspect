@@ -4,9 +4,12 @@ let bodyParser = require('body-parser')
 let morgan = require('morgan')
 let rateLimit = require('express-rate-limit')
 
-let authRoutes = require('./routes/auth')
 let config = require('./config')
 let db = require('./db')
+
+let authRoutes = require('./routes/auth')
+let deviceRoutes = require('./routes/device')
+
 
 let app = express()
 
@@ -83,6 +86,9 @@ app.get('/', apiLimiter, function (req, res) {
 
 // auth routes (get access token, refresh...)
 app.use('/api/auth', authLimiter, authRoutes(config, db))
+
+// device routes
+app.use('/api/device', apiLimiter, deviceRoutes(config, db))
 
 // =======================
 // start the server ======

@@ -9,7 +9,11 @@ module.exports.find = function(tableName, columns, params, callback) {
 
   columns = columns || '*'
 
-  let query = 'select ' + columns + ' from ' + tableName + ' where ?'
+  let query = 'select ' + columns + ' from ' + tableName
+
+  if (params){
+    query += ' where ?'
+  }
 
   exec(query, params, callback, 'find')
 
@@ -20,7 +24,11 @@ module.exports.findOne = function(tableName, columns, params, callback) {
 
   columns = columns || '*'
 
-  let query = 'select ' + columns + ' from ' + tableName + ' where ?'
+  let query = 'select ' + columns + ' from ' + tableName
+
+  if (params){
+    query += ' where ?'
+  }
 
   exec(query, params, callback, 'findOne', tableName)
 
