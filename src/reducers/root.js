@@ -3,10 +3,12 @@ import { combineReducers } from 'redux-immutable'
 import types from './../constants/action_types'
 import error from './error'
 import user from './user'
+import device from './device'
 
 const appReducer = combineReducers({
   error,
-  user
+  user,
+  device
 })
 
 const rootReducer = (state, action) => {

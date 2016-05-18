@@ -9,6 +9,7 @@ import Badge from 'material-ui/Badge'
 import NotificationsIcon from 'material-ui/svg-icons/social/notifications'
 import PureRenderMixin from 'react-addons-pure-render-mixin'
 import { logoutStart, changeLanguage } from '../../action_creators/user_creators'
+import { browserHistory } from 'react-router'
 
 class Nav extends React.Component {
 
@@ -21,6 +22,8 @@ class Nav extends React.Component {
     return (
         <AppBar onLeftIconButtonTouchTap={this.props.handleHamburger}
                 title="aspect"
+                titleStyle={ { cursor: 'pointer' } }
+                onTitleTouchTap={ () => { browserHistory.push('/') } }
                 children={
                   <div>
                     <Badge badgeContent={4} primary={true} badgeStyle={{top: 8, right: 8}}>

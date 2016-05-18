@@ -9,7 +9,7 @@ import {
   findRenderedComponentWithType
 } from 'react-addons-test-utils'
 import Immutable from 'immutable'
-import {Dashboard} from '../../src/components/Dashboard'
+import {Dashboard} from '../../src/components/pages/Dashboard'
 import {assert} from 'chai'
 
 describe('Dashboard', () => {
