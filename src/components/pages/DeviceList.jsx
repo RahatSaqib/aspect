@@ -21,6 +21,8 @@ export class DeviceList extends React.Component {
                     items={ this.props.items }
                     sortCol={ this.props.sortCol }
                     sortDir={ this.props.sortDir }
+                    page={ this.props.page }
+                    size={ this.props.size }
                     columns={[  { db: 'id', title: 'ID', tooltip: 'The ID of the device' },
                                 { db: 'name', title: this.props.strings.deviceName, info: 'The name of the device' },
                                 { db: 'shortname', title: this.props.strings.shortName, info: 'The short name of the device' }]} />
@@ -34,14 +36,16 @@ function mapStateToProps(state) {
     loading: state.getIn(['device', 'loading']),
     items: state.getIn(['device', 'items']),
     sortDir: state.getIn(['device', 'sortDir']),
-    sortCol: state.getIn(['device', 'sortCol'])
+    sortCol: state.getIn(['device', 'sortCol']),
+    page: state.getIn(['device', 'page']),
+    size: state.getIn(['device', 'size'])
   }
 }
 
 const mapDispatchToProps = (dispatch) => {
   return {
-    handleFetch: (sortCol, sortDir) => {
-      dispatch(fetchDevices(sortCol, sortDir))
+    handleFetch: (sortCol, sortDir, page, size) => {
+      dispatch(fetchDevices(sortCol, sortDir, page, size))
     }
   }
 }

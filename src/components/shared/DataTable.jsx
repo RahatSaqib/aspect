@@ -2,6 +2,7 @@ import React from 'react'
 import PureRenderMixin from 'react-addons-pure-render-mixin'
 import LinearProgress from 'material-ui/LinearProgress'
 import {Table, TableBody, TableHeader, TableHeaderColumn, TableRow, TableRowColumn} from 'material-ui/Table'
+import SortIcon from 'material-ui/svg-icons/content/sort'
 
 export class DataTable extends React.Component {
 
@@ -16,27 +17,31 @@ export class DataTable extends React.Component {
                     showCheckboxes: false,
                     enableSelectAll: false,
                     showRowHover: true,
-                    stripedRows: false,
-                    sortDirection: 'asc' }
+                    stripedRows: false }
   }
 
   componentDidMount() {
-    this.props.handleFetch(this.props.sortCol, this.state.sortDir)
+    this.props.handleFetch(this.props.sortCol, this.props.sortDir, this.props.page, this.props.size)
   }
 
   handleSort(col){
 
-    let newSort = this.state.sortDirection == 'asc' ? 'desc' : 'asc'
+    let newSort = this.props.sortCol === col && this.props.sortDir === 'asc' ? 'desc' : 'asc'
 
-    this.setState({ sortDirection:  newSort})
+    this.props.handleFetch(col, newSort, this.props.page, this.props.size)
 
-    this.props.handleFetch(col, newSort)
+  }
 
+  handlePage(page){
+
+    this.props.handleFetch(this.props.sortCol, this.props.sortDir, page, this.props.size)
   }
 
   render() {
 
-    let loading = this.props.loading ? <LinearProgress /> : <div style={ {margin: 0, padding: 0, height: 4 }}>&nbsp;</div>
+    let loading = this.props.loading ?
+                  <LinearProgress /> :
+                  <div style={ {margin: 0, padding: 0, height: 4 }}>&nbsp;</div>
 
     return (
       <div>
@@ -53,7 +58,13 @@ export class DataTable extends React.Component {
             enableSelectAll={this.state.enableSelectAll}>
             <TableRow>
               {this.props.columns.map( (col) => (
-                <TableHeaderColumn key={col.db} tooltip={col.tooltip}><span style={{cursor: 'pointer'}} onClick={() => { this.handleSort(col.db) }}>{col.title}</span></TableHeaderColumn>
+                <TableHeaderColumn key={col.db} tooltip={col.tooltip}>
+                  <span style={{cursor: 'pointer'}} onClick={() => { this.handleSort(col.db) }}>
+                    {col.title}
+                  </span>
+                  <SortIcon color={ this.props.sortCol == col.db ? 'black' : 'white' }
+                            style={{ height: 18, width: 18, position: 'relative', top: '4px', transform: this.props.sortDir === 'asc' ? 'scale(1, -1)' : '' }} />
+                </TableHeaderColumn>
                 ))}
             </TableRow>
           </TableHeader>
@@ -65,7 +76,9 @@ export class DataTable extends React.Component {
             {this.props.items.map( (item) => (
               <TableRow key={item.get('id')}>
               {this.props.columns.map( (col) => (
-                <TableRowColumn key={item.get(col.db)}>{item.get(col.db)}</TableRowColumn>
+                <TableRowColumn key={item.get(col.db)}>
+                  {item.get(col.db)}
+                </TableRowColumn>
                 ))}
               </TableRow>
               ))}
