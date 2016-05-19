@@ -14,7 +14,9 @@ class util{
   }
 
   handleFetchError(resp) {
+
     let json = resp.json()
+
     if (resp.ok) {
       return json
     } else {

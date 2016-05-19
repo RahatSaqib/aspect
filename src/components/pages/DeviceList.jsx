@@ -19,6 +19,8 @@ export class DeviceList extends React.Component {
         <DataTable  handleFetch={ this.props.handleFetch }
                     loading={ this.props.loading }
                     items={ this.props.items }
+                    sortCol={ this.props.sortCol }
+                    sortDir={ this.props.sortDir }
                     columns={[  { db: 'id', title: 'ID', tooltip: 'The ID of the device' },
                                 { db: 'name', title: this.props.strings.deviceName, info: 'The name of the device' },
                                 { db: 'shortname', title: this.props.strings.shortName, info: 'The short name of the device' }]} />
@@ -30,14 +32,16 @@ export class DeviceList extends React.Component {
 function mapStateToProps(state) {
   return {
     loading: state.getIn(['device', 'loading']),
-    items: state.getIn(['device', 'items'])
+    items: state.getIn(['device', 'items']),
+    sortDir: state.getIn(['device', 'sortDir']),
+    sortCol: state.getIn(['device', 'sortCol'])
   }
 }
 
 const mapDispatchToProps = (dispatch) => {
   return {
-    handleFetch: () => {
-      dispatch(fetchDevices())
+    handleFetch: (sortCol, sortDir) => {
+      dispatch(fetchDevices(sortCol, sortDir))
     }
   }
 }

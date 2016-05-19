@@ -3,9 +3,11 @@ import types from './../constants/action_types'
 import util from './../util'
 import { addError } from './error_creators'
 
-function requestDevices() {
+function requestDevices(sortCol, sortDir) {
   return {
-    type: types.REQUEST_DEVICES
+    type: types.REQUEST_DEVICES,
+    sortCol,
+    sortDir
   }
 }
 
@@ -16,13 +18,13 @@ function receiveDevices(json) {
   }
 }
 
-export function fetchDevices(){
+export function fetchDevices(sortCol, sortDir){
   return dispatch => {
-    dispatch(requestDevices())
+    dispatch(requestDevices(sortCol, sortDir))
 
     let headers = new Headers({ 'x-access-token': window.localStorage.access })
 
-    return fetch(config.aspectApi + '/device', { headers: headers })
+    return fetch(config.aspectApi + '/device?sortCol=' + sortCol + '&sortDir=' + sortDir, { headers: headers })
       .then(util.handleFetchError)
       .then(json => dispatch(receiveDevices(json)))
       .catch(err => {

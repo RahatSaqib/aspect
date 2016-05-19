@@ -8,16 +8,35 @@ export class DataTable extends React.Component {
   constructor(props) {
     super(props)
     this.shouldComponentUpdate = PureRenderMixin.shouldComponentUpdate.bind(this)
-    this.state = { height: 'inherit', fixedHeader: true, fixedFooter: false, selectable: false, multiSelectable: false, showCheckboxes: false, enableSelectAll: false }
+    this.state = {  height: 'inherit',
+                    fixedHeader: true,
+                    fixedFooter: false,
+                    selectable: false,
+                    multiSelectable: false,
+                    showCheckboxes: false,
+                    enableSelectAll: false,
+                    showRowHover: true,
+                    stripedRows: false,
+                    sortDirection: 'asc' }
   }
 
   componentDidMount() {
-    this.props.handleFetch()
+    this.props.handleFetch(this.props.sortCol, this.state.sortDir)
+  }
+
+  handleSort(col){
+
+    let newSort = this.state.sortDirection == 'asc' ? 'desc' : 'asc'
+
+    this.setState({ sortDirection:  newSort})
+
+    this.props.handleFetch(col, newSort)
+
   }
 
   render() {
 
-    let loading = this.props.loading ? <LinearProgress /> : null
+    let loading = this.props.loading ? <LinearProgress /> : <div style={ {margin: 0, padding: 0, height: 4 }}>&nbsp;</div>
 
     return (
       <div>
@@ -34,7 +53,7 @@ export class DataTable extends React.Component {
             enableSelectAll={this.state.enableSelectAll}>
             <TableRow>
               {this.props.columns.map( (col) => (
-                <TableHeaderColumn key={col.db} tooltip={col.tooltip}>{col.title}</TableHeaderColumn>
+                <TableHeaderColumn key={col.db} tooltip={col.tooltip}><span style={{cursor: 'pointer'}} onClick={() => { this.handleSort(col.db) }}>{col.title}</span></TableHeaderColumn>
                 ))}
             </TableRow>
           </TableHeader>
