@@ -11,15 +11,17 @@ module.exports = function(config, db) {
   routes.use((req, res, next) => jwtmiddleware(req, res, next, config.secret))
 
   // return list of devices
-  routes.get('/', function(req, res, next) {
+  routes.get('/', function(req, res) {
 
-    let sortCol = req.query.sortCol
-    let sortDir = req.query.sortDir
+    let sortCol = req.query.sortCol || 'name'
+    let sortDir = req.query.sortDir == 'desc' ? 'desc' : 'asc'
 
-    db.find('device', 'id, name, shortname, created_on, last_ping_on', null, function(r){
-      res.status(r.ok ? 200 : 500).json(camelize(r))
-      return next()
-    })
+    db.query(`select id, name, shortname, created_on, last_ping_on
+              from device order by ?? ${sortDir}`,
+              [sortCol],
+              function(r){
+                res.status(r.ok ? 200 : 500).json(camelize(r))
+              })
   })
 
   return routes

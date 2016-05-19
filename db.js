@@ -81,6 +81,8 @@ function exec(query, params, callback, mode, tableName) {
     } else {
       connection.query(query, params, function(err, result) {
         if (err) {
+
+          console.log(err)
           callback({
             ok: false,
             err: err.code
