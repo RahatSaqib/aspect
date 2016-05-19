@@ -1,4 +1,4 @@
-let async = require('async')
+let Promise = require('promise')
 let crypto = require('crypto')
 let express = require('express')
 let moment = require('moment')
@@ -67,38 +67,32 @@ module.exports = function(config, db) {
           let clientId = req.body.clientId || uuid.v4()
           let now = util.getUtcNowForMySql()
 
-          // some of these db calls can happen in parallel...
-          async.parallel([
-            function(callback) {
-              db.query('INSERT INTO refresh_token set ? ON DUPLICATE KEY UPDATE ?', [{
-                user_id: user.id,
-                client_id: clientId,
-                client_name: req.body.clientName,
-                token: refresh_token,
-                expires: expires,
-                created_on: now
-              }, {
-                token: refresh_token,
-                expires: expires
-              }], callback)
-            },
-            function(callback) {
-              db.update('user', [{  failed_password_attempts: 0,
-                                    last_login: now,
-                                    last_active: now }, { id: user.id }], callback)
-            }],
-            function(r) {
+          let setRefreshToken = new Promise((resolve, reject) => {
+            db.query('INSERT INTO refresh_token set ? ON DUPLICATE KEY UPDATE ?', [{
+              user_id: user.id,
+              client_id: clientId,
+              client_name: req.body.clientName,
+              token: refresh_token,
+              expires: expires,
+              created_on: now
+            }, {
+              token: refresh_token,
+              expires: expires
+            }], resolve, reject)
+          })
 
-              // this happens after the db calls above are complete
-              if (!r.ok) {
-                res.status(500).json({ message: 'Server error' })
-                return
-              }
+          let updatePwAttempts = new Promise((resolve, reject) => {
+            console.log(user.id)
+            db.update('user', [{  failed_password_attempts: 0,
+                                  last_login: now,
+                                  last_active: now }, { id: user.id }], resolve, reject) })
 
-              // finally, return the access token...
-              getToken(db, config, user.id, user.name, res, refresh_token, clientId, user.culture)
-
-            })
+          Promise.all([setRefreshToken, updatePwAttempts]).then(function(){
+            // finally, return the access token...
+            getToken(db, config, user.id, user.name, res, refresh_token, clientId, user.culture)
+          }, function(err){
+            res.status(500).json(err)
+          })
         }
       }, null, 'user')
   })
