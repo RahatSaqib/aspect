@@ -13,6 +13,7 @@
   "dependencies": {
     "async": "^2.0.0-rc.4",
     "body-parser": "^1.15.1",
+    "camelize": "^1.0.0",
     "cors": "^2.7.1",
     "express": "^4.13.4",
     "express-rate-limit": "^2.2.0",
