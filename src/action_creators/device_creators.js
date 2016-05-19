@@ -16,7 +16,8 @@ function requestDevices(sortCol, sortDir, page, size) {
 function receiveDevices(json) {
   return {
     type: types.RECEIVE_DEVICES,
-    devices: json.data
+    devices: json.data,
+    total: json.total
   }
 }
 
@@ -26,7 +27,7 @@ export function fetchDevices(sortCol, sortDir, page, size){
 
     let headers = new Headers({ 'x-access-token': window.localStorage.access })
 
-    return fetch(`${config.aspectApi}/device?sortCol=${sortCol}&sortDir=${sortDir}`, { headers: headers })
+    return fetch(`${config.aspectApi}/device?sortCol=${sortCol}&sortDir=${sortDir}&page=${page}&size=${size}`, { headers: headers })
       .then(util.handleFetchError)
       .then(json => dispatch(receiveDevices(json)))
       .catch(err => {

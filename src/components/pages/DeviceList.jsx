@@ -23,6 +23,7 @@ export class DeviceList extends React.Component {
                     sortDir={ this.props.sortDir }
                     page={ this.props.page }
                     size={ this.props.size }
+                    total={ this.props.total }
                     columns={[  { db: 'id', title: 'ID', tooltip: 'The ID of the device' },
                                 { db: 'name', title: this.props.strings.deviceName, info: 'The name of the device' },
                                 { db: 'shortname', title: this.props.strings.shortName, info: 'The short name of the device' }]} />
@@ -38,7 +39,8 @@ function mapStateToProps(state) {
     sortDir: state.getIn(['device', 'sortDir']),
     sortCol: state.getIn(['device', 'sortCol']),
     page: state.getIn(['device', 'page']),
-    size: state.getIn(['device', 'size'])
+    size: state.getIn(['device', 'size']),
+    total: state.getIn(['device', 'total'])
   }
 }
 

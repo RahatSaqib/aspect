@@ -1,7 +1,7 @@
 import React from 'react'
 import PureRenderMixin from 'react-addons-pure-render-mixin'
 import LinearProgress from 'material-ui/LinearProgress'
-import {Table, TableBody, TableHeader, TableHeaderColumn, TableRow, TableRowColumn} from 'material-ui/Table'
+import {Table, TableBody, TableHeader, TableHeaderColumn, TableRow, TableRowColumn, TableFooter } from 'material-ui/Table'
 import SortIcon from 'material-ui/svg-icons/content/sort'
 
 export class DataTable extends React.Component {
@@ -26,7 +26,8 @@ export class DataTable extends React.Component {
 
   handleSort(col){
 
-    let newSort = this.props.sortCol === col && this.props.sortDir === 'asc' ? 'desc' : 'asc'
+    // only change sort direction if column that we're currently sorting on is clicked
+    let newSort = this.props.sortCol === col ? (this.props.sortDir === 'asc' ? 'desc' : 'asc') : this.props.sortDir
 
     this.props.handleFetch(col, newSort, this.props.page, this.props.size)
 
@@ -83,6 +84,19 @@ export class DataTable extends React.Component {
               </TableRow>
               ))}
           </TableBody>
+          <TableFooter adjustForCheckbox={true}>
+            <TableRow>
+              <TableRowColumn colSpan={this.props.columns.length - 1} style={{ textAlign: 'right', padding: '0 30px 15px 0' }}>
+              Page { this.props.page + 1 } of { this.props.total / this.props.size }
+              <br/>
+              Displaying items { this.props.page * this.props.size + 1 } - { (this.props.page + 1) * this.props.size } of { this.props.total } items
+              <br/>
+              <button onClick={() => {this.handlePage(0)}} >1</button>
+              <button onClick={() => {this.handlePage(1)}} >2</button>
+              <button onClick={() => {this.handlePage(2)}} >3</button>
+              </TableRowColumn>
+            </TableRow>
+          </TableFooter>
         </Table>
       </div>
     )

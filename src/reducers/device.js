@@ -6,8 +6,8 @@ function requestDevices(state, newState){
   return state.merge(newState)
 }
 
-function receiveDevices(state, devices){
-  return state.merge({ loading: false, items: devices})
+function receiveDevices(state, devices, total){
+  return state.merge({ loading: false, items: devices, total: total})
 }
 
 const device = function(state = Immutable.Map({
@@ -16,12 +16,13 @@ const device = function(state = Immutable.Map({
   sortCol: 'name',
   sortDir: 'asc',
   page: 0,
-  size: 2 }), action) {
+  size: 2,
+  total: 0 }), action) {
   switch (action.type) {
   case types.REQUEST_DEVICES:
     return requestDevices(state, action)
   case types.RECEIVE_DEVICES:
-    return receiveDevices(state, action.devices)
+    return receiveDevices(state, action.devices, action.total)
   }
   return state
 }
