@@ -15,22 +15,24 @@ module.exports = function(config, db) {
 
     let sortCol = req.query.sortCol || 'name'
     let sortDir = req.query.sortDir == 'desc' ? 'desc' : 'asc'
-    let page = req.query.page || 0
-    let size = req.query.size || 20
+    let page = parseInt(req.query.page) || 0
+    let size = parseInt(req.query.size) || 20
+    let skip = page * size
 
+    // get total count for paging
     let getCount = new Promise(function(resolve, reject){
-      // get total count
       db.queryOne(`select count(id) as count
-                from device`,
-                null, resolve, reject)
+                  from device`,
+                  null, resolve, reject)
     })
 
+    // get rows
     let getItems = new Promise((resolve, reject) => {
-      // get rows
       db.query(`select id, name, shortname, created_on, last_ping_on
-                  from device
-                  order by ?? ${sortDir}`,
-                  [sortCol], resolve, reject)
+                from device
+                order by ?? ${sortDir}
+                limit ?, ?`,
+                [sortCol, skip, size], resolve, reject)
     })
 
     Promise.all([getCount, getItems]).then(function(value){
