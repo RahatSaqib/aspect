@@ -2,6 +2,7 @@ let supertest = require('supertest')
 let chai = require('chai')
 let jwt = require('jsonwebtoken')
 let config = require('./../config')
+let shared = require('./shared_tests')
 
 // This agent refers to PORT where program is runninng.
 let server = supertest.agent('http://localhost:8080')
@@ -55,7 +56,7 @@ describe('Authentication routes',function(){
       .send({ name: 'MickeyMouse', password: 'password', clientName: 'Mocha/Chai' })
       .end(function(err,res){
         assert.equal(res.status, 400)
-        assert.equal(res.body.message, 'User not found')
+        assert.equal(res.body.message, 'not found')
         done()
       })
     })
@@ -94,6 +95,7 @@ describe('Authentication routes',function(){
 
         // save token for the following tests:
         jwToken = res.body.access
+        shared.token = jwToken
         refreshToken = res.body.refresh
         clientId = res.body.clientId
 
@@ -116,37 +118,7 @@ describe('Authentication routes',function(){
 
   describe('GET',function(){
 
-    it('should return 403 and error message when trying to get without access token',function(done){
-      server
-      .get(path)
-      .end(function(err,res){
-        assert.equal(res.status, 403)
-        assert.equal(res.body.message, 'No token provided')
-        done()
-      })
-    })
-
-    it('should return 401 and error message when using invalid token',function(done){
-      server
-      .get(path)
-      .set('x-access-token', 'MOARTOKENZ')
-      .end(function(err,res){
-        assert.equal(res.status, 401)
-        assert.equal(res.body.message, 'Failed to authenticate token')
-        done()
-      })
-    })
-
-    it('should return 401 and error message when using outdated token',function(done){
-      server
-      .get(path)
-      .set('x-access-token', 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJuYW1lIjoic2JhdW1nYXJ0bmVyIiwibW9kdWxlcyI6WyJpbnYiLCJtYWkiXSwicm9sZXMiOlsiYWRtaW4iXSwiaWF0IjoxNDYyOTgyNTAyLCJleHAiOjE0NjI5ODYxMDIsImlzcyI6Imh0dHBzOi8vd3d3LmFzcGVjdC5pZCJ9.MhKor2PE9FLeEHdCh3GgsddOt_toq_ZcDdaRXMURTkc')
-      .end(function(err,res){
-        assert.equal(res.status, 401)
-        assert.equal(res.body.message, 'Failed to authenticate token')
-        done()
-      })
-    })
+    shared.checkToken(server, path)
 
     it('should return 200 and welcome message when using valid token',function(done){
       server

@@ -5,17 +5,17 @@ let config = require('./config')
 let pool = mysql.createPool(config.db)
 
 // select one or more rows
-module.exports.find = function(tableName, columns, params, callback) {
+module.exports.find = function(tableName, columns, whereParams, callback) {
 
   columns = columns || '*'
 
   let query = 'select ' + columns + ' from ' + tableName
 
-  if (params){
+  if (whereParams){
     query += ' where ?'
   }
 
-  exec(query, params, callback, 'find')
+  exec(query, whereParams, callback, 'find')
 
 }
 
@@ -24,11 +24,7 @@ module.exports.findOne = function(tableName, columns, params, callback) {
 
   columns = columns || '*'
 
-  let query = 'select ' + columns + ' from ' + tableName
-
-  if (params){
-    query += ' where ?'
-  }
+  let query = 'select ' + columns + ' from ' + tableName + ' where ?'
 
   exec(query, params, callback, 'findOne', tableName)
 
@@ -52,16 +48,26 @@ module.exports.update = function(tableName, params, callback) {
 
 }
 
-// can pass in any query here
-module.exports.query = function(query, params, callback) {
+// pass in any query, but expect exactly one result
+module.exports.queryOne = function(query, params, callback) {
 
-  exec(query, params, callback, 'find')
+  exec(query, params, callback, 'findOne')
 
 }
 
-// execute a databsae query
+// can pass in any query here
+// mode-param is optional
+module.exports.query = function(query, params, callback, mode) {
+
+  exec(query, params, callback, mode || 'find')
+
+}
+
+// execute a database query
+// mode and tableName are optional
 function exec(query, params, callback, mode, tableName) {
   pool.getConnection(function(err, connection) {
+
     if (err) {
 
       if (connection) {
@@ -70,30 +76,48 @@ function exec(query, params, callback, mode, tableName) {
 
       console.error('CONNECTION error: ', err)
 
-      callback({ result: 'error', err: err.code })
+      callback({ ok: false, err: err.code })
+
     } else {
       connection.query(query, params, function(err, result) {
         if (err) {
-          console.error(err)
-          callback({ result: 'error', err: err.code })
+          callback({
+            ok: false,
+            err: err.code
+          })
         } else {
+
           switch (mode) {
+
           case 'findOne':
             let ok = result.length == 1
             callback({
-              result: ok ? 'success' : 'error',
+              ok: ok,
               data: ok ? result[0] : null,
-              message: ok ? null : tableName + ' not found'
+              message: ok ? null : tableName ? tableName + ' not found' : 'not found'
             })
             break
+
           case 'insert':
-            callback({ result: 'success', id: result.insertId })
+            callback({
+              ok: true,
+              id: result.insertId
+            })
             break
+
           case 'update':
-            callback({ result: 'success', length: result.changedRows })
+            callback({
+              ok: true,
+              length: result.changedRows
+            })
             break
+
           default:
-            callback({ result: 'success', data: result, length: result.length })
+            callback({
+              ok: true,
+              data: result,
+              length: result.length
+            })
             break
           }
         }

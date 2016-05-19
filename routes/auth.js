@@ -31,16 +31,16 @@ module.exports = function(config, db) {
     }
 
     // find the user in the db
-    db.query('select u.locked_out, u.failed_password_attempts, u.id, u.name, p.culture ' +
+    db.queryOne('select u.locked_out, u.failed_password_attempts, u.id, u.name, p.culture ' +
               'from user u inner join person p on u.id = p.user_id ' +
               'where u.name = ?', req.body.name,
       function(response) {
-        if (response.result !== 'success' || response.data.length !== 1) {
-          res.status(400).json({ message: 'User not found' })
+        if (!response.ok) {
+          res.status(400).json({ message: response.message })
           return
         }
 
-        let user = response.data[0]
+        let user = response.data
 
         if (user.locked_out === 1) {
           res.status(401).json({ message: 'Your account is locked.' })
@@ -88,7 +88,7 @@ module.exports = function(config, db) {
             function(r) {
 
               // this happens after the db calls above are complete
-              if (r.result !== 'success') {
+              if (!r.ok) {
                 res.status(500).json({ message: 'Server error' })
                 return
               }
@@ -98,7 +98,7 @@ module.exports = function(config, db) {
 
             })
         }
-      })
+      }, 'user')
   })
 
   // get a new access token by sending refresh:
@@ -115,18 +115,18 @@ module.exports = function(config, db) {
     }
 
     // find the token in the db
-    db.query( 'select rt.user_id, rt.expires, u.name, p.culture ' +
+    db.queryOne( 'select rt.user_id, rt.expires, u.name, p.culture ' +
               'from refresh_token rt inner join user u on rt.user_Id = u.id ' +
               'inner join person p on u.id = p.user_id ' +
               'where client_id = ? and token = ? and revoked = 0',
               [req.body.clientId, req.body.token],
               (rows) => {
-                if (rows.result !== 'success' || rows.length !== 1) {
+                if (!rows.ok) {
                   res.status(400).json({ message: 'Unable to find token or token revoked' })
                   return
                 }
 
-                if (rows.data[0].expires < moment().utc()) {
+                if (rows.data.expires < moment().utc()) {
                   res.status(400).json({ message: 'Token expired' })
                   return
                 }
@@ -142,7 +142,7 @@ module.exports = function(config, db) {
                   token: req.body.token
                 }], () => {
                   // return the token
-                  let data = rows.data[0]
+                  let data = rows.data
                   getToken(db, config, data.user_id, data.name, res, refresh_token, req.body.clientId, data.culture)
                 })
               })

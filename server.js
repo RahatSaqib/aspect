@@ -50,7 +50,7 @@ let authLimiter = new rateLimit({
       }
     })
   },
-  keyGenerator: function(req ,res){
+  keyGenerator: function(req){
 
     // disable for localhost so we can run our unit tests...
     if (req.ip.indexOf('127.0.0.1') !== -1){
