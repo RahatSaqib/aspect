@@ -29,6 +29,7 @@ describe('Device routes',function(){
         assert.property(res.body.data[0], 'shortname')
         assert.property(res.body.data[0], 'createdOn')
         assert.property(res.body.data[0], 'lastPingOn')
+        assert.property(res.body, 'total')
         done()
       })
     })

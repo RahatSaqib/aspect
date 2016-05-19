@@ -83,7 +83,9 @@ module.exports = function(config, db) {
               }], callback)
             },
             function(callback) {
-              db.update('user', [{ failed_password_attempts: 0, last_login: now, last_active: now }, { id: user.id }], callback)
+              db.update('user', [{  failed_password_attempts: 0,
+                                    last_login: now,
+                                    last_active: now }, { id: user.id }], callback)
             }],
             function(r) {
 
@@ -98,7 +100,7 @@ module.exports = function(config, db) {
 
             })
         }
-      }, 'user')
+      }, null, 'user')
   })
 
   // get a new access token by sending refresh:

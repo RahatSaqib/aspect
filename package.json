@@ -21,7 +21,8 @@
     "moment": "^2.13.0",
     "morgan": "^1.7.0",
     "mysql": "^2.10.2",
-    "node-uuid": "^1.4.7"
+    "node-uuid": "^1.4.7",
+    "promise": "^7.1.1"
   },
   "devDependencies": {
     "chai": "^3.5.0",

@@ -5,7 +5,7 @@ let config = require('./config')
 let pool = mysql.createPool(config.db)
 
 // select one or more rows
-module.exports.find = function(tableName, columns, whereParams, callback) {
+module.exports.find = function(tableName, columns, whereParams, resolve, reject) {
 
   columns = columns || '*'
 
@@ -15,57 +15,57 @@ module.exports.find = function(tableName, columns, whereParams, callback) {
     query += ' where ?'
   }
 
-  exec(query, whereParams, callback, 'find')
+  exec(query, whereParams, resolve, reject, 'find')
 
 }
 
 // select exactly one row. throws error if none found or more than one
-module.exports.findOne = function(tableName, columns, params, callback) {
+module.exports.findOne = function(tableName, columns, params, resolve, reject) {
 
   columns = columns || '*'
 
   let query = 'select ' + columns + ' from ' + tableName + ' where ?'
 
-  exec(query, params, callback, 'findOne', tableName)
+  exec(query, params, resolve, reject, 'findOne', tableName)
 
 }
 
 // insert new row into a table
-module.exports.insert = function(tableName, params, callback) {
+module.exports.insert = function(tableName, params, resolve, reject) {
 
   let query = 'insert into ' + tableName + ' SET ?'
 
-  exec(query, params, callback, 'insert')
+  exec(query, params, resolve, reject, 'insert')
 
 }
 
 // update a table
-module.exports.update = function(tableName, params, callback) {
+module.exports.update = function(tableName, params, resolve, reject) {
 
   let query = 'update ' + tableName + ' SET ? WHERE ?'
 
-  exec(query, params, callback, 'update')
+  exec(query, params, resolve, reject, 'update')
 
 }
 
 // pass in any query, but expect exactly one result
-module.exports.queryOne = function(query, params, callback) {
+module.exports.queryOne = function(query, params, resolve, reject) {
 
-  exec(query, params, callback, 'findOne')
+  exec(query, params, resolve, reject, 'findOne')
 
 }
 
 // can pass in any query here
 // mode-param is optional
-module.exports.query = function(query, params, callback, mode) {
+module.exports.query = function(query, params, resolve, reject, mode) {
 
-  exec(query, params, callback, mode || 'find')
+  exec(query, params, resolve, reject, mode || 'find')
 
 }
 
 // execute a database query
 // mode and tableName are optional
-function exec(query, params, callback, mode, tableName) {
+function exec(query, params, resolve, reject, mode, tableName) {
   pool.getConnection(function(err, connection) {
 
     if (err) {
@@ -76,46 +76,49 @@ function exec(query, params, callback, mode, tableName) {
 
       console.error('CONNECTION error: ', err)
 
-      callback({ ok: false, err: err.code })
+      resolve({ ok: false, err: err.code })
 
     } else {
       connection.query(query, params, function(err, result) {
         if (err) {
 
           console.log(err)
-          callback({
-            ok: false,
-            err: err.code
-          })
+          let error = { ok: false, err: err.code }
+
+          reject ? reject(error) : resolve(error)
+
         } else {
 
           switch (mode) {
 
           case 'findOne':
             let ok = result.length == 1
-            callback({
+            let ret = {
               ok: ok,
               data: ok ? result[0] : null,
               message: ok ? null : tableName ? tableName + ' not found' : 'not found'
-            })
+            }
+
+            ret.ok ? resolve(ret) : (reject ? reject(ret) : resolve(ret))
+
             break
 
           case 'insert':
-            callback({
+            resolve({
               ok: true,
               id: result.insertId
             })
             break
 
           case 'update':
-            callback({
+            resolve({
               ok: true,
               length: result.changedRows
             })
             break
 
           default:
-            callback({
+            resolve({
               ok: true,
               data: result,
               length: result.length
