@@ -4,11 +4,13 @@ import types from './../constants/action_types'
 import error from './error'
 import user from './user'
 import device from './device'
+import person from './person'
 
 const appReducer = combineReducers({
   error,
   user,
-  device
+  device,
+  person
 })
 
 const rootReducer = (state, action) => {

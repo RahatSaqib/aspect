@@ -13,5 +13,11 @@ export default {
     reportingFor: 'Reporting For',
     lastSeen: 'Last Seen',
     totalTests: 'Total Tests'
+  },
+  PersonList: {
+    personName: 'Name',
+    level: 'Role',
+    state: 'State',
+    lga: 'County'
   }
 }

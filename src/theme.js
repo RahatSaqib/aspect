@@ -4,7 +4,6 @@ import {
   green300,
   green500,
   green700,
-  deepOrange300,
   deepOrange500,
   grey100
 } from 'material-ui/styles/colors'

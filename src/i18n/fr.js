@@ -8,6 +8,16 @@ export default {
   DeviceList: {
     title: 'Instruments',
     deviceName: 'Instrument',
-    shortName: 'Courte du nom'
+    shortName: 'Courte du nom',
+    status: 'Etat',
+    reportingFor: 'Depuis',
+    lastSeen: 'Déconnecté',
+    totalTests: 'Total'
+  },
+  PersonList: {
+    personName: 'Nom',
+    level: 'Role',
+    state: 'State',
+    lga: 'County'
   }
 }

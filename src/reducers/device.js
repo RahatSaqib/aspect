@@ -16,7 +16,7 @@ const device = function(state = Immutable.Map({
   sortCol: 'name',
   sortDir: 'asc',
   page: 0,
-  size: 20,
+  size: 10,
   total: 0 }), action) {
   switch (action.type) {
   case types.REQUEST_DEVICES:

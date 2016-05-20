@@ -4,6 +4,7 @@ import {Router, Route, browserHistory} from 'react-router'
 import App from './components/App'
 import { DashboardContainer } from './components/pages/Dashboard'
 import { DeviceListContainer } from './components/pages/DeviceList'
+import { PersonListContainer } from './components/pages/PersonList'
 import Login from './components/Login'
 import LoggedInShell from './components/LoggedInShell'
 
@@ -29,6 +30,7 @@ const routes = <Router history={browserHistory}>
           onEnter={(nextState, replace) => requireAuth(nextState, replace)}>
           <Route path="/" component={DashboardContainer} />
           <Route path="/devices" component={DeviceListContainer} />
+          <Route path="/persons" component={PersonListContainer} />
       </Route>
     </Route>
   </Router>

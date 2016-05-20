@@ -37,6 +37,12 @@ export class Dashboard extends React.Component {
             <MiniChart  data={[1000, 1200, 700, 500, 400, 500, 600, 780, 1200, 1456]}
                         label={"Cartridges"} number={1456} bgcolor={'#607d8b'} />
           </div>
+          <div className="pure-u-lg-1-4 pure-u-md-1-3 pure-u-sm-1-2">
+            <Link to="persons">
+              <MiniChart  data={[800, 700, 900, 1200, 1400, 1500, 1600, 1780]}
+                        label={"Persons"} number={12} bgcolor={'#FBC02D'} />
+            </Link>
+          </div>
         </div>
         <Snackbar
             open={this.props.location.search.indexOf('fl') !== -1}
