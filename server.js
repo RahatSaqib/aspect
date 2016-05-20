@@ -9,6 +9,7 @@ let db = require('./db')
 
 let authRoutes = require('./routes/auth')
 let deviceRoutes = require('./routes/device')
+let personRoutes = require('./routes/person')
 
 
 let app = express()
@@ -89,6 +90,9 @@ app.use('/api/auth', authLimiter, authRoutes(config, db))
 
 // device routes
 app.use('/api/device', apiLimiter, deviceRoutes(config, db))
+
+// person routes
+app.use('/api/person', apiLimiter, personRoutes(config, db))
 
 // =======================
 // start the server ======

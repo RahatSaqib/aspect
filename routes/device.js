@@ -14,7 +14,7 @@ module.exports = function(config, db) {
   // return list of devices
   routes.get('/', function(req, res) {
 
-    let sortCol = decamelize(req.query.sortCol) || 'name'
+    let sortCol = req.query.sortCol ? decamelize(req.query.sortCol) : 'name'
     let sortDir = req.query.sortDir == 'desc' ? 'desc' : 'asc'
     let page = parseInt(req.query.page) || 0
     let size = parseInt(req.query.size) || 20
