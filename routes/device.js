@@ -1,8 +1,8 @@
 let express = require('express')
 let camelize = require('camelize')
-let decamelize = require('decamelize')
 let Promise = require('promise')
 let jwtmiddleware = require('./jwtmiddleware')
+let util = require('../util')
 
 module.exports = function(config, db) {
 
@@ -14,17 +14,15 @@ module.exports = function(config, db) {
   // return list of devices
   routes.get('/', function(req, res) {
 
-    let sortCol = req.query.sortCol ? decamelize(req.query.sortCol) : 'name'
-    let sortDir = req.query.sortDir == 'desc' ? 'desc' : 'asc'
-    let page = parseInt(req.query.page) || 0
-    let size = parseInt(req.query.size) || 20
-    let skip = page * size
+    let sp = util.getSortPageParams(req, 'name')
+    let name = req.query.name ? '%' + req.query.name + '%' : '%'
 
     // get total count for paging
     let getCount = new Promise(function(resolve, reject){
       db.queryOne(`select count(id) as count
-                  from device`,
-                  null, resolve, reject)
+                  from device
+                  where name like ?`,
+                  [name], resolve, reject)
     })
 
     // get rows
@@ -32,9 +30,10 @@ module.exports = function(config, db) {
       db.query(`select id, name, shortname, created_on, last_ping_on,
                 updated_on as last_seen, 'Active' as status, id * 134 as total_tests
                 from device
-                order by ?? ${sortDir}
+                where name like ?
+                order by ?? ${sp.sortDir}
                 limit ?, ?`,
-                [sortCol, skip, size], resolve, reject)
+                [name, sp.sortCol, sp.skip, sp.size], resolve, reject)
     })
 
     Promise.all([getCount, getItems]).then(function(value){

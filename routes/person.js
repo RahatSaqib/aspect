@@ -1,8 +1,8 @@
 let express = require('express')
 let camelize = require('camelize')
-let decamelize = require('decamelize')
 let Promise = require('promise')
 let jwtmiddleware = require('./jwtmiddleware')
+let util = require('../util')
 
 module.exports = function(config, db) {
 
@@ -14,17 +14,15 @@ module.exports = function(config, db) {
   // return list of persons
   routes.get('/', function(req, res) {
 
-    let sortCol = req.query.sortCol ? decamelize(req.query.sortCol) : 'name'
-    let sortDir = req.query.sortDir == 'desc' ? 'desc' : 'asc'
-    let page = parseInt(req.query.page) || 0
-    let size = parseInt(req.query.size) || 20
-    let skip = page * size
+    let sp = util.getSortPageParams(req, 'name')
+    let name = req.query.name ? '%' + req.query.name + '%' : '%'
 
     // get total count for paging
     let getCount = new Promise(function(resolve, reject){
       db.queryOne(`select count(id) as count
-                  from person`,
-                  null, resolve, reject)
+                  from person
+                  where name like ?`,
+                  [name], resolve, reject)
     })
 
     // get rows
@@ -34,9 +32,10 @@ module.exports = function(config, db) {
                 left outer join person_level pl on p.person_level_id = pl.id
                 left outer join state s on p.state_id = s.id
                 left outer join lga l on p.lga_id = l.id
-                order by ?? ${sortDir}
+                where p.name like ?
+                order by ?? ${sp.sortDir}
                 limit ?, ?`,
-                [sortCol, skip, size], resolve, reject)
+                [name, sp.sortCol, sp.skip, sp.size], resolve, reject)
     })
 
     Promise.all([getCount, getItems]).then(function(value){
