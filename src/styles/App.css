@@ -32,3 +32,14 @@ body {
 .clear-fix{
   clear: both;
 }
+
+.pager-arrow {
+  position: relative;
+  top: 8px;
+  right: 18px;
+}
+
+.pager-arrow-prev{
+  left: 18px;
+  transform: rotate(180deg) !important;
+}

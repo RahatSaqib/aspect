@@ -8,6 +8,10 @@ export default {
   DeviceList: {
     title: 'Devices',
     deviceName: 'Device Name',
-    shortName: 'Short Name'
+    shortName: 'Short Name',
+    status: 'Status',
+    reportingFor: 'Reporting For',
+    lastSeen: 'Last Seen',
+    totalTests: 'Total Tests'
   }
 }

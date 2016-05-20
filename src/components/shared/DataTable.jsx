@@ -2,7 +2,12 @@ import React from 'react'
 import PureRenderMixin from 'react-addons-pure-render-mixin'
 import LinearProgress from 'material-ui/LinearProgress'
 import {Table, TableBody, TableHeader, TableHeaderColumn, TableRow, TableRowColumn, TableFooter } from 'material-ui/Table'
+import DropDownMenu from 'material-ui/DropDownMenu'
+import MenuItem from 'material-ui/MenuItem'
 import SortIcon from 'material-ui/svg-icons/content/sort'
+import IconButton from 'material-ui/IconButton'
+import Arrow from 'material-ui/svg-icons/av/play-arrow'
+import theme from './../../theme'
 
 export class DataTable extends React.Component {
 
@@ -11,7 +16,7 @@ export class DataTable extends React.Component {
     this.shouldComponentUpdate = PureRenderMixin.shouldComponentUpdate.bind(this)
     this.state = {  height: 'inherit',
                     fixedHeader: true,
-                    fixedFooter: false,
+                    fixedFooter: true,
                     selectable: false,
                     multiSelectable: false,
                     showCheckboxes: false,
@@ -43,6 +48,16 @@ export class DataTable extends React.Component {
     let loading = this.props.loading ?
                   <LinearProgress /> :
                   <div style={ {margin: 0, padding: 0, height: 4 }}>&nbsp;</div>
+
+    let page = this.props.page
+
+    let totalPages = Math.ceil(this.props.total / this.props.size)
+
+    let pageItems = []
+
+    for (let i = 0; i < totalPages; i++) {
+      pageItems.push(<MenuItem key={i} value={i} label={'Page ' + (i + 1) + ' of ' + totalPages} primaryText={'Page ' + (i + 1)} />)
+    }
 
     return (
       <div>
@@ -78,7 +93,7 @@ export class DataTable extends React.Component {
               <TableRow key={item.get('id')}>
               {this.props.columns.map( (col) => (
                 <TableRowColumn key={item.get(col.db)}>
-                  {item.get(col.db)}
+                  {col.format ? col.format(item.get(col.db)) : item.get(col.db)}
                 </TableRowColumn>
                 ))}
               </TableRow>
@@ -86,14 +101,19 @@ export class DataTable extends React.Component {
           </TableBody>
           <TableFooter adjustForCheckbox={true}>
             <TableRow>
-              <TableRowColumn colSpan={this.props.columns.length - 1} style={{ textAlign: 'right', padding: '0 30px 15px 0' }}>
-              Page { this.props.page + 1 } of { this.props.total / this.props.size }
-              <br/>
-              Displaying items { this.props.page * this.props.size + 1 } - { (this.props.page + 1) * this.props.size } of { this.props.total } items
-              <br/>
-              <button onClick={() => {this.handlePage(0)}} >1</button>
-              <button onClick={() => {this.handlePage(1)}} >2</button>
-              <button onClick={() => {this.handlePage(2)}} >3</button>
+              <TableRowColumn style={{ fontSize: '15px', padding: '0 0 25px 0', display: 'none' }}>
+                Displaying items { page * this.props.size + 1 } - { (page + 1) * this.props.size } of { this.props.total }
+              </TableRowColumn>
+              <TableRowColumn colSpan={this.props.columns.length - 1} style={{ textAlign: 'right', padding: '10px 0 20px 0' }} >
+              <IconButton className={'pager-arrow pager-arrow-prev'} touch={true} onClick={() => { this.handlePage(page - 1)}} disabled={page === 0}>
+                <Arrow color={theme.palette.primary1Color} />
+              </IconButton>
+              <DropDownMenu maxHeight={300} value={page} onChange={(e, k) => { this.handlePage(k) }}>
+                { pageItems }
+              </DropDownMenu>
+              <IconButton className={'pager-arrow'} touch={true} onClick={() => { this.handlePage(page + 1)}} disabled={ page + 1 >= totalPages}>
+                <Arrow color={theme.palette.primary1Color} />
+              </IconButton>
               </TableRowColumn>
             </TableRow>
           </TableFooter>

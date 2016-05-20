@@ -30,7 +30,7 @@ export default {
     primary3Color: green300,
     accent1Color: deepOrange500,
     accent2Color: grey100,
-    accent3Color: deepOrange300
+    accent3Color: deepOrange500
       // textColor: black,
       // alternateTextColor: white,
       // canvasColor: white,

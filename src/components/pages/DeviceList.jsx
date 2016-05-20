@@ -4,6 +4,7 @@ import PureRenderMixin from 'react-addons-pure-render-mixin'
 import { fetchDevices } from '../../action_creators/device_creators'
 import { DataTable } from '../shared/DataTable'
 import translate from '../../i18n/translate'
+import moment from 'moment'
 
 export class DeviceList extends React.Component {
 
@@ -24,9 +25,15 @@ export class DeviceList extends React.Component {
                     page={ this.props.page }
                     size={ this.props.size }
                     total={ this.props.total }
-                    columns={[  { db: 'id', title: 'ID', tooltip: 'The ID of the device' },
-                                { db: 'name', title: this.props.strings.deviceName, info: 'The name of the device' },
-                                { db: 'shortname', title: this.props.strings.shortName, info: 'The short name of the device' }]} />
+                    columns={[  { db: 'name', title: this.props.strings.deviceName },
+                                { db: 'status', title: this.props.strings.status },
+                                { db: 'createdOn', title: this.props.strings.reportingFor,
+                                  format: (data) => { return moment(data).fromNow(true) } },
+                                { db: 'lastSeen', title: this.props.strings.lastSeen,
+                                  info: 'When did we last hear from the device?',
+                                  format: (data) => { return moment(data).fromNow() } },
+                                { db: 'totalTests', title: this.props.strings.totalTests,
+                                  format: (data) => { return(data.toLocaleString()) } } ]} />
       </div>
     )
   }
