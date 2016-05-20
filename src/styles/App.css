@@ -33,6 +33,10 @@ body {
   clear: both;
 }
 
+.toolbar{
+  background-color: #fff !important;
+}
+
 .pager-arrow {
   position: relative;
   top: 8px;

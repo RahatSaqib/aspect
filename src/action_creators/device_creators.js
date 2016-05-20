@@ -3,13 +3,14 @@ import types from './../constants/action_types'
 import util from './../util'
 import { addError } from './error_creators'
 
-function requestDevices(sortCol, sortDir, page, size) {
+function requestDevices(sortCol, sortDir, page, size, filters) {
   return {
     type: types.REQUEST_DEVICES,
     sortCol,
     sortDir,
     page,
-    size
+    size,
+    filters
   }
 }
 
@@ -21,13 +22,33 @@ function receiveDevices(json) {
   }
 }
 
-export function fetchDevices(sortCol, sortDir, page, size){
+export function resetDevices(){
+  return fetchDevices('name', 'asc', 0, 10, { name: '' })
+}
+
+export function filterDevices(filters){
+  return fetchDevices('name', 'asc', 0, 10, filters)
+}
+
+export function fetchDevices(sortCol, sortDir, page, size, filters){
   return dispatch => {
-    dispatch(requestDevices(sortCol, sortDir, page, size))
+
+    dispatch(requestDevices(sortCol, sortDir, page, size, filters))
+
+    // filters might be an immutable map. unwrap it:
+    let qsFilters = ''
+    if (filters && filters.toObject){
+      filters = filters.toObject()
+    }
+
+    // serialize filters for querystring
+    if (filters){
+      qsFilters = Object.keys(filters).map(k => `${encodeURIComponent(k)}=${encodeURIComponent(filters[k])}`).join('&')
+    }
 
     let headers = new Headers({ 'x-access-token': window.localStorage.access })
 
-    return fetch(`${config.aspectApi}/device?sortCol=${sortCol}&sortDir=${sortDir}&page=${page}&size=${size}`, { headers: headers })
+    return fetch(`${config.aspectApi}/device?sortCol=${sortCol}&sortDir=${sortDir}&page=${page}&size=${size}&${qsFilters}`, { headers: headers })
       .then(util.handleFetchError)
       .then(json => dispatch(receiveDevices(json)))
       .catch(err => {

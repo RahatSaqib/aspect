@@ -15,6 +15,8 @@ export default {
     totalTests: 'Total'
   },
   PersonList: {
+    title: 'Contacts',
+    title: '',
     personName: 'Nom',
     level: 'Role',
     state: 'State',

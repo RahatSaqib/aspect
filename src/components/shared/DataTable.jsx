@@ -26,7 +26,7 @@ export class DataTable extends React.Component {
   }
 
   componentDidMount() {
-    this.props.handleFetch(this.props.sortCol, this.props.sortDir, this.props.page, this.props.size)
+    this.props.handleFetch(this.props.sortCol, this.props.sortDir, this.props.page, this.props.size, this.props.filters)
   }
 
   handleSort(col){
@@ -34,13 +34,13 @@ export class DataTable extends React.Component {
     // only change sort direction if column that we're currently sorting on is clicked
     let newSort = this.props.sortCol === col ? (this.props.sortDir === 'asc' ? 'desc' : 'asc') : this.props.sortDir
 
-    this.props.handleFetch(col, newSort, this.props.page, this.props.size)
+    this.props.handleFetch(col, newSort, this.props.page, this.props.size, this.props.filters)
 
   }
 
   handlePage(page){
 
-    this.props.handleFetch(this.props.sortCol, this.props.sortDir, page, this.props.size)
+    this.props.handleFetch(this.props.sortCol, this.props.sortDir, page, this.props.size, this.props.filters)
   }
 
   render() {
@@ -124,5 +124,14 @@ export class DataTable extends React.Component {
 }
 
 DataTable.propTypes = {
-  loading: React.PropTypes.bool.isRequired
+  handleFetch: React.PropTypes.func.isRequired,
+  loading: React.PropTypes.bool.isRequired,
+  items: React.PropTypes.object.isRequired,
+  sortCol: React.PropTypes.string.isRequired,
+  sortDir: React.PropTypes.string.isRequired,
+  page: React.PropTypes.number.isRequired,
+  size: React.PropTypes.number.isRequired,
+  total: React.PropTypes.number.isRequired,
+  filters: React.PropTypes.object.isRequired,
+  columns: React.PropTypes.array.isRequired
 }
