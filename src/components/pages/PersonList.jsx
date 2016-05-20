@@ -42,7 +42,7 @@ export class PersonList extends React.Component {
         <form onSubmit={ this.handleSubmit }>
           <Toolbar className={"toolbar"} >
             <ToolbarGroup firstChild={true}>
-              <TextField value={this.state.filters.name} id="name" onChange={ this.handleFilterChange } style={{ margin: '5px 0 0 15px' }} hintText="Filter by name" />
+              <TextField value={this.state.filters.name} id="name" onChange={ this.handleFilterChange } style={{ margin: '5px 0 0 15px', width: '150px' }} hintText="Filter by name" />
             </ToolbarGroup>
             <ToolbarGroup>
               <RaisedButton label="Filter" primary={true} />
@@ -68,9 +68,9 @@ export class PersonList extends React.Component {
                     total={ this.props.total }
                     filters={ this.props.filters }
                     columns={[  { db: 'name', title: this.props.strings.personName },
-                                { db: 'level', title: this.props.strings.level },
-                                { db: 'state', title: this.props.strings.state },
-                                { db: 'lga', title: this.props.strings.lga } ]} />
+                                { db: 'level', title: this.props.strings.level, hideOnXs: true },
+                                { db: 'state', title: this.props.strings.state, hideOnXs: true },
+                                { db: 'lga', title: this.props.strings.lga, hideOnXs: true } ]} />
       </div>
     )
   }

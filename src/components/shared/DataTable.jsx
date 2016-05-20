@@ -74,7 +74,7 @@ export class DataTable extends React.Component {
             enableSelectAll={this.state.enableSelectAll}>
             <TableRow>
               {this.props.columns.map( (col) => (
-                <TableHeaderColumn key={col.db} tooltip={col.tooltip}>
+                <TableHeaderColumn key={col.db} tooltip={col.tooltip} className={ col.hideOnXs ? 'pure-hidden-xs' : '' }>
                   <span style={{cursor: 'pointer'}} onClick={() => { this.handleSort(col.db) }}>
                     {col.title}
                   </span>
@@ -92,7 +92,7 @@ export class DataTable extends React.Component {
             {this.props.items.map( (item) => (
               <TableRow key={item.get('id')}>
               {this.props.columns.map( (col) => (
-                <TableRowColumn key={item.get(col.db)}>
+                <TableRowColumn key={item.get(col.db)} className={ col.hideOnXs ? 'pure-hidden-xs' : '' } >
                   {col.format ? col.format(item.get(col.db)) : item.get(col.db)}
                 </TableRowColumn>
                 ))}

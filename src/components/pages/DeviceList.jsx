@@ -46,10 +46,10 @@ export class DeviceList extends React.Component {
         <form onSubmit={ this.handleSubmit }>
           <Toolbar className={"toolbar"} >
             <ToolbarGroup firstChild={true}>
-              <TextField value={this.state.filters.name} id="name" onChange={ this.handleFilterChange } style={{ margin: '5px 0 0 15px' }} hintText="Filter by name" />
+              <TextField value={this.state.filters.name} id="name" onChange={ this.handleFilterChange } style={{ maxWidth: '150px', margin: '5px 0 0 15px' }} hintText="Filter by name" />
             </ToolbarGroup>
             <ToolbarGroup>
-              <RaisedButton label="Filter" primary={true} />
+              <RaisedButton label="Filter" primary={true} onClick={ this.handleSubmit } />
               <IconMenu iconButtonElement={
                   <IconButton touch={true}>
                     <NavigationExpandMoreIcon />
@@ -72,10 +72,10 @@ export class DeviceList extends React.Component {
                   total={ this.props.total }
                   filters={ this.props.filters }
                   columns={[  { db: 'name', title: this.props.strings.deviceName },
-                              { db: 'status', title: this.props.strings.status },
-                              { db: 'createdOn', title: this.props.strings.reportingFor,
+                              { db: 'status', title: this.props.strings.status, hideOnXs: true },
+                              { db: 'createdOn', title: this.props.strings.reportingFor, hideOnXs: true,
                                 format: (data) => { return moment(data).fromNow(true) } },
-                              { db: 'lastSeen', title: this.props.strings.lastSeen,
+                              { db: 'lastSeen', title: this.props.strings.lastSeen, hideOnXs: true,
                                 info: 'When did we last hear from the device?',
                                 format: (data) => { return moment(data).fromNow() } },
                               { db: 'totalTests', title: this.props.strings.totalTests,
