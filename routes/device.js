@@ -1,5 +1,6 @@
 let express = require('express')
 let camelize = require('camelize')
+let decamelize = require('decamelize')
 let Promise = require('promise')
 let jwtmiddleware = require('./jwtmiddleware')
 
@@ -13,7 +14,7 @@ module.exports = function(config, db) {
   // return list of devices
   routes.get('/', function(req, res) {
 
-    let sortCol = req.query.sortCol || 'name'
+    let sortCol = decamelize(req.query.sortCol) || 'name'
     let sortDir = req.query.sortDir == 'desc' ? 'desc' : 'asc'
     let page = parseInt(req.query.page) || 0
     let size = parseInt(req.query.size) || 20
@@ -28,7 +29,8 @@ module.exports = function(config, db) {
 
     // get rows
     let getItems = new Promise((resolve, reject) => {
-      db.query(`select id, name, shortname, created_on, last_ping_on
+      db.query(`select id, name, shortname, created_on, last_ping_on,
+                updated_on as last_seen, 'Active' as status, id * 134 as total_tests
                 from device
                 order by ?? ${sortDir}
                 limit ?, ?`,
