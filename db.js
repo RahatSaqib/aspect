@@ -6,9 +6,7 @@ let pool = mysql.createPool(config.db)
 
 // select one or more rows
 module.exports.find = function(tableName, columns, whereParams, resolve, reject) {
-
   columns = columns || '*'
-
   let query = 'select ' + columns + ' from ' + tableName
 
   if (whereParams){
@@ -16,60 +14,42 @@ module.exports.find = function(tableName, columns, whereParams, resolve, reject)
   }
 
   exec(query, whereParams, resolve, reject, 'find')
-
 }
 
 // select exactly one row. throws error if none found or more than one
 module.exports.findOne = function(tableName, columns, params, resolve, reject) {
-
   columns = columns || '*'
-
   let query = 'select ' + columns + ' from ' + tableName + ' where ?'
-
   exec(query, params, resolve, reject, 'findOne', tableName)
-
 }
 
 // insert new row into a table
 module.exports.insert = function(tableName, params, resolve, reject) {
-
   let query = 'insert into ' + tableName + ' SET ?'
-
   exec(query, params, resolve, reject, 'insert')
-
 }
 
 // update a table
 module.exports.update = function(tableName, params, resolve, reject) {
-
   let query = 'update ' + tableName + ' SET ? WHERE ?'
-
   exec(query, params, resolve, reject, 'update')
-
 }
 
 // pass in any query, but expect exactly one result
 module.exports.queryOne = function(query, params, resolve, reject) {
-
   exec(query, params, resolve, reject, 'findOne')
-
 }
 
-// can pass in any query here
-// mode-param is optional
+// can pass in any query here. mode-param is optional.
 module.exports.query = function(query, params, resolve, reject, mode) {
-
   exec(query, params, resolve, reject, mode || 'find')
-
 }
 
-// execute a database query
-// mode and tableName are optional
+// execute a database query. mode and tablename are optional.
 function exec(query, params, resolve, reject, mode, tableName) {
   pool.getConnection(function(err, connection) {
 
     if (err) {
-
       if (connection) {
         connection.release()
       }
@@ -80,15 +60,12 @@ function exec(query, params, resolve, reject, mode, tableName) {
 
     } else {
       connection.query(query, params, function(err, result) {
+        // did the query error out?
         if (err) {
-
           console.log(err)
           let error = { ok: false, err: err.code }
-
           reject ? reject(error) : resolve(error)
-
         } else {
-
           switch (mode) {
 
           case 'findOne':

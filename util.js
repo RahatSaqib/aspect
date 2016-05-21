@@ -2,13 +2,15 @@ let moment = require('moment')
 let decamelize = require('decamelize')
 
 module.exports = {
+
   // returns the current UTC date/time in a format that MySQL understands
   getUtcNowForMySql: function(){
     return moment().utc().format('YYYY-MM-DD HH:mm:ss')
   },
 
+  // extracts the parameters related to sorting and paging from the query
+  // string and returns them as an object
   getSortPageParams: function(req, defaultSort){
-
     let params = {}
 
     params.sortCol = req.query.sortCol ? decamelize(req.query.sortCol) : defaultSort
@@ -20,4 +22,3 @@ module.exports = {
     return params
   }
 }
-

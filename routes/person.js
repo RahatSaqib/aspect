@@ -44,6 +44,7 @@ module.exports = function(config, db) {
       value[1].total = value[0].data.count
 
       res.status(200).json(camelize(value[1]))
+
     }, function(err){
       res.status(500).json(camelize(err))
     })
