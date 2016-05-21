@@ -39,7 +39,6 @@ export class DataTable extends React.Component {
   }
 
   handlePage(page){
-
     this.props.handleFetch(this.props.sortCol, this.props.sortDir, page, this.props.size, this.props.filters)
   }
 
@@ -79,7 +78,7 @@ export class DataTable extends React.Component {
                     {col.title}
                   </span>
                   <SortIcon color={ this.props.sortCol == col.db ? 'black' : 'white' }
-                            style={{ height: 18, width: 18, position: 'relative', top: '4px', transform: this.props.sortDir === 'asc' ? 'scale(1, -1)' : '' }} />
+                            style={{ height: 18, width: 18, position: 'relative', top: '4px', left: '4px', transform: this.props.sortDir === 'asc' ? 'scale(1, -1)' : '' }} />
                 </TableHeaderColumn>
                 ))}
             </TableRow>

@@ -16,7 +16,6 @@ export default {
   },
   PersonList: {
     title: 'Contacts',
-    title: '',
     personName: 'Nom',
     level: 'Role',
     state: 'State',

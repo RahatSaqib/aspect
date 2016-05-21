@@ -37,12 +37,17 @@ export class PersonList extends React.Component {
   render() {
     return (
       <div className="content">
+
         <h1 className="content-h1">{ this.props.strings.title }</h1>
 
         <form onSubmit={ this.handleSubmit }>
           <Toolbar className={"toolbar"} >
             <ToolbarGroup firstChild={true}>
-              <TextField value={this.state.filters.name} id="name" onChange={ this.handleFilterChange } style={{ margin: '5px 0 0 15px', width: '150px' }} hintText="Filter by name" />
+              <TextField  value={this.state.filters.name}
+                          id="name"
+                          onChange={ this.handleFilterChange }
+                          style={{ margin: '5px 0 0 15px', maxWidth: '150px' }}
+                          hintText="Filter by name" />
             </ToolbarGroup>
             <ToolbarGroup>
               <RaisedButton label="Filter" primary={true} />
@@ -50,7 +55,8 @@ export class PersonList extends React.Component {
                   <IconButton touch={true}>
                     <NavigationExpandMoreIcon />
                   </IconButton>}>
-                <MenuItem primaryText="Reset" onTouchTap={ () => { this.setState({filters: { name: '' }}); this.props.handleReset() }} />
+                <MenuItem primaryText="Reset"
+                          onTouchTap={ () => { this.setState({filters: { name: '' }}); this.props.handleReset() }} />
                 <MenuItem primaryText="Export to Excel" />
                 <MenuItem primaryText="Export to CSV" />
               </IconMenu>
