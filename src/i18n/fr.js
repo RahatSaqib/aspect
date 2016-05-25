@@ -20,5 +20,9 @@ export default {
     level: 'Role',
     state: 'State',
     lga: 'County'
+  },
+  NotFound:{
+    title: 'Not Found',
+    help: 'The page you\'re looking for doesn\'t exist.'
   }
 }

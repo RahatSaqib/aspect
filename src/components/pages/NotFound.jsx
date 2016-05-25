@@ -1,0 +1,42 @@
+import React from 'react'
+import { connect } from 'react-redux'
+import { Link } from 'react-router'
+import PureRenderMixin from 'react-addons-pure-render-mixin'
+import IconButton from 'material-ui/IconButton'
+import ActionHome from 'material-ui/svg-icons/action/home'
+import ActionBack from 'material-ui/svg-icons/hardware/keyboard-arrow-left'
+
+import translate from '../../i18n/translate'
+
+export class NotFound extends React.Component {
+
+  constructor(props) {
+    super(props)
+    this.shouldComponentUpdate = PureRenderMixin.shouldComponentUpdate.bind(this)
+  }
+
+  render() {
+    return (
+      <div className="error-page">
+        <h1>{ this.props.strings.title }</h1>
+        <h2>{ this.props.strings.help }</h2>
+        <IconButton onClick={ this.props.history.goBack } ><ActionBack /></IconButton>
+        <Link to="/" ><IconButton ><ActionHome /></IconButton></Link>
+      </div>
+    )
+  }
+}
+
+NotFound.defaultProps = {
+  strings: {
+    title: 'Not Found'
+  }
+}
+
+function mapStateToProps(state) {
+  return {
+  }
+}
+
+const NotFoundTranslated = translate('NotFound')(NotFound)
+export const NotFoundContainer = connect(mapStateToProps)(NotFoundTranslated)
