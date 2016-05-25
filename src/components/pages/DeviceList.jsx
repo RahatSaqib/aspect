@@ -48,7 +48,7 @@ export class DeviceList extends React.Component {
             <ToolbarGroup firstChild={true}>
               <TextField value={this.state.filters.name} id="name" onChange={ this.handleFilterChange } style={{ maxWidth: '150px', margin: '5px 0 0 15px' }} hintText="Filter by name" />
             </ToolbarGroup>
-            <ToolbarGroup>
+            <ToolbarGroup lastChild={true}>
               <RaisedButton label="Filter" primary={true} onClick={ this.handleSubmit } />
               <IconMenu iconButtonElement={
                   <IconButton touch={true}>

@@ -1,5 +1,4 @@
 import React from 'react'
-import { connect } from 'react-redux'
 import { Link } from 'react-router'
 import PureRenderMixin from 'react-addons-pure-render-mixin'
 import IconButton from 'material-ui/IconButton'
@@ -33,10 +32,4 @@ NotFound.defaultProps = {
   }
 }
 
-function mapStateToProps(state) {
-  return {
-  }
-}
-
-const NotFoundTranslated = translate('NotFound')(NotFound)
-export const NotFoundContainer = connect(mapStateToProps)(NotFoundTranslated)
+export const NotFoundContainer = translate('NotFound')(NotFound)

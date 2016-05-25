@@ -49,7 +49,7 @@ export class PersonList extends React.Component {
                           style={{ margin: '5px 0 0 15px', maxWidth: '150px' }}
                           hintText="Filter by name" />
             </ToolbarGroup>
-            <ToolbarGroup>
+            <ToolbarGroup lastChild={true}>
               <RaisedButton label="Filter" primary={true} />
               <IconMenu iconButtonElement={
                   <IconButton touch={true}>
