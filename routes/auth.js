@@ -31,9 +31,9 @@ module.exports = function(config, db) {
     }
 
     // find the user in the db
-    db.queryOne('select u.locked_out, u.failed_password_attempts, u.id, u.name, p.culture ' +
-              'from user u inner join person p on u.id = p.user_id ' +
-              'where u.name = ?', req.body.name,
+    db.queryOne(`select u.locked_out, u.failed_password_attempts, u.id, u.name, p.culture
+                  from user u inner join person p on u.id = p.user_id
+                  where u.name = ?`, req.body.name,
       function(response) {
         if (!response.ok) {
           res.status(400).json({ message: response.message })
@@ -111,10 +111,10 @@ module.exports = function(config, db) {
     }
 
     // find the token in the db
-    db.queryOne( 'select rt.user_id, rt.expires, u.name, p.culture ' +
-              'from refresh_token rt inner join user u on rt.user_Id = u.id ' +
-              'inner join person p on u.id = p.user_id ' +
-              'where client_id = ? and token = ? and revoked = 0',
+    db.queryOne(`select rt.user_id, rt.expires, u.name, p.culture
+              from refresh_token rt inner join user u on rt.user_Id = u.id
+              inner join person p on u.id = p.user_id
+              where client_id = ? and token = ? and revoked = 0`,
               [req.body.clientId, req.body.token],
               (rows) => {
                 if (!rows.ok) {

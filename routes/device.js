@@ -16,12 +16,13 @@ module.exports = function(config, db) {
 
     let sp = util.getSortPageParams(req, 'name')
     let name = req.query.name ? '%' + req.query.name + '%' : '%'
+    let whereClause = 'where name like ?'
 
     // get total count for paging
     let getCount = new Promise(function(resolve, reject){
       db.queryOne(`select count(id) as count
                   from device
-                  where name like ?`,
+                  ${whereClause}`,
                   [name], resolve, reject)
     })
 
@@ -30,7 +31,7 @@ module.exports = function(config, db) {
       db.query(`select id, name, shortname, created_on, last_ping_on,
                 updated_on as last_seen, 'Active' as status, id * 134 as total_tests
                 from device
-                where name like ?
+                ${whereClause}
                 order by ?? ${sp.sortDir}
                 limit ?, ?`,
                 [name, sp.sortCol, sp.skip, sp.size], resolve, reject)
