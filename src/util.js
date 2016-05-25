@@ -13,6 +13,7 @@ class util{
     return browser.name + ' ' + browser.version
   }
 
+  // using this in a fetch (ajax request) to check if request was successful
   handleFetchError(resp) {
 
     let json = resp.json()

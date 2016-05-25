@@ -1,13 +1,16 @@
 import React from 'react'
 import {Router, Route, browserHistory} from 'react-router'
 
+// higher level containers/shells
 import App from './components/App'
+import LoggedInShell from './components/LoggedInShell'
+
+// "Pages"
+import Login from './components/Login'
 import { DashboardContainer } from './components/pages/Dashboard'
 import { DeviceListContainer } from './components/pages/DeviceList'
 import { PersonListContainer } from './components/pages/PersonList'
 import { NotFoundContainer } from './components/pages/NotFound'
-import Login from './components/Login'
-import LoggedInShell from './components/LoggedInShell'
 
 function requireAuth(nextState, replace) {
   // TODO: check access level based on tokens/roles in jwt
@@ -24,11 +27,12 @@ function requireAuth(nextState, replace) {
   }
 }
 
-const routes = <Router history={browserHistory}>
+const routes =
+  <Router history={browserHistory}>
     <Route component={App}>
       <Route component={Login} path="login" />
-        <Route component={LoggedInShell}
-          onEnter={(nextState, replace) => requireAuth(nextState, replace)}>
+        <Route  component={LoggedInShell}
+                onEnter={(nextState, replace) => requireAuth(nextState, replace)}>
           <Route path="/" component={DashboardContainer} />
           <Route path="/devices" component={DeviceListContainer} />
           <Route path="/persons" component={PersonListContainer} />
