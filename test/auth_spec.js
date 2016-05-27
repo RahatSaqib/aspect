@@ -23,7 +23,7 @@ describe('Authentication routes',function(){
       .send()
       .end(function(err,res){
         assert.equal(res.status, 400)
-        assert.equal(res.body.message, 'No user name provided')
+        assert.equal(res.body[0].msg, 'User name is required')
         done()
       })
     })
@@ -34,7 +34,7 @@ describe('Authentication routes',function(){
       .send({ name: 'admin' })
       .end(function(err,res){
         assert.equal(res.status, 400)
-        assert.equal(res.body.message, 'No password provided')
+        assert.equal(res.body[0].msg, 'Password is required')
         done()
       })
     })
@@ -45,7 +45,7 @@ describe('Authentication routes',function(){
       .send({ name: 'admin', password: 'password' })
       .end(function(err,res){
         assert.equal(res.status, 400)
-        assert.equal(res.body.message, 'No client name provided')
+        assert.equal(res.body[0].msg, 'Client name is required')
         done()
       })
     })
@@ -141,7 +141,7 @@ describe('Authentication routes',function(){
       .send()
       .end(function(err,res){
         assert.equal(res.status, 400)
-        assert.equal(res.body.message, 'No client ID provided')
+        assert.equal(res.body[0].msg, 'Client ID is required')
         done()
       })
     })
@@ -152,7 +152,7 @@ describe('Authentication routes',function(){
       .send({ clientId: 'Mocha/Chai' })
       .end(function(err,res){
         assert.equal(res.status, 400)
-        assert.equal(res.body.message, 'No token provided')
+        assert.equal(res.body[0].msg, 'Token is required')
         done()
       })
     })

@@ -1,4 +1,5 @@
 let express = require('express')
+let expressValidator = require('express-validator')
 let cors = require('cors')
 let bodyParser = require('body-parser')
 let morgan = require('morgan')
@@ -71,6 +72,9 @@ let port = process.env.PORT || 8080
 // use body parser so we can get info from POST and/or URL parameters
 app.use(bodyParser.urlencoded({ extended: false }))
 app.use(bodyParser.json())
+
+// enable express-validator
+app.use(expressValidator())
 
 // enable cross origin requests
 app.use(cors())

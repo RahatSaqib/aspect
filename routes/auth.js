@@ -12,21 +12,19 @@ module.exports = function(config, db) {
 
   let routes = express.Router()
 
-  // route to authenticate a user
+  /*
+  Route for authenticating a user
+  */
   routes.post('/', function(req, res) {
 
-    if (!req.body.name) {
-      res.status(400).json({ message: 'No user name provided' })
-      return
-    }
+    // validation
+    req.check('name', 'User name is required').notEmpty()
+    req.check('password', 'Password is required').notEmpty()
+    req.check('clientName', 'Client name is required').notEmpty()
 
-    if (!req.body.password) {
-      res.status(400).json({ message: 'No password provided' })
-      return
-    }
-
-    if (!req.body.clientName) {
-      res.status(400).json({ message: 'No client name provided' })
+    let errors = req.validationErrors()
+    if (errors){
+      res.status(400).json(errors)
       return
     }
 
@@ -97,16 +95,18 @@ module.exports = function(config, db) {
       }, null, 'user')
   })
 
-  // get a new access token by sending refresh:
+  /*
+  Route for getting a new access token by sending a refresh token
+  */
   routes.post('/refresh', function(req, res) {
 
-    if (!req.body.clientId) {
-      res.status(400).json({ message: 'No client ID provided' })
-      return
-    }
+    // validation
+    req.check('clientId', 'Client ID is required').notEmpty()
+    req.check('token', 'Token is required').notEmpty()
 
-    if (!req.body.token) {
-      res.status(400).json({ message: 'No token provided' })
+    let errors = req.validationErrors()
+    if (errors){
+      res.status(400).json(errors)
       return
     }
 
@@ -127,27 +127,29 @@ module.exports = function(config, db) {
           return
         }
 
-                // looks like we have a valid refresh token. set new one in db
-                let refresh_token = crypto.randomBytes(48).toString('base64')
-                let expires = moment().utc().add(7, 'days').format('YYYY-MM-DD HH:mm:ss')
+        // looks like we have a valid refresh token. set new one in db
+        let refresh_token = crypto.randomBytes(48).toString('base64')
+        let expires = moment().utc().add(7, 'days').format('YYYY-MM-DD HH:mm:ss')
 
-                db.query('update refresh_token set ? where ?', [{
-                  token: refresh_token,
-                  expires: expires
-                }, {
-                  token: req.body.token
-                }], () => {
-                  // return the token
-                  let data = rows.data
-                  getToken(db, config, data.user_id, data.name, res, refresh_token, req.body.clientId, data.culture)
-                })
-              })
+        db.query('update refresh_token set ? where ?', [{
+          token: refresh_token,
+          expires: expires
+        }, {
+          token: req.body.token
+        }], () => {
+          // return the token
+          let data = rows.data
+          getToken(db, config, data.user_id, data.name, res, refresh_token, req.body.clientId, data.culture)
+        })
+      })
   })
 
   // all routes after this will require a token
   routes.use((req, res, next) => jwtmiddleware(req, res, next, config.secret))
 
-  // route to test that token works
+  /*
+  Route for testing that token works
+  */
   routes.get('/', function(req, res) {
     res.json({ message: 'Welcome to the API!' })
   })
