@@ -37,6 +37,12 @@ nodemon
 Tests are in /test and written in Mocha/Chai
 To run tests, start the server and then run `mocha` or `npm test` in another terminal
 
+##Stress test with siege
+Install siege: http://jason.pureconcepts.net/2011/09/installing-siege-mac-os-x-lion/
+
+To test the auth endpoint, run this command:
+siege --concurrent=25 --content-type="application/json" 'http://localhost:8080/api/auth POST { "name": "sbaumgartner", "password": "test07", "clientName": "SIEGE" }'
+
 ##Deploying
 We're serving the API through AWS beanstalk. Install the eb cli tools and commit changes, then:
 

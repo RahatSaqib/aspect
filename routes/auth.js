@@ -32,8 +32,8 @@ module.exports = function(config, db) {
 
     // find the user in the db
     db.queryOne(`select u.locked_out, u.failed_password_attempts, u.id, u.name, p.culture
-                  from user u inner join person p on u.id = p.user_id
-                  where u.name = ?`, req.body.name,
+      from user u inner join person p on u.id = p.user_id
+      where u.name = ?`, req.body.name,
       function(response) {
         if (!response.ok) {
           res.status(400).json({ message: response.message })
@@ -56,9 +56,9 @@ module.exports = function(config, db) {
             failed_password_attempts: user.failed_password_attempts + 1,
             locked_out: lock
           }, { id: user.id }],
-            () => {
-              res.status(401).json({ message: 'Authentication failed. Wrong password.' })
-            })
+          () => {
+            res.status(401).json({ message: 'Authentication failed. Wrong password.' })
+          })
         } else {
 
           // upsert refresh token
@@ -84,8 +84,8 @@ module.exports = function(config, db) {
           let updatePwAttempts = new Promise((resolve, reject) => {
             console.log(user.id)
             db.update('user', [{  failed_password_attempts: 0,
-                                  last_login: now,
-                                  last_active: now }, { id: user.id }], resolve, reject) })
+              last_login: now,
+              last_active: now }, { id: user.id }], resolve, reject) })
 
           Promise.all([setRefreshToken, updatePwAttempts]).then(function(){
             // finally, return the access token...
@@ -112,20 +112,20 @@ module.exports = function(config, db) {
 
     // find the token in the db
     db.queryOne(`select rt.user_id, rt.expires, u.name, p.culture
-              from refresh_token rt inner join user u on rt.user_Id = u.id
-              inner join person p on u.id = p.user_id
-              where client_id = ? and token = ? and revoked = 0`,
-              [req.body.clientId, req.body.token],
-              (rows) => {
-                if (!rows.ok) {
-                  res.status(400).json({ message: 'Unable to find token or token revoked' })
-                  return
-                }
+      from refresh_token rt inner join user u on rt.user_Id = u.id
+      inner join person p on u.id = p.user_id
+      where client_id = ? and token = ? and revoked = 0`,
+      [req.body.clientId, req.body.token],
+      (rows) => {
+        if (!rows.ok) {
+          res.status(400).json({ message: 'Unable to find token or token revoked' })
+          return
+        }
 
-                if (rows.data.expires < moment().utc()) {
-                  res.status(400).json({ message: 'Token expired' })
-                  return
-                }
+        if (rows.data.expires < moment().utc()) {
+          res.status(400).json({ message: 'Token expired' })
+          return
+        }
 
                 // looks like we have a valid refresh token. set new one in db
                 let refresh_token = crypto.randomBytes(48).toString('base64')
