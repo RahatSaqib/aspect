@@ -1,12 +1,10 @@
 let Promise = require('promise')
 let crypto = require('crypto')
 let express = require('express')
-let moment = require('moment')
 let jwt = require('jsonwebtoken')
 let uuid = require('node-uuid')
 
 let jwtmiddleware = require('./jwtmiddleware')
-let util = require('./../util')
 
 module.exports = function(config, db) {
 
@@ -60,10 +58,10 @@ module.exports = function(config, db) {
         } else {
 
           // upsert refresh token
+          let now = new Date()
+          let expires = new Date(now.getTime() + 7 * 86400000) // 7 days from now
           let refresh_token = crypto.randomBytes(48).toString('base64')
-          let expires = moment().utc().add(7, 'days').format('YYYY-MM-DD HH:mm:ss')
           let clientId = req.body.clientId || uuid.v4()
-          let now = util.getUtcNowForMySql()
 
           let setRefreshToken = new Promise((resolve, reject) => {
             db.query('INSERT INTO refresh_token set ? ON DUPLICATE KEY UPDATE ?', [{
@@ -122,14 +120,17 @@ module.exports = function(config, db) {
           return
         }
 
-        if (rows.data.expires < moment().utc()) {
+        // check if expired
+        let now = new Date()
+
+        if (rows.data.expires < now) {
           res.status(400).json({ message: 'Token expired' })
           return
         }
 
         // looks like we have a valid refresh token. set new one in db
+        let expires = new Date(now.getTime() + 7 * 86400000) // 7 days from now
         let refresh_token = crypto.randomBytes(48).toString('base64')
-        let expires = moment().utc().add(7, 'days').format('YYYY-MM-DD HH:mm:ss')
 
         db.query('update refresh_token set ? where ?', [{
           token: refresh_token,
@@ -144,7 +145,9 @@ module.exports = function(config, db) {
       })
   })
 
-  // all routes after this will require a token
+  /*
+  all routes after this will require a token
+  */
   routes.use((req, res, next) => jwtmiddleware(req, res, next, config.secret))
 
   /*
@@ -157,6 +160,7 @@ module.exports = function(config, db) {
   return routes
 }
 
+// generate a new jwt
 function getToken(db, config, userId, userName, res, refresh_token, clientId, culture) {
   db.query( 'select r.name from role r inner join user_role ur on r.id = ur.role_id where ?',
     { user_id: userId },
