@@ -7,7 +7,7 @@ INSERT INTO aspect.location (name, shortname, identifier, country_id, state_id, 
   created_on, created_by, updated_on, updated_by)
 select  ifnull(Description, dep.HostId) as Name, ShortName, dep.DeploymentId as Identifier, 
       @aspectCountryId as country_id, sa.id as state_id, sl.id as lga_id,
-        city, street1, street2, zip, latitude, longitude, 
+        city, street1, street2, zip, longitude, latitude,
         timezoneid, OperationStartTime, OperationEndTime,
         dep.insertedon, auc.id as created_by, dep.updatedOn, auu.id as updated_by
 from bigpicture.deployment dep
