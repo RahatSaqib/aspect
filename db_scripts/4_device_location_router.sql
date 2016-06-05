@@ -22,6 +22,26 @@ where dep.countryId = @bpCountryId
 and ifnull(dep.Description, dep.HostId) not in (select name from aspect.location where country_id = @aspectCountryId);
 
 
+-- import inventory location
+INSERT INTO aspect.location (name, shortname, identifier, country_id, state_id, lga_id, city,
+  street1, street2, zip, longitude, latitude, timezone_id, hours_start, hours_end, 
+  created_on, created_by, updated_on, updated_by)
+select  il.name, null, il.InventoryLocationId as Identifier, 
+      @aspectCountryId as country_id, sa.id as state_id, sl.id as lga_id,
+        city, street1, street2, zip, null, null, 
+        'Eastern Standard Time', 540, 1020,
+        il.insertedon, auc.id as created_by, il.updatedOn, auu.id as updated_by
+from bigpicture.inventorylocation il
+left outer join bigpicture.state s on il.StateId = s.StateId
+left outer join aspect.state sa on sa.country_id = @aspectCountryId and sa.name = s.name
+left outer join bigpicture.lga l on il.LgaId = l.LgaId
+left outer join bigpicture.state ls on l.stateId = ls.StateId and ls.countryid = @bpCountryId
+left outer join aspect.lga sl on sl.name = l.name and ls.countryId = @bpCountryId
+inner join aspect.user auc on il.InsertedBy = auc.name
+inner join aspect.user auu on il.updatedby = auu.name
+where il.countryId = @bpCountryId
+and il.name not in (select name from aspect.location where country_id = @aspectCountryId);
+
 
 -- deployments/devices
 INSERT INTO aspect.device (device_type_id, id1,id2,id3,id4,serial,host_id,computer_id,location_id,
