@@ -48,5 +48,7 @@ siege --concurrent=25 --content-type="application/json" 'http://localhost:8080/a
 ##Deploying
 We're serving the API through AWS beanstalk. Install the eb cli tools and commit changes, then:
 
+```bash
 eb deploy aspect-api-dev
 eb open
+```
