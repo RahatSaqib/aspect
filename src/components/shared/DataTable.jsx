@@ -14,22 +14,24 @@ export class DataTable extends React.Component {
   constructor(props) {
     super(props)
     this.shouldComponentUpdate = PureRenderMixin.shouldComponentUpdate.bind(this)
-    this.state = {  height: 'inherit',
-                    fixedHeader: true,
-                    fixedFooter: true,
-                    selectable: false,
-                    multiSelectable: false,
-                    showCheckboxes: false,
-                    enableSelectAll: false,
-                    showRowHover: true,
-                    stripedRows: false }
+    this.state = {
+      height: 'inherit',
+      fixedHeader: true,
+      fixedFooter: true,
+      selectable: false,
+      multiSelectable: false,
+      showCheckboxes: false,
+      enableSelectAll: false,
+      showRowHover: true,
+      stripedRows: false
+    }
   }
 
   componentDidMount() {
     this.props.handleFetch(this.props.sortCol, this.props.sortDir, this.props.page, this.props.size, this.props.filters)
   }
 
-  handleSort(col){
+  handleSort(col) {
 
     // only change sort direction if column that we're currently sorting on is clicked
     let newSort = this.props.sortCol === col ? (this.props.sortDir === 'asc' ? 'desc' : 'asc') : this.props.sortDir
@@ -38,15 +40,15 @@ export class DataTable extends React.Component {
 
   }
 
-  handlePage(page){
+  handlePage(page) {
     this.props.handleFetch(this.props.sortCol, this.props.sortDir, page, this.props.size, this.props.filters)
   }
 
   render() {
 
     let loading = this.props.loading ?
-                  <LinearProgress /> :
-                  <div style={ {margin: 0, padding: 0, height: 4 }}>&nbsp;</div>
+      <LinearProgress /> :
+      <div style={ { margin: 0, padding: 0, height: 4 }}>&nbsp; </div>
 
     let page = this.props.page
 
@@ -55,7 +57,7 @@ export class DataTable extends React.Component {
     let pageItems = []
 
     for (let i = 0; i < totalPages; i++) {
-      pageItems.push(<MenuItem key={i} value={i} label={'Page ' + (i + 1) + ' of ' + totalPages} primaryText={'Page ' + (i + 1)} />)
+      pageItems.push(<MenuItem key={i} value={i} label={'Page ' + (i + 1) + ' of ' + totalPages} primaryText={'Page ' + (i + 1) } />)
     }
 
     return (
@@ -72,15 +74,15 @@ export class DataTable extends React.Component {
             adjustForCheckbox={this.state.showCheckboxes}
             enableSelectAll={this.state.enableSelectAll}>
             <TableRow>
-              {this.props.columns.map( (col) => (
+              {this.props.columns.map((col) => (
                 <TableHeaderColumn key={col.db} tooltip={col.tooltip} className={ col.hideOnXs ? 'pure-hidden-xs' : '' }>
-                  <span style={{cursor: 'pointer'}} onClick={() => { this.handleSort(col.db) }}>
+                  <span style={{ cursor: 'pointer' }} onClick={() => { this.handleSort(col.db) } }>
                     {col.title}
                   </span>
                   <SortIcon color={ this.props.sortCol == col.db ? 'black' : 'white' }
-                            style={{ height: 18, width: 18, position: 'relative', top: '4px', left: '4px', transform: this.props.sortDir === 'asc' ? 'scale(1, -1)' : '' }} />
+                    style={{ height: 18, width: 18, position: 'relative', top: '4px', left: '4px', transform: this.props.sortDir === 'asc' ? 'scale(1, -1)' : '' }} />
                 </TableHeaderColumn>
-                ))}
+              )) }
             </TableRow>
           </TableHeader>
           <TableBody
@@ -88,15 +90,15 @@ export class DataTable extends React.Component {
             deselectOnClickaway={this.state.deselectOnClickaway}
             showRowHover={this.state.showRowHover}
             stripedRows={this.state.stripedRows}>
-            {this.props.items.map( (item) => (
-              <TableRow key={item.get('id')}>
-              {this.props.columns.map( (col) => (
-                <TableRowColumn key={item.get(col.db)} className={ col.hideOnXs ? 'pure-hidden-xs' : '' } >
-                  {col.format ? col.format(item.get(col.db)) : item.get(col.db)}
-                </TableRowColumn>
-                ))}
+            {this.props.items.map((item) => (
+              <TableRow key={item.get('id') }>
+                {this.props.columns.map((col) => (
+                  <TableRowColumn key={item.get(col.db) } className={ col.hideOnXs ? 'pure-hidden-xs' : '' } >
+                    {col.format ? col.format(item.get(col.db)) : item.get(col.db) }
+                  </TableRowColumn>
+                )) }
               </TableRow>
-              ))}
+            )) }
           </TableBody>
           <TableFooter adjustForCheckbox={true}>
             <TableRow>
@@ -104,15 +106,15 @@ export class DataTable extends React.Component {
                 Displaying items { page * this.props.size + 1 } - { (page + 1) * this.props.size } of { this.props.total }
               </TableRowColumn>
               <TableRowColumn colSpan={this.props.columns.length - 1} style={{ textAlign: 'right', padding: '10px 0 20px 0' }} >
-              <IconButton className={'pager-arrow pager-arrow-prev'} touch={true} onClick={() => { this.handlePage(page - 1)}} disabled={page === 0}>
-                <Arrow color={theme.palette.primary1Color} />
-              </IconButton>
-              <DropDownMenu maxHeight={300} value={page} onChange={(e, k) => { this.handlePage(k) }}>
-                { pageItems }
-              </DropDownMenu>
-              <IconButton className={'pager-arrow'} touch={true} onClick={() => { this.handlePage(page + 1)}} disabled={ page + 1 >= totalPages}>
-                <Arrow color={theme.palette.primary1Color} />
-              </IconButton>
+                <IconButton className={'pager-arrow pager-arrow-prev'} touch={true} onClick={() => { this.handlePage(page - 1) } } disabled={page === 0}>
+                  <Arrow color={theme.palette.primary1Color} />
+                </IconButton>
+                <DropDownMenu maxHeight={300} value={page} onChange={(e, k) => { this.handlePage(k) } }>
+                  { pageItems }
+                </DropDownMenu>
+                <IconButton className={'pager-arrow'} touch={true} onClick={() => { this.handlePage(page + 1) } } disabled={ page + 1 >= totalPages}>
+                  <Arrow color={theme.palette.primary1Color} />
+                </IconButton>
               </TableRowColumn>
             </TableRow>
           </TableFooter>

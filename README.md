@@ -45,5 +45,8 @@ npm run copy
 ## Deploying
 We're serving the web files from an S3 bucket through cloudfront. 
 Here's the command for uploading a directory to an S3 bucket using the S3 CLI:
+
+```bash
 aws s3 cp dist s3://aspect-web-dev --recursive
+```
 
