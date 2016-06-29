@@ -3,9 +3,9 @@ set @aspectCountryId = 1;
 
 -- import locations
 INSERT INTO aspect.location (name, shortname, identifier, country_id, state_id, lga_id, city,
-  street1, street2, zip, longitude, latitude, timezone_id, hours_start, hours_end, 
+  street1, street2, zip, longitude, latitude, timezone_id, hours_start, hours_end,
   created_on, created_by, updated_on, updated_by)
-select  ifnull(Description, dep.HostId) as Name, ShortName, dep.DeploymentId as Identifier, 
+select  ifnull(Description, dep.HostId) as Name, ShortName, dep.DeploymentId as Identifier,
       @aspectCountryId as country_id, sa.id as state_id, sl.id as lga_id,
         city, street1, street2, zip, longitude, latitude,
         timezoneid, OperationStartTime, OperationEndTime,
@@ -24,11 +24,11 @@ and ifnull(dep.Description, dep.HostId) not in (select name from aspect.location
 
 -- import inventory location
 INSERT INTO aspect.location (name, shortname, identifier, country_id, state_id, lga_id, city,
-  street1, street2, zip, longitude, latitude, timezone_id, hours_start, hours_end, 
+  street1, street2, zip, longitude, latitude, timezone_id, hours_start, hours_end,
   created_on, created_by, updated_on, updated_by)
-select  il.name, null, il.InventoryLocationId as Identifier, 
+select  il.name, null, il.InventoryLocationId as Identifier,
       @aspectCountryId as country_id, sa.id as state_id, sl.id as lga_id,
-        city, street1, street2, zip, null, null, 
+        city, street1, street2, zip, null, null,
         'Eastern Standard Time', 540, 1020,
         il.insertedon, auc.id as created_by, il.updatedOn, auu.id as updated_by
 from bigpicture.inventorylocation il
@@ -50,20 +50,20 @@ INSERT INTO aspect.device (device_type_id, id1,id2,id3,id4,serial,host_id,comput
   last_calibrated, put_in_service, put_in_service_source, db_version,
   db_ok, lis_config,lis_ok,daily_details_on, aspect_client_version,
   custom_fields_enabled, custom_fields_sent_on, custom_fields_enabled_on_device,
-  approved,approved_on,approved_by,created_on,created_by, updated_on, updated_by)
-select adt.id, dev.ComputerId as id1, concat(concat(c.Abbreviation, '_'), concat(dev.Serial, concat('_', dep.HostId))) as id2, 
-        concat(concat(c.Abbreviation, '_'), dev.Serial) as id3, 
+  device_status_id,approved_on,approved_by,created_on,created_by, updated_on, updated_by)
+select adt.id, dev.ComputerId as id1, concat(concat(c.Abbreviation, '_'), concat(dev.Serial, concat('_', dep.HostId))) as id2,
+        concat(concat(c.Abbreviation, '_'), dev.Serial) as id3,
         concat(concat(c.Abbreviation, '_'), dev.HostId) as id4,
         dev.Serial, dev.HostId, dev.ComputerId,
         l.id as location_id, ifnull(dep.description, dep.HostId) as name, dep.shortname, dep.notes,
         HideOnDashboard,
-        lastpingon, lastpingfrom, ComputerCulture, computerosversion, 
+        lastpingon, lastpingfrom, ComputerCulture, computerosversion,
         computertimezoneid, LastCalibrated, PutInService, PutInServiceSource,
-        dbversion,  DataBAseDeviceOk as dbOk, lisconfig, LisConfigOk as lisOk, 
-        lastdailydetailson, GxConnectVersion as aspectClientVersion, 
-        EnableCustomFields, 
+        dbversion,  DataBAseDeviceOk as dbOk, lisconfig, LisConfigOk as lisOk,
+        lastdailydetailson, GxConnectVersion as aspectClientVersion,
+        EnableCustomFields,
         SentCustomFieldsOn, CustomFieldsEnabledOnDevice,
-        dep.approved, dep.approvedon, aua.id as approved_by,
+        case when dep.approved = 1 then 1 else 2 end, dep.approvedon, aua.id as approved_by,
         dep.insertedon, auc.id, dep.UpdatedOn, auu.id
 from bigpicture.deployment dep
 inner join aspect.location l on l.Identifier = dep.DeploymentId
@@ -90,17 +90,17 @@ where dev.id not in (select device_id from aspect.device_location_history);
 
 
 -- router
-insert into aspect.router (location_id, number, sim_reg_number, sim_reg_number_2, 
-sim_phone_number, sim_phone_number_2, sim_provider, sim_provider_2, 
+insert into aspect.router (location_id, number, sim_reg_number, sim_reg_number_2,
+sim_phone_number, sim_phone_number_2, sim_provider, sim_provider_2,
 sim_suffix, sim_suffix_2, sim_prefix, sim_prefix_2, created_by, created_on, updated_by, updated_on)
 select distinct dev.location_id, RouterNumber, SimCardRegistrationNumber, SimCardRegistrationNumber2,
-        SimCardPhoneNumber, SimCardPhoneNumber2, SimCardProvider, SimCardProvider2, 
+        SimCardPhoneNumber, SimCardPhoneNumber2, SimCardProvider, SimCardProvider2,
         SimCardSuffix, SimCardSuffix2, SimCardPrefix, SimCardPrefix2,
         1, now(), 1, now()
 from bigpicture.deployment dep
 inner join bigpicture.country c on dep.countryId = c.countryId
 inner join bigpicture.device bpd on dep.DeploymentId = bpd.CurrentDeploymentId
-inner join aspect.device dev on ifnull(dev.id1, 'asdfZY') = bpd.ComputerId OR 
+inner join aspect.device dev on ifnull(dev.id1, 'asdfZY') = bpd.ComputerId OR
                                 ifnull(dev.id2, 'asdfZY') = concat(concat(c.Abbreviation, '_'), concat(bpd.Serial, concat('_', dep.HostId))) OR
                                 ifnull(dev.id3, 'asdfZY') = concat(concat(c.Abbreviation, '_'), bpd.Serial) OR
                                 ifnull(dev.id4, 'asdfZY') = concat(concat(c.Abbreviation, '_'), bpd.HostId)
