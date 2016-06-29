@@ -5,7 +5,6 @@ import { fetchDevices, resetDevices, filterDevices } from '../../action_creators
 import { DataTable } from '../shared/DataTable'
 import translate from '../../i18n/translate'
 import moment from 'moment'
-import { Link } from 'react-router'
 
 import NavigationExpandMoreIcon from 'material-ui/svg-icons/navigation/expand-more'
 import RaisedButton from 'material-ui/RaisedButton'

@@ -1,6 +1,6 @@
 import React from 'react'
 import {Router, Route, browserHistory, applyRouterMiddleware } from 'react-router'
-import useScroll from 'react-router-scroll';
+import useScroll from 'react-router-scroll'
 
 // higher level containers/shells
 import App from './components/App'
