@@ -52,3 +52,17 @@ We're serving the API through AWS beanstalk. Install the eb cli tools and commit
 eb deploy aspect-api-dev
 eb open
 ```
+
+##Updating Dependencies
+
+To check which dependencies have newer versions available:
+
+```bash
+npm outdated
+```
+
+To update all to the latest version (this is not the same as the "Wanted" version): 
+
+```bash
+npm update --save
+```
