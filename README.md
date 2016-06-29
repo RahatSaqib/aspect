@@ -46,7 +46,20 @@ npm run copy
 We're serving the web files from an S3 bucket through cloudfront. 
 Here's the command for uploading a directory to an S3 bucket using the S3 CLI:
 
-```bash
+read```bash
 aws s3 cp dist s3://aspect-web-dev --recursive
 ```
 
+##Updating Dependencies
+
+To check which dependencies have newer versions available:
+
+```bash
+npm outdated
+```
+
+To update all to the latest version (this is not the same as the "Wanted" version): 
+
+```bash
+npm update --save
+```
