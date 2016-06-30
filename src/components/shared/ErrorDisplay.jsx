@@ -12,18 +12,18 @@ export class ErrorDisplay extends React.Component {
   }
 
   handleActionTouchTap = (error) => {
-    alert(error && error.desc ? JSON.stringify(error.desc, null, '\t') : 'No error details')
+    alert(error.get('desc') ? JSON.stringify(error.get('desc'), null, '\t') : 'No error details')
   }
 
   render() {
 
-    let error = this.props.error ? this.props.error.toObject() : null
+    let error = this.props.error
 
-    if (Object.keys(error).length !== 0){
+    if (!error.isEmpty()){
       return (
         <Snackbar
             open={true}
-            message={error.title}
+            message={error.get('title')}
             action="View Details"
             autoHideDuration={4000}
             onActionTouchTap={() => this.handleActionTouchTap(error)}

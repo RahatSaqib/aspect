@@ -2,6 +2,7 @@ import config from 'config'
 import types from './../constants/action_types'
 import util from './../util'
 import { addError } from './error_creators'
+import Immutable from 'immutable'
 
 function requestPersons(sortCol, sortDir, page, size, filters) {
   return {
@@ -23,7 +24,7 @@ function receivePersons(json) {
 }
 
 export function resetPersons(){
-  return fetchPersons('name', 'asc', 0, 10, { name: '' })
+  return fetchPersons('name', 'asc', 0, 10, Immutable.Map({ name: '' }))
 }
 
 export function filterPersons(filters){
@@ -35,13 +36,11 @@ export function fetchPersons(sortCol, sortDir, page, size, filters){
 
     dispatch(requestPersons(sortCol, sortDir, page, size, filters))
 
-    // filters might be an immutable map. unwrap it:
-    let qsFilters = ''
-    if (filters && filters.toObject){
-      filters = filters.toObject()
-    }
+    // filters is an immutable map. unwrap it:
+    filters = filters.toObject()
 
     // serialize filters for querystring
+    let qsFilters = ''
     if (filters){
       qsFilters = Object.keys(filters).map(k => `${encodeURIComponent(k)}=${encodeURIComponent(filters[k])}`).join('&')
     }

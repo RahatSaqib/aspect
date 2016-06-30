@@ -17,21 +17,25 @@ export class PersonList extends React.Component {
 
   constructor(props) {
     super(props)
-    this.state = { filters: props.filters.toObject() }
+    this.state = { filters: props.filters }
     this.shouldComponentUpdate = PureRenderMixin.shouldComponentUpdate.bind(this)
     this.handleFilterChange = this.handleFilterChange.bind(this)
     this.handleSubmit = this.handleSubmit.bind(this)
+    this.handleReset = this.handleReset.bind(this)
   }
 
   handleFilterChange(e){
-    let filters = this.state.filters
-    filters[e.target.id] = e.target.value
-    this.setState(filters)
+    this.setState({ filters: this.state.filters.set(e.target.id, e.target.value) })
   }
 
   handleSubmit(e){
     e.preventDefault()
     this.props.handleFilter(this.state.filters)
+  }
+
+  handleReset(){
+    this.setState({ filters: this.state.filters.set('name', '') })
+    this.props.handleReset()
   }
 
   render() {
@@ -43,7 +47,7 @@ export class PersonList extends React.Component {
         <form onSubmit={ this.handleSubmit }>
           <Toolbar className={"toolbar"} >
             <ToolbarGroup firstChild={true}>
-              <TextField  value={this.state.filters.name}
+              <TextField  value={this.state.filters.get('name')}
                           id="name"
                           onChange={ this.handleFilterChange }
                           style={{ margin: '5px 0 0 15px', maxWidth: '150px' }}
@@ -55,8 +59,7 @@ export class PersonList extends React.Component {
                   <IconButton touch={true}>
                     <NavigationExpandMoreIcon />
                   </IconButton>}>
-                <MenuItem primaryText="Reset"
-                          onTouchTap={ () => { this.setState({filters: { name: '' }}); this.props.handleReset() }} />
+                <MenuItem primaryText="Reset" onTouchTap={ this.handleReset } />
                 <MenuItem primaryText="Export to Excel" />
                 <MenuItem primaryText="Export to CSV" />
               </IconMenu>
