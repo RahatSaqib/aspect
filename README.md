@@ -23,8 +23,6 @@ By default, the site is served at http://localhost:8000/webpack-dev-server/ this
 npm start # or
 npm run serve
 
-# Start the dev-server with the dist version
-npm run serve:dist
 
 # Build the dist version and copy static files
 npm run dist
@@ -37,7 +35,7 @@ When npm run dist is finished, open dist/index.html and edit it so both the app.
 <script type="text/javascript" src="./assets/app.536be8e78dd55877dc81.js"></script>
 ```
 
-You will also have to include the contents of the manifest.js file inline (simply copy and paste the contents of the entire file):
+You will also have to include the contents of the manifest.js file inline (simply copy and paste the contents of the entire file) and put the script tag above vendor and app script tags:
 ```html
 <script>
   !function(e){function t(n){if(a[n])return a[n] ....... //# sourceMappingURL=manifest.9abe1b9f4ce3e063d78d.js.map
