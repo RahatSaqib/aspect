@@ -11,13 +11,14 @@ export default function translate(key) {
   return Component => {
     class TranslationComponent extends React.Component {
       render() {
-        let strings = languages[this.context.currentLanguage][key]
+        let lang = this.context.currentLanguage || 'en'
+        let strings = languages[lang][key]
         return <Component {...this.props } {...this.state } strings={strings} />
       }
     }
 
     TranslationComponent.contextTypes = {
-      currentLanguage: React.PropTypes.string.isRequired
+      currentLanguage: React.PropTypes.string
     }
 
     return TranslationComponent
