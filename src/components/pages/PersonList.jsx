@@ -41,9 +41,6 @@ export class PersonList extends React.Component {
   render() {
     return (
       <div className="content">
-
-        <h1 className="content-h1">{ this.props.strings.title }</h1>
-
         <form onSubmit={ this.handleSubmit }>
           <Toolbar className={"toolbar"} >
             <ToolbarGroup firstChild={true}>

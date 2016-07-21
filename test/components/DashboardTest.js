@@ -5,7 +5,6 @@ import Snackbar from 'material-ui/Snackbar'
 import theme from '../../src/theme'
 import {
   renderIntoDocument,
-  findRenderedDOMComponentWithClass,
   findRenderedComponentWithType
 } from 'react-addons-test-utils'
 import Immutable from 'immutable'
@@ -15,20 +14,6 @@ import {assert} from 'chai'
 describe('Dashboard', () => {
 
   let user = new Immutable.Map({ name: 'Stefan Baumgartner' })
-
-  it('renders an h1 with the class "content-h1" that says "Dashboard"', () => {
-
-    let location = { search: 'asfd' }
-
-    const component = renderIntoDocument(
-      <MuiThemeProvider muiTheme={getMuiTheme(theme)}>
-        <Dashboard location={location} />
-      </MuiThemeProvider>
-    )
-    const title = findRenderedDOMComponentWithClass(component, 'content-h1')
-    assert.equal(title.innerText, 'Dashboard')
-    assert.equal(title.className, 'content-h1')
-  })
 
   it('shows the snackbar with user name if query string contains "fl=1"', () => {
 

@@ -32,7 +32,7 @@ const routes =
   <Router history={browserHistory} render={applyRouterMiddleware(useScroll())}>
     <Route component={App}>
       <Route component={Login} path="login" />
-        <Route  component={LoggedInShell}
+        <Route component={LoggedInShell}
                 onEnter={(nextState, replace) => requireAuth(nextState, replace)}>
           <Route path="/" component={DashboardContainer} />
           <Route path="/devices" component={DeviceListContainer} />

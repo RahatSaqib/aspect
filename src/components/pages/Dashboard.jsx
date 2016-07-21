@@ -17,7 +17,6 @@ export class Dashboard extends React.Component {
   render() {
     return (
       <div className="content">
-        <h1 className="content-h1">{ this.props.strings.title }</h1>
         <div className="pure-g">
           <div className="pure-u-lg-1-4 pure-u-md-1-3 pure-u-sm-1-2">
             <Link to="devices">

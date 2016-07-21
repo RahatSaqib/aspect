@@ -62,7 +62,8 @@ export function changeLanguage(lang){
 
   window.localStorage.lang = lang
 
-  return{
+  // todo: update in db
+  return {
     type: types.CHANGE_LANGUAGE,
     lang
   }
