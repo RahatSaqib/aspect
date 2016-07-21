@@ -52,7 +52,7 @@ export class DeviceList extends React.Component {
                           onChange={ this.handleFilterChange }
                           className="filter-textfield"
                           hintText="Filter by name" />
-              <RaisedButton label="Filter" primary={true} onClick={ this.handleSubmit } />                         
+              <RaisedButton label="Filter" primary={true} onClick={ this.handleSubmit } />
             </ToolbarGroup>
             <ToolbarGroup lastChild={true}>
               <IconMenu iconButtonElement={
