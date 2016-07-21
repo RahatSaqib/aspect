@@ -50,16 +50,16 @@ export class DeviceList extends React.Component {
               <TextField  value={this.state.filters.get('name')}
                           id="name"
                           onChange={ this.handleFilterChange }
-                          style={{ maxWidth: '150px', margin: '5px 0 0 15px' }}
+                          className="filter-textfield"
                           hintText="Filter by name" />
+              <RaisedButton label="Filter" primary={true} onClick={ this.handleSubmit } />                         
             </ToolbarGroup>
             <ToolbarGroup lastChild={true}>
-              <RaisedButton label="Filter" primary={true} onClick={ this.handleSubmit } />
               <IconMenu iconButtonElement={
                   <IconButton touch={true}>
                     <NavigationExpandMoreIcon />
                   </IconButton>}>
-                <MenuItem primaryText="Reset" onTouchTap={ this.handleReset } />
+                <MenuItem primaryText="Clear Filters" onTouchTap={ this.handleReset } />
                 <MenuItem primaryText="Export to Excel" />
                 <MenuItem primaryText="Export to CSV" />
               </IconMenu>

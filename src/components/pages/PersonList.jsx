@@ -47,16 +47,16 @@ export class PersonList extends React.Component {
               <TextField  value={this.state.filters.get('name')}
                           id="name"
                           onChange={ this.handleFilterChange }
-                          style={{ margin: '5px 0 0 15px', maxWidth: '150px' }}
+                          className="filter-textfield"
                           hintText="Filter by name" />
+              <RaisedButton label="Filter" primary={true} />
             </ToolbarGroup>
             <ToolbarGroup lastChild={true}>
-              <RaisedButton label="Filter" primary={true} />
               <IconMenu iconButtonElement={
                   <IconButton touch={true}>
                     <NavigationExpandMoreIcon />
                   </IconButton>}>
-                <MenuItem primaryText="Reset" onTouchTap={ this.handleReset } />
+                <MenuItem primaryText="Clear Filters" onTouchTap={ this.handleReset } />
                 <MenuItem primaryText="Export to Excel" />
                 <MenuItem primaryText="Export to CSV" />
               </IconMenu>

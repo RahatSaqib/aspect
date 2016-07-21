@@ -76,3 +76,8 @@ body {
     left: 18px;
     transform: rotate(180deg) !important;
 }
+
+.filter-textfield {
+    max-width: 150px !important;
+    margin: 5px 0 0 15px !important;
+}
