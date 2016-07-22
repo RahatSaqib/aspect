@@ -38,7 +38,7 @@ const apiLimiter = new rateLimit({
 
 // limiter for auth related actions
 // allows 10 calls within 15 minutes, then starts slowing down response
-// by 3 second increments. completely blocks after 15 attempts
+// by 3 second increments. completely blocks after 20 attempts
 const throttleAuthMessage = 'Too many login attempts from this IP. Please try again in 15 minutes.'
 const authLimiter = new rateLimit({
   windowMs: 15*60*1000,
@@ -56,7 +56,7 @@ const authLimiter = new rateLimit({
   keyGenerator: function(req){
 
     // disable for localhost so we can run our unit tests without getting blocked
-    if (req.ip.indexOf('127.0.0.1') !== -1){
+    if (req.ip.indexOf('127.0.0.1' || req.ip === '::1') !== -1){
       return Math.random()
     }
 
