@@ -8,10 +8,15 @@ import LoggedInShell from './components/LoggedInShell'
 
 // "Pages"
 import Login from './components/Login'
-import { DashboardContainer } from './components/pages/Dashboard'
-import { DeviceListContainer } from './components/pages/DeviceList'
-import { PersonListContainer } from './components/pages/PersonList'
-import { NotFoundContainer } from './components/pages/NotFound'
+import { DashboardContainer } from './components/pages/dashboard/Dashboard'
+import { Inventory } from './components/pages/dashboard/Inventory'
+import { Maintenance } from './components/pages/dashboard/Maintenance'
+import { DeviceListContainer } from './components/pages/device/DeviceList'
+import { PersonListContainer } from './components/pages/person/PersonList'
+import { NotFoundContainer } from './components/pages/error/NotFound'
+import { ResultList } from './components/pages/result/ResultList'
+import { NotificationList } from './components/pages/notification/NotificationList'
+import { ReportList } from './components/pages/report/ReportList'
 
 function requireAuth(nextState, replace) {
   // TODO: check access level based on tokens/roles in jwt
@@ -35,16 +40,23 @@ const routes =
       <Route component={LoggedInShell}
         onEnter={(nextState, replace) => requireAuth(nextState, replace) }>
         
-        <Redirect from='/' to='/dashboard' />
+        <Redirect from='/' to='dashboard' />
 
-        <Route name="dashboard" path="/dashboard" >
+        <Route path="dashboard" >
           <IndexRoute component={DashboardContainer} />
-          <Route path="/devices" component={DeviceListContainer} />
+          <Route path="inventory" component={Inventory} />
+          <Route path="maintenance" component={Maintenance} />
         </Route>
         
-        <Route path="/devices" component={DeviceListContainer} />
+        <Route path="/device" component={DeviceListContainer} />
+
+        <Route path="/result" component={ResultList} />
         
-        <Route path="/persons" component={PersonListContainer} />
+        <Route path="/person" component={PersonListContainer} />
+
+        <Route path="/notification" component={NotificationList} />
+
+        <Route path="/report" component={ReportList} />
       
       </Route>
       <Route path="*" component={NotFoundContainer} />

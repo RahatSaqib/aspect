@@ -5,7 +5,7 @@ import IconButton from 'material-ui/IconButton'
 import ActionHome from 'material-ui/svg-icons/action/home'
 import ActionBack from 'material-ui/svg-icons/hardware/keyboard-arrow-left'
 
-import translate from '../../i18n/translate'
+import translate from '../../../i18n/translate'
 
 export class NotFound extends React.Component {
 
@@ -19,7 +19,7 @@ export class NotFound extends React.Component {
       <div className="error-page">
         <h1>{ this.props.strings.title }</h1>
         <h2>{ this.props.strings.help }</h2>
-        <IconButton onClick={ this.props.history.goBack } ><ActionBack /></IconButton>
+        <IconButton onClick={ this.context.router.goBack } ><ActionBack /></IconButton>
         <Link to="/" ><IconButton ><ActionHome /></IconButton></Link>
       </div>
     )
@@ -30,6 +30,10 @@ NotFound.defaultProps = {
   strings: {
     title: 'Not Found'
   }
+}
+
+NotFound.contextTypes = {
+  router: React.PropTypes.object.isRequired
 }
 
 export const NotFoundContainer = translate('NotFound')(NotFound)
