@@ -21,7 +21,7 @@ export function loginSuccess() {
     drawerOpen: local.drawerOpen === 'true',
     meta: {
       transition: () => ({
-        pathname: '/',
+        pathname: 'dashboard',
         search: '?fl=1'
       })
     }

@@ -21,7 +21,7 @@ class Nav extends React.Component {
       <AppBar onLeftIconButtonTouchTap={this.props.handleHamburger}
         title={ "Aspect" }
         titleStyle={ { cursor: 'pointer', fontWeight: '300', fontSize: '1.3rem' } }
-        onTitleTouchTap={ () => { browserHistory.push('/') } }
+        onTitleTouchTap={ () => { browserHistory.push('/dashboard') } }
         children={
           <div>
             <Badge  badgeContent={4} primary={true}
@@ -37,7 +37,7 @@ class Nav extends React.Component {
               </IconButton>}>
               <MenuItem primaryText="English" onTouchTap={() => { this.props.handleLanguageChange('en') } } />
               <MenuItem primaryText="French" onTouchTap={() => { this.props.handleLanguageChange('fr') } } />
-              <MenuItem primaryText="Help" linkButton={true} href="/" />
+              <MenuItem primaryText="Help" linkButton={true} href="https://admin.gxalert.com" />
               <MenuItem primaryText="Sign out" onTouchTap={this.props.handleSignOut} />
             </IconMenu>
           </div>
