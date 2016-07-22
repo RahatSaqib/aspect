@@ -17,6 +17,7 @@ export function loginSuccess() {
   return {
     type: types.LOGIN_SUCCESS,
     name: local.user,
+    culture: local.culture,
     lang: local.lang,
     drawerOpen: local.drawerOpen === 'true',
     meta: {
@@ -35,6 +36,7 @@ export function refreshSuccess() {
   return {
     type: types.LOGIN_SUCCESS,
     name: local.user,
+    culture: local.culture,
     lang: local.lang,
     drawerOpen: local.drawerOpen === 'true'
   }
@@ -47,6 +49,7 @@ export function hydrateFromLocalStorage() {
   return {
     type: types.LOGIN_SUCCESS,
     name: local.user,
+    culture: local.culture,
     lang: local.lang,
     drawerOpen: local.drawerOpen === 'true'
   }
@@ -152,6 +155,7 @@ export function logoutStart() {
     window.localStorage.removeItem('refresh')
     window.localStorage.removeItem('user')
     window.localStorage.removeItem('lang')
+    window.localStorage.removeItem('culture')
 
     // let the app know that we're now logged out
     dispatch(logoutSuccess())
@@ -182,10 +186,12 @@ export function refreshStart(){
 function storeAccess(json){
   // Store jwt, refresh token, and clientId
   let jwt = jwt_decode(json.access)
-  window.localStorage.access = json.access
-  window.localStorage.access_expires = jwt.exp
-  window.localStorage.refresh = json.refresh
-  window.localStorage.clientId = json.clientId
-  window.localStorage.user = jwt.name
-  window.localStorage.lang = jwt.culture.substring(0, 2)
+  let db = window.localStorage
+  db.access = json.access
+  db.access_expires = jwt.exp
+  db.refresh = json.refresh
+  db.clientId = json.clientId
+  db.user = jwt.name
+  db.lang = jwt.culture.substring(0, 2)
+  db.culture = jwt.culture
 }

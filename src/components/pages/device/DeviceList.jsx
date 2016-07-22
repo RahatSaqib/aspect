@@ -4,7 +4,9 @@ import PureRenderMixin from 'react-addons-pure-render-mixin'
 import { fetchDevices, resetDevices, filterDevices } from '../../../action_creators/device_creators'
 import { DataTable } from '../../shared/DataTable'
 import translate from '../../../i18n/translate'
-import moment from 'moment'
+
+import FormattedNumber from '../../shared/FormattedNumber'
+import FormattedDate from '../../shared/FormattedDate'
 
 import NavigationExpandMoreIcon from 'material-ui/svg-icons/navigation/expand-more'
 import RaisedButton from 'material-ui/RaisedButton'
@@ -79,12 +81,12 @@ export class DeviceList extends React.Component {
                   columns={[  { db: 'name', title: this.props.strings.deviceName },
                               { db: 'status', title: this.props.strings.status, hideOnXs: true },
                               { db: 'createdOn', title: this.props.strings.reportingFor, hideOnXs: true,
-                                format: (data) => { return moment(data).fromNow(true) } },
+                                format: (data) => { return <FormattedDate date={ data } fromNow={true} omitSuffix={true} /> } },
                               { db: 'lastSeen', title: this.props.strings.lastSeen, hideOnXs: true,
                                 info: 'When did we last hear from the device?',
-                                format: (data) => { return moment(data).fromNow() } },
+                                format: (data) => { return <FormattedDate date={ data } fromNow={true} /> } },
                               { db: 'totalTests', title: this.props.strings.totalTests,
-                                format: (data) => { return(data.toLocaleString()) } } ]} />
+                                format: (data) => { return <FormattedNumber number={ data } /> } } ]} />
       </div>
     )
   }

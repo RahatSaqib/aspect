@@ -6,8 +6,8 @@ function loginRequest(state){
   return state.merge({ loggedIn: false, loggingIn: true })
 }
 
-function loginSuccess(state, name, lang = 'en', drawerOpen){
-  return state.merge({ name: name, lang: lang, loggedIn: true, loggingIn: false, drawerOpen: drawerOpen })
+function loginSuccess(state, name, culture = 'en-US', lang = 'en', drawerOpen){
+  return state.merge({ name: name, culture: culture, lang: lang, loggedIn: true, loggingIn: false, drawerOpen: drawerOpen })
 }
 
 function loginFailure(state){
@@ -31,7 +31,7 @@ const login = function(state = Immutable.Map(), action) {
   case types.LOGIN_REQUEST:
     return loginRequest(state)
   case types.LOGIN_SUCCESS:
-    return loginSuccess(state, action.name, action.lang, action.drawerOpen)
+    return loginSuccess(state, action.name, action.culture, action.lang, action.drawerOpen)
   case types.LOGIN_FAILURE:
     return loginFailure(state)
   case types.LOGOUT_SUCCESS:

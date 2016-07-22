@@ -3,6 +3,8 @@ import Paper from 'material-ui/Paper'
 import PureRenderMixin from 'react-addons-pure-render-mixin'
 import { Sparklines, SparklinesLine, SparklinesSpots } from 'react-sparklines'
 
+import FormattedNumber from './FormattedNumber'
+
 require('./../../styles/Charts.css')
 
 class MiniChart extends React.Component {
@@ -23,7 +25,7 @@ class MiniChart extends React.Component {
           </div>
           <div className="minichart-count">
               <small>{this.props.label}</small>
-              <span>{this.props.number.toLocaleString()}</span>
+              <FormattedNumber number={this.props.number} />
           </div>
           <div className="clear-fix" ></div>
         </Paper>
