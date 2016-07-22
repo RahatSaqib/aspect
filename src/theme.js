@@ -9,9 +9,15 @@ import {
 } from 'material-ui/styles/colors'
 
 export default {
+  appBar: {
+    height: 56
+  },
+  drawer: {
+    width: 220
+  },
   spacing: {
-    // iconSize: 24,
-    // desktopGutter: 24,
+    iconSize: 24
+    // desktopGutter: 20,
     // desktopGutterMore: 32,
     // desktopGutterLess: 16,
     // desktopGutterMini: 8,

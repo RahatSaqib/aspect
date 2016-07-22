@@ -60,11 +60,11 @@ class Login extends React.Component {
                 <TextField ref="user" errorStyle={{ float: 'left' }} value={this.state.user} floatingLabelText="Username" errorText={this.state.error_user} onChange={this.handleUserChange} />
                 <TextField ref="password" errorStyle={{ float: 'left' }} value={this.state.password} onChange={this.handlePasswordChange} floatingLabelText="Password" type="password" errorText={this.state.error_password} />
               </div>
-            <div style={{ float: 'left', width: '15%'}}>
-              <FloatingActionButton type="submit" secondary={true} style={{ position: 'relative', top: '50px', right: '-45px' }}>
-                <Arrow />
-              </FloatingActionButton>
-            </div>
+              <div style={{ width: '13%', float: 'left'}}>
+                <FloatingActionButton type="submit" secondary={true} style={{ margin: '50px 45px' }}>
+                  <Arrow />
+                </FloatingActionButton>
+              </div>
             </form>
         </Paper>
         <div style={{width: '400px', margin: 'auto'}}>

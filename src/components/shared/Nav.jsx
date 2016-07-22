@@ -9,6 +9,7 @@ import Badge from 'material-ui/Badge'
 import NotificationsIcon from 'material-ui/svg-icons/social/notifications'
 import PureRenderMixin from 'react-addons-pure-render-mixin'
 import { logoutStart, changeLanguage } from '../../action_creators/user_creators'
+import { browserHistory } from 'react-router'
 
 class Nav extends React.Component {
 
@@ -19,25 +20,30 @@ class Nav extends React.Component {
 
   render() {
     return (
-        <AppBar onLeftIconButtonTouchTap={this.props.handleHamburger}
-                title={ "Devices" }
-                titleStyle={ { cursor: 'pointer' } }
-                children={
-                  <div>
-                    <Badge badgeContent={4} primary={true} badgeStyle={{top: 8, right: 8}}>
-                      <NotificationsIcon color={'#fff'} />
-                    </Badge>
-                    <IconMenu iconButtonElement={
-                      <IconButton>
-                        <MoreVertIcon color={'#fff'} />
-                      </IconButton>}>
-                      <MenuItem primaryText="English" onTouchTap={() => {this.props.handleLanguageChange('en')}} />
-                      <MenuItem primaryText="French" onTouchTap={() => {this.props.handleLanguageChange('fr')}} />
-                      <MenuItem primaryText="Help" linkButton={true} href="/" />
-                      <MenuItem primaryText="Sign out" onTouchTap={this.props.handleSignOut} />
-                    </IconMenu>
-                    </div>
-                  }/>
+      <AppBar onLeftIconButtonTouchTap={this.props.handleHamburger}
+        title={ "Aspect" }
+        titleStyle={ { cursor: 'pointer', fontWeight: '300', fontSize: '1.3rem' } }
+        onTitleTouchTap={ () => { browserHistory.push('/') } }
+        children={
+          <div>
+            <Badge  badgeContent={4} primary={true}
+              badgeStyle={{ height: 20, width: 20, fontSize: 11, top: 6 }}
+              style={{ padding: '6px 0 0 0' }}>
+              <IconButton tooltip="You have 4 unread notifications" iconStyle={ { height: 20 } }>
+                <NotificationsIcon color={'#fff'} />
+              </IconButton>
+            </Badge>
+            <IconMenu iconButtonElement={
+              <IconButton>
+                <MoreVertIcon color={'#fff'} />
+              </IconButton>}>
+              <MenuItem primaryText="English" onTouchTap={() => { this.props.handleLanguageChange('en') } } />
+              <MenuItem primaryText="French" onTouchTap={() => { this.props.handleLanguageChange('fr') } } />
+              <MenuItem primaryText="Help" linkButton={true} href="/" />
+              <MenuItem primaryText="Sign out" onTouchTap={this.props.handleSignOut} />
+            </IconMenu>
+          </div>
+        }/>
     )
   }
 }
@@ -47,7 +53,7 @@ Nav.propTypes = {
   handleSignOut: React.PropTypes.func.isRequired
 }
 
-Nav.contextTypes =  {
+Nav.contextTypes = {
   router: React.PropTypes.object.isRequired
 }
 

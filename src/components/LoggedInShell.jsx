@@ -10,7 +10,7 @@ class LoggedInShell extends React.Component {
   constructor(props) {
     super(props)
     this.shouldComponentUpdate = PureRenderMixin.shouldComponentUpdate.bind(this)
-    this.state = {drawerOpen: false}
+    this.state = { drawerOpen: true, desktop: true }
   }
 
   // user clicked on the menu-icon in the header
@@ -24,10 +24,13 @@ class LoggedInShell extends React.Component {
       <div>
         <ErrorDisplayContainer />
         <SideNav  open={this.state.drawerOpen}
+                  desktop={ this.state.desktop }
                   handleClose={this.handleSideClose}
                   handleRequestChange={(drawerOpen) => this.setState({drawerOpen})} />
         <Nav handleHamburger={this.handleHamburger} />
-        {this.props.children}
+        <div style={ this.state.drawerOpen && this.state.desktop ? { paddingLeft: '190px' } : {} } >
+          {this.props.children}
+        </div>
       </div>
     )
   }
