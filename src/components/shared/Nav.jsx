@@ -1,5 +1,4 @@
 import React from 'react'
-import { connect } from 'react-redux'
 import AppBar from 'material-ui/AppBar'
 import IconButton from 'material-ui/IconButton'
 import IconMenu from 'material-ui/IconMenu'
@@ -8,7 +7,6 @@ import MoreVertIcon from 'material-ui/svg-icons/navigation/more-vert'
 import Badge from 'material-ui/Badge'
 import NotificationsIcon from 'material-ui/svg-icons/social/notifications'
 import PureRenderMixin from 'react-addons-pure-render-mixin'
-import { logoutStart, changeLanguage } from '../../action_creators/user_creators'
 import { browserHistory } from 'react-router'
 
 class Nav extends React.Component {
@@ -57,21 +55,4 @@ Nav.contextTypes = {
   router: React.PropTypes.object.isRequired
 }
 
-const mapStateToProps = (state) => {
-  return {
-    user: state.get('user')
-  }
-}
-
-const mapDispatchToProps = (dispatch) => {
-  return {
-    handleSignOut: () => {
-      dispatch(logoutStart())
-    },
-    handleLanguageChange: (lang) => {
-      dispatch(changeLanguage(lang))
-    }
-  }
-}
-
-export default connect(mapStateToProps, mapDispatchToProps)(Nav)
+export default Nav

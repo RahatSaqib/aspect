@@ -10,11 +10,15 @@ export function loginRequest() {
   }
 }
 
-export function loginSuccess(name, lang) {
+export function loginSuccess() {
+
+  let local = window.localStorage
+
   return {
     type: types.LOGIN_SUCCESS,
-    name,
-    lang,
+    name: local.user,
+    lang: local.lang,
+    drawerOpen: local.drawerOpen === 'true',
     meta: {
       transition: () => ({
         pathname: '/',
@@ -24,19 +28,27 @@ export function loginSuccess(name, lang) {
   }
 }
 
-export function refreshSuccess(name, lang) {
+export function refreshSuccess() {
+
+  let local = window.localStorage
+  
   return {
     type: types.LOGIN_SUCCESS,
-    name,
-    lang
+    name: local.user,
+    lang: local.lang,
+    drawerOpen: local.drawerOpen === 'true'
   }
 }
 
 export function hydrateFromLocalStorage() {
+
+  let local = window.localStorage
+  
   return {
     type: types.LOGIN_SUCCESS,
-    name: window.localStorage.user,
-    lang: window.localStorage.lang
+    name: local.user,
+    lang: local.lang,
+    drawerOpen: local.drawerOpen === 'true'
   }
 }
 
@@ -66,6 +78,28 @@ export function changeLanguage(lang){
   return {
     type: types.CHANGE_LANGUAGE,
     lang
+  }
+}
+
+export function toggleDrawer(){
+
+  let drawerOpen = window.localStorage.drawerOpen === 'true'
+
+  window.localStorage.drawerOpen = !drawerOpen
+
+  return {
+    type: types.TOGGLE_DRAWER,
+    drawerOpen: !drawerOpen
+  }
+}
+
+export function closeDrawer(){
+
+  window.localStorage.drawerOpen = false
+
+  return {
+    type: types.TOGGLE_DRAWER,
+    drawerOpen: false
   }
 }
 
@@ -99,7 +133,7 @@ export function loginStart(user, password) {
 
         // We can dispatch many times!
         // Here, we update the app state with the results of the API call.
-        dispatch(loginSuccess(user, window.localStorage.lang))
+        dispatch(loginSuccess())
       })
       .catch(err => {
         dispatch(loginFailure(err))
@@ -137,7 +171,7 @@ export function refreshStart(){
     .then(json => {
       storeAccess(json)
 
-      dispatch(refreshSuccess(window.localStorage.user, window.localStorage.lang))
+      dispatch(refreshSuccess())
     })
     .catch(() => {
       dispatch(logoutStart())

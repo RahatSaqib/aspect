@@ -1,5 +1,7 @@
 import React from 'react'
+import { connect } from 'react-redux'
 import PureRenderMixin from 'react-addons-pure-render-mixin'
+import { logoutStart, changeLanguage, toggleDrawer, closeDrawer } from '../action_creators/user_creators'
 
 import Nav from './shared/Nav'
 import SideNav from './shared/SideNav'
@@ -10,25 +12,19 @@ class LoggedInShell extends React.Component {
   constructor(props) {
     super(props)
     this.shouldComponentUpdate = PureRenderMixin.shouldComponentUpdate.bind(this)
-    this.state = { drawerOpen: true, desktop: true }
+    this.state = { desktop: true }
   }
-
-  // user clicked on the menu-icon in the header
-  handleHamburger = () => this.setState({drawerOpen: !this.state.drawerOpen})
-
-  // user wants to close the side drawer
-  handleSideClose = () => this.setState({drawerOpen: false})
 
   render() {
     return (
       <div>
         <ErrorDisplayContainer />
-        <SideNav  open={this.state.drawerOpen}
+        <SideNav  open={this.props.drawerOpen}
                   desktop={ this.state.desktop }
-                  handleClose={this.handleSideClose}
+                  handleClose={this.props.handleDrawerClose}
                   handleRequestChange={(drawerOpen) => this.setState({drawerOpen})} />
-        <Nav handleHamburger={this.handleHamburger} />
-        <div style={ this.state.drawerOpen && this.state.desktop ? { paddingLeft: '190px' } : {} } >
+        <Nav handleHamburger={this.props.handleDrawerChange} handleSignOut={this.props.handleSignOut} handleLanguageChange={this.props.handleLanguageChange} />
+        <div style={ this.props.drawerOpen && this.state.desktop ? { paddingLeft: '190px' } : {} } >
           {this.props.children}
         </div>
       </div>
@@ -40,4 +36,27 @@ LoggedInShell.propTypes = {
   children: React.PropTypes.object.isRequired
 }
 
-export default LoggedInShell
+const mapStateToProps = (state) => {
+  return {
+    drawerOpen: state.getIn(['user', 'drawerOpen'])
+  }
+}
+
+const mapDispatchToProps = (dispatch) => {
+  return {
+    handleSignOut: () => {
+      dispatch(logoutStart())
+    },
+    handleLanguageChange: (lang) => {
+      dispatch(changeLanguage(lang))
+    },
+    handleDrawerChange: () => {
+      dispatch(toggleDrawer())
+    },
+    handleDrawerClose: () => {
+      dispatch(closeDrawer())
+    }
+  }
+}
+
+export default connect(mapStateToProps, mapDispatchToProps)(LoggedInShell)
