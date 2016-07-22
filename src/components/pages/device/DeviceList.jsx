@@ -81,12 +81,11 @@ export class DeviceList extends React.Component {
                   columns={[  { db: 'name', title: this.props.strings.deviceName },
                               { db: 'status', title: this.props.strings.status, hideOnXs: true },
                               { db: 'createdOn', title: this.props.strings.reportingFor, hideOnXs: true,
-                                format: (data) => { return <FormattedDate date={ data } fromNow={true} omitSuffix={true} /> } },
+                                format: (data) => <FormattedDate date={ data } fromNow={true} omitSuffix={true} /> },
                               { db: 'lastSeen', title: this.props.strings.lastSeen, hideOnXs: true,
-                                info: 'When did we last hear from the device?',
-                                format: (data) => { return <FormattedDate date={ data } fromNow={true} /> } },
+                                format: (data) => <FormattedDate date={ data } fromNow={true} /> },
                               { db: 'totalTests', title: this.props.strings.totalTests,
-                                format: (data) => { return <FormattedNumber number={ data } /> } } ]} />
+                                format: (data) => <FormattedNumber number={ data } /> } ]} />
       </div>
     )
   }

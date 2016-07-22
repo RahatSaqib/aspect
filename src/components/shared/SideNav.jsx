@@ -23,14 +23,6 @@ class SideNav extends React.Component {
   constructor(props) {
     super(props)
     this.shouldComponentUpdate = PureRenderMixin.shouldComponentUpdate.bind(this)
-    this.handleMenuItemTouchTap = this.handleMenuItemTouchTap.bind(this)
-  }
-
-  handleMenuItemTouchTap() {
-    // keep drawer open if on desktop and link in drawer is clicked
-    if (!this.props.desktop) {
-      this.props.handleClose
-    }
   }
 
   render() {
@@ -38,7 +30,7 @@ class SideNav extends React.Component {
       <Drawer docked={ this.props.desktop }
         containerStyle={ this.props.desktop ? { position: 'absolute', top: '68px', backgroundColor: '#f2f2f2', boxShadow: 'none' } : {} }
         open={this.props.open} onRequestChange={ this.props.handleClose}>
-        <SelectableList selectedPath={ '/dashboard' }>
+        <SelectableList selectedPath={ '/dashboard' } desktop={ this.props.desktop } handleClose={ this.props.handleClose } >
           <Subheader>Dashboards</Subheader>
           <ListItem
             value={ '/dashboard' }

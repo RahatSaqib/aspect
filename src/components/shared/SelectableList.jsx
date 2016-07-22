@@ -22,6 +22,12 @@ function wrapState(ComposedComponent) {
         selectedPath: path
       })
 
+      // if we're not on the desktop and 
+      // user clicked a link, close side nav
+      if (!this.props.desktop) {
+        this.props.handleClose()
+      }
+
       browserHistory.push(path)
 
     };
