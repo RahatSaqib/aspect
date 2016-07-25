@@ -7,7 +7,7 @@ function loginRequest(state){
 }
 
 function loginSuccess(state, name, culture = 'en-US', lang = 'en', drawerOpen){
-  return state.merge({ name: name, culture: culture, lang: lang, loggedIn: true, loggingIn: false, drawerOpen: drawerOpen })
+  return state.merge({ name, culture, lang, loggedIn: true, loggingIn: false, drawerOpen })
 }
 
 function loginFailure(state){
@@ -19,11 +19,11 @@ function logOut(state){
 }
 
 function changeLanguage(state, lang){
-  return state.merge({ lang: lang })
+  return state.merge({ lang })
 }
 
 function toggleDrawer(state, drawerOpen){
-  return state.merge({ drawerOpen: drawerOpen })
+  return state.merge({ drawerOpen })
 }
 
 const login = function(state = Immutable.Map(), action) {

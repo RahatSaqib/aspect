@@ -14,8 +14,8 @@ function requestPersons(state, newState) {
   })
 }
 
-function receivePersons(state, persons, total) {
-  return state.merge({ loading: false, items: persons, total: total })
+function receivePersons(state, items, total) {
+  return state.merge({ loading: false, items, total })
 }
 
 const person = function(state = Immutable.Map({

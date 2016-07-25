@@ -14,8 +14,8 @@ function requestDevices(state, newState) {
   })
 }
 
-function receiveDevices(state, devices, total) {
-  return state.merge({ loading: false, items: devices, total: total })
+function receiveDevices(state, items, total) {
+  return state.merge({ loading: false, items, total })
 }
 
 const device = function(state = Immutable.Map({
