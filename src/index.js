@@ -26,7 +26,7 @@ const store = createStoreWithDevTools(rootReducer)
 // get new access token on refresh/startup
 if (window.localStorage.refresh){
 
-  // let's see if we can get user name and language from local storage
+  // let's see if we can get language and culture from local storage
   store.dispatch(hydrateFromLocalStorage())
 
   // get new access token

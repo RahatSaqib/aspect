@@ -45,7 +45,7 @@ export function fetchPersons(sortCol, sortDir, page, size, filters){
       qsFilters = Object.keys(filters).map(k => `${encodeURIComponent(k)}=${encodeURIComponent(filters[k])}`).join('&')
     }
 
-    let headers = new Headers({ 'x-access-token': window.localStorage.access })
+    let headers = new Headers({ 'x-access-token': window.localStorage.jwt })
 
     return fetch(`${config.aspectApi}/person?sortCol=${sortCol}&sortDir=${sortDir}&page=${page}&size=${size}&${qsFilters}`, { headers: headers })
       .then(util.handleFetchError)

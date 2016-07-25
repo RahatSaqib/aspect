@@ -10,16 +10,14 @@ export function loginRequest() {
   }
 }
 
-export function loginSuccess() {
-
-  let local = window.localStorage
+export function loginSuccess(name, culture, lang) {
 
   return {
     type: types.LOGIN_SUCCESS,
-    name: local.user,
-    culture: local.culture,
-    lang: local.lang,
-    drawerOpen: local.drawerOpen === 'true',
+    name,
+    culture,
+    lang,
+    drawerOpen: window.localStorage.drawerOpen === 'true',
     meta: {
       transition: () => ({
         pathname: 'dashboard',
@@ -29,29 +27,28 @@ export function loginSuccess() {
   }
 }
 
-export function refreshSuccess() {
+export function refreshSuccess(name, culture, lang) {
 
-  let local = window.localStorage
-  
+  let db = window.localStorage
+
   return {
     type: types.LOGIN_SUCCESS,
-    name: local.user,
-    culture: local.culture,
-    lang: local.lang,
-    drawerOpen: local.drawerOpen === 'true'
+    name,
+    culture,
+    lang,
+    drawerOpen: db.drawerOpen === 'true'
   }
 }
 
 export function hydrateFromLocalStorage() {
 
-  let local = window.localStorage
-  
+  let db = window.localStorage
+
   return {
     type: types.LOGIN_SUCCESS,
-    name: local.user,
-    culture: local.culture,
-    lang: local.lang,
-    drawerOpen: local.drawerOpen === 'true'
+    culture: db.culture,
+    lang: db.lang,
+    drawerOpen: db.drawerOpen === 'true'
   }
 }
 
@@ -73,7 +70,7 @@ export function logoutSuccess() {
   }
 }
 
-export function changeLanguage(lang){
+export function changeLanguage(lang) {
 
   window.localStorage.lang = lang
 
@@ -84,7 +81,7 @@ export function changeLanguage(lang){
   }
 }
 
-export function toggleDrawer(){
+export function toggleDrawer() {
 
   let drawerOpen = window.localStorage.drawerOpen === 'true'
 
@@ -96,7 +93,7 @@ export function toggleDrawer(){
   }
 }
 
-export function closeDrawer(){
+export function closeDrawer() {
 
   window.localStorage.drawerOpen = false
 
@@ -122,21 +119,25 @@ export function loginStart(user, password) {
     let clientName = util.getBrowserNameAndVersion() + ' on ' + window.navigator.platform
 
     return fetch(config.aspectApi + '/auth',
-                  { method: 'POST',
-                    mode: 'cors',
-                    headers: {  'Content-Type': 'application/json' },
-                    body:  JSON.stringify({  name: user,
-                              password: password,
-                              clientId: window.localStorage.clientId,
-                              clientName: clientName })})
+      {
+        method: 'POST',
+        mode: 'cors',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          name: user,
+          password: password,
+          clientId: window.localStorage.clientId,
+          clientName: clientName
+        })
+      })
       .then(util.handleFetchError)
       .then(json => {
 
-        storeAccess(json)
+        let jwt = storeAccess(json)
 
         // We can dispatch many times!
         // Here, we update the app state with the results of the API call.
-        dispatch(loginSuccess())
+        dispatch(loginSuccess(jwt.name, jwt.culture, jwt.lang))
       })
       .catch(err => {
         dispatch(loginFailure(err))
@@ -162,36 +163,41 @@ export function logoutStart() {
   }
 }
 
-export function refreshStart(){
+export function refreshStart() {
   return function (dispatch) {
     // try to get a new access token:
     fetch(config.aspectApi + '/auth/refresh',
-                { method: 'POST',
-                  mode: 'cors',
-                  headers: {  'Content-Type': 'application/json' },
-                  body:  JSON.stringify({  token: window.localStorage.refresh,
-                            clientId: window.localStorage.clientId })})
-    .then(util.handleFetchError)
-    .then(json => {
-      storeAccess(json)
+      {
+        method: 'POST',
+        mode: 'cors',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          token: window.localStorage.refresh,
+          clientId: window.localStorage.clientId
+        })
+      })
+      .then(util.handleFetchError)
+      .then(json => {
+        let jwt = storeAccess(json)
 
-      dispatch(refreshSuccess())
-    })
-    .catch(() => {
-      dispatch(logoutStart())
-    })
+        dispatch(refreshSuccess(jwt.name, jwt.culture, jwt.lang))
+      })
+      .catch(() => {
+        dispatch(logoutStart())
+      })
   }
 }
 
-function storeAccess(json){
+function storeAccess(json) {
   // Store jwt, refresh token, and clientId
   let jwt = jwt_decode(json.access)
   let db = window.localStorage
-  db.access = json.access
-  db.access_expires = jwt.exp
+  db.jwt = json.access
+  db.jwt_expires = jwt.exp
   db.refresh = json.refresh
   db.clientId = json.clientId
-  db.user = jwt.name
   db.lang = jwt.culture.substring(0, 2)
   db.culture = jwt.culture
+
+  return jwt
 }

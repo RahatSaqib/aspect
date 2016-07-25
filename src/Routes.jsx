@@ -20,9 +20,9 @@ import { ReportList } from './components/pages/report/ReportList'
 
 function requireAuth(nextState, replace) {
   // TODO: check access level based on tokens/roles in jwt
-  if (!window.localStorage.access ||
-    !window.localStorage.access_expires ||
-    window.localStorage.access_expires < Math.floor(Date.now() / 1000)) {
+  if (!window.localStorage.jwt ||
+    !window.localStorage.jwt_expires ||
+    window.localStorage.jwt_expires < Math.floor(Date.now() / 1000)) {
 
     // if no access token or it is expired or expires within 10 minutes (600s),
     // try to refresh if we have a refresh token
@@ -39,7 +39,7 @@ const routes =
       <Route component={Login} path="login" />
       <Route component={LoggedInShell}
         onEnter={(nextState, replace) => requireAuth(nextState, replace) }>
-        
+
         <Redirect from='/' to='dashboard' />
 
         <Route path="dashboard" >
@@ -47,17 +47,17 @@ const routes =
           <Route path="inventory" component={Inventory} />
           <Route path="maintenance" component={Maintenance} />
         </Route>
-        
+
         <Route path="/device" component={DeviceListContainer} />
 
         <Route path="/result" component={ResultList} />
-        
+
         <Route path="/person" component={PersonListContainer} />
 
         <Route path="/notification" component={NotificationList} />
 
         <Route path="/report" component={ReportList} />
-      
+
       </Route>
       <Route path="*" component={NotFoundContainer} />
     </Route>
