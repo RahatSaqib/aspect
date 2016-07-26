@@ -21,6 +21,12 @@ body {
     }
 }
 
+/*Get rid of ugly yellow background on Chrome login autocomplete*/
+input:-webkit-autofill {
+    box-shadow: 0 0 0 300px white inset !important;
+    -webkit-box-shadow: 0 0 0 300px white inset !important;
+}
+
 /*Error page styles (404 and other)*/
 .error-page{
     background-color: #BFBFBF;
