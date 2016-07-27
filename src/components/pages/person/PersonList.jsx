@@ -1,10 +1,8 @@
 import React from 'react'
 import { connect } from 'react-redux'
 import PureRenderMixin from 'react-addons-pure-render-mixin'
-import { fetchPersons, resetPersons, filterPersons } from '../../../action_creators/person_creators'
-import { DataTable } from '../../shared/DataTable'
-import translate from '../../../i18n/translate'
 
+// Material-UI
 import NavigationExpandMoreIcon from 'material-ui/svg-icons/navigation/expand-more'
 import RaisedButton from 'material-ui/RaisedButton'
 import { Toolbar, ToolbarGroup } from 'material-ui/Toolbar'
@@ -12,6 +10,10 @@ import MenuItem from 'material-ui/MenuItem'
 import IconMenu from 'material-ui/IconMenu'
 import IconButton from 'material-ui/IconButton'
 import TextField from 'material-ui/TextField'
+
+import { fetchPersons, resetPersons, filterPersons } from '../../../action_creators/person_creators'
+import { DataTable } from '../../shared/DataTable'
+import translate from '../../../i18n/translate'
 
 export class PersonList extends React.Component {
 

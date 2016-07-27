@@ -1,12 +1,15 @@
 import React from 'react'
 import PureRenderMixin from 'react-addons-pure-render-mixin'
-import LinearProgress from 'material-ui/LinearProgress'
+
+// Material-UI
 import {Table, TableBody, TableHeader, TableHeaderColumn, TableRow, TableRowColumn, TableFooter } from 'material-ui/Table'
+import LinearProgress from 'material-ui/LinearProgress'
 import DropDownMenu from 'material-ui/DropDownMenu'
 import MenuItem from 'material-ui/MenuItem'
 import SortIcon from 'material-ui/svg-icons/content/sort'
 import IconButton from 'material-ui/IconButton'
 import Arrow from 'material-ui/svg-icons/av/play-arrow'
+
 import theme from './../../theme'
 
 export class DataTable extends React.Component {
@@ -76,7 +79,7 @@ export class DataTable extends React.Component {
             <TableRow>
               {this.props.columns.map((col) => (
                 <TableHeaderColumn key={col.db} tooltip={col.tooltip} className={ col.hideOnXs ? 'pure-hidden-xs' : '' }>
-                  <span style={{ cursor: 'pointer' }} onClick={() => { this.handleSort(col.db) } }>
+                  <span style={{ cursor: 'pointer' }} onTouchTap={() => { this.handleSort(col.db) } }>
                     {col.title}
                   </span>
                   <SortIcon color={ this.props.sortCol == col.db ? 'black' : 'white' }
@@ -106,13 +109,13 @@ export class DataTable extends React.Component {
                 Displaying items { page * this.props.size + 1 } - { (page + 1) * this.props.size } of { this.props.total }
               </TableRowColumn>
               <TableRowColumn colSpan={this.props.columns.length - 1} style={{ textAlign: 'right', padding: '10px 0 20px 0' }} >
-                <IconButton className={'pager-arrow pager-arrow-prev'} touch={true} onClick={() => { this.handlePage(page - 1) } } disabled={page === 0}>
+                <IconButton className={'pager-arrow pager-arrow-prev'} touch={true} onTouchTap={() => { this.handlePage(page - 1) } } disabled={page === 0}>
                   <Arrow color={theme.palette.primary1Color} />
                 </IconButton>
                 <DropDownMenu maxHeight={300} value={page} onChange={(e, k) => { this.handlePage(k) } }>
                   { pageItems }
                 </DropDownMenu>
-                <IconButton className={'pager-arrow'} touch={true} onClick={() => { this.handlePage(page + 1) } } disabled={ page + 1 >= totalPages}>
+                <IconButton className={'pager-arrow'} touch={true} onTouchTap={() => { this.handlePage(page + 1) } } disabled={ page + 1 >= totalPages}>
                   <Arrow color={theme.palette.primary1Color} />
                 </IconButton>
               </TableRowColumn>

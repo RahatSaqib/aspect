@@ -1,7 +1,7 @@
 import React from 'react'
-import Paper from 'material-ui/Paper'
 import PureRenderMixin from 'react-addons-pure-render-mixin'
 import { Sparklines, SparklinesLine, SparklinesSpots } from 'react-sparklines'
+import Paper from 'material-ui/Paper'
 
 import FormattedNumber from './FormattedNumber'
 

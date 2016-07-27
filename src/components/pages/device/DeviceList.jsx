@@ -2,19 +2,20 @@ import React from 'react'
 import { connect } from 'react-redux'
 import PureRenderMixin from 'react-addons-pure-render-mixin'
 import { fetchDevices, resetDevices, filterDevices } from '../../../action_creators/device_creators'
-import { DataTable } from '../../shared/DataTable'
-import translate from '../../../i18n/translate'
 
-import FormattedNumber from '../../shared/FormattedNumber'
-import FormattedDate from '../../shared/FormattedDate'
-
-import NavigationExpandMoreIcon from 'material-ui/svg-icons/navigation/expand-more'
+// Material-UI
 import RaisedButton from 'material-ui/RaisedButton'
 import { Toolbar, ToolbarGroup } from 'material-ui/Toolbar'
 import MenuItem from 'material-ui/MenuItem'
 import IconMenu from 'material-ui/IconMenu'
 import IconButton from 'material-ui/IconButton'
 import TextField from 'material-ui/TextField'
+import NavigationExpandMoreIcon from 'material-ui/svg-icons/navigation/expand-more'
+
+import { DataTable } from '../../shared/DataTable'
+import translate from '../../../i18n/translate'
+import FormattedNumber from '../../shared/FormattedNumber'
+import FormattedDate from '../../shared/FormattedDate'
 
 export class DeviceList extends React.Component {
 
@@ -54,7 +55,7 @@ export class DeviceList extends React.Component {
                           onChange={ this.handleFilterChange }
                           className="filter-textfield"
                           hintText="Filter by name" />
-              <RaisedButton label="Filter" primary={true} onClick={ this.handleSubmit } />
+              <RaisedButton label="Filter" primary={true} onTouchTap={ this.handleSubmit } />
             </ToolbarGroup>
             <ToolbarGroup lastChild={true}>
               <IconMenu iconButtonElement={

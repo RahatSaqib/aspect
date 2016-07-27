@@ -1,12 +1,11 @@
 import React from 'react'
 import PureRenderMixin from 'react-addons-pure-render-mixin'
+
+// Material-UI
 import Drawer from 'material-ui/Drawer'
 import { ListItem } from 'material-ui/List'
 import Divider from 'material-ui/Divider'
 import Subheader from 'material-ui/Subheader'
-
-import SelectableList from './SelectableList'
-
 import { green500, orange500, indigo600 } from 'material-ui/styles/colors'
 import Home from 'material-ui/svg-icons/action/home'
 import Cart from 'material-ui/svg-icons/action/shopping-cart'
@@ -17,6 +16,7 @@ import People from 'material-ui/svg-icons/social/people'
 import Notifications from 'material-ui/svg-icons/social/notifications'
 import Book from 'material-ui/svg-icons/action/book'
 
+import SelectableList from './SelectableList'
 
 class SideNav extends React.Component {
 

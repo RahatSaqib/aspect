@@ -6,6 +6,7 @@ import ReactDOM from 'react-dom'
 import {Provider} from 'react-redux'
 import {createStore, compose, applyMiddleware} from 'redux'
 import handleTransitions from 'redux-history-transitions'
+
 import rootReducer from './reducers/root'
 import { Routes, browserHistory } from './Routes'
 import { refreshStart, hydrateFromLocalStorage } from './action_creators/user_creators'

@@ -1,6 +1,6 @@
 import React, {Component, PropTypes} from 'react'
-import {List, MakeSelectable} from 'material-ui/List'
 import { browserHistory } from 'react-router'
+import {List, MakeSelectable} from 'material-ui/List'
 
 let SelectableList = MakeSelectable(List)
 

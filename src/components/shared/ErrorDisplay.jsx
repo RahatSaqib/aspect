@@ -1,7 +1,9 @@
 import React from 'react'
 import PureRenderMixin from 'react-addons-pure-render-mixin'
-import Snackbar from 'material-ui/Snackbar'
 import { connect } from 'react-redux'
+
+import Snackbar from 'material-ui/Snackbar'
+
 import { removeError } from '../../action_creators/error_creators'
 
 export class ErrorDisplay extends React.Component {

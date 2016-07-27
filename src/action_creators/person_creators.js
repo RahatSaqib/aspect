@@ -1,8 +1,9 @@
+import Immutable from 'immutable'
 import config from 'config'
-import types from './../constants/action_types'
+
 import util from './../util'
 import { addError } from './error_creators'
-import Immutable from 'immutable'
+import types from './../constants/action_types'
 
 function requestPersons(sortCol, sortDir, page, size, filters) {
   return {

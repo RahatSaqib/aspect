@@ -1,4 +1,8 @@
 import React from 'react'
+import PureRenderMixin from 'react-addons-pure-render-mixin'
+import { browserHistory } from 'react-router'
+
+// Material-UI
 import AppBar from 'material-ui/AppBar'
 import IconButton from 'material-ui/IconButton'
 import IconMenu from 'material-ui/IconMenu'
@@ -6,8 +10,6 @@ import MenuItem from 'material-ui/MenuItem'
 import MoreVertIcon from 'material-ui/svg-icons/navigation/more-vert'
 import Badge from 'material-ui/Badge'
 import NotificationsIcon from 'material-ui/svg-icons/social/notifications'
-import PureRenderMixin from 'react-addons-pure-render-mixin'
-import { browserHistory } from 'react-router'
 
 class Nav extends React.Component {
 

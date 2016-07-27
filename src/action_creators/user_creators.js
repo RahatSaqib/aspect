@@ -1,8 +1,9 @@
 import config from 'config'
 import jwt_decode from 'jwt-decode'
-import types from './../constants/action_types'
+
 import util from './../util'
 import { addError } from './error_creators'
+import types from './../constants/action_types'
 
 export function loginRequest() {
   return {
