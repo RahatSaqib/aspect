@@ -8,7 +8,7 @@ body {
     font-family: Roboto, sans-serif;
     padding: 0;
     margin: 0;
-    background-color: #f2f2f2;
+    background-color: #f9f9f9;
 }
 
 .content {
@@ -21,16 +21,23 @@ body {
     }
 }
 
+/*Side nav*/
+.drawer-desktop{
+    position: absolute !important;
+    top: 68px !important;
+    background-color: #f9f9f9 !important;
+    box-shadow: none !important;
+}
+
 /*Login page styles*/
 .login-background{
     height: 100%;
     /*This makes the top half of the screen green and bottom half in gray*/
-    background: linear-gradient(180deg, #4caf50 10%, transparent 80%);
+    background: linear-gradient(180deg, #7cb342 10%, transparent 80%);
     padding-top: 15%;
 }
 
-/*Give forms some breathing room*/
-form{
+.login-form {
     padding: 20px;
 }
 

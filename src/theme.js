@@ -1,10 +1,10 @@
 // This file contains all possible settings for
 // customizing the material-ui theme
 import {
-  green300,
-  green500,
-  green700,
-  deepOrange500,
+  lightGreen300,
+  lightGreen600,
+  lightGreen700,
+  orange500,
   green100
 } from 'material-ui/styles/colors'
 
@@ -30,12 +30,12 @@ export default {
   },
   fontFamily: 'Roboto, sans-serif',
   palette: {
-    primary1Color: green500,
-    primary2Color: green700,
-    primary3Color: green300,
-    accent1Color: deepOrange500,
+    primary1Color: lightGreen600,
+    primary2Color: lightGreen700,
+    primary3Color: lightGreen300,
+    accent1Color: orange500,
     accent2Color: green100,
-    accent3Color: deepOrange500
+    accent3Color: orange500
       // textColor: black,
       // alternateTextColor: white,
       // canvasColor: white,

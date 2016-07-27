@@ -28,7 +28,7 @@ class SideNav extends React.Component {
   render() {
     return (
       <Drawer docked={ this.props.desktop }
-        containerStyle={ this.props.desktop ? { position: 'absolute', top: '68px', backgroundColor: '#f2f2f2', boxShadow: 'none' } : {} }
+        containerClassName={ this.props.desktop ? 'drawer-desktop' : '' }
         open={this.props.open} onRequestChange={ this.props.handleClose}>
         <SelectableList selectedPath={ '/dashboard' } desktop={ this.props.desktop } handleClose={ this.props.handleClose } >
           <Subheader>Dashboards</Subheader>

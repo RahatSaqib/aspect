@@ -56,7 +56,7 @@ class Login extends React.Component {
             </div>
             <div className="pure-u-xl-1-4 pure-u-lg-1-3 pure-u-md-2-3 pure-u-sm-11-12">
               <Paper>
-                  <form onSubmit={this.handleSubmit}>
+                  <form onSubmit={this.handleSubmit} className={'login-form'}>
                     <TextField ref="user" errorStyle={{ float: 'left' }} fullWidth={true} value={this.state.user} floatingLabelText="Username" errorText={this.state.error_user} onChange={this.handleUserChange} />
                     <br/>
                     <TextField ref="password" errorStyle={{ float: 'left' }} fullWidth={true} value={this.state.password} onChange={this.handlePasswordChange} floatingLabelText="Password" type="password" errorText={this.state.error_password} />
