@@ -3,8 +3,7 @@ import { connect } from 'react-redux'
 import PureRenderMixin from 'react-addons-pure-render-mixin'
 import Paper from 'material-ui/Paper'
 import LinearProgress from 'material-ui/LinearProgress'
-import FloatingActionButton from 'material-ui/FloatingActionButton'
-import Arrow from 'material-ui/svg-icons/navigation/arrow-forward'
+import RaisedButton from 'material-ui/RaisedButton'
 import TextField from 'material-ui/TextField'
 
 import { loginStart } from '../action_creators/user_creators'
@@ -49,27 +48,29 @@ class Login extends React.Component {
     let progress = this.props.loggingIn ? <LinearProgress /> : ''
 
     return (
-      <div style={{height: '100%'}}>
+      <div className="login-background">
+        <div className="content">
+          <div className="pure-g">
+            <div className="pure-u-xl-3-8 pure-u-lg-1-3 pure-u-md-1-6 pure-u-sm-1-24">
+              &nbsp;
+            </div>
+            <div className="pure-u-xl-1-4 pure-u-lg-1-3 pure-u-md-2-3 pure-u-sm-11-12">
+              <Paper>
+                  <form onSubmit={this.handleSubmit}>
+                    <TextField ref="user" errorStyle={{ float: 'left' }} fullWidth={true} value={this.state.user} floatingLabelText="Username" errorText={this.state.error_user} onChange={this.handleUserChange} />
+                    <br/>
+                    <TextField ref="password" errorStyle={{ float: 'left' }} fullWidth={true} value={this.state.password} onChange={this.handlePasswordChange} floatingLabelText="Password" type="password" errorText={this.state.error_password} />
+                    <br/>
+                    <div className="button-row">
+                      <RaisedButton label="Log In" secondary={true} type="submit" />
+                    </div>
+                  </form>
+                  {progress}
+              </Paper>
+            </div>
+          </div>
+        </div>
         <ErrorDisplayContainer />
-        <div style={{backgroundColor: '#4CAF50', height: '50%'}}>
-          &nbsp;
-        </div>
-        <Paper style={{ width: '400px', height: '180px', padding: '10px 20px 0 20px', margin: 'auto', marginTop: '-90px'}} zDepth={1} >
-            <form onSubmit={this.handleSubmit}>
-              <div style={{width: '85%', float: 'left'}}>
-                <TextField ref="user" errorStyle={{ float: 'left' }} value={this.state.user} floatingLabelText="Username" errorText={this.state.error_user} onChange={this.handleUserChange} />
-                <TextField ref="password" errorStyle={{ float: 'left' }} value={this.state.password} onChange={this.handlePasswordChange} floatingLabelText="Password" type="password" errorText={this.state.error_password} />
-              </div>
-              <div style={{ width: '13%', float: 'left'}}>
-                <FloatingActionButton type="submit" secondary={true} style={{ margin: '50px 45px' }}>
-                  <Arrow />
-                </FloatingActionButton>
-              </div>
-            </form>
-        </Paper>
-        <div style={{width: '400px', margin: 'auto'}}>
-          {progress}
-        </div>
       </div>
     )
   }

@@ -21,6 +21,26 @@ body {
     }
 }
 
+/*Login page styles*/
+.login-background{
+    height: 100%;
+    /*This makes the top half of the screen green and bottom half in gray*/
+    background: linear-gradient(180deg, #4caf50 10%, transparent 80%);
+    padding-top: 15%;
+}
+
+/*Give forms some breathing room*/
+form{
+    padding: 20px;
+}
+
+/*in forms, show buttons on bottom right*/
+.button-row{
+    width: 100%;
+    text-align: right;
+    padding: 40px 0 0 0;
+}
+
 /*Get rid of ugly yellow background on Chrome login autocomplete*/
 input:-webkit-autofill {
     box-shadow: 0 0 0 300px white inset !important;
