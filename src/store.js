@@ -34,4 +34,12 @@ export const history = syncHistoryWithStore(browserHistory, store, {
   selectLocationState: createSelectLocationState()
 })
 
+// enable hot reload for reducers
+if (module.hot){
+  module.hot.accept('./reducers/', () => {
+    const nextRootReducer = require('./reducers/index').default
+    store.replaceReducer(nextRootReducer)
+  })
+}
+
 export default store
