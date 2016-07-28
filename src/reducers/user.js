@@ -6,7 +6,7 @@ function loginRequest(state){
   return state.merge({ loggedIn: false, loggingIn: true })
 }
 
-function loginSuccess(state, name, culture = 'en-US', lang = 'en', drawerOpen){
+function loginSuccess(state, name, culture, lang, drawerOpen){
   return state.merge({ name, culture, lang, loggedIn: true, loggingIn: false, drawerOpen })
 }
 
@@ -26,7 +26,7 @@ function toggleDrawer(state, drawerOpen){
   return state.merge({ drawerOpen })
 }
 
-const login = function(state = Immutable.Map(), action) {
+const login = function(state = Immutable.fromJS({ name: '', culture: 'en-US', lang: 'en', drawerOpen: true }), action) {
   switch (action.type) {
   case types.LOGIN_REQUEST:
     return loginRequest(state)

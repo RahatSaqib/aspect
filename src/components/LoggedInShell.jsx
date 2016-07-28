@@ -21,6 +21,7 @@ class LoggedInShell extends React.Component {
         <ErrorDisplayContainer />
         <SideNav  open={this.props.drawerOpen}
                   desktop={ this.state.desktop }
+                  pathname={ this.props.pathname }
                   handleClose={this.props.handleDrawerClose}
                   handleRequestChange={(drawerOpen) => this.setState({drawerOpen})} />
         <Nav handleHamburger={this.props.handleDrawerChange} handleSignOut={this.props.handleSignOut} handleLanguageChange={this.props.handleLanguageChange} />
@@ -36,9 +37,10 @@ LoggedInShell.propTypes = {
   children: React.PropTypes.object.isRequired
 }
 
-const mapStateToProps = (state) => {
+const mapStateToProps = (state, ownProps) => {
   return {
-    drawerOpen: state.getIn(['user', 'drawerOpen'])
+    drawerOpen: state.getIn(['user', 'drawerOpen']),
+    pathname: ownProps.location.pathname
   }
 }
 

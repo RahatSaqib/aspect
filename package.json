@@ -79,11 +79,11 @@
     "react-dom": "^15.1.0",
     "react-redux": "^4.4.5",
     "react-router": "^2.5.1",
+    "react-router-redux": "^4.0.5",
     "react-router-scroll": "^0.2.0",
     "react-sparklines": "^1.5.2",
     "react-tap-event-plugin": "^1.0.0",
     "redux": "^3.5.2",
-    "redux-history-transitions": "^2.2.0",
     "redux-immutable": "^3.0.6",
     "redux-thunk": "^2.1.0"
   }

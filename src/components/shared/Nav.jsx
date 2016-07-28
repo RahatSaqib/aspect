@@ -1,6 +1,6 @@
 import React from 'react'
 import PureRenderMixin from 'react-addons-pure-render-mixin'
-import { browserHistory } from 'react-router'
+import { Link } from 'react-router'
 
 // Material-UI
 import AppBar from 'material-ui/AppBar'
@@ -21,9 +21,8 @@ class Nav extends React.Component {
   render() {
     return (
       <AppBar onLeftIconButtonTouchTap={this.props.handleHamburger}
-        title={ "Aspect" }
+        title={ <Link style={ { color: '#fff', textDecoration: 'none' } } to="/dashboard" >Aspect</Link> }
         titleStyle={ { cursor: 'pointer', fontWeight: '300', fontSize: '1.3rem' } }
-        onTitleTouchTap={ () => { browserHistory.push('/dashboard') } }
         children={
           <div>
             <Badge  badgeContent={4} primary={true}
@@ -39,8 +38,8 @@ class Nav extends React.Component {
               </IconButton>}>
               <MenuItem primaryText="English" onTouchTap={() => { this.props.handleLanguageChange('en') } } />
               <MenuItem primaryText="French" onTouchTap={() => { this.props.handleLanguageChange('fr') } } />
-              <MenuItem primaryText="Help" linkButton={true} href="https://admin.gxalert.com" />
-              <MenuItem primaryText="Sign out" onTouchTap={this.props.handleSignOut} />
+              <MenuItem primaryText="Help" href="https://admin.gxalert.com" />
+              <MenuItem primaryText="Sign out" onTouchTap={ this.props.handleSignOut } />
             </IconMenu>
           </div>
         }/>

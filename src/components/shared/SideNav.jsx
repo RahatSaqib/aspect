@@ -1,4 +1,5 @@
 import React from 'react'
+import { Link } from 'react-router'
 import PureRenderMixin from 'react-addons-pure-render-mixin'
 
 // Material-UI
@@ -30,21 +31,24 @@ class SideNav extends React.Component {
       <Drawer docked={ this.props.desktop }
         containerClassName={ this.props.desktop ? 'drawer-desktop' : '' }
         open={this.props.open} onRequestChange={ this.props.handleClose}>
-        <SelectableList selectedPath={ '/dashboard' } desktop={ this.props.desktop } handleClose={ this.props.handleClose } >
+        <SelectableList pathname={ this.props.pathname } desktop={ this.props.desktop } handleClose={ this.props.handleClose } >
           <Subheader>Dashboards</Subheader>
           <ListItem
+            containerElement={<Link to="/dashboard" />}
             value={ '/dashboard' }
             leftIcon={<Home color={green500} />}
             style={{ fontSize: 14 }} innerDivStyle={{ paddingLeft: 56 }}
             primaryText="Home"
             />
           <ListItem
+            containerElement={<Link to="/dashboard/inventory" />}
             value={ '/dashboard/inventory' }
             leftIcon={<Cart color={orange500} />}
             style={{ fontSize: 14 }} innerDivStyle={{ paddingLeft: 56 }}
             primaryText="Inventory"
             />
           <ListItem
+            containerElement={<Link to="/dashboard/maintenance" />}
             value={ '/dashboard/maintenance' }
             leftIcon={<Build color={indigo600} />}
             style={{ fontSize: 14 }} innerDivStyle={{ paddingLeft: 56 }}
@@ -53,30 +57,35 @@ class SideNav extends React.Component {
         <Divider />
           <Subheader>Sections</Subheader>
           <ListItem
+            containerElement={<Link to="/device" />}
             value={ '/device' }
             leftIcon={<Scanner />}
             style={{ fontSize: 14 }} innerDivStyle={{ paddingLeft: 56 }}
             primaryText="Devices"
             />
           <ListItem
+            containerElement={<Link to="/result" />}
             value={ '/result' }
             leftIcon={<Assignment />}
             style={{ fontSize: 14 }} innerDivStyle={{ paddingLeft: 56 }}
             primaryText="Results"
             />
           <ListItem
+            containerElement={<Link to="/person" />}
             value={ '/person' }
             leftIcon={<People />}
             style={{ fontSize: 14 }} innerDivStyle={{ paddingLeft: 56 }}
             primaryText="Contacts"
             />
             <ListItem
+            containerElement={<Link to="/notification" />}
             value={ '/notification' }
             leftIcon={<Notifications />}
             style={{ fontSize: 14 }} innerDivStyle={{ paddingLeft: 56 }}
             primaryText="Notifications"
             />
           <ListItem
+            containerElement={<Link to="/report" />}
             value={ '/report' }
             leftIcon={<Book />}
             style={{ fontSize: 14 }} innerDivStyle={{ paddingLeft: 56 }}
@@ -90,7 +99,8 @@ class SideNav extends React.Component {
 
 SideNav.propTypes = {
   open: React.PropTypes.bool.isRequired,
-  handleClose: React.PropTypes.func.isRequired
+  handleClose: React.PropTypes.func.isRequired,
+  pathname: React.PropTypes.string.isRequired
 }
 
 export default SideNav

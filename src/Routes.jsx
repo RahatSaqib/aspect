@@ -1,6 +1,7 @@
 import React from 'react'
-import {Router, Route, IndexRoute, Redirect, browserHistory, applyRouterMiddleware } from 'react-router'
+import {Router, Route, IndexRoute, Redirect, applyRouterMiddleware } from 'react-router'
 import useScroll from 'react-router-scroll'
+import { history } from './store'
 
 // higher level containers/shells
 import App from './components/App'
@@ -34,7 +35,7 @@ function requireAuth(nextState, replace) {
 }
 
 const routes =
-  <Router history={browserHistory} render={applyRouterMiddleware(useScroll()) }>
+  <Router history={history} render={applyRouterMiddleware(useScroll()) }>
     <Route component={App}>
       <Route component={Login} path="login" />
       <Route component={LoggedInShell}
@@ -76,4 +77,4 @@ class Routes extends React.Component {
   }
 }
 
-export { Routes, browserHistory }
+export default Routes

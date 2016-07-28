@@ -4,7 +4,7 @@ import {
   lightGreen300,
   lightGreen600,
   lightGreen700,
-  orange500,
+  orange700,
   green100
 } from 'material-ui/styles/colors'
 
@@ -33,9 +33,9 @@ export default {
     primary1Color: lightGreen600,
     primary2Color: lightGreen700,
     primary3Color: lightGreen300,
-    accent1Color: orange500,
+    accent1Color: orange700,
     accent2Color: green100,
-    accent3Color: orange500
+    accent3Color: orange700
       // textColor: black,
       // alternateTextColor: white,
       // canvasColor: white,

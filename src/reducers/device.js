@@ -18,7 +18,7 @@ function receiveDevices(state, items, total) {
   return state.merge({ loading: false, items, total })
 }
 
-const device = function(state = Immutable.Map({
+const device = function(state = Immutable.fromJS({
   loading: false,
   items: Immutable.List(),
   sortCol: 'name',

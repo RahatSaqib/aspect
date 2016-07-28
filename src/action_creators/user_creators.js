@@ -1,5 +1,6 @@
 import config from 'config'
 import jwt_decode from 'jwt-decode'
+import { push } from 'react-router-redux'
 
 import util from './../util'
 import { addError } from './error_creators'
@@ -18,13 +19,7 @@ export function loginSuccess(name, culture, lang) {
     name,
     culture,
     lang,
-    drawerOpen: window.localStorage.drawerOpen === 'true',
-    meta: {
-      transition: () => ({
-        pathname: 'dashboard',
-        search: '?fl=1'
-      })
-    }
+    drawerOpen: window.localStorage.drawerOpen === 'true'
   }
 }
 
@@ -62,12 +57,7 @@ export function loginFailure(err) {
 
 export function logoutSuccess() {
   return {
-    type: types.LOGOUT_SUCCESS,
-    meta: {
-      transition: () => ({
-        pathname: '/login'
-      })
-    }
+    type: types.LOGOUT_SUCCESS
   }
 }
 
@@ -139,6 +129,8 @@ export function loginStart(user, password) {
         // We can dispatch many times!
         // Here, we update the app state with the results of the API call.
         dispatch(loginSuccess(jwt.name, jwt.culture, jwt.lang))
+
+        dispatch(push('/dashboard'))
       })
       .catch(err => {
         dispatch(loginFailure(err))
@@ -161,6 +153,9 @@ export function logoutStart() {
 
     // let the app know that we're now logged out
     dispatch(logoutSuccess())
+
+    // now, redirct to login page
+    dispatch(push('/login'))
   }
 }
 

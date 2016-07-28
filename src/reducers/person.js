@@ -18,7 +18,7 @@ function receivePersons(state, items, total) {
   return state.merge({ loading: false, items, total })
 }
 
-const person = function(state = Immutable.Map({
+const person = function(state = Immutable.fromJS({
   loading: false,
   items: Immutable.List(),
   sortCol: 'name',
