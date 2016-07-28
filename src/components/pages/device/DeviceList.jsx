@@ -63,9 +63,9 @@ export class DeviceList extends React.Component {
                   <IconButton touch={true}>
                     <NavigationExpandMoreIcon />
                   </IconButton>}>
-                <MenuItem primaryText="Clear Filters" onTouchTap={ this.resetDevices } />
-                <MenuItem primaryText="Export to Excel" />
-                <MenuItem primaryText="Export to CSV" />
+                <MenuItem primaryText="Clear Filters" className="linky" onTouchTap={ this.resetDevices } />
+                <MenuItem primaryText="Export to Excel" className="linky" />
+                <MenuItem primaryText="Export to CSV" className="linky" />
               </IconMenu>
             </ToolbarGroup>
           </Toolbar>

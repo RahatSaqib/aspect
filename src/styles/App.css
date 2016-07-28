@@ -1,3 +1,9 @@
+/*
+There are lots of importants in this file. Not ideal, but
+material-ui renders styles inline, so there's no other
+way to override them
+*/
+
 html,
 body,
 body>div {
@@ -39,6 +45,11 @@ body {
 
 .login-form {
     padding: 20px;
+}
+
+/*Make items with touch event behave like links*/
+.linky{
+    cursor: pointer !important;
 }
 
 /*in forms, show buttons on bottom right*/
