@@ -1,4 +1,5 @@
 import React from 'react'
+import { bindActionCreators } from 'redux'
 import { connect } from 'react-redux'
 import PureRenderMixin from 'react-addons-pure-render-mixin'
 
@@ -31,7 +32,7 @@ class Login extends React.Component {
       return
     }
 
-    this.props.handleLogin(this.state.user, this.state.password)
+    this.props.loginStart(this.state.user, this.state.password)
   }
 
   handleUserChange = (e) => {
@@ -79,7 +80,7 @@ class Login extends React.Component {
 
 Login.propTypes = {
   loggingIn: React.PropTypes.bool,
-  handleLogin: React.PropTypes.func.isRequired
+  loginStart: React.PropTypes.func.isRequired
 }
 
 Login.contextTypes =  {
@@ -93,11 +94,7 @@ const mapStateToProps = (state) => {
 }
 
 const mapDispatchToProps = (dispatch) => {
-  return {
-    handleLogin: (user, password) => {
-      dispatch(loginStart(user, password))
-    }
-  }
+  return bindActionCreators({ loginStart }, dispatch)
 }
 
 export default connect(mapStateToProps, mapDispatchToProps)(Login)

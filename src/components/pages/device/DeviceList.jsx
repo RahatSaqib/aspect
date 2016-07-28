@@ -1,4 +1,5 @@
 import React from 'react'
+import { bindActionCreators } from 'redux'
 import { connect } from 'react-redux'
 import PureRenderMixin from 'react-addons-pure-render-mixin'
 import { fetchDevices, resetDevices, filterDevices } from '../../../action_creators/device_creators'
@@ -23,23 +24,23 @@ export class DeviceList extends React.Component {
     super(props)
     this.state = { filters: props.filters }
     this.shouldComponentUpdate = PureRenderMixin.shouldComponentUpdate.bind(this)
-    this.handleFilterChange = this.handleFilterChange.bind(this)
+    this.filterDevicesChange = this.filterDevicesChange.bind(this)
     this.handleSubmit = this.handleSubmit.bind(this)
-    this.handleReset = this.handleReset.bind(this)
+    this.resetDevices = this.resetDevices.bind(this)
   }
 
-  handleFilterChange(e){
+  filterDevicesChange(e){
     this.setState({ filters: this.state.filters.set(e.target.id, e.target.value) })
   }
 
   handleSubmit(e){
     e.preventDefault()
-    this.props.handleFilter(this.state.filters)
+    this.props.filterDevices(this.state.filters)
   }
 
-  handleReset(){
+  resetDevices(){
     this.setState({ filters: this.state.filters.set('name', '') })
-    this.props.handleReset()
+    this.props.resetDevices()
   }
 
   render() {
@@ -52,7 +53,7 @@ export class DeviceList extends React.Component {
             <ToolbarGroup firstChild={true}>
               <TextField  value={this.state.filters.get('name')}
                           id="name"
-                          onChange={ this.handleFilterChange }
+                          onChange={ this.filterDevicesChange }
                           className="filter-textfield"
                           hintText="Filter by name" />
               <RaisedButton label="Filter" primary={true} onTouchTap={ this.handleSubmit } />
@@ -62,7 +63,7 @@ export class DeviceList extends React.Component {
                   <IconButton touch={true}>
                     <NavigationExpandMoreIcon />
                   </IconButton>}>
-                <MenuItem primaryText="Clear Filters" onTouchTap={ this.handleReset } />
+                <MenuItem primaryText="Clear Filters" onTouchTap={ this.resetDevices } />
                 <MenuItem primaryText="Export to Excel" />
                 <MenuItem primaryText="Export to CSV" />
               </IconMenu>
@@ -70,7 +71,7 @@ export class DeviceList extends React.Component {
           </Toolbar>
         </form>
 
-        <DataTable  handleFetch={ this.props.handleFetch }
+        <DataTable  handleFetch={ this.props.fetchDevices }
                   loading={ this.props.loading }
                   items={ this.props.items }
                   sortCol={ this.props.sortCol }
@@ -106,17 +107,7 @@ function mapStateToProps(state) {
 }
 
 const mapDispatchToProps = (dispatch) => {
-  return {
-    handleFetch: (sortCol, sortDir, page, size, filters) => {
-      dispatch(fetchDevices(sortCol, sortDir, page, size, filters))
-    },
-    handleReset: () => {
-      dispatch(resetDevices())
-    },
-    handleFilter: (filters) => {
-      dispatch(filterDevices(filters))
-    }
-  }
+  return bindActionCreators({ fetchDevices, resetDevices, filterDevices }, dispatch)
 }
 
 const DeviceListTranslated = translate('DeviceList')(DeviceList)

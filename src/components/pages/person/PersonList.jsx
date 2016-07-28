@@ -1,4 +1,5 @@
 import React from 'react'
+import { bindActionCreators } from 'redux'
 import { connect } from 'react-redux'
 import PureRenderMixin from 'react-addons-pure-render-mixin'
 
@@ -21,23 +22,23 @@ export class PersonList extends React.Component {
     super(props)
     this.state = { filters: props.filters }
     this.shouldComponentUpdate = PureRenderMixin.shouldComponentUpdate.bind(this)
-    this.handleFilterChange = this.handleFilterChange.bind(this)
+    this.filterPersonsChange = this.filterPersonsChange.bind(this)
     this.handleSubmit = this.handleSubmit.bind(this)
-    this.handleReset = this.handleReset.bind(this)
+    this.resetPersons = this.resetPersons.bind(this)
   }
 
-  handleFilterChange(e){
+  filterPersonsChange(e){
     this.setState({ filters: this.state.filters.set(e.target.id, e.target.value) })
   }
 
   handleSubmit(e){
     e.preventDefault()
-    this.props.handleFilter(this.state.filters)
+    this.props.filterPersons(this.state.filters)
   }
 
-  handleReset(){
+  resetPersons(){
     this.setState({ filters: this.state.filters.set('name', '') })
-    this.props.handleReset()
+    this.props.resetPersons()
   }
 
   render() {
@@ -48,7 +49,7 @@ export class PersonList extends React.Component {
             <ToolbarGroup firstChild={true}>
               <TextField  value={this.state.filters.get('name')}
                           id="name"
-                          onChange={ this.handleFilterChange }
+                          onChange={ this.filterPersonsChange }
                           className="filter-textfield"
                           hintText="Filter by name" />
               <RaisedButton label="Filter" primary={true} />
@@ -58,7 +59,7 @@ export class PersonList extends React.Component {
                   <IconButton touch={true}>
                     <NavigationExpandMoreIcon />
                   </IconButton>}>
-                <MenuItem primaryText="Clear Filters" onTouchTap={ this.handleReset } />
+                <MenuItem primaryText="Clear Filters" onTouchTap={ this.resetPersons } />
                 <MenuItem primaryText="Export to Excel" />
                 <MenuItem primaryText="Export to CSV" />
               </IconMenu>
@@ -66,7 +67,7 @@ export class PersonList extends React.Component {
           </Toolbar>
         </form>
 
-        <DataTable  handleFetch={ this.props.handleFetch }
+        <DataTable  handleFetch={ this.props.fetchPersons }
                     loading={ this.props.loading }
                     items={ this.props.items }
                     sortCol={ this.props.sortCol }
@@ -98,17 +99,7 @@ function mapStateToProps(state) {
 }
 
 const mapDispatchToProps = (dispatch) => {
-  return {
-    handleFetch: (sortCol, sortDir, page, size, filters) => {
-      dispatch(fetchPersons(sortCol, sortDir, page, size, filters))
-    },
-    handleReset: () => {
-      dispatch(resetPersons())
-    },
-    handleFilter: (filters) => {
-      dispatch(filterPersons(filters))
-    }
-  }
+  return bindActionCreators({ fetchPersons, resetPersons, filterPersons }, dispatch)
 }
 
 const PersonListTranslated = translate('PersonList')(PersonList)

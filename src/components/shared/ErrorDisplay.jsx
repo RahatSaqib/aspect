@@ -1,4 +1,5 @@
 import React from 'react'
+import { bindActionCreators } from 'redux'
 import PureRenderMixin from 'react-addons-pure-render-mixin'
 import { connect } from 'react-redux'
 
@@ -29,7 +30,7 @@ export class ErrorDisplay extends React.Component {
             action="View Details"
             autoHideDuration={4000}
             onActionTouchTap={() => this.handleActionTouchTap(error)}
-            onRequestClose={() => this.props.handleClose()}
+            onRequestClose={() => this.props.removeError()}
           />
         )
     } else {
@@ -40,7 +41,7 @@ export class ErrorDisplay extends React.Component {
 
 ErrorDisplay.propTypes = {
   error: React.PropTypes.object,
-  handleClose: React.PropTypes.func.isRequired
+  removeError: React.PropTypes.func.isRequired
 }
 
 function mapStateToProps(state) {
@@ -50,11 +51,7 @@ function mapStateToProps(state) {
 }
 
 const mapDispatchToProps = (dispatch) => {
-  return {
-    handleClose: () => {
-      dispatch(removeError())
-    }
-  }
+  return bindActionCreators({ removeError }, dispatch)
 }
 
 export const ErrorDisplayContainer = connect(mapStateToProps, mapDispatchToProps)(ErrorDisplay)

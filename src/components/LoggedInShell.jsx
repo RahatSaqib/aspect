@@ -1,4 +1,5 @@
 import React from 'react'
+import { bindActionCreators } from 'redux'
 import { connect } from 'react-redux'
 import PureRenderMixin from 'react-addons-pure-render-mixin'
 import { logoutStart, changeLanguage, toggleDrawer, closeDrawer } from '../action_creators/user_creators'
@@ -22,9 +23,9 @@ class LoggedInShell extends React.Component {
         <SideNav  open={this.props.drawerOpen}
                   desktop={ this.state.desktop }
                   pathname={ this.props.pathname }
-                  handleClose={this.props.handleDrawerClose}
+                  handleClose={this.props.closeDrawer}
                   handleRequestChange={(drawerOpen) => this.setState({drawerOpen})} />
-        <Nav handleHamburger={this.props.handleDrawerChange} handleSignOut={this.props.handleSignOut} handleLanguageChange={this.props.handleLanguageChange} />
+        <Nav handleHamburger={this.props.toggleDrawer} handleSignOut={this.props.logoutStart} handleLanguageChange={this.props.changeLanguage} />
         <div style={ this.props.drawerOpen && this.state.desktop ? { paddingLeft: '190px' } : {} } >
           {this.props.children}
         </div>
@@ -45,20 +46,7 @@ const mapStateToProps = (state, ownProps) => {
 }
 
 const mapDispatchToProps = (dispatch) => {
-  return {
-    handleSignOut: () => {
-      dispatch(logoutStart())
-    },
-    handleLanguageChange: (lang) => {
-      dispatch(changeLanguage(lang))
-    },
-    handleDrawerChange: () => {
-      dispatch(toggleDrawer())
-    },
-    handleDrawerClose: () => {
-      dispatch(closeDrawer())
-    }
-  }
+  return bindActionCreators({ logoutStart, changeLanguage, toggleDrawer, closeDrawer }, dispatch)
 }
 
 export default connect(mapStateToProps, mapDispatchToProps)(LoggedInShell)
