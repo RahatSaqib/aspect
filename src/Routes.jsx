@@ -1,5 +1,5 @@
 import React from 'react'
-import {Router, Route, IndexRoute, Redirect, applyRouterMiddleware } from 'react-router'
+import { Router, Route, IndexRoute, Redirect, applyRouterMiddleware } from 'react-router'
 import useScroll from 'react-router-scroll'
 import { history } from './store'
 
@@ -24,7 +24,6 @@ function requireAuth(nextState, replace) {
   if (!window.localStorage.jwt ||
     !window.localStorage.jwt_expires ||
     window.localStorage.jwt_expires < Math.floor(Date.now() / 1000)) {
-
     // if no access token or it is expired or expires within 10 minutes (600s),
     // try to refresh if we have a refresh token
     replace({
@@ -39,7 +38,7 @@ const routes =
     <Route component={App}>
       <Route component={Login} path="login" />
       <Route component={LoggedInShell}
-        onEnter={(nextState, replace) => requireAuth(nextState, replace) }>
+        onChange={(prevState, nextState, replace) => requireAuth(nextState, replace) }>
 
         <Redirect from='/' to='dashboard' />
 

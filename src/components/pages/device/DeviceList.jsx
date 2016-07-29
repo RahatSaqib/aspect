@@ -47,7 +47,6 @@ export class DeviceList extends React.Component {
 
     return (
       <div className="content">
-
         <form onSubmit={ this.handleSubmit }>
           <Toolbar className={"toolbar"} >
             <ToolbarGroup firstChild={true}>
@@ -70,7 +69,6 @@ export class DeviceList extends React.Component {
             </ToolbarGroup>
           </Toolbar>
         </form>
-
         <DataTable  handleFetch={ this.props.fetchDevices }
                   loading={ this.props.loading }
                   items={ this.props.items }

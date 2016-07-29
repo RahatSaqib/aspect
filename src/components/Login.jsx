@@ -53,10 +53,10 @@ class Login extends React.Component {
       <div className="login-background">
         <div className="content">
           <div className="pure-g">
-            <div className="pure-u-xl-3-8 pure-u-lg-1-3 pure-u-md-1-6 pure-u-sm-1-24">
+            <div className="pure-u-lg-1-3 pure-u-md-1-6 pure-u-sm-1-24">
               &nbsp;
             </div>
-            <div className="pure-u-xl-1-4 pure-u-lg-1-3 pure-u-md-2-3 pure-u-sm-11-12">
+            <div className="pure-u-lg-1-3 pure-u-md-2-3 pure-u-sm-11-12">
               <Paper>
                   <form onSubmit={this.handleSubmit} className={'login-form'}>
                     <TextField ref="user" errorStyle={{ float: 'left' }} fullWidth={true} value={this.state.user} floatingLabelText="Username" errorText={this.state.error_user} onChange={this.handleUserChange} />
