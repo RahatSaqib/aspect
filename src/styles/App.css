@@ -110,15 +110,27 @@ input:-webkit-autofill {
 }
 
 /*Styles for the grid pager*/
-.pager-arrow {
-    position: relative;
-    top: 8px;
-    right: 18px;
+.pager-button{
+    height: 30px !important;
+    line-height: 30px !important;
+    padding: 0 !important;
+    min-width: 0 !important;
+    border-radius: 100px !important;
 }
 
-.pager-arrow-prev {
-    left: 18px;
-    transform: rotate(180deg) !important;
+.pager-button span{
+    font-size: .8rem !important;
+    padding-left: 8px !important;
+    padding-right: 8px !important;
+}
+
+.pager-button-number{
+    width: 30px !important;
+}
+
+.pager-button-current{
+    background-color: #7cb342 !important;
+    color: #fff !important;
 }
 
 /*TextField in the filter area of a grid*/

@@ -4,13 +4,8 @@ import PureRenderMixin from 'react-addons-pure-render-mixin'
 // Material-UI
 import {Table, TableBody, TableHeader, TableHeaderColumn, TableRow, TableRowColumn, TableFooter } from 'material-ui/Table'
 import LinearProgress from 'material-ui/LinearProgress'
-import DropDownMenu from 'material-ui/DropDownMenu'
-import MenuItem from 'material-ui/MenuItem'
 import SortIcon from 'material-ui/svg-icons/content/sort'
-import IconButton from 'material-ui/IconButton'
-import Arrow from 'material-ui/svg-icons/av/play-arrow'
-
-import theme from './../../theme'
+import FlatButton from 'material-ui/FlatButton'
 
 export class DataTable extends React.Component {
 
@@ -59,13 +54,33 @@ export class DataTable extends React.Component {
 
     let pageItems = []
 
+    totalPages = 30;
+
+    // if there are lots of pages, how many to show max
+    const maxPagingButtons = 9
+
     for (let i = 0; i < totalPages; i++) {
-      pageItems.push(<MenuItem key={i} value={i} label={'Page ' + (i + 1) + ' of ' + totalPages} primaryText={'Page ' + (i + 1) } />)
+      // if total pages over 12, show first two, last two, and 2 before and after current
+      if (totalPages <= maxPagingButtons
+        // (page - (page < totalPages - 2 ? 2 : totalPages - page + 3 ) <= i && page + (page >= 2 ? 2 : 4 - page) >= i)){
+          ||
+          (i < 2) ||
+          (i >= totalPages - 2) ||
+          ((i > page - 3 || i > totalPages - 8) && (i < page + 3 || i < 7)) //||( i > page - (page < totalPages - 3 ? 2 : totalPages - page + ( 4 / (totalPages - page) )) && i < page + (page > 2 ? 2 : 5 - page) ) )
+      ){
+        pageItems.push(<FlatButton className={this.props.page === i ? 'pager-button pager-button-number pager-button-current' : 'pager-button pager-button-number'} label={(i + 1)} onTouchTap={() => { this.handlePage(i) } }/>)
+      }
+
+      // show ellipsis between first two and current region and last two and current region
+      // if (totalPages > maxPagingButtons && ((i === 1 && page > 3) || (i === totalPages - 3)) {
+      //   pageItems.push(<span>...</span>)
+      // }
     }
 
     return (
       <div>
         { loading }
+        { this.props.page }
         <Table
           height={this.state.height}
           fixedHeader={this.state.fixedHeader}
@@ -105,19 +120,10 @@ export class DataTable extends React.Component {
           </TableBody>
           <TableFooter adjustForCheckbox={true}>
             <TableRow>
-              <TableRowColumn style={{ fontSize: '15px', padding: '0 0 25px 0', display: 'none' }}>
-                Displaying items { page * this.props.size + 1 } - { (page + 1) * this.props.size } of { this.props.total }
-              </TableRowColumn>
-              <TableRowColumn colSpan={this.props.columns.length - 1} style={{ textAlign: 'right', padding: '10px 0 20px 0' }} >
-                <IconButton className={'pager-arrow pager-arrow-prev'} touch={true} onTouchTap={() => { this.handlePage(page - 1) } } disabled={page === 0}>
-                  <Arrow color={theme.palette.primary1Color} />
-                </IconButton>
-                <DropDownMenu maxHeight={300} value={page} onChange={(e, k) => { this.handlePage(k) } }>
+              <TableRowColumn colSpan={this.props.columns.length - 1} style={{ textAlign: 'right', padding: '10px 20px 20px 0' }} >
+                <FlatButton className={'pager-button'} label="< Prev" onTouchTap={() => { this.handlePage(page - 1) } } disabled={page === 0} />
                   { pageItems }
-                </DropDownMenu>
-                <IconButton className={'pager-arrow'} touch={true} onTouchTap={() => { this.handlePage(page + 1) } } disabled={ page + 1 >= totalPages}>
-                  <Arrow color={theme.palette.primary1Color} />
-                </IconButton>
+                <FlatButton className={'pager-button'} label="Next >" onTouchTap={() => { this.handlePage(page + 1) } } disabled={ page + 1 >= totalPages} />
               </TableRowColumn>
             </TableRow>
           </TableFooter>
