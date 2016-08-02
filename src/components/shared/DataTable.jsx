@@ -44,31 +44,40 @@ export class DataTable extends React.Component {
 
   render() {
 
-    let loading = this.props.loading ?
+    const loading = this.props.loading ?
       <LinearProgress /> :
       <div style={ { margin: 0, padding: 0, height: 4 }}>&nbsp; </div>
 
-    let page = this.props.page
+    const page = this.props.page
 
-    let totalPages = Math.ceil(this.props.total / this.props.size)
+    const totalPages = Math.ceil(this.props.total / this.props.size)
 
     let pageItems = []
-
-    totalPages = 30;
 
     // if there are lots of pages, how many to show max
     const maxPagingButtons = 9
 
+    // using this for react's key property-using the
+    // incrementer leads to flickering when changing pages
+    let key = 0
+
     for (let i = 0; i < totalPages; i++) {
       // if total pages over 12, show first two, last two, and 2 before and after current
       if (totalPages <= maxPagingButtons
-        // (page - (page < totalPages - 2 ? 2 : totalPages - page + 3 ) <= i && page + (page >= 2 ? 2 : 4 - page) >= i)){
           ||
           (i < 2) ||
           (i >= totalPages - 2) ||
-          ((i > page - 3 || i > totalPages - 8) && (i < page + 3 || i < 7)) //||( i > page - (page < totalPages - 3 ? 2 : totalPages - page + ( 4 / (totalPages - page) )) && i < page + (page > 2 ? 2 : 5 - page) ) )
+          ((i > page - 3 || i > totalPages - 8) && (i < page + 3 || i < 7))
       ){
-        pageItems.push(<FlatButton className={this.props.page === i ? 'pager-button pager-button-number pager-button-current' : 'pager-button pager-button-number'} label={(i + 1)} onTouchTap={() => { this.handlePage(i) } }/>)
+        pageItems.push(<FlatButton key={key} className={this.props.page === i ? 'pager-button pager-button-number pager-button-current' : 'pager-button pager-button-number'} label={(i + 1)} onTouchTap={() => { this.handlePage(i) } }/>)
+        key++
+
+        // show ellipsis if 2nd item AND page > 5 (maxPagingButtons/2) OR
+        // if 2nd to last item AND page < totalPages - 5 (maxPagingButtons/2)
+        if ((key === 2 && page > maxPagingButtons / 2) ||
+            (key === maxPagingButtons - 2 && page < totalPages - maxPagingButtons / 2 - 1) ) {
+          pageItems.push(<span style={{ margin: '0 5px' }}>&#8230;</span>)
+        }
       }
 
       // show ellipsis between first two and current region and last two and current region
@@ -80,7 +89,6 @@ export class DataTable extends React.Component {
     return (
       <div>
         { loading }
-        { this.props.page }
         <Table
           height={this.state.height}
           fixedHeader={this.state.fixedHeader}
