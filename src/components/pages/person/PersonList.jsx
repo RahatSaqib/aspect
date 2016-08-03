@@ -12,7 +12,7 @@ import IconMenu from 'material-ui/IconMenu'
 import IconButton from 'material-ui/IconButton'
 import TextField from 'material-ui/TextField'
 
-import { fetchPersons, resetPersons, filterPersons } from '../../../action_creators/person_creators'
+import { fetchPersons } from '../../../action_creators/person_creators'
 import { DataTable } from '../../shared/DataTable'
 import translate from '../../../i18n/translate'
 
@@ -20,7 +20,7 @@ export class PersonList extends React.Component {
 
   constructor(props) {
     super(props)
-    this.state = { filters: props.filters }
+    this.state = { filters: props.list.get('filters') }
     this.shouldComponentUpdate = PureRenderMixin.shouldComponentUpdate.bind(this)
     this.filterPersonsChange = this.filterPersonsChange.bind(this)
     this.handleSubmit = this.handleSubmit.bind(this)
@@ -33,12 +33,12 @@ export class PersonList extends React.Component {
 
   handleSubmit(e){
     e.preventDefault()
-    this.props.filterPersons(this.state.filters)
+    this.props.fetchPersons(this.state.filters)
   }
 
   resetPersons(){
     this.setState({ filters: this.state.filters.set('name', '') })
-    this.props.resetPersons()
+    this.props.fetchPersons()
   }
 
   render() {
@@ -52,30 +52,23 @@ export class PersonList extends React.Component {
                           onChange={ this.filterPersonsChange }
                           className="filter-textfield"
                           hintText="Filter by name" />
-              <RaisedButton label="Filter" primary={true} />
+              <RaisedButton label="Filter" primary={true} onTouchTap={ this.handleSubmit } />
             </ToolbarGroup>
             <ToolbarGroup lastChild={true}>
               <IconMenu iconButtonElement={
                   <IconButton touch={true}>
                     <NavigationExpandMoreIcon />
                   </IconButton>}>
-                <MenuItem primaryText="Clear Filters" onTouchTap={ this.resetPersons } />
-                <MenuItem primaryText="Export to Excel" />
-                <MenuItem primaryText="Export to CSV" />
+                <MenuItem primaryText="Clear Filters" className="linky" onTouchTap={ this.resetPersons } />
+                <MenuItem primaryText="Export to Excel" className="linky" />
+                <MenuItem primaryText="Export to CSV" className="linky" />
               </IconMenu>
             </ToolbarGroup>
           </Toolbar>
         </form>
 
         <DataTable  handleFetch={ this.props.fetchPersons }
-                    loading={ this.props.loading }
-                    items={ this.props.items }
-                    sortCol={ this.props.sortCol }
-                    sortDir={ this.props.sortDir }
-                    page={ this.props.page }
-                    size={ this.props.size }
-                    total={ this.props.total }
-                    filters={ this.props.filters }
+                    list={ this.props.list }
                     columns={[  { db: 'name', title: this.props.strings.personName },
                                 { db: 'level', title: this.props.strings.level, hideOnXs: true },
                                 { db: 'state', title: this.props.strings.state, hideOnXs: true },
@@ -87,19 +80,12 @@ export class PersonList extends React.Component {
 
 function mapStateToProps(state) {
   return {
-    loading: state.getIn(['person', 'loading']),
-    items: state.getIn(['person', 'items']),
-    sortDir: state.getIn(['person', 'sortDir']),
-    sortCol: state.getIn(['person', 'sortCol']),
-    page: state.getIn(['person', 'page']),
-    size: state.getIn(['person', 'size']),
-    total: state.getIn(['person', 'total']),
-    filters: state.getIn(['person', 'filters'])
+    list: state.get('person')
   }
 }
 
 const mapDispatchToProps = (dispatch) => {
-  return bindActionCreators({ fetchPersons, resetPersons, filterPersons }, dispatch)
+  return bindActionCreators({ fetchPersons }, dispatch)
 }
 
 const PersonListTranslated = translate('PersonList')(PersonList)

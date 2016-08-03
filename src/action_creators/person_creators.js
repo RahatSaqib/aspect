@@ -19,26 +19,18 @@ function requestPersons(sortCol, sortDir, page, size, filters) {
 function receivePersons(json) {
   return {
     type: types.RECEIVE_PERSONS,
-    persons: json.data,
+    items: json.data,
     total: json.total
   }
 }
 
-export function resetPersons(){
-  return fetchPersons('name', 'asc', 0, 10, Immutable.Map({ name: '' }))
-}
-
-export function filterPersons(filters){
-  return fetchPersons('name', 'asc', 0, 10, filters)
-}
-
-export function fetchPersons(sortCol, sortDir, page, size, filters){
+export function fetchPersons(filters = Immutable.Map({ name: '' }), sortCol = 'name', sortDir = 'asc', page = 0, size = 10){
   return dispatch => {
 
     dispatch(requestPersons(sortCol, sortDir, page, size, filters))
 
     // filters is an immutable map. unwrap it:
-    filters = filters.toObject()
+    filters = filters.toJS()
 
     // serialize filters for querystring
     let qsFilters = ''
@@ -46,7 +38,7 @@ export function fetchPersons(sortCol, sortDir, page, size, filters){
       qsFilters = Object.keys(filters).map(k => `${encodeURIComponent(k)}=${encodeURIComponent(filters[k])}`).join('&')
     }
 
-    let headers = new Headers({ 'x-access-token': window.localStorage.jwt })
+    let headers = new Headers({ 'Authorization': 'Bearer ' + window.localStorage.jwt })
 
     return fetch(`${config.aspectApi}/person?sortCol=${sortCol}&sortDir=${sortDir}&page=${page}&size=${size}&${qsFilters}`, { headers: headers })
       .then(util.handleFetchError)

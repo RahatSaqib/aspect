@@ -19,26 +19,18 @@ function requestDevices(sortCol, sortDir, page, size, filters) {
 function receiveDevices(json) {
   return {
     type: types.RECEIVE_DEVICES,
-    devices: json.data,
+    items: json.data,
     total: json.total
   }
 }
 
-export function resetDevices(){
-  return fetchDevices('name', 'asc', 0, 10, Immutable.Map({ name: '' }))
-}
-
-export function filterDevices(filters){
-  return fetchDevices('name', 'asc', 0, 10, filters)
-}
-
-export function fetchDevices(sortCol, sortDir, page, size, filters){
+export function fetchDevices(filters = Immutable.Map({ name: '' }), sortCol = 'name', sortDir = 'asc', page = 0, size = 10){
   return dispatch => {
 
     dispatch(requestDevices(sortCol, sortDir, page, size, filters))
 
     // filters is an immutable map. unwrap it:
-    filters = filters.toObject()
+    filters = filters.toJS()
 
     // serialize filters for querystring
     let qsFilters = ''
@@ -46,7 +38,7 @@ export function fetchDevices(sortCol, sortDir, page, size, filters){
       qsFilters = Object.keys(filters).map(k => `${encodeURIComponent(k)}=${encodeURIComponent(filters[k])}`).join('&')
     }
 
-    let headers = new Headers({ 'x-access-token': window.localStorage.jwt })
+    let headers = new Headers({ 'Authorization': 'Bearer ' + window.localStorage.jwt })
 
     return fetch(`${config.aspectApi}/device?sortCol=${sortCol}&sortDir=${sortDir}&page=${page}&size=${size}&${qsFilters}`, { headers: headers })
       .then(util.handleFetchError)

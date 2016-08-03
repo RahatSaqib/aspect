@@ -26,31 +26,41 @@ export class DataTable extends React.Component {
   }
 
   componentDidMount() {
-    this.props.handleFetch(this.props.sortCol, this.props.sortDir, this.props.page, this.props.size, this.props.filters)
+    this.fetchData()
   }
 
   handleSort(col) {
 
+    const list = this.props.list
+
     // only change sort direction if column that we're currently sorting on is clicked
-    let newSort = this.props.sortCol === col ? (this.props.sortDir === 'asc' ? 'desc' : 'asc') : this.props.sortDir
+    const newSort = list.get('sortCol') === col ? (list.get('sortDir') === 'asc' ? 'desc' : 'asc') : list.get('sortDir')
 
-    this.props.handleFetch(col, newSort, this.props.page, this.props.size, this.props.filters)
-
+    this.fetchData(col, newSort)
   }
 
   handlePage(page) {
-    this.props.handleFetch(this.props.sortCol, this.props.sortDir, page, this.props.size, this.props.filters)
+    this.fetchData(null, null, page)
+  }
+
+  fetchData(col, newSort, page){
+
+    const list = this.props.list
+
+    this.props.handleFetch(list.get('filters'), col || list.get('sortCol'), newSort || list.get('sortDir'), page == null ? list.get('page') : page, list.get('size'))
   }
 
   render() {
 
-    const loading = this.props.loading ?
+    const list = this.props.list
+
+    const loading = list.get('loading') ?
       <LinearProgress /> :
       <div style={ { margin: 0, padding: 0, height: 4 }}>&nbsp; </div>
 
-    const page = this.props.page
+    const page = list.get('page')
 
-    const totalPages = Math.ceil(this.props.total / this.props.size)
+    const totalPages = Math.ceil(list.get('total') / list.get('size'))
 
     let pageItems = []
 
@@ -69,7 +79,7 @@ export class DataTable extends React.Component {
           (i >= totalPages - 2) ||
           ((i > page - 3 || i > totalPages - 8) && (i < page + 3 || i < 7))
       ){
-        pageItems.push(<FlatButton key={key} className={this.props.page === i ? 'pager-button pager-button-number pager-button-current' : 'pager-button pager-button-number'} label={(i + 1)} onTouchTap={() => { this.handlePage(i) } }/>)
+        pageItems.push(<FlatButton key={key} className={list.get('page') === i ? 'pager-button pager-button-number pager-button-current' : 'pager-button pager-button-number'} label={(i + 1)} onTouchTap={() => { this.handlePage(i) } }/>)
         key++
 
         // show ellipsis if 2nd item AND page > 5 (maxPagingButtons/2) OR
@@ -105,8 +115,8 @@ export class DataTable extends React.Component {
                   <span style={{ cursor: 'pointer' }} onTouchTap={() => { this.handleSort(col.db) } }>
                     {col.title}
                   </span>
-                  <SortIcon color={ this.props.sortCol == col.db ? 'black' : 'white' }
-                    style={{ height: 18, width: 18, position: 'relative', top: '4px', left: '4px', transform: this.props.sortDir === 'asc' ? 'scale(1, -1)' : '' }} />
+                  <SortIcon color={ list.get('sortCol') == col.db ? 'black' : 'white' }
+                    style={{ height: 18, width: 18, position: 'relative', top: '4px', left: '4px', transform: list.get('sortDir') === 'asc' ? 'scale(1, -1)' : '' }} />
                 </TableHeaderColumn>
               )) }
             </TableRow>
@@ -116,7 +126,7 @@ export class DataTable extends React.Component {
             deselectOnClickaway={this.state.deselectOnClickaway}
             showRowHover={this.state.showRowHover}
             stripedRows={this.state.stripedRows}>
-            {this.props.items.map((item) => (
+            {list.get('items').map((item) => (
               <TableRow key={item.get('id') }>
                 {this.props.columns.map((col) => (
                   <TableRowColumn key={item.get(col.db) } className={ col.hideOnXs ? 'pure-hidden-xs' : '' } >
@@ -143,13 +153,6 @@ export class DataTable extends React.Component {
 
 DataTable.propTypes = {
   handleFetch: React.PropTypes.func.isRequired,
-  loading: React.PropTypes.bool.isRequired,
-  items: React.PropTypes.object.isRequired,
-  sortCol: React.PropTypes.string.isRequired,
-  sortDir: React.PropTypes.string.isRequired,
-  page: React.PropTypes.number.isRequired,
-  size: React.PropTypes.number.isRequired,
-  total: React.PropTypes.number.isRequired,
-  filters: React.PropTypes.object.isRequired,
+  list: React.PropTypes.object.isRequired,
   columns: React.PropTypes.array.isRequired
 }
