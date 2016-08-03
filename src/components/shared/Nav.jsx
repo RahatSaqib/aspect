@@ -20,15 +20,13 @@ class Nav extends React.Component {
 
   render() {
     return (
-      <AppBar onLeftIconButtonTouchTap={this.props.handleHamburger}
-        title={ <Link style={ { color: '#fff', textDecoration: 'none' } } to="/dashboard" >Aspect</Link> }
-        titleStyle={ { fontWeight: '300', fontSize: '1.3rem' } }
+      <AppBar className="nav" onLeftIconButtonTouchTap={this.props.handleHamburger}
+        title={ <Link to="/dashboard" >Aspect</Link> }
         children={
           <div>
-            <Badge  badgeContent={4} primary={true}
-              badgeStyle={{ height: 20, width: 20, fontSize: 11, top: 6 }}
-              style={{ padding: '6px 0 0 0' }}>
-              <IconButton tooltip="You have 4 unread notifications" iconStyle={ { height: 20 } }>
+            <Badge badgeContent={4} primary={true}
+              className="nav-badge">
+              <IconButton tooltip="You have 4 unread notifications">
                 <NotificationsIcon color={'#fff'} />
               </IconButton>
             </Badge>

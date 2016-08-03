@@ -17,6 +17,30 @@ body {
     background-color: #f2f2f2;
 }
 
+/*Top nav*/
+.nav a{
+    font-weight: 300;
+    font-size: 1.3rem;
+    text-decoration: none;
+    color: #fff;
+}
+
+.nav-badge{
+    padding: 6px 0 0 0 !important;
+}
+
+.nav-badge span{
+    height: 20px !important;
+    width: 20px !important;
+    font-size: 11px !important;
+    top: 6px !important;
+}
+
+.nav-badge svg{
+    height: 20px !important;
+}
+
+/*content area */
 .content {
     padding: 20px 50px 0 50px;
 }
@@ -33,6 +57,14 @@ body {
     top: 68px !important;
     background-color: #f2f2f2 !important;
     box-shadow: none !important;
+}
+
+.drawer-item{
+    font-size: 14px !important;
+}
+
+.drawer-item>div>div{
+    padding-left: 56px !important;
 }
 
 /*Login page styles*/

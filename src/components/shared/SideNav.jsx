@@ -37,21 +37,21 @@ class SideNav extends React.Component {
             containerElement={<Link to="/dashboard" />}
             value={ '/dashboard' }
             leftIcon={<Home color={green500} />}
-            style={{ fontSize: 14 }} innerDivStyle={{ paddingLeft: 56 }}
+            className="drawer-item"
             primaryText="Home"
             />
           <ListItem
             containerElement={<Link to="/dashboard/inventory" />}
             value={ '/dashboard/inventory' }
             leftIcon={<Cart color={orange500} />}
-            style={{ fontSize: 14 }} innerDivStyle={{ paddingLeft: 56 }}
+            className="drawer-item"
             primaryText="Inventory"
             />
           <ListItem
             containerElement={<Link to="/dashboard/maintenance" />}
             value={ '/dashboard/maintenance' }
             leftIcon={<Build color={indigo600} />}
-            style={{ fontSize: 14 }} innerDivStyle={{ paddingLeft: 56 }}
+            className="drawer-item"
             primaryText="Maintenance"
             />
         <Divider />
@@ -60,35 +60,35 @@ class SideNav extends React.Component {
             containerElement={<Link to="/device" />}
             value={ '/device' }
             leftIcon={<Scanner />}
-            style={{ fontSize: 14 }} innerDivStyle={{ paddingLeft: 56 }}
+            className="drawer-item"
             primaryText="Devices"
             />
           <ListItem
             containerElement={<Link to="/result" />}
             value={ '/result' }
             leftIcon={<Assignment />}
-            style={{ fontSize: 14 }} innerDivStyle={{ paddingLeft: 56 }}
+            className="drawer-item"
             primaryText="Results"
             />
           <ListItem
             containerElement={<Link to="/person" />}
             value={ '/person' }
             leftIcon={<People />}
-            style={{ fontSize: 14 }} innerDivStyle={{ paddingLeft: 56 }}
+            className="drawer-item"
             primaryText="Contacts"
             />
             <ListItem
             containerElement={<Link to="/notification" />}
             value={ '/notification' }
             leftIcon={<Notifications />}
-            style={{ fontSize: 14 }} innerDivStyle={{ paddingLeft: 56 }}
+            className="drawer-item"
             primaryText="Notifications"
             />
           <ListItem
             containerElement={<Link to="/report" />}
             value={ '/report' }
             leftIcon={<Book />}
-            style={{ fontSize: 14 }} innerDivStyle={{ paddingLeft: 56 }}
+            className="drawer-item"
             primaryText="Reports"
             />
         </SelectableList>
