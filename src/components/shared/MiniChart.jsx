@@ -25,7 +25,7 @@ class MiniChart extends React.Component {
           </div>
           <div className="minichart-count">
               <small>{this.props.label}</small>
-              <FormattedNumber number={this.props.number} />
+              <FormattedNumber number={this.props.number} culture="en-US" />
           </div>
           <div className="clear-fix" ></div>
         </Paper>

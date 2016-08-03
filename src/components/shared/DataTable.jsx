@@ -50,19 +50,10 @@ export class DataTable extends React.Component {
     this.props.handleFetch(list.get('filters'), col || list.get('sortCol'), newSort || list.get('sortDir'), page == null ? list.get('page') : page, list.get('size'))
   }
 
-  render() {
+  getPager(page, totalPages){
 
-    const list = this.props.list
-
-    const loading = list.get('loading') ?
-      <LinearProgress /> :
-      <div style={ { margin: 0, padding: 0, height: 4 }}>&nbsp; </div>
-
-    const page = list.get('page')
-
-    const totalPages = Math.ceil(list.get('total') / list.get('size'))
-
-    let pageItems = []
+    // paging controls
+    let pagerItems = []
 
     // if there are lots of pages, how many to show max
     const maxPagingButtons = 9
@@ -73,28 +64,37 @@ export class DataTable extends React.Component {
 
     for (let i = 0; i < totalPages; i++) {
       // if total pages over 12, show first two, last two, and 2 before and after current
-      if (totalPages <= maxPagingButtons
-          ||
-          (i < 2) ||
-          (i >= totalPages - 2) ||
-          ((i > page - 3 || i > totalPages - 8) && (i < page + 3 || i < 7))
+      if (totalPages <= maxPagingButtons ||
+          (i < 2) || (i >= totalPages - 2) || ((i > page - 3 || i > totalPages - 8) && (i < page + 3 || i < 7))
       ){
-        pageItems.push(<FlatButton key={key} className={list.get('page') === i ? 'pager-button pager-button-number pager-button-current' : 'pager-button pager-button-number'} label={(i + 1)} onTouchTap={() => { this.handlePage(i) } }/>)
+        pagerItems.push(<FlatButton key={key} className={page === i ? 'pager-button pager-button-number pager-button-current' : 'pager-button pager-button-number'} label={(i + 1)} onTouchTap={() => { this.handlePage(i) } }/>)
         key++
 
         // show ellipsis if 2nd item AND page > 5 (maxPagingButtons/2) OR
         // if 2nd to last item AND page < totalPages - 5 (maxPagingButtons/2)
         if ((key === 2 && page > maxPagingButtons / 2) ||
             (key === maxPagingButtons - 2 && page < totalPages - maxPagingButtons / 2 - 1) ) {
-          pageItems.push(<span style={{ margin: '0 5px' }}>&#8230;</span>)
+          pagerItems.push(<span style={{ margin: '0 5px' }}>&#8230;</span>)
         }
       }
-
-      // show ellipsis between first two and current region and last two and current region
-      // if (totalPages > maxPagingButtons && ((i === 1 && page > 3) || (i === totalPages - 3)) {
-      //   pageItems.push(<span>...</span>)
-      // }
     }
+
+    return pagerItems
+  }
+
+  render() {
+
+    const list = this.props.list
+
+    // show loading indicator?
+    const loading = list.get('loading') ?
+      <LinearProgress /> :
+      <div style={ { margin: 0, padding: 0, height: 4 }}>&nbsp; </div>
+
+    // generate paging for footer
+    const page = list.get('page')
+    const totalPages = Math.ceil(list.get('total') / list.get('size'))
+    let pagerItems = this.getPager(page, totalPages)
 
     return (
       <div>
@@ -105,6 +105,8 @@ export class DataTable extends React.Component {
           fixedFooter={this.state.fixedFooter}
           selectable={this.state.selectable}
           multiSelectable={this.state.multiSelectable}>
+
+          { /* Header - Sort on click in header columns */ }
           <TableHeader
             displaySelectAll={this.state.showCheckboxes}
             adjustForCheckbox={this.state.showCheckboxes}
@@ -121,6 +123,8 @@ export class DataTable extends React.Component {
               )) }
             </TableRow>
           </TableHeader>
+
+          { /* Body - this is where we fill the table with the data (List of items) */ }
           <TableBody
             displayRowCheckbox={this.state.showCheckboxes}
             deselectOnClickaway={this.state.deselectOnClickaway}
@@ -136,11 +140,13 @@ export class DataTable extends React.Component {
               </TableRow>
             )) }
           </TableBody>
+
+          { /* Footer - contains pager */ }
           <TableFooter adjustForCheckbox={true}>
             <TableRow>
               <TableRowColumn colSpan={this.props.columns.length - 1} style={{ textAlign: 'right', padding: '10px 20px 20px 0' }} >
                 <FlatButton className={'pager-button'} label="< Prev" onTouchTap={() => { this.handlePage(page - 1) } } disabled={page === 0} />
-                  { pageItems }
+                  { pagerItems }
                 <FlatButton className={'pager-button'} label="Next >" onTouchTap={() => { this.handlePage(page + 1) } } disabled={ page + 1 >= totalPages} />
               </TableRowColumn>
             </TableRow>

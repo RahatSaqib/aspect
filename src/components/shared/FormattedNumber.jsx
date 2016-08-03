@@ -1,5 +1,4 @@
 import React from 'react'
-import { connect } from 'react-redux'
 import PureRenderMixin from 'react-addons-pure-render-mixin'
 
 // This component returns a number formatted using the user's culture
@@ -24,13 +23,5 @@ FormattedNumber.propTypes = {
   number: React.PropTypes.any.isRequired,
   culture: React.PropTypes.string.isRequired
 }
-
-function mapStateToProps(state) {
-  return {
-    culture: state.getIn(['user', 'culture'])
-  }
-}
-
-FormattedNumber = connect(mapStateToProps)(FormattedNumber)
 
 export default FormattedNumber
