@@ -73,11 +73,11 @@ export class DeviceList extends React.Component {
                     columns={[  { db: 'name', title: this.props.strings.deviceName },
                               { db: 'status', title: this.props.strings.status, hideOnXs: true },
                               { db: 'createdOn', title: this.props.strings.reportingFor, hideOnXs: true,
-                                format: (data) => <FormattedDate date={ data } fromNow={true} omitSuffix={true} culture={ this.props.culture } /> },
+                                format: (data) => <FormattedDate date={ data } fromNow={true} omitSuffix={true} culture={ this.props.strings.culture } /> },
                               { db: 'lastSeen', title: this.props.strings.lastSeen, hideOnXs: true,
-                                format: (data) => <FormattedDate date={ data } fromNow={true} culture={ this.props.culture } /> },
+                                format: (data) => <FormattedDate date={ data } fromNow={true} culture={ this.props.strings.culture } /> },
                               { db: 'totalTests', title: this.props.strings.totalTests,
-                                format: (data) => <FormattedNumber number={ data } culture={ this.props.culture } /> } ]} />
+                                format: (data) => <FormattedNumber number={ data } culture={ this.props.strings.culture } /> } ]} />
       </div>
     )
   }
@@ -85,8 +85,7 @@ export class DeviceList extends React.Component {
 
 function mapStateToProps(state) {
   return {
-    list: state.get('device'),
-    culture: state.getIn(['user', 'culture'])
+    list: state.get('device')
   }
 }
 

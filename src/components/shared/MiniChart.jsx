@@ -25,7 +25,7 @@ class MiniChart extends React.Component {
           </div>
           <div className="minichart-count">
               <small>{this.props.label}</small>
-              <FormattedNumber number={this.props.number} culture="en-US" />
+              <FormattedNumber number={this.props.number} culture={this.props.culture} />
           </div>
           <div className="clear-fix" ></div>
         </Paper>
@@ -37,7 +37,8 @@ MiniChart.propTypes = {
   bgcolor: React.PropTypes.string.isRequired,
   data: React.PropTypes.array.isRequired,
   label: React.PropTypes.string.isRequired,
-  number: React.PropTypes.any.isRequired
+  number: React.PropTypes.any.isRequired,
+  culture: React.PropTypes.string.isRequired
 }
 
 export default MiniChart

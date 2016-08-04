@@ -34,8 +34,8 @@ class Nav extends React.Component {
               <IconButton>
                 <MoreVertIcon color={'#fff'} />
               </IconButton>}>
-              <MenuItem primaryText="English" className="linky" onTouchTap={() => { this.props.handleLanguageChange('en') } } />
-              <MenuItem primaryText="French" className="linky" onTouchTap={() => { this.props.handleLanguageChange('fr') } } />
+              <MenuItem primaryText="English" className="linky" onTouchTap={() => { this.props.handleLanguageChange('en', 'en-US') } } />
+              <MenuItem primaryText="French" className="linky" onTouchTap={() => { this.props.handleLanguageChange('fr', 'fr-FR') } } />
               <MenuItem primaryText="Help" href="https://admin.gxalert.com" />
               <MenuItem primaryText="Sign out" className="linky" onTouchTap={ this.props.handleSignOut } />
             </IconMenu>

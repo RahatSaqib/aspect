@@ -61,14 +61,16 @@ export function logoutSuccess() {
   }
 }
 
-export function changeLanguage(lang) {
+export function changeLanguage(lang, culture) {
 
   window.localStorage.lang = lang
+  window.localStorage.culture = culture
 
-  // todo: update in db
+  // todo: update in db, separate culture
   return {
     type: types.CHANGE_LANGUAGE,
-    lang
+    lang,
+    culture
   }
 }
 

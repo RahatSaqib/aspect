@@ -18,8 +18,8 @@ function logOut(state){
   return state.merge({ name: '', loggedIn: false, loggingIn: false })
 }
 
-function changeLanguage(state, lang){
-  return state.merge({ lang })
+function changeLanguage(state, lang, culture){
+  return state.merge({ lang, culture })
 }
 
 function toggleDrawer(state, drawerOpen){
@@ -37,7 +37,7 @@ const login = function(state = Immutable.fromJS({ name: '', culture: 'en-US', la
   case types.LOGOUT_SUCCESS:
     return logOut(state)
   case types.CHANGE_LANGUAGE:
-    return changeLanguage(state, action.lang)
+    return changeLanguage(state, action.lang, action.culture)
   case types.TOGGLE_DRAWER:
     return toggleDrawer(state, action.drawerOpen)
   }

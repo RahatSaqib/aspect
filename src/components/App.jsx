@@ -21,7 +21,7 @@ class App extends React.Component {
     return (
       // we set the currentlanguage as the key here to make sure that the
       // currentlanguage in the context is passed down to the children.
-      // that way, the UI will be rerendered as soon as the user changes the language
+      // that way, the UI will be rerendered as soon as the user changes the language/culture
       <MuiThemeProvider muiTheme={getMuiTheme(theme)} key={this.props.currentLanguage}>
         {this.props.children}
       </MuiThemeProvider>
@@ -30,7 +30,8 @@ class App extends React.Component {
 
   getChildContext() {
     return {
-      currentLanguage: this.props.currentLanguage
+      currentLanguage: this.props.currentLanguage,
+      currentCulture: this.props.currentCulture
     }
   }
 }
@@ -40,12 +41,14 @@ App.propTypes = {
 }
 
 App.childContextTypes = {
-  currentLanguage: React.PropTypes.string
+  currentLanguage: React.PropTypes.string,
+  currentCulture: React.PropTypes.string
 }
 
 function mapStateToProps(state) {
   return {
-    currentLanguage: state.getIn(['user', 'lang'])
+    currentLanguage: state.getIn(['user', 'lang']),
+    currentCulture: state.getIn(['user', 'culture'])
   }
 }
 

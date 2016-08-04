@@ -21,31 +21,36 @@ export class Dashboard extends React.Component {
           <div className="pure-u-lg-1-4 pure-u-md-1-3 pure-u-sm-1-2">
             <Link to="/device">
               <MiniChart  data={[1, 8, 15, 40, 45, 80, 90, 155]}
+                          culture={this.props.strings.culture}
                           label={"Total Devices"} number={155} bgcolor={'#00bcd4'}/>
             </Link>
           </div>
           <div className="pure-u-lg-1-4 pure-u-md-1-3 pure-u-sm-1-2">
             <Link to="/result">
               <MiniChart  data={[1000, 2000, 4000, 10000, 5000, 50000, 100000, 120000, 110000]}
-                        label={"Total Tests"} number={125459} bgcolor={'#8bc34a'} />
+                          culture={this.props.strings.culture}
+                          label={"Total Tests"} number={125459} bgcolor={'#8bc34a'} />
             </Link>
           </div>
           <div className="pure-u-lg-1-4 pure-u-md-1-3 pure-u-sm-1-2">
             <Link to="/result">
               <MiniChart  data={[25, 12, 8, 2, 1]}
-                        label={"Error Rate"} number={'12%'} bgcolor={'#ff9800'} />
+                          culture={this.props.strings.culture}
+                          label={"Error Rate"} number={'12%'} bgcolor={'#ff9800'} />
             </Link>
           </div>
           <div className="pure-u-lg-1-4 pure-u-md-1-3 pure-u-sm-1-2">
             <Link to="/dashboard/inventory">
               <MiniChart  data={[1000, 1200, 700, 500, 400, 500, 600, 780, 1200, 1456]}
-                        label={"Cartridges"} number={1456} bgcolor={'#607d8b'} />
+                          culture={this.props.strings.culture}
+                          label={"Cartridges"} number={1456} bgcolor={'#607d8b'} />
               </Link>
           </div>
           <div className="pure-u-lg-1-4 pure-u-md-1-3 pure-u-sm-1-2">
             <Link to="/person">
               <MiniChart  data={[800, 700, 900, 1200, 1400, 1500, 1600, 1780]}
-                        label={"Persons"} number={12} bgcolor={'#FBC02D'} />
+                          culture={this.props.strings.culture}
+                          label={"Persons"} number={12} bgcolor={'#FBC02D'} />
             </Link>
           </div>
         </div>

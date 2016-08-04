@@ -12,7 +12,7 @@ class FormattedNumber extends React.Component {
   render() {
     return (
         <span>
-          {this.props.number.toLocaleString(this.props.culture || 'en-US')}
+          {this.props.number.toLocaleString(this.props.culture)}
         </span>
       )
   }
