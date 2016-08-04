@@ -1,6 +1,7 @@
 // This is the entry point for our app
 import 'core-js/fn/object/assign'
 import React from 'react'
+import promise from 'es6-promise'
 import { render } from 'react-dom'
 import { Provider } from 'react-redux'
 
@@ -12,6 +13,10 @@ import { refreshStart, hydrateFromLocalStorage } from './action_creators/user_cr
 // http://stackoverflow.com/a/34015469/988941
 import injectTapEventPlugin from 'react-tap-event-plugin'
 injectTapEventPlugin()
+
+// polyfill promise if necessary
+// http://caniuse.com/#feat=promises
+promise.polyfill()
 
 // get new access token on refresh/startup
 if (window.localStorage.refresh){

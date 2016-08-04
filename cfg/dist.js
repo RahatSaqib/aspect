@@ -13,13 +13,14 @@ let ChunkManifestPlugin = require('chunk-manifest-webpack-plugin');
 
 // vendor packages so we can create a separate bundle
 const vendorPackages = [
+  'es6-promise',
   'immutable', 'isomorphic-fetch',
   'jwt-decode', 'material-ui', 'moment', 'react',
   'react-addons-pure-render-mixin', 'react-dom',
   'react-redux', 'react-router', 'react-router-scroll',
   'react-sparklines', 'react-tap-event-plugin',
   'redux', 'react-router-redux', 'redux-immutable',
-  'redux-thunk'
+  'redux-thunk', 'whatwg-fetch'
 ]
 
 let config = Object.assign({}, baseConfig, {

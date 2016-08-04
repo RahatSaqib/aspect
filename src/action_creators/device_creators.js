@@ -38,7 +38,7 @@ export function fetchDevices(filters = Immutable.Map({ name: '' }), sortCol = 'n
       qsFilters = Object.keys(filters).map(k => `${encodeURIComponent(k)}=${encodeURIComponent(filters[k])}`).join('&')
     }
 
-    let headers = new Headers({ 'Authorization': 'Bearer ' + window.localStorage.jwt })
+    let headers = new Headers({ Authorization: 'Bearer ' + window.localStorage.jwt })
 
     return fetch(`${config.aspectApi}/device?sortCol=${sortCol}&sortDir=${sortDir}&page=${page}&size=${size}&${qsFilters}`, { headers: headers })
       .then(util.handleFetchError)
