@@ -2,6 +2,7 @@
 import React from 'react'
 import { bindActionCreators } from 'redux'
 import { connect } from 'react-redux'
+import Helmet from 'react-helmet'
 import PureRenderMixin from 'react-addons-pure-render-mixin'
 import { logoutStart, changeLanguage, toggleDrawer, closeDrawer } from '../action_creators/user_creators'
 
@@ -21,6 +22,7 @@ class LoggedInShell extends React.Component {
   render() {
     return (
       <div>
+        <Helmet title={this.props.pathname} titleTemplate="%s - Aspect" defaultTitle="Aspect" />
         <ErrorDisplayContainer />
         <SideNav  open={this.props.drawerOpen}
                   desktop={ this.state.desktop }
@@ -40,10 +42,10 @@ LoggedInShell.propTypes = {
   children: React.PropTypes.object.isRequired
 }
 
-const mapStateToProps = (state, ownProps) => {
+const mapStateToProps = (state) => {
   return {
     drawerOpen: state.getIn(['user', 'drawerOpen']),
-    pathname: ownProps.location.pathname
+    pathname: state.getIn(['routing', 'locationBeforeTransitions', 'pathname'])
   }
 }
 

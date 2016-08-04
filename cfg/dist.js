@@ -19,7 +19,7 @@ const vendorPackages = [
   'react-addons-pure-render-mixin', 'react-dom',
   'react-redux', 'react-router', 'react-router-scroll',
   'react-sparklines', 'react-tap-event-plugin',
-  'redux', 'react-router-redux', 'redux-immutable',
+  'redux', 'react-helmet', 'react-router-redux', 'redux-immutable',
   'redux-thunk', 'whatwg-fetch'
 ]
 
