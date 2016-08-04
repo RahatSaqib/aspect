@@ -1,10 +1,13 @@
+// Imports from packages
 import React from 'react'
 import { connect } from 'react-redux'
 import PureRenderMixin from 'react-addons-pure-render-mixin'
 
+// Material-UI
 import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider'
 import getMuiTheme from 'material-ui/styles/getMuiTheme'
 
+// Our own imports
 import theme from '../theme'
 
 require('styles/App.css')

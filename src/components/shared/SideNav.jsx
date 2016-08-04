@@ -1,3 +1,4 @@
+// Imports from packages
 import React from 'react'
 import { Link } from 'react-router'
 import PureRenderMixin from 'react-addons-pure-render-mixin'
@@ -17,6 +18,7 @@ import People from 'material-ui/svg-icons/social/people'
 import Notifications from 'material-ui/svg-icons/social/notifications'
 import Book from 'material-ui/svg-icons/action/book'
 
+// Our own imports
 import SelectableList from './SelectableList'
 
 class SideNav extends React.Component {

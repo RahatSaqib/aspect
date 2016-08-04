@@ -24,5 +24,8 @@ export default {
   NotFound:{
     title: 'Not Found',
     help: 'The page you\'re looking for doesn\'t exist.'
+  },
+  ErrorDisplay:{
+
   }
 }

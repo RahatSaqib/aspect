@@ -1,13 +1,16 @@
+// Imports from packages
 import React from 'react'
 import { bindActionCreators } from 'redux'
 import { connect } from 'react-redux'
 import PureRenderMixin from 'react-addons-pure-render-mixin'
 
+// Material-UI
 import Paper from 'material-ui/Paper'
 import LinearProgress from 'material-ui/LinearProgress'
 import RaisedButton from 'material-ui/RaisedButton'
 import TextField from 'material-ui/TextField'
 
+// Our own imports
 import { loginStart } from '../action_creators/user_creators'
 import { ErrorDisplayContainer } from './shared/ErrorDisplay'
 

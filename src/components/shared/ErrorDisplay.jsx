@@ -1,10 +1,13 @@
+// Imports from packages
 import React from 'react'
 import { bindActionCreators } from 'redux'
 import PureRenderMixin from 'react-addons-pure-render-mixin'
 import { connect } from 'react-redux'
 
+// Material-UI
 import Snackbar from 'material-ui/Snackbar'
 
+// Our own imports
 import { removeError } from '../../action_creators/error_creators'
 
 export class ErrorDisplay extends React.Component {
@@ -54,4 +57,5 @@ const mapDispatchToProps = (dispatch) => {
   return bindActionCreators({ removeError }, dispatch)
 }
 
+// Translate and connect to redux store
 export const ErrorDisplayContainer = connect(mapStateToProps, mapDispatchToProps)(ErrorDisplay)

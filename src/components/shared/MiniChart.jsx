@@ -1,8 +1,10 @@
+// Imports from packages
 import React from 'react'
 import PureRenderMixin from 'react-addons-pure-render-mixin'
 import { Sparklines, SparklinesLine, SparklinesSpots } from 'react-sparklines'
 import Paper from 'material-ui/Paper'
 
+// Our own imports
 import FormattedNumber from './FormattedNumber'
 
 require('./../../styles/Charts.css')

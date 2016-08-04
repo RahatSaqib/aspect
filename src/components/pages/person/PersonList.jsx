@@ -1,3 +1,4 @@
+// Imports from packages
 import React from 'react'
 import { bindActionCreators } from 'redux'
 import { connect } from 'react-redux'
@@ -12,6 +13,7 @@ import IconMenu from 'material-ui/IconMenu'
 import IconButton from 'material-ui/IconButton'
 import TextField from 'material-ui/TextField'
 
+// Our own imports
 import { fetchPersons } from '../../../action_creators/person_creators'
 import { DataTable } from '../../shared/DataTable'
 import translate from '../../../i18n/translate'
@@ -88,5 +90,6 @@ const mapDispatchToProps = (dispatch) => {
   return bindActionCreators({ fetchPersons }, dispatch)
 }
 
+// Translate and connect to redux store
 const PersonListTranslated = translate('PersonList')(PersonList)
 export const PersonListContainer = connect(mapStateToProps, mapDispatchToProps)(PersonListTranslated)

@@ -1,9 +1,11 @@
+// Imports from packages
 import React from 'react'
 import { bindActionCreators } from 'redux'
 import { connect } from 'react-redux'
 import PureRenderMixin from 'react-addons-pure-render-mixin'
 import { logoutStart, changeLanguage, toggleDrawer, closeDrawer } from '../action_creators/user_creators'
 
+// Our own imports
 import Nav from './shared/Nav'
 import SideNav from './shared/SideNav'
 import { ErrorDisplayContainer } from './shared/ErrorDisplay'

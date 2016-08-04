@@ -1,9 +1,11 @@
+// Imports from packages
 import React from 'react'
 import { Link } from 'react-router'
 import { connect } from 'react-redux'
 import Snackbar from 'material-ui/Snackbar'
 import PureRenderMixin from 'react-addons-pure-render-mixin'
 
+// Our own imports
 import MiniChart from '../../shared/MiniChart'
 import translate from '../../../i18n/translate'
 
@@ -81,5 +83,6 @@ function mapStateToProps(state) {
   }
 }
 
+// Translate and connect to redux store
 const DashboardTranslated = translate('Dashboard')(Dashboard)
 export const DashboardContainer = connect(mapStateToProps)(DashboardTranslated)
