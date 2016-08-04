@@ -114,8 +114,7 @@ export function loginStart(user, password) {
     return fetch(config.aspectApi + '/auth',
       {
         method: 'POST',
-        mode: 'cors',
-        headers: { 'Content-Type': 'application/json' },
+        headers: util.getHeaders(true),
         body: JSON.stringify({
           name: user,
           password: password,
@@ -167,8 +166,7 @@ export function refreshStart() {
     fetch(config.aspectApi + '/auth/refresh',
       {
         method: 'POST',
-        mode: 'cors',
-        headers: { 'Content-Type': 'application/json' },
+        headers: util.getHeaders(true),
         body: JSON.stringify({
           token: window.localStorage.refresh,
           clientId: window.localStorage.clientId

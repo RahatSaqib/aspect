@@ -38,9 +38,7 @@ export function fetchPersons(filters = Immutable.Map({ name: '' }), sortCol = 'n
       qsFilters = Object.keys(filters).map(k => `${encodeURIComponent(k)}=${encodeURIComponent(filters[k])}`).join('&')
     }
 
-    let headers = new Headers({ 'Authorization': 'Bearer ' + window.localStorage.jwt })
-
-    return fetch(`${config.aspectApi}/person?sortCol=${sortCol}&sortDir=${sortDir}&page=${page}&size=${size}&${qsFilters}`, { headers: headers })
+    return fetch(`${config.aspectApi}/person?sortCol=${sortCol}&sortDir=${sortDir}&page=${page}&size=${size}&${qsFilters}`, { headers: util.getHeaders(false) })
       .then(util.handleFetchError)
       .then(json => dispatch(receivePersons(json)))
       .catch(err => {

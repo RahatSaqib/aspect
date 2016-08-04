@@ -1,7 +1,7 @@
 import React from 'react'
 import { Router, Route, IndexRoute, Redirect, applyRouterMiddleware } from 'react-router'
 import useScroll from 'react-router-scroll'
-import { history } from './store'
+import store, { history } from './store'
 
 // higher level containers/shells
 import App from './components/App'
@@ -19,17 +19,24 @@ import { ResultList } from './components/pages/result/ResultList'
 import { NotificationList } from './components/pages/notification/NotificationList'
 import { ReportList } from './components/pages/report/ReportList'
 
+import { refreshStart } from './action_creators/user_creators'
+
 function requireAuth(nextState, replace) {
   // TODO: check access level based on tokens/roles in jwt
   if (!window.localStorage.jwt ||
     !window.localStorage.jwt_expires ||
-    window.localStorage.jwt_expires < Math.floor(Date.now() / 1000)) {
-    // if no access token or it is expired or expires within 10 minutes (600s),
+    window.localStorage.jwt_expires < Math.floor(Date.now() / 1000) + 600) {
+    // if no access token or it is expired or expires within 10 minutes (600s)
     // try to refresh if we have a refresh token
-    replace({
-      pathname: '/login',
-      state: { nextPathname: nextState.location.pathname }
-    })
+    // if not, redirect to login
+    if (window.localStorage.refresh){
+      store.dispatch(refreshStart())
+    }  else {
+      replace({
+        pathname: '/login',
+        state: { nextPathname: nextState.location.pathname }
+      })
+    }
   }
 }
 

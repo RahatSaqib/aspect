@@ -13,6 +13,22 @@ class util{
     return browser.name + ' ' + browser.version
   }
 
+  // adds headers to every fetch request
+  getHeaders(json){
+
+    let headers = new Headers()
+
+    if (window.localStorage.jwt){
+      headers.append('Authorization', 'Bearer ' + window.localStorage.jwt)
+    }
+
+    if (json){
+      headers.append('Content-Type', 'application/json')
+    }
+
+    return headers
+  }
+
   // using this in a fetch (ajax request) to check if request was successful
   handleFetchError(resp) {
 
