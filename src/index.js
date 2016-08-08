@@ -26,12 +26,12 @@ if (window.localStorage.refresh){
 
   // get new access token
   store.dispatch(refreshStart())
-
-  // also refresh the access token every 30 minutes.
-  // this could probably be done more elegantly in a component
-  // but it works for now
-  setInterval(() => { store.dispatch(refreshStart()) }, 30 * 60 * 1000)
 }
+
+// also refresh the access token every 30 minutes.
+// this could probably be done more elegantly in a component
+// but it works for now
+setInterval(() => { store.dispatch(refreshStart()) }, 30 * 60 * 1000)
 
 render(
   <Provider store={store}>

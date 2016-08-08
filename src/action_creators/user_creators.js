@@ -162,6 +162,11 @@ export function logoutStart() {
 
 export function refreshStart() {
   return function (dispatch) {
+
+    if (!window.localStorage.refresh){
+      return
+    }
+
     // try to get a new access token:
     fetch(config.aspectApi + '/auth/refresh',
       {
