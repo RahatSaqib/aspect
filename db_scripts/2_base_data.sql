@@ -12,8 +12,5 @@ where r.name not in (select name from aspect.role);
 
 
 insert into aspect.device_type(name, id1_query, id2_query, id3_query, id4_query)
-values ('GeneXpert', 'ComputerId', 'concat(concat(country.Abbreviation, ''_''), concat(Serial, concat(''_'', HostId)))',
-        'concat(concat(country.Abbreviation, ''_''), Serial)', 'concat(concat(country.Abbreviation, ''_''), HostId)');
-        
-insert into aspect.device_type(name)
-values ('PIMA');
+values ('GeneXpert', 'ComputerId', 'concat(country.Abbreviation, ''_'', Serial, ''_'', HostId)',
+        'concat(country.Abbreviation, ''_'', Serial)', 'concat(country.Abbreviation, ''_'', HostId)');
