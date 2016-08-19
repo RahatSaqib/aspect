@@ -4,8 +4,11 @@
   "description": "The API for aspect clients",
   "main": "server.js",
   "scripts": {
-    "test": "mocha",
     "start": "node server.js",
+    "start:background": "forever start server.js",
+    "stop:background": "forever stop server.js",
+    "mocha": "mocha",
+    "test": "npm-run-all -c start:background mocha stop:background",
     "coverage": "./node_modules/istanbul/lib/cli.js cover --preload-sources ./node_modules/mocha/bin/_mocha -- --ui bdd -R spec -t 5000"
   },
   "author": "SystemOne",
@@ -30,7 +33,9 @@
   "devDependencies": {
     "chai": "^3.5.0",
     "eslint": "^2.9.0",
+    "forever": "^0.15.2",
     "mocha": "^2.4.5",
+    "npm-run-all": "^3.0.0",
     "supertest": "^1.2.0"
   }
 }
