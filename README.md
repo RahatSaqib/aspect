@@ -35,7 +35,7 @@ nodemon
 
 ##Tests
 Tests are in /test and written in Mocha/Chai
-To run tests, `npm test` in the terminal
+To run tests, start the server and then run `mocha` or `npm test` in another terminal
 
 
 ##Stress test with siege
