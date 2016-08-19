@@ -33,3 +33,6 @@ bower_components/
 .elasticbeanstalk/*
 !.elasticbeanstalk/*.cfg.yml
 !.elasticbeanstalk/*.global.yml
+
+#IDE Generated Files
+.idea
