@@ -1,6 +1,6 @@
 import React from 'react'
 import { Router, Route, IndexRoute, Redirect, applyRouterMiddleware } from 'react-router'
-import useScroll from 'react-router-scroll'
+import { useScroll } from 'react-router-scroll'
 import store, { history } from './store'
 
 // higher level containers/shells
