@@ -11,7 +11,7 @@ Clone the repository, then:
 npm install
 ```
 
-Then, set up secret and db connection string in config.js
+Then, set up secret and db connection string in config.test.js
 
 It's best to install nodemon globally and use that to run the project so that the server restarts automatically on any change:
 
@@ -37,6 +37,15 @@ nodemon
 Tests are in /test and written in Mocha/Chai
 To run tests, `npm test` in the terminal
 
+###Running tests against a local database
+The API is configured to connect to the test AWS RDS database by default and will point to the config.test.js to configure the application
+In order to change the config, on your machine, to point to another database you need to set the NODE_ENV variable to something specific
+Change the values in ./config.local.js to point to a local database setup on your machine and run the following command
+```bash
+set NODE_ENV=local
+``` 
+This will tell the application to point to config.<strong style="color: #0099cc;">local</strong>.js for configuration values
+Then run tests using the `npm test` command
 
 ##Stress test with siege
 Install siege: http://jason.pureconcepts.net/2011/09/installing-siege-mac-os-x-lion/
