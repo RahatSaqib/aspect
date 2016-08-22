@@ -1,20 +1,28 @@
-import React from 'react'
-import LoggedInShell from '../../src/components/LoggedInShell'
-import { assert } from 'chai'
-import { createComponentFromJsx } from 'helpers/shallowRenderHelper'
+import React from 'react';
+import {LoggedInShell} from '../../src/components/LoggedInShell';
+import { assert } from 'chai';
+import { shallow } from 'enzyme';
 
 describe('LoggedInShell', () => {
-
-  let output
+  const props = {
+    pathname:'',
+    drawerOpen:false,
+    children: {},
+    closeDrawer: () => {},
+    toggleDrawer: () => {},
+    logoutStart: () => {},
+    changeLanguage: () => {},
+  };
+  let output;
 
   // using shallow rendering here because we're not interested
   // in what exactly the sub components are doing
   beforeEach(() => {
-    output = createComponentFromJsx(<LoggedInShell children={{}} />)
-  })
+    output = shallow(<LoggedInShell {...props} />);
+  });
 
   it('Is a div that contains ErrorDisplay, SideNav, Nav and at least one other child', () => {
-    assert.equal(output.type, 'div')
-    assert.isAtLeast(output.props.children.length, 4)
-  })
-})
+    assert.equal(output.node.type, 'div');
+    assert.isAtLeast(output.props().children.length, 4);
+  });
+});

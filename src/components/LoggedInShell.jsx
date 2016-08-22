@@ -11,7 +11,7 @@ import Nav from './shared/Nav'
 import SideNav from './shared/SideNav'
 import { ErrorDisplayContainer } from './shared/ErrorDisplay'
 
-class LoggedInShell extends React.Component {
+export class LoggedInShell extends React.Component {
 
   constructor(props) {
     super(props)

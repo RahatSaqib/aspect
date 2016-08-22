@@ -50,6 +50,13 @@ module.exports = {
       config: srcPath + 'config/' + process.env.REACT_WEBPACK_ENV
     }
   },
+  externals: {
+    'jsdom': 'window',
+    'cheerio': 'window',
+    'react/lib/ExecutionEnvironment': true,
+    'react/lib/ReactContext': true,
+    'react/addons': true
+  },
   plugins: [
     new BowerWebpackPlugin({
       searchResolveModulesDirectories: false

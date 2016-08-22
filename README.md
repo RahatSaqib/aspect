@@ -35,10 +35,11 @@ When npm run dist is finished, open dist/index.html and edit it so both the app.
 <script type="text/javascript" src="/assets/app.PUTCORRECTSTRINGHERE.js"></script>
 ```
 
-You will also have to include the contents of the manifest.js file inline (simply copy and paste the contents of the entire file) and put the script tag above vendor and app script tags:
+You will also have to include the contents of the manifest.js file inline (simply copy and paste the contents of the entire file) and put the script tag above vendor and app script tags (note the /assets/ in front of the manifest file):
 ```html
 <script>
-  !function(e){function t(n){if(a[n])return a[n] ....... //# sourceMappingURL=/assets/manifest.PUTCORRECTSTRINGHERE.js.map
+  !function(e){function t(n){if(a[n])return a[n] .......
+  //# sourceMappingURL=/assets/manifest.PUTCORRECTSTRINGHERE.js.map
 </script>
 ```
 
