@@ -4,6 +4,13 @@ let config = require('./config')
 
 let pool = mysql.createPool(config.db)
 
+// initialize knex
+let knex = require('knex')({
+  client: 'mysql',
+  connection: config.db
+})
+module.exports.knex = knex
+
 // select one or more rows
 module.exports.find = function(tableName, columns, whereParams, resolve, reject) {
   columns = columns || '*'
