@@ -27,7 +27,7 @@ module.exports = function(config, db) {
       .leftOuterJoin('lga as l', 'p.lga_id', 'l.id')
       .modify(requestFilter, req, 'name', 'p.name')
       .modify(requestSortPage, req, 'name')
-      .select('p.id as id', 'p.name as name', 'pl.name as level', 's.name as state', 'l.name as lga')
+      .select('p.id', 'p.name', 'pl.name as level', 's.name as state', 'l.name as lga')
 
     // return result when both queries are finished
     Promise.all([getCount, getItems]).then(function(value){

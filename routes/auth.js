@@ -124,7 +124,7 @@ module.exports = function(config, db) {
       .innerJoin('user as u', 'rt.user_id', 'u.id')
       .innerJoin('person as p', 'u.id', 'p.user_id')
       .where({client_id: clientId, token, revoked: 0})
-      .select('rt.user_id as userId', 'rt.expires as expires', 'u.name as name', 'p.culture as culture')
+      .select('rt.user_id as userId', 'rt.expires', 'u.name', 'p.culture')
       .first()
 
     getRefreshToken.then(data => {
@@ -173,6 +173,7 @@ function getToken(config, db, userId, userName, refreshToken, clientId, culture)
   return db.knex('role as r')
     .innerJoin('user_role as ur', 'r.id', 'ur.role_id')
     .where({user_id: userId})
+    .select('r.name')
     .then(data => {
       // create a new token
       let token = jwt.sign({
