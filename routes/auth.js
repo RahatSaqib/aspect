@@ -9,12 +9,12 @@ let jwtmiddleware = require('./jwtmiddleware')
 module.exports = function(config, db) {
 
   let routes = express.Router()
+  let { knex } = db
 
   /*
   Route for authenticating a user
   */
   routes.post('/', function(req, res) {
-
     // validation
     req.check('name', 'User name is required').notEmpty()
     req.check('password', 'Password is required').notEmpty()
@@ -26,71 +26,81 @@ module.exports = function(config, db) {
       return
     }
 
-    // find the user in the db
-    db.queryOne(`select u.locked_out, u.failed_password_attempts, u.id, u.name, p.culture
-      from user u inner join person p on u.id = p.user_id
-      where u.name = ?`, req.body.name,
-      function(response) {
-        if (!response.ok) {
-          res.status(400).json({ message: response.message })
-          return
-        }
+    let findUser = knex('user as u')
+      .innerJoin('person as p', 'u.id', 'p.user_id')
+      .where({'u.name': req.body.name})
+      .select('u.locked_out', 'u.failed_password_attempts', 'u.id', 'u.name', 'p.culture')
+      .first()
+    
+    findUser.then(user => {
+      if(!user){
+        // TODO generic Auth failed message on username and password failed?
+        // TODO should this be 401 (test checks 400)
+        res.status(400).json({ message: 'not found' })
+        //res.status(401).json({ message: 'Authentication failed. Wrong user name.' })
+        return
+      }
+      
+      if (user.locked_out === 1) {
+        res.status(401).json({ message: 'Your account is locked.' })
+        return
+      }
 
-        let user = response.data
-
-        if (user.locked_out === 1) {
-          res.status(401).json({ message: 'Your account is locked.' })
-          return
-        }
-
-        // TODO: check if password matches
-        if (req.body.password !== 'test07') {
-
-          let lock = user.failed_password_attempts >= config.passwordAttempts ? 1 : 0
-
-          db.update('user', [{
+      // TODO: check if password matches
+      if (req.body.password !== 'test07') {
+        // FIXME this allows 6 attempts if config is 5... bug?
+        let lock = user.failed_password_attempts >= config.passwordAttempts ? 1 : 0
+        let updateFailedPass = knex('user')
+          .where({id: user.id})
+          .update({
             failed_password_attempts: user.failed_password_attempts + 1,
             locked_out: lock
-          }, { id: user.id }],
-          () => {
-            res.status(401).json({ message: 'Authentication failed. Wrong password.' })
-          })
-        } else {
-
-          // upsert refresh token
-          let now = new Date()
-          let expires = new Date(now.getTime() + 7 * 86400000) // 7 days from now
-          let refresh_token = crypto.randomBytes(48).toString('base64')
-          let clientId = req.body.clientId || uuid.v4()
-
-          let setRefreshToken = new Promise((resolve, reject) => {
-            db.query('INSERT INTO refresh_token set ? ON DUPLICATE KEY UPDATE ?', [{
-              user_id: user.id,
-              client_id: clientId,
-              client_name: req.body.clientName,
-              token: refresh_token,
-              expires: expires,
-              created_on: now
-            }, {
-              token: refresh_token,
-              expires: expires
-            }], resolve, reject)
           })
 
-          let updatePwAttempts = new Promise((resolve, reject) => {
-            console.log(user.id)
-            db.update('user', [{  failed_password_attempts: 0,
-              last_login: now,
-              last_active: now }, { id: user.id }], resolve, reject) })
+        return updateFailedPass.then(() => {
+          res.status(401).json({ message: 'Authentication failed. Wrong password.' })
+        })
+      }
 
-          Promise.all([setRefreshToken, updatePwAttempts]).then(function(){
-            // finally, return the access token...
-            getToken(db, config, user.id, user.name, res, refresh_token, clientId, user.culture)
-          }, function(err){
-            res.status(500).json(err)
+      return user
+    }).then(user => {
+      if(user){
+        // upsert refresh token
+        let now = new Date()
+        let expires = new Date(now.getTime() + 7 * 86400000) // 7 days from now
+        let refresh_token = crypto.randomBytes(48).toString('base64')
+        let clientId = req.body.clientId || uuid.v4()
+
+        // Use raw query as upsert not yet supported in knex#701
+        let setRefreshToken = knex.raw('INSERT INTO refresh_token set ? ON DUPLICATE KEY UPDATE ?', [
+          {
+            user_id: user.id,
+            client_id: clientId,
+            client_name: req.body.clientName,
+            token: refresh_token,
+            expires: expires,
+            created_on: now
+          },
+          {
+            token: refresh_token,
+            expires: expires
+          }
+        ])
+
+        let updatePwAttempts = knex('user')
+          .where({id: user.id})
+          .update({
+            failed_password_attempts: 0,
+            last_login: now,
+            last_active: now
           })
-        }
-      }, null, 'user')
+
+        return Promise.all([setRefreshToken, updatePwAttempts])
+          // finally, return the access token...
+          .then(() => getToken(config, db, user.id, user.name, refresh_token, clientId, user.culture))
+          .then(token => res.json(token))
+      }
+    }).catch(err => res.status(500).json(err))
   })
 
   /*
@@ -109,40 +119,38 @@ module.exports = function(config, db) {
     }
 
     // find the token in the db
-    db.queryOne(`select rt.user_id, rt.expires, u.name, p.culture
-      from refresh_token rt inner join user u on rt.user_Id = u.id
-      inner join person p on u.id = p.user_id
-      where client_id = ? and token = ? and revoked = 0`,
-      [req.body.clientId, req.body.token],
-      (rows) => {
-        if (!rows.ok) {
-          res.status(400).json({ message: 'Unable to find token or token revoked' })
-          return
-        }
+    let {clientId, token} = req.body
+    let getRefreshToken = knex('refresh_token as rt')
+      .innerJoin('user as u', 'rt.user_id', 'u.id')
+      .innerJoin('person as p', 'u.id', 'p.user_id')
+      .where({client_id: clientId, token, revoked: 0})
+      .select('rt.user_id as userId', 'rt.expires as expires', 'u.name as name', 'p.culture as culture')
+      .first()
 
-        // check if expired
-        let now = new Date()
+    getRefreshToken.then(data => {
+      if (!data) {
+        res.status(400).json({ message: 'Unable to find token or token revoked' })
+        return
+      }
 
-        if (rows.data.expires < now) {
-          res.status(400).json({ message: 'Token expired' })
-          return
-        }
+      // check if expired
+      let now = new Date()
 
-        // looks like we have a valid refresh token. set new one in db
-        let expires = new Date(now.getTime() + 7 * 86400000) // 7 days from now
-        let refresh_token = crypto.randomBytes(48).toString('base64')
+      if (data.expires < now) {
+        res.status(400).json({ message: 'Token expired' })
+        return
+      }
 
-        db.query('update refresh_token set ? where ?', [{
-          token: refresh_token,
-          expires: expires
-        }, {
-          token: req.body.token
-        }], () => {
-          // return the token
-          let data = rows.data
-          getToken(db, config, data.user_id, data.name, res, refresh_token, req.body.clientId, data.culture)
-        })
-      })
+      // looks like we have a valid refresh token. set new one in db
+      let expires = new Date(now.getTime() + 7 * 86400000) // 7 days from now
+      let refreshToken = crypto.randomBytes(48).toString('base64')
+
+      return knex('refresh_token')
+        .where({token: req.body.token})
+        .update({token: refreshToken, expires})
+        .then(() => getToken(config, db, data.userId, data.name, refreshToken, clientId, data.culture))
+        .then(result => res.json(result))
+    }).catch(err => res.status(500).json(err))
   })
 
   /*
@@ -161,17 +169,16 @@ module.exports = function(config, db) {
 }
 
 // generate a new jwt
-function getToken(db, config, userId, userName, res, refresh_token, clientId, culture) {
-  db.query( 'select r.name from role r inner join user_role ur on r.id = ur.role_id where ?',
-    { user_id: userId },
-    (result) => {
+function getToken(config, db, userId, userName, refreshToken, clientId, culture) {
+  return db.knex('role as r')
+    .innerJoin('user_role as ur', 'r.id', 'ur.role_id')
+    .where({user_id: userId})
+    .then(data => {
       // create a new token
       let token = jwt.sign({
         name: userName,
         modules: ['inv', 'mai'],
-        roles: result.data.map((a) => {
-          return a.name
-        }),
+        roles: data.map(a => a.name),
         culture: culture || 'en-US'
       },
       config.secret, {
@@ -180,10 +187,10 @@ function getToken(db, config, userId, userName, res, refresh_token, clientId, cu
       })
 
       // return the information including token as JSON
-      res.json({
+      return {
         access: token,
-        refresh: refresh_token,
+        refresh: refreshToken,
         clientId: clientId
-      })
+      }
     })
 }
