@@ -23,15 +23,46 @@ nodemon
 
 ##Routes
 
-```GET '/'```: Will return hello! (for testing)
+`GET '/'`: Will return hello! (for testing)
 
-```POST '/api/auth'```: Send name, password, client_id, and client_name in x-www-form-urlencoded format and if credentials are OK returns a JWT.
+`POST '/api/auth'`: Send name, password, client_id, and client_name in x-www-form-urlencoded format and if credentials are OK returns a JWT.
 
-```POST '/api/auth/refresh'```: Post a refresh token in the "x-access-token" header, and this endpoint will return a refreshed JWT.
+`POST '/api/auth/refresh'`: Post a refresh token in the "x-access-token" header, and this endpoint will return a refreshed JWT.
 
-```GET '/api/auth'```: When valid JWT is in header, returns a welcome-message (for testing that auth works)
+`GET '/api/auth'`: When valid JWT is in header, returns a welcome-message (for testing that auth works)
 
 
+### Example
+
+```bash
+$ curl localhost:8080
+Hello! The API is at /api.
+
+$ curl localhost:8080/api/auth
+{"message":"No token provided"}
+
+$ curl -X POST --data 'name=bob&password=pass&clientName=Acme' localhost:8080/api/auth
+# Edited to remove long tokens
+{
+    "access": "${jwt_token}"
+    "clientId": "${client_uuid}",
+    "refresh": "${refresh_token}"
+}
+
+$ curl -H 'Authorization: Bearer ${jwt_token}' localhost:8080/api/auth
+{"message":"Welcome to the API!"}
+
+$ curl -H 'Authorization: Bearer ${jwt_token}' -H 'Content-Type: application/json' \
+  --data '{"clientId": "${client_id}", "token": "${refresh_token}"}' \
+  localhost:8080/api/auth/refresh
+
+{
+    "access": "${new_jwt_token}"
+    "clientId": "${client_uuid}",
+    "refresh": "${new_refresh_token}"
+}
+
+```
 
 ##Tests
 Tests are in /test and written in Mocha/Chai
