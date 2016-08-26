@@ -5,7 +5,7 @@ import theme from '../../../theme'
 import {mount} from 'enzyme'
 import Immutable from 'immutable'
 import {Dashboard} from './Dashboard'
-import expect from 'expect'
+import { assert } from 'chai'
 
 describe('Dashboard', () => {
 
@@ -21,7 +21,7 @@ describe('Dashboard', () => {
       </MuiThemeProvider>
     )
     const sb = Wrapper.find('Snackbar')
-    expect(sb.props().open).toBeTruthy()
+    assert.isTrue(sb.props().open)
   })
 
   it('doesn\'t show the snackbar with user name if query string does not contain "fl=1"', () => {
@@ -34,6 +34,6 @@ describe('Dashboard', () => {
       </MuiThemeProvider>
     )
     const sb = Wrapper.find('Snackbar')
-    expect(sb.props().open).toBeFalsy()
+    assert.isFalse(sb.props().open)
   })
 })

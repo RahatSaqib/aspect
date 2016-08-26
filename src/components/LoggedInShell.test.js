@@ -1,6 +1,6 @@
 import React from 'react'
 import {LoggedInShell} from './LoggedInShell'
-import expect from 'expect'
+import { assert } from 'chai'
 import { shallow } from 'enzyme'
 
 describe('LoggedInShell', () => {
@@ -22,7 +22,7 @@ describe('LoggedInShell', () => {
   })
 
   it('Is a div that contains ErrorDisplay, SideNav, Nav and at least one other child', () => {
-    expect(output.node.type).toBe('div')
-    expect(output.props().children.length).toBeGreaterThanOrEqualTo(4)
+    assert.equal(output.node.type, 'div')
+    assert.isAtLeast(output.props().children.length, 4)
   })
 })

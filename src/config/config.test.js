@@ -2,11 +2,11 @@
 /*eslint no-console: 0*/
 'use strict'
 
+import { expect } from 'chai'
 import config from 'config'
-import expect from 'expect'
 
 describe('appEnvConfigTests', () => {
   it('should load app config file depending on current --env', () => {
-    expect(config.appEnv).toBe('test')
+    expect(config.appEnv).to.equal('test')
   })
 })
