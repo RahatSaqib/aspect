@@ -2,7 +2,7 @@
 /*eslint no-console: 0*/
 'use strict'
 
-import config from './config'
+import config from 'config'
 import expect from 'expect'
 
 describe('appEnvConfigTests', () => {
