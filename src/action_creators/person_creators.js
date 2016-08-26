@@ -1,5 +1,5 @@
 import Immutable from 'immutable'
-import config from 'config'
+import config from '../../cfg/config'
 
 import util from './../util'
 import { addError } from './error_creators'

@@ -1,4 +1,4 @@
-import config from 'config'
+import config from '../../cfg/config'
 import jwt_decode from 'jwt-decode'
 import { push } from 'react-router-redux'
 
