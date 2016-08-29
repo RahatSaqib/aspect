@@ -7,10 +7,12 @@ module.exports = {
   getSortPageParams: function(req, defaultSort){
     let params = {}
 
+    /*FIXME
     req.sanitize('sortcol').trim()
     req.sanitize('sortDir').whitelist(['desc', 'asc'])
     req.sanitize('page').toInt()
     req.sanitize('size').toInt()
+    */
 
     params.sortCol = req.query.sortCol ? decamelize(req.query.sortCol) : defaultSort
     params.sortDir = req.query.sortDir == 'desc' ? 'desc' : 'asc'
