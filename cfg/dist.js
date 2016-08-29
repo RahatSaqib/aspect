@@ -60,9 +60,10 @@ let config = Object.assign({}, baseConfig, {
     new webpack.optimize.OccurenceOrderPlugin(),
 
     new HtmlWebpackPlugin({
-      chunks: ['app'],
+      chunks: ['vendor', 'app'],
       template: 'src/index.html',
-      filename: '../index.html'
+      filename: '../index.html',
+      chunksSortMode: 'none'
     }),
     new HtmlWebpackPluginRemove('<script type="text/javascript" src="/assets/app.js"></script>')
   ],
