@@ -1,11 +1,6 @@
 instrumentation:
   extensions: ['.js', '.jsx']
-  excludes:
-    - '*.test.js'
-    - 'webpack.config.js'
-    - 'utils/*'
-    - 'cfg/*'
-    - 'dist/*'
+  excludes: ['*.test.js', 'webpack.config.js', 'utils/*', 'cfg/*', 'dist/assets/*', 'server.js']
   include-all-sources: true
 reporting:
     print: detail
