@@ -1,6 +1,6 @@
 let express = require('express')
 let camelize = require('camelize')
-let Promise = require('promise')
+let Promise = require('bluebird')
 let jwtmiddleware = require('./jwtmiddleware')
 
 module.exports = function(config, db) {
