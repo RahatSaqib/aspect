@@ -26,29 +26,12 @@ npm run serve
 
 # Build the dist version and copy static files
 npm run dist
-
-This will create separate bundles for vendor and app files. Both files include a hash for cachebusting. The hash only changes when the file contents change, so vendor should stay the same most of the time.
-When npm run dist is finished, open dist/index.html and edit it so both the app.js and vendor.js file are included:
-
-```html
-<script type="text/javascript" src="/assets/vendor.PUTCORRECTSTRINGHERE.js"></script>
-<script type="text/javascript" src="/assets/app.PUTCORRECTSTRINGHERE.js"></script>
-```
-
-You will also have to include the contents of the manifest.js file inline (simply copy and paste the contents of the entire file) and put the script tag above vendor and app script tags (note the /assets/ in front of the manifest file):
-```html
-<script>
-  !function(e){function t(n){if(a[n])return a[n] .......
-  //# sourceMappingURL=/assets/manifest.PUTCORRECTSTRINGHERE.js.map
-</script>
 ```
 
 To make sure everything works, you can spin up a quick web server with this command:
 ```bash
 python -m SimpleHTTPServer 8000
 ```
-
-Working on automating this...
 
 # Run unit tests
 npm test
