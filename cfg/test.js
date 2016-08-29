@@ -42,7 +42,6 @@ module.exports = {
     extensions: [ '', '.js', '.jsx' ],
     alias: {
       actions: srcPath + 'actions/',
-      helpers: path.join(__dirname, '/../test/helpers'),
       components: srcPath + 'components/',
       sources: srcPath + 'sources/',
       stores: srcPath + 'stores/',

@@ -1,7 +1,7 @@
-import React from 'react';
-import {LoggedInShell} from '../../src/components/LoggedInShell';
-import { assert } from 'chai';
-import { shallow } from 'enzyme';
+import React from 'react'
+import {LoggedInShell} from './LoggedInShell'
+import { assert } from 'chai'
+import { shallow } from 'enzyme'
 
 describe('LoggedInShell', () => {
   const props = {
@@ -11,18 +11,18 @@ describe('LoggedInShell', () => {
     closeDrawer: () => {},
     toggleDrawer: () => {},
     logoutStart: () => {},
-    changeLanguage: () => {},
-  };
-  let output;
+    changeLanguage: () => {}
+  }
+  let output
 
   // using shallow rendering here because we're not interested
   // in what exactly the sub components are doing
   beforeEach(() => {
-    output = shallow(<LoggedInShell {...props} />);
-  });
+    output = shallow(<LoggedInShell {...props} />)
+  })
 
   it('Is a div that contains ErrorDisplay, SideNav, Nav and at least one other child', () => {
-    assert.equal(output.node.type, 'div');
-    assert.isAtLeast(output.props().children.length, 4);
-  });
-});
+    assert.equal(output.node.type, 'div')
+    assert.isAtLeast(output.props().children.length, 4)
+  })
+})

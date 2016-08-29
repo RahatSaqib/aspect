@@ -1,0 +1,8 @@
+--require babel-register
+--require babel-polyfill
+--require utils/unitTestSetup
+--reporter spec
+--ui bdd
+--recursive
+--env test
+src/**/*.test.js
