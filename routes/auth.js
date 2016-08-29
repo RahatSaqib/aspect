@@ -1,4 +1,4 @@
-let Promise = require('promise')
+let Promise = require('bluebird')
 let crypto = require('crypto')
 let express = require('express')
 let jwt = require('jsonwebtoken')
