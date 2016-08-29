@@ -1,6 +1,7 @@
 instrumentation:
+  extensions: ['.js', '.jsx']
   excludes:
-    - '*.test.jsx?'
+    - '*.test.js'
     - 'webpack.config.js'
     - 'utils/*'
     - 'cfg/*'
