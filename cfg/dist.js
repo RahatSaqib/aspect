@@ -10,6 +10,8 @@ let defaultSettings = require('./defaults');
 let BowerWebpackPlugin = require('bower-webpack-plugin');
 let ManifestPlugin = require('webpack-manifest-plugin');
 let ChunkManifestPlugin = require('chunk-manifest-webpack-plugin');
+let HtmlWebpackPlugin = require('html-webpack-plugin');
+let HtmlWebpackPluginRemove = require('html-webpack-plugin-remove');
 
 // vendor packages so we can create a separate bundle
 const vendorPackages = [
@@ -55,7 +57,14 @@ let config = Object.assign({}, baseConfig, {
       filename: "chunk-manifest.json",
       manifestVariable: "webpackManifest"
     }),
-    new webpack.optimize.OccurenceOrderPlugin()
+    new webpack.optimize.OccurenceOrderPlugin(),
+
+    new HtmlWebpackPlugin({
+      chunks: ['app'],
+      template: 'src/index.html',
+      filename: '../index.html'
+    }),
+    new HtmlWebpackPluginRemove('<script type="text/javascript" src="/assets/app.js"></script>')
   ],
   module: defaultSettings.getDefaultModules()
 });
