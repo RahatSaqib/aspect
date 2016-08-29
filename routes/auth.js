@@ -26,13 +26,12 @@ module.exports = function(config, db) {
       return
     }
 
-    let findUser = knex('user as u')
-      .innerJoin('person as p', 'u.id', 'p.user_id')
-      .where({'u.name': req.body.name})
-      .select('u.locked_out', 'u.failed_password_attempts', 'u.id', 'u.name', 'p.culture')
-      .first()
-    
-    findUser.then(user => {
+    Promise.coroutine(function*(){
+      let user = yield knex('user as u')
+        .innerJoin('person as p', 'u.id', 'p.user_id')
+        .where({'u.name': req.body.name})
+        .first('u.locked_out', 'u.failed_password_attempts', 'u.id', 'u.name', 'p.culture')
+      
       if(!user){
         // TODO generic Auth failed message on username and password failed?
         // TODO should this be 401 (test checks 400)
@@ -57,50 +56,47 @@ module.exports = function(config, db) {
             locked_out: lock
           })
 
-        return updateFailedPass.then(() => {
-          res.status(401).json({ message: 'Authentication failed. Wrong password.' })
+        yield updateFailedPass
+        res.status(401).json({ message: 'Authentication failed. Wrong password.' })
+        return
+      }
+
+      // upsert refresh token
+      let now = new Date()
+      let expires = new Date(now.getTime() + 7 * 86400000) // 7 days from now
+      let refresh_token = crypto.randomBytes(48).toString('base64')
+      let clientId = req.body.clientId || uuid.v4()
+
+      // Use raw query as upsert not yet supported in knex#701
+      let setRefreshToken = knex.raw('INSERT INTO refresh_token set ? ON DUPLICATE KEY UPDATE ?', [
+        {
+          user_id: user.id,
+          client_id: clientId,
+          client_name: req.body.clientName,
+          token: refresh_token,
+          expires: expires,
+          created_on: now
+        },
+        {
+          token: refresh_token,
+          expires: expires
+        }
+      ])
+
+      let updatePwAttempts = knex('user')
+        .where({id: user.id})
+        .update({
+          failed_password_attempts: 0,
+          last_login: now,
+          last_active: now
         })
-      }
 
-      return user
-    }).then(user => {
-      if(user){
-        // upsert refresh token
-        let now = new Date()
-        let expires = new Date(now.getTime() + 7 * 86400000) // 7 days from now
-        let refresh_token = crypto.randomBytes(48).toString('base64')
-        let clientId = req.body.clientId || uuid.v4()
+      yield Promise.all([setRefreshToken, updatePwAttempts])
 
-        // Use raw query as upsert not yet supported in knex#701
-        let setRefreshToken = knex.raw('INSERT INTO refresh_token set ? ON DUPLICATE KEY UPDATE ?', [
-          {
-            user_id: user.id,
-            client_id: clientId,
-            client_name: req.body.clientName,
-            token: refresh_token,
-            expires: expires,
-            created_on: now
-          },
-          {
-            token: refresh_token,
-            expires: expires
-          }
-        ])
-
-        let updatePwAttempts = knex('user')
-          .where({id: user.id})
-          .update({
-            failed_password_attempts: 0,
-            last_login: now,
-            last_active: now
-          })
-
-        return Promise.all([setRefreshToken, updatePwAttempts])
-          // finally, return the access token...
-          .then(() => getToken(config, db, user.id, user.name, refresh_token, clientId, user.culture))
-          .then(token => res.json(token))
-      }
-    }).catch(err => res.status(500).json(err))
+      // finally, return the access token...
+      let newToken = yield getToken(config, db, user.id, user.name, refresh_token, clientId, user.culture)
+      res.json(newToken)
+    })().catch(err => res.status(500).json(err))
   })
 
   /*
@@ -118,16 +114,16 @@ module.exports = function(config, db) {
       return
     }
 
-    // find the token in the db
-    let {clientId, token} = req.body
-    let getRefreshToken = knex('refresh_token as rt')
-      .innerJoin('user as u', 'rt.user_id', 'u.id')
-      .innerJoin('person as p', 'u.id', 'p.user_id')
-      .where({client_id: clientId, token, revoked: 0})
-      .select('rt.user_id as userId', 'rt.expires', 'u.name', 'p.culture')
-      .first()
+    Promise.coroutine(function*(){
+      // find the token in the db
+      let {clientId, token} = req.body
+      let data = yield knex('refresh_token as rt')
+        .innerJoin('user as u', 'rt.user_id', 'u.id')
+        .innerJoin('person as p', 'u.id', 'p.user_id')
+        .where({client_id: clientId, token, revoked: 0})
+        .select('rt.user_id as userId', 'rt.expires', 'u.name', 'p.culture')
+        .first()
 
-    getRefreshToken.then(data => {
       if (!data) {
         res.status(400).json({ message: 'Unable to find token or token revoked' })
         return
@@ -145,12 +141,13 @@ module.exports = function(config, db) {
       let expires = new Date(now.getTime() + 7 * 86400000) // 7 days from now
       let refreshToken = crypto.randomBytes(48).toString('base64')
 
-      return knex('refresh_token')
+      yield knex('refresh_token')
         .where({token: req.body.token})
         .update({token: refreshToken, expires})
-        .then(() => getToken(config, db, data.userId, data.name, refreshToken, clientId, data.culture))
-        .then(result => res.json(result))
-    }).catch(err => res.status(500).json(err))
+
+      let newToken = yield getToken(config, db, data.userId, data.name, refreshToken, clientId, data.culture)
+      res.json(newToken)
+    })().catch(err => res.status(500).json(err))
   })
 
   /*
