@@ -14,11 +14,11 @@ module.exports = [{
     tags: ['api'],
     validate: {
       query: {
-        sortCol: Joi.string().description('Sort on named column'),
-        sortDir: Joi.string().allow('asc', 'desc').description('Sort order ascending or descending'),
-        page: Joi.number().integer().positive().description('Page index'),
+        sortCol: Joi.string().valid('name', 'level', 'state', 'lga').description('Sort on named column'),
+        sortDir: Joi.string().valid('asc', 'desc').description('Sort order ascending or descending'),
+        page: Joi.number().integer().min(0).description('Page index with 0 as first page'),
         size: Joi.number().integer().positive().description('Page size'),
-        name: Joi.string().description('Filter for device name')
+        name: Joi.string().allow('').description('Filter for device name')
       }
     }
   }

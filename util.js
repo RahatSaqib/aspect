@@ -17,6 +17,7 @@ function asyncHandler(handler){
       let result = yield* handler(request)
       reply(result)
     } catch(err) {
+      console.error(err)
       reply(Boom.wrap(err, 500))
     }
   })
