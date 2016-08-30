@@ -5,6 +5,7 @@ let bodyParser = require('body-parser')
 let morgan = require('morgan')
 let rateLimit = require('express-rate-limit')
 
+require('dotenv-safe').load()
 let config = require('./config')
 let db = require('./db')
 
