@@ -1,6 +1,12 @@
-require('colors');
-
-let environment = process.env.NODE_ENV || "test"; //Use config.test.js by default
-console.log('API configured using config.%s.js. To change this, set the NODE_ENV variable by running \'set NODE_ENV=(your environment)\' in the console'.blue, environment);
-let environment_config = require('./config.' + environment.trim());
-module.exports = environment_config;
+module.exports = {
+  'secret': process.env.secret,
+  'passwordAttempts': process.env.passwordAttempts,
+  'db': {
+    connectionLimit: process.env['db.connectionLimit'],
+    host: process.env['db.host'],
+    user: process.env['db.user'],
+    password: process.env['db.password'],
+    database: process.env['db.databaseName'],
+    debug: process.env['db.debug'] === 'true'
+  }
+}
