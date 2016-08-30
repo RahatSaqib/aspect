@@ -11,10 +11,21 @@ let { asyncHandler } = require('../util')
 
 module.exports = [
   {
+    method: 'GET',
+    path: '/auth',
+    handler: asyncHandler(checkAuthentication),
+    config: {
+      description: 'Check authentication',
+      notes: 'Check successful authentication token',
+      tags: ['api']
+    }
+  },
+  {
     method: 'POST',
     path: '/auth',
     handler: asyncHandler(authenticate),
     config: {
+      auth: false,
       description: 'Authenticate user',
       notes: 'Generate new JWT token given user name and password',
       tags: ['api'],
@@ -22,7 +33,8 @@ module.exports = [
         payload: {
           name: Joi.string().required(),
           password: Joi.string().required(),
-          clientName: Joi.string().required()
+          clientName: Joi.string().required(),
+          clientId: Joi.string()
         }
       }
     }
@@ -32,6 +44,7 @@ module.exports = [
     path: '/auth/refresh',
     handler: asyncHandler(refreshToken),
     config: {
+      auth: false,
       description: 'Refresh Token',
       notes: 'Generate a new access token by sending a refresh token',
       tags: ['api'],
@@ -45,6 +58,9 @@ module.exports = [
   }
 ]
 
+function* checkAuthentication(){
+  return { message: 'Welcome to the API!' }
+}
 
 function* authenticate(request){
   let {payload} = request
@@ -147,19 +163,6 @@ function* refreshToken(request){
   return getToken(config, data.userId, data.name, refreshToken, clientId, data.culture)
 }
 
-  /*
-  all routes after this will require a token
-  routes.use((req, res, next) => jwtmiddleware(req, res, next, config.secret))
-
-  /*
-  Route for testing that token works
-  routes.get('/', function(req, res) {
-    res.json({ message: 'Welcome to the API!' })
-  })
-
-  return routes
-}
-  */
 
 // generate a new jwt
 function getToken(config, userId, userName, refreshToken, clientId, culture) {

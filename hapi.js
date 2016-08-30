@@ -5,6 +5,7 @@ let Hapi = require('hapi')
 // =======================
 // configuration =========
 // =======================
+let config = require('./config')
 let { version } = require('./package.json')
 let server = new Hapi.Server()
 let port = process.env.PORT || 8080
@@ -22,6 +23,9 @@ let plugins = [
 
   // view layer (hapi-swagger dependency)
   require('vision'),
+
+  // JWT for authentication
+  require('hapi-auth-jwt2'),
 
   // SwaggerUI and documentation
   {
@@ -64,13 +68,32 @@ let plugins = [
 server.register(plugins, err => { if(err) throw err })
 
 // =======================
+// Authentication strategy
+// =======================
+server.auth.strategy('jwt', 'jwt', {
+  key: config.secret,
+  validateFunc: function(decoded, request, callback){
+    // TODO What do we want to do to validate data within decoded JWT token?
+    callback(null, true)
+  }
+  //TODO JWT verfication algorithm verifyOptions: { algorithms: [ 'HS256' ] }
+})
+
+// all routes use JWT authentication by default
+// use config: { auth: false } on route definition to disable authentication
+server.auth.default('jwt')
+
+// =======================
 // routes ================
 // =======================
 
 server.route({
   method: 'GET',
   path: '/',
-  handler: (request, reply) => reply('Hello! The API is at /api.')
+  handler: (request, reply) => reply('Hello! The API is at /api.'),
+  config: {
+    auth: false
+  }
 })
 
 // use plugin to mount all API routes at /api
