@@ -36,3 +36,6 @@ bower_components/
 
 #IDE Generated Files
 .idea
+
+#Environment specific configuration
+.env
