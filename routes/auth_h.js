@@ -12,7 +12,7 @@ let { asyncHandler } = require('../util')
 module.exports = [
   {
     method: 'POST',
-    path: '/auth',
+    path: '/api/auth',
     handler: asyncHandler(authenticate),
     config: {
       description: 'Authenticate user',
@@ -29,7 +29,7 @@ module.exports = [
   },
   {
     method: 'POST',
-    path: '/auth/refresh',
+    path: '/api/auth/refresh',
     handler: asyncHandler(refreshToken),
     config: {
       description: 'Refresh Token',
@@ -113,7 +113,7 @@ function* authenticate(request){
   yield Promise.all([setRefreshToken, updatePwAttempts])
 
   // finally, return the access token...
-  return yield getToken(config, user.id, user.name, refreshToken, clientId, user.culture)
+  return getToken(config, user.id, user.name, refreshToken, clientId, user.culture)
 }
 
 function* refreshToken(request){
@@ -144,7 +144,7 @@ function* refreshToken(request){
     .where({token})
     .update({token: refreshToken, expires})
 
-  return yield getToken(config, data.userId, data.name, refreshToken, clientId, data.culture)
+  return getToken(config, data.userId, data.name, refreshToken, clientId, data.culture)
 }
 
   /*

@@ -6,7 +6,7 @@ let { asyncHandler } = require('../util')
 
 module.exports = [{
   method: 'GET',
-  path: '/person',
+  path: '/api/person',
   handler: asyncHandler(listPeople),
   config: {
     description: 'People List',

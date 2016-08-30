@@ -6,7 +6,7 @@ let { asyncHandler } = require('../util')
 
 module.exports = [{
   method: 'GET',
-  path: '/device',
+  path: '/api/device',
   handler: asyncHandler(listDevices),
   config: {
     description: 'Device List',
@@ -39,6 +39,7 @@ function* listDevices(request){
 
   // return result when both queries are finished
   let [{count: total}, data] = yield Promise.all([getCount, getItems])
+
   let result = {ok: true, total, length: data.length, data}
   
   return camelize(result)
