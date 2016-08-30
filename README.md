@@ -1,7 +1,7 @@
 # Aspect API
 
-This is the web api for all aspect clients. 
-It's using express as the middleware and JWT (jwt.io) for authentication.
+This is the web api for all aspect clients.
+
 
 ##Installation
 Clone the repository, then:
@@ -12,7 +12,7 @@ npm install
 ```
 
 ###Environment Configuration
-Then add a file to the root of the application (inline with server.js) and add your environment config to it
+Then add a .env file to the root of the application (inline with server.js) and add your environment config to it
 ```
 secret=Any_Random_String
 
@@ -31,7 +31,6 @@ It's best to install nodemon globally and use that to run the project so that th
 ```bash
 nodemon
 ```
-
 
 
 ##Routes
@@ -77,6 +76,7 @@ $ curl -H 'Authorization: Bearer ${jwt_token}' -H 'Content-Type: application/jso
 
 ```
 
+
 ##Tests
 Tests are in /test and written in Mocha/Chai
 To run tests, `npm test` in the terminal
@@ -87,6 +87,7 @@ Environment variables are loaded from a file, called .env, that you need to add 
 See [Environment Configuration](#environment-configuration) in order to change the config, on your machine, to point to a local database 
 
 Once your environment is configured run tests using the `npm test` command
+
 
 ##Stress test with siege
 Install siege: http://jason.pureconcepts.net/2011/09/installing-siege-mac-os-x-lion/
@@ -102,6 +103,7 @@ We're serving the API through AWS beanstalk. Install the eb cli tools and commit
 eb deploy aspect-api-dev
 eb open
 ```
+
 
 ##Updating Dependencies
 
