@@ -9,7 +9,12 @@ let { version } = require('./package.json')
 let server = new Hapi.Server()
 let port = process.env.PORT || 8080
 let apiPath = '/api'
-server.connection({port})
+server.connection({
+  port,
+  routes: {
+    cors: true
+  }
+})
 
 let plugins = [
   // static file handling (hapi-swagger dependency)
