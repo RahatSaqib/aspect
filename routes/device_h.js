@@ -6,7 +6,7 @@ let { asyncHandler } = require('../util')
 
 module.exports = [{
   method: 'GET',
-  path: '/api/device',
+  path: '/device',
   handler: asyncHandler(listDevices),
   config: {
     description: 'Device List',

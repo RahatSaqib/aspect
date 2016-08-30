@@ -12,7 +12,7 @@ let { asyncHandler } = require('../util')
 module.exports = [
   {
     method: 'POST',
-    path: '/api/auth',
+    path: '/auth',
     handler: asyncHandler(authenticate),
     config: {
       description: 'Authenticate user',
@@ -29,7 +29,7 @@ module.exports = [
   },
   {
     method: 'POST',
-    path: '/api/auth/refresh',
+    path: '/auth/refresh',
     handler: asyncHandler(refreshToken),
     config: {
       description: 'Refresh Token',
