@@ -2,15 +2,18 @@ let crypto = require('crypto')
 let jwt = require('jsonwebtoken')
 let uuid = require('node-uuid')
 let Promise = require('bluebird')
+let Boom = require('boom')
 let Joi = require('joi')
+
 let config = require('../config')
 let { knex } = require('../db')
+let { asyncHandler } = require('../util')
 
 module.exports = [
   {
     method: 'POST',
     path: '/auth',
-    handler: Promise.coroutine(authenticate),
+    handler: asyncHandler(authenticate),
     config: {
       description: 'Authenticate user',
       notes: 'Generate new JWT token given user name and password',
@@ -27,7 +30,7 @@ module.exports = [
   {
     method: 'POST',
     path: '/auth/refresh',
-    handler: Promise.coroutine(refreshToken),
+    handler: asyncHandler(refreshToken),
     config: {
       description: 'Refresh Token',
       notes: 'Generate a new access token by sending a refresh token',
@@ -43,114 +46,105 @@ module.exports = [
 ]
 
 
-function* authenticate(req, reply){
-  try {
-    let user = yield knex('user as u')
-      .innerJoin('person as p', 'u.id', 'p.user_id')
-      .where({'u.name': req.payload.name})
-      .first('u.locked_out', 'u.failed_password_attempts', 'u.id', 'u.name', 'p.culture')
-    
-    if(!user){
-      // TODO generic Auth failed message on username and password failed?
-      // TODO should this be 401 (test checks 400)
-      return reply({ message: 'not found' }).code(400)
-      //res.status(401).json({ message: 'Authentication failed. Wrong user name.' })
-    }
-    
-    if (user.locked_out === 1) {
-      return reply({ message: 'Your account is locked.' }).code(401)
-    }
+function* authenticate(request){
+  let {payload} = request
 
-    // TODO: check if password matches
-    if (req.payload.password !== 'test07') {
-      // FIXME this allows 6 attempts if config is 5... bug?
-      let lock = user.failed_password_attempts >= config.passwordAttempts ? 1 : 0
-      let updateFailedPass = knex('user')
-        .where({id: user.id})
-        .update({
-          failed_password_attempts: user.failed_password_attempts + 1,
-          locked_out: lock
-        })
+  let user = yield knex('user as u')
+    .innerJoin('person as p', 'u.id', 'p.user_id')
+    .where({'u.name': payload.name})
+    .first('u.locked_out', 'u.failed_password_attempts', 'u.id', 'u.name', 'p.culture')
+  
+  if(!user){
+    // TODO generic Auth failed message on username and password failed?
+    // TODO should this be 401 (test checks 400)
+    return Boom.badRequest('not found')
+    //res.status(401).json({ message: 'Authentication failed. Wrong user name.' })
+  }
+  
+  if (user.locked_out === 1) {
+    return Boom.unauthorized('Your account is locked.')
+  }
 
-      yield updateFailedPass
-      return reply({ message: 'Authentication failed. Wrong password.' }).code(401)
-    }
-
-    // upsert refresh token
-    let now = new Date()
-    let expires = new Date(now.getTime() + 7 * 86400000) // 7 days from now
-    let refresh_token = crypto.randomBytes(48).toString('base64')
-    let clientId = req.payload.clientId || uuid.v4()
-
-    // Use raw query as upsert not yet supported in knex#701
-    let setRefreshToken = knex.raw('INSERT INTO refresh_token set ? ON DUPLICATE KEY UPDATE ?', [
-      {
-        user_id: user.id,
-        client_id: clientId,
-        client_name: req.payload.clientName,
-        token: refresh_token,
-        expires: expires,
-        created_on: now
-      },
-      {
-        token: refresh_token,
-        expires: expires
-      }
-    ])
-
-    let updatePwAttempts = knex('user')
+  // TODO: check if password matches
+  if (payload.password !== 'test07') {
+    // FIXME this allows 6 attempts if config is 5... bug?
+    let lock = user.failed_password_attempts >= config.passwordAttempts ? 1 : 0
+    let updateFailedPass = knex('user')
       .where({id: user.id})
       .update({
-        failed_password_attempts: 0,
-        last_login: now,
-        last_active: now
+        failed_password_attempts: user.failed_password_attempts + 1,
+        locked_out: lock
       })
 
-    yield Promise.all([setRefreshToken, updatePwAttempts])
-
-    // finally, return the access token...
-    let newToken = yield getToken(config, user.id, user.name, refresh_token, clientId, user.culture)
-    reply(newToken)
-  } catch (err){
-    reply(err).code(500)
+    yield updateFailedPass
+    return Boom.unauthorized('Authentication failed. Wrong password.')
   }
+
+  // upsert refresh token
+  let now = new Date()
+  let expires = new Date(now.getTime() + 7 * 86400000) // 7 days from now
+  let refreshToken = crypto.randomBytes(48).toString('base64')
+  let clientId = payload.clientId || uuid.v4()
+
+  // Use raw query as upsert not yet supported in knex#701
+  let setRefreshToken = knex.raw('INSERT INTO refresh_token set ? ON DUPLICATE KEY UPDATE ?', [
+    {
+      user_id: user.id,
+      client_id: clientId,
+      client_name: payload.clientName,
+      token: refreshToken,
+      expires: expires,
+      created_on: now
+    },
+    {
+      token: refreshToken,
+      expires: expires
+    }
+  ])
+
+  let updatePwAttempts = knex('user')
+    .where({id: user.id})
+    .update({
+      failed_password_attempts: 0,
+      last_login: now,
+      last_active: now
+    })
+
+  yield Promise.all([setRefreshToken, updatePwAttempts])
+
+  // finally, return the access token...
+  return yield getToken(config, user.id, user.name, refreshToken, clientId, user.culture)
 }
 
-function* refreshToken(req, reply){
-  try {
-    // find the token in the db
-    let {clientId, token} = req.payload
-    let data = yield knex('refresh_token as rt')
-      .innerJoin('user as u', 'rt.user_id', 'u.id')
-      .innerJoin('person as p', 'u.id', 'p.user_id')
-      .where({client_id: clientId, token, revoked: 0})
-      .select('rt.user_id as userId', 'rt.expires', 'u.name', 'p.culture')
-      .first()
+function* refreshToken(request){
+  // find the token in the db
+  let {clientId, token} = request.payload
+  let data = yield knex('refresh_token as rt')
+    .innerJoin('user as u', 'rt.user_id', 'u.id')
+    .innerJoin('person as p', 'u.id', 'p.user_id')
+    .where({client_id: clientId, token, revoked: 0})
+    .first('rt.user_id as userId', 'rt.expires', 'u.name', 'p.culture')
 
-    if (!data) {
-      return reply({ message: 'Unable to find token or token revoked' }).code(400)
-    }
-
-    // check if expired
-    let now = new Date()
-
-    if (data.expires < now) {
-      return reply({ message: 'Token expired' }).code(400)
-    }
-
-    // looks like we have a valid refresh token. set new one in db
-    let expires = new Date(now.getTime() + 7 * 86400000) // 7 days from now
-    let refreshToken = crypto.randomBytes(48).toString('base64')
-
-    yield knex('refresh_token')
-      .where({token: req.payload.token})
-      .update({token: refreshToken, expires})
-
-    let newToken = yield getToken(config, data.userId, data.name, refreshToken, clientId, data.culture)
-    reply(newToken)
-  } catch (err){
-    reply(err).code(500)
+  if (!data) {
+    return Boom.badRequest('Unable to find token or token revoked')
   }
+
+  // check if expired
+  let now = new Date()
+
+  if (data.expires < now) {
+    return Boom.badRequest('Token expired')
+  }
+
+  // looks like we have a valid refresh token. set new one in db
+  let expires = new Date(now.getTime() + 7 * 86400000) // 7 days from now
+  let refreshToken = crypto.randomBytes(48).toString('base64')
+
+  yield knex('refresh_token')
+    .where({token})
+    .update({token: refreshToken, expires})
+
+  return yield getToken(config, data.userId, data.name, refreshToken, clientId, data.culture)
 }
 
   /*

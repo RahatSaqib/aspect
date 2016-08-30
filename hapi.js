@@ -7,20 +7,9 @@ let HapiSwagger = require('hapi-swagger')
 let server = new Hapi.Server()
 server.connection({port: 8081})
 
-let authRoutes = require('./routes/auth_h.js')
-for(let route of authRoutes){
-  server.route(route)
-}
-
-let deviceRoutes = require('./routes/device_h.js')
-for(let route of deviceRoutes){
-  server.route(route)
-}
-
-let personRoutes = require('./routes/person_h.js')
-for(let route of personRoutes){
-  server.route(route)
-}
+server.route(require('./routes/auth_h.js'))
+server.route(require('./routes/device_h.js'))
+server.route(require('./routes/person_h.js'))
 
 server.register([
   Inert,
@@ -34,10 +23,12 @@ server.register([
       }
     }
   }
-], (err) => {if(err) throw err})
+], handleError)
 
-server.start(err => {
+server.start(handleError)
+
+function handleError(err){
   if(err){
     throw err
   }
-})
+}
