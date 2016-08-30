@@ -1,5 +1,3 @@
-require('colors')
-
 module.exports = {
   'secret': process.env.secret,
   'passwordAttempts': process.env.passwordAttempts,
