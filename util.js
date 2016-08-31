@@ -1,6 +1,7 @@
 let Promise = require('bluebird')
 let decamelize = require('decamelize')
 let Boom = require('boom')
+let Joi = require('joi')
 
 /**
  * Creates a coroutine based handler using the provided
@@ -24,21 +25,31 @@ function asyncHandler(handler){
 }
 
 
-// extracts the parameters related to sorting and paging from the query
-// string and returns them as an object
-function getSortPageParams(req, defaultSort){
-  let params = {}
+// extracts and sanitizes the parameters related to sorting and paging
+// from the candidate params and returns them as an object
+function getSortPageParams(params, defaultSort){
+  let result = {}
 
-  params.sortCol = req.query.sortCol ? decamelize(req.query.sortCol) : defaultSort
-  params.sortDir = req.query.sortDir == 'desc' ? 'desc' : 'asc'
-  params.page = parseInt(req.query.page) || 0
-  params.size = parseInt(req.query.size) || 20
-  params.skip = params.page * params.size
+  result.sortCol = params.sortCol ? decamelize(params.sortCol) : defaultSort
+  result.sortDir = params.sortDir == 'desc' ? 'desc' : 'asc'
+  result.page = parseInt(params.page) || 0
+  result.size = parseInt(params.size) || 20
+  result.skip = result.page * result.size
 
-  return params
+  return result
+}
+
+function validateSortPageParams(...sortColumns){
+  return {
+    sortCol: Joi.string().valid(sortColumns).description('Sort on named column'),
+    sortDir: Joi.string().valid('asc', 'desc').description('Sort order ascending or descending'),
+    page: Joi.number().integer().min(0).description('Page index with 0 as first page'),
+    size: Joi.number().integer().positive().description('Page size')
+  }
 }
 
 module.exports = {
   asyncHandler,
-  getSortPageParams
+  getSortPageParams,
+  validateSortPageParams
 }

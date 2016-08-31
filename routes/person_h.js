@@ -1,8 +1,8 @@
 let camelize = require('camelize')
 let Promise = require('bluebird')
 let Joi = require('joi')
-let { knex, requestFilter, requestSortPage } = require('../db')
-let { asyncHandler } = require('../util')
+let { knex, filterParams, sortPageParams } = require('../db')
+let { asyncHandler, validateSortPageParams } = require('../util')
 
 module.exports = [{
   method: 'GET',
@@ -12,21 +12,19 @@ module.exports = [{
     description: 'People List',
     notes: 'Pageable and sortable list of people',
     validate: {
-      query: {
-        sortCol: Joi.string().valid('name', 'level', 'state', 'lga').description('Sort on named column'),
-        sortDir: Joi.string().valid('asc', 'desc').description('Sort order ascending or descending'),
-        page: Joi.number().integer().min(0).description('Page index with 0 as first page'),
-        size: Joi.number().integer().positive().description('Page size'),
-        name: Joi.string().allow('').description('Filter for device name')
-      }
+      query: Object.assign({
+        name: Joi.string().allow('').description('Filter for person name')
+      }, validateSortPageParams('name', 'level', 'state', 'lga'))
     }
   }
 }]
 
 function* listPeople(request){
+  let {query} = request
+
   // get total count for paging
   let getCount = knex('person')
-    .modify(requestFilter, request, 'name')
+    .modify(filterParams, query, 'name')
     .count('id as count').first()
 
   // get rows
@@ -34,8 +32,8 @@ function* listPeople(request){
     .leftOuterJoin('person_level as pl', 'p.person_level_id', 'pl.id')
     .leftOuterJoin('state as s', 'p.state_id', 's.id')
     .leftOuterJoin('lga as l', 'p.lga_id', 'l.id')
-    .modify(requestFilter, request, 'name', 'p.name')
-    .modify(requestSortPage, request, 'name')
+    .modify(filterParams, query, 'name', 'p.name')
+    .modify(sortPageParams, query, 'name')
     .select('p.id', 'p.name', 'pl.name as level', 's.name as state', 'l.name as lga')
 
   // return result when both queries are finished

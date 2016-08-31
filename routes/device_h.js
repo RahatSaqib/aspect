@@ -1,8 +1,8 @@
 let camelize = require('camelize')
 let Promise = require('bluebird')
 let Joi = require('joi')
-let { knex, requestFilter, requestSortPage } = require('../db')
-let { asyncHandler } = require('../util')
+let { knex, filterParams, sortPageParams } = require('../db')
+let { asyncHandler, validateSortPageParams } = require('../util')
 
 module.exports = [{
   method: 'GET',
@@ -12,28 +12,25 @@ module.exports = [{
     description: 'Device List',
     notes: 'Pageable and sortable list of devices',
     validate: {
-      query: {
-        sortCol: Joi.string().valid('name', 'status', 'createdOn', 'lastSeen', 'totalTests')
-          .description('Sort on named column'),
-        sortDir: Joi.string().valid('asc', 'desc').description('Sort order ascending or descending'),
-        page: Joi.number().integer().min(0).description('Page index with 0 as first page'),
-        size: Joi.number().integer().positive().description('Page size'),
+      query: Object.assign({
         name: Joi.string().allow('').description('Filter for device name')
-      }
+      }, validateSortPageParams('name', 'status', 'createdOn', 'lastSeen', 'totalTests'))
     }
   }
 }]
 
 function* listDevices(request){
+  let {query} = request
+
   // get total count for paging
   let getCount = knex('device')
-    .modify(requestFilter, request, 'name')
+    .modify(filterParams, query, 'name')
     .count('id as count').first()
 
   // get rows
   let getItems = knex('device')
-    .modify(requestFilter, request, 'name')
-    .modify(requestSortPage, request, 'name')
+    .modify(filterParams, query, 'name')
+    .modify(sortPageParams, query, 'name')
     .select('id', 'name', 'shortname', 'created_on', 'last_ping_on', 'updated_on as last_seen',
       knex.raw('\'Active\' as status'), knex.raw('id * 134 as total_tests'))
 

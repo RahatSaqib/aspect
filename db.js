@@ -7,24 +7,23 @@ let knex = require('knex')({
   connection: config.db
 })
 
-// extracts the parameters related to sorting and paging from the query
-// string and modifies the query builder with the sort modifications
-function requestSortPage(queryBuilder, request, defaultSort) {
-  let sp = util.getSortPageParams(request, defaultSort)
+// extracts the parameters related to sorting and paging from the candidate
+// params and modifies the query builder with the sort modifications
+function sortPageParams(queryBuilder, params, defaultSort) {
+  let sp = util.getSortPageParams(params, defaultSort)
   queryBuilder.orderBy(sp.sortCol, sp.sortDir).limit(sp.size).offset(sp.skip)
 }
 
-// extracts the parameters related to filtering from the query
-// string and modifies the query builder with the filter modifications
-function requestFilter(queryBuilder, request, paramName, columnName = paramName) {
-  let { query } = request
-  if (query[paramName]) {
-    queryBuilder.where(columnName, 'like', `%${query[paramName]}%`)
+// extracts the parameters related to filtering from the candidate
+// params and modifies the query builder with the filter modifications
+function filterParams(queryBuilder, params, paramName, columnName = paramName) {
+  if (params[paramName]) {
+    queryBuilder.where(columnName, 'like', `%${params[paramName]}%`)
   }
 }
 
 module.exports = {
   knex,
-  requestFilter,
-  requestSortPage
+  filterParams,
+  sortPageParams
 }
