@@ -23,7 +23,8 @@ describe('Authentication routes',function(){
       .send()
       .end(function(err,res){
         assert.equal(res.status, 400)
-        // FIXME assert.equal(res.body[0].msg, 'User name is required')
+        assert.isString(res.body.message)
+        assert.notEqual('', res.body.message)
         done()
       })
     })
@@ -34,7 +35,7 @@ describe('Authentication routes',function(){
       .send({ name: 'admin' })
       .end(function(err,res){
         assert.equal(res.status, 400)
-        // FIXME assert.equal(res.body[0].msg, 'Password is required')
+        assert.equal(res.body.message, 'child "password" fails because ["password" is required]')
         done()
       })
     })
@@ -45,7 +46,7 @@ describe('Authentication routes',function(){
       .send({ name: 'admin', password: 'password' })
       .end(function(err,res){
         assert.equal(res.status, 400)
-        // FIXME assert.equal(res.body[0].msg, 'Client name is required')
+        assert.equal(res.body.message, 'child "clientName" fails because ["clientName" is required]')
         done()
       })
     })
@@ -141,7 +142,8 @@ describe('Authentication routes',function(){
       .send()
       .end(function(err,res){
         assert.equal(res.status, 400)
-        // FIXME assert.equal(res.body[0].msg, 'Client ID is required')
+        assert.isString(res.body.message)
+        assert.notEqual('', res.body.message)
         done()
       })
     })
@@ -152,7 +154,8 @@ describe('Authentication routes',function(){
       .send({ clientId: 'Mocha/Chai' })
       .end(function(err,res){
         assert.equal(res.status, 400)
-        // FIXME assert.equal(res.body[0].msg, 'Token is required')
+        assert.isString(res.body.message)
+        assert.notEqual('', res.body.message)
         done()
       })
     })
