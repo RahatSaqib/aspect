@@ -1,173 +1,169 @@
-let Promise = require('bluebird')
 let crypto = require('crypto')
-let express = require('express')
 let jwt = require('jsonwebtoken')
 let uuid = require('node-uuid')
+let Promise = require('bluebird')
+let Boom = require('boom')
+let Joi = require('joi')
 
-let jwtmiddleware = require('./jwtmiddleware')
+let config = require('../config')
+let { knex } = require('../db')
+let { asyncHandler } = require('../util')
 
-module.exports = function(config, db) {
-
-  let routes = express.Router()
-  let { knex } = db
-
-  /*
-  Route for authenticating a user
-  */
-  routes.post('/', function(req, res) {
-    // validation
-    req.check('name', 'User name is required').notEmpty()
-    req.check('password', 'Password is required').notEmpty()
-    req.check('clientName', 'Client name is required').notEmpty()
-
-    let errors = req.validationErrors()
-    if (errors){
-      res.status(400).json(errors)
-      return
-    }
-
-    Promise.coroutine(function*(){
-      let user = yield knex('user as u')
-        .innerJoin('person as p', 'u.id', 'p.user_id')
-        .where({'u.name': req.body.name})
-        .first('u.locked_out', 'u.failed_password_attempts', 'u.id', 'u.name', 'p.culture')
-      
-      if(!user){
-        // TODO generic Auth failed message on username and password failed?
-        // TODO should this be 401 (test checks 400)
-        res.status(400).json({ message: 'not found' })
-        //res.status(401).json({ message: 'Authentication failed. Wrong user name.' })
-        return
-      }
-      
-      if (user.locked_out === 1) {
-        res.status(401).json({ message: 'Your account is locked.' })
-        return
-      }
-
-      // TODO: check if password matches
-      if (req.body.password !== 'test07') {
-        // FIXME this allows 6 attempts if config is 5... bug?
-        let lock = user.failed_password_attempts >= config.passwordAttempts ? 1 : 0
-        let updateFailedPass = knex('user')
-          .where({id: user.id})
-          .update({
-            failed_password_attempts: user.failed_password_attempts + 1,
-            locked_out: lock
-          })
-
-        yield updateFailedPass
-        res.status(401).json({ message: 'Authentication failed. Wrong password.' })
-        return
-      }
-
-      // upsert refresh token
-      let now = new Date()
-      let expires = new Date(now.getTime() + 7 * 86400000) // 7 days from now
-      let refresh_token = crypto.randomBytes(48).toString('base64')
-      let clientId = req.body.clientId || uuid.v4()
-
-      // Use raw query as upsert not yet supported in knex#701
-      let setRefreshToken = knex.raw('INSERT INTO refresh_token set ? ON DUPLICATE KEY UPDATE ?', [
-        {
-          user_id: user.id,
-          client_id: clientId,
-          client_name: req.body.clientName,
-          token: refresh_token,
-          expires: expires,
-          created_on: now
-        },
-        {
-          token: refresh_token,
-          expires: expires
+module.exports = [
+  {
+    method: 'POST',
+    path: '/auth',
+    handler: asyncHandler(authenticate),
+    config: {
+      auth: false,
+      description: 'Authenticate user',
+      notes: 'Generate new JWT token given user name and password',
+      validate: {
+        payload: {
+          name: Joi.string().required(),
+          password: Joi.string().required(),
+          clientName: Joi.string().required(),
+          clientId: Joi.string()
         }
-      ])
-
-      let updatePwAttempts = knex('user')
-        .where({id: user.id})
-        .update({
-          failed_password_attempts: 0,
-          last_login: now,
-          last_active: now
-        })
-
-      yield Promise.all([setRefreshToken, updatePwAttempts])
-
-      // finally, return the access token...
-      let newToken = yield getToken(config, db, user.id, user.name, refresh_token, clientId, user.culture)
-      res.json(newToken)
-    })().catch(err => res.status(500).json(err))
-  })
-
-  /*
-  Route for getting a new access token by sending a refresh token
-  */
-  routes.post('/refresh', function(req, res) {
-
-    // validation
-    req.check('clientId', 'Client ID is required').notEmpty()
-    req.check('token', 'Token is required').notEmpty()
-
-    let errors = req.validationErrors()
-    if (errors){
-      res.status(400).json(errors)
-      return
+      }
     }
-
-    Promise.coroutine(function*(){
-      // find the token in the db
-      let {clientId, token} = req.body
-      let data = yield knex('refresh_token as rt')
-        .innerJoin('user as u', 'rt.user_id', 'u.id')
-        .innerJoin('person as p', 'u.id', 'p.user_id')
-        .where({client_id: clientId, token, revoked: 0})
-        .select('rt.user_id as userId', 'rt.expires', 'u.name', 'p.culture')
-        .first()
-
-      if (!data) {
-        res.status(400).json({ message: 'Unable to find token or token revoked' })
-        return
+  },
+  {
+    method: 'GET',
+    path: '/auth',
+    handler: asyncHandler(checkAuthentication),
+    config: {
+      description: 'Check authentication',
+      notes: 'Check successful authentication token'
+    }
+  },
+  {
+    method: 'POST',
+    path: '/auth/refresh',
+    handler: asyncHandler(refreshToken),
+    config: {
+      auth: false,
+      description: 'Refresh Token',
+      notes: 'Generate a new access token by sending a refresh token',
+      validate: {
+        payload: {
+          clientId: Joi.string().required(),
+          token: Joi.string().required()
+        }
       }
+    }
+  }
+]
 
-      // check if expired
-      let now = new Date()
-
-      if (data.expires < now) {
-        res.status(400).json({ message: 'Token expired' })
-        return
-      }
-
-      // looks like we have a valid refresh token. set new one in db
-      let expires = new Date(now.getTime() + 7 * 86400000) // 7 days from now
-      let refreshToken = crypto.randomBytes(48).toString('base64')
-
-      yield knex('refresh_token')
-        .where({token: req.body.token})
-        .update({token: refreshToken, expires})
-
-      let newToken = yield getToken(config, db, data.userId, data.name, refreshToken, clientId, data.culture)
-      res.json(newToken)
-    })().catch(err => res.status(500).json(err))
-  })
-
-  /*
-  all routes after this will require a token
-  */
-  routes.use((req, res, next) => jwtmiddleware(req, res, next, config.secret))
-
-  /*
-  Route for testing that token works
-  */
-  routes.get('/', function(req, res) {
-    res.json({ message: 'Welcome to the API!' })
-  })
-
-  return routes
+function* checkAuthentication(){
+  return { message: 'Welcome to the API!' }
 }
 
+function* authenticate(request){
+  let {payload} = request
+
+  let user = yield knex('user as u')
+    .innerJoin('person as p', 'u.id', 'p.user_id')
+    .where({'u.name': payload.name})
+    .first('u.locked_out', 'u.failed_password_attempts', 'u.id', 'u.name', 'p.culture')
+  
+  if(!user){
+    // TODO generic Auth failed message on username and password failed?
+    // TODO should this be 401 (test checks 400)
+    return Boom.badRequest('not found')
+    //res.status(401).json({ message: 'Authentication failed. Wrong user name.' })
+  }
+  
+  if (user.locked_out === 1) {
+    return Boom.unauthorized('Your account is locked.')
+  }
+
+  // TODO: check if password matches
+  if (payload.password !== 'test07') {
+    // FIXME this allows 6 attempts if config is 5... bug?
+    let lock = user.failed_password_attempts >= config.passwordAttempts ? 1 : 0
+    let updateFailedPass = knex('user')
+      .where({id: user.id})
+      .update({
+        failed_password_attempts: user.failed_password_attempts + 1,
+        locked_out: lock
+      })
+
+    yield updateFailedPass
+    return Boom.unauthorized('Authentication failed. Wrong password.')
+  }
+
+  // upsert refresh token
+  let now = new Date()
+  let expires = new Date(now.getTime() + 7 * 86400000) // 7 days from now
+  let refreshToken = crypto.randomBytes(48).toString('base64')
+  let clientId = payload.clientId || uuid.v4()
+
+  // Use raw query as upsert not yet supported in knex#701
+  let setRefreshToken = knex.raw('INSERT INTO refresh_token set ? ON DUPLICATE KEY UPDATE ?', [
+    {
+      user_id: user.id,
+      client_id: clientId,
+      client_name: payload.clientName,
+      token: refreshToken,
+      expires: expires,
+      created_on: now
+    },
+    {
+      token: refreshToken,
+      expires: expires
+    }
+  ])
+
+  let updatePwAttempts = knex('user')
+    .where({id: user.id})
+    .update({
+      failed_password_attempts: 0,
+      last_login: now,
+      last_active: now
+    })
+
+  yield Promise.all([setRefreshToken, updatePwAttempts])
+
+  // finally, return the access token...
+  return getToken(config, user.id, user.name, refreshToken, clientId, user.culture)
+}
+
+function* refreshToken(request){
+  // find the token in the db
+  let {clientId, token} = request.payload
+  let data = yield knex('refresh_token as rt')
+    .innerJoin('user as u', 'rt.user_id', 'u.id')
+    .innerJoin('person as p', 'u.id', 'p.user_id')
+    .where({client_id: clientId, token, revoked: 0})
+    .first('rt.user_id as userId', 'rt.expires', 'u.name', 'p.culture')
+
+  if (!data) {
+    return Boom.badRequest('Unable to find token or token revoked')
+  }
+
+  // check if expired
+  let now = new Date()
+
+  if (data.expires < now) {
+    return Boom.badRequest('Token expired')
+  }
+
+  // looks like we have a valid refresh token. set new one in db
+  let expires = new Date(now.getTime() + 7 * 86400000) // 7 days from now
+  let refreshToken = crypto.randomBytes(48).toString('base64')
+
+  yield knex('refresh_token')
+    .where({token})
+    .update({token: refreshToken, expires})
+
+  return getToken(config, data.userId, data.name, refreshToken, clientId, data.culture)
+}
+
+
 // generate a new jwt
-function getToken(config, db, userId, userName, refreshToken, clientId, culture) {
-  return db.knex('role as r')
+function getToken(config, userId, userName, refreshToken, clientId, culture) {
+  return knex('role as r')
     .innerJoin('user_role as ur', 'r.id', 'ur.role_id')
     .where({user_id: userId})
     .select('r.name')

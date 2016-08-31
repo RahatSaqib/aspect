@@ -2,9 +2,9 @@ let Joi = require('joi')
 
 // Adds all API routes to the server
 function addRoutes(server){
-  server.route(require('./auth_h.js').map(decorateAPI))
-  server.route(require('./device_h.js').map(decorateAPI))
-  server.route(require('./person_h.js').map(decorateAPI))
+  server.route(require('./auth.js').map(decorateAPI))
+  server.route(require('./device.js').map(decorateAPI))
+  server.route(require('./person.js').map(decorateAPI))
 }
 
 // Decorates an API route with common configuration so

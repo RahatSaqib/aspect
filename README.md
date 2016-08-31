@@ -2,6 +2,7 @@
 
 This is the web api for all aspect clients.
 
+Swagger UI is available for testing the UI manually and viewing route documentation at http://localhost:8080/documentation .  Use the `api/auth` route to generate a JWT token (named 'access' in response) and include the token in authenticated routes.
 
 ##Installation
 Clone the repository, then:

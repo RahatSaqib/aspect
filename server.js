@@ -1,107 +1,123 @@
-let express = require('express')
-let expressValidator = require('express-validator')
-let cors = require('cors')
-let bodyParser = require('body-parser')
-let morgan = require('morgan')
-let rateLimit = require('express-rate-limit')
-
 require('dotenv-safe').load()
-let config = require('./config')
-let db = require('./db')
 
-// our routes
-let authRoutes = require('./routes/auth')
-let deviceRoutes = require('./routes/device')
-let personRoutes = require('./routes/person')
-
-// the express app
-let app = express()
-
- // need this for express-rate-limit to work on AWS ELB
-app.enable('trust proxy')
-
-// rate limiter for api calls
-// allow 100 calls per minute
-const throttleApiMessage = 'Too many requests from this IP. Please try again in 5 minutes.'
-const apiLimiter = new rateLimit({
-  windowMs: 5*60*1000,
-  max: 100,
-  delayMs: 0,
-  message: throttleApiMessage,
-  handler: function (req, res) {
-    res.format({
-      json: function(){
-        res.status(429).json({ message: throttleApiMessage })
-      }
-    })
-  }
-})
-
-// limiter for auth related actions
-// allows 10 calls within 15 minutes, then starts slowing down response
-// by 3 second increments. completely blocks after 20 attempts
-const throttleAuthMessage = 'Too many login attempts from this IP. Please try again in 15 minutes.'
-const authLimiter = new rateLimit({
-  windowMs: 15*60*1000,
-  delayAfter: 10,
-  delayMs: 3*1000,
-  max: 20,
-  message: throttleAuthMessage,
-  handler: function (req, res) {
-    res.format({
-      json: function(){
-        res.status(429).json({ message: throttleAuthMessage })
-      }
-    })
-  },
-  keyGenerator: function(req){
-
-    // disable for localhost so we can run our unit tests without getting blocked
-    if (req.ip.indexOf('127.0.0.1' || req.ip === '::1') !== -1){
-      return Math.random()
-    }
-
-    return req.ip
-  }
-})
+let Hapi = require('hapi')
 
 // =======================
 // configuration =========
 // =======================
+let config = require('./config')
+let { version } = require('./package.json')
+let { addRoutes } = require('./routes')
+let server = new Hapi.Server()
 let port = process.env.PORT || 8080
+let apiPath = '/api'
+server.connection({
+  port,
+  routes: {
+    cors: true
+  }
+})
 
-// use body parser so we can get info from POST and/or URL parameters
-app.use(bodyParser.urlencoded({ extended: false }))
-app.use(bodyParser.json())
+let plugins = [
+  // static file handling (hapi-swagger dependency)
+  require('inert'),
 
-// enable express-validator
-app.use(expressValidator())
+  // view layer (hapi-swagger dependency)
+  require('vision'),
 
-// enable cross origin requests
-app.use(cors())
+  // JWT for authentication
+  require('hapi-auth-jwt2'),
 
-// use morgan to log requests to the console
-app.use(morgan('dev'))
+  // SwaggerUI and documentation
+  {
+    register: require('hapi-swagger'),
+    options: {
+      basePath: apiPath,
+      info: {
+        title: 'Aspect API',
+        version
+      }
+    }
+  },
+
+	// log responses to console using good
+  {
+    register: require('good'),
+    options: {
+      reporters: {
+        console: [
+          {
+            // Only show response log, and request.log events
+            module: 'good-squeeze',
+            name: 'Squeeze',
+            args: [{
+              log: '*',
+              response: '*',
+              request: '*'
+            }]
+          },
+          // format as string for console
+          { module: 'good-console' },
+          // write to std out
+          'stdout'
+        ]
+      }
+    }
+  }
+]
+
+server.register(plugins, err => { if(err) throw err })
+
+// =======================
+// Authentication strategy
+// =======================
+server.auth.strategy('jwt', 'jwt', {
+  key: config.secret,
+  validateFunc: function(decoded, request, callback){
+    // TODO What do we want to do to validate data within decoded JWT token?
+    callback(null, true)
+  }
+  //TODO JWT verfication algorithm verifyOptions: { algorithms: [ 'HS256' ] }
+})
+
+// all routes use JWT authentication by default
+// use config: { auth: false } on route definition to disable authentication
+server.auth.default('jwt')
 
 // =======================
 // routes ================
 // =======================
-// basic route
-app.get('/', apiLimiter, function (req, res) {
-  res.send('Hello! The API is at /api.')
+
+server.route({
+  method: 'GET',
+  path: '/',
+  handler: (request, reply) => reply('Hello! The API is at /api.'),
+  config: {
+    auth: false
+  }
 })
 
-// auth routes (get access token, refresh...)
-app.use('/api/auth', authLimiter, authRoutes(config, db))
-
-// device routes
-app.use('/api/device', apiLimiter, deviceRoutes(config, db))
-
-// person routes
-app.use('/api/person', apiLimiter, personRoutes(config, db))
+// use plugin to mount all API routes at /api
+function apiPlugin(server, options, next){
+  addRoutes(server)
+  next()
+}
+apiPlugin.attributes = {
+  name: 'api',
+  version
+}
+server.register({register: apiPlugin}, {
+  routes: {
+    prefix: apiPath
+  }
+}, err => { if(err) throw err })
 
 // =======================
 // start the server ======
 // =======================
-app.listen(port)
-console.log('Magic happens at http://localhost:' + port)
+server.start(err => {
+  if(err){
+    throw err
+  }
+  console.log('Magic happens at http://localhost:' + port)
+})
