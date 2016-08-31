@@ -7,7 +7,7 @@ let Hapi = require('hapi')
 // =======================
 let config = require('./config')
 let { version } = require('./package.json')
-let { addRoutes } = require('./routes')
+let { addRoutes } = require('./routes/index')
 let server = new Hapi.Server()
 let port = process.env.PORT || 8080
 let apiPath = '/api'
