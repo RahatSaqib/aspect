@@ -7,6 +7,7 @@ let Hapi = require('hapi')
 // =======================
 let config = require('./config')
 let { version } = require('./package.json')
+let { addRoutes } = require('./routes')
 let server = new Hapi.Server()
 let port = process.env.PORT || 8080
 let apiPath = '/api'
@@ -33,7 +34,7 @@ let plugins = [
     options: {
       basePath: apiPath,
       info: {
-        title: 'Aspect API doc',
+        title: 'Aspect API',
         version
       }
     }
@@ -98,9 +99,7 @@ server.route({
 
 // use plugin to mount all API routes at /api
 function apiPlugin(server, options, next){
-  server.route(require('./routes/auth_h.js'))
-  server.route(require('./routes/device_h.js'))
-  server.route(require('./routes/person_h.js'))
+  addRoutes(server)
   next()
 }
 apiPlugin.attributes = {

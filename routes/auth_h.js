@@ -11,16 +11,6 @@ let { asyncHandler } = require('../util')
 
 module.exports = [
   {
-    method: 'GET',
-    path: '/auth',
-    handler: asyncHandler(checkAuthentication),
-    config: {
-      description: 'Check authentication',
-      notes: 'Check successful authentication token',
-      tags: ['api']
-    }
-  },
-  {
     method: 'POST',
     path: '/auth',
     handler: asyncHandler(authenticate),
@@ -28,7 +18,6 @@ module.exports = [
       auth: false,
       description: 'Authenticate user',
       notes: 'Generate new JWT token given user name and password',
-      tags: ['api'],
       validate: {
         payload: {
           name: Joi.string().required(),
@@ -40,6 +29,15 @@ module.exports = [
     }
   },
   {
+    method: 'GET',
+    path: '/auth',
+    handler: asyncHandler(checkAuthentication),
+    config: {
+      description: 'Check authentication',
+      notes: 'Check successful authentication token'
+    }
+  },
+  {
     method: 'POST',
     path: '/auth/refresh',
     handler: asyncHandler(refreshToken),
@@ -47,7 +45,6 @@ module.exports = [
       auth: false,
       description: 'Refresh Token',
       notes: 'Generate a new access token by sending a refresh token',
-      tags: ['api'],
       validate: {
         payload: {
           clientId: Joi.string().required(),

@@ -11,7 +11,6 @@ module.exports = [{
   config: {
     description: 'Device List',
     notes: 'Pageable and sortable list of devices',
-    tags: ['api'],
     validate: {
       query: {
         sortCol: Joi.string().valid('name', 'status', 'createdOn', 'lastSeen', 'totalTests')

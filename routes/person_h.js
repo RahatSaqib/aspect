@@ -11,7 +11,6 @@ module.exports = [{
   config: {
     description: 'People List',
     notes: 'Pageable and sortable list of people',
-    tags: ['api'],
     validate: {
       query: {
         sortCol: Joi.string().valid('name', 'level', 'state', 'lga').description('Sort on named column'),
