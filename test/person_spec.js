@@ -17,7 +17,7 @@ describe('Person routes',function(){
     it('should return a list of persons when using valid token', function(done){
       server
       .get(path)
-      .set('x-access-token', shared.token)
+      .set('Authorization', 'Bearer '+shared.token)
       .end(function(err,res){
         assert.equal(res.status, 200)
         assert.typeOf(res.body, 'Object')
