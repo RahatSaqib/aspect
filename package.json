@@ -55,6 +55,7 @@
     "jsdom": "^9.4.0",
     "minimist": "^1.2.0",
     "mocha": "^3.0.0",
+    "mocha-bamboo-reporter": "^1.1.1",
     "npm-run-all": "^3.0.0",
     "null-loader": "^0.1.1",
     "postcss": "^5.1.0",
