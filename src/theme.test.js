@@ -7,7 +7,7 @@ describe('Theme', () => {
     assert.deepProperty(theme, 'palette.primary2Color')
     assert.deepProperty(theme, 'palette.primary3Color')
     assert.deepProperty(theme, 'palette.accent1Color')
-    assert.deepProperty(theme, 'palettte.accent2Color')
+    assert.deepProperty(theme, 'palette.accent2Color')
     assert.deepProperty(theme, 'palette.accent3Color')
   })
 })
