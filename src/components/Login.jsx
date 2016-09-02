@@ -2,7 +2,6 @@
 import React from 'react'
 import { bindActionCreators } from 'redux'
 import { connect } from 'react-redux'
-import PureRenderMixin from 'react-addons-pure-render-mixin'
 
 // Material-UI
 import Paper from 'material-ui/Paper'
@@ -14,12 +13,13 @@ import TextField from 'material-ui/TextField'
 import { loginStart } from '../action_creators/user_creators'
 import { ErrorDisplayContainer } from './shared/ErrorDisplay'
 
-class Login extends React.Component {
+class Login extends React.PureComponent {
 
-  constructor(props) {
-    super(props)
-    this.shouldComponentUpdate = PureRenderMixin.shouldComponentUpdate.bind(this)
-    this.state = {  user: '', password: '', error_user: '', error_password: ''}
+  state = {
+    user: '',
+    password: '',
+    error_user: '',
+    error_password: ''
   }
 
   componentDidMount = () => { setTimeout(() => { if (this.refs.user) { this.refs.user.focus() } }, 500) }

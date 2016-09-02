@@ -1,6 +1,5 @@
 // Imports from packages
 import React from 'react'
-import PureRenderMixin from 'react-addons-pure-render-mixin'
 import { Link } from 'react-router'
 
 // Material-UI
@@ -12,13 +11,7 @@ import MoreVertIcon from 'material-ui/svg-icons/navigation/more-vert'
 import Badge from 'material-ui/Badge'
 import NotificationsIcon from 'material-ui/svg-icons/social/notifications'
 
-class Nav extends React.Component {
-
-  constructor(props) {
-    super(props)
-    this.shouldComponentUpdate = PureRenderMixin.shouldComponentUpdate.bind(this)
-  }
-
+class Nav extends React.PureComponent {
   render() {
     return (
       <AppBar className="nav" onLeftIconButtonTouchTap={this.props.handleHamburger}

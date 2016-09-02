@@ -1,15 +1,8 @@
 // Imports from packages
 import React from 'react'
-import PureRenderMixin from 'react-addons-pure-render-mixin'
 
 // This component returns a number formatted using the user's culture
-class FormattedNumber extends React.Component {
-
-  constructor(props) {
-    super(props)
-    this.shouldComponentUpdate = PureRenderMixin.shouldComponentUpdate.bind(this)
-  }
-
+class FormattedNumber extends React.PureComponent {
   render() {
     return (
         <span>
