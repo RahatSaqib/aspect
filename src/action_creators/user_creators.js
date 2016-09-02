@@ -1,7 +1,7 @@
 import config from 'config'
 import jwt_decode from 'jwt-decode'
 
-import util from './../util'
+import * as fetchUtils from '../utils/fetch'
 import * as localStorage from '../utils/localStorage'
 import { history } from '../store'
 import { addError } from './error_creators'
@@ -102,12 +102,12 @@ export function loginStart(user, password) {
 
     // In this case, we return a promise to wait for.
     // This is not required by thunk middleware, but it is convenient for us.
-    let clientName = util.getBrowserNameAndVersion() + ' on ' + window.navigator.platform
+    const clientName = fetchUtils.getBrowserNameAndVersion() + ' on ' + window.navigator.platform
 
     return fetch(config.aspectApi + '/auth',
       {
         method: 'POST',
-        headers: util.getHeaders(true),
+        headers: fetchUtils.getHeaders(true),
         body: JSON.stringify({
           name: user,
           password: password,
@@ -115,7 +115,7 @@ export function loginStart(user, password) {
           clientName: clientName
         })
       })
-      .then(util.handleFetchError)
+      .then(fetchUtils.handleFetchError)
       .then(json => {
 
         let jwt = storeAccess(json)
@@ -159,13 +159,13 @@ export function refreshStart() {
     fetch(config.aspectApi + '/auth/refresh',
       {
         method: 'POST',
-        headers: util.getHeaders(true),
+        headers: fetchUtils.getHeaders(true),
         body: JSON.stringify({
           token: localStorage.getRefreshToken(),
           clientId: localStorage.getClientId()
         })
       })
-      .then(util.handleFetchError)
+      .then(fetchUtils.handleFetchError)
       .then(json => {
         let jwt = storeAccess(json)
 

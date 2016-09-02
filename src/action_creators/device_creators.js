@@ -1,7 +1,7 @@
 import Immutable from 'immutable'
 import config from 'config'
 
-import util from './../util'
+import * as fetchUtils from '../utils/fetch'
 import { addError } from './error_creators'
 import types from './../constants/action_types'
 
@@ -38,8 +38,8 @@ export function fetchDevices(filters = Immutable.Map({ name: '' }), sortCol = 'n
       qsFilters = Object.keys(filters).map(k => `${encodeURIComponent(k)}=${encodeURIComponent(filters[k])}`).join('&')
     }
 
-    return fetch(`${config.aspectApi}/device?sortCol=${sortCol}&sortDir=${sortDir}&page=${page}&size=${size}&${qsFilters}`, { headers: util.getHeaders(false) })
-      .then(util.handleFetchError)
+    return fetch(`${config.aspectApi}/device?sortCol=${sortCol}&sortDir=${sortDir}&page=${page}&size=${size}&${qsFilters}`, { headers: fetchUtils.getHeaders(false) })
+      .then(fetchUtils.handleFetchError)
       .then(json => dispatch(receiveDevices(json)))
       .catch(err => {
         dispatch(addError('Loading devices failed', err.message, err))
