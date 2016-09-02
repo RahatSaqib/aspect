@@ -79,4 +79,9 @@ config.module.loaders.push({
   )
 });
 
+config.module.loaders.push({
+  test: /\.(ico)$/,
+  loader: 'static-loader'
+});
+
 module.exports = config;
