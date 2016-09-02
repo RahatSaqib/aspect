@@ -14,14 +14,14 @@ const appReducer = combineReducers({
   person
 })
 
-const rootReducer = (state, action) => {
-
+function rootReducer(state, action) {
+  let nextState = state
   // on logout, empty state
   if (action.type === types.LOGOUT_SUCCESS) {
-    state = undefined
+    nextState = undefined
   }
 
-  return appReducer(state, action)
+  return appReducer(nextState, action)
 }
 
 export default rootReducer

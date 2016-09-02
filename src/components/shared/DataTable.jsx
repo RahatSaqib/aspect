@@ -48,7 +48,7 @@ export class DataTable extends React.Component {
 
     const list = this.props.list
 
-    this.props.handleFetch(list.get('filters'), col || list.get('sortCol'), newSort || list.get('sortDir'), page == null ? list.get('page') : page, list.get('size'))
+    this.props.handleFetch(list.get('filters'), col || list.get('sortCol'), newSort || list.get('sortDir'), page == null ? list.get('page') : page, list.get('pageSize'))
   }
 
   getPager(page, totalPages){
@@ -94,7 +94,7 @@ export class DataTable extends React.Component {
 
     // generate paging for footer
     const page = list.get('page')
-    const totalPages = Math.ceil(list.get('total') / list.get('size'))
+    const totalPages = Math.ceil(list.get('total') / list.get('pageSize'))
     let pagerItems = this.getPager(page, totalPages)
 
     return (
