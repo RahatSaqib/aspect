@@ -1,6 +1,5 @@
 // Imports from packages
 import React from 'react'
-import PureRenderMixin from 'react-addons-pure-render-mixin'
 import { Link } from 'react-router'
 
 // Material-UI
@@ -12,11 +11,15 @@ import MoreVertIcon from 'material-ui/svg-icons/navigation/more-vert'
 import Badge from 'material-ui/Badge'
 import NotificationsIcon from 'material-ui/svg-icons/social/notifications'
 
-class Nav extends React.Component {
+class Nav extends React.PureComponent {
 
-  constructor(props) {
-    super(props)
-    this.shouldComponentUpdate = PureRenderMixin.shouldComponentUpdate.bind(this)
+  static propTypes = {
+    handleHamburger: React.PropTypes.func.isRequired,
+    handleSignOut: React.PropTypes.func.isRequired
+  }
+
+  static contextTypes = {
+    router: React.PropTypes.object.isRequired
   }
 
   render() {
@@ -44,15 +47,6 @@ class Nav extends React.Component {
         }/>
     )
   }
-}
-
-Nav.propTypes = {
-  handleHamburger: React.PropTypes.func.isRequired,
-  handleSignOut: React.PropTypes.func.isRequired
-}
-
-Nav.contextTypes = {
-  router: React.PropTypes.object.isRequired
 }
 
 export default Nav

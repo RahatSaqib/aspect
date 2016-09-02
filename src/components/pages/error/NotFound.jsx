@@ -1,7 +1,6 @@
 // Imports from packages
 import React from 'react'
 import { Link } from 'react-router'
-import PureRenderMixin from 'react-addons-pure-render-mixin'
 
 // Material-UI
 import IconButton from 'material-ui/IconButton'
@@ -11,11 +10,16 @@ import ActionBack from 'material-ui/svg-icons/hardware/keyboard-arrow-left'
 // Our own imports
 import translate from '../../../i18n/translate'
 
-export class NotFound extends React.Component {
+export class NotFound extends React.PureComponent {
 
-  constructor(props) {
-    super(props)
-    this.shouldComponentUpdate = PureRenderMixin.shouldComponentUpdate.bind(this)
+  static defaultProps = {
+    strings: {
+      title: 'Not Found'
+    }
+  }
+
+  static contextTypes = {
+    router: React.PropTypes.object.isRequired
   }
 
   render() {
@@ -28,16 +32,6 @@ export class NotFound extends React.Component {
       </div>
     )
   }
-}
-
-NotFound.defaultProps = {
-  strings: {
-    title: 'Not Found'
-  }
-}
-
-NotFound.contextTypes = {
-  router: React.PropTypes.object.isRequired
 }
 
 export const NotFoundContainer = translate('NotFound')(NotFound)

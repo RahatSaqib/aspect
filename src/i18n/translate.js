@@ -10,6 +10,12 @@ const languages = {
 export default function translate(key) {
   return Component => {
     class TranslationComponent extends React.Component {
+
+      static contextTypes = {
+        currentLanguage: React.PropTypes.string,
+        currentCulture: React.PropTypes.string
+      }
+
       render() {
         let lang = this.context.currentLanguage || 'en'
         let culture = this.context.currentCulture || 'en-US'
@@ -19,11 +25,6 @@ export default function translate(key) {
 
         return <Component {...this.props } {...this.state } strings={strings} />
       }
-    }
-
-    TranslationComponent.contextTypes = {
-      currentLanguage: React.PropTypes.string,
-      currentCulture: React.PropTypes.string
     }
 
     return TranslationComponent

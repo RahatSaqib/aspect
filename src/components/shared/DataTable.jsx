@@ -1,6 +1,5 @@
 // Imports from packages
 import React from 'react'
-import PureRenderMixin from 'react-addons-pure-render-mixin'
 
 // Material-UI
 import {Table, TableBody, TableHeader, TableHeaderColumn, TableRow, TableRowColumn, TableFooter } from 'material-ui/Table'
@@ -8,22 +7,24 @@ import LinearProgress from 'material-ui/LinearProgress'
 import SortIcon from 'material-ui/svg-icons/content/sort'
 import FlatButton from 'material-ui/FlatButton'
 
-export class DataTable extends React.Component {
+export class DataTable extends React.PureComponent {
 
-  constructor(props) {
-    super(props)
-    this.shouldComponentUpdate = PureRenderMixin.shouldComponentUpdate.bind(this)
-    this.state = {
-      height: 'inherit',
-      fixedHeader: true,
-      fixedFooter: true,
-      selectable: false,
-      multiSelectable: false,
-      showCheckboxes: false,
-      enableSelectAll: false,
-      showRowHover: true,
-      stripedRows: false
-    }
+  static propTypes = {
+    handleFetch: React.PropTypes.func.isRequired,
+    list: React.PropTypes.object.isRequired,
+    columns: React.PropTypes.array.isRequired
+  }
+
+  state = {
+    height: 'inherit',
+    fixedHeader: true,
+    fixedFooter: true,
+    selectable: false,
+    multiSelectable: false,
+    showCheckboxes: false,
+    enableSelectAll: false,
+    showRowHover: true,
+    stripedRows: false
   }
 
   componentDidMount() {
@@ -156,10 +157,4 @@ export class DataTable extends React.Component {
       </div>
     )
   }
-}
-
-DataTable.propTypes = {
-  handleFetch: React.PropTypes.func.isRequired,
-  list: React.PropTypes.object.isRequired,
-  columns: React.PropTypes.array.isRequired
 }

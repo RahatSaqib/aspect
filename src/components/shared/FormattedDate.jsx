@@ -1,14 +1,21 @@
 // Imports from packages
 import React from 'react'
-import PureRenderMixin from 'react-addons-pure-render-mixin'
 import moment from 'moment'
 
 // This component returns a number formatted using the user's culture
-class FormattedDate extends React.Component {
+class FormattedDate extends React.PureComponent {
 
-  constructor(props) {
-    super(props)
-    this.shouldComponentUpdate = PureRenderMixin.shouldComponentUpdate.bind(this)
+  static propTypes = {
+    // any instead of number because we might get a percentage
+    date: React.PropTypes.any.isRequired,
+    culture: React.PropTypes.string.isRequired,
+
+    // use moment's fromNow function?
+    fromNow: React.PropTypes.bool,
+    omitSuffix: React.PropTypes.bool,
+
+    // if not using fromNow, can pass in a moment format string
+    format: React.PropTypes.string
   }
 
   render() {
@@ -33,19 +40,6 @@ class FormattedDate extends React.Component {
         </span>
       )
   }
-}
-
-FormattedDate.propTypes = {
-  // any instead of number because we might get a percentage
-  date: React.PropTypes.any.isRequired,
-  culture: React.PropTypes.string.isRequired,
-
-  // use moment's fromNow function?
-  fromNow: React.PropTypes.bool,
-  omitSuffix: React.PropTypes.bool,
-
-  // if not using fromNow, can pass in a moment format string
-  format: React.PropTypes.string
 }
 
 export default FormattedDate

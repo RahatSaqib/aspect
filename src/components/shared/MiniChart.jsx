@@ -1,6 +1,5 @@
 // Imports from packages
 import React from 'react'
-import PureRenderMixin from 'react-addons-pure-render-mixin'
 import { Sparklines, SparklinesLine, SparklinesSpots } from 'react-sparklines'
 import Paper from 'material-ui/Paper'
 
@@ -9,11 +8,14 @@ import FormattedNumber from './FormattedNumber'
 
 require('./../../styles/Charts.css')
 
-class MiniChart extends React.Component {
+class MiniChart extends React.PureComponent {
 
-  constructor(props) {
-    super(props)
-    this.shouldComponentUpdate = PureRenderMixin.shouldComponentUpdate.bind(this)
+  static propTypes = {
+    bgcolor: React.PropTypes.string.isRequired,
+    data: React.PropTypes.array.isRequired,
+    label: React.PropTypes.string.isRequired,
+    number: React.PropTypes.any.isRequired,
+    culture: React.PropTypes.string.isRequired
   }
 
   render() {
@@ -33,14 +35,6 @@ class MiniChart extends React.Component {
         </Paper>
       )
   }
-}
-
-MiniChart.propTypes = {
-  bgcolor: React.PropTypes.string.isRequired,
-  data: React.PropTypes.array.isRequired,
-  label: React.PropTypes.string.isRequired,
-  number: React.PropTypes.any.isRequired,
-  culture: React.PropTypes.string.isRequired
 }
 
 export default MiniChart

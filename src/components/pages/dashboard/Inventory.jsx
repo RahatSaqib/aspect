@@ -1,18 +1,11 @@
 // Imports from packages
 import React from 'react'
 import { Link } from 'react-router'
-import PureRenderMixin from 'react-addons-pure-render-mixin'
 
 // Our own imports
 import MiniChart from '../../shared/MiniChart'
 
-export class Inventory extends React.Component {
-
-  constructor(props) {
-    super(props)
-    this.shouldComponentUpdate = PureRenderMixin.shouldComponentUpdate.bind(this)
-  }
-
+export class Inventory extends React.PureComponent {
   render() {
     return (
       <div className="content">

@@ -1,7 +1,6 @@
 // Imports from packages
 import React from 'react'
 import { bindActionCreators } from 'redux'
-import PureRenderMixin from 'react-addons-pure-render-mixin'
 import { connect } from 'react-redux'
 
 // Material-UI
@@ -10,11 +9,11 @@ import Snackbar from 'material-ui/Snackbar'
 // Our own imports
 import { removeError } from '../../action_creators/error_creators'
 
-export class ErrorDisplay extends React.Component {
+export class ErrorDisplay extends React.PureComponent {
 
-  constructor(props) {
-    super(props)
-    this.shouldComponentUpdate = PureRenderMixin.shouldComponentUpdate.bind(this)
+  static propTypes = {
+    error: React.PropTypes.object,
+    removeError: React.PropTypes.func.isRequired
   }
 
   handleActionTouchTap = (error) => {
@@ -42,18 +41,13 @@ export class ErrorDisplay extends React.Component {
   }
 }
 
-ErrorDisplay.propTypes = {
-  error: React.PropTypes.object,
-  removeError: React.PropTypes.func.isRequired
-}
-
 function mapStateToProps(state) {
   return {
     error: state.get('error')
   }
 }
 
-const mapDispatchToProps = (dispatch) => {
+function mapDispatchToProps(dispatch) {
   return bindActionCreators({ removeError }, dispatch)
 }
 

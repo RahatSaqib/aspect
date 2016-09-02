@@ -2,7 +2,6 @@
 import React from 'react'
 import { bindActionCreators } from 'redux'
 import { connect } from 'react-redux'
-import PureRenderMixin from 'react-addons-pure-render-mixin'
 
 // Material-UI
 import Paper from 'material-ui/Paper'
@@ -14,12 +13,22 @@ import TextField from 'material-ui/TextField'
 import { loginStart } from '../action_creators/user_creators'
 import { ErrorDisplayContainer } from './shared/ErrorDisplay'
 
-class Login extends React.Component {
+class Login extends React.PureComponent {
 
-  constructor(props) {
-    super(props)
-    this.shouldComponentUpdate = PureRenderMixin.shouldComponentUpdate.bind(this)
-    this.state = {  user: '', password: '', error_user: '', error_password: ''}
+  static propTypes = {
+    loggingIn: React.PropTypes.bool,
+    loginStart: React.PropTypes.func.isRequired
+  }
+
+  static contextTypes = {
+    router: React.PropTypes.object.isRequired
+  }
+
+  state = {
+    user: '',
+    password: '',
+    error_user: '',
+    error_password: ''
   }
 
   componentDidMount = () => { setTimeout(() => { if (this.refs.user) { this.refs.user.focus() } }, 500) }
@@ -81,22 +90,13 @@ class Login extends React.Component {
   }
 }
 
-Login.propTypes = {
-  loggingIn: React.PropTypes.bool,
-  loginStart: React.PropTypes.func.isRequired
-}
-
-Login.contextTypes =  {
-  router: React.PropTypes.object.isRequired
-}
-
-const mapStateToProps = (state) => {
+function mapStateToProps(state) {
   return {
     loggingIn: state.getIn(['user', 'loggingIn'])
   }
 }
 
-const mapDispatchToProps = (dispatch) => {
+function mapDispatchToProps(dispatch) {
   return bindActionCreators({ loginStart }, dispatch)
 }
 

@@ -1,7 +1,6 @@
 // Imports from packages
 import React from 'react'
 import { connect } from 'react-redux'
-import PureRenderMixin from 'react-addons-pure-render-mixin'
 
 // Material-UI
 import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider'
@@ -13,11 +12,15 @@ import theme from '../theme'
 require('styles/App.css')
 require('styles/pure-grids-responsive-min.css')
 
-class App extends React.Component {
+class App extends React.PureComponent {
 
-  constructor(props) {
-    super(props)
-    this.shouldComponentUpdate = PureRenderMixin.shouldComponentUpdate.bind(this)
+  static propTypes = {
+    children: React.PropTypes.object.isRequired
+  }
+
+  static childContextTypes = {
+    currentLanguage: React.PropTypes.string,
+    currentCulture: React.PropTypes.string
   }
 
   render() {
@@ -37,15 +40,6 @@ class App extends React.Component {
       currentCulture: this.props.currentCulture
     }
   }
-}
-
-App.propTypes = {
-  children: React.PropTypes.object.isRequired
-}
-
-App.childContextTypes = {
-  currentLanguage: React.PropTypes.string,
-  currentCulture: React.PropTypes.string
 }
 
 function mapStateToProps(state) {

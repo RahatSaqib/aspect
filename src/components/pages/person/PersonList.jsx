@@ -2,7 +2,6 @@
 import React from 'react'
 import { bindActionCreators } from 'redux'
 import { connect } from 'react-redux'
-import PureRenderMixin from 'react-addons-pure-render-mixin'
 
 // Material-UI
 import NavigationExpandMoreIcon from 'material-ui/svg-icons/navigation/expand-more'
@@ -18,16 +17,13 @@ import { fetchPersons } from '../../../action_creators/person_creators'
 import { DataTable } from '../../shared/DataTable'
 import translate from '../../../i18n/translate'
 
-export class PersonList extends React.Component {
-
-  constructor(props) {
-    super(props)
-    this.state = { filters: props.list.get('filters') }
-    this.shouldComponentUpdate = PureRenderMixin.shouldComponentUpdate.bind(this)
-    this.filterPersonsChange = this.filterPersonsChange.bind(this)
-    this.handleSubmit = this.handleSubmit.bind(this)
-    this.resetPersons = this.resetPersons.bind(this)
+export class PersonList extends React.PureComponent {
+  state = {
+    filters: this.props.list.get('filters')
   }
+  filterPersonsChange = this.filterPersonsChange.bind(this)
+  handleSubmit = this.handleSubmit.bind(this)
+  resetPersons = this.resetPersons.bind(this)
 
   filterPersonsChange(e){
     this.setState({ filters: this.state.filters.set(e.target.id, e.target.value) })
@@ -86,7 +82,7 @@ function mapStateToProps(state) {
   }
 }
 
-const mapDispatchToProps = (dispatch) => {
+function mapDispatchToProps(dispatch) {
   return bindActionCreators({ fetchPersons }, dispatch)
 }
 

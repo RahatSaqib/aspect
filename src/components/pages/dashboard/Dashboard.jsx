@@ -3,17 +3,23 @@ import React from 'react'
 import { Link } from 'react-router'
 import { connect } from 'react-redux'
 import Snackbar from 'material-ui/Snackbar'
-import PureRenderMixin from 'react-addons-pure-render-mixin'
 
 // Our own imports
 import MiniChart from '../../shared/MiniChart'
 import translate from '../../../i18n/translate'
 
-export class Dashboard extends React.Component {
+export class Dashboard extends React.PureComponent {
 
-  constructor(props) {
-    super(props)
-    this.shouldComponentUpdate = PureRenderMixin.shouldComponentUpdate.bind(this)
+  static propTypes = {
+    userName: React.PropTypes.string,
+    location: React.PropTypes.object.isRequired,
+    strings: React.PropTypes.object
+  }
+
+  static defaultProps = {
+    strings: {
+      title: 'Dashboard'
+    }
   }
 
   render() {
@@ -62,18 +68,6 @@ export class Dashboard extends React.Component {
             message={'Welcome, ' + this.props.userName + '!'}  />
       </div>
     )
-  }
-}
-
-Dashboard.propTypes = {
-  userName: React.PropTypes.string,
-  location: React.PropTypes.object.isRequired,
-  strings: React.PropTypes.object
-}
-
-Dashboard.defaultProps = {
-  strings: {
-    title: 'Dashboard'
   }
 }
 
