@@ -9,6 +9,7 @@ import Routes from './Routes'
 import store from './store'
 import { getRefreshToken } from './utils/localStorage'
 import { refreshStart, hydrateFromLocalStorage } from './action_creators/user_creators'
+import 'static?!./favicon.ico?output=../favicon.ico'
 
 // This won't be necessary when facebook updates react
 // http://stackoverflow.com/a/34015469/988941
