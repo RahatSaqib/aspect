@@ -10,6 +10,18 @@ import translate from '../../../i18n/translate'
 
 export class Dashboard extends React.PureComponent {
 
+  static propTypes = {
+    userName: React.PropTypes.string,
+    location: React.PropTypes.object.isRequired,
+    strings: React.PropTypes.object
+  }
+
+  static defaultProps = {
+    strings: {
+      title: 'Dashboard'
+    }
+  }
+
   render() {
     return (
       <div className="content">
@@ -56,18 +68,6 @@ export class Dashboard extends React.PureComponent {
             message={'Welcome, ' + this.props.userName + '!'}  />
       </div>
     )
-  }
-}
-
-Dashboard.propTypes = {
-  userName: React.PropTypes.string,
-  location: React.PropTypes.object.isRequired,
-  strings: React.PropTypes.object
-}
-
-Dashboard.defaultProps = {
-  strings: {
-    title: 'Dashboard'
   }
 }
 

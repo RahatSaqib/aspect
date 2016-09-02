@@ -21,6 +21,13 @@ import Book from 'material-ui/svg-icons/action/book'
 import SelectableList from './SelectableList'
 
 class SideNav extends React.PureComponent {
+
+  static propTypes = {
+    open: React.PropTypes.bool.isRequired,
+    handleClose: React.PropTypes.func.isRequired,
+    pathname: React.PropTypes.string.isRequired
+  }
+
   render() {
     return (
       <Drawer docked={ this.props.desktop }
@@ -90,12 +97,6 @@ class SideNav extends React.PureComponent {
       </Drawer>
     )
   }
-}
-
-SideNav.propTypes = {
-  open: React.PropTypes.bool.isRequired,
-  handleClose: React.PropTypes.func.isRequired,
-  pathname: React.PropTypes.string.isRequired
 }
 
 export default SideNav

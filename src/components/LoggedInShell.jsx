@@ -12,6 +12,10 @@ import { ErrorDisplayContainer } from './shared/ErrorDisplay'
 
 export class LoggedInShell extends React.PureComponent {
 
+  static propTypes = {
+    children: React.PropTypes.object.isRequired
+  }
+
   state = {
     desktop: true
   }
@@ -33,10 +37,6 @@ export class LoggedInShell extends React.PureComponent {
       </div>
     )
   }
-}
-
-LoggedInShell.propTypes = {
-  children: React.PropTypes.object.isRequired
 }
 
 const mapStateToProps = (state) => {

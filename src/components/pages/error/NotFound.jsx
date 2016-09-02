@@ -11,6 +11,17 @@ import ActionBack from 'material-ui/svg-icons/hardware/keyboard-arrow-left'
 import translate from '../../../i18n/translate'
 
 export class NotFound extends React.PureComponent {
+
+  static defaultProps = {
+    strings: {
+      title: 'Not Found'
+    }
+  }
+
+  static contextTypes = {
+    router: React.PropTypes.object.isRequired
+  }
+
   render() {
     return (
       <div className="error-page">
@@ -21,16 +32,6 @@ export class NotFound extends React.PureComponent {
       </div>
     )
   }
-}
-
-NotFound.defaultProps = {
-  strings: {
-    title: 'Not Found'
-  }
-}
-
-NotFound.contextTypes = {
-  router: React.PropTypes.object.isRequired
 }
 
 export const NotFoundContainer = translate('NotFound')(NotFound)

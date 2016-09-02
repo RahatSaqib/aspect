@@ -9,6 +9,15 @@ import FormattedNumber from './FormattedNumber'
 require('./../../styles/Charts.css')
 
 class MiniChart extends React.PureComponent {
+
+  static propTypes = {
+    bgcolor: React.PropTypes.string.isRequired,
+    data: React.PropTypes.array.isRequired,
+    label: React.PropTypes.string.isRequired,
+    number: React.PropTypes.any.isRequired,
+    culture: React.PropTypes.string.isRequired
+  }
+
   render() {
     return (
         <Paper className="col-margin" style={{backgroundColor: this.props.bgcolor}}>
@@ -26,14 +35,6 @@ class MiniChart extends React.PureComponent {
         </Paper>
       )
   }
-}
-
-MiniChart.propTypes = {
-  bgcolor: React.PropTypes.string.isRequired,
-  data: React.PropTypes.array.isRequired,
-  label: React.PropTypes.string.isRequired,
-  number: React.PropTypes.any.isRequired,
-  culture: React.PropTypes.string.isRequired
 }
 
 export default MiniChart
