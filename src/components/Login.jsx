@@ -15,6 +15,15 @@ import { ErrorDisplayContainer } from './shared/ErrorDisplay'
 
 class Login extends React.PureComponent {
 
+  static propTypes = {
+    loggingIn: React.PropTypes.bool,
+    loginStart: React.PropTypes.func.isRequired
+  }
+
+  static contextTypes = {
+    router: React.PropTypes.object.isRequired
+  }
+
   state = {
     user: '',
     password: '',
@@ -79,15 +88,6 @@ class Login extends React.PureComponent {
       </div>
     )
   }
-}
-
-Login.propTypes = {
-  loggingIn: React.PropTypes.bool,
-  loginStart: React.PropTypes.func.isRequired
-}
-
-Login.contextTypes =  {
-  router: React.PropTypes.object.isRequired
 }
 
 const mapStateToProps = (state) => {

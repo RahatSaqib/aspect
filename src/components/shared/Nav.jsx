@@ -12,6 +12,16 @@ import Badge from 'material-ui/Badge'
 import NotificationsIcon from 'material-ui/svg-icons/social/notifications'
 
 class Nav extends React.PureComponent {
+
+  static propTypes = {
+    handleHamburger: React.PropTypes.func.isRequired,
+    handleSignOut: React.PropTypes.func.isRequired
+  }
+
+  static contextTypes = {
+    router: React.PropTypes.object.isRequired
+  }
+
   render() {
     return (
       <AppBar className="nav" onLeftIconButtonTouchTap={this.props.handleHamburger}
@@ -37,15 +47,6 @@ class Nav extends React.PureComponent {
         }/>
     )
   }
-}
-
-Nav.propTypes = {
-  handleHamburger: React.PropTypes.func.isRequired,
-  handleSignOut: React.PropTypes.func.isRequired
-}
-
-Nav.contextTypes = {
-  router: React.PropTypes.object.isRequired
 }
 
 export default Nav

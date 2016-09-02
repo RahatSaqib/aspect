@@ -10,6 +10,12 @@ import Snackbar from 'material-ui/Snackbar'
 import { removeError } from '../../action_creators/error_creators'
 
 export class ErrorDisplay extends React.PureComponent {
+
+  static propTypes = {
+    error: React.PropTypes.object,
+    removeError: React.PropTypes.func.isRequired
+  }
+
   handleActionTouchTap = (error) => {
     alert(error.get('desc') ? JSON.stringify(error.get('desc'), null, '\t') : 'No error details')
   }
@@ -33,11 +39,6 @@ export class ErrorDisplay extends React.PureComponent {
       return null
     }
   }
-}
-
-ErrorDisplay.propTypes = {
-  error: React.PropTypes.object,
-  removeError: React.PropTypes.func.isRequired
 }
 
 function mapStateToProps(state) {

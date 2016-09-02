@@ -8,6 +8,13 @@ import SortIcon from 'material-ui/svg-icons/content/sort'
 import FlatButton from 'material-ui/FlatButton'
 
 export class DataTable extends React.PureComponent {
+
+  static propTypes = {
+    handleFetch: React.PropTypes.func.isRequired,
+    list: React.PropTypes.object.isRequired,
+    columns: React.PropTypes.array.isRequired
+  }
+
   state = {
     height: 'inherit',
     fixedHeader: true,
@@ -150,10 +157,4 @@ export class DataTable extends React.PureComponent {
       </div>
     )
   }
-}
-
-DataTable.propTypes = {
-  handleFetch: React.PropTypes.func.isRequired,
-  list: React.PropTypes.object.isRequired,
-  columns: React.PropTypes.array.isRequired
 }

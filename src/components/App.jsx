@@ -13,6 +13,16 @@ require('styles/App.css')
 require('styles/pure-grids-responsive-min.css')
 
 class App extends React.PureComponent {
+
+  static propTypes = {
+    children: React.PropTypes.object.isRequired
+  }
+
+  static childContextTypes = {
+    currentLanguage: React.PropTypes.string,
+    currentCulture: React.PropTypes.string
+  }
+
   render() {
     return (
       // we set the currentlanguage as the key here to make sure that the
@@ -30,15 +40,6 @@ class App extends React.PureComponent {
       currentCulture: this.props.currentCulture
     }
   }
-}
-
-App.propTypes = {
-  children: React.PropTypes.object.isRequired
-}
-
-App.childContextTypes = {
-  currentLanguage: React.PropTypes.string,
-  currentCulture: React.PropTypes.string
 }
 
 function mapStateToProps(state) {
