@@ -2,10 +2,14 @@ import Immutable from 'immutable'
 
 import types from './../constants/action_types'
 
-function requestPersons(state, newState) {
+function requestPersons(state, action) {
   return state.merge({
     loading: true,
-    ...newState
+    sortCol: action.sortCol,
+    sortDir: action.sortDir,
+    page: action.page,
+    pageSize: action.size,
+    filters: action.filters
   })
 }
 
@@ -13,18 +17,20 @@ function receivePersons(state, items, total) {
   return state.merge({ loading: false, items, total })
 }
 
-const initialState = Immutable.fromJS({
+const Person = Immutable.Record({
   loading: false,
-  items: [],
+  items: Immutable.List(),
   sortCol: 'name',
   sortDir: 'asc',
   page: 0,
-  size: 10,
+  pageSize: 10, // Renamed from 'size' since 'size' will conflict with Immutable internal property
   total: 0,
-  filters: { name: '' }
+  filters: Immutable.fromJS({ name: '' })
 })
 
-const person = function (state = initialState, action) {
+const initialState = new Person()
+
+function person(state = initialState, action) {
   switch (action.type) {
   case types.REQUEST_PERSONS:
     return requestPersons(state, action)

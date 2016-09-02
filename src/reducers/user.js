@@ -26,7 +26,18 @@ function toggleDrawer(state, drawerOpen){
   return state.merge({ drawerOpen })
 }
 
-const login = function(state = Immutable.fromJS({ name: '', culture: 'en-US', lang: 'en', drawerOpen: true }), action) {
+const User = Immutable.Record({
+  name: '',
+  culture: 'en-US',
+  lang: 'en',
+  drawerOpen: true,
+  loggedIn: false,
+  loggingIn: false
+})
+
+const initialState = new User()
+
+function login(state = initialState, action) {
   switch (action.type) {
   case types.LOGIN_REQUEST:
     return loginRequest(state)
