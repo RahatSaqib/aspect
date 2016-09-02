@@ -1,7 +1,8 @@
-'use strict';
-const path = require('path');
-const srcPath = path.join(__dirname, '/../src');
-const dfltPort = 8000;
+import path from 'path'
+
+export const srcPath = path.join(__dirname, '/../src')
+const dfltPort = 8000
+
 function getDefaultModules() {
   return {
     preLoaders: [{
@@ -39,14 +40,15 @@ function getDefaultModules() {
         loader: 'file-loader'
       }
     ]
-  };
+  }
 }
-module.exports = {
-  srcPath: srcPath,
+
+export default {
+  srcPath,
   publicPath: '/assets/',
   port: dfltPort,
-  getDefaultModules: getDefaultModules,
-  postcss: function () {
-    return [];
+  getDefaultModules,
+  postcss() {
+    return []
   }
-};
+}

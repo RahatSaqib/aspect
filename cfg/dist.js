@@ -1,17 +1,14 @@
-'use strict';
-
-let path = require('path');
-let webpack = require('webpack');
-
-let baseConfig = require('./base');
-let defaultSettings = require('./defaults');
-
+import path from 'path'
+import webpack from 'webpack'
 // Add needed plugins here
-let BowerWebpackPlugin = require('bower-webpack-plugin');
-let ManifestPlugin = require('webpack-manifest-plugin');
-let ChunkManifestPlugin = require('chunk-manifest-webpack-plugin');
-let HtmlWebpackPlugin = require('html-webpack-plugin');
-let HtmlWebpackPluginRemove = require('html-webpack-plugin-remove');
+import BowerWebpackPlugin from 'bower-webpack-plugin'
+import ManifestPlugin from 'webpack-manifest-plugin'
+import ChunkManifestPlugin from 'chunk-manifest-webpack-plugin'
+import HtmlWebpackPlugin from 'html-webpack-plugin'
+import HtmlWebpackPluginRemove from 'html-webpack-plugin-remove'
+
+import defaultSettings from './defaults'
+import baseConfig from './base'
 
 // vendor packages so we can create a separate bundle
 const vendorPackages = [
@@ -25,7 +22,7 @@ const vendorPackages = [
   'redux-thunk', 'whatwg-fetch'
 ]
 
-let config = Object.assign({}, baseConfig, {
+const config = Object.assign({}, baseConfig, {
   entry: {
     app: path.join(__dirname, '../src/index'),
     vendor: vendorPackages
@@ -68,7 +65,7 @@ let config = Object.assign({}, baseConfig, {
     new HtmlWebpackPluginRemove('<script type="text/javascript" src="/assets/app.js"></script>')
   ],
   module: defaultSettings.getDefaultModules()
-});
+})
 
 // Add needed loaders to the defaults here
 config.module.loaders.push({
@@ -77,11 +74,11 @@ config.module.loaders.push({
   include: [].concat(
     config.additionalPaths, [path.join(__dirname, '/../src')]
   )
-});
+})
 
 config.module.loaders.push({
   test: /\.(ico)$/,
   loader: 'static-loader'
-});
+})
 
-module.exports = config;
+export default config
