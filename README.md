@@ -13,7 +13,8 @@ npm install
 ```
 
 ###Environment Configuration
-Then add a .env file to the root of the application (inline with server.js) and add your environment config to it
+Then add a .env file to the root of the application (inline with server.js) and add your environment config to it.  See `.env.example` for reference.
+
 ```
 secret=Any_Random_String
 
@@ -26,6 +27,16 @@ db.password=your_local_database_password
 db.databaseName=aspect
 db.debug=false
 ```
+
+Logs requests to console by default, to forward to Logstash, set the endpoint.
+
+```
+logstash.endpoint=udp://localhost:9001
+
+```
+
+
+### Running Server
 
 It's best to install nodemon globally and use that to run the project so that the server restarts automatically on any change:
 

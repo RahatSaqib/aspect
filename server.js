@@ -44,27 +44,50 @@ let plugins = [
   {
     register: require('good'),
     options: {
-      reporters: {
-        console: [
-          {
-            // Only show response log, and request.log events
-            module: 'good-squeeze',
-            name: 'Squeeze',
-            args: [{
-              log: '*',
-              response: '*',
-              request: '*'
-            }]
-          },
-          // format as string for console
-          { module: 'good-console' },
-          // write to std out
-          'stdout'
-        ]
-      }
+      reporters: loadGoodReporter()
     }
   }
 ]
+
+// load and return the good logging configuration
+function loadGoodReporter(){
+  let {logstash} = config
+
+  if(logstash){
+    // Forward to logstash if configured
+    return {
+      logstash: [
+        {
+          // Only show response log, and request.log events
+          module: 'good-squeeze',
+          name: 'Squeeze',
+          args: [{ response: '*' }]
+        },
+        // send to logstash
+        {
+          module: 'good-logstash',
+          args: [ logstash.endpoint ]
+        }
+      ]
+    }
+  } else {
+    // Logs to console by default.
+    return {
+      console: [
+        {
+          // Only show response log, and request.log events
+          module: 'good-squeeze',
+          name: 'Squeeze',
+          args: [{ log: '*', response: '*', request: '*' }]
+        },
+        // format as string for console
+        { module: 'good-console' },
+        // write to std out
+        'stdout'
+      ]
+    }
+  }
+}
 
 server.register(plugins, err => { if(err) throw err })
 
