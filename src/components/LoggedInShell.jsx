@@ -39,14 +39,14 @@ export class LoggedInShell extends React.PureComponent {
   }
 }
 
-const mapStateToProps = (state) => {
+function mapStateToProps(state) {
   return {
     drawerOpen: state.getIn(['user', 'drawerOpen']),
     pathname: state.getIn(['routing', 'locationBeforeTransitions', 'pathname'])
   }
 }
 
-const mapDispatchToProps = (dispatch) => {
+function mapDispatchToProps(dispatch) {
   return bindActionCreators({ logoutStart, changeLanguage, toggleDrawer, closeDrawer }, dispatch)
 }
 
