@@ -10,3 +10,13 @@ module.exports = {
     debug: process.env['db.debug'] === 'true'
   }
 }
+
+configureLogging(module.exports)
+
+// load logstash configuration if provided
+function configureLogging(config){
+  let endpoint = process.env['logstash.endpoint']
+  if(endpoint){
+    config.logstash = {endpoint}
+  }
+}
