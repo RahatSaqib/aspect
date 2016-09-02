@@ -1,8 +1,8 @@
 import config from 'config'
 import jwt_decode from 'jwt-decode'
-import { push } from 'react-router-redux'
 
 import util from './../util'
+import { history } from '../store'
 import { addError } from './error_creators'
 import types from './../constants/action_types'
 
@@ -131,7 +131,7 @@ export function loginStart(user, password) {
         // Here, we update the app state with the results of the API call.
         dispatch(loginSuccess(jwt.name, jwt.culture, jwt.lang))
 
-        dispatch(push('/dashboard'))
+        history.push('/dashboard')
       })
       .catch(err => {
         dispatch(loginFailure(err))
@@ -156,7 +156,7 @@ export function logoutStart() {
     dispatch(logoutSuccess())
 
     // now, redirct to login page
-    dispatch(push('/login'))
+    history.push('/login')
   }
 }
 
