@@ -1,14 +1,12 @@
-'use strict';
-
-let path = require('path');
-let webpack = require('webpack');
-let baseConfig = require('./base');
-let defaultSettings = require('./defaults');
-
+import path from 'path'
+import webpack from 'webpack'
 // Add needed plugins here
-let BowerWebpackPlugin = require('bower-webpack-plugin');
+import BowerWebpackPlugin from 'bower-webpack-plugin'
 
-let config = Object.assign({}, baseConfig, {
+import defaultSettings from './defaults'
+import baseConfig from './base'
+
+const config = Object.assign({}, baseConfig, {
   entry: [
     'whatwg-fetch',
     'webpack-dev-server/client?http://127.0.0.1:' + defaultSettings.port,
@@ -16,7 +14,7 @@ let config = Object.assign({}, baseConfig, {
     './src/index'
   ],
   cache: true,
-  devtool: 'eval-source-map',
+  devtool: 'inline-source-map',
   plugins: [
     new webpack.HotModuleReplacementPlugin(),
     new webpack.NoErrorsPlugin(),
@@ -25,7 +23,7 @@ let config = Object.assign({}, baseConfig, {
     })
   ],
   module: defaultSettings.getDefaultModules()
-});
+})
 
 // Add needed loaders to the defaults here
 config.module.loaders.push({
@@ -35,6 +33,6 @@ config.module.loaders.push({
     config.additionalPaths,
     [ path.join(__dirname, '/../src') ]
   )
-});
+})
 
-module.exports = config;
+export default config

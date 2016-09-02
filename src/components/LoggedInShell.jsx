@@ -20,13 +20,15 @@ export class LoggedInShell extends React.Component {
   }
 
   render() {
+    const {pathname} = this.props.location
+
     return (
       <div>
-        <Helmet title={this.props.pathname} titleTemplate="%s - Aspect" defaultTitle="Aspect" />
+        <Helmet title={pathname} titleTemplate="%s - Aspect" defaultTitle="Aspect" />
         <ErrorDisplayContainer />
         <SideNav  open={this.props.drawerOpen}
                   desktop={ this.state.desktop }
-                  pathname={ this.props.pathname }
+                  pathname={ pathname }
                   handleClose={this.props.closeDrawer}
                   handleRequestChange={(drawerOpen) => this.setState({drawerOpen})} />
         <Nav handleHamburger={this.props.toggleDrawer} handleSignOut={this.props.logoutStart} handleLanguageChange={this.props.changeLanguage} />
@@ -44,8 +46,7 @@ LoggedInShell.propTypes = {
 
 const mapStateToProps = (state) => {
   return {
-    drawerOpen: state.getIn(['user', 'drawerOpen']),
-    pathname: state.getIn(['routing', 'locationBeforeTransitions', 'pathname'])
+    drawerOpen: state.getIn(['user', 'drawerOpen'])
   }
 }
 

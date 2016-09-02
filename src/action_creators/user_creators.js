@@ -1,8 +1,9 @@
 import config from 'config'
 import jwt_decode from 'jwt-decode'
-import { push } from 'react-router-redux'
 
-import util from './../util'
+import * as fetchUtils from '../utils/fetch'
+import * as localStorage from '../utils/localStorage'
+import { history } from '../store'
 import { addError } from './error_creators'
 import types from './../constants/action_types'
 
@@ -19,32 +20,28 @@ export function loginSuccess(name, culture, lang) {
     name,
     culture,
     lang,
-    drawerOpen: window.localStorage.drawerOpen === 'true'
+    drawerOpen: localStorage.isDrawlerOpen()
   }
 }
 
 export function refreshSuccess(name, culture, lang) {
-
-  let db = window.localStorage
 
   return {
     type: types.LOGIN_SUCCESS,
     name,
     culture,
     lang,
-    drawerOpen: db.drawerOpen === 'true'
+    drawerOpen: localStorage.isDrawlerOpen()
   }
 }
 
 export function hydrateFromLocalStorage() {
 
-  let db = window.localStorage
-
   return {
     type: types.LOGIN_SUCCESS,
-    culture: db.culture,
-    lang: db.lang,
-    drawerOpen: db.drawerOpen === 'true'
+    culture: localStorage.getCulture(),
+    lang: localStorage.getLang(),
+    drawerOpen: localStorage.isDrawlerOpen()
   }
 }
 
@@ -62,9 +59,7 @@ export function logoutSuccess() {
 }
 
 export function changeLanguage(lang, culture) {
-
-  window.localStorage.lang = lang
-  window.localStorage.culture = culture
+  localStorage.updateLanguageAndCulture(lang, culture)
 
   // todo: update in db, separate culture
   return {
@@ -76,19 +71,17 @@ export function changeLanguage(lang, culture) {
 
 export function toggleDrawer() {
 
-  let drawerOpen = window.localStorage.drawerOpen === 'true'
-
-  window.localStorage.drawerOpen = !drawerOpen
+  localStorage.toggleDrawlerOpen()
 
   return {
     type: types.TOGGLE_DRAWER,
-    drawerOpen: !drawerOpen
+    drawerOpen: localStorage.isDrawlerOpen()
   }
 }
 
 export function closeDrawer() {
 
-  window.localStorage.drawerOpen = false
+  localStorage.closeDrawler()
 
   return {
     type: types.TOGGLE_DRAWER,
@@ -109,20 +102,20 @@ export function loginStart(user, password) {
 
     // In this case, we return a promise to wait for.
     // This is not required by thunk middleware, but it is convenient for us.
-    let clientName = util.getBrowserNameAndVersion() + ' on ' + window.navigator.platform
+    const clientName = fetchUtils.getBrowserNameAndVersion() + ' on ' + window.navigator.platform
 
     return fetch(config.aspectApi + '/auth',
       {
         method: 'POST',
-        headers: util.getHeaders(true),
+        headers: fetchUtils.getHeaders(true),
         body: JSON.stringify({
           name: user,
           password: password,
-          clientId: window.localStorage.clientId,
+          clientId: localStorage.getClientId(),
           clientName: clientName
         })
       })
-      .then(util.handleFetchError)
+      .then(fetchUtils.handleFetchError)
       .then(json => {
 
         let jwt = storeAccess(json)
@@ -131,7 +124,7 @@ export function loginStart(user, password) {
         // Here, we update the app state with the results of the API call.
         dispatch(loginSuccess(jwt.name, jwt.culture, jwt.lang))
 
-        dispatch(push('/dashboard'))
+        history.push('/dashboard')
       })
       .catch(err => {
         dispatch(loginFailure(err))
@@ -145,25 +138,20 @@ export function logoutStart() {
   return function (dispatch) {
 
     // remove access and refresh tokens
-    window.localStorage.removeItem('access')
-    window.localStorage.removeItem('access_expires')
-    window.localStorage.removeItem('refresh')
-    window.localStorage.removeItem('user')
-    window.localStorage.removeItem('lang')
-    window.localStorage.removeItem('culture')
+    localStorage.clear()
 
     // let the app know that we're now logged out
     dispatch(logoutSuccess())
 
     // now, redirct to login page
-    dispatch(push('/login'))
+    history.push('/login')
   }
 }
 
 export function refreshStart() {
   return function (dispatch) {
 
-    if (!window.localStorage.refresh){
+    if (!localStorage.getRefreshToken()){
       return
     }
 
@@ -171,13 +159,13 @@ export function refreshStart() {
     fetch(config.aspectApi + '/auth/refresh',
       {
         method: 'POST',
-        headers: util.getHeaders(true),
+        headers: fetchUtils.getHeaders(true),
         body: JSON.stringify({
-          token: window.localStorage.refresh,
-          clientId: window.localStorage.clientId
+          token: localStorage.getRefreshToken(),
+          clientId: localStorage.getClientId()
         })
       })
-      .then(util.handleFetchError)
+      .then(fetchUtils.handleFetchError)
       .then(json => {
         let jwt = storeAccess(json)
 
@@ -191,14 +179,12 @@ export function refreshStart() {
 
 function storeAccess(json) {
   // Store jwt, refresh token, and clientId
-  let jwt = jwt_decode(json.access)
-  let db = window.localStorage
-  db.jwt = json.access
-  db.jwt_expires = jwt.exp
-  db.refresh = json.refresh
-  db.clientId = json.clientId
-  db.lang = jwt.culture.substring(0, 2)
-  db.culture = jwt.culture
+  const jwt = jwt_decode(json.access)
+
+  localStorage.store(json.access, jwt.exp, json.refresh, json.clientId)
+
+  const lang = jwt.culture.substring(0, 2)
+  localStorage.updateLanguageAndCulture(lang, jwt.culture)
 
   return jwt
 }

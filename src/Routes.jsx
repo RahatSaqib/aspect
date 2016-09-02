@@ -21,15 +21,14 @@ import { ReportList } from './components/pages/report/ReportList'
 
 import { refreshStart } from './action_creators/user_creators'
 
+import { hasBlankOrExpiredJWT, getRefreshToken } from './utils/localStorage'
+
 function requireAuth(nextState, replace) {
   // TODO: check access level based on tokens/roles in jwt
-  if (!window.localStorage.jwt ||
-    !window.localStorage.jwt_expires ||
-    window.localStorage.jwt_expires < Math.floor(Date.now() / 1000) + 600) {
-    // if no access token or it is expired or expires within 10 minutes (600s)
+  if (hasBlankOrExpiredJWT()) {
     // try to refresh if we have a refresh token
     // if not, redirect to login
-    if (window.localStorage.refresh){
+    if (getRefreshToken()){
       store.dispatch(refreshStart())
     }  else {
       replace({

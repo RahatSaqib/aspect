@@ -1,14 +1,11 @@
-'use strict';
-
-let path = require('path');
-let srcPath = path.join(__dirname, '/../src/');
-
-let baseConfig = require('./base');
-
+import path from 'path'
 // Add needed plugins here
-let BowerWebpackPlugin = require('bower-webpack-plugin');
+import BowerWebpackPlugin from 'bower-webpack-plugin'
 
-module.exports = {
+import { srcPath } from './defaults'
+import baseConfig from './base'
+
+export default {
   devtool: 'eval',
   module: {
     preLoaders: [
@@ -61,4 +58,4 @@ module.exports = {
       searchResolveModulesDirectories: false
     })
   ]
-};
+}
