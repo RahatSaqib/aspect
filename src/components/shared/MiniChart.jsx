@@ -1,6 +1,5 @@
 // Imports from packages
 import React from 'react'
-import PureRenderMixin from 'react-addons-pure-render-mixin'
 import { Sparklines, SparklinesLine, SparklinesSpots } from 'react-sparklines'
 import Paper from 'material-ui/Paper'
 
@@ -9,13 +8,7 @@ import FormattedNumber from './FormattedNumber'
 
 require('./../../styles/Charts.css')
 
-class MiniChart extends React.Component {
-
-  constructor(props) {
-    super(props)
-    this.shouldComponentUpdate = PureRenderMixin.shouldComponentUpdate.bind(this)
-  }
-
+class MiniChart extends React.PureComponent {
   render() {
     return (
         <Paper className="col-margin" style={{backgroundColor: this.props.bgcolor}}>

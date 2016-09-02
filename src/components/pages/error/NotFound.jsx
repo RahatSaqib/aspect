@@ -1,7 +1,6 @@
 // Imports from packages
 import React from 'react'
 import { Link } from 'react-router'
-import PureRenderMixin from 'react-addons-pure-render-mixin'
 
 // Material-UI
 import IconButton from 'material-ui/IconButton'
@@ -11,13 +10,7 @@ import ActionBack from 'material-ui/svg-icons/hardware/keyboard-arrow-left'
 // Our own imports
 import translate from '../../../i18n/translate'
 
-export class NotFound extends React.Component {
-
-  constructor(props) {
-    super(props)
-    this.shouldComponentUpdate = PureRenderMixin.shouldComponentUpdate.bind(this)
-  }
-
+export class NotFound extends React.PureComponent {
   render() {
     return (
       <div className="error-page">

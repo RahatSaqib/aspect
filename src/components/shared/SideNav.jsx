@@ -1,7 +1,6 @@
 // Imports from packages
 import React from 'react'
 import { Link } from 'react-router'
-import PureRenderMixin from 'react-addons-pure-render-mixin'
 
 // Material-UI
 import Drawer from 'material-ui/Drawer'
@@ -21,13 +20,7 @@ import Book from 'material-ui/svg-icons/action/book'
 // Our own imports
 import SelectableList from './SelectableList'
 
-class SideNav extends React.Component {
-
-  constructor(props) {
-    super(props)
-    this.shouldComponentUpdate = PureRenderMixin.shouldComponentUpdate.bind(this)
-  }
-
+class SideNav extends React.PureComponent {
   render() {
     return (
       <Drawer docked={ this.props.desktop }

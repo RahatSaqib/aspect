@@ -3,18 +3,12 @@ import React from 'react'
 import { Link } from 'react-router'
 import { connect } from 'react-redux'
 import Snackbar from 'material-ui/Snackbar'
-import PureRenderMixin from 'react-addons-pure-render-mixin'
 
 // Our own imports
 import MiniChart from '../../shared/MiniChart'
 import translate from '../../../i18n/translate'
 
-export class Dashboard extends React.Component {
-
-  constructor(props) {
-    super(props)
-    this.shouldComponentUpdate = PureRenderMixin.shouldComponentUpdate.bind(this)
-  }
+export class Dashboard extends React.PureComponent {
 
   render() {
     return (

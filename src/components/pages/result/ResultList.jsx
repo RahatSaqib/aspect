@@ -1,14 +1,7 @@
 // Imports from packages
 import React from 'react'
-import PureRenderMixin from 'react-addons-pure-render-mixin'
 
-export class ResultList extends React.Component {
-
-  constructor(props) {
-    super(props)
-    this.shouldComponentUpdate = PureRenderMixin.shouldComponentUpdate.bind(this)
-  }
-
+export class ResultList extends React.PureComponent {
   render() {
     return (
       <div className="content">

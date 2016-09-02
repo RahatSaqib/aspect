@@ -1,7 +1,6 @@
 // Imports from packages
 import React from 'react'
 import { connect } from 'react-redux'
-import PureRenderMixin from 'react-addons-pure-render-mixin'
 
 // Material-UI
 import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider'
@@ -13,13 +12,7 @@ import theme from '../theme'
 require('styles/App.css')
 require('styles/pure-grids-responsive-min.css')
 
-class App extends React.Component {
-
-  constructor(props) {
-    super(props)
-    this.shouldComponentUpdate = PureRenderMixin.shouldComponentUpdate.bind(this)
-  }
-
+class App extends React.PureComponent {
   render() {
     return (
       // we set the currentlanguage as the key here to make sure that the

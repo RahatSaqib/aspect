@@ -1,16 +1,9 @@
 // Imports from packages
 import React from 'react'
-import PureRenderMixin from 'react-addons-pure-render-mixin'
 import moment from 'moment'
 
 // This component returns a number formatted using the user's culture
-class FormattedDate extends React.Component {
-
-  constructor(props) {
-    super(props)
-    this.shouldComponentUpdate = PureRenderMixin.shouldComponentUpdate.bind(this)
-  }
-
+class FormattedDate extends React.PureComponent {
   render() {
 
     let date = this.props.date

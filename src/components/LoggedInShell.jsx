@@ -3,7 +3,6 @@ import React from 'react'
 import { bindActionCreators } from 'redux'
 import { connect } from 'react-redux'
 import Helmet from 'react-helmet'
-import PureRenderMixin from 'react-addons-pure-render-mixin'
 import { logoutStart, changeLanguage, toggleDrawer, closeDrawer } from '../action_creators/user_creators'
 
 // Our own imports
@@ -11,12 +10,10 @@ import Nav from './shared/Nav'
 import SideNav from './shared/SideNav'
 import { ErrorDisplayContainer } from './shared/ErrorDisplay'
 
-export class LoggedInShell extends React.Component {
+export class LoggedInShell extends React.PureComponent {
 
-  constructor(props) {
-    super(props)
-    this.shouldComponentUpdate = PureRenderMixin.shouldComponentUpdate.bind(this)
-    this.state = { desktop: true }
+  state = {
+    desktop: true
   }
 
   render() {
