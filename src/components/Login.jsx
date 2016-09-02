@@ -90,13 +90,13 @@ class Login extends React.PureComponent {
   }
 }
 
-const mapStateToProps = (state) => {
+function mapStateToProps(state) {
   return {
     loggingIn: state.getIn(['user', 'loggingIn'])
   }
 }
 
-const mapDispatchToProps = (dispatch) => {
+function mapDispatchToProps(dispatch) {
   return bindActionCreators({ loginStart }, dispatch)
 }
 
