@@ -1,3 +1,5 @@
+import { getJWT } from './utils/localStorage'
+
 class util{
 
   constructor(){
@@ -18,8 +20,9 @@ class util{
 
     let headers = new Headers()
 
-    if (window.localStorage.jwt){
-      headers.append('Authorization', 'Bearer ' + window.localStorage.jwt)
+    const token = getJWT()
+    if (token){
+      headers.append('Authorization', 'Bearer ' + token)
     }
 
     if (json){
