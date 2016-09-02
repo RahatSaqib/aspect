@@ -7,6 +7,7 @@ import { Provider } from 'react-redux'
 
 import Routes from './Routes'
 import store from './store'
+import { getRefreshToken } from './utils/localStorage'
 import { refreshStart, hydrateFromLocalStorage } from './action_creators/user_creators'
 import 'static?!./favicon.ico?output=../favicon.ico'
 
@@ -20,7 +21,7 @@ injectTapEventPlugin()
 promise.polyfill()
 
 // get new access token on refresh/startup
-if (window.localStorage.refresh){
+if (getRefreshToken()){
 
   // let's see if we can get language and culture from local storage
   store.dispatch(hydrateFromLocalStorage())
