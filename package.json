@@ -55,6 +55,7 @@
     "minimist": "^1.2.0",
     "mocha": "^3.0.0",
     "mocha-bamboo-reporter": "^1.1.1",
+    "mocha-multi": "^0.9.1",
     "npm-run-all": "^3.0.0",
     "null-loader": "^0.1.1",
     "open": "0.0.5",
