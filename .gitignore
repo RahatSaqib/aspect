@@ -13,6 +13,9 @@ lib-cov
 # Coverage directory used by tools like istanbul
 coverage
 
+# Mocha report generated for Bamboo
+mocha.json
+
 # distribution bundle
 dist
 
