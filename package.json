@@ -13,7 +13,7 @@
     "test": "npm-run-all run:tests:coverage check:coverage",
     "test:watch": "npm run mocha -- --watch",
     "posttest": "npm run lint",
-    "dist": "webpack --env=dist",
+    "dist": "webpack --config=webpack.config.babel.js --env=dist",
     "lint": "eslint ./src",
     "clean": "fsys --task=emptyDir --dir=dist",
     "release:major": "npm version major && npm publish && git push --follow-tags",
