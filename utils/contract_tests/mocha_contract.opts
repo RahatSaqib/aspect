@@ -1,4 +1,4 @@
---require utils/contractTestSetup
+--require utils/contract_tests/contractTestSetup
 --reporter spec
 --ui bdd
 --recursive
