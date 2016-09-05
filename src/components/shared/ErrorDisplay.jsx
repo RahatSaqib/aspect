@@ -24,7 +24,7 @@ export class ErrorDisplay extends React.PureComponent {
 
     let error = this.props.error
 
-    if (!error.isEmpty()){
+    if (error.get('hasError')){
       return (
         <Snackbar
             open={true}

@@ -7,9 +7,10 @@ import types from './../constants/action_types'
 // could be easily extended to hold history of errors, dismissable, etc.
 // desc is a string, details in a js object that can have any shape
 function addError(state, newState){
-  return state.merge(
-    newState // FIXME: require explicit keys
-  )
+  return state.merge({
+    hasError: true,
+    ...newState // FIXME: require explicit keys
+  })
 }
 
 function removeError(state){
@@ -17,6 +18,7 @@ function removeError(state){
 }
 
 const Error = Immutable.Record({
+  hasError: false,
   title: null,
   desc: null,
   obj: null
