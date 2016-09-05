@@ -56,10 +56,10 @@ export function store(access, exp, refresh, clientId) {
 }
 
 export function clear() {
-  localStorage.removeItem('access') // FIXME: jwt?
-  localStorage.removeItem('access_expires') // FIXME: jwt_expires?
+  localStorage.removeItem('jwt')
+  localStorage.removeItem('jwt_expires')
   localStorage.removeItem('refresh')
-  localStorage.removeItem('user') // FIXME: clientId?
+  localStorage.removeItem('clientId')
   localStorage.removeItem('lang')
   localStorage.removeItem('culture')
   // FIXME: Add drawerOpen?
