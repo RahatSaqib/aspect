@@ -1,6 +1,6 @@
 import path from 'path'
 
-export const srcPath = path.join(__dirname, '/../src')
+const srcPath = path.join(__dirname, '/../src')
 const dfltPort = 8000
 
 function getDefaultModules() {
