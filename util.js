@@ -20,6 +20,8 @@ function asyncHandler(handler){
     } catch(err) {
       console.error(err)
       reply(Boom.wrap(err, 500))
+      // Need to rethrow error for detection of plugins
+      throw err
     }
   })
 }

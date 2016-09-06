@@ -48,6 +48,7 @@ let plugins = [
     }
   }
 ]
+addRavenPlugin(plugins)
 
 // load and return the good logging configuration
 function loadGoodReporter(){
@@ -86,6 +87,17 @@ function loadGoodReporter(){
         'stdout'
       ]
     }
+  }
+}
+
+// Loads Raven (Sentry) plugin if configured
+function addRavenPlugin(plugins){
+  let {raven} = config
+  if(raven){
+    plugins.push({
+      register: require('hapi-raven'),
+      options: {dsn: raven.dsn}
+    })
   }
 }
 
