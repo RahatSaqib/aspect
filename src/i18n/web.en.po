@@ -1,0 +1,92 @@
+msgid ""
+msgstr ""
+"Project-Id-Version: \n"
+"POT-Creation-Date: \n"
+"PO-Revision-Date: \n"
+"Last-Translator: \n"
+"Language-Team: \n"
+"Language: en\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"X-Generator: Poedit 1.8.9\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+
+#. [pages.PersonList.title] - undefined
+#: i18n/src/components/pages/person/PersonList.json
+msgid "Contacts"
+msgstr "Contacts"
+
+#. [pages.PersonList.lga] - undefined
+#: i18n/src/components/pages/person/PersonList.json
+msgid "County"
+msgstr "County"
+
+#. [pages.Dashboard.culture] - undefined
+#. [pages.DeviceList.culture] - undefined
+#: i18n/src/components/pages/dashboard/Dashboard.json
+#: i18n/src/components/pages/device/DeviceList.json
+msgid "Culture"
+msgstr "Culture"
+
+#. [pages.DeviceList.deviceName] - undefined
+#: i18n/src/components/pages/device/DeviceList.json
+msgid "Device Name"
+msgstr "Device Name"
+
+#. [pages.Dashboard.title] - undefined
+#. [pages.DeviceList.title] - undefined
+#: i18n/src/components/pages/dashboard/Dashboard.json
+#: i18n/src/components/pages/device/DeviceList.json
+msgid "Devices"
+msgstr "Devices"
+
+#. [pages.DeviceList.lastSeen] - undefined
+#: i18n/src/components/pages/device/DeviceList.json
+msgid "Last Seen"
+msgstr "Last Seen"
+
+#. [pages.PersonList.personName] - undefined
+#: i18n/src/components/pages/person/PersonList.json
+msgid "Name"
+msgstr "Name"
+
+#. [pages.NotFound.title] - undefined
+#: i18n/src/components/pages/error/NotFound.json
+msgid "Not Found"
+msgstr "Not Found"
+
+#. [pages.DeviceList.reportingFor] - undefined
+#: i18n/src/components/pages/device/DeviceList.json
+msgid "Reporting For"
+msgstr "Reporting For"
+
+#. [pages.PersonList.level] - undefined
+#: i18n/src/components/pages/person/PersonList.json
+msgid "Role"
+msgstr "Role"
+
+#. [pages.DeviceList.shortName] - undefined
+#: i18n/src/components/pages/device/DeviceList.json
+msgid "Short Name"
+msgstr "Short Name"
+
+#. [pages.PersonList.state] - undefined
+#: i18n/src/components/pages/person/PersonList.json
+msgid "State"
+msgstr "State"
+
+#. [pages.DeviceList.status] - undefined
+#: i18n/src/components/pages/device/DeviceList.json
+msgid "Status"
+msgstr "Status"
+
+#. [pages.NotFound.help] - undefined
+#: i18n/src/components/pages/error/NotFound.json
+msgid "The page you're looking for doesn't exist."
+msgstr "The page you're looking for doesn't exist."
+
+#. [pages.DeviceList.totalTests] - undefined
+#: i18n/src/components/pages/device/DeviceList.json
+msgid "Total Tests"
+msgstr "Total Tests"
