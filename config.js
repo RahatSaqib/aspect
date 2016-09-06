@@ -13,10 +13,15 @@ module.exports = {
 
 configureLogging(module.exports)
 
-// load logstash configuration if provided
+// load logstash or sentry configuration if provided
 function configureLogging(config){
-  let endpoint = process.env['logstash.endpoint']
-  if(endpoint){
-    config.logstash = {endpoint}
+  let logstashEndpoint = process.env['logstash.endpoint']
+  if(logstashEndpoint){
+    config.logstash = {endpoint: logstashEndpoint}
+  }
+
+  let ravenDsn = process.env['raven.dsn']
+  if(ravenDsn){
+    config.raven = {dsn: ravenDsn}
   }
 }

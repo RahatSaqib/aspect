@@ -35,6 +35,12 @@ logstash.endpoint=udp://localhost:9001
 
 ```
 
+Optionally, configure the Raven DSN to ship errors to Sentry:
+
+```
+raven.dsn=https://...
+```
+
 
 ### Running Server
 
