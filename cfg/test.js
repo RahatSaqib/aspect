@@ -2,7 +2,7 @@ import path from 'path'
 // Add needed plugins here
 import BowerWebpackPlugin from 'bower-webpack-plugin'
 
-import { srcPath } from './defaults'
+import defaultSettings from './defaults'
 import baseConfig from './base'
 
 export default {
@@ -28,8 +28,7 @@ export default {
         include: [].concat(
           baseConfig.additionalPaths,
           [
-            path.join(__dirname, '/../src'),
-            path.join(__dirname, '/../test')
+            path.join(__dirname, '/../src')
           ]
         )
       }
@@ -38,12 +37,12 @@ export default {
   resolve: {
     extensions: [ '', '.js', '.jsx' ],
     alias: {
-      actions: srcPath + 'actions/',
-      components: srcPath + 'components/',
-      sources: srcPath + 'sources/',
-      stores: srcPath + 'stores/',
-      styles: srcPath + 'styles/',
-      config: srcPath + 'config/' + process.env.REACT_WEBPACK_ENV
+      actions: `${defaultSettings.srcPath}/actions/`,
+      components: `${defaultSettings.srcPath}/components/`,
+      sources: `${defaultSettings.srcPath}/sources/`,
+      stores: `${defaultSettings.srcPath}/stores/`,
+      styles: `${defaultSettings.srcPath}/styles/`,
+      config: `${defaultSettings.srcPath}/config/` + process.env.REACT_WEBPACK_ENV
     }
   },
   externals: {
