@@ -1,5 +1,10 @@
 // Imports from packages
+import _ from 'lodash'
 import React from 'react'
+import {
+  injectIntl,
+  defineMessages
+} from 'react-intl'
 import { bindActionCreators } from 'redux'
 import { connect } from 'react-redux'
 
@@ -15,7 +20,29 @@ import TextField from 'material-ui/TextField'
 // Our own imports
 import { fetchPersons } from '../../../action_creators/person_creators'
 import { DataTable } from '../../shared/DataTable'
-import translate from '../../../i18n/translate'
+
+const messages = defineMessages({
+  title: {
+    id: 'pages.PersonList.title',
+    defaultMessage: 'Contacts'
+  },
+  personName: {
+    id: 'pages.PersonList.personName',
+    defaultMessage: 'Name'
+  },
+  level: {
+    id: 'pages.PersonList.level',
+    defaultMessage: 'Role'
+  },
+  state: {
+    id: 'pages.PersonList.state',
+    defaultMessage: 'State'
+  },
+  lga: {
+    id: 'pages.PersonList.lga',
+    defaultMessage: 'County'
+  }
+})
 
 export class PersonList extends React.PureComponent {
   state = {
@@ -40,6 +67,8 @@ export class PersonList extends React.PureComponent {
   }
 
   render() {
+    const { formatMessage } = this.props.intl
+
     return (
       <div className="content">
         <form onSubmit={ this.handleSubmit }>
@@ -67,10 +96,10 @@ export class PersonList extends React.PureComponent {
 
         <DataTable  handleFetch={ this.props.fetchPersons }
                     list={ this.props.list }
-                    columns={[  { db: 'name', title: this.props.strings.personName },
-                                { db: 'level', title: this.props.strings.level, hideOnXs: true },
-                                { db: 'state', title: this.props.strings.state, hideOnXs: true },
-                                { db: 'lga', title: this.props.strings.lga, hideOnXs: true } ]} />
+                    columns={[  { db: 'name', title: formatMessage(messages.personName) },
+                                { db: 'level', title: formatMessage(messages.level), hideOnXs: true },
+                                { db: 'state', title: formatMessage(messages.state), hideOnXs: true },
+                                { db: 'lga', title: formatMessage(messages.lga), hideOnXs: true } ]} />
       </div>
     )
   }
@@ -86,6 +115,7 @@ function mapDispatchToProps(dispatch) {
   return bindActionCreators({ fetchPersons }, dispatch)
 }
 
-// Translate and connect to redux store
-const PersonListTranslated = translate('PersonList')(PersonList)
-export const PersonListContainer = connect(mapStateToProps, mapDispatchToProps)(PersonListTranslated)
+export const PersonListContainer = _.flowRight(
+  injectIntl,
+  connect(mapStateToProps, mapDispatchToProps)
+)(PersonList)
