@@ -35,4 +35,9 @@ config.module.loaders.push({
   )
 })
 
+config.module.loaders.push({
+  test: /\.(ico)$/,
+  loader: 'null-loader'
+})
+
 export default config
