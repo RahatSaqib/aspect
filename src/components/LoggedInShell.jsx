@@ -21,7 +21,7 @@ export class LoggedInShell extends React.PureComponent {
   }
 
   render() {
-    const pathname = this.props.location
+    const pathname = this.props.location.pathname
 
     return (
       <div>
