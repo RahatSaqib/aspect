@@ -5,7 +5,9 @@ import { shallow } from 'enzyme'
 
 describe('LoggedInShell', () => {
   const props = {
-    pathname:'',
+    location: {
+      pathname:''
+    },
     drawerOpen:false,
     children: {},
     closeDrawer: () => {},
