@@ -10,8 +10,8 @@ import RaisedButton from 'material-ui/RaisedButton'
 import TextField from 'material-ui/TextField'
 
 // Our own imports
-import { loginStart } from '../action_creators/user_creators'
-import { ErrorDisplayContainer } from './shared/ErrorDisplay'
+import { loginStart } from '../../../action_creators/user_creators'
+import { ErrorDisplayContainer } from '../../shared/ErrorDisplay'
 
 class Login extends React.PureComponent {
 
@@ -100,4 +100,4 @@ function mapDispatchToProps(dispatch) {
   return bindActionCreators({ loginStart }, dispatch)
 }
 
-export default connect(mapStateToProps, mapDispatchToProps)(Login)
+export const LoginContainer = connect(mapStateToProps, mapDispatchToProps)(Login)
