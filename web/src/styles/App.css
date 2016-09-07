@@ -1,0 +1,172 @@
+/*
+There are lots of importants in this file. Not ideal, but
+material-ui renders styles inline, so there's no other
+way to override them
+*/
+
+html,
+body,
+body>div {
+    height: 100%;
+}
+
+body {
+    font-family: Roboto, sans-serif;
+    padding: 0;
+    margin: 0;
+    background-color: #f2f2f2;
+}
+
+/*Top nav*/
+.nav a{
+    font-weight: 300;
+    font-size: 1.3rem;
+    text-decoration: none;
+    color: #fff;
+}
+
+.nav-badge{
+    padding: 6px 0 0 0 !important;
+}
+
+.nav-badge span{
+    height: 20px !important;
+    width: 20px !important;
+    font-size: 11px !important;
+    top: 6px !important;
+}
+
+.nav-badge svg{
+    height: 20px !important;
+}
+
+/*content area */
+.content {
+    padding: 20px 50px 0 50px;
+}
+
+@media screen and (max-width:35.438em) {
+    .content {
+        padding: 20px 10px;
+    }
+}
+
+/*Side nav*/
+.drawer-desktop{
+    position: absolute !important;
+    top: 68px !important;
+    background-color: #f2f2f2 !important;
+    box-shadow: none !important;
+}
+
+.drawer-item{
+    font-size: 14px !important;
+}
+
+.drawer-item>div>div{
+    padding-left: 56px !important;
+}
+
+/*Login page styles*/
+.login-background{
+    height: 100%;
+    /*This makes the top half of the screen green and bottom half in gray*/
+    background: linear-gradient(180deg, #7cb342 10%, transparent 80%);
+    padding-top: 15%;
+}
+
+.login-form {
+    padding: 20px;
+}
+
+/*Make items with touch event behave like links*/
+.linky{
+    cursor: pointer !important;
+}
+
+/*in forms, show buttons on bottom right*/
+.button-row{
+    width: 100%;
+    text-align: right;
+    padding: 30px 0 0 0;
+}
+
+/*Get rid of ugly yellow background on Chrome login autocomplete*/
+input:-webkit-autofill {
+    box-shadow: 0 0 0 300px white inset !important;
+    -webkit-box-shadow: 0 0 0 300px white inset !important;
+}
+
+/*Error page styles (404 and other)*/
+.error-page{
+    background-color: #BFBFBF;
+    height: 300px;
+    width: 500px;
+    margin: 10% auto 0 auto;
+    text-align: center;
+}
+
+.error-page h1{
+    color: #fff;
+    text-transform: uppercase;
+    font-size: 3rem;
+    font-weight: 200;
+    padding: 40px 0 20px 0;
+}
+
+.error-page h2{
+    color: #fff;
+    font-size: 1.5rem;
+    font-weight: 200;
+    padding: 0 0 30px 0;
+}
+
+.error-page button{
+    background-color: #edecec !important;
+    border-radius: 500px;
+    margin: 0 5px;
+}
+
+/*styles for the grid system*/
+.col-margin {
+    margin: 0 10px 20px 10px;
+}
+
+.clear-fix {
+    clear: both;
+}
+
+/*Styles for the ToolBar component*/
+.toolbar {
+    background-color: #fff !important;
+}
+
+/*Styles for the grid pager*/
+.pager-button{
+    height: 30px !important;
+    line-height: 30px !important;
+    padding: 0 !important;
+    min-width: 0 !important;
+    border-radius: 100px !important;
+}
+
+.pager-button span{
+    font-size: .8rem !important;
+    padding-left: 8px !important;
+    padding-right: 8px !important;
+}
+
+.pager-button-number{
+    width: 30px !important;
+}
+
+.pager-button-current{
+    background-color: #7cb342 !important;
+    color: #fff !important;
+}
+
+/*TextField in the filter area of a grid*/
+.filter-textfield {
+    max-width: 150px !important;
+    margin: 5px 0 0 15px !important;
+}
