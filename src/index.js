@@ -5,6 +5,13 @@ import promise from 'es6-promise'
 import { render } from 'react-dom'
 import { Provider } from 'react-redux'
 
+import config from 'config'
+if (config.sentry){
+  // using require here since import only allowed at top-level
+  const Raven = require('raven-js')
+  Raven.config(config.sentry.dsn).install()
+}
+
 import Routes from './Routes'
 import store from './store'
 import { getRefreshToken } from './utils/localStorage'
