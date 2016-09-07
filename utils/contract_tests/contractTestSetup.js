@@ -1,13 +1,28 @@
 require('dotenv-safe').load()
 
-//Blocks the thread for a specified number of milliseconds
-function wait(ms){
-  const start = new Date().getTime()
-  let end = start
-  while(end < start + ms) {
-    end = new Date().getTime()
+let supertest = require('supertest')
+let serverUrl = 'http://localhost:8080',
+  server = supertest.agent(serverUrl),
+  attemptsToConnect = 0
+
+function attemptToConnect(done) {
+  if (attemptsToConnect === 3) {
+    done()
   }
+  setTimeout(function () {
+    server.get('/api')
+      .end(function(err,res){
+        if(res.status !== 200) {
+          attemptsToConnect++
+          attemptToConnect(done)
+        } else {
+          done()
+        }
+      })
+  }, 1000)
 }
 
-//Wait for 3 seconds
-wait(3000)
+before(function (done) {
+  //Wait until server is up and running
+  attemptToConnect(done)
+})
