@@ -7,7 +7,7 @@
     "start": "node server.js",
     "start:background": "forever start server.js",
     "stop:background": "forever stop server.js",
-    "mocha": "mocha --opts mocha_contract.opts",
+    "mocha": "mocha --opts utils/contract_tests/mocha_contract.opts",
     "test": "npm-run-all -c start:background mocha stop:background",
     "coverage": "./node_modules/istanbul/lib/cli.js cover --preload-sources ./node_modules/mocha/bin/_mocha -- --opts mocha_unit.opts -t 5000"
   },
@@ -42,6 +42,8 @@
     "eslint": "^3.3.0",
     "forever": "^0.15.2",
     "mocha": "^3.0.0",
+    "mocha-bamboo-reporter": "^1.1.1",
+    "mocha-multi": "^0.9.1",
     "npm-run-all": "^3.0.0",
     "supertest": "^2.0.0"
   }

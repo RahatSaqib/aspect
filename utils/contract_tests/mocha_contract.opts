@@ -1,0 +1,7 @@
+--reporter mocha-multi
+--reporter-options spec=-,mocha-bamboo-reporter=-
+--ui bdd
+--recursive
+--timeout 20000
+utils/contract_tests/contractTestSetup.js
+test/*_spec.js
