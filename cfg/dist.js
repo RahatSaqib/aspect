@@ -14,8 +14,8 @@ import baseConfig from './base'
 const vendorPackages = [
   'es6-promise',
   'immutable', 'isomorphic-fetch',
-  'jwt-decode', 'material-ui', 'moment', 'react',
-  'react-addons-pure-render-mixin', 'react-dom',
+  'jwt-decode', 'material-ui', 'moment',
+  'react', 'react-dom',
   'react-redux', 'react-router', 'react-router-scroll',
   'react-sparklines', 'react-tap-event-plugin',
   'redux', 'react-helmet', 'redux-immutable',
