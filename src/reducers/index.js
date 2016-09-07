@@ -1,3 +1,4 @@
+import { reducer as formReducer } from 'redux-form/immutable'
 import { combineReducers } from 'redux-immutable'
 
 import types from './../constants/action_types'
@@ -8,6 +9,7 @@ import device from './device'
 import person from './person'
 
 const appReducer = combineReducers({
+  form: formReducer,
   error,
   user,
   device,
