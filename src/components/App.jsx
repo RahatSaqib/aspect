@@ -1,52 +1,57 @@
 // Imports from packages
 import React from 'react'
 import { connect } from 'react-redux'
+import {
+  addLocaleData,
+  IntlProvider
+} from 'react-intl'
+import en from 'react-intl/locale-data/en';
+import fr from 'react-intl/locale-data/fr';
 
 // Material-UI
 import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider'
 import getMuiTheme from 'material-ui/styles/getMuiTheme'
 
 // Our own imports
+import translation from '../i18n/translation.json'
 import theme from '../theme'
 
 require('styles/App.css')
 require('styles/pure-grids-responsive-min.css')
 
+addLocaleData([...en, ...fr]);
+
 class App extends React.PureComponent {
 
   static propTypes = {
-    children: React.PropTypes.object.isRequired
-  }
-
-  static childContextTypes = {
-    currentLanguage: React.PropTypes.string,
-    currentCulture: React.PropTypes.string
+    locale: React.PropTypes.string.isRequired,
+    children: React.PropTypes.node.isRequired
   }
 
   render() {
-    return (
-      // we set the currentlanguage as the key here to make sure that the
-      // currentlanguage in the context is passed down to the children.
-      // that way, the UI will be rerendered as soon as the user changes the language/culture
-      <MuiThemeProvider muiTheme={getMuiTheme(theme)} key={this.props.currentLanguage}>
-        {this.props.children}
-      </MuiThemeProvider>
-    )
-  }
+    const { locale } = this.props;
+    const messages = translation[locale];
 
-  getChildContext() {
-    return {
-      currentLanguage: this.props.currentLanguage,
-      currentCulture: this.props.currentCulture
-    }
+    return (
+      <IntlProvider
+        key={/* https://git.io/viGEA */locale}
+        locale={locale}
+        messages={messages}
+      >
+        <MuiThemeProvider muiTheme={getMuiTheme(theme)}>
+          {this.props.children}
+        </MuiThemeProvider>
+      </IntlProvider>
+    )
   }
 }
 
 function mapStateToProps(state) {
   return {
-    currentLanguage: state.getIn(['user', 'lang']),
-    currentCulture: state.getIn(['user', 'culture'])
+    locale: state.getIn(['user', 'lang']) || DEFAULT_LOCALE
   }
 }
+
+const DEFAULT_LOCALE = 'en'
 
 export default connect(mapStateToProps)(App)
