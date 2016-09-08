@@ -6,6 +6,15 @@
         [ "babel-plugin-webpack-alias", { "config": "./webpack.config.babel.js" } ]
       ]
     },
+    "message": {
+      "plugins": [
+        [
+          "babel-plugin-react-intl", {
+            "messagesDir": "./i18n"
+          }
+        ]
+      ]
+    },
     "dist": {
       "plugins": [
         [ "babel-plugin-lodash", { } ]

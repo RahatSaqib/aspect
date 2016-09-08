@@ -8,7 +8,7 @@ import App from './components/App'
 import LoggedInShell from './components/LoggedInShell'
 
 // "Pages"
-import Login from './components/Login'
+import { LoginContainer } from './components/pages/auth/Login'
 import { DashboardContainer } from './components/pages/dashboard/Dashboard'
 import { Inventory } from './components/pages/dashboard/Inventory'
 import { Maintenance } from './components/pages/dashboard/Maintenance'
@@ -42,7 +42,7 @@ function requireAuth(nextState, replace) {
 const routes =
   <Router history={history} render={applyRouterMiddleware(useScroll()) }>
     <Route component={App}>
-      <Route component={Login} path="login" />
+      <Route component={LoginContainer} path="login" />
       <Route component={LoggedInShell}
         onChange={(prevState, nextState, replace) => requireAuth(nextState, replace) }>
 

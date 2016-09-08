@@ -51,5 +51,4 @@ function mapDispatchToProps(dispatch) {
   return bindActionCreators({ removeError }, dispatch)
 }
 
-// Translate and connect to redux store
 export const ErrorDisplayContainer = connect(mapStateToProps, mapDispatchToProps)(ErrorDisplay)

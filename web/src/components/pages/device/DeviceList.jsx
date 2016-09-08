@@ -1,5 +1,10 @@
 // Imports from packages
+import _ from 'lodash'
 import React from 'react'
+import {
+  injectIntl,
+  defineMessages
+} from 'react-intl'
 import { bindActionCreators } from 'redux'
 import { connect } from 'react-redux'
 
@@ -15,9 +20,43 @@ import TextField from 'material-ui/TextField'
 // Our own imports
 import { fetchDevices } from '../../../action_creators/device_creators'
 import { DataTable } from '../../shared/DataTable'
-import translate from '../../../i18n/translate'
 import FormattedNumber from '../../shared/FormattedNumber'
 import FormattedDate from '../../shared/FormattedDate'
+
+const messages = defineMessages({
+  title: {
+    id: 'pages.DeviceList.title',
+    defaultMessage: 'Devices'
+  },
+  deviceName: {
+    id: 'pages.DeviceList.deviceName',
+    defaultMessage: 'Device Name'
+  },
+  shortName: { // FIXME: unused
+    id: 'pages.DeviceList.shortName',
+    defaultMessage: 'Short Name'
+  },
+  status: {
+    id: 'pages.DeviceList.status',
+    defaultMessage: 'Status'
+  },
+  reportingFor: {
+    id: 'pages.DeviceList.reportingFor',
+    defaultMessage: 'Reporting For'
+  },
+  lastSeen: {
+    id: 'pages.DeviceList.lastSeen',
+    defaultMessage: 'Last Seen'
+  },
+  totalTests: {
+    id: 'pages.DeviceList.totalTests',
+    defaultMessage: 'Total Tests'
+  },
+  culture: {
+    id: 'pages.DeviceList.culture',
+    defaultMessage: 'Culture' // FIXME: missing
+  }
+})
 
 export class DeviceList extends React.PureComponent {
 
@@ -43,6 +82,8 @@ export class DeviceList extends React.PureComponent {
   }
 
   render() {
+    const { formatMessage } = this.props.intl
+
     return (
       <div className="content">
         <form onSubmit={ this.handleSubmit }>
@@ -69,14 +110,16 @@ export class DeviceList extends React.PureComponent {
         </form>
         <DataTable  handleFetch={ this.props.fetchDevices }
                     list={ this.props.list }
-                    columns={[  { db: 'name', title: this.props.strings.deviceName },
-                              { db: 'status', title: this.props.strings.status, hideOnXs: true },
-                              { db: 'createdOn', title: this.props.strings.reportingFor, hideOnXs: true,
-                                format: (data) => <FormattedDate date={ data } fromNow={true} omitSuffix={true} culture={ this.props.strings.culture } /> },
-                              { db: 'lastSeen', title: this.props.strings.lastSeen, hideOnXs: true,
-                                format: (data) => <FormattedDate date={ data } fromNow={true} culture={ this.props.strings.culture } /> },
-                              { db: 'totalTests', title: this.props.strings.totalTests,
-                                format: (data) => <FormattedNumber number={ data } culture={ this.props.strings.culture } /> } ]} />
+                    columns={[
+                      { db: 'name', title: formatMessage(messages.deviceName) },
+                      { db: 'status', title: formatMessage(messages.status), hideOnXs: true },
+                      { db: 'createdOn', title: formatMessage(messages.reportingFor), hideOnXs: true,
+                          format: (data) => <FormattedDate date={ data } fromNow={true} omitSuffix={true} culture={ formatMessage(messages.culture) } /> },
+                      { db: 'lastSeen', title: formatMessage(messages.lastSeen), hideOnXs: true,
+                          format: (data) => <FormattedDate date={ data } fromNow={true} culture={ formatMessage(messages.culture) } /> },
+                      { db: 'totalTests', title: formatMessage(messages.totalTests),
+                          format: (data) => <FormattedNumber number={ data } culture={ formatMessage(messages.culture) } /> }
+                    ]} />
       </div>
     )
   }
@@ -92,6 +135,7 @@ function mapDispatchToProps(dispatch) {
   return bindActionCreators({ fetchDevices }, dispatch)
 }
 
-// Translate and connect to redux store
-const DeviceListTranslated = translate('DeviceList')(DeviceList)
-export const DeviceListContainer = connect(mapStateToProps, mapDispatchToProps)(DeviceListTranslated)
+export const DeviceListContainer = _.flowRight(
+  injectIntl,
+  connect(mapStateToProps, mapDispatchToProps)
+)(DeviceList)
