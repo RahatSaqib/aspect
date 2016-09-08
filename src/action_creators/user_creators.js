@@ -89,7 +89,9 @@ export function closeDrawer() {
   }
 }
 
-export function loginStart(user, password) {
+export function loginStart(login) {
+  const user = login.get('user')
+  const password = login.get('password')
 
   return function (dispatch) {
 

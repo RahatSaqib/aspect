@@ -3,19 +3,19 @@ import Immutable from 'immutable'
 import types from './../constants/action_types'
 
 function loginRequest(state){
-  return state.merge({ loggedIn: false, loggingIn: true })
+  return state.merge({ loggedIn: false })
 }
 
 function loginSuccess(state, name, culture, lang, drawerOpen){
-  return state.merge({ name, culture, lang, loggedIn: true, loggingIn: false, drawerOpen })
+  return state.merge({ name, culture, lang, loggedIn: true,  drawerOpen })
 }
 
 function loginFailure(state){
-  return state.merge({ name: '', loggedIn: false, loggingIn: false })
+  return state.merge({ name: '', loggedIn: false })
 }
 
 function logOut(state){
-  return state.merge({ name: '', loggedIn: false, loggingIn: false })
+  return state.merge({ name: '', loggedIn: false })
 }
 
 function changeLanguage(state, lang, culture){
@@ -31,8 +31,7 @@ const User = Immutable.Record({
   culture: 'en-US',
   lang: 'en',
   drawerOpen: true,
-  loggedIn: false,
-  loggingIn: false
+  loggedIn: false
 })
 
 const initialState = new User()
