@@ -11,7 +11,16 @@ export class DataTable extends React.PureComponent {
 
   static propTypes = {
     handleFetch: React.PropTypes.func.isRequired,
-    list: React.PropTypes.object.isRequired,
+    table: React.PropTypes.shape({
+      loading: React.PropTypes.bool.isRequired,
+      sortCol: React.PropTypes.string.isRequired,
+      sortDir: React.PropTypes.string.isRequired,
+      filters: React.PropTypes.object.isRequired/* TODO */,
+      page: React.PropTypes.number.isRequired,
+      pageSize: React.PropTypes.number.isRequired,
+      total: React.PropTypes.number.isRequired,
+      items: React.PropTypes.object.isRequired/* TODO */
+    }).isRequired,
     columns: React.PropTypes.array.isRequired
   }
 
@@ -33,10 +42,10 @@ export class DataTable extends React.PureComponent {
 
   handleSort(col) {
 
-    const list = this.props.list
+    const table = this.props.table
 
     // only change sort direction if column that we're currently sorting on is clicked
-    const newSort = list.get('sortCol') === col ? (list.get('sortDir') === 'asc' ? 'desc' : 'asc') : list.get('sortDir')
+    const newSort = table.sortCol === col ? (table.sortDir === 'asc' ? 'desc' : 'asc') : table.sortDir
 
     this.fetchData(col, newSort)
   }
@@ -47,9 +56,9 @@ export class DataTable extends React.PureComponent {
 
   fetchData(col, newSort, page){
 
-    const list = this.props.list
+    const table = this.props.table
 
-    this.props.handleFetch(list.get('filters'), col || list.get('sortCol'), newSort || list.get('sortDir'), page == null ? list.get('page') : page, list.get('pageSize'))
+    this.props.handleFetch(table.filters, col || table.sortCol, newSort || table.sortDir, page == null ? table.page : page, table.pageSize)
   }
 
   getPager(page, totalPages){
@@ -86,16 +95,16 @@ export class DataTable extends React.PureComponent {
 
   render() {
 
-    const list = this.props.list
+    const table = this.props.table
 
     // show loading indicator?
-    const loading = list.get('loading') ?
+    const loading = table.loading ?
       <LinearProgress /> :
       <div style={ { margin: 0, padding: 0, height: 4 }}>&nbsp; </div>
 
     // generate paging for footer
-    const page = list.get('page')
-    const totalPages = Math.ceil(list.get('total') / list.get('pageSize'))
+    const page = table.page
+    const totalPages = Math.ceil(table.total / table.pageSize)
     let pagerItems = this.getPager(page, totalPages)
 
     return (
@@ -119,8 +128,8 @@ export class DataTable extends React.PureComponent {
                   <span style={{ cursor: 'pointer' }} onTouchTap={() => { this.handleSort(col.db) } }>
                     {col.title}
                   </span>
-                  <SortIcon color={ list.get('sortCol') == col.db ? 'black' : 'white' }
-                    style={{ height: 18, width: 18, position: 'relative', top: '4px', left: '4px', transform: list.get('sortDir') === 'asc' ? 'scale(1, -1)' : '' }} />
+                  <SortIcon color={ table.sortCol == col.db ? 'black' : 'white' }
+                    style={{ height: 18, width: 18, position: 'relative', top: '4px', left: '4px', transform: table.sortDir === 'asc' ? 'scale(1, -1)' : '' }} />
                 </TableHeaderColumn>
               )) }
             </TableRow>
@@ -132,7 +141,7 @@ export class DataTable extends React.PureComponent {
             deselectOnClickaway={this.state.deselectOnClickaway}
             showRowHover={this.state.showRowHover}
             stripedRows={this.state.stripedRows}>
-            {list.get('items').map((item) => (
+            {table.items.map((item) => (
               <TableRow key={item.get('id') }>
                 {this.props.columns.map((col) => (
                   <TableRowColumn key={item.get(col.db) } className={ col.hideOnXs ? 'pure-hidden-xs' : '' } >
