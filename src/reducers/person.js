@@ -1,31 +1,24 @@
 import Immutable from 'immutable'
 
 import types from './../constants/action_types'
+import {
+  requestTable,
+  receiveTableItems,
+  Table
+} from './meta/table'
 
 function requestPersons(state, action) {
-  return state.merge({
-    loading: true,
-    sortCol: action.sortCol,
-    sortDir: action.sortDir,
-    page: action.page,
-    pageSize: action.size,
-    filters: action.filters
-  })
+  return state
+    .updateIn(['table'], table => requestTable(table, action))
 }
 
 function receivePersons(state, items, total) {
-  return state.merge({ loading: false, items, total })
+  return state
+    .updateIn(['table'], table => receiveTableItems(table, items, total))
 }
 
 const Person = Immutable.Record({
-  loading: false,
-  items: Immutable.List(),
-  sortCol: 'name',
-  sortDir: 'asc',
-  page: 0,
-  pageSize: 10, // Renamed from 'size' since 'size' will conflict with Immutable internal property
-  total: 0,
-  filters: Immutable.fromJS({ name: '' })
+  table: new Table()
 })
 
 const initialState = new Person()
