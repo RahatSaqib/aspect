@@ -61,7 +61,7 @@ const messages = defineMessages({
 export class DeviceList extends React.PureComponent {
 
   state = {
-    filters: this.props.list.get('filters')
+    filters: this.props.table.get('filters')
   }
   filterDevicesChange = this.filterDevicesChange.bind(this)
   handleSubmit = this.handleSubmit.bind(this)
@@ -109,7 +109,7 @@ export class DeviceList extends React.PureComponent {
           </Toolbar>
         </form>
         <DataTable  handleFetch={ this.props.fetchDevices }
-                    table={ this.props.list }
+                    table={ this.props.table }
                     columns={[
                       { db: 'name', title: formatMessage(messages.deviceName) },
                       { db: 'status', title: formatMessage(messages.status), hideOnXs: true },
@@ -127,7 +127,7 @@ export class DeviceList extends React.PureComponent {
 
 function mapStateToProps(state) {
   return {
-    list: state.get('device')
+    table: state.device.table
   }
 }
 
