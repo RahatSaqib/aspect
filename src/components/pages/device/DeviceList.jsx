@@ -109,7 +109,7 @@ export class DeviceList extends React.PureComponent {
           </Toolbar>
         </form>
         <DataTable  handleFetch={ this.props.fetchDevices }
-                    list={ this.props.list }
+                    table={ this.props.list }
                     columns={[
                       { db: 'name', title: formatMessage(messages.deviceName) },
                       { db: 'status', title: formatMessage(messages.status), hideOnXs: true },

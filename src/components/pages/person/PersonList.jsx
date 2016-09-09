@@ -95,7 +95,7 @@ export class PersonList extends React.PureComponent {
         </form>
 
         <DataTable  handleFetch={ this.props.fetchPersons }
-                    list={ this.props.list }
+                    table={ this.props.list }
                     columns={[  { db: 'name', title: formatMessage(messages.personName) },
                                 { db: 'level', title: formatMessage(messages.level), hideOnXs: true },
                                 { db: 'state', title: formatMessage(messages.state), hideOnXs: true },
