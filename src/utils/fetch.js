@@ -1,3 +1,12 @@
+import {
+  createFetch,
+  base,
+  header,
+  accept,
+  onResponse
+} from 'http-client'
+import config from 'config'
+
 import { getJWT } from './localStorage'
 
 export function getBrowserNameAndVersion() {
@@ -9,6 +18,13 @@ export function getBrowserNameAndVersion() {
 
   return browser.name + ' ' + browser.version
 }
+
+export const aspectFetch = createFetch(
+  base(config.aspectApi),
+  accept('application/json'),
+  header('Content-Type', 'application/json'),
+  onResponse(handleFetchError)
+)
 
 // adds headers to every fetch request
 export function getHeaders(json){
