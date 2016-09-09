@@ -1,7 +1,7 @@
 import Immutable from 'immutable'
-import config from 'config'
+import { stringify } from 'querystring'
 
-import * as fetchUtils from '../utils/fetch'
+import { aspectFetch } from '../utils/fetch'
 import { addError } from './error_creators'
 import types from './../constants/action_types'
 
@@ -24,22 +24,18 @@ function receivePersons(json) {
   }
 }
 
-export function fetchPersons(filters = Immutable.Map({ name: '' }), sortCol = 'name', sortDir = 'asc', page = 0, size = 10){
+export function fetchPersons(filters = Immutable.Map({ name: '' }), sortCol = 'name', sortDir = 'asc', page = 0, pageSize = 10){
   return dispatch => {
 
-    dispatch(requestPersons(sortCol, sortDir, page, size, filters))
+    dispatch(requestPersons(sortCol, sortDir, page, pageSize, filters))
 
-    // filters is an immutable map. unwrap it:
-    filters = filters.toJS()
-
-    // serialize filters for querystring
-    let qsFilters = ''
-    if (filters){
-      qsFilters = Object.keys(filters).map(k => `${encodeURIComponent(k)}=${encodeURIComponent(filters[k])}`).join('&')
-    }
-
-    return fetch(`${config.aspectApi}/person?sortCol=${sortCol}&sortDir=${sortDir}&page=${page}&size=${size}&${qsFilters}`, { headers: fetchUtils.getHeaders(false) })
-      .then(fetchUtils.handleFetchError)
+    return aspectFetch(`/person?${stringify({
+      sortCol,
+      sortDir,
+      page,
+      size: pageSize,
+      ...filters.toJS()
+    })}`)
       .then(json => dispatch(receivePersons(json)))
       .catch(err => {
         dispatch(addError('Loading persons failed', err.message, err))
