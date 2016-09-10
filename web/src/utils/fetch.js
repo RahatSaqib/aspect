@@ -1,3 +1,12 @@
+import {
+  createFetch,
+  base,
+  header,
+  accept,
+  onResponse
+} from 'http-client'
+import config from 'config'
+
 import { getJWT } from './localStorage'
 
 export function getBrowserNameAndVersion() {
@@ -8,6 +17,22 @@ export function getBrowserNameAndVersion() {
   }
 
   return browser.name + ' ' + browser.version
+}
+
+export const aspectFetch = createFetch(
+  base(config.aspectApi),
+  accept('application/json'),
+  header('Content-Type', 'application/json'),
+  addAuthHeaderMiddleware,
+  onResponse(handleFetchError)
+)
+
+function addAuthHeaderMiddleware(fetch, input, options = {}) {
+  const token = getJWT()
+  if (token) {
+    (options.headers || (options.headers = {})).Authorization = `Bearer ${token}`
+  }
+  return fetch(input, options)
 }
 
 // adds headers to every fetch request

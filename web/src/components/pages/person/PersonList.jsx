@@ -46,7 +46,7 @@ const messages = defineMessages({
 
 export class PersonList extends React.PureComponent {
   state = {
-    filters: this.props.list.get('filters')
+    filters: this.props.table.get('filters')
   }
   filterPersonsChange = this.filterPersonsChange.bind(this)
   handleSubmit = this.handleSubmit.bind(this)
@@ -95,7 +95,7 @@ export class PersonList extends React.PureComponent {
         </form>
 
         <DataTable  handleFetch={ this.props.fetchPersons }
-                    list={ this.props.list }
+                    table={ this.props.table }
                     columns={[  { db: 'name', title: formatMessage(messages.personName) },
                                 { db: 'level', title: formatMessage(messages.level), hideOnXs: true },
                                 { db: 'state', title: formatMessage(messages.state), hideOnXs: true },
@@ -107,7 +107,7 @@ export class PersonList extends React.PureComponent {
 
 function mapStateToProps(state) {
   return {
-    list: state.get('person')
+    table: state.person.table
   }
 }
 
