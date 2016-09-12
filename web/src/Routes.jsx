@@ -13,6 +13,7 @@ import { DashboardContainer } from './components/pages/dashboard/Dashboard'
 import { Inventory } from './components/pages/dashboard/Inventory'
 import { Maintenance } from './components/pages/dashboard/Maintenance'
 import { DeviceListContainer } from './components/pages/device/DeviceList'
+import { SiteListContainer } from './components/pages/site/SiteList'
 import { PersonListContainer } from './components/pages/person/PersonList'
 import { NotFoundContainer } from './components/pages/error/NotFound'
 import { ResultList } from './components/pages/result/ResultList'
@@ -57,6 +58,8 @@ const routes =
         <Route path="/device" component={DeviceListContainer} />
 
         <Route path="/result" component={ResultList} />
+
+        <Route path="/site" component={SiteListContainer} />
 
         <Route path="/person" component={PersonListContainer} />
 
