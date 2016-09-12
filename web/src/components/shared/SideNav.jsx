@@ -12,6 +12,7 @@ import Home from 'material-ui/svg-icons/action/home'
 import Cart from 'material-ui/svg-icons/action/shopping-cart'
 import Build from 'material-ui/svg-icons/action/build'
 import Scanner from 'material-ui/svg-icons/hardware/scanner'
+import Laptop from 'material-ui/svg-icons/hardware/laptop'
 import Assignment from 'material-ui/svg-icons/action/assignment'
 import People from 'material-ui/svg-icons/social/people'
 import Notifications from 'material-ui/svg-icons/social/notifications'
@@ -78,6 +79,13 @@ class SideNav extends React.PureComponent {
             leftIcon={<People />}
             className="drawer-item"
             primaryText="Contacts"
+            />
+          <ListItem
+            containerElement={<Link to="/site" />}
+            value={ '/site' }
+            leftIcon={<Laptop />}
+            className="drawer-item"
+            primaryText="Sites"
             />
             <ListItem
             containerElement={<Link to="/notification" />}
