@@ -18,7 +18,7 @@
     "updatemessages:end": "rip po2json './src/i18n/web.*.po' -m './i18n/src/**/*.json' -o ./src/i18n/translation.json",
     "postupdatemessages:end": "fsys --task=remove --fileFolder=i18n && fsys --task=remove --fileFolder=src/i18n/diff.pot",
     "dist": "webpack --config=webpack.config.babel.js --env=dist",
-    "lint": "eslint ./src",
+    "lint": "eslint ./src --ext .js --ext .jsx",
     "clean": "fsys --task=emptyDir --dir=dist",
     "release:major": "npm version major && npm publish && git push --follow-tags",
     "release:minor": "npm version minor && npm publish && git push --follow-tags",

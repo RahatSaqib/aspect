@@ -5,8 +5,8 @@ import {
   addLocaleData,
   IntlProvider
 } from 'react-intl'
-import en from 'react-intl/locale-data/en';
-import fr from 'react-intl/locale-data/fr';
+import en from 'react-intl/locale-data/en'
+import fr from 'react-intl/locale-data/fr'
 
 // Material-UI
 import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider'
@@ -19,7 +19,7 @@ import theme from '../theme'
 require('styles/App.css')
 require('styles/pure-grids-responsive-min.css')
 
-addLocaleData([...en, ...fr]);
+addLocaleData([...en, ...fr])
 
 class App extends React.PureComponent {
 
@@ -29,8 +29,8 @@ class App extends React.PureComponent {
   }
 
   render() {
-    const { locale } = this.props;
-    const messages = translation[locale];
+    const { locale } = this.props
+    const messages = translation[locale]
 
     return (
       <IntlProvider

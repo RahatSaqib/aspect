@@ -82,7 +82,7 @@ class Login extends React.PureComponent {
   }
 }
 
-function mapStateToProps(state) {
+function mapStateToProps() {
   return {
   }
 }
