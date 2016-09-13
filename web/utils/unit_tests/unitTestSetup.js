@@ -1,3 +1,4 @@
+import fetch from 'isomorphic-fetch'
 import { jsdom } from 'jsdom'
 /* eslint-disable no-var*/
 
@@ -7,6 +8,7 @@ require.extensions['.css'] = function () {return null}
 require.extensions['.png'] = function () {return null}
 require.extensions['.jpg'] = function () {return null}
 
+global.fetch = fetch
 global.document = jsdom('')
 global.window = document.defaultView
 
