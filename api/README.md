@@ -106,6 +106,24 @@ See [Environment Configuration](#environment-configuration) in order to change t
 
 Once your environment is configured run tests using the `npm test` command
 
+## Migrations
+
+Migrations are managed with [knex](http://knexjs.org/#Migrations).
+
+```bash
+# Create a new migration
+$ npm run knex migrate:make migration_name
+Created migration: ./migrations/{dateTime}_migration_name.js
+
+# Edit created file in migrations using Schema API or Raw Queries
+
+# Update to latest migrate
+$ npm run knex migrate:latest
+
+# Rollback if migration done in error
+$ npm run knex migrate:rollback
+
+```
 
 ##Stress test with siege
 Install siege: http://jason.pureconcepts.net/2011/09/installing-siege-mac-os-x-lion/
