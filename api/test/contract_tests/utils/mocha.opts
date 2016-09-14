@@ -3,5 +3,5 @@
 --ui bdd
 --recursive
 --timeout 20000
-utils/contract_tests/contractTestSetup.js
-test/*_spec.js
+test/contract_tests/utils/testSetup.js
+test/contract_tests/*_spec.js
