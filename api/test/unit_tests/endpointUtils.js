@@ -1,5 +1,5 @@
 const callHandlerOn = function (endpoint) {
-  let self = this
+  let self = this instanceof callHandlerOn ? this : new callHandlerOn(endpoint)
   self.endpoint = endpoint
   self.with = function(requestData) {
     self.requestData = requestData
