@@ -15,7 +15,7 @@ const callHandlerOn = function (endpoint) {
   }
   self.execute = function () {
     self.endpoint.handler(self.requestData, function (result) {
-      result.then(function(responseData) {
+      Promise.resolve(result).then(function(responseData) {
         self.handleResponseWith(responseData)
         self.thenCall()
       }).catch(function(error){
