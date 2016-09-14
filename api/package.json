@@ -7,6 +7,7 @@
     "start": "node src/server.js",
     "start:background": "forever start src/server.js",
     "stop:background": "forever stop src/server.js",
+    "test:unit": "mocha --opts test/unit_tests/mocha.opts",
     "mocha": "mocha --opts test/contract_tests/utils/mocha.opts",
     "test": "npm-run-all -c start:background mocha stop:background",
     "coverage": "./node_modules/istanbul/lib/cli.js cover --preload-sources ./node_modules/mocha/bin/_mocha -- --opts mocha_unit.opts -t 5000",
@@ -47,6 +48,8 @@
     "mocha-bamboo-reporter": "^1.1.1",
     "mocha-multi": "^0.9.1",
     "npm-run-all": "^3.0.0",
+    "proxyquire": "^1.7.10",
+    "sinon": "^1.17.5",
     "supertest": "^2.0.0"
   }
 }
