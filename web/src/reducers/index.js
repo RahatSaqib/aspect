@@ -7,6 +7,7 @@ import types from './../constants/action_types'
 import error from './error'
 import user from './user'
 import device from './device'
+import site from './site'
 import person from './person'
 
 const appReducer = combineReducers({
@@ -14,6 +15,7 @@ const appReducer = combineReducers({
   error,
   user,
   device,
+  site,
   person
 })
 
@@ -22,6 +24,7 @@ const App = Immutable.Record({
   error: undefined,
   user: undefined,
   device: undefined,
+  site: undefined,
   person: undefined
 })
 
