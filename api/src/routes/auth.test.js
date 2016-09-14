@@ -2,6 +2,7 @@ let proxyquire = require('proxyquire')
 let {assert} = require('chai')
 let _ = require('lodash')
 let sinon = require('sinon')
+let endpointUtils = require('../../test/unit_tests/endpointUtils')
 
 describe('auth endpoints', function () {
   let auth, knexStub
@@ -15,7 +16,6 @@ describe('auth endpoints', function () {
           clientId: 'request client id'
         }
       }
-      let auth, knexStub
 
       beforeEach(function () {
         knexStub = sinon.stub()
