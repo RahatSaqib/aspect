@@ -47,6 +47,11 @@ raven.dsn=https://...
 It's best to install nodemon globally and use that to run the project so that the server restarts automatically on any change:
 
 ```bash
+# Run all new migrations
+# Only necessary if there are new migrations but safe to run any time
+npm run knex migrate:latest
+
+# Start the server so that it restarts automatically
 nodemon
 ```
 
@@ -110,6 +115,8 @@ Once your environment is configured run tests using the `npm test` command
 
 Migrations are managed with [knex](http://knexjs.org/#Migrations).
 
+To update to latest migration, run `npm run knex migrate:latest`.  Migrations are tracked in the `knex_migrations` table so only migrations that have not been applied will be run in the appropriate order.  It is safe to run migrations at any time. If no migrations need to run, the command will only print a message indicating that you are up to date.
+
 ```bash
 # Create a new migration
 $ npm run knex migrate:make migration_name
@@ -123,6 +130,24 @@ $ npm run knex migrate:latest
 # Rollback if migration done in error
 $ npm run knex migrate:rollback
 
+```
+
+### Troubleshooting
+
+Note that MySQL does not allow transactional DDL (schema updates).  If you make an error during development of your new migration, you may have to manually run DDL updates that were aborted due to an error. You may also have to manually delete the entry in the `knex_migrations` table for the migration to get to a consistent state.  This is a limitation in MySQL, not knex.
+
+As an example, assume that you need to manually clean up a migration named '20160913144739_permissions.js' (and it is the latest migration):
+
+```sql
+select * from knex_migrations where name='20160913144739_permissions.js';
+
++----+-------------------------------+-------+---------------------+
+| id | name                          | batch | migration_time      |
++----+-------------------------------+-------+---------------------+
+| 16 | 20160913144739_permissions.js |     1 | 2016-09-13 16:40:25 |
++----+-------------------------------+-------+---------------------+
+
+delete from knex_migrations where name='20160913144739_permissions.js';
 ```
 
 ##Stress test with siege
