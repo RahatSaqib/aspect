@@ -1,3 +1,5 @@
+require('dotenv-safe').load()
+
 module.exports = {
   'secret': process.env.secret,
   'passwordAttempts': process.env.passwordAttempts,

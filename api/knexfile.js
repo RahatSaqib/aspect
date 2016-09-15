@@ -1,5 +1,3 @@
-require('dotenv-safe').load()
-
 let config = require('./config')
 
 module.exports = {
