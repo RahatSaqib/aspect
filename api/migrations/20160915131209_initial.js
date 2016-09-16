@@ -3,7 +3,6 @@ module.exports = require('../db').migration(up, down)
 function* up(knex){
 
   yield knex.schema.createTable('user', user => {
-    // TODO should we switch to UUID for primary keys?
     user.increments('id')
     user.string('name').unique().notNullable()
     user.string('password', 128).notNullable()
@@ -23,7 +22,7 @@ function* up(knex){
     country.string('name').notNullable()
     country.string('abbreviation', 10).notNullable()
     country.string('a3', 3)
-    // TODO culture/locale table?
+    // TODO move to culture/locale table using name "en-US" as primary key
     country.string('culture', 5).notNullable()
     country.integer('country_code')
     country.string('state_label')
@@ -98,17 +97,10 @@ function* up(knex){
     person.boolean('hide_patient_id')
     person.boolean('hide_sample_id')
     person.boolean('hide_notes')
-    // TODO same culture as country? (different lengths)
-    person.string('culture', 10)
+    person.string('culture', 45)
     person.dateTime('accepted_license_on')
-    // TODO OK to change created_on and updated_on to _at and use knex.timestamps()?
-    // TODO should we store created, updated user time on all tables and write util to manage automatically?
-    person.dateTime('created_on').notNullable()
-    // TODO why is this a varchar(255) is it a user_id?
-    person.string('created_by').notNullable()
-    person.dateTime('updated_on').notNullable()
-    // TODO why is this a varchar(255) is it a user_id?
-    person.string('updated_by').notNullable()
+    addCreateFields(person)
+    addUpdateFields(person)
     person.charset('utf8')
   })
 
@@ -130,7 +122,6 @@ function* up(knex){
   yield knex.schema.createTable('refresh_token', refreshToken => {
     refreshToken.integer('user_id').unsigned().notNullable()
       .references('id').inTable('user')
-    // TODO should we add client table?
     refreshToken.string('client_id', 128).notNullable()
     refreshToken.string('client_name').notNullable()
     refreshToken.string('token').notNullable()
@@ -144,8 +135,9 @@ function* up(knex){
   yield knex.schema.createTable('device_type', deviceType => {
     deviceType.increments('id')
     deviceType.string('name').notNullable()
-    // TODO device_type id1 - id4_query??
     deviceType.charset('utf8')
+    // TODO add device_type id1 - id4_query or appropriate alternative
+    // used to uniquely identify devices and still to be discussed
   })
 
   yield knex.schema.createTable('location', location => {
@@ -171,12 +163,8 @@ function* up(knex){
     location.string('timezone_id', 45)
     location.integer('hours_start')
     location.integer('hours_end')
-    location.dateTime('created_on').notNullable()
-    location.integer('created_by').unsigned().notNullable()
-      .index().references('id').inTable('user')
-    location.dateTime('updated_on').notNullable()
-    location.integer('updated_by').unsigned().notNullable()
-      .index().references('id').inTable('user')
+    addCreateFields(location)
+    addUpdateFields(location)
     location.charset('utf8')
   })
 
@@ -184,10 +172,9 @@ function* up(knex){
     device.increments('id')
     device.integer('device_type_id').unsigned().notNullable()
       .index().references('id').inTable('device_type')
-    // TODO what are device id1 - id4?
-    // `id1` varchar(255) DEFAULT NULL,
+    // TODO Add device id1 - id4 or equivalent
+    // used to uniquely identify provisioned devices, still to be discussed
     device.string('serial')
-    // TODO what is the device host ID and computer ID?
     device.string('host_id')
     device.string('computer_id')
     device.integer('location_id').unsigned().notNullable()
@@ -198,23 +185,19 @@ function* up(knex){
     device.boolean('hide_on_dashboard')
     device.dateTime('last_ping_on')
     device.string('last_ping_from', 45)
-    // TODO computer culture same values as country and user culture?
     device.string('computer_culture', 45)
     device.string('computer_os')
     device.string('computer_timezone', 45)
     device.dateTime('last_calibrated')
     device.dateTime('put_in_service')
-    // TODO what is put_in_service_source
     device.string('put_in_service_source')
-    // TODO What is device db version/ok?
-    device.string('db_version', 45)
-    device.boolean('db_ok', 45)
-    // TODO device lis config?
-    device.string('lis_config', 1200)
-    device.boolean('lis_ok', 4)
+    // TODO add db and lis fields to "Operational Data" model
+    //device.string('db_version', 45)
+    //device.boolean('db_ok', 45)
+    //device.string('lis_config', 1200)
+    //device.boolean('lis_ok', 4)
     device.dateTime('daily_details_on')
     device.string('aspect_client_version', 45)
-    // TODO how to device custom fields work?
     device.boolean('custom_fields_enabled')
     device.dateTime('custom_fields_sent_on')
     device.boolean('custom_fields_enabled_on_device')
@@ -222,23 +205,49 @@ function* up(knex){
     device.dateTime('approved_on')
     device.integer('approved_by').unsigned()
       .index().references('id').inTable('user')
-    device.dateTime('created_on').notNullable()
-    device.integer('created_by').unsigned().notNullable()
-      .index().references('id').inTable('user')
-    device.dateTime('updated_on').notNullable()
-    device.integer('updated_by').unsigned().notNullable()
-      .index().references('id').inTable('user')
+    addCreateFields(device)
+    addUpdateFields(device)
     device.charset('utf8')
   })
 
-  // TODO device_location_history
-  // TODO what is form?
+  yield knex.schema.createTable('device_location_history', history => {
+    history.integer('device_id').unsigned().notNullable()
+      .index().references('id').inTable('device')
+    history.integer('location_id').unsigned().notNullable()
+      .index().references('id').inTable('location')
+    addCreateFields(history)
+    history.primary(['device_id', 'location_id'])
+    history.charset('utf8')
+  })
+
+  yield knex.schema.createTable('router', router => {
+    router.increments('id')
+    router.integer('location_id').unsigned().notNullable()
+      .index().references('id').inTable('location')
+    router.string('number', 45)
+    // TODO worth creating a SIM card table and changing
+    // to sim_1 and sim_2?  (or many to many?)
+    router.string('sim_reg_number', 45)
+    router.string('sim_reg_number_2', 45)
+    router.string('sim_phone_number', 45)
+    router.string('sim_phone_number_2', 45)
+    router.string('sim_provider', 45)
+    router.string('sim_provider_2', 45)
+    router.string('sim_suffix', 45)
+    router.string('sim_suffix_2', 45)
+    router.string('sim_prefix', 45)
+    router.string('sim_prefix_2', 45)
+    addCreateFields(router)
+    addUpdateFields(router)
+    router.charset('utf8')
+  })
+
   // TODO are person_country _device _level _lga _location _state replaced with data groups/roles?
-  // TODO router
-  // TODO pivot_labotory procedure
 }
 
 function* down(knex){
+  yield knex.schema.dropTable('router')
+  yield knex.schema.dropTable('device_location_history')
   yield knex.schema.dropTable('device')
   yield knex.schema.dropTable('location')
   yield knex.schema.dropTable('device_type')
@@ -246,8 +255,24 @@ function* down(knex){
   yield knex.schema.dropTable('user_role')
   yield knex.schema.dropTable('role')
   yield knex.schema.dropTable('person')
+  yield knex.schema.dropTable('person_level')
   yield knex.schema.dropTable('lga')
   yield knex.schema.dropTable('state')
   yield knex.schema.dropTable('country')
   yield knex.schema.dropTable('user')
+}
+
+
+// Adds created_on, created_by
+function addCreateFields(table){
+  table.dateTime('created_on').notNullable()
+  table.integer('created_by').unsigned().notNullable()
+    .index().references('id').inTable('user')
+}
+
+// Adds update_on, updated_by
+function addUpdateFields(table){
+  table.dateTime('updated_on').notNullable()
+  table.integer('updated_by').unsigned().notNullable()
+    .index().references('id').inTable('user')
 }
