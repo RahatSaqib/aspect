@@ -5,7 +5,7 @@ function* up(knex){
   yield knex.schema.createTable('user', user => {
     // TODO should we switch to UUID for primary keys?
     user.increments('id')
-    user.string('name').notNullable()
+    user.string('name').unique().notNullable()
     user.string('password', 128).notNullable()
     user.string('password_key', 32).notNullable()
     user.boolean('approved').notNullable()
@@ -61,6 +61,16 @@ function* up(knex){
     lga.charset('utf8')
   })
 
+  // TODO person_level replaced by permissions?
+  yield knex.schema.createTable('person_level', personLevel => {
+    personLevel.increments('id')
+    personLevel.string('name', 45).notNullable()
+    personLevel.integer('sort_order')
+    personLevel.string('token', 45).notNullable()
+    personLevel.integer('level').notNullable()
+    personLevel.charset('utf8')
+  })
+
   yield knex.schema.createTable('person', person => {
     person.increments('id')
     person.integer('user_id').unsigned()
@@ -78,15 +88,16 @@ function* up(knex){
       .index().references('id').inTable('state')
     person.integer('lga_id').unsigned()
       .index().references('id').inTable('lga')
-    // TODO person_level replaced by permissions?
+    person.integer('person_level_id').unsigned()
+      .index().references('id').inTable('person_level')
     person.string('notes', 1200)
     person.integer('last_country_id').unsigned()
       .index().references('id').inTable('country')
     // TODO timezone table?
     person.string('timezone')
-    person.boolean('hide_patient_id').notNullable()
-    person.boolean('hide_sample_id').notNullable()
-    person.boolean('hide_notes').notNullable()
+    person.boolean('hide_patient_id')
+    person.boolean('hide_sample_id')
+    person.boolean('hide_notes')
     // TODO same culture as country? (different lengths)
     person.string('culture', 10)
     person.dateTime('accepted_license_on')
