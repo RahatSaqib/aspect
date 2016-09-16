@@ -60,6 +60,15 @@ function migration(up, down){
   }
 }
 
+// Helper for seeed files. Ru
+function seed(seed){
+  return {
+    seed(knex){
+      return knex.transaction(trx => runBlock(seed, trx))
+    }
+  }
+}
+
 // initialize on demand to allow custom knex object
 // in testing/migrations
 function load(){
@@ -78,6 +87,7 @@ module.exports = {
   sortPageParams,
   migration,
   run,
+  seed,
   transact
 }
 

@@ -4,6 +4,81 @@ This is the web api for all aspect clients.
 
 Swagger UI is available for testing the UI manually and viewing route documentation at http://localhost:8080/documentation .  Use the `api/auth` route to generate a JWT token (named 'access' in response) and include the token in authenticated routes.
 
+## Quick start
+
+Quick Start for development. Everything is explained in more detail throughout this README.
+
+
+### New Development Setup
+
+```bash
+# Clone the repository
+git clone git@github.com:SystemOneId/aspect
+cd aspect
+
+# Install dependencies
+npm install
+
+# Create database and database user (changing password as desired)
+mysql -u root <<EOT
+create database aspect;
+create user 'aspectapi'@'localhost' identified by 'mypassword';
+grant all on aspect. * to 'aspectapi'@'localhost';
+flush privileges;
+EOT
+
+# Create an .env file and configure settings for your environment
+# (or copy .env.example and modify with your favorite editor)
+cat > .env <<EOT
+secret=Any_Random_String
+passwordAttempts=5
+
+db.connectionLimit=100
+db.host=localhost
+db.user=aspectapi
+db.password=mypassword
+db.databaseName=aspect
+db.debug=false
+seeds.directory='./seeds/development'
+EOT
+
+# Run migrations
+npm run knex migrate:latest
+
+# Populate databse with seed files (optional)
+npm run knex seed:run
+
+# Start the server
+nodemon
+```
+
+### Update development environment
+
+To update, pull from `develop` and run any new migrations.
+
+```bash
+git checkout develop
+git pull origin develop
+
+# If new migrations (but safe to run any time)
+npm run knex migrate:latest
+```
+
+If you would like to start with a fresh database:
+
+```bash
+# Drop and recreate database (or rollback migrations)
+mysql -u root <<EOT
+drop database aspect;
+create database aspect;
+EOT
+
+# Run migrations and seed files
+npm run knex migrate:latest
+npm run knex seed:run
+```
+
+
 ##Installation
 Clone the repository, then:
 
@@ -47,11 +122,6 @@ raven.dsn=https://...
 It's best to install nodemon globally and use that to run the project so that the server restarts automatically on any change:
 
 ```bash
-# Run all new migrations
-# Only necessary if there are new migrations but safe to run any time
-npm run knex migrate:latest
-
-# Start the server so that it restarts automatically
 nodemon
 ```
 
@@ -149,6 +219,22 @@ select * from knex_migrations where name='20160913144739_permissions.js';
 
 delete from knex_migrations where name='20160913144739_permissions.js';
 ```
+
+## Seed Files
+
+Seed files populate your database with test or development seed data.  They are not configured by default.  If you would like to use them, edit your `.env` file and set your seeds directory containing the scripts that populate your database.
+
+```
+# in .env
+seeds.directory='./seeds/development'
+```
+Now you can run all seed files within that directory (alphabetical order).
+
+```bash
+npm run knex seed:run
+```
+
+Unlike migrations ALL seed files are run every time.  You should structure your seed files to take this into account.  The files are run in alphabetical order, so it is good practice to prefix your seed name with the order to run.
 
 ##Stress test with siege
 Install siege: http://jason.pureconcepts.net/2011/09/installing-siege-mac-os-x-lion/

@@ -13,17 +13,25 @@ module.exports = {
   }
 }
 
-configureLogging(module.exports)
+configureOptional(module.exports)
 
-// load logstash or sentry configuration if provided
-function configureLogging(config){
+// Populates optional configuration
+function configureOptional(config){
+  // load logstash
   let logstashEndpoint = process.env['logstash.endpoint']
   if(logstashEndpoint){
     config.logstash = {endpoint: logstashEndpoint}
   }
 
+  // load sentry
   let ravenDsn = process.env['raven.dsn']
   if(ravenDsn){
     config.raven = {dsn: ravenDsn}
+  }
+
+  // set knex seeds
+  let seedsDirectory = process.env['seeds.directory']
+  if(seedsDirectory){
+    config.seeds = {directory: seedsDirectory}
   }
 }
