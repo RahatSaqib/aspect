@@ -18,7 +18,7 @@ function filterParams(queryBuilder, params, paramName, columnName = paramName) {
   }
 }
 
-// helper function for transact and run
+// helper function for run, transact and migration
 let runBlock = Promise.coroutine(function*(block, blockArg){
   try {
     return yield* block(blockArg)
@@ -30,21 +30,40 @@ let runBlock = Promise.coroutine(function*(block, blockArg){
 
 // Returns a promise that runs the provided generator function
 // within a knex transaction
+//
+// See also run
 function transact(block){
-  return knex.transaction(trx => runBlock(block, trx))
+  return load().transaction(trx => runBlock(block, trx))
 }
 
 // Returns a promise that runs the provided generator function
+// without a transaction
+//
+// See also transact
 function run(block){
-  return runBlock(block, knex)
+  return runBlock(block, load())
+}
+
+// Helper for migrations. Loads db with knex set by migration
+// and runs provided up and down generator functions
+// In migrate files, create up and down generators and
+// set module.exports = migrate(up, down)
+function migration(up, down){
+  return {
+    up(knex){
+      return runBlock(up, knex)
+    },
+
+    down(knex){
+      return runBlock(down, knex)
+    }
+  }
 }
 
 // initialize on demand to allow custom knex object
 // in testing/migrations
-function load(knexOverride){
-  if(knexOverride){
-    knex = knexOverride
-  } else if(!knex){
+function load(){
+  if(!knex){
     let config = require('./config')
     knex = require('knex')({
       client: 'mysql',
@@ -55,15 +74,11 @@ function load(knexOverride){
 }
 
 module.exports = {
-  load,
   filterParams,
   sortPageParams,
+  migration,
   run,
   transact
 }
 
-Object.defineProperty(module.exports, 'knex', {
-  get(){
-    return load()
-  }
-})
+Object.defineProperty(module.exports, 'knex', { get: load })

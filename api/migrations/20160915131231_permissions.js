@@ -1,14 +1,4 @@
-let db = require('../db')
-
-exports.up = function(knex) {
-  db.load(knex)
-  return db.run(up)
-}
-
-exports.down = function(knex) {
-  db.load(knex)
-  return db.run(down)
-}
+module.exports = require('../db').migration(up, down)
 
 function* up(knex){
   yield knex.schema.createTable('partner', partner => {
