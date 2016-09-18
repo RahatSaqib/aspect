@@ -1,13 +1,11 @@
-require('dotenv-safe').load()
-
-let Hapi = require('hapi')
-
 // =======================
 // configuration =========
 // =======================
 let config = require('./config')
 let { version } = require('./package.json')
 let { addRoutes } = require('./routes/index')
+
+let Hapi = require('hapi')
 let server = new Hapi.Server()
 let port = process.env.PORT || 8080
 let apiPath = '/api'

@@ -9,7 +9,8 @@
     "stop:background": "forever stop server.js",
     "mocha": "mocha --opts utils/contract_tests/mocha_contract.opts",
     "test": "npm-run-all -c start:background mocha stop:background",
-    "coverage": "./node_modules/istanbul/lib/cli.js cover --preload-sources ./node_modules/mocha/bin/_mocha -- --opts mocha_unit.opts -t 5000"
+    "coverage": "./node_modules/istanbul/lib/cli.js cover --preload-sources ./node_modules/mocha/bin/_mocha -- --opts mocha_unit.opts -t 5000",
+    "knex": "knex"
   },
   "author": "SystemOne",
   "license": "ISC",
