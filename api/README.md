@@ -45,7 +45,7 @@ EOT
 # Run migrations
 npm run knex migrate:latest
 
-# Populate databse with seed files (optional)
+# Populate database with seed files (optional)
 npm run knex seed:run
 
 # Start the server
@@ -177,7 +177,7 @@ To run tests, `npm test` in the terminal
 ###Running tests against a local database
 The test suite makes actual requests to the API which queries a MySQL database. The connection settings are stored as environment variables.
 Environment variables are loaded from a file, called .env, that you need to add to the root of the application.
-See [Environment Configuration](#environment-configuration) in order to change the config, on your machine, to point to a local database 
+See [Environment Configuration](#environment-configuration) in order to change the config, on your machine, to point to a local database
 
 Once your environment is configured run tests using the `npm test` command
 
@@ -260,7 +260,7 @@ To check which dependencies have newer versions available:
 npm outdated
 ```
 
-To update all to the latest version (this is not the same as the "Wanted" version): 
+To update all to the latest version (this is not the same as the "Wanted" version):
 
 ```bash
 npm update --save

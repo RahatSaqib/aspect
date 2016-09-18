@@ -16,7 +16,7 @@ npm install
 
 ## Available Commands
 
-By default, the site is served at http://localhost:8000/webpack-dev-server/ this gives you compiliation/error messages in the browser window. To browse just the "bare" site, go to http://localhost:8000.
+By default, the site is served at http://localhost:8000/webpack-dev-server/ this gives you compilation/error messages in the browser window. To browse just the "bare" site, go to http://localhost:8000.
 
 ```bash
 # Start for development
