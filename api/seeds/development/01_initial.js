@@ -10,6 +10,21 @@ function* seed(knex){
   let adminId = 1
   let auditFields = {}
 
+  yield knex('country').insert({
+    name: 'United States',
+    abbreviation: 'US',
+    a3: 'USA',
+    culture: 'en-US',
+    country_code: '1',
+    state_label: 'State',
+    lga_label: 'County',
+    timezone: 'Eastern Standard Time',
+    port_number: 3000,
+    export_columns: 'DeploymentDescription|TestEndedOn|AssayName|AssayVersion|User|Result1|Result2|ReagentLotID|ExpirationDate|CartridgeSerial|ModuleSerial|SoftwareVersion|ErrorCode|ErrorCategory|ErrorDescription|SampleId|Notes',
+    inventory_days_threshold: 21,
+    month_starts_on_day: 1
+  })
+
   for(let name of ['Admin', 'Bob', 'Frank', 'Fred', 'Steve']){
     let userId = yield knex('user').insert({
       name: name.toLowerCase(),
