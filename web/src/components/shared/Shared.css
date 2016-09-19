@@ -1,0 +1,35 @@
+/*content area */
+.Content {
+  padding: 20px 50px 0 50px;
+}
+
+@media screen and (max-width:35.438em) {
+  .Content {
+    padding: 20px 10px;
+  }
+}
+
+@media screen and (min-width: 80em) {
+  .Content {
+    max-width: 1200px;
+    margin: auto;
+  }
+}
+
+/*Styles for the ToolBar component*/
+.Toolbar {
+  background-color: #fff !important;
+}
+
+/*TextField in the filter area of a grid*/
+.TextField--filter {
+  max-width: 150px !important;
+  margin: 5px 0 0 15px !important;
+}
+
+/* --- Helper classes --- */
+
+/*Make items with touch event behave like links*/
+.Helper--linky {
+  cursor: pointer !important;
+}
