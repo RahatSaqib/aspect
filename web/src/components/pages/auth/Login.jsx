@@ -15,6 +15,7 @@ import TextField from 'material-ui/TextField'
 // Our own imports
 import { loginStart } from '../../../action_creators/user_creators'
 import { ErrorDisplayContainer } from '../../shared/ErrorDisplay'
+import styles from './Login.css'
 
 const renderUserField = ({ input, meta }) => {
   return (
@@ -55,21 +56,21 @@ class Login extends React.PureComponent {
     const { handleSubmit, pristine, submitting } = this.props
 
     return (
-      <div className="login-background">
+      <div className={styles.Background}>
         <Helmet title="Login" titleTemplate="%s - Aspect" defaultTitle="Aspect" />
-        <div className="content">
+        <div className={styles.Content}>
           <div className="pure-g">
             <div className="pure-u-lg-1-3 pure-u-md-1-6 pure-u-sm-1-24">
               &nbsp;
             </div>
             <div className="pure-u-lg-1-3 pure-u-md-2-3 pure-u-sm-11-12">
               <Paper>
-                <form onSubmit={handleSubmit} className={'login-form'}>
+                <form onSubmit={handleSubmit} className={styles.Form}>
                   <Field name="user" component={renderUserField} />
                   <br/>
                   <Field name="password" component={renderPasswordField} />
                   <br/>
-                  <div className="button-row">
+                  <div className={styles.Form__ActionRow}>
                     <RaisedButton disabled={pristine || submitting} label="Log In" secondary={true} type="submit" />
                   </div>
                 </form>
