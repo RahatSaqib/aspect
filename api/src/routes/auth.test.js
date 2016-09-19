@@ -1,0 +1,343 @@
+let proxyquire = require('proxyquire')
+let {assert} = require('chai')
+let _ = require('lodash')
+let sinon = require('sinon')
+let endpointUtils = require('../../test/unit_tests/endpointUtils')
+
+describe('auth endpoints', function () {
+  let auth, dbSpy, jwt, endpoint
+  const fakeConfig = { secret: '8rU7FITwHV30jhkcXvjOjoSvy2Tv2bZT', passwordAttempts: 5 }
+
+  function setupAuthRoutes(method, path) {
+    dbSpy = require('../../test/unit_tests/dbSpy')
+    sinon.spy(dbSpy, 'query')
+    jwt = require('jsonwebtoken')
+    sinon.spy(jwt, 'sign')
+    auth = proxyquire.noCallThru().load('./auth', {
+      'jsonwebtoken': jwt,
+      '../db': dbSpy,
+      '../config': fakeConfig
+    })
+    endpoint = _.find(auth, {method: method, path: path})
+  }
+
+  afterEach(function() {
+    dbSpy.query.restore()
+    jwt.sign.restore()
+  })
+
+  describe('/auth GET', function () {
+    beforeEach(function () {
+      setupAuthRoutes('GET', '/auth')
+    })
+
+    it('Should respond with a welcome message for the API', function (done) {
+      endpointUtils.callHandlerOn(endpoint)
+        .handleResponseWith(function (responseData) {
+          assert.equal(responseData.message, 'Welcome to the API!')
+        })
+        .thenCall(done)
+        .execute()
+    })
+  })
+
+  describe('/auth POST', function () {
+    beforeEach(function () {
+      setupAuthRoutes('POST', '/auth')
+    })
+
+    describe('When the user can authenticate', function () {
+      const roles = [{name: 'admin'}, {name: 'readonly'}, {name: 'write'}]
+      beforeEach(function () {
+        dbSpy.query.for('Get basic user details').resolvesWith({
+          locked_out: 0,
+          failed_password_attempts: 0,
+          id: 123,
+          name: 'admin',
+          culture: 'en-US'
+        })
+        dbSpy.query.for('Get roles for user').resolvesWith(roles)
+      })
+
+      it('Should respond with a signed JSON web token, a refresh token id and the client id passed to it', function (done) {
+        const requestData = {
+          payload: {
+            name: 'admin',
+            password: 'test07',
+            clientId: 'request client id'
+          }
+        }
+        endpointUtils.callHandlerOn(endpoint)
+          .with(requestData)
+          .handleResponseWith(function (responseData) {
+            assert.isOk(responseData.access)
+            assert.isOk(responseData.refresh)
+            assert.equal(responseData.clientId, requestData.payload.clientId)
+          })
+          .thenCall(done)
+          .execute()
+      })
+
+      it('Should create a client id if none is provided', function (done) {
+        const requestData = {
+          payload: {
+            name: 'admin',
+            password: 'test07',
+            clientId: ''
+          }
+        }
+        endpointUtils.callHandlerOn(endpoint)
+          .with(requestData)
+          .handleResponseWith(function (responseData) {
+            assert.isOk(responseData.clientId, requestData.payload.clientId)
+          })
+          .thenCall(done)
+          .execute()
+      })
+
+      describe('getToken', function() {
+        it('Should sign a token with the user\'s details', function (done) {
+          let britishUser = {
+            locked_out: 0,
+            failed_password_attempts: 0,
+            id: 123,
+            name: 'admin',
+            culture: 'en-GB'
+          }
+          dbSpy.query.for('Get basic user details').resolvesWith(britishUser)
+          const requestData = {
+            payload: {
+              name: 'admin',
+              password: 'test07',
+              clientId: 'request client id'
+            }
+          }
+          endpointUtils.callHandlerOn(endpoint)
+            .with(requestData)
+            .handleResponseWith(function () {
+              let unsignedToken = jwt.sign.lastCall.args[0]
+              assert.deepEqual(unsignedToken, {
+                name: britishUser.name,
+                modules: ['inv', 'mai'],
+                roles: roles.map(r => r.name),
+                culture: britishUser.culture
+              })
+            })
+            .thenCall(done)
+            .execute()
+        })
+
+        it('Should set the user\'s culture to en-US if not specified', function (done) {
+          dbSpy.query.for('Get basic user details').resolvesWith({
+            locked_out: 0,
+            failed_password_attempts: 0,
+            id: 123,
+            name: 'admin',
+            culture: ''
+          })
+          const requestData = {
+            payload: {
+              name: 'admin',
+              password: 'test07',
+              clientId: 'request client id'
+            }
+          }
+          endpointUtils.callHandlerOn(endpoint)
+            .with(requestData)
+            .handleResponseWith(function () {
+              let unsignedToken = jwt.sign.lastCall.args[0]
+              assert.equal(unsignedToken.culture, 'en-US')
+            })
+            .thenCall(done)
+            .execute()
+        })
+      })
+    })
+
+    describe('When a user is not found', function () {
+      beforeEach(function () {
+        dbSpy.query.for('Get basic user details').resolvesWith()
+      })
+
+      it('Should respond with 400 and "not found"', function (done) {
+        const requestData = {
+          payload: {
+            name: 'nonexistant',
+            password: 'test07',
+            clientId: 'request client id'
+          }
+        }
+        endpointUtils.callHandlerOn(endpoint)
+          .with(requestData)
+          .handleResponseWith(function (responseData) {
+            assert.equal(responseData.output.statusCode, 400)
+            assert.equal(responseData.output.payload.message, 'not found')
+          })
+          .thenCall(done)
+          .execute()
+      })
+    })
+
+    describe('When the users account is locked', function () {
+      beforeEach(function () {
+        dbSpy.query.for('Get basic user details').resolvesWith({
+          locked_out: 1,
+          failed_password_attempts: 0,
+          id: 123,
+          name: 'lockedaccount',
+          culture: 'en-US'
+        })
+      })
+
+      it('Should respond with 401 and "Your account is locked."', function (done) {
+        const requestData = {
+          payload: {
+            name: 'lockedaccount',
+            password: 'test07',
+            clientId: 'request client id'
+          }
+        }
+        endpointUtils.callHandlerOn(endpoint)
+          .with(requestData)
+          .handleResponseWith(function (responseData) {
+            assert.equal(responseData.output.statusCode, 401)
+            assert.equal(responseData.output.payload.message, 'Your account is locked.')
+          })
+          .thenCall(done)
+          .execute()
+      })
+    })
+
+    describe('When the password is incorrect', function () {
+      const requestData = {
+          payload: {
+            name: 'admin',
+            password: 'wrongpassword',
+            clientId: 'request client id'
+          }
+        }, basicUserDetails = {
+          locked_out: 0,
+          failed_password_attempts: 0,
+          id: 123,
+          name: 'admin',
+          culture: 'en-US'
+        }
+      beforeEach(function () {
+        dbSpy.query.for('Get basic user details').resolvesWith(basicUserDetails)
+      })
+
+      it('Should increment the number of failed password attempts and respond with 401 and "Authentication failed. Wrong password."', function (done) {
+        endpointUtils.callHandlerOn(endpoint)
+          .with(requestData)
+          .handleResponseWith(function (responseData) {
+            assert.equal(responseData.output.statusCode, 401)
+            assert.equal(responseData.output.payload.message, 'Authentication failed. Wrong password.')
+            let updateFieldsOnUser = dbSpy.query.withArgs('Update failed password attempts and set locked out status on user').lastCall.returnValue.update.lastCall.args[0]
+            assert.equal(updateFieldsOnUser.failed_password_attempts, basicUserDetails.failed_password_attempts + 1)
+          })
+          .thenCall(done)
+          .execute()
+      })
+
+      it('Should increment the number of failed password attempts and lock the user out after the maximum password attempts have been tried', function (done) {
+        basicUserDetails.failed_password_attempts = 5
+        endpointUtils.callHandlerOn(endpoint)
+          .with(requestData)
+          .handleResponseWith(function () {
+            assert.isOk(dbSpy.query.calledWith('Update failed password attempts and set locked out status on user'))
+            let updateFieldsOnUser = dbSpy.query.withArgs('Update failed password attempts and set locked out status on user').lastCall.returnValue.update.lastCall.args[0]
+            assert.equal(updateFieldsOnUser.failed_password_attempts, basicUserDetails.failed_password_attempts + 1)
+            assert.equal(updateFieldsOnUser.locked_out, 1)
+          })
+          .thenCall(done)
+          .execute()
+      })
+    })
+  })
+
+  describe('/auth/refresh POST', function () {
+    beforeEach(function () {
+      setupAuthRoutes('POST', '/auth/refresh')
+    })
+
+    describe('When a valid token exists', function () {
+      beforeEach(function () {
+        dbSpy.query.for('Find existing token for client ID').resolvesWith({
+          userId: 123,
+          expires: new Date(new Date().getTime() + 7 * 86400000),
+          name: 'admin',
+          culture: 'en-US'
+        })
+      })
+
+      it('Should respond with a signed JSON web token, a refresh token id and the client id passed to it', function (done) {
+        const requestData = {
+          payload: {
+            clientId: 'request client id',
+            token: 'A+nmAmjiD0BqrZvfhrIRlnAoufJW0mhigNWa1Fnz/gl8JWsec4ochW9K5iaz3XcR'
+          }
+        }
+        endpointUtils.callHandlerOn(endpoint)
+          .with(requestData)
+          .handleResponseWith(function (responseData) {
+            assert.isOk(responseData.access)
+            assert.isOk(responseData.refresh)
+            assert.equal(responseData.clientId, requestData.payload.clientId)
+          })
+          .thenCall(done)
+          .execute()
+      })
+    })
+
+    describe('When no token is found', function () {
+      beforeEach(function () {
+        dbSpy.query.for('Find existing token for client ID').resolvesWith()
+      })
+
+      it('Should respond with 400 and "Unable to find token or token revoked"', function (done) {
+        const requestData = {
+          payload: {
+            clientId: 'request client id',
+            token: 'A+nmAmjiD0BqrZvfhrIRlnAoufJW0mhigNWa1Fnz/gl8JWsec4ochW9K5iaz3XcR'
+          }
+        }
+        endpointUtils.callHandlerOn(endpoint)
+          .with(requestData)
+          .handleResponseWith(function (responseData) {
+            assert.equal(responseData.output.statusCode, 400)
+            assert.equal(responseData.output.payload.message, 'Unable to find token or token revoked')
+          })
+          .thenCall(done)
+          .execute()
+      })
+    })
+
+    describe('When the token has expired', function () {
+      beforeEach(function () {
+        dbSpy.query.for('Find existing token for client ID').resolvesWith({
+          userId: 123,
+          expires: new Date(new Date().getTime() - 1),
+          name: 'admin',
+          culture: 'en-US'
+        })
+      })
+
+      it('Should respond with 400 and "Token expired"', function (done) {
+        const requestData = {
+          payload: {
+            clientId: 'request client id',
+            token: 'A+nmAmjiD0BqrZvfhrIRlnAoufJW0mhigNWa1Fnz/gl8JWsec4ochW9K5iaz3XcR'
+          }
+        }
+        endpointUtils.callHandlerOn(endpoint)
+          .with(requestData)
+          .handleResponseWith(function (responseData) {
+            assert.equal(responseData.output.statusCode, 400)
+            assert.equal(responseData.output.payload.message, 'Token expired')
+          })
+          .thenCall(done)
+          .execute()
+      })
+    })
+  })
+})

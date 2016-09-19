@@ -12,7 +12,7 @@ function attemptToConnect(done) {
   setTimeout(function () {
     server.get('/api')
       .end(function(err,res){
-        if(res.status !== 200) {
+        if(err || !res || res.status !== 200) {
           attemptsToConnect++
           attemptToConnect(done)
         } else {

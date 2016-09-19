@@ -2,7 +2,7 @@
 // configuration =========
 // =======================
 let config = require('./config')
-let { version } = require('./package.json')
+let { version } = require('./../package.json')
 let { addRoutes } = require('./routes/index')
 
 let Hapi = require('hapi')

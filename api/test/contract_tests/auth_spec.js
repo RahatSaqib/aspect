@@ -1,7 +1,7 @@
 let supertest = require('supertest')
 let chai = require('chai')
 let jwt = require('jsonwebtoken')
-let config = require('./../config')
+let config = require('./../../src/config')
 let shared = require('./shared_tests')
 
 // This agent refers to PORT where program is runninng.

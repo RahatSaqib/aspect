@@ -2,6 +2,9 @@ let Promise = require('bluebird')
 let util = require('./util')
 let knex = null // see load
 
+function query() {
+  return load()
+}
 
 // extracts the parameters related to sorting and paging from the candidate
 // params and modifies the query builder with the sort modifications
@@ -83,6 +86,7 @@ function load(){
 }
 
 module.exports = {
+  query,
   filterParams,
   sortPageParams,
   migration,
