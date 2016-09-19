@@ -5,7 +5,7 @@ import store, { history } from './store'
 
 // higher level containers/shells
 import App from './components/App'
-import { LoggedInShellContainer } from './components/LoggedInShell'
+import LoggedInShell from './components/LoggedInShell'
 
 // "Pages"
 import { LoginContainer } from './components/pages/auth/Login'
@@ -44,7 +44,7 @@ const routes =
   <Router history={history} render={applyRouterMiddleware(useScroll()) }>
     <Route component={App}>
       <Route component={LoginContainer} path="login" />
-      <Route component={LoggedInShellContainer}
+      <Route component={LoggedInShell}
         onChange={(prevState, nextState, replace) => requireAuth(nextState, replace) }>
 
         <Redirect from='/' to='dashboard' />

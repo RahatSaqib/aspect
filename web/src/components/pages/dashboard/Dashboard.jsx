@@ -8,6 +8,7 @@ import {
 } from 'react-intl'
 import { connect } from 'react-redux'
 import Snackbar from 'material-ui/Snackbar'
+import Helmet from 'react-helmet'
 
 // Our own imports
 import MiniChart from '../../shared/MiniChart'
@@ -15,7 +16,7 @@ import MiniChart from '../../shared/MiniChart'
 const messages = defineMessages({
   title: {
     id: 'pages.Dashboard.title',
-    defaultMessage: 'Devices'
+    defaultMessage: 'Dashboard'
   },
   culture: {
     id: 'pages.Dashboard.culture',
@@ -37,6 +38,7 @@ export class Dashboard extends React.PureComponent {
 
     return (
       <div className="content">
+        <Helmet title={formatMessage(messages.title)} titleTemplate="%s - Aspect" defaultTitle="Aspect" />
         <div className="pure-g">
           <div className="pure-u-lg-1-4 pure-u-md-1-3 pure-u-sm-1-2">
             <Link to="/device">

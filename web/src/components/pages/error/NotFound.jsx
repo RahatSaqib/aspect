@@ -7,6 +7,7 @@ import {
 import {
   FormattedMessage
 } from 'react-intl'
+import Helmet from 'react-helmet'
 
 // Material-UI
 import IconButton from 'material-ui/IconButton'
@@ -22,6 +23,7 @@ export class NotFound extends React.PureComponent {
   render() {
     return (
       <div className="error-page">
+        <Helmet title="Not Found" titleTemplate="%s - Aspect" defaultTitle="Aspect" />
         <h1>
           <FormattedMessage
             id="pages.NotFound.title"
