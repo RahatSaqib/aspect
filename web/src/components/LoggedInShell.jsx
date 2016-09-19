@@ -25,7 +25,7 @@ export class LoggedInShell extends React.PureComponent {
 
     return (
       <div>
-        <Helmet title={pathname} titleTemplate="%s - Aspect" defaultTitle="Aspect" />
+        <Helmet title="Aspect" defaultTitle="Aspect" />
         <ErrorDisplayContainer />
         <SideNav  open={this.props.drawerOpen}
                   desktop={ this.state.desktop }

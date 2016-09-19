@@ -27,6 +27,14 @@ injectTapEventPlugin()
 // http://caniuse.com/#feat=promises
 promise.polyfill()
 
+// polyfill intl if necessary
+// http://formatjs.io/guides/runtime-environments/
+if (!window.Intl) {
+  require('intl')
+  // TODO: base on user's locale
+  require('intl/locale-data/jsonp/en.js')
+}
+
 // get new access token on refresh/startup
 if (getRefreshToken()){
 

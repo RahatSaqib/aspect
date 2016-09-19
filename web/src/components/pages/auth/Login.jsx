@@ -4,6 +4,7 @@ import React from 'react'
 import { bindActionCreators } from 'redux'
 import { connect } from 'react-redux'
 import { Field, reduxForm } from 'redux-form/immutable'
+import Helmet from 'react-helmet'
 
 // Material-UI
 import Paper from 'material-ui/Paper'
@@ -55,6 +56,7 @@ class Login extends React.PureComponent {
 
     return (
       <div className="login-background">
+        <Helmet title="Login" titleTemplate="%s - Aspect" defaultTitle="Aspect" />
         <div className="content">
           <div className="pure-g">
             <div className="pure-u-lg-1-3 pure-u-md-1-6 pure-u-sm-1-24">

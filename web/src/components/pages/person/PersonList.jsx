@@ -7,6 +7,7 @@ import {
 } from 'react-intl'
 import { bindActionCreators } from 'redux'
 import { connect } from 'react-redux'
+import Helmet from 'react-helmet'
 
 // Material-UI
 import NavigationExpandMoreIcon from 'material-ui/svg-icons/navigation/expand-more'
@@ -71,6 +72,7 @@ export class PersonList extends React.PureComponent {
 
     return (
       <div className="content">
+        <Helmet title={formatMessage(messages.title)} titleTemplate="%s - Aspect" defaultTitle="Aspect" />
         <form onSubmit={ this.handleSubmit }>
           <Toolbar className={"toolbar"} >
             <ToolbarGroup firstChild={true}>
