@@ -6,7 +6,7 @@ let Boom = require('boom')
 let Joi = require('joi')
 
 let config = require('../config')
-let { knex } = require('../db')
+let { knex, query } = require('../db')
 let { asyncHandler } = require('../util')
 
 module.exports = [
@@ -62,18 +62,18 @@ function* checkAuthentication(){
 function* authenticate(request){
   let {payload} = request
 
-  let user = yield knex('user as u')
+  let user = yield query('Get basic user details').from('user as u')
     .innerJoin('person as p', 'u.id', 'p.user_id')
     .where({'u.name': payload.name})
     .first('u.locked_out', 'u.failed_password_attempts', 'u.id', 'u.name', 'p.culture')
-  
+
   if(!user){
     // TODO generic Auth failed message on username and password failed?
     // TODO should this be 401 (test checks 400)
     return Boom.badRequest('not found')
     //res.status(401).json({ message: 'Authentication failed. Wrong user name.' })
   }
-  
+
   if (user.locked_out === 1) {
     return Boom.unauthorized('Your account is locked.')
   }
@@ -82,7 +82,7 @@ function* authenticate(request){
   if (payload.password !== 'test07') {
     // FIXME this allows 6 attempts if config is 5... bug?
     let lock = user.failed_password_attempts >= config.passwordAttempts ? 1 : 0
-    let updateFailedPass = knex('user')
+    let updateFailedPass = query('Update failed password attempts and set locked out status on user').from('user')
       .where({id: user.id})
       .update({
         failed_password_attempts: user.failed_password_attempts + 1,
@@ -100,7 +100,7 @@ function* authenticate(request){
   let clientId = payload.clientId || uuid.v4()
 
   // Use raw query as upsert not yet supported in knex#701
-  let setRefreshToken = knex.raw('INSERT INTO refresh_token set ? ON DUPLICATE KEY UPDATE ?', [
+  let setRefreshToken = query('Create new refresh token for the user').raw('INSERT INTO refresh_token set ? ON DUPLICATE KEY UPDATE ?', [
     {
       user_id: user.id,
       client_id: clientId,
@@ -115,7 +115,7 @@ function* authenticate(request){
     }
   ])
 
-  let updatePwAttempts = knex('user')
+  let updatePwAttempts = query('Update failed password attempts to 0').from('user')
     .where({id: user.id})
     .update({
       failed_password_attempts: 0,
@@ -163,7 +163,7 @@ function* refreshToken(request){
 
 // generate a new jwt
 function getToken(config, userId, userName, refreshToken, clientId, culture) {
-  return knex('role as r')
+  return query('Get roles for user').from('role as r')
     .innerJoin('user_role as ur', 'r.id', 'ur.role_id')
     .where({user_id: userId})
     .select('r.name')

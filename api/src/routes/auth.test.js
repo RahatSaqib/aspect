@@ -1,11 +1,11 @@
 let proxyquire = require('proxyquire')
 let {assert} = require('chai')
 let _ = require('lodash')
-let sinon = require('sinon')
+let dbStub = require('../../test/unit_tests/dbStub')
 let endpointUtils = require('../../test/unit_tests/endpointUtils')
 
 describe('auth endpoints', function () {
-  let auth, knexStub
+  let auth
 
   describe('/auth POST', function () {
     describe('When the user can authenticate', function () {
@@ -18,39 +18,18 @@ describe('auth endpoints', function () {
       }
 
       beforeEach(function () {
-        knexStub = sinon.stub()
-        knexStub.withArgs('user as u').returns({
-          innerJoin: sinon.stub().returns({
-            where: sinon.stub().returns({
-              first: sinon.stub().returns(Promise.resolve({
-                locked_out: 0,
-                failed_password_attempts: 0,
-                id: 123,
-                name: 'admin',
-                culture: 'en-US'
-              }))
-            })
-          })
+        dbStub.query.for('Get basic user details').resolvesWith({
+          locked_out: 0,
+          failed_password_attempts: 0,
+          id: 123,
+          name: 'admin',
+          culture: 'en-US'
         })
-
-        knexStub.withArgs('user').returns({
-          where: sinon.stub().returns({
-            update: sinon.stub().returns(Promise.resolve())
-          })
-        })
-
-        knexStub.raw = sinon.stub().returns(Promise.resolve())
-
-        knexStub.withArgs('role as r').returns({
-          innerJoin: sinon.stub().returns({
-            where: sinon.stub().returns({
-              select: sinon.stub().returns(Promise.resolve([{name: 'admin'}, {name: 'readonly'}, {name: 'write'}]))
-            })
-          })
-        })
-
+        dbStub.query.for('Get roles for user').resolvesWith(
+          [{name: 'admin'}, {name: 'readonly'}, {name: 'write'}]
+        )
         auth = proxyquire.noCallThru().load('./auth', {
-          '../db': { knex: knexStub },
+          '../db': dbStub,
           '../config': { secret: '8rU7FITwHV30jhkcXvjOjoSvy2Tv2bZT', passwordAttempts: 5 }
         })
       })
