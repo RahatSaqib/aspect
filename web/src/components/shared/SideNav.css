@@ -1,0 +1,14 @@
+/*Side nav*/
+.Drawler--desktop {
+  position: absolute !important;
+  top: 68px !important;
+  background-color: #f2f2f2 !important;
+  box-shadow: none !important;
+}
+
+.Drawler__ListItem {
+  font-size: 14px !important;
+}
+.Drawler__ListItem >div>div {/* FIXME: use classname */
+  padding-left: 56px !important;
+}
