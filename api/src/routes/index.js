@@ -5,6 +5,7 @@ function addRoutes(server){
   server.route(require('./auth.js').map(decorateAPI))
   server.route(require('./device.js').map(decorateAPI))
   server.route(require('./person.js').map(decorateAPI))
+  server.route(require('./site.js').map(decorateAPI))
 }
 
 // Decorates an API route with common configuration so

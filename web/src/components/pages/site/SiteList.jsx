@@ -31,12 +31,16 @@ const messages = defineMessages({
     id: 'pages.SiteList.siteName',
     defaultMessage: 'Name'
   },
+  state: {
+    id: 'pages.SiteList.state',
+    defaultMessage: 'State'
+  },
   lga: {
     id: 'pages.SiteList.lga',
-    defaultMessage: 'State/LGA'
+    defaultMessage: 'County'
   },
-  numberOfDevices: {
-    id: 'pages.SiteList.numberOfDevices',
+  totalDevices: {
+    id: 'pages.SiteList.totalDevices',
     defaultMessage: 'Number of Devices'
   }
 })
@@ -95,8 +99,9 @@ export class SiteList extends React.PureComponent {
         <DataTable  handleFetch={ this.props.fetchSites }
                     table={ this.props.table }
                     columns={[{ db: 'name', title: formatMessage(messages.siteName) },
+                              { db: 'state', title: formatMessage(messages.state) },
                               { db: 'lga', title: formatMessage(messages.lga) },
-                              { db: 'numberOfDevices', title: formatMessage(messages.numberOfDevices) } ]} />
+                              { db: 'totalDevices', title: formatMessage(messages.totalDevices) } ]} />
       </div>
     )
   }
