@@ -1,6 +1,7 @@
 module.exports = require('../../src/db').seed(seed)
 
 const _ = require('lodash')
+const geography = require('./fixtures/geography.json')
 const millisInHour = 1000*60*60
 const siteNumber = 10
 const deviceNumber = 50
@@ -10,20 +11,22 @@ function* seed(knex){
   let adminId = 1
   let auditFields = {}
 
-  yield knex('country').insert({
-    name: 'United States',
-    abbreviation: 'US',
-    a3: 'USA',
-    culture: 'en-US',
-    country_code: '1',
-    state_label: 'State',
-    lga_label: 'County',
-    timezone: 'Eastern Standard Time',
-    port_number: 3000,
-    export_columns: 'DeploymentDescription|TestEndedOn|AssayName|AssayVersion|User|Result1|Result2|ReagentLotID|ExpirationDate|CartridgeSerial|ModuleSerial|SoftwareVersion|ErrorCode|ErrorCategory|ErrorDescription|SampleId|Notes',
-    inventory_days_threshold: 21,
-    month_starts_on_day: 1
-  })
+  for(let country of geography.countries){
+    let countryId = yield knex('country').insert(_.pick(country, [
+      'abbreviation', 'name', 'a3', 'culture', 'country_code',
+      'state_label', 'lga_label', 'timezone', 'port_number',
+      'export_columns', 'inventory_days_threshold', 'month_starts_on_day']))
+
+    for(let state of (country.states || [])){
+      let stateId = yield knex('state').insert(Object.assign(
+        {country_id: countryId}, _.pick(state, ['abbreviation', 'name'])))
+
+      for(let lga of (state.lgas || [])){
+        yield knex('lga').insert(Object.assign(
+          {state_id: stateId}, _.pick(lga, ['name'])))
+      }
+    }
+  }
 
   for(let name of ['Admin', 'Bob', 'Frank', 'Fred', 'Steve']){
     let userId = yield knex('user').insert({

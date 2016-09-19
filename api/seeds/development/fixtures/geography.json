@@ -1,0 +1,238 @@
+{
+  "countries": [
+    {
+      "abbreviation": "US",
+      "name": "United States",
+      "a3": "USA",
+      "culture": "en-US",
+      "country_code": "1",
+      "state_label": "State",
+      "lga_label": "County",
+      "timezone": "Eastern Standard Time",
+      "port_number": 3000,
+      "export_columns": "DeploymentDescription|TestEndedOn|AssayName|AssayVersion|User|Result1|Result2|ReagentLotID|ExpirationDate|CartridgeSerial|ModuleSerial|SoftwareVersion|ErrorCode|ErrorCategory|ErrorDescription|SampleId|Notes",
+      "inventory_days_threshold": 21,
+      "month_starts_on_day": 1,
+      "states": [
+        {
+            "abbreviation": "AK",
+            "name": "Alaska"
+        },
+        {
+            "abbreviation": "AL",
+            "name": "Alabama"
+        },
+        {
+            "abbreviation": "AR",
+            "name": "Arkansas"
+        },
+        {
+            "abbreviation": "AZ",
+            "name": "Arizona"
+        },
+        {
+            "abbreviation": "CA",
+            "name": "California"
+        },
+        {
+            "abbreviation": "CO",
+            "name": "Colorado"
+        },
+        {
+            "abbreviation": "CT",
+            "name": "Connecticut"
+        },
+        {
+            "abbreviation": "DC",
+            "name": "District of Columbia"
+        },
+        {
+            "abbreviation": "DE",
+            "name": "Delaware"
+        },
+        {
+            "abbreviation": "FL",
+            "name": "Florida"
+        },
+        {
+            "abbreviation": "GA",
+            "name": "Georgia"
+        },
+        {
+            "abbreviation": "HI",
+            "name": "Hawaii"
+        },
+        {
+            "abbreviation": "IA",
+            "name": "Iowa"
+        },
+        {
+            "abbreviation": "ID",
+            "name": "Idaho"
+        },
+        {
+            "abbreviation": "IL",
+            "name": "Illinois"
+        },
+        {
+            "abbreviation": "IN",
+            "name": "Indiana"
+        },
+        {
+            "abbreviation": "KS",
+            "name": "Kansas"
+        },
+        {
+            "abbreviation": "KY",
+            "name": "Kentucky"
+        },
+        {
+            "abbreviation": "LA",
+            "name": "Louisiana"
+        },
+        {
+            "abbreviation": "MD",
+            "name": "Maryland"
+        },
+        {
+            "abbreviation": "ME",
+            "name": "Maine"
+        },
+        {
+            "abbreviation": "MA",
+            "name": "Massachusetts",
+            "lgas": [
+              {"name": "Franklin"},
+              {"name": "Suffolk"}
+            ]
+        },
+        {
+            "abbreviation": "MI",
+            "name": "Michigan"
+        },
+        {
+            "abbreviation": "MN",
+            "name": "Minnesota"
+        },
+        {
+            "abbreviation": "MO",
+            "name": "Missouri"
+        },
+        {
+            "abbreviation": "MS",
+            "name": "Mississippi"
+        },
+        {
+            "abbreviation": "MT",
+            "name": "Montana"
+        },
+        {
+            "abbreviation": "NC",
+            "name": "North Carolina"
+        },
+        {
+            "abbreviation": "ND",
+            "name": "North Dakota"
+        },
+        {
+            "abbreviation": "NE",
+            "name": "Nebraska",
+            "lgas": [
+              {"name": "Hall"},
+              {"name": "Gage"},
+              {"name": "Lancaster"},
+              {"name": "Wayne"}
+            ]
+        },
+        {
+            "abbreviation": "NH",
+            "name": "New Hampshire"
+        },
+        {
+            "abbreviation": "NJ",
+            "name": "New Jersey"
+        },
+        {
+            "abbreviation": "NM",
+            "name": "New Mexico"
+        },
+        {
+            "abbreviation": "NV",
+            "name": "Nevada"
+        },
+        {
+            "abbreviation": "NY",
+            "name": "New York"
+        },
+        {
+            "abbreviation": "OK",
+            "name": "Oklahoma"
+        },
+        {
+            "abbreviation": "OH",
+            "name": "Ohio",
+            "lgas": [
+              {"name": "Wayne"},
+              {"name": "Cuyahoga"}
+            ]
+        },
+        {
+            "abbreviation": "OR",
+            "name": "Oregon"
+        },
+        {
+            "abbreviation": "PA",
+            "name": "Pennsylvania"
+        },
+        {
+            "abbreviation": "RI",
+            "name": "Rhode Island"
+        },
+        {
+            "abbreviation": "SC",
+            "name": "South Carolina"
+        },
+        {
+            "abbreviation": "SD",
+            "name": "South Dakota"
+        },
+        {
+            "abbreviation": "TN",
+            "name": "Tennessee"
+        },
+        {
+            "abbreviation": "TX",
+            "name": "Texas"
+        },
+        {
+            "abbreviation": "UT",
+            "name": "Utah"
+        },
+        {
+            "abbreviation": "VA",
+            "name": "Virginia"
+        },
+        {
+            "abbreviation": "VT",
+            "name": "Vermont"
+        },
+        {
+            "abbreviation": "WA",
+            "name": "Washington"
+        },
+        {
+            "abbreviation": "WI",
+            "name": "Wisconsin"
+        },
+        {
+            "abbreviation": "WV",
+            "name": "West Virginia"
+        },
+        {
+            "abbreviation": "WY",
+            "name": "Wyoming"
+        }
+    ]
+  }
+]
+}
