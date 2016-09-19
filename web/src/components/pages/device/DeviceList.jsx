@@ -23,6 +23,7 @@ import { fetchDevices } from '../../../action_creators/device_creators'
 import { DataTable } from '../../shared/DataTable'
 import FormattedNumber from '../../shared/FormattedNumber'
 import FormattedDate from '../../shared/FormattedDate'
+import styles from './DeviceList.css'
 
 const messages = defineMessages({
   title: {
@@ -86,15 +87,15 @@ export class DeviceList extends React.PureComponent {
     const { formatMessage } = this.props.intl
 
     return (
-      <div className="content">
+      <div className={styles.Content}>
         <Helmet title={formatMessage(messages.title)} titleTemplate="%s - Aspect" defaultTitle="Aspect" />
         <form onSubmit={ this.handleSubmit }>
-          <Toolbar className={"toolbar"} >
+          <Toolbar className={styles.Toolbar} >
             <ToolbarGroup firstChild={true}>
               <TextField  value={this.state.filters.get('name')}
                           id="name"
                           onChange={ this.filterDevicesChange }
-                          className="filter-textfield"
+                          className={styles['Toolbar__TextField--filter']}
                           hintText="Filter by name" />
               <RaisedButton label="Filter" primary={true} onTouchTap={ this.handleSubmit } />
             </ToolbarGroup>
@@ -103,9 +104,9 @@ export class DeviceList extends React.PureComponent {
                   <IconButton touch={true}>
                     <NavigationExpandMoreIcon />
                   </IconButton>}>
-                <MenuItem primaryText="Clear Filters" className="linky" onTouchTap={ this.resetDevices } />
-                <MenuItem primaryText="Export to Excel" className="linky" />
-                <MenuItem primaryText="Export to CSV" className="linky" />
+                <MenuItem primaryText="Clear Filters" className={styles.Toolbar__MenuItem} onTouchTap={ this.resetDevices } />
+                <MenuItem primaryText="Export to Excel" className={styles.Toolbar__MenuItem} />
+                <MenuItem primaryText="Export to CSV" className={styles.Toolbar__MenuItem} />
               </IconMenu>
             </ToolbarGroup>
           </Toolbar>
