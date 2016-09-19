@@ -1,4 +1,5 @@
 // Imports from packages
+import cx from 'classnames'
 import React from 'react'
 
 // Material-UI
@@ -6,6 +7,9 @@ import {Table, TableBody, TableHeader, TableHeaderColumn, TableRow, TableRowColu
 import LinearProgress from 'material-ui/LinearProgress'
 import SortIcon from 'material-ui/svg-icons/content/sort'
 import FlatButton from 'material-ui/FlatButton'
+
+// Our own imports
+import styles from './DataTable.css'
 
 export class DataTable extends React.PureComponent {
 
@@ -78,7 +82,16 @@ export class DataTable extends React.PureComponent {
       if (totalPages <= maxPagingButtons ||
           (i < 2) || (i >= totalPages - 2) || ((i > page - 3 || i > totalPages - 8) && (i < page + 3 || i < 7))
       ){
-        pagerItems.push(<FlatButton key={key} className={page === i ? 'pager-button pager-button-number pager-button-current' : 'pager-button pager-button-number'} label={(i + 1)} onTouchTap={() => { this.handlePage(i) } }/>)
+        pagerItems.push(
+          <FlatButton
+            key={key}
+            className={cx(styles.Pager__Button, styles['Pager__Button--number'], {
+              [styles['Pager__Button--current']]: page === i
+            })}
+            label={(i + 1)}
+            onTouchTap={() => { this.handlePage(i) } }
+          />
+        )
         key++
 
         // show ellipsis if 2nd item AND page > 5 (maxPagingButtons/2) OR
@@ -156,9 +169,9 @@ export class DataTable extends React.PureComponent {
           <TableFooter adjustForCheckbox={true}>
             <TableRow>
               <TableRowColumn colSpan={this.props.columns.length - 1} style={{ textAlign: 'right', padding: '10px 20px 20px 0' }} >
-                <FlatButton className={'pager-button'} label="< Prev" onTouchTap={() => { this.handlePage(page - 1) } } disabled={page === 0} />
+                <FlatButton className={styles.Pager__Button} label="< Prev" onTouchTap={() => { this.handlePage(page - 1) } } disabled={page === 0} />
                   { pagerItems }
-                <FlatButton className={'pager-button'} label="Next >" onTouchTap={() => { this.handlePage(page + 1) } } disabled={ page + 1 >= totalPages} />
+                <FlatButton className={styles.Pager__Button} label="Next >" onTouchTap={() => { this.handlePage(page + 1) } } disabled={ page + 1 >= totalPages} />
               </TableRowColumn>
             </TableRow>
           </TableFooter>
