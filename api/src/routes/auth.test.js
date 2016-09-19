@@ -5,13 +5,16 @@ let sinon = require('sinon')
 let endpointUtils = require('../../test/unit_tests/endpointUtils')
 
 describe('auth endpoints', function () {
-  let auth, dbSpy, endpoint
+  let auth, dbSpy, jwt, endpoint
   const fakeConfig = { secret: '8rU7FITwHV30jhkcXvjOjoSvy2Tv2bZT', passwordAttempts: 5 }
 
   function setupAuthRoutes(method, path) {
     dbSpy = require('../../test/unit_tests/dbSpy')
     sinon.spy(dbSpy, 'query')
+    jwt = require('jsonwebtoken')
+    sinon.spy(jwt, 'sign')
     auth = proxyquire.noCallThru().load('./auth', {
+      'jsonwebtoken': jwt,
       '../db': dbSpy,
       '../config': fakeConfig
     })
@@ -20,6 +23,7 @@ describe('auth endpoints', function () {
 
   afterEach(function() {
     dbSpy.query.restore()
+    jwt.sign.restore()
   })
 
   describe('/auth GET', function () {
@@ -43,6 +47,7 @@ describe('auth endpoints', function () {
     })
 
     describe('When the user can authenticate', function () {
+      const roles = [{name: 'admin'}, {name: 'readonly'}, {name: 'write'}]
       beforeEach(function () {
         dbSpy.query.for('Get basic user details').resolvesWith({
           locked_out: 0,
@@ -51,9 +56,7 @@ describe('auth endpoints', function () {
           name: 'admin',
           culture: 'en-US'
         })
-        dbSpy.query.for('Get roles for user').resolvesWith(
-          [{name: 'admin'}, {name: 'readonly'}, {name: 'write'}]
-        )
+        dbSpy.query.for('Get roles for user').resolvesWith(roles)
       })
 
       it('Should respond with a signed JSON web token, a refresh token id and the client id passed to it', function (done) {
@@ -75,7 +78,7 @@ describe('auth endpoints', function () {
           .execute()
       })
 
-      it('Should create a client id is none is provided', function (done) {
+      it('Should create a client id if none is provided', function (done) {
         const requestData = {
           payload: {
             name: 'admin',
@@ -90,6 +93,64 @@ describe('auth endpoints', function () {
           })
           .thenCall(done)
           .execute()
+      })
+
+      describe('getToken', function() {
+        it('Should sign a token with the user\'s details', function (done) {
+          let britishUser = {
+            locked_out: 0,
+            failed_password_attempts: 0,
+            id: 123,
+            name: 'admin',
+            culture: 'en-GB'
+          }
+          dbSpy.query.for('Get basic user details').resolvesWith(britishUser)
+          const requestData = {
+            payload: {
+              name: 'admin',
+              password: 'test07',
+              clientId: 'request client id'
+            }
+          }
+          endpointUtils.callHandlerOn(endpoint)
+            .with(requestData)
+            .handleResponseWith(function () {
+              let unsignedToken = jwt.sign.lastCall.args[0]
+              assert.deepEqual(unsignedToken, {
+                name: britishUser.name,
+                modules: ['inv', 'mai'],
+                roles: roles.map(r => r.name),
+                culture: britishUser.culture
+              })
+            })
+            .thenCall(done)
+            .execute()
+        })
+
+        it('Should set the user\'s culture to en-US if not specified', function (done) {
+          dbSpy.query.for('Get basic user details').resolvesWith({
+            locked_out: 0,
+            failed_password_attempts: 0,
+            id: 123,
+            name: 'admin',
+            culture: ''
+          })
+          const requestData = {
+            payload: {
+              name: 'admin',
+              password: 'test07',
+              clientId: 'request client id'
+            }
+          }
+          endpointUtils.callHandlerOn(endpoint)
+            .with(requestData)
+            .handleResponseWith(function () {
+              let unsignedToken = jwt.sign.lastCall.args[0]
+              assert.equal(unsignedToken.culture, 'en-US')
+            })
+            .thenCall(done)
+            .execute()
+        })
       })
     })
 
@@ -149,18 +210,18 @@ describe('auth endpoints', function () {
 
     describe('When the password is incorrect', function () {
       const requestData = {
-        payload: {
+          payload: {
+            name: 'admin',
+            password: 'wrongpassword',
+            clientId: 'request client id'
+          }
+        }, basicUserDetails = {
+          locked_out: 0,
+          failed_password_attempts: 0,
+          id: 123,
           name: 'admin',
-          password: 'wrongpassword',
-          clientId: 'request client id'
+          culture: 'en-US'
         }
-      }, basicUserDetails = {
-        locked_out: 0,
-        failed_password_attempts: 0,
-        id: 123,
-        name: 'admin',
-        culture: 'en-US'
-      }
       beforeEach(function () {
         dbSpy.query.for('Get basic user details').resolvesWith(basicUserDetails)
       })
