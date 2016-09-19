@@ -15,7 +15,7 @@
     "stop:background": "forever stop src/server.js",
     "mocha:contract": "mocha --opts test/contract_tests/utils/mocha.opts",
     "test:contract": "npm-run-all -c start:background mocha:contract stop:background",
-    "test": "npm-run-all test:unit test:contract"
+    "test": "npm-run-all test:unit test:contract",
     "knex": "knex"
   },
   "author": "SystemOne",
