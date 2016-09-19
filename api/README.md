@@ -49,7 +49,7 @@ npm run knex migrate:latest
 npm run knex seed:run
 
 # Start the server
-nodemon
+nodemon src/server
 ```
 
 ### Update development environment
@@ -122,7 +122,7 @@ raven.dsn=https://...
 It's best to install nodemon globally and use that to run the project so that the server restarts automatically on any change:
 
 ```bash
-nodemon
+nodemon src/server
 ```
 
 
