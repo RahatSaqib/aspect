@@ -1,4 +1,4 @@
-module.exports = require('../db').migration(up, down)
+module.exports = require('../src/db').migration(up, down)
 
 function* up(knex){
 
