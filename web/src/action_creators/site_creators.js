@@ -1,5 +1,7 @@
 import Immutable from 'immutable'
+import { stringify } from 'querystring'
 
+import { aspectFetch } from '../utils/fetch'
 import { addError } from './error_creators'
 import types from './../constants/action_types'
 
@@ -27,25 +29,13 @@ export function fetchSites(filters = Immutable.Map({ name: '' }), sortCol = 'nam
 
     dispatch(requestSites(sortCol, sortDir, page, pageSize, filters))
 
-    // FIXME: return aspectFetch(`/site?${stringify({
-    return new Promise((resolve) => {
-      setTimeout(() => {
-        resolve({
-          data: [{
-            name: 'Y*&T^TFYU',
-            lga: 'CA',
-            numberOfDevices: 10
-          }, {
-            name: 'MKNJBHSAD@',
-            lga: 'NY',
-            numberOfDevices: 19
-          }],
-          length: 2,
-          ok: true,
-          total: 2
-        })
-      }, 500)
-    })
+    return aspectFetch(`/site?${stringify({
+      sortCol,
+      sortDir,
+      page,
+      size: pageSize,
+      ...filters.toJS()
+    })}`)
       .then(json => dispatch(receiveSites(json)))
       .catch(err => {
         dispatch(addError('Loading sites failed', err.message, err))

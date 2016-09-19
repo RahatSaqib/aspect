@@ -2,7 +2,7 @@ module.exports = require('../../src/db').seed(seed)
 
 const _ = require('lodash')
 const millisInHour = 1000*60*60
-const locationNumber = 10
+const siteNumber = 10
 const deviceNumber = 50
 
 function* seed(knex){
@@ -56,14 +56,14 @@ function* seed(knex){
     name: 'GeneXpert'
   })
 
-  let locationIds = []
-  for(let i = 1; i < locationNumber + 1; i++){
-    let locationId = yield knex('location').insert(Object.assign({
-      name: 'Location '+i,
+  let siteIds = []
+  for(let i = 1; i < siteNumber + 1; i++){
+    let siteId = yield knex('site').insert(Object.assign({
+      name: 'Site '+i,
       shortname: 'l'+i,
       identifier: i*31
     }, auditFields))
-    locationIds.push(locationId)
+    siteIds.push(siteId)
   }
 
   let devices = _.range(1, deviceNumber+1).map(i => (
@@ -71,7 +71,7 @@ function* seed(knex){
       name: 'Device '+i,
       shortname: 'd'+i,
       device_type_id: deviceTypeId,
-      location_id: locationIds[i % locationNumber],
+      site_id: siteIds[i % siteNumber],
       created_on: new Date(+now - 3*i*millisInHour),
       updated_on: new Date(+now - i*millisInHour),
       last_ping_on: new Date(+now - i*millisInHour/3)
