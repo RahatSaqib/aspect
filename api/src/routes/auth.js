@@ -6,7 +6,7 @@ let Boom = require('boom')
 let Joi = require('joi')
 
 let config = require('../config')
-let { knex, query } = require('../db')
+let { query } = require('../db')
 let { asyncHandler } = require('../util')
 
 module.exports = [
@@ -132,7 +132,7 @@ function* authenticate(request){
 function* refreshToken(request){
   // find the token in the db
   let {clientId, token} = request.payload
-  let data = yield knex('refresh_token as rt')
+  let data = yield query('Find existing token for client ID').from('refresh_token as rt')
     .innerJoin('user as u', 'rt.user_id', 'u.id')
     .innerJoin('person as p', 'u.id', 'p.user_id')
     .where({client_id: clientId, token, revoked: 0})
@@ -153,13 +153,12 @@ function* refreshToken(request){
   let expires = new Date(now.getTime() + 7 * 86400000) // 7 days from now
   let refreshToken = crypto.randomBytes(48).toString('base64')
 
-  yield knex('refresh_token')
+  yield query('Update refresh token expiry date').from('refresh_token')
     .where({token})
     .update({token: refreshToken, expires})
 
   return getToken(config, data.userId, data.name, refreshToken, clientId, data.culture)
 }
-
 
 // generate a new jwt
 function getToken(config, userId, userName, refreshToken, clientId, culture) {
