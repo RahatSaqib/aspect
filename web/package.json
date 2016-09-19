@@ -78,6 +78,7 @@
     "webpack-manifest-plugin": "^1.0.1"
   },
   "dependencies": {
+    "classnames": "^2.2.5",
     "es6-promise": "^3.2.1",
     "global": "^4.3.0",
     "http-client": "^4.1.0",
