@@ -80,7 +80,7 @@ function* up(knex){
     person.string('email2', 500)
     person.string('phone', 45)
     person.string('cell', 45)
-    // TODO should we move to location/geography table and share with site location?
+    // TODO should we move to geography table and share with site?
     person.integer('country_id').unsigned()
       .index().references('id').inTable('country')
     person.integer('state_id').unsigned()
@@ -140,32 +140,32 @@ function* up(knex){
     // used to uniquely identify devices and still to be discussed
   })
 
-  yield knex.schema.createTable('location', location => {
-    location.increments('id')
-    location.string('name').notNullable()
-    location.string('shortname', 45)
-    location.string('identifier')
-    location.string('notes', 2000)
-    location.integer('country_id').unsigned()
+  yield knex.schema.createTable('site', site => {
+    site.increments('id')
+    site.string('name').notNullable()
+    site.string('shortname', 45)
+    site.string('identifier')
+    site.string('notes', 2000)
+    site.integer('country_id').unsigned()
       .index().references('id').inTable('country')
-    location.integer('state_id').unsigned()
+    site.integer('state_id').unsigned()
       .index().references('id').inTable('state')
-    location.integer('lga_id').unsigned()
+    site.integer('lga_id').unsigned()
       .index().references('id').inTable('lga')
-    location.charset('utf8')
+    site.charset('utf8')
     // TODO do we want to mess with a city table?
-    location.string('city')
-    location.string('street1')
-    location.string('street2')
-    location.string('zip', 45)
-    location.float('longitude', 10, 6)
-    location.float('latitude', 10, 6)
-    location.string('timezone_id', 45)
-    location.integer('hours_start')
-    location.integer('hours_end')
-    addCreateFields(location)
-    addUpdateFields(location)
-    location.charset('utf8')
+    site.string('city')
+    site.string('street1')
+    site.string('street2')
+    site.string('zip', 45)
+    site.float('longitude', 10, 6)
+    site.float('latitude', 10, 6)
+    site.string('timezone_id', 45)
+    site.integer('hours_start')
+    site.integer('hours_end')
+    addCreateFields(site)
+    addUpdateFields(site)
+    site.charset('utf8')
   })
 
   yield knex.schema.createTable('device', device => {
@@ -177,8 +177,8 @@ function* up(knex){
     device.string('serial')
     device.string('host_id')
     device.string('computer_id')
-    device.integer('location_id').unsigned().notNullable()
-      .index().references('id').inTable('location')
+    device.integer('site_id').unsigned().notNullable()
+      .index().references('id').inTable('site')
     device.string('name').notNullable()
     device.string('shortname', 45)
     device.string('notes', 1200)
@@ -210,20 +210,20 @@ function* up(knex){
     device.charset('utf8')
   })
 
-  yield knex.schema.createTable('device_location_history', history => {
+  yield knex.schema.createTable('device_site_history', history => {
     history.integer('device_id').unsigned().notNullable()
       .index().references('id').inTable('device')
-    history.integer('location_id').unsigned().notNullable()
-      .index().references('id').inTable('location')
+    history.integer('site_id').unsigned().notNullable()
+      .index().references('id').inTable('site')
     addCreateFields(history)
-    history.primary(['device_id', 'location_id'])
+    history.primary(['device_id', 'site_id'])
     history.charset('utf8')
   })
 
   yield knex.schema.createTable('router', router => {
     router.increments('id')
-    router.integer('location_id').unsigned().notNullable()
-      .index().references('id').inTable('location')
+    router.integer('site_id').unsigned().notNullable()
+      .index().references('id').inTable('site')
     router.string('number', 45)
     // TODO worth creating a SIM card table and changing
     // to sim_1 and sim_2?  (or many to many?)
@@ -242,14 +242,14 @@ function* up(knex){
     router.charset('utf8')
   })
 
-  // TODO are person_country _device _level _lga _location _state replaced with data groups/roles?
+  // TODO are person_country _device _level _lga _site _state replaced with data groups/roles?
 }
 
 function* down(knex){
   yield knex.schema.dropTable('router')
-  yield knex.schema.dropTable('device_location_history')
+  yield knex.schema.dropTable('device_site_history')
   yield knex.schema.dropTable('device')
-  yield knex.schema.dropTable('location')
+  yield knex.schema.dropTable('site')
   yield knex.schema.dropTable('device_type')
   yield knex.schema.dropTable('refresh_token')
   yield knex.schema.dropTable('user_role')
