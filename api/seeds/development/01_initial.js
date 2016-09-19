@@ -1,4 +1,4 @@
-module.exports = require('../../db').seed(seed)
+module.exports = require('../../src/db').seed(seed)
 
 const _ = require('lodash')
 const millisInHour = 1000*60*60
