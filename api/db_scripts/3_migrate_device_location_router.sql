@@ -1,8 +1,8 @@
 set @bpCountryId = 1;
 set @aspectCountryId = 1;
 
--- import locations
-INSERT INTO aspect.location (name, shortname, identifier, country_id, state_id, lga_id, city,
+-- import locations (=sites)
+INSERT INTO aspect.site (name, shortname, identifier, country_id, state_id, lga_id, city,
   street1, street2, zip, longitude, latitude, timezone_id, hours_start, hours_end,
   created_on, created_by, updated_on, updated_by)
 select  ifnull(Description, dep.HostId) as Name, ShortName, dep.DeploymentId as Identifier,
@@ -19,11 +19,11 @@ left outer join aspect.lga sl on sl.name = l.name and ls.countryId = @bpCountryI
 inner join aspect.user auc on dep.InsertedBy = auc.name
 inner join aspect.user auu on dep.updatedby = auu.name
 where dep.countryId = @bpCountryId
-and ifnull(dep.Description, dep.HostId) not in (select name from aspect.location where country_id = @aspectCountryId);
+and ifnull(dep.Description, dep.HostId) not in (select name from aspect.site where country_id = @aspectCountryId);
 
 
 -- import inventory location
-INSERT INTO aspect.location (name, shortname, identifier, country_id, state_id, lga_id, city,
+INSERT INTO aspect.site (name, shortname, identifier, country_id, state_id, lga_id, city,
   street1, street2, zip, longitude, latitude, timezone_id, hours_start, hours_end,
   created_on, created_by, updated_on, updated_by)
 select  il.name, null, il.InventoryLocationId as Identifier,
@@ -40,11 +40,11 @@ left outer join aspect.lga sl on sl.name = l.name and ls.countryId = @bpCountryI
 inner join aspect.user auc on il.InsertedBy = auc.name
 inner join aspect.user auu on il.updatedby = auu.name
 where il.countryId = @bpCountryId
-and il.name not in (select name from aspect.location where country_id = @aspectCountryId);
+and il.name not in (select name from aspect.site where country_id = @aspectCountryId);
 
 
 -- deployments/devices
-INSERT INTO aspect.device (device_type_id, id1,id2,id3,id4,serial,host_id,computer_id,location_id,
+INSERT INTO aspect.device (device_type_id, id1,id2,id3,id4,serial,host_id,computer_id,site_id,
   name,shortname,notes,hide_on_dashboard,last_ping_on,
   last_ping_from,computer_culture, computer_os, computer_timezone,
   last_calibrated, put_in_service, put_in_service_source, db_version,
@@ -55,7 +55,7 @@ select adt.id, dev.ComputerId as id1, concat(concat(c.Abbreviation, '_'), concat
         concat(concat(c.Abbreviation, '_'), dev.Serial) as id3,
         concat(concat(c.Abbreviation, '_'), dev.HostId) as id4,
         dev.Serial, dev.HostId, dev.ComputerId,
-        l.id as location_id, ifnull(dep.description, dep.HostId) as name, dep.shortname, dep.notes,
+        l.id as site_id, ifnull(dep.description, dep.HostId) as name, dep.shortname, dep.notes,
         HideOnDashboard,
         lastpingon, lastpingfrom, ComputerCulture, computerosversion,
         computertimezoneid, LastCalibrated, PutInService, PutInServiceSource,
@@ -66,7 +66,7 @@ select adt.id, dev.ComputerId as id1, concat(concat(c.Abbreviation, '_'), concat
         case when dep.approved = 1 then 1 else 2 end, dep.approvedon, aua.id as approved_by,
         dep.insertedon, auc.id, dep.UpdatedOn, auu.id
 from bigpicture.deployment dep
-inner join aspect.location l on l.Identifier = dep.DeploymentId
+inner join aspect.site l on l.Identifier = dep.DeploymentId
 inner join bigpicture.device dev on dep.DeploymentId = dev.CurrentDeploymentId
 inner join aspect.country c on c.id = @aspectCountryId
 left outer join aspect.user aua on dep.approvedby = aua.name
@@ -82,18 +82,18 @@ and (concat(concat(c.Abbreviation, '_'), dev.HostId) is null OR concat(concat(c.
 
 
 -- deployment history
-insert aspect.device_location_history (device_id, location_id, created_on, created_by)
-select dev.id, dev.location_id, now(), 1
+insert aspect.device_site_history (device_id, site_id, created_on, created_by)
+select dev.id, dev.site_id, now(), 1
 from aspect.device dev
-where dev.id not in (select device_id from aspect.device_location_history);
+where dev.id not in (select device_id from aspect.device_site_history);
 
 
 
 -- router
-insert into aspect.router (location_id, number, sim_reg_number, sim_reg_number_2,
+insert into aspect.router (site_id, number, sim_reg_number, sim_reg_number_2,
 sim_phone_number, sim_phone_number_2, sim_provider, sim_provider_2,
 sim_suffix, sim_suffix_2, sim_prefix, sim_prefix_2, created_by, created_on, updated_by, updated_on)
-select distinct dev.location_id, RouterNumber, SimCardRegistrationNumber, SimCardRegistrationNumber2,
+select distinct dev.site_id, RouterNumber, SimCardRegistrationNumber, SimCardRegistrationNumber2,
         SimCardPhoneNumber, SimCardPhoneNumber2, SimCardProvider, SimCardProvider2,
         SimCardSuffix, SimCardSuffix2, SimCardPrefix, SimCardPrefix2,
         1, now(), 1, now()
@@ -104,6 +104,6 @@ inner join aspect.device dev on ifnull(dev.id1, 'asdfZY') = bpd.ComputerId OR
                                 ifnull(dev.id2, 'asdfZY') = concat(concat(c.Abbreviation, '_'), concat(bpd.Serial, concat('_', dep.HostId))) OR
                                 ifnull(dev.id3, 'asdfZY') = concat(concat(c.Abbreviation, '_'), bpd.Serial) OR
                                 ifnull(dev.id4, 'asdfZY') = concat(concat(c.Abbreviation, '_'), bpd.HostId)
-inner join aspect.location l on dev.location_id = l.id
+inner join aspect.site l on dev.site_id = l.id
 where dep.countryId = @bpCountryId
 and l.country_id = @aspectCountryId
