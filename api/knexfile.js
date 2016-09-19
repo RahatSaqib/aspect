@@ -1,4 +1,4 @@
-let config = require('./config')
+let config = require('./src/config')
 
 module.exports = {
   client: 'mysql',
