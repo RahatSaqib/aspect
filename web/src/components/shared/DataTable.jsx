@@ -1,4 +1,5 @@
 // Imports from packages
+import _ from 'lodash'
 import cx from 'classnames'
 import React from 'react'
 
@@ -158,7 +159,7 @@ export class DataTable extends React.PureComponent {
               <TableRow key={item.get('id') }>
                 {this.props.columns.map((col) => (
                   <TableRowColumn key={item.get(col.db) } className={ col.hideOnXs ? 'pure-hidden-xs' : '' } >
-                    {col.format ? col.format(item.get(col.db)) : item.get(col.db) }
+                    {(col.format || _.identity)(item.get(col.db))}
                   </TableRowColumn>
                 )) }
               </TableRow>
