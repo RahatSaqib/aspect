@@ -17,7 +17,26 @@ module.exports = [{
       }, validateSortPageParams('name', 'status', 'createdOn', 'lastSeen', 'totalTests'))
     }
   }
+}, {
+  method: 'GET',
+  path: '/device/{deviceId}',
+  handler: asyncHandler(showDevice),
+  config: {
+    description: 'Device Detail',
+    notes: 'Detail of a device',
+    validate: {
+      params: {
+        deviceId: Joi.string().description('Device id')
+      }
+    }
+  }
 }]
+
+const SELECT_FIELDS = [
+  'id', 'name', 'shortname', 'created_on', 'last_ping_on', 'updated_on as last_seen',
+  knex.raw('\'Active\' as status'),
+  knex.raw('id * 134 as total_tests')
+]
 
 function* listDevices(request){
   let {query} = request
@@ -31,13 +50,25 @@ function* listDevices(request){
   let getItems = knex('device')
     .modify(filterParams, query, 'name')
     .modify(sortPageParams, query, 'name')
-    .select('id', 'name', 'shortname', 'created_on', 'last_ping_on', 'updated_on as last_seen',
-      knex.raw('\'Active\' as status'), knex.raw('id * 134 as total_tests'))
+    .select(SELECT_FIELDS)
 
   // return result when both queries are finished
   let [{count: total}, data] = yield Promise.all([getCount, getItems])
 
   let result = {ok: true, total, length: data.length, data}
-  
+
+  return camelize(result)
+}
+
+function* showDevice(request) {
+  const {params} = request
+
+  // get item
+  const [item] = yield knex('device')
+    .where('id', params.deviceId)
+    .select(SELECT_FIELDS)
+
+  const result = {ok: true, data: item}
+
   return camelize(result)
 }
