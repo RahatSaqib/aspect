@@ -1,4 +1,5 @@
 let camelize = require('camelize')
+let _ = require('lodash')
 let Promise = require('bluebird')
 let Joi = require('joi')
 let { knex, filterParams, sortPageParams } = require('../db')
@@ -20,12 +21,20 @@ module.exports = [{
 }]
 
 function* listSites(request){
-  let {query} = request
+  let {query, auth} = request
+
+  // get data constraints
+  let dataConstraints = yield getConstraints(auth.credentials.name)
+
+  // get sites subquery
 
   // get total count for paging
-  let getCount = knex('site')
+  let getCount = knex('site as s')
     .modify(filterParams, query, 'name')
-    .count('id as count').first()
+    .leftOuterJoin('state as st', 's.state_id', 'st.id')
+    .leftOuterJoin('lga as l', 's.lga_id', 'l.id')
+    .modify(addConstraints, dataConstraints, {state: 'st', lga: 'l'})
+    .count('s.id as count').first()
 
   // get rows
   let getItems = knex('site as s')
@@ -33,6 +42,7 @@ function* listSites(request){
     .leftOuterJoin('lga as l', 's.lga_id', 'l.id')
     .modify(filterParams, query, 'name', 's.name')
     .modify(sortPageParams, query, 'name')
+    .modify(addConstraints, dataConstraints, {state: 'st', lga: 'l'})
     .select('s.id', 's.name', 's.shortname',
       'st.name as state', 'l.name as lga',
       's.created_on', knex.raw('s.id + 2 as total_devices'))
@@ -43,4 +53,32 @@ function* listSites(request){
   let result = {ok: true, total, length: data.length, data}
 
   return camelize(result)
+}
+
+function getConstraints(username){
+  return knex('data_filter as f')
+    .innerJoin('role as r', 'f.id', 'r.data_filter_id')
+    .innerJoin('user_role as ur', 'r.id', 'ur.role_id')
+    .innerJoin('user as u', 'ur.user_id', 'u.id')
+    .where({'u.name': username})
+    .select('f.constraint')
+    .map(f => JSON.parse(f.constraint))
+}
+
+function addConstraints(queryBuilder, dataConstraints, aliases = {state: 'state', lga: 'lga'}){
+  if(!dataConstraints || !dataConstraints.length){
+    return
+  }
+
+  queryBuilder.where(function(){
+    for(let constraint of dataConstraints){
+      if(constraint.state){
+        this.orWhere(_.mapKeys(constraint.state, (v, k) => `${aliases.state}.${k}`))
+      }
+
+      if(constraint.lga){
+        this.orWhere(_.mapKeys(constraint.lga, (v, k) => `${aliases.lga}.${k}`))
+      }
+    }
+  })
 }
