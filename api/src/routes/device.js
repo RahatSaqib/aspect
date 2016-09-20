@@ -3,6 +3,7 @@ let Promise = require('bluebird')
 let Joi = require('joi')
 let { knex, filterParams, sortPageParams } = require('../db')
 let { asyncHandler, validateSortPageParams } = require('../util')
+let { getConstraints, addConstraints } = require('../constraints')
 
 module.exports = [
   {
@@ -56,21 +57,21 @@ module.exports = [
 ]
 
 const SELECT_LIST_FIELDS = [
-  'id', 'name', 'shortname', 'created_on', 'last_ping_on', 'updated_on as last_seen',
+  'd.id', 'd.name', 'd.shortname', 'd.created_on', 'd.last_ping_on', 'd.updated_on as last_seen',
   knex.raw('\'Active\' as status'),
-  knex.raw('id * 134 as total_tests')
+  knex.raw('d.id * 134 as total_tests')
 ]
 
 const SELECT_SHOW_FIELDS = [
-  'id', 'name', 'shortname', 'created_on', 'last_ping_on', 'updated_on as last_seen',
+  'd.id', 'd.name', 'd.shortname', 'd.created_on', 'd.last_ping_on', 'd.updated_on as last_seen',
   knex.raw('\'Active\' as status'),
-  knex.raw('id * 134 as total_tests'),
-  'site_id',
+  knex.raw('d.id * 134 as total_tests'),
+  'd.site_id',
   // TODO: First Connected
   // TODO: First Approved On
   // TODO: First Approved By
-  'notes',
-  'serial'
+  'd.notes',
+  'd.serial'
 ]
 
 function changeIdToString(item) {
@@ -81,16 +82,24 @@ function changeIdToString(item) {
 }
 
 function* listDevices(request){
-  let {query} = request
+  let {query, auth} = request
+
+  // get data constraints
+  let dataConstraints = yield getConstraints(auth.credentials.name)
+
+  let deviceQuery = knex('device as d')
+    .leftOuterJoin('site as s', 'd.site_id', 's.id')
+    .leftOuterJoin('state as st', 's.state_id', 'st.id')
+    .leftOuterJoin('lga as l', 's.lga_id', 'l.id')
+    .modify(filterParams, query, 'name')
+    .modify(addConstraints, dataConstraints, {state: 'st', lga: 'l'})
 
   // get total count for paging
-  let getCount = knex('device')
-    .modify(filterParams, query, 'name')
-    .count('id as count').first()
+  let getCount = deviceQuery.clone()
+    .count('d.id as count').first()
 
   // get rows
-  let getItems = knex('device')
-    .modify(filterParams, query, 'name')
+  let getItems = deviceQuery.clone()
     .modify(sortPageParams, query, 'name')
     .select(SELECT_LIST_FIELDS)
 
