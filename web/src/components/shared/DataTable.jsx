@@ -162,11 +162,15 @@ export class DataTable extends React.PureComponent {
             stripedRows={this.state.stripedRows}>
             {items.currentIdList.map((itemId) => (
               <TableRow key={itemId}>
-                {this.props.columns.map((col) => (
-                  <TableRowColumn key={items.getIn(['byId', itemId, col.db])} className={ col.hideOnXs ? 'pure-hidden-xs' : '' } >
-                    {(col.format || _.identity)(items.getIn(['byId', itemId, col.db]))}
-                  </TableRowColumn>
-                )) }
+                {this.props.columns.map((col) => {
+                  const row = items.getIn(['byId', itemId])
+                  const data = row.get(col.db)
+                  return (
+                    <TableRowColumn key={data} className={ col.hideOnXs ? 'pure-hidden-xs' : '' } >
+                      {(col.format || _.identity)(data, row)}
+                    </TableRowColumn>
+                  )
+                })}
               </TableRow>
             )) }
           </TableBody>

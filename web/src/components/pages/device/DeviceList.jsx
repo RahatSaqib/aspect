@@ -5,6 +5,7 @@ import {
   injectIntl,
   defineMessages
 } from 'react-intl'
+import { Link } from 'react-router'
 import { bindActionCreators } from 'redux'
 import { connect } from 'react-redux'
 import Helmet from 'react-helmet'
@@ -115,7 +116,8 @@ export class DeviceList extends React.PureComponent {
                     items={ this.props.items }
                     table={ this.props.table }
                     columns={[
-                      { db: 'name', title: formatMessage(messages.deviceName) },
+                      { db: 'name', title: formatMessage(messages.deviceName),
+                          format: (data, row) => <Link to={`/device/${row.get('id')}`}>{data}</Link> },
                       { db: 'status', title: formatMessage(messages.status), hideOnXs: true },
                       { db: 'createdOn', title: formatMessage(messages.reportingFor), hideOnXs: true,
                           format: (data) => <FormattedDate date={ data } fromNow={true} omitSuffix={true} culture={ formatMessage(messages.culture) } /> },
