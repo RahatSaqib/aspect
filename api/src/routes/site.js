@@ -28,10 +28,14 @@ function* listSites(request){
     .count('id as count').first()
 
   // get rows
-  let getItems = knex('site')
-    .modify(filterParams, query, 'name')
+  let getItems = knex('site as s')
+    .leftOuterJoin('state as st', 's.state_id', 'st.id')
+    .leftOuterJoin('lga as l', 's.lga_id', 'l.id')
+    .modify(filterParams, query, 'name', 's.name')
     .modify(sortPageParams, query, 'name')
-    .select('id', 'name', 'shortname', knex.raw('\'Ohio\' as state'), knex.raw('\'Wayne\' as lga'), 'created_on', knex.raw('id + 2 as total_devices'))
+    .select('s.id', 's.name', 's.shortname',
+      'st.name as state', 'l.name as lga',
+      's.created_on', knex.raw('s.id + 2 as total_devices'))
 
   // return result when both queries are finished
   let [{count: total}, data] = yield Promise.all([getCount, getItems])
