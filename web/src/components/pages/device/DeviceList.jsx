@@ -112,6 +112,7 @@ export class DeviceList extends React.PureComponent {
           </Toolbar>
         </form>
         <DataTable  handleFetch={ this.props.fetchDevices }
+                    items={ this.props.items }
                     table={ this.props.table }
                     columns={[
                       { db: 'name', title: formatMessage(messages.deviceName) },
@@ -130,6 +131,7 @@ export class DeviceList extends React.PureComponent {
 
 function mapStateToProps(state) {
   return {
+    items: state.device.items,
     table: state.device.table
   }
 }

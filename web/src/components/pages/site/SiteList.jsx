@@ -98,6 +98,7 @@ export class SiteList extends React.PureComponent {
         </form>
 
         <DataTable  handleFetch={ this.props.fetchSites }
+                    items={ this.props.items }
                     table={ this.props.table }
                     columns={[{ db: 'name', title: formatMessage(messages.siteName) },
                               { db: 'state', title: formatMessage(messages.state) },
@@ -110,6 +111,7 @@ export class SiteList extends React.PureComponent {
 
 function mapStateToProps(state) {
   return {
+    items: state.site.items,
     table: state.site.table
   }
 }

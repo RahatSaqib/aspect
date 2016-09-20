@@ -16,6 +16,10 @@ export class DataTable extends React.PureComponent {
 
   static propTypes = {
     handleFetch: React.PropTypes.func.isRequired,
+    items: React.PropTypes.shape({
+      byId: React.PropTypes.object.isRequired,
+      currentIdList: React.PropTypes.object.isRequired
+    }).isRequired,
     table: React.PropTypes.shape({
       loading: React.PropTypes.bool.isRequired,
       sortCol: React.PropTypes.string.isRequired,
@@ -23,8 +27,7 @@ export class DataTable extends React.PureComponent {
       filters: React.PropTypes.object.isRequired/* TODO */,
       page: React.PropTypes.number.isRequired,
       pageSize: React.PropTypes.number.isRequired,
-      total: React.PropTypes.number.isRequired,
-      items: React.PropTypes.object.isRequired/* TODO */
+      total: React.PropTypes.number.isRequired
     }).isRequired,
     columns: React.PropTypes.array.isRequired
   }
@@ -108,8 +111,10 @@ export class DataTable extends React.PureComponent {
   }
 
   render() {
-
-    const table = this.props.table
+    const {
+      items,
+      table
+    } = this.props
 
     // show loading indicator?
     const loading = table.loading ?
@@ -155,11 +160,11 @@ export class DataTable extends React.PureComponent {
             deselectOnClickaway={this.state.deselectOnClickaway}
             showRowHover={this.state.showRowHover}
             stripedRows={this.state.stripedRows}>
-            {table.items.map((item) => (
-              <TableRow key={item.get('id') }>
+            {items.currentIdList.map((itemId) => (
+              <TableRow key={itemId}>
                 {this.props.columns.map((col) => (
-                  <TableRowColumn key={item.get(col.db) } className={ col.hideOnXs ? 'pure-hidden-xs' : '' } >
-                    {(col.format || _.identity)(item.get(col.db))}
+                  <TableRowColumn key={items.getIn(['byId', itemId, col.db])} className={ col.hideOnXs ? 'pure-hidden-xs' : '' } >
+                    {(col.format || _.identity)(items.getIn(['byId', itemId, col.db]))}
                   </TableRowColumn>
                 )) }
               </TableRow>
