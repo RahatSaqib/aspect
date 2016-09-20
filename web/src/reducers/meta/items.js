@@ -14,6 +14,11 @@ export function receiveList(items, list) {
     .set('currentIdList', nextCurrentIdList)
 }
 
+export function receiveItem(items, item) {
+  return items
+    .mergeDeepIn(['byId', item.get('id')], item)
+}
+
 export const Items = Immutable.Record({
   byId: Immutable.Map(),
   currentIdList: Immutable.List()
