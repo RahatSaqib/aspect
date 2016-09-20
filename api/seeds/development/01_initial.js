@@ -32,7 +32,7 @@ function* seed(knex){
   // Create geographic hierarchy
   let countries = {}
   let geoDatas = []
-  let siteIds = []
+  let siteDatas = []
   for(let country of geography.countries){
     let countryData = _.pick(country, [
       'abbreviation', 'name', 'a3', 'culture', 'country_code',
@@ -72,15 +72,16 @@ function* seed(knex){
         for(let siteNumber of _.range(1, 6 - (lgaData.id % 5))){
           let siteData = Object.assign({
             name: `${lga.name} ${country.lga_label} ${state.name} #${siteNumber}`,
-            shortname: `${lga.name} Site`,
+            shortname: `${lga.name}, ${state.abbreviation} #${siteNumber}`,
             identifier: `Site ${siteNumber * lgaData.id}`,
             city: `${lga.name} City`,
             street1: `${lgaData.id} Main Street`,
             zip: `12345-${lgaData.id}`
           }, geoData, auditFields)
 
-          siteData.id = yield knex('site').insert(siteData)
-          siteIds.push(siteData.id)
+          let [siteId] = yield knex('site').insert(siteData)
+          siteData.id = siteId
+          siteDatas.push(siteData)
         }
       }
     }
@@ -115,16 +116,18 @@ function* seed(knex){
     name: 'GeneXpert'
   })
 
-  let devices = _.range(1, deviceNumber+1).map(i => (
-    Object.assign({}, auditFields, {
-      name: 'Device '+i,
+  let devices = _.range(1, deviceNumber+1).map(i => {
+    let siteData = siteDatas[i % siteDatas.length]
+    return Object.assign({}, auditFields, {
+      name: `D${i} ${siteData.shortname}`,
       shortname: 'd'+i,
       device_type_id: deviceTypeId,
-      site_id: siteIds[i % siteIds.length],
+      site_id: siteData.id,
       created_on: new Date(+now - 3*i*millisInHour),
       updated_on: new Date(+now - i*millisInHour),
       last_ping_on: new Date(+now - i*millisInHour/3)
-    })))
+    })
+  })
   yield knex('device').insert(devices)
 
   // data filters
