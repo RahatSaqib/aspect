@@ -32,32 +32,4 @@ describe('Person routes',function(){
       })
     })
   })
-
-  describe('GET /person/current',function(){
-    const path = '/api/person/current'
-    shared.checkToken(server, path)
-
-    it('should return the person object linked to the currently logged in user\'s profile', function(done){
-      server
-        .get(path)
-        .set('Authorization', 'Bearer ' + shared.token)
-        .end(function(err,res){
-          assert.equal(res.status, 200)
-          assert.typeOf(res.body, 'Object')
-          assert.property(res.body, 'data')
-          assert.typeOf(res.body.data, 'array')
-          assert.equal(res.body.data.length, 1)
-          const personFieldNames = ['id', 'userId', 'name', 'title', 'email', 'email2',
-            'phone', 'cell', 'countryId', 'stateId', 'lgaId', 'personLevelId',
-            'notes', 'lastCountryId', 'timezone', 'hidePatientId', 'hideSampleId',
-            'hideNotes', 'culture', 'acceptedLicenseOn', 'createdOn', 'createdBy',
-            'updatedOn', 'updatedBy']
-          _.each(personFieldNames, function(fieldName) {
-            assert.property(res.body.data[0], fieldName)
-          })
-          done()
-        })
-    })
-  })
-
 })
