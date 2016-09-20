@@ -1,0 +1,3 @@
+.Content {
+  composes: Content from '../../shared/Shared.css';
+}

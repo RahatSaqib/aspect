@@ -12,6 +12,7 @@ import Helmet from 'react-helmet'
 
 // Our own imports
 import MiniChart from '../../shared/MiniChart'
+import styles from './Dashboard.css'
 
 const messages = defineMessages({
   title: {
@@ -37,7 +38,7 @@ export class Dashboard extends React.PureComponent {
     const cultureMessage = formatMessage(messages.culture)
 
     return (
-      <div className="content">
+      <div className={styles.Content}>
         <Helmet title={formatMessage(messages.title)} titleTemplate="%s - Aspect" defaultTitle="Aspect" />
         <div className="pure-g">
           <div className="pure-u-lg-1-4 pure-u-md-1-3 pure-u-sm-1-2">
