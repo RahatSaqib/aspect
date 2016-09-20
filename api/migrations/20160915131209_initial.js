@@ -18,34 +18,12 @@ function* up(knex){
       .index().references('id').inTable('org_unit')
   })
 
-  yield knex.schema.createTable('data_group', dataGroup => {
-    dataGroup.increments('id')
-    dataGroup.string('name').notNullable()
-
-    // Data Type (should this be another table: type, value, data_group_id?)
-    // Clinical Access Type: Result+PII; Result; Aggregate; or None
-    dataGroup.string('clinical_type', 48).notNullable()
-    // Operational Access Type: Current; Historical; Aggregate; or None
-    dataGroup.string('operational_type', 48).notNullable() // Result+PII; Result; Aggregate; or None
-    // Inventory Access Type: Current; Historical; Aggregate; or None
-    dataGroup.string('inventory_type', 48).notNullable() // Result+PII; Result; Aggregate; or None
-
-    dataGroup.integer('org_unit_id').unsigned()
-      .index().references('id').inTable('org_unit')
-  })
-
-  yield knex.schema.createTable('data_constraint', dataConstraint => {
-    dataConstraint.increments('id')
-
-    // the constraint name (name = value)
-    dataConstraint.string('name').notNullable()
-    // Operator (= > < etc)
-    dataConstraint.string('operator').notNullable()
-    // Value
-    dataConstraint.string('value').notNullable()
-
-    dataConstraint.integer('data_group_id').unsigned()
-      .index().references('id').inTable('data_group')
+  yield knex.schema.createTable('data_filter', dataFilter => {
+    dataFilter.increments('id')
+    dataFilter.string('name').notNullable()
+    // knex does not yet support JSON for MySQL
+    // dataFilter.json('constraint')
+    dataFilter.specificType('constraint', 'JSON').notNullable()
   })
 
   yield knex.raw('SET foreign_key_checks = 0')
@@ -108,16 +86,6 @@ function* up(knex){
     lga.charset('utf8')
   })
 
-  // TODO person_level replaced by permissions?
-  yield knex.schema.createTable('person_level', personLevel => {
-    personLevel.increments('id')
-    personLevel.string('name', 45).notNullable()
-    personLevel.integer('sort_order')
-    personLevel.string('token', 45).notNullable()
-    personLevel.integer('level').notNullable()
-    personLevel.charset('utf8')
-  })
-
   yield knex.schema.createTable('person', person => {
     person.increments('id')
     person.integer('user_id').unsigned()
@@ -135,8 +103,6 @@ function* up(knex){
       .index().references('id').inTable('state')
     person.integer('lga_id').unsigned()
       .index().references('id').inTable('lga')
-    person.integer('person_level_id').unsigned()
-      .index().references('id').inTable('person_level')
     person.string('notes', 1200)
     person.integer('last_country_id').unsigned()
       .index().references('id').inTable('country')
@@ -157,9 +123,31 @@ function* up(knex){
     role.string('name').notNullable()
     role.integer('partner_id').unsigned()
       .index().references('id').inTable('partner')
-    role.integer('data_group_id').unsigned()
-      .index().references('id').inTable('data_group')
+    role.integer('data_filter_id').unsigned()
+      .index().references('id').inTable('data_filter')
+    role.integer('org_unit_id').unsigned()
+      .index().references('id').inTable('org_unit')
     role.charset('utf8')
+  })
+
+  yield knex.schema.createTable('permission', permission => {
+    permission.increments('id')
+    // Clinical Access Type: Result+PII; Result; Aggregate; or None
+    // Operational Access Type: Current; Historical; Aggregate; or None
+    // dataGroup.string('operational_type', 48).notNullable() // Result+PII; Result; Aggregate; or None
+    // Inventory Access Type: Current; Historical; Aggregate; or None
+    permission.string('name').notNullable()
+    // e.g. Clinical, Inventory, Operational, Device, etc.
+    permission.string('activity').notNullable()
+    // e.g.: View, Modify, Admin etc
+    permission.string('activity_type').notNullable()
+    // e.g: Result, aggreagate, none
+    permission.string('data_type').notNullable()
+
+    // TODO many to many?
+    permission.integer('role_id').unsigned()
+      .index().references('id').inTable('role')
+    permission.charset('utf8')
   })
 
 
@@ -310,15 +298,14 @@ function* down(knex){
   yield knex.schema.dropTable('device_type')
   yield knex.schema.dropTable('refresh_token')
   yield knex.schema.dropTable('user_role')
+  yield knex.schema.dropTable('permission')
   yield knex.schema.dropTable('role')
   yield knex.schema.dropTable('person')
-  yield knex.schema.dropTable('person_level')
   yield knex.schema.dropTable('lga')
   yield knex.schema.dropTable('state')
   yield knex.schema.dropTable('country')
   yield knex.schema.dropTable('user')
-  yield knex.schema.dropTable('data_constraint')
-  yield knex.schema.dropTable('data_group')
+  yield knex.schema.dropTable('data_filter')
   yield knex.schema.dropTable('org_unit')
   yield knex.schema.dropTable('partner')
 }
