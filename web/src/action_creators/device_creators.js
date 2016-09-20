@@ -42,3 +42,31 @@ export function fetchDevices(filters = Immutable.Map({ name: '' }), sortCol = 'n
       })
   }
 }
+
+
+function requestADevice(deviceId) {
+  return {
+    type: types.REQUEST_A_DEVICE,
+    deviceId
+  }
+}
+
+function receiveADevice(json) {
+  return {
+    type: types.RECEIVE_A_DEVICE,
+    item: json.data
+  }
+}
+
+export function fetchADevice(deviceId){
+  return dispatch => {
+
+    dispatch(requestADevice(deviceId))
+
+    return aspectFetch(`/device/${deviceId}`)
+      .then(json => dispatch(receiveADevice(json)))
+      .catch(err => {
+        dispatch(addError(`Loading a device (${deviceId}) failed`, err.message, err))
+      })
+  }
+}
