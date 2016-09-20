@@ -20,7 +20,7 @@ export function loginSuccess(name, culture, lang) {
     name,
     culture,
     lang,
-    drawerOpen: localStorage.isDrawlerOpen()
+    drawerOpen: localStorage.isDrawerOpen()
   }
 }
 
@@ -31,7 +31,7 @@ export function refreshSuccess(name, culture, lang) {
     name,
     culture,
     lang,
-    drawerOpen: localStorage.isDrawlerOpen()
+    drawerOpen: localStorage.isDrawerOpen()
   }
 }
 
@@ -41,7 +41,7 @@ export function hydrateFromLocalStorage() {
     type: types.LOGIN_SUCCESS,
     culture: localStorage.getCulture(),
     lang: localStorage.getLang(),
-    drawerOpen: localStorage.isDrawlerOpen()
+    drawerOpen: localStorage.isDrawerOpen()
   }
 }
 
@@ -71,17 +71,17 @@ export function changeLanguage(lang, culture) {
 
 export function toggleDrawer() {
 
-  localStorage.toggleDrawlerOpen()
+  localStorage.toggleDrawerOpen()
 
   return {
     type: types.TOGGLE_DRAWER,
-    drawerOpen: localStorage.isDrawlerOpen()
+    drawerOpen: localStorage.isDrawerOpen()
   }
 }
 
 export function closeDrawer() {
 
-  localStorage.closeDrawler()
+  localStorage.closeDrawer()
 
   return {
     type: types.TOGGLE_DRAWER,
