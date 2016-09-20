@@ -63,6 +63,7 @@
     "mocha": "^3.0.0",
     "mocha-bamboo-reporter": "^1.1.1",
     "mocha-multi": "^0.9.1",
+    "node-sass": "^3.10.0",
     "npm-run-all": "^3.0.0",
     "null-loader": "^0.1.1",
     "postcss": "^5.1.0",
@@ -70,6 +71,7 @@
     "react-addons-test-utils": "^15.1.0",
     "react-hot-loader": "^1.2.9",
     "react-intl-po": "^1.0.6",
+    "sass-loader": "^4.0.2",
     "static-loader": "^0.1.8",
     "style-loader": "^0.13.0",
     "url-loader": "^0.5.6",
@@ -78,6 +80,7 @@
     "webpack-manifest-plugin": "^1.0.1"
   },
   "dependencies": {
+    "classnames": "^2.2.5",
     "es6-promise": "^3.2.1",
     "global": "^4.3.0",
     "http-client": "^4.1.0",

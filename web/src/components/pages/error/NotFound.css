@@ -1,0 +1,29 @@
+/*Error page styles (404 and other)*/
+.Content {
+  background-color: #BFBFBF;
+  height: 300px;
+  width: 500px;
+  margin: 10% auto 0 auto;
+  text-align: center;
+}
+
+.Content__Title {
+  color: #fff;
+  text-transform: uppercase;
+  font-size: 3rem;
+  font-weight: 200;
+  padding: 40px 0 20px 0;
+}
+
+.Content__HelpBlock {
+  color: #fff;
+  font-size: 1.5rem;
+  font-weight: 200;
+  padding: 0 0 30px 0;
+}
+
+.Content__Button {
+  background-color: #edecec !important;
+  border-radius: 500px;
+  margin: 0 5px;
+}

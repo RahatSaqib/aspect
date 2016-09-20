@@ -11,6 +11,9 @@ import MoreVertIcon from 'material-ui/svg-icons/navigation/more-vert'
 import Badge from 'material-ui/Badge'
 import NotificationsIcon from 'material-ui/svg-icons/social/notifications'
 
+// Our own imports
+import styles from './Nav.css'
+
 class Nav extends React.PureComponent {
 
   static propTypes = {
@@ -24,27 +27,32 @@ class Nav extends React.PureComponent {
 
   render() {
     return (
-      <AppBar className="nav" onLeftIconButtonTouchTap={this.props.handleHamburger}
-        title={ <Link to="/dashboard" >Aspect</Link> }
-        children={
-          <div>
-            <Badge badgeContent={4} primary={true}
-              className="nav-badge">
-              <IconButton tooltip="You have 4 unread notifications">
-                <NotificationsIcon color={'#fff'} />
-              </IconButton>
-            </Badge>
-            <IconMenu iconButtonElement={
-              <IconButton>
-                <MoreVertIcon color={'#fff'} />
-              </IconButton>}>
-              <MenuItem primaryText="English" className="linky" onTouchTap={() => { this.props.handleLanguageChange('en', 'en-US') } } />
-              <MenuItem primaryText="French" className="linky" onTouchTap={() => { this.props.handleLanguageChange('fr', 'fr-FR') } } />
-              <MenuItem primaryText="Help" href="https://admin.gxalert.com" />
-              <MenuItem primaryText="Sign out" className="linky" onTouchTap={ this.props.handleSignOut } />
-            </IconMenu>
-          </div>
-        }/>
+      <AppBar
+        onLeftIconButtonTouchTap={this.props.handleHamburger}
+        title={ <Link className={styles.Brand} to="/dashboard" >Aspect</Link> }
+      >
+        <div>
+          <Badge
+            badgeContent={4}
+            primary={true}
+            className={styles.Badge}
+          >
+            <IconButton tooltip="You have 4 unread notifications">
+              <NotificationsIcon color={'#fff'} />
+            </IconButton>
+          </Badge>
+          <IconMenu iconButtonElement={
+            <IconButton>
+              <MoreVertIcon color={'#fff'} />
+            </IconButton>}
+          >
+            <MenuItem primaryText="English" className={styles.MenuItem} onTouchTap={() => { this.props.handleLanguageChange('en', 'en-US') } } />
+            <MenuItem primaryText="French" className={styles.MenuItem} onTouchTap={() => { this.props.handleLanguageChange('fr', 'fr-FR') } } />
+            <MenuItem primaryText="Help" href="https://admin.gxalert.com" />
+            <MenuItem primaryText="Sign out" className={styles.MenuItem} onTouchTap={ this.props.handleSignOut } />
+          </IconMenu>
+        </div>
+      </AppBar>
     )
   }
 }

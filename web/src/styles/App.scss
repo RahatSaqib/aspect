@@ -1,0 +1,33 @@
+/*
+There are lots of importants in this file. Not ideal, but
+material-ui renders styles inline, so there's no other
+way to override them
+*/
+
+html,
+body,
+body>div {
+    height: 100%;
+}
+
+body {
+    font-family: Roboto, sans-serif;
+    padding: 0;
+    margin: 0;
+    background-color: #f2f2f2;
+}
+
+/*Get rid of ugly yellow background on Chrome login autocomplete*/
+input:-webkit-autofill {
+    box-shadow: 0 0 0 300px white inset !important;
+    -webkit-box-shadow: 0 0 0 300px white inset !important;
+}
+
+/*styles for the grid system*/
+.col-margin {
+    margin: 0 10px 20px 10px;
+}
+
+.clear-fix {
+    clear: both;
+}

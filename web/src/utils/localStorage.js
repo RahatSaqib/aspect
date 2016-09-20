@@ -2,7 +2,7 @@ import window from 'global/window'
 
 const { localStorage } = window
 
-export function isDrawlerOpen() {
+export function isDrawerOpen() {
   return localStorage.drawerOpen === 'true'
 }
 
@@ -11,11 +11,11 @@ export function updateLanguageAndCulture(lang, culture) {
   localStorage.culture = culture
 }
 
-export function toggleDrawlerOpen() {
-  localStorage.drawerOpen = !isDrawlerOpen()
+export function toggleDrawerOpen() {
+  localStorage.drawerOpen = !isDrawerOpen()
 }
 
-export function closeDrawler() {
+export function closeDrawer() {
   localStorage.drawerOpen = false
 }
 

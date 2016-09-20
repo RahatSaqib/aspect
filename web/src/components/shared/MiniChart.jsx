@@ -6,7 +6,7 @@ import Paper from 'material-ui/Paper'
 // Our own imports
 import FormattedNumber from './FormattedNumber'
 
-require('./../../styles/Charts.css')
+require('./../../styles/Charts.scss')
 
 class MiniChart extends React.PureComponent {
 

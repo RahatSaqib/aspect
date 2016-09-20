@@ -16,8 +16,8 @@ import getMuiTheme from 'material-ui/styles/getMuiTheme'
 import translation from '../i18n/translation.json'
 import theme from '../theme'
 
-require('styles/App.css')
-require('styles/pure-grids-responsive-min.css')
+require('styles/App.scss')
+require('styles/pure-grids-responsive-min.scss')
 
 addLocaleData([...en, ...fr])
 

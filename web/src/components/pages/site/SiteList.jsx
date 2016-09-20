@@ -21,6 +21,7 @@ import TextField from 'material-ui/TextField'
 // Our own imports
 import { fetchSites } from '../../../action_creators/site_creators'
 import { DataTable } from '../../shared/DataTable'
+import styles from './SiteList.css'
 
 const messages = defineMessages({
   title: {
@@ -71,15 +72,15 @@ export class SiteList extends React.PureComponent {
     const { formatMessage } = this.props.intl//
 
     return (
-      <div className="content">
+      <div className={styles.Content}>
         <Helmet title={formatMessage(messages.title)} titleTemplate="%s - Aspect" defaultTitle="Aspect" />
         <form onSubmit={ this.handleSubmit }>
-          <Toolbar className={"toolbar"} >
+          <Toolbar className={styles.Toolbar} >
             <ToolbarGroup firstChild={true}>
               <TextField  value={this.state.filters.get('name')}
                           id="name"
                           onChange={ this.filterSitesChange }
-                          className="filter-textfield"
+                          className={styles['Toolbar__TextField--filter']}
                           hintText="Filter by name" />
               <RaisedButton label="Filter" primary={true} onTouchTap={ this.handleSubmit } />
             </ToolbarGroup>
@@ -88,9 +89,9 @@ export class SiteList extends React.PureComponent {
                   <IconButton touch={true}>
                     <NavigationExpandMoreIcon />
                   </IconButton>}>
-                <MenuItem primaryText="Clear Filters" className="linky" onTouchTap={ this.resetSites } />
-                <MenuItem primaryText="Export to Excel" className="linky" />
-                <MenuItem primaryText="Export to CSV" className="linky" />
+                <MenuItem primaryText="Clear Filters" className={styles.Toolbar__MenuItem} onTouchTap={ this.resetSites } />
+                <MenuItem primaryText="Export to Excel" className={styles.Toolbar__MenuItem} />
+                <MenuItem primaryText="Export to CSV" className={styles.Toolbar__MenuItem} />
               </IconMenu>
             </ToolbarGroup>
           </Toolbar>
