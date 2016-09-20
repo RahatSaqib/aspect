@@ -38,6 +38,13 @@ const SELECT_FIELDS = [
   knex.raw('id * 134 as total_tests')
 ]
 
+function changeIdToString(item) {
+  // FIXME: id should be always a String type. Maybe UUID?
+  return Object.assign({}, item, {
+    id: String(item.id)
+  })
+}
+
 function* listDevices(request){
   let {query} = request
 
@@ -55,6 +62,8 @@ function* listDevices(request){
   // return result when both queries are finished
   let [{count: total}, data] = yield Promise.all([getCount, getItems])
 
+  data = data.map(changeIdToString)
+
   let result = {ok: true, total, length: data.length, data}
 
   return camelize(result)
@@ -68,7 +77,7 @@ function* showDevice(request) {
     .where('id', params.deviceId)
     .select(SELECT_FIELDS)
 
-  const result = {ok: true, data: item}
+  const result = {ok: true, data: changeIdToString(item)}
 
   return camelize(result)
 }
