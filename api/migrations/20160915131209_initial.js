@@ -2,6 +2,8 @@ module.exports = require('../src/db').migration(up, down)
 
 function* up(knex){
 
+  yield knex.raw('SET foreign_key_checks = 0')
+
   yield knex.schema.createTable('user', user => {
     user.increments('id')
     user.string('name').unique().notNullable()
@@ -242,6 +244,7 @@ function* up(knex){
     router.charset('utf8')
   })
 
+  yield knex.raw('SET foreign_key_checks = 1')
   // TODO are person_country _device _level _lga _site _state replaced with data groups/roles?
 }
 
