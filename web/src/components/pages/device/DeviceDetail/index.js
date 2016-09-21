@@ -9,8 +9,12 @@ import { bindActionCreators } from 'redux'
 import { connect } from 'react-redux'
 import Helmet from 'react-helmet'
 
+// Material-UI
+import LinearProgress from 'material-ui/LinearProgress'
+
 // Our own imports
 import { fetchSingleDevice } from '../../../../action_creators/device_creators'
+import { FormContainer } from './Form'
 import styles from './index.css'
 
 const messages = defineMessages({
@@ -36,13 +40,40 @@ export class DeviceDetail extends React.PureComponent {
     }
   }
 
+  renderProgress() {
+    const { device } = this.props
+
+    return !device && <LinearProgress />
+  }
+
+  renderContent() {
+    const { device } = this.props
+    if (!device) {
+      return
+    }
+    const initialValues = {
+      name: device.get('name'),
+      shortName: device.get('shortname'),
+      site: device.get('id')
+    }
+    return (
+      <div>
+        <FormContainer
+          initialValues={initialValues}
+        />
+        {JSON.stringify(device, null, 2)}
+      </div>
+    )
+  }
+
   render() {
     const { formatMessage } = this.props.intl
 
     return (
       <div className={styles.Content}>
         <Helmet title={formatMessage(messages.title)} titleTemplate="%s - Aspect" defaultTitle="Aspect" />
-        {JSON.stringify(this.props.device, null, 2)}
+        {this.renderProgress()}
+        {this.renderContent()}
       </div>
     )
   }
