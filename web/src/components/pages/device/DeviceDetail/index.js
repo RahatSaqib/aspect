@@ -15,6 +15,7 @@ import LinearProgress from 'material-ui/LinearProgress'
 // Our own imports
 import { fetchSingleDevice } from '../../../../action_creators/device_creators'
 import { FormContainer } from './Form'
+import Display from './Display'
 import styles from './index.css'
 
 const messages = defineMessages({
@@ -56,10 +57,39 @@ export class DeviceDetail extends React.PureComponent {
       shortName: device.get('shortname'),
       site: device.get('id')
     }
+    const fields = [
+      {
+        label: 'First Connected',
+        value: device.get('id')
+      },
+      {
+        label: 'First Approved On',
+        value: device.get('id')
+      },
+      {
+        label: 'First Approved By',
+        value: device.get('id')
+      },
+      {
+        label: 'Serial',
+        value: device.get('id')
+      },
+      {
+        label: 'Last Seen',
+        value: device.get('lastPingOn')
+      },
+      {
+        label: 'Total Number of Tests',
+        value: device.get('totalTests')
+      }
+    ]
     return (
       <div>
         <FormContainer
           initialValues={initialValues}
+        />
+        <Display
+          fields={fields}
         />
         {JSON.stringify(device, null, 2)}
       </div>
@@ -78,7 +108,6 @@ export class DeviceDetail extends React.PureComponent {
     )
   }
 }
-
 
 function mapStateToProps(state, props) {
   return {
