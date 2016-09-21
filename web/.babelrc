@@ -1,24 +1,42 @@
 {
-  "presets": [ "es2015", "react", "stage-1" ],
   "env": {
-    "test": {
+    "dist": {
       "plugins": [
-        [ "babel-plugin-webpack-alias", { "config": "./webpack.config.babel.js" } ]
+        [
+          "babel-plugin-lodash",
+          {}
+        ]
       ]
     },
     "message": {
       "plugins": [
         [
-          "babel-plugin-react-intl", {
+          "babel-plugin-react-intl",
+          {
             "messagesDir": "./i18n"
           }
         ]
       ]
     },
-    "dist": {
+    "test": {
       "plugins": [
-        [ "babel-plugin-lodash", { } ]
+        [
+          "babel-plugin-webpack-alias",
+          {
+            "config": "./webpack.config.babel.js"
+          }
+        ]
       ]
     }
-  }
+  },
+  "plugins": [
+    [
+      "react-hot-loader/babel"
+    ]
+  ],
+  "presets": [
+    "es2015",
+    "react",
+    "stage-1"
+  ]
 }
