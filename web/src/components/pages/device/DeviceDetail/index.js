@@ -10,8 +10,8 @@ import { connect } from 'react-redux'
 import Helmet from 'react-helmet'
 
 // Our own imports
-import { fetchSingleDevice } from '../../../action_creators/device_creators'
-import styles from './DeviceDetail.css'
+import { fetchSingleDevice } from '../../../../action_creators/device_creators'
+import styles from './index.css'
 
 const messages = defineMessages({
   title: {
