@@ -14,7 +14,7 @@ import LinearProgress from 'material-ui/LinearProgress'
 
 // Our own imports
 import { fetchSingleDevice } from '../../../../action_creators/device_creators'
-import { FormContainer } from './Form'
+import { EditableFieldsContainer } from './EditableFields'
 import Display from './Display'
 import styles from './index.css'
 
@@ -52,11 +52,6 @@ export class DeviceDetail extends React.PureComponent {
     if (!device) {
       return
     }
-    const initialValues = {
-      name: device.get('name'),
-      shortName: device.get('shortname'),
-      site: device.get('id')
-    }
     const fields = [
       {
         label: 'First Connected',
@@ -85,8 +80,8 @@ export class DeviceDetail extends React.PureComponent {
     ]
     return (
       <div>
-        <FormContainer
-          initialValues={initialValues}
+        <EditableFieldsContainer
+          device={device}
         />
         <Display
           fields={fields}
