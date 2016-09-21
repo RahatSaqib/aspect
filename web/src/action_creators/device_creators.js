@@ -51,10 +51,10 @@ function requestADevice(deviceId) {
   }
 }
 
-function receiveADevice(json) {
+function receiveSingleDevice(item) {
   return {
     type: types.RECEIVE_A_DEVICE,
-    item: json.data
+    item
   }
 }
 
@@ -64,7 +64,7 @@ export function fetchADevice(deviceId){
     dispatch(requestADevice(deviceId))
 
     return aspectFetch(`/device/${deviceId}`)
-      .then(json => dispatch(receiveADevice(json)))
+      .then(json => dispatch(receiveSingleDevice(json.data)))
       .catch(err => {
         dispatch(addError(`Loading a device (${deviceId}) failed`, err.message, err))
       })
