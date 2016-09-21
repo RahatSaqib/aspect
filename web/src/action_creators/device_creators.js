@@ -44,7 +44,7 @@ export function fetchDevices(filters = Immutable.Map({ name: '' }), sortCol = 'n
 }
 
 
-function requestADevice(deviceId) {
+function requestSingleDevice(deviceId) {
   return {
     type: types.REQUEST_A_DEVICE,
     deviceId
@@ -58,10 +58,10 @@ function receiveSingleDevice(item) {
   }
 }
 
-export function fetchADevice(deviceId){
+export function fetchSingleDevice(deviceId){
   return dispatch => {
 
-    dispatch(requestADevice(deviceId))
+    dispatch(requestSingleDevice(deviceId))
 
     return aspectFetch(`/device/${deviceId}`)
       .then(json => dispatch(receiveSingleDevice(json.data)))

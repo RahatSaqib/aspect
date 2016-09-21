@@ -10,7 +10,7 @@ import { connect } from 'react-redux'
 import Helmet from 'react-helmet'
 
 // Our own imports
-import { fetchADevice } from '../../../action_creators/device_creators'
+import { fetchSingleDevice } from '../../../action_creators/device_creators'
 import styles from './DeviceDetail.css'
 
 const messages = defineMessages({
@@ -23,7 +23,7 @@ const messages = defineMessages({
 export class DeviceDetail extends React.PureComponent {
 
   handleFetchDevice = () => {
-    this.props.fetchADevice(this.props.params.deviceId)
+    this.props.fetchSingleDevice(this.props.params.deviceId)
   }
 
   componentDidMount() {
@@ -56,7 +56,7 @@ function mapStateToProps(state, props) {
 }
 
 function mapDispatchToProps(dispatch) {
-  return bindActionCreators({ fetchADevice }, dispatch)
+  return bindActionCreators({ fetchSingleDevice }, dispatch)
 }
 
 export const DeviceDetailContainer = _.flowRight(
