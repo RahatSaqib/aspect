@@ -49,6 +49,7 @@ class Nav extends PureComponent {
             <MenuItem primaryText="English" className={styles.MenuItem} onTouchTap={() => { this.props.handleLanguageChange('en', 'en-US') } } />
             <MenuItem primaryText="French" className={styles.MenuItem} onTouchTap={() => { this.props.handleLanguageChange('fr', 'fr-FR') } } />
             <MenuItem primaryText="Help" href="https://admin.gxalert.com" />
+            <MenuItem primaryText="Account Details" href="/account-details/current" />
             <MenuItem primaryText="Sign out" className={styles.MenuItem} onTouchTap={ this.props.handleSignOut } />
           </IconMenu>
         </div>

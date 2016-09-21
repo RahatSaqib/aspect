@@ -10,6 +10,7 @@ import device from './device/DeviceRedux'
 import site from './site/SiteRedux'
 import result from './result/ResultRedux'
 import person from './person/PersonRedux'
+import accountDetails from './accountDetails'
 import idle from './idle/IdleRedux'
 
 const appReducer = combineReducers({
@@ -20,6 +21,7 @@ const appReducer = combineReducers({
   site,
   result,
   person,
+  accountDetails,
   idle
 })
 
@@ -31,6 +33,7 @@ const App = Immutable.Record({
   site: undefined,
   result: undefined,
   person: undefined,
+  accountDetails: undefined,
   idle: undefined
 })
 
