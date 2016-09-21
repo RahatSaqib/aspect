@@ -75,7 +75,14 @@ function* showDevice(request) {
   // get item
   const [item] = yield knex('device')
     .where('id', params.deviceId)
-    .select(SELECT_FIELDS)
+    .select([
+      ...SELECT_FIELDS,
+      'site_id',
+      // TODO: First Connected
+      // TODO: First Approved On
+      // TODO: First Approved By
+      'serial'
+    ])
 
   const result = {ok: true, data: changeIdToString(item)}
 
