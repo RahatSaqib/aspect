@@ -67,7 +67,7 @@ export class DeviceDetail extends React.PureComponent {
       },
       {
         label: 'Serial',
-        value: device.get('id')
+        value: device.get('serial') || /* FIXME */ '<empty>'
       },
       {
         label: 'Last Seen',
@@ -86,7 +86,6 @@ export class DeviceDetail extends React.PureComponent {
         <Display
           fields={fields}
         />
-        {JSON.stringify(device, null, 2)}
       </div>
     )
   }

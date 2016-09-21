@@ -35,7 +35,7 @@ export class EditableFields extends React.PureComponent {
       },
       {
         label: 'Site (ddl)',
-        value: device.get('id')
+        value: device.get('siteId')
       }
     ]
     return (
