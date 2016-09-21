@@ -85,14 +85,15 @@ function* listDevices(request){
   let {query, auth} = request
 
   // get data constraints
-  let dataConstraints = yield getConstraints(auth.credentials.name)
+  let dataConstraints = yield getConstraints(auth.credentials)
 
   let deviceQuery = knex('device as d')
     .leftOuterJoin('site as s', 'd.site_id', 's.id')
+    .leftOuterJoin('country as c', 's.country_id', 'c.id')
     .leftOuterJoin('state as st', 's.state_id', 'st.id')
     .leftOuterJoin('lga as l', 's.lga_id', 'l.id')
-    .modify(filterParams, query, 'name')
-    .modify(addConstraints, dataConstraints, {state: 'st', lga: 'l'})
+    .modify(filterParams, query, 'name', 'd.name')
+    .modify(addConstraints, dataConstraints, {country: 'c', state: 'st', lga: 'l'})
 
   // get total count for paging
   let getCount = deviceQuery.clone()

@@ -102,7 +102,10 @@ describe('auth endpoints', function () {
             failed_password_attempts: 0,
             id: 123,
             name: 'admin',
-            culture: 'en-GB'
+            culture: 'en-GB',
+            partnerId: 2,
+            countryId: 3
+
           }
           dbSpy.query.for('Get basic user details').resolvesWith(britishUser)
           const requestData = {
@@ -117,6 +120,9 @@ describe('auth endpoints', function () {
             .handleResponseWith(function () {
               let unsignedToken = jwt.sign.lastCall.args[0]
               assert.deepEqual(unsignedToken, {
+                id: 123,
+                partnerId: 2,
+                countryId: 3,
                 name: britishUser.name,
                 modules: ['inv', 'mai'],
                 roles: roles.map(r => r.name),

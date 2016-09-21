@@ -1,6 +1,37 @@
 {
   "countries": [
     {
+      "abbreviation": "NG",
+      "name": "Nigeria",
+      "a3": "NGA",
+      "culture": "ig-NG",
+      "country_code": "234",
+      "state_label": "State",
+      "lga_label": "LGA",
+      "timezone": "W. Central Africa Standard Time",
+      "port_number": 2951,
+      "export_columns": "DeploymentDescription|TestEndedOn|AssayName|AssayVersion|User|Result1|Result2|HIV|DRSuspect|PatientAge|PatientGender|PatientLGA|ReagentLotID|ExpirationDate|CartridgeSerial|ModuleSerial|SoftwareVersion|ErrorCode|ErrorCategory|ErrorDescription|SampleId|Notes|ProbeA",
+      "inventory_days_threshold": 21,
+      "month_starts_on_day": 1,
+      "states": [
+        {
+          "name": "Lagos",
+          "lgas": [
+            {"name": "Apapa"},
+            {"name": "Mushin"},
+            {"name": "Ojo"}
+          ]
+        },
+        {
+          "name": "Ogun",
+          "lgas": [
+            {"name": "Ifo"},
+            {"name": "Ipokia"}
+          ]
+        }
+      ]
+    },
+    {
       "abbreviation": "US",
       "name": "United States",
       "a3": "USA",

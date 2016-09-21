@@ -49,7 +49,8 @@ function* seed(knex){
         _.pick(state, ['abbreviation', 'name']))
       let [stateId] = yield knex('state').insert(stateData)
       stateData.id = stateId
-      countryData.states[state.abbreviation] = stateData
+      let stateKey = state.abbreviation || state.name
+      countryData.states[stateKey] = stateData
       stateData.lgas = {}
 
       for(let lga of (state.lgas || [])){
@@ -72,7 +73,7 @@ function* seed(knex){
         for(let siteNumber of _.range(1, 6 - (lgaData.id % 5))){
           let siteData = Object.assign({
             name: `${lga.name} ${country.lga_label} ${state.name} #${siteNumber}`,
-            shortname: `${lga.name}, ${state.abbreviation} #${siteNumber}`,
+            shortname: `${lga.name}, ${stateKey} #${siteNumber}`,
             identifier: `Site ${siteNumber * lgaData.id}`,
             city: `${lga.name} City`,
             street1: `${lgaData.id} Main Street`,
@@ -89,12 +90,12 @@ function* seed(knex){
 
   // Users
   let userIds = {}
-  for(let name of ['Admin', 'Bob', 'Bill', 'Frank', 'Fred', 'Steve']){
+  for(let name of ['Admin', 'Bob', 'Bill', 'Frank', 'Fred', 'Jim', 'Rich', 'Steve']){
     let userId
     if(name === 'Admin'){
       userId = adminId
     } else {
-      [userId] = yield knex('user').insert(Object.assign({
+      [userId] = yield knex('user').insert({
         name: name.toLowerCase(),
         password: 'mypassword',
         password_key: 'mykey',
@@ -102,13 +103,17 @@ function* seed(knex){
         created_on: now,
         locked_out: 0,
         failed_password_attempts: 0
-      }))
+      })
     }
     userIds[name.toLowerCase()] = userId
 
+    let lastCountryId = _.includes(['Jim', 'Rich'], name) ? countries.NG.id : countries.US.id
+
     yield knex('person').insert(Object.assign({
       user_id: userId,
-      name: name
+      name,
+      last_partner_id: partnerId,
+      last_country_id: lastCountryId
     }, geoDatas[geoDatas.length % userId], auditFields))
   }
 

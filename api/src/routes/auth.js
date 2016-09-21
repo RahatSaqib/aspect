@@ -65,7 +65,8 @@ function* authenticate(request){
   let user = yield query('Get basic user details').from('user as u')
     .innerJoin('person as p', 'u.id', 'p.user_id')
     .where({'u.name': payload.name})
-    .first('u.locked_out', 'u.failed_password_attempts', 'u.id', 'u.name', 'p.culture')
+    .first('u.locked_out', 'u.failed_password_attempts', 'u.id', 'u.name',
+      'p.culture', 'p.last_partner_id as partnerId', 'p.last_country_id as countryId')
 
   if(!user){
     // TODO generic Auth failed message on username and password failed?
@@ -126,7 +127,12 @@ function* authenticate(request){
   yield Promise.all([setRefreshToken, updatePwAttempts])
 
   // finally, return the access token...
-  return getToken(config, user.id, user.name, refreshToken, clientId, user.culture)
+  let accessToken = yield getAccessToken(user)
+  return {
+    access: accessToken,
+    refresh: refreshToken,
+    clientId
+  }
 }
 
 function* refreshToken(request){
@@ -136,7 +142,8 @@ function* refreshToken(request){
     .innerJoin('user as u', 'rt.user_id', 'u.id')
     .innerJoin('person as p', 'u.id', 'p.user_id')
     .where({client_id: clientId, token, revoked: 0})
-    .first('rt.user_id as userId', 'rt.expires', 'u.name', 'p.culture')
+    .first('rt.user_id as id', 'rt.expires', 'u.name',
+      'p.culture', 'p.last_partner_id as partnerId', 'p.last_country_id as countryId')
 
   if (!data) {
     return Boom.badRequest('Unable to find token or token revoked')
@@ -157,19 +164,28 @@ function* refreshToken(request){
     .where({token})
     .update({token: refreshToken, expires})
 
-  return getToken(config, data.userId, data.name, refreshToken, clientId, data.culture)
+  let accessToken = yield getAccessToken(data)
+  return {
+    access: accessToken,
+    refresh: refreshToken,
+    clientId
+  }
 }
 
-// generate a new jwt
-function getToken(config, userId, userName, refreshToken, clientId, culture) {
+// generate a new jwt for the given user data
+function getAccessToken({id, name, culture, partnerId, countryId}){
   return query('Get roles for user').from('role as r')
     .innerJoin('user_role as ur', 'r.id', 'ur.role_id')
-    .where({user_id: userId})
+    .where({user_id: id})
     .select('r.name')
     .then(data => {
       // create a new token
       let token = jwt.sign({
-        name: userName,
+        name,
+        id,
+        partnerId,
+        countryId,
+        // TODO modules are permissions
         modules: ['inv', 'mai'],
         roles: data.map(a => a.name),
         culture: culture || 'en-US'
@@ -179,11 +195,6 @@ function getToken(config, userId, userName, refreshToken, clientId, culture) {
         issuer: 'https://www.aspect.id'
       })
 
-      // return the information including token as JSON
-      return {
-        access: token,
-        refresh: refreshToken,
-        clientId: clientId
-      }
+      return token
     })
 }

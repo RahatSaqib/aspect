@@ -104,10 +104,13 @@ function* up(knex){
     person.integer('lga_id').unsigned()
       .index().references('id').inTable('lga')
     person.string('notes', 1200)
+    person.integer('last_partner_id').unsigned()
+      .index().references('id').inTable('partner')
     person.integer('last_country_id').unsigned()
       .index().references('id').inTable('country')
     // TODO timezone table?
     person.string('timezone')
+    // TODO should user prefrences be stored in separate table?
     person.boolean('hide_patient_id')
     person.boolean('hide_sample_id')
     person.boolean('hide_notes')

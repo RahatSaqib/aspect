@@ -24,13 +24,14 @@ function* listSites(request){
   let {query, auth} = request
 
   // get data constraints
-  let dataConstraints = yield getConstraints(auth.credentials.name)
+  let dataConstraints = yield getConstraints(auth.credentials)
 
   let siteQuery = knex('site as s')
+    .leftOuterJoin('country as c', 's.country_id', 'c.id')
     .leftOuterJoin('state as st', 's.state_id', 'st.id')
     .leftOuterJoin('lga as l', 's.lga_id', 'l.id')
-    .modify(filterParams, query, 'name')
-    .modify(addConstraints, dataConstraints, {state: 'st', lga: 'l'})
+    .modify(filterParams, query, 'name', 's.name')
+    .modify(addConstraints, dataConstraints, {country: 'c', state: 'st', lga: 'l'})
 
   // get total count for paging
   let getCount = siteQuery.clone()
