@@ -1,9 +1,11 @@
 // This is the entry point for our app
+import 'react-hot-loader/patch'
 import 'core-js/fn/object/assign'
 import React from 'react'
 import promise from 'es6-promise'
 import { render } from 'react-dom'
 import { Provider } from 'react-redux'
+import { AppContainer } from 'react-hot-loader'
 
 import config from 'config'
 if (config.sentry){
@@ -50,9 +52,28 @@ if (getRefreshToken()){
 // but it works for now
 setInterval(() => { store.dispatch(refreshStart()) }, 30 * 60 * 1000)
 
+const appDom = document.getElementById('app')
+
 render(
-  <Provider store={store}>
-    <Routes />
-  </Provider>,
-  document.getElementById('app')
+  <AppContainer>
+    <Provider store={store}>
+      <Routes />
+    </Provider>
+  </AppContainer>,
+  appDom
 )
+
+if (module.hot) {
+  module.hot.accept('./Routes.jsx', () => {
+    const NextRoutes = require('./Routes.jsx').default
+
+    render(
+      <AppContainer>
+        <Provider store={store}>
+          <NextRoutes />
+        </Provider>
+      </AppContainer>,
+      appDom
+    )
+  })
+}
