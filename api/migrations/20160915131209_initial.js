@@ -190,6 +190,9 @@ function* up(knex){
     site.string('shortname', 45)
     site.string('identifier')
     site.string('notes', 2000)
+    // TODO is site to partner many to many?
+    site.integer('partner_id').unsigned()
+      .index().references('id').inTable('partner')
     site.integer('country_id').unsigned()
       .index().references('id').inTable('country')
     site.integer('state_id').unsigned()

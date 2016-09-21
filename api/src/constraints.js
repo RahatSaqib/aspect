@@ -6,7 +6,10 @@ function getConstraints(credentials){
     .from('data_filter as f')
     .innerJoin('role as r', 'f.id', 'r.data_filter_id')
     .innerJoin('user_role as ur', 'r.id', 'ur.role_id')
-    .where({'ur.user_id': credentials.id})
+    .where({
+      'ur.user_id': credentials.id,
+      'r.partner_id': credentials.partnerId
+    })
     .select('f.constraint')
     .map(f => JSON.parse(f.constraint))
     .then(filterConstraints => ({
@@ -23,6 +26,7 @@ function getConstraints(credentials){
 
 function addConstraints(queryBuilder, constraints, aliases){
   let {
+    partner='partner',
     country='country',
     state='state',
     lga='lga'
@@ -30,7 +34,8 @@ function addConstraints(queryBuilder, constraints, aliases){
 
   // TODO generalize constraint building
 
-  // FIXME add partner constraint
+  // Partrner and country constraints are ANDed
+  queryBuilder.where({[`${partner}.id`]: constraints.partner.id})
   queryBuilder.where({[`${country}.id`]: constraints.country.id})
 
   // data filter constraints are ORed

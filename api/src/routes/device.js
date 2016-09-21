@@ -89,11 +89,12 @@ function* listDevices(request){
 
   let deviceQuery = knex('device as d')
     .leftOuterJoin('site as s', 'd.site_id', 's.id')
+    .leftOuterJoin('partner as p', 's.partner_id', 'p.id')
     .leftOuterJoin('country as c', 's.country_id', 'c.id')
     .leftOuterJoin('state as st', 's.state_id', 'st.id')
     .leftOuterJoin('lga as l', 's.lga_id', 'l.id')
     .modify(filterParams, query, 'name', 'd.name')
-    .modify(addConstraints, dataConstraints, {country: 'c', state: 'st', lga: 'l'})
+    .modify(addConstraints, dataConstraints, {partner: 'p', country: 'c', state: 'st', lga: 'l'})
 
   // get total count for paging
   let getCount = deviceQuery.clone()

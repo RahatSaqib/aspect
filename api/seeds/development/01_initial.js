@@ -24,9 +24,13 @@ function* seed(knex){
     updated_by: adminId
   }
 
-  // Create partner
-  let [partnerId] = yield knex('partner').insert({
-    name: 'SystemOne'
+  // Create partners
+  let [partnerOneId] = yield knex('partner').insert({
+    name: 'Partner One'
+  })
+
+  let [partnerTwoId] = yield knex('partner').insert({
+    name: 'Partner Two'
   })
 
   // Create geographic hierarchy
@@ -72,6 +76,7 @@ function* seed(knex){
         // up to 5 of sites at each LGA
         for(let siteNumber of _.range(1, 6 - (lgaData.id % 5))){
           let siteData = Object.assign({
+            partner_id: partnerOneId,
             name: `${lga.name} ${country.lga_label} ${state.name} #${siteNumber}`,
             shortname: `${lga.name}, ${stateKey} #${siteNumber}`,
             identifier: `Site ${siteNumber * lgaData.id}`,
@@ -90,7 +95,7 @@ function* seed(knex){
 
   // Users
   let userIds = {}
-  for(let name of ['Admin', 'Bob', 'Bill', 'Frank', 'Fred', 'Jim', 'Rich', 'Steve']){
+  for(let name of ['Admin', 'Bill', 'Bob', 'Frank', 'Fred', 'Jason', 'Jim', 'Sam', 'Steve']){
     let userId
     if(name === 'Admin'){
       userId = adminId
@@ -107,12 +112,13 @@ function* seed(knex){
     }
     userIds[name.toLowerCase()] = userId
 
-    let lastCountryId = _.includes(['Jim', 'Rich'], name) ? countries.NG.id : countries.US.id
+    let lastPartnerId = _.includes(['Jim', 'Jason'], name) ? partnerTwoId : partnerOneId
+    let lastCountryId = _.includes(['Jim', 'Sam'], name) ? countries.NG.id : countries.US.id
 
     yield knex('person').insert(Object.assign({
       user_id: userId,
       name,
-      last_partner_id: partnerId,
+      last_partner_id: lastPartnerId,
       last_country_id: lastCountryId
     }, geoDatas[geoDatas.length % userId], auditFields))
   }
@@ -176,25 +182,25 @@ function* seed(knex){
   // Roles
   let [roleIdOH] = yield knex('role').insert({
     name: 'Ohio Users',
-    partner_id: partnerId,
+    partner_id: partnerOneId,
     data_filter_id: dataFilterIdOH
   })
 
   let [roleIdNE] = yield knex('role').insert({
     name: 'Nebraska Users',
-    partner_id: partnerId,
+    partner_id: partnerOneId,
     data_filter_id: dataFilterIdNE
   })
 
   let [roleIdOHWayne] = yield knex('role').insert({
     name: 'Wayne County, OH Users',
-    partner_id: partnerId,
+    partner_id: partnerOneId,
     data_filter_id: dataFilterIdOHWayne
   })
 
   let [roleIdMASuffolk] = yield knex('role').insert({
     name: 'Suffolk County, MA Users',
-    partner_id: partnerId,
+    partner_id: partnerOneId,
     data_filter_id: dataFilterIdMASuffolk
   })
 
