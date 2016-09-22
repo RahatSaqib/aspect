@@ -28,7 +28,7 @@ export class EditableFields extends React.PureComponent {
     })
   }
 
-  renderFormContainer(device, restProps) {
+  renderFormContainer(device) {
     const initialValues = {
       // Map API fields to form fields
       name: device.get('name'),
@@ -37,7 +37,6 @@ export class EditableFields extends React.PureComponent {
     }
     return (
       <FormContainer
-        {...restProps}
         initialValues={initialValues}
         onSubmit={this.handleSubmit}
       />
@@ -65,11 +64,11 @@ export class EditableFields extends React.PureComponent {
   }
 
   render() {
-    const { updateSingleDevice, editable, device, ...restProps } = this.props
+    const { editable, device } = this.props
 
     return (
       editable ?
-      this.renderFormContainer(device, restProps) :
+      this.renderFormContainer(device) :
       this.renderDisplay(device)
     )
   }
