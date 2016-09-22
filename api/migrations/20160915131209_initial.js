@@ -135,24 +135,24 @@ function* up(knex){
 
   yield knex.schema.createTable('permission', permission => {
     permission.increments('id')
-    // Clinical Access Type: Result+PII; Result; Aggregate; or None
-    // Operational Access Type: Current; Historical; Aggregate; or None
-    // dataGroup.string('operational_type', 48).notNullable() // Result+PII; Result; Aggregate; or None
-    // Inventory Access Type: Current; Historical; Aggregate; or None
-    permission.string('name').notNullable()
-    // e.g. Clinical, Inventory, Operational, Device, etc.
-    permission.string('activity').notNullable()
-    // e.g.: View, Modify, Admin etc
-    permission.string('activity_type').notNullable()
-    // e.g: Result, aggreagate, none
-    permission.string('data_type').notNullable()
 
-    // TODO many to many?
-    permission.integer('role_id').unsigned()
-      .index().references('id').inTable('role')
+    // e.g. clinical, inventory, operational, device, etc.
+    permission.string('module').notNullable()
+    // e.g.: view, edit, admin, view:aggregate, view:historical etc
+    permission.string('activity').notNullable()
+
+    // Since permissions are static, UI labels can be created programmatically
     permission.charset('utf8')
   })
 
+  yield knex.schema.createTable('role_permission', permissionRole => {
+    permissionRole.integer('role_id').unsigned()
+      .index().references('id').inTable('role')
+    permissionRole.integer('permission_id').unsigned()
+      .index().references('id').inTable('permission')
+    permissionRole.primary(['permission_id', 'role_id'])
+    permissionRole.charset('utf8')
+  })
 
   yield knex.schema.createTable('user_role', userRole => {
     userRole.integer('user_id').unsigned()
@@ -304,6 +304,7 @@ function* down(knex){
   yield knex.schema.dropTable('device_type')
   yield knex.schema.dropTable('refresh_token')
   yield knex.schema.dropTable('user_role')
+  yield knex.schema.dropTable('role_permission')
   yield knex.schema.dropTable('permission')
   yield knex.schema.dropTable('role')
   yield knex.schema.dropTable('person')

@@ -174,10 +174,14 @@ function* refreshToken(request){
 
 // generate a new jwt for the given user data
 function getAccessToken({id, name, culture, partnerId, countryId}){
-  return query('Get roles for user').from('role as r')
+  return query('Get permissions for user and partner')
+    .from('permission as p')
+    .innerJoin('role_permission as rp', 'p.id', 'rp.permission_id')
+    .innerJoin('role as r', 'rp.role_id', 'r.id')
     .innerJoin('user_role as ur', 'r.id', 'ur.role_id')
-    .where({user_id: id})
-    .select('r.name')
+    .where({'ur.user_id': id, 'r.partner_id': partnerId})
+    .orderBy(['p.module', 'p.activity'])
+    .distinct('p.module', 'p.activity')
     .then(data => {
       // create a new token
       let token = jwt.sign({
@@ -185,9 +189,9 @@ function getAccessToken({id, name, culture, partnerId, countryId}){
         id,
         partnerId,
         countryId,
-        // TODO modules are permissions
-        modules: ['inv', 'mai'],
-        roles: data.map(a => a.name),
+        // TODO should we remove modules since same info in permissions to reduce size of JWT?
+        modules: data.map(p => p.module),
+        permissions: data.map(p => `${p.module}:${p.activity}`),
         culture: culture || 'en-US'
       },
       config.secret, {

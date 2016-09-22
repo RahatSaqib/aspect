@@ -1,6 +1,7 @@
 module.exports = require('../../src/db').seed(seed)
 
 const _ = require('lodash')
+const permissions = require('./fixtures/permissions.json')
 const geography = require('./fixtures/geography.json')
 const millisInHour = 1000*60*60
 const deviceNumber = 50
@@ -32,6 +33,20 @@ function* seed(knex){
   let [partnerTwoId] = yield knex('partner').insert({
     name: 'Partner Two'
   })
+
+  // Create permissions
+  let modules = {}
+  for(let module of permissions.modules){
+    let moduleData = {}
+    modules[module.name] = moduleData
+    for(let activity of module.activities){
+      let [permissionId] = yield knex('permission').insert({
+        module: module.name,
+        activity
+      })
+      moduleData[activity] = permissionId
+    }
+  }
 
   // Create geographic hierarchy
   let countries = {}
@@ -180,6 +195,11 @@ function* seed(knex){
   })
 
   // Roles
+  let [roleIdAdmin] = yield knex('role').insert({
+    name: 'Admin',
+    partner_id: partnerOneId
+  })
+
   let [roleIdOH] = yield knex('role').insert({
     name: 'Ohio Users',
     partner_id: partnerOneId,
@@ -204,7 +224,28 @@ function* seed(knex){
     data_filter_id: dataFilterIdMASuffolk
   })
 
+  // assign permissions to roles
+  yield knex('role_permission').insert([
+    { role_id: roleIdAdmin, permission_id: modules.device.admin },
+    { role_id: roleIdAdmin, permission_id: modules.person.admin },
+    { role_id: roleIdAdmin, permission_id: modules.site.admin },
+
+    { role_id: roleIdOH, permission_id: modules.site.edit },
+    { role_id: roleIdOH, permission_id: modules.device.edit },
+
+    { role_id: roleIdNE, permission_id: modules.site.edit },
+    { role_id: roleIdNE, permission_id: modules.device.edit },
+
+    { role_id: roleIdOHWayne, permission_id: modules.site.view },
+    { role_id: roleIdOHWayne, permission_id: modules.device.view },
+
+    { role_id: roleIdMASuffolk, permission_id: modules.device.view }
+  ])
+
+
+  // assign roles to users
   yield knex('user_role').insert([
+    { user_id: userIds['admin'], role_id: roleIdAdmin },
     { user_id: userIds['bob'], role_id: roleIdOH },
     { user_id: userIds['frank'], role_id: roleIdNE },
     { user_id: userIds['fred'], role_id: roleIdOHWayne },

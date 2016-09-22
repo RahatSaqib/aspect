@@ -2,6 +2,7 @@ let _ = require('lodash')
 let {query} = require('./db')
 
 function getConstraints(credentials){
+  // FIXME only include roles that assign permissions of interest
   return query('Get constraints for user credentials')
     .from('data_filter as f')
     .innerJoin('role as r', 'f.id', 'r.data_filter_id')

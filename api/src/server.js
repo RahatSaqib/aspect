@@ -101,14 +101,26 @@ function addRavenPlugin(plugins){
 
 server.register(plugins, err => { if(err) throw err })
 
-// =======================
-// Authentication strategy
-// =======================
+// ================================================
+// Authentication strategy and Authorization Scopes
+// ================================================
 server.auth.strategy('jwt', 'jwt', {
   key: config.secret,
   validateFunc: function(decoded, request, callback){
     // TODO What do we want to do to validate data within decoded JWT token?
-    callback(null, true)
+    let valid = true
+
+    // can specify either module or permission, e.g. "device" or "device:view"
+    // for authorization scope on routes.
+    // multiple scopes can be specified:
+    // ["device:view"] will authorize anyone with device module and view activity
+    // ["device", "site"] will authorize anyone with device or site modules
+    // ["device", "!site"] will authorize anyone with device but not site modules
+    // ["+device", "site:view", "site:edit"] will authorize anyone with device (required)
+    //   and either "site:view" or "site:edit" permissions
+    let scope = [].concat(decoded.modules, decoded.permissions)
+
+    callback(null, valid, Object.assign({scope}, decoded))
   }
   //TODO JWT verfication algorithm verifyOptions: { algorithms: [ 'HS256' ] }
 })

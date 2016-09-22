@@ -47,7 +47,11 @@ describe('auth endpoints', function () {
     })
 
     describe('When the user can authenticate', function () {
-      const roles = [{name: 'admin'}, {name: 'readonly'}, {name: 'write'}]
+      const permissions = [
+        {module: 'device', activity: 'view'},
+        {module: 'person', activity: 'view'},
+        {module: 'site', activity: 'view'}
+      ]
       beforeEach(function () {
         dbSpy.query.for('Get basic user details').resolvesWith({
           locked_out: 0,
@@ -56,7 +60,7 @@ describe('auth endpoints', function () {
           name: 'admin',
           culture: 'en-US'
         })
-        dbSpy.query.for('Get roles for user').resolvesWith(roles)
+        dbSpy.query.for('Get permissions for user and partner').resolvesWith(permissions)
       })
 
       it('Should respond with a signed JSON web token, a refresh token id and the client id passed to it', function (done) {
@@ -124,8 +128,8 @@ describe('auth endpoints', function () {
                 partnerId: 2,
                 countryId: 3,
                 name: britishUser.name,
-                modules: ['inv', 'mai'],
-                roles: roles.map(r => r.name),
+                modules: permissions.map(p => p.module),
+                permissions: permissions.map(p => `${p.module}:${p.activity}`),
                 culture: britishUser.culture
               })
             })
