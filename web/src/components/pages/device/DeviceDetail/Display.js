@@ -19,6 +19,7 @@ export default class Display extends React.PureComponent {
       <div>
         {fields.map(({label, value}) => (
           <TextField
+            key={label}
             disabled
             value={value}
             floatingLabelText={label}
