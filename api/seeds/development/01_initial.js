@@ -310,6 +310,8 @@ function* seed(knex){
     { user_id: userIds['fred'], role_id: roleIdOHWayne },
     { user_id: userIds['jon'], role_id: roleIdParentOrgUnit },
     { user_id: userIds['ned'], role_id: roleIdNortheast },
+    { user_id: userIds['sam'], role_id: roleIdAdmin },
+    { user_id: userIds['jim'], role_id: roleIdParentOrgUnit },
     { user_id: userIds['steve'], role_id: roleIdMASuffolk },
     { user_id: userIds['bill'], role_id: roleIdMASuffolk },
     { user_id: userIds['bill'], role_id: roleIdOH }])
