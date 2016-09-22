@@ -32,10 +32,21 @@ module.exports = [{
   }
 }]
 
-const SELECT_FIELDS = [
+const SELECT_LIST_FIELDS = [
   'id', 'name', 'shortname', 'created_on', 'last_ping_on', 'updated_on as last_seen',
   knex.raw('\'Active\' as status'),
   knex.raw('id * 134 as total_tests')
+]
+
+const SELECT_SHOW_FIELDS = [
+  'id', 'name', 'shortname', 'created_on', 'last_ping_on', 'updated_on as last_seen',
+  knex.raw('\'Active\' as status'),
+  knex.raw('id * 134 as total_tests'),
+  'site_id',
+  // TODO: First Connected
+  // TODO: First Approved On
+  // TODO: First Approved By
+  'serial'
 ]
 
 function changeIdToString(item) {
@@ -57,7 +68,7 @@ function* listDevices(request){
   let getItems = knex('device')
     .modify(filterParams, query, 'name')
     .modify(sortPageParams, query, 'name')
-    .select(SELECT_FIELDS)
+    .select(SELECT_LIST_FIELDS)
 
   // return result when both queries are finished
   let [{count: total}, data] = yield Promise.all([getCount, getItems])
@@ -75,14 +86,7 @@ function* showDevice(request) {
   // get item
   const [item] = yield knex('device')
     .where('id', params.deviceId)
-    .select([
-      ...SELECT_FIELDS,
-      'site_id',
-      // TODO: First Connected
-      // TODO: First Approved On
-      // TODO: First Approved By
-      'serial'
-    ])
+    .select(SELECT_SHOW_FIELDS)
 
   const result = {ok: true, data: changeIdToString(item)}
 
