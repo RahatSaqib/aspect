@@ -47,6 +47,8 @@ function device(state = initialState, action) {
     return receiveDevices(state, action.items, action.total)
   case types.RECEIVE_A_DEVICE:
     return receiveADevice(state, action.item)
+  case types.RECEIVE_UPDATED_SINGLE_DEVICE:
+    return receiveADevice(state, action.item)
   }
   return state
 }
