@@ -37,6 +37,7 @@ export class EditableFields extends React.PureComponent {
     }
     return (
       <FormContainer
+        enableReinitialize
         initialValues={initialValues}
         onSubmit={this.handleSubmit}
       />
