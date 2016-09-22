@@ -25,7 +25,7 @@ function receiveDevices(state, list, total) {
   })
 }
 
-function receiveADevice(state, item) {
+function receiveSingleDevice(state, item) {
   return state.withMutations(mutState => {
     const immutItem = Immutable.fromJS(item)
     mutState.set('items', receiveItem(mutState.items, immutItem))
@@ -45,10 +45,10 @@ function device(state = initialState, action) {
     return requestDevices(state, action)
   case types.RECEIVE_DEVICES:
     return receiveDevices(state, action.items, action.total)
-  case types.RECEIVE_A_DEVICE:
-    return receiveADevice(state, action.item)
+  case types.RECEIVE_SINGLE_DEVICE:
+    return receiveSingleDevice(state, action.item)
   case types.RECEIVE_UPDATED_SINGLE_DEVICE:
-    return receiveADevice(state, action.item)
+    return receiveSingleDevice(state, action.item)
   }
   return state
 }

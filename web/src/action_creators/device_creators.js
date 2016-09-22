@@ -45,14 +45,14 @@ export function fetchDevices(filters = Immutable.Map({ name: '' }), sortCol = 'n
 
 function requestSingleDevice(deviceId) {
   return {
-    type: types.REQUEST_A_DEVICE,
+    type: types.REQUEST_SINGLE_DEVICE,
     deviceId
   }
 }
 
 function receiveSingleDevice(item) {
   return {
-    type: types.RECEIVE_A_DEVICE,
+    type: types.RECEIVE_SINGLE_DEVICE,
     item
   }
 }
