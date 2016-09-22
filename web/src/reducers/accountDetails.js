@@ -1,25 +1,40 @@
+import Immutable from 'immutable'
 import types from './../constants/action_types'
 
-const initialState = {
-  loading: false,
-  data: {
-    username: '',
-    name: ''
-  }
-}
-
 function requestAccountDetails(state) {
-  return {...state,
-    loading: true
-  }
+  return state.set('loading', true)
 }
 
 function receiveAccountDetails(state, accountDetailsData) {
-  return {...state,
+  return state.mergeDeep({
     loading: false,
     data: accountDetailsData
-  }
+  })
 }
+
+const AccountDetailsData = Immutable.Record({
+  id: undefined,
+  userId: undefined,
+  username: undefined,
+  name: undefined,
+  title: undefined,
+  email: undefined,
+  email2: undefined,
+  phone: undefined,
+  cell: undefined,
+  countryId: undefined,
+  stateId: undefined,
+  lgaId: undefined,
+  timezone: undefined,
+  culture: undefined
+})
+
+const AccountDetails = Immutable.Record({
+  loading: true,
+  data: new AccountDetailsData()
+})
+
+const initialState = new AccountDetails()
 
 function accountDetails(state = initialState, action) {
   switch (action.type) {

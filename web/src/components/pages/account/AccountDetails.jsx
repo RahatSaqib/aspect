@@ -15,9 +15,9 @@ class AccountDetails extends React.PureComponent {
       <div className="content">
         Loading: {String(loading)}
         <br/>
-        Username: {accountDetails.username}
+        Username: {accountDetails.get('username')}
         <br/>
-        Full Name: {accountDetails.name}
+        Full Name: {accountDetails.get('name')}
       </div>
     )
   }
@@ -25,8 +25,8 @@ class AccountDetails extends React.PureComponent {
 
 function mapStateToProps(state) {
   return {
-    loading: state.accountDetails.loading,
-    accountDetails: state.accountDetails.data
+    loading: state.accountDetails.get('loading'),
+    accountDetails: state.accountDetails.get('data')
   }
 }
 
