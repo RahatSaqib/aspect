@@ -1,6 +1,9 @@
 module.exports = require('../src/db').migration(up, down)
 
 function* up(knex){
+
+  yield knex.raw('SET foreign_key_checks = 0')
+
   yield knex.schema.createTable('partner', partner => {
     partner.increments('id')
     partner.string('name').notNullable()
@@ -28,8 +31,6 @@ function* up(knex){
     // dataFilter.json('constraint')
     dataFilter.specificType('constraint', 'JSON').notNullable()
   })
-
-  yield knex.raw('SET foreign_key_checks = 0')
 
   yield knex.schema.createTable('user', user => {
     user.increments('id')
@@ -296,7 +297,6 @@ function* up(knex){
   })
 
   yield knex.raw('SET foreign_key_checks = 1')
-  // TODO are person_country _device _level _lga _site _state replaced with data groups/roles?
 }
 
 function* down(knex){
