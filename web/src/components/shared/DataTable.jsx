@@ -15,6 +15,8 @@ import styles from './DataTable.css'
 export class DataTable extends React.PureComponent {
 
   static propTypes = {
+    selectable: React.PropTypes.bool,
+    handleItemIdSelection: React.PropTypes.func,
     handleFetch: React.PropTypes.func.isRequired,
     items: React.PropTypes.shape({
       byId: React.PropTypes.object.isRequired,
@@ -36,12 +38,23 @@ export class DataTable extends React.PureComponent {
     height: 'inherit',
     fixedHeader: true,
     fixedFooter: true,
-    selectable: false,
     multiSelectable: false,
     showCheckboxes: false,
     enableSelectAll: false,
     showRowHover: true,
     stripedRows: false
+  }
+
+  handleRowSelection = this.handleRowSelection.bind(this)
+
+  handleRowSelection([selectedIndex]) {
+    const {
+      handleItemIdSelection = _.noop,
+      items
+    } = this.props
+
+    const selectedId = items.currentIdList.get(selectedIndex)
+    handleItemIdSelection(selectedId)
   }
 
   componentDidMount() {
@@ -133,8 +146,9 @@ export class DataTable extends React.PureComponent {
           height={this.state.height}
           fixedHeader={this.state.fixedHeader}
           fixedFooter={this.state.fixedFooter}
-          selectable={this.state.selectable}
-          multiSelectable={this.state.multiSelectable}>
+          selectable={this.props.selectable}
+          multiSelectable={this.state.multiSelectable}
+          onRowSelection={this.handleRowSelection}>
 
           { /* Header - Sort on click in header columns */ }
           <TableHeader
