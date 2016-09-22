@@ -7,25 +7,77 @@ let _ = require('lodash')
 let server = supertest.agent('http://localhost:8080')
 let assert = chai.assert
 
-describe('GET /account-details/current',function(){
-  const path = '/api/account-details/current'
-  shared.checkToken(server, path)
+describe('/account-details/current', function (){
+  let accountDetails
 
-  it('should return the account details for the currently logged in user', function(done){
-    server
-      .get(path)
-      .set('Authorization', 'Bearer ' + shared.token)
-      .end(function(err,res){
-        assert.equal(res.status, 200)
-        assert.typeOf(res.body, 'Object')
-        assert.property(res.body, 'data')
-        assert.typeOf(res.body.data, 'Object')
-        const accountDetailsFieldNames = ['id', 'userId', 'username', 'name', 'title', 'email', 'email2',
-          'phone', 'cell', 'countryId', 'stateId', 'lgaId', 'timezone', 'culture']
-        _.each(accountDetailsFieldNames, function(fieldName) {
-          assert.property(res.body.data, fieldName)
+  describe('GET', function(){
+    const path = '/api/account-details/current'
+    shared.checkToken(server, path)
+
+    it('should return the account details for the currently logged in user', function(done){
+      server
+        .get(path)
+        .set('Authorization', 'Bearer ' + shared.token)
+        .end(function(err,res){
+          //We need this for the nex test
+          accountDetails = res.body.data
+          assert.equal(res.status, 200)
+          assert.typeOf(res.body, 'Object')
+          assert.property(res.body, 'data')
+          assert.typeOf(res.body.data, 'Object')
+          const accountDetailsFieldNames = ['id', 'userId', 'username', 'name', 'title', 'email', 'email2',
+            'phone', 'cell', 'countryId', 'stateId', 'lgaId', 'timezone', 'culture']
+          _.each(accountDetailsFieldNames, function(fieldName) {
+            assert.property(res.body.data, fieldName)
+          })
+          done()
         })
-        done()
-      })
+    })
+  })
+
+  describe('POST', function(){
+    const path = '/api/account-details/current'
+    shared.checkToken(server, path)
+
+    it('should update account details for the currently logged in user and return them', function(done){
+      let originalTitle = accountDetails.title
+      let newJobTitle = 'New Job Title'
+      assert.notEqual(accountDetails.title, newJobTitle, 'The title of this person is already set to \'New Job Title\'. This could be a problem with the cleanup that was supposed to have happened the last time this test was run. Please update the title of person (id=' + accountDetails.id + ') to something other than \'' + newJobTitle + '\'')
+
+      server
+        .post(path)
+        .send(Object.assign({}, accountDetails, { title: newJobTitle }))
+        .set('Authorization', 'Bearer ' + shared.token)
+        .end(function(err,res){
+          assert.equal(res.status, 200)
+          assert.typeOf(res.body, 'Object')
+          assert.property(res.body, 'data')
+          assert.typeOf(res.body.data, 'Object')
+          const accountDetailsFieldNames = ['id', 'userId', 'username', 'name', 'title', 'email', 'email2',
+            'phone', 'cell', 'countryId', 'stateId', 'lgaId', 'timezone', 'culture']
+          _.each(accountDetailsFieldNames, function(fieldName) {
+            assert.property(res.body.data, fieldName)
+          })
+          assert.equal(res.body.data.title, newJobTitle)
+
+          //Make sure the data has been persisted
+          server
+            .get(path)
+            .set('Authorization', 'Bearer ' + shared.token)
+            .end(function(err,res){
+              assert.equal(res.body.data.title, newJobTitle)
+
+              //Clean Up: Update the user with their old title again
+              server
+                .post(path)
+                .send(Object.assign({}, accountDetails, { title: originalTitle }))
+                .set('Authorization', 'Bearer ' + shared.token)
+                .end(function(err,res){
+                  assert.equal(res.body.data.title, originalTitle)
+                  done()
+                })
+            })
+        })
+    })
   })
 })

@@ -10,7 +10,7 @@ let serverUrl = 'http://localhost:8080',
   attemptsToConnect = 0,
   assert = chai.assert
 
-function attemptToConnect(done) {
+function attemptToConnectAndLogin(done) {
   if (attemptsToConnect === 3) {
     done()
   }
@@ -19,24 +19,15 @@ function attemptToConnect(done) {
       .end(function(err,res){
         if(err || !res || res.status !== 200) {
           attemptsToConnect++
-          attemptToConnect(done)
+          attemptToConnectAndLogin(done)
         } else {
-          done()
+          tryLogin(done)
         }
       })
   }, 1000)
 }
 
-before(function (done) {
-  //Wait until server is up and running
-  attemptToConnect(done)
-})
-
-let jwToken = ''
-let refreshToken = ''
-let clientId = ''
-
-it('User should be able to login',function(done){
+function tryLogin(done) {
   server
     .post('/api/auth')
     .send({ name: 'admin', password: 'test07', clientName: 'Mocha/Chai' })
@@ -45,10 +36,7 @@ it('User should be able to login',function(done){
       assert.isAbove(res.body.access.length, 100)
       assert.isAbove(res.body.refresh.length, 50)
       assert.isAbove(res.body.clientId.length, 32)
-      jwToken = res.body.access
-      shared.token = jwToken
-      refreshToken = res.body.refresh
-      clientId = res.body.clientId
+      shared.token = res.body.access
       jwt.verify(res.body.access, config.secret, function (err, decoded) {
         assert.isNotOk(err)
         assert.property(decoded, 'name')
@@ -57,12 +45,12 @@ it('User should be able to login',function(done){
         assert.property(decoded, 'iat')
         assert.property(decoded, 'exp')
         assert.property(decoded, 'iss')
-        done()
+        tryRefreshToken(res.body.refresh, res.body.clientId, done)
       })
     })
-})
+}
 
-it('should be able to get a refresh token',function(done){
+function tryRefreshToken(refreshToken, clientId, done) {
   server
     .post('/api/auth/refresh')
     .send({ clientId: clientId, token: refreshToken })
@@ -71,8 +59,7 @@ it('should be able to get a refresh token',function(done){
       assert.isAbove(res.body.access.length, 100)
       assert.isAbove(res.body.refresh.length, 50)
       assert.isAbove(res.body.clientId.length, 32)
-      jwToken = res.body.access
-      shared.token = jwToken
+      shared.token = res.body.access
       jwt.verify(res.body.access, config.secret, function (err, decoded) {
         assert.isNotOk(err)
         assert.property(decoded, 'name')
@@ -84,4 +71,9 @@ it('should be able to get a refresh token',function(done){
         done()
       })
     })
+}
+
+before(function (done) {
+  //Wait until server is up and running
+  attemptToConnectAndLogin(done)
 })
