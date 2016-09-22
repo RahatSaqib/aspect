@@ -1,33 +1,32 @@
-import Immutable from 'immutable'
 import types from './../constants/action_types'
 
-function receiveCurrentlyLoggedInAccountDetails(state, accountDetails) {
-  return state.merge(accountDetails)
+const initialState = {
+  loading: false,
+  data: {
+    username: '',
+    name: ''
+  }
 }
 
-const AccountDetails = Immutable.Record({
-  id: null,
-  userId: null,
-  username: null,
-  name: null,
-  title: null,
-  email: null,
-  email2: null,
-  phone: null,
-  cell: null,
-  countryId: null,
-  stateId: null,
-  lgaId: null,
-  timezone: null,
-  culture: null
-})
+function requestAccountDetails(state) {
+  return {...state,
+    loading: true
+  }
+}
 
-const initialState = new AccountDetails()
+function receiveAccountDetails(state, accountDetailsData) {
+  return {...state,
+    loading: false,
+    data: accountDetailsData
+  }
+}
 
 function accountDetails(state = initialState, action) {
   switch (action.type) {
-  case types.RECEIVE_CURRENTLY_LOGGED_ACCOUNT_DETAILS:
-    return receiveCurrentlyLoggedInAccountDetails(state, action.accountDetails)
+  case types.REQUEST_ACCOUNT_DETAILS:
+    return requestAccountDetails(state)
+  case types.RECEIVE_ACCOUNT_DETAILS:
+    return receiveAccountDetails(state, action.accountDetails)
   }
   return state
 }
