@@ -1,25 +1,46 @@
 // Imports from packages
+import _ from 'lodash'
 import React from 'react'
+import { bindActionCreators } from 'redux'
+import { connect } from 'react-redux'
 
 // Our own imports
 import { FormContainer } from './Form'
 import Display from './Display'
 import { injectEditable } from '../../../hoc'
+import { updateSingleDevice } from '../../../../action_creators/device_creators'
 
 export class EditableFields extends React.PureComponent {
   static propTypes = {
+    updateSingleDevice: React.PropTypes.func.isRequired,
     editable: React.PropTypes.bool.isRequired,
     device: React.PropTypes.object.isRequired
   }
 
+  handleSubmit = data => {
+    const { device } = this.props
+
+    this.props.updateSingleDevice(device.get('id'), {
+      // Map form fields to API fields
+      name: data.get('name'),
+      shortname: data.get('shortName'),
+      siteId: data.get('site')
+    })
+  }
+
   renderFormContainer(device, restProps) {
     const initialValues = {
+      // Map API fields to form fields
       name: device.get('name'),
       shortName: device.get('shortname'),
-      site: device.get('id')
+      site: device.get('siteId')
     }
     return (
-      <FormContainer initialValues={initialValues} {...restProps} />
+      <FormContainer
+        {...restProps}
+        initialValues={initialValues}
+        onSubmit={this.handleSubmit}
+      />
     )
   }
 
@@ -44,7 +65,7 @@ export class EditableFields extends React.PureComponent {
   }
 
   render() {
-    const { editable, device, ...restProps } = this.props
+    const { updateSingleDevice, editable, device, ...restProps } = this.props
 
     return (
       editable ?
@@ -54,5 +75,18 @@ export class EditableFields extends React.PureComponent {
   }
 }
 
-export const EditableFieldsContainer = injectEditable(EditableFields)
+function mapStateToProps() {
+  return {
+  }
+}
 
+function mapDispatchToProps(dispatch) {
+  return bindActionCreators({
+    updateSingleDevice
+  }, dispatch)
+}
+
+export const EditableFieldsContainer = _.flowRight(
+  connect(mapStateToProps, mapDispatchToProps),
+  injectEditable
+)(EditableFields)
