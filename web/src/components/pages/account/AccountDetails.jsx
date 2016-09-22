@@ -2,6 +2,7 @@ import _ from 'lodash'
 import React from 'react'
 import { bindActionCreators } from 'redux'
 import { connect } from 'react-redux'
+import AccountDetailsForm from './AccountDetailsForm'
 import {fetchAccountDetails} from '../../../action_creators/accountDetails_creators'
 
 class AccountDetails extends React.PureComponent {
@@ -13,11 +14,8 @@ class AccountDetails extends React.PureComponent {
     const { loading, accountDetails } = this.props
     return (
       <div className="content">
-        Loading: {String(loading)}
-        <br/>
-        Username: {accountDetails.get('username')}
-        <br/>
-        Full Name: {accountDetails.get('name')}
+        {loading && <span>loading...</span>}
+        {!loading && <AccountDetailsForm accountDetails={accountDetails} />}
       </div>
     )
   }
