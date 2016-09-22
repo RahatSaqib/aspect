@@ -34,6 +34,30 @@ function* seed(knex){
     name: 'Partner Two'
   })
 
+  let [partnerOneOrgUnitId] = yield knex('org_unit').insert({
+    name: 'Partner One',
+    partner_id: partnerOneId,
+    depth: 1,
+    left_bound: 1,
+    right_bound: 6
+  })
+
+  let [regionNortheastId] = yield knex('org_unit').insert({
+    name: 'Northeast',
+    partner_id: partnerOneId,
+    depth: 2,
+    left_bound: 2,
+    right_bound: 3
+  })
+
+  let [regionMidwestId] = yield knex('org_unit').insert({
+    name: 'Midwest',
+    partner_id: partnerOneId,
+    depth: 2,
+    left_bound: 4,
+    right_bound: 5
+  })
+
   // Create permissions
   let modules = {}
   for(let module of permissions.modules){
@@ -72,6 +96,11 @@ function* seed(knex){
       countryData.states[stateKey] = stateData
       stateData.lgas = {}
 
+      // assign org units based on state region
+      let orgUnitId = _.includes(['OH', 'NE'], state.abbreviation) ? regionMidwestId
+        : _.includes(['MA', 'NY'], state.abbreviation) ? regionNortheastId
+        : partnerOneOrgUnitId
+
       for(let lga of (state.lgas || [])){
         let lgaData = Object.assign(
           {state_id: stateData.id},
@@ -92,6 +121,7 @@ function* seed(knex){
         for(let siteNumber of _.range(1, 6 - (lgaData.id % 5))){
           let siteData = Object.assign({
             partner_id: partnerOneId,
+            org_unit_id: orgUnitId,
             name: `${lga.name} ${country.lga_label} ${state.name} #${siteNumber}`,
             shortname: `${lga.name}, ${stateKey} #${siteNumber}`,
             identifier: `Site ${siteNumber * lgaData.id}`,
@@ -110,7 +140,8 @@ function* seed(knex){
 
   // Users
   let userIds = {}
-  for(let name of ['Admin', 'Bill', 'Bob', 'Frank', 'Fred', 'Jason', 'Jim', 'Sam', 'Steve']){
+  for(let name of ['Admin', 'Bill', 'Bob', 'Frank', 'Ed', 'Fred',
+      'Jason', 'Jim', 'Jon', 'Ned', 'Sam', 'Steve']){
     let userId
     if(name === 'Admin'){
       userId = adminId
@@ -224,6 +255,24 @@ function* seed(knex){
     data_filter_id: dataFilterIdMASuffolk
   })
 
+  let [roleIdParentOrgUnit] = yield knex('role').insert({
+    name: 'Partner One Users',
+    partner_id: partnerOneId,
+    org_unit_id: partnerOneOrgUnitId
+  })
+
+  let [roleIdNortheast] = yield knex('role').insert({
+    name: 'Northeast Users',
+    partner_id: partnerOneId,
+    org_unit_id: regionNortheastId
+  })
+
+  let [roleIdMidwest] = yield knex('role').insert({
+    name: 'Midwest Users',
+    partner_id: partnerOneId,
+    org_unit_id: regionMidwestId
+  })
+
   // assign permissions to roles
   yield knex('role_permission').insert([
     { role_id: roleIdAdmin, permission_id: modules.device.admin },
@@ -239,7 +288,16 @@ function* seed(knex){
     { role_id: roleIdOHWayne, permission_id: modules.site.view },
     { role_id: roleIdOHWayne, permission_id: modules.device.view },
 
-    { role_id: roleIdMASuffolk, permission_id: modules.device.view }
+    { role_id: roleIdMASuffolk, permission_id: modules.device.view },
+
+    { role_id: roleIdMidwest, permission_id: modules.site.edit },
+    { role_id: roleIdMidwest, permission_id: modules.device.edit },
+
+    { role_id: roleIdNortheast, permission_id: modules.site.edit },
+    { role_id: roleIdNortheast, permission_id: modules.device.edit },
+
+    { role_id: roleIdParentOrgUnit, permission_id: modules.site.edit },
+    { role_id: roleIdParentOrgUnit, permission_id: modules.device.edit }
   ])
 
 
@@ -247,8 +305,11 @@ function* seed(knex){
   yield knex('user_role').insert([
     { user_id: userIds['admin'], role_id: roleIdAdmin },
     { user_id: userIds['bob'], role_id: roleIdOH },
+    { user_id: userIds['ed'], role_id: roleIdMidwest },
     { user_id: userIds['frank'], role_id: roleIdNE },
     { user_id: userIds['fred'], role_id: roleIdOHWayne },
+    { user_id: userIds['jon'], role_id: roleIdParentOrgUnit },
+    { user_id: userIds['ned'], role_id: roleIdNortheast },
     { user_id: userIds['steve'], role_id: roleIdMASuffolk },
     { user_id: userIds['bill'], role_id: roleIdMASuffolk },
     { user_id: userIds['bill'], role_id: roleIdOH }])

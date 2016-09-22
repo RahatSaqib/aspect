@@ -9,13 +9,16 @@ function* up(knex){
   yield knex.schema.createTable('org_unit', orgUnit => {
     orgUnit.increments('id')
     orgUnit.string('name').notNullable()
+    orgUnit.integer('partner_id').unsigned().notNullable()
+      .index().references('id').inTable('partner')
+
     orgUnit.integer('left_bound').unsigned().notNullable()
     orgUnit.integer('right_bound').unsigned().notNullable()
     orgUnit.integer('depth').unsigned().notNullable()
-    orgUnit.integer('partner_id').unsigned().notNullable()
-      .index().references('id').inTable('partner')
-    orgUnit.integer('parent_id').unsigned()
-      .index().references('id').inTable('org_unit')
+
+    // TODO Add org_unit parent id if is helpful
+    //orgUnit.integer('parent_id').unsigned()
+    //  .index().references('id').inTable('org_unit')
   })
 
   yield knex.schema.createTable('data_filter', dataFilter => {
@@ -193,6 +196,8 @@ function* up(knex){
     // TODO is site to partner many to many?
     site.integer('partner_id').unsigned()
       .index().references('id').inTable('partner')
+    site.integer('org_unit_id').unsigned()
+      .index().references('id').inTable('org_unit')
     site.integer('country_id').unsigned()
       .index().references('id').inTable('country')
     site.integer('state_id').unsigned()
@@ -219,8 +224,6 @@ function* up(knex){
     device.increments('id')
     device.integer('device_type_id').unsigned().notNullable()
       .index().references('id').inTable('device_type')
-    device.integer('org_unit_id').unsigned()
-      .index().references('id').inTable('org_unit')
 
     // TODO Add device id1 - id4 or equivalent
     // used to uniquely identify provisioned devices, still to be discussed
