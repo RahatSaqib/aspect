@@ -1,6 +1,13 @@
 let _ = require('lodash')
 let {query} = require('./db')
 
+// A prefix for joined table aliases intended to avoid
+// conflict with caller supplied table aliases
+const ALIAS_PREFIX = '__constraints'
+function alias(table){
+  return `${ALIAS_PREFIX}_${table}`
+}
+
 function getConstraints(credentials){
   // FIXME only include roles that assign permissions of interest
   return query('Get constraints for user credentials')
@@ -26,16 +33,40 @@ function getConstraints(credentials){
 }
 
 function addConstraints(queryBuilder, constraints, aliases){
-  let {
-    partner='partner',
-    country='country',
-    state='state',
-    lga='lga'
-  } = aliases
+  let {device, site, partner, country, state, lga} = aliases
+  // TODO only join queries if needed within constraints or required by unspecified aliases
+  // TODO reuse aliases for joined tables if provided instead of joining twice
+  if(!site){
+    if(!device){
+      throw new Error('Must provide either site or device alias or modify this to accept provided aliases')
+    }
+    site = alias('site')
+    queryBuilder.leftOuterJoin(`site as ${site}`, `${device}.site_id`, `${site}.id`)
+  }
+
+  if(!partner){
+    partner = alias('partner')
+    queryBuilder.leftOuterJoin(`partner as ${partner}`, `${site}.partner_id`, `${partner}.id`)
+  }
+
+  if(!country){
+    country = alias('country')
+    queryBuilder.leftOuterJoin(`country as ${country}`, `${site}.country_id`, `${country}.id`)
+  }
+
+  if(!state){
+    state = alias('state')
+    queryBuilder.leftOuterJoin(`state as ${state}`, `${site}.state_id`, `${state}.id`)
+  }
+
+  if(!lga){
+    lga = alias('lga')
+    queryBuilder.leftOuterJoin(`lga as ${lga}`, `${site}.lga_id`, `${lga}.id`)
+  }
 
   // TODO generalize constraint building
 
-  // Partrner and country constraints are ANDed
+  // Partner and country constraints are ANDed
   queryBuilder.where({[`${partner}.id`]: constraints.partner.id})
   queryBuilder.where({[`${country}.id`]: constraints.country.id})
 
