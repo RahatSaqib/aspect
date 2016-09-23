@@ -5,7 +5,7 @@ let sinon = require('sinon')
 let endpointUtils = require('../../test/unit_tests/endpointUtils')
 
 describe('auth endpoints', function () {
-  let auth, dbSpy, jwt, endpoint
+  let dbSpy, jwt, endpoint
   const fakeConfig = { secret: '8rU7FITwHV30jhkcXvjOjoSvy2Tv2bZT', passwordAttempts: 5 }
 
   function setupAuthRoutes(method, path) {
@@ -13,12 +13,15 @@ describe('auth endpoints', function () {
     sinon.spy(dbSpy, 'query')
     jwt = require('jsonwebtoken')
     sinon.spy(jwt, 'sign')
-    auth = proxyquire.noCallThru().load('./endpoints', {
+    let service = proxyquire.noCallThru().load('./service', {
       'jsonwebtoken': jwt,
       '../db': dbSpy,
       '../config': fakeConfig
     })
-    endpoint = _.find(auth, {method: method, path: path})
+    let endpoints = proxyquire.noCallThru().load('./endpoints', {
+      './service': service
+    })
+    endpoint = _.find(endpoints, {method: method, path: path})
   }
 
   afterEach(function() {
