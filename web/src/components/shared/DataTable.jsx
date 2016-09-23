@@ -1,4 +1,5 @@
 // Imports from packages
+import _ from 'lodash'
 import cx from 'classnames'
 import React from 'react'
 
@@ -14,7 +15,13 @@ import styles from './DataTable.css'
 export class DataTable extends React.PureComponent {
 
   static propTypes = {
+    selectable: React.PropTypes.bool,
+    handleItemIdSelection: React.PropTypes.func,
     handleFetch: React.PropTypes.func.isRequired,
+    items: React.PropTypes.shape({
+      byId: React.PropTypes.object.isRequired,
+      currentIdList: React.PropTypes.object.isRequired
+    }).isRequired,
     table: React.PropTypes.shape({
       loading: React.PropTypes.bool.isRequired,
       sortCol: React.PropTypes.string.isRequired,
@@ -22,8 +29,7 @@ export class DataTable extends React.PureComponent {
       filters: React.PropTypes.object.isRequired/* TODO */,
       page: React.PropTypes.number.isRequired,
       pageSize: React.PropTypes.number.isRequired,
-      total: React.PropTypes.number.isRequired,
-      items: React.PropTypes.object.isRequired/* TODO */
+      total: React.PropTypes.number.isRequired
     }).isRequired,
     columns: React.PropTypes.array.isRequired
   }
@@ -32,12 +38,23 @@ export class DataTable extends React.PureComponent {
     height: 'inherit',
     fixedHeader: true,
     fixedFooter: true,
-    selectable: false,
     multiSelectable: false,
     showCheckboxes: false,
     enableSelectAll: false,
     showRowHover: true,
     stripedRows: false
+  }
+
+  handleRowSelection = this.handleRowSelection.bind(this)
+
+  handleRowSelection([selectedIndex]) {
+    const {
+      handleItemIdSelection = _.noop,
+      items
+    } = this.props
+
+    const selectedId = items.currentIdList.get(selectedIndex)
+    handleItemIdSelection(selectedId)
   }
 
   componentDidMount() {
@@ -107,8 +124,10 @@ export class DataTable extends React.PureComponent {
   }
 
   render() {
-
-    const table = this.props.table
+    const {
+      items,
+      table
+    } = this.props
 
     // show loading indicator?
     const loading = table.loading ?
@@ -127,8 +146,9 @@ export class DataTable extends React.PureComponent {
           height={this.state.height}
           fixedHeader={this.state.fixedHeader}
           fixedFooter={this.state.fixedFooter}
-          selectable={this.state.selectable}
-          multiSelectable={this.state.multiSelectable}>
+          selectable={this.props.selectable}
+          multiSelectable={this.state.multiSelectable}
+          onRowSelection={this.handleRowSelection}>
 
           { /* Header - Sort on click in header columns */ }
           <TableHeader
@@ -154,13 +174,17 @@ export class DataTable extends React.PureComponent {
             deselectOnClickaway={this.state.deselectOnClickaway}
             showRowHover={this.state.showRowHover}
             stripedRows={this.state.stripedRows}>
-            {table.items.map((item) => (
-              <TableRow key={item.get('id') }>
-                {this.props.columns.map((col) => (
-                  <TableRowColumn key={item.get(col.db) } className={ col.hideOnXs ? 'pure-hidden-xs' : '' } >
-                    {col.format ? col.format(item.get(col.db)) : item.get(col.db) }
-                  </TableRowColumn>
-                )) }
+            {items.currentIdList.map((itemId) => (
+              <TableRow key={itemId}>
+                {this.props.columns.map((col) => {
+                  const row = items.getIn(['byId', itemId])
+                  const data = row.get(col.db)
+                  return (
+                    <TableRowColumn key={data} className={ col.hideOnXs ? 'pure-hidden-xs' : '' } >
+                      {(col.format || _.identity)(data, row)}
+                    </TableRowColumn>
+                  )
+                })}
               </TableRow>
             )) }
           </TableBody>

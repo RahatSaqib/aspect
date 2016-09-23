@@ -2,6 +2,10 @@ import Immutable from 'immutable'
 
 import types from './../constants/action_types'
 import {
+  receiveList,
+  Items
+} from './meta/items'
+import {
   requestTable,
   receiveTableItems,
   Table
@@ -9,15 +13,19 @@ import {
 
 function requestPersons(state, action) {
   return state
-    .updateIn(['table'], table => requestTable(table, action))
+    .set('table', requestTable(state.table, action))
 }
 
-function receivePersons(state, items, total) {
-  return state
-    .updateIn(['table'], table => receiveTableItems(table, items, total))
+function receivePersons(state, list, total) {
+  return state.withMutations(mutState => {
+    const immutList = Immutable.fromJS(list)
+    mutState.set('items', receiveList(mutState.items, immutList))
+    mutState.set('table', receiveTableItems(mutState.table, total))
+  })
 }
 
 const Person = Immutable.Record({
+  items: new Items(),
   table: new Table()
 })
 

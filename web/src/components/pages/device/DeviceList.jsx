@@ -5,6 +5,7 @@ import {
   injectIntl,
   defineMessages
 } from 'react-intl'
+import { withRouter } from 'react-router'
 import { bindActionCreators } from 'redux'
 import { connect } from 'react-redux'
 import Helmet from 'react-helmet'
@@ -69,6 +70,10 @@ export class DeviceList extends React.PureComponent {
   handleSubmit = this.handleSubmit.bind(this)
   resetDevices = this.resetDevices.bind(this)
 
+  handleItemIdSelection = (deviceId) => {
+    this.props.router.push(`/device/${deviceId}`)
+  }
+
   filterDevicesChange(e){
     this.setState({ filters: this.state.filters.set(e.target.id, e.target.value) })
   }
@@ -111,7 +116,10 @@ export class DeviceList extends React.PureComponent {
             </ToolbarGroup>
           </Toolbar>
         </form>
-        <DataTable  handleFetch={ this.props.fetchDevices }
+        <DataTable  selectable
+                    handleItemIdSelection={this.handleItemIdSelection}
+                    handleFetch={ this.props.fetchDevices }
+                    items={ this.props.items }
                     table={ this.props.table }
                     columns={[
                       { db: 'name', title: formatMessage(messages.deviceName) },
@@ -130,6 +138,7 @@ export class DeviceList extends React.PureComponent {
 
 function mapStateToProps(state) {
   return {
+    items: state.device.items,
     table: state.device.table
   }
 }
@@ -140,5 +149,6 @@ function mapDispatchToProps(dispatch) {
 
 export const DeviceListContainer = _.flowRight(
   injectIntl,
+  withRouter,
   connect(mapStateToProps, mapDispatchToProps)
 )(DeviceList)

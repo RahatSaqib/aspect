@@ -13,6 +13,7 @@ import { DashboardContainer } from './components/pages/dashboard/Dashboard'
 import { Inventory } from './components/pages/dashboard/Inventory'
 import { Maintenance } from './components/pages/dashboard/Maintenance'
 import { DeviceListContainer } from './components/pages/device/DeviceList'
+import { DeviceDetailContainer } from './components/pages/device/DeviceDetail'
 import { SiteListContainer } from './components/pages/site/SiteList'
 import { PersonListContainer } from './components/pages/person/PersonList'
 import { NotFoundContainer } from './components/pages/error/NotFound'
@@ -55,7 +56,10 @@ const routes =
           <Route path="maintenance" component={Maintenance} />
         </Route>
 
-        <Route path="/device" component={DeviceListContainer} />
+        <Route path="device">
+          <IndexRoute component={DeviceListContainer} />
+          <Route path=":deviceId" component={DeviceDetailContainer} />
+        </Route>
 
         <Route path="/result" component={ResultList} />
 

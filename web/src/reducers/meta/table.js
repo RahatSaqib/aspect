@@ -11,17 +11,15 @@ export function requestTable(table, action) {
   })
 }
 
-export function receiveTableItems(table, items, total) {
+export function receiveTableItems(table, total) {
   return table.merge({
     loading: false,
-    items,
     total
   })
 }
 
 export const Table = Immutable.Record({
   loading: false,
-  items: Immutable.List(),
   sortCol: 'name',
   sortDir: 'asc',
   page: 0,

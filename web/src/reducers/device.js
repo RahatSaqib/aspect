@@ -2,6 +2,11 @@ import Immutable from 'immutable'
 
 import types from './../constants/action_types'
 import {
+  receiveList,
+  receiveItem,
+  Items
+} from './meta/items'
+import {
   requestTable,
   receiveTableItems,
   Table
@@ -9,15 +14,26 @@ import {
 
 function requestDevices(state, action) {
   return state
-    .updateIn(['table'], table => requestTable(table, action))
+    .set('table', requestTable(state.table, action))
 }
 
-function receiveDevices(state, items, total) {
-  return state
-    .updateIn(['table'], table => receiveTableItems(table, items, total))
+function receiveDevices(state, list, total) {
+  return state.withMutations(mutState => {
+    const immutList = Immutable.fromJS(list)
+    mutState.set('items', receiveList(mutState.items, immutList))
+    mutState.set('table', receiveTableItems(mutState.table, total))
+  })
+}
+
+function receiveSingleDevice(state, item) {
+  return state.withMutations(mutState => {
+    const immutItem = Immutable.fromJS(item)
+    mutState.set('items', receiveItem(mutState.items, immutItem))
+  })
 }
 
 const Device = Immutable.Record({
+  items: new Items(),
   table: new Table()
 })
 
@@ -29,6 +45,10 @@ function device(state = initialState, action) {
     return requestDevices(state, action)
   case types.RECEIVE_DEVICES:
     return receiveDevices(state, action.items, action.total)
+  case types.RECEIVE_SINGLE_DEVICE:
+    return receiveSingleDevice(state, action.item)
+  case types.RECEIVE_UPDATED_SINGLE_DEVICE:
+    return receiveSingleDevice(state, action.item)
   }
   return state
 }
