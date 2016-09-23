@@ -193,7 +193,7 @@ function* seed(knex){
     // TODO specify query constraint format (likely similar to MongoDB)
     constraint: JSON.stringify({
       state: {
-        abbreviation: 'OH'
+        id: countries.US.states.OH.id
       }
     })
   })
@@ -202,7 +202,7 @@ function* seed(knex){
     name: 'Nebraska Filter',
     constraint: JSON.stringify({
       state: {
-        abbreviation: 'NE'
+        id: countries.US.states.NE.id
       }
     })
   })
