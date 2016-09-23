@@ -19,8 +19,8 @@ const AccountDetailsData = Immutable.Record({
 })
 
 const AccountDetails = Immutable.Record({
-  loading: true,
-  loadingMessage: undefined,
+  loading: false,
+  saving: false,
   data: new AccountDetailsData()
 })
 
@@ -28,23 +28,21 @@ const initialState = new AccountDetails()
 
 function requestAccountDetails(state) {
   return state.merge({
-    loading: true,
-    loadingMessage: 'loading...'
+    loading: true
   })
 }
 
 function receiveAccountDetails(state, accountDetailsData) {
   return state.mergeDeep({
     loading: false,
-    loadingMessage: undefined,
+    saving: false,
     data: accountDetailsData
   })
 }
 
 function saveAccountDetailsStart(state) {
   return state.merge({
-    loading: true,
-    loadingMessage: 'saving...'
+    saving: true
   })
 }
 

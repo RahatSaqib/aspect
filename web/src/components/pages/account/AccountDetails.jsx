@@ -13,11 +13,11 @@ class AccountDetails extends React.PureComponent {
   }
 
   render() {
-    const { loading, loadingMessage, accountDetails, saveAccountDetails } = this.props
+    const { loading, saving, accountDetails, saveAccountDetails } = this.props
     return (
       <div className={styles.Content}>
-        {loading && <span>{loadingMessage}</span>}
-        {loading && <LinearProgress />}
+        {loading && <span>Loading...</span>}
+        {(loading || saving) && <LinearProgress />}
         {!loading && <AccountDetailsForm initialValues={accountDetails} onSubmit={saveAccountDetails} />}
       </div>
     )
@@ -27,6 +27,7 @@ class AccountDetails extends React.PureComponent {
 function mapStateToProps(state) {
   return {
     loading: state.accountDetails.get('loading'),
+    saving: state.accountDetails.get('saving'),
     loadingMessage: state.accountDetails.get('loadingMessage'),
     accountDetails: state.accountDetails.get('data')
   }

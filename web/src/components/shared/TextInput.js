@@ -7,11 +7,10 @@ const renderTextField = props =>
              errorText={props.meta.touched && props.meta.error} {...props.textFieldProps} />
 
 const renderFormField = props =>
-  <Field name={props.name}
-         textFieldProps={{
-           floatingLabelText: props.label,
-           fullWidth: props.fullWidth
-         }}
-         component={renderTextField} />
+  <Field name={props.name} textFieldProps={{
+    floatingLabelText: props.label,
+    fullWidth: props.fullWidth,
+    disabled: props.disabled
+  }} component={renderTextField} />
 
 export default renderFormField

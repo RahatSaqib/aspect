@@ -11,10 +11,10 @@ const AccountDetailsForm = props => {
   return (
     <Paper>
       <form onSubmit={handleSubmit} className={styles.Form}>
-        <TextInput name="name" label="Name" fullWidth />
-        <TextInput name="title" label="Job Title" fullWidth />
-        <TextInput name="email" label="Email" fullWidth />
-        <TextInput name="email2" label="Alternate Email" fullWidth />
+        <TextInput name="name" label="Name" disabled={submitting} fullWidth />
+        <TextInput name="title" label="Job Title" disabled={submitting} fullWidth />
+        <TextInput name="email" label="Email" disabled={submitting} fullWidth />
+        <TextInput name="email2" label="Alternate Email" disabled={submitting} fullWidth />
         <div className={styles.Form__ActionRow}>
           <RaisedButton disabled={pristine || invalid || submitting} label="Save" secondary={true} type="submit" />
         </div>

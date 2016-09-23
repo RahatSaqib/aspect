@@ -41,7 +41,6 @@ export function saveAccountDetails(accountDetails) {
     return aspectFetch('/account-details/current',
       {
         method: 'PUT',
-        //TODO: Is this necessary??
         headers: fetchUtils.getHeaders(true),
         body: JSON.stringify(accountDetails)
       })
