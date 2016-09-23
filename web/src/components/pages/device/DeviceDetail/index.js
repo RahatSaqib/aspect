@@ -44,6 +44,14 @@ const messages = defineMessages({
     id: 'pages.DeviceDetail.fieldSiteId',
     defaultMessage: 'Site (ddl)'
   },
+  siteLoadMore: {
+    id: 'pages.DeviceDetail.siteLoadMore',
+    defaultMessage: 'Load more'
+  },
+  siteLoadingMore: {
+    id: 'pages.DeviceDetail.siteLoadingMore',
+    defaultMessage: 'Loading……'
+  },
   fieldFirstConnected: {
     id: 'pages.DeviceDetail.fieldFirstConnected',
     defaultMessage: 'First Connected'
@@ -110,7 +118,9 @@ export class DeviceDetail extends React.PureComponent {
       name: formatMessage(messages.fieldName),
       shortName: formatMessage(messages.fieldShortname),
       notes: formatMessage(messages.fieldNotes),
-      site: formatMessage(messages.fieldSiteId)
+      site: formatMessage(messages.fieldSiteId),
+      loadMoreText: formatMessage(messages.siteLoadMore),
+      loadingMoreText: formatMessage(messages.siteLoadingMore)
     }
     const initialValues = {
       // Map API fields to form fields
