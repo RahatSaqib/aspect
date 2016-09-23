@@ -36,7 +36,7 @@ function decorateAPI(module){
           scope = []
           auth.scope = scope
         }
-        auth.scope = [`+${module}`].concat(auth.scope)
+        auth.scope = ['admin', `${module}:admin`].concat(auth.scope)
       }
 
       // Add JWT Auth token query param configuration

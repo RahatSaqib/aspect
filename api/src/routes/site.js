@@ -12,6 +12,7 @@ module.exports = [{
   config: {
     description: 'Site List',
     notes: 'Pageable and sortable list of sites',
+    auth: {scope: ['site:view', 'site:edit']},
     validate: {
       query: Object.assign({
         name: Joi.string().allow('').description('Filter for site name')

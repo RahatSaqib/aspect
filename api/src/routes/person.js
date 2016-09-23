@@ -11,6 +11,7 @@ module.exports = [{
   config: {
     description: 'People List',
     notes: 'Pageable and sortable list of people',
+    auth: {scope: ['person:view', 'person:edit']},
     validate: {
       query: Object.assign({
         name: Joi.string().allow('').description('Filter for person name')

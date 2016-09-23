@@ -13,6 +13,7 @@ module.exports = [
     config: {
       description: 'Device List',
       notes: 'Pageable and sortable list of devices',
+      auth: {scope: ['device:view', 'device:edit']},
       validate: {
         query: Object.assign({
           name: Joi.string().allow('').description('Filter for device name')
@@ -27,6 +28,7 @@ module.exports = [
     config: {
       description: 'Device Detail',
       notes: 'Detail of a device',
+      auth: {scope: ['device:view', 'device:edit']},
       validate: {
         params: {
           deviceId: Joi.string().description('Device id').required()
@@ -41,6 +43,7 @@ module.exports = [
     config: {
       description: 'Update Device Detail',
       notes: 'Detail of a device',
+      auth: {scope: ['device:edit']},
       validate: {
         params: {
           deviceId: Joi.string().description('Device id').required()
