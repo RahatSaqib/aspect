@@ -1,5 +1,5 @@
 let Joi = require('joi')
-let { asyncHandler, validateSortPageParams } = require('../util')
+let { asyncHandler, validateSortPageParams } = require('../routes')
 let { listPeople } = require('./service')
 
 module.exports = [{

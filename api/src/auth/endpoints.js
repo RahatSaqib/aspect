@@ -1,6 +1,6 @@
 let Joi = require('joi')
 
-let { asyncHandler } = require('../util')
+let { asyncHandler } = require('../routes')
 
 let {authenticate, checkAuthentication, refreshToken} = require('./service')
 
