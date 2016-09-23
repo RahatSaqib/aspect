@@ -1,5 +1,6 @@
 import React from 'react'
 import { Field, reduxForm } from 'redux-form/immutable'
+import {emailAddress as validateEmailAddress} from '../../../utils/validate'
 
 const AccountDetailsForm = props => {
   const { initialValues, handleSubmit, pristine, submitting } = props
@@ -29,6 +30,22 @@ const AccountDetailsForm = props => {
   )
 }
 
+const validate = acccountDetails => {
+  const errors = {}
+  if (!acccountDetails.get('name')) {
+    //TODO: i18n
+    errors.user = 'Please enter your Full name'
+  }
+  if (validateEmailAddress(acccountDetails.get('email').optional().isValid())) {
+    errors.email = 'Please enter a valid email address'
+  }
+  if (validateEmailAddress(acccountDetails.get('email2').optional().isValid())) {
+    errors.email2 = 'Please enter a valid email address'
+  }
+  return errors
+}
+
 export default reduxForm({
-  form: 'accountDetails'
+  form: 'accountDetails',
+  validate
 })(AccountDetailsForm)

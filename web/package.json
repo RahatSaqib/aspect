@@ -81,6 +81,7 @@
   },
   "dependencies": {
     "classnames": "^2.2.5",
+    "email-validator": "^1.0.7",
     "es6-promise": "^4.0.5",
     "global": "^4.3.0",
     "http-client": "^4.3.1",
