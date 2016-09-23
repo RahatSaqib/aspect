@@ -47,6 +47,7 @@ module.exports = [
         payload: {
           name: Joi.string().required(),
           shortname: Joi.string().required(),
+          notes: Joi.string().required(),
           siteId: Joi.number().required()
         }
       }
@@ -68,6 +69,7 @@ const SELECT_SHOW_FIELDS = [
   // TODO: First Connected
   // TODO: First Approved On
   // TODO: First Approved By
+  'notes',
   'serial'
 ]
 
@@ -127,6 +129,7 @@ function* updateDevice(request) {
     .update({
       name: payload.name,
       shortname: payload.shortname,
+      notes: payload.notes,
       site_id: payload.siteId
     })
 
