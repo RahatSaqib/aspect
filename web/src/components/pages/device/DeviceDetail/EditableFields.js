@@ -24,6 +24,7 @@ export class EditableFields extends React.PureComponent {
       // Map form fields to API fields
       name: data.get('name'),
       shortname: data.get('shortName'),
+      notes: data.get('notes'),
       siteId: data.get('site')
     })
   }
@@ -33,6 +34,7 @@ export class EditableFields extends React.PureComponent {
       // Map API fields to form fields
       name: device.get('name'),
       shortName: device.get('shortname'),
+      notes: device.get('notes'),
       site: device.get('siteId')
     }
     return (
@@ -53,6 +55,10 @@ export class EditableFields extends React.PureComponent {
       {
         label: 'Shortname',
         value: device.get('shortname')
+      },
+      {
+        label: 'Notes',
+        value: device.get('notes')
       },
       {
         label: 'Site (ddl)',

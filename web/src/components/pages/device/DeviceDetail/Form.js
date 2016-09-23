@@ -12,7 +12,7 @@ const renderNameField = ({ input, meta }) => {
     <TextField
       {...input}
       floatingLabelText="Name"
-      fullWidth={true}
+      fullWidth
       errorStyle={{ float: 'left' }}
       errorText={meta.touched && meta.error}
     />
@@ -24,7 +24,20 @@ const renderShortNameField = ({ input, meta }) => {
     <TextField
       {...input}
       floatingLabelText="Short Name"
-      fullWidth={true}
+      fullWidth
+      errorStyle={{ float: 'left' }}
+      errorText={meta.touched && meta.error}
+    />
+  )
+}
+
+const renderNotesField = ({ input, meta }) => {
+  return (
+    <TextField
+      {...input}
+      floatingLabelText="Notes"
+      multiLine
+      fullWidth
       errorStyle={{ float: 'left' }}
       errorText={meta.touched && meta.error}
     />
@@ -36,7 +49,7 @@ const renderSiteField = ({ input, meta }) => {
     <TextField
       {...input}
       floatingLabelText="Site (ddl)"
-      fullWidth={true}
+      fullWidth
       errorStyle={{ float: 'left' }}
       errorText={meta.touched && meta.error}
     />
@@ -51,8 +64,9 @@ export class Form extends React.PureComponent {
       <form onSubmit={handleSubmit}>
         <Field name="name" component={renderNameField} />
         <Field name="shortName" component={renderShortNameField} />
+        <Field name="notes" component={renderNotesField} />
         <Field name="site" component={renderSiteField} />
-        <RaisedButton disabled={pristine || submitting} label="Update" secondary={true} type="submit" />
+        <RaisedButton disabled={pristine || submitting} type="submit" label="Update" secondary />
         {submitting && <LinearProgress />}
       </form>
     )
