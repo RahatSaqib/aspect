@@ -44,7 +44,8 @@ describe('account details endpoints', function () {
           state_id: null,
           lga_id: null,
           timezone: 'Eastern Standard Time',
-          culture: 'en-US'
+          culture: 'en-US',
+          zip: '1234'
         }
 
       beforeEach(function () {
@@ -97,7 +98,8 @@ describe('account details endpoints', function () {
           state_id: null,
           lga_id: null,
           timezone: 'Eastern Standard Time',
-          culture: 'en-GB'
+          culture: 'en-GB',
+          zip: '1234'
         }, requestAccountDetails = camelize(accountDetails)
 
       beforeEach(function () {

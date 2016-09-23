@@ -36,5 +36,8 @@ query.for = function (queryDescription) {
 }
 
 module.exports = {
-  query
+  query,
+  knex: {
+    raw: sinon.spy()
+  }
 }
