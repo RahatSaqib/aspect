@@ -14,9 +14,13 @@ import Paper from 'material-ui/Paper'
 import LinearProgress from 'material-ui/LinearProgress'
 
 // Our own imports
-import { fetchSingleDevice } from '../../../../action_creators/device_creators'
+import { isEditable } from '../../../../selectors/device'
+import {
+  fetchSingleDevice,
+  updateSingleDevice
+} from '../../../../action_creators/device_creators'
 import ReadOnlyFields from '../../../shared/ReadOnlyFields'
-import { EditableFieldsContainer } from './EditableFields'
+import { FormContainer } from './Form'
 import styles from './index.css'
 
 const messages = defineMessages({
@@ -30,6 +34,18 @@ export class DeviceDetail extends React.PureComponent {
 
   handleFetchDevice = () => {
     this.props.fetchSingleDevice(this.props.params.deviceId)
+  }
+
+  handleSubmit = data => {
+    const { device } = this.props
+
+    this.props.updateSingleDevice(device.get('id'), {
+      // Map form fields to API fields
+      name: data.get('name'),
+      shortname: data.get('shortName'),
+      notes: data.get('notes'),
+      siteId: data.get('site')
+    })
   }
 
   componentDidMount() {
@@ -48,8 +64,51 @@ export class DeviceDetail extends React.PureComponent {
     return !device && <LinearProgress />
   }
 
-  renderContent() {
+  renderFormContainer() {
     const { device } = this.props
+    const initialValues = {
+      // Map API fields to form fields
+      name: device.get('name'),
+      shortName: device.get('shortname'),
+      notes: device.get('notes'),
+      site: device.get('siteId')
+    }
+    return (
+      <FormContainer
+        enableReinitialize
+        initialValues={initialValues}
+        onSubmit={this.handleSubmit}
+      />
+    )
+  }
+
+  renderReadOnlyFields() {
+    const { device } = this.props
+    const fields = [
+      {
+        label: 'Name',
+        value: device.get('name')
+      },
+      {
+        label: 'Shortname',
+        value: device.get('shortname')
+      },
+      {
+        label: 'Notes',
+        value: device.get('notes')
+      },
+      {
+        label: 'Site (ddl)',
+        value: device.get('siteId')
+      }
+    ]
+    return (
+      <ReadOnlyFields fields={fields} />
+    )
+  }
+
+  renderContent() {
+    const { device, editable } = this.props
     if (!device) {
       return
     }
@@ -81,9 +140,9 @@ export class DeviceDetail extends React.PureComponent {
     ]
     return (
       <div className={styles.FieldsContainer}>
-        <EditableFieldsContainer
-          device={device}
-        />
+        {editable ?
+        this.renderFormContainer() :
+        this.renderReadOnlyFields()}
         <ReadOnlyFields
           fields={fields}
         />
@@ -107,13 +166,19 @@ export class DeviceDetail extends React.PureComponent {
 }
 
 function mapStateToProps(state, props) {
+  const device = state.device.items.byId.get(props.params.deviceId)
+
   return {
-    device: state.device.items.byId.get(props.params.deviceId)
+    editable: isEditable(state.user, device),
+    device
   }
 }
 
 function mapDispatchToProps(dispatch) {
-  return bindActionCreators({ fetchSingleDevice }, dispatch)
+  return bindActionCreators({
+    fetchSingleDevice,
+    updateSingleDevice
+  }, dispatch)
 }
 
 export const DeviceDetailContainer = _.flowRight(
