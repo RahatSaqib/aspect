@@ -10,6 +10,7 @@ import { connect } from 'react-redux'
 import Helmet from 'react-helmet'
 
 // Material-UI
+import Paper from 'material-ui/Paper'
 import LinearProgress from 'material-ui/LinearProgress'
 
 // Our own imports
@@ -79,7 +80,7 @@ export class DeviceDetail extends React.PureComponent {
       }
     ]
     return (
-      <div>
+      <div className={styles.FieldsContainer}>
         <EditableFieldsContainer
           device={device}
         />
@@ -96,8 +97,10 @@ export class DeviceDetail extends React.PureComponent {
     return (
       <div className={styles.Content}>
         <Helmet title={formatMessage(messages.title)} titleTemplate="%s - Aspect" defaultTitle="Aspect" />
-        {this.renderProgress()}
-        {this.renderContent()}
+        <Paper>
+          {this.renderProgress()}
+          {this.renderContent()}
+        </Paper>
       </div>
     )
   }
