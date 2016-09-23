@@ -114,8 +114,8 @@ function* showDevice(request) {
   const {params} = request
 
   // get item
-  const [item] = yield knex('device')
-    .where('id', params.deviceId)
+  const [item] = yield knex('device as d')
+    .where('d.id', params.deviceId)
     .select(SELECT_SHOW_FIELDS)
 
   const result = {ok: true, data: changeIdToString(item)}
