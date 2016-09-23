@@ -3,6 +3,7 @@ let Promise = require('bluebird')
 let Joi = require('joi')
 let { knex, filterParams, sortPageParams } = require('../db')
 let { asyncHandler, validateSortPageParams } = require('../util')
+let { getConstraints, addConstraints } = require('../constraints')
 
 module.exports = [
   {
@@ -12,6 +13,7 @@ module.exports = [
     config: {
       description: 'Device List',
       notes: 'Pageable and sortable list of devices',
+      auth: {scope: ['device:view', 'device:edit']},
       validate: {
         query: Object.assign({
           name: Joi.string().allow('').description('Filter for device name')
@@ -26,6 +28,7 @@ module.exports = [
     config: {
       description: 'Device Detail',
       notes: 'Detail of a device',
+      auth: {scope: ['device:view', 'device:edit']},
       validate: {
         params: {
           deviceId: Joi.string().description('Device id').required()
@@ -40,6 +43,7 @@ module.exports = [
     config: {
       description: 'Update Device Detail',
       notes: 'Detail of a device',
+      auth: {scope: ['device:edit']},
       validate: {
         params: {
           deviceId: Joi.string().description('Device id').required()
@@ -56,21 +60,21 @@ module.exports = [
 ]
 
 const SELECT_LIST_FIELDS = [
-  'id', 'name', 'shortname', 'created_on', 'last_ping_on', 'updated_on as last_seen',
+  'd.id', 'd.name', 'd.shortname', 'd.created_on', 'd.last_ping_on', 'd.updated_on as last_seen',
   knex.raw('\'Active\' as status'),
-  knex.raw('id * 134 as total_tests')
+  knex.raw('d.id * 134 as total_tests')
 ]
 
 const SELECT_SHOW_FIELDS = [
-  'id', 'name', 'shortname', 'created_on', 'last_ping_on', 'updated_on as last_seen',
+  'd.id', 'd.name', 'd.shortname', 'd.created_on', 'd.last_ping_on', 'd.updated_on as last_seen',
   knex.raw('\'Active\' as status'),
-  knex.raw('id * 134 as total_tests'),
-  'site_id',
+  knex.raw('d.id * 134 as total_tests'),
+  'd.site_id',
   // TODO: First Connected
   // TODO: First Approved On
   // TODO: First Approved By
-  'notes',
-  'serial'
+  'd.notes',
+  'd.serial'
 ]
 
 function changeIdToString(item) {
@@ -81,16 +85,21 @@ function changeIdToString(item) {
 }
 
 function* listDevices(request){
-  let {query} = request
+  let {query, auth} = request
+
+  // get data constraints
+  let dataConstraints = yield getConstraints(auth.credentials)
+
+  let deviceQuery = knex('device as d')
+    .modify(filterParams, query, 'name', 'd.name')
+    .modify(addConstraints, dataConstraints, {device: 'd'})
 
   // get total count for paging
-  let getCount = knex('device')
-    .modify(filterParams, query, 'name')
-    .count('id as count').first()
+  let getCount = deviceQuery.clone()
+    .count('d.id as count').first()
 
   // get rows
-  let getItems = knex('device')
-    .modify(filterParams, query, 'name')
+  let getItems = deviceQuery.clone()
     .modify(sortPageParams, query, 'name')
     .select(SELECT_LIST_FIELDS)
 
@@ -108,8 +117,8 @@ function* showDevice(request) {
   const {params} = request
 
   // get item
-  const [item] = yield knex('device')
-    .where('id', params.deviceId)
+  const [item] = yield knex('device as d')
+    .where('d.id', params.deviceId)
     .select(SELECT_SHOW_FIELDS)
 
   const result = {ok: true, data: changeIdToString(item)}

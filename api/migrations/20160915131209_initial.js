@@ -4,6 +4,34 @@ function* up(knex){
 
   yield knex.raw('SET foreign_key_checks = 0')
 
+  yield knex.schema.createTable('partner', partner => {
+    partner.increments('id')
+    partner.string('name').notNullable()
+  })
+
+  yield knex.schema.createTable('org_unit', orgUnit => {
+    orgUnit.increments('id')
+    orgUnit.string('name').notNullable()
+    orgUnit.integer('partner_id').unsigned().notNullable()
+      .index().references('id').inTable('partner')
+
+    orgUnit.integer('left_bound').unsigned().notNullable()
+    orgUnit.integer('right_bound').unsigned().notNullable()
+    orgUnit.integer('depth').unsigned().notNullable()
+
+    // TODO Add org_unit parent id if is helpful
+    //orgUnit.integer('parent_id').unsigned()
+    //  .index().references('id').inTable('org_unit')
+  })
+
+  yield knex.schema.createTable('data_filter', dataFilter => {
+    dataFilter.increments('id')
+    dataFilter.string('name').notNullable()
+    // knex does not yet support JSON for MySQL
+    // dataFilter.json('constraint')
+    dataFilter.specificType('constraint', 'JSON').notNullable()
+  })
+
   yield knex.schema.createTable('user', user => {
     user.increments('id')
     user.string('name').unique().notNullable()
@@ -62,16 +90,6 @@ function* up(knex){
     lga.charset('utf8')
   })
 
-  // TODO person_level replaced by permissions?
-  yield knex.schema.createTable('person_level', personLevel => {
-    personLevel.increments('id')
-    personLevel.string('name', 45).notNullable()
-    personLevel.integer('sort_order')
-    personLevel.string('token', 45).notNullable()
-    personLevel.integer('level').notNullable()
-    personLevel.charset('utf8')
-  })
-
   yield knex.schema.createTable('person', person => {
     person.increments('id')
     person.integer('user_id').unsigned()
@@ -89,13 +107,14 @@ function* up(knex){
       .index().references('id').inTable('state')
     person.integer('lga_id').unsigned()
       .index().references('id').inTable('lga')
-    person.integer('person_level_id').unsigned()
-      .index().references('id').inTable('person_level')
     person.string('notes', 1200)
+    person.integer('last_partner_id').unsigned()
+      .index().references('id').inTable('partner')
     person.integer('last_country_id').unsigned()
       .index().references('id').inTable('country')
     // TODO timezone table?
     person.string('timezone')
+    // TODO should user prefrences be stored in separate table?
     person.boolean('hide_patient_id')
     person.boolean('hide_sample_id')
     person.boolean('hide_notes')
@@ -109,7 +128,34 @@ function* up(knex){
   yield knex.schema.createTable('role', role => {
     role.increments('id')
     role.string('name').notNullable()
+    role.integer('partner_id').unsigned()
+      .index().references('id').inTable('partner')
+    role.integer('data_filter_id').unsigned()
+      .index().references('id').inTable('data_filter')
+    role.integer('org_unit_id').unsigned()
+      .index().references('id').inTable('org_unit')
     role.charset('utf8')
+  })
+
+  yield knex.schema.createTable('permission', permission => {
+    permission.increments('id')
+
+    // e.g. clinical, inventory, operational, device, etc.
+    permission.string('module').notNullable()
+    // e.g.: view, edit, admin, view:aggregate, view:historical etc
+    permission.string('activity').notNullable()
+
+    // Since permissions are static, UI labels can be created programmatically
+    permission.charset('utf8')
+  })
+
+  yield knex.schema.createTable('role_permission', permissionRole => {
+    permissionRole.integer('role_id').unsigned()
+      .index().references('id').inTable('role')
+    permissionRole.integer('permission_id').unsigned()
+      .index().references('id').inTable('permission')
+    permissionRole.primary(['permission_id', 'role_id'])
+    permissionRole.charset('utf8')
   })
 
   yield knex.schema.createTable('user_role', userRole => {
@@ -148,6 +194,11 @@ function* up(knex){
     site.string('shortname', 45)
     site.string('identifier')
     site.string('notes', 2000)
+    // TODO is site to partner many to many?
+    site.integer('partner_id').unsigned()
+      .index().references('id').inTable('partner')
+    site.integer('org_unit_id').unsigned()
+      .index().references('id').inTable('org_unit')
     site.integer('country_id').unsigned()
       .index().references('id').inTable('country')
     site.integer('state_id').unsigned()
@@ -174,6 +225,7 @@ function* up(knex){
     device.increments('id')
     device.integer('device_type_id').unsigned().notNullable()
       .index().references('id').inTable('device_type')
+
     // TODO Add device id1 - id4 or equivalent
     // used to uniquely identify provisioned devices, still to be discussed
     device.string('serial')
@@ -245,7 +297,6 @@ function* up(knex){
   })
 
   yield knex.raw('SET foreign_key_checks = 1')
-  // TODO are person_country _device _level _lga _site _state replaced with data groups/roles?
 }
 
 function* down(knex){
@@ -256,13 +307,17 @@ function* down(knex){
   yield knex.schema.dropTable('device_type')
   yield knex.schema.dropTable('refresh_token')
   yield knex.schema.dropTable('user_role')
+  yield knex.schema.dropTable('role_permission')
+  yield knex.schema.dropTable('permission')
   yield knex.schema.dropTable('role')
   yield knex.schema.dropTable('person')
-  yield knex.schema.dropTable('person_level')
   yield knex.schema.dropTable('lga')
   yield knex.schema.dropTable('state')
   yield knex.schema.dropTable('country')
   yield knex.schema.dropTable('user')
+  yield knex.schema.dropTable('data_filter')
+  yield knex.schema.dropTable('org_unit')
+  yield knex.schema.dropTable('partner')
 }
 
 

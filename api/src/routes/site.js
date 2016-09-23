@@ -3,6 +3,7 @@ let Promise = require('bluebird')
 let Joi = require('joi')
 let { knex, filterParams, sortPageParams } = require('../db')
 let { asyncHandler, validateSortPageParams } = require('../util')
+let { getConstraints, addConstraints } = require('../constraints')
 
 module.exports = [{
   method: 'GET',
@@ -11,6 +12,7 @@ module.exports = [{
   config: {
     description: 'Site List',
     notes: 'Pageable and sortable list of sites',
+    auth: {scope: ['site:view', 'site:edit']},
     validate: {
       query: Object.assign({
         name: Joi.string().allow('').description('Filter for site name')
@@ -20,18 +22,23 @@ module.exports = [{
 }]
 
 function* listSites(request){
-  let {query} = request
+  let {query, auth} = request
 
-  // get total count for paging
-  let getCount = knex('site')
-    .modify(filterParams, query, 'name')
-    .count('id as count').first()
+  // get data constraints
+  let dataConstraints = yield getConstraints(auth.credentials)
 
-  // get rows
-  let getItems = knex('site as s')
+  let siteQuery = knex('site as s')
     .leftOuterJoin('state as st', 's.state_id', 'st.id')
     .leftOuterJoin('lga as l', 's.lga_id', 'l.id')
     .modify(filterParams, query, 'name', 's.name')
+    .modify(addConstraints, dataConstraints, {site: 's', state: 'st', lga: 'l'})
+
+  // get total count for paging
+  let getCount = siteQuery.clone()
+    .count('s.id as count').first()
+
+  // get rows
+  let getItems = siteQuery.clone()
     .modify(sortPageParams, query, 'name')
     .select('s.id', 's.name', 's.shortname',
       'st.name as state', 'l.name as lga',

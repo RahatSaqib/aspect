@@ -105,7 +105,7 @@ describe('Authentication routes',function(){
           assert.isNotOk(err) // isNotOk = is falsy
           assert.property(decoded, 'name')
           assert.property(decoded, 'modules')
-          assert.property(decoded, 'roles')
+          assert.property(decoded, 'permissions')
           assert.property(decoded, 'iat')
           assert.property(decoded, 'exp')
           assert.property(decoded, 'iss')
@@ -189,7 +189,7 @@ describe('Authentication routes',function(){
           assert.isNotOk(err) // isNotOk = is falsy
           assert.property(decoded, 'name')
           assert.property(decoded, 'modules')
-          assert.property(decoded, 'roles')
+          assert.property(decoded, 'permissions')
           assert.property(decoded, 'iat')
           assert.property(decoded, 'exp')
           assert.property(decoded, 'iss')

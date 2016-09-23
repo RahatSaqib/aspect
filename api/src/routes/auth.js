@@ -65,7 +65,8 @@ function* authenticate(request){
   let user = yield query('Get basic user details').from('user as u')
     .innerJoin('person as p', 'u.id', 'p.user_id')
     .where({'u.name': payload.name})
-    .first('u.locked_out', 'u.failed_password_attempts', 'u.id', 'u.name', 'p.culture')
+    .first('u.locked_out', 'u.failed_password_attempts', 'u.id', 'u.name',
+      'p.culture', 'p.last_partner_id as partnerId', 'p.last_country_id as countryId')
 
   if(!user){
     // TODO generic Auth failed message on username and password failed?
@@ -126,7 +127,12 @@ function* authenticate(request){
   yield Promise.all([setRefreshToken, updatePwAttempts])
 
   // finally, return the access token...
-  return getToken(config, user.id, user.name, refreshToken, clientId, user.culture)
+  let accessToken = yield getAccessToken(user)
+  return {
+    access: accessToken,
+    refresh: refreshToken,
+    clientId
+  }
 }
 
 function* refreshToken(request){
@@ -136,7 +142,8 @@ function* refreshToken(request){
     .innerJoin('user as u', 'rt.user_id', 'u.id')
     .innerJoin('person as p', 'u.id', 'p.user_id')
     .where({client_id: clientId, token, revoked: 0})
-    .first('rt.user_id as userId', 'rt.expires', 'u.name', 'p.culture')
+    .first('rt.user_id as id', 'rt.expires', 'u.name',
+      'p.culture', 'p.last_partner_id as partnerId', 'p.last_country_id as countryId')
 
   if (!data) {
     return Boom.badRequest('Unable to find token or token revoked')
@@ -157,21 +164,34 @@ function* refreshToken(request){
     .where({token})
     .update({token: refreshToken, expires})
 
-  return getToken(config, data.userId, data.name, refreshToken, clientId, data.culture)
+  let accessToken = yield getAccessToken(data)
+  return {
+    access: accessToken,
+    refresh: refreshToken,
+    clientId
+  }
 }
 
-// generate a new jwt
-function getToken(config, userId, userName, refreshToken, clientId, culture) {
-  return query('Get roles for user').from('role as r')
+// generate a new jwt for the given user data
+function getAccessToken({id, name, culture, partnerId, countryId}){
+  return query('Get permissions for user and partner')
+    .from('permission as p')
+    .innerJoin('role_permission as rp', 'p.id', 'rp.permission_id')
+    .innerJoin('role as r', 'rp.role_id', 'r.id')
     .innerJoin('user_role as ur', 'r.id', 'ur.role_id')
-    .where({user_id: userId})
-    .select('r.name')
+    .where({'ur.user_id': id, 'r.partner_id': partnerId})
+    .orderBy(['p.module', 'p.activity'])
+    .distinct('p.module', 'p.activity')
     .then(data => {
       // create a new token
       let token = jwt.sign({
-        name: userName,
-        modules: ['inv', 'mai'],
-        roles: data.map(a => a.name),
+        name,
+        id,
+        partnerId,
+        countryId,
+        // TODO should we remove modules since same info in permissions to reduce size of JWT?
+        modules: data.map(p => p.module),
+        permissions: data.map(p => `${p.module}:${p.activity}`),
         culture: culture || 'en-US'
       },
       config.secret, {
@@ -179,11 +199,6 @@ function getToken(config, userId, userName, refreshToken, clientId, culture) {
         issuer: 'https://www.aspect.id'
       })
 
-      // return the information including token as JSON
-      return {
-        access: token,
-        refresh: refreshToken,
-        clientId: clientId
-      }
+      return token
     })
 }
