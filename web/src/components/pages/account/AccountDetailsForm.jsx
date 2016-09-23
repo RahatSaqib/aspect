@@ -36,10 +36,10 @@ const validate = acccountDetails => {
     //TODO: i18n
     errors.user = 'Please enter your Full name'
   }
-  if (validateEmailAddress(acccountDetails.get('email').optional().isValid())) {
+  if (!validateEmailAddress(acccountDetails.get('email')).optional().isValid()) {
     errors.email = 'Please enter a valid email address'
   }
-  if (validateEmailAddress(acccountDetails.get('email2').optional().isValid())) {
+  if (!validateEmailAddress(acccountDetails.get('email2')).optional().isValid()) {
     errors.email2 = 'Please enter a valid email address'
   }
   return errors

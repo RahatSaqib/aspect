@@ -1,5 +1,5 @@
 import _ from 'lodash'
-import validate from './validate'
+import {emailAddress} from './validate'
 import { assert } from 'chai'
 
 describe('validate', () => {
@@ -27,26 +27,26 @@ describe('validate', () => {
         'dot-first-in-domain@.test.de', 'mg@ns.i']
 
     it('should return true for valid email addresses', () => {
-      _.each(validEmailAddresses, emailAddress => {
-        assert.isTrue(validate.emailAddress(emailAddress).isValid(), '"' + emailAddress + '" is a valid email address')
+      _.each(validEmailAddresses, address => {
+        assert.isTrue(emailAddress(address).isValid(), '"' + address + '" is a valid email address')
       })
     })
 
     it('should return false for invalid email addresses', () => {
-      _.each(invalidEmailAddresses, emailAddress => {
-        assert.isFalse(validate.emailAddress(emailAddress).isValid(), '"' + emailAddress + '" is an invalid email address')
+      _.each(invalidEmailAddresses, address => {
+        assert.isFalse(emailAddress(address).isValid(), '"' + address + '" is an invalid email address')
       })
     })
 
     it('should return false for blank email addresses by default', () => {
-      _.each(['', null, undefined], emailAddress => {
-        assert.isFalse(validate.emailAddress(emailAddress).isValid(), 'Blank email addresses are invalid unless optional is called')
+      _.each(['', null, undefined], address => {
+        assert.isFalse(emailAddress(address).isValid(), 'Blank email addresses are invalid unless optional is called')
       })
     })
 
     it('should return true for blank email addresses is optional was called', () => {
-      _.each(['', null, undefined], emailAddress => {
-        assert.isTrue(validate.emailAddress(emailAddress).optional().isValid(), 'Blank email addresses are invalid unless isOptional is specified')
+      _.each(['', null, undefined], address => {
+        assert.isTrue(emailAddress(address).optional().isValid(), 'Blank email addresses are invalid unless isOptional is specified')
       })
     })
   })

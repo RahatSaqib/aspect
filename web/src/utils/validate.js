@@ -1,6 +1,6 @@
 import {validate as validateEmail} from 'email-validator'
 
-function emailAddress(value) {
+export function emailAddress(value) {
   let validateChain = {
     email: value,
     optional: () => {
@@ -12,8 +12,4 @@ function emailAddress(value) {
     }
   }
   return validateChain
-}
-
-export default {
-  emailAddress: emailAddress
 }
