@@ -63,7 +63,6 @@ function addConstraints(queryBuilder, constraints, aliases){
 
   // TODO generalize constraint building
   // TODO only join queries if needed within constraints or required by unspecified aliases
-  // TODO reuse aliases for joined tables if provided instead of joining twice
   if(!site){
     if(!device){
       throw new Error('Must provide either site or device alias or modify this to accept provided aliases')
