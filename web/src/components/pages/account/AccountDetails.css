@@ -6,6 +6,17 @@
   composes: Form from '../../shared/Shared.css';
 }
 
+.Form__Content {
+  composes: Form__Content from '../../shared/Shared.css'
+}
+
+.Form__Content section h1 {
+  font-size: 1em;
+  color: rgba(0, 0, 0, 0.870588);
+  font-weight: 400;
+  margin: 2em 0 -1em;
+}
+
 .Form__ActionRow {
   composes: Form__ActionRow from '../../shared/Shared.css';
 }

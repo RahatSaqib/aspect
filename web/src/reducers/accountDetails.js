@@ -14,6 +14,7 @@ const AccountDetailsData = Immutable.Record({
   countryId: undefined,
   stateId: undefined,
   lgaId: undefined,
+  zip: undefined,
   timezone: undefined,
   culture: undefined
 })

@@ -3,7 +3,7 @@ let camelize = require('camelize')
 let decamelize = require('decamelize')
 let Boom = require('boom')
 let Joi = require('joi')
-let { query } = require('../db')
+let { query, knex } = require('../db')
 let { asyncHandler } = require('../util')
 
 module.exports = [
@@ -36,6 +36,7 @@ module.exports = [
           countryId: Joi.number().integer().positive().allow('', null),
           stateId: Joi.number().integer().positive().allow('', null),
           lgaId: Joi.number().integer().positive().allow('', null),
+          zip: Joi.string().max(45).allow('', null),
           timezone: Joi.string().max(255).allow('', null),
           culture: Joi.string().max(45).allow('', null)
         }
@@ -50,7 +51,8 @@ function getAccountDetailsForUsername(username) {
     .leftJoin('person as p', 'u.id', 'p.user_id')
     .where({'u.name': username})
     .first('p.id', 'p.user_id', 'u.name as username', 'p.name', 'p.title', 'p.email', 'p.email2',
-      'p.phone', 'p.cell', 'p.country_id', 'p.state_id', 'p.lga_id', 'p.timezone', 'p.culture')
+      'p.phone', 'p.cell', 'p.country_id', 'p.state_id', 'p.lga_id', 'p.timezone', 'p.culture',
+      knex.raw('\'12345\' as zip'))
 }
 
 function* getAccountDetailsForLoggedInUser(request){
@@ -72,7 +74,7 @@ function* saveAccountDetailsForLoggedInUser(request){
   //Compare the record with what has been sent and find changed values
   let changedFields = _.reduce(request.payload, function(result, value, key) {
     let fieldName = decamelize(key)
-    if(!_.includes(['id', 'username'], fieldName) && fieldName in accountDetails &&
+    if(!_.includes(['id', 'username', 'zip'], fieldName) && fieldName in accountDetails &&
       accountDetails[fieldName] != value) {
       result[fieldName] = value
     }

@@ -38,6 +38,10 @@
   padding: 20px;
 }
 
+.Form__Content {
+  padding: 0 20px;
+}
+
 /*in forms, show buttons on bottom right*/
 .Form__ActionRow {
   width: 100%;

@@ -2,8 +2,11 @@ import _ from 'lodash'
 import React from 'react'
 import { bindActionCreators } from 'redux'
 import { connect } from 'react-redux'
+import FontIcon from 'material-ui/FontIcon'
 import LinearProgress from 'material-ui/LinearProgress'
-import AccountDetailsForm from './AccountDetailsForm'
+import Paper from 'material-ui/Paper'
+import {Tabs, Tab} from 'material-ui/Tabs'
+import ContactDetailsForm from './ContactDetailsForm'
 import {fetchAccountDetails, saveAccountDetails} from '../../../action_creators/accountDetails_creators'
 import styles from './AccountDetails.css'
 
@@ -18,7 +21,20 @@ class AccountDetails extends React.PureComponent {
       <div className={styles.Content}>
         {loading && <span>Loading...</span>}
         {(loading || saving) && <LinearProgress />}
-        {!loading && <AccountDetailsForm initialValues={accountDetails} onSubmit={saveAccountDetails} />}
+        {!loading &&
+        <Paper>
+          <Tabs>
+            <Tab label="Contact Details">
+              <ContactDetailsForm initialValues={accountDetails} onSubmit={saveAccountDetails} />
+            </Tab>
+            <Tab label="Login Details">
+              <span>Change Username Password Here!</span>
+            </Tab>
+            <Tab label="User Preferences">
+              <span>Timezone and Language Here!</span>
+            </Tab>
+          </Tabs>
+        </Paper>}
       </div>
     )
   }
