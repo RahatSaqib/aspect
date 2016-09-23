@@ -1,52 +1,20 @@
 import React from 'react'
-import { Field, reduxForm } from 'redux-form/immutable'
+import { reduxForm } from 'redux-form/immutable'
 import Paper from 'material-ui/Paper'
-import TextField from 'material-ui/TextField'
 import RaisedButton from 'material-ui/RaisedButton'
+import TextInput from '../../shared/TextInput'
 import {emailAddress as validateEmailAddress} from '../../../utils/validate'
 import styles from './AccountDetails.css'
-
-const renderNameField = ({ input, meta }) => {
-  return (
-    //TODO: i18n
-    <TextField {...input} floatingLabelText="Name" fullWidth={true}
-               errorStyle={{ float: 'left' }} errorText={meta.touched && meta.error} />
-  )
-}
-
-const renderTitleField = ({ input, meta }) => {
-  return (
-    //TODO: i18n
-    <TextField {...input} floatingLabelText="Job Title"
-               errorStyle={{ float: 'left' }} errorText={meta.touched && meta.error} />
-  )
-}
-
-const renderEmailField = ({ input, meta }) => {
-  return (
-    //TODO: i18n
-    <TextField {...input} floatingLabelText="Email"
-               errorStyle={{ float: 'left' }} errorText={meta.touched && meta.error} />
-  )
-}
-
-const renderEmail2Field = ({ input, meta }) => {
-  return (
-    //TODO: i18n
-    <TextField {...input} floatingLabelText="Alternate Email"
-               errorStyle={{ float: 'left' }} errorText={meta.touched && meta.error} />
-  )
-}
 
 const AccountDetailsForm = props => {
   const { handleSubmit, pristine, invalid, submitting } = props
   return (
     <Paper>
       <form onSubmit={handleSubmit} className={styles.Form}>
-        <Field name="name" component={renderNameField} type="text" />
-        <Field name="title" component={renderTitleField} type="text" />
-        <Field name="email" component={renderEmailField} type="text" />
-        <Field name="email2" component={renderEmail2Field} type="text" />
+        <TextInput name="name" label="Name" fullWidth />
+        <TextInput name="title" label="Job Title" fullWidth />
+        <TextInput name="email" label="Email" fullWidth />
+        <TextInput name="email2" label="Alternate Email" fullWidth />
         <div className={styles.Form__ActionRow}>
           <RaisedButton disabled={pristine || invalid || submitting} label="Save" secondary={true} type="submit" />
         </div>
