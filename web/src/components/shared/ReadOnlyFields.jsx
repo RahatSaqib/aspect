@@ -8,7 +8,10 @@ export default class ReadOnlyFields extends React.PureComponent {
   static propTypes = {
     fields: React.PropTypes.arrayOf(React.PropTypes.shape({
       label: React.PropTypes.string.isRequired,
-      value: React.PropTypes.string.isRequired
+      value: React.PropTypes.oneOfType([
+        React.PropTypes.string,
+        React.PropTypes.number
+      ]).isRequired
     })).isRequired
   }
 

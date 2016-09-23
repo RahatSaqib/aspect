@@ -7,48 +7,11 @@ import LinearProgress from 'material-ui/LinearProgress'
 import RaisedButton from 'material-ui/RaisedButton'
 import TextField from 'material-ui/TextField'
 
-const renderNameField = ({ input, meta }) => {
+const renderTextField = ({ input, meta, ...restProps }) => {
   return (
     <TextField
+      {...restProps}
       {...input}
-      floatingLabelText="Name"
-      fullWidth
-      errorStyle={{ float: 'left' }}
-      errorText={meta.touched && meta.error}
-    />
-  )
-}
-
-const renderShortNameField = ({ input, meta }) => {
-  return (
-    <TextField
-      {...input}
-      floatingLabelText="Short Name"
-      fullWidth
-      errorStyle={{ float: 'left' }}
-      errorText={meta.touched && meta.error}
-    />
-  )
-}
-
-const renderNotesField = ({ input, meta }) => {
-  return (
-    <TextField
-      {...input}
-      floatingLabelText="Notes"
-      multiLine
-      fullWidth
-      errorStyle={{ float: 'left' }}
-      errorText={meta.touched && meta.error}
-    />
-  )
-}
-
-const renderSiteField = ({ input, meta }) => {
-  return (
-    <TextField
-      {...input}
-      floatingLabelText="Site (ddl)"
       fullWidth
       errorStyle={{ float: 'left' }}
       errorText={meta.touched && meta.error}
@@ -58,14 +21,14 @@ const renderSiteField = ({ input, meta }) => {
 
 export class Form extends React.PureComponent {
   render() {
-    const { handleSubmit, pristine, submitting } = this.props
+    const { labels, handleSubmit, pristine, submitting } = this.props
 
     return (
       <form onSubmit={handleSubmit}>
-        <Field name="name" component={renderNameField} />
-        <Field name="shortName" component={renderShortNameField} />
-        <Field name="notes" component={renderNotesField} />
-        <Field name="site" component={renderSiteField} />
+        <Field name="name" floatingLabelText={labels.name} component={renderTextField} />
+        <Field name="shortName" floatingLabelText={labels.shortName} component={renderTextField} />
+        <Field name="notes" multiLine floatingLabelText={labels.notes} component={renderTextField} />
+        <Field name="site" floatingLabelText={labels.site} component={renderTextField} />
         <RaisedButton disabled={pristine || submitting} type="submit" label="Update" secondary />
         {submitting && <LinearProgress />}
       </form>

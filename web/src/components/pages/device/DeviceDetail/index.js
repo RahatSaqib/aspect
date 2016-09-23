@@ -27,6 +27,46 @@ const messages = defineMessages({
   title: {
     id: 'pages.DeviceDetail.title',
     defaultMessage: 'Device Detail'
+  },
+  fieldName: {
+    id: 'pages.DeviceDetail.fieldName',
+    defaultMessage: 'Name'
+  },
+  fieldShortname: {
+    id: 'pages.DeviceDetail.fieldShortname',
+    defaultMessage: 'Shortname'
+  },
+  fieldNotes: {
+    id: 'pages.DeviceDetail.fieldNotes',
+    defaultMessage: 'Notes'
+  },
+  fieldSiteId: {
+    id: 'pages.DeviceDetail.fieldSiteId',
+    defaultMessage: 'Site (ddl)'
+  },
+  fieldFirstConnected: {
+    id: 'pages.DeviceDetail.fieldFirstConnected',
+    defaultMessage: 'First Connected'
+  },
+  fieldFirstApprovedOn: {
+    id: 'pages.DeviceDetail.fieldFirstApprovedOn',
+    defaultMessage: 'First Approved On'
+  },
+  fieldFirstApprovedBy: {
+    id: 'pages.DeviceDetail.fieldFirstApprovedBy',
+    defaultMessage: 'First Approved By'
+  },
+  fieldSerial: {
+    id: 'pages.DeviceDetail.fieldSerial',
+    defaultMessage: 'Serial'
+  },
+  fieldLastSeen: {
+    id: 'pages.DeviceDetail.fieldLastSeen',
+    defaultMessage: 'Last Seen'
+  },
+  fieldTotalNumberOfTests: {
+    id: 'pages.DeviceDetail.fieldTotalNumberOfTests',
+    defaultMessage: 'Total Number of Tests'
   }
 })
 
@@ -65,7 +105,13 @@ export class DeviceDetail extends React.PureComponent {
   }
 
   renderFormContainer() {
-    const { device } = this.props
+    const { device, intl: { formatMessage } } = this.props
+    const labels = {
+      name: formatMessage(messages.fieldName),
+      shortName: formatMessage(messages.fieldShortname),
+      notes: formatMessage(messages.fieldNotes),
+      site: formatMessage(messages.fieldSiteId)
+    }
     const initialValues = {
       // Map API fields to form fields
       name: device.get('name'),
@@ -75,6 +121,7 @@ export class DeviceDetail extends React.PureComponent {
     }
     return (
       <FormContainer
+        labels={labels}
         enableReinitialize
         initialValues={initialValues}
         onSubmit={this.handleSubmit}
@@ -83,22 +130,22 @@ export class DeviceDetail extends React.PureComponent {
   }
 
   renderReadOnlyFields() {
-    const { device } = this.props
+    const { device, intl: { formatMessage } } = this.props
     const fields = [
       {
-        label: 'Name',
+        label: formatMessage(messages.fieldName),
         value: device.get('name')
       },
       {
-        label: 'Shortname',
+        label: formatMessage(messages.fieldShortname),
         value: device.get('shortname')
       },
       {
-        label: 'Notes',
+        label: formatMessage(messages.fieldNotes),
         value: device.get('notes')
       },
       {
-        label: 'Site (ddl)',
+        label: formatMessage(messages.fieldSiteId),
         value: device.get('siteId')
       }
     ]
@@ -108,33 +155,33 @@ export class DeviceDetail extends React.PureComponent {
   }
 
   renderContent() {
-    const { device, editable } = this.props
+    const { device, editable, intl: { formatMessage } } = this.props
     if (!device) {
       return
     }
     const fields = [
       {
-        label: 'First Connected',
+        label: formatMessage(messages.fieldFirstConnected),
         value: device.get('id')
       },
       {
-        label: 'First Approved On',
+        label: formatMessage(messages.fieldFirstApprovedOn),
         value: device.get('id')
       },
       {
-        label: 'First Approved By',
+        label: formatMessage(messages.fieldFirstApprovedBy),
         value: device.get('id')
       },
       {
-        label: 'Serial',
+        label: formatMessage(messages.fieldSerial),
         value: device.get('serial') || /* FIXME */ '<empty>'
       },
       {
-        label: 'Last Seen',
+        label: formatMessage(messages.fieldLastSeen),
         value: device.get('lastPingOn')
       },
       {
-        label: 'Total Number of Tests',
+        label: formatMessage(messages.fieldTotalNumberOfTests),
         value: device.get('totalTests')
       }
     ]
