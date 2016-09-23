@@ -1,12 +1,20 @@
 import React from 'react'
 import { reduxForm } from 'redux-form/immutable'
+import AutoComplete from 'material-ui/AutoComplete'
 import RaisedButton from 'material-ui/RaisedButton'
+import AutoCompleteInput from '../../shared/AutoCompleteInput'
 import TextInput from '../../shared/TextInput'
 import {emailAddress as validateEmailAddress} from '../../../utils/validate'
 import styles from './AccountDetails.css'
 
 const ContactDetailsForm = props => {
-  const { handleSubmit, pristine, invalid, submitting } = props
+  const { handleSubmit, pristine, invalid, submitting, onCountryChanged, countriesLoading, countries,
+    onStateChanged, statesLoading, states, lgasLoading, lgas } = props
+  const geographyAutoCompleteDataSourceConfig = {
+    text: 'name',
+    value: 'id'
+  }
+
   return (
     <form onSubmit={handleSubmit} className={styles.Form}>
       <div className={styles.Form__Content}>
@@ -26,9 +34,17 @@ const ContactDetailsForm = props => {
         </section>
         <section>
           <h1>Location</h1>
-          <TextInput name="countryId" label="Country" disabled={submitting} />
-          <TextInput name="stateId" label="State" disabled={submitting} />
-          <TextInput name="lgaId" label="Area" disabled={submitting} />
+          <AutoCompleteInput name="countryId" label="Country" disabled={countriesLoading || submitting}
+                             dataSource={countries.toJS()} filter={AutoComplete.noFilter}
+                             dataSourceConfig={geographyAutoCompleteDataSourceConfig}
+                             onNewRequest={onCountryChanged} />
+          <AutoCompleteInput name="stateId" label="State" disabled={statesLoading || submitting}
+                             dataSource={states.toJS()} filter={AutoComplete.noFilter}
+                             dataSourceConfig={geographyAutoCompleteDataSourceConfig}
+                             onNewRequest={onStateChanged} />
+          <AutoCompleteInput name="lgaId" label="Area" disabled={lgasLoading || submitting}
+                             dataSource={lgas.toJS()} filter={AutoComplete.noFilter}
+                             dataSourceConfig={geographyAutoCompleteDataSourceConfig} />
           <TextInput name="zip" label="ZIP Code" disabled={submitting} />
         </section>
       </div>

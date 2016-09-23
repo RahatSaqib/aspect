@@ -23,7 +23,7 @@ describe('lga endpoints', function () {
   describe('/lga/select-list/{stateId}', function () {
     describe('GET', function () {
       const lgas = [{id: 1, name: 'Franklin'},
-          {id: 2, name: 'Suffolk'},],
+          {id: 2, name: 'Suffolk'}],
         requestData = { params: { stateId: '22' } }
 
       beforeEach(function () {
