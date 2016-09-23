@@ -76,7 +76,7 @@ describe('account details endpoints', function () {
       })
     })
 
-    describe('POST', function () {
+    describe('PUT', function () {
       const requestData = {
           auth: {
             credentials: {
@@ -101,7 +101,7 @@ describe('account details endpoints', function () {
         }, requestAccountDetails = camelize(accountDetails)
 
       beforeEach(function () {
-        setupPersonRoutes('POST', '/account-details/current')
+        setupPersonRoutes('PUT', '/account-details/current')
         dbSpy.query.for('Get account details for currently logged in user').resolvesWith(accountDetails)
 
       })

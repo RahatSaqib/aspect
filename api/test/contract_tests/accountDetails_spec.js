@@ -35,7 +35,7 @@ describe('/account-details/current', function (){
     })
   })
 
-  describe('POST', function(){
+  describe('PUT', function(){
     const path = '/api/account-details/current'
     shared.checkToken(server, path)
 
@@ -45,7 +45,7 @@ describe('/account-details/current', function (){
       assert.notEqual(accountDetails.title, newJobTitle, 'The title of this person is already set to \'New Job Title\'. This could be a problem with the cleanup that was supposed to have happened the last time this test was run. Please update the title of person (id=' + accountDetails.id + ') to something other than \'' + newJobTitle + '\'')
 
       server
-        .post(path)
+        .put(path)
         .send(Object.assign({}, accountDetails, { title: newJobTitle }))
         .set('Authorization', 'Bearer ' + shared.token)
         .end(function(err,res){
@@ -69,7 +69,7 @@ describe('/account-details/current', function (){
 
               //Clean Up: Update the user with their old title again
               server
-                .post(path)
+                .put(path)
                 .send(Object.assign({}, accountDetails, { title: originalTitle }))
                 .set('Authorization', 'Bearer ' + shared.token)
                 .end(function(err,res){

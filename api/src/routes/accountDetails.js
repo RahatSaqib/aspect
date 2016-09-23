@@ -16,7 +16,7 @@ module.exports = [
       notes: 'Returns a person object'
     }
   }, {
-    method: 'POST',
+    method: 'PUT',
     path: '/account-details/current',
     handler: asyncHandler(saveAccountDetailsForLoggedInUser),
     config: {

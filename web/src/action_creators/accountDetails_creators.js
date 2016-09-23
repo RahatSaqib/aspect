@@ -40,7 +40,7 @@ export function saveAccountDetails(accountDetails) {
     dispatch(saveAccountDetailsStart())
     return aspectFetch('/account-details/current',
       {
-        method: 'POST',
+        method: 'PUT',
         //TODO: Is this necessary??
         headers: fetchUtils.getHeaders(true),
         body: JSON.stringify(accountDetails)
