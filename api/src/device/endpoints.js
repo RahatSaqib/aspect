@@ -3,7 +3,7 @@ let Promise = require('bluebird')
 let Joi = require('joi')
 let { knex, filterParams, sortPageParams } = require('../db')
 let { asyncHandler, validateSortPageParams } = require('../util')
-let { getConstraints, addConstraints } = require('../constraints')
+let { getConstraints, addConstraints } = require('../auth/constraints')
 
 module.exports = [
   {

@@ -13,7 +13,7 @@ describe('auth endpoints', function () {
     sinon.spy(dbSpy, 'query')
     jwt = require('jsonwebtoken')
     sinon.spy(jwt, 'sign')
-    auth = proxyquire.noCallThru().load('./auth', {
+    auth = proxyquire.noCallThru().load('./endpoints', {
       'jsonwebtoken': jwt,
       '../db': dbSpy,
       '../config': fakeConfig
