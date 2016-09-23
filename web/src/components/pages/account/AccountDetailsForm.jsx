@@ -2,13 +2,13 @@ import React from 'react'
 import { Field, reduxForm } from 'redux-form/immutable'
 
 const AccountDetailsForm = props => {
-  const { accountDetails, handleSubmit, pristine, submitting } = props
+  const { initialValues, handleSubmit, pristine, submitting } = props
   return (
     <form onSubmit={handleSubmit}>
       <div>
-        Username: {accountDetails.get('username')}
+        Username: {initialValues.get('username')}
         <br/>
-        Full Name: {accountDetails.get('name')}
+        Full Name: {initialValues.get('name')}
       </div>
       <div>
         <label>Username</label>
