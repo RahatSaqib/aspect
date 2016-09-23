@@ -1,32 +1,57 @@
 import React from 'react'
 import { Field, reduxForm } from 'redux-form/immutable'
+import Paper from 'material-ui/Paper'
+import TextField from 'material-ui/TextField'
+import RaisedButton from 'material-ui/RaisedButton'
 import {emailAddress as validateEmailAddress} from '../../../utils/validate'
+import styles from './AccountDetails.css'
+
+const renderNameField = ({ input, meta }) => {
+  return (
+    //TODO: i18n
+    <TextField {...input} floatingLabelText="Name" fullWidth={true}
+               errorStyle={{ float: 'left' }} errorText={meta.touched && meta.error} />
+  )
+}
+
+const renderTitleField = ({ input, meta }) => {
+  return (
+    //TODO: i18n
+    <TextField {...input} floatingLabelText="Job Title"
+               errorStyle={{ float: 'left' }} errorText={meta.touched && meta.error} />
+  )
+}
+
+const renderEmailField = ({ input, meta }) => {
+  return (
+    //TODO: i18n
+    <TextField {...input} floatingLabelText="Email"
+               errorStyle={{ float: 'left' }} errorText={meta.touched && meta.error} />
+  )
+}
+
+const renderEmail2Field = ({ input, meta }) => {
+  return (
+    //TODO: i18n
+    <TextField {...input} floatingLabelText="Alternate Email"
+               errorStyle={{ float: 'left' }} errorText={meta.touched && meta.error} />
+  )
+}
 
 const AccountDetailsForm = props => {
-  const { initialValues, handleSubmit, pristine, submitting } = props
+  const { handleSubmit, pristine, invalid, submitting } = props
   return (
-    <form onSubmit={handleSubmit}>
-      <div>
-        Username: {initialValues.get('username')}
-        <br/>
-        Full Name: {initialValues.get('name')}
-      </div>
-      <div>
-        <label>Username</label>
-        <div>
-          <Field name="username" component="input" type="text" />
+    <Paper>
+      <form onSubmit={handleSubmit} className={styles.Form}>
+        <Field name="name" component={renderNameField} type="text" />
+        <Field name="title" component={renderTitleField} type="text" />
+        <Field name="email" component={renderEmailField} type="text" />
+        <Field name="email2" component={renderEmail2Field} type="text" />
+        <div className={styles.Form__ActionRow}>
+          <RaisedButton disabled={pristine || invalid || submitting} label="Save" secondary={true} type="submit" />
         </div>
-      </div>
-      <div>
-        <label>Full Name</label>
-        <div>
-          <Field name="name" component="input" type="text" />
-        </div>
-      </div>
-      <div>
-        <button type="submit" disabled={pristine || submitting}>Submit</button>
-      </div>
-    </form>
+      </form>
+    </Paper>
   )
 }
 
