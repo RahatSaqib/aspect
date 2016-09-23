@@ -1,4 +1,3 @@
-let camelize = require('camelize')
 let { query } = require('../db')
 let { asyncHandler } = require('../util')
 
@@ -7,7 +6,7 @@ module.exports = [{
   path: '/country/select-list',
   handler: asyncHandler(countrySelectList),
   config: {
-    description: 'List of countries for selct list',
+    description: 'List of countries for select list',
     notes: 'List of {id, name} objects'
   }
 }]
@@ -19,5 +18,5 @@ function* countrySelectList(){
 
   let result = {ok: true, data}
 
-  return camelize(result)
+  return result
 }
