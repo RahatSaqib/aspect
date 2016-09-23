@@ -5,8 +5,8 @@ import { bindActionCreators } from 'redux'
 import { connect } from 'react-redux'
 
 // Our own imports
+import ReadOnlyFields from '../../../shared/ReadOnlyFields'
 import { FormContainer } from './Form'
-import Display from './Display'
 import { injectEditable } from '../../../hoc'
 import { updateSingleDevice } from '../../../../action_creators/device_creators'
 
@@ -60,7 +60,7 @@ export class EditableFields extends React.PureComponent {
       }
     ]
     return (
-      <Display fields={fields} />
+      <ReadOnlyFields fields={fields} />
     )
   }
 

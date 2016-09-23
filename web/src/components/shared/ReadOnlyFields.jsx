@@ -4,7 +4,7 @@ import React from 'react'
 // Material-UI
 import TextField from 'material-ui/TextField'
 
-export default class Display extends React.PureComponent {
+export default class ReadOnlyFields extends React.PureComponent {
   static propTypes = {
     fields: React.PropTypes.arrayOf(React.PropTypes.shape({
       label: React.PropTypes.string.isRequired,

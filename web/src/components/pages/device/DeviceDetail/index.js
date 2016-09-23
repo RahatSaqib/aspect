@@ -14,8 +14,8 @@ import LinearProgress from 'material-ui/LinearProgress'
 
 // Our own imports
 import { fetchSingleDevice } from '../../../../action_creators/device_creators'
+import ReadOnlyFields from '../../../shared/ReadOnlyFields'
 import { EditableFieldsContainer } from './EditableFields'
-import Display from './Display'
 import styles from './index.css'
 
 const messages = defineMessages({
@@ -83,7 +83,7 @@ export class DeviceDetail extends React.PureComponent {
         <EditableFieldsContainer
           device={device}
         />
-        <Display
+        <ReadOnlyFields
           fields={fields}
         />
       </div>
