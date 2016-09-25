@@ -1,24 +1,6 @@
 let camelize = require('camelize')
 let Promise = require('bluebird')
-let Joi = require('joi')
 let { knex, filterParams, sortPageParams } = require('../db')
-let { asyncHandler, validateSortPageParams } = require('../util')
-
-module.exports = [{
-  method: 'GET',
-  path: '/person',
-  handler: asyncHandler(listPeople),
-  config: {
-    description: 'People List',
-    notes: 'Pageable and sortable list of people',
-    auth: {scope: ['person:view', 'person:edit']},
-    validate: {
-      query: Object.assign({
-        name: Joi.string().allow('').description('Filter for person name')
-      }, validateSortPageParams('name', 'level', 'state', 'lga'))
-    }
-  }
-}]
 
 function* listPeople(request){
   let {query} = request
@@ -49,4 +31,8 @@ function* listPeople(request){
   let result = {ok: true, total, data, length: data.length}
   
   return camelize(result)
+}
+
+module.exports = {
+  listPeople
 }

@@ -3,7 +3,7 @@
 // =======================
 let config = require('./config')
 let { version } = require('./../package.json')
-let { addRoutes } = require('./routes/index')
+let { addRoutes } = require('./routes')
 
 let Hapi = require('hapi')
 let server = new Hapi.Server()

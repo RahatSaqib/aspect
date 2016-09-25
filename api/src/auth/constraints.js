@@ -1,5 +1,5 @@
 let _ = require('lodash')
-let {query, knex} = require('./db')
+let {query, knex} = require('../db')
 
 // A prefix for joined table aliases intended to avoid
 // conflict with caller supplied table aliases

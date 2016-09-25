@@ -1,5 +1,5 @@
 let Promise = require('bluebird')
-let util = require('./util')
+let { getSortPageParams } = require('./routes')
 let knex = null // see load
 
 function query() {
@@ -9,7 +9,7 @@ function query() {
 // extracts the parameters related to sorting and paging from the candidate
 // params and modifies the query builder with the sort modifications
 function sortPageParams(queryBuilder, params, defaultSort) {
-  let sp = util.getSortPageParams(params, defaultSort)
+  let sp = getSortPageParams(params, defaultSort)
   queryBuilder.orderBy(sp.sortCol, sp.sortDir).limit(sp.size).offset(sp.skip)
 }
 

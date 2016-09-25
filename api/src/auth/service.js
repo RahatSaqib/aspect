@@ -3,57 +3,9 @@ let jwt = require('jsonwebtoken')
 let uuid = require('node-uuid')
 let Promise = require('bluebird')
 let Boom = require('boom')
-let Joi = require('joi')
 
 let config = require('../config')
 let { query } = require('../db')
-let { asyncHandler } = require('../util')
-
-module.exports = [
-  {
-    method: 'POST',
-    path: '/auth',
-    handler: asyncHandler(authenticate),
-    config: {
-      auth: false,
-      description: 'Authenticate user',
-      notes: 'Generate new JWT token given user name and password',
-      validate: {
-        payload: {
-          name: Joi.string().required(),
-          password: Joi.string().required(),
-          clientName: Joi.string().required(),
-          clientId: Joi.string()
-        }
-      }
-    }
-  },
-  {
-    method: 'GET',
-    path: '/auth',
-    handler: asyncHandler(checkAuthentication),
-    config: {
-      description: 'Check authentication',
-      notes: 'Check successful authentication token'
-    }
-  },
-  {
-    method: 'POST',
-    path: '/auth/refresh',
-    handler: asyncHandler(refreshToken),
-    config: {
-      auth: false,
-      description: 'Refresh Token',
-      notes: 'Generate a new access token by sending a refresh token',
-      validate: {
-        payload: {
-          clientId: Joi.string().required(),
-          token: Joi.string().required()
-        }
-      }
-    }
-  }
-]
 
 function* checkAuthentication(){
   return { message: 'Welcome to the API!' }
@@ -201,4 +153,10 @@ function getAccessToken({id, name, culture, partnerId, countryId}){
 
       return token
     })
+}
+
+module.exports = {
+  authenticate,
+  checkAuthentication,
+  refreshToken
 }

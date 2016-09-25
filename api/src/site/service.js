@@ -1,25 +1,7 @@
 let camelize = require('camelize')
 let Promise = require('bluebird')
-let Joi = require('joi')
 let { knex, filterParams, sortPageParams } = require('../db')
-let { asyncHandler, validateSortPageParams } = require('../util')
-let { getConstraints, addConstraints } = require('../constraints')
-
-module.exports = [{
-  method: 'GET',
-  path: '/site',
-  handler: asyncHandler(listSites),
-  config: {
-    description: 'Site List',
-    notes: 'Pageable and sortable list of sites',
-    auth: {scope: ['site:view', 'site:edit']},
-    validate: {
-      query: Object.assign({
-        name: Joi.string().allow('').description('Filter for site name')
-      }, validateSortPageParams('name', 'shortname', 'state', 'lga', 'created_on', 'totalDevices'))
-    }
-  }
-}]
+let { getConstraints, addConstraints } = require('../auth/constraints')
 
 function* listSites(request){
   let {query, auth} = request
@@ -50,4 +32,8 @@ function* listSites(request){
   let result = {ok: true, total, length: data.length, data}
 
   return camelize(result)
+}
+
+module.exports = {
+  listSites
 }
