@@ -45,42 +45,42 @@ export class Dashboard extends React.PureComponent {
             <Link to="/device">
               <MiniChart  data={[1, 8, 15, 40, 45, 80, 90, 155]}
                           culture={cultureMessage}
-                          label={"Total Devices"} number={155} bgcolor={'#00bcd4'}/>
+                          label={'Total Devices'} number={155} bgcolor={'#00bcd4'}/>
             </Link>
           </div>
           <div className="pure-u-lg-1-4 pure-u-md-1-3 pure-u-sm-1-2">
             <Link to="/result">
               <MiniChart  data={[1000, 2000, 4000, 10000, 5000, 50000, 100000, 120000, 110000]}
                           culture={cultureMessage}
-                          label={"Total Tests"} number={125459} bgcolor={'#8bc34a'} />
+                          label={'Total Tests'} number={125459} bgcolor={'#8bc34a'} />
             </Link>
           </div>
           <div className="pure-u-lg-1-4 pure-u-md-1-3 pure-u-sm-1-2">
             <Link to="/site">
               <MiniChart  data={[10, 19, 15, 40, 45, 80, 90, 22]}
                           culture={cultureMessage}
-                          label={"Sites"} number={8} bgcolor={'#24c821'}/>
+                          label={'Sites'} number={8} bgcolor={'#24c821'}/>
             </Link>
           </div>
           <div className="pure-u-lg-1-4 pure-u-md-1-3 pure-u-sm-1-2">
             <Link to="/result">
               <MiniChart  data={[25, 12, 8, 2, 1]}
                           culture={cultureMessage}
-                          label={"Error Rate"} number={'12%'} bgcolor={'#ff9800'} />
+                          label={'Error Rate'} number={'12%'} bgcolor={'#ff9800'} />
             </Link>
           </div>
           <div className="pure-u-lg-1-4 pure-u-md-1-3 pure-u-sm-1-2">
             <Link to="/dashboard/inventory">
               <MiniChart  data={[1000, 1200, 700, 500, 400, 500, 600, 780, 1200, 1456]}
                           culture={cultureMessage}
-                          label={"Cartridges"} number={1456} bgcolor={'#607d8b'} />
+                          label={'Cartridges'} number={1456} bgcolor={'#607d8b'} />
               </Link>
           </div>
           <div className="pure-u-lg-1-4 pure-u-md-1-3 pure-u-sm-1-2">
             <Link to="/person">
               <MiniChart  data={[800, 700, 900, 1200, 1400, 1500, 1600, 1780]}
                           culture={cultureMessage}
-                          label={"Persons"} number={12} bgcolor={'#FBC02D'} />
+                          label={'Persons'} number={12} bgcolor={'#FBC02D'} />
             </Link>
           </div>
         </div>
