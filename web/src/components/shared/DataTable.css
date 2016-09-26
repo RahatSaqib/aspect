@@ -1,3 +1,7 @@
+.TableRow--selectable {
+  cursor: pointer;
+}
+
 /*Styles for the grid pager*/
 .Pager__Button {
   height: 30px !important;

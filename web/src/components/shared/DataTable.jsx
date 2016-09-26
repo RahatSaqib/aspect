@@ -1,6 +1,6 @@
 // Imports from packages
 import _ from 'lodash'
-import cx from 'classnames'
+import classnames from 'classnames/bind'
 import React from 'react'
 
 // Material-UI
@@ -11,6 +11,8 @@ import FlatButton from 'material-ui/FlatButton'
 
 // Our own imports
 import styles from './DataTable.css'
+
+const cx = classnames.bind(styles)
 
 export class DataTable extends React.PureComponent {
 
@@ -102,8 +104,8 @@ export class DataTable extends React.PureComponent {
         pagerItems.push(
           <FlatButton
             key={key}
-            className={cx(styles.Pager__Button, styles['Pager__Button--number'], {
-              [styles['Pager__Button--current']]: page === i
+            className={cx('Pager__Button', 'Pager__Button--number', {
+              'Pager__Button--current': page === i
             })}
             label={(i + 1)}
             onTouchTap={() => { this.handlePage(i) } }
@@ -175,7 +177,9 @@ export class DataTable extends React.PureComponent {
             showRowHover={this.state.showRowHover}
             stripedRows={this.state.stripedRows}>
             {items.currentIdList.map((itemId) => (
-              <TableRow key={itemId}>
+              <TableRow key={itemId} className={cx({
+                'TableRow--selectable': this.props.selectable
+              })}>
                 {this.props.columns.map((col) => {
                   const row = items.getIn(['byId', itemId])
                   const data = row.get(col.db)
