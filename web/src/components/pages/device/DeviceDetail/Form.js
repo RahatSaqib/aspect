@@ -57,7 +57,7 @@ export class Form extends React.PureComponent {
   // So, load the sigle site resource in cDM
   //
   componentDidMount() {
-    this.handleLoadMoreClick()
+    this.props.fetchSites()
   }
 
   render() {
