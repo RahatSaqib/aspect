@@ -107,7 +107,9 @@ function validate(values) {
   if (!values.get('name')) {
     errors.name = 'Required'
   }
-  // TODO
+  if (!values.get('shortName')) {
+    errors.shortName = 'Required'
+  }
 
   return errors
 }
