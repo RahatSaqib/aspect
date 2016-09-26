@@ -5,15 +5,18 @@ let sinon = require('sinon')
 let endpointUtils = require('../../test/unit_tests/endpointUtils')
 
 describe('state endpoints', function () {
-  let state, dbSpy, endpoint
+  let endpoints, dbSpy, endpoint
 
   function setupPersonRoutes(method, path) {
     dbSpy = require('../../test/unit_tests/dbSpy')
     sinon.spy(dbSpy, 'query')
-    state = proxyquire.noCallThru().load('./state', {
+    let service = proxyquire.noCallThru().load('./stateService', {
       '../db': dbSpy
     })
-    endpoint = _.find(state, {method: method, path: path})
+    endpoints = proxyquire('./stateEndpoints', {
+      './stateService': service
+    })
+    endpoint = _.find(endpoints, {method: method, path: path})
   }
 
   afterEach(function() {

@@ -5,15 +5,18 @@ let sinon = require('sinon')
 let endpointUtils = require('../../test/unit_tests/endpointUtils')
 
 describe('lga endpoints', function () {
-  let lga, dbSpy, endpoint
+  let endpoints, dbSpy, endpoint
 
-  function setupPersonRoutes(method, path) {
+  function setupRoutes(method, path) {
     dbSpy = require('../../test/unit_tests/dbSpy')
     sinon.spy(dbSpy, 'query')
-    lga = proxyquire.noCallThru().load('./lga', {
+    let service = proxyquire.noCallThru().load('./lgaService', {
       '../db': dbSpy
     })
-    endpoint = _.find(lga, {method: method, path: path})
+    endpoints = proxyquire('./lgaEndpoints', {
+      './lgaService': service
+    })
+    endpoint = _.find(endpoints, {method: method, path: path})
   }
 
   afterEach(function() {
@@ -27,7 +30,7 @@ describe('lga endpoints', function () {
         requestData = { params: { stateId: '22' } }
 
       beforeEach(function () {
-        setupPersonRoutes('GET', '/lga/select-list/{stateId}')
+        setupRoutes('GET', '/lga/select-list/{stateId}')
         dbSpy.query.for('Get LGAs for select list').resolvesWith(lgas)
       })
 

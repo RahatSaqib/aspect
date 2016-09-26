@@ -5,15 +5,18 @@ let sinon = require('sinon')
 let endpointUtils = require('../../test/unit_tests/endpointUtils')
 
 describe('country endpoints', function () {
-  let country, dbSpy, endpoint
+  let endpoints, dbSpy, endpoint
 
-  function setupPersonRoutes(method, path) {
+  function setupRoutes(method, path) {
     dbSpy = require('../../test/unit_tests/dbSpy')
     sinon.spy(dbSpy, 'query')
-    country = proxyquire.noCallThru().load('./country', {
+    let service = proxyquire.noCallThru().load('./countryService', {
       '../db': dbSpy
     })
-    endpoint = _.find(country, {method: method, path: path})
+    endpoints = proxyquire('./countryEndpoints', {
+      './countryService': service
+    })
+    endpoint = _.find(endpoints, {method: method, path: path})
   }
 
   afterEach(function() {
@@ -29,7 +32,7 @@ describe('country endpoints', function () {
         { id: 4, name: 'Zimbabwe' }]
 
       beforeEach(function () {
-        setupPersonRoutes('GET', '/country/select-list')
+        setupRoutes('GET', '/country/select-list')
         dbSpy.query.for('Get countries for select list').resolvesWith(countries)
       })
 

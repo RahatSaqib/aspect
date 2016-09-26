@@ -1,4 +1,4 @@
-let { query } = require('../db')
+let { countrySelectList } = require('./countryService')
 let { asyncHandler } = require('../routes')
 
 module.exports = [{
@@ -10,13 +10,3 @@ module.exports = [{
     notes: 'List of {id, name} objects'
   }
 }]
-
-function* countrySelectList(){
-  let data = yield query('Get countries for select list').from('country as c')
-    .orderBy('name', 'asc')
-    .select('c.id', 'c.name')
-
-  let result = {ok: true, data}
-
-  return result
-}

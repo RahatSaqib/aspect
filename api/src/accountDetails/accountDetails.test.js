@@ -9,7 +9,7 @@ let endpointUtils = require('../../test/unit_tests/endpointUtils')
 describe('account details endpoints', function () {
   let endpoints, dbSpy, endpoint
 
-  function setupPersonRoutes(method, path) {
+  function setupRoutes(method, path) {
     dbSpy = require('../../test/unit_tests/dbSpy')
     sinon.spy(dbSpy, 'query')
     let service = proxyquire.noCallThru().load('./service', {
@@ -52,7 +52,7 @@ describe('account details endpoints', function () {
         }
 
       beforeEach(function () {
-        setupPersonRoutes('GET', '/account-details/current')
+        setupRoutes('GET', '/account-details/current')
         dbSpy.query.for('Get account details for currently logged in user').resolvesWith(accountDetails)
       })
 
@@ -109,7 +109,7 @@ describe('account details endpoints', function () {
         }, requestAccountDetails = camelize(accountDetails)
 
       beforeEach(function () {
-        setupPersonRoutes('PUT', '/account-details/current')
+        setupRoutes('PUT', '/account-details/current')
         dbSpy.query.for('Get account details for currently logged in user').resolvesWith(accountDetails)
 
       })
