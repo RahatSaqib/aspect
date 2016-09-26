@@ -21,13 +21,6 @@ const SELECT_SHOW_FIELDS = [
   'd.serial'
 ]
 
-function changeIdToString(item) {
-  // FIXME: id should be always a String type. Maybe UUID?
-  return Object.assign({}, item, {
-    id: String(item.id)
-  })
-}
-
 function* listDevices(request){
   let {query, auth} = request
 
@@ -50,8 +43,6 @@ function* listDevices(request){
   // return result when both queries are finished
   let [{count: total}, data] = yield Promise.all([getCount, getItems])
 
-  data = data.map(changeIdToString)
-
   let result = {ok: true, total, length: data.length, data}
 
   return camelize(result)
@@ -65,7 +56,7 @@ function* showDevice(request) {
     .where('d.id', params.deviceId)
     .select(SELECT_SHOW_FIELDS)
 
-  const result = {ok: true, data: changeIdToString(item)}
+  const result = {ok: true, data: item}
 
   return camelize(result)
 }
