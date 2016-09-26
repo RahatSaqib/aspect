@@ -7,15 +7,18 @@ let decamelize = require('decamelize')
 let endpointUtils = require('../../test/unit_tests/endpointUtils')
 
 describe('account details endpoints', function () {
-  let accountDetails, dbSpy, endpoint
+  let endpoints, dbSpy, endpoint
 
   function setupPersonRoutes(method, path) {
     dbSpy = require('../../test/unit_tests/dbSpy')
     sinon.spy(dbSpy, 'query')
-    accountDetails = proxyquire.noCallThru().load('./accountDetails', {
+    let service = proxyquire.noCallThru().load('./service', {
       '../db': dbSpy
     })
-    endpoint = _.find(accountDetails, {method: method, path: path})
+    endpoints = proxyquire('./endpoints', {
+      './service': service
+    })
+    endpoint = _.find(endpoints, {method: method, path: path})
   }
 
   afterEach(function() {
@@ -56,7 +59,10 @@ describe('account details endpoints', function () {
       it('Should lookup the account details for the currently logged in user', function (done) {
         endpointUtils.callHandlerOn(endpoint)
           .with(requestData)
-          .handleResponseWith(function () {
+          .handleResponseWith(function (response) {
+            assert.isTrue(response.ok)
+            assert.deepEqual(response.data, camelize(accountDetails))
+
             const getPersonQuery = dbSpy.query.withArgs('Get account details for currently logged in user').lastCall.returnValue
             assert.equal(getPersonQuery.from.lastCall.args[0], 'user as u')
             assert.deepEqual(getPersonQuery.leftJoin.lastCall.args, ['person as p', 'u.id', 'p.user_id'])

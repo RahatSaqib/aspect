@@ -4,7 +4,7 @@ let Joi = require('joi')
 
 // Adds all API routes to the server
 function addRoutes(server){
-  server.route(require('./accountDetails/accountDetails').map(decorateAPI()))
+  server.route(require('./accountDetails/endpoints').map(decorateAPI()))
   server.route(require('./auth/endpoints').map(decorateAPI()))
   server.route(require('./device/endpoints').map(decorateAPI('device')))
   server.route(require('./geography/country').map(decorateAPI()))
