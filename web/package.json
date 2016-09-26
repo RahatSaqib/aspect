@@ -34,7 +34,7 @@
     "babel-loader": "^6.2.0",
     "babel-plugin-lodash": "^3.2.8",
     "babel-plugin-react-intl": "^2.2.0",
-    "babel-plugin-webpack-alias": "^2.1.1",
+    "babel-plugin-webpack-alias": "^1.9.0",
     "babel-polyfill": "^6.13.0",
     "babel-preset-es2015": "^6.13.0",
     "babel-preset-react": "^6.11.0",
