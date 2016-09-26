@@ -53,10 +53,6 @@ const messages = defineMessages({
   totalTests: {
     id: 'pages.DeviceList.totalTests',
     defaultMessage: 'Total Tests'
-  },
-  culture: {
-    id: 'pages.DeviceList.culture',
-    defaultMessage: 'Culture' // FIXME: missing
   }
 })
 
