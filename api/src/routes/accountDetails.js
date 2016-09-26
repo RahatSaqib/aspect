@@ -4,7 +4,7 @@ let decamelize = require('decamelize')
 let Boom = require('boom')
 let Joi = require('joi')
 let { query, knex } = require('../db')
-let { asyncHandler } = require('../util')
+let { asyncHandler } = require('../routes')
 
 module.exports = [
   {

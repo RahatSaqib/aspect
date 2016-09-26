@@ -1,5 +1,5 @@
 let { query } = require('../db')
-let { asyncHandler } = require('../util')
+let { asyncHandler } = require('../routes')
 let Joi = require('joi')
 
 module.exports = [{
