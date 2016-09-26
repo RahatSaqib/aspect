@@ -46,10 +46,10 @@ module.exports = [
           deviceId: Joi.string().description('Device id').required()
         },
         payload: {
+          siteId: Joi.number().required(),
           name: Joi.string().required(),
           shortname: Joi.string().required(),
-          notes: Joi.string().required(),
-          siteId: Joi.number().required()
+          notes: Joi.string()
         }
       }
     }
