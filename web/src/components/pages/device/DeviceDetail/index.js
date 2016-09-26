@@ -42,7 +42,7 @@ const messages = defineMessages({
   },
   fieldSiteId: {
     id: 'pages.DeviceDetail.fieldSiteId',
-    defaultMessage: 'Site (ddl)'
+    defaultMessage: 'Site'
   },
   siteLoadMore: {
     id: 'pages.DeviceDetail.siteLoadMore',
