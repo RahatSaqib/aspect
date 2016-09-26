@@ -1,5 +1,5 @@
 // Imports from packages
-import cx from 'classnames'
+import classnames from 'classnames/bind'
 import React from 'react'
 import { Link } from 'react-router'
 
@@ -23,6 +23,8 @@ import Book from 'material-ui/svg-icons/action/book'
 import SelectableList from './SelectableList'
 import styles from './SideNav.css'
 
+const cx = classnames.bind(styles)
+
 class SideNav extends React.PureComponent {
 
   static propTypes = {
@@ -36,7 +38,7 @@ class SideNav extends React.PureComponent {
       <Drawer
         docked={ this.props.desktop }
         containerClassName={cx({
-          [styles['Drawer--desktop']]: this.props.desktop
+          'Drawer--desktop': this.props.desktop
         })}
         open={this.props.open}
         onRequestChange={ this.props.handleClose}
