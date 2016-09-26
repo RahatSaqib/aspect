@@ -12,13 +12,13 @@ import baseConfig from './base'
 
 // vendor packages so we can create a separate bundle
 const vendorPackages = [
-  'es6-promise',
-  'immutable', 'isomorphic-fetch',
-  'jwt-decode', 'material-ui', 'moment',
-  'react', 'react-dom',
+  'classnames', 'es6-promise', 'global', 'http-client',
+  'immutable', 'intl', 'isomorphic-fetch',
+  'jwt-decode', 'lodash', 'material-ui', 'moment',
+  'raven-js', 'react', 'react-dom', 'react-helmet', 'react-intl',
   'react-redux', 'react-router', 'react-router-scroll',
   'react-sparklines', 'react-tap-event-plugin',
-  'redux', 'react-helmet', 'redux-immutable',
+  'redux', 'redux-form', 'redux-immutable',
   'redux-thunk', 'whatwg-fetch'
 ]
 
