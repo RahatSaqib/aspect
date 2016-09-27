@@ -5,10 +5,10 @@
   "main": "server.js",
   "scripts": {
     "lint": "eslint ./src --ext .js",
-    "mocha:unit": "mocha --opts test/unit_tests/mocha.opts",
+    "mocha:unit": "mocha --opts test/unit.mocha.opts",
     "mocha:unit:clear:coverage": "fsys --task=remove --fileFolder=coverage && fsys --task=remove --fileFolder=mocha.json",
-    "mocha:unit:coverage": "istanbul cover --config test/unit_tests/istanbul.yml node_modules/mocha/bin/_mocha -- --opts test/unit_tests/mocha.opts",
-    "mocha:unit:check:coverage": "istanbul check-coverage --config test/unit_tests/istanbul.yml",
+    "mocha:unit:coverage": "istanbul cover --config test/istanbul.yml node_modules/mocha/bin/_mocha -- --opts test/unit.mocha.opts",
+    "mocha:unit:check:coverage": "istanbul check-coverage --config test/istanbul.yml",
     "test:unit": "npm-run-all lint mocha:unit:clear:coverage mocha:unit:coverage mocha:unit:check:coverage",
     "start": "node src/server.js",
     "start:background": "forever start src/server.js",

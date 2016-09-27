@@ -2,23 +2,23 @@ let proxyquire = require('proxyquire')
 let {assert} = require('chai')
 let _ = require('lodash')
 let sinon = require('sinon')
-let endpointUtils = require('../../test/unit_tests/endpointUtils')
+let endpointUtils = require('../utils/endpointUtils')
 
 describe('auth endpoints', function () {
   let dbSpy, jwt, endpoint
   const fakeConfig = { secret: '8rU7FITwHV30jhkcXvjOjoSvy2Tv2bZT', passwordAttempts: 5 }
 
   function setupAuthRoutes(method, path) {
-    dbSpy = require('../../test/unit_tests/dbSpy')
+    dbSpy = require('../utils/dbSpy')
     sinon.spy(dbSpy, 'query')
     jwt = require('jsonwebtoken')
     sinon.spy(jwt, 'sign')
-    let service = proxyquire.noCallThru().load('./service', {
+    let service = proxyquire.noCallThru().load('../../src/auth/service', {
       'jsonwebtoken': jwt,
       '../db': dbSpy,
       '../config': fakeConfig
     })
-    let endpoints = proxyquire.noCallThru().load('./endpoints', {
+    let endpoints = proxyquire.noCallThru().load('../../src/auth/endpoints', {
       './service': service
     })
     endpoint = _.find(endpoints, {method: method, path: path})
