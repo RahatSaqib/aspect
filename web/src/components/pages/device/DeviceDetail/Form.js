@@ -57,7 +57,7 @@ export class Form extends React.PureComponent {
   // So, load the sigle site resource in cDM
   //
   componentDidMount() {
-    this.handleLoadMoreClick()
+    this.props.fetchSites()
   }
 
   render() {
@@ -107,7 +107,9 @@ function validate(values) {
   if (!values.get('name')) {
     errors.name = 'Required'
   }
-  // TODO
+  if (!values.get('shortName')) {
+    errors.shortName = 'Required'
+  }
 
   return errors
 }

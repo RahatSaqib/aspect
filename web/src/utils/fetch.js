@@ -1,3 +1,4 @@
+import _ from 'lodash'
 import {
   createFetch,
   base,
@@ -56,7 +57,10 @@ export function handleFetchError(resp) {
   const json = resp.json()
 
   if (resp.ok) {
-    return json
+    return json.then(prevJson => {
+      const nextJson = changeAllIdsToString(prevJson) // FIXME: change backend
+      return nextJson
+    })
   } else {
     return json.then(Promise.reject.bind(Promise))
   }
@@ -88,5 +92,19 @@ function getBrowserInfo() {
     }
   } catch (e) {
     return null
+  }
+}
+
+function isIdLike(key) {
+  return key === 'id' || key.match(/.+Id$/)
+}
+
+function changeAllIdsToString(data) {
+  if (_.isArray(data)) {
+    return data.map(changeAllIdsToString)
+  } else if (_.isObject(data)) {
+    return _.mapValues(data, (value, key) => isIdLike(key) ? String(value) : changeAllIdsToString(value))
+  } else {
+    return data
   }
 }

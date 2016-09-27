@@ -42,7 +42,7 @@ const messages = defineMessages({
   },
   fieldSiteId: {
     id: 'pages.DeviceDetail.fieldSiteId',
-    defaultMessage: 'Site (ddl)'
+    defaultMessage: 'Site'
   },
   siteLoadMore: {
     id: 'pages.DeviceDetail.siteLoadMore',
@@ -165,7 +165,7 @@ export class DeviceDetail extends React.PureComponent {
   }
 
   renderContent() {
-    const { device, editable, intl: { formatMessage } } = this.props
+    const { device, editable, intl: { formatMessage, formatRelative } } = this.props
     if (!device) {
       return
     }
@@ -188,7 +188,7 @@ export class DeviceDetail extends React.PureComponent {
       },
       {
         label: formatMessage(messages.fieldLastSeen),
-        value: device.get('lastPingOn')
+        value: formatRelative(device.get('lastSeen'))
       },
       {
         label: formatMessage(messages.fieldTotalNumberOfTests),
