@@ -13,7 +13,7 @@
     "start": "node src/server.js",
     "start:background": "forever start src/server.js",
     "stop:background": "forever stop src/server.js",
-    "mocha:contract": "mocha --opts test/contract_tests/utils/mocha.opts",
+    "mocha:contract": "mocha --opts test/contract.mocha.opts",
     "test:contract": "npm-run-all -c start:background mocha:contract stop:background",
     "test": "npm-run-all test:unit test:contract",
     "knex": "knex"

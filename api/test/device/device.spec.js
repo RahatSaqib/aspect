@@ -1,23 +1,23 @@
 let supertest = require('supertest')
 let chai = require('chai')
-let shared = require('./shared_tests')
+let shared = require('../utils/sharedToken')
 
 // This agent refers to PORT where program is runninng.
 let server = supertest.agent('http://localhost:8080')
 let assert = chai.assert
 
-describe('Site routes',function(){
+describe('Device routes',function(){
 
-  let path = '/api/site'
+  let path = '/api/device'
 
   describe('GET',function(){
 
     shared.checkToken(server, path)
 
-    it('should return a list of sites when using valid token', function(done){
+    it('should return a list of devices when using valid token', function(done){
       server
       .get(path)
-      .set('Authorization', 'Bearer ' + shared.token)
+      .set('Authorization', 'Bearer '+shared.token)
       .end(function(err,res){
         assert.equal(res.status, 200)
         assert.typeOf(res.body, 'Object')
@@ -28,6 +28,7 @@ describe('Site routes',function(){
         assert.property(res.body.data[0], 'name')
         assert.property(res.body.data[0], 'shortname')
         assert.property(res.body.data[0], 'createdOn')
+        assert.property(res.body.data[0], 'lastPingOn')
         assert.property(res.body, 'total')
         done()
       })

@@ -1,8 +1,8 @@
 let supertest = require('supertest')
 let chai = require('chai')
 let jwt = require('jsonwebtoken')
-let config = require('./../../src/config')
-let shared = require('./shared_tests')
+let config = require('../../src/config')
+let shared = require('../utils/sharedToken')
 
 // This agent refers to PORT where program is runninng.
 let server = supertest.agent('http://localhost:8080')
