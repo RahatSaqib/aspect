@@ -8,7 +8,6 @@ import { Provider } from 'react-redux'
 import { AppContainer } from 'react-hot-loader'
 
 import config from 'config'
-
 if (config.sentry){
   // using require here since import only allowed at top-level
   const Raven = require('raven-js')
