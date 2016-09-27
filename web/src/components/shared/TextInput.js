@@ -4,7 +4,8 @@ import TextField from 'material-ui/TextField'
 
 const renderTextField = props =>
   <TextField {...props.input} errorStyle={{ float: 'left' }}
-             errorText={props.meta.touched && props.meta.error} {...props.textFieldProps} />
+             errorText={props.meta.touched && props.meta.error}
+             {...props.textFieldProps} />
 
 const renderFormField = props =>
   <Field name={props.name} textFieldProps={{

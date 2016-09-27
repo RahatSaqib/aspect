@@ -1,8 +1,7 @@
 import React from 'react'
 import { reduxForm } from 'redux-form/immutable'
-import AutoComplete from 'material-ui/AutoComplete'
 import RaisedButton from 'material-ui/RaisedButton'
-import AutoCompleteInput from '../../shared/AutoCompleteInput'
+import SelectInput from '../../shared/SelectInput'
 import TextInput from '../../shared/TextInput'
 import {emailAddress as validateEmailAddress} from '../../../utils/validate'
 import styles from './AccountDetails.css'
@@ -10,7 +9,8 @@ import styles from './AccountDetails.css'
 const ContactDetailsForm = props => {
   const { handleSubmit, pristine, invalid, submitting, onCountryChanged, countriesLoading, countries,
     onStateChanged, statesLoading, states, lgasLoading, lgas } = props
-  const geographyAutoCompleteDataSourceConfig = {
+
+  const geographySelectListDataSourceConfig = {
     text: 'name',
     value: 'id'
   }
@@ -34,17 +34,14 @@ const ContactDetailsForm = props => {
         </section>
         <section>
           <h1>Location</h1>
-          <AutoCompleteInput name="countryId" label="Country" disabled={countriesLoading || submitting}
-                             dataSource={countries.toJS()} filter={AutoComplete.noFilter}
-                             dataSourceConfig={geographyAutoCompleteDataSourceConfig}
-                             onNewRequest={onCountryChanged} />
-          <AutoCompleteInput name="stateId" label="State" disabled={statesLoading || submitting}
-                             dataSource={states.toJS()} filter={AutoComplete.noFilter}
-                             dataSourceConfig={geographyAutoCompleteDataSourceConfig}
-                             onNewRequest={onStateChanged} />
-          <AutoCompleteInput name="lgaId" label="Area" disabled={lgasLoading || submitting}
-                             dataSource={lgas.toJS()} filter={AutoComplete.noFilter}
-                             dataSourceConfig={geographyAutoCompleteDataSourceConfig} />
+          <SelectInput name="countryId" label="Country" disabled={countriesLoading || submitting}
+                       dataSource={countries} dataSourceConfig={geographySelectListDataSourceConfig}
+                       onChange={onCountryChanged} />
+          <SelectInput name="stateId" label="State" disabled={statesLoading || submitting}
+                       dataSource={states} dataSourceConfig={geographySelectListDataSourceConfig}
+                       onChange={onStateChanged} />
+          <SelectInput name="lgaId" label="Area" disabled={lgasLoading || submitting}
+                       dataSource={lgas} dataSourceConfig={geographySelectListDataSourceConfig} />
           <TextInput name="zip" label="ZIP Code" disabled={submitting} />
         </section>
       </div>
@@ -53,6 +50,7 @@ const ContactDetailsForm = props => {
       </div>
     </form>
   )
+  //TODO: Disable State and LGA inputs until parent item is selected
 }
 
 const validate = acccountDetails => {

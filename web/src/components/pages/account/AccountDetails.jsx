@@ -20,29 +20,22 @@ class AccountDetails extends React.PureComponent {
     this.props.fetchCountriesSelectList()
   }
 
-  onCountryChanged = this.onCountryChanged.bind(this)
-  onCountryChanged(text, index){
-    if(index > -1) {
-      let countryItem = this.props.countriesSelectList.get('items').get(index)
-      if(countryItem) {
-        this.props.fetchStatesSelectList(countryItem.get('id'))
-      }
-    }
-  }
-
-  onStateChanged = this.onStateChanged.bind(this)
-  onStateChanged(text, index) {
-    if(index > -1) {
-      let stateItem = this.props.statesSelectList.get('items').get(index)
-      if (stateItem) {
-        this.props.fetchLgasSelectList(stateItem.get('id'))
-      }
-    }
-  }
-
   render() {
     const { loading, saving, accountDetails, saveAccountDetails, countriesSelectList, statesSelectList,
       lgasSelectList } = this.props
+
+    const onCountryChanged = (event, index, countryId) => {
+      if(countryId) {
+        this.props.fetchStatesSelectList(countryId)
+      }
+    }
+
+    const onStateChanged = (event, index, stateId) => {
+      if(stateId) {
+        this.props.fetchLgasSelectList(stateId)
+      }
+    }
+
     return (
       <div className={styles.Content}>
         {loading && <span>Loading...</span>}
@@ -52,10 +45,10 @@ class AccountDetails extends React.PureComponent {
           <Tabs>
             <Tab label="Contact Details">
               <ContactDetailsForm initialValues={accountDetails} onSubmit={saveAccountDetails}
-                                  onCountryChanged={this.onCountryChanged}
+                                  onCountryChanged={onCountryChanged}
                                   countriesLoading={countriesSelectList.get('loading')}
                                   countries={countriesSelectList.get('items')}
-                                  onStateChanged={this.onStateChanged}
+                                  onStateChanged={onStateChanged}
                                   statesLoading={statesSelectList.get('loading')}
                                   states={statesSelectList.get('items')}
                                   lgasLoading={lgasSelectList.get('loading')}
