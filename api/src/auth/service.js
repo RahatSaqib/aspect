@@ -127,10 +127,10 @@ function* refreshToken(request){
 // generate a new jwt for the given user data
 function getAccessToken({id, name, culture, partnerId, countryId}){
   return query('Get permissions for user and partner')
-    .from('permission as p')
-    .innerJoin('role_permission as rp', 'p.id', 'rp.permission_id')
-    .innerJoin('role as r', 'rp.role_id', 'r.id')
-    .innerJoin('user_role as ur', 'r.id', 'ur.role_id')
+    .from('Permission as p')
+    .innerJoin('RolePermission as rp', 'p.id', 'rp.permissionId')
+    .innerJoin('Role as r', 'rp.roleId', 'r.id')
+    .innerJoin('UserRole as ur', 'r.id', 'ur.roleId')
     .where({'ur.user_id': id, 'r.partnerId': partnerId})
     .orderBy(['p.module', 'p.activity'])
     .distinct('p.module', 'p.activity')

@@ -24,7 +24,7 @@ function* up(knex){
     //  .index().references('id').inTable('OrgUnit')
   })
 
-  yield knex.schema.createTable('data_filter', dataFilter => {
+  yield knex.schema.createTable('DataFilter', dataFilter => {
     dataFilter.increments('id')
     dataFilter.string('name').notNullable()
     // knex does not yet support JSON for MySQL
@@ -125,19 +125,19 @@ function* up(knex){
     person.charset('utf8')
   })
 
-  yield knex.schema.createTable('role', role => {
+  yield knex.schema.createTable('Role', role => {
     role.increments('id')
     role.string('name').notNullable()
     role.integer('partnerId').unsigned()
       .index().references('id').inTable('Partner')
-    role.integer('data_filter_id').unsigned()
-      .index().references('id').inTable('data_filter')
+    role.integer('dataFilterId').unsigned()
+      .index().references('id').inTable('DataFilter')
     role.integer('orgUnitId').unsigned()
       .index().references('id').inTable('OrgUnit')
     role.charset('utf8')
   })
 
-  yield knex.schema.createTable('permission', permission => {
+  yield knex.schema.createTable('Permission', permission => {
     permission.increments('id')
 
     // e.g. clinical, inventory, operational, device, etc.
@@ -149,21 +149,22 @@ function* up(knex){
     permission.charset('utf8')
   })
 
-  yield knex.schema.createTable('role_permission', permissionRole => {
-    permissionRole.integer('role_id').unsigned()
-      .index().references('id').inTable('role')
-    permissionRole.integer('permission_id').unsigned()
-      .index().references('id').inTable('permission')
-    permissionRole.primary(['permission_id', 'role_id'])
+  yield knex.schema.createTable('RolePermission', permissionRole => {
+    permissionRole.integer('roleId').unsigned()
+      .index().references('id').inTable('Role')
+    permissionRole.integer('permissionId').unsigned()
+      .index().references('id').inTable('Permission')
+    permissionRole.primary(['permissionId', 'roleId'])
     permissionRole.charset('utf8')
   })
 
-  yield knex.schema.createTable('user_role', userRole => {
+  // FIXME Change UserRole to PersonRole
+  yield knex.schema.createTable('UserRole', userRole => {
     userRole.integer('user_id').unsigned()
       .index().references('id').inTable('user')
-    userRole.integer('role_id').unsigned()
-      .index().references('id').inTable('role')
-    userRole.primary(['user_id', 'role_id'])
+    userRole.integer('roleId').unsigned()
+      .index().references('id').inTable('Role')
+    userRole.primary(['user_id', 'roleId'])
     userRole.charset('utf8')
   })
 
@@ -321,6 +322,11 @@ function* down(knex){
   yield knex.schema.dropTableIfExists('org_unit')
   yield knex.schema.dropTableIfExists('partner')
 
+  yield knex.schema.dropTable('UserRole')
+  yield knex.schema.dropTableIfExists('RolePermission')
+  yield knex.schema.dropTableIfExists('Permission')
+  yield knex.schema.dropTableIfExists('Role')
+  yield knex.schema.dropTableIfExists('DataFilter')
   yield knex.schema.dropTableIfExists('OrgUnit')
   yield knex.schema.dropTableIfExists('Partner')
 

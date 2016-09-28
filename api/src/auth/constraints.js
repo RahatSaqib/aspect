@@ -11,9 +11,9 @@ function alias(table){
 function getConstraints(credentials){
   // FIXME only include roles that assign permissions of interest
   let dataFilters = query('Get constraints for user credentials')
-    .from('data_filter as f')
-    .innerJoin('role as r', 'f.id', 'r.data_filter_id')
-    .innerJoin('user_role as ur', 'r.id', 'ur.role_id')
+    .from('DataFilter as f')
+    .innerJoin('Role as r', 'f.id', 'r.dataFilterId')
+    .innerJoin('UserRole as ur', 'r.id', 'ur.roleId')
     .where({
       'ur.user_id': credentials.id,
       'r.partnerId': credentials.partnerId
@@ -23,8 +23,8 @@ function getConstraints(credentials){
 
   let topOrgUnit = query('Get top org unit for user credentials')
     .from('OrgUnit as o')
-    .innerJoin('role as r', 'o.id', 'r.orgUnitId')
-    .innerJoin('user_role as ur', 'r.id', 'ur.role_id')
+    .innerJoin('Role as r', 'o.id', 'r.orgUnitId')
+    .innerJoin('UserRole as ur', 'r.id', 'ur.roleId')
     .where({
       'ur.user_id': credentials.id,
       'r.partnerId': credentials.partnerId

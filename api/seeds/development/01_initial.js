@@ -64,7 +64,7 @@ function* seed(knex){
     let moduleData = {}
     modules[module.name] = moduleData
     for(let activity of module.activities){
-      let [permissionId] = yield knex('permission').insert({
+      let [permissionId] = yield knex('Permission').insert({
         module: module.name,
         activity
       })
@@ -188,7 +188,7 @@ function* seed(knex){
   yield knex('device').insert(devices)
 
   // data filters
-  let [dataFilterIdOH] = yield knex('data_filter').insert({
+  let [dataFilterIdOH] = yield knex('DataFilter').insert({
     name: 'Ohio Filter',
     // TODO specify query constraint format (likely similar to MongoDB)
     constraint: JSON.stringify({
@@ -198,7 +198,7 @@ function* seed(knex){
     })
   })
 
-  let [dataFilterIdNE] = yield knex('data_filter').insert({
+  let [dataFilterIdNE] = yield knex('DataFilter').insert({
     name: 'Nebraska Filter',
     constraint: JSON.stringify({
       state: {
@@ -207,7 +207,7 @@ function* seed(knex){
     })
   })
 
-  let [dataFilterIdOHWayne] = yield knex('data_filter').insert({
+  let [dataFilterIdOHWayne] = yield knex('DataFilter').insert({
     name: 'Wayne County, OH Filter',
     constraint: JSON.stringify({
       lga: {
@@ -216,7 +216,7 @@ function* seed(knex){
     })
   })
 
-  let [dataFilterIdMASuffolk] = yield knex('data_filter').insert({
+  let [dataFilterIdMASuffolk] = yield knex('DataFilter').insert({
     name: 'Suffolk County, MA Filter',
     constraint: JSON.stringify({
       lga: {
@@ -226,94 +226,94 @@ function* seed(knex){
   })
 
   // Roles
-  let [roleIdAdmin] = yield knex('role').insert({
+  let [roleIdAdmin] = yield knex('Role').insert({
     name: 'Admin',
     partnerId: partnerOneId
   })
 
-  let [roleIdOH] = yield knex('role').insert({
+  let [roleIdOH] = yield knex('Role').insert({
     name: 'Ohio Users',
     partnerId: partnerOneId,
-    data_filter_id: dataFilterIdOH
+    dataFilterId: dataFilterIdOH
   })
 
-  let [roleIdNE] = yield knex('role').insert({
+  let [roleIdNE] = yield knex('Role').insert({
     name: 'Nebraska Users',
     partnerId: partnerOneId,
-    data_filter_id: dataFilterIdNE
+    dataFilterId: dataFilterIdNE
   })
 
-  let [roleIdOHWayne] = yield knex('role').insert({
+  let [roleIdOHWayne] = yield knex('Role').insert({
     name: 'Wayne County, OH Users',
     partnerId: partnerOneId,
-    data_filter_id: dataFilterIdOHWayne
+    dataFilterId: dataFilterIdOHWayne
   })
 
-  let [roleIdMASuffolk] = yield knex('role').insert({
+  let [roleIdMASuffolk] = yield knex('Role').insert({
     name: 'Suffolk County, MA Users',
     partnerId: partnerOneId,
-    data_filter_id: dataFilterIdMASuffolk
+    dataFilterId: dataFilterIdMASuffolk
   })
 
-  let [roleIdParentOrgUnit] = yield knex('role').insert({
+  let [roleIdParentOrgUnit] = yield knex('Role').insert({
     name: 'Partner One Users',
     partnerId: partnerOneId,
     orgUnitId: partnerOneOrgUnitId
   })
 
-  let [roleIdNortheast] = yield knex('role').insert({
+  let [roleIdNortheast] = yield knex('Role').insert({
     name: 'Northeast Users',
     partnerId: partnerOneId,
     orgUnitId: regionNortheastId
   })
 
-  let [roleIdMidwest] = yield knex('role').insert({
+  let [roleIdMidwest] = yield knex('Role').insert({
     name: 'Midwest Users',
     partnerId: partnerOneId,
     orgUnitId: regionMidwestId
   })
 
   // assign permissions to roles
-  yield knex('role_permission').insert([
-    { role_id: roleIdAdmin, permission_id: modules.device.admin },
-    { role_id: roleIdAdmin, permission_id: modules.person.admin },
-    { role_id: roleIdAdmin, permission_id: modules.site.admin },
+  yield knex('RolePermission').insert([
+    { roleId: roleIdAdmin, permissionId: modules.device.admin },
+    { roleId: roleIdAdmin, permissionId: modules.person.admin },
+    { roleId: roleIdAdmin, permissionId: modules.site.admin },
 
-    { role_id: roleIdOH, permission_id: modules.site.edit },
-    { role_id: roleIdOH, permission_id: modules.device.edit },
+    { roleId: roleIdOH, permissionId: modules.site.edit },
+    { roleId: roleIdOH, permissionId: modules.device.edit },
 
-    { role_id: roleIdNE, permission_id: modules.site.edit },
-    { role_id: roleIdNE, permission_id: modules.device.edit },
+    { roleId: roleIdNE, permissionId: modules.site.edit },
+    { roleId: roleIdNE, permissionId: modules.device.edit },
 
-    { role_id: roleIdOHWayne, permission_id: modules.site.view },
-    { role_id: roleIdOHWayne, permission_id: modules.device.view },
+    { roleId: roleIdOHWayne, permissionId: modules.site.view },
+    { roleId: roleIdOHWayne, permissionId: modules.device.view },
 
-    { role_id: roleIdMASuffolk, permission_id: modules.device.view },
+    { roleId: roleIdMASuffolk, permissionId: modules.device.view },
 
-    { role_id: roleIdMidwest, permission_id: modules.site.edit },
-    { role_id: roleIdMidwest, permission_id: modules.device.edit },
+    { roleId: roleIdMidwest, permissionId: modules.site.edit },
+    { roleId: roleIdMidwest, permissionId: modules.device.edit },
 
-    { role_id: roleIdNortheast, permission_id: modules.site.edit },
-    { role_id: roleIdNortheast, permission_id: modules.device.edit },
+    { roleId: roleIdNortheast, permissionId: modules.site.edit },
+    { roleId: roleIdNortheast, permissionId: modules.device.edit },
 
-    { role_id: roleIdParentOrgUnit, permission_id: modules.site.edit },
-    { role_id: roleIdParentOrgUnit, permission_id: modules.device.edit }
+    { roleId: roleIdParentOrgUnit, permissionId: modules.site.edit },
+    { roleId: roleIdParentOrgUnit, permissionId: modules.device.edit }
   ])
 
 
   // assign roles to users
-  yield knex('user_role').insert([
-    { user_id: userIds['admin'], role_id: roleIdAdmin },
-    { user_id: userIds['bob'], role_id: roleIdOH },
-    { user_id: userIds['ed'], role_id: roleIdMidwest },
-    { user_id: userIds['frank'], role_id: roleIdNE },
-    { user_id: userIds['fred'], role_id: roleIdOHWayne },
-    { user_id: userIds['jon'], role_id: roleIdParentOrgUnit },
-    { user_id: userIds['ned'], role_id: roleIdNortheast },
-    { user_id: userIds['sam'], role_id: roleIdAdmin },
-    { user_id: userIds['jim'], role_id: roleIdParentOrgUnit },
-    { user_id: userIds['steve'], role_id: roleIdMASuffolk },
-    { user_id: userIds['bill'], role_id: roleIdMASuffolk },
-    { user_id: userIds['bill'], role_id: roleIdOH }])
+  yield knex('UserRole').insert([
+    { user_id: userIds['admin'], roleId: roleIdAdmin },
+    { user_id: userIds['bob'], roleId: roleIdOH },
+    { user_id: userIds['ed'], roleId: roleIdMidwest },
+    { user_id: userIds['frank'], roleId: roleIdNE },
+    { user_id: userIds['fred'], roleId: roleIdOHWayne },
+    { user_id: userIds['jon'], roleId: roleIdParentOrgUnit },
+    { user_id: userIds['ned'], roleId: roleIdNortheast },
+    { user_id: userIds['sam'], roleId: roleIdAdmin },
+    { user_id: userIds['jim'], roleId: roleIdParentOrgUnit },
+    { user_id: userIds['steve'], roleId: roleIdMASuffolk },
+    { user_id: userIds['bill'], roleId: roleIdMASuffolk },
+    { user_id: userIds['bill'], roleId: roleIdOH }])
 
 }

@@ -11,8 +11,8 @@ function* listPeople(request){
     .count('id as count').first()
 
   // TODO What do we do when a user has many roles? (currently delited list)
-  let getRoleNames = knex('user_role as ur')
-    .innerJoin('role as r', 'ur.role_id', 'r.id')
+  let getRoleNames = knex('UserRole as ur')
+    .innerJoin('Role as r', 'ur.roleId', 'r.id')
     .where('ur.user_id', '=', knex.raw('p.user_id'))
     .select(knex.raw('group_concat(r.name separator "; ")'))
     .as('level')
