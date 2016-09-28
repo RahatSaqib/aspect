@@ -21,7 +21,7 @@ const renderSelectField = props => {
 const renderFormField = props => {
   const {label, onChange, fullWidth, disabled, dataSource, dataSourceConfig} = props
 
-  const selectItems = _.map(dataSource.toJS(), item => {
+  const selectItems = _.map(dataSource, item => {
     return {
       key: item[dataSourceConfig.value],
       value: item[dataSourceConfig.value],
@@ -29,12 +29,11 @@ const renderFormField = props => {
     }
   })
 
-  return <Field name={props.name} onSelectionChanged={onChange} selectFieldProps={{
-    floatingLabelText: label,
-    fullWidth: fullWidth,
-    disabled: disabled
-  }} component={renderSelectField}>
-    <MenuItem key={-1} value={null} />
+  //TODO: i18n
+  return <Field name={props.name} onSelectionChanged={onChange}
+                selectFieldProps={{ floatingLabelText: label, fullWidth: fullWidth, disabled: disabled }}
+                component={renderSelectField}>
+    <MenuItem key={-1} value={null} primaryText="<None>" />
     { selectItems.map(item => <MenuItem {...item} />) }
   </Field>
 }

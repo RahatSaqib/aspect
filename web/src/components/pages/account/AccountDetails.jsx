@@ -7,35 +7,15 @@ import Paper from 'material-ui/Paper'
 import {Tabs, Tab} from 'material-ui/Tabs'
 import ContactDetailsForm from './ContactDetailsForm'
 import {fetchAccountDetails, saveAccountDetails} from '../../../action_creators/accountDetails_creators'
-import {
-  fetchCountriesSelectList,
-  fetchStatesSelectList,
-  fetchLgasSelectList
-} from '../../../action_creators/geography_creators'
 import styles from './AccountDetails.css'
 
 class AccountDetails extends React.PureComponent {
   componentDidMount() {
     this.props.fetchAccountDetails()
-    this.props.fetchCountriesSelectList()
   }
 
   render() {
-    const { loading, saving, accountDetails, saveAccountDetails, countriesSelectList, statesSelectList,
-      lgasSelectList } = this.props
-
-    const onCountryChanged = (event, index, countryId) => {
-      if(countryId) {
-        this.props.fetchStatesSelectList(countryId)
-      }
-    }
-
-    const onStateChanged = (event, index, stateId) => {
-      if(stateId) {
-        this.props.fetchLgasSelectList(stateId)
-      }
-    }
-
+    const { loading, saving, accountDetails, saveAccountDetails } = this.props
     return (
       <div className={styles.Content}>
         {loading && <span>Loading...</span>}
@@ -44,17 +24,7 @@ class AccountDetails extends React.PureComponent {
         <Paper>
           <Tabs>
             <Tab label="Contact Details">
-              <ContactDetailsForm initialValues={accountDetails} onSubmit={saveAccountDetails}
-                                  onCountryChanged={onCountryChanged}
-                                  countriesLoading={countriesSelectList.get('loading')}
-                                  countries={countriesSelectList.get('items')}
-                                  onStateChanged={onStateChanged}
-                                  statesLoading={statesSelectList.get('loading')}
-                                  states={statesSelectList.get('items')}
-                                  lgasLoading={lgasSelectList.get('loading')}
-                                  lgas={lgasSelectList.get('items')}
-                                  fetchStates={fetchCountriesSelectList}
-                                  fetchLgas={fetchCountriesSelectList} />
+              <ContactDetailsForm initialValues={accountDetails} onSubmit={saveAccountDetails} />
             </Tab>
             <Tab label="Login Details">
               <span>Change Username and Password Here!</span>
@@ -74,20 +44,14 @@ function mapStateToProps(state) {
     loading: state.accountDetails.get('loading'),
     saving: state.accountDetails.get('saving'),
     loadingMessage: state.accountDetails.get('loadingMessage'),
-    accountDetails: state.accountDetails.get('data'),
-    countriesSelectList: state.geography.get('country').get('selectList'),
-    statesSelectList: state.geography.get('state').get('selectList'),
-    lgasSelectList: state.geography.get('lga').get('selectList')
+    accountDetails: state.accountDetails.get('data')
   }
 }
 
 function mapDispatchToProps(dispatch) {
   return bindActionCreators({
     fetchAccountDetails,
-    saveAccountDetails,
-    fetchCountriesSelectList,
-    fetchStatesSelectList,
-    fetchLgasSelectList
+    saveAccountDetails
   }, dispatch)
 }
 

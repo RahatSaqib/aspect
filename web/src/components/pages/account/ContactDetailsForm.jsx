@@ -1,20 +1,13 @@
 import React from 'react'
 import { reduxForm } from 'redux-form/immutable'
 import RaisedButton from 'material-ui/RaisedButton'
-import SelectInput from '../../shared/SelectInput'
+import LocationSelector from '../../shared/LocationSelector'
 import TextInput from '../../shared/TextInput'
 import {emailAddress as validateEmailAddress} from '../../../utils/validate'
 import styles from './AccountDetails.css'
 
 const ContactDetailsForm = props => {
-  const { handleSubmit, pristine, invalid, submitting, onCountryChanged, countriesLoading, countries,
-    onStateChanged, statesLoading, states, lgasLoading, lgas } = props
-
-  const geographySelectListDataSourceConfig = {
-    text: 'name',
-    value: 'id'
-  }
-
+  const { handleSubmit, pristine, invalid, submitting } = props
   return (
     <form onSubmit={handleSubmit} className={styles.Form}>
       <div className={styles.Form__Content}>
@@ -34,14 +27,8 @@ const ContactDetailsForm = props => {
         </section>
         <section>
           <h1>Location</h1>
-          <SelectInput name="countryId" label="Country" disabled={countriesLoading || submitting}
-                       dataSource={countries} dataSourceConfig={geographySelectListDataSourceConfig}
-                       onChange={onCountryChanged} />
-          <SelectInput name="stateId" label="State" disabled={statesLoading || submitting}
-                       dataSource={states} dataSourceConfig={geographySelectListDataSourceConfig}
-                       onChange={onStateChanged} />
-          <SelectInput name="lgaId" label="Area" disabled={lgasLoading || submitting}
-                       dataSource={lgas} dataSourceConfig={geographySelectListDataSourceConfig} />
+          <LocationSelector disabled={submitting} countryIdFieldName="countryId"
+                            stateIdFieldName="stateId" lgaIdFieldName="lgaId"/>
           <TextInput name="zip" label="ZIP Code" disabled={submitting} />
         </section>
       </div>
