@@ -15,7 +15,7 @@ function* authenticate(request){
   let {payload} = request
 
   let user = yield query('Get basic user details').from('User as u')
-    .innerJoin('person as p', 'u.id', 'p.userId')
+    .innerJoin('Person as p', 'u.id', 'p.userId')
     .where({'u.name': payload.name})
     .first('u.lockedOut', 'u.failedPasswordAttempts', 'u.id', 'u.name',
       'p.culture', 'p.lastPartnerId as partnerId', 'p.lastCountryId as countryId')
@@ -92,7 +92,7 @@ function* refreshToken(request){
   let {clientId, token} = request.payload
   let data = yield query('Find existing token for client ID').from('RefreshToken as rt')
     .innerJoin('User as u', 'rt.userId', 'u.id')
-    .innerJoin('person as p', 'u.id', 'p.userId')
+    .innerJoin('Person as p', 'u.id', 'p.userId')
     .where({clientId, token, revoked: 0})
     .first('rt.userId as id', 'rt.expires', 'u.name',
       'p.culture', 'p.lastPartnerId as partnerId', 'p.lastCountryId as countryId')

@@ -6,7 +6,7 @@ function* listPeople(request){
   let {query} = request
 
   // get total count for paging
-  let getCount = knex('person')
+  let getCount = knex('Person')
     .modify(filterParams, query, 'name')
     .count('id as count').first()
 
@@ -18,7 +18,7 @@ function* listPeople(request){
     .as('level')
 
   // get rows
-  let getItems = knex('person as p')
+  let getItems = knex('Person as p')
     .leftOuterJoin('State as s', 'p.stateId', 's.id')
     .leftOuterJoin('Lga as l', 'p.lgaId', 'l.id')
     .modify(filterParams, query, 'name', 'p.name')

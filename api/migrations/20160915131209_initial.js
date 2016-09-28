@@ -90,7 +90,7 @@ function* up(knex){
     lga.charset('utf8')
   })
 
-  yield knex.schema.createTable('person', person => {
+  yield knex.schema.createTable('Person', person => {
     person.increments('id')
     person.integer('userId').unsigned()
       .index().references('id').inTable('User')
@@ -115,11 +115,11 @@ function* up(knex){
     // TODO timezone table?
     person.string('timezone')
     // TODO should user prefrences be stored in separate table?
-    person.boolean('hide_patient_id')
-    person.boolean('hide_sample_id')
-    person.boolean('hide_notes')
+    person.boolean('hidePatientId')
+    person.boolean('hideSampleId')
+    person.boolean('hideNotes')
     person.string('culture', 45)
-    person.dateTime('accepted_license_on')
+    person.dateTime('acceptedLicenseOn')
     addCreateFields(person)
     addUpdateFields(person)
     person.charset('utf8')
@@ -327,6 +327,7 @@ function* down(knex){
   yield knex.schema.dropTableIfExists('RolePermission')
   yield knex.schema.dropTableIfExists('Permission')
   yield knex.schema.dropTableIfExists('Role')
+  yield knex.schema.dropTableIfExists('Person')
   yield knex.schema.dropTableIfExists('Lga')
   yield knex.schema.dropTableIfExists('State')
   yield knex.schema.dropTableIfExists('Country')

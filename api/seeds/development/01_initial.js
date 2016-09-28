@@ -161,7 +161,7 @@ function* seed(knex){
     let lastPartnerId = _.includes(['Jim', 'Jason'], name) ? partnerTwoId : partnerOneId
     let lastCountryId = _.includes(['Jim', 'Sam'], name) ? countries.NG.id : countries.US.id
 
-    yield knex('person').insert(Object.assign({
+    yield knex('Person').insert(Object.assign({
       userId,
       name,
       lastPartnerId,
