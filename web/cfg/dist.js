@@ -31,7 +31,7 @@ const config = Object.assign({}, baseConfig, {
     path: path.join(__dirname, '/../dist/assets'),
     filename: '[name].[chunkhash].js',
     chunkFilename: '[chunkhash].js',
-    publicPath: `.${defaultSettings.publicPath}`
+    publicPath: `${defaultSettings.publicPath}`
   },
   cache: false,
   devtool: 'sourcemap',
