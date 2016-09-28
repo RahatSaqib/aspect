@@ -300,24 +300,28 @@ function* up(knex){
 }
 
 function* down(knex){
-  yield knex.schema.dropTable('router')
-  yield knex.schema.dropTable('device_site_history')
-  yield knex.schema.dropTable('device')
-  yield knex.schema.dropTable('site')
-  yield knex.schema.dropTable('device_type')
-  yield knex.schema.dropTable('refresh_token')
-  yield knex.schema.dropTable('user_role')
-  yield knex.schema.dropTable('role_permission')
-  yield knex.schema.dropTable('permission')
-  yield knex.schema.dropTable('role')
-  yield knex.schema.dropTable('person')
-  yield knex.schema.dropTable('lga')
-  yield knex.schema.dropTable('state')
-  yield knex.schema.dropTable('country')
-  yield knex.schema.dropTable('user')
-  yield knex.schema.dropTable('data_filter')
-  yield knex.schema.dropTable('org_unit')
-  yield knex.schema.dropTable('partner')
+  yield knex.raw('SET foreign_key_checks = 0')
+
+  yield knex.schema.dropTableIfExists('router')
+  yield knex.schema.dropTableIfExists('device_site_history')
+  yield knex.schema.dropTableIfExists('device')
+  yield knex.schema.dropTableIfExists('site')
+  yield knex.schema.dropTableIfExists('device_type')
+  yield knex.schema.dropTableIfExists('refresh_token')
+  yield knex.schema.dropTableIfExists('user_role')
+  yield knex.schema.dropTableIfExists('role_permission')
+  yield knex.schema.dropTableIfExists('permission')
+  yield knex.schema.dropTableIfExists('role')
+  yield knex.schema.dropTableIfExists('person')
+  yield knex.schema.dropTableIfExists('lga')
+  yield knex.schema.dropTableIfExists('state')
+  yield knex.schema.dropTableIfExists('country')
+  yield knex.schema.dropTableIfExists('user')
+  yield knex.schema.dropTableIfExists('data_filter')
+  yield knex.schema.dropTableIfExists('org_unit')
+  yield knex.schema.dropTableIfExists('partner')
+
+  yield knex.raw('SET foreign_key_checks = 1')
 }
 
 
