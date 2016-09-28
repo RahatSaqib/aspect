@@ -130,7 +130,7 @@ function* seed(knex){
             zip: `12345-${lgaData.id}`
           }, geoData, auditFields)
 
-          let [siteId] = yield knex('site').insert(siteData)
+          let [siteId] = yield knex('Site').insert(siteData)
           siteData.id = siteId
           siteDatas.push(siteData)
         }
@@ -169,7 +169,7 @@ function* seed(knex){
     }, geoDatas[geoDatas.length % userId], auditFields))
   }
 
-  let [deviceTypeId] = yield knex('device_type').insert({
+  let [deviceTypeId] = yield knex('DeviceType').insert({
     name: 'GeneXpert'
   })
 
@@ -178,14 +178,14 @@ function* seed(knex){
     return Object.assign({}, auditFields, {
       name: `D${i} ${siteData.shortname}`,
       shortname: 'd'+i,
-      device_type_id: deviceTypeId,
-      site_id: siteData.id,
+      deviceTypeId,
+      siteId: siteData.id,
       createdOn: new Date(+now - 3*i*millisInHour),
       updatedOn: new Date(+now - i*millisInHour),
-      last_ping_on: new Date(+now - i*millisInHour/3)
+      lastPingOn: new Date(+now - i*millisInHour/3)
     })
   })
-  yield knex('device').insert(devices)
+  yield knex('Device').insert(devices)
 
   // data filters
   let [dataFilterIdOH] = yield knex('DataFilter').insert({

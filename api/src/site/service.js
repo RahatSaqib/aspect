@@ -9,7 +9,7 @@ function* listSites(request){
   // get data constraints
   let dataConstraints = yield getConstraints(auth.credentials)
 
-  let siteQuery = knex('site as s')
+  let siteQuery = knex('Site as s')
     .leftOuterJoin('State as st', 's.stateId', 'st.id')
     .leftOuterJoin('Lga as l', 's.lgaId', 'l.id')
     .modify(filterParams, query, 'name', 's.name')
@@ -24,7 +24,7 @@ function* listSites(request){
     .modify(sortPageParams, query, 'name')
     .select('s.id', 's.name', 's.shortname',
       'st.name as state', 'l.name as lga',
-      's.createdOn', knex.raw('s.id + 2 as total_devices'))
+      's.createdOn', knex.raw('s.id + 2 as totalDevices'))
 
   // return result when both queries are finished
   let [{count: total}, data] = yield Promise.all([getCount, getItems])

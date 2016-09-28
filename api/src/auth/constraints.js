@@ -68,7 +68,7 @@ function addConstraints(queryBuilder, constraints, aliases){
       throw new Error('Must provide either site or device alias or modify this to accept provided aliases')
     }
     site = alias('site')
-    queryBuilder.leftOuterJoin(`site as ${site}`, `${device}.site_id`, `${site}.id`)
+    queryBuilder.leftOuterJoin(`Site as ${site}`, `${device}.siteId`, `${site}.id`)
   }
 
   if(!partner){
