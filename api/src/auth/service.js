@@ -18,7 +18,7 @@ function* authenticate(request){
     .innerJoin('person as p', 'u.id', 'p.userId')
     .where({'u.name': payload.name})
     .first('u.lockedOut', 'u.failedPasswordAttempts', 'u.id', 'u.name',
-      'p.culture', 'p.lastPartnerId as partnerId', 'p.last_country_id as countryId')
+      'p.culture', 'p.lastPartnerId as partnerId', 'p.lastCountryId as countryId')
 
   if(!user){
     // TODO generic Auth failed message on username and password failed?
@@ -95,7 +95,7 @@ function* refreshToken(request){
     .innerJoin('person as p', 'u.id', 'p.userId')
     .where({clientId, token, revoked: 0})
     .first('rt.userId as id', 'rt.expires', 'u.name',
-      'p.culture', 'p.lastPartnerId as partnerId', 'p.last_country_id as countryId')
+      'p.culture', 'p.lastPartnerId as partnerId', 'p.lastCountryId as countryId')
 
   if (!data) {
     return Boom.badRequest('Unable to find token or token revoked')

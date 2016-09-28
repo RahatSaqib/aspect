@@ -82,18 +82,18 @@ function addConstraints(queryBuilder, constraints, aliases){
   }
 
   if(!country){
-    country = alias('country')
-    queryBuilder.leftOuterJoin(`country as ${country}`, `${site}.country_id`, `${country}.id`)
+    country = alias('Country')
+    queryBuilder.leftOuterJoin(`Country as ${country}`, `${site}.countryId`, `${country}.id`)
   }
 
   if(!state){
-    state = alias('state')
-    queryBuilder.leftOuterJoin(`state as ${state}`, `${site}.state_id`, `${state}.id`)
+    state = alias('State')
+    queryBuilder.leftOuterJoin(`State as ${state}`, `${site}.stateId`, `${state}.id`)
   }
 
   if(!lga){
-    lga = alias('lga')
-    queryBuilder.leftOuterJoin(`lga as ${lga}`, `${site}.lga_id`, `${lga}.id`)
+    lga = alias('Lga')
+    queryBuilder.leftOuterJoin(`Lga as ${lga}`, `${site}.lgaId`, `${lga}.id`)
   }
 
   // Partner, country, and org unit constraints are ANDed

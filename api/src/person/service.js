@@ -19,8 +19,8 @@ function* listPeople(request){
 
   // get rows
   let getItems = knex('person as p')
-    .leftOuterJoin('state as s', 'p.state_id', 's.id')
-    .leftOuterJoin('lga as l', 'p.lga_id', 'l.id')
+    .leftOuterJoin('State as s', 'p.stateId', 's.id')
+    .leftOuterJoin('Lga as l', 'p.lgaId', 'l.id')
     .modify(filterParams, query, 'name', 'p.name')
     .modify(sortPageParams, query, 'name')
     .select('p.id', 'p.name', getRoleNames,

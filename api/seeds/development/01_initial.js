@@ -78,19 +78,19 @@ function* seed(knex){
   let siteDatas = []
   for(let country of geography.countries){
     let countryData = _.pick(country, [
-      'abbreviation', 'name', 'a3', 'culture', 'country_code',
-      'state_label', 'lga_label', 'timezone', 'port_number',
-      'export_columns', 'inventory_days_threshold', 'month_starts_on_day'])
-    let [countryId] = yield knex('country').insert(countryData)
+      'abbreviation', 'name', 'a3', 'culture', 'countryCode',
+      'stateLabel', 'lgaLabel', 'timezone', 'portNumber',
+      'exportColumns', 'inventoryDaysThreshold', 'monthStartsOnDay'])
+    let [countryId] = yield knex('Country').insert(countryData)
     countryData.id = countryId
     countries[country.abbreviation] = countryData
     countryData.states = {}
 
     for(let state of (country.states || [])){
       let stateData = Object.assign(
-        {country_id: countryData.id},
+        {countryId: countryData.id},
         _.pick(state, ['abbreviation', 'name']))
-      let [stateId] = yield knex('state').insert(stateData)
+      let [stateId] = yield knex('State').insert(stateData)
       stateData.id = stateId
       let stateKey = state.abbreviation || state.name
       countryData.states[stateKey] = stateData
@@ -103,17 +103,17 @@ function* seed(knex){
 
       for(let lga of (state.lgas || [])){
         let lgaData = Object.assign(
-          {state_id: stateData.id},
+          {stateId: stateData.id},
           _.pick(lga, ['name']))
-        let [lgaId] = yield knex('lga').insert(lgaData)
+        let [lgaId] = yield knex('Lga').insert(lgaData)
         lgaData.id = lgaId
         stateData.lgas[lga.name] = lgaData
         lgaData.sites = {}
 
         let geoData = {
-          country_id: countryData.id,
-          state_id: stateData.id,
-          lga_id: lgaData.id
+          countryId: countryData.id,
+          stateId: stateData.id,
+          lgaId: lgaData.id
         }
         geoDatas.push(geoData)
 
@@ -122,7 +122,7 @@ function* seed(knex){
           let siteData = Object.assign({
             partnerId: partnerOneId,
             orgUnitId,
-            name: `${lga.name} ${country.lga_label} ${state.name} #${siteNumber}`,
+            name: `${lga.name} ${country.lgaLabel} ${state.name} #${siteNumber}`,
             shortname: `${lga.name}, ${stateKey} #${siteNumber}`,
             identifier: `Site ${siteNumber * lgaData.id}`,
             city: `${lga.name} City`,
@@ -165,7 +165,7 @@ function* seed(knex){
       userId,
       name,
       lastPartnerId,
-      last_country_id: lastCountryId
+      lastCountryId
     }, geoDatas[geoDatas.length % userId], auditFields))
   }
 

@@ -10,8 +10,8 @@ function* listSites(request){
   let dataConstraints = yield getConstraints(auth.credentials)
 
   let siteQuery = knex('site as s')
-    .leftOuterJoin('state as st', 's.state_id', 'st.id')
-    .leftOuterJoin('lga as l', 's.lga_id', 'l.id')
+    .leftOuterJoin('State as st', 's.stateId', 'st.id')
+    .leftOuterJoin('Lga as l', 's.lgaId', 'l.id')
     .modify(filterParams, query, 'name', 's.name')
     .modify(addConstraints, dataConstraints, {site: 's', state: 'st', lga: 'l'})
 
