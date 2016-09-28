@@ -1,7 +1,9 @@
 import React from 'react'
 import { Router, Route, IndexRoute, Redirect, applyRouterMiddleware } from 'react-router'
 import { useScroll } from 'react-router-scroll'
+import PiwikReactRouter from 'piwik-react-router'
 import store, { history } from './store'
+import config from 'config'
 
 // higher level containers/shells
 import App from './components/App'
@@ -41,8 +43,14 @@ function requireAuth(nextState, replace) {
   }
 }
 
+// set up analytics
+const piwik = config.piwik ? PiwikReactRouter({
+  url : config.piwik.url,
+  siteId : config.piwik.siteId
+}) : false
+
 const routes =
-  <Router history={history} render={applyRouterMiddleware(useScroll()) }>
+  <Router history={piwik ?  piwik.connectToHistory(history) : history} render={applyRouterMiddleware(useScroll()) }>
     <Route component={App}>
       <Route component={LoginContainer} path="login" />
       <Route component={LoggedInShell}
