@@ -4,24 +4,24 @@ function* up(knex){
 
   yield knex.raw('SET foreign_key_checks = 0')
 
-  yield knex.schema.createTable('partner', partner => {
+  yield knex.schema.createTable('Partner', partner => {
     partner.increments('id')
     partner.string('name').notNullable()
   })
 
-  yield knex.schema.createTable('org_unit', orgUnit => {
+  yield knex.schema.createTable('OrgUnit', orgUnit => {
     orgUnit.increments('id')
     orgUnit.string('name').notNullable()
-    orgUnit.integer('partner_id').unsigned().notNullable()
-      .index().references('id').inTable('partner')
+    orgUnit.integer('partnerId').unsigned().notNullable()
+      .index().references('id').inTable('Partner')
 
-    orgUnit.integer('left_bound').unsigned().notNullable()
-    orgUnit.integer('right_bound').unsigned().notNullable()
+    orgUnit.integer('leftBound').unsigned().notNullable()
+    orgUnit.integer('rightBound').unsigned().notNullable()
     orgUnit.integer('depth').unsigned().notNullable()
 
-    // TODO Add org_unit parent id if is helpful
-    //orgUnit.integer('parent_id').unsigned()
-    //  .index().references('id').inTable('org_unit')
+    // TODO Add OrgUnit parent id if is helpful
+    //orgUnit.integer('parentId').unsigned()
+    //  .index().references('id').inTable('OrgUnit')
   })
 
   yield knex.schema.createTable('data_filter', dataFilter => {
@@ -108,8 +108,8 @@ function* up(knex){
     person.integer('lga_id').unsigned()
       .index().references('id').inTable('lga')
     person.string('notes', 1200)
-    person.integer('last_partner_id').unsigned()
-      .index().references('id').inTable('partner')
+    person.integer('lastPartnerId').unsigned()
+      .index().references('id').inTable('Partner')
     person.integer('last_country_id').unsigned()
       .index().references('id').inTable('country')
     // TODO timezone table?
@@ -128,12 +128,12 @@ function* up(knex){
   yield knex.schema.createTable('role', role => {
     role.increments('id')
     role.string('name').notNullable()
-    role.integer('partner_id').unsigned()
-      .index().references('id').inTable('partner')
+    role.integer('partnerId').unsigned()
+      .index().references('id').inTable('Partner')
     role.integer('data_filter_id').unsigned()
       .index().references('id').inTable('data_filter')
-    role.integer('org_unit_id').unsigned()
-      .index().references('id').inTable('org_unit')
+    role.integer('orgUnitId').unsigned()
+      .index().references('id').inTable('OrgUnit')
     role.charset('utf8')
   })
 
@@ -195,10 +195,10 @@ function* up(knex){
     site.string('identifier')
     site.string('notes', 2000)
     // TODO is site to partner many to many?
-    site.integer('partner_id').unsigned()
-      .index().references('id').inTable('partner')
-    site.integer('org_unit_id').unsigned()
-      .index().references('id').inTable('org_unit')
+    site.integer('partnerId').unsigned()
+      .index().references('id').inTable('Partner')
+    site.integer('orgUnitId').unsigned()
+      .index().references('id').inTable('OrgUnit')
     site.integer('country_id').unsigned()
       .index().references('id').inTable('country')
     site.integer('state_id').unsigned()
@@ -320,6 +320,9 @@ function* down(knex){
   yield knex.schema.dropTableIfExists('data_filter')
   yield knex.schema.dropTableIfExists('org_unit')
   yield knex.schema.dropTableIfExists('partner')
+
+  yield knex.schema.dropTableIfExists('OrgUnit')
+  yield knex.schema.dropTableIfExists('Partner')
 
   yield knex.raw('SET foreign_key_checks = 1')
 }
