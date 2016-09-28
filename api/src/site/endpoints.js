@@ -13,7 +13,7 @@ module.exports = [{
     validate: {
       query: Object.assign({
         name: Joi.string().allow('').description('Filter for site name')
-      }, validateSortPageParams('name', 'shortname', 'state', 'lga', 'created_on', 'totalDevices'))
+      }, validateSortPageParams('name', 'shortname', 'state', 'lga', 'createdOn', 'totalDevices'))
     }
   }
 }]

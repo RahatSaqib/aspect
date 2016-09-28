@@ -32,18 +32,18 @@ function* up(knex){
     dataFilter.specificType('constraint', 'JSON').notNullable()
   })
 
-  yield knex.schema.createTable('user', user => {
+  yield knex.schema.createTable('User', user => {
     user.increments('id')
     user.string('name').unique().notNullable()
     user.string('password', 128).notNullable()
-    user.string('password_key', 32).notNullable()
+    user.string('passwordKey', 32).notNullable()
     user.boolean('approved').notNullable()
-    user.dateTime('last_active')
-    user.dateTime('last_login')
-    user.dateTime('last_password_change')
-    user.dateTime('created_on').notNullable()
-    user.boolean('locked_out').notNullable()
-    user.integer('failed_password_attempts').unsigned().notNullable()
+    user.dateTime('lastActive')
+    user.dateTime('lastLogin')
+    user.dateTime('lastPasswordChange')
+    user.dateTime('createdOn').notNullable()
+    user.boolean('lockedOut').notNullable()
+    user.integer('failedPasswordAttempts').unsigned().notNullable()
     user.charset('utf8')
   })
 
@@ -92,8 +92,8 @@ function* up(knex){
 
   yield knex.schema.createTable('person', person => {
     person.increments('id')
-    person.integer('user_id').unsigned()
-      .index().references('id').inTable('user')
+    person.integer('userId').unsigned()
+      .index().references('id').inTable('User')
     person.string('name', 500).notNullable()
     person.string('title')
     person.string('email', 500)
@@ -160,24 +160,24 @@ function* up(knex){
 
   // FIXME Change UserRole to PersonRole
   yield knex.schema.createTable('UserRole', userRole => {
-    userRole.integer('user_id').unsigned()
-      .index().references('id').inTable('user')
+    userRole.integer('userId').unsigned()
+      .index().references('id').inTable('User')
     userRole.integer('roleId').unsigned()
       .index().references('id').inTable('Role')
-    userRole.primary(['user_id', 'roleId'])
+    userRole.primary(['userId', 'roleId'])
     userRole.charset('utf8')
   })
 
-  yield knex.schema.createTable('refresh_token', refreshToken => {
-    refreshToken.integer('user_id').unsigned().notNullable()
-      .references('id').inTable('user')
-    refreshToken.string('client_id', 128).notNullable()
-    refreshToken.string('client_name').notNullable()
+  yield knex.schema.createTable('RefreshToken', refreshToken => {
+    refreshToken.integer('userId').unsigned().notNullable()
+      .references('id').inTable('User')
+    refreshToken.string('clientId', 128).notNullable()
+    refreshToken.string('clientName').notNullable()
     refreshToken.string('token').notNullable()
     refreshToken.dateTime('expires').notNullable()
     refreshToken.boolean('revoked').notNullable().defaultTo(0)
-    refreshToken.dateTime('created_on').notNullable()
-    refreshToken.primary(['user_id', 'client_id'])
+    refreshToken.dateTime('createdOn').notNullable()
+    refreshToken.primary(['userId', 'clientId'])
     refreshToken.charset('utf8')
   })
 
@@ -259,7 +259,7 @@ function* up(knex){
     device.boolean('approved')
     device.dateTime('approved_on')
     device.integer('approved_by').unsigned()
-      .index().references('id').inTable('user')
+      .index().references('id').inTable('User')
     addCreateFields(device)
     addUpdateFields(device)
     device.charset('utf8')
@@ -322,10 +322,12 @@ function* down(knex){
   yield knex.schema.dropTableIfExists('org_unit')
   yield knex.schema.dropTableIfExists('partner')
 
+  yield knex.schema.dropTableIfExists('RefreshToken')
   yield knex.schema.dropTable('UserRole')
   yield knex.schema.dropTableIfExists('RolePermission')
   yield knex.schema.dropTableIfExists('Permission')
   yield knex.schema.dropTableIfExists('Role')
+  yield knex.schema.dropTableIfExists('User')
   yield knex.schema.dropTableIfExists('DataFilter')
   yield knex.schema.dropTableIfExists('OrgUnit')
   yield knex.schema.dropTableIfExists('Partner')
@@ -334,16 +336,16 @@ function* down(knex){
 }
 
 
-// Adds created_on, created_by
+// Adds createdOn, createdBy
 function addCreateFields(table){
-  table.dateTime('created_on').notNullable()
-  table.integer('created_by').unsigned().notNullable()
-    .index().references('id').inTable('user')
+  table.dateTime('createdOn').notNullable()
+  table.integer('createdBy').unsigned().notNullable()
+    .index().references('id').inTable('User')
 }
 
-// Adds update_on, updated_by
+// Adds updatedOn, updatedBy
 function addUpdateFields(table){
-  table.dateTime('updated_on').notNullable()
-  table.integer('updated_by').unsigned().notNullable()
-    .index().references('id').inTable('user')
+  table.dateTime('updatedOn').notNullable()
+  table.integer('updatedBy').unsigned().notNullable()
+    .index().references('id').inTable('User')
 }

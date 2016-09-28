@@ -15,7 +15,7 @@ function getConstraints(credentials){
     .innerJoin('Role as r', 'f.id', 'r.dataFilterId')
     .innerJoin('UserRole as ur', 'r.id', 'ur.roleId')
     .where({
-      'ur.user_id': credentials.id,
+      'ur.userId': credentials.id,
       'r.partnerId': credentials.partnerId
     })
     .select('f.constraint')
@@ -26,7 +26,7 @@ function getConstraints(credentials){
     .innerJoin('Role as r', 'o.id', 'r.orgUnitId')
     .innerJoin('UserRole as ur', 'r.id', 'ur.roleId')
     .where({
-      'ur.user_id': credentials.id,
+      'ur.userId': credentials.id,
       'r.partnerId': credentials.partnerId
     })
     .orderBy('o.depth')

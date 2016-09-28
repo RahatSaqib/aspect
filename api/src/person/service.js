@@ -13,7 +13,7 @@ function* listPeople(request){
   // TODO What do we do when a user has many roles? (currently delited list)
   let getRoleNames = knex('UserRole as ur')
     .innerJoin('Role as r', 'ur.roleId', 'r.id')
-    .where('ur.user_id', '=', knex.raw('p.user_id'))
+    .where('ur.userId', '=', knex.raw('p.userId'))
     .select(knex.raw('group_concat(r.name separator "; ")'))
     .as('level')
 

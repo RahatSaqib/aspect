@@ -9,20 +9,20 @@ const deviceNumber = 50
 function* seed(knex){
   // Create admin user and audit fields
   let now = new Date()
-  let [adminId] = yield knex('user').insert({
+  let [adminId] = yield knex('User').insert({
     name: 'admin',
     password: 'mypassword',
-    password_key: 'mykey',
+    passwordKey: 'mykey',
     approved: 1,
-    created_on: now,
-    locked_out: 0,
-    failed_password_attempts: 0
+    createdOn: now,
+    lockedOut: 0,
+    failedPasswordAttempts: 0
   })
   let auditFields = {
-    created_on: now,
-    created_by: adminId,
-    updated_on: now,
-    updated_by: adminId
+    createdOn: now,
+    createdBy: adminId,
+    updatedOn: now,
+    updatedBy: adminId
   }
 
   // Create partners
@@ -146,14 +146,14 @@ function* seed(knex){
     if(name === 'Admin'){
       userId = adminId
     } else {
-      [userId] = yield knex('user').insert({
+      [userId] = yield knex('User').insert({
         name: name.toLowerCase(),
         password: 'mypassword',
-        password_key: 'mykey',
+        passwordKey: 'mykey',
         approved: 1,
-        created_on: now,
-        locked_out: 0,
-        failed_password_attempts: 0
+        createdOn: now,
+        lockedOut: 0,
+        failedPasswordAttempts: 0
       })
     }
     userIds[name.toLowerCase()] = userId
@@ -162,7 +162,7 @@ function* seed(knex){
     let lastCountryId = _.includes(['Jim', 'Sam'], name) ? countries.NG.id : countries.US.id
 
     yield knex('person').insert(Object.assign({
-      user_id: userId,
+      userId,
       name,
       lastPartnerId,
       last_country_id: lastCountryId
@@ -180,8 +180,8 @@ function* seed(knex){
       shortname: 'd'+i,
       device_type_id: deviceTypeId,
       site_id: siteData.id,
-      created_on: new Date(+now - 3*i*millisInHour),
-      updated_on: new Date(+now - i*millisInHour),
+      createdOn: new Date(+now - 3*i*millisInHour),
+      updatedOn: new Date(+now - i*millisInHour),
       last_ping_on: new Date(+now - i*millisInHour/3)
     })
   })
@@ -303,17 +303,17 @@ function* seed(knex){
 
   // assign roles to users
   yield knex('UserRole').insert([
-    { user_id: userIds['admin'], roleId: roleIdAdmin },
-    { user_id: userIds['bob'], roleId: roleIdOH },
-    { user_id: userIds['ed'], roleId: roleIdMidwest },
-    { user_id: userIds['frank'], roleId: roleIdNE },
-    { user_id: userIds['fred'], roleId: roleIdOHWayne },
-    { user_id: userIds['jon'], roleId: roleIdParentOrgUnit },
-    { user_id: userIds['ned'], roleId: roleIdNortheast },
-    { user_id: userIds['sam'], roleId: roleIdAdmin },
-    { user_id: userIds['jim'], roleId: roleIdParentOrgUnit },
-    { user_id: userIds['steve'], roleId: roleIdMASuffolk },
-    { user_id: userIds['bill'], roleId: roleIdMASuffolk },
-    { user_id: userIds['bill'], roleId: roleIdOH }])
+    { userId: userIds['admin'], roleId: roleIdAdmin },
+    { userId: userIds['bob'], roleId: roleIdOH },
+    { userId: userIds['ed'], roleId: roleIdMidwest },
+    { userId: userIds['frank'], roleId: roleIdNE },
+    { userId: userIds['fred'], roleId: roleIdOHWayne },
+    { userId: userIds['jon'], roleId: roleIdParentOrgUnit },
+    { userId: userIds['ned'], roleId: roleIdNortheast },
+    { userId: userIds['sam'], roleId: roleIdAdmin },
+    { userId: userIds['jim'], roleId: roleIdParentOrgUnit },
+    { userId: userIds['steve'], roleId: roleIdMASuffolk },
+    { userId: userIds['bill'], roleId: roleIdMASuffolk },
+    { userId: userIds['bill'], roleId: roleIdOH }])
 
 }

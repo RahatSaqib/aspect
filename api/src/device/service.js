@@ -4,13 +4,13 @@ let { knex, filterParams, sortPageParams } = require('../db')
 let { getConstraints, addConstraints } = require('../auth/constraints')
 
 const SELECT_LIST_FIELDS = [
-  'd.id', 'd.name', 'd.shortname', 'd.created_on', 'd.last_ping_on', 'd.updated_on as last_seen',
+  'd.id', 'd.name', 'd.shortname', 'd.createdOn', 'd.last_ping_on', 'd.updatedOn as last_seen',
   knex.raw('\'Active\' as status'),
   knex.raw('d.id * 134 as total_tests')
 ]
 
 const SELECT_SHOW_FIELDS = [
-  'd.id', 'd.name', 'd.shortname', 'd.created_on', 'd.last_ping_on', 'd.updated_on as last_seen',
+  'd.id', 'd.name', 'd.shortname', 'd.createdOn', 'd.last_ping_on', 'd.updatedOn as last_seen',
   knex.raw('\'Active\' as status'),
   knex.raw('d.id * 134 as total_tests'),
   'd.site_id',

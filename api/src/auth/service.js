@@ -14,10 +14,10 @@ function* checkAuthentication(){
 function* authenticate(request){
   let {payload} = request
 
-  let user = yield query('Get basic user details').from('user as u')
-    .innerJoin('person as p', 'u.id', 'p.user_id')
+  let user = yield query('Get basic user details').from('User as u')
+    .innerJoin('person as p', 'u.id', 'p.userId')
     .where({'u.name': payload.name})
-    .first('u.locked_out', 'u.failed_password_attempts', 'u.id', 'u.name',
+    .first('u.lockedOut', 'u.failedPasswordAttempts', 'u.id', 'u.name',
       'p.culture', 'p.lastPartnerId as partnerId', 'p.last_country_id as countryId')
 
   if(!user){
@@ -27,19 +27,19 @@ function* authenticate(request){
     //res.status(401).json({ message: 'Authentication failed. Wrong user name.' })
   }
 
-  if (user.locked_out === 1) {
+  if (user.lockedOut === 1) {
     return Boom.unauthorized('Your account is locked.')
   }
 
   // TODO: check if password matches
   if (payload.password !== 'test07') {
     // FIXME this allows 6 attempts if config is 5... bug?
-    let lock = user.failed_password_attempts >= config.passwordAttempts ? 1 : 0
-    let updateFailedPass = query('Update failed password attempts and set locked out status on user').from('user')
+    let lock = user.failedPasswordAttempts >= config.passwordAttempts ? 1 : 0
+    let updateFailedPass = query('Update failed password attempts and set locked out status on user').from('User')
       .where({id: user.id})
       .update({
-        failed_password_attempts: user.failed_password_attempts + 1,
-        locked_out: lock
+        failedPasswordAttempts: user.failedPasswordAttempts + 1,
+        lockedOut: lock
       })
 
     yield updateFailedPass
@@ -53,14 +53,14 @@ function* authenticate(request){
   let clientId = payload.clientId || uuid.v4()
 
   // Use raw query as upsert not yet supported in knex#701
-  let setRefreshToken = query('Create new refresh token for the user').raw('INSERT INTO refresh_token set ? ON DUPLICATE KEY UPDATE ?', [
+  let setRefreshToken = query('Create new refresh token for the user').raw('INSERT INTO RefreshToken set ? ON DUPLICATE KEY UPDATE ?', [
     {
-      user_id: user.id,
-      client_id: clientId,
-      client_name: payload.clientName,
+      userId: user.id,
+      clientId,
+      clientName: payload.clientName,
       token: refreshToken,
       expires: expires,
-      created_on: now
+      createdOn: now
     },
     {
       token: refreshToken,
@@ -68,12 +68,12 @@ function* authenticate(request){
     }
   ])
 
-  let updatePwAttempts = query('Update failed password attempts to 0').from('user')
+  let updatePwAttempts = query('Update failed password attempts to 0').from('User')
     .where({id: user.id})
     .update({
-      failed_password_attempts: 0,
-      last_login: now,
-      last_active: now
+      failedPasswordAttempts: 0,
+      lastLogin: now,
+      lastActive: now
     })
 
   yield Promise.all([setRefreshToken, updatePwAttempts])
@@ -90,11 +90,11 @@ function* authenticate(request){
 function* refreshToken(request){
   // find the token in the db
   let {clientId, token} = request.payload
-  let data = yield query('Find existing token for client ID').from('refresh_token as rt')
-    .innerJoin('user as u', 'rt.user_id', 'u.id')
-    .innerJoin('person as p', 'u.id', 'p.user_id')
-    .where({client_id: clientId, token, revoked: 0})
-    .first('rt.user_id as id', 'rt.expires', 'u.name',
+  let data = yield query('Find existing token for client ID').from('RefreshToken as rt')
+    .innerJoin('User as u', 'rt.userId', 'u.id')
+    .innerJoin('person as p', 'u.id', 'p.userId')
+    .where({clientId, token, revoked: 0})
+    .first('rt.userId as id', 'rt.expires', 'u.name',
       'p.culture', 'p.lastPartnerId as partnerId', 'p.last_country_id as countryId')
 
   if (!data) {
@@ -112,7 +112,7 @@ function* refreshToken(request){
   let expires = new Date(now.getTime() + 7 * 86400000) // 7 days from now
   let refreshToken = crypto.randomBytes(48).toString('base64')
 
-  yield query('Update refresh token expiry date').from('refresh_token')
+  yield query('Update refresh token expiry date').from('RefreshToken')
     .where({token})
     .update({token: refreshToken, expires})
 
@@ -131,7 +131,7 @@ function getAccessToken({id, name, culture, partnerId, countryId}){
     .innerJoin('RolePermission as rp', 'p.id', 'rp.permissionId')
     .innerJoin('Role as r', 'rp.roleId', 'r.id')
     .innerJoin('UserRole as ur', 'r.id', 'ur.roleId')
-    .where({'ur.user_id': id, 'r.partnerId': partnerId})
+    .where({'ur.userId': id, 'r.partnerId': partnerId})
     .orderBy(['p.module', 'p.activity'])
     .distinct('p.module', 'p.activity')
     .then(data => {
