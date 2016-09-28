@@ -1,4 +1,3 @@
-let camelize = require('camelize')
 let Promise = require('bluebird')
 let { knex, filterParams, sortPageParams } = require('../db')
 let { getConstraints, addConstraints } = require('../auth/constraints')
@@ -45,7 +44,7 @@ function* listDevices(request){
 
   let result = {ok: true, total, length: data.length, data}
 
-  return camelize(result)
+  return result
 }
 
 function* showDevice(request) {
@@ -58,7 +57,7 @@ function* showDevice(request) {
 
   const result = {ok: true, data: item}
 
-  return camelize(result)
+  return result
 }
 
 function* updateDevice(request) {

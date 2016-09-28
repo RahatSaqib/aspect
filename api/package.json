@@ -23,8 +23,6 @@
   "dependencies": {
     "bluebird": "^3.4.3",
     "boom": "^4.0.0",
-    "camelize": "^1.0.0",
-    "decamelize": "^1.2.0",
     "dotenv-safe": "^2.3.1",
     "good": "^7.0.2",
     "good-console": "^6.1.2",

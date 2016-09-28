@@ -1,4 +1,3 @@
-let camelize = require('camelize')
 let Promise = require('bluebird')
 let { knex, filterParams, sortPageParams } = require('../db')
 
@@ -30,7 +29,7 @@ function* listPeople(request){
   let [{count: total}, data] = yield Promise.all([getCount, getItems])
   let result = {ok: true, total, data, length: data.length}
   
-  return camelize(result)
+  return result
 }
 
 module.exports = {
