@@ -1,4 +1,3 @@
-import _ from 'lodash'
 import React from 'react'
 import { bindActionCreators } from 'redux'
 import { connect } from 'react-redux'
@@ -43,7 +42,6 @@ function mapStateToProps(state) {
   return {
     loading: state.accountDetails.get('loading'),
     saving: state.accountDetails.get('saving'),
-    loadingMessage: state.accountDetails.get('loadingMessage'),
     accountDetails: state.accountDetails.get('data')
   }
 }

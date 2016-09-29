@@ -11,10 +11,10 @@ import LocationSelector from '../../shared/LocationSelector'
 describe('ContactDetailsForm Component', () => {
   describe('ContactDetailsForm', () => {
     const fakeReduxForm = {
-      reduxForm: config => component => component
-    }, ContactDetailsForm = proxyquire('./ContactDetailsForm', {
-      'redux-form/immutable': fakeReduxForm
-    }).default
+        reduxForm: () => component => component
+      }, ContactDetailsForm = proxyquire('./ContactDetailsForm', {
+        'redux-form/immutable': fakeReduxForm
+      }).default
 
     let props, ContactDetailsFormWrapper
 
@@ -44,14 +44,14 @@ describe('ContactDetailsForm Component', () => {
 
     it('Should contain fields for all contact details', () => {
       const expectedFieldLabels = {
-        'name': 'Full Name',
-        'title': 'Job Title',
-        'email': 'Primary',
-        'email2': 'Secondary',
-        'phone': 'Telephone',
-        'cell': 'Mobile',
-        'zip': 'ZIP Code'
-      }, textInputs = ContactDetailsFormWrapper.find(TextInput)
+          'name': 'Full Name',
+          'title': 'Job Title',
+          'email': 'Primary',
+          'email2': 'Secondary',
+          'phone': 'Telephone',
+          'cell': 'Mobile',
+          'zip': 'ZIP Code'
+        }, textInputs = ContactDetailsFormWrapper.find(TextInput)
 
       assert.equal(textInputs.length, Object.keys(expectedFieldLabels).length)
       textInputs.forEach(textInput => {
