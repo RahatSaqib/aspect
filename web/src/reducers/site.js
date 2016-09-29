@@ -47,6 +47,8 @@ function site(state = initialState, action) {
     return receiveSites(state, action.items, action.total)
   case types.RECEIVE_SINGLE_SITE:
     return receiveSingleSite(state, action.item)
+  case types.RECEIVE_UPDATED_SINGLE_SITE:
+    return receiveSingleSite(state, action.item)
   }
   return state
 }
