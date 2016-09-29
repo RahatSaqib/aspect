@@ -22,8 +22,6 @@ import TextField from 'material-ui/TextField'
 // Our own imports
 import { fetchDevices } from '../../../action_creators/device_creators'
 import { DataTable } from '../../shared/DataTable'
-import FormattedNumber from '../../shared/FormattedNumber'
-import FormattedDate from '../../shared/FormattedDate'
 import styles from './DeviceList.css'
 
 const messages = defineMessages({
@@ -54,10 +52,6 @@ const messages = defineMessages({
   totalTests: {
     id: 'pages.DeviceList.totalTests',
     defaultMessage: 'Total Tests'
-  },
-  culture: {
-    id: 'pages.DeviceList.culture',
-    defaultMessage: 'Culture' // FIXME: missing
   }
 })
 
@@ -89,7 +83,7 @@ export class DeviceList extends React.PureComponent {
   }
 
   render() {
-    const { formatMessage } = this.props.intl
+    const { formatMessage, formatRelative, formatNumber } = this.props.intl
 
     return (
       <div className={styles.Content}>
@@ -125,11 +119,11 @@ export class DeviceList extends React.PureComponent {
                       { db: 'name', title: formatMessage(messages.deviceName) },
                       { db: 'status', title: formatMessage(messages.status), hideOnXs: true },
                       { db: 'createdOn', title: formatMessage(messages.reportingFor), hideOnXs: true,
-                          format: (data) => <FormattedDate date={ data } fromNow={true} omitSuffix={true} culture={ formatMessage(messages.culture) } /> },
+                          format: (data) => formatRelative(data) },
                       { db: 'lastSeen', title: formatMessage(messages.lastSeen), hideOnXs: true,
-                          format: (data) => <FormattedDate date={ data } fromNow={true} culture={ formatMessage(messages.culture) } /> },
+                          format: (data) => formatRelative(data) },
                       { db: 'totalTests', title: formatMessage(messages.totalTests),
-                          format: (data) => <FormattedNumber number={ data } culture={ formatMessage(messages.culture) } /> }
+                          format: (data) => formatNumber(data) }
                     ]} />
       </div>
     )

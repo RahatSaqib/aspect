@@ -16,7 +16,7 @@ export class Maintenance extends React.PureComponent {
           <div className="pure-u-lg-1-4 pure-u-md-1-3 pure-u-sm-1-2">
             <Link to="device">
               <MiniChart  data={[800, 700, 900, 1200, 1400, 1500, 1600, 1780]}
-                        label={'Out of service'} number={45} bgcolor={'#607d8b'} culture="en-US" />
+                        label={'Out of service'} number={45} bgcolor={'#607d8b'} />
             </Link>
           </div>
         </div>

@@ -1,10 +1,10 @@
 // Imports from packages
 import React from 'react'
+import {
+  injectIntl
+} from 'react-intl'
 import { Sparklines, SparklinesLine, SparklinesSpots } from 'react-sparklines'
 import Paper from 'material-ui/Paper'
-
-// Our own imports
-import FormattedNumber from './FormattedNumber'
 
 require('./../../styles/Charts.scss')
 
@@ -14,11 +14,12 @@ class MiniChart extends React.PureComponent {
     bgcolor: React.PropTypes.string.isRequired,
     data: React.PropTypes.array.isRequired,
     label: React.PropTypes.string.isRequired,
-    number: React.PropTypes.any.isRequired,
-    culture: React.PropTypes.string.isRequired
+    number: React.PropTypes.any.isRequired
   }
 
   render() {
+    const { formatNumber } = this.props.intl
+
     return (
         <Paper className="col-margin" style={{backgroundColor: this.props.bgcolor}}>
           <div className="minichart-chart">
@@ -29,7 +30,7 @@ class MiniChart extends React.PureComponent {
           </div>
           <div className="minichart-count">
               <small>{this.props.label}</small>
-              <FormattedNumber number={this.props.number} culture={this.props.culture} />
+              {formatNumber(this.props.number)}
           </div>
           <div className="clear-fix" ></div>
         </Paper>
@@ -37,4 +38,4 @@ class MiniChart extends React.PureComponent {
   }
 }
 
-export default MiniChart
+export default injectIntl(MiniChart)
