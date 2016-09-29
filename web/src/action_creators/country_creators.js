@@ -22,9 +22,7 @@ export function fetchCountriesForSelectLists(forceRefresh, lastRefreshed) {
       dispatch(requestCountriesForSelectLists())
       return aspectFetch('/geography/select-list')
         .then(json => dispatch(receiveCountriesForSelectLists(json.data)))
-        .catch(err => {
-          dispatch(addError('Loading countries failed', err.message, err))
-        })
+        .catch(err => dispatch(addError('Loading countries failed', err.message, err)))
     }
   }
 }
