@@ -68,7 +68,6 @@ function* updateDevice(request) {
   // update item
   const updatedCount = yield knex('Device')
     .where('id', params.deviceId)
-    .returning(SELECT_SHOW_FIELDS)
     .update({
       name: payload.name,
       shortname: payload.shortname,
