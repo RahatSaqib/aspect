@@ -126,7 +126,7 @@ export class DeviceDetail extends React.PureComponent {
       // Map API fields to form fields
       name: device.get('name'),
       shortName: device.get('shortname'),
-      notes: device.get('notes'),
+      notes: device.get('notes') || /* FIXME */ '',
       site: device.get('siteId')
     }
     return (
