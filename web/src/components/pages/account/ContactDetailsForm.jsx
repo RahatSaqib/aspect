@@ -7,7 +7,7 @@ import {emailAddress as validateEmailAddress} from '../../../utils/validate'
 import styles from './AccountDetails.css'
 
 const ContactDetailsForm = props => {
-  const { handleSubmit, pristine, invalid, submitting } = props
+  const { handleSubmit, pristine, invalid, submitting, initialValues } = props
   return (
     <form onSubmit={handleSubmit} className={styles.Form}>
       <div className={styles.Form__Content}>
@@ -28,7 +28,8 @@ const ContactDetailsForm = props => {
         <section>
           <h1>Location</h1>
           <LocationSelector disabled={submitting} countryIdFieldName="countryId"
-                            stateIdFieldName="stateId" lgaIdFieldName="lgaId"/>
+                            initialCountryId={initialValues.countryId} stateIdFieldName="stateId"
+                            initialStateId={initialValues.stateId} lgaIdFieldName="lgaId" />
           <TextInput name="zip" label="ZIP Code" disabled={submitting} />
         </section>
       </div>

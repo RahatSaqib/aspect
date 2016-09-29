@@ -13,80 +13,121 @@ class LocationSelector extends React.PureComponent {
     countryIdFieldName: PropTypes.string.isRequired,
     stateIdFieldName: PropTypes.string.isRequired,
     lgaIdFieldName: PropTypes.string.isRequired,
-    disabled: PropTypes.bool
+    disabled: PropTypes.bool,
+    initialCountryId: PropTypes.number,
+    initialStateId: PropTypes.number
   }
 
-  constructor(props) {
-    super(props)
-
+  constructor(props, context) {
+    super(props, context)
     this.state = {
       countries: [],
-      states: [],
-      lgas: [],
+      selectedCountry: null,
+      selectedState: null,
       loading: false
     }
+    this.initialiseCountriesAndSelections = this.initialiseCountriesAndSelections.bind(this)
     this.onCountryChanged = this.onCountryChanged.bind(this)
+    this.selectCountry = this.selectCountry.bind(this)
     this.onStateChanged = this.onStateChanged.bind(this)
+    this.selectState = this.selectState.bind(this)
+    this.getLgasForCountry = this.getLgasForCountry.bind(this)
   }
 
   componentDidMount() {
-    this.props.fetchCountriesForSelectLists(false, this.props.countriesForSelectLists.get('lastRefreshed'))
-    let countriesFetched = this.props.countriesForSelectLists.get('countries').toJS(),
-      countriesLoading = this.props.countriesForSelectLists.get('loading'),
-      newState = {}
-    if(!_.isEqual(countriesFetched, this.state.countries)) {
-      newState.countries = countriesFetched
-    }
+    const {fetchCountriesForSelectLists, countriesForSelectLists} = this.props
+    fetchCountriesForSelectLists(false, countriesForSelectLists.get('lastRefreshed'))
+    this.initialiseCountriesAndSelections(this.props)
+  }
+
+  componentWillReceiveProps(nextProps) {
+    //TODO: Does next props contain everything? Do we need such a lengthy spread operator below?
+    this.initialiseCountriesAndSelections({...this.props, nextProps})
+  }
+
+  initialiseCountriesAndSelections(props) {
+    const {countriesForSelectLists, initialCountryId, initialStateId} = props
+    const countriesFetched = countriesForSelectLists.get('countries').toJS(),
+      countriesLoading = countriesForSelectLists.get('loading')
     if(countriesLoading != this.state.loading) {
-      newState.loading = countriesLoading
+      this.setState({
+        loading: countriesLoading
+      })
     }
-    if(!_.isEmpty(newState)) {
-      this.setState(newState)
+    if(!_.isEqual(countriesFetched, this.state.countries)) {
+      this.setState({
+        countries: countriesFetched
+      })
+    }
+    if(initialCountryId && !this.state.selectedCountry && !_.isEmpty(countriesFetched)) {
+      const initialCountry = _.find(countriesFetched, {id: initialCountryId})
+      this.selectCountry(initialCountry)
+      if(initialStateId && !this.state.selectedState) {
+        const initialState = _.find(initialCountry.states, {id: initialStateId})
+        this.selectState(initialState)
+      }
     }
   }
 
   onCountryChanged(event, index, value) {
-    let countrySelected = _.find(this.state.countries, {id: value})
-    if(countrySelected) {
+    const selectedCountry = _.find(this.state.countries, {id: value})
+    this.selectCountry(selectedCountry)
+  }
+
+  selectCountry(country) {
+    if(!_.isEqual(country, this.state.selectedCountry)) {
       this.setState({
-        states: countrySelected.states,
-        lgas: _.orderBy(_.flatten(_.reduce(countrySelected.states, (result, state) => {
-          result.push(_.map(state.lgas, lga => {
-            return { id: lga.id, name: lga.name + ', ' + state.name }
-          }))
-          return result
-        }, [])), 'name', 'asc')
+        selectedCountry: country
       })
+      this.selectState(null)
     }
   }
 
   onStateChanged(event, index, value) {
-    let stateSelected = _.find(this.state.states, {id: value})
-    if(stateSelected) {
+    if(this.state.selectedCountry) {
+      const selectedState = _.find(this.state.selectedCountry.states, {id: value})
+      this.selectState(selectedState)
+    }
+  }
+
+  selectState(state) {
+    if(!_.isEqual(state, this.state.selectedState)) {
       this.setState({
-        lgas: stateSelected.lgas
+        selectedState: state
       })
     }
+  }
+
+  getLgasForCountry(country) {
+    return _.orderBy(_.flatten(_.reduce(country.states, (result, state) => {
+      result.push(_.map(state.lgas, lga => {
+        return { id: lga.id, name: lga.name + ', ' + state.name }
+      }))
+      return result
+    }, [])), 'name', 'asc')
   }
 
   render() {
     const {disabled, countryIdFieldName, stateIdFieldName, lgaIdFieldName} = this.props
     const selectListDataSourceMappings = { text: 'name', value: 'id' }
 
+    const {loading, countries, selectedCountry, selectedState} = this.state,
+      states = selectedCountry ? selectedCountry.states : [],
+      lgas = selectedState ? selectedState.lgas :
+        (selectedCountry ? this.getLgasForCountry(selectedCountry) : [])
+
     return (
       <div>
         {this.state.loading && <LinearProgress />}
         <SelectInput name={countryIdFieldName} label="Country"
-                     disabled={disabled || this.state.loading || !this.state.countries.length}
-                     dataSource={this.state.countries} dataSourceConfig={selectListDataSourceMappings}
-                     onChange={this.onCountryChanged} />
+                     disabled={disabled || loading || !countries.length} dataSource={countries}
+                     dataSourceConfig={selectListDataSourceMappings} onChange={this.onCountryChanged} />
         <SelectInput name={stateIdFieldName} label="State"
-                     disabled={disabled || this.state.loading || !this.state.states.length}
-                     dataSource={this.state.states} dataSourceConfig={selectListDataSourceMappings}
-                     onChange={this.onStateChanged} />
+                     disabled={disabled || loading || !states.length} dataSource={states}
+                     dataSourceConfig={selectListDataSourceMappings} onChange={this.onStateChanged} />
         <SelectInput name={lgaIdFieldName} label="Area"
-                     disabled={disabled || this.state.loading || !this.state.lgas.length}
-                     dataSource={this.state.lgas} dataSourceConfig={selectListDataSourceMappings} />
+                     disabled={disabled || loading || !lgas.length} dataSource={lgas}
+                     dataSourceConfig={selectListDataSourceMappings} onChange={this.onLgaChanged} />
       </div>
     )
   }
