@@ -57,8 +57,8 @@ describe('auth endpoints', function () {
       ]
       beforeEach(function () {
         dbSpy.query.for('Get basic user details').resolvesWith({
-          locked_out: 0,
-          failed_password_attempts: 0,
+          lockedOut: 0,
+          failedPasswordAttempts: 0,
           id: 123,
           name: 'admin',
           culture: 'en-US'
@@ -105,8 +105,8 @@ describe('auth endpoints', function () {
       describe('getToken', function() {
         it('Should sign a token with the user\'s details', function (done) {
           let britishUser = {
-            locked_out: 0,
-            failed_password_attempts: 0,
+            lockedOut: 0,
+            failedPasswordAttempts: 0,
             id: 123,
             name: 'admin',
             culture: 'en-GB',
@@ -142,8 +142,8 @@ describe('auth endpoints', function () {
 
         it('Should set the user\'s culture to en-US if not specified', function (done) {
           dbSpy.query.for('Get basic user details').resolvesWith({
-            locked_out: 0,
-            failed_password_attempts: 0,
+            lockedOut: 0,
+            failedPasswordAttempts: 0,
             id: 123,
             name: 'admin',
             culture: ''
@@ -194,8 +194,8 @@ describe('auth endpoints', function () {
     describe('When the users account is locked', function () {
       beforeEach(function () {
         dbSpy.query.for('Get basic user details').resolvesWith({
-          locked_out: 1,
-          failed_password_attempts: 0,
+          lockedOut: 1,
+          failedPasswordAttempts: 0,
           id: 123,
           name: 'lockedaccount',
           culture: 'en-US'
@@ -229,8 +229,8 @@ describe('auth endpoints', function () {
             clientId: 'request client id'
           }
         }, basicUserDetails = {
-          locked_out: 0,
-          failed_password_attempts: 0,
+          lockedOut: 0,
+          failedPasswordAttempts: 0,
           id: 123,
           name: 'admin',
           culture: 'en-US'
@@ -246,21 +246,21 @@ describe('auth endpoints', function () {
             assert.equal(responseData.output.statusCode, 401)
             assert.equal(responseData.output.payload.message, 'Authentication failed. Wrong password.')
             let updateFieldsOnUser = dbSpy.query.withArgs('Update failed password attempts and set locked out status on user').lastCall.returnValue.update.lastCall.args[0]
-            assert.equal(updateFieldsOnUser.failed_password_attempts, basicUserDetails.failed_password_attempts + 1)
+            assert.equal(updateFieldsOnUser.failedPasswordAttempts, basicUserDetails.failedPasswordAttempts + 1)
           })
           .thenCall(done)
           .execute()
       })
 
       it('Should increment the number of failed password attempts and lock the user out after the maximum password attempts have been tried', function (done) {
-        basicUserDetails.failed_password_attempts = 5
+        basicUserDetails.failedPasswordAttempts = 5
         endpointUtils.callHandlerOn(endpoint)
           .with(requestData)
           .handleResponseWith(function () {
             assert.isOk(dbSpy.query.calledWith('Update failed password attempts and set locked out status on user'))
             let updateFieldsOnUser = dbSpy.query.withArgs('Update failed password attempts and set locked out status on user').lastCall.returnValue.update.lastCall.args[0]
-            assert.equal(updateFieldsOnUser.failed_password_attempts, basicUserDetails.failed_password_attempts + 1)
-            assert.equal(updateFieldsOnUser.locked_out, 1)
+            assert.equal(updateFieldsOnUser.failedPasswordAttempts, basicUserDetails.failedPasswordAttempts + 1)
+            assert.equal(updateFieldsOnUser.lockedOut, 1)
           })
           .thenCall(done)
           .execute()

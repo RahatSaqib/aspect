@@ -4,27 +4,27 @@ function* up(knex){
 
   yield knex.raw('SET foreign_key_checks = 0')
 
-  yield knex.schema.createTable('partner', partner => {
+  yield knex.schema.createTable('Partner', partner => {
     partner.increments('id')
     partner.string('name').notNullable()
   })
 
-  yield knex.schema.createTable('org_unit', orgUnit => {
+  yield knex.schema.createTable('OrgUnit', orgUnit => {
     orgUnit.increments('id')
     orgUnit.string('name').notNullable()
-    orgUnit.integer('partner_id').unsigned().notNullable()
-      .index().references('id').inTable('partner')
+    orgUnit.integer('partnerId').unsigned().notNullable()
+      .index().references('id').inTable('Partner')
 
-    orgUnit.integer('left_bound').unsigned().notNullable()
-    orgUnit.integer('right_bound').unsigned().notNullable()
+    orgUnit.integer('leftBound').unsigned().notNullable()
+    orgUnit.integer('rightBound').unsigned().notNullable()
     orgUnit.integer('depth').unsigned().notNullable()
 
-    // TODO Add org_unit parent id if is helpful
-    //orgUnit.integer('parent_id').unsigned()
-    //  .index().references('id').inTable('org_unit')
+    // TODO Add OrgUnit parent id if is helpful
+    //orgUnit.integer('parentId').unsigned()
+    //  .index().references('id').inTable('OrgUnit')
   })
 
-  yield knex.schema.createTable('data_filter', dataFilter => {
+  yield knex.schema.createTable('DataFilter', dataFilter => {
     dataFilter.increments('id')
     dataFilter.string('name').notNullable()
     // knex does not yet support JSON for MySQL
@@ -32,68 +32,68 @@ function* up(knex){
     dataFilter.specificType('constraint', 'JSON').notNullable()
   })
 
-  yield knex.schema.createTable('user', user => {
+  yield knex.schema.createTable('User', user => {
     user.increments('id')
     user.string('name').unique().notNullable()
     user.string('password', 128).notNullable()
-    user.string('password_key', 32).notNullable()
+    user.string('passwordKey', 32).notNullable()
     user.boolean('approved').notNullable()
-    user.dateTime('last_active')
-    user.dateTime('last_login')
-    user.dateTime('last_password_change')
-    user.dateTime('created_on').notNullable()
-    user.boolean('locked_out').notNullable()
-    user.integer('failed_password_attempts').unsigned().notNullable()
+    user.dateTime('lastActive')
+    user.dateTime('lastLogin')
+    user.dateTime('lastPasswordChange')
+    user.dateTime('createdOn').notNullable()
+    user.boolean('lockedOut').notNullable()
+    user.integer('failedPasswordAttempts').unsigned().notNullable()
     user.charset('utf8')
   })
 
-  yield knex.schema.createTable('country', country => {
+  yield knex.schema.createTable('Country', country => {
     country.increments('id')
     country.string('name').notNullable()
     country.string('abbreviation', 10).notNullable()
     country.string('a3', 3)
     // TODO move to culture/locale table using name "en-US" as primary key
     country.string('culture', 5).notNullable()
-    country.integer('country_code')
-    country.string('state_label')
-    country.string('lga_label')
+    country.integer('countryCode')
+    country.string('stateLabel')
+    country.string('lgaLabel')
     country.string('timezone')
-    country.string('port_number')
-    country.string('export_columns', 2500).notNullable()
-    country.string('tag_prefix', 45)
-    country.string('tag_regex_sampleId', 45)
-    country.string('tag_regex_patientId ', 45)
-    country.string('tag_regex_notes', 45)
-    country.string('patient_phone_regex', 100)
-    country.string('notes_sms_text', 1200)
-    country.integer('inventory_days_threshold')
-    country.string('test_eqa_regex', 45)
-    country.integer('month_starts_on_day')
-    country.integer('week_starts_on_day ')
+    country.string('portNumber')
+    country.string('exportColumns', 2500).notNullable()
+    country.string('tagPrefix', 45)
+    country.string('tagRegexSampleId', 45)
+    country.string('tagRegexPatientId ', 45)
+    country.string('tagRegexNotes', 45)
+    country.string('patientPhoneRegex', 100)
+    country.string('notesSmsText', 1200)
+    country.integer('inventoryDaysThreshold')
+    country.string('testEqaRegex', 45)
+    country.integer('monthStartsOnDay')
+    country.integer('weekStartsOnDay ')
     country.charset('utf8')
   })
 
-  yield knex.schema.createTable('state', state => {
+  yield knex.schema.createTable('State', state => {
     state.increments('id')
-    state.integer('country_id').unsigned()
-      .index().references('id').inTable('country')
+    state.integer('countryId').unsigned()
+      .index().references('id').inTable('Country')
     state.string('name').notNullable()
     state.string('abbreviation', 10)
     state.charset('utf8')
   })
 
-  yield knex.schema.createTable('lga', lga => {
+  yield knex.schema.createTable('Lga', lga => {
     lga.increments('id')
-    lga.integer('state_id').unsigned()
-      .index().references('id').inTable('state')
+    lga.integer('stateId').unsigned()
+      .index().references('id').inTable('State')
     lga.string('name').notNullable()
     lga.charset('utf8')
   })
 
-  yield knex.schema.createTable('person', person => {
+  yield knex.schema.createTable('Person', person => {
     person.increments('id')
-    person.integer('user_id').unsigned()
-      .index().references('id').inTable('user')
+    person.integer('userId').unsigned()
+      .index().references('id').inTable('User')
     person.string('name', 500).notNullable()
     person.string('title')
     person.string('email', 500)
@@ -101,43 +101,43 @@ function* up(knex){
     person.string('phone', 45)
     person.string('cell', 45)
     // TODO should we move to geography table and share with site?
-    person.integer('country_id').unsigned()
-      .index().references('id').inTable('country')
-    person.integer('state_id').unsigned()
-      .index().references('id').inTable('state')
-    person.integer('lga_id').unsigned()
-      .index().references('id').inTable('lga')
+    person.integer('countryId').unsigned()
+      .index().references('id').inTable('Country')
+    person.integer('stateId').unsigned()
+      .index().references('id').inTable('State')
+    person.integer('lgaId').unsigned()
+      .index().references('id').inTable('Lga')
     person.string('notes', 1200)
-    person.integer('last_partner_id').unsigned()
-      .index().references('id').inTable('partner')
-    person.integer('last_country_id').unsigned()
-      .index().references('id').inTable('country')
+    person.integer('lastPartnerId').unsigned()
+      .index().references('id').inTable('Partner')
+    person.integer('lastCountryId').unsigned()
+      .index().references('id').inTable('Country')
     // TODO timezone table?
     person.string('timezone')
     // TODO should user prefrences be stored in separate table?
-    person.boolean('hide_patient_id')
-    person.boolean('hide_sample_id')
-    person.boolean('hide_notes')
+    person.boolean('hidePatientId')
+    person.boolean('hideSampleId')
+    person.boolean('hideNotes')
     person.string('culture', 45)
-    person.dateTime('accepted_license_on')
+    person.dateTime('acceptedLicenseOn')
     addCreateFields(person)
     addUpdateFields(person)
     person.charset('utf8')
   })
 
-  yield knex.schema.createTable('role', role => {
+  yield knex.schema.createTable('Role', role => {
     role.increments('id')
     role.string('name').notNullable()
-    role.integer('partner_id').unsigned()
-      .index().references('id').inTable('partner')
-    role.integer('data_filter_id').unsigned()
-      .index().references('id').inTable('data_filter')
-    role.integer('org_unit_id').unsigned()
-      .index().references('id').inTable('org_unit')
+    role.integer('partnerId').unsigned()
+      .index().references('id').inTable('Partner')
+    role.integer('dataFilterId').unsigned()
+      .index().references('id').inTable('DataFilter')
+    role.integer('orgUnitId').unsigned()
+      .index().references('id').inTable('OrgUnit')
     role.charset('utf8')
   })
 
-  yield knex.schema.createTable('permission', permission => {
+  yield knex.schema.createTable('Permission', permission => {
     permission.increments('id')
 
     // e.g. clinical, inventory, operational, device, etc.
@@ -149,38 +149,39 @@ function* up(knex){
     permission.charset('utf8')
   })
 
-  yield knex.schema.createTable('role_permission', permissionRole => {
-    permissionRole.integer('role_id').unsigned()
-      .index().references('id').inTable('role')
-    permissionRole.integer('permission_id').unsigned()
-      .index().references('id').inTable('permission')
-    permissionRole.primary(['permission_id', 'role_id'])
+  yield knex.schema.createTable('RolePermission', permissionRole => {
+    permissionRole.integer('roleId').unsigned()
+      .index().references('id').inTable('Role')
+    permissionRole.integer('permissionId').unsigned()
+      .index().references('id').inTable('Permission')
+    permissionRole.primary(['permissionId', 'roleId'])
     permissionRole.charset('utf8')
   })
 
-  yield knex.schema.createTable('user_role', userRole => {
-    userRole.integer('user_id').unsigned()
-      .index().references('id').inTable('user')
-    userRole.integer('role_id').unsigned()
-      .index().references('id').inTable('role')
-    userRole.primary(['user_id', 'role_id'])
+  // FIXME Change UserRole to PersonRole
+  yield knex.schema.createTable('UserRole', userRole => {
+    userRole.integer('userId').unsigned()
+      .index().references('id').inTable('User')
+    userRole.integer('roleId').unsigned()
+      .index().references('id').inTable('Role')
+    userRole.primary(['userId', 'roleId'])
     userRole.charset('utf8')
   })
 
-  yield knex.schema.createTable('refresh_token', refreshToken => {
-    refreshToken.integer('user_id').unsigned().notNullable()
-      .references('id').inTable('user')
-    refreshToken.string('client_id', 128).notNullable()
-    refreshToken.string('client_name').notNullable()
+  yield knex.schema.createTable('RefreshToken', refreshToken => {
+    refreshToken.integer('userId').unsigned().notNullable()
+      .references('id').inTable('User')
+    refreshToken.string('clientId', 128).notNullable()
+    refreshToken.string('clientName').notNullable()
     refreshToken.string('token').notNullable()
     refreshToken.dateTime('expires').notNullable()
     refreshToken.boolean('revoked').notNullable().defaultTo(0)
-    refreshToken.dateTime('created_on').notNullable()
-    refreshToken.primary(['user_id', 'client_id'])
+    refreshToken.dateTime('createdOn').notNullable()
+    refreshToken.primary(['userId', 'clientId'])
     refreshToken.charset('utf8')
   })
 
-  yield knex.schema.createTable('device_type', deviceType => {
+  yield knex.schema.createTable('DeviceType', deviceType => {
     deviceType.increments('id')
     deviceType.string('name').notNullable()
     deviceType.charset('utf8')
@@ -188,23 +189,23 @@ function* up(knex){
     // used to uniquely identify devices and still to be discussed
   })
 
-  yield knex.schema.createTable('site', site => {
+  yield knex.schema.createTable('Site', site => {
     site.increments('id')
     site.string('name').notNullable()
     site.string('shortname', 45)
     site.string('identifier')
     site.string('notes', 2000)
     // TODO is site to partner many to many?
-    site.integer('partner_id').unsigned()
-      .index().references('id').inTable('partner')
-    site.integer('org_unit_id').unsigned()
-      .index().references('id').inTable('org_unit')
-    site.integer('country_id').unsigned()
-      .index().references('id').inTable('country')
-    site.integer('state_id').unsigned()
-      .index().references('id').inTable('state')
-    site.integer('lga_id').unsigned()
-      .index().references('id').inTable('lga')
+    site.integer('partnerId').unsigned()
+      .index().references('id').inTable('Partner')
+    site.integer('orgUnitId').unsigned()
+      .index().references('id').inTable('OrgUnit')
+    site.integer('countryId').unsigned()
+      .index().references('id').inTable('Country')
+    site.integer('stateId').unsigned()
+      .index().references('id').inTable('State')
+    site.integer('lgaId').unsigned()
+      .index().references('id').inTable('Lga')
     site.charset('utf8')
     // TODO do we want to mess with a city table?
     site.string('city')
@@ -213,84 +214,84 @@ function* up(knex){
     site.string('zip', 45)
     site.float('longitude', 10, 6)
     site.float('latitude', 10, 6)
-    site.string('timezone_id', 45)
-    site.integer('hours_start')
-    site.integer('hours_end')
+    site.string('timezoneId', 45)
+    site.integer('hoursStart')
+    site.integer('hoursEnd')
     addCreateFields(site)
     addUpdateFields(site)
     site.charset('utf8')
   })
 
-  yield knex.schema.createTable('device', device => {
+  yield knex.schema.createTable('Device', device => {
     device.increments('id')
-    device.integer('device_type_id').unsigned().notNullable()
-      .index().references('id').inTable('device_type')
+    device.integer('deviceTypeId').unsigned().notNullable()
+      .index().references('id').inTable('DeviceType')
 
     // TODO Add device id1 - id4 or equivalent
     // used to uniquely identify provisioned devices, still to be discussed
     device.string('serial')
-    device.string('host_id')
-    device.string('computer_id')
-    device.integer('site_id').unsigned().notNullable()
-      .index().references('id').inTable('site')
+    device.string('hostId')
+    device.string('computerId')
+    device.integer('siteId').unsigned().notNullable()
+      .index().references('id').inTable('Site')
     device.string('name').notNullable()
     device.string('shortname', 45)
     device.string('notes', 1200)
-    device.boolean('hide_on_dashboard')
-    device.dateTime('last_ping_on')
-    device.string('last_ping_from', 45)
-    device.string('computer_culture', 45)
-    device.string('computer_os')
-    device.string('computer_timezone', 45)
-    device.dateTime('last_calibrated')
-    device.dateTime('put_in_service')
-    device.string('put_in_service_source')
+    device.boolean('hideOnDashboard')
+    device.dateTime('lastPingOn')
+    device.string('lastPingFrom', 45)
+    device.string('computerCulture', 45)
+    device.string('computerOs')
+    device.string('computerTimezone', 45)
+    device.dateTime('lastCalibrated')
+    device.dateTime('putInService')
+    device.string('putInServiceSource')
     // TODO add db and lis fields to "Operational Data" model
-    //device.string('db_version', 45)
-    //device.boolean('db_ok', 45)
-    //device.string('lis_config', 1200)
-    //device.boolean('lis_ok', 4)
-    device.dateTime('daily_details_on')
-    device.string('aspect_client_version', 45)
-    device.boolean('custom_fields_enabled')
-    device.dateTime('custom_fields_sent_on')
-    device.boolean('custom_fields_enabled_on_device')
+    //device.string('dbVersion', 45)
+    //device.boolean('dbOk', 45)
+    //device.string('lisConfig', 1200)
+    //device.boolean('lisOk', 4)
+    device.dateTime('dailyDetailsOn')
+    device.string('aspectClientVersion', 45)
+    device.boolean('customFieldsEnabled')
+    device.dateTime('customFieldsSentOn')
+    device.boolean('customFieldsEnabledOnDevice')
     device.boolean('approved')
-    device.dateTime('approved_on')
-    device.integer('approved_by').unsigned()
-      .index().references('id').inTable('user')
+    device.dateTime('approvedOn')
+    device.integer('approvedBy').unsigned()
+      .index().references('id').inTable('User')
     addCreateFields(device)
     addUpdateFields(device)
     device.charset('utf8')
   })
 
-  yield knex.schema.createTable('device_site_history', history => {
-    history.integer('device_id').unsigned().notNullable()
-      .index().references('id').inTable('device')
-    history.integer('site_id').unsigned().notNullable()
-      .index().references('id').inTable('site')
+  yield knex.schema.createTable('DeviceSiteHistory', history => {
+    history.integer('deviceId').unsigned().notNullable()
+      .index().references('id').inTable('Device')
+    history.integer('siteId').unsigned().notNullable()
+      .index().references('id').inTable('Site')
     addCreateFields(history)
-    history.primary(['device_id', 'site_id'])
+    history.primary(['deviceId', 'siteId'])
     history.charset('utf8')
   })
 
-  yield knex.schema.createTable('router', router => {
+  yield knex.schema.createTable('Router', router => {
     router.increments('id')
-    router.integer('site_id').unsigned().notNullable()
-      .index().references('id').inTable('site')
+    router.integer('siteId').unsigned().notNullable()
+      .index().references('id').inTable('Site')
     router.string('number', 45)
     // TODO worth creating a SIM card table and changing
     // to sim_1 and sim_2?  (or many to many?)
-    router.string('sim_reg_number', 45)
-    router.string('sim_reg_number_2', 45)
-    router.string('sim_phone_number', 45)
-    router.string('sim_phone_number_2', 45)
-    router.string('sim_provider', 45)
-    router.string('sim_provider_2', 45)
-    router.string('sim_suffix', 45)
-    router.string('sim_suffix_2', 45)
-    router.string('sim_prefix', 45)
-    router.string('sim_prefix_2', 45)
+    router.string('simRegNumber', 45)
+    router.string('simRegNumber2', 45)
+    router.string('simPhoneNumber', 45)
+    router.string('simPhoneNumber2', 45)
+    router.string('simProvider', 45)
+    router.string('simProvider2', 45)
+    router.string('simSuffix', 45)
+    router.string('simSuffix2', 45)
+    router.string('simPrefix', 45)
+    router.string('simPrefix2', 45)
     addCreateFields(router)
     addUpdateFields(router)
     router.charset('utf8')
@@ -321,20 +322,39 @@ function* down(knex){
   yield knex.schema.dropTableIfExists('org_unit')
   yield knex.schema.dropTableIfExists('partner')
 
+  yield knex.schema.dropTableIfExists('Router')
+  yield knex.schema.dropTableIfExists('DeviceSiteHistory')
+  yield knex.schema.dropTableIfExists('Device')
+  yield knex.schema.dropTableIfExists('Site')
+  yield knex.schema.dropTableIfExists('DeviceType')
+  yield knex.schema.dropTableIfExists('RefreshToken')
+  yield knex.schema.dropTableIfExists('UserRole')
+  yield knex.schema.dropTableIfExists('RolePermission')
+  yield knex.schema.dropTableIfExists('Permission')
+  yield knex.schema.dropTableIfExists('Role')
+  yield knex.schema.dropTableIfExists('Person')
+  yield knex.schema.dropTableIfExists('Lga')
+  yield knex.schema.dropTableIfExists('State')
+  yield knex.schema.dropTableIfExists('Country')
+  yield knex.schema.dropTableIfExists('User')
+  yield knex.schema.dropTableIfExists('DataFilter')
+  yield knex.schema.dropTableIfExists('OrgUnit')
+  yield knex.schema.dropTableIfExists('Partner')
+
   yield knex.raw('SET foreign_key_checks = 1')
 }
 
 
-// Adds created_on, created_by
+// Adds createdOn, createdBy
 function addCreateFields(table){
-  table.dateTime('created_on').notNullable()
-  table.integer('created_by').unsigned().notNullable()
-    .index().references('id').inTable('user')
+  table.dateTime('createdOn').notNullable()
+  table.integer('createdBy').unsigned().notNullable()
+    .index().references('id').inTable('User')
 }
 
-// Adds update_on, updated_by
+// Adds updatedOn, updatedBy
 function addUpdateFields(table){
-  table.dateTime('updated_on').notNullable()
-  table.integer('updated_by').unsigned().notNullable()
-    .index().references('id').inTable('user')
+  table.dateTime('updatedOn').notNullable()
+  table.integer('updatedBy').unsigned().notNullable()
+    .index().references('id').inTable('User')
 }

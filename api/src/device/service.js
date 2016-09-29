@@ -1,19 +1,18 @@
-let camelize = require('camelize')
 let Promise = require('bluebird')
 let { knex, filterParams, sortPageParams } = require('../db')
 let { getConstraints, addConstraints } = require('../auth/constraints')
 
 const SELECT_LIST_FIELDS = [
-  'd.id', 'd.name', 'd.shortname', 'd.created_on', 'd.last_ping_on', 'd.updated_on as last_seen',
+  'd.id', 'd.name', 'd.shortname', 'd.createdOn', 'd.lastPingOn', 'd.updatedOn as lastSeen',
   knex.raw('\'Active\' as status'),
-  knex.raw('d.id * 134 as total_tests')
+  knex.raw('d.id * 134 as totalTests')
 ]
 
 const SELECT_SHOW_FIELDS = [
-  'd.id', 'd.name', 'd.shortname', 'd.created_on', 'd.last_ping_on', 'd.updated_on as last_seen',
+  'd.id', 'd.name', 'd.shortname', 'd.createdOn', 'd.lastPingOn', 'd.updatedOn as lastSeen',
   knex.raw('\'Active\' as status'),
-  knex.raw('d.id * 134 as total_tests'),
-  'd.site_id',
+  knex.raw('d.id * 134 as totalTests'),
+  'd.siteId',
   // TODO: First Connected
   // TODO: First Approved On
   // TODO: First Approved By
@@ -27,7 +26,7 @@ function* listDevices(request){
   // get data constraints
   let dataConstraints = yield getConstraints(auth.credentials)
 
-  let deviceQuery = knex('device as d')
+  let deviceQuery = knex('Device as d')
     .modify(filterParams, query, 'name', 'd.name')
     .modify(addConstraints, dataConstraints, {device: 'd'})
 
@@ -45,20 +44,20 @@ function* listDevices(request){
 
   let result = {ok: true, total, length: data.length, data}
 
-  return camelize(result)
+  return result
 }
 
 function* showDevice(request) {
   const {params} = request
 
   // get item
-  const [item] = yield knex('device as d')
+  const [item] = yield knex('Device as d')
     .where('d.id', params.deviceId)
     .select(SELECT_SHOW_FIELDS)
 
   const result = {ok: true, data: item}
 
-  return camelize(result)
+  return result
 }
 
 function* updateDevice(request) {
@@ -67,14 +66,14 @@ function* updateDevice(request) {
   // TODO: check permission
 
   // update item
-  const updatedCount = yield knex('device')
+  const updatedCount = yield knex('Device')
     .where('id', params.deviceId)
     .returning(SELECT_SHOW_FIELDS)
     .update({
       name: payload.name,
       shortname: payload.shortname,
       notes: payload.notes,
-      site_id: payload.siteId
+      siteId: payload.siteId
     })
 
   if (updatedCount !== 1) {

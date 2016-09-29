@@ -9,53 +9,53 @@ const deviceNumber = 50
 function* seed(knex){
   // Create admin user and audit fields
   let now = new Date()
-  let [adminId] = yield knex('user').insert({
+  let [adminId] = yield knex('User').insert({
     name: 'admin',
     password: 'mypassword',
-    password_key: 'mykey',
+    passwordKey: 'mykey',
     approved: 1,
-    created_on: now,
-    locked_out: 0,
-    failed_password_attempts: 0
+    createdOn: now,
+    lockedOut: 0,
+    failedPasswordAttempts: 0
   })
   let auditFields = {
-    created_on: now,
-    created_by: adminId,
-    updated_on: now,
-    updated_by: adminId
+    createdOn: now,
+    createdBy: adminId,
+    updatedOn: now,
+    updatedBy: adminId
   }
 
   // Create partners
-  let [partnerOneId] = yield knex('partner').insert({
+  let [partnerOneId] = yield knex('Partner').insert({
     name: 'Partner One'
   })
 
-  let [partnerTwoId] = yield knex('partner').insert({
+  let [partnerTwoId] = yield knex('Partner').insert({
     name: 'Partner Two'
   })
 
-  let [partnerOneOrgUnitId] = yield knex('org_unit').insert({
+  let [partnerOneOrgUnitId] = yield knex('OrgUnit').insert({
     name: 'Partner One',
-    partner_id: partnerOneId,
+    partnerId: partnerOneId,
     depth: 1,
-    left_bound: 1,
-    right_bound: 6
+    leftBound: 1,
+    rightBound: 6
   })
 
-  let [regionNortheastId] = yield knex('org_unit').insert({
+  let [regionNortheastId] = yield knex('OrgUnit').insert({
     name: 'Northeast',
-    partner_id: partnerOneId,
+    partnerId: partnerOneId,
     depth: 2,
-    left_bound: 2,
-    right_bound: 3
+    leftBound: 2,
+    rightBound: 3
   })
 
-  let [regionMidwestId] = yield knex('org_unit').insert({
+  let [regionMidwestId] = yield knex('OrgUnit').insert({
     name: 'Midwest',
-    partner_id: partnerOneId,
+    partnerId: partnerOneId,
     depth: 2,
-    left_bound: 4,
-    right_bound: 5
+    leftBound: 4,
+    rightBound: 5
   })
 
   // Create permissions
@@ -64,7 +64,7 @@ function* seed(knex){
     let moduleData = {}
     modules[module.name] = moduleData
     for(let activity of module.activities){
-      let [permissionId] = yield knex('permission').insert({
+      let [permissionId] = yield knex('Permission').insert({
         module: module.name,
         activity
       })
@@ -78,19 +78,19 @@ function* seed(knex){
   let siteDatas = []
   for(let country of geography.countries){
     let countryData = _.pick(country, [
-      'abbreviation', 'name', 'a3', 'culture', 'country_code',
-      'state_label', 'lga_label', 'timezone', 'port_number',
-      'export_columns', 'inventory_days_threshold', 'month_starts_on_day'])
-    let [countryId] = yield knex('country').insert(countryData)
+      'abbreviation', 'name', 'a3', 'culture', 'countryCode',
+      'stateLabel', 'lgaLabel', 'timezone', 'portNumber',
+      'exportColumns', 'inventoryDaysThreshold', 'monthStartsOnDay'])
+    let [countryId] = yield knex('Country').insert(countryData)
     countryData.id = countryId
     countries[country.abbreviation] = countryData
     countryData.states = {}
 
     for(let state of (country.states || [])){
       let stateData = Object.assign(
-        {country_id: countryData.id},
+        {countryId: countryData.id},
         _.pick(state, ['abbreviation', 'name']))
-      let [stateId] = yield knex('state').insert(stateData)
+      let [stateId] = yield knex('State').insert(stateData)
       stateData.id = stateId
       let stateKey = state.abbreviation || state.name
       countryData.states[stateKey] = stateData
@@ -103,26 +103,26 @@ function* seed(knex){
 
       for(let lga of (state.lgas || [])){
         let lgaData = Object.assign(
-          {state_id: stateData.id},
+          {stateId: stateData.id},
           _.pick(lga, ['name']))
-        let [lgaId] = yield knex('lga').insert(lgaData)
+        let [lgaId] = yield knex('Lga').insert(lgaData)
         lgaData.id = lgaId
         stateData.lgas[lga.name] = lgaData
         lgaData.sites = {}
 
         let geoData = {
-          country_id: countryData.id,
-          state_id: stateData.id,
-          lga_id: lgaData.id
+          countryId: countryData.id,
+          stateId: stateData.id,
+          lgaId: lgaData.id
         }
         geoDatas.push(geoData)
 
         // up to 5 of sites at each LGA
         for(let siteNumber of _.range(1, 6 - (lgaData.id % 5))){
           let siteData = Object.assign({
-            partner_id: partnerOneId,
-            org_unit_id: orgUnitId,
-            name: `${lga.name} ${country.lga_label} ${state.name} #${siteNumber}`,
+            partnerId: partnerOneId,
+            orgUnitId,
+            name: `${lga.name} ${country.lgaLabel} ${state.name} #${siteNumber}`,
             shortname: `${lga.name}, ${stateKey} #${siteNumber}`,
             identifier: `Site ${siteNumber * lgaData.id}`,
             city: `${lga.name} City`,
@@ -130,7 +130,7 @@ function* seed(knex){
             zip: `12345-${lgaData.id}`
           }, geoData, auditFields)
 
-          let [siteId] = yield knex('site').insert(siteData)
+          let [siteId] = yield knex('Site').insert(siteData)
           siteData.id = siteId
           siteDatas.push(siteData)
         }
@@ -146,14 +146,14 @@ function* seed(knex){
     if(name === 'Admin'){
       userId = adminId
     } else {
-      [userId] = yield knex('user').insert({
+      [userId] = yield knex('User').insert({
         name: name.toLowerCase(),
         password: 'mypassword',
-        password_key: 'mykey',
+        passwordKey: 'mykey',
         approved: 1,
-        created_on: now,
-        locked_out: 0,
-        failed_password_attempts: 0
+        createdOn: now,
+        lockedOut: 0,
+        failedPasswordAttempts: 0
       })
     }
     userIds[name.toLowerCase()] = userId
@@ -161,15 +161,15 @@ function* seed(knex){
     let lastPartnerId = _.includes(['Jim', 'Jason'], name) ? partnerTwoId : partnerOneId
     let lastCountryId = _.includes(['Jim', 'Sam'], name) ? countries.NG.id : countries.US.id
 
-    yield knex('person').insert(Object.assign({
-      user_id: userId,
+    yield knex('Person').insert(Object.assign({
+      userId,
       name,
-      last_partner_id: lastPartnerId,
-      last_country_id: lastCountryId
+      lastPartnerId,
+      lastCountryId
     }, geoDatas[geoDatas.length % userId], auditFields))
   }
 
-  let [deviceTypeId] = yield knex('device_type').insert({
+  let [deviceTypeId] = yield knex('DeviceType').insert({
     name: 'GeneXpert'
   })
 
@@ -178,17 +178,17 @@ function* seed(knex){
     return Object.assign({}, auditFields, {
       name: `D${i} ${siteData.shortname}`,
       shortname: 'd'+i,
-      device_type_id: deviceTypeId,
-      site_id: siteData.id,
-      created_on: new Date(+now - 3*i*millisInHour),
-      updated_on: new Date(+now - i*millisInHour),
-      last_ping_on: new Date(+now - i*millisInHour/3)
+      deviceTypeId,
+      siteId: siteData.id,
+      createdOn: new Date(+now - 3*i*millisInHour),
+      updatedOn: new Date(+now - i*millisInHour),
+      lastPingOn: new Date(+now - i*millisInHour/3)
     })
   })
-  yield knex('device').insert(devices)
+  yield knex('Device').insert(devices)
 
   // data filters
-  let [dataFilterIdOH] = yield knex('data_filter').insert({
+  let [dataFilterIdOH] = yield knex('DataFilter').insert({
     name: 'Ohio Filter',
     // TODO specify query constraint format (likely similar to MongoDB)
     constraint: JSON.stringify({
@@ -198,7 +198,7 @@ function* seed(knex){
     })
   })
 
-  let [dataFilterIdNE] = yield knex('data_filter').insert({
+  let [dataFilterIdNE] = yield knex('DataFilter').insert({
     name: 'Nebraska Filter',
     constraint: JSON.stringify({
       state: {
@@ -207,7 +207,7 @@ function* seed(knex){
     })
   })
 
-  let [dataFilterIdOHWayne] = yield knex('data_filter').insert({
+  let [dataFilterIdOHWayne] = yield knex('DataFilter').insert({
     name: 'Wayne County, OH Filter',
     constraint: JSON.stringify({
       lga: {
@@ -216,7 +216,7 @@ function* seed(knex){
     })
   })
 
-  let [dataFilterIdMASuffolk] = yield knex('data_filter').insert({
+  let [dataFilterIdMASuffolk] = yield knex('DataFilter').insert({
     name: 'Suffolk County, MA Filter',
     constraint: JSON.stringify({
       lga: {
@@ -226,94 +226,94 @@ function* seed(knex){
   })
 
   // Roles
-  let [roleIdAdmin] = yield knex('role').insert({
+  let [roleIdAdmin] = yield knex('Role').insert({
     name: 'Admin',
-    partner_id: partnerOneId
+    partnerId: partnerOneId
   })
 
-  let [roleIdOH] = yield knex('role').insert({
+  let [roleIdOH] = yield knex('Role').insert({
     name: 'Ohio Users',
-    partner_id: partnerOneId,
-    data_filter_id: dataFilterIdOH
+    partnerId: partnerOneId,
+    dataFilterId: dataFilterIdOH
   })
 
-  let [roleIdNE] = yield knex('role').insert({
+  let [roleIdNE] = yield knex('Role').insert({
     name: 'Nebraska Users',
-    partner_id: partnerOneId,
-    data_filter_id: dataFilterIdNE
+    partnerId: partnerOneId,
+    dataFilterId: dataFilterIdNE
   })
 
-  let [roleIdOHWayne] = yield knex('role').insert({
+  let [roleIdOHWayne] = yield knex('Role').insert({
     name: 'Wayne County, OH Users',
-    partner_id: partnerOneId,
-    data_filter_id: dataFilterIdOHWayne
+    partnerId: partnerOneId,
+    dataFilterId: dataFilterIdOHWayne
   })
 
-  let [roleIdMASuffolk] = yield knex('role').insert({
+  let [roleIdMASuffolk] = yield knex('Role').insert({
     name: 'Suffolk County, MA Users',
-    partner_id: partnerOneId,
-    data_filter_id: dataFilterIdMASuffolk
+    partnerId: partnerOneId,
+    dataFilterId: dataFilterIdMASuffolk
   })
 
-  let [roleIdParentOrgUnit] = yield knex('role').insert({
+  let [roleIdParentOrgUnit] = yield knex('Role').insert({
     name: 'Partner One Users',
-    partner_id: partnerOneId,
-    org_unit_id: partnerOneOrgUnitId
+    partnerId: partnerOneId,
+    orgUnitId: partnerOneOrgUnitId
   })
 
-  let [roleIdNortheast] = yield knex('role').insert({
+  let [roleIdNortheast] = yield knex('Role').insert({
     name: 'Northeast Users',
-    partner_id: partnerOneId,
-    org_unit_id: regionNortheastId
+    partnerId: partnerOneId,
+    orgUnitId: regionNortheastId
   })
 
-  let [roleIdMidwest] = yield knex('role').insert({
+  let [roleIdMidwest] = yield knex('Role').insert({
     name: 'Midwest Users',
-    partner_id: partnerOneId,
-    org_unit_id: regionMidwestId
+    partnerId: partnerOneId,
+    orgUnitId: regionMidwestId
   })
 
   // assign permissions to roles
-  yield knex('role_permission').insert([
-    { role_id: roleIdAdmin, permission_id: modules.device.admin },
-    { role_id: roleIdAdmin, permission_id: modules.person.admin },
-    { role_id: roleIdAdmin, permission_id: modules.site.admin },
+  yield knex('RolePermission').insert([
+    { roleId: roleIdAdmin, permissionId: modules.device.admin },
+    { roleId: roleIdAdmin, permissionId: modules.person.admin },
+    { roleId: roleIdAdmin, permissionId: modules.site.admin },
 
-    { role_id: roleIdOH, permission_id: modules.site.edit },
-    { role_id: roleIdOH, permission_id: modules.device.edit },
+    { roleId: roleIdOH, permissionId: modules.site.edit },
+    { roleId: roleIdOH, permissionId: modules.device.edit },
 
-    { role_id: roleIdNE, permission_id: modules.site.edit },
-    { role_id: roleIdNE, permission_id: modules.device.edit },
+    { roleId: roleIdNE, permissionId: modules.site.edit },
+    { roleId: roleIdNE, permissionId: modules.device.edit },
 
-    { role_id: roleIdOHWayne, permission_id: modules.site.view },
-    { role_id: roleIdOHWayne, permission_id: modules.device.view },
+    { roleId: roleIdOHWayne, permissionId: modules.site.view },
+    { roleId: roleIdOHWayne, permissionId: modules.device.view },
 
-    { role_id: roleIdMASuffolk, permission_id: modules.device.view },
+    { roleId: roleIdMASuffolk, permissionId: modules.device.view },
 
-    { role_id: roleIdMidwest, permission_id: modules.site.edit },
-    { role_id: roleIdMidwest, permission_id: modules.device.edit },
+    { roleId: roleIdMidwest, permissionId: modules.site.edit },
+    { roleId: roleIdMidwest, permissionId: modules.device.edit },
 
-    { role_id: roleIdNortheast, permission_id: modules.site.edit },
-    { role_id: roleIdNortheast, permission_id: modules.device.edit },
+    { roleId: roleIdNortheast, permissionId: modules.site.edit },
+    { roleId: roleIdNortheast, permissionId: modules.device.edit },
 
-    { role_id: roleIdParentOrgUnit, permission_id: modules.site.edit },
-    { role_id: roleIdParentOrgUnit, permission_id: modules.device.edit }
+    { roleId: roleIdParentOrgUnit, permissionId: modules.site.edit },
+    { roleId: roleIdParentOrgUnit, permissionId: modules.device.edit }
   ])
 
 
   // assign roles to users
-  yield knex('user_role').insert([
-    { user_id: userIds['admin'], role_id: roleIdAdmin },
-    { user_id: userIds['bob'], role_id: roleIdOH },
-    { user_id: userIds['ed'], role_id: roleIdMidwest },
-    { user_id: userIds['frank'], role_id: roleIdNE },
-    { user_id: userIds['fred'], role_id: roleIdOHWayne },
-    { user_id: userIds['jon'], role_id: roleIdParentOrgUnit },
-    { user_id: userIds['ned'], role_id: roleIdNortheast },
-    { user_id: userIds['sam'], role_id: roleIdAdmin },
-    { user_id: userIds['jim'], role_id: roleIdParentOrgUnit },
-    { user_id: userIds['steve'], role_id: roleIdMASuffolk },
-    { user_id: userIds['bill'], role_id: roleIdMASuffolk },
-    { user_id: userIds['bill'], role_id: roleIdOH }])
+  yield knex('UserRole').insert([
+    { userId: userIds['admin'], roleId: roleIdAdmin },
+    { userId: userIds['bob'], roleId: roleIdOH },
+    { userId: userIds['ed'], roleId: roleIdMidwest },
+    { userId: userIds['frank'], roleId: roleIdNE },
+    { userId: userIds['fred'], roleId: roleIdOHWayne },
+    { userId: userIds['jon'], roleId: roleIdParentOrgUnit },
+    { userId: userIds['ned'], roleId: roleIdNortheast },
+    { userId: userIds['sam'], roleId: roleIdAdmin },
+    { userId: userIds['jim'], roleId: roleIdParentOrgUnit },
+    { userId: userIds['steve'], roleId: roleIdMASuffolk },
+    { userId: userIds['bill'], roleId: roleIdMASuffolk },
+    { userId: userIds['bill'], roleId: roleIdOH }])
 
 }

@@ -11,23 +11,23 @@ function alias(table){
 function getConstraints(credentials){
   // FIXME only include roles that assign permissions of interest
   let dataFilters = query('Get constraints for user credentials')
-    .from('data_filter as f')
-    .innerJoin('role as r', 'f.id', 'r.data_filter_id')
-    .innerJoin('user_role as ur', 'r.id', 'ur.role_id')
+    .from('DataFilter as f')
+    .innerJoin('Role as r', 'f.id', 'r.dataFilterId')
+    .innerJoin('UserRole as ur', 'r.id', 'ur.roleId')
     .where({
-      'ur.user_id': credentials.id,
-      'r.partner_id': credentials.partnerId
+      'ur.userId': credentials.id,
+      'r.partnerId': credentials.partnerId
     })
     .select('f.constraint')
     .map(f => JSON.parse(f.constraint))
 
   let topOrgUnit = query('Get top org unit for user credentials')
-    .from('org_unit as o')
-    .innerJoin('role as r', 'o.id', 'r.org_unit_id')
-    .innerJoin('user_role as ur', 'r.id', 'ur.role_id')
+    .from('OrgUnit as o')
+    .innerJoin('Role as r', 'o.id', 'r.orgUnitId')
+    .innerJoin('UserRole as ur', 'r.id', 'ur.roleId')
     .where({
-      'ur.user_id': credentials.id,
-      'r.partner_id': credentials.partnerId
+      'ur.userId': credentials.id,
+      'r.partnerId': credentials.partnerId
     })
     .orderBy('o.depth')
     .first('o.id')
@@ -68,32 +68,32 @@ function addConstraints(queryBuilder, constraints, aliases){
       throw new Error('Must provide either site or device alias or modify this to accept provided aliases')
     }
     site = alias('site')
-    queryBuilder.leftOuterJoin(`site as ${site}`, `${device}.site_id`, `${site}.id`)
+    queryBuilder.leftOuterJoin(`Site as ${site}`, `${device}.siteId`, `${site}.id`)
   }
 
   if(!partner){
-    partner = alias('partner')
-    queryBuilder.leftOuterJoin(`partner as ${partner}`, `${site}.partner_id`, `${partner}.id`)
+    partner = alias('Partner')
+    queryBuilder.leftOuterJoin(`Partner as ${partner}`, `${site}.partnerId`, `${partner}.id`)
   }
 
   if(!orgUnit){
-    orgUnit = alias('org_unit')
-    queryBuilder.leftOuterJoin(`org_unit as ${orgUnit}`, `${site}.org_unit_id`, `${orgUnit}.id`)
+    orgUnit = alias('OrgUnit')
+    queryBuilder.leftOuterJoin(`OrgUnit as ${orgUnit}`, `${site}.orgUnitId`, `${orgUnit}.id`)
   }
 
   if(!country){
-    country = alias('country')
-    queryBuilder.leftOuterJoin(`country as ${country}`, `${site}.country_id`, `${country}.id`)
+    country = alias('Country')
+    queryBuilder.leftOuterJoin(`Country as ${country}`, `${site}.countryId`, `${country}.id`)
   }
 
   if(!state){
-    state = alias('state')
-    queryBuilder.leftOuterJoin(`state as ${state}`, `${site}.state_id`, `${state}.id`)
+    state = alias('State')
+    queryBuilder.leftOuterJoin(`State as ${state}`, `${site}.stateId`, `${state}.id`)
   }
 
   if(!lga){
-    lga = alias('lga')
-    queryBuilder.leftOuterJoin(`lga as ${lga}`, `${site}.lga_id`, `${lga}.id`)
+    lga = alias('Lga')
+    queryBuilder.leftOuterJoin(`Lga as ${lga}`, `${site}.lgaId`, `${lga}.id`)
   }
 
   // Partner, country, and org unit constraints are ANDed
@@ -103,15 +103,15 @@ function addConstraints(queryBuilder, constraints, aliases){
   if(constraints.orgUnit){
     // find all org units below topmost granted org unit
     // TODO likely makes sense to move nested set hierarchy queries to it's own helper function
-    let orgUnitSubOne = alias('org_unit_sub_1')
-    let orgUnitSubTwo = alias('org_unit_sub_2')
-    let orgUnitSubquery = query('Select org_unit hierachy for constraints')
-      .from(`org_unit as ${orgUnitSubOne}`)
-      .innerJoin(`org_unit as ${orgUnitSubTwo}`,
-        knex.raw(`${orgUnitSubTwo}.left_bound BETWEEN ${orgUnitSubOne}.left_bound AND ${orgUnitSubOne}.right_bound`))
+    let orgUnitSubOne = alias('OrgUnitSub1')
+    let orgUnitSubTwo = alias('OrgUnitSub2')
+    let orgUnitSubquery = query('Select OrgUnit hierachy for constraints')
+      .from(`OrgUnit as ${orgUnitSubOne}`)
+      .innerJoin(`OrgUnit as ${orgUnitSubTwo}`,
+        knex.raw(`${orgUnitSubTwo}.leftBound BETWEEN ${orgUnitSubOne}.leftBound AND ${orgUnitSubOne}.rightBound`))
       .where({
         [`${orgUnitSubOne}.id`]: constraints.orgUnit.id,
-        [`${orgUnitSubTwo}.partner_id`]: constraints.partner.id
+        [`${orgUnitSubTwo}.partnerId`]: constraints.partner.id
       }).select(`${orgUnitSubTwo}.id`)
     queryBuilder.whereIn(`${orgUnit}.id`, orgUnitSubquery)
   }

@@ -1,5 +1,4 @@
 let Promise = require('bluebird')
-let decamelize = require('decamelize')
 let Boom = require('boom')
 let Joi = require('joi')
 
@@ -93,7 +92,7 @@ function asyncHandler(handler){
 function getSortPageParams(params, defaultSort){
   let result = {}
 
-  result.sortCol = params.sortCol ? decamelize(params.sortCol) : defaultSort
+  result.sortCol = params.sortCol ? params.sortCol : defaultSort
   result.sortDir = params.sortDir == 'desc' ? 'desc' : 'asc'
   result.page = parseInt(params.page) || 0
   result.size = parseInt(params.size) || 20
