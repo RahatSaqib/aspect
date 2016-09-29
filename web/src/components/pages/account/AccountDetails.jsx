@@ -55,6 +55,4 @@ function mapDispatchToProps(dispatch) {
   }, dispatch)
 }
 
-export const AccountDetailsContainer = _.flowRight(
-  connect(mapStateToProps, mapDispatchToProps)
-)(AccountDetails)
+export const AccountDetailsContainer = connect(mapStateToProps, mapDispatchToProps)(AccountDetails)

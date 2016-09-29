@@ -44,7 +44,7 @@ const validate = acccountDetails => {
   const errors = {}
   if (!acccountDetails.get('name')) {
     //TODO: i18n
-    errors.user = 'Please enter your Full name'
+    errors.name = 'Please enter your Full name'
   }
   if (!validateEmailAddress(acccountDetails.get('email')).optional().isValid()) {
     errors.email = 'Please enter a valid email address'
