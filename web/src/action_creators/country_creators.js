@@ -1,4 +1,3 @@
-import moment from 'moment'
 import { aspectFetch } from '../utils/fetch'
 import { addError } from './error_creators'
 import types from './../constants/action_types'
@@ -11,13 +10,15 @@ function receiveCountriesForSelectLists(countries) {
   return {
     type:  types.RECEIVE_COUNTRIES_FOR_SELECT_LISTS,
     countries: countries,
-    lastRefreshed: moment()
+    lastRefreshed: new Date()
   }
 }
 
 export function fetchCountriesForSelectLists(forceRefresh, lastRefreshed) {
   return dispatch => {
-    if(forceRefresh || !lastRefreshed || moment.duration(moment().diff(lastRefreshed)).asMinutes() > 5) {
+    const now = new Date()
+    const fiveMinutes = 300000
+    if(forceRefresh || !lastRefreshed || Math.abs(now.getTime() - lastRefreshed.getTime()) > fiveMinutes) {
       dispatch(requestCountriesForSelectLists())
       return aspectFetch('/geography/select-list')
         .then(json => dispatch(receiveCountriesForSelectLists(json.data)))
