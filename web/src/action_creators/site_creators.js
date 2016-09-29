@@ -42,3 +42,30 @@ export function fetchSites(filters = Immutable.Map({ name: '' }), sortCol = 'nam
       })
   }
 }
+
+function requestSingleSite(siteId) {
+  return {
+    type: types.REQUEST_SINGLE_SITE,
+    siteId
+  }
+}
+
+function receiveSingleSite(item) {
+  return {
+    type: types.RECEIVE_SINGLE_SITE,
+    item
+  }
+}
+
+export function fetchSingleSite(siteId){
+  return dispatch => {
+
+    dispatch(requestSingleSite(siteId))
+
+    return aspectFetch(`/site/${siteId}`)
+      .then(json => dispatch(receiveSingleSite(json.data)))
+      .catch(err => {
+        dispatch(addError(`Loading a site (${siteId}) failed`, err.message, err))
+      })
+  }
+}
