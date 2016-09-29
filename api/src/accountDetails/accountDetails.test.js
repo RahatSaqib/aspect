@@ -2,8 +2,6 @@ let proxyquire = require('proxyquire')
 let {assert} = require('chai')
 let _ = require('lodash')
 let sinon = require('sinon')
-let camelize = require('camelize')
-let decamelize = require('decamelize')
 let endpointUtils = require('../../test/unit_tests/endpointUtils')
 
 describe('account details endpoints', function () {
@@ -35,7 +33,7 @@ describe('account details endpoints', function () {
           }
         }, accountDetails = {
           id: 68,
-          user_id: 4,
+          userId: 4,
           username: 'admin',
           name: 'Installer Name',
           title: 'Installer',
@@ -43,12 +41,12 @@ describe('account details endpoints', function () {
           email2: null,
           phone: null,
           cell: null,
-          country_id: 1,
-          state_id: null,
-          lga_id: null,
+          countryId: 1,
+          stateId: null,
+          lgaId: null,
+          zip: '1234',
           timezone: 'Eastern Standard Time',
-          culture: 'en-US',
-          zip: '1234'
+          culture: 'en-US'
         }
 
       beforeEach(function () {
@@ -61,11 +59,11 @@ describe('account details endpoints', function () {
           .with(requestData)
           .handleResponseWith(function (response) {
             assert.isTrue(response.ok)
-            assert.deepEqual(response.data, camelize(accountDetails))
+            assert.deepEqual(response.data, accountDetails)
 
             const getPersonQuery = dbSpy.query.withArgs('Get account details for currently logged in user').lastCall.returnValue
             assert.equal(getPersonQuery.from.lastCall.args[0], 'user as u')
-            assert.deepEqual(getPersonQuery.leftJoin.lastCall.args, ['person as p', 'u.id', 'p.user_id'])
+            assert.deepEqual(getPersonQuery.leftJoin.lastCall.args, ['person as p', 'u.id', 'p.userId'])
             assert.deepEqual(getPersonQuery.where.lastCall.args[0], {'u.name': requestData.auth.credentials.name})
           })
           .thenCall(done)
@@ -76,7 +74,7 @@ describe('account details endpoints', function () {
         endpointUtils.callHandlerOn(endpoint)
           .with(requestData)
           .handleResponseWith(function (responseData) {
-            assert.deepEqual(responseData.data, camelize(accountDetails))
+            assert.deepEqual(responseData.data, accountDetails)
           })
           .thenCall(done)
           .execute()
@@ -92,7 +90,7 @@ describe('account details endpoints', function () {
           }
         }, accountDetails = {
           id: 111,
-          user_id: 12,
+          userId: 12,
           username: 'logged-in-user',
           name: 'John Smith',
           title: 'Analyst',
@@ -100,13 +98,13 @@ describe('account details endpoints', function () {
           email2: null,
           phone: null,
           cell: null,
-          country_id: 1,
-          state_id: null,
-          lga_id: null,
+          countryId: 1,
+          stateId: null,
+          lgaId: null,
+          zip: '1234',
           timezone: 'Eastern Standard Time',
-          culture: 'en-GB',
-          zip: '1234'
-        }, requestAccountDetails = camelize(accountDetails)
+          culture: 'en-GB'
+        }
 
       beforeEach(function () {
         setupRoutes('PUT', '/account-details/current')
@@ -114,14 +112,14 @@ describe('account details endpoints', function () {
 
       })
 
-      it('Should save the user\'s account details which have changed and update updated_on and updated_by', function (done) {
+      it('Should save the user\'s account details which have changed and update updatedOn and updatedBy', function (done) {
         const changedRequestProperties = {
           title: 'Job Title has Changed',
           email2: 'secondary@email.com',
           countryId: 5
         }
         const changedDatabaseProperties = _.reduce(changedRequestProperties, function(result, value, key) {
-          result[decamelize(key)] = value
+          result[key] = value
           return result
         }, {})
 
@@ -130,15 +128,15 @@ describe('account details endpoints', function () {
         endpointUtils.callHandlerOn(endpoint)
           .with({
             auth: requestData.auth,
-            payload: Object.assign({}, requestAccountDetails, changedRequestProperties)
+            payload: Object.assign({}, accountDetails, changedRequestProperties)
           })
           .handleResponseWith(function () {
             const savePersonQuery = dbSpy.query.withArgs('Save account details for currently logged in user').lastCall.returnValue
             assert.equal(savePersonQuery.from.lastCall.args[0], 'person as p')
-            assert.deepEqual(savePersonQuery.where.lastCall.args[0], {'p.id': requestAccountDetails.id})
+            assert.deepEqual(savePersonQuery.where.lastCall.args[0], {'p.id': accountDetails.id})
             assert.deepEqual(savePersonQuery.update.lastCall.args[0], Object.assign({}, changedDatabaseProperties, {
-              updated_on: now,
-              updated_by: accountDetails.user_id
+              updatedOn: now,
+              updatedBy: accountDetails.userId
             }))
             clock.restore()
           })
@@ -166,7 +164,7 @@ describe('account details endpoints', function () {
             payload: accountDetails
           })
           .handleResponseWith(function (responseData) {
-            assert.deepEqual(responseData.data, camelize(accountDetails))
+            assert.deepEqual(responseData.data, accountDetails)
           })
           .thenCall(done)
           .execute()

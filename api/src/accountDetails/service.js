@@ -1,25 +1,19 @@
 let _ = require('lodash')
-let camelize = require('camelize')
-let decamelize = require('decamelize')
 let Boom = require('boom')
-let { query, knex } = require('../db')
+let { query } = require('../db')
 
 function getAccountDetailsForUsername(username) {
-  //TODO: Add migration for ZIP code
   return query('Get account details for currently logged in user').from('user as u')
-    .leftJoin('person as p', 'u.id', 'p.user_id')
+    .leftJoin('person as p', 'u.id', 'p.userId')
     .where({'u.name': username})
-    .first('p.id', 'p.user_id', 'u.name as username', 'p.name', 'p.title', 'p.email', 'p.email2',
-      'p.phone', 'p.cell', 'p.country_id', 'p.state_id', 'p.lga_id', 'p.timezone', 'p.culture',
-      knex.raw('\'12345\' as zip'))
+    .first('p.id', 'p.userId', 'u.name as username', 'p.name', 'p.title', 'p.email', 'p.email2',
+      'p.phone', 'p.cell', 'p.countryId', 'p.stateId', 'p.lgaId', 'p.zip', 'p.timezone', 'p.culture')
 }
 
 function* getAccountDetailsForLoggedInUser(request){
   const accountDetails = yield getAccountDetailsForUsername(request.auth.credentials.name)
 
-  const result = {ok: true, data: accountDetails}
-
-  return camelize(result)
+  return {ok: true, data: accountDetails}
 }
 
 function* saveAccountDetailsForLoggedInUser(request){
@@ -31,19 +25,19 @@ function* saveAccountDetailsForLoggedInUser(request){
   }
 
   //Compare the record with what has been sent and find changed values
+  const updatablePersonFields = ['name', 'title', 'email', 'email2', 'phone', 'cell', 'countryId', 'stateId', 'lgaId', 'zip', 'timezone', 'culture']
   const changedFields = _.reduce(request.payload, function(result, value, key) {
-    const fieldName = decamelize(key)
-    if(!_.includes(['id', 'username', 'zip'], fieldName) && fieldName in accountDetails &&
-      accountDetails[fieldName] != value) {
-      result[fieldName] = value
+    if(_.includes(updatablePersonFields, key) && key in accountDetails &&
+      accountDetails[key] != value) {
+      result[key] = value
     }
     return result
   }, {})
 
   //Update record if any values have changed
   if(!_.isEmpty(changedFields)) {
-    changedFields.updated_on = new Date()
-    changedFields.updated_by = accountDetails.user_id
+    changedFields.updatedOn = new Date()
+    changedFields.updatedBy = accountDetails.userId
 
     yield query('Save account details for currently logged in user').from('person as p')
       .where({'p.id': accountDetails.id})
@@ -52,9 +46,7 @@ function* saveAccountDetailsForLoggedInUser(request){
     accountDetails = yield getAccountDetailsForUsername(request.auth.credentials.name)
   }
 
-  const result = {ok: true, data: accountDetails}
-
-  return camelize(result)
+  return {ok: true, data: accountDetails}
 }
 
 module.exports = {
