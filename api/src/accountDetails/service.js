@@ -15,9 +15,9 @@ function getAccountDetailsForUsername(username) {
 }
 
 function* getAccountDetailsForLoggedInUser(request){
-  let accountDetails = yield getAccountDetailsForUsername(request.auth.credentials.name)
+  const accountDetails = yield getAccountDetailsForUsername(request.auth.credentials.name)
 
-  let result = {ok: true, data: accountDetails}
+  const result = {ok: true, data: accountDetails}
 
   return camelize(result)
 }
@@ -31,8 +31,8 @@ function* saveAccountDetailsForLoggedInUser(request){
   }
 
   //Compare the record with what has been sent and find changed values
-  let changedFields = _.reduce(request.payload, function(result, value, key) {
-    let fieldName = decamelize(key)
+  const changedFields = _.reduce(request.payload, function(result, value, key) {
+    const fieldName = decamelize(key)
     if(!_.includes(['id', 'username', 'zip'], fieldName) && fieldName in accountDetails &&
       accountDetails[fieldName] != value) {
       result[fieldName] = value
@@ -52,7 +52,7 @@ function* saveAccountDetailsForLoggedInUser(request){
     accountDetails = yield getAccountDetailsForUsername(request.auth.credentials.name)
   }
 
-  let result = {ok: true, data: accountDetails}
+  const result = {ok: true, data: accountDetails}
 
   return camelize(result)
 }

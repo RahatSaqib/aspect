@@ -2,7 +2,7 @@ let _ = require('lodash')
 let { query } = require('../db')
 
 function* buildGeographySelectList(){
-  let countriesStatesAndLGAs = yield query('Get countries, states and LGAs for select lists')
+  const countriesStatesAndLGAs = yield query('Get countries, states and LGAs for select lists')
     .from('country as c')
     .leftJoin('state as s', 'c.id', 's.country_id')
     .leftJoin('lga as l', 's.id', 'l.state_id')
@@ -10,7 +10,7 @@ function* buildGeographySelectList(){
     .select('c.id as countryId', 'c.name as countryName', 's.id as stateId',
       's.name as stateName', 'l.id as lgaId', 'l.name as lgaName')
 
-  let result = {
+  const result = {
     ok: true,
     data: _.map(_.uniqBy(countriesStatesAndLGAs, 'countryId'), function(countryRecord) {
       return {

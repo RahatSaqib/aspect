@@ -5,7 +5,7 @@ let endpointUtils = require('../../test/unit_tests/endpointUtils')
 
 describe('geography endpoints', function () {
   function setupRoute(method, path, serviceStub) {
-    let endpoints = proxyquire('./endpoints', {
+    const endpoints = proxyquire('./endpoints', {
       './service': serviceStub
     })
     return _.find(endpoints, {method: method, path: path})
@@ -13,7 +13,8 @@ describe('geography endpoints', function () {
 
   describe('/geography/select-list', function () {
     describe('GET', function () {
-      let endpoint, expectedResponse = [ 'List of Countries' ]
+      let endpoint
+      const expectedResponse = [ 'List of Countries' ]
 
       beforeEach(function () {
         endpoint = setupRoute('GET', '/geography/select-list', {

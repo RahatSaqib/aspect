@@ -28,12 +28,12 @@ describe('geography service', function () {
       return run(service.buildGeographySelectList)(function() {
         const countriesStatesAndLGAsQuery = dbSpy.query.withArgs('Get countries, states and LGAs for select lists').lastCall.returnValue
         assert.equal(countriesStatesAndLGAsQuery.from.lastCall.args[0], 'country as c')
-        let leftJoins = countriesStatesAndLGAsQuery.leftJoin.getCalls()
-        let statesLeftJoin = _.find(leftJoins, function (leftJoin) {
+        const leftJoins = countriesStatesAndLGAsQuery.leftJoin.getCalls()
+        const statesLeftJoin = _.find(leftJoins, function (leftJoin) {
           return _.isEqual(leftJoin.args, ['state as s', 'c.id', 's.country_id'])
         })
         assert.isOk(statesLeftJoin, 'Can\'t find the join to the states table')
-        let lgasLeftJoin = _.find(leftJoins, function (leftJoin) {
+        const lgasLeftJoin = _.find(leftJoins, function (leftJoin) {
           return _.isEqual(leftJoin.args, ['lga as l', 's.id', 'l.state_id'])
         })
         assert.isOk(lgasLeftJoin, 'Can\'t find the join to the LGAs table')

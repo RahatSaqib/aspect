@@ -12,7 +12,7 @@ describe('account details endpoints', function () {
   function setupRoutes(method, path) {
     dbSpy = require('../../test/unit_tests/dbSpy')
     sinon.spy(dbSpy, 'query')
-    let service = proxyquire.noCallThru().load('./service', {
+    const service = proxyquire.noCallThru().load('./service', {
       '../db': dbSpy
     })
     endpoints = proxyquire('./endpoints', {
@@ -125,8 +125,8 @@ describe('account details endpoints', function () {
           return result
         }, {})
 
-        let now = new Date()
-        let clock = sinon.useFakeTimers(now.getTime())
+        const now = new Date()
+        const clock = sinon.useFakeTimers(now.getTime())
         endpointUtils.callHandlerOn(endpoint)
           .with({
             auth: requestData.auth,
