@@ -49,7 +49,7 @@ module.exports = [
           siteId: Joi.number().required(),
           name: Joi.string().required(),
           shortname: Joi.string().required(),
-          notes: Joi.string()
+          notes: Joi.string().allow('')
         }
       }
     }
