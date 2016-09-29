@@ -16,7 +16,8 @@ import LinearProgress from 'material-ui/LinearProgress'
 // Our own imports
 import { isEditable } from '../../../../selectors/site'
 import {
-  fetchSingleSite
+  fetchSingleSite,
+  updateSingleSite
 } from '../../../../action_creators/site_creators'
 import ReadOnlyFields from '../../../shared/ReadOnlyFields'
 import { FormContainer } from './SiteForm'
@@ -78,12 +79,18 @@ export class SiteDetail extends React.PureComponent {
   handleSubmit = data => {
     const { site } = this.props
 
-    this.props.updateSingleDevice(site.get('id'), {
+    this.props.updateSingleSite(site.get('id'), {
       // Map form fields to API fields
       name: data.get('name'),
       shortname: data.get('shortName'),
-      notes: data.get('notes'),
-      siteId: data.get('site')
+      timezone: data.get('timezone'),
+      country: data.get('country'),
+      state: data.get('state'),
+      lga: data.get('lga'),
+      street1: data.get('address'),
+      street2: data.get('address2'),
+      city: data.get('city'),
+      zip: data.get('zip')
     })
   }
 
@@ -121,12 +128,12 @@ export class SiteDetail extends React.PureComponent {
       // Map API fields to form fields
       name: site.get('name'),
       shortName: site.get('shortname'),
-      timezone: site.get('timezone'),
+      timezone: site.get('timezone') || /* FIXME */ '',
       country: site.get('country'),
       state: site.get('state'),
       lga: site.get('lga'),
       address: site.get('street1'),
-      address2: site.get('street2'),
+      address2: site.get('street2') || /* FIXME */ '',
       city: site.get('city'),
       zip: site.get('zip')
     }
@@ -229,7 +236,8 @@ function mapStateToProps(state, props) {
 
 function mapDispatchToProps(dispatch) {
   return bindActionCreators({
-    fetchSingleSite
+    fetchSingleSite,
+    updateSingleSite
   }, dispatch)
 }
 
