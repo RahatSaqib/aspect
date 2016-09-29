@@ -69,3 +69,34 @@ export function fetchSingleSite(siteId){
       })
   }
 }
+
+function requestUpdatingSingleSite(siteId, data) {
+  return {
+    type: types.REQUEST_UPDATING_SINGLE_SITE,
+    siteId,
+    data
+  }
+}
+
+function receiveUpdatedSingleSite(item) {
+  return {
+    type: types.RECEIVE_UPDATED_SINGLE_SITE,
+    item
+  }
+}
+
+export function updateSingleSite(siteId, data){
+  return dispatch => {
+
+    dispatch(requestUpdatingSingleSite(siteId, data))
+
+    return aspectFetch(`/site/${siteId}`, {
+      method: 'PUT',
+      body: JSON.stringify(data)
+    })
+      .then(json => dispatch(receiveUpdatedSingleSite(json.data)))
+      .catch(err => {
+        dispatch(addError(`Updating a site (${siteId}) failed`, err.message, err))
+      })
+  }
+}
