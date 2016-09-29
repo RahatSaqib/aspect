@@ -4,7 +4,6 @@ import { bindActionCreators } from 'redux'
 import { connect } from 'react-redux'
 import { fetchCountriesForSelectLists } from '../../action_creators/country_creators'
 import SelectInput from './SelectInput'
-import LinearProgress from 'material-ui/LinearProgress'
 
 class LocationSelector extends React.PureComponent {
   static propTypes = {
@@ -118,7 +117,6 @@ class LocationSelector extends React.PureComponent {
 
     return (
       <div>
-        {this.state.loading && <LinearProgress />}
         <SelectInput name={countryIdFieldName} label="Country"
                      disabled={disabled || loading || !countries.length} dataSource={countries}
                      dataSourceConfig={selectListDataSourceMappings} onChange={this.onCountryChanged} />
