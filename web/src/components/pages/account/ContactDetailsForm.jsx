@@ -38,7 +38,6 @@ const ContactDetailsForm = props => {
       </div>
     </form>
   )
-  //TODO: Disable State and LGA inputs until parent item is selected
 }
 
 const validate = acccountDetails => {
