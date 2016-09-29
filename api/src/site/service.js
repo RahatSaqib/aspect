@@ -64,7 +64,51 @@ function* showSite(request) {
   return result
 }
 
+function* updateSite(request) {
+  const {params, payload} = request
+
+  // TODO: check permission
+
+  // TODO: maybe we want to use countryId, stateId and lgaId from payload?
+  const [{id: countryId}] = yield knex('Country')
+    .select('id')
+    .where('name', payload.country)
+
+  const [{id: stateId}] = yield knex('State')
+    .select('id')
+    .where('name', payload.state)
+    .where('countryId', countryId)
+
+  const [{id: lgaId}] = yield knex('Lga')
+    .select('id')
+    .where('name', payload.lga)
+    .where('stateId', stateId)
+
+  // update item
+  const updatedCount = yield knex('Site')
+    .where('id', params.siteId)
+    .update({
+      name: payload.name,
+      shortname: payload.shortname,
+      timezoneId: payload.timezone, // TODO
+      street1: payload.street1,
+      street2: payload.street2,
+      countryId,
+      stateId,
+      lgaId,
+      city: payload.city,
+      zip: payload.zip
+    })
+
+  if (updatedCount !== 1) {
+    throw new Error('Unknown error')
+  }
+
+  return yield* showSite(request)
+}
+
 module.exports = {
   listSites,
-  showSite
+  showSite,
+  updateSite
 }

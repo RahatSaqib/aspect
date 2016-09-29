@@ -1,6 +1,6 @@
 let Joi = require('joi')
 let { asyncHandler, validateSortPageParams } = require('../routes')
-let { listSites, showSite } = require('./service')
+let { listSites, showSite, updateSite } = require('./service')
 
 module.exports = [
   {
@@ -29,6 +29,33 @@ module.exports = [
       validate: {
         params: {
           siteId: Joi.string().description('Site id').required()
+        }
+      }
+    }
+  },
+  {
+    method: 'PUT',
+    path: '/site/{siteId}',
+    handler: asyncHandler(updateSite),
+    config: {
+      description: 'Update Site Detail',
+      notes: 'Detail of a site',
+      auth: {scope: ['site:edit']},
+      validate: {
+        params: {
+          siteId: Joi.string().description('Site id').required()
+        },
+        payload: {
+          name: Joi.string().required(),
+          shortname: Joi.string().required(),
+          timezone: Joi.string().allow(''),
+          country: Joi.string().required(),
+          state: Joi.string().required(),
+          lga: Joi.string().required(),
+          street1: Joi.string().required(),
+          street2: Joi.string().allow(''),
+          city: Joi.string().required(),
+          zip: Joi.string().required()
         }
       }
     }
