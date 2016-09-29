@@ -40,8 +40,7 @@ class LocationSelector extends React.PureComponent {
   }
 
   componentWillReceiveProps(nextProps) {
-    //TODO: Does next props contain everything? Do we need such a lengthy spread operator below?
-    this.initialiseCountriesAndSelections({...this.props, nextProps})
+    this.initialiseCountriesAndSelections(nextProps)
   }
 
   initialiseCountriesAndSelections(props) {
