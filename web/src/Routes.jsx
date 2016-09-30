@@ -90,10 +90,6 @@ const routes =
 
 class Routes extends Component {
 
-  constructor(props) {
-    super(props)
-  }
-
   render() {
     return (
       routes
