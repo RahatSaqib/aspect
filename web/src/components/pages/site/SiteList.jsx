@@ -5,6 +5,7 @@ import {
   injectIntl,
   defineMessages
 } from 'react-intl'
+import { withRouter } from 'react-router'
 import { bindActionCreators } from 'redux'
 import { connect } from 'react-redux'
 import Helmet from 'react-helmet'
@@ -54,6 +55,10 @@ export class SiteList extends React.PureComponent {
   handleSubmit = this.handleSubmit.bind(this)
   resetSites = this.resetSites.bind(this)
 
+  handleItemIdSelection = (siteId) => {
+    this.props.router.push(`/site/${siteId}`)
+  }
+
   filterSitesChange(e){
     this.setState({ filters: this.state.filters.set(e.target.id, e.target.value) })
   }
@@ -97,7 +102,9 @@ export class SiteList extends React.PureComponent {
           </Toolbar>
         </form>
 
-        <DataTable  handleFetch={ this.props.fetchSites }
+        <DataTable  selectable
+                    handleItemIdSelection={this.handleItemIdSelection}
+                    handleFetch={ this.props.fetchSites }
                     items={ this.props.items }
                     table={ this.props.table }
                     columns={[{ db: 'name', title: formatMessage(messages.siteName) },
@@ -122,5 +129,6 @@ function mapDispatchToProps(dispatch) {
 
 export const SiteListContainer = _.flowRight(
   injectIntl,
+  withRouter,
   connect(mapStateToProps, mapDispatchToProps)
 )(SiteList)
