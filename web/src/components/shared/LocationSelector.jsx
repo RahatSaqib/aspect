@@ -43,10 +43,10 @@ class LocationSelector extends React.PureComponent {
 
   initialiseCountriesAndSelections(props) {
     const {countriesForSelectLists, countryIdFieldName, stateIdFieldName, initialValues} = props
-    if(initialValues && initialValues[countryIdFieldName] && !this.props.selectedCountry && !_.isEmpty(countriesForSelectLists.get('countries'))) {
+    if(initialValues && initialValues[countryIdFieldName] && !this.state.selectedCountry && !_.isEmpty(countriesForSelectLists.get('countries'))) {
       const initialCountry = _.find(countriesForSelectLists.get('countries'), {id: initialValues[countryIdFieldName]})
       this.selectCountry(initialCountry)
-      if(initialValues && initialValues[stateIdFieldName] && !this.props.selectedState) {
+      if(initialValues && initialValues[stateIdFieldName] && !this.state.selectedState) {
         const initialState = _.find(initialCountry.states, {id: initialValues[stateIdFieldName]})
         this.selectState(initialState)
       }
@@ -55,12 +55,12 @@ class LocationSelector extends React.PureComponent {
 
   onCountryChanged(event, index, value) {
     const {countriesForSelectLists} = this.props
-    const selectedCountry = countriesForSelectLists.get('countries').find(country => country.id === value)
+    const selectedCountry = _.find(countriesForSelectLists.get('countries').toJS(), {id: value})
     this.selectCountry(selectedCountry)
   }
 
   selectCountry(country) {
-    if(!_.isEqual(country, this.props.selectedCountry)) {
+    if(!_.isEqual(country, this.state.selectedCountry)) {
       this.setState({
         selectedCountry: country
       })
@@ -69,14 +69,14 @@ class LocationSelector extends React.PureComponent {
   }
 
   onStateChanged(event, index, value) {
-    if(this.props.selectedCountry) {
-      const selectedState = _.find(this.props.selectedCountry.states, {id: value})
+    if(this.state.selectedCountry) {
+      const selectedState = _.find(this.state.selectedCountry.states, {id: value})
       this.selectState(selectedState)
     }
   }
 
   selectState(state) {
-    if(!_.isEqual(state, this.props.selectedState)) {
+    if(!_.isEqual(state, this.state.selectedState)) {
       this.setState({
         selectedState: state
       })
@@ -93,7 +93,8 @@ class LocationSelector extends React.PureComponent {
   }
 
   render() {
-    const {disabled, countryIdFieldName, stateIdFieldName, lgaIdFieldName, countriesForSelectLists, selectedCountry, selectedState} = this.props
+    const {disabled, countryIdFieldName, stateIdFieldName, lgaIdFieldName, countriesForSelectLists} = this.props,
+      {selectedCountry, selectedState} = this.state
     const states = selectedCountry ? selectedCountry.states : [],
       lgas = selectedState ? selectedState.lgas :
         (selectedCountry ? this.getLgasForCountry(selectedCountry) : [])
@@ -118,9 +119,7 @@ class LocationSelector extends React.PureComponent {
 
 function mapStateToProps(state) {
   return {
-    countriesForSelectLists: state.countriesForSelectLists,
-    selectedCountry: state.selectedCountry,
-    selectedState: state.selectedState
+    countriesForSelectLists: state.countriesForSelectLists
   }
 }
 

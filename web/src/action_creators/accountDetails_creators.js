@@ -20,7 +20,6 @@ export function fetchAccountDetails(){
   return dispatch => {
     dispatch(requestAccountDetails())
     return aspectFetch('/account-details/current')
-      .then(fetchUtils.handleFetchError)
       .then(json => dispatch(receiveAccountDetails(json.data)))
       .catch(err => {
         //TODO: i18n
@@ -44,7 +43,6 @@ export function saveAccountDetails(accountDetails) {
         headers: fetchUtils.getHeaders(true),
         body: JSON.stringify(accountDetails)
       })
-      .then(fetchUtils.handleFetchError)
       .then(json => dispatch(receiveAccountDetails(json.data)))
       .catch(err => {
         //TODO: i18n

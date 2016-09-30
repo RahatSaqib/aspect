@@ -133,8 +133,10 @@ describe('LocationSelector Component', () => {
         const selectedCountryId = 2,
           selectedCountry = countriesForSelectLists.get('countries')
             .find(country => country.id === selectedCountryId)
-        props.selectedCountry = selectedCountry
         shallowRenderLocationSelector()
+        LocationSelectorWrapper.setState({
+          selectedCountry: selectedCountry
+        })
         const stateSelect = LocationSelectorWrapper.findWhere(
           selectInput => selectInput.type() === SelectInput &&
           selectInput.props().name === props.stateIdFieldName),
@@ -186,9 +188,7 @@ describe('LocationSelector Component', () => {
         countriesForSelectLists: countriesForSelectLists
       }
       assert.deepEqual(mapStateToProps(state), {
-        countriesForSelectLists: countriesForSelectLists,
-        selectedCountry: undefined,
-        selectedState: undefined
+        countriesForSelectLists: countriesForSelectLists
       })
     })
   })
