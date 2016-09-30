@@ -43,6 +43,7 @@ export function fetchSites(filters = Immutable.Map({ name: '' }), sortCol = 'nam
   }
 }
 
+// loading a single site with given siteId
 function requestSingleSite(siteId) {
   return {
     type: types.REQUEST_SINGLE_SITE,
@@ -50,6 +51,7 @@ function requestSingleSite(siteId) {
   }
 }
 
+// received a single site
 function receiveSingleSite(item) {
   return {
     type: types.RECEIVE_SINGLE_SITE,
@@ -57,6 +59,7 @@ function receiveSingleSite(item) {
   }
 }
 
+// load a single site with given siteId
 export function fetchSingleSite(siteId){
   return dispatch => {
 
@@ -70,6 +73,7 @@ export function fetchSingleSite(siteId){
   }
 }
 
+// updating a single site with given siteId and data
 function requestUpdatingSingleSite(siteId, data) {
   return {
     type: types.REQUEST_UPDATING_SINGLE_SITE,
@@ -78,6 +82,7 @@ function requestUpdatingSingleSite(siteId, data) {
   }
 }
 
+// received a updated single site
 function receiveUpdatedSingleSite(item) {
   return {
     type: types.RECEIVE_UPDATED_SINGLE_SITE,
@@ -85,6 +90,7 @@ function receiveUpdatedSingleSite(item) {
   }
 }
 
+// update a single site with given siteId and data
 export function updateSingleSite(siteId, data){
   return dispatch => {
 
