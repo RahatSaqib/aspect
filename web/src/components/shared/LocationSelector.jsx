@@ -1,9 +1,25 @@
 import React, {PropTypes} from 'react'
+import { injectIntl, defineMessages } from 'react-intl'
 import _ from 'lodash'
 import { bindActionCreators } from 'redux'
 import { connect } from 'react-redux'
 import { fetchCountriesForSelectLists } from '../../action_creators/country_creators'
 import SelectInput from './SelectInput'
+
+const messages = defineMessages({
+  country: {
+    id: 'pages.LocationSelector.country',
+    defaultMessage: 'Country'
+  },
+  state: {
+    id: 'pages.LocationSelector.state',
+    defaultMessage: 'State'
+  },
+  lga: {
+    id: 'pages.LocationSelector.lga',
+    defaultMessage: 'Area'
+  }
+})
 
 class LocationSelector extends React.PureComponent {
   static propTypes = {
@@ -83,6 +99,7 @@ class LocationSelector extends React.PureComponent {
   }
 
   render() {
+    const { formatMessage } = this.props.intl
     const {disabled, countryIdFieldName, stateIdFieldName, lgaIdFieldName, countriesForSelectLists, initialValues} = this.props,
       countries = countriesForSelectLists.get('countries').toJS()
     let {selectedCountry, selectedState} = this.state
@@ -96,15 +113,15 @@ class LocationSelector extends React.PureComponent {
 
     return (
       <div>
-        <SelectInput name={countryIdFieldName} label="Country"
+        <SelectInput name={countryIdFieldName} label={formatMessage(messages.country)}
                      disabled={disabled || countriesForSelectLists.get('loading') || !countriesForSelectLists.get('countries').size}
                      dataSource={countries} dataSourceConfig={selectListDataSourceMappings}
                      onChange={this.onCountryChanged} />
-        <SelectInput name={stateIdFieldName} label="State"
+        <SelectInput name={stateIdFieldName} label={formatMessage(messages.state)}
                      disabled={disabled || countriesForSelectLists.get('loading') || !selectedCountry || _.isEmpty(selectedCountry.states)}
                      dataSource={selectedCountry ? selectedCountry.states : []} dataSourceConfig={selectListDataSourceMappings}
                      onChange={this.onStateChanged} />
-        <SelectInput name={lgaIdFieldName} label="Area"
+        <SelectInput name={lgaIdFieldName} label={formatMessage(messages.lga)}
                      disabled={disabled || countriesForSelectLists.get('loading') || !selectedState || _.isEmpty(selectedState.lgas)}
                      dataSource={selectedState ? selectedState.lgas : []} dataSourceConfig={selectListDataSourceMappings} />
       </div>
@@ -124,4 +141,7 @@ function mapDispatchToProps(dispatch) {
   }, dispatch)
 }
 
-export default connect(mapStateToProps, mapDispatchToProps)(LocationSelector)
+export default _.flowRight(
+  injectIntl,
+  connect(mapStateToProps, mapDispatchToProps)
+)(LocationSelector)

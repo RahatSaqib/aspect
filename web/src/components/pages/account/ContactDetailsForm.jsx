@@ -7,49 +7,49 @@ import {emailAddress as validateEmailAddress} from '../../../utils/validate'
 import styles from './AccountDetails.css'
 
 const ContactDetailsForm = props => {
-  const { handleSubmit, pristine, invalid, submitting, initialValues } = props
+  const { labels, handleSubmit, pristine, invalid, submitting, initialValues } = props
   return (
     <form onSubmit={handleSubmit} className={styles.Form}>
       <div className={styles.Form__Content}>
         <section>
-          <TextInput name="name" label="Full Name" disabled={submitting} />
-          <TextInput name="title" label="Job Title" disabled={submitting} />
+          <TextInput name="name" label={labels.name} disabled={submitting} maxLength="500" />
+          <TextInput name="title" label={labels.title} disabled={submitting} maxLength="255" />
         </section>
         <section>
-          <h1>Email</h1>
-          <TextInput name="email" label="Primary" disabled={submitting} />
-          <TextInput name="email2" label="Secondary" disabled={submitting} />
+          <h1>{labels.emailHeader}</h1>
+          <TextInput name="email" label={labels.email} disabled={submitting} maxLength="500" />
+          <TextInput name="email2" label={labels.email2} disabled={submitting} maxLength="500" />
         </section>
         <section>
-          <h1>Phone</h1>
-          <TextInput name="phone" label="Telephone" disabled={submitting} />
-          <TextInput name="cell" label="Mobile" disabled={submitting} />
+          <h1>{labels.phoneHeader}</h1>
+          <TextInput name="phone" label={labels.phone} disabled={submitting} maxLength="40" />
+          <TextInput name="cell" label={labels.cell} disabled={submitting} maxLength="40" />
         </section>
         <section>
-          <h1>Location</h1>
+          <h1>{labels.locationHeader}</h1>
           <LocationSelector disabled={submitting} countryIdFieldName="countryId"
                             initialValues={initialValues} stateIdFieldName="stateId"
                             lgaIdFieldName="lgaId" />
-          <TextInput name="zip" label="ZIP Code" disabled={submitting} />
+          <TextInput name="zip" label={labels.zip} disabled={submitting} maxLength="45" />
         </section>
       </div>
       <div className={styles.Form__ActionRow}>
-        <RaisedButton disabled={pristine || invalid || submitting} label="Save" secondary={true} type="submit" />
+        <RaisedButton disabled={pristine || invalid || submitting} label={labels.submit} secondary={true} type="submit" />
       </div>
     </form>
   )
 }
 
-const validate = acccountDetails => {
+const validate = accountDetails => {
   const errors = {}
-  if (!acccountDetails.get('name')) {
+  if (!accountDetails.get('name')) {
     //TODO: i18n
     errors.name = 'Please enter your Full name'
   }
-  if (!validateEmailAddress(acccountDetails.get('email')).optional().isValid()) {
+  if (!validateEmailAddress(accountDetails.get('email')).optional().isValid()) {
     errors.email = 'Please enter a valid email address'
   }
-  if (!validateEmailAddress(acccountDetails.get('email2')).optional().isValid()) {
+  if (!validateEmailAddress(accountDetails.get('email2')).optional().isValid()) {
     errors.email2 = 'Please enter a valid email address'
   }
   return errors

@@ -11,11 +11,14 @@ import ContactDetailsForm from './ContactDetailsForm'
 
 describe('AccountDetails Component', () => {
   describe('AccountDetails', () => {
-    const fakeReactRedux = {
+    const fakeIntl = {
+        injectIntl: component => component
+      }, fakeReactRedux = {
         connect: () => component => component
       }, fakeRedux = {
         bindActionCreators: (actionCreators) => actionCreators
       }, AccountDetails = proxyquire('./AccountDetails', {
+        'react-intl': fakeIntl,
         'react-redux': fakeReactRedux,
         'redux': fakeRedux
       }).AccountDetailsContainer
@@ -32,7 +35,10 @@ describe('AccountDetails Component', () => {
         loading: false,
         saving: false,
         accountDetails: {},
-        saveAccountDetails: () => {}
+        saveAccountDetails: () => {},
+        intl: {
+          formatMessage: message => message.defaultMessage
+        }
       }
       shallowRenderAccountDetails()
     })
@@ -48,7 +54,7 @@ describe('AccountDetails Component', () => {
       })
 
       it('Should show a loading message and a progress bar', () => {
-        assert.equal(AccountDetailsWrapper.findWhere(element => element.type() === 'span' && element.text() === 'Loading...').length, 1)
+        assert.equal(AccountDetailsWrapper.findWhere(element => element.type() === 'span' && element.text() === 'Loading……').length, 1)
         assert.equal(AccountDetailsWrapper.find(LinearProgress).length, 1)
       })
 
@@ -98,10 +104,13 @@ describe('AccountDetails Component', () => {
 
   describe('react-redux connect', () => {
     const expectedBoundActionCreators = { value: 'Bound Action Creators' }
-    let reactReduxStub, mapStateToProps, mapDispatchToProps, reduxStub, accountDetailsCreatorsStub
+    let reactReduxStub, intlStub, mapStateToProps, mapDispatchToProps, reduxStub, accountDetailsCreatorsStub
     beforeEach(() => {
       reactReduxStub = {
         connect: sinon.stub().returns(() => {})
+      }
+      intlStub = {
+        injectIntl: sinon.stub().returns(() => {})
       }
       reduxStub = {
         bindActionCreators: sinon.stub().returns(expectedBoundActionCreators)
@@ -111,6 +120,7 @@ describe('AccountDetails Component', () => {
         saveAccountDetails: () => {}
       }
       proxyquire('./AccountDetails', {
+        'react-intl': intlStub,
         'react-redux': reactReduxStub,
         'redux': reduxStub,
         '../../../action_creators/accountDetails_creators': accountDetailsCreatorsStub

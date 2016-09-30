@@ -11,7 +11,8 @@ const renderFormField = props =>
   <Field name={props.name} textFieldProps={{
     floatingLabelText: props.label,
     fullWidth: props.fullWidth,
-    disabled: props.disabled
+    disabled: props.disabled,
+    maxLength: props.maxLength
   }} component={renderTextField} />
 
 export default renderFormField

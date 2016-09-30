@@ -43,11 +43,14 @@ describe('LocationSelector Component', () => {
     })
 
   describe('LocationSelector', () => {
-    const fakeReactRedux = {
+    const fakeIntl = {
+        injectIntl: component => component
+      }, fakeReactRedux = {
         connect: () => component => component
       }, fakeRedux = {
         bindActionCreators: (actionCreators) => actionCreators
       }, LocationSelector = proxyquire('./LocationSelector', {
+        'react-intl': fakeIntl,
         'react-redux': fakeReactRedux,
         'redux': fakeRedux
       }).default
@@ -67,7 +70,10 @@ describe('LocationSelector Component', () => {
         lgaIdFieldName: 'lgaId',
         disabled: false,
         initialCountryId: null,
-        initialStateId: null
+        initialStateId: null,
+        intl: {
+          formatMessage: message => message.defaultMessage
+        }
       }
       shallowRenderLocationSelector()
     })
@@ -157,10 +163,13 @@ describe('LocationSelector Component', () => {
 
   describe('react-redux connect', () => {
     const expectedBoundActionCreators = { value: 'Bound Action Creators' }
-    let reactReduxStub, mapStateToProps, mapDispatchToProps, reduxStub, countryCreatorsStub
+    let reactReduxStub, intlStub, mapStateToProps, mapDispatchToProps, reduxStub, countryCreatorsStub
     beforeEach(() => {
       reactReduxStub = {
         connect: sinon.stub().returns(() => {})
+      }
+      intlStub = {
+        injectIntl: sinon.stub().returns(() => {})
       }
       reduxStub = {
         bindActionCreators: sinon.stub().returns(expectedBoundActionCreators)
@@ -169,6 +178,7 @@ describe('LocationSelector Component', () => {
         fetchCountriesForSelectLists: () => {}
       }
       proxyquire('./LocationSelector', {
+        'react-intl': intlStub,
         'react-redux': reactReduxStub,
         'redux': reduxStub,
         '../../action_creators/country_creators': countryCreatorsStub

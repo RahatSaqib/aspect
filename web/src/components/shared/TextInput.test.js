@@ -10,7 +10,8 @@ describe('TextInput', () => {
         name: 'fieldName',
         label: 'Field Label',
         disabled: false,
-        fullWidth: true
+        fullWidth: true,
+        maxLength: 50
       }, TextInputWrapper = shallow(<TextInput {...props}/>),
       textInputProps = TextInputWrapper.find(Field).props()
 
@@ -18,7 +19,8 @@ describe('TextInput', () => {
     assert.deepEqual(textInputProps.textFieldProps, {
       floatingLabelText: props.label,
       fullWidth: props.fullWidth,
-      disabled: props.disabled
+      disabled: props.disabled,
+      maxLength: props.maxLength
     })
   })
 })

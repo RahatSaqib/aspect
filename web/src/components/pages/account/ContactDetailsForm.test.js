@@ -31,7 +31,19 @@ describe('ContactDetailsForm Component', () => {
           countryId: null,
           stateId: null
         },
-        handleSubmit: () => {
+        handleSubmit: () => {},
+        labels: {
+          name: 'Full Name',
+          title: 'Job Title',
+          emailHeader: 'Email',
+          email: 'Primary',
+          email2: 'Alternate',
+          phoneHeader: 'Phone',
+          phone: 'Telephone',
+          cell: 'Mobile',
+          locationHeader: 'Location',
+          zip: 'Zip Code',
+          submit: 'Save'
         }
       }
       shallowRenderForm(props)
@@ -47,10 +59,10 @@ describe('ContactDetailsForm Component', () => {
           'name': 'Full Name',
           'title': 'Job Title',
           'email': 'Primary',
-          'email2': 'Secondary',
+          'email2': 'Alternate',
           'phone': 'Telephone',
           'cell': 'Mobile',
-          'zip': 'ZIP Code'
+          'zip': 'Zip Code'
         }, textInputs = ContactDetailsFormWrapper.find(TextInput)
 
       assert.equal(textInputs.length, Object.keys(expectedFieldLabels).length)
