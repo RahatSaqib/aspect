@@ -55,20 +55,17 @@ export class PersonList extends PureComponent {
   state = {
     filters: this.props.table.get('filters')
   }
-  filterPersonsChange = this.filterPersonsChange.bind(this)
-  handleSubmit = this.handleSubmit.bind(this)
-  resetPersons = this.resetPersons.bind(this)
 
-  filterPersonsChange(e){
+  filterPersonsChange = (e) => {
     this.setState({ filters: this.state.filters.set(e.target.id, e.target.value) })
   }
 
-  handleSubmit(e){
+  handleSubmit = (e) => {
     e.preventDefault()
     this.props.fetchPersons(this.state.filters)
   }
 
-  resetPersons(){
+  resetPersons = () => {
     this.setState({ filters: this.state.filters.set('name', '') })
     this.props.fetchPersons()
   }

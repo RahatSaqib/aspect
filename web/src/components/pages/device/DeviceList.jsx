@@ -64,24 +64,21 @@ export class DeviceList extends PureComponent {
   state = {
     filters: this.props.table.get('filters')
   }
-  filterDevicesChange = this.filterDevicesChange.bind(this)
-  handleSubmit = this.handleSubmit.bind(this)
-  resetDevices = this.resetDevices.bind(this)
 
   handleItemIdSelection = (deviceId) => {
     this.props.router.push(`/device/${deviceId}`)
   }
 
-  filterDevicesChange(e){
+  filterDevicesChange = (e) => {
     this.setState({ filters: this.state.filters.set(e.target.id, e.target.value) })
   }
 
-  handleSubmit(e){
+  handleSubmit = (e) => {
     e.preventDefault()
     this.props.fetchDevices(this.state.filters)
   }
 
-  resetDevices(){
+  resetDevices = () => {
     this.setState({ filters: this.state.filters.set('name', '') })
     this.props.fetchDevices()
   }
