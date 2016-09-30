@@ -2,4 +2,6 @@
 --reporter-options spec=-,mocha-bamboo-reporter=-
 --ui bdd
 --recursive
-src/**/*.test.js
+--timeout 20000
+test/utils/contractTestSetup.js
+test/**/*.spec.js
