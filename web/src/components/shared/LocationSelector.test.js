@@ -1,6 +1,6 @@
 import React from 'react'
 import { assert } from 'chai'
-import { shallow, mount } from 'enzyme'
+import { shallow } from 'enzyme'
 import sinon from 'sinon'
 import proxyquire from 'proxyquire'
 import Immutable from 'immutable'
@@ -44,13 +44,13 @@ describe('LocationSelector Component', () => {
 
   describe('LocationSelector', () => {
     const fakeReactRedux = {
-      connect: () => component => component
-    }, fakeRedux = {
-      bindActionCreators: (actionCreators) => actionCreators
-    }, LocationSelector = proxyquire('./LocationSelector', {
-      'react-redux': fakeReactRedux,
-      'redux': fakeRedux
-    }).default
+        connect: () => component => component
+      }, fakeRedux = {
+        bindActionCreators: (actionCreators) => actionCreators
+      }, LocationSelector = proxyquire('./LocationSelector', {
+        'react-redux': fakeReactRedux,
+        'redux': fakeRedux
+      }).default
 
     let props, LocationSelectorWrapper
 

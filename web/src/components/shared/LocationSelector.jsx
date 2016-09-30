@@ -28,7 +28,6 @@ class LocationSelector extends React.PureComponent {
     this.selectCountry = this.selectCountry.bind(this)
     this.onStateChanged = this.onStateChanged.bind(this)
     this.selectState = this.selectState.bind(this)
-    this.getLgasForCountry = this.getLgasForCountry.bind(this)
   }
 
   componentDidMount() {
@@ -46,7 +45,7 @@ class LocationSelector extends React.PureComponent {
     if(initialValues && initialValues[countryIdFieldName] && !this.state.selectedCountry && !_.isEmpty(countriesForSelectLists.get('countries'))) {
       const initialCountry = _.find(countriesForSelectLists.get('countries'), {id: initialValues[countryIdFieldName]})
       this.selectCountry(initialCountry)
-      if(initialValues && initialValues[stateIdFieldName] && !this.state.selectedState) {
+      if(initialCountry && initialValues && initialValues[stateIdFieldName] && !this.state.selectedState) {
         const initialState = _.find(initialCountry.states, {id: initialValues[stateIdFieldName]})
         this.selectState(initialState)
       }
@@ -83,35 +82,31 @@ class LocationSelector extends React.PureComponent {
     }
   }
 
-  getLgasForCountry(country) {
-    return _.orderBy(_.flatten(_.reduce(country.states, (result, state) => {
-      result.push(_.map(state.lgas, lga => {
-        return { id: lga.id, name: lga.name + ', ' + state.name }
-      }))
-      return result
-    }, [])), 'name', 'asc')
-  }
-
   render() {
-    const {disabled, countryIdFieldName, stateIdFieldName, lgaIdFieldName, countriesForSelectLists} = this.props,
-      {selectedCountry, selectedState} = this.state
-    const states = selectedCountry ? selectedCountry.states : [],
-      lgas = selectedState ? selectedState.lgas :
-        (selectedCountry ? this.getLgasForCountry(selectedCountry) : [])
+    const {disabled, countryIdFieldName, stateIdFieldName, lgaIdFieldName, countriesForSelectLists, initialValues} = this.props,
+      countries = countriesForSelectLists.get('countries').toJS()
+    let {selectedCountry, selectedState} = this.state
+    if(!selectedCountry && initialValues && initialValues[countryIdFieldName] && !_.isEmpty(countries)) {
+      selectedCountry = _.find(countries, {id: initialValues[countryIdFieldName]})
+    }
+    if(!selectedState && initialValues && initialValues[stateIdFieldName] && selectedCountry) {
+      selectedState = _.find(selectedCountry.states, {id: initialValues[stateIdFieldName]})
+    }
     const selectListDataSourceMappings = { text: 'name', value: 'id' }
 
     return (
       <div>
         <SelectInput name={countryIdFieldName} label="Country"
                      disabled={disabled || countriesForSelectLists.get('loading') || !countriesForSelectLists.get('countries').size}
-                     dataSource={countriesForSelectLists.get('countries').toJS()}
-                     dataSourceConfig={selectListDataSourceMappings} onChange={this.onCountryChanged} />
+                     dataSource={countries} dataSourceConfig={selectListDataSourceMappings}
+                     onChange={this.onCountryChanged} />
         <SelectInput name={stateIdFieldName} label="State"
-                     disabled={disabled || countriesForSelectLists.get('loading') || !states.length} dataSource={states}
-                     dataSourceConfig={selectListDataSourceMappings} onChange={this.onStateChanged} />
+                     disabled={disabled || countriesForSelectLists.get('loading') || !selectedCountry || _.isEmpty(selectedCountry.states)}
+                     dataSource={selectedCountry ? selectedCountry.states : []} dataSourceConfig={selectListDataSourceMappings}
+                     onChange={this.onStateChanged} />
         <SelectInput name={lgaIdFieldName} label="Area"
-                     disabled={disabled || countriesForSelectLists.get('loading') || !lgas.length} dataSource={lgas}
-                     dataSourceConfig={selectListDataSourceMappings} />
+                     disabled={disabled || countriesForSelectLists.get('loading') || !selectedState || _.isEmpty(selectedState.lgas)}
+                     dataSource={selectedState ? selectedState.lgas : []} dataSourceConfig={selectListDataSourceMappings} />
       </div>
     )
   }
