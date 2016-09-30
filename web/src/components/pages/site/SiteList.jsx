@@ -1,6 +1,6 @@
 // Imports from packages
 import _ from 'lodash'
-import React from 'react'
+import React, { PureComponent, PropTypes } from 'react'
 import {
   injectIntl,
   defineMessages
@@ -47,7 +47,11 @@ const messages = defineMessages({
   }
 })
 
-export class SiteList extends React.PureComponent {
+export class SiteList extends PureComponent {
+  static propTypes = {
+    table: PropTypes.object.isRequired
+  }
+
   state = {
     filters: this.props.table.get('filters')
   }

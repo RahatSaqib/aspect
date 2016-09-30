@@ -1,6 +1,6 @@
 // Imports from packages
 import _ from 'lodash'
-import React from 'react'
+import React, { PureComponent, PropTypes } from 'react'
 import {
   injectIntl,
   defineMessages
@@ -78,7 +78,11 @@ const messages = defineMessages({
   }
 })
 
-export class DeviceDetail extends React.PureComponent {
+export class DeviceDetail extends PureComponent {
+
+  static propTypes = {
+    fetchSingleDevice: PropTypes.func.isRequired
+  }
 
   handleFetchDevice = () => {
     this.props.fetchSingleDevice(this.props.params.deviceId)

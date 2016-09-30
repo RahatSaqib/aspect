@@ -1,5 +1,5 @@
 // Imports from packages
-import React from 'react'
+import React, { PureComponent, PropTypes } from 'react'
 import { Link } from 'react-router'
 
 // Material-UI
@@ -14,15 +14,15 @@ import NotificationsIcon from 'material-ui/svg-icons/social/notifications'
 // Our own imports
 import styles from './Nav.css'
 
-class Nav extends React.PureComponent {
+class Nav extends PureComponent {
 
   static propTypes = {
-    handleHamburger: React.PropTypes.func.isRequired,
-    handleSignOut: React.PropTypes.func.isRequired
+    handleHamburger: PropTypes.func.isRequired,
+    handleSignOut: PropTypes.func.isRequired
   }
 
   static contextTypes = {
-    router: React.PropTypes.object.isRequired
+    router: PropTypes.object.isRequired
   }
 
   render() {

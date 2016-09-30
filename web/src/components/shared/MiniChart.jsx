@@ -1,5 +1,5 @@
 // Imports from packages
-import React from 'react'
+import React, { PureComponent, PropTypes } from 'react'
 import {
   injectIntl
 } from 'react-intl'
@@ -8,13 +8,13 @@ import Paper from 'material-ui/Paper'
 
 require('./../../styles/Charts.scss')
 
-class MiniChart extends React.PureComponent {
+class MiniChart extends PureComponent {
 
   static propTypes = {
-    bgcolor: React.PropTypes.string.isRequired,
-    data: React.PropTypes.array.isRequired,
-    label: React.PropTypes.string.isRequired,
-    number: React.PropTypes.any.isRequired
+    bgcolor: PropTypes.string.isRequired,
+    data: PropTypes.array.isRequired,
+    label: PropTypes.string.isRequired,
+    number: PropTypes.any.isRequired
   }
 
   render() {

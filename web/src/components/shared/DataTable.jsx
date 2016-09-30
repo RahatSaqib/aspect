@@ -1,7 +1,7 @@
 // Imports from packages
 import _ from 'lodash'
 import classnames from 'classnames/bind'
-import React from 'react'
+import React, { PureComponent, PropTypes } from 'react'
 
 // Material-UI
 import {Table, TableBody, TableHeader, TableHeaderColumn, TableRow, TableRowColumn, TableFooter } from 'material-ui/Table'
@@ -14,26 +14,26 @@ import styles from './DataTable.css'
 
 const cx = classnames.bind(styles)
 
-export class DataTable extends React.PureComponent {
+export class DataTable extends PureComponent {
 
   static propTypes = {
-    selectable: React.PropTypes.bool,
-    handleItemIdSelection: React.PropTypes.func,
-    handleFetch: React.PropTypes.func.isRequired,
-    items: React.PropTypes.shape({
-      byId: React.PropTypes.object.isRequired,
-      currentIdList: React.PropTypes.object.isRequired
+    selectable: PropTypes.bool,
+    handleItemIdSelection: PropTypes.func,
+    handleFetch: PropTypes.func.isRequired,
+    items: PropTypes.shape({
+      byId: PropTypes.object.isRequired,
+      currentIdList: PropTypes.object.isRequired
     }).isRequired,
-    table: React.PropTypes.shape({
-      loading: React.PropTypes.bool.isRequired,
-      sortCol: React.PropTypes.string.isRequired,
-      sortDir: React.PropTypes.string.isRequired,
-      filters: React.PropTypes.object.isRequired/* TODO */,
-      page: React.PropTypes.number.isRequired,
-      pageSize: React.PropTypes.number.isRequired,
-      total: React.PropTypes.number.isRequired
+    table: PropTypes.shape({
+      loading: PropTypes.bool.isRequired,
+      sortCol: PropTypes.string.isRequired,
+      sortDir: PropTypes.string.isRequired,
+      filters: PropTypes.object.isRequired/* TODO */,
+      page: PropTypes.number.isRequired,
+      pageSize: PropTypes.number.isRequired,
+      total: PropTypes.number.isRequired
     }).isRequired,
-    columns: React.PropTypes.array.isRequired
+    columns: PropTypes.array.isRequired
   }
 
   state = {

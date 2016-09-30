@@ -1,16 +1,16 @@
 // Imports from packages
-import React from 'react'
+import React, { PureComponent, PropTypes } from 'react'
 
 // Material-UI
 import TextField from 'material-ui/TextField'
 
-export default class ReadOnlyFields extends React.PureComponent {
+export default class ReadOnlyFields extends PureComponent {
   static propTypes = {
-    fields: React.PropTypes.arrayOf(React.PropTypes.shape({
-      label: React.PropTypes.string.isRequired,
-      value: React.PropTypes.oneOfType([
-        React.PropTypes.string,
-        React.PropTypes.number
+    fields: PropTypes.arrayOf(PropTypes.shape({
+      label: PropTypes.string.isRequired,
+      value: PropTypes.oneOfType([
+        PropTypes.string,
+        PropTypes.number
       ]).isRequired
     })).isRequired
   }

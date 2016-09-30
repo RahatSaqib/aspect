@@ -1,5 +1,5 @@
 // Imports from packages
-import React from 'react'
+import React, { PureComponent, PropTypes } from 'react'
 import { bindActionCreators } from 'redux'
 import { connect } from 'react-redux'
 
@@ -9,11 +9,11 @@ import Snackbar from 'material-ui/Snackbar'
 // Our own imports
 import { removeError } from '../../action_creators/error_creators'
 
-export class ErrorDisplay extends React.PureComponent {
+export class ErrorDisplay extends PureComponent {
 
   static propTypes = {
-    error: React.PropTypes.object,
-    removeError: React.PropTypes.func.isRequired
+    error: PropTypes.object,
+    removeError: PropTypes.func.isRequired
   }
 
   handleActionTouchTap = (error) => {
