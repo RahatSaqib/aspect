@@ -4,8 +4,8 @@ let { query } = require('../db')
 function* buildGeographySelectList(){
   const countriesStatesAndLGAs = yield query('Get countries, states and LGAs for select lists')
     .from('country as c')
-    .leftJoin('state as s', 'c.id', 's.country_id')
-    .leftJoin('lga as l', 's.id', 'l.state_id')
+    .leftJoin('state as s', 'c.id', 's.countryId')
+    .leftJoin('lga as l', 's.id', 'l.stateId')
     .orderBy(['c.name', 's.name', 'l.name'], 'asc')
     .select('c.id as countryId', 'c.name as countryName', 's.id as stateId',
       's.name as stateName', 'l.id as lgaId', 'l.name as lgaName')

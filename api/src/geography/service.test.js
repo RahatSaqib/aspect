@@ -30,11 +30,11 @@ describe('geography service', function () {
         assert.equal(countriesStatesAndLGAsQuery.from.lastCall.args[0], 'country as c')
         const leftJoins = countriesStatesAndLGAsQuery.leftJoin.getCalls()
         const statesLeftJoin = _.find(leftJoins, function (leftJoin) {
-          return _.isEqual(leftJoin.args, ['state as s', 'c.id', 's.country_id'])
+          return _.isEqual(leftJoin.args, ['state as s', 'c.id', 's.countryId'])
         })
         assert.isOk(statesLeftJoin, 'Can\'t find the join to the states table')
         const lgasLeftJoin = _.find(leftJoins, function (leftJoin) {
-          return _.isEqual(leftJoin.args, ['lga as l', 's.id', 'l.state_id'])
+          return _.isEqual(leftJoin.args, ['lga as l', 's.id', 'l.stateId'])
         })
         assert.isOk(lgasLeftJoin, 'Can\'t find the join to the LGAs table')
         assert.deepEqual(countriesStatesAndLGAsQuery.orderBy.lastCall.args, [['c.name', 's.name', 'l.name'], 'asc'], 'The orderBy statement seems to be incorrect')
