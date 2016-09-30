@@ -75,9 +75,8 @@ describe('ContactDetailsForm Component', () => {
       assert.equal(locationSelector.length, 1)
       assert.deepEqual(locationSelector.props(), {
         countryIdFieldName: 'countryId',
-        initialCountryId: props.initialValues.countryId,
+        initialValues: props.initialValues,
         stateIdFieldName: 'stateId',
-        initialStateId: props.initialValues.stateId,
         lgaIdFieldName: 'lgaId',
         disabled: props.submitting
       })

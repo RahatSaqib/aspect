@@ -34,7 +34,7 @@ describe('AccountDetails Component', () => {
         accountDetails: {},
         saveAccountDetails: () => {}
       }
-      shallowRenderAccountDetails(props)
+      shallowRenderAccountDetails()
     })
 
     it('Should be a div', () => {
@@ -44,7 +44,7 @@ describe('AccountDetails Component', () => {
     describe('When loading is true', () => {
       beforeEach(() => {
         props.loading = true
-        shallowRenderAccountDetails(props)
+        shallowRenderAccountDetails()
       })
 
       it('Should show a loading message and a progress bar', () => {

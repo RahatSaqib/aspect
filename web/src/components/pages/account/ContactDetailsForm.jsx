@@ -28,8 +28,8 @@ const ContactDetailsForm = props => {
         <section>
           <h1>Location</h1>
           <LocationSelector disabled={submitting} countryIdFieldName="countryId"
-                            initialCountryId={initialValues.countryId} stateIdFieldName="stateId"
-                            initialStateId={initialValues.stateId} lgaIdFieldName="lgaId" />
+                            initialValues={initialValues} stateIdFieldName="stateId"
+                            lgaIdFieldName="lgaId" />
           <TextInput name="zip" label="ZIP Code" disabled={submitting} />
         </section>
       </div>
