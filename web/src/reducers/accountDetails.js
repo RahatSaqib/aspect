@@ -2,21 +2,21 @@ import Immutable from 'immutable'
 import types from './../constants/action_types'
 
 const AccountDetailsData = Immutable.Record({
-  id: undefined,
-  userId: undefined,
-  username: undefined,
-  name: undefined,
-  title: undefined,
-  email: undefined,
-  email2: undefined,
-  phone: undefined,
-  cell: undefined,
-  countryId: undefined,
-  stateId: undefined,
-  lgaId: undefined,
-  zip: undefined,
-  timezone: undefined,
-  culture: undefined
+  id: null,
+  userId: null,
+  username: null,
+  name: null,
+  title: null,
+  email: null,
+  email2: null,
+  phone: null,
+  cell: null,
+  countryId: null,
+  stateId: null,
+  lgaId: null,
+  zip: null,
+  timezone: null,
+  culture: null
 })
 
 const AccountDetails = Immutable.Record({

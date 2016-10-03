@@ -2,17 +2,21 @@ import React from 'react'
 import { Field } from 'redux-form/immutable'
 import TextField from 'material-ui/TextField'
 
-const renderTextField = props =>
-  <TextField {...props.input} errorStyle={{ float: 'left' }}
-             errorText={props.meta.touched && props.meta.error}
-             {...props.textFieldProps} />
+const renderTextField = props => {
+  const {input, meta, textFieldProps} = props,
+    {touched, error} = meta
+  return <TextField {...input} errorStyle={{ float: 'left' }}
+             errorText={touched && error} {...textFieldProps} />
+}
 
-const renderFormField = props =>
-  <Field name={props.name} textFieldProps={{
-    floatingLabelText: props.label,
-    fullWidth: props.fullWidth,
-    disabled: props.disabled,
-    maxLength: props.maxLength
+const renderFormField = props => {
+  const {name, label, fullWidth, disabled, maxLength} = props
+  return <Field name={name} textFieldProps={{
+    floatingLabelText: label,
+    fullWidth: fullWidth,
+    disabled: disabled,
+    maxLength: maxLength
   }} component={renderTextField} />
+}
 
 export default renderFormField
