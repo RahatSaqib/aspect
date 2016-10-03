@@ -1,5 +1,5 @@
 // Imports from packages
-import React, {Component, PropTypes} from 'react'
+import React, { Component, PropTypes } from 'react'
 import {List, MakeSelectable} from 'material-ui/List'
 
 let SelectableList = MakeSelectable(List)

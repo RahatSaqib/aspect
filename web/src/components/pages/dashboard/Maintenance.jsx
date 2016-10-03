@@ -1,5 +1,5 @@
 // Imports from packages
-import React from 'react'
+import React, { PureComponent } from 'react'
 import { Link } from 'react-router'
 import Helmet from 'react-helmet'
 
@@ -7,7 +7,7 @@ import Helmet from 'react-helmet'
 import MiniChart from '../../shared/MiniChart'
 import styles from './Maintenance.css'
 
-export class Maintenance extends React.PureComponent {
+export class Maintenance extends PureComponent {
   render() {
     return (
       <div className={styles.Content}>

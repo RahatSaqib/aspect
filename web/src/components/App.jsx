@@ -1,5 +1,5 @@
 // Imports from packages
-import React from 'react'
+import React, { PureComponent, PropTypes } from 'react'
 import { connect } from 'react-redux'
 import {
   addLocaleData,
@@ -21,11 +21,11 @@ require('styles/pure-grids-responsive-min.scss')
 
 addLocaleData([...en, ...fr])
 
-class App extends React.PureComponent {
+class App extends PureComponent {
 
   static propTypes = {
-    locale: React.PropTypes.string.isRequired,
-    children: React.PropTypes.node.isRequired
+    locale: PropTypes.string.isRequired,
+    children: PropTypes.node.isRequired
   }
 
   render() {

@@ -1,6 +1,6 @@
 // Imports from packages
 import classnames from 'classnames/bind'
-import React from 'react'
+import React, { PureComponent, PropTypes } from 'react'
 import { Link } from 'react-router'
 
 // Material-UI
@@ -25,12 +25,12 @@ import styles from './SideNav.css'
 
 const cx = classnames.bind(styles)
 
-class SideNav extends React.PureComponent {
+class SideNav extends PureComponent {
 
   static propTypes = {
-    open: React.PropTypes.bool.isRequired,
-    handleClose: React.PropTypes.func.isRequired,
-    pathname: React.PropTypes.string.isRequired
+    open: PropTypes.bool.isRequired,
+    handleClose: PropTypes.func.isRequired,
+    pathname: PropTypes.string.isRequired
   }
 
   render() {

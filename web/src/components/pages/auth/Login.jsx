@@ -1,6 +1,6 @@
 // Imports from packages
 import _ from 'lodash'
-import React from 'react'
+import React, { PureComponent, PropTypes } from 'react'
 import { bindActionCreators } from 'redux'
 import { connect } from 'react-redux'
 import { Field, reduxForm } from 'redux-form/immutable'
@@ -44,12 +44,12 @@ const renderPasswordField = ({ input, meta }) => {
   )
 }
 
-class Login extends React.PureComponent {
+class Login extends PureComponent {
 
   static propTypes = {
-    handleSubmit: React.PropTypes.func.isRequired,
-    pristine: React.PropTypes.bool.isRequired,
-    submitting: React.PropTypes.bool.isRequired
+    handleSubmit: PropTypes.func.isRequired,
+    pristine: PropTypes.bool.isRequired,
+    submitting: PropTypes.bool.isRequired
   }
 
   render() {

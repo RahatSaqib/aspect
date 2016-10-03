@@ -1,6 +1,6 @@
 // Imports from packages
 import _ from 'lodash'
-import React from 'react'
+import React, { PureComponent, PropTypes } from 'react'
 import {
   injectIntl,
   defineMessages
@@ -46,24 +46,26 @@ const messages = defineMessages({
   }
 })
 
-export class PersonList extends React.PureComponent {
+export class PersonList extends PureComponent {
+
+  static propTypes = {
+    table: PropTypes.object.isRequired
+  }
+
   state = {
     filters: this.props.table.get('filters')
   }
-  filterPersonsChange = this.filterPersonsChange.bind(this)
-  handleSubmit = this.handleSubmit.bind(this)
-  resetPersons = this.resetPersons.bind(this)
 
-  filterPersonsChange(e){
+  filterPersonsChange = (e) => {
     this.setState({ filters: this.state.filters.set(e.target.id, e.target.value) })
   }
 
-  handleSubmit(e){
+  handleSubmit = (e) => {
     e.preventDefault()
     this.props.fetchPersons(this.state.filters)
   }
 
-  resetPersons(){
+  resetPersons = () => {
     this.setState({ filters: this.state.filters.set('name', '') })
     this.props.fetchPersons()
   }

@@ -1,5 +1,5 @@
 // Imports from packages
-import React from 'react'
+import React, { PureComponent, PropTypes } from 'react'
 import { bindActionCreators } from 'redux'
 import { connect } from 'react-redux'
 import Helmet from 'react-helmet'
@@ -10,10 +10,10 @@ import Nav from './shared/Nav'
 import SideNav from './shared/SideNav'
 import { ErrorDisplayContainer } from './shared/ErrorDisplay'
 
-export class LoggedInShell extends React.PureComponent {
+export class LoggedInShell extends PureComponent {
 
   static propTypes = {
-    children: React.PropTypes.object.isRequired
+    children: PropTypes.object.isRequired
   }
 
   state = {

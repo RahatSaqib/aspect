@@ -1,5 +1,5 @@
 // Imports from packages
-import React from 'react'
+import React, { PureComponent, PropTypes } from 'react'
 import {
   withRouter,
   Link
@@ -17,10 +17,10 @@ import ActionBack from 'material-ui/svg-icons/hardware/keyboard-arrow-left'
 // Our own imports
 import styles from './NotFound.css'
 
-export class NotFound extends React.PureComponent {
+export class NotFound extends PureComponent {
 
   static defaultProps = {
-    router: React.PropTypes.object.isRequired
+    router: PropTypes.object.isRequired
   }
 
   render() {

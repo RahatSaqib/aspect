@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { Component } from 'react'
 import { Router, Route, IndexRoute, Redirect, applyRouterMiddleware } from 'react-router'
 import { useScroll } from 'react-router-scroll'
 import PiwikReactRouter from 'piwik-react-router'
@@ -88,11 +88,7 @@ const routes =
     </Route>
   </Router>
 
-class Routes extends React.Component {
-
-  constructor(props) {
-    super(props)
-  }
+class Routes extends Component {
 
   render() {
     return (

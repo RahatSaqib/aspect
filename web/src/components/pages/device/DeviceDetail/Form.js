@@ -1,6 +1,6 @@
 // Imports from packages
 import _ from 'lodash'
-import React from 'react'
+import React, { PureComponent, PropTypes } from 'react'
 import { Field, reduxForm } from 'redux-form/immutable'
 import { bindActionCreators } from 'redux'
 import { connect } from 'react-redux'
@@ -40,10 +40,10 @@ const renderPageableSelectField = ({ input, meta, ...restProps }) => {
   )
 }
 
-export class Form extends React.PureComponent {
+export class Form extends PureComponent {
 
   static propTypes = {
-    labels: React.PropTypes.object.isRequired
+    labels: PropTypes.object.isRequired
   }
 
   handleLoadMoreClick = () => {

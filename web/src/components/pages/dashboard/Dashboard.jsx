@@ -1,6 +1,6 @@
 // Imports from packages
 import _ from 'lodash'
-import React from 'react'
+import React, { PureComponent, PropTypes } from 'react'
 import { Link } from 'react-router'
 import {
   injectIntl,
@@ -21,12 +21,12 @@ const messages = defineMessages({
   }
 })
 
-export class Dashboard extends React.PureComponent {
+export class Dashboard extends PureComponent {
 
   static propTypes = {
-    userName: React.PropTypes.string,
-    location: React.PropTypes.object.isRequired,
-    strings: React.PropTypes.object
+    userName: PropTypes.string,
+    location: PropTypes.object.isRequired,
+    strings: PropTypes.object
   }
 
   render() {

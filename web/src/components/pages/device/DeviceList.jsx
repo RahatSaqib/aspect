@@ -1,6 +1,6 @@
 // Imports from packages
 import _ from 'lodash'
-import React from 'react'
+import React, { PureComponent, PropTypes } from 'react'
 import {
   injectIntl,
   defineMessages
@@ -55,29 +55,30 @@ const messages = defineMessages({
   }
 })
 
-export class DeviceList extends React.PureComponent {
+export class DeviceList extends PureComponent {
+
+  static propTypes = {
+    table: PropTypes.object.isRequired
+  }
 
   state = {
     filters: this.props.table.get('filters')
   }
-  filterDevicesChange = this.filterDevicesChange.bind(this)
-  handleSubmit = this.handleSubmit.bind(this)
-  resetDevices = this.resetDevices.bind(this)
 
   handleItemIdSelection = (deviceId) => {
     this.props.router.push(`/device/${deviceId}`)
   }
 
-  filterDevicesChange(e){
+  filterDevicesChange = (e) => {
     this.setState({ filters: this.state.filters.set(e.target.id, e.target.value) })
   }
 
-  handleSubmit(e){
+  handleSubmit = (e) => {
     e.preventDefault()
     this.props.fetchDevices(this.state.filters)
   }
 
-  resetDevices(){
+  resetDevices = () => {
     this.setState({ filters: this.state.filters.set('name', '') })
     this.props.fetchDevices()
   }

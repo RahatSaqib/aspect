@@ -1,11 +1,11 @@
 // Imports from packages
-import React from 'react'
+import React, { PureComponent } from 'react'
 import Helmet from 'react-helmet'
 
 // Our own imports
 import styles from './NotificationList.css'
 
-export class NotificationList extends React.PureComponent {
+export class NotificationList extends PureComponent {
   render() {
     return (
       <div className={styles.Content}>
