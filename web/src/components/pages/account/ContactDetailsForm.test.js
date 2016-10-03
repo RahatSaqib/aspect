@@ -9,11 +9,17 @@ import RaisedButton from 'material-ui/RaisedButton'
 import LocationSelector from '../../shared/LocationSelector'
 
 describe('ContactDetailsForm Component', () => {
+  const fakeReactIntl = {
+    injectIntl: component => component,
+    defineMessages: messages => messages
+  }
+
   describe('ContactDetailsForm', () => {
     const fakeReduxForm = {
         reduxForm: () => component => component
       }, ContactDetailsForm = proxyquire('./ContactDetailsForm', {
-        'redux-form/immutable': fakeReduxForm
+        'redux-form/immutable': fakeReduxForm,
+        'react-intl': fakeReactIntl
       }).default
 
     let props, ContactDetailsFormWrapper
@@ -135,7 +141,8 @@ describe('ContactDetailsForm Component', () => {
         reduxForm: sinon.stub().returns(() => {})
       }
       proxyquire('./ContactDetailsForm', {
-        'redux-form/immutable': reduxFormStub
+        'redux-form/immutable': reduxFormStub,
+        'react-intl': fakeReactIntl
       })
       reduxFormConfig = reduxFormStub.reduxForm.firstCall.args[0]
     })
@@ -145,6 +152,11 @@ describe('ContactDetailsForm Component', () => {
     })
 
     describe('validate function', () => {
+      const props = {
+        intl: {
+          formatMessage: message => message.defaultMessage
+        }
+      }
       let validateFunction, initialAccountDetails
 
       beforeEach(() => {
@@ -157,21 +169,21 @@ describe('ContactDetailsForm Component', () => {
       })
 
       it('Should validate that name has been entered', () => {
-        assert.deepEqual(validateFunction(initialAccountDetails), {})
+        assert.deepEqual(validateFunction(initialAccountDetails, props), {})
         const accountDetails = initialAccountDetails.set('name', '')
-        assert.deepEqual(validateFunction(accountDetails), {
+        assert.deepEqual(validateFunction(accountDetails, props), {
           name: 'Please enter your Full name'
         })
       })
 
       it('Should validate email addresses if they have been entered', () => {
         let accountDetails = initialAccountDetails.set('email', 'invalid email')
-        assert.deepEqual(validateFunction(accountDetails), {
+        assert.deepEqual(validateFunction(accountDetails, props), {
           email: 'Please enter a valid email address'
         })
 
         accountDetails = initialAccountDetails.set('email2', 'invalid email')
-        assert.deepEqual(validateFunction(accountDetails), {
+        assert.deepEqual(validateFunction(accountDetails, props), {
           email2: 'Please enter a valid email address'
         })
       })
@@ -182,25 +194,25 @@ describe('ContactDetailsForm Component', () => {
           email: 'Invalid Email',
           email2: 'Another Invalid Email'
         })
-        assert.deepEqual(validateFunction(accountDetails), {
-          name: 'Please enter your Full name',
+        assert.deepEqual(validateFunction(accountDetails, props), {
           email: 'Please enter a valid email address',
-          email2: 'Please enter a valid email address'
+          email2: 'Please enter a valid email address',
+          name: 'Please enter your Full name'
         })
 
         accountDetails = accountDetails.set('name', 'Abu Jenkins')
-        assert.deepEqual(validateFunction(accountDetails), {
+        assert.deepEqual(validateFunction(accountDetails, props), {
           email: 'Please enter a valid email address',
           email2: 'Please enter a valid email address'
         })
 
         accountDetails = accountDetails.set('email2', 'valid@email.address')
-        assert.deepEqual(validateFunction(accountDetails), {
+        assert.deepEqual(validateFunction(accountDetails, props), {
           email: 'Please enter a valid email address'
         })
 
         accountDetails = accountDetails.set('email', 'another.valid@email.address')
-        assert.deepEqual(validateFunction(accountDetails), {})
+        assert.deepEqual(validateFunction(accountDetails, props), {})
       })
     })
   })

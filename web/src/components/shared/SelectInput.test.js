@@ -5,7 +5,6 @@ import { shallow } from 'enzyme'
 import _ from 'lodash'
 import MenuItem from 'material-ui/MenuItem'
 import SelectInput from './SelectInput'
-import SelectField from 'material-ui/SelectField'
 
 describe('SelectInput', () => {
   const props = {

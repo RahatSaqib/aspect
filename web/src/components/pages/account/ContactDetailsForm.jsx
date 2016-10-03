@@ -1,10 +1,23 @@
 import React from 'react'
 import { reduxForm } from 'redux-form/immutable'
 import RaisedButton from 'material-ui/RaisedButton'
+import _ from 'lodash'
+import { injectIntl, defineMessages } from 'react-intl'
 import LocationSelector from '../../shared/LocationSelector'
 import TextInput from '../../shared/TextInput'
 import {emailAddress as validateEmailAddress} from '../../../utils/validate'
 import styles from './AccountDetails.css'
+
+const messages = defineMessages({
+  nameRequired: {
+    id: 'pages.ContactDetailsForm.nameRequired',
+    defaultMessage: 'Please enter your Full name'
+  },
+  invalidEmailAddress: {
+    id: 'pages.ContactDetailsForm.invalidEmailAddress',
+    defaultMessage: 'Please enter a valid email address'
+  }
+})
 
 const ContactDetailsForm = props => {
   const { labels, handleSubmit, pristine, invalid, submitting, initialValues } = props
@@ -40,22 +53,24 @@ const ContactDetailsForm = props => {
   )
 }
 
-const validate = accountDetails => {
-  const errors = {}
+const validate = (accountDetails, props) => {
+  const {formatMessage} = props.intl,
+    errors = {}
   if (!accountDetails.get('name')) {
-    //TODO: i18n
-    errors.name = 'Please enter your Full name'
+    errors.name = formatMessage(messages.nameRequired)
   }
   if (!validateEmailAddress(accountDetails.get('email')).optional().isValid()) {
-    errors.email = 'Please enter a valid email address'
+    errors.email = formatMessage(messages.invalidEmailAddress)
   }
   if (!validateEmailAddress(accountDetails.get('email2')).optional().isValid()) {
-    errors.email2 = 'Please enter a valid email address'
+    errors.email2 = formatMessage(messages.invalidEmailAddress)
   }
   return errors
 }
 
-export default reduxForm({
-  form: 'accountDetails',
-  validate
-})(ContactDetailsForm)
+export default _.flowRight(
+  injectIntl,
+  reduxForm({
+    form: 'accountDetails',
+    validate
+  }))(ContactDetailsForm)
