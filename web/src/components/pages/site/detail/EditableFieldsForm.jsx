@@ -1,6 +1,6 @@
 // Imports from packages
 import _ from 'lodash'
-import React from 'react'
+import React, { PureComponent, PropTypes } from 'react'
 import { Field, reduxForm } from 'redux-form/immutable'
 
 // Material-UI
@@ -23,10 +23,10 @@ const renderTextField = ({ input, meta, ...restProps }) => {
 }
 
 // Renders underlying form and inputs components
-export class EditableFieldsForm extends React.PureComponent {
+export class EditableFieldsForm extends PureComponent {
 
   static propTypes = {
-    labels: React.PropTypes.object.isRequired
+    labels: PropTypes.object.isRequired
   }
 
   render() {

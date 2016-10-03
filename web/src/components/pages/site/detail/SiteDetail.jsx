@@ -1,6 +1,6 @@
 // Imports from packages
 import _ from 'lodash'
-import React from 'react'
+import React, { PureComponent, PropTypes } from 'react'
 import { injectIntl } from 'react-intl'
 import { bindActionCreators } from 'redux'
 import { connect } from 'react-redux'
@@ -23,7 +23,11 @@ import styles from './SiteDetail.css'
 /*
  * This page component renders a single site
  */
-export class SiteDetail extends React.PureComponent {
+export class SiteDetail extends PureComponent {
+
+  static propTypes = {
+    params: PropTypes.object.isRequired
+  }
 
   handleFetchSite = ({ params }) => {
     this.props.fetchSingleSite(params.siteId)

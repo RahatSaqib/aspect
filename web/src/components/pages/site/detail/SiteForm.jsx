@@ -1,5 +1,5 @@
 // Imports from packages
-import React from 'react'
+import React, { PureComponent, PropTypes } from 'react'
 
 // Our own imports
 import ReadOnlyFields from '../../../shared/ReadOnlyFields'
@@ -8,13 +8,13 @@ import messages from './messages'
 
 // If editable, it renders all editable fields in a form for a single site.
 // Otherwise, it renders read only fields
-export default class SiteForm extends React.PureComponent {
+export default class SiteForm extends PureComponent {
 
   static propTypes = {
-    formatMessage: React.PropTypes.func.isRequired,
-    onSubmit: React.PropTypes.func.isRequired,
-    editable: React.PropTypes.bool.isRequired,
-    site: React.PropTypes.object
+    formatMessage: PropTypes.func.isRequired,
+    onSubmit: PropTypes.func.isRequired,
+    editable: PropTypes.bool.isRequired,
+    site: PropTypes.object
   }
 
   handleSubmit = data => {
