@@ -1,24 +1,80 @@
-import React from 'react'
+import React, {PropTypes} from 'react'
+import _ from 'lodash'
 import { Field } from 'redux-form/immutable'
 import TextField from 'material-ui/TextField'
 import CountrySelect from './CountrySelect'
 
-const renderPhoneField = props => {
-  const {input, meta, textFieldProps} = props,
-    {touched, error} = meta
-  return <div style={{display: 'inline-block', position: 'relative'}}>
-      <TextField {...input} errorStyle={{ float: 'left' }} errorText={touched && error}
-                 {...textFieldProps} style={{marginLeft: '5.5em', width: '10.5em'}}
-                 floatingLabelFocusStyle={{marginLeft: '-5.5em'}}
-                 underlineStyle={{marginLeft: '-5.5em', width: '16em'}} />
-      <div style={{position: 'absolute', left: '0', bottom: '0'}}>
-        <CountrySelect value="AS" dataSource={dialingCodes}
-                       dataSourceConfig={{selectedItemTextPredicate: dialingCode => dialingCode.dial_code}}
-                       selectFieldStyle={{verticalAlign: 'bottom', width: '5.5em'}}
-                       selectedItemStyle={{width: '4.5em'}} underlineStyle={{display: 'none'}} />
+class PhoneInput extends React.PureComponent {
+  static propTypes = {
+    input: PropTypes.object.isRequired,
+    meta: PropTypes.object.isRequired,
+    textFieldProps: PropTypes.object.isRequired
+  }
+
+  constructor(props) {
+    super(props)
+
+    this.state = {
+      selectedCountryCode: 'US',
+      number: ''
+    }
+
+    this.onCountryChanged = this.onCountryChanged.bind(this)
+    this.selectCountry = this.selectCountry.bind(this)
+    this.onNumberChanged = this.onNumberChanged.bind(this)
+    this.changeNumber = this.changeNumber.bind(this)
+  }
+
+  onCountryChanged(event, index, value) {
+    this.selectCountry(value)
+  }
+
+  selectCountry(isoAlpha2Code) {
+    this.setState({
+      selectedCountryCode: isoAlpha2Code
+    })
+  }
+
+  onNumberChanged(event) {
+    this.changeNumber(event.target.value)
+  }
+
+  changeNumber(number) {
+    const matchingDialingCodes = _.filter(dialingCodes, dialingCode => number.startsWith(dialingCode.dial_code.substr(0, number.length)))
+    if(matchingDialingCodes.length === 1){
+      this.selectCountry(matchingDialingCodes[0].iso_alpha2_code)
+      number = number.substr(matchingDialingCodes[0].dial_code.length)
+    }
+    this.setState({
+      number: number.trim()
+    })
+  }
+
+  render() {
+    const {input, meta, textFieldProps} = this.props,
+      {touched, error} = meta,
+      {selectedCountryCode, number} = this.state
+
+    return (
+      <div style={{display: 'inline-block', position: 'relative'}}>
+        <TextField {...input} errorStyle={{ float: 'left' }} errorText={touched && error}
+                   {...textFieldProps} style={{marginLeft: '5.5em', width: '10.5em'}}
+                   floatingLabelFocusStyle={{marginLeft: '-5.5em'}}
+                   underlineStyle={{marginLeft: '-5.5em', width: '16em'}} onChange={this.onNumberChanged}
+                   value={number} />
+        <div style={{position: 'absolute', left: '0', bottom: '0'}}>
+          <CountrySelect value={selectedCountryCode} dataSource={dialingCodes}
+                         dataSourceConfig={{selectedItemTextPredicate: dialingCode => dialingCode.dial_code}}
+                         selectFieldStyle={{verticalAlign: 'bottom', width: '5.5em'}}
+                         onChange={this.onCountryChanged} selectedItemStyle={{width: '4.5em'}}
+                         underlineStyle={{display: 'none'}} />
+        </div>
       </div>
-    </div>
+    )
+  }
 }
+
+const renderPhoneField = props => <PhoneInput {...props} />
 
 const renderFormField = props => {
   const {name, label, disabled, maxLength} = props
@@ -32,14 +88,12 @@ const renderFormField = props => {
 export default renderFormField
 
 const dialingCodes = [{dial_code: '+93', iso_alpha2_code: 'AF'},
-  {dial_code: '+358', iso_alpha2_code: 'AX'},
   {dial_code: '+355', iso_alpha2_code: 'AL'},
   {dial_code: '+213', iso_alpha2_code: 'DZ'},
   {dial_code: '+1684', iso_alpha2_code: 'AS'},
   {dial_code: '+376', iso_alpha2_code: 'AD'},
   {dial_code: '+244', iso_alpha2_code: 'AO'},
   {dial_code: '+1264', iso_alpha2_code: 'AI'},
-  {dial_code: '+672', iso_alpha2_code: 'AQ'},
   {dial_code: '+1268', iso_alpha2_code: 'AG'},
   {dial_code: '+54', iso_alpha2_code: 'AR'},
   {dial_code: '+374', iso_alpha2_code: 'AM'},
@@ -68,15 +122,12 @@ const dialingCodes = [{dial_code: '+93', iso_alpha2_code: 'AF'},
   {dial_code: '+257', iso_alpha2_code: 'BI'},
   {dial_code: '+855', iso_alpha2_code: 'KH'},
   {dial_code: '+237', iso_alpha2_code: 'CM'},
-  {dial_code: '+1', iso_alpha2_code: 'CA'},
   {dial_code: '+238', iso_alpha2_code: 'CV'},
-  {dial_code: '+ 345', iso_alpha2_code: 'KY'},
+  {dial_code: '+345', iso_alpha2_code: 'KY'},
   {dial_code: '+236', iso_alpha2_code: 'CF'},
   {dial_code: '+235', iso_alpha2_code: 'TD'},
   {dial_code: '+56', iso_alpha2_code: 'CL'},
   {dial_code: '+86', iso_alpha2_code: 'CN'},
-  {dial_code: '+61', iso_alpha2_code: 'CX'},
-  {dial_code: '+61', iso_alpha2_code: 'CC'},
   {dial_code: '+57', iso_alpha2_code: 'CO'},
   {dial_code: '+269', iso_alpha2_code: 'KM'},
   {dial_code: '+242', iso_alpha2_code: 'CG'},
@@ -118,10 +169,8 @@ const dialingCodes = [{dial_code: '+93', iso_alpha2_code: 'AF'},
   {dial_code: '+590', iso_alpha2_code: 'GP'},
   {dial_code: '+1671', iso_alpha2_code: 'GU'},
   {dial_code: '+502', iso_alpha2_code: 'GT'},
-  {dial_code: '+44', iso_alpha2_code: 'GG'},
   {dial_code: '+224', iso_alpha2_code: 'GN'},
   {dial_code: '+245', iso_alpha2_code: 'GW'},
-  {dial_code: '+595', iso_alpha2_code: 'GY'},
   {dial_code: '+509', iso_alpha2_code: 'HT'},
   {dial_code: '+379', iso_alpha2_code: 'VA'},
   {dial_code: '+504', iso_alpha2_code: 'HN'},
@@ -133,12 +182,10 @@ const dialingCodes = [{dial_code: '+93', iso_alpha2_code: 'AF'},
   {dial_code: '+98', iso_alpha2_code: 'IR'},
   {dial_code: '+964', iso_alpha2_code: 'IQ'},
   {dial_code: '+353', iso_alpha2_code: 'IE'},
-  {dial_code: '+44', iso_alpha2_code: 'IM'},
   {dial_code: '+972', iso_alpha2_code: 'IL'},
   {dial_code: '+39', iso_alpha2_code: 'IT'},
   {dial_code: '+1876', iso_alpha2_code: 'JM'},
   {dial_code: '+81', iso_alpha2_code: 'JP'},
-  {dial_code: '+44', iso_alpha2_code: 'JE'},
   {dial_code: '+962', iso_alpha2_code: 'JO'},
   {dial_code: '+77', iso_alpha2_code: 'KZ'},
   {dial_code: '+254', iso_alpha2_code: 'KE'},
@@ -168,7 +215,6 @@ const dialingCodes = [{dial_code: '+93', iso_alpha2_code: 'AF'},
   {dial_code: '+596', iso_alpha2_code: 'MQ'},
   {dial_code: '+222', iso_alpha2_code: 'MR'},
   {dial_code: '+230', iso_alpha2_code: 'MU'},
-  {dial_code: '+262', iso_alpha2_code: 'YT'},
   {dial_code: '+52', iso_alpha2_code: 'MX'},
   {dial_code: '+691', iso_alpha2_code: 'FM'},
   {dial_code: '+373', iso_alpha2_code: 'MD'},
@@ -211,11 +257,9 @@ const dialingCodes = [{dial_code: '+93', iso_alpha2_code: 'AF'},
   {dial_code: '+7', iso_alpha2_code: 'RU'},
   {dial_code: '+250', iso_alpha2_code: 'RW'},
   {dial_code: '+262', iso_alpha2_code: 'RE'},
-  {dial_code: '+590', iso_alpha2_code: 'BL'},
   {dial_code: '+290', iso_alpha2_code: 'SH'},
   {dial_code: '+1869', iso_alpha2_code: 'KN'},
   {dial_code: '+1758', iso_alpha2_code: 'LC'},
-  {dial_code: '+590', iso_alpha2_code: 'MF'},
   {dial_code: '+508', iso_alpha2_code: 'PM'},
   {dial_code: '+1784', iso_alpha2_code: 'VC'},
   {dial_code: '+685', iso_alpha2_code: 'WS'},
@@ -233,12 +277,10 @@ const dialingCodes = [{dial_code: '+93', iso_alpha2_code: 'AF'},
   {dial_code: '+252', iso_alpha2_code: 'SO'},
   {dial_code: '+27', iso_alpha2_code: 'ZA'},
   {dial_code: '+211', iso_alpha2_code: 'SS'},
-  {dial_code: '+500', iso_alpha2_code: 'GS'},
   {dial_code: '+34', iso_alpha2_code: 'ES'},
   {dial_code: '+94', iso_alpha2_code: 'LK'},
   {dial_code: '+249', iso_alpha2_code: 'SD'},
   {dial_code: '+597', iso_alpha2_code: 'SR'},
-  {dial_code: '+47', iso_alpha2_code: 'SJ'},
   {dial_code: '+268', iso_alpha2_code: 'SZ'},
   {dial_code: '+46', iso_alpha2_code: 'SE'},
   {dial_code: '+41', iso_alpha2_code: 'CH'},

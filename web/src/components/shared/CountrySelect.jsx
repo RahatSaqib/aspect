@@ -49,9 +49,8 @@ export default props => {
         }
       })
 
-  return <SelectField value={value} style={selectFieldStyle}
-                      underlineStyle={underlineStyle} autoWidth={true}
-                      onChange={handleChange}>
+  return <SelectField value={value} style={selectFieldStyle} underlineStyle=""
+                      autoWidth={true} onChange={handleChange}>
     {
       countriesData.map(country =>
         <MenuItem key={country.value} value={country.value}
