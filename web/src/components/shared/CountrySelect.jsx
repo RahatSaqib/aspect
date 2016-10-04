@@ -21,12 +21,12 @@ const MenuItemLabel = props => {
   const {country, selectedItemStyle} = props
   return <div style={{...{display: 'inline-block', whiteSpace: 'nowrap', overflow: 'hidden'}, ...selectedItemStyle}}>
     <FlagIcon countryIsoAlpha2Code={country.iso_alpha2_code} />
-    <div style={{position: 'absolute', left: '1.3em', right: '1.4em', top: '0', textAlign: 'right', whiteSpace: 'nowrap', overflow: 'hidden'}}>{country.selectedItemText}</div>
+    <div style={{position: 'absolute', left: '1.3em', right: '1.4em', top: '0.15em', textAlign: 'right', whiteSpace: 'nowrap', overflow: 'hidden'}}>{country.selectedItemText}</div>
   </div>
 }
 
 export default props => {
-  const {value, selectFieldStyle, selectedItemStyle} = props,
+  const {value, selectFieldStyle, selectedItemStyle, underlineStyle} = props,
     dataSource = props.dataSource || countries,
     dataSourceConfig = props.dataSourceConfig || {},
     countriesJoinOn = dataSourceConfig.countriesJoinOn || 'iso_alpha2_code',
@@ -50,7 +50,8 @@ export default props => {
       })
 
   return <SelectField value={value} style={selectFieldStyle}
-                      autoWidth={true} onChange={handleChange}>
+                      underlineStyle={underlineStyle} autoWidth={true}
+                      onChange={handleChange}>
     {
       countriesData.map(country =>
         <MenuItem key={country.value} value={country.value}

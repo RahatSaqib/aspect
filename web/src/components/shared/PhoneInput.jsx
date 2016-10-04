@@ -6,21 +6,24 @@ import CountrySelect from './CountrySelect'
 const renderPhoneField = props => {
   const {input, meta, textFieldProps} = props,
     {touched, error} = meta
-  return <div style={{display: 'inline-block'}}>
-      <CountrySelect value="AS" dataSource={dialingCodes}
-                     dataSourceConfig={{selectedItemTextPredicate: dialingCode => dialingCode.dial_code}}
-                     selectFieldStyle={{verticalAlign: 'bottom', width: '5.5em'}}
-                     selectedItemStyle={{width: '4.5em'}} />
+  return <div style={{display: 'inline-block', position: 'relative'}}>
       <TextField {...input} errorStyle={{ float: 'left' }} errorText={touched && error}
-                 {...textFieldProps} />
+                 {...textFieldProps} style={{marginLeft: '5.5em', width: '10.5em'}}
+                 floatingLabelFocusStyle={{marginLeft: '-5.5em'}}
+                 underlineStyle={{marginLeft: '-5.5em', width: '16em'}} />
+      <div style={{position: 'absolute', left: '0', bottom: '0'}}>
+        <CountrySelect value="AS" dataSource={dialingCodes}
+                       dataSourceConfig={{selectedItemTextPredicate: dialingCode => dialingCode.dial_code}}
+                       selectFieldStyle={{verticalAlign: 'bottom', width: '5.5em'}}
+                       selectedItemStyle={{width: '4.5em'}} underlineStyle={{display: 'none'}} />
+      </div>
     </div>
 }
 
 const renderFormField = props => {
-  const {name, label, fullWidth, disabled, maxLength} = props
+  const {name, label, disabled, maxLength} = props
   return <Field name={name} textFieldProps={{
     floatingLabelText: label,
-    fullWidth: fullWidth,
     disabled: disabled,
     maxLength: maxLength
   }} component={renderPhoneField} />
