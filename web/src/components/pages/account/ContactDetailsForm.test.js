@@ -5,6 +5,7 @@ import sinon from 'sinon'
 import proxyquire from 'proxyquire'
 import Immutable from 'immutable'
 import TextInput from '../../shared/TextInput'
+import PhoneInput from '../../shared/PhoneInput'
 import RaisedButton from 'material-ui/RaisedButton'
 import LocationSelector from '../../shared/LocationSelector'
 
@@ -61,19 +62,21 @@ describe('ContactDetailsForm Component', () => {
     })
 
     it('Should contain fields for all contact details', () => {
-      const expectedFieldLabels = {
+      const expectedTextFieldLabels = {
           'name': 'Full Name',
           'title': 'Job Title',
           'email': 'Primary',
           'email2': 'Alternate',
-          'phone': 'Telephone',
-          'cell': 'Mobile',
           'zip': 'Zip Code'
-        }, textInputs = ContactDetailsFormWrapper.find(TextInput)
+        }, expectedPhoneFieldLabels = {
+          'phone': 'Telephone',
+          'cell': 'Mobile'
+        }, textInputs = ContactDetailsFormWrapper.find(TextInput),
+        phoneInputs = ContactDetailsFormWrapper.find(PhoneInput)
 
-      assert.equal(textInputs.length, Object.keys(expectedFieldLabels).length)
+      assert.equal(textInputs.length, Object.keys(expectedTextFieldLabels).length)
       textInputs.forEach(textInput => {
-        assert.equal(textInput.props().label, expectedFieldLabels[textInput.props().name])
+        assert.equal(textInput.props().label, expectedTextFieldLabels[textInput.props().name])
       })
     })
 

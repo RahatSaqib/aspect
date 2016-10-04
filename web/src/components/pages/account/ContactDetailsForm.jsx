@@ -5,6 +5,7 @@ import _ from 'lodash'
 import { injectIntl, defineMessages } from 'react-intl'
 import LocationSelector from '../../shared/LocationSelector'
 import TextInput from '../../shared/TextInput'
+import PhoneInput from '../../shared/PhoneInput'
 import {emailAddress as validateEmailAddress} from '../../../utils/validate'
 import styles from './AccountDetails.css'
 
@@ -35,8 +36,8 @@ const ContactDetailsForm = props => {
         </section>
         <section>
           <h1>{labels.phoneHeader}</h1>
-          <TextInput name="phone" label={labels.phone} disabled={submitting} maxLength="40" />
-          <TextInput name="cell" label={labels.cell} disabled={submitting} maxLength="40" />
+          <PhoneInput name="phone" label={labels.phone} disabled={submitting} maxLength="40" />
+          <PhoneInput name="cell" label={labels.cell} disabled={submitting} maxLength="40" />
         </section>
         <section>
           <h1>{labels.locationHeader}</h1>
