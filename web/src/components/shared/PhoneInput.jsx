@@ -6,6 +6,7 @@ import CountrySelect from './CountrySelect'
 
 class PhoneInput extends React.PureComponent {
   static propTypes = {
+    onChange: PropTypes.func.isRequired,
     input: PropTypes.object.isRequired,
     meta: PropTypes.object.isRequired,
     textFieldProps: PropTypes.object.isRequired
@@ -15,7 +16,7 @@ class PhoneInput extends React.PureComponent {
     super(props)
 
     this.state = {
-      selectedCountryCode: 'US',
+      selectedIsoAlpha2Code: 'US',
       number: ''
     }
 
@@ -23,47 +24,65 @@ class PhoneInput extends React.PureComponent {
     this.selectCountry = this.selectCountry.bind(this)
     this.onNumberChanged = this.onNumberChanged.bind(this)
     this.changeNumber = this.changeNumber.bind(this)
+    this.getPhoneNumber = this.getPhoneNumber.bind(this)
+  }
+
+  componentDidMount() {
+    if(!this.state.number) {
+      this.changeNumber(this.props.input.value)
+    }
   }
 
   onCountryChanged(event, index, value) {
     this.selectCountry(value)
+    this.props.onChange(this.getPhoneNumber(value, this.state.number))
   }
 
   selectCountry(isoAlpha2Code) {
     this.setState({
-      selectedCountryCode: isoAlpha2Code
+      selectedIsoAlpha2Code: isoAlpha2Code
     })
   }
 
   onNumberChanged(event) {
     this.changeNumber(event.target.value)
+    this.props.onChange(this.getPhoneNumber(this.state.selectedIsoAlpha2Code, event.target.value))
   }
 
   changeNumber(number) {
     const matchingDialingCodes = _.filter(dialingCodes, dialingCode => number.startsWith(dialingCode.dial_code.substr(0, number.length)))
     if(matchingDialingCodes.length === 1){
       this.selectCountry(matchingDialingCodes[0].iso_alpha2_code)
-      number = number.substr(matchingDialingCodes[0].dial_code.length)
+      number = number.substr(matchingDialingCodes[0].dial_code.length).replace(/^\s+/,'')
     }
-    this.setState({
-      number: number.trim()
-    })
+    if(/^[\s()+-]*([0-9][\s()+-]*){0,17}$/.test(number)) {
+      this.setState({
+        number: number
+      })
+    }
+  }
+
+  getPhoneNumber(isoAlpha2Code, number) {
+    const dialingCode = _.find(dialingCodes, {iso_alpha2_code: isoAlpha2Code})
+    if(dialingCode) {
+      return dialingCode.dial_code + (number ? ' ' + number.trim() : '')
+    }
   }
 
   render() {
-    const {input, meta, textFieldProps} = this.props,
+    const {meta, textFieldProps} = this.props,
       {touched, error} = meta,
-      {selectedCountryCode, number} = this.state
+      {selectedIsoAlpha2Code, number} = this.state
 
     return (
       <div style={{display: 'inline-block', position: 'relative'}}>
-        <TextField {...input} errorStyle={{ float: 'left' }} errorText={touched && error}
+        <TextField name="test" errorStyle={{ float: 'left' }} errorText={touched && error}
                    {...textFieldProps} style={{marginLeft: '5.5em', width: '10.5em'}}
                    floatingLabelFocusStyle={{marginLeft: '-5.5em'}}
                    underlineStyle={{marginLeft: '-5.5em', width: '16em'}} onChange={this.onNumberChanged}
                    value={number} />
         <div style={{position: 'absolute', left: '0', bottom: '0'}}>
-          <CountrySelect value={selectedCountryCode} dataSource={dialingCodes}
+          <CountrySelect value={selectedIsoAlpha2Code} dataSource={dialingCodes}
                          dataSourceConfig={{selectedItemTextPredicate: dialingCode => dialingCode.dial_code}}
                          selectFieldStyle={{verticalAlign: 'bottom', width: '5.5em'}}
                          onChange={this.onCountryChanged} selectedItemStyle={{width: '4.5em'}}
@@ -74,7 +93,9 @@ class PhoneInput extends React.PureComponent {
   }
 }
 
-const renderPhoneField = props => <PhoneInput {...props} />
+const renderPhoneField = props => {
+  return <PhoneInput {...props} onChange={phoneNumber => props.input.onChange(phoneNumber)}/>
+}
 
 const renderFormField = props => {
   const {name, label, disabled, maxLength} = props

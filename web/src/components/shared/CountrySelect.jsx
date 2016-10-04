@@ -4,10 +4,6 @@ import SelectField from 'material-ui/SelectField'
 import MenuItem from 'material-ui/MenuItem'
 import FlagIcon from './flagIcon/FlagIcon'
 
-const handleChange = (event, index, value) => {
-  console.log(value)
-}
-
 const MenuItemPrimaryText = props => {
   const {country} = props
   return <div>
@@ -26,7 +22,7 @@ const MenuItemLabel = props => {
 }
 
 export default props => {
-  const {value, selectFieldStyle, selectedItemStyle, underlineStyle} = props,
+  const {value, selectFieldStyle, selectedItemStyle, underlineStyle, onChange} = props,
     dataSource = props.dataSource || countries,
     dataSourceConfig = props.dataSourceConfig || {},
     countriesJoinOn = dataSourceConfig.countriesJoinOn || 'iso_alpha2_code',
@@ -49,8 +45,8 @@ export default props => {
         }
       })
 
-  return <SelectField value={value} style={selectFieldStyle} underlineStyle=""
-                      autoWidth={true} onChange={handleChange}>
+  return <SelectField value={value} style={selectFieldStyle} underlineStyle={underlineStyle}
+                      autoWidth={true} onChange={onChange}>
     {
       countriesData.map(country =>
         <MenuItem key={country.value} value={country.value}
