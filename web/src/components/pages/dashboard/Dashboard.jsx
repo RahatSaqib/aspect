@@ -57,7 +57,7 @@ export class Dashboard extends PureComponent {
           <div className="pure-u-lg-1-4 pure-u-md-1-3 pure-u-sm-1-2">
             <Link to="/result">
               <MiniChart  data={[25, 12, 8, 2, 1]}
-                          label={'Error Rate'} number={'12%'} bgcolor={'#ff9800'} />
+                          label={'Error Rate'} number={'12'} bgcolor={'#ff9800'} />
             </Link>
           </div>
           <div className="pure-u-lg-1-4 pure-u-md-1-3 pure-u-sm-1-2">
