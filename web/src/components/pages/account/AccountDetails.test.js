@@ -85,19 +85,32 @@ describe('AccountDetails Component', () => {
 
       it('Should show a Contact Details tab containing a contact details form', () => {
         const firstTab = AccountDetailsWrapper.find(Tab).first()
-        assert.equal(firstTab.props().label, 'Contact Details')
-        assert.equal(firstTab.children().length, 1)
-        assert.equal(firstTab.children().first().type(), ContactDetailsForm)
-        assert.equal(firstTab.children().first().props().initialValues, props.accountDetails)
-        assert.equal(firstTab.children().first().props().onSubmit, props.saveAccountDetails)
+        assert.equal(firstTab.props().label.props.children, 'Contact Details')
+        assert.equal(firstTab.find('h2').text(), 'Contact Details')
+
+        const contactDetailsForm = firstTab.find(ContactDetailsForm)
+        assert.equal(contactDetailsForm.props().initialValues, props.accountDetails)
+        assert.equal(contactDetailsForm.props().onSubmit, props.saveAccountDetails)
       })
 
       it('Should show a Login Details tab', () => {
-        assert.equal(AccountDetailsWrapper.findWhere(element => element.type() === Tab && element.props().label === 'Login Details').length, 1)
+        const secondTab = AccountDetailsWrapper.find(Tab).at(1)
+        assert.equal(secondTab.props().label.props.children, 'Username & Password')
+        assert.equal(secondTab.find('h2').text(), 'Username & Password')
+
+        /*const loginDetailsForm = secondTab.find(ChangeLoginDetailsForm)
+        assert.equal(loginDetailsForm.props().initialValues, props.accountDetails)
+        assert.equal(loginDetailsForm.props().onSubmit, props.saveLoginDetails)*/
       })
 
       it('Should show a User Preferences tab', () => {
-        assert.equal(AccountDetailsWrapper.find(Tab).last().props().label, 'User Preferences')
+        const thirdTab = AccountDetailsWrapper.find(Tab).at(2)
+        assert.equal(thirdTab.props().label.props.children, 'Language & Timezone')
+        assert.equal(thirdTab.find('h2').text(), 'Language & Timezone')
+
+        /*const localeDetailsForm = thirdTab.find(LocaleDetailsForm)
+        assert.equal(localeDetailsFormloginDetailsForm.props().initialValues, props.accountDetails)
+        assert.equal(localeDetailsForm.props().onSubmit, props.saveLocaleDetails)*/
       })
     })
   })
