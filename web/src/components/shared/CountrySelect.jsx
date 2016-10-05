@@ -43,7 +43,8 @@ export default props => {
     {
       countriesData.map(country =>
         <MenuItem key={country.value} value={country.value}
-                  primaryText={country.menuItemText} leftIcon={<FlagIcon style={{margin: '0.3em 0'}} countryIsoAlpha2Code={country.iso_alpha2_code} />}
+                  primaryText={country.menuItemText} leftIcon={<FlagIcon style={{margin: '0.3em 0'}}
+                                                                         countryIsoAlpha2Code={country.iso_alpha2_code} />}
                   label={<MenuItemLabel country={country} selectedItemStyle={selectedItemStyle} />} />)
     }
   </SelectField>
