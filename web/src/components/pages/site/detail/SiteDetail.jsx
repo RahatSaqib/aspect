@@ -17,6 +17,7 @@ import {
   updateSingleSite
 } from '../../../../action_creators/site_creators'
 import SiteForm from './SiteForm'
+import SiteLocationFormMap from './SiteLocationFormMap'
 import messages from './messages'
 import styles from './SiteDetail.css'
 
@@ -63,6 +64,12 @@ export class SiteDetail extends PureComponent {
               site={site}
             />
           </div>
+          {site && (
+            <SiteLocationFormMap
+              editable={editable}
+              site={site}
+            />
+          )}
         </Paper>
       </div>
     )
