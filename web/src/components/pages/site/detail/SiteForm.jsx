@@ -31,7 +31,9 @@ export default class SiteForm extends PureComponent {
       street1: data.get('address'),
       street2: data.get('address2'),
       city: data.get('city'),
-      zip: data.get('zip')
+      zip: data.get('zip'),
+      longitude: data.get('lng'),
+      latitude: data.get('lat')
     })
   }
 

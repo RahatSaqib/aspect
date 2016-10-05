@@ -55,7 +55,9 @@ module.exports = [
           street1: Joi.string().required(),
           street2: Joi.string().allow(''),
           city: Joi.string().required(),
-          zip: Joi.string().required()
+          zip: Joi.string().required(),
+          longitude: Joi.number().required(),
+          latitude: Joi.number().required()
         }
       }
     }

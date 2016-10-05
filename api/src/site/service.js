@@ -97,7 +97,9 @@ function* updateSite(request) {
       stateId,
       lgaId,
       city: payload.city,
-      zip: payload.zip
+      zip: payload.zip,
+      longitude: payload.longitude,
+      latitude: payload.latitude
     })
 
   if (updatedCount !== 1) {
