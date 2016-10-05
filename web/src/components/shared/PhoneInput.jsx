@@ -50,14 +50,24 @@ class PhoneInput extends React.PureComponent {
   }
 
   changeNumber(number) {
-    const matchingDialingCodes = _.filter(dialingCodes, dialingCode => number.startsWith(dialingCode.dial_code.substr(0, number.length)))
+    if(!number) {
+      return
+    }
+    //Remove leading spaces from input
+    let trimmedNumber = number.replace(/^\s+/,'')
+    //Get the trimmed first portion of the number (up until the first char which isn't '+' or [0-9]
+    const firstPortionDividerMatch = /\s|\(|\)|-/.exec(trimmedNumber)
+    const firstIndexOfSectionDivider = firstPortionDividerMatch ? firstPortionDividerMatch.index : -1
+    const firstPortionOfNumber = firstIndexOfSectionDivider > -1 ?
+      trimmedNumber.substr(0, firstIndexOfSectionDivider) : trimmedNumber
+    const matchingDialingCodes = _.filter(dialingCodes, {dial_code: firstPortionOfNumber})
     if(matchingDialingCodes.length === 1){
       this.selectCountry(matchingDialingCodes[0].iso_alpha2_code)
-      number = number.substr(matchingDialingCodes[0].dial_code.length).replace(/^\s+/,'')
+      trimmedNumber = trimmedNumber.substr(matchingDialingCodes[0].dial_code.length)
     }
-    if(/^[\s()+-]*([0-9][\s()+-]*){0,17}$/.test(number)) {
+    if(/^[\s()+-]*([0-9][\s()+-]*){0,17}$/.test(trimmedNumber)) {
       this.setState({
-        number: number
+        number: trimmedNumber
       })
     }
   }
@@ -76,17 +86,22 @@ class PhoneInput extends React.PureComponent {
 
     return (
       <div style={{display: 'inline-block', position: 'relative'}}>
-        <TextField name="test" errorStyle={{ float: 'left' }} errorText={touched && error}
-                   {...textFieldProps} style={{marginLeft: '5.5em', width: '10.5em'}}
-                   floatingLabelFocusStyle={{marginLeft: '-5.5em'}}
-                   underlineStyle={{marginLeft: '-5.5em', width: '16em'}} onChange={this.onNumberChanged}
-                   value={number} />
         <div style={{position: 'absolute', left: '0', bottom: '0'}}>
           <CountrySelect value={selectedIsoAlpha2Code} dataSource={dialingCodes}
-                         dataSourceConfig={{selectedItemTextPredicate: dialingCode => dialingCode.dial_code}}
+                         dataSourceConfig={{
+                           selectedItemTextPredicate: country => country.dial_code,
+                           menuItemTextPredicate: country => country.name + ' (' + country.dial_code + ')'
+                         }}
                          selectFieldStyle={{verticalAlign: 'bottom', width: '5.5em'}}
                          onChange={this.onCountryChanged} selectedItemStyle={{width: '4.5em'}}
                          underlineStyle={{display: 'none'}} />
+        </div>
+        <div style={{float: 'left'}}>
+          <TextField name="test" errorStyle={{ float: 'left' }} errorText={touched && error}
+                     {...textFieldProps} style={{marginLeft: '5.5em', width: '10.5em'}}
+                     floatingLabelFocusStyle={{marginLeft: '-5.5em'}}
+                     underlineStyle={{marginLeft: '-5.5em', width: '16em'}} onChange={this.onNumberChanged}
+                     value={number} />
         </div>
       </div>
     )

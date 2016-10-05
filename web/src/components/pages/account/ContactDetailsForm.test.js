@@ -78,6 +78,9 @@ describe('ContactDetailsForm Component', () => {
       textInputs.forEach(textInput => {
         assert.equal(textInput.props().label, expectedTextFieldLabels[textInput.props().name])
       })
+      phoneInputs.forEach(phoneInput => {
+        assert.equal(phoneInput.props().label, expectedPhoneFieldLabels[phoneInput.props().name])
+      })
     })
 
     it('Should disable all fields when form is submitting', () => {
