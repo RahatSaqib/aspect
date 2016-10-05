@@ -4,20 +4,13 @@ import SelectField from 'material-ui/SelectField'
 import MenuItem from 'material-ui/MenuItem'
 import FlagIcon from './flagIcon/FlagIcon'
 
-const MenuItemPrimaryText = props => {
-  const {country} = props
-  return <div>
-    <FlagIcon countryIsoAlpha2Code={country.iso_alpha2_code} />
-    &nbsp;&nbsp;
-    <span>{country.menuItemText}</span>
-  </div>
-}
-
 const MenuItemLabel = props => {
   const {country, selectedItemStyle} = props
   return <div style={{...{display: 'inline-block', whiteSpace: 'nowrap', overflow: 'hidden'}, ...selectedItemStyle}}>
     <FlagIcon countryIsoAlpha2Code={country.iso_alpha2_code} />
-    <div style={{position: 'absolute', left: '1.3em', right: '1.4em', top: '0.15em', textAlign: 'right', whiteSpace: 'nowrap', overflow: 'hidden'}}>{country.selectedItemText}</div>
+    <div style={{position: 'absolute', left: '1.3em', right: '1.4em', top: '0.15em', textAlign: 'right', whiteSpace: 'nowrap', overflow: 'hidden'}}>
+      {country.selectedItemText}
+    </div>
   </div>
 }
 

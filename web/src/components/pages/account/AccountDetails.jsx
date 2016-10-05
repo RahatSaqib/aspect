@@ -6,6 +6,9 @@ import { connect } from 'react-redux'
 import LinearProgress from 'material-ui/LinearProgress'
 import Paper from 'material-ui/Paper'
 import {Tabs, Tab} from 'material-ui/Tabs'
+import MapsPersonPin from 'material-ui/svg-icons/maps/person-pin'
+import Language from 'material-ui/svg-icons/action/language'
+import Lock from 'material-ui/svg-icons/action/lock'
 import ContactDetailsForm from './ContactDetailsForm'
 import {fetchAccountDetails, saveAccountDetails} from '../../../action_creators/accountDetails_creators'
 import styles from './AccountDetails.css'
@@ -63,13 +66,13 @@ const messages = defineMessages({
     id: 'pages.AccountDetails.save',
     defaultMessage: 'Save'
   },
-  loginDetails: {
-    id: 'pages.AccountDetails.loginDetails',
-    defaultMessage: 'Login Details'
+  usernameAndPassword: {
+    id: 'pages.AccountDetails.usernameAndPassword',
+    defaultMessage: 'Username & Password'
   },
-  userPreferences: {
-    id: 'pages.AccountDetails.userPreferences',
-    defaultMessage: 'User Preferences'
+  languageAndTimezone: {
+    id: 'pages.AccountDetails.languageAndTimezone',
+    defaultMessage: 'Language & Timezone'
   }
 })
 
@@ -101,13 +104,19 @@ class AccountDetails extends React.PureComponent {
         {!loading &&
         <Paper>
           <Tabs>
-            <Tab label={formatMessage(messages.contactDetails)}>
+            <Tab className={styles.ResponsiveTab} icon={<MapsPersonPin />}
+                 label={<span className="pure-hidden-xs">{formatMessage(messages.contactDetails)}</span>}>
+              <h2 className={'pure-visible-xs ' + styles.Form__Header}>{formatMessage(messages.contactDetails)}</h2>
               <ContactDetailsForm initialValues={accountDetails} onSubmit={saveAccountDetails} labels={labels} />
             </Tab>
-            <Tab label={formatMessage(messages.loginDetails)}>
+            <Tab className={styles.ResponsiveTab} icon={<Lock />}
+                 label={<span className="pure-hidden-xs">{formatMessage(messages.usernameAndPassword)}</span>}>
+              <h2 className={'pure-visible-xs ' + styles.Form__Header}>{formatMessage(messages.usernameAndPassword)}</h2>
               <span>Change Username and Password Here!</span>
             </Tab>
-            <Tab label={formatMessage(messages.userPreferences)}>
+            <Tab className={styles.ResponsiveTab} icon={<Language />}
+                 label={<span className="pure-hidden-xs">{formatMessage(messages.languageAndTimezone)}</span>}>
+              <h2 className={'pure-visible-xs ' + styles.Form__Header}>{formatMessage(messages.languageAndTimezone)}</h2>
               <span>Timezone and Language Here!</span>
             </Tab>
           </Tabs>

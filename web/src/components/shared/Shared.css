@@ -3,12 +3,14 @@
   padding: 20px 50px 0 50px;
 }
 
+/* xs */
 @media screen and (max-width:35.438em) {
   .Content {
     padding: 20px 10px;
   }
 }
 
+/* xl */
 @media screen and (min-width: 80em) {
   .Content {
     max-width: 1400px;
