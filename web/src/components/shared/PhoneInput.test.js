@@ -1,6 +1,5 @@
 import React from 'react'
 import { assert } from 'chai'
-import _ from 'lodash'
 import { shallow } from 'enzyme'
 import sinon from 'sinon'
 import TextField from 'material-ui/TextField'

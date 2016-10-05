@@ -3,8 +3,8 @@ require('dotenv-safe').load()
 let supertest = require('supertest')
 let jwt = require('jsonwebtoken')
 let chai = require('chai')
-let shared = require('../shared_tests')
-let config = require('./../../../src/config')
+let shared = require('./sharedToken')
+let config = require('../../src/config')
 let serverUrl = 'http://localhost:8080',
   server = supertest.agent(serverUrl),
   attemptsToConnect = 0,

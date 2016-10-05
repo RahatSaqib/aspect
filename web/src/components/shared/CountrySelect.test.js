@@ -23,8 +23,8 @@ describe('CountrySelect Component', () => {
       dataSourceConfig: {
         countriesJoinOn: 'iso_alpha2_code',
         dataSourceJoinOn: 'id',
-        selectedItemTextPredicate: country => 'Expected Selected Item Text',
-        menuItemTextPredicate: country => 'Expected List Item Text',
+        selectedItemTextPredicate: () => 'Expected Selected Item Text',
+        menuItemTextPredicate: () => 'Expected List Item Text',
         valuePredicate: country => country.id + ' ' + country.country
       }
     }
