@@ -1,11 +1,11 @@
 let proxyquire = require('proxyquire')
 let {assert} = require('chai')
 let _ = require('lodash')
-let endpointUtils = require('../../test/unit_tests/endpointUtils')
+let endpointUtils = require('../utils/endpointUtils')
 
 describe('geography endpoints', function () {
   function setupRoute(method, path, serviceStub) {
-    const endpoints = proxyquire('./endpoints', {
+    const endpoints = proxyquire('../../src/geography/endpoints', {
       './service': serviceStub
     })
     return _.find(endpoints, {method: method, path: path})

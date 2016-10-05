@@ -1,9 +1,9 @@
 let supertest = require('supertest')
 let chai = require('chai')
-let shared = require('./shared_tests')
+let shared = require('../utils/sharedToken')
 let _ = require('lodash')
 
-// This agent refers to PORT where program is runninng.
+// This agent refers to PORT where program is running.
 let server = supertest.agent('http://localhost:8080')
 let assert = chai.assert
 

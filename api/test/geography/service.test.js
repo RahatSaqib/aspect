@@ -2,15 +2,15 @@ let proxyquire = require('proxyquire')
 let {assert} = require('chai')
 let _ = require('lodash')
 let sinon = require('sinon')
-let {run} = require('../../test/unit_tests/generatorFunctionUtils')
+let {run} = require('../utils/generatorFunctionUtils')
 
 describe('geography service', function () {
   let dbSpy, service
 
   beforeEach(function () {
-    dbSpy = require('../../test/unit_tests/dbSpy')
+    dbSpy = require('../utils/dbSpy')
     sinon.spy(dbSpy, 'query')
-    service = proxyquire.noCallThru().load('./service', {
+    service = proxyquire.noCallThru().load('../../src/geography/service', {
       '../db': dbSpy
     })
   })
