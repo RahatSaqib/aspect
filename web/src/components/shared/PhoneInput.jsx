@@ -67,7 +67,7 @@ class PhoneInput extends React.PureComponent {
     }
     if(/^[\s()+-]*([0-9][\s()+-]*){0,17}$/.test(trimmedNumber)) {
       this.setState({
-        number: trimmedNumber
+        number: trimmedNumber.replace(/^\s+/,'')
       })
     }
   }
@@ -75,6 +75,9 @@ class PhoneInput extends React.PureComponent {
   getPhoneNumber(isoAlpha2Code, number) {
     const dialingCode = _.find(dialingCodes, {iso_alpha2_code: isoAlpha2Code})
     if(dialingCode) {
+      if(number.startsWith(dialingCode)) {
+        number = number.substr(dialingCode.length)
+      }
       return dialingCode.dial_code + (number ? ' ' + number.trim() : '')
     }
   }
@@ -108,9 +111,8 @@ class PhoneInput extends React.PureComponent {
   }
 }
 
-const renderPhoneField = props => {
-  return <PhoneInput {...props} onChange={phoneNumber => props.input.onChange(phoneNumber)}/>
-}
+const renderPhoneField = props =>
+  <PhoneInput {...props} onChange={phoneNumber => props.input.onChange(phoneNumber)}/>
 
 const renderFormField = props => {
   const {name, label, disabled, maxLength} = props
