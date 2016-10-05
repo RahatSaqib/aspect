@@ -75,7 +75,7 @@ export default class SiteForm extends PureComponent {
 
   // these are the same fields in read only mode in case the user has read access only
   renderReadOnlyFields() {
-    const { site, intl: { formatMessage } } = this.props
+    const { site, formatMessage } = this.props
     const fields = [
       {
         label: formatMessage(messages.fieldName),
