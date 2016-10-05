@@ -1,3 +1,7 @@
+/*
+  This is a generic reducer for a list of things that are
+  to be loaded in a pageable, sortable grid
+*/
 import Immutable from 'immutable'
 
 export function requestTable(table, action) {

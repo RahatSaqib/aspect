@@ -20,12 +20,13 @@ export function getBrowserNameAndVersion() {
   return browser.name + ' ' + browser.version
 }
 
+// fetch with auth and other headers we need
 export const aspectFetch = createFetch(
   base(config.aspectApi),
   accept('application/json'),
   header('Content-Type', 'application/json'),
   addAuthHeaderMiddleware,
-  onResponse(handleFetchError)
+  onResponse(handleFetchResponse)
 )
 
 function addAuthHeaderMiddleware(fetch, input, options = {}) {
@@ -36,7 +37,7 @@ function addAuthHeaderMiddleware(fetch, input, options = {}) {
   return fetch(input, options)
 }
 
-// adds headers to every fetch request
+// adds authorization and content type headers to a request
 export function getHeaders(json){
   const headers = new Headers()
 
@@ -53,12 +54,12 @@ export function getHeaders(json){
 }
 
 // using this in a fetch (ajax request) to check if request was successful
-export function handleFetchError(resp) {
+export function handleFetchResponse(resp) {
   const json = resp.json()
 
   if (resp.ok) {
     return json.then(prevJson => {
-      const nextJson = changeAllIdsToString(prevJson) // FIXME: change backend
+      const nextJson = changeAllIdsToString(prevJson)
       return nextJson
     })
   } else {
@@ -66,6 +67,7 @@ export function handleFetchError(resp) {
   }
 }
 
+// returns name and version of the user's browser
 function getBrowserInfo() {
   try {
     let ua = navigator.userAgent,
@@ -95,10 +97,14 @@ function getBrowserInfo() {
   }
 }
 
+// check if a property looks like an ID (key is equal to 'id' or ends with 'Id')
 function isIdLike(key) {
   return key === 'id' || key.match(/.+Id$/)
 }
 
+// change data type of IDs to a string
+// params in react router are always strings
+// so this saves us from having to do conversions throught the app
 function changeAllIdsToString(data) {
   if (_.isArray(data)) {
     return data.map(changeAllIdsToString)

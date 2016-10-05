@@ -109,7 +109,7 @@ export function loginStart(login) {
     return fetch(config.aspectApi + '/auth',
       {
         method: 'POST',
-        headers: fetchUtils.getHeaders(true),
+        headers: fetchUtils.getHeaders(),
         body: JSON.stringify({
           name: user,
           password: password,
@@ -117,7 +117,7 @@ export function loginStart(login) {
           clientName: clientName
         })
       })
-      .then(fetchUtils.handleFetchError)
+      .then(fetchUtils.handleFetchResponse)
       .then(json => {
 
         let jwt = storeAccess(json)
@@ -145,7 +145,7 @@ export function logoutStart() {
     // let the app know that we're now logged out
     dispatch(logoutSuccess())
 
-    // now, redirct to login page
+    // now, redirect to login page
     history.push('/login')
   }
 }
@@ -161,13 +161,13 @@ export function refreshStart() {
     fetch(config.aspectApi + '/auth/refresh',
       {
         method: 'POST',
-        headers: fetchUtils.getHeaders(true),
+        headers: fetchUtils.getHeaders(),
         body: JSON.stringify({
           token: localStorage.getRefreshToken(),
           clientId: localStorage.getClientId()
         })
       })
-      .then(fetchUtils.handleFetchError)
+      .then(fetchUtils.handleFetchResponse)
       .then(json => {
         let jwt = storeAccess(json)
 

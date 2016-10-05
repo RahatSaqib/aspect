@@ -1,3 +1,7 @@
+/*
+  This is a generic reducer for a list of items
+  where individual items can be updated with additional data
+*/
 import Immutable from 'immutable'
 
 export function receiveList(items, list) {
