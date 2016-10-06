@@ -38,6 +38,6 @@ query.for = function (queryDescription) {
 module.exports = {
   query,
   knex: {
-    raw: sinon.spy()
+    raw: sinon.stub()
   }
 }

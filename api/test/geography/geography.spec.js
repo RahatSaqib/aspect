@@ -7,8 +7,8 @@ let shared = require('../utils/sharedToken')
 let server = supertest.agent('http://localhost:8080')
 let assert = chai.assert
 
-describe('Geography routes',function(){
-  describe('/api/geography/select-list',function(){
+describe('Geography routes', function(){
+  describe('/api/geography/select-list', function(){
     let path = '/api/geography/select-list'
 
     describe('GET',function(){
@@ -50,35 +50,128 @@ describe('Geography routes',function(){
     })
   })
 
-  describe('/geography/country-select-list',function(){
+  describe('/geography/country-select-list', function(){
     let path = '/api/geography/country-select-list'
 
     describe('GET',function(){
       shared.checkToken(server, path)
 
-      it('should return a list of country IDs and names ordered by name', function(done){
-        server
-          .get(path)
-          .set('Authorization', 'Bearer '+shared.token)
-          .end(function(err,res){
-            assert.equal(res.status, 200)
-            assert.typeOf(res.body, 'Object')
-            assert.property(res.body, 'data')
-            assert.typeOf(res.body.data, 'array')
-            assert.isAtLeast(res.body.data.length, 1)
-            let expectedCountriesInAlphabeticalOrder = _.orderBy(res.body.data, 'name', 'asc')
-            assert.isTrue(_.isEqual(res.body.data, expectedCountriesInAlphabeticalOrder), 'Countries returned are not in alphabetical order ' + JSON.stringify(res.body.data))
-            _.each(res.body.data, function(country) {
-              assert.property(country, 'id')
-              assert.property(country, 'name')
+      describe('with no selected country', function(){
+        it('should return a list of country IDs and names ordered by name', function(done){
+          server
+            .get(path)
+            .set('Authorization', 'Bearer '+shared.token)
+            .end(function(err,res){
+              assert.equal(res.status, 200)
+              assert.typeOf(res.body, 'Object')
+              assert.property(res.body, 'data')
+              assert.typeOf(res.body.data, 'array')
+              assert.isAtLeast(res.body.data.length, 1)
+              let expectedCountriesInAlphabeticalOrder = _.orderBy(res.body.data, 'name', 'asc')
+              assert.isTrue(_.isEqual(res.body.data, expectedCountriesInAlphabeticalOrder), 'Countries returned are not in alphabetical order ' + JSON.stringify(res.body.data))
+              _.each(res.body.data, function(country) {
+                assert.property(country, 'id')
+                assert.property(country, 'name')
+              })
+              done()
             })
-            done()
-          })
+        })
+      })
+
+      describe('with a selected country and no selected state', function(){
+        it('should return a list of country IDs and names, ordered by name and populating the states of the selected country', function(done){
+          //First get the full country/state/LGA tree so that we can pick a countryId to query
+          server
+            .get('/api/geography/select-list')
+            .set('Authorization', 'Bearer '+ shared.token)
+            .end(function(err,res){
+              const countryWithStates = _.find(res.body.data, function (country) {
+                return country.states.length > 0
+              })
+              server
+                .get(path + '/' + countryWithStates.id)
+                .set('Authorization', 'Bearer '+shared.token)
+                .end(function(err,res){
+                  assert.equal(res.status, 200)
+                  assert.typeOf(res.body, 'Object')
+                  assert.property(res.body, 'data')
+                  assert.typeOf(res.body.data, 'array')
+                  assert.isAtLeast(res.body.data.length, 1)
+                  let expectedCountriesInAlphabeticalOrder = _.orderBy(res.body.data, 'name', 'asc')
+                  assert.isTrue(_.isEqual(res.body.data, expectedCountriesInAlphabeticalOrder), 'Countries returned are not in alphabetical order ' + JSON.stringify(res.body.data))
+                  _.each(res.body.data, function(country) {
+                    assert.property(country, 'id')
+                    assert.property(country, 'name')
+                    if(country.id === countryWithStates.id) {
+                      assert.property(country, 'states')
+                      assert.typeOf(country.states, 'array')
+                      assert.isAtLeast(country.states.length, 1)
+                    } else {
+                      assert.equal(country.states, undefined)
+                    }
+                  })
+                  done()
+                })
+            })
+        })
+      })
+
+      describe('with a selected country and a selected state', function(){
+        it('should return a list of country IDs and names, ordered by name and populating the states of the selected country and the LGAs of the selected state', function(done){
+          //First get the full country/state/LGA tree so that we can pick a countryId to query
+          server
+            .get('/api/geography/select-list')
+            .set('Authorization', 'Bearer '+ shared.token)
+            .end(function(err,res){
+              const countryWithStatesAndLGAs = _.find(res.body.data, function (country) {
+                return _.some(country.states, function(state) {
+                  return state.lgas.length > 0
+                })
+              }), stateWithLGAs = _.find(countryWithStatesAndLGAs.states, function(state) {
+                return state.lgas.length > 0
+              })
+              server
+                .get(path + '/' + countryWithStatesAndLGAs.id + '/' + stateWithLGAs.id)
+                .set('Authorization', 'Bearer '+shared.token)
+                .end(function(err,res){
+                  assert.equal(res.status, 200)
+                  assert.typeOf(res.body, 'Object')
+                  assert.property(res.body, 'data')
+                  assert.typeOf(res.body.data, 'array')
+                  assert.isAtLeast(res.body.data.length, 1)
+                  let expectedCountriesInAlphabeticalOrder = _.orderBy(res.body.data, 'name', 'asc')
+                  assert.isTrue(_.isEqual(res.body.data, expectedCountriesInAlphabeticalOrder), 'Countries returned are not in alphabetical order ' + JSON.stringify(res.body.data))
+                  _.each(res.body.data, function(country) {
+                    assert.property(country, 'id')
+                    assert.property(country, 'name')
+                    if(country.id === countryWithStatesAndLGAs.id) {
+                      assert.property(country, 'states')
+                      assert.typeOf(country.states, 'array')
+                      assert.isAtLeast(country.states.length, 1)
+                      _.each(country.states, function(state) {
+                        assert.property(state, 'id')
+                        assert.property(state, 'name')
+                        if(state.id === stateWithLGAs.id) {
+                          assert.property(state, 'lgas')
+                          assert.typeOf(state.lgas, 'array')
+                          assert.isAtLeast(state.lgas.length, 1)
+                        } else {
+                          assert.equal(state.lgas, undefined)
+                        }
+                      })
+                    } else {
+                      assert.equal(country.states, undefined)
+                    }
+                  })
+                  done()
+                })
+            })
+        })
       })
     })
   })
 
-  describe('/geography/state-select-list/{countryId}',function(){
+  describe('/geography/state-select-list/{countryId}', function(){
     let path = '/api/geography/state-select-list/'
 
     describe('GET',function(){
@@ -113,7 +206,7 @@ describe('Geography routes',function(){
     })
   })
 
-  describe('/geography/lga-select-list/{stateId}',function(){
+  describe('/geography/lga-select-list/{stateId}', function(){
     let path = '/api/geography/lga-select-list/'
 
     describe('GET',function(){

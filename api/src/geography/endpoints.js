@@ -20,6 +20,33 @@ module.exports = [{
   }
 }, {
   method: 'GET',
+  path: '/geography/country-select-list/{countryId}',
+  handler: asyncHandler(countrySelectList),
+  config: {
+    description: 'Country List With Selected Country',
+    notes: 'List of country IDs and Names With States Populated for Selected Country',
+    validate: {
+      params: {
+        countryId: Joi.number().description('Country ID').required()
+      }
+    }
+  }
+}, {
+  method: 'GET',
+  path: '/geography/country-select-list/{countryId}/{stateId}',
+  handler: asyncHandler(countrySelectList),
+  config: {
+    description: 'Country List With Selected Country and State',
+    notes: 'List of country IDs and Names With States Populated for Selected Country and LGAs Populated for Selected State',
+    validate: {
+      params: {
+        countryId: Joi.number().description('Country ID').required(),
+        stateId: Joi.number().description('State ID').required()
+      }
+    }
+  }
+}, {
+  method: 'GET',
   path: '/geography/state-select-list/{countryId}',
   handler: asyncHandler(stateSelectList),
   config: {

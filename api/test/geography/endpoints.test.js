@@ -46,6 +46,53 @@ describe('geography endpoints', function () {
 
       it('Should respond with a the data returned from the service', function (done) {
         endpointUtils.callHandlerOn(endpoint)
+          .with({params: {}})
+          .handleResponseWith(function (response) {
+            assert.deepEqual(response, expectedResponse)
+          })
+          .thenCall(done)
+          .execute()
+      })
+    })
+  })
+
+  describe('/geography/country-select-list/{countryId}', function () {
+    describe('GET', function () {
+      let endpoint
+      const expectedResponse = [ 'List of Countries' ]
+
+      beforeEach(function () {
+        endpoint = setupRoute('GET', '/geography/country-select-list/{countryId}', {
+          countrySelectList: function* () { return expectedResponse }
+        })
+      })
+
+      it('Should respond with a the data returned from the service', function (done) {
+        endpointUtils.callHandlerOn(endpoint)
+          .with({params: {}})
+          .handleResponseWith(function (response) {
+            assert.deepEqual(response, expectedResponse)
+          })
+          .thenCall(done)
+          .execute()
+      })
+    })
+  })
+
+  describe('/geography/country-select-list/{countryId}/{stateId}', function () {
+    describe('GET', function () {
+      let endpoint
+      const expectedResponse = [ 'List of Countries' ]
+
+      beforeEach(function () {
+        endpoint = setupRoute('GET', '/geography/country-select-list/{countryId}/{stateId}', {
+          countrySelectList: function* () { return expectedResponse }
+        })
+      })
+
+      it('Should respond with a the data returned from the service', function (done) {
+        endpointUtils.callHandlerOn(endpoint)
+          .with({params: {}})
           .handleResponseWith(function (response) {
             assert.deepEqual(response, expectedResponse)
           })

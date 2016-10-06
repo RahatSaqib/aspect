@@ -136,31 +136,185 @@ describe('geography service', function () {
   })
 
   describe('countrySelectList', function () {
-    const countriesForSelectList = _.sortBy(_.uniqBy(
-      _.map(countriesStatesAndLGAs, function(result) {
-        return {
-          id: result.countryId,
-          name: result.countryName
-        }
-      }), 'id'), 'name')
+    describe('when no selected country or state is specified', function () {
+      const countriesForSelectList = _.sortBy(_.uniqBy(
+        _.map(countriesStatesAndLGAs, function(result) {
+          return {
+            id: result.countryId,
+            name: result.countryName
+          }
+        }), 'id'), 'name')
 
-    beforeEach(function () {
-      dbSpy.query.for('Get countries for select list').resolvesWith(countriesForSelectList)
-    })
+      beforeEach(function () {
+        dbSpy.query.for('Get countries for select list').resolvesWith(countriesForSelectList)
+      })
 
-    it('Should query the country table, sorting the results by country name', function () {
-      return run(service.countrySelectList)(function() {
-        const countyQuery = dbSpy.query.withArgs('Get countries for select list').lastCall.returnValue
-        assert.equal(countyQuery.from.lastCall.args[0], 'country as c')
-        assert.deepEqual(countyQuery.orderBy.lastCall.args, [['c.name'], 'asc'], 'The orderBy clause seems to be incorrect')
-        assert.deepEqual(countyQuery.select.lastCall.args, ['c.id', 'c.name'], 'The select clause seems to be incorrect')
+      it('Should query the country table, sorting the results by country name', function () {
+        return run(service.countrySelectList, [{params: {}}])(function() {
+          const countryQuery = dbSpy.query.withArgs('Get countries for select list').lastCall.returnValue
+          assert.equal(countryQuery.from.lastCall.args[0], 'country as c')
+          assert.deepEqual(countryQuery.orderBy.lastCall.args, [['c.name'], 'asc'], 'The orderBy clause seems to be incorrect')
+          assert.deepEqual(countryQuery.select.lastCall.args, ['c.id', 'c.name'], 'The select clause seems to be incorrect')
+        })
+      })
+
+      it('Should return a list of countries', function () {
+        return run(service.countrySelectList, [{params: {}}])(function(response) {
+          assert.isTrue(response.ok)
+          assert.deepEqual(response.data, countriesForSelectList)
+        })
       })
     })
 
-    it('Should return a list of countries', function () {
-      return run(service.countrySelectList)(function(response) {
-        assert.isTrue(response.ok)
-        assert.deepEqual(response.data, countriesForSelectList)
+    describe('when a selected country is specified', function () {
+      const selectedCountryId = 2,
+        countriesForSelectList = _.sortBy(_.map(countriesStatesAndLGAs, function(result) {
+            return {
+              countryId: result.countryId,
+              countryName: result.countryName,
+              stateId: selectedCountryId === result.countryId ? result.stateId : null,
+              stateName: selectedCountryId === result.countryId ? result.stateName : null
+            }
+          }), ['countryName', 'stateName'])
+
+      beforeEach(function () {
+        dbSpy.query.for('Get countries and country states for select lists').resolvesWith(countriesForSelectList)
+      })
+
+      it('Should query the country and state tables, sorting the results by country name and then state name', function () {
+        return run(service.countrySelectList, [{params: {countryId: selectedCountryId}}])(function() {
+          const countryQuery = dbSpy.query.withArgs('Get countries and country states for select lists').lastCall.returnValue
+          assert.equal(countryQuery.from.lastCall.args[0], 'country as c')
+          assert.equal(countryQuery.leftJoin.lastCall.args[0], 'state as s')
+
+          const joinOnCallbackFunction = countryQuery.leftJoin.lastCall.args[1],
+            knexQueryBuilderSpy = {
+              on: sinon.stub()
+            },
+            boundJoinOnCallbackFunction = joinOnCallbackFunction.bind(knexQueryBuilderSpy)
+          knexQueryBuilderSpy.on.returns(knexQueryBuilderSpy)
+          dbSpy.knex.raw.withArgs(2).returns('' + selectedCountryId)
+          boundJoinOnCallbackFunction()
+          assert.isOk(knexQueryBuilderSpy.on.calledTwice)
+          assert.deepEqual(knexQueryBuilderSpy.on.firstCall.args, ['c.id', 's.countryId'])
+          assert.deepEqual(knexQueryBuilderSpy.on.secondCall.args, [{countryId: '' + selectedCountryId}])
+
+          assert.deepEqual(countryQuery.orderBy.lastCall.args, [['c.name','s.name'], 'asc'], 'The orderBy clause seems to be incorrect')
+          assert.deepEqual(countryQuery.select.lastCall.args, ['c.id as countryId', 'c.name as countryName', 's.id as stateId', 's.name as stateName'], 'The select clause seems to be incorrect')
+        })
+      })
+
+      it('Should return a list of countries with the selected country\'s states populated', function () {
+        const expectedCountries = _.map(_.uniqBy(countriesForSelectList, 'countryId'), function(countryRecord) {
+          return {
+            id: countryRecord.countryId,
+            name: countryRecord.countryName
+          }
+        }), selectedCountry = _.find(expectedCountries, {id: selectedCountryId}),
+          selectedCountryStates = _.map(_.filter(countriesForSelectList, function(stateRecord) {
+            return stateRecord.stateId != null
+          }), function(stateRecord) {
+            return {
+              id: stateRecord.stateId,
+              name: stateRecord.stateName
+            }
+          })
+        selectedCountry.states = _.sortBy(selectedCountryStates, 'name')
+
+        return run(service.countrySelectList, [{params: {countryId: selectedCountryId}}])(function(response) {
+          assert.isTrue(response.ok)
+          assert.deepEqual(response.data, expectedCountries)
+        })
+      })
+    })
+
+    describe('when selected country and state are specified', function () {
+      const selectedCountryId = 2, selectedStateId = 32,
+        countriesForSelectList = _.sortBy(_.map(countriesStatesAndLGAs, function(result) {
+            return {
+              countryId: result.countryId,
+              countryName: result.countryName,
+              stateId: selectedCountryId === result.countryId ? result.stateId : null,
+              stateName: selectedCountryId === result.countryId ? result.stateName : null,
+              lgaId: selectedStateId === result.stateId ? result.lgaId : null,
+              lgaName: selectedStateId === result.stateId ? result.lgaName : null
+            }
+          }), ['countryName', 'stateName', 'lgaName'])
+
+      beforeEach(function () {
+        dbSpy.query.for('Get countries, country states and state LGAs for select lists').resolvesWith(countriesForSelectList)
+      })
+
+      it('Should query the country, state and lga tables, sorting the results by country name, then state and then LGA name', function () {
+        return run(service.countrySelectList, [{params: {countryId: selectedCountryId, stateId: selectedStateId}}])(function() {
+          const countryQuery = dbSpy.query.withArgs('Get countries, country states and state LGAs for select lists').lastCall.returnValue
+          assert.equal(countryQuery.from.lastCall.args[0], 'country as c')
+          assert.isOk(countryQuery.leftJoin.calledTwice)
+          assert.equal(countryQuery.leftJoin.firstCall.args[0], 'state as s')
+
+          let knexQueryBuilderSpy = {
+            on: sinon.stub()
+          }
+          knexQueryBuilderSpy.on.returns(knexQueryBuilderSpy)
+          const stateJoinOnCallbackFunction = countryQuery.leftJoin.firstCall.args[1],
+            boundStateJoinOnCallbackFunction = stateJoinOnCallbackFunction.bind(knexQueryBuilderSpy)
+          dbSpy.knex.raw.withArgs(2).returns('' + selectedCountryId)
+          boundStateJoinOnCallbackFunction()
+          assert.isOk(knexQueryBuilderSpy.on.calledTwice)
+          assert.deepEqual(knexQueryBuilderSpy.on.firstCall.args, ['c.id', 's.countryId'])
+          assert.deepEqual(knexQueryBuilderSpy.on.secondCall.args, [{countryId: '' + selectedCountryId}])
+
+          knexQueryBuilderSpy = {
+            on: sinon.stub()
+          }
+          knexQueryBuilderSpy.on.returns(knexQueryBuilderSpy)
+          assert.equal(countryQuery.leftJoin.secondCall.args[0], 'lga as l')
+          const lgaJoinOnCallbackFunction = countryQuery.leftJoin.secondCall.args[1],
+            boundLgaJoinOnCallbackFunction = lgaJoinOnCallbackFunction.bind(knexQueryBuilderSpy)
+          dbSpy.knex.raw.withArgs(32).returns('' + selectedStateId)
+          boundLgaJoinOnCallbackFunction()
+          assert.isOk(knexQueryBuilderSpy.on.calledTwice)
+          assert.deepEqual(knexQueryBuilderSpy.on.firstCall.args, ['s.id', 'l.stateId'])
+          assert.deepEqual(knexQueryBuilderSpy.on.secondCall.args, [{stateId: '' + selectedStateId}])
+
+
+          assert.deepEqual(countryQuery.orderBy.lastCall.args, [['c.name', 's.name', 'l.name'], 'asc'], 'The orderBy clause seems to be incorrect')
+          assert.deepEqual(countryQuery.select.lastCall.args, ['c.id as countryId', 'c.name as countryName', 's.id as stateId', 's.name as stateName', 'l.id as lgaId', 'l.name as lgaName'], 'The select clause seems to be incorrect')
+        })
+      })
+
+      it('Should return a list of countries with the selected country\'s states populated and the selected state\'s LGAs populated', function () {
+        const expectedCountries = _.map(_.uniqBy(countriesForSelectList, 'countryId'), function(countryRecord) {
+            return {
+              id: countryRecord.countryId,
+              name: countryRecord.countryName
+            }
+          }), selectedCountry = _.find(expectedCountries, {id: selectedCountryId}),
+          selectedCountryStates = _.map(_.uniqBy(_.filter(countriesForSelectList, function(stateRecord) {
+            return stateRecord.stateId != null
+          }), 'stateId'), function(stateRecord) {
+            return {
+              id: stateRecord.stateId,
+              name: stateRecord.stateName
+            }
+          })
+        selectedCountry.states = _.sortBy(selectedCountryStates, 'name')
+        const selectedState = _.find(selectedCountry.states, {id: selectedStateId}),
+          selectedStateLgas = _.map(_.filter(countriesForSelectList, function(lgaRecord) {
+            return lgaRecord.lgaId != null
+          }), function(lgaRecord) {
+            return {
+              id: lgaRecord.lgaId,
+              name: lgaRecord.lgaName
+            }
+          })
+
+        selectedState.lgas = _.sortBy(selectedStateLgas, 'name')
+
+        return run(service.countrySelectList, [{params: {countryId: selectedCountryId, stateId: selectedStateId}}])(function(response) {
+          assert.isTrue(response.ok)
+          assert.deepEqual(response.data, expectedCountries)
+        })
       })
     })
   })
@@ -200,7 +354,7 @@ describe('geography service', function () {
 
   describe('lgaSelectList', function () {
     const lgasForSelectList = _.sortBy(_.uniqBy(
-      _.map(_.filter(countriesStatesAndLGAs, {countryId: 32}), function(result) {
+      _.map(_.filter(countriesStatesAndLGAs, {stateId: 32}), function(result) {
         return {
           id: result.lgaId,
           name: result.lgaName
