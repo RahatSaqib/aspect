@@ -277,7 +277,10 @@ function* seed(knex){
   yield knex('RolePermission').insert([
     { roleId: roleIdAdmin, permissionId: modules.device.admin },
     { roleId: roleIdAdmin, permissionId: modules.person.admin },
+    { roleId: roleIdAdmin, permissionId: modules.result.admin },
     { roleId: roleIdAdmin, permissionId: modules.site.admin },
+
+    // FIXME: result permission for role
 
     { roleId: roleIdOH, permissionId: modules.site.edit },
     { roleId: roleIdOH, permissionId: modules.device.edit },
