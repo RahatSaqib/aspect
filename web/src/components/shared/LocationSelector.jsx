@@ -3,7 +3,7 @@ import { injectIntl, defineMessages } from 'react-intl'
 import _ from 'lodash'
 import { bindActionCreators } from 'redux'
 import { connect } from 'react-redux'
-import { fetchCountriesForSelectLists } from '../../action_creators/country_creators'
+import { fetchCountriesForLocationSelector } from '../../action_creators/geography_creators'
 import SelectInput from './SelectInput'
 
 const messages = defineMessages({
@@ -23,8 +23,8 @@ const messages = defineMessages({
 
 class LocationSelector extends React.PureComponent {
   static propTypes = {
-    fetchCountriesForSelectLists: PropTypes.func.isRequired,
-    countriesForSelectLists: PropTypes.object.isRequired,
+    fetchCountriesForLocationSelector: PropTypes.func.isRequired,
+    countriesForLocationSelector: PropTypes.object.isRequired,
     countryIdFieldName: PropTypes.string.isRequired,
     stateIdFieldName: PropTypes.string.isRequired,
     lgaIdFieldName: PropTypes.string.isRequired,
@@ -47,8 +47,8 @@ class LocationSelector extends React.PureComponent {
   }
 
   componentDidMount() {
-    const {fetchCountriesForSelectLists, countriesForSelectLists} = this.props
-    fetchCountriesForSelectLists(false, countriesForSelectLists.get('lastRefreshed'))
+    const {fetchCountriesForLocationSelector, countriesForLocationSelector, initialValues, countryIdFieldName, stateIdFieldName} = this.props
+    fetchCountriesForLocationSelector(initialValues[countryIdFieldName], initialValues[stateIdFieldName], false, countriesForLocationSelector.get('lastRefreshed'))
     this.initialiseCountriesAndSelections(this.props)
   }
 
@@ -57,9 +57,9 @@ class LocationSelector extends React.PureComponent {
   }
 
   initialiseCountriesAndSelections(props) {
-    const {countriesForSelectLists, countryIdFieldName, stateIdFieldName, initialValues} = props
-    if(initialValues && initialValues[countryIdFieldName] && !this.state.selectedCountry && !_.isEmpty(countriesForSelectLists.get('countries'))) {
-      const initialCountry = _.find(countriesForSelectLists.get('countries'), {id: initialValues[countryIdFieldName]})
+    const {countriesForLocationSelector, countryIdFieldName, stateIdFieldName, initialValues} = props
+    if(initialValues && initialValues[countryIdFieldName] && !this.state.selectedCountry && !_.isEmpty(countriesForLocationSelector.get('countries'))) {
+      const initialCountry = _.find(countriesForLocationSelector.get('countries'), {id: initialValues[countryIdFieldName]})
       this.selectCountry(initialCountry)
       if(initialCountry && initialValues && initialValues[stateIdFieldName] && !this.state.selectedState) {
         const initialState = _.find(initialCountry.states, {id: initialValues[stateIdFieldName]})
@@ -69,8 +69,8 @@ class LocationSelector extends React.PureComponent {
   }
 
   onCountryChanged(event, index, value) {
-    const {countriesForSelectLists} = this.props
-    const selectedCountry = _.find(countriesForSelectLists.get('countries').toJS(), {id: value})
+    const {countriesForLocationSelector} = this.props
+    const selectedCountry = _.find(countriesForLocationSelector.get('countries').toJS(), {id: value})
     this.selectCountry(selectedCountry)
   }
 
@@ -100,8 +100,8 @@ class LocationSelector extends React.PureComponent {
 
   render() {
     const { formatMessage } = this.props.intl
-    const {disabled, countryIdFieldName, stateIdFieldName, lgaIdFieldName, countriesForSelectLists, initialValues} = this.props,
-      countries = countriesForSelectLists.get('countries').toJS()
+    const {disabled, countryIdFieldName, stateIdFieldName, lgaIdFieldName, countriesForLocationSelector, initialValues} = this.props,
+      countries = countriesForLocationSelector.get('countries').toJS()
     let {selectedCountry, selectedState} = this.state
     if(!selectedCountry && initialValues && initialValues[countryIdFieldName] && !_.isEmpty(countries)) {
       selectedCountry = _.find(countries, {id: initialValues[countryIdFieldName]})
@@ -114,15 +114,15 @@ class LocationSelector extends React.PureComponent {
     return (
       <div>
         <SelectInput name={countryIdFieldName} label={formatMessage(messages.country)}
-                     disabled={disabled || countriesForSelectLists.get('loading') || !countriesForSelectLists.get('countries').size}
+                     disabled={disabled || countriesForLocationSelector.get('loading') || !countriesForLocationSelector.get('countries').size}
                      dataSource={countries} dataSourceConfig={selectListDataSourceMappings}
                      onChange={this.onCountryChanged} />
         <SelectInput name={stateIdFieldName} label={formatMessage(messages.state)}
-                     disabled={disabled || countriesForSelectLists.get('loading') || !selectedCountry || _.isEmpty(selectedCountry.states)}
+                     disabled={disabled || countriesForLocationSelector.get('loading') || !selectedCountry || _.isEmpty(selectedCountry.states)}
                      dataSource={selectedCountry ? selectedCountry.states : []} dataSourceConfig={selectListDataSourceMappings}
                      onChange={this.onStateChanged} />
         <SelectInput name={lgaIdFieldName} label={formatMessage(messages.lga)}
-                     disabled={disabled || countriesForSelectLists.get('loading') || !selectedState || _.isEmpty(selectedState.lgas)}
+                     disabled={disabled || countriesForLocationSelector.get('loading') || !selectedState || _.isEmpty(selectedState.lgas)}
                      dataSource={selectedState ? selectedState.lgas : []} dataSourceConfig={selectListDataSourceMappings} />
       </div>
     )
@@ -131,13 +131,13 @@ class LocationSelector extends React.PureComponent {
 
 function mapStateToProps(state) {
   return {
-    countriesForSelectLists: state.countriesForSelectLists
+    countriesForLocationSelector: state.countriesForLocationSelector
   }
 }
 
 function mapDispatchToProps(dispatch) {
   return bindActionCreators({
-    fetchCountriesForSelectLists
+    fetchCountriesForLocationSelector
   }, dispatch)
 }
 

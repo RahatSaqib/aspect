@@ -12,7 +12,7 @@ describe('LocationSelector Component', () => {
       loading: false,
       countries: Immutable.List(),
       lastRefreshed: undefined
-    }), countriesForSelectLists = new CountriesForSelectLists({
+    }), countriesForLocationSelector = new CountriesForSelectLists({
       countries: Immutable.List([{
         id: 1,
         name: 'United States',
@@ -63,8 +63,8 @@ describe('LocationSelector Component', () => {
 
     beforeEach(() => {
       props = {
-        fetchCountriesForSelectLists: () => {},
-        countriesForSelectLists: countriesForSelectLists,
+        fetchCountriesForLocationSelector: () => {},
+        countriesForLocationSelector: countriesForLocationSelector,
         countryIdFieldName: 'countryId',
         stateIdFieldName: 'stateId',
         lgaIdFieldName: 'lgaId',
@@ -90,8 +90,8 @@ describe('LocationSelector Component', () => {
       assert.deepEqual(countrySelect.props(), {...countrySelect.props(),
         name: props.countryIdFieldName,
         label: 'Country',
-        disabled: props.disabled || countriesForSelectLists.get('loading') || !countriesForSelectLists.get('countries').size,
-        dataSource: countriesForSelectLists.get('countries').toJS(),
+        disabled: props.disabled || countriesForLocationSelector.get('loading') || !countriesForLocationSelector.get('countries').size,
+        dataSource: countriesForLocationSelector.get('countries').toJS(),
         dataSourceConfig: expectedSelectListDataSourceMappings
       })
       const stateSelect = selectInputs.findWhere(
@@ -120,7 +120,7 @@ describe('LocationSelector Component', () => {
           selectInput => selectInput.type() === SelectInput &&
           selectInput.props().name === props.countryIdFieldName),
           selectCountryId = 1,
-          expectedCountryToSelect = countriesForSelectLists.get('countries')
+          expectedCountryToSelect = countriesForLocationSelector.get('countries')
             .find(country => country.id === selectCountryId)
         assert.equal(LocationSelectorWrapper.state('selectedCountry'), undefined)
 
@@ -137,7 +137,7 @@ describe('LocationSelector Component', () => {
     describe('selectState', () => {
       it('Should set the selected state on the component\'s state', () => {
         const selectedCountryId = 2,
-          selectedCountry = countriesForSelectLists.get('countries')
+          selectedCountry = countriesForLocationSelector.get('countries')
             .find(country => country.id === selectedCountryId)
         shallowRenderLocationSelector()
         LocationSelectorWrapper.setState({
@@ -163,7 +163,7 @@ describe('LocationSelector Component', () => {
 
   describe('react-redux connect', () => {
     const expectedBoundActionCreators = { value: 'Bound Action Creators' }
-    let reactReduxStub, intlStub, mapStateToProps, mapDispatchToProps, reduxStub, countryCreatorsStub
+    let reactReduxStub, intlStub, mapStateToProps, mapDispatchToProps, reduxStub, geographyCreatorsStub
     beforeEach(() => {
       reactReduxStub = {
         connect: sinon.stub().returns(() => {})
@@ -174,31 +174,33 @@ describe('LocationSelector Component', () => {
       reduxStub = {
         bindActionCreators: sinon.stub().returns(expectedBoundActionCreators)
       }
-      countryCreatorsStub = {
-        fetchCountriesForSelectLists: () => {}
+      geographyCreatorsStub = {
+        fetchCountriesForLocationSelector: () => {}
       }
       proxyquire('./LocationSelector', {
         'react-intl': intlStub,
         'react-redux': reactReduxStub,
         'redux': reduxStub,
-        '../../action_creators/country_creators': countryCreatorsStub
+        '../../action_creators/geography_creators': geographyCreatorsStub
       })
       mapStateToProps = reactReduxStub.connect.firstCall.args[0]
       mapDispatchToProps = reactReduxStub.connect.firstCall.args[1]
     })
 
-    it('mapDispatchToProps should bind fetchCountriesForSelectLists action creators to the component\'s properties', () => {
+    it('mapDispatchToProps should bind fetchCountriesForLocationSelector action creators to the component\'s properties', () => {
       const expectedDispatcher = {value: 'I am a dispatch function'}
       assert.equal(mapDispatchToProps(expectedDispatcher), expectedBoundActionCreators)
-      assert.deepEqual(reduxStub.bindActionCreators.lastCall.args, [countryCreatorsStub, expectedDispatcher])
+      assert.deepEqual(reduxStub.bindActionCreators.lastCall.args, [{
+        fetchCountriesForLocationSelector: geographyCreatorsStub.fetchCountriesForLocationSelector},
+        expectedDispatcher])
     })
 
-    it('mapStateToProps should map countriesForSelectLists from countriesForSelectLists on state', () => {
+    it('mapStateToProps should map countriesForLocationSelector from countriesForLocationSelector on state', () => {
       const state = {
-        countriesForSelectLists: countriesForSelectLists
+        countriesForLocationSelector: countriesForLocationSelector
       }
       assert.deepEqual(mapStateToProps(state), {
-        countriesForSelectLists: countriesForSelectLists
+        countriesForLocationSelector: countriesForLocationSelector
       })
     })
   })
