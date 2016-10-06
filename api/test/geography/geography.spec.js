@@ -8,12 +8,10 @@ let server = supertest.agent('http://localhost:8080')
 let assert = chai.assert
 
 describe('Geography routes',function(){
-
   describe('/api/geography/select-list',function(){
     let path = '/api/geography/select-list'
 
     describe('GET',function(){
-
       shared.checkToken(server, path)
 
       it('should return a list of countries, each with its nested set of states and LGAs, all ordered by name', function(done){
@@ -47,6 +45,108 @@ describe('Geography routes',function(){
               })
             })
             done()
+          })
+      })
+    })
+  })
+
+  describe('/geography/country-select-list',function(){
+    let path = '/api/geography/country-select-list'
+
+    describe('GET',function(){
+      shared.checkToken(server, path)
+
+      it('should return a list of country IDs and names ordered by name', function(done){
+        server
+          .get(path)
+          .set('Authorization', 'Bearer '+shared.token)
+          .end(function(err,res){
+            assert.equal(res.status, 200)
+            assert.typeOf(res.body, 'Object')
+            assert.property(res.body, 'data')
+            assert.typeOf(res.body.data, 'array')
+            assert.isAtLeast(res.body.data.length, 1)
+            let expectedCountriesInAlphabeticalOrder = _.orderBy(res.body.data, 'name', 'asc')
+            assert.isTrue(_.isEqual(res.body.data, expectedCountriesInAlphabeticalOrder), 'Countries returned are not in alphabetical order ' + JSON.stringify(res.body.data))
+            _.each(res.body.data, function(country) {
+              assert.property(country, 'id')
+              assert.property(country, 'name')
+            })
+            done()
+          })
+      })
+    })
+  })
+
+  describe('/geography/state-select-list/{countryId}',function(){
+    let path = '/api/geography/state-select-list/'
+
+    describe('GET',function(){
+      it('should return a list of state IDs and names for the country ordered by name', function(done){
+        //First get the full country/state/LGA tree so that we can pick a countryId to query
+        server
+          .get('/api/geography/select-list')
+          .set('Authorization', 'Bearer '+ shared.token)
+          .end(function(err,res){
+            const countryWithStates = _.find(res.body.data, function (country) {
+              return country.states.length > 0
+            })
+            server
+              .get(path + countryWithStates.id)
+              .set('Authorization', 'Bearer '+shared.token)
+              .end(function(err,res){
+                assert.equal(res.status, 200)
+                assert.typeOf(res.body, 'Object')
+                assert.property(res.body, 'data')
+                assert.typeOf(res.body.data, 'array')
+                assert.isAtLeast(res.body.data.length, 1)
+                let expectedStatesInAlphabeticalOrder = _.orderBy(res.body.data, 'name', 'asc')
+                assert.isTrue(_.isEqual(res.body.data, expectedStatesInAlphabeticalOrder), 'States returned are not in alphabetical order ' + JSON.stringify(res.body.data))
+                _.each(res.body.data, function(state) {
+                  assert.property(state, 'id')
+                  assert.property(state, 'name')
+                })
+                done()
+              })
+          })
+      })
+    })
+  })
+
+  describe('/geography/lga-select-list/{stateId}',function(){
+    let path = '/api/geography/lga-select-list/'
+
+    describe('GET',function(){
+      it('should return a list of LGA IDs and names for the country ordered by name', function(done){
+        //First get the full country/state/LGA tree so that we can pick a stateId to query
+        server
+          .get('/api/geography/select-list')
+          .set('Authorization', 'Bearer '+shared.token)
+          .end(function(err,res){
+            const stateWithLgas = _.find(_.find(res.body.data, function (country) {
+                return _.some(country.states, function(state) {
+                  return state.lgas.length > 0
+                })
+              }).states, function(state) {
+                return state.lgas.length > 0
+              })
+            server
+              .get(path + stateWithLgas.id)
+              .set('Authorization', 'Bearer '+shared.token)
+              .end(function(err,res){
+                assert.equal(res.status, 200)
+                assert.typeOf(res.body, 'Object')
+                assert.property(res.body, 'data')
+                assert.typeOf(res.body.data, 'array')
+                assert.isAtLeast(res.body.data.length, 1)
+                let expectedStatesInAlphabeticalOrder = _.orderBy(res.body.data, 'name', 'asc')
+                assert.isTrue(_.isEqual(res.body.data, expectedStatesInAlphabeticalOrder), 'LGAs returned are not in alphabetical order ' + JSON.stringify(res.body.data))
+                _.each(res.body.data, function(state) {
+                  assert.property(state, 'id')
+                  assert.property(state, 'name')
+                })
+                done()
+              })
           })
       })
     })

@@ -40,6 +40,55 @@ function* buildGeographySelectList(){
   return result
 }
 
+function* countrySelectList(){
+  const countries = yield query('Get countries for select list')
+    .from('country as c')
+    .orderBy(['c.name'], 'asc')
+    .select('c.id', 'c.name')
+
+  const result = {
+    ok: true,
+    data: countries
+  }
+
+  return result
+}
+
+function* stateSelectList(request){
+  const {params} = request
+  const states = yield query('Get states for select list')
+    .from('state as s')
+    .where('s.countryId', params.countryId)
+    .orderBy(['s.name'], 'asc')
+    .select('s.id', 's.name')
+
+  const result = {
+    ok: true,
+    data: states
+  }
+
+  return result
+}
+
+function* lgaSelectList(request){
+  const {params} = request
+  const lgas = yield query('Get LGAs for select list')
+    .from('lga as l')
+    .where('l.stateId', params.stateId)
+    .orderBy(['l.name'], 'asc')
+    .select('l.id', 'l.name')
+
+  const result = {
+    ok: true,
+    data: lgas
+  }
+
+  return result
+}
+
 module.exports = {
-  buildGeographySelectList
+  buildGeographySelectList,
+  countrySelectList,
+  stateSelectList,
+  lgaSelectList
 }

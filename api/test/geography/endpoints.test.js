@@ -32,4 +32,70 @@ describe('geography endpoints', function () {
       })
     })
   })
+
+  describe('/geography/country-select-list', function () {
+    describe('GET', function () {
+      let endpoint
+      const expectedResponse = [ 'List of Countries' ]
+
+      beforeEach(function () {
+        endpoint = setupRoute('GET', '/geography/country-select-list', {
+          countrySelectList: function* () { return expectedResponse }
+        })
+      })
+
+      it('Should respond with a the data returned from the service', function (done) {
+        endpointUtils.callHandlerOn(endpoint)
+          .handleResponseWith(function (response) {
+            assert.deepEqual(response, expectedResponse)
+          })
+          .thenCall(done)
+          .execute()
+      })
+    })
+  })
+
+  describe('/geography/state-select-list/{countryId}', function () {
+    describe('GET', function () {
+      let endpoint
+      const expectedResponse = [ 'List of States' ]
+
+      beforeEach(function () {
+        endpoint = setupRoute('GET', '/geography/state-select-list/{countryId}', {
+          stateSelectList: function* () { return expectedResponse }
+        })
+      })
+
+      it('Should respond with a the data returned from the service', function (done) {
+        endpointUtils.callHandlerOn(endpoint)
+          .handleResponseWith(function (response) {
+            assert.deepEqual(response, expectedResponse)
+          })
+          .thenCall(done)
+          .execute()
+      })
+    })
+  })
+
+  describe('/geography/lga-select-list/{stateId}', function () {
+    describe('GET', function () {
+      let endpoint
+      const expectedResponse = [ 'List of LGAs' ]
+
+      beforeEach(function () {
+        endpoint = setupRoute('GET', '/geography/lga-select-list/{stateId}', {
+          lgaSelectList: function* () { return expectedResponse }
+        })
+      })
+
+      it('Should respond with a the data returned from the service', function (done) {
+        endpointUtils.callHandlerOn(endpoint)
+          .handleResponseWith(function (response) {
+            assert.deepEqual(response, expectedResponse)
+          })
+          .thenCall(done)
+          .execute()
+      })
+    })
+  })
 })
