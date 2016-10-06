@@ -20,7 +20,7 @@ import { SiteListContainer } from './components/pages/site/SiteList'
 import { SiteDetailContainer } from './components/pages/site/detail/SiteDetail'
 import { PersonListContainer } from './components/pages/person/PersonList'
 import { NotFoundContainer } from './components/pages/error/NotFound'
-import { ResultList } from './components/pages/result/ResultList'
+import { ResultList } from './components/pages/result/list/ResultList'
 import { NotificationList } from './components/pages/notification/NotificationList'
 import { ReportList } from './components/pages/report/ReportList'
 
