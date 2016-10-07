@@ -83,7 +83,7 @@ function receiveStatesForLocationSelector(state, states, selectedCountryId, last
               items: state.lgas ? new Immutable.List(_.map(state.lgas, lga => new LazyLoadChild(lga))) : undefined
             })
           })))
-      })
+        })
     }
   }
   return state

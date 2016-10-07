@@ -4,7 +4,6 @@ import { shallow } from 'enzyme'
 import sinon from 'sinon'
 import proxyquire from 'proxyquire'
 import Immutable from 'immutable'
-import _ from 'lodash'
 import SelectInput from './SelectInput'
 
 describe('LocationSelector Component', () => {

@@ -49,7 +49,7 @@ class LocationSelector extends React.PureComponent {
   componentDidMount() {
     const {fetchCountriesForLocationSelector, countriesForLocationSelector, initialValues,
       countryIdFieldName, stateIdFieldName} = this.props
-    fetchCountriesForLocationSelector(false, countriesForLocationSelector.get('lastRefreshed'),
+    fetchCountriesForLocationSelector(false, countriesForLocationSelector,
       initialValues[countryIdFieldName], initialValues[stateIdFieldName])
     this.initialiseCountriesAndSelections(this.props)
   }

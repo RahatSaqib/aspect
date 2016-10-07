@@ -48,11 +48,13 @@ function receiveLgasForLocationSelector(lgas, selectedCountryId, selectedStateId
   }
 }
 
-export const fetchCountriesForLocationSelector = function(forceRefresh, lastRefreshed, selectedCountryId, selectedStateId) {
+export const fetchCountriesForLocationSelector = function(forceRefresh, countriesState,
+                                                          selectedCountryId, selectedStateId) {
   return dispatch => {
     const now = new Date()
     const fiveMinutes = 300000
-    if(forceRefresh || !lastRefreshed || Math.abs(now.getTime() - lastRefreshed.getTime()) > fiveMinutes) {
+    if(!countriesState.loading && (forceRefresh || !countriesState.lastRefreshed ||
+      Math.abs(now.getTime() - countriesState.lastRefreshed.getTime()) > fiveMinutes)) {
       dispatch(requestCountriesForLocationSelector())
       let path = '/geography/country-select-list'
       if(selectedCountryId) {
@@ -63,7 +65,46 @@ export const fetchCountriesForLocationSelector = function(forceRefresh, lastRefr
       }
       return aspectFetch(path)
         .then(json => dispatch(receiveCountriesForLocationSelector(json.data)))
-        .catch(err => dispatch(addError('Loading countries failed', err.message, err)))
+        .catch(err => {
+          receiveCountriesForLocationSelector([])
+          dispatch(addError('Loading countries failed', err.message, err))
+        })
+    }
+  }
+}
+
+export const fetchStatesForLocationSelector = function(forceRefresh, selectedCountry) {
+  return dispatch => {
+    const now = new Date()
+    const fiveMinutes = 300000
+    if(!selectedCountry.children.loading && (forceRefresh || !selectedCountry.children.lastRefreshed ||
+      Math.abs(now.getTime() - selectedCountry.children.lastRefreshed.getTime()) > fiveMinutes)) {
+      dispatch(requestStatesForLocationSelector(selectedCountry.id))
+      let path = '/geography/state-select-list/' + selectedCountry.id
+      return aspectFetch(path)
+        .then(json => dispatch(receiveStatesForLocationSelector(json.data, selectedCountry.id)))
+        .catch(err => {
+          receiveStatesForLocationSelector([], selectedCountry.id)
+          dispatch(addError('Loading states failed', err.message, err))
+        })
+    }
+  }
+}
+
+export const fetchLgasForLocationSelector = function(forceRefresh, selectedCountry, selectedState) {
+  return dispatch => {
+    const now = new Date()
+    const fiveMinutes = 300000
+    if(!selectedState.children.loading && (forceRefresh || !selectedState.children.lastRefreshed ||
+      Math.abs(now.getTime() - selectedState.children.lastRefreshed.getTime()) > fiveMinutes)) {
+      dispatch(requestLgasForLocationSelector(selectedCountry.id, selectedState.id))
+      let path = '/geography/lga-select-list/' + selectedState.id
+      return aspectFetch(path)
+        .then(json => dispatch(receiveLgasForLocationSelector(json.data, selectedCountry.id, selectedState.id)))
+        .catch(err => {
+          receiveStatesForLocationSelector([], selectedCountry.id, selectedState.id)
+          dispatch(addError('Loading LGAs failed', err.message, err))
+        })
     }
   }
 }
