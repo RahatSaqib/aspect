@@ -20,8 +20,8 @@ import IconButton from 'material-ui/IconButton'
 import TextField from 'material-ui/TextField'
 
 // Our own imports
-import { fetchDevices } from '../../../action_creators/device_creators'
-import { DataTable } from '../../shared/DataTable'
+import { fetchDevices } from '../DeviceRedux'
+import { DataTable } from '../../components/shared/DataTable'
 import styles from './DeviceList.css'
 
 const messages = defineMessages({
