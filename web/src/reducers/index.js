@@ -6,7 +6,7 @@ import types from './../constants/action_types'
 
 import error from './error'
 import user from './user'
-import device from './device'
+import device from '../device/DeviceRedux'
 import site from './site'
 import result from './result'
 import person from './person'

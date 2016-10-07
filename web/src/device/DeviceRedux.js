@@ -4,6 +4,17 @@ import { stringify } from 'querystring'
 import { aspectFetch } from '../utils/fetch'
 import { addError } from '../action_creators/error_creators'
 
+import {
+  receiveList,
+  receiveItem,
+  Items
+} from '../reducers/meta/items'
+import {
+  requestTable,
+  receiveTableItems,
+  Table
+} from '../reducers/meta/table'
+
 export const types = {
   REQUEST_DEVICES: 'REQUEST_DEVICES',
   RECEIVE_DEVICES: 'RECEIVE_DEVICES',
@@ -112,4 +123,35 @@ export function updateSingleDevice(deviceId, data){
       })
   }
 }
+/*
+ * ---------------- Reducers -----------------
+ */
+const Device = Immutable.Record({
+  items: new Items(),
+  table: new Table()
+})
 
+const initialState = new Device()
+
+export default function deviceReducer(state = initialState, action) {
+  switch (action.type) {
+  case types.REQUEST_DEVICES:
+    return state
+      .set('table', requestTable(state.table, action))
+  case types.RECEIVE_DEVICES:
+    return state
+      .withMutations(mutState => {
+        const immutList = Immutable.fromJS(action.items)
+        mutState.set('items', receiveList(mutState.items, immutList))
+        mutState.set('table', receiveTableItems(mutState.table, action.total))
+      })
+  case types.RECEIVE_SINGLE_DEVICE:
+  case types.RECEIVE_UPDATED_SINGLE_DEVICE:
+    return state
+      .withMutations(mutState => {
+        const immutItem = Immutable.fromJS(action.item)
+        mutState.set('items', receiveItem(mutState.items, immutItem))
+      })
+  }
+  return state
+}
