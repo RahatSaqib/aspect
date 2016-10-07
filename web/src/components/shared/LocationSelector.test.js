@@ -8,38 +8,74 @@ import _ from 'lodash'
 import SelectInput from './SelectInput'
 
 describe('LocationSelector Component', () => {
-  const CountriesForSelectLists = Immutable.Record({
+  const now = new Date(),
+    LazyLoadItems = Immutable.Record({
       loading: false,
-      countries: Immutable.List(),
+      items: Immutable.List(),
       lastRefreshed: undefined
-    }), countriesForLocationSelector = new CountriesForSelectLists({
-      countries: Immutable.List([{
-        id: 1,
-        name: 'United States',
-        states: [{
-          id: 1,
-          name: 'Massachusetts',
-          lgas: [{ id: 1, name: 'Franklin' }, { id: 2, name: 'Suffolk' }]
-        }, {
-          id: 2,
-          name: 'Nebraska',
-          lgas: [{ id: 3, name: 'Hall' }, { id: 4, name: 'Gage' }, { id: 5, name: 'Lancaster' }, { id: 6, name: 'Wayne' }]
-        }]
-      }, {
-        id: 2,
-        name: 'South Africa',
-        states: [{
-          id: 3,
-          name: 'Eastern Cape',
-          lgas: [{ id: 7, name: 'East London' }, { id: 8, name: 'Uitenhage' }]
-        }, {
-          id: 4,
-          name: 'KwaZulu Natal',
-          lgas: [{ id: 9, name: 'Durban' }, { id: 10, name: 'Nottingham Road' }]
-        }]
-      }]),
+    }), LazyLoadParent = Immutable.Record({
+      id: undefined,
+      name: undefined,
+      children: new LazyLoadItems()
+    }), LazyLoadChild = Immutable.Record({
+      id: undefined,
+      name: undefined
+    }),
+    countriesForLocationSelector = new LazyLoadItems({
       loading: false,
-      lastRefreshed: new Date()
+      lastRefreshed: now,
+      items: Immutable.List([
+        new LazyLoadParent({
+          id: 1,
+          name: 'Nigeria',
+          children: new LazyLoadItems({
+            loading: false,
+            lastRefreshed: now,
+            items: Immutable.List([
+              new LazyLoadParent({
+                id: 1,
+                name: 'Lagos',
+                children: new LazyLoadItems({
+                  loading: false,
+                  lastRefreshed: now,
+                  items: Immutable.List([
+                    new LazyLoadChild({
+                      id: 1,
+                      name: 'Apapa'
+                    }),
+                    new LazyLoadChild({
+                      id: 2,
+                      name: 'Mushin'
+                    }),
+                    new LazyLoadChild({
+                      id: 3,
+                      name: 'Ojo'
+                    })
+                  ])
+                })
+              }),
+              new LazyLoadParent({
+                id: 2,
+                name: 'Ogun',
+                children: new LazyLoadItems({
+                  loading: false,
+                  lastRefreshed: undefined,
+                  items: Immutable.List([])
+                })
+              })
+            ])
+          })
+        }),
+        new LazyLoadParent({
+          id: 2,
+          name: 'United States',
+          children: new LazyLoadItems({
+            loading: false,
+            lastRefreshed: undefined,
+            items: Immutable.List([])
+          })
+        })
+      ])
     })
 
   describe('LocationSelector', () => {
@@ -90,8 +126,8 @@ describe('LocationSelector Component', () => {
       assert.deepEqual(countrySelect.props(), {...countrySelect.props(),
         name: props.countryIdFieldName,
         label: 'Country',
-        disabled: props.disabled || countriesForLocationSelector.get('loading') || !countriesForLocationSelector.get('countries').size,
-        dataSource: countriesForLocationSelector.get('countries').toJS(),
+        disabled: props.disabled || countriesForLocationSelector.get('loading') || !countriesForLocationSelector.get('items').size,
+        dataSource: countriesForLocationSelector.get('items'),
         dataSourceConfig: expectedSelectListDataSourceMappings
       })
       const stateSelect = selectInputs.findWhere(
@@ -120,7 +156,7 @@ describe('LocationSelector Component', () => {
           selectInput => selectInput.type() === SelectInput &&
           selectInput.props().name === props.countryIdFieldName),
           selectCountryId = 1,
-          expectedCountryToSelect = countriesForLocationSelector.get('countries')
+          expectedCountryToSelect = countriesForLocationSelector.get('items')
             .find(country => country.id === selectCountryId)
         assert.equal(LocationSelectorWrapper.state('selectedCountry'), undefined)
 
@@ -136,8 +172,8 @@ describe('LocationSelector Component', () => {
 
     describe('selectState', () => {
       it('Should set the selected state on the component\'s state', () => {
-        const selectedCountryId = 2,
-          selectedCountry = countriesForLocationSelector.get('countries')
+        const selectedCountryId = 1,
+          selectedCountry = countriesForLocationSelector.get('items')
             .find(country => country.id === selectedCountryId)
         shallowRenderLocationSelector()
         LocationSelectorWrapper.setState({
@@ -147,7 +183,8 @@ describe('LocationSelector Component', () => {
           selectInput => selectInput.type() === SelectInput &&
           selectInput.props().name === props.stateIdFieldName),
           selectStateId = 3,
-          expectedStateToSelect = _.find(selectedCountry.states, {id: selectStateId})
+          expectedStateToSelect = selectedCountry.children.items.find(
+            state => state.id === selectStateId)
         assert.equal(LocationSelectorWrapper.state('selectedState'), undefined)
 
         stateSelect.simulate('change', undefined, undefined, selectStateId)
@@ -197,7 +234,9 @@ describe('LocationSelector Component', () => {
 
     it('mapStateToProps should map countriesForLocationSelector from countriesForLocationSelector on state', () => {
       const state = {
-        countriesForLocationSelector: countriesForLocationSelector
+        geography: {
+          countriesForLocationSelector: countriesForLocationSelector
+        }
       }
       assert.deepEqual(mapStateToProps(state), {
         countriesForLocationSelector: countriesForLocationSelector
