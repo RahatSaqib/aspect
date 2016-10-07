@@ -14,14 +14,14 @@ import Paper from 'material-ui/Paper'
 import LinearProgress from 'material-ui/LinearProgress'
 
 // Our own imports
-import { isEditable } from '../../../../selectors/device'
+import { isEditable } from '../../selectors/device'
 import {
   fetchSingleDevice,
   updateSingleDevice
-} from '../../../../action_creators/device_creators'
-import ReadOnlyFields from '../../../shared/ReadOnlyFields'
+} from '../DeviceRedux'
+import ReadOnlyFields from '../../components/shared/ReadOnlyFields'
 import { FormContainer } from './Form'
-import styles from './index.css'
+import styles from './DeviceDetail.css'
 
 const messages = defineMessages({
   title: {

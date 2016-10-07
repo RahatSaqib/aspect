@@ -12,8 +12,8 @@ import TextField from 'material-ui/TextField'
 import MenuItem from 'material-ui/MenuItem'
 
 // Our own imports
-import { fetchSites } from '../../../../action_creators/site_creators'
-import PageableSelectField from '../../../shared/PageableSelectField'
+import { fetchSites } from '../../action_creators/site_creators'
+import PageableSelectField from '../../components/shared/PageableSelectField'
 
 const renderTextField = ({ input, meta, ...restProps }) => {
   return (

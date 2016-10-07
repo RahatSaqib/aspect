@@ -1,7 +1,0 @@
-.Content {
-  composes: Content from '../../../shared/Shared.css';
-}
-
-.FieldsContainer {
-  padding: 20px;
-}
