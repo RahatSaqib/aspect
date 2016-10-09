@@ -8,6 +8,7 @@ function addRoutes(server){
   server.route(require('./device/endpoints').map(decorateAPI('device')))
   server.route(require('./person/endpoints').map(decorateAPI('person')))
   server.route(require('./site/endpoints').map(decorateAPI('site')))
+  server.route(require('./result/endpoints').map(decorateAPI('result')))
 }
 
 // Decorates an API route with common configuration so
