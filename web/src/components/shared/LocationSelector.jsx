@@ -88,7 +88,7 @@ class LocationSelector extends React.PureComponent {
         selectedCountry: country
       })
 
-      fetchStatesForLocationSelector(false, country)
+      this.props.fetchStatesForLocationSelector(false, country)
       this.selectState(null)
     }
   }
@@ -106,7 +106,7 @@ class LocationSelector extends React.PureComponent {
       this.setState({
         selectedState: state
       })
-      fetchLgasForLocationSelector(false, state)
+      this.props.fetchLgasForLocationSelector(false, this.state.selectedCountry, state)
     }
   }
 

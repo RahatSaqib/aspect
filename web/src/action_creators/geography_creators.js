@@ -96,7 +96,7 @@ export const fetchLgasForLocationSelector = function(forceRefresh, selectedCount
     if(!selectedState.getIn(['children', 'loading']) && (forceRefresh || !selectedState.getIn(['children', 'lastRefreshed']) ||
       Math.abs(now.getTime() - selectedState.getIn(['children', 'lastRefreshed']).getTime()) > fiveMinutes)) {
       dispatch(requestLgasForLocationSelector(selectedCountry.get('id'), selectedState.get('id')))
-      let path = '/geography/lga-select-list/' + selectedCountry.get('id') + '/' + selectedState.get('id')
+      let path = '/geography/lga-select-list/' + selectedState.get('id')
       return aspectFetch(path)
         .then(json => dispatch(receiveLgasForLocationSelector(json.data, selectedCountry.get('id'), selectedState.get('id'))))
         .catch(err => {
