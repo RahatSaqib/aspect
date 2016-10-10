@@ -99,6 +99,8 @@ describe('LocationSelector Component', () => {
     beforeEach(() => {
       props = {
         fetchCountriesForLocationSelector: () => {},
+        fetchStatesForLocationSelector: () => {},
+        fetchLgasForLocationSelector: () => {},
         countriesForLocationSelector: countriesForLocationSelector,
         countryIdFieldName: 'countryId',
         stateIdFieldName: 'stateId',
@@ -126,7 +128,7 @@ describe('LocationSelector Component', () => {
         name: props.countryIdFieldName,
         label: 'Country',
         disabled: props.disabled || countriesForLocationSelector.get('loading') || !countriesForLocationSelector.get('items').size,
-        dataSource: countriesForLocationSelector.get('items'),
+        dataSource: countriesForLocationSelector.get('items').toJS(),
         dataSourceConfig: expectedSelectListDataSourceMappings
       })
       const stateSelect = selectInputs.findWhere(
@@ -211,7 +213,9 @@ describe('LocationSelector Component', () => {
         bindActionCreators: sinon.stub().returns(expectedBoundActionCreators)
       }
       geographyCreatorsStub = {
-        fetchCountriesForLocationSelector: () => {}
+        fetchCountriesForLocationSelector: () => {},
+        fetchStatesForLocationSelector: () => {},
+        fetchLgasForLocationSelector: () => {}
       }
       proxyquire('./LocationSelector', {
         'react-intl': intlStub,
@@ -227,7 +231,10 @@ describe('LocationSelector Component', () => {
       const expectedDispatcher = {value: 'I am a dispatch function'}
       assert.equal(mapDispatchToProps(expectedDispatcher), expectedBoundActionCreators)
       assert.deepEqual(reduxStub.bindActionCreators.lastCall.args, [{
-        fetchCountriesForLocationSelector: geographyCreatorsStub.fetchCountriesForLocationSelector},
+        fetchCountriesForLocationSelector: geographyCreatorsStub.fetchCountriesForLocationSelector,
+        fetchStatesForLocationSelector: geographyCreatorsStub.fetchStatesForLocationSelector,
+        fetchLgasForLocationSelector: geographyCreatorsStub.fetchLgasForLocationSelector
+      },
         expectedDispatcher])
     })
 

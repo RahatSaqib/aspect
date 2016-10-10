@@ -14,10 +14,6 @@ import {fetchAccountDetails, saveAccountDetails} from '../../../action_creators/
 import styles from './AccountDetails.css'
 
 const messages = defineMessages({
-  loading: {
-    id: 'pages.AccountDetails.loading',
-    defaultMessage: 'Loading……'
-  },
   contactDetails: {
     id: 'pages.AccountDetails.contactDetails',
     defaultMessage: 'Contact Details'
@@ -99,7 +95,6 @@ class AccountDetails extends React.PureComponent {
     }
     return (
       <div className={styles.Content}>
-        {loading && <span>{formatMessage(messages.loading)}</span>}
         {(loading || saving) && <LinearProgress />}
         {!loading &&
         <Paper>

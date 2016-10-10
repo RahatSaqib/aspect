@@ -54,15 +54,13 @@ describe('AccountDetails Component', () => {
       })
 
       it('Should show a loading message and a progress bar', () => {
-        assert.equal(AccountDetailsWrapper.findWhere(element => element.type() === 'span' && element.text() === 'Loading……').length, 1)
         assert.equal(AccountDetailsWrapper.find(LinearProgress).length, 1)
       })
 
       it('Should not show anything else', () => {
-        assert.equal(AccountDetailsWrapper.node.props.children.length, 3)
-        assert.equal(AccountDetailsWrapper.node.props.children[0].type, 'span')
-        assert.equal(AccountDetailsWrapper.node.props.children[1].type, LinearProgress)
-        assert.isFalse(AccountDetailsWrapper.node.props.children[2])
+        assert.equal(AccountDetailsWrapper.node.props.children.length, 2)
+        assert.equal(AccountDetailsWrapper.node.props.children[0].type, LinearProgress)
+        assert.isFalse(AccountDetailsWrapper.node.props.children[1])
       })
     })
 
@@ -73,10 +71,9 @@ describe('AccountDetails Component', () => {
       })
 
       it('Should show a paper container with three tabs', () => {
-        assert.equal(AccountDetailsWrapper.node.props.children.length, 3)
+        assert.equal(AccountDetailsWrapper.node.props.children.length, 2)
         assert.isFalse(AccountDetailsWrapper.node.props.children[0])
-        assert.isFalse(AccountDetailsWrapper.node.props.children[1])
-        assert.equal(AccountDetailsWrapper.node.props.children[2].type, Paper)
+        assert.equal(AccountDetailsWrapper.node.props.children[1].type, Paper)
         const paperContainer = AccountDetailsWrapper.find(Paper)
         assert.equal(paperContainer.length, 1)
         const tabsContainer = paperContainer.find(Tabs)
