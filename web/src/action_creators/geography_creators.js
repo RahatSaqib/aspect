@@ -48,11 +48,12 @@ function receiveLgasForLocationSelector(lgas, selectedCountryId, selectedStateId
   }
 }
 
+const fiveMinutes = 300000 //five minutes
+
 export const fetchCountriesForLocationSelector = function(forceRefresh, countriesState,
                                                           selectedCountryId, selectedStateId) {
   return dispatch => {
     const now = new Date()
-    const fiveMinutes = 300000
     if(!countriesState.loading && (forceRefresh || !countriesState.lastRefreshed ||
       Math.abs(now.getTime() - countriesState.lastRefreshed.getTime()) > fiveMinutes)) {
       dispatch(requestCountriesForLocationSelector())
@@ -72,11 +73,9 @@ export const fetchCountriesForLocationSelector = function(forceRefresh, countrie
     }
   }
 }
-
 export const fetchStatesForLocationSelector = function(forceRefresh, selectedCountry) {
   return dispatch => {
     const now = new Date()
-    const fiveMinutes = 300000
     if(!selectedCountry.children.loading && (forceRefresh || !selectedCountry.children.lastRefreshed ||
       Math.abs(now.getTime() - selectedCountry.children.lastRefreshed.getTime()) > fiveMinutes)) {
       dispatch(requestStatesForLocationSelector(selectedCountry.id))
@@ -94,11 +93,10 @@ export const fetchStatesForLocationSelector = function(forceRefresh, selectedCou
 export const fetchLgasForLocationSelector = function(forceRefresh, selectedCountry, selectedState) {
   return dispatch => {
     const now = new Date()
-    const fiveMinutes = 300000
     if(!selectedState.children.loading && (forceRefresh || !selectedState.children.lastRefreshed ||
       Math.abs(now.getTime() - selectedState.children.lastRefreshed.getTime()) > fiveMinutes)) {
       dispatch(requestLgasForLocationSelector(selectedCountry.id, selectedState.id))
-      let path = '/geography/lga-select-list/' + selectedState.id
+      let path = '/geography/lga-select-list/' + selectedCountry.id + '/' + selectedState.id
       return aspectFetch(path)
         .then(json => dispatch(receiveLgasForLocationSelector(json.data, selectedCountry.id, selectedState.id)))
         .catch(err => {
