@@ -4,8 +4,15 @@ function* up(knex){
 
   yield knex.raw('SET foreign_key_checks = 0')
 
+  yield knex.schema.createTable('PartnerType', pt => {
+    pt.increments('id')
+    pt.string('name').notNullable()
+  })
+
   yield knex.schema.createTable('Partner', partner => {
     partner.increments('id')
+    partner.integer('partnerTypeId').unsigned().notNullable()
+      .index().references('id').inTable('PartnerType')
     partner.string('name').notNullable()
   })
 
@@ -340,6 +347,7 @@ function* down(knex){
   yield knex.schema.dropTableIfExists('DataFilter')
   yield knex.schema.dropTableIfExists('OrgUnit')
   yield knex.schema.dropTableIfExists('Partner')
+  yield knex.schema.dropTableIfExists('PartnerType')
 
   yield knex.raw('SET foreign_key_checks = 1')
 }

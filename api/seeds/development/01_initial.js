@@ -25,13 +25,28 @@ function* seed(knex){
     updatedBy: adminId
   }
 
+  // Create partner types
+  const partnerTypeFundingId = yield knex('PartnerType').insert({
+    name: 'Funding '
+  })
+
+  const partnerTypeImplementingId = yield knex('PartnerType').insert({
+    name: 'Implementing'
+  })
+
+  yield knex('PartnerType').insert({
+    name: 'Operating'
+  })
+
   // Create partners
   let [partnerOneId] = yield knex('Partner').insert({
-    name: 'Partner One'
+    name: 'Partner One',
+    partnerTypeId: partnerTypeFundingId
   })
 
   let [partnerTwoId] = yield knex('Partner').insert({
-    name: 'Partner Two'
+    name: 'Partner Two',
+    partnerTypeId: partnerTypeImplementingId
   })
 
   let [partnerOneOrgUnitId] = yield knex('OrgUnit').insert({
