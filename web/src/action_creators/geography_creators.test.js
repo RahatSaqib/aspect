@@ -779,7 +779,7 @@ describe('geography action creators', () => {
           fetchStub = {
             aspectFetch: sinon.stub()
           }
-          fetchStub.aspectFetch.withArgs('/geography/lga-select-list/1/1')
+          fetchStub.aspectFetch.withArgs('/geography/lga-select-list/1')
             .returns(expectedResponseFromServer)
           dispatch = sinon.spy()
           geographyCreators = proxyquire('./geography_creators', {
@@ -801,7 +801,7 @@ describe('geography action creators', () => {
         })
 
         it('Should request a new list of LGAs from the server', () => {
-          assert(fetchStub.aspectFetch.calledWith('/geography/lga-select-list/1/1'), 'A request to /geography/lga-select-list/{countryId}/{stateId} was not detected')
+          assert(fetchStub.aspectFetch.calledWith('/geography/lga-select-list/1'), 'A request to /geography/lga-select-list/{stateId} was not detected')
         })
 
         describe('and a response is received from the server', () => {
@@ -828,7 +828,7 @@ describe('geography action creators', () => {
           fetchStub = {
             aspectFetch: sinon.stub()
           }
-          fetchStub.aspectFetch.withArgs('/geography/lga-select-list/1/1')
+          fetchStub.aspectFetch.withArgs('/geography/lga-select-list/1')
             .returns(expectedResponseFromServer)
           dispatch = sinon.spy()
           geographyCreators = proxyquire('./geography_creators', {
@@ -850,7 +850,7 @@ describe('geography action creators', () => {
         })
 
         it('Should request a new list of LGAs from the server', () => {
-          assert(fetchStub.aspectFetch.calledWith('/geography/lga-select-list/1/1'), 'A request to /geography/lga-select-list/{countryId}/{stateId} was not detected')
+          assert(fetchStub.aspectFetch.calledWith('/geography/lga-select-list/1'), 'A request to /geography/lga-select-list/{stateId} was not detected')
         })
 
         describe('and a response is received from the server', () => {
@@ -879,7 +879,7 @@ describe('geography action creators', () => {
           fetchStub = {
             aspectFetch: sinon.stub()
           }
-          fetchStub.aspectFetch.withArgs('/geography/lga-select-list/1/1')
+          fetchStub.aspectFetch.withArgs('/geography/lga-select-list/1')
             .returns(expectedResponseFromServer)
           dispatch = sinon.spy()
           geographyCreators = proxyquire('./geography_creators', {
@@ -901,7 +901,7 @@ describe('geography action creators', () => {
         })
 
         it('Should request a new list of LGAs from the server', () => {
-          assert(fetchStub.aspectFetch.calledWith('/geography/lga-select-list/1/1'), 'A request to /geography/lga-select-list/{countryId}/{stateId} was not detected')
+          assert(fetchStub.aspectFetch.calledWith('/geography/lga-select-list/1'), 'A request to /geography/lga-select-list/{stateId} was not detected')
         })
 
         describe('and a response is received from the server', () => {
@@ -928,7 +928,7 @@ describe('geography action creators', () => {
           fetchStub = {
             aspectFetch: sinon.stub()
           }
-          fetchStub.aspectFetch.withArgs('/geography/lga-select-list/1/1')
+          fetchStub.aspectFetch.withArgs('/geography/lga-select-list/1')
             .returns(expectedResponseFromServer)
           dispatch = sinon.spy()
           geographyCreators = proxyquire('./geography_creators', {
@@ -950,7 +950,7 @@ describe('geography action creators', () => {
         })
 
         it('Should request a new list of LGAs from the server', () => {
-          assert(fetchStub.aspectFetch.calledWith('/geography/lga-select-list/1/1'), 'A request to /geography/lga-select-list/{countryId}/{stateId} was not detected')
+          assert(fetchStub.aspectFetch.calledWith('/geography/lga-select-list/1'), 'A request to /geography/lga-select-list/{stateId} was not detected')
         })
 
         describe('and a response is received from the server', () => {
@@ -977,7 +977,7 @@ describe('geography action creators', () => {
           fetchStub = {
             aspectFetch: sinon.stub()
           }
-          fetchStub.aspectFetch.withArgs('/geography/lga-select-list/1/1')
+          fetchStub.aspectFetch.withArgs('/geography/lga-select-list/1')
             .returns(expectedResponseFromServer)
           dispatch = sinon.spy()
           geographyCreators = proxyquire('./geography_creators', {
@@ -999,7 +999,7 @@ describe('geography action creators', () => {
         })
 
         it('Should request a new list of LGAs from the server', () => {
-          assert(fetchStub.aspectFetch.calledWith('/geography/lga-select-list/1/1'), 'A request to /geography/lga-select-list/{countryId}/{stateId} was not detected')
+          assert(fetchStub.aspectFetch.calledWith('/geography/lga-select-list/1'), 'A request to /geography/lga-select-list/{stateId} was not detected')
         })
 
         describe('and a response is received from the server', () => {
@@ -1028,7 +1028,7 @@ describe('geography action creators', () => {
         fetchStub = {
           aspectFetch: sinon.stub()
         }
-        fetchStub.aspectFetch.withArgs('/geography/lga-select-list/1/1')
+        fetchStub.aspectFetch.withArgs('/geography/lga-select-list/1')
           .returns(expectedResponseFromServer)
         errorCreatorsStub = {
           addError: sinon.stub()
@@ -1056,7 +1056,7 @@ describe('geography action creators', () => {
       })
 
       it('Should request a new list of LGAs from the server', () => {
-        assert(fetchStub.aspectFetch.calledWith('/geography/lga-select-list/1/1'), 'A request to /geography/lga-select-list/{countryId}/{stateId} was not detected')
+        assert(fetchStub.aspectFetch.calledWith('/geography/lga-select-list/1'), 'A request to /geography/lga-select-list/{stateId} was not detected')
       })
 
       describe('and a response is received from the server', () => {

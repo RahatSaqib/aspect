@@ -133,20 +133,28 @@ class LocationSelector extends React.PureComponent {
       lgasForSelectList = selectedState && selectedState.getIn(['children', 'items']) && selectedState.getIn(['children', 'items']).size > 0 ? selectedState.getIn(['children', 'items']).toJS() : [],
       lgasLoading = selectedState ? statesLoading || selectedState.getIn(['children', 'loading']) : false
 
-
     return (
       <div>
-        <SelectInput name={countryIdFieldName} label={formatMessage(messages.country)}
-                     disabled={disabled || countriesLoading || !countriesForSelectList.length}
-                     dataSource={countriesForSelectList} dataSourceConfig={selectListDataSourceMappings}
-                     onChange={this.onCountryChanged} />
-        <SelectInput name={stateIdFieldName} label={formatMessage(messages.state)}
-                     disabled={disabled || statesLoading || !statesForSelectList.length}
-                     dataSource={statesForSelectList} dataSourceConfig={selectListDataSourceMappings}
-                     onChange={this.onStateChanged} />
-        <SelectInput name={lgaIdFieldName} label={formatMessage(messages.lga)}
-                     disabled={disabled || lgasLoading || !lgasForSelectList.length}
-                     dataSource={lgasForSelectList} dataSourceConfig={selectListDataSourceMappings} />
+        <div style={{display: 'inline-block', position: 'relative'}}>
+          <SelectInput name={countryIdFieldName} label={formatMessage(messages.country)}
+                       disabled={disabled || countriesLoading || !countriesForSelectList.length}
+                       dataSource={countriesForSelectList} dataSourceConfig={selectListDataSourceMappings}
+                       onChange={this.onCountryChanged} />
+          {countriesLoading && <span style={{position: 'absolute', left: '0.1em', bottom: '0.5em'}}>Loading...</span>}
+        </div>
+        <div style={{display: 'inline-block', position: 'relative'}}>
+          <SelectInput name={stateIdFieldName} label={formatMessage(messages.state)}
+                       disabled={disabled || statesLoading || !statesForSelectList.length}
+                       dataSource={statesForSelectList} dataSourceConfig={selectListDataSourceMappings}
+                       onChange={this.onStateChanged} />
+          {statesLoading && <span style={{position: 'absolute', left: '0.1em', bottom: '0.5em'}}>Loading...</span>}
+        </div>
+        <div style={{display: 'inline-block', position: 'relative'}}>
+          <SelectInput name={lgaIdFieldName} label={formatMessage(messages.lga)}
+                       disabled={disabled || lgasLoading || !lgasForSelectList.length}
+                       dataSource={lgasForSelectList} dataSourceConfig={selectListDataSourceMappings} />
+          {lgasLoading && <span style={{position: 'absolute', left: '0.1em', bottom: '0.5em'}}>Loading...</span>}
+        </div>
       </div>
     )
   }
