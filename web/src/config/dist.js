@@ -7,7 +7,8 @@ let config = {
   piwik: {
     url: '//analytics.aspect.id',
     siteId: 1
-  }
+  },
+  userInactiveMinutes: 15 // time in minutes after user is considered inactive
 }
 
 export default Object.freeze(Object.assign({}, baseConfig, config))

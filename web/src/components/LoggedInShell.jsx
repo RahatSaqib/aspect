@@ -8,6 +8,7 @@ import { logoutStart, changeLanguage, toggleDrawer, closeDrawer } from '../actio
 // Our own imports
 import Nav from './shared/Nav'
 import SideNav from './shared/SideNav'
+import { IdleDialogContainer } from './shared/idle/dialog/IdleDialog'
 import { ErrorDisplayContainer } from './shared/ErrorDisplay'
 
 export class LoggedInShell extends PureComponent {
@@ -27,6 +28,7 @@ export class LoggedInShell extends PureComponent {
       <div>
         <Helmet title="Aspect" defaultTitle="Aspect" />
         <ErrorDisplayContainer />
+        <IdleDialogContainer />
         <SideNav  open={this.props.drawerOpen}
                   desktop={ this.state.desktop }
                   pathname={ pathname }

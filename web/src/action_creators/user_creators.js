@@ -135,7 +135,7 @@ export function loginStart(login) {
   }
 }
 
-export function logoutStart() {
+export function logoutStart(reason) {
 
   return function (dispatch) {
 
@@ -146,7 +146,7 @@ export function logoutStart() {
     dispatch(logoutSuccess())
 
     // now, redirect to login page
-    history.push('/login')
+    history.push('/login' + (typeof reason === 'string' ? '?reason=' + reason : ''))
   }
 }
 
