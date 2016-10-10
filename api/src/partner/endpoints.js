@@ -14,7 +14,7 @@ module.exports = [
       validate: {
         query: Object.assign({
           name: Joi.string().allow('').description('Filter for partner name')
-        }, validateSortPageParams('name', 'status', 'createdOn', 'lastSeen', 'totalTests'))
+        }, validateSortPageParams('name', 'partnerTypeName'))
       }
     }
   },

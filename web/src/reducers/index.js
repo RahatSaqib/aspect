@@ -10,7 +10,6 @@ import device from './device'
 import site from './site'
 import result from './result'
 import person from './person'
-import { reducer as idle } from './idle'
 
 const appReducer = combineReducers({
   form: formReducer,
@@ -19,8 +18,7 @@ const appReducer = combineReducers({
   device,
   site,
   result,
-  person,
-  idle
+  person
 })
 
 const App = Immutable.Record({
@@ -30,8 +28,7 @@ const App = Immutable.Record({
   device: undefined,
   site: undefined,
   result: undefined,
-  person: undefined,
-  idle: undefined
+  person: undefined
 })
 
 const initialState = new App()

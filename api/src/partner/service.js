@@ -18,7 +18,8 @@ function* listPartners(request){
 
   let partnerQuery = knex('Partner as p')
     .modify(filterParams, query, 'name', 'd.name')
-    .modify(addConstraints, dataConstraints, {Partner: 'p'})
+    // TODO: modify addConstraints to not require site or device
+    // .modify(addConstraints, dataConstraints, {Partner: 'p'})
 
   // get total count for paging
   let getCount = partnerQuery.clone()
@@ -49,7 +50,8 @@ function* showPartner(request) {
   const [item] = yield knex('Partner as p')
     .where('p.id', params.partnerId)
     .innerJoin('PartnerType as pt', 'pt.id', 'p.partnerTypeId')
-    .modify(addConstraints, dataConstraints, {Partner: 'p'})
+    // TODO: modify addConstraints to not require site or device
+    // .modify(addConstraints, dataConstraints, {Partner: 'p'})
     .select(SELECT_SHOW_FIELDS)
 
   const result = {ok: true, data: item}

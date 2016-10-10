@@ -27,7 +27,7 @@ function* seed(knex){
 
   // Create partner types
   const partnerTypeFundingId = yield knex('PartnerType').insert({
-    name: 'Funding '
+    name: 'Funding'
   })
 
   const partnerTypeImplementingId = yield knex('PartnerType').insert({
