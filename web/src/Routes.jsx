@@ -6,8 +6,8 @@ import store, { history } from './store'
 import config from 'config'
 
 // higher level containers/shells
-import App from './components/App'
-import LoggedInShell from './components/LoggedInShell'
+import App from './components/layouts/App'
+import LoggedInShell from './components/layouts/LoggedInShell'
 
 // "Pages"
 import { LoginContainer } from './components/pages/auth/Login'

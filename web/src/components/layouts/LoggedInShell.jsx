@@ -3,13 +3,13 @@ import React, { PureComponent, PropTypes } from 'react'
 import { bindActionCreators } from 'redux'
 import { connect } from 'react-redux'
 import Helmet from 'react-helmet'
-import { logoutStart, changeLanguage, toggleDrawer, closeDrawer } from '../action_creators/user_creators'
 
 // Our own imports
-import Nav from './shared/Nav'
-import SideNav from './shared/SideNav'
-import { IdleDialogContainer } from './shared/idle/dialog/IdleDialog'
-import { ErrorDisplayContainer } from './shared/ErrorDisplay'
+import { logoutStart, changeLanguage, toggleDrawer, closeDrawer } from '../../action_creators/user_creators'
+import Nav from '../shared/Nav'
+import SideNav from '../shared/SideNav'
+import { IdleDialogContainer } from '../shared/idle/dialog/IdleDialog'
+import { ErrorDisplayContainer } from '../shared/ErrorDisplay'
 
 export class LoggedInShell extends PureComponent {
 
