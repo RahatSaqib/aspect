@@ -8,12 +8,12 @@ import {
   receiveList,
   receiveItem,
   Items
-} from '../reducers/meta/items'
+} from '../shared/metaReducers/items'
 import {
   requestTable,
   receiveTableItems,
   Table
-} from '../reducers/meta/table'
+} from '../shared/metaReducers/table'
 
 export const types = {
   REQUEST_DEVICES: 'REQUEST_DEVICES',

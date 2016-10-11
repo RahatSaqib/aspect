@@ -6,12 +6,12 @@ import { addError } from '../error/ErrorRedux'
 import {
   receiveList,
   Items
-} from '../reducers/meta/items'
+} from '../shared/metaReducers/items'
 import {
   requestTable,
   receiveTableItems,
   Table
-} from '../reducers/meta/table'
+} from '../shared/metaReducers/table'
 
 export const types = {
   REQUEST_PERSONS: 'REQUEST_PERSONS',
