@@ -21,7 +21,7 @@ import { SiteListContainer } from '../site/list/SiteList'
 import { SiteDetailContainer } from '../site/detail/SiteDetail'
 import { PersonListContainer } from '../person/list/PersonList'
 import { ResultListContainer } from '../result/list/ResultList'
-import { NotificationList } from '../components/pages/notification/NotificationList'
+import { NotificationList } from '../notification/list/NotificationList'
 import { ReportList } from '../components/pages/report/ReportList'
 
 import { refreshStart } from '../auth/AuthRedux'
