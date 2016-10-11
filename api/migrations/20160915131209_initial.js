@@ -36,7 +36,6 @@ function* up(knex){
     user.increments('id')
     user.string('name').unique().notNullable()
     user.string('password', 128).notNullable()
-    user.string('passwordKey', 32).notNullable()
     user.boolean('approved').notNullable()
     user.dateTime('lastActive')
     user.dateTime('lastLogin')
