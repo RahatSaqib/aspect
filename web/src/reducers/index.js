@@ -8,9 +8,9 @@ import error from '../error/ErrorRedux'
 import user from './user'
 import device from '../device/DeviceRedux'
 import site from '../site/SiteRedux'
-import result from './result'
-import { reducer as idle } from '../components/shared/idle/IdleRedux'
+import result from '../result/ResultRedux'
 import person from '../person/PersonRedux'
+import { reducer as idle } from '../components/shared/idle/IdleRedux'
 
 const appReducer = combineReducers({
   form: formReducer,
