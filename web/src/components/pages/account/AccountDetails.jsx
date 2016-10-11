@@ -74,7 +74,8 @@ const messages = defineMessages({
 
 class AccountDetails extends React.PureComponent {
   componentDidMount() {
-    this.props.fetchAccountDetails()
+    const {fetchAccountDetails} = this.props
+    fetchAccountDetails()
   }
 
   render() {

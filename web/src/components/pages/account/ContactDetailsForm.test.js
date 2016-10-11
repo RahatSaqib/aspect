@@ -98,8 +98,9 @@ describe('ContactDetailsForm Component', () => {
       const locationSelector = ContactDetailsFormWrapper.find(LocationSelector)
       assert.equal(locationSelector.length, 1)
       assert.deepEqual(locationSelector.props(), {
-        countryIdFieldName: 'countryId',
         initialValues: props.initialValues,
+        formName: 'accountDetails',
+        countryIdFieldName: 'countryId',
         stateIdFieldName: 'stateId',
         lgaIdFieldName: 'lgaId',
         disabled: props.loading

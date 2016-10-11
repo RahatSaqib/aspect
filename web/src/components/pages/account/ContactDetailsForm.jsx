@@ -41,9 +41,9 @@ const ContactDetailsForm = props => {
         </section>
         <section>
           <h1>{labels.locationHeader}</h1>
-          <LocationSelector disabled={loading} countryIdFieldName="countryId"
-                            initialValues={initialValues} stateIdFieldName="stateId"
-                            lgaIdFieldName="lgaId" />
+          <LocationSelector disabled={loading} initialValues={initialValues}
+                            formName="accountDetails" countryIdFieldName="countryId"
+                            stateIdFieldName="stateId" lgaIdFieldName="lgaId" />
           <TextInput name="zip" label={labels.zip} disabled={loading} maxLength="45" />
         </section>
       </div>
