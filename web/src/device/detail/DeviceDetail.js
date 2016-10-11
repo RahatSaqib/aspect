@@ -14,7 +14,7 @@ import Paper from 'material-ui/Paper'
 import LinearProgress from 'material-ui/LinearProgress'
 
 // Our own imports
-import { isEditable } from '../../selectors/device'
+import { isEditable } from '../../shared/selectors/device'
 import {
   fetchSingleDevice,
   updateSingleDevice
