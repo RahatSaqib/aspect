@@ -1,6 +1,7 @@
 {
   "name": "aspect-api",
-  "version": "1.0.0",
+  "private": true,
+  "version": "0.0.1",
   "description": "The API for aspect clients",
   "main": "server.js",
   "scripts": {

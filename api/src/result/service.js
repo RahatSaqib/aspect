@@ -1,7 +1,4 @@
-const Promise = require('bluebird')
 const _ = require('lodash')
-const { knex, filterParams, sortPageParams } = require('../db')
-const { getConstraints, addConstraints } = require('../auth/constraints')
 
 function* listResults(request){
   const {query} = request
@@ -14,7 +11,7 @@ function* listResults(request){
       state: 'Massachusetts',
       lga: 'Franklin',
       patiendId: 38,
-      resultText: 'adsklsa. Massachusetts opksa sadasd;',
+      resultText: 'adsklsa. Massachusetts opksa sadasd;'
     },
     {
       id: 2,
@@ -23,7 +20,7 @@ function* listResults(request){
       state: 'Nebraska',
       lga: 'Gage',
       patiendId: 42,
-      resultText: 'adsklsa. Nebraska opksa sadasd;',
+      resultText: 'adsklsa. Nebraska opksa sadasd;'
     },
     {
       id: 3,
@@ -32,7 +29,7 @@ function* listResults(request){
       state: 'Massachusetts',
       lga: 'Franklin',
       patiendId: 85,
-      resultText: 'adsklsa. Massachusetts Suffolk sadasd;',
+      resultText: 'adsklsa. Massachusetts Suffolk sadasd;'
     }
   ]
 
