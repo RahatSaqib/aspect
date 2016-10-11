@@ -22,7 +22,7 @@ import { SiteDetailContainer } from '../site/detail/SiteDetail'
 import { PersonListContainer } from '../person/list/PersonList'
 import { ResultListContainer } from '../result/list/ResultList'
 import { NotificationList } from '../notification/list/NotificationList'
-import { ReportList } from '../components/pages/report/ReportList'
+import { ReportList } from '../report/list/ReportList'
 
 import { refreshStart } from '../auth/AuthRedux'
 
