@@ -1,5 +1,12 @@
 {
   "env": {
+    "dev": {
+      "plugins": [
+        [
+          "react-hot-loader/babel"
+        ]
+      ]
+    },
     "dist": {
       "plugins": [
         [
@@ -29,11 +36,6 @@
       ]
     }
   },
-  "plugins": [
-    [
-      "react-hot-loader/babel"
-    ]
-  ],
   "presets": [
     "es2015",
     "react",
