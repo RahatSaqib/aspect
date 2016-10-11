@@ -10,7 +10,7 @@ import App from './components/layouts/App'
 import LoggedInShell from './components/layouts/LoggedInShell'
 
 // "Pages"
-import { LoginContainer } from './components/pages/auth/Login'
+import { LoginContainer } from './auth/login/Login'
 import { DashboardContainer } from './dashboard/dashboard/Dashboard'
 import { Inventory } from './dashboard/inventory/Inventory'
 import { Maintenance } from './dashboard/maintenance/Maintenance'
