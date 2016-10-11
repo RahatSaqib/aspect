@@ -13,7 +13,7 @@ import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider'
 import getMuiTheme from 'material-ui/styles/getMuiTheme'
 
 // Our own imports
-import translation from '../../i18n/translation.json'
+import translation from '../../shared/i18n/translation.json'
 import theme from '../../theme'
 
 require('./App.scss')
