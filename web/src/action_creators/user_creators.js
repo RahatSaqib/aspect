@@ -1,5 +1,6 @@
 import config from 'config'
 import jwt_decode from 'jwt-decode'
+import { stringify } from 'querystring'
 
 import * as fetchUtils from '../utils/fetch'
 import * as localStorage from '../utils/localStorage'
@@ -135,7 +136,7 @@ export function loginStart(login) {
   }
 }
 
-export function logoutStart() {
+export function logoutStart(reason) {
 
   return function (dispatch) {
 
@@ -146,7 +147,7 @@ export function logoutStart() {
     dispatch(logoutSuccess())
 
     // now, redirect to login page
-    history.push('/login')
+    history.push('/login' + (typeof reason === 'string' ? '?' + stringify({ reason }) : ''))
   }
 }
 

@@ -5,6 +5,10 @@ import { bindActionCreators } from 'redux'
 import { connect } from 'react-redux'
 import { Field, reduxForm } from 'redux-form/immutable'
 import Helmet from 'react-helmet'
+import {
+  injectIntl,
+  defineMessages
+} from 'react-intl'
 
 // Material-UI
 import Paper from 'material-ui/Paper'
@@ -16,6 +20,17 @@ import TextField from 'material-ui/TextField'
 import { loginStart } from '../../../action_creators/user_creators'
 import { ErrorDisplayContainer } from '../../shared/ErrorDisplay'
 import styles from './Login.css'
+
+const messages = defineMessages({
+  title: {
+    id: 'pages.Login.title',
+    defaultMessage: 'Login'
+  },
+  reasonidle: {
+    id: 'shared.Login.reasonIdle',
+    defaultMessage: 'You were logged out due to inactivity'
+  }
+})
 
 const renderUserField = ({ input, meta }) => {
   return (
@@ -53,7 +68,8 @@ class Login extends PureComponent {
   }
 
   render() {
-    const { handleSubmit, pristine, submitting } = this.props
+    const { formatMessage } = this.props.intl
+    const { handleSubmit, pristine, submitting, location } = this.props
 
     return (
       <div className={styles.Background}>
@@ -66,6 +82,7 @@ class Login extends PureComponent {
             <div className="pure-u-lg-1-3 pure-u-md-2-3 pure-u-sm-11-12">
               <Paper>
                 <form onSubmit={handleSubmit} className={styles.Form}>
+                  { location.query.reason ? <div className={styles.Form__Info}>{formatMessage(messages['reason' +location.query.reason])}</div> : null }
                   <Field name="user" component={renderUserField} />
                   <br/>
                   <Field name="password" component={renderPasswordField} />
@@ -110,6 +127,7 @@ function validate(values) {
 }
 
 export const LoginContainer = _.flowRight(
+  injectIntl,
   connect(mapStateToProps, mapDispatchToProps),
   reduxForm({
     form: 'login',
