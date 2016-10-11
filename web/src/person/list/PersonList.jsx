@@ -19,8 +19,8 @@ import IconButton from 'material-ui/IconButton'
 import TextField from 'material-ui/TextField'
 
 // Our own imports
-import { fetchPersons } from '../../../action_creators/person_creators'
-import { DataTable } from '../../shared/DataTable'
+import { fetchPersons } from '../../action_creators/person_creators'
+import { DataTable } from '../../components/shared/DataTable'
 import styles from './PersonList.css'
 
 const messages = defineMessages({
