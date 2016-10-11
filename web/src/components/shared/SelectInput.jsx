@@ -3,6 +3,7 @@ import { Field } from 'redux-form/immutable'
 import SelectField from 'material-ui/SelectField'
 import MenuItem from 'material-ui/MenuItem'
 import _ from 'lodash'
+import styles from './Shared.css'
 
 const renderSelectField = props => {
   const {onSelectionChanged, input, meta, selectFieldProps, children} = props,
@@ -15,7 +16,7 @@ const renderSelectField = props => {
   }
   return <SelectField {...input} errorStyle={{float: 'left'}} style={{verticalAlign: 'bottom'}}
                  errorText={touched && error} {...selectFieldProps} children={children}
-                 onChange={onChange} />
+                 onChange={onChange} className={styles.Form__Field} />
 }
 
 const renderFormField = props => {

@@ -33,7 +33,7 @@ describe('ContactDetailsForm Component', () => {
       props = {
         pristine: true,
         invalid: true,
-        submitting: false,
+        loading: false,
         initialValues: {
           countryId: null,
           stateId: null
@@ -83,11 +83,11 @@ describe('ContactDetailsForm Component', () => {
       })
     })
 
-    it('Should disable all fields when form is submitting', () => {
+    it('Should disable all fields when form is loading', () => {
       ContactDetailsFormWrapper.find(TextInput).forEach(textInput => {
         assert.isFalse(textInput.props().disabled)
       })
-      props.submitting = true
+      props.loading = true
       shallowRenderForm(props)
       ContactDetailsFormWrapper.find(TextInput).forEach(textInput => {
         assert.isTrue(textInput.props().disabled)
@@ -102,7 +102,7 @@ describe('ContactDetailsForm Component', () => {
         initialValues: props.initialValues,
         stateIdFieldName: 'stateId',
         lgaIdFieldName: 'lgaId',
-        disabled: props.submitting
+        disabled: props.loading
       })
     })
 
@@ -114,7 +114,7 @@ describe('ContactDetailsForm Component', () => {
         label: 'Save',
         secondary: true,
         type: 'submit',
-        disabled: props.submitting || props.invalid || props.pristine
+        disabled: props.loading || props.invalid || props.pristine
       })
     })
 

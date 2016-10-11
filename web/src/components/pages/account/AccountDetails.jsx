@@ -95,27 +95,28 @@ class AccountDetails extends React.PureComponent {
     }
     return (
       <div className={styles.Content}>
-        {(loading || saving) && <LinearProgress />}
-        {!loading &&
         <Paper>
           <Tabs>
             <Tab className={styles.ResponsiveTab} icon={<MapsPersonPin />}
                  label={<span className="pure-hidden-xs">{formatMessage(messages.contactDetails)}</span>}>
+              {(loading || saving) && <LinearProgress />}
               <h2 className={'pure-visible-xs ' + styles.Form__Header}>{formatMessage(messages.contactDetails)}</h2>
-              <ContactDetailsForm initialValues={accountDetails} onSubmit={saveAccountDetails} labels={labels} />
+              {!loading && <ContactDetailsForm loading={loading || saving} initialValues={accountDetails} onSubmit={saveAccountDetails} labels={labels} />}
             </Tab>
             <Tab className={styles.ResponsiveTab} icon={<Lock />}
                  label={<span className="pure-hidden-xs">{formatMessage(messages.usernameAndPassword)}</span>}>
+              {(loading || saving) && <LinearProgress />}
               <h2 className={'pure-visible-xs ' + styles.Form__Header}>{formatMessage(messages.usernameAndPassword)}</h2>
               <span>Change Username and Password Here!</span>
             </Tab>
             <Tab className={styles.ResponsiveTab} icon={<Language />}
                  label={<span className="pure-hidden-xs">{formatMessage(messages.languageAndTimezone)}</span>}>
+              {(loading || saving) && <LinearProgress />}
               <h2 className={'pure-visible-xs ' + styles.Form__Header}>{formatMessage(messages.languageAndTimezone)}</h2>
               <span>Timezone and Language Here!</span>
             </Tab>
           </Tabs>
-        </Paper>}
+        </Paper>
       </div>
     )
   }

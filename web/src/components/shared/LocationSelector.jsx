@@ -1,4 +1,5 @@
 import React, {PropTypes} from 'react'
+import RefreshIndicator from 'material-ui/RefreshIndicator'
 import { injectIntl, defineMessages } from 'react-intl'
 import _ from 'lodash'
 import { bindActionCreators } from 'redux'
@@ -216,21 +217,21 @@ class LocationSelector extends React.PureComponent {
                        disabled={disabled || countriesLoading || _.isEmpty(countriesForSelectList)}
                        dataSource={countriesForSelectList} dataSourceConfig={selectListDataSourceMappings}
                        onChange={this.onCountryChanged} />
-          {countriesLoading && <span style={{position: 'absolute', left: '0.1em', bottom: '0.5em'}}>Loading...</span>}
+          <RefreshIndicator size={30} left={100} top={30} status={countriesLoading ? 'loading' : 'hide'} />
         </div>
         <div style={{display: 'inline-block', position: 'relative'}}>
           <SelectInput name={stateIdFieldName} label={formatMessage(messages.state)}
                        disabled={disabled || statesLoading || _.isEmpty(statesForSelectList)}
                        dataSource={statesForSelectList} dataSourceConfig={selectListDataSourceMappings}
                        onChange={this.onStateChanged} />
-          {statesLoading && <span style={{position: 'absolute', left: '0.1em', bottom: '0.5em'}}>Loading...</span>}
+          <RefreshIndicator size={30} left={100} top={30} status={statesLoading ? 'loading' : 'hide'} />
         </div>
         <div style={{display: 'inline-block', position: 'relative'}}>
           <SelectInput name={lgaIdFieldName} label={formatMessage(messages.lga)}
                        disabled={disabled || lgasLoading || _.isEmpty(lgasForSelectList)}
                        dataSource={lgasForSelectList} dataSourceConfig={selectListDataSourceMappings}
                        onChange={this.onLgaChanged} />
-          {lgasLoading && <span style={{position: 'absolute', left: '0.1em', bottom: '0.5em'}}>Loading...</span>}
+          <RefreshIndicator size={30} left={100} top={30} status={lgasLoading ? 'loading' : 'hide'} />
         </div>
       </div>
     )

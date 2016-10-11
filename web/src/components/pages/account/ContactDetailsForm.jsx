@@ -21,34 +21,34 @@ const messages = defineMessages({
 })
 
 const ContactDetailsForm = props => {
-  const { labels, handleSubmit, pristine, invalid, submitting, initialValues } = props
+  const { labels, handleSubmit, pristine, invalid, loading, initialValues } = props
   return (
     <form onSubmit={handleSubmit} className={styles.Form}>
       <div className={styles.Form__Content}>
         <section>
-          <TextInput name="name" label={labels.name} disabled={submitting} maxLength="500" />
-          <TextInput name="title" label={labels.title} disabled={submitting} maxLength="255" />
+          <TextInput name="name" label={labels.name} disabled={loading} maxLength="500" />
+          <TextInput name="title" label={labels.title} disabled={loading} maxLength="255" />
         </section>
         <section>
           <h1>{labels.emailHeader}</h1>
-          <TextInput name="email" label={labels.email} disabled={submitting} maxLength="500" />
-          <TextInput name="email2" label={labels.email2} disabled={submitting} maxLength="500" />
+          <TextInput name="email" label={labels.email} disabled={loading} maxLength="500" />
+          <TextInput name="email2" label={labels.email2} disabled={loading} maxLength="500" />
         </section>
         <section>
           <h1>{labels.phoneHeader}</h1>
-          <PhoneInput name="phone" label={labels.phone} disabled={submitting} maxLength="40" />
-          <PhoneInput name="cell" label={labels.cell} disabled={submitting} maxLength="40" />
+          <PhoneInput name="phone" label={labels.phone} disabled={loading} maxLength="40" />
+          <PhoneInput name="cell" label={labels.cell} disabled={loading} maxLength="40" />
         </section>
         <section>
           <h1>{labels.locationHeader}</h1>
-          <LocationSelector disabled={submitting} countryIdFieldName="countryId"
+          <LocationSelector disabled={loading} countryIdFieldName="countryId"
                             initialValues={initialValues} stateIdFieldName="stateId"
                             lgaIdFieldName="lgaId" />
-          <TextInput name="zip" label={labels.zip} disabled={submitting} maxLength="45" />
+          <TextInput name="zip" label={labels.zip} disabled={loading} maxLength="45" />
         </section>
       </div>
       <div className={styles.Form__ActionRow}>
-        <RaisedButton disabled={pristine || invalid || submitting} label={labels.submit} secondary={true} type="submit" />
+        <RaisedButton disabled={pristine || invalid || loading} label={labels.submit} secondary={true} type="submit" />
       </div>
     </form>
   )

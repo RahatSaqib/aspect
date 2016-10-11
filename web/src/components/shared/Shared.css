@@ -50,3 +50,13 @@
   text-align: right;
   padding: 30px 0 0 0;
 }
+
+.Form__Field {
+  margin-right: 3em;
+}
+/* xs */
+@media screen and (max-width:35.438em) {
+  .Form__Field {
+    margin-right: 0;
+  }
+}

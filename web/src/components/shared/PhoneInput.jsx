@@ -3,6 +3,7 @@ import _ from 'lodash'
 import { Field } from 'redux-form/immutable'
 import TextField from 'material-ui/TextField'
 import CountrySelect from './CountrySelect'
+import styles from './Shared.css'
 
 class PhoneInput extends React.PureComponent {
   static propTypes = {
@@ -50,26 +51,28 @@ class PhoneInput extends React.PureComponent {
   }
 
   changeNumber(number) {
-    if(!number) {
-      return
+    let trimmedNumber = ''
+    if(number) {
+      trimmedNumber = number.replace(/^\s+/,'')
+
+      //Get the trimmed first portion of the number (up until the first char which isn't '+' or [0-9]
+      const firstPortionDividerMatch = /\s|\(|\)|-/.exec(trimmedNumber)
+      const firstIndexOfSectionDivider = firstPortionDividerMatch ? firstPortionDividerMatch.index : -1
+      const firstPortionOfNumber = firstIndexOfSectionDivider > -1 ?
+        trimmedNumber.substr(0, firstIndexOfSectionDivider) : trimmedNumber
+      const matchingDialingCodes = _.filter(dialingCodes, {dial_code: firstPortionOfNumber})
+      if(matchingDialingCodes.length === 1){
+        this.selectCountry(matchingDialingCodes[0].iso_alpha2_code)
+        trimmedNumber = trimmedNumber.substr(matchingDialingCodes[0].dial_code.length)
+      }
+      if(!/^[\s()+-]*([0-9][\s()+-]*){0,17}$/.test(trimmedNumber)) {
+        return
+      }
+      trimmedNumber = trimmedNumber.replace(/^\s+/,'')
     }
-    //Remove leading spaces from input
-    let trimmedNumber = number.replace(/^\s+/,'')
-    //Get the trimmed first portion of the number (up until the first char which isn't '+' or [0-9]
-    const firstPortionDividerMatch = /\s|\(|\)|-/.exec(trimmedNumber)
-    const firstIndexOfSectionDivider = firstPortionDividerMatch ? firstPortionDividerMatch.index : -1
-    const firstPortionOfNumber = firstIndexOfSectionDivider > -1 ?
-      trimmedNumber.substr(0, firstIndexOfSectionDivider) : trimmedNumber
-    const matchingDialingCodes = _.filter(dialingCodes, {dial_code: firstPortionOfNumber})
-    if(matchingDialingCodes.length === 1){
-      this.selectCountry(matchingDialingCodes[0].iso_alpha2_code)
-      trimmedNumber = trimmedNumber.substr(matchingDialingCodes[0].dial_code.length)
-    }
-    if(/^[\s()+-]*([0-9][\s()+-]*){0,17}$/.test(trimmedNumber)) {
-      this.setState({
-        number: trimmedNumber.replace(/^\s+/,'')
-      })
-    }
+    this.setState({
+      number: trimmedNumber
+    })
   }
 
   getPhoneNumber(isoAlpha2Code, number) {
@@ -104,7 +107,7 @@ class PhoneInput extends React.PureComponent {
                      {...textFieldProps} style={{marginLeft: '5.5em', width: '10.5em'}}
                      floatingLabelFocusStyle={{marginLeft: '-5.5em'}}
                      underlineStyle={{marginLeft: '-5.5em', width: '16em'}} onChange={this.onNumberChanged}
-                     value={number} />
+                     value={number} className={styles.Form__Field} />
         </div>
       </div>
     )

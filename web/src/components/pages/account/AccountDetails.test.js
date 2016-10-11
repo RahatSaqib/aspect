@@ -53,14 +53,13 @@ describe('AccountDetails Component', () => {
         shallowRenderAccountDetails()
       })
 
-      it('Should show a loading message and a progress bar', () => {
-        assert.equal(AccountDetailsWrapper.find(LinearProgress).length, 1)
-      })
-
-      it('Should not show anything else', () => {
-        assert.equal(AccountDetailsWrapper.node.props.children.length, 2)
-        assert.equal(AccountDetailsWrapper.node.props.children[0].type, LinearProgress)
-        assert.isFalse(AccountDetailsWrapper.node.props.children[1])
+      it('Should show a progress bar in each tab', () => {
+        const firstTab = AccountDetailsWrapper.find(Tab).first()
+        assert.equal(firstTab.find(LinearProgress).length, 1)
+        const secondTab = AccountDetailsWrapper.find(Tab).at(1)
+        assert.equal(secondTab.find(LinearProgress).length, 1)
+        const thirdTab = AccountDetailsWrapper.find(Tab).at(2)
+        assert.equal(thirdTab.find(LinearProgress).length, 1)
       })
     })
 
@@ -71,9 +70,7 @@ describe('AccountDetails Component', () => {
       })
 
       it('Should show a paper container with three tabs', () => {
-        assert.equal(AccountDetailsWrapper.node.props.children.length, 2)
-        assert.isFalse(AccountDetailsWrapper.node.props.children[0])
-        assert.equal(AccountDetailsWrapper.node.props.children[1].type, Paper)
+        assert.equal(AccountDetailsWrapper.node.props.children.type, Paper)
         const paperContainer = AccountDetailsWrapper.find(Paper)
         assert.equal(paperContainer.length, 1)
         const tabsContainer = paperContainer.find(Tabs)
