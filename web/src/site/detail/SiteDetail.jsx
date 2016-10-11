@@ -15,7 +15,7 @@ import { isEditable } from '../../selectors/site'
 import {
   fetchSingleSite,
   updateSingleSite
-} from '../../action_creators/site_creators'
+} from '../SiteRedux'
 import SiteForm from './SiteForm'
 import SiteLocationFormMap from './SiteLocationFormMap'
 import messages from './messages'

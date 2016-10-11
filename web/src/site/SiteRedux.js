@@ -1,10 +1,33 @@
-import Immutable from 'immutable'
 import { stringify } from 'querystring'
+import Immutable from 'immutable'
 
 import { aspectFetch } from '../utils/fetch'
-import { addError } from './error_creators'
-import types from './../constants/action_types'
+import { addError } from '../action_creators/error_creators'
 
+import {
+  receiveList,
+  receiveItem,
+  Items
+} from '../reducers/meta/items'
+import {
+  requestTable,
+  receiveTableItems,
+  Table
+} from '../reducers/meta/table'
+
+export const types = {
+  REQUEST_SITES: 'REQUEST_SITES',
+  RECEIVE_SITES: 'RECEIVE_SITES',
+
+  REQUEST_SINGLE_SITE: 'REQUEST_SINGLE_SITE',
+  RECEIVE_SINGLE_SITE: 'RECEIVE_SINGLE_SITE',
+
+  REQUEST_UPDATING_SINGLE_SITE: 'REQUEST_UPDATING_SINGLE_SITE',
+  RECEIVE_UPDATED_SINGLE_SITE: 'RECEIVE_UPDATED_SINGLE_SITE'
+}
+/*
+ * ---------------- Action Creators -----------------
+ */
 function requestSites(sortCol, sortDir, page, size, filters) {
   return {
     type: types.REQUEST_SITES,
@@ -105,4 +128,34 @@ export function updateSingleSite(siteId, data){
         dispatch(addError(`Updating a site (${siteId}) failed`, err.message, err))
       })
   }
+}
+/*
+ * ---------------- Reducers -----------------
+ */
+const Site = Immutable.Record({
+  items: new Items(),
+  table: new Table()
+})
+
+const initialState = new Site()
+
+export default function siteReducer(state = initialState, action) {
+  switch (action.type) {
+  case types.REQUEST_SITES:
+    return state
+      .set('table', requestTable(state.table, action))
+  case types.RECEIVE_SITES:
+    return state.withMutations(mutState => {
+      const immutList = Immutable.fromJS(action.items)
+      mutState.set('items', receiveList(mutState.items, immutList))
+      mutState.set('table', receiveTableItems(mutState.table, action.total))
+    })
+  case types.RECEIVE_SINGLE_SITE:
+  case types.RECEIVE_UPDATED_SINGLE_SITE:
+    return state.withMutations(mutState => {
+      const immutItem = Immutable.fromJS(action.item)
+      mutState.set('items', receiveItem(mutState.items, immutItem))
+    })
+  }
+  return state
 }
