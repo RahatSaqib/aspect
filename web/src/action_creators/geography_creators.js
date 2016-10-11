@@ -73,6 +73,7 @@ export const fetchCountriesForLocationSelector = function(forceRefresh, countrie
     }
   }
 }
+
 export const fetchStatesForLocationSelector = function(forceRefresh, selectedCountry) {
   return dispatch => {
     const now = new Date()
@@ -93,7 +94,8 @@ export const fetchStatesForLocationSelector = function(forceRefresh, selectedCou
 export const fetchLgasForLocationSelector = function(forceRefresh, selectedCountry, selectedState) {
   return dispatch => {
     const now = new Date()
-    if(!selectedState.getIn(['children', 'loading']) && (forceRefresh || !selectedState.getIn(['children', 'lastRefreshed']) ||
+    if(selectedState && !selectedState.getIn(['children', 'loading']) &&
+      (forceRefresh || !selectedState.getIn(['children', 'lastRefreshed']) ||
       Math.abs(now.getTime() - selectedState.getIn(['children', 'lastRefreshed']).getTime()) > fiveMinutes)) {
       dispatch(requestLgasForLocationSelector(selectedCountry.get('id'), selectedState.get('id')))
       let path = '/geography/lga-select-list/' + selectedState.get('id')

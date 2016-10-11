@@ -101,13 +101,11 @@ describe('LocationSelector Component', () => {
         fetchCountriesForLocationSelector: () => {},
         fetchStatesForLocationSelector: () => {},
         fetchLgasForLocationSelector: () => {},
-        countriesForLocationSelector: countriesForLocationSelector,
+        countries: countriesForLocationSelector,
         countryIdFieldName: 'countryId',
         stateIdFieldName: 'stateId',
         lgaIdFieldName: 'lgaId',
         disabled: false,
-        initialCountryId: null,
-        initialStateId: null,
         intl: {
           formatMessage: message => message.defaultMessage
         }
@@ -239,13 +237,15 @@ describe('LocationSelector Component', () => {
     })
 
     it('mapStateToProps should map countriesForLocationSelector from countriesForLocationSelector on state', () => {
-      const state = {
-        geography: {
+      const Geograpy = Immutable.Record({
           countriesForLocationSelector: countriesForLocationSelector
-        }
-      }
+        }), App = Immutable.Record({
+          geography: new Geograpy()
+        })
+
+      const state = new App()
       assert.deepEqual(mapStateToProps(state), {
-        countriesForLocationSelector: countriesForLocationSelector
+        countries: countriesForLocationSelector
       })
     })
   })

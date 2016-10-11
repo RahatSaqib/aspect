@@ -54,11 +54,12 @@ function receiveCountriesForLocationSelector(state, countries, lastRefreshed) {
 }
 
 function requestStatesForLocationSelector(state, selectedCountryId) {
-  if(state.countriesForLocationSelector.items) {
-    const selectedCountry = state.countriesForLocationSelector.items.find(country => country.id === selectedCountryId)
+  if(state.getIn(['countriesForLocationSelector', 'items'])) {
+    const selectedCountry = state.getIn(['countriesForLocationSelector', 'items']).find(
+      country => country.get('id') === selectedCountryId)
     if (selectedCountry) {
       return state.setIn(['countriesForLocationSelector', 'items',
-        state.countriesForLocationSelector.items.indexOf(selectedCountry),
+        state.getIn(['countriesForLocationSelector', 'items']).indexOf(selectedCountry),
         'children', 'loading'], true)
     }
   }
@@ -66,11 +67,12 @@ function requestStatesForLocationSelector(state, selectedCountryId) {
 }
 
 function receiveStatesForLocationSelector(state, states, selectedCountryId, lastRefreshed) {
-  if(state.countriesForLocationSelector.items) {
-    const selectedCountry = state.countriesForLocationSelector.items.find(country => country.id === selectedCountryId)
+  if(state.getIn(['countriesForLocationSelector', 'items'])) {
+    const selectedCountry = state.getIn(['countriesForLocationSelector', 'items']).find(
+      country => country.get('id') === selectedCountryId)
     if (selectedCountry) {
       return state.mergeDeepIn(['countriesForLocationSelector', 'items',
-        state.countriesForLocationSelector.items.indexOf(selectedCountry),
+        state.getIn(['countriesForLocationSelector', 'items']).indexOf(selectedCountry),
         'children'], {
           loading: false,
           lastRefreshed: lastRefreshed,
@@ -90,15 +92,17 @@ function receiveStatesForLocationSelector(state, states, selectedCountryId, last
 }
 
 function requestLgasForLocationSelector(state, selectedCountryId, selectedStateId) {
-  if(state.countriesForLocationSelector.items) {
-    const selectedCountry = state.countriesForLocationSelector.items.find(country => country.id === selectedCountryId)
-    if(selectedCountry && selectedCountry.children.items) {
-      const selectedState = selectedCountry.children.items.find(state => state.id === selectedStateId)
+  if(state.getIn(['countriesForLocationSelector', 'items'])) {
+    const selectedCountry = state.getIn(['countriesForLocationSelector', 'items']).find(
+      country => country.get('id') === selectedCountryId)
+    if(selectedCountry && selectedCountry.getIn(['children', 'items'])) {
+      const selectedState = selectedCountry.getIn(['children', 'items']).find(
+        state => state.get('id') === selectedStateId)
       if(selectedState) {
         return state.setIn(['countriesForLocationSelector', 'items',
-          state.countriesForLocationSelector.items.indexOf(selectedCountry),
-          'children', 'items', selectedCountry.children.items.indexOf(selectedState), 'children',
-          'loading'], true)
+          state.getIn(['countriesForLocationSelector', 'items']).indexOf(selectedCountry),
+          'children', 'items', selectedCountry.getIn(['children', 'items']).indexOf(selectedState),
+          'children', 'loading'], true)
       }
     }
   }
@@ -106,18 +110,20 @@ function requestLgasForLocationSelector(state, selectedCountryId, selectedStateI
 }
 
 function receiveLgasForLocationSelector(state, lgas, selectedCountryId, selectedStateId, lastRefreshed) {
-  if(state.countriesForLocationSelector.items) {
-    const selectedCountry = state.countriesForLocationSelector.items.find(country => country.id === selectedCountryId)
-    if (selectedCountry  && selectedCountry.children.items) {
-      const selectedState = selectedCountry.children.items.find(state => state.id === selectedStateId)
+  if(state.getIn(['countriesForLocationSelector', 'items'])) {
+    const selectedCountry = state.getIn(['countriesForLocationSelector', 'items']).find(
+      country => country.get('id') === selectedCountryId)
+    if (selectedCountry && selectedCountry.getIn(['children', 'items'])) {
+      const selectedState = selectedCountry.getIn(['children', 'items']).find(
+        state => state.get('id') === selectedStateId)
       if(selectedState) {
         return state.mergeDeepIn(['countriesForLocationSelector', 'items',
-          state.countriesForLocationSelector.items.indexOf(selectedCountry),
-          'children', 'items', selectedCountry.children.items.indexOf(selectedState),
+          state.getIn(['countriesForLocationSelector', 'items']).indexOf(selectedCountry),
+          'children', 'items', selectedCountry.getIn(['children', 'items']).indexOf(selectedState),
           'children'], {
             loading: false,
             lastRefreshed: lastRefreshed,
-            items: new Immutable.List(lgas)
+            items: new Immutable.List(_.map(lgas, lga => new LazyLoadChild(lga)))
           })
       }
     }
