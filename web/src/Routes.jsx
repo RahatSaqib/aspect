@@ -26,7 +26,7 @@ import { ReportList } from './components/pages/report/ReportList'
 
 import { refreshStart } from './auth/AuthRedux'
 
-import { hasBlankOrExpiredJWT, getRefreshToken } from './utils/localStorage'
+import { hasBlankOrExpiredJWT, getRefreshToken } from './shared/utils/localStorage'
 
 function requireAuth(nextState, replace) {
   // TODO: check access level based on tokens/roles in jwt

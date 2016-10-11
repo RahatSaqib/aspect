@@ -3,8 +3,8 @@ import Immutable from 'immutable'
 import config from 'config'
 import jwt_decode from 'jwt-decode'
 
-import * as fetchUtils from '../utils/fetch'
-import * as localStorage from '../utils/localStorage'
+import * as fetchUtils from '../shared/utils/fetch'
+import * as localStorage from '../shared/utils/localStorage'
 import { history } from '../store'
 import { addError } from '../error/ErrorRedux'
 

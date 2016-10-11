@@ -1,7 +1,7 @@
 import Immutable from 'immutable'
 import { stringify } from 'querystring'
 
-import { aspectFetch } from '../utils/fetch'
+import { aspectFetch } from '../shared/utils/fetch'
 import { addError } from '../error/ErrorRedux'
 
 import {

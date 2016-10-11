@@ -16,7 +16,7 @@ if (config.sentry){
 
 import Routes from './Routes'
 import store from './store'
-import { getRefreshToken } from './utils/localStorage'
+import { getRefreshToken } from './shared/utils/localStorage'
 import { refreshStart, hydrateFromLocalStorage } from './auth/AuthRedux'
 import './favicon.ico?output=../favicon.ico'
 
