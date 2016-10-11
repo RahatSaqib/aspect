@@ -2,7 +2,7 @@ import Immutable from 'immutable'
 import { stringify } from 'querystring'
 
 import { aspectFetch } from '../utils/fetch'
-import { addError } from '../action_creators/error_creators'
+import { addError } from '../error/ErrorRedux'
 import {
   receiveList,
   Items

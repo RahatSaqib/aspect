@@ -2,7 +2,7 @@ import Immutable from 'immutable'
 import { stringify } from 'querystring'
 
 import { aspectFetch } from '../utils/fetch'
-import { addError } from './error_creators'
+import { addError } from '../error/ErrorRedux'
 import types from './../constants/action_types'
 
 function requestResults(sortCol, sortDir, page, size, filters) {

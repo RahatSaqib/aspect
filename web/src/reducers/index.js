@@ -4,7 +4,7 @@ import { combineReducers } from 'redux-immutable'
 
 import types from './../constants/action_types'
 
-import error from './error'
+import error from '../error/ErrorRedux'
 import user from './user'
 import device from '../device/DeviceRedux'
 import site from '../site/SiteRedux'

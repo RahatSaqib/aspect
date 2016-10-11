@@ -5,7 +5,7 @@ import { stringify } from 'querystring'
 import * as fetchUtils from '../utils/fetch'
 import * as localStorage from '../utils/localStorage'
 import { history } from '../store'
-import { addError } from './error_creators'
+import { addError } from '../error/ErrorRedux'
 import types from './../constants/action_types'
 
 export function loginRequest() {
