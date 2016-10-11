@@ -49,7 +49,7 @@ function* countrySelectList(request){
       .from('country as c')
       .orderBy(['c.name'], 'asc')
       .select('c.id', 'c.name')
-  } else if(!stateId) {
+  } else if (!stateId) {
     const countriesAndStates = yield query('Get countries and country states for select lists')
       .from('country as c')
       .leftJoin('state as s', function () {
@@ -118,10 +118,7 @@ function* countrySelectList(request){
     selectedState.lgas = _.sortBy(selectedStateLgas, 'name')
   }
 
-  const result = {
-    ok: true,
-    data: countries
-  }
+  const result = { ok: true, data: countries }
 
   return result
 }
@@ -134,10 +131,7 @@ function* stateSelectList(request){
     .orderBy(['s.name'], 'asc')
     .select('s.id', 's.name')
 
-  const result = {
-    ok: true,
-    data: states
-  }
+  const result = { ok: true, data: states }
 
   return result
 }
@@ -150,10 +144,7 @@ function* lgaSelectList(request){
     .orderBy(['l.name'], 'asc')
     .select('l.id', 'l.name')
 
-  const result = {
-    ok: true,
-    data: lgas
-  }
+  const result = { ok: true, data: lgas }
 
   return result
 }
