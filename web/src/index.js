@@ -17,7 +17,7 @@ if (config.sentry){
 import Routes from './Routes'
 import store from './store'
 import { getRefreshToken } from './utils/localStorage'
-import { refreshStart, hydrateFromLocalStorage } from './action_creators/user_creators'
+import { refreshStart, hydrateFromLocalStorage } from './auth/AuthRedux'
 import './favicon.ico?output=../favicon.ico'
 
 // This won't be necessary when facebook updates react

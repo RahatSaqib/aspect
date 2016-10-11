@@ -5,7 +5,7 @@ import { connect } from 'react-redux'
 import Helmet from 'react-helmet'
 
 // Our own imports
-import { logoutStart, changeLanguage, toggleDrawer, closeDrawer } from '../../action_creators/user_creators'
+import { logoutStart, changeLanguage, toggleDrawer, closeDrawer } from '../../auth/AuthRedux'
 import Nav from '../shared/Nav'
 import SideNav from '../shared/SideNav'
 import { IdleDialogContainer } from '../shared/idle/dialog/IdleDialog'

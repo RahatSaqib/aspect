@@ -24,7 +24,7 @@ import { ResultListContainer } from './result/list/ResultList'
 import { NotificationList } from './components/pages/notification/NotificationList'
 import { ReportList } from './components/pages/report/ReportList'
 
-import { refreshStart } from './action_creators/user_creators'
+import { refreshStart } from './auth/AuthRedux'
 
 import { hasBlankOrExpiredJWT, getRefreshToken } from './utils/localStorage'
 

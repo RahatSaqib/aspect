@@ -1,13 +1,24 @@
+import { stringify } from 'querystring'
+import Immutable from 'immutable'
 import config from 'config'
 import jwt_decode from 'jwt-decode'
-import { stringify } from 'querystring'
 
 import * as fetchUtils from '../utils/fetch'
 import * as localStorage from '../utils/localStorage'
 import { history } from '../store'
 import { addError } from '../error/ErrorRedux'
-import types from './../constants/action_types'
 
+export const types = {
+  LOGIN_REQUEST: 'LOGIN_REQUEST',
+  LOGIN_SUCCESS: 'LOGIN_SUCCESS',
+  LOGIN_FAILURE: 'LOGIN_FAILURE',
+  LOGOUT_SUCCESS: 'LOGOUT_SUCCESS',
+  CHANGE_LANGUAGE: 'CHANGE_LANGUAGE',
+  TOGGLE_DRAWER: 'TOGGLE_DRAWER'
+}
+/*
+ * ---------------- Action Creators -----------------
+ */
 export function loginRequest() {
   return {
     type: types.LOGIN_REQUEST
@@ -190,4 +201,45 @@ function storeAccess(json) {
   localStorage.updateLanguageAndCulture(lang, jwt.culture)
 
   return jwt
+}
+/*
+ * ---------------- Reducers -----------------
+ */
+const User = Immutable.Record({
+  name: '',
+  culture: 'en-US',
+  lang: 'en',
+  drawerOpen: true,
+  loggedIn: false
+})
+
+const initialState = new User()
+
+export default function authReducer(state = initialState, action) {
+  switch (action.type) {
+  case types.LOGIN_REQUEST:
+    return state.merge({ loggedIn: false })
+  case types.LOGIN_SUCCESS:
+    return state.merge({
+      name: action.name,
+      culture: action.culture,
+      lang: action.lang,
+      loggedIn: true,
+      drawerOpen: action.drawerOpen
+    })
+  case types.LOGIN_FAILURE:
+    return state.merge({ name: '', loggedIn: false })
+  case types.LOGOUT_SUCCESS:
+    return state.merge({ name: '', loggedIn: false })
+  case types.CHANGE_LANGUAGE:
+    return state.merge({
+      lang: action.lang,
+      culture: action.culture
+    })
+  case types.TOGGLE_DRAWER:
+    return state.merge({
+      drawerOpen: action.drawerOpen
+    })
+  }
+  return state
 }

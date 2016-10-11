@@ -17,8 +17,8 @@ import RaisedButton from 'material-ui/RaisedButton'
 import TextField from 'material-ui/TextField'
 
 // Our own imports
-import { loginStart } from '../../action_creators/user_creators'
 import { ErrorDisplayContainer } from '../../components/shared/ErrorDisplay'
+import { loginStart } from '../AuthRedux'
 import styles from './Login.css'
 
 const messages = defineMessages({
