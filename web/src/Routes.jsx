@@ -20,7 +20,7 @@ import { DeviceDetailContainer } from './device/detail/DeviceDetail'
 import { SiteListContainer } from './site/list/SiteList'
 import { SiteDetailContainer } from './site/detail/SiteDetail'
 import { PersonListContainer } from './person/list/PersonList'
-import { ResultListContainer } from './components/pages/result/list/ResultList'
+import { ResultListContainer } from './result/list/ResultList'
 import { NotificationList } from './components/pages/notification/NotificationList'
 import { ReportList } from './components/pages/report/ReportList'
 
