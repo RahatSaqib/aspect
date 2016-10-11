@@ -1,5 +1,5 @@
 .Content {
-  composes: Content from '../../../shared/Shared.css';
+  composes: Content from '../../components/shared/Shared.css';
   padding-bottom: 20px;
 }
 

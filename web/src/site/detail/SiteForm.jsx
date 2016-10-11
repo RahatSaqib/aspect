@@ -2,7 +2,7 @@
 import React, { PureComponent, PropTypes } from 'react'
 
 // Our own imports
-import ReadOnlyFields from '../../../shared/ReadOnlyFields'
+import ReadOnlyFields from '../../components/shared/ReadOnlyFields'
 import { EditableFieldsFormContainer } from './EditableFieldsForm'
 import messages from './messages'
 

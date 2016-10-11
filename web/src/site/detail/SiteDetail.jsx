@@ -11,11 +11,11 @@ import Paper from 'material-ui/Paper'
 import LinearProgress from 'material-ui/LinearProgress'
 
 // Our own imports
-import { isEditable } from '../../../../selectors/site'
+import { isEditable } from '../../selectors/site'
 import {
   fetchSingleSite,
   updateSingleSite
-} from '../../../../action_creators/site_creators'
+} from '../../action_creators/site_creators'
 import SiteForm from './SiteForm'
 import SiteLocationFormMap from './SiteLocationFormMap'
 import messages from './messages'
