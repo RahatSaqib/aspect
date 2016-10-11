@@ -14,7 +14,7 @@ if (config.sentry){
   Raven.config(config.sentry.dsn).install()
 }
 
-import Routes from './Routes'
+import Routes from './components/Routes'
 import store from './store'
 import { getRefreshToken } from './shared/utils/localStorage'
 import { refreshStart, hydrateFromLocalStorage } from './auth/AuthRedux'
@@ -64,8 +64,8 @@ render(
 )
 
 if (module.hot) {
-  module.hot.accept('./Routes.jsx', () => {
-    const NextRoutes = require('./Routes.jsx').default
+  module.hot.accept('./components/Routes.jsx', () => {
+    const NextRoutes = require('./components/Routes.jsx').default
 
     render(
       <AppContainer>
