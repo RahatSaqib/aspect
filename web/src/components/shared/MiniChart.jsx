@@ -6,7 +6,7 @@ import {
 import { Sparklines, SparklinesLine, SparklinesSpots } from 'react-sparklines'
 import Paper from 'material-ui/Paper'
 
-require('./../../styles/Charts.scss')
+require('./MiniChart.scss')
 
 class MiniChart extends PureComponent {
 
