@@ -1,8 +1,9 @@
 import React from 'react'
 import {shallow} from 'enzyme'
 import Immutable from 'immutable'
-import {Dashboard} from './Dashboard'
 import { assert } from 'chai'
+
+import {Dashboard} from './Dashboard'
 
 describe('Dashboard', () => {
 

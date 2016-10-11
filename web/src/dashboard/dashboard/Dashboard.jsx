@@ -11,7 +11,7 @@ import Snackbar from 'material-ui/Snackbar'
 import Helmet from 'react-helmet'
 
 // Our own imports
-import MiniChart from '../../shared/MiniChart'
+import MiniChart from '../../components/shared/MiniChart'
 import styles from './Dashboard.css'
 
 const messages = defineMessages({

@@ -11,9 +11,9 @@ import LoggedInShell from './components/layouts/LoggedInShell'
 
 // "Pages"
 import { LoginContainer } from './components/pages/auth/Login'
-import { DashboardContainer } from './components/pages/dashboard/Dashboard'
-import { Inventory } from './components/pages/dashboard/Inventory'
-import { Maintenance } from './components/pages/dashboard/Maintenance'
+import { DashboardContainer } from './dashboard/dashboard/Dashboard'
+import { Inventory } from './dashboard/inventory/Inventory'
+import { Maintenance } from './dashboard/maintenance/Maintenance'
 import { DeviceListContainer } from './device/list/DeviceList'
 import { DeviceDetailContainer } from './device/detail/DeviceDetail'
 import { SiteListContainer } from './components/pages/site/SiteList'
