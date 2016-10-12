@@ -3,6 +3,7 @@ let {assert} = require('chai')
 let _ = require('lodash')
 let sinon = require('sinon')
 let endpointUtils = require('../utils/endpointUtils')
+const validHashedPassword = '$2a$10$blGsMw08vX52YoZUnI18cOTluN170WvPJq1XApyif8Y2PuZThzK5K' // = test07
 
 describe('auth endpoints', function () {
   let dbSpy, jwt, endpoint
@@ -61,7 +62,8 @@ describe('auth endpoints', function () {
           failedPasswordAttempts: 0,
           id: 123,
           name: 'admin',
-          culture: 'en-US'
+          culture: 'en-US',
+          password: validHashedPassword
         })
         dbSpy.query.for('Get permissions for user and partner').resolvesWith(permissions)
       })
@@ -109,10 +111,10 @@ describe('auth endpoints', function () {
             failedPasswordAttempts: 0,
             id: 123,
             name: 'admin',
+            password: validHashedPassword,
             culture: 'en-GB',
             partnerId: 2,
             countryId: 3
-
           }
           dbSpy.query.for('Get basic user details').resolvesWith(britishUser)
           const requestData = {
@@ -146,6 +148,7 @@ describe('auth endpoints', function () {
             failedPasswordAttempts: 0,
             id: 123,
             name: 'admin',
+            password: validHashedPassword,
             culture: ''
           })
           const requestData = {
@@ -172,19 +175,18 @@ describe('auth endpoints', function () {
         dbSpy.query.for('Get basic user details').resolvesWith()
       })
 
-      it('Should respond with 400 and "not found"', function (done) {
+      it('Should respond with 401', function (done) {
         const requestData = {
           payload: {
             name: 'nonexistant',
-            password: 'test07',
+            password: 'whatevs',
             clientId: 'request client id'
           }
         }
         endpointUtils.callHandlerOn(endpoint)
           .with(requestData)
           .handleResponseWith(function (responseData) {
-            assert.equal(responseData.output.statusCode, 400)
-            assert.equal(responseData.output.payload.message, 'not found')
+            assert.equal(responseData.output.statusCode, 401)
           })
           .thenCall(done)
           .execute()
@@ -198,7 +200,9 @@ describe('auth endpoints', function () {
           failedPasswordAttempts: 0,
           id: 123,
           name: 'lockedaccount',
-          culture: 'en-US'
+          password: 'whatevs',
+          culture: 'en-US',
+          password: ''
         })
       })
 
@@ -232,6 +236,7 @@ describe('auth endpoints', function () {
           lockedOut: 0,
           failedPasswordAttempts: 0,
           id: 123,
+          password: validHashedPassword,
           name: 'admin',
           culture: 'en-US'
         }

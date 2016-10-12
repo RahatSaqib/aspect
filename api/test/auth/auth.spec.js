@@ -51,24 +51,12 @@ describe('Authentication routes',function(){
       })
     })
 
-    it('should return 400 and error message if user not found',function(done){
+    it('should return 401 if user not found',function(done){
       server
       .post(path)
       .send({ name: 'MickeyMouse', password: 'password', clientName: 'Mocha/Chai' })
       .end(function(err,res){
-        assert.equal(res.status, 400)
-        assert.equal(res.body.message, 'not found')
-        done()
-      })
-    })
-
-    it('should return 401 and error message if incorrect password',function(done){
-      server
-      .post(path)
-      .send({ name: 'admin', password: 'password', clientName: 'Mocha/Chai' })
-      .end(function(err,res){
         assert.equal(res.status, 401)
-        assert.equal(res.body.message, 'Authentication failed. Wrong password.')
         done()
       })
     })

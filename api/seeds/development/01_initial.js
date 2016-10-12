@@ -1,18 +1,20 @@
 module.exports = require('../../src/db').seed(seed)
 
+let config = require('../../src/config')
 const _ = require('lodash')
+const bcrypt = require('bcrypt')
 const permissions = require('./fixtures/permissions.json')
 const geography = require('./fixtures/geography.json')
 const millisInHour = 1000*60*60
 const deviceNumber = 50
+const saltRounds = parseInt(config.passwordSaltRounds)
 
 function* seed(knex){
   // Create admin user and audit fields
   let now = new Date()
   let [adminId] = yield knex('User').insert({
     name: 'admin',
-    password: 'mypassword',
-    passwordKey: 'mykey',
+    password: bcrypt.hashSync('test07', saltRounds),
     approved: 1,
     createdOn: now,
     lockedOut: 0,
@@ -163,8 +165,11 @@ function* seed(knex){
     } else {
       [userId] = yield knex('User').insert({
         name: name.toLowerCase(),
-        password: 'mypassword',
-        passwordKey: 'mykey',
+        // User "Bill" was migrated from a GxAlert database.
+        // Set pw to something that doesn't look like a bcrypt hash
+        // so that Gx API is used to verify pw and set on aspect
+        password: name === 'Bill' ? 'SOMESTRING' : bcrypt.hashSync('test07', saltRounds),
+        legacyPassword: name === 'Bill' ? 1 : 0,
         approved: 1,
         createdOn: now,
         lockedOut: 0,

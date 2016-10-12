@@ -3,6 +3,8 @@ require('dotenv-safe').load()
 module.exports = {
   'secret': process.env.secret,
   'passwordAttempts': process.env.passwordAttempts,
+  'passwordSaltRounds': process.env.passwordSaltRounds,
+  'gxAlertApi': process.env.gxAlertApi,
   'db': {
     connectionLimit: process.env['db.connectionLimit'],
     host: process.env['db.host'],

@@ -22,6 +22,7 @@
   "author": "SystemOne",
   "license": "ISC",
   "dependencies": {
+    "bcrypt": "^0.8.7",
     "bluebird": "^3.4.3",
     "boom": "^4.1.0",
     "dotenv-safe": "^2.3.1",
@@ -33,7 +34,9 @@
     "hapi-auth-jwt2": "^7.1.2",
     "hapi-raven": "^4.3.1",
     "hapi-swagger": "^7.1.0",
+    "http-client": "^4.3.1",
     "inert": "^4.0.2",
+    "isomorphic-fetch": "^2.2.1",
     "joi": "^9.1.0",
     "jsonwebtoken": "^7.1.0",
     "knex": "^0.12.2",

@@ -43,7 +43,6 @@ function* up(knex){
     user.increments('id')
     user.string('name').unique().notNullable()
     user.string('password', 128).notNullable()
-    user.string('passwordKey', 32).notNullable()
     user.boolean('approved').notNullable()
     user.dateTime('lastActive')
     user.dateTime('lastLogin')
@@ -51,6 +50,7 @@ function* up(knex){
     user.dateTime('createdOn').notNullable()
     user.boolean('lockedOut').notNullable()
     user.integer('failedPasswordAttempts').unsigned().notNullable()
+    user.boolean('legacyPassword').notNullable().defaultTo(0)
     user.charset('utf8')
   })
 
