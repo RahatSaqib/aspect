@@ -5,7 +5,7 @@
   "description": "The web client for the aspect API",
   "main": "",
   "scripts": {
-    "start": "NODE_ENV=dev webpack-dev-server --inline --hot --open --env=dev",
+    "start": "cross-env NODE_ENV=dev webpack-dev-server --inline --hot --open --env=dev",
     "mocha": "mocha --opts utils/unit_tests/mocha_unit.opts",
     "run:tests:coverage": "istanbul cover --config utils/unit_tests/istanbul.yml node_modules/mocha/bin/_mocha -- --opts utils/unit_tests/mocha_unit.opts",
     "check:coverage": "istanbul check-coverage --config utils/unit_tests/istanbul.yml",
@@ -13,7 +13,7 @@
     "test": "npm-run-all run:tests:coverage check:coverage",
     "test:watch": "npm run mocha -- --watch",
     "posttest": "npm run lint",
-    "preupdatemessages:start": "BABEL_ENV=message babel --quiet --out-dir ./i18n/dist ./src",
+    "preupdatemessages:start": "cross-env BABEL_ENV=message babel --quiet --out-dir ./i18n/dist ./src",
     "updatemessages:start": "rip json2pot './i18n/src/**/*.json' -o ./src/shared/i18n/diff.pot",
     "updatemessages:end": "rip po2json './src/shared/i18n/web.*.po' -m './i18n/src/**/*.json' -o ./src/shared/i18n/translation.json",
     "postupdatemessages:end": "fsys --task=remove --fileFolder=i18n && fsys --task=remove --fileFolder=src/shared/i18n/diff.pot",
