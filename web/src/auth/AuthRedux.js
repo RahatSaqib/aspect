@@ -2,10 +2,10 @@ import { stringify } from 'querystring'
 import Immutable from 'immutable'
 import config from 'config'
 import jwt_decode from 'jwt-decode'
+import { browserHistory } from 'react-router'
 
 import * as fetchUtils from '../shared/utils/fetch'
 import * as localStorage from '../shared/utils/localStorage'
-import { history } from '../store'
 import { addError } from '../error/ErrorRedux'
 
 export const types = {
@@ -138,7 +138,7 @@ export function loginStart(login) {
         // Here, we update the app state with the results of the API call.
         dispatch(loginSuccess(jwt.name, jwt.culture, jwt.lang))
 
-        history.push('/dashboard')
+        browserHistory.push('/dashboard')
       })
       .catch(err => {
         dispatch(loginFailure(err))
@@ -158,7 +158,7 @@ export function logoutStart(reason) {
     dispatch(logoutSuccess())
 
     // now, redirect to login page
-    history.push('/login' + (typeof reason === 'string' ? '?' + stringify({ reason }) : ''))
+    browserHistory.push('/login' + (typeof reason === 'string' ? '?' + stringify({ reason }) : ''))
   }
 }
 

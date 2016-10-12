@@ -1,8 +1,8 @@
 import React, { Component } from 'react'
-import { Router, Route, IndexRoute, Redirect, applyRouterMiddleware } from 'react-router'
+import { Router, Route, IndexRoute, Redirect, applyRouterMiddleware, browserHistory } from 'react-router'
 import { useScroll } from 'react-router-scroll'
 import PiwikReactRouter from 'piwik-react-router'
-import store, { history } from '../store'
+import store from '../store'
 import config from 'config'
 
 // higher level containers/shells
@@ -51,7 +51,7 @@ const piwik = config.piwik ? PiwikReactRouter({
 }) : false
 
 const routes =
-  <Router history={piwik ?  piwik.connectToHistory(history) : history} render={applyRouterMiddleware(useScroll()) }>
+  <Router history={piwik ?  piwik.connectToHistory(browserHistory) : browserHistory} render={applyRouterMiddleware(useScroll()) }>
     <Route component={App}>
       <Route component={LoginContainer} path="login" />
       <Route component={LoggedInShell}

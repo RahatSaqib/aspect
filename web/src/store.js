@@ -2,9 +2,8 @@ import thunk from 'redux-thunk'
 import {createStore, compose, applyMiddleware} from 'redux'
 
 import rootReducer from './rootReducer'
-import { browserHistory } from 'react-router'
 
-import { middleware as idleMiddleware, actions as idleActions } from './components/shared/idle/IdleRedux'
+import { middleware as idleMiddleware, actions as idleActions } from './idle/IdleRedux'
 
 let middleware = [thunk, idleMiddleware]
 
@@ -15,8 +14,6 @@ const createStoreWithDevTools = compose(
 )(createStore)
 
 const store = createStoreWithDevTools(rootReducer)
-
-export const history = browserHistory
 
 // enable hot reload for reducers
 if (module.hot){

@@ -2,7 +2,7 @@ import _ from 'lodash'
 import configure from 'redux-idle-monitor'
 import config from 'config'
 
-import { logoutStart } from '../../../auth/AuthRedux'
+import { logoutStart } from '../auth/AuthRedux'
 
 const types = {
   IDLESTATUS_AWAY: 'IDLESTATUS_AWAY',
@@ -41,4 +41,7 @@ const opts =  { appName: 'aspect'
               }
 
 const { middleware, reducer, actions } = configure(opts)
-export { middleware, reducer, actions }
+
+export { middleware, actions }
+
+export default reducer
