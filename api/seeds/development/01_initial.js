@@ -151,7 +151,8 @@ function* seed(knex){
       [userId] = yield knex('User').insert({
         name: name.toLowerCase(),
         // User "Bill" was migrated from a GxAlert database.
-        // Set pw to null so Gx API is used to verify pw and set on aspect
+        // Set pw to something that doesn't look like a bcrypt hash
+        // so that Gx API is used to verify pw and set on aspect
         password: name === 'Bill' ? 'Migrated from GxAlert' : bcrypt.hashSync('test07', saltRounds),
         approved: 1,
         createdOn: now,
