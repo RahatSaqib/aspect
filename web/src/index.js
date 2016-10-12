@@ -14,10 +14,10 @@ if (config.sentry){
   Raven.config(config.sentry.dsn).install()
 }
 
-import Routes from './Routes'
+import Routes from './components/Routes'
 import store from './store'
-import { getRefreshToken } from './utils/localStorage'
-import { refreshStart, hydrateFromLocalStorage } from './action_creators/user_creators'
+import { getRefreshToken } from './shared/utils/localStorage'
+import { refreshStart, hydrateFromLocalStorage } from './auth/AuthRedux'
 import './favicon.ico?output=../favicon.ico'
 
 // This won't be necessary when facebook updates react
@@ -64,8 +64,8 @@ render(
 )
 
 if (module.hot) {
-  module.hot.accept('./Routes.jsx', () => {
-    const NextRoutes = require('./Routes.jsx').default
+  module.hot.accept('./components/Routes.jsx', () => {
+    const NextRoutes = require('./components/Routes.jsx').default
 
     render(
       <AppContainer>

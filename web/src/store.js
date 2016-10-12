@@ -1,7 +1,7 @@
 import thunk from 'redux-thunk'
 import {createStore, compose, applyMiddleware} from 'redux'
 
-import rootReducer from './reducers/index'
+import rootReducer from './rootReducer'
 import { browserHistory } from 'react-router'
 
 import { middleware as idleMiddleware, actions as idleActions } from './components/shared/idle/IdleRedux'
@@ -20,8 +20,8 @@ export const history = browserHistory
 
 // enable hot reload for reducers
 if (module.hot){
-  module.hot.accept('./reducers/', () => {
-    const nextRootReducer = require('./reducers/index').default
+  module.hot.accept('./rootReducer', () => {
+    const nextRootReducer = require('./rootReducer').default
     store.replaceReducer(nextRootReducer)
   })
 }

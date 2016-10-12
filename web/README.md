@@ -52,26 +52,26 @@ npm run copy
 2. `npm run updatemessages:start`
 3. Create or update `.po` files. See below.
 4. `npm run updatemessages:end`
-5. Commit stuff in `src/i18n/**/*`
+5. Commit stuff in `src/shared/i18n/**/*`
 
-In step 3, you'll need to create or update `.po` files inside `src/i18n` folder. The `.po` files store translations for each locale. Creating a `.po` file mean adding new locale support. Updating `.po` files means updating existing translations with newly added messages due to changes in step 1.
+In step 3, you'll need to create or update `.po` files inside `src/shared/i18n` folder. The `.po` files store translations for each locale. Creating a `.po` file mean adding new locale support. Updating `.po` files means updating existing translations with newly added messages due to changes in step 1.
 
 ### Create `.po` files
 
 1. Open [Poedit](https://poedit.net)
 2. Click `Creare new translation`
-3. Select `src/i18n/diff.pot` from the file dialog
+3. Select `src/shared/i18n/diff.pot` from the file dialog
 4. Select language of the translation from the dropdown
 5. Add translations for each item inside the window
-5. When done, click `File > Save`. Set filename to `web.${LOCALE_NAME}.po` and store it under `src/i18n` folder.
+5. When done, click `File > Save`. Set filename to `web.${LOCALE_NAME}.po` and store it under `src/shared/i18n` folder.
 
 ### Update `.po` files
 
 1. Open [Poedit](https://poedit.net)
 2. Click `Edit a translation`
-3. Select `src/i18n/web.en_US.po` from the file dialog
+3. Select `src/shared/i18n/web.en_US.po` from the file dialog
 4. Click `Cataglog > Update from POT file`
-5. Select `src/i18n/diff.pot` from the file dialog
+5. Select `src/shared/i18n/diff.pot` from the file dialog
 6. Update translations for each items inside the window
 7. When done, click `File > Save`
 

@@ -7,7 +7,7 @@ import { connect } from 'react-redux'
 import Snackbar from 'material-ui/Snackbar'
 
 // Our own imports
-import { removeError } from '../../action_creators/error_creators'
+import { removeError } from '../../error/ErrorRedux'
 
 export class ErrorDisplay extends PureComponent {
 

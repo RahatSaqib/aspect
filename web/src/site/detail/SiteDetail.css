@@ -1,0 +1,8 @@
+.Content {
+  composes: Content from '../../components/shared/Shared.css';
+  padding-bottom: 20px;
+}
+
+.FieldsContainer {
+  padding: 20px;
+}
