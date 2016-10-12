@@ -8,7 +8,7 @@ import Helmet from 'react-helmet'
 import { logoutStart, changeLanguage, toggleDrawer, closeDrawer } from '../../auth/AuthRedux'
 import Nav from '../shared/Nav'
 import SideNav from '../shared/SideNav'
-import { IdleDialogContainer } from '../shared/idle/dialog/IdleDialog'
+import { IdleDialogContainer } from '../../idle/dialog/IdleDialog'
 import { ErrorDisplayContainer } from '../shared/ErrorDisplay'
 
 export class LoggedInShell extends PureComponent {

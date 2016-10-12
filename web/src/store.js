@@ -4,7 +4,7 @@ import {createStore, compose, applyMiddleware} from 'redux'
 import rootReducer from './rootReducer'
 import { browserHistory } from 'react-router'
 
-import { middleware as idleMiddleware, actions as idleActions } from './components/shared/idle/IdleRedux'
+import { middleware as idleMiddleware, actions as idleActions } from './idle/IdleRedux'
 
 let middleware = [thunk, idleMiddleware]
 
