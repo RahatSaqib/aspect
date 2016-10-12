@@ -10,7 +10,13 @@ import MapsPersonPin from 'material-ui/svg-icons/maps/person-pin'
 import Language from 'material-ui/svg-icons/action/language'
 import Lock from 'material-ui/svg-icons/action/lock'
 import ContactDetailsForm from './ContactDetailsForm'
-import {fetchAccountDetails, saveAccountDetails} from '../AccountRedux'
+import LoginDetailsForm from './LoginDetailsForm'
+import {
+  fetchAccountDetails,
+  saveContactDetails,
+  saveLoginDetails,
+  saveUserPreferences
+} from '../AccountRedux'
 import styles from './AccountDetails.css'
 
 const messages = defineMessages({
@@ -70,6 +76,26 @@ const messages = defineMessages({
     id: 'pages.AccountDetails.usernameAndPassword',
     defaultMessage: 'Username & Password'
   },
+  username: {
+    id: 'pages.AccountDetails.username',
+    defaultMessage: 'Username'
+  },
+  passwordHeader: {
+    id: 'pages.AccountDetails.passwordHeader',
+    defaultMessage: 'Password'
+  },
+  currentPassword: {
+    id: 'pages.AccountDetails.currentPassword',
+    defaultMessage: 'Current Password'
+  },
+  newPassword: {
+    id: 'pages.AccountDetails.newPassword',
+    defaultMessage: 'New Password'
+  },
+  confirmNewPassword: {
+    id: 'pages.AccountDetails.confirmNewPassword',
+    defaultMessage: 'Confirm'
+  },
   languageAndTimezone: {
     id: 'pages.AccountDetails.languageAndTimezone',
     defaultMessage: 'Language & Timezone'
@@ -94,9 +120,9 @@ class AccountDetails extends PureComponent {
   }
 
   render() {
-    const { intl, loading, saving, accountDetails, saveAccountDetails } = this.props
+    const { intl, loading, saving, accountDetails, saveContactDetails, saveLoginDetails } = this.props
     const { formatMessage } = intl
-    const labels = {
+    const contactDetailsLabels = {
       name: formatMessage(messages.fullName),
       title: formatMessage(messages.jobTitle),
       emailHeader: formatMessage(messages.emailHeader),
@@ -109,6 +135,14 @@ class AccountDetails extends PureComponent {
       zip: formatMessage(messages.zip),
       submit: formatMessage(messages.save)
     }
+    const loginDetailsLabels = {
+      username: formatMessage(messages.username),
+      passwordHeader: formatMessage(messages.passwordHeader),
+      currentPassword: formatMessage(messages.currentPassword),
+      newPassword: formatMessage(messages.newPassword),
+      confirmNewPassword: formatMessage(messages.confirmNewPassword),
+      submit: formatMessage(messages.save)
+    }
     return (
       <div className={styles.Content}>
         <Paper>
@@ -117,13 +151,13 @@ class AccountDetails extends PureComponent {
                  label={<span className="pure-hidden-xs">{formatMessage(messages.contactDetails)}</span>}>
               {(loading || saving) && <LinearProgress />}
               <h2 className={'pure-visible-xs ' + styles.Form__Header}>{formatMessage(messages.contactDetails)}</h2>
-              {!loading && <ContactDetailsForm loading={loading || saving} initialValues={accountDetails} onSubmit={saveAccountDetails} labels={labels} />}
+              {!loading && <ContactDetailsForm loading={loading || saving} initialValues={accountDetails} onSubmit={saveContactDetails} labels={contactDetailsLabels} />}
             </Tab>
             <Tab className={styles.ResponsiveTab} icon={<Lock />}
                  label={<span className="pure-hidden-xs">{formatMessage(messages.usernameAndPassword)}</span>}>
               {(loading || saving) && <LinearProgress />}
               <h2 className={'pure-visible-xs ' + styles.Form__Header}>{formatMessage(messages.usernameAndPassword)}</h2>
-              <span>Change Username and Password Here!</span>
+              {!loading && <LoginDetailsForm loading={loading || saving} onSubmit={saveLoginDetails} labels={loginDetailsLabels} />}
             </Tab>
             <Tab className={styles.ResponsiveTab} icon={<Language />}
                  label={<span className="pure-hidden-xs">{formatMessage(messages.languageAndTimezone)}</span>}>
@@ -149,7 +183,9 @@ function mapStateToProps(state) {
 function mapDispatchToProps(dispatch) {
   return bindActionCreators({
     fetchAccountDetails,
-    saveAccountDetails
+    saveContactDetails,
+    saveLoginDetails,
+    saveUserPreferences
   }, dispatch)
 }
 

@@ -2,7 +2,12 @@ let Joi = require('joi')
 
 let { asyncHandler } = require('../routes')
 
-let {authenticate, checkAuthentication, refreshToken} = require('./service')
+let {
+  authenticate,
+  checkAuthentication,
+  refreshToken,
+  updateUsernameAndPasswordForLoggedInUser
+} = require('./service')
 
 module.exports = [
   {
@@ -22,8 +27,7 @@ module.exports = [
         }
       }
     }
-  },
-  {
+  }, {
     method: 'GET',
     path: '/auth',
     handler: asyncHandler(checkAuthentication),
@@ -31,8 +35,7 @@ module.exports = [
       description: 'Check authentication',
       notes: 'Check successful authentication token'
     }
-  },
-  {
+  }, {
     method: 'POST',
     path: '/auth/refresh',
     handler: asyncHandler(refreshToken),
@@ -44,6 +47,21 @@ module.exports = [
         payload: {
           clientId: Joi.string().required(),
           token: Joi.string().required()
+        }
+      }
+    }
+  }, {
+    method: 'PUT',
+    path: '/auth/update-login-details',
+    handler: asyncHandler(updateUsernameAndPasswordForLoggedInUser),
+    config: {
+      description: 'Update username and password for logged in user',
+      notes: 'Returns an array of the fields that were updated',
+      validate: {
+        payload: {
+          currentPassword: Joi.string().max(100).required(),
+          newUsername: Joi.string().max(255).required(),
+          newPassword: Joi.string().max(100).required()
         }
       }
     }

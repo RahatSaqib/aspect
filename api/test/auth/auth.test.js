@@ -7,7 +7,8 @@ const validHashedPassword = '$2a$10$blGsMw08vX52YoZUnI18cOTluN170WvPJq1XApyif8Y2
 
 describe('auth endpoints', function () {
   let dbSpy, jwt, endpoint
-  const fakeConfig = { secret: '8rU7FITwHV30jhkcXvjOjoSvy2Tv2bZT', passwordAttempts: 5 }
+  const fakeConfig = { secret: '8rU7FITwHV30jhkcXvjOjoSvy2Tv2bZT', passwordAttempts: 5 },
+    now = new Date(), clock = sinon.useFakeTimers(now.getTime())
 
   function setupAuthRoutes(method, path) {
     dbSpy = require('../utils/dbSpy')
@@ -28,6 +29,10 @@ describe('auth endpoints', function () {
   afterEach(function() {
     dbSpy.query.restore()
     jwt.sign.restore()
+  })
+
+  after(function() {
+    clock.restore()
   })
 
   describe('/auth GET', function () {
@@ -352,6 +357,416 @@ describe('auth endpoints', function () {
           .handleResponseWith(function (responseData) {
             assert.equal(responseData.output.statusCode, 400)
             assert.equal(responseData.output.payload.message, 'Token expired')
+          })
+          .thenCall(done)
+          .execute()
+      })
+    })
+  })
+
+  describe('/auth/update-login-details PUT', function () {
+    beforeEach(function () {
+      setupAuthRoutes('PUT', '/auth/update-login-details')
+    })
+
+    describe('When the user is changing both their username and password', function () {
+      beforeEach(function () {
+        dbSpy.query.for('Get ID, username and password details for logged in user').resolvesWith({
+          id: 123,
+          name: 'logged-in-user',
+          password: 'old-password',
+          passwordKey: 'password key'
+        })
+      })
+
+      it('should respond with a the list of fields that were updated', function (done) {
+        const requestData = {
+          auth: {
+            credentials: {
+              name: 'logged-in-user'
+            }
+          }, payload: {
+            newUsername: 'new-username',
+            currentPassword: 'test07',
+            newPassword: 'new-password'
+          }
+        }
+        endpointUtils.callHandlerOn(endpoint)
+          .with(requestData)
+          .handleResponseWith(function (response) {
+            assert.isOk(response.ok)
+            assert.include(response.data, 'name')
+            assert.include(response.data, 'password')
+          })
+          .thenCall(done)
+          .execute()
+      })
+
+      it('should save the user\'s details', function (done) {
+        const requestData = {
+          auth: {
+            credentials: {
+              name: 'logged-in-user'
+            }
+          }, payload: {
+            newUsername: 'new-username',
+            currentPassword: 'test07',
+            newPassword: 'new-password'
+          }
+        }
+        endpointUtils.callHandlerOn(endpoint)
+          .with(requestData)
+          .handleResponseWith(function () {
+            const updateUserDetails = dbSpy.query.withArgs('Save user details for currently logged in user').lastCall.returnValue.update.lastCall.args[0]
+            assert.isOk(updateUserDetails.password)
+            assert.deepEqual(updateUserDetails, Object.assign(updateUserDetails, {
+              updatedOn: now,
+              updatedBy: 123,
+              name: requestData.payload.newUsername
+            }))
+          })
+          .thenCall(done)
+          .execute()
+      })
+    })
+
+    describe('When the user is only changing their username', function () {
+      beforeEach(function () {
+        dbSpy.query.for('Get ID, username and password details for logged in user').resolvesWith({
+          id: 123,
+          name: 'logged-in-user',
+          password: 'old-password',
+          passwordKey: 'password key'
+        })
+      })
+
+      it('should respond with a the list of fields that were updated', function (done) {
+        const requestData = {
+          auth: {
+            credentials: {
+              name: 'logged-in-user'
+            }
+          }, payload: {
+            newUsername: 'new-username',
+            currentPassword: 'test07',
+            newPassword: ''
+          }
+        }
+        endpointUtils.callHandlerOn(endpoint)
+          .with(requestData)
+          .handleResponseWith(function (response) {
+            assert.isOk(response.ok)
+            assert.include(response.data, 'name')
+            assert.notInclude(response.data, 'password')
+          })
+          .thenCall(done)
+          .execute()
+      })
+
+      it('should save the user\'s username', function (done) {
+        const requestData = {
+          auth: {
+            credentials: {
+              name: 'logged-in-user'
+            }
+          }, payload: {
+            newUsername: 'new-username',
+            currentPassword: 'test07'
+          }
+        }
+        endpointUtils.callHandlerOn(endpoint)
+          .with(requestData)
+          .handleResponseWith(function () {
+            const updateUserDetails = dbSpy.query.withArgs('Save user details for currently logged in user').lastCall.returnValue.update.lastCall.args[0]
+            assert.notProperty(updateUserDetails, 'password')
+            assert.deepEqual(updateUserDetails, {
+              updatedOn: now,
+              updatedBy: 123,
+              name: requestData.payload.newUsername
+            })
+          })
+          .thenCall(done)
+          .execute()
+      })
+    })
+
+    describe('When the user is only changing their password', function () {
+      beforeEach(function () {
+        dbSpy.query.for('Get ID, username and password details for logged in user').resolvesWith({
+          id: 123,
+          name: 'logged-in-user',
+          password: 'old-password',
+          passwordKey: 'password key'
+        })
+      })
+
+      it('should respond with a the list of fields that were updated', function (done) {
+        const requestData = {
+          auth: {
+            credentials: {
+              name: 'logged-in-user'
+            }
+          }, payload: {
+            currentPassword: 'test07',
+            newPassword: 'new-password'
+          }
+        }
+        endpointUtils.callHandlerOn(endpoint)
+          .with(requestData)
+          .handleResponseWith(function (response) {
+            assert.isOk(response.ok)
+            assert.notInclude(response.data, 'name')
+            assert.include(response.data, 'password')
+          })
+          .thenCall(done)
+          .execute()
+      })
+
+      it('should save the user\'s password', function (done) {
+        const requestData = {
+          auth: {
+            credentials: {
+              name: 'logged-in-user'
+            }
+          }, payload: {
+            newUsername: '',
+            currentPassword: 'test07',
+            newPassword: 'new-password'
+          }
+        }
+        endpointUtils.callHandlerOn(endpoint)
+          .with(requestData)
+          .handleResponseWith(function () {
+            const updateUserDetails = dbSpy.query.withArgs('Save user details for currently logged in user').lastCall.returnValue.update.lastCall.args[0]
+            assert.notProperty(updateUserDetails, 'username')
+            assert.isOk(updateUserDetails.password)
+            assert.deepEqual(updateUserDetails, Object.assign(updateUserDetails, {
+              updatedOn: now,
+              updatedBy: 123
+            }))
+          })
+          .thenCall(done)
+          .execute()
+      })
+    })
+
+    describe('When current password is incorrect', function () {
+      beforeEach(function () {
+        dbSpy.query.for('Get ID, username and password details for logged in user').resolvesWith({
+          id: 123,
+          name: 'logged-in-user',
+          password: 'correct-password',
+          passwordKey: 'password key'
+        })
+      })
+
+      it('should respond 403 forbidden', function (done) {
+        const requestData = {
+          auth: {
+            credentials: {
+              name: 'logged-in-user'
+            }
+          }, payload: {
+            newUsername: 'new-username',
+            currentPassword: 'incorrect-password',
+            newPassword: 'new-password'
+          }
+        }
+        endpointUtils.callHandlerOn(endpoint)
+          .with(requestData)
+          .handleResponseWith(function (response) {
+            assert.equal(response.output.statusCode, 403)
+            assert.deepEqual(response.output.payload, {
+              statusCode: 403,
+              error: 'Forbidden',
+              message: 'Incorrect password.'
+            })
+          })
+          .thenCall(done)
+          .execute()
+      })
+    })
+
+    describe('When user is trying to update another user\'s details', function () {
+      beforeEach(function () {
+        dbSpy.query.for('Get ID, username and password details for logged in user').resolvesWith({
+          id: 123,
+          name: 'another-user',
+          password: 'correct-password',
+          passwordKey: 'password key'
+        })
+      })
+
+      it('should respond 403 forbidden', function (done) {
+        const requestData = {
+          auth: {
+            credentials: {
+              name: 'logged-in-user'
+            }
+          }, payload: {
+            newUsername: 'new-username',
+            currentPassword: 'test07',
+            newPassword: 'new-password'
+          }
+        }
+        endpointUtils.callHandlerOn(endpoint)
+          .with(requestData)
+          .handleResponseWith(function (response) {
+            assert.equal(response.output.statusCode, 403)
+            assert.deepEqual(response.output.payload, {
+              statusCode: 403,
+              error: 'Forbidden',
+              message: 'Not allowed to updated another user from here.'
+            })
+          })
+          .thenCall(done)
+          .execute()
+      })
+    })
+
+    describe('When the user does not exist', function () {
+      beforeEach(function () {
+        dbSpy.query.for('Get ID, username and password details for logged in user').resolvesWith(undefined)
+      })
+
+      it('should respond 404 not found', function (done) {
+        const requestData = {
+          auth: {
+            credentials: {
+              name: 'logged-in-user'
+            }
+          }, payload: {
+            newUsername: 'new-username',
+            currentPassword: 'test07',
+            newPassword: 'new-password'
+          }
+        }
+        endpointUtils.callHandlerOn(endpoint)
+          .with(requestData)
+          .handleResponseWith(function (response) {
+            assert.equal(response.output.statusCode, 404)
+            assert.deepEqual(response.output.payload, {
+              statusCode: 404,
+              error: 'Not Found',
+              message: 'User not Found'
+            })
+          })
+          .thenCall(done)
+          .execute()
+      })
+    })
+
+    describe('When the username hasn\'t changed', function () {
+      beforeEach(function () {
+        dbSpy.query.for('Get ID, username and password details for logged in user').resolvesWith({
+          id: 123,
+          name: 'logged-in-user',
+          password: 'old-password',
+          passwordKey: 'password key'
+        })
+      })
+
+      it('should not update username', function (done) {
+        const requestData = {
+          auth: {
+            credentials: {
+              name: 'logged-in-user'
+            }
+          }, payload: {
+            newUsername: 'logged-in-user',
+            currentPassword: 'test07',
+            newPassword: 'new-password'
+          }
+        }
+        endpointUtils.callHandlerOn(endpoint)
+          .with(requestData)
+          .handleResponseWith(function (response) {
+            const updateUserDetails = dbSpy.query.withArgs('Save user details for currently logged in user').lastCall.returnValue.update.lastCall.args[0]
+            assert.isOk(updateUserDetails.password)
+            assert.notOk(updateUserDetails.name)
+            assert.deepEqual(updateUserDetails, Object.assign(updateUserDetails, {
+              updatedOn: now,
+              updatedBy: 123
+            }))
+          })
+          .thenCall(done)
+          .execute()
+      })
+    })
+
+    describe('When the password hasn\'t changed', function () {
+      beforeEach(function () {
+        dbSpy.query.for('Get ID, username and password details for logged in user').resolvesWith({
+          id: 123,
+          name: 'logged-in-user',
+          password: 'test07',
+          passwordKey: 'password key'
+        })
+      })
+
+      it('should not update password', function (done) {
+        const requestData = {
+          auth: {
+            credentials: {
+              name: 'logged-in-user'
+            }
+          }, payload: {
+            newUsername: 'new-username',
+            currentPassword: 'test07',
+            newPassword: 'test07'
+          }
+        }
+        endpointUtils.callHandlerOn(endpoint)
+          .with(requestData)
+          .handleResponseWith(function (response) {
+            const updateUserDetails = dbSpy.query.withArgs('Save user details for currently logged in user').lastCall.returnValue.update.lastCall.args[0]
+            assert.notOk(updateUserDetails.password)
+            assert.isOk(updateUserDetails.name)
+            assert.deepEqual(updateUserDetails, updateUserDetails, {
+              updatedOn: now,
+              updatedBy: 123,
+              name: requestData.payload.newUsername
+            })
+          })
+          .thenCall(done)
+          .execute()
+      })
+    })
+
+    describe('When the username is already in use by another user', function () {
+      beforeEach(function () {
+        dbSpy.query.for('Get ID, username and password details for logged in user').resolvesWith({
+          id: 123,
+          name: 'logged-in-user',
+          password: 'test07',
+          passwordKey: 'password key'
+        })
+        dbSpy.query.for('Get user object for username').resolvesWith({
+          id: 321
+        })
+      })
+
+      it('should response with 409 Conflict', function (done) {
+        const requestData = {
+          auth: {
+            credentials: {
+              name: 'logged-in-user'
+            }
+          }, payload: {
+            newUsername: 'new-username',
+            currentPassword: 'test07',
+            newPassword: 'test07'
+          }
+        }
+        endpointUtils.callHandlerOn(endpoint)
+          .with(requestData)
+          .handleResponseWith(function (response) {
+            assert.equal(response.output.statusCode, 409)
+            assert.deepEqual(response.output.payload, {
+              statusCode: 409,
+              error: 'Conflict',
+              message: 'Username already in use'
+            })
           })
           .thenCall(done)
           .execute()

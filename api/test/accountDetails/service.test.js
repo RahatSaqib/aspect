@@ -68,7 +68,7 @@ describe('account details service', function () {
     })
   })
 
-  describe('saveAccountDetailsForLoggedInUser', function () {
+  describe('saveContactDetailsForLoggedInUser', function () {
     const requestData = {
       auth: {
         credentials: {
@@ -104,10 +104,9 @@ describe('account details service', function () {
         countryId: 5
       }
 
-      const now = new Date()
-      const clock = sinon.useFakeTimers(now.getTime())
+      const now = new Date(), clock = sinon.useFakeTimers(now.getTime())
 
-      return run(service.saveAccountDetailsForLoggedInUser, [{
+      return run(service.saveContactDetailsForLoggedInUser, [{
         auth: requestData.auth,
         payload: Object.assign({}, accountDetails, changedRequestProperties)
       }])(function () {
@@ -123,7 +122,7 @@ describe('account details service', function () {
     })
 
     it('Should not save anything when no details have changed', function () {
-      return run(service.saveAccountDetailsForLoggedInUser, [{
+      return run(service.saveContactDetailsForLoggedInUser, [{
         auth: requestData.auth,
         payload: accountDetails
       }])(function () {
@@ -132,7 +131,7 @@ describe('account details service', function () {
     })
 
     it('Should respond with an account details object for the currently logged in user', function () {
-      return run(service.saveAccountDetailsForLoggedInUser, [{
+      return run(service.saveContactDetailsForLoggedInUser, [{
         auth: requestData.auth,
         payload: accountDetails
       }])(function (response) {
@@ -144,7 +143,7 @@ describe('account details service', function () {
       dbSpy.query.for('Get account details for currently logged in user').resolvesWith(
         Object.assign({}, accountDetails, {id: accountDetails.id + 5}))
 
-      return run(service.saveAccountDetailsForLoggedInUser, [{
+      return run(service.saveContactDetailsForLoggedInUser, [{
         auth: Object.assign({}, requestData.auth, {
           credentials: {
             name: 'another-user'

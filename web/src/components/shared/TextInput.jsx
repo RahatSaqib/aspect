@@ -11,12 +11,13 @@ const renderTextField = props => {
 }
 
 const renderFormField = props => {
-  const {name, label, fullWidth, disabled, maxLength} = props
+  const {name, label, fullWidth, disabled, maxLength, type} = props
   return <Field name={name} textFieldProps={{
     floatingLabelText: label,
     fullWidth: fullWidth,
     disabled: disabled,
-    maxLength: maxLength
+    maxLength: maxLength,
+    type: type || 'text'
   }} component={renderTextField} />
 }
 

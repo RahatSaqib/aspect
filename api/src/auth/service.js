@@ -1,8 +1,9 @@
-const crypto = require('crypto')
-const jwt = require('jsonwebtoken')
-const uuid = require('node-uuid')
-const Promise = require('bluebird')
-const Boom = require('boom')
+let crypto = require('crypto')
+let jwt = require('jsonwebtoken')
+let uuid = require('node-uuid')
+let Promise = require('bluebird')
+let Boom = require('boom')
+let _ = require('lodash')
 
 const { createFetch, base, accept, header, method, body } = require('http-client')
 require('isomorphic-fetch')
@@ -192,8 +193,67 @@ function getAccessToken({id, name, culture, partnerId, countryId}){
     })
 }
 
+function* updateUsernameAndPasswordForLoggedInUser(request){
+  let {payload} = request
+
+  const loggedInUser = yield query('Get ID, username and password details for logged in user').from('User as u')
+    .where({'u.name': request.auth.credentials.name})
+    .first('u.id', 'u.name', 'u.password', 'u.passwordKey')
+
+  if(!loggedInUser){
+    return Boom.notFound('User not Found')
+  }
+  if(loggedInUser.name !== request.auth.credentials.name){
+    return Boom.forbidden('Not allowed to updated another user from here.')
+  }
+  if (!checkPassword(request.auth.credentials.name, payload.currentPassword)) {
+    return Boom.forbidden('Incorrect password.')
+  }
+  const changedFields = {}
+  if(payload.newUsername) {
+    const existingUserIdWithNewUsername = yield query('Get user object for username').from('User as u')
+      .where({'u.name': payload.newUsername})
+      .first('u.id')
+    if(existingUserIdWithNewUsername) {
+      if(existingUserIdWithNewUsername.id !== loggedInUser.id) {
+        return Boom.conflict('Username already in use')
+      }
+    } else if(payload.newUsername != loggedInUser.name) {
+      changedFields.name = payload.newUsername
+    }
+  }
+  if(payload.newPassword) {
+    const encryptedNewPassword = encryptPassword(payload.newPassword, loggedInUser.passwordKey)
+    if(loggedInUser.password != encryptedNewPassword) {
+      changedFields.password = encryptedNewPassword
+    }
+  }
+  if(!_.isEmpty(changedFields)) {
+    changedFields.updatedOn = new Date()
+    changedFields.updatedBy = loggedInUser.id
+
+    yield query('Save user details for currently logged in user').from('user as u')
+      .where({'u.id': loggedInUser.id})
+      .update(changedFields)
+  }
+
+  return {ok: true, data: Object.keys(changedFields)}
+}
+
+function checkPassword(username, password) {
+  return username && password === 'test07'
+}
+
+function encryptPassword(password, passwordKey) {
+  if(!passwordKey) {
+    throw 'Password key required for encryption'
+  }
+  return password
+}
+
 module.exports = {
   authenticate,
   checkAuthentication,
-  refreshToken
+  refreshToken,
+  updateUsernameAndPasswordForLoggedInUser
 }

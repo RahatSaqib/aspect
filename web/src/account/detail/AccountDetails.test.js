@@ -36,7 +36,7 @@ describe('AccountDetails Component', () => {
         loading: false,
         saving: false,
         accountDetails: {},
-        saveAccountDetails: () => {},
+        saveContactDetails: () => {},
         intl: {
           formatMessage: message => message.defaultMessage
         }
@@ -85,7 +85,7 @@ describe('AccountDetails Component', () => {
 
         const contactDetailsForm = firstTab.find(ContactDetailsForm)
         assert.equal(contactDetailsForm.props().initialValues, props.accountDetails)
-        assert.equal(contactDetailsForm.props().onSubmit, props.saveAccountDetails)
+        assert.equal(contactDetailsForm.props().onSubmit, props.saveContactDetails)
       })
 
       it('Should show a Login Details tab', () => {
@@ -125,7 +125,9 @@ describe('AccountDetails Component', () => {
       }
       accountDetailsCreatorsStub = {
         fetchAccountDetails: () => {},
-        saveAccountDetails: () => {}
+        saveContactDetails: () => {},
+        saveLoginDetails: () => {},
+        saveUserPreferences: () => {}
       }
       proxyquire('./AccountDetails', {
         'react-intl': intlStub,
@@ -142,7 +144,9 @@ describe('AccountDetails Component', () => {
       assert.equal(mapDispatchToProps(expectedDispatcher), expectedBoundActionCreators)
       assert.deepEqual(reduxStub.bindActionCreators.lastCall.args, [{
         fetchAccountDetails: accountDetailsCreatorsStub.fetchAccountDetails,
-        saveAccountDetails: accountDetailsCreatorsStub.saveAccountDetails
+        saveContactDetails: accountDetailsCreatorsStub.saveContactDetails,
+        saveLoginDetails: accountDetailsCreatorsStub.saveLoginDetails,
+        saveUserPreferences: accountDetailsCreatorsStub.saveUserPreferences
       }, expectedDispatcher])
     })
 

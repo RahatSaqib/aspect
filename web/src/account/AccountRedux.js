@@ -5,7 +5,9 @@ import { addError } from '../error/ErrorRedux'
 export const types = {
   REQUEST_ACCOUNT_DETAILS: 'REQUEST_ACCOUNT_DETAILS',
   RECEIVE_ACCOUNT_DETAILS: 'RECEIVE_ACCOUNT_DETAILS',
-  SAVE_ACCOUNT_DETAILS_START: 'SAVE_ACCOUNT_DETAILS_START'
+  SAVE_ACCOUNT_DETAILS_START: 'SAVE_ACCOUNT_DETAILS_START',
+  RECEIVE_UPDATED_LOGIN_DETAILS: 'RECEIVE_UPDATED_LOGIN_DETAILS',
+  RECEIVE_UPDATED_USER_PREFERENCES: 'RECEIVE_UPDATED_USER_PREFERENCES'
 }
 
 /*
@@ -40,10 +42,10 @@ function createSaveAccountDetailsStart() {
   }
 }
 
-export function saveAccountDetails(accountDetails) {
+export function saveContactDetails(accountDetails) {
   return dispatch => {
     dispatch(createSaveAccountDetailsStart())
-    return aspectFetch('/account-details/current',
+    return aspectFetch('/account-details/current-contact',
       {
         method: 'PUT',
         headers: getHeaders(true),
@@ -54,6 +56,47 @@ export function saveAccountDetails(accountDetails) {
   }
 }
 
+function createReceiveUpdatedLoginDetails(fieldsUpdated) {
+  return {
+    type: types.RECEIVE_UPDATED_LOGIN_DETAILS,
+    fieldsUpdated
+  }
+}
+
+export function saveLoginDetails(loginDetails) {
+  return dispatch => {
+    dispatch(createSaveAccountDetailsStart())
+    return aspectFetch('/auth/update-login-details',
+      {
+        method: 'PUT',
+        headers: getHeaders(true),
+        body: JSON.stringify(loginDetails)
+      })
+      .then(json => dispatch(createReceiveUpdatedLoginDetails(json.data)))
+      .catch(err => dispatch(addError('Loading account details failed', err.message, err)))
+  }
+}
+
+function createReceiveUpdatedUserPreferences(accountDetails) {
+  return {
+    type: types.RECEIVE_UPDATED_USER_PREFERENCES,
+    accountDetails
+  }
+}
+
+export function saveUserPreferences(userPreferences) {
+  return dispatch => {
+    dispatch(createSaveAccountDetailsStart())
+    return aspectFetch('/account-details/current-preferences',
+      {
+        method: 'PUT',
+        headers: getHeaders(true),
+        body: JSON.stringify(userPreferences)
+      })
+      .then(json => dispatch(createReceiveUpdatedUserPreferences(json.data))) //TODO: Dispatch action to set current timezone and language
+      .catch(err => dispatch(addError('Loading account details failed', err.message, err)))
+  }
+}
 /*
  * ---------------- Reducers -----------------
  */
@@ -103,6 +146,21 @@ function saveAccountDetailsStart(state) {
   })
 }
 
+function receiveUpdatedLoginDetails(state) {
+  return state.merge({
+    loading: false,
+    saving: false
+  })
+}
+
+function receiveUpdatedUserPreferences(state, accountDetailsData) {
+  return state.mergeDeep({
+    loading: false,
+    saving: false,
+    data: accountDetailsData
+  })
+}
+
 export default function accountDetailsReducer(state = initialState, action) {
   switch (action.type) {
   case types.REQUEST_ACCOUNT_DETAILS:
@@ -111,6 +169,10 @@ export default function accountDetailsReducer(state = initialState, action) {
     return receiveAccountDetails(state, action.accountDetails)
   case types.SAVE_ACCOUNT_DETAILS_START:
     return saveAccountDetailsStart(state)
+  case types.RECEIVE_UPDATED_LOGIN_DETAILS:
+    return receiveUpdatedLoginDetails(state)
+  case types.RECEIVE_UPDATED_USER_PREFERENCES:
+    return receiveUpdatedUserPreferences(state, action.accountDetails)
   }
   return state
 }
