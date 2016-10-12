@@ -1,59 +1,94 @@
-let crypto = require('crypto')
-let jwt = require('jsonwebtoken')
-let uuid = require('node-uuid')
-let Promise = require('bluebird')
-let Boom = require('boom')
+const crypto = require('crypto')
+const jwt = require('jsonwebtoken')
+const uuid = require('node-uuid')
+const Promise = require('bluebird')
+const Boom = require('boom')
 
-let config = require('../config')
-let { query } = require('../db')
+const { createFetch, base, accept, header, method, body } = require('http-client')
+require('isomorphic-fetch')
+
+const bcrypt = require('bcrypt')
+const bcryptCompare = Promise.promisify(bcrypt.compare)
+const bcryptHash = Promise.promisify(bcrypt.hash)
+
+const config = require('../config')
+const { query } = require('../db')
 
 function* checkAuthentication(){
   return { message: 'Welcome to the API!' }
 }
 
 function* authenticate(request){
-  let {payload} = request
+  const {payload} = request
 
-  let user = yield query('Get basic user details').from('User as u')
+  const user = yield query('Get basic user details').from('User as u')
     .innerJoin('Person as p', 'u.id', 'p.userId')
     .where({'u.name': payload.name})
-    .first('u.lockedOut', 'u.failedPasswordAttempts', 'u.id', 'u.name',
+    .first('u.lockedOut', 'u.failedPasswordAttempts', 'u.password', 'u.id', 'u.name',
       'p.culture', 'p.lastPartnerId as partnerId', 'p.lastCountryId as countryId')
 
   if(!user){
-    // TODO generic Auth failed message on username and password failed?
-    // TODO should this be 401 (test checks 400)
-    return Boom.badRequest('not found')
-    //res.status(401).json({ message: 'Authentication failed. Wrong user name.' })
+    return Boom.unauthorized()
   }
 
   if (user.lockedOut === 1) {
     return Boom.unauthorized('Your account is locked.')
   }
 
-  // TODO: check if password matches
-  if (payload.password !== 'test07') {
-    // FIXME this allows 6 attempts if config is 5... bug?
-    let lock = user.failedPasswordAttempts >= config.passwordAttempts ? 1 : 0
-    let updateFailedPass = query('Update failed password attempts and set locked out status on user').from('User')
-      .where({id: user.id})
-      .update({
-        failedPasswordAttempts: user.failedPasswordAttempts + 1,
-        lockedOut: lock
-      })
+  // if password isn't a bcrypt hash, user was migrated from
+  // GxAlert and password wasn't set yet in aspect:
+  if (user.password && !user.password.startsWith('$2')){
 
-    yield updateFailedPass
-    return Boom.unauthorized('Authentication failed. Wrong password.')
+    // use GxAlert API to check pw
+    const gxFetch = createFetch(
+      method('POST'),
+      base(config.gxAlertApi),
+      accept('application/json'),
+      header('Content-Type', 'application/json'),
+      body(JSON.stringify({ username: payload.name, password: payload.password }), 'application/json')
+    )
+
+    const resp = yield gxFetch('/auth')
+
+    if (resp.status === 200){
+      // we now know that pw is valid. store it in our database:
+      const pw = yield bcryptHash(payload.password, parseInt(config.passwordSaltRounds))
+      yield query('Update user password in our database').from('User')
+        .where({id: user.id})
+        .update({
+          password: pw,
+          failedPasswordAttempts: 0,
+          lockedOut: false
+        })
+    } else {
+      return Boom.unauthorized('Authentication failed. Wrong password.')
+    }
+  } else {
+    // this is for "regular" accounts that were either created in aspect
+    // or migrated from GxAlert and updated their password
+    const pwResult = yield bcryptCompare(payload.password, user.password)
+    if (!pwResult){
+      const lock = user.failedPasswordAttempts + 1 >= config.passwordAttempts ? 1 : 0
+      const updateFailedPass = query('Update failed password attempts and set locked out status on user').from('User')
+        .where({id: user.id})
+        .update({
+          failedPasswordAttempts: user.failedPasswordAttempts + 1,
+          lockedOut: lock
+        })
+
+      yield updateFailedPass
+      return Boom.unauthorized('Authentication failed. Wrong password.')
+    }
   }
 
   // upsert refresh token
-  let now = new Date()
-  let expires = new Date(now.getTime() + 7 * 86400000) // 7 days from now
-  let refreshToken = crypto.randomBytes(48).toString('base64')
-  let clientId = payload.clientId || uuid.v4()
+  const now = new Date()
+  const expires = new Date(now.getTime() + 7 * 86400000) // 7 days from now
+  const refreshToken = crypto.randomBytes(48).toString('base64')
+  const clientId = payload.clientId || uuid.v4()
 
   // Use raw query as upsert not yet supported in knex#701
-  let setRefreshToken = query('Create new refresh token for the user').raw('INSERT INTO RefreshToken set ? ON DUPLICATE KEY UPDATE ?', [
+  const setRefreshToken = query('Create new refresh token for the user').raw('INSERT INTO RefreshToken set ? ON DUPLICATE KEY UPDATE ?', [
     {
       userId: user.id,
       clientId,
@@ -68,7 +103,7 @@ function* authenticate(request){
     }
   ])
 
-  let updatePwAttempts = query('Update failed password attempts to 0').from('User')
+  const updatePwAttempts = query('Update failed password attempts to 0').from('User')
     .where({id: user.id})
     .update({
       failedPasswordAttempts: 0,
@@ -79,7 +114,7 @@ function* authenticate(request){
   yield Promise.all([setRefreshToken, updatePwAttempts])
 
   // finally, return the access token...
-  let accessToken = yield getAccessToken(user)
+  const accessToken = yield getAccessToken(user)
   return {
     access: accessToken,
     refresh: refreshToken,
@@ -89,8 +124,8 @@ function* authenticate(request){
 
 function* refreshToken(request){
   // find the token in the db
-  let {clientId, token} = request.payload
-  let data = yield query('Find existing token for client ID').from('RefreshToken as rt')
+  const {clientId, token} = request.payload
+  const data = yield query('Find existing token for client ID').from('RefreshToken as rt')
     .innerJoin('User as u', 'rt.userId', 'u.id')
     .innerJoin('Person as p', 'u.id', 'p.userId')
     .where({clientId, token, revoked: 0})
@@ -102,21 +137,21 @@ function* refreshToken(request){
   }
 
   // check if expired
-  let now = new Date()
+  const now = new Date()
 
   if (data.expires < now) {
     return Boom.badRequest('Token expired')
   }
 
   // looks like we have a valid refresh token. set new one in db
-  let expires = new Date(now.getTime() + 7 * 86400000) // 7 days from now
-  let refreshToken = crypto.randomBytes(48).toString('base64')
+  const expires = new Date(now.getTime() + 7 * 86400000) // 7 days from now
+  const refreshToken = crypto.randomBytes(48).toString('base64')
 
   yield query('Update refresh token expiry date').from('RefreshToken')
     .where({token})
     .update({token: refreshToken, expires})
 
-  let accessToken = yield getAccessToken(data)
+  const accessToken = yield getAccessToken(data)
   return {
     access: accessToken,
     refresh: refreshToken,
@@ -136,7 +171,7 @@ function getAccessToken({id, name, culture, partnerId, countryId}){
     .distinct('p.module', 'p.activity')
     .then(data => {
       // create a new token
-      let token = jwt.sign({
+      const token = jwt.sign({
         name,
         id,
         partnerId,
