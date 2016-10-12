@@ -45,6 +45,7 @@
     "chai-immutable": "^1.6.0",
     "chunk-manifest-webpack-plugin": "^0.1.0",
     "core-js": "^2.4.0",
+    "cross-env": "^3.1.2",
     "css-loader": "^0.25.0",
     "enzyme": "^2.4.1",
     "eslint": "^3.7.1",
