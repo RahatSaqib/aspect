@@ -75,6 +75,31 @@ function* seed(knex){
     rightBound: 5
   })
 
+
+  // Assays and AssayTypes
+  let [assayTypeMTBRifId] = yield knex('AssayType').insert({
+    name: 'MTB/Rif'
+  })
+
+  let [assayTypeHIVVLId] = yield knex('AssayType').insert({
+    name: 'HIV VL'
+  })
+
+  yield knex('Assay').insert({
+    name: 'GeneXpert MTB/Rif',
+    assayTypeId: assayTypeMTBRifId
+  })
+
+  yield knex('Assay').insert({
+    name: 'Merck MTB/Rif',
+    assayTypeId: assayTypeMTBRifId
+  })
+
+  yield knex('Assay').insert({
+    name: 'GeneXpert HIV VL',
+    assayTypeId: assayTypeHIVVLId
+  })
+
   // Create permissions
   let modules = {}
   for(let module of permissions.modules){
@@ -299,17 +324,20 @@ function* seed(knex){
     { roleId: roleIdAdmin, permissionId: modules.person.admin },
     { roleId: roleIdAdmin, permissionId: modules.result.admin },
     { roleId: roleIdAdmin, permissionId: modules.site.admin },
+    { roleId: roleIdAdmin, permissionId: modules.assay.admin },
 
     // FIXME: result permission for role
 
     { roleId: roleIdOH, permissionId: modules.site.edit },
     { roleId: roleIdOH, permissionId: modules.device.edit },
+    { roleId: roleIdOH, permissionId: modules.assay.edit },
 
     { roleId: roleIdNE, permissionId: modules.site.edit },
     { roleId: roleIdNE, permissionId: modules.device.edit },
 
     { roleId: roleIdOHWayne, permissionId: modules.site.view },
     { roleId: roleIdOHWayne, permissionId: modules.device.view },
+    { roleId: roleIdOHWayne, permissionId: modules.assay.view },
 
     { roleId: roleIdMASuffolk, permissionId: modules.device.view },
 
