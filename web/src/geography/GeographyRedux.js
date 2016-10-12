@@ -1,7 +1,121 @@
 import _ from 'lodash'
 import Immutable from 'immutable'
-import types from './../constants/action_types'
+import { aspectFetch } from '../shared/utils/fetch'
+import { addError } from '../error/ErrorRedux'
 
+export const types = {
+  REQUEST_COUNTRIES_FOR_LOCATION_SELECTOR: 'REQUEST_COUNTRIES_FOR_LOCATION_SELECTOR',
+  RECEIVE_COUNTRIES_FOR_LOCATION_SELECTOR: 'RECEIVE_COUNTRIES_FOR_LOCATION_SELECTOR',
+  REQUEST_STATES_FOR_LOCATION_SELECTOR: 'REQUEST_STATES_FOR_LOCATION_SELECTOR',
+  RECEIVE_STATES_FOR_LOCATION_SELECTOR: 'RECEIVE_STATES_FOR_LOCATION_SELECTOR',
+  REQUEST_LGAS_FOR_LOCATION_SELECTOR: 'REQUEST_LGAS_FOR_LOCATION_SELECTOR',
+  RECEIVE_LGAS_FOR_LOCATION_SELECTOR: 'RECEIVE_LGAS_FOR_LOCATION_SELECTOR'
+}
+
+/*
+ * ---------------- Action Creators -----------------
+ */
+function createRequestCountriesForLocationSelector() {
+  return { type: types.REQUEST_COUNTRIES_FOR_LOCATION_SELECTOR }
+}
+
+function createReceiveCountriesForLocationSelector(countries) {
+  return {
+    type:  types.RECEIVE_COUNTRIES_FOR_LOCATION_SELECTOR,
+    countries: countries,
+    lastRefreshed: new Date()
+  }
+}
+
+function createRequestStatesForLocationSelector(selectedCountryId) {
+  return {
+    type: types.REQUEST_STATES_FOR_LOCATION_SELECTOR,
+    selectedCountryId: selectedCountryId
+  }
+}
+
+function createReceiveStatesForLocationSelector(states, selectedCountryId) {
+  return {
+    type:  types.RECEIVE_STATES_FOR_LOCATION_SELECTOR,
+    states: states,
+    selectedCountryId: selectedCountryId,
+    lastRefreshed: new Date()
+  }
+}
+
+function createRequestLgasForLocationSelector(selectedCountryId, selectedStateId) {
+  return {
+    type: types.REQUEST_LGAS_FOR_LOCATION_SELECTOR,
+    selectedCountryId: selectedCountryId,
+    selectedStateId: selectedStateId
+  }
+}
+
+function createReceiveLgasForLocationSelector(lgas, selectedCountryId, selectedStateId) {
+  return {
+    type:  types.RECEIVE_LGAS_FOR_LOCATION_SELECTOR,
+    lgas: lgas,
+    selectedCountryId: selectedCountryId,
+    selectedStateId: selectedStateId,
+    lastRefreshed: new Date()
+  }
+}
+
+const fiveMinutes = 300000 //five minutes
+
+export const fetchCountriesForLocationSelector = function(forceRefresh, countriesState,
+                                                          selectedCountryId, selectedStateId) {
+  return dispatch => {
+    const now = new Date()
+    if(!countriesState.get('loading') && (forceRefresh || !countriesState.get('lastRefreshed') ||
+      Math.abs(now.getTime() - countriesState.get('lastRefreshed').getTime()) > fiveMinutes)) {
+      dispatch(createRequestCountriesForLocationSelector())
+      let path = '/geography/country-select-list'
+      if(selectedCountryId) {
+        path += '/' + selectedCountryId
+        if(selectedStateId) {
+          path += '/' + selectedStateId
+        }
+      }
+      return aspectFetch(path)
+        .then(json => dispatch(createReceiveCountriesForLocationSelector(json.data)))
+        .catch(err => dispatch(addError('Loading countries failed', err.message, err)))
+    }
+  }
+}
+
+export const fetchStatesForLocationSelector = function(forceRefresh, selectedCountry) {
+  return dispatch => {
+    const now = new Date()
+    if(!selectedCountry.getIn(['children', 'loading']) && (forceRefresh || !selectedCountry.getIn(['children', 'lastRefreshed']) ||
+      Math.abs(now.getTime() - selectedCountry.getIn(['children', 'lastRefreshed']).getTime()) > fiveMinutes)) {
+      dispatch(createRequestStatesForLocationSelector(selectedCountry.get('id')))
+      let path = '/geography/state-select-list/' + selectedCountry.get('id')
+      return aspectFetch(path)
+        .then(json => dispatch(createReceiveStatesForLocationSelector(json.data, selectedCountry.get('id'))))
+        .catch(err => dispatch(addError('Loading states failed', err.message, err)))
+    }
+  }
+}
+
+export const fetchLgasForLocationSelector = function(forceRefresh, selectedCountry, selectedState) {
+  return dispatch => {
+    const now = new Date()
+    if(selectedState && !selectedState.getIn(['children', 'loading']) &&
+      (forceRefresh || !selectedState.getIn(['children', 'lastRefreshed']) ||
+      Math.abs(now.getTime() - selectedState.getIn(['children', 'lastRefreshed']).getTime()) > fiveMinutes)) {
+      dispatch(createRequestLgasForLocationSelector(selectedCountry.get('id'), selectedState.get('id')))
+      let path = '/geography/lga-select-list/' + selectedState.get('id')
+      return aspectFetch(path)
+        .then(json => dispatch(createReceiveLgasForLocationSelector(json.data, selectedCountry.get('id'), selectedState.get('id'))))
+        .catch(err => dispatch(addError('Loading LGAs failed', err.message, err)))
+    }
+  }
+}
+
+/*
+ * ---------------- Reducers -----------------
+ */
 const LazyLoadItems = Immutable.Record({
     loading: false,
     items: Immutable.List(),
@@ -131,7 +245,7 @@ function receiveLgasForLocationSelector(state, lgas, selectedCountryId, selected
   return state
 }
 
-function countries(state = initialState, action) {
+export default function geographyReducer(state = initialState, action) {
   switch (action.type) {
   case types.REQUEST_COUNTRIES_FOR_LOCATION_SELECTOR:
     return requestCountriesForLocationSelector(state)
@@ -152,5 +266,3 @@ function countries(state = initialState, action) {
   }
   return state
 }
-
-export default countries

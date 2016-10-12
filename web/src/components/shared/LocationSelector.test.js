@@ -259,7 +259,7 @@ describe('LocationSelector Component', () => {
         'react-redux': reactReduxStub,
         'redux': reduxStub,
         'redux-form': reduxFormStub,
-        '../../action_creators/geography_creators': geographyCreatorsStub
+        '../../geography/GeographyRedux': geographyCreatorsStub
       })
       mapStateToProps = reactReduxStub.connect.firstCall.args[0]
       mapDispatchToProps = reactReduxStub.connect.firstCall.args[1]

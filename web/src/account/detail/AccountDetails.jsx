@@ -10,7 +10,7 @@ import MapsPersonPin from 'material-ui/svg-icons/maps/person-pin'
 import Language from 'material-ui/svg-icons/action/language'
 import Lock from 'material-ui/svg-icons/action/lock'
 import ContactDetailsForm from './ContactDetailsForm'
-import {fetchAccountDetails, saveAccountDetails} from '../../../action_creators/accountDetails_creators'
+import {fetchAccountDetails, saveAccountDetails} from '../AccountRedux'
 import styles from './AccountDetails.css'
 
 const messages = defineMessages({

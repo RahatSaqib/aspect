@@ -9,7 +9,7 @@ import {
   fetchCountriesForLocationSelector,
   fetchStatesForLocationSelector,
   fetchLgasForLocationSelector
-} from '../../action_creators/geography_creators'
+} from '../../geography/GeographyRedux'
 import SelectInput from './SelectInput'
 
 const messages = defineMessages({

@@ -130,7 +130,7 @@ describe('AccountDetails Component', () => {
         'react-intl': intlStub,
         'react-redux': reactReduxStub,
         'redux': reduxStub,
-        '../../../action_creators/accountDetails_creators': accountDetailsCreatorsStub
+        '../AccountRedux': accountDetailsCreatorsStub
       })
       mapStateToProps = reactReduxStub.connect.firstCall.args[0]
       mapDispatchToProps = reactReduxStub.connect.firstCall.args[1]
@@ -139,7 +139,10 @@ describe('AccountDetails Component', () => {
     it('mapDispatchToProps should bind fetchAccountDetails and saveAccountDetails action creators to the component\'s properties', () => {
       const expectedDispatcher = {value: 'I am a dispatch function'}
       assert.equal(mapDispatchToProps(expectedDispatcher), expectedBoundActionCreators)
-      assert.deepEqual(reduxStub.bindActionCreators.lastCall.args, [accountDetailsCreatorsStub, expectedDispatcher])
+      assert.deepEqual(reduxStub.bindActionCreators.lastCall.args, [{
+        fetchAccountDetails: accountDetailsCreatorsStub.fetchAccountDetails,
+        saveAccountDetails: accountDetailsCreatorsStub.saveAccountDetails
+      }, expectedDispatcher])
     })
 
     it('mapStateToProps should map loading, saving and accountDetails from accountDetails on state', () => {

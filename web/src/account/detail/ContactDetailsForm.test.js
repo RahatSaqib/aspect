@@ -4,10 +4,10 @@ import { shallow } from 'enzyme'
 import sinon from 'sinon'
 import proxyquire from 'proxyquire'
 import Immutable from 'immutable'
-import TextInput from '../../shared/TextInput'
-import PhoneInput from '../../shared/PhoneInput'
+import TextInput from '../../components/shared/TextInput'
+import PhoneInput from '../../components/shared/PhoneInput'
 import RaisedButton from 'material-ui/RaisedButton'
-import LocationSelector from '../../shared/LocationSelector'
+import LocationSelector from '../../components/shared/LocationSelector'
 
 describe('ContactDetailsForm Component', () => {
   const fakeReactIntl = {
