@@ -10,8 +10,8 @@ import device from './device/DeviceRedux'
 import site from './site/SiteRedux'
 import result from './result/ResultRedux'
 import person from './person/PersonRedux'
-import accountDetails from './accountDetails'
-import geography from './geography'
+import accountDetails from './account/AccountRedux'
+import geography from './geography/GeographyRedux'
 import idle from './idle/IdleRedux'
 
 const appReducer = combineReducers({
