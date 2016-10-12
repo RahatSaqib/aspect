@@ -153,7 +153,8 @@ function* seed(knex){
         // User "Bill" was migrated from a GxAlert database.
         // Set pw to something that doesn't look like a bcrypt hash
         // so that Gx API is used to verify pw and set on aspect
-        password: name === 'Bill' ? 'Migrated from GxAlert' : bcrypt.hashSync('test07', saltRounds),
+        password: name === 'Bill' ? 'SOMESTRING' : bcrypt.hashSync('test07', saltRounds),
+        legacyPassword: name === 'Bill' ? 1 : 0,
         approved: 1,
         createdOn: now,
         lockedOut: 0,

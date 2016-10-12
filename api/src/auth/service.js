@@ -24,8 +24,9 @@ function* authenticate(request){
   const user = yield query('Get basic user details').from('User as u')
     .innerJoin('Person as p', 'u.id', 'p.userId')
     .where({'u.name': payload.name})
-    .first('u.lockedOut', 'u.failedPasswordAttempts', 'u.password', 'u.id', 'u.name',
-      'p.culture', 'p.lastPartnerId as partnerId', 'p.lastCountryId as countryId')
+    .first( 'u.lockedOut', 'u.failedPasswordAttempts', 'u.password',
+            'u.legacyPassword', 'u.id', 'u.name', 'p.culture',
+            'p.lastPartnerId as partnerId', 'p.lastCountryId as countryId')
 
   if(!user){
     return Boom.unauthorized()
@@ -37,7 +38,7 @@ function* authenticate(request){
 
   // if password isn't a bcrypt hash, user was migrated from
   // GxAlert and password wasn't set yet in aspect:
-  if (user.password && !user.password.startsWith('$2')){
+  if (user.password && user.legacyPassword){
 
     // use GxAlert API to check pw
     const gxFetch = createFetch(
@@ -58,6 +59,7 @@ function* authenticate(request){
         .update({
           password: pw,
           failedPasswordAttempts: 0,
+          legacyPassword: 0,
           lockedOut: false
         })
     } else {

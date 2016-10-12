@@ -43,6 +43,7 @@ function* up(knex){
     user.dateTime('createdOn').notNullable()
     user.boolean('lockedOut').notNullable()
     user.integer('failedPasswordAttempts').unsigned().notNullable()
+    user.boolean('legacyPassword').notNullable().defaultTo(0)
     user.charset('utf8')
   })
 
