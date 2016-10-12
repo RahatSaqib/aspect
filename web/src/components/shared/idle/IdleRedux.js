@@ -2,7 +2,7 @@ import _ from 'lodash'
 import configure from 'redux-idle-monitor'
 import config from 'config'
 
-import { logoutStart } from './../../../action_creators/user_creators'
+import { logoutStart } from '../../../auth/AuthRedux'
 
 const types = {
   IDLESTATUS_AWAY: 'IDLESTATUS_AWAY',
