@@ -75,27 +75,27 @@ function* seed(knex){
 
 
   // Assays and AssayTypes
-  let [assayTypeOneId] = yield knex('AssayType').insert({
-    name: 'Assay Type 1'
+  let [assayTypeMTBRifId] = yield knex('AssayType').insert({
+    name: 'MTB/Rif'
   })
 
-  let [assayTypeTwoId] = yield knex('AssayType').insert({
-    name: 'Assay Type 2'
-  })
-
-  yield knex('Assay').insert({
-    name: 'Assay 1a',
-    assayTypeId: assayTypeOneId
+  let [assayTypeHIVVLId] = yield knex('AssayType').insert({
+    name: 'HIV VL'
   })
 
   yield knex('Assay').insert({
-    name: 'Assay 1b',
-    assayTypeId: assayTypeOneId
+    name: 'GeneXpert MTB/Rif',
+    assayTypeId: assayTypeMTBRifId
   })
 
   yield knex('Assay').insert({
-    name: 'Assay 2a',
-    assayTypeId: assayTypeTwoId
+    name: 'Merck MTB/Rif',
+    assayTypeId: assayTypeMTBRifId
+  })
+
+  yield knex('Assay').insert({
+    name: 'GeneXpert HIV VL',
+    assayTypeId: assayTypeHIVVLId
   })
 
   // Create permissions

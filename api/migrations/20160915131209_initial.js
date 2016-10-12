@@ -343,6 +343,8 @@ function* down(knex){
   yield knex.schema.dropTableIfExists('org_unit')
   yield knex.schema.dropTableIfExists('partner')
 
+  yield knex.schema.dropTableIfExists('Assay')
+  yield knex.schema.dropTableIfExists('AssayType')
   yield knex.schema.dropTableIfExists('Router')
   yield knex.schema.dropTableIfExists('DeviceSiteHistory')
   yield knex.schema.dropTableIfExists('Device')
