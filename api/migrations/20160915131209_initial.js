@@ -304,6 +304,20 @@ function* up(knex){
     router.charset('utf8')
   })
 
+  yield knex.schema.createTable('AssayType', assayType => {
+    assayType.increments('id')
+    assayType.string('name').notNullable()
+    assayType.charset('utf8')
+  })
+
+  yield knex.schema.createTable('Assay', assay => {
+    assay.increments('id')
+    assay.string('name').notNullable()
+    assay.integer('assayTypeId').unsigned().notNullable()
+      .index().references('id').inTable('AssayType')
+    assay.charset('utf8')
+  })
+
   yield knex.raw('SET foreign_key_checks = 1')
 }
 

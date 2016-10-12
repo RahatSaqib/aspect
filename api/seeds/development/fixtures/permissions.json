@@ -1,6 +1,10 @@
 {
   "modules": [
     {
+      "name": "assay",
+      "activities": ["view", "edit", "admin"]
+    },
+    {
       "name": "device",
       "activities": ["view", "edit", "admin"]
     },
