@@ -114,6 +114,7 @@ function* up(knex){
       .index().references('id').inTable('State')
     person.integer('lgaId').unsigned()
       .index().references('id').inTable('Lga')
+    person.string('zip', 45)
     person.string('notes', 1200)
     person.integer('lastPartnerId').unsigned()
       .index().references('id').inTable('Partner')

@@ -1,0 +1,28 @@
+.Content {
+  composes: Content from '../../components/shared/Shared.css';
+}
+
+.Form {
+  composes: Form from '../../components/shared/Shared.css';
+}
+
+.Form__Content {
+  composes: Form__Content from '../../components/shared/Shared.css'
+}
+
+.Form__Content section h1 {
+  font-size: 1em;
+  color: rgba(0, 0, 0, 0.498039);
+  text-transform: uppercase;
+  font-weight: 400;
+  margin: 2em 0 -1em;
+}
+
+.Form__ActionRow {
+  composes: Form__ActionRow from '../../components/shared/Shared.css';
+}
+
+h2.Form__Header {
+  padding: 1em 0 0 1.5em;
+  margin: 0 0 -0.5em;
+}

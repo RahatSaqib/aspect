@@ -23,6 +23,7 @@ import { PersonListContainer } from '../person/list/PersonList'
 import { ResultListContainer } from '../result/list/ResultList'
 import { NotificationList } from '../notification/list/NotificationList'
 import { ReportList } from '../report/list/ReportList'
+import { AccountDetailsContainer } from '../account/detail/AccountDetails'
 
 import { refreshStart } from '../auth/AuthRedux'
 
@@ -80,6 +81,10 @@ const routes =
         </Route>
 
         <Route path="/person" component={PersonListContainer} />
+
+        <Route path="account-details">
+          <Route path="current" component={AccountDetailsContainer} />
+        </Route>
 
         <Route path="/notification" component={NotificationList} />
 

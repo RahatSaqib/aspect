@@ -1,17 +1,15 @@
 let supertest = require('supertest')
 let chai = require('chai')
 let shared = require('../utils/sharedToken')
+let _ = require('lodash')
 
 // This agent refers to PORT where program is runninng.
 let server = supertest.agent('http://localhost:8080')
 let assert = chai.assert
 
 describe('Person routes',function(){
-
-  let path = '/api/person'
-
-  describe('GET',function(){
-
+  describe('GET /person',function(){
+    const path = '/api/person'
     shared.checkToken(server, path)
 
     it('should return a list of persons when using valid token', function(done){
@@ -33,10 +31,5 @@ describe('Person routes',function(){
         done()
       })
     })
-
   })
-
-  describe('POST',function(){
-  })
-
 })

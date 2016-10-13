@@ -109,7 +109,9 @@ function changeAllIdsToString(data) {
   if (_.isArray(data)) {
     return data.map(changeAllIdsToString)
   } else if (_.isObject(data)) {
-    return _.mapValues(data, (value, key) => isIdLike(key) ? String(value) : changeAllIdsToString(value))
+    return _.mapValues(data, (value, key) => isIdLike(key) ?
+      (value === null || value === undefined ? value : String(value)) :
+      changeAllIdsToString(value))
   } else {
     return data
   }
