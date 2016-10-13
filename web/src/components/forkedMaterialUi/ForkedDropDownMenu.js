@@ -6,6 +6,8 @@
  *
  * Please check this file again if we upgrade material-ui.
  *
+ * Added support for closing the dropDownMenu when onEscKeyDown
+ *
  * References:
  *   https://github.com/callemall/material-ui/blob/v0.16.0/src/TextField/TextField.js
  *   https://github.com/callemall/material-ui/pull/3583/files
@@ -158,6 +160,8 @@ class DropDownMenu extends Component {
      * The value that is currently selected.
      */
     value: PropTypes.any,
+    // Forked
+    onCloseFromEsc: PropTypes.func.isRequired,
   };
 
   static defaultProps = {
@@ -239,6 +243,11 @@ class DropDownMenu extends Component {
       open: false,
       anchorEl: null,
     });
+  };
+
+  handleRequestCloseMenuFromEsc = () => { // Forked
+    this.handleRequestCloseMenu();
+    this.props.onCloseFromEsc();
   };
 
   handleItemTouchTap = (event, child, index) => {
@@ -327,6 +336,8 @@ class DropDownMenu extends Component {
             style={menuStyle}
             listStyle={listStyle}
             onItemTouchTap={this.handleItemTouchTap}
+            // Forked
+            onEscKeyDown={this.handleRequestCloseMenuFromEsc}
           >
             {children}
           </Menu>

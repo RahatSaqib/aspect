@@ -14,11 +14,13 @@
  *   https://github.com/callemall/material-ui/pull/3583/files
  */
 // Forked
+import _ from 'lodash';
+import {findDOMNode} from 'react-dom';
 import keycode from 'keycode';
 // Original
 import React, {Component, PropTypes} from 'react';
 import TextField from 'material-ui/TextField';
-import DropDownMenu from 'material-ui/DropDownMenu';
+import DropDownMenu from './ForkedDropDownMenu';
 
 function getStyles(props) {
   return {
@@ -173,6 +175,33 @@ class SelectField extends Component {
     }
   };
 
+  handleChange = (...args) => {
+    const { onChange = _.noop } = this.props;
+    onChange(...args);
+    this.delayedTriggerFocusOnRootNode();
+  };
+
+  handleCloseFromEsc = () => {
+    this.delayedTriggerFocusOnRootNode();
+  };
+
+  delayedTriggerFocusOnRootNode() {
+    // When we got focused by a tab event and tabIndex is set,
+    // we trigger focus method on the textField, causing dropDownMenu to open.
+    if (!this.props.tabIndex || this.props.tabIndex < 0) {
+      return;
+    }
+    // Trigger focus on the root node with a delay.
+    // (it's the <div> element wraps underlying textField/dropDownMenu……etc)
+    // It keeps the focus state (blue border) around the SelectField element
+    // but without the open menu.
+    // Now user can use tab or tab+shift to navigate to/away the next/previous element.
+    _.delay(() => {
+      const root = findDOMNode(this._textField);
+      root.focus();
+    }, 50);
+  }
+
   render() {
     const {
       autoWidth,
@@ -235,8 +264,11 @@ class SelectField extends Component {
           underlineStyle={styles.hideDropDownUnderline}
           autoWidth={autoWidth}
           value={value}
-          onChange={onChange}
+          // onChange={onChange} Forked
           maxHeight={maxHeight}
+          // Forked
+          onChange={this.handleChange}
+          onCloseFromEsc={this.handleCloseFromEsc}
         >
           {children}
         </DropDownMenu>
