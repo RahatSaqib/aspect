@@ -193,12 +193,16 @@ function getAccessToken({id, name, culture, partnerId, countryId}){
     })
 }
 
+function* getUsernamePasswordAndPassswordKey(username) {
+  return yield query('Get ID, username and password details for logged in user').from('User as u')
+    .where({'u.name': username})
+    .first('u.id', 'u.name', 'u.password', 'u.passwordKey')
+}
+
 function* updateUsernameAndPasswordForLoggedInUser(request){
   let {payload} = request
 
-  const loggedInUser = yield query('Get ID, username and password details for logged in user').from('User as u')
-    .where({'u.name': request.auth.credentials.name})
-    .first('u.id', 'u.name', 'u.password', 'u.passwordKey')
+  let loggedInUser = yield getUsernamePasswordAndPassswordKey(request.auth.credentials.name)
 
   if(!loggedInUser){
     return Boom.notFound('User not Found')
@@ -235,9 +239,17 @@ function* updateUsernameAndPasswordForLoggedInUser(request){
     yield query('Save user details for currently logged in user').from('user as u')
       .where({'u.id': loggedInUser.id})
       .update(changedFields)
+
+    loggedInUser = yield getUsernamePasswordAndPassswordKey(changedFields.username || loggedInUser.name)
   }
 
-  return {ok: true, data: Object.keys(changedFields)}
+  return {
+    ok: true,
+    data: {
+      changedFields: Object.keys(changedFields),
+      username: loggedInUser.name
+    }
+  }
 }
 
 function checkPassword(username, password) {

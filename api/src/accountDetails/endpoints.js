@@ -25,8 +25,6 @@ module.exports = [
       validate: {
         payload: {
           id: Joi.number().integer().required(),
-          userId: Joi.number().integer().required(),
-          username: Joi.string().required(),
           name: Joi.string().max(500).required(),
           title: Joi.string().max(255).allow('', null),
           email: Joi.string().max(500).allow('', null),

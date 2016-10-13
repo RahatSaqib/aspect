@@ -1,4 +1,5 @@
 import Immutable from 'immutable'
+import _ from 'lodash'
 import { aspectFetch, getHeaders } from '../shared/utils/fetch'
 import { addError } from '../error/ErrorRedux'
 
@@ -6,6 +7,7 @@ export const types = {
   REQUEST_ACCOUNT_DETAILS: 'REQUEST_ACCOUNT_DETAILS',
   RECEIVE_ACCOUNT_DETAILS: 'RECEIVE_ACCOUNT_DETAILS',
   SAVE_ACCOUNT_DETAILS_START: 'SAVE_ACCOUNT_DETAILS_START',
+  RECEIVE_UPDATED_CONTACT_DETAILS: 'RECEIVE_UPDATED_CONTACT_DETAILS',
   RECEIVE_UPDATED_LOGIN_DETAILS: 'RECEIVE_UPDATED_LOGIN_DETAILS',
   RECEIVE_UPDATED_USER_PREFERENCES: 'RECEIVE_UPDATED_USER_PREFERENCES'
 }
@@ -42,6 +44,13 @@ function createSaveAccountDetailsStart() {
   }
 }
 
+function createReceiveUpdatedContactDetails(accountDetails) {
+  return {
+    type: types.RECEIVE_UPDATED_CONTACT_DETAILS,
+    accountDetails
+  }
+}
+
 export function saveContactDetails(accountDetails) {
   return dispatch => {
     dispatch(createSaveAccountDetailsStart())
@@ -51,15 +60,15 @@ export function saveContactDetails(accountDetails) {
         headers: getHeaders(true),
         body: JSON.stringify(accountDetails)
       })
-      .then(json => dispatch(createReceiveAccountDetails(json.data)))
+      .then(json => dispatch(createReceiveUpdatedContactDetails(json.data)))
       .catch(err => dispatch(addError('Loading account details failed', err.message, err)))
   }
 }
 
-function createReceiveUpdatedLoginDetails(fieldsUpdated) {
+function createReceiveUpdatedLoginDetails(updateDetails) {
   return {
     type: types.RECEIVE_UPDATED_LOGIN_DETAILS,
-    fieldsUpdated
+    updateDetails
   }
 }
 
@@ -100,29 +109,34 @@ export function saveUserPreferences(userPreferences) {
 /*
  * ---------------- Reducers -----------------
  */
-const AccountDetailsData = Immutable.Record({
-  id: null,
-  userId: null,
-  username: null,
-  name: null,
-  title: null,
-  email: null,
-  email2: null,
-  phone: null,
-  cell: null,
-  countryId: null,
-  stateId: null,
-  lgaId: null,
-  zip: null,
-  timezone: null,
-  culture: null
-})
-
-const AccountDetails = Immutable.Record({
-  loading: false,
-  saving: false,
-  data: new AccountDetailsData()
-})
+const ContactDetails = Immutable.Record({
+    id: null,
+    name: null,
+    title: null,
+    email: null,
+    email2: null,
+    phone: null,
+    cell: null,
+    countryId: null,
+    stateId: null,
+    lgaId: null,
+    zip: null
+  }), LoginDetails = Immutable.Record({
+    id: null,
+    username: null
+  }), UserPreferences = Immutable.Record({
+    id: null,
+    timezone: null,
+    culture: null
+  }), AccountDetailsData = Immutable.Record({
+    contactDetails: new ContactDetails(),
+    loginDetails: new LoginDetails(),
+    userPreferences: new UserPreferences()
+  }), AccountDetails = Immutable.Record({
+    loading: false,
+    saving: false,
+    data: new AccountDetailsData()
+  })
 
 const initialState = new AccountDetails()
 
@@ -136,7 +150,11 @@ function receiveAccountDetails(state, accountDetailsData) {
   return state.mergeDeep({
     loading: false,
     saving: false,
-    data: accountDetailsData
+    data: new AccountDetailsData({
+      contactDetails: new ContactDetails(_.pick(accountDetailsData, Object.keys(state.getIn(['data', 'contactDetails']).toJS()))),
+      loginDetails: new LoginDetails({ id: accountDetailsData.userId, username: accountDetailsData.username }),
+      userPreferences: new UserPreferences(_.pick(accountDetailsData, Object.keys(state.getIn(['data', 'userPreferences']).toJS())))
+    })
   })
 }
 
@@ -146,10 +164,27 @@ function saveAccountDetailsStart(state) {
   })
 }
 
-function receiveUpdatedLoginDetails(state) {
-  return state.merge({
+function receiveUpdatedContactDetails(state, accountDetailsData) {
+  return state.mergeDeep({
     loading: false,
-    saving: false
+    saving: false,
+    data: new AccountDetailsData({
+      contactDetails: new ContactDetails(_.pick(accountDetailsData, Object.keys(state.getIn(['data', 'contactDetails']).toJS()))),
+      loginDetails: state.getIn(['data', 'loginDetails']),
+      userPreferences: state.getIn(['data', 'userPreferences'])
+    })
+  })
+}
+
+function receiveUpdatedLoginDetails(state, updateDetails) {
+  return state.mergeDeep({
+    loading: false,
+    saving: false,
+    data: new AccountDetailsData({
+      contactDetails: state.getIn(['data', 'contactDetails']),
+      loginDetails: new LoginDetails({ id: state.getIn(['data', 'loginDetails', 'id']), username: updateDetails.username }),
+      userPreferences: state.getIn(['data', 'userPreferences'])
+    })
   })
 }
 
@@ -157,7 +192,11 @@ function receiveUpdatedUserPreferences(state, accountDetailsData) {
   return state.mergeDeep({
     loading: false,
     saving: false,
-    data: accountDetailsData
+    data: new AccountDetailsData({
+      contactDetails: state.getIn(['data', 'contactDetails']),
+      loginDetails: state.getIn(['data', 'loginDetails']),
+      userPreferences: new UserPreferences(_.pick(accountDetailsData, Object.keys(state.getIn(['data', 'userPreferences']).toJS())))
+    })
   })
 }
 
@@ -169,8 +208,10 @@ export default function accountDetailsReducer(state = initialState, action) {
     return receiveAccountDetails(state, action.accountDetails)
   case types.SAVE_ACCOUNT_DETAILS_START:
     return saveAccountDetailsStart(state)
+  case types.RECEIVE_UPDATED_CONTACT_DETAILS:
+    return receiveUpdatedContactDetails(state, action.accountDetails)
   case types.RECEIVE_UPDATED_LOGIN_DETAILS:
-    return receiveUpdatedLoginDetails(state)
+    return receiveUpdatedLoginDetails(state, action.updateDetails)
   case types.RECEIVE_UPDATED_USER_PREFERENCES:
     return receiveUpdatedUserPreferences(state, action.accountDetails)
   }

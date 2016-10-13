@@ -10,6 +10,50 @@ import {emailAddress as validateEmailAddress} from '../../shared/utils/validate'
 import styles from './AccountDetails.css'
 
 const messages = defineMessages({
+  fullName: {
+    id: 'pages.AccountDetails.name',
+    defaultMessage: 'Full Name'
+  },
+  jobTitle: {
+    id: 'pages.AccountDetails.title',
+    defaultMessage: 'Job Title'
+  },
+  emailHeader: {
+    id: 'pages.AccountDetails.emailHeader',
+    defaultMessage: 'Email'
+  },
+  primaryEmail: {
+    id: 'pages.AccountDetails.email',
+    defaultMessage: 'Primary'
+  },
+  secondaryEmail: {
+    id: 'pages.AccountDetails.email2',
+    defaultMessage: 'Alternate'
+  },
+  phone: {
+    id: 'pages.AccountDetails.phoneHeader',
+    defaultMessage: 'Phone'
+  },
+  telephone: {
+    id: 'pages.AccountDetails.phone',
+    defaultMessage: 'Telephone'
+  },
+  mobile: {
+    id: 'pages.AccountDetails.cell',
+    defaultMessage: 'Mobile'
+  },
+  location: {
+    id: 'pages.AccountDetails.locationHeader',
+    defaultMessage: 'Location'
+  },
+  zip: {
+    id: 'pages.AccountDetails.zip',
+    defaultMessage: 'Zip Code'
+  },
+  save: {
+    id: 'pages.AccountDetails.save',
+    defaultMessage: 'Save'
+  },
   nameRequired: {
     id: 'pages.ContactDetailsForm.nameRequired',
     defaultMessage: 'Please enter your Full name'
@@ -21,34 +65,35 @@ const messages = defineMessages({
 })
 
 const ContactDetailsForm = props => {
-  const { labels, handleSubmit, pristine, invalid, loading, initialValues } = props
+  const { handleSubmit, pristine, invalid, loading, initialValues } = props,
+    {formatMessage} = props.intl
   return (
     <form onSubmit={handleSubmit} className={styles.Form}>
       <div className={styles.Form__Content}>
         <section>
-          <TextInput name="name" label={labels.name} disabled={loading} maxLength="500" />
-          <TextInput name="title" label={labels.title} disabled={loading} maxLength="255" />
+          <TextInput name="name" label={formatMessage(messages.fullName)} disabled={loading} maxLength="500" />
+          <TextInput name="title" label={formatMessage(messages.jobTitle)} disabled={loading} maxLength="255" />
         </section>
         <section>
-          <h1>{labels.emailHeader}</h1>
-          <TextInput name="email" label={labels.email} disabled={loading} maxLength="500" />
-          <TextInput name="email2" label={labels.email2} disabled={loading} maxLength="500" />
+          <h1>{formatMessage(messages.emailHeader)}</h1>
+          <TextInput name="email" label={formatMessage(messages.primaryEmail)} disabled={loading} maxLength="500" />
+          <TextInput name="email2" label={formatMessage(messages.secondaryEmail)} disabled={loading} maxLength="500" />
         </section>
         <section>
-          <h1>{labels.phoneHeader}</h1>
-          <PhoneInput name="phone" label={labels.phone} disabled={loading} maxLength="40" />
-          <PhoneInput name="cell" label={labels.cell} disabled={loading} maxLength="40" />
+          <h1>{formatMessage(messages.phone)}</h1>
+          <PhoneInput name="phone" label={formatMessage(messages.telephone)} disabled={loading} maxLength="40" />
+          <PhoneInput name="cell" label={formatMessage(messages.mobile)} disabled={loading} maxLength="40" />
         </section>
         <section>
-          <h1>{labels.locationHeader}</h1>
+          <h1>{formatMessage(messages.location)}</h1>
           <LocationSelector disabled={loading} initialValues={initialValues}
                             formName="accountDetails" countryIdFieldName="countryId"
                             stateIdFieldName="stateId" lgaIdFieldName="lgaId" />
-          <TextInput name="zip" label={labels.zip} disabled={loading} maxLength="45" />
+          <TextInput name="zip" label={formatMessage(messages.zip)} disabled={loading} maxLength="45" />
         </section>
       </div>
       <div className={styles.Form__ActionRow}>
-        <RaisedButton disabled={pristine || invalid || loading} label={labels.submit} secondary={true} type="submit" />
+        <RaisedButton disabled={pristine || invalid || loading} label={formatMessage(messages.save)} secondary={true} type="submit" />
       </div>
     </form>
   )

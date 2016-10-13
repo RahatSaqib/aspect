@@ -8,6 +8,26 @@ import StrongPasswordInput from '../../components/shared/StrongPasswordInput'
 import styles from './AccountDetails.css'
 
 const messages = defineMessages({
+  username: {
+    id: 'pages.AccountDetails.username',
+    defaultMessage: 'Username'
+  },
+  newPassword: {
+    id: 'pages.AccountDetails.newPassword',
+    defaultMessage: 'New Password'
+  },
+  confirmNewPassword: {
+    id: 'pages.AccountDetails.confirmNewPassword',
+    defaultMessage: 'Confirm New Password'
+  },
+  save: {
+    id: 'pages.AccountDetails.save',
+    defaultMessage: 'Save'
+  },
+  currentPassword: {
+    id: 'pages.AccountDetails.currentPassword',
+    defaultMessage: 'Current Password'
+  },
   usernameRequired: {
     id: 'pages.LoginDetailsForm.usernameRequired',
     defaultMessage: 'A username is required'
@@ -35,24 +55,18 @@ const messages = defineMessages({
 })
 
 const LoginDetailsForm = props => {
-  const { labels, handleSubmit, pristine, invalid, loading } = props
+  const { handleSubmit, pristine, invalid, loading } = props,
+    {formatMessage} = props.intl
   return (
     <form onSubmit={handleSubmit} className={styles.Form}>
       <div className={styles.Form__Content}>
-        <section>
-          <TextInput name="username" label={labels.username} disabled={loading} maxLength="500" />
-        </section>
-        <section>
-          <h1>{labels.passwordHeader}</h1>
-          <TextInput name="currentPassword" label={labels.currentPassword} disabled={loading} maxLength="100" type="password" />
-          <div>
-            <StrongPasswordInput name="newPassword" label={labels.newPassword} disabled={loading} maxLength="100" />
-            <TextInput name="confirmNewPassword" label={labels.confirmNewPassword} disabled={loading} maxLength="100" type="password" />
-          </div>
-        </section>
+        <TextInput name="username" label={formatMessage(messages.username)} disabled={loading} maxLength="500" />
+        <br />
+        <StrongPasswordInput name="newPassword" label={formatMessage(messages.newPassword)} disabled={loading} maxLength="100" />
+        <TextInput name="confirmNewPassword" label={formatMessage(messages.confirmNewPassword)} disabled={loading} maxLength="100" type="password" />
       </div>
       <div className={styles.Form__ActionRow}>
-        <RaisedButton disabled={pristine || invalid || loading} label={labels.submit} secondary={true} type="submit" />
+        <RaisedButton disabled={pristine || invalid || loading} label={formatMessage(messages.save)} secondary={true} type="button" />
       </div>
     </form>
   )
