@@ -1,8 +1,8 @@
 // Imports from packages
 import React, { Component, PropTypes } from 'react'
-import {List, MakeSelectable} from 'material-ui/List'
+import {List, makeSelectable} from 'material-ui/List'
 
-let SelectableList = MakeSelectable(List)
+let SelectableList = makeSelectable(List)
 
 function wrapState(ComposedComponent) {
   return class SelectableList extends Component {
