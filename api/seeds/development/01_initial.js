@@ -100,6 +100,23 @@ function* seed(knex){
     assayTypeId: assayTypeHIVVLId
   })
 
+  //Result types
+  yield knex('ResultType').insert({
+    name: 'one'
+  })
+
+  yield knex('ResultType').insert({
+    name: 'two'
+  })
+  yield knex('ResultType').insert({
+    name: 'three'
+  })
+
+  yield knex('ResultType').insert({
+    name: 'four'
+  })
+
+
   // Create permissions
   let modules = {}
   for(let module of permissions.modules){

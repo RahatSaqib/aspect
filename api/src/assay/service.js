@@ -3,7 +3,7 @@ let { knex, filterParams, sortPageParams } = require('../db')
 let { getConstraints, addConstraints } = require('../auth/constraints')
 
 const SELECT_LIST_FIELDS = [
-// id, id, name, name
+
   'a.id', 'at.id as assayTypeId', 'a.name', 'at.name as assayTypeName'
 ]
 

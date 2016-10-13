@@ -1,3 +1,7 @@
+let Promise = require('bluebird')
+let { knex, filterParams, sortPageParams } = require('../db')
+let { getConstraints, addConstraints } = require('../auth/constraints')
+
 const _ = require('lodash')
 
 function* listResults(request){
@@ -44,6 +48,34 @@ function* listResults(request){
   return result
 }
 
+function* listResultTypes(request){
+  let {query, auth} = request
+
+  // get data constraints
+  let dataConstraints = yield getConstraints(auth.credentials)
+
+  let resultTypeQuery = knex('ResultType as rt')
+    .modify(filterParams, query, 'name', 'rt.name')
+    //.modify(addConstraints, dataConstraints, {device: 'd'})
+
+  // get total count for paging
+  let getCount = resultTypeQuery.clone()
+    .count('rt.id as count').first()
+
+  // get rows
+  let getItems = resultTypeQuery.clone()
+    .modify(sortPageParams, query, 'name')
+    .select('id','name')
+
+  // return result when both queries are finished
+  let [{count: total}, data] = yield Promise.all([getCount, getItems])
+
+  let result = {ok: true, total, length: data.length, data}
+
+  return result
+}
+
 module.exports = {
-  listResults
+  listResults,
+  listResultTypes
 }

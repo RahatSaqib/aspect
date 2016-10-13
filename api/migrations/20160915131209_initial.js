@@ -319,6 +319,12 @@ function* up(knex){
     assay.charset('utf8')
   })
 
+  yield knex.schema.createTable('ResultType', resultType => {
+    resultType.increments('id')
+    resultType.string('name').notNullable()
+    resultType.charset('utf8')
+  })
+
   yield knex.raw('SET foreign_key_checks = 1')
 }
 
@@ -344,6 +350,7 @@ function* down(knex){
   yield knex.schema.dropTableIfExists('org_unit')
   yield knex.schema.dropTableIfExists('partner')
 
+  yield knex.schema.dropTableIfExists('ResultType')
   yield knex.schema.dropTableIfExists('Assay')
   yield knex.schema.dropTableIfExists('AssayType')
   yield knex.schema.dropTableIfExists('Router')
