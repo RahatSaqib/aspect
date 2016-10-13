@@ -102,20 +102,23 @@ function* seed(knex){
 
   //Result types
   yield knex('ResultType').insert({
-    name: 'one'
+    name: 'Patient'
   })
 
   yield knex('ResultType').insert({
-    name: 'two'
+    name: 'EQA'
   })
   yield knex('ResultType').insert({
-    name: 'three'
+    name: 'Training'
   })
 
   yield knex('ResultType').insert({
-    name: 'four'
+    name: 'Calibration'
   })
 
+  yield knex('ResultType').insert({
+    name: 'Study/Research'
+  })
 
   // Create permissions
   let modules = {}
