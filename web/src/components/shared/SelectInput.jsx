@@ -1,8 +1,9 @@
+import _ from 'lodash'
 import React from 'react'
 import { Field } from 'redux-form/immutable'
-import SelectField from 'material-ui/SelectField'
 import MenuItem from 'material-ui/MenuItem'
-import _ from 'lodash'
+
+import ForkedSelectField from '../forkedMaterialUi/ForkedSelectField'
 import styles from './Shared.css'
 
 const renderSelectField = props => {
@@ -14,9 +15,13 @@ const renderSelectField = props => {
     }
     input.onChange(value)
   }
-  return <SelectField {...input} errorStyle={{float: 'left'}} style={{verticalAlign: 'bottom'}}
-                 errorText={touched && error} {...selectFieldProps} children={children}
-                 onChange={onChange} className={styles.Form__Field} />
+  return (
+    <ForkedSelectField
+      {...input} errorStyle={{float: 'left'}} style={{verticalAlign: 'bottom'}}
+      errorText={touched && error} {...selectFieldProps} children={children}
+      onChange={onChange} className={styles.Form__Field}
+      tabIndex="0" aria-haspopup />
+  )
 }
 
 const renderFormField = props => {
