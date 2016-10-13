@@ -1,10 +1,21 @@
+/* eslint-disable */
 /**
  * This component is a fork of material-ui/SelectField.
  *
  * Initially tracks: https://github.com/callemall/material-ui/blob/v0.16.0/src/SelectField/SelectField.js
  *
  * Please check this file again if we upgrade material-ui.
+ *
+ * Added support for tab event, focus support and open dropdown menu on focus.
+ *
+ * References:
+ *   https://github.com/callemall/material-ui/blob/v0.16.0/src/TextField/TextField.js
+ *   https://github.com/callemall/material-ui/blob/v0.16.0/src/DropDownMenu/DropDownMenu.js
+ *   https://github.com/callemall/material-ui/pull/3583/files
  */
+// Forked
+import keycode from 'keycode';
+// Original
 import React, {Component, PropTypes} from 'react';
 import TextField from 'material-ui/TextField';
 import DropDownMenu from 'material-ui/DropDownMenu';
@@ -145,6 +156,23 @@ class SelectField extends Component {
     muiTheme: PropTypes.object.isRequired,
   };
 
+  handleTextFieldMount = (textField) => {// Forked
+    this._textField = textField;
+  };
+
+  handleKeyUp = (event) => {// Forked
+    // When we got focused by a tab event and tabIndex is set,
+    // we trigger focus method on the textField, causing dropDownMenu to open.
+    if (!this.props.tabIndex || this.props.tabIndex < 0) {
+      return;
+    }
+    switch (keycode(event)) {
+      case 'tab':
+        this._textField.focus(); // trigger event handler setup by DropDownMenu
+        break;
+    }
+  };
+
   render() {
     const {
       autoWidth,
@@ -195,6 +223,9 @@ class SelectField extends Component {
         id={id}
         underlineDisabledStyle={underlineDisabledStyle}
         underlineFocusStyle={underlineFocusStyle}
+        // Forked below
+        ref={this.handleTextFieldMount}
+        onKeyUp={this.handleKeyUp}
       >
         <DropDownMenu
           disabled={disabled}
