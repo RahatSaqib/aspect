@@ -172,6 +172,15 @@ class SelectField extends Component {
       case 'tab':
         this._textField.focus(); // trigger event handler setup by DropDownMenu
         break;
+      case 'enter':
+        // When menu is closed and delayedTriggerFocusOnRootNode is called,
+        // the root element should have focus state.
+        // This is the only time we open up the menu again.
+        const root = findDOMNode(this._textField);
+        if (document.activeElement === root) {
+          this._textField.focus();
+        }
+        break;
     }
   };
 
@@ -199,7 +208,7 @@ class SelectField extends Component {
     _.delay(() => {
       const root = findDOMNode(this._textField);
       root.focus();
-    }, 50);
+    }, 300)
   }
 
   render() {
