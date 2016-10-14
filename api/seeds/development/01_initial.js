@@ -323,10 +323,12 @@ function* seed(knex){
     deviceTypeCategoryId: deviceTypeCategoryConnectivity
   })
 
-  // insert some routers:
-  let routers = _.range(1, routerNumber+1).map(i => {
+  // insert some routers with sims:
+  let routerIds = []
+  for (let i = 0; i < routerNumber; i++) {
     let siteData = siteDatas[i % siteDatas.length]
-    return Object.assign({}, auditFields, {
+
+    let routerId = yield knex('Device').insert(Object.assign({}, auditFields, {
       name: `Router at ${i} ${siteData.shortname}`,
       shortname: 'r'+i,
       deviceTypeId: deviceTypeIdRouter,
@@ -334,20 +336,33 @@ function* seed(knex){
       createdOn: new Date(+now - 3*i*millisInHour),
       updatedOn: new Date(+now - i*millisInHour),
       lastPingOn: new Date(+now - i*millisInHour/3)
+    }))
+
+    routerIds.push(routerId)
+  }
+
+  // ... and 1-3 sims for some routers
+  let sims = _.range(0, routerNumber, 2).map(i => {
+    const routerId = routerIds[i]
+    return Object.assign({}, auditFields, {
+      deviceId: routerId,
+      provider: i%3 === 0 ? 'Glo' : 'Vodafone',
+      serial: 'SRL-' + routerId,
+      number: '+1 413 123 45' + routerId
     })
   })
-  yield knex('Device').insert(routers)
+  yield knex('DeviceSim').insert(sims)
 
   // insert GeneXpert devices
   let devices = _.range(1, deviceNumber+1).map(i => {
     let siteData = siteDatas[i % siteDatas.length]
-    let router = _.find(routers, (r) => { return r.siteId === siteData.id })
+    let routerId = routerIds[i]
     return Object.assign({}, auditFields, {
       name: `D${i} ${siteData.shortname}`,
       shortname: 'd'+i,
       deviceTypeId: deviceTypeIdGx,
       siteId: siteData.id,
-      deviceId: router ? router.id : null, // not all sites will have a router - we only added routers to some site
+      deviceId: routerId || null, // not all sites will have a router - we only added routers to some site
       createdOn: new Date(+now - 3*i*millisInHour),
       updatedOn: new Date(+now - i*millisInHour),
       lastPingOn: new Date(+now - i*millisInHour/3)
