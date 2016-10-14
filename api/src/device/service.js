@@ -60,6 +60,8 @@ function* showDevice(request) {
 
   // get item
   const [item] = yield knex('Device as d')
+    .innerJoin('DeviceType as dt', 'd.deviceTypeId', 'dt.id')
+    .innerJoin('DeviceTypeCategory as dc', 'dt.deviceTypeCategoryId', 'dc.id')
     .where('d.id', params.deviceId)
     .select(SELECT_SHOW_FIELDS)
 
