@@ -55,10 +55,20 @@ const messages = defineMessages({
   }
 })
 
+const DEVICE_TABLE_COLUMN_SPACING = 12
+
 export class DeviceList extends PureComponent {
 
   static propTypes = {
     table: PropTypes.object.isRequired
+  }
+
+  static contextTypes = {
+    muiTheme: PropTypes.object.isRequired
+  }
+
+  static childContextTypes = {
+    muiTheme: PropTypes.object.isRequired
   }
 
   state = {
@@ -81,6 +91,24 @@ export class DeviceList extends PureComponent {
   resetDevices = () => {
     this.setState({ filters: this.state.filters.set('name', '') })
     this.props.fetchDevices()
+  }
+
+  getChildContext() {
+    const { muiTheme } = this.context
+
+    return {
+      muiTheme: {
+        ...muiTheme,
+        tableHeaderColumn: {
+          ...muiTheme.tableHeaderColumn,
+          spacing: DEVICE_TABLE_COLUMN_SPACING
+        },
+        tableRowColumn: {
+          ...muiTheme.tableRowColumn,
+          spacing: DEVICE_TABLE_COLUMN_SPACING
+        }
+      }
+    }
   }
 
   render() {
