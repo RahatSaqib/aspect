@@ -212,7 +212,8 @@ export class DeviceDetail extends PureComponent {
   }
 
   render() {
-    const { formatMessage } = this.props.intl
+    const { intl } = this.props
+    const { formatMessage } = intl
 
     return (
       <div className={styles.Content}>

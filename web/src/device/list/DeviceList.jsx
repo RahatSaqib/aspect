@@ -116,7 +116,8 @@ export class DeviceList extends PureComponent {
   }
 
   render() {
-    const { formatMessage, formatRelative, formatNumber } = this.props.intl
+    const { intl } = this.props
+    const { formatMessage, formatRelative, formatNumber } = intl
 
     return (
       <div className={styles.Content}>

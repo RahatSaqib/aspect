@@ -79,8 +79,8 @@ class AccountDetails extends React.PureComponent {
   }
 
   render() {
-    const { formatMessage } = this.props.intl
-    const { loading, saving, accountDetails, saveAccountDetails } = this.props
+    const { intl, loading, saving, accountDetails, saveAccountDetails } = this.props
+    const { formatMessage } = intl
     const labels = {
       name: formatMessage(messages.fullName),
       title: formatMessage(messages.jobTitle),

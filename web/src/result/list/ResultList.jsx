@@ -84,7 +84,8 @@ export class ResultList extends PureComponent {
   }
 
   render() {
-    const { formatMessage, formatDate } = this.props.intl
+    const { intl } = this.props
+    const { formatMessage, formatDate } = intl
 
     return (
       <div className={styles.Content}>

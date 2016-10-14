@@ -68,8 +68,8 @@ class Login extends PureComponent {
   }
 
   render() {
-    const { formatMessage } = this.props.intl
-    const { handleSubmit, pristine, submitting, location } = this.props
+    const { intl, handleSubmit, pristine, submitting, location } = this.props
+    const { formatMessage } = intl
 
     return (
       <div className={styles.Background}>

@@ -18,7 +18,8 @@ class MiniChart extends PureComponent {
   }
 
   render() {
-    const { formatNumber } = this.props.intl
+    const { intl } = this.props
+    const { formatNumber } = intl
 
     return (
         <Paper className="col-margin" style={{backgroundColor: this.props.bgcolor}}>
