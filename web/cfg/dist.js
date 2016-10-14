@@ -1,6 +1,7 @@
 import path from 'path'
 import webpack from 'webpack'
 // Add needed plugins here
+import CaseSensitivePathsPlugin from 'case-sensitive-paths-webpack-plugin'
 import BowerWebpackPlugin from 'bower-webpack-plugin'
 import ManifestPlugin from 'webpack-manifest-plugin'
 import ChunkManifestPlugin from 'chunk-manifest-webpack-plugin'
@@ -40,6 +41,7 @@ const config = Object.assign({}, baseConfig, {
     new webpack.DefinePlugin({
       'process.env.NODE_ENV': '"production"'
     }),
+    new CaseSensitivePathsPlugin(),
     new BowerWebpackPlugin({
       searchResolveModulesDirectories: false
     }),

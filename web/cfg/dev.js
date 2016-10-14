@@ -1,6 +1,7 @@
 import path from 'path'
 import webpack from 'webpack'
 // Add needed plugins here
+import CaseSensitivePathsPlugin from 'case-sensitive-paths-webpack-plugin'
 import BowerWebpackPlugin from 'bower-webpack-plugin'
 
 import defaultSettings from './defaults'
@@ -15,6 +16,7 @@ const config = Object.assign({}, baseConfig, {
   devtool: 'inline-source-map',
   plugins: [
     new webpack.NoErrorsPlugin(),
+    new CaseSensitivePathsPlugin(),
     new BowerWebpackPlugin({
       searchResolveModulesDirectories: false
     })
