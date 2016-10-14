@@ -71,6 +71,11 @@ const routes =
           <Route path=":deviceId" component={DeviceDetailContainer} />
         </Route>
 
+        <Route path="router">
+          <IndexRoute component={DeviceListContainer} />
+          <Route path=":deviceId" component={DeviceDetailContainer} />
+        </Route>
+
         <Route path="result">
           <IndexRoute component={ResultListContainer} />
         </Route>
