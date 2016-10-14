@@ -13,6 +13,10 @@ module.exports = [
       auth: {scope: ['device:view', 'device:edit']},
       validate: {
         query: Object.assign({
+          hasResults: Joi.number().min(0).max(1).description('Filter for getting devices that can have results'),
+          hasConnectivity: Joi.number().min(0).max(1).description('Filter for getting devices that can have connectivity'),
+          category: Joi.string().description('Filter for device type category'),
+          type: Joi.string().description('Filter for device type'),
           name: Joi.string().allow('').description('Filter for device name')
         }, validateSortPageParams('name', 'status', 'createdOn', 'lastSeen', 'totalTests'))
       }
