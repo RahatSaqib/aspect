@@ -7,6 +7,7 @@ const permissions = require('./fixtures/permissions.json')
 const geography = require('./fixtures/geography.json')
 const millisInHour = 1000*60*60
 const deviceNumber = 50
+const routerNumber = 20
 const saltRounds = parseInt(config.passwordSaltRounds)
 
 function* seed(knex){
@@ -234,17 +235,65 @@ function* seed(knex){
     }, geoDatas[geoDatas.length % userId], auditFields))
   }
 
-  let [deviceTypeId] = yield knex('DeviceType').insert({
-    name: 'GeneXpert'
+  let [deviceTypeCategoryLab] = yield knex('DeviceTypeCategory').insert({
+    name: 'Lab',
+    hasConnectivity: 0,
+    hasResults: 1
   })
 
+  let [deviceTypeCategoryConnectivity] = yield knex('DeviceTypeCategory').insert({
+    name: 'Router',
+    hasConnectivity: 1,
+    hasResults: 0
+  })
+
+  yield knex('DeviceTypeCategory').insert({
+    name: 'Integrated',
+    hasConnectivity: 1,
+    hasResults: 1
+  })
+
+  yield knex('DeviceTypeCategory').insert({
+    name: 'Client',
+    hasConnectivity: 0,
+    hasResults: 0
+  })
+
+  let [deviceTypeIdGx] = yield knex('DeviceType').insert({
+    name: 'GeneXpert',
+    deviceTypeCategoryId: deviceTypeCategoryLab
+  })
+
+  let [deviceTypeIdRouter] = yield knex('DeviceType').insert({
+    name: 'Metacom Router',
+    deviceTypeCategoryId: deviceTypeCategoryConnectivity
+  })
+
+  // insert some routers:
+  let routers = _.range(1, routerNumber+1).map(i => {
+    let siteData = siteDatas[i % siteDatas.length]
+    return Object.assign({}, auditFields, {
+      name: `Router at ${i} ${siteData.shortname}`,
+      shortname: 'r'+i,
+      deviceTypeId: deviceTypeIdRouter,
+      siteId: siteData.id,
+      createdOn: new Date(+now - 3*i*millisInHour),
+      updatedOn: new Date(+now - i*millisInHour),
+      lastPingOn: new Date(+now - i*millisInHour/3)
+    })
+  })
+  yield knex('Device').insert(routers)
+
+  // insert GeneXpert devices
   let devices = _.range(1, deviceNumber+1).map(i => {
     let siteData = siteDatas[i % siteDatas.length]
+    let router = _.find(routers, (r) => { return r.siteId === siteData.id })
     return Object.assign({}, auditFields, {
       name: `D${i} ${siteData.shortname}`,
       shortname: 'd'+i,
-      deviceTypeId,
+      deviceTypeId: deviceTypeIdGx,
       siteId: siteData.id,
+      deviceId: router ? router.id : null, // not all sites will have a router - we only added routers to some site
       createdOn: new Date(+now - 3*i*millisInHour),
       updatedOn: new Date(+now - i*millisInHour),
       lastPingOn: new Date(+now - i*millisInHour/3)
