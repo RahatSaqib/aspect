@@ -30,8 +30,5 @@ describe('Result routes',function(){
         done()
       })
     })
-
   })
-
-
 })
