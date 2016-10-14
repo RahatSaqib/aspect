@@ -84,7 +84,7 @@ export class ResultList extends PureComponent {
   }
 
   render() {
-    const { formatMessage } = this.props.intl
+    const { formatMessage, formatDate } = this.props.intl
 
     return (
       <div className={styles.Content}>
@@ -120,7 +120,8 @@ export class ResultList extends PureComponent {
           items={ this.props.items }
           table={ this.props.table }
           columns={[
-            { db: 'lastTestOn', title: formatMessage(messages.lastTestOn) },
+            { db: 'lastTestOn', title: formatMessage(messages.lastTestOn),
+              format: (data) => formatDate(data) },
             { db: 'deviceName', title: formatMessage(messages.deviceName) },
             { db: 'state', title: formatMessage(messages.state), hideOnXs: true },
             { db: 'lga', title: formatMessage(messages.lga), hideOnXs: true },
