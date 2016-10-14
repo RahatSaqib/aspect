@@ -56,6 +56,8 @@ const messages = defineMessages({
 })
 
 const DEVICE_TABLE_COLUMN_SPACING = 12
+const DEVICE_TABLE_NAME_COLUMN_WIDTH = '30%'
+const DEVICE_TABLE_STATUS_COLUMN_WIDTH = '15%'
 
 export class DeviceList extends PureComponent {
 
@@ -145,8 +147,10 @@ export class DeviceList extends PureComponent {
                     items={ this.props.items }
                     table={ this.props.table }
                     columns={[
-                      { db: 'name', title: formatMessage(messages.deviceName) },
-                      { db: 'status', title: formatMessage(messages.status), hideOnXs: true },
+                      { db: 'name', title: formatMessage(messages.deviceName),
+                          extraProps: { style: { width: DEVICE_TABLE_NAME_COLUMN_WIDTH } } },
+                      { db: 'status', title: formatMessage(messages.status), hideOnXs: true,
+                          extraProps: { style: { width: DEVICE_TABLE_STATUS_COLUMN_WIDTH } } },
                       { db: 'createdOn', title: formatMessage(messages.reportingFor), hideOnXs: true,
                           format: (data) => formatRelative(data) },
                       { db: 'lastSeen', title: formatMessage(messages.lastSeen), hideOnXs: true,
