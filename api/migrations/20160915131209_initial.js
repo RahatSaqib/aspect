@@ -189,8 +189,18 @@ function* up(knex){
     refreshToken.charset('utf8')
   })
 
+  yield knex.schema.createTable('DeviceTypeCategory', deviceTypeFeature => {
+    deviceTypeFeature.increments('id')
+    deviceTypeFeature.string('name').notNullable()
+    deviceTypeFeature.boolean('hasConnectivity').notNullable().defaultTo(0)
+    deviceTypeFeature.boolean('hasResults').notNullable().defaultTo(0)
+    deviceTypeFeature.charset('utf8')
+  })
+
   yield knex.schema.createTable('DeviceType', deviceType => {
     deviceType.increments('id')
+    deviceType.integer('deviceTypeCategoryId').unsigned().notNullable()
+      .references('id').inTable('DeviceTypeCategory')
     deviceType.string('name').notNullable()
     deviceType.string('manufacturer').notNullable()
     deviceType.charset('utf8')
@@ -233,26 +243,26 @@ function* up(knex){
 
   yield knex.schema.createTable('Device', device => {
     device.increments('id')
-    device.integer('deviceTypeId').unsigned().notNullable()
-      .index().references('id').inTable('DeviceType')
-
-    // TODO Add device id1 - id4 or equivalent
-    // used to uniquely identify provisioned devices, still to be discussed
-    device.string('serial')
-    device.string('hostId')
-    device.string('computerId')
+    device.integer('deviceId').unsigned()
+      .index().references('id').inTable('Device')
     device.integer('siteId').unsigned().notNullable()
       .index().references('id').inTable('Site')
+    device.integer('deviceTypeId').unsigned().notNullable()
+      .index().references('id').inTable('DeviceType')
+    // TODO Add device id1 - id4 or equivalent
+    // used to uniquely identify provisioned devices, still to be discussed
     device.string('name').notNullable()
     device.string('shortname', 45)
+    device.string('serial')
+    device.string('hostId')
     device.string('notes', 1200)
     device.boolean('hideOnDashboard')
     device.dateTime('lastPingOn')
     device.string('lastPingFrom', 45)
-    device.string('computerCulture', 45)
-    device.string('computerOs')
-    device.string('computerTimezone', 45)
-    device.dateTime('lastCalibrated')
+    device.string('macAddress')
+    device.string('culture', 45)
+    device.string('operatingSystem')
+    device.string('timezone', 45)
     device.dateTime('putInService')
     device.string('putInServiceSource')
     // TODO add db and lis fields to "Operational Data" model
@@ -260,8 +270,8 @@ function* up(knex){
     //device.boolean('dbOk', 45)
     //device.string('lisConfig', 1200)
     //device.boolean('lisOk', 4)
-    device.dateTime('dailyDetailsOn')
-    device.string('aspectClientVersion', 45)
+    device.dateTime('heartbeatOn')
+    device.string('clientVersion', 45)
     device.boolean('customFieldsEnabled')
     device.dateTime('customFieldsSentOn')
     device.boolean('customFieldsEnabledOnDevice')
@@ -282,28 +292,6 @@ function* up(knex){
     addCreateFields(history)
     history.primary(['deviceId', 'siteId'])
     history.charset('utf8')
-  })
-
-  yield knex.schema.createTable('Router', router => {
-    router.increments('id')
-    router.integer('siteId').unsigned().notNullable()
-      .index().references('id').inTable('Site')
-    router.string('number', 45)
-    // TODO worth creating a SIM card table and changing
-    // to sim_1 and sim_2?  (or many to many?)
-    router.string('simRegNumber', 45)
-    router.string('simRegNumber2', 45)
-    router.string('simPhoneNumber', 45)
-    router.string('simPhoneNumber2', 45)
-    router.string('simProvider', 45)
-    router.string('simProvider2', 45)
-    router.string('simSuffix', 45)
-    router.string('simSuffix2', 45)
-    router.string('simPrefix', 45)
-    router.string('simPrefix2', 45)
-    addCreateFields(router)
-    addUpdateFields(router)
-    router.charset('utf8')
   })
 
   yield knex.schema.createTable('AssayType', assayType => {
@@ -360,6 +348,7 @@ function* down(knex){
   yield knex.schema.dropTableIfExists('DeviceSiteHistory')
   yield knex.schema.dropTableIfExists('Device')
   yield knex.schema.dropTableIfExists('Site')
+  yield knex.schema.dropTableIfExists('DeviceTypeCategory')
   yield knex.schema.dropTableIfExists('DeviceType')
   yield knex.schema.dropTableIfExists('RefreshToken')
   yield knex.schema.dropTableIfExists('UserRole')
