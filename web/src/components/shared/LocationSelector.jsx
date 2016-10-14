@@ -174,19 +174,20 @@ class LocationSelector extends React.PureComponent {
   }
 
   render() {
-    const { formatMessage } = this.props.intl,
-      { disabled, countries, countryIdFieldName, stateIdFieldName, lgaIdFieldName } = this.props,
-      dataSourceConfig = { text: 'name', value: 'id' },
-      dropdownCountries = countries ? countries.get('items').toJS() : [],
-      countriesLoading = countries ? countries.get('loading') : false,
-      selectedCountry = this.findCountry(this.state.selectedCountryId),
-      states = selectedCountry ? selectedCountry.getIn(['children', 'items']) : undefined,
-      statesLoading = selectedCountry ? selectedCountry.getIn(['children', 'loading']) : false,
-      dropdownStates = states ? states.toJS() : [],
-      selectedState = this.findState(this.state.selectedCountryId, this.state.selectedStateId),
-      lgas = selectedState ? selectedState.getIn(['children', 'items']) : undefined,
-      lgasLoading = selectedState ? selectedState.getIn(['children', 'loading']) : false,
-      dropdownLgas = lgas ? lgas.toJS() : []
+    const { intl, disabled, countries, countryIdFieldName, stateIdFieldName, lgaIdFieldName } = this.props
+    const { formatMessage } = intl
+
+    const dataSourceConfig = { text: 'name', value: 'id' }
+    const dropdownCountries = countries ? countries.get('items').toJS() : []
+    const countriesLoading = countries ? countries.get('loading') : false
+    const selectedCountry = this.findCountry(this.state.selectedCountryId)
+    const states = selectedCountry ? selectedCountry.getIn(['children', 'items']) : undefined
+    const statesLoading = selectedCountry ? selectedCountry.getIn(['children', 'loading']) : false
+    const dropdownStates = states ? states.toJS() : []
+    const selectedState = this.findState(this.state.selectedCountryId, this.state.selectedStateId)
+    const lgas = selectedState ? selectedState.getIn(['children', 'items']) : undefined
+    const lgasLoading = selectedState ? selectedState.getIn(['children', 'loading']) : false
+    const dropdownLgas = lgas ? lgas.toJS() : []
 
     return (
       <div>
