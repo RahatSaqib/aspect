@@ -159,7 +159,7 @@ export class DataTable extends PureComponent {
             enableSelectAll={this.state.enableSelectAll}>
             <TableRow>
               {this.props.columns.map((col) => (
-                <TableHeaderColumn key={col.db} tooltip={col.tooltip} className={ col.hideOnXs ? 'pure-hidden-xs' : '' }>
+                <TableHeaderColumn key={col.db} tooltip={col.tooltip} className={ col.hideOnXs ? 'pure-hidden-xs' : '' } {...col.extraProps}>
                   <span style={{ cursor: 'pointer' }} onTouchTap={() => { this.handleSort(col.db) } }>
                     {col.title}
                   </span>
@@ -184,7 +184,7 @@ export class DataTable extends PureComponent {
                   const row = items.getIn(['byId', itemId])
                   const data = row.get(col.db)
                   return (
-                    <TableRowColumn key={data} className={ col.hideOnXs ? 'pure-hidden-xs' : '' } >
+                    <TableRowColumn key={data} className={ col.hideOnXs ? 'pure-hidden-xs' : '' } {...col.extraProps}>
                       {(col.format || _.identity)(data, row)}
                     </TableRowColumn>
                   )
