@@ -16,8 +16,12 @@ function sortPageParams(queryBuilder, params, defaultSort) {
 // extracts the parameters related to filtering from the candidate
 // params and modifies the query builder with the filter modifications
 function filterParams(queryBuilder, params, paramName, columnName = paramName) {
-  if (params[paramName]) {
-    queryBuilder.where(columnName, 'like', `%${params[paramName]}%`)
+  if (typeof params[paramName] !== 'undefined') {
+    if (typeof params[paramName] === 'string'){
+      queryBuilder.where(columnName, 'like', `%${params[paramName]}%`)
+    } else{
+      queryBuilder.where(columnName, '=', params[paramName])
+    }
   }
 }
 
