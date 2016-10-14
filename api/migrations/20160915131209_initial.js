@@ -283,6 +283,18 @@ function* up(knex){
     device.charset('utf8')
   })
 
+  yield knex.schema.createTable('DeviceSim', sim => {
+    sim.increments('id')
+    sim.integer('deviceId').unsigned().notNullable()
+      .index().references('id').inTable('Device')
+    sim.string('provider')
+    sim.string('serial')
+    sim.string('number')
+    addCreateFields(sim)
+    addUpdateFields(sim)
+    sim.charset('utf8')
+  })
+
   yield knex.schema.createTable('DeviceSiteHistory', history => {
     history.integer('deviceId').unsigned().notNullable()
       .index().references('id').inTable('Device')
@@ -361,6 +373,7 @@ function* down(knex){
   yield knex.schema.dropTableIfExists('OrgUnit')
   yield knex.schema.dropTableIfExists('Partner')
   yield knex.schema.dropTableIfExists('PartnerType')
+  yield knex.schema.dropTableIfExists('DeviceSim')
 
   yield knex.raw('SET foreign_key_checks = 1')
 }
