@@ -15,6 +15,7 @@
  */
 // Forked
 import _ from 'lodash';
+import raf from 'dom-helpers/util/requestAnimationFrame';
 import {findDOMNode} from 'react-dom';
 import keycode from 'keycode';
 // Original
@@ -179,7 +180,7 @@ class SelectField extends Component {
         // the root element should have focus state.
         // This is the only time we open up the menu again.
         const root = findDOMNode(this._textField);
-        if (document.activeElement === root) {
+        if (root.contains(document.activeElement)) {
           this._textField.focus();
         }
         break;
@@ -202,15 +203,26 @@ class SelectField extends Component {
     if (!this.props.tabIndex || this.props.tabIndex < 0) {
       return;
     }
-    // Trigger focus on the root node with a delay.
-    // (it's the <div> element wraps underlying textField/dropDownMenu……etc)
-    // It keeps the focus state (blue border) around the SelectField element
-    // but without the open menu.
+    // this._textField.handleInputFocus();
+    // Trigger focus on the root node in tick until the activeElement is dropDownRootNode
+    // (it's the <div> element wraps the underlying dropDownMenu……etc)
+    // It keeps the focus state (active underline style) below the SelectField element
+    // but without the menu open.
     // Now user can use tab or tab+shift to navigate to/away the next/previous element.
-    _.delay(() => {
-      const root = findDOMNode(this._textField);
-      root.focus();
-    }, 300)
+    const endedAt = Date.now() + 5000;
+    const tick = () => {
+      const dropDownMenu = this._textField.input; // Private variable
+      const dropDownRootNode = findDOMNode(dropDownMenu);
+      // Don't call dropDownRootNode.focus() directly, it'll open the menu.
+      // We just want DOM to focus on this element
+      HTMLDivElement.prototype.focus.call(dropDownRootNode);
+      if (Date.now() < endedAt && document.activeElement !== dropDownRootNode) {
+        raf(tick);
+      }
+      // We need to use raf to call tick is because DOM rendering is asynchronous,
+      // and we have no idea when will it settled.
+    };
+    raf(tick);
   }
 
   render() {
@@ -239,6 +251,7 @@ class SelectField extends Component {
       onBlur,
       onChange,
       value,
+      tabIndex, // Forked
       ...other,
     } = this.props;
 
@@ -281,9 +294,10 @@ class SelectField extends Component {
           value={value}
           // onChange={onChange} Forked
           maxHeight={maxHeight}
-          // Forked
+          // Forked below
           onChange={this.handleChange}
           onCloseFromEsc={this.handleCloseFromEsc}
+          tabIndex={tabIndex}
         >
           {children}
         </DropDownMenu>
