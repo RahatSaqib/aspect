@@ -316,6 +316,8 @@ function* up(knex){
     assay.string('name').notNullable()
     assay.integer('assayTypeId').unsigned().notNullable()
       .index().references('id').inTable('AssayType')
+    assay.integer('deviceTypeId').unsigned().notNullable()
+      .index().references('id').inTable('DeviceType')
     assay.charset('utf8')
   })
 
