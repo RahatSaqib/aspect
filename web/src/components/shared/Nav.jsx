@@ -33,8 +33,8 @@ class Nav extends PureComponent {
       >
         <div>
           <Badge
+            secondary
             badgeContent={4}
-            primary={true}
             className={styles.Badge}
           >
             <IconButton tooltip="You have 4 unread notifications">
