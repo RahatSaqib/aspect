@@ -4,7 +4,7 @@ import classnames from 'classnames/bind'
 import React, { PureComponent, PropTypes } from 'react'
 
 // Material-UI
-import {Table, TableBody, TableHeader, TableHeaderColumn, TableRow, TableRowColumn, TableFooter } from 'material-ui/Table'
+import {Table, TableBody, TableHeader, TableHeaderColumn, TableRow, TableRowColumn as TableRowColumnWithBug, TableFooter } from 'material-ui/Table'
 import LinearProgress from 'material-ui/LinearProgress'
 import SortIcon from 'material-ui/svg-icons/content/sort'
 import FlatButton from 'material-ui/FlatButton'
@@ -13,6 +13,19 @@ import FlatButton from 'material-ui/FlatButton'
 import styles from './DataTable.css'
 
 const cx = classnames.bind(styles)
+
+const TableRowColumn = (props) => (
+  <TableRowColumnWithBug
+    {...props}
+    style={{
+      // Fix a regression for material-ui@0.16.0. It's already fixed in this PR:
+      // https://github.com/callemall/material-ui/pull/5378
+      // Originally introduced: https://github.com/callemall/material-ui/pull/5014
+      overflow: 'hidden',
+      ...props.style
+    }}
+  />
+)
 
 export class DataTable extends PureComponent {
 
