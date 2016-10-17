@@ -247,7 +247,11 @@ class SelectField extends Component {
     return (
       <TextField
         {...other}
-        style={style}
+        style={{
+          ...style,
+          // Forked
+          outline: 'none'
+        }}
         disabled={disabled}
         floatingLabelFixed={floatingLabelFixed}
         floatingLabelText={floatingLabelText}
