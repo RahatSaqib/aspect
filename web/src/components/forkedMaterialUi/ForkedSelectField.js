@@ -170,7 +170,9 @@ class SelectField extends Component {
     }
     switch (keycode(event)) {
       case 'tab':
-        this._textField.focus(); // trigger event handler setup by DropDownMenu
+        if (!event.shiftKey) {
+          this._textField.focus(); // trigger event handler setup by DropDownMenu
+        }
         break;
       case 'enter':
         // When menu is closed and delayedTriggerFocusOnRootNode is called,
