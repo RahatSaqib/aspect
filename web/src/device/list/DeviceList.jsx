@@ -102,10 +102,12 @@ export class DeviceList extends PureComponent {
       muiTheme: {
         ...muiTheme,
         tableHeaderColumn: {
+          // Overrides the style used by <material-ui/Table/TableHeaderColumn /> in <DataTable />
           ...muiTheme.tableHeaderColumn,
           spacing: DEVICE_TABLE_COLUMN_SPACING
         },
         tableRowColumn: {
+          // Overrides the style used by <material-ui/Table/TableRowColumn /> in <DataTable />
           ...muiTheme.tableRowColumn,
           spacing: DEVICE_TABLE_COLUMN_SPACING
         }
