@@ -3,8 +3,8 @@ let Boom = require('boom')
 let { query } = require('../db')
 
 function getAccountDetailsForUsername(username) {
-  return query('Get account details for currently logged in user').from('user as u')
-    .leftJoin('person as p', 'u.id', 'p.userId')
+  return query('Get account details for currently logged in user').from('User as u')
+    .leftJoin('Person as p', 'u.id', 'p.userId')
     .where({'u.name': username})
     .first('p.id', 'p.userId', 'u.name as username', 'p.name', 'p.title', 'p.email', 'p.email2',
       'p.phone', 'p.cell', 'p.countryId', 'p.stateId', 'p.lgaId', 'p.zip', 'p.timezone', 'p.culture')
@@ -39,7 +39,7 @@ function* saveAccountDetailsForLoggedInUser(request){
     changedFields.updatedOn = new Date()
     changedFields.updatedBy = accountDetails.userId
 
-    yield query('Save account details for currently logged in user').from('person as p')
+    yield query('Save account details for currently logged in user').from('Person as p')
       .where({'p.id': accountDetails.id})
       .update(changedFields)
 

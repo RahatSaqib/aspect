@@ -3,9 +3,9 @@ let { query, knex } = require('../db')
 
 function* buildGeographySelectList(){
   const countriesStatesAndLGAs = yield query('Get countries, states and LGAs for select lists')
-    .from('country as c')
-    .leftJoin('state as s', 'c.id', 's.countryId')
-    .leftJoin('lga as l', 's.id', 'l.stateId')
+    .from('Country as c')
+    .leftJoin('State as s', 'c.id', 's.countryId')
+    .leftJoin('Lga as l', 's.id', 'l.stateId')
     .orderBy(['c.name', 's.name', 'l.name'], 'asc')
     .select('c.id as countryId', 'c.name as countryName', 's.id as stateId',
       's.name as stateName', 'l.id as lgaId', 'l.name as lgaName')
@@ -46,13 +46,13 @@ function* countrySelectList(request){
   let countries = []
   if(!countryId) {
     countries = yield query('Get countries for select list')
-      .from('country as c')
+      .from('Country as c')
       .orderBy(['c.name'], 'asc')
       .select('c.id', 'c.name')
   } else if (!stateId) {
     const countriesAndStates = yield query('Get countries and country states for select lists')
-      .from('country as c')
-      .leftJoin('state as s', function () {
+      .from('Country as c')
+      .leftJoin('State as s', function () {
         this.on('c.id', 's.countryId')
           .on({countryId: knex.raw(countryId)})
       })
@@ -77,12 +77,12 @@ function* countrySelectList(request){
     selectedCountry.states = _.sortBy(selectedCountryStates, 'name')
   } else {
     const countriesStatesAndLgas = yield query('Get countries, country states and state LGAs for select lists')
-      .from('country as c')
-      .leftJoin('state as s', function () {
+      .from('Country as c')
+      .leftJoin('State as s', function () {
         this.on('c.id', 's.countryId')
           .on({countryId: knex.raw(countryId)})
       })
-      .leftJoin('lga as l', function () {
+      .leftJoin('Lga as l', function () {
         this.on('s.id', 'l.stateId')
           .on({stateId: knex.raw(stateId)})
       })
@@ -126,7 +126,7 @@ function* countrySelectList(request){
 function* stateSelectList(request){
   const {params} = request
   const states = yield query('Get states for select list')
-    .from('state as s')
+    .from('State as s')
     .where('s.countryId', params.countryId)
     .orderBy(['s.name'], 'asc')
     .select('s.id', 's.name')
@@ -139,7 +139,7 @@ function* stateSelectList(request){
 function* lgaSelectList(request){
   const {params} = request
   const lgas = yield query('Get LGAs for select list')
-    .from('lga as l')
+    .from('Lga as l')
     .where('l.stateId', params.stateId)
     .orderBy(['l.name'], 'asc')
     .select('l.id', 'l.name')

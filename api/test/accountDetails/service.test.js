@@ -55,8 +55,8 @@ describe('account details service', function () {
         assert.deepEqual(response.data, accountDetails)
 
         const getPersonQuery = dbSpy.query.withArgs('Get account details for currently logged in user').lastCall.returnValue
-        assert.equal(getPersonQuery.from.lastCall.args[0], 'user as u')
-        assert.deepEqual(getPersonQuery.leftJoin.lastCall.args, ['person as p', 'u.id', 'p.userId'])
+        assert.equal(getPersonQuery.from.lastCall.args[0], 'User as u')
+        assert.deepEqual(getPersonQuery.leftJoin.lastCall.args, ['Person as p', 'u.id', 'p.userId'])
         assert.deepEqual(getPersonQuery.where.lastCall.args[0], {'u.name': requestData.auth.credentials.name})
       })
     })
@@ -116,7 +116,7 @@ describe('account details service', function () {
         payload: Object.assign({}, accountDetails, changedRequestProperties)
       }])(function () {
         const savePersonQuery = dbSpy.query.withArgs('Save account details for currently logged in user').lastCall.returnValue
-        assert.equal(savePersonQuery.from.lastCall.args[0], 'person as p')
+        assert.equal(savePersonQuery.from.lastCall.args[0], 'Person as p')
         assert.deepEqual(savePersonQuery.where.lastCall.args[0], {'p.id': accountDetails.id})
         assert.deepEqual(savePersonQuery.update.lastCall.args[0], Object.assign({}, changedDatabaseProperties, {
           updatedOn: now,
