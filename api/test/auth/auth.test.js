@@ -104,7 +104,7 @@ describe('auth endpoints', function () {
         endpointUtils.callHandlerOn(endpoint)
           .with(requestData)
           .handleResponseWith(function (responseData) {
-            assert.isOk(responseData.clientId, requestData.payload.clientId)
+            assert.isOk(responseData.clientId)
           })
           .thenCall(done)
           .execute()
@@ -389,7 +389,8 @@ describe('auth endpoints', function () {
         }, payload: {
           newUsername: 'new-username',
           currentPassword: validPassword,
-          newPassword: 'new-password'
+          newPassword: 'new-password',
+          clientId: 'request client id'
         }
       }
     })
@@ -420,8 +421,7 @@ describe('auth endpoints', function () {
             const updateUserDetails = dbSpy.query.withArgs('Save user details for currently logged in user').lastCall.returnValue.update.lastCall.args[0]
             assert.isOk(updateUserDetails.password)
             assert.deepEqual(updateUserDetails, Object.assign(updateUserDetails, {
-              updatedOn: now,
-              updatedBy: 123,
+              lastPasswordChange: now,
               name: requestData.payload.newUsername
             }))
           })
@@ -455,8 +455,6 @@ describe('auth endpoints', function () {
             const updateUserDetails = dbSpy.query.withArgs('Save user details for currently logged in user').lastCall.returnValue.update.lastCall.args[0]
             assert.notProperty(updateUserDetails, 'password')
             assert.deepEqual(updateUserDetails, {
-              updatedOn: now,
-              updatedBy: 123,
               name: requestData.payload.newUsername
             })
           })
@@ -491,8 +489,7 @@ describe('auth endpoints', function () {
             assert.notProperty(updateUserDetails, 'username')
             assert.isOk(updateUserDetails.password)
             assert.deepEqual(updateUserDetails, Object.assign(updateUserDetails, {
-              updatedOn: now,
-              updatedBy: 123
+              lastPasswordChange: now
             }))
           })
           .thenCall(done)
@@ -611,6 +608,96 @@ describe('auth endpoints', function () {
           })
           .thenCall(done)
           .execute()
+      })
+    })
+
+    describe('token regeneration', function() {
+      const permissions = [
+        {module: 'device', activity: 'view'},
+        {module: 'person', activity: 'view'},
+        {module: 'site', activity: 'view'}
+      ]
+
+      beforeEach(function () {
+        dbSpy.query.for('Get user id for username').resolvesWith({
+          id: 123
+        })
+        dbSpy.query.for('Get basic user details').resolvesWith(validUserRecord)
+        dbSpy.query.for('Get permissions for user and partner').resolvesWith(permissions)
+      })
+
+      it('Should respond with a signed JSON web token, a refresh token id and the client id passed to it', function (done) {
+        endpointUtils.callHandlerOn(endpoint)
+          .with(requestData)
+          .handleResponseWith(function (response) {
+            assert.isOk(response.access)
+            assert.isOk(response.refresh)
+            assert.equal(response.clientId, requestData.payload.clientId)
+          })
+          .thenCall(done)
+          .execute()
+      })
+
+      it('Should create a client id if none is provided', function (done) {
+        requestData.payload.clientId = ''
+        endpointUtils.callHandlerOn(endpoint)
+          .with(requestData)
+          .handleResponseWith(function (responseData) {
+            assert.isOk(responseData.clientId)
+          })
+          .thenCall(done)
+          .execute()
+      })
+
+      describe('getToken', function() {
+        it('Should sign a token with the user\'s details', function (done) {
+          let southAfricanUser = {
+            lockedOut: 0,
+            failedPasswordAttempts: 0,
+            id: 123,
+            name: 'admin',
+            password: validHashedPassword,
+            culture: 'en-ZA',
+            partnerId: 2,
+            countryId: 3
+          }
+          dbSpy.query.for('Get basic user details').resolvesWith(southAfricanUser)
+          endpointUtils.callHandlerOn(endpoint)
+            .with(requestData)
+            .handleResponseWith(function () {
+              let unsignedToken = jwt.sign.lastCall.args[0]
+              assert.deepEqual(unsignedToken, {
+                id: 123,
+                partnerId: 2,
+                countryId: 3,
+                name: southAfricanUser.name,
+                modules: permissions.map(p => p.module),
+                permissions: permissions.map(p => `${p.module}:${p.activity}`),
+                culture: southAfricanUser.culture
+              })
+            })
+            .thenCall(done)
+            .execute()
+        })
+
+        it('Should set the user\'s culture to en-US if not specified', function (done) {
+          dbSpy.query.for('Get basic user details').resolvesWith({
+            lockedOut: 0,
+            failedPasswordAttempts: 0,
+            id: 123,
+            name: 'admin',
+            password: validHashedPassword,
+            culture: ''
+          })
+          endpointUtils.callHandlerOn(endpoint)
+            .with(requestData)
+            .handleResponseWith(function () {
+              let unsignedToken = jwt.sign.lastCall.args[0]
+              assert.equal(unsignedToken.culture, 'en-US')
+            })
+            .thenCall(done)
+            .execute()
+        })
       })
     })
   })

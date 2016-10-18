@@ -87,37 +87,19 @@ function* authenticate(request){
     }
   }
 
-  // upsert refresh token
   const now = new Date()
-  const expires = new Date(now.getTime() + 7 * 86400000) // 7 days from now
   const refreshToken = crypto.randomBytes(48).toString('base64')
   const clientId = payload.clientId || uuid.v4()
 
-  // Use raw query as upsert not yet supported in knex#701
-  const setRefreshToken = query('Create new refresh token for the user').raw('INSERT INTO RefreshToken set ? ON DUPLICATE KEY UPDATE ?', [
-    {
-      userId: user.id,
-      clientId,
-      clientName: payload.clientName,
-      token: refreshToken,
-      expires: expires,
-      createdOn: now
-    },
-    {
-      token: refreshToken,
-      expires: expires
-    }
-  ])
+  yield setRefreshToken(user.id, payload.clientName, clientId, refreshToken, now)
 
-  const updatePwAttempts = query('Update failed password attempts to 0').from('User')
+  yield query('Update failed password attempts to 0').from('User')
     .where({id: user.id})
     .update({
       failedPasswordAttempts: 0,
       lastLogin: now,
       lastActive: now
     })
-
-  yield Promise.all([setRefreshToken, updatePwAttempts])
 
   // finally, return the access token...
   const accessToken = yield getAccessToken(user)
@@ -126,6 +108,24 @@ function* authenticate(request){
     refresh: refreshToken,
     clientId
   }
+}
+
+function setRefreshToken(userId, clientName, clientId, refreshToken, now){
+  const expires = new Date(now.getTime() + 7 * 86400000) // 7 days from now
+  // upsert refresh token
+  return query('Create new refresh token for the user')
+    .raw('INSERT INTO RefreshToken set ? ON DUPLICATE KEY UPDATE ?', [{
+      userId: userId,
+      clientId,
+      clientName: clientName,
+      token: refreshToken,
+      expires: expires,
+      createdOn: now
+    }, {
+      token: refreshToken,
+      expires: expires
+    }
+  ])
 }
 
 function* refreshToken(request){
@@ -221,29 +221,40 @@ function* updateUsernameAndPasswordForLoggedInUser(request){
       changedFields.name = payload.newUsername
     }
   }
+
+  const now = new Date()
   if(payload.newPassword) {
     const passwordsMatch = yield bcryptCompare(payload.newPassword, loggedInUser.password)
     if(!passwordsMatch) {
       changedFields.password = yield bcryptHash(payload.newPassword, parseInt(config.passwordSaltRounds))
+      changedFields.lastPasswordChange = now
     }
   }
-  if(!_.isEmpty(changedFields)) {
-    changedFields.updatedOn = new Date()
-    changedFields.updatedBy = loggedInUser.id
 
+  if(!_.isEmpty(changedFields)) {
     yield query('Save user details for currently logged in user').from('user as u')
       .where({'u.id': loggedInUser.id})
       .update(changedFields)
 
-    loggedInUser = yield getUser(changedFields.username || loggedInUser.name)
+    loggedInUser = yield getUser(changedFields.name || loggedInUser.name)
   }
+
+  const refreshToken = crypto.randomBytes(48).toString('base64')
+  const clientId = payload.clientId || uuid.v4()
+
+  yield setRefreshToken(loggedInUser.id, payload.clientName, clientId, refreshToken, now)
+
+  const accessToken = yield getAccessToken(loggedInUser)
 
   return {
     ok: true,
     data: {
-      changedFields: Object.keys(_.omit(changedFields, ['updatedOn', 'updatedBy'])),
+      changedFields: Object.keys(_.omit(changedFields, ['lastPasswordChange'])),
       username: loggedInUser.name
-    }
+    },
+    access: accessToken,
+    refresh: refreshToken,
+    clientId
   }
 }
 

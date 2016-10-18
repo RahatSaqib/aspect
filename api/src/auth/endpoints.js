@@ -60,8 +60,10 @@ module.exports = [
       validate: {
         payload: {
           currentPassword: Joi.string().max(100).required(),
-          newUsername: Joi.string().max(255).required(),
-          newPassword: Joi.string().max(100).required()
+          newUsername: Joi.string().max(255).allow('', null),
+          newPassword: Joi.string().max(100).allow('', null),
+          clientName: Joi.string().required(),
+          clientId: Joi.string()
         }
       }
     }
