@@ -4,11 +4,10 @@ let uuid = require('node-uuid')
 let Promise = require('bluebird')
 let Boom = require('boom')
 let _ = require('lodash')
-
+const bcrypt = require('bcrypt')
 const { createFetch, base, accept, header, method, body } = require('http-client')
 require('isomorphic-fetch')
 
-const bcrypt = require('bcrypt')
 const bcryptCompare = Promise.promisify(bcrypt.compare)
 const bcryptHash = Promise.promisify(bcrypt.hash)
 
@@ -19,15 +18,19 @@ function* checkAuthentication(){
   return { message: 'Welcome to the API!' }
 }
 
+function getUser(username) {
+  return query('Get basic user details').from('User as u')
+    .innerJoin('Person as p', 'u.id', 'p.userId')
+    .where({'u.name': username})
+    .first( 'u.lockedOut', 'u.failedPasswordAttempts', 'u.password',
+      'u.legacyPassword', 'u.id', 'u.name', 'p.culture',
+      'p.lastPartnerId as partnerId', 'p.lastCountryId as countryId')
+}
+
 function* authenticate(request){
   const {payload} = request
 
-  const user = yield query('Get basic user details').from('User as u')
-    .innerJoin('Person as p', 'u.id', 'p.userId')
-    .where({'u.name': payload.name})
-    .first( 'u.lockedOut', 'u.failedPasswordAttempts', 'u.password',
-            'u.legacyPassword', 'u.id', 'u.name', 'p.culture',
-            'p.lastPartnerId as partnerId', 'p.lastCountryId as countryId')
+  const user = yield getUser(payload.name)
 
   if(!user){
     return Boom.unauthorized()
@@ -193,29 +196,21 @@ function getAccessToken({id, name, culture, partnerId, countryId}){
     })
 }
 
-function* getUsernamePasswordAndPassswordKey(username) {
-  return yield query('Get ID, username and password details for logged in user').from('User as u')
-    .where({'u.name': username})
-    .first('u.id', 'u.name', 'u.password', 'u.passwordKey')
-}
-
 function* updateUsernameAndPasswordForLoggedInUser(request){
   let {payload} = request
 
-  let loggedInUser = yield getUsernamePasswordAndPassswordKey(request.auth.credentials.name)
+  let loggedInUser = yield getUser(request.auth.credentials.name)
 
   if(!loggedInUser){
     return Boom.notFound('User not Found')
   }
-  if(loggedInUser.name !== request.auth.credentials.name){
-    return Boom.forbidden('Not allowed to updated another user from here.')
-  }
-  if (!checkPassword(request.auth.credentials.name, payload.currentPassword)) {
+  const pwResult = yield bcryptCompare(payload.currentPassword, loggedInUser.password)
+  if (!pwResult) {
     return Boom.forbidden('Incorrect password.')
   }
   const changedFields = {}
   if(payload.newUsername) {
-    const existingUserIdWithNewUsername = yield query('Get user object for username').from('User as u')
+    const existingUserIdWithNewUsername = yield query('Get user id for username').from('User as u')
       .where({'u.name': payload.newUsername})
       .first('u.id')
     if(existingUserIdWithNewUsername) {
@@ -227,9 +222,9 @@ function* updateUsernameAndPasswordForLoggedInUser(request){
     }
   }
   if(payload.newPassword) {
-    const encryptedNewPassword = encryptPassword(payload.newPassword, loggedInUser.passwordKey)
-    if(loggedInUser.password != encryptedNewPassword) {
-      changedFields.password = encryptedNewPassword
+    const passwordsMatch = yield bcryptCompare(payload.newPassword, loggedInUser.password)
+    if(!passwordsMatch) {
+      changedFields.password = yield bcryptHash(payload.newPassword, parseInt(config.passwordSaltRounds))
     }
   }
   if(!_.isEmpty(changedFields)) {
@@ -240,27 +235,16 @@ function* updateUsernameAndPasswordForLoggedInUser(request){
       .where({'u.id': loggedInUser.id})
       .update(changedFields)
 
-    loggedInUser = yield getUsernamePasswordAndPassswordKey(changedFields.username || loggedInUser.name)
+    loggedInUser = yield getUser(changedFields.username || loggedInUser.name)
   }
 
   return {
     ok: true,
     data: {
-      changedFields: Object.keys(changedFields),
+      changedFields: Object.keys(_.omit(changedFields, ['updatedOn', 'updatedBy'])),
       username: loggedInUser.name
     }
   }
-}
-
-function checkPassword(username, password) {
-  return username && password === 'test07'
-}
-
-function encryptPassword(password, passwordKey) {
-  if(!passwordKey) {
-    throw 'Password key required for encryption'
-  }
-  return password
 }
 
 module.exports = {
