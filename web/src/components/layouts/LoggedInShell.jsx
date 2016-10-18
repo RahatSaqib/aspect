@@ -43,6 +43,7 @@ export class LoggedInShell extends PureComponent {
                   handleRequestChange={(drawerOpen) => this.setState({drawerOpen})} />
         <Nav
           pageTitle={pageTitle}
+          pagePath={pathname}
           handleHamburger={this.props.toggleDrawer}
           handleSignOut={this.props.logoutStart}
           handleLanguageChange={this.props.changeLanguage}
