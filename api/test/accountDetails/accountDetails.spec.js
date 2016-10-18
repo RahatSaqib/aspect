@@ -45,11 +45,10 @@ describe('/account-details', function () {
         let originalTitle = accountDetails.title
         let newJobTitle = 'New Job Title'
         assert.notEqual(accountDetails.title, newJobTitle, 'The title of this person is already set to \'New Job Title\'. This could be a problem with the cleanup that was supposed to have happened the last time this test was run. Please update the title of person (id=' + accountDetails.id + ') to something other than \'' + newJobTitle + '\'')
-        delete accountDetails.timezone
-        delete accountDetails.culture
+        let contactDetails = _.omit(accountDetails, ['userId', 'username', 'timezone', 'culture'])
         server
           .put(path)
-          .send(Object.assign({}, accountDetails, { title: newJobTitle }))
+          .send(Object.assign({}, contactDetails, { title: newJobTitle }))
           .set('Authorization', 'Bearer ' + shared.token)
           .end(function(err,res){
             assert.equal(res.status, 200)
@@ -71,9 +70,10 @@ describe('/account-details', function () {
                 assert.equal(res.body.data.title, newJobTitle)
 
                 //Clean Up: Update the user with their old title again
+                contactDetails = _.omit(accountDetails, ['userId', 'username', 'timezone', 'culture'])
                 server
                   .put(path)
-                  .send(Object.assign({}, accountDetails, { title: originalTitle }))
+                  .send(Object.assign({}, contactDetails, { title: originalTitle }))
                   .set('Authorization', 'Bearer ' + shared.token)
                   .end(function(err,res){
                     assert.equal(res.body.data.title, originalTitle)
