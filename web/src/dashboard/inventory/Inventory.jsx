@@ -1,5 +1,5 @@
 // Imports from packages
-import React, { PureComponent } from 'react'
+import React, { PureComponent, PropTypes } from 'react'
 import { Link } from 'react-router'
 import Helmet from 'react-helmet'
 
@@ -8,6 +8,15 @@ import MiniChart from '../../components/shared/MiniChart'
 import styles from './Inventory.css'
 
 export class Inventory extends PureComponent {
+
+  static propTypes = {
+    setPageTitle: PropTypes.func.isRequired
+  }
+
+  componentWillMount() {
+    this.props.setPageTitle('Inventory')
+  }
+
   render() {
     return (
       <div className={styles.Content}>

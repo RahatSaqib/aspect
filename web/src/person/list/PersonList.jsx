@@ -49,6 +49,7 @@ const messages = defineMessages({
 export class PersonList extends PureComponent {
 
   static propTypes = {
+    setPageTitle: PropTypes.func.isRequired,
     table: PropTypes.object.isRequired
   }
 
@@ -68,6 +69,12 @@ export class PersonList extends PureComponent {
   resetPersons = () => {
     this.setState({ filters: this.state.filters.set('name', '') })
     this.props.fetchPersons()
+  }
+
+  componentWillMount() {
+    const { setPageTitle, intl } = this.props
+    const { formatMessage } = intl
+    setPageTitle(formatMessage(messages.title))
   }
 
   render() {

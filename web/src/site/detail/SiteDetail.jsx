@@ -27,11 +27,18 @@ import styles from './SiteDetail.css'
 export class SiteDetail extends PureComponent {
 
   static propTypes = {
+    setPageTitle: PropTypes.func.isRequired,
     params: PropTypes.object.isRequired
   }
 
   handleFetchSite = ({ params }) => {
     this.props.fetchSingleSite(params.siteId)
+  }
+
+  componentWillMount() {
+    const { setPageTitle, intl } = this.props
+    const { formatMessage } = intl
+    setPageTitle(formatMessage(messages.title))
   }
 
   componentDidMount() {

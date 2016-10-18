@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { PureComponent, PropTypes } from 'react'
 import { bindActionCreators } from 'redux'
 import { injectIntl, defineMessages } from 'react-intl'
 import _ from 'lodash'
@@ -14,6 +14,10 @@ import {fetchAccountDetails, saveAccountDetails} from '../AccountRedux'
 import styles from './AccountDetails.css'
 
 const messages = defineMessages({
+  title: {
+    id: 'pages.AccountDetails.title',
+    defaultMessage: 'Account Details'
+  },
   contactDetails: {
     id: 'pages.AccountDetails.contactDetails',
     defaultMessage: 'Contact Details'
@@ -72,7 +76,18 @@ const messages = defineMessages({
   }
 })
 
-class AccountDetails extends React.PureComponent {
+class AccountDetails extends PureComponent {
+
+  static propTypes = {
+    setPageTitle: PropTypes.func.isRequired
+  }
+
+  componentWillMount() {
+    const { setPageTitle, intl } = this.props
+    const { formatMessage } = intl
+    setPageTitle(formatMessage(messages.title))
+  }
+
   componentDidMount() {
     const {fetchAccountDetails} = this.props
     fetchAccountDetails()

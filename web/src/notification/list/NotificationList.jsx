@@ -1,11 +1,20 @@
 // Imports from packages
-import React, { PureComponent } from 'react'
+import React, { PureComponent, PropTypes } from 'react'
 import Helmet from 'react-helmet'
 
 // Our own imports
 import styles from './NotificationList.css'
 
 export class NotificationList extends PureComponent {
+
+  static propTypes = {
+    setPageTitle: PropTypes.func.isRequired
+  }
+
+  componentWillMount() {
+    this.props.setPageTitle('Notifications')
+  }
+
   render() {
     return (
       <div className={styles.Content}>
