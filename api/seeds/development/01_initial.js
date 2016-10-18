@@ -77,11 +77,28 @@ function* seed(knex){
 
   // Device Types
   let [deviceTypeGeneXpertId] = yield knex('DeviceType').insert({
-    name: 'GeneXpert'
+    name: 'GeneXpert',
+    manufacturer: 'Cepheid'
   })
 
-  let [deviceTypeOtherId] = yield knex('DeviceType').insert({
-    name: 'ACME'
+  let [deviceTypeAfinionId] = yield knex('DeviceType').insert({
+    name: 'Afinion',
+    manufacturer: 'Alere'
+  })
+
+  let [deviceTypeQId] = yield knex('DeviceType').insert({
+    name: 'Q',
+    manufacturer: 'Alere'
+  })
+
+  yield knex('DeviceType').insert({
+    name: 'm2000',
+    manufacturer: 'Abbott'
+  })
+
+  yield knex('DeviceType').insert({
+    name: 'Daktari',
+    manufacturer: 'Daktari'
   })
 
   // Assays and AssayTypes
@@ -89,8 +106,16 @@ function* seed(knex){
     name: 'MTB/Rif'
   })
 
+  let [assayTypeEbolaId] = yield knex('AssayType').insert({
+    name: 'Ebola'
+  })
+
   let [assayTypeHIVVLId] = yield knex('AssayType').insert({
     name: 'HIV VL'
+  })
+
+  let [assayTypeLipidPanelId] = yield knex('AssayType').insert({
+    name: 'Lipid Panel'
   })
 
   yield knex('Assay').insert({
@@ -100,15 +125,33 @@ function* seed(knex){
   })
 
   yield knex('Assay').insert({
-    name: 'ACME MTB/Rif',
-    assayTypeId: assayTypeMTBRifId,
-    deviceTypeId: deviceTypeOtherId
-  })
-
-  yield knex('Assay').insert({
     name: 'GeneXpert HIV VL',
     assayTypeId: assayTypeHIVVLId,
     deviceTypeId: deviceTypeGeneXpertId
+  })
+
+  yield knex('Assay').insert({
+    name: 'GeneXpert Ebola',
+    assayTypeId: assayTypeEbolaId,
+    deviceTypeId: deviceTypeGeneXpertId
+  })
+
+  yield knex('Assay').insert({
+    name: 'Afinion HIV VL',
+    assayTypeId: assayTypeHIVVLId,
+    deviceTypeId: deviceTypeAfinionId
+  })
+
+  yield knex('Assay').insert({
+    name: 'Afinion Lipid Panel',
+    assayTypeId: assayTypeLipidPanelId,
+    deviceTypeId: deviceTypeAfinionId
+  })
+
+  yield knex('Assay').insert({
+    name: 'Q HIV VL',
+    assayTypeId: assayTypeHIVVLId,
+    deviceTypeId: deviceTypeQId
   })
 
   //Result types
