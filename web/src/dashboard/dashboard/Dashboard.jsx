@@ -24,9 +24,14 @@ const messages = defineMessages({
 export class Dashboard extends PureComponent {
 
   static propTypes = {
+    setPageTitle: PropTypes.func.isRequired,
     userName: PropTypes.string,
     location: PropTypes.object.isRequired,
     strings: PropTypes.object
+  }
+
+  componentWillMount() {
+    this.props.setPageTitle(null)
   }
 
   render() {

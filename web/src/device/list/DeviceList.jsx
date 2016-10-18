@@ -62,6 +62,7 @@ const DEVICE_TABLE_STATUS_COLUMN_WIDTH = '15%'
 export class DeviceList extends PureComponent {
 
   static propTypes = {
+    setPageTitle: PropTypes.func.isRequired,
     table: PropTypes.object.isRequired
   }
 
@@ -93,6 +94,12 @@ export class DeviceList extends PureComponent {
   resetDevices = () => {
     this.setState({ filters: this.state.filters.set('name', '') })
     this.props.fetchDevices()
+  }
+
+  componentWillMount() {
+    const { setPageTitle, intl } = this.props
+    const { formatMessage } = intl
+    setPageTitle(formatMessage(messages.title))
   }
 
   getChildContext() {

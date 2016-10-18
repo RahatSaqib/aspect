@@ -81,6 +81,7 @@ const messages = defineMessages({
 export class DeviceDetail extends PureComponent {
 
   static propTypes = {
+    setPageTitle: PropTypes.func.isRequired,
     fetchSingleDevice: PropTypes.func.isRequired
   }
 
@@ -98,6 +99,12 @@ export class DeviceDetail extends PureComponent {
       notes: data.get('notes'),
       siteId: data.get('site')
     })
+  }
+
+  componentWillMount() {
+    const { setPageTitle, intl } = this.props
+    const { formatMessage } = intl
+    setPageTitle(formatMessage(messages.title))
   }
 
   componentDidMount() {

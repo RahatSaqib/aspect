@@ -58,6 +58,7 @@ const messages = defineMessages({
 export class ResultList extends PureComponent {
 
   static propTypes = {
+    setPageTitle: PropTypes.func.isRequired,
     table: PropTypes.object.isRequired
   }
 
@@ -81,6 +82,12 @@ export class ResultList extends PureComponent {
   resetResults = () => {
     this.setState({ filters: this.state.filters.set('deviceName', '') })
     this.props.fetchResults()
+  }
+
+  componentWillMount() {
+    const { setPageTitle, intl } = this.props
+    const { formatMessage } = intl
+    setPageTitle(formatMessage(messages.title))
   }
 
   render() {
