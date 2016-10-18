@@ -48,8 +48,8 @@ module.exports = [
       validate: {
         payload: {
           id: Joi.number().integer().required(),
-          timezone: Joi.string().max(255).required(),
-          culture: Joi.string().max(45).required()
+          timezone: Joi.string().max(255).allow('', null),
+          culture: Joi.string().max(45).allow('', null)
         }
       }
     }

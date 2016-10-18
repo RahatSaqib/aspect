@@ -20,7 +20,7 @@ describe('/account-details', function () {
           .get(path)
           .set('Authorization', 'Bearer ' + shared.token)
           .end(function(err,res){
-            //We need this for the nex test
+            //We need this for the next tests
             accountDetails = res.body.data
             assert.equal(res.status, 200)
             assert.typeOf(res.body, 'Object')
@@ -77,6 +77,58 @@ describe('/account-details', function () {
                   .set('Authorization', 'Bearer ' + shared.token)
                   .end(function(err,res){
                     assert.equal(res.body.data.title, originalTitle)
+                    done()
+                  })
+              })
+          })
+      })
+    })
+  })
+
+  describe('/account-details/current-preferences', function (){
+    describe('PUT', function(){
+      const path = '/api/account-details/current-preferences'
+
+      it('should update user preferences for the currently logged in user and return them', function(done){
+        let originalTimezone = accountDetails.timezone
+        let newTimezone = 'South African Standard Time'
+        assert.notEqual(accountDetails.timezone, newTimezone, 'The timezone set for this person is already set to \'South African Standard Time\'. This could be a problem with the cleanup that was supposed to have happened the last time this test was run. Please update the timezone for this person (id=' + accountDetails.id + ') to something other than \'' + newTimezone + '\'')
+        let userPreferences = _.omit(accountDetails,
+          ['userId', 'username', 'name', 'title', 'email', 'email2', 'phone', 'cell', 'countryId',
+            'stateId', 'lgaId', 'zip'])
+        server
+          .put(path)
+          .send(Object.assign({}, userPreferences, { timezone: newTimezone }))
+          .set('Authorization', 'Bearer ' + shared.token)
+          .end(function(err,res){
+            assert.equal(res.status, 200)
+            assert.typeOf(res.body, 'Object')
+            assert.property(res.body, 'data')
+            assert.typeOf(res.body.data, 'Object')
+            const accountDetailsFieldNames = ['id', 'userId', 'username', 'name', 'title', 'email', 'email2',
+              'phone', 'cell', 'countryId', 'stateId', 'lgaId', 'timezone', 'culture']
+            _.each(accountDetailsFieldNames, function(fieldName) {
+              assert.property(res.body.data, fieldName)
+            })
+            assert.equal(res.body.data.timezone, newTimezone)
+
+            //Make sure the data has been persisted
+            server
+              .get('/api/account-details/current')
+              .set('Authorization', 'Bearer ' + shared.token)
+              .end(function(err,res){
+                assert.equal(res.body.data.timezone, newTimezone)
+
+                //Clean Up: Update the user with their old title again
+                userPreferences = _.omit(accountDetails,
+                  ['userId', 'username', 'name', 'title', 'email', 'email2', 'phone', 'cell', 'countryId',
+                    'stateId', 'lgaId', 'zip'])
+                server
+                  .put(path)
+                  .send(Object.assign({}, userPreferences, { timezone: originalTimezone }))
+                  .set('Authorization', 'Bearer ' + shared.token)
+                  .end(function(err,res){
+                    assert.equal(res.body.data.timezone, originalTimezone)
                     done()
                   })
               })
