@@ -21,7 +21,7 @@ function* saveAccountDetailsForLoggedInUser(request){
 
   //The account details do not belong to the user that submitted this request!
   if(accountDetails.id !== request.payload.id) {
-    return Boom.badRequest('Incorrect user details')
+    return Boom.forbidden('Incorrect user details')
   }
 
   //Compare the record with what has been sent and find changed values
