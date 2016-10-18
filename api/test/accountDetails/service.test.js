@@ -103,10 +103,6 @@ describe('account details service', function () {
         email2: 'secondary@email.com',
         countryId: 5
       }
-      const changedDatabaseProperties = _.reduce(changedRequestProperties, function(result, value, key) {
-        result[key] = value
-        return result
-      }, {})
 
       const now = new Date()
       const clock = sinon.useFakeTimers(now.getTime())
@@ -118,7 +114,7 @@ describe('account details service', function () {
         const savePersonQuery = dbSpy.query.withArgs('Save account details for currently logged in user').lastCall.returnValue
         assert.equal(savePersonQuery.from.lastCall.args[0], 'person as p')
         assert.deepEqual(savePersonQuery.where.lastCall.args[0], {'p.id': accountDetails.id})
-        assert.deepEqual(savePersonQuery.update.lastCall.args[0], Object.assign({}, changedDatabaseProperties, {
+        assert.deepEqual(savePersonQuery.update.lastCall.args[0], Object.assign({}, changedRequestProperties, {
           updatedOn: now,
           updatedBy: accountDetails.userId
         }))
@@ -156,7 +152,7 @@ describe('account details service', function () {
         }),
         payload: accountDetails
       }])(function (response) {
-        assert.equal(response.output.statusCode, 400)
+        assert.equal(response.output.statusCode, 403)
         assert.equal(response.output.payload.message, 'Incorrect user details')
       })
     })
