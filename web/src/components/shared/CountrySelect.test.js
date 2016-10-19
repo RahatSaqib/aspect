@@ -3,7 +3,7 @@ import { assert } from 'chai'
 import _ from 'lodash'
 import { shallow } from 'enzyme'
 import sinon from 'sinon'
-import SelectField from 'material-ui/SelectField'
+import ForkedSelectField from '../forkedMaterialUi/ForkedSelectField'
 import MenuItem from 'material-ui/MenuItem'
 import FlagIcon from './flagIcon/FlagIcon'
 import CountrySelect from './CountrySelect'
@@ -32,7 +32,7 @@ describe('CountrySelect Component', () => {
   })
 
   it('should render a SelectField with with items for each country in the datasource', () => {
-    const selectField = CountrySelectWrapper.find(SelectField)
+    const selectField = CountrySelectWrapper.find(ForkedSelectField)
     assert.deepEqual(selectField.props(), {...selectField.props(),
       value: props.value,
       style: props.selectFieldStyle,
@@ -66,7 +66,7 @@ describe('CountrySelect Component', () => {
   describe('Selecting one of the countries in the list', () => {
     it('should call the onChange method with the value of the country', () => {
       assert.isOk(props.onChange.notCalled)
-      const selectField = CountrySelectWrapper.find(SelectField),
+      const selectField = CountrySelectWrapper.find(ForkedSelectField),
         valueToSelect = props.dataSourceConfig.valuePredicate(props.dataSource[0])
       selectField.simulate('change', undefined, undefined, valueToSelect)
 
@@ -83,7 +83,7 @@ describe('CountrySelect Component', () => {
     })
 
     it('should render a SelectField with with items for each country built into the CountrySelect component', () => {
-      const selectField = CountrySelectWrapper.find(SelectField)
+      const selectField = CountrySelectWrapper.find(ForkedSelectField)
       assert.isAtLeast(selectField.props().children.length, 242)
     })
 
@@ -94,7 +94,7 @@ describe('CountrySelect Component', () => {
       })
 
       it('should render a SelectField with with items for each country', () => {
-        const selectField = CountrySelectWrapper.find(SelectField)
+        const selectField = CountrySelectWrapper.find(ForkedSelectField)
         assert.deepEqual(selectField.props(), {...selectField.props(),
           value: props.value,
           style: props.selectFieldStyle,

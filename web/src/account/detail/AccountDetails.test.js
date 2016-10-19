@@ -66,7 +66,7 @@ describe('AccountDetails Component', () => {
         setPageTitle: () => {},
         loading: false,
         saving: false,
-        accountDetails: new AccountDetailsRecord(),
+        accountDetails: (new AccountDetailsRecord()).get('data'),
         saveContactDetails: () => {},
         saveLoginDetails: () => {},
         saveUserPreferences: () => {},
@@ -117,7 +117,7 @@ describe('AccountDetails Component', () => {
         assert.equal(firstTab.find('h2').text(), 'Contact Details')
 
         const contactDetailsForm = firstTab.find(ContactDetailsForm)
-        assert.equal(contactDetailsForm.props().initialValues, props.accountDetails.getIn(['data', 'contactDetails']))
+        assert.equal(contactDetailsForm.props().initialValues, props.accountDetails.get('contactDetails'))
         assert.equal(contactDetailsForm.props().onSubmit, props.saveContactDetails)
       })
 
@@ -127,7 +127,7 @@ describe('AccountDetails Component', () => {
         assert.equal(secondTab.find('h2').text(), 'Username & Password')
 
         const loginDetailsForm = secondTab.find(LoginDetailsForm)
-        assert.equal(loginDetailsForm.props().initialValues, props.accountDetails.getIn(['data', 'loginDetails']))
+        assert.equal(loginDetailsForm.props().initialValues, props.accountDetails.get('loginDetails'))
         assert.equal(loginDetailsForm.props().onSubmit, props.saveLoginDetails)
       })
 
@@ -137,7 +137,7 @@ describe('AccountDetails Component', () => {
         assert.equal(thirdTab.find('h2').text(), 'Language & Timezone')
 
         const userPreferencesForm = thirdTab.find(UserPreferencesForm)
-        assert.equal(userPreferencesForm.props().initialValues, props.accountDetails.getIn(['data', 'userPreferences']))
+        assert.equal(userPreferencesForm.props().initialValues, props.accountDetails.get('userPreferences'))
         assert.equal(userPreferencesForm.props().onSubmit, props.saveUserPreferences)
       })
     })
