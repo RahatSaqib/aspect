@@ -1,8 +1,10 @@
 import Immutable from 'immutable'
 import _ from 'lodash'
+import jwt_decode from 'jwt-decode'
 import { aspectFetch, getHeaders, getBrowserNameAndVersion } from '../shared/utils/fetch'
 import * as localStorage from '../shared/utils/localStorage'
 import { addError } from '../error/ErrorRedux'
+import {loginSuccess} from '../auth/AuthRedux'
 
 export const types = {
   REQUEST_ACCOUNT_DETAILS: 'REQUEST_ACCOUNT_DETAILS',
@@ -73,6 +75,12 @@ function createReceiveUpdatedLoginDetails(updateDetails) {
   }
 }
 
+function storeAccess(access, refresh, clientId) {
+  const jwt = jwt_decode(access)
+  localStorage.store(access, jwt.exp, refresh, clientId)
+  return jwt
+}
+
 export function saveLoginDetails(loginDetails) {
   return dispatch => {
     dispatch(createSaveAccountDetailsStart())
@@ -88,8 +96,11 @@ export function saveLoginDetails(loginDetails) {
           clientName: getBrowserNameAndVersion() + ' on ' + window.navigator.platform
         })
       })
-      //TODO: Update token and user details
-      .then(json => dispatch(createReceiveUpdatedLoginDetails(json.data)))
+      .then(json => {
+        let jwt = storeAccess(json.access, json.refresh, json.clientId)
+        dispatch(loginSuccess(jwt.name, jwt.culture, jwt.lang))
+        dispatch(createReceiveUpdatedLoginDetails(json.data))
+      })
       .catch(err => dispatch(addError('Saving login details failed', err.message, err)))
   }
 }
