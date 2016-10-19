@@ -18,6 +18,7 @@ import Assignment from 'material-ui/svg-icons/action/assignment'
 import People from 'material-ui/svg-icons/social/people'
 import Notifications from 'material-ui/svg-icons/social/notifications'
 import Book from 'material-ui/svg-icons/action/book'
+import RssFeed from 'material-ui/svg-icons/communication/rss-feed'
 
 // Our own imports
 import SelectableList from './SelectableList'
@@ -95,6 +96,13 @@ class SideNav extends PureComponent {
             leftIcon={<Laptop />}
             className={styles.Drawer__ListItem}
             primaryText="Sites"
+          />
+           <ListItem
+            containerElement={<Link to="/router" />}
+            value={ '/router' }
+            leftIcon={<RssFeed />}
+            className={styles.Drawer__ListItem}
+            primaryText="Routers"
           />
             <ListItem
             containerElement={<Link to="/notification" />}

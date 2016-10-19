@@ -17,7 +17,7 @@ function* listAssays(request){
   let assayQuery = knex('Assay as a')
     .innerJoin('AssayType as at', 'a.assayTypeId', 'at.id')
     .innerJoin('DeviceType as dt', 'a.deviceTypeId', 'dt.id')
-    .modify(filterParams, query, 'name', 'a.name')
+    .modify(filterParams, query, { 'name': 'a.name'})
     //.modify(addConstraints, dataConstraints, {device: 'd'})
 
   // get total count for paging

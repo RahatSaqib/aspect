@@ -17,7 +17,7 @@ function* listPartners(request){
   let dataConstraints = yield getConstraints(auth.credentials)
 
   let partnerQuery = knex('Partner as p')
-    .modify(filterParams, query, 'name', 'd.name')
+    .modify(filterParams, query, { 'name': 'p.name'})
     // TODO: modify addConstraints to not require site or device
     // .modify(addConstraints, dataConstraints, {Partner: 'p'})
 
