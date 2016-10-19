@@ -99,7 +99,7 @@ class PhoneInput extends React.PureComponent {
                            menuItemTextPredicate: country => country.name + ' (' + country.dial_code + ')'
                          }}
                          selectFieldStyle={{verticalAlign: 'bottom', width: '5.5em'}}
-                         onChange={this.onCountryChanged} selectedItemStyle={{width: '4.5em'}}
+                         onChange={this.onCountryChanged} selectedItemStyle={{position: 'absolute', left: '1em', right: '1.4em', top: '0.15em', textAlign: 'right', whiteSpace: 'nowrap', overflow: 'hidden', width: '2.8em', display: 'block'}}
                          underlineStyle={{display: 'none'}} />
         </div>
         <div style={{float: 'left'}}>

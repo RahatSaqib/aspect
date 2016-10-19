@@ -23,18 +23,20 @@ const messages = defineMessages({
 })
 
 const renderLanguageField = props => {
-  const {input} = props,
+  const {onSelectionChanged, input, selectFieldProps} = props,
     onChange = (event, index, value) => {
+      if(onSelectionChanged){
+        onSelectionChanged(event, index, value)
+      }
       input.onChange(value)
     }
   return (
-    <CountrySelect name={input.name} dataSource={languages}
+    <CountrySelect name={input.name} value={input.value} dataSource={languages}
                    dataSourceConfig={{
                      selectedItemTextPredicate: language => language.language_name,
                      menuItemTextPredicate: language => language.language_name,
                      valuePredicate: language => language.culture
-                   }}
-                   selectFieldStyle={{verticalAlign: 'bottom'}}
+                   }} selectFieldProps={selectFieldProps}
                    onChange={onChange} />
   )
 }
@@ -52,6 +54,11 @@ const UserPreferencesForm = props => {
                      dataSource={timezones} dataSourceConfig={timezoneDataSourceConfig} />
         <br />
         <Field name="culture" floatingLabelText={formatMessage(messages.language)}
+               selectFieldProps={{
+                 floatingLabelText: formatMessage(messages.language),
+                 disabled: (loading || saving),
+                 autoWidth: true
+               }}
                disabled={loading || saving} component={renderLanguageField}  />
       </div>
       <div className={styles.Form__ActionRow}>

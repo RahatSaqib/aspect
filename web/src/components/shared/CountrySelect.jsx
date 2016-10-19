@@ -1,21 +1,21 @@
 import React from 'react'
 import _ from 'lodash'
-import SelectField from 'material-ui/SelectField'
+import ForkedSelectField from '../forkedMaterialUi/ForkedSelectField'
 import MenuItem from 'material-ui/MenuItem'
 import FlagIcon from './flagIcon/FlagIcon'
 
 const MenuItemLabel = props => {
   const {country, selectedItemStyle} = props
-  return <div style={{...{display: 'inline-block', whiteSpace: 'nowrap', overflow: 'hidden'}, ...selectedItemStyle}}>
+  return <div style={{display: 'inline-block', whiteSpace: 'nowrap', overflow: 'hidden'}}>
     <FlagIcon countryIsoAlpha2Code={country.iso_alpha2_code} />
-    <div style={{position: 'absolute', left: '1.3em', right: '1.4em', top: '0.15em', textAlign: 'right', whiteSpace: 'nowrap', overflow: 'hidden'}}>
+    <div style={{...{display: 'inline-block', marginLeft: '0.5em'}, ...selectedItemStyle}}>
       {country.selectedItemText}
     </div>
   </div>
 }
 
 export default props => {
-  const {value, selectFieldStyle, selectedItemStyle, underlineStyle, onChange} = props,
+  const {value, selectFieldStyle, selectedItemStyle, underlineStyle, onChange, selectFieldProps} = props,
     dataSource = props.dataSource || countries,
     dataSourceConfig = props.dataSourceConfig || {},
     countriesJoinOn = dataSourceConfig.countriesJoinOn || 'iso_alpha2_code',
@@ -38,8 +38,8 @@ export default props => {
         }
       })
 
-  return <SelectField value={value} style={selectFieldStyle} underlineStyle={underlineStyle}
-                      autoWidth={true} onChange={onChange}>
+  return <ForkedSelectField value={value} style={selectFieldStyle} underlineStyle={underlineStyle}
+                      autoWidth={true} onChange={onChange} {...selectFieldProps}>
     {
       countriesData.map(country =>
         <MenuItem key={country.value} value={country.value}
@@ -47,7 +47,7 @@ export default props => {
                                                                          countryIsoAlpha2Code={country.iso_alpha2_code} />}
                   label={<MenuItemLabel country={country} selectedItemStyle={selectedItemStyle} />} />)
     }
-  </SelectField>
+  </ForkedSelectField>
 }
 
 const countries = [{name:'Afghanistan',iso_alpha2_code:'AF'},
