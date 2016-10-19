@@ -82,19 +82,26 @@ const LoginDetailsForm = props => {
       closeCurrentPasswordInputDialog()
       handleSubmit()
     },
+    onCurrentPasswordKeyPress = event => {
+      if(event.key === 'Enter') {
+        submitCurrentPassword()
+      }
+    },
     currentPasswordInputDialogActions = [
-      <FlatButton label={formatMessage(messages.submitCurrentPassword)} primary
-                  onTouchTap={submitCurrentPassword} />,
       <FlatButton label={formatMessage(messages.cancelCurrentPassword)} secondary
-                  onTouchTap={closeCurrentPasswordInputDialog} />
+                  disabled={loading} onTouchTap={closeCurrentPasswordInputDialog} />,
+      <FlatButton label={formatMessage(messages.submitCurrentPassword)} primary
+                  disabled={pristine || invalid || loading} onTouchTap={submitCurrentPassword} />
     ]
   return (
     <form onSubmit={submitCurrentPassword} className={styles.Form}>
       <div className={styles.Form__Content}>
         <TextInput name="username" label={formatMessage(messages.username)} disabled={loading} maxLength="500" />
         <br />
-        <StrongPasswordInput name="newPassword" label={formatMessage(messages.newPassword)} disabled={loading} maxLength="100" />
-        <TextInput name="confirmNewPassword" label={formatMessage(messages.confirmNewPassword)} disabled={loading} maxLength="100" type="password" />
+        <StrongPasswordInput name="newPassword" label={formatMessage(messages.newPassword)}
+                             disabled={loading} maxLength="100" />
+        <TextInput name="confirmNewPassword" label={formatMessage(messages.confirmNewPassword)}
+                   disabled={loading} maxLength="100" type="password" />
       </div>
       <div className={styles.Form__ActionRow}>
         <RaisedButton disabled={pristine || invalid || loading} label={formatMessage(messages.save)} secondary
@@ -105,8 +112,8 @@ const LoginDetailsForm = props => {
               open={currentPasswordInputDialogOpen}
               onRequestClose={closeCurrentPasswordInputDialog}>
         {formatMessage(messages.currentPasswordDialogMessage)}
-        <TextInput name="currentPassword" label={formatMessage(messages.currentPassword)}
-                   disabled={loading} maxLength="100" type="password" />
+        <TextInput name="currentPassword" autoFocus fullWidth disabled={loading} maxLength="100"
+                   onKeyPress={onCurrentPasswordKeyPress} type="password" />
       </Dialog>
     </form>
   )
@@ -118,9 +125,9 @@ const validate = (loginDetails, props) => {
   if (!loginDetails.get('username')) {
     errors.username = formatMessage(messages.usernameRequired)
   }
-  //TODO: messages.usernameUnavailable
-  //TODO: messages.currentPasswordRequired: If any details are dirty, validate that current password has been entered and is correct
-  //TODO: messages.invalidPassword: Check that current password is correct
+  if (!loginDetails.get('currentPassword')) {
+    errors.currentPassword = formatMessage(messages.currentPasswordRequired)
+  }
   if (loginDetails.get('newPassword')) {
     //TODO: messages.weakPassword
 

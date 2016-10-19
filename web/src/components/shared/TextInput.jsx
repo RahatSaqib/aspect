@@ -7,18 +7,27 @@ const renderTextField = props => {
   const {input, meta, textFieldProps} = props,
     {touched, error} = meta
   return <TextField {...input} errorStyle={{ float: 'left' }}
-             errorText={touched && error} {...textFieldProps} className={styles.Form__Field} />
+                    errorText={touched && error} {...textFieldProps}
+                    className={textFieldProps.fullWidth ? '' : styles.Form__Field} />
 }
 
 const renderFormField = props => {
-  const {name, label, fullWidth, disabled, maxLength, type} = props
-  return <Field name={name} textFieldProps={{
+  const {name, label, fullWidth, autoFocus, disabled, maxLength, type, onChange, onKeyPress} = props
+  const textFieldProps = {
     floatingLabelText: label,
     fullWidth: fullWidth,
+    autoFocus: autoFocus,
     disabled: disabled,
     maxLength: maxLength,
     type: type || 'text'
-  }} component={renderTextField} />
+  }
+  if(onChange) {
+    textFieldProps.onChange = onChange
+  }
+  if(onKeyPress) {
+    textFieldProps.onKeyPress = onKeyPress
+  }
+  return <Field name={name} textFieldProps={textFieldProps} component={renderTextField} />
 }
 
 export default renderFormField

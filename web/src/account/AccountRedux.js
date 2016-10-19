@@ -1,4 +1,5 @@
 import Immutable from 'immutable'
+import { SubmissionError } from 'redux-form'
 import _ from 'lodash'
 import jwt_decode from 'jwt-decode'
 import { aspectFetch, getHeaders, getBrowserNameAndVersion } from '../shared/utils/fetch'
@@ -12,7 +13,8 @@ export const types = {
   SAVE_ACCOUNT_DETAILS_START: 'SAVE_ACCOUNT_DETAILS_START',
   RECEIVE_UPDATED_CONTACT_DETAILS: 'RECEIVE_UPDATED_CONTACT_DETAILS',
   RECEIVE_UPDATED_LOGIN_DETAILS: 'RECEIVE_UPDATED_LOGIN_DETAILS',
-  RECEIVE_UPDATED_USER_PREFERENCES: 'RECEIVE_UPDATED_USER_PREFERENCES'
+  RECEIVE_UPDATED_USER_PREFERENCES: 'RECEIVE_UPDATED_USER_PREFERENCES',
+  INCORRECT_CURRENT_PASSWORD_ENTERED: 'INCORRECT_CURRENT_PASSWORD_ENTERED'
 }
 
 /*
@@ -75,6 +77,12 @@ function createReceiveUpdatedLoginDetails(updateDetails) {
   }
 }
 
+function createIncorrectCurrentPasswordEntered() {
+  return {
+    type: types.INCORRECT_CURRENT_PASSWORD_ENTERED
+  }
+}
+
 function storeAccess(access, refresh, clientId) {
   const jwt = jwt_decode(access)
   localStorage.store(access, jwt.exp, refresh, clientId)
@@ -101,7 +109,18 @@ export function saveLoginDetails(loginDetails) {
         dispatch(loginSuccess(jwt.name, jwt.culture, jwt.lang))
         dispatch(createReceiveUpdatedLoginDetails(json.data))
       })
-      .catch(err => dispatch(addError('Saving login details failed', err.message, err)))
+      .catch(err => {
+        if(err.message === 'Incorrect password.') {
+          dispatch(createIncorrectCurrentPasswordEntered())
+          //TODO: i18n Possibly through a callback passed to the function
+          throw new SubmissionError({currentPassword: 'The password that you entered is not valid'})
+        } else if(err.message === 'Username already in use') {
+          //TODO: i18n Possibly through a callback passed to the function
+          throw new SubmissionError({username: 'This username is unavailable'})
+        } else {
+          dispatch(addError('Saving login details failed', err.message, err))
+        }
+      })
   }
 }
 
@@ -147,7 +166,8 @@ const ContactDetails = Immutable.Record({
     username: null,
     newPassword: null,
     confirmNewPassword: null,
-    currentPassword: null
+    currentPassword: null,
+    incorrectCurrentPasswordEntered: false
   }), UserPreferences = Immutable.Record({
     id: null,
     timezone: null,
@@ -206,7 +226,24 @@ function receiveUpdatedLoginDetails(state, updateDetails) {
     saving: false,
     data: new AccountDetailsData({
       contactDetails: state.getIn(['data', 'contactDetails']),
-      loginDetails: new LoginDetails({ id: state.getIn(['data', 'loginDetails', 'id']), username: updateDetails.username }),
+      loginDetails: new LoginDetails({...state.getIn(['data', 'loginDetails']).toJS(),
+        username: updateDetails.username,
+        incorrectCurrentPasswordEntered: false
+      }),
+      userPreferences: state.getIn(['data', 'userPreferences'])
+    })
+  })
+}
+
+function incorrectCurrentPasswordEntered(state) {
+  return state.mergeDeep({
+    loading: false,
+    saving: false,
+    data: new AccountDetailsData({
+      contactDetails: state.getIn(['data', 'contactDetails']),
+      loginDetails: new LoginDetails({...state.getIn(['data', 'loginDetails']).toJS(),
+        incorrectCurrentPasswordEntered: true
+      }),
       userPreferences: state.getIn(['data', 'userPreferences'])
     })
   })
@@ -238,6 +275,8 @@ export default function accountDetailsReducer(state = initialState, action) {
     return receiveUpdatedLoginDetails(state, action.updateDetails)
   case types.RECEIVE_UPDATED_USER_PREFERENCES:
     return receiveUpdatedUserPreferences(state, action.accountDetails)
+  case types.INCORRECT_CURRENT_PASSWORD_ENTERED:
+    return incorrectCurrentPasswordEntered(state)
   }
   return state
 }

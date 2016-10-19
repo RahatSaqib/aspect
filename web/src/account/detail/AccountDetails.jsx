@@ -54,7 +54,7 @@ class AccountDetails extends React.PureComponent {
     super(props)
 
     this.state = {
-      currentPasswordInputDialogOpen: false
+      currentPasswordInputDialogOpen: props.accountDetails && props.accountDetails.getIn(['loginDetails', 'incorrectCurrentPasswordEntered'])
     }
 
     this.openCurrentPasswordInputDialog = this.openCurrentPasswordInputDialog.bind(this)
@@ -72,6 +72,12 @@ class AccountDetails extends React.PureComponent {
   componentDidMount() {
     const {fetchAccountDetails} = this.props
     fetchAccountDetails()
+  }
+
+  componentWillReceiveProps(newProps) {
+    if(newProps.accountDetails && newProps.accountDetails.getIn(['loginDetails', 'incorrectCurrentPasswordEntered'])) {
+      this.openCurrentPasswordInputDialog()
+    }
   }
 
   render() {
