@@ -76,30 +76,66 @@ function* seed(knex){
     rightBound: 5
   })
 
+  // Categories of devices (lab, connectivity...)
+  let [deviceTypeCategoryLab] = yield knex('DeviceTypeCategory').insert({
+    name: 'Lab',
+    hasConnectivity: 0,
+    hasResults: 1
+  })
+
+  let [deviceTypeCategoryConnectivity] = yield knex('DeviceTypeCategory').insert({
+    name: 'Router',
+    hasConnectivity: 1,
+    hasResults: 0
+  })
+
+  yield knex('DeviceTypeCategory').insert({
+    name: 'Integrated',
+    hasConnectivity: 1,
+    hasResults: 1
+  })
+
+  yield knex('DeviceTypeCategory').insert({
+    name: 'Client',
+    hasConnectivity: 0,
+    hasResults: 0
+  })
+
   // Device Types
   let [deviceTypeGeneXpertId] = yield knex('DeviceType').insert({
     name: 'GeneXpert',
-    manufacturer: 'Cepheid'
+    manufacturer: 'Cepheid',
+    deviceTypeCategoryId: deviceTypeCategoryLab
   })
 
   let [deviceTypeAfinionId] = yield knex('DeviceType').insert({
     name: 'Afinion',
-    manufacturer: 'Alere'
+    manufacturer: 'Alere',
+    deviceTypeCategoryId: deviceTypeCategoryLab
   })
 
   let [deviceTypeQId] = yield knex('DeviceType').insert({
     name: 'Q',
-    manufacturer: 'Alere'
+    manufacturer: 'Alere',
+    deviceTypeCategoryId: deviceTypeCategoryLab
   })
 
   yield knex('DeviceType').insert({
     name: 'm2000',
-    manufacturer: 'Abbott'
+    manufacturer: 'Abbott',
+    deviceTypeCategoryId: deviceTypeCategoryLab
   })
 
   yield knex('DeviceType').insert({
     name: 'Daktari',
-    manufacturer: 'Daktari'
+    manufacturer: 'Daktari',
+    deviceTypeCategoryId: deviceTypeCategoryLab
+  })
+
+  let [deviceTypeIdRouter] = yield knex('DeviceType').insert({
+    name: 'Metacom Router',
+    manufacturer: 'Metacom',
+    deviceTypeCategoryId: deviceTypeCategoryConnectivity
   })
 
   // Assays and AssayTypes
@@ -289,46 +325,12 @@ function* seed(knex){
     }, geoDatas[geoDatas.length % userId], auditFields))
   }
 
-  let [deviceTypeCategoryLab] = yield knex('DeviceTypeCategory').insert({
-    name: 'Lab',
-    hasConnectivity: 0,
-    hasResults: 1
-  })
-
-  let [deviceTypeCategoryConnectivity] = yield knex('DeviceTypeCategory').insert({
-    name: 'Router',
-    hasConnectivity: 1,
-    hasResults: 0
-  })
-
-  yield knex('DeviceTypeCategory').insert({
-    name: 'Integrated',
-    hasConnectivity: 1,
-    hasResults: 1
-  })
-
-  yield knex('DeviceTypeCategory').insert({
-    name: 'Client',
-    hasConnectivity: 0,
-    hasResults: 0
-  })
-
-  let [deviceTypeIdGx] = yield knex('DeviceType').insert({
-    name: 'GeneXpert',
-    deviceTypeCategoryId: deviceTypeCategoryLab
-  })
-
-  let [deviceTypeIdRouter] = yield knex('DeviceType').insert({
-    name: 'Metacom Router',
-    deviceTypeCategoryId: deviceTypeCategoryConnectivity
-  })
-
   // insert some routers with sims:
   let routerIds = []
   for (let i = 0; i < routerNumber; i++) {
     let siteData = siteDatas[i % siteDatas.length]
 
-    let routerId = yield knex('Device').insert(Object.assign({}, auditFields, {
+    let [routerId] = yield knex('Device').insert(Object.assign({}, auditFields, {
       name: `Router at ${i} ${siteData.shortname}`,
       shortname: 'r'+i,
       deviceTypeId: deviceTypeIdRouter,
@@ -360,7 +362,7 @@ function* seed(knex){
     return Object.assign({}, auditFields, {
       name: `D${i} ${siteData.shortname}`,
       shortname: 'd'+i,
-      deviceTypeId: deviceTypeIdGx,
+      deviceTypeId: deviceTypeGeneXpertId,
       siteId: siteData.id,
       deviceId: routerId || null, // not all sites will have a router - we only added routers to some site
       createdOn: new Date(+now - 3*i*millisInHour),
