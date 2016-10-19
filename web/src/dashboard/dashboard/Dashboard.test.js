@@ -1,3 +1,4 @@
+import _ from 'lodash'
 import React from 'react'
 import {shallow} from 'enzyme'
 import Immutable from 'immutable'
@@ -16,7 +17,7 @@ describe('Dashboard', () => {
 
     let location = { search: 'fl=1' }
 
-    const Wrapper = shallow(<Dashboard location={location} user={user} intl={intl} />)
+    const Wrapper = shallow(<Dashboard setPageTitle={_.noop} location={location} user={user} intl={intl} />)
     const sb = Wrapper.find('Snackbar')
     assert.isTrue(sb.props().open)
   })
@@ -25,7 +26,7 @@ describe('Dashboard', () => {
 
     let location = { search: 'test=2' }
 
-    const Wrapper = shallow(<Dashboard location={location} user={user} intl={intl} />)
+    const Wrapper = shallow(<Dashboard setPageTitle={_.noop} location={location} user={user} intl={intl} />)
     const sb = Wrapper.find('Snackbar')
     assert.isFalse(sb.props().open)
   })

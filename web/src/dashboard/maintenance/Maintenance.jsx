@@ -1,6 +1,10 @@
 // Imports from packages
-import React, { PureComponent } from 'react'
+import _ from 'lodash'
+import React, { PureComponent, PropTypes } from 'react'
 import { Link } from 'react-router'
+import {
+  injectIntl
+} from 'react-intl'
 import Helmet from 'react-helmet'
 
 // Our own imports
@@ -8,6 +12,15 @@ import MiniChart from '../../components/shared/MiniChart'
 import styles from './Maintenance.css'
 
 export class Maintenance extends PureComponent {
+
+  static propTypes = {
+    setPageTitle: PropTypes.func.isRequired
+  }
+
+  componentWillMount() {
+    this.props.setPageTitle('Maintenance')
+  }
+
   render() {
     return (
       <div className={styles.Content}>
@@ -25,4 +38,6 @@ export class Maintenance extends PureComponent {
   }
 }
 
-export default Maintenance
+export const MaintenanceContainer = _.flowRight(
+  injectIntl
+)(Maintenance)

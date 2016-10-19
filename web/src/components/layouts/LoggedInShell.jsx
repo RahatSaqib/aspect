@@ -18,11 +18,18 @@ export class LoggedInShell extends PureComponent {
   }
 
   state = {
+    pageTitle: null,
     desktop: true
   }
 
+  handleSetPageTitle = pageTitle => {
+    this.setState({ pageTitle })
+  }
+
   render() {
-    const pathname = this.props.location.pathname
+    const { location } = this.props
+    const { pathname } = location
+    const { pageTitle } = this.state
 
     return (
       <div>
@@ -34,9 +41,17 @@ export class LoggedInShell extends PureComponent {
                   pathname={ pathname }
                   handleClose={this.props.closeDrawer}
                   handleRequestChange={(drawerOpen) => this.setState({drawerOpen})} />
-        <Nav handleHamburger={this.props.toggleDrawer} handleSignOut={this.props.logoutStart} handleLanguageChange={this.props.changeLanguage} />
+        <Nav
+          pageTitle={pageTitle}
+          pagePath={pathname}
+          handleHamburger={this.props.toggleDrawer}
+          handleSignOut={this.props.logoutStart}
+          handleLanguageChange={this.props.changeLanguage}
+        />
         <div style={ this.props.drawerOpen && this.state.desktop ? { paddingLeft: '190px' } : {} } >
-          {this.props.children}
+          {React.cloneElement(this.props.children, {
+            setPageTitle: this.handleSetPageTitle
+          })}
         </div>
       </div>
     )

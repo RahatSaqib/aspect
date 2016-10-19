@@ -17,6 +17,8 @@ import styles from './Nav.css'
 class Nav extends PureComponent {
 
   static propTypes = {
+    pageTitle: PropTypes.string,
+    pagePath: PropTypes.string,
     handleHamburger: PropTypes.func.isRequired,
     handleSignOut: PropTypes.func.isRequired
   }
@@ -25,11 +27,29 @@ class Nav extends PureComponent {
     router: PropTypes.object.isRequired
   }
 
+  renderPageFragment() {
+    const { pageTitle, pagePath } = this.props
+
+    if (pageTitle) {
+      return (
+        <span>
+          {' - '}
+          <Link className={styles.Brand} to={pagePath} >{pageTitle}</Link>
+        </span>
+      )
+    }
+  }
+
   render() {
     return (
       <AppBar
         onLeftIconButtonTouchTap={this.props.handleHamburger}
-        title={ <Link className={styles.Brand} to="/dashboard" >Aspect</Link> }
+        title={(
+          <span>
+            <Link className={styles.Brand} to="/dashboard" >Aspect</Link>
+            {this.renderPageFragment()}
+          </span>
+        )}
       >
         <div>
           <Badge

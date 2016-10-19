@@ -1,5 +1,5 @@
 import React, { Component } from 'react'
-import { Router, Route, IndexRoute, Redirect, applyRouterMiddleware, browserHistory } from 'react-router'
+import { Router, Route, IndexRoute, IndexRedirect, applyRouterMiddleware, browserHistory } from 'react-router'
 import { useScroll } from 'react-router-scroll'
 import PiwikReactRouter from 'piwik-react-router'
 import store from '../store'
@@ -13,16 +13,16 @@ import LoggedInShell from '../components/layouts/LoggedInShell'
 import { NotFoundContainer } from '../error/notFound/NotFound'
 import { LoginContainer } from '../auth/login/Login'
 import { DashboardContainer } from '../dashboard/dashboard/Dashboard'
-import { Inventory } from '../dashboard/inventory/Inventory'
-import { Maintenance } from '../dashboard/maintenance/Maintenance'
+import { InventoryContainer } from '../dashboard/inventory/Inventory'
+import { MaintenanceContainer } from '../dashboard/maintenance/Maintenance'
 import { DeviceListContainer } from '../device/list/DeviceList'
 import { DeviceDetailContainer } from '../device/detail/DeviceDetail'
 import { SiteListContainer } from '../site/list/SiteList'
 import { SiteDetailContainer } from '../site/detail/SiteDetail'
 import { PersonListContainer } from '../person/list/PersonList'
 import { ResultListContainer } from '../result/list/ResultList'
-import { NotificationList } from '../notification/list/NotificationList'
-import { ReportList } from '../report/list/ReportList'
+import { NotificationListContainer } from '../notification/list/NotificationList'
+import { ReportListContainer } from '../report/list/ReportList'
 import { AccountDetailsContainer } from '../account/detail/AccountDetails'
 
 import { refreshStart } from '../auth/AuthRedux'
@@ -53,17 +53,17 @@ const piwik = config.piwik ? PiwikReactRouter({
 
 const routes =
   <Router history={piwik ?  piwik.connectToHistory(browserHistory) : browserHistory} render={applyRouterMiddleware(useScroll()) }>
-    <Route component={App}>
+    <Route component={App} path="/">
       <Route component={LoginContainer} path="login" />
       <Route component={LoggedInShell}
         onChange={(prevState, nextState, replace) => requireAuth(nextState, replace) }>
 
-        <Redirect from='/' to='dashboard' />
+        <IndexRedirect to="dashboard" />
 
         <Route path="dashboard" >
           <IndexRoute component={DashboardContainer} />
-          <Route path="inventory" component={Inventory} />
-          <Route path="maintenance" component={Maintenance} />
+          <Route path="inventory" component={InventoryContainer} />
+          <Route path="maintenance" component={MaintenanceContainer} />
         </Route>
 
         <Route path="device" hasResults="1">
@@ -85,15 +85,15 @@ const routes =
           <Route path=":siteId" component={SiteDetailContainer} />
         </Route>
 
-        <Route path="/person" component={PersonListContainer} />
+        <Route path="person" component={PersonListContainer} />
 
         <Route path="account-details">
           <Route path="current" component={AccountDetailsContainer} />
         </Route>
 
-        <Route path="/notification" component={NotificationList} />
+        <Route path="notification" component={NotificationListContainer} />
 
-        <Route path="/report" component={ReportList} />
+        <Route path="report" component={ReportListContainer} />
 
       </Route>
       <Route path="*" component={NotFoundContainer} />
