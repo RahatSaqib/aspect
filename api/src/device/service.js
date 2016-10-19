@@ -1,6 +1,6 @@
 const Promise = require('bluebird')
 const Boom = require('boom')
-const { knex, filterParams, sortPageParams } = require('../db')
+const { knex, filterParams, sortPageParams, transact } = require('../db')
 const { getConstraints, addConstraints } = require('../auth/constraints')
 
 const SELECT_LIST_FIELDS = [
@@ -97,14 +97,70 @@ function* updateDevice(request) {
 }
 
 function* addDeviceOperation(request){
+  const {auth, payload} = request
+  const device = yield* getDeviceByDeviceId(request, ['d.id'])
+  if(!device.ok){
+    return Boom.notFound()
+  }
+  const deviceId = device.data.id
+
+  const now = new Date()
+  const userId = auth.credentials.id
+
+  yield transact(function*(knex){
+    const [deviceOperationId] = yield knex('DeviceOperation')
+      .insert({
+        deviceId,
+        data: JSON.stringify(payload.data),
+        createdOn: now,
+        createdBy: userId
+      })
+
+    yield knex('Device')
+      .where('id', deviceId)
+      .update({
+        deviceOperationId,
+        updatedOn: now,
+        updatedBy: userId
+      })
+  })
   return {ok: true}
 }
 
 function* listDeviceOperation(request){
-  return {ok: true}
+  let {query, auth} = request
+
+  // get data constraints
+  let dataConstraints = yield getConstraints(auth.credentials)
+
+  let opQuery = knex('DeviceOperation as do')
+    .leftJoin('Device as d', 'do.deviceId', 'd.id')
+    .modify(filterParams, query, 'name', 'd.name')
+    .modify(addConstraints, dataConstraints, {device: 'd'})
+
+  // get total count for paging
+  let getCount = opQuery.clone()
+    .count('do.id as count').first()
+
+  // get rows
+  let getItems = opQuery.clone()
+    .modify(sortPageParams, query, 'deviceName')
+    .select('do.id', 'do.createdOn', 'do.data', 'do.deviceId', 'd.name as deviceName')
+    .map(item => Object.assign({}, item, {data: JSON.parse(item.data)}))
+
+  // return result when both queries are finished
+  let [{count: total}, data] = yield Promise.all([getCount, getItems])
+
+  let result = {ok: true, total, length: data.length, data}
+
+  return result
 }
 
 function* addDeviceConfiguration(request){
+  const device = yield* getDeviceByDeviceId(request)
+  if(!device.ok){
+    return Boom.notFound()
+  }
   return {ok: true}
 }
 

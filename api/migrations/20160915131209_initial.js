@@ -319,7 +319,6 @@ function* up(knex){
       .index().references('id').inTable('Device')
     config.specificType('data', 'JSON').notNullable()
     addCreateFields(config)
-    addUpdateFields(config)
     config.charset('utf8')
   })
 
@@ -329,7 +328,6 @@ function* up(knex){
       .index().references('id').inTable('Device')
     config.specificType('data', 'JSON').notNullable()
     addCreateFields(config)
-    addUpdateFields(config)
     config.charset('utf8')
   })
 

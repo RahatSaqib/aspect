@@ -72,7 +72,9 @@ module.exports = [
         params: {
           deviceId: Joi.string().description('Device id').required()
         },
-        query: validateSortPageParams('createdOn', 'updatedOn')
+        query: Object.assign({
+          deviceName: Joi.string().allow('').description('Filter for device name')
+        }, validateSortPageParams('deviceName', 'createdOn', 'updatedOn'))
       }
     }
   },
@@ -106,7 +108,9 @@ module.exports = [
         params: {
           deviceId: Joi.string().description('Device id').required()
         },
-        query: validateSortPageParams('createdOn', 'updatedOn')
+        query: Object.assign({
+          deviceName: Joi.string().allow('').description('Filter for device name')
+        }, validateSortPageParams('deviceName', 'createdOn', 'updatedOn'))
       }
     }
   },
