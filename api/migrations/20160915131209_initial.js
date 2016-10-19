@@ -249,6 +249,13 @@ function* up(knex){
       .index().references('id').inTable('Site')
     device.integer('deviceTypeId').unsigned().notNullable()
       .index().references('id').inTable('DeviceType')
+
+    // current configuration and operation (history maintained with backref)
+    device.integer('deviceConfigurationId').unsigned()
+      .index().references('id').inTable('DeviceConfiguration')
+    device.integer('deviceOperationId').unsigned()
+      .index().references('id').inTable('DeviceOperation')
+
     // TODO Add device id1 - id4 or equivalent
     // used to uniquely identify provisioned devices, still to be discussed
     device.string('name').notNullable()
@@ -306,6 +313,26 @@ function* up(knex){
     history.charset('utf8')
   })
 
+  yield knex.schema.createTable('DeviceConfiguration', config => {
+    config.increments('id')
+    config.integer('deviceId').unsigned().notNullable()
+      .index().references('id').inTable('Device')
+    config.specificType('data', 'JSON').notNullable()
+    addCreateFields(config)
+    addUpdateFields(config)
+    config.charset('utf8')
+  })
+
+  yield knex.schema.createTable('DeviceOperation', config => {
+    config.increments('id')
+    config.integer('deviceId').unsigned().notNullable()
+      .index().references('id').inTable('Device')
+    config.specificType('data', 'JSON').notNullable()
+    addCreateFields(config)
+    addUpdateFields(config)
+    config.charset('utf8')
+  })
+
   yield knex.schema.createTable('AssayType', assayType => {
     assayType.increments('id')
     assayType.string('name').notNullable()
@@ -361,6 +388,8 @@ function* down(knex){
   yield knex.schema.dropTableIfExists('Device')
   yield knex.schema.dropTableIfExists('Site')
   yield knex.schema.dropTableIfExists('DeviceTypeCategory')
+  yield knex.schema.dropTableIfExists('DeviceConfiguration')
+  yield knex.schema.dropTableIfExists('DeviceOperation')
   yield knex.schema.dropTableIfExists('DeviceType')
   yield knex.schema.dropTableIfExists('RefreshToken')
   yield knex.schema.dropTableIfExists('UserRole')

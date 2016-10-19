@@ -1,6 +1,8 @@
 let Joi = require('joi')
 let { asyncHandler, validateSortPageParams } = require('../routes')
-let { listDevices, showDevice, updateDevice } = require('./service')
+let { listDevices, showDevice, updateDevice,
+  addDeviceOperation, listDeviceOperation,
+  addDeviceConfiguration, listDeviceConfiguration} = require('./service')
 
 module.exports = [
   {
@@ -54,6 +56,74 @@ module.exports = [
           name: Joi.string().required(),
           shortname: Joi.string().required(),
           notes: Joi.string().allow('')
+        }
+      }
+    }
+  },
+  {
+    method: 'GET',
+    path: '/device/{deviceId}/configuration',
+    handler: asyncHandler(listDeviceConfiguration),
+    config: {
+      notes: 'List Device Configuration',
+      description: 'List device configuration data for the specified device',
+      auth: {scope: ['device:view', 'device:edit']},
+      validate: {
+        params: {
+          deviceId: Joi.string().description('Device id').required()
+        },
+        query: validateSortPageParams('createdOn', 'updatedOn')
+      }
+    }
+  },
+  {
+    method: 'POST',
+    path: '/device/{deviceId}/configuration',
+    handler: asyncHandler(addDeviceConfiguration),
+    config: {
+      notes: 'Add Device Configuration',
+      description: 'Add new device configuration data for the specified device',
+      auth: {scope: ['device:edit']},
+      validate: {
+        params: {
+          deviceId: Joi.string().description('Device id').required()
+        },
+        payload: {
+          data: Joi.object().required()
+        }
+      }
+    }
+  },
+  {
+    method: 'GET',
+    path: '/device/{deviceId}/operation',
+    handler: asyncHandler(listDeviceOperation),
+    config: {
+      notes: 'List Device Operation',
+      description: 'List device operational data for the specified device',
+      auth: {scope: ['device:view', 'device:edit']},
+      validate: {
+        params: {
+          deviceId: Joi.string().description('Device id').required()
+        },
+        query: validateSortPageParams('createdOn', 'updatedOn')
+      }
+    }
+  },
+  {
+    method: 'POST',
+    path: '/device/{deviceId}/operation',
+    handler: asyncHandler(addDeviceOperation),
+    config: {
+      description: 'Device Operation',
+      notes: 'Adds new device operational data for the specified device',
+      auth: {scope: ['device:edit']},
+      validate: {
+        params: {
+          deviceId: Joi.string().description('Device id').required()
+        },
+        payload: {
+          data: Joi.object().required()
         }
       }
     }

@@ -1,6 +1,7 @@
-let Promise = require('bluebird')
-let { knex, filterParams, sortPageParams } = require('../db')
-let { getConstraints, addConstraints } = require('../auth/constraints')
+const Promise = require('bluebird')
+const Boom = require('boom')
+const { knex, filterParams, sortPageParams } = require('../db')
+const { getConstraints, addConstraints } = require('../auth/constraints')
 
 const SELECT_LIST_FIELDS = [
   'd.id', 'd.name', 'd.shortname', 'd.createdOn', 'd.lastPingOn', 'd.updatedOn as lastSeen',
@@ -55,19 +56,22 @@ function* listDevices(request){
   return result
 }
 
-function* showDevice(request) {
-  const {params} = request
+function* getDeviceByDeviceId(request, fields=SELECT_SHOW_FIELDS){
+  const {auth, params} = request
+  const dataConstraints = yield getConstraints(auth.credentials)
 
-  // get item
-  const [item] = yield knex('Device as d')
+  const devices = yield knex('Device as d')
     .innerJoin('DeviceType as dt', 'd.deviceTypeId', 'dt.id')
     .innerJoin('DeviceTypeCategory as dc', 'dt.deviceTypeCategoryId', 'dc.id')
     .where('d.id', params.deviceId)
-    .select(SELECT_SHOW_FIELDS)
+    .modify(addConstraints, dataConstraints, {device: 'd'})
+    .select(fields)
+  return {ok: devices.length === 1, data: devices[0]}
+}
 
-  const result = {ok: true, data: item}
-
-  return result
+function* showDevice(request) {
+  const device = yield* getDeviceByDeviceId(request)
+  return device.ok ? device : Boom.notFound()
 }
 
 function* updateDevice(request) {
@@ -92,9 +96,29 @@ function* updateDevice(request) {
   return yield* showDevice(request)
 }
 
+function* addDeviceOperation(request){
+  return {ok: true}
+}
+
+function* listDeviceOperation(request){
+  return {ok: true}
+}
+
+function* addDeviceConfiguration(request){
+  return {ok: true}
+}
+
+function* listDeviceConfiguration(request){
+  return {ok: true}
+}
+
 
 module.exports = {
   listDevices,
   showDevice,
-  updateDevice
+  updateDevice,
+  addDeviceOperation,
+  listDeviceOperation,
+  addDeviceConfiguration,
+  listDeviceConfiguration
 }
