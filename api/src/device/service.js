@@ -31,11 +31,11 @@ function* listDevices(request){
   let deviceQuery = knex('Device as d')
     .innerJoin('DeviceType as dt', 'd.deviceTypeId', 'dt.id')
     .innerJoin('DeviceTypeCategory as dc', 'dt.deviceTypeCategoryId', 'dc.id')
-    .modify(filterParams, query, 'name', 'd.name')
-    .modify(filterParams, query, 'hasConnectivity', 'dc.hasConnectivity')
-    .modify(filterParams, query, 'hasResults', 'dc.hasResults')
-    .modify(filterParams, query, 'category', 'dc.name')
-    .modify(filterParams, query, 'type', 'dt.name')
+    .modify(filterParams, query, {  name: 'd.name',
+                                    hasConnectivity: 'dc.hasConnectivity',
+                                    hasResults: 'dc.hasResults',
+                                    category: 'dc.name',
+                                    type: 'dt.name' })
     .modify(addConstraints, dataConstraints, {device: 'd'})
 
   // get total count for paging

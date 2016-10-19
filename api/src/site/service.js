@@ -28,7 +28,7 @@ function* listSites(request){
   let siteQuery = knex('Site as s')
     .leftOuterJoin('State as st', 's.stateId', 'st.id')
     .leftOuterJoin('Lga as l', 's.lgaId', 'l.id')
-    .modify(filterParams, query, 'name', 's.name')
+    .modify(filterParams, query, { 'name': 's.name'})
     .modify(addConstraints, dataConstraints, {site: 's', state: 'st', lga: 'l'})
 
   // get total count for paging

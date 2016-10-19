@@ -20,7 +20,7 @@ function* listPeople(request){
   let getItems = knex('Person as p')
     .leftOuterJoin('State as s', 'p.stateId', 's.id')
     .leftOuterJoin('Lga as l', 'p.lgaId', 'l.id')
-    .modify(filterParams, query, 'name', 'p.name')
+    .modify(filterParams, query, { 'name': 'p.name'})
     .modify(sortPageParams, query, 'name')
     .select('p.id', 'p.name', getRoleNames,
       's.name as state', 'l.name as lga')
@@ -28,7 +28,7 @@ function* listPeople(request){
   // return result when both queries are finished
   let [{count: total}, data] = yield Promise.all([getCount, getItems])
   let result = {ok: true, total, data, length: data.length}
-  
+
   return result
 }
 

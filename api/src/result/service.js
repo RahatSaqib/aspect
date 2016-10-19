@@ -55,7 +55,7 @@ function* listResultTypes(request){
   let dataConstraints = yield getConstraints(auth.credentials)
 
   let resultTypeQuery = knex('ResultType as rt')
-    .modify(filterParams, query, 'name', 'rt.name')
+    .modify(filterParams, query, { 'name': 'rt.name'})
     //.modify(addConstraints, dataConstraints, {device: 'd'})
 
   // get total count for paging
