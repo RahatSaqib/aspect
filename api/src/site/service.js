@@ -10,10 +10,10 @@ const SELECT_LIST_FIELDS = [
 
 const SELECT_SHOW_FIELDS = [
   's.id', 's.name', 's.shortname',
-  'st.name as state', 'l.name as lga',
+  'st.name as state', 'l.name as lga', 'ct.name as country',
   's.createdOn', knex.raw('s.id + 2 as totalDevices'),
 
-  'ct.name as country',
+  's.countryId','s.stateId','s.lgaId',
   's.timezoneId as timezone', // FIXME?
   's.city', 's.zip', 's.street1', 's.street2',
   's.longitude', 's.latitude'
@@ -69,21 +69,6 @@ function* updateSite(request) {
 
   // TODO: check permission
 
-  // TODO: maybe we want to use countryId, stateId and lgaId from payload?
-  const [{id: countryId}] = yield knex('Country')
-    .select('id')
-    .where('name', payload.country)
-
-  const [{id: stateId}] = yield knex('State')
-    .select('id')
-    .where('name', payload.state)
-    .where('countryId', countryId)
-
-  const [{id: lgaId}] = yield knex('Lga')
-    .select('id')
-    .where('name', payload.lga)
-    .where('stateId', stateId)
-
   // update item
   const updatedCount = yield knex('Site')
     .where('id', params.siteId)
@@ -93,9 +78,9 @@ function* updateSite(request) {
       timezoneId: payload.timezone, // TODO
       street1: payload.street1,
       street2: payload.street2,
-      countryId,
-      stateId,
-      lgaId,
+      countryId: payload.countryId,
+      stateId: payload.stateId,
+      lgaId: payload.lgaId,
       city: payload.city,
       zip: payload.zip,
       longitude: payload.longitude,
