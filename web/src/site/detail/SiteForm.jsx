@@ -25,9 +25,9 @@ export default class SiteForm extends PureComponent {
       name: data.get('name'),
       shortname: data.get('shortName'),
       timezone: data.get('timezone'),
-      country: data.get('country'),
-      state: data.get('state'),
-      lga: data.get('lga'),
+      countryId: data.get('countryId'),
+      stateId: data.get('stateId'),
+      lgaId: data.get('lgaId'),
       street1: data.get('address'),
       street2: data.get('address2'),
       city: data.get('city'),
@@ -40,14 +40,21 @@ export default class SiteForm extends PureComponent {
   // this renders the fields in controls for a user who has write access
   renderEditableFieldsFormContainer() {
     const { site, formatMessage } = this.props
+    const extraValuesForMap = {
+      // SiteLocationFormMap reads the values from redux-form to construct names for Geocoder
+      country: site.get('country'),
+      state: site.get('state'),
+      lga: site.get('lga')
+    }
     const initialValues = {
+      ...extraValuesForMap,
       // Map API fields to form fields
       name: site.get('name'),
       shortName: site.get('shortname'),
       timezone: site.get('timezone') || /* FIXME */ '',
-      country: site.get('country'),
-      state: site.get('state'),
-      lga: site.get('lga'),
+      countryId: site.get('countryId'),
+      stateId: site.get('stateId'),
+      lgaId: site.get('lgaId'),
       address: site.get('street1'),
       address2: site.get('street2') || /* FIXME */ '',
       city: site.get('city'),
@@ -57,9 +64,6 @@ export default class SiteForm extends PureComponent {
       name: formatMessage(messages.fieldName),
       shortName: formatMessage(messages.fieldShortname),
       timezone: formatMessage(messages.fieldTimeZone),
-      country: formatMessage(messages.fieldCountry),
-      state: formatMessage(messages.fieldState),
-      lga: formatMessage(messages.fieldLGA),
       address: formatMessage(messages.fieldAddress),
       address2: formatMessage(messages.fieldAddress2),
       city: formatMessage(messages.fieldCity),

@@ -9,6 +9,7 @@ import RaisedButton from 'material-ui/RaisedButton'
 import TextField from 'material-ui/TextField'
 
 // Our own imports
+import LocationSelector from '../../components/shared/LocationSelector'
 
 const renderTextField = ({ input, meta, ...restProps }) => {
   return (
@@ -30,16 +31,21 @@ export class EditableFieldsForm extends PureComponent {
   }
 
   render() {
-    const { labels, handleSubmit, pristine, submitting } = this.props
+    const { labels, initialValues, handleSubmit, pristine, loading, submitting } = this.props
 
     return (
       <form onSubmit={handleSubmit}>
         <Field name="name" floatingLabelText={labels.name} component={renderTextField} />
         <Field name="shortName" floatingLabelText={labels.shortName} component={renderTextField} />
         <Field name="timezone" floatingLabelText={labels.timezone} component={renderTextField} />
-        <Field name="country" floatingLabelText={labels.country} component={renderTextField} />
-        <Field name="state" floatingLabelText={labels.state} component={renderTextField} />
-        <Field name="lga" floatingLabelText={labels.lga} component={renderTextField} />
+        <LocationSelector
+          disabled={loading}
+          initialValues={initialValues}
+          formName="siteDetail"
+          countryIdFieldName="countryId"
+          stateIdFieldName="stateId"
+          lgaIdFieldName="lgaId"
+        />
         <Field name="address" floatingLabelText={labels.address} component={renderTextField} />
         <Field name="address2" floatingLabelText={labels.address2} component={renderTextField} />
         <Field name="city" floatingLabelText={labels.city} component={renderTextField} />
