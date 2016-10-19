@@ -4,7 +4,8 @@ let { getConstraints, addConstraints } = require('../auth/constraints')
 
 const SELECT_LIST_FIELDS = [
 
-  'a.id', 'at.id as assayTypeId', 'a.name', 'at.name as assayTypeName'
+  'a.id', 'at.id as assayTypeId', 'a.name', 'at.name as assayTypeName',
+  'dt.id as deviceTypeId', 'dt.name as deviceTypeName'
 ]
 
 function* listAssays(request){
@@ -14,7 +15,8 @@ function* listAssays(request){
   let dataConstraints = yield getConstraints(auth.credentials)
 
   let assayQuery = knex('Assay as a')
-    .leftJoin('AssayType as at', 'a.assayTypeId', 'at.id')
+    .innerJoin('AssayType as at', 'a.assayTypeId', 'at.id')
+    .innerJoin('DeviceType as dt', 'a.deviceTypeId', 'dt.id')
     .modify(filterParams, query, 'name', 'a.name')
     //.modify(addConstraints, dataConstraints, {device: 'd'})
 

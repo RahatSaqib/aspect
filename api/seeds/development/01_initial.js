@@ -75,29 +75,83 @@ function* seed(knex){
     rightBound: 5
   })
 
+  // Device Types
+  let [deviceTypeGeneXpertId] = yield knex('DeviceType').insert({
+    name: 'GeneXpert',
+    manufacturer: 'Cepheid'
+  })
+
+  let [deviceTypeAfinionId] = yield knex('DeviceType').insert({
+    name: 'Afinion',
+    manufacturer: 'Alere'
+  })
+
+  let [deviceTypeQId] = yield knex('DeviceType').insert({
+    name: 'Q',
+    manufacturer: 'Alere'
+  })
+
+  yield knex('DeviceType').insert({
+    name: 'm2000',
+    manufacturer: 'Abbott'
+  })
+
+  yield knex('DeviceType').insert({
+    name: 'Daktari',
+    manufacturer: 'Daktari'
+  })
 
   // Assays and AssayTypes
   let [assayTypeMTBRifId] = yield knex('AssayType').insert({
     name: 'MTB/Rif'
   })
 
+  let [assayTypeEbolaId] = yield knex('AssayType').insert({
+    name: 'Ebola'
+  })
+
   let [assayTypeHIVVLId] = yield knex('AssayType').insert({
     name: 'HIV VL'
   })
 
-  yield knex('Assay').insert({
-    name: 'GeneXpert MTB/Rif',
-    assayTypeId: assayTypeMTBRifId
+  let [assayTypeLipidPanelId] = yield knex('AssayType').insert({
+    name: 'Lipid Panel'
   })
 
   yield knex('Assay').insert({
-    name: 'Merck MTB/Rif',
-    assayTypeId: assayTypeMTBRifId
+    name: 'GeneXpert MTB/Rif',
+    assayTypeId: assayTypeMTBRifId,
+    deviceTypeId: deviceTypeGeneXpertId
   })
 
   yield knex('Assay').insert({
     name: 'GeneXpert HIV VL',
-    assayTypeId: assayTypeHIVVLId
+    assayTypeId: assayTypeHIVVLId,
+    deviceTypeId: deviceTypeGeneXpertId
+  })
+
+  yield knex('Assay').insert({
+    name: 'GeneXpert Ebola',
+    assayTypeId: assayTypeEbolaId,
+    deviceTypeId: deviceTypeGeneXpertId
+  })
+
+  yield knex('Assay').insert({
+    name: 'Afinion HIV VL',
+    assayTypeId: assayTypeHIVVLId,
+    deviceTypeId: deviceTypeAfinionId
+  })
+
+  yield knex('Assay').insert({
+    name: 'Afinion Lipid Panel',
+    assayTypeId: assayTypeLipidPanelId,
+    deviceTypeId: deviceTypeAfinionId
+  })
+
+  yield knex('Assay').insert({
+    name: 'Q HIV VL',
+    assayTypeId: assayTypeHIVVLId,
+    deviceTypeId: deviceTypeQId
   })
 
   //Result types
@@ -234,16 +288,12 @@ function* seed(knex){
     }, geoDatas[geoDatas.length % userId], auditFields))
   }
 
-  let [deviceTypeId] = yield knex('DeviceType').insert({
-    name: 'GeneXpert'
-  })
-
   let devices = _.range(1, deviceNumber+1).map(i => {
     let siteData = siteDatas[i % siteDatas.length]
     return Object.assign({}, auditFields, {
       name: `D${i} ${siteData.shortname}`,
       shortname: 'd'+i,
-      deviceTypeId,
+      deviceTypeId: deviceTypeGeneXpertId,
       siteId: siteData.id,
       createdOn: new Date(+now - 3*i*millisInHour),
       updatedOn: new Date(+now - i*millisInHour),
