@@ -204,8 +204,13 @@ describe('AccountDetailsRedux', () => {
       }
       const proxyDependencies = {
         '../shared/utils/fetch': fetchStub,
+        'jwt-decode': () => 'decoded-token',
         '../shared/utils/localStorage': {
-          getClientId: () => 'Mocha/Chai'
+          getClientId: () => 'Mocha/Chai',
+          store: () => {}
+        },
+        '../auth/AuthRedux': {
+          loginSuccess: () => {}
         }
       }
       if(errorCreatorsStub) {
@@ -445,7 +450,7 @@ describe('AccountDetailsRedux', () => {
         it('Should dispatch a RECEIVE_UPDATED_LOGIN_DETAILS action with the account details received', () => {
           return expectedResponseFromServer.then(response => {
             assert.deepEqual(response, {ok: true, data: updateDetails})
-            assert.deepEqual(dispatch.secondCall.args, [{
+            assert.deepEqual(dispatch.thirdCall.args, [{
               type: types.RECEIVE_UPDATED_LOGIN_DETAILS,
               updateDetails: updateDetails
             }])
