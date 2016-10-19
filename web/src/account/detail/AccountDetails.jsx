@@ -39,8 +39,7 @@ const messages = defineMessages({
   }
 })
 
-class AccountDetails extends PureComponent {
-
+class AccountDetails extends React.PureComponent {
   static propTypes = {
     setPageTitle: PropTypes.func.isRequired
   }
@@ -51,6 +50,25 @@ class AccountDetails extends PureComponent {
     setPageTitle(formatMessage(messages.title))
   }
 
+  constructor(props) {
+    super(props)
+
+    this.state = {
+      currentPasswordInputDialogOpen: false
+    }
+
+    this.openCurrentPasswordInputDialog = this.openCurrentPasswordInputDialog.bind(this)
+    this.closeCurrentPasswordInputDialog = this.closeCurrentPasswordInputDialog.bind(this)
+  }
+
+  openCurrentPasswordInputDialog = () => {
+    this.setState({ currentPasswordInputDialogOpen: true })
+  }
+
+  closeCurrentPasswordInputDialog = () => {
+    this.setState({currentPasswordInputDialogOpen: false})
+  }
+
   componentDidMount() {
     const {fetchAccountDetails} = this.props
     fetchAccountDetails()
@@ -58,8 +76,7 @@ class AccountDetails extends PureComponent {
 
   render() {
     const { formatMessage } = this.props.intl
-    const { loading, saving, accountDetails, saveContactDetails,
-      saveLoginDetails, saveUserPreferences } = this.props
+    const { loading, saving, accountDetails, saveContactDetails, saveUserPreferences, saveLoginDetails } = this.props
     return (
       <div className={styles.Content}>
         <Paper>
@@ -67,20 +84,35 @@ class AccountDetails extends PureComponent {
             <Tab className={styles.ResponsiveTab} icon={<MapsPersonPin />}
                  label={<span className="pure-hidden-xs">{formatMessage(messages.contactDetails)}</span>}>
               {(loading || saving) && <LinearProgress />}
-              <h2 className={'pure-visible-xs ' + styles.Form__Header}>{formatMessage(messages.contactDetails)}</h2>
-              {!loading && <ContactDetailsForm loading={loading || saving} initialValues={accountDetails.get('contactDetails')} onSubmit={saveContactDetails} />}
+              <h2 className={'pure-visible-xs ' + styles.Form__Header}>
+                {formatMessage(messages.contactDetails)}
+              </h2>
+              {!loading && <ContactDetailsForm loading={loading || saving}
+                                               initialValues={accountDetails.get('contactDetails')}
+                                               onSubmit={saveContactDetails} />}
             </Tab>
             <Tab className={styles.ResponsiveTab} icon={<Lock />}
                  label={<span className="pure-hidden-xs">{formatMessage(messages.usernameAndPassword)}</span>}>
               {(loading || saving) && <LinearProgress />}
-              <h2 className={'pure-visible-xs ' + styles.Form__Header}>{formatMessage(messages.usernameAndPassword)}</h2>
-              {!loading && <LoginDetailsForm loading={loading || saving} initialValues={accountDetails.get('loginDetails')} onSubmit={saveLoginDetails} />}
+              <h2 className={'pure-visible-xs ' + styles.Form__Header}>
+                {formatMessage(messages.usernameAndPassword)}
+              </h2>
+              {!loading && <LoginDetailsForm loading={loading || saving}
+                                             initialValues={accountDetails.get('loginDetails')}
+                                             currentPasswordInputDialogOpen={this.state.currentPasswordInputDialogOpen}
+                                             openCurrentPasswordInputDialog={this.openCurrentPasswordInputDialog}
+                                             closeCurrentPasswordInputDialog={this.closeCurrentPasswordInputDialog}
+                                             onSubmit={saveLoginDetails} />}
             </Tab>
             <Tab className={styles.ResponsiveTab} icon={<Language />}
                  label={<span className="pure-hidden-xs">{formatMessage(messages.languageAndTimezone)}</span>}>
               {(loading || saving) && <LinearProgress />}
-              <h2 className={'pure-visible-xs ' + styles.Form__Header}>{formatMessage(messages.languageAndTimezone)}</h2>
-              {!loading && <UserPreferencesForm loading={loading || saving} initialValues={accountDetails.get('userPreferences')} onSubmit={saveUserPreferences} />}
+              <h2 className={'pure-visible-xs ' + styles.Form__Header}>
+                {formatMessage(messages.languageAndTimezone)}
+              </h2>
+              {!loading && <UserPreferencesForm loading={loading || saving}
+                                                initialValues={accountDetails.get('userPreferences')}
+                                                onSubmit={saveUserPreferences} />}
             </Tab>
           </Tabs>
         </Paper>

@@ -1,6 +1,7 @@
 import Immutable from 'immutable'
 import _ from 'lodash'
-import { aspectFetch, getHeaders } from '../shared/utils/fetch'
+import { aspectFetch, getHeaders, getBrowserNameAndVersion } from '../shared/utils/fetch'
+import * as localStorage from '../shared/utils/localStorage'
 import { addError } from '../error/ErrorRedux'
 
 export const types = {
@@ -79,7 +80,13 @@ export function saveLoginDetails(loginDetails) {
       {
         method: 'PUT',
         headers: getHeaders(true),
-        body: JSON.stringify(loginDetails)
+        body: JSON.stringify({
+          currentPassword: loginDetails.currentPassword,
+          newUsername: loginDetails.username,
+          newPassword: loginDetails.newPassword,
+          clientId: localStorage.getClientId(),
+          clientName: getBrowserNameAndVersion() + ' on ' + window.navigator.platform
+        })
       })
       //TODO: Update token and user details
       .then(json => dispatch(createReceiveUpdatedLoginDetails(json.data)))
@@ -126,7 +133,10 @@ const ContactDetails = Immutable.Record({
     zip: null
   }), LoginDetails = Immutable.Record({
     id: null,
-    username: null
+    username: null,
+    newPassword: null,
+    confirmNewPassword: null,
+    currentPassword: null
   }), UserPreferences = Immutable.Record({
     id: null,
     timezone: null,

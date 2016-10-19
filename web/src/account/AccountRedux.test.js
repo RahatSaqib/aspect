@@ -54,7 +54,10 @@ describe('AccountDetailsRedux', () => {
         })
         assert.deepEqual(initialState.getIn(['data', 'loginDetails']).toJS(), {
           id: null,
-          username: null
+          username: null,
+          newPassword: null,
+          confirmNewPassword: null,
+          currentPassword: null
         })
         assert.deepEqual(initialState.getIn(['data', 'userPreferences']).toJS(), {
           id: null,
@@ -80,7 +83,10 @@ describe('AccountDetailsRedux', () => {
             ['username', 'userId', 'timezone', 'culture']))
           assert.deepEqual(state.getIn(['data', 'loginDetails']).toJS(), {
             id: accountDetailsData.userId,
-            username: accountDetailsData.username
+            username: accountDetailsData.username,
+            newPassword: null,
+            confirmNewPassword: null,
+            currentPassword: null
           })
           assert.deepEqual(state.getIn(['data', 'userPreferences']).toJS(), _.pick(accountDetailsData, ['id', 'timezone', 'culture']))
         })
@@ -120,7 +126,10 @@ describe('AccountDetailsRedux', () => {
             ['username', 'userId', 'timezone', 'culture']))
           assert.deepEqual(newState.getIn(['data', 'loginDetails']).toJS(), {
             id: accountDetailsData.userId,
-            username: accountDetailsData.username
+            username: accountDetailsData.username,
+            newPassword: null,
+            confirmNewPassword: null,
+            currentPassword: null
           })
           assert.deepEqual(newState.getIn(['data', 'userPreferences']).toJS(), _.pick(accountDetailsData, ['id', 'timezone', 'culture']))
         })
@@ -139,7 +148,10 @@ describe('AccountDetailsRedux', () => {
             ['username', 'userId', 'timezone', 'culture']))
           assert.deepEqual(newState.getIn(['data', 'loginDetails']).toJS(), {
             id: accountDetailsData.userId,
-            username: updateDetailsData.username
+            username: updateDetailsData.username,
+            newPassword: null,
+            confirmNewPassword: null,
+            currentPassword: null
           })
           assert.deepEqual(newState.getIn(['data', 'userPreferences']).toJS(), _.pick(accountDetailsData, ['id', 'timezone', 'culture']))
         })
@@ -172,7 +184,10 @@ describe('AccountDetailsRedux', () => {
             ['username', 'userId', 'timezone', 'culture']))
           assert.deepEqual(newState.getIn(['data', 'loginDetails']).toJS(), {
             id: accountDetailsData.userId,
-            username: accountDetailsData.username
+            username: accountDetailsData.username,
+            newPassword: null,
+            confirmNewPassword: null,
+            currentPassword: null
           })
           assert.deepEqual(newState.getIn(['data', 'userPreferences']).toJS(), _.pick(newAccountDetailsData, ['id', 'timezone', 'culture']))
         })
@@ -184,8 +199,14 @@ describe('AccountDetailsRedux', () => {
     let accountDetailsRedux, dispatch
 
     function createAccountDetailsReduxReduxWithStubs(fetchStub, errorCreatorsStub) {
+      if(!fetchStub.getBrowserNameAndVersion) {
+        fetchStub.getBrowserNameAndVersion = () => 'Mocha/Chai'
+      }
       const proxyDependencies = {
-        '../shared/utils/fetch': fetchStub
+        '../shared/utils/fetch': fetchStub,
+        '../shared/utils/localStorage': {
+          getClientId: () => 'Mocha/Chai'
+        }
       }
       if(errorCreatorsStub) {
         proxyDependencies['../error/ErrorRedux'] = errorCreatorsStub
@@ -377,7 +398,16 @@ describe('AccountDetailsRedux', () => {
         stubHeaders = { value: 'Stubbed Headers' },
         loginDetailsData = {
           id: accountDetailsData.userId,
-          username: accountDetailsData.username
+          username: accountDetailsData.username,
+          newPassword: null,
+          confirmNewPassword: null,
+          currentPassword: 'current-password'
+        }, requestData = {
+          currentPassword: loginDetailsData.currentPassword,
+          newUsername: loginDetailsData.username,
+          newPassword: loginDetailsData.newPassword,
+          clientId: 'Mocha/Chai',
+          clientName: 'Mocha/Chai on ' + window.navigator.platform
         }
       let fetchStub
 
@@ -390,7 +420,7 @@ describe('AccountDetailsRedux', () => {
         fetchStub.aspectFetch.withArgs('/auth/update-login-details', {
           method: 'PUT',
           headers: stubHeaders,
-          body: JSON.stringify(loginDetailsData)
+          body: JSON.stringify(requestData)
         }).returns(expectedResponseFromServer)
         dispatch = sinon.spy()
         createAccountDetailsReduxReduxWithStubs(fetchStub)
@@ -407,7 +437,7 @@ describe('AccountDetailsRedux', () => {
         assert(fetchStub.aspectFetch.calledWith('/auth/update-login-details', {
           method: 'PUT',
           headers: stubHeaders,
-          body: JSON.stringify(loginDetailsData)
+          body: JSON.stringify(requestData)
         }), 'A PUT to /auth/update-login-details was not detected')
       })
 
@@ -438,7 +468,7 @@ describe('AccountDetailsRedux', () => {
           fetchStub.aspectFetch.withArgs('/auth/update-login-details', {
             method: 'PUT',
             headers: stubHeaders,
-            body: JSON.stringify(loginDetailsData)
+            body: JSON.stringify(requestData)
           }).returns(expectedErrorFromServer)
           errorCreatorsStub = {
             addError: sinon.stub()
@@ -459,7 +489,7 @@ describe('AccountDetailsRedux', () => {
           assert(fetchStub.aspectFetch.calledWith('/auth/update-login-details', {
             method: 'PUT',
             headers: stubHeaders,
-            body: JSON.stringify(loginDetailsData)
+            body: JSON.stringify(requestData)
           }), 'A PUT to /auth/update-login-details was not detected')
         })
 

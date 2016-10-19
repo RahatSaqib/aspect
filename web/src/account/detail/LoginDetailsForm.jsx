@@ -1,6 +1,8 @@
 import React from 'react'
 import { reduxForm } from 'redux-form/immutable'
 import RaisedButton from 'material-ui/RaisedButton'
+import Dialog from 'material-ui/Dialog'
+import FlatButton from 'material-ui/FlatButton'
 import _ from 'lodash'
 import { injectIntl, defineMessages } from 'react-intl'
 import TextInput from '../../components/shared/TextInput'
@@ -51,14 +53,43 @@ const messages = defineMessages({
   passwordsDoNotMatch: {
     id: 'pages.LoginDetails.passwordsDoNotMatch',
     defaultMessage: 'These passwords don\'t match'
+  },
+  currentPasswordDialogHeader: {
+    id: 'pages.LoginDetails.currentPasswordDialogHeader',
+    defaultMessage: 'Enter Current Password'
+  },
+  currentPasswordDialogMessage: {
+    id: 'pages.LoginDetails.currentPasswordDialogMessage',
+    defaultMessage: 'To update your login details, please enter your current password'
+  },
+  submitCurrentPassword: {
+    id: 'pages.LoginDetails.submitCurrentPassword',
+    defaultMessage: 'Submit'
+  },
+  cancelCurrentPassword: {
+    id: 'pages.LoginDetails.cancelCurrentPassword',
+    defaultMessage: 'Cancel'
   }
 })
 
 const LoginDetailsForm = props => {
-  const { handleSubmit, pristine, invalid, loading } = props,
-    {formatMessage} = props.intl
+  const { handleSubmit, pristine, invalid, loading,
+      currentPasswordInputDialogOpen,
+      openCurrentPasswordInputDialog,
+      closeCurrentPasswordInputDialog} = props,
+    {formatMessage} = props.intl,
+    submitCurrentPassword = () => {
+      closeCurrentPasswordInputDialog()
+      handleSubmit()
+    },
+    currentPasswordInputDialogActions = [
+      <FlatButton label={formatMessage(messages.submitCurrentPassword)} primary
+                  onTouchTap={submitCurrentPassword} />,
+      <FlatButton label={formatMessage(messages.cancelCurrentPassword)} secondary
+                  onTouchTap={closeCurrentPasswordInputDialog} />
+    ]
   return (
-    <form onSubmit={handleSubmit} className={styles.Form}>
+    <form onSubmit={submitCurrentPassword} className={styles.Form}>
       <div className={styles.Form__Content}>
         <TextInput name="username" label={formatMessage(messages.username)} disabled={loading} maxLength="500" />
         <br />
@@ -66,25 +97,34 @@ const LoginDetailsForm = props => {
         <TextInput name="confirmNewPassword" label={formatMessage(messages.confirmNewPassword)} disabled={loading} maxLength="100" type="password" />
       </div>
       <div className={styles.Form__ActionRow}>
-        <RaisedButton disabled={pristine || invalid || loading} label={formatMessage(messages.save)} secondary={true} type="button" />
+        <RaisedButton disabled={pristine || invalid || loading} label={formatMessage(messages.save)} secondary
+                      onTouchTap={openCurrentPasswordInputDialog} />
       </div>
+      <Dialog title={formatMessage(messages.currentPasswordDialogHeader)}
+              actions={currentPasswordInputDialogActions} modal={false}
+              open={currentPasswordInputDialogOpen}
+              onRequestClose={closeCurrentPasswordInputDialog}>
+        {formatMessage(messages.currentPasswordDialogMessage)}
+        <TextInput name="currentPassword" label={formatMessage(messages.currentPassword)}
+                   disabled={loading} maxLength="100" type="password" />
+      </Dialog>
     </form>
   )
 }
 
-const validate = (accountDetails, props) => {
+const validate = (loginDetails, props) => {
   const {formatMessage} = props.intl,
     errors = {}
-  if (!accountDetails.get('username')) {
+  if (!loginDetails.get('username')) {
     errors.username = formatMessage(messages.usernameRequired)
   }
   //TODO: messages.usernameUnavailable
   //TODO: messages.currentPasswordRequired: If any details are dirty, validate that current password has been entered and is correct
   //TODO: messages.invalidPassword: Check that current password is correct
-  if (accountDetails.get('newPassword')) {
+  if (loginDetails.get('newPassword')) {
     //TODO: messages.weakPassword
 
-    if (accountDetails.get('newPassword') !== accountDetails.get('confirmNewPassword')) {
+    if (loginDetails.get('newPassword') !== loginDetails.get('confirmNewPassword')) {
       errors.confirmNewPassword = formatMessage(messages.passwordsDoNotMatch)
     }
   }
