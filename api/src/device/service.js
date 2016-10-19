@@ -63,7 +63,7 @@ function* getDeviceByDeviceId(request, fields=SELECT_SHOW_FIELDS){
   const devices = yield knex('Device as d')
     .innerJoin('DeviceType as dt', 'd.deviceTypeId', 'dt.id')
     .innerJoin('DeviceTypeCategory as dc', 'dt.deviceTypeCategoryId', 'dc.id')
-    .where('d.id', params.deviceId)
+    .where('d.id', +params.deviceId)
     .modify(addConstraints, dataConstraints, {device: 'd'})
     .select(fields)
   return {ok: devices.length === 1, data: devices[0]}
@@ -107,9 +107,10 @@ function* addDeviceConfiguration(request){
 
   const now = new Date()
   const userId = auth.credentials.id
+  let deviceConfigurationId = -1
 
   yield transact(function*(knex){
-    const [deviceConfigurationId] = yield knex('DeviceConfiguration')
+    [deviceConfigurationId] = yield knex('DeviceConfiguration')
       .insert({
         deviceId,
         data: JSON.stringify(payload.data),
@@ -125,7 +126,9 @@ function* addDeviceConfiguration(request){
         updatedBy: userId
       })
   })
-  return {ok: true}
+  return deviceConfigurationId > 0
+    ? {ok: true, data: {id: deviceConfigurationId}}
+    : {ok: false}
 }
 
 function* listDeviceConfiguration(request){
