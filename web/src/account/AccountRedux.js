@@ -51,17 +51,17 @@ function createReceiveUpdatedContactDetails(accountDetails) {
   }
 }
 
-export function saveContactDetails(accountDetails) {
+export function saveContactDetails(contactDetails) {
   return dispatch => {
     dispatch(createSaveAccountDetailsStart())
     return aspectFetch('/account-details/current-contact',
       {
         method: 'PUT',
         headers: getHeaders(true),
-        body: JSON.stringify(accountDetails)
+        body: JSON.stringify(contactDetails)
       })
       .then(json => dispatch(createReceiveUpdatedContactDetails(json.data)))
-      .catch(err => dispatch(addError('Loading account details failed', err.message, err)))
+      .catch(err => dispatch(addError('Saving contact details failed', err.message, err)))
   }
 }
 
@@ -81,8 +81,9 @@ export function saveLoginDetails(loginDetails) {
         headers: getHeaders(true),
         body: JSON.stringify(loginDetails)
       })
+      //TODO: Update token and user details
       .then(json => dispatch(createReceiveUpdatedLoginDetails(json.data)))
-      .catch(err => dispatch(addError('Loading account details failed', err.message, err)))
+      .catch(err => dispatch(addError('Saving login details failed', err.message, err)))
   }
 }
 
@@ -102,10 +103,12 @@ export function saveUserPreferences(userPreferences) {
         headers: getHeaders(true),
         body: JSON.stringify(userPreferences)
       })
+      //TODO: Update language and time
       .then(json => dispatch(createReceiveUpdatedUserPreferences(json.data))) //TODO: Dispatch action to set current timezone and language
-      .catch(err => dispatch(addError('Loading account details failed', err.message, err)))
+      .catch(err => dispatch(addError('Saving user preferences failed', err.message, err)))
   }
 }
+
 /*
  * ---------------- Reducers -----------------
  */

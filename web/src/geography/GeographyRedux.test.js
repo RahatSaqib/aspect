@@ -5,7 +5,6 @@ import proxyquire from 'proxyquire'
 import sinon from 'sinon'
 import geography, {types} from './GeographyRedux'
 
-
 describe('geography reducer', () => {
   describe('initial state', () => {
     let initialState
