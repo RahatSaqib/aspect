@@ -32,6 +32,7 @@ describe('AccountDetails Component', () => {
     beforeEach(() => {
       props = {
         fetchAccountDetails: () => {},
+        setPageTitle: () => {},
         loading: false,
         saving: false,
         accountDetails: {},
