@@ -11,6 +11,7 @@ import Language from 'material-ui/svg-icons/action/language'
 import Lock from 'material-ui/svg-icons/action/lock'
 import ContactDetailsForm from './ContactDetailsForm'
 import LoginDetailsForm from './LoginDetailsForm'
+import UserPreferencesForm from './UserPreferencesForm'
 import {
   fetchAccountDetails,
   saveContactDetails,
@@ -58,7 +59,7 @@ class AccountDetails extends PureComponent {
   render() {
     const { formatMessage } = this.props.intl
     const { loading, saving, accountDetails, saveContactDetails,
-      saveLoginDetails } = this.props
+      saveLoginDetails, saveUserPreferences } = this.props
     return (
       <div className={styles.Content}>
         <Paper>
@@ -67,19 +68,19 @@ class AccountDetails extends PureComponent {
                  label={<span className="pure-hidden-xs">{formatMessage(messages.contactDetails)}</span>}>
               {(loading || saving) && <LinearProgress />}
               <h2 className={'pure-visible-xs ' + styles.Form__Header}>{formatMessage(messages.contactDetails)}</h2>
-              {!loading && <ContactDetailsForm loading={loading || saving} initialValues={accountDetails} onSubmit={saveContactDetails} />}
+              {!loading && <ContactDetailsForm loading={loading || saving} initialValues={accountDetails.getIn(['data', 'contactDetails'])} onSubmit={saveContactDetails} />}
             </Tab>
             <Tab className={styles.ResponsiveTab} icon={<Lock />}
                  label={<span className="pure-hidden-xs">{formatMessage(messages.usernameAndPassword)}</span>}>
               {(loading || saving) && <LinearProgress />}
               <h2 className={'pure-visible-xs ' + styles.Form__Header}>{formatMessage(messages.usernameAndPassword)}</h2>
-              {!loading && <LoginDetailsForm loading={loading || saving} initialValues={accountDetails} onSubmit={saveLoginDetails} />}
+              {!loading && <LoginDetailsForm loading={loading || saving} initialValues={accountDetails.getIn(['data', 'loginDetails'])} onSubmit={saveLoginDetails} />}
             </Tab>
             <Tab className={styles.ResponsiveTab} icon={<Language />}
                  label={<span className="pure-hidden-xs">{formatMessage(messages.languageAndTimezone)}</span>}>
               {(loading || saving) && <LinearProgress />}
               <h2 className={'pure-visible-xs ' + styles.Form__Header}>{formatMessage(messages.languageAndTimezone)}</h2>
-              <span>Timezone and Language Here!</span>
+              {!loading && <UserPreferencesForm loading={loading || saving} initialValues={accountDetails.getIn(['data', 'userPreferences'])} onSubmit={saveUserPreferences} />}
             </Tab>
           </Tabs>
         </Paper>

@@ -11,31 +11,31 @@ import styles from './AccountDetails.css'
 
 const messages = defineMessages({
   fullName: {
-    id: 'pages.AccountDetails.name',
+    id: 'pages.ContactDetails.name',
     defaultMessage: 'Full Name'
   },
   jobTitle: {
-    id: 'pages.AccountDetails.title',
+    id: 'pages.ContactDetails.title',
     defaultMessage: 'Job Title'
   },
   emailHeader: {
-    id: 'pages.AccountDetails.emailHeader',
+    id: 'pages.ContactDetails.emailHeader',
     defaultMessage: 'Email'
   },
   primaryEmail: {
-    id: 'pages.AccountDetails.email',
+    id: 'pages.ContactDetails.email',
     defaultMessage: 'Primary'
   },
   secondaryEmail: {
-    id: 'pages.AccountDetails.email2',
+    id: 'pages.ContactDetails.email2',
     defaultMessage: 'Alternate'
   },
   phone: {
-    id: 'pages.AccountDetails.phoneHeader',
+    id: 'pages.ContactDetails.phoneHeader',
     defaultMessage: 'Phone'
   },
   telephone: {
-    id: 'pages.AccountDetails.phone',
+    id: 'pages.ContactDetails.phone',
     defaultMessage: 'Telephone'
   },
   mobile: {
@@ -43,23 +43,23 @@ const messages = defineMessages({
     defaultMessage: 'Mobile'
   },
   location: {
-    id: 'pages.AccountDetails.locationHeader',
+    id: 'pages.ContactDetails.locationHeader',
     defaultMessage: 'Location'
   },
   zip: {
-    id: 'pages.AccountDetails.zip',
+    id: 'pages.ContactDetails.zip',
     defaultMessage: 'Zip Code'
   },
   save: {
-    id: 'pages.AccountDetails.save',
+    id: 'pages.ContactDetails.save',
     defaultMessage: 'Save'
   },
   nameRequired: {
-    id: 'pages.ContactDetailsForm.nameRequired',
+    id: 'pages.ContactDetails.nameRequired',
     defaultMessage: 'Please enter your Full name'
   },
   invalidEmailAddress: {
-    id: 'pages.ContactDetailsForm.invalidEmailAddress',
+    id: 'pages.ContactDetails.invalidEmailAddress',
     defaultMessage: 'Please enter a valid email address'
   }
 })

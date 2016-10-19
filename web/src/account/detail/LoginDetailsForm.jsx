@@ -9,47 +9,47 @@ import styles from './AccountDetails.css'
 
 const messages = defineMessages({
   username: {
-    id: 'pages.AccountDetails.username',
+    id: 'pages.LoginDetails.username',
     defaultMessage: 'Username'
   },
   newPassword: {
-    id: 'pages.AccountDetails.newPassword',
+    id: 'pages.LoginDetails.newPassword',
     defaultMessage: 'New Password'
   },
   confirmNewPassword: {
-    id: 'pages.AccountDetails.confirmNewPassword',
+    id: 'pages.LoginDetails.confirmNewPassword',
     defaultMessage: 'Confirm New Password'
   },
   save: {
-    id: 'pages.AccountDetails.save',
+    id: 'pages.LoginDetails.save',
     defaultMessage: 'Save'
   },
   currentPassword: {
-    id: 'pages.AccountDetails.currentPassword',
+    id: 'pages.LoginDetails.currentPassword',
     defaultMessage: 'Current Password'
   },
   usernameRequired: {
-    id: 'pages.LoginDetailsForm.usernameRequired',
+    id: 'pages.LoginDetails.usernameRequired',
     defaultMessage: 'A username is required'
   },
   usernameUnavailable: {
-    id: 'pages.LoginDetailsForm.usernameUnavailable',
+    id: 'pages.LoginDetails.usernameUnavailable',
     defaultMessage: 'This username is unavailable'
   },
   currentPasswordRequired: {
-    id: 'pages.LoginDetailsForm.currentPasswordRequired',
+    id: 'pages.LoginDetails.currentPasswordRequired',
     defaultMessage: 'Please enter your current password to update your login details'
   },
   invalidPassword: {
-    id: 'pages.LoginDetailsForm.invalidPassword',
+    id: 'pages.LoginDetails.invalidPassword',
     defaultMessage: 'The password that you entered is not valid'
   },
   weakPassword: {
-    id: 'pages.LoginDetailsForm.weakPassword',
+    id: 'pages.LoginDetails.weakPassword',
     defaultMessage: 'The password that you entered is too weak'
   },
   passwordsDoNotMatch: {
-    id: 'pages.LoginDetailsForm.passwordsDoNotMatch',
+    id: 'pages.LoginDetails.passwordsDoNotMatch',
     defaultMessage: 'These passwords don\'t match'
   }
 })

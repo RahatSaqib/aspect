@@ -8,6 +8,8 @@ import LinearProgress from 'material-ui/LinearProgress'
 import Paper from 'material-ui/Paper'
 import {Tabs, Tab} from 'material-ui/Tabs'
 import ContactDetailsForm from './ContactDetailsForm'
+import LoginDetailsForm from './LoginDetailsForm'
+import UserPreferencesForm from './UserPreferencesForm'
 
 describe('AccountDetails Component', () => {
   describe('AccountDetails', () => {
@@ -29,14 +31,45 @@ describe('AccountDetails Component', () => {
       AccountDetailsWrapper = shallow(<AccountDetails {...props} />)
     }
 
+    const ContactDetailsRecord = Immutable.Record({
+        id: null,
+        name: null,
+        title: null,
+        email: null,
+        email2: null,
+        phone: null,
+        cell: null,
+        countryId: null,
+        stateId: null,
+        lgaId: null,
+        zip: null
+      }), LoginDetailsRecord = Immutable.Record({
+        id: null,
+        username: null
+      }), UserPreferencesRecord = Immutable.Record({
+        id: null,
+        timezone: null,
+        culture: null
+      }), AccountDetailsDataRecord = Immutable.Record({
+        contactDetails: new ContactDetailsRecord(),
+        loginDetails: new LoginDetailsRecord(),
+        userPreferences: new UserPreferencesRecord()
+      }), AccountDetailsRecord = Immutable.Record({
+        loading: false,
+        saving: false,
+        data: new AccountDetailsDataRecord()
+      })
+
     beforeEach(() => {
       props = {
         fetchAccountDetails: () => {},
         setPageTitle: () => {},
         loading: false,
         saving: false,
-        accountDetails: {},
+        accountDetails: new AccountDetailsRecord(),
         saveContactDetails: () => {},
+        saveLoginDetails: () => {},
+        saveUserPreferences: () => {},
         intl: {
           formatMessage: message => message.defaultMessage
         }
@@ -84,7 +117,7 @@ describe('AccountDetails Component', () => {
         assert.equal(firstTab.find('h2').text(), 'Contact Details')
 
         const contactDetailsForm = firstTab.find(ContactDetailsForm)
-        assert.equal(contactDetailsForm.props().initialValues, props.accountDetails)
+        assert.equal(contactDetailsForm.props().initialValues, props.accountDetails.getIn(['data', 'contactDetails']))
         assert.equal(contactDetailsForm.props().onSubmit, props.saveContactDetails)
       })
 
@@ -93,9 +126,9 @@ describe('AccountDetails Component', () => {
         assert.equal(secondTab.props().label.props.children, 'Username & Password')
         assert.equal(secondTab.find('h2').text(), 'Username & Password')
 
-        /*const loginDetailsForm = secondTab.find(ChangeLoginDetailsForm)
-        assert.equal(loginDetailsForm.props().initialValues, props.accountDetails)
-        assert.equal(loginDetailsForm.props().onSubmit, props.saveLoginDetails)*/
+        const loginDetailsForm = secondTab.find(LoginDetailsForm)
+        assert.equal(loginDetailsForm.props().initialValues, props.accountDetails.getIn(['data', 'loginDetails']))
+        assert.equal(loginDetailsForm.props().onSubmit, props.saveLoginDetails)
       })
 
       it('Should show a User Preferences tab', () => {
@@ -103,9 +136,9 @@ describe('AccountDetails Component', () => {
         assert.equal(thirdTab.props().label.props.children, 'Language & Timezone')
         assert.equal(thirdTab.find('h2').text(), 'Language & Timezone')
 
-        /*const localeDetailsForm = thirdTab.find(LocaleDetailsForm)
-        assert.equal(localeDetailsFormloginDetailsForm.props().initialValues, props.accountDetails)
-        assert.equal(localeDetailsForm.props().onSubmit, props.saveLocaleDetails)*/
+        const userPreferencesForm = thirdTab.find(UserPreferencesForm)
+        assert.equal(userPreferencesForm.props().initialValues, props.accountDetails.getIn(['data', 'userPreferences']))
+        assert.equal(userPreferencesForm.props().onSubmit, props.saveUserPreferences)
       })
     })
   })
