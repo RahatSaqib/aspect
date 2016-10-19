@@ -68,19 +68,19 @@ class AccountDetails extends PureComponent {
                  label={<span className="pure-hidden-xs">{formatMessage(messages.contactDetails)}</span>}>
               {(loading || saving) && <LinearProgress />}
               <h2 className={'pure-visible-xs ' + styles.Form__Header}>{formatMessage(messages.contactDetails)}</h2>
-              {!loading && <ContactDetailsForm loading={loading || saving} initialValues={accountDetails.getIn(['data', 'contactDetails'])} onSubmit={saveContactDetails} />}
+              {!loading && <ContactDetailsForm loading={loading || saving} initialValues={accountDetails.get('contactDetails')} onSubmit={saveContactDetails} />}
             </Tab>
             <Tab className={styles.ResponsiveTab} icon={<Lock />}
                  label={<span className="pure-hidden-xs">{formatMessage(messages.usernameAndPassword)}</span>}>
               {(loading || saving) && <LinearProgress />}
               <h2 className={'pure-visible-xs ' + styles.Form__Header}>{formatMessage(messages.usernameAndPassword)}</h2>
-              {!loading && <LoginDetailsForm loading={loading || saving} initialValues={accountDetails.getIn(['data', 'loginDetails'])} onSubmit={saveLoginDetails} />}
+              {!loading && <LoginDetailsForm loading={loading || saving} initialValues={accountDetails.get('loginDetails')} onSubmit={saveLoginDetails} />}
             </Tab>
             <Tab className={styles.ResponsiveTab} icon={<Language />}
                  label={<span className="pure-hidden-xs">{formatMessage(messages.languageAndTimezone)}</span>}>
               {(loading || saving) && <LinearProgress />}
               <h2 className={'pure-visible-xs ' + styles.Form__Header}>{formatMessage(messages.languageAndTimezone)}</h2>
-              {!loading && <UserPreferencesForm loading={loading || saving} initialValues={accountDetails.getIn(['data', 'userPreferences'])} onSubmit={saveUserPreferences} />}
+              {!loading && <UserPreferencesForm loading={loading || saving} initialValues={accountDetails.get('userPreferences')} onSubmit={saveUserPreferences} />}
             </Tab>
           </Tabs>
         </Paper>

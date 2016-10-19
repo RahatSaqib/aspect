@@ -1,5 +1,5 @@
 import React, {PropTypes} from 'react'
-import RefreshIndicator from 'material-ui/RefreshIndicator'
+import LinearProgress from 'material-ui/LinearProgress'
 import { injectIntl, defineMessages } from 'react-intl'
 import _ from 'lodash'
 import { bindActionCreators } from 'redux'
@@ -174,20 +174,21 @@ class LocationSelector extends React.PureComponent {
   }
 
   render() {
-    const { intl, disabled, countries, countryIdFieldName, stateIdFieldName, lgaIdFieldName } = this.props
-    const { formatMessage } = intl
+    const { intl, disabled, countries, countryIdFieldName, stateIdFieldName, lgaIdFieldName } = this.props,
+      { formatMessage } = intl,
+      dataSourceConfig = { text: 'name', value: 'id' },
+      dropdownCountries = countries ? countries.get('items').toJS() : [],
+      countriesLoading = countries ? countries.get('loading') : false,
+      selectedCountry = this.findCountry(this.state.selectedCountryId),
+      states = selectedCountry ? selectedCountry.getIn(['children', 'items']) : undefined,
+      statesLoading = selectedCountry ? selectedCountry.getIn(['children', 'loading']) : false,
+      dropdownStates = states ? states.toJS() : [],
+      selectedState = this.findState(this.state.selectedCountryId, this.state.selectedStateId),
+      lgas = selectedState ? selectedState.getIn(['children', 'items']) : undefined,
+      lgasLoading = selectedState ? selectedState.getIn(['children', 'loading']) : false,
+      dropdownLgas = lgas ? lgas.toJS() : [],
+      loadingProgressStyle = {position: 'absolute', bottom: '0.5em', width: '85%'}
 
-    const dataSourceConfig = { text: 'name', value: 'id' }
-    const dropdownCountries = countries ? countries.get('items').toJS() : []
-    const countriesLoading = countries ? countries.get('loading') : false
-    const selectedCountry = this.findCountry(this.state.selectedCountryId)
-    const states = selectedCountry ? selectedCountry.getIn(['children', 'items']) : undefined
-    const statesLoading = selectedCountry ? selectedCountry.getIn(['children', 'loading']) : false
-    const dropdownStates = states ? states.toJS() : []
-    const selectedState = this.findState(this.state.selectedCountryId, this.state.selectedStateId)
-    const lgas = selectedState ? selectedState.getIn(['children', 'items']) : undefined
-    const lgasLoading = selectedState ? selectedState.getIn(['children', 'loading']) : false
-    const dropdownLgas = lgas ? lgas.toJS() : []
 
     return (
       <div>
@@ -196,21 +197,21 @@ class LocationSelector extends React.PureComponent {
                        disabled={disabled || countriesLoading || _.isEmpty(dropdownCountries)}
                        dataSource={dropdownCountries} dataSourceConfig={dataSourceConfig}
                        onChange={this.onCountryChanged} />
-          <RefreshIndicator size={30} left={100} top={30} status={countriesLoading ? 'loading' : 'hide'} />
+          {countriesLoading && <LinearProgress style={loadingProgressStyle} />}
         </div>
         <div style={{display: 'inline-block', position: 'relative'}}>
           <SelectInput name={stateIdFieldName} label={formatMessage(messages.state)}
                        disabled={disabled || statesLoading || _.isEmpty(dropdownStates)}
                        dataSource={dropdownStates} dataSourceConfig={dataSourceConfig}
                        onChange={this.onStateChanged} />
-          <RefreshIndicator size={30} left={100} top={30} status={statesLoading ? 'loading' : 'hide'} />
+          {statesLoading && <LinearProgress style={loadingProgressStyle} />}
         </div>
         <div style={{display: 'inline-block', position: 'relative'}}>
           <SelectInput name={lgaIdFieldName} label={formatMessage(messages.lga)}
                        disabled={disabled || lgasLoading || _.isEmpty(dropdownLgas)}
                        dataSource={dropdownLgas} dataSourceConfig={dataSourceConfig}
                        onChange={this.onLgaChanged} />
-          <RefreshIndicator size={30} left={100} top={30} status={lgasLoading ? 'loading' : 'hide'} />
+          {lgasLoading && <LinearProgress style={loadingProgressStyle} />}
         </div>
       </div>
     )
