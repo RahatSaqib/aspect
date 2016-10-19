@@ -1,5 +1,9 @@
 // Imports from packages
+import _ from 'lodash'
 import React, { PureComponent, PropTypes } from 'react'
+import {
+  injectIntl
+} from 'react-intl'
 import Helmet from 'react-helmet'
 
 // Our own imports
@@ -29,4 +33,6 @@ export class NotificationList extends PureComponent {
   }
 }
 
-export default NotificationList
+export const NotificationListContainer = _.flowRight(
+  injectIntl
+)(NotificationList)
