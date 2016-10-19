@@ -355,6 +355,70 @@ function* seed(knex){
   })
   yield knex('DeviceSim').insert(sims)
 
+  let [deviceTypeCategoryLab] = yield knex('DeviceTypeCategory').insert({
+    name: 'Lab',
+    hasConnectivity: 0,
+    hasResults: 1
+  })
+
+  let [deviceTypeCategoryConnectivity] = yield knex('DeviceTypeCategory').insert({
+    name: 'Router',
+    hasConnectivity: 1,
+    hasResults: 0
+  })
+
+  yield knex('DeviceTypeCategory').insert({
+    name: 'Integrated',
+    hasConnectivity: 1,
+    hasResults: 1
+  })
+
+  yield knex('DeviceTypeCategory').insert({
+    name: 'Client',
+    hasConnectivity: 0,
+    hasResults: 0
+  })
+
+  let [deviceTypeIdGx] = yield knex('DeviceType').insert({
+    name: 'GeneXpert',
+    deviceTypeCategoryId: deviceTypeCategoryLab
+  })
+
+  let [deviceTypeIdRouter] = yield knex('DeviceType').insert({
+    name: 'Metacom Router',
+    deviceTypeCategoryId: deviceTypeCategoryConnectivity
+  })
+
+  // insert some routers with sims:
+  let routerIds = []
+  for (let i = 0; i < routerNumber; i++) {
+    let siteData = siteDatas[i % siteDatas.length]
+
+    let routerId = yield knex('Device').insert(Object.assign({}, auditFields, {
+      name: `Router at ${i} ${siteData.shortname}`,
+      shortname: 'r'+i,
+      deviceTypeId: deviceTypeIdRouter,
+      siteId: siteData.id,
+      createdOn: new Date(+now - 3*i*millisInHour),
+      updatedOn: new Date(+now - i*millisInHour),
+      lastPingOn: new Date(+now - i*millisInHour/3)
+    }))
+
+    routerIds.push(routerId)
+  }
+
+  // ... and 1-3 sims for some routers
+  let sims = _.range(0, routerNumber, 2).map(i => {
+    const routerId = routerIds[i]
+    return Object.assign({}, auditFields, {
+      deviceId: routerId,
+      provider: i%3 === 0 ? 'Glo' : 'Vodafone',
+      serial: 'SRL-' + routerId,
+      number: '+1 413 123 45' + routerId
+    })
+  })
+  yield knex('DeviceSim').insert(sims)
+
   // insert GeneXpert devices
   let devices = _.range(1, deviceNumber+1).map(i => {
     let siteData = siteDatas[i % siteDatas.length]
@@ -362,7 +426,7 @@ function* seed(knex){
     return Object.assign({}, auditFields, {
       name: `D${i} ${siteData.shortname}`,
       shortname: 'd'+i,
-      deviceTypeId: deviceTypeGeneXpertId,
+      deviceTypeId: deviceTypeIdGx,
       siteId: siteData.id,
       deviceId: routerId || null, // not all sites will have a router - we only added routers to some site
       createdOn: new Date(+now - 3*i*millisInHour),
