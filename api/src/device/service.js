@@ -96,6 +96,68 @@ function* updateDevice(request) {
   return yield* showDevice(request)
 }
 
+
+function* addDeviceConfiguration(request){
+  const {auth, payload} = request
+  const device = yield* getDeviceByDeviceId(request, ['d.id'])
+  if(!device.ok){
+    return Boom.notFound()
+  }
+  const deviceId = device.data.id
+
+  const now = new Date()
+  const userId = auth.credentials.id
+
+  yield transact(function*(knex){
+    const [deviceConfigurationId] = yield knex('DeviceConfiguration')
+      .insert({
+        deviceId,
+        data: JSON.stringify(payload.data),
+        createdOn: now,
+        createdBy: userId
+      })
+
+    yield knex('Device')
+      .where('id', deviceId)
+      .update({
+        deviceConfigurationId,
+        updatedOn: now,
+        updatedBy: userId
+      })
+  })
+  return {ok: true}
+}
+
+function* listDeviceConfiguration(request){
+  let {query, auth} = request
+
+  // get data constraints
+  let dataConstraints = yield getConstraints(auth.credentials)
+
+  let configQuery = knex('DeviceConfiguration as dc')
+    .leftJoin('Device as d', 'dc.deviceId', 'd.id')
+    .modify(filterParams, query, 'name', 'd.name')
+    .modify(addConstraints, dataConstraints, {device: 'd'})
+
+  // get total count for paging
+  let getCount = configQuery.clone()
+    .count('dc.id as count').first()
+
+  // get rows
+  let getItems = configQuery.clone()
+    .modify(sortPageParams, query, 'deviceName')
+    .select('dc.id', 'dc.createdOn', 'dc.data', 'dc.deviceId', 'd.name as deviceName')
+    .map(item => Object.assign({}, item, {data: JSON.parse(item.data)}))
+
+  // return result when both queries are finished
+  let [{count: total}, data] = yield Promise.all([getCount, getItems])
+
+  let result = {ok: true, total, length: data.length, data}
+
+  return result
+}
+
+
 function* addDeviceOperation(request){
   const {auth, payload} = request
   const device = yield* getDeviceByDeviceId(request, ['d.id'])
@@ -156,25 +218,12 @@ function* listDeviceOperation(request){
   return result
 }
 
-function* addDeviceConfiguration(request){
-  const device = yield* getDeviceByDeviceId(request)
-  if(!device.ok){
-    return Boom.notFound()
-  }
-  return {ok: true}
-}
-
-function* listDeviceConfiguration(request){
-  return {ok: true}
-}
-
-
 module.exports = {
   listDevices,
   showDevice,
   updateDevice,
-  addDeviceOperation,
-  listDeviceOperation,
   addDeviceConfiguration,
-  listDeviceConfiguration
+  listDeviceConfiguration,
+  addDeviceOperation,
+  listDeviceOperation
 }
