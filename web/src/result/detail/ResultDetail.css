@@ -5,3 +5,11 @@
 .FieldsContainer {
   padding: 20px;
 }
+
+.FieldsContainer__LeftColumn__Content {
+  padding-right: 10px;
+}
+
+.FieldsContainer__RightColumn__Content {
+  padding-left: 10px;
+}

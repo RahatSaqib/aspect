@@ -19,7 +19,10 @@ export const types = {
   RECEIVE_RESULTS: 'RECEIVE_RESULTS',
 
   REQUEST_SINGLE_RESULT: 'REQUEST_SINGLE_RESULT',
-  RECEIVE_SINGLE_RESULT: 'RECEIVE_SINGLE_RESULT'
+  RECEIVE_SINGLE_RESULT: 'RECEIVE_SINGLE_RESULT',
+
+  REQUEST_UPDATING_SINGLE_RESULT: 'REQUEST_UPDATING_SINGLE_RESULT',
+  RECEIVE_UPDATED_SINGLE_RESULT: 'RECEIVE_UPDATED_SINGLE_RESULT'
 }
 /*
  * ---------------- Action Creators -----------------
@@ -91,6 +94,40 @@ export function fetchSingleResult(resultId){
       })
   }
 }
+
+// updating a single result with given resultId and data
+function requestUpdatingSingleResult(resultId, data) {
+  return {
+    type: types.REQUEST_UPDATING_SINGLE_RESULT,
+    resultId,
+    data
+  }
+}
+
+// received a updated single result
+function receiveUpdatedSingleResult(item) {
+  return {
+    type: types.RECEIVE_UPDATED_SINGLE_RESULT,
+    item
+  }
+}
+
+// update a single result with given resultId and data
+export function updateSingleResult(resultId, data){
+  return dispatch => {
+
+    dispatch(requestUpdatingSingleResult(resultId, data))
+
+    return aspectFetch(`/result/${resultId}`, {
+      method: 'PUT',
+      body: JSON.stringify(data)
+    })
+      .then(json => dispatch(receiveUpdatedSingleResult(json.data)))
+      .catch(err => {
+        dispatch(addError(`Updating a result (${resultId}) failed`, err.message, err))
+      })
+  }
+}
 /*
  * ---------------- Reducers -----------------
  */
@@ -118,6 +155,7 @@ export default function resultReducer(state = initialState, action) {
       mutState.set('table', receiveTableItems(mutState.table, action.total))
     })
   case types.RECEIVE_SINGLE_RESULT:
+  case types.RECEIVE_UPDATED_SINGLE_RESULT:
     return state.withMutations(mutState => {
       const immutItem = Immutable.fromJS(action.item)
       mutState.set('items', receiveItem(mutState.items, immutItem))

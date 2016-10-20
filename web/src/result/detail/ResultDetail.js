@@ -1,5 +1,6 @@
 // Imports from packages
 import _ from 'lodash'
+import classnames from 'classnames/bind'
 import React, { PureComponent, PropTypes } from 'react'
 import {
   injectIntl,
@@ -14,31 +15,82 @@ import Paper from 'material-ui/Paper'
 import LinearProgress from 'material-ui/LinearProgress'
 
 // Our own imports
-import { isEditable } from '../../shared/selectors/result'
 import {
-  fetchSingleResult,
-  updateSingleResult
+  fetchSingleResult
 } from '../ResultRedux'
 import ReadOnlyFields from '../../components/shared/ReadOnlyFields'
-import { FormContainer } from './ResultDetailForm'
 import styles from './ResultDetail.css'
+
+const cx = classnames.bind(styles)
 
 const messages = defineMessages({
   title: {
     id: 'pages.ResultDetail.title',
     defaultMessage: 'Result Detail'
   },
-  fieldLastTestOn: {
-    id: 'pages.ResultDetail.fieldLastTestOn',
-    defaultMessage: 'Last Test On'
+  fieldSiteName: {
+    id: 'pages.ResultDetail.fieldSiteName',
+    defaultMessage: 'Deployment Full Name'
+  },
+  fieldCountryName: {
+    id: 'pages.ResultDetail.fieldCountryName',
+    defaultMessage: 'Country'
+  },
+  fieldStateName: {
+    id: 'pages.ResultDetail.fieldStateName',
+    defaultMessage: 'State'
+  },
+  fieldLgaName: {
+    id: 'pages.ResultDetail.fieldLgaName',
+    defaultMessage: 'LGA'
+  },
+  fieldEndedOn: {
+    id: 'pages.ResultDetail.fieldEndedOn',
+    defaultMessage: 'Ended Date'
   },
   fieldPatientId: {
     id: 'pages.ResultDetail.fieldPatientId',
-    defaultMessage: 'Patient'
+    defaultMessage: 'Patient ID'
   },
-  fieldResultText: {
-    id: 'pages.ResultDetail.fieldResultText',
+  fieldResultDataResultText: {
+    id: 'pages.ResultDetail.fieldResultDataResultText',
     defaultMessage: 'Result Text'
+  },
+  fieldAssayName: {
+    id: 'pages.ResultDetail.fieldAssayName',
+    defaultMessage: 'Assay'
+  },
+  fieldInstrumentSerial: {
+    id: 'pages.ResultDetail.fieldInstrumentSerial',
+    defaultMessage: 'Instrument Serial'
+  },
+  fieldModuleSerial: {
+    id: 'pages.ResultDetail.fieldModuleSerial',
+    defaultMessage: 'Module Serial'
+  },
+  fieldConsumableSerial: {
+    id: 'pages.ResultDetail.fieldConsumableSerial',
+    defaultMessage: 'Consumable Serial'
+  },
+  fieldConsumableExpirationDate: {
+    id: 'pages.ResultDetail.fieldConsumableExpirationDate',
+    defaultMessage: 'Consumable Expiration Date'
+  },
+  fieldSenderVersion: {
+    id: 'pages.ResultDetail.fieldSenderVersion',
+    defaultMessage: 'Sender Version'
+  },
+  fieldSenderOperator: {
+    id: 'pages.ResultDetail.fieldSenderOperator',
+    defaultMessage: 'Sender Operator'
+  },
+  fieldStartedOn: {
+    id: 'pages.ResultDetail.fieldStartedOn',
+    defaultMessage: 'Started Date'
+  },
+  fieldUpdatedOn: {
+    id: 'pages.ResultDetail.fieldUpdatedOn',
+    defaultMessage: 'Updated Date'
   }
 })
 
@@ -49,7 +101,7 @@ export class ResultDetail extends PureComponent {
     fetchSingleResult: PropTypes.func.isRequired
   }
 
-  handleFetchDevice = () => {
+  handleFetchResult = () => {
     this.props.fetchSingleResult(this.props.params.resultId)
   }
 
@@ -71,12 +123,12 @@ export class ResultDetail extends PureComponent {
   }
 
   componentDidMount() {
-    this.handleFetchDevice()
+    this.handleFetchResult()
   }
 
   componentWillReceiveProps(nextProps) {
     if (this.props.params.resultId !== nextProps.params.resultId) {
-      this.handleFetchDevice()
+      this.handleFetchResult()
     }
   }
 
@@ -86,61 +138,121 @@ export class ResultDetail extends PureComponent {
     return !result && <LinearProgress />
   }
 
-  renderFormContainer() {
+  renderLeftColumnFields() {
     const { result, intl: { formatMessage } } = this.props
-    const labels = {
-      lastTestOn: formatMessage(messages.fieldLastTestOn),
-      patientId: formatMessage(messages.fieldPatientId),
-      resultText: formatMessage(messages.fieldResultText)
-    }
+    const assay = result.get('assay')
 
-    const initialValues = {
-      // Map API fields to form fields
-      lastTestOn: result.get('lastTestOn'),
-      patientId: result.get('patientId'),
-      resultText: result.get('resultText')
-    }
-    return (
-      <FormContainer
-        labels={labels}
-        enableReinitialize
-        initialValues={initialValues}
-        onSubmit={this.handleSubmit}
-      />
-    )
-  }
-
-  renderReadOnlyFields() {
-    const { result, intl: { formatMessage } } = this.props
     const fields = [
       {
-        label: formatMessage(messages.fieldLastTestOn),
-        value: result.get('lastTestOn')
+        label: formatMessage(messages.fieldSiteName),
+        value: result.get('siteName')
+      },
+      {
+        label: formatMessage(messages.fieldCountryName),
+        value: result.get('countryName')
+      },
+      {
+        label: formatMessage(messages.fieldStateName),
+        value: result.get('stateName')
+      },
+      {
+        label: formatMessage(messages.fieldLgaName),
+        value: result.get('lgaName')
+      },
+      {
+        label: formatMessage(messages.fieldEndedOn),
+        value: result.get('endedOn')
       },
       {
         label: formatMessage(messages.fieldPatientId),
         value: result.get('patientId')
       },
       {
-        label: formatMessage(messages.fieldResultText),
-        value: result.get('resultText')
+        label: assay.get('resultCategory1Label'), // TODO i18n
+        value: result.get('resultCategory1Name')
+      },
+      {
+        label: assay.get('resultCategory2Label'), // TODO i18n
+        value: result.get('resultCategory2Name') || '-'
+      },
+      {
+        label: formatMessage(messages.fieldResultDataResultText),
+        value: result.getIn(['resultData', 'resultText'])
       }
     ]
     return (
-      <ReadOnlyFields fields={fields} />
+      <ReadOnlyFields
+        className={cx('FieldsContainer__LeftColumn__Content')}
+        fields={fields}
+      />
+    )
+  }
+
+  renderRightColumnFields() {
+    const { result, intl: { formatMessage } } = this.props
+    const assay = result.get('assay')
+
+    const fields = [
+      {
+        label: formatMessage(messages.fieldAssayName),
+        value: assay.get('name')
+      },
+      {
+        label: formatMessage(messages.fieldInstrumentSerial),
+        value: result.get('instrumentSerial')
+      },
+      {
+        label: formatMessage(messages.fieldModuleSerial),
+        value: result.get('moduleSerial')
+      },
+      {
+        label: formatMessage(messages.fieldConsumableSerial),
+        value: result.get('consumableSerial')
+      },
+      {
+        label: formatMessage(messages.fieldConsumableExpirationDate),
+        value: result.get('consumableExpirationDate')
+      },
+      {
+        label: formatMessage(messages.fieldSenderVersion),
+        value: result.get('senderVersion')
+      },
+      {
+        label: formatMessage(messages.fieldSenderOperator),
+        value: result.get('senderOperator')
+      },
+      {
+        label: formatMessage(messages.fieldStartedOn),
+        value: result.get('startedOn')
+      },
+      {
+        label: formatMessage(messages.fieldUpdatedOn),
+        value: result.get('updatedOn')
+      }
+    ]
+    return (
+      <ReadOnlyFields
+        className={cx('FieldsContainer__RightColumn__Content')}
+        fields={fields}
+      />
     )
   }
 
   renderContent() {
-    const { result, editable } = this.props
+    const { result } = this.props
     if (!result) {
       return
     }
     return (
-      <div className={styles.FieldsContainer}>
-        {editable ?
-        this.renderFormContainer() :
-        this.renderReadOnlyFields()}
+      <div className={cx('FieldsContainer')}>
+        <div className="pure-g">
+          <div className="pure-u-lg-1-2 pure-u-md-1-2 pure-u-sm-1-2">
+            {this.renderLeftColumnFields()}
+          </div>
+          <div className="pure-u-lg-1-2 pure-u-md-1-2 pure-u-sm-1-2">
+            {this.renderRightColumnFields()}
+          </div>
+        </div>
       </div>
     )
   }
@@ -150,7 +262,7 @@ export class ResultDetail extends PureComponent {
     const { formatMessage } = intl
 
     return (
-      <div className={styles.Content}>
+      <div className={cx('Content')}>
         <Helmet title={formatMessage(messages.title)} titleTemplate="%s - Aspect" defaultTitle="Aspect" />
         <Paper>
           {this.renderProgress()}
@@ -165,15 +277,13 @@ function mapStateToProps(state, props) {
   const result = state.result.items.byId.get(props.params.resultId)
 
   return {
-    editable: isEditable(state.user, result),
     result
   }
 }
 
 function mapDispatchToProps(dispatch) {
   return bindActionCreators({
-    fetchSingleResult,
-    updateSingleResult
+    fetchSingleResult
   }, dispatch)
 }
 
