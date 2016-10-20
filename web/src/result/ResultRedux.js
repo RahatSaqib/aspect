@@ -5,6 +5,7 @@ import { aspectFetch } from '../shared/utils/fetch'
 import { addError } from '../error/ErrorRedux'
 import {
   receiveList,
+  receiveItem,
   Items
 } from '../shared/metaReducers/items'
 import {
@@ -15,7 +16,10 @@ import {
 
 export const types = {
   REQUEST_RESULTS: 'REQUEST_RESULTS',
-  RECEIVE_RESULTS: 'RECEIVE_RESULTS'
+  RECEIVE_RESULTS: 'RECEIVE_RESULTS',
+
+  REQUEST_SINGLE_RESULT: 'REQUEST_SINGLE_RESULT',
+  RECEIVE_SINGLE_RESULT: 'RECEIVE_SINGLE_RESULT'
 }
 /*
  * ---------------- Action Creators -----------------
@@ -57,6 +61,36 @@ export function fetchResults(filters/* required */, sortCol = 'endedOn', sortDir
       })
   }
 }
+
+// loading a single result with given resultId
+function requestSingleResult(resultId) {
+  return {
+    type: types.REQUEST_SINGLE_RESULT,
+    resultId
+  }
+}
+
+// received a single result
+function receiveSingleResult(item) {
+  return {
+    type: types.RECEIVE_SINGLE_RESULT,
+    item
+  }
+}
+
+// load a single result with given resultId
+export function fetchSingleResult(resultId){
+  return dispatch => {
+
+    dispatch(requestSingleResult(resultId))
+
+    return aspectFetch(`/result/${resultId}`)
+      .then(json => dispatch(receiveSingleResult(json.data)))
+      .catch(err => {
+        dispatch(addError(`Loading a result (${resultId}) failed`, err.message, err))
+      })
+  }
+}
 /*
  * ---------------- Reducers -----------------
  */
@@ -82,6 +116,11 @@ export default function resultReducer(state = initialState, action) {
       const immutList = Immutable.fromJS(action.items)
       mutState.set('items', receiveList(mutState.items, immutList))
       mutState.set('table', receiveTableItems(mutState.table, action.total))
+    })
+  case types.RECEIVE_SINGLE_RESULT:
+    return state.withMutations(mutState => {
+      const immutItem = Immutable.fromJS(action.item)
+      mutState.set('items', receiveItem(mutState.items, immutItem))
     })
   }
   return state
