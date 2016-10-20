@@ -9,6 +9,7 @@ import RaisedButton from 'material-ui/RaisedButton'
 import TextField from 'material-ui/TextField'
 
 // Our own imports
+import TimezoneSelect from '../../components/shared/TimezoneSelect'
 import LocationSelector from '../../components/shared/LocationSelector'
 
 const renderTextField = ({ input, meta, ...restProps }) => {
@@ -37,7 +38,7 @@ export class EditableFieldsForm extends PureComponent {
       <form onSubmit={handleSubmit}>
         <Field name="name" floatingLabelText={labels.name} component={renderTextField} />
         <Field name="shortName" floatingLabelText={labels.shortName} component={renderTextField} />
-        <Field name="timezone" floatingLabelText={labels.timezone} component={renderTextField} />
+        <TimezoneSelect name="timezone" label={labels.timezone} disabled={loading || submitting} fullWidth />
         <LocationSelector
           disabled={loading}
           initialValues={initialValues}
