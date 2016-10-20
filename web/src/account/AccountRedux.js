@@ -5,7 +5,7 @@ import { SubmissionError } from 'redux-form'
 import { aspectFetch, getHeaders, getBrowserNameAndVersion } from '../shared/utils/fetch'
 import * as localStorage from '../shared/utils/localStorage'
 import { addError } from '../error/ErrorRedux'
-import {loginSuccess} from '../auth/AuthRedux'
+import {loginSuccess, changeLanguage} from '../auth/AuthRedux'
 
 export const types = {
   REQUEST_ACCOUNT_DETAILS: 'REQUEST_ACCOUNT_DETAILS',
@@ -142,7 +142,13 @@ export function saveUserPreferences(userPreferences) {
         body: JSON.stringify(userPreferences)
       })
       //TODO: Update language and time
-      .then(json => dispatch(createReceiveUpdatedUserPreferences(json.data))) //TODO: Dispatch action to set current timezone and language
+      .then(json => {
+        if(json.data.culture && json.data.culture.indexOf('-') > 0) {
+          const lang = json.data.culture.substr(0, json.data.culture.indexOf('-'))
+          dispatch(changeLanguage(lang, json.data.culture))
+        }
+        dispatch(createReceiveUpdatedUserPreferences(json.data))
+      }) //TODO: Dispatch action to set current timezone and language
       .catch(err => dispatch(addError('Saving user preferences failed', err.message, err)))
   }
 }

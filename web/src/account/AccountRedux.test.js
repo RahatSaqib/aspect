@@ -210,7 +210,8 @@ describe('AccountDetailsRedux', () => {
           store: () => {}
         },
         '../auth/AuthRedux': {
-          loginSuccess: () => {}
+          loginSuccess: () => {},
+          changeLanguage: () => {}
         }
       }
       if(errorCreatorsStub) {
@@ -549,7 +550,7 @@ describe('AccountDetailsRedux', () => {
         it('Should dispatch a RECEIVE_UPDATED_USER_PREFERENCES action with the account details received', () => {
           return expectedResponseFromServer.then(response => {
             assert.deepEqual(response, {ok: true, data: accountDetailsData})
-            assert.deepEqual(dispatch.secondCall.args, [{
+            assert.deepEqual(dispatch.thirdCall.args, [{
               type: types.RECEIVE_UPDATED_USER_PREFERENCES,
               accountDetails: accountDetailsData
             }])
