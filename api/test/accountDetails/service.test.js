@@ -109,7 +109,7 @@ describe('account details service', function () {
       }])(function () {
         const savePersonQuery = dbSpy.query.withArgs('Save account details for currently logged in user').lastCall.returnValue
         assert.equal(savePersonQuery.from.lastCall.args[0], 'Person as p')
-        assert.deepEqual(savePersonQuery.where.lastCall.args[0], {'p.id': accountDetails.id})
+        assert.deepEqual(savePersonQuery.where.lastCall.args[0], {'p.id': contactDetails.id})
         assert.deepEqual(savePersonQuery.update.lastCall.args[0], Object.assign({}, changedRequestProperties, {
           updatedOn: now,
           updatedBy: contactDetails.userId
@@ -136,7 +136,7 @@ describe('account details service', function () {
       })
     })
 
-    it('Should return an bad request response if the account details are not the details of the currently logged in user', function () {
+    it('Should return an forbidden response if the account details are not the details of the currently logged in user', function () {
       dbSpy.query.for('Get account details for currently logged in user').resolvesWith(
         Object.assign({}, contactDetails, {id: contactDetails.id + 5}))
 
@@ -148,7 +148,7 @@ describe('account details service', function () {
         }),
         payload: contactDetails
       }])(function (response) {
-        assert.equal(response.output.statusCode, 400)
+        assert.equal(response.output.statusCode, 403)
         assert.equal(response.output.payload.message, 'Incorrect user details')
       })
     })

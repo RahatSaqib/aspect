@@ -39,7 +39,7 @@ const messages = defineMessages({
   }
 })
 
-class AccountDetails extends React.PureComponent {
+class AccountDetails extends PureComponent {
   static propTypes = {
     setPageTitle: PropTypes.func.isRequired
   }

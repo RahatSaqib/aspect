@@ -24,7 +24,7 @@ function* saveDetailsForLoggedInUser(request, updatablePersonFields) {
 
   //The account details do not belong to the user that submitted this request!
   if(accountDetails.id !== newAccountDetails.id) {
-    return Boom.badRequest('Incorrect user details')
+    return Boom.forbidden('Incorrect user details')
   }
   //Compare the record with what has been sent and find changed values
   const changedFields = _.reduce(newAccountDetails, function(result, value, key) {
