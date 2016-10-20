@@ -87,6 +87,8 @@ class AccountDetails extends PureComponent {
         if(!errors.currentPassword) {
           this.closeCurrentPasswordInputDialog()
         }
+      }, saveLoginDetailsSucceeded = () => {
+        this.closeCurrentPasswordInputDialog()
       }
     return (
       <div className={styles.Content}>
@@ -113,7 +115,8 @@ class AccountDetails extends PureComponent {
                                              currentPasswordInputDialogOpen={this.state.currentPasswordInputDialogOpen}
                                              openCurrentPasswordInputDialog={this.openCurrentPasswordInputDialog}
                                              closeCurrentPasswordInputDialog={this.closeCurrentPasswordInputDialog}
-                                             onSubmit={saveLoginDetails} onSubmitFail={saveLoginDetailsFailed} />}
+                                             onSubmit={saveLoginDetails} onSubmitFail={saveLoginDetailsFailed}
+                                             onSubmitSuccess={saveLoginDetailsSucceeded} />}
             </Tab>
             <Tab className={styles.ResponsiveTab} icon={<Language />}
                  label={<span className="pure-hidden-xs">{formatMessage(messages.languageAndTimezone)}</span>}>
