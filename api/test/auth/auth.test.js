@@ -119,6 +119,7 @@ describe('auth endpoints', function () {
             name: 'admin',
             password: validHashedPassword,
             culture: 'en-GB',
+            timezone: 'GMT Standard Time',
             partnerId: 2,
             countryId: 3
           }
@@ -141,7 +142,8 @@ describe('auth endpoints', function () {
                 name: britishUser.name,
                 modules: permissions.map(p => p.module),
                 permissions: permissions.map(p => `${p.module}:${p.activity}`),
-                culture: britishUser.culture
+                culture: britishUser.culture,
+                timezone: britishUser.timezone
               })
             })
             .thenCall(done)
@@ -658,6 +660,7 @@ describe('auth endpoints', function () {
             name: 'admin',
             password: validHashedPassword,
             culture: 'en-ZA',
+            timezone: 'South Africa Standard Time',
             partnerId: 2,
             countryId: 3
           }
@@ -673,7 +676,8 @@ describe('auth endpoints', function () {
                 name: southAfricanUser.name,
                 modules: permissions.map(p => p.module),
                 permissions: permissions.map(p => `${p.module}:${p.activity}`),
-                culture: southAfricanUser.culture
+                culture: southAfricanUser.culture,
+                timezone: southAfricanUser.timezone
               })
             })
             .thenCall(done)

@@ -11,6 +11,10 @@ export function updateLanguageAndCulture(lang, culture) {
   localStorage.culture = culture
 }
 
+export function updateTimezone(timezone) {
+  localStorage.timezone = timezone
+}
+
 export function toggleDrawerOpen() {
   localStorage.drawerOpen = !isDrawerOpen()
 }
@@ -25,6 +29,10 @@ export function getCulture() {
 
 export function getLang() {
   return localStorage.lang
+}
+
+export function getTimezone() {
+  return localStorage.timezone
 }
 
 export function getClientId() {
@@ -62,5 +70,6 @@ export function clear() {
   localStorage.removeItem('clientId')
   localStorage.removeItem('lang')
   localStorage.removeItem('culture')
+  localStorage.removeItem('timezone')
   // FIXME: Add drawerOpen?
 }

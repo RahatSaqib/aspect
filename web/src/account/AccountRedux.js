@@ -5,7 +5,7 @@ import { SubmissionError } from 'redux-form'
 import { aspectFetch, getHeaders, getBrowserNameAndVersion } from '../shared/utils/fetch'
 import * as localStorage from '../shared/utils/localStorage'
 import { addError } from '../error/ErrorRedux'
-import {loginSuccess, changeLanguage} from '../auth/AuthRedux'
+import {loginSuccess, changeLanguage, changeTimezone} from '../auth/AuthRedux'
 
 export const types = {
   REQUEST_ACCOUNT_DETAILS: 'REQUEST_ACCOUNT_DETAILS',
@@ -143,9 +143,12 @@ export function saveUserPreferences(userPreferences) {
       })
       //TODO: Update language and time
       .then(json => {
-        if(json.data.culture && json.data.culture.indexOf('-') > 0) {
-          const lang = json.data.culture.substr(0, json.data.culture.indexOf('-'))
+        if(json.data.culture && json.data.culture.length > 1) {
+          const lang = json.data.culture.substr(0, 2)
           dispatch(changeLanguage(lang, json.data.culture))
+        }
+        if(json.data.timezone) {
+          dispatch(changeTimezone(json.data.timezone))
         }
         dispatch(createReceiveUpdatedUserPreferences(json.data))
       }) //TODO: Dispatch action to set current timezone and language

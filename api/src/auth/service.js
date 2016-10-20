@@ -23,7 +23,7 @@ function getUser(username) {
     .innerJoin('Person as p', 'u.id', 'p.userId')
     .where({'u.name': username})
     .first( 'u.lockedOut', 'u.failedPasswordAttempts', 'u.password',
-      'u.legacyPassword', 'u.id', 'u.name', 'p.culture',
+      'u.legacyPassword', 'u.id', 'u.name', 'p.culture', 'p.timezone',
       'p.lastPartnerId as partnerId', 'p.lastCountryId as countryId')
 }
 
@@ -136,7 +136,7 @@ function* refreshToken(request){
     .innerJoin('Person as p', 'u.id', 'p.userId')
     .where({clientId, token, revoked: 0})
     .first('rt.userId as id', 'rt.expires', 'u.name',
-      'p.culture', 'p.lastPartnerId as partnerId', 'p.lastCountryId as countryId')
+      'p.culture', 'p.timezone', 'p.lastPartnerId as partnerId', 'p.lastCountryId as countryId')
 
   if (!data) {
     return Boom.badRequest('Unable to find token or token revoked')
@@ -166,7 +166,7 @@ function* refreshToken(request){
 }
 
 // generate a new jwt for the given user data
-function getAccessToken({id, name, culture, partnerId, countryId}){
+function getAccessToken({id, name, culture, timezone, partnerId, countryId}){
   return query('Get permissions for user and partner')
     .from('Permission as p')
     .innerJoin('RolePermission as rp', 'p.id', 'rp.permissionId')
@@ -185,7 +185,8 @@ function getAccessToken({id, name, culture, partnerId, countryId}){
         // TODO should we remove modules since same info in permissions to reduce size of JWT?
         modules: data.map(p => p.module),
         permissions: data.map(p => `${p.module}:${p.activity}`),
-        culture: culture || 'en-US'
+        culture: culture || 'en-US',
+        timezone: timezone || 'Eastern Standard Time'
       },
       config.secret, {
         expiresIn: '1 hour',
