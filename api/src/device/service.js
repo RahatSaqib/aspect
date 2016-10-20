@@ -171,9 +171,10 @@ function* addDeviceOperation(request){
 
   const now = new Date()
   const userId = auth.credentials.id
+  let deviceOperationId = -1
 
   yield transact(function*(knex){
-    const [deviceOperationId] = yield knex('DeviceOperation')
+    [deviceOperationId] = yield knex('DeviceOperation')
       .insert({
         deviceId,
         data: JSON.stringify(payload.data),
@@ -189,7 +190,9 @@ function* addDeviceOperation(request){
         updatedBy: userId
       })
   })
-  return {ok: true}
+  return deviceOperationId > 0
+    ? {ok: true, data: {id: deviceOperationId}}
+    : {ok: false}
 }
 
 function* listDeviceOperation(request){
