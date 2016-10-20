@@ -57,8 +57,7 @@ describe('AccountDetailsRedux', () => {
           username: null,
           newPassword: null,
           confirmNewPassword: null,
-          currentPassword: null,
-          incorrectCurrentPasswordEntered: false
+          currentPassword: null
         })
         assert.deepEqual(initialState.getIn(['data', 'userPreferences']).toJS(), {
           id: null,
@@ -87,8 +86,7 @@ describe('AccountDetailsRedux', () => {
             username: accountDetailsData.username,
             newPassword: null,
             confirmNewPassword: null,
-            currentPassword: null,
-            incorrectCurrentPasswordEntered: false
+            currentPassword: null
           })
           assert.deepEqual(state.getIn(['data', 'userPreferences']).toJS(), _.pick(accountDetailsData, ['id', 'timezone', 'culture']))
         })
@@ -131,8 +129,7 @@ describe('AccountDetailsRedux', () => {
             username: accountDetailsData.username,
             newPassword: null,
             confirmNewPassword: null,
-            currentPassword: null,
-            incorrectCurrentPasswordEntered: false
+            currentPassword: null
           })
           assert.deepEqual(newState.getIn(['data', 'userPreferences']).toJS(), _.pick(accountDetailsData, ['id', 'timezone', 'culture']))
         })
@@ -154,8 +151,7 @@ describe('AccountDetailsRedux', () => {
             username: updateDetailsData.username,
             newPassword: null,
             confirmNewPassword: null,
-            currentPassword: null,
-            incorrectCurrentPasswordEntered: false
+            currentPassword: null
           })
           assert.deepEqual(newState.getIn(['data', 'userPreferences']).toJS(), _.pick(accountDetailsData, ['id', 'timezone', 'culture']))
         })
@@ -191,8 +187,7 @@ describe('AccountDetailsRedux', () => {
             username: accountDetailsData.username,
             newPassword: null,
             confirmNewPassword: null,
-            currentPassword: null,
-            incorrectCurrentPasswordEntered: false
+            currentPassword: null
           })
           assert.deepEqual(newState.getIn(['data', 'userPreferences']).toJS(), _.pick(newAccountDetailsData, ['id', 'timezone', 'culture']))
         })

@@ -1,7 +1,7 @@
 import Immutable from 'immutable'
-import { SubmissionError } from 'redux-form'
 import _ from 'lodash'
 import jwt_decode from 'jwt-decode'
+import { SubmissionError } from 'redux-form'
 import { aspectFetch, getHeaders, getBrowserNameAndVersion } from '../shared/utils/fetch'
 import * as localStorage from '../shared/utils/localStorage'
 import { addError } from '../error/ErrorRedux'
@@ -14,7 +14,7 @@ export const types = {
   RECEIVE_UPDATED_CONTACT_DETAILS: 'RECEIVE_UPDATED_CONTACT_DETAILS',
   RECEIVE_UPDATED_LOGIN_DETAILS: 'RECEIVE_UPDATED_LOGIN_DETAILS',
   RECEIVE_UPDATED_USER_PREFERENCES: 'RECEIVE_UPDATED_USER_PREFERENCES',
-  INCORRECT_CURRENT_PASSWORD_ENTERED: 'INCORRECT_CURRENT_PASSWORD_ENTERED'
+  RECEIVE_UPDATED_LOGIN_DETAILS_EXPECTED_ERROR: 'RECEIVE_UPDATED_LOGIN_DETAILS_EXPECTED_ERROR'
 }
 
 /*
@@ -77,9 +77,9 @@ function createReceiveUpdatedLoginDetails(updateDetails) {
   }
 }
 
-function createIncorrectCurrentPasswordEntered() {
+function createReceiveUpdatedLoginDetailsExpectedError() {
   return {
-    type: types.INCORRECT_CURRENT_PASSWORD_ENTERED
+    type: types.RECEIVE_UPDATED_LOGIN_DETAILS_EXPECTED_ERROR
   }
 }
 
@@ -110,15 +110,16 @@ export function saveLoginDetails(loginDetails) {
         dispatch(createReceiveUpdatedLoginDetails(json.data))
       })
       .catch(err => {
-        if(err.message === 'Incorrect password.') {
-          dispatch(createIncorrectCurrentPasswordEntered())
-          //TODO: i18n Possibly through a callback passed to the function
-          throw new SubmissionError({currentPassword: 'The password that you entered is not valid'})
-        } else if(err.message === 'Username already in use') {
-          //TODO: i18n Possibly through a callback passed to the function
-          throw new SubmissionError({username: 'This username is unavailable'})
-        } else {
-          dispatch(addError('Saving login details failed', err.message, err))
+        dispatch(addError('Saving login details failed', err.message, err))
+        if(['Incorrect password.', 'Username already in use'].includes(err.message)) {
+          dispatch(createReceiveUpdatedLoginDetailsExpectedError())
+          const submissionError = {_error: err.message}
+          if(err.message === 'Incorrect password.') {
+            submissionError.currentPassword = 'The password that you entered is not valid'
+          } else if(err.message === 'Username already in use') {
+            submissionError.username = 'This username is unavailable'
+          }
+          throw new SubmissionError(submissionError)
         }
       })
   }
@@ -166,8 +167,7 @@ const ContactDetails = Immutable.Record({
     username: null,
     newPassword: null,
     confirmNewPassword: null,
-    currentPassword: null,
-    incorrectCurrentPasswordEntered: false
+    currentPassword: null
   }), UserPreferences = Immutable.Record({
     id: null,
     timezone: null,
@@ -227,25 +227,17 @@ function receiveUpdatedLoginDetails(state, updateDetails) {
     data: new AccountDetailsData({
       contactDetails: state.getIn(['data', 'contactDetails']),
       loginDetails: new LoginDetails({...state.getIn(['data', 'loginDetails']).toJS(),
-        username: updateDetails.username,
-        incorrectCurrentPasswordEntered: false
+        username: updateDetails.username
       }),
       userPreferences: state.getIn(['data', 'userPreferences'])
     })
   })
 }
 
-function incorrectCurrentPasswordEntered(state) {
-  return state.mergeDeep({
+function receiveUpdatedLoginDetailsExpectedError(state) {
+  return state.merge({
     loading: false,
-    saving: false,
-    data: new AccountDetailsData({
-      contactDetails: state.getIn(['data', 'contactDetails']),
-      loginDetails: new LoginDetails({...state.getIn(['data', 'loginDetails']).toJS(),
-        incorrectCurrentPasswordEntered: true
-      }),
-      userPreferences: state.getIn(['data', 'userPreferences'])
-    })
+    saving: false
   })
 }
 
@@ -275,8 +267,8 @@ export default function accountDetailsReducer(state = initialState, action) {
     return receiveUpdatedLoginDetails(state, action.updateDetails)
   case types.RECEIVE_UPDATED_USER_PREFERENCES:
     return receiveUpdatedUserPreferences(state, action.accountDetails)
-  case types.INCORRECT_CURRENT_PASSWORD_ENTERED:
-    return incorrectCurrentPasswordEntered(state)
+  case types.RECEIVE_UPDATED_LOGIN_DETAILS_EXPECTED_ERROR:
+    return receiveUpdatedLoginDetailsExpectedError(state)
   }
   return state
 }

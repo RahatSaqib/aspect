@@ -11,64 +11,64 @@ import styles from './AccountDetails.css'
 
 const messages = defineMessages({
   username: {
-    id: 'pages.LoginDetails.username',
+    id: 'pages.UpdateLoginDetails.username',
     defaultMessage: 'Username'
   },
   newPassword: {
-    id: 'pages.LoginDetails.newPassword',
+    id: 'pages.UpdateLoginDetails.newPassword',
     defaultMessage: 'New Password'
   },
   confirmNewPassword: {
-    id: 'pages.LoginDetails.confirmNewPassword',
+    id: 'pages.UpdateLoginDetails.confirmNewPassword',
     defaultMessage: 'Confirm New Password'
   },
   save: {
-    id: 'pages.LoginDetails.save',
+    id: 'pages.UpdateLoginDetails.save',
     defaultMessage: 'Save'
   },
   currentPassword: {
-    id: 'pages.LoginDetails.currentPassword',
+    id: 'pages.UpdateLoginDetails.currentPassword',
     defaultMessage: 'Current Password'
   },
   usernameRequired: {
-    id: 'pages.LoginDetails.usernameRequired',
+    id: 'pages.UpdateLoginDetails.usernameRequired',
     defaultMessage: 'A username is required'
   },
-  usernameUnavailable: {
-    id: 'pages.LoginDetails.usernameUnavailable',
-    defaultMessage: 'This username is unavailable'
-  },
   currentPasswordRequired: {
-    id: 'pages.LoginDetails.currentPasswordRequired',
+    id: 'pages.UpdateLoginDetails.currentPasswordRequired',
     defaultMessage: 'Please enter your current password to update your login details'
   },
-  invalidPassword: {
-    id: 'pages.LoginDetails.invalidPassword',
-    defaultMessage: 'The password that you entered is not valid'
-  },
-  weakPassword: {
-    id: 'pages.LoginDetails.weakPassword',
-    defaultMessage: 'The password that you entered is too weak'
+  newPasswordTooShort: {
+    id: 'pages.UpdateLoginDetails.newPasswordTooShort',
+    defaultMessage: 'Your password needs to be at least 6 characters long'
   },
   passwordsDoNotMatch: {
-    id: 'pages.LoginDetails.passwordsDoNotMatch',
+    id: 'pages.UpdateLoginDetails.passwordsDoNotMatch',
     defaultMessage: 'These passwords don\'t match'
   },
   currentPasswordDialogHeader: {
-    id: 'pages.LoginDetails.currentPasswordDialogHeader',
+    id: 'pages.UpdateLoginDetails.currentPasswordDialogHeader',
     defaultMessage: 'Enter Current Password'
   },
   currentPasswordDialogMessage: {
-    id: 'pages.LoginDetails.currentPasswordDialogMessage',
+    id: 'pages.UpdateLoginDetails.currentPasswordDialogMessage',
     defaultMessage: 'To update your login details, please enter your current password'
   },
   submitCurrentPassword: {
-    id: 'pages.LoginDetails.submitCurrentPassword',
+    id: 'pages.UpdateLoginDetails.submitCurrentPassword',
     defaultMessage: 'Submit'
   },
   cancelCurrentPassword: {
-    id: 'pages.LoginDetails.cancelCurrentPassword',
+    id: 'pages.UpdateLoginDetails.cancelCurrentPassword',
     defaultMessage: 'Cancel'
+  },
+  usernameUnavailable: {
+    id: 'pages.UpdateLoginDetails.usernameUnavailable',
+    defaultMessage: 'This username is unavailable'
+  },
+  invalidPassword: {
+    id: 'pages.UpdateLoginDetails.invalidPassword',
+    defaultMessage: 'The password that you entered is not valid'
   }
 })
 
@@ -78,23 +78,19 @@ const LoginDetailsForm = props => {
       openCurrentPasswordInputDialog,
       closeCurrentPasswordInputDialog} = props,
     {formatMessage} = props.intl,
-    submitCurrentPassword = () => {
-      closeCurrentPasswordInputDialog()
-      handleSubmit()
-    },
     onCurrentPasswordKeyPress = event => {
       if(event.key === 'Enter') {
-        submitCurrentPassword()
+        return handleSubmit()
       }
     },
     currentPasswordInputDialogActions = [
       <FlatButton label={formatMessage(messages.cancelCurrentPassword)} secondary
                   disabled={loading} onTouchTap={closeCurrentPasswordInputDialog} />,
       <FlatButton label={formatMessage(messages.submitCurrentPassword)} primary
-                  disabled={pristine || invalid || loading} onTouchTap={submitCurrentPassword} />
+                  disabled={pristine || invalid || loading} onTouchTap={handleSubmit} />
     ]
   return (
-    <form onSubmit={submitCurrentPassword} className={styles.Form}>
+    <form onSubmit={handleSubmit} className={styles.Form}>
       <div className={styles.Form__Content}>
         <TextInput name="username" label={formatMessage(messages.username)} disabled={loading} maxLength="500" />
         <br />
@@ -129,8 +125,9 @@ const validate = (loginDetails, props) => {
     errors.currentPassword = formatMessage(messages.currentPasswordRequired)
   }
   if (loginDetails.get('newPassword')) {
-    //TODO: messages.weakPassword
-
+    if(loginDetails.get('newPassword').trim().length < 6) {
+      errors.newPassword = formatMessage(messages.newPasswordTooShort)
+    }
     if (loginDetails.get('newPassword') !== loginDetails.get('confirmNewPassword')) {
       errors.confirmNewPassword = formatMessage(messages.passwordsDoNotMatch)
     }

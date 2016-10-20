@@ -54,7 +54,7 @@ class AccountDetails extends React.PureComponent {
     super(props)
 
     this.state = {
-      currentPasswordInputDialogOpen: props.accountDetails && props.accountDetails.getIn(['loginDetails', 'incorrectCurrentPasswordEntered'])
+      currentPasswordInputDialogOpen: false
     }
 
     this.openCurrentPasswordInputDialog = this.openCurrentPasswordInputDialog.bind(this)
@@ -81,8 +81,13 @@ class AccountDetails extends React.PureComponent {
   }
 
   render() {
-    const { formatMessage } = this.props.intl
-    const { loading, saving, accountDetails, saveContactDetails, saveUserPreferences, saveLoginDetails } = this.props
+    const { loading, saving, accountDetails, saveContactDetails, saveUserPreferences, saveLoginDetails } = this.props,
+      { formatMessage } = this.props.intl,
+      saveLoginDetailsFailed = errors => {
+        if(!errors.currentPassword) {
+          this.closeCurrentPasswordInputDialog()
+        }
+      }
     return (
       <div className={styles.Content}>
         <Paper>
@@ -108,7 +113,7 @@ class AccountDetails extends React.PureComponent {
                                              currentPasswordInputDialogOpen={this.state.currentPasswordInputDialogOpen}
                                              openCurrentPasswordInputDialog={this.openCurrentPasswordInputDialog}
                                              closeCurrentPasswordInputDialog={this.closeCurrentPasswordInputDialog}
-                                             onSubmit={saveLoginDetails} />}
+                                             onSubmit={saveLoginDetails} onSubmitFail={saveLoginDetailsFailed} />}
             </Tab>
             <Tab className={styles.ResponsiveTab} icon={<Language />}
                  label={<span className="pure-hidden-xs">{formatMessage(messages.languageAndTimezone)}</span>}>
