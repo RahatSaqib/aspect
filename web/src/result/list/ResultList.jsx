@@ -41,8 +41,8 @@ const messages = defineMessages({
     id: 'pages.ResultList.sampleId',
     defaultMessage: 'Sample ID'
   },
-  patiendId: {
-    id: 'pages.ResultList.patiendId',
+  patientId: {
+    id: 'pages.ResultList.patientId',
     defaultMessage: 'Patient ID'
   }
 })
@@ -128,7 +128,7 @@ export class ResultList extends PureComponent {
               format: (data) => formatDate(data) },
             { db: 'deviceName', title: formatMessage(messages.deviceName) },
             { db: 'sampleId', title: formatMessage(messages.sampleId) },
-            { db: 'patientId', title: formatMessage(messages.patiendId) }
+            { db: 'patientId', title: formatMessage(messages.patientId) }
           ]}
         />
       </div>
