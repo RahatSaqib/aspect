@@ -21,6 +21,7 @@ import { SiteListContainer } from '../site/list/SiteList'
 import { SiteDetailContainer } from '../site/detail/SiteDetail'
 import { PersonListContainer } from '../person/list/PersonList'
 import { ResultListContainer } from '../result/list/ResultList'
+import { ResultDetailContainer } from '../result/detail/ResultDetail'
 import { NotificationListContainer } from '../notification/list/NotificationList'
 import { ReportListContainer } from '../report/list/ReportList'
 import { AccountDetailsContainer } from '../account/detail/AccountDetails'
@@ -79,6 +80,7 @@ const routes =
 
         <Route path="result">
           <IndexRoute component={ResultListContainer} />
+          <Route path=":resultId" component={ResultDetailContainer} />
         </Route>
 
         <Route path="site">
