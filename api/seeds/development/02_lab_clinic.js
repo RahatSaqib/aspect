@@ -67,7 +67,6 @@ function* seed(knex){
     countryId: nigeriaStates[0].countryId,
     stateId: nigeriaStates[0].stateId
   }, auditFields))
-  console.log('2')
 
   for(let state of nigeriaStates){
     const geoData = {
