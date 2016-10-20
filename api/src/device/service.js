@@ -1,6 +1,7 @@
-let Promise = require('bluebird')
-let { knex, filterParams, sortPageParams } = require('../db')
-let { getConstraints, addConstraints } = require('../auth/constraints')
+const Promise = require('bluebird')
+const Boom = require('boom')
+const { knex, filterParams, sortPageParams, transact } = require('../db')
+const { getConstraints, addConstraints } = require('../auth/constraints')
 
 const SELECT_LIST_FIELDS = [
   'd.id', 'd.name', 'd.shortname', 'd.createdOn', 'd.lastPingOn', 'd.updatedOn as lastSeen',
@@ -55,19 +56,22 @@ function* listDevices(request){
   return result
 }
 
-function* showDevice(request) {
-  const {params} = request
+function* getDeviceByDeviceId(request, fields=SELECT_SHOW_FIELDS){
+  const {auth, params} = request
+  const dataConstraints = yield getConstraints(auth.credentials)
 
-  // get item
-  const [item] = yield knex('Device as d')
+  const devices = yield knex('Device as d')
     .innerJoin('DeviceType as dt', 'd.deviceTypeId', 'dt.id')
     .innerJoin('DeviceTypeCategory as dc', 'dt.deviceTypeCategoryId', 'dc.id')
-    .where('d.id', params.deviceId)
-    .select(SELECT_SHOW_FIELDS)
+    .where('d.id', +params.deviceId)
+    .modify(addConstraints, dataConstraints, {device: 'd'})
+    .select(fields)
+  return {ok: devices.length === 1, data: devices[0]}
+}
 
-  const result = {ok: true, data: item}
-
-  return result
+function* showDevice(request) {
+  const device = yield* getDeviceByDeviceId(request)
+  return device.ok ? device : Boom.notFound()
 }
 
 function* updateDevice(request) {
@@ -93,8 +97,139 @@ function* updateDevice(request) {
 }
 
 
+function* addDeviceConfiguration(request){
+  const {auth, payload} = request
+  const device = yield* getDeviceByDeviceId(request, ['d.id'])
+  if(!device.ok){
+    return Boom.notFound()
+  }
+  const deviceId = device.data.id
+
+  const now = new Date()
+  const userId = auth.credentials.id
+  let deviceConfigurationId = -1
+
+  yield transact(function*(knex){
+    [deviceConfigurationId] = yield knex('DeviceConfiguration')
+      .insert({
+        deviceId,
+        data: JSON.stringify(payload.data),
+        createdOn: now,
+        createdBy: userId
+      })
+
+    yield knex('Device')
+      .where('id', deviceId)
+      .update({
+        deviceConfigurationId,
+        updatedOn: now,
+        updatedBy: userId
+      })
+  })
+  return deviceConfigurationId > 0
+    ? {ok: true, data: {id: deviceConfigurationId}}
+    : {ok: false}
+}
+
+function* listDeviceConfiguration(request){
+  let {query, auth} = request
+
+  // get data constraints
+  let dataConstraints = yield getConstraints(auth.credentials)
+
+  let configQuery = knex('DeviceConfiguration as dc')
+    .leftJoin('Device as d', 'dc.deviceId', 'd.id')
+    .modify(filterParams, query, 'name', 'd.name')
+    .modify(addConstraints, dataConstraints, {device: 'd'})
+
+  // get total count for paging
+  let getCount = configQuery.clone()
+    .count('dc.id as count').first()
+
+  // get rows
+  let getItems = configQuery.clone()
+    .modify(sortPageParams, query, 'deviceName')
+    .select('dc.id', 'dc.createdOn', 'dc.data', 'dc.deviceId', 'd.name as deviceName')
+    .map(item => Object.assign({}, item, {data: JSON.parse(item.data)}))
+
+  // return result when both queries are finished
+  let [{count: total}, data] = yield Promise.all([getCount, getItems])
+
+  let result = {ok: true, total, length: data.length, data}
+
+  return result
+}
+
+
+function* addDeviceOperation(request){
+  const {auth, payload} = request
+  const device = yield* getDeviceByDeviceId(request, ['d.id'])
+  if(!device.ok){
+    return Boom.notFound()
+  }
+  const deviceId = device.data.id
+
+  const now = new Date()
+  const userId = auth.credentials.id
+  let deviceOperationId = -1
+
+  yield transact(function*(knex){
+    [deviceOperationId] = yield knex('DeviceOperation')
+      .insert({
+        deviceId,
+        data: JSON.stringify(payload.data),
+        createdOn: now,
+        createdBy: userId
+      })
+
+    yield knex('Device')
+      .where('id', deviceId)
+      .update({
+        deviceOperationId,
+        updatedOn: now,
+        updatedBy: userId
+      })
+  })
+  return deviceOperationId > 0
+    ? {ok: true, data: {id: deviceOperationId}}
+    : {ok: false}
+}
+
+function* listDeviceOperation(request){
+  let {query, auth} = request
+
+  // get data constraints
+  let dataConstraints = yield getConstraints(auth.credentials)
+
+  let opQuery = knex('DeviceOperation as do')
+    .leftJoin('Device as d', 'do.deviceId', 'd.id')
+    .modify(filterParams, query, 'name', 'd.name')
+    .modify(addConstraints, dataConstraints, {device: 'd'})
+
+  // get total count for paging
+  let getCount = opQuery.clone()
+    .count('do.id as count').first()
+
+  // get rows
+  let getItems = opQuery.clone()
+    .modify(sortPageParams, query, 'deviceName')
+    .select('do.id', 'do.createdOn', 'do.data', 'do.deviceId', 'd.name as deviceName')
+    .map(item => Object.assign({}, item, {data: JSON.parse(item.data)}))
+
+  // return result when both queries are finished
+  let [{count: total}, data] = yield Promise.all([getCount, getItems])
+
+  let result = {ok: true, total, length: data.length, data}
+
+  return result
+}
+
 module.exports = {
   listDevices,
   showDevice,
-  updateDevice
+  updateDevice,
+  addDeviceConfiguration,
+  listDeviceConfiguration,
+  addDeviceOperation,
+  listDeviceOperation
 }
