@@ -347,6 +347,22 @@ function* up(knex){
     assay.integer('deviceTypeId').unsigned().notNullable()
       .index().references('id').inTable('DeviceType')
     assay.charset('utf8')
+    // TODO: This could probably be more elegant, but I did want to
+    // have a way to normalize some of the result so it would be easy to
+    // create reports/filters/list pages, etc. 1-3 categories should cover the most interesting
+    // data for most assays.
+    assay.string('ResultCatgegory1Label')
+    assay.string('ResultCatgegory1i18nKey')
+    assay.string('ResultCatgegory2Label')
+    assay.string('ResultCatgegory2i18nKey')
+    assay.string('ResultCatgegory3Label')
+    assay.string('ResultCatgegory3i18nKey')
+    assay.string('ResultNumeric1Label')
+    assay.string('ResultNumeric1i18nKey')
+    assay.string('ResultNumeric2Label')
+    assay.string('ResultNumeric2i18nKey')
+    assay.string('ResultNumeric3Label')
+    assay.string('ResultNumeric3i18nKey')
   })
 
   yield knex.schema.createTable('ResultType', resultType => {
@@ -367,25 +383,10 @@ function* up(knex){
   // which result categories apply to which assays?
   yield knex.schema.createTable('ResultCategoryAssay', resultTypeCategoryAssay => {
     resultTypeCategoryAssay.integer('resultCategoryId').unsigned().notNullable()
-      .index().references('id').inTable('ResultCategory').unique()
+      .index().references('id').inTable('ResultCategory')
     resultTypeCategoryAssay.integer('assayId').unsigned().notNullable()
-      .index().references('id').inTable('Assay').unique()
-    // TODO: This could probably be more elegant, but I did want to
-    // have a way to normalize some of the result so it would be easy to
-    // create reports/filters/list pages, etc. 1-3 categories should cover the most interesting
-    // data for most assays.
-    resultTypeCategoryAssay.string('ResultCatgegory1Label')
-    resultTypeCategoryAssay.string('ResultCatgegory1i18nKey')
-    resultTypeCategoryAssay.string('ResultCatgegory2Label')
-    resultTypeCategoryAssay.string('ResultCatgegory2i18nKey')
-    resultTypeCategoryAssay.string('ResultCatgegory3Label')
-    resultTypeCategoryAssay.string('ResultCatgegory3i18nKey')
-    resultTypeCategoryAssay.string('ResultNumeric1Label')
-    resultTypeCategoryAssay.string('ResultNumeric1i18nKey')
-    resultTypeCategoryAssay.string('ResultNumeric2Label')
-    resultTypeCategoryAssay.string('ResultNumeric2i18nKey')
-    resultTypeCategoryAssay.string('ResultNumeric3Label')
-    resultTypeCategoryAssay.string('ResultNumeric3i18nKey')
+      .index().references('id').inTable('Assay')
+    resultTypeCategoryAssay.unique(['resultCategoryId', 'assayId'])
   })
 
   // define how to label fields in the free-form JSON column in results-table
@@ -434,11 +435,11 @@ function* up(knex){
     result.integer('sampleId').unsigned().notNullable()
       .index().references('id').inTable('Sample')
     result.string('resultText')
-    result.integer('resultCode1').unsigned()
+    result.integer('resultCategory1').unsigned()
       .index().references('id').inTable('ResultCategory')
-    result.integer('resultCode2').unsigned()
+    result.integer('resultCategory2').unsigned()
       .index().references('id').inTable('ResultCategory')
-    result.integer('resultCode3').unsigned()
+    result.integer('resultCategory3').unsigned()
       .index().references('id').inTable('ResultCategory')
     result.float('resultNumeric1', 10, 6)
     result.float('resultNumeric2', 10, 6)
