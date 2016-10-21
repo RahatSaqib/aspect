@@ -12,6 +12,10 @@ const messages = defineMessages({
     id: 'pages.UserPreferences.timezone',
     defaultMessage: 'Time Zone'
   },
+  useDeviceTimezone: {
+    id: 'pages.UserPreferences.useDeviceTimezone',
+    defaultMessage: 'Use Computer\'s Time Zone'
+  },
   language: {
     id: 'pages.UserPreferences.language',
     defaultMessage: 'Language'
@@ -36,8 +40,7 @@ const renderLanguageField = props => {
                      selectedItemTextPredicate: language => language.language_name,
                      menuItemTextPredicate: language => language.language_name,
                      valuePredicate: language => language.culture
-                   }} selectFieldProps={selectFieldProps}
-                   onChange={onChange} />
+                   }} selectFieldProps={selectFieldProps} onChange={onChange} />
   )
 }
 
@@ -49,7 +52,8 @@ const UserPreferencesForm = props => {
     <form onSubmit={handleSubmit} className={styles.Form}>
       <div className={styles.Form__Content}>
         <TimezoneSelect name="timezone" label={formatMessage(messages.timezone)}
-                        disabled={loading || saving} autoWidth />
+                        disabled={loading || saving} autoWidth
+                        defaultTimezoneText={formatMessage(messages.useDeviceTimezone)} />
         <br />
         <Field name="culture" floatingLabelText={formatMessage(messages.language)}
                selectFieldProps={{
