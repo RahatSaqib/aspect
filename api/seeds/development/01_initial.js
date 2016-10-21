@@ -172,10 +172,10 @@ function* seed(knex){
     i18nKey: 'AssayGeneXpertHivVl',
     assayTypeId: assayTypeHIVVLId,
     deviceTypeId: deviceTypeGeneXpertId,
-    ResultCatgegory1Label: 'MTB',
-    ResultCatgegory1i18nKey: 'ResultCategoryMtb',
-    ResultCatgegory2Label: 'Rif',
-    ResultCatgegory2i18nKey: 'ResultCategoryRif'
+    ResultCategory1Label: 'MTB',
+    ResultCategory1i18nKey: 'ResultCategoryMtb',
+    ResultCategory2Label: 'Rif',
+    ResultCategory2i18nKey: 'ResultCategoryRif'
   })
 
   yield knex('Assay').insert({
@@ -183,10 +183,10 @@ function* seed(knex){
     i18nKey: 'AssayGeneXpertEbola',
     assayTypeId: assayTypeEbolaId,
     deviceTypeId: deviceTypeGeneXpertId,
-    ResultCatgegory1Label: 'GP',
-    ResultCatgegory1i18nKey: 'ResultCategoryEbolaGp',
-    ResultCatgegory2Label: 'NP',
-    ResultCatgegory2i18nKey: 'ResultCategoryEbolaNp'
+    ResultCategory1Label: 'GP',
+    ResultCategory1i18nKey: 'ResultCategoryEbolaGp',
+    ResultCategory2Label: 'NP',
+    ResultCategory2i18nKey: 'ResultCategoryEbolaNp'
   })
 
   yield knex('Assay').insert({
@@ -214,8 +214,8 @@ function* seed(knex){
     i18nKey: 'AssayQHivVl',
     assayTypeId: assayTypeHIVVLId,
     deviceTypeId: deviceTypeQId,
-    ResultCatgegory1Label: 'HIV',
-    ResultCatgegory1i18nKey: 'ResultCategoryHivVl',
+    ResultCategory1Label: 'HIV',
+    ResultCategory1i18nKey: 'ResultCategoryHivVl',
     ResultNumeric1Label: 'Copies/ml',
     ResultNumeric1i18nKey: 'ResultCategoryHivCopiesMl',
     ResultNumeric2Label: 'log',
@@ -648,10 +648,12 @@ function* seed(knex){
   yield knex('DeviceSim').insert(sims)
 
   // insert GeneXpert devices
-  let devices = _.range(1, deviceNumber+1).map(i => {
+  let devices = []
+  for (let i = 0; i < deviceNumber; i++) {
     let siteData = siteDatas[i % siteDatas.length]
     let routerId = routerIds[i]
-    return Object.assign({}, auditFields, {
+
+    let device = Object.assign({}, auditFields, {
       name: `D${i} ${siteData.shortname}`,
       shortname: 'd'+i,
       deviceTypeId: deviceTypeGeneXpertId,
@@ -661,18 +663,25 @@ function* seed(knex){
       updatedOn: new Date(+now - i*millisInHour),
       lastPingOn: new Date(+now - i*millisInHour/3)
     })
-  })
-  const deviceIds = yield knex('Device').insert(devices)
+
+    device.id = yield knex('Device').insert(device)
+
+    devices.push(device)
+  }
 
   // some samples:
-  const samples = _.range(1, resultMtbNumber - 100).map(i => {
-    const siteData = siteDatas[i % siteDatas.length]
-    return Object.assign({}, {
+  let samples = []
+  for (let i = 0; i < resultMtbNumber - 100; i++) {
+    let siteData = siteDatas[i % siteDatas.length]
+    let sample = Object.assign({}, {
       sampleId: `SMP-${i}`,
       originSiteId: siteData.id
     })
-  })
-  const sampleIds = yield knex('Sample').insert(samples)
+
+    sample.id = yield knex('Sample').insert(sample)
+
+    samples.push(sample)
+  }
 
   // finally, results!
   const possibleResults = [{ resultText: 'Not Detected', category1: resultCategoryDetectedId, category2: null },
@@ -683,9 +692,8 @@ function* seed(knex){
 
   const resultsMtb = _.range(1, resultMtbNumber+1).map(i => {
     const device = devices[i % devices.length]
-    const deviceId = deviceIds[i % deviceIds.length]
     const siteData = siteDatas.find((site) => { return site.id === device.siteId })
-    const sampleId = sampleIds[i % sampleIds.length]
+    const sample = samples[i % samples.length]
     const result = possibleResults[i % 5]
 
     return Object.assign({}, auditFields, {
@@ -697,9 +705,9 @@ function* seed(knex){
       stateId: siteData.stateId,
       lgaId : siteData.lgaId,
       siteId: siteData.id,
-      deviceId: deviceId,
+      deviceId: device.id,
       resultTypeId: resultTypePatientId,
-      sampleId: sampleId,
+      sampleId: sample.id,
       resultText: result.resultText,
       resultCategory1: result.category1,
       resultCategory2: result.category2,
