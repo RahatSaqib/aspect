@@ -15,6 +15,7 @@ import getMuiTheme from 'material-ui/styles/getMuiTheme'
 // Our own imports
 import translation from '../../shared/i18n/translation.json'
 import theme from '../../theme'
+import {getUsersTimezone} from '../../shared/utils/timezone'
 
 require('./App.scss')
 require('./pure-grids-responsive-min.scss')
@@ -25,17 +26,29 @@ class App extends PureComponent {
 
   static propTypes = {
     locale: PropTypes.string.isRequired,
+    timezone: PropTypes.string,
     children: PropTypes.node.isRequired
   }
 
   render() {
-    const { locale } = this.props
-    const messages = translation[locale]
+    const { locale, timezone } = this.props,
+      messages = translation[locale], defaultFormats = {}
+
+    if(timezone) {
+      defaultFormats.date = {
+        timeZone: timezone
+      }
+      defaultFormats.time = {
+        timeZone: timezone
+      }
+    }
 
     return (
       <IntlProvider
         key={/* https://git.io/viGEA */locale}
         locale={locale}
+        formats={defaultFormats}
+        defaultFormats={defaultFormats}
         messages={messages}
       >
         <MuiThemeProvider muiTheme={getMuiTheme(theme)}>
@@ -48,7 +61,8 @@ class App extends PureComponent {
 
 function mapStateToProps(state) {
   return {
-    locale: state.getIn(['user', 'lang']) || DEFAULT_LOCALE
+    locale: state.getIn(['user', 'lang']) || DEFAULT_LOCALE,
+    timezone: getUsersTimezone(state.getIn(['user', 'timezone']))
   }
 }
 

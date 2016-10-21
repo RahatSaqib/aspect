@@ -36,11 +36,11 @@ export class LoggedInShell extends PureComponent {
         <Helmet title="Aspect" defaultTitle="Aspect" />
         <ErrorDisplayContainer />
         <IdleDialogContainer />
-        <SideNav  open={this.props.drawerOpen}
-                  desktop={ this.state.desktop }
-                  pathname={ pathname }
-                  handleClose={this.props.closeDrawer}
-                  handleRequestChange={(drawerOpen) => this.setState({drawerOpen})} />
+        <SideNav open={this.props.drawerOpen}
+                 desktop={ this.state.desktop }
+                 pathname={ pathname }
+                 handleClose={this.props.closeDrawer}
+                 handleRequestChange={(drawerOpen) => this.setState({drawerOpen})} />
         <Nav
           pageTitle={pageTitle}
           pagePath={pathname}

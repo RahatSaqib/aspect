@@ -1,4 +1,5 @@
 import _ from 'lodash'
+import * as localStorage from './localStorage'
 
 export const timezones = [
   { id: 'Dateline Standard Time', name: 'International Date Line West (UTC-12:00)', timeZone: 'Pacific/Wake' },
@@ -108,8 +109,11 @@ export const getTimezoneById = timeZoneId => {
   const timezone = _.find(timezones, {id: timeZoneId})
   if(timezone) {
     return timezone.timeZone
-  }
-  try {
+  } else if(Intl) {
     return Intl.DateTimeFormat().resolvedOptions().timeZone
-  } catch (err) {}
+  }
+}
+
+export const getUsersTimezone = (timezone) => {
+  return getTimezoneById(timezone || localStorage.getTimezone())
 }
