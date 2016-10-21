@@ -351,12 +351,12 @@ function* up(knex){
     // have a way to normalize some of the result so it would be easy to
     // create reports/filters/list pages, etc. 1-3 categories should cover the most interesting
     // data for most assays.
-    assay.string('ResultCatgegory1Label')
-    assay.string('ResultCatgegory1i18nKey')
-    assay.string('ResultCatgegory2Label')
-    assay.string('ResultCatgegory2i18nKey')
-    assay.string('ResultCatgegory3Label')
-    assay.string('ResultCatgegory3i18nKey')
+    assay.string('ResultCategory1Label')
+    assay.string('ResultCategory1i18nKey')
+    assay.string('ResultCategory2Label')
+    assay.string('ResultCategory2i18nKey')
+    assay.string('ResultCategory3Label')
+    assay.string('ResultCategory3i18nKey')
     assay.string('ResultNumeric1Label')
     assay.string('ResultNumeric1i18nKey')
     assay.string('ResultNumeric2Label')
