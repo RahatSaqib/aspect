@@ -211,6 +211,7 @@ const User = Immutable.Record({
   name: '',
   culture: 'en-US',
   lang: 'en',
+  permissions: Immutable.List(),
   drawerOpen: true,
   loggedIn: false
 })
@@ -226,6 +227,7 @@ export default function authReducer(state = initialState, action) {
       name: action.name,
       culture: action.culture,
       lang: action.lang,
+      permissions: action.permissions,
       loggedIn: true,
       drawerOpen: action.drawerOpen
     })
