@@ -9,6 +9,7 @@ import * as localStorage from '../shared/utils/localStorage'
 import { addError } from '../error/ErrorRedux'
 
 export const types = {
+  HYDRATE_FROM_LOCAL_STORAGE: 'HYDRATE_FROM_LOCAL_STORAGE',
   LOGIN_REQUEST: 'LOGIN_REQUEST',
   LOGIN_SUCCESS: 'LOGIN_SUCCESS',
   LOGIN_FAILURE: 'LOGIN_FAILURE',
@@ -52,7 +53,7 @@ export function refreshSuccess(name, culture, lang, permissions) {
 export function hydrateFromLocalStorage() {
 
   return {
-    type: types.LOGIN_SUCCESS,
+    type: types.HYDRATE_FROM_LOCAL_STORAGE,
     culture: localStorage.getCulture(),
     lang: localStorage.getLang(),
     drawerOpen: localStorage.isDrawerOpen()
@@ -220,6 +221,12 @@ const initialState = new User()
 
 export default function authReducer(state = initialState, action) {
   switch (action.type) {
+  case types.HYDRATE_FROM_LOCAL_STORAGE:
+    return state.merge({
+      culture: action.culture,
+      lang: action.lang,
+      loggedIn: true
+    })
   case types.LOGIN_REQUEST:
     return state.merge({ loggedIn: false })
   case types.LOGIN_SUCCESS:
