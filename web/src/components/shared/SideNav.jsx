@@ -21,10 +21,15 @@ import Book from 'material-ui/svg-icons/action/book'
 import RssFeed from 'material-ui/svg-icons/communication/rss-feed'
 
 // Our own imports
+import requirePermissions from './requirePermissions'
 import SelectableList from './SelectableList'
 import styles from './SideNav.css'
 
 const cx = classnames.bind(styles)
+
+const DevicesListItem = requirePermissions({
+  permissions: ['device:admin', 'device:view']
+})(ListItem)
 
 class SideNav extends PureComponent {
 
@@ -69,7 +74,7 @@ class SideNav extends PureComponent {
           />
           <Divider />
           <Subheader>Sections</Subheader>
-          <ListItem
+          <DevicesListItem
             containerElement={<Link to="/device" />}
             value={ '/device' }
             leftIcon={<Scanner />}
