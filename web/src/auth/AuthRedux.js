@@ -25,24 +25,26 @@ export function loginRequest() {
   }
 }
 
-export function loginSuccess(name, culture, lang) {
+export function loginSuccess(name, culture, lang, permissions) {
 
   return {
     type: types.LOGIN_SUCCESS,
     name,
     culture,
     lang,
+    permissions,
     drawerOpen: localStorage.isDrawerOpen()
   }
 }
 
-export function refreshSuccess(name, culture, lang) {
+export function refreshSuccess(name, culture, lang, permissions) {
 
   return {
     type: types.LOGIN_SUCCESS,
     name,
     culture,
     lang,
+    permissions,
     drawerOpen: localStorage.isDrawerOpen()
   }
 }
@@ -136,7 +138,7 @@ export function loginStart(login) {
 
         // We can dispatch many times!
         // Here, we update the app state with the results of the API call.
-        dispatch(loginSuccess(jwt.name, jwt.culture, jwt.lang))
+        dispatch(loginSuccess(jwt.name, jwt.culture, jwt.lang, jwt.permissions))
 
         browserHistory.push('/dashboard')
       })
@@ -183,7 +185,7 @@ export function refreshStart() {
       .then(json => {
         let jwt = storeAccess(json)
 
-        dispatch(refreshSuccess(jwt.name, jwt.culture, jwt.lang))
+        dispatch(refreshSuccess(jwt.name, jwt.culture, jwt.lang, jwt.permissions))
       })
       .catch(() => {
         dispatch(logoutStart())
