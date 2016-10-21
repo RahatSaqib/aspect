@@ -32,13 +32,10 @@ class App extends PureComponent {
 
   render() {
     const { locale, timezone } = this.props,
-      messages = translation[locale], defaultFormats = {}
+      messages = translation[locale], formats = {}
 
     if(timezone) {
-      defaultFormats.date = {
-        timeZone: timezone
-      }
-      defaultFormats.time = {
+      formats['user-timezone'] = {
         timeZone: timezone
       }
     }
@@ -47,8 +44,7 @@ class App extends PureComponent {
       <IntlProvider
         key={/* https://git.io/viGEA */locale}
         locale={locale}
-        formats={defaultFormats}
-        defaultFormats={defaultFormats}
+        formats={formats}
         messages={messages}
       >
         <MuiThemeProvider muiTheme={getMuiTheme(theme)}>

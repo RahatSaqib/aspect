@@ -1,4 +1,5 @@
 import React, {PropTypes} from 'react'
+import _ from 'lodash'
 import { injectIntl, defineMessages } from 'react-intl'
 import { Field } from 'redux-form/immutable'
 import TextField from 'material-ui/TextField'
@@ -117,7 +118,7 @@ class StrongPasswordInput extends React.PureComponent {
                  errorText={touched && error} {...textFieldProps}
                  className={textFieldProps.fullWidth ? '' : styles.Form__Field}
                  onFocus={this.handleFocus} onBlur={this.handleBlur} />
-      <Popover anchorEl={this.state.anchorEl} open={this.state.showMeter && input.value} useLayerForClickAway={false}>
+      <Popover anchorEl={this.state.anchorEl} open={this.state.showMeter && !_.isEmpty(input.value)} useLayerForClickAway={false}>
         <span style={strengthMessageStyle}>{strengthMessage}</span>
         <LinearProgress mode="determinate" value={passwordStrengthScore} color={passwordStrengthColor} style={{height: '1em', backgroundColor: 'transparent'}} />
         <ul className={styles.List__Unstyled}>
