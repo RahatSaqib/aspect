@@ -160,6 +160,7 @@ function* seed(knex){
     i18nKey: 'AssayTypeLipidPanel'
   })
 
+  // define resultData object
   const geneXpertResultDataSchema = JSON.stringify({ probes: {
     title: 'Probes',
     type: 'object',
