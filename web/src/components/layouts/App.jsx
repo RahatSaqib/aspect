@@ -35,8 +35,15 @@ class App extends PureComponent {
       messages = translation[locale], formats = {}
 
     if(timezone) {
-      formats['user-timezone'] = {
-        timeZone: timezone
+      formats.date = {
+        userTimeZone: {
+          timeZone: timezone
+        }
+      }
+      formats.time = {
+        userTimeZone: {
+          timeZone: timezone
+        }
       }
     }
 

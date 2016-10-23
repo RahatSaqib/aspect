@@ -151,7 +151,7 @@ export function saveUserPreferences(userPreferences) {
           dispatch(changeTimezone(json.data.timezone))
         }
         dispatch(createReceiveUpdatedUserPreferences(json.data))
-      }) //TODO: Dispatch action to set current timezone and language
+      })
       .catch(err => dispatch(addError('Saving user preferences failed', err.message, err)))
   }
 }
