@@ -160,11 +160,119 @@ function* seed(knex){
     i18nKey: 'AssayTypeLipidPanel'
   })
 
+  const geneXpertResultDataSchema = JSON.stringify({ probes: {
+    title: 'Probes',
+    type: 'object',
+    i18nKey: 'Probes',
+    properties: {
+      'probeA': {
+        title: 'Probe A',
+        type: 'string'
+      },
+      'probeB': {
+        title: 'Probe B',
+        type: 'string'
+      },
+      'probeC': {
+        title: 'Probe C',
+        type: 'string'
+      },
+      'probeD': {
+        title: 'Probe D',
+        type: 'string'
+      },
+      'probeE': {
+        title: 'Probe E',
+        type: 'string'
+      },
+      'probeSpc': {
+        title: 'Probe Spc',
+        type: 'string'
+      },
+      'qc1': {
+        title: 'QC1',
+        type: 'string'
+      },
+      'qc2': {
+        title: 'QC2',
+        type: 'string'
+      },
+      'probeACt': {
+        title: 'Probe A Ct',
+        type: 'number'
+      },
+      'probeBCt': {
+        title: 'Probe B Ct',
+        type: 'number'
+      },
+      'probeCCt': {
+        title: 'Probe C Ct',
+        type: 'number'
+      },
+      'probeDCt': {
+        title: 'Probe D Ct',
+        type: 'number'
+      },
+      'probeECt': {
+        title: 'Probe E Ct',
+        type: 'number'
+      },
+      'probeSpcCt': {
+        title: 'Probe Spc Ct',
+        type: 'number'
+      },
+      'qc1Ct': {
+        title: 'QC1 Ct',
+        type: 'number'
+      },
+      'qc2Ct': {
+        title: 'QC2 Ct',
+        type: 'number'
+      },
+      'probeAEndpt': {
+        title: 'Probe A Endpt',
+        type: 'number'
+      },
+      'probeBEndpt': {
+        title: 'Probe B Endpt',
+        type: 'number'
+      },
+      'probeCEndpt': {
+        title: 'Probe C Endpt',
+        type: 'number'
+      },
+      'probeDEndpt': {
+        title: 'Probe D Endpt',
+        type: 'number'
+      },
+      'probeEEndpt': {
+        title: 'Probe E Endpt',
+        type: 'number'
+      },
+      'probeSpcEndpt': {
+        title: 'Probe Spc Endpt',
+        type: 'number'
+      },
+      'qc1Endpt': {
+        title: 'QC1 Endpt',
+        type: 'number'
+      },
+      'qc2Endpt': {
+        title: 'QC2 Endpt',
+        type: 'number'
+      }
+    }}})
+
   let [assayMtbRifId] = yield knex('Assay').insert({
     name: 'GeneXpert MTB/Rif',
     i18nKey: 'AssayGeneXpertMtbRif',
     assayTypeId: assayTypeMTBRifId,
-    deviceTypeId: deviceTypeGeneXpertId
+    deviceTypeId: deviceTypeGeneXpertId,
+    resultCategory1Label: 'MTB',
+    resultCategory1i18nKey: 'ResultCategoryMtb',
+    resultCategory2Label: 'Rif',
+    resultCategory2i18nKey: 'ResultCategoryRif',
+    resultDataSchema: geneXpertResultDataSchema
   })
 
   yield knex('Assay').insert({
@@ -172,10 +280,11 @@ function* seed(knex){
     i18nKey: 'AssayGeneXpertHivVl',
     assayTypeId: assayTypeHIVVLId,
     deviceTypeId: deviceTypeGeneXpertId,
-    ResultCategory1Label: 'MTB',
-    ResultCategory1i18nKey: 'ResultCategoryMtb',
-    ResultCategory2Label: 'Rif',
-    ResultCategory2i18nKey: 'ResultCategoryRif'
+    resultCategory1Label: 'MTB',
+    resultCategory1i18nKey: 'ResultCategoryMtb',
+    resultCategory2Label: 'Rif',
+    resultCategory2i18nKey: 'ResultCategoryRif',
+    resultDataSchema: geneXpertResultDataSchema
   })
 
   yield knex('Assay').insert({
@@ -183,24 +292,52 @@ function* seed(knex){
     i18nKey: 'AssayGeneXpertEbola',
     assayTypeId: assayTypeEbolaId,
     deviceTypeId: deviceTypeGeneXpertId,
-    ResultCategory1Label: 'GP',
-    ResultCategory1i18nKey: 'ResultCategoryEbolaGp',
-    ResultCategory2Label: 'NP',
-    ResultCategory2i18nKey: 'ResultCategoryEbolaNp'
+    resultCategory1Label: 'GP',
+    resultCategory1i18nKey: 'ResultCategoryEbolaGp',
+    resultCategory2Label: 'NP',
+    resultCategory2i18nKey: 'ResultCategoryEbolaNp',
+    resultDataSchema: geneXpertResultDataSchema
   })
 
   yield knex('Assay').insert({
     name: 'Afinion HIV VL',
     i18nKey: 'AssayAfinionHivVl',
     assayTypeId: assayTypeHIVVLId,
-    deviceTypeId: deviceTypeAfinionId
+    deviceTypeId: deviceTypeAfinionId,
+    resultDataSchema: JSON.stringify({
+      copies: {
+        title: 'copies/mL',
+        type: 'number'
+      },
+      log: {
+        title: 'log',
+        type: 'number'
+      }
+    })
   })
 
   yield knex('Assay').insert({
     name: 'Afinion Lipid Panel',
     i18nKey: 'AssayAfinionLipidPanel',
     assayTypeId: assayTypeLipidPanelId,
-    deviceTypeId: deviceTypeAfinionId
+    deviceTypeId: deviceTypeAfinionId,
+    resultDataSchema: JSON.stringify({
+      chol: {
+        title: 'Chol (mmol/L)',
+        type: 'number',
+        unit: 'mmol/L'
+      },
+      trig: {
+        title: 'Trig (mmol/L)',
+        type: 'number',
+        unit: 'mmol/L'
+      },
+      hdl: {
+        title: 'HDL (mmol/L)',
+        type: 'number',
+        unit: 'mmol/L'
+      }
+    })
   })
 
   yield knex('Assay').insert({
@@ -209,11 +346,7 @@ function* seed(knex){
     assayTypeId: assayTypeHIVVLId,
     deviceTypeId: deviceTypeQId,
     ResultCategory1Label: 'HIV',
-    ResultCategory1i18nKey: 'ResultCategoryHivVl',
-    ResultNumeric1Label: 'Copies/ml',
-    ResultNumeric1i18nKey: 'ResultCategoryHivCopiesMl',
-    ResultNumeric2Label: 'log',
-    ResultNumeric2i18nKey: 'ResultCategoryHivLog'
+    ResultCategory1i18nKey: 'ResultCategoryHivVl'
   })
 
   //Result types
@@ -239,200 +372,6 @@ function* seed(knex){
   yield knex('ResultType').insert({
     name: 'Study/Research',
     i18nKey: 'ResultTypeStudy'
-  })
-
-  // Result JSON. Describes the shape of the JSON field in result table
-  yield knex('ResultJsonSchema').insert({
-    assayId: assayMtbRifId,
-    jsonField: 'probeA',
-    label: 'Probe A',
-    i18nKey: null,
-    type: 'string'
-  })
-
-  yield knex('ResultJsonSchema').insert({
-    assayId: assayMtbRifId,
-    jsonField: 'probeB',
-    label: 'Probe B',
-    i18nKey: null,
-    type: 'string'
-  })
-
-  yield knex('ResultJsonSchema').insert({
-    assayId: assayMtbRifId,
-    jsonField: 'probeC',
-    label: 'Probe C',
-    i18nKey: null,
-    type: 'string'
-  })
-
-  yield knex('ResultJsonSchema').insert({
-    assayId: assayMtbRifId,
-    jsonField: 'probeD',
-    label: 'Probe D',
-    i18nKey: null,
-    type: 'string'
-  })
-
-  yield knex('ResultJsonSchema').insert({
-    assayId: assayMtbRifId,
-    jsonField: 'probeE',
-    label: 'Probe E',
-    i18nKey: null,
-    type: 'string'
-  })
-
-  yield knex('ResultJsonSchema').insert({
-    assayId: assayMtbRifId,
-    jsonField: 'probeSpc',
-    label: 'Probe SPC',
-    i18nKey: null,
-    type: 'string'
-  })
-
-  yield knex('ResultJsonSchema').insert({
-    assayId: assayMtbRifId,
-    jsonField: 'qc1',
-    label: 'QC1',
-    i18nKey: null,
-    type: 'string'
-  })
-
-  yield knex('ResultJsonSchema').insert({
-    assayId: assayMtbRifId,
-    jsonField: 'qc2',
-    label: 'QC 2',
-    i18nKey: null,
-    type: 'string'
-  })
-
-
-  yield knex('ResultJsonSchema').insert({
-    assayId: assayMtbRifId,
-    jsonField: 'probeACt',
-    label: 'Probe A Ct',
-    i18nKey: null,
-    type: 'float'
-  })
-
-  yield knex('ResultJsonSchema').insert({
-    assayId: assayMtbRifId,
-    jsonField: 'probeBCt',
-    label: 'Probe B Ct',
-    i18nKey: null,
-    type: 'float'
-  })
-
-  yield knex('ResultJsonSchema').insert({
-    assayId: assayMtbRifId,
-    jsonField: 'probeCCt',
-    label: 'Probe C Ct',
-    i18nKey: null,
-    type: 'float'
-  })
-
-  yield knex('ResultJsonSchema').insert({
-    assayId: assayMtbRifId,
-    jsonField: 'probeDCt',
-    label: 'Probe D Ct',
-    i18nKey: null,
-    type: 'float'
-  })
-
-  yield knex('ResultJsonSchema').insert({
-    assayId: assayMtbRifId,
-    jsonField: 'probeECt',
-    label: 'Probe E Ct',
-    i18nKey: null,
-    type: 'float'
-  })
-
-  yield knex('ResultJsonSchema').insert({
-    assayId: assayMtbRifId,
-    jsonField: 'probeSpcCt',
-    label: 'Probe SPC Ct',
-    i18nKey: null,
-    type: 'float'
-  })
-
-  yield knex('ResultJsonSchema').insert({
-    assayId: assayMtbRifId,
-    jsonField: 'qc1Ct',
-    label: 'QC1 Ct',
-    i18nKey: null,
-    type: 'float'
-  })
-
-  yield knex('ResultJsonSchema').insert({
-    assayId: assayMtbRifId,
-    jsonField: 'qc2Ct',
-    label: 'QC 2 Ct',
-    i18nKey: null,
-    type: 'float'
-  })
-
-  yield knex('ResultJsonSchema').insert({
-    assayId: assayMtbRifId,
-    jsonField: 'probeAEndpt',
-    label: 'Probe A Endpt',
-    i18nKey: null,
-    type: 'float'
-  })
-
-  yield knex('ResultJsonSchema').insert({
-    assayId: assayMtbRifId,
-    jsonField: 'probeBEndpt',
-    label: 'Probe B Endpt',
-    i18nKey: null,
-    type: 'float'
-  })
-
-  yield knex('ResultJsonSchema').insert({
-    assayId: assayMtbRifId,
-    jsonField: 'probeCEndpt',
-    label: 'Probe C Endpt',
-    i18nKey: null,
-    type: 'float'
-  })
-
-  yield knex('ResultJsonSchema').insert({
-    assayId: assayMtbRifId,
-    jsonField: 'probeDEndpt',
-    label: 'Probe D Endpt',
-    i18nKey: null,
-    type: 'float'
-  })
-
-  yield knex('ResultJsonSchema').insert({
-    assayId: assayMtbRifId,
-    jsonField: 'probeEEndpt',
-    label: 'Probe E Endpt',
-    i18nKey: null,
-    type: 'float'
-  })
-
-  yield knex('ResultJsonSchema').insert({
-    assayId: assayMtbRifId,
-    jsonField: 'probeSpcEndpt',
-    label: 'Probe SPC Endpt',
-    i18nKey: null,
-    type: 'float'
-  })
-
-  yield knex('ResultJsonSchema').insert({
-    assayId: assayMtbRifId,
-    jsonField: 'qc1Endpt',
-    label: 'QC1 Endpt',
-    i18nKey: null,
-    type: 'float'
-  })
-
-  yield knex('ResultJsonSchema').insert({
-    assayId: assayMtbRifId,
-    jsonField: 'qc2Endpt',
-    label: 'QC 2 Endpt',
-    i18nKey: null,
-    type: 'float'
   })
 
   // result categories
@@ -684,6 +623,16 @@ function* seed(knex){
                           { resultText: 'ERROR', category1: resultCategoryErrorId, category2: null },
                           { resultText: 'Invalid', category1: resultCategoryInvalidId, category2: null }]
 
+  const probes = { probes: {  probeA: 'NEG', probeB: 'POS', probeC: 'NO RESULT',
+                              probeD: 'NEG', probeE: 'POS', probeSpc: 'NO RESULT',
+                              qc1: 'YES', qc2: 'No',
+                              probeACt: 12.32, probeBCt: 11.2, probeCCt: 12.5,
+                              probeDCt: 0.5, probeECt: 1.2, probeSpcCt: 5.78,
+                              qc1Ct: 1, qc2Ct: 0.007,
+                              probeAEndpt: 1.6, probeBEndpt: 2.33, probeCEndpt: 457,
+                              probeDEndpt: 12.43, probeEEndpt: 3.14, probeSpcEndpt: 8.9018,
+                              qc1Endpt: 0.1234, qc2Endpt: 1.22 }}
+
   const resultsMtb = _.range(1, resultMtbNumber+1).map(i => {
     const device = devices[i % devices.length]
     const siteData = siteDatas.find((site) => { return site.id === device.siteId })
@@ -705,9 +654,7 @@ function* seed(knex){
       resultText: result.resultText,
       resultCategory1: result.category1,
       resultCategory2: result.category2,
-      resultData: JSON.stringify({  probeA: 'NEG', probeB: 'POS', probeC: 'NO RESULT',
-                                    probeACt: 12.32, probeBCt: 11.2, probeCCt: 12.5,
-                                    probeAEndpt: 0.6, probeBEndpt: 0.55, probeCEndpt: 113 }),
+      resultData: JSON.stringify(probes),
       assayVersion: '4',
       started: new Date(+now - 12*i*millisInHour),
       ended: new Date(+now - 10*i*millisInHour),
