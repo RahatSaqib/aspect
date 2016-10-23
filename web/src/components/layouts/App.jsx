@@ -36,12 +36,12 @@ class App extends PureComponent {
 
     if(timezone) {
       formats.date = {
-        userTimeZone: {
+        'user-timezone': {
           timeZone: timezone
         }
       }
       formats.time = {
-        userTimeZone: {
+        'user-timezone': {
           timeZone: timezone
         }
       }
