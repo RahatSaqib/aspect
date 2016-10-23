@@ -209,7 +209,11 @@ function* seed(knex){
     assayTypeId: assayTypeHIVVLId,
     deviceTypeId: deviceTypeQId,
     ResultCategory1Label: 'HIV',
-    ResultCategory1i18nKey: 'ResultCategoryHivVl'
+    ResultCategory1i18nKey: 'ResultCategoryHivVl',
+    ResultNumeric1Label: 'Copies/ml',
+    ResultNumeric1i18nKey: 'ResultCategoryHivCopiesMl',
+    ResultNumeric2Label: 'log',
+    ResultNumeric2i18nKey: 'ResultCategoryHivLog'
   })
 
   //Result types
