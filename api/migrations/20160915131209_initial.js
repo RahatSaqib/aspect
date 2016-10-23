@@ -346,15 +346,12 @@ function* up(knex){
       .index().references('id').inTable('AssayType')
     assay.integer('deviceTypeId').unsigned().notNullable()
       .index().references('id').inTable('DeviceType')
-    assay.charset('utf8')
-    // TODO: This could probably be more elegant, but I did want to
-    // have a way to normalize some of the result so it would be easy to
-    // create reports/filters/list pages, etc. 1-3 categories should cover the most interesting
-    // data for most assays.
     assay.string('ResultCategory1Label')
     assay.string('ResultCategory1i18nKey')
     assay.string('ResultCategory2Label')
     assay.string('ResultCategory2i18nKey')
+    assay.specificType('resultDataSchema', 'JSON')
+    assay.charset('utf8')
   })
 
   yield knex.schema.createTable('ResultType', resultType => {
@@ -379,19 +376,6 @@ function* up(knex){
     resultTypeCategoryAssay.integer('assayId').unsigned().notNullable()
       .index().references('id').inTable('Assay')
     resultTypeCategoryAssay.unique(['resultCategoryId', 'assayId'])
-  })
-
-  // define how to label fields in the free-form JSON column in results-table
-  // this is different for every assay.
-  yield knex.schema.createTable('ResultJsonSchema', resultJsonSchema => {
-    resultJsonSchema.increments('id')
-    resultJsonSchema.integer('assayId').unsigned().notNullable()
-      .index().references('id').inTable('Assay')
-    resultJsonSchema.string('jsonField').notNullable()
-    resultJsonSchema.string('label').notNullable()
-    resultJsonSchema.string('i18nKey')
-    resultJsonSchema.string('type').notNullable()
-    resultJsonSchema.charset('utf8')
   })
 
   // the sample that the result is based on (multiple results can refer to the same sample)
@@ -431,7 +415,6 @@ function* up(knex){
       .index().references('id').inTable('ResultCategory')
     result.integer('resultCategory2').unsigned()
       .index().references('id').inTable('ResultCategory')
-
     result.specificType('resultData', 'JSON')
     result.string('assayVersion')
     result.dateTime('started')
@@ -469,11 +452,9 @@ function* up(knex){
 
 function* down(knex){
   yield knex.raw('SET foreign_key_checks = 0')
-
   yield knex.schema.dropTableIfExists('ResultCategoryAssay')
   yield knex.schema.dropTableIfExists('ResultType')
   yield knex.schema.dropTableIfExists('ResultCategory')
-  yield knex.schema.dropTableIfExists('ResultJsonSchema')
   yield knex.schema.dropTableIfExists('ResultLog')
   yield knex.schema.dropTableIfExists('Result')
   yield knex.schema.dropTableIfExists('Sample')
