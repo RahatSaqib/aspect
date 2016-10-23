@@ -308,7 +308,8 @@ function* seed(knex){
     resultDataSchema: JSON.stringify({
       copies: {
         title: 'copies/mL',
-        type: 'number'
+        type: 'number',
+        list: true
       },
       log: {
         title: 'log',
@@ -326,12 +327,14 @@ function* seed(knex){
       chol: {
         title: 'Chol (mmol/L)',
         type: 'number',
-        unit: 'mmol/L'
+        unit: 'mmol/L',
+        list: true
       },
       trig: {
         title: 'Trig (mmol/L)',
         type: 'number',
-        unit: 'mmol/L'
+        unit: 'mmol/L',
+        list: true
       },
       hdl: {
         title: 'HDL (mmol/L)',

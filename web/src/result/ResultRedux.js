@@ -39,7 +39,7 @@ function receiveResults(json) {
   }
 }
 
-export function fetchResults(filters = Immutable.Map({ deviceName: '' }), sortCol = 'deviceName', sortDir = 'asc', page = 0, pageSize = 10){
+export function fetchResults(filters = Immutable.Map({ sampleId: '' }), sortCol = 'ended', sortDir = 'desc', page = 0, pageSize = 20){
   return dispatch => {
 
     dispatch(requestResults(sortCol, sortDir, page, pageSize, filters))
@@ -63,8 +63,10 @@ export function fetchResults(filters = Immutable.Map({ deviceName: '' }), sortCo
 const Result = Immutable.Record({
   items: new Items(),
   table: new Table({
-    sortCol: 'deviceName',
-    filters: Immutable.fromJS({ deviceName: '' })
+    sortCol: 'ended',
+    sortDir: 'desc',
+    pageSize: 20,
+    filters: Immutable.fromJS({ sampleId: '' })
   })
 })
 

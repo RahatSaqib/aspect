@@ -29,21 +29,17 @@ const messages = defineMessages({
     id: 'pages.ResultList.title',
     defaultMessage: 'Results'
   },
-  lastTestOn: {
-    id: 'pages.ResultList.lastTestOn',
+  ended: {
+    id: 'pages.ResultList.Ended',
     defaultMessage: 'Test Date'
   },
   deviceName: {
     id: 'pages.ResultList.deviceName',
     defaultMessage: 'Device'
   },
-  state: {
-    id: 'pages.ResultList.state',
-    defaultMessage: 'State'
-  },
-  lga: {
-    id: 'pages.ResultList.lga',
-    defaultMessage: 'LGA'
+  sampleId: {
+    id: 'pages.ResultList.sampleId',
+    defaultMessage: 'Sample ID'
   },
   patiendId: {
     id: 'pages.ResultList.patiendId',
@@ -80,7 +76,7 @@ export class ResultList extends PureComponent {
   }
 
   resetResults = () => {
-    this.setState({ filters: this.state.filters.set('deviceName', '') })
+    this.setState({ filters: this.state.filters.set('sampleId', '') })
     this.props.fetchResults()
   }
 
@@ -101,11 +97,11 @@ export class ResultList extends PureComponent {
           <Toolbar className={styles.Toolbar} >
             <ToolbarGroup firstChild={true}>
               <TextField
-                value={this.state.filters.get('deviceName')}
-                id="deviceName"
+                value={this.state.filters.get('sampleId')}
+                id="sampleId"
                 onChange={ this.filterResultsChange }
                 className={styles['Toolbar__TextField--filter']}
-                hintText="Filter by deviceName"
+                hintText="Filter by Sample ID"
               />
               <RaisedButton label="Filter" primary={true} onTouchTap={ this.handleSubmit } />
             </ToolbarGroup>
@@ -128,12 +124,11 @@ export class ResultList extends PureComponent {
           items={ this.props.items }
           table={ this.props.table }
           columns={[
-            { db: 'lastTestOn', title: formatMessage(messages.lastTestOn),
+            { db: 'ended', title: formatMessage(messages.ended),
               format: (data) => formatDate(data) },
             { db: 'deviceName', title: formatMessage(messages.deviceName) },
-            { db: 'state', title: formatMessage(messages.state), hideOnXs: true },
-            { db: 'lga', title: formatMessage(messages.lga), hideOnXs: true },
-            { db: 'patiendId', title: formatMessage(messages.patiendId) },
+            { db: 'sampleId', title: formatMessage(messages.sampleId) },
+            { db: 'patientId', title: formatMessage(messages.patiendId) },
             { db: 'resultText', title: formatMessage(messages.resultText) }
           ]}
         />
