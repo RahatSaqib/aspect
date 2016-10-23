@@ -200,13 +200,7 @@ function* seed(knex){
     name: 'Afinion Lipid Panel',
     i18nKey: 'AssayAfinionLipidPanel',
     assayTypeId: assayTypeLipidPanelId,
-    deviceTypeId: deviceTypeAfinionId,
-    ResultNumeric1Label: 'Lipid 1',
-    ResultNumeric1i18nKey: 'ResultCategoryLipid1',
-    ResultNumeric2Label: 'Lipid 2',
-    ResultNumeric2i18nKey: 'ResultCategoryLipid2',
-    ResultNumeric3Label: 'Lipid 3',
-    ResultNumeric3i18nKey: 'ResultCategoryLipid3'
+    deviceTypeId: deviceTypeAfinionId
   })
 
   yield knex('Assay').insert({
@@ -215,11 +209,7 @@ function* seed(knex){
     assayTypeId: assayTypeHIVVLId,
     deviceTypeId: deviceTypeQId,
     ResultCategory1Label: 'HIV',
-    ResultCategory1i18nKey: 'ResultCategoryHivVl',
-    ResultNumeric1Label: 'Copies/ml',
-    ResultNumeric1i18nKey: 'ResultCategoryHivCopiesMl',
-    ResultNumeric2Label: 'log',
-    ResultNumeric2i18nKey: 'ResultCategoryHivLog'
+    ResultCategory1i18nKey: 'ResultCategoryHivVl'
   })
 
   //Result types
@@ -724,7 +714,7 @@ function* seed(knex){
       moduleName: 'Module A',
       moduleSerial: 'M-1234-' + i%4,
       researchId: 'R-ID-' + i,
-      patientId: 'P-ID=' + i,
+      patientId: 'PAT-ID-' + i,
       senderVersion: '4.6b',
       senderOperator: 'Marsha',
       notes: 'This is a test... result',

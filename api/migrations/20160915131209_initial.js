@@ -355,14 +355,6 @@ function* up(knex){
     assay.string('ResultCategory1i18nKey')
     assay.string('ResultCategory2Label')
     assay.string('ResultCategory2i18nKey')
-    assay.string('ResultCategory3Label')
-    assay.string('ResultCategory3i18nKey')
-    assay.string('ResultNumeric1Label')
-    assay.string('ResultNumeric1i18nKey')
-    assay.string('ResultNumeric2Label')
-    assay.string('ResultNumeric2i18nKey')
-    assay.string('ResultNumeric3Label')
-    assay.string('ResultNumeric3i18nKey')
   })
 
   yield knex.schema.createTable('ResultType', resultType => {
@@ -439,11 +431,7 @@ function* up(knex){
       .index().references('id').inTable('ResultCategory')
     result.integer('resultCategory2').unsigned()
       .index().references('id').inTable('ResultCategory')
-    result.integer('resultCategory3').unsigned()
-      .index().references('id').inTable('ResultCategory')
-    result.float('resultNumeric1', 10, 6)
-    result.float('resultNumeric2', 10, 6)
-    result.float('resultNumeric3', 10, 6)
+
     result.specificType('resultData', 'JSON')
     result.string('assayVersion')
     result.dateTime('started')
