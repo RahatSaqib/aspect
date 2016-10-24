@@ -12,6 +12,7 @@ import Helmet from 'react-helmet'
 
 // Our own imports
 import MiniChart from '../../components/shared/MiniChart'
+import DashboardDevices from './DashboardDevices'
 import styles from './Dashboard.css'
 
 const messages = defineMessages({
@@ -43,10 +44,7 @@ export class Dashboard extends PureComponent {
         <Helmet title={formatMessage(messages.title)} titleTemplate="%s - Aspect" defaultTitle="Aspect" />
         <div className="pure-g">
           <div className="pure-u-lg-1-4 pure-u-md-1-3 pure-u-sm-1-2">
-            <Link to="/device">
-              <MiniChart  data={[1, 8, 15, 40, 45, 80, 90, 155]}
-                          label={'Total Devices'} number={155} bgcolor={'#00bcd4'}/>
-            </Link>
+            <DashboardDevices label={'Total Devices'} />
           </div>
           <div className="pure-u-lg-1-4 pure-u-md-1-3 pure-u-sm-1-2">
             <Link to="/result">
