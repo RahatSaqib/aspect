@@ -6,6 +6,7 @@ import { aspectFetch } from '../shared/utils/fetch'
 import { addError } from '../error/ErrorRedux'
 import {
   receiveList,
+  receiveItem,
   Items
 } from '../shared/metaReducers/items'
 import {
@@ -16,9 +17,14 @@ import {
 
 export const types = {
   REQUEST_PERSONS: 'REQUEST_PERSONS',
-  RECEIVE_PERSONS: 'RECEIVE_PERSONS'
-}
+  RECEIVE_PERSONS: 'RECEIVE_PERSONS',
 
+  REQUEST_SINGLE_PERSON: 'REQUEST_SINGLE_PERSON',
+  RECEIVE_SINGLE_PERSON: 'RECEIVE_SINGLE_PERSON',
+
+  REQUEST_UPDATING_SINGLE_PERSON: 'REQUEST_UPDATING_SINGLE_PERSON',
+  RECEIVE_UPDATED_SINGLE_PERSON: 'RECEIVE_UPDATED_SINGLE_PERSON'
+}
 /*
  * ---------------- Action Creators -----------------
  */
@@ -74,6 +80,70 @@ export function fetchPersons(filters/* required */, sortCol = 'name', sortDir = 
       })
   }
 }
+
+// loading a single person with given personId
+function requestSinglePerson(personId) {
+  return {
+    type: types.REQUEST_SINGLE_PERSON,
+    personId
+  }
+}
+
+// received a single person
+function receiveSinglePerson(item) {
+  return {
+    type: types.RECEIVE_SINGLE_PERSON,
+    item
+  }
+}
+
+// load a single person with given personId
+export function fetchSinglePerson(personId){
+  return dispatch => {
+
+    dispatch(requestSinglePerson(personId))
+
+    return aspectFetch(`/person/${personId}`)
+      .then(json => dispatch(receiveSinglePerson(json.data)))
+      .catch(err => {
+        dispatch(addError(`Loading a person (${personId}) failed`, err.message, err))
+      })
+  }
+}
+
+// updating a single person with given personId and data
+function requestUpdatingSinglePerson(personId, data) {
+  return {
+    type: types.REQUEST_UPDATING_SINGLE_PERSON,
+    personId,
+    data
+  }
+}
+
+// received a updated single person
+function receiveUpdatedSinglePerson(item) {
+  return {
+    type: types.RECEIVE_UPDATED_SINGLE_PERSON,
+    item
+  }
+}
+
+// update a single person with given personId and data
+export function updateSinglePerson(personId, data){
+  return dispatch => {
+
+    dispatch(requestUpdatingSinglePerson(personId, data))
+
+    return aspectFetch(`/person/${personId}`, {
+      method: 'PUT',
+      body: JSON.stringify(data)
+    })
+      .then(json => dispatch(receiveUpdatedSinglePerson(json.data)))
+      .catch(err => {
+        dispatch(addError(`Updating a person (${personId}) failed`, err.message, err))
+      })
+  }
+}
 /*
  * ---------------- Reducers -----------------
  */
@@ -94,6 +164,12 @@ export default function personReducer(state = initialState, action) {
       const immutList = Immutable.fromJS(action.items)
       mutState.set('items', receiveList(mutState.items, immutList))
       mutState.set('table', receiveTableItems(mutState.table, action.total))
+    })
+  case types.RECEIVE_SINGLE_PERSON:
+  case types.RECEIVE_UPDATED_SINGLE_PERSON:
+    return state.withMutations(mutState => {
+      const immutItem = Immutable.fromJS(action.item)
+      mutState.set('items', receiveItem(mutState.items, immutItem))
     })
   }
   return state
