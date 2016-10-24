@@ -16,6 +16,7 @@ import DashboardDevices from './DashboardDevices'
 import DashboardTests from './DashboardTests'
 import DashboardSites from './DashboardSites'
 import DashboardErrorRate from './DashboardErrorRate'
+import DashboardContacts from './DashboardContacts'
 import styles from './Dashboard.css'
 
 const messages = defineMessages({
@@ -65,10 +66,7 @@ export class Dashboard extends PureComponent {
               </Link>
           </div>
           <div className="pure-u-lg-1-4 pure-u-md-1-3 pure-u-sm-1-2">
-            <Link to="/person">
-              <MiniChart  data={[800, 700, 900, 1200, 1400, 1500, 1600, 1780]}
-                          label={'Persons'} number={12} bgcolor={'#FBC02D'} />
-            </Link>
+            <DashboardContacts label={'Persons'} />
           </div>
         </div>
         <Snackbar
