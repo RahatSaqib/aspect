@@ -9,9 +9,10 @@ import {Tabs, Tab} from 'material-ui/Tabs'
 import MapsPersonPin from 'material-ui/svg-icons/maps/person-pin'
 import Language from 'material-ui/svg-icons/action/language'
 import Lock from 'material-ui/svg-icons/action/lock'
-import ContactDetailsForm from './ContactDetailsForm'
-import LoginDetailsForm from './LoginDetailsForm'
-import UserPreferencesForm from './UserPreferencesForm'
+import ContactDetailsForm from '../../person/detail/ContactDetailsForm'
+import LoginDetailsForm from '../../person/detail/LoginDetailsForm'
+import UserPreferencesForm from '../../person/detail/UserPreferencesForm'
+import Helmet from 'react-helmet'
 import {
   fetchAccountDetails,
   saveContactDetails,
@@ -99,9 +100,10 @@ class AccountDetails extends PureComponent {
       }
     return (
       <div className={styles.Content}>
+        <Helmet title={formatMessage(messages.title)} titleTemplate="%s - Aspect" defaultTitle="Aspect" />
         <Paper>
           <Tabs>
-            <Tab className={styles.ResponsiveTab} icon={<MapsPersonPin />}
+            <Tab icon={<MapsPersonPin />}
                  label={<span className="pure-hidden-xs">{formatMessage(messages.contactDetails)}</span>}>
               {(loading || saving) && <LinearProgress />}
               <h2 className={'pure-visible-xs ' + styles.Form__Header}>
@@ -111,7 +113,7 @@ class AccountDetails extends PureComponent {
                                                initialValues={accountDetails.get('contactDetails')}
                                                onSubmit={saveContactDetails} />}
             </Tab>
-            <Tab className={styles.ResponsiveTab} icon={<Lock />}
+            <Tab icon={<Lock />}
                  label={<span className="pure-hidden-xs">{formatMessage(messages.usernameAndPassword)}</span>}>
               {(loading || saving) && <LinearProgress />}
               <h2 className={'pure-visible-xs ' + styles.Form__Header}>
@@ -125,7 +127,7 @@ class AccountDetails extends PureComponent {
                                              onSubmit={saveLoginDetails} onSubmitFail={saveLoginDetailsFailed}
                                              onSubmitSuccess={saveLoginDetailsSucceeded} />}
             </Tab>
-            <Tab className={styles.ResponsiveTab} icon={<Language />}
+            <Tab icon={<Language />}
                  label={<span className="pure-hidden-xs">{formatMessage(messages.languageAndTimezone)}</span>}>
               {(loading || saving) && <LinearProgress />}
               <h2 className={'pure-visible-xs ' + styles.Form__Header}>

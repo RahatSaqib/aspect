@@ -7,7 +7,7 @@ import _ from 'lodash'
 import { injectIntl, defineMessages } from 'react-intl'
 import TextInput from '../../components/shared/TextInput'
 import StrongPasswordInput from '../../components/shared/StrongPasswordInput'
-import styles from './AccountDetails.css'
+import styles from './PersonDetail.css'
 
 const messages = defineMessages({
   username: {
@@ -87,6 +87,13 @@ const LoginDetailsForm = props => {
         return handleSubmit()
       }
     },
+    handleSaveButtonClicked = () => {
+      if(openCurrentPasswordInputDialog) {
+        return openCurrentPasswordInputDialog()
+      } else {
+        return handleSubmit()
+      }
+    },
     currentPasswordInputDialogActions = [
       <FlatButton label={formatMessage(messages.cancelCurrentPassword)} secondary
                   disabled={loading} onTouchTap={closeCurrentPasswordInputDialog} />,
@@ -106,8 +113,8 @@ const LoginDetailsForm = props => {
                    disabled={loading} maxLength="100" type="password" />
       </div>
       <div className={styles.Form__ActionRow}>
-        <RaisedButton disabled={pristine || invalid || loading} label={formatMessage(messages.save)} secondary
-                      onTouchTap={openCurrentPasswordInputDialog} />
+        <RaisedButton disabled={pristine || invalid || loading} label={formatMessage(messages.save)}
+                      secondary onTouchTap={handleSaveButtonClicked} />
       </div>
       <Dialog title={formatMessage(messages.currentPasswordDialogHeader)}
               actions={currentPasswordInputDialogActions} modal={false}

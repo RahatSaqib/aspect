@@ -79,7 +79,9 @@ describe('AccountDetails Component', () => {
       })
 
       it('Should show a paper container with three tabs', () => {
-        assert.equal(AccountDetailsWrapper.node.props.children.type, Paper)
+        assert.equal(AccountDetailsWrapper.node.props.children.length, 2)
+        assert.equal(AccountDetailsWrapper.node.props.children[0].type, Helmet)
+        assert.equal(AccountDetailsWrapper.node.props.children[1].type, Paper)
         const paperContainer = AccountDetailsWrapper.find(Paper)
         assert.equal(paperContainer.length, 1)
         const tabsContainer = paperContainer.find(Tabs)

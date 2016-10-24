@@ -5,7 +5,7 @@ import _ from 'lodash'
 import { injectIntl, defineMessages } from 'react-intl'
 import TimezoneSelect from '../../components/shared/TimezoneSelect'
 import CountrySelect from '../../components/shared/CountrySelect'
-import styles from './AccountDetails.css'
+import styles from './PersonDetail.css'
 
 const messages = defineMessages({
   timezone: {

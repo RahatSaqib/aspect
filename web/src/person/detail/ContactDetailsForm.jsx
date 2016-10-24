@@ -7,7 +7,7 @@ import LocationSelector from '../../components/shared/LocationSelector'
 import TextInput from '../../components/shared/TextInput'
 import PhoneInput from '../../components/shared/PhoneInput'
 import {emailAddress as validateEmailAddress} from '../../shared/utils/validate'
-import styles from './AccountDetails.css'
+import styles from './PersonDetail.css'
 
 const messages = defineMessages({
   fullName: {
