@@ -6,13 +6,13 @@ const { getConstraints, addConstraints } = require('../auth/constraints')
 const SELECT_LIST_FIELDS = [
   'r.id', 'r.ended', 'd.name as deviceName', 'st.name as stateName', 'lg.name as lgaName',
   'rc1.name as resultCategory1Name', 'rc2.name as resultCategory2Name',
-  's.sampleId', 'r.patientId', 'r.resultText'
+  's.sampleId', 'r.patientId'
 ]
 
 const SELECT_SHOW_FIELDS = [
   'r.id', 'r.started', 'r.ended', 'd.name as deviceName', 'st.name as stateName', 'lg.name as lgaName',
   'rc1.name as resultCategory1Name', 'rc2.name as resultCategory2Name', 'r.resultData',
-  's.sampleId', 'r.patientId', 'r.resultText', 'a.name as assayName', 'a.i18nKey as assayNameI18n',
+  's.sampleId', 'r.patientId', 'a.name as assayName', 'a.i18nKey as assayNameI18n',
   'a.resultCategory1Label', 'a.resultCategory1i18nKey', 'a.resultCategory2Label', 'a.resultCategory2i18nKey',
   'a.resultDataSchema', 'si.name as siteName', 'r.assayVersion', 'r.consumableSerial', 'r.consumableLot',
   'r.consumableExpirationDate', 'r.instrumentSerial', 'r.moduleName', 'r.moduleSerial', 'r.researchId',

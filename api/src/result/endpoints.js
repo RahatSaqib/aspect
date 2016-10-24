@@ -14,7 +14,7 @@ module.exports = [
       validate: {
         query: Object.assign({
           sampleId: Joi.string().allow('').description('Filter for sample ID')
-        }, validateSortPageParams('ended', 'deviceName', 'stateName', 'lgaName', 'sampleId', 'patientId', 'resultText'))
+        }, validateSortPageParams('ended', 'deviceName', 'stateName', 'lgaName', 'sampleId', 'patientId'))
       }
     }
   },

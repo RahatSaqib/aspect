@@ -161,108 +161,114 @@ function* seed(knex){
   })
 
   // define resultData object
-  const geneXpertResultDataSchema = JSON.stringify({ probes: {
-    title: 'Probes',
-    type: 'object',
-    i18nKey: 'Probes',
-    properties: {
-      'probeA': {
-        title: 'Probe A',
-        type: 'string'
-      },
-      'probeB': {
-        title: 'Probe B',
-        type: 'string'
-      },
-      'probeC': {
-        title: 'Probe C',
-        type: 'string'
-      },
-      'probeD': {
-        title: 'Probe D',
-        type: 'string'
-      },
-      'probeE': {
-        title: 'Probe E',
-        type: 'string'
-      },
-      'probeSpc': {
-        title: 'Probe Spc',
-        type: 'string'
-      },
-      'qc1': {
-        title: 'QC1',
-        type: 'string'
-      },
-      'qc2': {
-        title: 'QC2',
-        type: 'string'
-      },
-      'probeACt': {
-        title: 'Probe A Ct',
-        type: 'number'
-      },
-      'probeBCt': {
-        title: 'Probe B Ct',
-        type: 'number'
-      },
-      'probeCCt': {
-        title: 'Probe C Ct',
-        type: 'number'
-      },
-      'probeDCt': {
-        title: 'Probe D Ct',
-        type: 'number'
-      },
-      'probeECt': {
-        title: 'Probe E Ct',
-        type: 'number'
-      },
-      'probeSpcCt': {
-        title: 'Probe Spc Ct',
-        type: 'number'
-      },
-      'qc1Ct': {
-        title: 'QC1 Ct',
-        type: 'number'
-      },
-      'qc2Ct': {
-        title: 'QC2 Ct',
-        type: 'number'
-      },
-      'probeAEndpt': {
-        title: 'Probe A Endpt',
-        type: 'number'
-      },
-      'probeBEndpt': {
-        title: 'Probe B Endpt',
-        type: 'number'
-      },
-      'probeCEndpt': {
-        title: 'Probe C Endpt',
-        type: 'number'
-      },
-      'probeDEndpt': {
-        title: 'Probe D Endpt',
-        type: 'number'
-      },
-      'probeEEndpt': {
-        title: 'Probe E Endpt',
-        type: 'number'
-      },
-      'probeSpcEndpt': {
-        title: 'Probe Spc Endpt',
-        type: 'number'
-      },
-      'qc1Endpt': {
-        title: 'QC1 Endpt',
-        type: 'number'
-      },
-      'qc2Endpt': {
-        title: 'QC2 Endpt',
-        type: 'number'
+  const geneXpertResultDataSchema = JSON.stringify({
+    resultText: {
+      title: 'Result Text',
+      type: 'string'
+    },
+    probes: {
+      title: 'Probes',
+      type: 'object',
+      i18nKey: 'Probes',
+      properties: {
+        'probeA': {
+          title: 'Probe A',
+          type: 'string'
+        },
+        'probeB': {
+          title: 'Probe B',
+          type: 'string'
+        },
+        'probeC': {
+          title: 'Probe C',
+          type: 'string'
+        },
+        'probeD': {
+          title: 'Probe D',
+          type: 'string'
+        },
+        'probeE': {
+          title: 'Probe E',
+          type: 'string'
+        },
+        'probeSpc': {
+          title: 'Probe Spc',
+          type: 'string'
+        },
+        'qc1': {
+          title: 'QC1',
+          type: 'string'
+        },
+        'qc2': {
+          title: 'QC2',
+          type: 'string'
+        },
+        'probeACt': {
+          title: 'Probe A Ct',
+          type: 'number'
+        },
+        'probeBCt': {
+          title: 'Probe B Ct',
+          type: 'number'
+        },
+        'probeCCt': {
+          title: 'Probe C Ct',
+          type: 'number'
+        },
+        'probeDCt': {
+          title: 'Probe D Ct',
+          type: 'number'
+        },
+        'probeECt': {
+          title: 'Probe E Ct',
+          type: 'number'
+        },
+        'probeSpcCt': {
+          title: 'Probe Spc Ct',
+          type: 'number'
+        },
+        'qc1Ct': {
+          title: 'QC1 Ct',
+          type: 'number'
+        },
+        'qc2Ct': {
+          title: 'QC2 Ct',
+          type: 'number'
+        },
+        'probeAEndpt': {
+          title: 'Probe A Endpt',
+          type: 'number'
+        },
+        'probeBEndpt': {
+          title: 'Probe B Endpt',
+          type: 'number'
+        },
+        'probeCEndpt': {
+          title: 'Probe C Endpt',
+          type: 'number'
+        },
+        'probeDEndpt': {
+          title: 'Probe D Endpt',
+          type: 'number'
+        },
+        'probeEEndpt': {
+          title: 'Probe E Endpt',
+          type: 'number'
+        },
+        'probeSpcEndpt': {
+          title: 'Probe Spc Endpt',
+          type: 'number'
+        },
+        'qc1Endpt': {
+          title: 'QC1 Endpt',
+          type: 'number'
+        },
+        'qc2Endpt': {
+          title: 'QC2 Endpt',
+          type: 'number'
+        }
       }
-    }}})
+    }})
 
   let [assayMtbRifId] = yield knex('Assay').insert({
     name: 'GeneXpert MTB/Rif',
@@ -627,21 +633,23 @@ function* seed(knex){
                           { resultText: 'ERROR', category1: resultCategoryErrorId, category2: null },
                           { resultText: 'Invalid', category1: resultCategoryInvalidId, category2: null }]
 
-  const probes = { probes: {  probeA: 'NEG', probeB: 'POS', probeC: 'NO RESULT',
-                              probeD: 'NEG', probeE: 'POS', probeSpc: 'NO RESULT',
-                              qc1: 'YES', qc2: 'No',
-                              probeACt: 12.32, probeBCt: 11.2, probeCCt: 12.5,
-                              probeDCt: 0.5, probeECt: 1.2, probeSpcCt: 5.78,
-                              qc1Ct: 1, qc2Ct: 0.007,
-                              probeAEndpt: 1.6, probeBEndpt: 2.33, probeCEndpt: 457,
-                              probeDEndpt: 12.43, probeEEndpt: 3.14, probeSpcEndpt: 8.9018,
-                              qc1Endpt: 0.1234, qc2Endpt: 1.22 }}
+  const data = {  resultText: '',
+                  probes: { probeA: 'NEG', probeB: 'POS', probeC: 'NO RESULT',
+                            probeD: 'NEG', probeE: 'POS', probeSpc: 'NO RESULT',
+                            qc1: 'YES', qc2: 'No',
+                            probeACt: 12.32, probeBCt: 11.2, probeCCt: 12.5,
+                            probeDCt: 0.5, probeECt: 1.2, probeSpcCt: 5.78,
+                            qc1Ct: 1, qc2Ct: 0.007,
+                            probeAEndpt: 1.6, probeBEndpt: 2.33, probeCEndpt: 457,
+                            probeDEndpt: 12.43, probeEEndpt: 3.14, probeSpcEndpt: 8.9018,
+                            qc1Endpt: 0.1234, qc2Endpt: 1.22 }}
 
   const resultsMtb = _.range(1, resultMtbNumber+1).map(i => {
     const device = devices[i % devices.length]
     const siteData = siteDatas.find((site) => { return site.id === device.siteId })
     const sample = samples[i % samples.length]
     const result = possibleResults[i % 5]
+    data.resultText = result.resultText
 
     return Object.assign({}, auditFields, {
       uniqueId: 'UQ-' + i,
@@ -655,10 +663,9 @@ function* seed(knex){
       deviceId: device.id,
       resultTypeId: resultTypePatientId,
       sampleId: sample.id,
-      resultText: result.resultText,
       resultCategory1: result.category1,
       resultCategory2: result.category2,
-      resultData: JSON.stringify(probes),
+      resultData: JSON.stringify(data),
       assayVersion: '4',
       started: new Date(+now - 12*i*millisInHour),
       ended: new Date(+now - 10*i*millisInHour),
