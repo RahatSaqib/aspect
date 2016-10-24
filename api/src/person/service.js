@@ -61,15 +61,13 @@ function* showPerson(request) {
   return {ok: true, data: personDetails}
 }
 
-function* updatePerson(request) {
+function* savePerson(request, updatablePersonFields) {
   const {params, payload} = request
 
   // TODO: check access level permissions
   const currentlyLoggedInUser = yield userService.getUser(request.auth.credentials.name)
 
   const personDetails = yield getPersonDetails(params.personId),
-    updatablePersonFields = ['name', 'title', 'email', 'email2', 'phone', 'cell', 'countryId',
-      'stateId', 'lgaId', 'zip', 'notes'],
     changedFields = _.reduce(payload, function(result, value, key) {
       if(_.includes(updatablePersonFields, key) && key in personDetails &&
         personDetails[key] != value) {
@@ -91,8 +89,18 @@ function* updatePerson(request) {
   return yield* showPerson(request)
 }
 
+function* updatePerson(request) {
+  return yield* savePerson(request, ['name', 'title', 'email', 'email2', 'phone', 'cell', 'countryId',
+    'stateId', 'lgaId', 'zip', 'notes'])
+}
+
+function* updatePersonUserPreferences(request) {
+  return yield* savePerson(request, ['timezone', 'culture'])
+}
+
 module.exports = {
   listPeople,
   showPerson,
-  updatePerson
+  updatePerson,
+  updatePersonUserPreferences
 }

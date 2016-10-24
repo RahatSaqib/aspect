@@ -1,6 +1,6 @@
 let Joi = require('joi')
 let { asyncHandler, validateSortPageParams } = require('../routes')
-let { listPeople, showPerson, updatePerson } = require('./service')
+let { listPeople, showPerson, updatePerson, updatePersonUserPreferences } = require('./service')
 
 module.exports = [{
   method: 'GET',
@@ -57,6 +57,25 @@ module.exports = [{
         lgaId: Joi.number().integer().positive().allow('', null),
         zip: Joi.string().max(45).allow('', null),
         notes: Joi.string().optional().max(1200).allow('', null)
+      }
+    }
+  },
+  {
+    method: 'PUT',
+    path: '/person/preferences/{personId}',
+    handler: asyncHandler(updatePersonUserPreferences),
+    config: {
+      description: 'Update Person\'s User Preferences',
+      notes: 'Timezone and Language',
+      auth: {scope: ['person:edit', 'person:admin']},
+      validate: {
+        params: {
+          personId: Joi.string().description('Person ID').required()
+        },
+        payload: {
+          timezone: Joi.string().max(255).allow('', null),
+          culture: Joi.string().max(45).allow('', null)
+        }
       }
     }
   }

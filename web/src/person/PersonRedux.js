@@ -129,22 +129,30 @@ function receiveUpdatedSinglePerson(item) {
 }
 
 // update a single person with given personId and data
-export function updateSinglePerson(personId, data){
+function updatePerson(path, personId, data, fields) {
   return dispatch => {
 
     dispatch(requestUpdatingSinglePerson(personId, data))
 
     const personJson = data.toJS ? data.toJS() : data
-    return aspectFetch(`/person/${personId}`, {
+    return aspectFetch(path, {
       method: 'PUT',
-      body: JSON.stringify(_.pick(personJson, ['name', 'title', 'email', 'email2', 'phone',
-        'cell', 'countryId', 'stateId', 'lgaId', 'zip', 'notes']))
+      body: JSON.stringify(_.pick(personJson, fields))
     })
       .then(json => dispatch(receiveUpdatedSinglePerson(json.data)))
       .catch(err => {
         dispatch(addError(`Updating a person (${personId}) failed`, err.message, err))
       })
   }
+}
+
+export function updateSinglePerson(personId, data){
+  return updatePerson(`/person/${personId}`, personId, data, ['name', 'title', 'email', 'email2', 'phone',
+    'cell', 'countryId', 'stateId', 'lgaId', 'zip', 'notes'])
+}
+
+export function updateSinglePersonUserPreferences(personId, data){
+  return updatePerson(`/person/preferences/${personId}`, personId, data, ['timezone', 'culture'])
 }
 /*
  * ---------------- Reducers -----------------
