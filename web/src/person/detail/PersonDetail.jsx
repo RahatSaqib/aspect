@@ -63,8 +63,8 @@ export class PersonDetail extends PureComponent {
         <Paper>
           {!person && <LinearProgress />}
           <div className={styles.FieldsContainer}>
-            {!editable && <span>{person.name}</span>}
-            {editable && <input value={person.name} />}
+            {!editable && <span>{person.get('name')}</span>}
+            {editable && <input value={person.get('name')} />}
             {editable && <button onClick={updateSinglePerson}>Save</button>}
           </div>
         </Paper>
