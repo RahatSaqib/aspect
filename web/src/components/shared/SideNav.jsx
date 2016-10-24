@@ -31,6 +31,10 @@ const DevicesListItem = requirePermissions({
   permissions: ['device:admin', 'device:view']
 })(ListItem)
 
+const ResultsListItem = requirePermissions({
+  permissions: ['result:admin', 'result:view']
+})(ListItem)
+
 class SideNav extends PureComponent {
 
   static propTypes = {
@@ -81,7 +85,7 @@ class SideNav extends PureComponent {
             className={styles.Drawer__ListItem}
             primaryText="Devices"
           />
-          <ListItem
+          <ResultsListItem
             containerElement={<Link to="/result" />}
             value={ '/result' }
             leftIcon={<Assignment />}
