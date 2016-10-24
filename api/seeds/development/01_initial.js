@@ -164,7 +164,8 @@ function* seed(knex){
   const geneXpertResultDataSchema = JSON.stringify({
     resultText: {
       title: 'Result Text',
-      type: 'string'
+      type: 'string',
+      list: true
     },
     probes: {
       title: 'Probes',

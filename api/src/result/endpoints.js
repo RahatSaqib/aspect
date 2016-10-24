@@ -13,7 +13,8 @@ module.exports = [
       auth: {scope: ['result:view', 'result:edit']},
       validate: {
         query: Object.assign({
-          sampleId: Joi.string().allow('').description('Filter for sample ID')
+          sampleId: Joi.string().allow('').description('Filter for sample ID'),
+          assayId: Joi.string().allow('').description('Filter for assay ID')
         }, validateSortPageParams('ended', 'deviceName', 'stateName', 'lgaName', 'sampleId', 'patientId'))
       }
     }
