@@ -5,6 +5,7 @@ import {
   injectIntl,
   defineMessages
 } from 'react-intl'
+import { withRouter } from 'react-router'
 import { bindActionCreators } from 'redux'
 import { connect } from 'react-redux'
 import Helmet from 'react-helmet'
@@ -46,6 +47,10 @@ export class PersonList extends PureComponent {
     table: PropTypes.object.isRequired
   }
 
+  handleItemIdSelection = (personId) => {
+    this.props.router.push(`/person/${personId}`)
+  }
+
   handleFetch = (...args) => {
     this.props.fetchListFilteredPersons({}, ...args)
   }
@@ -72,6 +77,7 @@ export class PersonList extends PureComponent {
         <Helmet title={formatMessage(messages.title)} titleTemplate="%s - Aspect" defaultTitle="Aspect" />
         <ListFilterContainer />
         <DataTable
+          handleItemIdSelection={this.handleItemIdSelection}
           handleFetch={ this.handleFetch }
           items={ this.props.items }
           table={ this.props.table }
@@ -104,5 +110,6 @@ function mapDispatchToProps(dispatch) {
 
 export const PersonListContainer = _.flowRight(
   injectIntl,
+  withRouter,
   connect(mapStateToProps, mapDispatchToProps)
 )(PersonList)
