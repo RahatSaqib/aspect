@@ -12,6 +12,11 @@ import Helmet from 'react-helmet'
 
 // Our own imports
 import MiniChart from '../../components/shared/MiniChart'
+import DashboardDevices from './DashboardDevices'
+import DashboardTests from './DashboardTests'
+import DashboardSites from './DashboardSites'
+import DashboardErrorRate from './DashboardErrorRate'
+import DashboardContacts from './DashboardContacts'
 import styles from './Dashboard.css'
 
 const messages = defineMessages({
@@ -43,28 +48,16 @@ export class Dashboard extends PureComponent {
         <Helmet title={formatMessage(messages.title)} titleTemplate="%s - Aspect" defaultTitle="Aspect" />
         <div className="pure-g">
           <div className="pure-u-lg-1-4 pure-u-md-1-3 pure-u-sm-1-2">
-            <Link to="/device">
-              <MiniChart  data={[1, 8, 15, 40, 45, 80, 90, 155]}
-                          label={'Total Devices'} number={155} bgcolor={'#00bcd4'}/>
-            </Link>
+            <DashboardDevices label={'Total Devices'} />
           </div>
           <div className="pure-u-lg-1-4 pure-u-md-1-3 pure-u-sm-1-2">
-            <Link to="/result">
-              <MiniChart  data={[1000, 2000, 4000, 10000, 5000, 50000, 100000, 120000, 110000]}
-                          label={'Total Tests'} number={125459} bgcolor={'#8bc34a'} />
-            </Link>
+            <DashboardTests label={'Total Tests'} />
           </div>
           <div className="pure-u-lg-1-4 pure-u-md-1-3 pure-u-sm-1-2">
-            <Link to="/site">
-              <MiniChart  data={[10, 19, 15, 40, 45, 80, 90, 22]}
-                          label={'Sites'} number={8} bgcolor={'#24c821'}/>
-            </Link>
+            <DashboardSites label={'Sites'} />
           </div>
           <div className="pure-u-lg-1-4 pure-u-md-1-3 pure-u-sm-1-2">
-            <Link to="/result">
-              <MiniChart  data={[25, 12, 8, 2, 1]}
-                          label={'Error Rate'} number={'12'} bgcolor={'#ff9800'} />
-            </Link>
+            <DashboardErrorRate label={'Error Rate'} />
           </div>
           <div className="pure-u-lg-1-4 pure-u-md-1-3 pure-u-sm-1-2">
             <Link to="/dashboard/inventory">
@@ -73,10 +66,7 @@ export class Dashboard extends PureComponent {
               </Link>
           </div>
           <div className="pure-u-lg-1-4 pure-u-md-1-3 pure-u-sm-1-2">
-            <Link to="/person">
-              <MiniChart  data={[800, 700, 900, 1200, 1400, 1500, 1600, 1780]}
-                          label={'Persons'} number={12} bgcolor={'#FBC02D'} />
-            </Link>
+            <DashboardContacts label={'Persons'} />
           </div>
         </div>
         <Snackbar

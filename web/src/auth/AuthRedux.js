@@ -9,6 +9,7 @@ import * as localStorage from '../shared/utils/localStorage'
 import { addError } from '../error/ErrorRedux'
 
 export const types = {
+  HYDRATE_FROM_LOCAL_STORAGE: 'HYDRATE_FROM_LOCAL_STORAGE',
   LOGIN_REQUEST: 'LOGIN_REQUEST',
   LOGIN_SUCCESS: 'LOGIN_SUCCESS',
   LOGIN_FAILURE: 'LOGIN_FAILURE',
@@ -25,24 +26,26 @@ export function loginRequest() {
   }
 }
 
-export function loginSuccess(name, culture, lang) {
+export function loginSuccess(name, culture, lang, permissions) {
 
   return {
     type: types.LOGIN_SUCCESS,
     name,
     culture,
     lang,
+    permissions,
     drawerOpen: localStorage.isDrawerOpen()
   }
 }
 
-export function refreshSuccess(name, culture, lang) {
+export function refreshSuccess(name, culture, lang, permissions) {
 
   return {
     type: types.LOGIN_SUCCESS,
     name,
     culture,
     lang,
+    permissions,
     drawerOpen: localStorage.isDrawerOpen()
   }
 }
@@ -50,7 +53,7 @@ export function refreshSuccess(name, culture, lang) {
 export function hydrateFromLocalStorage() {
 
   return {
-    type: types.LOGIN_SUCCESS,
+    type: types.HYDRATE_FROM_LOCAL_STORAGE,
     culture: localStorage.getCulture(),
     lang: localStorage.getLang(),
     drawerOpen: localStorage.isDrawerOpen()
@@ -136,7 +139,7 @@ export function loginStart(login) {
 
         // We can dispatch many times!
         // Here, we update the app state with the results of the API call.
-        dispatch(loginSuccess(jwt.name, jwt.culture, jwt.lang))
+        dispatch(loginSuccess(jwt.name, jwt.culture, jwt.lang, jwt.permissions))
 
         browserHistory.push('/dashboard')
       })
@@ -183,7 +186,7 @@ export function refreshStart() {
       .then(json => {
         let jwt = storeAccess(json)
 
-        dispatch(refreshSuccess(jwt.name, jwt.culture, jwt.lang))
+        dispatch(refreshSuccess(jwt.name, jwt.culture, jwt.lang, jwt.permissions))
       })
       .catch(() => {
         dispatch(logoutStart())
@@ -209,6 +212,7 @@ const User = Immutable.Record({
   name: '',
   culture: 'en-US',
   lang: 'en',
+  permissions: Immutable.List(),
   drawerOpen: true,
   loggedIn: false
 })
@@ -217,6 +221,12 @@ const initialState = new User()
 
 export default function authReducer(state = initialState, action) {
   switch (action.type) {
+  case types.HYDRATE_FROM_LOCAL_STORAGE:
+    return state.merge({
+      culture: action.culture,
+      lang: action.lang,
+      loggedIn: true
+    })
   case types.LOGIN_REQUEST:
     return state.merge({ loggedIn: false })
   case types.LOGIN_SUCCESS:
@@ -224,6 +234,7 @@ export default function authReducer(state = initialState, action) {
       name: action.name,
       culture: action.culture,
       lang: action.lang,
+      permissions: action.permissions,
       loggedIn: true,
       drawerOpen: action.drawerOpen
     })

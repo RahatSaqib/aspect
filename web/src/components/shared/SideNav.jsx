@@ -21,10 +21,27 @@ import Book from 'material-ui/svg-icons/action/book'
 import RssFeed from 'material-ui/svg-icons/communication/rss-feed'
 
 // Our own imports
+import requirePermissions from './requirePermissions'
 import SelectableList from './SelectableList'
 import styles from './SideNav.css'
 
 const cx = classnames.bind(styles)
+
+const DevicesListItem = requirePermissions({
+  permissions: ['device:admin', 'device:view']
+})(ListItem)
+
+const ResultsListItem = requirePermissions({
+  permissions: ['result:admin', 'result:view']
+})(ListItem)
+
+const ContactsListItem = requirePermissions({
+  permissions: ['person:admin', 'person:view']
+})(ListItem)
+
+const SitesListItem = requirePermissions({
+  permissions: ['site:admin', 'site:view']
+})(ListItem)
 
 class SideNav extends PureComponent {
 
@@ -69,28 +86,28 @@ class SideNav extends PureComponent {
           />
           <Divider />
           <Subheader>Sections</Subheader>
-          <ListItem
+          <DevicesListItem
             containerElement={<Link to="/device" />}
             value={ '/device' }
             leftIcon={<Scanner />}
             className={styles.Drawer__ListItem}
             primaryText="Devices"
           />
-          <ListItem
+          <ResultsListItem
             containerElement={<Link to="/result" />}
             value={ '/result' }
             leftIcon={<Assignment />}
             className={styles.Drawer__ListItem}
             primaryText="Results"
           />
-          <ListItem
+          <ContactsListItem
             containerElement={<Link to="/person" />}
             value={ '/person' }
             leftIcon={<People />}
             className={styles.Drawer__ListItem}
             primaryText="Contacts"
           />
-          <ListItem
+          <SitesListItem
             containerElement={<Link to="/site" />}
             value={ '/site' }
             leftIcon={<Laptop />}
