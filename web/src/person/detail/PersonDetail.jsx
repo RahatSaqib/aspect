@@ -60,22 +60,27 @@ export class PersonDetail extends PureComponent {
     }
   }
 
+  saveContactDetails = formValues => {
+    const {updateSinglePerson} = this.props
+    return updateSinglePerson(formValues.get('id'), formValues)
+  }
+
+  saveLoginDetails = formValues => {
+    console.log(formValues)
+  }
+
+  saveUserPreferences = formValues => {
+    console.log(formValues)
+  }
+
   render() {
     const {
         intl: { formatMessage },
-        updateSinglePerson,
         person, editable
       } = this.props,
       contactDetails = new ContactDetails(person),
       loginDetails = new LoginDetails(person),
-      userPreferences = new UserPreferences(person),
-      saveContactDetails = formValues => updateSinglePerson(formValues),
-      saveLoginDetails = formValues => {
-        console.log(formValues)
-      },
-      saveUserPreferences = formValues =>  {
-        console.log(formValues)
-      }
+      userPreferences = new UserPreferences(person)
 
     return (
       <div className={styles.Content}>
@@ -89,7 +94,7 @@ export class PersonDetail extends PureComponent {
                 {formatMessage(messages.contactDetails)}
               </h2>
               {person && <ContactDetailsForm initialValues={contactDetails} showNotesField
-                                             onSubmit={saveContactDetails} />}
+                                             onSubmit={this.saveContactDetails} />}
             </Tab>
             <Tab icon={<Lock />}
                  label={<span className="pure-hidden-xs">{formatMessage(messages.usernameAndPassword)}</span>}>
@@ -97,7 +102,7 @@ export class PersonDetail extends PureComponent {
               <h2 className={'pure-visible-xs ' + styles.Form__Header}>
                 {formatMessage(messages.usernameAndPassword)}
               </h2>
-              {person && <LoginDetailsForm initialValues={loginDetails} onSubmit={saveLoginDetails} />}
+              {person && <LoginDetailsForm initialValues={loginDetails} onSubmit={this.saveLoginDetails} />}
             </Tab>
             <Tab icon={<Language />}
                  label={<span className="pure-hidden-xs">{formatMessage(messages.languageAndTimezone)}</span>}>
@@ -105,8 +110,8 @@ export class PersonDetail extends PureComponent {
               <h2 className={'pure-visible-xs ' + styles.Form__Header}>
                 {formatMessage(messages.languageAndTimezone)}
               </h2>
-              {!person && <UserPreferencesForm initialValues={userPreferences}
-                                               onSubmit={saveUserPreferences} />}
+              {person && <UserPreferencesForm initialValues={userPreferences}
+                                              onSubmit={this.saveUserPreferences} />}
             </Tab>
           </Tabs>}
         </Paper>

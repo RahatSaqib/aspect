@@ -134,9 +134,11 @@ export function updateSinglePerson(personId, data){
 
     dispatch(requestUpdatingSinglePerson(personId, data))
 
+    const personJson = data.toJS ? data.toJS() : data
     return aspectFetch(`/person/${personId}`, {
       method: 'PUT',
-      body: JSON.stringify(data)
+      body: JSON.stringify(_.pick(personJson, ['name', 'title', 'email', 'email2', 'phone',
+        'cell', 'countryId', 'stateId', 'lgaId', 'zip', 'notes']))
     })
       .then(json => dispatch(receiveUpdatedSinglePerson(json.data)))
       .catch(err => {
