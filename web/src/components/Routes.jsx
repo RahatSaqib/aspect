@@ -21,6 +21,7 @@ import { DeviceDetailContainer } from '../device/detail/DeviceDetail'
 import { SiteListContainer } from '../site/list/SiteList'
 import { SiteDetailContainer } from '../site/detail/SiteDetail'
 import { PersonListContainer } from '../person/list/PersonList'
+import { PersonDetailContainer } from '../person/list/PersonDetail'
 import { ResultListContainer } from '../result/list/ResultList'
 import { ResultDetailContainer } from '../result/detail/ResultDetail'
 import { NotificationListContainer } from '../notification/list/NotificationList'
@@ -93,7 +94,10 @@ const routes =
           <Route path=":siteId" component={SiteDetailContainer} />
         </Route>
 
-        <Route path="person" component={PersonListContainer} />
+        <Route path="person">
+          <IndexRoute component={PersonListContainer} />
+          <Route path=":personId" component={PersonDetailContainer} />
+        </Route>
 
         <Route path="account-details">
           <Route path="current" component={AccountDetailsContainer} />
