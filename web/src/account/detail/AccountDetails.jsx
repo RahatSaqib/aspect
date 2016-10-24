@@ -94,7 +94,8 @@ class AccountDetails extends PureComponent {
         if(!errors.currentPassword) {
           this.closeCurrentPasswordInputDialog()
         }
-      }, saveLoginDetailsSucceeded = () => {
+      },
+      saveLoginDetailsSucceeded = () => {
         this.closeCurrentPasswordInputDialog()
         addAcknowledgement(formatMessage(messages.loginDetailsUpdated))
       }

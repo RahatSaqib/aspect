@@ -88,7 +88,7 @@ export class PersonDetail extends PureComponent {
               <h2 className={'pure-visible-xs ' + styles.Form__Header}>
                 {formatMessage(messages.contactDetails)}
               </h2>
-              {person && <ContactDetailsForm initialValues={contactDetails}
+              {person && <ContactDetailsForm initialValues={contactDetails} showNotesField
                                              onSubmit={saveContactDetails} />}
             </Tab>
             <Tab icon={<Lock />}

@@ -96,8 +96,8 @@ const ContactDetailsForm = props => {
           <TextInput name="zip" label={formatMessage(messages.zip)} disabled={loading} maxLength="45" />
         </section>
         {showNotesField && <section>
-          <h1>{formatMessage(messages.notes)}</h1>
-          <TextInput name="notes" disabled={loading} maxLength="1200" multiLine fullWidth rows={4} />
+          <TextInput name="notes" label={formatMessage(messages.notes)} disabled={loading} maxLength="1200"
+                     multiLine fullWidth rows={4} />
         </section>}
       </div>
       <div className={styles.Form__ActionRow}>

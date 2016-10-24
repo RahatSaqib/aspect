@@ -118,7 +118,7 @@ const LoginDetailsForm = props => {
       </div>
       <Dialog title={formatMessage(messages.currentPasswordDialogHeader)}
               actions={currentPasswordInputDialogActions} modal={false}
-              open={currentPasswordInputDialogOpen}
+              open={currentPasswordInputDialogOpen || false}
               onRequestClose={closeCurrentPasswordInputDialog}>
         {formatMessage(messages.currentPasswordDialogMessage)}
         <TextInput name="currentPassword" autoFocus fullWidth disabled={loading} maxLength="100"

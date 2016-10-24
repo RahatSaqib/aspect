@@ -64,7 +64,8 @@ export function saveContactDetails(contactDetails) {
       {
         method: 'PUT',
         headers: getHeaders(true),
-        body: JSON.stringify(contactDetails)
+        body: JSON.stringify(_.pick(contactDetails.toJS(), ['id', 'name', 'title', 'email', 'email2',
+          'phone', 'cell', 'countryId', 'stateId', 'lgaId', 'zip']))
       })
       .then(json => dispatch(createReceiveUpdatedContactDetails(json.data)))
       .catch(err => dispatch(addError('Saving contact details failed', err.message, err)))
