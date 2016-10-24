@@ -5,6 +5,7 @@ import { SubmissionError } from 'redux-form'
 import { aspectFetch, getHeaders, getBrowserNameAndVersion } from '../shared/utils/fetch'
 import * as localStorage from '../shared/utils/localStorage'
 import { addError } from '../error/ErrorRedux'
+import {ContactDetails, LoginDetails, UserPreferences} from '../person/PersonRedux'
 import {loginSuccess, changeCulture, changeTimezone} from '../auth/AuthRedux'
 
 export const types = {
@@ -157,37 +158,16 @@ export function saveUserPreferences(userPreferences) {
 /*
  * ---------------- Reducers -----------------
  */
-const ContactDetails = Immutable.Record({
-    id: null,
-    name: null,
-    title: null,
-    email: null,
-    email2: null,
-    phone: null,
-    cell: null,
-    countryId: null,
-    stateId: null,
-    lgaId: null,
-    zip: null
-  }), LoginDetails = Immutable.Record({
-    id: null,
-    username: null,
-    newPassword: null,
-    confirmNewPassword: null,
-    currentPassword: null
-  }), UserPreferences = Immutable.Record({
-    id: null,
-    timezone: null,
-    culture: null
-  }), AccountDetailsData = Immutable.Record({
-    contactDetails: new ContactDetails(),
-    loginDetails: new LoginDetails(),
-    userPreferences: new UserPreferences()
-  }), AccountDetails = Immutable.Record({
-    loading: false,
-    saving: false,
-    data: new AccountDetailsData()
-  })
+export const AccountDetailsData = Immutable.Record({
+  contactDetails: new ContactDetails(),
+  loginDetails: new LoginDetails(),
+  userPreferences: new UserPreferences()
+})
+export const AccountDetails = Immutable.Record({
+  loading: false,
+  saving: false,
+  data: new AccountDetailsData()
+})
 
 const initialState = new AccountDetails()
 

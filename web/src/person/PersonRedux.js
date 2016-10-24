@@ -151,6 +151,32 @@ const Person = Immutable.Record({
   items: new Items(),
   table: new Table()
 })
+export const ContactDetails = Immutable.Record({
+  id: null,
+  name: null,
+  title: null,
+  email: null,
+  email2: null,
+  phone: null,
+  cell: null,
+  countryId: null,
+  stateId: null,
+  lgaId: null,
+  zip: null,
+  notes: null
+})
+export const LoginDetails = Immutable.Record({
+  id: null,
+  username: null,
+  newPassword: null,
+  confirmNewPassword: null,
+  currentPassword: null
+})
+export const UserPreferences = Immutable.Record({
+  id: null,
+  timezone: null,
+  culture: null
+})
 
 const initialState = new Person()
 

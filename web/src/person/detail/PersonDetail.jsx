@@ -8,13 +8,23 @@ import Helmet from 'react-helmet'
 
 // Material-UI
 import Paper from 'material-ui/Paper'
+import {Tabs, Tab} from 'material-ui/Tabs'
 import LinearProgress from 'material-ui/LinearProgress'
+import MapsPersonPin from 'material-ui/svg-icons/maps/person-pin'
+import Language from 'material-ui/svg-icons/action/language'
+import Lock from 'material-ui/svg-icons/action/lock'
+import ContactDetailsForm from './ContactDetailsForm'
+import LoginDetailsForm from './LoginDetailsForm'
+import UserPreferencesForm from './UserPreferencesForm'
 
 // Our own imports
 import { isEditable } from '../../shared/selectors/person'
 import {
   fetchSinglePerson,
-  updateSinglePerson
+  updateSinglePerson,
+  ContactDetails,
+  LoginDetails,
+  UserPreferences
 } from '../PersonRedux'
 
 import messages from './messages'
