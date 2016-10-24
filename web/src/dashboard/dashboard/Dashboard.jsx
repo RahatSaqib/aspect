@@ -15,6 +15,7 @@ import MiniChart from '../../components/shared/MiniChart'
 import DashboardDevices from './DashboardDevices'
 import DashboardTests from './DashboardTests'
 import DashboardSites from './DashboardSites'
+import DashboardErrorRate from './DashboardErrorRate'
 import styles from './Dashboard.css'
 
 const messages = defineMessages({
@@ -55,10 +56,7 @@ export class Dashboard extends PureComponent {
             <DashboardSites label={'Sites'} />
           </div>
           <div className="pure-u-lg-1-4 pure-u-md-1-3 pure-u-sm-1-2">
-            <Link to="/result">
-              <MiniChart  data={[25, 12, 8, 2, 1]}
-                          label={'Error Rate'} number={'12'} bgcolor={'#ff9800'} />
-            </Link>
+            <DashboardErrorRate label={'Error Rate'} />
           </div>
           <div className="pure-u-lg-1-4 pure-u-md-1-3 pure-u-sm-1-2">
             <Link to="/dashboard/inventory">
