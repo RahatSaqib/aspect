@@ -336,6 +336,7 @@ function* updatePasswordWithResetPasswordToken(request) {
 }
 
 module.exports = {
+  getUser,
   authenticate,
   checkAuthentication,
   refreshToken,

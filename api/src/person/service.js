@@ -1,5 +1,7 @@
 const Promise = require('bluebird')
-const { knex, filterParams, sortPageParams } = require('../db')
+let _ = require('lodash')
+const { query, knex, filterParams, sortPageParams } = require('../db')
+let userService = require('../auth/service')
 
 function* listPeople(request){
   const {query} = request
@@ -35,11 +37,62 @@ function* listPeople(request){
   // return result when both queries are finished
   const [{count: total}, data] = yield Promise.all([getCount, getItems])
 
-  const result = {ok: true, total, data, length: data.length}
+  return {ok: true, total, data, length: data.length}
+}
 
-  return result
+function getPersonDetails(personId) {
+  return query('Get person details').from('Person as p')
+    .leftJoin('User as u', 'p.userId', 'u.id')
+    .leftOuterJoin('State as s', 'p.stateId', 's.id')
+    .leftOuterJoin('Country as c', 'p.countryId', 'c.id')
+    .leftOuterJoin('Lga as l', 'p.lgaId', 'l.id')
+    .where({'p.id': personId})
+    .first('p.id', 'p.userId', 'u.name as username', 'p.name', 'p.title', 'p.email', 'p.email2',
+      'p.phone', 'p.cell', 'p.countryId', 'p.stateId', 'p.lgaId', 'p.zip', 'p.timezone', 'p.culture',
+      'p.notes', 'p.lastPartnerId', 'p.hidePatientId', 'p.hideSampleId', 'p.hideNotes',
+      'c.name as country', 's.name as stateName', 'l.name as lgaName')
+}
+
+function* showPerson(request) {
+  const {params} = request
+
+  const personDetails = yield getPersonDetails(params.personId)
+
+  return {ok: true, data: personDetails}
+}
+
+function* updatePerson(request) {
+  const {params, payload} = request
+
+  // TODO: check access level permissions
+  const currentlyLoggedInUser = yield userService.getUser(request.auth.credentials.name)
+
+  const personDetails = yield getPersonDetails(params.personId),
+    updatablePersonFields = ['name', 'title', 'email', 'email2', 'phone', 'cell', 'countryId',
+      'stateId', 'lgaId', 'zip', 'notes'],
+    changedFields = _.reduce(payload, function(result, value, key) {
+      if(_.includes(updatablePersonFields, key) && key in personDetails &&
+        personDetails[key] != value) {
+        result[key] = value
+      }
+      return result
+    }, {})
+
+  //Update record if any values have changed
+  if(!_.isEmpty(changedFields)) {
+    changedFields.updatedOn = new Date()
+    changedFields.updatedBy = currentlyLoggedInUser.id
+
+    yield query('Save person details').from('Person as p')
+      .where({'p.id': personDetails.id})
+      .update(changedFields)
+  }
+
+  return yield* showPerson(request)
 }
 
 module.exports = {
-  listPeople
+  listPeople,
+  showPerson,
+  updatePerson
 }
