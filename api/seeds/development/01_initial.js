@@ -8,6 +8,7 @@ const geography = require('./fixtures/geography.json')
 const millisInHour = 1000*60*60
 const deviceNumber = 50
 const routerNumber = 20
+const resultMtbNumber = 200
 const saltRounds = parseInt(config.passwordSaltRounds)
 
 function* seed(knex){
@@ -140,75 +141,303 @@ function* seed(knex){
 
   // Assays and AssayTypes
   let [assayTypeMTBRifId] = yield knex('AssayType').insert({
-    name: 'MTB/Rif'
+    name: 'MTB/Rif',
+    i18nKey: 'AssayTypeMtbRif'
   })
 
   let [assayTypeEbolaId] = yield knex('AssayType').insert({
-    name: 'Ebola'
+    name: 'Ebola',
+    i18nKey: 'AssayTypeEbola'
   })
 
   let [assayTypeHIVVLId] = yield knex('AssayType').insert({
-    name: 'HIV VL'
+    name: 'HIV VL',
+    i18nKey: 'AssayTypeHivVl'
   })
 
   let [assayTypeLipidPanelId] = yield knex('AssayType').insert({
-    name: 'Lipid Panel'
+    name: 'Lipid Panel',
+    i18nKey: 'AssayTypeLipidPanel'
   })
 
-  yield knex('Assay').insert({
+  // define resultData object
+  const geneXpertResultDataSchema = JSON.stringify({ probes: {
+    title: 'Probes',
+    type: 'object',
+    i18nKey: 'Probes',
+    properties: {
+      'probeA': {
+        title: 'Probe A',
+        type: 'string'
+      },
+      'probeB': {
+        title: 'Probe B',
+        type: 'string'
+      },
+      'probeC': {
+        title: 'Probe C',
+        type: 'string'
+      },
+      'probeD': {
+        title: 'Probe D',
+        type: 'string'
+      },
+      'probeE': {
+        title: 'Probe E',
+        type: 'string'
+      },
+      'probeSpc': {
+        title: 'Probe Spc',
+        type: 'string'
+      },
+      'qc1': {
+        title: 'QC1',
+        type: 'string'
+      },
+      'qc2': {
+        title: 'QC2',
+        type: 'string'
+      },
+      'probeACt': {
+        title: 'Probe A Ct',
+        type: 'number'
+      },
+      'probeBCt': {
+        title: 'Probe B Ct',
+        type: 'number'
+      },
+      'probeCCt': {
+        title: 'Probe C Ct',
+        type: 'number'
+      },
+      'probeDCt': {
+        title: 'Probe D Ct',
+        type: 'number'
+      },
+      'probeECt': {
+        title: 'Probe E Ct',
+        type: 'number'
+      },
+      'probeSpcCt': {
+        title: 'Probe Spc Ct',
+        type: 'number'
+      },
+      'qc1Ct': {
+        title: 'QC1 Ct',
+        type: 'number'
+      },
+      'qc2Ct': {
+        title: 'QC2 Ct',
+        type: 'number'
+      },
+      'probeAEndpt': {
+        title: 'Probe A Endpt',
+        type: 'number'
+      },
+      'probeBEndpt': {
+        title: 'Probe B Endpt',
+        type: 'number'
+      },
+      'probeCEndpt': {
+        title: 'Probe C Endpt',
+        type: 'number'
+      },
+      'probeDEndpt': {
+        title: 'Probe D Endpt',
+        type: 'number'
+      },
+      'probeEEndpt': {
+        title: 'Probe E Endpt',
+        type: 'number'
+      },
+      'probeSpcEndpt': {
+        title: 'Probe Spc Endpt',
+        type: 'number'
+      },
+      'qc1Endpt': {
+        title: 'QC1 Endpt',
+        type: 'number'
+      },
+      'qc2Endpt': {
+        title: 'QC2 Endpt',
+        type: 'number'
+      }
+    }}})
+
+  let [assayMtbRifId] = yield knex('Assay').insert({
     name: 'GeneXpert MTB/Rif',
+    i18nKey: 'AssayGeneXpertMtbRif',
     assayTypeId: assayTypeMTBRifId,
-    deviceTypeId: deviceTypeGeneXpertId
+    deviceTypeId: deviceTypeGeneXpertId,
+    resultCategory1Label: 'MTB',
+    resultCategory1i18nKey: 'ResultCategoryMtb',
+    resultCategory2Label: 'Rif',
+    resultCategory2i18nKey: 'ResultCategoryRif',
+    resultDataSchema: geneXpertResultDataSchema
   })
 
   yield knex('Assay').insert({
     name: 'GeneXpert HIV VL',
+    i18nKey: 'AssayGeneXpertHivVl',
     assayTypeId: assayTypeHIVVLId,
-    deviceTypeId: deviceTypeGeneXpertId
+    deviceTypeId: deviceTypeGeneXpertId,
+    resultCategory1Label: 'MTB',
+    resultCategory1i18nKey: 'ResultCategoryMtb',
+    resultCategory2Label: 'Rif',
+    resultCategory2i18nKey: 'ResultCategoryRif',
+    resultDataSchema: geneXpertResultDataSchema
   })
 
   yield knex('Assay').insert({
     name: 'GeneXpert Ebola',
+    i18nKey: 'AssayGeneXpertEbola',
     assayTypeId: assayTypeEbolaId,
-    deviceTypeId: deviceTypeGeneXpertId
+    deviceTypeId: deviceTypeGeneXpertId,
+    resultCategory1Label: 'GP',
+    resultCategory1i18nKey: 'ResultCategoryEbolaGp',
+    resultCategory2Label: 'NP',
+    resultCategory2i18nKey: 'ResultCategoryEbolaNp',
+    resultDataSchema: geneXpertResultDataSchema
   })
 
   yield knex('Assay').insert({
     name: 'Afinion HIV VL',
+    i18nKey: 'AssayAfinionHivVl',
     assayTypeId: assayTypeHIVVLId,
-    deviceTypeId: deviceTypeAfinionId
+    deviceTypeId: deviceTypeAfinionId,
+    resultDataSchema: JSON.stringify({
+      copies: {
+        title: 'copies/mL',
+        type: 'number',
+        list: true
+      },
+      log: {
+        title: 'log',
+        type: 'number'
+      }
+    })
   })
 
   yield knex('Assay').insert({
     name: 'Afinion Lipid Panel',
+    i18nKey: 'AssayAfinionLipidPanel',
     assayTypeId: assayTypeLipidPanelId,
-    deviceTypeId: deviceTypeAfinionId
+    deviceTypeId: deviceTypeAfinionId,
+    resultDataSchema: JSON.stringify({
+      chol: {
+        title: 'Chol (mmol/L)',
+        type: 'number',
+        unit: 'mmol/L',
+        list: true
+      },
+      trig: {
+        title: 'Trig (mmol/L)',
+        type: 'number',
+        unit: 'mmol/L',
+        list: true
+      },
+      hdl: {
+        title: 'HDL (mmol/L)',
+        type: 'number',
+        unit: 'mmol/L'
+      }
+    })
   })
 
   yield knex('Assay').insert({
     name: 'Q HIV VL',
+    i18nKey: 'AssayQHivVl',
     assayTypeId: assayTypeHIVVLId,
-    deviceTypeId: deviceTypeQId
+    deviceTypeId: deviceTypeQId,
+    ResultCategory1Label: 'HIV',
+    ResultCategory1i18nKey: 'ResultCategoryHivVl'
   })
 
   //Result types
-  yield knex('ResultType').insert({
-    name: 'Patient'
+  const [resultTypePatientId] = yield knex('ResultType').insert({
+    name: 'Patient',
+    i18nKey: 'ResultTypePatient'
   })
 
   yield knex('ResultType').insert({
-    name: 'EQA'
+    name: 'EQA',
+    i18nKey: 'ResultTypeEqa'
   })
   yield knex('ResultType').insert({
-    name: 'Training'
-  })
-
-  yield knex('ResultType').insert({
-    name: 'Calibration'
+    name: 'Training',
+    i18nKey: 'ResultTypeTraining'
   })
 
   yield knex('ResultType').insert({
-    name: 'Study/Research'
+    name: 'Calibration',
+    i18nKey: 'ResultTypeCalibration'
+  })
+
+  yield knex('ResultType').insert({
+    name: 'Study/Research',
+    i18nKey: 'ResultTypeStudy'
+  })
+
+  // result categories
+  const [resultCategoryDetectedId] = yield knex('ResultCategory').insert({
+    name: 'Detected',
+    i18nKey: 'ResultCategoryDetected'
+  })
+
+  const [resultCategoryNotDetectedId] =yield knex('ResultCategory').insert({
+    name: 'Not Detected',
+    i18nKey: 'ResultCategoryNotDetected'
+  })
+
+  const [resultCategoryIndeterminateId] = yield knex('ResultCategory').insert({
+    name: 'Indeterminate',
+    i18nKey: 'ResultCategoryIndeterminate'
+  })
+
+  const [resultCategoryInvalidId] = yield knex('ResultCategory').insert({
+    name: 'Invalid',
+    i18nKey: 'ResultCategoryInvalid'
+  })
+
+  const [resultCategoryNoResultId] = yield knex('ResultCategory').insert({
+    name: 'No Result',
+    i18nKey: 'ResultCategoryNoResult'
+  })
+
+  const [resultCategoryErrorId] = yield knex('ResultCategory').insert({
+    name: 'Error',
+    i18nKey: 'ResultCategoryError'
+  })
+
+  // assign categories to Assays
+  yield knex('ResultCategoryAssay').insert({
+    resultCategoryId: resultCategoryDetectedId,
+    assayId: assayMtbRifId
+  })
+
+  yield knex('ResultCategoryAssay').insert({
+    resultCategoryId: resultCategoryNotDetectedId,
+    assayId: assayMtbRifId
+  })
+
+  yield knex('ResultCategoryAssay').insert({
+    resultCategoryId: resultCategoryIndeterminateId,
+    assayId: assayMtbRifId
+  })
+
+  yield knex('ResultCategoryAssay').insert({
+    resultCategoryId: resultCategoryInvalidId,
+    assayId: assayMtbRifId
+  })
+
+  yield knex('ResultCategoryAssay').insert({
+    resultCategoryId: resultCategoryNoResultId,
+    assayId: assayMtbRifId
+  })
+
+  yield knex('ResultCategoryAssay').insert({
+    resultCategoryId: resultCategoryErrorId,
+    assayId: assayMtbRifId
   })
 
   // Create permissions
@@ -356,10 +585,12 @@ function* seed(knex){
   yield knex('DeviceSim').insert(sims)
 
   // insert GeneXpert devices
-  let devices = _.range(1, deviceNumber+1).map(i => {
+  let devices = []
+  for (let i = 0; i < deviceNumber; i++) {
     let siteData = siteDatas[i % siteDatas.length]
     let routerId = routerIds[i]
-    return Object.assign({}, auditFields, {
+
+    let device = Object.assign({}, auditFields, {
       name: `D${i} ${siteData.shortname}`,
       shortname: 'd'+i,
       deviceTypeId: deviceTypeGeneXpertId,
@@ -369,8 +600,84 @@ function* seed(knex){
       updatedOn: new Date(+now - i*millisInHour),
       lastPingOn: new Date(+now - i*millisInHour/3)
     })
+
+    device.id = yield knex('Device').insert(device)
+
+    devices.push(device)
+  }
+
+  // some samples:
+  let samples = []
+  for (let i = 0; i < resultMtbNumber - 100; i++) {
+    let siteData = siteDatas[i % siteDatas.length]
+    let sample = Object.assign({}, {
+      sampleId: `SMP-${i}`,
+      originSiteId: siteData.id
+    })
+
+    sample.id = yield knex('Sample').insert(sample)
+
+    samples.push(sample)
+  }
+
+  // finally, results!
+  const possibleResults = [{ resultText: 'Not Detected', category1: resultCategoryDetectedId, category2: null },
+                          { resultText: 'MTB Detected, Rif Resistance Not Detected', category1: resultCategoryDetectedId, category2: resultCategoryNotDetectedId },
+                          { resultText: 'MTB Detected, Rif Indeterminate', category1: resultCategoryDetectedId, category2: resultCategoryIndeterminateId },
+                          { resultText: 'ERROR', category1: resultCategoryErrorId, category2: null },
+                          { resultText: 'Invalid', category1: resultCategoryInvalidId, category2: null }]
+
+  const probes = { probes: {  probeA: 'NEG', probeB: 'POS', probeC: 'NO RESULT',
+                              probeD: 'NEG', probeE: 'POS', probeSpc: 'NO RESULT',
+                              qc1: 'YES', qc2: 'No',
+                              probeACt: 12.32, probeBCt: 11.2, probeCCt: 12.5,
+                              probeDCt: 0.5, probeECt: 1.2, probeSpcCt: 5.78,
+                              qc1Ct: 1, qc2Ct: 0.007,
+                              probeAEndpt: 1.6, probeBEndpt: 2.33, probeCEndpt: 457,
+                              probeDEndpt: 12.43, probeEEndpt: 3.14, probeSpcEndpt: 8.9018,
+                              qc1Endpt: 0.1234, qc2Endpt: 1.22 }}
+
+  const resultsMtb = _.range(1, resultMtbNumber+1).map(i => {
+    const device = devices[i % devices.length]
+    const siteData = siteDatas.find((site) => { return site.id === device.siteId })
+    const sample = samples[i % samples.length]
+    const result = possibleResults[i % 5]
+
+    return Object.assign({}, auditFields, {
+      uniqueId: 'UQ-' + i,
+      assayId: assayMtbRifId,
+      partnerId: partnerOneId,
+      orgUnitId: partnerOneOrgUnitId,
+      countryId: siteData.countryId,
+      stateId: siteData.stateId,
+      lgaId : siteData.lgaId,
+      siteId: siteData.id,
+      deviceId: device.id,
+      resultTypeId: resultTypePatientId,
+      sampleId: sample.id,
+      resultText: result.resultText,
+      resultCategory1: result.category1,
+      resultCategory2: result.category2,
+      resultData: JSON.stringify(probes),
+      assayVersion: '4',
+      started: new Date(+now - 12*i*millisInHour),
+      ended: new Date(+now - 10*i*millisInHour),
+      consumableSerial: i + '12',
+      consumableExpirationDate: new Date(+now + 200*i*millisInHour),
+      consumableLot: 'Lot ' + i%5,
+      instrumentSerial: 'S-1234-' + i%3,
+      moduleName: 'Module A',
+      moduleSerial: 'M-1234-' + i%4,
+      researchId: 'R-ID-' + i,
+      patientId: 'PAT-ID-' + i,
+      senderVersion: '4.6b',
+      senderOperator: 'Marsha',
+      notes: 'This is a test... result',
+      errorCode: result.category1 === resultCategoryErrorId ? '1024' : null,
+      errorNotes: result.category1 === resultCategoryErrorId ? 'Exceeded cycle threshold' : null
+    })
   })
-  yield knex('Device').insert(devices)
+  yield knex('Result').insert(resultsMtb)
 
   // data filters
   let [dataFilterIdOH] = yield knex('DataFilter').insert({

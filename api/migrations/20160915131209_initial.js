@@ -334,23 +334,117 @@ function* up(knex){
   yield knex.schema.createTable('AssayType', assayType => {
     assayType.increments('id')
     assayType.string('name').notNullable()
+    assayType.string('i18nKey')
     assayType.charset('utf8')
   })
 
   yield knex.schema.createTable('Assay', assay => {
     assay.increments('id')
     assay.string('name').notNullable()
+    assay.string('i18nKey')
     assay.integer('assayTypeId').unsigned().notNullable()
       .index().references('id').inTable('AssayType')
     assay.integer('deviceTypeId').unsigned().notNullable()
       .index().references('id').inTable('DeviceType')
+    assay.string('resultCategory1Label')
+    assay.string('resultCategory1i18nKey')
+    assay.string('resultCategory2Label')
+    assay.string('resultCategory2i18nKey')
+    assay.specificType('resultDataSchema', 'JSON')
     assay.charset('utf8')
   })
 
   yield knex.schema.createTable('ResultType', resultType => {
     resultType.increments('id')
     resultType.string('name').notNullable()
+    resultType.string('i18nKey')
     resultType.charset('utf8')
+  })
+
+  // holds general categories such as "Detected"/"Invalid"
+  yield knex.schema.createTable('ResultCategory', resultCategory => {
+    resultCategory.increments('id')
+    resultCategory.string('name').notNullable()
+    resultCategory.string('i18nKey')
+    resultCategory.charset('utf8')
+  })
+
+  // which result categories apply to which assays?
+  yield knex.schema.createTable('ResultCategoryAssay', resultTypeCategoryAssay => {
+    resultTypeCategoryAssay.integer('resultCategoryId').unsigned().notNullable()
+      .index().references('id').inTable('ResultCategory')
+    resultTypeCategoryAssay.integer('assayId').unsigned().notNullable()
+      .index().references('id').inTable('Assay')
+    resultTypeCategoryAssay.unique(['resultCategoryId', 'assayId'])
+  })
+
+  // the sample that the result is based on (multiple results can refer to the same sample)
+  yield knex.schema.createTable('Sample', sample => {
+    sample.increments('id')
+    sample.string('sampleId').notNullable()
+    sample.integer('originSiteId').unsigned()
+          .index().references('id').inTable('Site')
+    sample.charset('utf8')
+  })
+
+  yield knex.schema.createTable('Result', result => {
+    result.increments('id')
+    result.string('uniqueId').notNullable()
+    result.integer('assayId').unsigned().notNullable()
+      .index().references('id').inTable('Assay')
+    result.integer('partnerId').unsigned()
+          .index().references('id').inTable('Partner')
+    result.integer('orgUnitId').unsigned()
+          .index().references('id').inTable('OrgUnit')
+    result.integer('countryId').unsigned()
+          .index().references('id').inTable('Country')
+    result.integer('stateId').unsigned()
+          .index().references('id').inTable('State')
+    result.integer('lgaId').unsigned()
+          .index().references('id').inTable('Lga')
+    result.integer('siteId').unsigned()
+          .index().references('id').inTable('Site')
+    result.integer('deviceId').unsigned().notNullable()
+          .index().references('id').inTable('Device')
+    result.integer('resultTypeId').unsigned().notNullable()
+      .index().references('id').inTable('ResultType')
+    result.integer('sampleId').unsigned().notNullable()
+      .index().references('id').inTable('Sample')
+    result.string('resultText')
+    result.integer('resultCategory1').unsigned()
+      .index().references('id').inTable('ResultCategory')
+    result.integer('resultCategory2').unsigned()
+      .index().references('id').inTable('ResultCategory')
+    result.specificType('resultData', 'JSON')
+    result.string('assayVersion')
+    result.dateTime('started')
+    result.dateTime('ended').notNullable()
+    result.string('consumableSerial')
+    result.dateTime('consumableExpirationDate')
+    result.string('consumableLot')
+    result.string('instrumentSerial')
+    result.string('moduleName')
+    result.string('moduleSerial')
+    result.string('researchId')
+    result.string('patientId')
+    result.string('senderVersion')
+    result.string('senderOperator')
+    result.string('notes')
+    result.string('errorCode')
+    result.string('errorNotes')
+    addCreateFieldsNullable(result)
+    addUpdateFieldsNullable(result)
+    result.charset('utf8')
+  })
+
+  yield knex.schema.createTable('ResultLog', sample => {
+    sample.increments('id')
+    sample.integer('resultId').unsigned().notNullable()
+          .index().references('id').inTable('Result')
+    sample.string('source').notNullable() // LIS listener, API...
+    sample.string('senderIp').notNullable()
+    sample.text('rawMessage')
+    sample.charset('utf8')
   })
 
   yield knex.raw('SET foreign_key_checks = 1')
@@ -358,8 +452,12 @@ function* up(knex){
 
 function* down(knex){
   yield knex.raw('SET foreign_key_checks = 0')
-
+  yield knex.schema.dropTableIfExists('ResultCategoryAssay')
   yield knex.schema.dropTableIfExists('ResultType')
+  yield knex.schema.dropTableIfExists('ResultCategory')
+  yield knex.schema.dropTableIfExists('ResultLog')
+  yield knex.schema.dropTableIfExists('Result')
+  yield knex.schema.dropTableIfExists('Sample')
   yield knex.schema.dropTableIfExists('Assay')
   yield knex.schema.dropTableIfExists('AssayType')
   yield knex.schema.dropTableIfExists('Router')
@@ -401,5 +499,18 @@ function addCreateFields(table){
 function addUpdateFields(table){
   table.dateTime('updatedOn').notNullable()
   table.integer('updatedBy').unsigned().notNullable()
+    .index().references('id').inTable('User')
+}
+
+function addCreateFieldsNullable(table){
+  table.dateTime('createdOn')
+  table.integer('createdBy').unsigned()
+    .index().references('id').inTable('User')
+}
+
+// Adds updatedOn, updatedBy
+function addUpdateFieldsNullable(table){
+  table.dateTime('updatedOn')
+  table.integer('updatedBy').unsigned()
     .index().references('id').inTable('User')
 }
