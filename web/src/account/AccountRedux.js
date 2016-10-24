@@ -60,11 +60,12 @@ function createReceiveUpdatedContactDetails(accountDetails) {
 export function saveContactDetails(contactDetails) {
   return dispatch => {
     dispatch(createSaveAccountDetailsStart())
+    const contactDetailsJson = contactDetails.toJS ? contactDetails.toJS() : contactDetails
     return aspectFetch('/account-details/current-contact',
       {
         method: 'PUT',
         headers: getHeaders(true),
-        body: JSON.stringify(_.pick(contactDetails.toJS(), ['id', 'name', 'title', 'email', 'email2',
+        body: JSON.stringify(_.pick(contactDetailsJson, ['id', 'name', 'title', 'email', 'email2',
           'phone', 'cell', 'countryId', 'stateId', 'lgaId', 'zip']))
       })
       .then(json => dispatch(createReceiveUpdatedContactDetails(json.data)))

@@ -306,7 +306,7 @@ describe('AccountDetailsRedux', () => {
     describe('saveContactDetails', () => {
       const expectedResponseFromServer = Promise.resolve({ok: true, data: accountDetailsData}),
         stubHeaders = { value: 'Stubbed Headers' },
-        contactDetailsData = _.omit(accountDetailsData, ['username', 'userId', 'timezone', 'culture'])
+        contactDetailsData = _.omit(accountDetailsData, ['username', 'userId', 'timezone', 'culture', 'notes'])
       let fetchStub
 
       beforeEach(() => {
