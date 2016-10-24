@@ -39,6 +39,10 @@ const ContactsListItem = requirePermissions({
   permissions: ['person:admin', 'person:view']
 })(ListItem)
 
+const SitesListItem = requirePermissions({
+  permissions: ['site:admin', 'site:view']
+})(ListItem)
+
 class SideNav extends PureComponent {
 
   static propTypes = {
@@ -103,7 +107,7 @@ class SideNav extends PureComponent {
             className={styles.Drawer__ListItem}
             primaryText="Contacts"
           />
-          <ListItem
+          <SitesListItem
             containerElement={<Link to="/site" />}
             value={ '/site' }
             leftIcon={<Laptop />}
