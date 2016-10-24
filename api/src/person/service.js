@@ -56,8 +56,20 @@ function getPersonDetails(personId) {
 function* showPerson(request) {
   const {params} = request
 
-  const personDetails = yield getPersonDetails(params.personId)
-
+  const personDetails = yield getPersonDetails(params.personId),
+    rolesForUser = personDetails.userId ? userService.getRolesForUser(personDetails.userId) : []
+  personDetails.roles = _.map(rolesForUser, 'roleId')
+  if(!_.isEmpty(personDetails.roles)) {
+    const partnerInfo = yield query('Get Partner ID and Organisational Unit ID for Role')
+      .from('role as r')
+      .where({'r.id': personDetails.roles[0]})
+      .first('r.partnerId', 'r.orgUnitId')
+    personDetails.partnerId = partnerInfo.partnerId
+    personDetails.orgUnitId = partnerInfo.orgUnitId
+  } else {
+    personDetails.partnerId = null
+    personDetails.orgUnitId = null
+  }
   return {ok: true, data: personDetails}
 }
 

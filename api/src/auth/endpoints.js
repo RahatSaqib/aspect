@@ -8,7 +8,8 @@ let {
   refreshToken,
   updateUsernameAndPasswordForLoggedInUser,
   createResetPasswordToken,
-  updatePasswordWithResetPasswordToken
+  updatePasswordWithResetPasswordToken,
+  updateUsernameAndPasswordForPerson
 } = require('./service')
 
 module.exports = [
@@ -99,6 +100,26 @@ module.exports = [
           newPassword: Joi.string().max(100).required(),
           clientName: Joi.string().required(),
           clientId: Joi.string()
+        }
+      }
+    }
+  }, {
+    method: 'PUT',
+    path: '/auth/update-person-login-details',
+    handler: asyncHandler(updateUsernameAndPasswordForPerson),
+    config: {
+      description: 'Update username and password linked to a person',
+      notes: 'Returns an array of the fields that were updated',
+      validate: {
+        params: {
+          personId: Joi.string().description('Person ID').required()
+        },
+        payload: {
+          currentPassword: Joi.string().max(100).required(),
+          newUsername: Joi.string().max(255).allow('', null),
+          newPassword: Joi.string().max(100).allow('', null),
+          partnerId: Joi.number().integer().allow('', null),
+          roles: Joi.array().items(Joi.number().integer().positive()).unique()
         }
       }
     }

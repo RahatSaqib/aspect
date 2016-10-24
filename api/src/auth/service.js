@@ -14,7 +14,7 @@ const bcryptCompare = Promise.promisify(bcrypt.compare)
 const bcryptHash = Promise.promisify(bcrypt.hash)
 
 const config = require('../config')
-const { query } = require('../db')
+const { query, knex } = require('../db')
 
 function* checkAuthentication(){
   return { message: 'Welcome to the API!' }
@@ -27,6 +27,21 @@ function getUser(username) {
     .first( 'u.lockedOut', 'u.failedPasswordAttempts', 'u.password',
       'u.legacyPassword', 'u.id', 'u.name', 'p.culture', 'p.timezone',
       'p.lastPartnerId as partnerId', 'p.lastCountryId as countryId')
+}
+
+function getUserByPersonId(personId) {
+  return query('Get user details for person').from('Person as p')
+    .innerJoin('User as u', 'p.userId', 'u.id')
+    .where({'p.id': personId})
+    .first( 'u.lockedOut', 'u.failedPasswordAttempts', 'u.password',
+      'u.legacyPassword', 'u.id', 'u.name', 'p.culture', 'p.timezone',
+      'p.lastPartnerId as partnerId', 'p.lastCountryId as countryId')
+}
+
+function getUserId(username) {
+  return query('Get user ID for username').from('User as u')
+    .where({'u.name': username})
+    .first('u.id')
 }
 
 function* authenticate(request){
@@ -198,6 +213,38 @@ function getAccessToken({id, name, culture, timezone, partnerId, countryId}){
     })
 }
 
+function updateUser(userId, changedFields) {
+  return query('Update user details').from('User as u')
+    .where({'u.id': userId})
+    .update(changedFields)
+}
+
+function* isUsernameAlreadyInUseBySomebodyElse(userId, username) {
+  if(username) {
+    const existingUserIdWithNewUsername = yield getUserId(username)
+    if(existingUserIdWithNewUsername) {
+      if(existingUserIdWithNewUsername.id !== userId) {
+        return Boom.conflict('Username already in use')
+      }
+    }
+  }
+}
+
+function* getChangedFields(payload, existingRecord) {
+  const changedFields = {}
+  if(payload.newUsername && payload.newUsername != existingRecord.name) {
+    changedFields.name = payload.newUsername
+  }
+  if(payload.newPassword) {
+    const passwordsMatch = yield bcryptCompare(payload.newPassword, existingRecord.password)
+    if(!passwordsMatch) {
+      changedFields.password = yield bcryptHash(payload.newPassword, parseInt(config.passwordSaltRounds))
+      changedFields.lastPasswordChange = new Date()
+    }
+  }
+  return changedFields
+}
+
 function* updateUsernameAndPasswordForLoggedInUser(request){
   let {payload} = request
 
@@ -210,20 +257,15 @@ function* updateUsernameAndPasswordForLoggedInUser(request){
   if (!pwResult) {
     return Boom.forbidden('Incorrect password.')
   }
-  const changedFields = {}
   if(payload.newUsername) {
-    const existingUserIdWithNewUsername = yield query('Get user id for username').from('User as u')
-      .where({'u.name': payload.newUsername})
-      .first('u.id')
-    if(existingUserIdWithNewUsername) {
-      if(existingUserIdWithNewUsername.id !== loggedInUser.id) {
-        return Boom.conflict('Username already in use')
-      }
-    } else if(payload.newUsername != loggedInUser.name) {
-      changedFields.name = payload.newUsername
+    const usernameNotAvailable = yield* isUsernameAlreadyInUseBySomebodyElse(loggedInUser.id,
+      payload.newUsername)
+    if(usernameNotAvailable) {
+      return usernameNotAvailable
     }
   }
 
+  const changedFields = yield* getChangedFields(payload, loggedInUser)
   const now = new Date()
   if(payload.newPassword) {
     const passwordsMatch = yield bcryptCompare(payload.newPassword, loggedInUser.password)
@@ -237,10 +279,7 @@ function* updateUsernameAndPasswordForLoggedInUser(request){
   }
 
   if(!_.isEmpty(changedFields)) {
-    yield query('Save user details for currently logged in user').from('User as u')
-      .where({'u.id': loggedInUser.id})
-      .update(changedFields)
-
+    yield updateUser(loggedInUser.id, changedFields)
     loggedInUser = yield getUser(changedFields.name || loggedInUser.name)
   }
 
@@ -335,12 +374,88 @@ function* updatePasswordWithResetPasswordToken(request) {
   }
 }
 
+function* getRolesForUser(userId) {
+  return query('Get roles for user').from('UserRole')
+    .where({'ur.userId': userId})
+}
+
+function* updateUsernamePasswordForPerson(request) {
+  let {params, payload} = request
+
+  // TODO: check access level permissions for currently logged in user
+
+  const userLinkedToPerson = yield getUserByPersonId(params.personId)
+
+  if (payload.newUsername) {
+    const usernameNotAvailable = yield isUsernameAlreadyInUseBySomebodyElse(
+      userLinkedToPerson ? userLinkedToPerson.id : 0,
+      payload.newUsername)
+    if (usernameNotAvailable) {
+      return usernameNotAvailable
+    }
+  }
+
+  const responseData = {}
+  let userId = 0
+  if (userLinkedToPerson) {
+    userId = userLinkedToPerson.id
+    const changedFields = yield* getChangedFields(payload, userLinkedToPerson)
+    if (!_.isEmpty(changedFields)) {
+      yield updateUser(userLinkedToPerson.id, changedFields)
+    }
+
+    responseData.changedFields = Object.keys(_.omit(changedFields, ['lastPasswordChange']))
+    responseData.username = userLinkedToPerson.name
+  } else {
+    userId = yield query('Insert new user details').from('User')
+      .insert({
+        name: payload.newUsername,
+        password: yield bcryptHash(payload.newPassword, parseInt(config.passwordSaltRounds)),
+        approved: 1,
+        createdOn: new Date(),
+        lockedOut: 0,
+        failedPasswordAttempts: 0,
+        legacyPassword: 0
+      }).returning('id')
+
+    responseData.changedFields = ['name', 'password']
+    responseData.username = payload.newUsername
+  }
+
+  const userRoles = yield getRolesForUser(userId),
+    userRolesToDelete = _.map(_.filter(userRoles,
+      userRole => !payload.roles.includes(userRole.roleId)), 'roleId'),
+    userRolesToAdd = _.filter(payload.roles, roleId => !_.some(userRoles, {roleId: roleId}))
+  if (!_.isEmpty(userRolesToDelete) || !_.isEmpty(userRolesToAdd)) {
+    responseData.changedFields.push('roles')
+    if (!_.isEmpty(userRolesToDelete)) {
+      yield query('Delete user roles').from('UserRole as ur')
+        .where({'ur.userId': userId})
+        .andWhere(knex.raw('ur.roleId in (?)', _.join(userRolesToDelete)))
+        .del()
+    }
+    if (!_.isEmpty(userRolesToAdd)) {
+      yield query('Add user roles')
+        .insert(_.map(userRolesToAdd, roleId => { return { userId, roleId } }))
+        .into('UserRole')
+    }
+  }
+
+
+  return {
+    ok: true,
+    data: responseData
+  }
+}
+
 module.exports = {
   getUser,
   authenticate,
   checkAuthentication,
   refreshToken,
+  getRolesForUser,
   updateUsernameAndPasswordForLoggedInUser,
+  updateUsernamePasswordForPerson,
   createResetPasswordToken,
   updatePasswordWithResetPasswordToken
 }
