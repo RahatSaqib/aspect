@@ -21,7 +21,8 @@ describe('AccountDetailsRedux', () => {
     lgaId: 3,
     zip: 'ZIP 123',
     timezone: 'Pacific Standard Time',
-    culture: 'fr-FR'
+    culture: 'fr-FR',
+    notes: null
   }
 
   describe('account details reducer', () => {
@@ -50,7 +51,8 @@ describe('AccountDetailsRedux', () => {
           countryId: null,
           stateId: null,
           lgaId: null,
-          zip: null
+          zip: null,
+          notes: null
         })
         assert.deepEqual(initialState.getIn(['data', 'loginDetails']).toJS(), {
           id: null,
@@ -116,7 +118,8 @@ describe('AccountDetailsRedux', () => {
             lgaId: 1,
             zip: '123 ZIP',
             timezone: 'Eastern Standard Time',
-            culture: 'en-GB'
+            culture: 'en-GB',
+            notes: null
           }
           const state = accountDetails(initialState, { type: types.RECEIVE_ACCOUNT_DETAILS, accountDetails: accountDetailsData })
           const newState = accountDetails(state, { type: types.RECEIVE_UPDATED_CONTACT_DETAILS, accountDetails: newAccountDetailsData })

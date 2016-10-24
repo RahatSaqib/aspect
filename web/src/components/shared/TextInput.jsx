@@ -12,13 +12,15 @@ const renderTextField = props => {
 }
 
 const renderFormField = props => {
-  const {name, label, fullWidth, autoFocus, disabled, maxLength, type, onChange, onKeyPress} = props
+  const {name, label, fullWidth, autoFocus, disabled, maxLength, multiLine, rows, type, onChange, onKeyPress} = props
   const textFieldProps = {
     floatingLabelText: label,
     fullWidth: fullWidth,
     autoFocus: autoFocus,
     disabled: disabled,
     maxLength: maxLength,
+    multiLine: multiLine,
+    rows: rows,
     type: type || 'text'
   }
   if(onChange) {

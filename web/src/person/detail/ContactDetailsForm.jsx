@@ -50,6 +50,10 @@ const messages = defineMessages({
     id: 'pages.ContactDetails.zip',
     defaultMessage: 'Zip Code'
   },
+  notes: {
+    id: 'pages.ContactDetails.notes',
+    defaultMessage: 'Notes'
+  },
   save: {
     id: 'pages.ContactDetails.save',
     defaultMessage: 'Save'
@@ -65,7 +69,7 @@ const messages = defineMessages({
 })
 
 const ContactDetailsForm = props => {
-  const { handleSubmit, pristine, invalid, loading, initialValues } = props,
+  const { handleSubmit, pristine, invalid, loading, initialValues, showNotesField } = props,
     {formatMessage} = props.intl
   return (
     <form onSubmit={handleSubmit} className={styles.Form}>
@@ -91,6 +95,10 @@ const ContactDetailsForm = props => {
                             stateIdFieldName="stateId" lgaIdFieldName="lgaId" />
           <TextInput name="zip" label={formatMessage(messages.zip)} disabled={loading} maxLength="45" />
         </section>
+        {showNotesField && <section>
+          <h1>{formatMessage(messages.notes)}</h1>
+          <TextInput name="notes" disabled={loading} maxLength="1200" multiLine fullWidth rows={4} />
+        </section>}
       </div>
       <div className={styles.Form__ActionRow}>
         <RaisedButton disabled={pristine || invalid || loading} label={formatMessage(messages.save)} secondary type="submit" />
