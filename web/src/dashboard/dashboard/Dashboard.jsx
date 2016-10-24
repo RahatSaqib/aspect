@@ -14,6 +14,7 @@ import Helmet from 'react-helmet'
 import MiniChart from '../../components/shared/MiniChart'
 import DashboardDevices from './DashboardDevices'
 import DashboardTests from './DashboardTests'
+import DashboardSites from './DashboardSites'
 import styles from './Dashboard.css'
 
 const messages = defineMessages({
@@ -51,10 +52,7 @@ export class Dashboard extends PureComponent {
             <DashboardTests label={'Total Tests'} />
           </div>
           <div className="pure-u-lg-1-4 pure-u-md-1-3 pure-u-sm-1-2">
-            <Link to="/site">
-              <MiniChart  data={[10, 19, 15, 40, 45, 80, 90, 22]}
-                          label={'Sites'} number={8} bgcolor={'#24c821'}/>
-            </Link>
+            <DashboardSites label={'Sites'} />
           </div>
           <div className="pure-u-lg-1-4 pure-u-md-1-3 pure-u-sm-1-2">
             <Link to="/result">
