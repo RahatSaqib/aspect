@@ -3,9 +3,11 @@ import { reduxForm } from 'redux-form/immutable'
 import RaisedButton from 'material-ui/RaisedButton'
 import Dialog from 'material-ui/Dialog'
 import FlatButton from 'material-ui/FlatButton'
+import {Card, CardHeader} from 'material-ui/Card'
 import _ from 'lodash'
 import { injectIntl, defineMessages } from 'react-intl'
 import TextInput from '../../components/shared/TextInput'
+import SelectInput from '../../components/shared/SelectInput'
 import StrongPasswordInput from '../../components/shared/StrongPasswordInput'
 import styles from './PersonDetail.css'
 
@@ -21,6 +23,14 @@ const messages = defineMessages({
   confirmNewPassword: {
     id: 'pages.UpdateLoginDetails.confirmNewPassword',
     defaultMessage: 'Confirm New Password'
+  },
+  partner: {
+    id: 'pages.UpdateLoginDetails.partner',
+    defaultMessage: 'Partner'
+  },
+  organisationalUnit: {
+    id: 'pages.UpdateLoginDetails.organisationalUnit',
+    defaultMessage: 'Organizational Unit'
   },
   save: {
     id: 'pages.UpdateLoginDetails.save',
@@ -80,7 +90,9 @@ const LoginDetailsForm = props => {
   const { handleSubmit, pristine, invalid, loading,
       currentPasswordInputDialogOpen,
       openCurrentPasswordInputDialog,
-      closeCurrentPasswordInputDialog} = props,
+      closeCurrentPasswordInputDialog, showRolesPanel} = props,
+    partners = props.partners || [],
+    organisationalUnits = props.organisationalUnits || [],
     {formatMessage} = props.intl,
     onCurrentPasswordKeyPress = event => {
       if(event.key === 'Enter') {
@@ -111,6 +123,20 @@ const LoginDetailsForm = props => {
                              targetOrigin={{horizontal: 'left',vertical:'center'}} />
         <TextInput name="confirmNewPassword" label={formatMessage(messages.confirmNewPassword)}
                    disabled={loading} maxLength="100" type="password" />
+        {showRolesPanel && <Card className={styles.LoginForm_RolesPanel}>
+          <CardHeader title="Partner & Roles" />
+          <SelectInput name="partnerId" label={formatMessage(messages.partner)}
+                       disabled={loading || _.isEmpty(partners)} autoWidth
+                       dataSource={partners} dataSourceConfig={{ text: 'name', value: 'id' }} />
+          <br />
+          <SelectInput name="orgUnitId" label={formatMessage(messages.organisationalUnit)}
+                       disabled={loading || _.isEmpty(organisationalUnits)} autoWidth
+                       dataSource={organisationalUnits} dataSourceConfig={{ text: 'name', value: 'id' }} />
+          <br />
+          <div>
+            Roles Checkbox List Here
+          </div>
+        </Card>}
       </div>
       <div className={styles.Form__ActionRow}>
         <RaisedButton disabled={pristine || invalid || loading} label={formatMessage(messages.save)}

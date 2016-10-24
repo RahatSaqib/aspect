@@ -76,11 +76,12 @@ export class PersonDetail extends PureComponent {
   render() {
     const {
         intl: { formatMessage },
-        person, editable
+        person, user, editable
       } = this.props,
       contactDetails = new ContactDetails(person),
       loginDetails = new LoginDetails(person),
-      userPreferences = new UserPreferences(person)
+      userPreferences = new UserPreferences(person),
+      userIsAdmin = user.get('permissions').includes('person:admin')
 
     return (
       <div className={styles.Content}>
@@ -96,14 +97,15 @@ export class PersonDetail extends PureComponent {
               {person && <ContactDetailsForm initialValues={contactDetails} showNotesField
                                              onSubmit={this.saveContactDetails} />}
             </Tab>
-            <Tab icon={<Lock />}
-                 label={<span className="pure-hidden-xs">{formatMessage(messages.usernameAndPassword)}</span>}>
+            {userIsAdmin && <Tab icon={<Lock />}
+                 label={<span className="pure-hidden-xs">{formatMessage(messages.systemAccessControl)}</span>}>
               {(!person) && <LinearProgress />}
               <h2 className={'pure-visible-xs ' + styles.Form__Header}>
                 {formatMessage(messages.usernameAndPassword)}
               </h2>
-              {person && <LoginDetailsForm initialValues={loginDetails} onSubmit={this.saveLoginDetails} />}
-            </Tab>
+              {person && <LoginDetailsForm initialValues={loginDetails} onSubmit={this.saveLoginDetails}
+                                           showRolesPanel />}
+            </Tab>}
             <Tab icon={<Language />}
                  label={<span className="pure-hidden-xs">{formatMessage(messages.languageAndTimezone)}</span>}>
               {(!person) && <LinearProgress />}
@@ -125,7 +127,8 @@ function mapStateToProps(state, { params }) {
 
   return {
     editable: isEditable(state.user, person),
-    person
+    person,
+    user: state.user
   }
 }
 

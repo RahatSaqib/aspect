@@ -11,9 +11,9 @@ export default defineMessages({
     id: 'pages.PersonDetails.contactDetails',
     defaultMessage: 'Contact Details'
   },
-  usernameAndPassword: {
-    id: 'pages.PersonDetails.usernameAndPassword',
-    defaultMessage: 'Username & Password'
+  systemAccessControl: {
+    id: 'pages.PersonDetails.systemAccessControl',
+    defaultMessage: 'System Access & Roles'
   },
   languageAndTimezone: {
     id: 'pages.PersonDetails.languageAndTimezone',

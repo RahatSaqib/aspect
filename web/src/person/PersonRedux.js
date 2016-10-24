@@ -180,7 +180,10 @@ export const LoginDetails = Immutable.Record({
   username: null,
   newPassword: null,
   confirmNewPassword: null,
-  currentPassword: null
+  currentPassword: null,
+  partnerId: null,
+  orgUnitId: null,
+  roles: new Immutable.List([])
 })
 export const UserPreferences = Immutable.Record({
   id: null,
