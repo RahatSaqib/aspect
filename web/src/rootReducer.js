@@ -16,6 +16,8 @@ import accountDetails from './account/AccountRedux'
 import geography from './geography/GeographyRedux'
 import assay from './assay/AssayRedux'
 import idle from './idle/IdleRedux'
+import partner from './partner/PartnerRedux'
+import organisationalUnit from './organisationalUnit/OrganisationalUnitRedux'
 
 const appReducer = combineReducers({
   form: formReducer,
@@ -30,7 +32,9 @@ const appReducer = combineReducers({
   result,
   geography,
   assay,
-  idle
+  idle,
+  partner,
+  organisationalUnit
 })
 
 const App = Immutable.Record({
@@ -46,7 +50,9 @@ const App = Immutable.Record({
   geography: undefined,
   assay: undefined,
   result: undefined,
-  idle: undefined
+  idle: undefined,
+  partner: undefined,
+  organisationalUnit: undefined
 })
 
 const initialState = new App()

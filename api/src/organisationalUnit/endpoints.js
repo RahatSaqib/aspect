@@ -5,7 +5,7 @@ let { listOrganisationalUnitsForSelectList } = require('./service')
 module.exports = [
   {
     method: 'GET',
-    path: '/organisational-unit/select-list',
+    path: '/organisational-unit/select-list/{partnerId}',
     handler: asyncHandler(listOrganisationalUnitsForSelectList),
     config: {
       description: 'Organisational Units for Select List',
