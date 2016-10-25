@@ -106,7 +106,7 @@ export function saveLoginDetails(loginDetails) {
       })
       .then(json => {
         let jwt = storeAccess(json.access, json.refresh, json.clientId)
-        dispatch(loginSuccess(jwt.name, jwt.culture, jwt.lang))
+        dispatch(loginSuccess(jwt.name, jwt.culture, jwt.lang, jwt.timezone, jwt.permissions))
         dispatch(createReceiveUpdatedLoginDetails(json.data))
       })
       .catch(err => {
