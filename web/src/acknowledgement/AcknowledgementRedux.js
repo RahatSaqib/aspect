@@ -4,28 +4,33 @@ export const types = {
   ADD_ACKNOWLEDGEMENT: 'ADD_ACKNOWLEDGEMENT',
   REMOVE_ACKNOWLEDGEMENT: 'REMOVE_ACKNOWLEDGEMENT'
 }
+
 /*
  * ---------------- Action Creators -----------------
  */
-export function addAcknowledgement(title, desc){
-  return {
-    type: types.ADD_ACKNOWLEDGEMENT,
-    message: { title: title, desc: desc }
+export function addAcknowledgement(message) {
+  return dispatch => {
+    dispatch({
+      type: types.ADD_ACKNOWLEDGEMENT,
+      acknowledgement: {message}
+    })
   }
 }
 
 export function removeAcknowledgement(){
-  return {
-    type: types.REMOVE_ACKNOWLEDGEMENT
+  return dispatch => {
+    dispatch({
+      type: types.REMOVE_ACKNOWLEDGEMENT
+    })
   }
 }
+
 /*
  * ---------------- Reducers -----------------
  */
 const Acknowledgement = Immutable.Record({
   hasAcknowledgement: false,
-  title: null,
-  desc: null
+  message: null
 })
 
 const initialState = new Acknowledgement()

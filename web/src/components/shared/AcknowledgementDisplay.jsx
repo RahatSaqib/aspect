@@ -24,10 +24,7 @@ class AcknowledgementDisplay extends PureComponent {
       return (
         <Snackbar
             open={true}
-            message={<div>
-              <strong>acknowledgement.get('title')</strong>
-              {acknowledgement.get('desc') && <p>acknowledgement.get('desc')</p>}
-            </div>}
+            message={acknowledgement.get('message')}
             autoHideDuration={4000}
             onRequestClose={() => this.props.removeAcknowledgement()}
           />

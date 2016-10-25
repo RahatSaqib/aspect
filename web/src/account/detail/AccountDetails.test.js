@@ -145,7 +145,8 @@ describe('AccountDetails Component', () => {
 
   describe('react-redux connect', () => {
     const expectedBoundActionCreators = { value: 'Bound Action Creators' }
-    let reactReduxStub, intlStub, mapStateToProps, mapDispatchToProps, reduxStub, accountDetailsCreatorsStub
+    let reactReduxStub, intlStub, mapStateToProps, mapDispatchToProps,
+      reduxStub, accountDetailsCreatorsStub, acknowledgementCreatorsStub
     beforeEach(() => {
       reactReduxStub = {
         connect: sinon.stub().returns(() => {})
@@ -162,11 +163,15 @@ describe('AccountDetails Component', () => {
         saveLoginDetails: () => {},
         saveUserPreferences: () => {}
       }
+      acknowledgementCreatorsStub = {
+        addAcknowledgement: () => {}
+      }
       proxyquire('./AccountDetails', {
         'react-intl': intlStub,
         'react-redux': reactReduxStub,
         'redux': reduxStub,
-        '../AccountRedux': accountDetailsCreatorsStub
+        '../AccountRedux': accountDetailsCreatorsStub,
+        '../../acknowledgement/AcknowledgementRedux': acknowledgementCreatorsStub
       })
       mapStateToProps = reactReduxStub.connect.firstCall.args[0]
       mapDispatchToProps = reactReduxStub.connect.firstCall.args[1]
@@ -176,6 +181,7 @@ describe('AccountDetails Component', () => {
       const expectedDispatcher = {value: 'I am a dispatch function'}
       assert.equal(mapDispatchToProps(expectedDispatcher), expectedBoundActionCreators)
       assert.deepEqual(reduxStub.bindActionCreators.lastCall.args, [{
+        addAcknowledgement: acknowledgementCreatorsStub.addAcknowledgement,
         fetchAccountDetails: accountDetailsCreatorsStub.fetchAccountDetails,
         saveContactDetails: accountDetailsCreatorsStub.saveContactDetails,
         saveLoginDetails: accountDetailsCreatorsStub.saveLoginDetails,

@@ -235,7 +235,8 @@ function receiveUpdatedLoginDetails(state, updateDetails) {
     data: new AccountDetailsData({
       contactDetails: state.getIn(['data', 'contactDetails']),
       loginDetails: new LoginDetails({...state.getIn(['data', 'loginDetails']).toJS(),
-        username: updateDetails.username
+        username: updateDetails.username,
+        currentPassword: null
       }),
       userPreferences: state.getIn(['data', 'userPreferences'])
     })
@@ -245,7 +246,14 @@ function receiveUpdatedLoginDetails(state, updateDetails) {
 function receiveUpdatedLoginDetailsExpectedError(state) {
   return state.merge({
     loading: false,
-    saving: false
+    saving: false,
+    data: new AccountDetailsData({
+      contactDetails: state.getIn(['data', 'contactDetails']),
+      loginDetails: new LoginDetails({...state.getIn(['data', 'loginDetails']).toJS(),
+        currentPassword: null
+      }),
+      userPreferences: state.getIn(['data', 'userPreferences'])
+    })
   })
 }
 

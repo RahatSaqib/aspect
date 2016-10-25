@@ -18,6 +18,7 @@ import {
   saveLoginDetails,
   saveUserPreferences
 } from '../AccountRedux'
+import { addAcknowledgement } from '../../acknowledgement/AcknowledgementRedux'
 import styles from './AccountDetails.css'
 
 const messages = defineMessages({
@@ -32,6 +33,10 @@ const messages = defineMessages({
   usernameAndPassword: {
     id: 'pages.AccountDetails.usernameAndPassword',
     defaultMessage: 'Username & Password'
+  },
+  loginDetailsUpdated: {
+    id: 'pages.AccountDetails.loginDetailsUpdated',
+    defaultMessage: 'Login details changed successfully'
   },
   languageAndTimezone: {
     id: 'pages.AccountDetails.languageAndTimezone',
@@ -81,7 +86,8 @@ class AccountDetails extends PureComponent {
   }
 
   render() {
-    const { loading, saving, accountDetails, saveContactDetails, saveUserPreferences, saveLoginDetails } = this.props,
+    const { loading, saving, accountDetails, saveContactDetails,
+        saveUserPreferences, saveLoginDetails, addAcknowledgement } = this.props,
       { formatMessage } = this.props.intl,
       saveLoginDetailsFailed = errors => {
         if(!errors.currentPassword) {
@@ -89,6 +95,7 @@ class AccountDetails extends PureComponent {
         }
       }, saveLoginDetailsSucceeded = () => {
         this.closeCurrentPasswordInputDialog()
+        addAcknowledgement(formatMessage(messages.loginDetailsUpdated))
       }
     return (
       <div className={styles.Content}>
@@ -148,7 +155,8 @@ function mapDispatchToProps(dispatch) {
     fetchAccountDetails,
     saveContactDetails,
     saveLoginDetails,
-    saveUserPreferences
+    saveUserPreferences,
+    addAcknowledgement
   }, dispatch)
 }
 
