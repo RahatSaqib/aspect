@@ -3,7 +3,6 @@ import { reduxForm } from 'redux-form/immutable'
 import RaisedButton from 'material-ui/RaisedButton'
 import Dialog from 'material-ui/Dialog'
 import FlatButton from 'material-ui/FlatButton'
-import {Card, CardHeader} from 'material-ui/Card'
 import _ from 'lodash'
 import { injectIntl, defineMessages } from 'react-intl'
 import TextInput from '../../components/shared/TextInput'
@@ -23,6 +22,10 @@ const messages = defineMessages({
   confirmNewPassword: {
     id: 'pages.UpdateLoginDetails.confirmNewPassword',
     defaultMessage: 'Confirm New Password'
+  },
+  partnerAndRoles: {
+    id: 'pages.UpdateLoginDetails.partnerAndRoles',
+    defaultMessage: 'Partner & Roles'
   },
   partner: {
     id: 'pages.UpdateLoginDetails.partner',
@@ -115,28 +118,29 @@ const LoginDetailsForm = props => {
   return (
     <form onSubmit={handleSubmit} className={styles.Form}>
       <div className={styles.Form__Content}>
-        <TextInput name="username" label={formatMessage(messages.username)} disabled={loading} maxLength="500" />
-        <br />
-        <StrongPasswordInput name="newPassword" label={formatMessage(messages.newPassword)}
-                             disabled={loading} maxLength="100"
-                             anchorOrigin={{horizontal: 'right',vertical:'top'}}
-                             targetOrigin={{horizontal: 'left',vertical:'center'}} />
-        <TextInput name="confirmNewPassword" label={formatMessage(messages.confirmNewPassword)}
-                   disabled={loading} maxLength="100" type="password" />
-        {showRolesPanel && <Card className={styles.LoginForm_RolesPanel}>
-          <CardHeader title="Partner & Roles" />
+        <section>
+          <TextInput name="username" label={formatMessage(messages.username)} disabled={loading} maxLength="500" />
+          <br />
+          <StrongPasswordInput name="newPassword" label={formatMessage(messages.newPassword)}
+                               disabled={loading} maxLength="100"
+                               anchorOrigin={{horizontal: 'right',vertical:'top'}}
+                               targetOrigin={{horizontal: 'left',vertical:'center'}} />
+          <TextInput name="confirmNewPassword" label={formatMessage(messages.confirmNewPassword)}
+                     disabled={loading} maxLength="100" type="password" />
+        </section>
+        {showRolesPanel && <section>
+          <h1>{formatMessage(messages.partnerAndRoles)}</h1>
           <SelectInput name="partnerId" label={formatMessage(messages.partner)}
                        disabled={loading || _.isEmpty(partners)} autoWidth
                        dataSource={partners} dataSourceConfig={{ text: 'name', value: 'id' }} />
-          <br />
           <SelectInput name="orgUnitId" label={formatMessage(messages.organisationalUnit)}
                        disabled={loading || _.isEmpty(organisationalUnits)} autoWidth
                        dataSource={organisationalUnits} dataSourceConfig={{ text: 'name', value: 'id' }} />
           <br />
           <div>
-            Roles Checkbox List Here
+            Select Partner &amp; Organisational Unit
           </div>
-        </Card>}
+        </section>}
       </div>
       <div className={styles.Form__ActionRow}>
         <RaisedButton disabled={pristine || invalid || loading} label={formatMessage(messages.save)}

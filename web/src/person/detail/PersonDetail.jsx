@@ -101,7 +101,7 @@ export class PersonDetail extends PureComponent {
                  label={<span className="pure-hidden-xs">{formatMessage(messages.systemAccessControl)}</span>}>
               {(!person) && <LinearProgress />}
               <h2 className={'pure-visible-xs ' + styles.Form__Header}>
-                {formatMessage(messages.usernameAndPassword)}
+                {formatMessage(messages.systemAccessControl)}
               </h2>
               {person && <LoginDetailsForm initialValues={loginDetails} onSubmit={this.saveLoginDetails}
                                            showRolesPanel />}
