@@ -54,7 +54,7 @@ function* seed(knex){
 
 
   // Create clinics for every state in Malawi
-  const nigeriaStates = yield knex('Country as c')
+  const malawiStates = yield knex('Country as c')
     .innerJoin('State as s', 'c.id', 's.countryId')
     .where({'c.a3': 'MWI'})
     .select('s.countryId', 's.id', 's.name')
@@ -64,9 +64,9 @@ function* seed(knex){
     userId: adminId,
     name: 'RRT Admin',
     lastPartnerId: partnerId,
-    lastCountryId: nigeriaStates[0].countryId,
-    countryId: nigeriaStates[0].countryId,
-    stateId: nigeriaStates[0].stateId
+    lastCountryId: malawiStates[0].countryId,
+    countryId: malawiStates[0].countryId,
+    stateId: malawiStates[0].stateId
   }, auditFields))
 
   const [roleIdAdmin] = yield knex('Role').insert({
@@ -85,7 +85,7 @@ function* seed(knex){
     { userId: adminId, roleId: roleIdAdmin }])
 
   // every clinic has a site, RRT device and a user assigned to it
-  for(let state of nigeriaStates){
+  for(let state of malawiStates){
     const geoData = {
       countryId: state.countryId,
       stateId: state.id
@@ -175,7 +175,7 @@ function* seed(knex){
   }
 
   // Labs have m2000 and modem
-  for(let state of _.filter(nigeriaStates, s => _.includes(['Dedza', 'Chitipa', 'Balaka'], s.name))){
+  for(let state of _.filter(malawiStates, s => _.includes(['Dedza', 'Chitipa', 'Balaka'], s.name))){
     const geoData = {
       countryId: state.countryId,
       stateId: state.id
