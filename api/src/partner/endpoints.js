@@ -1,6 +1,6 @@
 let Joi = require('joi')
 let { asyncHandler, validateSortPageParams } = require('../routes')
-let { listPartners, showPartner } = require('./service')
+let { listPartners, showPartner, listPartnersForSelectList } = require('./service')
 
 module.exports = [
   {
@@ -31,6 +31,16 @@ module.exports = [
           partnerId: Joi.string().description('Partner ID').required()
         }
       }
+    }
+  },
+  {
+    method: 'GET',
+    path: '/partner/select-list',
+    handler: asyncHandler(listPartnersForSelectList),
+    config: {
+      description: 'Partners for Select List',
+      notes: 'List of partner IDs and Names',
+      auth: {scope: ['person']}
     }
   }
 ]
