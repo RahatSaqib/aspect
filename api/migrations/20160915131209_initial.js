@@ -64,7 +64,8 @@ function* up(knex){
     country.integer('countryCode')
     country.string('stateLabel')
     country.string('lgaLabel')
-    country.string('timezone')
+    //TODO: Move timezone to LGA table
+    country.string('timezone').notNullable()
     country.string('portNumber')
     country.string('exportColumns', 2500).notNullable()
     country.string('tagPrefix', 45)
@@ -120,13 +121,13 @@ function* up(knex){
       .index().references('id').inTable('Partner')
     person.integer('lastCountryId').unsigned()
       .index().references('id').inTable('Country')
-    // TODO timezone table?
-    person.string('timezone')
-    // TODO should user prefrences be stored in separate table?
+    // TODO timezone table? < Bryan: I don't think this is required. Timezones are static
+    person.string('timezone').notNullable()
+    // TODO should user preferences be stored in separate table?
     person.boolean('hidePatientId')
     person.boolean('hideSampleId')
     person.boolean('hideNotes')
-    person.string('culture', 45)
+    person.string('culture', 45).notNullable()
     person.dateTime('acceptedLicenseOn')
     addCreateFields(person)
     addUpdateFields(person)
