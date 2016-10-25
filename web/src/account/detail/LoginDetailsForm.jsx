@@ -95,7 +95,9 @@ const LoginDetailsForm = props => {
         <TextInput name="username" label={formatMessage(messages.username)} disabled={loading} maxLength="500" />
         <br />
         <StrongPasswordInput name="newPassword" label={formatMessage(messages.newPassword)}
-                             disabled={loading} maxLength="100" />
+                             disabled={loading} maxLength="100"
+                             anchorOrigin={{horizontal: 'right',vertical:'top'}}
+                             targetOrigin={{horizontal: 'left',vertical:'center'}} />
         <TextInput name="confirmNewPassword" label={formatMessage(messages.confirmNewPassword)}
                    disabled={loading} maxLength="100" type="password" />
       </div>

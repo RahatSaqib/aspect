@@ -69,7 +69,7 @@ class StrongPasswordInput extends React.PureComponent {
   }
 
   render() {
-    const {input, meta, textFieldProps, intl} = this.props,
+    const {input, meta, textFieldProps, popOverProps, intl} = this.props,
       {touched, error} = meta,
       {formatMessage} = intl,
       passwordStrengthRules = {
@@ -118,7 +118,9 @@ class StrongPasswordInput extends React.PureComponent {
                  errorText={touched && error} {...textFieldProps}
                  className={textFieldProps.fullWidth ? '' : styles.Form__Field}
                  onFocus={this.handleFocus} onBlur={this.handleBlur} />
-      <Popover anchorEl={this.state.anchorEl} open={this.state.showMeter && !_.isEmpty(input.value)} useLayerForClickAway={false}>
+      <Popover anchorEl={this.state.anchorEl}
+               open={this.state.showMeter && !_.isEmpty(input.value)}
+               useLayerForClickAway={false} {...popOverProps}>
         <span style={strengthMessageStyle}>{strengthMessage}</span>
         <LinearProgress mode="determinate" value={passwordStrengthScore} color={passwordStrengthColor} style={{height: '1em', backgroundColor: 'transparent'}} />
         <ul className={styles.List__Unstyled}>
@@ -147,7 +149,8 @@ class StrongPasswordInput extends React.PureComponent {
 const intlStrongPasswordInput = injectIntl(StrongPasswordInput)
 
 const renderFormField = props => {
-  const {name, label, fullWidth, disabled, maxLength, autoFocus} = props
+  const {name, label, fullWidth, disabled, maxLength, autoFocus,
+    anchorOrigin, targetOrigin} = props
   return <Field name={name} textFieldProps={{
     floatingLabelText: label,
     fullWidth: fullWidth,
@@ -155,6 +158,9 @@ const renderFormField = props => {
     disabled: disabled,
     maxLength: maxLength,
     type: 'password'
+  }} popOverProps={{
+    anchorOrigin: anchorOrigin,
+    targetOrigin: targetOrigin
   }} component={intlStrongPasswordInput} />
 }
 
