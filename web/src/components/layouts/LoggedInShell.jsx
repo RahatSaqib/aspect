@@ -10,6 +10,7 @@ import Nav from '../shared/Nav'
 import SideNav from '../shared/SideNav'
 import { IdleDialogContainer } from '../../idle/dialog/IdleDialog'
 import { ErrorDisplayContainer } from '../shared/ErrorDisplay'
+import AcknowledgementDisplay from '../shared/AcknowledgementDisplay'
 
 export class LoggedInShell extends PureComponent {
 
@@ -35,18 +36,16 @@ export class LoggedInShell extends PureComponent {
       <div>
         <Helmet title="Aspect" defaultTitle="Aspect" />
         <ErrorDisplayContainer />
+        <AcknowledgementDisplay />
         <IdleDialogContainer />
         <SideNav open={this.props.drawerOpen}
                  desktop={ this.state.desktop }
                  pathname={ pathname }
                  handleClose={this.props.closeDrawer}
                  handleRequestChange={(drawerOpen) => this.setState({drawerOpen})} />
-        <Nav
-          pageTitle={pageTitle}
-          pagePath={pathname}
-          handleHamburger={this.props.toggleDrawer}
-          handleSignOut={this.props.logoutStart}
-        />
+        <Nav pageTitle={pageTitle} pagePath={pathname}
+             handleHamburger={this.props.toggleDrawer}
+             handleSignOut={this.props.logoutStart} />
         <div style={ this.props.drawerOpen && this.state.desktop ? { paddingLeft: '190px' } : {} } >
           {React.cloneElement(this.props.children, {
             setPageTitle: this.handleSetPageTitle

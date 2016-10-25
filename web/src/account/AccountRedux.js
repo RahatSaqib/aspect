@@ -141,7 +141,6 @@ export function saveUserPreferences(userPreferences) {
         headers: getHeaders(true),
         body: JSON.stringify(userPreferences)
       })
-      //TODO: Update language and time
       .then(json => {
         if(json.data.culture && json.data.culture.length > 1) {
           const lang = json.data.culture.substr(0, 2)
