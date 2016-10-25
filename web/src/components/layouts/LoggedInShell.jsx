@@ -5,7 +5,7 @@ import { connect } from 'react-redux'
 import Helmet from 'react-helmet'
 
 // Our own imports
-import { logoutStart, changeLanguage, toggleDrawer, closeDrawer } from '../../auth/AuthRedux'
+import { logoutStart, toggleDrawer, closeDrawer } from '../../auth/AuthRedux'
 import Nav from '../shared/Nav'
 import SideNav from '../shared/SideNav'
 import { IdleDialogContainer } from '../../idle/dialog/IdleDialog'
@@ -46,7 +46,6 @@ export class LoggedInShell extends PureComponent {
           pagePath={pathname}
           handleHamburger={this.props.toggleDrawer}
           handleSignOut={this.props.logoutStart}
-          handleLanguageChange={this.props.changeLanguage}
         />
         <div style={ this.props.drawerOpen && this.state.desktop ? { paddingLeft: '190px' } : {} } >
           {React.cloneElement(this.props.children, {
@@ -65,7 +64,7 @@ function mapStateToProps(state) {
 }
 
 function mapDispatchToProps(dispatch) {
-  return bindActionCreators({ logoutStart, changeLanguage, toggleDrawer, closeDrawer }, dispatch)
+  return bindActionCreators({ logoutStart, toggleDrawer, closeDrawer }, dispatch)
 }
 
 export default connect(mapStateToProps, mapDispatchToProps)(LoggedInShell)
