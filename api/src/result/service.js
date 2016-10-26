@@ -25,16 +25,11 @@ function* listResults(request){
 
   // did the client request specific selectFields from
   // the resultData JSON column?
-  let fields = request.query.jsonFields
-  if (fields){
-    fields = request.query.jsonFields
-    fields = typeof fields === 'string' ? [fields] : fields
-    _.each(fields, (f) => {
-      if (f){
-        selectFields.push(knex.raw(`JSON_EXTRACT(resultData, "$.${f}") as ${f.replace('.', '_')}`))
-      }
-    })
-  }
+  _.each(request.query.jsonFields, (f) => {
+    if (f){
+      selectFields.push(knex.raw(`JSON_EXTRACT(resultData, "$.${f}") as ${f.replace('.', '_')}`))
+    }
+  })
 
   console.log(selectFields)
 
