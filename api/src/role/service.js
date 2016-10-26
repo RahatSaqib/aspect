@@ -13,27 +13,36 @@ function* getRolesForSelectList(){
     .select('p.id as partnerId', 'p.name as partnerName', 'ou.id as orgUnitId',
       'ou.name as orgUnitName', 'r.id as roleId', 'r.name as roleName')
 
-  const rolesWithoutParent = _.orderBy(_.map(
-      _.uniqBy(
-        _.filter(partnersOrganisationalUnitsAndRoles,
-          {partnerId: null, orgUnitId: null}),
-        'roleId'), 'name'),
-      function(roleRecord) {
-        return {
-          id: roleRecord.roleId,
-          name: roleRecord.roleName
-        }
-      }),
-    partners = _.map(
+  const partners = [{
+    id: null,
+    name: null,
+    orgUnits: [{
+      id: null,
+      name: null,
+      roles: _.orderBy(_.map(
+        _.uniqBy(
+          _.filter(partnersOrganisationalUnitsAndRoles,
+            {partnerId: null, orgUnitId: null}),
+          'roleId'), 'name'),
+        function(roleRecord) {
+          return {
+            id: roleRecord.roleId,
+            name: roleRecord.roleName
+          }
+        })
+    }]}].concat(_.map(
       _.uniqBy(
         _.filter(partnersOrganisationalUnitsAndRoles,
           function(partnerRecord) {
             return partnerRecord.partnerId !== null
-        }), 'partnerId'),
-        function(partnerRecord) {
-          return {
-            id: partnerRecord.partnerId,
-            name: partnerRecord.partnerName,
+          }), 'partnerId'),
+      function(partnerRecord) {
+        return {
+          id: partnerRecord.partnerId,
+          name: partnerRecord.partnerName,
+          orgUnits: [{
+            id: null,
+            name: null,
             roles: _.orderBy(_.map(
               _.filter(partnersOrganisationalUnitsAndRoles,
                 {partnerId: partnerRecord.partnerId, orgUnitId: null}),
@@ -42,36 +51,30 @@ function* getRolesForSelectList(){
                   id: roleRecord.roleId,
                   name: roleRecord.roleName
                 }
-              }), 'name'),
-            orgUnits: _.orderBy(_.map(
-              _.filter(partnersOrganisationalUnitsAndRoles,
-                function (orgUnitRecord) {
-                  return orgUnitRecord.orgUnitId !== null &&
-                    orgUnitRecord.partnerId === partnerRecord.partnerId
-                }),
-              function(orgUnitRecord) {
-                return {
-                  id: orgUnitRecord.orgUnitId,
-                  name: orgUnitRecord.orgUnitName,
-                  roles: _.orderBy(_.map(
-                    _.filter(partnersOrganisationalUnitsAndRoles,
-                      {orgUnitId: orgUnitRecord.orgUnitId}),
-                    function(roleRecord) {
-                      return {
-                        id: roleRecord.roleId,
-                        name: roleRecord.roleName
-                      }
-                    }), 'name')
-                }
               }), 'name')
-          }
-        })
-
-  partners.unshift({
-    id: null,
-    name: null,
-    roles: rolesWithoutParent
-  })
+          }].concat(_.orderBy(_.map(
+            _.filter(partnersOrganisationalUnitsAndRoles,
+              function (orgUnitRecord) {
+                return orgUnitRecord.orgUnitId !== null &&
+                  orgUnitRecord.partnerId === partnerRecord.partnerId
+              }),
+            function(orgUnitRecord) {
+              return {
+                id: orgUnitRecord.orgUnitId,
+                name: orgUnitRecord.orgUnitName,
+                roles: _.orderBy(_.map(
+                  _.filter(partnersOrganisationalUnitsAndRoles,
+                    {orgUnitId: orgUnitRecord.orgUnitId}),
+                  function(roleRecord) {
+                    return {
+                      id: roleRecord.roleId,
+                      name: roleRecord.roleName
+                    }
+                  }), 'name')
+              }
+            }), 'name'))
+        }
+      }))
 
   return {
     ok: true,

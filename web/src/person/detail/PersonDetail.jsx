@@ -26,6 +26,7 @@ import {
   LoginDetails,
   UserPreferences
 } from '../PersonRedux'
+import {fetchPartnersAndRolesForSelectList} from '../../role/RoleRedux'
 
 import messages from './messages'
 import styles from './PersonDetail.css'
@@ -40,8 +41,18 @@ export class PersonDetail extends PureComponent {
     params: PropTypes.object.isRequired
   }
 
-  handleFetchPerson = ({ params }) => {
-    this.props.fetchSinglePerson(params.personId)
+  state = {
+    partners: [],
+    orgUnits: [],
+    roles: []
+  }
+
+  handleFetchPartnersAndRoles = ({partnersAndRolesForSelectList, fetchPartnersAndRolesForSelectList}) => {
+    fetchPartnersAndRolesForSelectList(partnersAndRolesForSelectList)
+  }
+
+  handleFetchPerson = ({ params, fetchSinglePerson }) => {
+    fetchSinglePerson(params.personId)
   }
 
   componentWillMount() {
@@ -51,12 +62,59 @@ export class PersonDetail extends PureComponent {
   }
 
   componentDidMount() {
+    this.handleFetchPartnersAndRoles(this.props)
     this.handleFetchPerson(this.props)
   }
 
   componentWillReceiveProps(nextProps) {
     if (this.props.params.personId !== nextProps.params.personId) {
       this.handleFetchPerson(nextProps)
+    } else if (nextProps.partnersAndRolesForSelectList.get('lastRefreshed')) {
+      this.setPartnersOrgUnitsAndRoles(nextProps, nextProps.person.partnerId, nextProps.person.orgUnitId)
+    }
+  }
+
+  partnerSelected = (event, target, value) => {
+    this.setPartnersOrgUnitsAndRoles(this.props, value, this.props.person.orgUnitId)
+  }
+
+  orgUnitSelected = (event, target, value) => {
+    this.setPartnersOrgUnitsAndRoles(this.props, this.props.person.partnerId, value)
+  }
+
+  setPartnersOrgUnitsAndRoles = (props, selectedPartnerId, selectedOrgUnitId) => {
+    const {partnersAndRolesForSelectList, intl} = props,
+      {formatMessage} = intl,
+      partners = _.map(partnersAndRolesForSelectList.get('partners').toJS(), partner => {
+        return{
+          id: partner.id,
+          name: partner.name || formatMessage(messages.noPartner),
+          orgUnits: _.map(partner.orgUnits, orgUnit => {
+            return {
+              id: orgUnit.id,
+              name: orgUnit.name || formatMessage(messages.noOrgUnit),
+              roles: orgUnit.roles
+            }
+          })
+        }
+      }),
+      selectedPartner = _.find(partners, {id: selectedPartnerId}) || _.find(partners, {id: null}),
+      orgUnits = selectedPartner.orgUnits,
+      selectedOrgUnit = _.find(selectedPartner.orgUnits, {id: selectedOrgUnitId}) || _.find(selectedPartner.orgUnits, {id: null}),
+      roles = selectedOrgUnit.roles
+    this.setState({
+      partners,
+      orgUnits,
+      roles
+    })
+  }
+
+  roleSelected = (event, isSelected) => {
+    const roleId = parseInt(event.target.name)
+    if(isSelected) {
+      this.props.person.roles.push(roleId)
+    } else {
+      this.props.person.roles.splice(this.props.person.roles.indexOf(roleId), 1)
     }
   }
 
@@ -104,7 +162,9 @@ export class PersonDetail extends PureComponent {
                 {formatMessage(messages.systemAccessControl)}
               </h2>
               {person && <LoginDetailsForm initialValues={loginDetails} onSubmit={this.saveLoginDetails}
-                                           showRolesPanel />}
+                                           partners={this.state.partners} orgUnits={this.state.orgUnits}
+                                           roles={this.state.roles} partnerSelected={this.partnerSelected}
+                                           orgUnitSelected={this.orgUnitSelected} roleSelected={this.roleSelected} />}
             </Tab>}
             <Tab icon={<Language />}
                  label={<span className="pure-hidden-xs">{formatMessage(messages.languageAndTimezone)}</span>}>
@@ -128,14 +188,16 @@ function mapStateToProps(state, { params }) {
   return {
     editable: isEditable(state.user, person),
     person,
-    user: state.user
+    user: state.user,
+    partnersAndRolesForSelectList: state.roles.get('partnersAndRolesForSelectList')
   }
 }
 
 function mapDispatchToProps(dispatch) {
   return bindActionCreators({
     fetchSinglePerson,
-    updateSinglePerson
+    updateSinglePerson,
+    fetchPartnersAndRolesForSelectList
   }, dispatch)
 }
 

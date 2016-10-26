@@ -1,6 +1,7 @@
 import React from 'react'
 import { reduxForm } from 'redux-form/immutable'
 import RaisedButton from 'material-ui/RaisedButton'
+import Checkbox from 'material-ui/Checkbox'
 import Dialog from 'material-ui/Dialog'
 import FlatButton from 'material-ui/FlatButton'
 import _ from 'lodash'
@@ -91,11 +92,9 @@ const messages = defineMessages({
 
 const LoginDetailsForm = props => {
   const { handleSubmit, pristine, invalid, loading,
-      currentPasswordInputDialogOpen,
-      openCurrentPasswordInputDialog,
-      closeCurrentPasswordInputDialog, showRolesPanel} = props,
-    partners = props.partners || [],
-    organisationalUnits = props.organisationalUnits || [],
+      currentPasswordInputDialogOpen, openCurrentPasswordInputDialog,
+      closeCurrentPasswordInputDialog, partners, orgUnits, roles,
+      initialValues, partnerSelected, orgUnitSelected, roleSelected} = props,
     {formatMessage} = props.intl,
     onCurrentPasswordKeyPress = event => {
       if(event.key === 'Enter') {
@@ -128,18 +127,23 @@ const LoginDetailsForm = props => {
           <TextInput name="confirmNewPassword" label={formatMessage(messages.confirmNewPassword)}
                      disabled={loading} maxLength="100" type="password" />
         </section>
-        {showRolesPanel && <section>
+        {!_.isEmpty(partners) && <section>
           <h1>{formatMessage(messages.partnerAndRoles)}</h1>
           <SelectInput name="partnerId" label={formatMessage(messages.partner)}
                        disabled={loading || _.isEmpty(partners)} autoWidth
-                       dataSource={partners} dataSourceConfig={{ text: 'name', value: 'id' }} />
+                       dataSource={partners} dataSourceConfig={{ text: 'name', value: 'id' }}
+                       onChange={partnerSelected} />
           <SelectInput name="orgUnitId" label={formatMessage(messages.organisationalUnit)}
-                       disabled={loading || _.isEmpty(organisationalUnits)} autoWidth
-                       dataSource={organisationalUnits} dataSourceConfig={{ text: 'name', value: 'id' }} />
+                       disabled={loading || _.isEmpty(orgUnits)} autoWidth
+                       dataSource={orgUnits} dataSourceConfig={{ text: 'name', value: 'id' }}
+                       onChange={orgUnitSelected} />
           <br />
-          <div>
-            Select Partner &amp; Organisational Unit
-          </div>
+          {!_.isEmpty(roles) && <div>
+            {roles.map(role =>
+              <Checkbox key={String(role.id)} name={String(role.id)} label={role.name} onCheck={roleSelected}
+                        checked={initialValues.get('roles') && initialValues.get('roles').includes(role.id)} />)
+            }
+          </div>}
         </section>}
       </div>
       <div className={styles.Form__ActionRow}>

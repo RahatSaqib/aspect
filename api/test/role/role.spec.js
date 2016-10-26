@@ -19,7 +19,6 @@ describe('Role routes',function(){
         .get(path)
         .set('Authorization', 'Bearer '+ shared.token)
         .end(function(err,res){
-          console.log(res)
           assert.equal(res.status, 200)
           assert.typeOf(res.body, 'Object')
           assert.property(res.body, 'data')
@@ -27,11 +26,14 @@ describe('Role routes',function(){
           assert.isAtLeast(res.body.data.length, 2)
           assert.isNull(res.body.data[0].id)
           assert.isNull(res.body.data[0].name)
-          assert.typeOf(res.body.data[0].roles, 'array')
+          assert.typeOf(res.body.data[0].orgUnits, 'array')
+          assert.equal(res.body.data[0].orgUnits.length, 1)
+          assert.isNull(res.body.data[0].orgUnits[0].id)
+          assert.isNull(res.body.data[0].orgUnits[0].name)
+          assert.typeOf(res.body.data[0].orgUnits[0].roles, 'array')
 
           assert.property(res.body.data[1], 'id')
           assert.property(res.body.data[1], 'name')
-          assert.typeOf(res.body.data[1].roles, 'array')
           assert.typeOf(res.body.data[1].orgUnits, 'array')
 
           assert.isAtLeast(res.body.data[1].orgUnits.length, 1)
