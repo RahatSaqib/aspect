@@ -11,7 +11,8 @@ const SELECT_LIST_FIELDS = [
 ]
 
 const SELECT_SHOW_FIELDS = [
-  'r.id', 'r.started', 'r.ended', 'd.name as deviceName', 'st.name as stateName', 'lg.name as lgaName',
+  'r.id', 'r.started', 'r.ended', 'd.name as deviceName', 'c.name as countryName',
+  'st.name as stateName', 'lg.name as lgaName',
   'rc1.name as resultCategory1Name', 'rc2.name as resultCategory2Name', 'r.resultData',
   's.sampleId', 'r.patientId','si.name as siteName', 'r.assayVersion', 'r.consumableSerial',
   'r.consumableLot', 'r.consumableExpirationDate', 'r.instrumentSerial', 'r.moduleName',
@@ -30,8 +31,6 @@ function* listResults(request){
       selectFields.push(knex.raw(`JSON_EXTRACT(resultData, "$.${f}") as ${f.replace('.', '_')}`))
     }
   })
-
-  console.log(selectFields)
 
   // get data constraints
   const dataConstraints = yield getConstraints(auth.credentials)
@@ -77,6 +76,7 @@ function* getResultByResultId(request, fields=SELECT_SHOW_FIELDS){
     .innerJoin('Device as d', 'r.deviceId', 'd.id')
     .innerJoin('Assay as a', 'r.assayId', 'a.id')
     .leftJoin('Site as si', 'r.siteId', 'si.id')
+    .leftJoin('Country as c', 'r.countryId', 'c.id')
     .leftJoin('State as st', 'r.stateId', 'st.id')
     .leftJoin('Lga as lg', 'r.lgaId', 'lg.id')
     .leftJoin('ResultCategory as rc1', 'r.resultCategory1', 'rc1.id')
