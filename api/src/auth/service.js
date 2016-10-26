@@ -374,12 +374,13 @@ function* updatePasswordWithResetPasswordToken(request) {
   }
 }
 
-function* getRolesForUser(userId) {
-  return query('Get roles for user').from('UserRole')
+function getRolesForUser(userId) {
+  return query('Get roles for user').from('UserRole as ur')
     .where({'ur.userId': userId})
+    .select('ur.userId', 'ur.roleId')
 }
 
-function* updateUsernamePasswordForPerson(request) {
+function* updateUsernameAndPasswordForPerson(request) {
   let {params, payload} = request
 
   // TODO: check access level permissions for currently logged in user
@@ -455,7 +456,7 @@ module.exports = {
   refreshToken,
   getRolesForUser,
   updateUsernameAndPasswordForLoggedInUser,
-  updateUsernamePasswordForPerson,
+  updateUsernameAndPasswordForPerson,
   createResetPasswordToken,
   updatePasswordWithResetPasswordToken
 }
