@@ -52,7 +52,8 @@ const piwik = config.piwik ? PiwikReactRouter({
 }) : false
 
 const routes =
-  <Router history={piwik ?  piwik.connectToHistory(browserHistory) : browserHistory} render={applyRouterMiddleware(useScroll()) }>
+  <Router history={piwik ?  piwik.connectToHistory(browserHistory) : browserHistory}
+          render={applyRouterMiddleware(useScroll()) }>
     <Route component={App} path="/">
       <Route component={LoginContainer} path="login" />
       <Route component={LoggedInShell}

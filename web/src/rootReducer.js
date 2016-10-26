@@ -2,6 +2,7 @@ import Immutable from 'immutable'
 import { reducer as formReducer } from 'redux-form/immutable'
 import { combineReducers } from 'redux-immutable'
 
+import acknowledgement from './acknowledgement/AcknowledgementRedux'
 import error from './error/ErrorRedux'
 import user, {
   types as authTypes
@@ -16,6 +17,7 @@ import idle from './idle/IdleRedux'
 
 const appReducer = combineReducers({
   form: formReducer,
+  acknowledgement,
   error,
   user,
   device,
@@ -29,6 +31,7 @@ const appReducer = combineReducers({
 
 const App = Immutable.Record({
   form: undefined,
+  acknowledgement: undefined,
   error: undefined,
   user: undefined,
   device: undefined,

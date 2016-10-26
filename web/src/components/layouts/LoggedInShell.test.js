@@ -12,8 +12,7 @@ describe('LoggedInShell', () => {
     children: {},
     closeDrawer: () => {},
     toggleDrawer: () => {},
-    logoutStart: () => {},
-    changeLanguage: () => {}
+    logoutStart: () => {}
   }
   let output
 

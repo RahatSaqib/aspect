@@ -16,17 +16,18 @@ function* getAccountDetailsForLoggedInUser(request){
   return {ok: true, data: accountDetails}
 }
 
-function* saveAccountDetailsForLoggedInUser(request){
-  let accountDetails = yield getAccountDetailsForUsername(request.auth.credentials.name)
+function* saveDetailsForLoggedInUser(request, updatablePersonFields) {
+  const username = request.auth.credentials.name,
+    newAccountDetails = request.payload
+
+  let accountDetails = yield getAccountDetailsForUsername(username)
 
   //The account details do not belong to the user that submitted this request!
-  if(accountDetails.id !== request.payload.id) {
+  if(accountDetails.id !== newAccountDetails.id) {
     return Boom.forbidden('Incorrect user details')
   }
-
   //Compare the record with what has been sent and find changed values
-  const updatablePersonFields = ['name', 'title', 'email', 'email2', 'phone', 'cell', 'countryId', 'stateId', 'lgaId', 'zip', 'timezone', 'culture']
-  const changedFields = _.reduce(request.payload, function(result, value, key) {
+  const changedFields = _.reduce(newAccountDetails, function(result, value, key) {
     if(_.includes(updatablePersonFields, key) && key in accountDetails &&
       accountDetails[key] != value) {
       result[key] = value
@@ -42,14 +43,23 @@ function* saveAccountDetailsForLoggedInUser(request){
     yield query('Save account details for currently logged in user').from('Person as p')
       .where({'p.id': accountDetails.id})
       .update(changedFields)
-
-    accountDetails = yield getAccountDetailsForUsername(request.auth.credentials.name)
+    accountDetails = yield getAccountDetailsForUsername(username)
   }
 
   return {ok: true, data: accountDetails}
 }
 
+function* saveContactDetailsForLoggedInUser(request){
+  return yield* saveDetailsForLoggedInUser(request,
+    ['name', 'title', 'email', 'email2', 'phone', 'cell', 'countryId', 'stateId', 'lgaId', 'zip'])
+}
+
+function* saveUserPreferencesForLoggedInUser(request){
+  return yield* saveDetailsForLoggedInUser(request, ['timezone', 'culture'])
+}
+
 module.exports = {
   getAccountDetailsForLoggedInUser,
-  saveAccountDetailsForLoggedInUser
+  saveContactDetailsForLoggedInUser,
+  saveUserPreferencesForLoggedInUser
 }

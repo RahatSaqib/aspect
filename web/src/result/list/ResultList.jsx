@@ -125,7 +125,7 @@ export class ResultList extends PureComponent {
           table={ this.props.table }
           columns={[
             { db: 'ended', title: formatMessage(messages.ended),
-              format: (data) => formatDate(data) },
+              format: (data) => formatDate(data, 'user-timezone') },
             { db: 'deviceName', title: formatMessage(messages.deviceName) },
             { db: 'sampleId', title: formatMessage(messages.sampleId) },
             { db: 'patientId', title: formatMessage(messages.patiendId) },

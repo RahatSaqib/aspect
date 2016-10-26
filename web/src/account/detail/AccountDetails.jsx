@@ -10,7 +10,15 @@ import MapsPersonPin from 'material-ui/svg-icons/maps/person-pin'
 import Language from 'material-ui/svg-icons/action/language'
 import Lock from 'material-ui/svg-icons/action/lock'
 import ContactDetailsForm from './ContactDetailsForm'
-import {fetchAccountDetails, saveAccountDetails} from '../AccountRedux'
+import LoginDetailsForm from './LoginDetailsForm'
+import UserPreferencesForm from './UserPreferencesForm'
+import {
+  fetchAccountDetails,
+  saveContactDetails,
+  saveLoginDetails,
+  saveUserPreferences
+} from '../AccountRedux'
+import { addAcknowledgement } from '../../acknowledgement/AcknowledgementRedux'
 import styles from './AccountDetails.css'
 
 const messages = defineMessages({
@@ -22,53 +30,13 @@ const messages = defineMessages({
     id: 'pages.AccountDetails.contactDetails',
     defaultMessage: 'Contact Details'
   },
-  fullName: {
-    id: 'pages.AccountDetails.name',
-    defaultMessage: 'Full Name'
-  },
-  jobTitle: {
-    id: 'pages.AccountDetails.title',
-    defaultMessage: 'Job Title'
-  },
-  emailHeader: {
-    id: 'pages.AccountDetails.emailHeader',
-    defaultMessage: 'Email'
-  },
-  primaryEmail: {
-    id: 'pages.AccountDetails.email',
-    defaultMessage: 'Primary'
-  },
-  secondaryEmail: {
-    id: 'pages.AccountDetails.email2',
-    defaultMessage: 'Alternate'
-  },
-  phone: {
-    id: 'pages.AccountDetails.phoneHeader',
-    defaultMessage: 'Phone'
-  },
-  telephone: {
-    id: 'pages.AccountDetails.phone',
-    defaultMessage: 'Telephone'
-  },
-  mobile: {
-    id: 'pages.AccountDetails.cell',
-    defaultMessage: 'Mobile'
-  },
-  location: {
-    id: 'pages.AccountDetails.locationHeader',
-    defaultMessage: 'Location'
-  },
-  zip: {
-    id: 'pages.AccountDetails.zip',
-    defaultMessage: 'Zip Code'
-  },
-  save: {
-    id: 'pages.AccountDetails.save',
-    defaultMessage: 'Save'
-  },
   usernameAndPassword: {
     id: 'pages.AccountDetails.usernameAndPassword',
     defaultMessage: 'Username & Password'
+  },
+  loginDetailsUpdated: {
+    id: 'pages.AccountDetails.loginDetailsUpdated',
+    defaultMessage: 'Login details changed successfully'
   },
   languageAndTimezone: {
     id: 'pages.AccountDetails.languageAndTimezone',
@@ -77,7 +45,6 @@ const messages = defineMessages({
 })
 
 class AccountDetails extends PureComponent {
-
   static propTypes = {
     setPageTitle: PropTypes.func.isRequired
   }
@@ -88,27 +55,48 @@ class AccountDetails extends PureComponent {
     setPageTitle(formatMessage(messages.title))
   }
 
+  constructor(props) {
+    super(props)
+
+    this.state = {
+      currentPasswordInputDialogOpen: false
+    }
+
+    this.openCurrentPasswordInputDialog = this.openCurrentPasswordInputDialog.bind(this)
+    this.closeCurrentPasswordInputDialog = this.closeCurrentPasswordInputDialog.bind(this)
+  }
+
+  openCurrentPasswordInputDialog = () => {
+    this.setState({ currentPasswordInputDialogOpen: true })
+  }
+
+  closeCurrentPasswordInputDialog = () => {
+    this.setState({currentPasswordInputDialogOpen: false})
+  }
+
   componentDidMount() {
     const {fetchAccountDetails} = this.props
     fetchAccountDetails()
   }
 
-  render() {
-    const { intl, loading, saving, accountDetails, saveAccountDetails } = this.props
-    const { formatMessage } = intl
-    const labels = {
-      name: formatMessage(messages.fullName),
-      title: formatMessage(messages.jobTitle),
-      emailHeader: formatMessage(messages.emailHeader),
-      email: formatMessage(messages.primaryEmail),
-      email2: formatMessage(messages.secondaryEmail),
-      phoneHeader: formatMessage(messages.phone),
-      phone: formatMessage(messages.telephone),
-      cell: formatMessage(messages.mobile),
-      locationHeader: formatMessage(messages.location),
-      zip: formatMessage(messages.zip),
-      submit: formatMessage(messages.save)
+  componentWillReceiveProps(newProps) {
+    if(newProps.accountDetails && newProps.accountDetails.getIn(['loginDetails', 'incorrectCurrentPasswordEntered'])) {
+      this.openCurrentPasswordInputDialog()
     }
+  }
+
+  render() {
+    const { loading, saving, accountDetails, saveContactDetails,
+        saveUserPreferences, saveLoginDetails, addAcknowledgement } = this.props,
+      { formatMessage } = this.props.intl,
+      saveLoginDetailsFailed = errors => {
+        if(!errors.currentPassword) {
+          this.closeCurrentPasswordInputDialog()
+        }
+      }, saveLoginDetailsSucceeded = () => {
+        this.closeCurrentPasswordInputDialog()
+        addAcknowledgement(formatMessage(messages.loginDetailsUpdated))
+      }
     return (
       <div className={styles.Content}>
         <Paper>
@@ -116,20 +104,36 @@ class AccountDetails extends PureComponent {
             <Tab className={styles.ResponsiveTab} icon={<MapsPersonPin />}
                  label={<span className="pure-hidden-xs">{formatMessage(messages.contactDetails)}</span>}>
               {(loading || saving) && <LinearProgress />}
-              <h2 className={'pure-visible-xs ' + styles.Form__Header}>{formatMessage(messages.contactDetails)}</h2>
-              {!loading && <ContactDetailsForm loading={loading || saving} initialValues={accountDetails} onSubmit={saveAccountDetails} labels={labels} />}
+              <h2 className={'pure-visible-xs ' + styles.Form__Header}>
+                {formatMessage(messages.contactDetails)}
+              </h2>
+              {!loading && <ContactDetailsForm loading={loading || saving}
+                                               initialValues={accountDetails.get('contactDetails')}
+                                               onSubmit={saveContactDetails} />}
             </Tab>
             <Tab className={styles.ResponsiveTab} icon={<Lock />}
                  label={<span className="pure-hidden-xs">{formatMessage(messages.usernameAndPassword)}</span>}>
               {(loading || saving) && <LinearProgress />}
-              <h2 className={'pure-visible-xs ' + styles.Form__Header}>{formatMessage(messages.usernameAndPassword)}</h2>
-              <span>Change Username and Password Here!</span>
+              <h2 className={'pure-visible-xs ' + styles.Form__Header}>
+                {formatMessage(messages.usernameAndPassword)}
+              </h2>
+              {!loading && <LoginDetailsForm loading={loading || saving}
+                                             initialValues={accountDetails.get('loginDetails')}
+                                             currentPasswordInputDialogOpen={this.state.currentPasswordInputDialogOpen}
+                                             openCurrentPasswordInputDialog={this.openCurrentPasswordInputDialog}
+                                             closeCurrentPasswordInputDialog={this.closeCurrentPasswordInputDialog}
+                                             onSubmit={saveLoginDetails} onSubmitFail={saveLoginDetailsFailed}
+                                             onSubmitSuccess={saveLoginDetailsSucceeded} />}
             </Tab>
             <Tab className={styles.ResponsiveTab} icon={<Language />}
                  label={<span className="pure-hidden-xs">{formatMessage(messages.languageAndTimezone)}</span>}>
               {(loading || saving) && <LinearProgress />}
-              <h2 className={'pure-visible-xs ' + styles.Form__Header}>{formatMessage(messages.languageAndTimezone)}</h2>
-              <span>Timezone and Language Here!</span>
+              <h2 className={'pure-visible-xs ' + styles.Form__Header}>
+                {formatMessage(messages.languageAndTimezone)}
+              </h2>
+              {!loading && <UserPreferencesForm loading={loading || saving}
+                                                initialValues={accountDetails.get('userPreferences')}
+                                                onSubmit={saveUserPreferences} />}
             </Tab>
           </Tabs>
         </Paper>
@@ -149,7 +153,10 @@ function mapStateToProps(state) {
 function mapDispatchToProps(dispatch) {
   return bindActionCreators({
     fetchAccountDetails,
-    saveAccountDetails
+    saveContactDetails,
+    saveLoginDetails,
+    saveUserPreferences,
+    addAcknowledgement
   }, dispatch)
 }
 

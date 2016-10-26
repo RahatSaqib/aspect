@@ -39,18 +39,8 @@ describe('ContactDetailsForm Component', () => {
           stateId: null
         },
         handleSubmit: () => {},
-        labels: {
-          name: 'Full Name',
-          title: 'Job Title',
-          emailHeader: 'Email',
-          email: 'Primary',
-          email2: 'Alternate',
-          phoneHeader: 'Phone',
-          phone: 'Telephone',
-          cell: 'Mobile',
-          locationHeader: 'Location',
-          zip: 'Zip Code',
-          submit: 'Save'
+        intl: {
+          formatMessage: message => message.defaultMessage
         }
       }
       shallowRenderForm(props)

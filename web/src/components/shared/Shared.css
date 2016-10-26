@@ -60,3 +60,8 @@
     margin-right: 0;
   }
 }
+
+.List__Unstyled {
+  list-style: none;
+  padding: 0.5em 1em;
+}

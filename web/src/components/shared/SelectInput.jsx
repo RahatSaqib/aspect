@@ -6,6 +6,13 @@ import MenuItem from 'material-ui/MenuItem'
 import ForkedSelectField from '../forkedMaterialUi/ForkedSelectField'
 import styles from './Shared.css'
 
+const MenuItemLabel = props => {
+  const {text, selectedItemStyle} = props
+  return <div style={{...{display: 'inline-block', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis', width: '100%'}, ...selectedItemStyle}}>
+    {text}
+  </div>
+}
+
 const renderSelectField = props => {
   const {onSelectionChanged, input, meta, selectFieldProps, children} = props,
     {touched, error} = meta
@@ -25,7 +32,7 @@ const renderSelectField = props => {
 }
 
 const renderFormField = props => {
-  const {name, label, onChange, fullWidth, disabled, dataSource, dataSourceConfig} = props,
+  const {name, label, onChange, fullWidth, disabled, dataSource, dataSourceConfig, autoWidth, selectedItemStyle} = props,
     valueKey = dataSourceConfig.value, textKey = dataSourceConfig.text
 
   const selectItems = _.map(dataSource, item => {
@@ -37,9 +44,11 @@ const renderFormField = props => {
   })
 
   return <Field name={name} onSelectionChanged={onChange}
-                selectFieldProps={{ floatingLabelText: label, fullWidth: fullWidth, disabled: disabled }}
+                selectFieldProps={{ floatingLabelText: label, fullWidth: fullWidth, disabled: disabled, autoWidth: autoWidth }}
                 component={renderSelectField}>
-      { selectItems.map(item => <MenuItem {...item} />) }
+      { selectItems.map(item => <MenuItem key={item.key} value={item.value}
+                                          primaryText={item.primaryText}
+                                          label={<MenuItemLabel text={item.primaryText} selectedItemStyle={selectedItemStyle} />} />) }
     </Field>
 }
 
