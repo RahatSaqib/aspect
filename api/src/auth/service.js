@@ -217,7 +217,7 @@ function* getDeviceApiKey(request){
   const token = jwt.sign({
     deviceId
     // FIXME handle Device API revocation
-    // FIXME include device permissions in Device TOken
+    // FIXME include device permissions in Device Token
   },
   config.secret, {
     expiresIn: '100 years',

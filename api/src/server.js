@@ -8,7 +8,7 @@ const { addClientRoutes, addDeviceRoutes } = require('./routes')
 const Hapi = require('hapi')
 const server = new Hapi.Server()
 const port = process.env.PORT || 8080
-const apiPath = '/api'
+const clientApiPath = '/api'
 const deviceApiPath = '/device'
 
 server.connection({
@@ -119,12 +119,10 @@ server.auth.strategy('jwt', 'jwt', {
     // ["device", "!site"] will authorize anyone with device but not site modules
     // ["+device", "site:view", "site:edit"] will authorize anyone with device (required)
     //   and either "site:view" or "site:edit" permissions
-    const scope = [].concat(decoded.modules || [], decoded.permissions)
 
     const isDeviceApi = (decoded.deviceId > 0)
-    if(isDeviceApi){
-      scope.push('deviceApi')
-    }
+    const scope = [isDeviceApi ? 'deviceApi' : 'clientApi']
+      .concat(decoded.modules || [], decoded.permissions || [])
 
     callback(null, valid, Object.assign({scope}, decoded))
   }
@@ -149,17 +147,17 @@ server.route({
 })
 
 // use plugin to mount all API routes at /api
-function apiPlugin(server, options, next){
+function clientApiPlugin(server, options, next){
   addClientRoutes(server)
   next()
 }
-apiPlugin.attributes = {
-  name: 'api',
+clientApiPlugin.attributes = {
+  name: 'clientApi',
   version
 }
-server.register({register: apiPlugin}, {
+server.register({register: clientApiPlugin}, {
   routes: {
-    prefix: apiPath
+    prefix: clientApiPath
   }
 }, err => { if(err) throw err })
 

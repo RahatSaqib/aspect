@@ -315,7 +315,7 @@ function* up(knex){
     config.integer('deviceId').unsigned().notNullable()
       .index().references('id').inTable('Device')
     config.specificType('data', 'JSON').notNullable()
-    addCreateFields(config)
+    addCreateFieldsNullable(config)
     config.charset('utf8')
   })
 
@@ -324,7 +324,7 @@ function* up(knex){
     config.integer('deviceId').unsigned().notNullable()
       .index().references('id').inTable('Device')
     config.specificType('data', 'JSON').notNullable()
-    addCreateFields(config)
+    addCreateFieldsNullable(config)
     config.charset('utf8')
   })
 

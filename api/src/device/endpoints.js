@@ -1,8 +1,7 @@
 let Joi = require('joi')
 let { asyncHandler, validateSortPageParams } = require('../routes')
 let { listDevices, showDevice, updateDevice,
-  addDeviceOperation, listDeviceOperation,
-  addDeviceConfiguration, listDeviceConfiguration} = require('./service')
+  listDeviceOperation, listDeviceConfiguration} = require('./service')
 
 module.exports = [
   {
@@ -79,24 +78,6 @@ module.exports = [
     }
   },
   {
-    method: 'POST',
-    path: '/device/{deviceId}/configuration',
-    handler: asyncHandler(addDeviceConfiguration),
-    config: {
-      notes: 'Add Device Configuration',
-      description: 'Add new device configuration data for the specified device',
-      auth: {scope: ['device:edit']},
-      validate: {
-        params: {
-          deviceId: Joi.string().description('Device id').required()
-        },
-        payload: {
-          data: Joi.object().required()
-        }
-      }
-    }
-  },
-  {
     method: 'GET',
     path: '/device/{deviceId}/operation',
     handler: asyncHandler(listDeviceOperation),
@@ -111,24 +92,6 @@ module.exports = [
         query: Object.assign({
           deviceName: Joi.string().allow('').description('Filter for device name')
         }, validateSortPageParams('deviceName', 'createdOn', 'updatedOn'))
-      }
-    }
-  },
-  {
-    method: 'POST',
-    path: '/device/{deviceId}/operation',
-    handler: asyncHandler(addDeviceOperation),
-    config: {
-      description: 'Device Operation',
-      notes: 'Adds new device operational data for the specified device',
-      auth: {scope: ['device:edit']},
-      validate: {
-        params: {
-          deviceId: Joi.string().description('Device id').required()
-        },
-        payload: {
-          data: Joi.object().required()
-        }
       }
     }
   }
