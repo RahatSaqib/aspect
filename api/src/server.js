@@ -1,14 +1,16 @@
 // =======================
 // configuration =========
 // =======================
-let config = require('./config')
-let { version } = require('./../package.json')
-let { addRoutes } = require('./routes')
+const config = require('./config')
+const { version } = require('./../package.json')
+const { addClientRoutes, addDeviceRoutes } = require('./routes')
 
-let Hapi = require('hapi')
-let server = new Hapi.Server()
-let port = process.env.PORT || 8080
-let apiPath = '/api'
+const Hapi = require('hapi')
+const server = new Hapi.Server()
+const port = process.env.PORT || 8080
+const apiPath = '/api'
+const deviceApiPath = '/device'
+
 server.connection({
   port,
   routes: {
@@ -30,7 +32,6 @@ let plugins = [
   {
     register: require('hapi-swagger'),
     options: {
-      basePath: apiPath,
       info: {
         title: 'Aspect API',
         version
@@ -108,7 +109,7 @@ server.auth.strategy('jwt', 'jwt', {
   key: config.secret,
   validateFunc: function(decoded, request, callback){
     // TODO What do we want to do to validate data within decoded JWT token?
-    let valid = true
+    const valid = true
 
     // can specify either module or permission, e.g. "device" or "device:view"
     // for authorization scope on routes.
@@ -118,7 +119,12 @@ server.auth.strategy('jwt', 'jwt', {
     // ["device", "!site"] will authorize anyone with device but not site modules
     // ["+device", "site:view", "site:edit"] will authorize anyone with device (required)
     //   and either "site:view" or "site:edit" permissions
-    let scope = [].concat(decoded.modules, decoded.permissions)
+    const scope = [].concat(decoded.modules || [], decoded.permissions)
+
+    const isDeviceApi = (decoded.deviceId > 0)
+    if(isDeviceApi){
+      scope.push('deviceApi')
+    }
 
     callback(null, valid, Object.assign({scope}, decoded))
   }
@@ -144,7 +150,7 @@ server.route({
 
 // use plugin to mount all API routes at /api
 function apiPlugin(server, options, next){
-  addRoutes(server)
+  addClientRoutes(server)
   next()
 }
 apiPlugin.attributes = {
@@ -154,6 +160,21 @@ apiPlugin.attributes = {
 server.register({register: apiPlugin}, {
   routes: {
     prefix: apiPath
+  }
+}, err => { if(err) throw err })
+
+// All device API routes mounted under /device
+function deviceApiPlugin(server, options, next){
+  addDeviceRoutes(server)
+  next()
+}
+deviceApiPlugin.attributes = {
+  name: 'deviceApi',
+  version
+}
+server.register({register: deviceApiPlugin}, {
+  routes: {
+    prefix: deviceApiPath
   }
 }, err => { if(err) throw err })
 

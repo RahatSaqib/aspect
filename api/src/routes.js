@@ -3,7 +3,7 @@ let Boom = require('boom')
 let Joi = require('joi')
 
 // Adds all API routes to the server
-function addRoutes(server){
+function addClientRoutes(server){
   server.route(require('./accountDetails/endpoints').map(decorateAPI()))
   server.route(require('./auth/endpoints').map(decorateAPI()))
   server.route(require('./assay/endpoints').map(decorateAPI('assay')))
@@ -13,6 +13,10 @@ function addRoutes(server){
   server.route(require('./site/endpoints').map(decorateAPI('site')))
   server.route(require('./result/endpoints').map(decorateAPI('result')))
   server.route(require('./partner/endpoints').map(decorateAPI('partner')))
+}
+
+function addDeviceRoutes(server){
+  server.route([{method: 'GET', path: '/hi', handler: (r1, r) => r('Hello!!!!'), config: {auth:false}}].map(decorateAPI()))
 }
 
 // Decorates an API route with common configuration so
@@ -116,7 +120,8 @@ function validateSortPageParams(...sortColumns){
 }
 
 module.exports = {
-  addRoutes,
+  addClientRoutes,
+  addDeviceRoutes,
   asyncHandler,
   getSortPageParams,
   validateSortPageParams
