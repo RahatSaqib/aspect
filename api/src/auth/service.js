@@ -6,6 +6,7 @@ let Boom = require('boom')
 let _ = require('lodash')
 const bcrypt = require('bcrypt')
 const { createFetch, base, accept, header, method, body } = require('http-client')
+const { getConstraints, addConstraints} = require('./constraints')
 require('isomorphic-fetch')
 
 const bcryptCompare = Promise.promisify(bcrypt.compare)
@@ -197,6 +198,35 @@ function getAccessToken({id, name, culture, timezone, partnerId, countryId}){
     })
 }
 
+function* getDeviceApiKey(request){
+  const {auth, params} = request
+  const dataConstraints = yield getConstraints(auth.credentials)
+
+  const devices = yield query('Get device for API Key').from('Device as d')
+    .where('d.id', +params.deviceId)
+    .modify(addConstraints, dataConstraints, {device: 'd'})
+    .select('d.id')
+
+  if(devices.length !== 1){
+    Boom.notFound()
+  }
+
+  const {id: deviceId} = devices[0]
+
+  // create a new token
+  const token = jwt.sign({
+    deviceId
+    // FIXME handle Device API revocation
+    // FIXME include device permissions in Device TOken
+  },
+  config.secret, {
+    expiresIn: '100 years',
+    issuer: 'https://www.aspect.id/device'
+  })
+
+  return {access: token}
+}
+
 function* updateUsernameAndPasswordForLoggedInUser(request){
   let {payload} = request
 
@@ -262,6 +292,7 @@ function* updateUsernameAndPasswordForLoggedInUser(request){
 module.exports = {
   authenticate,
   checkAuthentication,
+  getDeviceApiKey,
   refreshToken,
   updateUsernameAndPasswordForLoggedInUser
 }

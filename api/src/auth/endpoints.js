@@ -5,6 +5,7 @@ let { asyncHandler } = require('../routes')
 let {
   authenticate,
   checkAuthentication,
+  getDeviceApiKey,
   refreshToken,
   updateUsernameAndPasswordForLoggedInUser
 } = require('./service')
@@ -64,6 +65,21 @@ module.exports = [
           newPassword: Joi.string().max(100).allow('', null),
           clientName: Joi.string().required(),
           clientId: Joi.string()
+        }
+      }
+    }
+  },
+  {
+    method: 'GET',
+    path: '/auth/device/{deviceId}/apiKey',
+    handler: asyncHandler(getDeviceApiKey),
+    config: {
+      description: 'Get Device API Key',
+      notes: 'Get API Key for the specified device',
+      auth: {scope: ['admin', 'device:admin']},
+      validate: {
+        params: {
+          deviceId: Joi.string().description('Device id').required()
         }
       }
     }
