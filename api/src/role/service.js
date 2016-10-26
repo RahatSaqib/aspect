@@ -14,11 +14,11 @@ function* getRolesForSelectList(){
       'ou.name as orgUnitName', 'r.id as roleId', 'r.name as roleName')
 
   const partners = [{
-    id: null,
-    name: null,
+    id: undefined,
+    name: undefined,
     orgUnits: [{
-      id: null,
-      name: null,
+      id: undefined,
+      name: undefined,
       roles: _.orderBy(_.map(
         _.uniqBy(
           _.filter(partnersOrganisationalUnitsAndRoles,
@@ -41,8 +41,8 @@ function* getRolesForSelectList(){
           id: partnerRecord.partnerId,
           name: partnerRecord.partnerName,
           orgUnits: [{
-            id: null,
-            name: null,
+            id: undefined,
+            name: undefined,
             roles: _.orderBy(_.map(
               _.filter(partnersOrganisationalUnitsAndRoles,
                 {partnerId: partnerRecord.partnerId, orgUnitId: null}),

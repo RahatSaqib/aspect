@@ -65,11 +65,11 @@ function* showPerson(request) {
       .from('Role as r')
       .where({'r.id': personDetails.roles[0]})
       .first('r.partnerId', 'r.orgUnitId')
-    personDetails.partnerId = partnerInfo.partnerId
-    personDetails.orgUnitId = partnerInfo.orgUnitId
+    personDetails.partnerId = partnerInfo.partnerId || undefined
+    personDetails.orgUnitId = partnerInfo.orgUnitId || undefined
   } else {
-    personDetails.partnerId = null
-    personDetails.orgUnitId = null
+    personDetails.partnerId = undefined
+    personDetails.orgUnitId = undefined
   }
   return {ok: true, data: personDetails}
 }

@@ -64,22 +64,25 @@ export class PersonDetail extends PureComponent {
   componentDidMount() {
     this.handleFetchPartnersAndRoles(this.props)
     this.handleFetchPerson(this.props)
+    if (this.props.partnersAndRolesForSelectList.get('lastRefreshed')) {
+      this.setPartnersOrgUnitsAndRoles(this.props, this.props.person.get('partnerId'), this.props.person.get('orgUnitId'))
+    }
   }
 
   componentWillReceiveProps(nextProps) {
     if (this.props.params.personId !== nextProps.params.personId) {
       this.handleFetchPerson(nextProps)
     } else if (nextProps.partnersAndRolesForSelectList.get('lastRefreshed')) {
-      this.setPartnersOrgUnitsAndRoles(nextProps, nextProps.person.partnerId, nextProps.person.orgUnitId)
+      this.setPartnersOrgUnitsAndRoles(nextProps, nextProps.person.get('partnerId'), nextProps.person.get('orgUnitId'))
     }
   }
 
   partnerSelected = (event, target, value) => {
-    this.setPartnersOrgUnitsAndRoles(this.props, value, this.props.person.orgUnitId)
+    this.setPartnersOrgUnitsAndRoles(this.props, value, this.props.person.get('orgUnitId'))
   }
 
   orgUnitSelected = (event, target, value) => {
-    this.setPartnersOrgUnitsAndRoles(this.props, this.props.person.partnerId, value)
+    this.setPartnersOrgUnitsAndRoles(this.props, this.props.person.get('partnerId'), value)
   }
 
   setPartnersOrgUnitsAndRoles = (props, selectedPartnerId, selectedOrgUnitId) => {
@@ -98,9 +101,9 @@ export class PersonDetail extends PureComponent {
           })
         }
       }),
-      selectedPartner = _.find(partners, {id: selectedPartnerId}) || _.find(partners, {id: null}),
+      selectedPartner = _.find(partners, {id: selectedPartnerId}) || _.find(partners, {id: undefined}),
       orgUnits = selectedPartner.orgUnits,
-      selectedOrgUnit = _.find(selectedPartner.orgUnits, {id: selectedOrgUnitId}) || _.find(selectedPartner.orgUnits, {id: null}),
+      selectedOrgUnit = _.find(selectedPartner.orgUnits, {id: selectedOrgUnitId}) || _.find(selectedPartner.orgUnits, {id: undefined}),
       roles = selectedOrgUnit.roles
     this.setState({
       partners,
