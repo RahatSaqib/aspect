@@ -1,6 +1,6 @@
 let Promise = require('bluebird')
-let { query, knex, filterParams, sortPageParams } = require('../db')
-let { getConstraints, addConstraints } = require('../auth/constraints')
+let { knex, filterParams, sortPageParams } = require('../db')
+let { getConstraints } = require('../auth/constraints')
 
 const SELECT_LIST_FIELDS = [
   'p.id', 'p.name', 'p.partnerTypeId', 'pt.name as partnerTypeName'
@@ -59,17 +59,7 @@ function* showPartner(request) {
   return result
 }
 
-function* listPartnersForSelectList(request) {
-  let partners = yield query('Get partners for select list')
-    .from('Partner as p')
-    .orderBy(['p.name'], 'asc')
-    .select('p.id', 'p.name')
-
-  return { ok: true, data: partners }
-}
-
 module.exports = {
   listPartners,
-  showPartner,
-  listPartnersForSelectList
+  showPartner
 }
