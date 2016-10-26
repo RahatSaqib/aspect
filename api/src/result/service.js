@@ -28,7 +28,7 @@ function* listResults(request){
   // the resultData JSON column?
   _.each(request.query.jsonFields, (f) => {
     if (f){
-      selectFields.push(knex.raw(`JSON_EXTRACT(resultData, "$.${f}") as ${f.replace('.', '_')}`))
+      selectFields.push(knex.raw('JSON_EXTRACT(resultData, ?) as ?', [`$.${f}`, f.replace('.', '_')]))
     }
   })
 
