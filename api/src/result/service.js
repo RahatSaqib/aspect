@@ -5,13 +5,13 @@ const { knex, filterParams, sortPageParams } = require('../db')
 const { getConstraints, addConstraints } = require('../auth/constraints')
 
 const SELECT_LIST_FIELDS = [
-  'r.id', 'r.ended', 'd.name as deviceName', 'st.name as stateName', 'lg.name as lgaName',
+  'r.id', 'r.endedOn', 'd.name as deviceName', 'st.name as stateName', 'lg.name as lgaName',
   'rc1.name as resultCategory1Name', 'rc2.name as resultCategory2Name',
   's.sampleId', 'r.patientId', 'a.name as assayName'
 ]
 
 const SELECT_SHOW_FIELDS = [
-  'r.id', 'r.started', 'r.ended', 'd.name as deviceName', 'c.name as countryName',
+  'r.id', 'r.startedOn', 'r.endedOn', 'd.name as deviceName', 'c.name as countryName',
   'st.name as stateName', 'lg.name as lgaName',
   'rc1.name as resultCategory1Name', 'rc2.name as resultCategory2Name', 'r.resultData',
   's.sampleId', 'r.patientId','si.name as siteName', 'r.assayVersion', 'r.consumableSerial',
@@ -52,7 +52,7 @@ function* listResults(request){
 
   // get rows
   const getItems = resultQuery.clone()
-    .modify(sortPageParams, query, 'ended')
+    .modify(sortPageParams, query, 'endedOn')
     .select(selectFields)
 
   // return result when both queries are finished

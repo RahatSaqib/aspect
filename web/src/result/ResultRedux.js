@@ -39,7 +39,7 @@ function receiveResults(json) {
   }
 }
 
-export function fetchResults(filters = Immutable.Map({ sampleId: '' }), sortCol = 'ended', sortDir = 'desc', page = 0, pageSize = 20){
+export function fetchResults(filters = Immutable.Map({ sampleId: '' }), sortCol = 'endedOn', sortDir = 'desc', page = 0, pageSize = 20){
   return dispatch => {
 
     dispatch(requestResults(sortCol, sortDir, page, pageSize, filters))
@@ -63,7 +63,7 @@ export function fetchResults(filters = Immutable.Map({ sampleId: '' }), sortCol 
 const Result = Immutable.Record({
   items: new Items(),
   table: new Table({
-    sortCol: 'ended',
+    sortCol: 'endedOn',
     sortDir: 'desc',
     pageSize: 20,
     filters: Immutable.fromJS({ sampleId: '' })
