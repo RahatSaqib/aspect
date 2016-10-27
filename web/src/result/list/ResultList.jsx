@@ -29,8 +29,8 @@ const messages = defineMessages({
     id: 'pages.ResultList.title',
     defaultMessage: 'Results'
   },
-  ended: {
-    id: 'pages.ResultList.Ended',
+  endedOn: {
+    id: 'pages.ResultList.EndedOn',
     defaultMessage: 'Test Date'
   },
   deviceName: {
@@ -44,10 +44,6 @@ const messages = defineMessages({
   patiendId: {
     id: 'pages.ResultList.patiendId',
     defaultMessage: 'Patient ID'
-  },
-  resultText: {
-    id: 'pages.ResultList.resultText',
-    defaultMessage: 'Result Text'
   }
 })
 
@@ -124,12 +120,11 @@ export class ResultList extends PureComponent {
           items={ this.props.items }
           table={ this.props.table }
           columns={[
-            { db: 'ended', title: formatMessage(messages.ended),
-              format: (data) => formatDate(data, 'user-timezone') },
+            { db: 'endedOn', title: formatMessage(messages.endedOn),
+              format: (data) => formatDate(data) },
             { db: 'deviceName', title: formatMessage(messages.deviceName) },
             { db: 'sampleId', title: formatMessage(messages.sampleId) },
-            { db: 'patientId', title: formatMessage(messages.patiendId) },
-            { db: 'resultText', title: formatMessage(messages.resultText) }
+            { db: 'patientId', title: formatMessage(messages.patiendId) }
           ]}
         />
       </div>

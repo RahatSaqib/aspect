@@ -119,242 +119,251 @@ function* seed(knex){
     deviceTypeCategoryId: deviceTypeCategoryLab
   })
 
-  const [deviceTypeIdRouter] = yield knex('DeviceType').insert({
-      name: 'Metacom Router',
-      manufacturer: 'Metacom',
-      deviceTypeCategoryId: deviceTypeCategoryConnectivity
-    }),
-    // Assays and AssayTypes
-    [assayTypeMTBRifId] = yield knex('AssayType').insert({
-      name: 'MTB/Rif',
-      i18nKey: 'AssayTypeMtbRif'
-    }),[assayTypeEbolaId] = yield knex('AssayType').insert({
-      name: 'Ebola',
-      i18nKey: 'AssayTypeEbola'
-    }), [assayTypeHivVlId] = yield knex('AssayType').insert({
-      name: 'HIV VL',
-      i18nKey: 'AssayTypeHivVl'
-    }), [assayTypeLipidPanelId] = yield knex('AssayType').insert({
-      name: 'Lipid Panel',
-      i18nKey: 'AssayTypeHivVl'
-    }),
-    // define resultData object
-    geneXpertResultDataSchema = JSON.stringify({
-      resultText: {
-        title: 'Result Text',
-        type: 'string',
-        i18nKey: 'ResultText'
-      },
-      probes: {
-        title: 'Probes',
-        type: 'object',
-        i18nKey: 'Probes',
-        properties: {
-          'probeA': {
-            title: 'Probe A',
-            type: 'string'
-          },
-          'probeB': {
-            title: 'Probe B',
-            type: 'string'
-          },
-          'probeC': {
-            title: 'Probe C',
-            type: 'string'
-          },
-          'probeD': {
-            title: 'Probe D',
-            type: 'string'
-          },
-          'probeE': {
-            title: 'Probe E',
-            type: 'string'
-          },
-          'probeSpc': {
-            title: 'Probe Spc',
-            type: 'string'
-          },
-          'qc1': {
-            title: 'QC1',
-            type: 'string'
-          },
-          'qc2': {
-            title: 'QC2',
-            type: 'string'
-          },
-          'probeACt': {
-            title: 'Probe A Ct',
-            type: 'number'
-          },
-          'probeBCt': {
-            title: 'Probe B Ct',
-            type: 'number'
-          },
-          'probeCCt': {
-            title: 'Probe C Ct',
-            type: 'number'
-          },
-          'probeDCt': {
-            title: 'Probe D Ct',
-            type: 'number'
-          },
-          'probeECt': {
-            title: 'Probe E Ct',
-            type: 'number'
-          },
-          'probeSpcCt': {
-            title: 'Probe Spc Ct',
-            type: 'number'
-          },
-          'qc1Ct': {
-            title: 'QC1 Ct',
-            type: 'number'
-          },
-          'qc2Ct': {
-            title: 'QC2 Ct',
-            type: 'number'
-          },
-          'probeAEndpt': {
-            title: 'Probe A Endpt',
-            type: 'number'
-          },
-          'probeBEndpt': {
-            title: 'Probe B Endpt',
-            type: 'number'
-          },
-          'probeCEndpt': {
-            title: 'Probe C Endpt',
-            type: 'number'
-          },
-          'probeDEndpt': {
-            title: 'Probe D Endpt',
-            type: 'number'
-          },
-          'probeEEndpt': {
-            title: 'Probe E Endpt',
-            type: 'number'
-          },
-          'probeSpcEndpt': {
-            title: 'Probe Spc Endpt',
-            type: 'number'
-          },
-          'qc1Endpt': {
-            title: 'QC1 Endpt',
-            type: 'number'
-          },
-          'qc2Endpt': {
-            title: 'QC2 Endpt',
-            type: 'number'
-          }
+  let [deviceTypeIdRouter] = yield knex('DeviceType').insert({
+    name: 'Metacom Router',
+    manufacturer: 'Metacom',
+    deviceTypeCategoryId: deviceTypeCategoryConnectivity
+  })
+
+  // Assays and AssayTypes
+  let [assayTypeMTBRifId] = yield knex('AssayType').insert({
+    name: 'MTB/Rif',
+    i18nKey: 'AssayTypeMtbRif'
+  })
+
+  let [assayTypeEbolaId] = yield knex('AssayType').insert({
+    name: 'Ebola',
+    i18nKey: 'AssayTypeEbola'
+  })
+
+  let [assayTypeHivVlId] = yield knex('AssayType').insert({
+    name: 'HIV VL',
+    i18nKey: 'AssayTypeHivVl'
+  })
+
+  let [assayTypeLipidPanelId] = yield knex('AssayType').insert({
+    name: 'Lipid Panel',
+    i18nKey: 'AssayTypeLipidPanel'
+  })
+
+  // define resultData object
+  const geneXpertResultDataSchema = JSON.stringify({
+    resultText: {
+      title: 'Result Text',
+      type: 'string',
+      list: true
+    },
+    probes: {
+      title: 'Probes',
+      type: 'object',
+      i18nKey: 'Probes',
+      properties: {
+        'probeA': {
+          title: 'Probe A',
+          type: 'string'
+        },
+        'probeB': {
+          title: 'Probe B',
+          type: 'string'
+        },
+        'probeC': {
+          title: 'Probe C',
+          type: 'string'
+        },
+        'probeD': {
+          title: 'Probe D',
+          type: 'string'
+        },
+        'probeE': {
+          title: 'Probe E',
+          type: 'string'
+        },
+        'probeSpc': {
+          title: 'Probe Spc',
+          type: 'string'
+        },
+        'qc1': {
+          title: 'QC1',
+          type: 'string'
+        },
+        'qc2': {
+          title: 'QC2',
+          type: 'string'
+        },
+        'probeACt': {
+          title: 'Probe A Ct',
+          type: 'number'
+        },
+        'probeBCt': {
+          title: 'Probe B Ct',
+          type: 'number'
+        },
+        'probeCCt': {
+          title: 'Probe C Ct',
+          type: 'number'
+        },
+        'probeDCt': {
+          title: 'Probe D Ct',
+          type: 'number'
+        },
+        'probeECt': {
+          title: 'Probe E Ct',
+          type: 'number'
+        },
+        'probeSpcCt': {
+          title: 'Probe Spc Ct',
+          type: 'number'
+        },
+        'qc1Ct': {
+          title: 'QC1 Ct',
+          type: 'number'
+        },
+        'qc2Ct': {
+          title: 'QC2 Ct',
+          type: 'number'
+        },
+        'probeAEndpt': {
+          title: 'Probe A Endpt',
+          type: 'number'
+        },
+        'probeBEndpt': {
+          title: 'Probe B Endpt',
+          type: 'number'
+        },
+        'probeCEndpt': {
+          title: 'Probe C Endpt',
+          type: 'number'
+        },
+        'probeDEndpt': {
+          title: 'Probe D Endpt',
+          type: 'number'
+        },
+        'probeEEndpt': {
+          title: 'Probe E Endpt',
+          type: 'number'
+        },
+        'probeSpcEndpt': {
+          title: 'Probe Spc Endpt',
+          type: 'number'
+        },
+        'qc1Endpt': {
+          title: 'QC1 Endpt',
+          type: 'number'
+        },
+        'qc2Endpt': {
+          title: 'QC2 Endpt',
+          type: 'number'
         }
       }
-    }),
-    geneXpertResultDataSchemaHiv = JSON.stringify({
-      resultText: {
-        title: 'Result Text',
-        type: 'string',
-        i18nKey: 'ResultText'
-      },
-      copies: {
-        title: 'Copies/mL',
-        type: 'number'
-      },
-      log: {
-        title: 'log',
-        type: 'number'
-      },
-      probes: {
-        title: 'Probes',
-        type: 'object',
-        i18nKey: 'Probes',
-        properties: {
-          'gpCt': {
-            title: 'GP Ct',
-            type: 'number'
-          },
-          'gpEndPt': {
-            title: 'GP Endpt',
-            type: 'number'
-          },
-          'cicCt': {
-            title: 'CIC Ct',
-            type: 'number'
-          },
-          'cicEndPt': {
-            title: 'CIC EndPt',
-            type: 'number'
-          },
-          'sacCt': {
-            title: 'SAC Ct',
-            type: 'number'
-          },
-          'sacEndPt': {
-            title: 'SAC EndPt',
-            type: 'number'
-          },
-          'npCt': {
-            title: 'NP Ct',
-            type: 'number'
-          },
-          'npEndPt': {
-            title: 'NP EndPt',
-            type: 'number'
-          },
-          'qc1Ct': {
-            title: 'QC1 Ct',
-            type: 'number'
-          },
-          'qc1Endpt': {
-            title: 'QC1 EndPt',
-            type: 'number'
-          },
-          'qc2Ct': {
-            title: 'QC2 Ct',
-            type: 'number'
-          },
-          'qc2Endpt': {
-            title: 'Qc2Endpt',
-            type: 'number'
-          }
+    }
+  })
+
+  const geneXpertResultDataSchemaHiv = JSON.stringify({
+    resultText: {
+      title: 'Result Text',
+      type: 'string',
+      i18nKey: 'ResultText'
+    },
+    copies: {
+      title: 'Copies/mL',
+      type: 'number'
+    },
+    log: {
+      title: 'log',
+      type: 'number'
+    },
+    probes: {
+      title: 'Probes',
+      type: 'object',
+      i18nKey: 'Probes',
+      properties: {
+        'gpCt': {
+          title: 'GP Ct',
+          type: 'number'
+        },
+        'gpEndPt': {
+          title: 'GP Endpt',
+          type: 'number'
+        },
+        'cicCt': {
+          title: 'CIC Ct',
+          type: 'number'
+        },
+        'cicEndPt': {
+          title: 'CIC EndPt',
+          type: 'number'
+        },
+        'sacCt': {
+          title: 'SAC Ct',
+          type: 'number'
+        },
+        'sacEndPt': {
+          title: 'SAC EndPt',
+          type: 'number'
+        },
+        'npCt': {
+          title: 'NP Ct',
+          type: 'number'
+        },
+        'npEndPt': {
+          title: 'NP EndPt',
+          type: 'number'
+        },
+        'qc1Ct': {
+          title: 'QC1 Ct',
+          type: 'number'
+        },
+        'qc1Endpt': {
+          title: 'QC1 EndPt',
+          type: 'number'
+        },
+        'qc2Ct': {
+          title: 'QC2 Ct',
+          type: 'number'
+        },
+        'qc2Endpt': {
+          title: 'Qc2Endpt',
+          type: 'number'
         }
       }
-    }),
+    }
+  })
 
-    [assayMtbRifId] = yield knex('Assay').insert({
-      name: 'GeneXpert MTB/Rif',
-      i18nKey: 'AssayGeneXpertMtbRif',
-      assayTypeId: assayTypeMTBRifId,
-      deviceTypeId: deviceTypeGeneXpertId,
-      resultCategory1Label: 'MTB',
-      resultCategory1i18nKey: 'ResultCategoryMtb',
-      resultCategory2Label: 'Rif',
-      resultCategory2i18nKey: 'ResultCategoryRif',
-      resultDataSchema: geneXpertResultDataSchema
-    }),
+  const [assayMtbRifId] = yield knex('Assay').insert({
+    name: 'GeneXpert MTB/Rif',
+    i18nKey: 'AssayGeneXpertMtbRif',
+    assayTypeId: assayTypeMTBRifId,
+    deviceTypeId: deviceTypeGeneXpertId,
+    resultCategory1Label: 'MTB',
+    resultCategory1i18nKey: 'ResultCategoryMtb',
+    resultCategory2Label: 'Rif',
+    resultCategory2i18nKey: 'ResultCategoryRif',
+    resultDataSchema: geneXpertResultDataSchema
+  })
 
-    [assayHivVlId] = yield knex('Assay').insert({
-      name: 'GeneXpert HIV VL',
-      i18nKey: 'AssayGeneXpertHivVl',
-      assayTypeId: assayTypeHivVlId,
-      deviceTypeId: deviceTypeGeneXpertId,
-      resultCategory1Label: 'MTB',
-      resultCategory1i18nKey: 'ResultCategoryMtb',
-      resultCategory2Label: 'Rif',
-      resultCategory2i18nKey: 'ResultCategoryRif',
-      resultDataSchema: geneXpertResultDataSchemaHiv
-    }),
+  const [assayHivVlId] = yield knex('Assay').insert({
+    name: 'GeneXpert HIV VL',
+    i18nKey: 'AssayGeneXpertHivVl',
+    assayTypeId: assayTypeHivVlId,
+    deviceTypeId: deviceTypeGeneXpertId,
+    resultCategory1Label: 'MTB',
+    resultCategory1i18nKey: 'ResultCategoryMtb',
+    resultCategory2Label: 'Rif',
+    resultCategory2i18nKey: 'ResultCategoryRif',
+    resultDataSchema: geneXpertResultDataSchemaHiv
+  })
 
-    [assayEbolaId] = yield knex('Assay').insert({
-      name: 'GeneXpert Ebola',
-      i18nKey: 'AssayGeneXpertEbola',
-      assayTypeId: assayTypeEbolaId,
-      deviceTypeId: deviceTypeGeneXpertId,
-      resultCategory1Label: 'GP',
-      resultCategory1i18nKey: 'ResultCategoryEbolaGp',
-      resultCategory2Label: 'NP',
-      resultCategory2i18nKey: 'ResultCategoryEbolaNp',
-      resultDataSchema: geneXpertResultDataSchema
-    })
+  const [assayEbolaId] = yield knex('Assay').insert({
+    name: 'GeneXpert Ebola',
+    i18nKey: 'AssayGeneXpertEbola',
+    assayTypeId: assayTypeEbolaId,
+    deviceTypeId: deviceTypeGeneXpertId,
+    resultCategory1Label: 'GP',
+    resultCategory1i18nKey: 'ResultCategoryEbolaGp',
+    resultCategory2Label: 'NP',
+    resultCategory2i18nKey: 'ResultCategoryEbolaNp',
+    resultDataSchema: geneXpertResultDataSchema
+  })
 
   yield knex('Assay').insert({
     name: 'Afinion HIV VL',
@@ -769,8 +778,8 @@ function* seed(knex){
       resultCategory2: result.category2,
       resultData: JSON.stringify(resultData),
       assayVersion: '4',
-      started: new Date(+now - 12*i*millisInHour),
-      ended: new Date(+now - 10*i*millisInHour),
+      startedOn: new Date(+now - 12*i*millisInHour),
+      endedOn: new Date(+now - 10*i*millisInHour),
       consumableSerial: i + '12',
       consumableExpirationDate: new Date(+now + 200*i*millisInHour),
       consumableLot: 'Lot ' + i%5,
@@ -845,8 +854,8 @@ function* seed(knex){
       resultCategory2: result.category2,
       resultData: JSON.stringify(resultData),
       assayVersion: '4',
-      started: new Date(+now - 12*i*millisInHour),
-      ended: new Date(+now - 10*i*millisInHour),
+      startedOn: new Date(+now - 12*i*millisInHour),
+      endedOn: new Date(+now - 10*i*millisInHour),
       consumableSerial: i + '12',
       consumableExpirationDate: new Date(+now + 200*i*millisInHour),
       consumableLot: 'Lot ' + i%5,
@@ -927,8 +936,8 @@ function* seed(knex){
       resultCategory1: result.category1,
       resultData: JSON.stringify(resultData),
       assayVersion: '4',
-      started: new Date(+now - 12*i*millisInHour),
-      ended: new Date(+now - 10*i*millisInHour),
+      startedOn: new Date(+now - 12*i*millisInHour),
+      endedOn: new Date(+now - 10*i*millisInHour),
       consumableSerial: i + '12',
       consumableExpirationDate: new Date(+now + 200*i*millisInHour),
       consumableLot: 'Lot ' + i%5,
@@ -948,78 +957,88 @@ function* seed(knex){
 
   // data filters
   const [dataFilterIdOH] = yield knex('DataFilter').insert({
-      name: 'Ohio Filter',
-      // TODO specify query constraint format (likely similar to MongoDB)
-      constraint: JSON.stringify({
-        state: {
-          id: countries.US.states.OH.id
-        }
-      })
-    }),
-    [dataFilterIdNE] = yield knex('DataFilter').insert({
-      name: 'Nebraska Filter',
-      constraint: JSON.stringify({
-        state: {
-          id: countries.US.states.NE.id
-        }
-      })
-    }),
-    [dataFilterIdOHWayne] = yield knex('DataFilter').insert({
-      name: 'Wayne County, OH Filter',
-      constraint: JSON.stringify({
-        lga: {
-          id: countries.US.states.OH.lgas.Wayne.id
-        }
-      })
-    }),
-    [dataFilterIdMASuffolk] = yield knex('DataFilter').insert({
-      name: 'Suffolk County, MA Filter',
-      constraint: JSON.stringify({
-        lga: {
-          id: countries.US.states.MA.lgas.Suffolk.id
-        }
-      })
-    }),
-    // Roles
-    [roleIdAdmin] = yield knex('Role').insert({
-      name: 'Admin',
-      partnerId: partnerOneId
-    }),
-    [roleIdOH] = yield knex('Role').insert({
-      name: 'Ohio Users',
-      partnerId: partnerOneId,
-      dataFilterId: dataFilterIdOH
-    }),
-    [roleIdNE] = yield knex('Role').insert({
-      name: 'Nebraska Users',
-      partnerId: partnerOneId,
-      dataFilterId: dataFilterIdNE
-    }),
-    [roleIdOHWayne] = yield knex('Role').insert({
-      name: 'Wayne County, OH Users',
-      partnerId: partnerOneId,
-      dataFilterId: dataFilterIdOHWayne
-    }),
-    [roleIdMASuffolk] = yield knex('Role').insert({
-      name: 'Suffolk County, MA Users',
-      partnerId: partnerOneId,
-      dataFilterId: dataFilterIdMASuffolk
-    }),
-    [roleIdParentOrgUnit] = yield knex('Role').insert({
-      name: 'Partner One Users',
-      partnerId: partnerOneId,
-      orgUnitId: partnerOneOrgUnitId
-    }),
-    [roleIdNortheast] = yield knex('Role').insert({
-      name: 'Northeast Users',
-      partnerId: partnerOneId,
-      orgUnitId: regionNortheastId
-    }),
-    [roleIdMidwest] = yield knex('Role').insert({
-      name: 'Midwest Users',
-      partnerId: partnerOneId,
-      orgUnitId: regionMidwestId
+    name: 'Ohio Filter',
+    // TODO specify query constraint format (likely similar to MongoDB)
+    constraint: JSON.stringify({
+      state: {
+        id: countries.US.states.OH.id
+      }
     })
+  })
+
+  const [dataFilterIdNE] = yield knex('DataFilter').insert({
+    name: 'Nebraska Filter',
+    constraint: JSON.stringify({
+      state: {
+        id: countries.US.states.NE.id
+      }
+    })
+  })
+
+  const [dataFilterIdOHWayne] = yield knex('DataFilter').insert({
+    name: 'Wayne County, OH Filter',
+    constraint: JSON.stringify({
+      lga: {
+        id: countries.US.states.OH.lgas.Wayne.id
+      }
+    })
+  })
+
+  const [dataFilterIdMASuffolk] = yield knex('DataFilter').insert({
+    name: 'Suffolk County, MA Filter',
+    constraint: JSON.stringify({
+      lga: {
+        id: countries.US.states.MA.lgas.Suffolk.id
+      }
+    })
+  })
+
+  // Roles
+  const [roleIdAdmin] = yield knex('Role').insert({
+    name: 'Admin',
+    partnerId: partnerOneId
+  })
+
+  const [roleIdOH] = yield knex('Role').insert({
+    name: 'Ohio Users',
+    partnerId: partnerOneId,
+    dataFilterId: dataFilterIdOH
+  })
+  const [roleIdNE] = yield knex('Role').insert({
+    name: 'Nebraska Users',
+    partnerId: partnerOneId,
+    dataFilterId: dataFilterIdNE
+  })
+
+  const [roleIdOHWayne] = yield knex('Role').insert({
+    name: 'Wayne County, OH Users',
+    partnerId: partnerOneId,
+    dataFilterId: dataFilterIdOHWayne
+  })
+
+  const [roleIdMASuffolk] = yield knex('Role').insert({
+    name: 'Suffolk County, MA Users',
+    partnerId: partnerOneId,
+    dataFilterId: dataFilterIdMASuffolk
+  })
+
+  const [roleIdParentOrgUnit] = yield knex('Role').insert({
+    name: 'Partner One Users',
+    partnerId: partnerOneId,
+    orgUnitId: partnerOneOrgUnitId
+  })
+
+  const [roleIdNortheast] = yield knex('Role').insert({
+    name: 'Northeast Users',
+    partnerId: partnerOneId,
+    orgUnitId: regionNortheastId
+  })
+
+  const [roleIdMidwest] = yield knex('Role').insert({
+    name: 'Midwest Users',
+    partnerId: partnerOneId,
+    orgUnitId: regionMidwestId
+  })
 
   // assign permissions to roles
   yield knex('RolePermission').insert([
@@ -1069,5 +1088,4 @@ function* seed(knex){
     { userId: userIds['steve'], roleId: roleIdMASuffolk },
     { userId: userIds['bill'], roleId: roleIdMASuffolk },
     { userId: userIds['bill'], roleId: roleIdOH }])
-
 }
