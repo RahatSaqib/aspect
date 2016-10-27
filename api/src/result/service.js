@@ -5,7 +5,8 @@ const { knex, filterParams, sortPageParams } = require('../db')
 const { getConstraints, addConstraints } = require('../auth/constraints')
 
 const SELECT_LIST_FIELDS = [
-  'r.id', 'r.endedOn', 'd.name as deviceName', 'st.name as stateName', 'lg.name as lgaName',
+  'r.id', 'r.endedOn', 'd.name as deviceName', 'c.name as countryName',
+  'st.name as stateName', 'lg.name as lgaName',
   'rc1.name as resultCategory1Name', 'rc2.name as resultCategory2Name',
   's.sampleId', 'r.patientId', 'a.name as assayName'
 ]
@@ -38,6 +39,7 @@ function* listResults(request){
   const resultQuery = knex('Result as r')
     .innerJoin('Assay as a', 'r.assayId', 'a.id')
     .innerJoin('Device as d', 'r.deviceId', 'd.id')
+    .leftJoin('Country as c', 'r.countryId', 'c.id')
     .leftJoin('State as st', 'r.stateId', 'st.id')
     .leftJoin('Lga as lg', 'r.lgaId', 'lg.id')
     .leftJoin('ResultCategory as rc1', 'r.resultCategory1', 'rc1.id')
@@ -104,8 +106,7 @@ function* listResultTypes(request){
   const dataConstraints = yield getConstraints(auth.credentials)
 
   const resultTypeQuery = knex('ResultType as rt')
-    .modify(filterParams, query, { 'name': 'rt.name'})
-    .modify(addConstraints, dataConstraints, {device: 'd'})
+    .modify(filterParams, query, { 'name': 'rt.name' })
 
   // get total count for paging
   const getCount = resultTypeQuery.clone()
