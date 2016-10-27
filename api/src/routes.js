@@ -16,7 +16,7 @@ function addClientRoutes(server){
 }
 
 function addDeviceRoutes(server){
-  server.route(require('./device/deviceEndpoints').map(decorateDeviceAPI('device')))
+  server.route(require('./deviceApi/endpoints').map(decorateDeviceAPI('device')))
 }
 
 // Decorates an API route with common configuration so
