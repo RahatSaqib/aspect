@@ -120,7 +120,7 @@ server.auth.strategy('jwt', 'jwt', {
     // ["+device", "site:view", "site:edit"] will authorize anyone with device (required)
     //   and either "site:view" or "site:edit" permissions
 
-    const isDeviceApi = (decoded.deviceApiKeyId > 0)
+    const isDeviceApi = (+decoded.dak > 0)
     const scope = [isDeviceApi ? 'deviceApi' : 'clientApi']
       .concat(decoded.modules || [], decoded.permissions || [])
 

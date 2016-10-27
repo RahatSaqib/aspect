@@ -213,11 +213,10 @@ function* getDeviceApiKey(request){
     return Boom.notFound()
   }
 
-  const {id: deviceApiKeyId} = devices[0]
+  const {id: dak} = devices[0]
 
   // create a new token
-  const token = jwt.sign({deviceApiKeyId},
-    config.secret, {issuer: 'https://www.aspect.id/device'})
+  const token = jwt.sign({dak}, config.secret)
 
   return {access: token}
 }

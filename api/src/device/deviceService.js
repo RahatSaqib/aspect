@@ -6,7 +6,7 @@ function* getDeviceByApiKeyId(request, fields=['d.id']){
   const devices = yield knex('DeviceApiKey as dak')
     .innerJoin('Device as d', 'dak.deviceId', 'd.id')
     .where({
-      'dak.id': +auth.credentials.deviceApiKeyId,
+      'dak.id': +auth.credentials.dak,
       'dak.revoked': false
     })
     .select(fields)
