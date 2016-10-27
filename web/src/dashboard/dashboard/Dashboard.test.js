@@ -8,7 +8,7 @@ import {Dashboard} from './Dashboard'
 
 describe('Dashboard', () => {
 
-  const user = new Immutable.Map({ name: 'Stefan Baumgartner', lang: 'en' })
+  const user = new Immutable.Map({ name: 'Stefan Baumgartner', lang: 'en', timezone: null })
   const intl = {
     formatMessage: message => message.defaultMessage
   }

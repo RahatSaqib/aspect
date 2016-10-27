@@ -37,8 +37,8 @@ describe('account details endpoints', function () {
       const expectedResponse = { value: 'Expected account details'}
 
       beforeEach(function () {
-        endpoint = setupRoute('PUT', '/account-details/current', {
-          saveAccountDetailsForLoggedInUser: function* () { return expectedResponse }
+        endpoint = setupRoute('PUT', '/account-details/current-contact', {
+          saveContactDetailsForLoggedInUser: function* () { return expectedResponse }
         })
       })
 

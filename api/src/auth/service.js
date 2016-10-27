@@ -1,13 +1,13 @@
-const crypto = require('crypto')
-const jwt = require('jsonwebtoken')
-const uuid = require('node-uuid')
-const Promise = require('bluebird')
-const Boom = require('boom')
-
+let crypto = require('crypto')
+let jwt = require('jsonwebtoken')
+let uuid = require('node-uuid')
+let Promise = require('bluebird')
+let Boom = require('boom')
+let _ = require('lodash')
+const bcrypt = require('bcrypt')
 const { createFetch, base, accept, header, method, body } = require('http-client')
 require('isomorphic-fetch')
 
-const bcrypt = require('bcrypt')
 const bcryptCompare = Promise.promisify(bcrypt.compare)
 const bcryptHash = Promise.promisify(bcrypt.hash)
 
@@ -18,15 +18,19 @@ function* checkAuthentication(){
   return { message: 'Welcome to the API!' }
 }
 
+function getUser(username) {
+  return query('Get basic user details').from('User as u')
+    .innerJoin('Person as p', 'u.id', 'p.userId')
+    .where({'u.name': username})
+    .first( 'u.lockedOut', 'u.failedPasswordAttempts', 'u.password',
+      'u.legacyPassword', 'u.id', 'u.name', 'p.culture', 'p.timezone',
+      'p.lastPartnerId as partnerId', 'p.lastCountryId as countryId')
+}
+
 function* authenticate(request){
   const {payload} = request
 
-  const user = yield query('Get basic user details').from('User as u')
-    .innerJoin('Person as p', 'u.id', 'p.userId')
-    .where({'u.name': payload.name})
-    .first( 'u.lockedOut', 'u.failedPasswordAttempts', 'u.password',
-            'u.legacyPassword', 'u.id', 'u.name', 'p.culture',
-            'p.lastPartnerId as partnerId', 'p.lastCountryId as countryId')
+  const user = yield getUser(payload.name)
 
   if(!user){
     return Boom.unauthorized()
@@ -83,37 +87,19 @@ function* authenticate(request){
     }
   }
 
-  // upsert refresh token
   const now = new Date()
-  const expires = new Date(now.getTime() + 7 * 86400000) // 7 days from now
   const refreshToken = crypto.randomBytes(48).toString('base64')
   const clientId = payload.clientId || uuid.v4()
 
-  // Use raw query as upsert not yet supported in knex#701
-  const setRefreshToken = query('Create new refresh token for the user').raw('INSERT INTO RefreshToken set ? ON DUPLICATE KEY UPDATE ?', [
-    {
-      userId: user.id,
-      clientId,
-      clientName: payload.clientName,
-      token: refreshToken,
-      expires: expires,
-      createdOn: now
-    },
-    {
-      token: refreshToken,
-      expires: expires
-    }
-  ])
+  yield setRefreshToken(user.id, payload.clientName, clientId, refreshToken, now)
 
-  const updatePwAttempts = query('Update failed password attempts to 0').from('User')
+  yield query('Update failed password attempts to 0').from('User')
     .where({id: user.id})
     .update({
       failedPasswordAttempts: 0,
       lastLogin: now,
       lastActive: now
     })
-
-  yield Promise.all([setRefreshToken, updatePwAttempts])
 
   // finally, return the access token...
   const accessToken = yield getAccessToken(user)
@@ -124,6 +110,24 @@ function* authenticate(request){
   }
 }
 
+function setRefreshToken(userId, clientName, clientId, refreshToken, now){
+  const expires = new Date(now.getTime() + 7 * 86400000) // 7 days from now
+  // upsert refresh token
+  return query('Create new refresh token for the user')
+    .raw('INSERT INTO RefreshToken set ? ON DUPLICATE KEY UPDATE ?', [{
+      userId: userId,
+      clientId,
+      clientName: clientName,
+      token: refreshToken,
+      expires: expires,
+      createdOn: now
+    }, {
+      token: refreshToken,
+      expires: expires
+    }
+  ])
+}
+
 function* refreshToken(request){
   // find the token in the db
   const {clientId, token} = request.payload
@@ -132,7 +136,7 @@ function* refreshToken(request){
     .innerJoin('Person as p', 'u.id', 'p.userId')
     .where({clientId, token, revoked: 0})
     .first('rt.userId as id', 'rt.expires', 'u.name',
-      'p.culture', 'p.lastPartnerId as partnerId', 'p.lastCountryId as countryId')
+      'p.culture', 'p.timezone', 'p.lastPartnerId as partnerId', 'p.lastCountryId as countryId')
 
   if (!data) {
     return Boom.badRequest('Unable to find token or token revoked')
@@ -162,7 +166,7 @@ function* refreshToken(request){
 }
 
 // generate a new jwt for the given user data
-function getAccessToken({id, name, culture, partnerId, countryId}){
+function getAccessToken({id, name, culture, timezone, partnerId, countryId}){
   return query('Get permissions for user and partner')
     .from('Permission as p')
     .innerJoin('RolePermission as rp', 'p.id', 'rp.permissionId')
@@ -181,7 +185,8 @@ function getAccessToken({id, name, culture, partnerId, countryId}){
         // TODO should we remove modules since same info in permissions to reduce size of JWT?
         modules: data.map(p => p.module),
         permissions: data.map(p => `${p.module}:${p.activity}`),
-        culture: culture || 'en-US'
+        culture: culture || 'en-US',
+        timezone: timezone || 'Eastern Standard Time'
       },
       config.secret, {
         expiresIn: '1 hour',
@@ -192,8 +197,71 @@ function getAccessToken({id, name, culture, partnerId, countryId}){
     })
 }
 
+function* updateUsernameAndPasswordForLoggedInUser(request){
+  let {payload} = request
+
+  let loggedInUser = yield getUser(request.auth.credentials.name)
+
+  if(!loggedInUser){
+    return Boom.notFound('User not Found')
+  }
+  const pwResult = yield bcryptCompare(payload.currentPassword, loggedInUser.password)
+  if (!pwResult) {
+    return Boom.forbidden('Incorrect password.')
+  }
+  const changedFields = {}
+  if(payload.newUsername) {
+    const existingUserIdWithNewUsername = yield query('Get user id for username').from('User as u')
+      .where({'u.name': payload.newUsername})
+      .first('u.id')
+    if(existingUserIdWithNewUsername) {
+      if(existingUserIdWithNewUsername.id !== loggedInUser.id) {
+        return Boom.conflict('Username already in use')
+      }
+    } else if(payload.newUsername != loggedInUser.name) {
+      changedFields.name = payload.newUsername
+    }
+  }
+
+  const now = new Date()
+  if(payload.newPassword) {
+    const passwordsMatch = yield bcryptCompare(payload.newPassword, loggedInUser.password)
+    if(!passwordsMatch) {
+      changedFields.password = yield bcryptHash(payload.newPassword, parseInt(config.passwordSaltRounds))
+      changedFields.lastPasswordChange = now
+    }
+  }
+
+  if(!_.isEmpty(changedFields)) {
+    yield query('Save user details for currently logged in user').from('User as u')
+      .where({'u.id': loggedInUser.id})
+      .update(changedFields)
+
+    loggedInUser = yield getUser(changedFields.name || loggedInUser.name)
+  }
+
+  const refreshToken = crypto.randomBytes(48).toString('base64')
+  const clientId = payload.clientId || uuid.v4()
+
+  yield setRefreshToken(loggedInUser.id, payload.clientName, clientId, refreshToken, now)
+
+  const accessToken = yield getAccessToken(loggedInUser)
+
+  return {
+    ok: true,
+    data: {
+      changedFields: Object.keys(_.omit(changedFields, ['lastPasswordChange'])),
+      username: loggedInUser.name
+    },
+    access: accessToken,
+    refresh: refreshToken,
+    clientId
+  }
+}
+
 module.exports = {
   authenticate,
   checkAuthentication,
-  refreshToken
+  refreshToken,
+  updateUsernameAndPasswordForLoggedInUser
 }

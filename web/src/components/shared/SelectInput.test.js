@@ -10,6 +10,7 @@ describe('SelectInput', () => {
   const props = {
     name: 'fieldName',
     label: 'Field Label',
+    autoWidth: false,
     disabled: false,
     dataSource: [{personId: '123', fullName: 'Jim Jefferson'},
       {personId: '124', fullName: 'Billy Idol'},
@@ -30,7 +31,8 @@ describe('SelectInput', () => {
     assert.deepEqual(selectInputProps.selectFieldProps, {
       floatingLabelText: props.label,
       fullWidth: props.fullWidth,
-      disabled: props.disabled
+      disabled: props.disabled,
+      autoWidth: false
     })
   })
 

@@ -9,12 +9,14 @@ import * as localStorage from '../shared/utils/localStorage'
 import { addError } from '../error/ErrorRedux'
 
 export const types = {
+  HYDRATE_FROM_LOCAL_STORAGE: 'HYDRATE_FROM_LOCAL_STORAGE',
   LOGIN_REQUEST: 'LOGIN_REQUEST',
   LOGIN_SUCCESS: 'LOGIN_SUCCESS',
   LOGIN_FAILURE: 'LOGIN_FAILURE',
   LOGOUT_SUCCESS: 'LOGOUT_SUCCESS',
   CHANGE_LANGUAGE: 'CHANGE_LANGUAGE',
-  TOGGLE_DRAWER: 'TOGGLE_DRAWER'
+  TOGGLE_DRAWER: 'TOGGLE_DRAWER',
+  CHANGE_TIMEZONE: 'CHANGE_TIMEZONE'
 }
 /*
  * ---------------- Action Creators -----------------
@@ -25,24 +27,28 @@ export function loginRequest() {
   }
 }
 
-export function loginSuccess(name, culture, lang) {
+export function loginSuccess(name, culture, lang, timezone, permissions) {
 
   return {
     type: types.LOGIN_SUCCESS,
     name,
     culture,
     lang,
+    timezone,
+    permissions,
     drawerOpen: localStorage.isDrawerOpen()
   }
 }
 
-export function refreshSuccess(name, culture, lang) {
+export function refreshSuccess(name, culture, lang, timezone, permissions) {
 
   return {
     type: types.LOGIN_SUCCESS,
     name,
     culture,
     lang,
+    timezone,
+    permissions,
     drawerOpen: localStorage.isDrawerOpen()
   }
 }
@@ -50,9 +56,10 @@ export function refreshSuccess(name, culture, lang) {
 export function hydrateFromLocalStorage() {
 
   return {
-    type: types.LOGIN_SUCCESS,
+    type: types.HYDRATE_FROM_LOCAL_STORAGE,
     culture: localStorage.getCulture(),
     lang: localStorage.getLang(),
+    timezone: localStorage.getTimezone(),
     drawerOpen: localStorage.isDrawerOpen()
   }
 }
@@ -78,6 +85,14 @@ export function changeLanguage(lang, culture) {
     type: types.CHANGE_LANGUAGE,
     lang,
     culture
+  }
+}
+
+export function changeTimezone(timezone) {
+  localStorage.updateTimezone(timezone)
+  return {
+    type: types.CHANGE_TIMEZONE,
+    timezone
   }
 }
 
@@ -136,7 +151,7 @@ export function loginStart(login) {
 
         // We can dispatch many times!
         // Here, we update the app state with the results of the API call.
-        dispatch(loginSuccess(jwt.name, jwt.culture, jwt.lang))
+        dispatch(loginSuccess(jwt.name, jwt.culture, jwt.lang, jwt.timezone, jwt.permissions))
 
         browserHistory.push('/dashboard')
       })
@@ -183,7 +198,7 @@ export function refreshStart() {
       .then(json => {
         let jwt = storeAccess(json)
 
-        dispatch(refreshSuccess(jwt.name, jwt.culture, jwt.lang))
+        dispatch(refreshSuccess(jwt.name, jwt.culture, jwt.lang, jwt.timezone, jwt.permissions))
       })
       .catch(() => {
         dispatch(logoutStart())
@@ -199,7 +214,7 @@ function storeAccess(json) {
 
   const lang = jwt.culture.substring(0, 2)
   localStorage.updateLanguageAndCulture(lang, jwt.culture)
-
+  localStorage.updateTimezone(jwt.timezone)
   return jwt
 }
 /*
@@ -209,6 +224,8 @@ const User = Immutable.Record({
   name: '',
   culture: 'en-US',
   lang: 'en',
+  timezone: 'Eastern Standard Time',
+  permissions: Immutable.List(),
   drawerOpen: true,
   loggedIn: false
 })
@@ -217,6 +234,13 @@ const initialState = new User()
 
 export default function authReducer(state = initialState, action) {
   switch (action.type) {
+  case types.HYDRATE_FROM_LOCAL_STORAGE:
+    return state.merge({
+      culture: action.culture,
+      lang: action.lang,
+      timezone: action.timezone,
+      loggedIn: true
+    })
   case types.LOGIN_REQUEST:
     return state.merge({ loggedIn: false })
   case types.LOGIN_SUCCESS:
@@ -224,6 +248,8 @@ export default function authReducer(state = initialState, action) {
       name: action.name,
       culture: action.culture,
       lang: action.lang,
+      timezone: action.timezone,
+      permissions: action.permissions,
       loggedIn: true,
       drawerOpen: action.drawerOpen
     })
@@ -235,6 +261,10 @@ export default function authReducer(state = initialState, action) {
     return state.merge({
       lang: action.lang,
       culture: action.culture
+    })
+  case types.CHANGE_TIMEZONE:
+    return state.merge({
+      timezone: action.timezone
     })
   case types.TOGGLE_DRAWER:
     return state.merge({

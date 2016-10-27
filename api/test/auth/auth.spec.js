@@ -10,10 +10,13 @@ let assert = chai.assert
 
 describe('Authentication routes',function(){
 
-  let path = '/api/auth'
-  let jwToken = ''
-  let refreshToken = ''
-  let clientId = ''
+  const adminUsername = 'admin', adminPassword = 'test07'
+
+  let path = '/api/auth', jwToken = '', refreshToken = '', clientId = ''
+
+  beforeEach(function(){
+    path = '/api/auth'
+  })
 
   describe('POST',function(){
 
@@ -32,7 +35,7 @@ describe('Authentication routes',function(){
     it('should return 400 and error message if user name is provided, but pw is missing',function(done){
       server
       .post(path)
-      .send({ name: 'admin' })
+      .send({ name: adminUsername })
       .end(function(err,res){
         assert.equal(res.status, 400)
         assert.equal(res.body.message, 'child "password" fails because ["password" is required]')
@@ -43,7 +46,7 @@ describe('Authentication routes',function(){
     it('should return 400 and error message if user name and password is provided, but client name is missing',function(done){
       server
       .post(path)
-      .send({ name: 'admin', password: 'password' })
+      .send({ name: adminUsername, password: 'password' })
       .end(function(err,res){
         assert.equal(res.status, 400)
         assert.equal(res.body.message, 'child "clientName" fails because ["clientName" is required]')
@@ -64,7 +67,7 @@ describe('Authentication routes',function(){
     it('should return 401 and error message if incorrect password',function(done){
       server
       .post(path)
-      .send({ name: 'admin', password: 'password', clientName: 'Mocha/Chai' })
+      .send({ name: adminUsername, password: 'password', clientName: 'Mocha/Chai' })
       .end(function(err,res){
         assert.equal(res.status, 401)
         assert.equal(res.body.message, 'Authentication failed. Wrong password.')
@@ -75,7 +78,7 @@ describe('Authentication routes',function(){
     it('should return a JSON message that contains a valid jwt, access token, and client ID if username/password are correct',function(done){
       server
       .post(path)
-      .send({ name: 'admin', password: 'test07', clientName: 'Mocha/Chai' })
+      .send({ name: adminUsername, password: adminPassword, clientName: 'Mocha/Chai' })
       .end(function(err,res){
         assert.equal(res.status, 200)
         assert.isAbove(res.body.access.length, 100)
@@ -189,4 +192,364 @@ describe('Authentication routes',function(){
 
   })
 
+  describe('PUT to /update-login-details', function() {
+    beforeEach(function(){
+      path = '/api/auth/update-login-details'
+    })
+
+    it('should allow users to login with their new username after they have changed it',function(done){
+      const newUsername = 'new-username'
+      server
+        .put(path)
+        .send({currentPassword: adminPassword, newUsername: 'new-username', clientName: 'Mocha/Chai'})
+        .set('Authorization', 'Bearer ' + shared.token)
+        .end(function(err,res){
+          assert.equal(res.status, 200)
+          assert.isTrue(res.body.ok)
+          assert.equal(res.body.data.username, newUsername)
+          assert.deepEqual(res.body.data.changedFields, ['name'])
+
+          // save token for the following tests:
+          jwToken = res.body.access
+          shared.token = jwToken
+          refreshToken = res.body.refresh
+          clientId = res.body.clientId
+
+          jwt.verify(res.body.access, config.secret, function (err, decoded) {
+
+            assert.isNotOk(err) // isNotOk = is falsy
+            assert.property(decoded, 'name')
+            assert.equal(decoded.name, newUsername)
+            assert.property(decoded, 'modules')
+            assert.property(decoded, 'permissions')
+            assert.property(decoded, 'iat')
+            assert.property(decoded, 'exp')
+            assert.property(decoded, 'iss')
+
+            server
+              .post('/api/auth')
+              .send({ name: newUsername, password: adminPassword, clientName: 'Mocha/Chai' })
+              .end(function(err,res){
+                assert.equal(res.status, 200)
+                assert.isAbove(res.body.access.length, 100)
+                assert.isAbove(res.body.refresh.length, 50)
+                assert.isAbove(res.body.clientId.length, 32)
+
+                // save token for the following tests:
+                jwToken = res.body.access
+                shared.token = jwToken
+                refreshToken = res.body.refresh
+                clientId = res.body.clientId
+
+                jwt.verify(res.body.access, config.secret, function (err, decoded) {
+                  assert.isNotOk(err) // isNotOk = is falsy
+                  assert.property(decoded, 'name')
+                  assert.equal(decoded.name, newUsername)
+                  assert.property(decoded, 'modules')
+                  assert.property(decoded, 'permissions')
+                  assert.property(decoded, 'iat')
+                  assert.property(decoded, 'exp')
+                  assert.property(decoded, 'iss')
+
+                  //Clean Up: Update the user with their old username again
+                  server
+                    .put(path)
+                    .send({currentPassword: adminPassword, newUsername: adminUsername, clientName: 'Mocha/Chai'})
+                    .set('Authorization', 'Bearer ' + shared.token)
+                    .end(function(err,res){
+                      assert.equal(res.status, 200)
+                      assert.isTrue(res.body.ok)
+                      assert.equal(res.body.data.username, adminUsername)
+                      assert.deepEqual(res.body.data.changedFields, ['name'])
+
+                      // save token for the following tests:
+                      jwToken = res.body.access
+                      shared.token = jwToken
+                      refreshToken = res.body.refresh
+                      clientId = res.body.clientId
+
+                      jwt.verify(res.body.access, config.secret, function (err, decoded) {
+
+                        assert.isNotOk(err) // isNotOk = is falsy
+                        assert.property(decoded, 'name')
+                        assert.equal(decoded.name, adminUsername)
+                        assert.property(decoded, 'modules')
+                        assert.property(decoded, 'permissions')
+                        assert.property(decoded, 'iat')
+                        assert.property(decoded, 'exp')
+                        assert.property(decoded, 'iss')
+
+                        server
+                          .post('/api/auth')
+                          .send({ name: adminUsername, password: adminPassword, clientName: 'Mocha/Chai' })
+                          .end(function(err,res){
+                            assert.equal(res.status, 200)
+                            assert.isAbove(res.body.access.length, 100)
+                            assert.isAbove(res.body.refresh.length, 50)
+                            assert.isAbove(res.body.clientId.length, 32)
+
+                            // save token for the following tests:
+                            jwToken = res.body.access
+                            shared.token = jwToken
+                            refreshToken = res.body.refresh
+                            clientId = res.body.clientId
+
+                            jwt.verify(res.body.access, config.secret, function (err, decoded) {
+                              assert.isNotOk(err) // isNotOk = is falsy
+                              assert.property(decoded, 'name')
+                              assert.equal(decoded.name, adminUsername)
+                              assert.property(decoded, 'modules')
+                              assert.property(decoded, 'permissions')
+                              assert.property(decoded, 'iat')
+                              assert.property(decoded, 'exp')
+                              assert.property(decoded, 'iss')
+
+                              done()
+                            })
+                          })
+                      })
+                    })
+                })
+              })
+          })
+        })
+    })
+
+    it('should allow users to login with their new password after they have changed it',function(done){
+      const newPassword = '0mgIt5aP@ssw0rd!'
+      server
+        .put(path)
+        .send({currentPassword: adminPassword, newPassword: newPassword, clientName: 'Mocha/Chai'})
+        .set('Authorization', 'Bearer ' + shared.token)
+        .end(function(err,res){
+          assert.equal(res.status, 200)
+          assert.isTrue(res.body.ok)
+          assert.equal(res.body.data.username, adminUsername)
+          assert.deepEqual(res.body.data.changedFields, ['password'])
+
+          // save token for the following tests:
+          jwToken = res.body.access
+          shared.token = jwToken
+          refreshToken = res.body.refresh
+          clientId = res.body.clientId
+
+          jwt.verify(res.body.access, config.secret, function (err, decoded) {
+
+            assert.isNotOk(err) // isNotOk = is falsy
+            assert.property(decoded, 'name')
+            assert.equal(decoded.name, adminUsername)
+            assert.property(decoded, 'modules')
+            assert.property(decoded, 'permissions')
+            assert.property(decoded, 'iat')
+            assert.property(decoded, 'exp')
+            assert.property(decoded, 'iss')
+
+            server
+              .post('/api/auth')
+              .send({ name: adminUsername, password: newPassword, clientName: 'Mocha/Chai' })
+              .end(function(err,res){
+                assert.equal(res.status, 200)
+                assert.isAbove(res.body.access.length, 100)
+                assert.isAbove(res.body.refresh.length, 50)
+                assert.isAbove(res.body.clientId.length, 32)
+
+                // save token for the following tests:
+                jwToken = res.body.access
+                shared.token = jwToken
+                refreshToken = res.body.refresh
+                clientId = res.body.clientId
+
+                jwt.verify(res.body.access, config.secret, function (err, decoded) {
+                  assert.isNotOk(err) // isNotOk = is falsy
+                  assert.property(decoded, 'name')
+                  assert.equal(decoded.name, adminUsername)
+                  assert.property(decoded, 'modules')
+                  assert.property(decoded, 'permissions')
+                  assert.property(decoded, 'iat')
+                  assert.property(decoded, 'exp')
+                  assert.property(decoded, 'iss')
+
+                  //Clean Up: Update the user with their old username again
+                  server
+                    .put(path)
+                    .send({currentPassword: newPassword, newPassword: adminPassword, clientName: 'Mocha/Chai'})
+                    .set('Authorization', 'Bearer ' + shared.token)
+                    .end(function(err,res){
+                      assert.equal(res.status, 200)
+                      assert.isTrue(res.body.ok)
+                      assert.equal(res.body.data.username, adminUsername)
+                      assert.deepEqual(res.body.data.changedFields, ['password'])
+
+                      // save token for the following tests:
+                      jwToken = res.body.access
+                      shared.token = jwToken
+                      refreshToken = res.body.refresh
+                      clientId = res.body.clientId
+
+                      jwt.verify(res.body.access, config.secret, function (err, decoded) {
+
+                        assert.isNotOk(err) // isNotOk = is falsy
+                        assert.property(decoded, 'name')
+                        assert.equal(decoded.name, adminUsername)
+                        assert.property(decoded, 'modules')
+                        assert.property(decoded, 'permissions')
+                        assert.property(decoded, 'iat')
+                        assert.property(decoded, 'exp')
+                        assert.property(decoded, 'iss')
+
+                        server
+                          .post('/api/auth')
+                          .send({ name: adminUsername, password: adminPassword, clientName: 'Mocha/Chai' })
+                          .end(function(err,res){
+                            assert.equal(res.status, 200)
+                            assert.isAbove(res.body.access.length, 100)
+                            assert.isAbove(res.body.refresh.length, 50)
+                            assert.isAbove(res.body.clientId.length, 32)
+
+                            // save token for the following tests:
+                            jwToken = res.body.access
+                            shared.token = jwToken
+                            refreshToken = res.body.refresh
+                            clientId = res.body.clientId
+
+                            jwt.verify(res.body.access, config.secret, function (err, decoded) {
+                              assert.isNotOk(err) // isNotOk = is falsy
+                              assert.property(decoded, 'name')
+                              assert.equal(decoded.name, adminUsername)
+                              assert.property(decoded, 'modules')
+                              assert.property(decoded, 'permissions')
+                              assert.property(decoded, 'iat')
+                              assert.property(decoded, 'exp')
+                              assert.property(decoded, 'iss')
+
+                              done()
+                            })
+                          })
+                      })
+                    })
+                })
+              })
+          })
+        })
+    })
+
+    it('should allow users to login with their new credentials after they have changed them',function(done){
+      const newUsername = 'ChangedUsername',
+        newPassword = 'Th3Passw0rdAreDifferent'
+      server
+        .put(path)
+        .send({currentPassword: adminPassword, newUsername: newUsername, newPassword: newPassword, clientName: 'Mocha/Chai'})
+        .set('Authorization', 'Bearer ' + shared.token)
+        .end(function(err,res){
+          assert.equal(res.status, 200)
+          assert.isTrue(res.body.ok)
+          assert.equal(res.body.data.username, newUsername)
+          assert.deepEqual(res.body.data.changedFields, ['name', 'password'])
+
+          // save token for the following tests:
+          jwToken = res.body.access
+          shared.token = jwToken
+          refreshToken = res.body.refresh
+          clientId = res.body.clientId
+
+          jwt.verify(res.body.access, config.secret, function (err, decoded) {
+
+            assert.isNotOk(err) // isNotOk = is falsy
+            assert.property(decoded, 'name')
+            assert.equal(decoded.name, newUsername)
+            assert.property(decoded, 'modules')
+            assert.property(decoded, 'permissions')
+            assert.property(decoded, 'iat')
+            assert.property(decoded, 'exp')
+            assert.property(decoded, 'iss')
+
+            server
+              .post('/api/auth')
+              .send({ name: newUsername, password: newPassword, clientName: 'Mocha/Chai' })
+              .end(function(err,res){
+                assert.equal(res.status, 200)
+                assert.isAbove(res.body.access.length, 100)
+                assert.isAbove(res.body.refresh.length, 50)
+                assert.isAbove(res.body.clientId.length, 32)
+
+                // save token for the following tests:
+                jwToken = res.body.access
+                shared.token = jwToken
+                refreshToken = res.body.refresh
+                clientId = res.body.clientId
+
+                jwt.verify(res.body.access, config.secret, function (err, decoded) {
+                  assert.isNotOk(err) // isNotOk = is falsy
+                  assert.property(decoded, 'name')
+                  assert.equal(decoded.name, newUsername)
+                  assert.property(decoded, 'modules')
+                  assert.property(decoded, 'permissions')
+                  assert.property(decoded, 'iat')
+                  assert.property(decoded, 'exp')
+                  assert.property(decoded, 'iss')
+
+                  //Clean Up: Update the user with their old username again
+                  server
+                    .put(path)
+                    .send({currentPassword: newPassword, newUsername: adminUsername, newPassword: adminPassword, clientName: 'Mocha/Chai'})
+                    .set('Authorization', 'Bearer ' + shared.token)
+                    .end(function(err,res){
+                      assert.equal(res.status, 200)
+                      assert.isTrue(res.body.ok)
+                      assert.equal(res.body.data.username, adminUsername)
+                      assert.deepEqual(res.body.data.changedFields, ['name', 'password'])
+
+                      // save token for the following tests:
+                      jwToken = res.body.access
+                      shared.token = jwToken
+                      refreshToken = res.body.refresh
+                      clientId = res.body.clientId
+
+                      jwt.verify(res.body.access, config.secret, function (err, decoded) {
+
+                        assert.isNotOk(err) // isNotOk = is falsy
+                        assert.property(decoded, 'name')
+                        assert.equal(decoded.name, adminUsername)
+                        assert.property(decoded, 'modules')
+                        assert.property(decoded, 'permissions')
+                        assert.property(decoded, 'iat')
+                        assert.property(decoded, 'exp')
+                        assert.property(decoded, 'iss')
+
+                        server
+                          .post('/api/auth')
+                          .send({ name: adminUsername, password: adminPassword, clientName: 'Mocha/Chai' })
+                          .end(function(err,res){
+                            assert.equal(res.status, 200)
+                            assert.isAbove(res.body.access.length, 100)
+                            assert.isAbove(res.body.refresh.length, 50)
+                            assert.isAbove(res.body.clientId.length, 32)
+
+                            // save token for the following tests:
+                            jwToken = res.body.access
+                            shared.token = jwToken
+                            refreshToken = res.body.refresh
+                            clientId = res.body.clientId
+
+                            jwt.verify(res.body.access, config.secret, function (err, decoded) {
+                              assert.isNotOk(err) // isNotOk = is falsy
+                              assert.property(decoded, 'name')
+                              assert.equal(decoded.name, adminUsername)
+                              assert.property(decoded, 'modules')
+                              assert.property(decoded, 'permissions')
+                              assert.property(decoded, 'iat')
+                              assert.property(decoded, 'exp')
+                              assert.property(decoded, 'iss')
+
+                              done()
+                            })
+                          })
+                      })
+                    })
+                })
+              })
+          })
+        })
+    })
+  })
 })
