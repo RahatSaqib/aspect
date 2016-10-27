@@ -233,7 +233,7 @@ function* updateUsernameAndPasswordForLoggedInUser(request){
   }
 
   if(!_.isEmpty(changedFields)) {
-    yield query('Save user details for currently logged in user').from('user as u')
+    yield query('Save user details for currently logged in user').from('User as u')
       .where({'u.id': loggedInUser.id})
       .update(changedFields)
 
