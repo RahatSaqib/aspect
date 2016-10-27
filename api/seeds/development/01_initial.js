@@ -899,8 +899,11 @@ function* seed(knex){
     let copies = 3200
     let log = 5
     if (result === possibleResults[0]){
-      copies =Math.random(500000)
-      log = Math.random(6)
+      copies = Math.floor(Math.random() * 500000)
+      log = Math.round(Math.random() * 600) / 100
+    } else {
+      copies = null
+      log = null
     }
 
     resultData.copies = copies
