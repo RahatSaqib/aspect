@@ -117,27 +117,41 @@ function* seed(knex){
     deviceTypeCategoryId: deviceTypeCategoryLab
   })
 
-  const [deviceTypeIdRouter] = yield knex('DeviceType').insert({
-      name: 'Metacom Router',
-      manufacturer: 'Metacom',
-      deviceTypeCategoryId: deviceTypeCategoryConnectivity
-    }),
-    // Assays and AssayTypes
-    [assayTypeMTBRifId] = yield knex('AssayType').insert({
-      name: 'MTB/Rif',
-      i18nKey: 'AssayTypeMtbRif'
-    }), [assayTypeEbolaId] = yield knex('AssayType').insert({
-      name: 'Ebola',
-      i18nKey: 'AssayTypeEbola'
-    }), [assayTypeHIVVLId] = yield knex('AssayType').insert({
-      name: 'HIV VL',
-      i18nKey: 'AssayTypeHivVl'
-    }), [assayTypeLipidPanelId] = yield knex('AssayType').insert({
-      name: 'Lipid Panel',
-      i18nKey: 'AssayTypeHivVl'
-    }),
-    // define resultData object
-    geneXpertResultDataSchema = JSON.stringify({ probes: {
+  let [deviceTypeIdRouter] = yield knex('DeviceType').insert({
+    name: 'Metacom Router',
+    manufacturer: 'Metacom',
+    deviceTypeCategoryId: deviceTypeCategoryConnectivity
+  })
+
+  // Assays and AssayTypes
+  let [assayTypeMTBRifId] = yield knex('AssayType').insert({
+    name: 'MTB/Rif',
+    i18nKey: 'AssayTypeMtbRif'
+  })
+
+  let [assayTypeEbolaId] = yield knex('AssayType').insert({
+    name: 'Ebola',
+    i18nKey: 'AssayTypeEbola'
+  })
+
+  let [assayTypeHIVVLId] = yield knex('AssayType').insert({
+    name: 'HIV VL',
+    i18nKey: 'AssayTypeHivVl'
+  })
+
+  let [assayTypeLipidPanelId] = yield knex('AssayType').insert({
+    name: 'Lipid Panel',
+    i18nKey: 'AssayTypeLipidPanel'
+  })
+
+  // define resultData object
+  const geneXpertResultDataSchema = JSON.stringify({
+    resultText: {
+      title: 'Result Text',
+      type: 'string',
+      list: true
+    },
+    probes: {
       title: 'Probes',
       type: 'object',
       i18nKey: 'Probes',
@@ -238,23 +252,19 @@ function* seed(knex){
           title: 'QC2 Endpt',
           type: 'number'
         }
-      }}}),
-    [assayMtbRifId] = yield knex('Assay').insert({
-      name: 'GeneXpert MTB/Rif',
-      i18nKey: 'AssayGeneXpertMtbRif',
-      assayTypeId: assayTypeMTBRifId,
-      deviceTypeId: deviceTypeGeneXpertId,
-      resultCategory1Label: 'MTB',
-      resultCategory1i18nKey: 'ResultCategoryMtb',
-      resultCategory2Label: 'Rif',
-      resultCategory2i18nKey: 'ResultCategoryRif',
-      resultDataSchema: geneXpertResultDataSchema
-    })
+      }
+    }})
 
-  yield knex('Assay').insert({
+  const [assayMtbRifId] = yield knex('Assay').insert({
     name: 'GeneXpert MTB/Rif',
+    i18nKey: 'AssayGeneXpertMtbRif',
     assayTypeId: assayTypeMTBRifId,
-    deviceTypeId: deviceTypeGeneXpertId
+    deviceTypeId: deviceTypeGeneXpertId,
+    resultCategory1Label: 'MTB',
+    resultCategory1i18nKey: 'ResultCategoryMtb',
+    resultCategory2Label: 'Rif',
+    resultCategory2i18nKey: 'ResultCategoryRif',
+    resultDataSchema: geneXpertResultDataSchema
   })
 
   yield knex('Assay').insert({
@@ -609,21 +619,23 @@ function* seed(knex){
                           { resultText: 'ERROR', category1: resultCategoryErrorId, category2: null },
                           { resultText: 'Invalid', category1: resultCategoryInvalidId, category2: null }]
 
-  const probes = { probes: {  probeA: 'NEG', probeB: 'POS', probeC: 'NO RESULT',
-                              probeD: 'NEG', probeE: 'POS', probeSpc: 'NO RESULT',
-                              qc1: 'YES', qc2: 'No',
-                              probeACt: 12.32, probeBCt: 11.2, probeCCt: 12.5,
-                              probeDCt: 0.5, probeECt: 1.2, probeSpcCt: 5.78,
-                              qc1Ct: 1, qc2Ct: 0.007,
-                              probeAEndpt: 1.6, probeBEndpt: 2.33, probeCEndpt: 457,
-                              probeDEndpt: 12.43, probeEEndpt: 3.14, probeSpcEndpt: 8.9018,
-                              qc1Endpt: 0.1234, qc2Endpt: 1.22 }}
+  const data = {  resultText: '',
+                  probes: { probeA: 'NEG', probeB: 'POS', probeC: 'NO RESULT',
+                            probeD: 'NEG', probeE: 'POS', probeSpc: 'NO RESULT',
+                            qc1: 'YES', qc2: 'No',
+                            probeACt: 12.32, probeBCt: 11.2, probeCCt: 12.5,
+                            probeDCt: 0.5, probeECt: 1.2, probeSpcCt: 5.78,
+                            qc1Ct: 1, qc2Ct: 0.007,
+                            probeAEndpt: 1.6, probeBEndpt: 2.33, probeCEndpt: 457,
+                            probeDEndpt: 12.43, probeEEndpt: 3.14, probeSpcEndpt: 8.9018,
+                            qc1Endpt: 0.1234, qc2Endpt: 1.22 }}
 
   const resultsMtb = _.range(1, resultMtbNumber+1).map(i => {
     const device = devices[i % devices.length]
     const siteData = siteDatas.find((site) => { return site.id === device.siteId })
     const sample = samples[i % samples.length]
     const result = possibleResults[i % 5]
+    data.resultText = result.resultText
 
     return Object.assign({}, auditFields, {
       uniqueId: 'UQ-' + i,
@@ -639,13 +651,12 @@ function* seed(knex){
       latitude: 28.419348,
       resultTypeId: resultTypePatientId,
       sampleId: sample.id,
-      resultText: result.resultText,
       resultCategory1: result.category1,
       resultCategory2: result.category2,
-      resultData: JSON.stringify(probes),
+      resultData: JSON.stringify(data),
       assayVersion: '4',
-      started: new Date(+now - 12*i*millisInHour),
-      ended: new Date(+now - 10*i*millisInHour),
+      startedOn: new Date(+now - 12*i*millisInHour),
+      endedOn: new Date(+now - 10*i*millisInHour),
       consumableSerial: i + '12',
       consumableExpirationDate: new Date(+now + 200*i*millisInHour),
       consumableLot: 'Lot ' + i%5,
@@ -665,78 +676,88 @@ function* seed(knex){
 
   // data filters
   const [dataFilterIdOH] = yield knex('DataFilter').insert({
-      name: 'Ohio Filter',
-      // TODO specify query constraint format (likely similar to MongoDB)
-      constraint: JSON.stringify({
-        state: {
-          id: countries.US.states.OH.id
-        }
-      })
-    }),
-    [dataFilterIdNE] = yield knex('DataFilter').insert({
-      name: 'Nebraska Filter',
-      constraint: JSON.stringify({
-        state: {
-          id: countries.US.states.NE.id
-        }
-      })
-    }),
-    [dataFilterIdOHWayne] = yield knex('DataFilter').insert({
-      name: 'Wayne County, OH Filter',
-      constraint: JSON.stringify({
-        lga: {
-          id: countries.US.states.OH.lgas.Wayne.id
-        }
-      })
-    }),
-    [dataFilterIdMASuffolk] = yield knex('DataFilter').insert({
-      name: 'Suffolk County, MA Filter',
-      constraint: JSON.stringify({
-        lga: {
-          id: countries.US.states.MA.lgas.Suffolk.id
-        }
-      })
-    }),
-    // Roles
-    [roleIdAdmin] = yield knex('Role').insert({
-      name: 'Admin',
-      partnerId: partnerOneId
-    }),
-    [roleIdOH] = yield knex('Role').insert({
-      name: 'Ohio Users',
-      partnerId: partnerOneId,
-      dataFilterId: dataFilterIdOH
-    }),
-    [roleIdNE] = yield knex('Role').insert({
-      name: 'Nebraska Users',
-      partnerId: partnerOneId,
-      dataFilterId: dataFilterIdNE
-    }),
-    [roleIdOHWayne] = yield knex('Role').insert({
-      name: 'Wayne County, OH Users',
-      partnerId: partnerOneId,
-      dataFilterId: dataFilterIdOHWayne
-    }),
-    [roleIdMASuffolk] = yield knex('Role').insert({
-      name: 'Suffolk County, MA Users',
-      partnerId: partnerOneId,
-      dataFilterId: dataFilterIdMASuffolk
-    }),
-    [roleIdParentOrgUnit] = yield knex('Role').insert({
-      name: 'Partner One Users',
-      partnerId: partnerOneId,
-      orgUnitId: partnerOneOrgUnitId
-    }),
-    [roleIdNortheast] = yield knex('Role').insert({
-      name: 'Northeast Users',
-      partnerId: partnerOneId,
-      orgUnitId: regionNortheastId
-    }),
-    [roleIdMidwest] = yield knex('Role').insert({
-      name: 'Midwest Users',
-      partnerId: partnerOneId,
-      orgUnitId: regionMidwestId
+    name: 'Ohio Filter',
+    // TODO specify query constraint format (likely similar to MongoDB)
+    constraint: JSON.stringify({
+      state: {
+        id: countries.US.states.OH.id
+      }
     })
+  })
+
+  const [dataFilterIdNE] = yield knex('DataFilter').insert({
+    name: 'Nebraska Filter',
+    constraint: JSON.stringify({
+      state: {
+        id: countries.US.states.NE.id
+      }
+    })
+  })
+
+  const [dataFilterIdOHWayne] = yield knex('DataFilter').insert({
+    name: 'Wayne County, OH Filter',
+    constraint: JSON.stringify({
+      lga: {
+        id: countries.US.states.OH.lgas.Wayne.id
+      }
+    })
+  })
+
+  const [dataFilterIdMASuffolk] = yield knex('DataFilter').insert({
+    name: 'Suffolk County, MA Filter',
+    constraint: JSON.stringify({
+      lga: {
+        id: countries.US.states.MA.lgas.Suffolk.id
+      }
+    })
+  })
+
+  // Roles
+  const [roleIdAdmin] = yield knex('Role').insert({
+    name: 'Admin',
+    partnerId: partnerOneId
+  })
+
+  const [roleIdOH] = yield knex('Role').insert({
+    name: 'Ohio Users',
+    partnerId: partnerOneId,
+    dataFilterId: dataFilterIdOH
+  })
+  const [roleIdNE] = yield knex('Role').insert({
+    name: 'Nebraska Users',
+    partnerId: partnerOneId,
+    dataFilterId: dataFilterIdNE
+  })
+
+  const [roleIdOHWayne] = yield knex('Role').insert({
+    name: 'Wayne County, OH Users',
+    partnerId: partnerOneId,
+    dataFilterId: dataFilterIdOHWayne
+  })
+
+  const [roleIdMASuffolk] = yield knex('Role').insert({
+    name: 'Suffolk County, MA Users',
+    partnerId: partnerOneId,
+    dataFilterId: dataFilterIdMASuffolk
+  })
+
+  const [roleIdParentOrgUnit] = yield knex('Role').insert({
+    name: 'Partner One Users',
+    partnerId: partnerOneId,
+    orgUnitId: partnerOneOrgUnitId
+  })
+
+  const [roleIdNortheast] = yield knex('Role').insert({
+    name: 'Northeast Users',
+    partnerId: partnerOneId,
+    orgUnitId: regionNortheastId
+  })
+
+  const [roleIdMidwest] = yield knex('Role').insert({
+    name: 'Midwest Users',
+    partnerId: partnerOneId,
+    orgUnitId: regionMidwestId
+  })
 
   // assign permissions to roles
   yield knex('RolePermission').insert([
@@ -786,5 +807,4 @@ function* seed(knex){
     { userId: userIds['steve'], roleId: roleIdMASuffolk },
     { userId: userIds['bill'], roleId: roleIdMASuffolk },
     { userId: userIds['bill'], roleId: roleIdOH }])
-
 }
