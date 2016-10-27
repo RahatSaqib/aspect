@@ -142,6 +142,11 @@ export class ResultDetail extends PureComponent {
     }
   }
 
+  hasResultWithAssay() {
+    const { result } = this.props
+    return result && result.has('assay')
+  }
+
   renderProgress() {
     return (
       <LinearProgress />
@@ -316,10 +321,13 @@ export class ResultDetail extends PureComponent {
   }
 
   renderPaper() {
-    const { result } = this.props
     return (
       <Paper>
-        {result ? this.renderContent() : this.renderProgress()}
+        {
+          this.hasResultWithAssay() ?
+          this.renderContent() :
+          this.renderProgress()
+        }
       </Paper>
     )
   }
