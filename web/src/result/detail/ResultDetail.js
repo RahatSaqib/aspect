@@ -13,12 +13,16 @@ import Helmet from 'react-helmet'
 // Material-UI
 import Paper from 'material-ui/Paper'
 import LinearProgress from 'material-ui/LinearProgress'
+import { Card, CardHeader, CardText } from 'material-ui/Card'
 
 // Our own imports
 import {
   fetchSingleResult
 } from '../ResultRedux'
-import ReadOnlyFields from '../../components/shared/ReadOnlyFields'
+import {
+  ReadOnlyField,
+  ReadOnlyFields
+} from '../../components/shared/ReadOnlyFields'
 import styles from './ResultDetail.css'
 
 const cx = classnames.bind(styles)
@@ -94,6 +98,12 @@ const messages = defineMessages({
   }
 })
 
+// Iterate JSON schema level 2 and reduce it with resultData into a fields list
+export const makeLevel2TupleMapper = (resultData, outerKey) => ([key, value]) => ({
+  label: value.get('title'),
+  value: resultData.getIn([outerKey, key]) || ''
+})
+
 export class ResultDetail extends PureComponent {
 
   static propTypes = {
@@ -133,9 +143,9 @@ export class ResultDetail extends PureComponent {
   }
 
   renderProgress() {
-    const { result } = this.props
-
-    return !result && <LinearProgress />
+    return (
+      <LinearProgress />
+    )
   }
 
   renderLeftColumnFields() {
@@ -182,7 +192,6 @@ export class ResultDetail extends PureComponent {
     ]
     return (
       <ReadOnlyFields
-        className={cx('FieldsContainer__LeftColumn__Content')}
         fields={fields}
       />
     )
@@ -232,28 +241,86 @@ export class ResultDetail extends PureComponent {
     ]
     return (
       <ReadOnlyFields
-        className={cx('FieldsContainer__RightColumn__Content')}
         fields={fields}
       />
     )
   }
 
-  renderContent() {
-    const { result } = this.props
-    if (!result) {
-      return
+  renderSchemaFields() {
+    if (!this.hasResultWithAssay()) {
+      return false
     }
+    const { result } = this.props
+    const resultDataSchema = result.getIn(['assay', 'resultDataSchema'])
+    const resultData = result.get('resultData')
+
+    return resultDataSchema
+      .filter((value, key) => key !== 'resultText')
+      .entrySeq()
+      .map(([key, value]) => {
+        // Level 1: "Probes"
+        if (value.get('type') === 'object') {
+          // Level 2: "Probes.ProbeA"
+          const fields = value
+            .get('properties')
+            .entrySeq()
+            .map(makeLevel2TupleMapper(resultData, key))
+            .sortBy(({label}) => label)
+            .toJS()
+
+          return (
+            <Card className={cx('Card')} key={key}>
+              <CardHeader
+                title={value.get('title')/* TODO: i18n */}
+                actAsExpander={true}
+                showExpandableButton={true}
+              />
+              <CardText expandable={true}>
+                <ReadOnlyFields
+                  fields={fields}
+                />
+              </CardText>
+            </Card>
+          )
+        } else {
+          // TODO: render level one string/number. Or there's no such case?
+          return (
+            <ReadOnlyField
+              key={key}
+              label={value.get('title')}
+              value={resultData.get(key)}
+            />
+          )
+        }
+      })
+  }
+
+  renderContent() {
     return (
       <div className={cx('FieldsContainer')}>
         <div className="pure-g">
           <div className="pure-u-lg-1-2 pure-u-md-1-2 pure-u-sm-1-2">
-            {this.renderLeftColumnFields()}
+            <div className={cx('FieldsContainer__LeftColumn__Content')}>
+              {this.renderLeftColumnFields()}
+            </div>
           </div>
           <div className="pure-u-lg-1-2 pure-u-md-1-2 pure-u-sm-1-2">
-            {this.renderRightColumnFields()}
+            <div className={cx('FieldsContainer__RightColumn__Content')}>
+              {this.renderRightColumnFields()}
+              {this.renderSchemaFields()}
+            </div>
           </div>
         </div>
       </div>
+    )
+  }
+
+  renderPaper() {
+    const { result } = this.props
+    return (
+      <Paper>
+        {result ? this.renderContent() : this.renderProgress()}
+      </Paper>
     )
   }
 
@@ -264,10 +331,7 @@ export class ResultDetail extends PureComponent {
     return (
       <div className={cx('Content')}>
         <Helmet title={formatMessage(messages.title)} titleTemplate="%s - Aspect" defaultTitle="Aspect" />
-        <Paper>
-          {this.renderProgress()}
-          {this.renderContent()}
-        </Paper>
+        {this.renderPaper()}
       </div>
     )
   }
