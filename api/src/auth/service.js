@@ -6,7 +6,6 @@ let Boom = require('boom')
 let _ = require('lodash')
 const bcrypt = require('bcrypt')
 const { createFetch, base, accept, header, method, body } = require('http-client')
-const { getConstraints, addConstraints} = require('./constraints')
 require('isomorphic-fetch')
 
 const bcryptCompare = Promise.promisify(bcrypt.compare)
@@ -198,29 +197,6 @@ function getAccessToken({id, name, culture, timezone, partnerId, countryId}){
     })
 }
 
-function* getDeviceApiKey(request){
-  const {auth, params} = request
-  const dataConstraints = yield getConstraints(auth.credentials)
-
-  const devices = yield query('Get device for API Key')
-    .from('DeviceApiKey as dak')
-    .innerJoin('Device as d', 'dak.deviceId', 'd.id')
-    .where({'d.id': +params.deviceId, 'dak.revoked': 0})
-    .modify(addConstraints, dataConstraints, {device: 'd'})
-    .select('dak.id as id')
-
-  if(devices.length !== 1){
-    return Boom.notFound()
-  }
-
-  const {id: dak} = devices[0]
-
-  // create a new token
-  const token = jwt.sign({dak}, config.secret)
-
-  return {access: token}
-}
-
 function* updateUsernameAndPasswordForLoggedInUser(request){
   let {payload} = request
 
@@ -286,7 +262,6 @@ function* updateUsernameAndPasswordForLoggedInUser(request){
 module.exports = {
   authenticate,
   checkAuthentication,
-  getDeviceApiKey,
   refreshToken,
   updateUsernameAndPasswordForLoggedInUser
 }

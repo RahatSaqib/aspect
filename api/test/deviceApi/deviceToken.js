@@ -64,7 +64,7 @@ const shared = module.exports = {
           const deviceId = res.body.data[0].id
 
           server
-            .get(`/api/auth/device/${deviceId}/apiKey`)
+            .get(`/api/device/${deviceId}/apiKey`)
             .set('Authorization', 'Bearer '+sharedToken.token)
             .end(function(err,res){
               assert.equal(res.status, 200)

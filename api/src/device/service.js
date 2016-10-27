@@ -1,7 +1,10 @@
 const Promise = require('bluebird')
 const Boom = require('boom')
+const jwt = require('jsonwebtoken')
 const { knex, filterParams, sortPageParams } = require('../db')
+const config = require('../config')
 const { getConstraints, addConstraints } = require('../auth/constraints')
+
 
 const SELECT_LIST_FIELDS = [
   'd.id', 'd.name', 'd.shortname', 'd.createdOn', 'd.lastPingOn', 'd.updatedOn as lastSeen',
@@ -96,6 +99,28 @@ function* updateDevice(request) {
   return yield* showDevice(request)
 }
 
+function* getDeviceApiKey(request){
+  const {auth, params} = request
+  const dataConstraints = yield getConstraints(auth.credentials)
+
+  const devices = yield knex('DeviceApiKey as dak')
+    .innerJoin('Device as d', 'dak.deviceId', 'd.id')
+    .where({'d.id': +params.deviceId, 'dak.revoked': 0})
+    .modify(addConstraints, dataConstraints, {device: 'd'})
+    .select('dak.id as id')
+
+  if(devices.length !== 1){
+    return Boom.notFound()
+  }
+
+  const {id: dak} = devices[0]
+
+  // create a new token
+  const token = jwt.sign({dak}, config.secret)
+
+  return {access: token}
+}
+
 
 function* listDeviceConfiguration(request){
   let {query, auth} = request
@@ -160,6 +185,7 @@ module.exports = {
   listDevices,
   showDevice,
   updateDevice,
+  getDeviceApiKey,
   listDeviceConfiguration,
   listDeviceOperation
 }

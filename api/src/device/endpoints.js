@@ -1,6 +1,6 @@
 let Joi = require('joi')
 let { asyncHandler, validateSortPageParams } = require('../routes')
-let { listDevices, showDevice, updateDevice,
+let { listDevices, showDevice, updateDevice, getDeviceApiKey,
   listDeviceOperation, listDeviceConfiguration} = require('./service')
 
 module.exports = [
@@ -55,6 +55,21 @@ module.exports = [
           name: Joi.string().required(),
           shortname: Joi.string().required(),
           notes: Joi.string().allow('')
+        }
+      }
+    }
+  },
+  {
+    method: 'GET',
+    path: '/device/{deviceId}/apiKey',
+    handler: asyncHandler(getDeviceApiKey),
+    config: {
+      description: 'Get Device API Key',
+      notes: 'Get API Key for the specified device',
+      //auth: {scope: []},  admin only
+      validate: {
+        params: {
+          deviceId: Joi.string().description('Device id').required()
         }
       }
     }
