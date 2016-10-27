@@ -61,17 +61,15 @@ module.exports = [
   },
   {
     method: 'GET',
-    path: '/device/{deviceId}/configuration',
+    path: '/device/configuration',
     handler: asyncHandler(listDeviceConfiguration),
     config: {
       notes: 'List Device Configuration',
       description: 'List device configuration data for the specified device',
       auth: {scope: ['device:view', 'device:edit']},
       validate: {
-        params: {
-          deviceId: Joi.string().description('Device id').required()
-        },
         query: Object.assign({
+          deviceId: Joi.string().description('Device id').description('Filter for device id'),
           deviceName: Joi.string().allow('').description('Filter for device name')
         }, validateSortPageParams('deviceName', 'createdOn', 'updatedOn'))
       }
@@ -79,17 +77,15 @@ module.exports = [
   },
   {
     method: 'GET',
-    path: '/device/{deviceId}/operation',
+    path: '/device/operation',
     handler: asyncHandler(listDeviceOperation),
     config: {
       notes: 'List Device Operation',
       description: 'List device operational data for the specified device',
       auth: {scope: ['device:view', 'device:edit']},
       validate: {
-        params: {
-          deviceId: Joi.string().description('Device id').required()
-        },
         query: Object.assign({
+          deviceId: Joi.string().description('Device id').description('Filter for device id'),
           deviceName: Joi.string().allow('').description('Filter for device name')
         }, validateSortPageParams('deviceName', 'createdOn', 'updatedOn'))
       }

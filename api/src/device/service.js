@@ -98,15 +98,14 @@ function* updateDevice(request) {
 
 
 function* listDeviceConfiguration(request){
-  let {query, auth, params} = request
+  let {query, auth} = request
 
   // get data constraints
   let dataConstraints = yield getConstraints(auth.credentials)
 
   let configQuery = knex('DeviceConfiguration as dc')
     .leftJoin('Device as d', 'dc.deviceId', 'd.id')
-    .where({'d.id': params.deviceId})
-    .modify(filterParams, query, 'name', 'd.name')
+    .modify(filterParams, query, {deviceId: 'd.id', deviceName: 'd.name'})
     .modify(addConstraints, dataConstraints, {device: 'd'})
 
   // get total count for paging
@@ -129,15 +128,14 @@ function* listDeviceConfiguration(request){
 
 
 function* listDeviceOperation(request){
-  let {query, auth, params} = request
+  let {query, auth} = request
 
   // get data constraints
   let dataConstraints = yield getConstraints(auth.credentials)
 
   let opQuery = knex('DeviceOperation as do')
     .leftJoin('Device as d', 'do.deviceId', 'd.id')
-    .where({'d.id': params.deviceId})
-    .modify(filterParams, query, 'name', 'd.name')
+    .modify(filterParams, query, {deviceId: 'd.id', deviceName: 'd.name'})
     .modify(addConstraints, dataConstraints, {device: 'd'})
 
   // get total count for paging
