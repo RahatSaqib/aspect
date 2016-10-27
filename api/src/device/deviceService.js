@@ -1,17 +1,21 @@
 const Boom = require('boom')
 const { knex, transact } = require('../db')
 
-function* getDeviceByDeviceId(request, fields=['d.id']){
+function* getDeviceByApiKeyId(request, fields=['d.id']){
   const {auth} = request
-  const devices = yield knex('Device as d')
-    .where('d.id', +auth.credentials.deviceId)
+  const devices = yield knex('DeviceApiKey as dak')
+    .innerJoin('Device as d', 'dak.deviceId', 'd.id')
+    .where({
+      'dak.id': +auth.credentials.deviceApiKeyId,
+      'dak.revoked': false
+    })
     .select(fields)
   return {ok: devices.length === 1, data: devices[0]}
 }
 
 function* addDeviceConfiguration(request){
   const {payload} = request
-  const device = yield* getDeviceByDeviceId(request)
+  const device = yield* getDeviceByApiKeyId(request)
   if(!device.ok){
     return Boom.notFound()
   }
@@ -42,7 +46,7 @@ function* addDeviceConfiguration(request){
 
 function* addDeviceOperation(request){
   const {payload} = request
-  const device = yield* getDeviceByDeviceId(request)
+  const device = yield* getDeviceByApiKeyId(request)
   if(!device.ok){
     return Boom.notFound()
   }

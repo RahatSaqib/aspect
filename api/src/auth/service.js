@@ -202,27 +202,22 @@ function* getDeviceApiKey(request){
   const {auth, params} = request
   const dataConstraints = yield getConstraints(auth.credentials)
 
-  const devices = yield query('Get device for API Key').from('Device as d')
-    .where('d.id', +params.deviceId)
+  const devices = yield query('Get device for API Key')
+    .from('DeviceApiKey as dak')
+    .innerJoin('Device as d', 'dak.deviceId', 'd.id')
+    .where({'d.id': +params.deviceId, 'dak.revoked': 0})
     .modify(addConstraints, dataConstraints, {device: 'd'})
-    .select('d.id')
+    .select('dak.id as id')
 
   if(devices.length !== 1){
-    Boom.notFound()
+    return Boom.notFound()
   }
 
-  const {id: deviceId} = devices[0]
+  const {id: deviceApiKeyId} = devices[0]
 
   // create a new token
-  const token = jwt.sign({
-    deviceId
-    // FIXME handle Device API revocation
-    // FIXME include device permissions in Device Token
-  },
-  config.secret, {
-    expiresIn: '100 years',
-    issuer: 'https://www.aspect.id/device'
-  })
+  const token = jwt.sign({deviceApiKeyId},
+    config.secret, {issuer: 'https://www.aspect.id/device'})
 
   return {access: token}
 }
