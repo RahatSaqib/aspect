@@ -635,6 +635,8 @@ function* seed(knex){
       lgaId : siteData.lgaId,
       siteId: siteData.id,
       deviceId: device.id,
+      longitude: -81.581222,
+      latitude: 28.419348,
       resultTypeId: resultTypePatientId,
       sampleId: sample.id,
       resultText: result.resultText,
