@@ -195,8 +195,8 @@ function* up(knex){
     apiKey.integer('deviceId').unsigned().notNullable()
       .references('id').inTable('Device')
     apiKey.boolean('revoked').notNullable().defaultTo(0)
-    addCreateFieldsNullable(apiKey)
-    addUpdateFieldsNullable(apiKey)
+    addCreateFields(apiKey)
+    addUpdateFields(apiKey)
     apiKey.charset('utf8')
   })
 
