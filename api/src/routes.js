@@ -3,21 +3,43 @@ let Boom = require('boom')
 let Joi = require('joi')
 
 // Adds all API routes to the server
-function addRoutes(server){
-  server.route(require('./accountDetails/endpoints').map(decorateAPI()))
-  server.route(require('./auth/endpoints').map(decorateAPI()))
-  server.route(require('./assay/endpoints').map(decorateAPI('assay')))
-  server.route(require('./device/endpoints').map(decorateAPI('device')))
-  server.route(require('./geography/endpoints').map(decorateAPI()))
-  server.route(require('./person/endpoints').map(decorateAPI('person')))
-  server.route(require('./site/endpoints').map(decorateAPI('site')))
-  server.route(require('./result/endpoints').map(decorateAPI('result')))
-  server.route(require('./partner/endpoints').map(decorateAPI('partner')))
+function addClientRoutes(server){
+  server.route(require('./accountDetails/endpoints').map(decorateClientAPI()))
+  server.route(require('./auth/endpoints').map(decorateClientAPI()))
+  server.route(require('./assay/endpoints').map(decorateClientAPI('assay')))
+  server.route(require('./device/endpoints').map(decorateClientAPI('device')))
+  server.route(require('./geography/endpoints').map(decorateClientAPI()))
+  server.route(require('./person/endpoints').map(decorateClientAPI('person')))
+  server.route(require('./site/endpoints').map(decorateClientAPI('site')))
+  server.route(require('./result/endpoints').map(decorateClientAPI('result')))
+  server.route(require('./partner/endpoints').map(decorateClientAPI('partner')))
+}
+
+function addDeviceRoutes(server){
+  server.route(require('./deviceApi/endpoints').map(decorateDeviceAPI('device')))
 }
 
 // Decorates an API route with common configuration so
 // it does not need to specified explicity for every route
-function decorateAPI(module){
+function decorateClientAPI(module){
+  // must always be authenticated using Client JWT
+  const scope = ['+clientApi']
+
+  if(module){
+    // If module specified, must have one of admin or `{module}:admin`
+    // in addition to any other listed in scope of routes.
+    scope.push('admin', `${module}:admin`)
+  }
+  return decorateAPI({scope})
+}
+
+function decorateDeviceAPI(){
+  // must always be authenticated using Device JWT
+  const scope = ['+deviceApi']
+  return decorateAPI({scope})
+}
+
+function decorateAPI({scope}){
   return (route) => {
     // add ['api'] tag by default so available in Hapi-Swagger
     let {config} = route
@@ -38,12 +60,7 @@ function decorateAPI(module){
           auth = {}
           config.auth = auth
         }
-        let {scope} = auth
-        if(!scope){
-          scope = []
-          auth.scope = scope
-        }
-        auth.scope = ['admin', `${module}:admin`].concat(auth.scope)
+        auth.scope = scope.concat(auth.scope || [])
       }
 
       // Add JWT Auth token query param configuration
@@ -116,7 +133,8 @@ function validateSortPageParams(...sortColumns){
 }
 
 module.exports = {
-  addRoutes,
+  addClientRoutes,
+  addDeviceRoutes,
   asyncHandler,
   getSortPageParams,
   validateSortPageParams

@@ -1,10 +1,12 @@
-let chai = require('chai')
-let assert = chai.assert
+const chai = require('chai')
+const assert = chai.assert
+const jwt = require('jsonwebtoken')
+const config = require('../../src/config')
 
-module.exports = {
+const shared = module.exports = {
 
   // this can be reused in tests for all routes that require authentication
-  checkToken: function(server, path) {
+  checkToken(server, path) {
     it('should return 401 and error message when trying to get without access token', function(done) {
       server
         .get(path)
@@ -20,7 +22,7 @@ module.exports = {
     it('should return 401 and error message when using invalid token', function(done) {
       server
         .get(path)
-        .set('Authorization', 'MOARTOKENZ')
+        .set('Authorization', 'Bearer MOARTOKENZ')
         .end(function(err, res) {
           assert.equal(res.status, 401)
           assert.isString(res.body.message)
@@ -44,7 +46,24 @@ module.exports = {
     })
   },
 
-  // use this in your tests to get a valid token for testing
-  token: ''
+  authenticateUser(server, username, password='test07'){
+    it(`should authenticate user ${username} and return valid JWT token`, function(done) {
+      server
+      .post('/api/auth')
+      .send({ name: username, password, clientName: 'Mocha/Chai' })
+      .end(function(err,res){
+        assert.equal(res.status, 200)
+        assert.isAbove(res.body.access.length, 100)
+        assert.isAbove(res.body.refresh.length, 50)
+        assert.isAbove(res.body.clientId.length, 32)
 
+        // save token for the following tests:
+        shared.token = res.body.access
+        jwt.verify(shared.token, config.secret, done)
+      })
+    })
+  },
+
+  // use this in your tests to get a valid client token for testing
+  token: ''
 }

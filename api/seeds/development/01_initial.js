@@ -718,8 +718,13 @@ function* seed(knex){
       })
 
     device.id = yield knex('Device').insert(device)
-
     devices.push(device)
+
+    // Create API Keys
+    yield knex('DeviceApiKey').insert(Object.assign({
+      deviceId: device.id,
+      revoked: device.id % 5 === 0
+    }, auditFields))
   }
 
   // some TB samples:
