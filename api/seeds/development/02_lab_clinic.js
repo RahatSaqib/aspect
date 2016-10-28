@@ -54,10 +54,15 @@ function* seed(knex){
 
 
   // Create clinics for every state in Malawi
-  const malawiStates = yield knex('Country as c')
-    .innerJoin('State as s', 'c.id', 's.countryId')
+  const [malawiCountry] = yield knex('Country as c')
     .where({'c.a3': 'MWI'})
+    .select('c.id', 'c.culture', 'c.timezone')
+
+  const malawiStates = yield knex('State as s')
+    .where({'s.countryId': malawiCountry.id})
     .select('s.countryId', 's.id', 's.name')
+
+  const {culture, timezone} = malawiCountry
 
   // Permissions for RRT Admin
   yield knex('Person').insert(Object.assign({
@@ -66,7 +71,9 @@ function* seed(knex){
     lastPartnerId: partnerId,
     lastCountryId: malawiStates[0].countryId,
     countryId: malawiStates[0].countryId,
-    stateId: malawiStates[0].stateId
+    stateId: malawiStates[0].stateId,
+    culture,
+    timezone
   }, auditFields))
 
   const [roleIdAdmin] = yield knex('Role').insert({
@@ -104,24 +111,8 @@ function* seed(knex){
     const [siteId] = yield knex('Site').insert(siteData)
     siteData.id = siteId
 
-    // User and person
-    const [userId] = yield knex('User').insert({
-      name: `rrt_${state.name}`.toLowerCase().replace(/\s+/, '_'),
-      password: bcrypt.hashSync('test07', saltRounds),
-      approved: 1,
-      createdOn: now,
-      lockedOut: 0,
-      failedPasswordAttempts: 0
-    })
-    yield knex('Person').insert(Object.assign({
-      userId,
-      name: `RRT ${state.name}`,
-      lastPartnerId: partnerId,
-      lastCountryId: state.countryId
-    }, geoData, auditFields))
-
     // Router
-    let [routerId] = yield knex('Device').insert(Object.assign({}, auditFields, {
+    const [routerId] = yield knex('Device').insert(Object.assign({}, auditFields, {
       name: `Router at ${siteData.name}`,
       shortname: 'r'+siteData.shortname,
       deviceTypeId: deviceTypes['Metacom Router'].id,
@@ -138,7 +129,7 @@ function* seed(knex){
     }, auditFields))
 
     // RRT Terminal
-    yield knex('Device').insert(Object.assign({
+    const [deviceId] = yield knex('Device').insert(Object.assign({
       name: `RRT at ${siteData.name}`,
       shortname: 'd'+siteData.shortname,
       deviceTypeId: deviceTypes['RRT'].id,
@@ -149,29 +140,34 @@ function* seed(knex){
       lastPingOn: new Date(+now - millisInHour/3)
     }, auditFields))
 
+    yield knex('DeviceApiKey').insert(Object.assign({
+      deviceId,
+      revoked: 0
+    }, auditFields))
+
     // Roles and permissions
     // TODO allow data filter on site and sample source site
     const [dataFilterId] = yield knex('DataFilter').insert({
       name: siteData.name+' Filter',
       constraint: JSON.stringify({
-        site: {
-          id: siteId
+        sample: {
+          originSiteId: siteId
         }
       })
     })
 
     const [roleIdSite] = yield knex('Role').insert({
-      name: siteData.name+' User',
+      name: `RRT at ${siteData.name} Samples`,
       partnerId,
-      dataFilterId: dataFilterId
+      dataFilterId
     })
 
     yield knex('RolePermission').insert([
       { roleId: roleIdSite, permissionId: modules.device.edit }
     ])
 
-    yield knex('UserRole').insert([
-      { userId, roleId: roleIdSite }])
+    yield knex('DeviceRole').insert([
+      { deviceId, roleId: roleIdSite }])
   }
 
   // Labs have m2000 and modem
@@ -194,24 +190,8 @@ function* seed(knex){
     const [siteId] = yield knex('Site').insert(siteData)
     siteData.id = siteId
 
-    // User and person
-    const [userId] = yield knex('User').insert({
-      name: `rrt_lab_${state.name}`.toLowerCase().replace(/\s+/, '_'),
-      password: bcrypt.hashSync('test07', saltRounds),
-      approved: 1,
-      createdOn: now,
-      lockedOut: 0,
-      failedPasswordAttempts: 0
-    })
-    yield knex('Person').insert(Object.assign({
-      userId,
-      name: `Lab ${state.name}`,
-      lastPartnerId: partnerId,
-      lastCountryId: state.countryId
-    }, geoData, auditFields))
-
     // Router
-    let [routerId] = yield knex('Device').insert(Object.assign({}, auditFields, {
+    const [routerId] = yield knex('Device').insert(Object.assign({}, auditFields, {
       name: `Router at Lab ${siteData.name}`,
       shortname: 'r'+siteData.shortname,
       deviceTypeId: deviceTypes['Metacom Router'].id,
@@ -238,31 +218,6 @@ function* seed(knex){
       updatedOn: new Date(+now - millisInHour),
       lastPingOn: new Date(+now - millisInHour/3)
     }, auditFields))
-
-    // Roles and permissions
-    // TODO allow data filter on site and sample source site
-    const [dataFilterId] = yield knex('DataFilter').insert({
-      name: siteData.name+' Lab Filter',
-      constraint: JSON.stringify({
-        site: {
-          id: siteId
-        }
-      })
-    })
-
-    const [roleIdSite] = yield knex('Role').insert({
-      name: siteData.name+' Lab User',
-      partnerId,
-      dataFilterId: dataFilterId
-    })
-
-    yield knex('RolePermission').insert([
-      { roleId: roleIdSite, permissionId: modules.device.edit },
-      { roleId: roleIdSite, permissionId: modules.result.edit }
-    ])
-
-    yield knex('UserRole').insert([
-      { userId, roleId: roleIdSite }])
   }
 }
 
