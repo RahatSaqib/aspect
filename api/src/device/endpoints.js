@@ -61,7 +61,7 @@ module.exports = [
   },
   {
     method: 'GET',
-    path: '/device/{deviceId}/apiKey',
+    path: '/device/{deviceId}/api-key',
     handler: asyncHandler(getDeviceApiKey),
     config: {
       description: 'Get Device API Key',
