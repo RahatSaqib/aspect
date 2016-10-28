@@ -1,16 +1,17 @@
 // Imports from packages
 import _ from 'lodash'
 import React, { PureComponent, PropTypes } from 'react'
+import { bindActionCreators } from 'redux'
 import { Link } from 'react-router'
 import {
   injectIntl,
   defineMessages
 } from 'react-intl'
 import { connect } from 'react-redux'
-import Snackbar from 'material-ui/Snackbar'
 import Helmet from 'react-helmet'
 
 // Our own imports
+import { addAcknowledgement } from '../../acknowledgement/AcknowledgementRedux'
 import MiniChart from '../../components/shared/MiniChart'
 import DashboardDevices from './DashboardDevices'
 import DashboardTests from './DashboardTests'
@@ -30,6 +31,7 @@ export class Dashboard extends PureComponent {
 
   static propTypes = {
     setPageTitle: PropTypes.func.isRequired,
+    addAcknowledgement: PropTypes.func.isRequired,
     userName: PropTypes.string,
     location: PropTypes.object.isRequired,
     strings: PropTypes.object
@@ -37,6 +39,13 @@ export class Dashboard extends PureComponent {
 
   componentWillMount() {
     this.props.setPageTitle(null)
+  }
+
+  componentWillReceiveProps(nextProps) {
+    const { location, addAcknowledgement, userName } = nextProps
+    if (location.query.fl && nextProps.userName !== this.props.userName) {
+      addAcknowledgement(`Welcome, ${userName }!`)
+    }
   }
 
   render() {
@@ -69,10 +78,6 @@ export class Dashboard extends PureComponent {
             <DashboardContacts label={'Persons'} />
           </div>
         </div>
-        <Snackbar
-            open={this.props.location.search.indexOf('fl') !== -1}
-            autoHideDuration={3000}
-            message={'Welcome, ' + this.props.userName + '!'}  />
       </div>
     )
   }
@@ -84,7 +89,13 @@ function mapStateToProps(state) {
   }
 }
 
+function mapDispatchToProps(dispatch) {
+  return bindActionCreators({
+    addAcknowledgement
+  }, dispatch)
+}
+
 export const DashboardContainer = _.flowRight(
   injectIntl,
-  connect(mapStateToProps)
+  connect(mapStateToProps, mapDispatchToProps)
 )(Dashboard)
