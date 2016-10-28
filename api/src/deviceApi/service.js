@@ -156,12 +156,16 @@ function* addResult(request){
 
     yield knex('ResultLog').insert({
       resultId,
-      // TODO ResultLog source, senderIp
-      source: '',
-      senderIp: '',
+      source: 'ResultAPI',
+      // TODO Does Hapi Remote address work through proxies? Check headers?
+      senderIp: request.info.remoteAddress || '',
       // TODO ResultLog handle non-JSON payloads
       rawMessage: JSON.stringify(payload)
     })
+
+    // TODO should we update lastPingOn lastPingFromIp with Result request info?
+    // TODO does device result upload change updatedOn on Device?
+    // could also do this for DeviceOperation, DeviceConfiguration uploads
   })
   return resultId > 0
     ? {ok: true, data: {id: resultId}}
