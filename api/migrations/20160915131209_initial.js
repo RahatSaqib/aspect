@@ -200,6 +200,15 @@ function* up(knex){
     apiKey.charset('utf8')
   })
 
+  yield knex.schema.createTable('DeviceRole', deviceRole => {
+    deviceRole.integer('deviceId').unsigned()
+      .index().references('id').inTable('Device')
+    deviceRole.integer('roleId').unsigned()
+      .index().references('id').inTable('Role')
+    deviceRole.primary(['deviceId', 'roleId'])
+    deviceRole.charset('utf8')
+  })
+
   yield knex.schema.createTable('DeviceTypeCategory', deviceTypeFeature => {
     deviceTypeFeature.increments('id')
     deviceTypeFeature.string('name').notNullable()
@@ -496,6 +505,7 @@ function* down(knex){
   yield knex.schema.dropTableIfExists('DeviceConfiguration')
   yield knex.schema.dropTableIfExists('DeviceOperation')
   yield knex.schema.dropTableIfExists('DeviceType')
+  yield knex.schema.dropTableIfExists('DeviceRole')
   yield knex.schema.dropTableIfExists('DeviceApiKey')
   yield knex.schema.dropTableIfExists('RefreshToken')
   yield knex.schema.dropTableIfExists('UserRole')
