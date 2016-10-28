@@ -1,10 +1,15 @@
 import _ from 'lodash'
 import React from 'react'
-import {shallow} from 'enzyme'
+import sinon from 'sinon'
+import {mount} from 'enzyme'
 import Immutable from 'immutable'
 import { assert } from 'chai'
 
 import {Dashboard} from './Dashboard'
+
+function makeLocationObject(query) {
+  return { query }
+}
 
 describe('Dashboard', () => {
 
@@ -13,21 +18,61 @@ describe('Dashboard', () => {
     formatMessage: message => message.defaultMessage
   }
 
-  it('shows the snackbar with user name if query string contains "fl=1"', () => {
+  context('React lifecycles', () => {
+    let renderStub
+    before(() => {
+      renderStub = sinon.stub(Dashboard.prototype, 'render', () => false)
+    })
 
-    let location = { search: 'fl=1' }
+    after(() => {
+      renderStub.restore()
+    })
 
-    const Wrapper = shallow(<Dashboard setPageTitle={_.noop} location={location} user={user} intl={intl} />)
-    const sb = Wrapper.find('Snackbar')
-    assert.isTrue(sb.props().open)
-  })
+    context('if query string contains "fl=1', () => {
+      it('calls addAcknowledgement with user name when receiving new user', () => {
+        const location = makeLocationObject({ fl: '1' })
+        const addAcknowledgement = sinon.stub()
 
-  it('doesn\'t show the snackbar with user name if query string does not contain "fl=1"', () => {
+        const Wrapper = mount(
+          <Dashboard
+            setPageTitle={_.noop}
+            addAcknowledgement={addAcknowledgement}
+            location={location}
+            userName=""
+            intl={intl}
+          />
+        )
+        assert.isTrue(addAcknowledgement.notCalled)
 
-    let location = { search: 'test=2' }
+        Wrapper.setProps({
+          userName: user.get('name')
+        })
+        assert.isTrue(addAcknowledgement.called)
+      })
+    })
 
-    const Wrapper = shallow(<Dashboard setPageTitle={_.noop} location={location} user={user} intl={intl} />)
-    const sb = Wrapper.find('Snackbar')
-    assert.isFalse(sb.props().open)
+    context('if query string oes not contains "fl=1', () => {
+      it('calls addAcknowledgement with user name when receiving new user', () => {
+        const location = makeLocationObject({ test: '2' })
+        const addAcknowledgement = sinon.stub()
+
+        const Wrapper = mount(
+          <Dashboard
+            setPageTitle={_.noop}
+            addAcknowledgement={addAcknowledgement}
+            location={location}
+            userName=""
+            intl={intl}
+          />
+        )
+
+        assert.isTrue(addAcknowledgement.notCalled)
+
+        Wrapper.setProps({
+          userName: user.get('name')
+        })
+        assert.isTrue(addAcknowledgement.notCalled)
+      })
+    })
   })
 })
