@@ -4,7 +4,8 @@ import { bindActionCreators } from 'redux'
 import { connect } from 'react-redux'
 
 // Material-UI
-import Snackbar from 'material-ui/Snackbar'
+import Dialog from 'material-ui/Dialog'
+import FlatButton from 'material-ui/FlatButton'
 
 // Our own imports
 import { removeError } from '../../error/ErrorRedux'
@@ -16,28 +17,32 @@ export class ErrorDisplay extends PureComponent {
     removeError: PropTypes.func.isRequired
   }
 
-  handleActionTouchTap = (error) => {
-    alert(error.get('desc') ? JSON.stringify(error.get('desc'), null, '\t') : 'No error details')
+  handleClose = () => {
+    this.props.removeError()
   }
 
   render() {
+    const { error } = this.props
 
-    let error = this.props.error
+    const actions = [
+      <FlatButton
+        label="Close"
+        primary={true}
+        onTouchTap={this.handleClose}
+      />
+    ]
 
-    if (error.get('hasError')){
-      return (
-        <Snackbar
-            open={true}
-            message={error.get('title')}
-            action="View Details"
-            autoHideDuration={4000}
-            onActionTouchTap={() => this.handleActionTouchTap(error)}
-            onRequestClose={() => this.props.removeError()}
-          />
-        )
-    } else {
-      return null
-    }
+    return (
+      <Dialog
+        title={error.get('title')}
+        actions={actions}
+        modal={false}
+        open={error.get('hasError')}
+        onRequestClose={this.handleClose}
+      >
+        {JSON.stringify(error.get('desc'), null, '\t')}
+      </Dialog>
+    )
   }
 }
 
