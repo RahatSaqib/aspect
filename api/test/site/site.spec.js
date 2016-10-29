@@ -1,6 +1,7 @@
 let supertest = require('supertest')
 let chai = require('chai')
 let shared = require('../utils/sharedToken')
+let _ = require('lodash')
 
 // This agent refers to PORT where program is runninng.
 let server = supertest.agent('http://localhost:8080')
@@ -9,7 +10,8 @@ let assert = chai.assert
 describe('Site routes',function(){
 
   let path = '/api/site'
-
+  let siteId = 1
+  let siteData
   describe('GET',function(){
 
     shared.checkToken(server, path)
@@ -29,13 +31,76 @@ describe('Site routes',function(){
         assert.property(res.body.data[0], 'shortname')
         assert.property(res.body.data[0], 'createdOn')
         assert.property(res.body, 'total')
+        siteId = res.body.data[0].id
         done()
       })
     })
-
+    it('should return a single site when using a valid token', function(done){
+      server
+      .get(path + '/' + siteId)
+      .set('Authorization', 'Bearer '+shared.token)
+      .end(function(err,res){
+        assert.equal(res.status, 200)
+        assert.typeOf(res.body, 'Object')
+        assert.property(res.body, 'data')
+        assert.typeOf(res.body.data, 'Object')
+        assert.property(res.body.data, 'id')
+        assert.property(res.body.data, 'name')
+        assert.property(res.body.data, 'shortname')
+        assert.property(res.body.data, 'state')
+        assert.property(res.body.data, 'lga')
+        assert.property(res.body.data, 'country')
+        assert.property(res.body.data, 'createdOn')
+        assert.property(res.body.data, 'totalDevices')
+        assert.property(res.body.data, 'countryId')
+        assert.property(res.body.data, 'stateId')
+        assert.property(res.body.data, 'lgaId')
+        assert.property(res.body.data, 'timezone')
+        assert.property(res.body.data, 'city')
+        assert.property(res.body.data, 'zip')
+        assert.property(res.body.data, 'street1')
+        assert.property(res.body.data, 'street2')
+        assert.property(res.body.data, 'longitude')
+        siteData = res.body.data
+        done()
+      })
+    })
   })
-
   describe('POST',function(){
   })
 
+  describe('PUT',function(){
+    it('Should update site given a siteId', function(done){
+      let newStreet2 = '10 New Street'
+      let newSiteData = _.omit(siteData, ['id', 'state', 'lga', 'country', 'createdOn', 'totalDevices'])
+      server
+        .put(path + '/' + siteId)
+        .send(Object.assign({}, newSiteData, { street2: newStreet2 }))
+        .set('Authorization', 'Bearer' + shared.token)
+        .end(function(err, res){
+          assert.equal(res.status, 200)
+          assert.typeOf(res.body, 'Object')
+          assert.property(res.body, 'data')
+          assert.typeOf(res.body.data, 'Object')
+          assert.property(res.body.data, 'id')
+          assert.property(res.body.data, 'name')
+          assert.property(res.body.data, 'shortname')
+          assert.property(res.body.data, 'state')
+          assert.property(res.body.data, 'lga')
+          assert.property(res.body.data, 'country')
+          assert.property(res.body.data, 'createdOn')
+          assert.property(res.body.data, 'totalDevices')
+          assert.property(res.body.data, 'countryId')
+          assert.property(res.body.data, 'stateId')
+          assert.property(res.body.data, 'lgaId')
+          assert.property(res.body.data, 'timezone')
+          assert.property(res.body.data, 'city')
+          assert.property(res.body.data, 'zip')
+          assert.property(res.body.data, 'street1')
+          assert.property(res.body.data, 'street2')
+          assert.property(res.body.data, 'longitude')
+          done()
+        })
+    })
+  })
 })
