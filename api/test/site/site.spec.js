@@ -71,7 +71,7 @@ describe('Site routes',function(){
 
   describe('PUT',function(){
     it('Should update site given a siteId', function(done){
-      let originalStreet2 = siteData.street2 
+      let originalStreet2 = siteData.street2
       let newStreet2 = '15 New Street'
       let newSiteData = _.omit(siteData, ['id', 'state', 'lga', 'country', 'createdOn', 'totalDevices'])
       server
@@ -98,8 +98,8 @@ describe('Site routes',function(){
             .set('Authorization', 'Bearer' + shared.token)
             .end(function(err,res){
               assert.equal(res.body.data.street2, newStreet2)
-
-              //Clean Up: Update street2 with the original street address
+              
+              // Clean Up: Update street2 with the original street address
               server
                 .put(path + '/' + siteId)
                 .send(Object.assign({}, newSiteData, { street2: originalStreet2 }))
