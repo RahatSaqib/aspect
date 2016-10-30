@@ -71,7 +71,8 @@ describe('Site routes',function(){
 
   describe('PUT',function(){
     it('Should update site given a siteId', function(done){
-      let newStreet2 = '10 New Street'
+      let originalStreet2 = siteData.street2 
+      let newStreet2 = '15 New Street'
       let newSiteData = _.omit(siteData, ['id', 'state', 'lga', 'country', 'createdOn', 'totalDevices'])
       server
         .put(path + '/' + siteId)
@@ -82,24 +83,32 @@ describe('Site routes',function(){
           assert.typeOf(res.body, 'Object')
           assert.property(res.body, 'data')
           assert.typeOf(res.body.data, 'Object')
-          assert.property(res.body.data, 'id')
-          assert.property(res.body.data, 'name')
-          assert.property(res.body.data, 'shortname')
-          assert.property(res.body.data, 'state')
-          assert.property(res.body.data, 'lga')
-          assert.property(res.body.data, 'country')
-          assert.property(res.body.data, 'createdOn')
-          assert.property(res.body.data, 'totalDevices')
-          assert.property(res.body.data, 'countryId')
-          assert.property(res.body.data, 'stateId')
-          assert.property(res.body.data, 'lgaId')
-          assert.property(res.body.data, 'timezone')
-          assert.property(res.body.data, 'city')
-          assert.property(res.body.data, 'zip')
-          assert.property(res.body.data, 'street1')
-          assert.property(res.body.data, 'street2')
-          assert.property(res.body.data, 'longitude')
-          done()
+          const siteFieldNames = ['id', 'name', 'shortname', 'state','lga',
+            'country', 'createdOn', 'totalDevices', 'countryId', 'stateId', 'lgaId',
+            'timezone', 'city', 'zip', 'street1', 'street2', 'longitude']
+          _.each(siteFieldNames, function(fieldName){
+            assert.property(res.body.data, fieldName)
+          })
+          //check the updated property
+          assert.equal(res.body.data.street2, newStreet2)
+
+          //make sure the data has persisted
+          server
+            .get('/api/site/' + siteId)
+            .set('Authorization', 'Bearer' + shared.token)
+            .end(function(err,res){
+              assert.equal(res.body.data.street2, newStreet2)
+
+              //Clean Up: Update street2 with the original street address
+              server
+                .put(path + '/' + siteId)
+                .send(Object.assign({}, newSiteData, { street2: originalStreet2 }))
+                .set('Authorization', 'Bearer' + shared.token)
+                .end(function(err, res){
+                  assert.equal(res.body.data.street2, originalStreet2)
+                  done()
+                })
+            })
         })
     })
   })
