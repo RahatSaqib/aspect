@@ -5,7 +5,7 @@ const { getConstraints, addConstraints } = require('../auth/constraints')
 
 const SELECT_LIST_FIELDS = [
   'a.id', 'at.id as assayTypeId', 'a.name', 'at.name as assayTypeName',
-  'dt.id as deviceTypeId', 'dt.name as deviceTypeName'
+  'dt.id as deviceTypeId', 'dt.name as deviceTypeName', 'a.resultDataSchema'
 ]
 
 function* listAssays(request) {
@@ -36,7 +36,10 @@ function* listAssays(request) {
 
   // return result when both queries are finished
   let [{count: total}, data] = yield Promise.all([getCount, getItems])
-  data = _.each(data, (d) => { d.hasResults = assayIds.includes(d.id) })
+  data = _.each(data, (d) => {
+    d.hasResults = assayIds.includes(d.id)
+    d.resultDataSchema = JSON.parse(d.resultDataSchema)
+  })
 
   const result = { ok: true, total, length: data.length, data }
 
