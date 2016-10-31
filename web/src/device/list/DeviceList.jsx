@@ -83,7 +83,8 @@ export class DeviceList extends PureComponent {
   }
 
   handleFetch = (...args) => {
-    this.props.fetchDevices(this.props.table.filters, ...args)
+    const nextFilters = this.props.table.filters.merge(this.getDeviceConfigFromRoutes())
+    this.props.fetchDevices(nextFilters, ...args)
   }
 
   filterDevicesChange = (e) => {
@@ -92,18 +93,35 @@ export class DeviceList extends PureComponent {
 
   handleSubmit = (e) => {
     e.preventDefault()
-    this.props.fetchDevices(this.state.filters)
+    const nextFilters = this.props.table.filters
+      .merge(this.getDeviceConfigFromRoutes())
+      .merge(this.state.filters)
+    this.props.fetchDevices(nextFilters)
   }
 
   resetDevices = () => {
     this.setState({ filters: this.state.filters.set('name', '') })
-    this.props.fetchDevices()
+    this.handleFetch()
+  }
+
+  getDeviceConfigFromRoutes({ routes } = this.props) {
+    const { deviceConfig } = _.find(routes, r => r.deviceConfig)
+    return deviceConfig
   }
 
   componentWillMount() {
     const { setPageTitle, intl } = this.props
     const { formatMessage } = intl
     setPageTitle(formatMessage(messages.title))
+  }
+
+  componentDidUpdate(prevProps) {
+    const prevDeviceConfig = this.getDeviceConfigFromRoutes(prevProps)
+    const deviceConfig = this.getDeviceConfigFromRoutes()
+    // When switching between routers/devices, re-fetch API
+    if (prevDeviceConfig !== deviceConfig) {
+      this.handleFetch()
+    }
   }
 
   getChildContext() {

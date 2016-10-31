@@ -67,7 +67,7 @@ const routes =
           <Route path="maintenance" component={MaintenanceContainer} />
         </Route>
 
-        <Route path="device" deviceConfig={{hasResults: 1}}>
+        <Route path="device" deviceConfig={{hasResults: 1, hasConnectivity: undefined}}>
           <IndexRoute component={DeviceListContainer} />
           <Route path=":deviceId" component={DeviceDetailContainer} />
         </Route>
