@@ -455,12 +455,18 @@ function* up(knex){
     sample.charset('utf8')
   })
 
+  yield knex.schema.createTable('Units', units => {
+    units.increments('id')
+    units.string('name').notNullable()
+    units.string('shortName')
+    units.charset('utf8')
+  })
+
   yield knex.schema.createTable('Consumable', consumable =>{
     consumable.increments('id')
     consumable.string('name').notNullable()
-    //TODO: add foreign key to units table
-    //consumable.integer('unit').unsigned().notNullable()
-     // .index().references('name').inTable('Units')
+    consumable.integer('unit').unsigned().notNullable()
+      .references('id').inTable('Units')
     consumable.boolean('canExpire').notNullable().defaultTo(0)
     consumable.text('manufacturer')
     consumable.boolean('autoInclude').notNullable().defaultTo(0)
@@ -472,6 +478,7 @@ function* up(knex){
 
 function* down(knex){
   yield knex.raw('SET foreign_key_checks = 0')
+  yield knex.schema.dropTableIfExists('Units')
   yield knex.schema.dropTableIfExists('Consumable')
   yield knex.schema.dropTableIfExists('ResultCategoryAssay')
   yield knex.schema.dropTableIfExists('ResultType')

@@ -555,14 +555,57 @@ function* seed(knex){
     assayId: assayHivVlId
   })
 
+
+  // Units
+  let [piece] = yield knex('Units').insert({
+    name: 'Piece',
+    shortName: 'pc'
+  })
+
+  let [liter] = yield knex('Units').insert({
+    name: 'Liter',
+    shortName: 'l'
+  })
+
+  let [milliliter] = yield knex('Units').insert({
+    name: 'Milliliter',
+    shortName: 'ml'
+  })
+
+  let [milligram] = yield knex('Units').insert({
+    name: 'Milligram',
+    shortName: 'mg'
+  })
+
+  let [gram] = yield knex('Units').insert({
+    name: 'Gram',
+    shortName: 'g'
+  })
+
+  let [kilogram] = yield knex('Units').insert({
+    name: 'Kilogram',
+    shortName: 'kg'
+  })
+
+  let [ounce] = yield knex('Units').insert({
+    name: 'Ounce',
+    shortName: 'oz'
+  })
+
   // Consumable types
   yield knex('Consumable').insert({
     name: 'Gloves',
-    manufacturer: 'ABC Company'
+    unit: piece,
+    canExpire: 0,
+    manufacturer: 'ABC Company',
+    autoInclude: 1
   })
   yield knex('Consumable').insert({
     name: 'GeneXpert TB Cartridge',
-    manufacturer: 'Cepheid'
+    unit: ounce,
+    canExpire: 1,
+    manufacturer: 'Cepheid',
+    autoInclude: 0
   })
 
   // Create permissions
