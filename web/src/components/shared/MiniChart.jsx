@@ -22,20 +22,20 @@ class MiniChart extends PureComponent {
     const { formatNumber } = intl
 
     return (
-        <Paper className="col-margin" style={{backgroundColor: this.props.bgcolor}}>
-          <div className="minichart-chart">
-            <Sparklines data={this.props.data} width={100} height={80} margin={15} >
-                <SparklinesLine color={'#fff'} style={{fill: 'none'}} />
-                <SparklinesSpots style={{ fill: '#fff' }}  />
-            </Sparklines>
-          </div>
-          <div className="minichart-count">
-              <small>{this.props.label}</small>
-              {formatNumber(this.props.number)}
-          </div>
-          <div className="clear-fix" ></div>
-        </Paper>
-      )
+      <Paper className="col-margin" style={{backgroundColor: this.props.bgcolor}}>
+        <div className="minichart-chart">
+          <Sparklines data={this.props.data} width={100} height={80} margin={15} >
+            <SparklinesLine color={'#fff'} style={{fill: 'none'}} />
+            <SparklinesSpots style={{ fill: '#fff' }}  />
+          </Sparklines>
+        </div>
+        <div className="minichart-count">
+            <small>{this.props.label}</small>
+            {formatNumber(this.props.number)}
+        </div>
+        <div className="clear-fix" ></div>
+      </Paper>
+    )
   }
 }
 
