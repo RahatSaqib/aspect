@@ -555,6 +555,16 @@ function* seed(knex){
     assayId: assayHivVlId
   })
 
+  // Consumable types
+  yield knex('Consumable').insert({
+    name: 'Gloves',
+    manufacturer: 'ABC Company'
+  })
+  yield knex('Consumable').insert({
+    name: 'GeneXpert TB Cartridge',
+    manufacturer: 'Cepheid'
+  })
+
   // Create permissions
   const modules = {}
   for(let module of permissions.modules){
@@ -1052,19 +1062,23 @@ function* seed(knex){
     { roleId: roleIdAdmin, permissionId: modules.result.admin },
     { roleId: roleIdAdmin, permissionId: modules.site.admin },
     { roleId: roleIdAdmin, permissionId: modules.assay.admin },
+    { roleId: roleIdAdmin, permissionId: modules.inventory.admin },
 
     // FIXME: result permission for role
 
     { roleId: roleIdOH, permissionId: modules.site.edit },
     { roleId: roleIdOH, permissionId: modules.device.edit },
     { roleId: roleIdOH, permissionId: modules.assay.edit },
+    { roleId: roleIdOH, permissionId: modules.inventory.edit},
 
     { roleId: roleIdNE, permissionId: modules.site.edit },
     { roleId: roleIdNE, permissionId: modules.device.edit },
 
+
     { roleId: roleIdOHWayne, permissionId: modules.site.view },
     { roleId: roleIdOHWayne, permissionId: modules.device.view },
     { roleId: roleIdOHWayne, permissionId: modules.assay.view },
+    {roleId: roleIdOHWayne, permissionId: modules.inventory.view},
 
     { roleId: roleIdMASuffolk, permissionId: modules.device.view },
 
