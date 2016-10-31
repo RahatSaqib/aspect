@@ -33,12 +33,13 @@ const idleStatusAction = idleStatus => (dispatch) => {
 }
 
 // configure idle monitor
-const opts =  { appName: 'aspect'
-              , IDLE_STATUSES: _.values(types)
-              , idleStatusDelay
-              , activeStatusAction
-              , idleStatusAction
-              }
+const opts =  {
+  appName: 'aspect'
+, IDLE_STATUSES: _.values(types)
+, idleStatusDelay
+, activeStatusAction
+, idleStatusAction
+}
 
 const { middleware, reducer, actions } = configure(opts)
 
