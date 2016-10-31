@@ -25,9 +25,13 @@ import { DataTable } from '../../components/shared/DataTable'
 import styles from './DeviceList.css'
 
 const messages = defineMessages({
-  title: {
-    id: 'pages.DeviceList.title',
+  devicesTitle: {
+    id: 'pages.DeviceList.devicesTitle',
     defaultMessage: 'Devices'
+  },
+  routersTitle: {
+    id: 'pages.DeviceList.routersTitle',
+    defaultMessage: 'Routers'
   },
   deviceName: {
     id: 'pages.DeviceList.deviceName',
@@ -83,7 +87,9 @@ export class DeviceList extends PureComponent {
   }
 
   handleFetch = (...args) => {
-    const nextFilters = this.props.table.filters.merge(this.getDeviceConfigFromRoutes())
+    const nextFilters = this.props.table.filters.merge(
+      this.getDeviceConfigRoute().deviceConfig
+    )
     this.props.fetchDevices(nextFilters, ...args)
   }
 
@@ -94,7 +100,7 @@ export class DeviceList extends PureComponent {
   handleSubmit = (e) => {
     e.preventDefault()
     const nextFilters = this.props.table.filters
-      .merge(this.getDeviceConfigFromRoutes())
+      .merge(this.getDeviceConfigRoute().deviceConfig)
       .merge(this.state.filters)
     this.props.fetchDevices(nextFilters)
   }
@@ -104,23 +110,32 @@ export class DeviceList extends PureComponent {
     this.handleFetch()
   }
 
-  getDeviceConfigFromRoutes({ routes } = this.props) {
-    const { deviceConfig } = _.find(routes, r => r.deviceConfig)
-    return deviceConfig
+  getDeviceConfigRoute({ routes } = this.props) {
+    return _.find(routes, r => r.deviceConfig)
+  }
+
+  getFormattedTitle() {
+    const deviceConfigRoute = this.getDeviceConfigRoute()
+    const { intl } = this.props
+    const { formatMessage } = intl
+    if (deviceConfigRoute.path === 'device') {
+      return formatMessage(messages.devicesTitle)
+    } else {
+      return formatMessage(messages.routersTitle)
+    }
   }
 
   componentWillMount() {
-    const { setPageTitle, intl } = this.props
-    const { formatMessage } = intl
-    setPageTitle(formatMessage(messages.title))
+    this.props.setPageTitle(this.getFormattedTitle())
   }
 
   componentDidUpdate(prevProps) {
-    const prevDeviceConfig = this.getDeviceConfigFromRoutes(prevProps)
-    const deviceConfig = this.getDeviceConfigFromRoutes()
+    const prevDeviceConfigRoute = this.getDeviceConfigRoute(prevProps)
+    const deviceConfigRoute = this.getDeviceConfigRoute()
     // When switching between routers/devices, re-fetch API
-    if (prevDeviceConfig !== deviceConfig) {
+    if (prevDeviceConfigRoute !== deviceConfigRoute) {
       this.handleFetch()
+      this.props.setPageTitle(this.getFormattedTitle())
     }
   }
 
@@ -150,7 +165,7 @@ export class DeviceList extends PureComponent {
 
     return (
       <div className={styles.Content}>
-        <Helmet title={formatMessage(messages.title)} titleTemplate="%s - Aspect" defaultTitle="Aspect" />
+        <Helmet title={this.getFormattedTitle()} titleTemplate="%s - Aspect" defaultTitle="Aspect" />
         <form onSubmit={ this.handleSubmit }>
           <Toolbar className={styles.Toolbar} >
             <ToolbarGroup firstChild={true}>
