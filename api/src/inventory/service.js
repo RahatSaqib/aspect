@@ -12,7 +12,7 @@ function* listConsumableTypes(request){
   const dataConstraints = yield getConstraints(auth.credentials)
 
   const consumableQuery = knex('Consumable as c')
-    .leftJoin('Units as u', 'c.unit', 'u.id')
+    .leftJoin('Unit as u', 'c.unit', 'u.id')
     .modify(filterParams, query, { 'name': 'c.name' })
 
   // get total count for paging

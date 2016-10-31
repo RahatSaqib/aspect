@@ -557,39 +557,39 @@ function* seed(knex){
 
 
   // Units
-  let [piece] = yield knex('Units').insert({
+  let [piece] = yield knex('Unit').insert({
     name: 'Piece',
-    shortName: 'pc'
+    shortname: 'pc'
   })
 
-  let [liter] = yield knex('Units').insert({
+  let [liter] = yield knex('Unit').insert({
     name: 'Liter',
-    shortName: 'l'
+    shortname: 'l'
   })
 
-  let [milliliter] = yield knex('Units').insert({
+  let [milliliter] = yield knex('Unit').insert({
     name: 'Milliliter',
-    shortName: 'ml'
+    shortname: 'ml'
   })
 
-  let [milligram] = yield knex('Units').insert({
+  let [milligram] = yield knex('Unit').insert({
     name: 'Milligram',
-    shortName: 'mg'
+    shortname: 'mg'
   })
 
-  let [gram] = yield knex('Units').insert({
+  let [gram] = yield knex('Unit').insert({
     name: 'Gram',
-    shortName: 'g'
+    shortname: 'g'
   })
 
-  let [kilogram] = yield knex('Units').insert({
+  let [kilogram] = yield knex('Unit').insert({
     name: 'Kilogram',
-    shortName: 'kg'
+    shortname: 'kg'
   })
 
-  let [ounce] = yield knex('Units').insert({
+  let [ounce] = yield knex('Unit').insert({
     name: 'Ounce',
-    shortName: 'oz'
+    shortname: 'oz'
   })
 
   // Consumable types
