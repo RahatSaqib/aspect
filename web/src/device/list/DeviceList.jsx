@@ -158,15 +158,15 @@ export class DeviceList extends PureComponent {
                     table={ this.props.table }
                     columns={[
                       { db: 'name', title: formatMessage(messages.deviceName),
-                          extraProps: { style: { width: DEVICE_TABLE_NAME_COLUMN_WIDTH } } },
+                        extraProps: { style: { width: DEVICE_TABLE_NAME_COLUMN_WIDTH } } },
                       { db: 'status', title: formatMessage(messages.status), hideOnXs: true,
-                          extraProps: { style: { width: DEVICE_TABLE_STATUS_COLUMN_WIDTH } } },
+                        extraProps: { style: { width: DEVICE_TABLE_STATUS_COLUMN_WIDTH } } },
                       { db: 'createdOn', title: formatMessage(messages.reportingFor), hideOnXs: true,
-                          format: (data) => formatRelative(data) },
+                        format: (data) => formatRelative(data) },
                       { db: 'lastSeen', title: formatMessage(messages.lastSeen), hideOnXs: true,
-                          format: (data) => formatRelative(data) },
+                        format: (data) => formatRelative(data) },
                       { db: 'totalTests', title: formatMessage(messages.totalTests),
-                          format: (data) => formatNumber(data) }
+                        format: (data) => formatNumber(data) }
                     ]} />
       </div>
     )
