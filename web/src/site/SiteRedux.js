@@ -47,7 +47,7 @@ function receiveSites(json) {
   }
 }
 
-export function fetchSites(filters = Immutable.Map({ name: '' }), sortCol = 'name', sortDir = 'asc', page = 0, pageSize = 10){
+export function fetchSites(filters/* required */, sortCol = 'name', sortDir = 'asc', page = 0, pageSize = 10){
   return dispatch => {
 
     dispatch(requestSites(sortCol, sortDir, page, pageSize, filters))

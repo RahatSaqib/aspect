@@ -82,6 +82,10 @@ export class DeviceList extends PureComponent {
     this.props.router.push(`/device/${deviceId}`)
   }
 
+  handleFetch = (...args) => {
+    this.props.fetchDevices(this.props.table.filters, ...args)
+  }
+
   filterDevicesChange = (e) => {
     this.setState({ filters: this.state.filters.set(e.target.id, e.target.value) })
   }
@@ -151,23 +155,25 @@ export class DeviceList extends PureComponent {
             </ToolbarGroup>
           </Toolbar>
         </form>
-        <DataTable  selectable
-                    handleItemIdSelection={this.handleItemIdSelection}
-                    handleFetch={ this.props.fetchDevices }
-                    items={ this.props.items }
-                    table={ this.props.table }
-                    columns={[
-                      { db: 'name', title: formatMessage(messages.deviceName),
-                        extraProps: { style: { width: DEVICE_TABLE_NAME_COLUMN_WIDTH } } },
-                      { db: 'status', title: formatMessage(messages.status), hideOnXs: true,
-                        extraProps: { style: { width: DEVICE_TABLE_STATUS_COLUMN_WIDTH } } },
-                      { db: 'createdOn', title: formatMessage(messages.reportingFor), hideOnXs: true,
-                        format: (data) => formatRelative(data) },
-                      { db: 'lastSeen', title: formatMessage(messages.lastSeen), hideOnXs: true,
-                        format: (data) => formatRelative(data) },
-                      { db: 'totalTests', title: formatMessage(messages.totalTests),
-                        format: (data) => formatNumber(data) }
-                    ]} />
+        <DataTable
+          selectable
+          handleItemIdSelection={this.handleItemIdSelection}
+          handleFetch={ this.handleFetch }
+          items={ this.props.items }
+          table={ this.props.table }
+          columns={[
+            { db: 'name', title: formatMessage(messages.deviceName),
+              extraProps: { style: { width: DEVICE_TABLE_NAME_COLUMN_WIDTH } } },
+            { db: 'status', title: formatMessage(messages.status), hideOnXs: true,
+              extraProps: { style: { width: DEVICE_TABLE_STATUS_COLUMN_WIDTH } } },
+            { db: 'createdOn', title: formatMessage(messages.reportingFor), hideOnXs: true,
+              format: (data) => formatRelative(data) },
+            { db: 'lastSeen', title: formatMessage(messages.lastSeen), hideOnXs: true,
+              format: (data) => formatRelative(data) },
+            { db: 'totalTests', title: formatMessage(messages.totalTests),
+              format: (data) => formatNumber(data) }
+          ]}
+        />
       </div>
     )
   }

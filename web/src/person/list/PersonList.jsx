@@ -61,6 +61,10 @@ export class PersonList extends PureComponent {
     this.setState({ filters: this.state.filters.set(e.target.id, e.target.value) })
   }
 
+  handleFetch = (...args) => {
+    this.props.fetchPersons(this.props.table.filters, ...args)
+  }
+
   handleSubmit = (e) => {
     e.preventDefault()
     this.props.fetchPersons(this.state.filters)
@@ -107,13 +111,17 @@ export class PersonList extends PureComponent {
           </Toolbar>
         </form>
 
-        <DataTable  handleFetch={ this.props.fetchPersons }
-                    items={ this.props.items }
-                    table={ this.props.table }
-                    columns={[  { db: 'name', title: formatMessage(messages.personName) },
-                                { db: 'level', title: formatMessage(messages.level), hideOnXs: true },
-                                { db: 'state', title: formatMessage(messages.state), hideOnXs: true },
-                                { db: 'lga', title: formatMessage(messages.lga), hideOnXs: true } ]} />
+        <DataTable
+          handleFetch={ this.handleFetch }
+          items={ this.props.items }
+          table={ this.props.table }
+          columns={[
+            { db: 'name', title: formatMessage(messages.personName) },
+            { db: 'level', title: formatMessage(messages.level), hideOnXs: true },
+            { db: 'state', title: formatMessage(messages.state), hideOnXs: true },
+            { db: 'lga', title: formatMessage(messages.lga), hideOnXs: true }
+          ]}
+        />
       </div>
     )
   }

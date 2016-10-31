@@ -61,6 +61,10 @@ export class SiteList extends PureComponent {
     this.props.router.push(`/site/${siteId}`)
   }
 
+  handleFetch = (...args) => {
+    this.props.fetchSites(this.props.table.filters, ...args)
+  }
+
   filterSitesChange = (e) => {
     this.setState({ filters: this.state.filters.set(e.target.id, e.target.value) })
   }
@@ -111,15 +115,19 @@ export class SiteList extends PureComponent {
           </Toolbar>
         </form>
 
-        <DataTable  selectable
-                    handleItemIdSelection={this.handleItemIdSelection}
-                    handleFetch={ this.props.fetchSites }
-                    items={ this.props.items }
-                    table={ this.props.table }
-                    columns={[{ db: 'name', title: formatMessage(messages.siteName) },
-                              { db: 'state', title: formatMessage(messages.state) },
-                              { db: 'lga', title: formatMessage(messages.lga) },
-                              { db: 'totalDevices', title: formatMessage(messages.totalDevices) } ]} />
+        <DataTable
+          selectable
+          handleItemIdSelection={this.handleItemIdSelection}
+          handleFetch={ this.handleFetch }
+          items={ this.props.items }
+          table={ this.props.table }
+          columns={[
+            { db: 'name', title: formatMessage(messages.siteName) },
+            { db: 'state', title: formatMessage(messages.state) },
+            { db: 'lga', title: formatMessage(messages.lga) },
+            { db: 'totalDevices', title: formatMessage(messages.totalDevices) }
+          ]}
+        />
       </div>
     )
   }

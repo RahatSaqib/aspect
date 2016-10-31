@@ -62,6 +62,10 @@ export class ResultList extends PureComponent {
     this.props.router.push(`/result/${resultId}`)
   }
 
+  handleFetch = (...args) => {
+    this.props.fetchResults(this.props.table.filters, ...args)
+  }
+
   filterResultsChange = (e) => {
     this.setState({ filters: this.state.filters.set(e.target.id, e.target.value) })
   }
@@ -116,7 +120,7 @@ export class ResultList extends PureComponent {
         <DataTable
           selectable
           handleItemIdSelection={this.handleItemIdSelection}
-          handleFetch={ this.props.fetchResults }
+          handleFetch={ this.handleFetch }
           items={ this.props.items }
           table={ this.props.table }
           columns={[

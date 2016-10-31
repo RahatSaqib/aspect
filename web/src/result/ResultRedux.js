@@ -39,7 +39,7 @@ function receiveResults(json) {
   }
 }
 
-export function fetchResults(filters = Immutable.Map({ sampleId: '' }), sortCol = 'endedOn', sortDir = 'desc', page = 0, pageSize = 20){
+export function fetchResults(filters/* required */, sortCol = 'endedOn', sortDir = 'desc', page = 0, pageSize = 20){
   return dispatch => {
 
     dispatch(requestResults(sortCol, sortDir, page, pageSize, filters))
