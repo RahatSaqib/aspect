@@ -30,6 +30,7 @@ describe('Assay routes',function(){
         assert.property(res.body.data[0], 'name')
         assert.property(res.body.data[0], 'assayTypeName')
         assert.property(res.body.data[0], 'deviceTypeName')
+        assert.property(res.body.data[0], 'hasResults')
         assert.property(res.body, 'total')
         done()
       })

@@ -98,7 +98,7 @@ export class ResultList extends PureComponent {
     const { intl, assays } = this.props
     const { formatMessage, formatDate } = intl
     const assaysLoading = assays ? assays.get('loading') : false
-    const dropdownAssay = assays ? assays.get('items').toJS() : []
+    const dropdownAssay = assays ? assays.get('items').filter(a => a.get('hasResults')) : []
 
     return (
       <div className={styles.Content}>
@@ -123,7 +123,7 @@ export class ResultList extends PureComponent {
                         this.filterResultsChange('assayId', v, () => this.handleSubmit(e)) } }>
                       {
                         dropdownAssay.map(assay =>
-                          <MenuItem key={assay.id} value={assay.id} primaryText={assay.name} />)
+                          <MenuItem key={assay.get('id')} value={assay.get('id')} primaryText={assay.get('name')} />)
                       }
               </ForkedSelectField>
               <RaisedButton label="Filter" primary={true} onTouchTap={ this.handleSubmit } />
