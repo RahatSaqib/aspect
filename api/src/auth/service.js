@@ -7,6 +7,7 @@ let _ = require('lodash')
 const bcrypt = require('bcrypt')
 const { createFetch, base, accept, header, method, body } = require('http-client')
 require('isomorphic-fetch')
+const sendGridUtil = require('../email/sendGridUtil')
 
 const bcryptCompare = Promise.promisify(bcrypt.compare)
 const bcryptHash = Promise.promisify(bcrypt.hash)
@@ -271,8 +272,9 @@ function* createResetPasswordToken(request){
   if(user && user.id){
     const resetPasswordToken = crypto.randomBytes(48).toString('base64'),
       now = new Date(),
-      expires = new Date(now + 3600000)
-
+      expires = new Date(now + 3600000),
+      resetPasswordLink = 'http://localhost:8000/reset-password?token=' + resetPasswordToken
+    yield sendGridUtil.sendEmail(payload.email, 'Aspect Password Reset', `<a href="${resetPasswordLink}">Click Here to Reset Your Password: resetPasswordLink</a>`)
     yield query('Save reset password token').insert({
       token: resetPasswordToken,
       userId: user.id,
@@ -290,5 +292,6 @@ module.exports = {
   authenticate,
   checkAuthentication,
   refreshToken,
-  updateUsernameAndPasswordForLoggedInUser
+  updateUsernameAndPasswordForLoggedInUser,
+  createResetPasswordToken
 }

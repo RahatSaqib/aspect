@@ -6,7 +6,8 @@ let {
   authenticate,
   checkAuthentication,
   refreshToken,
-  updateUsernameAndPasswordForLoggedInUser
+  updateUsernameAndPasswordForLoggedInUser,
+  createResetPasswordToken
 } = require('./service')
 
 module.exports = [
@@ -64,6 +65,20 @@ module.exports = [
           newPassword: Joi.string().max(100).allow('', null),
           clientName: Joi.string().required(),
           clientId: Joi.string()
+        }
+      }
+    }
+  }, {
+    method: 'POST',
+    path: '/auth/send-reset-password-token',
+    handler: asyncHandler(createResetPasswordToken),
+    config: {
+      auth: false,
+      description: 'Send Reset Password Token',
+      notes: 'Generate a new reset password token and send it to the user via email',
+      validate: {
+        params: {
+          email: Joi.string().description('Email address').required()
         }
       }
     }
