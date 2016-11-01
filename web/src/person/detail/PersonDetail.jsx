@@ -77,14 +77,6 @@ export class PersonDetail extends PureComponent {
     }
   }
 
-  partnerSelected = (event, target, value) => {
-    this.setPartnersOrgUnitsAndRoles(this.props, value, this.props.person.get('orgUnitId'))
-  }
-
-  orgUnitSelected = (event, target, value) => {
-    this.setPartnersOrgUnitsAndRoles(this.props, this.props.person.get('partnerId'), value)
-  }
-
   setPartnersOrgUnitsAndRoles = (props, selectedPartnerId, selectedOrgUnitId) => {
     const {partnersAndRolesForSelectList, intl} = props,
       {formatMessage} = intl,
@@ -110,15 +102,6 @@ export class PersonDetail extends PureComponent {
       orgUnits,
       roles
     })
-  }
-
-  roleSelected = (event, isSelected) => {
-    const roleId = parseInt(event.target.name)
-    if(isSelected) {
-      this.props.person.roles.push(roleId)
-    } else {
-      this.props.person.roles.splice(this.props.person.roles.indexOf(roleId), 1)
-    }
   }
 
   saveContactDetails = formValues => {
@@ -155,8 +138,8 @@ export class PersonDetail extends PureComponent {
               <h2 className={'pure-visible-xs ' + styles.Form__Header}>
                 {formatMessage(messages.contactDetails)}
               </h2>
-              {person && <ContactDetailsForm initialValues={contactDetails} showNotesField
-                                             onSubmit={this.saveContactDetails} />}
+              {person && <ContactDetailsForm initialValues={contactDetails} partners={this.state.partners}
+                                             showNotesField userIsAdmin onSubmit={this.saveContactDetails} />}
             </Tab>
             {userIsAdmin && <Tab icon={<Lock />}
                  label={<span className="pure-hidden-xs">{formatMessage(messages.systemAccessControl)}</span>}>
@@ -164,10 +147,7 @@ export class PersonDetail extends PureComponent {
               <h2 className={'pure-visible-xs ' + styles.Form__Header}>
                 {formatMessage(messages.systemAccessControl)}
               </h2>
-              {person && <LoginDetailsForm initialValues={loginDetails} onSubmit={this.saveLoginDetails}
-                                           partners={this.state.partners} orgUnits={this.state.orgUnits}
-                                           roles={this.state.roles} partnerSelected={this.partnerSelected}
-                                           orgUnitSelected={this.orgUnitSelected} roleSelected={this.roleSelected} />}
+              {person && <LoginDetailsForm initialValues={loginDetails} onSubmit={this.saveLoginDetails} />}
             </Tab>}
             <Tab icon={<Language />}
                  label={<span className="pure-hidden-xs">{formatMessage(messages.languageAndTimezone)}</span>}>

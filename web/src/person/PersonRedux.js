@@ -148,7 +148,7 @@ function updatePerson(path, personId, data, fields) {
 
 export function updateSinglePerson(personId, data){
   return updatePerson(`/person/${personId}`, personId, data, ['name', 'title', 'email', 'email2', 'phone',
-    'cell', 'countryId', 'stateId', 'lgaId', 'zip', 'notes'])
+    'cell', 'countryId', 'stateId', 'lgaId', 'zip', 'notes', 'lastPartnerId'])
 }
 
 export function updateSinglePersonUserPreferences(personId, data){
@@ -173,7 +173,8 @@ export const ContactDetails = Immutable.Record({
   stateId: null,
   lgaId: null,
   zip: null,
-  notes: null
+  notes: null,
+  lastPartnerId: null
 })
 export const LoginDetails = Immutable.Record({
   id: null,

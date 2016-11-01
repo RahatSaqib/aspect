@@ -6,6 +6,7 @@ import { injectIntl, defineMessages } from 'react-intl'
 import LocationSelector from '../../components/shared/LocationSelector'
 import TextInput from '../../components/shared/TextInput'
 import PhoneInput from '../../components/shared/PhoneInput'
+import SelectInput from '../../components/shared/SelectInput'
 import {emailAddress as validateEmailAddress} from '../../shared/utils/validate'
 import styles from './PersonDetail.css'
 
@@ -42,6 +43,10 @@ const messages = defineMessages({
     id: 'pages.AccountDetails.cell',
     defaultMessage: 'Mobile'
   },
+  partner: {
+    id: 'pages.AccountDetails.partner',
+    defaultMessage: 'Partner'
+  },
   location: {
     id: 'pages.ContactDetails.locationHeader',
     defaultMessage: 'Location'
@@ -69,7 +74,7 @@ const messages = defineMessages({
 })
 
 const ContactDetailsForm = props => {
-  const { handleSubmit, pristine, invalid, loading, initialValues, showNotesField } = props,
+  const { handleSubmit, pristine, invalid, loading, initialValues, showNotesField, userIsAdmin, partners } = props,
     {formatMessage} = props.intl
   return (
     <form onSubmit={handleSubmit} className={styles.Form}>
@@ -88,6 +93,12 @@ const ContactDetailsForm = props => {
           <PhoneInput name="phone" label={formatMessage(messages.telephone)} disabled={loading} maxLength="40" />
           <PhoneInput name="cell" label={formatMessage(messages.mobile)} disabled={loading} maxLength="40" />
         </section>
+        {userIsAdmin && <section>
+          <h1>{formatMessage(messages.partner)}</h1>
+          <SelectInput name="lastPartnerId" label={formatMessage(messages.partner)}
+                       disabled={loading || _.isEmpty(partners)} autoWidth
+                       dataSource={partners} dataSourceConfig={{ text: 'name', value: 'id' }} />
+        </section>}
         <section>
           <h1>{formatMessage(messages.location)}</h1>
           <LocationSelector disabled={loading} initialValues={initialValues}

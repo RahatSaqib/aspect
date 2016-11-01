@@ -1,13 +1,11 @@
 import React from 'react'
 import { reduxForm } from 'redux-form/immutable'
 import RaisedButton from 'material-ui/RaisedButton'
-import Checkbox from 'material-ui/Checkbox'
 import Dialog from 'material-ui/Dialog'
 import FlatButton from 'material-ui/FlatButton'
 import _ from 'lodash'
 import { injectIntl, defineMessages } from 'react-intl'
 import TextInput from '../../components/shared/TextInput'
-import SelectInput from '../../components/shared/SelectInput'
 import StrongPasswordInput from '../../components/shared/StrongPasswordInput'
 import styles from './PersonDetail.css'
 
@@ -23,18 +21,6 @@ const messages = defineMessages({
   confirmNewPassword: {
     id: 'pages.UpdateLoginDetails.confirmNewPassword',
     defaultMessage: 'Confirm New Password'
-  },
-  partnerAndRoles: {
-    id: 'pages.UpdateLoginDetails.partnerAndRoles',
-    defaultMessage: 'Partner & Roles'
-  },
-  partner: {
-    id: 'pages.UpdateLoginDetails.partner',
-    defaultMessage: 'Partner'
-  },
-  organisationalUnit: {
-    id: 'pages.UpdateLoginDetails.organisationalUnit',
-    defaultMessage: 'Organizational Unit'
   },
   save: {
     id: 'pages.UpdateLoginDetails.save',
@@ -93,8 +79,7 @@ const messages = defineMessages({
 const LoginDetailsForm = props => {
   const { handleSubmit, pristine, invalid, loading,
       currentPasswordInputDialogOpen, openCurrentPasswordInputDialog,
-      closeCurrentPasswordInputDialog, partners, orgUnits, roles,
-      initialValues, partnerSelected, orgUnitSelected, roleSelected} = props,
+      closeCurrentPasswordInputDialog} = props,
     {formatMessage} = props.intl,
     onCurrentPasswordKeyPress = event => {
       if(event.key === 'Enter') {
@@ -127,24 +112,6 @@ const LoginDetailsForm = props => {
           <TextInput name="confirmNewPassword" label={formatMessage(messages.confirmNewPassword)}
                      disabled={loading} maxLength="100" type="password" />
         </section>
-        {!_.isEmpty(partners) && <section>
-          <h1>{formatMessage(messages.partnerAndRoles)}</h1>
-          <SelectInput name="partnerId" label={formatMessage(messages.partner)}
-                       disabled={loading || _.isEmpty(partners)} autoWidth
-                       dataSource={partners} dataSourceConfig={{ text: 'name', value: 'id' }}
-                       onChange={partnerSelected} />
-          <SelectInput name="orgUnitId" label={formatMessage(messages.organisationalUnit)}
-                       disabled={loading || _.isEmpty(orgUnits)} autoWidth
-                       dataSource={orgUnits} dataSourceConfig={{ text: 'name', value: 'id' }}
-                       onChange={orgUnitSelected} />
-          <br />
-          {!_.isEmpty(roles) && <div>
-            {roles.map(role =>
-              <Checkbox key={String(role.id)} name={String(role.id)} label={role.name} onCheck={roleSelected}
-                        checked={initialValues.get('roles') && initialValues.get('roles').includes(role.id)} />)
-            }
-          </div>}
-        </section>}
       </div>
       <div className={styles.Form__ActionRow}>
         <RaisedButton disabled={pristine || invalid || loading} label={formatMessage(messages.save)}

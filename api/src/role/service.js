@@ -4,8 +4,8 @@ const { query, knex } = require('../db')
 function* getRolesForSelectList(){
   const partnersOrganisationalUnitsAndRoles = yield query('Get partners, organisational units and roles for select lists')
     .from('Role as r')
-    .leftJoin('OrgUnit as ou', 'r.orgUnitId', 'ou.id')
-    .leftJoin('Partner as p', function () {
+    .rightOuterJoin('OrgUnit as ou', 'r.orgUnitId', 'ou.id')
+    .rightOuterJoin('Partner as p', function () {
       this.on('ou.partnerId', 'p.id')
         .orOn(knex.raw('r.orgUnitId IS NULL AND r.partnerId = p.id'))
     })
@@ -45,7 +45,11 @@ function* getRolesForSelectList(){
             name: undefined,
             roles: _.orderBy(_.map(
               _.filter(partnersOrganisationalUnitsAndRoles,
-                {partnerId: partnerRecord.partnerId, orgUnitId: null}),
+                function (roleRecord) {
+                  return roleRecord.partnerId === partnerRecord.partnerId &&
+                    roleRecord.roleId !== null &&
+                    roleRecord.orgUnitId === null
+              }),
               function(roleRecord) {
                 return {
                   id: roleRecord.roleId,
@@ -56,6 +60,7 @@ function* getRolesForSelectList(){
             _.filter(partnersOrganisationalUnitsAndRoles,
               function (orgUnitRecord) {
                 return orgUnitRecord.orgUnitId !== null &&
+                  orgUnitRecord.roleId !== null &&
                   orgUnitRecord.partnerId === partnerRecord.partnerId
               }),
             function(orgUnitRecord) {

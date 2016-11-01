@@ -56,27 +56,28 @@ module.exports = [{
         stateId: Joi.number().integer().positive().allow('', null),
         lgaId: Joi.number().integer().positive().allow('', null),
         zip: Joi.string().max(45).allow('', null),
-        notes: Joi.string().optional().max(1200).allow('', null)
+        notes: Joi.string().optional().max(1200).allow('', null),
+        lastPartnerId: Joi.number().integer().positive().allow('', null)
       }
     }
-  },
-  {
-    method: 'PUT',
-    path: '/person/preferences/{personId}',
-    handler: asyncHandler(updatePersonUserPreferences),
-    config: {
-      description: 'Update Person\'s User Preferences',
-      notes: 'Timezone and Language',
-      auth: {scope: ['person:edit', 'person:admin']},
-      validate: {
-        params: {
-          personId: Joi.string().description('Person ID').required()
-        },
-        payload: {
-          timezone: Joi.string().max(255).allow('', null),
-          culture: Joi.string().max(45).allow('', null)
-        }
+  }
+}, {
+  method: 'PUT',
+  path: '/person/preferences/{personId}',
+  handler: asyncHandler(updatePersonUserPreferences),
+  config: {
+    description: 'Update Person\'s User Preferences',
+    notes: 'Timezone and Language',
+    auth: {scope: ['person:edit', 'person:admin']},
+    validate: {
+      params: {
+        personId: Joi.string().description('Person ID').required()
+      },
+      payload: {
+        timezone: Joi.string().max(255).allow('', null),
+        culture: Joi.string().max(45).allow('', null)
       }
     }
   }
 }]
+

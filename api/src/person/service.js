@@ -104,7 +104,7 @@ function* savePerson(request, updatablePersonFields) {
 
 function* updatePerson(request) {
   return yield* savePerson(request, ['name', 'title', 'email', 'email2', 'phone', 'cell', 'countryId',
-    'stateId', 'lgaId', 'zip', 'notes'])
+    'stateId', 'lgaId', 'zip', 'notes', 'lastPartnerId'])
 }
 
 function* updatePersonUserPreferences(request) {
