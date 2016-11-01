@@ -113,24 +113,34 @@ export class PersonDetail extends PureComponent {
   }
 
   saveLoginDetails = formValues => {
-    console.log(formValues)
+    const {updateSinglePersonLoginDetails} = this.props
+    return updateSinglePersonLoginDetails(formValues.get('id'), formValues)
   }
 
   saveUserPreferences = formValues => {
-    console.log(formValues)
+    const {updateSinglePersonUserPreferences} = this.props
+    return updateSinglePersonUserPreferences(formValues.get('id'), formValues)
   }
 
   render() {
     const {
         intl: { formatMessage },
-        person, user, editable
+        person, user, editable, addAcknowledgement
       } = this.props,
       contactDetails = new ContactDetails(person),
       loginDetails = new LoginDetails(person),
       userPreferences = new UserPreferences(person),
       userIsAdmin = user.get('permissions').includes('person:admin'),
-      loading = !person || person.get('loaded') !== true
-
+      loading = !person || person.get('loaded') !== true,
+      saveContactDetailsSucceeded = () => {
+        addAcknowledgement(formatMessage(messages.contactDetailsUpdated))
+      },
+      saveLoginDetailsSucceeded = () => {
+        addAcknowledgement(formatMessage(messages.loginDetailsUpdated))
+      },
+      saveUserPreferencesSucceeded = () => {
+        addAcknowledgement(formatMessage(messages.userPreferencesUpdated))
+      }
     return (
       <div className={styles.Content}>
         <Helmet title={formatMessage(messages.title)} titleTemplate="%s - Aspect" defaultTitle="Aspect" />
@@ -144,7 +154,8 @@ export class PersonDetail extends PureComponent {
                 {formatMessage(messages.contactDetails)}
               </h2>
               {!loading && <ContactDetailsForm initialValues={contactDetails} partners={this.state.partners}
-                                               showNotesField userIsAdmin onSubmit={this.saveContactDetails} />}
+                                               showNotesField userIsAdmin onSubmit={this.saveContactDetails}
+                                               onSubmitSuccess={saveContactDetailsSucceeded} />}
             </Tab>
             {userIsAdmin && <Tab icon={<Lock />}
                  label={<span className="pure-hidden-xs">{formatMessage(messages.systemAccessControl)}</span>}>
@@ -152,7 +163,8 @@ export class PersonDetail extends PureComponent {
               <h2 className={'pure-visible-xs ' + styles.Form__Header}>
                 {formatMessage(messages.systemAccessControl)}
               </h2>
-              {!loading && <LoginDetailsForm initialValues={loginDetails} onSubmit={this.saveLoginDetails} />}
+              {!loading && <LoginDetailsForm initialValues={loginDetails} onSubmit={this.saveLoginDetails}
+                                             onSubmitSuccess={saveLoginDetailsSucceeded} />}
             </Tab>}
             <Tab icon={<Language />}
                  label={<span className="pure-hidden-xs">{formatMessage(messages.languageAndTimezone)}</span>}>
@@ -161,7 +173,8 @@ export class PersonDetail extends PureComponent {
                 {formatMessage(messages.languageAndTimezone)}
               </h2>
               {!loading && <UserPreferencesForm initialValues={userPreferences}
-                                                onSubmit={this.saveUserPreferences} />}
+                                                onSubmit={this.saveUserPreferences}
+                                                onSubmitSuccess={saveUserPreferencesSucceeded} />}
             </Tab>
           </Tabs>}
         </Paper>
@@ -185,7 +198,10 @@ function mapDispatchToProps(dispatch) {
   return bindActionCreators({
     fetchSinglePerson,
     updateSinglePerson,
-    fetchPartnersAndRolesForSelectList
+    updateSinglePersonLoginDetails,
+    updateSinglePersonUserPreferences,
+    fetchPartnersAndRolesForSelectList,
+    addAcknowledgement
   }, dispatch)
 }
 

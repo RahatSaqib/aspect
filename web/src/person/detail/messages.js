@@ -30,5 +30,17 @@ export default defineMessages({
   languageAndTimezone: {
     id: 'pages.PersonDetails.languageAndTimezone',
     defaultMessage: 'Language & Timezone'
+  },
+  contactDetailsUpdated: {
+    id: 'pages.AccountDetails.contactDetailsUpdated',
+    defaultMessage: 'Contact details changed successfully'
+  },
+  loginDetailsUpdated: {
+    id: 'pages.AccountDetails.loginDetailsUpdated',
+    defaultMessage: 'Login details changed successfully'
+  },
+  userPreferencesUpdated: {
+    id: 'pages.AccountDetails.userPreferencesUpdated',
+    defaultMessage: 'User preferences changed successfully'
   }
 })

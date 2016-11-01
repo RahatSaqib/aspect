@@ -23,7 +23,8 @@ export const types = {
   RECEIVE_SINGLE_PERSON: 'RECEIVE_SINGLE_PERSON',
 
   REQUEST_UPDATING_SINGLE_PERSON: 'REQUEST_UPDATING_SINGLE_PERSON',
-  RECEIVE_UPDATED_SINGLE_PERSON: 'RECEIVE_UPDATED_SINGLE_PERSON'
+  RECEIVE_UPDATED_SINGLE_PERSON: 'RECEIVE_UPDATED_SINGLE_PERSON',
+  RECEIVE_UPDATED_SINGLE_PERSON_LOGIN_DETAILS: 'RECEIVE_UPDATED_SINGLE_PERSON_LOGIN_DETAILS'
 }
 /*
  * ---------------- Action Creators -----------------
@@ -128,6 +129,13 @@ function receiveUpdatedSinglePerson(item) {
   }
 }
 
+function receiveUpdatedSinglePersonLoadinDetails(updatedInformation) {
+  return {
+    type: types.RECEIVE_UPDATED_SINGLE_PERSON_LOGIN_DETAILS,
+    personId: updatedInformation.personId
+  }
+}
+
 // update a single person with given personId and data
 function updatePerson(path, personId, data, fields) {
   return dispatch => {
@@ -156,12 +164,12 @@ export function updateSinglePersonLoginDetails(personId, data){
 
     dispatch(requestUpdatingSinglePerson(personId, data))
 
-    const personJson = data.toJS ? data.toJS() : data
+    const loginDetailsJson = data.toJS ? data.toJS() : data
     return aspectFetch(`/auth/update-person-login-details/${personId}`, {
       method: 'PUT',
-      body: JSON.stringify(_.pick(personJson, fields))
+      body: JSON.stringify(_.pick(loginDetailsJson, ['newUsername', 'newPassword']))
     })
-      .then(json => dispatch(receiveUpdatedSinglePerson(json.data)))
+      .then(json => dispatch(receiveUpdatedSinglePersonLoadinDetails(json.data)))
       .catch(err => {
         dispatch(addError(`Updating a person (${personId}) failed`, err.message, err))
       })
@@ -228,9 +236,14 @@ export default function personReducer(state = initialState, action) {
       const immutItem = Immutable.fromJS({...action.item, loaded: true})
       mutState.set('items', receiveItem(mutState.items, immutItem))
     })
-  case types.REQUEST_UPDATING_SINGLE_PERSON:
-    const person = state.items.byId.get(action.personId).set('loaded', false)
+  case types.RECEIVE_UPDATED_SINGLE_PERSON_LOGIN_DETAILS:
     return state.withMutations(mutState => {
+      const person = state.items.byId.get(action.personId).set('loaded', true)
+      mutState.set('items', receiveItem(mutState.items, person))
+    })
+  case types.REQUEST_UPDATING_SINGLE_PERSON:
+    return state.withMutations(mutState => {
+      const person = state.items.byId.get(action.personId).set('loaded', false)
       mutState.set('items', receiveItem(mutState.items, person))
     })
   }
