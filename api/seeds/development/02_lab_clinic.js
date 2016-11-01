@@ -103,7 +103,7 @@ function* seed(knex){
       partnerId,
       name: `${state.name} Clinic`,
       shortname: `C: ${state.name}`,
-      identifier: `I: ${state.name}`,
+      externalId: `clinic_${state.name}`,
       city: `${state.name} City`,
       street1: `${state.id} Main Street`,
       zip: `12345-${state.id}`
@@ -182,7 +182,7 @@ function* seed(knex){
       partnerId,
       name: `${state.name} Lab`,
       shortname: `L: ${state.name}`,
-      identifier: `LI: ${state.name}`,
+      externalId: `lab_${state.name}`,
       city: `${state.name} City`,
       street1: `${state.id} Main Street`,
       zip: `12345-${state.id}`

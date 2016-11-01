@@ -16,8 +16,8 @@ function* addResult(request){
 
   yield transact(function*(knex){
     // TODO lookup and reuse result with UniqueId if specified
-    const uniqueId = typeof payload.uniqueId !== 'undefined'
-      ? payload.uniqueId
+    const externalId = typeof payload.id !== 'undefined'
+      ? payload.id
       : crypto.randomBytes(48).toString('base64') // TODO UUID?
 
     // TODO handle multiple Assays per DeviceType
@@ -34,7 +34,7 @@ function* addResult(request){
 
     // TODO lookup specified ResultType
     const resultTypeQ = knex('ResultType as rt')
-      .where({'rt.i18nKey': 'ResultTypePatient'})
+      .where({'rt.externalId': 'Patient'})
       .first('rt.id')
 
     const [assay, site, resultType] = yield Promise.all([assayQ, siteQ, resultTypeQ])
@@ -42,7 +42,7 @@ function* addResult(request){
     // TODO lookup specified sample
     // TODO allow linking to different sample origin site
     const [sampleId] = yield knex('Sample').insert({
-      sampleId: 'Sample '+uniqueId,
+      externalId: 'sample_'+externalId,
       originSiteId: site.id
     })
 
@@ -52,7 +52,7 @@ function* addResult(request){
     // TODO result merge into existing with same uniqueId
     ;[resultId] = yield knex('Result')
       .insert({
-        uniqueId,
+        externalId,
         deviceId,
         assayId: assay.id,
         partnerId: site.partnerId,

@@ -41,7 +41,7 @@ module.exports = [
       notes: 'Adds new assay result data for the authenticated device',
       validate: {
         payload: {
-          uniqueId: Joi.string(),
+          id: Joi.string(),
           data: Joi.object().required()
         }
       }

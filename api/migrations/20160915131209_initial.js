@@ -232,7 +232,7 @@ function* up(knex){
     site.increments('id')
     site.string('name').notNullable()
     site.string('shortname', 45)
-    site.string('identifier')
+    site.string('externalId').notNullable()
     site.string('notes', 2000)
     // TODO is site to partner many to many?
     site.integer('partnerId').unsigned()
@@ -358,6 +358,7 @@ function* up(knex){
     assay.increments('id')
     assay.string('name').notNullable()
     assay.string('i18nKey')
+    assay.string('externalId').notNullable()
     assay.integer('assayTypeId').unsigned().notNullable()
       .index().references('id').inTable('AssayType')
     assay.integer('deviceTypeId').unsigned().notNullable()
@@ -374,6 +375,7 @@ function* up(knex){
     resultType.increments('id')
     resultType.string('name').notNullable()
     resultType.string('i18nKey')
+    resultType.string('externalId').notNullable()
     resultType.charset('utf8')
   })
 
@@ -382,6 +384,7 @@ function* up(knex){
     resultCategory.increments('id')
     resultCategory.string('name').notNullable()
     resultCategory.string('i18nKey')
+    resultCategory.string('externalId').notNullable()
     resultCategory.charset('utf8')
   })
 
@@ -397,7 +400,7 @@ function* up(knex){
   // the sample that the result is based on (multiple results can refer to the same sample)
   yield knex.schema.createTable('Sample', sample => {
     sample.increments('id')
-    sample.string('sampleId').notNullable()
+    sample.string('externalId').notNullable()
     sample.integer('originSiteId').unsigned()
           .index().references('id').inTable('Site')
     sample.charset('utf8')
@@ -405,7 +408,7 @@ function* up(knex){
 
   yield knex.schema.createTable('Result', result => {
     result.increments('id')
-    result.string('uniqueId').notNullable()
+    result.string('externalId').notNullable()
     result.integer('assayId').unsigned().notNullable()
       .index().references('id').inTable('Assay')
     result.integer('partnerId').unsigned()
