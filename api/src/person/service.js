@@ -91,6 +91,10 @@ function* savePerson(request, updatablePersonFields) {
 
   //Update record if any values have changed
   if(!_.isEmpty(changedFields)) {
+    if(changedFields.countryId && personDetails.lastCountryId !== changedFields.countryId) {
+      changedFields.lastCountryId = changedFields.countryId
+    }
+
     changedFields.updatedOn = new Date()
     changedFields.updatedBy = currentlyLoggedInUser.id
 
