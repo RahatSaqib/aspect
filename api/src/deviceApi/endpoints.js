@@ -1,6 +1,7 @@
 let Joi = require('joi')
 let { asyncHandler } = require('../routes')
-let { addDeviceOperation, addDeviceConfiguration, addResult} = require('./service')
+let { addDeviceOperation, addDeviceConfiguration} = require('./device')
+let { addResult} = require('./result')
 
 module.exports = [
   {
