@@ -471,6 +471,16 @@ function* up(knex){
     sample.charset('utf8')
   })
 
+  yield knex.schema.createTable('ResetPassword', resetPassword => {
+    resetPassword.increments('id')
+    resetPassword.string('token').notNullable()
+    resetPassword.integer('userId').unsigned().notNullable()
+      .index().references('id').inTable('User')
+    resetPassword.dateTime('expires')
+    resetPassword.string('sentTo', 500)
+    resetPassword.charset('utf8')
+  })
+
   yield knex.schema.createTable('Unit', unit => {
     unit.increments('id')
     unit.string('name').notNullable()
@@ -505,6 +515,7 @@ function* down(knex){
   yield knex.schema.dropTableIfExists('ConsumableReason')
   yield knex.schema.dropTableIfExists('Unit')
   yield knex.schema.dropTableIfExists('Consumable')
+  yield knex.schema.dropTableIfExists('ResetPassword')
   yield knex.schema.dropTableIfExists('ResultCategoryAssay')
   yield knex.schema.dropTableIfExists('ResultType')
   yield knex.schema.dropTableIfExists('ResultCategory')

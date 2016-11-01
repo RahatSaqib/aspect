@@ -259,6 +259,33 @@ function* updateUsernameAndPasswordForLoggedInUser(request){
   }
 }
 
+function* createResetPasswordToken(request){
+  const {payload} = request
+
+  const user = yield query('Get user details from email address').from('Person as p')
+    .innerJoin('User as u', 'p.userId', 'u.id')
+    .where({'p.email': payload.email})
+    .orWhere({'p.email2': payload.email})
+    .first( 'u.id')
+
+  if(user && user.id){
+    const resetPasswordToken = crypto.randomBytes(48).toString('base64'),
+      now = new Date(),
+      expires = new Date(now + 3600000)
+
+    yield query('Save reset password token').insert({
+      token: resetPasswordToken,
+      userId: user.id,
+      expires: expires,
+      sentTo: payload.email
+    }).into('ResetPassword')
+  }
+
+  return {
+    ok: true
+  }
+}
+
 module.exports = {
   authenticate,
   checkAuthentication,
