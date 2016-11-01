@@ -397,9 +397,7 @@ function* updateUsernameAndPasswordForPerson(request) {
   }
 
   const responseData = {}
-  let userId = 0
   if (userLinkedToPerson) {
-    userId = userLinkedToPerson.id
     const changedFields = yield* getChangedFields(payload, userLinkedToPerson)
     if (!_.isEmpty(changedFields)) {
       yield updateUser(userLinkedToPerson.id, changedFields)
@@ -408,7 +406,7 @@ function* updateUsernameAndPasswordForPerson(request) {
     responseData.changedFields = Object.keys(_.omit(changedFields, ['lastPasswordChange']))
     responseData.username = userLinkedToPerson.name
   } else {
-    userId = yield query('Insert new user details').from('User')
+    yield query('Insert new user details').from('User')
       .insert({
         name: payload.newUsername,
         password: yield bcryptHash(payload.newPassword, parseInt(config.passwordSaltRounds)),
@@ -417,31 +415,11 @@ function* updateUsernameAndPasswordForPerson(request) {
         lockedOut: 0,
         failedPasswordAttempts: 0,
         legacyPassword: 0
-      }).returning('id')
+      })
 
     responseData.changedFields = ['name', 'password']
     responseData.username = payload.newUsername
   }
-
-  const userRoles = yield getRolesForUser(userId),
-    userRolesToDelete = _.map(_.filter(userRoles,
-      userRole => !payload.roles.includes(userRole.roleId)), 'roleId'),
-    userRolesToAdd = _.filter(payload.roles, roleId => !_.some(userRoles, {roleId: roleId}))
-  if (!_.isEmpty(userRolesToDelete) || !_.isEmpty(userRolesToAdd)) {
-    responseData.changedFields.push('roles')
-    if (!_.isEmpty(userRolesToDelete)) {
-      yield query('Delete user roles').from('UserRole as ur')
-        .where({'ur.userId': userId})
-        .andWhere(knex.raw('ur.roleId in (?)', _.join(userRolesToDelete)))
-        .del()
-    }
-    if (!_.isEmpty(userRolesToAdd)) {
-      yield query('Add user roles')
-        .insert(_.map(userRolesToAdd, roleId => { return { userId, roleId } }))
-        .into('UserRole')
-    }
-  }
-
 
   return {
     ok: true,

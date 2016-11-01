@@ -151,6 +151,23 @@ export function updateSinglePerson(personId, data){
     'cell', 'countryId', 'stateId', 'lgaId', 'zip', 'notes', 'lastPartnerId'])
 }
 
+export function updateSinglePersonLoginDetails(personId, data){
+  return dispatch => {
+
+    dispatch(requestUpdatingSinglePerson(personId, data))
+
+    const personJson = data.toJS ? data.toJS() : data
+    return aspectFetch(`/auth/update-person-login-details/${personId}`, {
+      method: 'PUT',
+      body: JSON.stringify(_.pick(personJson, fields))
+    })
+      .then(json => dispatch(receiveUpdatedSinglePerson(json.data)))
+      .catch(err => {
+        dispatch(addError(`Updating a person (${personId}) failed`, err.message, err))
+      })
+  }
+}
+
 export function updateSinglePersonUserPreferences(personId, data){
   return updatePerson(`/person/preferences/${personId}`, personId, data, ['timezone', 'culture'])
 }

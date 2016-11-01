@@ -22,11 +22,14 @@ import { isEditable } from '../../shared/selectors/person'
 import {
   fetchSinglePerson,
   updateSinglePerson,
+  updateSinglePersonLoginDetails,
+  updateSinglePersonUserPreferences,
   ContactDetails,
   LoginDetails,
   UserPreferences
 } from '../PersonRedux'
 import {fetchPartnersAndRolesForSelectList} from '../../role/RoleRedux'
+import { addAcknowledgement } from '../../acknowledgement/AcknowledgementRedux'
 
 import messages from './messages'
 import styles from './PersonDetail.css'

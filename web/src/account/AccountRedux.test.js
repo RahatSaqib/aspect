@@ -22,7 +22,8 @@ describe('AccountDetailsRedux', () => {
     zip: 'ZIP 123',
     timezone: 'Pacific Standard Time',
     culture: 'fr-FR',
-    notes: null
+    notes: null,
+    lastPartnerId: null
   }
 
   describe('account details reducer', () => {
@@ -42,6 +43,7 @@ describe('AccountDetailsRedux', () => {
         assert.isFalse(initialState.get('saving'))
         assert.deepEqual(initialState.getIn(['data', 'contactDetails']).toJS(), {
           id: null,
+          lastPartnerId: null,
           name: null,
           title: null,
           email: null,
@@ -111,6 +113,7 @@ describe('AccountDetailsRedux', () => {
         it('should show that account details are not loading anymore and populate contactDetails only', () => {
           const newAccountDetailsData = {
             id: 111,
+            lastPartnerId: null,
             username: 'new-username',
             userId: 123,
             name: 'John Hank Smith',
@@ -321,7 +324,7 @@ describe('AccountDetailsRedux', () => {
     describe('saveContactDetails', () => {
       const expectedResponseFromServer = Promise.resolve({ok: true, data: accountDetailsData}),
         stubHeaders = { value: 'Stubbed Headers' },
-        contactDetailsData = _.omit(accountDetailsData, ['username', 'userId', 'timezone', 'culture', 'notes'])
+        contactDetailsData = _.omit(accountDetailsData, ['username', 'userId', 'timezone', 'culture', 'notes', 'lastPartnerId'])
       let fetchStub
 
       beforeEach(() => {

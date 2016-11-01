@@ -7,9 +7,9 @@ let {
   checkAuthentication,
   refreshToken,
   updateUsernameAndPasswordForLoggedInUser,
+  updateUsernameAndPasswordForPerson,
   createResetPasswordToken,
-  updatePasswordWithResetPasswordToken,
-  updateUsernameAndPasswordForPerson
+  updatePasswordWithResetPasswordToken
 } = require('./service')
 
 module.exports = [
@@ -115,11 +115,8 @@ module.exports = [
           personId: Joi.string().description('Person ID').required()
         },
         payload: {
-          currentPassword: Joi.string().max(100).required(),
           newUsername: Joi.string().max(255).allow('', null),
-          newPassword: Joi.string().max(100).allow('', null),
-          partnerId: Joi.number().integer().allow('', null),
-          roles: Joi.array().items(Joi.number().integer().positive()).unique()
+          newPassword: Joi.string().max(100).allow('', null)
         }
       }
     }
