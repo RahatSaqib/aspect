@@ -114,7 +114,10 @@ export class PersonDetail extends PureComponent {
 
   saveLoginDetails = formValues => {
     const {updateSinglePersonLoginDetails} = this.props
-    return updateSinglePersonLoginDetails(formValues.get('id'), formValues)
+    return updateSinglePersonLoginDetails(formValues.get('id'), {
+      newUsername: formValues.get('username'),
+      newPassword: formValues.get('newPassword')
+    })
   }
 
   saveUserPreferences = formValues => {
