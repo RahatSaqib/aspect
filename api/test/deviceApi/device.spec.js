@@ -4,7 +4,7 @@ const _ = require('lodash')
 const shared = require('../utils/sharedToken')
 const sharedDevice = require('./deviceToken')
 
-const { transact } = require('../../src/db')
+const { run } = require('../../src/db')
 
 // This agent refers to PORT where program is runninng.
 let server = supertest.agent('http://localhost:8080')
@@ -19,7 +19,7 @@ describe('Device API routes',function(){
 
     const devicePath = '/device/configuration'
 
-    it('should add and return device configuration', () => transact(function*(knex){
+    it('should add and return device configuration', () => run(function*(knex){
 
       const {deviceId} = sharedDevice
       clientPath += ('?deviceId='+deviceId)
@@ -119,8 +119,7 @@ describe('Device API routes',function(){
           assert.typeOf(res.body, 'Object')
           assert.property(res.body, 'data')
           assert.typeOf(res.body.data, 'array')
-          assert.isAtLeast(res.body.data.length, 0)
-          initialDataLength = res.body.data.length
+          assert.equal(res.body.data.length, initialDataLength)
           assert.property(res.body, 'total')
         })
     }))
@@ -133,7 +132,7 @@ describe('Device API routes',function(){
 
     const devicePath = '/device/operation'
 
-    it('should add and return device operation', () => transact(function*(knex){
+    it('should add and return device operation', () => run(function*(knex){
       const {deviceId} = sharedDevice
       clientPath += ('?deviceId='+deviceId)
 
@@ -232,8 +231,7 @@ describe('Device API routes',function(){
           assert.typeOf(res.body, 'Object')
           assert.property(res.body, 'data')
           assert.typeOf(res.body.data, 'array')
-          assert.isAtLeast(res.body.data.length, 0)
-          initialDataLength = res.body.data.length
+          assert.equal(res.body.data.length, initialDataLength)
           assert.property(res.body, 'total')
         })
     }))
