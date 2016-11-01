@@ -105,7 +105,7 @@ module.exports = [
     }
   }, {
     method: 'PUT',
-    path: '/auth/update-person-login-details',
+    path: '/auth/update-person-login-details/{personId}',
     handler: asyncHandler(updateUsernameAndPasswordForPerson),
     config: {
       description: 'Update username and password linked to a person',

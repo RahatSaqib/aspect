@@ -396,7 +396,9 @@ function* updateUsernameAndPasswordForPerson(request) {
     }
   }
 
-  const responseData = {}
+  const responseData = {
+    personId: params.personId
+  }
   if (userLinkedToPerson) {
     const changedFields = yield* getChangedFields(payload, userLinkedToPerson)
     if (!_.isEmpty(changedFields)) {
