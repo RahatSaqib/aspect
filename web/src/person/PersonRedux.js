@@ -239,12 +239,12 @@ export default function personReducer(state = initialState, action) {
     })
   case types.RECEIVE_UPDATED_SINGLE_PERSON_LOGIN_DETAILS:
     return state.withMutations(mutState => {
-      const person = state.items.byId.get(action.personId).set('loaded', true)
+      const person = state.items.byId.get(action.personId).merge({loaded: true, username: action.username})
       mutState.set('items', receiveItem(mutState.items, person))
     })
   case types.REQUEST_UPDATING_SINGLE_PERSON:
     return state.withMutations(mutState => {
-      const person = state.items.byId.get(action.personId).merge({loaded: false, username: action.username})
+      const person = state.items.byId.get(action.personId).set('loaded', false)
       mutState.set('items', receiveItem(mutState.items, person))
     })
   }
