@@ -49,7 +49,7 @@ export class Form extends PureComponent {
   handleLoadMoreClick = () => {
     const { table } = this.props
 
-    this.props.fetchSites(undefined, undefined, undefined, table.page + 1)
+    this.props.fetchSites(this.props.table.filters, undefined, undefined, table.page + 1)
   }
 
   // TODO: if site_id is set to one not present in client redux store,
@@ -57,7 +57,7 @@ export class Form extends PureComponent {
   // So, load the sigle site resource in cDM
   //
   componentDidMount() {
-    this.props.fetchSites()
+    this.props.fetchSites(this.props.table.filters)
   }
 
   render() {
