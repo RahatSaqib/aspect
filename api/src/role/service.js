@@ -49,13 +49,12 @@ function* getRolesForSelectList(){
                   return roleRecord.partnerId === partnerRecord.partnerId &&
                     roleRecord.roleId !== null &&
                     roleRecord.orgUnitId === null
-              }),
-              function(roleRecord) {
-                return {
-                  id: roleRecord.roleId,
-                  name: roleRecord.roleName
-                }
-              }), 'name')
+                }), function(roleRecord) {
+              return {
+                id: roleRecord.roleId,
+                name: roleRecord.roleName
+              }
+            }), 'name')
           }].concat(_.orderBy(_.map(
             _.filter(partnersOrganisationalUnitsAndRoles,
               function (orgUnitRecord) {

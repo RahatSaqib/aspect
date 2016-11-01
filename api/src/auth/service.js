@@ -14,7 +14,7 @@ const bcryptCompare = Promise.promisify(bcrypt.compare)
 const bcryptHash = Promise.promisify(bcrypt.hash)
 
 const config = require('../config')
-const { query, knex } = require('../db')
+const { query } = require('../db')
 
 function* checkAuthentication(){
   return { message: 'Welcome to the API!' }
