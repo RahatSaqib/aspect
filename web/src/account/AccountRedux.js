@@ -5,7 +5,7 @@ import { SubmissionError } from 'redux-form'
 import { aspectFetch, getHeaders, getBrowserNameAndVersion } from '../shared/utils/fetch'
 import * as localStorage from '../shared/utils/localStorage'
 import { addError } from '../error/ErrorRedux'
-import {loginSuccess, changeLanguage, changeTimezone} from '../auth/AuthRedux'
+import {loginSuccess, changeCulture, changeTimezone} from '../auth/AuthRedux'
 
 export const types = {
   REQUEST_ACCOUNT_DETAILS: 'REQUEST_ACCOUNT_DETAILS',
@@ -106,7 +106,7 @@ export function saveLoginDetails(loginDetails) {
       })
       .then(json => {
         let jwt = storeAccess(json.access, json.refresh, json.clientId)
-        dispatch(loginSuccess(jwt.name, jwt.culture, jwt.lang, jwt.timezone, jwt.permissions))
+        dispatch(loginSuccess(jwt.name, jwt.culture, jwt.timezone, jwt.permissions))
         dispatch(createReceiveUpdatedLoginDetails(json.data))
       })
       .catch(err => {
@@ -143,8 +143,7 @@ export function saveUserPreferences(userPreferences) {
       })
       .then(json => {
         if(json.data.culture && json.data.culture.length > 1) {
-          const lang = json.data.culture.substr(0, 2)
-          dispatch(changeLanguage(lang, json.data.culture))
+          dispatch(changeCulture(json.data.culture))
         }
         if(json.data.timezone) {
           dispatch(changeTimezone(json.data.timezone))

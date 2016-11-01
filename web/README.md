@@ -59,7 +59,7 @@ In step 3, you'll need to create or update `.po` files inside `src/shared/i18n` 
 ### Create `.po` files
 
 1. Open [Poedit](https://poedit.net)
-2. Click `Creare new translation`
+2. Click `Create new translation`
 3. Select `src/shared/i18n/diff.pot` from the file dialog
 4. Select language of the translation from the dropdown
 5. Add translations for each item inside the window
@@ -70,7 +70,7 @@ In step 3, you'll need to create or update `.po` files inside `src/shared/i18n` 
 1. Open [Poedit](https://poedit.net)
 2. Click `Edit a translation`
 3. Select `src/shared/i18n/web.en_US.po` from the file dialog
-4. Click `Cataglog > Update from POT file`
+4. Click `Catalog > Update from POT file`
 5. Select `src/shared/i18n/diff.pot` from the file dialog
 6. Update translations for each items inside the window
 7. When done, click `File > Save`

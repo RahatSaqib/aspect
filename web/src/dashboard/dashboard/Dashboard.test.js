@@ -13,7 +13,7 @@ function makeLocationObject(query) {
 
 describe('Dashboard', () => {
 
-  const user = new Immutable.Map({ name: 'Stefan Baumgartner', lang: 'en', timezone: null })
+  const user = new Immutable.Map({ name: 'Stefan Baumgartner', culture: 'en-US', timezone: null })
   const intl = {
     formatMessage: message => message.defaultMessage
   }

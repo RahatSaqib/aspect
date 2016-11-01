@@ -43,7 +43,7 @@ module.exports = [
     path: '/account-details/current-preferences',
     handler: asyncHandler(saveUserPreferencesForLoggedInUser),
     config: {
-      description: 'Save Time Zone and Language of the person Object Linked for the Logged In User',
+      description: 'Save Time Zone and Culture of the person Object Linked for the Logged In User',
       notes: 'Returns a person object, prevents a user from trying to edit a person object not linked to their own profile',
       validate: {
         payload: {
