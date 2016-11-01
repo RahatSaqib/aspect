@@ -71,6 +71,7 @@ function* showPerson(request) {
     personDetails.partnerId = undefined
     personDetails.orgUnitId = undefined
   }
+
   return {ok: true, data: personDetails}
 }
 

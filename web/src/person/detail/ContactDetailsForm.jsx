@@ -76,6 +76,7 @@ const messages = defineMessages({
 const ContactDetailsForm = props => {
   const { handleSubmit, pristine, invalid, loading, initialValues, showNotesField, userIsAdmin, partners } = props,
     {formatMessage} = props.intl
+
   return (
     <form onSubmit={handleSubmit} className={styles.Form}>
       <div className={styles.Form__Content}>

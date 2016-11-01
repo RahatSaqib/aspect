@@ -208,8 +208,13 @@ export default function personReducer(state = initialState, action) {
   case types.RECEIVE_SINGLE_PERSON:
   case types.RECEIVE_UPDATED_SINGLE_PERSON:
     return state.withMutations(mutState => {
-      const immutItem = Immutable.fromJS(action.item)
+      const immutItem = Immutable.fromJS({...action.item, loaded: true})
       mutState.set('items', receiveItem(mutState.items, immutItem))
+    })
+  case types.REQUEST_UPDATING_SINGLE_PERSON:
+    const person = state.items.byId.get(action.personId).set('loaded', false)
+    return state.withMutations(mutState => {
+      mutState.set('items', receiveItem(mutState.items, person))
     })
   }
   return state

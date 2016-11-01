@@ -125,7 +125,8 @@ export class PersonDetail extends PureComponent {
       contactDetails = new ContactDetails(person),
       loginDetails = new LoginDetails(person),
       userPreferences = new UserPreferences(person),
-      userIsAdmin = user.get('permissions').includes('person:admin')
+      userIsAdmin = user.get('permissions').includes('person:admin'),
+      loading = !person || person.get('loaded') !== true
 
     return (
       <div className={styles.Content}>
@@ -135,28 +136,29 @@ export class PersonDetail extends PureComponent {
             <Tab icon={<MapsPersonPin />}
                  label={<span className="pure-hidden-xs">{formatMessage(messages.contactDetails)}</span>}>
               {(!person) && <LinearProgress />}
+              {loading && <LinearProgress />}
               <h2 className={'pure-visible-xs ' + styles.Form__Header}>
                 {formatMessage(messages.contactDetails)}
               </h2>
-              {person && <ContactDetailsForm initialValues={contactDetails} partners={this.state.partners}
-                                             showNotesField userIsAdmin onSubmit={this.saveContactDetails} />}
+              {!loading && <ContactDetailsForm initialValues={contactDetails} partners={this.state.partners}
+                                               showNotesField userIsAdmin onSubmit={this.saveContactDetails} />}
             </Tab>
             {userIsAdmin && <Tab icon={<Lock />}
                  label={<span className="pure-hidden-xs">{formatMessage(messages.systemAccessControl)}</span>}>
-              {(!person) && <LinearProgress />}
+              {loading && <LinearProgress />}
               <h2 className={'pure-visible-xs ' + styles.Form__Header}>
                 {formatMessage(messages.systemAccessControl)}
               </h2>
-              {person && <LoginDetailsForm initialValues={loginDetails} onSubmit={this.saveLoginDetails} />}
+              {!loading && <LoginDetailsForm initialValues={loginDetails} onSubmit={this.saveLoginDetails} />}
             </Tab>}
             <Tab icon={<Language />}
                  label={<span className="pure-hidden-xs">{formatMessage(messages.languageAndTimezone)}</span>}>
-              {(!person) && <LinearProgress />}
+              {loading && <LinearProgress />}
               <h2 className={'pure-visible-xs ' + styles.Form__Header}>
                 {formatMessage(messages.languageAndTimezone)}
               </h2>
-              {person && <UserPreferencesForm initialValues={userPreferences}
-                                              onSubmit={this.saveUserPreferences} />}
+              {!loading && <UserPreferencesForm initialValues={userPreferences}
+                                                onSubmit={this.saveUserPreferences} />}
             </Tab>
           </Tabs>}
         </Paper>
