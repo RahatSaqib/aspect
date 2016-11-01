@@ -1,6 +1,6 @@
 const Boom = require('boom')
 const { transact } = require('../db')
-const { getDeviceByApiKeyId } = require('./common')
+const { getDeviceByApiKeyId, getExternalId } = require('./common')
 
 
 function* addDeviceConfiguration(request){
@@ -12,12 +12,14 @@ function* addDeviceConfiguration(request){
   const deviceId = device.data.id
 
   const now = new Date()
-  let deviceConfigurationId = -1
+  const externalId = getExternalId(payload.id)
+  let ok = false
 
   yield transact(function*(knex){
-    [deviceConfigurationId] = yield knex('DeviceConfiguration')
+    const [deviceConfigurationId] = yield knex('DeviceConfiguration')
       .insert({
         deviceId,
+        externalId,
         data: JSON.stringify(payload.data),
         createdOn: now
       })
@@ -28,27 +30,31 @@ function* addDeviceConfiguration(request){
         deviceConfigurationId,
         updatedOn: now
       })
+
+    ok = true
   })
-  return deviceConfigurationId > 0
-    ? {ok: true, data: {id: deviceConfigurationId}}
-    : {ok: false}
+  return ok ? {ok, data: {id: externalId}} : {ok}
 }
 
 function* addDeviceOperation(request){
   const {payload} = request
   const device = yield* getDeviceByApiKeyId(request)
+
+  const externalId = getExternalId(payload.id)
+  let ok = false
+
   if(!device.ok){
     return Boom.unauthorized()
   }
   const deviceId = device.data.id
 
   const now = new Date()
-  let deviceOperationId = -1
 
   yield transact(function*(knex){
-    [deviceOperationId] = yield knex('DeviceOperation')
+    const [deviceOperationId] = yield knex('DeviceOperation')
       .insert({
         deviceId,
+        externalId,
         data: JSON.stringify(payload.data),
         createdOn: now
       })
@@ -59,10 +65,10 @@ function* addDeviceOperation(request){
         deviceOperationId,
         updatedOn: now
       })
+
+    ok = true
   })
-  return deviceOperationId > 0
-    ? {ok: true, data: {id: deviceOperationId}}
-    : {ok: false}
+  return ok ? {ok, data: {id: externalId}} : {ok}
 }
 
 module.exports = {

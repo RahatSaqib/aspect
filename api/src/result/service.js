@@ -5,15 +5,15 @@ const { knex, filterParams, sortPageParams } = require('../db')
 const { getConstraints, addConstraints } = require('../auth/constraints')
 
 const SELECT_LIST_FIELDS = [
-  'r.id', 'r.endedOn', 'd.name as deviceName', 'c.name as countryName',
-  'st.name as stateName', 'lg.name as lgaName',
+  'r.id', 'r.externalId', 'r.endedOn', 'd.name as deviceName',
+  'c.name as countryName', 'st.name as stateName', 'lg.name as lgaName',
   'rc1.name as resultCategory1Name', 'rc2.name as resultCategory2Name',
   's.externalId as sampleId', 'r.patientId', 'a.name as assayName'
 ]
 
 const SELECT_SHOW_FIELDS = [
-  'r.id', 'r.startedOn', 'r.endedOn', 'd.name as deviceName', 'c.name as countryName',
-  'st.name as stateName', 'lg.name as lgaName',
+  'r.id', 'r.externalId', 'r.startedOn', 'r.endedOn', 'd.name as deviceName',
+  'c.name as countryName', 'st.name as stateName', 'lg.name as lgaName',
   'rc1.name as resultCategory1Name', 'rc2.name as resultCategory2Name', 'r.resultData',
   's.externalId as sampleId', 'r.patientId','si.name as siteName', 'r.assayVersion',
   'r.consumableSerial', 'r.consumableLot', 'r.consumableExpirationDate', 'r.instrumentSerial',

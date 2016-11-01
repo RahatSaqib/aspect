@@ -1,7 +1,6 @@
 const Boom = require('boom')
-const crypto = require('crypto')
 const { transact } = require('../db')
-const { getDeviceByApiKeyId } = require('./common')
+const { getDeviceByApiKeyId, getExternalId } = require('./common')
 
 function* addResult(request){
   const {payload} = request
@@ -12,13 +11,11 @@ function* addResult(request){
   const deviceId = device.data.id
 
   const now = new Date()
-  let resultId = -1
+  const externalId = getExternalId(payload.id)
+  let ok = false
 
   yield transact(function*(knex){
     // TODO lookup and reuse result with UniqueId if specified
-    const externalId = typeof payload.id !== 'undefined'
-      ? payload.id
-      : crypto.randomBytes(48).toString('base64') // TODO UUID?
 
     // TODO handle multiple Assays per DeviceType
     const assayQ = knex('Assay as a')
@@ -50,7 +47,7 @@ function* addResult(request){
     const resultData = JSON.stringify(payload.data)
 
     // TODO result merge into existing with same uniqueId
-    ;[resultId] = yield knex('Result')
+    const [resultId] = yield knex('Result')
       .insert({
         externalId,
         deviceId,
@@ -93,10 +90,9 @@ function* addResult(request){
     // TODO should we update lastPingOn lastPingFromIp with Result request info?
     // TODO does device result upload change updatedOn on Device?
     // could also do this for DeviceOperation, DeviceConfiguration uploads
+    ok = true
   })
-  return resultId > 0
-    ? {ok: true, data: {id: resultId}}
-    : {ok: false}
+  return ok ? {ok, data: {id: externalId}} : {ok}
 }
 
 

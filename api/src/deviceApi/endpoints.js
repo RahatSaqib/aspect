@@ -62,9 +62,9 @@ module.exports = [
               id: Joi.string()
             })
           ).min(0).max(2).single(true),
-          data: Joi.object().required(),
+          data: Joi.object(),
           startedOn: Joi.date().iso(),
-          endedOn: Joi.date().iso().required(),
+          endedOn: Joi.date().iso(),
           consumable: Joi.array().items(
             Joi.object().keys({
               serial: Joi.string(),

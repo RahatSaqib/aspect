@@ -1,4 +1,11 @@
+const crypto = require('crypto')
 const { knex }  = require('../db')
+
+function getExternalId(candidateId){
+  return typeof candidateId !== 'undefined'
+      ? candidateId
+      : crypto.randomBytes(48).toString('base64') // TODO UUID?
+}
 
 function* getDeviceByApiKeyId(request, fields=['d.id']){
   const {auth} = request
@@ -13,5 +20,6 @@ function* getDeviceByApiKeyId(request, fields=['d.id']){
 }
 
 module.exports = {
+  getExternalId,
   getDeviceByApiKeyId
 }

@@ -71,16 +71,17 @@ describe('Device Result API routes',function(){
           assert.property(res.body, 'total')
 
           assert.equal(res.body.data.length, initialDataLength + 1)
-          const lastConfig = _.find(res.body.data, {id: resultIds[0]})
-          assert.typeOf(lastConfig, 'Object')
-          assert.equal(lastConfig.id, resultIds[0])
+          const lastResult = _.find(res.body.data, {externalId: resultIds[0]})
+          assert.typeOf(lastResult, 'Object')
+          assert.equal(lastResult.externalId, resultIds[0])
         })
 
-      const [{rawMessage: log1Raw}] = yield knex('ResultLog')
-        .where({resultId: resultIds[0]}).select('rawMessage')
+      const [{rawMessage: log1Raw, resultId: resultId1}] = yield knex('ResultLog as rl')
+        .innerJoin('Result as r', 'r.id', 'rl.resultId')
+        .where({externalId: resultIds[0]}).select('rawMessage', 'resultId')
       assert.deepEqual(JSON.parse(log1Raw), {data: {a: 'b'}})
 
-      yield server.get(clientSingleResultPath+resultIds[0])
+      yield server.get(clientSingleResultPath+resultId1)
         .set('Authorization', clientAuth)
         .then(function(res){
           assert.equal(res.status, 200)
@@ -117,30 +118,31 @@ describe('Device Result API routes',function(){
 
           assert.equal(res.body.data.length, initialDataLength + 2)
 
-          const prevConfig = _.find(res.body.data, {id: resultIds[0]})
-          assert.typeOf(prevConfig, 'Object')
-          assert.equal(prevConfig.id, resultIds[0])
+          const prevResult = _.find(res.body.data, {externalId: resultIds[0]})
+          assert.typeOf(prevResult, 'Object')
+          assert.equal(prevResult.externalId, resultIds[0])
 
-          const lastConfig = _.find(res.body.data, {id: resultIds[1]})
-          assert.typeOf(lastConfig, 'Object')
-          assert.equal(lastConfig.id, resultIds[1])
+          const lastResult = _.find(res.body.data, {externalId: resultIds[1]})
+          assert.typeOf(lastResult, 'Object')
+          assert.equal(lastResult.externalId, resultIds[1])
         })
 
-      const [{rawMessage: log2Raw}] = yield knex('ResultLog')
-        .where({resultId: resultIds[1]}).select('rawMessage')
+      const [{rawMessage: log2Raw, resultId: resultId2}] = yield knex('ResultLog as rl')
+        .innerJoin('Result as r', 'r.id', 'rl.resultId')
+        .where({externalId: resultIds[1]}).select('rawMessage', 'resultId')
       assert.deepEqual(JSON.parse(log2Raw), {data: {a:'b', c:2, d:false, e:{f: 'g'}}})
 
-      yield server.get(clientSingleResultPath+resultIds[0])
+      yield server.get(clientSingleResultPath+resultId2)
         .set('Authorization', clientAuth)
         .then(function(res){
           assert.equal(res.status, 200)
           assert.typeOf(res.body, 'Object')
           assert.typeOf(res.body.data, 'Object')
           assert.typeOf(res.body.data.resultData, 'Object')
-          assert.deepEqual(res.body.data.resultData, {a:'b'})
+          assert.deepEqual(res.body.data.resultData, {a:'b', c:2, d:false, e:{f: 'g'}})
         })
 
-      yield server.get(clientSingleResultPath+resultIds[1])
+      yield server.get(clientSingleResultPath+resultId2)
         .set('Authorization', clientAuth)
         .then(function(res){
           assert.equal(res.status, 200)
@@ -152,11 +154,12 @@ describe('Device Result API routes',function(){
 
 
       // cleanup
-      yield knex('ResultLog').whereIn('resultId', resultIds).delete()
+      yield knex('ResultLog').whereIn('resultId',
+        knex('Result').whereIn('externalId', resultIds).select('id')).delete()
       const [{count: logLengthClean}] = yield knex('ResultLog').count('id as count')
       assert.equal(logLengthClean, initialLogLength)
 
-      yield knex('Result').whereIn('id', resultIds).delete()
+      yield knex('Result').whereIn('externalId', resultIds).delete()
       yield server.get(clientPath)
         .set('Authorization', clientAuth)
         .then(function(res){
