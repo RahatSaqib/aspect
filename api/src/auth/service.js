@@ -240,6 +240,9 @@ function* getChangedFields(payload, existingRecord) {
     if(!passwordsMatch) {
       changedFields.password = yield bcryptHash(payload.newPassword, parseInt(config.passwordSaltRounds))
       changedFields.lastPasswordChange = new Date()
+      if(existingRecord.legacyPassword) {
+        changedFields.legacyPassword = 0
+      }
     }
   }
   return changedFields
@@ -388,7 +391,7 @@ function* updateUsernameAndPasswordForPerson(request) {
   const userLinkedToPerson = yield getUserByPersonId(params.personId)
 
   if (payload.newUsername) {
-    const usernameNotAvailable = yield isUsernameAlreadyInUseBySomebodyElse(
+    const usernameNotAvailable = yield* isUsernameAlreadyInUseBySomebodyElse(
       userLinkedToPerson ? userLinkedToPerson.id : 0,
       payload.newUsername)
     if (usernameNotAvailable) {
