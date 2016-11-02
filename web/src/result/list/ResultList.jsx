@@ -62,7 +62,8 @@ export class ResultList extends PureComponent {
   }
 
   state = {
-    filters: this.props.table.get('filters')
+    filters: this.props.table.get('filters'),
+    assayColumns: [{ db: 'patientId' }]
   }
 
   handleItemIdSelection = (resultId) => {
@@ -99,6 +100,11 @@ export class ResultList extends PureComponent {
     const { formatMessage, formatDate } = intl
     const assaysLoading = assays ? assays.get('loading') : false
     const dropdownAssay = assays ? assays.get('items').filter(a => a.get('hasResults')) : []
+    const generalColumns = [{ db: 'endedOn', title: formatMessage(messages.endedOn), format: (data) => formatDate(data) },
+                            { db: 'deviceName', title: formatMessage(messages.deviceName) },
+                            { db: 'sampleId', title: formatMessage(messages.sampleId) },
+                            { db: 'patientId', title: formatMessage(messages.patiendId) }]
+    const columnsToRender = generalColumns.concat(this.state.assayColumns)
 
     return (
       <div className={styles.Content}>
@@ -146,13 +152,7 @@ export class ResultList extends PureComponent {
           handleFetch={ this.props.fetchResults }
           items={ this.props.items }
           table={ this.props.table }
-          columns={[
-            { db: 'endedOn', title: formatMessage(messages.endedOn),
-              format: (data) => formatDate(data) },
-            { db: 'deviceName', title: formatMessage(messages.deviceName) },
-            { db: 'sampleId', title: formatMessage(messages.sampleId) },
-            { db: 'patientId', title: formatMessage(messages.patiendId) }
-          ]}
+          columns={ columnsToRender }
         />
       </div>
     )
