@@ -200,6 +200,7 @@ function* up(knex){
     apiKey.charset('utf8')
   })
 
+  /* TODO ASP-177 Device Role
   yield knex.schema.createTable('DeviceRole', deviceRole => {
     deviceRole.integer('deviceId').unsigned()
       .index().references('id').inTable('Device')
@@ -208,6 +209,7 @@ function* up(knex){
     deviceRole.primary(['deviceId', 'roleId'])
     deviceRole.charset('utf8')
   })
+  */
 
   yield knex.schema.createTable('DeviceTypeCategory', deviceTypeFeature => {
     deviceTypeFeature.increments('id')
