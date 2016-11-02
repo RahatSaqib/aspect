@@ -1,20 +1,18 @@
-const mail = require('sendgrid').mail
+let Promise = require('bluebird')
+const helper = require('sendgrid').mail
 
 function* sendEmail(to, subject, htmlContent, textContent, attachments) {
-  const fromEmail = new mail.Email(process.env['email.fromAddress'], 'Aspect'),
-    toEmail = new mail.Email(to),
-    htmlBody = htmlContent ? new mail.Content('text/html', htmlContent) : undefined,
-    textBody = textContent ? new mail.Content('text/html', textContent) : undefined,
-    emailMessage = new mail.Mail(fromEmail, subject, toEmail)
-  if(htmlBody) {
+  const fromEmail = new helper.Email(process.env['email.fromAddress'], 'Aspect'),
+    toEmail = new helper.Email(to),
+    htmlBody = htmlContent ? new helper.Content('text/html', htmlContent) : undefined,
+    textBody = textContent ? new helper.Content('text/plain', textContent) : undefined,
+    emailMessage = new helper.Mail(fromEmail, subject.trim(), toEmail, textBody || htmlBody)
+  if(textBody && htmlBody) {
     emailMessage.addContent(htmlBody)
-  }
-  if(textBody) {
-    emailMessage.addContent(textBody)
   }
   if(attachments && attachments.length) {
     attachments.forEach(function (att) {
-      const attachment = new mail.Attachment()
+      const attachment = new helper.Attachment()
       attachment.setContent(att.content)
       attachment.setType(att.mimeType)
       attachment.setFilename(att.fileName)
@@ -22,7 +20,7 @@ function* sendEmail(to, subject, htmlContent, textContent, attachments) {
       if(att.disposition === 'inline') {
         attachment.setContentId(att.fileName)
       }
-      mail.addAttachment(attachment)
+      emailMessage.addAttachment(attachment)
     })
   }
   const sendGrid = require('sendgrid')(process.env['sendgrid.apiKey']),
@@ -32,11 +30,14 @@ function* sendEmail(to, subject, htmlContent, textContent, attachments) {
       body: emailMessage.toJSON()
     })
 
-  return sendGrid.API(request, function(error, response) {
-    if(error) {
-      return Promise.reject(error)
-    }
-    return response
+  return new Promise((resolve, reject) => {
+    sendGrid.API(request, function(error, response) {
+      if(error) {
+        reject(error)
+      } else {
+        resolve(response)
+      }
+    })
   })
 }
 

@@ -268,16 +268,21 @@ function* createResetPasswordToken(request){
     .innerJoin('User as u', 'p.userId', 'u.id')
     .where({'p.email': params.email})
     .orWhere({'p.email2': params.email})
-    .first( 'u.id, p.name')
+    .first( 'u.id', 'p.name', 'p.culture')
 
   if(user && user.id){
     const resetPasswordToken = crypto.randomBytes(48).toString('base64'),
       now = new Date(),
-      expires = new Date(now + 3600000)
+      expires = new Date(now + 3600000),
+      generatedEmail = yield templateProcessor.process('resetPassword', {
+        name: user.name,
+        aspectUrl: process.env['aspectUrl'],
+        resetPasswordToken: resetPasswordToken
+      }),
+      inlineImageAttachments = yield* templateProcessor.getInlineImageAttachments(generatedEmail.html)
 
+    yield* sendGridUtil.sendEmail(params.email, generatedEmail.subject, generatedEmail.html, generatedEmail.text, inlineImageAttachments)
 
-      //resetPasswordLink = 'http://localhost:8000/reset-password?token=' + resetPasswordToken
-    //yield* sendGridUtil.sendEmail(params.email, 'Aspect Password Reset', `<html><body><a href="${resetPasswordLink}">Click Here to Reset Your Password: resetPasswordLink</a></body></html>`)
     yield query('Save reset password token').insert({
       token: resetPasswordToken,
       userId: user.id,
