@@ -261,12 +261,12 @@ function* updateUsernameAndPasswordForLoggedInUser(request){
 }
 
 function* createResetPasswordToken(request){
-  const {payload} = request
+  const {params} = request
 
   const user = yield query('Get user details from email address').from('Person as p')
     .innerJoin('User as u', 'p.userId', 'u.id')
-    .where({'p.email': payload.email})
-    .orWhere({'p.email2': payload.email})
+    .where({'p.email': params.email})
+    .orWhere({'p.email2': params.email})
     .first( 'u.id')
 
   if(user && user.id){
@@ -274,12 +274,12 @@ function* createResetPasswordToken(request){
       now = new Date(),
       expires = new Date(now + 3600000),
       resetPasswordLink = 'http://localhost:8000/reset-password?token=' + resetPasswordToken
-    yield sendGridUtil.sendEmail(payload.email, 'Aspect Password Reset', `<a href="${resetPasswordLink}">Click Here to Reset Your Password: resetPasswordLink</a>`)
+    yield* sendGridUtil.sendEmail(params.email, 'Aspect Password Reset', `<html><body><a href="${resetPasswordLink}">Click Here to Reset Your Password: resetPasswordLink</a></body></html>`)
     yield query('Save reset password token').insert({
       token: resetPasswordToken,
       userId: user.id,
       expires: expires,
-      sentTo: payload.email
+      sentTo: params.email
     }).into('ResetPassword')
   }
 

@@ -70,7 +70,7 @@ module.exports = [
     }
   }, {
     method: 'POST',
-    path: '/auth/send-reset-password-token',
+    path: '/auth/send-reset-password-token/{email}',
     handler: asyncHandler(createResetPasswordToken),
     config: {
       auth: false,
