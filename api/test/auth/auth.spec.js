@@ -552,4 +552,24 @@ describe('Authentication routes',function(){
         })
     })
   })
+
+  describe.only('POST to /auth/send-reset-password-token', function() {
+    beforeEach(function(){
+      path = '/api/auth/send-reset-password-token/'
+    })
+
+    it('should return an OK response regardless of whether the emaill address is valid or not',function(done){
+      server.post(path + 'brichards@systemone.id')
+        .end(function(err,res){
+          assert.equal(res.status, 200)
+          assert.isTrue(res.body.ok)
+          server.post(path + 'invalid_email@example.com')
+            .end(function(err,res){
+              assert.equal(res.status, 200)
+              assert.isTrue(res.body.ok)
+              done()
+            })
+        })
+    })
+  })
 })

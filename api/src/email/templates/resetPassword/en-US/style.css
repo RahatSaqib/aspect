@@ -1,0 +1,15 @@
+.banner {
+  width: 100%;
+  text-align: center;
+}
+.button {
+  display: inline-block;
+  background-color: #7cb342;
+  color: #fff;
+  text-transform: uppercase;
+  font-weight: bold;
+  border: solid 1px #aed581;
+  width: 90%;
+  margin: 5%;
+  line-height: 3em;
+}
