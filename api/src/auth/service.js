@@ -278,7 +278,7 @@ function* createResetPasswordToken(request){
         name: user.name,
         aspectUrl: process.env['aspectUrl'],
         resetPasswordToken: resetPasswordToken
-      }),
+      }, user.culture),
       inlineImageAttachments = yield* templateProcessor.getInlineImageAttachments(generatedEmail.html)
 
     yield* sendGridUtil.sendEmail(params.email, generatedEmail.subject, generatedEmail.html, generatedEmail.text, inlineImageAttachments)
