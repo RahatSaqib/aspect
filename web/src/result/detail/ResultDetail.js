@@ -64,6 +64,10 @@ const messages = defineMessages({
     id: 'pages.ResultDetail.fieldAssayName',
     defaultMessage: 'Assay'
   },
+  fieldReagentLotID: {
+    id: 'pages.ResultDetail.fieldReagentLotID',
+    defaultMessage: 'Reagent Lot ID'
+  },
   fieldInstrumentSerial: {
     id: 'pages.ResultDetail.fieldInstrumentSerial',
     defaultMessage: 'Instrument Serial'
@@ -210,6 +214,10 @@ export class ResultDetail extends PureComponent {
       {
         label: formatMessage(messages.fieldAssayName),
         value: assay.get('name')
+      },
+      {
+        label: formatMessage(messages.fieldReagentLotID),
+        value: result.get('consumableLot')
       },
       {
         label: formatMessage(messages.fieldInstrumentSerial),
