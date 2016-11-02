@@ -1,6 +1,7 @@
 const {assert} = require('chai')
 const path = require('path')
 const templateProcessor = require('../../src/email/templateProcessor')
+const {run} = require('../utils/generatorFunctionUtils')
 
 describe('email/templateProcessor', function () {
   describe('process', function () {
@@ -55,13 +56,24 @@ describe('email/templateProcessor', function () {
     describe('api/src/email/templates/systemone.jpg', function () {
       it('should generate an attachment object with base 64 encoded string for the file', function () {
         const filePath = path.join(__dirname, '../../src/email/templates/systemone.jpg')
-        return templateProcessor.generateAttachment(filePath, 'image/jpeg', 'inline')
-          .then(function(attachment) {
-            assert.isOk(attachment.content)
-            assert.equal(attachment.mimeType, 'image/jpeg')
-            assert.equal(attachment.disposition, 'inline')
-            assert.equal(attachment.fileName, 'systemone.jpg')
-          })
+        return run(templateProcessor.generateAttachment, [filePath, 'image/jpeg', 'inline'])(function (attachment) {
+          assert.isOk(attachment.content)
+          assert.equal(attachment.mimeType, 'image/jpeg')
+          assert.equal(attachment.disposition, 'inline')
+          assert.equal(attachment.fileName, 'systemone.jpg')
+        })
+      })
+    })
+  })
+
+  describe('getInlineImageAttachments', function () {
+    it('should generate an array of image attachments referenced in the content', function() {
+      return run(templateProcessor.getInlineImageAttachments, ['<html><body><img src="cid:systemone.jpg" /></body></html>'])(function (inlineAttachments) {
+        assert.equal(inlineAttachments.length, 1)
+        assert.isOk(inlineAttachments[0].content)
+        assert.equal(inlineAttachments[0].mimeType, 'image/jpeg')
+        assert.equal(inlineAttachments[0].disposition, 'inline')
+        assert.equal(inlineAttachments[0].fileName, 'systemone.jpg')
       })
     })
   })
