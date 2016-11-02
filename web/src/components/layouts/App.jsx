@@ -64,7 +64,7 @@ class App extends PureComponent {
 
 function mapStateToProps(state) {
   return {
-    locale: state.getIn(['user', 'lang']) || DEFAULT_LOCALE,
+    locale: state.getIn(['user', 'culture']) || DEFAULT_LOCALE,
     timezone: getUsersTimezone(state.getIn(['user', 'timezone']))
   }
 }

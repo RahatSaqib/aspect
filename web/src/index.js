@@ -40,7 +40,7 @@ if (!window.Intl) {
 // get new access token on refresh/startup
 if (getRefreshToken()){
 
-  // let's see if we can get language and culture from local storage
+  // let's see if we can get culture from local storage
   store.dispatch(hydrateFromLocalStorage())
 
   // get new access token

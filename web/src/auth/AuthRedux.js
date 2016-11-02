@@ -14,7 +14,7 @@ export const types = {
   LOGIN_SUCCESS: 'LOGIN_SUCCESS',
   LOGIN_FAILURE: 'LOGIN_FAILURE',
   LOGOUT_SUCCESS: 'LOGOUT_SUCCESS',
-  CHANGE_LANGUAGE: 'CHANGE_LANGUAGE',
+  CHANGE_CULTURE: 'CHANGE_CULTURE',
   TOGGLE_DRAWER: 'TOGGLE_DRAWER',
   CHANGE_TIMEZONE: 'CHANGE_TIMEZONE'
 }
@@ -27,26 +27,23 @@ export function loginRequest() {
   }
 }
 
-export function loginSuccess(name, culture, lang, timezone, permissions) {
-
+export function loginSuccess(name, culture, timezone, permissions) {
   return {
     type: types.LOGIN_SUCCESS,
     name,
     culture,
-    lang,
     timezone,
     permissions,
     drawerOpen: localStorage.isDrawerOpen()
   }
 }
 
-export function refreshSuccess(name, culture, lang, timezone, permissions) {
+export function refreshSuccess(name, culture, timezone, permissions) {
 
   return {
     type: types.LOGIN_SUCCESS,
     name,
     culture,
-    lang,
     timezone,
     permissions,
     drawerOpen: localStorage.isDrawerOpen()
@@ -58,7 +55,6 @@ export function hydrateFromLocalStorage() {
   return {
     type: types.HYDRATE_FROM_LOCAL_STORAGE,
     culture: localStorage.getCulture(),
-    lang: localStorage.getLang(),
     timezone: localStorage.getTimezone(),
     drawerOpen: localStorage.isDrawerOpen()
   }
@@ -77,13 +73,10 @@ export function logoutSuccess() {
   }
 }
 
-export function changeLanguage(lang, culture) {
-  localStorage.updateLanguageAndCulture(lang, culture)
-
-  // todo: update in db, separate culture
+export function changeCulture(culture) {
+  localStorage.updateCulture(culture)
   return {
-    type: types.CHANGE_LANGUAGE,
-    lang,
+    type: types.CHANGE_CULTURE,
     culture
   }
 }
@@ -151,7 +144,7 @@ export function loginStart(login) {
 
         // We can dispatch many times!
         // Here, we update the app state with the results of the API call.
-        dispatch(loginSuccess(jwt.name, jwt.culture, jwt.lang, jwt.timezone, jwt.permissions))
+        dispatch(loginSuccess(jwt.name, jwt.culture, jwt.timezone, jwt.permissions))
 
         browserHistory.push('/dashboard')
       })
@@ -198,7 +191,7 @@ export function refreshStart() {
       .then(json => {
         let jwt = storeAccess(json)
 
-        dispatch(refreshSuccess(jwt.name, jwt.culture, jwt.lang, jwt.timezone, jwt.permissions))
+        dispatch(refreshSuccess(jwt.name, jwt.culture, jwt.timezone, jwt.permissions))
       })
       .catch(() => {
         dispatch(logoutStart())
@@ -212,8 +205,7 @@ function storeAccess(json) {
 
   localStorage.store(json.access, jwt.exp, json.refresh, json.clientId)
 
-  const lang = jwt.culture.substring(0, 2)
-  localStorage.updateLanguageAndCulture(lang, jwt.culture)
+  localStorage.updateCulture(jwt.culture)
   localStorage.updateTimezone(jwt.timezone)
   return jwt
 }
@@ -223,7 +215,6 @@ function storeAccess(json) {
 const User = Immutable.Record({
   name: '',
   culture: 'en-US',
-  lang: 'en',
   timezone: 'Eastern Standard Time',
   permissions: Immutable.List(),
   drawerOpen: true,
@@ -237,7 +228,6 @@ export default function authReducer(state = initialState, action) {
   case types.HYDRATE_FROM_LOCAL_STORAGE:
     return state.merge({
       culture: action.culture,
-      lang: action.lang,
       timezone: action.timezone,
       loggedIn: true
     })
@@ -247,7 +237,6 @@ export default function authReducer(state = initialState, action) {
     return state.merge({
       name: action.name,
       culture: action.culture,
-      lang: action.lang,
       timezone: action.timezone,
       permissions: action.permissions,
       loggedIn: true,
@@ -257,9 +246,8 @@ export default function authReducer(state = initialState, action) {
     return state.merge({ name: '', loggedIn: false })
   case types.LOGOUT_SUCCESS:
     return state.merge({ name: '', loggedIn: false })
-  case types.CHANGE_LANGUAGE:
+  case types.CHANGE_CULTURE:
     return state.merge({
-      lang: action.lang,
       culture: action.culture
     })
   case types.CHANGE_TIMEZONE:

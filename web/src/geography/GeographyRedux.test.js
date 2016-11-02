@@ -217,10 +217,10 @@ describe('geography reducer', () => {
               stateIds = _.map(statesReceived, 'id'),
               stateNames = _.map(statesReceived, 'name'),
               newState = geography(initialState, { type: types.RECEIVE_STATES_FOR_LOCATION_SELECTOR,
-              states: statesReceived,
-              selectedCountryId: selectedCountryId,
-              lastRefreshed: now
-            }), selectedCountryStates = newState.getIn(['countriesForLocationSelector', 'items', indexOfSelectedCountry, 'children', 'items'])
+                states: statesReceived,
+                selectedCountryId: selectedCountryId,
+                lastRefreshed: now
+              }), selectedCountryStates = newState.getIn(['countriesForLocationSelector', 'items', indexOfSelectedCountry, 'children', 'items'])
 
             assert.instanceOf(selectedCountryStates, Immutable.List)
             assert.equal(selectedCountryStates.size, statesReceived.length)

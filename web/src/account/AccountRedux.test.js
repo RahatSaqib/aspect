@@ -211,7 +211,7 @@ describe('AccountDetailsRedux', () => {
         },
         '../auth/AuthRedux': {
           loginSuccess: () => {},
-          changeLanguage: () => {},
+          changeCulture: () => {},
           changeTimezone: () => {}
         }
       }
