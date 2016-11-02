@@ -51,33 +51,41 @@ function* addResult(request){
       .insert({
         externalId,
         deviceId,
-        assayId: assay.id,
         partnerId: site.partnerId,
         orgUnitId: site.orgUnitId,
         countryId: site.countryId,
         stateId: site.stateId,
         lgaId: site.lgaId,
         siteId: site.id,
-        latitude: site.latitude,
-        longitude: site.longitude,
+        latitude: _.get(payload, 'location.latitude', site.latitude),
+        longitude: _.get(payload, 'location.longitude', site.longitude),
+        assayId: assay.id,
+        assayVersion: _.get(payload, 'assay.version', null),
         resultTypeId: resultType.id,
         sampleId,
         // TODO result categories
         resultData,
-        // TODO result assayVersion
-        // TODO result startedOn, endedOn
-        startedOn: now,
-        endedOn: now,
-        // TODO result consumable serial, expiration date, lot
-        // TODO result instrument serial, module name and serial,
-        // TODO result researchId, patientId
-        // TODO result sender version, operator
-        // TODO result notes
-        // TODO result error code, notes
+        startedOn: _.get(payload, 'startedOn', null),
+        endedOn: _.get(payload, 'endedOn', now),
+        consumableSerial: _.get(payload, 'consumable[0].serial', null),
+        consumableExpirationDate: _.get(payload, 'consumable[0].expirationDate', null),
+        consumableLot: _.get(payload, 'consumable[0].lot', null),
+        instrumentSerial: _.get(payload, 'instrument.serial', null),
+        moduleSerial: _.get(payload, 'module.serial', null),
+        moduleName: _.get(payload, 'module.name', null),
+        researchId: _.get(payload, 'research.id', null),
+        patientId: _.get(payload, 'patient.id', null),
+        senderVersion: _.get(payload, 'sender.version', null),
+        senderOperator: _.get(payload, 'sender.operator', null),
+        notes: _.get(payload, 'notes', null),
+        errorCode: _.get(payload, 'error.code', null),
+        errorNotes: _.get(payload, 'error.notes', null),
         createdOn: now,
         updatedOn: now
       })
 
+    // TODO ResultLog should be stored even if validation or result parsing fails
+    // And should contain the RAW payload (prior to transformation during Joi Validation)
     yield knex('ResultLog').insert({
       resultId,
       source: 'ResultAPI',

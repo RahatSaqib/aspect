@@ -103,7 +103,40 @@ describe('Device Result API routes',function(){
         .set('Authorization', deviceAuth)
         .send({
           data: {a: 'b', c: 2, d: false, e: {f: 'g'}},
-          type: {id: 'Study'}})
+          type: {id: 'Study'},
+          assay: {
+            version: '1a.c1'
+          },
+          location: {
+            longitude: -87.581222,
+            latitude: 30.419348
+          },
+          startedOn: '2013-12-01',
+          endedOn: '2013-12-01T01:30',
+          consumable: {
+            serial: '132-44-222',
+            expirationDate: '2014-03-01',
+            lot: '331-1'
+          },
+          instrument: {
+            serial: '444-3'
+          },
+          module: {
+            name: 'ModA',
+            serial: '555-8'
+          },
+          research: {id: 'R123'},
+          patient: {id: 'P-333'},
+          sender: {
+            version: '99-1',
+            operator: 'Bob O'
+          },
+          notes: 'My Awesome notes about this Awesome result!',
+          error: {
+            code: '123',
+            notes: 'Oh NOZE!'
+          }
+        })
         .then(function(res){
           assert.equal(res.status, 200)
           assert.typeOf(res.body, 'Object')
@@ -141,16 +174,69 @@ describe('Device Result API routes',function(){
         .where({externalId: resultIds[1]}).first()
       assert.equal(result2.externalId, resultIds[1])
       assert.deepEqual(JSON.parse(result2.resultData), {a: 'b', c: 2, d: false, e: {f: 'g'}})
+      assert.equal(result2.assayVersion, '1a.c1')
+      assert.approximately(result2.latitude, 30.419348, 0.000001)
+      assert.approximately(result2.longitude, -87.581222, 0.000001)
+      assert.deepEqual(result2.startedOn, new Date('2013-12-01'))
+      assert.deepEqual(result2.endedOn, new Date('2013-12-01T01:30'))
+      assert.equal(result2.consumableSerial, '132-44-222')
+      assert.deepEqual(result2.consumableExpirationDate, new Date('2014-03-01'))
+      assert.equal(result2.consumableLot, '331-1')
+      assert.equal(result2.instrumentSerial, '444-3')
+      assert.equal(result2.moduleName, 'ModA')
+      assert.equal(result2.moduleSerial, '555-8')
+      assert.equal(result2.researchId, 'R123')
+      assert.equal(result2.patientId, 'P-333')
+      assert.equal(result2.senderVersion, '99-1')
+      assert.equal(result2.senderOperator, 'Bob O')
+      assert.equal(result2.notes, 'My Awesome notes about this Awesome result!')
+      assert.equal(result2.errorCode, '123')
+      assert.equal(result2.errorNotes, 'Oh NOZE!')
+
       const result2Type = yield knex('ResultType as rt')
         .where({id: result2.resultTypeId}).first('externalId')
       assert.equal(result2Type.externalId, 'Study')
+
 
       const [{rawMessage: log2Raw, resultId: resultId2}] = yield knex('ResultLog as rl')
         .innerJoin('Result as r', 'r.id', 'rl.resultId')
         .where({externalId: resultIds[1]}).select('rawMessage', 'resultId')
       assert.deepEqual(JSON.parse(log2Raw), {
         data: {a: 'b', c: 2, d: false, e: {f: 'g'}},
-        type: {id: 'Study'}
+        type: {id: 'Study'},
+        assay: {
+          version: '1a.c1'
+        },
+        location: {
+          longitude: -87.581222,
+          latitude: 30.419348
+        },
+        // TODO ResultLog should be raw payload (before transformation during validation)
+        startedOn: '2013-12-01T00:00:00.000Z',
+        endedOn: '2013-12-01T01:30:00.000Z',
+        consumable: [{
+          serial: '132-44-222',
+          expirationDate: '2014-03-01T00:00:00.000Z',
+          lot: '331-1'
+        }],
+        instrument: {
+          serial: '444-3'
+        },
+        module: {
+          name: 'ModA',
+          serial: '555-8'
+        },
+        research: {id: 'R123'},
+        patient: {id: 'P-333'},
+        sender: {
+          version: '99-1',
+          operator: 'Bob O'
+        },
+        notes: 'My Awesome notes about this Awesome result!',
+        error: {
+          code: '123',
+          notes: 'Oh NOZE!'
+        }
       })
 
       yield server.get(clientSingleResultPath+resultId2)
