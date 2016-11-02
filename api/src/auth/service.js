@@ -274,7 +274,7 @@ function* createResetPasswordToken(request){
     const resetPasswordToken = crypto.randomBytes(48).toString('base64'),
       now = new Date(),
       expires = new Date(now + 3600000),
-      generatedEmail = yield templateProcessor.process('resetPassword', {
+      generatedEmail = yield* templateProcessor.process('resetPassword', {
         name: user.name,
         aspectUrl: process.env['aspectUrl'],
         resetPasswordToken: resetPasswordToken

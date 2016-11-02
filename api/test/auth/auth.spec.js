@@ -553,7 +553,7 @@ describe('Authentication routes',function(){
     })
   })
 
-  describe('POST to /auth/send-reset-password-token', function() {
+  describe.only('POST to /auth/send-reset-password-token', function() {
     beforeEach(function(){
       path = '/api/auth/send-reset-password-token/'
     })

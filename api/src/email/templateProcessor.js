@@ -4,18 +4,27 @@ const Promise = require('bluebird')
 const encode = Promise.promisify(require('node-base64-image').encode)
 const readdir = Promise.promisify(require('fs').readdir)
 
-function process(templateName, tokenValues, locale) {
+function* process(templateName, tokenValues, locale) {
   if(!locale) {
     locale = 'en-US'
   }
-  const templateDir = path.join(__dirname, 'templates', templateName, locale),
-    emailTemplate = new EmailTemplate(templateDir)
+  const templateDir = path.join(__dirname, 'templates', templateName),
+    directoryItems = yield readdir(templateDir)
+  if(!directoryItems.includes(locale)) {
+    locale = 'en-US'
+  }
 
-  return emailTemplate.render(tokenValues, function(err, result) {
-    if(err) {
-      throw err
-    }
-    return result
+  const localeTemplateDir = path.join(templateDir, locale),
+    emailTemplate = new EmailTemplate(localeTemplateDir)
+
+  return yield new Promise((resolve, reject) => {
+    emailTemplate.render(tokenValues, function(err, result) {
+      if(err) {
+        reject(err)
+      } else {
+        resolve(result)
+      }
+    })
   })
 }
 

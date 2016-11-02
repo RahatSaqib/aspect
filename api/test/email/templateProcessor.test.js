@@ -12,7 +12,7 @@ describe('email/templateProcessor', function () {
           aspectUrl: 'https://aspect.id',
           resetPasswordToken: 'reset-token-12345'
         }
-        return templateProcessor.process('resetPassword', tokenValues).then(function(result) {
+        return run(templateProcessor.process, ['resetPassword', tokenValues])(function (result) {
           assert.include(result.subject, 'Aspect Password Reset')
           assert.include(result.html, 'Dear ' + tokenValues.name + ',')
           assert.include(result.html, 'Click here to reset your password')
@@ -28,13 +28,13 @@ describe('email/templateProcessor', function () {
       })
 
       describe('fr-FR locale', function () {
-        it('should generate a french reset password email', function () {
+        it('should generate a French reset password email', function () {
           const tokenValues = {
             name: 'Jean-Luc Picard',
             aspectUrl: 'https://aspect.id',
             resetPasswordToken: 'reset-token-12345'
           }
-          return templateProcessor.process('resetPassword', tokenValues, 'fr-FR').then(function(result) {
+          return run(templateProcessor.process, ['resetPassword', tokenValues, 'fr-FR'])(function (result) {
             assert.include(result.subject, 'Réinitialisation du mot de passe Aspect')
             assert.include(result.html, 'Cher ' + tokenValues.name + ',')
             assert.include(result.html, 'Cliquez ici pour réinitialiser votre mot de passe')
