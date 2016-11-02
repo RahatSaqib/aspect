@@ -32,10 +32,6 @@ const messages = defineMessages({
     id: 'pages.ResultDetail.title',
     defaultMessage: 'Result Detail'
   },
-  fieldSiteName: {
-    id: 'pages.ResultDetail.fieldSiteName',
-    defaultMessage: 'Deployment Full Name'
-  },
   fieldCountryName: {
     id: 'pages.ResultDetail.fieldCountryName',
     defaultMessage: 'Country'
@@ -48,6 +44,10 @@ const messages = defineMessages({
     id: 'pages.ResultDetail.fieldLgaName',
     defaultMessage: 'LGA'
   },
+  fieldSiteName: {
+    id: 'pages.ResultDetail.fieldSiteName',
+    defaultMessage: 'Site Name'
+  },
   fieldEndedOn: {
     id: 'pages.ResultDetail.fieldEndedOn',
     defaultMessage: 'Ended Date'
@@ -56,9 +56,29 @@ const messages = defineMessages({
     id: 'pages.ResultDetail.fieldPatientId',
     defaultMessage: 'Patient ID'
   },
+  fieldErrorCode: {
+    id: 'pages.ResultDetail.fieldErrorCode',
+    defaultMessage: 'Error Code'
+  },
+  fieldErrorNotes: {
+    id: 'pages.ResultDetail.fieldErrorNotes',
+    defaultMessage: 'Error Notes'
+  },
+  fieldSampleId: {
+    id: 'pages.ResultDetail.fieldSampleId',
+    defaultMessage: 'Sample ID'
+  },
+  fieldResearchId: {
+    id: 'pages.ResultDetail.fieldResearchId',
+    defaultMessage: 'Research ID'
+  },
   fieldResultDataResultText: {
     id: 'pages.ResultDetail.fieldResultDataResultText',
     defaultMessage: 'Result Text'
+  },
+  fieldNotes: {
+    id: 'pages.ResultDetail.fieldNotes',
+    defaultMessage: 'Notes'
   },
   fieldAssayName: {
     id: 'pages.ResultDetail.fieldAssayName',
@@ -75,6 +95,10 @@ const messages = defineMessages({
   fieldModuleSerial: {
     id: 'pages.ResultDetail.fieldModuleSerial',
     defaultMessage: 'Module Serial'
+  },
+  fieldModuleName: {
+    id: 'pages.ResultDetail.fieldModuleName',
+    defaultMessage: 'Module Name'
   },
   fieldConsumableSerial: {
     id: 'pages.ResultDetail.fieldConsumableSerial',
@@ -94,11 +118,15 @@ const messages = defineMessages({
   },
   fieldStartedOn: {
     id: 'pages.ResultDetail.fieldStartedOn',
-    defaultMessage: 'Started Date'
+    defaultMessage: 'Started'
+  },
+  fieldCreatedOn: {
+    id: 'pages.ResultDetail.fieldCreatedOn',
+    defaultMessage: 'Added'
   },
   fieldUpdatedOn: {
     id: 'pages.ResultDetail.fieldUpdatedOn',
-    defaultMessage: 'Updated Date'
+    defaultMessage: 'Updated'
   }
 })
 
@@ -107,6 +135,16 @@ export const makeLevel2TupleMapper = (resultData, outerKey) => ([key, value]) =>
   label: value.get('title'),
   value: resultData.getIn([outerKey, key]) || ''
 })
+
+const DateTimeFormat = {
+  // https://github.com/yahoo/react-intl/wiki/Components#date-formatting-components
+  year  : '2-digit',
+  month : '2-digit',
+  day   : '2-digit',
+  hour  : '2-digit',
+  minute: '2-digit',
+  second: '2-digit'
+}
 
 export class ResultDetail extends PureComponent {
 
@@ -158,14 +196,11 @@ export class ResultDetail extends PureComponent {
   }
 
   renderLeftColumnFields() {
-    const { result, intl: { formatMessage } } = this.props
+    const { result, intl } = this.props
+    const { formatMessage, formatDate } = intl
     const assay = result.get('assay')
 
-    const fields = [
-      {
-        label: formatMessage(messages.fieldSiteName),
-        value: result.get('siteName')
-      },
+    const fields = _.compact([
       {
         label: formatMessage(messages.fieldCountryName),
         value: result.get('countryName')
@@ -179,8 +214,12 @@ export class ResultDetail extends PureComponent {
         value: result.get('lgaName')
       },
       {
+        label: formatMessage(messages.fieldSiteName),
+        value: result.get('siteName')
+      },
+      {
         label: formatMessage(messages.fieldEndedOn),
-        value: result.get('endedOn')
+        value: formatDate(result.get('endedOn'), DateTimeFormat)
       },
       {
         label: formatMessage(messages.fieldPatientId),
@@ -194,11 +233,31 @@ export class ResultDetail extends PureComponent {
         label: assay.get('resultCategory2Label'), // TODO i18n
         value: result.get('resultCategory2Name') || '-'
       },
+      (result.get('errorCode') && {
+        label: formatMessage(messages.fieldErrorCode),
+        value: result.get('errorCode')
+      }),
+      (result.get('errorNotes') && {
+        label: formatMessage(messages.fieldErrorNotes),
+        value: result.get('errorNotes')
+      }),
+      {
+        label: formatMessage(messages.fieldSampleId),
+        value: result.get('sampleId')
+      },
+      {
+        label: formatMessage(messages.fieldResearchId),
+        value: result.get('researchId')
+      },
       {
         label: formatMessage(messages.fieldResultDataResultText),
         value: result.getIn(['resultData', 'resultText'])
+      },
+      {
+        label: formatMessage(messages.fieldNotes),
+        value: result.get('notes')
       }
-    ]
+    ])
     return (
       <ReadOnlyFields
         fields={fields}
@@ -207,10 +266,11 @@ export class ResultDetail extends PureComponent {
   }
 
   renderRightColumnFields() {
-    const { result, intl: { formatMessage } } = this.props
+    const { result, intl } = this.props
+    const { formatMessage, formatDate } = intl
     const assay = result.get('assay')
 
-    const fields = [
+    const fields = _.compact([
       {
         label: formatMessage(messages.fieldAssayName),
         value: assay.get('name')
@@ -227,13 +287,17 @@ export class ResultDetail extends PureComponent {
         label: formatMessage(messages.fieldModuleSerial),
         value: result.get('moduleSerial')
       },
+      (result.get('moduleName') && {
+        label: formatMessage(messages.fieldModuleName),
+        value: result.get('moduleName')
+      }),
       {
         label: formatMessage(messages.fieldConsumableSerial),
         value: result.get('consumableSerial')
       },
       {
         label: formatMessage(messages.fieldConsumableExpirationDate),
-        value: result.get('consumableExpirationDate')
+        value: formatDate(result.get('consumableExpirationDate'), DateTimeFormat)
       },
       {
         label: formatMessage(messages.fieldSenderVersion),
@@ -245,13 +309,17 @@ export class ResultDetail extends PureComponent {
       },
       {
         label: formatMessage(messages.fieldStartedOn),
-        value: result.get('startedOn')
+        value: formatDate(result.get('startedOn'), DateTimeFormat)
+      },
+      {
+        label: formatMessage(messages.fieldCreatedOn),
+        value: formatDate(result.get('createdOn'), DateTimeFormat)
       },
       {
         label: formatMessage(messages.fieldUpdatedOn),
-        value: result.get('updatedOn')
+        value: formatDate(result.get('updatedOn'), DateTimeFormat)
       }
-    ]
+    ])
     return (
       <ReadOnlyFields
         fields={fields}
