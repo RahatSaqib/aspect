@@ -13,6 +13,7 @@ let assert = chai.assert
 describe('Device Result API routes',function(){
   describe('result', function(){
     const resultIds = []
+    const now = new Date()
 
     const clientBasePath = '/api/result'
     shared.checkToken(server, clientBasePath)
@@ -92,6 +93,14 @@ describe('Device Result API routes',function(){
         .where({id: result1.resultTypeId}).first('externalId')
       assert.equal(result1Type.externalId, 'Patient')
 
+      const result1Sample = yield knex('Sample as s')
+        .where({id: result1.sampleId}).first()
+      assert.equal(result1.siteId, result1Sample.originSiteId)
+
+      const result1SampleSite = yield knex('Site as s')
+        .where({id: result1Sample.originSiteId}).first()
+      assert.equal(result1.siteId, result1Sample.originSiteId)
+
       const result1Assay = yield knex('Assay as assay')
         .where({id: result1.assayId}).first('externalId', 'name')
       assert.equal(result1Assay.externalId, 'HivVl')
@@ -117,6 +126,11 @@ describe('Device Result API routes',function(){
           assert.deepEqual(res.body.data.resultData, {a:'b'})
         })
 
+      const result2SampleSite = yield knex('Site as s')
+        .where('partnerId', result1SampleSite.partnerId)
+        .where('id', '<>', result1.siteId)
+        .first()
+
       yield server.post(devicePath)
         .set('Authorization', deviceAuth)
         .send({
@@ -129,6 +143,12 @@ describe('Device Result API routes',function(){
           assay: {
             id: 'MtbRif',
             version: '1a.c1'
+          },
+          sample: {
+            id: 'Sample'+now,
+            originSite: {
+              id: result2SampleSite.externalId
+            }
           },
           location: {
             longitude: -87.581222,
@@ -225,6 +245,12 @@ describe('Device Result API routes',function(){
       assert.equal(result2Assay.externalId, 'MtbRif')
       assert.equal(result2Assay.name, 'GeneXpert MTB/Rif')
 
+      const result2Sample = yield knex('Sample as s')
+        .where({id: result2.sampleId}).first()
+      assert.notEqual(result2.siteId, result2Sample.originSiteId)
+      assert.equal(result2SampleSite.id, result2Sample.originSiteId)
+      assert.equal(result2Sample.externalId, 'Sample'+now)
+
       const [result2Category1, result2Category2] = yield knex('ResultCategory as rt')
         .whereIn('id', [result2.resultCategory1, result2.resultCategory2]).select('externalId')
       assert.equal(result2Category1.externalId, 'Detected')
@@ -243,6 +269,12 @@ describe('Device Result API routes',function(){
         assay: {
           id: 'MtbRif',
           version: '1a.c1'
+        },
+        sample: {
+          id: 'Sample'+now,
+          originSite: {
+            id: result2SampleSite.externalId
+          }
         },
         location: {
           longitude: -87.581222,

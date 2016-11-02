@@ -50,11 +50,18 @@ function* addResult(request){
     // TODO handle 0 result types, sites or assays, categories found
     // TODO error if multiple assays and no assay specified
 
-    // TODO lookup specified sample
-    // TODO allow linking to different sample origin site
+    // TODO lookup and merge specified sample
+    // TODO Do we need to authorize this Device can link to Sample origin site?
+    let sampleOriginSiteId = site.id
+    const payloadOriginSiteId = _.get(payload, 'sample.originSite.id', false)
+    if(payloadOriginSiteId){
+      sampleOriginSiteId = (yield knex('Site')
+        .where({partnerId: site.partnerId, externalId: payloadOriginSiteId})
+        .first('id')).id
+    }
     const [sampleId] = yield knex('Sample').insert({
-      externalId: 'sample_'+externalId,
-      originSiteId: site.id
+      externalId: _.get(payload, 'sample.id', 'sample_'+externalId),
+      originSiteId: sampleOriginSiteId
     })
 
     // TODO result data validate against assay schema

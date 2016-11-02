@@ -55,7 +55,9 @@ module.exports = [
           }),
           sample: Joi.object().keys({
             id: Joi.string(),
-            originSiteId: Joi.string()
+            originSite: Joi.object().keys({
+              id: Joi.string()
+            })
           }),
           category: Joi.array().items(
             Joi.object().keys({
