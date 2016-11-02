@@ -1,7 +1,8 @@
 const {assert} = require('chai')
+const path = require('path')
 const templateProcessor = require('../../src/email/templateProcessor')
 
-describe.only('email/templateProcessor', function () {
+describe('email/templateProcessor', function () {
   describe('process', function () {
     describe('resetPassword', function () {
       it('should generate a reset password email', function () {
@@ -46,6 +47,21 @@ describe.only('email/templateProcessor', function () {
             assert.include(result.text, 'Ce lien est valable pour l\'heure suivante et ne peut être utilisé qu\'une seule fois')
           })
         })
+      })
+    })
+  })
+
+  describe('generateAttachment', function () {
+    describe('api/src/email/templates/systemone.jpg', function () {
+      it('should generate an attachment object with base 64 encoded string for the file', function () {
+        const filePath = path.join(__dirname, '../../src/email/templates/systemone.jpg')
+        return templateProcessor.generateAttachment(filePath, 'image/jpeg', 'inline')
+          .then(function(attachment) {
+            assert.isOk(attachment.content)
+            assert.equal(attachment.mimeType, 'image/jpeg')
+            assert.equal(attachment.disposition, 'inline')
+            assert.equal(attachment.fileName, 'systemone.jpg')
+          })
       })
     })
   })

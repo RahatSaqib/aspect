@@ -1,5 +1,7 @@
 const EmailTemplate = require('email-templates').EmailTemplate
 const path = require('path')
+const Promise = require('bluebird')
+const encode = Promise.promisify(require('node-base64-image').encode)
 
 function process(templateName, tokenValues, locale) {
   if(!locale) {
@@ -16,6 +18,18 @@ function process(templateName, tokenValues, locale) {
   })
 }
 
+function generateAttachment(pathToFile, mimeType = 'application/octet-stream', disposition = 'attachment') {
+  return encode(pathToFile, { string: true, local: true }).then(function(result) {
+    return {
+      content: result,
+      mimeType: mimeType,
+      fileName: path.basename(pathToFile),
+      disposition: disposition
+    }
+  })
+}
+
 module.exports = {
-  process
+  process,
+  generateAttachment
 }

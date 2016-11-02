@@ -36,7 +36,7 @@ function* sendEmail(to, subject, htmlContent, textContent, attachments) {
     if(error) {
       return Promise.reject(error)
     }
-    return Promise.resolve(response)
+    return response
   })
 }
 
