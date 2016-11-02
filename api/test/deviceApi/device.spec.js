@@ -15,7 +15,7 @@ describe('Device API routes',function(){
 
     let clientPath = '/api/device/configuration'
     shared.checkToken(server, clientPath)
-    sharedDevice.authenticateUserAndFirstDevice(server, 'admin')
+    sharedDevice.authenticateUserAndFirstDevice(server, {user: 'admin'})
 
     const devicePath = '/device/configuration'
 
@@ -128,7 +128,7 @@ describe('Device API routes',function(){
   describe('operation', function(){
     let clientPath = '/api/device/operation'
     shared.checkToken(server, clientPath)
-    sharedDevice.authenticateUserAndFirstDevice(server, 'admin')
+    sharedDevice.authenticateUserAndFirstDevice(server, {user: 'admin'})
 
     const devicePath = '/device/operation'
 

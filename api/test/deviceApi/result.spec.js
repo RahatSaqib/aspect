@@ -16,7 +16,7 @@ describe('Device Result API routes',function(){
 
     const clientBasePath = '/api/result'
     shared.checkToken(server, clientBasePath)
-    sharedDevice.authenticateUserAndFirstDevice(server, 'admin')
+    sharedDevice.authenticateUserAndFirstDevice(server, {user: 'admin', type: 'GeneXpert'})
 
     const devicePath = '/device/result'
 
