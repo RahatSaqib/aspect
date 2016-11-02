@@ -43,21 +43,21 @@ module.exports = [
       auth: {scope: ['site:edit']},
       validate: {
         params: {
-          siteId: Joi.string().description('Site id').required()
+          siteId: Joi.number().integer().positive().description('Site id').required()
         },
         payload: {
           name: Joi.string().required(),
           shortname: Joi.string().required(),
-          timezone: Joi.string().allow(''),
-          countryId: Joi.string().required(),
-          stateId: Joi.string().required(),
-          lgaId: Joi.string().allow(''),
+          timezone: Joi.string().allow('', null),
+          countryId: Joi.number().integer().positive().allow('', null),
+          stateId: Joi.number().integer().positive().allow('', null),
+          lgaId: Joi.number().integer().positive().allow('', null),
           street1: Joi.string().required(),
-          street2: Joi.string().allow(''),
+          street2: Joi.string().allow('', null),
           city: Joi.string().required(),
-          zip: Joi.string().required(),
-          longitude: Joi.number().required(),
-          latitude: Joi.number().required()
+          zip: Joi.string().max(45).allow('', null),
+          longitude: Joi.number().allow('', null),
+          latitude: Joi.number().allow('', null)
         }
       }
     }
