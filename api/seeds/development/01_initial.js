@@ -555,6 +555,59 @@ function* seed(knex){
     assayId: assayHivVlId
   })
 
+
+  // Units
+  let [piece] = yield knex('Unit').insert({
+    name: 'Piece',
+    shortname: 'pc'
+  })
+
+  let [liter] = yield knex('Unit').insert({
+    name: 'Liter',
+    shortname: 'l'
+  })
+
+  let [milliliter] = yield knex('Unit').insert({
+    name: 'Milliliter',
+    shortname: 'ml'
+  })
+
+  let [milligram] = yield knex('Unit').insert({
+    name: 'Milligram',
+    shortname: 'mg'
+  })
+
+  let [gram] = yield knex('Unit').insert({
+    name: 'Gram',
+    shortname: 'g'
+  })
+
+  let [kilogram] = yield knex('Unit').insert({
+    name: 'Kilogram',
+    shortname: 'kg'
+  })
+
+  let [ounce] = yield knex('Unit').insert({
+    name: 'Ounce',
+    shortname: 'oz'
+  })
+
+  // Consumable types
+  yield knex('Consumable').insert({
+    name: 'Gloves',
+    unit: piece,
+    canExpire: 0,
+    manufacturer: 'ABC Company',
+    autoInclude: 1
+  })
+  yield knex('Consumable').insert({
+    name: 'GeneXpert TB Cartridge',
+    unit: ounce,
+    canExpire: 1,
+    manufacturer: 'Cepheid',
+    autoInclude: 0
+  })
+
   // Create permissions
   const modules = {}
   for(let module of permissions.modules){
@@ -1052,19 +1105,23 @@ function* seed(knex){
     { roleId: roleIdAdmin, permissionId: modules.result.admin },
     { roleId: roleIdAdmin, permissionId: modules.site.admin },
     { roleId: roleIdAdmin, permissionId: modules.assay.admin },
+    { roleId: roleIdAdmin, permissionId: modules.inventory.admin },
 
     // FIXME: result permission for role
 
     { roleId: roleIdOH, permissionId: modules.site.edit },
     { roleId: roleIdOH, permissionId: modules.device.edit },
     { roleId: roleIdOH, permissionId: modules.assay.edit },
+    { roleId: roleIdOH, permissionId: modules.inventory.edit},
 
     { roleId: roleIdNE, permissionId: modules.site.edit },
     { roleId: roleIdNE, permissionId: modules.device.edit },
 
+
     { roleId: roleIdOHWayne, permissionId: modules.site.view },
     { roleId: roleIdOHWayne, permissionId: modules.device.view },
     { roleId: roleIdOHWayne, permissionId: modules.assay.view },
+    {roleId: roleIdOHWayne, permissionId: modules.inventory.view},
 
     { roleId: roleIdMASuffolk, permissionId: modules.device.view },
 

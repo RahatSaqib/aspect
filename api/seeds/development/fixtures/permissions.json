@@ -9,6 +9,10 @@
       "activities": ["view", "edit", "admin"]
     },
     {
+      "name": "inventory",
+      "activities": ["view", "edit", "admin"]
+    },
+    {
       "name": "person",
       "activities": ["view", "edit", "admin"]
     },
