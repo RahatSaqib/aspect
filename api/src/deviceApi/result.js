@@ -16,11 +16,14 @@ function* addResult(request){
   let ok = false
 
   yield transact(function*(knex){
-    // TODO handle multiple Assays per DeviceType
     const assayQ = knex('Assay as a')
       .join('Device as d', 'a.deviceTypeId', 'd.deviceTypeId')
       .where({'d.id': deviceId})
-      .first('a.id')
+      .first('a.id', 'a.externalId')
+    const payloadAssayId = _.get(payload, 'assay.id', false)
+    if(payloadAssayId){
+      assayQ.where({'a.externalId': payloadAssayId})
+    }
 
     const siteQ = knex('Site as s')
       .join('Device as d', 's.id', 'd.siteId')
@@ -44,7 +47,8 @@ function* addResult(request){
 
     const [assay, site, resultType, categories] = yield Promise.all(
       [assayQ, siteQ, resultTypeQ, categoryQ])
-    // TODO handle 0 result types, sites or assays, cateogories found
+    // TODO handle 0 result types, sites or assays, categories found
+    // TODO error if multiple assays and no assay specified
 
     // TODO lookup specified sample
     // TODO allow linking to different sample origin site

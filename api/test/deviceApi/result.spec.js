@@ -54,7 +54,7 @@ describe('Device Result API routes',function(){
 
       yield server.post(devicePath)
         .set('Authorization', deviceAuth)
-        .send({data: {a:'b'}})
+        .send({data: {a:'b'}, assay: {id: 'HivVl'}})
         .then(function(res){
           assert.equal(res.status, 200)
           assert.typeOf(res.body, 'Object')
@@ -92,6 +92,11 @@ describe('Device Result API routes',function(){
         .where({id: result1.resultTypeId}).first('externalId')
       assert.equal(result1Type.externalId, 'Patient')
 
+      const result1Assay = yield knex('Assay as assay')
+        .where({id: result1.assayId}).first('externalId', 'name')
+      assert.equal(result1Assay.externalId, 'HivVl')
+      assert.equal(result1Assay.name, 'GeneXpert HIV VL')
+
       const [result1Category1, result1Category2] = yield knex('ResultCategory as rt')
         .whereIn('id', [result1.resultCategory1, result1.resultCategory2]).select('externalId')
       assert.equal(result1Category1.externalId, 'Success')
@@ -100,7 +105,7 @@ describe('Device Result API routes',function(){
       const [{rawMessage: log1Raw, resultId: resultId1}] = yield knex('ResultLog as rl')
         .innerJoin('Result as r', 'r.id', 'rl.resultId')
         .where({externalId: resultIds[0]}).select('rawMessage', 'resultId')
-      assert.deepEqual(JSON.parse(log1Raw), {data: {a: 'b'}})
+      assert.deepEqual(JSON.parse(log1Raw), {data: {a: 'b'}, assay: {id: 'HivVl'}})
 
       yield server.get(clientSingleResultPath+resultId1)
         .set('Authorization', clientAuth)
@@ -122,6 +127,7 @@ describe('Device Result API routes',function(){
             {id: 'Indeterminate'}
           ],
           assay: {
+            id: 'MtbRif',
             version: '1a.c1'
           },
           location: {
@@ -214,6 +220,11 @@ describe('Device Result API routes',function(){
         .where({id: result2.resultTypeId}).first('externalId')
       assert.equal(result2Type.externalId, 'Study')
 
+      const result2Assay = yield knex('Assay as assay')
+        .where({id: result2.assayId}).first('externalId', 'name')
+      assert.equal(result2Assay.externalId, 'MtbRif')
+      assert.equal(result2Assay.name, 'GeneXpert MTB/Rif')
+
       const [result2Category1, result2Category2] = yield knex('ResultCategory as rt')
         .whereIn('id', [result2.resultCategory1, result2.resultCategory2]).select('externalId')
       assert.equal(result2Category1.externalId, 'Detected')
@@ -230,6 +241,7 @@ describe('Device Result API routes',function(){
           {id: 'Indeterminate'}
         ],
         assay: {
+          id: 'MtbRif',
           version: '1a.c1'
         },
         location: {
