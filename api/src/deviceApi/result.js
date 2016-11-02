@@ -33,8 +33,18 @@ function* addResult(request){
       .where({'rt.externalId': _.get(payload, 'type.id', 'Patient')})
       .first('rt.id')
 
-    const [assay, site, resultType] = yield Promise.all([assayQ, siteQ, resultTypeQ])
-    // TODO handle 0 result types, sites or assays found
+    // Categories if specified, otherwise Error or Success depending on error payload
+    let categoryIds = _.compact(_.map(payload.category, 'id'))
+    if(categoryIds.length === 0){
+      categoryIds = [payload.error ? 'Error' : 'Success']
+    }
+    const categoryQ  = knex('ResultCategory as rc')
+      .whereIn('rc.externalId', categoryIds)
+      .select('rc.id')
+
+    const [assay, site, resultType, categories] = yield Promise.all(
+      [assayQ, siteQ, resultTypeQ, categoryQ])
+    // TODO handle 0 result types, sites or assays, cateogories found
 
     // TODO lookup specified sample
     // TODO allow linking to different sample origin site
@@ -63,7 +73,8 @@ function* addResult(request){
         assayVersion: _.get(payload, 'assay.version', null),
         resultTypeId: resultType.id,
         sampleId,
-        // TODO result categories
+        resultCategory1: _.get(categories, '[0].id', null),
+        resultCategory2: _.get(categories, '[1].id', null),
         resultData,
         startedOn: _.get(payload, 'startedOn', null),
         endedOn: _.get(payload, 'endedOn', now),
