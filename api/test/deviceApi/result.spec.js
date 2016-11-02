@@ -76,6 +76,14 @@ describe('Device Result API routes',function(){
           assert.equal(lastResult.externalId, resultIds[0])
         })
 
+      const result1 = yield knex('Result as r')
+        .where({externalId: resultIds[0]}).first()
+      assert.equal(result1.externalId, resultIds[0])
+      assert.deepEqual(JSON.parse(result1.resultData), {a: 'b'})
+      const result1Type = yield knex('ResultType as rt')
+        .where({id: result1.resultTypeId}).first('externalId')
+      assert.equal(result1Type.externalId, 'Patient')
+
       const [{rawMessage: log1Raw, resultId: resultId1}] = yield knex('ResultLog as rl')
         .innerJoin('Result as r', 'r.id', 'rl.resultId')
         .where({externalId: resultIds[0]}).select('rawMessage', 'resultId')
@@ -93,7 +101,9 @@ describe('Device Result API routes',function(){
 
       yield server.post(devicePath)
         .set('Authorization', deviceAuth)
-        .send({data: {a:'b', c:2, d:false, e:{f: 'g'}}})
+        .send({
+          data: {a: 'b', c: 2, d: false, e: {f: 'g'}},
+          type: {id: 'Study'}})
         .then(function(res){
           assert.equal(res.status, 200)
           assert.typeOf(res.body, 'Object')
@@ -127,10 +137,21 @@ describe('Device Result API routes',function(){
           assert.equal(lastResult.externalId, resultIds[1])
         })
 
+      const result2 = yield knex('Result as r')
+        .where({externalId: resultIds[1]}).first()
+      assert.equal(result2.externalId, resultIds[1])
+      assert.deepEqual(JSON.parse(result2.resultData), {a: 'b', c: 2, d: false, e: {f: 'g'}})
+      const result2Type = yield knex('ResultType as rt')
+        .where({id: result2.resultTypeId}).first('externalId')
+      assert.equal(result2Type.externalId, 'Study')
+
       const [{rawMessage: log2Raw, resultId: resultId2}] = yield knex('ResultLog as rl')
         .innerJoin('Result as r', 'r.id', 'rl.resultId')
         .where({externalId: resultIds[1]}).select('rawMessage', 'resultId')
-      assert.deepEqual(JSON.parse(log2Raw), {data: {a:'b', c:2, d:false, e:{f: 'g'}}})
+      assert.deepEqual(JSON.parse(log2Raw), {
+        data: {a: 'b', c: 2, d: false, e: {f: 'g'}},
+        type: {id: 'Study'}
+      })
 
       yield server.get(clientSingleResultPath+resultId2)
         .set('Authorization', clientAuth)

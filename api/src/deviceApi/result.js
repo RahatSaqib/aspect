@@ -1,4 +1,5 @@
 const Boom = require('boom')
+const _ = require('lodash')
 const { transact } = require('../db')
 const { getDeviceByApiKeyId, getExternalId } = require('./common')
 
@@ -15,8 +16,6 @@ function* addResult(request){
   let ok = false
 
   yield transact(function*(knex){
-    // TODO lookup and reuse result with UniqueId if specified
-
     // TODO handle multiple Assays per DeviceType
     const assayQ = knex('Assay as a')
       .join('Device as d', 'a.deviceTypeId', 'd.deviceTypeId')
@@ -29,12 +28,13 @@ function* addResult(request){
       .first('s.id', 's.partnerId', 's.orgUnitId',
         's.countryId', 's.stateId', 's.lgaId', 's.latitude', 's.longitude')
 
-    // TODO lookup specified ResultType
+    // Select ResultType if specified, otherwise Patient
     const resultTypeQ = knex('ResultType as rt')
-      .where({'rt.externalId': 'Patient'})
+      .where({'rt.externalId': _.get(payload, 'type.id', 'Patient')})
       .first('rt.id')
 
     const [assay, site, resultType] = yield Promise.all([assayQ, siteQ, resultTypeQ])
+    // TODO handle 0 result types, sites or assays found
 
     // TODO lookup specified sample
     // TODO allow linking to different sample origin site
