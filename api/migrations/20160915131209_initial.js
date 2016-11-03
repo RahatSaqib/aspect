@@ -473,7 +473,8 @@ function* up(knex){
 
   yield knex.schema.createTable('ResetPassword', resetPassword => {
     resetPassword.increments('id')
-    resetPassword.string('token').notNullable()
+    resetPassword.string('token', 36).notNullable()
+    resetPassword.string('requestedFrom', 40).notNullable()
     resetPassword.integer('userId').unsigned().notNullable()
       .index().references('id').inTable('User')
     resetPassword.dateTime('expires')

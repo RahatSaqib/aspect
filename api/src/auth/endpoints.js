@@ -88,6 +88,7 @@ module.exports = [
     path: '/auth/update-password/{resetPasswordToken}',
     handler: asyncHandler(updatePasswordWithResetPasswordToken),
     config: {
+      auth: false,
       description: 'Update password for user with reset password token',
       notes: 'Returns the username so that the usr knows how to login',
       validate: {
