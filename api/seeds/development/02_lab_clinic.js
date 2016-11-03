@@ -209,7 +209,7 @@ function* seed(knex){
     }, auditFields))
 
     // RRT Terminal
-    yield knex('Device').insert(Object.assign({
+    const [deviceId] = yield knex('Device').insert(Object.assign({
       name: `m2000 at ${siteData.name}`,
       shortname: 'd'+siteData.shortname,
       deviceTypeId: deviceTypes['m2000'].id,
@@ -218,6 +218,11 @@ function* seed(knex){
       createdOn: new Date(+now - 3*millisInHour),
       updatedOn: new Date(+now - millisInHour),
       lastPingOn: new Date(+now - millisInHour/3)
+    }, auditFields))
+
+    yield knex('DeviceApiKey').insert(Object.assign({
+      deviceId,
+      revoked: 0
     }, auditFields))
   }
 }
