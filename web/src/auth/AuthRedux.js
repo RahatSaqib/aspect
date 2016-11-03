@@ -16,7 +16,14 @@ export const types = {
   LOGOUT_SUCCESS: 'LOGOUT_SUCCESS',
   CHANGE_CULTURE: 'CHANGE_CULTURE',
   TOGGLE_DRAWER: 'TOGGLE_DRAWER',
-  CHANGE_TIMEZONE: 'CHANGE_TIMEZONE'
+  CHANGE_TIMEZONE: 'CHANGE_TIMEZONE',
+  RESET_PASSWORD_ENTER_EMAIL_ADDRESS: 'RESET_PASSWORD_ENTER_EMAIL_ADDRESS',
+  RESET_PASSWORD_ENTER_EMAIL_ADDRESS_SUCCESS: 'RESET_PASSWORD_ENTER_EMAIL_ADDRESS_SUCCESS',
+  RESET_PASSWORD_ENTER_EMAIL_ADDRESS_FAILED: 'RESET_PASSWORD_ENTER_EMAIL_ADDRESS_FAILED',
+  RESET_PASSWORD_GET_TOKEN: 'RESET_PASSWORD_GET_TOKEN',
+  RESET_PASSWORD_ENTER_PASSWORD: 'RESET_PASSWORD_ENTER_PASSWORD',
+  RESET_PASSWORD_ENTER_PASSWORD_SUCCESS: 'RESET_PASSWORD_ENTER_PASSWORD_SUCCESS',
+  RESET_PASSWORD_ENTER_PASSWORD_FAILED: 'RESET_PASSWORD_ENTER_PASSWORD_FAILED'
 }
 /*
  * ---------------- Action Creators -----------------
@@ -209,6 +216,112 @@ function storeAccess(json) {
   localStorage.updateTimezone(jwt.timezone)
   return jwt
 }
+
+function createResetPasswordEnterEmailAddressRequest(emailAddress) {
+  return {
+    type: types.RESET_PASSWORD_ENTER_EMAIL_ADDRESS,
+    emailAddress
+  }
+}
+
+function createResetPasswordEnterEmailAddressSuccess(emailAddress) {
+  return {
+    type: types.RESET_PASSWORD_ENTER_EMAIL_ADDRESS_SUCCESS,
+    emailAddress
+  }
+}
+
+function createResetPasswordEnterEmailAddressFailure(error) {
+  return {
+    type: types.RESET_PASSWORD_ENTER_EMAIL_ADDRESS_FAILED,
+    error
+  }
+}
+
+function createResetPasswordGetToken(resetPasswordToken) {
+  return {
+    type: types.RESET_PASSWORD_GET_TOKEN,
+    resetPasswordToken
+  }
+}
+
+function createResetPasswordEnterPasswordRequest(resetPasswordToken, newPassword) {
+  return {
+    type: types.RESET_PASSWORD_ENTER_PASSWORD,
+    resetPasswordToken,
+    newPassword
+  }
+}
+
+function createResetPasswordEnterPasswordSuccess(username) {
+  return {
+    type: types.RESET_PASSWORD_ENTER_PASSWORD_SUCCESS,
+    username
+  }
+}
+
+function createResetPasswordEnterPasswordFailure(error) {
+  return {
+    type: types.RESET_PASSWORD_ENTER_PASSWORD_FAILED,
+    error
+  }
+}
+
+export function resetPasswordEnterEmailAddress(emailAddress) {
+  return function (dispatch) {
+    dispatch(createResetPasswordEnterEmailAddressRequest(emailAddress))
+    const clientName = fetchUtils.getBrowserNameAndVersion() + ' on ' + window.navigator.platform
+    return fetch(config.aspectApi + `/auth/send-reset-password-token/${emailAddress}`,
+      {
+        method: 'POST',
+        headers: fetchUtils.getHeaders(),
+        body: JSON.stringify({
+          clientId: localStorage.getClientId(),
+          clientName: clientName
+        })
+      })
+      .then(fetchUtils.handleFetchResponse)
+      .then(() => {
+        dispatch(createResetPasswordEnterEmailAddressSuccess(emailAddress))
+      })
+      .catch(err => {
+        dispatch(createResetPasswordEnterEmailAddressFailure(err))
+        dispatch(addError('Could not start resetting password', err.message, err))
+      })
+  }
+}
+
+export function resetPasswordSetToken(resetPasswordToken) {
+  return function (dispatch) {
+    dispatch(createResetPasswordGetToken(resetPasswordToken))
+  }
+}
+
+export function resetPasswordEnterPassword(resetPasswordToken, newPassword) {
+  return function (dispatch) {
+    dispatch(createResetPasswordEnterPasswordRequest(resetPasswordToken, newPassword))
+    const clientName = fetchUtils.getBrowserNameAndVersion() + ' on ' + window.navigator.platform
+    return fetch(config.aspectApi + `/auth/update-password/${resetPasswordToken}`,
+      {
+        method: 'PUT',
+        headers: fetchUtils.getHeaders(),
+        body: JSON.stringify({
+          newPassword: newPassword,
+          clientId: localStorage.getClientId(),
+          clientName: clientName
+        })
+      })
+      .then(fetchUtils.handleFetchResponse)
+      .then(json => {
+        dispatch(createResetPasswordEnterPasswordSuccess(json.username))
+      })
+      .catch(err => {
+        dispatch(createResetPasswordEnterPasswordFailure(err))
+        dispatch(addError('Could not reset password', err.message, err))
+      })
+  }
+}
+
 /*
  * ---------------- Reducers -----------------
  */
@@ -218,7 +331,10 @@ const User = Immutable.Record({
   timezone: 'Eastern Standard Time',
   permissions: Immutable.List(),
   drawerOpen: true,
-  loggedIn: false
+  loggedIn: false,
+  resetPasswordToken: '',
+  resettingPassword: false,
+  usernameReminder: ''
 })
 
 const initialState = new User()
@@ -258,6 +374,23 @@ export default function authReducer(state = initialState, action) {
     return state.merge({
       drawerOpen: action.drawerOpen
     })
+  case types.RESET_PASSWORD_ENTER_EMAIL_ADDRESS:
+    return state.set('resettingPassword', true)
+  case types.RESET_PASSWORD_ENTER_EMAIL_ADDRESS_SUCCESS:
+    return state.set('resettingPassword', false)
+  case types.RESET_PASSWORD_ENTER_EMAIL_ADDRESS_FAILED:
+    return state.set('resettingPassword', false)
+  case types.RESET_PASSWORD_GET_TOKEN:
+    return state.set('resetPasswordToken', action.resetPasswordToken)
+  case types.RESET_PASSWORD_ENTER_PASSWORD:
+    return state.set('resettingPassword', true)
+  case types.RESET_PASSWORD_ENTER_PASSWORD_SUCCESS:
+    return state.merge({
+      resettingPassword: false,
+      usernameReminder: action.username
+    })
+  case types.RESET_PASSWORD_ENTER_PASSWORD_FAILED:
+    return state.set('resettingPassword', false)
   }
   return state
 }
