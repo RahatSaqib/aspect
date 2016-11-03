@@ -85,7 +85,14 @@ module.exports = [
             id: Joi.string().allow('', null)
           }),
           patient: Joi.object().keys({
-            id: Joi.string().allow('', null)
+            id: Joi.string().allow('', null),
+            name: Joi.string().allow('', null),
+            surname: Joi.string().allow('', null),
+            gender: Joi.string().allow('', null),
+            age: Joi.number(),
+            dateOfBirth: Joi.date().iso(),
+            address: Joi.string().allow('', null),
+            phone: Joi.string().allow('', null)
           }),
           sender: Joi.object().keys({
             version: Joi.string().allow('', null),

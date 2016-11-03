@@ -169,7 +169,16 @@ describe('Device Result API routes',function(){
             serial: '555-8'
           },
           research: {id: 'R123'},
-          patient: {id: 'P-333'},
+          patient: {
+            id: 'P-333',
+            name: 'Bob',
+            surname: 'Hope',
+            gender: 'M',
+            age: 72,
+            dateOfBirth: '1903-05-29',
+            address: '123 Main Street',
+            phone: '856-7909'
+          },
           sender: {
             version: '99-1',
             operator: 'Bob O'
@@ -229,7 +238,16 @@ describe('Device Result API routes',function(){
       assert.equal(result2.moduleName, 'ModA')
       assert.equal(result2.moduleSerial, '555-8')
       assert.equal(result2.researchId, 'R123')
-      assert.equal(JSON.parse(result2.patientData).id, 'P-333')
+      assert.deepEqual(JSON.parse(result2.patientData), {
+        id: 'P-333',
+        name: 'Bob',
+        surname: 'Hope',
+        gender: 'M',
+        age: 72,
+        dateOfBirth: '1903-05-29T00:00:00.000Z',
+        address: '123 Main Street',
+        phone: '856-7909'
+      })
       assert.equal(result2.senderVersion, '99-1')
       assert.equal(result2.senderOperator, 'Bob O')
       assert.equal(result2.notes, 'My Awesome notes about this Awesome result!')
@@ -296,7 +314,16 @@ describe('Device Result API routes',function(){
           serial: '555-8'
         },
         research: {id: 'R123'},
-        patient: {id: 'P-333'},
+        patient: {
+          id: 'P-333',
+          name: 'Bob',
+          surname: 'Hope',
+          gender: 'M',
+          age: 72,
+          dateOfBirth: '1903-05-29T00:00:00.000Z',
+          address: '123 Main Street',
+          phone: '856-7909'
+        },
         sender: {
           version: '99-1',
           operator: 'Bob O'
