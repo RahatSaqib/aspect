@@ -55,11 +55,15 @@ export default defineMessages({
   },
   newPasswordTooShort: {
     id: 'pages.ResetPassword.newPasswordTooShort',
-    defaultMessage: 'Your password needs to be at least 6 characters long'
+    defaultMessage: 'Your password needs to be at least 8 characters long'
   },
   newPasswordMustContainANumber: {
     id: 'pages.ResetPassword.newPasswordMustContainANumber',
     defaultMessage: 'Your password needs to contain at least one number'
+  },
+  newPasswordMustContainASpecialCharacter: {
+    id: 'pages.ResetPassword.newPasswordMustContainASpecialCharacter',
+    defaultMessage: 'Your password needs to contain a special character (%!$*...)'
   },
   confirmNewPassword: {
     id: 'pages.ResetPassword.confirmNewPassword',

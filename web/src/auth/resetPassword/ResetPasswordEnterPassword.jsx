@@ -21,7 +21,8 @@ const ResetPasswordEnterPassword = props => {
       <div className={styles.Form__Content}>
         <p>{formatMessage(messages.enterNewPasswordContent)}</p>
         <StrongPasswordInput name="newPassword" label={formatMessage(messages.newPassword)}
-                             maxLength="100" autoFocus requiresNumber fullWidth />
+                             maxLength="100" autoFocus requiresNumber requiresSpecialCharacter
+                             minLength={8} fullWidth />
         <TextInput name="confirmNewPassword" label={formatMessage(messages.confirmNewPassword)}
                    maxLength="100" type="password" fullWidth />
       </div>
@@ -37,10 +38,12 @@ const validate = (passwordInput, props) => {
   const {formatMessage} = props.intl,
     errors = {}
   if (passwordInput.get('newPassword')) {
-    if(passwordInput.get('newPassword').trim().length < 6) {
+    if(passwordInput.get('newPassword').trim().length < 8) {
       errors.newPassword = formatMessage(messages.newPasswordTooShort)
     } else if (!/\d/.test(passwordInput.get('newPassword'))) {
       errors.newPassword = formatMessage(messages.newPasswordMustContainANumber)
+    } else if (!/(?=.*?[`~!@#$%\^&*()\-=_+\\\[\]{}/?,.<>])/.test(passwordInput.get('newPassword'))) {
+      errors.newPassword = formatMessage(messages.newPasswordMustContainASpecialCharacter)
     }
     if (passwordInput.get('newPassword') !== passwordInput.get('confirmNewPassword')) {
       errors.confirmNewPassword = formatMessage(messages.passwordsDoNotMatch)
