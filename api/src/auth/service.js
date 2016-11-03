@@ -296,10 +296,45 @@ function* createResetPasswordToken(request){
   }
 }
 
+function* updatePasswordWithResetPasswordToken(request) {
+  let {payload, params} = request
+
+  let resetPasswordDetails = yield query('Get reset password token').from('ResetPassword as rp')
+    .join('User as u', 'rp.userId', 'u.id')
+    .where({'rp.token': params.resetPasswordToken})
+    .first('rp.id as resetPasswordTokenId', 'rp.expires', 'u.id as userId', 'u.name as username')
+
+  if(!resetPasswordDetails){
+    return Boom.notFound('Reset password details not Found')
+  } else {
+    yield query('Delete reset password token').from('ResetPassword as rp')
+      .where({'rp.id': resetPasswordDetails.resetPasswordTokenId})
+      .delete()
+  }
+  const now = new Date()
+  if (!resetPasswordDetails.expires < now) {
+    return Boom.resourceGone('The reset password token is not valid')
+  }
+  if(payload.newPassword) {
+    yield query('Save password for user').from('User as u')
+      .where({'u.id': resetPasswordDetails.userId})
+      .update({
+        password: yield bcryptHash(payload.newPassword, parseInt(config.passwordSaltRounds)),
+        lastPasswordChange: now
+      })
+  }
+
+  return {
+    ok: true,
+    username: resetPasswordDetails.username
+  }
+}
+
 module.exports = {
   authenticate,
   checkAuthentication,
   refreshToken,
   updateUsernameAndPasswordForLoggedInUser,
-  createResetPasswordToken
+  createResetPasswordToken,
+  updatePasswordWithResetPasswordToken
 }

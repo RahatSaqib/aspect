@@ -7,7 +7,8 @@ let {
   checkAuthentication,
   refreshToken,
   updateUsernameAndPasswordForLoggedInUser,
-  createResetPasswordToken
+  createResetPasswordToken,
+  updatePasswordWithResetPasswordToken
 } = require('./service')
 
 module.exports = [
@@ -79,6 +80,24 @@ module.exports = [
       validate: {
         params: {
           email: Joi.string().description('Email address').required()
+        }
+      }
+    }
+  }, {
+    method: 'PUT',
+    path: '/auth/update-password/{resetPasswordToken}',
+    handler: asyncHandler(updatePasswordWithResetPasswordToken),
+    config: {
+      description: 'Update password for user with reset password token',
+      notes: 'Returns the username so that the usr knows how to login',
+      validate: {
+        params: {
+          resetPasswordToken: Joi.string().description('Reset Password Token').required()
+        },
+        payload: {
+          newPassword: Joi.string().max(100).allow('', null),
+          clientName: Joi.string().required(),
+          clientId: Joi.string()
         }
       }
     }
