@@ -89,8 +89,8 @@ module.exports = [
             name: Joi.string().allow('', null),
             surname: Joi.string().allow('', null),
             gender: Joi.string().allow('', null),
-            age: Joi.number(),
-            dateOfBirth: Joi.date().iso(),
+            age: Joi.number().allow(null),
+            dateOfBirth: Joi.date().iso().allow(null),
             address: Joi.string().allow('', null),
             phone: Joi.string().allow('', null)
           }),
