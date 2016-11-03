@@ -32,6 +32,32 @@ function* listConsumableTypes(request){
   return result
 }
 
+function* listConsumableReasons(request){
+  const {query, auth} = request
+
+  //Get data constraints
+  const dataConstraints = yield getConstraints(auth.credentials)
+  //TODO: use dataContraints
+  const consumableReasonQuery = knex('ConsumableReason as cr')
+    .modify(filterParams, query, {'name': 'cr.name'})
+
+  // get total count for paging
+  const getCount = consumableReasonQuery.clone()
+    .count('cr.id as count').first()
+
+  //get rows
+  const getItems = consumableReasonQuery.clone()
+    .modify(sortPageParams, query, 'name')
+    .select(['id', 'name', 'decrease'])
+
+  const [{count: total}, data] = yield Promise.all([getCount, getItems])
+
+  const result = {ok: true, total, length: data.length, data}
+
+  return result
+}
+
 module.exports = {
-  listConsumableTypes
+  listConsumableTypes,
+  listConsumableReasons
 }
