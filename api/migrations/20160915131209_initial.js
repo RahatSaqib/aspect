@@ -450,7 +450,7 @@ function* up(knex){
     result.string('moduleName')
     result.string('moduleSerial')
     result.string('researchId')
-    result.string('patientId')
+    result.specificType('patientData', 'JSON')
     result.string('senderVersion')
     result.string('senderOperator')
     result.string('notes', 2000)

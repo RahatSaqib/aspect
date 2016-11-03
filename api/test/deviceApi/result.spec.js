@@ -229,7 +229,7 @@ describe('Device Result API routes',function(){
       assert.equal(result2.moduleName, 'ModA')
       assert.equal(result2.moduleSerial, '555-8')
       assert.equal(result2.researchId, 'R123')
-      assert.equal(result2.patientId, 'P-333')
+      assert.equal(JSON.parse(result2.patientData).id, 'P-333')
       assert.equal(result2.senderVersion, '99-1')
       assert.equal(result2.senderOperator, 'Bob O')
       assert.equal(result2.notes, 'My Awesome notes about this Awesome result!')

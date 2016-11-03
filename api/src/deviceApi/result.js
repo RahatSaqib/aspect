@@ -67,6 +67,8 @@ function* addResult(request){
     // TODO result data validate against assay schema
     const resultData = JSON.stringify(payload.data)
 
+    const patientData = JSON.stringify(payload.patient)
+
     // TODO result merge into existing with same uniqueId
     const [resultId] = yield knex('Result')
       .insert({
@@ -96,7 +98,7 @@ function* addResult(request){
         moduleSerial: _.get(payload, 'module.serial', null),
         moduleName: _.get(payload, 'module.name', null),
         researchId: _.get(payload, 'research.id', null),
-        patientId: _.get(payload, 'patient.id', null),
+        patientData,
         senderVersion: _.get(payload, 'sender.version', null),
         senderOperator: _.get(payload, 'sender.operator', null),
         notes: _.get(payload, 'notes', null),

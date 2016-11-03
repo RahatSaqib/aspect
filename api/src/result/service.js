@@ -8,17 +8,19 @@ const SELECT_LIST_FIELDS = [
   'r.id', 'r.externalId', 'r.endedOn', 'd.name as deviceName',
   'c.name as countryName', 'st.name as stateName', 'lg.name as lgaName',
   'rc1.name as resultCategory1Name', 'rc2.name as resultCategory2Name',
-  's.externalId as sampleId', 'r.patientId', 'a.name as assayName'
+  's.externalId as sampleId', 'a.name as assayName',
+  knex.raw('JSON_UNQUOTE(JSON_EXTRACT(r.patientData, "$.id")) as patientId')
 ]
 
 const SELECT_SHOW_FIELDS = [
   'r.id', 'r.externalId', 'r.startedOn', 'r.endedOn', 'd.name as deviceName',
   'c.name as countryName', 'st.name as stateName', 'lg.name as lgaName',
   'rc1.name as resultCategory1Name', 'rc2.name as resultCategory2Name', 'r.resultData',
-  's.externalId as sampleId', 'r.patientId','si.name as siteName', 'r.assayVersion',
+  's.externalId as sampleId', 'si.name as siteName', 'r.assayVersion',
   'r.consumableSerial', 'r.consumableLot', 'r.consumableExpirationDate', 'r.instrumentSerial',
   'r.moduleName', 'r.moduleSerial', 'r.researchId', 'r.senderVersion', 'r.senderOperator',
-  'r.notes', 'r.errorCode', 'r.errorNotes','r.createdOn', 'r.updatedOn', 'r.assayId'
+  'r.notes', 'r.errorCode', 'r.errorNotes','r.createdOn', 'r.updatedOn', 'r.assayId',
+  knex.raw('JSON_UNQUOTE(JSON_EXTRACT(r.patientData, "$.id")) as patientId')
 ]
 
 function* listResults(request){
