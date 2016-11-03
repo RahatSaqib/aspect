@@ -225,14 +225,14 @@ export class ResultDetail extends PureComponent {
         label: formatMessage(messages.fieldPatientId),
         value: result.get('patientId')
       },
-      {
+      (result.get('resultCategory1Name') && {
         label: assay.get('resultCategory1Label'), // TODO i18n
         value: result.get('resultCategory1Name')
-      },
-      {
+      }),
+      (result.get('resultCategory2Name') && {
         label: assay.get('resultCategory2Label'), // TODO i18n
-        value: result.get('resultCategory2Name') || '-'
-      },
+        value: result.get('resultCategory2Name')
+      }),
       (result.get('errorCode') && {
         label: formatMessage(messages.fieldErrorCode),
         value: result.get('errorCode')
