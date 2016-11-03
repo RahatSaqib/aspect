@@ -608,6 +608,28 @@ function* seed(knex){
     autoInclude: 0
   })
 
+  // Consumable Reasons
+
+  yield knex('ConsumableReason').insert({
+    name: 'Test Conducted',
+    decrease: 1
+  })
+
+  yield knex('ConsumableReason').insert({
+    name: 'Expired',
+    decrease: 1
+  })
+
+  yield knex('ConsumableReason').insert({
+    name: 'Stolen',
+    decrease: 0
+  })
+
+  yield knex('ConsumableReason').insert({
+    name: 'Lost',
+    decrease: 0
+  })
+
   // Create permissions
   const modules = {}
   for(let module of permissions.modules){
