@@ -1,5 +1,6 @@
 // Imports from packages
 import _ from 'lodash'
+import Immutable from 'immutable'
 import classnames from 'classnames/bind'
 import React, { PureComponent, PropTypes } from 'react'
 import {
@@ -19,10 +20,7 @@ import { Card, CardHeader, CardText } from 'material-ui/Card'
 import {
   fetchSingleResult
 } from '../ResultRedux'
-import {
-  ReadOnlyField,
-  ReadOnlyFields
-} from '../../components/shared/ReadOnlyFields'
+import ReadOnlyFields from '../../components/shared/ReadOnlyFields'
 import styles from './ResultDetail.css'
 
 const cx = classnames.bind(styles)
@@ -195,82 +193,103 @@ export class ResultDetail extends PureComponent {
     )
   }
 
-  renderLeftColumnFields() {
-    const { result, intl } = this.props
-    const { formatMessage, formatDate } = intl
-    const assay = result.get('assay')
+  getAssayFields() {
+    if (!this.hasResultWithAssay()) {
+      return false
+    }
+    const { result } = this.props
+    const resultDataSchema = result.getIn(['assay', 'resultDataSchema'])
+    const resultData = result.get('resultData')
 
-    const fields = _.compact([
-      {
-        label: formatMessage(messages.fieldCountryName),
-        value: result.get('countryName')
-      },
-      {
-        label: formatMessage(messages.fieldStateName),
-        value: result.get('stateName')
-      },
-      {
-        label: formatMessage(messages.fieldLgaName),
-        value: result.get('lgaName')
-      },
-      {
-        label: formatMessage(messages.fieldSiteName),
-        value: result.get('siteName')
-      },
-      {
-        label: formatMessage(messages.fieldEndedOn),
-        value: formatDate(result.get('endedOn'), DateTimeFormat)
-      },
-      {
-        label: formatMessage(messages.fieldPatientId),
-        value: result.get('patientId')
-      },
-      (result.get('resultCategory1Name') && {
-        label: assay.get('resultCategory1Label'), // TODO i18n
-        value: result.get('resultCategory1Name')
-      }),
-      (result.get('resultCategory2Name') && {
-        label: assay.get('resultCategory2Label'), // TODO i18n
-        value: result.get('resultCategory2Name')
-      }),
-      (result.get('errorCode') && {
-        label: formatMessage(messages.fieldErrorCode),
-        value: result.get('errorCode')
-      }),
-      (result.get('errorNotes') && {
-        label: formatMessage(messages.fieldErrorNotes),
-        value: result.get('errorNotes')
-      }),
-      {
-        label: formatMessage(messages.fieldSampleId),
-        value: result.get('sampleId')
-      },
-      {
-        label: formatMessage(messages.fieldResearchId),
-        value: result.get('researchId')
-      },
-      {
-        label: formatMessage(messages.fieldResultDataResultText),
-        value: result.getIn(['resultData', 'resultText'])
-      },
-      {
-        label: formatMessage(messages.fieldNotes),
-        value: result.get('notes')
-      }
-    ])
-    return (
-      <ReadOnlyFields
-        fields={fields}
-      />
-    )
+    return resultDataSchema
+      .filter((value, key) => key !== 'resultText' && value.get('type') !== 'object')
+      .entrySeq()
+      .map(([key, value]) => {
+        // Level 1: "Probes"
+        return {
+          label: value.get('title'),
+          value: resultData.get(key)
+        }
+      })
   }
 
-  renderRightColumnFields() {
+  getLeftColumnFields() {
     const { result, intl } = this.props
     const { formatMessage, formatDate } = intl
     const assay = result.get('assay')
 
-    const fields = _.compact([
+    return Immutable
+      .List([
+        {
+          label: formatMessage(messages.fieldCountryName),
+          value: result.get('countryName')
+        },
+        {
+          label: formatMessage(messages.fieldStateName),
+          value: result.get('stateName')
+        },
+        {
+          label: formatMessage(messages.fieldLgaName),
+          value: result.get('lgaName')
+        },
+        {
+          label: formatMessage(messages.fieldSiteName),
+          value: result.get('siteName')
+        },
+        {
+          label: formatMessage(messages.fieldEndedOn),
+          value: formatDate(result.get('endedOn'), DateTimeFormat)
+        },
+        {
+          label: formatMessage(messages.fieldPatientId),
+          value: result.get('patientId')
+        },
+        (result.get('resultCategory1Name') && {
+          label: assay.get('resultCategory1Label'), // TODO i18n
+          value: result.get('resultCategory1Name')
+        }),
+        (result.get('resultCategory2Name') && {
+          label: assay.get('resultCategory2Label'), // TODO i18n
+          value: result.get('resultCategory2Name')
+        })
+      ])
+      .concat(this.getAssayFields())
+      .concat([
+        (result.get('errorCode') && {
+          label: formatMessage(messages.fieldErrorCode),
+          value: result.get('errorCode')
+        }),
+        (result.get('errorNotes') && {
+          label: formatMessage(messages.fieldErrorNotes),
+          value: result.get('errorNotes')
+        }),
+        {
+          label: formatMessage(messages.fieldSampleId),
+          value: result.get('sampleId')
+        },
+        {
+          label: formatMessage(messages.fieldResearchId),
+          value: result.get('researchId')
+        },
+        {
+          label: formatMessage(messages.fieldResultDataResultText),
+          value: result.getIn(['resultData', 'resultText'])
+        },
+        {
+          label: formatMessage(messages.fieldNotes),
+          value: result.get('notes')
+        }
+      ])
+      .filter(_.identity)
+      .toJS()
+  }
+
+  getRightColumnFields() {
+    const { result, intl } = this.props
+    const { formatMessage, formatDate } = intl
+    const assay = result.get('assay')
+
+    return _.compact([
       {
         label: formatMessage(messages.fieldAssayName),
         value: assay.get('name')
@@ -320,14 +339,9 @@ export class ResultDetail extends PureComponent {
         value: formatDate(result.get('updatedOn'), DateTimeFormat)
       }
     ])
-    return (
-      <ReadOnlyFields
-        fields={fields}
-      />
-    )
   }
 
-  renderSchemaFields() {
+  renderSchemaFieldsInCards() {
     if (!this.hasResultWithAssay()) {
       return false
     }
@@ -336,43 +350,31 @@ export class ResultDetail extends PureComponent {
     const resultData = result.get('resultData')
 
     return resultDataSchema
-      .filter((value, key) => key !== 'resultText')
+      .filter((value, key) => key !== 'resultText' && value.get('type') === 'object')
       .entrySeq()
       .map(([key, value]) => {
-        // Level 1: "Probes"
-        if (value.get('type') === 'object') {
-          // Level 2: "Probes.ProbeA"
-          const fields = value
-            .get('properties')
-            .entrySeq()
-            .map(makeLevel2TupleMapper(resultData, key))
-            .sortBy(({label}) => label)
-            .toJS()
+        // Level 2: "Probes.ProbeA"
+        const fields = value
+          .get('properties')
+          .entrySeq()
+          .map(makeLevel2TupleMapper(resultData, key))
+          .sortBy(({label}) => label)
+          .toJS()
 
-          return (
-            <Card className={cx('Card')} key={key}>
-              <CardHeader
-                title={value.get('title')/* TODO: i18n */}
-                actAsExpander={true}
-                showExpandableButton={true}
-              />
-              <CardText expandable={true}>
-                <ReadOnlyFields
-                  fields={fields}
-                />
-              </CardText>
-            </Card>
-          )
-        } else {
-          // TODO: render level one string/number. Or there's no such case?
-          return (
-            <ReadOnlyField
-              key={key}
-              label={value.get('title')}
-              value={resultData.get(key)}
+        return (
+          <Card className={cx('Card')} key={key}>
+            <CardHeader
+              title={value.get('title')/* TODO: i18n */}
+              actAsExpander={true}
+              showExpandableButton={true}
             />
-          )
-        }
+            <CardText expandable={true}>
+              <ReadOnlyFields
+                fields={fields}
+              />
+            </CardText>
+          </Card>
+        )
       })
   }
 
@@ -382,13 +384,17 @@ export class ResultDetail extends PureComponent {
         <div className="pure-g">
           <div className="pure-u-lg-1-2 pure-u-md-1-2 pure-u-sm-1-2">
             <div className={cx('FieldsContainer__LeftColumn__Content')}>
-              {this.renderLeftColumnFields()}
+              <ReadOnlyFields
+                fields={this.getLeftColumnFields()}
+              />
             </div>
           </div>
           <div className="pure-u-lg-1-2 pure-u-md-1-2 pure-u-sm-1-2">
             <div className={cx('FieldsContainer__RightColumn__Content')}>
-              {this.renderRightColumnFields()}
-              {this.renderSchemaFields()}
+              <ReadOnlyFields
+                fields={this.getRightColumnFields()}
+              />
+              {this.renderSchemaFieldsInCards()}
             </div>
           </div>
         </div>
