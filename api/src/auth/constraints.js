@@ -127,6 +127,10 @@ function addConstraints(queryBuilder, constraints, aliases){
         if(constraint.lga){
           this.orWhere(_.mapKeys(constraint.lga, (v, k) => `${lga}.${k}`))
         }
+
+        if(constraint.site){
+          this.orWhere(_.mapKeys(constraint.site, (v, k) => `${site}.${k}`))
+        }
       }
     })
   }

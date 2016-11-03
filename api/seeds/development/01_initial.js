@@ -332,6 +332,7 @@ function* seed(knex){
   const [assayMtbRifId] = yield knex('Assay').insert({
     name: 'GeneXpert MTB/Rif',
     i18nKey: 'AssayGeneXpertMtbRif',
+    externalId: 'MtbRif',
     assayTypeId: assayTypeMTBRifId,
     deviceTypeId: deviceTypeGeneXpertId,
     resultCategory1Label: 'MTB',
@@ -344,6 +345,7 @@ function* seed(knex){
   const [assayHivVlId] = yield knex('Assay').insert({
     name: 'GeneXpert HIV VL',
     i18nKey: 'AssayGeneXpertHivVl',
+    externalId: 'HivVl',
     assayTypeId: assayTypeHivVlId,
     deviceTypeId: deviceTypeGeneXpertId,
     resultCategory1Label: 'MTB',
@@ -356,6 +358,7 @@ function* seed(knex){
   const [assayEbolaId] = yield knex('Assay').insert({
     name: 'GeneXpert Ebola',
     i18nKey: 'AssayGeneXpertEbola',
+    externalId: 'Ebola',
     assayTypeId: assayTypeEbolaId,
     deviceTypeId: deviceTypeGeneXpertId,
     resultCategory1Label: 'GP',
@@ -368,6 +371,7 @@ function* seed(knex){
   yield knex('Assay').insert({
     name: 'Afinion HIV VL',
     i18nKey: 'AssayAfinionHivVl',
+    externalId: 'HivVl',
     assayTypeId: assayTypeHivVlId,
     deviceTypeId: deviceTypeAfinionId,
     resultDataSchema: JSON.stringify({
@@ -386,6 +390,7 @@ function* seed(knex){
   yield knex('Assay').insert({
     name: 'Afinion Lipid Panel',
     i18nKey: 'AssayAfinionLipidPanel',
+    externalId: 'LipidPanel',
     assayTypeId: assayTypeLipidPanelId,
     deviceTypeId: deviceTypeAfinionId,
     resultDataSchema: JSON.stringify({
@@ -412,6 +417,8 @@ function* seed(knex){
   yield knex('Assay').insert({
     name: 'Q HIV VL',
     i18nKey: 'AssayQHivVl',
+    externalId: 'HivVl',
+    assayTypeId: assayTypeLipidPanelId,
     assayTypeId: assayTypeHivVlId,
     deviceTypeId: deviceTypeQId,
     ResultCategory1Label: 'HIV',
@@ -421,62 +428,74 @@ function* seed(knex){
   //Result types
   const [resultTypePatientId] = yield knex('ResultType').insert({
     name: 'Patient',
-    i18nKey: 'ResultTypePatient'
+    i18nKey: 'ResultTypePatient',
+    externalId: 'Patient'
   })
 
   yield knex('ResultType').insert({
     name: 'EQA',
-    i18nKey: 'ResultTypeEqa'
+    i18nKey: 'ResultTypeEqa',
+    externalId: 'EQA'
   })
   yield knex('ResultType').insert({
     name: 'Training',
-    i18nKey: 'ResultTypeTraining'
+    i18nKey: 'ResultTypeTraining',
+    externalId: 'Training'
   })
 
   yield knex('ResultType').insert({
     name: 'Calibration',
-    i18nKey: 'ResultTypeCalibration'
+    i18nKey: 'ResultTypeCalibration',
+    externalId: 'Calibration'
   })
 
   yield knex('ResultType').insert({
     name: 'Study/Research',
-    i18nKey: 'ResultTypeStudy'
+    i18nKey: 'ResultTypeStudy',
+    externalId: 'Study'
   })
 
   // result categories
   const [resultCategoryDetectedId] = yield knex('ResultCategory').insert({
     name: 'Detected',
-    i18nKey: 'ResultCategoryDetected'
+    i18nKey: 'ResultCategoryDetected',
+    externalId: 'Detected'
   })
 
   const [resultCategoryNotDetectedId] =yield knex('ResultCategory').insert({
     name: 'Not Detected',
-    i18nKey: 'ResultCategoryNotDetected'
+    i18nKey: 'ResultCategoryNotDetected',
+    externalId: 'NotDetected'
   })
 
   const [resultCategoryIndeterminateId] = yield knex('ResultCategory').insert({
     name: 'Indeterminate',
-    i18nKey: 'ResultCategoryIndeterminate'
+    i18nKey: 'ResultCategoryIndeterminate',
+    externalId: 'Indeterminate'
   })
 
   const [resultCategoryInvalidId] = yield knex('ResultCategory').insert({
     name: 'Invalid',
-    i18nKey: 'ResultCategoryInvalid'
+    i18nKey: 'ResultCategoryInvalid',
+    externalId: 'Invalid'
   })
 
   const [resultCategoryNoResultId] = yield knex('ResultCategory').insert({
     name: 'No Result',
-    i18nKey: 'ResultCategoryNoResult'
+    i18nKey: 'ResultCategoryNoResult',
+    externalId: 'NoResult'
   })
 
   const [resultCategoryErrorId] = yield knex('ResultCategory').insert({
     name: 'Error',
-    i18nKey: 'ResultCategoryError'
+    i18nKey: 'ResultCategoryError',
+    externalId: 'Error'
   })
 
   const [resultCategorySuccessId] = yield knex('ResultCategory').insert({
     name: 'Success',
-    i18nKey: 'ResultCategorySuccess'
+    i18nKey: 'ResultCategorySuccess',
+    externalId: 'Success'
   })
 
   // assign categories to Assays
@@ -672,9 +691,9 @@ function* seed(knex){
           const siteData = Object.assign({
               partnerId: partnerOneId,
               orgUnitId,
+              externalId: `${state.name}_${siteNumber}`,
               name: `${lga.name} ${country.lgaLabel} ${state.name} #${siteNumber}`,
               shortname: `${lga.name}, ${stateKey} #${siteNumber}`,
-              identifier: `Site ${siteNumber * lgaData.id}`,
               city: `${lga.name} City`,
               street1: `${lgaData.id} Main Street`,
               zip: `12345-${lgaData.id}`
@@ -785,7 +804,7 @@ function* seed(knex){
   for (let i = 0; i < resultMtbNumber / 2; i++) {
     const siteData = siteDatas[i % siteDatas.length],
       sample = Object.assign({}, {
-        sampleId: `SMP-TB-${i}`,
+        externalId: `SMP-TB-${i}`,
         originSiteId: siteData.id
       })
 
@@ -819,7 +838,7 @@ function* seed(knex){
     resultData.resultText = result.resultText
 
     return Object.assign({}, auditFields, {
-      uniqueId: 'UQTB-' + i,
+      externalId: 'UQTB-' + i,
       assayId: assayMtbRifId,
       partnerId: partnerOneId,
       orgUnitId: partnerOneOrgUnitId,
@@ -860,7 +879,7 @@ function* seed(knex){
   for (let i = 0; i < resultEbolaNumber / 2; i++) {
     const siteData = siteDatas[i % siteDatas.length],
       sample = Object.assign({}, {
-        sampleId: `SMP-EB-${i}`,
+        externalId: `SMP-EB-${i}`,
         originSiteId: siteData.id
       })
 
@@ -895,7 +914,7 @@ function* seed(knex){
     resultData.resultText = result.resultText
 
     return Object.assign({}, auditFields, {
-      uniqueId: 'UQEB-' + i,
+      externalId: 'UQEB-' + i,
       assayId: assayEbolaId,
       partnerId: partnerOneId,
       orgUnitId: partnerOneOrgUnitId,
@@ -936,7 +955,7 @@ function* seed(knex){
   for (let i = 0; i < resultHivVlNumber / 2; i++) {
     const siteData = siteDatas[i % siteDatas.length],
       sample = Object.assign({}, {
-        sampleId: `SMP-HIV-${i}`,
+        externalId: `SMP-HIV-${i}`,
         originSiteId: siteData.id
       })
 
@@ -978,7 +997,7 @@ function* seed(knex){
     resultData.resultText = result.resultText.replace('{0}', copies).replace('{1}', log)
 
     return Object.assign({}, auditFields, {
-      uniqueId: 'UQHIV-' + i,
+      externalId: 'UQHIV-' + i,
       assayId: assayHivVlId,
       partnerId: partnerOneId,
       orgUnitId: partnerOneOrgUnitId,

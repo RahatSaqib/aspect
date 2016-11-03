@@ -140,7 +140,7 @@ function* listDeviceConfiguration(request){
   // get rows
   let getItems = configQuery.clone()
     .modify(sortPageParams, query, 'deviceName')
-    .select('dc.id', 'dc.createdOn', 'dc.data', 'dc.deviceId', 'd.name as deviceName')
+    .select('dc.id', 'dc.externalId', 'dc.createdOn', 'dc.data', 'dc.deviceId', 'd.name as deviceName')
     .map(item => Object.assign({}, item, {data: JSON.parse(item.data)}))
 
   // return result when both queries are finished
@@ -170,7 +170,7 @@ function* listDeviceOperation(request){
   // get rows
   let getItems = opQuery.clone()
     .modify(sortPageParams, query, 'deviceName')
-    .select('do.id', 'do.createdOn', 'do.data', 'do.deviceId', 'd.name as deviceName')
+    .select('do.id', 'do.externalId', 'do.createdOn', 'do.data', 'do.deviceId', 'd.name as deviceName')
     .map(item => Object.assign({}, item, {data: JSON.parse(item.data)}))
 
   // return result when both queries are finished

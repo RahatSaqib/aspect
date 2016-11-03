@@ -45,12 +45,12 @@ const shared = module.exports = {
     })
   },
 
-  authenticateUserAndFirstDevice(server, username, password){
-    sharedToken.authenticateUser(server, username, password)
+  authenticateUserAndFirstDevice(server, {user, password, type}){
+    sharedToken.authenticateUser(server, user, password)
 
-    it(`should authenticate first device for user ${username}`, function(done) {
+    it(`should authenticate first device for user ${user}`, function(done) {
       server
-        .get('/api/device?size=1')
+        .get('/api/device?size=1'+(type ? '&type='+type : ''))
         .set('Authorization', 'Bearer '+sharedToken.token)
         .end(function(err,res){
           assert.equal(res.status, 200)
