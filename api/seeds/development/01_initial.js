@@ -97,17 +97,21 @@ function* seed(knex){
       name: 'GeneXpert',
       manufacturer: 'Cepheid',
       deviceTypeCategoryId: deviceTypeCategoryLab
-    }), [deviceTypeAfinionId] = yield knex('DeviceType').insert({
+  })
+
+  const [deviceTypeAfinionId] = yield knex('DeviceType').insert({
       name: 'Afinion',
       manufacturer: 'Alere',
       deviceTypeCategoryId: deviceTypeCategoryLab
-    }), [deviceTypeQId] = yield knex('DeviceType').insert({
+  })
+
+  const [deviceTypeQId] = yield knex('DeviceType').insert({
       name: 'Q',
       manufacturer: 'Alere',
       deviceTypeCategoryId: deviceTypeCategoryLab
     })
 
-  yield knex('DeviceType').insert({
+  const [deviceTypeM2000Id] = yield knex('DeviceType').insert({
     name: 'm2000',
     manufacturer: 'Abbott',
     deviceTypeCategoryId: deviceTypeCategoryLab
@@ -421,8 +425,31 @@ function* seed(knex){
     assayTypeId: assayTypeLipidPanelId,
     assayTypeId: assayTypeHivVlId,
     deviceTypeId: deviceTypeQId,
-    ResultCategory1Label: 'HIV',
-    ResultCategory1i18nKey: 'ResultCategoryHivVl'
+    resultCategory1Label: 'HIV',
+    resultCategory1i18nKey: 'ResultCategoryHivVl'
+  })
+
+  yield knex('Assay').insert({
+    name: 'Abbot m2000 HIV VL',
+    i18nKey: 'AssayAbbotM2000HivVl',
+    externalId: 'HivVl',
+    assayTypeId: assayTypeHivVlId,
+    deviceTypeId: deviceTypeM2000Id,
+    resultDataSchema: JSON.stringify({
+      resultText: {
+        title: 'Result Text',
+        type: 'string',
+      },
+      resultText: {
+        title: 'Result Text',
+        type: 'string',
+      },
+      copies: {
+        title: 'copies/mL',
+        type: 'number',
+        list: true
+      }
+    })
   })
 
   //Result types
