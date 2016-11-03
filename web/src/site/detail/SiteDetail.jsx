@@ -35,6 +35,11 @@ export class SiteDetail extends PureComponent {
     this.props.fetchSingleSite(params.siteId)
   }
 
+  hasSiteWithLocation() {
+    const { site } = this.props
+    return site && site.has('longitude') && site.has('latitude')
+  }
+
   componentWillMount() {
     const { setPageTitle, intl } = this.props
     const { formatMessage } = intl
@@ -62,16 +67,18 @@ export class SiteDetail extends PureComponent {
       <div className={styles.Content}>
         <Helmet title={formatMessage(messages.title)} titleTemplate="%s - Aspect" defaultTitle="Aspect" />
         <Paper>
-          {!site && <LinearProgress />}
-          <div className={styles.FieldsContainer}>
-            <SiteForm
-              formatMessage={formatMessage}
-              onSubmit={updateSingleSite}
-              editable={editable}
-              site={site}
-            />
-          </div>
-          {site && (
+          {!this.hasSiteWithLocation() && <LinearProgress />}
+          {this.hasSiteWithLocation() && (
+            <div className={styles.FieldsContainer}>
+              <SiteForm
+                formatMessage={formatMessage}
+                onSubmit={updateSingleSite}
+                editable={editable}
+                site={site}
+              />
+            </div>
+          )}
+          {this.hasSiteWithLocation() && (
             <SiteLocationFormMap
               editable={editable}
               site={site}
