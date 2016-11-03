@@ -50,7 +50,7 @@ class App extends PureComponent {
     return (
       <IntlProvider
         key={/* https://git.io/viGEA */locale}
-        locale={locale}
+        locale={locale === 'en-US' ? 'en' : locale}
         formats={formats}
         messages={messages}
       >

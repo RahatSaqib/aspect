@@ -1,9 +1,6 @@
 /*Login page styles*/
 .Background {
-  height: 100%;
-  /*This makes the top half of the screen green and bottom half in gray*/
-  background: linear-gradient(180deg, #7cb342 10%, transparent 80%);
-  padding-top: 15%;
+  composes: PreLogin__Background from '../../components/shared/Shared.css';
 }
 
 .Content {

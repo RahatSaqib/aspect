@@ -69,7 +69,7 @@ class StrongPasswordInput extends React.PureComponent {
   }
 
   render() {
-    const {input, meta, textFieldProps, popOverProps, intl} = this.props,
+    const {input, meta, requiresNumber, textFieldProps, popOverProps, intl} = this.props,
       {touched, error} = meta,
       {formatMessage} = intl,
       passwordStrengthRules = {
@@ -79,8 +79,8 @@ class StrongPasswordInput extends React.PureComponent {
         containSpecialCharacter: /(?=.*?[`~!@#$%\^&*()\-=_+\\\[\]{}/?,.<>])/.test(input.value)
       },
       passwordStrengthResults = {
-        isWeak: !passwordStrengthRules.minLength,
-        isOkay: passwordStrengthRules.minLength,
+        isWeak: !passwordStrengthRules.minLength || (requiresNumber && !passwordStrengthRules.containsNumber),
+        isOkay: passwordStrengthRules.minLength && (passwordStrengthRules.containsNumber || !requiresNumber),
         isStrong: passwordStrengthRules.minLength && passwordStrengthRules.containsNumber &&
           passwordStrengthRules.mixUpperAndLowerCase && passwordStrengthRules.containSpecialCharacter
       },

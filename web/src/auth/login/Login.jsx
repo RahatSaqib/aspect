@@ -14,6 +14,7 @@ import {
 import Paper from 'material-ui/Paper'
 import LinearProgress from 'material-ui/LinearProgress'
 import RaisedButton from 'material-ui/RaisedButton'
+import FlatButton from 'material-ui/FlatButton'
 import TextField from 'material-ui/TextField'
 
 // Our own imports
@@ -29,6 +30,10 @@ const messages = defineMessages({
   reasonidle: {
     id: 'shared.Login.reasonIdle',
     defaultMessage: 'You were logged out due to inactivity'
+  },
+  resetPasswordLink: {
+    id: 'shared.Login.resetPasswordButton',
+    defaultMessage: 'Forgot Password? Reset Here'
   }
 })
 
@@ -88,6 +93,7 @@ class Login extends PureComponent {
                   <Field name="password" component={renderPasswordField} />
                   <br/>
                   <div className={styles.Form__ActionRow}>
+                    <FlatButton primary={true} href="/reset-password" label={formatMessage(messages.resetPasswordLink)} />
                     <RaisedButton disabled={pristine || submitting} label="Log In" secondary={true} type="submit" />
                   </div>
                 </form>
