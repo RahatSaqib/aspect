@@ -116,10 +116,6 @@ function* addResult(request){
       // TODO ResultLog handle non-JSON payloads
       rawMessage: JSON.stringify(payload)
     })
-
-    // TODO should we update lastPingOn lastPingFromIp with Result request info?
-    // TODO does device result upload change updatedOn on Device?
-    // could also do this for DeviceOperation, DeviceConfiguration uploads
     ok = true
   })
   return ok ? {ok, data: {id: externalId}} : {ok}
