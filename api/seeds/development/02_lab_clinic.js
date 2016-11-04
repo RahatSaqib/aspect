@@ -91,6 +91,17 @@ function* seed(knex){
   yield knex('UserRole').insert([
     { userId: adminId, roleId: roleIdAdmin }])
 
+
+  // Region to site external ids
+  const siteExternalIds = {
+    dedza: '1723',
+    dowa: '1315',
+    lilongwe: '1538',
+    nkhotakota: '1111',
+    ntcheu: '1802',
+    ntchisi: '1210'
+  }
+
   // every clinic has a site, RRT device and a user assigned to it
   for(let state of malawiStates){
     const geoData = {
@@ -103,7 +114,7 @@ function* seed(knex){
       partnerId,
       name: `${state.name} Clinic`,
       shortname: `C: ${state.name}`,
-      externalId: `clinic_${state.name}`,
+      externalId: siteExternalIds[state.name.toLowerCase()] || `clinic_${state.name}`,
       city: `${state.name} City`,
       street1: `${state.id} Main Street`,
       zip: `12345-${state.id}`
