@@ -1,7 +1,7 @@
 let Joi = require('joi')
-let { asyncHandler } = require('../routes')
+let { asyncHandler, validateSortPageParams } = require('../routes')
 let { addDeviceOperation, addDeviceConfiguration} = require('./device')
-let { addResult} = require('./result')
+let { addResult, listResults } = require('./result')
 
 module.exports = [
   {
@@ -29,6 +29,19 @@ module.exports = [
         payload: {
           data: Joi.object().required()
         }
+      }
+    }
+  },
+  {
+    method: 'GET',
+    path: '/result',
+    handler: asyncHandler(listResults),
+    config: {
+      description: 'Result List',
+      notes: 'Pageable and sortable list of results for authenticated device',
+      validate: {
+        query: Object.assign({
+        }, validateSortPageParams('endedOn', 'updatedOn'))
       }
     }
   },

@@ -1,6 +1,6 @@
 const Boom = require('boom')
 const _ = require('lodash')
-const { transact } = require('../db')
+const { transact, knex, sortPageParams } = require('../db')
 const { getDeviceByApiKeyId, getExternalId } = require('./common')
 
 function* addResult(request){
@@ -123,7 +123,134 @@ function* addResult(request){
   return ok ? {ok, data: {id: externalId}} : {ok}
 }
 
+function* listResults(request){
+  const {query} = request
+  const device = yield* getDeviceByApiKeyId(request)
+  if(!device.ok){
+    return Boom.unauthorized()
+  }
+  const deviceId = device.data.id
+
+  const resultQuery = knex('Result as r')
+    .innerJoin('Assay as a', 'r.assayId', 'a.id')
+    .innerJoin('Device as d', 'r.deviceId', 'd.id')
+    .leftJoin('ResultCategory as rc1', 'r.resultCategory1', 'rc1.id')
+    .leftJoin('ResultCategory as rc2', 'r.resultCategory2', 'rc2.id')
+    .leftJoin('ResultType as rt', 'r.resultTypeId', 'rt.id')
+    .leftJoin('Sample as s', 'r.sampleId', 's.id')
+    .leftJoin('Site as sos', 's.originSiteId', 'sos.id')
+    .where({'d.id': deviceId})
+
+  // get total count for paging
+  const getCount = resultQuery.clone()
+    .count('r.id as count').first()
+
+  // get rows
+  const getItems = resultQuery.clone()
+    .modify(sortPageParams, query, 'updatedOn')
+    .select(
+      'r.externalId as resultId', 'r.resultData', 'r.patientData',
+      'r.startedOn', 'r.endedOn', 'r.updatedOn', 'r.researchId', 'r.notes',
+      'r.senderVersion', 'r.senderOperator', 'r.errorCode', 'r.errorNotes',
+      'r.consumableSerial', 'r.consumableExpirationDate', 'r.consumableLot',
+      'r.instrumentSerial', 'r.moduleName', 'r.moduleSerial',
+      'a.externalId as assayId', 'r.assayVersion',
+      'r.latitude', 'r.longitude', 'rt.externalId as resultTypeId',
+      's.externalId as sampleId', 'sos.externalId as sampleOriginSiteId',
+      'rc1.externalId as category1Id', 'rc2.externalId as category2Id'
+    )
+
+  // return result when both queries are finished
+  const [{count: total}, items] = yield Promise.all([getCount, getItems])
+  const data = items.map(rowToResult)
+
+  return { ok: true, total, length: data.length, data }
+}
+
+function rowToResult(row){
+  // TODO allow filtering on fields of interest, similar to client device API
+  // but JSON paths from result data in same format as POST
+  const result = {id: row.resultId}
+
+  result.assay = {id: row.assayId}
+  if(row.assayVersion != null){
+    result.assay.version = row.assayVersion
+  }
+
+  const location = {latitude: row.latitude, longitude: row.longitude}
+  if(location.latitude != null || location.longitude != null){
+    result.location = location
+  }
+  result.type = {id: row.resultTypeId}
+
+  result.sample = {id: row.sampleId, originSite: {id: row.sampleOriginSiteId}}
+
+  const categories = []
+  if(row.category1Id !== null){
+    categories.push({id: row.category1Id})
+  }
+  if(row.category2Id !== null){
+    categories.push({id: row.category2Id})
+  }
+  if(categories.length > 0){
+    result.category = categories
+  }
+
+  result.data = JSON.parse(row.resultData)
+
+  if(row.startedOn != null){
+    result.startedOn = row.startedOn
+  }
+  result.endedOn = row.endedOn
+
+  const consumable = {
+    serial: row.consumableSerial,
+    lot: row.consumableLot,
+    expirationDate: row.consumableExpirationDate
+  }
+  if(consumable.serial != null
+      || consumable.lot != null
+      || consumable.expirationDate != null){
+    result.consumable = [consumable]
+  }
+
+  const instrument = {serial: row.instrumentSerial}
+  if(instrument.serial != null){
+    result.instrument = instrument
+  }
+
+  const module = {name: row.moduleName, serial: row.moduleSerial}
+  if(module.name != null || module.serial != null){
+    result.module = module
+  }
+
+  const research = {id: row.researchId}
+  if(research.id != null){
+    result.research = research
+  }
+
+  if(row.patientData != null){
+    result.patient = JSON.parse(row.patientData)
+  }
+
+  const sender = {version: row.senderVersion, operator: row.senderOperator}
+  if(sender.version != null || sender.operator != null){
+    result.sender = sender
+
+  }
+  if(row.notes != null){
+    result.notes = row.notes
+  }
+
+  const error = {code: row.errorCode, notes: row.errorNotes}
+  if(error.code != null || error.notes != null){
+    result.error = error
+  }
+  return result
+}
+
 
 module.exports = {
-  addResult
+  addResult,
+  listResults
 }

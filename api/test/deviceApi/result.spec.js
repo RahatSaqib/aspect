@@ -33,6 +33,7 @@ describe('Device Result API routes',function(){
 
       const {deviceId} = sharedDevice
       const clientSingleResultPath = clientBasePath+'/'
+      const deviceResultPath = devicePath+'?size=5&sortCol=updatedOn&sortDir=desc'
       const clientPath = clientBasePath+'?deviceId='+deviceId
 
       let initialDataLength = 0
@@ -124,6 +125,32 @@ describe('Device Result API routes',function(){
           assert.typeOf(res.body.data, 'Object')
           assert.typeOf(res.body.data.resultData, 'Object')
           assert.deepEqual(res.body.data.resultData, {a:'b'})
+        })
+
+      yield server.get(deviceResultPath)
+        .set('Authorization', deviceAuth)
+        .then(function(res){
+          assert.equal(res.status, 200)
+          assert.typeOf(res.body, 'Object')
+          assert.property(res.body, 'data')
+          assert.typeOf(res.body.data, 'array')
+          assert.property(res.body, 'total')
+          assert.property(res.body, 'length')
+
+          const lastResult = _.find(res.body.data, {id: resultIds[0]})
+          assert.typeOf(lastResult, 'Object')
+          assert.property(lastResult, 'endedOn')
+          assert.property(lastResult.sample, 'id')
+          assert.property(lastResult.sample.originSite, 'id')
+          assert.equal(lastResult.sample.originSite.id, result1SampleSite.externalId)
+
+          assert.deepEqual(_.omit(lastResult, 'endedOn', 'sample'), {
+            id: resultIds[0],
+            data: {a: 'b'},
+            assay: {id: 'HivVl'},
+            category: [{id: 'Success'}],
+            type: {id: 'Patient'}
+          })
         })
 
       const result2SampleSite = yield knex('Site as s')
@@ -345,16 +372,80 @@ describe('Device Result API routes',function(){
           assert.deepEqual(res.body.data.resultData, {a:'b', c:2, d:false, e:{f: 'g'}})
         })
 
-      yield server.get(clientSingleResultPath+resultId2)
-        .set('Authorization', clientAuth)
+      yield server.get(deviceResultPath)
+        .set('Authorization', deviceAuth)
         .then(function(res){
           assert.equal(res.status, 200)
           assert.typeOf(res.body, 'Object')
-          assert.typeOf(res.body.data, 'Object')
-          assert.typeOf(res.body.data.resultData, 'Object')
-          assert.deepEqual(res.body.data.resultData, {a:'b', c:2, d:false, e:{f:'g'}})
-        })
+          assert.property(res.body, 'data')
+          assert.typeOf(res.body.data, 'array')
+          assert.property(res.body, 'total')
+          assert.property(res.body, 'length')
 
+          const lastResult = _.find(res.body.data, {id: resultIds[1]})
+          assert.typeOf(lastResult, 'Object')
+          assert.property(lastResult, 'endedOn')
+          assert.property(lastResult.sample, 'id')
+          assert.property(lastResult.sample.originSite, 'id')
+          assert.equal(lastResult.sample.originSite.id, result2SampleSite.externalId)
+          assert.property(lastResult, 'location')
+          assert.approximately(lastResult.location.latitude, 30.419348, 0.000001)
+          assert.approximately(lastResult.location.longitude, -87.581222, 0.000001)
+
+          assert.deepEqual(_.omit(lastResult, 'location'), {
+            id: resultIds[1],
+            data: {a: 'b', c: 2, d: false, e: {f: 'g'}},
+            assay: {
+              id: 'MtbRif',
+              version: '1a.c1'
+            },
+            type: {id: 'Study'},
+            category: [
+              {id: 'Detected'},
+              {id: 'Indeterminate'}
+            ],
+            sample: {
+              id: 'Sample'+now,
+              originSite: {
+                id: result2SampleSite.externalId
+              }
+            },
+            startedOn: '2013-12-01T00:00:00.000Z',
+            endedOn: '2013-12-01T01:30:00.000Z',
+            consumable: [{
+              serial: '132-44-222',
+              expirationDate: '2014-03-01T00:00:00.000Z',
+              lot: '331-1'
+            }],
+            instrument: {
+              serial: '444-3'
+            },
+            module: {
+              name: 'ModA',
+              serial: '555-8'
+            },
+            research: {id: 'R123'},
+            patient: {
+              id: 'P-333',
+              name: 'Bob',
+              surname: 'Hope',
+              gender: 'M',
+              age: 72,
+              dateOfBirth: '1903-05-29T00:00:00.000Z',
+              address: '123 Main Street',
+              phone: '856-7909'
+            },
+            sender: {
+              version: '99-1',
+              operator: 'Bob O'
+            },
+            notes: 'My Awesome notes about this Awesome result!',
+            error: {
+              code: '123',
+              notes: 'Oh NOZE!'
+            }
+          })
+        })
 
       // cleanup
       yield knex('ResultLog').whereIn('resultId',
