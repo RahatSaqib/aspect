@@ -61,13 +61,13 @@ class Login extends PureComponent {
               <Paper>
                 <form onSubmit={handleSubmit} className={styles.Form}>
                   { location.query.reason ? <div className={styles.Form__Info}>{formatMessage(messages['reason' +location.query.reason])}</div> : null }
-                  <TextInput name="user" label="Username" fullWidth={true} autoFocus={_.isEmpty(initialValues.get('user'))} />
-                  <TextInput name="password" type="password" label="Password" fullWidth={true} autoFocus={!_.isEmpty(initialValues.get('user'))} />
+                  <TextInput name="user" label="Username" fullWidth autoFocus={_.isEmpty(initialValues.get('user'))} />
+                  <TextInput name="password" type="password" label="Password" fullWidth autoFocus={!_.isEmpty(initialValues.get('user'))} />
                   <div className={styles.Form__ActionRow}>
                     <Link className={styles.Left_Align} to="reset-password">
                       {formatMessage(messages.resetPasswordLink)}
                     </Link>
-                    <RaisedButton disabled={pristine || submitting} label="Log In" secondary={true} type="submit" />
+                    <RaisedButton disabled={pristine || submitting} label="Log In" secondary type="submit" />
                   </div>
                 </form>
                 {submitting && <LinearProgress />}

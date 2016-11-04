@@ -28,7 +28,7 @@ export class ErrorDisplay extends PureComponent {
     const actions = [
       <FlatButton
         label="Close"
-        primary={true}
+        primary
         onTouchTap={this.handleClose}
       />
     ]
