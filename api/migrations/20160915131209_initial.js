@@ -489,11 +489,20 @@ function* up(knex){
     consumable.charset('utf8')
   })
 
+  yield knex.schema.createTable('ConsumableReason', consumableReason =>{
+    consumableReason.increments('id')
+    consumableReason.string('name').notNullable()
+    consumableReason.boolean('decrease').notNullable().defaultTo(0)
+    consumableReason.charset('utf8')
+  })
+
   yield knex.raw('SET foreign_key_checks = 1')
 }
 
 function* down(knex){
   yield knex.raw('SET foreign_key_checks = 0')
+
+  yield knex.schema.dropTableIfExists('ConsumableReason')
   yield knex.schema.dropTableIfExists('Unit')
   yield knex.schema.dropTableIfExists('Consumable')
   yield knex.schema.dropTableIfExists('ResultCategoryAssay')
