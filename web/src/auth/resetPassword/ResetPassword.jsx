@@ -59,6 +59,7 @@ class ResetPassword extends PureComponent {
     const { intl: { formatMessage }, resetPasswordEnterEmailAddress,
         resetPasswordEnterPassword, addAcknowledgement, addError } = this.props,
       {stepIndex, emailAddress, resetPasswordToken, resettingPassword} = this.state,
+      //TODO: Find out what these values should be
       supportTelephone = '+1 (123) 555 5555', supportEmail = 'support@aspect.id',
       showAdminHelpDialog = () => {
         this.setState({
