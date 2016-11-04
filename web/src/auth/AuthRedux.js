@@ -2,6 +2,7 @@ import { stringify } from 'querystring'
 import Immutable from 'immutable'
 import jwt_decode from 'jwt-decode'
 import { browserHistory } from 'react-router'
+import { SubmissionError } from 'redux-form'
 import { aspectFetch, getHeaders, getBrowserNameAndVersion } from '../shared/utils/fetch'
 import * as localStorage from '../shared/utils/localStorage'
 import { addError } from '../error/ErrorRedux'
@@ -15,13 +16,7 @@ export const types = {
   CHANGE_CULTURE: 'CHANGE_CULTURE',
   TOGGLE_DRAWER: 'TOGGLE_DRAWER',
   CHANGE_TIMEZONE: 'CHANGE_TIMEZONE',
-  RESET_PASSWORD_ENTER_EMAIL_ADDRESS: 'RESET_PASSWORD_ENTER_EMAIL_ADDRESS',
-  RESET_PASSWORD_ENTER_EMAIL_ADDRESS_SUCCESS: 'RESET_PASSWORD_ENTER_EMAIL_ADDRESS_SUCCESS',
-  RESET_PASSWORD_ENTER_EMAIL_ADDRESS_FAILED: 'RESET_PASSWORD_ENTER_EMAIL_ADDRESS_FAILED',
-  RESET_PASSWORD_GET_TOKEN: 'RESET_PASSWORD_GET_TOKEN',
-  RESET_PASSWORD_ENTER_PASSWORD: 'RESET_PASSWORD_ENTER_PASSWORD',
-  RESET_PASSWORD_ENTER_PASSWORD_SUCCESS: 'RESET_PASSWORD_ENTER_PASSWORD_SUCCESS',
-  RESET_PASSWORD_ENTER_PASSWORD_FAILED: 'RESET_PASSWORD_ENTER_PASSWORD_FAILED'
+  RESET_PASSWORD_ENTER_PASSWORD_SUCCESS: 'RESET_PASSWORD_ENTER_PASSWORD_SUCCESS'
 }
 /*
  * ---------------- Action Creators -----------------
@@ -213,42 +208,6 @@ function storeAccess(json) {
   return jwt
 }
 
-function createResetPasswordEnterEmailAddressRequest(emailAddress) {
-  return {
-    type: types.RESET_PASSWORD_ENTER_EMAIL_ADDRESS,
-    emailAddress
-  }
-}
-
-function createResetPasswordEnterEmailAddressSuccess(emailAddress) {
-  return {
-    type: types.RESET_PASSWORD_ENTER_EMAIL_ADDRESS_SUCCESS,
-    emailAddress
-  }
-}
-
-function createResetPasswordEnterEmailAddressFailure(error) {
-  return {
-    type: types.RESET_PASSWORD_ENTER_EMAIL_ADDRESS_FAILED,
-    error
-  }
-}
-
-function createResetPasswordGetToken(resetPasswordToken) {
-  return {
-    type: types.RESET_PASSWORD_GET_TOKEN,
-    resetPasswordToken
-  }
-}
-
-function createResetPasswordEnterPasswordRequest(resetPasswordToken, newPassword) {
-  return {
-    type: types.RESET_PASSWORD_ENTER_PASSWORD,
-    resetPasswordToken,
-    newPassword
-  }
-}
-
 function createResetPasswordEnterPasswordSuccess(username) {
   return {
     type: types.RESET_PASSWORD_ENTER_PASSWORD_SUCCESS,
@@ -256,16 +215,8 @@ function createResetPasswordEnterPasswordSuccess(username) {
   }
 }
 
-function createResetPasswordEnterPasswordFailure(error) {
-  return {
-    type: types.RESET_PASSWORD_ENTER_PASSWORD_FAILED,
-    error
-  }
-}
-
 export function resetPasswordEnterEmailAddress(emailAddress) {
-  return function (dispatch) {
-    dispatch(createResetPasswordEnterEmailAddressRequest(emailAddress))
+  return function () {
     const clientName = getBrowserNameAndVersion() + ' on ' + window.navigator.platform
     return aspectFetch(`/auth/send-reset-password-token/${emailAddress}`,
       {
@@ -276,25 +227,14 @@ export function resetPasswordEnterEmailAddress(emailAddress) {
           clientName: clientName
         })
       })
-      .then(() => {
-        dispatch(createResetPasswordEnterEmailAddressSuccess(emailAddress))
-      })
       .catch(err => {
-        dispatch(createResetPasswordEnterEmailAddressFailure(err))
-        dispatch(addError('Could not start resetting password', err.message, err))
+        throw new SubmissionError({_error: err.message})
       })
-  }
-}
-
-export function resetPasswordSetToken(resetPasswordToken) {
-  return function (dispatch) {
-    dispatch(createResetPasswordGetToken(resetPasswordToken))
   }
 }
 
 export function resetPasswordEnterPassword(resetPasswordToken, newPassword) {
   return function (dispatch) {
-    dispatch(createResetPasswordEnterPasswordRequest(resetPasswordToken, newPassword))
     const clientName = getBrowserNameAndVersion() + ' on ' + window.navigator.platform
     return aspectFetch(`/auth/update-password/${resetPasswordToken}`,
       {
@@ -310,8 +250,7 @@ export function resetPasswordEnterPassword(resetPasswordToken, newPassword) {
         dispatch(createResetPasswordEnterPasswordSuccess(json.username))
       })
       .catch(err => {
-        dispatch(createResetPasswordEnterPasswordFailure(err))
-        dispatch(addError('Could not reset password', err.message, err))
+        throw new SubmissionError({_error: err.message})
       })
   }
 }
@@ -325,10 +264,7 @@ const User = Immutable.Record({
   timezone: 'Eastern Standard Time',
   permissions: Immutable.List(),
   drawerOpen: true,
-  loggedIn: false,
-  resetPasswordToken: '',
-  resettingPassword: false,
-  usernameReminder: ''
+  loggedIn: false
 })
 
 const initialState = new User()
@@ -368,23 +304,10 @@ export default function authReducer(state = initialState, action) {
     return state.merge({
       drawerOpen: action.drawerOpen
     })
-  case types.RESET_PASSWORD_ENTER_EMAIL_ADDRESS:
-    return state.set('resettingPassword', true)
-  case types.RESET_PASSWORD_ENTER_EMAIL_ADDRESS_SUCCESS:
-    return state.set('resettingPassword', false)
-  case types.RESET_PASSWORD_ENTER_EMAIL_ADDRESS_FAILED:
-    return state.set('resettingPassword', false)
-  case types.RESET_PASSWORD_GET_TOKEN:
-    return state.set('resetPasswordToken', action.resetPasswordToken)
-  case types.RESET_PASSWORD_ENTER_PASSWORD:
-    return state.set('resettingPassword', true)
   case types.RESET_PASSWORD_ENTER_PASSWORD_SUCCESS:
     return state.merge({
-      resettingPassword: false,
-      usernameReminder: action.username
+      name: action.username
     })
-  case types.RESET_PASSWORD_ENTER_PASSWORD_FAILED:
-    return state.set('resettingPassword', false)
   }
   return state
 }

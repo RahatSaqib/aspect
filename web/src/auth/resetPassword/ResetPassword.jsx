@@ -24,10 +24,10 @@ import { ErrorDisplayContainer } from '../../components/shared/ErrorDisplay'
 import AcknowledgementDisplay from '../../components/shared/AcknowledgementDisplay'
 import {
   resetPasswordEnterEmailAddress,
-  resetPasswordSetToken,
   resetPasswordEnterPassword
 } from '../AuthRedux'
 import { addAcknowledgement } from '../../acknowledgement/AcknowledgementRedux'
+import { addError } from '../../error/ErrorRedux'
 import styles from './ResetPassword.css'
 import messages from './messages'
 import ResetPasswordEnterEmail from './ResetPasswordEnterEmail'
@@ -36,26 +36,30 @@ import ResetPasswordEnterPassword from './ResetPasswordEnterPassword'
 class ResetPassword extends PureComponent {
   state = {
     emailAddress: '',
+    resetPasswordToken: '',
     stepIndex: 0,
-    showAdminHelpDialog: false
+    showAdminHelpDialog: false,
+    resettingPassword: false
   }
 
   componentDidMount() {
-    const { location: { query: { token } },
-      resetPasswordSetToken} = this.props
-    resetPasswordSetToken(token)
-    if(token) {
-      this.setState({
-        stepIndex: 2
-      })
-    }
+    const { location: { query: { token } } } = this.props
+    this.setState({
+      resetPasswordToken: token
+    }, () => {
+      if(token) {
+        this.setState({
+          stepIndex: 2
+        })
+      }
+    })
   }
 
   render() {
-    const { intl: { formatMessage }, user,
-      resetPasswordEnterEmailAddress, resetPasswordEnterPassword,
-      addAcknowledgement, resetPasswordSetToken } = this.props,
-      {stepIndex, emailAddress} = this.state,
+    const { intl: { formatMessage }, resetPasswordEnterEmailAddress,
+        resetPasswordEnterPassword, addAcknowledgement, addError } = this.props,
+      {stepIndex, emailAddress, resetPasswordToken, resettingPassword} = this.state,
+      supportTelephone = '+1 (123) 555 5555', supportEmail = 'support@aspect.id',
       showAdminHelpDialog = () => {
         this.setState({
           showAdminHelpDialog: true
@@ -74,22 +78,39 @@ class ResetPassword extends PureComponent {
       ],
       createResetPasswordToken = formValues => {
         this.setState({
+          resettingPassword: true,
           emailAddress: formValues.get('emailAddress')
         })
-        resetPasswordEnterEmailAddress(formValues.get('emailAddress'))
+        return resetPasswordEnterEmailAddress(formValues.get('emailAddress'))
+      },
+      createResetPasswordTokenFail = () => {
+        addError(formatMessage(messages.generateTokenFailedTitle), formatMessage(messages.generateTokenFailed, {supportTelephone: supportTelephone, supportEmail: supportEmail}))
+        this.setState({
+          resettingPassword: false
+        })
       },
       checkInbox = () => {
         this.setState({
+          resettingPassword: false,
           stepIndex: 1
         })
         addAcknowledgement(formatMessage(messages.emailSent))
       },
       updatePassword = formValues => {
-        resetPasswordEnterPassword(user.resetPasswordToken, formValues.get('newPassword'))
-        resetPasswordSetToken('')
+        this.setState({
+          resettingPassword: true
+        })
+        return resetPasswordEnterPassword(resetPasswordToken, formValues.get('newPassword'))
+      },
+      updatePasswordFail = () => {
+        addError(formatMessage(messages.passwordUpdateFailedTitle), formatMessage(messages.passwordUpdateFailed, {supportTelephone: supportTelephone, supportEmail: supportEmail}))
+        this.setState({
+          resettingPassword: false
+        })
       },
       completeProcess = () => {
         this.setState({
+          resettingPassword: false,
           stepIndex: 3
         })
         addAcknowledgement(formatMessage(messages.passwordUpdated))
@@ -118,8 +139,10 @@ class ResetPassword extends PureComponent {
                       <StepLabel>{formatMessage(messages.finish)}</StepLabel>
                     </Step>
                   </Stepper>
+                  {resettingPassword && <LinearProgress />}
                   {stepIndex === 0 && <ResetPasswordEnterEmail onSubmit={createResetPasswordToken}
                                                                onSubmitSuccess={checkInbox}
+                                                               onSubmitFail={createResetPasswordTokenFail}
                                                                showAdminHelpDialog={showAdminHelpDialog} /> }
                   {stepIndex === 1 && <div className={styles.Form}>
                     <FormattedHTMLMessage {...messages.checkEmailContent} values={{ emailAddress: emailAddress }} />
@@ -128,14 +151,16 @@ class ResetPassword extends PureComponent {
                     </a>
                   </div> }
                   {stepIndex === 2 && <div>
-                    <ResetPasswordEnterPassword onSubmit={updatePassword} onSubmitSuccess={completeProcess} />
+                    <ResetPasswordEnterPassword onSubmit={updatePassword}
+                                                onSubmitSuccess={completeProcess}
+                                                onSubmitFail={updatePasswordFail} />
                     <br />
                     <br />
                     <br />
                     <br />
                   </div>}
                   {stepIndex === 3 && <div className={styles.Form}>
-                    <FormattedHTMLMessage {...messages.finishContent} values={{ username: user.usernameReminder }} />
+                    <FormattedHTMLMessage {...messages.finishContent} />
                     <div className={styles.Form__ActionRow}>
                       <Link to="login">
                         <FlatButton primary label={formatMessage(messages.loginWithMyNewPassword)} />
@@ -144,12 +169,14 @@ class ResetPassword extends PureComponent {
                   </div> }
                 </div>
                 <div className="pure-hidden-md pure-hidden-lg pure-hidden-xl">
+                  {resettingPassword && <LinearProgress />}
                   <Stepper activeStep={stepIndex} orientation="vertical">
                     <Step>
                       <StepLabel>{formatMessage(messages.enterEmailAddress)}</StepLabel>
                       <StepContent>
                         <ResetPasswordEnterEmail onSubmit={createResetPasswordToken}
                                                  onSubmitSuccess={checkInbox}
+                                                 onSubmitFail={createResetPasswordTokenFail}
                                                  showAdminHelpDialog={showAdminHelpDialog} />
                       </StepContent>
                     </Step>
@@ -168,7 +195,8 @@ class ResetPassword extends PureComponent {
                       <StepLabel>{formatMessage(messages.enterNewPassword)}</StepLabel>
                       <StepContent>
                         <ResetPasswordEnterPassword onSubmit={updatePassword}
-                                                    onSubmitSuccess={completeProcess} />
+                                                    onSubmitSuccess={completeProcess}
+                                                    onSubmitFail={updatePasswordFail} />
                       </StepContent>
                     </Step>
                     <Step>
@@ -176,7 +204,7 @@ class ResetPassword extends PureComponent {
                       <StepContent>
                         <div className={styles.Form}>
                           <div>
-                            <FormattedHTMLMessage {...messages.finishContent} values={{ username: user.usernameReminder }} />
+                            <FormattedHTMLMessage {...messages.finishContent} />
                           </div>
                           <div className={styles.Form__ActionRow}>
                             <Link to="login">
@@ -188,7 +216,6 @@ class ResetPassword extends PureComponent {
                     </Step>
                   </Stepper>
                 </div>
-                {user.resettingPassword && <LinearProgress />}
               </Paper>
             </div>
           </div>
@@ -197,7 +224,8 @@ class ResetPassword extends PureComponent {
                 actions={adminHelpDialogActions} modal={false}
                 open={this.state.showAdminHelpDialog}
                 onRequestClose={closeAdminHelpDialog}>
-          <FormattedHTMLMessage {...messages.adminHelpContent} />
+          <FormattedHTMLMessage {...messages.adminHelpContent}
+                                values={{supportTelephone: supportTelephone, supportEmail: supportEmail}} />
         </Dialog>
         <ErrorDisplayContainer />
         <AcknowledgementDisplay />
@@ -206,18 +234,16 @@ class ResetPassword extends PureComponent {
   }
 }
 
-function mapStateToProps(state) {
-  return {
-    user: state.user
-  }
+function mapStateToProps() {
+  return {}
 }
 
 function mapDispatchToProps(dispatch) {
   return bindActionCreators({
     resetPasswordEnterEmailAddress,
-    resetPasswordSetToken,
     resetPasswordEnterPassword,
-    addAcknowledgement
+    addAcknowledgement,
+    addError
   }, dispatch)
 }
 

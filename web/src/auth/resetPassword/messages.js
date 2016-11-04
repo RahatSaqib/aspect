@@ -21,6 +21,14 @@ export default defineMessages({
     id: 'pages.ResetPassword.invalidEmailAddress',
     defaultMessage: 'Please enter a valid email address'
   },
+  generateTokenFailedTitle: {
+    id: 'pages.ResetPassword.generateTokenFailedTitle',
+    defaultMessage: 'Unable to Reset Password'
+  },
+  generateTokenFailed: {
+    id: 'pages.ResetPassword.passwordUpdateFailed',
+    defaultMessage: 'We are unable to reset your password. You can request further help by sending an email to {supportEmail} or calling us on {supportTelephone}'
+  },
   iDontHaveAnEmailAddress: {
     id: 'pages.ResetPassword.iDontHaveAnEmailAddress',
     defaultMessage: 'I don\'t know what email address I am registered with'
@@ -59,7 +67,7 @@ export default defineMessages({
   },
   adminHelpContent: {
     id: 'pages.ResetPassword.adminHelpContent',
-    defaultMessage: '<p>If you you need help to recover you login details, please contact us so that we may assist you.</p><p>You can request our help by sending an email to <a href="mailto:admin@aspect.id">admin@aspect.id</a></p><p>or calling us on +1 (123) 555 5555</p>'
+    defaultMessage: '<p>If you you need help to recover you login details, please contact us so that we may assist you.</p><p>You can request our help by sending an email to <a href="mailto:{supportEmail}">{supportEmail}</a></p><p>or calling us on {supportTelephone}</p>'
   },
   adminHelpClose: {
     id: 'pages.ResetPassword.adminHelpClose',
@@ -101,13 +109,21 @@ export default defineMessages({
     id: 'pages.ResetPassword.passwordUpdated',
     defaultMessage: 'Your password has been changed successfully'
   },
+  passwordUpdateFailedTitle: {
+    id: 'pages.ResetPassword.passwordUpdateFailedTitle',
+    defaultMessage: 'Password Reset Failed'
+  },
+  passwordUpdateFailed: {
+    id: 'pages.ResetPassword.passwordUpdateFailed',
+    defaultMessage: 'We were unable to reset your password. You can request further help by sending an email to {supportEmail} or calling us on {supportTelephone}'
+  },
   finish: {
     id: 'pages.ResetPassword.finish',
     defaultMessage: 'Finish'
   },
   finishContent: {
     id: 'pages.ResetPassword.finishContent',
-    defaultMessage: '<p>Your password has been changed successfully.</p><p>You can now login with your username (which is {username}) and your new password</p>'
+    defaultMessage: '<p>Your password has been changed successfully.</p><p>You can now login with your new password</p>'
   },
   loginWithMyNewPassword: {
     id: 'pages.ResetPassword.loginWithMyNewPassword',

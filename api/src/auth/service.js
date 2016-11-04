@@ -309,28 +309,27 @@ function* updatePasswordWithResetPasswordToken(request) {
     .where('u.resetPasswordToken', params.resetPasswordToken)
     .first('u.resetPasswordTokenExpires', 'u.id', 'u.name as username')
 
-  if(!userDetails){
-    return Boom.notFound('Reset password details not Found')
+  if(userDetails){
+    const now = new Date()
+    if (userDetails.resetPasswordTokenExpires < now) {
+      return Boom.resourceGone('The reset password token is no longer valid')
+    }
+    yield query('Save password for user').from('User as u')
+      .where('u.id', userDetails.id)
+      .update({
+        lockedOut: 0,
+        failedPasswordAttempts: 0,
+        legacyPassword: 0,
+        password: yield bcryptHash(payload.newPassword, parseInt(config.passwordSaltRounds)),
+        lastPasswordChange: now,
+        resetPasswordToken: null,
+        resetPasswordTokenExpires: null
+      })
   }
-  const now = new Date()
-  if (userDetails.resetPasswordTokenExpires < now) {
-    return Boom.resourceGone('The reset password token is no longer valid')
-  }
-  yield query('Save password for user').from('User as u')
-    .where('u.id', userDetails.id)
-    .update({
-      lockedOut: 0,
-      failedPasswordAttempts: 0,
-      legacyPassword: 0,
-      password: yield bcryptHash(payload.newPassword, parseInt(config.passwordSaltRounds)),
-      lastPasswordChange: now,
-      resetPasswordToken: null,
-      resetPasswordTokenExpires: null
-    })
 
   return {
     ok: true,
-    username: userDetails.username
+    username: userDetails ? userDetails.username : undefined
   }
 }
 
