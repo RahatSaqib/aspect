@@ -16,7 +16,7 @@ module.exports = [
           sampleId: Joi.string().allow('').description('Filter for sample ID'),
           assayId: Joi.string().allow('').description('Filter for assay ID'),
           jsonFields: Joi.array().single().description('Specify which fields to select from the resultDataJSON')
-        }, validateSortPageParams('endedOn', 'deviceName', 'stateName', 'lgaName', 'sampleId', 'patientId'))
+        }, validateSortPageParams())
       }
     }
   },

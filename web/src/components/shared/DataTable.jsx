@@ -46,7 +46,8 @@ export class DataTable extends PureComponent {
       pageSize: PropTypes.number.isRequired,
       total: PropTypes.number.isRequired
     }).isRequired,
-    columns: PropTypes.array.isRequired
+    columns: PropTypes.array.isRequired,
+    extraColumns: PropTypes.array
   }
 
   state = {
@@ -94,7 +95,7 @@ export class DataTable extends PureComponent {
 
     const table = this.props.table
 
-    this.props.handleFetch(table.filters, col || table.sortCol, newSort || table.sortDir, page == null ? table.page : page, table.pageSize)
+    this.props.handleFetch(table.filters, col || table.sortCol, newSort || table.sortDir, page == null ? table.page : page, table.pageSize, this.props.extraColumns)
   }
 
   getPager(page, totalPages){

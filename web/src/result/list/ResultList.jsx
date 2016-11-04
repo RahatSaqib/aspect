@@ -206,6 +206,7 @@ export class ResultList extends PureComponent {
           items={ this.props.items }
           table={ this.props.table }
           columns={ columns }
+          extraColumns={ this.state.assayColumns }
         />
       </div>
     )

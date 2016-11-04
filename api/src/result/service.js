@@ -21,17 +21,28 @@ const SELECT_SHOW_FIELDS = [
   'r.errorCode', 'r.errorNotes','r.createdOn', 'r.updatedOn', 'r.assayId'
 ]
 
+const SORT_FIELDS = [
+  'endedOn', 'deviceName', 'stateName', 'lgaName', 'sampleId', 'patientId', 'resultCategory1Name', 'resultCategory2Name'
+]
+
 function* listResults(request){
   const {query, auth} = request
   let selectFields = _.clone(SELECT_LIST_FIELDS)
+  let sortableFields = _.clone(SORT_FIELDS)
 
   // did the client request specific selectFields from
   // the resultData JSON column?
   _.each(request.query.jsonFields, (f) => {
     if (f){
       selectFields.push(knex.raw('JSON_EXTRACT(resultData, ?) as ?', [`$.${f}`, f.replace('.', '_')]))
+      sortableFields.push(f.replace('.', '_'))
     }
   })
+
+  // now we know if the sort that was passed is valid:
+  if (!sortableFields.includes(query.sortCol)){
+    return Boom.badRequest()
+  }
 
   // get data constraints
   const dataConstraints = yield getConstraints(auth.credentials)
