@@ -229,6 +229,9 @@ function* updateUsernameAndPasswordForLoggedInUser(request){
   if(payload.newPassword) {
     const passwordsMatch = yield bcryptCompare(payload.newPassword, loggedInUser.password)
     if(!passwordsMatch) {
+      changedFields.lockedOut = 0
+      changedFields.failedPasswordAttempts = 0
+      changedFields.legacyPassword = 0
       changedFields.password = yield bcryptHash(payload.newPassword, parseInt(config.passwordSaltRounds))
       changedFields.lastPasswordChange = now
     }
@@ -252,7 +255,7 @@ function* updateUsernameAndPasswordForLoggedInUser(request){
   return {
     ok: true,
     data: {
-      changedFields: Object.keys(_.omit(changedFields, ['lastPasswordChange'])),
+      changedFields: Object.keys(_.pick(changedFields, ['name', 'password'])),
       username: loggedInUser.name
     },
     access: accessToken,
@@ -308,27 +311,21 @@ function* updatePasswordWithResetPasswordToken(request) {
 
   if(!userDetails){
     return Boom.notFound('Reset password details not Found')
-  } else {
-    yield query('Clear reset password token').from('User as u')
-      .where('u.id', userDetails.id)
-      .update({
-        resetPasswordToken: null,
-        resetPasswordTokenExpires: null
-      })
   }
-
   const now = new Date()
-  if (userDetails.expires < now) {
-    return Boom.resourceGone('The reset password token is not valid')
+  if (userDetails.resetPasswordTokenExpires < now) {
+    return Boom.resourceGone('The reset password token is no longer valid')
   }
   yield query('Save password for user').from('User as u')
-    .where('u.id', userDetails.userId)
+    .where('u.id', userDetails.id)
     .update({
       lockedOut: 0,
       failedPasswordAttempts: 0,
       legacyPassword: 0,
       password: yield bcryptHash(payload.newPassword, parseInt(config.passwordSaltRounds)),
-      lastPasswordChange: now
+      lastPasswordChange: now,
+      resetPasswordToken: null,
+      resetPasswordTokenExpires: null
     })
 
   return {
