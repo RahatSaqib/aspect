@@ -1,6 +1,7 @@
 let supertest = require('supertest')
 let chai = require('chai')
 let jwt = require('jsonwebtoken')
+let uuid = require('node-uuid')
 let config = require('../../src/config')
 let shared = require('../utils/sharedToken')
 
@@ -569,6 +570,21 @@ describe('Authentication routes',function(){
               assert.isTrue(res.body.ok)
               done()
             })
+        })
+    })
+  })
+
+  describe('PUT to /auth/update-password', function() {
+    beforeEach(function(){
+      path = '/api/auth/update-password/'
+    })
+
+    it('should return a 404 response when token doesn\'t exist',function(done){
+      server.put(path + uuid.v4())
+        .end(function(err,res){
+          assert.equal(res.status, 404)
+          assert.equal(res.body.message, 'The reset password token was not found')
+          done()
         })
     })
   })

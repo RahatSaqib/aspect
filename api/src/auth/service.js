@@ -271,7 +271,7 @@ function* createResetPasswordToken(request){
     .innerJoin('User as u', 'p.userId', 'u.id')
     .where({'p.email': params.email})
     .orWhere({'p.email2': params.email})
-    .select( 'u.id', 'p.name', 'p.culture')
+    .select( 'u.id', 'p.name', 'p.culture' )
 
   if (users.length === 1) {
     const resetPasswordToken = uuid.v4(),
@@ -284,7 +284,8 @@ function* createResetPasswordToken(request){
       }, users[0].culture),
       inlineImageAttachments = yield* templateProcessor.getInlineImageAttachments(generatedEmail.html)
 
-    yield* emailUtil.sendEmail(params.email, generatedEmail.subject, generatedEmail.html, generatedEmail.text, inlineImageAttachments)
+    yield* emailUtil.sendEmail(params.email, generatedEmail.subject, generatedEmail.html,
+      generatedEmail.text, inlineImageAttachments)
 
     yield query('Save reset password token').from('User as u')
       .where('u.id', users[0].id)
