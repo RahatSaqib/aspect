@@ -48,7 +48,7 @@ function* listResults(request){
     .leftJoin('ResultCategory as rc2', 'r.resultCategory2', 'rc2.id')
     .leftJoin('Sample as s', 'r.sampleId', 's.id')
     .modify(filterParams, query, {deviceId: 'd.id', sampleId: 's.externalId', assayId: 'r.assayId' })
-    .modify(addConstraints, dataConstraints, {device: 'd'})
+    .modify(addConstraints, dataConstraints, {device: 'd', sample: 's'})
 
   // get total count for paging
   const getCount = resultQuery.clone()

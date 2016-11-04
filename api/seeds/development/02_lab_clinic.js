@@ -156,7 +156,6 @@ function* seed(knex){
       revoked: 0
     }, auditFields))
 
-    /* TODO ASP 177 allow data filter on site and sample source site
     // Roles and permissions
     const [dataFilterId] = yield knex('DataFilter').insert({
       name: siteData.name+' Filter',
@@ -179,7 +178,6 @@ function* seed(knex){
 
     yield knex('DeviceRole').insert([
        { deviceId, roleId: roleIdSite }])
-     */
   }
 
   // Labs have m2000 and modem
