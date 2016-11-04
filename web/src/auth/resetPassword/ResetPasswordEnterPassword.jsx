@@ -51,6 +51,8 @@ const validate = (passwordInput, props) => {
     if (passwordInput.get('newPassword') !== passwordInput.get('confirmNewPassword')) {
       errors.confirmNewPassword = formatMessage(messages.passwordsDoNotMatch)
     }
+  } else {
+    errors.newPassword = formatMessage(messages.newPasswordRequired)
   }
   return errors
 }

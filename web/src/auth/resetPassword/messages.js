@@ -85,6 +85,10 @@ export default defineMessages({
     id: 'pages.ResetPassword.newPassword',
     defaultMessage: 'New Password'
   },
+  newPasswordRequired: {
+    id: 'pages.ResetPassword.newPasswordRequired',
+    defaultMessage: 'Please enter a new password'
+  },
   newPasswordTooShort: {
     id: 'pages.ResetPassword.newPasswordTooShort',
     defaultMessage: 'Your password needs to be at least 8 characters long'
