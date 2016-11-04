@@ -622,12 +622,12 @@ function* seed(knex){
 
   yield knex('ConsumableReason').insert({
     name: 'Stolen',
-    decrease: 0
+    decrease: 1
   })
 
   yield knex('ConsumableReason').insert({
     name: 'Lost',
-    decrease: 0
+    decrease: 1
   })
 
   // Create permissions

@@ -8,7 +8,7 @@ let assert = chai.assert
 
 describe('Inventory Routes',function(){
 
-  describe('Conumable types route', function(){
+  describe('Consumable Type Route', function(){
     let path = '/api/inventory/consumable-types'
 
     describe('GET',function(){
@@ -38,7 +38,7 @@ describe('Inventory Routes',function(){
 
   })
 
-  describe('Conumable Reason Route', function(){
+  describe('Consumable Reason Route', function(){
     let path = '/api/inventory/consumable-reason'
 
     describe('GET',function(){
