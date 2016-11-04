@@ -581,6 +581,7 @@ describe('Authentication routes',function(){
 
     it('should return a 404 response when token doesn\'t exist',function(done){
       server.put(path + uuid.v4())
+        .send({newPassword: 'NewPass123!', clientName: 'Mocha/Chai', clientId: 'Client ID'})
         .end(function(err,res){
           assert.equal(res.status, 404)
           assert.equal(res.body.message, 'The reset password token was not found')

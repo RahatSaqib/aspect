@@ -1,4 +1,4 @@
-let Promise = require('bluebird')
+const _ = require('lodash')
 const helper = require('sendgrid').mail
 
 function* sendEmail(to, subject, htmlContent, textContent, attachments) {
@@ -10,7 +10,7 @@ function* sendEmail(to, subject, htmlContent, textContent, attachments) {
   if(textBody && htmlBody) {
     emailMessage.addContent(htmlBody)
   }
-  if(attachments && attachments.length) {
+  if(_.isArray(attachments) && attachments.length) {
     attachments.forEach(function (att) {
       const attachment = new helper.Attachment()
       attachment.setContent(att.content)
@@ -30,15 +30,7 @@ function* sendEmail(to, subject, htmlContent, textContent, attachments) {
       body: emailMessage.toJSON()
     })
 
-  return new Promise((resolve, reject) => {
-    sendGrid.API(request, function(error, response) {
-      if(error) {
-        reject(error)
-      } else {
-        resolve(response)
-      }
-    })
-  })
+  return sendGrid.API(request)
 }
 
 module.exports = {
