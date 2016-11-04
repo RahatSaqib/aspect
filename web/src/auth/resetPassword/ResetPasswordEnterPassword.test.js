@@ -37,13 +37,11 @@ describe('Reset Password Enter Password Form', () => {
       props = {
         pristine: true,
         invalid: true,
-        loading: false,
         initialValues: {
-          countryId: null,
-          stateId: null
+          newPassword: null,
+          confirmNewPassword: null
         },
-        handleSubmit: () => {
-        },
+        handleSubmit: () => { },
         intl: {
           formatMessage: message => message.defaultMessage
         }
