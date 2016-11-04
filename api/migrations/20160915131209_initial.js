@@ -51,6 +51,8 @@ function* up(knex){
     user.boolean('lockedOut').notNullable()
     user.integer('failedPasswordAttempts').unsigned().notNullable()
     user.boolean('legacyPassword').notNullable().defaultTo(0)
+    user.string('resetPasswordToken', 36)
+    user.dateTime('resetPasswordTokenExpires')
     user.charset('utf8')
   })
 
@@ -469,17 +471,6 @@ function* up(knex){
     sample.string('senderIp').notNullable()
     sample.text('rawMessage')
     sample.charset('utf8')
-  })
-
-  yield knex.schema.createTable('ResetPassword', resetPassword => {
-    resetPassword.increments('id')
-    resetPassword.string('token', 36).notNullable()
-    resetPassword.string('requestedFrom', 40).notNullable()
-    resetPassword.integer('userId').unsigned().notNullable()
-      .index().references('id').inTable('User')
-    resetPassword.dateTime('expires')
-    resetPassword.string('sentTo', 500)
-    resetPassword.charset('utf8')
   })
 
   yield knex.schema.createTable('Unit', unit => {
