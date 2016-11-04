@@ -60,6 +60,18 @@ function* listResults(request){
   // return result when both queries are finished
   const [{count: total}, data] = yield Promise.all([getCount, getItems])
 
+  // if any json fields requested, parse them
+  if (request.query.jsonFields){
+    _.each(data, (d) => {
+      _.each(request.query.jsonFields, (f) => {
+        if (f){
+          const path = f.replace('.', '_')
+          _.set(d, path, JSON.parse(d[path]))
+        }
+      })
+    })
+  }
+
   const result = { ok: true, total, length: data.length, data }
 
   return result

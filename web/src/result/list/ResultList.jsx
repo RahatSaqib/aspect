@@ -87,7 +87,7 @@ export class ResultList extends PureComponent {
   handleAssayChange = (e, i, assayId) => {
 
     const { intl, assays } = this.props
-    const { formatMessage } = intl
+    const { formatMessage, formatNumber } = intl
 
     const assay = assayId ? assays.get('items').find(a => a.get('id') === assayId) : null
     let columns = []
@@ -113,6 +113,7 @@ export class ResultList extends PureComponent {
       assay.get('resultDataSchema').forEach((v, k) => {
         if (v.get('list')){
           columns.push({  db: k,
+                          format: v.get('type') === 'number' ? (n) => { return n ? formatNumber(n) : null } : null,
                           title: v.get('i18nKey') && messages[v.get('i18nKey')] ?
                             formatMessage[v.get('i18nKey')] : v.get('title') })
         }
