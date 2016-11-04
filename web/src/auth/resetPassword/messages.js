@@ -21,6 +21,10 @@ export default defineMessages({
     id: 'pages.ResetPassword.invalidEmailAddress',
     defaultMessage: 'Please enter a valid email address'
   },
+  iDontHaveAnEmailAddress: {
+    id: 'pages.ResetPassword.iDontHaveAnEmailAddress',
+    defaultMessage: 'I don\'t know what email address I am registered with'
+  },
   next: {
     id: 'pages.ResetPassword.next',
     defaultMessage: 'Next'
@@ -40,6 +44,26 @@ export default defineMessages({
   checkEmailContent: {
     id: 'pages.ResetPassword.checkEmailContent',
     defaultMessage: '<p>We have sent an email to {emailAddress} that contains a link which will allow you to reset your password.</p><p>Please check your inbox?</p>'
+  },
+  iDidntReceiveAnEmail: {
+    id: 'pages.ResetPassword.iDidntReceiveAnEmail',
+    defaultMessage: 'I didn\'t receive an email'
+  },
+  backToLogin: {
+    id: 'pages.ResetPassword.backToLogin',
+    defaultMessage: 'Back to Login Page'
+  },
+  adminHelpHeader: {
+    id: 'pages.ResetPassword.adminHelpHeader',
+    defaultMessage: 'Request a New Password From Aspect'
+  },
+  adminHelpContent: {
+    id: 'pages.ResetPassword.adminHelpContent',
+    defaultMessage: '<p>If you you need help to recover you login details, please contact us so that we may assist you.</p><p>You can request our help by sending an email to <a href="mailto:admin@aspect.id">admin@aspect.id</a></p><p>or calling us on +1 (123) 555 5555</p>'
+  },
+  adminHelpClose: {
+    id: 'pages.ResetPassword.adminHelpClose',
+    defaultMessage: 'Close'
   },
   enterNewPassword: {
     id: 'pages.ResetPassword.enterNewPassword',

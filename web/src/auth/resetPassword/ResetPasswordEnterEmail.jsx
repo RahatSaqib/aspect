@@ -15,7 +15,7 @@ import {emailAddress as validateEmailAddress} from '../../shared/utils/validate'
 import TextInput from '../../components/shared/TextInput'
 
 const ResetPasswordEnterEmail = props => {
-  const { intl: { formatMessage }, handleSubmit, pristine, invalid } = props
+  const { intl: { formatMessage }, handleSubmit, pristine, invalid, showAdminHelpDialog } = props
   return (
     <form onSubmit={handleSubmit} className={styles.Form}>
       <div className={styles.Form__Content}>
@@ -23,6 +23,7 @@ const ResetPasswordEnterEmail = props => {
         <TextInput name="emailAddress" label={formatMessage(messages.emailAddress)} autoFocus maxLength="500" fullWidth />
       </div>
       <div className={styles.Form__ActionRow}>
+        <FlatButton secondary label={formatMessage(messages.iDontHaveAnEmailAddress)} onTouchTap={showAdminHelpDialog} />
         <RaisedButton disabled={pristine || invalid} label={formatMessage(messages.next)} primary type="submit" />
         <FlatButton secondary label={formatMessage(messages.cancel)} href="/login" />
       </div>

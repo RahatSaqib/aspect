@@ -16,6 +16,7 @@ import {
 } from 'material-ui/Stepper'
 import FlatButton from 'material-ui/FlatButton'
 import LinearProgress from 'material-ui/LinearProgress'
+import Dialog from 'material-ui/Dialog'
 
 // Our own imports
 import { ErrorDisplayContainer } from '../../components/shared/ErrorDisplay'
@@ -34,7 +35,8 @@ import ResetPasswordEnterPassword from './ResetPasswordEnterPassword'
 class ResetPassword extends PureComponent {
   state = {
     emailAddress: '',
-    stepIndex: 0
+    stepIndex: 0,
+    showAdminHelpDialog: false
   }
 
   componentDidMount() {
@@ -53,6 +55,20 @@ class ResetPassword extends PureComponent {
       resetPasswordEnterEmailAddress, resetPasswordEnterPassword,
       addAcknowledgement, resetPasswordSetToken } = this.props,
       {stepIndex, emailAddress} = this.state,
+      showAdminHelpDialog = () => {
+        this.setState({
+          showAdminHelpDialog: true
+        })
+      },
+      closeAdminHelpDialog = () => {
+        this.setState({
+          showAdminHelpDialog: false
+        })
+      },
+      adminHelpDialogActions = [
+        <FlatButton label={formatMessage(messages.adminHelpClose)} secondary onTouchTap={closeAdminHelpDialog} />,
+        <FlatButton label={formatMessage(messages.backToLogin)} primary href="/login" />
+      ],
       createResetPasswordToken = formValues => {
         this.setState({
           emailAddress: formValues.get('emailAddress')
@@ -100,8 +116,12 @@ class ResetPassword extends PureComponent {
                     </Step>
                   </Stepper>
                   {stepIndex === 0 && <ResetPasswordEnterEmail onSubmit={createResetPasswordToken}
-                                                               onSubmitSuccess={checkInbox} /> }
-                  {stepIndex === 1 && <div className={styles.Form}><FormattedHTMLMessage {...messages.checkEmailContent} values={{ emailAddress: emailAddress }} /></div> }
+                                                               onSubmitSuccess={checkInbox}
+                                                               showAdminHelpDialog={showAdminHelpDialog} /> }
+                  {stepIndex === 1 && <div className={styles.Form}>
+                    <FormattedHTMLMessage {...messages.checkEmailContent} values={{ emailAddress: emailAddress }} />
+                    <FlatButton secondary label={formatMessage(messages.iDidntReceiveAnEmail)} onTouchTap={showAdminHelpDialog} />
+                  </div> }
                   {stepIndex === 2 && <div>
                     <ResetPasswordEnterPassword onSubmit={updatePassword} onSubmitSuccess={completeProcess} />
                     <br />
@@ -110,7 +130,7 @@ class ResetPassword extends PureComponent {
                     <br />
                   </div>}
                   {stepIndex === 3 && <div className={styles.Form}>
-                    {<FormattedHTMLMessage {...messages.finishContent} values={{ username: user.usernameReminder }} /> }
+                    <FormattedHTMLMessage {...messages.finishContent} values={{ username: user.usernameReminder }} />
                     <div className={styles.Form__ActionRow}>
                       <FlatButton primary href="/login" label={formatMessage(messages.loginWithMyNewPassword)} />
                     </div>
@@ -122,7 +142,8 @@ class ResetPassword extends PureComponent {
                       <StepLabel>{formatMessage(messages.enterEmailAddress)}</StepLabel>
                       <StepContent>
                         <ResetPasswordEnterEmail onSubmit={createResetPasswordToken}
-                                                 onSubmitSuccess={checkInbox} />
+                                                 onSubmitSuccess={checkInbox}
+                                                 showAdminHelpDialog={showAdminHelpDialog} />
                       </StepContent>
                     </Step>
                     <Step>
@@ -130,6 +151,7 @@ class ResetPassword extends PureComponent {
                       <StepContent>
                         <div className={styles.Form}>
                           <FormattedHTMLMessage {...messages.checkEmailContent} values={{ emailAddress: emailAddress }} />
+                          <FlatButton secondary label={formatMessage(messages.iDidntReceiveAnEmail)} onTouchTap={showAdminHelpDialog} />
                         </div>
                       </StepContent>
                     </Step>
@@ -160,6 +182,12 @@ class ResetPassword extends PureComponent {
             </div>
           </div>
         </div>
+        <Dialog title={formatMessage(messages.adminHelpHeader)}
+                actions={adminHelpDialogActions} modal={false}
+                open={this.state.showAdminHelpDialog}
+                onRequestClose={closeAdminHelpDialog}>
+          <FormattedHTMLMessage {...messages.adminHelpContent} />
+        </Dialog>
         <ErrorDisplayContainer />
         <AcknowledgementDisplay />
       </div>
