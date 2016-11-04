@@ -130,7 +130,7 @@ export class DataTable extends PureComponent {
         // if 2nd to last item AND page < totalPages - 5 (maxPagingButtons/2)
         if ((key === 2 && page > maxPagingButtons / 2) ||
             (key === maxPagingButtons - 2 && page < totalPages - maxPagingButtons / 2 - 1) ) {
-          pagerItems.push(<span style={{ margin: '0 5px' }}>&#8230;</span>)
+          pagerItems.push(<span key={'ellipsis-' + key} style={{ margin: '0 5px' }}>&#8230;</span>)
         }
       }
     }
@@ -197,7 +197,7 @@ export class DataTable extends PureComponent {
                   const row = items.getIn(['byId', itemId])
                   const data = row.get(col.db)
                   return (
-                    <TableRowColumn key={data} className={ col.hideOnXs ? 'pure-hidden-xs' : '' } {...col.extraProps}>
+                    <TableRowColumn key={col.db} className={ col.hideOnXs ? 'pure-hidden-xs' : '' } {...col.extraProps}>
                       {(col.format || _.identity)(data, row)}
                     </TableRowColumn>
                   )
