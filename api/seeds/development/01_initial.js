@@ -438,16 +438,11 @@ function* seed(knex){
     resultDataSchema: JSON.stringify({
       resultText: {
         title: 'Result Text',
-        type: 'string',
-      },
-      resultText: {
-        title: 'Result Text',
-        type: 'string',
+        type: 'string'
       },
       copies: {
         title: 'copies/mL',
-        type: 'number',
-        list: true
+        type: 'number'
       }
     })
   })

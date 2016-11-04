@@ -92,7 +92,7 @@ function* seed(knex){
     { userId: adminId, roleId: roleIdAdmin }])
 
 
-  // Region to site extenal ids
+  // Region to site external ids
   const siteExternalIds = {
     dedza: '1723',
     dowa: '1315',
