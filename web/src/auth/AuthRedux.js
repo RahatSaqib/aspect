@@ -1,10 +1,8 @@
 import { stringify } from 'querystring'
 import Immutable from 'immutable'
-import config from 'config'
 import jwt_decode from 'jwt-decode'
 import { browserHistory } from 'react-router'
-
-import * as fetchUtils from '../shared/utils/fetch'
+import { aspectFetch, getHeaders, getBrowserNameAndVersion } from '../shared/utils/fetch'
 import * as localStorage from '../shared/utils/localStorage'
 import { addError } from '../error/ErrorRedux'
 
@@ -131,12 +129,12 @@ export function loginStart(login) {
 
     // In this case, we return a promise to wait for.
     // This is not required by thunk middleware, but it is convenient for us.
-    const clientName = fetchUtils.getBrowserNameAndVersion() + ' on ' + window.navigator.platform
+    const clientName = getBrowserNameAndVersion() + ' on ' + window.navigator.platform
 
-    return fetch(config.aspectApi + '/auth',
+    return aspectFetch('/auth',
       {
         method: 'POST',
-        headers: fetchUtils.getHeaders(),
+        headers: getHeaders(),
         body: JSON.stringify({
           name: user,
           password: password,
@@ -144,7 +142,6 @@ export function loginStart(login) {
           clientName: clientName
         })
       })
-      .then(fetchUtils.handleFetchResponse)
       .then(json => {
 
         let jwt = storeAccess(json)
@@ -185,16 +182,15 @@ export function refreshStart() {
     }
 
     // try to get a new access token:
-    fetch(config.aspectApi + '/auth/refresh',
+    aspectFetch('/auth/refresh',
       {
         method: 'POST',
-        headers: fetchUtils.getHeaders(),
+        headers: getHeaders(),
         body: JSON.stringify({
           token: localStorage.getRefreshToken(),
           clientId: localStorage.getClientId()
         })
       })
-      .then(fetchUtils.handleFetchResponse)
       .then(json => {
         let jwt = storeAccess(json)
 
@@ -270,17 +266,16 @@ function createResetPasswordEnterPasswordFailure(error) {
 export function resetPasswordEnterEmailAddress(emailAddress) {
   return function (dispatch) {
     dispatch(createResetPasswordEnterEmailAddressRequest(emailAddress))
-    const clientName = fetchUtils.getBrowserNameAndVersion() + ' on ' + window.navigator.platform
-    return fetch(config.aspectApi + `/auth/send-reset-password-token/${emailAddress}`,
+    const clientName = getBrowserNameAndVersion() + ' on ' + window.navigator.platform
+    return aspectFetch(`/auth/send-reset-password-token/${emailAddress}`,
       {
         method: 'POST',
-        headers: fetchUtils.getHeaders(),
+        headers: getHeaders(),
         body: JSON.stringify({
           clientId: localStorage.getClientId(),
           clientName: clientName
         })
       })
-      .then(fetchUtils.handleFetchResponse)
       .then(() => {
         dispatch(createResetPasswordEnterEmailAddressSuccess(emailAddress))
       })
@@ -300,18 +295,17 @@ export function resetPasswordSetToken(resetPasswordToken) {
 export function resetPasswordEnterPassword(resetPasswordToken, newPassword) {
   return function (dispatch) {
     dispatch(createResetPasswordEnterPasswordRequest(resetPasswordToken, newPassword))
-    const clientName = fetchUtils.getBrowserNameAndVersion() + ' on ' + window.navigator.platform
-    return fetch(config.aspectApi + `/auth/update-password/${resetPasswordToken}`,
+    const clientName = getBrowserNameAndVersion() + ' on ' + window.navigator.platform
+    return aspectFetch(`/auth/update-password/${resetPasswordToken}`,
       {
         method: 'PUT',
-        headers: fetchUtils.getHeaders(),
+        headers: getHeaders(),
         body: JSON.stringify({
           newPassword: newPassword,
           clientId: localStorage.getClientId(),
           clientName: clientName
         })
       })
-      .then(fetchUtils.handleFetchResponse)
       .then(json => {
         dispatch(createResetPasswordEnterPasswordSuccess(json.username))
       })
