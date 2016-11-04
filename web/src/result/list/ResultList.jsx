@@ -50,6 +50,10 @@ const messages = defineMessages({
   patiendId: {
     id: 'pages.ResultList.patiendId',
     defaultMessage: 'Patient ID'
+  },
+  resultCategoryCopiesMl: {
+    id: 'pages.ResultList.resultCategoryHiv',
+    defaultMessage: 'HIV'
   }
 })
 
@@ -58,12 +62,13 @@ export class ResultList extends PureComponent {
   static propTypes = {
     fetchAssays: PropTypes.func.isRequired,
     setPageTitle: PropTypes.func.isRequired,
-    table: PropTypes.object.isRequired
+    table: PropTypes.object.isRequired,
+    assayColumns: PropTypes.object.isRequired
   }
 
   state = {
     filters: this.props.table.get('filters'),
-    assayColumns: [{ db: 'patientId' }]
+    assayColumns: this.props.assayColumns.toJS()
   }
 
   handleItemIdSelection = (resultId) => {
@@ -76,11 +81,53 @@ export class ResultList extends PureComponent {
 
   handleSubmit = (e) => {
     e.preventDefault()
-    this.props.fetchResults(this.state.filters)
+    this.props.fetchResults(this.state.filters, undefined, undefined, undefined, undefined, this.state.assayColumns)
+  }
+
+  handleAssayChange = (e, i, assayId) => {
+
+    const { intl, assays } = this.props
+    const { formatMessage } = intl
+
+    const assay = assayId ? assays.get('items').find(a => a.get('id') === assayId) : null
+    let columns = []
+
+    // add column for category 1 if it applies
+    if (assay){
+      if (assay.get('resultCategory1Label')){
+        const i18nKey = assay.get('resultCategory1i18nKey')
+        columns.push({  db: 'resultCategory1Name',
+                        title: i18nKey && messages[i18nKey] ?
+                          formatMessage(messages[i18nKey]) : assay.get('resultCategory1Label') })
+      }
+
+      // add column for category 2 if it applies
+      if (assay.get('resultCategory2Label')){
+        const i18nKey = assay.get('resultCategory2i18nKey')
+        columns.push({  db: 'resultCategory2Name',
+                        title: i18nKey && messages[i18nKey] ?
+                          formatMessage(messages[i18nKey]) : assay.get('resultCategory2Label') })
+      }
+
+      // now, add any json columns
+      assay.get('resultDataSchema').forEach((v, k) => {
+        if (v.get('list')){
+          columns.push({  db: k,
+                          title: v.get('i18nKey') && messages[v.get('i18nKey')] ?
+                            formatMessage[v.get('i18nKey')] : v.get('title') })
+        }
+      })
+    }
+
+    // finally, update state and submit
+    this.setState({ assayColumns: columns,
+                    filters: this.state.filters.set('assayId', assayId) },
+                  () => this.handleSubmit(e))
   }
 
   resetResults = () => {
-    this.setState({ filters: this.state.filters.set('sampleId', '').set('assayId', null) })
+    this.setState({ assayColumns: [],
+                    filters: this.state.filters.set('sampleId', '').set('assayId', null) })
     this.props.fetchResults()
   }
 
@@ -98,13 +145,19 @@ export class ResultList extends PureComponent {
   render() {
     const { intl, assays } = this.props
     const { formatMessage, formatDate } = intl
+
+    // load assay dropdown
     const assaysLoading = assays ? assays.get('loading') : false
-    const dropdownAssay = assays ? assays.get('items').filter(a => a.get('hasResults')) : []
-    const generalColumns = [{ db: 'endedOn', title: formatMessage(messages.endedOn), format: (data) => formatDate(data) },
-                            { db: 'deviceName', title: formatMessage(messages.deviceName) },
-                            { db: 'sampleId', title: formatMessage(messages.sampleId) },
-                            { db: 'patientId', title: formatMessage(messages.patiendId) }]
-    const columnsToRender = generalColumns.concat(this.state.assayColumns)
+    const validAssays = assays ? assays.get('items').filter(a => a.get('hasResults')) : []
+
+    let columns = [ { db: 'endedOn', title: formatMessage(messages.endedOn), format: (data) => formatDate(data) },
+                    { db: 'deviceName', title: formatMessage(messages.deviceName) },
+                    { db: 'sampleId', title: formatMessage(messages.sampleId) },
+                    { db: 'patientId', title: formatMessage(messages.patiendId) }]
+
+    if (this.state.assayColumns){
+      columns = columns.concat(this.state.assayColumns)
+    }
 
     return (
       <div className={styles.Content}>
@@ -124,11 +177,10 @@ export class ResultList extends PureComponent {
                       value={this.state.filters.get('assayId')}
                       label={formatMessage(messages.assayId)}
                       hintText={formatMessage(messages.assayId)}
-                      disabled={assaysLoading || _.isEmpty(dropdownAssay)}
-                      onChange={ (e, i, v) => {
-                        this.filterResultsChange('assayId', v, () => this.handleSubmit(e)) } }>
+                      disabled={assaysLoading || _.isEmpty(validAssays)}
+                      onChange={ (e, i, v) => { this.handleAssayChange(e, i, v) } }>
                       {
-                        dropdownAssay.map(assay =>
+                        validAssays.map(assay =>
                           <MenuItem key={assay.get('id')} value={assay.get('id')} primaryText={assay.get('name')} />)
                       }
               </ForkedSelectField>
@@ -148,11 +200,11 @@ export class ResultList extends PureComponent {
         </form>
         <DataTable
           selectable
-          handleItemIdSelection={this.handleItemIdSelection}
+          handleItemIdSelection={ this.handleItemIdSelection }
           handleFetch={ this.props.fetchResults }
           items={ this.props.items }
           table={ this.props.table }
-          columns={ columnsToRender }
+          columns={ columns }
         />
       </div>
     )
@@ -163,6 +215,7 @@ function mapStateToProps(state) {
   return {
     items: state.result.items,
     table: state.result.table,
+    assayColumns: state.result.assayColumns,
     assays: state.assay
   }
 }

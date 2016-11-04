@@ -5,7 +5,9 @@ const { getConstraints, addConstraints } = require('../auth/constraints')
 
 const SELECT_LIST_FIELDS = [
   'a.id', 'at.id as assayTypeId', 'a.name', 'at.name as assayTypeName',
-  'dt.id as deviceTypeId', 'dt.name as deviceTypeName', 'a.resultDataSchema'
+  'dt.id as deviceTypeId', 'dt.name as deviceTypeName', 'a.resultDataSchema',
+  'a.resultCategory1Label', 'a.resultCategory1i18nKey',
+  'a.resultCategory2Label', 'a.resultCategory2i18nKey'
 ]
 
 function* listAssays(request) {

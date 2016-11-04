@@ -100,10 +100,7 @@ function* getResultByResultId(request, fields=SELECT_SHOW_FIELDS){
 }
 
 function* listResultTypes(request){
-  const {query, auth} = request
-
-  // get data constraints
-  const dataConstraints = yield getConstraints(auth.credentials)
+  const { query } = request
 
   const resultTypeQuery = knex('ResultType as rt')
     .modify(filterParams, query, { 'name': 'rt.name' })
