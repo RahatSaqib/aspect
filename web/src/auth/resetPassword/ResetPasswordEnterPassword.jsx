@@ -3,6 +3,7 @@ import _ from 'lodash'
 import React from 'react'
 import { reduxForm } from 'redux-form/immutable'
 import { injectIntl } from 'react-intl'
+import {Link} from 'react-router'
 
 // Material-UI
 import RaisedButton from 'material-ui/RaisedButton'
@@ -28,7 +29,9 @@ const ResetPasswordEnterPassword = props => {
       </div>
       <div className={styles.Form__ActionRow}>
         <RaisedButton disabled={pristine || invalid} label={formatMessage(messages.next)} primary type="submit" />
-        <FlatButton secondary label={formatMessage(messages.cancel)} href="/login" />
+        <Link to="login">
+          <FlatButton secondary label={formatMessage(messages.cancel)} />
+        </Link>
       </div>
     </form>
   )

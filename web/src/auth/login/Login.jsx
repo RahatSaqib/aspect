@@ -9,12 +9,12 @@ import {
   injectIntl,
   defineMessages
 } from 'react-intl'
+import {Link} from 'react-router'
 
 // Material-UI
 import Paper from 'material-ui/Paper'
 import LinearProgress from 'material-ui/LinearProgress'
 import RaisedButton from 'material-ui/RaisedButton'
-import FlatButton from 'material-ui/FlatButton'
 import TextField from 'material-ui/TextField'
 
 // Our own imports
@@ -33,7 +33,7 @@ const messages = defineMessages({
   },
   resetPasswordLink: {
     id: 'shared.Login.resetPasswordButton',
-    defaultMessage: 'Forgot Password? Reset Here'
+    defaultMessage: 'Forgot Password?'
   }
 })
 
@@ -93,7 +93,9 @@ class Login extends PureComponent {
                   <Field name="password" component={renderPasswordField} />
                   <br/>
                   <div className={styles.Form__ActionRow}>
-                    <FlatButton primary={true} href="/reset-password" label={formatMessage(messages.resetPasswordLink)} />
+                    <Link className={styles.Left_Align} to="reset-password">
+                      {formatMessage(messages.resetPasswordLink)}
+                    </Link>
                     <RaisedButton disabled={pristine || submitting} label="Log In" secondary={true} type="submit" />
                   </div>
                 </form>

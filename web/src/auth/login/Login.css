@@ -18,6 +18,11 @@
   padding: 30px 0 0 0;
 }
 
+.Form__ActionRow .Left_Align {
+  float: left;
+  line-height: 3em;
+}
+
 .Form__Info{
   text-align: center;
   padding: 10px 0 0 0;

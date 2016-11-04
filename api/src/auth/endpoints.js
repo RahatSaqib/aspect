@@ -96,7 +96,7 @@ module.exports = [
           resetPasswordToken: Joi.string().description('Reset Password Token').required()
         },
         payload: {
-          newPassword: Joi.string().max(100).allow('', null),
+          newPassword: Joi.string().max(100).required(),
           clientName: Joi.string().required(),
           clientId: Joi.string()
         }

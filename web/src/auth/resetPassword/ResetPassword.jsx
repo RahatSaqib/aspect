@@ -5,6 +5,7 @@ import { bindActionCreators } from 'redux'
 import { connect } from 'react-redux'
 import Helmet from 'react-helmet'
 import { injectIntl, FormattedHTMLMessage } from 'react-intl'
+import {Link} from 'react-router'
 
 // Material-UI
 import Paper from 'material-ui/Paper'
@@ -67,7 +68,9 @@ class ResetPassword extends PureComponent {
       },
       adminHelpDialogActions = [
         <FlatButton label={formatMessage(messages.adminHelpClose)} secondary onTouchTap={closeAdminHelpDialog} />,
-        <FlatButton label={formatMessage(messages.backToLogin)} primary href="/login" />
+        <Link to="login">
+          <FlatButton label={formatMessage(messages.backToLogin)} primary />
+        </Link>
       ],
       createResetPasswordToken = formValues => {
         this.setState({
@@ -120,7 +123,9 @@ class ResetPassword extends PureComponent {
                                                                showAdminHelpDialog={showAdminHelpDialog} /> }
                   {stepIndex === 1 && <div className={styles.Form}>
                     <FormattedHTMLMessage {...messages.checkEmailContent} values={{ emailAddress: emailAddress }} />
-                    <FlatButton secondary label={formatMessage(messages.iDidntReceiveAnEmail)} onTouchTap={showAdminHelpDialog} />
+                    <a href="#" onClick={showAdminHelpDialog}>
+                      {formatMessage(messages.iDidntReceiveAnEmail)}
+                    </a>
                   </div> }
                   {stepIndex === 2 && <div>
                     <ResetPasswordEnterPassword onSubmit={updatePassword} onSubmitSuccess={completeProcess} />
@@ -132,7 +137,9 @@ class ResetPassword extends PureComponent {
                   {stepIndex === 3 && <div className={styles.Form}>
                     <FormattedHTMLMessage {...messages.finishContent} values={{ username: user.usernameReminder }} />
                     <div className={styles.Form__ActionRow}>
-                      <FlatButton primary href="/login" label={formatMessage(messages.loginWithMyNewPassword)} />
+                      <Link to="login">
+                        <FlatButton primary label={formatMessage(messages.loginWithMyNewPassword)} />
+                      </Link>
                     </div>
                   </div> }
                 </div>
@@ -151,7 +158,9 @@ class ResetPassword extends PureComponent {
                       <StepContent>
                         <div className={styles.Form}>
                           <FormattedHTMLMessage {...messages.checkEmailContent} values={{ emailAddress: emailAddress }} />
-                          <FlatButton secondary label={formatMessage(messages.iDidntReceiveAnEmail)} onTouchTap={showAdminHelpDialog} />
+                          <a href="#" onClick={showAdminHelpDialog}>
+                            {formatMessage(messages.iDidntReceiveAnEmail)}
+                          </a>
                         </div>
                       </StepContent>
                     </Step>
@@ -170,7 +179,9 @@ class ResetPassword extends PureComponent {
                             <FormattedHTMLMessage {...messages.finishContent} values={{ username: user.usernameReminder }} />
                           </div>
                           <div className={styles.Form__ActionRow}>
-                            <FlatButton primary href="/login" label={formatMessage(messages.loginWithMyNewPassword)} />
+                            <Link to="login">
+                              <FlatButton primary label={formatMessage(messages.loginWithMyNewPassword)} />
+                            </Link>
                           </div>
                         </div>
                       </StepContent>

@@ -3,6 +3,7 @@ import _ from 'lodash'
 import React from 'react'
 import { reduxForm } from 'redux-form/immutable'
 import { injectIntl } from 'react-intl'
+import {Link} from 'react-router'
 
 // Material-UI
 import RaisedButton from 'material-ui/RaisedButton'
@@ -20,12 +21,16 @@ const ResetPasswordEnterEmail = props => {
     <form onSubmit={handleSubmit} className={styles.Form}>
       <div className={styles.Form__Content}>
         <p>{formatMessage(messages.enterEmailAddressContent)}</p>
+        <a href="#" onClick={showAdminHelpDialog}>
+          {formatMessage(messages.iDontHaveAnEmailAddress)}
+        </a>
         <TextInput name="emailAddress" label={formatMessage(messages.emailAddress)} autoFocus maxLength="500" fullWidth />
       </div>
       <div className={styles.Form__ActionRow}>
-        <FlatButton secondary label={formatMessage(messages.iDontHaveAnEmailAddress)} onTouchTap={showAdminHelpDialog} />
         <RaisedButton disabled={pristine || invalid} label={formatMessage(messages.next)} primary type="submit" />
-        <FlatButton secondary label={formatMessage(messages.cancel)} href="/login" />
+        <Link to="login">
+          <FlatButton secondary label={formatMessage(messages.cancel)} />
+        </Link>
       </div>
     </form>
   )

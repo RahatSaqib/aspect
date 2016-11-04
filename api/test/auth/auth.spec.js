@@ -558,7 +558,7 @@ describe('Authentication routes',function(){
       path = '/api/auth/send-reset-password-token/'
     })
 
-    it('should return an OK response regardless of whether the emaill address is valid or not',function(done){
+    it('should return an OK response regardless of whether the email address is valid or not',function(done){
       server.post(path + 'brichards@systemone.id')
         .end(function(err,res){
           assert.equal(res.status, 200)

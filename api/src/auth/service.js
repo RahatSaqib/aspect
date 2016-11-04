@@ -7,7 +7,7 @@ let _ = require('lodash')
 const bcrypt = require('bcrypt')
 const { createFetch, base, accept, header, method, body } = require('http-client')
 require('isomorphic-fetch')
-const sendGridUtil = require('../email/sendGridUtil')
+const emailUtil = require('../email/emailUtil')
 const templateProcessor = require('../email/templateProcessor')
 
 const bcryptCompare = Promise.promisify(bcrypt.compare)
@@ -291,7 +291,7 @@ function* createResetPasswordToken(request){
       }, user.culture),
       inlineImageAttachments = yield* templateProcessor.getInlineImageAttachments(generatedEmail.html)
 
-    yield* sendGridUtil.sendEmail(params.email, generatedEmail.subject, generatedEmail.html, generatedEmail.text, inlineImageAttachments)
+    yield* emailUtil.sendEmail(params.email, generatedEmail.subject, generatedEmail.html, generatedEmail.text, inlineImageAttachments)
 
     yield query('Save reset password token').insert({
       token: resetPasswordToken,
