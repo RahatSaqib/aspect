@@ -325,6 +325,8 @@ function* updatePasswordWithResetPasswordToken(request) {
         resetPasswordToken: null,
         resetPasswordTokenExpires: null
       })
+  } else {
+    return Boom.notFound('The reset password token was not found')
   }
 
   return {

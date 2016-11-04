@@ -3,7 +3,7 @@ import _ from 'lodash'
 import React, { PureComponent, PropTypes } from 'react'
 import { bindActionCreators } from 'redux'
 import { connect } from 'react-redux'
-import { Field, reduxForm } from 'redux-form/immutable'
+import { reduxForm } from 'redux-form/immutable'
 import Helmet from 'react-helmet'
 import {
   injectIntl,
@@ -15,9 +15,9 @@ import {Link} from 'react-router'
 import Paper from 'material-ui/Paper'
 import LinearProgress from 'material-ui/LinearProgress'
 import RaisedButton from 'material-ui/RaisedButton'
-import TextField from 'material-ui/TextField'
 
 // Our own imports
+import TextInput from '../../components/shared/TextInput'
 import { ErrorDisplayContainer } from '../../components/shared/ErrorDisplay'
 import { loginStart } from '../AuthRedux'
 import styles from './Login.css'
@@ -37,33 +37,6 @@ const messages = defineMessages({
   }
 })
 
-const renderUserField = ({ input, meta }) => {
-  return (
-    <TextField
-      floatingLabelText="Username"
-      fullWidth={true}
-      errorStyle={{ float: 'left' }}
-      errorText={meta.touched && meta.error}
-      value={input.value}
-      onChange={input.onChange}
-    />
-  )
-}
-
-const renderPasswordField = ({ input, meta }) => {
-  return (
-    <TextField
-      type="password"
-      floatingLabelText="Password"
-      fullWidth={true}
-      errorStyle={{ float: 'left' }}
-      errorText={meta.touched && meta.error}
-      value={input.value}
-      onChange={input.onChange}
-    />
-  )
-}
-
 class Login extends PureComponent {
 
   static propTypes = {
@@ -73,7 +46,7 @@ class Login extends PureComponent {
   }
 
   render() {
-    const { intl, handleSubmit, pristine, submitting, location } = this.props
+    const { intl, handleSubmit, pristine, submitting, location, initialValues } = this.props
     const { formatMessage } = intl
 
     return (
@@ -88,10 +61,8 @@ class Login extends PureComponent {
               <Paper>
                 <form onSubmit={handleSubmit} className={styles.Form}>
                   { location.query.reason ? <div className={styles.Form__Info}>{formatMessage(messages['reason' +location.query.reason])}</div> : null }
-                  <Field name="user" component={renderUserField} />
-                  <br/>
-                  <Field name="password" component={renderPasswordField} />
-                  <br/>
+                  <TextInput name="user" label="Username" fullWidth={true} autoFocus={_.isEmpty(initialValues.get('user'))} />
+                  <TextInput name="password" type="password" label="Password" fullWidth={true} autoFocus={!_.isEmpty(initialValues.get('user'))} />
                   <div className={styles.Form__ActionRow}>
                     <Link className={styles.Left_Align} to="reset-password">
                       {formatMessage(messages.resetPasswordLink)}
@@ -110,8 +81,9 @@ class Login extends PureComponent {
   }
 }
 
-function mapStateToProps() {
+function mapStateToProps({user: { name }}) {
   return {
+    initialValues: {user: name}
   }
 }
 
