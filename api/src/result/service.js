@@ -8,7 +8,7 @@ const SELECT_LIST_FIELDS = [
   'r.id', 'r.endedOn', 'd.name as deviceName', 'c.name as countryName',
   'st.name as stateName', 'lg.name as lgaName',
   'rc1.name as resultCategory1Name', 'rc2.name as resultCategory2Name',
-  's.sampleId', 'r.patientId', 'a.name as assayName'
+  's.sampleId', 'r.patientId', 'a.name as assayName', 'a.id as assayId'
 ]
 
 const SELECT_SHOW_FIELDS = [

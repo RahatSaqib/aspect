@@ -1,5 +1,6 @@
 let supertest = require('supertest')
 let chai = require('chai')
+let _ = require('lodash')
 let shared = require('../utils/sharedToken')
 
 // This agent refers to PORT where program is runninng.
@@ -10,6 +11,7 @@ describe('Result routes',function(){
 
   let path = '/api/result'
   let resultId = 1
+  let assayId = 1
 
   describe('GET',function(){
 
@@ -31,19 +33,21 @@ describe('Result routes',function(){
         assert.property(res.body.data[0], 'countryName')
         assert.property(res.body.data[0], 'stateName')
         assert.property(res.body.data[0], 'lgaName')
-        assert.property(res.body.data[0], 'resultCategory1Name')
-        assert.property(res.body.data[0], 'resultCategory2Name')
         assert.property(res.body.data[0], 'sampleId')
         assert.property(res.body.data[0], 'patientId')
         assert.property(res.body.data[0], 'assayName')
         assert.property(res.body, 'total')
+
+        resultId = res.body.data[0].id
+        assayId = res.body.data[0].assayId
+
         done()
       })
     })
 
-    it('should return a list of results with jsonData fields if assay is requested', function(done){
+    it('should return a list of results with jsonData fields if TB assay is requested', function(done){
       server
-      .get(path + '?assayId=1')
+      .get(path + '?assayId=' + assayId)
       .set('Authorization', 'Bearer '+shared.token)
       .end(function(err,res){
         assert.equal(res.status, 200)
@@ -57,15 +61,13 @@ describe('Result routes',function(){
         assert.property(res.body.data[0], 'countryName')
         assert.property(res.body.data[0], 'stateName')
         assert.property(res.body.data[0], 'lgaName')
-        assert.property(res.body.data[0], 'resultCategory1Name')
-        assert.property(res.body.data[0], 'resultCategory2Name')
         assert.property(res.body.data[0], 'sampleId')
         assert.property(res.body.data[0], 'patientId')
         assert.property(res.body.data[0], 'assayName')
-        assert.property(res.body.data[0], 'resultText')
-        assert.property(res.body.data[0], 'probes_ProbeA')
+        assert.property(res.body.data[0], 'resultCategory1Name')
+        assert.property(res.body.data[0], 'resultCategory2Name')
         assert.property(res.body, 'total')
-        resultId = res.body.data[0].id
+        assert.typeOf(res.body.extraColumns, 'array')
         done()
       })
     })
