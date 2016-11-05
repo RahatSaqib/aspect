@@ -62,13 +62,11 @@ export class ResultList extends PureComponent {
   static propTypes = {
     fetchAssays: PropTypes.func.isRequired,
     setPageTitle: PropTypes.func.isRequired,
-    table: PropTypes.object.isRequired,
-    assayColumns: PropTypes.object.isRequired
+    table: PropTypes.object.isRequired
   }
 
   state = {
-    filters: this.props.table.get('filters'),
-    assayColumns: this.props.assayColumns.toJS()
+    filters: this.props.table.get('filters')
   }
 
   handleItemIdSelection = (resultId) => {
@@ -81,54 +79,18 @@ export class ResultList extends PureComponent {
 
   handleSubmit = (e) => {
     e.preventDefault()
-    this.props.fetchResults(this.state.filters, undefined, undefined, undefined, undefined, this.state.assayColumns)
+    this.props.fetchResults(this.state.filters, undefined, undefined, undefined, undefined)
   }
 
   handleAssayChange = (e, i, assayId) => {
 
-    const { intl, assays } = this.props
-    const { formatMessage, formatNumber } = intl
-
-    const assay = assayId ? assays.get('items').find(a => a.get('id') === assayId) : null
-    let columns = []
-
-    // add column for category 1 if it applies
-    if (assay){
-      if (assay.get('resultCategory1Label')){
-        const i18nKey = assay.get('resultCategory1i18nKey')
-        columns.push({  db: 'resultCategory1Name',
-                        title: i18nKey && messages[i18nKey] ?
-                          formatMessage(messages[i18nKey]) : assay.get('resultCategory1Label') })
-      }
-
-      // add column for category 2 if it applies
-      if (assay.get('resultCategory2Label')){
-        const i18nKey = assay.get('resultCategory2i18nKey')
-        columns.push({  db: 'resultCategory2Name',
-                        title: i18nKey && messages[i18nKey] ?
-                          formatMessage(messages[i18nKey]) : assay.get('resultCategory2Label') })
-      }
-
-      // now, add any json columns
-      assay.get('resultDataSchema').forEach((v, k) => {
-        if (v.get('list')){
-          columns.push({  db: k,
-                          format: v.get('type') === 'number' ? (n) => { return n ? formatNumber(n) : null } : null,
-                          title: v.get('i18nKey') && messages[v.get('i18nKey')] ?
-                            formatMessage[v.get('i18nKey')] : v.get('title') })
-        }
-      })
-    }
-
     // finally, update state and submit
-    this.setState({ assayColumns: columns,
-                    filters: this.state.filters.set('assayId', assayId) },
+    this.setState({ filters: this.state.filters.set('assayId', assayId) },
                   () => this.handleSubmit(e))
   }
 
   resetResults = () => {
-    this.setState({ assayColumns: [],
-                    filters: this.state.filters.set('sampleId', '').set('assayId', null) })
+    this.setState({ filters: this.state.filters.set('sampleId', '').set('assayId', null) })
     this.props.fetchResults()
   }
 
@@ -155,10 +117,6 @@ export class ResultList extends PureComponent {
                     { db: 'deviceName', title: formatMessage(messages.deviceName) },
                     { db: 'sampleId', title: formatMessage(messages.sampleId) },
                     { db: 'patientId', title: formatMessage(messages.patiendId) }]
-
-    if (this.state.assayColumns){
-      columns = columns.concat(this.state.assayColumns)
-    }
 
     return (
       <div className={styles.Content}>
@@ -206,7 +164,8 @@ export class ResultList extends PureComponent {
           items={ this.props.items }
           table={ this.props.table }
           columns={ columns }
-          extraColumns={ this.state.assayColumns }
+          intl={ intl }
+          messages={ messages }
         />
       </div>
     )
@@ -217,7 +176,6 @@ function mapStateToProps(state) {
   return {
     items: state.result.items,
     table: state.result.table,
-    assayColumns: state.result.assayColumns,
     assays: state.assay
   }
 }

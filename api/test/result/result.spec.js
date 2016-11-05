@@ -41,9 +41,9 @@ describe('Result routes',function(){
       })
     })
 
-    it('should return a list of results with jsonData fields as requested', function(done){
+    it('should return a list of results with jsonData fields if assay is requested', function(done){
       server
-      .get(path + '?jsonFields=resultText&jsonFields=probes.ProbeA')
+      .get(path + '?assayId=1')
       .set('Authorization', 'Bearer '+shared.token)
       .end(function(err,res){
         assert.equal(res.status, 200)

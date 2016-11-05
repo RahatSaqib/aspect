@@ -14,8 +14,7 @@ module.exports = [
       validate: {
         query: Object.assign({
           sampleId: Joi.string().allow('').description('Filter for sample ID'),
-          assayId: Joi.string().allow('').description('Filter for assay ID'),
-          jsonFields: Joi.array().single().description('Specify which fields to select from the resultDataJSON')
+          assayId: Joi.string().allow('').description('Filter for assay ID')
         }, validateSortPageParams())
       }
     }

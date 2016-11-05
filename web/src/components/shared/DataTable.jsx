@@ -47,7 +47,8 @@ export class DataTable extends PureComponent {
       total: PropTypes.number.isRequired
     }).isRequired,
     columns: PropTypes.array.isRequired,
-    extraColumns: PropTypes.array
+    intl: PropTypes.object,
+    messages: PropTypes.object
   }
 
   state = {
@@ -95,7 +96,7 @@ export class DataTable extends PureComponent {
 
     const table = this.props.table
 
-    this.props.handleFetch(table.filters, col || table.sortCol, newSort || table.sortDir, page == null ? table.page : page, table.pageSize, this.props.extraColumns)
+    this.props.handleFetch(table.filters, col || table.sortCol, newSort || table.sortDir, page == null ? table.page : page, table.pageSize)
   }
 
   getPager(page, totalPages){
@@ -142,7 +143,9 @@ export class DataTable extends PureComponent {
   render() {
     const {
       items,
-      table
+      table,
+      intl,
+      messages
     } = this.props
 
     // show loading indicator?
@@ -154,6 +157,17 @@ export class DataTable extends PureComponent {
     const page = table.page
     const totalPages = Math.ceil(table.total / table.pageSize)
     let pagerItems = this.getPager(page, totalPages)
+
+    let columns = this.props.columns
+
+    // add any extra columns we received from the api
+    if (table.get('extraColumns')){
+      table.get('extraColumns').forEach((column) => {
+        columns.push({  db: column.get('db'),
+                        format: column.get('type') === 'number' ? (n) => { return isNaN(n) ? null : intl.formatNumber(n) } : null,
+                        title: column.get('i18nKey') && messages[column.get('i18nKey')] ?
+                          intl.formatMessage[column.get('i18nKey')] : column.get('title') }) })
+    }
 
     return (
       <div>

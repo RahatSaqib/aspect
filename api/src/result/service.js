@@ -26,21 +26,53 @@ const SORT_FIELDS = [
 ]
 
 function* listResults(request){
-  const {query, auth} = request
+  const { query, auth } = request
   let selectFields = _.clone(SELECT_LIST_FIELDS)
   let sortableFields = _.clone(SORT_FIELDS)
 
-  // did the client request specific selectFields from
-  // the resultData JSON column?
-  _.each(request.query.jsonFields, (f) => {
-    if (f){
-      selectFields.push(knex.raw('JSON_EXTRACT(resultData, ?) as ?', [`$.${f}`, f.replace('.', '_')]))
-      sortableFields.push(f.replace('.', '_'))
+  let assayColumns = []
+  if (query.assayId){
+
+    const [assay] = yield knex('Assay as a').where('a.id', query.assayId)
+
+    if (assay.resultCategory1Label){
+      selectFields.push('rc1.name as resultCategory1Name')
+      sortableFields.push('resultCategory1Name')
+      assayColumns.push({
+        db: 'resultCategory1Name',
+        type: 'string',
+        title: assay.resultCategory1Label,
+        i18nKey: assay.resultCategory1i18nKey })
     }
-  })
+
+    if (assay.resultCategory2Label){
+      selectFields.push('rc2.name as resultCategory2Name')
+      sortableFields.push('resultCategory2Name')
+      assayColumns.push({
+        db: 'resultCategory2Name',
+        type: 'string',
+        title: assay.resultCategory2Label,
+        i18nKey: assay.resultCategory2i18nKey })
+    }
+
+    const resultDataSchema = JSON.parse(assay.resultDataSchema)
+    _.each(resultDataSchema, (value, key) => {
+      if (value.list){
+        selectFields.push(knex.raw('JSON_EXTRACT(resultData, ?) as ?', [`$.${key}`, key.replace('.', '_')]))
+
+        sortableFields.push(key.replace('.', '_'))
+
+        assayColumns.push({
+          db: key.replace('.', '_'),
+          type: value.type,
+          title: value.title,
+          i18nKey: value.i18nKey })
+      }
+    })
+  }
 
   // now we know if the sort that was passed is valid:
-  if (!sortableFields.includes(query.sortCol)){
+  if (query.sortCol && !sortableFields.includes(query.sortCol)){
     return Boom.badRequest()
   }
 
@@ -83,7 +115,7 @@ function* listResults(request){
     })
   }
 
-  const result = { ok: true, total, length: data.length, data }
+  const result = { ok: true, total, length: data.length, data, extraColumns: assayColumns }
 
   return result
 }
