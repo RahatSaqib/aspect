@@ -103,12 +103,12 @@ function* listResults(request){
   // return result when both queries are finished
   const [{count: total}, data] = yield Promise.all([getCount, getItems])
 
-  // if any json fields requested, parse them
-  if (request.query.jsonFields){
+  // if any json data fields requested, parse them
+  if (assayColumns){
     _.each(data, (d) => {
-      _.each(request.query.jsonFields, (f) => {
-        if (f){
-          const path = f.replace('.', '_')
+      _.each(assayColumns, (c) => {
+        if (c && c.db.indexOf('resultCategory') === -1){
+          const path = c.db.replace('.', '_')
           _.set(d, path, JSON.parse(d[path]))
         }
       })

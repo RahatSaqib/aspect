@@ -164,7 +164,7 @@ export class DataTable extends PureComponent {
     if (table.get('extraColumns')){
       table.get('extraColumns').forEach((column) => {
         columns.push({  db: column.get('db'),
-                        format: column.get('type') === 'number' ? (n) => { return isNaN(n) ? null : intl.formatNumber(n) } : null,
+                        format: column.get('type') === 'number' ? (n) => { return !n || isNaN(n) ? null : intl.formatNumber(n) } : null,
                         title: column.get('i18nKey') && messages[column.get('i18nKey')] ?
                           intl.formatMessage[column.get('i18nKey')] : column.get('title') }) })
     }
