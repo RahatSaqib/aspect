@@ -103,7 +103,7 @@ function* listResults(request){
   // return result when both queries are finished
   const [{count: total}, data] = yield Promise.all([getCount, getItems])
 
-  // if any json data fields requested, parse them
+  // if assay specified columns from the resultData field, parse them to valid JSON
   if (assayColumns){
     _.each(data, (d) => {
       _.each(assayColumns, (c) => {

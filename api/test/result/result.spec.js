@@ -44,7 +44,7 @@ describe('Result routes',function(){
       })
     })
 
-    it('should return a list of results with jsonData fields if TB assay is requested', function(done){
+    it('should return a list of results with assay-specific fields if TB assay is requested', function(done){
       server
       .get(path + '?assayId=' + assayId)
       .set('Authorization', 'Bearer '+shared.token)
