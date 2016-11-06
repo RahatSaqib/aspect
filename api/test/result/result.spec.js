@@ -1,6 +1,5 @@
 let supertest = require('supertest')
 let chai = require('chai')
-let _ = require('lodash')
 let shared = require('../utils/sharedToken')
 
 // This agent refers to PORT where program is runninng.
