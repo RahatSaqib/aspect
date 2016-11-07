@@ -176,10 +176,14 @@ export class DeviceDetail extends PureComponent {
   }
 
   renderContent() {
-    const { device, editable, intl: { formatMessage, formatRelative } } = this.props
+    const { device, editable, intl: { formatMessage, formatDate } } = this.props
     if (!device) {
       return
     }
+
+    // get date for current locale, 'date' - is a Date object or string value in DateTime format
+    const getFormattedDate = (date) => { return date !== null && date !== '' && isFinite(new Date(date)) ? formatDate(date) : date }
+
     const fields = [
       {
         label: formatMessage(messages.fieldFirstConnected),
@@ -187,11 +191,11 @@ export class DeviceDetail extends PureComponent {
       },
       {
         label: formatMessage(messages.fieldFirstApprovedOn),
-        value: device.get('id')
+        value: getFormattedDate(device.get('approvedOn')) || ''
       },
       {
         label: formatMessage(messages.fieldFirstApprovedBy),
-        value: device.get('id')
+        value: device.get('approvedBy') || ''
       },
       {
         label: formatMessage(messages.fieldSerial),
@@ -199,7 +203,7 @@ export class DeviceDetail extends PureComponent {
       },
       {
         label: formatMessage(messages.fieldLastSeen),
-        value: formatRelative(device.get('lastSeen'))
+        value: getFormattedDate(device.get('lastSeen')) || ''
       },
       {
         label: formatMessage(messages.fieldTotalNumberOfTests),
@@ -207,13 +211,19 @@ export class DeviceDetail extends PureComponent {
       }
     ]
     return (
-      <div className={styles.FieldsContainer}>
-        {editable ?
-        this.renderFormContainer() :
-        this.renderReadOnlyFields()}
-        <ReadOnlyFields
-          fields={fields}
-        />
+      <div className={'pure-g ' + styles.RowContainer}>
+        <div className='pure-u-lg-1-2'>
+          <div>
+            {editable ? this.renderFormContainer() : this.renderReadOnlyFields()}
+          </div>
+        </div>
+        <div className='pure-u-lg-1-2'>
+          <div>
+            <ReadOnlyFields
+              fields={fields}
+            />
+          </div>
+        </div>
       </div>
     )
   }
