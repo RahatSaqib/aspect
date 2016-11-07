@@ -126,8 +126,7 @@ function setRefreshToken(userId, clientName, clientId, refreshToken, now){
     }, {
       token: refreshToken,
       expires: expires
-    }
-  ])
+    }])
 }
 
 function* refreshToken(request){
