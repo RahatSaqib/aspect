@@ -156,9 +156,9 @@ export class PersonDetail extends PureComponent {
               <h2 className={'pure-visible-xs ' + styles.Form__Header}>
                 {formatMessage(messages.contactDetails)}
               </h2>
-              {!loading && <ContactDetailsForm initialValues={contactDetails} partners={this.state.partners}
-                                               showNotesField userIsAdmin onSubmit={this.saveContactDetails}
-                                               onSubmitSuccess={saveContactDetailsSucceeded} />}
+              <ContactDetailsForm loading={loading} initialValues={contactDetails} partners={this.state.partners}
+                                  showNotesField userIsAdmin onSubmit={this.saveContactDetails}
+                                  onSubmitSuccess={saveContactDetailsSucceeded} />
             </Tab>
             {userIsAdmin && <Tab icon={<Lock />}
                  label={<span className="pure-hidden-xs">{formatMessage(messages.systemAccessControl)}</span>}>
@@ -166,8 +166,8 @@ export class PersonDetail extends PureComponent {
               <h2 className={'pure-visible-xs ' + styles.Form__Header}>
                 {formatMessage(messages.systemAccessControl)}
               </h2>
-              {!loading && <LoginDetailsForm initialValues={loginDetails} onSubmit={this.saveLoginDetails}
-                                             onSubmitSuccess={saveLoginDetailsSucceeded} />}
+              <LoginDetailsForm loading={loading} initialValues={loginDetails} onSubmit={this.saveLoginDetails}
+                                onSubmitSuccess={saveLoginDetailsSucceeded} />
             </Tab>}
             <Tab icon={<Language />}
                  label={<span className="pure-hidden-xs">{formatMessage(messages.languageAndTimezone)}</span>}>
@@ -175,9 +175,9 @@ export class PersonDetail extends PureComponent {
               <h2 className={'pure-visible-xs ' + styles.Form__Header}>
                 {formatMessage(messages.languageAndTimezone)}
               </h2>
-              {!loading && <UserPreferencesForm initialValues={userPreferences}
-                                                onSubmit={this.saveUserPreferences}
-                                                onSubmitSuccess={saveUserPreferencesSucceeded} />}
+              <UserPreferencesForm loading={loading} initialValues={userPreferences}
+                                   onSubmit={this.saveUserPreferences}
+                                   onSubmitSuccess={saveUserPreferencesSucceeded} />
             </Tab>
           </Tabs>}
         </Paper>

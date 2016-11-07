@@ -156,5 +156,6 @@ export default _.flowRight(
   injectIntl,
   reduxForm({
     form: 'loginDetails',
+    enableReinitialize: true,
     validate
   }))(LoginDetailsForm)

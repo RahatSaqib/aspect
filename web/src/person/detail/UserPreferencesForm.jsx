@@ -73,6 +73,7 @@ const UserPreferencesForm = props => {
 export default _.flowRight(
   injectIntl,
   reduxForm({
+    enableReinitialize: true,
     form: 'userPreferences'
   }))(UserPreferencesForm)
 
