@@ -24,7 +24,7 @@ const messages = defineMessages({
   },
   passwordStrengthMeterMinLength: {
     id: 'pages.StrongPasswordInput.passwordStrengthMeterMinLength',
-    defaultMessage: 'Is at least 6 characters long'
+    defaultMessage: 'Is at least {minLength} characters long'
   },
   passwordStrengthMeterContainsNumber: {
     id: 'pages.StrongPasswordInput.passwordStrengthMeterContainsNumber',
@@ -69,20 +69,18 @@ class StrongPasswordInput extends React.PureComponent {
   }
 
   render() {
-    const {input, meta, textFieldProps, popOverProps, intl} = this.props,
-      {touched, error} = meta,
+    const {input, meta: {touched, dirty, error},
+        textFieldProps, popOverProps, intl} = this.props,
       {formatMessage} = intl,
       passwordStrengthRules = {
-        minLength: input.value.length >= 6,
+        minLength: input.value.length > 7,
         containsNumber: /\d/.test(input.value),
         mixUpperAndLowerCase: /(?=.*?[a-z])(?=.*?[A-Z])/.test(input.value),
         containSpecialCharacter: /(?=.*?[`~!@#$%\^&*()\-=_+\\\[\]{}/?,.<>])/.test(input.value)
-      },
-      passwordStrengthResults = {
-        isWeak: !passwordStrengthRules.minLength,
-        isOkay: passwordStrengthRules.minLength,
-        isStrong: passwordStrengthRules.minLength && passwordStrengthRules.containsNumber &&
-          passwordStrengthRules.mixUpperAndLowerCase && passwordStrengthRules.containSpecialCharacter
+      }, passwordStrengthResults = {
+        isWeak: !passwordStrengthRules.minLength || (!passwordStrengthRules.containsNumber && !passwordStrengthRules.containSpecialCharacter),
+        isOkay: passwordStrengthRules.minLength && (passwordStrengthRules.containsNumber || passwordStrengthRules.containSpecialCharacter),
+        isStrong: passwordStrengthRules.minLength && passwordStrengthRules.containsNumber && passwordStrengthRules.mixUpperAndLowerCase && passwordStrengthRules.containSpecialCharacter
       },
       blue = 'rgb(78, 145, 252)',
       red = 'rgb(226, 18, 18)',
@@ -115,7 +113,7 @@ class StrongPasswordInput extends React.PureComponent {
         (passwordStrengthResults.isWeak ? weakStyle : okayStyle)
     return (<div>
       <TextField {...input} errorStyle={{ float: 'left' }}
-                 errorText={touched && error} {...textFieldProps}
+                 errorText={(touched || dirty) && error} {...textFieldProps}
                  className={textFieldProps.fullWidth ? '' : styles.Form__Field}
                  onFocus={this.handleFocus} onBlur={this.handleBlur} />
       <Popover anchorEl={this.state.anchorEl}
@@ -126,7 +124,7 @@ class StrongPasswordInput extends React.PureComponent {
         <ul className={styles.List__Unstyled}>
           <li>
             {passwordStrengthRules.minLength ? <CheckIcon style={checkIconStyle} /> : <CloseIcon  style={crossIconStyle} />}
-            <span style={strengthRuleStyle}>{formatMessage(messages.passwordStrengthMeterMinLength)}</span>
+            <span style={strengthRuleStyle}>{formatMessage(messages.passwordStrengthMeterMinLength, {minLength: 8})}</span>
           </li>
           <li>
             {passwordStrengthRules.containsNumber ? <CheckIcon style={checkIconStyle} /> : <CloseIcon  style={crossIconStyle} />}
@@ -150,18 +148,27 @@ const intlStrongPasswordInput = injectIntl(StrongPasswordInput)
 
 const renderFormField = props => {
   const {name, label, fullWidth, disabled, maxLength, autoFocus,
-    anchorOrigin, targetOrigin} = props
-  return <Field name={name} textFieldProps={{
-    floatingLabelText: label,
-    fullWidth: fullWidth,
-    autoFocus: autoFocus,
-    disabled: disabled,
-    maxLength: maxLength,
-    type: 'password'
-  }} popOverProps={{
-    anchorOrigin: anchorOrigin,
-    targetOrigin: targetOrigin
-  }} component={intlStrongPasswordInput} />
+    anchorOrigin, targetOrigin, minLength, requiresNumber, requiresMixUpperAndLowerCase,
+    requiresSpecialCharacter} = props
+  return <Field name={name} component={intlStrongPasswordInput}
+                textFieldProps={{
+                  floatingLabelText: label,
+                  fullWidth: fullWidth,
+                  autoFocus: autoFocus,
+                  disabled: disabled,
+                  maxLength: maxLength,
+                  type: 'password'
+                }}
+                popOverProps={{
+                  anchorOrigin: anchorOrigin,
+                  targetOrigin: targetOrigin
+                }}
+                validationProps={{
+                  minLength,
+                  requiresNumber,
+                  requiresMixUpperAndLowerCase,
+                  requiresSpecialCharacter
+                }} />
 }
 
 export default renderFormField

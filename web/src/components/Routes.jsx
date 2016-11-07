@@ -12,6 +12,7 @@ import LoggedInShell from '../components/layouts/LoggedInShell'
 // "Pages"
 import { NotFoundContainer } from '../error/notFound/NotFound'
 import { LoginContainer } from '../auth/login/Login'
+import ResetPasswordContainer from '../auth/resetPassword/ResetPassword'
 import { DashboardContainer } from '../dashboard/dashboard/Dashboard'
 import { InventoryContainer } from '../dashboard/inventory/Inventory'
 import { MaintenanceContainer } from '../dashboard/maintenance/Maintenance'
@@ -57,6 +58,7 @@ const routes =
           render={applyRouterMiddleware(useScroll()) }>
     <Route component={App} path="/">
       <Route component={LoginContainer} path="login" />
+      <Route component={ResetPasswordContainer} path="reset-password" />
       <Route component={LoggedInShell}
         onChange={(prevState, nextState, replace) => requireAuth(nextState, replace) }>
 

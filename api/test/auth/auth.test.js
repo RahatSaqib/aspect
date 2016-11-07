@@ -7,19 +7,39 @@ const validPassword = 'test07'
 const validHashedPassword = '$2a$10$blGsMw08vX52YoZUnI18cOTluN170WvPJq1XApyif8Y2PuZThzK5K' // = test07
 
 describe('auth endpoints', function () {
-  let dbSpy, jwt, endpoint
+  let dbSpy, jwt, endpoint, templateProcessorFake, emailUtilFake
   const fakeConfig = { secret: '8rU7FITwHV30jhkcXvjOjoSvy2Tv2bZT', passwordAttempts: 5 },
-    now = new Date(), clock = sinon.useFakeTimers(now.getTime())
+    now = new Date(), clock = sinon.useFakeTimers(now.getTime()),
+    generatedEmail = {html: '<html><body><h1>Howdy!</h1></body></html>', text: 'Howdy!', subject: 'Hi There'},
+    inlineImageAttachments = [{ value: 'This is an inline image to be inserted into the email' }]
 
   function setupAuthRoutes(method, path) {
     dbSpy = require('../utils/dbSpy')
     sinon.spy(dbSpy, 'query')
     jwt = require('jsonwebtoken')
     sinon.spy(jwt, 'sign')
+    templateProcessorFake = {
+      process: function* () {
+        return yield Promise.resolve(generatedEmail)
+      },
+      getInlineImageAttachments: function* () {
+        return yield Promise.resolve(inlineImageAttachments)
+      }
+    }
+    sinon.spy(templateProcessorFake, 'process')
+    sinon.spy(templateProcessorFake, 'getInlineImageAttachments')
+    emailUtilFake = {
+      sendEmail: function* () {
+        return yield Promise.resolve()
+      }
+    }
+    sinon.spy(emailUtilFake, 'sendEmail')
     let service = proxyquire.noCallThru().load('../../src/auth/service', {
       'jsonwebtoken': jwt,
       '../db': dbSpy,
-      '../config': fakeConfig
+      '../config': fakeConfig,
+      '../email/emailUtil': emailUtilFake,
+      '../email/templateProcessor': templateProcessorFake
     })
     let endpoints = proxyquire.noCallThru().load('../../src/auth/endpoints', {
       './service': service
@@ -702,6 +722,203 @@ describe('auth endpoints', function () {
             .thenCall(done)
             .execute()
         })
+      })
+    })
+  })
+
+  describe('/auth/send-reset-password-token POST', function() {
+    const requestData = {
+      params: {
+        email: 'email@example.com'
+      }
+    }
+
+    beforeEach(function(){
+      setupAuthRoutes('POST', '/auth/send-reset-password-token/{email}')
+    })
+
+    describe('when a single user exists with the email address provided', function () {
+      const user = { id: 3, name: 'user-name', culture: 'fr-FR' }
+
+      beforeEach(function () {
+        dbSpy.query.for('Get user details from email address').resolvesWith([user])
+      })
+
+      it('should respond with ok', function (done) {
+        endpointUtils.callHandlerOn(endpoint)
+          .with(requestData)
+          .handleResponseWith(function (response) {
+            assert.isOk(response.ok)
+          })
+          .thenCall(done)
+          .execute()
+      })
+
+      it('should save a reset password token', function (done) {
+        endpointUtils.callHandlerOn(endpoint)
+          .with(requestData)
+          .handleResponseWith(function () {
+            const updateUserDetails = dbSpy.query.withArgs('Save reset password token').lastCall.returnValue.update.lastCall.args[0]
+            assert.isOk(updateUserDetails.resetPasswordToken)
+            assert.equal(updateUserDetails.resetPasswordTokenExpires.toString(), (new Date(now.getTime() + 3600000)).toString())
+          })
+          .thenCall(done)
+          .execute()
+      })
+
+      it('should send an email with the user to the user', function (done) {
+        endpointUtils.callHandlerOn(endpoint)
+          .with(requestData)
+          .handleResponseWith(function () {
+            assert.equal(templateProcessorFake.process.lastCall.args[0], 'resetPassword')
+            assert.equal(templateProcessorFake.process.lastCall.args[1].name, user.name)
+            assert.isOk(templateProcessorFake.process.lastCall.args[1].resetPasswordToken)
+            assert.equal(templateProcessorFake.process.lastCall.args[2], user.culture)
+            assert.deepEqual(templateProcessorFake.getInlineImageAttachments.lastCall.args, [generatedEmail.html])
+            assert.deepEqual(emailUtilFake.sendEmail.lastCall.args,
+              [requestData.params.email, generatedEmail.subject, generatedEmail.html, generatedEmail.text,
+                inlineImageAttachments])
+          })
+          .thenCall(done)
+          .execute()
+      })
+    })
+
+    describe('when multiple users exist with the email address provided', function () {
+      const users = [{ id: 3, name: 'user-name', culture: 'fr-FR' }, { id: 4, name: 'another-user-name', culture: 'en-US' }]
+
+      beforeEach(function () {
+        dbSpy.query.for('Get user details from email address').resolvesWith(users)
+      })
+
+      it('should respond with a conflict response', function (done) {
+        endpointUtils.callHandlerOn(endpoint)
+          .with(requestData)
+          .handleResponseWith(function (response) {
+            assert.equal(response.output.statusCode, 409)
+            assert.deepEqual(response.output.payload, {
+              statusCode: 409,
+              error: 'Conflict',
+              message: 'Could not pinpoint the user from the email address provided'
+            })
+          })
+          .thenCall(done)
+          .execute()
+      })
+    })
+
+    describe('when no users exist with the email address provided', function () {
+      beforeEach(function () {
+        dbSpy.query.for('Get user details from email address').resolvesWith([])
+      })
+
+      it('should respond with ok so that intruders can\'t use this endpoint to determine user details', function (done) {
+        endpointUtils.callHandlerOn(endpoint)
+          .with(requestData)
+          .handleResponseWith(function (response) {
+            assert.isOk(response.ok)
+          })
+          .thenCall(done)
+          .execute()
+      })
+    })
+  })
+
+  describe('/auth/update-password PUT', function() {
+    const requestData = {
+      params: {
+        resetPasswordToken: 'this doesn\'t exist'
+      },
+      payload: {
+        newPassword: 'New Password',
+        clientName: 'Mocha/Chai',
+        clientId: 'Client ID'
+      }
+    }
+
+    beforeEach(function(){
+      setupAuthRoutes('PUT', '/auth/update-password/{resetPasswordToken}')
+    })
+
+    describe('when reset password token doesn\'t exist', function () {
+      beforeEach(function () {
+        dbSpy.query.for('Get user with reset password token').resolvesWith(undefined)
+      })
+
+      it('should respond with a 404 response', function (done) {
+        endpointUtils.callHandlerOn(endpoint)
+          .with(requestData)
+          .handleResponseWith(function (response) {
+            assert.equal(response.output.statusCode, 404)
+            assert.deepEqual(response.output.payload, {
+              statusCode: 404,
+              error: 'Not Found',
+              message: 'The reset password token was not found'
+            })
+          })
+          .thenCall(done)
+          .execute()
+      })
+    })
+
+    describe('when reset password token has expired', function () {
+      beforeEach(function () {
+        const now = new Date()
+        dbSpy.query.for('Get user with reset password token').resolvesWith(
+          {resetPasswordTokenExpires: new Date(now.getTime() - 1), id: 1, username: 'a-username'})
+      })
+
+      it('should respond with a 410 (Resource Gone) response', function (done) {
+        endpointUtils.callHandlerOn(endpoint)
+          .with(requestData)
+          .handleResponseWith(function (response) {
+            assert.equal(response.output.statusCode, 410)
+            assert.deepEqual(response.output.payload, {
+              statusCode: 410,
+              error: 'Gone',
+              message: 'The reset password token is no longer valid'
+            })
+          })
+          .thenCall(done)
+          .execute()
+      })
+    })
+
+    describe('when reset password token is valid', function () {
+      const userDetails = {resetPasswordTokenExpires: new Date(now.getTime() + 60000), id: 1, username: 'valid-username'}
+
+      beforeEach(function () {
+        dbSpy.query.for('Get user with reset password token').resolvesWith(userDetails)
+      })
+
+      it('should respond with ok and the username', function (done) {
+        endpointUtils.callHandlerOn(endpoint)
+          .with(requestData)
+          .handleResponseWith(function (response) {
+            assert.deepEqual(response, {
+              ok: true,
+              username: userDetails.username
+            })
+          })
+          .thenCall(done)
+          .execute()
+      })
+
+      it('should save the password details for the user', function (done) {
+        endpointUtils.callHandlerOn(endpoint)
+          .with(requestData)
+          .handleResponseWith(function () {
+            const updateUserDetails = dbSpy.query.withArgs('Save password for user').lastCall.returnValue.update.lastCall.args[0]
+            assert.equal(updateUserDetails.lockedOut, 0)
+            assert.equal(updateUserDetails.failedPasswordAttempts, 0)
+            assert.equal(updateUserDetails.legacyPassword, 0)
+            assert.isOk(updateUserDetails.password)
+            assert.equal(updateUserDetails.lastPasswordChange.toString(), now.toString())
+            assert.isNull(updateUserDetails.resetPasswordToken)
+            assert.isNull(updateUserDetails.resetPasswordTokenExpires)
+          })
+          .thenCall(done)
+          .execute()
       })
     })
   })

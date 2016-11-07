@@ -51,6 +51,8 @@ function* up(knex){
     user.boolean('lockedOut').notNullable()
     user.integer('failedPasswordAttempts').unsigned().notNullable()
     user.boolean('legacyPassword').notNullable().defaultTo(0)
+    user.string('resetPasswordToken', 36)
+    user.dateTime('resetPasswordTokenExpires')
     user.charset('utf8')
   })
 
@@ -505,6 +507,7 @@ function* down(knex){
   yield knex.schema.dropTableIfExists('ConsumableReason')
   yield knex.schema.dropTableIfExists('Unit')
   yield knex.schema.dropTableIfExists('Consumable')
+  yield knex.schema.dropTableIfExists('ResetPassword')
   yield knex.schema.dropTableIfExists('ResultCategoryAssay')
   yield knex.schema.dropTableIfExists('ResultType')
   yield knex.schema.dropTableIfExists('ResultCategory')

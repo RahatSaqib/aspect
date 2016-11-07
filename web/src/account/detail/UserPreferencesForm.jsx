@@ -64,7 +64,7 @@ const UserPreferencesForm = props => {
                disabled={loading || saving} component={renderLanguageField}  />
       </div>
       <div className={styles.Form__ActionRow}>
-        <RaisedButton disabled={pristine || invalid || loading} label={formatMessage(messages.save)} secondary={true} type="submit" />
+        <RaisedButton disabled={pristine || invalid || loading} label={formatMessage(messages.save)} secondary type="submit" />
       </div>
     </form>
   )

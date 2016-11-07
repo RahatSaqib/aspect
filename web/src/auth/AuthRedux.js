@@ -1,10 +1,9 @@
 import { stringify } from 'querystring'
 import Immutable from 'immutable'
-import config from 'config'
 import jwt_decode from 'jwt-decode'
 import { browserHistory } from 'react-router'
-
-import * as fetchUtils from '../shared/utils/fetch'
+import { SubmissionError } from 'redux-form'
+import { aspectFetch, getHeaders, getBrowserNameAndVersion } from '../shared/utils/fetch'
 import * as localStorage from '../shared/utils/localStorage'
 import { addError } from '../error/ErrorRedux'
 
@@ -16,7 +15,8 @@ export const types = {
   LOGOUT_SUCCESS: 'LOGOUT_SUCCESS',
   CHANGE_CULTURE: 'CHANGE_CULTURE',
   TOGGLE_DRAWER: 'TOGGLE_DRAWER',
-  CHANGE_TIMEZONE: 'CHANGE_TIMEZONE'
+  CHANGE_TIMEZONE: 'CHANGE_TIMEZONE',
+  RESET_PASSWORD_ENTER_PASSWORD_SUCCESS: 'RESET_PASSWORD_ENTER_PASSWORD_SUCCESS'
 }
 /*
  * ---------------- Action Creators -----------------
@@ -124,12 +124,12 @@ export function loginStart(login) {
 
     // In this case, we return a promise to wait for.
     // This is not required by thunk middleware, but it is convenient for us.
-    const clientName = fetchUtils.getBrowserNameAndVersion() + ' on ' + window.navigator.platform
+    const clientName = getBrowserNameAndVersion() + ' on ' + window.navigator.platform
 
-    return fetch(config.aspectApi + '/auth',
+    return aspectFetch('/auth',
       {
         method: 'POST',
-        headers: fetchUtils.getHeaders(),
+        headers: getHeaders(),
         body: JSON.stringify({
           name: user,
           password: password,
@@ -137,7 +137,6 @@ export function loginStart(login) {
           clientName: clientName
         })
       })
-      .then(fetchUtils.handleFetchResponse)
       .then(json => {
 
         let jwt = storeAccess(json)
@@ -178,16 +177,15 @@ export function refreshStart() {
     }
 
     // try to get a new access token:
-    fetch(config.aspectApi + '/auth/refresh',
+    aspectFetch('/auth/refresh',
       {
         method: 'POST',
-        headers: fetchUtils.getHeaders(),
+        headers: getHeaders(),
         body: JSON.stringify({
           token: localStorage.getRefreshToken(),
           clientId: localStorage.getClientId()
         })
       })
-      .then(fetchUtils.handleFetchResponse)
       .then(json => {
         let jwt = storeAccess(json)
 
@@ -209,6 +207,54 @@ function storeAccess(json) {
   localStorage.updateTimezone(jwt.timezone)
   return jwt
 }
+
+function createResetPasswordEnterPasswordSuccess(username) {
+  return {
+    type: types.RESET_PASSWORD_ENTER_PASSWORD_SUCCESS,
+    username
+  }
+}
+
+export function resetPasswordEnterEmailAddress(emailAddress) {
+  return function () {
+    const clientName = getBrowserNameAndVersion() + ' on ' + window.navigator.platform
+    return aspectFetch(`/auth/send-reset-password-token/${emailAddress}`,
+      {
+        method: 'POST',
+        headers: getHeaders(),
+        body: JSON.stringify({
+          clientId: localStorage.getClientId(),
+          clientName: clientName
+        })
+      })
+      .catch(err => {
+        throw new SubmissionError({_error: err.message})
+      })
+  }
+}
+
+export function resetPasswordEnterPassword(resetPasswordToken, newPassword) {
+  return function (dispatch) {
+    const clientName = getBrowserNameAndVersion() + ' on ' + window.navigator.platform
+    return aspectFetch(`/auth/update-password/${resetPasswordToken}`,
+      {
+        method: 'PUT',
+        headers: getHeaders(),
+        body: JSON.stringify({
+          newPassword: newPassword,
+          clientId: localStorage.getClientId(),
+          clientName: clientName
+        })
+      })
+      .then(json => {
+        dispatch(createResetPasswordEnterPasswordSuccess(json.username))
+      })
+      .catch(err => {
+        throw new SubmissionError({_error: err.message})
+      })
+  }
+}
+
 /*
  * ---------------- Reducers -----------------
  */
@@ -257,6 +303,10 @@ export default function authReducer(state = initialState, action) {
   case types.TOGGLE_DRAWER:
     return state.merge({
       drawerOpen: action.drawerOpen
+    })
+  case types.RESET_PASSWORD_ENTER_PASSWORD_SUCCESS:
+    return state.merge({
+      name: action.username
     })
   }
   return state
