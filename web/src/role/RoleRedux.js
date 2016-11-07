@@ -22,7 +22,7 @@ function createReceivePartnersAndRolesForSelectList(partners) {
   }
 }
 
-const cacheExpiryTime = 300000 //five minutes
+const cacheExpiryTime = 5 * 60 * 1000 //five minutes
 
 export const fetchPartnersAndRolesForSelectList = function(partnersAndRolesForSelectList, forceRefresh) {
   return dispatch => {

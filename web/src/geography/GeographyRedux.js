@@ -61,14 +61,14 @@ function createReceiveLgasForLocationSelector(lgas, selectedCountryId, selectedS
   }
 }
 
-const fiveMinutes = 300000 //five minutes
+const cacheExpiryTime = 5 * 60 * 1000 //five minutes
 
 export const fetchCountriesForLocationSelector = function(forceRefresh, countriesState,
                                                           selectedCountryId, selectedStateId) {
   return dispatch => {
     const now = new Date()
     if(!countriesState.get('loading') && (forceRefresh || !countriesState.get('lastRefreshed') ||
-      Math.abs(now.getTime() - countriesState.get('lastRefreshed').getTime()) > fiveMinutes)) {
+      Math.abs(now.getTime() - countriesState.get('lastRefreshed').getTime()) > cacheExpiryTime)) {
       dispatch(createRequestCountriesForLocationSelector())
       let path = '/geography/country-select-list'
       if(selectedCountryId) {
@@ -88,7 +88,7 @@ export const fetchStatesForLocationSelector = function(forceRefresh, selectedCou
   return dispatch => {
     const now = new Date()
     if(!selectedCountry.getIn(['children', 'loading']) && (forceRefresh || !selectedCountry.getIn(['children', 'lastRefreshed']) ||
-      Math.abs(now.getTime() - selectedCountry.getIn(['children', 'lastRefreshed']).getTime()) > fiveMinutes)) {
+      Math.abs(now.getTime() - selectedCountry.getIn(['children', 'lastRefreshed']).getTime()) > cacheExpiryTime)) {
       dispatch(createRequestStatesForLocationSelector(selectedCountry.get('id')))
       let path = '/geography/state-select-list/' + selectedCountry.get('id')
       return aspectFetch(path)
@@ -103,7 +103,7 @@ export const fetchLgasForLocationSelector = function(forceRefresh, selectedCount
     const now = new Date()
     if(selectedState && !selectedState.getIn(['children', 'loading']) &&
       (forceRefresh || !selectedState.getIn(['children', 'lastRefreshed']) ||
-      Math.abs(now.getTime() - selectedState.getIn(['children', 'lastRefreshed']).getTime()) > fiveMinutes)) {
+      Math.abs(now.getTime() - selectedState.getIn(['children', 'lastRefreshed']).getTime()) > cacheExpiryTime)) {
       dispatch(createRequestLgasForLocationSelector(selectedCountry.get('id'), selectedState.get('id')))
       let path = '/geography/lga-select-list/' + selectedState.get('id')
       return aspectFetch(path)
@@ -116,20 +116,24 @@ export const fetchLgasForLocationSelector = function(forceRefresh, selectedCount
 /*
  * ---------------- Reducers -----------------
  */
-const LazyLoadItems = Immutable.Record({
-    loading: false,
-    items: Immutable.List(),
-    lastRefreshed: undefined
-  }), LazyLoadParent = Immutable.Record({
-    id: undefined,
-    name: undefined,
-    children: new LazyLoadItems()
-  }), LazyLoadChild = Immutable.Record({
-    id: undefined,
-    name: undefined
-  })
+export const LazyLoadItems = Immutable.Record({
+  loading: false,
+  items: Immutable.List(),
+  lastRefreshed: undefined
+})
 
-const Geograpy = Immutable.Record({
+export const LazyLoadParent = Immutable.Record({
+  id: undefined,
+  name: undefined,
+  children: new LazyLoadItems()
+})
+
+export const LazyLoadChild = Immutable.Record({
+  id: undefined,
+  name: undefined
+})
+
+const Geography = Immutable.Record({
   countriesForLocationSelector: new LazyLoadItems({
     loading: false,
     items: Immutable.List([]),
@@ -137,7 +141,7 @@ const Geograpy = Immutable.Record({
   })
 })
 
-const initialState = new Geograpy()
+const initialState = new Geography()
 
 function requestCountriesForLocationSelector(state) {
   return state.setIn(['countriesForLocationSelector', 'loading'], true)
