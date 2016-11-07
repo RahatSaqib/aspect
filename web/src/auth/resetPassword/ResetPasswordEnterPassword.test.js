@@ -64,9 +64,6 @@ describe('Reset Password Enter Password Form', () => {
         label: 'New Password',
         maxLength: '100',
         autoFocus: true,
-        requiresNumber: true,
-        requiresSpecialCharacter: true,
-        minLength: 8,
         fullWidth: true
       })
       assert.deepEqual(ResetPasswordEnterPasswordWrapper.find(TextInput).props(), {
@@ -173,17 +170,11 @@ describe('Reset Password Enter Password Form', () => {
 
         passwordFields = initialPasswordFields.set('newPassword', 'testabcd')
         assert.deepEqual(validateFunction(passwordFields, props), {
-          newPassword: 'Your password needs to contain at least one number',
+          newPassword: 'Your password needs to contain at least one number or special character (%!$*...)',
           confirmNewPassword: 'These passwords don\'t match'
         })
 
         passwordFields = initialPasswordFields.set('newPassword', 'testabc1')
-        assert.deepEqual(validateFunction(passwordFields, props), {
-          newPassword: 'Your password needs to contain a special character (%!$*...)',
-          confirmNewPassword: 'These passwords don\'t match'
-        })
-
-        passwordFields = initialPasswordFields.set('newPassword', 'testab1$')
         assert.deepEqual(validateFunction(passwordFields, props), {
           confirmNewPassword: 'These passwords don\'t match'
         })

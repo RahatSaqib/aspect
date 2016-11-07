@@ -70,25 +70,17 @@ class StrongPasswordInput extends React.PureComponent {
 
   render() {
     const {input, meta: {touched, dirty, error},
-        validationProps: {minLength, requiresNumber, requiresMixUpperAndLowerCase, requiresSpecialCharacter},
         textFieldProps, popOverProps, intl} = this.props,
       {formatMessage} = intl,
       passwordStrengthRules = {
-        minLength: input.value.length >= (minLength || 6),
+        minLength: input.value.length > 7,
         containsNumber: /\d/.test(input.value),
         mixUpperAndLowerCase: /(?=.*?[a-z])(?=.*?[A-Z])/.test(input.value),
         containSpecialCharacter: /(?=.*?[`~!@#$%\^&*()\-=_+\\\[\]{}/?,.<>])/.test(input.value)
       }, passwordStrengthResults = {
-        isWeak: !passwordStrengthRules.minLength ||
-        (requiresNumber && !passwordStrengthRules.containsNumber) ||
-        (requiresMixUpperAndLowerCase && !passwordStrengthRules.mixUpperAndLowerCase) ||
-        (requiresSpecialCharacter && !passwordStrengthRules.containSpecialCharacter),
-        isOkay: passwordStrengthRules.minLength &&
-        (passwordStrengthRules.containsNumber || !requiresNumber) &&
-        (passwordStrengthRules.mixUpperAndLowerCase || !requiresMixUpperAndLowerCase) &&
-        (passwordStrengthRules.containSpecialCharacter || !requiresSpecialCharacter),
-        isStrong: passwordStrengthRules.minLength && passwordStrengthRules.containsNumber &&
-          passwordStrengthRules.mixUpperAndLowerCase && passwordStrengthRules.containSpecialCharacter
+        isWeak: !passwordStrengthRules.minLength || (!passwordStrengthRules.containsNumber && !passwordStrengthRules.containSpecialCharacter),
+        isOkay: passwordStrengthRules.minLength && (passwordStrengthRules.containsNumber || passwordStrengthRules.containSpecialCharacter),
+        isStrong: passwordStrengthRules.minLength && passwordStrengthRules.containsNumber && passwordStrengthRules.mixUpperAndLowerCase && passwordStrengthRules.containSpecialCharacter
       },
       blue = 'rgb(78, 145, 252)',
       red = 'rgb(226, 18, 18)',
@@ -132,7 +124,7 @@ class StrongPasswordInput extends React.PureComponent {
         <ul className={styles.List__Unstyled}>
           <li>
             {passwordStrengthRules.minLength ? <CheckIcon style={checkIconStyle} /> : <CloseIcon  style={crossIconStyle} />}
-            <span style={strengthRuleStyle}>{formatMessage(messages.passwordStrengthMeterMinLength, {minLength: minLength || 6})}</span>
+            <span style={strengthRuleStyle}>{formatMessage(messages.passwordStrengthMeterMinLength, {minLength: 8})}</span>
           </li>
           <li>
             {passwordStrengthRules.containsNumber ? <CheckIcon style={checkIconStyle} /> : <CloseIcon  style={crossIconStyle} />}
