@@ -32,7 +32,7 @@ import styles from './ResetPassword.css'
 import messages from './messages'
 import ResetPasswordEnterEmail from './ResetPasswordEnterEmail'
 import ResetPasswordEnterPassword from './ResetPasswordEnterPassword'
-import {supportTelephone, supportEmail} from 'config'
+import config from 'config'
 
 class ResetPassword extends PureComponent {
   state = {
@@ -79,7 +79,7 @@ class ResetPassword extends PureComponent {
 
   createResetPasswordTokenFail = () => {
     const { intl: { formatMessage }, addError } = this.props
-    addError(formatMessage(messages.generateTokenFailedTitle), formatMessage(messages.generateTokenFailed, {supportTelephone: supportTelephone, supportEmail: supportEmail}))
+    addError(formatMessage(messages.generateTokenFailedTitle), formatMessage(messages.generateTokenFailed, {supportTelephone: config.supportTelephone, supportEmail: config.supportEmail}))
     this.setState({
       resettingPassword: false
     })
@@ -105,7 +105,7 @@ class ResetPassword extends PureComponent {
 
   updatePasswordFail = () => {
     const { intl: { formatMessage }, addError } = this.props
-    addError(formatMessage(messages.passwordUpdateFailedTitle), formatMessage(messages.passwordUpdateFailed, {supportTelephone: supportTelephone, supportEmail: supportEmail}))
+    addError(formatMessage(messages.passwordUpdateFailedTitle), formatMessage(messages.passwordUpdateFailed, {supportTelephone: config.supportTelephone, supportEmail: config.supportEmail}))
     this.setState({
       resettingPassword: false
     })
@@ -237,7 +237,7 @@ class ResetPassword extends PureComponent {
                 open={this.state.showAdminHelpDialog}
                 onRequestClose={this.closeAdminHelpDialog}>
           <FormattedHTMLMessage {...messages.adminHelpContent}
-                                values={{supportTelephone: supportTelephone, supportEmail: supportEmail}} />
+                                values={{supportTelephone: config.supportTelephone, supportEmail: config.supportEmail}} />
         </Dialog>
         <ErrorDisplayContainer />
         <AcknowledgementDisplay />

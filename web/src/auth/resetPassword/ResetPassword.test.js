@@ -192,6 +192,5 @@ describe('ResetPassword Component', () => {
         assert.equal(adminHelpDialog.props().actions[1].props.to, 'login')
       })
     })
-
   })
 })
