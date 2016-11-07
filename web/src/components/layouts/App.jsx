@@ -31,8 +31,9 @@ class App extends PureComponent {
   }
 
   render() {
-    const { locale, timezone } = this.props,
-      messages = translation[locale], formats = {}
+    const { locale, timezone } = this.props
+    const messages = translation[locale]
+    const formats = {}
 
     if(timezone) {
       formats.date = {
