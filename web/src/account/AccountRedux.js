@@ -141,14 +141,14 @@ export function saveUserPreferences(userPreferences) {
         headers: getHeaders(true),
         body: JSON.stringify(userPreferences)
       })
-      .then(json => {
-        if(json.data.culture && json.data.culture.length > 1) {
-          dispatch(changeCulture(json.data.culture))
+      .then(({data}) => {
+        if(_.isString(data.culture)) {
+          dispatch(changeCulture(data.culture))
         }
-        if(json.data.timezone) {
-          dispatch(changeTimezone(json.data.timezone))
+        if(_.isString(data.timezone)) {
+          dispatch(changeTimezone(data.timezone))
         }
-        dispatch(createReceiveUpdatedUserPreferences(json.data))
+        dispatch(createReceiveUpdatedUserPreferences(data))
       })
       .catch(err => dispatch(addError('Saving user preferences failed', err.message, err)))
   }
