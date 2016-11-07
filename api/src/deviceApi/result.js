@@ -2,6 +2,7 @@ const Boom = require('boom')
 const _ = require('lodash')
 const { transact, knex, sortPageParams } = require('../db')
 const { getDeviceByApiKeyId, getExternalId } = require('./common')
+const { getDeviceConstraints, addConstraints } = require('../auth/constraints')
 
 function* addResult(request){
   const {payload} = request
@@ -124,12 +125,13 @@ function* addResult(request){
 }
 
 function* listResults(request){
-  const {query} = request
+  const {query, auth} = request
   const device = yield* getDeviceByApiKeyId(request)
   if(!device.ok){
     return Boom.unauthorized()
   }
-  const deviceId = device.data.id
+
+  const dataConstraints = yield getDeviceConstraints(auth.credentials)
 
   const resultQuery = knex('Result as r')
     .innerJoin('Assay as a', 'r.assayId', 'a.id')
@@ -139,7 +141,7 @@ function* listResults(request){
     .leftJoin('ResultType as rt', 'r.resultTypeId', 'rt.id')
     .leftJoin('Sample as s', 'r.sampleId', 's.id')
     .leftJoin('Site as sos', 's.originSiteId', 'sos.id')
-    .where({'d.id': deviceId})
+    .modify(addConstraints, dataConstraints, {device: 'd', sample: 's'})
 
   // get total count for paging
   const getCount = resultQuery.clone()

@@ -79,6 +79,17 @@ const shared = module.exports = {
     })
   },
 
+  getApiKey(server, deviceId){
+    return server
+      .get(`/api/device/${deviceId}/api-key`)
+      .set('Authorization', 'Bearer '+sharedToken.token)
+      .then(function(res){
+        assert.equal(res.status, 200)
+        assert.isAbove(res.body.access.length, 1)
+        return res.body.access
+      })
+  },
+
   // use this in your tests to get a valid device token for testing
   deviceToken: '',
 
