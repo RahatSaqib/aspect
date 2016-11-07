@@ -18,14 +18,14 @@ describe('Reset Password Enter Password Form', () => {
 
   describe('ResetPasswordEnterPassword component', () => {
     const fakeReduxForm = {
-      reduxForm: () => component => component
-    }, ResetPasswordEnterPassword = proxyquire('./ResetPasswordEnterPassword', {
-      'redux-form/immutable': fakeReduxForm,
-      'react-intl': fakeReactIntl,
-      './messages': proxyquire('./messages', {
-        'react-intl': fakeReactIntl
+        reduxForm: () => component => component
+      }, ResetPasswordEnterPassword = proxyquire('./ResetPasswordEnterPassword', {
+        'redux-form/immutable': fakeReduxForm,
+        'react-intl': fakeReactIntl,
+        './messages': proxyquire('./messages', {
+          'react-intl': fakeReactIntl
+        }).default
       }).default
-    }).default
 
     let props, ResetPasswordEnterPasswordWrapper
 

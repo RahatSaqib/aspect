@@ -18,22 +18,22 @@ import StrongPasswordInput from '../../components/shared/StrongPasswordInput'
 const ResetPasswordEnterPassword = props => {
   const { intl: { formatMessage }, handleSubmit, pristine, invalid } = props
   return (
-    <form onSubmit={handleSubmit} className={styles.Form}>
-      <div className={styles.Form__Content}>
-        <p>{formatMessage(messages.enterNewPasswordContent)}</p>
-        <StrongPasswordInput name="newPassword" label={formatMessage(messages.newPassword)}
-                             maxLength="100" autoFocus requiresNumber requiresSpecialCharacter
-                             minLength={8} fullWidth />
-        <TextInput name="confirmNewPassword" label={formatMessage(messages.confirmNewPassword)}
-                   maxLength="100" type="password" fullWidth />
-      </div>
-      <div className={styles.Form__ActionRow}>
-        <RaisedButton disabled={pristine || invalid} label={formatMessage(messages.next)} primary type="submit" />
-        <Link to="login">
-          <FlatButton secondary label={formatMessage(messages.cancel)} />
-        </Link>
-      </div>
-    </form>
+      <form onSubmit={handleSubmit} className={styles.Form}>
+        <div className={styles.Form__Content}>
+          <p>{formatMessage(messages.enterNewPasswordContent)}</p>
+          <StrongPasswordInput name="newPassword" label={formatMessage(messages.newPassword)}
+                               maxLength="100" autoFocus requiresNumber requiresSpecialCharacter
+                               minLength={8} fullWidth />
+          <TextInput name="confirmNewPassword" label={formatMessage(messages.confirmNewPassword)}
+                     maxLength="100" type="password" fullWidth />
+        </div>
+        <div className={styles.Form__ActionRow}>
+          <RaisedButton disabled={pristine || invalid} label={formatMessage(messages.next)} primary type="submit" />
+          <Link to="login">
+            <FlatButton secondary label={formatMessage(messages.cancel)} />
+          </Link>
+        </div>
+      </form>
   )
 }
 

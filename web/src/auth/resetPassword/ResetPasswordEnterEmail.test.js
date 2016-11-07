@@ -17,14 +17,14 @@ describe('Reset Password Enter Email Form', () => {
 
   describe('ResetPasswordEnterEmail component', () => {
     const fakeReduxForm = {
-      reduxForm: () => component => component
-    }, ResetPasswordEnterEmail = proxyquire('./ResetPasswordEnterEmail', {
-      'redux-form/immutable': fakeReduxForm,
-      'react-intl': fakeReactIntl,
-      './messages': proxyquire('./messages', {
-        'react-intl': fakeReactIntl
+        reduxForm: () => component => component
+      }, ResetPasswordEnterEmail = proxyquire('./ResetPasswordEnterEmail', {
+        'redux-form/immutable': fakeReduxForm,
+        'react-intl': fakeReactIntl,
+        './messages': proxyquire('./messages', {
+          'react-intl': fakeReactIntl
+        }).default
       }).default
-    }).default
 
     let props, ResetPasswordEnterEmailWrapper
 
@@ -68,7 +68,7 @@ describe('Reset Password Enter Email Form', () => {
     })
 
     it('Should contain a link that calls the showAdminHelpDialog function when clicked', () => {
-      const anchorTag = ResetPasswordEnterEmailWrapper.find('a');
+      const anchorTag = ResetPasswordEnterEmailWrapper.find('a')
       assert.deepEqual(anchorTag.props(), {
         children: 'I don\'t know what email address I am registered with',
         href: '#',
