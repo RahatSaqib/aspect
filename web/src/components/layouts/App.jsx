@@ -69,6 +69,6 @@ function mapStateToProps(state) {
   }
 }
 
-const DEFAULT_LOCALE = 'en'
+const DEFAULT_LOCALE = 'en-US'
 
 export default connect(mapStateToProps)(App)
