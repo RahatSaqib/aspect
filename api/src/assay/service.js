@@ -19,7 +19,7 @@ function* listAssays(request) {
     .innerJoin('Device as d', 'r.deviceId', 'd.id')
     .modify(addConstraints, dataConstraints, { device: 'd' })
     .distinct('r.assayId')
-  const assayIds =  _.map(usedAssays, c => c.assayId)
+  const assayIds =  _.map(usedAssays, 'assayId')
 
   // no get the assays with a field for hasResults
   const assayQuery = knex('Assay as a')
@@ -38,9 +38,12 @@ function* listAssays(request) {
 
   // return result when both queries are finished
   let [{count: total}, data] = yield Promise.all([getCount, getItems])
-  data = _.each(data, (d) => {
-    d.hasResults = assayIds.includes(d.id)
-    d.resultDataSchema = JSON.parse(d.resultDataSchema)
+
+  data = _.map(data, (d) => {
+    return _.assign(d,
+      { hasResults: assayIds.includes(d.id) },
+      { resultDataSchema: JSON.parse(d.resultDataSchema) }
+    )
   })
 
   const result = { ok: true, total, length: data.length, data }

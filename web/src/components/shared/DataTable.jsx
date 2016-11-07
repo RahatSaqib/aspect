@@ -99,6 +99,21 @@ export class DataTable extends PureComponent {
     this.props.handleFetch(table.filters, col || table.sortCol, newSort || table.sortDir, page == null ? table.page : page, table.pageSize)
   }
 
+  getColumns(table, intl, messages) {
+    if (table.extraColumns) {
+      // concat the extra columns in table.extraColumns with the columns specified in table.columns
+      return this.props.columns.concat(table.extraColumns.map((column) => {
+        return _.assign(column, {
+          db: column.get('db'),
+          format: column.get('type') === 'number' ? ((n) => _.isNumber(n) ? intl.formatNumber(n) : null) : _.identity,
+          title: column.get('i18nKey') && messages[column.get('i18nKey')] ?
+            intl.formatMessage[column.get('i18nKey')] : column.get('title')})
+      }).toJS())
+    } else{
+      return this.props.columns
+    }
+  }
+
   getPager(page, totalPages){
 
     // paging controls
@@ -156,18 +171,8 @@ export class DataTable extends PureComponent {
     // generate paging for footer
     const page = table.page
     const totalPages = Math.ceil(table.total / table.pageSize)
-    let pagerItems = this.getPager(page, totalPages)
-
-    let columns = this.props.columns
-
-    // add any extra columns we received from the api
-    if (table.get('extraColumns')){
-      table.get('extraColumns').forEach((column) => {
-        columns.push({  db: column.get('db'),
-                        format: column.get('type') === 'number' ? (n) => { return !n || isNaN(n) ? null : intl.formatNumber(n) } : null,
-                        title: column.get('i18nKey') && messages[column.get('i18nKey')] ?
-                          intl.formatMessage[column.get('i18nKey')] : column.get('title') }) })
-    }
+    const columns = this.getColumns(table, intl, messages)
+    const pagerItems = this.getPager(page, totalPages)
 
     return (
       <div>
@@ -186,7 +191,7 @@ export class DataTable extends PureComponent {
             adjustForCheckbox={this.state.showCheckboxes}
             enableSelectAll={this.state.enableSelectAll}>
             <TableRow>
-              {this.props.columns.map((col) => (
+              {columns.map((col) => (
                 <TableHeaderColumn key={col.db} tooltip={col.tooltip} className={ col.hideOnXs ? 'pure-hidden-xs' : '' } {...col.extraProps}>
                   <span style={{ cursor: 'pointer' }} onTouchTap={() => { this.handleSort(col.db) } }>
                     {col.title}
@@ -208,7 +213,7 @@ export class DataTable extends PureComponent {
               <TableRow key={itemId} className={cx({
                 'TableRow--selectable': this.props.selectable
               })}>
-                {this.props.columns.map((col) => {
+                {columns.map((col) => {
                   const row = items.getIn(['byId', itemId])
                   const data = row.get(col.db)
                   return (
@@ -224,7 +229,7 @@ export class DataTable extends PureComponent {
           { /* Footer - contains pager */ }
           <TableFooter adjustForCheckbox={true}>
             <TableRow>
-              <TableRowColumn colSpan={this.props.columns.length - 1} style={{ textAlign: 'right', padding: '10px 20px 20px 0' }} >
+              <TableRowColumn colSpan={columns.length - 1} style={{ textAlign: 'right', padding: '10px 20px 20px 0' }} >
                 <FlatButton className={styles.Pager__Button} label="< Prev" onTouchTap={() => { this.handlePage(page - 1) } } disabled={page === 0} />
                   { pagerItems }
                 <FlatButton className={styles.Pager__Button} label="Next >" onTouchTap={() => { this.handlePage(page + 1) } } disabled={ page + 1 >= totalPages} />

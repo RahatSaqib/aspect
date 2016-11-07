@@ -33,7 +33,7 @@ function* listResults(request){
   let assayColumns = []
   if (query.assayId){
 
-    const [assay] = yield knex('Assay as a').where('a.id', query.assayId)
+    const assay = yield knex('Assay as a').where('a.id', query.assayId).first()
 
     if (assay.resultCategory1Label){
       selectFields.push('rc1.name as resultCategory1Name')
