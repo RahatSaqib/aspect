@@ -5,6 +5,7 @@ import { injectIntl } from 'react-intl'
 import { bindActionCreators } from 'redux'
 import { connect } from 'react-redux'
 import Helmet from 'react-helmet'
+import classNames from 'classnames'
 
 // Material-UI
 import Paper from 'material-ui/Paper'
@@ -153,7 +154,7 @@ export class PersonDetail extends PureComponent {
                  label={<span className="pure-hidden-xs">{formatMessage(messages.contactDetails)}</span>}>
               {(!person) && <LinearProgress />}
               {loading && <LinearProgress />}
-              <h2 className={'pure-visible-xs ' + styles.Form__Header}>
+              <h2 className={classNames('pure-visible-xs', styles.Form__Header)}>
                 {formatMessage(messages.contactDetails)}
               </h2>
               <ContactDetailsForm loading={loading} initialValues={contactDetails} partners={this.state.partners}
@@ -163,7 +164,7 @@ export class PersonDetail extends PureComponent {
             {userIsAdmin && <Tab icon={<Lock />}
                  label={<span className="pure-hidden-xs">{formatMessage(messages.systemAccessControl)}</span>}>
               {loading && <LinearProgress />}
-              <h2 className={'pure-visible-xs ' + styles.Form__Header}>
+              <h2 className={classNames('pure-visible-xs', styles.Form__Header)}>
                 {formatMessage(messages.systemAccessControl)}
               </h2>
               <LoginDetailsForm loading={loading} initialValues={loginDetails} onSubmit={this.saveLoginDetails}
@@ -172,7 +173,7 @@ export class PersonDetail extends PureComponent {
             <Tab icon={<Language />}
                  label={<span className="pure-hidden-xs">{formatMessage(messages.languageAndTimezone)}</span>}>
               {loading && <LinearProgress />}
-              <h2 className={'pure-visible-xs ' + styles.Form__Header}>
+              <h2 className={classNames('pure-visible-xs', styles.Form__Header)}>
                 {formatMessage(messages.languageAndTimezone)}
               </h2>
               <UserPreferencesForm loading={loading} initialValues={userPreferences}

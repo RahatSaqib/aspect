@@ -6,6 +6,7 @@ import { connect } from 'react-redux'
 import Helmet from 'react-helmet'
 import { injectIntl, FormattedHTMLMessage } from 'react-intl'
 import {Link} from 'react-router'
+import classNames from 'classnames'
 
 // Material-UI
 import Paper from 'material-ui/Paper'
@@ -138,7 +139,7 @@ class ResetPassword extends PureComponent {
             <div className="pure-u-1-24 pure-u-md-1-12 pure-u-xl-1-4"></div>
             <div className="pure-u-11-12 pure-u-md-5-6 pure-u-xl-1-2">
               <Paper>
-                <div className={'pure-hidden-xs pure-hidden-sm ' + styles.LargeContent}>
+                <div className={classNames('pure-hidden-xs', 'pure-hidden-sm', styles.LargeContent)}>
                   <Stepper activeStep={stepIndex}>
                     <Step>
                       <StepLabel>{formatMessage(messages.enterEmailAddress)}</StepLabel>

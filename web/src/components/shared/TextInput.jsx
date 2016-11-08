@@ -1,6 +1,7 @@
 import React from 'react'
 import { Field } from 'redux-form/immutable'
 import TextField from 'material-ui/TextField'
+import classNames from 'classnames'
 import styles from './Shared.css'
 
 const renderTextField = props => {
@@ -8,7 +9,7 @@ const renderTextField = props => {
     {touched, error} = meta
   return <TextField {...input} errorStyle={{ float: 'left' }}
                     errorText={touched && error} {...textFieldProps}
-                    className={textFieldProps.fullWidth ? '' : styles.Form__Field} />
+                    className={classNames({[styles.Form__Field]: textFieldProps.fullWidth})} />
 }
 
 const renderFormField = props => {
