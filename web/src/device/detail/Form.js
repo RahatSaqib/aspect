@@ -1,6 +1,8 @@
 // Imports from packages
+import classnames from 'classnames/bind'
 import _ from 'lodash'
 import React, { PureComponent, PropTypes } from 'react'
+import { Link } from 'react-router'
 import { Field, reduxForm } from 'redux-form/immutable'
 import { bindActionCreators } from 'redux'
 import { connect } from 'react-redux'
@@ -9,11 +11,15 @@ import { connect } from 'react-redux'
 import LinearProgress from 'material-ui/LinearProgress'
 import RaisedButton from 'material-ui/RaisedButton'
 import TextField from 'material-ui/TextField'
-import MenuItem from 'material-ui/MenuItem'
+import AutoComplete from 'material-ui/AutoComplete'
+import GoToSite from 'material-ui/svg-icons/communication/screen-share'
 
 // Our own imports
 import { fetchSites } from '../../site/SiteRedux'
-import PageableSelectField from '../../components/shared/PageableSelectField'
+
+// use classnames module to handle style classes
+import styles from './DeviceDetail.css'
+const cx = classnames.bind(styles)
 
 const renderTextField = ({ input, meta, ...restProps }) => {
   return (
@@ -27,18 +33,80 @@ const renderTextField = ({ input, meta, ...restProps }) => {
   )
 }
 
-const renderPageableSelectField = ({ input, meta, ...restProps }) => {
+const handleAutoCompleteChange = (chosenRequest, index, input, allSites) => {
+  let value = input.value
+
+  // if user typed text and pressed Enter, then index=-1 - and chosenRequest is string value (see API doc - http://www.material-ui.com/#/components/auto-complete)
+  if(index === -1){
+    const textLo = chosenRequest.toLowerCase().trim()
+    let site = allSites.find(o => o.text.toLowerCase() === textLo)
+    if (site){
+      value = site.value
+    }
+  }
+    // if user selected item from the list then index>=0 and chosenRequest is object literal of default format {text:'', value:''}
+  else{
+    value = chosenRequest.value
+  }
+
+  // set value - AutoComplete handles new/changed value by itself
+  input.onChange(value)
+}
+
+// --------------------------
+// on bluring - check if actual visual site name is correct (exists in datasource) and is equal siteId value stored in props
+// --------------------------
+const handleAutoCompleteBlur = (textValue, input, siteCurrent, allSites) => {
+  const textLo = textValue.toLowerCase().trim()
+  const siteNew = allSites.find(o => o.text.toLowerCase() === textLo)
+
+  // site with this name exists
+  if (siteNew){
+    // if visual site name differs from currently stored in props - change it
+    if (siteNew.value !== siteCurrent.value){
+      input.onChange(siteNew.value)
+    }
+  }
+    // if no site found with this name - empty field
+  else{
+    input.onChange(null)
+  }
+
+  // push upper onBlur to run form validation
+  input.onBlur()
+}
+
+const renderAutoCompleteField = ({ input, meta, ...restProps }) => {
+  const allSites = restProps.dataSource
+  const site = allSites.find(o => o.value === input.value.trim())
+
   return (
-    <PageableSelectField
+    <AutoComplete
+      hintText="Enter site name"
       {...restProps}
       {...input}
-      onChange={(event, index, value) => input.onChange(value)}
-      fullWidth
+      searchText={site ? site.text : ''}
+      onNewRequest={(chosenRequest, index) => handleAutoCompleteChange(chosenRequest, index, input, allSites) }
+      onBlur={ev => handleAutoCompleteBlur(ev.target.value, input, site, allSites) }
+      fullWidth={true}
       errorStyle={{ float: 'left' }}
       errorText={meta.touched && meta.error}
     />
   )
 }
+
+const renderLinkButtonToSite = ({ input }) => {
+  return (
+    <RaisedButton primary
+      icon={<GoToSite/>}
+      href={'/site/' + input.value}
+      className={cx('GoToSite')}
+      title="Go to site"
+      disabled={!Number.isInteger(parseInt(input.value))}>
+    </RaisedButton>
+  )
+}
+
 
 export class Form extends PureComponent {
 
@@ -46,43 +114,49 @@ export class Form extends PureComponent {
     labels: PropTypes.object.isRequired
   }
 
-  handleLoadMoreClick = () => {
-    const { table } = this.props
-
-    this.props.fetchSites(undefined, undefined, undefined, table.page + 1)
-  }
-
   // TODO: if site_id is set to one not present in client redux store,
   // the SelectField cannot match the item for display and it'll be blank
   // So, load the sigle site resource in cDM
   //
   componentDidMount() {
-    this.props.fetchSites()
+    this.props.fetchSites(this.props.table.filters, undefined, undefined, 0, 99999)
   }
 
   render() {
-    const { labels, items, table, handleSubmit, pristine, submitting } = this.props
+    const { labels, items, table, handleSubmit, pristine, submitting, valid } = this.props
+
+    // all sites for dataSource property of 'Site' AutoComplete component
+    const allSites = items.byId.valueSeq().map(item => ({ value:item.get('id'), text:item.get('name') }) ).toJS()
 
     return (
       <form onSubmit={handleSubmit}>
         <Field name="name" floatingLabelText={labels.name} component={renderTextField} />
         <Field name="shortName" floatingLabelText={labels.shortName} component={renderTextField} />
         <Field name="notes" multiLine floatingLabelText={labels.notes} component={renderTextField} />
-        <Field
-          onLoadMoreClick={this.handleLoadMoreClick}
-          isLoadingMore={table.loading}
-          loadMoreText={labels.loadMoreText}
-          loadingMoreText={labels.loadingMoreText}
-          name="site"
-          floatingLabelText={labels.site}
-          component={renderPageableSelectField}
-        >
-          {items.byId.valueSeq().map(item => (
-            <MenuItem key={item.get('id')} value={item.get('id')} primaryText={item.get('name')} />
-          ))}
-        </Field>
-        <RaisedButton disabled={pristine || submitting} type="submit" label="Update" secondary />
+
+        <table className={cx('pure-table', 'SelectSiteRow')}>
+          <tbody>
+          <tr>
+            <td>
+              <Field
+              dataSource={allSites}
+              name="site"
+              floatingLabelText={labels.site}
+              component={renderAutoCompleteField}
+              filter={AutoComplete.caseInsensitiveFilter} />
+            </td>
+            <td>
+              <Field name="site" component={renderLinkButtonToSite} />
+            </td>
+          </tr>
+          </tbody>
+        </table>
+
+        <br />
+        <RaisedButton disabled={pristine || !valid || submitting} onClick={handleSubmit} type="button" label="Update" secondary />
         {submitting && <LinearProgress />}
+        <br />
+        <Link className={cx('BackLink')} to="/device">Back to Devices</Link>
       </form>
     )
   }
@@ -104,11 +178,16 @@ function mapDispatchToProps(dispatch) {
 function validate(values) {
   const errors = {}
 
-  if (!values.get('name')) {
-    errors.name = 'Required'
-  }
-  if (!values.get('shortName')) {
-    errors.shortName = 'Required'
+  if (values){
+    if (!values.get('name')) {
+      errors.name = 'Required'
+    }
+    if (!values.get('shortName')) {
+      errors.shortName = 'Required'
+    }
+    if (!values.get('site')) {
+      errors.site = 'Required'
+    }
   }
 
   return errors

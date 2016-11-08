@@ -5,3 +5,32 @@
 .FieldsContainer {
   padding: 20px;
 }
+
+.RowContainer{
+  padding: 10px;
+}
+
+.RowContainer > div > div{
+  margin: 10px;
+}
+
+.SelectSiteRow{
+    width: 100%;
+}
+
+.SelectSiteRow tbody tr td:first-of-type{
+    width:100%;
+}
+
+.SelectSiteRow tbody tr td:last-of-type{
+    vertical-align: bottom;
+}
+.SelectSiteRow tbody tr td:last-of-type .GoToSite{
+    min-width:50px !important;
+    margin-bottom: 8px;
+}
+
+.BackLink{
+    font-size: 65%;
+    text-transform: uppercase;
+}

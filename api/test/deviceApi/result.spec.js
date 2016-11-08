@@ -1,0 +1,776 @@
+const supertest = require('supertest')
+const chai = require('chai')
+const _ = require('lodash')
+const shared = require('../utils/sharedToken')
+const sharedDevice = require('./deviceToken')
+
+const { run } = require('../../src/db')
+
+// This agent refers to PORT where program is runninng.
+let server = supertest.agent('http://localhost:8080')
+let assert = chai.assert
+
+describe('Device Result API routes',function(){
+  describe('admin GeneXpert result', function(){
+    const resultIds = []
+    const now = new Date()
+
+    const clientBasePath = '/api/result'
+    shared.checkToken(server, clientBasePath)
+    sharedDevice.authenticateUserAndFirstDevice(server, {user: 'admin', type: 'GeneXpert'})
+
+    const devicePath = '/device/result'
+
+    afterEach(() => run(function*(knex){
+      // cleanup
+      yield knex('ResultLog').whereIn('resultId',
+        knex('Result').whereIn('externalId', resultIds).select('id')).delete()
+      yield knex('Result').whereIn('externalId', resultIds).delete()
+      resultIds.splice(0)
+    }))
+
+    it('should add and return device results', () => run(function*(knex){
+
+      const {deviceId} = sharedDevice
+      const clientSingleResultPath = clientBasePath+'/'
+      const deviceResultPath = devicePath+'?size=5&sortCol=updatedOn&sortDir=desc'
+      const clientPath = clientBasePath+'?deviceId='+deviceId
+
+      let initialDataLength = 0
+      const clientAuth = 'Bearer '+shared.token
+      const deviceAuth = 'Bearer '+sharedDevice.deviceToken
+
+      const [{count: initialLogLength}] = yield knex('ResultLog').count('id as count')
+
+      yield server.get(clientPath)
+        .set('Authorization', clientAuth)
+        .then(function(res){
+          assert.equal(res.status, 200)
+          assert.typeOf(res.body, 'Object')
+          assert.property(res.body, 'data')
+          assert.typeOf(res.body.data, 'array')
+          assert.isAtLeast(res.body.data.length, 0)
+          initialDataLength = res.body.data.length
+          assert.property(res.body, 'total')
+        })
+
+      yield server.post(devicePath)
+        .set('Authorization', deviceAuth)
+        .send({data: {a:'b'}, assay: {id: 'HivVl'}})
+        .then(function(res){
+          assert.equal(res.status, 200)
+          assert.typeOf(res.body, 'Object')
+          assert.property(res.body, 'data')
+          assert.equal(res.body.ok, true)
+          assert.typeOf(res.body.data, 'Object')
+          assert.property(res.body.data, 'id')
+          resultIds.push(res.body.data.id)
+        })
+
+      const [{count: logLength1}] = yield knex('ResultLog').count('id as count')
+      assert.equal(logLength1, initialLogLength + 1)
+
+      yield server.get(clientPath)
+        .set('Authorization', clientAuth)
+        .then(function(res){
+          assert.equal(res.status, 200)
+          assert.typeOf(res.body, 'Object')
+          assert.property(res.body, 'data')
+          assert.typeOf(res.body.data, 'array')
+          assert.property(res.body, 'total')
+
+          assert.equal(res.body.data.length, initialDataLength + 1)
+          const lastResult = _.find(res.body.data, {externalId: resultIds[0]})
+          assert.typeOf(lastResult, 'Object')
+          assert.equal(lastResult.externalId, resultIds[0])
+        })
+
+      const result1 = yield knex('Result as r')
+        .where({externalId: resultIds[0]}).first()
+      assert.equal(result1.externalId, resultIds[0])
+      assert.deepEqual(JSON.parse(result1.resultData), {a: 'b'})
+
+      const result1Type = yield knex('ResultType as rt')
+        .where({id: result1.resultTypeId}).first('externalId')
+      assert.equal(result1Type.externalId, 'Patient')
+
+      const result1Sample = yield knex('Sample as s')
+        .where({id: result1.sampleId}).first()
+      assert.equal(result1.siteId, result1Sample.originSiteId)
+
+      const result1SampleSite = yield knex('Site as s')
+        .where({id: result1Sample.originSiteId}).first()
+      assert.equal(result1.siteId, result1Sample.originSiteId)
+
+      const result1Assay = yield knex('Assay as assay')
+        .where({id: result1.assayId}).first('externalId', 'name')
+      assert.equal(result1Assay.externalId, 'HivVl')
+      assert.equal(result1Assay.name, 'GeneXpert HIV VL')
+
+      const [result1Category1, result1Category2] = yield knex('ResultCategory as rt')
+        .whereIn('id', [result1.resultCategory1, result1.resultCategory2]).select('externalId')
+      assert.equal(result1Category1.externalId, 'Success')
+      assert.isNotOk(result1Category2)
+
+      const [{rawMessage: log1Raw, resultId: resultId1}] = yield knex('ResultLog as rl')
+        .innerJoin('Result as r', 'r.id', 'rl.resultId')
+        .where({externalId: resultIds[0]}).select('rawMessage', 'resultId')
+      assert.deepEqual(JSON.parse(log1Raw), {data: {a: 'b'}, assay: {id: 'HivVl'}})
+
+      yield server.get(clientSingleResultPath+resultId1)
+        .set('Authorization', clientAuth)
+        .then(function(res){
+          assert.equal(res.status, 200)
+          assert.typeOf(res.body, 'Object')
+          assert.typeOf(res.body.data, 'Object')
+          assert.typeOf(res.body.data.resultData, 'Object')
+          assert.deepEqual(res.body.data.resultData, {a:'b'})
+        })
+
+      yield server.get(deviceResultPath)
+        .set('Authorization', deviceAuth)
+        .then(function(res){
+          assert.equal(res.status, 200)
+          assert.typeOf(res.body, 'Object')
+          assert.property(res.body, 'data')
+          assert.typeOf(res.body.data, 'array')
+          assert.property(res.body, 'total')
+          assert.property(res.body, 'length')
+
+          const lastResult = _.find(res.body.data, {id: resultIds[0]})
+          assert.typeOf(lastResult, 'Object')
+          assert.property(lastResult, 'endedOn')
+          assert.property(lastResult.sample, 'id')
+          assert.property(lastResult.sample.originSite, 'id')
+          assert.equal(lastResult.sample.originSite.id, result1SampleSite.externalId)
+
+          assert.deepEqual(_.omit(lastResult, 'endedOn', 'sample'), {
+            id: resultIds[0],
+            data: {a: 'b'},
+            assay: {id: 'HivVl'},
+            category: [{id: 'Success'}],
+            type: {id: 'Patient'}
+          })
+        })
+
+      const result2SampleSite = yield knex('Site as s')
+        .where('partnerId', result1SampleSite.partnerId)
+        .where('id', '<>', result1.siteId)
+        .first()
+
+      yield server.post(devicePath)
+        .set('Authorization', deviceAuth)
+        .send({
+          data: {a: 'b', c: 2, d: false, e: {f: 'g'}},
+          type: {id: 'Study'},
+          category: [
+            {id: 'Detected'},
+            {id: 'Indeterminate'}
+          ],
+          assay: {
+            id: 'MtbRif',
+            version: '1a.c1'
+          },
+          sample: {
+            id: 'Sample'+now,
+            originSite: {
+              id: result2SampleSite.externalId
+            }
+          },
+          location: {
+            longitude: -87.581222,
+            latitude: 30.419348
+          },
+          startedOn: '2013-12-01',
+          endedOn: '2013-12-01T01:30',
+          consumable: {
+            serial: '132-44-222',
+            expirationDate: '2014-03-01',
+            lot: '331-1'
+          },
+          instrument: {
+            serial: '444-3'
+          },
+          module: {
+            name: 'ModA',
+            serial: '555-8'
+          },
+          research: {id: 'R123'},
+          patient: {
+            id: 'P-333',
+            name: 'Bob',
+            surname: 'Hope',
+            gender: 'M',
+            age: 72,
+            dateOfBirth: '1903-05-29',
+            address: '123 Main Street',
+            phone: '856-7909'
+          },
+          sender: {
+            version: '99-1',
+            operator: 'Bob O'
+          },
+          notes: 'My Awesome notes about this Awesome result!',
+          error: {
+            code: '123',
+            notes: 'Oh NOZE!'
+          }
+        })
+        .then(function(res){
+          assert.equal(res.status, 200)
+          assert.typeOf(res.body, 'Object')
+          assert.property(res.body, 'data')
+          assert.equal(res.body.ok, true)
+          assert.typeOf(res.body.data, 'Object')
+          assert.property(res.body.data, 'id')
+          resultIds.push(res.body.data.id)
+        })
+
+      const [{count: logLength2}] = yield knex('ResultLog').count('id as count')
+      assert.equal(logLength2, initialLogLength + 2)
+
+      yield server.get(clientPath)
+        .set('Authorization', clientAuth)
+        .then(function(res){
+          assert.equal(res.status, 200)
+          assert.typeOf(res.body, 'Object')
+          assert.property(res.body, 'data')
+          assert.typeOf(res.body.data, 'array')
+          assert.property(res.body, 'total')
+
+          assert.equal(res.body.data.length, initialDataLength + 2)
+
+          const prevResult = _.find(res.body.data, {externalId: resultIds[0]})
+          assert.typeOf(prevResult, 'Object')
+          assert.equal(prevResult.externalId, resultIds[0])
+
+          const lastResult = _.find(res.body.data, {externalId: resultIds[1]})
+          assert.typeOf(lastResult, 'Object')
+          assert.equal(lastResult.externalId, resultIds[1])
+        })
+
+      const result2 = yield knex('Result as r')
+        .where({externalId: resultIds[1]}).first()
+      assert.equal(result2.externalId, resultIds[1])
+      assert.deepEqual(JSON.parse(result2.resultData), {a: 'b', c: 2, d: false, e: {f: 'g'}})
+      assert.equal(result2.assayVersion, '1a.c1')
+      assert.approximately(result2.latitude, 30.419348, 0.000001)
+      assert.approximately(result2.longitude, -87.581222, 0.000001)
+      assert.deepEqual(result2.startedOn, new Date('2013-12-01'))
+      assert.deepEqual(result2.endedOn, new Date('2013-12-01T01:30'))
+      assert.equal(result2.consumableSerial, '132-44-222')
+      assert.deepEqual(result2.consumableExpirationDate, new Date('2014-03-01'))
+      assert.equal(result2.consumableLot, '331-1')
+      assert.equal(result2.instrumentSerial, '444-3')
+      assert.equal(result2.moduleName, 'ModA')
+      assert.equal(result2.moduleSerial, '555-8')
+      assert.equal(result2.researchId, 'R123')
+      assert.deepEqual(JSON.parse(result2.patientData), {
+        id: 'P-333',
+        name: 'Bob',
+        surname: 'Hope',
+        gender: 'M',
+        age: 72,
+        dateOfBirth: '1903-05-29T00:00:00.000Z',
+        address: '123 Main Street',
+        phone: '856-7909'
+      })
+      assert.equal(result2.senderVersion, '99-1')
+      assert.equal(result2.senderOperator, 'Bob O')
+      assert.equal(result2.notes, 'My Awesome notes about this Awesome result!')
+      assert.equal(result2.errorCode, '123')
+      assert.equal(result2.errorNotes, 'Oh NOZE!')
+
+      const result2Type = yield knex('ResultType as rt')
+        .where({id: result2.resultTypeId}).first('externalId')
+      assert.equal(result2Type.externalId, 'Study')
+
+      const result2Assay = yield knex('Assay as assay')
+        .where({id: result2.assayId}).first('externalId', 'name')
+      assert.equal(result2Assay.externalId, 'MtbRif')
+      assert.equal(result2Assay.name, 'GeneXpert MTB/Rif')
+
+      const result2Sample = yield knex('Sample as s')
+        .where({id: result2.sampleId}).first()
+      assert.notEqual(result2.siteId, result2Sample.originSiteId)
+      assert.equal(result2SampleSite.id, result2Sample.originSiteId)
+      assert.equal(result2Sample.externalId, 'Sample'+now)
+
+      const [result2Category1, result2Category2] = yield knex('ResultCategory as rt')
+        .whereIn('id', [result2.resultCategory1, result2.resultCategory2]).select('externalId')
+      assert.equal(result2Category1.externalId, 'Detected')
+      assert.equal(result2Category2.externalId, 'Indeterminate')
+
+      const [{rawMessage: log2Raw, resultId: resultId2}] = yield knex('ResultLog as rl')
+        .innerJoin('Result as r', 'r.id', 'rl.resultId')
+        .where({externalId: resultIds[1]}).select('rawMessage', 'resultId')
+      assert.deepEqual(JSON.parse(log2Raw), {
+        data: {a: 'b', c: 2, d: false, e: {f: 'g'}},
+        type: {id: 'Study'},
+        category: [
+          {id: 'Detected'},
+          {id: 'Indeterminate'}
+        ],
+        assay: {
+          id: 'MtbRif',
+          version: '1a.c1'
+        },
+        sample: {
+          id: 'Sample'+now,
+          originSite: {
+            id: result2SampleSite.externalId
+          }
+        },
+        location: {
+          longitude: -87.581222,
+          latitude: 30.419348
+        },
+        // TODO ResultLog should be raw payload (before transformation during validation)
+        startedOn: '2013-12-01T00:00:00.000Z',
+        endedOn: '2013-12-01T01:30:00.000Z',
+        consumable: [{
+          serial: '132-44-222',
+          expirationDate: '2014-03-01T00:00:00.000Z',
+          lot: '331-1'
+        }],
+        instrument: {
+          serial: '444-3'
+        },
+        module: {
+          name: 'ModA',
+          serial: '555-8'
+        },
+        research: {id: 'R123'},
+        patient: {
+          id: 'P-333',
+          name: 'Bob',
+          surname: 'Hope',
+          gender: 'M',
+          age: 72,
+          dateOfBirth: '1903-05-29T00:00:00.000Z',
+          address: '123 Main Street',
+          phone: '856-7909'
+        },
+        sender: {
+          version: '99-1',
+          operator: 'Bob O'
+        },
+        notes: 'My Awesome notes about this Awesome result!',
+        error: {
+          code: '123',
+          notes: 'Oh NOZE!'
+        }
+      })
+
+      yield server.get(clientSingleResultPath+resultId2)
+        .set('Authorization', clientAuth)
+        .then(function(res){
+          assert.equal(res.status, 200)
+          assert.typeOf(res.body, 'Object')
+          assert.typeOf(res.body.data, 'Object')
+          assert.typeOf(res.body.data.resultData, 'Object')
+          assert.deepEqual(res.body.data.resultData, {a:'b', c:2, d:false, e:{f: 'g'}})
+        })
+
+      yield server.get(deviceResultPath)
+        .set('Authorization', deviceAuth)
+        .then(function(res){
+          assert.equal(res.status, 200)
+          assert.typeOf(res.body, 'Object')
+          assert.property(res.body, 'data')
+          assert.typeOf(res.body.data, 'array')
+          assert.property(res.body, 'total')
+          assert.property(res.body, 'length')
+
+          const lastResult = _.find(res.body.data, {id: resultIds[1]})
+          assert.typeOf(lastResult, 'Object')
+          assert.property(lastResult, 'endedOn')
+          assert.property(lastResult.sample, 'id')
+          assert.property(lastResult.sample.originSite, 'id')
+          assert.equal(lastResult.sample.originSite.id, result2SampleSite.externalId)
+          assert.property(lastResult, 'location')
+          assert.approximately(lastResult.location.latitude, 30.419348, 0.000001)
+          assert.approximately(lastResult.location.longitude, -87.581222, 0.000001)
+
+          assert.deepEqual(_.omit(lastResult, 'location'), {
+            id: resultIds[1],
+            data: {a: 'b', c: 2, d: false, e: {f: 'g'}},
+            assay: {
+              id: 'MtbRif',
+              version: '1a.c1'
+            },
+            type: {id: 'Study'},
+            category: [
+              {id: 'Detected'},
+              {id: 'Indeterminate'}
+            ],
+            sample: {
+              id: 'Sample'+now,
+              originSite: {
+                id: result2SampleSite.externalId
+              }
+            },
+            startedOn: '2013-12-01T00:00:00.000Z',
+            endedOn: '2013-12-01T01:30:00.000Z',
+            consumable: [{
+              serial: '132-44-222',
+              expirationDate: '2014-03-01T00:00:00.000Z',
+              lot: '331-1'
+            }],
+            instrument: {
+              serial: '444-3'
+            },
+            module: {
+              name: 'ModA',
+              serial: '555-8'
+            },
+            research: {id: 'R123'},
+            patient: {
+              id: 'P-333',
+              name: 'Bob',
+              surname: 'Hope',
+              gender: 'M',
+              age: 72,
+              dateOfBirth: '1903-05-29T00:00:00.000Z',
+              address: '123 Main Street',
+              phone: '856-7909'
+            },
+            sender: {
+              version: '99-1',
+              operator: 'Bob O'
+            },
+            notes: 'My Awesome notes about this Awesome result!',
+            error: {
+              code: '123',
+              notes: 'Oh NOZE!'
+            }
+          })
+        })
+
+      // cleanup
+      yield knex('ResultLog').whereIn('resultId',
+        knex('Result').whereIn('externalId', resultIds).select('id')).delete()
+      const [{count: logLengthClean}] = yield knex('ResultLog').count('id as count')
+      assert.equal(logLengthClean, initialLogLength)
+
+      yield knex('Result').whereIn('externalId', resultIds).delete()
+      yield server.get(clientPath)
+        .set('Authorization', clientAuth)
+        .then(function(res){
+          assert.equal(res.status, 200)
+          assert.typeOf(res.body, 'Object')
+          assert.property(res.body, 'data')
+          assert.typeOf(res.body.data, 'array')
+          assert.equal(res.body.data.length, initialDataLength)
+          assert.property(res.body, 'total')
+        })
+    }))
+
+    it('should set default result categories', () => run(function*(knex){
+      const deviceAuth = 'Bearer '+sharedDevice.deviceToken
+
+      yield server.post(devicePath)
+        .set('Authorization', deviceAuth)
+        .send({data: {a:'b'}})
+        .then(function(res){
+          assert.equal(res.status, 200)
+          resultIds.push(res.body.data.id)
+        })
+
+      const result1 = yield knex('Result as r')
+        .where({externalId: resultIds[0]}).first()
+      assert.equal(result1.externalId, resultIds[0])
+      assert.deepEqual(JSON.parse(result1.resultData), {a: 'b'})
+      assert.isNotOk(result1.errorCode)
+
+      const [result1Category1, result1Category2] = yield knex('ResultCategory as rt')
+        .whereIn('id', [result1.resultCategory1, result1.resultCategory2]).select('externalId')
+      assert.equal(result1Category1.externalId, 'Success')
+      assert.isNotOk(result1Category2)
+
+      yield server.post(devicePath)
+        .set('Authorization', deviceAuth)
+        .send({data: {a:'c'}, error: {code: '1'}})
+        .then(function(res){
+          assert.equal(res.status, 200)
+          resultIds.push(res.body.data.id)
+        })
+
+      const result2 = yield knex('Result as r')
+        .where({externalId: resultIds[1]}).first()
+      assert.equal(result2.externalId, resultIds[1])
+      assert.deepEqual(JSON.parse(result2.resultData), {a: 'c'})
+      assert.equal(result2.errorCode, '1')
+
+      const [result2Category1, result2Category2] = yield knex('ResultCategory as rt')
+        .whereIn('id', [result2.resultCategory1, result2.resultCategory2]).select('externalId')
+      assert.equal(result2Category1.externalId, 'Error')
+      assert.isNotOk(result2Category2)
+
+      yield server.post(devicePath)
+        .set('Authorization', deviceAuth)
+        .send({data: {a:'d'}, category: {id: 'Invalid'}, error: {code: '1'}})
+        .then(function(res){
+          assert.equal(res.status, 200)
+          resultIds.push(res.body.data.id)
+        })
+
+      const result3 = yield knex('Result as r')
+        .where({externalId: resultIds[2]}).first()
+      assert.equal(result3.externalId, resultIds[2])
+      assert.deepEqual(JSON.parse(result3.resultData), {a: 'd'})
+      assert.equal(result3.errorCode, '1')
+
+      const [result3Category1, result3Category2] = yield knex('ResultCategory as rt')
+        .whereIn('id', [result3.resultCategory1, result3.resultCategory2]).select('externalId')
+      assert.equal(result3Category1.externalId, 'Invalid')
+      assert.isNotOk(result3Category2)
+
+      yield server.post(devicePath)
+        .set('Authorization', deviceAuth)
+        .send({data: {a:'e'}, category: [{id: 'Detected'}, {id: 'NotDetected'}]})
+        .then(function(res){
+          assert.equal(res.status, 200)
+          resultIds.push(res.body.data.id)
+        })
+
+      const result4 = yield knex('Result as r')
+        .where({externalId: resultIds[3]}).first()
+      assert.equal(result4.externalId, resultIds[3])
+      assert.deepEqual(JSON.parse(result4.resultData), {a: 'e'})
+      assert.isNotOk(result4.errorCode)
+
+      const [result4Category1, result4Category2] = yield knex('ResultCategory as rt')
+        .whereIn('id', [result4.resultCategory1, result4.resultCategory2]).select('externalId')
+      assert.equal(result4Category1.externalId, 'Detected')
+      assert.equal(result4Category2.externalId, 'NotDetected')
+
+    }))
+  })
+
+  describe('rrt_admin lab/clinic results', function(){
+    const resultIds = []
+
+    sharedDevice.authenticateUserAndFirstDevice(server, {user: 'rrt_admin', type: 'm2000'})
+
+    const devicePath = '/device/result'
+
+    afterEach(() => run(function*(knex){
+      // cleanup
+      yield knex('ResultLog').whereIn('resultId',
+        knex('Result').whereIn('externalId', resultIds).select('id')).delete()
+      yield knex('Result').whereIn('externalId', resultIds).delete()
+      resultIds.splice(0)
+    }))
+
+    it('should honor device role sample origin site', () => run(function*(knex){
+      const deviceAuth = 'Bearer '+sharedDevice.deviceToken
+      const deviceResultPath = devicePath+'?size=5&sortCol=updatedOn&sortDir=desc'
+
+      const [device1315, device1723] = yield knex('Device as d')
+        .join('Site as s', 'd.siteId', 's.id')
+        .join('DeviceType as dt', 'd.deviceTypeId', 'dt.id')
+        .whereIn('s.externalId', ['1315', '1723'])
+        .where('dt.name', 'RRT')
+        .orderBy('s.externalId')
+        .select('d.*')
+
+      const device1315Key = yield sharedDevice.getApiKey(server, device1315.id)
+      const device1723Key = yield sharedDevice.getApiKey(server, device1723.id)
+
+      const device1315Auth =  'Bearer '+device1315Key
+      const device1723Auth =  'Bearer '+device1723Key
+
+      yield server.post(devicePath)
+        .set('Authorization', deviceAuth)
+        .send({
+          data: {
+            resultText:'454112',
+            copies: 454112
+          },
+          sample: {
+            originSite: {
+              id: '1315'
+            }
+          },
+          notes: '454,112 Copies / mL'
+        })
+        .then(function(res){
+          assert.equal(res.status, 200)
+          resultIds.push(res.body.data.id)
+        })
+
+      yield server.get(deviceResultPath)
+        .set('Authorization', deviceAuth)
+        .then(function(res){
+          assert.equal(res.status, 200)
+          assert.typeOf(res.body, 'Object')
+          assert.property(res.body, 'data')
+          assert.typeOf(res.body.data, 'array')
+          assert.property(res.body, 'total')
+          assert.property(res.body, 'length')
+
+          const lastResult = _.find(res.body.data, {id: resultIds[0]})
+          assert.typeOf(lastResult, 'Object')
+          assert.property(lastResult, 'endedOn')
+          assert.property(lastResult.sample, 'id')
+          assert.property(lastResult.sample.originSite, 'id')
+          assert.equal(lastResult.sample.originSite.id, '1315')
+
+          assert.deepEqual(_.omit(lastResult, 'endedOn', 'sample'), {
+            id: resultIds[0],
+            data: {
+              resultText:'454112',
+              copies: 454112
+            },
+            assay: {id: 'HivVl'},
+            category: [{id: 'Success'}],
+            type: {id: 'Patient'},
+            notes: '454,112 Copies / mL'
+          })
+        })
+
+      yield server.get(deviceResultPath)
+        .set('Authorization', device1315Auth)
+        .then(function(res){
+          assert.equal(res.status, 200)
+          assert.typeOf(res.body, 'Object')
+          assert.property(res.body, 'data')
+          assert.typeOf(res.body.data, 'array')
+          assert.property(res.body, 'total')
+          assert.property(res.body, 'length')
+
+          const lastResult = _.find(res.body.data, {id: resultIds[0]})
+          assert.typeOf(lastResult, 'Object')
+          assert.property(lastResult, 'endedOn')
+          assert.property(lastResult.sample, 'id')
+          assert.property(lastResult.sample.originSite, 'id')
+          assert.equal(lastResult.sample.originSite.id, '1315')
+
+          assert.deepEqual(_.omit(lastResult, 'endedOn', 'sample'), {
+            id: resultIds[0],
+            data: {
+              resultText:'454112',
+              copies: 454112
+            },
+            assay: {id: 'HivVl'},
+            category: [{id: 'Success'}],
+            type: {id: 'Patient'},
+            notes: '454,112 Copies / mL'
+          })
+        })
+
+      yield server.get(deviceResultPath)
+        .set('Authorization', device1723Auth)
+        .then(function(res){
+          assert.equal(res.status, 200)
+          assert.typeOf(res.body, 'Object')
+          assert.property(res.body, 'data')
+          assert.typeOf(res.body.data, 'array')
+          assert.property(res.body, 'total')
+          assert.property(res.body, 'length')
+
+          const lastResult = _.find(res.body.data, {id: resultIds[0]})
+          assert.typeOf(lastResult, 'undefined')
+        })
+
+      yield server.post(devicePath)
+        .set('Authorization', deviceAuth)
+        .send({
+          data: {
+            resultText:'154112',
+            copies: 154112
+          },
+          sample: {
+            originSite: {
+              id: '1723'
+            }
+          },
+          notes: '154,112 Copies / mL'
+        })
+        .then(function(res){
+          assert.equal(res.status, 200)
+          resultIds.push(res.body.data.id)
+        })
+
+      yield server.get(deviceResultPath)
+        .set('Authorization', deviceAuth)
+        .then(function(res){
+          assert.equal(res.status, 200)
+          assert.typeOf(res.body, 'Object')
+          assert.property(res.body, 'data')
+          assert.typeOf(res.body.data, 'array')
+          assert.property(res.body, 'total')
+          assert.property(res.body, 'length')
+
+          const lastResult = _.find(res.body.data, {id: resultIds[1]})
+          assert.typeOf(lastResult, 'Object')
+          assert.property(lastResult, 'endedOn')
+          assert.property(lastResult.sample, 'id')
+          assert.property(lastResult.sample.originSite, 'id')
+          assert.equal(lastResult.sample.originSite.id, '1723')
+
+          assert.deepEqual(_.omit(lastResult, 'endedOn', 'sample'), {
+            id: resultIds[1],
+            data: {
+              resultText:'154112',
+              copies: 154112
+            },
+            assay: {id: 'HivVl'},
+            category: [{id: 'Success'}],
+            type: {id: 'Patient'},
+            notes: '154,112 Copies / mL'
+          })
+        })
+
+      yield server.get(deviceResultPath)
+        .set('Authorization', device1723Auth)
+        .then(function(res){
+          assert.equal(res.status, 200)
+          assert.typeOf(res.body, 'Object')
+          assert.property(res.body, 'data')
+          assert.typeOf(res.body.data, 'array')
+          assert.property(res.body, 'total')
+          assert.property(res.body, 'length')
+
+          const lastResult = _.find(res.body.data, {id: resultIds[1]})
+          assert.typeOf(lastResult, 'Object')
+          assert.property(lastResult, 'endedOn')
+          assert.property(lastResult.sample, 'id')
+          assert.property(lastResult.sample.originSite, 'id')
+          assert.equal(lastResult.sample.originSite.id, '1723')
+
+          assert.deepEqual(_.omit(lastResult, 'endedOn', 'sample'), {
+            id: resultIds[1],
+            data: {
+              resultText:'154112',
+              copies: 154112
+            },
+            assay: {id: 'HivVl'},
+            category: [{id: 'Success'}],
+            type: {id: 'Patient'},
+            notes: '154,112 Copies / mL'
+          })
+        })
+
+      yield server.get(deviceResultPath)
+        .set('Authorization', device1315Auth)
+        .then(function(res){
+          assert.equal(res.status, 200)
+          assert.typeOf(res.body, 'Object')
+          assert.property(res.body, 'data')
+          assert.typeOf(res.body.data, 'array')
+          assert.property(res.body, 'total')
+          assert.property(res.body, 'length')
+
+          const lastResult = _.find(res.body.data, {id: resultIds[1]})
+          assert.typeOf(lastResult, 'undefined')
+        })
+
+    }))
+
+
+    // other tests assume admin is authenticated so reset
+    sharedDevice.authenticateUserAndFirstDevice(server, {user: 'admin', type: 'GeneXpert'})
+  })
+})

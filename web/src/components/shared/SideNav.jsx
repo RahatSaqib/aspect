@@ -13,7 +13,7 @@ import Home from 'material-ui/svg-icons/action/home'
 import Cart from 'material-ui/svg-icons/action/shopping-cart'
 import Build from 'material-ui/svg-icons/action/build'
 import Scanner from 'material-ui/svg-icons/hardware/scanner'
-import Laptop from 'material-ui/svg-icons/hardware/laptop'
+import Location from 'material-ui/svg-icons/communication/location-on'
 import Assignment from 'material-ui/svg-icons/action/assignment'
 import People from 'material-ui/svg-icons/social/people'
 import Notifications from 'material-ui/svg-icons/social/notifications'
@@ -110,7 +110,7 @@ class SideNav extends PureComponent {
           <SitesListItem
             containerElement={<Link to="/site" />}
             value={ '/site' }
-            leftIcon={<Laptop />}
+            leftIcon={<Location />}
             className={styles.Drawer__ListItem}
             primaryText="Sites"
           />

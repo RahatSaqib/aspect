@@ -7,6 +7,8 @@ let _ = require('lodash')
 const bcrypt = require('bcrypt')
 const { createFetch, base, accept, header, method, body } = require('http-client')
 require('isomorphic-fetch')
+const emailUtil = require('../email/emailUtil')
+const templateProcessor = require('../email/templateProcessor')
 
 const bcryptCompare = Promise.promisify(bcrypt.compare)
 const bcryptHash = Promise.promisify(bcrypt.hash)
@@ -124,8 +126,7 @@ function setRefreshToken(userId, clientName, clientId, refreshToken, now){
     }, {
       token: refreshToken,
       expires: expires
-    }
-  ])
+    }])
 }
 
 function* refreshToken(request){
@@ -227,6 +228,9 @@ function* updateUsernameAndPasswordForLoggedInUser(request){
   if(payload.newPassword) {
     const passwordsMatch = yield bcryptCompare(payload.newPassword, loggedInUser.password)
     if(!passwordsMatch) {
+      changedFields.lockedOut = 0
+      changedFields.failedPasswordAttempts = 0
+      changedFields.legacyPassword = 0
       changedFields.password = yield bcryptHash(payload.newPassword, parseInt(config.passwordSaltRounds))
       changedFields.lastPasswordChange = now
     }
@@ -250,7 +254,7 @@ function* updateUsernameAndPasswordForLoggedInUser(request){
   return {
     ok: true,
     data: {
-      changedFields: Object.keys(_.omit(changedFields, ['lastPasswordChange'])),
+      changedFields: Object.keys(_.pick(changedFields, ['name', 'password'])),
       username: loggedInUser.name
     },
     access: accessToken,
@@ -259,9 +263,83 @@ function* updateUsernameAndPasswordForLoggedInUser(request){
   }
 }
 
+function* createResetPasswordToken(request){
+  const {params} = request
+
+  const users = yield query('Get user details from email address').from('Person as p')
+    .innerJoin('User as u', 'p.userId', 'u.id')
+    .where({'p.email': params.email})
+    .orWhere({'p.email2': params.email})
+    .select( 'u.id', 'p.name', 'p.culture' )
+
+  if (users.length === 1) {
+    const resetPasswordToken = uuid.v4(),
+      now = new Date(),
+      expires = new Date(now.getTime() + 3600000),
+      generatedEmail = yield* templateProcessor.process('resetPassword', {
+        name: users[0].name,
+        aspectUrl: process.env['aspectUrl'],
+        resetPasswordToken: resetPasswordToken
+      }, users[0].culture),
+      inlineImageAttachments = yield* templateProcessor.getInlineImageAttachments(generatedEmail.html)
+
+    yield* emailUtil.sendEmail(params.email, generatedEmail.subject, generatedEmail.html,
+      generatedEmail.text, inlineImageAttachments)
+
+    yield query('Save reset password token').from('User as u')
+      .where('u.id', users[0].id)
+      .update({
+        resetPasswordToken: resetPasswordToken,
+        resetPasswordTokenExpires: expires
+      })
+  } else if(users.length > 1) {
+    return Boom.conflict('Could not pinpoint the user from the email address provided')
+  }
+
+  return {
+    ok: true
+  }
+}
+
+function* updatePasswordWithResetPasswordToken(request) {
+  let {payload, params} = request
+
+  let userDetails = yield query('Get user with reset password token')
+    .from('User as u')
+    .where('u.resetPasswordToken', params.resetPasswordToken)
+    .first('u.resetPasswordTokenExpires', 'u.id', 'u.name as username')
+
+  if(userDetails){
+    const now = new Date()
+    if (userDetails.resetPasswordTokenExpires < now) {
+      return Boom.resourceGone('The reset password token is no longer valid')
+    }
+    yield query('Save password for user').from('User as u')
+      .where('u.id', userDetails.id)
+      .update({
+        lockedOut: 0,
+        failedPasswordAttempts: 0,
+        legacyPassword: 0,
+        password: yield bcryptHash(payload.newPassword, parseInt(config.passwordSaltRounds)),
+        lastPasswordChange: now,
+        resetPasswordToken: null,
+        resetPasswordTokenExpires: null
+      })
+  } else {
+    return Boom.notFound('The reset password token was not found')
+  }
+
+  return {
+    ok: true,
+    username: userDetails ? userDetails.username : undefined
+  }
+}
+
 module.exports = {
   authenticate,
   checkAuthentication,
   refreshToken,
-  updateUsernameAndPasswordForLoggedInUser
+  updateUsernameAndPasswordForLoggedInUser,
+  createResetPasswordToken,
+  updatePasswordWithResetPasswordToken
 }

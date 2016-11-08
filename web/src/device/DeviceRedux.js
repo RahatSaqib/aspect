@@ -47,7 +47,7 @@ function receiveDevices(json) {
   }
 }
 
-export function fetchDevices(filters = Immutable.Map({ name: '' }), sortCol = 'name', sortDir = 'asc', page = 0, pageSize = 10){
+export function fetchDevices(filters/* required */, sortCol = 'name', sortDir = 'asc', page = 0, pageSize = 10){
   return dispatch => {
 
     dispatch(requestDevices(sortCol, sortDir, page, pageSize, filters))

@@ -39,7 +39,7 @@ export default props => {
       })
 
   return <ForkedSelectField value={value} style={selectFieldStyle} underlineStyle={underlineStyle}
-                      autoWidth={true} onChange={onChange} {...selectFieldProps}>
+                      autoWidth onChange={onChange} {...selectFieldProps}>
     {
       countriesData.map(country =>
         <MenuItem key={country.value} value={country.value}

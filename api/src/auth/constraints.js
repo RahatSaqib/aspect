@@ -1,5 +1,5 @@
-let _ = require('lodash')
-let {query, knex} = require('../db')
+const _ = require('lodash')
+const {query, knex} = require('../db')
 
 // A prefix for joined table aliases intended to avoid
 // conflict with caller supplied table aliases
@@ -10,7 +10,7 @@ function alias(table){
 
 function getConstraints(credentials){
   // FIXME only include roles that assign permissions of interest
-  let dataFilters = query('Get constraints for user credentials')
+  const dataFilters = query('Get constraints for user credentials')
     .from('DataFilter as f')
     .innerJoin('Role as r', 'f.id', 'r.dataFilterId')
     .innerJoin('UserRole as ur', 'r.id', 'ur.roleId')
@@ -21,7 +21,7 @@ function getConstraints(credentials){
     .select('f.constraint')
     .map(f => JSON.parse(f.constraint))
 
-  let topOrgUnit = query('Get top org unit for user credentials')
+  const topOrgUnit = query('Get top org unit for user credentials')
     .from('OrgUnit as o')
     .innerJoin('Role as r', 'o.id', 'r.orgUnitId')
     .innerJoin('UserRole as ur', 'r.id', 'ur.roleId')
@@ -35,7 +35,7 @@ function getConstraints(credentials){
   return Promise.all([dataFilters, topOrgUnit])
     .then(([filterConstraints, orgUnit]) => {
       // TODO define constraints schema
-      let constraints =  {
+      const constraints =  {
         partner: {
           id: credentials.partnerId
         },
@@ -58,8 +58,40 @@ function getConstraints(credentials){
     })
 }
 
+function getDeviceConstraints(credentials){
+  const deviceId = query('Get device id for device credentials')
+    .from('Device as d')
+    .innerJoin('DeviceApiKey as dak', 'd.id', 'dak.deviceId')
+    .where({
+      'dak.id': +credentials.dak,
+      'dak.revoked': false
+    })
+    .first('d.id as deviceId')
+
+  const dataFilters = query('Get constraints for device credentials')
+    .from('DataFilter as f')
+    .innerJoin('Role as r', 'f.id', 'r.dataFilterId')
+    .innerJoin('DeviceRole as dr', 'r.id', 'dr.roleId')
+    .innerJoin('DeviceApiKey as dak', 'dak.deviceId', 'dr.deviceId')
+    .where({
+      'dak.id': +credentials.dak,
+      'dak.revoked': false
+    })
+    .select('f.constraint')
+    .map(f => JSON.parse(f.constraint))
+
+  return Promise.all([deviceId, dataFilters])
+    .then(([deviceId, filterConstraints]) => {
+      const constraints =  {
+        $or: [{device: {id: deviceId.deviceId}}].concat(filterConstraints)
+      }
+      return constraints
+    })
+}
+
+
 function addConstraints(queryBuilder, constraints, aliases){
-  let {device, site, partner, orgUnit, country, state, lga} = aliases
+  let {device, site, partner, orgUnit, country, state, lga, sample} = aliases
 
   // TODO generalize constraint building
   // TODO only join queries if needed within constraints or required by unspecified aliases
@@ -97,15 +129,19 @@ function addConstraints(queryBuilder, constraints, aliases){
   }
 
   // Partner, country, and org unit constraints are ANDed
-  queryBuilder.where({[`${partner}.id`]: constraints.partner.id})
-  queryBuilder.where({[`${country}.id`]: constraints.country.id})
+  if(constraints.partner){
+    queryBuilder.where({[`${partner}.id`]: constraints.partner.id})
+  }
+  if(constraints.country){
+    queryBuilder.where({[`${country}.id`]: constraints.country.id})
+  }
 
   if(constraints.orgUnit){
     // find all org units below topmost granted org unit
     // TODO likely makes sense to move nested set hierarchy queries to it's own helper function
-    let orgUnitSubOne = alias('OrgUnitSub1')
-    let orgUnitSubTwo = alias('OrgUnitSub2')
-    let orgUnitSubquery = query('Select OrgUnit hierachy for constraints')
+    const orgUnitSubOne = alias('OrgUnitSub1')
+    const orgUnitSubTwo = alias('OrgUnitSub2')
+    const orgUnitSubquery = query('Select OrgUnit hierachy for constraints')
       .from(`OrgUnit as ${orgUnitSubOne}`)
       .innerJoin(`OrgUnit as ${orgUnitSubTwo}`,
         knex.raw(`${orgUnitSubTwo}.leftBound BETWEEN ${orgUnitSubOne}.leftBound AND ${orgUnitSubOne}.rightBound`))
@@ -127,6 +163,18 @@ function addConstraints(queryBuilder, constraints, aliases){
         if(constraint.lga){
           this.orWhere(_.mapKeys(constraint.lga, (v, k) => `${lga}.${k}`))
         }
+
+        if(constraint.site){
+          this.orWhere(_.mapKeys(constraint.site, (v, k) => `${site}.${k}`))
+        }
+
+        if(constraint.device){
+          this.orWhere(_.mapKeys(constraint.device, (v, k) => `${device}.${k}`))
+        }
+
+        if(constraint.sample){
+          this.orWhere(_.mapKeys(constraint.sample, (v, k) => `${sample}.${k}`))
+        }
       }
     })
   }
@@ -134,5 +182,6 @@ function addConstraints(queryBuilder, constraints, aliases){
 
 module.exports = {
   getConstraints,
+  getDeviceConstraints,
   addConstraints
 }

@@ -5,20 +5,22 @@ const { knex, filterParams, sortPageParams } = require('../db')
 const { getConstraints, addConstraints } = require('../auth/constraints')
 
 const SELECT_LIST_FIELDS = [
-  'r.id', 'r.endedOn', 'd.name as deviceName', 'c.name as countryName',
-  'st.name as stateName', 'lg.name as lgaName',
+  'r.id', 'r.externalId', 'r.endedOn', 'd.name as deviceName',
+  'c.name as countryName', 'st.name as stateName', 'lg.name as lgaName',
   'rc1.name as resultCategory1Name', 'rc2.name as resultCategory2Name',
-  's.sampleId', 'r.patientId', 'a.name as assayName', 'a.id as assayId'
+  's.externalId as sampleId', 'a.name as assayName', 'a.id as assayId',
+  knex.raw('JSON_UNQUOTE(JSON_EXTRACT(r.patientData, "$.id")) as patientId')
 ]
 
 const SELECT_SHOW_FIELDS = [
-  'r.id', 'r.startedOn', 'r.endedOn', 'd.name as deviceName', 'c.name as countryName',
-  'st.name as stateName', 'lg.name as lgaName',
+  'r.id', 'r.externalId', 'r.startedOn', 'r.endedOn', 'd.name as deviceName',
+  'c.name as countryName', 'st.name as stateName', 'lg.name as lgaName',
   'rc1.name as resultCategory1Name', 'rc2.name as resultCategory2Name', 'r.resultData',
-  's.sampleId', 'r.patientId','si.name as siteName', 'r.assayVersion', 'r.consumableSerial',
-  'r.consumableLot', 'r.consumableExpirationDate', 'r.instrumentSerial', 'r.moduleName',
-  'r.moduleSerial', 'r.researchId', 'r.senderVersion', 'r.senderOperator', 'r.notes',
-  'r.errorCode', 'r.errorNotes','r.createdOn', 'r.updatedOn', 'r.assayId'
+  's.externalId as sampleId', 'si.name as siteName', 'r.assayVersion',
+  'r.consumableSerial', 'r.consumableLot', 'r.consumableExpirationDate', 'r.instrumentSerial',
+  'r.moduleName', 'r.moduleSerial', 'r.researchId', 'r.senderVersion', 'r.senderOperator',
+  'r.notes', 'r.errorCode', 'r.errorNotes','r.createdOn', 'r.updatedOn', 'r.assayId',
+  knex.raw('JSON_UNQUOTE(JSON_EXTRACT(r.patientData, "$.id")) as patientId')
 ]
 
 const SORT_FIELDS = [
@@ -88,8 +90,8 @@ function* listResults(request){
     .leftJoin('ResultCategory as rc1', 'r.resultCategory1', 'rc1.id')
     .leftJoin('ResultCategory as rc2', 'r.resultCategory2', 'rc2.id')
     .leftJoin('Sample as s', 'r.sampleId', 's.id')
-    .modify(filterParams, query, {  sampleId: 's.sampleId', assayId: 'r.assayId' })
-    .modify(addConstraints, dataConstraints, {device: 'd'})
+    .modify(filterParams, query, {deviceId: 'd.id', sampleId: 's.externalId', assayId: 'r.assayId' })
+    .modify(addConstraints, dataConstraints, {device: 'd', sample: 's'})
 
   // get total count for paging
   const getCount = resultQuery.clone()
@@ -138,7 +140,7 @@ function* getResultByResultId(request, fields=SELECT_SHOW_FIELDS){
     .leftJoin('Lga as lg', 'r.lgaId', 'lg.id')
     .leftJoin('ResultCategory as rc1', 'r.resultCategory1', 'rc1.id')
     .leftJoin('ResultCategory as rc2', 'r.resultCategory2', 'rc2.id')
-    .leftJoin('Sample as s', 'r.sampleId', 's.id')
+    .leftJoin('Sample as s', 'r.externalId', 's.id')
     .where('r.id', + params.resultId)
     .modify(addConstraints, dataConstraints, {device: 'd'})
     .select(fields)

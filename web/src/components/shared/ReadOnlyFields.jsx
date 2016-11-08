@@ -4,32 +4,51 @@ import React, { PureComponent, PropTypes } from 'react'
 // Material-UI
 import TextField from 'material-ui/TextField'
 
-export default class ReadOnlyFields extends PureComponent {
+export class ReadOnlyField extends PureComponent {
   static propTypes = {
-    fields: PropTypes.arrayOf(PropTypes.shape({
-      label: PropTypes.string.isRequired,
-      value: PropTypes.oneOfType([
-        PropTypes.string,
-        PropTypes.number
-      ]).isRequired
-    })).isRequired
+    label: PropTypes.string.isRequired,
+    value: PropTypes.oneOfType([
+      PropTypes.string,
+      PropTypes.number
+    ]).isRequired
   }
 
   render() {
-    const { fields } = this.props
+    const { label, value } = this.props
 
     return (
-      <div>
+      <TextField
+        disabled
+        value={value}
+        floatingLabelText={label}
+        fullWidth={true}
+      />
+    )
+  }
+}
+
+export class ReadOnlyFields extends PureComponent {
+  static propTypes = {
+    fields: PropTypes.arrayOf(
+      PropTypes.shape(ReadOnlyField.propTypes)
+    ).isRequired
+  }
+
+  render() {
+    const { fields, ...restProps } = this.props
+
+    return (
+      <div {...restProps}>
         {fields.map(({label, value}) => (
-          <TextField
+          <ReadOnlyField
             key={label}
-            disabled
+            label={label}
             value={value}
-            floatingLabelText={label}
-            fullWidth={true}
           />
         ))}
       </div>
     )
   }
 }
+
+export default ReadOnlyFields

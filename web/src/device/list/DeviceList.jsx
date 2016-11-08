@@ -25,9 +25,13 @@ import { DataTable } from '../../components/shared/DataTable'
 import styles from './DeviceList.css'
 
 const messages = defineMessages({
-  title: {
-    id: 'pages.DeviceList.title',
+  devicesTitle: {
+    id: 'pages.DeviceList.devicesTitle',
     defaultMessage: 'Devices'
+  },
+  routersTitle: {
+    id: 'pages.DeviceList.routersTitle',
+    defaultMessage: 'Routers'
   },
   deviceName: {
     id: 'pages.DeviceList.deviceName',
@@ -82,24 +86,57 @@ export class DeviceList extends PureComponent {
     this.props.router.push(`/device/${deviceId}`)
   }
 
+  handleFetch = (...args) => {
+    const nextFilters = this.props.table.filters.merge(
+      this.getDeviceConfigRoute().deviceConfig
+    )
+    this.props.fetchDevices(nextFilters, ...args)
+  }
+
   filterDevicesChange = (e) => {
     this.setState({ filters: this.state.filters.set(e.target.id, e.target.value) })
   }
 
   handleSubmit = (e) => {
     e.preventDefault()
-    this.props.fetchDevices(this.state.filters)
+    const nextFilters = this.props.table.filters
+      .merge(this.getDeviceConfigRoute().deviceConfig)
+      .merge(this.state.filters)
+    this.props.fetchDevices(nextFilters)
   }
 
   resetDevices = () => {
     this.setState({ filters: this.state.filters.set('name', '') })
-    this.props.fetchDevices()
+    this.handleFetch()
+  }
+
+  getDeviceConfigRoute({ routes } = this.props) {
+    return _.find(routes, r => r.deviceConfig)
+  }
+
+  getFormattedTitle() {
+    const deviceConfigRoute = this.getDeviceConfigRoute()
+    const { intl } = this.props
+    const { formatMessage } = intl
+    if (deviceConfigRoute.path === 'device') {
+      return formatMessage(messages.devicesTitle)
+    } else {
+      return formatMessage(messages.routersTitle)
+    }
   }
 
   componentWillMount() {
-    const { setPageTitle, intl } = this.props
-    const { formatMessage } = intl
-    setPageTitle(formatMessage(messages.title))
+    this.props.setPageTitle(this.getFormattedTitle())
+  }
+
+  componentDidUpdate(prevProps) {
+    const prevDeviceConfigRoute = this.getDeviceConfigRoute(prevProps)
+    const deviceConfigRoute = this.getDeviceConfigRoute()
+    // When switching between routers/devices, re-fetch API
+    if (prevDeviceConfigRoute !== deviceConfigRoute) {
+      this.handleFetch()
+      this.props.setPageTitle(this.getFormattedTitle())
+    }
   }
 
   getChildContext() {
@@ -128,7 +165,7 @@ export class DeviceList extends PureComponent {
 
     return (
       <div className={styles.Content}>
-        <Helmet title={formatMessage(messages.title)} titleTemplate="%s - Aspect" defaultTitle="Aspect" />
+        <Helmet title={this.getFormattedTitle()} titleTemplate="%s - Aspect" defaultTitle="Aspect" />
         <form onSubmit={ this.handleSubmit }>
           <Toolbar className={styles.Toolbar} >
             <ToolbarGroup firstChild={true}>
@@ -151,23 +188,25 @@ export class DeviceList extends PureComponent {
             </ToolbarGroup>
           </Toolbar>
         </form>
-        <DataTable  selectable
-                    handleItemIdSelection={this.handleItemIdSelection}
-                    handleFetch={ this.props.fetchDevices }
-                    items={ this.props.items }
-                    table={ this.props.table }
-                    columns={[
-                      { db: 'name', title: formatMessage(messages.deviceName),
-                          extraProps: { style: { width: DEVICE_TABLE_NAME_COLUMN_WIDTH } } },
-                      { db: 'status', title: formatMessage(messages.status), hideOnXs: true,
-                          extraProps: { style: { width: DEVICE_TABLE_STATUS_COLUMN_WIDTH } } },
-                      { db: 'createdOn', title: formatMessage(messages.reportingFor), hideOnXs: true,
-                          format: (data) => formatRelative(data) },
-                      { db: 'lastSeen', title: formatMessage(messages.lastSeen), hideOnXs: true,
-                          format: (data) => formatRelative(data) },
-                      { db: 'totalTests', title: formatMessage(messages.totalTests),
-                          format: (data) => formatNumber(data) }
-                    ]} />
+        <DataTable
+          selectable
+          handleItemIdSelection={this.handleItemIdSelection}
+          handleFetch={ this.handleFetch }
+          items={ this.props.items }
+          table={ this.props.table }
+          columns={[
+            { db: 'name', title: formatMessage(messages.deviceName),
+              extraProps: { style: { width: DEVICE_TABLE_NAME_COLUMN_WIDTH } } },
+            { db: 'status', title: formatMessage(messages.status), hideOnXs: true,
+              extraProps: { style: { width: DEVICE_TABLE_STATUS_COLUMN_WIDTH } } },
+            { db: 'createdOn', title: formatMessage(messages.reportingFor), hideOnXs: true,
+              format: (data) => formatRelative(data) },
+            { db: 'lastSeen', title: formatMessage(messages.lastSeen), hideOnXs: true,
+              format: (data) => formatRelative(data) },
+            { db: 'totalTests', title: formatMessage(messages.totalTests),
+              format: (data) => formatNumber(data) }
+          ]}
+        />
       </div>
     )
   }

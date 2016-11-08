@@ -20,8 +20,8 @@ const SELECT_SHOW_FIELDS = [
   knex.raw('d.id * 134 as totalTests'),
   'd.siteId',
   // TODO: First Connected
-  // TODO: First Approved On
-  // TODO: First Approved By
+  'd.approvedOn',
+  'u.name as approvedBy',
   'd.notes',
   'd.serial'
 ]
@@ -66,6 +66,7 @@ function* getDeviceByDeviceId(request, fields=SELECT_SHOW_FIELDS){
   const devices = yield knex('Device as d')
     .innerJoin('DeviceType as dt', 'd.deviceTypeId', 'dt.id')
     .innerJoin('DeviceTypeCategory as dc', 'dt.deviceTypeCategoryId', 'dc.id')
+    .leftOuterJoin('User as u', 'u.id', 'd.approvedBy')
     .where('d.id', +params.deviceId)
     .modify(addConstraints, dataConstraints, {device: 'd'})
     .select(fields)
@@ -140,7 +141,7 @@ function* listDeviceConfiguration(request){
   // get rows
   let getItems = configQuery.clone()
     .modify(sortPageParams, query, 'deviceName')
-    .select('dc.id', 'dc.createdOn', 'dc.data', 'dc.deviceId', 'd.name as deviceName')
+    .select('dc.id', 'dc.externalId', 'dc.createdOn', 'dc.data', 'dc.deviceId', 'd.name as deviceName')
     .map(item => Object.assign({}, item, {data: JSON.parse(item.data)}))
 
   // return result when both queries are finished
@@ -170,7 +171,7 @@ function* listDeviceOperation(request){
   // get rows
   let getItems = opQuery.clone()
     .modify(sortPageParams, query, 'deviceName')
-    .select('do.id', 'do.createdOn', 'do.data', 'do.deviceId', 'd.name as deviceName')
+    .select('do.id', 'do.externalId', 'do.createdOn', 'do.data', 'do.deviceId', 'd.name as deviceName')
     .map(item => Object.assign({}, item, {data: JSON.parse(item.data)}))
 
   // return result when both queries are finished

@@ -45,12 +45,12 @@ const shared = module.exports = {
     })
   },
 
-  authenticateUserAndFirstDevice(server, username, password){
-    sharedToken.authenticateUser(server, username, password)
+  authenticateUserAndFirstDevice(server, {user, password, type}){
+    sharedToken.authenticateUser(server, user, password)
 
-    it(`should authenticate first device for user ${username}`, function(done) {
+    it(`should authenticate first device for user ${user}`, function(done) {
       server
-        .get('/api/device?size=1')
+        .get('/api/device?size=1'+(type ? '&type='+type : ''))
         .set('Authorization', 'Bearer '+sharedToken.token)
         .end(function(err,res){
           assert.equal(res.status, 200)
@@ -77,6 +77,17 @@ const shared = module.exports = {
             })
         })
     })
+  },
+
+  getApiKey(server, deviceId){
+    return server
+      .get(`/api/device/${deviceId}/api-key`)
+      .set('Authorization', 'Bearer '+sharedToken.token)
+      .then(function(res){
+        assert.equal(res.status, 200)
+        assert.isAbove(res.body.access.length, 1)
+        return res.body.access
+      })
   },
 
   // use this in your tests to get a valid device token for testing

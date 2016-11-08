@@ -12,6 +12,7 @@ import LoggedInShell from '../components/layouts/LoggedInShell'
 // "Pages"
 import { NotFoundContainer } from '../error/notFound/NotFound'
 import { LoginContainer } from '../auth/login/Login'
+import ResetPasswordContainer from '../auth/resetPassword/ResetPassword'
 import { DashboardContainer } from '../dashboard/dashboard/Dashboard'
 import { InventoryContainer } from '../dashboard/inventory/Inventory'
 import { MaintenanceContainer } from '../dashboard/maintenance/Maintenance'
@@ -21,6 +22,7 @@ import { SiteListContainer } from '../site/list/SiteList'
 import { SiteDetailContainer } from '../site/detail/SiteDetail'
 import { PersonListContainer } from '../person/list/PersonList'
 import { ResultListContainer } from '../result/list/ResultList'
+import { ResultDetailContainer } from '../result/detail/ResultDetail'
 import { NotificationListContainer } from '../notification/list/NotificationList'
 import { ReportListContainer } from '../report/list/ReportList'
 import { AccountDetailsContainer } from '../account/detail/AccountDetails'
@@ -56,6 +58,7 @@ const routes =
           render={applyRouterMiddleware(useScroll()) }>
     <Route component={App} path="/">
       <Route component={LoginContainer} path="login" />
+      <Route component={ResetPasswordContainer} path="reset-password" />
       <Route component={LoggedInShell}
         onChange={(prevState, nextState, replace) => requireAuth(nextState, replace) }>
 
@@ -67,18 +70,19 @@ const routes =
           <Route path="maintenance" component={MaintenanceContainer} />
         </Route>
 
-        <Route path="device" hasResults="1">
+        <Route path="device" deviceConfig={{hasResults: 1, hasConnectivity: undefined}}>
           <IndexRoute component={DeviceListContainer} />
           <Route path=":deviceId" component={DeviceDetailContainer} />
         </Route>
 
-        <Route path="router" hasResults="0" hasConnectivity="1">
+        <Route path="router" deviceConfig={{hasResults: 0, hasConnectivity: 1}}>
           <IndexRoute component={DeviceListContainer} />
           <Route path=":deviceId" component={DeviceDetailContainer} />
         </Route>
 
         <Route path="result">
           <IndexRoute component={ResultListContainer} />
+          <Route path=":resultId" component={ResultDetailContainer} />
         </Route>
 
         <Route path="site">

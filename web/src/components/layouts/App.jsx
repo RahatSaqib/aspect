@@ -31,8 +31,9 @@ class App extends PureComponent {
   }
 
   render() {
-    const { locale, timezone } = this.props,
-      messages = translation[locale], formats = {}
+    const { locale, timezone } = this.props
+    const messages = translation[locale]
+    const formats = {}
 
     if(timezone) {
       formats.date = {
@@ -50,7 +51,7 @@ class App extends PureComponent {
     return (
       <IntlProvider
         key={/* https://git.io/viGEA */locale}
-        locale={locale}
+        locale={locale === 'en-US' ? 'en' : locale}
         formats={formats}
         messages={messages}
       >
@@ -64,11 +65,11 @@ class App extends PureComponent {
 
 function mapStateToProps(state) {
   return {
-    locale: state.getIn(['user', 'lang']) || DEFAULT_LOCALE,
+    locale: state.getIn(['user', 'culture']) || DEFAULT_LOCALE,
     timezone: getUsersTimezone(state.getIn(['user', 'timezone']))
   }
 }
 
-const DEFAULT_LOCALE = 'en'
+const DEFAULT_LOCALE = 'en-US'
 
 export default connect(mapStateToProps)(App)

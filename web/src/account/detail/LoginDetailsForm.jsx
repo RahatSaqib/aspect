@@ -40,7 +40,11 @@ const messages = defineMessages({
   },
   newPasswordTooShort: {
     id: 'pages.UpdateLoginDetails.newPasswordTooShort',
-    defaultMessage: 'Your password needs to be at least 6 characters long'
+    defaultMessage: 'The password needs to be at least 8 characters long'
+  },
+  newPasswordMustContainANumberOrSpecialCharacter: {
+    id: 'pages.UpdateLoginDetails.newPasswordMustContainANumberOrSpecialCharacter',
+    defaultMessage: 'The password needs to contain at least one number or special character (%!$*...)'
   },
   passwordsDoNotMatch: {
     id: 'pages.UpdateLoginDetails.passwordsDoNotMatch',
@@ -127,8 +131,11 @@ const validate = (loginDetails, props) => {
     errors.currentPassword = formatMessage(messages.currentPasswordRequired)
   }
   if (loginDetails.get('newPassword')) {
-    if(loginDetails.get('newPassword').trim().length < 6) {
+    if(loginDetails.get('newPassword').trim().length < 8) {
       errors.newPassword = formatMessage(messages.newPasswordTooShort)
+    } else if (!/\d/.test(loginDetails.get('newPassword')) &&
+      !/(?=.*?[`~!@#$%\^&*()\-=_+\\\[\]{}/?,.<>])/.test(loginDetails.get('newPassword'))) {
+      errors.newPassword = formatMessage(messages.newPasswordMustContainANumberOrSpecialCharacter)
     }
     if (loginDetails.get('newPassword') !== loginDetails.get('confirmNewPassword')) {
       errors.confirmNewPassword = formatMessage(messages.passwordsDoNotMatch)

@@ -51,6 +51,8 @@ function* up(knex){
     user.boolean('lockedOut').notNullable()
     user.integer('failedPasswordAttempts').unsigned().notNullable()
     user.boolean('legacyPassword').notNullable().defaultTo(0)
+    user.string('resetPasswordToken', 36)
+    user.dateTime('resetPasswordTokenExpires')
     user.charset('utf8')
   })
 
@@ -200,6 +202,15 @@ function* up(knex){
     apiKey.charset('utf8')
   })
 
+  yield knex.schema.createTable('DeviceRole', deviceRole => {
+    deviceRole.integer('deviceId').unsigned()
+      .index().references('id').inTable('Device')
+    deviceRole.integer('roleId').unsigned()
+      .index().references('id').inTable('Role')
+    deviceRole.primary(['deviceId', 'roleId'])
+    deviceRole.charset('utf8')
+  })
+
   yield knex.schema.createTable('DeviceTypeCategory', deviceTypeFeature => {
     deviceTypeFeature.increments('id')
     deviceTypeFeature.string('name').notNullable()
@@ -223,7 +234,7 @@ function* up(knex){
     site.increments('id')
     site.string('name').notNullable()
     site.string('shortname', 45)
-    site.string('identifier')
+    site.string('externalId').notNullable()
     site.string('notes', 2000)
     // TODO is site to partner many to many?
     site.integer('partnerId').unsigned()
@@ -324,6 +335,7 @@ function* up(knex){
     config.increments('id')
     config.integer('deviceId').unsigned().notNullable()
       .index().references('id').inTable('Device')
+    config.string('externalId').notNullable()
     config.specificType('data', 'JSON').notNullable()
     addCreateFieldsNullable(config)
     config.charset('utf8')
@@ -333,6 +345,7 @@ function* up(knex){
     config.increments('id')
     config.integer('deviceId').unsigned().notNullable()
       .index().references('id').inTable('Device')
+    config.string('externalId').notNullable()
     config.specificType('data', 'JSON').notNullable()
     addCreateFieldsNullable(config)
     config.charset('utf8')
@@ -349,6 +362,7 @@ function* up(knex){
     assay.increments('id')
     assay.string('name').notNullable()
     assay.string('i18nKey')
+    assay.string('externalId').notNullable()
     assay.integer('assayTypeId').unsigned().notNullable()
       .index().references('id').inTable('AssayType')
     assay.integer('deviceTypeId').unsigned().notNullable()
@@ -365,6 +379,7 @@ function* up(knex){
     resultType.increments('id')
     resultType.string('name').notNullable()
     resultType.string('i18nKey')
+    resultType.string('externalId').notNullable()
     resultType.charset('utf8')
   })
 
@@ -373,6 +388,7 @@ function* up(knex){
     resultCategory.increments('id')
     resultCategory.string('name').notNullable()
     resultCategory.string('i18nKey')
+    resultCategory.string('externalId').notNullable()
     resultCategory.charset('utf8')
   })
 
@@ -388,7 +404,7 @@ function* up(knex){
   // the sample that the result is based on (multiple results can refer to the same sample)
   yield knex.schema.createTable('Sample', sample => {
     sample.increments('id')
-    sample.string('sampleId').notNullable()
+    sample.string('externalId').notNullable()
     sample.integer('originSiteId').unsigned()
           .index().references('id').inTable('Site')
     sample.charset('utf8')
@@ -396,7 +412,7 @@ function* up(knex){
 
   yield knex.schema.createTable('Result', result => {
     result.increments('id')
-    result.string('uniqueId').notNullable()
+    result.string('externalId').notNullable()
     result.integer('assayId').unsigned().notNullable()
       .index().references('id').inTable('Assay')
     result.integer('partnerId').unsigned()
@@ -434,7 +450,7 @@ function* up(knex){
     result.string('moduleName')
     result.string('moduleSerial')
     result.string('researchId')
-    result.string('patientId')
+    result.specificType('patientData', 'JSON')
     result.string('senderVersion')
     result.string('senderOperator')
     result.string('notes', 2000)
@@ -455,11 +471,41 @@ function* up(knex){
     sample.charset('utf8')
   })
 
+  yield knex.schema.createTable('Unit', unit => {
+    unit.increments('id')
+    unit.string('name').notNullable()
+    unit.string('shortname')
+    unit.charset('utf8')
+  })
+
+  yield knex.schema.createTable('Consumable', consumable =>{
+    consumable.increments('id')
+    consumable.string('name').notNullable()
+    consumable.integer('unit').unsigned().notNullable()
+      .references('id').inTable('Unit')
+    consumable.boolean('canExpire').notNullable().defaultTo(0)
+    consumable.text('manufacturer')
+    consumable.boolean('autoInclude').notNullable().defaultTo(0)
+    consumable.charset('utf8')
+  })
+
+  yield knex.schema.createTable('ConsumableReason', consumableReason =>{
+    consumableReason.increments('id')
+    consumableReason.string('name').notNullable()
+    consumableReason.boolean('decrease').notNullable().defaultTo(0)
+    consumableReason.charset('utf8')
+  })
+
   yield knex.raw('SET foreign_key_checks = 1')
 }
 
 function* down(knex){
   yield knex.raw('SET foreign_key_checks = 0')
+
+  yield knex.schema.dropTableIfExists('ConsumableReason')
+  yield knex.schema.dropTableIfExists('Unit')
+  yield knex.schema.dropTableIfExists('Consumable')
+  yield knex.schema.dropTableIfExists('ResetPassword')
   yield knex.schema.dropTableIfExists('ResultCategoryAssay')
   yield knex.schema.dropTableIfExists('ResultType')
   yield knex.schema.dropTableIfExists('ResultCategory')
@@ -476,6 +522,7 @@ function* down(knex){
   yield knex.schema.dropTableIfExists('DeviceConfiguration')
   yield knex.schema.dropTableIfExists('DeviceOperation')
   yield knex.schema.dropTableIfExists('DeviceType')
+  yield knex.schema.dropTableIfExists('DeviceRole')
   yield knex.schema.dropTableIfExists('DeviceApiKey')
   yield knex.schema.dropTableIfExists('RefreshToken')
   yield knex.schema.dropTableIfExists('UserRole')

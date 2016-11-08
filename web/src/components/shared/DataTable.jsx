@@ -41,7 +41,6 @@ export class DataTable extends PureComponent {
       loading: PropTypes.bool.isRequired,
       sortCol: PropTypes.string.isRequired,
       sortDir: PropTypes.string.isRequired,
-      filters: PropTypes.object.isRequired/* TODO */,
       page: PropTypes.number.isRequired,
       pageSize: PropTypes.number.isRequired,
       total: PropTypes.number.isRequired
@@ -96,7 +95,7 @@ export class DataTable extends PureComponent {
 
     const table = this.props.table
 
-    this.props.handleFetch(table.filters, col || table.sortCol, newSort || table.sortDir, page == null ? table.page : page, table.pageSize)
+    this.props.handleFetch(col || table.sortCol, newSort || table.sortDir, page == null ? table.page : page, table.pageSize)
   }
 
   getColumns() {
