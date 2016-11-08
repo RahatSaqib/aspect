@@ -41,23 +41,27 @@ export const fetchPartnersAndRolesForSelectList = function(partnersAndRolesForSe
  * ---------------- Reducers -----------------
  */
 const Partner = Immutable.Record({
-    id: null,
-    name: null,
-    orgUnits: Immutable.List()
-  }), OrgUnit = Immutable.Record({
-    id: null,
-    name: null,
-    roles: Immutable.List()
-  }), Role = Immutable.Record({
-    id: null,
-    name: null
-  }), LazyLoadPartnersAndRoles = Immutable.Record({
-    loading: false,
-    lastRefreshed: undefined,
-    partners: Immutable.List()
-  }), Roles = Immutable.Record({
-    partnersAndRolesForSelectList: new LazyLoadPartnersAndRoles()
-  })
+  id: null,
+  name: null,
+  orgUnits: Immutable.List()
+})
+const OrgUnit = Immutable.Record({
+  id: null,
+  name: null,
+  roles: Immutable.List()
+})
+const Role = Immutable.Record({
+  id: null,
+  name: null
+})
+const LazyLoadPartnersAndRoles = Immutable.Record({
+  loading: false,
+  lastRefreshed: undefined,
+  partners: Immutable.List()
+})
+const Roles = Immutable.Record({
+  partnersAndRolesForSelectList: new LazyLoadPartnersAndRoles()
+})
 
 const initialState = new Roles()
 

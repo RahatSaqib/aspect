@@ -27,13 +27,13 @@ const messages = defineMessages({
 })
 
 const renderLanguageField = props => {
-  const {onSelectionChanged, input, selectFieldProps} = props,
-    onChange = (event, index, value) => {
-      if(onSelectionChanged){
-        onSelectionChanged(event, index, value)
-      }
-      input.onChange(value)
+  const {onSelectionChanged, input, selectFieldProps} = props
+  const onChange = (event, index, value) => {
+    if(onSelectionChanged){
+      onSelectionChanged(event, index, value)
     }
+    input.onChange(value)
+  }
   return (
     <CountrySelect name={input.name} value={input.value} dataSource={languages}
                    dataSourceConfig={{

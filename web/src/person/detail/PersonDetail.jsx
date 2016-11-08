@@ -82,9 +82,8 @@ export class PersonDetail extends PureComponent {
   }
 
   setPartnersOrgUnitsAndRoles = (props, selectedPartnerId, selectedOrgUnitId) => {
-    const {partnersAndRolesForSelectList, intl} = props,
-      {formatMessage} = intl,
-      partners = _.map(partnersAndRolesForSelectList.get('partners').toJS(), partner => {
+    const {partnersAndRolesForSelectList, intl: {formatMessage}} = props
+    const partners = _.map(partnersAndRolesForSelectList.get('partners').toJS(), partner => {
         return{
           id: partner.id,
           name: partner.name || formatMessage(messages.noPartner),
@@ -96,11 +95,11 @@ export class PersonDetail extends PureComponent {
             }
           })
         }
-      }),
-      selectedPartner = _.find(partners, {id: selectedPartnerId}) || _.find(partners, {id: undefined}),
-      orgUnits = selectedPartner.orgUnits,
-      selectedOrgUnit = _.find(selectedPartner.orgUnits, {id: selectedOrgUnitId}) || _.find(selectedPartner.orgUnits, {id: undefined}),
-      roles = selectedOrgUnit.roles
+      })
+    const selectedPartner = _.find(partners, {id: selectedPartnerId}) || _.find(partners, {id: undefined})
+    const orgUnits = selectedPartner.orgUnits
+    const selectedOrgUnit = _.find(selectedPartner.orgUnits, {id: selectedOrgUnitId}) || _.find(selectedPartner.orgUnits, {id: undefined})
+    const roles = selectedOrgUnit.roles
     this.setState({
       partners,
       orgUnits,
@@ -130,21 +129,25 @@ export class PersonDetail extends PureComponent {
     const {
         intl: { formatMessage },
         person, user, editable, addAcknowledgement
-      } = this.props,
-      contactDetails = new ContactDetails(person),
-      loginDetails = new LoginDetails(person),
-      userPreferences = new UserPreferences(person),
-      userIsAdmin = user.get('permissions').includes('person:admin'),
-      loading = !person || person.get('loaded') !== true,
-      saveContactDetailsSucceeded = () => {
-        addAcknowledgement(formatMessage(messages.contactDetailsUpdated))
-      },
-      saveLoginDetailsSucceeded = () => {
-        addAcknowledgement(formatMessage(messages.loginDetailsUpdated))
-      },
-      saveUserPreferencesSucceeded = () => {
-        addAcknowledgement(formatMessage(messages.userPreferencesUpdated))
-      }
+      } = this.props
+    const contactDetails = new ContactDetails(person)
+    const loginDetails = new LoginDetails(person)
+    const userPreferences = new UserPreferences(person)
+    const userIsAdmin = user.get('permissions').includes('person:admin')
+    const loading = !person || person.get('loaded') !== true
+    const saveContactDetailsSucceeded = () => {
+      addAcknowledgement(formatMessage(messages.contactDetailsUpdated))
+    }
+    const saveLoginDetailsSucceeded = () => {
+      addAcknowledgement(formatMessage(messages.loginDetailsUpdated))
+    }
+    const saveUserPreferencesSucceeded = () => {
+      addAcknowledgement(formatMessage(messages.userPreferencesUpdated))
+    }
+    const smallScreenHeaderClasses = classNames({
+      'main-class': true,
+      'activeClass': self.state.focused === index
+    })
     return (
       <div className={styles.Content}>
         <Helmet title={formatMessage(messages.title)} titleTemplate="%s - Aspect" defaultTitle="Aspect" />

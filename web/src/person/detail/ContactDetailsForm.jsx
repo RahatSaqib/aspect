@@ -119,8 +119,8 @@ const ContactDetailsForm = props => {
 }
 
 const validate = (accountDetails, props) => {
-  const {formatMessage} = props.intl,
-    errors = {}
+  const {formatMessage} = props.intl
+  const errors = {}
   if (!accountDetails.get('name')) {
     errors.name = formatMessage(messages.nameRequired)
   }

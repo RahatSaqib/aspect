@@ -77,28 +77,26 @@ const messages = defineMessages({
 })
 
 const LoginDetailsForm = props => {
-  const { handleSubmit, pristine, invalid, loading,
+  const { intl: {formatMessage}, handleSubmit, pristine, invalid, loading,
       currentPasswordInputDialogOpen, openCurrentPasswordInputDialog,
-      closeCurrentPasswordInputDialog} = props,
-    {formatMessage} = props.intl,
-    onCurrentPasswordKeyPress = event => {
-      if(event.key === 'Enter') {
-        return handleSubmit()
-      }
-    },
-    handleSaveButtonClicked = () => {
-      if(openCurrentPasswordInputDialog) {
-        return openCurrentPasswordInputDialog()
-      } else {
-        return handleSubmit()
-      }
-    },
-    currentPasswordInputDialogActions = [
-      <FlatButton label={formatMessage(messages.cancelCurrentPassword)} secondary
-                  disabled={loading} onTouchTap={closeCurrentPasswordInputDialog} />,
-      <FlatButton label={formatMessage(messages.submitCurrentPassword)} primary
-                  disabled={pristine || invalid || loading} onTouchTap={handleSubmit} />
-    ]
+      closeCurrentPasswordInputDialog} = props
+  const onCurrentPasswordKeyPress = event => {
+    if(event.key === 'Enter') {
+      return handleSubmit()
+    }
+  }
+  const handleSaveButtonClicked = () => {
+    if(openCurrentPasswordInputDialog) {
+      return openCurrentPasswordInputDialog()
+    } else {
+      return handleSubmit()
+    }
+  }
+  const currentPasswordInputDialogActions = [
+    <FlatButton label={formatMessage(messages.cancelCurrentPassword)} secondary
+                disabled={loading} onTouchTap={closeCurrentPasswordInputDialog} />,
+    <FlatButton label={formatMessage(messages.submitCurrentPassword)} primary
+                disabled={pristine || invalid || loading} onTouchTap={handleSubmit} />]
   return (
     <form onSubmit={handleSubmit} className={styles.Form}>
       <div className={styles.Form__Content}>
@@ -130,8 +128,8 @@ const LoginDetailsForm = props => {
 }
 
 const validate = (loginDetails, props) => {
-  const {formatMessage} = props.intl,
-    errors = {}
+  const {formatMessage} = props.intl
+  const errors = {}
   if (!loginDetails.get('username')) {
     errors.username = formatMessage(messages.usernameRequired)
   }
