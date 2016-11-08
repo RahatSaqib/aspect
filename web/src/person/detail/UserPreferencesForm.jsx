@@ -34,16 +34,13 @@ const UserPreferencesForm = props => {
     <form onSubmit={handleSubmit} className={styles.Form}>
       <div className={styles.Form__Content}>
         <TimezoneSelect name="timezone" label={formatMessage(messages.timezone)}
-                        disabled={loading || saving} autoWidth
-                        defaultTimezoneText={formatMessage(messages.useDeviceTimezone)} />
+                        disabled={loading || saving} autoWidth />
         <br />
-        <Field name="culture" floatingLabelText={formatMessage(messages.language)}
-               selectFieldProps={{
-                 floatingLabelText: formatMessage(messages.language),
-                 disabled: (loading || saving),
-                 autoWidth: true
-               }}
-               disabled={loading || saving} component={renderLanguageField}  />
+        <Field name="culture" selectFieldProps={{
+          floatingLabelText: formatMessage(messages.language),
+          disabled: (loading || saving),
+          autoWidth: true
+        }} disabled={loading || saving} component={renderLanguageField}  />
       </div>
       <div className={styles.Form__ActionRow}>
         <RaisedButton disabled={pristine || invalid || loading} label={formatMessage(messages.save)} secondary type="submit" />
@@ -54,6 +51,7 @@ const UserPreferencesForm = props => {
 
 UserPreferencesForm.propTypes = {
   loading: PropTypes.bool,
+  saving: PropTypes.bool,
   onSubmit: PropTypes.func.isRequired,
   onSubmitSuccess: PropTypes.func
 }

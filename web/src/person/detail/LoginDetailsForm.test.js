@@ -7,7 +7,6 @@ import Immutable from 'immutable'
 import TextInput from '../../components/shared/TextInput'
 import StrongPasswordInput from '../../components/shared/StrongPasswordInput'
 import RaisedButton from 'material-ui/RaisedButton'
-import LocationSelector from '../../components/shared/LocationSelector'
 
 describe('LoginDetailsForm Component', () => {
   const fakeReactIntl = {
@@ -134,7 +133,7 @@ describe('LoginDetailsForm Component', () => {
       reduxFormConfig = reduxFormStub.reduxForm.firstCall.args[0]
     })
 
-    it('Should create a form called \'accountDetails\'', () => {
+    it('Should create a form called \'loginDetails\'', () => {
       assert.equal(reduxFormConfig.form, 'loginDetails')
     })
 

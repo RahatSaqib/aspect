@@ -159,10 +159,6 @@ export default defineMessages({
     id: 'pages.UserPreferences.timezone',
     defaultMessage: 'Time Zone'
   },
-  useDeviceTimezone: {
-    id: 'pages.UserPreferences.useDeviceTimezone',
-    defaultMessage: 'Use Computer\'s Time Zone'
-  },
   language: {
     id: 'pages.UserPreferences.language',
     defaultMessage: 'Language'
