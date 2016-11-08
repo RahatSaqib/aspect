@@ -84,18 +84,18 @@ export class PersonDetail extends PureComponent {
   setPartnersOrgUnitsAndRoles = (props, selectedPartnerId, selectedOrgUnitId) => {
     const {partnersAndRolesForSelectList, intl: {formatMessage}} = props
     const partners = _.map(partnersAndRolesForSelectList.get('partners').toJS(), partner => {
-        return{
-          id: partner.id,
-          name: partner.name || formatMessage(messages.noPartner),
-          orgUnits: _.map(partner.orgUnits, orgUnit => {
-            return {
-              id: orgUnit.id,
-              name: orgUnit.name || formatMessage(messages.noOrgUnit),
-              roles: orgUnit.roles
-            }
-          })
-        }
-      })
+      return{
+        id: partner.id,
+        name: partner.name || formatMessage(messages.noPartner),
+        orgUnits: _.map(partner.orgUnits, orgUnit => {
+          return {
+            id: orgUnit.id,
+            name: orgUnit.name || formatMessage(messages.noOrgUnit),
+            roles: orgUnit.roles
+          }
+        })
+      }
+    })
     const selectedPartner = _.find(partners, {id: selectedPartnerId}) || _.find(partners, {id: undefined})
     const orgUnits = selectedPartner.orgUnits
     const selectedOrgUnit = _.find(selectedPartner.orgUnits, {id: selectedOrgUnitId}) || _.find(selectedPartner.orgUnits, {id: undefined})
@@ -144,10 +144,7 @@ export class PersonDetail extends PureComponent {
     const saveUserPreferencesSucceeded = () => {
       addAcknowledgement(formatMessage(messages.userPreferencesUpdated))
     }
-    const smallScreenHeaderClasses = classNames({
-      'main-class': true,
-      'activeClass': self.state.focused === index
-    })
+
     return (
       <div className={styles.Content}>
         <Helmet title={formatMessage(messages.title)} titleTemplate="%s - Aspect" defaultTitle="Aspect" />
