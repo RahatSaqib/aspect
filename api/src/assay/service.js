@@ -15,11 +15,11 @@ function* listAssays(request) {
 
   // get all assays that have results that user has access to
   const dataConstraints = yield getConstraints(auth.credentials)
-  const usedAssays = yield knex('Result as r')
+  const usedAssayIds = yield knex('Result as r')
     .innerJoin('Device as d', 'r.deviceId', 'd.id')
     .modify(addConstraints, dataConstraints, { device: 'd' })
     .distinct('r.assayId')
-  const assayIds =  _.map(usedAssays, 'assayId')
+    .pluck('assayId')
 
   // no get the assays with a field for hasResults
   const assayQuery = knex('Assay as a')
@@ -40,10 +40,10 @@ function* listAssays(request) {
   let [{count: total}, data] = yield Promise.all([getCount, getItems])
 
   data = _.map(data, (d) => {
-    return _.assign(d,
-      { hasResults: assayIds.includes(d.id) },
-      { resultDataSchema: JSON.parse(d.resultDataSchema) }
-    )
+    return _.assign({}, d, {
+      hasResults: usedAssayIds.includes(d.id),
+      resultDataSchema: JSON.parse(d.resultDataSchema)
+    })
   })
 
   const result = { ok: true, total, length: data.length, data }

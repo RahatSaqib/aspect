@@ -99,7 +99,14 @@ export class DataTable extends PureComponent {
     this.props.handleFetch(table.filters, col || table.sortCol, newSort || table.sortDir, page == null ? table.page : page, table.pageSize)
   }
 
-  getColumns(table, intl, messages) {
+  getColumns() {
+
+    const {
+      table,
+      intl,
+      messages
+    } = this.props
+
     if (table.extraColumns) {
       // concat the extra columns in table.extraColumns with the columns specified in table.columns
       return this.props.columns.concat(table.extraColumns.map((column) => {
@@ -158,9 +165,7 @@ export class DataTable extends PureComponent {
   render() {
     const {
       items,
-      table,
-      intl,
-      messages
+      table
     } = this.props
 
     // show loading indicator?
@@ -171,7 +176,7 @@ export class DataTable extends PureComponent {
     // generate paging for footer
     const page = table.page
     const totalPages = Math.ceil(table.total / table.pageSize)
-    const columns = this.getColumns(table, intl, messages)
+    const columns = this.getColumns()
     const pagerItems = this.getPager(page, totalPages)
 
     return (
