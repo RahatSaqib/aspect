@@ -59,13 +59,13 @@ const ContactDetailsForm = props => {
 ContactDetailsForm.propTypes = {
   loading: PropTypes.bool,
   partners: PropTypes.arrayOf(PropTypes.shape({
-    id: PropTypes.number,
+    id: PropTypes.string,
     name: PropTypes.string,
     orgUnits: PropTypes.arrayOf(PropTypes.shape({
-      id: PropTypes.number,
+      id: PropTypes.string,
       name: PropTypes.string,
       roles: PropTypes.arrayOf(PropTypes.shape({
-        id: PropTypes.number,
+        id: PropTypes.string,
         name: PropTypes.string
       }))
     }))
