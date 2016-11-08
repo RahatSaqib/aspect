@@ -26,8 +26,7 @@
     vertical-align: bottom;
 }
 .SelectSiteRow tbody tr td:last-of-type .GoToSite{
-    min-width:50px !important;
-    margin-bottom: 8px;
+    padding-bottom: 5px;
 }
 
 .BackLink{
