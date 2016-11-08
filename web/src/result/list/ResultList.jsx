@@ -23,6 +23,8 @@ import TextField from 'material-ui/TextField'
 import { DataTable } from '../../components/shared/DataTable'
 import { fetchResults } from '../ResultRedux'
 import styles from './ResultList.css'
+import { fetchAssays } from '../../assay/AssayRedux'
+import ForkedSelectField from '../../components/forkedMaterialUi/ForkedSelectField'
 
 const messages = defineMessages({
   title: {
@@ -41,15 +43,24 @@ const messages = defineMessages({
     id: 'pages.ResultList.sampleId',
     defaultMessage: 'Sample ID'
   },
-  patientId: {
-    id: 'pages.ResultList.patientId',
+  assayId: {
+    id: 'pages.ResultList.assayId',
+    defaultMessage: 'Assay'
+  },
+  patiendId: {
+    id: 'pages.ResultList.patiendId',
     defaultMessage: 'Patient ID'
+  },
+  resultCategoryCopiesMl: {
+    id: 'pages.ResultList.resultCategoryHiv',
+    defaultMessage: 'HIV'
   }
 })
 
 export class ResultList extends PureComponent {
 
   static propTypes = {
+    fetchAssays: PropTypes.func.isRequired,
     setPageTitle: PropTypes.func.isRequired,
     table: PropTypes.object.isRequired
   }
@@ -66,18 +77,30 @@ export class ResultList extends PureComponent {
     this.props.fetchResults(this.props.table.filters, ...args)
   }
 
-  filterResultsChange = (e) => {
-    this.setState({ filters: this.state.filters.set(e.target.id, e.target.value) })
+  filterResultsChange = (key, value, callback) => {
+    this.setState({ filters: this.state.filters.set(key, value) }, callback)
   }
 
   handleSubmit = (e) => {
     e.preventDefault()
-    this.props.fetchResults(this.state.filters)
+    this.props.fetchResults(this.state.filters, undefined, undefined, undefined, undefined)
+  }
+
+  handleAssayChange = (e, i, assayId) => {
+
+    // finally, update state and submit
+    this.setState({ filters: this.state.filters.set('assayId', assayId) },
+                  () => this.handleSubmit(e))
   }
 
   resetResults = () => {
-    this.setState({ filters: this.state.filters.set('sampleId', '') })
+    this.setState({ filters: this.state.filters.set('sampleId', '').set('assayId', null) })
     this.props.fetchResults()
+  }
+
+  componentDidMount(){
+    const { fetchAssays, assays } = this.props
+    fetchAssays(false, assays)
   }
 
   componentWillMount() {
@@ -87,8 +110,17 @@ export class ResultList extends PureComponent {
   }
 
   render() {
-    const { intl } = this.props
+    const { intl, assays } = this.props
     const { formatMessage, formatDate } = intl
+
+    // load assay dropdown
+    const assaysLoading = assays ? assays.get('loading') : false
+    const validAssays = assays ? assays.get('items').filter(a => a.get('hasResults')) : []
+
+    let columns = [ { db: 'endedOn', title: formatMessage(messages.endedOn), format: (data) => formatDate(data) },
+                    { db: 'deviceName', title: formatMessage(messages.deviceName) },
+                    { db: 'sampleId', title: formatMessage(messages.sampleId) },
+                    { db: 'patientId', title: formatMessage(messages.patiendId) }]
 
     return (
       <div className={styles.Content}>
@@ -99,10 +131,22 @@ export class ResultList extends PureComponent {
               <TextField
                 value={this.state.filters.get('sampleId')}
                 id="sampleId"
-                onChange={ this.filterResultsChange }
+                onChange={ (e, v) => this.filterResultsChange('sampleId', v) }
                 className={styles['Toolbar__TextField--filter']}
                 hintText="Filter by Sample ID"
               />
+              <ForkedSelectField name="assayId"
+                      style={{ margin: '5px 0 0 15px' }}
+                      value={this.state.filters.get('assayId')}
+                      label={formatMessage(messages.assayId)}
+                      hintText={formatMessage(messages.assayId)}
+                      disabled={assaysLoading || _.isEmpty(validAssays)}
+                      onChange={ (e, i, v) => { this.handleAssayChange(e, i, v) } }>
+                      {
+                        validAssays.map(assay =>
+                          <MenuItem key={assay.get('id')} value={assay.get('id')} primaryText={assay.get('name')} />)
+                      }
+              </ForkedSelectField>
               <RaisedButton label="Filter" primary={true} onTouchTap={ this.handleSubmit } />
             </ToolbarGroup>
             <ToolbarGroup lastChild={true}>
@@ -119,17 +163,13 @@ export class ResultList extends PureComponent {
         </form>
         <DataTable
           selectable
-          handleItemIdSelection={this.handleItemIdSelection}
+          handleItemIdSelection={ this.handleItemIdSelection }
           handleFetch={ this.handleFetch }
           items={ this.props.items }
           table={ this.props.table }
-          columns={[
-            { db: 'endedOn', title: formatMessage(messages.endedOn),
-              format: (data) => formatDate(data) },
-            { db: 'deviceName', title: formatMessage(messages.deviceName) },
-            { db: 'sampleId', title: formatMessage(messages.sampleId) },
-            { db: 'patientId', title: formatMessage(messages.patientId) }
-          ]}
+          columns={ columns }
+          intl={ intl }
+          messages={ messages }
         />
       </div>
     )
@@ -139,12 +179,13 @@ export class ResultList extends PureComponent {
 function mapStateToProps(state) {
   return {
     items: state.result.items,
-    table: state.result.table
+    table: state.result.table,
+    assays: state.assay
   }
 }
 
 function mapDispatchToProps(dispatch) {
-  return bindActionCreators({ fetchResults }, dispatch)
+  return bindActionCreators({ fetchResults, fetchAssays }, dispatch)
 }
 
 export const ResultListContainer = _.flowRight(

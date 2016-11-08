@@ -94,22 +94,22 @@ function* seed(knex){
 
   // Device Types
   const [deviceTypeGeneXpertId] = yield knex('DeviceType').insert({
-      name: 'GeneXpert',
-      manufacturer: 'Cepheid',
-      deviceTypeCategoryId: deviceTypeCategoryLab
+    name: 'GeneXpert',
+    manufacturer: 'Cepheid',
+    deviceTypeCategoryId: deviceTypeCategoryLab
   })
 
   const [deviceTypeAfinionId] = yield knex('DeviceType').insert({
-      name: 'Afinion',
-      manufacturer: 'Alere',
-      deviceTypeCategoryId: deviceTypeCategoryLab
+    name: 'Afinion',
+    manufacturer: 'Alere',
+    deviceTypeCategoryId: deviceTypeCategoryLab
   })
 
   const [deviceTypeQId] = yield knex('DeviceType').insert({
-      name: 'Q',
-      manufacturer: 'Alere',
-      deviceTypeCategoryId: deviceTypeCategoryLab
-    })
+    name: 'Q',
+    manufacturer: 'Alere',
+    deviceTypeCategoryId: deviceTypeCategoryLab
+  })
 
   const [deviceTypeM2000Id] = yield knex('DeviceType').insert({
     name: 'm2000',
@@ -132,30 +132,29 @@ function* seed(knex){
   // Assays and AssayTypes
   let [assayTypeMTBRifId] = yield knex('AssayType').insert({
     name: 'MTB/Rif',
-    i18nKey: 'AssayTypeMtbRif'
+    i18nKey: 'assayTypeMtbRif'
   })
 
   let [assayTypeEbolaId] = yield knex('AssayType').insert({
     name: 'Ebola',
-    i18nKey: 'AssayTypeEbola'
+    i18nKey: 'assayTypeEbola'
   })
 
   let [assayTypeHivVlId] = yield knex('AssayType').insert({
     name: 'HIV VL',
-    i18nKey: 'AssayTypeHivVl'
+    i18nKey: 'assayTypeHivVl'
   })
 
   let [assayTypeLipidPanelId] = yield knex('AssayType').insert({
     name: 'Lipid Panel',
-    i18nKey: 'AssayTypeLipidPanel'
+    i18nKey: 'assayTypeLipidPanel'
   })
 
   // define resultData object
   const geneXpertResultDataSchema = JSON.stringify({
     resultText: {
       title: 'Result Text',
-      type: 'string',
-      list: true
+      type: 'string'
     },
     probes: {
       title: 'Probes',
@@ -266,11 +265,12 @@ function* seed(knex){
     resultText: {
       title: 'Result Text',
       type: 'string',
-      i18nKey: 'ResultText'
+      i18nKey: 'resultText'
     },
     copies: {
       title: 'Copies/mL',
-      type: 'number'
+      type: 'number',
+      list: true
     },
     log: {
       title: 'log',
@@ -279,7 +279,7 @@ function* seed(knex){
     probes: {
       title: 'Probes',
       type: 'object',
-      i18nKey: 'Probes',
+      i18nKey: 'probes',
       properties: {
         'gpCt': {
           title: 'GP Ct',
@@ -335,46 +335,46 @@ function* seed(knex){
 
   const [assayMtbRifId] = yield knex('Assay').insert({
     name: 'GeneXpert MTB/Rif',
-    i18nKey: 'AssayGeneXpertMtbRif',
+    i18nKey: 'assayGeneXpertMtbRif',
     externalId: 'MtbRif',
     assayTypeId: assayTypeMTBRifId,
     deviceTypeId: deviceTypeGeneXpertId,
     resultCategory1Label: 'MTB',
-    resultCategory1i18nKey: 'ResultCategoryMtb',
+    resultCategory1i18nKey: 'resultCategoryMtb',
     resultCategory2Label: 'Rif',
-    resultCategory2i18nKey: 'ResultCategoryRif',
+    resultCategory2i18nKey: 'resultCategoryRif',
     resultDataSchema: geneXpertResultDataSchema
   })
 
   const [assayHivVlId] = yield knex('Assay').insert({
     name: 'GeneXpert HIV VL',
-    i18nKey: 'AssayGeneXpertHivVl',
+    i18nKey: 'assayGeneXpertHivVl',
     externalId: 'HivVl',
     assayTypeId: assayTypeHivVlId,
     deviceTypeId: deviceTypeGeneXpertId,
-    resultCategory1Label: 'MTB',
-    resultCategory1i18nKey: 'ResultCategoryMtb',
-    resultCategory2Label: 'Rif',
-    resultCategory2i18nKey: 'ResultCategoryRif',
+    resultCategory1Label: 'HIV',
+    resultCategory1i18nKey: 'resultCategoryHiv',
+    resultCategory2Label: null,
+    resultCategory2i18nKey: null,
     resultDataSchema: geneXpertResultDataSchemaHiv
   })
 
   const [assayEbolaId] = yield knex('Assay').insert({
     name: 'GeneXpert Ebola',
-    i18nKey: 'AssayGeneXpertEbola',
+    i18nKey: 'assayGeneXpertEbola',
     externalId: 'Ebola',
     assayTypeId: assayTypeEbolaId,
     deviceTypeId: deviceTypeGeneXpertId,
     resultCategory1Label: 'GP',
-    resultCategory1i18nKey: 'ResultCategoryEbolaGp',
+    resultCategory1i18nKey: 'resultCategoryEbolaGp',
     resultCategory2Label: 'NP',
-    resultCategory2i18nKey: 'ResultCategoryEbolaNp',
+    resultCategory2i18nKey: 'resultCategoryEbolaNp',
     resultDataSchema: geneXpertResultDataSchema
   })
 
   yield knex('Assay').insert({
     name: 'Afinion HIV VL',
-    i18nKey: 'AssayAfinionHivVl',
+    i18nKey: 'assayAfinionHivVl',
     externalId: 'HivVl',
     assayTypeId: assayTypeHivVlId,
     deviceTypeId: deviceTypeAfinionId,
@@ -393,7 +393,7 @@ function* seed(knex){
 
   yield knex('Assay').insert({
     name: 'Afinion Lipid Panel',
-    i18nKey: 'AssayAfinionLipidPanel',
+    i18nKey: 'assayAfinionLipidPanel',
     externalId: 'LipidPanel',
     assayTypeId: assayTypeLipidPanelId,
     deviceTypeId: deviceTypeAfinionId,
@@ -420,13 +420,12 @@ function* seed(knex){
 
   yield knex('Assay').insert({
     name: 'Q HIV VL',
-    i18nKey: 'AssayQHivVl',
+    i18nKey: 'assayQHivVl',
     externalId: 'HivVl',
-    assayTypeId: assayTypeLipidPanelId,
     assayTypeId: assayTypeHivVlId,
     deviceTypeId: deviceTypeQId,
     resultCategory1Label: 'HIV',
-    resultCategory1i18nKey: 'ResultCategoryHivVl'
+    resultCategory1i18nKey: 'resultCategoryHivVl'
   })
 
   yield knex('Assay').insert({
@@ -450,30 +449,31 @@ function* seed(knex){
   //Result types
   const [resultTypePatientId] = yield knex('ResultType').insert({
     name: 'Patient',
-    i18nKey: 'ResultTypePatient',
+    i18nKey: 'resultTypePatient',
     externalId: 'Patient'
   })
 
   yield knex('ResultType').insert({
     name: 'EQA',
-    i18nKey: 'ResultTypeEqa',
+    i18nKey: 'resultTypeEqa',
     externalId: 'EQA'
   })
+
   yield knex('ResultType').insert({
     name: 'Training',
-    i18nKey: 'ResultTypeTraining',
+    i18nKey: 'resultTypeTraining',
     externalId: 'Training'
   })
 
   yield knex('ResultType').insert({
     name: 'Calibration',
-    i18nKey: 'ResultTypeCalibration',
+    i18nKey: 'resultTypeCalibration',
     externalId: 'Calibration'
   })
 
   yield knex('ResultType').insert({
     name: 'Study/Research',
-    i18nKey: 'ResultTypeStudy',
+    i18nKey: 'resultTypeStudy',
     externalId: 'Study'
   })
 
@@ -486,37 +486,37 @@ function* seed(knex){
 
   const [resultCategoryNotDetectedId] =yield knex('ResultCategory').insert({
     name: 'Not Detected',
-    i18nKey: 'ResultCategoryNotDetected',
+    i18nKey: 'resultCategoryNotDetected',
     externalId: 'NotDetected'
   })
 
   const [resultCategoryIndeterminateId] = yield knex('ResultCategory').insert({
     name: 'Indeterminate',
-    i18nKey: 'ResultCategoryIndeterminate',
+    i18nKey: 'resultCategoryIndeterminate',
     externalId: 'Indeterminate'
   })
 
   const [resultCategoryInvalidId] = yield knex('ResultCategory').insert({
     name: 'Invalid',
-    i18nKey: 'ResultCategoryInvalid',
+    i18nKey: 'resultCategoryInvalid',
     externalId: 'Invalid'
   })
 
   const [resultCategoryNoResultId] = yield knex('ResultCategory').insert({
     name: 'No Result',
-    i18nKey: 'ResultCategoryNoResult',
+    i18nKey: 'resultCategoryNoResult',
     externalId: 'NoResult'
   })
 
   const [resultCategoryErrorId] = yield knex('ResultCategory').insert({
     name: 'Error',
-    i18nKey: 'ResultCategoryError',
+    i18nKey: 'resultCategoryError',
     externalId: 'Error'
   })
 
   const [resultCategorySuccessId] = yield knex('ResultCategory').insert({
     name: 'Success',
-    i18nKey: 'ResultCategorySuccess',
+    i18nKey: 'resultCategorySuccess',
     externalId: 'Success'
   })
 
@@ -603,27 +603,27 @@ function* seed(knex){
     shortname: 'pc'
   })
 
-  let [liter] = yield knex('Unit').insert({
+  yield knex('Unit').insert({
     name: 'Liter',
     shortname: 'l'
   })
 
-  let [milliliter] = yield knex('Unit').insert({
+  yield knex('Unit').insert({
     name: 'Milliliter',
     shortname: 'ml'
   })
 
-  let [milligram] = yield knex('Unit').insert({
+  yield knex('Unit').insert({
     name: 'Milligram',
     shortname: 'mg'
   })
 
-  let [gram] = yield knex('Unit').insert({
+  yield knex('Unit').insert({
     name: 'Gram',
     shortname: 'g'
   })
 
-  let [kilogram] = yield knex('Unit').insert({
+  yield knex('Unit').insert({
     name: 'Kilogram',
     shortname: 'kg'
   })

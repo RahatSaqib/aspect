@@ -42,11 +42,12 @@ function receiveResults(json) {
   return {
     type: types.RECEIVE_RESULTS,
     items: json.data,
-    total: json.total
+    total: json.total,
+    extraColumns: json.extraColumns
   }
 }
 
-export function fetchResults(filters/* required */, sortCol = 'endedOn', sortDir = 'desc', page = 0, pageSize = 20){
+export function fetchResults(filters = Immutable.Map({ sampleId: '', assayId: null }), sortCol = 'endedOn', sortDir = 'desc', page = 0, pageSize = 20){
   return dispatch => {
 
     dispatch(requestResults(sortCol, sortDir, page, pageSize, filters))
@@ -137,7 +138,8 @@ const Result = Immutable.Record({
     sortCol: 'endedOn',
     sortDir: 'desc',
     pageSize: 20,
-    filters: Immutable.fromJS({ sampleId: '' })
+    filters: Immutable.fromJS({ sampleId: '', assayId: null }),
+    extraColumns: new Immutable.List()
   })
 })
 
@@ -152,7 +154,7 @@ export default function resultReducer(state = initialState, action) {
     return state.withMutations(mutState => {
       const immutList = Immutable.fromJS(action.items)
       mutState.set('items', receiveList(mutState.items, immutList))
-      mutState.set('table', receiveTableItems(mutState.table, action.total))
+      mutState.set('table', receiveTableItems(mutState.table, action.total, action.extraColumns))
     })
   case types.RECEIVE_SINGLE_RESULT:
   case types.RECEIVE_UPDATED_SINGLE_RESULT:

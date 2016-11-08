@@ -45,7 +45,9 @@ export class DataTable extends PureComponent {
       pageSize: PropTypes.number.isRequired,
       total: PropTypes.number.isRequired
     }).isRequired,
-    columns: PropTypes.array.isRequired
+    columns: PropTypes.array.isRequired,
+    intl: PropTypes.object,
+    messages: PropTypes.object
   }
 
   state = {
@@ -96,6 +98,28 @@ export class DataTable extends PureComponent {
     this.props.handleFetch(col || table.sortCol, newSort || table.sortDir, page == null ? table.page : page, table.pageSize)
   }
 
+  getColumns() {
+
+    const {
+      table,
+      intl,
+      messages
+    } = this.props
+
+    if (table.extraColumns) {
+      // concat the extra columns in table.extraColumns with the columns specified in table.columns
+      return this.props.columns.concat(table.extraColumns.map((column) => {
+        return _.assign(column, {
+          db: column.get('db'),
+          format: column.get('type') === 'number' ? ((n) => _.isNumber(n) ? intl.formatNumber(n) : null) : _.identity,
+          title: column.get('i18nKey') && messages[column.get('i18nKey')] ?
+            intl.formatMessage[column.get('i18nKey')] : column.get('title')})
+      }).toJS())
+    } else{
+      return this.props.columns
+    }
+  }
+
   getPager(page, totalPages){
 
     // paging controls
@@ -129,7 +153,7 @@ export class DataTable extends PureComponent {
         // if 2nd to last item AND page < totalPages - 5 (maxPagingButtons/2)
         if ((key === 2 && page > maxPagingButtons / 2) ||
             (key === maxPagingButtons - 2 && page < totalPages - maxPagingButtons / 2 - 1) ) {
-          pagerItems.push(<span style={{ margin: '0 5px' }}>&#8230;</span>)
+          pagerItems.push(<span key={'ellipsis-' + key} style={{ margin: '0 5px' }}>&#8230;</span>)
         }
       }
     }
@@ -151,7 +175,8 @@ export class DataTable extends PureComponent {
     // generate paging for footer
     const page = table.page
     const totalPages = Math.ceil(table.total / table.pageSize)
-    let pagerItems = this.getPager(page, totalPages)
+    const columns = this.getColumns()
+    const pagerItems = this.getPager(page, totalPages)
 
     return (
       <div>
@@ -170,7 +195,7 @@ export class DataTable extends PureComponent {
             adjustForCheckbox={this.state.showCheckboxes}
             enableSelectAll={this.state.enableSelectAll}>
             <TableRow>
-              {this.props.columns.map((col) => (
+              {columns.map((col) => (
                 <TableHeaderColumn key={col.db} tooltip={col.tooltip} className={ col.hideOnXs ? 'pure-hidden-xs' : '' } {...col.extraProps}>
                   <span style={{ cursor: 'pointer' }} onTouchTap={() => { this.handleSort(col.db) } }>
                     {col.title}
@@ -192,11 +217,11 @@ export class DataTable extends PureComponent {
               <TableRow key={itemId} className={cx({
                 'TableRow--selectable': this.props.selectable
               })}>
-                {this.props.columns.map((col) => {
+                {columns.map((col) => {
                   const row = items.getIn(['byId', itemId])
                   const data = row.get(col.db)
                   return (
-                    <TableRowColumn key={data} className={ col.hideOnXs ? 'pure-hidden-xs' : '' } {...col.extraProps}>
+                    <TableRowColumn key={col.db} className={ col.hideOnXs ? 'pure-hidden-xs' : '' } {...col.extraProps}>
                       {(col.format || _.identity)(data, row)}
                     </TableRowColumn>
                   )
@@ -208,7 +233,7 @@ export class DataTable extends PureComponent {
           { /* Footer - contains pager */ }
           <TableFooter adjustForCheckbox={true}>
             <TableRow>
-              <TableRowColumn colSpan={this.props.columns.length - 1} style={{ textAlign: 'right', padding: '10px 20px 20px 0' }} >
+              <TableRowColumn colSpan={columns.length - 1} style={{ textAlign: 'right', padding: '10px 20px 20px 0' }} >
                 <FlatButton className={styles.Pager__Button} label="< Prev" onTouchTap={() => { this.handlePage(page - 1) } } disabled={page === 0} />
                   { pagerItems }
                 <FlatButton className={styles.Pager__Button} label="Next >" onTouchTap={() => { this.handlePage(page + 1) } } disabled={ page + 1 >= totalPages} />

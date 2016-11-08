@@ -1,38 +1,52 @@
-let Promise = require('bluebird')
-let { knex, filterParams, sortPageParams } = require('../db')
-let { getConstraints, addConstraints } = require('../auth/constraints')
+const Promise = require('bluebird')
+const _ = require('lodash')
+const { knex, filterParams, sortPageParams } = require('../db')
+const { getConstraints, addConstraints } = require('../auth/constraints')
 
 const SELECT_LIST_FIELDS = [
-
   'a.id', 'at.id as assayTypeId', 'a.name', 'at.name as assayTypeName',
-  'dt.id as deviceTypeId', 'dt.name as deviceTypeName'
+  'dt.id as deviceTypeId', 'dt.name as deviceTypeName', 'a.resultDataSchema',
+  'a.resultCategory1Label', 'a.resultCategory1i18nKey',
+  'a.resultCategory2Label', 'a.resultCategory2i18nKey'
 ]
 
-function* listAssays(request){
-  let {query, auth} = request
+function* listAssays(request) {
+  const {query, auth} = request
 
-  // get data constraints
-  let dataConstraints = yield getConstraints(auth.credentials)
+  // get all assays that have results that user has access to
+  const dataConstraints = yield getConstraints(auth.credentials)
+  const usedAssayIds = yield knex('Result as r')
+    .innerJoin('Device as d', 'r.deviceId', 'd.id')
+    .modify(addConstraints, dataConstraints, { device: 'd' })
+    .distinct('r.assayId')
+    .pluck('assayId')
 
-  let assayQuery = knex('Assay as a')
+  // no get the assays with a field for hasResults
+  const assayQuery = knex('Assay as a')
     .innerJoin('AssayType as at', 'a.assayTypeId', 'at.id')
     .innerJoin('DeviceType as dt', 'a.deviceTypeId', 'dt.id')
-    .modify(filterParams, query, { 'name': 'a.name'})
-    //.modify(addConstraints, dataConstraints, {device: 'd'})
+    .modify(filterParams, query, { 'name': 'a.name' })
 
   // get total count for paging
-  let getCount = assayQuery.clone()
+  const getCount = assayQuery.clone()
     .count('a.id as count').first()
 
   // get rows
-  let getItems = assayQuery.clone()
+  const getItems = assayQuery.clone()
     .modify(sortPageParams, query, 'name')
     .select(SELECT_LIST_FIELDS)
 
   // return result when both queries are finished
   let [{count: total}, data] = yield Promise.all([getCount, getItems])
 
-  let result = {ok: true, total, length: data.length, data}
+  data = _.map(data, (d) => {
+    return _.assign({}, d, {
+      hasResults: usedAssayIds.includes(d.id),
+      resultDataSchema: JSON.parse(d.resultDataSchema)
+    })
+  })
+
+  const result = { ok: true, total, length: data.length, data }
 
   return result
 }

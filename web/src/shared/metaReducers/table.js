@@ -15,10 +15,11 @@ export function requestTable(table, action) {
   })
 }
 
-export function receiveTableItems(table, total) {
+export function receiveTableItems(table, total, extraColumns) {
   return table.merge({
     loading: false,
-    total
+    total,
+    extraColumns
   })
 }
 
@@ -29,5 +30,6 @@ export const Table = Immutable.Record({
   page: 0,
   pageSize: 10, // Renamed from 'size' since 'size' will conflict with Immutable internal property
   total: 0,
-  filters: Immutable.fromJS({ name: '' })
+  filters: Immutable.fromJS({ name: '' }),
+  extraColumns: new Immutable.List()
 })
