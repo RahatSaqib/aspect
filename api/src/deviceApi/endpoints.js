@@ -53,6 +53,9 @@ module.exports = [
       description: 'Result',
       notes: 'Adds new assay result data for the authenticated device',
       validate: {
+        options: {
+          allowUnknown: true
+        },
         payload: {
           id: Joi.string().allow('', null),
           assay: Joi.object().keys({
