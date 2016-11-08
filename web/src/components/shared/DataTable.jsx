@@ -12,7 +12,7 @@ import FlatButton from 'material-ui/FlatButton'
 // Our own imports
 import styles from './DataTable.css'
 
-const cx = classnames.bind(styles)
+const cssClasses = classnames.bind(styles)
 
 const TableRowColumn = (props) => (
   <TableRowColumnWithBug
@@ -140,7 +140,7 @@ export class DataTable extends PureComponent {
         pagerItems.push(
           <FlatButton
             key={key}
-            className={cx('Pager__Button', 'Pager__Button--number', {
+            className={cssClasses('Pager__Button', 'Pager__Button--number', {
               'Pager__Button--current': page === i
             })}
             label={(i + 1)}
@@ -214,7 +214,7 @@ export class DataTable extends PureComponent {
             showRowHover={this.state.showRowHover}
             stripedRows={this.state.stripedRows}>
             {items.currentIdList.map((itemId) => (
-              <TableRow key={itemId} className={cx({
+              <TableRow key={itemId} className={cssClasses({
                 'TableRow--selectable': this.props.selectable
               })}>
                 {columns.map((col) => {

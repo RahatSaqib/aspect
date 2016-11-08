@@ -2,24 +2,24 @@
 import classnames from 'classnames/bind'
 import _ from 'lodash'
 import React, { PureComponent, PropTypes } from 'react'
-import { Link } from 'react-router'
 import { Field, reduxForm } from 'redux-form/immutable'
 import { bindActionCreators } from 'redux'
 import { connect } from 'react-redux'
+import { Link } from 'react-router'
 
 // Material-UI
 import LinearProgress from 'material-ui/LinearProgress'
 import RaisedButton from 'material-ui/RaisedButton'
 import TextField from 'material-ui/TextField'
 import AutoComplete from 'material-ui/AutoComplete'
-import GoToSite from 'material-ui/svg-icons/communication/screen-share'
+import ExitToApp from 'material-ui/svg-icons/action/exit-to-app'
 
 // Our own imports
 import { fetchSites } from '../../site/SiteRedux'
 
 // use classnames module to handle style classes
 import styles from './DeviceDetail.css'
-const cx = classnames.bind(styles)
+const cssClasses = classnames.bind(styles)
 
 const renderTextField = ({ input, meta, ...restProps }) => {
   return (
@@ -30,6 +30,14 @@ const renderTextField = ({ input, meta, ...restProps }) => {
       errorStyle={{ float: 'left' }}
       errorText={meta.touched && meta.error}
     />
+  )
+}
+
+const renderGoToSiteField = ({ input }) => {
+  return (
+    <Link title="Go to site" to={'/site/' + input.value} >
+      <ExitToApp className={cssClasses('GoToSite')} />
+    </Link>
   )
 }
 
@@ -95,19 +103,6 @@ const renderAutoCompleteField = ({ input, meta, ...restProps }) => {
   )
 }
 
-const renderLinkButtonToSite = ({ input }) => {
-  return (
-    <RaisedButton primary
-      icon={<GoToSite/>}
-      href={'/site/' + input.value}
-      className={cx('GoToSite')}
-      title="Go to site"
-      disabled={!Number.isInteger(parseInt(input.value))}>
-    </RaisedButton>
-  )
-}
-
-
 export class Form extends PureComponent {
 
   static propTypes = {
@@ -134,7 +129,7 @@ export class Form extends PureComponent {
         <Field name="shortName" floatingLabelText={labels.shortName} component={renderTextField} />
         <Field name="notes" multiLine floatingLabelText={labels.notes} component={renderTextField} />
 
-        <table className={cx('pure-table', 'SelectSiteRow')}>
+        <table className={cssClasses('pure-table', 'SelectSiteRow')}>
           <tbody>
           <tr>
             <td>
@@ -146,17 +141,14 @@ export class Form extends PureComponent {
               filter={AutoComplete.caseInsensitiveFilter} />
             </td>
             <td>
-              <Field name="site" component={renderLinkButtonToSite} />
+              <Field name="site" component={renderGoToSiteField} />
             </td>
           </tr>
           </tbody>
         </table>
-
         <br />
         <RaisedButton disabled={pristine || !valid || submitting} onClick={handleSubmit} type="button" label="Update" secondary />
         {submitting && <LinearProgress />}
-        <br />
-        <Link className={cx('BackLink')} to="/device">Back to Devices</Link>
       </form>
     )
   }

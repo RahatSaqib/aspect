@@ -25,7 +25,7 @@ import requirePermissions from './requirePermissions'
 import SelectableList from './SelectableList'
 import styles from './SideNav.css'
 
-const cx = classnames.bind(styles)
+const cssClasses = classnames.bind(styles)
 
 const DevicesListItem = requirePermissions({
   permissions: ['device:admin', 'device:view']
@@ -55,7 +55,7 @@ class SideNav extends PureComponent {
     return (
       <Drawer
         docked={ this.props.desktop }
-        containerClassName={cx({
+        containerClassName={cssClasses({
           'Drawer--desktop': this.props.desktop
         })}
         open={this.props.open}

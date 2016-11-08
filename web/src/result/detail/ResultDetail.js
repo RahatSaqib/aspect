@@ -23,7 +23,7 @@ import {
 import ReadOnlyFields from '../../components/shared/ReadOnlyFields'
 import styles from './ResultDetail.css'
 
-const cx = classnames.bind(styles)
+const cssClasses = classnames.bind(styles)
 
 const messages = defineMessages({
   title: {
@@ -362,7 +362,7 @@ export class ResultDetail extends PureComponent {
           .toJS()
 
         return (
-          <Card className={cx('Card')} key={key}>
+          <Card className={cssClasses('Card')} key={key}>
             <CardHeader
               title={value.get('title')/* TODO: i18n */}
               actAsExpander={true}
@@ -380,17 +380,17 @@ export class ResultDetail extends PureComponent {
 
   renderContent() {
     return (
-      <div className={cx('FieldsContainer')}>
+      <div className={cssClasses('FieldsContainer')}>
         <div className="pure-g">
           <div className="pure-u-lg-1-2 pure-u-md-1-2 pure-u-sm-1-2">
-            <div className={cx('FieldsContainer__LeftColumn__Content')}>
+            <div className={cssClasses('FieldsContainer__LeftColumn__Content')}>
               <ReadOnlyFields
                 fields={this.getLeftColumnFields()}
               />
             </div>
           </div>
           <div className="pure-u-lg-1-2 pure-u-md-1-2 pure-u-sm-1-2">
-            <div className={cx('FieldsContainer__RightColumn__Content')}>
+            <div className={cssClasses('FieldsContainer__RightColumn__Content')}>
               <ReadOnlyFields
                 fields={this.getRightColumnFields()}
               />
@@ -419,7 +419,7 @@ export class ResultDetail extends PureComponent {
     const { formatMessage } = intl
 
     return (
-      <div className={cx('Content')}>
+      <div className={cssClasses('Content')}>
         <Helmet title={formatMessage(messages.title)} titleTemplate="%s - Aspect" defaultTitle="Aspect" />
         {this.renderPaper()}
       </div>
