@@ -75,7 +75,7 @@ export class PersonDetail extends PureComponent {
   componentWillReceiveProps(nextProps) {
     if (this.props.params.personId !== nextProps.params.personId) {
       this.handleFetchPerson(nextProps)
-    } else if (nextProps.partnersAndRolesForSelectList.get('lastRefreshed')) {
+    } else if (nextProps.person && nextProps.partnersAndRolesForSelectList.get('lastRefreshed')) {
       this.setPartnersOrgUnitsAndRoles(nextProps, nextProps.person.get('partnerId'), nextProps.person.get('orgUnitId'))
     }
   }

@@ -4,22 +4,11 @@ import { shallow } from 'enzyme'
 import sinon from 'sinon'
 import proxyquire from 'proxyquire'
 import Immutable from 'immutable'
+import {LazyLoadItems, LazyLoadParent, LazyLoadChild} from '../../geography/GeographyRedux'
 import SelectInput from './SelectInput'
 
 describe('LocationSelector Component', () => {
   const now = new Date(),
-    LazyLoadItems = Immutable.Record({
-      loading: false,
-      items: Immutable.List(),
-      lastRefreshed: undefined
-    }), LazyLoadParent = Immutable.Record({
-      id: undefined,
-      name: undefined,
-      children: new LazyLoadItems()
-    }), LazyLoadChild = Immutable.Record({
-      id: undefined,
-      name: undefined
-    }),
     countriesForLocationSelector = new LazyLoadItems({
       loading: false,
       lastRefreshed: now,
@@ -98,15 +87,15 @@ describe('LocationSelector Component', () => {
 
     beforeEach(() => {
       props = {
-        fetchCountriesForLocationSelector: () => {},
-        fetchStatesForLocationSelector: () => {},
-        fetchLgasForLocationSelector: () => {},
+        fetchCountriesForLocationSelector: sinon.spy(),
+        fetchStatesForLocationSelector: sinon.spy(),
+        fetchLgasForLocationSelector: sinon.spy(),
         changeFieldValue: () => {},
         countries: countriesForLocationSelector,
         countryIdFieldName: 'countryId',
         stateIdFieldName: 'stateId',
         lgaIdFieldName: 'lgaId',
-        disabled: false,
+        loading: false,
         intl: {
           formatMessage: message => message.defaultMessage
         }
@@ -151,84 +140,39 @@ describe('LocationSelector Component', () => {
     })
 
     describe('selectCountry', () => {
-      it('Should set the selected country on the component\'s state', () => {
+      it('should trigger fetchStatesForLocationSelector when value has been selected', () => {
         const countrySelect = LocationSelectorWrapper.findWhere(
           selectInput => selectInput.type() === SelectInput &&
           selectInput.props().name === props.countryIdFieldName),
-          selectCountryId = 1,
-          expectedCountryToSelect = countriesForLocationSelector.get('items')
-            .find(country => country.id === selectCountryId)
-        assert.equal(LocationSelectorWrapper.state('selectedCountryId'), undefined)
+          selectCountryId = 1
 
         countrySelect.simulate('change', undefined, undefined, selectCountryId)
 
-        assert.equal(LocationSelectorWrapper.state('selectedCountryId'), expectedCountryToSelect.get('id'))
+        assert.isTrue(props.fetchStatesForLocationSelector.calledOnce)
 
-        countrySelect.simulate('change', undefined, undefined, selectCountryId)
+        countrySelect.simulate('change', undefined, undefined, undefined)
 
-        assert.equal(LocationSelectorWrapper.state('selectedCountryId'), expectedCountryToSelect.get('id'))
+        assert.isFalse(props.fetchStatesForLocationSelector.calledTwice)
       })
     })
 
     describe('selectState', () => {
-      it('Should set the selected state on the component\'s state', () => {
-        const selectedCountryId = 1,
-          selectedCountry = countriesForLocationSelector.get('items')
-            .find(country => country.id === selectedCountryId)
+      it('should trigger fetchLgasForLocationSelector when value has been selected', () => {
+        props.selectedCountryId = 1
         shallowRenderLocationSelector()
-        LocationSelectorWrapper.setState({
-          selectedCountryId: selectedCountryId
-        })
 
         const stateSelect = LocationSelectorWrapper.findWhere(
           selectInput => selectInput.type() === SelectInput &&
           selectInput.props().name === props.stateIdFieldName),
-          selectStateId = 2,
-          expectedStateToSelect = selectedCountry.getIn(['children', 'items']).find(
-            state => state.get('id') === selectStateId)
-
-        assert.equal(LocationSelectorWrapper.state('selectedStateId'), undefined)
+          selectStateId = 2
 
         stateSelect.simulate('change', undefined, undefined, selectStateId)
 
-        assert.equal(LocationSelectorWrapper.state('selectedStateId'), expectedStateToSelect.get('id'))
+        assert.isTrue(props.fetchLgasForLocationSelector.calledOnce)
 
-        stateSelect.simulate('change', undefined, undefined, selectStateId)
+        stateSelect.simulate('change', undefined, undefined, undefined)
 
-        assert.equal(LocationSelectorWrapper.state('selectedStateId'), expectedStateToSelect.get('id'))
-      })
-    })
-
-    describe('selectLga', () => {
-      it('Should set the selected lga on the component\'s state', () => {
-        const selectedCountryId = 1,
-          selectedCountry = countriesForLocationSelector.get('items')
-            .find(country => country.id === selectedCountryId),
-          selectedStateId = 1,
-          selectedState = selectedCountry.getIn(['children', 'items']).find(
-            state => state.get('id') === selectedStateId)
-        shallowRenderLocationSelector()
-        LocationSelectorWrapper.setState({
-          selectedCountryId: selectedCountryId,
-          selectedStateId: selectedStateId
-        })
-
-        const lgaSelect = LocationSelectorWrapper.findWhere(
-          selectInput => selectInput.type() === SelectInput &&
-          selectInput.props().name === props.lgaIdFieldName),
-          selectLgaId = 2,
-          expectedLgaToSelect = selectedState.getIn(['children', 'items']).find(
-            lga => lga.get('id') === selectLgaId)
-
-        assert.equal(LocationSelectorWrapper.state('selectedLgaId'), undefined)
-
-        lgaSelect.simulate('change', undefined, undefined, selectLgaId)
-
-        assert.equal(LocationSelectorWrapper.state('selectedLgaId'), expectedLgaToSelect.get('id'))
-
-        lgaSelect.simulate('change', undefined, undefined, selectLgaId)
-
-        assert.equal(LocationSelectorWrapper.state('selectedLgaId'), expectedLgaToSelect.get('id'))
+        assert.isFalse(props.fetchLgasForLocationSelector.calledTwice)
       })
     })
   })
@@ -285,8 +229,11 @@ describe('LocationSelector Component', () => {
         })
 
       const state = new App()
-      assert.deepEqual(mapStateToProps(state), {
-        countries: countriesForLocationSelector
+      assert.deepEqual(mapStateToProps(state, { initialValues: { get: () => 'selected id' }}), {
+        countries: countriesForLocationSelector,
+        selectedCountryId: 'selected id',
+        selectedStateId: 'selected id',
+        selectedLgaId: 'selected id'
       })
     })
   })

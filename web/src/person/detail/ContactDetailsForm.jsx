@@ -102,7 +102,7 @@ const ContactDetailsForm = props => {
         </section>}
         <section>
           <h1>{formatMessage(messages.location)}</h1>
-          <LocationSelector disabled={loading} initialValues={initialValues}
+          <LocationSelector loading={loading} initialValues={initialValues}
                             formName="accountDetails" countryIdFieldName="countryId"
                             stateIdFieldName="stateId" lgaIdFieldName="lgaId" />
           <TextInput name="zip" label={formatMessage(messages.zip)} disabled={loading} maxLength="45" />

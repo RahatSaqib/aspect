@@ -93,7 +93,7 @@ describe('ContactDetailsForm Component', () => {
         countryIdFieldName: 'countryId',
         stateIdFieldName: 'stateId',
         lgaIdFieldName: 'lgaId',
-        disabled: props.loading
+        loading: props.loading
       })
     })
 
