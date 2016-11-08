@@ -471,7 +471,7 @@ describe('Device Result API routes',function(){
 
       yield server.post(devicePath)
         .set('Authorization', deviceAuth)
-        .send({data: {a:'b'}})
+        .send({data: {a:'b'}, assay: {id: 'HivVl'}})
         .then(function(res){
           assert.equal(res.status, 200)
           resultIds.push(res.body.data.id)
@@ -490,7 +490,7 @@ describe('Device Result API routes',function(){
 
       yield server.post(devicePath)
         .set('Authorization', deviceAuth)
-        .send({data: {a:'c'}, error: {code: '1'}})
+        .send({data: {a:'c'}, error: {code: '1'}, assay: {id: 'HivVl'}})
         .then(function(res){
           assert.equal(res.status, 200)
           resultIds.push(res.body.data.id)
@@ -509,7 +509,7 @@ describe('Device Result API routes',function(){
 
       yield server.post(devicePath)
         .set('Authorization', deviceAuth)
-        .send({data: {a:'d'}, category: {id: 'Invalid'}, error: {code: '1'}})
+        .send({data: {a:'d'}, category: {id: 'Invalid'}, error: {code: '1'}, assay: {id: 'HivVl'}})
         .then(function(res){
           assert.equal(res.status, 200)
           resultIds.push(res.body.data.id)
@@ -528,7 +528,7 @@ describe('Device Result API routes',function(){
 
       yield server.post(devicePath)
         .set('Authorization', deviceAuth)
-        .send({data: {a:'e'}, category: [{id: 'Detected'}, {id: 'NotDetected'}]})
+        .send({data: {a:'e'}, category: [{id: 'Detected'}, {id: 'NotDetected'}], assay: {id: 'HivVl'}})
         .then(function(res){
           assert.equal(res.status, 200)
           resultIds.push(res.body.data.id)
