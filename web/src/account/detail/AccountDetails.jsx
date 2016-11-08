@@ -1,6 +1,6 @@
 import React, { PureComponent, PropTypes } from 'react'
 import { bindActionCreators } from 'redux'
-import { injectIntl, defineMessages } from 'react-intl'
+import { injectIntl } from 'react-intl'
 import _ from 'lodash'
 import { connect } from 'react-redux'
 import LinearProgress from 'material-ui/LinearProgress'
@@ -22,29 +22,8 @@ import {
 import { addAcknowledgement } from '../../acknowledgement/AcknowledgementRedux'
 import styles from './AccountDetails.css'
 import classNames from 'classnames'
-
-const messages = defineMessages({
-  title: {
-    id: 'pages.AccountDetails.title',
-    defaultMessage: 'Account Details'
-  },
-  contactDetails: {
-    id: 'pages.AccountDetails.contactDetails',
-    defaultMessage: 'Contact Details'
-  },
-  usernameAndPassword: {
-    id: 'pages.AccountDetails.usernameAndPassword',
-    defaultMessage: 'Username & Password'
-  },
-  loginDetailsUpdated: {
-    id: 'pages.AccountDetails.loginDetailsUpdated',
-    defaultMessage: 'Login details changed successfully'
-  },
-  languageAndTimezone: {
-    id: 'pages.AccountDetails.languageAndTimezone',
-    defaultMessage: 'Language & Timezone'
-  }
-})
+import accountDetailsMessages from './messages'
+import personDetailsMessages from '../../person/detail/messages'
 
 class AccountDetails extends PureComponent {
   static propTypes = {
@@ -54,7 +33,7 @@ class AccountDetails extends PureComponent {
   componentWillMount() {
     const { setPageTitle, intl } = this.props
     const { formatMessage } = intl
-    setPageTitle(formatMessage(messages.title))
+    setPageTitle(formatMessage(accountDetailsMessages.title))
   }
 
   constructor(props) {
@@ -88,38 +67,37 @@ class AccountDetails extends PureComponent {
   }
 
   render() {
-    const { loading, saving, accountDetails, saveContactDetails,
-        saveUserPreferences, saveLoginDetails, addAcknowledgement } = this.props,
-      { formatMessage } = this.props.intl,
-      saveLoginDetailsFailed = errors => {
-        if(!errors.currentPassword) {
-          this.closeCurrentPasswordInputDialog()
-        }
-      },
-      saveLoginDetailsSucceeded = () => {
+    const { intl: {formatMessage}, loading, saving, accountDetails, saveContactDetails,
+        saveUserPreferences, saveLoginDetails, addAcknowledgement } = this.props
+    const saveLoginDetailsFailed = errors => {
+      if(!errors.currentPassword) {
         this.closeCurrentPasswordInputDialog()
-        addAcknowledgement(formatMessage(messages.loginDetailsUpdated))
       }
+    }
+    const saveLoginDetailsSucceeded = () => {
+      this.closeCurrentPasswordInputDialog()
+      addAcknowledgement(formatMessage(personDetailsMessages.loginDetailsUpdated))
+    }
     return (
       <div className={styles.Content}>
-        <Helmet title={formatMessage(messages.title)} titleTemplate="%s - Aspect" defaultTitle="Aspect" />
+        <Helmet title={formatMessage(accountDetailsMessages.title)} titleTemplate="%s - Aspect" defaultTitle="Aspect" />
         <Paper>
           <Tabs>
             <Tab icon={<MapsPersonPin />}
-                 label={<span className="pure-hidden-xs">{formatMessage(messages.contactDetails)}</span>}>
+                 label={<span className="pure-hidden-xs">{formatMessage(personDetailsMessages.contactDetails)}</span>}>
               {(loading || saving) && <LinearProgress />}
               <h2 className={classNames('pure-visible-xs', styles.Form__Header)}>
-                {formatMessage(messages.contactDetails)}
+                {formatMessage(personDetailsMessages.contactDetails)}
               </h2>
               <ContactDetailsForm loading={loading || saving}
                                   initialValues={accountDetails.get('contactDetails')}
                                   onSubmit={saveContactDetails} />
             </Tab>
             <Tab icon={<Lock />}
-                 label={<span className="pure-hidden-xs">{formatMessage(messages.usernameAndPassword)}</span>}>
+                 label={<span className="pure-hidden-xs">{formatMessage(accountDetailsMessages.usernameAndPassword)}</span>}>
               {(loading || saving) && <LinearProgress />}
               <h2 className={classNames('pure-visible-xs', styles.Form__Header)}>
-                {formatMessage(messages.usernameAndPassword)}
+                {formatMessage(accountDetailsMessages.usernameAndPassword)}
               </h2>
               <LoginDetailsForm loading={loading || saving}
                                 initialValues={accountDetails.get('loginDetails')}
@@ -130,10 +108,10 @@ class AccountDetails extends PureComponent {
                                 onSubmitSuccess={saveLoginDetailsSucceeded} />
             </Tab>
             <Tab icon={<Language />}
-                 label={<span className="pure-hidden-xs">{formatMessage(messages.languageAndTimezone)}</span>}>
+                 label={<span className="pure-hidden-xs">{formatMessage(personDetailsMessages.languageAndTimezone)}</span>}>
               {(loading || saving) && <LinearProgress />}
               <h2 className={classNames('pure-visible-xs', styles.Form__Header)}>
-                {formatMessage(messages.languageAndTimezone)}
+                {formatMessage(personDetailsMessages.languageAndTimezone)}
               </h2>
               <UserPreferencesForm loading={loading || saving}
                                    initialValues={accountDetails.get('userPreferences')}

@@ -1,30 +1,12 @@
-import React from 'react'
+import React, { PropTypes } from 'react'
 import { reduxForm, Field } from 'redux-form/immutable'
 import RaisedButton from 'material-ui/RaisedButton'
 import _ from 'lodash'
-import { injectIntl, defineMessages } from 'react-intl'
+import { injectIntl } from 'react-intl'
 import TimezoneSelect from '../../components/shared/TimezoneSelect'
 import CountrySelect from '../../components/shared/CountrySelect'
+import messages from './messages'
 import styles from './PersonDetail.css'
-
-const messages = defineMessages({
-  timezone: {
-    id: 'pages.UserPreferences.timezone',
-    defaultMessage: 'Time Zone'
-  },
-  useDeviceTimezone: {
-    id: 'pages.UserPreferences.useDeviceTimezone',
-    defaultMessage: 'Use Computer\'s Time Zone'
-  },
-  language: {
-    id: 'pages.UserPreferences.language',
-    defaultMessage: 'Language'
-  },
-  save: {
-    id: 'pages.UserPreferences.save',
-    defaultMessage: 'Save'
-  }
-})
 
 const renderLanguageField = props => {
   const {onSelectionChanged, input, selectFieldProps} = props
@@ -68,6 +50,12 @@ const UserPreferencesForm = props => {
       </div>
     </form>
   )
+}
+
+UserPreferencesForm.propTypes = {
+  loading: PropTypes.bool,
+  onSubmit: PropTypes.func.isRequired,
+  onSubmitSuccess: PropTypes.func
 }
 
 export default _.flowRight(

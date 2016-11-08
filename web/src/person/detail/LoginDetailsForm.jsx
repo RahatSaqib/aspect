@@ -1,80 +1,14 @@
-import React from 'react'
+import React, { PropTypes } from 'react'
 import { reduxForm } from 'redux-form/immutable'
 import RaisedButton from 'material-ui/RaisedButton'
 import Dialog from 'material-ui/Dialog'
 import FlatButton from 'material-ui/FlatButton'
 import _ from 'lodash'
-import { injectIntl, defineMessages } from 'react-intl'
+import { injectIntl } from 'react-intl'
 import TextInput from '../../components/shared/TextInput'
 import StrongPasswordInput from '../../components/shared/StrongPasswordInput'
+import messages from './messages'
 import styles from './PersonDetail.css'
-
-const messages = defineMessages({
-  username: {
-    id: 'pages.UpdateLoginDetails.username',
-    defaultMessage: 'Username'
-  },
-  newPassword: {
-    id: 'pages.UpdateLoginDetails.newPassword',
-    defaultMessage: 'New Password'
-  },
-  confirmNewPassword: {
-    id: 'pages.UpdateLoginDetails.confirmNewPassword',
-    defaultMessage: 'Confirm New Password'
-  },
-  save: {
-    id: 'pages.UpdateLoginDetails.save',
-    defaultMessage: 'Save'
-  },
-  currentPassword: {
-    id: 'pages.UpdateLoginDetails.currentPassword',
-    defaultMessage: 'Current Password'
-  },
-  usernameRequired: {
-    id: 'pages.UpdateLoginDetails.usernameRequired',
-    defaultMessage: 'A username is required'
-  },
-  currentPasswordRequired: {
-    id: 'pages.UpdateLoginDetails.currentPasswordRequired',
-    defaultMessage: 'Please enter your current password to update your login details'
-  },
-  newPasswordTooShort: {
-    id: 'pages.UpdateLoginDetails.newPasswordTooShort',
-    defaultMessage: 'The password needs to be at least 8 characters long'
-  },
-  newPasswordMustContainANumberOrSpecialCharacter: {
-    id: 'pages.UpdateLoginDetails.newPasswordMustContainANumberOrSpecialCharacter',
-    defaultMessage: 'The password needs to contain at least one number or special character (%!$*...)'
-  },
-  passwordsDoNotMatch: {
-    id: 'pages.UpdateLoginDetails.passwordsDoNotMatch',
-    defaultMessage: 'These passwords don\'t match'
-  },
-  currentPasswordDialogHeader: {
-    id: 'pages.UpdateLoginDetails.currentPasswordDialogHeader',
-    defaultMessage: 'Enter Current Password'
-  },
-  currentPasswordDialogMessage: {
-    id: 'pages.UpdateLoginDetails.currentPasswordDialogMessage',
-    defaultMessage: 'To update your login details, please enter your current password'
-  },
-  submitCurrentPassword: {
-    id: 'pages.UpdateLoginDetails.submitCurrentPassword',
-    defaultMessage: 'Submit'
-  },
-  cancelCurrentPassword: {
-    id: 'pages.UpdateLoginDetails.cancelCurrentPassword',
-    defaultMessage: 'Cancel'
-  },
-  usernameUnavailable: {
-    id: 'pages.UpdateLoginDetails.usernameUnavailable',
-    defaultMessage: 'This username is unavailable'
-  },
-  invalidPassword: {
-    id: 'pages.UpdateLoginDetails.invalidPassword',
-    defaultMessage: 'The password that you entered is not valid'
-  }
-})
 
 const LoginDetailsForm = props => {
   const { intl: {formatMessage}, handleSubmit, pristine, invalid, loading,
@@ -125,6 +59,15 @@ const LoginDetailsForm = props => {
       </Dialog>
     </form>
   )
+}
+
+LoginDetailsForm.propTypes = {
+  loading: PropTypes.bool,
+  currentPasswordInputDialogOpen: PropTypes.bool,
+  openCurrentPasswordInputDialog: PropTypes.func,
+  closeCurrentPasswordInputDialog: PropTypes.func,
+  onSubmit: PropTypes.func.isRequired,
+  onSubmitSuccess: PropTypes.func
 }
 
 const validate = (loginDetails, props) => {

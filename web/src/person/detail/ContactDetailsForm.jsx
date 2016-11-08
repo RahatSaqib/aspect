@@ -1,77 +1,15 @@
-import React from 'react'
+import React, { PropTypes } from 'react'
 import { reduxForm } from 'redux-form/immutable'
 import RaisedButton from 'material-ui/RaisedButton'
 import _ from 'lodash'
-import { injectIntl, defineMessages } from 'react-intl'
+import { injectIntl } from 'react-intl'
 import LocationSelector from '../../components/shared/LocationSelector'
 import TextInput from '../../components/shared/TextInput'
 import PhoneInput from '../../components/shared/PhoneInput'
 import SelectInput from '../../components/shared/SelectInput'
 import {emailAddress as validateEmailAddress} from '../../shared/utils/validate'
+import messages from './messages'
 import styles from './PersonDetail.css'
-
-const messages = defineMessages({
-  fullName: {
-    id: 'pages.ContactDetails.name',
-    defaultMessage: 'Full Name'
-  },
-  jobTitle: {
-    id: 'pages.ContactDetails.title',
-    defaultMessage: 'Job Title'
-  },
-  emailHeader: {
-    id: 'pages.ContactDetails.emailHeader',
-    defaultMessage: 'Email'
-  },
-  primaryEmail: {
-    id: 'pages.ContactDetails.email',
-    defaultMessage: 'Primary'
-  },
-  secondaryEmail: {
-    id: 'pages.ContactDetails.email2',
-    defaultMessage: 'Alternate'
-  },
-  phone: {
-    id: 'pages.ContactDetails.phoneHeader',
-    defaultMessage: 'Phone'
-  },
-  telephone: {
-    id: 'pages.ContactDetails.phone',
-    defaultMessage: 'Telephone'
-  },
-  mobile: {
-    id: 'pages.AccountDetails.cell',
-    defaultMessage: 'Mobile'
-  },
-  partner: {
-    id: 'pages.AccountDetails.partner',
-    defaultMessage: 'Partner'
-  },
-  location: {
-    id: 'pages.ContactDetails.locationHeader',
-    defaultMessage: 'Location'
-  },
-  zip: {
-    id: 'pages.ContactDetails.zip',
-    defaultMessage: 'Zip Code'
-  },
-  notes: {
-    id: 'pages.ContactDetails.notes',
-    defaultMessage: 'Notes'
-  },
-  save: {
-    id: 'pages.ContactDetails.save',
-    defaultMessage: 'Save'
-  },
-  nameRequired: {
-    id: 'pages.ContactDetails.nameRequired',
-    defaultMessage: 'Please enter your Full name'
-  },
-  invalidEmailAddress: {
-    id: 'pages.ContactDetails.invalidEmailAddress',
-    defaultMessage: 'Please enter a valid email address'
-  }
-})
 
 const ContactDetailsForm = props => {
   const { intl: {formatMessage}, handleSubmit, pristine, invalid,
@@ -118,16 +56,35 @@ const ContactDetailsForm = props => {
   )
 }
 
-const validate = (accountDetails, props) => {
+ContactDetailsForm.propTypes = {
+  loading: PropTypes.bool,
+  partners: PropTypes.arrayOf(PropTypes.shape({
+    id: PropTypes.number,
+    name: PropTypes.string,
+    orgUnits: PropTypes.arrayOf(PropTypes.shape({
+      id: PropTypes.number,
+      name: PropTypes.string,
+      roles: PropTypes.arrayOf(PropTypes.shape({
+        id: PropTypes.number,
+        name: PropTypes.string
+      }))
+    }))
+  })),
+  showNotesField: PropTypes.bool,
+  onSubmit: PropTypes.func.isRequired,
+  onSubmitSuccess: PropTypes.func
+}
+
+const validate = (contactDetails, props) => {
   const {formatMessage} = props.intl
   const errors = {}
-  if (!accountDetails.get('name')) {
+  if (!contactDetails.get('name')) {
     errors.name = formatMessage(messages.nameRequired)
   }
-  if (!validateEmailAddress(accountDetails.get('email')).optional().isValid()) {
+  if (!validateEmailAddress(contactDetails.get('email')).optional().isValid()) {
     errors.email = formatMessage(messages.invalidEmailAddress)
   }
-  if (!validateEmailAddress(accountDetails.get('email2')).optional().isValid()) {
+  if (!validateEmailAddress(contactDetails.get('email2')).optional().isValid()) {
     errors.email2 = formatMessage(messages.invalidEmailAddress)
   }
   return errors

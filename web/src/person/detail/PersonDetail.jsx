@@ -84,7 +84,7 @@ export class PersonDetail extends PureComponent {
   setPartnersOrgUnitsAndRoles = (props, selectedPartnerId, selectedOrgUnitId) => {
     const {partnersAndRolesForSelectList, intl: {formatMessage}} = props
     const partners = _.map(partnersAndRolesForSelectList.get('partners').toJS(), partner => {
-      return{
+      return {
         id: partner.id,
         name: partner.name || formatMessage(messages.noPartner),
         orgUnits: _.map(partner.orgUnits, orgUnit => {
