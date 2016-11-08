@@ -15,12 +15,8 @@ export default defineMessages({
     id: 'pages.PersonDetails.systemAccessControl',
     defaultMessage: 'System Access & Roles'
   },
-  noPartner: {
-    id: 'pages.PersonDetails.noPartner',
-    defaultMessage: 'None'
-  },
-  noOrgUnit: {
-    id: 'pages.PersonDetails.noOrgUnit',
+  none: {
+    id: 'pages.PersonDetails.none',
     defaultMessage: 'None'
   },
   languageAndTimezone: {

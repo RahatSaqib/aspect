@@ -86,11 +86,11 @@ export class PersonDetail extends PureComponent {
     const partners = _.map(partnersAndRolesForSelectList.get('partners').toJS(), partner => {
       return {
         id: partner.id,
-        name: partner.name || formatMessage(messages.noPartner),
+        name: partner.name || formatMessage(messages.none),
         orgUnits: _.map(partner.orgUnits, orgUnit => {
           return {
             id: orgUnit.id,
-            name: orgUnit.name || formatMessage(messages.noOrgUnit),
+            name: orgUnit.name || formatMessage(messages.none),
             roles: orgUnit.roles
           }
         })
