@@ -28,11 +28,15 @@ describe('Assay Consumable Routes',function(){
                 assert.property(res.body, 'data')
                 assert.typeOf(res.body.data, 'array')
                 assert.isAtLeast(res.body.data.length, 1)
-                assert.property(res.body.data[0], 'consumableId')
-                assert.property(res.body.data[0], 'assayId')
-                assert.property(res.body.data[0], 'quantity')
                 res.body.data.forEach(function(assayConsumable) {
                   assert.equal(assayConsumable.assayId, gxMtbRifAssay.id)
+                  assert.property(assayConsumable, 'consumableId')
+                  assert.property(assayConsumable, 'quantity')
+                  assert.property(assayConsumable, 'consumableName')
+                  assert.property(assayConsumable, 'unitName')
+                  assert.property(assayConsumable, 'unitShortName')
+                  assert.property(assayConsumable, 'assayName')
+                  assert.property(assayConsumable, 'assayI18nKey')
                 })
 
                 server
@@ -45,11 +49,15 @@ describe('Assay Consumable Routes',function(){
                     assert.property(res.body, 'data')
                     assert.typeOf(res.body.data, 'array')
                     assert.isAtLeast(res.body.data.length, 1)
-                    assert.property(res.body.data[0], 'consumableId')
-                    assert.property(res.body.data[0], 'assayId')
-                    assert.property(res.body.data[0], 'quantity')
                     res.body.data.forEach(function(assayConsumable) {
                       assert.equal(assayConsumable.assayId, gxEbolaAssay.id)
+                      assert.property(assayConsumable, 'consumableId')
+                      assert.property(assayConsumable, 'quantity')
+                      assert.property(assayConsumable, 'consumableName')
+                      assert.property(assayConsumable, 'unitName')
+                      assert.property(assayConsumable, 'unitShortName')
+                      assert.property(assayConsumable, 'assayName')
+                      assert.property(assayConsumable, 'assayI18nKey')
                     })
                     done()
                   })
@@ -93,6 +101,11 @@ describe('Assay Consumable Routes',function(){
                     assert.equal(res.body.data.consumableId, gxHivVlCartridgeId)
                     assert.equal(res.body.data.assayId, gxHivVlAssayId)
                     assert.equal(res.body.data.quantity, initialQuantity)
+                    assert.property(res.body.data, 'consumableName')
+                    assert.property(res.body.data, 'unitName')
+                    assert.property(res.body.data, 'unitShortName')
+                    assert.property(res.body.data, 'assayName')
+                    assert.property(res.body.data, 'assayI18nKey')
 
                     server
                       .post(path)
@@ -131,6 +144,11 @@ describe('Assay Consumable Routes',function(){
             assert.equal(res.body.data.consumableId, gxHivVlCartridgeId)
             assert.equal(res.body.data.assayId, gxHivVlAssayId)
             assert.equal(res.body.data.quantity, updatedQuantity)
+            assert.property(res.body.data, 'consumableName')
+            assert.property(res.body.data, 'unitName')
+            assert.property(res.body.data, 'unitShortName')
+            assert.property(res.body.data, 'assayName')
+            assert.property(res.body.data, 'assayI18nKey')
 
             server
               .get(`/api/assay-consumables/${gxHivVlAssayId}`)
