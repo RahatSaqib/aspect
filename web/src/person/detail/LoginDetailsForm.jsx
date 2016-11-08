@@ -35,7 +35,7 @@ const LoginDetailsForm = props => {
     <form onSubmit={handleSubmit} className={styles.Form}>
       <div className={styles.Form__Content}>
         <section>
-          <TextInput name="username" label={formatMessage(messages.username)} disabled={loading} maxLength="500" />
+          <TextInput name="username" label={formatMessage(messages.username)} disabled={loading} maxLength="255" />
           <br />
           <StrongPasswordInput name="newPassword" label={formatMessage(messages.newPassword)}
                                disabled={loading} maxLength="100"

@@ -11,8 +11,7 @@ import LocationSelector from '../../components/shared/LocationSelector'
 
 describe('ContactDetailsForm Component', () => {
   const fakeReactIntl = {
-    injectIntl: component => component,
-    defineMessages: messages => messages
+    injectIntl: component => component
   }
 
   describe('ContactDetailsForm', () => {
