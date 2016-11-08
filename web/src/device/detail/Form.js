@@ -19,7 +19,7 @@ import { fetchSites } from '../../site/SiteRedux'
 
 // use classnames module to handle style classes
 import styles from './DeviceDetail.css'
-const cx = classnames.bind(styles)
+const cssClasses = classnames.bind(styles)
 
 const renderTextField = ({ input, meta, ...restProps }) => {
   return (
@@ -36,7 +36,7 @@ const renderTextField = ({ input, meta, ...restProps }) => {
 const renderGoToSiteField = ({ input }) => {
   return (
     <Link title="Go to site" to={'/site/' + input.value} >
-      <ExitToApp className={cx('GoToSite')} />
+      <ExitToApp className={cssClasses('GoToSite')} />
     </Link>
   )
 }
@@ -129,7 +129,7 @@ export class Form extends PureComponent {
         <Field name="shortName" floatingLabelText={labels.shortName} component={renderTextField} />
         <Field name="notes" multiLine floatingLabelText={labels.notes} component={renderTextField} />
 
-        <table className={cx('pure-table', 'SelectSiteRow')}>
+        <table className={cssClasses('pure-table', 'SelectSiteRow')}>
           <tbody>
           <tr>
             <td>
