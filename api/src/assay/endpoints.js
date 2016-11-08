@@ -49,7 +49,7 @@ module.exports = [
         payload: {
           assayId: Joi.number().integer().positive().required(),
           consumableId: Joi.number().integer().positive().required(),
-          quantity: Joi.number().positive().required()
+          quantity: Joi.number().positive().precision(2).required().description('Amount of consumable used per test (up to 2 decimal places)')
         }
       }
     }
@@ -67,7 +67,7 @@ module.exports = [
           consumableId: Joi.number().integer().positive().required()
         },
         payload: {
-          quantity: Joi.number().positive().required()
+          quantity: Joi.number().positive().precision(2).required().description('Amount of consumable used per test (up to 2 decimal places)')
         }
       }
     }
