@@ -111,7 +111,7 @@ function* addResult(request){
       ? JSON.stringify(payload.data)
       : _.get(existingResult, 'resultData', null)
 
-    const patientData = _.has(payload, 'patient', null)
+    const patientData = _.has(payload, 'patient')
       ? JSON.stringify(payload.patient)
       : _.get(existingResult, 'patientData')
 
