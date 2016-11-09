@@ -714,12 +714,12 @@ function* seed(knex){
     token: 'in-progress'
   })
   let [processed] = yield knex('ResultStatus').insert({
-    name: 'processed',
+    name: 'Processed',
     i18nkey: 'ResultStatusProcessed',
     token: 'processed'
   })
   let [acknowledged] = yield knex('ResultStatus').insert({
-    name: 'acknowledged',
+    name: 'Acknowledged',
     i18nkey: 'ResultStatusAcknowledged',
     token: 'acknowledged'
   })
