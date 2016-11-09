@@ -1,7 +1,6 @@
 const Joi = require('joi')
 const { asyncHandler, validateSortPageParams } = require('../routes')
-const { listConsumableTypes, listConsumableReasons } = require('./inventoryService')
-const { getConsumableAssays } = require('./consumableAssayService')
+const { listConsumableTypes, listConsumableReasons } = require('./service')
 
 module.exports = [
   {
@@ -30,20 +29,6 @@ module.exports = [
         query: Object.assign({
           name: Joi.string().allow('').description('Filter for consumable reason')
         }, validateSortPageParams('name'))
-      }
-    }
-  }, {
-    method: 'GET',
-    path: '/consumable-assays/{consumableId}',
-    handler: asyncHandler(getConsumableAssays),
-    config: {
-      description: 'Gets the consumable quantities for each assay for a specific consumable',
-      notes: 'Returns a list of assay consumable records',
-      auth: {scope: ['assay:view']},
-      validate: {
-        params: {
-          consumableId: Joi.number().integer().positive().required()
-        }
       }
     }
   }
