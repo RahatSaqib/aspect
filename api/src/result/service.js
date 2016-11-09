@@ -8,7 +8,7 @@ const SELECT_LIST_FIELDS = [
   'r.id', 'r.externalId', 'r.endedOn', 'd.name as deviceName',
   'c.name as countryName', 'st.name as stateName', 'lg.name as lgaName',
   'rc1.name as resultCategory1Name', 'rc2.name as resultCategory2Name',
-  's.externalId as sampleId', 'a.name as assayName', 'a.id as assayId',
+  's.externalId as sampleId', 'a.name as assayName', 'a.id as assayId', 'rs.name as resultStatus',
   knex.raw('JSON_UNQUOTE(JSON_EXTRACT(r.patientData, "$.id")) as patientId')
 ]
 
@@ -19,7 +19,7 @@ const SELECT_SHOW_FIELDS = [
   's.externalId as sampleId', 'si.name as siteName', 'r.assayVersion',
   'r.consumableSerial', 'r.consumableLot', 'r.consumableExpirationDate', 'r.instrumentSerial',
   'r.moduleName', 'r.moduleSerial', 'r.researchId', 'r.senderVersion', 'r.senderOperator',
-  'r.notes', 'r.errorCode', 'r.errorNotes','r.createdOn', 'r.updatedOn', 'r.assayId',
+  'r.notes', 'r.errorCode', 'r.errorNotes','r.createdOn', 'r.updatedOn', 'r.assayId', 'rs.name as resultStatus',
   knex.raw('JSON_UNQUOTE(JSON_EXTRACT(r.patientData, "$.id")) as patientId')
 ]
 
@@ -90,6 +90,7 @@ function* listResults(request){
     .leftJoin('ResultCategory as rc1', 'r.resultCategory1', 'rc1.id')
     .leftJoin('ResultCategory as rc2', 'r.resultCategory2', 'rc2.id')
     .leftJoin('Sample as s', 'r.sampleId', 's.id')
+    .leftJoin('ResultStatus as rs', 'r.resultStatusId', 'rs.id')
     .modify(filterParams, query, {deviceId: 'd.id', sampleId: 's.externalId', assayId: 'r.assayId' })
     .modify(addConstraints, dataConstraints, {device: 'd', sample: 's'})
 
@@ -141,6 +142,7 @@ function* getResultByResultId(request, fields=SELECT_SHOW_FIELDS){
     .leftJoin('ResultCategory as rc1', 'r.resultCategory1', 'rc1.id')
     .leftJoin('ResultCategory as rc2', 'r.resultCategory2', 'rc2.id')
     .leftJoin('Sample as s', 'r.externalId', 's.id')
+    .leftJoin('ResultStatus as rs', 'r.resultStatusId', 'rs.id')
     .where('r.id', + params.resultId)
     .modify(addConstraints, dataConstraints, {device: 'd'})
     .select(fields)
@@ -179,8 +181,37 @@ function* listResultTypes(request){
   return result
 }
 
+function* updateStatus(request){
+  const {params, payload} = request
+
+  //TODO: check permission
+  
+  let resultStatusId = payload.resultStatusId
+ 
+  //check if a token is provided
+  if (payload.token){
+    resultStatusId = knex('ResultStatus as rs')
+      .where('rs.token', payload.token)
+      .select('rs.id')
+
+    if (!isNaN(resultStatusId)){
+      Boom.error('Invalid result status token')
+    }
+  }
+
+  //update the resultStatusId
+  yield knex('Result')
+      .where('id', params.resultId)
+      .update({
+        resultStatusId: resultStatusId
+      })
+
+  return yield* showResult(request)
+}
+
 module.exports = {
   listResults,
   showResult,
-  listResultTypes
+  listResultTypes,
+  updateStatus
 }
