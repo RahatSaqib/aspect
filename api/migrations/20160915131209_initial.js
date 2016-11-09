@@ -430,7 +430,7 @@ function* up(knex){
     result.integer('deviceId').unsigned().notNullable()
           .index().references('id').inTable('Device')
     result.integer('resultStatusId').unsigned().notNullable()
-          .index().references('id').inTable('ResulstStatus')
+          .index().references('id').inTable('ResultStatus')
     result.float('longitude', 10, 6)
     result.float('latitude', 10, 6)
     result.integer('resultTypeId').unsigned().notNullable()
