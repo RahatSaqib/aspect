@@ -50,7 +50,10 @@ function* createAssayConsumable(request) {
 
   yield query('Insert assay consumable')
     .insert({assayId, consumableId, quantity})
-    .into('ConsumableAssay')
+    .into('ConsumableAssay').catch(function(err) {
+      console.log(err)
+      throw err
+    })
 
   const assayConsumable = yield getAssayConsumable(assayId, consumableId)
 
