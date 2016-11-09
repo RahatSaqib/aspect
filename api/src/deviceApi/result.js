@@ -10,20 +10,26 @@ function* addResult(request){
   if(!device.ok){
     return Boom.unauthorized()
   }
-  const deviceId = device.data.id
 
-  const now = new Date()
-  const externalId = getExternalId(payload.id)
-  let ok = false
+  const response = yield transact(function*(knex){
+    const deviceId = device.data.id
 
-  yield transact(function*(knex){
+    const now = new Date()
+    const externalId = getExternalId(payload.id)
+    const existingResult = yield knex('Result')
+      .where({externalId, deviceId})
+      .first()
+
     const assayQ = knex('Assay as a')
       .join('Device as d', 'a.deviceTypeId', 'd.deviceTypeId')
       .where({'d.id': deviceId})
-      .first('a.id', 'a.externalId')
+      .limit(2)
+      .select('a.id', 'a.externalId')
     const payloadAssayId = _.get(payload, 'assay.id', false)
     if(payloadAssayId){
       assayQ.where({'a.externalId': payloadAssayId})
+    } else if(existingResult){
+      assayQ.where({'a.id': existingResult.assayId})
     }
 
     const siteQ = knex('Site as s')
@@ -34,45 +40,151 @@ function* addResult(request){
 
     // Select ResultType if specified, otherwise Patient
     const resultTypeQ = knex('ResultType as rt')
-      .where({'rt.externalId': _.get(payload, 'type.id', 'Patient')})
       .first('rt.id')
+    if(_.has(payload, 'type.id')){
+      resultTypeQ.where({'rt.externalId': _.get(payload, 'type.id')})
+    } else if(existingResult){
+      resultTypeQ.where({'rt.id': existingResult.resultTypeId})
+    } else {
+      resultTypeQ.where({'rt.externalId': 'Patient'})
+    }
 
     // Categories if specified, otherwise Error or Success depending on error payload
-    let categoryIds = _.compact(_.map(payload.category, 'id'))
-    if(categoryIds.length === 0){
-      categoryIds = [payload.error ? 'Error' : 'Success']
-    }
     const categoryQ  = knex('ResultCategory as rc')
-      .whereIn('rc.externalId', categoryIds)
       .select('rc.id')
+    const categoryIds = _.compact(_.map(payload.category, 'id'))
+    if(categoryIds.length > 0){
+      categoryQ.whereIn('rc.externalId', categoryIds)
+    } else if(payload.error){
+      categoryQ.where({'rc.externalId': 'Error'})
+    } else if(existingResult){
+      categoryQ.whereIn('rc.id', _.compact(
+        [existingResult.resultCategory1, existingResult.resultCategory2]))
+    } else {
+      categoryQ.where({'rc.externalId': 'Success'})
+    }
 
-    const [assay, site, resultType, categories] = yield Promise.all(
+    const [assays, site, resultType, categories] = yield Promise.all(
       [assayQ, siteQ, resultTypeQ, categoryQ])
-    // TODO handle 0 result types, sites or assays, categories found
-    // TODO error if multiple assays and no assay specified
 
-    // TODO lookup and merge specified sample
-    // TODO Do we need to authorize this Device can link to Sample origin site?
+    if(!site || !resultType || categories.length === 0 || assays.length !== 1){
+      return Boom.badRequest()
+    }
+
+    const assay = assays[0]
+
     let sampleOriginSiteId = site.id
     const payloadOriginSiteId = _.get(payload, 'sample.originSite.id', false)
     if(payloadOriginSiteId){
+      // TODO Do we need to authorize this Device can link to Sample origin site?
       sampleOriginSiteId = (yield knex('Site')
         .where({partnerId: site.partnerId, externalId: payloadOriginSiteId})
         .first('id')).id
     }
-    const [sampleId] = yield knex('Sample').insert({
-      externalId: _.get(payload, 'sample.id', 'sample_'+externalId),
-      originSiteId: sampleOriginSiteId
-    })
+
+    let sampleId
+    if(!existingResult){
+      [sampleId] = yield knex('Sample').insert({
+        externalId: _.get(payload, 'sample.id', 'sample_'+externalId),
+        originSiteId: sampleOriginSiteId
+      })
+    } else {
+      sampleId = existingResult.sampleId
+      if(_.has(payload, 'sample')){
+        const existingSample = yield knex('Sample')
+          .where({id: sampleId})
+          .first('externalId', 'originSiteId')
+        yield knex('Sample')
+          .where({id: sampleId})
+          .update({
+            externalId: _.get(payload, 'sample.id', existingSample.externalId),
+            originSiteId: payloadOriginSiteId
+              ? sampleOriginSiteId
+              : existingSample.originSiteId
+          })
+      }
+    }
 
     // TODO result data validate against assay schema
-    const resultData = JSON.stringify(payload.data)
+    // TODO should we merge within patient or result data payload?
+    const resultData = _.has(payload, 'data')
+      ? JSON.stringify(payload.data)
+      : _.get(existingResult, 'resultData', null)
 
-    const patientData = JSON.stringify(payload.patient)
+    const patientData = _.has(payload, 'patient')
+      ? JSON.stringify(payload.patient)
+      : _.get(existingResult, 'patientData')
 
-    // TODO result merge into existing with same uniqueId
-    const [resultId] = yield knex('Result')
-      .insert({
+    const result =  {
+      latitude: _.get(
+        payload, 'location.latitude',
+        _.get(existingResult, 'latitude', site.latitude)),
+      longitude: _.get(
+        payload, 'location.longitude',
+        _.get(existingResult, 'longitude', site.longitude)),
+      assayId: assay.id,
+      assayVersion: _.get(
+        payload, 'assay.version',
+        _.get(existingResult, 'assayVersion', null)),
+      resultTypeId: resultType.id,
+      sampleId,
+      resultCategory1: _.get(categories, '[0].id', null),
+      resultCategory2: _.get(categories, '[1].id', null),
+      resultData,
+      startedOn: _.get(
+        payload, 'startedOn',
+        _.get(existingResult, 'startedOn', null)),
+      endedOn: _.get(
+        payload, 'endedOn',
+        _.get(existingResult, 'endedOn', now)),
+      consumableSerial: _.get(
+        payload, 'consumable[0].serial',
+        _.get(existingResult, 'consumableSerial', null)),
+      consumableExpirationDate: _.get(
+        payload, 'consumable[0].expirationDate',
+        _.get(existingResult, 'consumableExpirationDate', null)),
+      consumableLot: _.get(
+        payload, 'consumable[0].lot',
+        _.get(existingResult, 'consumableLot', null)),
+      instrumentSerial: _.get(
+        payload, 'instrument.serial',
+        _.get(existingResult, 'instrumentSerial', null)),
+      moduleSerial: _.get(
+        payload, 'module.serial',
+        _.get(existingResult, 'moduleSerial', null)),
+      moduleName: _.get(
+        payload, 'module.name',
+        _.get(existingResult, 'moduleName', null)),
+      researchId: _.get(
+        payload, 'research.id',
+        _.get(existingResult, 'researchId', null)),
+      patientData,
+      senderVersion: _.get(
+        payload, 'sender.version',
+        _.get(existingResult, 'senderVersion', null)),
+      senderOperator: _.get(
+        payload, 'sender.operator',
+        _.get(existingResult, 'senderOperator', null)),
+      notes: _.get(
+        payload, 'notes',
+        _.get(existingResult, 'notes', null)),
+      errorCode: _.get(
+        payload, 'error.code',
+        _.get(existingResult, 'errorCode', null)),
+      errorNotes: _.get(
+        payload, 'error.notes',
+        _.get(existingResult, 'errorNotes', null)),
+      updatedOn: now
+    }
+
+    let resultId
+    if(existingResult){
+      resultId = existingResult.id
+      yield knex('Result')
+        .where({id: resultId})
+        .update(result)
+    } else {
+      [resultId] = yield knex('Result').insert(Object.assign({
         externalId,
         deviceId,
         partnerId: site.partnerId,
@@ -81,33 +193,9 @@ function* addResult(request){
         stateId: site.stateId,
         lgaId: site.lgaId,
         siteId: site.id,
-        latitude: _.get(payload, 'location.latitude', site.latitude),
-        longitude: _.get(payload, 'location.longitude', site.longitude),
-        assayId: assay.id,
-        assayVersion: _.get(payload, 'assay.version', null),
-        resultTypeId: resultType.id,
-        sampleId,
-        resultCategory1: _.get(categories, '[0].id', null),
-        resultCategory2: _.get(categories, '[1].id', null),
-        resultData,
-        startedOn: _.get(payload, 'startedOn', null),
-        endedOn: _.get(payload, 'endedOn', now),
-        consumableSerial: _.get(payload, 'consumable[0].serial', null),
-        consumableExpirationDate: _.get(payload, 'consumable[0].expirationDate', null),
-        consumableLot: _.get(payload, 'consumable[0].lot', null),
-        instrumentSerial: _.get(payload, 'instrument.serial', null),
-        moduleSerial: _.get(payload, 'module.serial', null),
-        moduleName: _.get(payload, 'module.name', null),
-        researchId: _.get(payload, 'research.id', null),
-        patientData,
-        senderVersion: _.get(payload, 'sender.version', null),
-        senderOperator: _.get(payload, 'sender.operator', null),
-        notes: _.get(payload, 'notes', null),
-        errorCode: _.get(payload, 'error.code', null),
-        errorNotes: _.get(payload, 'error.notes', null),
-        createdOn: now,
-        updatedOn: now
-      })
+        createdOn: now
+      }, result))
+    }
 
     // TODO ResultLog should be stored even if validation or result parsing fails
     // And should contain the RAW payload (prior to transformation during Joi Validation)
@@ -119,9 +207,11 @@ function* addResult(request){
       // TODO ResultLog handle non-JSON payloads
       rawMessage: JSON.stringify(payload)
     })
-    ok = true
+
+    return {ok: true, data: {id: externalId}}
   })
-  return ok ? {ok, data: {id: externalId}} : {ok}
+
+  return response
 }
 
 function* listResults(request){
