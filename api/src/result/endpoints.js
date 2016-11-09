@@ -1,6 +1,6 @@
 const Joi = require('joi')
 const { asyncHandler, validateSortPageParams } = require('../routes')
-const { listResults, showResult, listResultTypes } = require('./service')
+const { listResults, showResult, listResultTypes, updateStatus } = require('./service')
 
 module.exports = [
   {
@@ -47,6 +47,25 @@ module.exports = [
         query: Object.assign({
           name: Joi.string().allow('').description('Filter for result type name')
         }, validateSortPageParams('name'))
+      }
+    }
+  },
+  {
+    method : 'PUT',
+    path: '/result/status/{resultId}',
+    handler: asyncHandler(updateStatus),
+    config: {
+      description: 'Update Result Status',
+      notes: 'Update the status of a result',
+      auth: {scope : ['result:edit']},
+      validate: {
+        params: {
+          resultId: Joi.number().integer().positive().description('Result Id')
+        },
+        payload: {
+          resultStatusId: Joi.number().integer().allow(null),
+          token: Joi.string().allow('', null)
+        }
       }
     }
   }
