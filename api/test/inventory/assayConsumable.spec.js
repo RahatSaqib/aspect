@@ -149,7 +149,12 @@ describe('Assay Consumable Routes', function(){
                       .send({assayId: gxHivVlAssayId, consumableId: gxHivVlCartridgeId, quantity: updatedQuantity})
                       .set('Authorization', 'Bearer ' + shared.token)
                       .end(function(err,res){
-                        assert.equal(res.status, 500, 'We should not be able to post a duplicate assay consumable')
+                        assert.equal(res.status, 409, 'We should not be able to post a duplicate assay consumable')
+                        assert.deepEqual(res.body, {
+                          statusCode: 409,
+                          error: 'Conflict',
+                          message: 'There is already an record for this assay and consumable'
+                        })
 
                         server
                           .get(`/api/assay-consumables/${gxHivVlAssayId}`)

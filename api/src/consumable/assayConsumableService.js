@@ -48,12 +48,16 @@ function* getAssayConsumables(request){
 function* createAssayConsumable(request) {
   const {assayId, consumableId, quantity} = request.payload
 
-  yield query('Insert assay consumable')
-    .insert({assayId, consumableId, quantity})
-    .into('ConsumableAssay').catch(function(err) {
-      console.log(err)
-      throw err
-    })
+  try {
+    yield query('Insert assay consumable')
+      .insert({assayId, consumableId, quantity})
+      .into('ConsumableAssay')
+  } catch (err) {
+    if(err.code === 'ER_DUP_ENTRY') {
+      return Boom.conflict('There is already an record for this assay and consumable')
+    }
+    throw err
+  }
 
   const assayConsumable = yield getAssayConsumable(assayId, consumableId)
 
