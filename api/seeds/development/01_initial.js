@@ -7,6 +7,7 @@ const permissions = require('./fixtures/permissions.json')
 const geography = require('./fixtures/geography.json')
 
 const millisInHour = 1000 * 60 * 60
+const millisInNormalYear = 1000 * 60 * 60 * 24 * 365
 const deviceNumber = 50
 const routerNumber = 20
 const resultMtbNumber = 200
@@ -643,7 +644,7 @@ function* seed(knex) {
 
   // Consumable types
   // TODO: We need to discuss how shared consumables are handled
-  yield knex('Consumable').insert({
+  const [consumableGlovesId] = yield knex('Consumable').insert({
     name: 'Gloves',
     unit: piece,
     canExpire: 0,
@@ -922,6 +923,24 @@ function* seed(knex) {
     }, auditFields))
   }
 
+  //Insert Inventory Items
+  for (let i = 0; i < siteDatas.length; i++) {
+    const siteData = siteDatas[i]
+    //TB Cartridges
+    yield knex('InventoryItem').insert({
+      consumableId: consumableGxTbCartridgeId,
+      siteId: siteData.id,
+      expiresOn: new Date(now.getTime() + _.random(-millisInNormalYear, millisInNormalYear)),
+      quantityOnHand: _.random(0, 1000)
+    })
+    //Gloves
+    yield knex('InventoryItem').insert({
+      consumableId: consumableGlovesId,
+      siteId: siteData.id,
+      quantityOnHand: _.random(0, 100)
+    })
+  }
+
   // some TB samples:
   let samples = []
   for (let i = 0; i < resultMtbNumber / 2; i++) {
@@ -1129,7 +1148,7 @@ function* seed(knex) {
     samples.push(sample)
   }
 
-  // HIV VL esults:
+  // HIV VL Results:
   possibleResults = [{ resultText: 'HIV-1 DÉTECTÉ {0} copies/mL (log {1})', category1: resultCategoryDetectedId },
                           { resultText: 'HIV-1 NON DÉTECTÉ', category1: resultCategoryNotDetectedId },
                           { resultText: 'No Result', category1: resultCategoryNoResultId },
