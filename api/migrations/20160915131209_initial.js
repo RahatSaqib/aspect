@@ -529,6 +529,19 @@ function* up(knex) {
     resultWorkflowStatus.string('token')
   })
 
+  yield knex.schema.createTable('InventoryItem', inventoryItem =>{
+    inventoryItem.increments('id')
+    inventoryItem.integer('consumableId').unsigned().notNullable()
+      .references('id').inTable('Consumable')
+    inventoryItem.integer('sideId').unsigned().notNullable()
+      .references('id').inTable('Site')
+    inventoryItem.dateTime('expiresOn')
+    inventoryItem.float('quantityOnHand')
+    addCreateFieldsNullable(inventoryItem)
+    addUpdateFieldsNullable(inventoryItem)
+    inventoryItem.charset('utf8')
+  })
+
   yield knex.raw('SET foreign_key_checks = 1')
 }
 
@@ -538,6 +551,7 @@ function* down(knex) {
   yield knex.schema.dropTableIfExists('ConsumableAssay')
   yield knex.schema.dropTableIfExists('ResultWorkflowStatus')
   yield knex.schema.dropTableIfExists('ConsumableAssay')
+  yield knex.schema.dropTableIfExists('InventoryItem')
   yield knex.schema.dropTableIfExists('ConsumableReason')
   yield knex.schema.dropTableIfExists('Unit')
   yield knex.schema.dropTableIfExists('Consumable')
