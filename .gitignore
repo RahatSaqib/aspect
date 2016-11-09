@@ -5,3 +5,6 @@ logs
 #IDE Generated Files
 .idea/
 .vscode/
+
+#Yarn Lock Files
+*.lock
