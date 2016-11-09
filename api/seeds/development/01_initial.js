@@ -702,6 +702,28 @@ function* seed(knex){
     decrease: 1
   })
 
+  //Result Status
+  let [ordered] = yield knex('ResultStatus').insert({
+    name: 'Ordered',
+    i18nkey: 'ResultStatusOrdered',
+    token: 'ordered'
+  })
+  let [inProgress] = yield knex('ResultStatus').insert({
+    name: 'In Progress',
+    i18nkey: 'ResultStatusOrdered',
+    token: 'in-progress'
+  })
+  let [processed] = yield knex('ResultStatus').insert({
+    name: 'processed',
+    i18nkey: 'ResultStatusProcessed',
+    token: 'processed'
+  })
+  let [acknowledged] = yield knex('ResultStatus').insert({
+    name: 'acknowledged',
+    i18nkey: 'ResultStatusAcknowledged',
+    token: 'acknowledged'
+  })
+
   // Create permissions
   const modules = {}
   for(let module of permissions.modules){
@@ -888,6 +910,8 @@ function* seed(knex){
     samples.push(sample)
   }
 
+  //Results section 
+
   // TB results:
   let possibleResults = [{ resultText: 'Not Detected', category1: resultCategoryDetectedId, category2: null },
                           { resultText: 'MTB Detected, Rif Resistance Not Detected', category1: resultCategoryDetectedId, category2: resultCategoryNotDetectedId },
@@ -922,6 +946,7 @@ function* seed(knex){
       lgaId : siteData.lgaId,
       siteId: siteData.id,
       deviceId: device.id,
+      resultStatusId: ordered,
       longitude: -81.581222,
       latitude: 28.419348,
       resultTypeId: resultTypePatientId,
@@ -998,6 +1023,7 @@ function* seed(knex){
       lgaId : siteData.lgaId,
       siteId: siteData.id,
       deviceId: device.id,
+      resultStatusId: processed,
       longitude: -81.581222,
       latitude: 28.419348,
       resultTypeId: resultTypePatientId,
@@ -1081,6 +1107,7 @@ function* seed(knex){
       lgaId : siteData.lgaId,
       siteId: siteData.id,
       deviceId: device.id,
+      resultStatusId: acknowledged,
       longitude: -81.581222,
       latitude: 28.419348,
       resultTypeId: resultTypePatientId,
