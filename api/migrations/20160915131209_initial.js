@@ -496,6 +496,15 @@ function* up(knex){
     consumableReason.charset('utf8')
   })
 
+  yield knex.schema.createTable('ConsumableAssay', consumableAssay => {
+    consumableAssay.integer('consumableId').unsigned().notNullable()
+      .index().references('id').inTable('Consumable')
+    consumableAssay.integer('assayId').unsigned().notNullable()
+      .index().references('id').inTable('Assay')
+    consumableAssay.float('quantity').notNullable()
+    consumableAssay.unique(['consumableId', 'assayId'])
+  })
+
   yield knex.raw('SET foreign_key_checks = 1')
 }
 

@@ -634,6 +634,7 @@ function* seed(knex){
   })
 
   // Consumable types
+  //TODO: We need to discuss how shared consumables are handled
   yield knex('Consumable').insert({
     name: 'Gloves',
     unit: piece,
@@ -641,12 +642,42 @@ function* seed(knex){
     manufacturer: 'ABC Company',
     autoInclude: 1
   })
-  yield knex('Consumable').insert({
+
+  const [consumableGxTbCartridgeId] = yield knex('Consumable').insert({
     name: 'GeneXpert TB Cartridge',
-    unit: ounce,
+    unit: piece,
     canExpire: 1,
     manufacturer: 'Cepheid',
     autoInclude: 0
+  })
+
+  const [consumableGxEbolaCartridgeId] = yield knex('Consumable').insert({
+    name: 'GeneXpert Ebola Cartridge',
+    unit: piece,
+    canExpire: 1,
+    manufacturer: 'Cepheid',
+    autoInclude: 0
+  })
+
+  yield knex('Consumable').insert({
+    name: 'GeneXpert HIV Viral Load Cartridge',
+    unit: piece,
+    canExpire: 1,
+    manufacturer: 'Cepheid',
+    autoInclude: 0
+  })
+
+  //Assay Consumables
+  yield knex('ConsumableAssay').insert({
+    consumableId: consumableGxTbCartridgeId,
+    assayId: assayMtbRifId,
+    quantity: 1
+  })
+
+  yield knex('ConsumableAssay').insert({
+    consumableId: consumableGxEbolaCartridgeId,
+    assayId: assayEbolaId,
+    quantity: 1
   })
 
   // Consumable Reasons
