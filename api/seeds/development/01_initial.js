@@ -645,7 +645,7 @@ function* seed(knex){
 
   const [consumableGxTbCartridgeId] = yield knex('Consumable').insert({
     name: 'GeneXpert TB Cartridge',
-    unit: ounce,
+    unit: piece,
     canExpire: 1,
     manufacturer: 'Cepheid',
     autoInclude: 0
@@ -653,7 +653,7 @@ function* seed(knex){
 
   const [consumableGxEbolaCartridgeId] = yield knex('Consumable').insert({
     name: 'GeneXpert Ebola Cartridge',
-    unit: ounce,
+    unit: piece,
     canExpire: 1,
     manufacturer: 'Cepheid',
     autoInclude: 0
@@ -661,7 +661,7 @@ function* seed(knex){
 
   yield knex('Consumable').insert({
     name: 'GeneXpert HIV Viral Load Cartridge',
-    unit: ounce,
+    unit: piece,
     canExpire: 1,
     manufacturer: 'Cepheid',
     autoInclude: 0
