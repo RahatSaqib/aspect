@@ -10,28 +10,90 @@
     "mocha": true
   },
   "rules": {
+    "array-bracket-spacing": [
+      "warn",
+      "never"
+    ],
+    "arrow-spacing": "warn",
+    "brace-style": "warn",
+    "camelcase": [
+      "warn",
+      {
+        "properties": "always"
+      }
+    ],
+    "comma-dangle": 1,
+    "comma-style": [
+      "warn",
+      "last"
+    ],
+    "dot-notation": 1,
+    "eqeqeq": [
+      "warn",
+      "always",
+      {
+        "null": "ignore"
+      }
+    ],
+    "global-strict": 0,
+    "id-length": [
+      "warn",
+      {
+        "min": 2,
+        "properties": "never"
+      }
+    ],
     "indent": [
       "warn",
       2
     ],
-    "comma-dangle": 1,
-    "quotes": [
-      1,
-      "single"
-    ],
-    "no-var": 1,
-    "no-undef": 1,
-    "global-strict": 0,
+    "no-array-constructor": 1,
+    "no-case-declarations": 1,
+    "no-confusing-arrow": 1,
+    "no-console": 1,
+    "no-duplicate-imports": 1,
     "no-extra-semi": 1,
-    "no-underscore-dangle": 0,
+    "no-dupe-class-members": 1,
+    "no-iterator": 1,
+    "no-nested-ternary": 1,
+    "no-new-func": 1,
+    "no-new-object": 1,
+    "no-param-reassign": 1,
+    "no-underscore-dangle": 1,
+    "no-unneeded-ternary": 1,
+    "no-unreachable": 1,
     "no-unused-vars": 1,
+    "no-useless-constructor": 1,
+    "no-useless-escape": 1,
     "no-trailing-spaces": [
       1,
       {
         "skipBlankLines": true
       }
     ],
-    "no-unreachable": 1,
-    "semi": ["warn", "never"]
+    "no-undef": 1,
+    "no-var": 1,
+    "object-shorthand": 1,
+    "prefer-template": 1,
+    "prefer-arrow-callback": 1,
+    "prefer-const": 1,
+    "quotes": [
+      1,
+      "single"
+    ],
+    "semi": [
+      "warn",
+      "never"
+    ],
+    "space-in-parens": [
+      "warn",
+      "never"
+    ],
+    "space-infix-ops": 1,
+    "spaced-comment": 1,
+    "template-curly-spacing": [
+      "warn",
+      "never"
+    ]
   }
 }
