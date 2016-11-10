@@ -9,7 +9,7 @@ function query() {
 }
 
 // extracts the parameters related to sorting and paging from the candidate
-// params and modifies the query builder with the sort modifications
+// params and modifies the query builder with the sort & paging modifications
 function sortPageParams(queryBuilder, params, defaultSort) {
   const sp = getSortPageParams(params, defaultSort)
   queryBuilder.orderBy(sp.sortCol, sp.sortDir).limit(sp.size).offset(sp.skip)

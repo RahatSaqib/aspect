@@ -61,17 +61,21 @@ const INVENTORY_ITEMS_SELECT_LIST_FIELDS = [
   'co.name as countryName', 'st.name as stateName', 'l.name as lgaName'
 ]
 
-const INVENTORY_ITEMS_SORT_FIELDS = [
-  'consumableName', 'manufacturer', 'siteName', 'countryName', 'stateName', 'lgaName', 'quantityOnHand', 'expiresOn'
-]
+const INVENTORY_ITEMS_SORT_FIELDS = {
+  'consumableName': 'c.name',
+  'manufacturer': 'c.manufacturer',
+  'siteName': 's.name',
+  'countryName': 'co.name',
+  'stateName': 'st.name',
+  'lgaName': 'l.name',
+  'quantityOnHand': 'ii.quantityOnHand',
+  'expiresOn': 'ii.expiresOn'
+}
 
 function* listInventoryItems(request){
-  let {auth} = request
+  const {auth} = request
 
-  let selectFields = _.clone(INVENTORY_ITEMS_SELECT_LIST_FIELDS)
-  let sortableFields = _.clone(INVENTORY_ITEMS_SORT_FIELDS)
-
-  if (query.sortCol && !sortableFields.includes(query.sortCol)){
+  if (request.query.sortCol && !_.keys(INVENTORY_ITEMS_SORT_FIELDS).includes(request.query.sortCol)){
     return Boom.badRequest()
   }
 
@@ -85,24 +89,37 @@ function* listInventoryItems(request){
     .leftOuterJoin('Country as co', 's.countryId', 'co.id')
     .leftOuterJoin('State as st', 's.stateId', 'st.id')
     .leftOuterJoin('Lga as l', 's.lgaId', 'l.id')
-    .modify(filterParams, request.query, { siteName: 's.name', consumableId: 'ii.consumableId' })
+    .modify(filterParams, request.query, {consumableId: 'ii.consumableId', siteName: 's.name' })
     .modify(addConstraints, dataConstraints, {country: 'co', state: 'st', lga: 'l', site: 's'})
-  //TODO: Date and Range Filters
 
-  let getCount = inventoryItemsQuery.clone()
+  const getCount = inventoryItemsQuery.clone()
     .count('ii.id as count').first()
 
-  let getItems = inventoryItemsQuery.clone()
-    .modify(sortPageParams, query, 'siteName')
-    .select(selectFields)
+  const getItems = inventoryItemsQuery.clone()
+    .modify(sortPageParams, request.query, INVENTORY_ITEMS_SORT_FIELDS['siteName'])
+    .select(INVENTORY_ITEMS_SELECT_LIST_FIELDS)
 
-  let [{count: total}, data] = yield Promise.all([getCount, getItems])
+  const [{count: total}, data] = yield Promise.all([getCount, getItems])
 
   return {ok: true, total, length: data.length, data}
 }
 
+function* listInventoryItemsGroupedBySite(request) {
+
+}
+
+function* listInventoryItemsGroupedByConsumable(request) {
+
+}
+
+function* listInventoryItemsGroupedBySiteConsumable(request) {
+
+}
 module.exports = {
   listConsumableTypes,
   listConsumableReasons,
-  listInventoryItems
+  listInventoryItems,
+  listInventoryItemsGroupedBySite,
+  listInventoryItemsGroupedByConsumable,
+  listInventoryItemsGroupedBySiteConsumable
 }
