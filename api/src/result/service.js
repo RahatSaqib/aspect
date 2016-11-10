@@ -197,7 +197,7 @@ function* updateStatus(request){
       .map(row => row.id)
 
     if (!resultStatusId){
-      Boom.badRequest('Invalid result status token')
+     return Boom.badRequest('Invalid resulStatus token')
     }
   }
 

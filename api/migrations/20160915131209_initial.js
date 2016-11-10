@@ -516,7 +516,6 @@ function* up(knex){
     resultStatus.string('token')
   })
 
-
   yield knex.raw('SET foreign_key_checks = 1')
 }
 

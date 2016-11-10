@@ -711,7 +711,7 @@ function* seed(knex){
   })
   let [inProgress] = yield knex('ResultStatus').insert({
     name: 'In Progress',
-    i18nkey: 'ResultStatusOrdered',
+    i18nkey: 'ResultStatusInProgress',
     token: 'in-progress',
     externalId: 'InProgress'
   })
