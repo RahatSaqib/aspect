@@ -67,6 +67,7 @@ const INVENTORY_ITEMS_SORT_FIELDS = [
 
 function* listInventoryItems(request){
   let {auth} = request
+
   let selectFields = _.clone(INVENTORY_ITEMS_SELECT_LIST_FIELDS)
   let sortableFields = _.clone(INVENTORY_ITEMS_SORT_FIELDS)
 
@@ -74,7 +75,6 @@ function* listInventoryItems(request){
     return Boom.badRequest()
   }
 
-  // get data constraints
   let dataConstraints = yield getConstraints(auth.credentials)
 
   let inventoryItemsQuery = query('Search Inventory Items')
@@ -89,16 +89,13 @@ function* listInventoryItems(request){
     .modify(addConstraints, dataConstraints, {country: 'co', state: 'st', lga: 'l', site: 's'})
   //TODO: Date and Range Filters
 
-  // get total count for paging
   let getCount = inventoryItemsQuery.clone()
     .count('ii.id as count').first()
 
-  // get rows
   let getItems = inventoryItemsQuery.clone()
-    .modify(sortPageParams, query, 'name')
+    .modify(sortPageParams, query, 'siteName')
     .select(selectFields)
 
-  // return result when both queries are finished
   let [{count: total}, data] = yield Promise.all([getCount, getItems])
 
   return {ok: true, total, length: data.length, data}

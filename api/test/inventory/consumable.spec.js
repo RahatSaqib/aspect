@@ -62,7 +62,7 @@ describe('Consumable Routes', () => {
     })
   })
 
-  describe('Inventory List Route', function(){
+  describe.only('Inventory List Route', function(){
     let path = '/api/inventory'
 
     describe('GET',function(){
@@ -95,6 +95,32 @@ describe('Consumable Routes', () => {
             assert.property(res.body.data[0], 'lgaName')
             assert.property(res.body, 'total')
             done()
+          })
+      })
+
+      it('should accept a consumableId, siteName and groupBy fields as query string parameters', function(done){
+        server
+          .get(path + '?consumableId=1&siteName=hillbrow&groupBy=siteId&groupBy=consumableId')
+          .set('Authorization', 'Bearer '+shared.token)
+          .end(function(err,res){
+            assert.equal(res.status, 200)
+            done()
+          })
+      })
+
+      it('should only accept valid groupBy fields as query string parameters', function(done){
+        server
+          .get(path + '?groupBy=invalidField&groupBy=anotherInvalidField')
+          .set('Authorization', 'Bearer '+shared.token)
+          .end(function(err,res){
+            assert.equal(res.status, 400)
+            server
+              .get(path + '?groupBy=siteId&groupBy=consumableId')
+              .set('Authorization', 'Bearer '+shared.token)
+              .end(function(err,res){
+                assert.equal(res.status, 200)
+                done()
+              })
           })
       })
     })

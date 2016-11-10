@@ -14,7 +14,8 @@ module.exports = [
       validate: {
         query: Object.assign({
           consumableId: Joi.number().integer().positive().allow('', null),
-          siteName: Joi.string().allow('', null)
+          siteName: Joi.string().allow('', null),
+          groupBy: Joi.array().unique().items(Joi.string().valid('siteId', 'consumableId')).single(true)
         }, validateSortPageParams())
       }
     }
