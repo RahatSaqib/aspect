@@ -61,5 +61,43 @@ describe('Consumable Routes', () => {
       })
     })
   })
+
+  describe('Inventory List Route', function(){
+    let path = '/api/inventory'
+
+    describe('GET',function(){
+      shared.checkToken(server, path)
+
+      it('should return a list of inventory items when using valid token', function(done){
+        server
+          .get(path)
+          .set('Authorization', 'Bearer '+shared.token)
+          .end(function(err,res){
+            assert.equal(res.status, 200)
+            assert.typeOf(res.body, 'Object')
+            assert.property(res.body, 'data')
+            assert.typeOf(res.body.data, 'array')
+            assert.isAtLeast(res.body.data.length, 5)
+            assert.property(res.body.data[0], 'id')
+            assert.property(res.body.data[0], 'consumableId')
+            assert.property(res.body.data[0], 'siteId')
+            assert.property(res.body.data[0], 'expiresOn')
+            assert.property(res.body.data[0], 'quantityOnHand')
+            assert.property(res.body.data[0], 'consumableName')
+            assert.property(res.body.data[0], 'manufacturer')
+            assert.property(res.body.data[0], 'unitShortName')
+            assert.property(res.body.data[0], 'siteName')
+            assert.property(res.body.data[0], 'countryId')
+            assert.property(res.body.data[0], 'stateId')
+            assert.property(res.body.data[0], 'lgaId')
+            assert.property(res.body.data[0], 'countryName')
+            assert.property(res.body.data[0], 'stateName')
+            assert.property(res.body.data[0], 'lgaName')
+            assert.property(res.body, 'total')
+            done()
+          })
+      })
+    })
+  })
 })
 
