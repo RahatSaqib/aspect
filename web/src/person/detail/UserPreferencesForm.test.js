@@ -15,7 +15,8 @@ describe('UserPreferencesForm Component', () => {
   describe('UserPreferencesForm', () => {
     const fakeReduxForm = {
       reduxForm: () => component => component
-    }, UserPreferencesForm = proxyquire('./UserPreferencesForm', {
+    }
+    const UserPreferencesForm = proxyquire('./UserPreferencesForm', {
       'redux-form/immutable': fakeReduxForm,
       'react-intl': fakeReactIntl
     }).default

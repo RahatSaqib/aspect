@@ -16,7 +16,8 @@ describe('LoginDetailsForm Component', () => {
   describe('ContactDetailsForm', () => {
     const fakeReduxForm = {
       reduxForm: () => component => component
-    }, LoginDetailsForm = proxyquire('./LoginDetailsForm', {
+    }
+    const LoginDetailsForm = proxyquire('./LoginDetailsForm', {
       'redux-form/immutable': fakeReduxForm,
       'react-intl': fakeReactIntl
     }).default
