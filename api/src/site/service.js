@@ -1,6 +1,6 @@
-let Promise = require('bluebird')
-let { knex, filterParams, sortPageParams } = require('../db')
-let { getConstraints, addConstraints } = require('../auth/constraints')
+const Promise = require('bluebird')
+const { knex, filterParams, filterDateRangeParams, sortPageParams } = require('../db')
+const { getConstraints, addConstraints } = require('../auth/constraints')
 
 const SELECT_LIST_FIELDS = [
   's.id', 's.name', 's.shortname',
@@ -20,30 +20,48 @@ const SELECT_SHOW_FIELDS = [
 ]
 
 function* listSites(request){
-  let {query, auth} = request
+  const {query, auth} = request
 
   // get data constraints
-  let dataConstraints = yield getConstraints(auth.credentials)
+  const dataConstraints = yield getConstraints(auth.credentials)
 
-  let siteQuery = knex('Site as s')
+  const siteQuery = knex('Site as s')
     .leftOuterJoin('State as st', 's.stateId', 'st.id')
     .leftOuterJoin('Lga as l', 's.lgaId', 'l.id')
-    .modify(filterParams, query, { 'name': 's.name'})
+    .where(function () {
+      if (!query.deviceName) {
+        return
+      }
+      const deviceQuery = knex('Device as d')
+        .select('d.siteId')
+        .modify(filterParams, query, {
+          deviceName: 'd.name'
+        })
+
+      this.whereIn('s.id', deviceQuery)
+    })
+    .modify(filterDateRangeParams, query, 's.createdOn')
+    .modify(filterParams, query, {
+      countryId: 's.countryId',
+      stateId: 's.stateId',
+      lgaId: 's.lgaId',
+      siteName: 's.name'
+    })
     .modify(addConstraints, dataConstraints, {site: 's', state: 'st', lga: 'l'})
 
   // get total count for paging
-  let getCount = siteQuery.clone()
+  const getCount = siteQuery.clone()
     .count('s.id as count').first()
 
   // get rows
-  let getItems = siteQuery.clone()
+  const getItems = siteQuery.clone()
     .modify(sortPageParams, query, 'name')
     .select(SELECT_LIST_FIELDS)
 
   // return result when both queries are finished
-  let [{count: total}, data] = yield Promise.all([getCount, getItems])
+  const [{count: total}, data] = yield Promise.all([getCount, getItems])
 
-  let result = {ok: true, total, length: data.length, data}
+  const result = {ok: true, total, length: data.length, data}
 
   return result
 }

@@ -1,7 +1,7 @@
 const Promise = require('bluebird')
 const Boom = require('boom')
 const _ = require('lodash')
-const { knex, filterParams, sortPageParams } = require('../db')
+const { knex, filterParams, filterDateRangeParams, sortPageParams } = require('../db')
 const { getConstraints, addConstraints } = require('../auth/constraints')
 
 const SELECT_LIST_FIELDS = [
@@ -91,7 +91,19 @@ function* listResults(request){
     .leftJoin('ResultCategory as rc2', 'r.resultCategory2', 'rc2.id')
     .leftJoin('Sample as s', 'r.sampleId', 's.id')
     .leftJoin('ResultWorkflowStatus as rs', 'r.resultWorkflowStatusId', 'rs.id')
-    .modify(filterParams, query, {deviceId: 'd.id', sampleId: 's.externalId', assayId: 'r.assayId' })
+    .leftJoin('Site', 'r.siteId', 'Site.id')
+    .modify(filterDateRangeParams, query, 'r.endedOn')
+    .modify(filterParams, query, {
+      deviceId: 'd.id',
+      assayId: 'r.assayId',
+      resultCategoryId: 'r.resultCategory1',
+      countryId: 'Site.countryId',
+      stateId: 'Site.stateId',
+      lgaId: 'Site.lgaId',
+      deviceName: 'd.name',
+      siteName: 'Site.name',
+      sampleId: 's.externalId'
+    })
     .modify(addConstraints, dataConstraints, {device: 'd', sample: 's'})
 
   // get total count for paging
@@ -185,9 +197,8 @@ function* updateWorkflowStatus(request){
   const {params, payload} = request
 
   //TODO: check permission
-  
+
   let resultWorkflowStatusId = payload.resultWorkflowStatusId
- 
   //check if a token is provided
   if (payload.token){
     [resultWorkflowStatusId] = yield knex('ResultWorkflowStatus as rs')
