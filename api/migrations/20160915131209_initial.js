@@ -429,7 +429,7 @@ function* up(knex){
           .index().references('id').inTable('Site')
     result.integer('deviceId').unsigned().notNullable()
           .index().references('id').inTable('Device')
-    result.integer('resultStatusId').unsigned().notNullable()
+    result.integer('resultStatusId').unsigned()
           .index().references('id').inTable('ResultStatus')
     result.float('longitude', 10, 6)
     result.float('latitude', 10, 6)
@@ -511,6 +511,7 @@ function* up(knex){
   yield knex.schema.createTable('ResultStatus', resultStatus => {
     resultStatus.increments('id')
     resultStatus.string('name').notNullable()
+    resultStatus.string('externalId').notNullable()
     resultStatus.string('i18nKey')
     resultStatus.string('token')
   })

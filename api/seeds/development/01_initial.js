@@ -706,22 +706,26 @@ function* seed(knex){
   let [ordered] = yield knex('ResultStatus').insert({
     name: 'Ordered',
     i18nkey: 'ResultStatusOrdered',
-    token: 'ordered'
+    token: 'ordered',
+    externalId: 'Ordered'
   })
   let [inProgress] = yield knex('ResultStatus').insert({
     name: 'In Progress',
     i18nkey: 'ResultStatusOrdered',
-    token: 'in-progress'
+    token: 'in-progress',
+    externalId: 'InProgress'
   })
   let [processed] = yield knex('ResultStatus').insert({
     name: 'Processed',
     i18nkey: 'ResultStatusProcessed',
-    token: 'processed'
+    token: 'processed',
+    externalId: 'Processed'
   })
   let [acknowledged] = yield knex('ResultStatus').insert({
     name: 'Acknowledged',
     i18nkey: 'ResultStatusAcknowledged',
-    token: 'acknowledged'
+    token: 'acknowledged',
+    externalId: 'Acknowledged'
   })
 
   // Create permissions

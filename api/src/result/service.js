@@ -190,12 +190,14 @@ function* updateStatus(request){
  
   //check if a token is provided
   if (payload.token){
-    resultStatusId = knex('ResultStatus as rs')
+    [resultStatusId] = yield knex('ResultStatus as rs')
       .where('rs.token', payload.token)
       .select('rs.id')
+      .limit(1)
+      .map(row => row.id)
 
-    if (!isNaN(resultStatusId)){
-      Boom.error('Invalid result status token')
+    if (!resultStatusId){
+      Boom.badRequest('Invalid result status token')
     }
   }
 
