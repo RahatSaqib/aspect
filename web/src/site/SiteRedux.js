@@ -1,3 +1,4 @@
+import _ from 'lodash'
 import { stringify } from 'querystring'
 import Immutable from 'immutable'
 
@@ -47,6 +48,21 @@ function receiveSites(json) {
   }
 }
 
+// With state.filter.listFilter & extraFilters
+export function fetchListFilteredSites(extraFilters = {}, ...args){
+  return (dispatch, getState) => {
+    const filters = getState()
+      .filter
+      .listFilter
+      .toMap()
+      .merge(extraFilters)
+      .filter(_.identity)
+      .toJS()
+
+    return dispatch(fetchSites(filters, ...args))
+  }
+}
+
 export function fetchSites(filters/* required */, sortCol = 'name', sortDir = 'asc', page = 0, pageSize = 10){
   return dispatch => {
 
@@ -57,7 +73,7 @@ export function fetchSites(filters/* required */, sortCol = 'name', sortDir = 'a
       sortDir,
       page,
       size: pageSize,
-      ...filters.toJS()
+      ...filters
     })}`)
       .then(json => dispatch(receiveSites(json)))
       .catch(err => {

@@ -1,3 +1,4 @@
+import _ from 'lodash'
 import Immutable from 'immutable'
 import { stringify } from 'querystring'
 
@@ -40,6 +41,21 @@ function receivePersons(json) {
   }
 }
 
+// With state.filter.listFilter & extraFilters
+export function fetchListFilteredPersons(extraFilters = {}, ...args){
+  return (dispatch, getState) => {
+    const filters = getState()
+      .filter
+      .listFilter
+      .toMap()
+      .merge(extraFilters)
+      .filter(_.identity)
+      .toJS()
+
+    return dispatch(fetchPersons(filters, ...args))
+  }
+}
+
 export function fetchPersons(filters/* required */, sortCol = 'name', sortDir = 'asc', page = 0, pageSize = 10){
   return dispatch => {
 
@@ -50,7 +66,7 @@ export function fetchPersons(filters/* required */, sortCol = 'name', sortDir = 
       sortDir,
       page,
       size: pageSize,
-      ...filters.toJS()
+      ...filters
     })}`)
       .then(json => dispatch(receivePersons(json)))
       .catch(err => {

@@ -10,17 +10,10 @@ import { bindActionCreators } from 'redux'
 import { connect } from 'react-redux'
 import Helmet from 'react-helmet'
 
-// Material-UI
-import NavigationExpandMoreIcon from 'material-ui/svg-icons/navigation/expand-more'
-import RaisedButton from 'material-ui/RaisedButton'
-import { Toolbar, ToolbarGroup } from 'material-ui/Toolbar'
-import MenuItem from 'material-ui/MenuItem'
-import IconMenu from 'material-ui/IconMenu'
-import IconButton from 'material-ui/IconButton'
-import TextField from 'material-ui/TextField'
-
 // Our own imports
-import { fetchDevices } from '../DeviceRedux'
+import { fetchListFilteredDevices } from '../DeviceRedux'
+import ListFilterContainer from '../../filter/list/ListFilter'
+import { configureListFilter } from '../../filter/FilterRedux'
 import { DataTable } from '../../components/shared/DataTable'
 import styles from './DeviceList.css'
 
@@ -78,36 +71,15 @@ export class DeviceList extends PureComponent {
     muiTheme: PropTypes.object.isRequired
   }
 
-  state = {
-    filters: this.props.table.get('filters')
+  handleFetch = (...args) => {
+    this.props.fetchListFilteredDevices(
+      this.getDeviceConfigRoute().deviceConfig.filterParams,
+      ...args
+    )
   }
 
   handleItemIdSelection = (deviceId) => {
     this.props.router.push(`/device/${deviceId}`)
-  }
-
-  handleFetch = (...args) => {
-    const nextFilters = this.props.table.filters.merge(
-      this.getDeviceConfigRoute().deviceConfig
-    )
-    this.props.fetchDevices(nextFilters, ...args)
-  }
-
-  filterDevicesChange = (e) => {
-    this.setState({ filters: this.state.filters.set(e.target.id, e.target.value) })
-  }
-
-  handleSubmit = (e) => {
-    e.preventDefault()
-    const nextFilters = this.props.table.filters
-      .merge(this.getDeviceConfigRoute().deviceConfig)
-      .merge(this.state.filters)
-    this.props.fetchDevices(nextFilters)
-  }
-
-  resetDevices = () => {
-    this.setState({ filters: this.state.filters.set('name', '') })
-    this.handleFetch()
   }
 
   getDeviceConfigRoute({ routes } = this.props) {
@@ -126,7 +98,15 @@ export class DeviceList extends PureComponent {
   }
 
   componentWillMount() {
-    this.props.setPageTitle(this.getFormattedTitle())
+    const { setPageTitle, configureListFilter } = this.props
+    setPageTitle(this.getFormattedTitle())
+    configureListFilter(this.getDeviceConfigRoute().deviceConfig.filterConfig)
+  }
+
+  componentWillReceiveProps(nextProps) {
+    if (this.props.listFilter !== nextProps.listFilter) {
+      this.handleFetch()
+    }
   }
 
   componentDidUpdate(prevProps) {
@@ -134,7 +114,6 @@ export class DeviceList extends PureComponent {
     const deviceConfigRoute = this.getDeviceConfigRoute()
     // When switching between routers/devices, re-fetch API
     if (prevDeviceConfigRoute !== deviceConfigRoute) {
-      this.handleFetch()
       this.props.setPageTitle(this.getFormattedTitle())
     }
   }
@@ -166,28 +145,7 @@ export class DeviceList extends PureComponent {
     return (
       <div className={styles.Content}>
         <Helmet title={this.getFormattedTitle()} titleTemplate="%s - Aspect" defaultTitle="Aspect" />
-        <form onSubmit={ this.handleSubmit }>
-          <Toolbar className={styles.Toolbar} >
-            <ToolbarGroup firstChild={true}>
-              <TextField  value={this.state.filters.get('name')}
-                          id="name"
-                          onChange={ this.filterDevicesChange }
-                          className={styles['Toolbar__TextField--filter']}
-                          hintText="Filter by name" />
-              <RaisedButton label="Filter" primary={true} onTouchTap={ this.handleSubmit } />
-            </ToolbarGroup>
-            <ToolbarGroup lastChild={true}>
-              <IconMenu iconButtonElement={
-                  <IconButton touch={true}>
-                    <NavigationExpandMoreIcon />
-                  </IconButton>}>
-                <MenuItem primaryText="Clear Filters" className={styles.Toolbar__MenuItem} onTouchTap={ this.resetDevices } />
-                <MenuItem primaryText="Export to Excel" className={styles.Toolbar__MenuItem} />
-                <MenuItem primaryText="Export to CSV" className={styles.Toolbar__MenuItem} />
-              </IconMenu>
-            </ToolbarGroup>
-          </Toolbar>
-        </form>
+        <ListFilterContainer />
         <DataTable
           selectable
           handleItemIdSelection={this.handleItemIdSelection}
@@ -214,13 +172,17 @@ export class DeviceList extends PureComponent {
 
 function mapStateToProps(state) {
   return {
+    listFilter: state.filter.listFilter,
     items: state.device.items,
     table: state.device.table
   }
 }
 
 function mapDispatchToProps(dispatch) {
-  return bindActionCreators({ fetchDevices }, dispatch)
+  return bindActionCreators({
+    configureListFilter,
+    fetchListFilteredDevices
+  }, dispatch)
 }
 
 export const DeviceListContainer = _.flowRight(
