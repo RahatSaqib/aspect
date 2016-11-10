@@ -1,5 +1,8 @@
 const Promise = require('bluebird')
-const { knex, filterParams, sortPageParams } = require('../db')
+const _ = require('lodash')
+const Boom = require('boom')
+const { knex, query, filterParams, sortPageParams } = require('../db')
+const { getConstraints, addConstraints } = require('../auth/constraints')
 
 const SELECT_LIST_FIELDS = [
   'c.id', 'c.name', 'u.name as unit', 'c.canExpire', 'c.manufacturer', 'c.autoInclude'
@@ -51,7 +54,58 @@ function* listConsumableReasons(request) {
   return result
 }
 
+const INVENTORY_ITEMS_SELECT_LIST_FIELDS = [
+  'ii.id', 'ii.consumableId', 'ii.siteId', 'ii.expiresOn', 'ii.quantityOnHand',
+  'c.name as consumableName', 'c.manufacturer as manufacturer', 'u.shortname as unitShortName',
+  's.name as siteName', 's.countryId', 's.stateId', 's.lgaId',
+  'co.name as countryName', 'st.name as stateName', 'l.name as lgaName'
+]
+
+const INVENTORY_ITEMS_SORT_FIELDS = [
+  'consumableName', 'manufacturer', 'siteName', 'countryName', 'stateName', 'lgaName', 'quantityOnHand', 'expiresOn'
+]
+
+function* listInventoryItems(request){
+  let {auth} = request
+  let selectFields = _.clone(INVENTORY_ITEMS_SELECT_LIST_FIELDS)
+  let sortableFields = _.clone(INVENTORY_ITEMS_SORT_FIELDS)
+
+  if (query.sortCol && !sortableFields.includes(query.sortCol)){
+    return Boom.badRequest()
+  }
+
+  // get data constraints
+  let dataConstraints = yield getConstraints(auth.credentials)
+
+  let inventoryItemsQuery = query('Search Inventory Items')
+    .from('InventoryItem as ii')
+    .leftOuterJoin('Consumable as c', 'ii.consumableId', 'c.id')
+    .leftOuterJoin('Unit as u', 'c.unit', 'u.id')
+    .leftOuterJoin('Site as s', 'ii.siteId', 's.id')
+    .leftOuterJoin('Country as co', 's.countryId', 'co.id')
+    .leftOuterJoin('State as st', 's.stateId', 'st.id')
+    .leftOuterJoin('Lga as l', 's.lgaId', 'l.id')
+    .modify(filterParams, request.query, { siteName: 's.name', consumableId: 'ii.consumableId' })
+    .modify(addConstraints, dataConstraints, {country: 'co', state: 'st', lga: 'l', site: 's'})
+  //TODO: Date and Range Filters
+
+  // get total count for paging
+  let getCount = inventoryItemsQuery.clone()
+    .count('ii.id as count').first()
+
+  // get rows
+  let getItems = inventoryItemsQuery.clone()
+    .modify(sortPageParams, query, 'name')
+    .select(selectFields)
+
+  // return result when both queries are finished
+  let [{count: total}, data] = yield Promise.all([getCount, getItems])
+
+  return {ok: true, total, length: data.length, data}
+}
+
 module.exports = {
   listConsumableTypes,
-  listConsumableReasons
+  listConsumableReasons,
+  listInventoryItems
 }
