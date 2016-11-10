@@ -153,62 +153,66 @@ describe('ContactDetailsForm Component', () => {
           formatMessage: message => message.defaultMessage
         }
       }
-      let validateFunction, initialAccountDetails
+      let validateFunction, initialContactDetails
 
       beforeEach(() => {
         validateFunction = reduxFormConfig.validate
-        initialAccountDetails = Immutable.Map({
+        initialContactDetails = Immutable.Map({
           name: 'John Smith',
           email: null,
           email2: null
         })
       })
 
-      it('Should validate that name has been entered', () => {
-        assert.deepEqual(validateFunction(initialAccountDetails, props), {})
-        const accountDetails = initialAccountDetails.set('name', '')
-        assert.deepEqual(validateFunction(accountDetails, props), {
+      it('should validate that name has been entered', () => {
+        assert.deepEqual(validateFunction(initialContactDetails, props), {})
+        const contactDetails = initialContactDetails.set('name', '')
+        assert.deepEqual(validateFunction(contactDetails, props), {
           name: 'Please enter your Full name'
         })
       })
 
-      it('Should validate email addresses if they have been entered', () => {
-        let accountDetails = initialAccountDetails.set('email', 'invalid email')
-        assert.deepEqual(validateFunction(accountDetails, props), {
+      it('should validate email addresses if they have been entered', () => {
+        let contactDetails = initialContactDetails.set('email', 'invalid email')
+        assert.deepEqual(validateFunction(contactDetails, props), {
           email: 'Please enter a valid email address'
         })
 
-        accountDetails = initialAccountDetails.set('email2', 'invalid email')
-        assert.deepEqual(validateFunction(accountDetails, props), {
+        contactDetails = initialContactDetails.set('email2', 'invalid email')
+        assert.deepEqual(validateFunction(contactDetails, props), {
           email2: 'Please enter a valid email address'
         })
       })
 
-      it('Should validate name and both email addresses', () => {
-        let accountDetails = initialAccountDetails.merge({
+      it('should validate name and both email addresses', () => {
+        let contactDetails = initialContactDetails.merge({
           name: '',
           email: 'Invalid Email',
           email2: 'Another Invalid Email'
         })
-        assert.deepEqual(validateFunction(accountDetails, props), {
+        assert.deepEqual(validateFunction(contactDetails, props), {
           email: 'Please enter a valid email address',
           email2: 'Please enter a valid email address',
           name: 'Please enter your Full name'
         })
 
-        accountDetails = accountDetails.set('name', 'Abu Jenkins')
-        assert.deepEqual(validateFunction(accountDetails, props), {
+        contactDetails = contactDetails.set('name', 'Abu Jenkins')
+        assert.deepEqual(validateFunction(contactDetails, props), {
           email: 'Please enter a valid email address',
           email2: 'Please enter a valid email address'
         })
 
-        accountDetails = accountDetails.set('email2', 'valid@email.address')
-        assert.deepEqual(validateFunction(accountDetails, props), {
+        contactDetails = contactDetails.set('email2', 'valid@email.address')
+        assert.deepEqual(validateFunction(contactDetails, props), {
           email: 'Please enter a valid email address'
         })
 
-        accountDetails = accountDetails.set('email', 'another.valid@email.address')
-        assert.deepEqual(validateFunction(accountDetails, props), {})
+        contactDetails = contactDetails.set('email', 'another.valid@email.address')
+        assert.deepEqual(validateFunction(contactDetails, props), {})
+      })
+
+      it('should be able to handle an undefined parameter', () => {
+        assert.deepEqual(validateFunction(undefined, props), {})
       })
     })
   })

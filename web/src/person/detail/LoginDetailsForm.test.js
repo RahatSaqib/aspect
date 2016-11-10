@@ -194,6 +194,10 @@ describe('LoginDetailsForm Component', () => {
           currentPassword: 'Please enter your current password to update your login details'
         })
       })
+
+      it('should be able to handle an undefined parameter', () => {
+        assert.deepEqual(validateFunction(undefined, props), {})
+      })
     })
   })
 })

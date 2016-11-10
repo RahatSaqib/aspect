@@ -73,21 +73,23 @@ LoginDetailsForm.propTypes = {
 const validate = (loginDetails, props) => {
   const {formatMessage} = props.intl
   const errors = {}
-  if (!loginDetails.get('username')) {
-    errors.username = formatMessage(messages.usernameRequired)
-  }
-  if (!loginDetails.get('currentPassword')) {
-    errors.currentPassword = formatMessage(messages.currentPasswordRequired)
-  }
-  if (loginDetails.get('newPassword')) {
-    if(loginDetails.get('newPassword').trim().length < 8) {
-      errors.newPassword = formatMessage(messages.newPasswordTooShort)
-    } else if (!/\d/.test(loginDetails.get('newPassword')) &&
-      !/(?=.*?[`~!@#$%\^&*()\-=_+\\\[\]{}/?,.<>])/.test(loginDetails.get('newPassword'))) {
-      errors.newPassword = formatMessage(messages.newPasswordMustContainANumberOrSpecialCharacter)
+  if(loginDetails) {
+    if (!loginDetails.get('username')) {
+      errors.username = formatMessage(messages.usernameRequired)
     }
-    if (loginDetails.get('newPassword') !== loginDetails.get('confirmNewPassword')) {
-      errors.confirmNewPassword = formatMessage(messages.passwordsDoNotMatch)
+    if (!loginDetails.get('currentPassword')) {
+      errors.currentPassword = formatMessage(messages.currentPasswordRequired)
+    }
+    if (loginDetails.get('newPassword')) {
+      if(loginDetails.get('newPassword').trim().length < 8) {
+        errors.newPassword = formatMessage(messages.newPasswordTooShort)
+      } else if (!/\d/.test(loginDetails.get('newPassword')) &&
+        !/(?=.*?[`~!@#$%\^&*()\-=_+\\\[\]{}/?,.<>])/.test(loginDetails.get('newPassword'))) {
+        errors.newPassword = formatMessage(messages.newPasswordMustContainANumberOrSpecialCharacter)
+      }
+      if (loginDetails.get('newPassword') !== loginDetails.get('confirmNewPassword')) {
+        errors.confirmNewPassword = formatMessage(messages.passwordsDoNotMatch)
+      }
     }
   }
   return errors

@@ -78,14 +78,16 @@ ContactDetailsForm.propTypes = {
 const validate = (contactDetails, props) => {
   const {formatMessage} = props.intl
   const errors = {}
-  if (!contactDetails.get('name')) {
-    errors.name = formatMessage(messages.nameRequired)
-  }
-  if (!validateEmailAddress(contactDetails.get('email')).optional().isValid()) {
-    errors.email = formatMessage(messages.invalidEmailAddress)
-  }
-  if (!validateEmailAddress(contactDetails.get('email2')).optional().isValid()) {
-    errors.email2 = formatMessage(messages.invalidEmailAddress)
+  if(contactDetails) {
+    if (!contactDetails.get('name')) {
+      errors.name = formatMessage(messages.nameRequired)
+    }
+    if (!validateEmailAddress(contactDetails.get('email')).optional().isValid()) {
+      errors.email = formatMessage(messages.invalidEmailAddress)
+    }
+    if (!validateEmailAddress(contactDetails.get('email2')).optional().isValid()) {
+      errors.email2 = formatMessage(messages.invalidEmailAddress)
+    }
   }
   return errors
 }
