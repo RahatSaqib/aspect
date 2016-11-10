@@ -1,7 +1,6 @@
 export function isEditable(user/* TODO: add me back, site */) {
   const notEditable = user
     .permissions
-    .toSet()
     .intersect(['site:admin', 'site:edit'])
     .isEmpty()
 

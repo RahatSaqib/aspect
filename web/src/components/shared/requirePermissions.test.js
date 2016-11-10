@@ -1,3 +1,4 @@
+import Immutable from 'immutable'
 import { assert } from 'chai'
 import React from 'react'
 import { shallow } from 'enzyme'
@@ -21,7 +22,7 @@ describe('requirePermissions', () => {
   describe('isPermittedUser', () => {
     context('only required', () => {
       it('should be valid for admin user', () => {
-        const isPermitted = isPermittedUser(['person:admin'], {
+        const isPermitted = isPermittedUser(Immutable.Set(['person:admin']), {
           required: ['person:admin'],
           forbidden: [],
           optional: []
@@ -33,7 +34,7 @@ describe('requirePermissions', () => {
 
     context('only forbidden', () => {
       it('should be invalid for admin user', () => {
-        const isPermitted = isPermittedUser(['person:admin'], {
+        const isPermitted = isPermittedUser(Immutable.Set(['person:admin']), {
           required: [],
           forbidden: ['person:admin'],
           optional: []
@@ -45,7 +46,7 @@ describe('requirePermissions', () => {
 
     context('only optional', () => {
       it('should be valid for admin user', () => {
-        const isPermitted = isPermittedUser(['person:admin'], {
+        const isPermitted = isPermittedUser(Immutable.Set(['person:admin']), {
           required: [],
           forbidden: [],
           optional: ['person:admin', 'site:admin']
@@ -57,7 +58,7 @@ describe('requirePermissions', () => {
 
     context('required and forbidden', () => {
       it('should be valid for admin user', () => {
-        const isPermitted = isPermittedUser(['person:admin'], {
+        const isPermitted = isPermittedUser(Immutable.Set(['person:admin']), {
           required: ['person:admin'],
           forbidden: ['site:view'],
           optional: []
@@ -67,7 +68,7 @@ describe('requirePermissions', () => {
       })
 
       it('should be invalid for admin user', () => {
-        const isPermitted = isPermittedUser(['person:admin'], {
+        const isPermitted = isPermittedUser(Immutable.Set(['person:admin']), {
           required: ['site:view'],
           forbidden: ['person:admin'],
           optional: []
@@ -79,7 +80,7 @@ describe('requirePermissions', () => {
 
     context('required, forbidden and optional', () => {
       it('should be valid for admin user', () => {
-        const isPermitted = isPermittedUser(['person:admin', 'device:view'], {
+        const isPermitted = isPermittedUser(Immutable.Set(['person:admin', 'device:view']), {
           required: ['person:admin'],
           forbidden: ['site:view'],
           optional: ['device:view']
@@ -89,7 +90,7 @@ describe('requirePermissions', () => {
       })
 
       it('should be invalid for admin user', () => {
-        const isPermitted = isPermittedUser(['person:admin'], {
+        const isPermitted = isPermittedUser(Immutable.Set(['person:admin']), {
           required: ['site:view'],
           forbidden: ['person:admin'],
           optional: ['device:view']
@@ -109,7 +110,7 @@ describe('requirePermissions', () => {
         subscribe() {},
         getState() {
           return {
-            getIn() { return userPermissions }
+            getIn() { return Immutable.Set(userPermissions) }
           }
         }
       }
