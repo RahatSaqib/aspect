@@ -208,7 +208,7 @@ export class ResultDetail extends PureComponent {
         // Level 1: "Probes"
         return {
           label: value.get('title'),
-          value: resultData.get(key)
+          value: resultData.get(key) || ''
         }
       })
   }
@@ -265,7 +265,7 @@ export class ResultDetail extends PureComponent {
         }),
         {
           label: formatMessage(messages.fieldSampleId),
-          value: result.get('sampleId')
+          value: result.get('sampleId') || ''
         },
         {
           label: formatMessage(messages.fieldResearchId),
