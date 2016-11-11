@@ -49,6 +49,18 @@ function* addResult(request){
       resultTypeQ.where({'rt.externalId': 'Patient'})
     }
 
+    // Select ResultStatus if specified, otherwise null
+    let resultStatusQ
+    if(_.has(payload, 'status.id')){
+      resultStatusQ = knex('ResultStatus as rs')
+        .where({'rs.externalId': _.get(payload, 'status.id')})
+        .first('rs.id')
+    } else if(existingResult){
+      resultStatusQ = {id: existingResult.resultStatusId}
+    } else {
+      resultStatusQ = {id: null}
+    }
+
     // Categories if specified, otherwise Error or Success depending on error payload
     const categoryQ  = knex('ResultCategory as rc')
       .select('rc.id')
@@ -64,8 +76,8 @@ function* addResult(request){
       categoryQ.where({'rc.externalId': 'Success'})
     }
 
-    const [assays, site, resultType, categories] = yield Promise.all(
-      [assayQ, siteQ, resultTypeQ, categoryQ])
+    const [assays, site, resultType, resultStatus, categories] = yield Promise.all(
+      [assayQ, siteQ, resultTypeQ, resultStatusQ, categoryQ])
 
     if(!site || !resultType || categories.length === 0 || assays.length !== 1){
       return Boom.badRequest()
@@ -127,6 +139,7 @@ function* addResult(request){
         payload, 'assay.version',
         _.get(existingResult, 'assayVersion', null)),
       resultTypeId: resultType.id,
+      resultStatusId: resultStatus.id,
       sampleId,
       resultCategory1: _.get(categories, '[0].id', null),
       resultCategory2: _.get(categories, '[1].id', null),
@@ -229,6 +242,7 @@ function* listResults(request){
     .leftJoin('ResultCategory as rc1', 'r.resultCategory1', 'rc1.id')
     .leftJoin('ResultCategory as rc2', 'r.resultCategory2', 'rc2.id')
     .leftJoin('ResultType as rt', 'r.resultTypeId', 'rt.id')
+    .leftJoin('ResultStatus as rs', 'r.resultStatusId', 'rs.id')
     .leftJoin('Sample as s', 'r.sampleId', 's.id')
     .leftJoin('Site as sos', 's.originSiteId', 'sos.id')
     .modify(addConstraints, dataConstraints, {device: 'd', sample: 's'})
@@ -248,6 +262,7 @@ function* listResults(request){
       'r.instrumentSerial', 'r.moduleName', 'r.moduleSerial',
       'a.externalId as assayId', 'r.assayVersion',
       'r.latitude', 'r.longitude', 'rt.externalId as resultTypeId',
+      'rs.externalId as resultStatusId',
       's.externalId as sampleId', 'sos.externalId as sampleOriginSiteId',
       'rc1.externalId as category1Id', 'rc2.externalId as category2Id'
     )
@@ -274,6 +289,10 @@ function rowToResult(row){
     result.location = location
   }
   result.type = {id: row.resultTypeId}
+
+  if(row.resultStatusId != null){
+    result.status = {id: row.resultStatusId}
+  }
 
   result.sample = {id: row.sampleId, originSite: {id: row.sampleOriginSiteId}}
 

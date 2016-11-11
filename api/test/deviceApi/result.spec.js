@@ -163,6 +163,7 @@ describe('Device Result API routes',function(){
         .send({
           data: {a: 'b', c: 2, d: false, e: {f: 'g'}},
           type: {id: 'Study'},
+          status: {id: 'Acknowledged'},
           category: [
             {id: 'Detected'},
             {id: 'Indeterminate'}
@@ -285,6 +286,10 @@ describe('Device Result API routes',function(){
         .where({id: result2.resultTypeId}).first('externalId')
       assert.equal(result2Type.externalId, 'Study')
 
+      const result2Status = yield knex('ResultStatus as rs')
+        .where({id: result2.resultStatusId}).first('externalId')
+      assert.equal(result2Status.externalId, 'Acknowledged')
+
       const result2Assay = yield knex('Assay as assay')
         .where({id: result2.assayId}).first('externalId', 'name')
       assert.equal(result2Assay.externalId, 'MtbRif')
@@ -307,6 +312,7 @@ describe('Device Result API routes',function(){
       assert.deepEqual(JSON.parse(log2Raw), {
         data: {a: 'b', c: 2, d: false, e: {f: 'g'}},
         type: {id: 'Study'},
+        status: {id: 'Acknowledged'},
         category: [
           {id: 'Detected'},
           {id: 'Indeterminate'}
@@ -400,6 +406,7 @@ describe('Device Result API routes',function(){
               version: '1a.c1'
             },
             type: {id: 'Study'},
+            status: {id: 'Acknowledged'},
             category: [
               {id: 'Detected'},
               {id: 'Indeterminate'}
@@ -610,6 +617,7 @@ describe('Device Result API routes',function(){
           id: resultIds[1],
           data: {a: 'b', c: 2, d: false, e: {f: 'g'}},
           type: {id: 'Study'},
+          status: {id: 'Acknowledged'},
           category: [
             {id: 'Detected'},
             {id: 'Indeterminate'}
@@ -709,6 +717,10 @@ describe('Device Result API routes',function(){
       const result2Type = yield knex('ResultType as rt')
         .where({id: result2.resultTypeId}).first('externalId')
       assert.equal(result2Type.externalId, 'Study')
+
+      const result2Status = yield knex('ResultStatus as rs')
+        .where({id: result2.resultStatusId}).first('externalId')
+      assert.equal(result2Status.externalId, 'Acknowledged')
 
       const result2Assay = yield knex('Assay as assay')
         .where({id: result2.assayId}).first('externalId', 'name')

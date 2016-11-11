@@ -69,6 +69,9 @@ module.exports = [
           type: Joi.object().keys({
             id: Joi.string().required()
           }),
+          status: Joi.object().keys({
+            id: Joi.string().required()
+          }),
           sample: Joi.object().keys({
             id: Joi.string().allow('', null),
             originSite: Joi.object().keys({
