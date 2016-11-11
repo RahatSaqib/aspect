@@ -17,6 +17,7 @@ function addClientRoutes(server) {
   server.route(require('./role/endpoints').map(decorateClientAPI('person')))
   server.route(require('./consumable/endpoints').map(decorateClientAPI('inventory')))
   server.route(require('./notification/endpoints').map(decorateClientAPI('notification')))
+  server.route(require('./inventory/endpoints').map(decorateClientAPI('inventory')))
 }
 
 function addDeviceRoutes(server) {
