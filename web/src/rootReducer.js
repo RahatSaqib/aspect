@@ -15,6 +15,8 @@ import person from './person/PersonRedux'
 import accountDetails from './account/AccountRedux'
 import geography from './geography/GeographyRedux'
 import assay from './assay/AssayRedux'
+import consumable from './consumable/ConsumableRedux'
+import inventory from './inventory/InventoryRedux'
 import notification from './notification/NotificationRedux'
 import report from './report/ReportRedux'
 import idle from './idle/IdleRedux'
@@ -33,10 +35,12 @@ const appReducer = combineReducers({
   result,
   geography,
   assay,
-  notification,
-  report,
+  roles,
+  consumable,
+  inventory,
   idle,
-  roles
+  notification,
+  report
 })
 
 const App = Immutable.Record({
@@ -54,8 +58,10 @@ const App = Immutable.Record({
   notification: undefined,
   report: undefined,
   result: undefined,
-  idle: undefined,
-  roles: undefined
+  roles: undefined,
+  consumable: undefined,
+  inventory: undefined,
+  idle: undefined
 })
 
 const initialState = new App()
