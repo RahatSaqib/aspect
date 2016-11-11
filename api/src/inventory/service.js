@@ -6,7 +6,7 @@ const { getConstraints, addConstraints } = require('../auth/constraints')
 
 const INVENTORY_ITEMS_SELECT_LIST_FIELDS = [
   'ii.id', 'ii.consumableId', 'ii.siteId', 'ii.expiresOn', 'ii.quantityOnHand',
-  'c.name as consumableName', 'c.manufacturer as manufacturer', 'u.shortname as unitShortName',
+  'c.name as consumableName', 'c.manufacturer', 'u.shortname as unitShortName',
   's.name as siteName', 's.countryId', 's.stateId', 's.lgaId',
   'co.name as countryName', 'st.name as stateName', 'l.name as lgaName'
 ]
@@ -21,6 +21,10 @@ const INVENTORY_ITEMS_SORT_FIELDS = {
   'quantityOnHand': 'ii.quantityOnHand',
   'expiresOn': 'ii.expiresOn'
 }
+
+const INVENTORY_FILTER_FIELDS = { consumableId: 'ii.consumableId', siteName: 's.name', siteId: 'ii.siteId' }
+
+const INVENTORY_DATA_CONSTRAINT_ALIASES = {country: 'co', state: 'st', lga: 'l', site: 's'}
 
 function* listInventoryItems(request){
   const {auth} = request
@@ -39,8 +43,8 @@ function* listInventoryItems(request){
     .leftOuterJoin('Country as co', 's.countryId', 'co.id')
     .leftOuterJoin('State as st', 's.stateId', 'st.id')
     .leftOuterJoin('Lga as l', 's.lgaId', 'l.id')
-    .modify(filterParams, request.query, {consumableId: 'ii.consumableId', siteName: 's.name' })
-    .modify(addConstraints, dataConstraints, {country: 'co', state: 'st', lga: 'l', site: 's'})
+    .modify(filterParams, request.query, INVENTORY_FILTER_FIELDS)
+    .modify(addConstraints, dataConstraints, INVENTORY_DATA_CONSTRAINT_ALIASES)
 
   const getCount = inventoryItemsQuery.clone()
     .count('ii.id as count').first()
@@ -54,21 +58,73 @@ function* listInventoryItems(request){
   return {ok: true, total, length: data.length, data}
 }
 
+const SITES_SELECT_LIST_FIELDS = [
+  's.id', 's.name', 's.countryId', 's.stateId', 's.lgaId',
+  'co.name as countryName', 'st.name as stateName', 'l.name as lgaName'
+]
+
+const SITES_SORT_FIELDS = {
+  'siteName': 's.name',
+  'countryName': 'co.name',
+  'stateName': 'st.name',
+  'lgaName': 'l.name'
+}
+
 function* listInventoryItemsGroupedBySite(request) {
+  const {auth} = request
 
-}
+  if (request.query.sortCol && !_.keys(SITES_SORT_FIELDS).includes(request.query.sortCol)){
+    return Boom.badRequest()
+  }
 
-function* listInventoryItemsGroupedByConsumable(request) {
+  const dataConstraints = yield getConstraints(auth.credentials)
 
-}
+  let sitesQuery = query('Search Sites With Inventory Items')
+    .from('Site as s')
+    .leftOuterJoin('InventoryItem as ii', 's.id', 'ii.siteId')
+    .leftOuterJoin('Country as co', 's.countryId', 'co.id')
+    .leftOuterJoin('State as st', 's.stateId', 'st.id')
+    .leftOuterJoin('Lga as l', 's.lgaId', 'l.id')
+    .modify(filterParams, request.query, INVENTORY_FILTER_FIELDS) //TODO: Omit consumable filters
+    .modify(addConstraints, dataConstraints, INVENTORY_DATA_CONSTRAINT_ALIASES)
 
-function* listInventoryItemsGroupedBySiteConsumable(request) {
+  const getSiteCount = sitesQuery.clone().countDistinct('s.id as count').first()
 
+  const getSites = sitesQuery.clone()
+    .modify(sortPageParams, request.query, SITES_SORT_FIELDS['siteName'])
+    .distinct(SITES_SELECT_LIST_FIELDS)
+    .select()
+
+  const [{count: total}, sitesData] = yield Promise.all([getSiteCount, getSites])
+
+
+  const inventoryFilters = Object.assign({}, request.query, {siteId: _.map(sitesData, 'id')})
+
+  const inventoryItems = yield query('Search Inventory Items In Sites')
+    .from('InventoryItem as ii')
+    .leftOuterJoin('Consumable as c', 'ii.consumableId', 'c.id')
+    .leftOuterJoin('Unit as u', 'c.unit', 'u.id')
+    .leftOuterJoin('Site as s', 'ii.siteId', 's.id')
+    .leftOuterJoin('Country as co', 's.countryId', 'co.id')
+    .leftOuterJoin('State as st', 's.stateId', 'st.id')
+    .leftOuterJoin('Lga as l', 's.lgaId', 'l.id')
+    .modify(filterParams, inventoryFilters, INVENTORY_FILTER_FIELDS)
+    .modify(addConstraints, dataConstraints, INVENTORY_DATA_CONSTRAINT_ALIASES)
+    .select(INVENTORY_ITEMS_SELECT_LIST_FIELDS)
+
+  const sitesWithInventoryItems = _.map(sitesData, function(site) {
+    return Object.assign({}, site, {
+      inventoryItems: _.map(_.filter(inventoryItems, {siteId: site.id}), function (inventoryItem) {
+        return _.pick(inventoryItem,
+          ['id', 'consumableId', 'expiresOn', 'quantityOnHand', 'consumableName', 'manufacturer', 'unitShortName'])
+      })
+    })
+  })
+
+  return {ok: true, total, length: sitesData.length, data: sitesWithInventoryItems}
 }
 
 module.exports = {
   listInventoryItems,
-  listInventoryItemsGroupedBySite,
-  listInventoryItemsGroupedByConsumable,
-  listInventoryItemsGroupedBySiteConsumable
+  listInventoryItemsGroupedBySite
 }

@@ -3,8 +3,7 @@ let { asyncHandler, validateSortPageParams } = require('../routes')
 let {
   listInventoryItems,
   listInventoryItemsGroupedBySite,
-  listInventoryItemsGroupedByConsumable,
-  listInventoryItemsGroupedBySiteConsumable
+  listInventoryItemsGroupedBySiteAndConsumable
 } = require('./service')
 
 module.exports = [
@@ -40,23 +39,8 @@ module.exports = [
     }
   }, {
     method: 'GET',
-    path: '/inventory/group-by-consumable',
-    handler: asyncHandler(listInventoryItemsGroupedByConsumable),
-    config: {
-      description: 'Inventory List Grouped by Consumable',
-      notes: 'Pageable and sortable list of inventory items grouped by consumable',
-      auth: {scope :['inventory:view', 'inventory:edit']},
-      validate: {
-        query: Object.assign({
-          consumableId: Joi.number().integer().positive().allow('', null),
-          siteName: Joi.string().allow('', null)
-        }, validateSortPageParams())
-      }
-    }
-  }, {
-    method: 'GET',
     path: '/inventory/group-by-site-and-consumable',
-    handler: asyncHandler(listInventoryItemsGroupedBySiteConsumable),
+    handler: asyncHandler(listInventoryItemsGroupedBySiteAndConsumable),
     config: {
       description: 'Inventory List Grouped by Site and then by Consumable',
       notes: 'Pageable and sortable list of inventory items grouped by site then consumable',
