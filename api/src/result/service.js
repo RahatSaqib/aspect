@@ -205,7 +205,8 @@ function* updateStatus(request){
   yield knex('Result')
       .where('id', params.resultId)
       .update({
-        resultStatusId: resultStatusId
+        resultStatusId: resultStatusId,
+        updatedOn: new Date()
       })
 
   return yield* showResult(request)
