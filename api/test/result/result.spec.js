@@ -192,14 +192,14 @@ describe('Result routes',function(){
               })
 
               //check if resultStatus was updated
-              assert.equal(res.body.data.resultStatus, 'Ordered')
+              assert.equal(res.body.data.resultStatus, 'OK')
 
               // Check if update persisted
               server
                 .get('/api/result/' + resultId)
                 .set('Authorization', 'Bearer' + shared.token)
                 .end(function(err,res){
-                  assert.equal(res.body.data.resultStatus, 'Ordered')
+                  assert.equal(res.body.data.resultStatus, 'OK')
                   
                   // Clean Up: Update resultStatus with original status
                   server

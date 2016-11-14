@@ -709,6 +709,12 @@ function* seed(knex){
     token: 'ok',
     externalId: 'OK'
   })
+  yield knex('ResultStatus').insert({
+    name: 'Error',
+    i18nkey: 'ResultStatusError',
+    token: 'error',
+    externalId: 'Error'
+  })
   let [ordered] = yield knex('ResultStatus').insert({
     name: 'Ordered',
     i18nkey: 'ResultStatusOrdered',

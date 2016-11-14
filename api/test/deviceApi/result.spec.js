@@ -94,6 +94,10 @@ describe('Device Result API routes',function(){
         .where({id: result1.resultTypeId}).first('externalId')
       assert.equal(result1Type.externalId, 'Patient')
 
+      const result1Status = yield knex('ResultStatus as rs')
+        .where({id: result1.resultStatusId}).first('externalId')
+      assert.equal(result1Status.externalId, 'OK')
+
       const result1Sample = yield knex('Sample as s')
         .where({id: result1.sampleId}).first()
       assert.equal(result1.siteId, result1Sample.originSiteId)
@@ -474,7 +478,7 @@ describe('Device Result API routes',function(){
         })
     }))
 
-    it('should set default result categories', () => run(function*(knex){
+    it('should set default result status and categories', () => run(function*(knex){
       const deviceAuth = 'Bearer '+sharedDevice.deviceToken
 
       yield server.post(devicePath)
@@ -490,6 +494,10 @@ describe('Device Result API routes',function(){
       assert.equal(result1.externalId, resultIds[0])
       assert.deepEqual(JSON.parse(result1.resultData), {a: 'b'})
       assert.isNotOk(result1.errorCode)
+
+      const result1Status = yield knex('ResultStatus as rs')
+        .where({id: result1.resultStatusId}).first('externalId')
+      assert.equal(result1Status.externalId, 'OK')
 
       const [result1Category1, result1Category2] = yield knex('ResultCategory as rt')
         .whereIn('id', [result1.resultCategory1, result1.resultCategory2]).select('externalId')
@@ -510,6 +518,10 @@ describe('Device Result API routes',function(){
       assert.deepEqual(JSON.parse(result2.resultData), {a: 'c'})
       assert.equal(result2.errorCode, '1')
 
+      const result2Status = yield knex('ResultStatus as rs')
+        .where({id: result2.resultStatusId}).first('externalId')
+      assert.equal(result2Status.externalId, 'Error')
+
       const [result2Category1, result2Category2] = yield knex('ResultCategory as rt')
         .whereIn('id', [result2.resultCategory1, result2.resultCategory2]).select('externalId')
       assert.equal(result2Category1.externalId, 'Error')
@@ -529,6 +541,10 @@ describe('Device Result API routes',function(){
       assert.deepEqual(JSON.parse(result3.resultData), {a: 'd'})
       assert.equal(result3.errorCode, '1')
 
+      const result3Status = yield knex('ResultStatus as rs')
+        .where({id: result3.resultStatusId}).first('externalId')
+      assert.equal(result3Status.externalId, 'Error')
+
       const [result3Category1, result3Category2] = yield knex('ResultCategory as rt')
         .whereIn('id', [result3.resultCategory1, result3.resultCategory2]).select('externalId')
       assert.equal(result3Category1.externalId, 'Invalid')
@@ -547,6 +563,10 @@ describe('Device Result API routes',function(){
       assert.equal(result4.externalId, resultIds[3])
       assert.deepEqual(JSON.parse(result4.resultData), {a: 'e'})
       assert.isNotOk(result4.errorCode)
+
+      const result4Status = yield knex('ResultStatus as rs')
+        .where({id: result4.resultStatusId}).first('externalId')
+      assert.equal(result4Status.externalId, 'OK')
 
       const [result4Category1, result4Category2] = yield knex('ResultCategory as rt')
         .whereIn('id', [result4.resultCategory1, result4.resultCategory2]).select('externalId')
@@ -947,6 +967,7 @@ describe('Device Result API routes',function(){
             assay: {id: 'HivVl'},
             category: [{id: 'Success'}],
             type: {id: 'Patient'},
+            status: {id: 'OK'},
             notes: '154,112 Copies / mL'
           })
         })

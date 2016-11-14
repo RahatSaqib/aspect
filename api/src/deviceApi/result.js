@@ -61,11 +61,13 @@ function* addResult(request){
       resultTypeQ.where({'rt.externalId': 'Patient'})
     }
 
-    // Select ResultStatus if specified, otherwise OK
+    // Select ResultStatus if specified, otherwise Error or OK depending on error payload
     const resultStatusQ = knex('ResultStatus as rs')
       .first('rs.id')
     if(_.has(payload, 'status.id')){
       resultStatusQ.where({'rs.externalId': _.get(payload, 'status.id')})
+    } else if(payload.error){
+      resultStatusQ.where({'rs.externalId': 'Error'})
     } else if(existingResult){
       resultStatusQ.where({'rs.id': existingResult.resultStatusId})
     } else {
