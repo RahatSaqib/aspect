@@ -20,7 +20,7 @@ import IconButton from 'material-ui/IconButton'
 import TextField from 'material-ui/TextField'
 
 // Our own imports
-import { DataTable } from '../../components/shared/DataTable'
+import { GroupedDataTable } from '../../components/shared/GroupedDataTable'
 import { fetchInventoryItems } from '../InventoryRedux'
 import styles from './InventoryItemsList.css'
 import { fetchConsumables } from '../../consumable/ConsumableRedux'
@@ -101,10 +101,24 @@ export class InventoryItemsList extends PureComponent {
 
     const consumablesLoading = consumables ? consumables.get('loading') : false
 
-    let columns = [ { db: 'siteName', title: formatMessage(messages.siteName), format: (data) => formatDate(data) },
-      { db: 'consumableName', title: formatMessage(messages.consumableName) },
-      { db: 'quantityOnHand', title: formatMessage(messages.quantityOnHand) },
-      { db: 'expiresOn', title: formatMessage(messages.expiresOn) }]
+    let columns = [{
+      fieldName: 'siteName',
+      headerText: formatMessage(messages.siteName),
+      groupChildren: {
+        fieldName: 'inventoryItems',
+        columns: [{
+          fieldName: 'consumableName',
+          headerText: formatMessage(messages.consumableName)
+        }, {
+          fieldName: 'quantityOnHand',
+          headerText: formatMessage(messages.quantityOnHand)
+        }, {
+          fieldName: 'expiresOn',
+          headerText: formatMessage(messages.expiresOn),
+          format: (data) => formatDate(data, {format: 'user-timezone'})
+        }]
+      }
+    }]
 
     return (
       <div className={styles.Content}>
@@ -127,7 +141,8 @@ export class InventoryItemsList extends PureComponent {
                                  disabled={consumablesLoading || _.isEmpty(consumables)}
                                  onChange={ (e, i, v) => { this.handleConsumableChange(e, i, v) } }>
                 {
-                  consumables.map(consumable =>
+                  consumables.get('items') &&
+                  consumables.get('items').map(consumable =>
                     <MenuItem key={consumable.get('id')} value={consumable.get('id')} primaryText={consumable.get('name')} />)
                 }
               </ForkedSelectField>
@@ -145,7 +160,7 @@ export class InventoryItemsList extends PureComponent {
             </ToolbarGroup>
           </Toolbar>
         </form>
-        <DataTable
+        <GroupedDataTable
           selectable
           handleFetch={ this.handleFetch }
           items={ this.props.items }

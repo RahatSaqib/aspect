@@ -4,7 +4,6 @@ import Immutable from 'immutable'
 import { aspectFetch } from '../shared/utils/fetch'
 import { addError } from '../error/ErrorRedux'
 import { receiveList, Items } from '../shared/metaReducers/items'
-import { requestTable, receiveTableItems, Table } from '../shared/metaReducers/table'
 
 export const types = {
   REQUEST_INVENTORY_ITEMS: 'REQUEST_INVENTORY_ITEMS',
@@ -38,7 +37,7 @@ const defaultFilters = Immutable.Map({ consumableId: '', siteName: '' })
 const defaultSortCol = 'siteName'
 const defaultSortDir = 'asc'
 const defaultPage = 0
-const defaultPageSize = 0
+const defaultPageSize = 10
 const defaultGroupBySite = false
 const defaultGroupByConsumable = false
 
@@ -67,16 +66,21 @@ export function fetchInventoryItems(filters = defaultFilters, sortCol = defaultS
 /*
  * ---------------- Reducers -----------------
  */
+export const InventoryTable = Immutable.Record({
+  loading: false,
+  sortCol: defaultSortCol,
+  sortDir: defaultSortDir,
+  page: 0,
+  pageSize: defaultPageSize,
+  total: 0,
+  filters: defaultFilters,
+  groupBySite: defaultGroupBySite,
+  groupByConsumable: defaultGroupByConsumable
+})
+
 const Inventory = Immutable.Record({
   items: new Items(),
-  table: new Table({
-    sortCol: defaultSortCol,
-    sortDir: defaultSortDir,
-    pageSize: defaultPage,
-    filters: defaultFilters,
-    groupBySite: defaultGroupBySite,
-    groupByConsumable: defaultGroupByConsumable
-  })
+  table: new InventoryTable()
 })
 
 const initialState = new Inventory()
@@ -84,7 +88,13 @@ const initialState = new Inventory()
 export default function inventoryItemsReducer(state = initialState, action) {
   switch (action.type) {
   case types.REQUEST_INVENTORY_ITEMS:
-    return state.set('table', requestTable(state.table, action).merge({
+    return state.set('table', state.table.merge({
+      loading: true,
+      sortCol: action.sortCol,
+      sortDir: action.sortDir,
+      page: action.page,
+      pageSize: action.size,
+      filters: action.filters,
       groupBySite: action.groupBySite,
       groupByConsumable: action.groupByConsumable
     }))
@@ -92,7 +102,10 @@ export default function inventoryItemsReducer(state = initialState, action) {
     return state.withMutations(mutState => {
       const immutList = Immutable.fromJS(action.items)
       mutState.set('items', receiveList(mutState.items, immutList))
-      mutState.set('table', receiveTableItems(mutState.table, action.total))
+      mutState.set('table', mutState.table.merge({
+        loading: false,
+        total: action.total
+      }))
     })
   }
   return state

@@ -2,7 +2,6 @@
 import _ from 'lodash'
 import React, { PureComponent, PropTypes } from 'react'
 import { bindActionCreators } from 'redux'
-import { Link } from 'react-router'
 import {
   injectIntl,
   defineMessages
@@ -13,12 +12,12 @@ import Helmet from 'react-helmet'
 // Our own imports
 import { Unit } from '../../components/pureGrids'
 import { addAcknowledgement } from '../../acknowledgement/AcknowledgementRedux'
-import MiniChart from '../../components/shared/MiniChart'
 import DashboardDevices from './DashboardDevices'
 import DashboardTests from './DashboardTests'
 import DashboardSites from './DashboardSites'
 import DashboardErrorRate from './DashboardErrorRate'
 import DashboardContacts from './DashboardContacts'
+import DashboardInventory from './DashboardInventory'
 import styles from './Dashboard.css'
 
 const messages = defineMessages({
@@ -70,14 +69,7 @@ export class Dashboard extends PureComponent {
             <DashboardErrorRate label={'Error Rate'} />
           </Unit>
           <Unit sm="1-2" md="1-3" lg="1-4">
-            <Link to="/dashboard/inventory">
-              <MiniChart
-                data={[1000, 1200, 700, 500, 400, 500, 600, 780, 1200, 1456]}
-                label={'Cartridges'}
-                number={1456}
-                bgcolor={'#607d8b'}
-              />
-            </Link>
+            <DashboardInventory label={'Cartridges'} />
           </Unit>
           <Unit sm="1-2" md="1-3" lg="1-4">
             <DashboardContacts label={'Persons'} />

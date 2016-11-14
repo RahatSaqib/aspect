@@ -28,6 +28,7 @@ import { NotificationListContainer } from '../notification/list/NotificationList
 import { ReportListContainer } from '../report/list/ReportList'
 import { AccountDetailsContainer } from '../account/detail/AccountDetails'
 import { StyleguideMainContainer } from '../styleguide/main/StyleguideMain'
+import { InventoryItemsListContainer } from '../inventory/list/InventoryItemsList'
 
 import { refreshStart } from '../auth/AuthRedux'
 
@@ -63,11 +64,9 @@ const routes =
     <Route component={App} path="/">
       <Route component={LoginContainer} path="login" />
       <Route component={ResetPasswordContainer} path="reset-password" />
-      <Route
-        component={LoggedInShell}
+      <Route component={LoggedInShell}
         onEnter={requireAuth}
-        onChange={(prevState, nextState, replace) => requireAuth(nextState, replace)}
-      >
+        onChange={(prevState, nextState, replace) => requireAuth(nextState, replace) } >
         <IndexRedirect to="dashboard" />
 
         <Route path="dashboard" >
@@ -103,6 +102,10 @@ const routes =
 
         <Route path="account-details">
           <Route path="current" component={AccountDetailsContainer} />
+        </Route>
+
+        <Route path="inventory">
+          <IndexRoute component={InventoryItemsListContainer} />
         </Route>
 
         <Route path="notification" component={NotificationListContainer} />
