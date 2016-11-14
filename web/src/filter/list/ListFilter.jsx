@@ -9,9 +9,9 @@ import { connect } from 'react-redux'
 import {Card, CardActions, CardText} from 'material-ui/Card'
 import Toggle from 'material-ui/Toggle'
 import FlatButton from 'material-ui/FlatButton'
-import TextField from 'material-ui/TextField'
 
 // Our own imports
+import FocusBlurTextField from '../../components/shared/FocusBlurTextField'
 import CountrySelectField from '../geography/CountrySelectField'
 import StateSelectField from '../geography/StateSelectField'
 import LgaSelectField from '../geography/LgaSelectField'
@@ -115,7 +115,7 @@ export class ListFilter extends PureComponent {
     this.props.onChangeFilter(nextFilter)
   }
 
-  handleTextFieldChange = (event) => {
+  handleTextFieldCommitValue = (event) => {
     const nextFilter = {
       ...this.props.filter,
       [event.target.name]: event.target.value
@@ -213,26 +213,26 @@ export class ListFilter extends PureComponent {
                     />
                   )}
                   {config.deviceName && (
-                    <TextField
+                    <FocusBlurTextField
                       name="deviceName"
                       value={filter.deviceName || ''}
-                      onChange={this.handleTextFieldChange}
+                      onCommitValue={this.handleTextFieldCommitValue}
                       floatingLabelText="Device name"
                     />
                   )}
                   {config.siteName && (
-                    <TextField
+                    <FocusBlurTextField
                       name="siteName"
                       value={filter.siteName || ''}
-                      onChange={this.handleTextFieldChange}
+                      onCommitValue={this.handleTextFieldCommitValue}
                       floatingLabelText="Site name"
                     />
                   )}
                   {config.contactNameOrEmail && (
-                    <TextField
+                    <FocusBlurTextField
                       name="contactNameOrEmail"
                       value={filter.contactNameOrEmail || ''}
-                      onChange={this.handleTextFieldChange}
+                      onCommitValue={this.handleTextFieldCommitValue}
                       floatingLabelText="Contact name/email"
                     />
                   )}
