@@ -628,7 +628,7 @@ function* seed(knex){
     shortname: 'kg'
   })
 
-  let [ounce] = yield knex('Unit').insert({
+  yield knex('Unit').insert({
     name: 'Ounce',
     shortname: 'oz'
   })
@@ -703,13 +703,19 @@ function* seed(knex){
   })
 
   //Result Status
+  yield knex('ResultStatus').insert({
+    name: 'OK',
+    i18nkey: 'ResultStatusOK',
+    token: 'ok',
+    externalId: 'OK'
+  })
   let [ordered] = yield knex('ResultStatus').insert({
     name: 'Ordered',
     i18nkey: 'ResultStatusOrdered',
     token: 'ordered',
     externalId: 'Ordered'
   })
-  let [inProgress] = yield knex('ResultStatus').insert({
+  yield knex('ResultStatus').insert({
     name: 'In Progress',
     i18nkey: 'ResultStatusInProgress',
     token: 'in-progress',
@@ -914,7 +920,7 @@ function* seed(knex){
     samples.push(sample)
   }
 
-  //Results section 
+  //Results section
 
   // TB results:
   let possibleResults = [{ resultText: 'Not Detected', category1: resultCategoryDetectedId, category2: null },

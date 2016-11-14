@@ -149,7 +149,8 @@ describe('Device Result API routes',function(){
             data: {a: 'b'},
             assay: {id: 'HivVl'},
             category: [{id: 'Success'}],
-            type: {id: 'Patient'}
+            type: {id: 'Patient'},
+            status: {id: 'OK'}
           })
         })
 
@@ -820,6 +821,7 @@ describe('Device Result API routes',function(){
             assay: {id: 'HivVl'},
             category: [{id: 'Success'}],
             type: {id: 'Patient'},
+            status: {id: 'OK'},
             notes: '454,112 Copies / mL'
           })
         })
@@ -850,6 +852,7 @@ describe('Device Result API routes',function(){
             assay: {id: 'HivVl'},
             category: [{id: 'Success'}],
             type: {id: 'Patient'},
+            status: {id: 'OK'},
             notes: '454,112 Copies / mL'
           })
         })
@@ -913,6 +916,7 @@ describe('Device Result API routes',function(){
             assay: {id: 'HivVl'},
             category: [{id: 'Success'}],
             type: {id: 'Patient'},
+            status: {id: 'OK'},
             notes: '154,112 Copies / mL'
           })
         })

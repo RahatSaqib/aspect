@@ -429,7 +429,7 @@ function* up(knex){
           .index().references('id').inTable('Site')
     result.integer('deviceId').unsigned().notNullable()
           .index().references('id').inTable('Device')
-    result.integer('resultStatusId').unsigned()
+    result.integer('resultStatusId').unsigned().notNullable()
           .index().references('id').inTable('ResultStatus')
     result.float('longitude', 10, 6)
     result.float('latitude', 10, 6)
@@ -522,6 +522,7 @@ function* up(knex){
 function* down(knex){
   yield knex.raw('SET foreign_key_checks = 0')
   yield knex.schema.dropTableIfExists('ResultStatus')
+  yield knex.schema.dropTableIfExists('ConsumableAssay')
   yield knex.schema.dropTableIfExists('ConsumableReason')
   yield knex.schema.dropTableIfExists('Unit')
   yield knex.schema.dropTableIfExists('Consumable')

@@ -61,16 +61,15 @@ function* addResult(request){
       resultTypeQ.where({'rt.externalId': 'Patient'})
     }
 
-    // Select ResultStatus if specified, otherwise null
-    let resultStatusQ
+    // Select ResultStatus if specified, otherwise OK
+    const resultStatusQ = knex('ResultStatus as rs')
+      .first('rs.id')
     if(_.has(payload, 'status.id')){
-      resultStatusQ = knex('ResultStatus as rs')
-        .where({'rs.externalId': _.get(payload, 'status.id')})
-        .first('rs.id')
+      resultStatusQ.where({'rs.externalId': _.get(payload, 'status.id')})
     } else if(existingResult){
-      resultStatusQ = {id: existingResult.resultStatusId}
+      resultStatusQ.where({'rs.id': existingResult.resultStatusId})
     } else {
-      resultStatusQ = {id: null}
+      resultStatusQ.where({'rs.externalId': 'OK'})
     }
 
     // Categories if specified, otherwise Error or Success depending on error payload
@@ -91,7 +90,7 @@ function* addResult(request){
     const [assays, site, resultType, resultStatus, categories] = yield Promise.all(
       [assayQ, siteQ, resultTypeQ, resultStatusQ, categoryQ])
 
-    if(!site || !resultType || categories.length === 0 || assays.length !== 1){
+    if(!site || !resultType || !resultStatus ||  categories.length === 0 || assays.length !== 1){
       return Boom.badRequest()
     }
 
@@ -301,10 +300,7 @@ function rowToResult(row){
     result.location = location
   }
   result.type = {id: row.resultTypeId}
-
-  if(row.resultStatusId != null){
-    result.status = {id: row.resultStatusId}
-  }
+  result.status = {id: row.resultStatusId}
 
   result.sample = {id: row.sampleId, originSite: {id: row.sampleOriginSiteId}}
 
