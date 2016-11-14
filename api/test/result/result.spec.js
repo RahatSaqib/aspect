@@ -12,7 +12,7 @@ describe('Result routes',function(){
   let path = '/api/result'
   let resultId = 1
   let assayId = 1
-  let initialResultStatus = ''
+  let initialResultWorkflowStatus = ''
   describe('GET',function(){
 
     shared.checkToken(server, path)
@@ -40,7 +40,7 @@ describe('Result routes',function(){
 
         resultId = res.body.data[0].id
         assayId = res.body.data[0].assayId
-        initialResultStatus = res.body.data[0].resultStatus
+        initialResultWorkflowStatus = res.body.data[0].resultWorkflowStatus
 
         done()
       })
@@ -132,17 +132,17 @@ describe('Result routes',function(){
   describe('PUT',function(){
     it('Should update result status given a resultId', function(done){
       let updateWithToken = {
-        resultStatusId: null,
+        resultWorkflowStatusId: null,
         token: 'processed'
       }
       let updateWithId = {
-        resultStatusId: 1,
+        resultWorkflowStatusId: 1,
         token: null
       }
 
       //update with token
       server
-        .put(path + '/' + 'status/' + resultId)
+        .put(path + '/workflow-status/' + resultId)
         .send(updateWithToken)
         .set('Authorization', 'Bearer' + shared.token)
         .end(function(err, res){
@@ -165,11 +165,11 @@ describe('Result routes',function(){
           })
 
           //check the updated fieldName
-          assert.equal(res.body.data.resultStatus, 'Processed')
+          assert.equal(res.body.data.resultWorkflowStatus, 'Processed')
           
-          //update with resultStatusId
+          //update with resultWorkflowStatusId
           server
-            .put(path + '/' + 'status/' + resultId)
+            .put(path + '/workflow-status/' + resultId)
             .send(updateWithId)
             .set('Authorization', 'Bearer' + shared.token)
             .end(function(err, res){
@@ -191,23 +191,23 @@ describe('Result routes',function(){
                 assert.property(res.body.data, fieldName)
               })
 
-              //check if resultStatus was updated
-              assert.equal(res.body.data.resultStatus, 'OK')
+              //check if resultWorkflowStatus was updated
+              assert.equal(res.body.data.resultWorkflowStatus, 'OK')
 
               // Check if update persisted
               server
                 .get('/api/result/' + resultId)
                 .set('Authorization', 'Bearer' + shared.token)
                 .end(function(err,res){
-                  assert.equal(res.body.data.resultStatus, 'OK')
+                  assert.equal(res.body.data.resultWorkflowStatus, 'OK')
                   
-                  // Clean Up: Update resultStatus with original status
+                  // Clean Up: Update resultWorkflowStatus with original status
                   server
-                    .put(path + '/' + 'status/' + resultId)
-                    .send({resultStatusId: null, token: initialResultStatus})
+                    .put(path + '/workflow-status/' + resultId)
+                    .send({resultWorkflowStatusId: null, token: initialResultWorkflowStatus})
                     .set('Authorization', 'Bearer' + shared.token)
                     .end(function(err, res){
-                      assert.equal(res.body.data.resultStatus, initialResultStatus)
+                      assert.equal(res.body.data.resultWorkflowStatus, initialResultWorkflowStatus)
                       done()
                     })
                 })

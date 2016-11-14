@@ -61,17 +61,17 @@ function* addResult(request){
       resultTypeQ.where({'rt.externalId': 'Patient'})
     }
 
-    // Select ResultStatus if specified, otherwise Error or OK depending on error payload
-    const resultStatusQ = knex('ResultStatus as rs')
+    // Select Workflow Status if specified, otherwise Error or OK depending on error payload
+    const resultWorkflowStatusQ = knex('ResultWorkflowStatus as rs')
       .first('rs.id')
-    if(_.has(payload, 'status.id')){
-      resultStatusQ.where({'rs.externalId': _.get(payload, 'status.id')})
+    if(_.has(payload, 'workflow.status.id')){
+      resultWorkflowStatusQ.where({'rs.externalId': _.get(payload, 'workflow.status.id')})
     } else if(payload.error){
-      resultStatusQ.where({'rs.externalId': 'Error'})
+      resultWorkflowStatusQ.where({'rs.externalId': 'Error'})
     } else if(existingResult){
-      resultStatusQ.where({'rs.id': existingResult.resultStatusId})
+      resultWorkflowStatusQ.where({'rs.id': existingResult.resultWorkflowStatusId})
     } else {
-      resultStatusQ.where({'rs.externalId': 'OK'})
+      resultWorkflowStatusQ.where({'rs.externalId': 'OK'})
     }
 
     // Categories if specified, otherwise Error or Success depending on error payload
@@ -89,10 +89,10 @@ function* addResult(request){
       categoryQ.where({'rc.externalId': 'Success'})
     }
 
-    const [assays, site, resultType, resultStatus, categories] = yield Promise.all(
-      [assayQ, siteQ, resultTypeQ, resultStatusQ, categoryQ])
+    const [assays, site, resultType, resultWorkflowStatus, categories] = yield Promise.all(
+      [assayQ, siteQ, resultTypeQ, resultWorkflowStatusQ, categoryQ])
 
-    if(!site || !resultType || !resultStatus ||  categories.length === 0 || assays.length !== 1){
+    if(!site || !resultType || !resultWorkflowStatus ||  categories.length === 0 || assays.length !== 1){
       return Boom.badRequest()
     }
 
@@ -152,7 +152,7 @@ function* addResult(request){
         payload, 'assay.version',
         _.get(existingResult, 'assayVersion', null)),
       resultTypeId: resultType.id,
-      resultStatusId: resultStatus.id,
+      resultWorkflowStatusId: resultWorkflowStatus.id,
       sampleId,
       resultCategory1: _.get(categories, '[0].id', null),
       resultCategory2: _.get(categories, '[1].id', null),
@@ -255,7 +255,7 @@ function* listResults(request){
     .leftJoin('ResultCategory as rc1', 'r.resultCategory1', 'rc1.id')
     .leftJoin('ResultCategory as rc2', 'r.resultCategory2', 'rc2.id')
     .leftJoin('ResultType as rt', 'r.resultTypeId', 'rt.id')
-    .leftJoin('ResultStatus as rs', 'r.resultStatusId', 'rs.id')
+    .leftJoin('ResultWorkflowStatus as rs', 'r.resultWorkflowStatusId', 'rs.id')
     .leftJoin('Sample as s', 'r.sampleId', 's.id')
     .leftJoin('Site as sos', 's.originSiteId', 'sos.id')
     .modify(addConstraints, dataConstraints, {device: 'd', sample: 's'})
@@ -275,7 +275,7 @@ function* listResults(request){
       'r.instrumentSerial', 'r.moduleName', 'r.moduleSerial',
       'a.externalId as assayId', 'r.assayVersion',
       'r.latitude', 'r.longitude', 'rt.externalId as resultTypeId',
-      'rs.externalId as resultStatusId',
+      'rs.externalId as resultWorkflowStatusId',
       's.externalId as sampleId', 'sos.externalId as sampleOriginSiteId',
       'rc1.externalId as category1Id', 'rc2.externalId as category2Id'
     )
@@ -302,7 +302,7 @@ function rowToResult(row){
     result.location = location
   }
   result.type = {id: row.resultTypeId}
-  result.status = {id: row.resultStatusId}
+  result.workflow = {status: {id: row.resultWorkflowStatusId}}
 
   result.sample = {id: row.sampleId, originSite: {id: row.sampleOriginSiteId}}
 

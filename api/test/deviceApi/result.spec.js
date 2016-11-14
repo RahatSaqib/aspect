@@ -94,8 +94,8 @@ describe('Device Result API routes',function(){
         .where({id: result1.resultTypeId}).first('externalId')
       assert.equal(result1Type.externalId, 'Patient')
 
-      const result1Status = yield knex('ResultStatus as rs')
-        .where({id: result1.resultStatusId}).first('externalId')
+      const result1Status = yield knex('ResultWorkflowStatus as rs')
+        .where({id: result1.resultWorkflowStatusId}).first('externalId')
       assert.equal(result1Status.externalId, 'OK')
 
       const result1Sample = yield knex('Sample as s')
@@ -154,7 +154,7 @@ describe('Device Result API routes',function(){
             assay: {id: 'HivVl'},
             category: [{id: 'Success'}],
             type: {id: 'Patient'},
-            status: {id: 'OK'}
+            workflow: {status: {id: 'OK'}}
           })
         })
 
@@ -168,7 +168,7 @@ describe('Device Result API routes',function(){
         .send({
           data: {a: 'b', c: 2, d: false, e: {f: 'g'}},
           type: {id: 'Study'},
-          status: {id: 'Acknowledged'},
+          workflow: {status: {id: 'Acknowledged'}},
           category: [
             {id: 'Detected'},
             {id: 'Indeterminate'}
@@ -291,8 +291,8 @@ describe('Device Result API routes',function(){
         .where({id: result2.resultTypeId}).first('externalId')
       assert.equal(result2Type.externalId, 'Study')
 
-      const result2Status = yield knex('ResultStatus as rs')
-        .where({id: result2.resultStatusId}).first('externalId')
+      const result2Status = yield knex('ResultWorkflowStatus as rs')
+        .where({id: result2.resultWorkflowStatusId}).first('externalId')
       assert.equal(result2Status.externalId, 'Acknowledged')
 
       const result2Assay = yield knex('Assay as assay')
@@ -317,7 +317,7 @@ describe('Device Result API routes',function(){
       assert.deepEqual(JSON.parse(log2Raw), {
         data: {a: 'b', c: 2, d: false, e: {f: 'g'}},
         type: {id: 'Study'},
-        status: {id: 'Acknowledged'},
+        workflow: {status: {id: 'Acknowledged'}},
         category: [
           {id: 'Detected'},
           {id: 'Indeterminate'}
@@ -411,7 +411,7 @@ describe('Device Result API routes',function(){
               version: '1a.c1'
             },
             type: {id: 'Study'},
-            status: {id: 'Acknowledged'},
+            workflow: {status: {id: 'Acknowledged'}},
             category: [
               {id: 'Detected'},
               {id: 'Indeterminate'}
@@ -495,8 +495,8 @@ describe('Device Result API routes',function(){
       assert.deepEqual(JSON.parse(result1.resultData), {a: 'b'})
       assert.isNotOk(result1.errorCode)
 
-      const result1Status = yield knex('ResultStatus as rs')
-        .where({id: result1.resultStatusId}).first('externalId')
+      const result1Status = yield knex('ResultWorkflowStatus as rs')
+        .where({id: result1.resultWorkflowStatusId}).first('externalId')
       assert.equal(result1Status.externalId, 'OK')
 
       const [result1Category1, result1Category2] = yield knex('ResultCategory as rt')
@@ -518,8 +518,8 @@ describe('Device Result API routes',function(){
       assert.deepEqual(JSON.parse(result2.resultData), {a: 'c'})
       assert.equal(result2.errorCode, '1')
 
-      const result2Status = yield knex('ResultStatus as rs')
-        .where({id: result2.resultStatusId}).first('externalId')
+      const result2Status = yield knex('ResultWorkflowStatus as rs')
+        .where({id: result2.resultWorkflowStatusId}).first('externalId')
       assert.equal(result2Status.externalId, 'Error')
 
       const [result2Category1, result2Category2] = yield knex('ResultCategory as rt')
@@ -541,8 +541,8 @@ describe('Device Result API routes',function(){
       assert.deepEqual(JSON.parse(result3.resultData), {a: 'd'})
       assert.equal(result3.errorCode, '1')
 
-      const result3Status = yield knex('ResultStatus as rs')
-        .where({id: result3.resultStatusId}).first('externalId')
+      const result3Status = yield knex('ResultWorkflowStatus as rs')
+        .where({id: result3.resultWorkflowStatusId}).first('externalId')
       assert.equal(result3Status.externalId, 'Error')
 
       const [result3Category1, result3Category2] = yield knex('ResultCategory as rt')
@@ -564,8 +564,8 @@ describe('Device Result API routes',function(){
       assert.deepEqual(JSON.parse(result4.resultData), {a: 'e'})
       assert.isNotOk(result4.errorCode)
 
-      const result4Status = yield knex('ResultStatus as rs')
-        .where({id: result4.resultStatusId}).first('externalId')
+      const result4Status = yield knex('ResultWorkflowStatus as rs')
+        .where({id: result4.resultWorkflowStatusId}).first('externalId')
       assert.equal(result4Status.externalId, 'OK')
 
       const [result4Category1, result4Category2] = yield knex('ResultCategory as rt')
@@ -638,7 +638,7 @@ describe('Device Result API routes',function(){
           id: resultIds[1],
           data: {a: 'b', c: 2, d: false, e: {f: 'g'}},
           type: {id: 'Study'},
-          status: {id: 'Acknowledged'},
+          workflow: {status: {id: 'Acknowledged'}},
           category: [
             {id: 'Detected'},
             {id: 'Indeterminate'}
@@ -739,8 +739,8 @@ describe('Device Result API routes',function(){
         .where({id: result2.resultTypeId}).first('externalId')
       assert.equal(result2Type.externalId, 'Study')
 
-      const result2Status = yield knex('ResultStatus as rs')
-        .where({id: result2.resultStatusId}).first('externalId')
+      const result2Status = yield knex('ResultWorkflowStatus as rs')
+        .where({id: result2.resultWorkflowStatusId}).first('externalId')
       assert.equal(result2Status.externalId, 'Acknowledged')
 
       const result2Assay = yield knex('Assay as assay')
@@ -841,7 +841,7 @@ describe('Device Result API routes',function(){
             assay: {id: 'HivVl'},
             category: [{id: 'Success'}],
             type: {id: 'Patient'},
-            status: {id: 'OK'},
+            workflow: {status: {id: 'OK'}},
             notes: '454,112 Copies / mL'
           })
         })
@@ -872,7 +872,7 @@ describe('Device Result API routes',function(){
             assay: {id: 'HivVl'},
             category: [{id: 'Success'}],
             type: {id: 'Patient'},
-            status: {id: 'OK'},
+            workflow: {status: {id: 'OK'}},
             notes: '454,112 Copies / mL'
           })
         })
@@ -936,7 +936,7 @@ describe('Device Result API routes',function(){
             assay: {id: 'HivVl'},
             category: [{id: 'Success'}],
             type: {id: 'Patient'},
-            status: {id: 'OK'},
+            workflow: {status: {id: 'OK'}},
             notes: '154,112 Copies / mL'
           })
         })
@@ -967,7 +967,7 @@ describe('Device Result API routes',function(){
             assay: {id: 'HivVl'},
             category: [{id: 'Success'}],
             type: {id: 'Patient'},
-            status: {id: 'OK'},
+            workflow: {status: {id: 'OK'}},
             notes: '154,112 Copies / mL'
           })
         })
@@ -990,7 +990,7 @@ describe('Device Result API routes',function(){
         .set('Authorization', device1723Auth)
         .send({
           id: resultIds[1],
-          status: {id: 'Acknowledged'}
+          workflow: {status: {id: 'Acknowledged'}}
         })
         .then(function(res){
           assert.equal(res.status, 200)
@@ -1001,7 +1001,7 @@ describe('Device Result API routes',function(){
         .set('Authorization', device1723Auth)
         .send({
           id: resultIds[0],
-          status: {id: 'Acknowledged'}
+          workflow: {status: {id: 'Acknowledged'}}
         })
         .then(function(res){
           // Device 1723 does not have access to resultIds[0]
@@ -1027,7 +1027,7 @@ describe('Device Result API routes',function(){
 
           assert.deepEqual(_.omit(lastResult, 'endedOn', 'sample'), {
             id: resultIds[1],
-            status: {id: 'Acknowledged'},
+            workflow: {status: {id: 'Acknowledged'}},
             data: {
               resultText:'154112',
               copies: 154112
@@ -1065,7 +1065,7 @@ describe('Device Result API routes',function(){
             assay: {id: 'HivVl'},
             category: [{id: 'Success'}],
             type: {id: 'Patient'},
-            status: {id: 'Acknowledged'},
+            workflow: {status: {id: 'Acknowledged'}},
             notes: '154,112 Copies / mL'
           })
         })

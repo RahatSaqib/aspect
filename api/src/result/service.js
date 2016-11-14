@@ -7,7 +7,7 @@ const { getConstraints, addConstraints } = require('../auth/constraints')
 const SELECT_LIST_FIELDS = [
   'r.id', 'r.externalId', 'r.endedOn', 'd.name as deviceName',
   'c.name as countryName', 'st.name as stateName', 'lg.name as lgaName',
-  'rc1.name as resultCategory1Name', 'rc2.name as resultCategory2Name', 'rs.name as resultStatus',
+  'rc1.name as resultCategory1Name', 'rc2.name as resultCategory2Name', 'rs.name as resultWorkflowStatus',
   's.externalId as sampleId', 'a.name as assayName', 'a.id as assayId',
   knex.raw('JSON_UNQUOTE(JSON_EXTRACT(r.patientData, "$.id")) as patientId')
 ]
@@ -15,7 +15,7 @@ const SELECT_LIST_FIELDS = [
 const SELECT_SHOW_FIELDS = [
   'r.id', 'r.externalId', 'r.startedOn', 'r.endedOn', 'd.name as deviceName',
   'c.name as countryName', 'st.name as stateName', 'lg.name as lgaName',
-  'rc1.name as resultCategory1Name', 'rc2.name as resultCategory2Name', 'rs.name as resultStatus',
+  'rc1.name as resultCategory1Name', 'rc2.name as resultCategory2Name', 'rs.name as resultWorkflowStatus',
   'r.resultData','s.externalId as sampleId', 'si.name as siteName', 'r.assayVersion',
   'r.consumableSerial', 'r.consumableLot', 'r.consumableExpirationDate', 'r.instrumentSerial',
   'r.moduleName', 'r.moduleSerial', 'r.researchId', 'r.senderVersion', 'r.senderOperator',
@@ -90,7 +90,7 @@ function* listResults(request){
     .leftJoin('ResultCategory as rc1', 'r.resultCategory1', 'rc1.id')
     .leftJoin('ResultCategory as rc2', 'r.resultCategory2', 'rc2.id')
     .leftJoin('Sample as s', 'r.sampleId', 's.id')
-    .leftJoin('ResultStatus as rs', 'r.resultStatusId', 'rs.id')
+    .leftJoin('ResultWorkflowStatus as rs', 'r.resultWorkflowStatusId', 'rs.id')
     .modify(filterParams, query, {deviceId: 'd.id', sampleId: 's.externalId', assayId: 'r.assayId' })
     .modify(addConstraints, dataConstraints, {device: 'd', sample: 's'})
 
@@ -142,7 +142,7 @@ function* getResultByResultId(request, fields=SELECT_SHOW_FIELDS){
     .leftJoin('ResultCategory as rc1', 'r.resultCategory1', 'rc1.id')
     .leftJoin('ResultCategory as rc2', 'r.resultCategory2', 'rc2.id')
     .leftJoin('Sample as s', 'r.externalId', 's.id')
-    .leftJoin('ResultStatus as rs', 'r.resultStatusId', 'rs.id')
+    .leftJoin('ResultWorkflowStatus as rs', 'r.resultWorkflowStatusId', 'rs.id')
     .where('r.id', + params.resultId)
     .modify(addConstraints, dataConstraints, {device: 'd'})
     .select(fields)
@@ -181,31 +181,31 @@ function* listResultTypes(request){
   return result
 }
 
-function* updateStatus(request){
+function* updateWorkflowStatus(request){
   const {params, payload} = request
 
   //TODO: check permission
   
-  let resultStatusId = payload.resultStatusId
+  let resultWorkflowStatusId = payload.resultWorkflowStatusId
  
   //check if a token is provided
   if (payload.token){
-    [resultStatusId] = yield knex('ResultStatus as rs')
+    [resultWorkflowStatusId] = yield knex('ResultWorkflowStatus as rs')
       .where('rs.token', payload.token)
       .select('rs.id')
       .limit(1)
       .map(row => row.id)
 
-    if (!resultStatusId){
-     return Boom.badRequest('Invalid resulStatus token')
+    if (!resultWorkflowStatusId){
+      return Boom.badRequest('Invalid ResultWorkflowStatus token')
     }
   }
 
-  //update the resultStatusId
+  //update the resultWorkflowStatusId
   yield knex('Result')
       .where('id', params.resultId)
       .update({
-        resultStatusId: resultStatusId,
+        resultWorkflowStatusId,
         updatedOn: new Date()
       })
 
@@ -216,5 +216,5 @@ module.exports = {
   listResults,
   showResult,
   listResultTypes,
-  updateStatus
+  updateWorkflowStatus
 }

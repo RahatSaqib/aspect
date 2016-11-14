@@ -702,40 +702,40 @@ function* seed(knex){
     decrease: 1
   })
 
-  //Result Status
-  yield knex('ResultStatus').insert({
+  //Result Workflow Status
+  yield knex('ResultWorkflowStatus').insert({
     name: 'OK',
-    i18nkey: 'ResultStatusOK',
+    i18nkey: 'ResultWorkflowStatusOK',
     token: 'ok',
     externalId: 'OK'
   })
-  yield knex('ResultStatus').insert({
+  yield knex('ResultWorkflowStatus').insert({
     name: 'Error',
-    i18nkey: 'ResultStatusError',
+    i18nkey: 'ResultWorkflowStatusError',
     token: 'error',
     externalId: 'Error'
   })
-  let [ordered] = yield knex('ResultStatus').insert({
+  let [ordered] = yield knex('ResultWorkflowStatus').insert({
     name: 'Ordered',
-    i18nkey: 'ResultStatusOrdered',
+    i18nkey: 'ResultWorkflowStatusOrdered',
     token: 'ordered',
     externalId: 'Ordered'
   })
-  yield knex('ResultStatus').insert({
+  yield knex('ResultWorkflowStatus').insert({
     name: 'In Progress',
-    i18nkey: 'ResultStatusInProgress',
+    i18nkey: 'ResultWorkflowStatusInProgress',
     token: 'in-progress',
     externalId: 'InProgress'
   })
-  let [processed] = yield knex('ResultStatus').insert({
+  let [processed] = yield knex('ResultWorkflowStatus').insert({
     name: 'Processed',
-    i18nkey: 'ResultStatusProcessed',
+    i18nkey: 'ResultWorkflowStatusProcessed',
     token: 'processed',
     externalId: 'Processed'
   })
-  let [acknowledged] = yield knex('ResultStatus').insert({
+  let [acknowledged] = yield knex('ResultWorkflowStatus').insert({
     name: 'Acknowledged',
-    i18nkey: 'ResultStatusAcknowledged',
+    i18nkey: 'ResultWorkflowStatusAcknowledged',
     token: 'acknowledged',
     externalId: 'Acknowledged'
   })
@@ -962,7 +962,7 @@ function* seed(knex){
       lgaId : siteData.lgaId,
       siteId: siteData.id,
       deviceId: device.id,
-      resultStatusId: ordered,
+      resultWorkflowStatusId: ordered,
       longitude: -81.581222,
       latitude: 28.419348,
       resultTypeId: resultTypePatientId,
@@ -1039,7 +1039,7 @@ function* seed(knex){
       lgaId : siteData.lgaId,
       siteId: siteData.id,
       deviceId: device.id,
-      resultStatusId: processed,
+      resultWorkflowStatusId: processed,
       longitude: -81.581222,
       latitude: 28.419348,
       resultTypeId: resultTypePatientId,
@@ -1123,7 +1123,7 @@ function* seed(knex){
       lgaId : siteData.lgaId,
       siteId: siteData.id,
       deviceId: device.id,
-      resultStatusId: acknowledged,
+      resultWorkflowStatusId: acknowledged,
       longitude: -81.581222,
       latitude: 28.419348,
       resultTypeId: resultTypePatientId,
