@@ -133,7 +133,7 @@ export class ListFilter extends PureComponent {
     )
 
     return (
-      <div>
+      <div className={styles.ListFilter}>
         <Card expanded={expanded} onExpandChange={this.handleExpandChange}>
           <CardText>
             <div className={styles.Header}>

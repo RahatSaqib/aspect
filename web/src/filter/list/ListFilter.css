@@ -1,3 +1,7 @@
+.ListFilter {
+  will-change: transform;
+}
+
 .Header {
   display: flex;
 }
