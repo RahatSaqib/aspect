@@ -215,7 +215,7 @@ export class ListFilter extends PureComponent {
                   {config.deviceName && (
                     <TextField
                       name="deviceName"
-                      value={filter.deviceName}
+                      value={filter.deviceName || ''}
                       onChange={this.handleTextFieldChange}
                       floatingLabelText="Device name"
                     />
@@ -223,7 +223,7 @@ export class ListFilter extends PureComponent {
                   {config.siteName && (
                     <TextField
                       name="siteName"
-                      value={filter.siteName}
+                      value={filter.siteName || ''}
                       onChange={this.handleTextFieldChange}
                       floatingLabelText="Site name"
                     />
@@ -231,7 +231,7 @@ export class ListFilter extends PureComponent {
                   {config.contactNameOrEmail && (
                     <TextField
                       name="contactNameOrEmail"
-                      value={filter.contactNameOrEmail}
+                      value={filter.contactNameOrEmail || ''}
                       onChange={this.handleTextFieldChange}
                       floatingLabelText="Contact name/email"
                     />
