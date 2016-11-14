@@ -5,20 +5,32 @@ const { getDeviceByApiKeyId, getExternalId } = require('./common')
 const { getDeviceConstraints, addConstraints } = require('../auth/constraints')
 
 function* addResult(request){
-  const {payload} = request
+  const {auth, payload} = request
   const device = yield* getDeviceByApiKeyId(request)
   if(!device.ok){
     return Boom.unauthorized()
   }
 
   const response = yield transact(function*(knex){
-    const deviceId = device.data.id
 
+    const dataConstraints = yield getDeviceConstraints(auth.credentials)
+
+    // TODO seperate permissions for device add vs update result?
     const now = new Date()
     const externalId = getExternalId(payload.id)
-    const existingResult = yield knex('Result')
-      .where({externalId, deviceId})
-      .first()
+    const existingResults = yield knex('Result as r')
+      .where({'r.externalId': externalId})
+      .innerJoin('Device as d', 'r.deviceId', 'd.id')
+      .leftJoin('Sample as s', 'r.sampleId', 's.id')
+      .modify(addConstraints, dataConstraints, {device: 'd', sample: 's'})
+      .distinct('r.*')
+      .limit(2)
+
+    if(existingResults.length > 1){
+      return Boom.badRequest()
+    }
+    const existingResult = existingResults[0]
+    const deviceId = existingResult ? existingResult.deviceId : device.data.id
 
     const assayQ = knex('Assay as a')
       .join('Device as d', 'a.deviceTypeId', 'd.deviceTypeId')

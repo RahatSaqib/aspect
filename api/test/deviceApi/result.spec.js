@@ -961,6 +961,104 @@ describe('Device Result API routes',function(){
           assert.typeOf(lastResult, 'undefined')
         })
 
+      yield server.post(devicePath)
+        .set('Authorization', device1723Auth)
+        .send({
+          id: resultIds[1],
+          status: {id: 'Acknowledged'}
+        })
+        .then(function(res){
+          assert.equal(res.status, 200)
+          resultIds.push(res.body.data.id)
+        })
+
+      yield server.post(devicePath)
+        .set('Authorization', device1723Auth)
+        .send({
+          id: resultIds[0],
+          status: {id: 'Acknowledged'}
+        })
+        .then(function(res){
+          // Device 1723 does not have access to resultIds[0]
+          assert.equal(res.status, 400)
+        })
+
+      yield server.get(deviceResultPath)
+        .set('Authorization', deviceAuth)
+        .then(function(res){
+          assert.equal(res.status, 200)
+          assert.typeOf(res.body, 'Object')
+          assert.property(res.body, 'data')
+          assert.typeOf(res.body.data, 'array')
+          assert.property(res.body, 'total')
+          assert.property(res.body, 'length')
+
+          const lastResult = _.find(res.body.data, {id: resultIds[1]})
+          assert.typeOf(lastResult, 'Object')
+          assert.property(lastResult, 'endedOn')
+          assert.property(lastResult.sample, 'id')
+          assert.property(lastResult.sample.originSite, 'id')
+          assert.equal(lastResult.sample.originSite.id, '1723')
+
+          assert.deepEqual(_.omit(lastResult, 'endedOn', 'sample'), {
+            id: resultIds[1],
+            status: {id: 'Acknowledged'},
+            data: {
+              resultText:'154112',
+              copies: 154112
+            },
+            assay: {id: 'HivVl'},
+            category: [{id: 'Success'}],
+            type: {id: 'Patient'},
+            notes: '154,112 Copies / mL'
+          })
+        })
+
+      yield server.get(deviceResultPath)
+        .set('Authorization', device1723Auth)
+        .then(function(res){
+          assert.equal(res.status, 200)
+          assert.typeOf(res.body, 'Object')
+          assert.property(res.body, 'data')
+          assert.typeOf(res.body.data, 'array')
+          assert.property(res.body, 'total')
+          assert.property(res.body, 'length')
+
+          const lastResult = _.find(res.body.data, {id: resultIds[1]})
+          assert.typeOf(lastResult, 'Object')
+          assert.property(lastResult, 'endedOn')
+          assert.property(lastResult.sample, 'id')
+          assert.property(lastResult.sample.originSite, 'id')
+          assert.equal(lastResult.sample.originSite.id, '1723')
+
+          assert.deepEqual(_.omit(lastResult, 'endedOn', 'sample'), {
+            id: resultIds[1],
+            data: {
+              resultText:'154112',
+              copies: 154112
+            },
+            assay: {id: 'HivVl'},
+            category: [{id: 'Success'}],
+            type: {id: 'Patient'},
+            status: {id: 'Acknowledged'},
+            notes: '154,112 Copies / mL'
+          })
+        })
+
+      yield server.get(deviceResultPath)
+        .set('Authorization', device1315Auth)
+        .then(function(res){
+          assert.equal(res.status, 200)
+          assert.typeOf(res.body, 'Object')
+          assert.property(res.body, 'data')
+          assert.typeOf(res.body.data, 'array')
+          assert.property(res.body, 'total')
+          assert.property(res.body, 'length')
+
+          const lastResult = _.find(res.body.data, {id: resultIds[1]})
+          assert.typeOf(lastResult, 'undefined')
+        })
+
     }))
 
 
