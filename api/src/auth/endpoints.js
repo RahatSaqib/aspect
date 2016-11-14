@@ -1,8 +1,8 @@
-let Joi = require('joi')
+const Joi = require('joi')
 
-let { asyncHandler } = require('../routes')
+const { asyncHandler } = require('../routes')
 
-let {
+const {
   authenticate,
   checkAuthentication,
   refreshToken,

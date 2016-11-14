@@ -4,70 +4,70 @@ const { transact, knex, sortPageParams } = require('../db')
 const { getDeviceByApiKeyId, getExternalId } = require('./common')
 const { getDeviceConstraints, addConstraints } = require('../auth/constraints')
 
-function* addResult(request){
-  const {payload} = request
+function* addResult(request) {
+  const { payload } = request
   const device = yield* getDeviceByApiKeyId(request)
-  if(!device.ok){
+  if (!device.ok) {
     return Boom.unauthorized()
   }
 
-  const response = yield transact(function*(knex){
+  const response = yield transact(function* (knex) {
     const deviceId = device.data.id
 
     const now = new Date()
     const externalId = getExternalId(payload.id)
     const existingResult = yield knex('Result')
-      .where({externalId, deviceId})
+      .where({ externalId, deviceId })
       .first()
 
     const assayQ = knex('Assay as a')
       .join('Device as d', 'a.deviceTypeId', 'd.deviceTypeId')
-      .where({'d.id': deviceId})
+      .where({ 'd.id': deviceId })
       .limit(2)
       .select('a.id', 'a.externalId')
     const payloadAssayId = _.get(payload, 'assay.id', false)
-    if(payloadAssayId){
-      assayQ.where({'a.externalId': payloadAssayId})
-    } else if(existingResult){
-      assayQ.where({'a.id': existingResult.assayId})
+    if (payloadAssayId) {
+      assayQ.where({ 'a.externalId': payloadAssayId })
+    } else if (existingResult) {
+      assayQ.where({ 'a.id': existingResult.assayId })
     }
 
     const siteQ = knex('Site as s')
       .join('Device as d', 's.id', 'd.siteId')
-      .where({'d.id': deviceId})
+      .where({ 'd.id': deviceId })
       .first('s.id', 's.partnerId', 's.orgUnitId',
         's.countryId', 's.stateId', 's.lgaId', 's.latitude', 's.longitude')
 
     // Select ResultType if specified, otherwise Patient
     const resultTypeQ = knex('ResultType as rt')
       .first('rt.id')
-    if(_.has(payload, 'type.id')){
-      resultTypeQ.where({'rt.externalId': _.get(payload, 'type.id')})
-    } else if(existingResult){
-      resultTypeQ.where({'rt.id': existingResult.resultTypeId})
+    if (_.has(payload, 'type.id')) {
+      resultTypeQ.where({ 'rt.externalId': _.get(payload, 'type.id') })
+    } else if (existingResult) {
+      resultTypeQ.where({ 'rt.id': existingResult.resultTypeId })
     } else {
-      resultTypeQ.where({'rt.externalId': 'Patient'})
+      resultTypeQ.where({ 'rt.externalId': 'Patient' })
     }
 
     // Categories if specified, otherwise Error or Success depending on error payload
-    const categoryQ  = knex('ResultCategory as rc')
+    const categoryQ = knex('ResultCategory as rc')
       .select('rc.id')
     const categoryIds = _.compact(_.map(payload.category, 'id'))
-    if(categoryIds.length > 0){
+    if (categoryIds.length > 0) {
       categoryQ.whereIn('rc.externalId', categoryIds)
-    } else if(payload.error){
-      categoryQ.where({'rc.externalId': 'Error'})
-    } else if(existingResult){
+    } else if (payload.error) {
+      categoryQ.where({ 'rc.externalId': 'Error' })
+    } else if (existingResult) {
       categoryQ.whereIn('rc.id', _.compact(
         [existingResult.resultCategory1, existingResult.resultCategory2]))
     } else {
-      categoryQ.where({'rc.externalId': 'Success'})
+      categoryQ.where({ 'rc.externalId': 'Success' })
     }
 
     const [assays, site, resultType, categories] = yield Promise.all(
       [assayQ, siteQ, resultTypeQ, categoryQ])
 
-    if(!site || !resultType || categories.length === 0 || assays.length !== 1){
+    if (!site || !resultType || categories.length === 0 || assays.length !== 1) {
       return Boom.badRequest()
     }
 
@@ -75,27 +75,27 @@ function* addResult(request){
 
     let sampleOriginSiteId = site.id
     const payloadOriginSiteId = _.get(payload, 'sample.originSite.id', false)
-    if(payloadOriginSiteId){
+    if (payloadOriginSiteId) {
       // TODO Do we need to authorize this Device can link to Sample origin site?
       sampleOriginSiteId = (yield knex('Site')
-        .where({partnerId: site.partnerId, externalId: payloadOriginSiteId})
+        .where({ partnerId: site.partnerId, externalId: payloadOriginSiteId })
         .first('id')).id
     }
 
     let sampleId
-    if(!existingResult){
+    if (!existingResult) {
       [sampleId] = yield knex('Sample').insert({
-        externalId: _.get(payload, 'sample.id', 'sample_'+externalId),
+        externalId: _.get(payload, 'sample.id', `sample_${externalId}`),
         originSiteId: sampleOriginSiteId
       })
     } else {
       sampleId = existingResult.sampleId
-      if(_.has(payload, 'sample')){
+      if (_.has(payload, 'sample')) {
         const existingSample = yield knex('Sample')
-          .where({id: sampleId})
+          .where({ id: sampleId })
           .first('externalId', 'originSiteId')
         yield knex('Sample')
-          .where({id: sampleId})
+          .where({ id: sampleId })
           .update({
             externalId: _.get(payload, 'sample.id', existingSample.externalId),
             originSiteId: payloadOriginSiteId
@@ -115,7 +115,7 @@ function* addResult(request){
       ? JSON.stringify(payload.patient)
       : _.get(existingResult, 'patientData')
 
-    const result =  {
+    const result = {
       latitude: _.get(
         payload, 'location.latitude',
         _.get(existingResult, 'latitude', site.latitude)),
@@ -178,10 +178,10 @@ function* addResult(request){
     }
 
     let resultId
-    if(existingResult){
+    if (existingResult) {
       resultId = existingResult.id
       yield knex('Result')
-        .where({id: resultId})
+        .where({ id: resultId })
         .update(result)
     } else {
       [resultId] = yield knex('Result').insert(Object.assign({
@@ -208,16 +208,16 @@ function* addResult(request){
       rawMessage: JSON.stringify(payload)
     })
 
-    return {ok: true, data: {id: externalId}}
+    return { ok: true, data: { id: externalId } }
   })
 
   return response
 }
 
-function* listResults(request){
-  const {query, auth} = request
+function* listResults(request) {
+  const { query, auth } = request
   const device = yield* getDeviceByApiKeyId(request)
-  if(!device.ok){
+  if (!device.ok) {
     return Boom.unauthorized()
   }
 
@@ -231,7 +231,7 @@ function* listResults(request){
     .leftJoin('ResultType as rt', 'r.resultTypeId', 'rt.id')
     .leftJoin('Sample as s', 'r.sampleId', 's.id')
     .leftJoin('Site as sos', 's.originSiteId', 'sos.id')
-    .modify(addConstraints, dataConstraints, {device: 'd', sample: 's'})
+    .modify(addConstraints, dataConstraints, { device: 'd', sample: 's' })
 
   // get total count for paging
   const getCount = resultQuery.clone()
@@ -253,44 +253,44 @@ function* listResults(request){
     )
 
   // return result when both queries are finished
-  const [{count: total}, items] = yield Promise.all([getCount, getItems])
+  const [{ count: total }, items] = yield Promise.all([getCount, getItems])
   const data = items.map(rowToResult)
 
   return { ok: true, total, length: data.length, data }
 }
 
-function rowToResult(row){
+function rowToResult(row) {
   // TODO allow filtering on fields of interest, similar to client device API
   // but JSON paths from result data in same format as POST
-  const result = {id: row.resultId}
+  const result = { id: row.resultId }
 
-  result.assay = {id: row.assayId}
-  if(row.assayVersion != null){
+  result.assay = { id: row.assayId }
+  if (row.assayVersion != null) {
     result.assay.version = row.assayVersion
   }
 
-  const location = {latitude: row.latitude, longitude: row.longitude}
-  if(location.latitude != null || location.longitude != null){
+  const location = { latitude: row.latitude, longitude: row.longitude }
+  if (location.latitude != null || location.longitude != null) {
     result.location = location
   }
-  result.type = {id: row.resultTypeId}
+  result.type = { id: row.resultTypeId }
 
-  result.sample = {id: row.sampleId, originSite: {id: row.sampleOriginSiteId}}
+  result.sample = { id: row.sampleId, originSite: { id: row.sampleOriginSiteId } }
 
   const categories = []
-  if(row.category1Id !== null){
-    categories.push({id: row.category1Id})
+  if (row.category1Id !== null) {
+    categories.push({ id: row.category1Id })
   }
-  if(row.category2Id !== null){
-    categories.push({id: row.category2Id})
+  if (row.category2Id !== null) {
+    categories.push({ id: row.category2Id })
   }
-  if(categories.length > 0){
+  if (categories.length > 0) {
     result.category = categories
   }
 
   result.data = JSON.parse(row.resultData)
 
-  if(row.startedOn != null){
+  if (row.startedOn != null) {
     result.startedOn = row.startedOn
   }
   result.endedOn = row.endedOn
@@ -300,42 +300,41 @@ function rowToResult(row){
     lot: row.consumableLot,
     expirationDate: row.consumableExpirationDate
   }
-  if(consumable.serial != null
+  if (consumable.serial != null
       || consumable.lot != null
-      || consumable.expirationDate != null){
+      || consumable.expirationDate != null) {
     result.consumable = [consumable]
   }
 
-  const instrument = {serial: row.instrumentSerial}
-  if(instrument.serial != null){
+  const instrument = { serial: row.instrumentSerial }
+  if (instrument.serial != null) {
     result.instrument = instrument
   }
 
-  const module = {name: row.moduleName, serial: row.moduleSerial}
-  if(module.name != null || module.serial != null){
+  const module = { name: row.moduleName, serial: row.moduleSerial }
+  if (module.name != null || module.serial != null) {
     result.module = module
   }
 
-  const research = {id: row.researchId}
-  if(research.id != null){
+  const research = { id: row.researchId }
+  if (research.id != null) {
     result.research = research
   }
 
-  if(row.patientData != null){
+  if (row.patientData != null) {
     result.patient = JSON.parse(row.patientData)
   }
 
-  const sender = {version: row.senderVersion, operator: row.senderOperator}
-  if(sender.version != null || sender.operator != null){
+  const sender = { version: row.senderVersion, operator: row.senderOperator }
+  if (sender.version != null || sender.operator != null) {
     result.sender = sender
-
   }
-  if(row.notes != null){
+  if (row.notes != null) {
     result.notes = row.notes
   }
 
-  const error = {code: row.errorCode, notes: row.errorNotes}
-  if(error.code != null || error.notes != null){
+  const error = { code: row.errorCode, notes: row.errorNotes }
+  if (error.code != null || error.notes != null) {
     result.error = error
   }
   return result

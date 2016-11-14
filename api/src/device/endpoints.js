@@ -1,7 +1,7 @@
-let Joi = require('joi')
-let { asyncHandler, validateSortPageParams } = require('../routes')
-let { listDevices, showDevice, updateDevice, getDeviceApiKey,
-  listDeviceOperation, listDeviceConfiguration} = require('./service')
+const Joi = require('joi')
+const { asyncHandler, validateSortPageParams } = require('../routes')
+const { listDevices, showDevice, updateDevice, getDeviceApiKey,
+  listDeviceOperation, listDeviceConfiguration } = require('./service')
 
 module.exports = [
   {
@@ -11,7 +11,7 @@ module.exports = [
     config: {
       description: 'Device List',
       notes: 'Pageable and sortable list of devices',
-      auth: {scope: ['device:view', 'device:edit']},
+      auth: { scope: ['device:view', 'device:edit'] },
       validate: {
         query: Object.assign({
           hasResults: Joi.number().allow('').min(0).max(1).description('Filter for getting devices that can have results'),
@@ -30,7 +30,7 @@ module.exports = [
     config: {
       description: 'Device Detail',
       notes: 'Detail of a device',
-      auth: {scope: ['device:view', 'device:edit']},
+      auth: { scope: ['device:view', 'device:edit'] },
       validate: {
         params: {
           deviceId: Joi.string().description('Device id').required()
@@ -45,7 +45,7 @@ module.exports = [
     config: {
       description: 'Update Device Detail',
       notes: 'Detail of a device',
-      auth: {scope: ['device:edit']},
+      auth: { scope: ['device:edit'] },
       validate: {
         params: {
           deviceId: Joi.string().description('Device id').required()
@@ -66,7 +66,7 @@ module.exports = [
     config: {
       description: 'Get Device API Key',
       notes: 'Get API Key for the specified device',
-      //auth: {scope: []},  admin only
+      // auth: {scope: []},  admin only
       validate: {
         params: {
           deviceId: Joi.string().description('Device id').required()
@@ -81,7 +81,7 @@ module.exports = [
     config: {
       notes: 'List Device Configuration',
       description: 'List device configuration data for the specified device',
-      auth: {scope: ['device:view', 'device:edit']},
+      auth: { scope: ['device:view', 'device:edit'] },
       validate: {
         query: Object.assign({
           deviceId: Joi.string().description('Device id').description('Filter for device id'),
@@ -97,7 +97,7 @@ module.exports = [
     config: {
       notes: 'List Device Operation',
       description: 'List device operational data for the specified device',
-      auth: {scope: ['device:view', 'device:edit']},
+      auth: { scope: ['device:view', 'device:edit'] },
       validate: {
         query: Object.assign({
           deviceId: Joi.string().description('Device id').description('Filter for device id'),

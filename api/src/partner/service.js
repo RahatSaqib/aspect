@@ -1,6 +1,5 @@
-let Promise = require('bluebird')
-let { knex, filterParams, sortPageParams } = require('../db')
-let { getConstraints, addConstraints } = require('../auth/constraints')
+const Promise = require('bluebird')
+const { knex, filterParams, sortPageParams } = require('../db')
 
 const SELECT_LIST_FIELDS = [
   'p.id', 'p.name', 'p.partnerTypeId', 'pt.name as partnerTypeName'
@@ -10,41 +9,34 @@ const SELECT_SHOW_FIELDS = [
   'p.id', 'p.name', 'p.partnerTypeId', 'pt.name as partnerTypeName'
 ]
 
-function* listPartners(request){
-  let {query, auth} = request
+function* listPartners(request) {
+  const { query } = request
 
-  // get data constraints
-  let dataConstraints = yield getConstraints(auth.credentials)
-
-  let partnerQuery = knex('Partner as p')
-    .modify(filterParams, query, { 'name': 'p.name'})
+  const partnerQuery = knex('Partner as p')
+    .modify(filterParams, query, { name: 'p.name' })
     // TODO: modify addConstraints to not require site or device
     // .modify(addConstraints, dataConstraints, {Partner: 'p'})
 
   // get total count for paging
-  let getCount = partnerQuery.clone()
+  const getCount = partnerQuery.clone()
     .count('p.id as count').first()
 
   // get rows
-  let getItems = partnerQuery.clone()
+  const getItems = partnerQuery.clone()
     .modify(sortPageParams, query, 'name')
     .innerJoin('PartnerType as pt', 'pt.id', 'p.partnerTypeId')
     .select(SELECT_LIST_FIELDS)
 
   // return result when both queries are finished
-  let [{count: total}, data] = yield Promise.all([getCount, getItems])
+  const [{ count: total }, data] = yield Promise.all([getCount, getItems])
 
-  let result = {ok: true, total, length: data.length, data}
+  const result = { ok: true, total, length: data.length, data }
 
   return result
 }
 
 function* showPartner(request) {
-  const {params, auth} = request
-
-
-  // get data constraints
-  let dataConstraints = yield getConstraints(auth.credentials)
+  const { params } = request
 
   // get item
   const [item] = yield knex('Partner as p')
@@ -54,7 +46,7 @@ function* showPartner(request) {
     // .modify(addConstraints, dataConstraints, {Partner: 'p'})
     .select(SELECT_SHOW_FIELDS)
 
-  const result = {ok: true, data: item}
+  const result = { ok: true, data: item }
 
   return result
 }

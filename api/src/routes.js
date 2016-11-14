@@ -1,9 +1,9 @@
-let Promise = require('bluebird')
-let Boom = require('boom')
-let Joi = require('joi')
+const Promise = require('bluebird')
+const Boom = require('boom')
+const Joi = require('joi')
 
 // Adds all API routes to the server
-function addClientRoutes(server){
+function addClientRoutes(server) {
   server.route(require('./accountDetails/endpoints').map(decorateClientAPI()))
   server.route(require('./auth/endpoints').map(decorateClientAPI()))
   server.route(require('./assay/endpoints').map(decorateClientAPI('assay')))
@@ -16,48 +16,48 @@ function addClientRoutes(server){
   server.route(require('./consumable/endpoints').map(decorateClientAPI('inventory')))
 }
 
-function addDeviceRoutes(server){
+function addDeviceRoutes(server) {
   server.route(require('./deviceApi/endpoints').map(decorateDeviceAPI('device')))
 }
 
 // Decorates an API route with common configuration so
 // it does not need to specified explicity for every route
-function decorateClientAPI(module){
+function decorateClientAPI(module) {
   // must always be authenticated using Client JWT
   const scope = ['+clientApi']
 
-  if(module){
+  if (module) {
     // If module specified, must have one of admin or `{module}:admin`
     // in addition to any other listed in scope of routes.
     scope.push('admin', `${module}:admin`)
   }
-  return decorateAPI({scope})
+  return decorateAPI({ scope })
 }
 
-function decorateDeviceAPI(){
+function decorateDeviceAPI() {
   // must always be authenticated using Device JWT
   const scope = ['+deviceApi']
-  return decorateAPI({scope})
+  return decorateAPI({ scope })
 }
 
-function decorateAPI({scope}){
+function decorateAPI({ scope }) {
   return (route) => {
     // add ['api'] tag by default so available in Hapi-Swagger
-    let {config} = route
-    if(!config){
+    let { config } = route
+    if (!config) {
       config = {}
       route.config = config
     }
-    if(!config.tags){
+    if (!config.tags) {
       config.tags = ['api']
     }
 
     // If route is authenticated, add common configuration
-    if(config.auth !== false){
+    if (config.auth !== false) {
       // Require module scope to all routes
-      if(module){
-        let {auth} = config
-        if(!auth){ // could be undefined instead of explicitly false
+      if (module) {
+        let { auth } = config
+        if (!auth) { // could be undefined instead of explicitly false
           auth = {}
           config.auth = auth
         }
@@ -65,18 +65,18 @@ function decorateAPI({scope}){
       }
 
       // Add JWT Auth token query param configuration
-      let {validate} = config
-      if(!validate){
+      let { validate } = config
+      if (!validate) {
         validate = {}
         config.validate = validate
       }
-      let {query} = validate
-      if(!query){
+      let { query } = validate
+      if (!query) {
         query = {}
         validate.query = query
       }
-      let {token} = query
-      if(!token){
+      const { token } = query
+      if (!token) {
         query.token = Joi.string().description('JWT Authentication token')
       }
     }
@@ -95,12 +95,12 @@ function decorateAPI({scope}){
  * Any unhandled error will result in a 500 error. Return
  * a Boom error for custom error reporting
  */
-function asyncHandler(handler){
-  return Promise.coroutine(function*(request, reply){
+function asyncHandler(handler) {
+  return Promise.coroutine(function* (request, reply) {
     try {
-      let result = yield* handler(request)
+      const result = yield* handler(request)
       reply(result)
-    } catch(err) {
+    } catch (err) {
       console.error(err)
       reply(Boom.wrap(err, 500))
       // Need to rethrow error for detection of plugins
@@ -112,19 +112,19 @@ function asyncHandler(handler){
 
 // extracts and sanitizes the parameters related to sorting and paging
 // from the candidate params and returns them as an object
-function getSortPageParams(params, defaultSort){
-  let result = {}
+function getSortPageParams(params, defaultSort) {
+  const result = {}
 
   result.sortCol = params.sortCol ? params.sortCol : defaultSort
-  result.sortDir = params.sortDir == 'desc' ? 'desc' : 'asc'
-  result.page = parseInt(params.page) || 0
-  result.size = parseInt(params.size) || 20
+  result.sortDir = params.sortDir === 'desc' ? 'desc' : 'asc'
+  result.page = parseInt(params.page, 10) || 0
+  result.size = parseInt(params.size, 10) || 20
   result.skip = result.page * result.size
 
   return result
 }
 
-function validateSortPageParams(...sortColumns){
+function validateSortPageParams(...sortColumns) {
   return {
     sortCol: sortColumns.length > 0 ? Joi.string().valid(sortColumns).description('Sort on named column') : Joi.string().description('Sort on named column'),
     sortDir: Joi.string().valid('asc', 'desc').description('Sort order ascending or descending'),

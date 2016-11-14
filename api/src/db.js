@@ -1,6 +1,7 @@
-let Promise = require('bluebird')
-let _ = require('lodash')
-let { getSortPageParams } = require('./routes')
+const Promise = require('bluebird')
+const _ = require('lodash')
+const { getSortPageParams } = require('./routes')
+
 let knex = null // see load
 
 function query() {
@@ -10,7 +11,7 @@ function query() {
 // extracts the parameters related to sorting and paging from the candidate
 // params and modifies the query builder with the sort modifications
 function sortPageParams(queryBuilder, params, defaultSort) {
-  let sp = getSortPageParams(params, defaultSort)
+  const sp = getSortPageParams(params, defaultSort)
   queryBuilder.orderBy(sp.sortCol, sp.sortDir).limit(sp.size).offset(sp.skip)
 }
 
@@ -19,9 +20,9 @@ function sortPageParams(queryBuilder, params, defaultSort) {
 function filterParams(queryBuilder, params, filters) {
   _.each(filters, (columnName, paramName) => {
     if (typeof params[paramName] !== 'undefined') {
-      if (typeof params[paramName] === 'string'){
+      if (typeof params[paramName] === 'string') {
         queryBuilder.where(columnName, 'like', `%${params[paramName]}%`)
-      } else{
+      } else {
         queryBuilder.where(columnName, '=', params[paramName])
       }
     }
@@ -29,10 +30,10 @@ function filterParams(queryBuilder, params, filters) {
 }
 
 // helper function for run, transact and migration
-let runBlock = Promise.coroutine(function*(block, blockArg){
+const runBlock = Promise.coroutine(function* (block, blockArg) {
   try {
     return yield* block(blockArg)
-  } catch(err){
+  } catch (err) {
     console.error(err)
     throw err
   }
@@ -42,7 +43,7 @@ let runBlock = Promise.coroutine(function*(block, blockArg){
 // within a knex transaction
 //
 // See also run
-function transact(block){
+function transact(block) {
   return load().transaction(trx => runBlock(block, trx))
 }
 
@@ -50,7 +51,7 @@ function transact(block){
 // without a transaction
 //
 // See also transact
-function run(block){
+function run(block) {
   return runBlock(block, load())
 }
 
@@ -58,22 +59,22 @@ function run(block){
 // and runs provided up and down generator functions
 // In migrate files, create up and down generators and
 // set module.exports = migrate(up, down)
-function migration(up, down){
+function migration(up, down) {
   return {
-    up(knex){
+    up(knex) {
       return runBlock(up, knex)
     },
 
-    down(knex){
+    down(knex) {
       return runBlock(down, knex)
     }
   }
 }
 
 // Helper for seeed files. Ru
-function seed(seed){
+function seed(seed) {
   return {
-    seed(knex){
+    seed(knex) {
       return knex.transaction(trx => runBlock(seed, trx))
     }
   }
@@ -81,9 +82,9 @@ function seed(seed){
 
 // initialize on demand to allow custom knex object
 // in testing/migrations
-function load(){
-  if(!knex){
-    let config = require('./config')
+function load() {
+  if (!knex) {
+    const config = require('./config')
     knex = require('knex')({
       client: 'mysql',
       connection: config.db

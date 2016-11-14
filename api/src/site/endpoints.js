@@ -1,6 +1,6 @@
-let Joi = require('joi')
-let { asyncHandler, validateSortPageParams } = require('../routes')
-let { listSites, showSite, updateSite } = require('./service')
+const Joi = require('joi')
+const { asyncHandler, validateSortPageParams } = require('../routes')
+const { listSites, showSite, updateSite } = require('./service')
 
 module.exports = [
   {
@@ -10,7 +10,7 @@ module.exports = [
     config: {
       description: 'Site List',
       notes: 'Pageable and sortable list of sites',
-      auth: {scope: ['site:view', 'site:edit']},
+      auth: { scope: ['site:view', 'site:edit'] },
       validate: {
         query: Object.assign({
           name: Joi.string().allow('').description('Filter for site name')
@@ -25,7 +25,7 @@ module.exports = [
     config: {
       description: 'Site Detail',
       notes: 'Detail of a site',
-      auth: {scope: ['site:view', 'site:edit']},
+      auth: { scope: ['site:view', 'site:edit'] },
       validate: {
         params: {
           siteId: Joi.string().description('Site id').required()
@@ -40,7 +40,7 @@ module.exports = [
     config: {
       description: 'Update Site Detail',
       notes: 'Detail of a site',
-      auth: {scope: ['site:edit']},
+      auth: { scope: ['site:edit'] },
       validate: {
         params: {
           siteId: Joi.number().integer().positive().description('Site id').required()

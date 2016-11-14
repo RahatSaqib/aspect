@@ -19,7 +19,7 @@ const SELECT_SHOW_FIELDS = [
   's.externalId as sampleId', 'si.name as siteName', 'r.assayVersion',
   'r.consumableSerial', 'r.consumableLot', 'r.consumableExpirationDate', 'r.instrumentSerial',
   'r.moduleName', 'r.moduleSerial', 'r.researchId', 'r.senderVersion', 'r.senderOperator',
-  'r.notes', 'r.errorCode', 'r.errorNotes','r.createdOn', 'r.updatedOn', 'r.assayId',
+  'r.notes', 'r.errorCode', 'r.errorNotes', 'r.createdOn', 'r.updatedOn', 'r.assayId',
   knex.raw('JSON_UNQUOTE(JSON_EXTRACT(r.patientData, "$.id")) as patientId')
 ]
 
@@ -27,17 +27,16 @@ const SORT_FIELDS = [
   'endedOn', 'deviceName', 'stateName', 'lgaName', 'sampleId', 'patientId', 'resultCategory1Name', 'resultCategory2Name'
 ]
 
-function* listResults(request){
+function* listResults(request) {
   const { query, auth } = request
-  let selectFields = _.clone(SELECT_LIST_FIELDS)
-  let sortableFields = _.clone(SORT_FIELDS)
+  const selectFields = _.clone(SELECT_LIST_FIELDS)
+  const sortableFields = _.clone(SORT_FIELDS)
 
-  let assayColumns = []
-  if (query.assayId){
-
+  const assayColumns = []
+  if (query.assayId) {
     const assay = yield knex('Assay as a').where('a.id', query.assayId).first()
 
-    if (assay.resultCategory1Label){
+    if (assay.resultCategory1Label) {
       selectFields.push('rc1.name as resultCategory1Name')
       sortableFields.push('resultCategory1Name')
       assayColumns.push({
@@ -47,7 +46,7 @@ function* listResults(request){
         i18nKey: assay.resultCategory1i18nKey })
     }
 
-    if (assay.resultCategory2Label){
+    if (assay.resultCategory2Label) {
       selectFields.push('rc2.name as resultCategory2Name')
       sortableFields.push('resultCategory2Name')
       assayColumns.push({
@@ -59,7 +58,7 @@ function* listResults(request){
 
     const resultDataSchema = JSON.parse(assay.resultDataSchema)
     _.each(resultDataSchema, (value, key) => {
-      if (value.list){
+      if (value.list) {
         selectFields.push(knex.raw('JSON_EXTRACT(resultData, ?) as ?', [`$.${key}`, key.replace('.', '_')]))
 
         sortableFields.push(key.replace('.', '_'))
@@ -74,7 +73,7 @@ function* listResults(request){
   }
 
   // now we know if the sort that was passed is valid:
-  if (query.sortCol && !sortableFields.includes(query.sortCol)){
+  if (query.sortCol && !sortableFields.includes(query.sortCol)) {
     return Boom.badRequest()
   }
 
@@ -90,8 +89,8 @@ function* listResults(request){
     .leftJoin('ResultCategory as rc1', 'r.resultCategory1', 'rc1.id')
     .leftJoin('ResultCategory as rc2', 'r.resultCategory2', 'rc2.id')
     .leftJoin('Sample as s', 'r.sampleId', 's.id')
-    .modify(filterParams, query, {deviceId: 'd.id', sampleId: 's.externalId', assayId: 'r.assayId' })
-    .modify(addConstraints, dataConstraints, {device: 'd', sample: 's'})
+    .modify(filterParams, query, { deviceId: 'd.id', sampleId: 's.externalId', assayId: 'r.assayId' })
+    .modify(addConstraints, dataConstraints, { device: 'd', sample: 's' })
 
   // get total count for paging
   const getCount = resultQuery.clone()
@@ -103,13 +102,13 @@ function* listResults(request){
     .select(selectFields)
 
   // return result when both queries are finished
-  const [{count: total}, data] = yield Promise.all([getCount, getItems])
+  const [{ count: total }, data] = yield Promise.all([getCount, getItems])
 
   // if assay specified columns from the resultData field, parse them to valid JSON
-  if (assayColumns){
+  if (assayColumns) {
     _.each(data, (d) => {
       _.each(assayColumns, (c) => {
-        if (c && c.db.indexOf('resultCategory') === -1){
+        if (c && c.db.indexOf('resultCategory') === -1) {
           const path = c.db.replace('.', '_')
           _.set(d, path, JSON.parse(d[path]))
         }
@@ -127,8 +126,8 @@ function* showResult(request) {
   return result.ok ? result : Boom.notFound()
 }
 
-function* getResultByResultId(request, fields=SELECT_SHOW_FIELDS){
-  const {auth, params} = request
+function* getResultByResultId(request, fields = SELECT_SHOW_FIELDS) {
+  const { auth, params } = request
   const dataConstraints = yield getConstraints(auth.credentials)
 
   const results = yield knex('Result as r')
@@ -141,13 +140,13 @@ function* getResultByResultId(request, fields=SELECT_SHOW_FIELDS){
     .leftJoin('ResultCategory as rc1', 'r.resultCategory1', 'rc1.id')
     .leftJoin('ResultCategory as rc2', 'r.resultCategory2', 'rc2.id')
     .leftJoin('Sample as s', 'r.externalId', 's.id')
-    .where('r.id', + params.resultId)
-    .modify(addConstraints, dataConstraints, {device: 'd'})
+    .where('r.id', +params.resultId)
+    .modify(addConstraints, dataConstraints, { device: 'd' })
     .select(fields)
 
   // translate result data back to an object and get assay details
   // if selecting the result was successful
-  if (results.length === 1){
+  if (results.length === 1) {
     results[0].resultData = JSON.parse(results[0].resultData)
     results[0].assay = yield knex('Assay as a').where('a.id', results[0].assayId).first()
     results[0].assay.resultDataSchema = JSON.parse(results[0].assay.resultDataSchema)
@@ -156,11 +155,11 @@ function* getResultByResultId(request, fields=SELECT_SHOW_FIELDS){
   return { ok: results.length === 1, data: results[0] }
 }
 
-function* listResultTypes(request){
+function* listResultTypes(request) {
   const { query } = request
 
   const resultTypeQuery = knex('ResultType as rt')
-    .modify(filterParams, query, { 'name': 'rt.name' })
+    .modify(filterParams, query, { name: 'rt.name' })
 
   // get total count for paging
   const getCount = resultTypeQuery.clone()
@@ -169,12 +168,12 @@ function* listResultTypes(request){
   // get rows
   const getItems = resultTypeQuery.clone()
     .modify(sortPageParams, query, 'name')
-    .select('id','name')
+    .select('id', 'name')
 
   // return result when both queries are finished
-  const [{count: total}, data] = yield Promise.all([getCount, getItems])
+  const [{ count: total }, data] = yield Promise.all([getCount, getItems])
 
-  const result = {ok: true, total, length: data.length, data}
+  const result = { ok: true, total, length: data.length, data }
 
   return result
 }

@@ -1,6 +1,6 @@
-let Joi = require('joi')
-let { asyncHandler, validateSortPageParams } = require('../routes')
-let { listPeople } = require('./service')
+const Joi = require('joi')
+const { asyncHandler, validateSortPageParams } = require('../routes')
+const { listPeople } = require('./service')
 
 module.exports = [{
   method: 'GET',
@@ -9,7 +9,7 @@ module.exports = [{
   config: {
     description: 'People List',
     notes: 'Pageable and sortable list of people',
-    auth: {scope: ['person:view', 'person:edit']},
+    auth: { scope: ['person:view', 'person:edit'] },
     validate: {
       query: Object.assign({
         name: Joi.string().allow('').description('Filter for person name')

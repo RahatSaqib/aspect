@@ -1,14 +1,14 @@
 const _ = require('lodash')
-const {query, knex} = require('../db')
+const { query, knex } = require('../db')
 
 // A prefix for joined table aliases intended to avoid
 // conflict with caller supplied table aliases
 const ALIAS_PREFIX = '__constraints'
-function alias(table){
+function alias(table) {
   return `${ALIAS_PREFIX}_${table}`
 }
 
-function getConstraints(credentials){
+function getConstraints(credentials) {
   // FIXME only include roles that assign permissions of interest
   const dataFilters = query('Get constraints for user credentials')
     .from('DataFilter as f')
@@ -35,7 +35,7 @@ function getConstraints(credentials){
   return Promise.all([dataFilters, topOrgUnit])
     .then(([filterConstraints, orgUnit]) => {
       // TODO define constraints schema
-      const constraints =  {
+      const constraints = {
         partner: {
           id: credentials.partnerId
         },
@@ -44,13 +44,13 @@ function getConstraints(credentials){
         }
       }
 
-      if(orgUnit){
+      if (orgUnit) {
         constraints.orgUnit = {
           id: orgUnit.id
         }
       }
 
-      if(filterConstraints.length){
+      if (filterConstraints.length) {
         constraints.$or = filterConstraints
       }
 
@@ -58,7 +58,7 @@ function getConstraints(credentials){
     })
 }
 
-function getDeviceConstraints(credentials){
+function getDeviceConstraints(credentials) {
   const deviceId = query('Get device id for device credentials')
     .from('Device as d')
     .innerJoin('DeviceApiKey as dak', 'd.id', 'dak.deviceId')
@@ -82,61 +82,62 @@ function getDeviceConstraints(credentials){
 
   return Promise.all([deviceId, dataFilters])
     .then(([deviceId, filterConstraints]) => {
-      const constraints =  {
-        $or: [{device: {id: deviceId.deviceId}}].concat(filterConstraints)
+      const constraints = {
+        $or: [{ device: { id: deviceId.deviceId } }].concat(filterConstraints)
       }
       return constraints
     })
 }
 
 
-function addConstraints(queryBuilder, constraints, aliases){
-  let {device, site, partner, orgUnit, country, state, lga, sample} = aliases
+function addConstraints(queryBuilder, constraints, aliases) {
+  let { site, partner, orgUnit, country, state, lga } = aliases
+  const { device, sample } = aliases
 
   // TODO generalize constraint building
   // TODO only join queries if needed within constraints or required by unspecified aliases
-  if(!site){
-    if(!device){
+  if (!site) {
+    if (!device) {
       throw new Error('Must provide either site or device alias or modify this to accept provided aliases')
     }
     site = alias('Site')
     queryBuilder.leftOuterJoin(`Site as ${site}`, `${device}.siteId`, `${site}.id`)
   }
 
-  if(!partner){
+  if (!partner) {
     partner = alias('Partner')
     queryBuilder.leftOuterJoin(`Partner as ${partner}`, `${site}.partnerId`, `${partner}.id`)
   }
 
-  if(!orgUnit){
+  if (!orgUnit) {
     orgUnit = alias('OrgUnit')
     queryBuilder.leftOuterJoin(`OrgUnit as ${orgUnit}`, `${site}.orgUnitId`, `${orgUnit}.id`)
   }
 
-  if(!country){
+  if (!country) {
     country = alias('Country')
     queryBuilder.leftOuterJoin(`Country as ${country}`, `${site}.countryId`, `${country}.id`)
   }
 
-  if(!state){
+  if (!state) {
     state = alias('State')
     queryBuilder.leftOuterJoin(`State as ${state}`, `${site}.stateId`, `${state}.id`)
   }
 
-  if(!lga){
+  if (!lga) {
     lga = alias('Lga')
     queryBuilder.leftOuterJoin(`Lga as ${lga}`, `${site}.lgaId`, `${lga}.id`)
   }
 
   // Partner, country, and org unit constraints are ANDed
-  if(constraints.partner){
-    queryBuilder.where({[`${partner}.id`]: constraints.partner.id})
+  if (constraints.partner) {
+    queryBuilder.where({ [`${partner}.id`]: constraints.partner.id })
   }
-  if(constraints.country){
-    queryBuilder.where({[`${country}.id`]: constraints.country.id})
+  if (constraints.country) {
+    queryBuilder.where({ [`${country}.id`]: constraints.country.id })
   }
 
-  if(constraints.orgUnit){
+  if (constraints.orgUnit) {
     // find all org units below topmost granted org unit
     // TODO likely makes sense to move nested set hierarchy queries to it's own helper function
     const orgUnitSubOne = alias('OrgUnitSub1')
@@ -153,26 +154,26 @@ function addConstraints(queryBuilder, constraints, aliases){
   }
 
   // data filter constraints are ORed
-  if(constraints.$or && constraints.$or.length){
-    queryBuilder.where(function(){
-      for(let constraint of constraints.$or){
-        if(constraint.state){
+  if (constraints.$or && constraints.$or.length) {
+    queryBuilder.where(function () {
+      for (const constraint of constraints.$or) {
+        if (constraint.state) {
           this.orWhere(_.mapKeys(constraint.state, (v, k) => `${state}.${k}`))
         }
 
-        if(constraint.lga){
+        if (constraint.lga) {
           this.orWhere(_.mapKeys(constraint.lga, (v, k) => `${lga}.${k}`))
         }
 
-        if(constraint.site){
+        if (constraint.site) {
           this.orWhere(_.mapKeys(constraint.site, (v, k) => `${site}.${k}`))
         }
 
-        if(constraint.device){
+        if (constraint.device) {
           this.orWhere(_.mapKeys(constraint.device, (v, k) => `${device}.${k}`))
         }
 
-        if(constraint.sample){
+        if (constraint.sample) {
           this.orWhere(_.mapKeys(constraint.sample, (v, k) => `${sample}.${k}`))
         }
       }

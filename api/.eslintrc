@@ -16,9 +16,15 @@
       "never"
     ],
     "comma-dangle": "off",
+    "func-names": "off",
     "global-require": "off",
     "newline-per-chained-call": "off",
     "no-iterator": "off",
-    "no-use-before-define": "off"
+    "no-param-reassign": "off",
+    "no-plusplus": ["error", { "allowForLoopAfterthoughts": true }],
+    "no-restricted-syntax": "off",
+    "no-shadow": "off",
+    "no-use-before-define": "off",
+    "require-yield": "off"
   }
 }
