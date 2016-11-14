@@ -71,7 +71,7 @@ function* updateAssayConsumableQuantity(request) {
     .from('ConsumableAssay as ca')
     .where('ca.assayId', assayId)
     .andWhere('ca.consumableId', consumableId)
-    .update({'ca.quantity': quantity})
+    .update({'quantity': quantity})
 
   const assayConsumable = yield getAssayConsumable(assayId, consumableId)
 
