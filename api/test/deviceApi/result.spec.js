@@ -7,13 +7,15 @@ const sharedDevice = require('./deviceToken')
 const { run } = require('../../src/db')
 
 // This agent refers to PORT where program is runninng.
-let server = supertest.agent('http://localhost:8080')
-let assert = chai.assert
+const server = supertest.agent('http://localhost:8080')
+const assert = chai.assert
+
+const now = new Date()
+const updatedSince = `updatedSince=${new Date(+now - 1000*60*60).toISOString()}`
 
 describe('Device Result API routes',function(){
   describe('admin GeneXpert result', function(){
     const resultIds = []
-    const now = new Date()
 
     const clientBasePath = '/api/result'
     shared.checkToken(server, clientBasePath)
@@ -33,7 +35,7 @@ describe('Device Result API routes',function(){
 
       const {deviceId} = sharedDevice
       const clientSingleResultPath = clientBasePath+'/'
-      const deviceResultPath = devicePath
+      const deviceResultPath = devicePath+`?${updatedSince}`
       const clientPath = clientBasePath+'?deviceId='+deviceId
 
       let initialDataLength = 0
@@ -780,7 +782,7 @@ describe('Device Result API routes',function(){
 
     it('should honor device role sample origin site', () => run(function*(knex){
       const deviceAuth = 'Bearer '+sharedDevice.deviceToken
-      const deviceResultPath = devicePath
+      const deviceResultPath = devicePath+`?${updatedSince}`
 
       const [device1315, device1723] = yield knex('Device as d')
         .join('Site as s', 'd.siteId', 's.id')

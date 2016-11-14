@@ -241,7 +241,7 @@ function* addResult(request){
 }
 
 function* listResults(request){
-  const {auth} = request
+  const {auth, query} = request
   const device = yield* getDeviceByApiKeyId(request)
   if(!device.ok){
     return Boom.unauthorized()
@@ -258,6 +258,7 @@ function* listResults(request){
     .leftJoin('ResultWorkflowStatus as rs', 'r.resultWorkflowStatusId', 'rs.id')
     .leftJoin('Sample as s', 'r.sampleId', 's.id')
     .leftJoin('Site as sos', 's.originSiteId', 'sos.id')
+    .where('r.updatedOn', '>=', query.updatedSince)
     .modify(addConstraints, dataConstraints, {device: 'd', sample: 's'})
 
   // get total count for paging

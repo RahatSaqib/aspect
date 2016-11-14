@@ -38,7 +38,12 @@ module.exports = [
     handler: asyncHandler(listResults),
     config: {
       description: 'Result List',
-      notes: 'Pageable and sortable list of results for authenticated device'
+      notes: 'List of results for authenticated device',
+      validate: {
+        query: {
+          updatedSince: Joi.date().iso().required()
+        }
+      }
     }
   },
   {
