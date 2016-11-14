@@ -1,6 +1,6 @@
 const Joi = require('joi')
 const { asyncHandler, validateSortPageParams } = require('../routes')
-const { listResults, showResult, listResultTypes, updateStatus } = require('./service')
+const { listResults, showResult, listResultTypes, updateWorkflowStatus } = require('./service')
 
 module.exports = [
   {
@@ -52,8 +52,8 @@ module.exports = [
   },
   {
     method : 'PUT',
-    path: '/result/status/{resultId}',
-    handler: asyncHandler(updateStatus),
+    path: '/result/workflow-status/{resultId}',
+    handler: asyncHandler(updateWorkflowStatus),
     config: {
       description: 'Update Result Status',
       notes: 'Update the status of a result',
@@ -63,7 +63,7 @@ module.exports = [
           resultId: Joi.number().integer().positive().description('Result Id')
         },
         payload: {
-          resultStatusId: Joi.number().integer().allow(null),
+          resultWorkflowStatusId: Joi.number().integer().allow(null),
           token: Joi.string().allow('', null)
         }
       }

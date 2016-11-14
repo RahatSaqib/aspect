@@ -429,8 +429,8 @@ function* up(knex){
           .index().references('id').inTable('Site')
     result.integer('deviceId').unsigned().notNullable()
           .index().references('id').inTable('Device')
-    result.integer('resultStatusId').unsigned()
-          .index().references('id').inTable('ResultStatus')
+    result.integer('resultWorkflowStatusId').unsigned().notNullable()
+          .index().references('id').inTable('ResultWorkflowStatus')
     result.float('longitude', 10, 6)
     result.float('latitude', 10, 6)
     result.integer('resultTypeId').unsigned().notNullable()
@@ -508,12 +508,12 @@ function* up(knex){
   })
   
   // Result status table
-  yield knex.schema.createTable('ResultStatus', resultStatus => {
-    resultStatus.increments('id')
-    resultStatus.string('name').notNullable()
-    resultStatus.string('externalId').notNullable()
-    resultStatus.string('i18nKey')
-    resultStatus.string('token')
+  yield knex.schema.createTable('ResultWorkflowStatus', resultWorkflowStatus => {
+    resultWorkflowStatus.increments('id')
+    resultWorkflowStatus.string('name').notNullable()
+    resultWorkflowStatus.string('externalId').notNullable()
+    resultWorkflowStatus.string('i18nKey')
+    resultWorkflowStatus.string('token')
   })
 
   yield knex.raw('SET foreign_key_checks = 1')
@@ -521,7 +521,8 @@ function* up(knex){
 
 function* down(knex){
   yield knex.raw('SET foreign_key_checks = 0')
-  yield knex.schema.dropTableIfExists('ResultStatus')
+  yield knex.schema.dropTableIfExists('ResultWorkflowStatus')
+  yield knex.schema.dropTableIfExists('ConsumableAssay')
   yield knex.schema.dropTableIfExists('ConsumableReason')
   yield knex.schema.dropTableIfExists('Unit')
   yield knex.schema.dropTableIfExists('Consumable')

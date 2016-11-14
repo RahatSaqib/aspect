@@ -94,6 +94,10 @@ describe('Device Result API routes',function(){
         .where({id: result1.resultTypeId}).first('externalId')
       assert.equal(result1Type.externalId, 'Patient')
 
+      const result1Status = yield knex('ResultWorkflowStatus as rs')
+        .where({id: result1.resultWorkflowStatusId}).first('externalId')
+      assert.equal(result1Status.externalId, 'OK')
+
       const result1Sample = yield knex('Sample as s')
         .where({id: result1.sampleId}).first()
       assert.equal(result1.siteId, result1Sample.originSiteId)
@@ -149,7 +153,8 @@ describe('Device Result API routes',function(){
             data: {a: 'b'},
             assay: {id: 'HivVl'},
             category: [{id: 'Success'}],
-            type: {id: 'Patient'}
+            type: {id: 'Patient'},
+            workflow: {status: {id: 'OK'}}
           })
         })
 
@@ -163,6 +168,7 @@ describe('Device Result API routes',function(){
         .send({
           data: {a: 'b', c: 2, d: false, e: {f: 'g'}},
           type: {id: 'Study'},
+          workflow: {status: {id: 'Acknowledged'}},
           category: [
             {id: 'Detected'},
             {id: 'Indeterminate'}
@@ -285,6 +291,10 @@ describe('Device Result API routes',function(){
         .where({id: result2.resultTypeId}).first('externalId')
       assert.equal(result2Type.externalId, 'Study')
 
+      const result2Status = yield knex('ResultWorkflowStatus as rs')
+        .where({id: result2.resultWorkflowStatusId}).first('externalId')
+      assert.equal(result2Status.externalId, 'Acknowledged')
+
       const result2Assay = yield knex('Assay as assay')
         .where({id: result2.assayId}).first('externalId', 'name')
       assert.equal(result2Assay.externalId, 'MtbRif')
@@ -307,6 +317,7 @@ describe('Device Result API routes',function(){
       assert.deepEqual(JSON.parse(log2Raw), {
         data: {a: 'b', c: 2, d: false, e: {f: 'g'}},
         type: {id: 'Study'},
+        workflow: {status: {id: 'Acknowledged'}},
         category: [
           {id: 'Detected'},
           {id: 'Indeterminate'}
@@ -400,6 +411,7 @@ describe('Device Result API routes',function(){
               version: '1a.c1'
             },
             type: {id: 'Study'},
+            workflow: {status: {id: 'Acknowledged'}},
             category: [
               {id: 'Detected'},
               {id: 'Indeterminate'}
@@ -466,7 +478,7 @@ describe('Device Result API routes',function(){
         })
     }))
 
-    it('should set default result categories', () => run(function*(knex){
+    it('should set default result status and categories', () => run(function*(knex){
       const deviceAuth = 'Bearer '+sharedDevice.deviceToken
 
       yield server.post(devicePath)
@@ -482,6 +494,10 @@ describe('Device Result API routes',function(){
       assert.equal(result1.externalId, resultIds[0])
       assert.deepEqual(JSON.parse(result1.resultData), {a: 'b'})
       assert.isNotOk(result1.errorCode)
+
+      const result1Status = yield knex('ResultWorkflowStatus as rs')
+        .where({id: result1.resultWorkflowStatusId}).first('externalId')
+      assert.equal(result1Status.externalId, 'OK')
 
       const [result1Category1, result1Category2] = yield knex('ResultCategory as rt')
         .whereIn('id', [result1.resultCategory1, result1.resultCategory2]).select('externalId')
@@ -502,6 +518,10 @@ describe('Device Result API routes',function(){
       assert.deepEqual(JSON.parse(result2.resultData), {a: 'c'})
       assert.equal(result2.errorCode, '1')
 
+      const result2Status = yield knex('ResultWorkflowStatus as rs')
+        .where({id: result2.resultWorkflowStatusId}).first('externalId')
+      assert.equal(result2Status.externalId, 'Error')
+
       const [result2Category1, result2Category2] = yield knex('ResultCategory as rt')
         .whereIn('id', [result2.resultCategory1, result2.resultCategory2]).select('externalId')
       assert.equal(result2Category1.externalId, 'Error')
@@ -521,6 +541,10 @@ describe('Device Result API routes',function(){
       assert.deepEqual(JSON.parse(result3.resultData), {a: 'd'})
       assert.equal(result3.errorCode, '1')
 
+      const result3Status = yield knex('ResultWorkflowStatus as rs')
+        .where({id: result3.resultWorkflowStatusId}).first('externalId')
+      assert.equal(result3Status.externalId, 'Error')
+
       const [result3Category1, result3Category2] = yield knex('ResultCategory as rt')
         .whereIn('id', [result3.resultCategory1, result3.resultCategory2]).select('externalId')
       assert.equal(result3Category1.externalId, 'Invalid')
@@ -539,6 +563,10 @@ describe('Device Result API routes',function(){
       assert.equal(result4.externalId, resultIds[3])
       assert.deepEqual(JSON.parse(result4.resultData), {a: 'e'})
       assert.isNotOk(result4.errorCode)
+
+      const result4Status = yield knex('ResultWorkflowStatus as rs')
+        .where({id: result4.resultWorkflowStatusId}).first('externalId')
+      assert.equal(result4Status.externalId, 'OK')
 
       const [result4Category1, result4Category2] = yield knex('ResultCategory as rt')
         .whereIn('id', [result4.resultCategory1, result4.resultCategory2]).select('externalId')
@@ -610,6 +638,7 @@ describe('Device Result API routes',function(){
           id: resultIds[1],
           data: {a: 'b', c: 2, d: false, e: {f: 'g'}},
           type: {id: 'Study'},
+          workflow: {status: {id: 'Acknowledged'}},
           category: [
             {id: 'Detected'},
             {id: 'Indeterminate'}
@@ -710,6 +739,10 @@ describe('Device Result API routes',function(){
         .where({id: result2.resultTypeId}).first('externalId')
       assert.equal(result2Type.externalId, 'Study')
 
+      const result2Status = yield knex('ResultWorkflowStatus as rs')
+        .where({id: result2.resultWorkflowStatusId}).first('externalId')
+      assert.equal(result2Status.externalId, 'Acknowledged')
+
       const result2Assay = yield knex('Assay as assay')
         .where({id: result2.assayId}).first('externalId', 'name')
       assert.equal(result2Assay.externalId, 'MtbRif')
@@ -808,6 +841,7 @@ describe('Device Result API routes',function(){
             assay: {id: 'HivVl'},
             category: [{id: 'Success'}],
             type: {id: 'Patient'},
+            workflow: {status: {id: 'OK'}},
             notes: '454,112 Copies / mL'
           })
         })
@@ -838,6 +872,7 @@ describe('Device Result API routes',function(){
             assay: {id: 'HivVl'},
             category: [{id: 'Success'}],
             type: {id: 'Patient'},
+            workflow: {status: {id: 'OK'}},
             notes: '454,112 Copies / mL'
           })
         })
@@ -901,6 +936,7 @@ describe('Device Result API routes',function(){
             assay: {id: 'HivVl'},
             category: [{id: 'Success'}],
             type: {id: 'Patient'},
+            workflow: {status: {id: 'OK'}},
             notes: '154,112 Copies / mL'
           })
         })
@@ -931,6 +967,105 @@ describe('Device Result API routes',function(){
             assay: {id: 'HivVl'},
             category: [{id: 'Success'}],
             type: {id: 'Patient'},
+            workflow: {status: {id: 'OK'}},
+            notes: '154,112 Copies / mL'
+          })
+        })
+
+      yield server.get(deviceResultPath)
+        .set('Authorization', device1315Auth)
+        .then(function(res){
+          assert.equal(res.status, 200)
+          assert.typeOf(res.body, 'Object')
+          assert.property(res.body, 'data')
+          assert.typeOf(res.body.data, 'array')
+          assert.property(res.body, 'total')
+          assert.property(res.body, 'length')
+
+          const lastResult = _.find(res.body.data, {id: resultIds[1]})
+          assert.typeOf(lastResult, 'undefined')
+        })
+
+      yield server.post(devicePath)
+        .set('Authorization', device1723Auth)
+        .send({
+          id: resultIds[1],
+          workflow: {status: {id: 'Acknowledged'}}
+        })
+        .then(function(res){
+          assert.equal(res.status, 200)
+          resultIds.push(res.body.data.id)
+        })
+
+      yield server.post(devicePath)
+        .set('Authorization', device1723Auth)
+        .send({
+          id: resultIds[0],
+          workflow: {status: {id: 'Acknowledged'}}
+        })
+        .then(function(res){
+          // Device 1723 does not have access to resultIds[0]
+          assert.equal(res.status, 400)
+        })
+
+      yield server.get(deviceResultPath)
+        .set('Authorization', deviceAuth)
+        .then(function(res){
+          assert.equal(res.status, 200)
+          assert.typeOf(res.body, 'Object')
+          assert.property(res.body, 'data')
+          assert.typeOf(res.body.data, 'array')
+          assert.property(res.body, 'total')
+          assert.property(res.body, 'length')
+
+          const lastResult = _.find(res.body.data, {id: resultIds[1]})
+          assert.typeOf(lastResult, 'Object')
+          assert.property(lastResult, 'endedOn')
+          assert.property(lastResult.sample, 'id')
+          assert.property(lastResult.sample.originSite, 'id')
+          assert.equal(lastResult.sample.originSite.id, '1723')
+
+          assert.deepEqual(_.omit(lastResult, 'endedOn', 'sample'), {
+            id: resultIds[1],
+            workflow: {status: {id: 'Acknowledged'}},
+            data: {
+              resultText:'154112',
+              copies: 154112
+            },
+            assay: {id: 'HivVl'},
+            category: [{id: 'Success'}],
+            type: {id: 'Patient'},
+            notes: '154,112 Copies / mL'
+          })
+        })
+
+      yield server.get(deviceResultPath)
+        .set('Authorization', device1723Auth)
+        .then(function(res){
+          assert.equal(res.status, 200)
+          assert.typeOf(res.body, 'Object')
+          assert.property(res.body, 'data')
+          assert.typeOf(res.body.data, 'array')
+          assert.property(res.body, 'total')
+          assert.property(res.body, 'length')
+
+          const lastResult = _.find(res.body.data, {id: resultIds[1]})
+          assert.typeOf(lastResult, 'Object')
+          assert.property(lastResult, 'endedOn')
+          assert.property(lastResult.sample, 'id')
+          assert.property(lastResult.sample.originSite, 'id')
+          assert.equal(lastResult.sample.originSite.id, '1723')
+
+          assert.deepEqual(_.omit(lastResult, 'endedOn', 'sample'), {
+            id: resultIds[1],
+            data: {
+              resultText:'154112',
+              copies: 154112
+            },
+            assay: {id: 'HivVl'},
+            category: [{id: 'Success'}],
+            type: {id: 'Patient'},
+            workflow: {status: {id: 'Acknowledged'}},
             notes: '154,112 Copies / mL'
           })
         })
