@@ -39,6 +39,15 @@ class App extends PureComponent {
       formats.date = {
         'user-timezone': {
           timeZone: timezone
+        },
+        '2-digit-date-time': {
+          // https://github.com/yahoo/react-intl/wiki/Components#date-formatting-components
+          year  : '2-digit',
+          month : '2-digit',
+          day   : '2-digit',
+          hour  : '2-digit',
+          minute: '2-digit',
+          second: '2-digit'
         }
       }
       formats.time = {

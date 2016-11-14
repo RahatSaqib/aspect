@@ -1,8 +1,10 @@
 export function isEditable(user/* TODO: add me back, site */) {
-  const editable = user.name === 'admin'
-  // TODO: is user has write access to the object?
+  const notEditable = user
+    .permissions
+    .intersect(['site:admin', 'site:edit'])
+    .isEmpty()
 
-  return editable
+  return !notEditable
 }
 
 export function latLng(site) {
