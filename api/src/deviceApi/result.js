@@ -1,6 +1,6 @@
 const Boom = require('boom')
 const _ = require('lodash')
-const { transact, knex, sortPageParams } = require('../db')
+const { transact, knex } = require('../db')
 const { getDeviceByApiKeyId, getExternalId } = require('./common')
 const { getDeviceConstraints, addConstraints } = require('../auth/constraints')
 
@@ -241,7 +241,7 @@ function* addResult(request){
 }
 
 function* listResults(request){
-  const {query, auth} = request
+  const {auth} = request
   const device = yield* getDeviceByApiKeyId(request)
   if(!device.ok){
     return Boom.unauthorized()
@@ -266,7 +266,7 @@ function* listResults(request){
 
   // get rows
   const getItems = resultQuery.clone()
-    .modify(sortPageParams, query, 'updatedOn')
+    .orderBy('updatedOn', 'desc')
     .select(
       'r.externalId as resultId', 'r.resultData', 'r.patientData',
       'r.startedOn', 'r.endedOn', 'r.updatedOn', 'r.researchId', 'r.notes',

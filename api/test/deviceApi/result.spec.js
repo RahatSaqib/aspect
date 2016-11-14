@@ -33,7 +33,7 @@ describe('Device Result API routes',function(){
 
       const {deviceId} = sharedDevice
       const clientSingleResultPath = clientBasePath+'/'
-      const deviceResultPath = devicePath+'?size=5&sortCol=updatedOn&sortDir=desc'
+      const deviceResultPath = devicePath
       const clientPath = clientBasePath+'?deviceId='+deviceId
 
       let initialDataLength = 0
@@ -780,7 +780,7 @@ describe('Device Result API routes',function(){
 
     it('should honor device role sample origin site', () => run(function*(knex){
       const deviceAuth = 'Bearer '+sharedDevice.deviceToken
-      const deviceResultPath = devicePath+'?size=5&sortCol=updatedOn&sortDir=desc'
+      const deviceResultPath = devicePath
 
       const [device1315, device1723] = yield knex('Device as d')
         .join('Site as s', 'd.siteId', 's.id')

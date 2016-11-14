@@ -1,5 +1,5 @@
 let Joi = require('joi')
-let { asyncHandler, validateSortPageParams } = require('../routes')
+let { asyncHandler } = require('../routes')
 let { addDeviceOperation, addDeviceConfiguration} = require('./device')
 let { addResult, listResults } = require('./result')
 
@@ -38,11 +38,7 @@ module.exports = [
     handler: asyncHandler(listResults),
     config: {
       description: 'Result List',
-      notes: 'Pageable and sortable list of results for authenticated device',
-      validate: {
-        query: Object.assign({
-        }, validateSortPageParams('endedOn', 'updatedOn'))
-      }
+      notes: 'Pageable and sortable list of results for authenticated device'
     }
   },
   {
