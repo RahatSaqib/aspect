@@ -298,7 +298,6 @@ function* up(knex){
     //device.boolean('dbOk', 45)
     //device.string('lisConfig', 1200)
     //device.boolean('lisOk', 4)
-    device.dateTime('heartbeatOn')
     device.string('clientVersion', 45)
     device.boolean('approved')
     device.dateTime('approvedOn')
