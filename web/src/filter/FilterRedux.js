@@ -78,7 +78,7 @@ export default function filterReducer(state = initialState, action) {
           switch(key) {
           case 'assayAndResultCategory':
             return ['assayId', 'resultCategoryId'].reduce(deleteFromMap, acc)
-          case 'location':
+          case 'geography':
             return ['countryId', 'stateId', 'lgaId'].reduce(deleteFromMap, acc)
           case 'date':
             return ['minDate', 'maxDate'].reduce(deleteFromMap, acc)
