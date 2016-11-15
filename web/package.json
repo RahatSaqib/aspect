@@ -85,6 +85,7 @@
   },
   "dependencies": {
     "classnames": "^2.2.5",
+    "date-fns": "^1.10.0",
     "dom-helpers": "^3.0.0",
     "email-validator": "^1.0.7",
     "es6-promise": "^4.0.5",
