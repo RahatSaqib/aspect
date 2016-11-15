@@ -90,6 +90,9 @@ module.exports = [
       notes: 'Add Device Configuration, operation or Result',
       description: 'Add new device configuration, operation or result data for the authenticated device',
       validate: {
+        options: {
+          allowUnknown: true
+        },
         payload: Joi.object().keys({
           configuration: Joi.object().keys(configurationPayload),
           operation: Joi.object().keys(configurationPayload),
