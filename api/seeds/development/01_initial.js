@@ -930,7 +930,7 @@ function* seed(knex) {
     yield knex('InventoryItem').insert({
       consumableId: consumableGxTbCartridgeId,
       siteId: siteData.id,
-      expiresOn: new Date(now.getTime() + _.random(-millisInNormalYear, millisInNormalYear)),
+      expiresOn: (new Date(now.getTime() + _.random(-millisInNormalYear, millisInNormalYear))).getDate(),
       quantityOnHand: _.random(0, 1000)
     })
     //Gloves

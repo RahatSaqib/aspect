@@ -59,7 +59,7 @@ function* listInventoryItems(request){
 }
 
 const SITES_SELECT_LIST_FIELDS = [
-  's.id', 's.name', 's.countryId', 's.stateId', 's.lgaId',
+  's.id as siteId', 's.name as siteName', 's.countryId', 's.stateId', 's.lgaId',
   'co.name as countryName', 'st.name as stateName', 'l.name as lgaName'
 ]
 
@@ -70,7 +70,7 @@ const SITES_SORT_FIELDS = {
   'lgaName': 'l.name'
 }
 
-function* listInventoryItemsGroupedBySite(request) {
+function* getSitesAndInventoryItems(request) {
   const {auth} = request
 
   if (request.query.sortCol && !_.keys(SITES_SORT_FIELDS).includes(request.query.sortCol)){
@@ -85,7 +85,7 @@ function* listInventoryItemsGroupedBySite(request) {
     .leftOuterJoin('Country as co', 's.countryId', 'co.id')
     .leftOuterJoin('State as st', 's.stateId', 'st.id')
     .leftOuterJoin('Lga as l', 's.lgaId', 'l.id')
-    .modify(filterParams, request.query, INVENTORY_FILTER_FIELDS) //TODO: Omit consumable filters
+    .modify(filterParams, request.query, INVENTORY_FILTER_FIELDS)
     .modify(addConstraints, dataConstraints, INVENTORY_DATA_CONSTRAINT_ALIASES)
 
   const getSiteCount = sitesQuery.clone().countDistinct('s.id as count').first()
@@ -97,8 +97,7 @@ function* listInventoryItemsGroupedBySite(request) {
 
   const [{count: total}, sitesData] = yield Promise.all([getSiteCount, getSites])
 
-
-  const inventoryFilters = Object.assign({}, request.query, {siteId: _.map(sitesData, 'id')})
+  const inventoryFilters = Object.assign({}, request.query, {siteId: _.map(sitesData, 'siteId')})
 
   const inventoryItems = yield query('Search Inventory Items In Sites')
     .from('InventoryItem as ii')
@@ -112,9 +111,19 @@ function* listInventoryItemsGroupedBySite(request) {
     .modify(addConstraints, dataConstraints, INVENTORY_DATA_CONSTRAINT_ALIASES)
     .select(INVENTORY_ITEMS_SELECT_LIST_FIELDS)
 
+  return {
+    sitesData,
+    inventoryItems,
+    total
+  }
+}
+
+function* listInventoryItemsGroupedBySite(request) {
+  const {sitesData, inventoryItems, total} = yield* getSitesAndInventoryItems(request)
+
   const sitesWithInventoryItems = _.map(sitesData, function(site) {
     return Object.assign({}, site, {
-      inventoryItems: _.map(_.filter(inventoryItems, {siteId: site.id}), function (inventoryItem) {
+      inventoryItems: _.map(_.filter(inventoryItems, {siteId: site.siteId}), function (inventoryItem) {
         return _.pick(inventoryItem,
           ['id', 'consumableId', 'expiresOn', 'quantityOnHand', 'consumableName', 'manufacturer', 'unitShortName'])
       })
@@ -124,7 +133,29 @@ function* listInventoryItemsGroupedBySite(request) {
   return {ok: true, total, length: sitesData.length, data: sitesWithInventoryItems}
 }
 
+function* listInventoryItemsGroupedBySiteAndConsumable(request) {
+  const {sitesData, inventoryItems, total} = yield* getSitesAndInventoryItems(request)
+
+  const sitesWithConsumablesAndInventoryItems = _.map(sitesData, function(site) {
+    return Object.assign({}, site, {
+      consumables: _.uniqBy(_.map(_.filter(inventoryItems, {siteId: site.siteId}), function (consumableInventoryItem) {
+        return Object.assign({}, _.pick(consumableInventoryItem, ['consumableName', 'manufacturer', 'unitShortName']), {
+          consumableId: consumableInventoryItem.consumableId,
+          inventoryItems: _.map(_.filter(inventoryItems, {siteId: site.siteId, consumableId: consumableInventoryItem.consumableId}),
+            function (inventoryItem) {
+              return _.pick(inventoryItem,
+                ['id', 'expiresOn', 'quantityOnHand'])
+            })
+        })
+      }), 'id')
+    })
+  })
+
+  return {ok: true, total, length: sitesData.length, data: sitesWithConsumablesAndInventoryItems}
+}
+
 module.exports = {
   listInventoryItems,
-  listInventoryItemsGroupedBySite
+  listInventoryItemsGroupedBySite,
+  listInventoryItemsGroupedBySiteAndConsumable
 }

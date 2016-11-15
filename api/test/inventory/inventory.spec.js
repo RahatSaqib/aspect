@@ -81,8 +81,8 @@ describe('Inventory Routes',function() {
               assert.typeOf(res.body.data, 'array')
               assert.isAtLeast(res.body.data.length, 1)
               res.body.data.forEach(function (site) {
-                assert.property(site, 'id')
-                assert.property(site, 'name')
+                assert.property(site, 'siteId')
+                assert.property(site, 'siteName')
                 assert.property(site, 'countryId')
                 assert.property(site, 'stateId')
                 assert.property(site, 'lgaId')
@@ -114,9 +114,73 @@ describe('Inventory Routes',function() {
             .end(function (err, res) {
               assert.equal(res.status, 200)
               res.body.data.forEach(function (site) {
-                assert.includes(site.name.toLowerCase(), siteNameFilter.toLowerCase())
+                assert.includes(site.siteName.toLowerCase(), siteNameFilter.toLowerCase())
                 site.inventoryItems.forEach(function (inventoryItem) {
                   assert.equal(inventoryItem.consumableId, consumableId)
+                })
+              })
+              done()
+            })
+        })
+      })
+    })
+
+    describe('/inventory/group-by-site-and-consumable', function () {
+      let path = '/api/inventory/group-by-site-and-consumable'
+
+      describe('GET', function () {
+        shared.checkToken(server, path)
+
+        it('should return a list of sites, each with a list of consumables (with inventory items), when using valid token', function (done) {
+          server
+            .get(path)
+            .set('Authorization', `Bearer ${shared.token}`)
+            .end(function (err, res) {
+              assert.equal(res.status, 200)
+              assert.typeOf(res.body, 'Object')
+              assert.property(res.body, 'data')
+              assert.typeOf(res.body.data, 'array')
+              assert.isAtLeast(res.body.data.length, 1)
+              res.body.data.forEach(function (site) {
+                assert.property(site, 'siteId')
+                assert.property(site, 'siteName')
+                assert.property(site, 'countryId')
+                assert.property(site, 'stateId')
+                assert.property(site, 'lgaId')
+                assert.property(site, 'countryName')
+                assert.property(site, 'stateName')
+                assert.property(site, 'lgaName')
+                assert.property(site, 'consumables')
+                site.consumables.forEach(function (consumable) {
+                  assert.property(consumable, 'consumableId')
+                  assert.property(consumable, 'consumableName')
+                  assert.property(consumable, 'manufacturer')
+                  assert.property(consumable, 'unitShortName')
+                  assert.property(consumable, 'inventoryItems')
+                  consumable.inventoryItems.forEach(function (inventoryItem) {
+                    assert.property(inventoryItem, 'id')
+                    assert.property(inventoryItem, 'expiresOn')
+                    assert.property(inventoryItem, 'quantityOnHand')
+                  })
+                })
+              })
+              assert.property(res.body, 'total')
+              done()
+            })
+        })
+
+        it('should accept consumableId and siteName as query string parameters', function (done) {
+          const consumableId = 1
+          const siteNameFilter = 'lab'
+          server
+            .get(`${path}?consumableId=${consumableId}&siteName=${siteNameFilter}`)
+            .set('Authorization', `Bearer ${shared.token}`)
+            .end(function (err, res) {
+              assert.equal(res.status, 200)
+              res.body.data.forEach(function (site) {
+                assert.includes(site.siteName.toLowerCase(), siteNameFilter.toLowerCase())
+                site.consumables.forEach(function (consumable) {
+                  assert.equal(consumable.consumableId, consumableId)
                 })
               })
               done()
