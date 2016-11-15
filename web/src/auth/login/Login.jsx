@@ -17,6 +17,7 @@ import LinearProgress from 'material-ui/LinearProgress'
 import RaisedButton from 'material-ui/RaisedButton'
 
 // Our own imports
+import { Unit } from '../../components/pureGrids'
 import TextInput from '../../components/shared/TextInput'
 import { ErrorDisplayContainer } from '../../components/shared/ErrorDisplay'
 import { loginStart } from '../AuthRedux'
@@ -56,11 +57,11 @@ export class Login extends PureComponent {
       <div className={styles.Background}>
         <Helmet title="Login" titleTemplate="%s - Aspect" defaultTitle="Aspect" />
         <div className={styles.Content}>
-          <div className="pure-g">
-            <div className="pure-u-lg-1-3 pure-u-md-1-6 pure-u-sm-1-24">
+          <div>
+            <Unit sm="1-24" md="1-6" lg="1-3">
               &nbsp;
-            </div>
-            <div className="pure-u-lg-1-3 pure-u-md-2-3 pure-u-sm-11-12">
+            </Unit>
+            <Unit sm="11-12" md="2-3" lg="1-3">
               <Paper>
                 <form onSubmit={handleSubmit} className={styles.Form}>
                   { location.query.reason ? <div className={styles.Form__Info}>{formatMessage(messages[`reason${location.query.reason}`])}</div> : null }
@@ -75,7 +76,7 @@ export class Login extends PureComponent {
                 </form>
                 {submitting && <LinearProgress />}
               </Paper>
-            </div>
+            </Unit>
           </div>
         </div>
         <ErrorDisplayContainer />
