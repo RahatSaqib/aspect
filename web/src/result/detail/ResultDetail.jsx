@@ -15,10 +15,12 @@ import Helmet from 'react-helmet'
 import Paper from 'material-ui/Paper'
 import LinearProgress from 'material-ui/LinearProgress'
 import { Card, CardHeader, CardText } from 'material-ui/Card'
+import Checkbox from 'material-ui/Checkbox'
 
 // Our own imports
 import {
-  fetchSingleResult
+  fetchSingleResult,
+  updateResultWorkflowStatus
 } from '../ResultRedux'
 import ReadOnlyFields from '../../components/shared/ReadOnlyFields'
 import styles from './ResultDetail.css'
@@ -145,6 +147,12 @@ export class ResultDetail extends PureComponent {
     params: PropTypes.object.isRequired,
     result: PropTypes.object,
     updateSingleResult: PropTypes.func
+  }
+
+  handleCheck = () => {
+    const { result } = this.props
+
+    this.props.updateResultWorkflowStatus(result.get('id'))
   }
 
   componentWillMount() {
@@ -409,6 +417,23 @@ export class ResultDetail extends PureComponent {
     )
   }
 
+  renderCheckbox() {
+    if (!this.hasResultWithAssay()) {
+      return
+    }
+    const { result } = this.props
+    const checked = result.get('resultWorkflowStatus') === 'Acknowledged'
+    return (
+      <Checkbox
+        disabled={checked}
+        label="Acknowledged"
+        style={{margin: 20}}
+        checked={checked}
+        onCheck={this.handleCheck}
+      />
+    )
+  }
+
   render() {
     const { intl } = this.props
     const { formatMessage } = intl
@@ -417,6 +442,7 @@ export class ResultDetail extends PureComponent {
       <div className={cssClasses('Content')}>
         <Helmet title={formatMessage(messages.title)} titleTemplate="%s - Aspect" defaultTitle="Aspect" />
         {this.renderPaper()}
+        {this.renderCheckbox()}
       </div>
     )
   }
@@ -432,7 +458,8 @@ function mapStateToProps(state, props) {
 
 function mapDispatchToProps(dispatch) {
   return bindActionCreators({
-    fetchSingleResult
+    fetchSingleResult,
+    updateResultWorkflowStatus
   }, dispatch)
 }
 
