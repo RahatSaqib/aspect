@@ -1,10 +1,28 @@
 const Boom = require('boom')
 const { transact } = require('../db')
 const { getDeviceByApiKeyId, getExternalId } = require('./common')
+const { addResult } = require('./result')
 
-
-function* addDeviceConfiguration(request){
+function* addDeviceData(request){
   const {payload} = request
+  const {result, configuration, operation} = payload
+  const response = {}
+
+  if(result){
+    response.result = yield* addResult(request, result)
+  }
+
+  if(configuration){
+    response.configuration = yield* addDeviceConfiguration(request, configuration)
+  }
+
+  if(operation){
+    response.operation = yield* addDeviceOperation(request, operation)
+  }
+  return response
+}
+
+function* addDeviceConfiguration(request, payload=request.payload){
   const device = yield* getDeviceByApiKeyId(request)
   if(!device.ok){
     return Boom.unauthorized()
@@ -36,8 +54,7 @@ function* addDeviceConfiguration(request){
   return ok ? {ok, data: {id: externalId}} : {ok}
 }
 
-function* addDeviceOperation(request){
-  const {payload} = request
+function* addDeviceOperation(request, payload=request.payload){
   const device = yield* getDeviceByApiKeyId(request)
 
   const externalId = getExternalId(payload.id)
@@ -72,6 +89,7 @@ function* addDeviceOperation(request){
 }
 
 module.exports = {
+  addDeviceData,
   addDeviceConfiguration,
   addDeviceOperation
 }

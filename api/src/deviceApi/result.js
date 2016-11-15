@@ -4,8 +4,8 @@ const { transact, knex } = require('../db')
 const { getDeviceByApiKeyId, getExternalId } = require('./common')
 const { getDeviceConstraints, addConstraints } = require('../auth/constraints')
 
-function* addResult(request){
-  const {auth, payload} = request
+function* addResult(request, payload=request.payload){
+  const {auth} = request
   const device = yield* getDeviceByApiKeyId(request)
   if(!device.ok){
     return Boom.unauthorized()
