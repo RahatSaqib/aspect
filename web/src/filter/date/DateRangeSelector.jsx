@@ -1,4 +1,5 @@
 // Imports from packages
+import endOfDay from 'date-fns/end_of_day'
 import _ from 'lodash'
 import React, { PureComponent, PropTypes } from 'react'
 
@@ -26,7 +27,7 @@ export class DateRangeSelector extends PureComponent {
   }
 
   handleMaxDateChange = (_, date) => {
-    this.props.onChangeDate('maxDate', date.toJSON())
+    this.props.onChangeDate('maxDate', endOfDay(date).toJSON())
   }
 
   handleClearMaxDate = () => {
