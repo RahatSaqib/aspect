@@ -1,6 +1,6 @@
 const Joi = require('joi')
 const { asyncHandler } = require('../routes')
-const { addDeviceData, addDeviceOperation, addDeviceConfiguration} = require('./device')
+const { ping, addDeviceOperation, addDeviceConfiguration} = require('./device')
 const { addResult, listResults } = require('./result')
 
 const configurationPayload = {
@@ -85,9 +85,9 @@ module.exports = [
   {
     method: 'POST',
     path: '/',
-    handler: asyncHandler(addDeviceData),
+    handler: asyncHandler(ping),
     config: {
-      notes: 'Add Device Configuration',
+      notes: 'Add Device Configuration, operation or Result',
       description: 'Add new device configuration, operation or result data for the authenticated device',
       validate: {
         payload: Joi.object().keys({

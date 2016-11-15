@@ -3,7 +3,7 @@ const { transact } = require('../db')
 const { getDeviceByApiKeyId, getExternalId } = require('./common')
 const { addResult } = require('./result')
 
-function* addDeviceData(request){
+function* ping(request){
   const {payload} = request
   const {result, configuration, operation} = payload
   const response = {}
@@ -31,7 +31,6 @@ function* addDeviceConfiguration(request, payload=request.payload){
 
   const now = new Date()
   const externalId = getExternalId(payload.id)
-  let ok = false
 
   yield transact(function*(knex){
     const [deviceConfigurationId] = yield knex('DeviceConfiguration')
@@ -48,17 +47,14 @@ function* addDeviceConfiguration(request, payload=request.payload){
         deviceConfigurationId,
         updatedOn: now
       })
-
-    ok = true
   })
-  return ok ? {ok, data: {id: externalId}} : {ok}
+  return {id: externalId, updatedOn: now.toISOString()}
 }
 
 function* addDeviceOperation(request, payload=request.payload){
   const device = yield* getDeviceByApiKeyId(request)
 
   const externalId = getExternalId(payload.id)
-  let ok = false
 
   if(!device.ok){
     return Boom.unauthorized()
@@ -83,13 +79,12 @@ function* addDeviceOperation(request, payload=request.payload){
         updatedOn: now
       })
 
-    ok = true
   })
-  return ok ? {ok, data: {id: externalId}} : {ok}
+  return {id: externalId, updatedOn: now.toISOString()}
 }
 
 module.exports = {
-  addDeviceData,
+  ping,
   addDeviceConfiguration,
   addDeviceOperation
 }

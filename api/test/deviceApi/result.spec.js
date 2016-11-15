@@ -64,11 +64,9 @@ describe('Device Result API routes',function(){
           assert.equal(res.status, 200)
           assert.typeOf(res.body, 'Object')
           assert.typeOf(res.body.result, 'Object')
-          assert.property(res.body.result, 'data')
-          assert.equal(res.body.result.ok, true)
-          assert.typeOf(res.body.result.data, 'Object')
-          assert.property(res.body.result.data, 'id')
-          resultIds.push(res.body.result.data.id)
+          assert.property(res.body.result, 'id')
+          assert.property(res.body.result, 'updatedOn')
+          resultIds.push(res.body.result.id)
         })
 
       const [{count: logLength1}] = yield knex('ResultLog').count('id as count')
@@ -229,11 +227,9 @@ describe('Device Result API routes',function(){
         .then(function(res){
           assert.equal(res.status, 200)
           assert.typeOf(res.body, 'Object')
-          assert.property(res.body, 'data')
-          assert.equal(res.body.ok, true)
-          assert.typeOf(res.body.data, 'Object')
-          assert.property(res.body.data, 'id')
-          resultIds.push(res.body.data.id)
+          assert.property(res.body, 'id')
+          assert.property(res.body, 'updatedOn')
+          resultIds.push(res.body.id)
         })
 
       const [{count: logLength2}] = yield knex('ResultLog').count('id as count')
@@ -490,7 +486,7 @@ describe('Device Result API routes',function(){
         .send({data: {a:'b'}, assay: {id: 'HivVl'}})
         .then(function(res){
           assert.equal(res.status, 200)
-          resultIds.push(res.body.data.id)
+          resultIds.push(res.body.id)
         })
 
       const result1 = yield knex('Result as r')
@@ -513,7 +509,7 @@ describe('Device Result API routes',function(){
         .send({data: {a:'c'}, error: {code: '1'}, assay: {id: 'HivVl'}})
         .then(function(res){
           assert.equal(res.status, 200)
-          resultIds.push(res.body.data.id)
+          resultIds.push(res.body.id)
         })
 
       const result2 = yield knex('Result as r')
@@ -536,7 +532,7 @@ describe('Device Result API routes',function(){
         .send({data: {a:'d'}, category: {id: 'Invalid'}, error: {code: '1'}, assay: {id: 'HivVl'}})
         .then(function(res){
           assert.equal(res.status, 200)
-          resultIds.push(res.body.data.id)
+          resultIds.push(res.body.id)
         })
 
       const result3 = yield knex('Result as r')
@@ -559,7 +555,7 @@ describe('Device Result API routes',function(){
         .send({data: {a:'e'}, category: [{id: 'Detected'}, {id: 'NotDetected'}], assay: {id: 'HivVl'}})
         .then(function(res){
           assert.equal(res.status, 200)
-          resultIds.push(res.body.data.id)
+          resultIds.push(res.body.id)
         })
 
       const result4 = yield knex('Result as r')
@@ -590,7 +586,7 @@ describe('Device Result API routes',function(){
         .send({id: resultIds[0], data: {a:'b'}, assay: {id: 'HivVl'}})
         .then(function(res){
           assert.equal(res.status, 200)
-          assert.equal(res.body.data.id, resultIds[0])
+          assert.equal(res.body.id, resultIds[0])
         })
 
       let result1 = yield knex('Result as r')
@@ -605,7 +601,7 @@ describe('Device Result API routes',function(){
         .send({id: resultIds[0], data: {a:'b', c:'d'}, assay: {id: 'HivVl'}})
         .then(function(res){
           assert.equal(res.status, 200)
-          assert.equal(res.body.data.id, resultIds[0])
+          assert.equal(res.body.id, resultIds[0])
         })
 
       result1 = yield knex('Result as r')
@@ -620,7 +616,7 @@ describe('Device Result API routes',function(){
         .send({id: resultIds[1], data: {a:'b'}, assay: {id: 'HivVl'}})
         .then(function(res){
           assert.equal(res.status, 200)
-          assert.equal(res.body.data.id, resultIds[1])
+          assert.equal(res.body.id, resultIds[1])
         })
 
       let result2 = yield knex('Result as r')
@@ -699,11 +695,9 @@ describe('Device Result API routes',function(){
         .then(function(res){
           assert.equal(res.status, 200)
           assert.typeOf(res.body, 'Object')
-          assert.property(res.body, 'data')
-          assert.equal(res.body.ok, true)
-          assert.typeOf(res.body.data, 'Object')
-          assert.property(res.body.data, 'id')
-          resultIds.push(res.body.data.id)
+          assert.property(res.body, 'id')
+          assert.property(res.body, 'updatedOn')
+          resultIds.push(res.body.id)
         })
 
       result2 = yield knex('Result as r')
@@ -816,7 +810,7 @@ describe('Device Result API routes',function(){
         })
         .then(function(res){
           assert.equal(res.status, 200)
-          resultIds.push(res.body.data.id)
+          resultIds.push(res.body.id)
         })
 
       yield server.get(deviceGetResultPath)
@@ -911,7 +905,7 @@ describe('Device Result API routes',function(){
         })
         .then(function(res){
           assert.equal(res.status, 200)
-          resultIds.push(res.body.data.id)
+          resultIds.push(res.body.id)
         })
 
       yield server.get(deviceGetResultPath)
@@ -998,7 +992,7 @@ describe('Device Result API routes',function(){
         })
         .then(function(res){
           assert.equal(res.status, 200)
-          resultIds.push(res.body.data.id)
+          resultIds.push(res.body.id)
         })
 
       yield server.post(devicePostResultPath)

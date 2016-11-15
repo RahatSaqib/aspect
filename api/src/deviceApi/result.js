@@ -234,7 +234,7 @@ function* addResult(request, payload=request.payload){
       rawMessage: JSON.stringify(payload)
     })
 
-    return {ok: true, data: {id: externalId}}
+    return {id: externalId, updatedOn: now.toISOString()}
   })
 
   return response
