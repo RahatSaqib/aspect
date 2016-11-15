@@ -3,7 +3,7 @@ import Immutable from 'immutable'
 
 import { aspectFetch } from '../shared/utils/fetch'
 import { addError } from '../error/ErrorRedux'
-import { receiveList, Items } from '../shared/metaReducers/items'
+import { receiveList, Items } from '../shared/metaReducers/groupedItems'
 
 export const types = {
   REQUEST_INVENTORY_ITEMS: 'REQUEST_INVENTORY_ITEMS',
@@ -25,11 +25,12 @@ function requestInventoryItems(sortCol, sortDir, page, size, filters, groupBySit
   }
 }
 
-function receiveInventoryItems(json) {
+function receiveInventoryItems(json, nestedPropertyPath) {
   return {
     type: types.RECEIVE_INVENTORY_ITEMS,
     items: json.data,
-    total: json.total
+    total: json.total,
+    nestedPropertyPath
   }
 }
 
@@ -44,7 +45,7 @@ const defaultGroupByConsumable = false
 export function fetchInventoryItems(filters = defaultFilters, sortCol = defaultSortCol, sortDir = defaultSortDir,
                                     page = defaultPage, pageSize = defaultPageSize, groupBySite = defaultGroupBySite,
                                     groupByConsumable = defaultGroupByConsumable) {
-  const path = groupBySite ? '/inventory/group-by-site' : '/inventory'
+  const path = groupBySite ? (groupByConsumable ? '/inventory/group-by-site-and-consumable' : '/inventory/group-by-site') : '/inventory'
   return dispatch => {
 
     dispatch(requestInventoryItems(sortCol, sortDir, page, pageSize, filters, groupBySite, groupByConsumable))
@@ -56,7 +57,16 @@ export function fetchInventoryItems(filters = defaultFilters, sortCol = defaultS
       size: pageSize,
       ...filters.toJS()
     })}`)
-      .then(json => dispatch(receiveInventoryItems(json)))
+      .then(json => {
+        const nestedPropertyPath = []
+        if(groupByConsumable) {
+          nestedPropertyPath.push('consumables')
+        }
+        if(groupBySite) {
+          nestedPropertyPath.push('inventoryItems')
+        }
+        return dispatch(receiveInventoryItems(json, nestedPropertyPath))
+      })
       .catch(err => {
         dispatch(addError('Loading inventory items failed', err.message, err))
       })
@@ -100,8 +110,7 @@ export default function inventoryItemsReducer(state = initialState, action) {
     }))
   case types.RECEIVE_INVENTORY_ITEMS:
     return state.withMutations(mutState => {
-      const immutList = Immutable.fromJS(action.items)
-      mutState.set('items', receiveList(mutState.items, immutList))
+      mutState.set('items', receiveList(mutState.items, action.nestedPropertyPath, action.items))
       mutState.set('table', mutState.table.merge({
         loading: false,
         total: action.total
