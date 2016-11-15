@@ -2,6 +2,8 @@
 import _ from 'lodash'
 import React, { PureComponent, PropTypes } from 'react'
 
+import styles from './pure-grids-responsive-min.css'
+
 const pureGridPropTypes = {
   xs: PropTypes.bool,
   sm: PropTypes.bool,
@@ -11,11 +13,11 @@ const pureGridPropTypes = {
 }
 
 const keyToClassNameMappings = {
-  xs: 'pure-hidden-xs',
-  sm: 'pure-hidden-sm',
-  md: 'pure-hidden-md',
-  lg: 'pure-hidden-lg',
-  xl: 'pure-hidden-xl'
+  xs: styles['pure-hidden-xs'],
+  sm: styles['pure-hidden-sm'],
+  md: styles['pure-hidden-md'],
+  lg: styles['pure-hidden-lg'],
+  xl: styles['pure-hidden-xl']
 }
 
 export function getClassNames(props) {

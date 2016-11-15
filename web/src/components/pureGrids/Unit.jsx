@@ -2,6 +2,8 @@
 import _ from 'lodash'
 import React, { PureComponent, PropTypes } from 'react'
 
+import styles from './pure-grids-responsive-min.css'
+
 const pureGridPropTypes = {
   xs: PropTypes.string,
   sm: PropTypes.string,
@@ -24,7 +26,7 @@ export function getClassNames(props) {
   return _.reduce(pureGridPropTypes, (acc, unused, key) => {
     const value = props[key]
     if (_.isString(value)) {
-      acc.push(`${keyToPrefixMappings[key]}-${value}`)
+      acc.push(styles[`${keyToPrefixMappings[key]}-${value}`])
     }
     return acc
   }, initial)
