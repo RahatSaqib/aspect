@@ -14,6 +14,7 @@ import Paper from 'material-ui/Paper'
 import LinearProgress from 'material-ui/LinearProgress'
 
 // Our own imports
+import { Unit } from '../../components/pureGrids'
 import isEditable from '../../shared/selectors/device'
 import {
   fetchSingleDevice,
@@ -216,19 +217,19 @@ export class DeviceDetail extends PureComponent {
       }
     ]
     return (
-      <div className={`pure-g ${styles.RowContainer}`}>
-        <div className="pure-u-lg-1-2">
+      <div className={styles.RowContainer}>
+        <Unit lg="1-2">
           <div>
             {editable ? this.renderFormContainer() : this.renderReadOnlyFields()}
           </div>
-        </div>
-        <div className="pure-u-lg-1-2">
+        </Unit>
+        <Unit lg="1-2">
           <div>
             <ReadOnlyFields
               fields={fields}
             />
           </div>
-        </div>
+        </Unit>
       </div>
     )
   }
