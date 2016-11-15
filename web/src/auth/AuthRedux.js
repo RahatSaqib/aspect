@@ -177,7 +177,7 @@ export function refreshStart() {
     }
 
     // try to get a new access token:
-    aspectFetch('/auth/refresh',
+    return aspectFetch('/auth/refresh',
       {
         method: 'POST',
         headers: getHeaders(),

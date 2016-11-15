@@ -59,9 +59,11 @@ const routes =
     <Route component={App} path="/">
       <Route component={LoginContainer} path="login" />
       <Route component={ResetPasswordContainer} path="reset-password" />
-      <Route component={LoggedInShell}
-        onChange={(prevState, nextState, replace) => requireAuth(nextState, replace) }>
-
+      <Route
+        component={LoggedInShell}
+        onEnter={requireAuth}
+        onChange={(prevState, nextState, replace) => requireAuth(nextState, replace) }
+      >
         <IndexRedirect to="dashboard" />
 
         <Route path="dashboard" >
