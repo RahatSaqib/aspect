@@ -22,6 +22,7 @@ import LinearProgress from 'material-ui/LinearProgress'
 import Dialog from 'material-ui/Dialog'
 
 // Our own imports
+import { Unit } from '../../components/pureGrids'
 import { ErrorDisplayContainer } from '../../components/shared/ErrorDisplay'
 import AcknowledgementDisplay from '../../components/shared/AcknowledgementDisplay'
 import {
@@ -145,9 +146,9 @@ export default class ResetPassword extends PureComponent {
       <div className={styles.Background}>
         <Helmet title={formatMessage(messages.title)} titleTemplate="%s - Aspect" defaultTitle="Aspect" />
         <div className={styles.Content}>
-          <div className="pure-g">
-            <div className="pure-u-1-24 pure-u-md-1-12 pure-u-xl-1-4" />
-            <div className="pure-u-11-12 pure-u-md-5-6 pure-u-xl-1-2">
+          <div>
+            <Unit xs="1-24" md="1-12" xl="1-4" />
+            <Unit xs="11-12" md="5-6" xl="1-2">
               <Paper>
                 <div className={classNames('pure-hidden-xs', 'pure-hidden-sm', styles.LargeContent)}>
                   <Stepper activeStep={stepIndex}>
@@ -260,7 +261,7 @@ export default class ResetPassword extends PureComponent {
                   </Stepper>
                 </div>
               </Paper>
-            </div>
+            </Unit>
           </div>
         </div>
         <Dialog
