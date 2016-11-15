@@ -26,6 +26,7 @@ import { ResultDetailContainer } from '../result/detail/ResultDetail'
 import { NotificationListContainer } from '../notification/list/NotificationList'
 import { ReportListContainer } from '../report/list/ReportList'
 import { AccountDetailsContainer } from '../account/detail/AccountDetails'
+import { StyleguideMainContainer } from '../styleguide/main/StyleguideMain'
 
 import { refreshStart } from '../auth/AuthRedux'
 
@@ -72,12 +73,12 @@ const routes =
           <Route path="maintenance" component={MaintenanceContainer} />
         </Route>
 
-        <Route path="device" deviceConfig={{hasResults: 1, hasConnectivity: undefined}}>
+        <Route path="device" deviceConfig={{filterParams: {hasResults: 1}, filterConfig: {assayAndResultCategory: true, geography: true, date: true, deviceName: true}}}>
           <IndexRoute component={DeviceListContainer} />
           <Route path=":deviceId" component={DeviceDetailContainer} />
         </Route>
 
-        <Route path="router" deviceConfig={{hasResults: 0, hasConnectivity: 1}}>
+        <Route path="router" deviceConfig={{filterParams: {hasResults: 0, hasConnectivity: 1}, filterConfig: {geography: true, date: true, deviceName: true}}}>
           <IndexRoute component={DeviceListContainer} />
           <Route path=":deviceId" component={DeviceDetailContainer} />
         </Route>
@@ -103,6 +104,9 @@ const routes =
         <Route path="report" component={ReportListContainer} />
 
       </Route>
+      {process.env.NODE_ENV !== 'production' && (
+        <Route path="styleguide" component={StyleguideMainContainer} />
+      )}
       <Route path="*" component={NotFoundContainer} />
     </Route>
   </Router>

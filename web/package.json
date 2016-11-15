@@ -85,6 +85,7 @@
   },
   "dependencies": {
     "classnames": "^2.2.5",
+    "date-fns": "^1.10.0",
     "dom-helpers": "^3.0.0",
     "email-validator": "^1.0.7",
     "es6-promise": "^4.0.5",
@@ -92,6 +93,7 @@
     "http-client": "^4.3.1",
     "immutable": "^3.8.1",
     "intl": "^1.2.4",
+    "invariant": "^2.2.1",
     "isomorphic-fetch": "^2.2.1",
     "jwt-decode": "^2.0.1",
     "keycode": "^2.1.7",

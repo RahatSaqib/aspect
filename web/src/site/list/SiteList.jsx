@@ -10,18 +10,11 @@ import { bindActionCreators } from 'redux'
 import { connect } from 'react-redux'
 import Helmet from 'react-helmet'
 
-// Material-UI
-import NavigationExpandMoreIcon from 'material-ui/svg-icons/navigation/expand-more'
-import RaisedButton from 'material-ui/RaisedButton'
-import { Toolbar, ToolbarGroup } from 'material-ui/Toolbar'
-import MenuItem from 'material-ui/MenuItem'
-import IconMenu from 'material-ui/IconMenu'
-import IconButton from 'material-ui/IconButton'
-import TextField from 'material-ui/TextField'
-
 // Our own imports
 import { DataTable } from '../../components/shared/DataTable'
-import { fetchSites } from '../SiteRedux'
+import ListFilterContainer from '../../filter/list/ListFilter'
+import { configureListFilter } from '../../filter/FilterRedux'
+import { fetchListFilteredSites } from '../SiteRedux'
 import styles from './SiteList.css'
 
 const messages = defineMessages({
@@ -48,41 +41,31 @@ const messages = defineMessages({
 })
 
 export class SiteList extends PureComponent {
+
   static propTypes = {
     setPageTitle: PropTypes.func.isRequired,
     table: PropTypes.object.isRequired
   }
 
-  state = {
-    filters: this.props.table.get('filters')
+  handleFetch = (...args) => {
+    this.props.fetchListFilteredSites({}, ...args)
   }
 
   handleItemIdSelection = (siteId) => {
     this.props.router.push(`/site/${siteId}`)
   }
 
-  handleFetch = (...args) => {
-    this.props.fetchSites(this.props.table.filters, ...args)
-  }
-
-  filterSitesChange = (e) => {
-    this.setState({ filters: this.state.filters.set(e.target.id, e.target.value) })
-  }
-
-  handleSubmit = (e) => {
-    e.preventDefault()
-    this.props.fetchSites(this.state.filters)
-  }
-
-  resetSites = () => {
-    this.setState({ filters: this.state.filters.set('name', '') })
-    this.props.fetchSites()
-  }
-
   componentWillMount() {
-    const { setPageTitle, intl } = this.props
+    const { setPageTitle, configureListFilter, intl } = this.props
     const { formatMessage } = intl
     setPageTitle(formatMessage(messages.title))
+    configureListFilter({geography: true, date: true, deviceName: true, siteName: true})
+  }
+
+  componentWillReceiveProps(nextProps) {
+    if (this.props.listFilter !== nextProps.listFilter) {
+      this.handleFetch()
+    }
   }
 
   render() {
@@ -92,29 +75,7 @@ export class SiteList extends PureComponent {
     return (
       <div className={styles.Content}>
         <Helmet title={formatMessage(messages.title)} titleTemplate="%s - Aspect" defaultTitle="Aspect" />
-        <form onSubmit={ this.handleSubmit }>
-          <Toolbar className={styles.Toolbar} >
-            <ToolbarGroup firstChild={true}>
-              <TextField  value={this.state.filters.get('name')}
-                          id="name"
-                          onChange={ this.filterSitesChange }
-                          className={styles['Toolbar__TextField--filter']}
-                          hintText="Filter by name" />
-              <RaisedButton label="Filter" primary={true} onTouchTap={ this.handleSubmit } />
-            </ToolbarGroup>
-            <ToolbarGroup lastChild={true}>
-              <IconMenu iconButtonElement={
-                  <IconButton touch={true}>
-                    <NavigationExpandMoreIcon />
-                  </IconButton>}>
-                <MenuItem primaryText="Clear Filters" className={styles.Toolbar__MenuItem} onTouchTap={ this.resetSites } />
-                <MenuItem primaryText="Export to Excel" className={styles.Toolbar__MenuItem} />
-                <MenuItem primaryText="Export to CSV" className={styles.Toolbar__MenuItem} />
-              </IconMenu>
-            </ToolbarGroup>
-          </Toolbar>
-        </form>
-
+        <ListFilterContainer />
         <DataTable
           selectable
           handleItemIdSelection={this.handleItemIdSelection}
@@ -135,13 +96,17 @@ export class SiteList extends PureComponent {
 
 function mapStateToProps(state) {
   return {
+    listFilter: state.filter.listFilter,
     items: state.site.items,
     table: state.site.table
   }
 }
 
 function mapDispatchToProps(dispatch) {
-  return bindActionCreators({ fetchSites }, dispatch)
+  return bindActionCreators({
+    configureListFilter,
+    fetchListFilteredSites
+  }, dispatch)
 }
 
 export const SiteListContainer = _.flowRight(

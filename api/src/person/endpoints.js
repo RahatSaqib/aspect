@@ -12,7 +12,10 @@ module.exports = [{
     auth: {scope: ['person:view', 'person:edit']},
     validate: {
       query: Object.assign({
-        name: Joi.string().allow('').description('Filter for person name')
+        countryId: Joi.number().allow('').description('Country ID'),
+        stateId: Joi.number().allow('').description('State ID'),
+        lgaId: Joi.number().allow('').description('LGA ID'),
+        contactNameOrEmail: Joi.string().allow('').description('Filter for person name/email')
       }, validateSortPageParams('name', 'level', 'state', 'lga'))
     }
   }

@@ -10,6 +10,10 @@ const SELECT_LIST_FIELDS = [
   'a.resultCategory2Label', 'a.resultCategory2i18nKey'
 ]
 
+const SELECT_LIST_RESULT_CATEGORY_FIELDS = [
+  'rc.id', 'rc.name', 'rc.i18nKey', 'rca.assayId'
+]
+
 function* listAssays(request) {
   const {query, auth} = request
 
@@ -37,12 +41,22 @@ function* listAssays(request) {
     .select(SELECT_LIST_FIELDS)
 
   // return result when both queries are finished
-  let [{count: total}, data] = yield Promise.all([getCount, getItems])
+  const [{count: total}, rawAssays] = yield Promise.all([getCount, getItems])
 
-  data = _.map(data, (d) => {
+  // get resultCategories for all assays
+  const rawResultCategories = yield knex('ResultCategory as rc')
+    .innerJoin('ResultCategoryAssay as rca', 'rc.id', 'rca.resultCategoryId')
+    .whereIn('rca.assayId', _.map(rawAssays, 'id'))
+    .select(SELECT_LIST_RESULT_CATEGORY_FIELDS)
+
+  const resultCategoriesByAssayId = _.groupBy(rawResultCategories, 'assayId')
+
+  // map rawAssays with extra values
+  const data = _.map(rawAssays, (d) => {
     return _.assign({}, d, {
       hasResults: usedAssayIds.includes(d.id),
-      resultDataSchema: JSON.parse(d.resultDataSchema)
+      resultDataSchema: JSON.parse(d.resultDataSchema),
+      resultCategories: resultCategoriesByAssayId[d.id]
     })
   })
 

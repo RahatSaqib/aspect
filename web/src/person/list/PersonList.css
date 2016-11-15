@@ -1,15 +1,3 @@
 .Content {
   composes: Content from '../../components/shared/Shared.css';
 }
-
-.Toolbar {
-  composes: Toolbar from '../../components/shared/Shared.css';
-}
-
-.Toolbar__TextField--filter {
-  composes: TextField--filter from '../../components/shared/Shared.css';
-}
-
-.Toolbar__MenuItem {
-  composes: Helper--linky from '../../components/shared/Shared.css';
-}
