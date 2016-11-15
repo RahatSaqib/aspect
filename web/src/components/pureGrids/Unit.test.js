@@ -1,5 +1,6 @@
 import { assert } from 'chai'
-import { getClassNames } from './Unit'
+
+import { getClassNames, Hidden } from './Unit'
 
 describe('Unit module', () => {
   describe('getClassNames', () => {
