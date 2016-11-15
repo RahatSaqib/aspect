@@ -1,19 +1,13 @@
 const Boom = require('boom')
 const _ = require('lodash')
 const { transact, knex } = require('../db')
-const { getDeviceByApiKeyId, getExternalId } = require('./common')
-const { getDeviceConstraints, addConstraints } = require('../auth/constraints')
+const { getExternalId } = require('./common')
+const { addConstraints } = require('../auth/constraints')
 
-function* addResult(request, payload=request.payload){
-  const {auth} = request
-  const device = yield* getDeviceByApiKeyId(request)
-  if(!device.ok){
-    return Boom.unauthorized()
-  }
-
+function* addResult(context){
   const response = yield transact(function*(knex){
 
-    const dataConstraints = yield getDeviceConstraints(auth.credentials)
+    const {payload, constraints: dataConstraints} = context
 
     // TODO seperate permissions for device add vs update result?
     const now = new Date()
@@ -30,7 +24,7 @@ function* addResult(request, payload=request.payload){
       return Boom.badRequest()
     }
     const existingResult = existingResults[0]
-    const deviceId = existingResult ? existingResult.deviceId : device.data.id
+    const deviceId = existingResult ? existingResult.deviceId : context.device.id
 
     const assayQ = knex('Assay as a')
       .join('Device as d', 'a.deviceTypeId', 'd.deviceTypeId')
@@ -228,8 +222,7 @@ function* addResult(request, payload=request.payload){
     yield knex('ResultLog').insert({
       resultId,
       source: 'ResultAPI',
-      // TODO Does Hapi Remote address work through proxies? Check headers?
-      senderIp: request.info.remoteAddress || '',
+      senderIp: context.remoteAddress,
       // TODO ResultLog handle non-JSON payloads
       rawMessage: JSON.stringify(payload)
     })
@@ -240,14 +233,8 @@ function* addResult(request, payload=request.payload){
   return response
 }
 
-function* listResults(request){
-  const {auth, query} = request
-  const device = yield* getDeviceByApiKeyId(request)
-  if(!device.ok){
-    return Boom.unauthorized()
-  }
-
-  const dataConstraints = yield getDeviceConstraints(auth.credentials)
+function* listResults(context){
+  const {constraints: dataConstraints, query} = context
 
   const resultQuery = knex('Result as r')
     .innerJoin('Assay as a', 'r.assayId', 'a.id')

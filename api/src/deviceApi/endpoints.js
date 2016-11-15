@@ -1,5 +1,5 @@
 const Joi = require('joi')
-const { asyncHandler } = require('../routes')
+const { deviceApiHandler } = require('./common')
 const { ping, addDeviceOperation, addDeviceConfiguration} = require('./device')
 const { addResult, listResults } = require('./result')
 
@@ -85,7 +85,7 @@ module.exports = [
   {
     method: 'POST',
     path: '/',
-    handler: asyncHandler(ping),
+    handler: deviceApiHandler(ping, {updatePing: true}),
     config: {
       notes: 'Add Device Configuration, operation or Result',
       description: 'Add new device configuration, operation or result data for the authenticated device',
@@ -101,7 +101,7 @@ module.exports = [
   {
     method: 'POST',
     path: '/configuration',
-    handler: asyncHandler(addDeviceConfiguration),
+    handler: deviceApiHandler(addDeviceConfiguration, {updatePing: true}),
     config: {
       notes: 'Add Device Configuration',
       description: 'Add new device configuration data for the authenticated device',
@@ -113,7 +113,7 @@ module.exports = [
   {
     method: 'POST',
     path: '/operation',
-    handler: asyncHandler(addDeviceOperation),
+    handler: deviceApiHandler(addDeviceOperation, {updatePing: true}),
     config: {
       description: 'Device Operation',
       notes: 'Adds new device operational data for the authenticated device',
@@ -125,7 +125,7 @@ module.exports = [
   {
     method: 'GET',
     path: '/result',
-    handler: asyncHandler(listResults),
+    handler: deviceApiHandler(listResults, {updatePing: false}),
     config: {
       description: 'Result List',
       notes: 'List of results for authenticated device',
@@ -139,7 +139,7 @@ module.exports = [
   {
     method: 'POST',
     path: '/result',
-    handler: asyncHandler(addResult),
+    handler: deviceApiHandler(addResult, {updatePing: true}),
     config: {
       description: 'Result',
       notes: 'Adds new assay result data for the authenticated device',
