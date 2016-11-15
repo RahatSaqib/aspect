@@ -55,6 +55,8 @@ new Promise(resolve => {
     // get new access token
     store.dispatch(refreshStart())
       .then(resolve, resolve)
+  } else {
+    resolve()
   }
 }).then(() => {
   render(
