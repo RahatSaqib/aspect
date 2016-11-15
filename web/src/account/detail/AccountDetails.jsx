@@ -11,6 +11,8 @@ import { Tabs, Tab } from 'material-ui/Tabs'
 import MapsPersonPin from 'material-ui/svg-icons/maps/person-pin'
 import Language from 'material-ui/svg-icons/action/language'
 import Lock from 'material-ui/svg-icons/action/lock'
+
+import { Hidden } from '../../components/pureGrids'
 import ContactDetailsForm from '../../person/detail/ContactDetailsForm'
 import LoginDetailsForm from '../../person/detail/LoginDetailsForm'
 import UserPreferencesForm from '../../person/detail/UserPreferencesForm'
@@ -94,7 +96,7 @@ export class AccountDetails extends PureComponent {
           <Tabs>
             <Tab
               icon={<MapsPersonPin />}
-              label={<span className="pure-hidden-xs">{formatMessage(personDetailsMessages.contactDetails)}</span>}
+              label={<Hidden xs component="span">{formatMessage(personDetailsMessages.contactDetails)}</Hidden>}
             >
               {(loading || saving) && <LinearProgress />}
               <h2 className={classNames('pure-visible-xs', styles.Form__Header)}>
@@ -108,7 +110,7 @@ export class AccountDetails extends PureComponent {
             </Tab>
             <Tab
               icon={<Lock />}
-              label={<span className="pure-hidden-xs">{formatMessage(accountDetailsMessages.usernameAndPassword)}</span>}
+              label={<Hidden xs component="span">{formatMessage(accountDetailsMessages.usernameAndPassword)}</Hidden>}
             >
               {(loading || saving) && <LinearProgress />}
               <h2 className={classNames('pure-visible-xs', styles.Form__Header)}>
@@ -126,7 +128,7 @@ export class AccountDetails extends PureComponent {
             </Tab>
             <Tab
               icon={<Language />}
-              label={<span className="pure-hidden-xs">{formatMessage(personDetailsMessages.languageAndTimezone)}</span>}
+              label={<Hidden xs component="span">{formatMessage(personDetailsMessages.languageAndTimezone)}</Hidden>}
             >
               {(loading || saving) && <LinearProgress />}
               <h2 className={classNames('pure-visible-xs', styles.Form__Header)}>
