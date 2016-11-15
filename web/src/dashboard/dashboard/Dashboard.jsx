@@ -11,6 +11,7 @@ import { connect } from 'react-redux'
 import Helmet from 'react-helmet'
 
 // Our own imports
+import { Unit } from '../../components/pureGrids'
 import { addAcknowledgement } from '../../acknowledgement/AcknowledgementRedux'
 import MiniChart from '../../components/shared/MiniChart'
 import DashboardDevices from './DashboardDevices'
@@ -55,20 +56,20 @@ export class Dashboard extends PureComponent {
     return (
       <div className={styles.Content}>
         <Helmet title={formatMessage(messages.title)} titleTemplate="%s - Aspect" defaultTitle="Aspect" />
-        <div className="pure-g">
-          <div className="pure-u-lg-1-4 pure-u-md-1-3 pure-u-sm-1-2">
+        <div>
+          <Unit sm="1-2" md="1-3" lg="1-4">
             <DashboardDevices label={'Total Devices'} />
-          </div>
-          <div className="pure-u-lg-1-4 pure-u-md-1-3 pure-u-sm-1-2">
+          </Unit>
+          <Unit sm="1-2" md="1-3" lg="1-4">
             <DashboardTests label={'Total Tests'} />
-          </div>
-          <div className="pure-u-lg-1-4 pure-u-md-1-3 pure-u-sm-1-2">
+          </Unit>
+          <Unit sm="1-2" md="1-3" lg="1-4">
             <DashboardSites label={'Sites'} />
-          </div>
-          <div className="pure-u-lg-1-4 pure-u-md-1-3 pure-u-sm-1-2">
+          </Unit>
+          <Unit sm="1-2" md="1-3" lg="1-4">
             <DashboardErrorRate label={'Error Rate'} />
-          </div>
-          <div className="pure-u-lg-1-4 pure-u-md-1-3 pure-u-sm-1-2">
+          </Unit>
+          <Unit sm="1-2" md="1-3" lg="1-4">
             <Link to="/dashboard/inventory">
               <MiniChart
                 data={[1000, 1200, 700, 500, 400, 500, 600, 780, 1200, 1456]}
@@ -77,10 +78,10 @@ export class Dashboard extends PureComponent {
                 bgcolor={'#607d8b'}
               />
             </Link>
-          </div>
-          <div className="pure-u-lg-1-4 pure-u-md-1-3 pure-u-sm-1-2">
+          </Unit>
+          <Unit sm="1-2" md="1-3" lg="1-4">
             <DashboardContacts label={'Persons'} />
-          </div>
+          </Unit>
         </div>
       </div>
     )
