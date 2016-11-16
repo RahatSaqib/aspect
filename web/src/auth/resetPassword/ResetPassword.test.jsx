@@ -9,6 +9,8 @@ import {
   StepLabel,
   StepContent
 } from 'material-ui/Stepper'
+
+import { Hidden } from '../../components/pureGrids'
 import ResetPasswordEnterEmail from './ResetPasswordEnterEmail'
 
 describe('ResetPassword Component', () => {
@@ -53,14 +55,15 @@ describe('ResetPassword Component', () => {
     })
 
     it('should contain a vertical stepper for small screens and a horizontal stepper for large screens', () => {
-      const largeScreenDiv = ResetPasswordWrapper.find('div.pure-hidden-xs')
-      const smallScreenDiv = ResetPasswordWrapper.find('div.pure-hidden-xl')
+      const largeScreenDiv = ResetPasswordWrapper.find(Hidden).find({ xs: true, sm: true })
+      const smallScreenDiv = ResetPasswordWrapper.find(Hidden).find({ xl: true })
+
       assert.equal(largeScreenDiv.find(Stepper).props().orientation, 'horizontal')
       assert.equal(smallScreenDiv.find(Stepper).props().orientation, 'vertical')
     })
 
     it('should contain the same steps for both large and small screens', () => {
-      const smallScreenDiv = ResetPasswordWrapper.find('div.pure-hidden-xl')
+      const smallScreenDiv = ResetPasswordWrapper.find(Hidden).find({ xl: true })
       const smallScreenStepper = smallScreenDiv.find(Stepper)
       const smallScreenStep1Label = smallScreenStepper.find(StepLabel).at(0)
       const smallScreenStep1ResetPasswordEnterEmail =
@@ -74,30 +77,31 @@ describe('ResetPassword Component', () => {
       const smallScreenStep4Label = smallScreenStepper.find(StepLabel).at(3)
       const smallScreenStep4Finish = smallScreenStepper.find(StepContent).at(3).children()
 
-      let largeScreenDiv = ResetPasswordWrapper.find('div.pure-hidden-xs')
+      let largeScreenDiv = ResetPasswordWrapper.find(Hidden).find({ xs: true, sm: true })
       const largeScreenStepper = largeScreenDiv.find(Stepper)
       const largeScreenStep1Label = largeScreenStepper.find(StepLabel).at(0)
       const largeScreenStep2Label = largeScreenStepper.find(StepLabel).at(1)
       const largeScreenStep3Label = largeScreenStepper.find(StepLabel).at(2)
       const largeScreenStep4Label = largeScreenStepper.find(StepLabel).at(3)
       const largeScreenStep1ResetPasswordEnterEmail = largeScreenDiv.children().at(1)
+
       ResetPasswordWrapper = ResetPasswordWrapper.setState({
         stepIndex: 1
       })
-      largeScreenDiv = ResetPasswordWrapper.find('div.pure-hidden-xs')
+      largeScreenDiv = ResetPasswordWrapper.find(Hidden).find({ xs: true, sm: true })
       const largeScreenStep2CheckInbox = largeScreenDiv.children().at(1)
 
       ResetPasswordWrapper = ResetPasswordWrapper.setState({
         stepIndex: 2
       })
-      largeScreenDiv = ResetPasswordWrapper.find('div.pure-hidden-xs')
+      largeScreenDiv = ResetPasswordWrapper.find(Hidden).find({ xs: true })
       const largeScreenStep3ResetPasswordEnterPassword =
         largeScreenDiv.children().at(1).children().first()
 
       ResetPasswordWrapper = ResetPasswordWrapper.setState({
         stepIndex: 3
       })
-      largeScreenDiv = ResetPasswordWrapper.find('div.pure-hidden-xs')
+      largeScreenDiv = ResetPasswordWrapper.find(Hidden).find({ xs: true, sm: true })
       const largeScreenStep4Finish = largeScreenDiv.children().at(1)
 
       assert.deepEqual(largeScreenStep1Label.children().text(),
@@ -131,8 +135,8 @@ describe('ResetPassword Component', () => {
       })
 
       it('should show a progress bar', () => {
-        const smallScreenDiv = ResetPasswordWrapper.find('div.pure-hidden-xl')
-        const largeScreenDiv = ResetPasswordWrapper.find('div.pure-hidden-xs')
+        const smallScreenDiv = ResetPasswordWrapper.find(Hidden).find({ xl: true })
+        const largeScreenDiv = ResetPasswordWrapper.find(Hidden).find({ xs: true })
 
         assert.equal(smallScreenDiv.find(LinearProgress).length, 1)
         assert.equal(largeScreenDiv.find(LinearProgress).length, 1)
@@ -147,8 +151,8 @@ describe('ResetPassword Component', () => {
       })
 
       it('should show a progress bar', () => {
-        const smallScreenDiv = ResetPasswordWrapper.find('div.pure-hidden-xl')
-        const largeScreenDiv = ResetPasswordWrapper.find('div.pure-hidden-xs')
+        const smallScreenDiv = ResetPasswordWrapper.find(Hidden).find({ xl: true })
+        const largeScreenDiv = ResetPasswordWrapper.find(Hidden).find({ xs: true })
 
         assert.equal(smallScreenDiv.find(LinearProgress).length, 0)
         assert.equal(largeScreenDiv.find(LinearProgress).length, 0)
@@ -179,8 +183,10 @@ describe('ResetPassword Component', () => {
         ResetPasswordWrapper = ResetPasswordWrapper.setState({
           stepIndex: 1
         })
-        const step2Content = ResetPasswordWrapper.find('div.pure-hidden-xs').children().at(1)
+        const largeScreenDiv = ResetPasswordWrapper.find(Hidden).find({ xs: true })
+        const step2Content = largeScreenDiv.children().at(1)
         const iDidntReceiveAnEmailLink = step2Content.children().find('a')
+
         iDidntReceiveAnEmailLink.simulate('click')
         ResetPasswordWrapper.update()
         let adminHelpDialog = ResetPasswordWrapper.find(Dialog)
@@ -196,8 +202,10 @@ describe('ResetPassword Component', () => {
         ResetPasswordWrapper = ResetPasswordWrapper.setState({
           stepIndex: 1
         })
-        const step2Content = ResetPasswordWrapper.find('div.pure-hidden-xs').children().at(1)
+        const largeScreenDiv = ResetPasswordWrapper.find(Hidden).find({ xs: true })
+        const step2Content = largeScreenDiv.children().at(1)
         const iDidntReceiveAnEmailLink = step2Content.children().find('a')
+
         iDidntReceiveAnEmailLink.simulate('click')
         ResetPasswordWrapper.update()
         const adminHelpDialog = ResetPasswordWrapper.find(Dialog)
