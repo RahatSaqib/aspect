@@ -6,10 +6,12 @@ import proxyquire from 'proxyquire'
 import Immutable from 'immutable'
 import LinearProgress from 'material-ui/LinearProgress'
 import Paper from 'material-ui/Paper'
+import Helmet from 'react-helmet'
 import {Tabs, Tab} from 'material-ui/Tabs'
-import ContactDetailsForm from './ContactDetailsForm'
-import LoginDetailsForm from './LoginDetailsForm'
-import UserPreferencesForm from './UserPreferencesForm'
+import ContactDetailsForm from '../../person/detail/ContactDetailsForm'
+import LoginDetailsForm from '../../person/detail/LoginDetailsForm'
+import UserPreferencesForm from '../../person/detail/UserPreferencesForm'
+import {AccountDetails} from '../AccountRedux'
 
 describe('AccountDetails Component', () => {
   describe('AccountDetails', () => {
@@ -19,7 +21,7 @@ describe('AccountDetails Component', () => {
         connect: () => component => component
       }, fakeRedux = {
         bindActionCreators: (actionCreators) => actionCreators
-      }, AccountDetails = proxyquire('./AccountDetails', {
+      }, AccountDetailsComponent = proxyquire('./AccountDetails', {
         'react-intl': fakeIntl,
         'react-redux': fakeReactRedux,
         'redux': fakeRedux
@@ -28,37 +30,10 @@ describe('AccountDetails Component', () => {
     let props, AccountDetailsWrapper
 
     const shallowRenderAccountDetails = () => {
-      AccountDetailsWrapper = shallow(<AccountDetails {...props} />)
+      AccountDetailsWrapper = shallow(<AccountDetailsComponent {...props} />)
     }
 
-    const ContactDetailsRecord = Immutable.Record({
-        id: null,
-        name: null,
-        title: null,
-        email: null,
-        email2: null,
-        phone: null,
-        cell: null,
-        countryId: null,
-        stateId: null,
-        lgaId: null,
-        zip: null
-      }), LoginDetailsRecord = Immutable.Record({
-        id: null,
-        username: null
-      }), UserPreferencesRecord = Immutable.Record({
-        id: null,
-        timezone: null,
-        culture: null
-      }), AccountDetailsDataRecord = Immutable.Record({
-        contactDetails: new ContactDetailsRecord(),
-        loginDetails: new LoginDetailsRecord(),
-        userPreferences: new UserPreferencesRecord()
-      }), AccountDetailsRecord = Immutable.Record({
-        loading: false,
-        saving: false,
-        data: new AccountDetailsDataRecord()
-      })
+    const AccountDetailsRecord = new AccountDetails()
 
     beforeEach(() => {
       props = {
@@ -66,7 +41,7 @@ describe('AccountDetails Component', () => {
         setPageTitle: () => {},
         loading: false,
         saving: false,
-        accountDetails: (new AccountDetailsRecord()).get('data'),
+        accountDetails: AccountDetailsRecord.get('data'),
         saveContactDetails: () => {},
         saveLoginDetails: () => {},
         saveUserPreferences: () => {},
@@ -104,7 +79,9 @@ describe('AccountDetails Component', () => {
       })
 
       it('Should show a paper container with three tabs', () => {
-        assert.equal(AccountDetailsWrapper.node.props.children.type, Paper)
+        assert.equal(AccountDetailsWrapper.node.props.children.length, 2)
+        assert.equal(AccountDetailsWrapper.node.props.children[0].type, Helmet)
+        assert.equal(AccountDetailsWrapper.node.props.children[1].type, Paper)
         const paperContainer = AccountDetailsWrapper.find(Paper)
         assert.equal(paperContainer.length, 1)
         const tabsContainer = paperContainer.find(Tabs)

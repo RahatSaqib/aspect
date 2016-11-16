@@ -37,8 +37,8 @@ const renderFormField = props => {
 
   const selectItems = _.map(dataSource, item => {
     return {
-      key: item[valueKey],
-      value: item[valueKey],
+      key: item[valueKey] || '-1',
+      value: item[valueKey] || null,
       primaryText: item[textKey]
     }
   })

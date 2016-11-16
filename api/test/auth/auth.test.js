@@ -229,8 +229,7 @@ describe('auth endpoints', function () {
           id: 123,
           name: 'lockedaccount',
           password: 'whatevs',
-          culture: 'en-US',
-          password: ''
+          culture: 'en-US'
         })
       })
 
@@ -415,6 +414,7 @@ describe('auth endpoints', function () {
           clientId: 'request client id'
         }
       }
+      dbSpy.query.for('Get permissions for user and partner').resolvesWith([])
     })
 
     describe('When the user is changing both their username and password', function () {
@@ -440,7 +440,7 @@ describe('auth endpoints', function () {
         endpointUtils.callHandlerOn(endpoint)
           .with(requestData)
           .handleResponseWith(function () {
-            const updateUserDetails = dbSpy.query.withArgs('Save user details for currently logged in user').lastCall.returnValue.update.lastCall.args[0]
+            const updateUserDetails = dbSpy.query.withArgs('Update user details').lastCall.returnValue.update.lastCall.args[0]
             assert.isOk(updateUserDetails.password)
             assert.deepEqual(updateUserDetails, Object.assign(updateUserDetails, {
               lastPasswordChange: now,
@@ -474,7 +474,7 @@ describe('auth endpoints', function () {
         endpointUtils.callHandlerOn(endpoint)
           .with(requestData)
           .handleResponseWith(function () {
-            const updateUserDetails = dbSpy.query.withArgs('Save user details for currently logged in user').lastCall.returnValue.update.lastCall.args[0]
+            const updateUserDetails = dbSpy.query.withArgs('Update user details').lastCall.returnValue.update.lastCall.args[0]
             assert.notProperty(updateUserDetails, 'password')
             assert.deepEqual(updateUserDetails, {
               name: requestData.payload.newUsername
@@ -507,7 +507,7 @@ describe('auth endpoints', function () {
         endpointUtils.callHandlerOn(endpoint)
           .with(requestData)
           .handleResponseWith(function () {
-            const updateUserDetails = dbSpy.query.withArgs('Save user details for currently logged in user').lastCall.returnValue.update.lastCall.args[0]
+            const updateUserDetails = dbSpy.query.withArgs('Update user details').lastCall.returnValue.update.lastCall.args[0]
             assert.notProperty(updateUserDetails, 'username')
             assert.isOk(updateUserDetails.password)
             assert.deepEqual(updateUserDetails, Object.assign(updateUserDetails, {
@@ -571,8 +571,8 @@ describe('auth endpoints', function () {
       it('should not update username', function (done) {
         endpointUtils.callHandlerOn(endpoint)
           .with(requestData)
-          .handleResponseWith(function (response) {
-            const updateUserDetails = dbSpy.query.withArgs('Save user details for currently logged in user').lastCall.returnValue.update.lastCall.args[0]
+          .handleResponseWith(function () {
+            const updateUserDetails = dbSpy.query.withArgs('Update user details').lastCall.returnValue.update.lastCall.args[0]
             assert.isOk(updateUserDetails.password)
             assert.notOk(updateUserDetails.name)
             assert.deepEqual(updateUserDetails, Object.assign(updateUserDetails, {
@@ -595,7 +595,7 @@ describe('auth endpoints', function () {
         endpointUtils.callHandlerOn(endpoint)
           .with(requestData)
           .handleResponseWith(function () {
-            const updateUserDetails = dbSpy.query.withArgs('Save user details for currently logged in user').lastCall.returnValue.update.lastCall.args[0]
+            const updateUserDetails = dbSpy.query.withArgs('Update user details').lastCall.returnValue.update.lastCall.args[0]
             assert.notOk(updateUserDetails.password)
             assert.isOk(updateUserDetails.name)
             assert.deepEqual(updateUserDetails, updateUserDetails, {
@@ -612,7 +612,7 @@ describe('auth endpoints', function () {
     describe('When the username is already in use by another user', function () {
       beforeEach(function () {
         dbSpy.query.for('Get basic user details').resolvesWith(validUserRecord)
-        dbSpy.query.for('Get user id for username').resolvesWith({
+        dbSpy.query.for('Get user ID for username').resolvesWith({
           id: 321
         })
       })
@@ -641,7 +641,7 @@ describe('auth endpoints', function () {
       ]
 
       beforeEach(function () {
-        dbSpy.query.for('Get user id for username').resolvesWith({
+        dbSpy.query.for('Get user ID for username').resolvesWith({
           id: 123
         })
         dbSpy.query.for('Get basic user details').resolvesWith(validUserRecord)

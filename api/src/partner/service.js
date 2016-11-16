@@ -1,6 +1,6 @@
 let Promise = require('bluebird')
 let { knex, filterParams, sortPageParams } = require('../db')
-let { getConstraints, addConstraints } = require('../auth/constraints')
+let { getConstraints } = require('../auth/constraints')
 
 const SELECT_LIST_FIELDS = [
   'p.id', 'p.name', 'p.partnerTypeId', 'pt.name as partnerTypeName'

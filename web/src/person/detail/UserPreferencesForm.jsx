@@ -1,39 +1,21 @@
-import React from 'react'
+import React, { PropTypes } from 'react'
 import { reduxForm, Field } from 'redux-form/immutable'
 import RaisedButton from 'material-ui/RaisedButton'
 import _ from 'lodash'
-import { injectIntl, defineMessages } from 'react-intl'
+import { injectIntl } from 'react-intl'
 import TimezoneSelect from '../../components/shared/TimezoneSelect'
 import CountrySelect from '../../components/shared/CountrySelect'
-import styles from './AccountDetails.css'
-
-const messages = defineMessages({
-  timezone: {
-    id: 'pages.UserPreferences.timezone',
-    defaultMessage: 'Time Zone'
-  },
-  useDeviceTimezone: {
-    id: 'pages.UserPreferences.useDeviceTimezone',
-    defaultMessage: 'Use Computer\'s Time Zone'
-  },
-  language: {
-    id: 'pages.UserPreferences.language',
-    defaultMessage: 'Language'
-  },
-  save: {
-    id: 'pages.UserPreferences.save',
-    defaultMessage: 'Save'
-  }
-})
+import messages from './messages'
+import styles from './PersonDetail.css'
 
 const renderLanguageField = props => {
-  const {onSelectionChanged, input, selectFieldProps} = props,
-    onChange = (event, index, value) => {
-      if(onSelectionChanged){
-        onSelectionChanged(event, index, value)
-      }
-      input.onChange(value)
+  const {onSelectionChanged, input, selectFieldProps} = props
+  const onChange = (event, index, value) => {
+    if(onSelectionChanged){
+      onSelectionChanged(event, index, value)
     }
+    input.onChange(value)
+  }
   return (
     <CountrySelect name={input.name} value={input.value} dataSource={languages}
                    dataSourceConfig={{
@@ -52,16 +34,13 @@ const UserPreferencesForm = props => {
     <form onSubmit={handleSubmit} className={styles.Form}>
       <div className={styles.Form__Content}>
         <TimezoneSelect name="timezone" label={formatMessage(messages.timezone)}
-                        disabled={loading || saving} autoWidth
-                        defaultTimezoneText={formatMessage(messages.useDeviceTimezone)} />
+                        disabled={loading || saving} autoWidth />
         <br />
-        <Field name="culture" floatingLabelText={formatMessage(messages.language)}
-               selectFieldProps={{
-                 floatingLabelText: formatMessage(messages.language),
-                 disabled: (loading || saving),
-                 autoWidth: true
-               }}
-               disabled={loading || saving} component={renderLanguageField}  />
+        <Field name="culture" selectFieldProps={{
+          floatingLabelText: formatMessage(messages.language),
+          disabled: (loading || saving),
+          autoWidth: true
+        }} disabled={loading || saving} component={renderLanguageField}  />
       </div>
       <div className={styles.Form__ActionRow}>
         <RaisedButton disabled={pristine || invalid || loading} label={formatMessage(messages.save)} secondary type="submit" />
@@ -70,9 +49,17 @@ const UserPreferencesForm = props => {
   )
 }
 
+UserPreferencesForm.propTypes = {
+  loading: PropTypes.bool,
+  saving: PropTypes.bool,
+  onSubmit: PropTypes.func.isRequired,
+  onSubmitSuccess: PropTypes.func
+}
+
 export default _.flowRight(
   injectIntl,
   reduxForm({
+    enableReinitialize: true,
     form: 'userPreferences'
   }))(UserPreferencesForm)
 

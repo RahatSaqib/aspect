@@ -506,7 +506,7 @@ function* up(knex){
     consumableAssay.float('quantity').notNullable()
     consumableAssay.unique(['consumableId', 'assayId'])
   })
-  
+
   // Result status table
   yield knex.schema.createTable('ResultWorkflowStatus', resultWorkflowStatus => {
     resultWorkflowStatus.increments('id')
@@ -521,12 +521,13 @@ function* up(knex){
 
 function* down(knex){
   yield knex.raw('SET foreign_key_checks = 0')
+
+  yield knex.schema.dropTableIfExists('ConsumableAssay')
   yield knex.schema.dropTableIfExists('ResultWorkflowStatus')
   yield knex.schema.dropTableIfExists('ConsumableAssay')
   yield knex.schema.dropTableIfExists('ConsumableReason')
   yield knex.schema.dropTableIfExists('Unit')
   yield knex.schema.dropTableIfExists('Consumable')
-  yield knex.schema.dropTableIfExists('ResetPassword')
   yield knex.schema.dropTableIfExists('ResultCategoryAssay')
   yield knex.schema.dropTableIfExists('ResultType')
   yield knex.schema.dropTableIfExists('ResultCategory')
@@ -535,7 +536,6 @@ function* down(knex){
   yield knex.schema.dropTableIfExists('Sample')
   yield knex.schema.dropTableIfExists('Assay')
   yield knex.schema.dropTableIfExists('AssayType')
-  yield knex.schema.dropTableIfExists('Router')
   yield knex.schema.dropTableIfExists('DeviceSiteHistory')
   yield knex.schema.dropTableIfExists('Device')
   yield knex.schema.dropTableIfExists('Site')

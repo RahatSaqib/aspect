@@ -1,6 +1,6 @@
 import React, { PureComponent, PropTypes } from 'react'
 import { bindActionCreators } from 'redux'
-import { injectIntl, defineMessages } from 'react-intl'
+import { injectIntl } from 'react-intl'
 import _ from 'lodash'
 import { connect } from 'react-redux'
 import LinearProgress from 'material-ui/LinearProgress'
@@ -9,9 +9,10 @@ import {Tabs, Tab} from 'material-ui/Tabs'
 import MapsPersonPin from 'material-ui/svg-icons/maps/person-pin'
 import Language from 'material-ui/svg-icons/action/language'
 import Lock from 'material-ui/svg-icons/action/lock'
-import ContactDetailsForm from './ContactDetailsForm'
-import LoginDetailsForm from './LoginDetailsForm'
-import UserPreferencesForm from './UserPreferencesForm'
+import ContactDetailsForm from '../../person/detail/ContactDetailsForm'
+import LoginDetailsForm from '../../person/detail/LoginDetailsForm'
+import UserPreferencesForm from '../../person/detail/UserPreferencesForm'
+import Helmet from 'react-helmet'
 import {
   fetchAccountDetails,
   saveContactDetails,
@@ -20,29 +21,9 @@ import {
 } from '../AccountRedux'
 import { addAcknowledgement } from '../../acknowledgement/AcknowledgementRedux'
 import styles from './AccountDetails.css'
-
-const messages = defineMessages({
-  title: {
-    id: 'pages.AccountDetails.title',
-    defaultMessage: 'Account Details'
-  },
-  contactDetails: {
-    id: 'pages.AccountDetails.contactDetails',
-    defaultMessage: 'Contact Details'
-  },
-  usernameAndPassword: {
-    id: 'pages.AccountDetails.usernameAndPassword',
-    defaultMessage: 'Username & Password'
-  },
-  loginDetailsUpdated: {
-    id: 'pages.AccountDetails.loginDetailsUpdated',
-    defaultMessage: 'Login details changed successfully'
-  },
-  languageAndTimezone: {
-    id: 'pages.AccountDetails.languageAndTimezone',
-    defaultMessage: 'Language & Timezone'
-  }
-})
+import classNames from 'classnames'
+import accountDetailsMessages from './messages'
+import personDetailsMessages from '../../person/detail/messages'
 
 class AccountDetails extends PureComponent {
   static propTypes = {
@@ -52,7 +33,7 @@ class AccountDetails extends PureComponent {
   componentWillMount() {
     const { setPageTitle, intl } = this.props
     const { formatMessage } = intl
-    setPageTitle(formatMessage(messages.title))
+    setPageTitle(formatMessage(accountDetailsMessages.title))
   }
 
   constructor(props) {
@@ -86,54 +67,55 @@ class AccountDetails extends PureComponent {
   }
 
   render() {
-    const { loading, saving, accountDetails, saveContactDetails,
-        saveUserPreferences, saveLoginDetails, addAcknowledgement } = this.props,
-      { formatMessage } = this.props.intl,
-      saveLoginDetailsFailed = errors => {
-        if(!errors.currentPassword) {
-          this.closeCurrentPasswordInputDialog()
-        }
-      }, saveLoginDetailsSucceeded = () => {
+    const { intl: {formatMessage}, loading, saving, accountDetails, saveContactDetails,
+        saveUserPreferences, saveLoginDetails, addAcknowledgement } = this.props
+    const saveLoginDetailsFailed = errors => {
+      if(!errors.currentPassword) {
         this.closeCurrentPasswordInputDialog()
-        addAcknowledgement(formatMessage(messages.loginDetailsUpdated))
       }
+    }
+    const saveLoginDetailsSucceeded = () => {
+      this.closeCurrentPasswordInputDialog()
+      addAcknowledgement(formatMessage(personDetailsMessages.loginDetailsUpdated))
+    }
     return (
       <div className={styles.Content}>
+        <Helmet title={formatMessage(accountDetailsMessages.title)} titleTemplate="%s - Aspect" defaultTitle="Aspect" />
         <Paper>
           <Tabs>
-            <Tab className={styles.ResponsiveTab} icon={<MapsPersonPin />}
-                 label={<span className="pure-hidden-xs">{formatMessage(messages.contactDetails)}</span>}>
+            <Tab icon={<MapsPersonPin />}
+                 label={<span className="pure-hidden-xs">{formatMessage(personDetailsMessages.contactDetails)}</span>}>
               {(loading || saving) && <LinearProgress />}
-              <h2 className={'pure-visible-xs ' + styles.Form__Header}>
-                {formatMessage(messages.contactDetails)}
+              <h2 className={classNames('pure-visible-xs', styles.Form__Header)}>
+                {formatMessage(personDetailsMessages.contactDetails)}
               </h2>
-              {!loading && <ContactDetailsForm loading={loading || saving}
-                                               initialValues={accountDetails.get('contactDetails')}
-                                               onSubmit={saveContactDetails} />}
+              <ContactDetailsForm loading={loading || saving}
+                                  initialValues={accountDetails.get('contactDetails')}
+                                  onSubmit={saveContactDetails} />
             </Tab>
-            <Tab className={styles.ResponsiveTab} icon={<Lock />}
-                 label={<span className="pure-hidden-xs">{formatMessage(messages.usernameAndPassword)}</span>}>
+            <Tab icon={<Lock />}
+                 label={<span className="pure-hidden-xs">{formatMessage(accountDetailsMessages.usernameAndPassword)}</span>}>
               {(loading || saving) && <LinearProgress />}
-              <h2 className={'pure-visible-xs ' + styles.Form__Header}>
-                {formatMessage(messages.usernameAndPassword)}
+              <h2 className={classNames('pure-visible-xs', styles.Form__Header)}>
+                {formatMessage(accountDetailsMessages.usernameAndPassword)}
               </h2>
-              {!loading && <LoginDetailsForm loading={loading || saving}
-                                             initialValues={accountDetails.get('loginDetails')}
-                                             currentPasswordInputDialogOpen={this.state.currentPasswordInputDialogOpen}
-                                             openCurrentPasswordInputDialog={this.openCurrentPasswordInputDialog}
-                                             closeCurrentPasswordInputDialog={this.closeCurrentPasswordInputDialog}
-                                             onSubmit={saveLoginDetails} onSubmitFail={saveLoginDetailsFailed}
-                                             onSubmitSuccess={saveLoginDetailsSucceeded} />}
+              <LoginDetailsForm loading={loading || saving}
+                                initialValues={accountDetails.get('loginDetails')}
+                                currentPasswordInputDialogOpen={this.state.currentPasswordInputDialogOpen}
+                                openCurrentPasswordInputDialog={this.openCurrentPasswordInputDialog}
+                                closeCurrentPasswordInputDialog={this.closeCurrentPasswordInputDialog}
+                                onSubmit={saveLoginDetails} onSubmitFail={saveLoginDetailsFailed}
+                                onSubmitSuccess={saveLoginDetailsSucceeded} />
             </Tab>
-            <Tab className={styles.ResponsiveTab} icon={<Language />}
-                 label={<span className="pure-hidden-xs">{formatMessage(messages.languageAndTimezone)}</span>}>
+            <Tab icon={<Language />}
+                 label={<span className="pure-hidden-xs">{formatMessage(personDetailsMessages.languageAndTimezone)}</span>}>
               {(loading || saving) && <LinearProgress />}
-              <h2 className={'pure-visible-xs ' + styles.Form__Header}>
-                {formatMessage(messages.languageAndTimezone)}
+              <h2 className={classNames('pure-visible-xs', styles.Form__Header)}>
+                {formatMessage(personDetailsMessages.languageAndTimezone)}
               </h2>
-              {!loading && <UserPreferencesForm loading={loading || saving}
-                                                initialValues={accountDetails.get('userPreferences')}
-                                                onSubmit={saveUserPreferences} />}
+              <UserPreferencesForm loading={loading || saving}
+                                   initialValues={accountDetails.get('userPreferences')}
+                                   onSubmit={saveUserPreferences} />
             </Tab>
           </Tabs>
         </Paper>

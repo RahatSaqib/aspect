@@ -61,49 +61,69 @@ function createReceiveLgasForLocationSelector(lgas, selectedCountryId, selectedS
   }
 }
 
-const fiveMinutes = 300000 //five minutes
+const cacheExpiryTime = 5 * 60 * 1000 //five minutes
 
 export const fetchCountriesForLocationSelector = function(forceRefresh, countriesState,
                                                           selectedCountryId, selectedStateId) {
-  return dispatch => {
-    const now = new Date()
-    if(!countriesState.get('loading') && (forceRefresh || !countriesState.get('lastRefreshed') ||
-      Math.abs(now.getTime() - countriesState.get('lastRefreshed').getTime()) > fiveMinutes)) {
-      dispatch(createRequestCountriesForLocationSelector())
-      let path = '/geography/country-select-list'
-      if(selectedCountryId) {
-        path += '/' + selectedCountryId
+  const now = new Date()
+  if(!countriesState.get('loading') && (forceRefresh || !countriesState.get('lastRefreshed') ||
+    Math.abs(now.getTime() - countriesState.get('lastRefreshed').getTime()) > cacheExpiryTime ||
+    selectedCountryId)) {
+    if(forceRefresh || !countriesState.get('lastRefreshed') ||
+      Math.abs(now.getTime() - countriesState.get('lastRefreshed').getTime()) > cacheExpiryTime) {
+      return dispatch => {
+        dispatch(createRequestCountriesForLocationSelector())
+        let path = '/geography/country-select-list'
+        if(selectedCountryId) {
+          path += '/' + selectedCountryId
+          if(selectedStateId) {
+            path += '/' + selectedStateId
+          }
+        }
+        return aspectFetch(path)
+          .then(json => dispatch(createReceiveCountriesForLocationSelector(json.data)))
+          .catch(err => dispatch(addError('Loading countries failed', err.message, err)))
+      }
+    } else if (selectedCountryId) {
+      const selectedCountry = countriesState.get('items').find(country => country.get('id') === selectedCountryId)
+      return fetchStatesForLocationSelector(false, selectedCountry, selectedStateId)
+    }
+  }
+  return () => {}
+}
+
+export const fetchStatesForLocationSelector = function(forceRefresh, selectedCountry, selectedStateId) {
+  const now = new Date()
+  if(!selectedCountry.getIn(['children', 'loading']) && (forceRefresh || !selectedCountry.getIn(['children', 'lastRefreshed']) ||
+    Math.abs(now.getTime() - selectedCountry.getIn(['children', 'lastRefreshed']).getTime()) > cacheExpiryTime ||
+    selectedStateId)) {
+    if(forceRefresh || !selectedCountry.getIn(['children', 'lastRefreshed']) ||
+      Math.abs(now.getTime() - selectedCountry.getIn(['children', 'lastRefreshed']).getTime()) > cacheExpiryTime)
+    {
+      return dispatch => {
+        dispatch(createRequestStatesForLocationSelector(selectedCountry.get('id')))
+        let path = '/geography/state-select-list/' + selectedCountry.get('id')
         if(selectedStateId) {
           path += '/' + selectedStateId
         }
+        return aspectFetch(path)
+          .then(json => dispatch(createReceiveStatesForLocationSelector(json.data, selectedCountry.get('id'))))
+          .catch(err => dispatch(addError('Loading states failed', err.message, err)))
       }
-      return aspectFetch(path)
-        .then(json => dispatch(createReceiveCountriesForLocationSelector(json.data)))
-        .catch(err => dispatch(addError('Loading countries failed', err.message, err)))
+    } else if(selectedStateId) {
+      const selectedState = selectedCountry.getIn(['children', 'items']).find(state => state.get('id') === selectedStateId)
+      return fetchLgasForLocationSelector(false, selectedCountry, selectedState)
     }
   }
-}
-
-export const fetchStatesForLocationSelector = function(forceRefresh, selectedCountry) {
-  return dispatch => {
-    const now = new Date()
-    if(!selectedCountry.getIn(['children', 'loading']) && (forceRefresh || !selectedCountry.getIn(['children', 'lastRefreshed']) ||
-      Math.abs(now.getTime() - selectedCountry.getIn(['children', 'lastRefreshed']).getTime()) > fiveMinutes)) {
-      dispatch(createRequestStatesForLocationSelector(selectedCountry.get('id')))
-      let path = '/geography/state-select-list/' + selectedCountry.get('id')
-      return aspectFetch(path)
-        .then(json => dispatch(createReceiveStatesForLocationSelector(json.data, selectedCountry.get('id'))))
-        .catch(err => dispatch(addError('Loading states failed', err.message, err)))
-    }
-  }
+  return () => {}
 }
 
 export const fetchLgasForLocationSelector = function(forceRefresh, selectedCountry, selectedState) {
-  return dispatch => {
-    const now = new Date()
-    if(selectedState && !selectedState.getIn(['children', 'loading']) &&
-      (forceRefresh || !selectedState.getIn(['children', 'lastRefreshed']) ||
-      Math.abs(now.getTime() - selectedState.getIn(['children', 'lastRefreshed']).getTime()) > fiveMinutes)) {
+  const now = new Date()
+  if(selectedState && !selectedState.getIn(['children', 'loading']) &&
+    (forceRefresh || !selectedState.getIn(['children', 'lastRefreshed']) ||
+    Math.abs(now.getTime() - selectedState.getIn(['children', 'lastRefreshed']).getTime()) > cacheExpiryTime)) {
+    return dispatch => {
       dispatch(createRequestLgasForLocationSelector(selectedCountry.get('id'), selectedState.get('id')))
       let path = '/geography/lga-select-list/' + selectedState.get('id')
       return aspectFetch(path)
@@ -111,25 +131,30 @@ export const fetchLgasForLocationSelector = function(forceRefresh, selectedCount
         .catch(err => dispatch(addError('Loading LGAs failed', err.message, err)))
     }
   }
+  return () => {}
 }
 
 /*
  * ---------------- Reducers -----------------
  */
-const LazyLoadItems = Immutable.Record({
-    loading: false,
-    items: Immutable.List(),
-    lastRefreshed: undefined
-  }), LazyLoadParent = Immutable.Record({
-    id: undefined,
-    name: undefined,
-    children: new LazyLoadItems()
-  }), LazyLoadChild = Immutable.Record({
-    id: undefined,
-    name: undefined
-  })
+export const LazyLoadItems = Immutable.Record({
+  loading: false,
+  items: Immutable.List(),
+  lastRefreshed: undefined
+})
 
-const Geograpy = Immutable.Record({
+export const LazyLoadParent = Immutable.Record({
+  id: undefined,
+  name: undefined,
+  children: new LazyLoadItems()
+})
+
+export const LazyLoadChild = Immutable.Record({
+  id: undefined,
+  name: undefined
+})
+
+const Geography = Immutable.Record({
   countriesForLocationSelector: new LazyLoadItems({
     loading: false,
     items: Immutable.List([]),
@@ -137,7 +162,7 @@ const Geograpy = Immutable.Record({
   })
 })
 
-const initialState = new Geograpy()
+const initialState = new Geography()
 
 function requestCountriesForLocationSelector(state) {
   return state.setIn(['countriesForLocationSelector', 'loading'], true)

@@ -6,7 +6,7 @@ let shared = require('../utils/sharedToken')
 let server = supertest.agent('http://localhost:8080')
 let assert = chai.assert
 
-describe('Inventory Routes',function(){
+describe('Consumable Routes',function(){
 
   describe('Consumable Type Route', function(){
     let path = '/api/inventory/consumable-types'
