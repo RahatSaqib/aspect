@@ -1,6 +1,5 @@
 {
   "AWSTemplateFormatVersion": "2010-09-09",
-  "Description": "New Aspect Deployment",
   "Parameters": {
     "DeploymentName": {
       "Type": "String",
@@ -10,12 +9,9 @@
       "NoEcho": "true",
       "Type": "String",
       "Default": "MyPassword"
-    },
-    "AvailabilityZone": {
-      "Type": "String",
-      "Default": "us-east-1c"
     }
   },
+  "Description": "Aspect Deployment",
   "Resources": {
     "AspectVPC": {
       "Type": "AWS::EC2::VPC",
@@ -34,9 +30,7 @@
       "Type": "AWS::EC2::Subnet",
       "Properties": {
         "CidrBlock": "172.31.48.0/20",
-        "AvailabilityZone": {
-          "Ref": "AvailabilityZone"
-        },
+        "AvailabilityZone": "us-east-1a",
         "VpcId": {
           "Ref": "AspectVPC"
         },
@@ -50,9 +44,7 @@
       "Type": "AWS::EC2::Subnet",
       "Properties": {
         "CidrBlock": "172.31.16.0/20",
-        "AvailabilityZone": {
-          "Ref": "AvailabilityZone"
-        },
+        "AvailabilityZone": "us-east-1c",
         "VpcId": {
           "Ref": "AspectVPC"
         },
@@ -66,9 +58,7 @@
       "Type": "AWS::EC2::Subnet",
       "Properties": {
         "CidrBlock": "172.31.32.0/20",
-        "AvailabilityZone": {
-          "Ref": "AvailabilityZone"
-        },
+        "AvailabilityZone": "us-east-1d",
         "VpcId": {
           "Ref": "AspectVPC"
         },
@@ -82,9 +72,7 @@
       "Type": "AWS::EC2::Subnet",
       "Properties": {
         "CidrBlock": "172.31.0.0/20",
-        "AvailabilityZone": {
-          "Ref": "AvailabilityZone"
-        },
+        "AvailabilityZone": "us-east-1e",
         "VpcId": {
           "Ref": "AspectVPC"
         },
@@ -144,10 +132,159 @@
       }
     },
 
+    "AspectCloudfront": {
+      "Type": "AWS::CloudFront::Distribution",
+      "Properties": {
+        "DistributionConfig": {
+          "Aliases": [
+            { "Fn::Join": ["", [{ "Ref": "DeploymentName" }, ".aspect.id"]] }
+          ],
+          "Enabled": true,
+          "DefaultRootObject": "index.html",
+          "PriceClass": "PriceClass_All",
+          "CustomErrorResponses": [
+            {
+              "ErrorCachingMinTTL": 5,
+              "ErrorCode": 404,
+              "ResponseCode": "200",
+              "ResponsePagePath": "/index.html"
+            }
+          ],
+          "CacheBehaviors": [
+            {
+              "TargetOriginId": { "Ref": "AspectS3Web" },
+              "PathPattern": "*.html",
+              "ViewerProtocolPolicy": "allow-all",
+              "MinTTL": 0,
+              "AllowedMethods": [
+                "HEAD",
+                "GET"
+              ],
+              "CachedMethods": [
+                "HEAD",
+                "GET"
+              ],
+              "ForwardedValues": {
+                "Cookies": {
+                  "Forward": "none"
+                },
+                "QueryString": false
+              }
+            }
+          ],
+          "DefaultCacheBehavior": {
+            "TargetOriginId": { "Ref": "AspectS3Web" },
+            "ViewerProtocolPolicy": "allow-all",
+            "MinTTL": 0,
+            "AllowedMethods": [
+              "HEAD",
+              "GET"
+            ],
+            "CachedMethods": [
+              "HEAD",
+              "GET"
+            ],
+            "ForwardedValues": {
+              "Cookies": {
+                "Forward": "none"
+              },
+              "QueryString": false
+            }
+          },
+          "Origins": [
+            {
+              "DomainName": { "Fn::Join": ["", [{ "Ref": "DeploymentName" }, "-aspect-web.s3.amazonaws.com"]] },
+              "Id": { "Ref": "AspectS3Web" },
+              "S3OriginConfig": { }
+            }
+          ],
+          "Restrictions": {
+            "GeoRestriction": {
+              "RestrictionType": "none",
+              "Locations": []
+            }
+          },
+          "ViewerCertificate": {
+            "CloudFrontDefaultCertificate": "true",
+            "MinimumProtocolVersion": "SSLv3"
+          }
+        }
+      }
+    },
+
+    "AspectDBSG": {
+      "Type": "AWS::EC2::SecurityGroup",
+      "Properties": {
+        "GroupDescription": { "Fn::Join": ["", ["Security group for access to ", { "Ref": "DeploymentName" }, " aspect DB in RDS"]] },
+        "VpcId": {
+          "Ref": "AspectVPC"
+        },
+        "Tags": [{
+          "Key": "Name",
+          "Value": { "Fn::Join": ["", [{ "Ref": "DeploymentName" }, "_AspectDBSG"]] }
+        }]
+      }
+    },
+
+    "AspectAPISG": {
+      "Type": "AWS::EC2::SecurityGroup",
+      "Properties": {
+        "GroupDescription": { "Fn::Join": ["", ["Security group for access to ", { "Ref": "DeploymentName" }, " aspect API on port 80"]] },
+        "VpcId": {
+          "Ref": "AspectVPC"
+        },
+        "Tags": [{
+          "Key": "Name",
+          "Value": { "Fn::Join": ["", [{ "Ref": "DeploymentName" }, "_AspectAPISG"]] }
+        }]
+      }
+    },
+
+    "AspectRDS": {
+      "Type": "AWS::RDS::DBInstance",
+      "Properties": {
+        "AllocatedStorage": "10",
+        "AllowMajorVersionUpgrade": "false",
+        "AutoMinorVersionUpgrade": "true",
+        "DBInstanceClass": "db.t2.micro",
+        "DBInstanceIdentifier": { "Fn::Join": ["", ["aspect-", { "Ref": "DeploymentName" }]] },
+        "Port": "3306",
+        "PubliclyAccessible": "true",
+        "StorageType": "gp2",
+        "BackupRetentionPeriod": "35",
+        "MasterUsername": "master",
+        "MasterUserPassword": {
+          "Ref": "RDSMasterPassword"
+        },
+        "PreferredBackupWindow": "01:00-01:30",
+        "PreferredMaintenanceWindow": "sat:02:00-sat:03:00",
+        "DBName": "aspect",
+        "Engine": "mysql",
+        "EngineVersion": "5.7.11",
+        "LicenseModel": "general-public-license",
+        "DBSubnetGroupName": {
+          "Ref": "AspectDBSubnetGroup"
+        },
+        "VPCSecurityGroups": [
+          {
+            "Ref": "AspectDBSG"
+          }
+        ],
+        "Tags": [{
+          "Key": "Name",
+          "Value": { "Fn::Join": ["", [{ "Ref": "DeploymentName" }, "_AspectRDS"]] }
+        }, {
+          "Key": "workload-type",
+          "Value": "other"
+        }]
+      }
+    },
+
     "AspectAPIEnv": {
       "Type": "AWS::ElasticBeanstalk::Environment",
       "Properties": {
         "ApplicationName": "aspect-api",
+        "EnvironmentName": { "Fn::Join": ["", [{ "Ref": "DeploymentName" }, "-aspect-api"]] },
         "SolutionStackName": "64bit Amazon Linux 2016.09 v3.1.0 running Node.js",
         "Tier": {
           "Name": "WebServer",
@@ -173,11 +310,6 @@
             "Namespace": "aws:autoscaling:launchconfiguration",
             "OptionName": "InstanceType",
             "Value": "t2.micro"
-          },
-          {
-            "Namespace": "aws:autoscaling:launchconfiguration",
-            "OptionName": "SecurityGroups",
-            "Value": "awseb-e-bxjjthxba2-stack-AWSEBSecurityGroup-U65SIA6X06FN"
           },
           {
             "Namespace": "aws:autoscaling:trigger",
@@ -255,11 +387,6 @@
             "Value": "80"
           },
           {
-            "Namespace": "aws:elb:loadbalancer",
-            "OptionName": "SecurityGroups",
-            "Value": "sg-bd815bc0"
-          },
-          {
             "Namespace": "aws:elb:policies",
             "OptionName": "ConnectionDrainingEnabled",
             "Value": "true"
@@ -269,142 +396,8 @@
           "Key": "Name",
           "Value": { "Fn::Join": ["", [{ "Ref": "DeploymentName" }, "_AspectAPIEnv"]] }
         }]
-      }
-    },
-
-    "AspectCloudfront": {
-      "Type": "AWS::CloudFront::Distribution",
-      "Properties": {
-        "DistributionConfig": {
-          "Aliases": [
-            { "Fn::Join": ["", [{ "Ref": "DeploymentName" }, ".aspect.id"]] }
-          ],
-          "Enabled": true,
-          "DefaultRootObject": "index.html",
-          "PriceClass": "PriceClass_All",
-          "CustomErrorResponses": [
-            {
-              "ErrorCachingMinTTL": 5,
-              "ErrorCode": 404,
-              "ResponseCode": "200",
-              "ResponsePagePath": "/index.html"
-            }
-          ],
-          "CacheBehaviors": [
-            {
-              "TargetOriginId": { "Fn::Join": ["", ["S3-", { "Ref": "DeploymentName" }, "-aspect-web"]] },
-              "PathPattern": "*.html",
-              "ViewerProtocolPolicy": "allow-all",
-              "MinTTL": 0,
-              "AllowedMethods": [
-                "HEAD",
-                "GET"
-              ],
-              "CachedMethods": [
-                "HEAD",
-                "GET"
-              ],
-              "ForwardedValues": {
-                "Cookies": {
-                  "Forward": "none"
-                }
-              }
-            }
-          ],
-          "DefaultCacheBehavior": {
-            "TargetOriginId": { "Fn::Join": ["", ["S3-", { "Ref": "DeploymentName" }, "-aspect-web"]] },
-            "ViewerProtocolPolicy": "allow-all",
-            "MinTTL": 0,
-            "AllowedMethods": [
-              "HEAD",
-              "GET"
-            ],
-            "CachedMethods": [
-              "HEAD",
-              "GET"
-            ],
-            "ForwardedValues": {
-              "Cookies": {
-                "Forward": "none"
-              }
-            }
-          },
-          "Origins": [
-            {
-              "DomainName": { "Fn::Join": ["", [{ "Ref": "DeploymentName" }, "-aspect-web.s3.amazonaws.com"]] },
-              "Id": { "Fn::Join": ["", ["S3-", { "Ref": "DeploymentName" }, "-aspect-web"]] },
-              "S3OriginConfig": { }
-            }
-          ],
-          "Restrictions": {
-            "GeoRestriction": {
-              "RestrictionType": "none",
-              "Locations": []
-            }
-          },
-          "ViewerCertificate": {
-            "CloudFrontDefaultCertificate": "true",
-            "MinimumProtocolVersion": "SSLv3"
-          }
-        },
-        "Tags": [{
-          "Key": "Name",
-          "Value": { "Fn::Join": ["", [{ "Ref": "DeploymentName" }, "_AspectCloudfront"]] }
-        }]
-      }
-    },
-
-    "AspectDBSG": {
-      "Type": "AWS::EC2::SecurityGroup",
-      "Properties": {
-        "GroupDescription": { "Fn::Join": ["", ["Security group for access to ", { "Ref": "DeploymentName" }, " aspect DB in RDS"]] },
-        "VpcId": {
-          "Ref": "AspectVPC"
-        },
-        "Tags": [{
-          "Key": "Name",
-          "Value": { "Fn::Join": ["", [{ "Ref": "DeploymentName" }, "_AspectDBSG"]] }
-        }]
-      }
-    },
-
-    "AspectRDS": {
-      "Type": "AWS::RDS::DBInstance",
-      "Properties": {
-        "AllocatedStorage": "10",
-        "AllowMajorVersionUpgrade": "false",
-        "AutoMinorVersionUpgrade": "true",
-        "DBInstanceClass": "db.t2.micro",
-        "Port": "3306",
-        "PubliclyAccessible": "true",
-        "StorageType": "gp2",
-        "BackupRetentionPeriod": "35",
-        "MasterUsername": "master",
-        "MasterUserPassword": {
-          "Ref": "RDSMasterPassword"
-        },
-        "PreferredBackupWindow": "01:00-01:30",
-        "PreferredMaintenanceWindow": "sat:02:00-sat:03:00",
-        "DBName": "aspect",
-        "Engine": "mysql",
-        "EngineVersion": "5.7.11",
-        "LicenseModel": "general-public-license",
-        "DBSubnetGroupName": {
-          "Ref": "AspectDBSubnetGroup"
-        },
-        "VPCSecurityGroups": [
-          {
-            "Ref": "AspectDBSG"
-          }
-        ],
-        "Tags": [{
-          "Key": "Name",
-          "Value": { "Fn::Join": ["", [{ "Ref": "DeploymentName" }, "_AspectRDS"]] }
-        }, {
-          "Key": "workload-type",
-          "Value": "other"
-        }]
-      }
+      },
+      "DependsOn": "AspectRDS"
     },
 
     "AspectS3Web": {
@@ -503,11 +496,7 @@
               }
             }
           ]
-        },
-        "Tags": [{
-          "Key": "Name",
-          "Value": { "Fn::Join": ["", [{ "Ref": "DeploymentName" }, "_S3AspectConfigPolicy"]] }
-        }]
+        }
       }
     },
 
@@ -561,14 +550,9 @@
               }
             }
           ]
-        },
-        "Tags": [{
-          "Key": "Name",
-          "Value": { "Fn::Join": ["", [{ "Ref": "DeploymentName" }, "_AspectS3WebPolicy"]] }
-        }]
+        }
       }
     },
-
 
     "AspectACLEntry1": {
       "Type": "AWS::EC2::NetworkAclEntry",
@@ -580,11 +564,7 @@
         "RuleNumber": "100",
         "NetworkAclId": {
           "Ref": "AspectACL"
-        },
-        "Tags": [{
-          "Key": "Name",
-          "Value": { "Fn::Join": ["", [{ "Ref": "DeploymentName" }, "_AspectACLEntry1"]] }
-        }]
+        }
       }
     },
     "AspectACLEntry2": {
@@ -596,11 +576,7 @@
         "RuleNumber": "100",
         "NetworkAclId": {
           "Ref": "AspectACL"
-        },
-        "Tags": [{
-          "Key": "Name",
-          "Value": { "Fn::Join": ["", [{ "Ref": "DeploymentName" }, "_AspectACLEntry2"]] }
-        }]
+        }
       }
     },
     "AspectACLSubnet1": {
@@ -611,11 +587,7 @@
         },
         "SubnetId": {
           "Ref": "AspectSubnet1"
-        },
-        "Tags": [{
-          "Key": "Name",
-          "Value": { "Fn::Join": ["", [{ "Ref": "DeploymentName" }, "_AspectACLSubnet1"]] }
-        }]
+        }
       }
     },
     "AspectACLSubnet2": {
@@ -626,11 +598,7 @@
         },
         "SubnetId": {
           "Ref": "AspectSubnet2"
-        },
-        "Tags": [{
-          "Key": "Name",
-          "Value": { "Fn::Join": ["", [{ "Ref": "DeploymentName" }, "_AspectACLSubnet2"]] }
-        }]
+        }
       }
     },
     "AspectACLSubnet3": {
@@ -641,11 +609,7 @@
         },
         "SubnetId": {
           "Ref": "AspectSubnet3"
-        },
-        "Tags": [{
-          "Key": "Name",
-          "Value": { "Fn::Join": ["", [{ "Ref": "DeploymentName" }, "_AspectACLSubnet3"]] }
-        }]
+        }
       }
     },
     "AspectACLSubnet4": {
@@ -656,11 +620,7 @@
         },
         "SubnetId": {
           "Ref": "AspectSubnet4"
-        },
-        "Tags": [{
-          "Key": "Name",
-          "Value": { "Fn::Join": ["", [{ "Ref": "DeploymentName" }, "_AspectACLSubnet4"]] }
-        }]
+        }
       }
     },
     "AspectGW": {
@@ -671,11 +631,7 @@
         },
         "InternetGatewayId": {
           "Ref": "AspectIG"
-        },
-        "Tags": [{
-          "Key": "Name",
-          "Value": { "Fn::Join": ["", [{ "Ref": "DeploymentName" }, "_AspectGW"]] }
-        }]
+        }
       }
     },
     "AspectRoute": {
@@ -687,11 +643,7 @@
         },
         "GatewayId": {
           "Ref": "AspectIG"
-        },
-        "Tags": [{
-          "Key": "Name",
-          "Value": { "Fn::Join": ["", [{ "Ref": "DeploymentName" }, "_AspectRoute"]] }
-        }]
+        }
       },
       "DependsOn": "AspectGW"
     },
@@ -704,11 +656,7 @@
         },
         "DhcpOptionsId": {
           "Ref": "AspectDHCP"
-        },
-        "Tags": [{
-          "Key": "Name",
-          "Value": { "Fn::Join": ["", [{ "Ref": "DeploymentName" }, "_AspectDHCPAssoc"]] }
-        }]
+        }
       }
     },
     "AspectIngress1": {
@@ -720,11 +668,7 @@
         "IpProtocol": "tcp",
         "FromPort": "3306",
         "ToPort": "3306",
-        "CidrIp": "24.61.236.22/32",
-        "Tags": [{
-          "Key": "Name",
-          "Value": { "Fn::Join": ["", [{ "Ref": "DeploymentName" }, "_AspectIngress2"]] }
-        }]
+        "CidrIp": "24.61.236.22/32"
       }
     },
     "AspectIngress2": {
@@ -736,11 +680,7 @@
         "IpProtocol": "tcp",
         "FromPort": "3306",
         "ToPort": "3306",
-        "CidrIp": "73.219.141.209/32",
-        "Tags": [{
-          "Key": "Name",
-          "Value": { "Fn::Join": ["", [{ "Ref": "DeploymentName" }, "_AspectIngress3"]] }
-        }]
+        "CidrIp": "73.219.141.209/32"
       }
     },
     "AspectIngress3": {
@@ -752,11 +692,7 @@
         "IpProtocol": "tcp",
         "FromPort": "3306",
         "ToPort": "3306",
-        "CidrIp": "93.113.92.138/32",
-        "Tags": [{
-          "Key": "Name",
-          "Value": { "Fn::Join": ["", [{ "Ref": "DeploymentName" }, "_AspectIngress4"]] }
-        }]
+        "CidrIp": "93.113.92.138/32"
       }
     },
     "AspectIngress4": {
@@ -768,11 +704,7 @@
         "IpProtocol": "tcp",
         "FromPort": "3306",
         "ToPort": "3306",
-        "CidrIp": "96.89.207.156/32",
-        "Tags": [{
-          "Key": "Name",
-          "Value": { "Fn::Join": ["", [{ "Ref": "DeploymentName" }, "_AspectIngress5"]] }
-        }]
+        "CidrIp": "96.89.207.156/32"
       }
     },
     "AspectIngress5": {
@@ -784,11 +716,7 @@
         "IpProtocol": "tcp",
         "FromPort": "3306",
         "ToPort": "3306",
-        "CidrIp": "96.127.33.204/32",
-        "Tags": [{
-          "Key": "Name",
-          "Value": { "Fn::Join": ["", [{ "Ref": "DeploymentName" }, "_AspectIngress6"]] }
-        }]
+        "CidrIp": "96.127.33.204/32"
       }
     },
     "AspectIngress6": {
@@ -800,11 +728,7 @@
         "IpProtocol": "tcp",
         "FromPort": "3306",
         "ToPort": "3306",
-        "CidrIp": "155.93.128.122/32",
-        "Tags": [{
-          "Key": "Name",
-          "Value": { "Fn::Join": ["", [{ "Ref": "DeploymentName" }, "_AspectIngress7"]] }
-        }]
+        "CidrIp": "155.93.128.122/32"
       }
     },
     "AspectIngress7": {
@@ -816,11 +740,7 @@
         "IpProtocol": "tcp",
         "FromPort": "3306",
         "ToPort": "3306",
-        "CidrIp": "173.255.197.184/32",
-        "Tags": [{
-          "Key": "Name",
-          "Value": { "Fn::Join": ["", [{ "Ref": "DeploymentName" }, "_AspectIngress8"]] }
-        }]
+        "CidrIp": "173.255.197.184/32"
       }
     },
     "AspectIngress8": {
@@ -832,11 +752,7 @@
         "IpProtocol": "tcp",
         "FromPort": "3306",
         "ToPort": "3306",
-        "CidrIp": "178.168.61.218/32",
-        "Tags": [{
-          "Key": "Name",
-          "Value": { "Fn::Join": ["", [{ "Ref": "DeploymentName" }, "_AspectIngress9"]] }
-        }]
+        "CidrIp": "178.168.61.218/32"
       }
     },
     "AspectIngress9": {
@@ -848,11 +764,7 @@
         "IpProtocol": "tcp",
         "FromPort": "3306",
         "ToPort": "3306",
-        "CidrIp": "95.42.145.218/32",
-        "Tags": [{
-          "Key": "Name",
-          "Value": { "Fn::Join": ["", [{ "Ref": "DeploymentName" }, "_AspectIngress10"]] }
-        }]
+        "CidrIp": "95.42.145.218/32"
       }
     },
     "AspectIngress10": {
@@ -864,11 +776,7 @@
         "IpProtocol": "tcp",
         "FromPort": "3306",
         "ToPort": "3306",
-        "CidrIp": "172.31.28.214/32",
-        "Tags": [{
-          "Key": "Name",
-          "Value": { "Fn::Join": ["", [{ "Ref": "DeploymentName" }, "_AspectIngress11"]] }
-        }]
+        "CidrIp": "172.31.28.214/32"
       }
     },
     "AspectIngress11": {
@@ -878,14 +786,33 @@
           "Ref": "AspectDBSG"
         },
         "IpProtocol": "tcp",
-        "FromPort": "0",
-        "ToPort": "0",
-        "SourceSecurityGroupId": "sg-cdc4dab6",
-        "SourceSecurityGroupOwnerId": "041127481730",
-        "Tags": [{
-          "Key": "Name",
-          "Value": { "Fn::Join": ["", [{ "Ref": "DeploymentName" }, "_AspectIngress12"]] }
-        }]
+        "FromPort": "80",
+        "ToPort": "80",
+        "CidrIp": "0.0.0.0/0"
+      }
+    },
+    "AspectIngress12": {
+      "Type": "AWS::EC2::SecurityGroupIngress",
+      "Properties": {
+        "GroupId": {
+          "Ref": "AspectAPISG"
+        },
+        "IpProtocol": "tcp",
+        "FromPort": "80",
+        "ToPort": "80",
+        "CidrIp": "0.0.0.0/0"
+      }
+    },
+    "AspectIngress13": {
+      "Type": "AWS::EC2::SecurityGroupIngress",
+      "Properties": {
+        "GroupId": {
+          "Ref": "AspectAPISG"
+        },
+        "IpProtocol": "tcp",
+        "FromPort": "22",
+        "ToPort": "22",
+        "CidrIp": "0.0.0.0/0"
       }
     },
     "AspectEgress1": {
@@ -895,11 +822,7 @@
           "Ref": "AspectDBSG"
         },
         "IpProtocol": "-1",
-        "CidrIp": "0.0.0.0/0",
-        "Tags": [{
-          "Key": "Name",
-          "Value": { "Fn::Join": ["", [{ "Ref": "DeploymentName" }, "_AspectEgress2"]] }
-        }]
+        "CidrIp": "0.0.0.0/0"
       }
     }
   }
