@@ -403,6 +403,7 @@
     "AspectS3Web": {
       "Type": "AWS::S3::Bucket",
       "Properties": {
+        "BucketName": { "Fn::Join": ["", ["aspect-web-", { "Ref": "DeploymentName" }]] },
         "AccessControl": "Private",
         "VersioningConfiguration": {
           "Status": "Suspended"
