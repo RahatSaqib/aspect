@@ -5,10 +5,14 @@
       "Type": "String",
       "Default": "malawi"
     },
+    "RDSMasterUsername": {
+      "Type": "String",
+      "Default": "aspectapi"
+    },
     "RDSMasterPassword": {
       "NoEcho": "true",
       "Type": "String",
-      "Default": "MyPassword"
+      "Default": "96loETfSyBSF6PLX"
     }
   },
   "Description": "Aspect Deployment",
@@ -252,7 +256,9 @@
         "PubliclyAccessible": "true",
         "StorageType": "gp2",
         "BackupRetentionPeriod": "35",
-        "MasterUsername": "master",
+        "MasterUsername": {
+          "Ref": "RDSMasterUsername"
+        },
         "MasterUserPassword": {
           "Ref": "RDSMasterPassword"
         },
