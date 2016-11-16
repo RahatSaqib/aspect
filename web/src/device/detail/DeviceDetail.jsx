@@ -22,6 +22,7 @@ import {
 } from '../DeviceRedux'
 import ReadOnlyFields from '../../components/shared/ReadOnlyFields'
 import { FormContainer } from './Form'
+import DeviceDetailForm from './DeviceDetailForm'
 import styles from './DeviceDetail.css'
 
 const messages = defineMessages({
@@ -221,6 +222,13 @@ export class DeviceDetail extends PureComponent {
         <Unit lg="1-2">
           <div>
             {editable ? this.renderFormContainer() : this.renderReadOnlyFields()}
+            <DeviceDetailForm
+              name={device.get('name') || ''}
+              shortname={device.get('shortname') || ''}
+              notes={device.get('notes') || ''}
+              siteId={device.get('siteId')}
+              siteName={device.get('siteName')}
+            />
           </div>
         </Unit>
         <Unit lg="1-2">
