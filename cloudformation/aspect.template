@@ -1,7 +1,14 @@
 {
   "AWSTemplateFormatVersion": "2010-09-09",
+  "Description": "New Aspect Deployment",
+  "Parameters": {
+
+  },
+  "Outputs": {
+
+  },
   "Resources": {
-    "vpc10a75377": {
+    "{PARAMETER:deployment_name}_aspect_vpc": {
       "Type": "AWS::EC2::VPC",
       "Properties": {
         "CidrBlock": "172.31.0.0/16",
@@ -10,190 +17,96 @@
         "EnableDnsHostnames": "true"
       }
     },
-    "subnet4edf4464": {
+    "{PARAMETER:deployment_name}_aspect_subnet_1": {
       "Type": "AWS::EC2::Subnet",
       "Properties": {
         "CidrBlock": "172.31.48.0/20",
-        "AvailabilityZone": "us-east-1c",
+        "AvailabilityZone": "{PARAMETER:availability_zone}",
         "VpcId": {
-          "Ref": "vpc10a75377"
+          "Ref": "{PARAMETER:deployment_name}_aspect_vpc"
         }
       }
     },
-    "subnet50fc9d08": {
+    "{PARAMETER:deployment_name}_aspect_subnet_2": {
       "Type": "AWS::EC2::Subnet",
       "Properties": {
         "CidrBlock": "172.31.16.0/20",
-        "AvailabilityZone": "us-east-1a",
+        "AvailabilityZone": "{PARAMETER:availability_zone}",
         "VpcId": {
-          "Ref": "vpc10a75377"
+          "Ref": "{PARAMETER:deployment_name}_aspect_vpc"
         }
       }
     },
-    "subnetb9194a84": {
+    "{PARAMETER:deployment_name}_aspect_subnet_3": {
       "Type": "AWS::EC2::Subnet",
       "Properties": {
         "CidrBlock": "172.31.32.0/20",
-        "AvailabilityZone": "us-east-1e",
+        "AvailabilityZone": "{PARAMETER:availability_zone}",
         "VpcId": {
-          "Ref": "vpc10a75377"
+          "Ref": "{PARAMETER:deployment_name}_aspect_vpc"
         }
       }
     },
-    "subnet43622835": {
+    "{PARAMETER:deployment_name}_aspect_subnet_4": {
       "Type": "AWS::EC2::Subnet",
       "Properties": {
         "CidrBlock": "172.31.0.0/20",
-        "AvailabilityZone": "us-east-1d",
+        "AvailabilityZone": "{PARAMETER:availability_zone}",
         "VpcId": {
-          "Ref": "vpc10a75377"
+          "Ref": "{PARAMETER:deployment_name}_aspect_vpc"
         }
       }
-    },
-    "igwbb6a0fdf": {
-      "Type": "AWS::EC2::InternetGateway",
+    }
+
+    "{PARAMETER:deployment_name}_aspect_db_subnet_group": {
+      "Type": "AWS::RDS::DBSubnetGroup",
       "Properties": {
-      }
-    },
-    "doptdb222abe": {
-      "Type": "AWS::EC2::DHCPOptions",
-      "Properties": {
-        "DomainName": "ec2.internal",
-        "DomainNameServers": [
-          "AmazonProvidedDNS"
+        "DBSubnetGroupDescription": "{PARAMETER:deployment_name} Aspect DB Subnet Group",
+        "SubnetIds": [
+          {
+            "Ref": "{PARAMETER:deployment_name}_aspect_subnet_1"
+          },
+          {
+            "Ref": "{PARAMETER:deployment_name}_aspect_subnet_2"
+          },
+          {
+            "Ref": "{PARAMETER:deployment_name}_aspect_subnet_3"
+          },
+          {
+            "Ref": "{PARAMETER:deployment_name}_aspect_subnet_4"
+          }
         ]
       }
     },
-    "acle28f5885": {
-      "Type": "AWS::EC2::NetworkAcl",
+    "{PARAMETER:deployment_name}_aspect_db_subnet_group_dev": {
+      "Type": "AWS::RDS::DBSubnetGroup",
       "Properties": {
-        "VpcId": {
-          "Ref": "vpc10a75377"
-        }
-      }
-    },
-    "rtb7c543d1b": {
-      "Type": "AWS::EC2::RouteTable",
-      "Properties": {
-        "VpcId": {
-          "Ref": "vpc10a75377"
-        }
-      }
-    },
-    "distd321fjz1vkaxo1cloudfrontnet": {
-      "Type": "AWS::CloudFront::Distribution",
-      "Properties": {
-        "DistributionConfig": {
-          "Aliases": [
-            "dev.aspect.id"
-          ],
-          "Enabled": true,
-          "DefaultRootObject": "index.html",
-          "PriceClass": "PriceClass_All",
-          "CustomErrorResponses": [
-            {
-              "ErrorCachingMinTTL": 5,
-              "ErrorCode": 404,
-              "ResponseCode": "200",
-              "ResponsePagePath": "/index.html"
-            }
-          ],
-          "CacheBehaviors": [
-            {
-              "TargetOriginId": "S3-aspect-web-dev",
-              "PathPattern": "*.html",
-              "ViewerProtocolPolicy": "allow-all",
-              "MinTTL": 0,
-              "AllowedMethods": [
-                "HEAD",
-                "GET"
-              ],
-              "CachedMethods": [
-                "HEAD",
-                "GET"
-              ],
-              "ForwardedValues": {
-                "Cookies": {
-                  "Forward": "none"
-                }
-              }
-            }
-          ],
-          "DefaultCacheBehavior": {
-            "TargetOriginId": "S3-aspect-web-dev",
-            "ViewerProtocolPolicy": "allow-all",
-            "MinTTL": 0,
-            "AllowedMethods": [
-              "HEAD",
-              "GET"
-            ],
-            "CachedMethods": [
-              "HEAD",
-              "GET"
-            ],
-            "ForwardedValues": {
-              "Cookies": {
-                "Forward": "none"
-              }
-            }
+        "DBSubnetGroupDescription": "Subnet Group for developer access to {PARAMETER:deployment_name} Aspect RDS",
+        "SubnetIds": [
+          {
+            "Ref": "{PARAMETER:deployment_name}_aspect_subnet_1"
           },
-          "Origins": [
-            {
-              "DomainName": "aspect-web-dev.s3.amazonaws.com",
-              "Id": "S3-aspect-web-dev",
-              "S3OriginConfig": {
-              }
-            }
-          ],
-          "Restrictions": {
-            "GeoRestriction": {
-              "RestrictionType": "none",
-              "Locations": [
-
-              ]
-            }
+          {
+            "Ref": "{PARAMETER:deployment_name}_aspect_subnet_2"
           },
-          "ViewerCertificate": {
-            "CloudFrontDefaultCertificate": "true",
-            "MinimumProtocolVersion": "SSLv3"
+          {
+            "Ref": "{PARAMETER:deployment_name}_aspect_subnet_3"
+          },
+          {
+            "Ref": "{PARAMETER:deployment_name}_aspect_subnet_4"
           }
-        }
+        ]
       }
     },
-    "aspectapi": {
-      "Type": "AWS::ElasticBeanstalk::Application",
-      "Properties": {
-        "Description": "Application created from the EB CLI using \"eb init\""
-      }
-    },
-    "versionapp1611160726360": {
-      "Type": "AWS::ElasticBeanstalk::ApplicationVersion",
-      "Properties": {
-        "ApplicationName": {
-          "Ref": "aspectapi"
-        },
-        "Description": "EB-CLI deploy",
-        "SourceBundle": {
-          "S3Bucket": "elasticbeanstalk-us-east-1-041127481730",
-          "S3Key": "aspect-api/app-161116_072636.zip"
-        }
-      }
-    },
-    "envaspectapidev1": {
+
+    "{PARAMETER:deployment_name}_aspect_api_env": {
       "Type": "AWS::ElasticBeanstalk::Environment",
       "Properties": {
-        "ApplicationName": {
-          "Ref": "aspectapi"
-        },
-        "Description": "Environment created from the EB CLI using \"eb create\"",
+        "ApplicationName": "aspect-api",
         "SolutionStackName": "64bit Amazon Linux 2016.09 v3.1.0 running Node.js",
-        "VersionLabel": {
-          "Ref": "versionapp1611160726360"
-        },
         "Tier": {
           "Name": "WebServer",
-          "Type": "Standard",
-          "Version": " "
+          "Type": "Standard"
         },
         "OptionSettings": [
           {
@@ -309,7 +222,102 @@
         ]
       }
     },
-    "rdsaspectdev": {
+
+    "{PARAMETER:deployment_name}_aspect_cloudfront": {
+      "Type": "AWS::CloudFront::Distribution",
+      "Properties": {
+        "DistributionConfig": {
+          "Aliases": [
+            "{PARAMETER:deployment_name}.aspect.id"
+          ],
+          "Enabled": true,
+          "DefaultRootObject": "index.html",
+          "PriceClass": "PriceClass_All",
+          "CustomErrorResponses": [
+            {
+              "ErrorCachingMinTTL": 5,
+              "ErrorCode": 404,
+              "ResponseCode": "200",
+              "ResponsePagePath": "/index.html"
+            }
+          ],
+          "CacheBehaviors": [
+            {
+              "TargetOriginId": "S3-{PARAMETER:deployment_name}-aspect-web",
+              "PathPattern": "*.html",
+              "ViewerProtocolPolicy": "allow-all",
+              "MinTTL": 0,
+              "AllowedMethods": [
+                "HEAD",
+                "GET"
+              ],
+              "CachedMethods": [
+                "HEAD",
+                "GET"
+              ],
+              "ForwardedValues": {
+                "Cookies": {
+                  "Forward": "none"
+                }
+              }
+            }
+          ],
+          "DefaultCacheBehavior": {
+            "TargetOriginId": "S3-{PARAMETER:deployment_name}-aspect-web",
+            "ViewerProtocolPolicy": "allow-all",
+            "MinTTL": 0,
+            "AllowedMethods": [
+              "HEAD",
+              "GET"
+            ],
+            "CachedMethods": [
+              "HEAD",
+              "GET"
+            ],
+            "ForwardedValues": {
+              "Cookies": {
+                "Forward": "none"
+              }
+            }
+          },
+          "Origins": [
+            {
+              "DomainName": "{PARAMETER:deployment_name}-aspect-web.s3.amazonaws.com",
+              "Id": "S3-{PARAMETER:deployment_name}-aspect-web",
+              "S3OriginConfig": { }
+            }
+          ],
+          "Restrictions": {
+            "GeoRestriction": {
+              "RestrictionType": "none",
+              "Locations": []
+            }
+          },
+          "ViewerCertificate": {
+            "CloudFrontDefaultCertificate": "true",
+            "MinimumProtocolVersion": "SSLv3"
+          }
+        }
+      }
+    },
+
+    "{PARAMETER:deployment_name}_aspect_db_sg": {
+      "Type": "AWS::EC2::SecurityGroup",
+      "Properties": {
+        "GroupDescription": "Security group for access to {PARAMETER:deployment_name} aspect DB in RDS",
+        "VpcId": {
+          "Ref": "{PARAMETER:deployment_name}_aspect_vpc"
+        },
+        "Tags": [
+          {
+            "Key": "Name",
+            "Value": "rds-{PARAMETER:deployment_name}-aspect-db-sg"
+          }
+        ]
+      }
+    },
+
+    "{PARAMETER:deployment_name}_aspect_rds": {
       "Type": "AWS::RDS::DBInstance",
       "Properties": {
         "AllocatedStorage": "10",
@@ -321,19 +329,19 @@
         "StorageType": "gp2",
         "BackupRetentionPeriod": "35",
         "MasterUsername": "master",
-        "MasterUserPassword": "MyPassword",
+        "MasterUserPassword": "{PARAMETER:rds_master_password}",
         "PreferredBackupWindow": "01:00-01:30",
         "PreferredMaintenanceWindow": "sat:02:00-sat:03:00",
-        "DBName": "MyDatabase",
+        "DBName": "aspect",
         "Engine": "mysql",
         "EngineVersion": "5.7.11",
         "LicenseModel": "general-public-license",
         "DBSubnetGroupName": {
-          "Ref": "dbsubnetdefault"
+          "Ref": "{PARAMETER:deployment_name}_aspect_db_subnet_group"
         },
         "VPCSecurityGroups": [
           {
-            "Ref": "sgrdsdevdb"
+            "Ref": "{PARAMETER:deployment_name}_aspect_db_sg"
           }
         ],
         "Tags": [
@@ -344,7 +352,8 @@
         ]
       }
     },
-    "s3aspectenvconfig": {
+
+    "{PARAMETER:deployment_name}_aspect_s3_web": {
       "Type": "AWS::S3::Bucket",
       "Properties": {
         "AccessControl": "Private",
@@ -353,113 +362,61 @@
         }
       }
     },
-    "s3aspectwebdev": {
-      "Type": "AWS::S3::Bucket",
-      "Properties": {
-        "AccessControl": "Private",
-        "VersioningConfiguration": {
-          "Status": "Suspended"
-        }
-      }
-    },
-    "s3elasticbeanstalkuseast1041127481730": {
-      "Type": "AWS::S3::Bucket",
-      "Properties": {
-        "AccessControl": "Private",
-        "VersioningConfiguration": {
-          "Status": "Suspended"
-        }
-      }
-    },
-    "dbsubnetdefault": {
-      "Type": "AWS::RDS::DBSubnetGroup",
-      "Properties": {
-        "DBSubnetGroupDescription": "default",
-        "SubnetIds": [
-          {
-            "Ref": "subnet4edf4464"
-          },
-          {
-            "Ref": "subnet50fc9d08"
-          },
-          {
-            "Ref": "subnetb9194a84"
-          },
-          {
-            "Ref": "subnet43622835"
-          }
-        ]
-      }
-    },
-    "dbsubnetrdsdev": {
-      "Type": "AWS::RDS::DBSubnetGroup",
-      "Properties": {
-        "DBSubnetGroupDescription": "Subnet Group for developer access to RDS",
-        "SubnetIds": [
-          {
-            "Ref": "subnet4edf4464"
-          },
-          {
-            "Ref": "subnet50fc9d08"
-          },
-          {
-            "Ref": "subnetb9194a84"
-          },
-          {
-            "Ref": "subnet43622835"
-          }
-        ]
-      }
-    },
-    "sgaspectWebServerSecurityGroup1V2I3LC76C1D": {
+
+    "{PARAMETER:deployment_name}_aspect_ssl_sg": {
       "Type": "AWS::EC2::SecurityGroup",
       "Properties": {
         "GroupDescription": "Enable HTTPS access via port 443",
         "VpcId": "vpc-92c228f4"
       }
     },
-    "sgrdsdevdb": {
-      "Type": "AWS::EC2::SecurityGroup",
+
+    "{PARAMETER:deployment_name}_aspect_ig": {
+      "Type": "AWS::EC2::InternetGateway",
+      "Properties": {}
+    },
+    "{PARAMETER:deployment_name}_aspect_dhcp": {
+      "Type": "AWS::EC2::DHCPOptions",
       "Properties": {
-        "GroupDescription": "Security group for access to dev db in RDS",
-        "VpcId": {
-          "Ref": "vpc10a75377"
-        },
-        "Tags": [
-          {
-            "Key": "Name",
-            "Value": "rds-dev-db"
-          }
+        "DomainName": "ec2.internal",
+        "DomainNameServers": [
+          "AmazonProvidedDNS"
         ]
       }
     },
-    "s3policyaspectenvconfig": {
+
+    "{PARAMETER:deployment_name}_aspect_acl": {
+      "Type": "AWS::EC2::NetworkAcl",
+      "Properties": {
+        "VpcId": {
+          "Ref": "{PARAMETER:deployment_name}_aspect_vpc"
+        }
+      }
+    },
+
+    "{PARAMETER:deployment_name}_aspect_rt": {
+      "Type": "AWS::EC2::RouteTable",
+      "Properties": {
+        "VpcId": {
+          "Ref": "{PARAMETER:deployment_name}_aspect_vpc"
+        }
+      }
+    },
+
+    "{PARAMETER:deployment_name}_s3_aspect_config_policy": {
       "Type": "AWS::S3::BucketPolicy",
       "Properties": {
-        "Bucket": {
-          "Ref": "s3aspectenvconfig"
-        },
+        "Bucket": "aspect-env-config",
         "PolicyDocument": {
           "Version": "2012-10-17",
-          "Id": "Policy1473152644888",
+          "Id": "{PARAMETER:deployment_name}_s3_aspect_config_policy_id",
           "Statement": [
             {
-              "Sid": "Stmt1473152642192",
+              "Sid": "{PARAMETER:deployment_name}_s3_aspect_config_policy_stmt",
               "Effect": "Allow",
               "Principal": "*",
               "Action": "s3:GetObject",
-              "Resource": {
-                "Fn::Join": [
-                  "",
-                  [
-                    "arn:aws:s3:::",
-                    {
-                      "Ref": "s3aspectenvconfig"
-                    },
-                    "/test.env"
-                  ]
-                ]
-              },
+              "Resource": "arn:aws:s3:::aspect-env-config/{PARAMETER:deployment_name}.env",
               "Condition": {
                 "IpAddress": {
                   "aws:SourceIp": "52.44.26.14"
@@ -467,22 +424,11 @@
               }
             },
             {
-              "Sid": "Stmt1473152642193",
+              "Sid": "{PARAMETER:deployment_name}_s3_aspect_migration_config_policy_stmt",
               "Effect": "Allow",
               "Principal": "*",
               "Action": "s3:GetObject",
-              "Resource": {
-                "Fn::Join": [
-                  "",
-                  [
-                    "arn:aws:s3:::",
-                    {
-                      "Ref": "s3aspectenvconfig"
-                    },
-                    "/migrate.env"
-                  ]
-                ]
-              },
+              "Resource": "arn:aws:s3:::aspect-env-config/{PARAMETER:deployment_name}_migrate.env",
               "Condition": {
                 "IpAddress": {
                   "aws:SourceIp": "52.44.26.14"
@@ -493,11 +439,12 @@
         }
       }
     },
-    "s3policyaspectwebdev": {
+
+    "{PARAMETER:deployment_name}_aspect_s3_web_policy": {
       "Type": "AWS::S3::BucketPolicy",
       "Properties": {
         "Bucket": {
-          "Ref": "s3aspectwebdev"
+          "Ref": "{PARAMETER:deployment_name}_aspect_s3_web"
         },
         "PolicyDocument": {
           "Version": "2008-10-17",
@@ -515,7 +462,7 @@
                   [
                     "arn:aws:s3:::",
                     {
-                      "Ref": "s3aspectwebdev"
+                      "Ref": "{PARAMETER:deployment_name}_aspect_s3_web"
                     },
                     "/*"
                   ]
@@ -535,7 +482,7 @@
                   [
                     "arn:aws:s3:::",
                     {
-                      "Ref": "s3aspectwebdev"
+                      "Ref": "{PARAMETER:deployment_name}_aspect_s3_web"
                     },
                     ""
                   ]
@@ -546,91 +493,9 @@
         }
       }
     },
-    "s3policyelasticbeanstalkuseast1041127481730": {
-      "Type": "AWS::S3::BucketPolicy",
-      "Properties": {
-        "Bucket": {
-          "Ref": "s3elasticbeanstalkuseast1041127481730"
-        },
-        "PolicyDocument": {
-          "Version": "2008-10-17",
-          "Statement": [
-            {
-              "Sid": "eb-ad78f54a-f239-4c90-adda-49e5f56cb51e",
-              "Effect": "Allow",
-              "Principal": {
-                "AWS": "arn:aws:iam::041127481730:role/aws-elasticbeanstalk-ec2-role"
-              },
-              "Action": "s3:PutObject",
-              "Resource": {
-                "Fn::Join": [
-                  "",
-                  [
-                    "arn:aws:s3:::",
-                    "elasticbeanstalk-us-east-",
-                    "1-041127481730/resources/environments/logs/*"
-                  ]
-                ]
-              }
-            },
-            {
-              "Sid": "eb-af163bf3-d27b-4712-b795-d1e33e331ca4",
-              "Effect": "Allow",
-              "Principal": {
-                "AWS": "arn:aws:iam::041127481730:role/aws-elasticbeanstalk-ec2-role"
-              },
-              "Action": [
-                "s3:ListBucket",
-                "s3:ListBucketVersions",
-                "s3:GetObject",
-                "s3:GetObjectVersion"
-              ],
-              "Resource": [
-                {
-                  "Fn::Join": [
-                    "",
-                    [
-                      "arn:aws:s3:::",
-                      "elasticbeanstalk-us-east-",
-                      "1-041127481730/resources/environments/*"
-                    ]
-                  ]
-                },
-                {
-                  "Fn::Join": [
-                    "",
-                    [
-                      "arn:aws:s3:::",
-                      "elasticbeanstalk-us-east-",
-                      "1-041127481730"
-                    ]
-                  ]
-                }
-              ]
-            },
-            {
-              "Sid": "eb-58950a8c-feb6-11e2-89e0-0800277d041b",
-              "Effect": "Deny",
-              "Principal": {
-                "AWS": "*"
-              },
-              "Action": "s3:DeleteBucket",
-              "Resource": {
-                "Fn::Join": [
-                  "",
-                  [
-                    "arn:aws:s3:::",
-                    "elasticbeanstalk-us-east-",
-                    "1-041127481730"
-                  ]
-                ]
-              }
-            }
-          ]
-        }
-      }
-    },
-    "acl1": {
+
+
+    "{PARAMETER:deployment_name}_aspect_acl_entry_1": {
       "Type": "AWS::EC2::NetworkAclEntry",
       "Properties": {
         "CidrBlock": "0.0.0.0/0",
@@ -639,11 +504,11 @@
         "RuleAction": "allow",
         "RuleNumber": "100",
         "NetworkAclId": {
-          "Ref": "acle28f5885"
+          "Ref": "{PARAMETER:deployment_name}_aspect_acl"
         }
       }
     },
-    "acl2": {
+    "{PARAMETER:deployment_name}_aspect_acl_entry_2": {
       "Type": "AWS::EC2::NetworkAclEntry",
       "Properties": {
         "CidrBlock": "0.0.0.0/0",
@@ -651,94 +516,95 @@
         "RuleAction": "allow",
         "RuleNumber": "100",
         "NetworkAclId": {
-          "Ref": "acle28f5885"
+          "Ref": "{PARAMETER:deployment_name}_aspect_acl"
         }
       }
     },
-    "subnetacl1": {
+    "{PARAMETER:deployment_name}_aspect_acl_subnet_1": {
       "Type": "AWS::EC2::SubnetNetworkAclAssociation",
       "Properties": {
         "NetworkAclId": {
-          "Ref": "acle28f5885"
+          "Ref": "{PARAMETER:deployment_name}_aspect_acl"
         },
         "SubnetId": {
-          "Ref": "subnet4edf4464"
+          "Ref": "{PARAMETER:deployment_name}_aspect_subnet_1"
         }
       }
     },
-    "subnetacl2": {
+    "{PARAMETER:deployment_name}_aspect_acl_subnet_2": {
       "Type": "AWS::EC2::SubnetNetworkAclAssociation",
       "Properties": {
         "NetworkAclId": {
-          "Ref": "acle28f5885"
+          "Ref": "{PARAMETER:deployment_name}_aspect_acl"
         },
         "SubnetId": {
-          "Ref": "subnet50fc9d08"
+          "Ref": "{PARAMETER:deployment_name}_aspect_subnet_2"
         }
       }
     },
-    "subnetacl3": {
+    "{PARAMETER:deployment_name}_aspect_acl_subnet_3": {
       "Type": "AWS::EC2::SubnetNetworkAclAssociation",
       "Properties": {
         "NetworkAclId": {
-          "Ref": "acle28f5885"
+          "Ref": "{PARAMETER:deployment_name}_aspect_acl"
         },
         "SubnetId": {
-          "Ref": "subnet43622835"
+          "Ref": "{PARAMETER:deployment_name}_aspect_subnet_3"
         }
       }
     },
-    "subnetacl4": {
+    "{PARAMETER:deployment_name}_aspect_acl_subnet_4": {
       "Type": "AWS::EC2::SubnetNetworkAclAssociation",
       "Properties": {
         "NetworkAclId": {
-          "Ref": "acle28f5885"
+          "Ref": "{PARAMETER:deployment_name}_aspect_acl"
         },
         "SubnetId": {
-          "Ref": "subnetb9194a84"
+          "Ref": "{PARAMETER:deployment_name}_aspect_subnet_4"
         }
       }
     },
-    "gw1": {
+    "{PARAMETER:deployment_name}_aspect_gw": {
       "Type": "AWS::EC2::VPCGatewayAttachment",
       "Properties": {
         "VpcId": {
-          "Ref": "vpc10a75377"
+          "Ref": "{PARAMETER:deployment_name}_aspect_vpc"
         },
         "InternetGatewayId": {
-          "Ref": "igwbb6a0fdf"
+          "Ref": "{PARAMETER:deployment_name}_aspect_ig"
         }
       }
     },
-    "route1": {
+    "{PARAMETER:deployment_name}_aspect_route": {
       "Type": "AWS::EC2::Route",
       "Properties": {
         "DestinationCidrBlock": "0.0.0.0/0",
         "RouteTableId": {
-          "Ref": "rtb7c543d1b"
+          "Ref": "{PARAMETER:deployment_name}_aspect_rt"
         },
         "GatewayId": {
-          "Ref": "igwbb6a0fdf"
+          "Ref": "{PARAMETER:deployment_name}_aspect_ig"
         }
       },
-      "DependsOn": "gw1"
+      "DependsOn": "{PARAMETER:deployment_name}_aspect_gw"
     },
-    "dchpassoc1": {
+
+    "{PARAMETER:deployment_name}_aspect_dchp_assoc": {
       "Type": "AWS::EC2::VPCDHCPOptionsAssociation",
       "Properties": {
         "VpcId": {
-          "Ref": "vpc10a75377"
+          "Ref": "{PARAMETER:deployment_name}_aspect_vpc"
         },
         "DhcpOptionsId": {
-          "Ref": "doptdb222abe"
+          "Ref": "{PARAMETER:deployment_name}_aspect_dhcp"
         }
       }
     },
-    "ingress1": {
+    "{PARAMETER:deployment_name}_aspect_ingress_1": {
       "Type": "AWS::EC2::SecurityGroupIngress",
       "Properties": {
         "GroupId": {
-          "Ref": "sgaspectWebServerSecurityGroup1V2I3LC76C1D"
+          "Ref": "{PARAMETER:deployment_name}_aspect_ssl_sg"
         },
         "IpProtocol": "tcp",
         "FromPort": "443",
@@ -746,11 +612,11 @@
         "CidrIp": "0.0.0.0/0"
       }
     },
-    "ingress2": {
+    "{PARAMETER:deployment_name}_aspect_ingress_2": {
       "Type": "AWS::EC2::SecurityGroupIngress",
       "Properties": {
         "GroupId": {
-          "Ref": "sgrdsdevdb"
+          "Ref": "{PARAMETER:deployment_name}_aspect_db_sg"
         },
         "IpProtocol": "tcp",
         "FromPort": "3306",
@@ -759,11 +625,11 @@
         "SourceSecurityGroupOwnerId": "041127481730"
       }
     },
-    "ingress3": {
+    "{PARAMETER:deployment_name}_aspect_ingress_3": {
       "Type": "AWS::EC2::SecurityGroupIngress",
       "Properties": {
         "GroupId": {
-          "Ref": "sgrdsdevdb"
+          "Ref": "{PARAMETER:deployment_name}_aspect_db_sg"
         },
         "IpProtocol": "tcp",
         "FromPort": "3306",
@@ -771,11 +637,11 @@
         "CidrIp": "24.61.236.22/32"
       }
     },
-    "ingress4": {
+    "{PARAMETER:deployment_name}_aspect_ingress_4": {
       "Type": "AWS::EC2::SecurityGroupIngress",
       "Properties": {
         "GroupId": {
-          "Ref": "sgrdsdevdb"
+          "Ref": "{PARAMETER:deployment_name}_aspect_db_sg"
         },
         "IpProtocol": "tcp",
         "FromPort": "3306",
@@ -783,11 +649,11 @@
         "CidrIp": "73.219.141.209/32"
       }
     },
-    "ingress5": {
+    "{PARAMETER:deployment_name}_aspect_ingress_5": {
       "Type": "AWS::EC2::SecurityGroupIngress",
       "Properties": {
         "GroupId": {
-          "Ref": "sgrdsdevdb"
+          "Ref": "{PARAMETER:deployment_name}_aspect_db_sg"
         },
         "IpProtocol": "tcp",
         "FromPort": "3306",
@@ -795,11 +661,11 @@
         "CidrIp": "93.113.92.138/32"
       }
     },
-    "ingress6": {
+    "{PARAMETER:deployment_name}_aspect_ingress_6": {
       "Type": "AWS::EC2::SecurityGroupIngress",
       "Properties": {
         "GroupId": {
-          "Ref": "sgrdsdevdb"
+          "Ref": "{PARAMETER:deployment_name}_aspect_db_sg"
         },
         "IpProtocol": "tcp",
         "FromPort": "3306",
@@ -807,11 +673,11 @@
         "CidrIp": "96.89.207.156/32"
       }
     },
-    "ingress7": {
+    "{PARAMETER:deployment_name}_aspect_ingress_7": {
       "Type": "AWS::EC2::SecurityGroupIngress",
       "Properties": {
         "GroupId": {
-          "Ref": "sgrdsdevdb"
+          "Ref": "{PARAMETER:deployment_name}_aspect_db_sg"
         },
         "IpProtocol": "tcp",
         "FromPort": "3306",
@@ -819,11 +685,11 @@
         "CidrIp": "96.127.33.204/32"
       }
     },
-    "ingress8": {
+    "{PARAMETER:deployment_name}_aspect_ingress_8": {
       "Type": "AWS::EC2::SecurityGroupIngress",
       "Properties": {
         "GroupId": {
-          "Ref": "sgrdsdevdb"
+          "Ref": "{PARAMETER:deployment_name}_aspect_db_sg"
         },
         "IpProtocol": "tcp",
         "FromPort": "3306",
@@ -831,11 +697,11 @@
         "CidrIp": "155.93.128.122/32"
       }
     },
-    "ingress9": {
+    "{PARAMETER:deployment_name}_aspect_ingress_9": {
       "Type": "AWS::EC2::SecurityGroupIngress",
       "Properties": {
         "GroupId": {
-          "Ref": "sgrdsdevdb"
+          "Ref": "{PARAMETER:deployment_name}_aspect_db_sg"
         },
         "IpProtocol": "tcp",
         "FromPort": "3306",
@@ -843,11 +709,11 @@
         "CidrIp": "173.255.197.184/32"
       }
     },
-    "ingress10": {
+    "{PARAMETER:deployment_name}_aspect_ingress_10": {
       "Type": "AWS::EC2::SecurityGroupIngress",
       "Properties": {
         "GroupId": {
-          "Ref": "sgrdsdevdb"
+          "Ref": "{PARAMETER:deployment_name}_aspect_db_sg"
         },
         "IpProtocol": "tcp",
         "FromPort": "3306",
@@ -855,11 +721,11 @@
         "CidrIp": "178.168.61.218/32"
       }
     },
-    "ingress11": {
+    "{PARAMETER:deployment_name}_aspect_ingress_11": {
       "Type": "AWS::EC2::SecurityGroupIngress",
       "Properties": {
         "GroupId": {
-          "Ref": "sgrdsdevdb"
+          "Ref": "{PARAMETER:deployment_name}_aspect_db_sg"
         },
         "IpProtocol": "tcp",
         "FromPort": "3306",
@@ -867,11 +733,11 @@
         "CidrIp": "95.42.145.218/32"
       }
     },
-    "ingress12": {
+    "{PARAMETER:deployment_name}_aspect_ingress_12": {
       "Type": "AWS::EC2::SecurityGroupIngress",
       "Properties": {
         "GroupId": {
-          "Ref": "sgrdsdevdb"
+          "Ref": "{PARAMETER:deployment_name}_aspect_db_sg"
         },
         "IpProtocol": "tcp",
         "FromPort": "3306",
@@ -879,11 +745,11 @@
         "CidrIp": "172.31.28.214/32"
       }
     },
-    "ingress13": {
+    "{PARAMETER:deployment_name}_aspect_ingress_13": {
       "Type": "AWS::EC2::SecurityGroupIngress",
       "Properties": {
         "GroupId": {
-          "Ref": "sgrdsdevdb"
+          "Ref": "{PARAMETER:deployment_name}_aspect_db_sg"
         },
         "IpProtocol": "tcp",
         "FromPort": "0",
@@ -892,26 +758,25 @@
         "SourceSecurityGroupOwnerId": "041127481730"
       }
     },
-    "egress1": {
+    "{PARAMETER:deployment_name}_aspect_egress_1": {
       "Type": "AWS::EC2::SecurityGroupEgress",
       "Properties": {
         "GroupId": {
-          "Ref": "sgaspectWebServerSecurityGroup1V2I3LC76C1D"
+          "Ref": "{PARAMETER:deployment_name}_aspect_ssl_sg"
         },
         "IpProtocol": "-1",
         "CidrIp": "0.0.0.0/0"
       }
     },
-    "egress2": {
+    "{PARAMETER:deployment_name}_aspect_egress_2": {
       "Type": "AWS::EC2::SecurityGroupEgress",
       "Properties": {
         "GroupId": {
-          "Ref": "sgrdsdevdb"
+          "Ref": "{PARAMETER:deployment_name}_aspect_db_sg"
         },
         "IpProtocol": "-1",
         "CidrIp": "0.0.0.0/0"
       }
     }
-  },
-  "Description": "New Aspect Deployment"
+  }
 }
