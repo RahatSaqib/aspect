@@ -18,6 +18,8 @@ function sortPageParams(queryBuilder, params, defaultSort) {
 function getWhereArgs(columnName, paramValue) {
   if (_.isString(paramValue)) {
     return [columnName, 'like', `%${paramValue}%`]
+  } else if(_.isArray(paramValue)) {
+    return [columnName, paramValue]
   }
   return [columnName, '=', paramValue]
 }
@@ -33,11 +35,19 @@ function filterParams(queryBuilder, params, filters) {
       queryBuilder.where(function () {
         // http://knexjs.org/#Builder-where
         columnNameOrArray.forEach((columnName) => {
-          this.orWhere(...getWhereArgs(columnName, params[paramName]))
+          if(_.isArray(params[paramName])) {
+            this.orWhereIn(...getWhereArgs(columnName, params[paramName]))
+          } else {
+            this.orWhere(...getWhereArgs(columnName, params[paramName]))
+          }
         })
       })
     } else {
-      queryBuilder.where(...getWhereArgs(columnNameOrArray, params[paramName]))
+      if(_.isArray(params[paramName])) {
+        queryBuilder.whereIn(...getWhereArgs(columnNameOrArray, params[paramName]))
+      } else {
+        queryBuilder.where(...getWhereArgs(columnNameOrArray, params[paramName]))
+      }
     }
   })
 }
