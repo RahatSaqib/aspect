@@ -156,7 +156,7 @@ function* addResult(context){
         _.get(existingResult, 'startedOn', null)),
       endedOn: _.get(
         payload, 'endedOn',
-        _.get(existingResult, 'endedOn', now)),
+        _.get(existingResult, 'endedOn', null)),
       consumableSerial: _.get(
         payload, 'consumable[0].serial',
         _.get(existingResult, 'consumableSerial', null)),
