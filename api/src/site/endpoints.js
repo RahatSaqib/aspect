@@ -13,7 +13,13 @@ module.exports = [
       auth: { scope: ['site:view', 'site:edit'] },
       validate: {
         query: Object.assign({
-          name: Joi.string().allow('').description('Filter for site name')
+          minDate: Joi.date().iso().allow(null).description('Start on'),
+          maxDate: Joi.date().iso().allow(null).description('End on'),
+          countryId: Joi.number().allow('').description('Country ID'),
+          stateId: Joi.number().allow('').description('State ID'),
+          lgaId: Joi.number().allow('').description('LGA ID'),
+          deviceName: Joi.string().allow('').description('Filter for device name'),
+          siteName: Joi.string().allow('').description('Filter for site name')
         }, validateSortPageParams('name', 'shortname', 'state', 'lga', 'createdOn', 'totalDevices'))
       }
     }

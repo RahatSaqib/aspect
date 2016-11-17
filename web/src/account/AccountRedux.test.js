@@ -21,7 +21,9 @@ describe('AccountDetailsRedux', () => {
     lgaId: 3,
     zip: 'ZIP 123',
     timezone: 'Pacific Standard Time',
-    culture: 'fr-FR'
+    culture: 'fr-FR',
+    notes: null,
+    lastPartnerId: null
   }
 
   describe('account details reducer', () => {
@@ -41,6 +43,7 @@ describe('AccountDetailsRedux', () => {
         assert.isFalse(initialState.get('saving'))
         assert.deepEqual(initialState.getIn(['data', 'contactDetails']).toJS(), {
           id: null,
+          lastPartnerId: null,
           name: null,
           title: null,
           email: null,
@@ -50,14 +53,18 @@ describe('AccountDetailsRedux', () => {
           countryId: null,
           stateId: null,
           lgaId: null,
-          zip: null
+          zip: null,
+          notes: null
         })
         assert.deepEqual(initialState.getIn(['data', 'loginDetails']).toJS(), {
           id: null,
           username: null,
           newPassword: null,
           confirmNewPassword: null,
-          currentPassword: null
+          currentPassword: null,
+          partnerId: null,
+          orgUnitId: null,
+          roles: []
         })
         assert.deepEqual(initialState.getIn(['data', 'userPreferences']).toJS(), {
           id: null,
@@ -89,7 +96,10 @@ describe('AccountDetailsRedux', () => {
             username: accountDetailsData.username,
             newPassword: null,
             confirmNewPassword: null,
-            currentPassword: null
+            currentPassword: null,
+            partnerId: null,
+            orgUnitId: null,
+            roles: []
           })
           assert.deepEqual(state.getIn(['data', 'userPreferences']).toJS(), _.pick(accountDetailsData, ['id', 'timezone', 'culture']))
         })
@@ -106,6 +116,7 @@ describe('AccountDetailsRedux', () => {
         it('should show that account details are not loading anymore and populate contactDetails only', () => {
           const newAccountDetailsData = {
             id: 111,
+            lastPartnerId: null,
             username: 'new-username',
             userId: 123,
             name: 'John Hank Smith',
@@ -119,7 +130,8 @@ describe('AccountDetailsRedux', () => {
             lgaId: 1,
             zip: '123 ZIP',
             timezone: 'Eastern Standard Time',
-            culture: 'en-GB'
+            culture: 'en-GB',
+            notes: null
           }
           const state = accountDetails(initialState, {
             type: types.RECEIVE_ACCOUNT_DETAILS,
@@ -138,7 +150,10 @@ describe('AccountDetailsRedux', () => {
             username: accountDetailsData.username,
             newPassword: null,
             confirmNewPassword: null,
-            currentPassword: null
+            currentPassword: null,
+            partnerId: null,
+            orgUnitId: null,
+            roles: []
           })
           assert.deepEqual(newState.getIn(['data', 'userPreferences']).toJS(), _.pick(accountDetailsData, ['id', 'timezone', 'culture']))
         })
@@ -166,7 +181,10 @@ describe('AccountDetailsRedux', () => {
             username: updateDetailsData.username,
             newPassword: null,
             confirmNewPassword: null,
-            currentPassword: null
+            currentPassword: null,
+            partnerId: null,
+            orgUnitId: null,
+            roles: []
           })
           assert.deepEqual(newState.getIn(['data', 'userPreferences']).toJS(), _.pick(accountDetailsData, ['id', 'timezone', 'culture']))
         })
@@ -208,7 +226,10 @@ describe('AccountDetailsRedux', () => {
             username: accountDetailsData.username,
             newPassword: null,
             confirmNewPassword: null,
-            currentPassword: null
+            currentPassword: null,
+            partnerId: null,
+            orgUnitId: null,
+            roles: []
           })
           assert.deepEqual(newState.getIn(['data', 'userPreferences']).toJS(), _.pick(newAccountDetailsData, ['id', 'timezone', 'culture']))
         })
@@ -321,7 +342,7 @@ describe('AccountDetailsRedux', () => {
     describe('saveContactDetails', () => {
       const expectedResponseFromServer = Promise.resolve({ ok: true, data: accountDetailsData })
       const stubHeaders = { value: 'Stubbed Headers' }
-      const contactDetailsData = _.omit(accountDetailsData, ['username', 'userId', 'timezone', 'culture'])
+      const contactDetailsData = _.omit(accountDetailsData, ['username', 'userId', 'timezone', 'culture', 'notes', 'lastPartnerId'])
       let fetchStub
 
       beforeEach(() => {

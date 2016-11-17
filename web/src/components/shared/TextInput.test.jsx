@@ -22,6 +22,8 @@ describe('TextInput', () => {
       fullWidth: props.fullWidth,
       disabled: props.disabled,
       maxLength: props.maxLength,
+      multiLine: props.multiLine,
+      rows: props.rows,
       type: 'text',
       autoFocus: undefined
     })
@@ -45,6 +47,8 @@ describe('TextInput', () => {
       fullWidth: props.fullWidth,
       disabled: props.disabled,
       maxLength: props.maxLength,
+      multiLine: props.multiLine,
+      rows: props.rows,
       type: 'password',
       autoFocus: undefined
     })

@@ -168,7 +168,7 @@ export function refreshStart() {
     }
 
     // try to get a new access token:
-    aspectFetch('/auth/refresh',
+    return aspectFetch('/auth/refresh',
       {
         method: 'POST',
         headers: getHeaders(),
@@ -253,7 +253,7 @@ const User = Immutable.Record({
   name: '',
   culture: 'en-US',
   timezone: 'Eastern Standard Time',
-  permissions: Immutable.List(),
+  permissions: Immutable.Set(),
   drawerOpen: true,
   loggedIn: false
 })
@@ -271,7 +271,7 @@ export default function authReducer(state = initialState, action) {
     case types.LOGIN_REQUEST:
       return state.merge({ loggedIn: false })
     case types.LOGIN_SUCCESS:
-      return state.merge({
+      return state.mergeDeep({
         name: action.name,
         culture: action.culture,
         timezone: action.timezone,

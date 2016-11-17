@@ -3,7 +3,7 @@ import Immutable from 'immutable'
 import _ from 'lodash'
 import proxyquire from 'proxyquire'
 import sinon from 'sinon'
-import geography, { types } from './GeographyRedux'
+import geography, { types, LazyLoadItems, LazyLoadParent, LazyLoadChild } from './GeographyRedux'
 
 describe('geography reducer', () => {
   describe('initial state', () => {
@@ -482,21 +482,7 @@ describe('geography reducer', () => {
 })
 
 describe('geography action creators', () => {
-  const fiveMinutes = 300000 // five minutes
-  const LazyLoadItems = Immutable.Record({
-    loading: false,
-    items: Immutable.List(),
-    lastRefreshed: undefined
-  })
-  const LazyLoadParent = Immutable.Record({
-    id: undefined,
-    name: undefined,
-    children: new LazyLoadItems()
-  })
-  const LazyLoadChild = Immutable.Record({
-    id: undefined,
-    name: undefined
-  })
+  const fiveMinutes = 5 * 60 * 1000 // five minutes
 
   let clock
   let now

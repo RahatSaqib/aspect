@@ -43,7 +43,7 @@ export class EditableFieldsForm extends PureComponent {
         <Field name="shortName" floatingLabelText={labels.shortName} component={renderTextField} />
         <TimezoneSelect name="timezone" label={labels.timezone} disabled={loading || submitting} fullWidth />
         <LocationSelector
-          disabled={loading}
+          loading={loading}
           initialValues={initialValues}
           formName="siteDetail"
           countryIdFieldName="countryId"

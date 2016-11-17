@@ -37,14 +37,11 @@ export function groupByPermissionTypes(permissions) {
 // Given a user's permissions list, and a permission group (return type of groupByPermissionTypes),
 // check if the user is allowed to the resource protected by the permission group
 export function isPermittedUser(userPermissions, { required, forbidden, optional }) {
-  const isAllRequired = required
-    .every(it => userPermissions.indexOf(it) !== -1)
+  const isAllRequired = (userPermissions.intersect(required).size === required.length)
 
-  const isNoForbidden = forbidden
-    .every(it => userPermissions.indexOf(it) === -1)
+  const isNoForbidden = (userPermissions.intersect(forbidden).size === 0)
 
-  const hasSomeOptional = _.isEmpty(optional) || optional
-    .some(it => userPermissions.indexOf(it) !== -1)
+  const hasSomeOptional = _.isEmpty(optional) || (userPermissions.intersect(optional).size > 0)
 
   return isAllRequired && isNoForbidden && hasSomeOptional
 }

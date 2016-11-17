@@ -1,13 +1,13 @@
 const Promise = require('bluebird')
 const Boom = require('boom')
 const _ = require('lodash')
-const { knex, filterParams, sortPageParams } = require('../db')
+const { knex, filterParams, filterDateRangeParams, sortPageParams } = require('../db')
 const { getConstraints, addConstraints } = require('../auth/constraints')
 
 const SELECT_LIST_FIELDS = [
   'r.id', 'r.externalId', 'r.endedOn', 'd.name as deviceName',
   'c.name as countryName', 'st.name as stateName', 'lg.name as lgaName',
-  'rc1.name as resultCategory1Name', 'rc2.name as resultCategory2Name',
+  'rc1.name as resultCategory1Name', 'rc2.name as resultCategory2Name', 'rs.name as resultWorkflowStatus',
   's.externalId as sampleId', 'a.name as assayName', 'a.id as assayId',
   knex.raw('JSON_UNQUOTE(JSON_EXTRACT(r.patientData, "$.id")) as patientId')
 ]
@@ -15,8 +15,8 @@ const SELECT_LIST_FIELDS = [
 const SELECT_SHOW_FIELDS = [
   'r.id', 'r.externalId', 'r.startedOn', 'r.endedOn', 'd.name as deviceName',
   'c.name as countryName', 'st.name as stateName', 'lg.name as lgaName',
-  'rc1.name as resultCategory1Name', 'rc2.name as resultCategory2Name', 'r.resultData',
-  's.externalId as sampleId', 'si.name as siteName', 'r.assayVersion',
+  'rc1.name as resultCategory1Name', 'rc2.name as resultCategory2Name', 'rs.name as resultWorkflowStatus',
+  'r.resultData', 's.externalId as sampleId', 'si.name as siteName', 'r.assayVersion',
   'r.consumableSerial', 'r.consumableLot', 'r.consumableExpirationDate', 'r.instrumentSerial',
   'r.moduleName', 'r.moduleSerial', 'r.researchId', 'r.senderVersion', 'r.senderOperator',
   'r.notes', 'r.errorCode', 'r.errorNotes', 'r.createdOn', 'r.updatedOn', 'r.assayId',
@@ -89,7 +89,20 @@ function* listResults(request) {
     .leftJoin('ResultCategory as rc1', 'r.resultCategory1', 'rc1.id')
     .leftJoin('ResultCategory as rc2', 'r.resultCategory2', 'rc2.id')
     .leftJoin('Sample as s', 'r.sampleId', 's.id')
-    .modify(filterParams, query, { deviceId: 'd.id', sampleId: 's.externalId', assayId: 'r.assayId' })
+    .leftJoin('ResultWorkflowStatus as rs', 'r.resultWorkflowStatusId', 'rs.id')
+    .leftJoin('Site', 'r.siteId', 'Site.id')
+    .modify(filterDateRangeParams, query, 'r.endedOn')
+    .modify(filterParams, query, {
+      deviceId: 'd.id',
+      assayId: 'r.assayId',
+      resultCategoryId: 'r.resultCategory1',
+      countryId: 'Site.countryId',
+      stateId: 'Site.stateId',
+      lgaId: 'Site.lgaId',
+      deviceName: 'd.name',
+      siteName: 'Site.name',
+      sampleId: 's.externalId'
+    })
     .modify(addConstraints, dataConstraints, { device: 'd', sample: 's' })
 
   // get total count for paging
@@ -140,6 +153,7 @@ function* getResultByResultId(request, fields = SELECT_SHOW_FIELDS) {
     .leftJoin('ResultCategory as rc1', 'r.resultCategory1', 'rc1.id')
     .leftJoin('ResultCategory as rc2', 'r.resultCategory2', 'rc2.id')
     .leftJoin('Sample as s', 'r.externalId', 's.id')
+    .leftJoin('ResultWorkflowStatus as rs', 'r.resultWorkflowStatusId', 'rs.id')
     .where('r.id', +params.resultId)
     .modify(addConstraints, dataConstraints, { device: 'd' })
     .select(fields)
@@ -178,8 +192,39 @@ function* listResultTypes(request) {
   return result
 }
 
+function* updateWorkflowStatus(request) {
+  const { params, payload } = request
+
+  // TODO: check permission
+
+  let resultWorkflowStatusId = payload.resultWorkflowStatusId
+  // check if a token is provided
+  if (payload.token) {
+    [resultWorkflowStatusId] = yield knex('ResultWorkflowStatus as rs')
+      .where('rs.token', payload.token)
+      .select('rs.id')
+      .limit(1)
+      .map(row => row.id)
+
+    if (!resultWorkflowStatusId) {
+      return Boom.badRequest('Invalid ResultWorkflowStatus token')
+    }
+  }
+
+  // update the resultWorkflowStatusId
+  yield knex('Result')
+      .where('id', params.resultId)
+      .update({
+        resultWorkflowStatusId,
+        updatedOn: new Date()
+      })
+
+  return yield* showResult(request)
+}
+
 module.exports = {
   listResults,
   showResult,
-  listResultTypes
+  listResultTypes,
+  updateWorkflowStatus
 }

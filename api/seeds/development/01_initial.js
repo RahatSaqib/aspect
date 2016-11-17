@@ -628,7 +628,7 @@ function* seed(knex){
     shortname: 'kg'
   })
 
-  let [ounce] = yield knex('Unit').insert({
+  yield knex('Unit').insert({
     name: 'Ounce',
     shortname: 'oz'
   })
@@ -700,6 +700,44 @@ function* seed(knex){
   yield knex('ConsumableReason').insert({
     name: 'Lost',
     decrease: 1
+  })
+
+  //Result Workflow Status
+  yield knex('ResultWorkflowStatus').insert({
+    name: 'OK',
+    i18nkey: 'ResultWorkflowStatusOK',
+    token: 'ok',
+    externalId: 'OK'
+  })
+  yield knex('ResultWorkflowStatus').insert({
+    name: 'Error',
+    i18nkey: 'ResultWorkflowStatusError',
+    token: 'error',
+    externalId: 'Error'
+  })
+  let [ordered] = yield knex('ResultWorkflowStatus').insert({
+    name: 'Ordered',
+    i18nkey: 'ResultWorkflowStatusOrdered',
+    token: 'ordered',
+    externalId: 'Ordered'
+  })
+  yield knex('ResultWorkflowStatus').insert({
+    name: 'In Progress',
+    i18nkey: 'ResultWorkflowStatusInProgress',
+    token: 'in-progress',
+    externalId: 'InProgress'
+  })
+  let [processed] = yield knex('ResultWorkflowStatus').insert({
+    name: 'Processed',
+    i18nkey: 'ResultWorkflowStatusProcessed',
+    token: 'processed',
+    externalId: 'Processed'
+  })
+  let [acknowledged] = yield knex('ResultWorkflowStatus').insert({
+    name: 'Acknowledged',
+    i18nkey: 'ResultWorkflowStatusAcknowledged',
+    token: 'acknowledged',
+    externalId: 'Acknowledged'
   })
 
   // Create permissions
@@ -888,6 +926,8 @@ function* seed(knex){
     samples.push(sample)
   }
 
+  //Results section
+
   // TB results:
   let possibleResults = [{ resultText: 'Not Detected', category1: resultCategoryDetectedId, category2: null },
                           { resultText: 'MTB Detected, Rif Resistance Not Detected', category1: resultCategoryDetectedId, category2: resultCategoryNotDetectedId },
@@ -922,6 +962,7 @@ function* seed(knex){
       lgaId : siteData.lgaId,
       siteId: siteData.id,
       deviceId: device.id,
+      resultWorkflowStatusId: ordered,
       longitude: -81.581222,
       latitude: 28.419348,
       resultTypeId: resultTypePatientId,
@@ -998,6 +1039,7 @@ function* seed(knex){
       lgaId : siteData.lgaId,
       siteId: siteData.id,
       deviceId: device.id,
+      resultWorkflowStatusId: processed,
       longitude: -81.581222,
       latitude: 28.419348,
       resultTypeId: resultTypePatientId,
@@ -1081,6 +1123,7 @@ function* seed(knex){
       lgaId : siteData.lgaId,
       siteId: siteData.id,
       deviceId: device.id,
+      resultWorkflowStatusId: acknowledged,
       longitude: -81.581222,
       latitude: 28.419348,
       resultTypeId: resultTypePatientId,
@@ -1200,6 +1243,8 @@ function* seed(knex){
     { roleId: roleIdAdmin, permissionId: modules.site.admin },
     { roleId: roleIdAdmin, permissionId: modules.assay.admin },
     { roleId: roleIdAdmin, permissionId: modules.inventory.admin },
+    { roleId: roleIdAdmin, permissionId: modules.notification.admin },
+    { roleId: roleIdAdmin, permissionId: modules.report.admin },
 
     // FIXME: result permission for role
 

@@ -5,6 +5,7 @@ import { SubmissionError } from 'redux-form'
 import { aspectFetch, getHeaders, getBrowserNameAndVersion } from '../shared/utils/fetch'
 import * as localStorage from '../shared/utils/localStorage'
 import { addError } from '../error/ErrorRedux'
+import { ContactDetails, LoginDetails, UserPreferences } from '../person/PersonRedux'
 import { loginSuccess, changeCulture, changeTimezone } from '../auth/AuthRedux'
 
 export const types = {
@@ -59,11 +60,13 @@ function createReceiveUpdatedContactDetails(accountDetails) {
 export function saveContactDetails(contactDetails) {
   return (dispatch) => {
     dispatch(createSaveAccountDetailsStart())
+    const contactDetailsJson = contactDetails.toJS ? contactDetails.toJS() : contactDetails
     return aspectFetch('/account-details/current-contact',
       {
         method: 'PUT',
         headers: getHeaders(true),
-        body: JSON.stringify(contactDetails)
+        body: JSON.stringify(_.pick(contactDetailsJson, ['id', 'name', 'title', 'email', 'email2',
+          'phone', 'cell', 'countryId', 'stateId', 'lgaId', 'zip']))
       })
       .then(json => dispatch(createReceiveUpdatedContactDetails(json.data)))
       .catch(err => dispatch(addError('Saving contact details failed', err.message, err)))
@@ -157,37 +160,12 @@ export function saveUserPreferences(userPreferences) {
 /*
  * ---------------- Reducers -----------------
  */
-const ContactDetails = Immutable.Record({
-  id: null,
-  name: null,
-  title: null,
-  email: null,
-  email2: null,
-  phone: null,
-  cell: null,
-  countryId: null,
-  stateId: null,
-  lgaId: null,
-  zip: null
-})
-const LoginDetails = Immutable.Record({
-  id: null,
-  username: null,
-  newPassword: null,
-  confirmNewPassword: null,
-  currentPassword: null
-})
-const UserPreferences = Immutable.Record({
-  id: null,
-  timezone: null,
-  culture: null
-})
-const AccountDetailsData = Immutable.Record({
+export const AccountDetailsData = Immutable.Record({
   contactDetails: new ContactDetails(),
   loginDetails: new LoginDetails(),
   userPreferences: new UserPreferences()
 })
-const AccountDetails = Immutable.Record({
+export const AccountDetails = Immutable.Record({
   loading: false,
   saving: false,
   data: new AccountDetailsData()

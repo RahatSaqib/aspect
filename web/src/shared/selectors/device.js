@@ -1,8 +1,10 @@
-const isEditable = function (user/* TODO: add me back, device */) {
-  const editable = user.name === 'admin'
-  // TODO: is user has write access to the object?
+export function isEditable(user/* TODO: add me back, device */) {
+  const notEditable = user
+    .permissions
+    .intersect(['device:admin', 'device:edit'])
+    .isEmpty()
 
-  return editable
+  return !notEditable
 }
 
 export { isEditable as default }

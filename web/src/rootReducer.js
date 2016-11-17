@@ -4,6 +4,7 @@ import { combineReducers } from 'redux-immutable'
 
 import acknowledgement from './acknowledgement/AcknowledgementRedux'
 import error from './error/ErrorRedux'
+import filter from './filter/FilterRedux'
 import user, {
   types as authTypes
 } from './auth/AuthRedux'
@@ -14,12 +15,16 @@ import person from './person/PersonRedux'
 import accountDetails from './account/AccountRedux'
 import geography from './geography/GeographyRedux'
 import assay from './assay/AssayRedux'
+import notification from './notification/NotificationRedux'
+import report from './report/ReportRedux'
 import idle from './idle/IdleRedux'
+import roles from './role/RoleRedux'
 
 const appReducer = combineReducers({
   form: formReducer,
   acknowledgement,
   error,
+  filter,
   user,
   device,
   site,
@@ -28,13 +33,17 @@ const appReducer = combineReducers({
   result,
   geography,
   assay,
-  idle
+  notification,
+  report,
+  idle,
+  roles
 })
 
 const App = Immutable.Record({
   form: undefined,
   acknowledgement: undefined,
   error: undefined,
+  filter: undefined,
   user: undefined,
   device: undefined,
   site: undefined,
@@ -42,8 +51,11 @@ const App = Immutable.Record({
   accountDetails: undefined,
   geography: undefined,
   assay: undefined,
+  notification: undefined,
+  report: undefined,
   result: undefined,
-  idle: undefined
+  idle: undefined,
+  roles: undefined
 })
 
 const initialState = new App()

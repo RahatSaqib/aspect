@@ -60,6 +60,20 @@ module.exports = [{
   }
 }, {
   method: 'GET',
+  path: '/geography/state-select-list/{countryId}/{stateId}',
+  handler: asyncHandler(stateSelectList),
+  config: {
+    description: 'State List With LGAs for Selected State',
+    notes: 'List of state IDs and Names with LGAs populated for selected state',
+    validate: {
+      params: {
+        countryId: Joi.number().description('Country ID').required(),
+        stateId: Joi.number().description('State ID').required()
+      }
+    }
+  }
+}, {
+  method: 'GET',
   path: '/geography/lga-select-list/{stateId}',
   handler: asyncHandler(lgaSelectList),
   config: {

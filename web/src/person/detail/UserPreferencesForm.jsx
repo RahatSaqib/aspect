@@ -1,30 +1,12 @@
-import React from 'react'
+import React, { PropTypes } from 'react'
 import { reduxForm, Field } from 'redux-form/immutable'
 import RaisedButton from 'material-ui/RaisedButton'
 import _ from 'lodash'
-import { injectIntl, defineMessages } from 'react-intl'
+import { injectIntl } from 'react-intl'
 import TimezoneSelect from '../../components/shared/TimezoneSelect'
 import CountrySelect from '../../components/shared/CountrySelect'
-import styles from './AccountDetails.css'
-
-const messages = defineMessages({
-  timezone: {
-    id: 'pages.UserPreferences.timezone',
-    defaultMessage: 'Time Zone'
-  },
-  useDeviceTimezone: {
-    id: 'pages.UserPreferences.useDeviceTimezone',
-    defaultMessage: 'Use Computer\'s Time Zone'
-  },
-  language: {
-    id: 'pages.UserPreferences.language',
-    defaultMessage: 'Language'
-  },
-  save: {
-    id: 'pages.UserPreferences.save',
-    defaultMessage: 'Save'
-  }
-})
+import messages from './messages'
+import styles from './PersonDetail.css'
 
 const renderLanguageField = (props) => {
   const { onSelectionChanged, input, selectFieldProps } = props
@@ -56,17 +38,14 @@ const UserPreferencesForm = (props) => {
         <TimezoneSelect
           name="timezone" label={formatMessage(messages.timezone)}
           disabled={loading || saving} autoWidth
-          defaultTimezoneText={formatMessage(messages.useDeviceTimezone)}
         />
         <br />
         <Field
-          name="culture" floatingLabelText={formatMessage(messages.language)}
-          selectFieldProps={{
+          name="culture" selectFieldProps={{
             floatingLabelText: formatMessage(messages.language),
             disabled: (loading || saving),
             autoWidth: true
-          }}
-          disabled={loading || saving} component={renderLanguageField}
+          }} disabled={loading || saving} component={renderLanguageField}
         />
       </div>
       <div className={styles.Form__ActionRow}>
@@ -76,9 +55,19 @@ const UserPreferencesForm = (props) => {
   )
 }
 
+UserPreferencesForm.propTypes = {
+  loading: PropTypes.bool,
+  saving: PropTypes.bool,
+  handleSubmit: PropTypes.func.isRequired,
+  pristine: PropTypes.bool.isRequired,
+  invalid: PropTypes.bool.isRequired,
+  intl: PropTypes.object.isRequired
+}
+
 export default _.flowRight(
   injectIntl,
   reduxForm({
+    enableReinitialize: true,
     form: 'userPreferences'
   }))(UserPreferencesForm)
 

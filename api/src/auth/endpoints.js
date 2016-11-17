@@ -7,6 +7,7 @@ const {
   checkAuthentication,
   refreshToken,
   updateUsernameAndPasswordForLoggedInUser,
+  updateUsernameAndPasswordForPerson,
   createResetPasswordToken,
   updatePasswordWithResetPasswordToken
 } = require('./service')
@@ -99,6 +100,23 @@ module.exports = [
           newPassword: Joi.string().max(100).required(),
           clientName: Joi.string().required(),
           clientId: Joi.string()
+        }
+      }
+    }
+  }, {
+    method: 'PUT',
+    path: '/auth/update-person-login-details/{personId}',
+    handler: asyncHandler(updateUsernameAndPasswordForPerson),
+    config: {
+      description: 'Update username and password linked to a person',
+      notes: 'Returns an array of the fields that were updated',
+      validate: {
+        params: {
+          personId: Joi.string().description('Person ID').required()
+        },
+        payload: {
+          newUsername: Joi.string().max(255).allow('', null),
+          newPassword: Joi.string().max(100).allow('', null)
         }
       }
     }

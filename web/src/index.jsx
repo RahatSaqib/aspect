@@ -36,30 +36,36 @@ if (!window.Intl) {
   require('intl/locale-data/jsonp/en.js')
 }
 
-// get new access token on refresh/startup
-if (getRefreshToken()) {
-  // let's see if we can get culture from local storage
-  store.dispatch(hydrateFromLocalStorage())
-
-  // get new access token
-  store.dispatch(refreshStart())
-}
-
-// also refresh the access token every 30 minutes.
+// Refresh the access token every 30 minutes.
 // this could probably be done more elegantly in a component
 // but it works for now
 setInterval(() => { store.dispatch(refreshStart()) }, 30 * 60 * 1000)
 
 const appDom = document.getElementById('app')
 
-render(
-  <AppContainer>
-    <Provider store={store}>
-      <Routes />
-    </Provider>
-  </AppContainer>,
-  appDom
-)
+// If found a access token, refresh it before initial rendering
+new Promise((resolve) => {
+  // get new access token on refresh/startup
+  if (getRefreshToken()) {
+    // let's see if we can get culture from local storage
+    store.dispatch(hydrateFromLocalStorage())
+
+    // get new access token
+    store.dispatch(refreshStart())
+      .then(resolve, resolve)
+  } else {
+    resolve()
+  }
+}).then(() => {
+  render(
+    <AppContainer>
+      <Provider store={store}>
+        <Routes />
+      </Provider>
+    </AppContainer>,
+    appDom
+  )
+})
 
 if (module.hot) {
   module.hot.accept('./components/Routes.jsx', () => {

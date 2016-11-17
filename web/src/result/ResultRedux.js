@@ -1,3 +1,4 @@
+import _ from 'lodash'
 import { stringify } from 'querystring'
 import Immutable from 'immutable'
 
@@ -47,7 +48,22 @@ function receiveResults(json) {
   }
 }
 
-export function fetchResults(filters = Immutable.Map({ sampleId: '', assayId: null }), sortCol = 'endedOn', sortDir = 'desc', page = 0, pageSize = 20) {
+// With state.filter.listFilter & extraFilters
+export function fetchListFilteredResults(extraFilters = {}, ...args) {
+  return (dispatch, getState) => {
+    const filters = getState()
+      .filter
+      .listFilter
+      .toMap()
+      .merge(extraFilters)
+      .filter(_.identity)
+      .toJS()
+
+    return dispatch(fetchResults(filters, ...args))
+  }
+}
+
+export function fetchResults(filters/* required */, sortCol = 'endedOn', sortDir = 'desc', page = 0, pageSize = 20) {
   return (dispatch) => {
     dispatch(requestResults(sortCol, sortDir, page, pageSize, filters))
 
@@ -56,7 +72,7 @@ export function fetchResults(filters = Immutable.Map({ sampleId: '', assayId: nu
       sortDir,
       page,
       size: pageSize,
-      ...filters.toJS()
+      ...filters
     })}`)
       .then(json => dispatch(receiveResults(json)))
       .catch((err) => {

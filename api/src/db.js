@@ -15,18 +15,42 @@ function sortPageParams(queryBuilder, params, defaultSort) {
   queryBuilder.orderBy(sp.sortCol, sp.sortDir).limit(sp.size).offset(sp.skip)
 }
 
+function getWhereArgs(columnName, paramValue) {
+  if (_.isString(paramValue)) {
+    return [columnName, 'like', `%${paramValue}%`]
+  }
+  return [columnName, '=', paramValue]
+}
+
 // extracts the parameters related to filtering from the candidate
 // params and modifies the query builder with the filter modifications
 function filterParams(queryBuilder, params, filters) {
-  _.each(filters, (columnName, paramName) => {
-    if (typeof params[paramName] !== 'undefined') {
-      if (typeof params[paramName] === 'string') {
-        queryBuilder.where(columnName, 'like', `%${params[paramName]}%`)
-      } else {
-        queryBuilder.where(columnName, '=', params[paramName])
-      }
+  _.each(filters, (columnNameOrArray, paramName) => {
+    if (_.isUndefined(params[paramName])) {
+      return
+    }
+    if (_.isArray(columnNameOrArray)) {
+      queryBuilder.where(function () {
+        // http://knexjs.org/#Builder-where
+        columnNameOrArray.forEach((columnName) => {
+          this.orWhere(...getWhereArgs(columnName, params[paramName]))
+        })
+      })
+    } else {
+      queryBuilder.where(...getWhereArgs(columnNameOrArray, params[paramName]))
     }
   })
+}
+
+// extracts the parameters related to filtering from the candidate
+// params and modifies the query builder with the filter modifications
+function filterDateRangeParams(queryBuilder, params, dateColumnName) {
+  if (params.minDate) {
+    queryBuilder.where(dateColumnName, '>=', params.minDate)
+  }
+  if (params.maxDate) {
+    queryBuilder.where(dateColumnName, '<', params.maxDate)
+  }
 }
 
 // helper function for run, transact and migration
@@ -96,6 +120,7 @@ function load() {
 module.exports = {
   query,
   filterParams,
+  filterDateRangeParams,
   sortPageParams,
   migration,
   run,

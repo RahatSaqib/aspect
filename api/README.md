@@ -101,6 +101,11 @@ db.user=aspectapi
 db.password=your_local_database_password
 db.databaseName=aspect
 db.debug=false
+
+sendgrid.apiKey=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
+email.fromAddress=support@gxalert.com
+
+aspectUrl=http://dev.aspect.id
 ```
 
 Logs requests to console by default, to forward to Logstash, set the endpoint.

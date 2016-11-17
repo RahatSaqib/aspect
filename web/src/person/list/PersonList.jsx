@@ -5,22 +5,16 @@ import {
   injectIntl,
   defineMessages
 } from 'react-intl'
+import { withRouter } from 'react-router'
 import { bindActionCreators } from 'redux'
 import { connect } from 'react-redux'
 import Helmet from 'react-helmet'
 
-// Material-UI
-import NavigationExpandMoreIcon from 'material-ui/svg-icons/navigation/expand-more'
-import RaisedButton from 'material-ui/RaisedButton'
-import { Toolbar, ToolbarGroup } from 'material-ui/Toolbar'
-import MenuItem from 'material-ui/MenuItem'
-import IconMenu from 'material-ui/IconMenu'
-import IconButton from 'material-ui/IconButton'
-import TextField from 'material-ui/TextField'
-
 // Our own imports
-import DataTable from '../../components/shared/DataTable'
-import { fetchPersons } from '../PersonRedux'
+import { DataTable } from '../../components/shared/DataTable'
+import ListFilterContainer from '../../filter/list/ListFilter'
+import { configureListFilter } from '../../filter/FilterRedux'
+import { fetchListFilteredPersons } from '../PersonRedux'
 import styles from './PersonList.css'
 
 const messages = defineMessages({
@@ -52,36 +46,32 @@ export class PersonList extends PureComponent {
     setPageTitle: PropTypes.func.isRequired,
     table: PropTypes.object.isRequired,
     intl: PropTypes.object.isRequired,
-    fetchPersons: PropTypes.func.isRequired,
-    items: PropTypes.object.isRequired
-  }
-
-  state = {
-    filters: this.props.table.get('filters')
+    items: PropTypes.object.isRequired,
+    configureListFilter: PropTypes.object.isRequired,
+    listFilter: PropTypes.object.isRequired,
+    router: PropTypes.object.isRequired,
+    fetchListFilteredPersons: PropTypes.func.isRequired
   }
 
   componentWillMount() {
-    const { setPageTitle, intl } = this.props
+    const { setPageTitle, configureListFilter, intl } = this.props
     const { formatMessage } = intl
     setPageTitle(formatMessage(messages.title))
+    configureListFilter({ geography: true, contactNameOrEmail: true })
   }
 
-  filterPersonsChange = (e) => {
-    this.setState({ filters: this.state.filters.set(e.target.id, e.target.value) })
+  componentWillReceiveProps(nextProps) {
+    if (this.props.listFilter !== nextProps.listFilter) {
+      this.handleFetch()
+    }
+  }
+
+  handleItemIdSelection = (personId) => {
+    this.props.router.push(`/person/${personId}`)
   }
 
   handleFetch = (...args) => {
-    this.props.fetchPersons(this.props.table.filters, ...args)
-  }
-
-  handleSubmit = (e) => {
-    e.preventDefault()
-    this.props.fetchPersons(this.state.filters)
-  }
-
-  resetPersons = () => {
-    this.setState({ filters: this.state.filters.set('name', '') })
-    this.props.fetchPersons()
+    this.props.fetchListFilteredPersons({}, ...args)
   }
 
   render() {
@@ -91,34 +81,9 @@ export class PersonList extends PureComponent {
     return (
       <div className={styles.Content}>
         <Helmet title={formatMessage(messages.title)} titleTemplate="%s - Aspect" defaultTitle="Aspect" />
-        <form onSubmit={this.handleSubmit}>
-          <Toolbar className={styles.Toolbar} >
-            <ToolbarGroup firstChild>
-              <TextField
-                value={this.state.filters.get('name')}
-                id="name"
-                onChange={this.filterPersonsChange}
-                className={styles['Toolbar__TextField--filter']}
-                hintText="Filter by name"
-              />
-              <RaisedButton label="Filter" primary onTouchTap={this.handleSubmit} />
-            </ToolbarGroup>
-            <ToolbarGroup lastChild>
-              <IconMenu
-                iconButtonElement={
-                  <IconButton touch>
-                    <NavigationExpandMoreIcon />
-                  </IconButton>}
-              >
-                <MenuItem primaryText="Clear Filters" className={styles.Toolbar__MenuItem} onTouchTap={this.resetPersons} />
-                <MenuItem primaryText="Export to Excel" className={styles.Toolbar__MenuItem} />
-                <MenuItem primaryText="Export to CSV" className={styles.Toolbar__MenuItem} />
-              </IconMenu>
-            </ToolbarGroup>
-          </Toolbar>
-        </form>
-
+        <ListFilterContainer />
         <DataTable
+          handleItemIdSelection={this.handleItemIdSelection}
           handleFetch={this.handleFetch}
           items={this.props.items}
           table={this.props.table}
@@ -136,16 +101,21 @@ export class PersonList extends PureComponent {
 
 function mapStateToProps(state) {
   return {
+    listFilter: state.filter.listFilter,
     items: state.person.items,
     table: state.person.table
   }
 }
 
 function mapDispatchToProps(dispatch) {
-  return bindActionCreators({ fetchPersons }, dispatch)
+  return bindActionCreators({
+    configureListFilter,
+    fetchListFilteredPersons
+  }, dispatch)
 }
 
 export const PersonListContainer = _.flowRight(
   injectIntl,
+  withRouter,
   connect(mapStateToProps, mapDispatchToProps)
 )(PersonList)

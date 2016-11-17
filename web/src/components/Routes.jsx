@@ -12,7 +12,7 @@ import LoggedInShell from '../components/layouts/LoggedInShell'
 // "Pages"
 import { NotFoundContainer } from '../error/notFound/NotFound'
 import { LoginContainer } from '../auth/login/Login'
-import ResetPasswordContainer from '../auth/resetPassword/ResetPassword'
+import { ResetPasswordContainer } from '../auth/resetPassword/ResetPassword'
 import { DashboardContainer } from '../dashboard/dashboard/Dashboard'
 import { InventoryContainer } from '../dashboard/inventory/Inventory'
 import { MaintenanceContainer } from '../dashboard/maintenance/Maintenance'
@@ -21,11 +21,13 @@ import { DeviceDetailContainer } from '../device/detail/DeviceDetail'
 import { SiteListContainer } from '../site/list/SiteList'
 import { SiteDetailContainer } from '../site/detail/SiteDetail'
 import { PersonListContainer } from '../person/list/PersonList'
+import { PersonDetailContainer } from '../person/detail/PersonDetail'
 import { ResultListContainer } from '../result/list/ResultList'
 import { ResultDetailContainer } from '../result/detail/ResultDetail'
 import { NotificationListContainer } from '../notification/list/NotificationList'
 import { ReportListContainer } from '../report/list/ReportList'
 import { AccountDetailsContainer } from '../account/detail/AccountDetails'
+import { StyleguideMainContainer } from '../styleguide/main/StyleguideMain'
 
 import { refreshStart } from '../auth/AuthRedux'
 
@@ -63,9 +65,9 @@ const routes =
       <Route component={ResetPasswordContainer} path="reset-password" />
       <Route
         component={LoggedInShell}
+        onEnter={requireAuth}
         onChange={(prevState, nextState, replace) => requireAuth(nextState, replace)}
       >
-
         <IndexRedirect to="dashboard" />
 
         <Route path="dashboard" >
@@ -74,12 +76,12 @@ const routes =
           <Route path="maintenance" component={MaintenanceContainer} />
         </Route>
 
-        <Route path="device" deviceConfig={{ hasResults: 1, hasConnectivity: undefined }}>
+        <Route path="device" deviceConfig={{ filterParams: { hasResults: 1 }, filterConfig: { assayAndResultCategory: true, geography: true, date: true, deviceName: true } }}>
           <IndexRoute component={DeviceListContainer} />
           <Route path=":deviceId" component={DeviceDetailContainer} />
         </Route>
 
-        <Route path="router" deviceConfig={{ hasResults: 0, hasConnectivity: 1 }}>
+        <Route path="router" deviceConfig={{ filterParams: { hasResults: 0, hasConnectivity: 1 }, filterConfig: { geography: true, date: true, deviceName: true } }}>
           <IndexRoute component={DeviceListContainer} />
           <Route path=":deviceId" component={DeviceDetailContainer} />
         </Route>
@@ -94,7 +96,10 @@ const routes =
           <Route path=":siteId" component={SiteDetailContainer} />
         </Route>
 
-        <Route path="person" component={PersonListContainer} />
+        <Route path="person">
+          <IndexRoute component={PersonListContainer} />
+          <Route path=":personId" component={PersonDetailContainer} />
+        </Route>
 
         <Route path="account-details">
           <Route path="current" component={AccountDetailsContainer} />
@@ -105,12 +110,14 @@ const routes =
         <Route path="report" component={ReportListContainer} />
 
       </Route>
+      {process.env.NODE_ENV !== 'production' && (
+        <Route path="styleguide" component={StyleguideMainContainer} />
+      )}
       <Route path="*" component={NotFoundContainer} />
     </Route>
   </Router>)
 
 class Routes extends Component {
-
   render() {
     return (
       routes

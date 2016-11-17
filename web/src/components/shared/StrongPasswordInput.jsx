@@ -7,6 +7,7 @@ import Popover from 'material-ui/Popover'
 import LinearProgress from 'material-ui/LinearProgress'
 import CheckIcon from 'material-ui/svg-icons/navigation/check'
 import CloseIcon from 'material-ui/svg-icons/navigation/close'
+import classNames from 'classnames'
 import styles from './Shared.css'
 
 const messages = defineMessages({
@@ -128,7 +129,7 @@ class StrongPasswordInput extends React.PureComponent {
       <TextField
         {...input} errorStyle={{ float: 'left' }}
         errorText={(touched || dirty) && error} {...textFieldProps}
-        className={textFieldProps.fullWidth ? '' : styles.Form__Field}
+        className={classNames({ [styles.Form__Field]: textFieldProps.fullWidth })}
         onFocus={this.handleFocus} onBlur={this.handleBlur}
       />
       <Popover

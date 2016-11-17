@@ -47,10 +47,9 @@ const renderFormField = (props) => {
     selectedItemStyle } = props
   const valueKey = dataSourceConfig.value
   const textKey = dataSourceConfig.text
-
   const selectItems = _.map(dataSource, item => ({
-    key: item[valueKey],
-    value: item[valueKey],
+    key: item[valueKey] || '-1',
+    value: item[valueKey] || null,
     primaryText: item[textKey]
   }))
 

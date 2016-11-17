@@ -119,7 +119,7 @@ export class Form extends PureComponent {
   // So, load the sigle site resource in cDM
   //
   componentDidMount() {
-    this.props.fetchSites(this.props.table.filters, undefined, undefined, 0, 99999)
+    this.props.fetchSites({}, undefined, undefined, 0, 99999)
   }
 
   render() {

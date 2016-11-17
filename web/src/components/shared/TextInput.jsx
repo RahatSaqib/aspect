@@ -1,6 +1,7 @@
 import React from 'react'
 import { Field } from 'redux-form/immutable'
 import TextField from 'material-ui/TextField'
+import classNames from 'classnames'
 import styles from './Shared.css'
 
 const renderTextField = (props) => {
@@ -9,27 +10,21 @@ const renderTextField = (props) => {
   return (<TextField
     {...input} errorStyle={{ float: 'left' }}
     errorText={touched && error} {...textFieldProps}
-    className={textFieldProps.fullWidth ? '' : styles.Form__Field}
+    className={classNames({ [styles.Form__Field]: textFieldProps.fullWidth })}
   />)
 }
 
 const renderFormField = (props) => {
-  const {
-    name,
-    label,
-    fullWidth,
-    autoFocus,
-    disabled,
-    maxLength,
-    type,
-    onChange,
-    onKeyPress } = props
+  const { name, label, fullWidth, autoFocus, disabled, maxLength,
+    multiLine, rows, type, onChange, onKeyPress } = props
   const textFieldProps = {
     floatingLabelText: label,
     fullWidth,
     autoFocus,
     disabled,
     maxLength,
+    multiLine,
+    rows,
     type: type || 'text'
   }
   if (onChange) {

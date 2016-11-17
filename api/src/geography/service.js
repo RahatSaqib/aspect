@@ -100,22 +100,45 @@ function* countrySelectList(request) {
     selectedState.lgas = _.sortBy(selectedStateLgas, 'name')
   }
 
-  const result = { ok: true, data: countries }
-
-  return result
+  return { ok: true, data: countries }
 }
 
 function* stateSelectList(request) {
-  const { params } = request
-  const states = yield query('Get states for select list')
-    .from('State as s')
-    .where('s.countryId', params.countryId)
-    .orderBy(['s.name'], 'asc')
-    .select('s.id', 's.name')
+  const { countryId, stateId } = request.params
 
-  const result = { ok: true, data: states }
+  let states = []
+  if (!stateId) {
+    states = yield query('Get states for select list')
+      .from('State as s')
+      .where('s.countryId', countryId)
+      .orderBy(['s.name'], 'asc')
+      .select('s.id', 's.name')
+  } else {
+    const statesAndLgas = yield query('Get states and state LGAs for select lists')
+      .from('State as s')
+      .where('s.countryId', countryId)
+      .leftJoin('Lga as l', function () {
+        this.on('s.id', 'l.stateId')
+          .on({ stateId: knex.raw(stateId) })
+      })
+      .orderBy(['s.name', 'l.name'], 'asc')
+      .select('s.id as stateId', 's.name as stateName', 'l.id as lgaId', 'l.name as lgaName')
+    states = _.map(_.uniqBy(statesAndLgas, 'stateId'), stateRecord => ({
+      id: stateRecord.stateId,
+      name: stateRecord.stateName
+    }))
+    const selectedState = _.find(states, { id: stateId })
+    const selectedStateLgas = _.map(_.filter(statesAndLgas, lgaRecord => lgaRecord.lgaId != null),
+      lgaRecord => ({
+        id: lgaRecord.lgaId,
+        name: lgaRecord.lgaName
+      }
+    ))
 
-  return result
+    selectedState.lgas = _.sortBy(selectedStateLgas, 'name')
+  }
+
+  return { ok: true, data: states }
 }
 
 function* lgaSelectList(request) {
@@ -126,9 +149,7 @@ function* lgaSelectList(request) {
     .orderBy(['l.name'], 'asc')
     .select('l.id', 'l.name')
 
-  const result = { ok: true, data: lgas }
-
-  return result
+  return { ok: true, data: lgas }
 }
 
 module.exports = {

@@ -10,8 +10,7 @@ export function requestTable(table, action) {
     sortCol: action.sortCol,
     sortDir: action.sortDir,
     page: action.page,
-    pageSize: action.size,
-    filters: action.filters
+    pageSize: action.size
   })
 }
 
@@ -30,6 +29,5 @@ export const Table = Immutable.Record({
   page: 0,
   pageSize: 10, // Renamed from 'size' since 'size' will conflict with Immutable internal property
   total: 0,
-  filters: Immutable.fromJS({ name: '' }),
   extraColumns: new Immutable.List()
 })
