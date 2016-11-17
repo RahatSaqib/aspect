@@ -23,6 +23,14 @@
     {
       "name": "site",
       "activities": ["view", "edit", "admin"]
+    },
+    {
+      "name": "notification",
+      "activities": ["view", "edit", "admin"]
+    },
+    {
+      "name": "report",
+      "activities": ["view", "edit", "admin"]
     }
   ]
 }

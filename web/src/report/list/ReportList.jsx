@@ -2,38 +2,117 @@
 import _ from 'lodash'
 import React, { PureComponent, PropTypes } from 'react'
 import {
-  injectIntl
+  injectIntl,
+  defineMessages
 } from 'react-intl'
+import { bindActionCreators } from 'redux'
+import { connect } from 'react-redux'
 import Helmet from 'react-helmet'
 
 // Our own imports
+import { DataTable } from '../../components/shared/DataTable'
+import ListFilterContainer from '../../filter/list/ListFilter'
+import { configureListFilter } from '../../filter/FilterRedux'
+import { fetchListFilteredReports } from '../ReportRedux'
 import styles from './ReportList.css'
+
+const messages = defineMessages({
+  title: {
+    id: 'pages.ReportList.title',
+    defaultMessage: 'Reports'
+  },
+  deploymentName: {
+    id: 'pages.ReportList.deploymentName',
+    defaultMessage: 'Deployment Name'
+  },
+  moduleSerial: {
+    id: 'pages.ReportList.moduleSerial',
+    defaultMessage: 'Module Serial'
+  },
+  dateOfError: {
+    id: 'pages.ReportList.dateOfError',
+    defaultMessage: 'Date of Error'
+  },
+  error: {
+    id: 'pages.ReportList.error',
+    defaultMessage: 'Error'
+  },
+  totalTestsRun: {
+    id: 'pages.ReportList.totalTestsRun',
+    defaultMessage: 'Total Tests Run'
+  },
+  totalErrors: {
+    id: 'pages.ReportList.totalErrors',
+    defaultMessage: 'Total Errors'
+  }
+})
 
 export class ReportList extends PureComponent {
 
   static propTypes = {
-    setPageTitle: PropTypes.func.isRequired
+    setPageTitle: PropTypes.func.isRequired,
+    table: PropTypes.object.isRequired
+  }
+
+  handleFetch = (...args) => {
+    this.props.fetchListFilteredReports({}, ...args)
   }
 
   componentWillMount() {
-    this.props.setPageTitle('Reports')
+    const { setPageTitle, configureListFilter, intl } = this.props
+    const { formatMessage } = intl
+    setPageTitle(formatMessage(messages.title))
+    configureListFilter({contactNameOrEmail: true})
+  }
+
+  componentWillReceiveProps(nextProps) {
+    if (this.props.listFilter !== nextProps.listFilter) {
+      this.handleFetch()
+    }
   }
 
   render() {
+    const { intl } = this.props
+    const { formatMessage } = intl
+
     return (
       <div className={styles.Content}>
-        <Helmet title="Reports" titleTemplate="%s - Aspect" defaultTitle="Aspect" />
-        <div className="pure-g">
-          <div className="pure-u-lg-1-4 pure-u-md-1-3 pure-u-sm-1-2">
-            Reports Here!
-          </div>
-        </div>
+        <Helmet title={formatMessage(messages.title)} titleTemplate="%s - Aspect" defaultTitle="Aspect" />
+        <ListFilterContainer />
+        <DataTable
+          handleFetch={ this.handleFetch }
+          items={ this.props.items }
+          table={ this.props.table }
+          columns={[
+            { db: 'deploymentName', title: formatMessage(messages.deploymentName) },
+            { db: 'moduleSerial', title: formatMessage(messages.moduleSerial) },
+            { db: 'dateOfError', title: formatMessage(messages.dateOfError) },
+            { db: 'error', title: formatMessage(messages.error) },
+            { db: 'totalTestsRun', title: formatMessage(messages.totalTestsRun) },
+            { db: 'totalErrors', title: formatMessage(messages.totalErrors) }
+          ]}
+        />
       </div>
     )
   }
 }
 
-export const ReportListContainer = _.flowRight(
-  injectIntl
-)(ReportList)
+function mapStateToProps(state) {
+  return {
+    listFilter: state.filter.listFilter,
+    items: state.report.items,
+    table: state.report.table
+  }
+}
 
+function mapDispatchToProps(dispatch) {
+  return bindActionCreators({
+    configureListFilter,
+    fetchListFilteredReports
+  }, dispatch)
+}
+
+export const ReportListContainer = _.flowRight(
+  injectIntl,
+  connect(mapStateToProps, mapDispatchToProps)
+)(ReportList)

@@ -15,6 +15,8 @@ import person from './person/PersonRedux'
 import accountDetails from './account/AccountRedux'
 import geography from './geography/GeographyRedux'
 import assay from './assay/AssayRedux'
+import notification from './notification/NotificationRedux'
+import report from './report/ReportRedux'
 import idle from './idle/IdleRedux'
 import roles from './role/RoleRedux'
 
@@ -31,6 +33,8 @@ const appReducer = combineReducers({
   result,
   geography,
   assay,
+  notification,
+  report,
   idle,
   roles
 })
@@ -47,6 +51,8 @@ const App = Immutable.Record({
   accountDetails: undefined,
   geography: undefined,
   assay: undefined,
+  notification: undefined,
+  report: undefined,
   result: undefined,
   idle: undefined,
   roles: undefined

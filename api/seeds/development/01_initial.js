@@ -1243,6 +1243,8 @@ function* seed(knex){
     { roleId: roleIdAdmin, permissionId: modules.site.admin },
     { roleId: roleIdAdmin, permissionId: modules.assay.admin },
     { roleId: roleIdAdmin, permissionId: modules.inventory.admin },
+    { roleId: roleIdAdmin, permissionId: modules.notification.admin },
+    { roleId: roleIdAdmin, permissionId: modules.report.admin },
 
     // FIXME: result permission for role
 
