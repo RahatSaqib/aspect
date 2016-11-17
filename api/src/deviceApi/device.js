@@ -3,7 +3,7 @@ const { addConstraints } = require('../auth/constraints')
 const { getExternalId } = require('./common')
 const { addResult } = require('./result')
 
-function* ping(context){
+function* addDeviceData(context){
   const response = {}
   const {payload, device: {id: deviceId}, constraints: dataConstraints} = context
   const {result, configuration, operation} = payload
@@ -109,7 +109,7 @@ function* addDeviceOperation(context){
 }
 
 module.exports = {
-  ping,
+  addDeviceData,
   addDeviceConfiguration,
   addDeviceOperation
 }
