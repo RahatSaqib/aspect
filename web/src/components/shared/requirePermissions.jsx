@@ -5,7 +5,8 @@ import getDisplayName from 'react-display-name'
 // Get a permissions list from the combination of permissionsInConfig (from HOC)
 // and overriddenPermissions, extraPermissions that are passed in by props
 export function getPermissions(permissionsInConfig, overriddenPermissions, extraPermissions) {
-  const basePermissions = _.isEmpty(overriddenPermissions) ? permissionsInConfig : overriddenPermissions
+  const basePermissions = _.isEmpty(overriddenPermissions) ?
+    permissionsInConfig : overriddenPermissions
   const permissions = basePermissions.concat(extraPermissions)
   return permissions
 }
@@ -49,8 +50,10 @@ export function isPermittedUser(userPermissions, { required, forbidden, optional
 }
 
 // An HOC that can protect underlying resource with pre-config permissions list.
-// The permissions can be overridden/added by props (overriddenPermissions, extraPermissions) as well.
-export const requirePermissions = ({ permissions: permissionsInConfig = [], ForbiddenComponent = _.constant(false) }) => WrappedComponent => (
+// The permissions can be overridden/added by
+// props (overriddenPermissions, extraPermissions) as well.
+export const requirePermissions = ({ permissions: permissionsInConfig = [],
+  ForbiddenComponent = _.constant(false) }) => WrappedComponent => (
   class RequirePermissions extends PureComponent {
     static displayName = `requirePermissions(${getDisplayName(WrappedComponent)})`
 

@@ -1,4 +1,4 @@
-export function isEditable(user/* TODO: add me back, site */) {
+const isEditable = function isEditable(user/* TODO: add me back, site */) {
   const editable = user.name === 'admin'
   // TODO: is user has write access to the object?
 
@@ -22,3 +22,5 @@ export function address(site) {
     address2: site.get('street2')
   }
 }
+
+export { isEditable as default }

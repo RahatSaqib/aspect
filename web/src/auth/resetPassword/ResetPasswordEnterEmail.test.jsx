@@ -4,10 +4,10 @@ import { shallow } from 'enzyme'
 import proxyquire from 'proxyquire'
 import Immutable from 'immutable'
 import sinon from 'sinon'
-import TextInput from '../../components/shared/TextInput'
 import RaisedButton from 'material-ui/RaisedButton'
-import {Link} from 'react-router'
+import { Link } from 'react-router'
 import FlatButton from 'material-ui/FlatButton'
+import TextInput from '../../components/shared/TextInput'
 
 describe('Reset Password Enter Email Form', () => {
   const fakeReactIntl = {
@@ -17,16 +17,18 @@ describe('Reset Password Enter Email Form', () => {
 
   describe('ResetPasswordEnterEmail component', () => {
     const fakeReduxForm = {
-        reduxForm: () => component => component
-      }, ResetPasswordEnterEmail = proxyquire('./ResetPasswordEnterEmail', {
-        'redux-form/immutable': fakeReduxForm,
-        'react-intl': fakeReactIntl,
-        './messages': proxyquire('./messages', {
-          'react-intl': fakeReactIntl
-        }).default
+      reduxForm: () => component => component
+    }
+    const ResetPasswordEnterEmail = proxyquire('./ResetPasswordEnterEmail', {
+      'redux-form/immutable': fakeReduxForm,
+      'react-intl': fakeReactIntl,
+      './messages': proxyquire('./messages', {
+        'react-intl': fakeReactIntl
       }).default
+    }).default
 
-    let props, ResetPasswordEnterEmailWrapper
+    let props
+    let ResetPasswordEnterEmailWrapper
 
     const shallowRenderResetPasswordEnterEmail = () => {
       ResetPasswordEnterEmailWrapper = shallow(<ResetPasswordEnterEmail {...props} />)
@@ -71,7 +73,7 @@ describe('Reset Password Enter Email Form', () => {
       const anchorTag = ResetPasswordEnterEmailWrapper.find('a')
       assert.deepEqual(anchorTag.props(), {
         children: 'I don\'t know what email address I am registered with',
-        href: '#',
+        href: '#showAdminHelp',
         onClick: props.showAdminHelpDialog
       })
       assert.isTrue(props.showAdminHelpDialog.notCalled)
@@ -126,7 +128,8 @@ describe('Reset Password Enter Email Form', () => {
   })
 
   describe('reduxForm', () => {
-    let reduxFormStub, reduxFormConfig
+    let reduxFormStub
+    let reduxFormConfig
 
     beforeEach(() => {
       reduxFormStub = {
@@ -149,7 +152,8 @@ describe('Reset Password Enter Email Form', () => {
           formatMessage: message => message.defaultMessage
         }
       }
-      let validateFunction, initialEmailField
+      let validateFunction
+      let initialEmailField
 
       beforeEach(() => {
         validateFunction = reduxFormConfig.validate

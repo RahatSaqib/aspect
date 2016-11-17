@@ -7,13 +7,14 @@ import TextInput from './TextInput'
 describe('TextInput', () => {
   it('Should render a Field and pass the props assigned to it', () => {
     const props = {
-        name: 'fieldName',
-        label: 'Field Label',
-        disabled: false,
-        fullWidth: true,
-        maxLength: 50
-      }, TextInputWrapper = shallow(<TextInput {...props}/>),
-      textInputProps = TextInputWrapper.find(Field).props()
+      name: 'fieldName',
+      label: 'Field Label',
+      disabled: false,
+      fullWidth: true,
+      maxLength: 50
+    }
+    const TextInputWrapper = shallow(<TextInput {...props} />)
+    const textInputProps = TextInputWrapper.find(Field).props()
 
     assert.equal(textInputProps.name, props.name)
     assert.deepEqual(textInputProps.textFieldProps, {
@@ -28,14 +29,15 @@ describe('TextInput', () => {
 
   it('Should render a Password Field when type is specified as password', () => {
     const props = {
-        name: 'fieldName',
-        label: 'Field Label',
-        disabled: false,
-        fullWidth: true,
-        maxLength: 50,
-        type: 'password'
-      }, TextInputWrapper = shallow(<TextInput {...props}/>),
-      textInputProps = TextInputWrapper.find(Field).props()
+      name: 'fieldName',
+      label: 'Field Label',
+      disabled: false,
+      fullWidth: true,
+      maxLength: 50,
+      type: 'password'
+    }
+    const TextInputWrapper = shallow(<TextInput {...props} />)
+    const textInputProps = TextInputWrapper.find(Field).props()
 
     assert.equal(textInputProps.name, props.name)
     assert.deepEqual(textInputProps.textFieldProps, {

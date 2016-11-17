@@ -9,16 +9,16 @@ export const types = {
  * ---------------- Action Creators -----------------
  */
 export function addAcknowledgement(message) {
-  return dispatch => {
+  return (dispatch) => {
     dispatch({
       type: types.ADD_ACKNOWLEDGEMENT,
-      acknowledgement: {message}
+      acknowledgement: { message }
     })
   }
 }
 
-export function removeAcknowledgement(){
-  return dispatch => {
+export function removeAcknowledgement() {
+  return (dispatch) => {
     dispatch({
       type: types.REMOVE_ACKNOWLEDGEMENT
     })
@@ -37,13 +37,14 @@ const initialState = new Acknowledgement()
 
 export default function acknowledgementReducer(state = initialState, action) {
   switch (action.type) {
-  case types.ADD_ACKNOWLEDGEMENT:
-    return state.merge({
-      hasAcknowledgement: true,
-      ...action.acknowledgement
-    })
-  case types.REMOVE_ACKNOWLEDGEMENT:
-    return state.clear()
+    case types.ADD_ACKNOWLEDGEMENT:
+      return state.merge({
+        hasAcknowledgement: true,
+        ...action.acknowledgement
+      })
+    case types.REMOVE_ACKNOWLEDGEMENT:
+      return state.clear()
+    default:
+      return state
   }
-  return state
 }

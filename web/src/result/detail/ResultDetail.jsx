@@ -136,10 +136,10 @@ export const makeLevel2TupleMapper = (resultData, outerKey) => ([key, value]) =>
 
 const DateTimeFormat = {
   // https://github.com/yahoo/react-intl/wiki/Components#date-formatting-components
-  year  : '2-digit',
-  month : '2-digit',
-  day   : '2-digit',
-  hour  : '2-digit',
+  year: '2-digit',
+  month: '2-digit',
+  day: '2-digit',
+  hour: '2-digit',
   minute: '2-digit',
   second: '2-digit'
 }
@@ -148,22 +148,11 @@ export class ResultDetail extends PureComponent {
 
   static propTypes = {
     setPageTitle: PropTypes.func.isRequired,
-    fetchSingleResult: PropTypes.func.isRequired
-  }
-
-  handleFetchResult = () => {
-    this.props.fetchSingleResult(this.props.params.resultId)
-  }
-
-  handleSubmit = data => {
-    const { result } = this.props
-
-    this.props.updateSingleResult(result.get('id'), {
-      // Map form fields to API fields
-      lastTestOn: data.get('lastTestOn'),
-      patientId: data.get('patientId'),
-      resultText: data.get('resultText')
-    })
+    fetchSingleResult: PropTypes.func.isRequired,
+    params: PropTypes.object.isRequired,
+    intl: PropTypes.object.isRequired,
+    result: PropTypes.object.isRequired,
+    updateSingleResult: PropTypes.func
   }
 
   componentWillMount() {
@@ -182,17 +171,6 @@ export class ResultDetail extends PureComponent {
     }
   }
 
-  hasResultWithAssay() {
-    const { result } = this.props
-    return result && result.has('assay')
-  }
-
-  renderProgress() {
-    return (
-      <LinearProgress />
-    )
-  }
-
   getAssayFields() {
     if (!this.hasResultWithAssay()) {
       return false
@@ -204,13 +182,12 @@ export class ResultDetail extends PureComponent {
     return resultDataSchema
       .filter((value, key) => key !== 'resultText' && value.get('type') !== 'object')
       .entrySeq()
-      .map(([key, value]) => {
+      .map(([key, value]) =>
         // Level 1: "Probes"
-        return {
-          label: value.get('title'),
-          value: resultData.get(key)
-        }
-      })
+         ({
+           label: value.get('title'),
+           value: resultData.get(key)
+         }))
   }
 
   getLeftColumnFields() {
@@ -341,6 +318,32 @@ export class ResultDetail extends PureComponent {
     ])
   }
 
+  handleFetchResult = () => {
+    this.props.fetchSingleResult(this.props.params.resultId)
+  }
+
+  handleSubmit = (data) => {
+    const { result } = this.props
+
+    this.props.updateSingleResult(result.get('id'), {
+      // Map form fields to API fields
+      lastTestOn: data.get('lastTestOn'),
+      patientId: data.get('patientId'),
+      resultText: data.get('resultText')
+    })
+  }
+
+  hasResultWithAssay() {
+    const { result } = this.props
+    return result && result.has('assay')
+  }
+
+  renderProgress() {
+    return (
+      <LinearProgress />
+    )
+  }
+
   renderSchemaFieldsInCards() {
     if (!this.hasResultWithAssay()) {
       return false
@@ -358,17 +361,17 @@ export class ResultDetail extends PureComponent {
           .get('properties')
           .entrySeq()
           .map(makeLevel2TupleMapper(resultData, key))
-          .sortBy(({label}) => label)
+          .sortBy(({ label }) => label)
           .toJS()
 
         return (
           <Card className={cssClasses('Card')} key={key}>
             <CardHeader
               title={value.get('title')/* TODO: i18n */}
-              actAsExpander={true}
-              showExpandableButton={true}
+              actAsExpander
+              showExpandableButton
             />
-            <CardText expandable={true}>
+            <CardText expandable>
               <ReadOnlyFields
                 fields={fields}
               />

@@ -17,10 +17,9 @@ class AcknowledgementDisplay extends PureComponent {
   }
 
   render() {
+    const acknowledgement = this.props.acknowledgement
 
-    let acknowledgement = this.props.acknowledgement
-
-    if (acknowledgement.get('hasAcknowledgement')){
+    if (acknowledgement.get('hasAcknowledgement')) {
       return (
         <Snackbar
           open
@@ -29,9 +28,8 @@ class AcknowledgementDisplay extends PureComponent {
           onRequestClose={() => this.props.removeAcknowledgement()}
         />
       )
-    } else {
-      return null
     }
+    return null
   }
 }
 

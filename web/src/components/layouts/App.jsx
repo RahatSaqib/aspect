@@ -15,7 +15,7 @@ import getMuiTheme from 'material-ui/styles/getMuiTheme'
 // Our own imports
 import translation from '../../shared/i18n/translation.json'
 import theme from '../../theme'
-import {getUsersTimezone} from '../../shared/utils/timezone'
+import { getUsersTimezone } from '../../shared/utils/timezone'
 
 require('./App.scss')
 require('./pure-grids-responsive-min.scss')
@@ -35,7 +35,7 @@ class App extends PureComponent {
     const messages = translation[locale]
     const formats = {}
 
-    if(timezone) {
+    if (timezone) {
       formats.date = {
         'user-timezone': {
           timeZone: timezone

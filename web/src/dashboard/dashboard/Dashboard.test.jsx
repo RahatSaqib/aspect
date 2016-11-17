@@ -1,18 +1,17 @@
 import _ from 'lodash'
 import React from 'react'
 import sinon from 'sinon'
-import {mount} from 'enzyme'
+import { mount } from 'enzyme'
 import Immutable from 'immutable'
 import { assert } from 'chai'
 
-import {Dashboard} from './Dashboard'
+import { Dashboard } from './Dashboard'
 
 function makeLocationObject(query) {
   return { query }
 }
 
 describe('Dashboard', () => {
-
   const user = new Immutable.Map({ name: 'Stefan Baumgartner', culture: 'en-US', timezone: null })
   const intl = {
     formatMessage: message => message.defaultMessage

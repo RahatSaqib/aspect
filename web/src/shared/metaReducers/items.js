@@ -5,7 +5,7 @@
 import Immutable from 'immutable'
 
 export function receiveList(items, list) {
-  const nextById = items.byId.withMutations(mutById => {
+  const nextById = items.byId.withMutations((mutById) => {
     list.forEach(item =>
       mutById.mergeDeepIn([item.get('id')], item)
     )

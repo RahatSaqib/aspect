@@ -14,7 +14,7 @@ import Paper from 'material-ui/Paper'
 import LinearProgress from 'material-ui/LinearProgress'
 
 // Our own imports
-import { isEditable } from '../../shared/selectors/device'
+import isEditable from '../../shared/selectors/device'
 import {
   fetchSingleDevice,
   updateSingleDevice
@@ -82,23 +82,12 @@ export class DeviceDetail extends PureComponent {
 
   static propTypes = {
     setPageTitle: PropTypes.func.isRequired,
-    fetchSingleDevice: PropTypes.func.isRequired
-  }
-
-  handleFetchDevice = () => {
-    this.props.fetchSingleDevice(this.props.params.deviceId)
-  }
-
-  handleSubmit = data => {
-    const { device } = this.props
-
-    this.props.updateSingleDevice(device.get('id'), {
-      // Map form fields to API fields
-      name: data.get('name'),
-      shortname: data.get('shortName'),
-      notes: data.get('notes'),
-      siteId: data.get('site')
-    })
+    fetchSingleDevice: PropTypes.func.isRequired,
+    params: PropTypes.object.isRequired,
+    device: PropTypes.object,
+    intl: PropTypes.object.isRequired,
+    editable: PropTypes.bool.isRequired,
+    updateSingleDevice: PropTypes.func.isRequired
   }
 
   componentWillMount() {
@@ -115,6 +104,22 @@ export class DeviceDetail extends PureComponent {
     if (this.props.params.deviceId !== nextProps.params.deviceId) {
       this.handleFetchDevice()
     }
+  }
+
+  handleFetchDevice = () => {
+    this.props.fetchSingleDevice(this.props.params.deviceId)
+  }
+
+  handleSubmit = (data) => {
+    const { device } = this.props
+
+    this.props.updateSingleDevice(device.get('id'), {
+      // Map form fields to API fields
+      name: data.get('name'),
+      shortname: data.get('shortName'),
+      notes: data.get('notes'),
+      siteId: data.get('site')
+    })
   }
 
   renderProgress() {
@@ -178,11 +183,11 @@ export class DeviceDetail extends PureComponent {
   renderContent() {
     const { device, editable, intl: { formatMessage, formatDate } } = this.props
     if (!device) {
-      return
+      return null
     }
 
     // get date for current locale, 'date' - is a Date object or string value in DateTime format
-    const getFormattedDate = (date) => { return date !== null && date !== '' && isFinite(new Date(date)) ? formatDate(date) : date }
+    const getFormattedDate = date => (date !== null && date !== '' && isFinite(new Date(date)) ? formatDate(date) : date)
 
     const fields = [
       {
@@ -211,13 +216,13 @@ export class DeviceDetail extends PureComponent {
       }
     ]
     return (
-      <div className={'pure-g ' + styles.RowContainer}>
-        <div className='pure-u-lg-1-2'>
+      <div className={`pure-g ${styles.RowContainer}`}>
+        <div className="pure-u-lg-1-2">
           <div>
             {editable ? this.renderFormContainer() : this.renderReadOnlyFields()}
           </div>
         </div>
-        <div className='pure-u-lg-1-2'>
+        <div className="pure-u-lg-1-2">
           <div>
             <ReadOnlyFields
               fields={fields}

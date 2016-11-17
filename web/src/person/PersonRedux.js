@@ -40,9 +40,8 @@ function receivePersons(json) {
   }
 }
 
-export function fetchPersons(filters/* required */, sortCol = 'name', sortDir = 'asc', page = 0, pageSize = 10){
-  return dispatch => {
-
+export function fetchPersons(filters/* required */, sortCol = 'name', sortDir = 'asc', page = 0, pageSize = 10) {
+  return (dispatch) => {
     dispatch(requestPersons(sortCol, sortDir, page, pageSize, filters))
 
     return aspectFetch(`/person?${stringify({
@@ -53,7 +52,7 @@ export function fetchPersons(filters/* required */, sortCol = 'name', sortDir = 
       ...filters.toJS()
     })}`)
       .then(json => dispatch(receivePersons(json)))
-      .catch(err => {
+      .catch((err) => {
         dispatch(addError('Loading persons failed', err.message, err))
       })
   }
@@ -70,15 +69,16 @@ const initialState = new Person()
 
 export default function personReducer(state = initialState, action) {
   switch (action.type) {
-  case types.REQUEST_PERSONS:
-    return state
+    case types.REQUEST_PERSONS:
+      return state
       .set('table', requestTable(state.table, action))
-  case types.RECEIVE_PERSONS:
-    return state.withMutations(mutState => {
-      const immutList = Immutable.fromJS(action.items)
-      mutState.set('items', receiveList(mutState.items, immutList))
-      mutState.set('table', receiveTableItems(mutState.table, action.total))
-    })
+    case types.RECEIVE_PERSONS:
+      return state.withMutations((mutState) => {
+        const immutList = Immutable.fromJS(action.items)
+        mutState.set('items', receiveList(mutState.items, immutList))
+        mutState.set('table', receiveTableItems(mutState.table, action.total))
+      })
+    default:
+      return state
   }
-  return state
 }

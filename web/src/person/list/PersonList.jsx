@@ -19,7 +19,7 @@ import IconButton from 'material-ui/IconButton'
 import TextField from 'material-ui/TextField'
 
 // Our own imports
-import { DataTable } from '../../components/shared/DataTable'
+import DataTable from '../../components/shared/DataTable'
 import { fetchPersons } from '../PersonRedux'
 import styles from './PersonList.css'
 
@@ -50,11 +50,20 @@ export class PersonList extends PureComponent {
 
   static propTypes = {
     setPageTitle: PropTypes.func.isRequired,
-    table: PropTypes.object.isRequired
+    table: PropTypes.object.isRequired,
+    intl: PropTypes.object.isRequired,
+    fetchPersons: PropTypes.func.isRequired,
+    items: PropTypes.object.isRequired
   }
 
   state = {
     filters: this.props.table.get('filters')
+  }
+
+  componentWillMount() {
+    const { setPageTitle, intl } = this.props
+    const { formatMessage } = intl
+    setPageTitle(formatMessage(messages.title))
   }
 
   filterPersonsChange = (e) => {
@@ -75,12 +84,6 @@ export class PersonList extends PureComponent {
     this.props.fetchPersons()
   }
 
-  componentWillMount() {
-    const { setPageTitle, intl } = this.props
-    const { formatMessage } = intl
-    setPageTitle(formatMessage(messages.title))
-  }
-
   render() {
     const { intl } = this.props
     const { formatMessage } = intl
@@ -88,22 +91,26 @@ export class PersonList extends PureComponent {
     return (
       <div className={styles.Content}>
         <Helmet title={formatMessage(messages.title)} titleTemplate="%s - Aspect" defaultTitle="Aspect" />
-        <form onSubmit={ this.handleSubmit }>
+        <form onSubmit={this.handleSubmit}>
           <Toolbar className={styles.Toolbar} >
-            <ToolbarGroup firstChild={true}>
-              <TextField  value={this.state.filters.get('name')}
-                          id="name"
-                          onChange={ this.filterPersonsChange }
-                          className={styles['Toolbar__TextField--filter']}
-                          hintText="Filter by name" />
-              <RaisedButton label="Filter" primary={true} onTouchTap={ this.handleSubmit } />
+            <ToolbarGroup firstChild>
+              <TextField
+                value={this.state.filters.get('name')}
+                id="name"
+                onChange={this.filterPersonsChange}
+                className={styles['Toolbar__TextField--filter']}
+                hintText="Filter by name"
+              />
+              <RaisedButton label="Filter" primary onTouchTap={this.handleSubmit} />
             </ToolbarGroup>
-            <ToolbarGroup lastChild={true}>
-              <IconMenu iconButtonElement={
-                  <IconButton touch={true}>
+            <ToolbarGroup lastChild>
+              <IconMenu
+                iconButtonElement={
+                  <IconButton touch>
                     <NavigationExpandMoreIcon />
-                  </IconButton>}>
-                <MenuItem primaryText="Clear Filters" className={styles.Toolbar__MenuItem} onTouchTap={ this.resetPersons } />
+                  </IconButton>}
+              >
+                <MenuItem primaryText="Clear Filters" className={styles.Toolbar__MenuItem} onTouchTap={this.resetPersons} />
                 <MenuItem primaryText="Export to Excel" className={styles.Toolbar__MenuItem} />
                 <MenuItem primaryText="Export to CSV" className={styles.Toolbar__MenuItem} />
               </IconMenu>
@@ -112,9 +119,9 @@ export class PersonList extends PureComponent {
         </form>
 
         <DataTable
-          handleFetch={ this.handleFetch }
-          items={ this.props.items }
-          table={ this.props.table }
+          handleFetch={this.handleFetch}
+          items={this.props.items}
+          table={this.props.table}
           columns={[
             { db: 'name', title: formatMessage(messages.personName) },
             { db: 'level', title: formatMessage(messages.level), hideOnXs: true },

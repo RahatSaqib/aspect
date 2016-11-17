@@ -44,7 +44,7 @@ function* listAssays(request) {
     resultDataSchema: JSON.parse(d.resultDataSchema)
   }))
 
-  const result = { ok: true, total, length: assays.length, assays }
+  const result = { ok: true, total, length: assays.length, data: assays }
 
   return result
 }

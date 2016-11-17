@@ -22,7 +22,8 @@ const messages = defineMessages({
 export class IdleDialog extends PureComponent {
 
   static propTypes = {
-    idleStatus: PropTypes.string.isRequired
+    idleStatus: PropTypes.string.isRequired,
+    intl: PropTypes.object.isRequired
   }
 
   render() {
@@ -32,9 +33,10 @@ export class IdleDialog extends PureComponent {
     return (
       <Dialog
         title={formatMessage(messages.title)}
-        modal={true}
-        open={this.props.idleStatus === 'IDLESTATUS_INACTIVE'}>
-          <span dangerouslySetInnerHTML={{__html: formatMessage(messages.help)}} ></span>
+        modal
+        open={this.props.idleStatus === 'IDLESTATUS_INACTIVE'}
+      >
+        <span dangerouslySetInnerHTML={{ __html: formatMessage(messages.help) }} />
       </Dialog>
     )
   }

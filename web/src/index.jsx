@@ -6,23 +6,22 @@ import promise from 'es6-promise'
 import { render } from 'react-dom'
 import { Provider } from 'react-redux'
 import { AppContainer } from 'react-hot-loader'
-
+import injectTapEventPlugin from 'react-tap-event-plugin'
 import config from 'config'
-if (config.sentry){
+import store from './store'
+import { getRefreshToken } from './shared/utils/localStorage'
+import { refreshStart, hydrateFromLocalStorage } from './auth/AuthRedux'
+import './favicon.ico?output=../favicon.ico'
+import Routes from './components/Routes'
+
+if (config.sentry) {
   // using require here since import only allowed at top-level
   const Raven = require('raven-js')
   Raven.config(config.sentry.dsn).install()
 }
 
-import Routes from './components/Routes'
-import store from './store'
-import { getRefreshToken } from './shared/utils/localStorage'
-import { refreshStart, hydrateFromLocalStorage } from './auth/AuthRedux'
-import './favicon.ico?output=../favicon.ico'
-
 // This won't be necessary when facebook updates react
 // http://stackoverflow.com/a/34015469/988941
-import injectTapEventPlugin from 'react-tap-event-plugin'
 injectTapEventPlugin()
 
 // polyfill promise if necessary
@@ -38,8 +37,7 @@ if (!window.Intl) {
 }
 
 // get new access token on refresh/startup
-if (getRefreshToken()){
-
+if (getRefreshToken()) {
   // let's see if we can get culture from local storage
   store.dispatch(hydrateFromLocalStorage())
 

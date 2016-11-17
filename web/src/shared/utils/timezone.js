@@ -105,15 +105,15 @@ export const timezones = [
   { id: 'Samoa Standard Time', name: 'Samoa (UTC+13:00)', timeZone: 'Pacific/Samoa' }
 ]
 
-export const getTimezoneById = timeZoneId => {
-  const timezone = _.find(timezones, {id: timeZoneId})
-  if(timezone) {
+export const getTimezoneById = (timeZoneId) => {
+  const timezone = _.find(timezones, { id: timeZoneId })
+  if (timezone) {
     return timezone.timeZone
-  } else if(Intl) {
+  } else if (Intl) {
     return Intl.DateTimeFormat().resolvedOptions().timeZone
   }
+
+  return ''
 }
 
-export const getUsersTimezone = (timezone) => {
-  return getTimezoneById(timezone || localStorage.getTimezone())
-}
+export const getUsersTimezone = timezone => getTimezoneById(timezone || localStorage.getTimezone())

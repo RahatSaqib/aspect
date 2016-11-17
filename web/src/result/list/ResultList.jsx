@@ -20,7 +20,7 @@ import IconButton from 'material-ui/IconButton'
 import TextField from 'material-ui/TextField'
 
 // Our own imports
-import { DataTable } from '../../components/shared/DataTable'
+import DataTable from '../../components/shared/DataTable'
 import { fetchResults } from '../ResultRedux'
 import styles from './ResultList.css'
 import { fetchAssays } from '../../assay/AssayRedux'
@@ -62,11 +62,27 @@ export class ResultList extends PureComponent {
   static propTypes = {
     fetchAssays: PropTypes.func.isRequired,
     setPageTitle: PropTypes.func.isRequired,
-    table: PropTypes.object.isRequired
+    table: PropTypes.object.isRequired,
+    assays: PropTypes.object.isRequired,
+    router: PropTypes.object.isRequired,
+    fetchResults: PropTypes.func.isRequired,
+    intl: PropTypes.object.isRequired,
+    items: PropTypes.object.isRequired
   }
 
   state = {
     filters: this.props.table.get('filters')
+  }
+
+  componentWillMount() {
+    const { setPageTitle, intl } = this.props
+    const { formatMessage } = intl
+    setPageTitle(formatMessage(messages.title))
+  }
+
+  componentDidMount() {
+    const { fetchAssays, assays } = this.props
+    fetchAssays(false, assays)
   }
 
   handleItemIdSelection = (resultId) => {
@@ -87,7 +103,6 @@ export class ResultList extends PureComponent {
   }
 
   handleAssayChange = (e, i, assayId) => {
-
     // finally, update state and submit
     this.setState({ filters: this.state.filters.set('assayId', assayId) },
                   () => this.handleSubmit(e))
@@ -98,17 +113,6 @@ export class ResultList extends PureComponent {
     this.props.fetchResults()
   }
 
-  componentDidMount(){
-    const { fetchAssays, assays } = this.props
-    fetchAssays(false, assays)
-  }
-
-  componentWillMount() {
-    const { setPageTitle, intl } = this.props
-    const { formatMessage } = intl
-    setPageTitle(formatMessage(messages.title))
-  }
-
   render() {
     const { intl, assays } = this.props
     const { formatMessage, formatDate } = intl
@@ -117,7 +121,7 @@ export class ResultList extends PureComponent {
     const assaysLoading = assays ? assays.get('loading') : false
     const validAssays = assays ? assays.get('items').filter(a => a.get('hasResults')) : []
 
-    let columns = [ { db: 'endedOn', title: formatMessage(messages.endedOn), format: (data) => formatDate(data) },
+    const columns = [{ db: 'endedOn', title: formatMessage(messages.endedOn), format: data => formatDate(data) },
                     { db: 'deviceName', title: formatMessage(messages.deviceName) },
                     { db: 'sampleId', title: formatMessage(messages.sampleId) },
                     { db: 'patientId', title: formatMessage(messages.patiendId) }]
@@ -125,36 +129,40 @@ export class ResultList extends PureComponent {
     return (
       <div className={styles.Content}>
         <Helmet title={formatMessage(messages.title)} titleTemplate="%s - Aspect" defaultTitle="Aspect" />
-        <form onSubmit={ this.handleSubmit }>
+        <form onSubmit={this.handleSubmit}>
           <Toolbar className={styles.Toolbar} >
-            <ToolbarGroup firstChild={true}>
+            <ToolbarGroup firstChild>
               <TextField
                 value={this.state.filters.get('sampleId')}
                 id="sampleId"
-                onChange={ (e, v) => this.filterResultsChange('sampleId', v) }
+                onChange={(e, v) => this.filterResultsChange('sampleId', v)}
                 className={styles['Toolbar__TextField--filter']}
                 hintText="Filter by Sample ID"
               />
-              <ForkedSelectField name="assayId"
-                      style={{ margin: '5px 0 0 15px' }}
-                      value={this.state.filters.get('assayId')}
-                      label={formatMessage(messages.assayId)}
-                      hintText={formatMessage(messages.assayId)}
-                      disabled={assaysLoading || _.isEmpty(validAssays)}
-                      onChange={ (e, i, v) => { this.handleAssayChange(e, i, v) } }>
-                      {
+              <ForkedSelectField
+                name="assayId"
+                style={{ margin: '5px 0 0 15px' }}
+                value={this.state.filters.get('assayId')}
+                label={formatMessage(messages.assayId)}
+                hintText={formatMessage(messages.assayId)}
+                disabled={assaysLoading || _.isEmpty(validAssays)}
+                onChange={(e, i, v) => { this.handleAssayChange(e, i, v) }}
+              >
+                {
                         validAssays.map(assay =>
                           <MenuItem key={assay.get('id')} value={assay.get('id')} primaryText={assay.get('name')} />)
                       }
               </ForkedSelectField>
-              <RaisedButton label="Filter" primary={true} onTouchTap={ this.handleSubmit } />
+              <RaisedButton label="Filter" primary onTouchTap={this.handleSubmit} />
             </ToolbarGroup>
-            <ToolbarGroup lastChild={true}>
-              <IconMenu iconButtonElement={
-                  <IconButton touch={true}>
+            <ToolbarGroup lastChild>
+              <IconMenu
+                iconButtonElement={
+                  <IconButton touch>
                     <NavigationExpandMoreIcon />
-                  </IconButton>}>
-                <MenuItem primaryText="Clear Filters" className={styles.Toolbar__MenuItem} onTouchTap={ this.resetResults } />
+                  </IconButton>}
+              >
+                <MenuItem primaryText="Clear Filters" className={styles.Toolbar__MenuItem} onTouchTap={this.resetResults} />
                 <MenuItem primaryText="Export to Excel" className={styles.Toolbar__MenuItem} />
                 <MenuItem primaryText="Export to CSV" className={styles.Toolbar__MenuItem} />
               </IconMenu>
@@ -163,13 +171,13 @@ export class ResultList extends PureComponent {
         </form>
         <DataTable
           selectable
-          handleItemIdSelection={ this.handleItemIdSelection }
-          handleFetch={ this.handleFetch }
-          items={ this.props.items }
-          table={ this.props.table }
-          columns={ columns }
-          intl={ intl }
-          messages={ messages }
+          handleItemIdSelection={this.handleItemIdSelection}
+          handleFetch={this.handleFetch}
+          items={this.props.items}
+          table={this.props.table}
+          columns={columns}
+          intl={intl}
+          messages={messages}
         />
       </div>
     )

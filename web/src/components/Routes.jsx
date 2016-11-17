@@ -2,8 +2,8 @@ import React, { Component } from 'react'
 import { Router, Route, IndexRoute, IndexRedirect, applyRouterMiddleware, browserHistory } from 'react-router'
 import { useScroll } from 'react-router-scroll'
 import PiwikReactRouter from 'piwik-react-router'
-import store from '../store'
 import config from 'config'
+import store from '../store'
 
 // higher level containers/shells
 import App from '../components/layouts/App'
@@ -36,9 +36,9 @@ function requireAuth(nextState, replace) {
   if (hasBlankOrExpiredJWT()) {
     // try to refresh if we have a refresh token
     // if not, redirect to login
-    if (getRefreshToken()){
+    if (getRefreshToken()) {
       store.dispatch(refreshStart())
-    }  else {
+    } else {
       replace({
         pathname: '/login',
         state: { nextPathname: nextState.location.pathname }
@@ -48,19 +48,23 @@ function requireAuth(nextState, replace) {
 }
 
 // set up analytics
-const piwik = config.piwik ? PiwikReactRouter({
-  url : config.piwik.url,
-  siteId : config.piwik.siteId
+const piwik = config.piwik ? PiwikReactRouter({ // eslint-disable-line new-cap
+  url: config.piwik.url,
+  siteId: config.piwik.siteId
 }) : false
 
 const routes =
-  <Router history={piwik ?  piwik.connectToHistory(browserHistory) : browserHistory}
-          render={applyRouterMiddleware(useScroll()) }>
+  (<Router
+    history={piwik ? piwik.connectToHistory(browserHistory) : browserHistory}
+    render={applyRouterMiddleware(useScroll())}
+  >
     <Route component={App} path="/">
       <Route component={LoginContainer} path="login" />
       <Route component={ResetPasswordContainer} path="reset-password" />
-      <Route component={LoggedInShell}
-        onChange={(prevState, nextState, replace) => requireAuth(nextState, replace) }>
+      <Route
+        component={LoggedInShell}
+        onChange={(prevState, nextState, replace) => requireAuth(nextState, replace)}
+      >
 
         <IndexRedirect to="dashboard" />
 
@@ -70,12 +74,12 @@ const routes =
           <Route path="maintenance" component={MaintenanceContainer} />
         </Route>
 
-        <Route path="device" deviceConfig={{hasResults: 1, hasConnectivity: undefined}}>
+        <Route path="device" deviceConfig={{ hasResults: 1, hasConnectivity: undefined }}>
           <IndexRoute component={DeviceListContainer} />
           <Route path=":deviceId" component={DeviceDetailContainer} />
         </Route>
 
-        <Route path="router" deviceConfig={{hasResults: 0, hasConnectivity: 1}}>
+        <Route path="router" deviceConfig={{ hasResults: 0, hasConnectivity: 1 }}>
           <IndexRoute component={DeviceListContainer} />
           <Route path=":deviceId" component={DeviceDetailContainer} />
         </Route>
@@ -103,7 +107,7 @@ const routes =
       </Route>
       <Route path="*" component={NotFoundContainer} />
     </Route>
-  </Router>
+  </Router>)
 
 class Routes extends Component {
 

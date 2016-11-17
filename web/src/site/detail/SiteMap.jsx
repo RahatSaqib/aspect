@@ -7,7 +7,7 @@ const SiteMap = withGoogleMap(props => (
   <GoogleMap
     defaultZoom={14}
     center={props.position}
-    options={{scrollwheel: false}}
+    options={{ scrollwheel: false }}
   >
     <Marker
       position={props.position}

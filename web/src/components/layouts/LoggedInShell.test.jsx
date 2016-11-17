@@ -1,14 +1,14 @@
 import React from 'react'
-import {LoggedInShell} from './LoggedInShell'
 import { assert } from 'chai'
 import { shallow } from 'enzyme'
+import { LoggedInShell } from './LoggedInShell'
 
 describe('LoggedInShell', () => {
   const props = {
     location: {
-      pathname:''
+      pathname: ''
     },
-    drawerOpen:false,
+    drawerOpen: false,
     children: {},
     closeDrawer: () => {},
     toggleDrawer: () => {},

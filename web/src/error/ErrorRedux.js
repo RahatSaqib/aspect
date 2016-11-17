@@ -7,7 +7,7 @@ export const types = {
 /*
  * ---------------- Action Creators -----------------
  */
-export function addError(title, desc, obj){
+export function addError(title, desc, obj) {
   return {
     type: types.ADD_ERROR,
     title,
@@ -16,7 +16,7 @@ export function addError(title, desc, obj){
   }
 }
 
-export function removeError(){
+export function removeError() {
   return {
     type: types.REMOVE_ERROR
   }
@@ -39,15 +39,16 @@ const initialState = new Error()
 
 export default function errorReducer(state = initialState, action) {
   switch (action.type) {
-  case types.ADD_ERROR:
-    return state.merge({
-      hasError: true,
-      title: action.title,
-      desc: action.desc,
-      obj: action.obj
-    })
-  case types.REMOVE_ERROR:
-    return state.clear()
+    case types.ADD_ERROR:
+      return state.merge({
+        hasError: true,
+        title: action.title,
+        desc: action.desc,
+        obj: action.obj
+      })
+    case types.REMOVE_ERROR:
+      return state.clear()
+    default:
+      return state
   }
-  return state
 }

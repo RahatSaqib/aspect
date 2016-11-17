@@ -12,23 +12,26 @@ import TextField from 'material-ui/TextField'
 import TimezoneSelect from '../../components/shared/TimezoneSelect'
 import LocationSelector from '../../components/shared/LocationSelector'
 
-const renderTextField = ({ input, meta, ...restProps }) => {
-  return (
-    <TextField
-      {...restProps}
-      {...input}
-      fullWidth
-      errorStyle={{ float: 'left' }}
-      errorText={meta.touched && meta.error}
-    />
-  )
-}
+const renderTextField = ({ input, meta, ...restProps }) => (
+  <TextField
+    {...restProps}
+    {...input}
+    fullWidth
+    errorStyle={{ float: 'left' }}
+    errorText={meta.touched && meta.error}
+  />
+)
 
 // Renders underlying form and inputs components
 export class EditableFieldsForm extends PureComponent {
 
   static propTypes = {
-    labels: PropTypes.object.isRequired
+    labels: PropTypes.object.isRequired,
+    initialValues: PropTypes.object.isRequired,
+    handleSubmit: PropTypes.func.isRequired,
+    pristine: PropTypes.bool.isRequired,
+    loading: PropTypes.bool.isRequired,
+    submitting: PropTypes.bool.isRequired
   }
 
   render() {

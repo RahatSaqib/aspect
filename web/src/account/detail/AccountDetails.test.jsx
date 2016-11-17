@@ -6,7 +6,7 @@ import proxyquire from 'proxyquire'
 import Immutable from 'immutable'
 import LinearProgress from 'material-ui/LinearProgress'
 import Paper from 'material-ui/Paper'
-import {Tabs, Tab} from 'material-ui/Tabs'
+import { Tabs, Tab } from 'material-ui/Tabs'
 import ContactDetailsForm from './ContactDetailsForm'
 import LoginDetailsForm from './LoginDetailsForm'
 import UserPreferencesForm from './UserPreferencesForm'
@@ -14,51 +14,59 @@ import UserPreferencesForm from './UserPreferencesForm'
 describe('AccountDetails Component', () => {
   describe('AccountDetails', () => {
     const fakeIntl = {
-        injectIntl: component => component
-      }, fakeReactRedux = {
-        connect: () => component => component
-      }, fakeRedux = {
-        bindActionCreators: (actionCreators) => actionCreators
-      }, AccountDetails = proxyquire('./AccountDetails', {
-        'react-intl': fakeIntl,
-        'react-redux': fakeReactRedux,
-        'redux': fakeRedux
-      }).AccountDetailsContainer
+      injectIntl: component => component
+    }
+    const fakeReactRedux = {
+      connect: () => component => component
+    }
+    const fakeRedux = {
+      bindActionCreators: actionCreators => actionCreators
+    }
+    const AccountDetails = proxyquire('./AccountDetails', {
+      'react-intl': fakeIntl,
+      'react-redux': fakeReactRedux,
+      redux: fakeRedux
+    }).AccountDetailsContainer
 
-    let props, AccountDetailsWrapper
+    let props
+    let AccountDetailsWrapper
 
     const shallowRenderAccountDetails = () => {
       AccountDetailsWrapper = shallow(<AccountDetails {...props} />)
     }
 
     const ContactDetailsRecord = Immutable.Record({
-        id: null,
-        name: null,
-        title: null,
-        email: null,
-        email2: null,
-        phone: null,
-        cell: null,
-        countryId: null,
-        stateId: null,
-        lgaId: null,
-        zip: null
-      }), LoginDetailsRecord = Immutable.Record({
-        id: null,
-        username: null
-      }), UserPreferencesRecord = Immutable.Record({
-        id: null,
-        timezone: null,
-        culture: null
-      }), AccountDetailsDataRecord = Immutable.Record({
-        contactDetails: new ContactDetailsRecord(),
-        loginDetails: new LoginDetailsRecord(),
-        userPreferences: new UserPreferencesRecord()
-      }), AccountDetailsRecord = Immutable.Record({
-        loading: false,
-        saving: false,
-        data: new AccountDetailsDataRecord()
-      })
+      id: null,
+      name: null,
+      title: null,
+      email: null,
+      email2: null,
+      phone: null,
+      cell: null,
+      countryId: null,
+      stateId: null,
+      lgaId: null,
+      zip: null
+    })
+    const LoginDetailsRecord = Immutable.Record({
+      id: null,
+      username: null
+    })
+    const UserPreferencesRecord = Immutable.Record({
+      id: null,
+      timezone: null,
+      culture: null
+    })
+    const AccountDetailsDataRecord = Immutable.Record({
+      contactDetails: new ContactDetailsRecord(),
+      loginDetails: new LoginDetailsRecord(),
+      userPreferences: new UserPreferencesRecord()
+    })
+    const AccountDetailsRecord = Immutable.Record({
+      loading: false,
+      saving: false,
+      data: new AccountDetailsDataRecord()
+    })
 
     beforeEach(() => {
       props = {
@@ -145,8 +153,13 @@ describe('AccountDetails Component', () => {
 
   describe('react-redux connect', () => {
     const expectedBoundActionCreators = { value: 'Bound Action Creators' }
-    let reactReduxStub, intlStub, mapStateToProps, mapDispatchToProps,
-      reduxStub, accountDetailsCreatorsStub, acknowledgementCreatorsStub
+    let reactReduxStub
+    let intlStub
+    let mapStateToProps
+    let mapDispatchToProps
+    let reduxStub
+    let accountDetailsCreatorsStub
+    let acknowledgementCreatorsStub
     beforeEach(() => {
       reactReduxStub = {
         connect: sinon.stub().returns(() => {})
@@ -169,7 +182,7 @@ describe('AccountDetails Component', () => {
       proxyquire('./AccountDetails', {
         'react-intl': intlStub,
         'react-redux': reactReduxStub,
-        'redux': reduxStub,
+        redux: reduxStub,
         '../AccountRedux': accountDetailsCreatorsStub,
         '../../acknowledgement/AcknowledgementRedux': acknowledgementCreatorsStub
       })
@@ -178,7 +191,7 @@ describe('AccountDetails Component', () => {
     })
 
     it('mapDispatchToProps should bind fetchAccountDetails and saveAccountDetails action creators to the component\'s properties', () => {
-      const expectedDispatcher = {value: 'I am a dispatch function'}
+      const expectedDispatcher = { value: 'I am a dispatch function' }
       assert.equal(mapDispatchToProps(expectedDispatcher), expectedBoundActionCreators)
       assert.deepEqual(reduxStub.bindActionCreators.lastCall.args, [{
         addAcknowledgement: acknowledgementCreatorsStub.addAcknowledgement,
@@ -191,12 +204,13 @@ describe('AccountDetails Component', () => {
 
     it('mapStateToProps should map loading, saving and accountDetails from accountDetails on state', () => {
       const accountDetails = {
-          loading: false,
-          saving: false,
-          data: {value: 'This object contains the user\'s account details'}
-        }, state = {
-          accountDetails: Immutable.Map(accountDetails)
-        }
+        loading: false,
+        saving: false,
+        data: { value: 'This object contains the user\'s account details' }
+      }
+      const state = {
+        accountDetails: Immutable.Map(accountDetails)
+      }
       assert.deepEqual(mapStateToProps(state), {
         loading: accountDetails.loading,
         saving: accountDetails.saving,

@@ -47,9 +47,8 @@ function receiveSites(json) {
   }
 }
 
-export function fetchSites(filters/* required */, sortCol = 'name', sortDir = 'asc', page = 0, pageSize = 10){
-  return dispatch => {
-
+export function fetchSites(filters/* required */, sortCol = 'name', sortDir = 'asc', page = 0, pageSize = 10) {
+  return (dispatch) => {
     dispatch(requestSites(sortCol, sortDir, page, pageSize, filters))
 
     return aspectFetch(`/site?${stringify({
@@ -60,7 +59,7 @@ export function fetchSites(filters/* required */, sortCol = 'name', sortDir = 'a
       ...filters.toJS()
     })}`)
       .then(json => dispatch(receiveSites(json)))
-      .catch(err => {
+      .catch((err) => {
         dispatch(addError('Loading sites failed', err.message, err))
       })
   }
@@ -83,14 +82,13 @@ function receiveSingleSite(item) {
 }
 
 // load a single site with given siteId
-export function fetchSingleSite(siteId){
-  return dispatch => {
-
+export function fetchSingleSite(siteId) {
+  return (dispatch) => {
     dispatch(requestSingleSite(siteId))
 
     return aspectFetch(`/site/${siteId}`)
       .then(json => dispatch(receiveSingleSite(json.data)))
-      .catch(err => {
+      .catch((err) => {
         dispatch(addError(`Loading a site (${siteId}) failed`, err.message, err))
       })
   }
@@ -114,9 +112,8 @@ function receiveUpdatedSingleSite(item) {
 }
 
 // update a single site with given siteId and data
-export function updateSingleSite(siteId, data){
-  return dispatch => {
-
+export function updateSingleSite(siteId, data) {
+  return (dispatch) => {
     dispatch(requestUpdatingSingleSite(siteId, data))
 
     return aspectFetch(`/site/${siteId}`, {
@@ -124,7 +121,7 @@ export function updateSingleSite(siteId, data){
       body: JSON.stringify(data)
     })
       .then(json => dispatch(receiveUpdatedSingleSite(json.data)))
-      .catch(err => {
+      .catch((err) => {
         dispatch(addError(`Updating a site (${siteId}) failed`, err.message, err))
       })
   }
@@ -141,21 +138,22 @@ const initialState = new Site()
 
 export default function siteReducer(state = initialState, action) {
   switch (action.type) {
-  case types.REQUEST_SITES:
-    return state
+    case types.REQUEST_SITES:
+      return state
       .set('table', requestTable(state.table, action))
-  case types.RECEIVE_SITES:
-    return state.withMutations(mutState => {
-      const immutList = Immutable.fromJS(action.items)
-      mutState.set('items', receiveList(mutState.items, immutList))
-      mutState.set('table', receiveTableItems(mutState.table, action.total))
-    })
-  case types.RECEIVE_SINGLE_SITE:
-  case types.RECEIVE_UPDATED_SINGLE_SITE:
-    return state.withMutations(mutState => {
-      const immutItem = Immutable.fromJS(action.item)
-      mutState.set('items', receiveItem(mutState.items, immutItem))
-    })
+    case types.RECEIVE_SITES:
+      return state.withMutations((mutState) => {
+        const immutList = Immutable.fromJS(action.items)
+        mutState.set('items', receiveList(mutState.items, immutList))
+        mutState.set('table', receiveTableItems(mutState.table, action.total))
+      })
+    case types.RECEIVE_SINGLE_SITE:
+    case types.RECEIVE_UPDATED_SINGLE_SITE:
+      return state.withMutations((mutState) => {
+        const immutItem = Immutable.fromJS(action.item)
+        mutState.set('items', receiveItem(mutState.items, immutItem))
+      })
+    default:
+      return state
   }
-  return state
 }

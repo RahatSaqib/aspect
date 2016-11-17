@@ -46,17 +46,41 @@ export class SiteLocationFormMap extends PureComponent {
 
   static propTypes = {
     change: PropTypes.func.isRequired, // redux-form
-    latLngInForm: PropTypes.object.isRequired, // connect
-    latLngInSite: PropTypes.object.isRequired, // connect
     fullAddressInForm: PropTypes.object.isRequired, // connect
-    fullAddressInSite: PropTypes.object.isRequired, // connect
-    editable: PropTypes.bool.isRequired,
-    site: PropTypes.object.isRequired
+    editable: PropTypes.bool.isRequired
   }
 
-  isUnmounted = false
+  componentWillMount() {
+    if (!this.getValidLatLng(this.props)) {
+      this.handleQueryAddress(this.props)
+    }
+  }
 
-  geocoder = new google.maps.Geocoder()
+  // query geocoder again if no valid latLng in nextProps or
+  // the use just changed some field of address part in the form
+  componentWillReceiveProps(nextProps) {
+    const noValidLatLng = !this.getValidLatLng(nextProps)
+    const isAddressInFormJustChanged = !_.isEqual(this.props.fullAddressInForm,
+      nextProps.fullAddressInForm)
+
+    if (noValidLatLng || isAddressInFormJustChanged) {
+      this.handleQueryAddress(nextProps)
+    }
+  }
+
+  componentWillUnmount() {
+    this.isUnmounted = true
+  }
+
+  // read lat, lng from form state first, otherwise use the site values from API
+  getValidLatLng({ latLngInForm, latLngInSite }) {
+    if (isValidLatLng(latLngInForm)) {
+      return latLngInForm
+    } else if (isValidLatLng(latLngInSite)) {
+      return latLngInSite
+    }
+    return false
+  }
 
   // update form state with new location
   handlePositionFound({ geometry: { location } }) {
@@ -68,7 +92,8 @@ export class SiteLocationFormMap extends PureComponent {
   }
 
   handleQueryAddress({ fullAddressInForm, fullAddressInSite }) {
-    const fullAddress = isValidFullAddress(fullAddressInForm) ? fullAddressInForm : fullAddressInSite
+    const fullAddress = isValidFullAddress(fullAddressInForm) ?
+      fullAddressInForm : fullAddressInSite
     const addressQuery = formatFullAddressToAddressQuery(fullAddress)
 
     this.geocoder.geocode({
@@ -84,37 +109,9 @@ export class SiteLocationFormMap extends PureComponent {
     })
   }
 
-  // read lat, lng from form state first, otherwise use the site values from API
-  getValidLatLng({ latLngInForm, latLngInSite }) {
-    if (isValidLatLng(latLngInForm)) {
-      return latLngInForm
-    } else if (isValidLatLng(latLngInSite)) {
-      return latLngInSite
-    } else {
-      return false
-    }
-  }
+  geocoder = new google.maps.Geocoder()
 
-  componentWillMount() {
-    if (!this.getValidLatLng(this.props)) {
-      this.handleQueryAddress(this.props)
-    }
-  }
-
-  // query geocoder again if no valid latLng in nextProps or
-  // the use just changed some field of address part in the form
-  componentWillReceiveProps(nextProps) {
-    const noValidLatLng = !this.getValidLatLng(nextProps)
-    const isAddressInFormJustChanged = !_.isEqual(this.props.fullAddressInForm, nextProps.fullAddressInForm)
-
-    if (noValidLatLng || isAddressInFormJustChanged) {
-      this.handleQueryAddress(nextProps)
-    }
-  }
-
-  componentWillUnmount() {
-    this.isUnmounted = true
-  }
+  isUnmounted = false
 
   render() {
     const latLng = this.getValidLatLng(this.props)

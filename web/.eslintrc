@@ -24,8 +24,28 @@
       "never"
     ],
     "comma-dangle": "off",
+    "consistent-return": "off",
+    "class-methods-use-this": "off",
+    "func-names": "off",
     "global-require": "off",
+    "import/extensions": "off",
+    "import/no-extraneous-dependencies": "off",
+    "import/no-named-as-default": "off",
+    "import/no-unresolved": "off",
+    "jsx-a11y/anchor-has-content": "off",
+    "new-cap": ["error", { "properties": false }],
     "newline-per-chained-call": "off",
-    "no-use-before-define": "off"
+    "no-confusing-arrow": ["error", {"allowParens": true}],
+    "no-nested-ternary": "off",
+    "no-param-reassign": "off",
+    "no-plusplus": ["error", { "allowForLoopAfterthoughts": true }],
+    "no-restricted-syntax": "off",
+    "no-shadow": "off",
+    "no-use-before-define": "off",
+    "react/no-multi-comp": "off",
+    "react/prop-types": ["error", { "skipUndeclared": true }],
+    "react/forbid-prop-types": "off",
+    "react/prefer-stateless-function": "warn",
+    "require-yield": "off"
   }
 }

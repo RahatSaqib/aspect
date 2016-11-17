@@ -6,7 +6,7 @@ import { injectIntl, defineMessages } from 'react-intl'
 import LocationSelector from '../../components/shared/LocationSelector'
 import TextInput from '../../components/shared/TextInput'
 import PhoneInput from '../../components/shared/PhoneInput'
-import {emailAddress as validateEmailAddress} from '../../shared/utils/validate'
+import validateEmailAddress from '../../shared/utils/validate'
 import styles from './AccountDetails.css'
 
 const messages = defineMessages({
@@ -64,9 +64,9 @@ const messages = defineMessages({
   }
 })
 
-const ContactDetailsForm = props => {
-  const { handleSubmit, pristine, invalid, loading, initialValues } = props,
-    {formatMessage} = props.intl
+const ContactDetailsForm = (props) => {
+  const { handleSubmit, pristine, invalid, loading, initialValues } = props
+  const { formatMessage } = props.intl
   return (
     <form onSubmit={handleSubmit} className={styles.Form}>
       <div className={styles.Form__Content}>
@@ -86,9 +86,11 @@ const ContactDetailsForm = props => {
         </section>
         <section>
           <h1>{formatMessage(messages.location)}</h1>
-          <LocationSelector disabled={loading} initialValues={initialValues}
-                            formName="accountDetails" countryIdFieldName="countryId"
-                            stateIdFieldName="stateId" lgaIdFieldName="lgaId" />
+          <LocationSelector
+            disabled={loading} initialValues={initialValues}
+            formName="accountDetails" countryIdFieldName="countryId"
+            stateIdFieldName="stateId" lgaIdFieldName="lgaId"
+          />
           <TextInput name="zip" label={formatMessage(messages.zip)} disabled={loading} maxLength="45" />
         </section>
       </div>
@@ -100,8 +102,9 @@ const ContactDetailsForm = props => {
 }
 
 const validate = (accountDetails, props) => {
-  const {formatMessage} = props.intl,
-    errors = {}
+  const { formatMessage } = props.intl
+  const errors = {}
+
   if (!accountDetails.get('name')) {
     errors.name = formatMessage(messages.nameRequired)
   }

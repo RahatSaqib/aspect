@@ -4,11 +4,11 @@ import { shallow } from 'enzyme'
 import proxyquire from 'proxyquire'
 import Immutable from 'immutable'
 import sinon from 'sinon'
+import { Link } from 'react-router'
+import RaisedButton from 'material-ui/RaisedButton'
+import FlatButton from 'material-ui/FlatButton'
 import TextInput from '../../components/shared/TextInput'
 import StrongPasswordInput from '../../components/shared/StrongPasswordInput'
-import RaisedButton from 'material-ui/RaisedButton'
-import {Link} from 'react-router'
-import FlatButton from 'material-ui/FlatButton'
 
 describe('Reset Password Enter Password Form', () => {
   const fakeReactIntl = {
@@ -18,16 +18,18 @@ describe('Reset Password Enter Password Form', () => {
 
   describe('ResetPasswordEnterPassword component', () => {
     const fakeReduxForm = {
-        reduxForm: () => component => component
-      }, ResetPasswordEnterPassword = proxyquire('./ResetPasswordEnterPassword', {
-        'redux-form/immutable': fakeReduxForm,
-        'react-intl': fakeReactIntl,
-        './messages': proxyquire('./messages', {
-          'react-intl': fakeReactIntl
-        }).default
+      reduxForm: () => component => component
+    }
+    const ResetPasswordEnterPassword = proxyquire('./ResetPasswordEnterPassword', {
+      'redux-form/immutable': fakeReduxForm,
+      'react-intl': fakeReactIntl,
+      './messages': proxyquire('./messages', {
+        'react-intl': fakeReactIntl
       }).default
+    }).default
 
-    let props, ResetPasswordEnterPasswordWrapper
+    let props
+    let ResetPasswordEnterPasswordWrapper
 
     const shallowRenderResetPasswordEnterPassword = () => {
       ResetPasswordEnterPasswordWrapper = shallow(<ResetPasswordEnterPassword {...props} />)
@@ -122,7 +124,8 @@ describe('Reset Password Enter Password Form', () => {
   })
 
   describe('reduxForm', () => {
-    let reduxFormStub, reduxFormConfig
+    let reduxFormStub
+    let reduxFormConfig
 
     beforeEach(() => {
       reduxFormStub = {
@@ -145,7 +148,8 @@ describe('Reset Password Enter Password Form', () => {
           formatMessage: message => message.defaultMessage
         }
       }
-      let validateFunction, initialPasswordFields
+      let validateFunction
+      let initialPasswordFields
 
       beforeEach(() => {
         validateFunction = reduxFormConfig.validate

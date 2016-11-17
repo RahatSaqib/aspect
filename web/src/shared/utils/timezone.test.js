@@ -1,12 +1,13 @@
-import {timezones, getTimezoneById} from './timezone'
 import { assert } from 'chai'
+import { timezones, getTimezoneById } from './timezone'
 
 describe('timezone', () => {
   it('should contain valid time zones only', () => {
-    const dateToFormat = new Date(), culture = 'en-ZA'
-    timezones.forEach(timezone => {
-      try{
-        assert.isOk(dateToFormat.toLocaleTimeString(culture, {timeZone: timezone.timeZone}))
+    const dateToFormat = new Date()
+    const culture = 'en-ZA'
+    timezones.forEach((timezone) => {
+      try {
+        assert.isOk(dateToFormat.toLocaleTimeString(culture, { timeZone: timezone.timeZone }))
       } catch (ex) {
         assert.fail(timezone.timeZone, ex.message)
       }
@@ -14,7 +15,7 @@ describe('timezone', () => {
   })
 
   it('should get the timezone by ID', () => {
-    timezones.forEach(timezone => {
+    timezones.forEach((timezone) => {
       const timeZone = getTimezoneById(timezone.id)
       assert.equal(timezone.timeZone, timeZone)
     })

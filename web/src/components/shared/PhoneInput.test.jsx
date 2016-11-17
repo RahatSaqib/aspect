@@ -3,12 +3,14 @@ import { assert } from 'chai'
 import { shallow } from 'enzyme'
 import sinon from 'sinon'
 import TextField from 'material-ui/TextField'
-import CountrySelect from './CountrySelect'
 import { Field } from 'redux-form/immutable'
+import CountrySelect from './CountrySelect'
 import PhoneInput from './PhoneInput'
 
 describe('PhoneInput Field Component', () => {
-  let props, PhoneInputFieldWrapper, phoneInputProps
+  let props
+  let PhoneInputFieldWrapper
+  let phoneInputProps
   beforeEach(() => {
     props = {
       name: 'fieldName',
@@ -16,7 +18,7 @@ describe('PhoneInput Field Component', () => {
       disabled: false,
       maxLength: 50
     }
-    PhoneInputFieldWrapper = shallow(<PhoneInput {...props}/>)
+    PhoneInputFieldWrapper = shallow(<PhoneInput {...props} />)
     phoneInputProps = PhoneInputFieldWrapper.find(Field).props()
   })
 
@@ -30,7 +32,10 @@ describe('PhoneInput Field Component', () => {
   })
 
   describe('PhoneInput Component', () => {
-    let PhoneInputWrapper, PhoneInputType, phoneFieldProps, phoneInputTypeProps
+    let PhoneInputWrapper
+    let PhoneInputType
+    let phoneFieldProps
+    let phoneInputTypeProps
 
     beforeEach(() => {
       phoneFieldProps = {
@@ -39,9 +44,11 @@ describe('PhoneInput Field Component', () => {
           floatingLabelText: props.label,
           disabled: props.disabled,
           maxLength: props.maxLength
-        }, input: {
+        },
+        input: {
           onChange: sinon.spy()
-        }, meta: { }
+        },
+        meta: { }
       }
       PhoneInputType = PhoneInputFieldWrapper.props().component(phoneFieldProps).type
       phoneInputTypeProps = {
@@ -67,7 +74,7 @@ describe('PhoneInput Field Component', () => {
     })
 
     it('Should set the country dialing code when it is entered into the text field', () => {
-      PhoneInputWrapper.find(TextField).simulate('change', { target: { value: '+44 0711 234 3211'}})
+      PhoneInputWrapper.find(TextField).simulate('change', { target: { value: '+44 0711 234 3211' } })
       assert.deepEqual(PhoneInputWrapper.state(), {
         selectedIsoAlpha2Code: 'GB',
         number: '0711 234 3211'
@@ -81,7 +88,7 @@ describe('PhoneInput Field Component', () => {
 
     it('Should set the call onChange with the full phone number when the country is changed and a number is entered into the text field', () => {
       PhoneInputWrapper.find(CountrySelect).simulate('change', undefined, undefined, 'ZA')
-      PhoneInputWrapper.find(TextField).simulate('change', { target: { value: '123 4567'}})
+      PhoneInputWrapper.find(TextField).simulate('change', { target: { value: '123 4567' } })
 
       assert.deepEqual(phoneFieldProps.input.onChange.lastCall.args, ['+27 123 4567'])
     })

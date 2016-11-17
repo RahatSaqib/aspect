@@ -47,9 +47,8 @@ function receiveDevices(json) {
   }
 }
 
-export function fetchDevices(filters/* required */, sortCol = 'name', sortDir = 'asc', page = 0, pageSize = 10){
-  return dispatch => {
-
+export function fetchDevices(filters/* required */, sortCol = 'name', sortDir = 'asc', page = 0, pageSize = 10) {
+  return (dispatch) => {
     dispatch(requestDevices(sortCol, sortDir, page, pageSize, filters))
 
     return aspectFetch(`/device?${stringify({
@@ -60,7 +59,7 @@ export function fetchDevices(filters/* required */, sortCol = 'name', sortDir = 
       ...filters.toJS()
     })}`)
       .then(json => dispatch(receiveDevices(json)))
-      .catch(err => {
+      .catch((err) => {
         dispatch(addError('Loading devices failed', err.message, err))
       })
   }
@@ -80,14 +79,13 @@ function receiveSingleDevice(item) {
   }
 }
 
-export function fetchSingleDevice(deviceId){
-  return dispatch => {
-
+export function fetchSingleDevice(deviceId) {
+  return (dispatch) => {
     dispatch(requestSingleDevice(deviceId))
 
     return aspectFetch(`/device/${deviceId}`)
       .then(json => dispatch(receiveSingleDevice(json.data)))
-      .catch(err => {
+      .catch((err) => {
         dispatch(addError(`Loading a device (${deviceId}) failed`, err.message, err))
       })
   }
@@ -108,9 +106,8 @@ function receiveUpdatedSingleDevice(item) {
   }
 }
 
-export function updateSingleDevice(deviceId, data){
-  return dispatch => {
-
+export function updateSingleDevice(deviceId, data) {
+  return (dispatch) => {
     dispatch(requestUpdatingSingleDevice(deviceId, data))
 
     return aspectFetch(`/device/${deviceId}`, {
@@ -118,7 +115,7 @@ export function updateSingleDevice(deviceId, data){
       body: JSON.stringify(data)
     })
       .then(json => dispatch(receiveUpdatedSingleDevice(json.data)))
-      .catch(err => {
+      .catch((err) => {
         dispatch(addError(`Updating a device (${deviceId}) failed`, err.message, err))
       })
   }
@@ -135,23 +132,23 @@ const initialState = new Device()
 
 export default function deviceReducer(state = initialState, action) {
   switch (action.type) {
-  case types.REQUEST_DEVICES:
-    return state
+    case types.REQUEST_DEVICES:
+      return state
       .set('table', requestTable(state.table, action))
-  case types.RECEIVE_DEVICES:
-    return state
-      .withMutations(mutState => {
+    case types.RECEIVE_DEVICES:
+      return state
+      .withMutations((mutState) => {
         const immutList = Immutable.fromJS(action.items)
         mutState.set('items', receiveList(mutState.items, immutList))
         mutState.set('table', receiveTableItems(mutState.table, action.total))
       })
-  case types.RECEIVE_SINGLE_DEVICE:
-  case types.RECEIVE_UPDATED_SINGLE_DEVICE:
-    return state
-      .withMutations(mutState => {
+    case types.RECEIVE_SINGLE_DEVICE:
+    case types.RECEIVE_UPDATED_SINGLE_DEVICE:
+      return state.withMutations((mutState) => {
         const immutItem = Immutable.fromJS(action.item)
         mutState.set('items', receiveItem(mutState.items, immutItem))
       })
+    default:
+      return state
   }
-  return state
 }

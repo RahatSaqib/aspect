@@ -39,7 +39,12 @@ export class NotFound extends PureComponent {
             defaultMessage="The page you're looking for doesn't exist."
           />
         </h2>
-        <IconButton className={styles.Content__Button} onTouchTap={ this.props.router.goBack } ><ActionBack /></IconButton>
+        <IconButton
+          className={styles.Content__Button}
+          onTouchTap={this.props.router.goBack}
+        >
+          <ActionBack />
+        </IconButton>
         <Link to="/" ><IconButton className={styles.Content__Button}><ActionHome /></IconButton></Link>
       </div>
     )

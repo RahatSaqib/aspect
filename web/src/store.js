@@ -1,11 +1,11 @@
 import thunk from 'redux-thunk'
-import {createStore, compose, applyMiddleware} from 'redux'
+import { createStore, compose, applyMiddleware } from 'redux'
 
 import rootReducer from './rootReducer'
 
 import { middleware as idleMiddleware, actions as idleActions } from './idle/IdleRedux'
 
-let middleware = [thunk, idleMiddleware]
+const middleware = [thunk, idleMiddleware]
 
 // our redux store with dev tools
 const createStoreWithDevTools = compose(
@@ -16,7 +16,7 @@ const createStoreWithDevTools = compose(
 const store = createStoreWithDevTools(rootReducer)
 
 // enable hot reload for reducers
-if (module.hot){
+if (module.hot) {
   module.hot.accept('./rootReducer', () => {
     const nextRootReducer = require('./rootReducer').default
     store.replaceReducer(nextRootReducer)
@@ -33,7 +33,7 @@ store.subscribe(() => {
   currentIsAuthorized = state.getIn(['user', 'loggedIn'])
 
   // if user logged in, watch for idleness
-  if(currentIsAuthorized !== previousIsAuthorized) {
+  if (currentIsAuthorized !== previousIsAuthorized) {
     store.dispatch((currentIsAuthorized ? idleActions.start : idleActions.stop)())
   }
 })

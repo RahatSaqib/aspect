@@ -12,33 +12,33 @@ const types = {
 
 // actions
 const idleStatusDelay = idleStatus => () => {
-  if(idleStatus === types.IDLESTATUS_AWAY)
-    return 20000 // User becomes away after 20 seconds inactivity
-  if(idleStatus === types.IDLESTATUS_INACTIVE)
-    return config.userInactiveMinutes * 60 * 1000 // inactive after X minutes
-  if(idleStatus === types.IDLESTATUS_EXPIRED)
-    return 60000 // Log them out one minute after they enter the inactive status
+  if (idleStatus === types.IDLESTATUS_AWAY) {
+    return 20000
+  } // User becomes away after 20 seconds inactivity
+  if (idleStatus === types.IDLESTATUS_INACTIVE) {
+    return config.userInactiveMinutes * 60 * 1000
+  } // inactive after X minutes
+  if (idleStatus === types.IDLESTATUS_EXPIRED) {
+    return 60000
+  }
+  return 20000
 }
 
 const activeStatusAction = () => {}
 
 const idleStatusAction = idleStatus => (dispatch) => {
-
-  if(idleStatus === types.IDLESTATUS_INACTIVE){
-  }
-
-  if(idleStatus === types.IDLESTATUS_EXPIRED){
+  if (idleStatus === types.IDLESTATUS_EXPIRED) {
     dispatch(logoutStart('idle'))
   }
 }
 
 // configure idle monitor
-const opts =  {
-  appName: 'aspect'
-, IDLE_STATUSES: _.values(types)
-, idleStatusDelay
-, activeStatusAction
-, idleStatusAction
+const opts = {
+  appName: 'aspect',
+  IDLE_STATUSES: _.values(types),
+  idleStatusDelay,
+  activeStatusAction,
+  idleStatusAction
 }
 
 const { middleware, reducer, actions } = configure(opts)

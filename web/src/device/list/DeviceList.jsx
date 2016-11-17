@@ -21,7 +21,7 @@ import TextField from 'material-ui/TextField'
 
 // Our own imports
 import { fetchDevices } from '../DeviceRedux'
-import { DataTable } from '../../components/shared/DataTable'
+import DataTable from '../../components/shared/DataTable'
 import styles from './DeviceList.css'
 
 const messages = defineMessages({
@@ -67,7 +67,11 @@ export class DeviceList extends PureComponent {
 
   static propTypes = {
     setPageTitle: PropTypes.func.isRequired,
-    table: PropTypes.object.isRequired
+    table: PropTypes.object.isRequired,
+    intl: PropTypes.object.isRequired,
+    router: PropTypes.object.isRequired,
+    fetchDevices: PropTypes.func.isRequired,
+    items: PropTypes.object.isRequired
   }
 
   static contextTypes = {
@@ -80,6 +84,54 @@ export class DeviceList extends PureComponent {
 
   state = {
     filters: this.props.table.get('filters')
+  }
+
+  getChildContext() {
+    const { muiTheme } = this.context
+
+    return {
+      muiTheme: {
+        ...muiTheme,
+        tableHeaderColumn: {
+          // Overrides the style used by <material-ui/Table/TableHeaderColumn /> in <DataTable />
+          ...muiTheme.tableHeaderColumn,
+          spacing: DEVICE_TABLE_COLUMN_SPACING
+        },
+        tableRowColumn: {
+          // Overrides the style used by <material-ui/Table/TableRowColumn /> in <DataTable />
+          ...muiTheme.tableRowColumn,
+          spacing: DEVICE_TABLE_COLUMN_SPACING
+        }
+      }
+    }
+  }
+
+  componentWillMount() {
+    this.props.setPageTitle(this.getFormattedTitle())
+  }
+
+  componentDidUpdate(prevProps) {
+    const prevDeviceConfigRoute = this.getDeviceConfigRoute(prevProps)
+    const deviceConfigRoute = this.getDeviceConfigRoute()
+    // When switching between routers/devices, re-fetch API
+    if (prevDeviceConfigRoute !== deviceConfigRoute) {
+      this.handleFetch()
+      this.props.setPageTitle(this.getFormattedTitle())
+    }
+  }
+
+  getDeviceConfigRoute({ routes } = this.props) {
+    return _.find(routes, r => r.deviceConfig)
+  }
+
+  getFormattedTitle() {
+    const deviceConfigRoute = this.getDeviceConfigRoute()
+    const { intl } = this.props
+    const { formatMessage } = intl
+    if (deviceConfigRoute.path === 'device') {
+      return formatMessage(messages.devicesTitle)
+    }
+    return formatMessage(messages.routersTitle)
   }
 
   handleItemIdSelection = (deviceId) => {
@@ -110,55 +162,6 @@ export class DeviceList extends PureComponent {
     this.handleFetch()
   }
 
-  getDeviceConfigRoute({ routes } = this.props) {
-    return _.find(routes, r => r.deviceConfig)
-  }
-
-  getFormattedTitle() {
-    const deviceConfigRoute = this.getDeviceConfigRoute()
-    const { intl } = this.props
-    const { formatMessage } = intl
-    if (deviceConfigRoute.path === 'device') {
-      return formatMessage(messages.devicesTitle)
-    } else {
-      return formatMessage(messages.routersTitle)
-    }
-  }
-
-  componentWillMount() {
-    this.props.setPageTitle(this.getFormattedTitle())
-  }
-
-  componentDidUpdate(prevProps) {
-    const prevDeviceConfigRoute = this.getDeviceConfigRoute(prevProps)
-    const deviceConfigRoute = this.getDeviceConfigRoute()
-    // When switching between routers/devices, re-fetch API
-    if (prevDeviceConfigRoute !== deviceConfigRoute) {
-      this.handleFetch()
-      this.props.setPageTitle(this.getFormattedTitle())
-    }
-  }
-
-  getChildContext() {
-    const { muiTheme } = this.context
-
-    return {
-      muiTheme: {
-        ...muiTheme,
-        tableHeaderColumn: {
-          // Overrides the style used by <material-ui/Table/TableHeaderColumn /> in <DataTable />
-          ...muiTheme.tableHeaderColumn,
-          spacing: DEVICE_TABLE_COLUMN_SPACING
-        },
-        tableRowColumn: {
-          // Overrides the style used by <material-ui/Table/TableRowColumn /> in <DataTable />
-          ...muiTheme.tableRowColumn,
-          spacing: DEVICE_TABLE_COLUMN_SPACING
-        }
-      }
-    }
-  }
-
   render() {
     const { intl } = this.props
     const { formatMessage, formatRelative, formatNumber } = intl
@@ -166,22 +169,26 @@ export class DeviceList extends PureComponent {
     return (
       <div className={styles.Content}>
         <Helmet title={this.getFormattedTitle()} titleTemplate="%s - Aspect" defaultTitle="Aspect" />
-        <form onSubmit={ this.handleSubmit }>
+        <form onSubmit={this.handleSubmit}>
           <Toolbar className={styles.Toolbar} >
-            <ToolbarGroup firstChild={true}>
-              <TextField  value={this.state.filters.get('name')}
-                          id="name"
-                          onChange={ this.filterDevicesChange }
-                          className={styles['Toolbar__TextField--filter']}
-                          hintText="Filter by name" />
-              <RaisedButton label="Filter" primary={true} onTouchTap={ this.handleSubmit } />
+            <ToolbarGroup firstChild>
+              <TextField
+                value={this.state.filters.get('name')}
+                id="name"
+                onChange={this.filterDevicesChange}
+                className={styles['Toolbar__TextField--filter']}
+                hintText="Filter by name"
+              />
+              <RaisedButton label="Filter" primary onTouchTap={this.handleSubmit} />
             </ToolbarGroup>
-            <ToolbarGroup lastChild={true}>
-              <IconMenu iconButtonElement={
-                  <IconButton touch={true}>
+            <ToolbarGroup lastChild>
+              <IconMenu
+                iconButtonElement={
+                  <IconButton touch>
                     <NavigationExpandMoreIcon />
-                  </IconButton>}>
-                <MenuItem primaryText="Clear Filters" className={styles.Toolbar__MenuItem} onTouchTap={ this.resetDevices } />
+                  </IconButton>}
+              >
+                <MenuItem primaryText="Clear Filters" className={styles.Toolbar__MenuItem} onTouchTap={this.resetDevices} />
                 <MenuItem primaryText="Export to Excel" className={styles.Toolbar__MenuItem} />
                 <MenuItem primaryText="Export to CSV" className={styles.Toolbar__MenuItem} />
               </IconMenu>
@@ -191,20 +198,28 @@ export class DeviceList extends PureComponent {
         <DataTable
           selectable
           handleItemIdSelection={this.handleItemIdSelection}
-          handleFetch={ this.handleFetch }
-          items={ this.props.items }
-          table={ this.props.table }
+          handleFetch={this.handleFetch}
+          items={this.props.items}
+          table={this.props.table}
           columns={[
-            { db: 'name', title: formatMessage(messages.deviceName),
+            { db: 'name',
+              title: formatMessage(messages.deviceName),
               extraProps: { style: { width: DEVICE_TABLE_NAME_COLUMN_WIDTH } } },
-            { db: 'status', title: formatMessage(messages.status), hideOnXs: true,
+            { db: 'status',
+              title: formatMessage(messages.status),
+              hideOnXs: true,
               extraProps: { style: { width: DEVICE_TABLE_STATUS_COLUMN_WIDTH } } },
-            { db: 'createdOn', title: formatMessage(messages.reportingFor), hideOnXs: true,
-              format: (data) => formatRelative(data) },
-            { db: 'lastSeen', title: formatMessage(messages.lastSeen), hideOnXs: true,
-              format: (data) => formatRelative(data) },
-            { db: 'totalTests', title: formatMessage(messages.totalTests),
-              format: (data) => formatNumber(data) }
+            { db: 'createdOn',
+              title: formatMessage(messages.reportingFor),
+              hideOnXs: true,
+              format: data => formatRelative(data) },
+            { db: 'lastSeen',
+              title: formatMessage(messages.lastSeen),
+              hideOnXs: true,
+              format: data => formatRelative(data) },
+            { db: 'totalTests',
+              title: formatMessage(messages.totalTests),
+              format: data => formatNumber(data) }
           ]}
         />
       </div>
