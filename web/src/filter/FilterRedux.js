@@ -63,9 +63,9 @@ const initialState = new Filter()
 
 export default function filterReducer(state = initialState, action) {
   switch (action.type) {
-  case types.CONFIGURE_LIST_FILTER:
-    return state
-      .withMutations(mutState => {
+    case types.CONFIGURE_LIST_FILTER:
+      return state
+      .withMutations((mutState) => {
         const nextListConfig = new ListConfig(action.listConfig)
         mutState.set('listConfig', nextListConfig)
 
@@ -75,30 +75,31 @@ export default function filterReducer(state = initialState, action) {
           if (value) {
             return acc
           }
-          switch(key) {
-          case 'assayAndResultCategory':
-            return ['assayId', 'resultCategoryId'].reduce(deleteFromMap, acc)
-          case 'geography':
-            return ['countryId', 'stateId', 'lgaId'].reduce(deleteFromMap, acc)
-          case 'date':
-            return ['minDate', 'maxDate'].reduce(deleteFromMap, acc)
-          case 'deviceName':
-          case 'siteName':
-          case 'contactNameOrEmail':
-            return acc.delete(key)
-          default:
-            invariant(false, 'Unreachable')
+          switch (key) {
+            case 'assayAndResultCategory':
+              return ['assayId', 'resultCategoryId'].reduce(deleteFromMap, acc)
+            case 'geography':
+              return ['countryId', 'stateId', 'lgaId'].reduce(deleteFromMap, acc)
+            case 'date':
+              return ['minDate', 'maxDate'].reduce(deleteFromMap, acc)
+            case 'deviceName':
+            case 'siteName':
+            case 'contactNameOrEmail':
+              return acc.delete(key)
+            default:
+              invariant(false, 'Unreachable')
           }
         }, state.listFilter)
 
         mutState.set('listFilter', nextListFilter)
       })
-  case types.CLEAR_LIST_FILTER:
-    return state
+    case types.CLEAR_LIST_FILTER:
+      return state
       .set('listFilter', initialState.listFilter)
-  case types.CHANGE_LIST_FILTER:
-    return state
+    case types.CHANGE_LIST_FILTER:
+      return state
       .mergeIn(['listFilter'], action.listFilter)
+    default:
+      return state
   }
-  return state
 }

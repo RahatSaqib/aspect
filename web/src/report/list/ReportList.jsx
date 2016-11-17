@@ -51,24 +51,29 @@ export class ReportList extends PureComponent {
 
   static propTypes = {
     setPageTitle: PropTypes.func.isRequired,
-    table: PropTypes.object.isRequired
-  }
-
-  handleFetch = (...args) => {
-    this.props.fetchListFilteredReports({}, ...args)
+    table: PropTypes.object.isRequired,
+    fetchListFilteredReports: PropTypes.func.isRequired,
+    configureListFilter: PropTypes.object.isRequired,
+    intl: PropTypes.object.isRequired,
+    listFilter: PropTypes.object.isRequired,
+    items: PropTypes.object.isRequired
   }
 
   componentWillMount() {
     const { setPageTitle, configureListFilter, intl } = this.props
     const { formatMessage } = intl
     setPageTitle(formatMessage(messages.title))
-    configureListFilter({contactNameOrEmail: true})
+    configureListFilter({ contactNameOrEmail: true })
   }
 
   componentWillReceiveProps(nextProps) {
     if (this.props.listFilter !== nextProps.listFilter) {
       this.handleFetch()
     }
+  }
+
+  handleFetch = (...args) => {
+    this.props.fetchListFilteredReports({}, ...args)
   }
 
   render() {
@@ -80,9 +85,9 @@ export class ReportList extends PureComponent {
         <Helmet title={formatMessage(messages.title)} titleTemplate="%s - Aspect" defaultTitle="Aspect" />
         <ListFilterContainer />
         <DataTable
-          handleFetch={ this.handleFetch }
-          items={ this.props.items }
-          table={ this.props.table }
+          handleFetch={this.handleFetch}
+          items={this.props.items}
+          table={this.props.table}
           columns={[
             { db: 'deploymentName', title: formatMessage(messages.deploymentName) },
             { db: 'moduleSerial', title: formatMessage(messages.moduleSerial) },

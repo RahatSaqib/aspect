@@ -20,7 +20,7 @@ export class AssaySelectField extends PureComponent {
   }
 
   componentDidMount() {
-    const {assay} = this.props
+    const { assay } = this.props
     this.props.fetchAssays(false, assay)
   }
 

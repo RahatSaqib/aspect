@@ -16,17 +16,17 @@ class CountrySelectField extends PureComponent {
     countryId: PropTypes.string
   }
 
+  componentDidMount() {
+    const { countries, countryId } = this.props
+    this.props.fetchCountriesForLocationSelector(false, countries, countryId, null)
+  }
+
   handleSelectFieldChange = (event, index, value) => {
     this.props.onChangeCountry(value)
   }
 
-  componentDidMount() {
-    const {countries, countryId} = this.props
-    this.props.fetchCountriesForLocationSelector(false, countries, countryId, null)
-  }
-
   render() {
-    const {countries, countryId} = this.props
+    const { countries, countryId } = this.props
     const restProps = _.omit(this.props, [
       'countries', 'onChangeCountry', 'countryId', 'fetchCountriesForLocationSelector'
     ])

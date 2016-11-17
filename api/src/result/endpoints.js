@@ -60,13 +60,13 @@ module.exports = [
     }
   },
   {
-    method : 'PUT',
+    method: 'PUT',
     path: '/result/workflow-status/{resultId}',
     handler: asyncHandler(updateWorkflowStatus),
     config: {
       description: 'Update Result Status',
       notes: 'Update the status of a result',
-      auth: {scope : ['result:edit']},
+      auth: { scope: ['result:edit'] },
       validate: {
         params: {
           resultId: Joi.number().integer().positive().description('Result Id')

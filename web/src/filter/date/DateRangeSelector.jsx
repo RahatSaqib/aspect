@@ -18,22 +18,6 @@ export class DateRangeSelector extends PureComponent {
     maxDate: PropTypes.string
   }
 
-  handleMinDateChange = (_, date) => {
-    this.props.onChangeDate('minDate', date.toJSON())
-  }
-
-  handleClearMinDate = () => {
-    this.props.onChangeDate('minDate', null)
-  }
-
-  handleMaxDateChange = (_, date) => {
-    this.props.onChangeDate('maxDate', endOfDay(date).toJSON())
-  }
-
-  handleClearMaxDate = () => {
-    this.props.onChangeDate('maxDate', null)
-  }
-
   getMinDate() {
     const { minDate } = this.props
     return minDate && new Date(minDate)
@@ -44,6 +28,22 @@ export class DateRangeSelector extends PureComponent {
     return maxDate && new Date(maxDate)
   }
 
+  handleMaxDateChange = (_, date) => {
+    this.props.onChangeDate('maxDate', endOfDay(date).toJSON())
+  }
+
+  handleClearMaxDate = () => {
+    this.props.onChangeDate('maxDate', null)
+  }
+
+  handleClearMinDate = () => {
+    this.props.onChangeDate('minDate', null)
+  }
+
+  handleMinDateChange = (_, date) => {
+    this.props.onChangeDate('minDate', date.toJSON())
+  }
+
   render() {
     const { clearButtonTooltip, clearButtonStyle, minDate, maxDate } = this.props
     const restProps = _.omit(this.props, [
@@ -51,7 +51,7 @@ export class DateRangeSelector extends PureComponent {
     ])
 
     return (
-      <div style={{display: 'inline-block'}}>
+      <div style={{ display: 'inline-block' }}>
         <DatePicker
           {...restProps}
           value={this.getMinDate()}
@@ -59,7 +59,7 @@ export class DateRangeSelector extends PureComponent {
           hintText="Start from"
           container="inline"
           mode="landscape"
-          style={{display: 'inline-block'}}
+          style={{ display: 'inline-block' }}
         />
         {minDate && (
           <IconButton
@@ -77,7 +77,7 @@ export class DateRangeSelector extends PureComponent {
           hintText="End at"
           container="inline"
           mode="landscape"
-          style={{display: 'inline-block'}}
+          style={{ display: 'inline-block' }}
         />
         {maxDate && (
           <IconButton

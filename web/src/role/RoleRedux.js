@@ -17,25 +17,26 @@ function createRequestPartnersAndRolesForSelectList() {
 
 function createReceivePartnersAndRolesForSelectList(partners) {
   return {
-    type:  types.RECEIVE_PARTNERS_AND_ROLES_FOR_SELECT_LIST,
+    type: types.RECEIVE_PARTNERS_AND_ROLES_FOR_SELECT_LIST,
     partners
   }
 }
 
-const cacheExpiryTime = 5 * 60 * 1000 //five minutes
+const cacheExpiryTime = 5 * 60 * 1000 // five minutes
 
-export const fetchPartnersAndRolesForSelectList = function(partnersAndRolesForSelectList, forceRefresh) {
-  return dispatch => {
-    const now = new Date()
-    if (forceRefresh || !partnersAndRolesForSelectList.get('lastRefreshed') ||
-      Math.abs(now.getTime() - partnersAndRolesForSelectList.get('lastRefreshed').getTime()) > cacheExpiryTime) {
-      dispatch(createRequestPartnersAndRolesForSelectList())
-      return aspectFetch('/role/select-list')
-        .then(json => dispatch(createReceivePartnersAndRolesForSelectList(json.data)))
-        .catch(err => dispatch(addError('Loading partners and roles failed', err.message, err)))
+export const fetchPartnersAndRolesForSelectList =
+  function (partnersAndRolesForSelectList, forceRefresh) {
+    return (dispatch) => {
+      const now = new Date()
+      if (forceRefresh || !partnersAndRolesForSelectList.get('lastRefreshed') ||
+        Math.abs(now.getTime() - partnersAndRolesForSelectList.get('lastRefreshed').getTime()) > cacheExpiryTime) {
+        dispatch(createRequestPartnersAndRolesForSelectList())
+        return aspectFetch('/role/select-list')
+          .then(json => dispatch(createReceivePartnersAndRolesForSelectList(json.data)))
+          .catch(err => dispatch(addError('Loading partners and roles failed', err.message, err)))
+      }
     }
   }
-}
 
 /*
  * ---------------- Reducers -----------------
@@ -96,10 +97,11 @@ function receivePartnersAndRolesForSelectList(state, partners) {
 
 export default function rolesReducer(state = initialState, action) {
   switch (action.type) {
-  case types.REQUEST_PARTNERS_AND_ROLES_FOR_SELECT_LIST:
-    return requestPartnersAndRolesForSelectList(state)
-  case types.RECEIVE_PARTNERS_AND_ROLES_FOR_SELECT_LIST:
-    return receivePartnersAndRolesForSelectList(state, action.partners)
+    case types.REQUEST_PARTNERS_AND_ROLES_FOR_SELECT_LIST:
+      return requestPartnersAndRolesForSelectList(state)
+    case types.RECEIVE_PARTNERS_AND_ROLES_FOR_SELECT_LIST:
+      return receivePartnersAndRolesForSelectList(state, action.partners)
+    default:
+      return state
   }
-  return state
 }

@@ -15,29 +15,23 @@ import {
 
 export function getSelectedState(props) {
   const states = getSelectedCountryStates(props)
-  return states.find((s) => s.id === props.stateId)
+  return states.find(s => s.id === props.stateId)
 }
 
 export function getSelectedStateLgas(props) {
   const selectedState = getSelectedState(props)
   if (selectedState && selectedState.children.items) {
     return selectedState.children.items
-  } else {
-    return Immutable.List()
   }
+  return Immutable.List()
 }
 
 class LgaSelectField extends PureComponent {
   static propTypes = {
-    countries: PropTypes.object.isRequired,
     onChangeLga: PropTypes.func.isRequired,
-    countryId: PropTypes.string,
     stateId: PropTypes.string,
-    lgaId: PropTypes.string
-  }
-
-  handleSelectFieldChange = (event, index, value) => {
-    this.props.onChangeLga(value)
+    lgaId: PropTypes.string,
+    fetchLgasForLocationSelector: PropTypes.func
   }
 
   componentDidMount() {
@@ -58,8 +52,12 @@ class LgaSelectField extends PureComponent {
     }
   }
 
+  handleSelectFieldChange = (event, index, value) => {
+    this.props.onChangeLga(value)
+  }
+
   render() {
-    const {lgaId} = this.props
+    const { lgaId } = this.props
     const restProps = _.omit(this.props, [
       'countries', 'onChangeLga', 'countryId', 'stateId', 'lgaId', 'fetchLgasForLocationSelector'
     ])
