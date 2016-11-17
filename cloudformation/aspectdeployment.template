@@ -1,0 +1,456 @@
+{
+  "AWSTemplateFormatVersion": "2010-09-09",
+  "Parameters": {
+    "DeploymentName": {
+      "Type": "String",
+      "Default": "malawi"
+    },
+    "RDSMasterUsername": {
+      "Type": "String",
+      "Default": "aspectmaster"
+    },
+    "RDSMasterPassword": {
+      "NoEcho": "true",
+      "Type": "String",
+      "Default": "fh7toYl8EAM3"
+    }
+  },
+  "Description": "Aspect Deployment",
+  "Resources": {
+    "AspectCloudfront": {
+      "Type": "AWS::CloudFront::Distribution",
+      "Properties": {
+        "DistributionConfig": {
+          "Aliases": [
+            {
+              "Fn::Join": [
+                "",
+                [
+                  {
+                    "Ref": "DeploymentName"
+                  },
+                  ".aspect.id"
+                ]
+              ]
+            }
+          ],
+          "Enabled": true,
+          "DefaultRootObject": "index.html",
+          "PriceClass": "PriceClass_All",
+          "CustomErrorResponses": [
+            {
+              "ErrorCachingMinTTL": 5,
+              "ErrorCode": 404,
+              "ResponseCode": "200",
+              "ResponsePagePath": "/index.html"
+            }
+          ],
+          "CacheBehaviors": [
+            {
+              "TargetOriginId": {
+                "Ref": "AspectS3Web"
+              },
+              "PathPattern": "*.html",
+              "ViewerProtocolPolicy": "allow-all",
+              "MinTTL": 0,
+              "AllowedMethods": [
+                "HEAD",
+                "GET"
+              ],
+              "CachedMethods": [
+                "HEAD",
+                "GET"
+              ],
+              "ForwardedValues": {
+                "Cookies": {
+                  "Forward": "none"
+                },
+                "QueryString": false
+              }
+            }
+          ],
+          "DefaultCacheBehavior": {
+            "TargetOriginId": {
+              "Ref": "AspectS3Web"
+            },
+            "ViewerProtocolPolicy": "allow-all",
+            "MinTTL": 0,
+            "AllowedMethods": [
+              "HEAD",
+              "GET"
+            ],
+            "CachedMethods": [
+              "HEAD",
+              "GET"
+            ],
+            "ForwardedValues": {
+              "Cookies": {
+                "Forward": "none"
+              },
+              "QueryString": false
+            }
+          },
+          "Origins": [
+            {
+              "DomainName": {
+                "Fn::Join": [
+                  "",
+                  [
+                    {
+                      "Ref": "DeploymentName"
+                    },
+                    "-aspect-web.s3.amazonaws.com"
+                  ]
+                ]
+              },
+              "Id": {
+                "Ref": "AspectS3Web"
+              },
+              "S3OriginConfig": {}
+            }
+          ],
+          "Restrictions": {
+            "GeoRestriction": {
+              "RestrictionType": "none",
+              "Locations": []
+            }
+          },
+          "ViewerCertificate": {
+            "CloudFrontDefaultCertificate": "true",
+            "MinimumProtocolVersion": "SSLv3"
+          }
+        }
+      }
+    },
+    "AspectDBSubnetGroup": {
+      "Type": "AWS::RDS::DBSubnetGroup",
+      "Properties": {
+        "DBSubnetGroupDescription": {
+          "Fn::Join": [
+            "",
+            [
+              {
+                "Ref": "DeploymentName"
+              },
+              " Aspect DB Subnet Group"
+            ]
+          ]
+        },
+        "SubnetIds": [
+          "subnet-4edf4464",
+          "subnet-50fc9d08",
+          "subnet-b9194a84",
+          "subnet-43622835"
+        ],
+        "Tags": [
+          {
+            "Key": "Name",
+            "Value": {
+              "Fn::Join": [
+                "",
+                [
+                  {
+                    "Ref": "DeploymentName"
+                  },
+                  "_AspectDBSubnetGroup"
+                ]
+              ]
+            }
+          }
+        ]
+      }
+    },
+    "AspectRDS": {
+      "Type": "AWS::RDS::DBInstance",
+      "Properties": {
+        "AllocatedStorage": "10",
+        "AllowMajorVersionUpgrade": "false",
+        "AutoMinorVersionUpgrade": "true",
+        "DBInstanceClass": "db.t2.micro",
+        "DBInstanceIdentifier": {
+          "Fn::Join": [
+            "",
+            [
+              "aspect-",
+              {
+                "Ref": "DeploymentName"
+              }
+            ]
+          ]
+        },
+        "Port": "3306",
+        "PubliclyAccessible": "true",
+        "StorageType": "gp2",
+        "BackupRetentionPeriod": "35",
+        "MasterUsername": {
+          "Ref": "RDSMasterUsername"
+        },
+        "MasterUserPassword": {
+          "Ref": "RDSMasterPassword"
+        },
+        "PreferredBackupWindow": "01:00-01:30",
+        "PreferredMaintenanceWindow": "sat:02:00-sat:03:00",
+        "DBName": "aspect",
+        "Engine": "mysql",
+        "EngineVersion": "5.7.11",
+        "LicenseModel": "general-public-license",
+        "DBSubnetGroupName": {
+          "Ref": "AspectDBSubnetGroup"
+        },
+        "VPCSecurityGroups": [
+          "sg-867848fd"
+        ],
+        "Tags": [
+          {
+            "Key": "Name",
+            "Value": {
+              "Fn::Join": [
+                "",
+                [
+                  {
+                    "Ref": "DeploymentName"
+                  },
+                  "_AspectRDS"
+                ]
+              ]
+            }
+          },
+          {
+            "Key": "workload-type",
+            "Value": "other"
+          }
+        ]
+      }
+    },
+    "AspectAPIEnv": {
+      "Type": "AWS::ElasticBeanstalk::Environment",
+      "Properties": {
+        "ApplicationName": "aspect-api",
+        "EnvironmentName": {
+          "Fn::Join": [
+            "",
+            [
+              {
+                "Ref": "DeploymentName"
+              },
+              "-aspect-api"
+            ]
+          ]
+        },
+        "SolutionStackName": "64bit Amazon Linux 2016.09 v3.1.0 running Node.js",
+        "Tier": {
+          "Name": "WebServer",
+          "Type": "Standard"
+        },
+        "OptionSettings": [
+          {
+            "Namespace": "aws:autoscaling:launchconfiguration",
+            "OptionName": "EC2KeyName",
+            "Value": "aws-eb"
+          },
+          {
+            "Namespace": "aws:autoscaling:launchconfiguration",
+            "OptionName": "IamInstanceProfile",
+            "Value": "aws-elasticbeanstalk-ec2-role"
+          },
+          {
+            "Namespace": "aws:autoscaling:launchconfiguration",
+            "OptionName": "ImageId",
+            "Value": "ami-d8356acf"
+          },
+          {
+            "Namespace": "aws:autoscaling:launchconfiguration",
+            "OptionName": "InstanceType",
+            "Value": "t2.micro"
+          },
+          {
+            "Namespace": "aws:autoscaling:trigger",
+            "OptionName": "UpperThreshold",
+            "Value": "6000000"
+          },
+          {
+            "Namespace": "aws:autoscaling:updatepolicy:rollingupdate",
+            "OptionName": "MaxBatchSize",
+            "Value": "1"
+          },
+          {
+            "Namespace": "aws:autoscaling:updatepolicy:rollingupdate",
+            "OptionName": "MinInstancesInService",
+            "Value": "1"
+          },
+          {
+            "Namespace": "aws:autoscaling:updatepolicy:rollingupdate",
+            "OptionName": "RollingUpdateEnabled",
+            "Value": "true"
+          },
+          {
+            "Namespace": "aws:autoscaling:updatepolicy:rollingupdate",
+            "OptionName": "RollingUpdateType",
+            "Value": "Health"
+          },
+          {
+            "Namespace": "aws:elasticbeanstalk:command",
+            "OptionName": "BatchSize",
+            "Value": "30"
+          },
+          {
+            "Namespace": "aws:elasticbeanstalk:container:nodejs",
+            "OptionName": "NodeVersion",
+            "Value": "6.2.2"
+          },
+          {
+            "Namespace": "aws:elasticbeanstalk:environment",
+            "OptionName": "ServiceRole",
+            "Value": "aws-elasticbeanstalk-service-role"
+          },
+          {
+            "Namespace": "aws:elasticbeanstalk:healthreporting:system",
+            "OptionName": "SystemType",
+            "Value": "enhanced"
+          },
+          {
+            "Namespace": "aws:elasticbeanstalk:managedactions",
+            "OptionName": "ManagedActionsEnabled",
+            "Value": "true"
+          },
+          {
+            "Namespace": "aws:elasticbeanstalk:managedactions",
+            "OptionName": "PreferredStartTime",
+            "Value": "SUN:09:02"
+          },
+          {
+            "Namespace": "aws:elasticbeanstalk:managedactions:platformupdate",
+            "OptionName": "UpdateLevel",
+            "Value": "minor"
+          },
+          {
+            "Namespace": "aws:elb:healthcheck",
+            "OptionName": "Interval",
+            "Value": "10"
+          },
+          {
+            "Namespace": "aws:elb:loadbalancer",
+            "OptionName": "CrossZone",
+            "Value": "true"
+          },
+          {
+            "Namespace": "aws:elb:loadbalancer",
+            "OptionName": "LoadBalancerHTTPPort",
+            "Value": "80"
+          },
+          {
+            "Namespace": "aws:elb:policies",
+            "OptionName": "ConnectionDrainingEnabled",
+            "Value": "true"
+          }
+        ],
+        "Tags": [
+          {
+            "Key": "Name",
+            "Value": {
+              "Fn::Join": [
+                "",
+                [
+                  {
+                    "Ref": "DeploymentName"
+                  },
+                  "_AspectAPIEnv"
+                ]
+              ]
+            }
+          }
+        ]
+      },
+      "DependsOn": "AspectRDS"
+    },
+    "AspectS3Web": {
+      "Type": "AWS::S3::Bucket",
+      "Properties": {
+        "BucketName": {
+          "Fn::Join": [
+            "",
+            [
+              "aspect-web-",
+              {
+                "Ref": "DeploymentName"
+              }
+            ]
+          ]
+        },
+        "AccessControl": "Private",
+        "VersioningConfiguration": {
+          "Status": "Suspended"
+        },
+        "Tags": [
+          {
+            "Key": "Name",
+            "Value": {
+              "Fn::Join": [
+                "",
+                [
+                  {
+                    "Ref": "DeploymentName"
+                  },
+                  "_AspectS3Web"
+                ]
+              ]
+            }
+          }
+        ]
+      }
+    },
+    "AspectS3WebPolicy": {
+      "Type": "AWS::S3::BucketPolicy",
+      "Properties": {
+        "Bucket": {
+          "Ref": "AspectS3Web"
+        },
+        "PolicyDocument": {
+          "Version": "2008-10-17",
+          "Statement": [
+            {
+              "Sid": "Gives read access to everyone",
+              "Effect": "Allow",
+              "Principal": {
+                "AWS": "*"
+              },
+              "Action": "s3:GetObject",
+              "Resource": {
+                "Fn::Join": [
+                  "",
+                  [
+                    "arn:aws:s3:::",
+                    {
+                      "Ref": "AspectS3Web"
+                    },
+                    "/*"
+                  ]
+                ]
+              }
+            },
+            {
+              "Sid": "Gives listing folder contents to everyone",
+              "Effect": "Allow",
+              "Principal": {
+                "AWS": "*"
+              },
+              "Action": "s3:ListBucket",
+              "Resource": {
+                "Fn::Join": [
+                  "",
+                  [
+                    "arn:aws:s3:::",
+                    {
+                      "Ref": "AspectS3Web"
+                    },
+                    ""
+                  ]
+                ]
+              }
+            }
+          ]
+        }
+      }
+    }
+  }
+}
