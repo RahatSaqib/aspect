@@ -1,0 +1,313 @@
+{
+  "countries": [
+    {
+      "abbreviation": "MW",
+      "name": "Malawi",
+      "a3": "MWI",
+      "culture": "ny-MW",
+      "countryCode": "265",
+      "stateLabel": "District",
+      "lgaLabel": "LGA",
+      "timezone": "Central Africa Time",
+      "portNumber": 2952,
+      "exportColumns": "DeploymentDescription|TestEndedOn|AssayName|AssayVersion|User|Result1|Result2|HIV|DRSuspect|PatientAge|PatientGender|PatientLGA|ReagentLotID|ExpirationDate|CartridgeSerial|ModuleSerial|SoftwareVersion|ErrorCode|ErrorCategory|ErrorDescription|SampleId|Notes|ProbeA",
+      "inventoryDaysThreshold": 21,
+      "monthStartsOnDay": 1,
+      "states": [
+        {"name": "Dedza"},
+        {"name": "Dowa"},
+        {"name": "Kasungu"},
+        {"name": "Lilongwe"},
+        {"name": "Mchinji"},
+        {"name": "Nkhotakota"},
+        {"name": "Ntcheu"},
+        {"name": "Ntchisi"},
+        {"name": "Salima"},
+        {"name": "Chitipa"},
+        {"name": "Karonga"},
+        {"name": "Likoma"},
+        {"name": "Mzimba"},
+        {"name": "Nkhata Bay"},
+        {"name": "Rumphi"},
+        {"name": "Balaka"},
+        {"name": "Blantyre"},
+        {"name": "Chikwawa"},
+        {"name": "Chiradzulu"},
+        {"name": "Machinga"},
+        {"name": "Mangochi"},
+        {"name": "Mulanje"},
+        {"name": "Mwanza"},
+        {"name": "Nsanje"},
+        {"name": "Thyolo"},
+        {"name": "Phalombe"},
+        {"name": "Zomba"},
+        {"name": "Neno"}
+      ]
+    },
+    {
+      "abbreviation": "NG",
+      "name": "Nigeria",
+      "a3": "NGA",
+      "culture": "ig-NG",
+      "countryCode": "234",
+      "stateLabel": "State",
+      "lgaLabel": "LGA",
+      "timezone": "W. Central Africa Standard Time",
+      "portNumber": 2951,
+      "exportColumns": "DeploymentDescription|TestEndedOn|AssayName|AssayVersion|User|Result1|Result2|HIV|DRSuspect|PatientAge|PatientGender|PatientLGA|ReagentLotID|ExpirationDate|CartridgeSerial|ModuleSerial|SoftwareVersion|ErrorCode|ErrorCategory|ErrorDescription|SampleId|Notes|ProbeA",
+      "inventoryDaysThreshold": 21,
+      "monthStartsOnDay": 1,
+      "states": [
+        {
+          "name": "Lagos",
+          "lgas": [
+            {"name": "Apapa"},
+            {"name": "Mushin"},
+            {"name": "Ojo"}
+          ]
+        },
+        {
+          "name": "Ogun",
+          "lgas": [
+            {"name": "Ifo"},
+            {"name": "Ipokia"}
+          ]
+        }
+      ]
+    },
+    {
+      "abbreviation": "US",
+      "name": "United States",
+      "a3": "USA",
+      "culture": "en-US",
+      "countryCode": "1",
+      "stateLabel": "State",
+      "lgaLabel": "County",
+      "timezone": "Eastern Standard Time",
+      "portNumber": 3000,
+      "exportColumns": "DeploymentDescription|TestEndedOn|AssayName|AssayVersion|User|Result1|Result2|ReagentLotID|ExpirationDate|CartridgeSerial|ModuleSerial|SoftwareVersion|ErrorCode|ErrorCategory|ErrorDescription|SampleId|Notes",
+      "inventoryDaysThreshold": 21,
+      "monthStartsOnDay": 1,
+      "states": [
+        {
+            "abbreviation": "AK",
+            "name": "Alaska"
+        },
+        {
+            "abbreviation": "AL",
+            "name": "Alabama"
+        },
+        {
+            "abbreviation": "AR",
+            "name": "Arkansas"
+        },
+        {
+            "abbreviation": "AZ",
+            "name": "Arizona"
+        },
+        {
+            "abbreviation": "CA",
+            "name": "California"
+        },
+        {
+            "abbreviation": "CO",
+            "name": "Colorado"
+        },
+        {
+            "abbreviation": "CT",
+            "name": "Connecticut"
+        },
+        {
+            "abbreviation": "DC",
+            "name": "District of Columbia"
+        },
+        {
+            "abbreviation": "DE",
+            "name": "Delaware"
+        },
+        {
+            "abbreviation": "FL",
+            "name": "Florida"
+        },
+        {
+            "abbreviation": "GA",
+            "name": "Georgia"
+        },
+        {
+            "abbreviation": "HI",
+            "name": "Hawaii"
+        },
+        {
+            "abbreviation": "IA",
+            "name": "Iowa"
+        },
+        {
+            "abbreviation": "ID",
+            "name": "Idaho"
+        },
+        {
+            "abbreviation": "IL",
+            "name": "Illinois"
+        },
+        {
+            "abbreviation": "IN",
+            "name": "Indiana"
+        },
+        {
+            "abbreviation": "KS",
+            "name": "Kansas"
+        },
+        {
+            "abbreviation": "KY",
+            "name": "Kentucky"
+        },
+        {
+            "abbreviation": "LA",
+            "name": "Louisiana"
+        },
+        {
+            "abbreviation": "MD",
+            "name": "Maryland"
+        },
+        {
+            "abbreviation": "ME",
+            "name": "Maine"
+        },
+        {
+            "abbreviation": "MA",
+            "name": "Massachusetts",
+            "lgas": [
+              {"name": "Franklin"},
+              {"name": "Suffolk"}
+            ]
+        },
+        {
+            "abbreviation": "MI",
+            "name": "Michigan"
+        },
+        {
+            "abbreviation": "MN",
+            "name": "Minnesota"
+        },
+        {
+            "abbreviation": "MO",
+            "name": "Missouri"
+        },
+        {
+            "abbreviation": "MS",
+            "name": "Mississippi"
+        },
+        {
+            "abbreviation": "MT",
+            "name": "Montana"
+        },
+        {
+            "abbreviation": "NC",
+            "name": "North Carolina"
+        },
+        {
+            "abbreviation": "ND",
+            "name": "North Dakota"
+        },
+        {
+            "abbreviation": "NE",
+            "name": "Nebraska",
+            "lgas": [
+              {"name": "Hall"},
+              {"name": "Gage"},
+              {"name": "Lancaster"},
+              {"name": "Wayne"}
+            ]
+        },
+        {
+            "abbreviation": "NH",
+            "name": "New Hampshire"
+        },
+        {
+            "abbreviation": "NJ",
+            "name": "New Jersey"
+        },
+        {
+            "abbreviation": "NM",
+            "name": "New Mexico"
+        },
+        {
+            "abbreviation": "NV",
+            "name": "Nevada"
+        },
+        {
+            "abbreviation": "NY",
+            "name": "New York"
+        },
+        {
+            "abbreviation": "OK",
+            "name": "Oklahoma"
+        },
+        {
+            "abbreviation": "OH",
+            "name": "Ohio",
+            "lgas": [
+              {"name": "Wayne"},
+              {"name": "Cuyahoga"}
+            ]
+        },
+        {
+            "abbreviation": "OR",
+            "name": "Oregon"
+        },
+        {
+            "abbreviation": "PA",
+            "name": "Pennsylvania"
+        },
+        {
+            "abbreviation": "RI",
+            "name": "Rhode Island"
+        },
+        {
+            "abbreviation": "SC",
+            "name": "South Carolina"
+        },
+        {
+            "abbreviation": "SD",
+            "name": "South Dakota"
+        },
+        {
+            "abbreviation": "TN",
+            "name": "Tennessee"
+        },
+        {
+            "abbreviation": "TX",
+            "name": "Texas"
+        },
+        {
+            "abbreviation": "UT",
+            "name": "Utah"
+        },
+        {
+            "abbreviation": "VA",
+            "name": "Virginia"
+        },
+        {
+            "abbreviation": "VT",
+            "name": "Vermont"
+        },
+        {
+            "abbreviation": "WA",
+            "name": "Washington"
+        },
+        {
+            "abbreviation": "WI",
+            "name": "Wisconsin"
+        },
+        {
+            "abbreviation": "WV",
+            "name": "West Virginia"
+        },
+        {
+            "abbreviation": "WY",
+            "name": "Wyoming"
+        }
+    ]
+  }
+]
+}

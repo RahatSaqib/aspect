@@ -21,7 +21,7 @@
   },
   "Description": "Aspect Deployment",
   "Resources": {
-    "AspectCloudfront": {
+    "CloudFront": {
       "Type": "AWS::CloudFront::Distribution",
       "Properties": {
         "DistributionConfig": {
@@ -125,7 +125,8 @@
         }
       }
     },
-    "AspectDBSubnetGroup": {
+
+    "DBSubnetGroup": {
       "Type": "AWS::RDS::DBSubnetGroup",
       "Properties": {
         "DBSubnetGroupDescription": {
@@ -155,7 +156,7 @@
                   {
                     "Ref": "DeploymentName"
                   },
-                  "_AspectDBSubnetGroup"
+                  "_DBSubnetGroup"
                 ]
               ]
             }
@@ -163,7 +164,7 @@
         ]
       }
     },
-    "AspectRDS": {
+    "RDSInstance": {
       "Type": "AWS::RDS::DBInstance",
       "Properties": {
         "AllocatedStorage": "10",
@@ -198,7 +199,7 @@
         "EngineVersion": "5.7.11",
         "LicenseModel": "general-public-license",
         "DBSubnetGroupName": {
-          "Ref": "AspectDBSubnetGroup"
+          "Ref": "DBSubnetGroup"
         },
         "VPCSecurityGroups": [
           "sg-867848fd"
@@ -213,7 +214,7 @@
                   {
                     "Ref": "DeploymentName"
                   },
-                  "_AspectRDS"
+                  "_RDSInstance"
                 ]
               ]
             }
@@ -225,6 +226,61 @@
         ]
       }
     },
+
+    "APILoadBalancerSG": {
+      "Type": "AWS::EC2::SecurityGroup",
+      "Properties": {
+        "GroupDescription": { "Fn::Join": ["", ["Security Group For ", { "Ref": "DeploymentName" }, " Application Load Balancer"]] },
+        "VpcId": "vpc-10a75377",
+        "Tags": [{
+          "Key": "Name",
+          "Value": { "Fn::Join": ["", [{ "Ref": "DeploymentName" }, "_APILoadBalancerSG"]] }
+        }]
+      }
+    },
+    "LoadBalancerIngress": {
+      "Type": "AWS::EC2::SecurityGroupIngress",
+      "Properties": {
+        "GroupId": { "Ref": "APILoadBalancerSG" },
+        "IpProtocol": "tcp",
+        "FromPort": "80",
+        "ToPort": "80",
+        "CidrIp": "0.0.0.0/0"
+      }
+    },
+
+    "APIInstanceSG": {
+      "Type": "AWS::EC2::SecurityGroup",
+      "Properties": {
+        "GroupDescription": { "Fn::Join": ["", ["Security Group For ", { "Ref": "DeploymentName" }, " Application EC2 Instances"]] },
+        "VpcId": "vpc-10a75377",
+        "Tags": [{
+          "Key": "Name",
+          "Value": { "Fn::Join": ["", [{ "Ref": "DeploymentName" }, "_APIInstanceSG"]] }
+        }]
+      }
+    },
+    "LoadBalancerAppIngress": {
+      "Type": "AWS::EC2::SecurityGroupIngress",
+      "Properties": {
+        "GroupId": { "Ref": "APIInstanceSG" },
+        "IpProtocol": "tcp",
+        "FromPort": "80",
+        "ToPort": "80",
+        "SourceSecurityGroupId": { "Ref": "APILoadBalancerSG" }
+      }
+    },
+    "DBAccessIngress": {
+      "Type": "AWS::EC2::SecurityGroupIngress",
+      "Properties": {
+        "GroupId": "sg-867848fd",
+        "IpProtocol": "tcp",
+        "FromPort": "3306",
+        "ToPort": "3306",
+        "SourceSecurityGroupId": { "Ref": "APIInstanceSG" }
+      }
+    },
+
     "AspectAPIEnv": {
       "Type": "AWS::ElasticBeanstalk::Environment",
       "Properties": {
@@ -265,6 +321,11 @@
             "Namespace": "aws:autoscaling:launchconfiguration",
             "OptionName": "InstanceType",
             "Value": "t2.micro"
+          },
+          {
+            "Namespace": "aws:autoscaling:launchconfiguration",
+            "OptionName": "SecurityGroups",
+            "Value": [{ "Ref": "APIInstanceSG" }]
           },
           {
             "Namespace": "aws:autoscaling:trigger",
@@ -342,6 +403,16 @@
             "Value": "80"
           },
           {
+            "Namespace": "aws:elb:loadbalancer",
+            "OptionName": "SecurityGroups",
+            "Value": [{ "Ref": "APILoadBalancerSG" }]
+          },
+          {
+            "Namespace": "aws:elb:loadbalancer",
+            "OptionName": "ManagedSecurityGroup",
+            "Value": { "Ref": "APILoadBalancerSG" }
+          },
+          {
             "Namespace": "aws:elb:policies",
             "OptionName": "ConnectionDrainingEnabled",
             "Value": "true"
@@ -364,8 +435,9 @@
           }
         ]
       },
-      "DependsOn": "AspectRDS"
+      "DependsOn": "RDSInstance"
     },
+
     "AspectS3Web": {
       "Type": "AWS::S3::Bucket",
       "Properties": {
@@ -460,7 +532,7 @@
     "RDSHost": {
       "Description": "URL to connect to the newly created database",
       "Value": {
-        "Fn::GetAtt": ["AspectRDS", "Endpoint.Address"]
+        "Fn::GetAtt": ["RDSInstance", "Endpoint.Address"]
       }
     },
     "APIUrl": {
@@ -472,7 +544,7 @@
     "CloudFrontUrl": {
       "Description": "URL to the newly created CloudFront Distribution",
       "Value": {
-        "Fn::GetAtt": ["AspectCloudfront", "DomainName"]
+        "Fn::GetAtt": ["CloudFront", "DomainName"]
       }
     }
   }
