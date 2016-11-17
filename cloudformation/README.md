@@ -1,8 +1,15 @@
 # Aspect Deployment CloudFormation Template
+## Summary
 This AWS CloudFormation Template allows you to create a new Aspect deployment
 
-# How to Create a New Aspect Deployment
-## Prerequisites
+It creates the following:
+- An RDS instance for the deployment inside the Aspect VPC
+- An Elastic Beanstalk Environment for the deployment inside the Aspect VPC
+- A S3 Bucket to Host the Front End
+- A CloudFront Distribution to Browse to the Front End Assets
+
+## How to Create a New Aspect Deployment
+### Prerequisites
 - You must be on a machine that has mysql access to the AWS RDS instances (ie. your IP address must be white-listed in the rds-dev-db security group for MySQL/Aurora, port 3306)
 - A working copy of the API and Web project (npm installed and tests passing)
 - Usernames and passwords for the new database to be created
@@ -20,8 +27,9 @@ This AWS CloudFormation Template allows you to create a new Aspect deployment
 - Database seed folder for the deployment in API project
   - We will use the following in this example:
     - api/seeds/malawi
-    
-## Steps
+- AWS and EB CLI Tools configured to use the SystemOne AWS credentials
+
+### Steps
 1. Login to the AWS web console and navigate to Services > CloudFormation
 2. Click on Create Stack
 3. Select Upload a template to Amazon S3, choose cloudformation/aspectdeployment.template and click Next
@@ -64,8 +72,22 @@ aspectUrl=http://malawi.aspect.id
 ...
 db.user=aspectapi
 db.password=96loETfSyBSF6PLX
-                             ...
+...
 ```
 - 9.2. Seed the database with the data in api/seeds/malawi by running `yarn run knex seed:run`
 
+10. ##### Deploy API to Elastic Beanstalk Environment
+- 10.1. Initialise the deployment config by running `eb init`
+  - Choose <b>us-east-1</b> for default region
+  - Choose <b>aspect-api</b> for application
+  - Choose the new environment created by the CloudFormation template
+- 10.2. Deploy the application by running `eb deploy malawi-aspect-api`
 
+11. ##### Deploy Front End Assets to S3
+- 11.1. Navigate to the web folder in this project
+- 11.2. Create front end bundle for this deployment by running `yarn run dist -- --deployment=malawi`
+- 11.3. Upload the bundle assets to S3 by running `aws s3 cp dist s3://aspect-web-malawi --recursive`
+
+12. Lastly, create the following A records with the aspect.id DNS provider
+- [malawi.aspect.id]() pointing to the CloudFront distribution observed in Step 7
+- [malawiapi.aspect.id]() pointing to the Elastic Beanstalk environment

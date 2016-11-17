@@ -100,10 +100,9 @@
                 "Fn::Join": [
                   "",
                   [
-                    {
+                    "aspect-web-", {
                       "Ref": "DeploymentName"
-                    },
-                    "-aspect-web.s3.amazonaws.com"
+                    }, ".s3.amazonaws.com"
                   ]
                 ]
               },
