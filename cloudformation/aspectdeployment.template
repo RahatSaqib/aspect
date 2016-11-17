@@ -452,5 +452,19 @@
         }
       }
     }
+  },
+  "Outputs": {
+    "RDSHost": {
+      "Description": "URL to connect to the newly created database",
+      "Value": {
+        "Fn::GetAtt": ["AspectRDS", "Endpoint.Address"]
+      }
+    },
+    "APIUrl": {
+      "Description": "URL to the newly created Aspect API",
+      "Value": {
+        "Fn::GetAtt": ["AspectAPIEnv", "EndpointURL"]
+      }
+    }
   }
 }
