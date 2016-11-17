@@ -1,19 +1,13 @@
 const Boom = require('boom')
 const _ = require('lodash')
-const { transact, knex, sortPageParams } = require('../db')
-const { getDeviceByApiKeyId, getExternalId } = require('./common')
-const { getDeviceConstraints, addConstraints } = require('../auth/constraints')
+const { transact, knex } = require('../db')
+const { getExternalId } = require('./common')
+const { addConstraints } = require('../auth/constraints')
 
-function* addResult(request){
-  const {auth, payload} = request
-  const device = yield* getDeviceByApiKeyId(request)
-  if(!device.ok){
-    return Boom.unauthorized()
-  }
-
+function* addResult(context){
   const response = yield transact(function*(knex){
 
-    const dataConstraints = yield getDeviceConstraints(auth.credentials)
+    const {payload, constraints: dataConstraints} = context
 
     // TODO seperate permissions for device add vs update result?
     const now = new Date()
@@ -30,7 +24,7 @@ function* addResult(request){
       return Boom.badRequest()
     }
     const existingResult = existingResults[0]
-    const deviceId = existingResult ? existingResult.deviceId : device.data.id
+    const deviceId = existingResult ? existingResult.deviceId : context.device.id
 
     const assayQ = knex('Assay as a')
       .join('Device as d', 'a.deviceTypeId', 'd.deviceTypeId')
@@ -162,7 +156,7 @@ function* addResult(request){
         _.get(existingResult, 'startedOn', null)),
       endedOn: _.get(
         payload, 'endedOn',
-        _.get(existingResult, 'endedOn', now)),
+        _.get(existingResult, 'endedOn', null)),
       consumableSerial: _.get(
         payload, 'consumable[0].serial',
         _.get(existingResult, 'consumableSerial', null)),
@@ -228,26 +222,19 @@ function* addResult(request){
     yield knex('ResultLog').insert({
       resultId,
       source: 'ResultAPI',
-      // TODO Does Hapi Remote address work through proxies? Check headers?
-      senderIp: request.info.remoteAddress || '',
+      senderIp: context.remoteAddress,
       // TODO ResultLog handle non-JSON payloads
       rawMessage: JSON.stringify(payload)
     })
 
-    return {ok: true, data: {id: externalId}}
+    return {id: externalId, updatedOn: now.toISOString()}
   })
 
   return response
 }
 
-function* listResults(request){
-  const {query, auth} = request
-  const device = yield* getDeviceByApiKeyId(request)
-  if(!device.ok){
-    return Boom.unauthorized()
-  }
-
-  const dataConstraints = yield getDeviceConstraints(auth.credentials)
+function* listResults(context){
+  const {constraints: dataConstraints, query} = context
 
   const resultQuery = knex('Result as r')
     .innerJoin('Assay as a', 'r.assayId', 'a.id')
@@ -258,6 +245,7 @@ function* listResults(request){
     .leftJoin('ResultWorkflowStatus as rs', 'r.resultWorkflowStatusId', 'rs.id')
     .leftJoin('Sample as s', 'r.sampleId', 's.id')
     .leftJoin('Site as sos', 's.originSiteId', 'sos.id')
+    .where('r.updatedOn', '>=', query.updatedSince)
     .modify(addConstraints, dataConstraints, {device: 'd', sample: 's'})
 
   // get total count for paging
@@ -266,7 +254,7 @@ function* listResults(request){
 
   // get rows
   const getItems = resultQuery.clone()
-    .modify(sortPageParams, query, 'updatedOn')
+    .orderBy('updatedOn', 'desc')
     .select(
       'r.externalId as resultId', 'r.resultData', 'r.patientData',
       'r.startedOn', 'r.endedOn', 'r.updatedOn', 'r.researchId', 'r.notes',
