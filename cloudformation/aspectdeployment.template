@@ -3,7 +3,11 @@
   "Parameters": {
     "DeploymentName": {
       "Type": "String",
-      "Default": "malawi"
+      "Default": "malawi",
+      "MinLength" : "3",
+      "MaxLength" : "20",
+      "AllowedPattern" : "[a-z]*",
+      "Description" : "Ensure that the following files are present in your project: web/src/config/<DeploymentName>.js and api/seeds/<DeploymentName>"
     },
     "RDSMasterUsername": {
       "Type": "String",
@@ -464,6 +468,12 @@
       "Description": "URL to the newly created Aspect API",
       "Value": {
         "Fn::GetAtt": ["AspectAPIEnv", "EndpointURL"]
+      }
+    },
+    "CloudFrontUrl": {
+      "Description": "URL to the newly created CloudFront Distribution",
+      "Value": {
+        "Fn::GetAtt": ["AspectCloudfront", "DomainName"]
       }
     }
   }
