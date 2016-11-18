@@ -1,9 +1,13 @@
+import _ from 'lodash'
 import { stringify } from 'querystring'
 import Immutable from 'immutable'
 
 import { aspectFetch } from '../shared/utils/fetch'
 import { addError } from '../error/ErrorRedux'
-import { receiveList, Items } from '../shared/metaReducers/groupedItems'
+import {
+  receiveList,
+  Items
+} from '../shared/metaReducers/groupedItems'
 import {
   requestTable,
   receiveTableItems,
@@ -30,25 +34,30 @@ function requestInventoryItems(
   }
 }
 
-function receiveInventoryItems(json, nestedPropertyPath) {
+function receiveInventoryItems(json, childrenPropertyPath) {
   return {
     type: types.RECEIVE_INVENTORY_ITEMS,
     items: json.data,
     total: json.total,
-    nestedPropertyPath
+    childrenPropertyPath
   }
 }
 
-const defaultFilters = Immutable.Map({ consumableId: '', siteName: '' })
-const defaultSortCol = 'siteName'
-const defaultSortDir = 'asc'
-const defaultPage = 0
-const defaultPageSize = 10
-const defaultGroupBy = new Immutable.List()
+export function fetchListFilteredInventoryItems(extraFilters = {}, ...args) {
+  return (dispatch, getState) => {
+    const filters = getState()
+      .filter
+      .listFilter
+      .toMap()
+      .merge(extraFilters)
+      .filter(_.identity)
+      .toJS()
 
-export function fetchInventoryItems(
-  filters = defaultFilters, sortCol = defaultSortCol, sortDir = defaultSortDir,
-  page = defaultPage, pageSize = defaultPageSize, groupBy = defaultGroupBy) {
+    return dispatch(fetchInventoryItems(filters, ...args))
+  }
+}
+
+export function fetchInventoryItems(filters /* required */, sortCol = 'siteName', sortDir = 'asc', page = 0, pageSize = 10, groupBy = []) {
   const path = groupBy.includes('siteId') ? (groupBy.includes('consumableId') ?
     '/inventory/group-by-site-and-consumable' : '/inventory/group-by-site') : '/inventory'
   return (dispatch) => {
@@ -59,17 +68,17 @@ export function fetchInventoryItems(
       sortDir,
       page,
       size: pageSize,
-      ...filters.toJS()
+      ...filters
     })}`)
       .then((json) => {
-        const nestedPropertyPath = []
+        const childrenPropertyPath = []
         if (groupBy.includes('siteId')) {
-          nestedPropertyPath.push('consumables')
+          childrenPropertyPath.push('consumables')
         }
         if (groupBy.includes('consumableId')) {
-          nestedPropertyPath.push('inventoryItems')
+          childrenPropertyPath.push('inventoryItems')
         }
-        return dispatch(receiveInventoryItems(json, nestedPropertyPath))
+        return dispatch(receiveInventoryItems(json, childrenPropertyPath))
       })
       .catch((err) => {
         dispatch(addError('Loading inventory items failed', err.message, err))
@@ -83,11 +92,12 @@ export function fetchInventoryItems(
 const Inventory = Immutable.Record({
   items: new Items(),
   table: new Table({
-    sortCol: defaultSortCol,
-    sortDir: defaultSortDir,
-    pageSize: defaultPageSize,
-    filters: defaultFilters,
-    groupBy: defaultGroupBy
+    sortCol: 'siteName',
+    sortDir: 'asc',
+    pageSize: 10,
+    filters: Immutable.fromJS({ siteName: '', consumableId: null }),
+    extraColumns: new Immutable.List(),
+    groupBy: new Immutable.List()
   })
 })
 
@@ -100,7 +110,7 @@ export default function inventoryItemsReducer(state = initialState, action) {
         .set('table', requestTable(state.table, action))
     case types.RECEIVE_INVENTORY_ITEMS:
       return state.withMutations((mutState) => {
-        mutState.set('items', receiveList(mutState.items, action.nestedPropertyPath, action.items))
+        mutState.set('items', receiveList(mutState.items, action.childrenPropertyPath, action.items))
         mutState.set('table', receiveTableItems(mutState.table, action.total, action.extraColumns))
       })
     default:

@@ -83,7 +83,7 @@ export default class GroupedDataTable extends PureComponent {
     return flattenedColumns
   }
 
-  getPager = (page, totalPages) => {
+  getPager(page, totalPages) {
     const pagerItems = []
     const maxPagingButtons = 9
     // using this for react's key property-using the
@@ -119,26 +119,9 @@ export default class GroupedDataTable extends PureComponent {
     return pagerItems
   }
 
-  fetchData = (col, newSort, page) => {
-    const { table, handleFetch } = this.props
-    handleFetch(col || table.sortCol, newSort || table.sortDir,
-      page == null ? table.page : page, table.pageSize,
-      table.groupBy)
-  }
+  handleRowSelection = this.handleRowSelection.bind(this)
 
-  handlePage = (page) => {
-    this.fetchData(null, null, page)
-  }
-
-  handleSort = (col) => {
-    if (col.canSort) {
-      const table = this.props.table
-      const newSort = table.sortCol === col.fieldName ? (table.sortDir === 'asc' ? 'desc' : 'asc') : table.sortDir
-      this.fetchData(col, newSort)
-    }
-  }
-
-  handleRowSelection = ([selectedIndex]) => {
+  handleRowSelection([selectedIndex]) {
     const {
       handleItemIdSelection = _.noop,
       items
@@ -146,6 +129,25 @@ export default class GroupedDataTable extends PureComponent {
 
     const selectedId = items.currentIdList.get(selectedIndex)
     handleItemIdSelection(selectedId)
+  }
+
+  handleSort(col) {
+    if (col.canSort) {
+      const table = this.props.table
+      const newSort = table.sortCol === col.fieldName ? (table.sortDir === 'asc' ? 'desc' : 'asc') : table.sortDir
+      this.fetchData(col, newSort)
+    }
+  }
+
+  handlePage = (page) => {
+    this.fetchData(null, null, page)
+  }
+
+  fetchData = (col, newSort, page) => {
+    const { table, handleFetch } = this.props
+    handleFetch(col || table.sortCol, newSort || table.sortDir,
+      page == null ? table.page : page, table.pageSize,
+      table.groupBy)
   }
 
   flattenColumnsForHeader = (columns) => {
@@ -162,6 +164,7 @@ export default class GroupedDataTable extends PureComponent {
       headerColumns = [...headerColumns, ..._.map(children.columns, nestedColumnToHeaderColumn)]
       children = children.groupChildren
     }
+    return headerColumns
   }
 
   render() {
