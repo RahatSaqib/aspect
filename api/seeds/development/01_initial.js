@@ -5,80 +5,88 @@ const _ = require('lodash')
 const bcrypt = require('bcrypt')
 const permissions = require('./fixtures/permissions.json')
 const geography = require('./fixtures/geography.json')
-const millisInHour = 1000*60*60
+
+const millisInHour = 1000 * 60 * 60
 const deviceNumber = 50
 const routerNumber = 20
 const resultMtbNumber = 200
 const resultEbolaNumber = 100
 const resultHivVlNumber = 50
-const saltRounds = parseInt(config.passwordSaltRounds)
 
-function* seed(knex){
+const saltRounds = parseInt(config.passwordSaltRounds, 10)
+
+function* seed(knex) {
   // Create admin user and audit fields
-  const now = new Date(),
-    [adminId] = yield knex('User').insert({
-      name: 'admin',
-      password: bcrypt.hashSync('test07', saltRounds),
-      approved: 1,
-      createdOn: now,
-      lockedOut: 0,
-      failedPasswordAttempts: 0
-    }), auditFields = {
-      createdOn: now,
-      createdBy: adminId,
-      updatedOn: now,
-      updatedBy: adminId
-    }
+  const now = new Date()
+  const [adminId] = yield knex('User').insert({
+    name: 'admin',
+    password: bcrypt.hashSync('test07', saltRounds),
+    approved: 1,
+    createdOn: now,
+    lockedOut: 0,
+    failedPasswordAttempts: 0
+  })
+  const auditFields = {
+    createdOn: now,
+    createdBy: adminId,
+    updatedOn: now,
+    updatedBy: adminId
+  }
 
   // Create partner types
   const partnerTypeFundingId = yield knex('PartnerType').insert({
-      name: 'Funding'
-    }), partnerTypeImplementingId = yield knex('PartnerType').insert({
-      name: 'Implementing'
-    })
+    name: 'Funding'
+  })
+  const partnerTypeImplementingId = yield knex('PartnerType').insert({
+    name: 'Implementing'
+  })
 
   yield knex('PartnerType').insert({
     name: 'Operating'
   })
 
   // Create partners
-  let [partnerOneId] = yield knex('Partner').insert({
+  const [partnerOneId] = yield knex('Partner').insert({
     name: 'Partner One',
     partnerTypeId: partnerTypeFundingId
   })
 
   const [partnerTwoId] = yield knex('Partner').insert({
-      name: 'Partner Two',
-      partnerTypeId: partnerTypeImplementingId
-    }), [partnerOneOrgUnitId] = yield knex('OrgUnit').insert({
-      name: 'Partner One',
-      partnerId: partnerOneId,
-      depth: 1,
-      leftBound: 1,
-      rightBound: 6
-    }), [regionNortheastId] = yield knex('OrgUnit').insert({
-      name: 'Northeast',
-      partnerId: partnerOneId,
-      depth: 2,
-      leftBound: 2,
-      rightBound: 3
-    }), [regionMidwestId] = yield knex('OrgUnit').insert({
-      name: 'Midwest',
-      partnerId: partnerOneId,
-      depth: 2,
-      leftBound: 4,
-      rightBound: 5
-    }),
-    // Categories of devices (lab, connectivity...)
-    [deviceTypeCategoryLab] = yield knex('DeviceTypeCategory').insert({
-      name: 'Lab',
-      hasConnectivity: 0,
-      hasResults: 1
-    }), [deviceTypeCategoryConnectivity] = yield knex('DeviceTypeCategory').insert({
-      name: 'Router',
-      hasConnectivity: 1,
-      hasResults: 0
-    })
+    name: 'Partner Two',
+    partnerTypeId: partnerTypeImplementingId
+  })
+  const [partnerOneOrgUnitId] = yield knex('OrgUnit').insert({
+    name: 'Partner One',
+    partnerId: partnerOneId,
+    depth: 1,
+    leftBound: 1,
+    rightBound: 6
+  })
+  const [regionNortheastId] = yield knex('OrgUnit').insert({
+    name: 'Northeast',
+    partnerId: partnerOneId,
+    depth: 2,
+    leftBound: 2,
+    rightBound: 3
+  })
+  const [regionMidwestId] = yield knex('OrgUnit').insert({
+    name: 'Midwest',
+    partnerId: partnerOneId,
+    depth: 2,
+    leftBound: 4,
+    rightBound: 5
+  })
+  // Categories of devices (lab, connectivity...)
+  const [deviceTypeCategoryLab] = yield knex('DeviceTypeCategory').insert({
+    name: 'Lab',
+    hasConnectivity: 0,
+    hasResults: 1
+  })
+  const [deviceTypeCategoryConnectivity] = yield knex('DeviceTypeCategory').insert({
+    name: 'Router',
+    hasConnectivity: 1,
+    hasResults: 0
+  })
 
   yield knex('DeviceTypeCategory').insert({
     name: 'Integrated',
@@ -123,29 +131,29 @@ function* seed(knex){
     deviceTypeCategoryId: deviceTypeCategoryLab
   })
 
-  let [deviceTypeIdRouter] = yield knex('DeviceType').insert({
+  const [deviceTypeIdRouter] = yield knex('DeviceType').insert({
     name: 'Metacom Router',
     manufacturer: 'Metacom',
     deviceTypeCategoryId: deviceTypeCategoryConnectivity
   })
 
   // Assays and AssayTypes
-  let [assayTypeMTBRifId] = yield knex('AssayType').insert({
+  const [assayTypeMTBRifId] = yield knex('AssayType').insert({
     name: 'MTB/Rif',
     i18nKey: 'assayTypeMtbRif'
   })
 
-  let [assayTypeEbolaId] = yield knex('AssayType').insert({
+  const [assayTypeEbolaId] = yield knex('AssayType').insert({
     name: 'Ebola',
     i18nKey: 'assayTypeEbola'
   })
 
-  let [assayTypeHivVlId] = yield knex('AssayType').insert({
+  const [assayTypeHivVlId] = yield knex('AssayType').insert({
     name: 'HIV VL',
     i18nKey: 'assayTypeHivVl'
   })
 
-  let [assayTypeLipidPanelId] = yield knex('AssayType').insert({
+  const [assayTypeLipidPanelId] = yield knex('AssayType').insert({
     name: 'Lipid Panel',
     i18nKey: 'assayTypeLipidPanel'
   })
@@ -161,99 +169,99 @@ function* seed(knex){
       type: 'object',
       i18nKey: 'Probes',
       properties: {
-        'probeA': {
+        probeA: {
           title: 'Probe A',
           type: 'string'
         },
-        'probeB': {
+        probeB: {
           title: 'Probe B',
           type: 'string'
         },
-        'probeC': {
+        probeC: {
           title: 'Probe C',
           type: 'string'
         },
-        'probeD': {
+        probeD: {
           title: 'Probe D',
           type: 'string'
         },
-        'probeE': {
+        probeE: {
           title: 'Probe E',
           type: 'string'
         },
-        'probeSpc': {
+        probeSpc: {
           title: 'Probe Spc',
           type: 'string'
         },
-        'qc1': {
+        qc1: {
           title: 'QC1',
           type: 'string'
         },
-        'qc2': {
+        qc2: {
           title: 'QC2',
           type: 'string'
         },
-        'probeACt': {
+        probeACt: {
           title: 'Probe A Ct',
           type: 'number'
         },
-        'probeBCt': {
+        probeBCt: {
           title: 'Probe B Ct',
           type: 'number'
         },
-        'probeCCt': {
+        probeCCt: {
           title: 'Probe C Ct',
           type: 'number'
         },
-        'probeDCt': {
+        probeDCt: {
           title: 'Probe D Ct',
           type: 'number'
         },
-        'probeECt': {
+        probeECt: {
           title: 'Probe E Ct',
           type: 'number'
         },
-        'probeSpcCt': {
+        probeSpcCt: {
           title: 'Probe Spc Ct',
           type: 'number'
         },
-        'qc1Ct': {
+        qc1Ct: {
           title: 'QC1 Ct',
           type: 'number'
         },
-        'qc2Ct': {
+        qc2Ct: {
           title: 'QC2 Ct',
           type: 'number'
         },
-        'probeAEndpt': {
+        probeAEndpt: {
           title: 'Probe A Endpt',
           type: 'number'
         },
-        'probeBEndpt': {
+        probeBEndpt: {
           title: 'Probe B Endpt',
           type: 'number'
         },
-        'probeCEndpt': {
+        probeCEndpt: {
           title: 'Probe C Endpt',
           type: 'number'
         },
-        'probeDEndpt': {
+        probeDEndpt: {
           title: 'Probe D Endpt',
           type: 'number'
         },
-        'probeEEndpt': {
+        probeEEndpt: {
           title: 'Probe E Endpt',
           type: 'number'
         },
-        'probeSpcEndpt': {
+        probeSpcEndpt: {
           title: 'Probe Spc Endpt',
           type: 'number'
         },
-        'qc1Endpt': {
+        qc1Endpt: {
           title: 'QC1 Endpt',
           type: 'number'
         },
-        'qc2Endpt': {
+        qc2Endpt: {
           title: 'QC2 Endpt',
           type: 'number'
         }
@@ -281,51 +289,51 @@ function* seed(knex){
       type: 'object',
       i18nKey: 'probes',
       properties: {
-        'gpCt': {
+        gpCt: {
           title: 'GP Ct',
           type: 'number'
         },
-        'gpEndPt': {
+        gpEndPt: {
           title: 'GP Endpt',
           type: 'number'
         },
-        'cicCt': {
+        cicCt: {
           title: 'CIC Ct',
           type: 'number'
         },
-        'cicEndPt': {
+        cicEndPt: {
           title: 'CIC EndPt',
           type: 'number'
         },
-        'sacCt': {
+        sacCt: {
           title: 'SAC Ct',
           type: 'number'
         },
-        'sacEndPt': {
+        sacEndPt: {
           title: 'SAC EndPt',
           type: 'number'
         },
-        'npCt': {
+        npCt: {
           title: 'NP Ct',
           type: 'number'
         },
-        'npEndPt': {
+        npEndPt: {
           title: 'NP EndPt',
           type: 'number'
         },
-        'qc1Ct': {
+        qc1Ct: {
           title: 'QC1 Ct',
           type: 'number'
         },
-        'qc1Endpt': {
+        qc1Endpt: {
           title: 'QC1 EndPt',
           type: 'number'
         },
-        'qc2Ct': {
+        qc2Ct: {
           title: 'QC2 Ct',
           type: 'number'
         },
-        'qc2Endpt': {
+        qc2Endpt: {
           title: 'Qc2Endpt',
           type: 'number'
         }
@@ -446,7 +454,7 @@ function* seed(knex){
     })
   })
 
-  //Result types
+  // Result types
   const [resultTypePatientId] = yield knex('ResultType').insert({
     name: 'Patient',
     i18nKey: 'resultTypePatient',
@@ -484,7 +492,7 @@ function* seed(knex){
     externalId: 'Detected'
   })
 
-  const [resultCategoryNotDetectedId] =yield knex('ResultCategory').insert({
+  const [resultCategoryNotDetectedId] = yield knex('ResultCategory').insert({
     name: 'Not Detected',
     i18nKey: 'resultCategoryNotDetected',
     externalId: 'NotDetected'
@@ -598,7 +606,7 @@ function* seed(knex){
 
 
   // Units
-  let [piece] = yield knex('Unit').insert({
+  const [piece] = yield knex('Unit').insert({
     name: 'Piece',
     shortname: 'pc'
   })
@@ -634,7 +642,7 @@ function* seed(knex){
   })
 
   // Consumable types
-  //TODO: We need to discuss how shared consumables are handled
+  // TODO: We need to discuss how shared consumables are handled
   yield knex('Consumable').insert({
     name: 'Gloves',
     unit: piece,
@@ -667,7 +675,7 @@ function* seed(knex){
     autoInclude: 0
   })
 
-  //Assay Consumables
+  // Assay Consumables
   yield knex('ConsumableAssay').insert({
     consumableId: consumableGxTbCartridgeId,
     assayId: assayMtbRifId,
@@ -702,7 +710,7 @@ function* seed(knex){
     decrease: 1
   })
 
-  //Result Workflow Status
+  // Result Workflow Status
   yield knex('ResultWorkflowStatus').insert({
     name: 'OK',
     i18nkey: 'ResultWorkflowStatusOK',
@@ -715,7 +723,7 @@ function* seed(knex){
     token: 'error',
     externalId: 'Error'
   })
-  let [ordered] = yield knex('ResultWorkflowStatus').insert({
+  const [ordered] = yield knex('ResultWorkflowStatus').insert({
     name: 'Ordered',
     i18nkey: 'ResultWorkflowStatusOrdered',
     token: 'ordered',
@@ -727,13 +735,13 @@ function* seed(knex){
     token: 'in-progress',
     externalId: 'InProgress'
   })
-  let [processed] = yield knex('ResultWorkflowStatus').insert({
+  const [processed] = yield knex('ResultWorkflowStatus').insert({
     name: 'Processed',
     i18nkey: 'ResultWorkflowStatusProcessed',
     token: 'processed',
     externalId: 'Processed'
   })
-  let [acknowledged] = yield knex('ResultWorkflowStatus').insert({
+  const [acknowledged] = yield knex('ResultWorkflowStatus').insert({
     name: 'Acknowledged',
     i18nkey: 'ResultWorkflowStatusAcknowledged',
     token: 'acknowledged',
@@ -742,10 +750,10 @@ function* seed(knex){
 
   // Create permissions
   const modules = {}
-  for(let module of permissions.modules){
+  for (const module of permissions.modules) {
     const moduleData = {}
     modules[module.name] = moduleData
-    for(let activity of module.activities){
+    for (const activity of module.activities) {
       const [permissionId] = yield knex('Permission').insert({
         module: module.name,
         activity
@@ -755,10 +763,10 @@ function* seed(knex){
   }
 
   // Create geographic hierarchy
-  const countries = {},
-    geoDatas = [],
-    siteDatas = []
-  for(let country of geography.countries){
+  const countries = {}
+  const geoDatas = []
+  const siteDatas = []
+  for (const country of geography.countries) {
     const countryData = _.pick(country, [
       'abbreviation', 'name', 'a3', 'culture', 'countryCode',
       'stateLabel', 'lgaLabel', 'timezone', 'portNumber',
@@ -768,9 +776,9 @@ function* seed(knex){
     countries[country.abbreviation] = countryData
     countryData.states = {}
 
-    for(let state of (country.states || [])){
+    for (const state of (country.states || [])) {
       const stateData = Object.assign(
-        {countryId: countryData.id},
+        { countryId: countryData.id },
         _.pick(state, ['abbreviation', 'name']))
       const [stateId] = yield knex('State').insert(stateData)
       stateData.id = stateId
@@ -783,11 +791,12 @@ function* seed(knex){
         : _.includes(['MA', 'NY'], state.abbreviation) ? regionNortheastId
         : partnerOneOrgUnitId
 
-      for(let lga of (state.lgas || [])){
+      for (const lga of (state.lgas || [])) {
         const lgaData = Object.assign(
-          {stateId: stateData.id},
-          _.pick(lga, ['name'])),
-          [lgaId] = yield knex('Lga').insert(lgaData)
+          { stateId: stateData.id },
+          _.pick(lga, ['name']))
+
+        const [lgaId] = yield knex('Lga').insert(lgaData)
         lgaData.id = lgaId
         stateData.lgas[lga.name] = lgaData
         lgaData.sites = {}
@@ -800,18 +809,18 @@ function* seed(knex){
         geoDatas.push(geoData)
 
         // up to 5 of sites at each LGA
-        for(let siteNumber of _.range(1, 6 - (lgaData.id % 5))){
+        for (const siteNumber of _.range(1, 6 - (lgaData.id % 5))) {
           const siteData = Object.assign({
-              partnerId: partnerOneId,
-              orgUnitId,
-              externalId: `${state.name}_${siteNumber}`,
-              name: `${lga.name} ${country.lgaLabel} ${state.name} #${siteNumber}`,
-              shortname: `${lga.name}, ${stateKey} #${siteNumber}`,
-              city: `${lga.name} City`,
-              street1: `${lgaData.id} Main Street`,
-              zip: `12345-${lgaData.id}`
-            }, geoData, auditFields),
-            [siteId] = yield knex('Site').insert(siteData)
+            partnerId: partnerOneId,
+            orgUnitId,
+            externalId: `${state.name}_${siteNumber}`,
+            name: `${lga.name} ${country.lgaLabel} ${state.name} #${siteNumber}`,
+            shortname: `${lga.name}, ${stateKey} #${siteNumber}`,
+            city: `${lga.name} City`,
+            street1: `${lgaData.id} Main Street`,
+            zip: `12345-${lgaData.id}`
+          }, geoData, auditFields)
+          const [siteId] = yield knex('Site').insert(siteData)
           siteData.id = siteId
           siteDatas.push(siteData)
         }
@@ -821,10 +830,10 @@ function* seed(knex){
 
   // Users
   const userIds = {}
-  for(let name of ['Admin', 'Bill', 'Bob', 'Frank', 'Ed', 'Fred',
-      'Jason', 'Jim', 'Jon', 'Ned', 'Sam', 'Steve']){
+  for (const name of ['Admin', 'Bill', 'Bob', 'Frank', 'Ed', 'Fred',
+    'Jason', 'Jim', 'Jon', 'Ned', 'Sam', 'Steve']) {
     let userId
-    if(name === 'Admin'){
+    if (name === 'Admin') {
       userId = adminId
     } else {
       [userId] = yield knex('User').insert({
@@ -842,10 +851,10 @@ function* seed(knex){
     }
     userIds[name.toLowerCase()] = userId
 
-    const lastPartnerId = _.includes(['Jim', 'Jason'], name) ? partnerTwoId : partnerOneId,
-      lastCountryId = _.includes(['Jim', 'Sam'], name) ? countries.NG.id : countries.US.id,
-      timezone = _.includes(['Jim', 'Sam'], name) ? countries.NG.timezone : countries.US.timezone,
-      culture = _.includes(['Jim', 'Sam'], name) ? countries.NG.culture : countries.US.culture
+    const lastPartnerId = _.includes(['Jim', 'Jason'], name) ? partnerTwoId : partnerOneId
+    const lastCountryId = _.includes(['Jim', 'Sam'], name) ? countries.NG.id : countries.US.id
+    const timezone = _.includes(['Jim', 'Sam'], name) ? countries.NG.timezone : countries.US.timezone
+    const culture = _.includes(['Jim', 'Sam'], name) ? countries.NG.culture : countries.US.culture
 
     yield knex('Person').insert(Object.assign({
       userId,
@@ -858,30 +867,30 @@ function* seed(knex){
   }
 
   // insert some routers with sims:
-  let routerIds = []
+  const routerIds = []
   for (let i = 0; i < routerNumber; i++) {
-    const siteData = siteDatas[i % siteDatas.length],
-      [routerId] = yield knex('Device').insert(Object.assign({}, auditFields, {
-        name: `Router at ${i} ${siteData.shortname}`,
-        shortname: 'r'+i,
-        deviceTypeId: deviceTypeIdRouter,
-        siteId: siteData.id,
-        createdOn: new Date(+now - 3*i*millisInHour),
-        updatedOn: new Date(+now - i*millisInHour),
-        lastPingOn: new Date(+now - i*millisInHour/3)
-      }))
+    const siteData = siteDatas[i % siteDatas.length]
+    const [routerId] = yield knex('Device').insert(Object.assign({}, auditFields, {
+      name: `Router at ${i} ${siteData.shortname}`,
+      shortname: `r${i}`,
+      deviceTypeId: deviceTypeIdRouter,
+      siteId: siteData.id,
+      createdOn: new Date(+now - (3 * i * millisInHour)),
+      updatedOn: new Date(+now - (i * millisInHour)),
+      lastPingOn: new Date(+now - ((i * millisInHour) / 3))
+    }))
 
     routerIds.push(routerId)
   }
 
   // ... and 1-3 sims for some routers
-  let sims = _.range(0, routerNumber, 2).map(i => {
+  const sims = _.range(0, routerNumber, 2).map((i) => {
     const routerId = routerIds[i]
     return Object.assign({}, auditFields, {
       deviceId: routerId,
-      provider: i%3 === 0 ? 'Glo' : 'Vodafone',
-      serial: 'SRL-' + routerId,
-      number: '+1 413 123 45' + routerId
+      provider: i % 3 === 0 ? 'Glo' : 'Vodafone',
+      serial: `SRL-${routerId}`,
+      number: `+1 413 123 45${routerId}`
     })
   })
   yield knex('DeviceSim').insert(sims)
@@ -889,18 +898,19 @@ function* seed(knex){
   // insert GeneXpert devices
   const devices = []
   for (let i = 0; i < deviceNumber; i++) {
-    const siteData = siteDatas[i % siteDatas.length],
-      routerId = routerIds[i],
-      device = Object.assign({}, auditFields, {
-        name: `D${i} ${siteData.shortname}`,
-        shortname: 'd'+i,
-        deviceTypeId: deviceTypeGeneXpertId,
-        siteId: siteData.id,
-        deviceId: routerId || null, // not all sites will have a router - we only added routers to some site
-        createdOn: new Date(+now - 3*i*millisInHour),
-        updatedOn: new Date(+now - i*millisInHour),
-        lastPingOn: new Date(+now - i*millisInHour/3)
-      })
+    const siteData = siteDatas[i % siteDatas.length]
+    const routerId = routerIds[i]
+    const device = Object.assign({}, auditFields, {
+      name: `D${i} ${siteData.shortname}`,
+      shortname: `d${i}`,
+      deviceTypeId: deviceTypeGeneXpertId,
+      siteId: siteData.id,
+      // not all sites will have a router - we only added routers to some site
+      deviceId: routerId || null,
+      createdOn: new Date(+now - (3 * i * millisInHour)),
+      updatedOn: new Date(+now - (i * millisInHour)),
+      lastPingOn: new Date(+now - ((i * millisInHour) / 3))
+    })
 
     device.id = yield knex('Device').insert(device)
     devices.push(device)
@@ -915,18 +925,18 @@ function* seed(knex){
   // some TB samples:
   let samples = []
   for (let i = 0; i < resultMtbNumber / 2; i++) {
-    const siteData = siteDatas[i % siteDatas.length],
-      sample = Object.assign({}, {
-        externalId: `SMP-TB-${i}`,
-        originSiteId: siteData.id
-      })
+    const siteData = siteDatas[i % siteDatas.length]
+    const sample = Object.assign({}, {
+      externalId: `SMP-TB-${i}`,
+      originSiteId: siteData.id
+    })
 
     sample.id = yield knex('Sample').insert(sample)
 
     samples.push(sample)
   }
 
-  //Results section
+  // Results section
 
   // TB results:
   let possibleResults = [{ resultText: 'Not Detected', category1: resultCategoryDetectedId, category2: null },
@@ -935,31 +945,50 @@ function* seed(knex){
                           { resultText: 'ERROR', category1: resultCategoryErrorId, category2: null },
                           { resultText: 'Invalid', category1: resultCategoryInvalidId, category2: null }]
 
-  let resultData = { probes: {  probeA: 'NEG', probeB: 'POS', probeC: 'NO RESULT',
-                              probeD: 'NEG', probeE: 'POS', probeSpc: 'NO RESULT',
-                              qc1: 'YES', qc2: 'No',
-                              probeACt: 12.32, probeBCt: 11.2, probeCCt: 12.5,
-                              probeDCt: 0.5, probeECt: 1.2, probeSpcCt: 5.78,
-                              qc1Ct: 1, qc2Ct: 0.007,
-                              probeAEndpt: 1.6, probeBEndpt: 2.33, probeCEndpt: 457,
-                              probeDEndpt: 12.43, probeEEndpt: 3.14, probeSpcEndpt: 8.9018,
-                              qc1Endpt: 0.1234, qc2Endpt: 1.22 }}
+  let resultData = {
+    probes: {
+      probeA: 'NEG',
+      probeB: 'POS',
+      probeC: 'NO RESULT',
+      probeD: 'NEG',
+      probeE: 'POS',
+      probeSpc: 'NO RESULT',
+      qc1: 'YES',
+      qc2: 'No',
+      probeACt: 12.32,
+      probeBCt: 11.2,
+      probeCCt: 12.5,
+      probeDCt: 0.5,
+      probeECt: 1.2,
+      probeSpcCt: 5.78,
+      qc1Ct: 1,
+      qc2Ct: 0.007,
+      probeAEndpt: 1.6,
+      probeBEndpt: 2.33,
+      probeCEndpt: 457,
+      probeDEndpt: 12.43,
+      probeEEndpt: 3.14,
+      probeSpcEndpt: 8.9018,
+      qc1Endpt: 0.1234,
+      qc2Endpt: 1.22
+    }
+  }
 
-  const resultsMtb = _.range(1, resultMtbNumber+1).map(i => {
+  const resultsMtb = _.range(1, resultMtbNumber + 1).map((i) => {
     const device = devices[i % devices.length]
-    const siteData = siteDatas.find((site) => { return site.id === device.siteId })
+    const siteData = siteDatas.find(site => site.id === device.siteId)
     const sample = samples[i % samples.length]
     const result = possibleResults[i % 5]
     resultData.resultText = result.resultText
 
     return Object.assign({}, auditFields, {
-      externalId: 'UQTB-' + i,
+      externalId: `UQTB-${i}`,
       assayId: assayMtbRifId,
       partnerId: partnerOneId,
       orgUnitId: partnerOneOrgUnitId,
       countryId: siteData.countryId,
       stateId: siteData.stateId,
-      lgaId : siteData.lgaId,
+      lgaId: siteData.lgaId,
       siteId: siteData.id,
       deviceId: device.id,
       resultWorkflowStatusId: ordered,
@@ -971,16 +1000,16 @@ function* seed(knex){
       resultCategory2: result.category2,
       resultData: JSON.stringify(resultData),
       assayVersion: '4',
-      startedOn: new Date(+now - 12*i*millisInHour),
-      endedOn: new Date(+now - 10*i*millisInHour),
-      consumableSerial: i + '12',
-      consumableExpirationDate: new Date(+now + 200*i*millisInHour),
-      consumableLot: 'Lot ' + i%5,
-      instrumentSerial: 'S-1234-' + i%3,
+      startedOn: new Date(+now - (12 * i * millisInHour)),
+      endedOn: new Date(+now - (10 * i * millisInHour)),
+      consumableSerial: `${i}12`,
+      consumableExpirationDate: new Date(+now + (200 * i * millisInHour)),
+      consumableLot: `Lot ${i % 5}`,
+      instrumentSerial: `S-1234-${i % 3}`,
       moduleName: 'Module A',
-      moduleSerial: 'M-1234-' + i%4,
-      researchId: 'R-ID-' + i,
-      patientData: JSON.stringify({id: 'TB-PAT-ID-' + i}),
+      moduleSerial: `M-1234-${i % 4}`,
+      researchId: `R-ID-${i}`,
+      patientData: JSON.stringify({ id: `TB-PAT-ID-${i}` }),
       senderVersion: '4.6b',
       senderOperator: 'Marsha',
       notes: 'This is a test... result',
@@ -993,11 +1022,11 @@ function* seed(knex){
   // some Ebola samples:
   samples = []
   for (let i = 0; i < resultEbolaNumber / 2; i++) {
-    const siteData = siteDatas[i % siteDatas.length],
-      sample = Object.assign({}, {
-        externalId: `SMP-EB-${i}`,
-        originSiteId: siteData.id
-      })
+    const siteData = siteDatas[i % siteDatas.length]
+    const sample = Object.assign({}, {
+      externalId: `SMP-EB-${i}`,
+      originSiteId: siteData.id
+    })
 
     sample.id = yield knex('Sample').insert(sample)
 
@@ -1012,31 +1041,50 @@ function* seed(knex){
                           { resultText: 'ERROR', category1: resultCategoryErrorId, category2: null },
                           { resultText: 'Invalid', category1: resultCategoryInvalidId, category2: null }]
 
-  resultData = { probes: {  probeA: null, probeB: null, probeC: null,
-                              probeD: null, probeE: null, probeSpc: null,
-                              qc1: null, qc2: null,
-                              probeACt: 0.32, probeBCt: 0, probeCCt: 11.4,
-                              probeDCt: 0.5, probeECt: 1.2, probeSpcCt: null,
-                              qc1Ct: 1, qc2Ct: 0.007,
-                              probeAEndpt: 1.6, probeBEndpt: 2.33, probeCEndpt: 457,
-                              probeDEndpt: 12.43, probeEEndpt: 3.14, probeSpcEndpt: null,
-                              qc1Endpt: 0.1234, qc2Endpt: 1.22 }}
+  resultData = {
+    probes: {
+      probeA: null,
+      probeB: null,
+      probeC: null,
+      probeD: null,
+      probeE: null,
+      probeSpc: null,
+      qc1: null,
+      qc2: null,
+      probeACt: 0.32,
+      probeBCt: 0,
+      probeCCt: 11.4,
+      probeDCt: 0.5,
+      probeECt: 1.2,
+      probeSpcCt: null,
+      qc1Ct: 1,
+      qc2Ct: 0.007,
+      probeAEndpt: 1.6,
+      probeBEndpt: 2.33,
+      probeCEndpt: 457,
+      probeDEndpt: 12.43,
+      probeEEndpt: 3.14,
+      probeSpcEndpt: null,
+      qc1Endpt: 0.1234,
+      qc2Endpt: 1.22
+    }
+  }
 
-  const resultsEbola = _.range(1, resultEbolaNumber+1).map(i => {
+  const resultsEbola = _.range(1, resultEbolaNumber + 1).map((i) => {
     const device = devices[i % devices.length]
-    const siteData = siteDatas.find((site) => { return site.id === device.siteId })
+    const siteData = siteDatas.find(site => site.id === device.siteId)
     const sample = samples[i % samples.length]
     const result = possibleResults[i % 5]
     resultData.resultText = result.resultText
 
     return Object.assign({}, auditFields, {
-      externalId: 'UQEB-' + i,
+      externalId: `UQEB-${i}`,
       assayId: assayEbolaId,
       partnerId: partnerOneId,
       orgUnitId: partnerOneOrgUnitId,
       countryId: siteData.countryId,
       stateId: siteData.stateId,
-      lgaId : siteData.lgaId,
+      lgaId: siteData.lgaId,
       siteId: siteData.id,
       deviceId: device.id,
       resultWorkflowStatusId: processed,
@@ -1048,16 +1096,16 @@ function* seed(knex){
       resultCategory2: result.category2,
       resultData: JSON.stringify(resultData),
       assayVersion: '4',
-      startedOn: new Date(+now - 12*i*millisInHour),
-      endedOn: new Date(+now - 10*i*millisInHour),
-      consumableSerial: i + '12',
-      consumableExpirationDate: new Date(+now + 200*i*millisInHour),
-      consumableLot: 'Lot ' + i%5,
-      instrumentSerial: 'S-1234-' + i%3,
+      startedOn: new Date(+now - (12 * i * millisInHour)),
+      endedOn: new Date(+now - (10 * i * millisInHour)),
+      consumableSerial: `${i}12`,
+      consumableExpirationDate: new Date(+now + (200 * i * millisInHour)),
+      consumableLot: `Lot ${i % 5}`,
+      instrumentSerial: `S-1234-${i % 3}`,
       moduleName: 'Module A',
-      moduleSerial: 'M-1234-' + i%4,
-      researchId: 'R-ID-' + i,
-      patientData: JSON.stringify({id: 'EB-PAT-ID-' + i}),
+      moduleSerial: `M-1234-${i % 4}`,
+      researchId: `R-ID-${i}`,
+      patientData: JSON.stringify({ id: `EB-PAT-ID-${i}` }),
       senderVersion: '4.7a',
       senderOperator: 'Marsha',
       notes: 'This is an Ebola test result',
@@ -1070,11 +1118,11 @@ function* seed(knex){
   // some HIV VL samples:
   samples = []
   for (let i = 0; i < resultHivVlNumber / 2; i++) {
-    const siteData = siteDatas[i % siteDatas.length],
-      sample = Object.assign({}, {
-        externalId: `SMP-HIV-${i}`,
-        originSiteId: siteData.id
-      })
+    const siteData = siteDatas[i % siteDatas.length]
+    const sample = Object.assign({}, {
+      externalId: `SMP-HIV-${i}`,
+      originSiteId: siteData.id
+    })
 
     sample.id = yield knex('Sample').insert(sample)
 
@@ -1088,20 +1136,31 @@ function* seed(knex){
                           { resultText: 'ERROR', category1: resultCategoryErrorId },
                           { resultText: 'Invalid', category1: resultCategoryInvalidId }]
 
-  resultData = {  probes: {  gpCt: 25.40, gpEndPt: 558.00, cicCt: 23.90,
-                        cicEndPt: 289.00, sacCt: 33.80, sacEndPt: 650.00,
-                        npCt: 12.2, npEndPt: null,
-                        qc1Ct: 0.32, qc1Endpt: 0, qc2Ct: 11.4,
-                        qc2Endpt: 0.5 }}
+  resultData = {
+    probes: {
+      gpCt: 25.40,
+      gpEndPt: 558.00,
+      cicCt: 23.90,
+      cicEndPt: 289.00,
+      sacCt: 33.80,
+      sacEndPt: 650.00,
+      npCt: 12.2,
+      npEndPt: null,
+      qc1Ct: 0.32,
+      qc1Endpt: 0,
+      qc2Ct: 11.4,
+      qc2Endpt: 0.5
+    }
+  }
 
-  const resultsHiv = _.range(1, resultHivVlNumber+1).map(i => {
+  const resultsHiv = _.range(1, resultHivVlNumber + 1).map((i) => {
     const device = devices[i % devices.length]
-    const siteData = siteDatas.find((site) => { return site.id === device.siteId })
+    const siteData = siteDatas.find(site => site.id === device.siteId)
     const sample = samples[i % samples.length]
     const result = possibleResults[i % 5]
     let copies = 3200
     let log = 5
-    if (result === possibleResults[0]){
+    if (result === possibleResults[0]) {
       copies = Math.floor(Math.random() * 500000)
       log = Math.round(Math.random() * 600) / 100
     } else {
@@ -1114,13 +1173,13 @@ function* seed(knex){
     resultData.resultText = result.resultText.replace('{0}', copies).replace('{1}', log)
 
     return Object.assign({}, auditFields, {
-      externalId: 'UQHIV-' + i,
+      externalId: `UQHIV-${i}`,
       assayId: assayHivVlId,
       partnerId: partnerOneId,
       orgUnitId: partnerOneOrgUnitId,
       countryId: siteData.countryId,
       stateId: siteData.stateId,
-      lgaId : siteData.lgaId,
+      lgaId: siteData.lgaId,
       siteId: siteData.id,
       deviceId: device.id,
       resultWorkflowStatusId: acknowledged,
@@ -1131,16 +1190,16 @@ function* seed(knex){
       resultCategory1: result.category1,
       resultData: JSON.stringify(resultData),
       assayVersion: '4',
-      startedOn: new Date(+now - 12*i*millisInHour),
-      endedOn: new Date(+now - 10*i*millisInHour),
-      consumableSerial: i + '12',
-      consumableExpirationDate: new Date(+now + 200*i*millisInHour),
-      consumableLot: 'Lot ' + i%5,
-      instrumentSerial: 'S-1234-' + i%3,
+      startedOn: new Date(+now - (12 * i * millisInHour)),
+      endedOn: new Date(+now - (10 * i * millisInHour)),
+      consumableSerial: `${i}12`,
+      consumableExpirationDate: new Date(+now + (200 * i * millisInHour)),
+      consumableLot: `Lot ${i % 5}`,
+      instrumentSerial: `S-1234-${i % 3}`,
       moduleName: 'Module A',
-      moduleSerial: 'M-1234-' + i%4,
-      researchId: 'R-ID-' + i,
-      patientData: JSON.stringify({id: 'HIV-PAT-ID-' + i}),
+      moduleSerial: `M-1234-${i % 4}`,
+      researchId: `R-ID-${i}`,
+      patientData: JSON.stringify({ id: `HIV-PAT-ID-${i}` }),
       senderVersion: '4.4',
       senderOperator: 'Marsha',
       notes: 'This is an HIV test result',
@@ -1251,7 +1310,7 @@ function* seed(knex){
     { roleId: roleIdOH, permissionId: modules.site.edit },
     { roleId: roleIdOH, permissionId: modules.device.edit },
     { roleId: roleIdOH, permissionId: modules.assay.edit },
-    { roleId: roleIdOH, permissionId: modules.inventory.edit},
+    { roleId: roleIdOH, permissionId: modules.inventory.edit },
 
     { roleId: roleIdNE, permissionId: modules.site.edit },
     { roleId: roleIdNE, permissionId: modules.device.edit },
@@ -1260,7 +1319,7 @@ function* seed(knex){
     { roleId: roleIdOHWayne, permissionId: modules.site.view },
     { roleId: roleIdOHWayne, permissionId: modules.device.view },
     { roleId: roleIdOHWayne, permissionId: modules.assay.view },
-    {roleId: roleIdOHWayne, permissionId: modules.inventory.view},
+    { roleId: roleIdOHWayne, permissionId: modules.inventory.view },
 
     { roleId: roleIdMASuffolk, permissionId: modules.device.view },
 
@@ -1277,16 +1336,16 @@ function* seed(knex){
 
   // assign roles to users
   yield knex('UserRole').insert([
-    { userId: userIds['admin'], roleId: roleIdAdmin },
-    { userId: userIds['bob'], roleId: roleIdOH },
-    { userId: userIds['ed'], roleId: roleIdMidwest },
-    { userId: userIds['frank'], roleId: roleIdNE },
-    { userId: userIds['fred'], roleId: roleIdOHWayne },
-    { userId: userIds['jon'], roleId: roleIdParentOrgUnit },
-    { userId: userIds['ned'], roleId: roleIdNortheast },
-    { userId: userIds['sam'], roleId: roleIdAdmin },
-    { userId: userIds['jim'], roleId: roleIdParentOrgUnit },
-    { userId: userIds['steve'], roleId: roleIdMASuffolk },
-    { userId: userIds['bill'], roleId: roleIdMASuffolk },
-    { userId: userIds['bill'], roleId: roleIdOH }])
+    { userId: userIds.admin, roleId: roleIdAdmin },
+    { userId: userIds.bob, roleId: roleIdOH },
+    { userId: userIds.ed, roleId: roleIdMidwest },
+    { userId: userIds.frank, roleId: roleIdNE },
+    { userId: userIds.fred, roleId: roleIdOHWayne },
+    { userId: userIds.jon, roleId: roleIdParentOrgUnit },
+    { userId: userIds.ned, roleId: roleIdNortheast },
+    { userId: userIds.sam, roleId: roleIdAdmin },
+    { userId: userIds.jim, roleId: roleIdParentOrgUnit },
+    { userId: userIds.steve, roleId: roleIdMASuffolk },
+    { userId: userIds.bill, roleId: roleIdMASuffolk },
+    { userId: userIds.bill, roleId: roleIdOH }])
 }

@@ -5,7 +5,7 @@
   "description": "The API for aspect clients",
   "main": "server.js",
   "scripts": {
-    "lint": "eslint ./src ./migrations ./knexfile.js --ext .js",
+    "lint": "eslint ./src ./migrations ./seeds ./knexfile.js --ext .js",
     "mocha:unit": "mocha --opts test/unit.mocha.opts",
     "mocha:unit:clear:coverage": "fsys --task=remove --fileFolder=coverage && fsys --task=remove --fileFolder=mocha.json",
     "mocha:unit:coverage": "istanbul cover --config test/istanbul.yml node_modules/mocha/bin/_mocha -- --opts test/unit.mocha.opts",
