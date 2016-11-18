@@ -35,7 +35,7 @@ describe('UserPreferencesForm Component', () => {
         loading: false,
         saving: false,
         initialValues: { },
-        onSubmit: () => {},
+        handleSubmit: () => {},
         intl: {
           formatMessage: message => message.defaultMessage
         }

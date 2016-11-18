@@ -39,7 +39,7 @@ describe('ContactDetailsForm Component', () => {
           countryId: null,
           stateId: null
         },
-        onSubmit: () => {},
+        handleSubmit: () => {},
         intl: {
           formatMessage: message => message.defaultMessage
         }
@@ -156,7 +156,8 @@ describe('ContactDetailsForm Component', () => {
       const props = {
         intl: {
           formatMessage: message => message.defaultMessage
-        }
+        },
+        handleSubmit: () => {}
       }
       let validateFunction
       let initialContactDetails
