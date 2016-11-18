@@ -15,10 +15,12 @@ import Helmet from 'react-helmet'
 import Paper from 'material-ui/Paper'
 import LinearProgress from 'material-ui/LinearProgress'
 import { Card, CardHeader, CardText } from 'material-ui/Card'
+import Checkbox from 'material-ui/Checkbox'
 
 // Our own imports
 import {
-  fetchSingleResult
+  fetchSingleResult,
+  updateResultWorkflowStatus
 } from '../ResultRedux'
 import ReadOnlyFields from '../../components/shared/ReadOnlyFields'
 import styles from './ResultDetail.css'
@@ -145,6 +147,12 @@ export class ResultDetail extends PureComponent {
     params: PropTypes.object.isRequired,
     result: PropTypes.object,
     updateSingleResult: PropTypes.func
+  }
+
+  handleCheck = () => {
+    const { result } = this.props
+
+    this.props.updateResultWorkflowStatus(result.get('id'))
   }
 
   componentWillMount() {
@@ -336,6 +344,23 @@ export class ResultDetail extends PureComponent {
     )
   }
 
+  renderCheckbox() {
+    if (!this.hasResultWithAssay()) {
+      return
+    }
+    const { result } = this.props
+    const checked = result.get('resultWorkflowStatus') === 'Acknowledged'
+    return (
+      <Checkbox
+        disabled={checked}
+        label="Acknowledged"
+        style={{margin: 20}}
+        checked={checked}
+        onCheck={this.handleCheck}
+      />
+    )
+  }
+
   renderSchemaFieldsInCards() {
     if (!this.hasResultWithAssay()) {
       return false
@@ -382,6 +407,7 @@ export class ResultDetail extends PureComponent {
               <ReadOnlyFields
                 fields={this.getLeftColumnFields()}
               />
+              {this.renderCheckbox()}
             </div>
           </div>
           <div className="pure-u-lg-1-2 pure-u-md-1-2 pure-u-sm-1-2">
@@ -432,7 +458,8 @@ function mapStateToProps(state, props) {
 
 function mapDispatchToProps(dispatch) {
   return bindActionCreators({
-    fetchSingleResult
+    fetchSingleResult,
+    updateResultWorkflowStatus
   }, dispatch)
 }
 

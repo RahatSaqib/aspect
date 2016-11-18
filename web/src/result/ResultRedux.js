@@ -142,6 +142,34 @@ export function updateSingleResult(resultId, data) {
       })
   }
 }
+
+// update a single result with given workflow status token
+function updateSingleResultWorkflowStatus(resultId, token) {
+  return {
+    type: types.REQUEST_SINGLE_RESULT,
+    resultId,
+    token
+  }
+}
+
+const RESULT_WORKFLOW_STATUS_TOKEN_ACKNOWLEDGED = 'acknowledged'
+
+export function updateResultWorkflowStatus(resultId){
+  return dispatch => {
+    const token = RESULT_WORKFLOW_STATUS_TOKEN_ACKNOWLEDGED
+
+    dispatch(updateSingleResultWorkflowStatus(resultId, token))
+
+    return aspectFetch(`/result/workflow-status/${resultId}`, {
+      method: 'PUT',
+      body: JSON.stringify({ token })
+    })
+      .then(json => dispatch(receiveUpdatedSingleResult(json.data)))
+      .catch(err => {
+        dispatch(addError(`Updating a result workflow status (${resultId}) failed`, err.message, err))
+      })
+  }
+}
 /*
  * ---------------- Reducers -----------------
  */
