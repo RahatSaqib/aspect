@@ -13,14 +13,41 @@ import baseConfig from './base'
 
 // vendor packages so we can create a separate bundle
 const vendorPackages = [
-  'classnames', 'es6-promise', 'global', 'http-client',
-  'immutable', 'intl', 'isomorphic-fetch',
-  'jwt-decode', 'lodash', 'material-ui', 'moment',
-  'raven-js', 'react', 'react-dom', 'react-helmet', 'react-intl',
-  'react-redux', 'react-router', 'react-router-scroll',
-  'react-sparklines', 'react-tap-event-plugin',
-  'redux', 'redux-form', 'redux-immutable',
-  'redux-thunk', 'whatwg-fetch'
+  'classnames',
+  'date-fns',
+  'dom-helpers',
+  'email-validator',
+  'es6-promise',
+  'global',
+  'http-client',
+  'immutable',
+  'intl',
+  'invariant',
+  'isomorphic-fetch',
+  'jwt-decode',
+  'keycode',
+  'lodash',
+  'material-ui',
+  'moment',
+  'piwik-react-router',
+  'raven-js',
+  'react',
+  'react-display-name',
+  'react-dom',
+  'react-google-maps',
+  'react-helmet',
+  'react-intl',
+  'react-redux',
+  'react-router',
+  'react-router-scroll',
+  'react-sparklines',
+  'react-tap-event-plugin',
+  'redux',
+  'redux-form',
+  'redux-idle-monitor',
+  'redux-immutable',
+  'redux-thunk',
+  'whatwg-fetch'
 ]
 
 const config = Object.assign({}, baseConfig, {
@@ -50,11 +77,11 @@ const config = Object.assign({}, baseConfig, {
     new webpack.NoErrorsPlugin(),
 
 
-    new webpack.optimize.CommonsChunkPlugin( { names: ["vendor", "manifest"] }),
+    new webpack.optimize.CommonsChunkPlugin({ names: ['vendor', 'manifest'] }),
     new ManifestPlugin(),
     new ChunkManifestPlugin({
-      filename: "chunk-manifest.json",
-      manifestVariable: "webpackManifest"
+      filename: 'chunk-manifest.json',
+      manifestVariable: 'webpackManifest'
     }),
     new webpack.optimize.OccurenceOrderPlugin(),
 
