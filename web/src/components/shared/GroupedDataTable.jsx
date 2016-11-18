@@ -44,7 +44,9 @@ export default class GroupedDataTable extends PureComponent {
       pageSize: PropTypes.number.isRequired,
       total: PropTypes.number.isRequired
     }).isRequired,
-    columns: PropTypes.array.isRequired
+    columns: PropTypes.array.isRequired,
+    intl: PropTypes.object,
+    messages: PropTypes.object
   }
 
   state = {
@@ -62,6 +64,25 @@ export default class GroupedDataTable extends PureComponent {
     this.fetchData()
   }
 
+  getColumns = (flattenedColumns) => {
+    const {
+      table,
+      intl,
+      messages
+    } = this.props
+
+    if (table.extraColumns) {
+      // concat the extra columns in table.extraColumns with the columns specified in table.columns
+      return flattenedColumns.concat(table.extraColumns.map(column => _.assign(column, {
+        isExtraColumn: true,
+        fieldName: column.get('fieldName'),
+        format: column.get('type') === 'number' ? (n => (_.isNumber(n) ? intl.formatNumber(n) : null)) : _.identity,
+        headerText: column.get('i18nKey') && messages[column.get('i18nKey')] ?
+          intl.formatMessage[column.get('i18nKey')] : column.get('title') })).toJS())
+    }
+    return flattenedColumns
+  }
+
   getPager = (page, totalPages) => {
     const pagerItems = []
     const maxPagingButtons = 9
@@ -71,8 +92,9 @@ export default class GroupedDataTable extends PureComponent {
     for (let i = 0; i < totalPages; i++) {
       // if total pages over 12, show first two, last two, and 2 before and after current
       if (totalPages <= maxPagingButtons ||
-        (i < 2) || (i >= totalPages - 2) ||
-        ((i > page - 3 || i > totalPages - 8) && (i < page + 3 || i < 7))) {
+          (i < 2) || (i >= totalPages - 2) ||
+          ((i > page - 3 || i > totalPages - 8) && (i < page + 3 || i < 7))
+      ) {
         pagerItems.push(
           <FlatButton
             key={key}
@@ -88,7 +110,7 @@ export default class GroupedDataTable extends PureComponent {
         // show ellipsis if 2nd item AND page > 5 (maxPagingButtons/2) OR
         // if 2nd to last item AND page < totalPages - 5 (maxPagingButtons/2)
         if ((key === 2 && page > maxPagingButtons / 2) ||
-          (key === maxPagingButtons - 2 && page < ((totalPages - maxPagingButtons) / 2) - 1)) {
+            (key === maxPagingButtons - 2 && page < totalPages - 1 - (maxPagingButtons / 2))) {
           pagerItems.push(<span key={`ellipsis-${key}`} style={{ margin: '0 5px' }}>&#8230;</span>)
         }
       }
@@ -149,7 +171,7 @@ export default class GroupedDataTable extends PureComponent {
       columns
     } = this.props
 
-    const headerColumns = this.flattenColumnsForHeader(columns)
+    const headerColumns = this.getColumns(this.flattenColumnsForHeader(columns))
 
     const loading = table.loading ?
       <LinearProgress /> :
@@ -205,14 +227,24 @@ export default class GroupedDataTable extends PureComponent {
             {items.currentIdList.map(itemId => (
               <TableRow
                 key={itemId}
-                className={cssClasses({ 'TableRow--selectable': this.props.selectable })}
+                className={cssClasses({
+                  'TableRow--selectable': this.props.selectable
+                })}
               >
                 {
                   headerColumns.map((col) => {
                     const row = items.getIn(['byId', ...itemId])
+                    const visible = col.isExtraColumn || row.get('visibleProperties').includes(col.fieldName)
+                    const rowSpan = col.isExtraColumn ? 1 : row.getIn(['rowSpans', col.fieldName])
                     const data = row.getIn(col.fieldName)
                     return (
-                      <TableRowColumn key={col.key || col.fieldName} className={col.hideOnXs ? 'pure-hidden-xs' : ''} {...col.extraProps}>
+                      visible &&
+                      <TableRowColumn
+                        key={col.fieldName}
+                        rowSpan={rowSpan}
+                        className={cssClasses({ 'pure-hidden-xs': col.hideOnXs })}
+                        {...col.extraProps}
+                      >
                         {(col.format || _.identity)(data, row)}
                       </TableRowColumn>
                     )
