@@ -73,13 +73,15 @@ export default class DataTable extends PureComponent {
     } = this.props
 
     if (table.extraColumns) {
-      // concat the extra columns in table.extraColumns with the columns specified in table.columns
-      return this.props.columns.concat(table.extraColumns.map(column => _.assign(column, {
-        db: column.get('db'),
+      const formattedExtraColumns = table.extraColumns.map(column => column.merge({
         format: column.get('type') === 'number' ? (n => (_.isNumber(n) ? intl.formatNumber(n) : null)) : _.identity,
-        title: column.get('i18nKey') && messages[column.get('i18nKey')] ?
-            intl.formatMessage[column.get('i18nKey')] : column.get('title') })).toJS())
+        title: column.get('i18nKey') && messages[column.get('i18nKey')] ? intl.formatMessage[column.get('i18nKey')] : column.get('title')
+      }))
+
+      // concat the extra columns in table.extraColumns with the columns specified in table.columns
+      return this.props.columns.concat(formattedExtraColumns.toJS())
     }
+
     return this.props.columns
   }
 
