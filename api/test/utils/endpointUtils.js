@@ -1,30 +1,38 @@
-const callHandlerOn = function (endpoint) {
-  if(!(this instanceof callHandlerOn)){ return new callHandlerOn(endpoint)}
-  let self = this
-  self.endpoint = endpoint
-  self.with = function(requestData) {
-    self.requestData = requestData
-    return self
+function callHandlerOn(endpoint) {
+  return new CallHandlerOn(endpoint)
+}
+
+class CallHandlerOn {
+  constructor(endpoint) {
+    this.endpoint = endpoint
   }
-  self.handleResponseWith = function (callback) {
-    self.handleResponseWith = callback
-    return self
+
+  with(requestData) {
+    this.requestData = requestData
+    return this
   }
-  self.thenCall = function (callback) {
-    self.thenCall = callback
-    return self
+
+  handleResponseWith(callback) {
+    this.handleResponseWithCallback = callback
+    return this
   }
-  self.execute = function () {
-    self.endpoint.handler(self.requestData, function (result) {
-      Promise.resolve(result).then(function(responseData) {
-        self.handleResponseWith(responseData)
-        self.thenCall()
-      }).catch(function(error){
-        self.thenCall(error)
+
+  thenCall(callback) {
+    this.thenCallback = callback
+    return this
+  }
+
+  execute() {
+    this.endpoint.handler(this.requestData, (result) => {
+      Promise.resolve(result).then((responseData) => {
+        this.handleResponseWithCallback(responseData)
+        this.thenCallback()
+      }).catch((error) => {
+        this.thenCallback(error)
       })
     })
+    return this
   }
-  return self
 }
 
 module.exports = {

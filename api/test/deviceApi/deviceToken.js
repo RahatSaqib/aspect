@@ -1,4 +1,5 @@
 const chai = require('chai')
+
 const assert = chai.assert
 const jwt = require('jsonwebtoken')
 const config = require('../../src/config')
@@ -9,10 +10,9 @@ const shared = module.exports = {
     opts = opts || {}
     const method = (opts.method || 'get').toLowerCase()
 
-    it('should return 401 and error message when trying to get without access token', function(done) {
-      server
-        [method](path)
-        .end(function(err, res) {
+    it('should return 401 and error message when trying to get without access token', (done) => {
+      server[method](path)
+        .end((err, res) => {
           assert.equal(res.status, 401)
           assert.isString(res.body.message)
           assert.notEqual(res.body.message, '')
@@ -20,11 +20,10 @@ const shared = module.exports = {
         })
     })
 
-    it('should return 401 and error message when using invalid token', function(done) {
-      server
-        [method](path)
+    it('should return 401 and error message when using invalid token', (done) => {
+      server[method](path)
         .set('Authorization', 'MOARTOKENZ')
-        .end(function(err, res) {
+        .end((err, res) => {
           assert.equal(res.status, 401)
           assert.isString(res.body.message)
           assert.notEqual(res.body.message, '')
@@ -32,11 +31,10 @@ const shared = module.exports = {
         })
     })
 
-    it('should return 401 and error message when using client token', function(done) {
-      server
-        [method](path)
+    it('should return 401 and error message when using client token', (done) => {
+      server[method](path)
         .set('Authorization', sharedToken.token)
-        .end(function(err, res) {
+        .end((err, res) => {
           assert.equal(res.status, 401)
           assert.isString(res.body.message)
           assert.notEqual(res.body.message, '')
@@ -45,14 +43,14 @@ const shared = module.exports = {
     })
   },
 
-  authenticateUserAndFirstDevice(server, {user, password, type}){
+  authenticateUserAndFirstDevice(server, { user, password, type }) {
     sharedToken.authenticateUser(server, user, password)
 
-    it(`should authenticate first device for user ${user}`, function(done) {
+    it(`should authenticate first device for user ${user}`, (done) => {
       server
-        .get('/api/device?size=1'+(type ? '&type='+type : ''))
-        .set('Authorization', 'Bearer '+sharedToken.token)
-        .end(function(err,res){
+        .get(`/api/device?size=1${type ? `&type=${type}` : ''}`)
+        .set('Authorization', `Bearer ${sharedToken.token}`)
+        .end((err, res) => {
           assert.equal(res.status, 200)
 
           assert.property(res.body, 'data')
@@ -65,8 +63,8 @@ const shared = module.exports = {
 
           server
             .get(`/api/device/${deviceId}/api-key`)
-            .set('Authorization', 'Bearer '+sharedToken.token)
-            .end(function(err,res){
+            .set('Authorization', `Bearer ${sharedToken.token}`)
+            .end((err, res) => {
               assert.equal(res.status, 200)
               assert.isAbove(res.body.access.length, 1)
 
@@ -79,11 +77,11 @@ const shared = module.exports = {
     })
   },
 
-  getApiKey(server, deviceId){
+  getApiKey(server, deviceId) {
     return server
       .get(`/api/device/${deviceId}/api-key`)
-      .set('Authorization', 'Bearer '+sharedToken.token)
-      .then(function(res){
+      .set('Authorization', `Bearer ${sharedToken.token}`)
+      .then((res) => {
         assert.equal(res.status, 200)
         assert.isAbove(res.body.access.length, 1)
         return res.body.access

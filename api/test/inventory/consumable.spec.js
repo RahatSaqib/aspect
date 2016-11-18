@@ -1,24 +1,23 @@
-let supertest = require('supertest')
-let chai = require('chai')
-let shared = require('../utils/sharedToken')
+const supertest = require('supertest')
+const chai = require('chai')
+const shared = require('../utils/sharedToken')
 
 // This agent refers to PORT where program is runninng.
-let server = supertest.agent('http://localhost:8080')
-let assert = chai.assert
+const server = supertest.agent('http://localhost:8080')
+const assert = chai.assert
 
-describe('Consumable Routes',function(){
+describe('Consumable Routes', () => {
+  describe('Consumable Type Route', () => {
+    const path = '/api/inventory/consumable-types'
 
-  describe('Consumable Type Route', function(){
-    let path = '/api/inventory/consumable-types'
-
-    describe('GET',function(){
+    describe('GET', () => {
       shared.checkToken(server, path)
 
-      it('should return a list of consumable types when using valid token', function(done){
+      it('should return a list of consumable types when using valid token', (done) => {
         server
         .get(path)
-        .set('Authorization', 'Bearer '+shared.token)
-        .end(function(err,res){
+        .set('Authorization', `Bearer ${shared.token}`)
+        .end((err, res) => {
           assert.equal(res.status, 200)
           assert.typeOf(res.body, 'Object')
           assert.property(res.body, 'data')
@@ -35,20 +34,19 @@ describe('Consumable Routes',function(){
         })
       })
     })
-
   })
 
-  describe('Consumable Reason Route', function(){
-    let path = '/api/inventory/consumable-reason'
+  describe('Consumable Reason Route', () => {
+    const path = '/api/inventory/consumable-reason'
 
-    describe('GET',function(){
+    describe('GET', () => {
       shared.checkToken(server, path)
 
-      it('should return a list of consumable reasons when using valid token', function(done){
+      it('should return a list of consumable reasons when using valid token', (done) => {
         server
         .get(path)
-        .set('Authorization', 'Bearer '+shared.token)
-        .end(function(err,res){
+        .set('Authorization', `Bearer ${shared.token}`)
+        .end((err, res) => {
           assert.equal(res.status, 200)
           assert.typeOf(res.body, 'Object')
           assert.property(res.body, 'data')
@@ -61,12 +59,7 @@ describe('Consumable Routes',function(){
           done()
         })
       })
-
     })
-
   })
-
-
-
 })
 

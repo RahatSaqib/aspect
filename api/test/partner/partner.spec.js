@@ -1,24 +1,22 @@
-let supertest = require('supertest')
-let chai = require('chai')
-let shared = require('../utils/sharedToken')
+const supertest = require('supertest')
+const chai = require('chai')
+const shared = require('../utils/sharedToken')
 
 // This agent refers to PORT where program is runninng.
-let server = supertest.agent('http://localhost:8080')
-let assert = chai.assert
+const server = supertest.agent('http://localhost:8080')
+const assert = chai.assert
 
-describe('Partner routes',function(){
+describe('Partner routes', () => {
+  const path = '/api/partner'
 
-  let path = '/api/partner'
-
-  describe('GET',function(){
-
+  describe('GET', () => {
     shared.checkToken(server, path)
 
-    it('should return a list of partners when using valid token', function(done){
+    it('should return a list of partners when using valid token', (done) => {
       server
       .get(path)
-      .set('Authorization', 'Bearer '+shared.token)
-      .end(function(err,res){
+      .set('Authorization', `Bearer ${shared.token}`)
+      .end((err, res) => {
         assert.equal(res.status, 200)
         assert.typeOf(res.body, 'Object')
         assert.property(res.body, 'data')
@@ -32,10 +30,8 @@ describe('Partner routes',function(){
         done()
       })
     })
-
   })
 
-  describe('POST',function(){
+  describe('POST', () => {
   })
-
 })
