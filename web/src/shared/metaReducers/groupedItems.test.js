@@ -1,5 +1,5 @@
 import { assert } from 'chai'
-import {Items, receiveList} from './groupedItems'
+import { Items, receiveList } from './groupedItems'
 
 describe('Grouped Items Reducer', () => {
   it('should generate a nested list of objects from the list of bottom level objects in the nested structure', () => {

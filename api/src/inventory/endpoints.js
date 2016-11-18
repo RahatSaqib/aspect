@@ -1,6 +1,6 @@
-let Joi = require('joi')
-let { asyncHandler, validateSortPageParams } = require('../routes')
-let {
+const Joi = require('joi')
+const { asyncHandler, validateSortPageParams } = require('../routes')
+const {
   listInventoryItems,
   listInventoryItemsGroupedBySite,
   listInventoryItemsGroupedBySiteAndConsumable
@@ -14,7 +14,7 @@ module.exports = [
     config: {
       description: 'Inventory List',
       notes: 'Pageable and sortable list of inventory items',
-      auth: {scope :['inventory:view', 'inventory:edit']},
+      auth: { scope: ['inventory:view', 'inventory:edit'] },
       validate: {
         query: Object.assign({
           consumableId: Joi.number().integer().positive().allow('', null),
@@ -29,7 +29,7 @@ module.exports = [
     config: {
       description: 'Inventory List Grouped by Site',
       notes: 'Pageable and sortable list of inventory items grouped by site',
-      auth: {scope :['inventory:view', 'inventory:edit']},
+      auth: { scope: ['inventory:view', 'inventory:edit'] },
       validate: {
         query: Object.assign({
           consumableId: Joi.number().integer().positive().allow('', null),
@@ -44,7 +44,7 @@ module.exports = [
     config: {
       description: 'Inventory List Grouped by Site and then by Consumable',
       notes: 'Pageable and sortable list of inventory items grouped by site then consumable',
-      auth: {scope :['inventory:view', 'inventory:edit']},
+      auth: { scope: ['inventory:view', 'inventory:edit'] },
       validate: {
         query: Object.assign({
           consumableId: Joi.number().integer().positive().allow('', null),

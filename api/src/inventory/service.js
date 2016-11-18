@@ -12,30 +12,31 @@ const INVENTORY_ITEMS_SELECT_LIST_FIELDS = [
 ]
 
 const INVENTORY_ITEMS_SORT_FIELDS = {
-  'consumableName': 'c.name',
-  'manufacturer': 'c.manufacturer',
-  'siteName': 's.name',
-  'countryName': 'co.name',
-  'stateName': 'st.name',
-  'lgaName': 'l.name',
-  'quantityOnHand': 'ii.quantityOnHand',
-  'expiresOn': 'ii.expiresOn'
+  consumableName: 'c.name',
+  manufacturer: 'c.manufacturer',
+  siteName: 's.name',
+  countryName: 'co.name',
+  stateName: 'st.name',
+  lgaName: 'l.name',
+  quantityOnHand: 'ii.quantityOnHand',
+  expiresOn: 'ii.expiresOn'
 }
 
 const INVENTORY_FILTER_FIELDS = { consumableId: 'ii.consumableId', siteName: 's.name', siteId: 'ii.siteId' }
 
-const INVENTORY_DATA_CONSTRAINT_ALIASES = {country: 'co', state: 'st', lga: 'l', site: 's'}
+const INVENTORY_DATA_CONSTRAINT_ALIASES = { country: 'co', state: 'st', lga: 'l', site: 's' }
 
-function* listInventoryItems(request){
-  const {auth} = request
+function* listInventoryItems(request) {
+  const { auth } = request
 
-  if (request.query.sortCol && !_.keys(INVENTORY_ITEMS_SORT_FIELDS).includes(request.query.sortCol)){
+  if (request.query.sortCol &&
+    !_.keys(INVENTORY_ITEMS_SORT_FIELDS).includes(request.query.sortCol)) {
     return Boom.badRequest()
   }
 
-  let dataConstraints = yield getConstraints(auth.credentials)
+  const dataConstraints = yield getConstraints(auth.credentials)
 
-  let inventoryItemsQuery = query('Search Inventory Items')
+  const inventoryItemsQuery = query('Search Inventory Items')
     .from('InventoryItem as ii')
     .leftOuterJoin('Consumable as c', 'ii.consumableId', 'c.id')
     .leftOuterJoin('Unit as u', 'c.unit', 'u.id')
@@ -50,12 +51,12 @@ function* listInventoryItems(request){
     .count('ii.id as count').first()
 
   const getItems = inventoryItemsQuery.clone()
-    .modify(sortPageParams, request.query, INVENTORY_ITEMS_SORT_FIELDS['siteName'])
+    .modify(sortPageParams, request.query, INVENTORY_ITEMS_SORT_FIELDS.siteName)
     .select(INVENTORY_ITEMS_SELECT_LIST_FIELDS)
 
-  const [{count: total}, data] = yield Promise.all([getCount, getItems])
+  const [{ count: total }, data] = yield Promise.all([getCount, getItems])
 
-  return {ok: true, total, length: data.length, data}
+  return { ok: true, total, length: data.length, data }
 }
 
 const SITES_SELECT_LIST_FIELDS = [
@@ -64,22 +65,23 @@ const SITES_SELECT_LIST_FIELDS = [
 ]
 
 const SITES_SORT_FIELDS = {
-  'siteName': 's.name',
-  'countryName': 'co.name',
-  'stateName': 'st.name',
-  'lgaName': 'l.name'
+  siteName: 's.name',
+  countryName: 'co.name',
+  stateName: 'st.name',
+  lgaName: 'l.name'
 }
 
 function* getSitesAndInventoryItems(request) {
-  const {auth} = request
+  const { auth } = request
 
-  if (request.query.sortCol && !_.keys(SITES_SORT_FIELDS).includes(request.query.sortCol)){
+  if (request.query.sortCol &&
+    !_.keys(SITES_SORT_FIELDS).includes(request.query.sortCol)) {
     return Boom.badRequest()
   }
 
   const dataConstraints = yield getConstraints(auth.credentials)
 
-  let sitesQuery = query('Search Sites With Inventory Items')
+  const sitesQuery = query('Search Sites With Inventory Items')
     .from('Site as s')
     .leftOuterJoin('InventoryItem as ii', 's.id', 'ii.siteId')
     .leftOuterJoin('Country as co', 's.countryId', 'co.id')
@@ -91,13 +93,13 @@ function* getSitesAndInventoryItems(request) {
   const getSiteCount = sitesQuery.clone().countDistinct('s.id as count').first()
 
   const getSites = sitesQuery.clone()
-    .modify(sortPageParams, request.query, SITES_SORT_FIELDS['siteName'])
+    .modify(sortPageParams, request.query, SITES_SORT_FIELDS.siteName)
     .distinct(SITES_SELECT_LIST_FIELDS)
     .select()
 
-  const [{count: total}, sitesData] = yield Promise.all([getSiteCount, getSites])
+  const [{ count: total }, sitesData] = yield Promise.all([getSiteCount, getSites])
 
-  const inventoryFilters = Object.assign({}, request.query, {siteId: _.map(sitesData, 'siteId')})
+  const inventoryFilters = Object.assign({}, request.query, { siteId: _.map(sitesData, 'siteId') })
 
   const inventoryItems = yield query('Search Inventory Items In Sites')
     .from('InventoryItem as ii')
@@ -119,39 +121,34 @@ function* getSitesAndInventoryItems(request) {
 }
 
 function* listInventoryItemsGroupedBySite(request) {
-  const {sitesData, inventoryItems, total} = yield* getSitesAndInventoryItems(request)
+  const { sitesData, inventoryItems, total } = yield* getSitesAndInventoryItems(request)
 
-  const sitesWithInventoryItems = _.map(sitesData, function(site) {
-    return Object.assign({}, site, {
-      inventoryItems: _.map(_.filter(inventoryItems, {siteId: site.siteId}), function (inventoryItem) {
-        return _.pick(inventoryItem,
-          ['id', 'consumableId', 'expiresOn', 'quantityOnHand', 'consumableName', 'manufacturer', 'unitShortName'])
-      })
-    })
-  })
+  const sitesWithInventoryItems = _.map(sitesData, site => Object.assign({}, site, {
+    inventoryItems: _.map(
+      _.filter(inventoryItems, { siteId: site.siteId }), inventoryItem => _.pick(inventoryItem,
+        ['id', 'consumableId', 'expiresOn', 'quantityOnHand', 'consumableName', 'manufacturer', 'unitShortName']))
+  }))
 
-  return {ok: true, total, length: sitesData.length, data: sitesWithInventoryItems}
+  return { ok: true, total, length: sitesData.length, data: sitesWithInventoryItems }
 }
 
 function* listInventoryItemsGroupedBySiteAndConsumable(request) {
-  const {sitesData, inventoryItems, total} = yield* getSitesAndInventoryItems(request)
+  const { sitesData, inventoryItems, total } = yield* getSitesAndInventoryItems(request)
 
-  const sitesWithConsumablesAndInventoryItems = _.map(sitesData, function(site) {
-    return Object.assign({}, site, {
-      consumables: _.uniqBy(_.map(_.filter(inventoryItems, {siteId: site.siteId}), function (consumableInventoryItem) {
-        return Object.assign({}, _.pick(consumableInventoryItem, ['consumableName', 'manufacturer', 'unitShortName']), {
-          consumableId: consumableInventoryItem.consumableId,
-          inventoryItems: _.map(_.filter(inventoryItems, {siteId: site.siteId, consumableId: consumableInventoryItem.consumableId}),
-            function (inventoryItem) {
-              return _.pick(inventoryItem,
-                ['id', 'expiresOn', 'quantityOnHand'])
-            })
-        })
-      }), 'id')
-    })
-  })
+  const sitesWithConsumablesAndInventoryItems = _.map(sitesData, site => Object.assign({}, site, {
+    consumables: _.uniqBy(
+      _.map(
+        _.filter(inventoryItems, { siteId: site.siteId }), consumableInventoryItem =>
+          Object.assign({}, _.pick(consumableInventoryItem, ['consumableName', 'manufacturer', 'unitShortName']), {
+            consumableId: consumableInventoryItem.consumableId,
+            inventoryItems: _.map(
+              _.filter(inventoryItems,
+                { siteId: site.siteId, consumableId: consumableInventoryItem.consumableId }),
+              inventoryItem => _.pick(inventoryItem, ['id', 'expiresOn', 'quantityOnHand']))
+          })), 'id')
+  }))
 
-  return {ok: true, total, length: sitesData.length, data: sitesWithConsumablesAndInventoryItems}
+  return { ok: true, total, length: sitesData.length, data: sitesWithConsumablesAndInventoryItems }
 }
 
 module.exports = {

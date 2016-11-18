@@ -12,7 +12,8 @@ export const types = {
 /*
  * ---------------- Action Creators -----------------
  */
-function requestInventoryItems(sortCol, sortDir, page, size, filters, groupBySite, groupByConsumable) {
+function requestInventoryItems(
+  sortCol, sortDir, page, size, filters, groupBySite, groupByConsumable) {
   return {
     type: types.REQUEST_INVENTORY_ITEMS,
     sortCol,
@@ -42,14 +43,14 @@ const defaultPageSize = 10
 const defaultGroupBySite = false
 const defaultGroupByConsumable = false
 
-export function fetchInventoryItems(filters = defaultFilters, sortCol = defaultSortCol, sortDir = defaultSortDir,
-                                    page = defaultPage, pageSize = defaultPageSize, groupBySite = defaultGroupBySite,
-                                    groupByConsumable = defaultGroupByConsumable) {
+export function fetchInventoryItems(
+  filters = defaultFilters, sortCol = defaultSortCol, sortDir = defaultSortDir,
+  page = defaultPage, pageSize = defaultPageSize, groupBySite = defaultGroupBySite,
+  groupByConsumable = defaultGroupByConsumable) {
   const path = groupBySite ? (groupByConsumable ? '/inventory/group-by-site-and-consumable' : '/inventory/group-by-site') : '/inventory'
-  return dispatch => {
-
-    dispatch(requestInventoryItems(sortCol, sortDir, page, pageSize, filters, groupBySite, groupByConsumable))
-
+  return (dispatch) => {
+    dispatch(requestInventoryItems(
+      sortCol, sortDir, page, pageSize, filters, groupBySite, groupByConsumable))
     return aspectFetch(`${path}?${stringify({
       sortCol,
       sortDir,
@@ -57,17 +58,17 @@ export function fetchInventoryItems(filters = defaultFilters, sortCol = defaultS
       size: pageSize,
       ...filters.toJS()
     })}`)
-      .then(json => {
+      .then((json) => {
         const nestedPropertyPath = []
-        if(groupByConsumable) {
+        if (groupByConsumable) {
           nestedPropertyPath.push('consumables')
         }
-        if(groupBySite) {
+        if (groupBySite) {
           nestedPropertyPath.push('inventoryItems')
         }
         return dispatch(receiveInventoryItems(json, nestedPropertyPath))
       })
-      .catch(err => {
+      .catch((err) => {
         dispatch(addError('Loading inventory items failed', err.message, err))
       })
   }
@@ -97,25 +98,26 @@ const initialState = new Inventory()
 
 export default function inventoryItemsReducer(state = initialState, action) {
   switch (action.type) {
-  case types.REQUEST_INVENTORY_ITEMS:
-    return state.set('table', state.table.merge({
-      loading: true,
-      sortCol: action.sortCol,
-      sortDir: action.sortDir,
-      page: action.page,
-      pageSize: action.size,
-      filters: action.filters,
-      groupBySite: action.groupBySite,
-      groupByConsumable: action.groupByConsumable
-    }))
-  case types.RECEIVE_INVENTORY_ITEMS:
-    return state.withMutations(mutState => {
-      mutState.set('items', receiveList(mutState.items, action.nestedPropertyPath, action.items))
-      mutState.set('table', mutState.table.merge({
-        loading: false,
-        total: action.total
+    case types.REQUEST_INVENTORY_ITEMS:
+      return state.set('table', state.table.merge({
+        loading: true,
+        sortCol: action.sortCol,
+        sortDir: action.sortDir,
+        page: action.page,
+        pageSize: action.size,
+        filters: action.filters,
+        groupBySite: action.groupBySite,
+        groupByConsumable: action.groupByConsumable
       }))
-    })
+    case types.RECEIVE_INVENTORY_ITEMS:
+      return state.withMutations((mutState) => {
+        mutState.set('items', receiveList(mutState.items, action.nestedPropertyPath, action.items))
+        mutState.set('table', mutState.table.merge({
+          loading: false,
+          total: action.total
+        }))
+      })
+    default:
+      return state
   }
-  return state
 }

@@ -4,7 +4,7 @@ import classnames from 'classnames/bind'
 import React, { PureComponent, PropTypes } from 'react'
 
 // Material-UI
-import {Table, TableBody, TableHeader, TableHeaderColumn, TableRow, TableRowColumn as TableRowColumnWithBug, TableFooter } from 'material-ui/Table'
+import { Table, TableBody, TableHeader, TableHeaderColumn, TableRow, TableRowColumn as TableRowColumnWithBug, TableFooter } from 'material-ui/Table'
 import LinearProgress from 'material-ui/LinearProgress'
 import SortIcon from 'material-ui/svg-icons/content/sort'
 import FlatButton from 'material-ui/FlatButton'
@@ -14,7 +14,7 @@ import styles from './DataTable.css'
 
 const cssClasses = classnames.bind(styles)
 
-const TableRowColumn = (props) => (
+const TableRowColumn = props => (
   <TableRowColumnWithBug
     {...props}
     style={{
@@ -27,7 +27,7 @@ const TableRowColumn = (props) => (
   />
 )
 
-export class GroupedDataTable extends PureComponent {
+export default class GroupedDataTable extends PureComponent {
   static propTypes = {
     selectable: PropTypes.bool,
     handleItemIdSelection: PropTypes.func,
@@ -44,9 +44,7 @@ export class GroupedDataTable extends PureComponent {
       pageSize: PropTypes.number.isRequired,
       total: PropTypes.number.isRequired
     }).isRequired,
-    columns: PropTypes.array.isRequired,
-    intl: PropTypes.object,
-    messages: PropTypes.object
+    columns: PropTypes.array.isRequired
   }
 
   state = {
@@ -60,9 +58,64 @@ export class GroupedDataTable extends PureComponent {
     stripedRows: false
   }
 
-  handleRowSelection = this.handleRowSelection.bind(this)
+  componentDidMount() {
+    this.fetchData()
+  }
 
-  handleRowSelection([selectedIndex]) {
+  getPager = (page, totalPages) => {
+    const pagerItems = []
+    const maxPagingButtons = 9
+    // using this for react's key property-using the
+    // incrementer leads to flickering when changing pages
+    let key = 0
+    for (let i = 0; i < totalPages; i++) {
+      // if total pages over 12, show first two, last two, and 2 before and after current
+      if (totalPages <= maxPagingButtons ||
+        (i < 2) || (i >= totalPages - 2) ||
+        ((i > page - 3 || i > totalPages - 8) && (i < page + 3 || i < 7))) {
+        pagerItems.push(
+          <FlatButton
+            key={key}
+            className={cssClasses('Pager__Button', 'Pager__Button--number', {
+              'Pager__Button--current': page === i
+            })}
+            label={(i + 1)}
+            onTouchTap={() => { this.handlePage(i) }}
+          />
+        )
+        key += 1
+
+        // show ellipsis if 2nd item AND page > 5 (maxPagingButtons/2) OR
+        // if 2nd to last item AND page < totalPages - 5 (maxPagingButtons/2)
+        if ((key === 2 && page > maxPagingButtons / 2) ||
+          (key === maxPagingButtons - 2 && page < ((totalPages - maxPagingButtons) / 2) - 1)) {
+          pagerItems.push(<span key={`ellipsis-${key}`} style={{ margin: '0 5px' }}>&#8230;</span>)
+        }
+      }
+    }
+
+    return pagerItems
+  }
+
+  fetchData = (col, newSort, page) => {
+    const table = this.props.table
+    this.props.handleFetch(col || table.sortCol,
+      newSort || table.sortDir, page == null ? table.page : page, table.pageSize)
+  }
+
+  handlePage = (page) => {
+    this.fetchData(null, null, page)
+  }
+
+  handleSort = (col) => {
+    if (col.canSort) {
+      const table = this.props.table
+      const newSort = table.sortCol === col.fieldName ? (table.sortDir === 'asc' ? 'desc' : 'asc') : table.sortDir
+      this.fetchData(col, newSort)
+    }
+  }
+
+  handleRowSelection = ([selectedIndex]) => {
     const {
       handleItemIdSelection = _.noop,
       items
@@ -72,75 +125,16 @@ export class GroupedDataTable extends PureComponent {
     handleItemIdSelection(selectedId)
   }
 
-  componentDidMount() {
-    this.fetchData()
-  }
-
-  handleSort(col) {
-    const table = this.props.table
-
-    const newSort = table.sortCol === col ? (table.sortDir === 'asc' ? 'desc' : 'asc') : table.sortDir
-
-    this.fetchData(col, newSort)
-  }
-
-  handlePage(page) {
-    this.fetchData(null, null, page)
-  }
-
-  fetchData(col, newSort, page){
-    const table = this.props.table
-
-    this.props.handleFetch(col || table.sortCol, newSort || table.sortDir, page == null ? table.page : page, table.pageSize)
-  }
-
-  getPager(page, totalPages){
-    let pagerItems = []
-
-    const maxPagingButtons = 9
-
-    // using this for react's key property-using the
-    // incrementer leads to flickering when changing pages
-    let key = 0
-
-    for (let i = 0; i < totalPages; i++) {
-      // if total pages over 12, show first two, last two, and 2 before and after current
-      if (totalPages <= maxPagingButtons ||
-        (i < 2) || (i >= totalPages - 2) || ((i > page - 3 || i > totalPages - 8) && (i < page + 3 || i < 7))
-      ){
-        pagerItems.push(
-          <FlatButton
-            key={key}
-            className={cssClasses('Pager__Button', 'Pager__Button--number', {
-              'Pager__Button--current': page === i
-            })}
-            label={(i + 1)}
-            onTouchTap={() => { this.handlePage(i) } }
-          />
-        )
-        key++
-
-        // show ellipsis if 2nd item AND page > 5 (maxPagingButtons/2) OR
-        // if 2nd to last item AND page < totalPages - 5 (maxPagingButtons/2)
-        if ((key === 2 && page > maxPagingButtons / 2) ||
-          (key === maxPagingButtons - 2 && page < totalPages - maxPagingButtons / 2 - 1) ) {
-          pagerItems.push(<span key={'ellipsis-' + key} style={{ margin: '0 5px' }}>&#8230;</span>)
-        }
-      }
-    }
-
-    return pagerItems
-  }
-
-  flattenColumnsForHeader = columns => {
+  flattenColumnsForHeader = (columns) => {
     let valuePropertyPath = columns.fieldName ? [columns.fieldName] : []
-    const nestedColumnToHeaderColumn = column => {
-      return {...column, fieldPath: [...valuePropertyPath, column.fieldName],
-        canSort: column.canSort === undefined ? true : column.canSort }
+    const nestedColumnToHeaderColumn = (column) => {
+      const canSort = column.canSort === undefined ? true : column.canSort
+      const fieldPath = [...valuePropertyPath, column.fieldName]
+      return { ...column, fieldPath, canSort }
     }
     let headerColumns = _.map(columns.columns, nestedColumnToHeaderColumn)
     let children = columns.groupChildren
-    while(children) {
+    while (children) {
       valuePropertyPath = [...valuePropertyPath, children.fieldName]
       headerColumns = [...headerColumns, ..._.map(children.columns, nestedColumnToHeaderColumn)]
       children = children.groupChildren
@@ -158,7 +152,7 @@ export class GroupedDataTable extends PureComponent {
 
     const loading = table.loading ?
       <LinearProgress /> :
-      <div style={ { margin: 0, padding: 0, height: 4 }}>&nbsp; </div>
+      <div style={{ margin: 0, padding: 0, height: 4 }}>&nbsp; </div>
 
     const page = table.page
     const totalPages = Math.ceil(table.total / table.pageSize)
@@ -173,19 +167,30 @@ export class GroupedDataTable extends PureComponent {
           fixedFooter={this.state.fixedFooter}
           selectable={this.props.selectable}
           multiSelectable={this.state.multiSelectable}
-          onRowSelection={this.handleRowSelection}>
+          onRowSelection={this.handleRowSelection}
+        >
           <TableHeader
             displaySelectAll={this.state.showCheckboxes}
             adjustForCheckbox={this.state.showCheckboxes}
-            enableSelectAll={this.state.enableSelectAll}>
+            enableSelectAll={this.state.enableSelectAll}
+          >
             <TableRow>
-              {headerColumns.map((col) => (
-                <TableHeaderColumn key={col.fieldName} tooltip={col.tooltip} className={ col.hideOnXs ? 'pure-hidden-xs' : '' } {...col.extraProps}>
-                  <span style={{ cursor: 'pointer' }} onTouchTap={() => { col.canSort && this.handleSort(col.fieldName) } }>
+              {headerColumns.map(col => (
+                <TableHeaderColumn key={col.fieldName} tooltip={col.tooltip} className={col.hideOnXs ? 'pure-hidden-xs' : ''} {...col.extraProps}>
+                  <span style={{ cursor: 'pointer' }} onTouchTap={this.handleSort(col)}>
                     {col.headerText}
                   </span>
-                  <SortIcon color={ table.sortCol == col.fieldName ? 'black' : 'white' }
-                            style={{ height: 18, width: 18, position: 'relative', top: '4px', left: '4px', transform: table.sortDir === 'asc' ? 'scale(1, -1)' : '' }} />
+                  <SortIcon
+                    color={table.sortCol === col.fieldName ? 'black' : 'white'}
+                    style={{
+                      height: 18,
+                      width: 18,
+                      position: 'relative',
+                      top: '4px',
+                      left: '4px',
+                      transform: table.sortDir === 'asc' ? 'scale(1, -1)' : ''
+                    }}
+                  />
                 </TableHeaderColumn>
               )) }
             </TableRow>
@@ -194,31 +199,33 @@ export class GroupedDataTable extends PureComponent {
             displayRowCheckbox={this.state.showCheckboxes}
             deselectOnClickaway={this.state.deselectOnClickaway}
             showRowHover={this.state.showRowHover}
-            stripedRows={this.state.stripedRows}>
-
+            stripedRows={this.state.stripedRows}
+          >
             {items.currentIdList.map(itemId => (
-              <TableRow key={itemId} className={cssClasses({
-                'TableRow--selectable': this.props.selectable
-              })}>
-                {headerColumns.map((col) => {
-
-                  const row = items.getIn(['byId', ...itemId])
-                  const data = row.getIn(col.fieldName)
-                  return (
-                    <TableRowColumn key={col.key || col.fieldName} className={ col.hideOnXs ? 'pure-hidden-xs' : '' } {...col.extraProps}>
-                      {(col.format || _.identity)(data, row)}
-                    </TableRowColumn>
-                  )
-                })}
+              <TableRow
+                key={itemId}
+                className={cssClasses({ 'TableRow--selectable': this.props.selectable })}
+              >
+                {
+                  headerColumns.map((col) => {
+                    const row = items.getIn(['byId', ...itemId])
+                    const data = row.getIn(col.fieldName)
+                    return (
+                      <TableRowColumn key={col.key || col.fieldName} className={col.hideOnXs ? 'pure-hidden-xs' : ''} {...col.extraProps}>
+                        {(col.format || _.identity)(data, row)}
+                      </TableRowColumn>
+                    )
+                  })
+                }
               </TableRow>
             )) }
           </TableBody>
-          <TableFooter adjustForCheckbox={true}>
+          <TableFooter adjustForCheckbox>
             <TableRow>
               <TableRowColumn colSpan={headerColumns.length - 1} style={{ textAlign: 'right', padding: '10px 20px 20px 0' }} >
-                <FlatButton className={styles.Pager__Button} label="< Prev" onTouchTap={() => { this.handlePage(page - 1) } } disabled={page === 0} />
+                <FlatButton className={styles.Pager__Button} label="< Prev" onTouchTap={this.handlePage(page - 1)} disabled={page === 0} />
                 { pagerItems }
-                <FlatButton className={styles.Pager__Button} label="Next >" onTouchTap={() => { this.handlePage(page + 1) } } disabled={ page + 1 >= totalPages} />
+                <FlatButton className={styles.Pager__Button} label="Next >" onTouchTap={this.handlePage(page + 1)} disabled={page + 1 >= totalPages} />
               </TableRowColumn>
             </TableRow>
           </TableFooter>

@@ -16,25 +16,23 @@ function createRequestConsumables() {
 
 function createReceiveConsumables(consumables) {
   return {
-    type:  types.RECEIVE_CONSUMABLES,
+    type: types.RECEIVE_CONSUMABLES,
     items: consumables,
     lastRefreshed: new Date()
   }
 }
 
-const cacheExpiryTime = 1000*60*5 //five minutes
+const cacheExpiryTime = 1000 * 60 * 5 // five minutes
 
-export const fetchConsumables = function(forceRefresh, consumablesState) {
-  return dispatch => {
-    const now = new Date()
-    if(!consumablesState.get('loading') && (forceRefresh || !consumablesState.get('lastRefreshed') ||
-      Math.abs(now.getTime() - consumablesState.get('lastRefreshed').getTime()) > cacheExpiryTime)) {
-      dispatch(createRequestConsumables())
-      let path = '/inventory/consumable-types'
-      return aspectFetch(path)
-        .then(json => dispatch(createReceiveConsumables(json.data)))
-        .catch(err => dispatch(addError('Loading consumables failed', err.message, err)))
-    }
+export const fetchConsumables = (forceRefresh, consumablesState) => (dispatch) => {
+  const now = new Date()
+  if (!consumablesState.get('loading') && (forceRefresh || !consumablesState.get('lastRefreshed') ||
+    Math.abs(now.getTime() - consumablesState.get('lastRefreshed').getTime()) > cacheExpiryTime)) {
+    dispatch(createRequestConsumables())
+    const path = '/inventory/consumable-types'
+    return aspectFetch(path)
+      .then(json => dispatch(createReceiveConsumables(json.data)))
+      .catch(err => dispatch(addError('Loading consumables failed', err.message, err)))
   }
 }
 
@@ -56,17 +54,18 @@ function requestConsumables(state) {
 function receiveConsumables(state, consumables, lastRefreshed) {
   return state.merge({
     loading: false,
-    lastRefreshed: lastRefreshed,
+    lastRefreshed,
     items: new Immutable.fromJS(consumables)
   })
 }
 
 export default function consumableReducer(state = initialState, action) {
   switch (action.type) {
-  case types.REQUEST_CONSUMABLES:
-    return requestConsumables(state)
-  case types.RECEIVE_CONSUMABLES:
-    return receiveConsumables(state, action.items, action.lastRefreshed)
+    case types.REQUEST_CONSUMABLES:
+      return requestConsumables(state)
+    case types.RECEIVE_CONSUMABLES:
+      return receiveConsumables(state, action.items, action.lastRefreshed)
+    default:
+      return state
   }
-  return state
 }

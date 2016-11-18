@@ -27,6 +27,7 @@
     "no-restricted-syntax": "off",
     "no-shadow": "off",
     "no-use-before-define": "off",
-    "require-yield": "off"
+    "require-yield": "off",
+    "linebreak-style": "off"
   }
 }

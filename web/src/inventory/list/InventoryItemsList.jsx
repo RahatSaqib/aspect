@@ -54,11 +54,25 @@ export class InventoryItemsList extends PureComponent {
   static propTypes = {
     fetchConsumables: PropTypes.func.isRequired,
     setPageTitle: PropTypes.func.isRequired,
-    table: PropTypes.object.isRequired
+    table: PropTypes.object.isRequired,
+    items: PropTypes.object,
+    intl: PropTypes.object.isRequired,
+    fetchInventoryItems: PropTypes.func.isRequired,
+    consumables: PropTypes.object
   }
 
   state = {
     filters: this.props.table.get('filters')
+  }
+
+  componentWillMount() {
+    const { setPageTitle, intl: { formatMessage } } = this.props
+    setPageTitle(formatMessage(messages.title))
+  }
+
+  componentDidMount() {
+    const { fetchConsumables, consumables } = this.props
+    fetchConsumables(false, consumables)
   }
 
   handleFetch = (...args) => {
@@ -71,7 +85,9 @@ export class InventoryItemsList extends PureComponent {
 
   handleSubmit = (e) => {
     e.preventDefault()
-    this.props.fetchInventoryItems(this.state.filters, undefined, undefined, undefined, undefined) //TODO: Add group by site & consumable
+    // TODO: Add group by site & consumable
+    this.props.fetchInventoryItems(
+      this.state.filters, undefined, undefined, undefined, undefined)
   }
 
   handleConsumableChange = (event, index, value) => {
@@ -84,24 +100,13 @@ export class InventoryItemsList extends PureComponent {
     this.props.fetchInventoryItems()
   }
 
-  componentDidMount(){
-    const { fetchConsumables, consumables } = this.props
-    fetchConsumables(false, consumables)
-  }
-
-  componentWillMount() {
-    const { setPageTitle, intl } = this.props
-    const { formatMessage } = intl
-    setPageTitle(formatMessage(messages.title))
-  }
-
   render() {
     const { intl, consumables } = this.props
     const { formatMessage, formatDate } = intl
 
     const consumablesLoading = consumables ? consumables.get('loading') : false
 
-    let columns = [{
+    const columns = [{
       fieldName: 'siteName',
       headerText: formatMessage(messages.siteName),
       groupChildren: {
@@ -115,7 +120,7 @@ export class InventoryItemsList extends PureComponent {
         }, {
           fieldName: 'expiresOn',
           headerText: formatMessage(messages.expiresOn),
-          format: (data) => formatDate(data, {format: 'user-timezone'})
+          format: data => formatDate(data, { format: 'user-timezone' })
         }]
       }
     }]
@@ -123,37 +128,42 @@ export class InventoryItemsList extends PureComponent {
     return (
       <div className={styles.Content}>
         <Helmet title={formatMessage(messages.title)} titleTemplate="%s - Aspect" defaultTitle="Aspect" />
-        <form onSubmit={ this.handleSubmit }>
+        <form onSubmit={this.handleSubmit}>
           <Toolbar className={styles.Toolbar} >
-            <ToolbarGroup firstChild={true}>
+            <ToolbarGroup firstChild>
               <TextField
                 value={this.state.filters.get('siteName')}
                 id="siteName"
-                onChange={ (event, value) => this.filterInventoryItemsChange('siteName', value) }
+                onChange={(event, value) => this.filterInventoryItemsChange('siteName', value)}
                 className={styles['Toolbar__TextField--filter']}
                 hintText="Filter by Location"
               />
-              <ForkedSelectField name="consumableId"
-                                 style={{ margin: '5px 0 0 15px' }}
-                                 value={this.state.filters.get('consumableId')}
-                                 label={formatMessage(messages.consumableName)}
-                                 hintText={formatMessage(messages.consumableName)}
-                                 disabled={consumablesLoading || _.isEmpty(consumables)}
-                                 onChange={ (e, i, v) => { this.handleConsumableChange(e, i, v) } }>
+              <ForkedSelectField
+                name="consumableId"
+                style={{ margin: '5px 0 0 15px' }}
+                value={this.state.filters.get('consumableId')}
+                label={formatMessage(messages.consumableName)}
+                hintText={formatMessage(messages.consumableName)}
+                disabled={consumablesLoading || _.isEmpty(consumables)}
+                onChange={(e, i, v) => { this.handleConsumableChange(e, i, v) }}
+              >
                 {
                   consumables.get('items') &&
                   consumables.get('items').map(consumable =>
                     <MenuItem key={consumable.get('id')} value={consumable.get('id')} primaryText={consumable.get('name')} />)
                 }
               </ForkedSelectField>
-              <RaisedButton label="Filter" primary={true} onTouchTap={ this.handleSubmit } />
+              <RaisedButton label="Filter" primary onTouchTap={this.handleSubmit} />
             </ToolbarGroup>
-            <ToolbarGroup lastChild={true}>
-              <IconMenu iconButtonElement={
-                <IconButton touch={true}>
-                  <NavigationExpandMoreIcon />
-                </IconButton>}>
-                <MenuItem primaryText="Clear Filters" className={styles.Toolbar__MenuItem} onTouchTap={ this.resetInventoryItems } />
+            <ToolbarGroup lastChild>
+              <IconMenu
+                iconButtonElement={
+                  <IconButton touch>
+                    <NavigationExpandMoreIcon />
+                  </IconButton>
+                }
+              >
+                <MenuItem primaryText="Clear Filters" className={styles.Toolbar__MenuItem} onTouchTap={this.resetInventoryItems} />
                 <MenuItem primaryText="Export to Excel" className={styles.Toolbar__MenuItem} />
                 <MenuItem primaryText="Export to CSV" className={styles.Toolbar__MenuItem} />
               </IconMenu>
@@ -162,12 +172,12 @@ export class InventoryItemsList extends PureComponent {
         </form>
         <GroupedDataTable
           selectable
-          handleFetch={ this.handleFetch }
-          items={ this.props.items }
-          table={ this.props.table }
-          columns={ columns }
-          intl={ intl }
-          messages={ messages }
+          handleFetch={this.handleFetch}
+          items={this.props.items}
+          table={this.props.table}
+          columns={columns}
+          intl={intl}
+          messages={messages}
         />
       </div>
     )

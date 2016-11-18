@@ -16,8 +16,10 @@ export class DashboardInventory extends PureComponent {
 
     return (
       <Link to="/inventory">
-        <MiniChart  data={[1000, 1200, 700, 500, 400, 500, 600, 780, 1200, 1456]}
-                    label={label} number={1456} bgcolor={'#607d8b'} />
+        <MiniChart
+          data={[1000, 1200, 700, 500, 400, 500, 600, 780, 1200, 1456]}
+          label={label} number={1456} bgcolor={'#607d8b'}
+        />
       </Link>
     )
   }

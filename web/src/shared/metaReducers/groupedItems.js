@@ -8,31 +8,39 @@ function rowSpans(item, nestedPropertyPath, numberOfChildren) {
 
 function transformItem(item, nestedPropertyPath) {
   const nextChildrenProperty = _.head(nestedPropertyPath)
-  if(nextChildrenProperty) {
-    const nestedChildren = _.flattenDeep(_.map(item[nextChildrenProperty], item => {
-      return transformItem(item, _.without(nestedPropertyPath, nextChildrenProperty))
-    }))
-    if(_.isEmpty(nestedChildren)) {
-      return {..._.omit(item, nextChildrenProperty), rowSpans: rowSpans(item, nestedPropertyPath, 0)}
-    } else {
-      return [
-        {..._.omit(item, nextChildrenProperty), ...nestedChildren[0],
-          rowSpans: {...rowSpans(item, nestedPropertyPath, nestedChildren.length - 1), ...nestedChildren[0].rowSpans}},
-        ..._.drop(nestedChildren)]
+  if (nextChildrenProperty) {
+    const nestedChildren = _.flattenDeep(_.map(item[nextChildrenProperty],
+      item => transformItem(item, _.without(nestedPropertyPath, nextChildrenProperty))))
+    if (_.isEmpty(nestedChildren)) {
+      return {
+        ..._.omit(item, nextChildrenProperty),
+        rowSpans: rowSpans(item, nestedPropertyPath, 0)
+      }
     }
-  } else {
-    return {...item, rowSpans: rowSpans(item, nestedPropertyPath, 0)}
+    return [
+      {
+        ..._.omit(item, nextChildrenProperty),
+        ...nestedChildren[0],
+        rowSpans: {
+          ...rowSpans(item, nestedPropertyPath, nestedChildren.length - 1),
+          ...nestedChildren[0].rowSpans
+        }
+      },
+      ..._.drop(nestedChildren)
+    ]
+  }
+  return {
+    ...item,
+    rowSpans: rowSpans(item, nestedPropertyPath, 0)
   }
 }
 
 export function receiveList(items, nestedPropertyPath, nestedList) {
-  const list = _.flattenDeep(_.map(nestedList, item => {
-    return transformItem(item, nestedPropertyPath)
-  }))
+  const list = _.flattenDeep(_.map(nestedList, item => transformItem(item, nestedPropertyPath)))
 
   const immutableList = Immutable.fromJS(list)
 
-  const nextById = items.byId.withMutations(mutById => {
+  const nextById = items.byId.withMutations((mutById) => {
     immutableList.forEach(item =>
       mutById.mergeDeepIn([item.get('id')], item)
     )

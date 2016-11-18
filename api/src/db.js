@@ -18,7 +18,7 @@ function sortPageParams(queryBuilder, params, defaultSort) {
 function getWhereArgs(columnName, paramValue) {
   if (_.isString(paramValue)) {
     return [columnName, 'like', `%${paramValue}%`]
-  } else if(_.isArray(paramValue)) {
+  } else if (_.isArray(paramValue)) {
     return [columnName, paramValue]
   }
   return [columnName, '=', paramValue]
@@ -35,19 +35,17 @@ function filterParams(queryBuilder, params, filters) {
       queryBuilder.where(function () {
         // http://knexjs.org/#Builder-where
         columnNameOrArray.forEach((columnName) => {
-          if(_.isArray(params[paramName])) {
+          if (_.isArray(params[paramName])) {
             this.orWhereIn(...getWhereArgs(columnName, params[paramName]))
           } else {
             this.orWhere(...getWhereArgs(columnName, params[paramName]))
           }
         })
       })
+    } else if (_.isArray(params[paramName])) {
+      queryBuilder.whereIn(...getWhereArgs(columnNameOrArray, params[paramName]))
     } else {
-      if(_.isArray(params[paramName])) {
-        queryBuilder.whereIn(...getWhereArgs(columnNameOrArray, params[paramName]))
-      } else {
-        queryBuilder.where(...getWhereArgs(columnNameOrArray, params[paramName]))
-      }
+      queryBuilder.where(...getWhereArgs(columnNameOrArray, params[paramName]))
     }
   })
 }
@@ -68,7 +66,7 @@ const runBlock = Promise.coroutine(function* (block, blockArg) {
   try {
     return yield* block(blockArg)
   } catch (err) {
-    console.error(err)
+    console.error(err) // eslint-disable-line no-console
     throw err
   }
 })

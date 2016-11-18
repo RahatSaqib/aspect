@@ -203,5 +203,5 @@ server.start((err) => {
   if (err) {
     throw err
   }
-  console.log(`Magic happens at http://localhost:${port}`)
+  console.log(`Magic happens at http://localhost:${port}`) // eslint-disable-line no-console
 })
