@@ -17,7 +17,8 @@ describe('Device API routes',function(){
     shared.checkToken(server, clientPath)
     sharedDevice.authenticateUserAndFirstDevice(server, {user: 'admin'})
 
-    const devicePath = '/device/configuration'
+    const devicePath = '/device'
+    const deviceConfigurationPath = '/device/configuration'
 
     it('should add and return device configuration', () => run(function*(knex){
 
@@ -45,17 +46,15 @@ describe('Device API routes',function(){
           assert.property(res.body, 'total')
         })
 
-      yield server.post(devicePath)
+      yield server.post(deviceConfigurationPath)
         .set('Authorization', deviceAuth)
         .send({data: {a:'b'}})
         .then(function(res){
           assert.equal(res.status, 200)
           assert.typeOf(res.body, 'Object')
-          assert.property(res.body, 'data')
-          assert.equal(res.body.ok, true)
-          assert.typeOf(res.body.data, 'Object')
-          assert.property(res.body.data, 'id')
-          configIds.push(res.body.data.id)
+          assert.property(res.body, 'id')
+          assert.property(res.body, 'updatedOn')
+          configIds.push(res.body.id)
         })
 
       yield server.get(clientPath)
@@ -76,15 +75,14 @@ describe('Device API routes',function(){
 
       yield server.post(devicePath)
         .set('Authorization', deviceAuth)
-        .send({data: {a:'b', c:2, d:false, e:{f: 'g'}}})
+        .send({configuration: {data: {a:'b', c:2, d:false, e:{f: 'g'}}}})
         .then(function(res){
           assert.equal(res.status, 200)
           assert.typeOf(res.body, 'Object')
-          assert.property(res.body, 'data')
-          assert.equal(res.body.ok, true)
-          assert.typeOf(res.body.data, 'Object')
-          assert.property(res.body.data, 'id')
-          configIds.push(res.body.data.id)
+          assert.property(res.body, 'configuration')
+          assert.property(res.body.configuration, 'id')
+          assert.property(res.body.configuration, 'updatedOn')
+          configIds.push(res.body.configuration.id)
         })
 
       yield server.get(clientPath)
@@ -130,7 +128,8 @@ describe('Device API routes',function(){
     shared.checkToken(server, clientPath)
     sharedDevice.authenticateUserAndFirstDevice(server, {user: 'admin'})
 
-    const devicePath = '/device/operation'
+    const devicePath = '/device'
+    const deviceOperationPath = '/device/operation'
 
     it('should add and return device operation', () => run(function*(knex){
       const {deviceId} = sharedDevice
@@ -157,17 +156,15 @@ describe('Device API routes',function(){
           assert.property(res.body, 'total')
         })
 
-      yield server.post(devicePath)
+      yield server.post(deviceOperationPath)
         .set('Authorization', deviceAuth)
         .send({data: {a:'b'}})
         .then(function(res){
           assert.equal(res.status, 200)
           assert.typeOf(res.body, 'Object')
-          assert.property(res.body, 'data')
-          assert.equal(res.body.ok, true)
-          assert.typeOf(res.body.data, 'Object')
-          assert.property(res.body.data, 'id')
-          opIds.push(res.body.data.id)
+          assert.property(res.body, 'id')
+          assert.property(res.body, 'updatedOn')
+          opIds.push(res.body.id)
         })
 
       yield server.get(clientPath)
@@ -188,15 +185,14 @@ describe('Device API routes',function(){
 
       yield server.post(devicePath)
         .set('Authorization', deviceAuth)
-        .send({data: {a:'b', c:2, d:false, e:{f: 'g'}}})
+        .send({operation: {data: {a:'b', c:2, d:false, e:{f: 'g'}}}})
         .then(function(res){
           assert.equal(res.status, 200)
           assert.typeOf(res.body, 'Object')
-          assert.property(res.body, 'data')
-          assert.equal(res.body.ok, true)
-          assert.typeOf(res.body.data, 'Object')
-          assert.property(res.body.data, 'id')
-          opIds.push(res.body.data.id)
+          assert.typeOf(res.body.operation, 'Object')
+          assert.property(res.body.operation, 'id')
+          assert.property(res.body.operation, 'updatedOn')
+          opIds.push(res.body.operation.id)
         })
 
       yield server.get(clientPath)

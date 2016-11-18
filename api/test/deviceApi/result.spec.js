@@ -7,19 +7,22 @@ const sharedDevice = require('./deviceToken')
 const { run } = require('../../src/db')
 
 // This agent refers to PORT where program is runninng.
-let server = supertest.agent('http://localhost:8080')
-let assert = chai.assert
+const server = supertest.agent('http://localhost:8080')
+const assert = chai.assert
+
+const now = new Date()
+const updatedSince = `updatedSince=${new Date(+now - 1000*60*60).toISOString()}`
 
 describe('Device Result API routes',function(){
   describe('admin GeneXpert result', function(){
     const resultIds = []
-    const now = new Date()
 
     const clientBasePath = '/api/result'
     shared.checkToken(server, clientBasePath)
     sharedDevice.authenticateUserAndFirstDevice(server, {user: 'admin', type: 'GeneXpert'})
 
-    const devicePath = '/device/result'
+    const devicePath = '/device'
+    const devicePostResultPath = '/device/result'
 
     afterEach(() => run(function*(knex){
       // cleanup
@@ -33,7 +36,7 @@ describe('Device Result API routes',function(){
 
       const {deviceId} = sharedDevice
       const clientSingleResultPath = clientBasePath+'/'
-      const deviceResultPath = devicePath+'?size=5&sortCol=updatedOn&sortDir=desc'
+      const deviceGetResultPath = devicePostResultPath+`?${updatedSince}`
       const clientPath = clientBasePath+'?deviceId='+deviceId
 
       let initialDataLength = 0
@@ -56,15 +59,14 @@ describe('Device Result API routes',function(){
 
       yield server.post(devicePath)
         .set('Authorization', deviceAuth)
-        .send({data: {a:'b'}, assay: {id: 'HivVl'}})
+        .send({result: {data: {a:'b'}, assay: {id: 'HivVl'}}})
         .then(function(res){
           assert.equal(res.status, 200)
           assert.typeOf(res.body, 'Object')
-          assert.property(res.body, 'data')
-          assert.equal(res.body.ok, true)
-          assert.typeOf(res.body.data, 'Object')
-          assert.property(res.body.data, 'id')
-          resultIds.push(res.body.data.id)
+          assert.typeOf(res.body.result, 'Object')
+          assert.property(res.body.result, 'id')
+          assert.property(res.body.result, 'updatedOn')
+          resultIds.push(res.body.result.id)
         })
 
       const [{count: logLength1}] = yield knex('ResultLog').count('id as count')
@@ -131,7 +133,7 @@ describe('Device Result API routes',function(){
           assert.deepEqual(res.body.data.resultData, {a:'b'})
         })
 
-      yield server.get(deviceResultPath)
+      yield server.get(deviceGetResultPath)
         .set('Authorization', deviceAuth)
         .then(function(res){
           assert.equal(res.status, 200)
@@ -163,7 +165,7 @@ describe('Device Result API routes',function(){
         .where('id', '<>', result1.siteId)
         .first()
 
-      yield server.post(devicePath)
+      yield server.post(devicePostResultPath)
         .set('Authorization', deviceAuth)
         .send({
           data: {a: 'b', c: 2, d: false, e: {f: 'g'}},
@@ -225,11 +227,9 @@ describe('Device Result API routes',function(){
         .then(function(res){
           assert.equal(res.status, 200)
           assert.typeOf(res.body, 'Object')
-          assert.property(res.body, 'data')
-          assert.equal(res.body.ok, true)
-          assert.typeOf(res.body.data, 'Object')
-          assert.property(res.body.data, 'id')
-          resultIds.push(res.body.data.id)
+          assert.property(res.body, 'id')
+          assert.property(res.body, 'updatedOn')
+          resultIds.push(res.body.id)
         })
 
       const [{count: logLength2}] = yield knex('ResultLog').count('id as count')
@@ -383,7 +383,7 @@ describe('Device Result API routes',function(){
           assert.deepEqual(res.body.data.resultData, {a:'b', c:2, d:false, e:{f: 'g'}})
         })
 
-      yield server.get(deviceResultPath)
+      yield server.get(deviceGetResultPath)
         .set('Authorization', deviceAuth)
         .then(function(res){
           assert.equal(res.status, 200)
@@ -481,12 +481,12 @@ describe('Device Result API routes',function(){
     it('should set default result status and categories', () => run(function*(knex){
       const deviceAuth = 'Bearer '+sharedDevice.deviceToken
 
-      yield server.post(devicePath)
+      yield server.post(devicePostResultPath)
         .set('Authorization', deviceAuth)
         .send({data: {a:'b'}, assay: {id: 'HivVl'}})
         .then(function(res){
           assert.equal(res.status, 200)
-          resultIds.push(res.body.data.id)
+          resultIds.push(res.body.id)
         })
 
       const result1 = yield knex('Result as r')
@@ -504,12 +504,12 @@ describe('Device Result API routes',function(){
       assert.equal(result1Category1.externalId, 'Success')
       assert.isNotOk(result1Category2)
 
-      yield server.post(devicePath)
+      yield server.post(devicePostResultPath)
         .set('Authorization', deviceAuth)
         .send({data: {a:'c'}, error: {code: '1'}, assay: {id: 'HivVl'}})
         .then(function(res){
           assert.equal(res.status, 200)
-          resultIds.push(res.body.data.id)
+          resultIds.push(res.body.id)
         })
 
       const result2 = yield knex('Result as r')
@@ -527,12 +527,12 @@ describe('Device Result API routes',function(){
       assert.equal(result2Category1.externalId, 'Error')
       assert.isNotOk(result2Category2)
 
-      yield server.post(devicePath)
+      yield server.post(devicePostResultPath)
         .set('Authorization', deviceAuth)
         .send({data: {a:'d'}, category: {id: 'Invalid'}, error: {code: '1'}, assay: {id: 'HivVl'}})
         .then(function(res){
           assert.equal(res.status, 200)
-          resultIds.push(res.body.data.id)
+          resultIds.push(res.body.id)
         })
 
       const result3 = yield knex('Result as r')
@@ -550,12 +550,12 @@ describe('Device Result API routes',function(){
       assert.equal(result3Category1.externalId, 'Invalid')
       assert.isNotOk(result3Category2)
 
-      yield server.post(devicePath)
+      yield server.post(devicePostResultPath)
         .set('Authorization', deviceAuth)
         .send({data: {a:'e'}, category: [{id: 'Detected'}, {id: 'NotDetected'}], assay: {id: 'HivVl'}})
         .then(function(res){
           assert.equal(res.status, 200)
-          resultIds.push(res.body.data.id)
+          resultIds.push(res.body.id)
         })
 
       const result4 = yield knex('Result as r')
@@ -581,12 +581,12 @@ describe('Device Result API routes',function(){
       const countResults = () => knex('Result').count('id as cnt').then(([{cnt}]) => cnt)
       const initialCount = yield countResults()
 
-      yield server.post(devicePath)
+      yield server.post(devicePostResultPath)
         .set('Authorization', deviceAuth)
         .send({id: resultIds[0], data: {a:'b'}, assay: {id: 'HivVl'}})
         .then(function(res){
           assert.equal(res.status, 200)
-          assert.equal(res.body.data.id, resultIds[0])
+          assert.equal(res.body.id, resultIds[0])
         })
 
       let result1 = yield knex('Result as r')
@@ -596,12 +596,12 @@ describe('Device Result API routes',function(){
       assert.isNotOk(result1.errorCode)
       assert.equal(initialCount+1, yield countResults())
 
-      yield server.post(devicePath)
+      yield server.post(devicePostResultPath)
         .set('Authorization', deviceAuth)
         .send({id: resultIds[0], data: {a:'b', c:'d'}, assay: {id: 'HivVl'}})
         .then(function(res){
           assert.equal(res.status, 200)
-          assert.equal(res.body.data.id, resultIds[0])
+          assert.equal(res.body.id, resultIds[0])
         })
 
       result1 = yield knex('Result as r')
@@ -611,12 +611,12 @@ describe('Device Result API routes',function(){
       assert.isNotOk(result1.errorCode)
       assert.equal(initialCount+1, yield countResults())
 
-      yield server.post(devicePath)
+      yield server.post(devicePostResultPath)
         .set('Authorization', deviceAuth)
         .send({id: resultIds[1], data: {a:'b'}, assay: {id: 'HivVl'}})
         .then(function(res){
           assert.equal(res.status, 200)
-          assert.equal(res.body.data.id, resultIds[1])
+          assert.equal(res.body.id, resultIds[1])
         })
 
       let result2 = yield knex('Result as r')
@@ -632,7 +632,7 @@ describe('Device Result API routes',function(){
         .where('id', '<>', result1.siteId)
         .first()
 
-      yield server.post(devicePath)
+      yield server.post(devicePostResultPath)
         .set('Authorization', deviceAuth)
         .send({
           id: resultIds[1],
@@ -695,11 +695,9 @@ describe('Device Result API routes',function(){
         .then(function(res){
           assert.equal(res.status, 200)
           assert.typeOf(res.body, 'Object')
-          assert.property(res.body, 'data')
-          assert.equal(res.body.ok, true)
-          assert.typeOf(res.body.data, 'Object')
-          assert.property(res.body.data, 'id')
-          resultIds.push(res.body.data.id)
+          assert.property(res.body, 'id')
+          assert.property(res.body, 'updatedOn')
+          resultIds.push(res.body.id)
         })
 
       result2 = yield knex('Result as r')
@@ -768,7 +766,7 @@ describe('Device Result API routes',function(){
 
     sharedDevice.authenticateUserAndFirstDevice(server, {user: 'rrt_admin', type: 'm2000'})
 
-    const devicePath = '/device/result'
+    const devicePostResultPath = '/device/result'
 
     afterEach(() => run(function*(knex){
       // cleanup
@@ -780,7 +778,7 @@ describe('Device Result API routes',function(){
 
     it('should honor device role sample origin site', () => run(function*(knex){
       const deviceAuth = 'Bearer '+sharedDevice.deviceToken
-      const deviceResultPath = devicePath+'?size=5&sortCol=updatedOn&sortDir=desc'
+      const deviceGetResultPath = devicePostResultPath+`?${updatedSince}`
 
       const [device1315, device1723] = yield knex('Device as d')
         .join('Site as s', 'd.siteId', 's.id')
@@ -796,7 +794,7 @@ describe('Device Result API routes',function(){
       const device1315Auth =  'Bearer '+device1315Key
       const device1723Auth =  'Bearer '+device1723Key
 
-      yield server.post(devicePath)
+      yield server.post(devicePostResultPath)
         .set('Authorization', deviceAuth)
         .send({
           data: {
@@ -812,10 +810,10 @@ describe('Device Result API routes',function(){
         })
         .then(function(res){
           assert.equal(res.status, 200)
-          resultIds.push(res.body.data.id)
+          resultIds.push(res.body.id)
         })
 
-      yield server.get(deviceResultPath)
+      yield server.get(deviceGetResultPath)
         .set('Authorization', deviceAuth)
         .then(function(res){
           assert.equal(res.status, 200)
@@ -846,7 +844,7 @@ describe('Device Result API routes',function(){
           })
         })
 
-      yield server.get(deviceResultPath)
+      yield server.get(deviceGetResultPath)
         .set('Authorization', device1315Auth)
         .then(function(res){
           assert.equal(res.status, 200)
@@ -877,7 +875,7 @@ describe('Device Result API routes',function(){
           })
         })
 
-      yield server.get(deviceResultPath)
+      yield server.get(deviceGetResultPath)
         .set('Authorization', device1723Auth)
         .then(function(res){
           assert.equal(res.status, 200)
@@ -891,7 +889,7 @@ describe('Device Result API routes',function(){
           assert.typeOf(lastResult, 'undefined')
         })
 
-      yield server.post(devicePath)
+      yield server.post(devicePostResultPath)
         .set('Authorization', deviceAuth)
         .send({
           data: {
@@ -907,10 +905,10 @@ describe('Device Result API routes',function(){
         })
         .then(function(res){
           assert.equal(res.status, 200)
-          resultIds.push(res.body.data.id)
+          resultIds.push(res.body.id)
         })
 
-      yield server.get(deviceResultPath)
+      yield server.get(deviceGetResultPath)
         .set('Authorization', deviceAuth)
         .then(function(res){
           assert.equal(res.status, 200)
@@ -941,7 +939,7 @@ describe('Device Result API routes',function(){
           })
         })
 
-      yield server.get(deviceResultPath)
+      yield server.get(deviceGetResultPath)
         .set('Authorization', device1723Auth)
         .then(function(res){
           assert.equal(res.status, 200)
@@ -972,7 +970,7 @@ describe('Device Result API routes',function(){
           })
         })
 
-      yield server.get(deviceResultPath)
+      yield server.get(deviceGetResultPath)
         .set('Authorization', device1315Auth)
         .then(function(res){
           assert.equal(res.status, 200)
@@ -986,7 +984,7 @@ describe('Device Result API routes',function(){
           assert.typeOf(lastResult, 'undefined')
         })
 
-      yield server.post(devicePath)
+      yield server.post(devicePostResultPath)
         .set('Authorization', device1723Auth)
         .send({
           id: resultIds[1],
@@ -994,10 +992,10 @@ describe('Device Result API routes',function(){
         })
         .then(function(res){
           assert.equal(res.status, 200)
-          resultIds.push(res.body.data.id)
+          resultIds.push(res.body.id)
         })
 
-      yield server.post(devicePath)
+      yield server.post(devicePostResultPath)
         .set('Authorization', device1723Auth)
         .send({
           id: resultIds[0],
@@ -1008,7 +1006,7 @@ describe('Device Result API routes',function(){
           assert.equal(res.status, 400)
         })
 
-      yield server.get(deviceResultPath)
+      yield server.get(deviceGetResultPath)
         .set('Authorization', deviceAuth)
         .then(function(res){
           assert.equal(res.status, 200)
@@ -1039,7 +1037,7 @@ describe('Device Result API routes',function(){
           })
         })
 
-      yield server.get(deviceResultPath)
+      yield server.get(deviceGetResultPath)
         .set('Authorization', device1723Auth)
         .then(function(res){
           assert.equal(res.status, 200)
@@ -1070,7 +1068,7 @@ describe('Device Result API routes',function(){
           })
         })
 
-      yield server.get(deviceResultPath)
+      yield server.get(deviceGetResultPath)
         .set('Authorization', device1315Auth)
         .then(function(res){
           assert.equal(res.status, 200)
