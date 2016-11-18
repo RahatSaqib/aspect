@@ -5,7 +5,6 @@ import { injectIntl } from 'react-intl'
 import { bindActionCreators } from 'redux'
 import { connect } from 'react-redux'
 import Helmet from 'react-helmet'
-import classNames from 'classnames'
 
 // Material-UI
 import Paper from 'material-ui/Paper'
