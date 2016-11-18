@@ -27,7 +27,7 @@ export default defineMessages({
   },
   generateTokenFailed: {
     id: 'pages.ResetPassword.passwordUpdateFailed',
-    defaultMessage: 'We are unable to reset your password. You can request further help by sending an email to {supportEmail} or calling us on {supportTelephone}'
+    defaultMessage: 'We were unable to reset your password. You can request further help by sending an email to {supportEmail} or calling us on {supportTelephone}'
   },
   iDontHaveAnEmailAddress: {
     id: 'pages.ResetPassword.iDontHaveAnEmailAddress',
