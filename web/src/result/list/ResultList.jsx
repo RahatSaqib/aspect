@@ -11,7 +11,7 @@ import { connect } from 'react-redux'
 import Helmet from 'react-helmet'
 
 // Our own imports
-import { DataTable } from '../../components/shared/DataTable'
+import DataTable from '../../components/shared/DataTable'
 import ListFilterContainer from '../../filter/list/ListFilter'
 import { configureListFilter } from '../../filter/FilterRedux'
 import { fetchListFilteredResults } from '../ResultRedux'
@@ -53,14 +53,12 @@ export class ResultList extends PureComponent {
   static propTypes = {
     setPageTitle: PropTypes.func.isRequired,
     table: PropTypes.object.isRequired,
-    assays: PropTypes.object.isRequired,
-    router: PropTypes.object.isRequired,
-    fetchListFilteredResults: PropTypes.func.isRequired,
-    fetchAssays: PropTypes.func.isRequired,
-    intl: PropTypes.object.isRequired,
-    items: PropTypes.object.isRequired,
     configureListFilter: PropTypes.func.isRequired,
-    listFilter: PropTypes.object.isRequired
+    intl: PropTypes.object.isRequired,
+    listFilter: PropTypes.object.isRequired,
+    fetchListFilteredResults: PropTypes.func.isRequired,
+    router: PropTypes.object.isRequired,
+    items: PropTypes.object.isRequired
   }
 
   componentWillMount() {
@@ -71,13 +69,7 @@ export class ResultList extends PureComponent {
       assayAndResultCategory: true,
       geography: true,
       date: true,
-      siteName: true
-    })
-  }
-
-  componentDidMount() {
-    const { fetchAssays, assays } = this.props
-    fetchAssays(false, assays)
+      siteName: true })
   }
 
   componentWillReceiveProps(nextProps) {
@@ -97,6 +89,7 @@ export class ResultList extends PureComponent {
   render() {
     const { intl } = this.props
     const { formatMessage, formatDate } = intl
+
     const columns = [
       { db: 'endedOn', title: formatMessage(messages.endedOn), format: data => formatDate(data) },
       { db: 'deviceName', title: formatMessage(messages.deviceName) },

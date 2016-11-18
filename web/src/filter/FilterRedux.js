@@ -71,25 +71,26 @@ export default function filterReducer(state = initialState, action) {
 
         const deleteFromMap = (a, k) => a.delete(k)
 
-        const nextListFilter = nextListConfig.reduce((acc, value, key) => {
-          if (value) {
-            return acc
-          }
-          switch (key) {
-            case 'assayAndResultCategory':
-              return ['assayId', 'resultCategoryId'].reduce(deleteFromMap, acc)
-            case 'geography':
-              return ['countryId', 'stateId', 'lgaId'].reduce(deleteFromMap, acc)
-            case 'date':
-              return ['minDate', 'maxDate'].reduce(deleteFromMap, acc)
-            case 'deviceName':
-            case 'siteName':
-            case 'contactNameOrEmail':
-              return acc.delete(key)
-            default:
-              invariant(false, 'Unreachable')
-          }
-        }, state.listFilter)
+        const nextListFilter = nextListConfig
+          .reduce((acc, value, key) => { // eslint-disable-line array-callback-return
+            if (value) {
+              return acc
+            }
+            switch (key) {
+              case 'assayAndResultCategory':
+                return ['assayId', 'resultCategoryId'].reduce(deleteFromMap, acc)
+              case 'geography':
+                return ['countryId', 'stateId', 'lgaId'].reduce(deleteFromMap, acc)
+              case 'date':
+                return ['minDate', 'maxDate'].reduce(deleteFromMap, acc)
+              case 'deviceName':
+              case 'siteName':
+              case 'contactNameOrEmail':
+                return acc.delete(key)
+              default:
+                invariant(false, 'Unreachable')
+            }
+          }, state.listFilter)
 
         mutState.set('listFilter', nextListFilter)
       })

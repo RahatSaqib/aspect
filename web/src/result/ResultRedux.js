@@ -63,7 +63,7 @@ export function fetchListFilteredResults(extraFilters = {}, ...args) {
   }
 }
 
-export function fetchResults(filters/* required */, sortCol = 'endedOn', sortDir = 'desc', page = 0, pageSize = 20) {
+export function fetchResults(filters/* required */, sortCol = 'endedOn', sortDir = 'desc', page = 0, pageSize = 10) {
   return (dispatch) => {
     dispatch(requestResults(sortCol, sortDir, page, pageSize, filters))
 
@@ -150,7 +150,7 @@ const Result = Immutable.Record({
   table: new Table({
     sortCol: 'endedOn',
     sortDir: 'desc',
-    pageSize: 20,
+    pageSize: 10,
     filters: Immutable.fromJS({ sampleId: '', assayId: null }),
     extraColumns: new Immutable.List()
   })

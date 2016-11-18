@@ -19,7 +19,7 @@ import LoginDetailsForm from './LoginDetailsForm'
 import UserPreferencesForm from './UserPreferencesForm'
 
 // Our own imports
-import { isEditable } from '../../shared/selectors/person'
+import isEditable from '../../shared/selectors/person'
 import {
   fetchSinglePerson,
   updateSinglePerson,

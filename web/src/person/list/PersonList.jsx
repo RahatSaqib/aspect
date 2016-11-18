@@ -11,7 +11,7 @@ import { connect } from 'react-redux'
 import Helmet from 'react-helmet'
 
 // Our own imports
-import { DataTable } from '../../components/shared/DataTable'
+import DataTable from '../../components/shared/DataTable'
 import ListFilterContainer from '../../filter/list/ListFilter'
 import { configureListFilter } from '../../filter/FilterRedux'
 import { fetchListFilteredPersons } from '../PersonRedux'
@@ -47,7 +47,7 @@ export class PersonList extends PureComponent {
     table: PropTypes.object.isRequired,
     intl: PropTypes.object.isRequired,
     items: PropTypes.object.isRequired,
-    configureListFilter: PropTypes.object.isRequired,
+    configureListFilter: PropTypes.func.isRequired,
     listFilter: PropTypes.object.isRequired,
     router: PropTypes.object.isRequired,
     fetchListFilteredPersons: PropTypes.func.isRequired

@@ -30,7 +30,7 @@ export class EditableFieldsForm extends PureComponent {
     initialValues: PropTypes.object.isRequired,
     handleSubmit: PropTypes.func.isRequired,
     pristine: PropTypes.bool.isRequired,
-    loading: PropTypes.bool.isRequired,
+    loading: PropTypes.bool,
     submitting: PropTypes.bool.isRequired
   }
 

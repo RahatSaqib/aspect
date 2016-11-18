@@ -7,7 +7,7 @@ import LocationSelector from '../../components/shared/LocationSelector'
 import TextInput from '../../components/shared/TextInput'
 import PhoneInput from '../../components/shared/PhoneInput'
 import SelectInput from '../../components/shared/SelectInput'
-import { emailAddress as validateEmailAddress } from '../../shared/utils/validate'
+import validateEmailAddress from '../../shared/utils/validate'
 import messages from './messages'
 import styles from './PersonDetail.css'
 
@@ -82,7 +82,7 @@ ContactDetailsForm.propTypes = {
   pristine: PropTypes.bool.isRequired,
   invalid: PropTypes.bool.isRequired,
   initialValues: PropTypes.object.isRequired,
-  userIsAdmin: PropTypes.bool.isRequired
+  userIsAdmin: PropTypes.bool
 }
 
 const validate = (contactDetails, props) => {

@@ -1,6 +1,5 @@
 // Imports from packages
 import _ from 'lodash'
-import config from 'config'
 import React, { PureComponent } from 'react'
 import { bindActionCreators } from 'redux'
 import { connect } from 'react-redux'
@@ -8,6 +7,7 @@ import Helmet from 'react-helmet'
 import { injectIntl, FormattedHTMLMessage } from 'react-intl'
 import { Link } from 'react-router'
 import classNames from 'classnames'
+import config from 'config'
 
 // Material-UI
 import Paper from 'material-ui/Paper'
@@ -22,12 +22,12 @@ import LinearProgress from 'material-ui/LinearProgress'
 import Dialog from 'material-ui/Dialog'
 
 // Our own imports
+import { ErrorDisplayContainer } from '../../components/shared/ErrorDisplay'
+import AcknowledgementDisplay from '../../components/shared/AcknowledgementDisplay'
 import {
   resetPasswordEnterEmailAddress,
   resetPasswordEnterPassword
 } from '../AuthRedux'
-import { ErrorDisplayContainer } from '../../components/shared/ErrorDisplay'
-import AcknowledgementDisplay from '../../components/shared/AcknowledgementDisplay'
 import { addAcknowledgement } from '../../acknowledgement/AcknowledgementRedux'
 import { addError } from '../../error/ErrorRedux'
 import styles from './ResetPassword.css'
@@ -35,7 +35,7 @@ import messages from './messages'
 import ResetPasswordEnterEmail from './ResetPasswordEnterEmail'
 import ResetPasswordEnterPassword from './ResetPasswordEnterPassword'
 
-export class ResetPassword extends PureComponent {
+export default class ResetPassword extends PureComponent {
   state = {
     emailAddress: '',
     resetPasswordToken: '',
@@ -83,8 +83,8 @@ export class ResetPassword extends PureComponent {
   createResetPasswordTokenFail = () => {
     const { intl: { formatMessage }, addError } = this.props
     addError(formatMessage(messages.generateTokenFailedTitle),
-      formatMessage(messages.generateTokenFailed,
-        { supportTelephone: config.supportTelephone, supportEmail: config.supportEmail }))
+      formatMessage(messages.generateTokenFailed, {
+        supportTelephone: config.supportTelephone, supportEmail: config.supportEmail }))
     this.setState({
       resettingPassword: false
     })
@@ -111,8 +111,8 @@ export class ResetPassword extends PureComponent {
   updatePasswordFail = () => {
     const { intl: { formatMessage }, addError } = this.props
     addError(formatMessage(messages.passwordUpdateFailedTitle),
-      formatMessage(messages.passwordUpdateFailed,
-        { supportTelephone: config.supportTelephone, supportEmail: config.supportEmail }))
+      formatMessage(messages.passwordUpdateFailed, {
+        supportTelephone: config.supportTelephone, supportEmail: config.supportEmail }))
     this.setState({
       resettingPassword: false
     })

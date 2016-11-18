@@ -10,7 +10,7 @@ import { connect } from 'react-redux'
 import Helmet from 'react-helmet'
 
 // Our own imports
-import { DataTable } from '../../components/shared/DataTable'
+import DataTable from '../../components/shared/DataTable'
 import ListFilterContainer from '../../filter/list/ListFilter'
 import { configureListFilter } from '../../filter/FilterRedux'
 import { fetchListFilteredReports } from '../ReportRedux'
@@ -53,7 +53,7 @@ export class ReportList extends PureComponent {
     setPageTitle: PropTypes.func.isRequired,
     table: PropTypes.object.isRequired,
     fetchListFilteredReports: PropTypes.func.isRequired,
-    configureListFilter: PropTypes.object.isRequired,
+    configureListFilter: PropTypes.func.isRequired,
     intl: PropTypes.object.isRequired,
     listFilter: PropTypes.object.isRequired,
     items: PropTypes.object.isRequired

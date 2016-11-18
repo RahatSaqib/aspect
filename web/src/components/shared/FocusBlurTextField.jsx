@@ -16,7 +16,7 @@ export class FocusBlurTextField extends PureComponent {
     onBlur: PropTypes.func,
     onFocus: PropTypes.func,
     onCommitValue: PropTypes.func.isRequired,
-    value: PropTypes.object
+    value: PropTypes.string
   }
 
   state = {

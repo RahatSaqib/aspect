@@ -143,8 +143,8 @@ export class ResultDetail extends PureComponent {
     fetchSingleResult: PropTypes.func.isRequired,
     intl: PropTypes.object.isRequired,
     params: PropTypes.object.isRequired,
-    result: PropTypes.object.isRequired,
-    updateSingleResult: PropTypes.func.isRequired
+    result: PropTypes.object,
+    updateSingleResult: PropTypes.func
   }
 
   componentWillMount() {

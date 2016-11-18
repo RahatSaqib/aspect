@@ -14,7 +14,7 @@ import Helmet from 'react-helmet'
 import { fetchListFilteredDevices } from '../DeviceRedux'
 import ListFilterContainer from '../../filter/list/ListFilter'
 import { configureListFilter } from '../../filter/FilterRedux'
-import { DataTable } from '../../components/shared/DataTable'
+import DataTable from '../../components/shared/DataTable'
 import styles from './DeviceList.css'
 
 const messages = defineMessages({
@@ -65,7 +65,7 @@ export class DeviceList extends PureComponent {
     router: PropTypes.object.isRequired,
     fetchListFilteredDevices: PropTypes.func.isRequired,
     items: PropTypes.object.isRequired,
-    configureListFilter: PropTypes.object.isRequired,
+    configureListFilter: PropTypes.func.isRequired,
     listFilter: PropTypes.object.isRequired
   }
 
