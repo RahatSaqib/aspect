@@ -19,6 +19,7 @@ import LoginDetailsForm from './LoginDetailsForm'
 import UserPreferencesForm from './UserPreferencesForm'
 
 // Our own imports
+import { Hidden } from '../../components/pureGrids'
 import isEditable from '../../shared/selectors/person'
 import {
   fetchSinglePerson,
@@ -160,7 +161,7 @@ export class PersonDetail extends PureComponent {
           {editable && <Tabs>
             <Tab
               icon={<MapsPersonPin />}
-              label={<span className="pure-hidden-xs">{formatMessage(messages.contactDetails)}</span>}
+              label={<Hidden xs component="span">{formatMessage(messages.contactDetails)}</Hidden>}
             >
               {(!person) && <LinearProgress />}
               {loading && <LinearProgress />}
@@ -175,7 +176,7 @@ export class PersonDetail extends PureComponent {
             </Tab>
             {userIsAdmin && <Tab
               icon={<Lock />}
-              label={<span className="pure-hidden-xs">{formatMessage(messages.systemAccessControl)}</span>}
+              label={<Hidden xs component="span">{formatMessage(messages.systemAccessControl)}</Hidden>}
             >
               {loading && <LinearProgress />}
               <h2 className={classNames('pure-visible-xs', styles.Form__Header)}>
@@ -188,7 +189,7 @@ export class PersonDetail extends PureComponent {
             </Tab>}
             <Tab
               icon={<Language />}
-              label={<span className="pure-hidden-xs">{formatMessage(messages.languageAndTimezone)}</span>}
+              label={<Hidden xs component="span">{formatMessage(messages.languageAndTimezone)}</Hidden>}
             >
               {loading && <LinearProgress />}
               <h2 className={classNames('pure-visible-xs', styles.Form__Header)}>
