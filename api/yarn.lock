@@ -638,9 +638,9 @@ console-control-strings@^1.0.0, console-control-strings@~1.1.0:
   version "1.1.0"
   resolved "https://registry.yarnpkg.com/console-control-strings/-/console-control-strings-1.1.0.tgz#3d7cf4464db6446ea644bf4b39507f9851008e8e"
 
-consolidate@niftylettuce/consolidate.js:
-  version "0.14.1"
-  resolved "https://codeload.github.com/niftylettuce/consolidate.js/tar.gz/12c19d92bd67c56cfe6feac1eb5e8c12507c01bd"
+consolidate@^0.14.2:
+  version "0.14.5"
+  resolved "https://registry.yarnpkg.com/consolidate/-/consolidate-0.14.5.tgz#5a25047bc76f73072667c8cb52c989888f494c63"
   dependencies:
     bluebird "^3.1.1"
 
@@ -876,9 +876,9 @@ domutils@^1.5.1, domutils@1.5, domutils@1.5.1:
     dom-serializer "0"
     domelementtype "1"
 
-dotenv-safe@^2.3.1:
-  version "2.3.3"
-  resolved "https://registry.yarnpkg.com/dotenv-safe/-/dotenv-safe-2.3.3.tgz#f35e09650527579bcc6e3565a7e2b6fcbbd44539"
+dotenv-safe@^3.0.0:
+  version "3.0.0"
+  resolved "https://registry.yarnpkg.com/dotenv-safe/-/dotenv-safe-3.0.0.tgz#6da9b185929c49f4e540fe6883150dd6c44c446f"
   dependencies:
     dotenv "^2.0.0"
 
@@ -911,12 +911,12 @@ ecdsa-sig-formatter@1.0.7:
   dependencies:
     base64-url "^1.2.1"
 
-email-templates@^2.5.3:
-  version "2.5.3"
-  resolved "https://registry.yarnpkg.com/email-templates/-/email-templates-2.5.3.tgz#ff79ed8640786e90ccfc5d963e79ca7fb74d7487"
+email-templates@^2.5.4:
+  version "2.5.4"
+  resolved "https://registry.yarnpkg.com/email-templates/-/email-templates-2.5.4.tgz#5f8995f63802688f5afd5aa50ee7587f4e1c9440"
   dependencies:
     bluebird "^3.0.0"
-    consolidate niftylettuce/consolidate.js
+    consolidate "^0.14.2"
     debug "^2.2.0"
     glob "^6.0.0"
     juice "^2.0.0"
@@ -1637,9 +1637,9 @@ good-logstash@^2.0.2:
     fast-safe-stringify "^1.1.0"
     logstash-client "^1.1.1"
 
-good-squeeze@^5.0.0:
-  version "5.0.0"
-  resolved "https://registry.yarnpkg.com/good-squeeze/-/good-squeeze-5.0.0.tgz#57003c22cbe20abd5dfd564b9a0f4d168d266196"
+good-squeeze@^5.0.1:
+  version "5.0.1"
+  resolved "https://registry.yarnpkg.com/good-squeeze/-/good-squeeze-5.0.1.tgz#2bf53c28a77c072b18a64691f6e862cd68ea0891"
   dependencies:
     fast-safe-stringify "1.1.0"
     hoek "4.x.x"
@@ -1675,9 +1675,19 @@ handlebars@^4.0.1, handlebars@^4.0.5:
   optionalDependencies:
     uglify-js "^2.6"
 
-hapi-auth-jwt2@^7.1.2:
-  version "7.1.3"
-  resolved "https://registry.yarnpkg.com/hapi-auth-jwt2/-/hapi-auth-jwt2-7.1.3.tgz#1dc7cb24598146e5fc1a5605a2a99d26f35d5af1"
+handlebars@^4.0.6:
+  version "4.0.6"
+  resolved "https://registry.yarnpkg.com/handlebars/-/handlebars-4.0.6.tgz#2ce4484850537f9c97a8026d5399b935c4ed4ed7"
+  dependencies:
+    async "^1.4.0"
+    optimist "^0.6.1"
+    source-map "^0.4.4"
+  optionalDependencies:
+    uglify-js "^2.6"
+
+hapi-auth-jwt2@^7.2.0:
+  version "7.2.0"
+  resolved "https://registry.yarnpkg.com/hapi-auth-jwt2/-/hapi-auth-jwt2-7.2.0.tgz#4fa0b8856d6d79e3e4e962c44d565f233af23959"
   dependencies:
     boom "^4.0.0"
     cookie "^0.3.1"
@@ -2123,6 +2133,15 @@ jodid25519@^1.0.0:
   dependencies:
     jsbn "~0.1.0"
 
+joi@^10.0.0:
+  version "10.0.0"
+  resolved "https://registry.yarnpkg.com/joi/-/joi-10.0.0.tgz#ee951f228ea22f6382b1e651c4db6be771a982e2"
+  dependencies:
+    hoek "4.x.x"
+    isemail "2.x.x"
+    items "2.x.x"
+    topo "2.x.x"
+
 joi@^6.10.1:
   version "6.10.1"
   resolved "https://registry.yarnpkg.com/joi/-/joi-6.10.1.tgz#4d50c318079122000fe5f16af1ff8e1917b77e06"
@@ -2131,16 +2150,6 @@ joi@^6.10.1:
     isemail "1.x.x"
     moment "2.x.x"
     topo "1.x.x"
-
-joi@^9.2.0, joi@9.x.x:
-  version "9.2.0"
-  resolved "https://registry.yarnpkg.com/joi/-/joi-9.2.0.tgz#3385ac790192130cbe230e802ec02c9215bbfeda"
-  dependencies:
-    hoek "4.x.x"
-    isemail "2.x.x"
-    items "2.x.x"
-    moment "2.x.x"
-    topo "2.x.x"
 
 joi@7.x.x:
   version "7.3.0"
@@ -2172,6 +2181,16 @@ joi@8.x.x:
 joi@9.0.4:
   version "9.0.4"
   resolved "https://registry.yarnpkg.com/joi/-/joi-9.0.4.tgz#88d64890915abeb127cd757027116d50df3e68df"
+  dependencies:
+    hoek "4.x.x"
+    isemail "2.x.x"
+    items "2.x.x"
+    moment "2.x.x"
+    topo "2.x.x"
+
+joi@9.x.x:
+  version "9.2.0"
+  resolved "https://registry.yarnpkg.com/joi/-/joi-9.2.0.tgz#3385ac790192130cbe230e802ec02c9215bbfeda"
   dependencies:
     hoek "4.x.x"
     isemail "2.x.x"
@@ -2468,9 +2487,13 @@ lodash@^3.10.1:
   version "3.10.1"
   resolved "https://registry.yarnpkg.com/lodash/-/lodash-3.10.1.tgz#5bf45e8e49ba4189e17d482789dfd15bd140b7b6"
 
-lodash@^4.0.0, lodash@^4.0.1, lodash@^4.1.0, lodash@^4.14.0, lodash@^4.16.4, lodash@^4.3.0, lodash@^4.6.0:
+lodash@^4.0.0, lodash@^4.0.1, lodash@^4.1.0, lodash@^4.14.0, lodash@^4.3.0, lodash@^4.6.0:
   version "4.16.6"
   resolved "https://registry.yarnpkg.com/lodash/-/lodash-4.16.6.tgz#d22c9ac660288f3843e16ba7d2b5d06cca27d777"
+
+lodash@^4.17.2:
+  version "4.17.2"
+  resolved "https://registry.yarnpkg.com/lodash/-/lodash-4.17.2.tgz#34a3055babe04ce42467b607d700072c7ff6bf42"
 
 lodash@4.11.1:
   version "4.11.1"
@@ -2637,7 +2660,11 @@ module-not-found-error@^1.0.0:
   version "1.0.1"
   resolved "https://registry.yarnpkg.com/module-not-found-error/-/module-not-found-error-1.0.1.tgz#cf8b4ff4f29640674d6cdd02b0e3bc523c2bbdc0"
 
-moment@^2.15.2, moment@2.15.x, moment@2.x.x:
+moment@^2.16.0:
+  version "2.16.0"
+  resolved "https://registry.yarnpkg.com/moment/-/moment-2.16.0.tgz#f38f2c97c9889b0ee18fc6cc392e1e443ad2da8e"
+
+moment@2.15.x, moment@2.x.x:
   version "2.15.2"
   resolved "https://registry.yarnpkg.com/moment/-/moment-2.15.2.tgz#1bfdedf6a6e345f322fe956d5df5bd08a8ce84dc"
 

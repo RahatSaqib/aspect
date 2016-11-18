@@ -146,13 +146,8 @@ export class ResultDetail extends PureComponent {
     intl: PropTypes.object.isRequired,
     params: PropTypes.object.isRequired,
     result: PropTypes.object,
-    updateSingleResult: PropTypes.func
-  }
-
-  handleCheck = () => {
-    const { result } = this.props
-
-    this.props.updateResultWorkflowStatus(result.get('id'))
+    updateSingleResult: PropTypes.func,
+    updateResultWorkflowStatus: PropTypes.func
   }
 
   componentWillMount() {
@@ -318,6 +313,12 @@ export class ResultDetail extends PureComponent {
     ])
   }
 
+  handleCheck = () => {
+    const { result } = this.props
+
+    this.props.updateResultWorkflowStatus(result.get('id'))
+  }
+
   handleFetchResult = () => {
     this.props.fetchSingleResult(this.props.params.resultId)
   }
@@ -354,7 +355,7 @@ export class ResultDetail extends PureComponent {
       <Checkbox
         disabled={checked}
         label="Acknowledged"
-        style={{margin: 20}}
+        style={{ margin: 20 }}
         checked={checked}
         onCheck={this.handleCheck}
       />

@@ -154,8 +154,8 @@ function updateSingleResultWorkflowStatus(resultId, token) {
 
 const RESULT_WORKFLOW_STATUS_TOKEN_ACKNOWLEDGED = 'acknowledged'
 
-export function updateResultWorkflowStatus(resultId){
-  return dispatch => {
+export function updateResultWorkflowStatus(resultId) {
+  return (dispatch) => {
     const token = RESULT_WORKFLOW_STATUS_TOKEN_ACKNOWLEDGED
 
     dispatch(updateSingleResultWorkflowStatus(resultId, token))
@@ -165,7 +165,7 @@ export function updateResultWorkflowStatus(resultId){
       body: JSON.stringify({ token })
     })
       .then(json => dispatch(receiveUpdatedSingleResult(json.data)))
-      .catch(err => {
+      .catch((err) => {
         dispatch(addError(`Updating a result workflow status (${resultId}) failed`, err.message, err))
       })
   }
