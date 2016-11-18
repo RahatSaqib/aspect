@@ -1,42 +1,60 @@
 import _ from 'lodash'
 import Immutable from 'immutable'
 
-function rowSpans(item, nestedPropertyPath, numberOfChildren) {
-  const fields = _.difference(Object.keys(item), nestedPropertyPath)
-  return _.zipObject(fields, _.map(fields, () => numberOfChildren + 1))
+function rowSpans(item, excludeProperties, numberOfChildren) {
+  const includedProperties = _.difference(Object.keys(item), excludeProperties)
+  return _.zipObject(includedProperties, _.map(includedProperties, () => numberOfChildren + 1))
 }
 
-function transformItem(item, nestedPropertyPath) {
-  const nextChildrenProperty = _.head(nestedPropertyPath)
-  if (nextChildrenProperty) {
-    const nestedChildren = _.flattenDeep(_.map(item[nextChildrenProperty],
-      item => transformItem(item, _.without(nestedPropertyPath, nextChildrenProperty))))
-    if (_.isEmpty(nestedChildren)) {
+function flattenItem(item, childrenPropertyPath) {
+  const childrenPropertyName = _.head(childrenPropertyPath)
+  if (childrenPropertyName) {
+    const children = _.flattenDeep(_.map(item[childrenPropertyName],
+      item => flattenItem(item, _.without(childrenPropertyPath, childrenPropertyName))))
+    if (_.isEmpty(children)) {
       return {
-        ..._.omit(item, nextChildrenProperty),
-        rowSpans: rowSpans(item, nestedPropertyPath, 0)
+        ..._.omit(item, childrenPropertyName),
+        rowSpans: rowSpans(item, childrenPropertyPath, 0)
       }
     }
-    return [
-      {
-        ..._.omit(item, nextChildrenProperty),
-        ...nestedChildren[0],
-        rowSpans: {
-          ...rowSpans(item, nestedPropertyPath, nestedChildren.length - 1),
-          ...nestedChildren[0].rowSpans
-        }
-      },
-      ..._.drop(nestedChildren)
-    ]
+    const flatParentItemWithFirstChild = {
+      ..._.omit(item, childrenPropertyName),
+      ...children[0]
+    }
+    const parentRowSpans = {
+      ...rowSpans(item, childrenPropertyPath, children.length - 1),
+      ...children[0].rowSpans
+    }
+    const flatParentItem = {
+      ...flatParentItemWithFirstChild,
+      rowSpans: parentRowSpans,
+      visibleProperties: _.without(Object.keys(flatParentItemWithFirstChild), 'rowSpans', 'visibleProperties')
+    }
+    const childrenWithParentProperties = _.map(_.drop(children), (child) => {
+      const rowSpans = {
+        ...parentRowSpans,
+        ...child.rowSpans
+      }
+      const visibleProperties = _.without(Object.keys(child), 'rowSpans', 'visibleProperties')
+      return {
+        visibleProperties,
+        ...flatParentItem,
+        ...child,
+        rowSpans
+      }
+    })
+    return [flatParentItem, ...childrenWithParentProperties]
   }
   return {
     ...item,
-    rowSpans: rowSpans(item, nestedPropertyPath, 0)
+    rowSpans: rowSpans(item, childrenPropertyPath, 0),
+    visibleProperties: _.without(Object.keys(item), 'rowSpans', 'visibleProperties')
   }
 }
 
-export function receiveList(items, nestedPropertyPath, nestedList) {
-  const list = _.flattenDeep(_.map(nestedList, item => transformItem(item, nestedPropertyPath)))
+export function receiveList(items, childrenPropertyPath, listOfTreeObjects) {
+  const list = _.flattenDeep(
+    _.map(listOfTreeObjects, item => flattenItem(item, childrenPropertyPath)))
 
   const immutableList = Immutable.fromJS(list)
 
