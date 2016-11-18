@@ -344,6 +344,23 @@ export class ResultDetail extends PureComponent {
     )
   }
 
+  renderCheckbox() {
+    if (!this.hasResultWithAssay()) {
+      return
+    }
+    const { result } = this.props
+    const checked = result.get('resultWorkflowStatus') === 'Acknowledged'
+    return (
+      <Checkbox
+        disabled={checked}
+        label="Acknowledged"
+        style={{margin: 20}}
+        checked={checked}
+        onCheck={this.handleCheck}
+      />
+    )
+  }
+
   renderSchemaFieldsInCards() {
     if (!this.hasResultWithAssay()) {
       return false
@@ -390,6 +407,7 @@ export class ResultDetail extends PureComponent {
               <ReadOnlyFields
                 fields={this.getLeftColumnFields()}
               />
+              {this.renderCheckbox()}
             </div>
           </div>
           <div className="pure-u-lg-1-2 pure-u-md-1-2 pure-u-sm-1-2">
@@ -417,23 +435,6 @@ export class ResultDetail extends PureComponent {
     )
   }
 
-  renderCheckbox() {
-    if (!this.hasResultWithAssay()) {
-      return
-    }
-    const { result } = this.props
-    const checked = result.get('resultWorkflowStatus') === 'Acknowledged'
-    return (
-      <Checkbox
-        disabled={checked}
-        label="Acknowledged"
-        style={{margin: 20}}
-        checked={checked}
-        onCheck={this.handleCheck}
-      />
-    )
-  }
-
   render() {
     const { intl } = this.props
     const { formatMessage } = intl
@@ -442,7 +443,6 @@ export class ResultDetail extends PureComponent {
       <div className={cssClasses('Content')}>
         <Helmet title={formatMessage(messages.title)} titleTemplate="%s - Aspect" defaultTitle="Aspect" />
         {this.renderPaper()}
-        {this.renderCheckbox()}
       </div>
     )
   }
