@@ -98,9 +98,10 @@ export default class GroupedDataTable extends PureComponent {
   }
 
   fetchData = (col, newSort, page) => {
-    const table = this.props.table
-    this.props.handleFetch(col || table.sortCol,
-      newSort || table.sortDir, page == null ? table.page : page, table.pageSize)
+    const { table, handleFetch } = this.props
+    handleFetch(col || table.sortCol, newSort || table.sortDir,
+      page == null ? table.page : page, table.pageSize,
+      table.groupBy)
   }
 
   handlePage = (page) => {

@@ -4,6 +4,11 @@ import Immutable from 'immutable'
 import { aspectFetch } from '../shared/utils/fetch'
 import { addError } from '../error/ErrorRedux'
 import { receiveList, Items } from '../shared/metaReducers/groupedItems'
+import {
+  requestTable,
+  receiveTableItems,
+  Table
+} from '../shared/metaReducers/groupedTable'
 
 export const types = {
   REQUEST_INVENTORY_ITEMS: 'REQUEST_INVENTORY_ITEMS',
@@ -13,7 +18,7 @@ export const types = {
  * ---------------- Action Creators -----------------
  */
 function requestInventoryItems(
-  sortCol, sortDir, page, size, filters, groupBySite, groupByConsumable) {
+  sortCol, sortDir, page, size, filters, groupBy) {
   return {
     type: types.REQUEST_INVENTORY_ITEMS,
     sortCol,
@@ -21,8 +26,7 @@ function requestInventoryItems(
     page,
     size,
     filters,
-    groupBySite,
-    groupByConsumable
+    groupBy
   }
 }
 
@@ -40,17 +44,16 @@ const defaultSortCol = 'siteName'
 const defaultSortDir = 'asc'
 const defaultPage = 0
 const defaultPageSize = 10
-const defaultGroupBySite = false
-const defaultGroupByConsumable = false
+const defaultGroupBy = new Immutable.List()
 
 export function fetchInventoryItems(
   filters = defaultFilters, sortCol = defaultSortCol, sortDir = defaultSortDir,
-  page = defaultPage, pageSize = defaultPageSize, groupBySite = defaultGroupBySite,
-  groupByConsumable = defaultGroupByConsumable) {
-  const path = groupBySite ? (groupByConsumable ? '/inventory/group-by-site-and-consumable' : '/inventory/group-by-site') : '/inventory'
+  page = defaultPage, pageSize = defaultPageSize, groupBy = defaultGroupBy) {
+  const path = groupBy.includes('siteId') ? (groupBy.includes('consumableId') ?
+    '/inventory/group-by-site-and-consumable' : '/inventory/group-by-site') : '/inventory'
   return (dispatch) => {
     dispatch(requestInventoryItems(
-      sortCol, sortDir, page, pageSize, filters, groupBySite, groupByConsumable))
+      sortCol, sortDir, page, pageSize, filters, groupBy))
     return aspectFetch(`${path}?${stringify({
       sortCol,
       sortDir,
@@ -60,10 +63,10 @@ export function fetchInventoryItems(
     })}`)
       .then((json) => {
         const nestedPropertyPath = []
-        if (groupByConsumable) {
+        if (groupBy.includes('siteId')) {
           nestedPropertyPath.push('consumables')
         }
-        if (groupBySite) {
+        if (groupBy.includes('consumableId')) {
           nestedPropertyPath.push('inventoryItems')
         }
         return dispatch(receiveInventoryItems(json, nestedPropertyPath))
@@ -77,21 +80,15 @@ export function fetchInventoryItems(
 /*
  * ---------------- Reducers -----------------
  */
-export const InventoryTable = Immutable.Record({
-  loading: false,
-  sortCol: defaultSortCol,
-  sortDir: defaultSortDir,
-  page: 0,
-  pageSize: defaultPageSize,
-  total: 0,
-  filters: defaultFilters,
-  groupBySite: defaultGroupBySite,
-  groupByConsumable: defaultGroupByConsumable
-})
-
 const Inventory = Immutable.Record({
   items: new Items(),
-  table: new InventoryTable()
+  table: new Table({
+    sortCol: defaultSortCol,
+    sortDir: defaultSortDir,
+    pageSize: defaultPageSize,
+    filters: defaultFilters,
+    groupBy: defaultGroupBy
+  })
 })
 
 const initialState = new Inventory()
@@ -99,23 +96,12 @@ const initialState = new Inventory()
 export default function inventoryItemsReducer(state = initialState, action) {
   switch (action.type) {
     case types.REQUEST_INVENTORY_ITEMS:
-      return state.set('table', state.table.merge({
-        loading: true,
-        sortCol: action.sortCol,
-        sortDir: action.sortDir,
-        page: action.page,
-        pageSize: action.size,
-        filters: action.filters,
-        groupBySite: action.groupBySite,
-        groupByConsumable: action.groupByConsumable
-      }))
+      return state
+        .set('table', requestTable(state.table, action))
     case types.RECEIVE_INVENTORY_ITEMS:
       return state.withMutations((mutState) => {
         mutState.set('items', receiveList(mutState.items, action.nestedPropertyPath, action.items))
-        mutState.set('table', mutState.table.merge({
-          loading: false,
-          total: action.total
-        }))
+        mutState.set('table', receiveTableItems(mutState.table, action.total, action.extraColumns))
       })
     default:
       return state
