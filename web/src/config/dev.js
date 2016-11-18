@@ -5,7 +5,7 @@ const config = {
   aspectApi: 'http://localhost:8080/api',
   sentry: false, // {dsn: 'https://<key>@sentry.io/<app>'}
   piwik: false, // {url: '//analytics.aspect.id', siteId: 1}
-  userInactiveMinutes: 1, // time in minutes after user is considered inactive
+  userInactiveMinutes: 15, // time in minutes after user is considered inactive
   supportTelephone: '+1 555-123-4567',
   supportEmail: 'support@gxalert.com'
 }
