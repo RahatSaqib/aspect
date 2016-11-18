@@ -1,8 +1,18 @@
 import { assert } from 'chai'
-
-import { getClassNames, Hidden } from './Unit'
+import proxyquire from 'proxyquire'
 
 describe('Unit module', () => {
+  let getClassNames
+
+  before(() => {
+    ({ getClassNames } = proxyquire('./Unit', {
+      './pure-grids-responsive-min.css': {
+        __esModule: true,
+        default: new Proxy({}, { get(t, name) { return name } })
+      }
+    }))
+  })
+
   describe('getClassNames', () => {
     it('should get correct class names', () => {
       const className = getClassNames({

@@ -1,10 +1,21 @@
 import { assert } from 'chai'
 import React from 'react'
 import { shallow } from 'enzyme'
-
-import { getClassNames, Hidden } from './Hidden'
+import proxyquire from 'proxyquire'
 
 describe('Hidden module', () => {
+  let getClassNames
+  let Hidden
+
+  before(() => {
+    ({ getClassNames, Hidden } = proxyquire('./Hidden', {
+      './pure-grids-responsive-min.css': {
+        __esModule: true,
+        default: new Proxy({}, { get(t, name) { return name } })
+      }
+    }))
+  })
+
   describe('getClassNames function', () => {
     it('should get correct class names', () => {
       const className = getClassNames({
