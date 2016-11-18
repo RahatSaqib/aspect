@@ -64,20 +64,8 @@ const SITES_SELECT_LIST_FIELDS = [
   'co.name as countryName', 'st.name as stateName', 'l.name as lgaName'
 ]
 
-const SITES_SORT_FIELDS = {
-  siteName: 's.name',
-  countryName: 'co.name',
-  stateName: 'st.name',
-  lgaName: 'l.name'
-}
-
 function* getSitesAndInventoryItems(request) {
   const { auth } = request
-
-  if (request.query.sortCol &&
-    !_.keys(SITES_SORT_FIELDS).includes(request.query.sortCol)) {
-    return Boom.badRequest()
-  }
 
   const dataConstraints = yield getConstraints(auth.credentials)
 
@@ -93,7 +81,7 @@ function* getSitesAndInventoryItems(request) {
   const getSiteCount = sitesQuery.clone().countDistinct('s.id as count').first()
 
   const getSites = sitesQuery.clone()
-    .modify(sortPageParams, request.query, SITES_SORT_FIELDS.siteName)
+    .modify(sortPageParams, request.query, INVENTORY_ITEMS_SORT_FIELDS.siteName)
     .distinct(SITES_SELECT_LIST_FIELDS)
     .select()
 
@@ -121,6 +109,11 @@ function* getSitesAndInventoryItems(request) {
 }
 
 function* listInventoryItemsGroupedBySite(request) {
+  if (request.query.sortCol &&
+    !_.keys(INVENTORY_ITEMS_SORT_FIELDS).includes(request.query.sortCol)) {
+    return Boom.badRequest()
+  }
+
   const { sitesData, inventoryItems, total } = yield* getSitesAndInventoryItems(request)
 
   const sitesWithInventoryItems = _.map(sitesData, site => Object.assign({}, site, {
@@ -133,6 +126,11 @@ function* listInventoryItemsGroupedBySite(request) {
 }
 
 function* listInventoryItemsGroupedBySiteAndConsumable(request) {
+  if (request.query.sortCol &&
+    !_.keys(INVENTORY_ITEMS_SORT_FIELDS).includes(request.query.sortCol)) {
+    return Boom.badRequest()
+  }
+
   const { sitesData, inventoryItems, total } = yield* getSitesAndInventoryItems(request)
 
   const sitesWithConsumablesAndInventoryItems = _.map(sitesData, site => Object.assign({}, site, {
