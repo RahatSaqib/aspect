@@ -134,7 +134,7 @@ export class Form extends PureComponent {
         <Field name="shortName" floatingLabelText={labels.shortName} component={renderTextField} />
         <Field name="notes" multiLine floatingLabelText={labels.notes} component={renderTextField} />
 
-        <table className={cssClasses('pure-table', 'SelectSiteRow')}>
+        <table className={cssClasses('SelectSiteRow')}>
           <tbody>
             <tr>
               <td>
