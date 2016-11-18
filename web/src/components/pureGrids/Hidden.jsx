@@ -1,7 +1,10 @@
 // Imports from packages
-import _ from 'lodash'
-import React, { PureComponent, PropTypes } from 'react'
+import { PropTypes } from 'react'
 
+import {
+  makeGetClassNames,
+  makeDelegateComponent
+} from './makeDelegateComponent'
 import styles from './pure-grids-responsive-min.css'
 
 const pureGridPropTypes = {
@@ -20,43 +23,8 @@ const keyToClassNameMappings = {
   xl: styles['pure-hidden-xl']
 }
 
-export function getClassNames(props) {
-  const initial = _.isString(props.className) ? [props.className] : []
+export const getClassNames = makeGetClassNames(pureGridPropTypes, keyToClassNameMappings)
 
-  return _.reduce(pureGridPropTypes, (acc, unused, key) => {
-    const value = props[key]
-    if (_.isBoolean(value) && value) {
-      acc.push(keyToClassNameMappings[key])
-    }
-    return acc
-  }, initial)
-}
-
-export class Hidden extends PureComponent {
-
-  static defaultProps = {
-    component: 'div'
-  }
-
-  static propTypes = {
-    className: PropTypes.string,
-    component: PropTypes.oneOfType([
-      PropTypes.func,
-      PropTypes.string
-    ]).isRequired,
-    ...pureGridPropTypes
-  }
-
-  render() {
-    const restProps = _.omit(this.props, excludedPropList)
-
-    return React.createElement(this.props.component, {
-      ...restProps,
-      className: getClassNames(this.props).join(' ')
-    }, this.props.children)
-  }
-}
-
-const excludedPropList = _.keys(Hidden.propTypes)
+export const Hidden = makeDelegateComponent('Hidden', pureGridPropTypes, keyToClassNameMappings)
 
 export default Hidden
