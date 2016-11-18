@@ -18,7 +18,7 @@ import LoginDetailsForm from './LoginDetailsForm'
 import UserPreferencesForm from './UserPreferencesForm'
 
 // Our own imports
-import { Hidden } from '../../components/pureGrids'
+import { Hidden, Visible } from '../../components/pureGrids'
 import isEditable from '../../shared/selectors/person'
 import {
   fetchSinglePerson,
@@ -164,9 +164,9 @@ export class PersonDetail extends PureComponent {
             >
               {(!person) && <LinearProgress />}
               {loading && <LinearProgress />}
-              <h2 className={classNames('pure-visible-xs', styles.Form__Header)}>
+              <Visible xs component="h2" className={styles.Form__Header}>
                 {formatMessage(messages.contactDetails)}
-              </h2>
+              </Visible>
               <ContactDetailsForm
                 loading={loading} initialValues={contactDetails} partners={this.state.partners}
                 showNotesField userIsAdmin onSubmit={this.saveContactDetails}
@@ -178,9 +178,9 @@ export class PersonDetail extends PureComponent {
               label={<Hidden xs component="span">{formatMessage(messages.systemAccessControl)}</Hidden>}
             >
               {loading && <LinearProgress />}
-              <h2 className={classNames('pure-visible-xs', styles.Form__Header)}>
+              <Visible xs component="h2" className={styles.Form__Header}>
                 {formatMessage(messages.systemAccessControl)}
-              </h2>
+              </Visible>
               <LoginDetailsForm
                 loading={loading} initialValues={loginDetails} onSubmit={this.saveLoginDetails}
                 onSubmitSuccess={saveLoginDetailsSucceeded}
@@ -191,9 +191,9 @@ export class PersonDetail extends PureComponent {
               label={<Hidden xs component="span">{formatMessage(messages.languageAndTimezone)}</Hidden>}
             >
               {loading && <LinearProgress />}
-              <h2 className={classNames('pure-visible-xs', styles.Form__Header)}>
+              <Visible xs component="h2" className={styles.Form__Header}>
                 {formatMessage(messages.languageAndTimezone)}
-              </h2>
+              </Visible>
               <UserPreferencesForm
                 loading={loading} initialValues={userPreferences}
                 onSubmit={this.saveUserPreferences}
