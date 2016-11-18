@@ -27,21 +27,21 @@ import styles from './SideNav.css'
 
 const cssClasses = classnames.bind(styles)
 
-const DevicesListItem = requirePermissions({
+const DevicesLink = requirePermissions({
   permissions: ['device:admin', 'device:view']
-})(ListItem)
+})(Link)
 
-const ResultsListItem = requirePermissions({
+const ResultsLink = requirePermissions({
   permissions: ['result:admin', 'result:view']
-})(ListItem)
+})(Link)
 
-const ContactsListItem = requirePermissions({
+const ContactsLink = requirePermissions({
   permissions: ['person:admin', 'person:view']
-})(ListItem)
+})(Link)
 
-const SitesListItem = requirePermissions({
+const SitesLink = requirePermissions({
   permissions: ['site:admin', 'site:view']
-})(ListItem)
+})(Link)
 
 class SideNav extends PureComponent {
 
@@ -91,29 +91,29 @@ class SideNav extends PureComponent {
           />
           <Divider />
           <Subheader>Sections</Subheader>
-          <DevicesListItem
-            containerElement={<Link to="/device" />}
+          <ListItem
+            containerElement={<DevicesLink to="/device" />}
             value={'/device'}
             leftIcon={<Scanner />}
             className={styles.Drawer__ListItem}
             primaryText="Devices"
           />
-          <ResultsListItem
-            containerElement={<Link to="/result" />}
+          <ListItem
+            containerElement={<ResultsLink to="/result" />}
             value={'/result'}
             leftIcon={<Assignment />}
             className={styles.Drawer__ListItem}
             primaryText="Results"
           />
-          <ContactsListItem
-            containerElement={<Link to="/person" />}
+          <ListItem
+            containerElement={<ContactsLink to="/person" />}
             value={'/person'}
             leftIcon={<People />}
             className={styles.Drawer__ListItem}
             primaryText="Contacts"
           />
-          <SitesListItem
-            containerElement={<Link to="/site" />}
+          <ListItem
+            containerElement={<SitesLink to="/site" />}
             value={'/site'}
             leftIcon={<Location />}
             className={styles.Drawer__ListItem}
