@@ -15,7 +15,7 @@ const SELECT_LIST_RESULT_CATEGORY_FIELDS = [
 ]
 
 function* listAssays(request) {
-  const {query, auth} = request
+  const { query, auth } = request
 
   // get all assays that have results that user has access to
   const dataConstraints = yield getConstraints(auth.credentials)
@@ -29,7 +29,7 @@ function* listAssays(request) {
   const assayQuery = knex('Assay as a')
     .innerJoin('AssayType as at', 'a.assayTypeId', 'at.id')
     .innerJoin('DeviceType as dt', 'a.deviceTypeId', 'dt.id')
-    .modify(filterParams, query, { 'name': 'a.name' })
+    .modify(filterParams, query, { name: 'a.name' })
 
   // get total count for paging
   const getCount = assayQuery.clone()
@@ -41,7 +41,7 @@ function* listAssays(request) {
     .select(SELECT_LIST_FIELDS)
 
   // return result when both queries are finished
-  const [{count: total}, rawAssays] = yield Promise.all([getCount, getItems])
+  const [{ count: total }, rawAssays] = yield Promise.all([getCount, getItems])
 
   // get resultCategories for all assays
   const rawResultCategories = yield knex('ResultCategory as rc')
@@ -52,15 +52,13 @@ function* listAssays(request) {
   const resultCategoriesByAssayId = _.groupBy(rawResultCategories, 'assayId')
 
   // map rawAssays with extra values
-  const data = _.map(rawAssays, (d) => {
-    return _.assign({}, d, {
-      hasResults: usedAssayIds.includes(d.id),
-      resultDataSchema: JSON.parse(d.resultDataSchema),
-      resultCategories: resultCategoriesByAssayId[d.id]
-    })
-  })
+  const assays = _.map(rawAssays, d => _.assign({}, d, {
+    hasResults: usedAssayIds.includes(d.id),
+    resultDataSchema: JSON.parse(d.resultDataSchema),
+    resultCategories: resultCategoriesByAssayId[d.id]
+  }))
 
-  const result = { ok: true, total, length: data.length, data }
+  const result = { ok: true, total, length: assays.length, data: assays }
 
   return result
 }

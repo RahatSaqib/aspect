@@ -15,7 +15,12 @@ import AcknowledgementDisplay from '../shared/AcknowledgementDisplay'
 export class LoggedInShell extends PureComponent {
 
   static propTypes = {
-    children: PropTypes.object.isRequired
+    children: PropTypes.object.isRequired,
+    location: PropTypes.object.isRequired,
+    drawerOpen: PropTypes.bool.isRequired,
+    closeDrawer: PropTypes.func.isRequired,
+    toggleDrawer: PropTypes.func.isRequired,
+    logoutStart: PropTypes.func.isRequired
   }
 
   state = {
@@ -23,7 +28,7 @@ export class LoggedInShell extends PureComponent {
     desktop: true
   }
 
-  handleSetPageTitle = pageTitle => {
+  handleSetPageTitle = (pageTitle) => {
     this.setState({ pageTitle })
   }
 
@@ -38,15 +43,19 @@ export class LoggedInShell extends PureComponent {
         <ErrorDisplayContainer />
         <AcknowledgementDisplay />
         <IdleDialogContainer />
-        <SideNav open={this.props.drawerOpen}
-                 desktop={ this.state.desktop }
-                 pathname={ pathname }
-                 handleClose={this.props.closeDrawer}
-                 handleRequestChange={(drawerOpen) => this.setState({drawerOpen})} />
-        <Nav pageTitle={pageTitle} pagePath={pathname}
-             handleHamburger={this.props.toggleDrawer}
-             handleSignOut={this.props.logoutStart} />
-        <div style={ this.props.drawerOpen && this.state.desktop ? { paddingLeft: '190px' } : {} } >
+        <SideNav
+          open={this.props.drawerOpen}
+          desktop={this.state.desktop}
+          pathname={pathname}
+          handleClose={this.props.closeDrawer}
+          handleRequestChange={drawerOpen => this.setState({ drawerOpen })}
+        />
+        <Nav
+          pageTitle={pageTitle} pagePath={pathname}
+          handleHamburger={this.props.toggleDrawer}
+          handleSignOut={this.props.logoutStart}
+        />
+        <div style={this.props.drawerOpen && this.state.desktop ? { paddingLeft: '190px' } : {}} >
           {React.cloneElement(this.props.children, {
             setPageTitle: this.handleSetPageTitle
           })}

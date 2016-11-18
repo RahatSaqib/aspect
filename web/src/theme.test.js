@@ -1,5 +1,5 @@
-import theme from './theme'
 import { assert } from 'chai'
+import theme from './theme'
 
 describe('Theme', () => {
   it('It is an object that contains at least the primary and accent colors', () => {

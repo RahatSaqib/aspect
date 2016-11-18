@@ -17,7 +17,7 @@ export function getBrowserNameAndVersion() {
     return 'Unknown'
   }
 
-  return browser.name + ' ' + browser.version
+  return `${browser.name} ${browser.version}`
 }
 
 // fetch with auth and other headers we need
@@ -38,15 +38,15 @@ function addAuthHeaderMiddleware(fetch, input, options = {}) {
 }
 
 // adds authorization and content type headers to a request
-export function getHeaders(json){
+export function getHeaders(json) {
   const headers = new Headers()
 
   const token = getJWT()
-  if (token){
-    headers.append('Authorization', 'Bearer ' + token)
+  if (token) {
+    headers.append('Authorization', `Bearer ${token}`)
   }
 
-  if (json){
+  if (json) {
     headers.append('Content-Type', 'application/json')
   }
 
@@ -58,20 +58,20 @@ export function handleFetchResponse(resp) {
   const json = resp.json()
 
   if (resp.ok) {
-    return json.then(prevJson => {
+    return json.then((prevJson) => {
       const nextJson = changeAllIdsToString(prevJson)
       return nextJson
     })
-  } else {
-    return json.then(Promise.reject.bind(Promise))
   }
+  return json.then(Promise.reject.bind(Promise))
 }
 
 // returns name and version of the user's browser
 function getBrowserInfo() {
   try {
-    let ua = navigator.userAgent,
-      tem, M = ua.match(/(opera|chrome|safari|firefox|msie|trident(?=\/))\/?\s*(\d+)/i) || []
+    const ua = navigator.userAgent
+    let tem
+    let M = ua.match(/(opera|chrome|safari|firefox|msie|trident(?=\/))\/?\s*(\d+)/i) || []
 
     if (/trident/i.test(M[1])) {
       tem = /\brv[ :]+(\d+)/g.exec(ua) || []
@@ -87,7 +87,9 @@ function getBrowserInfo() {
 
     M = M[2] ? [M[1], M[2]] : [navigator.appName, navigator.appVersion, '-?']
 
-    if ((tem = ua.match(/version\/(\d+)/i)) != null) { M.splice(1, 1, tem[1]) }
+    tem = ua.match(/version\/(\d+)/i)
+
+    if (tem != null) { M.splice(1, 1, tem[1]) }
     return {
       name: M[0],
       version: M[1]
@@ -109,10 +111,9 @@ function changeAllIdsToString(data) {
   if (_.isArray(data)) {
     return data.map(changeAllIdsToString)
   } else if (_.isObject(data)) {
-    return _.mapValues(data, (value, key) => isIdLike(key) ?
+    return _.mapValues(data, (value, key) => (isIdLike(key) ?
       (value === null || value === undefined ? value : String(value)) :
-      changeAllIdsToString(value))
-  } else {
-    return data
+      changeAllIdsToString(value)))
   }
+  return data
 }

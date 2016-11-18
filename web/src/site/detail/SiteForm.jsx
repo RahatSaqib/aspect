@@ -17,7 +17,7 @@ export default class SiteForm extends PureComponent {
     site: PropTypes.object
   }
 
-  handleSubmit = data => {
+  handleSubmit = (data) => {
     const { site } = this.props
 
     this.props.onSubmit(site.get('id'), {
@@ -137,8 +137,8 @@ export default class SiteForm extends PureComponent {
         this.renderEditableFieldsFormContainer() :
         this.renderReadOnlyFields()
       )
-    } else {
-      return false
     }
+
+    return false
   }
 }

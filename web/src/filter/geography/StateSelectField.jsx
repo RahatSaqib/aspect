@@ -23,21 +23,16 @@ export function getSelectedCountryStates(props) {
   const selectedCountry = getSelectedCountry(props)
   if (selectedCountry && selectedCountry.children.items) {
     return selectedCountry.children.items
-  } else {
-    return Immutable.List()
   }
+  return Immutable.List()
 }
 
 class StateSelectField extends PureComponent {
   static propTypes = {
-    countries: PropTypes.object.isRequired,
+    fetchStatesForLocationSelector: PropTypes.func.isRequired,
     onChangeState: PropTypes.func.isRequired,
     countryId: PropTypes.string,
     stateId: PropTypes.string
-  }
-
-  handleSelectFieldChange = (event, index, value) => {
-    this.props.onChangeState(value)
   }
 
   componentDidMount() {
@@ -56,8 +51,12 @@ class StateSelectField extends PureComponent {
     }
   }
 
+  handleSelectFieldChange = (event, index, value) => {
+    this.props.onChangeState(value)
+  }
+
   render() {
-    const {stateId} = this.props
+    const { stateId } = this.props
     const restProps = _.omit(this.props, [
       'countries', 'onChangeState', 'countryId', 'stateId', 'fetchStatesForLocationSelector'
     ])

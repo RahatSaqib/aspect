@@ -9,7 +9,7 @@ module.exports = [{
   config: {
     description: 'Notification List',
     notes: 'Pageable and sortable list of notifications',
-    auth: {scope: ['notification:view', 'notification:edit']},
+    auth: { scope: ['notification:view', 'notification:edit'] },
     validate: {
       query: Object.assign({
         name: Joi.string().allow('').description('Filter for notification name')

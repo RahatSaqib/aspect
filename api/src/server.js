@@ -4,8 +4,8 @@
 const config = require('./config')
 const { version } = require('./../package.json')
 const { addClientRoutes, addDeviceRoutes } = require('./routes')
-
 const Hapi = require('hapi')
+
 const server = new Hapi.Server()
 const port = process.env.PORT || 8080
 const clientApiPath = '/api'
@@ -18,7 +18,7 @@ server.connection({
   }
 })
 
-let plugins = [
+const plugins = [
   // static file handling (hapi-swagger dependency)
   require('inert'),
 
@@ -39,7 +39,7 @@ let plugins = [
     }
   },
 
-	// log responses to console using good
+  // log responses to console using good
   {
     register: require('good'),
     options: {
@@ -47,13 +47,14 @@ let plugins = [
     }
   }
 ]
+
 addRavenPlugin(plugins)
 
 // load and return the good logging configuration
-function loadGoodReporter(){
-  let {logstash} = config
+function loadGoodReporter() {
+  const { logstash } = config
 
-  if(logstash){
+  if (logstash) {
     // Forward to logstash if configured
     return {
       logstash: [
@@ -66,48 +67,48 @@ function loadGoodReporter(){
         // send to logstash
         {
           module: 'good-logstash',
-          args: [ logstash.endpoint ]
+          args: [logstash.endpoint]
         }
       ]
     }
-  } else {
-    // Logs to console by default.
-    return {
-      console: [
-        {
-          // Only show response log, and request.log events
-          module: 'good-squeeze',
-          name: 'Squeeze',
-          args: [{ log: '*', response: '*', request: '*' }]
-        },
-        // format as string for console
-        { module: 'good-console' },
-        // write to std out
-        'stdout'
-      ]
-    }
+  }
+
+  // Logs to console by default.
+  return {
+    console: [
+      {
+        // Only show response log, and request.log events
+        module: 'good-squeeze',
+        name: 'Squeeze',
+        args: [{ log: '*', response: '*', request: '*' }]
+      },
+      // format as string for console
+      { module: 'good-console' },
+      // write to std out
+      'stdout'
+    ]
   }
 }
 
 // Loads Raven (Sentry) plugin if configured
-function addRavenPlugin(plugins){
-  let {raven} = config
-  if(raven){
+function addRavenPlugin(plugins) {
+  const { raven } = config
+  if (raven) {
     plugins.push({
       register: require('hapi-raven'),
-      options: {dsn: raven.dsn}
+      options: { dsn: raven.dsn }
     })
   }
 }
 
-server.register(plugins, err => { if(err) throw err })
+server.register(plugins, (err) => { if (err) throw err })
 
 // ================================================
 // Authentication strategy and Authorization Scopes
 // ================================================
 server.auth.strategy('jwt', 'jwt', {
   key: config.secret,
-  validateFunc: function(decoded, request, callback){
+  validateFunc(decoded, request, callback) {
     // TODO What do we want to do to validate data within decoded JWT token?
     const valid = true
 
@@ -124,9 +125,9 @@ server.auth.strategy('jwt', 'jwt', {
     const scope = [isDeviceApi ? 'deviceApi' : 'clientApi']
       .concat(decoded.modules || [], decoded.permissions || [])
 
-    callback(null, valid, Object.assign({scope}, decoded))
+    callback(null, valid, Object.assign({ scope }, decoded))
   }
-  //TODO JWT verfication algorithm verifyOptions: { algorithms: [ 'HS256' ] }
+  // TODO JWT verfication algorithm verifyOptions: { algorithms: [ 'HS256' ] }
 })
 
 // all routes use JWT authentication by default
@@ -147,7 +148,7 @@ server.route({
 })
 
 // use plugin to mount all API routes at /api
-function clientApiPlugin(server, options, next){
+function clientApiPlugin(server, options, next) {
   addClientRoutes(server)
   next()
 }
@@ -155,14 +156,14 @@ clientApiPlugin.attributes = {
   name: 'clientApi',
   version
 }
-server.register({register: clientApiPlugin}, {
+server.register({ register: clientApiPlugin }, {
   routes: {
     prefix: clientApiPath
   }
-}, err => { if(err) throw err })
+}, (err) => { if (err) throw err })
 
 // All device API routes mounted under /device
-function deviceApiPlugin(server, options, next){
+function deviceApiPlugin(server, options, next) {
   addDeviceRoutes(server)
   next()
 }
@@ -170,18 +171,18 @@ deviceApiPlugin.attributes = {
   name: 'deviceApi',
   version
 }
-server.register({register: deviceApiPlugin}, {
+server.register({ register: deviceApiPlugin }, {
   routes: {
     prefix: deviceApiPath
   }
-}, err => { if(err) throw err })
+}, (err) => { if (err) throw err })
 
 // =======================
 // start the server ======
 // =======================
-server.start(err => {
-  if(err){
+server.start((err) => {
+  if (err) {
     throw err
   }
-  console.log('Magic happens at http://localhost:' + port)
+  console.log(`Magic happens at http://localhost:${port}`)
 })

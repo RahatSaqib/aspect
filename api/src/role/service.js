@@ -1,7 +1,7 @@
 const _ = require('lodash')
 const { query, knex } = require('../db')
 
-function* getRolesForSelectList(){
+function* getRolesForSelectList() {
   const partnersOrganisationalUnitsAndRoles = yield query('Get partners, organisational units and roles for select lists')
     .from('Role as r')
     .rightOuterJoin('OrgUnit as ou', 'r.orgUnitId', 'ou.id')
@@ -22,63 +22,47 @@ function* getRolesForSelectList(){
       roles: _.orderBy(_.map(
         _.uniqBy(
           _.filter(partnersOrganisationalUnitsAndRoles,
-            {partnerId: null, orgUnitId: null}),
+            { partnerId: null, orgUnitId: null }),
           'roleId'), 'name'),
-        function(roleRecord) {
-          return {
-            id: roleRecord.roleId,
-            name: roleRecord.roleName
-          }
-        })
-    }]}].concat(_.map(
+        roleRecord => ({
+          id: roleRecord.roleId,
+          name: roleRecord.roleName
+        }))
+    }] }].concat(_.map(
       _.uniqBy(
         _.filter(partnersOrganisationalUnitsAndRoles,
-          function(partnerRecord) {
-            return partnerRecord.partnerId !== null
-          }), 'partnerId'),
-      function(partnerRecord) {
-        return {
-          id: partnerRecord.partnerId,
-          name: partnerRecord.partnerName,
-          orgUnits: [{
-            id: undefined,
-            name: undefined,
-            roles: _.orderBy(_.map(
+          partnerRecord => partnerRecord.partnerId !== null), 'partnerId'),
+      partnerRecord => ({
+        id: partnerRecord.partnerId,
+        name: partnerRecord.partnerName,
+        orgUnits: [{
+          id: undefined,
+          name: undefined,
+          roles: _.orderBy(_.map(
               _.filter(partnersOrganisationalUnitsAndRoles,
-                function (roleRecord) {
-                  return roleRecord.partnerId === partnerRecord.partnerId &&
+                roleRecord => roleRecord.partnerId === partnerRecord.partnerId &&
                     roleRecord.roleId !== null &&
-                    roleRecord.orgUnitId === null
-                }), function(roleRecord) {
-              return {
-                id: roleRecord.roleId,
-                name: roleRecord.roleName
-              }
-            }), 'name')
-          }].concat(_.orderBy(_.map(
-            _.filter(partnersOrganisationalUnitsAndRoles,
-              function (orgUnitRecord) {
-                return orgUnitRecord.orgUnitId !== null &&
-                  orgUnitRecord.roleId !== null &&
-                  orgUnitRecord.partnerId === partnerRecord.partnerId
-              }),
-            function(orgUnitRecord) {
-              return {
-                id: orgUnitRecord.orgUnitId,
-                name: orgUnitRecord.orgUnitName,
-                roles: _.orderBy(_.map(
-                  _.filter(partnersOrganisationalUnitsAndRoles,
-                    {orgUnitId: orgUnitRecord.orgUnitId}),
-                  function(roleRecord) {
-                    return {
+                    roleRecord.orgUnitId === null), roleRecord => ({
                       id: roleRecord.roleId,
                       name: roleRecord.roleName
-                    }
-                  }), 'name')
-              }
-            }), 'name'))
-        }
-      }))
+                    })), 'name')
+        }].concat(_.orderBy(_.map(
+            _.filter(partnersOrganisationalUnitsAndRoles,
+              orgUnitRecord => orgUnitRecord.orgUnitId !== null &&
+                  orgUnitRecord.roleId !== null &&
+                  orgUnitRecord.partnerId === partnerRecord.partnerId),
+            orgUnitRecord => ({
+              id: orgUnitRecord.orgUnitId,
+              name: orgUnitRecord.orgUnitName,
+              roles: _.orderBy(_.map(
+                  _.filter(partnersOrganisationalUnitsAndRoles,
+                    { orgUnitId: orgUnitRecord.orgUnitId }),
+                  roleRecord => ({
+                    id: roleRecord.roleId,
+                    name: roleRecord.roleName
+                  })), 'name')
+            })), 'name'))
+      })))
 
   return {
     ok: true,

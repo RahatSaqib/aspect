@@ -10,7 +10,7 @@ module.exports = [
     config: {
       description: 'Result List',
       notes: 'Pageable and sortable list of results',
-      auth: {scope: ['result:view', 'result:edit']},
+      auth: { scope: ['result:view', 'result:edit'] },
       validate: {
         query: Object.assign({
           deviceId: Joi.number().allow('').description('Filter for device ID'),
@@ -36,7 +36,7 @@ module.exports = [
     config: {
       description: 'Result Detail',
       notes: 'Details of a result',
-      auth: {scope: ['result:view', 'result:edit']},
+      auth: { scope: ['result:view', 'result:edit'] },
       validate: {
         params: {
           resultId: Joi.string().description('Result ID').required()
@@ -51,7 +51,7 @@ module.exports = [
     config: {
       description: 'Result Type List',
       notes: 'Pageable and sortable list of results types',
-      auth: {scope: ['result:view', 'result:edit']},
+      auth: { scope: ['result:view', 'result:edit'] },
       validate: {
         query: Object.assign({
           name: Joi.string().allow('').description('Filter for result type name')
@@ -60,13 +60,13 @@ module.exports = [
     }
   },
   {
-    method : 'PUT',
+    method: 'PUT',
     path: '/result/workflow-status/{resultId}',
     handler: asyncHandler(updateWorkflowStatus),
     config: {
       description: 'Update Result Status',
       notes: 'Update the status of a result',
-      auth: {scope : ['result:edit']},
+      auth: { scope: ['result:edit'] },
       validate: {
         params: {
           resultId: Joi.number().integer().positive().description('Result Id')

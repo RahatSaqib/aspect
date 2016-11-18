@@ -1,5 +1,5 @@
-/*eslint-env node, mocha */
-/*eslint no-console: 0*/
+/* eslint-env node, mocha */
+/* eslint no-console: 0*/
 
 import { expect } from 'chai'
 import config from 'config'

@@ -4,9 +4,9 @@ import { shallow } from 'enzyme'
 import sinon from 'sinon'
 import proxyquire from 'proxyquire'
 import Immutable from 'immutable'
+import RaisedButton from 'material-ui/RaisedButton'
 import TextInput from '../../components/shared/TextInput'
 import PhoneInput from '../../components/shared/PhoneInput'
-import RaisedButton from 'material-ui/RaisedButton'
 import LocationSelector from '../../components/shared/LocationSelector'
 
 describe('ContactDetailsForm Component', () => {
@@ -16,16 +16,18 @@ describe('ContactDetailsForm Component', () => {
 
   describe('ContactDetailsForm', () => {
     const fakeReduxForm = {
-        reduxForm: () => component => component
-      }, ContactDetailsForm = proxyquire('./ContactDetailsForm', {
-        'redux-form/immutable': fakeReduxForm,
-        'react-intl': fakeReactIntl
-      }).default
+      reduxForm: () => component => component
+    }
+    const ContactDetailsForm = proxyquire('./ContactDetailsForm', {
+      'redux-form/immutable': fakeReduxForm,
+      'react-intl': fakeReactIntl
+    }).default
 
-    let props, ContactDetailsFormWrapper
+    let props
+    let ContactDetailsFormWrapper
 
-    const shallowRenderForm = props => {
-      ContactDetailsFormWrapper = shallow(<ContactDetailsForm {...props}/>)
+    const shallowRenderForm = (props) => {
+      ContactDetailsFormWrapper = shallow(<ContactDetailsForm {...props} />)
     }
 
     beforeEach(() => {
@@ -52,33 +54,35 @@ describe('ContactDetailsForm Component', () => {
 
     it('Should contain fields for all contact details', () => {
       const expectedTextFieldLabels = {
-          'name': 'Full Name',
-          'title': 'Job Title',
-          'email': 'Primary',
-          'email2': 'Alternate',
-          'zip': 'Zip Code'
-        }, expectedPhoneFieldLabels = {
-          'phone': 'Telephone',
-          'cell': 'Mobile'
-        }, textInputs = ContactDetailsFormWrapper.find(TextInput),
-        phoneInputs = ContactDetailsFormWrapper.find(PhoneInput)
+        name: 'Full Name',
+        title: 'Job Title',
+        email: 'Primary',
+        email2: 'Alternate',
+        zip: 'Zip Code'
+      }
+      const expectedPhoneFieldLabels = {
+        phone: 'Telephone',
+        cell: 'Mobile'
+      }
+      const textInputs = ContactDetailsFormWrapper.find(TextInput)
+      const phoneInputs = ContactDetailsFormWrapper.find(PhoneInput)
 
       assert.equal(textInputs.length, Object.keys(expectedTextFieldLabels).length)
-      textInputs.forEach(textInput => {
+      textInputs.forEach((textInput) => {
         assert.equal(textInput.props().label, expectedTextFieldLabels[textInput.props().name])
       })
-      phoneInputs.forEach(phoneInput => {
+      phoneInputs.forEach((phoneInput) => {
         assert.equal(phoneInput.props().label, expectedPhoneFieldLabels[phoneInput.props().name])
       })
     })
 
     it('Should disable all fields when form is loading', () => {
-      ContactDetailsFormWrapper.find(TextInput).forEach(textInput => {
+      ContactDetailsFormWrapper.find(TextInput).forEach((textInput) => {
         assert.isFalse(textInput.props().disabled)
       })
       props.loading = true
       shallowRenderForm(props)
-      ContactDetailsFormWrapper.find(TextInput).forEach(textInput => {
+      ContactDetailsFormWrapper.find(TextInput).forEach((textInput) => {
         assert.isTrue(textInput.props().disabled)
       })
     })
@@ -130,7 +134,8 @@ describe('ContactDetailsForm Component', () => {
   })
 
   describe('reduxForm', () => {
-    let reduxFormStub, reduxFormConfig
+    let reduxFormStub
+    let reduxFormConfig
 
     beforeEach(() => {
       reduxFormStub = {
@@ -153,7 +158,8 @@ describe('ContactDetailsForm Component', () => {
           formatMessage: message => message.defaultMessage
         }
       }
-      let validateFunction, initialContactDetails
+      let validateFunction
+      let initialContactDetails
 
       beforeEach(() => {
         validateFunction = reduxFormConfig.validate

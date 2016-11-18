@@ -11,7 +11,7 @@ import { connect } from 'react-redux'
 import Helmet from 'react-helmet'
 
 // Our own imports
-import { DataTable } from '../../components/shared/DataTable'
+import DataTable from '../../components/shared/DataTable'
 import ListFilterContainer from '../../filter/list/ListFilter'
 import { configureListFilter } from '../../filter/FilterRedux'
 import { fetchListFilteredPersons } from '../PersonRedux'
@@ -44,7 +44,26 @@ export class PersonList extends PureComponent {
 
   static propTypes = {
     setPageTitle: PropTypes.func.isRequired,
-    table: PropTypes.object.isRequired
+    table: PropTypes.object.isRequired,
+    intl: PropTypes.object.isRequired,
+    items: PropTypes.object.isRequired,
+    configureListFilter: PropTypes.func.isRequired,
+    listFilter: PropTypes.object.isRequired,
+    router: PropTypes.object.isRequired,
+    fetchListFilteredPersons: PropTypes.func.isRequired
+  }
+
+  componentWillMount() {
+    const { setPageTitle, configureListFilter, intl } = this.props
+    const { formatMessage } = intl
+    setPageTitle(formatMessage(messages.title))
+    configureListFilter({ geography: true, contactNameOrEmail: true })
+  }
+
+  componentWillReceiveProps(nextProps) {
+    if (this.props.listFilter !== nextProps.listFilter) {
+      this.handleFetch()
+    }
   }
 
   handleItemIdSelection = (personId) => {
@@ -53,19 +72,6 @@ export class PersonList extends PureComponent {
 
   handleFetch = (...args) => {
     this.props.fetchListFilteredPersons({}, ...args)
-  }
-
-  componentWillMount() {
-    const { setPageTitle, configureListFilter, intl } = this.props
-    const { formatMessage } = intl
-    setPageTitle(formatMessage(messages.title))
-    configureListFilter({geography: true, contactNameOrEmail: true})
-  }
-
-  componentWillReceiveProps(nextProps) {
-    if (this.props.listFilter !== nextProps.listFilter) {
-      this.handleFetch()
-    }
   }
 
   render() {
@@ -78,9 +84,9 @@ export class PersonList extends PureComponent {
         <ListFilterContainer />
         <DataTable
           handleItemIdSelection={this.handleItemIdSelection}
-          handleFetch={ this.handleFetch }
-          items={ this.props.items }
-          table={ this.props.table }
+          handleFetch={this.handleFetch}
+          items={this.props.items}
+          table={this.props.table}
           columns={[
             { db: 'name', title: formatMessage(messages.personName) },
             { db: 'level', title: formatMessage(messages.level), hideOnXs: true },

@@ -42,27 +42,35 @@ class Nav extends PureComponent {
 
   render() {
     return (
-      <AppBar onLeftIconButtonTouchTap={this.props.handleHamburger}
-              title={(<span>
-                  <Link className={styles.Brand} to="/dashboard" >Aspect</Link>
-                  {this.renderPageFragment()}
-                </span>)}>
+      <AppBar
+        onLeftIconButtonTouchTap={this.props.handleHamburger}
+        title={(<span>
+          <Link className={styles.Brand} to="/dashboard" >Aspect</Link>
+          {this.renderPageFragment()}
+        </span>)}
+      >
         <div>
           <Badge secondary badgeContent={4} className={styles.Badge}>
             <IconButton tooltip="You have 4 unread notifications">
               <NotificationsIcon color={'#fff'} />
             </IconButton>
           </Badge>
-          <IconMenu iconButtonElement={
-            <IconButton>
-              <MoreVertIcon color={'#fff'} />
-            </IconButton>}>
+          <IconMenu
+            iconButtonElement={
+              <IconButton>
+                <MoreVertIcon color={'#fff'} />
+              </IconButton>}
+          >
             <MenuItem primaryText="Help" href="https://admin.gxalert.com" />
-            <MenuItem primaryText="Account Details"
-                      containerElement={
-                        <Link to="/account-details/current" />} />
-            <MenuItem primaryText="Sign out" className={styles.MenuItem}
-                      onTouchTap={ this.props.handleSignOut } />
+            <MenuItem
+              primaryText="Account Details"
+              containerElement={
+                <Link to="/account-details/current" />}
+            />
+            <MenuItem
+              primaryText="Sign out" className={styles.MenuItem}
+              onTouchTap={this.props.handleSignOut}
+            />
           </IconMenu>
         </div>
       </AppBar>

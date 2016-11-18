@@ -3,7 +3,7 @@ import _ from 'lodash'
 import React from 'react'
 import { reduxForm } from 'redux-form/immutable'
 import { injectIntl } from 'react-intl'
-import {Link} from 'react-router'
+import { Link } from 'react-router'
 
 // Material-UI
 import RaisedButton from 'material-ui/RaisedButton'
@@ -15,35 +15,39 @@ import messages from './messages'
 import TextInput from '../../components/shared/TextInput'
 import StrongPasswordInput from '../../components/shared/StrongPasswordInput'
 
-const ResetPasswordEnterPassword = props => {
+const ResetPasswordEnterPassword = (props) => {
   const { intl: { formatMessage }, handleSubmit, pristine, invalid } = props
   return (
-      <form onSubmit={handleSubmit} className={styles.Form}>
-        <div className={styles.Form__Content}>
-          <p>{formatMessage(messages.enterNewPasswordContent)}</p>
-          <StrongPasswordInput name="newPassword" label={formatMessage(messages.newPassword)}
-                               maxLength="100" autoFocus fullWidth />
-          <TextInput name="confirmNewPassword" label={formatMessage(messages.confirmNewPassword)}
-                     maxLength="100" type="password" fullWidth />
-        </div>
-        <div className={styles.Form__ActionRow}>
-          <RaisedButton disabled={pristine || invalid} label={formatMessage(messages.next)} primary type="submit" />
-          <Link to="login">
-            <FlatButton secondary label={formatMessage(messages.cancel)} />
-          </Link>
-        </div>
-      </form>
+    <form onSubmit={handleSubmit} className={styles.Form}>
+      <div className={styles.Form__Content}>
+        <p>{formatMessage(messages.enterNewPasswordContent)}</p>
+        <StrongPasswordInput
+          name="newPassword" label={formatMessage(messages.newPassword)}
+          maxLength="100" autoFocus fullWidth
+        />
+        <TextInput
+          name="confirmNewPassword" label={formatMessage(messages.confirmNewPassword)}
+          maxLength="100" type="password" fullWidth
+        />
+      </div>
+      <div className={styles.Form__ActionRow}>
+        <RaisedButton disabled={pristine || invalid} label={formatMessage(messages.next)} primary type="submit" />
+        <Link to="login">
+          <FlatButton secondary label={formatMessage(messages.cancel)} />
+        </Link>
+      </div>
+    </form>
   )
 }
 
 const validate = (passwordInput, props) => {
-  const {formatMessage} = props.intl,
-    errors = {}
+  const { formatMessage } = props.intl
+  const errors = {}
   if (passwordInput.get('newPassword')) {
-    if(passwordInput.get('newPassword').trim().length < 8) {
+    if (passwordInput.get('newPassword').trim().length < 8) {
       errors.newPassword = formatMessage(messages.newPasswordTooShort)
     } else if (!/\d/.test(passwordInput.get('newPassword')) &&
-      !/(?=.*?[`~!@#$%\^&*()\-=_+\\\[\]{}/?,.<>])/.test(passwordInput.get('newPassword'))) {
+      !/(?=.*?[`~!@#$%^&*()\-=_+\\[\]{}/?,.<>])/.test(passwordInput.get('newPassword'))) {
       errors.newPassword = formatMessage(messages.newPasswordMustContainANumberOrSpecialCharacter)
     }
     if (passwordInput.get('newPassword') !== passwordInput.get('confirmNewPassword')) {

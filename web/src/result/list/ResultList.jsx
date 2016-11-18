@@ -11,7 +11,7 @@ import { connect } from 'react-redux'
 import Helmet from 'react-helmet'
 
 // Our own imports
-import { DataTable } from '../../components/shared/DataTable'
+import DataTable from '../../components/shared/DataTable'
 import ListFilterContainer from '../../filter/list/ListFilter'
 import { configureListFilter } from '../../filter/FilterRedux'
 import { fetchListFilteredResults } from '../ResultRedux'
@@ -52,7 +52,30 @@ export class ResultList extends PureComponent {
 
   static propTypes = {
     setPageTitle: PropTypes.func.isRequired,
-    table: PropTypes.object.isRequired
+    table: PropTypes.object.isRequired,
+    configureListFilter: PropTypes.func.isRequired,
+    intl: PropTypes.object.isRequired,
+    listFilter: PropTypes.object.isRequired,
+    fetchListFilteredResults: PropTypes.func.isRequired,
+    router: PropTypes.object.isRequired,
+    items: PropTypes.object.isRequired
+  }
+
+  componentWillMount() {
+    const { setPageTitle, configureListFilter, intl } = this.props
+    const { formatMessage } = intl
+    setPageTitle(formatMessage(messages.title))
+    configureListFilter({
+      assayAndResultCategory: true,
+      geography: true,
+      date: true,
+      siteName: true })
+  }
+
+  componentWillReceiveProps(nextProps) {
+    if (this.props.listFilter !== nextProps.listFilter) {
+      this.handleFetch()
+    }
   }
 
   handleFetch = (...args) => {
@@ -63,25 +86,12 @@ export class ResultList extends PureComponent {
     this.props.router.push(`/result/${resultId}`)
   }
 
-  componentWillMount() {
-    const { setPageTitle, configureListFilter, intl } = this.props
-    const { formatMessage } = intl
-    setPageTitle(formatMessage(messages.title))
-    configureListFilter({assayAndResultCategory: true, geography: true, date: true, siteName: true})
-  }
-
-  componentWillReceiveProps(nextProps) {
-    if (this.props.listFilter !== nextProps.listFilter) {
-      this.handleFetch()
-    }
-  }
-
   render() {
     const { intl } = this.props
     const { formatMessage, formatDate } = intl
 
     const columns = [
-      { db: 'endedOn', title: formatMessage(messages.endedOn), format: (data) => formatDate(data) },
+      { db: 'endedOn', title: formatMessage(messages.endedOn), format: data => formatDate(data) },
       { db: 'deviceName', title: formatMessage(messages.deviceName) },
       { db: 'sampleId', title: formatMessage(messages.sampleId) },
       { db: 'patientId', title: formatMessage(messages.patiendId) }
@@ -93,13 +103,13 @@ export class ResultList extends PureComponent {
         <ListFilterContainer />
         <DataTable
           selectable
-          handleItemIdSelection={ this.handleItemIdSelection }
-          handleFetch={ this.handleFetch }
-          items={ this.props.items }
-          table={ this.props.table }
-          columns={ columns }
-          intl={ intl }
-          messages={ messages }
+          handleItemIdSelection={this.handleItemIdSelection}
+          handleFetch={this.handleFetch}
+          items={this.props.items}
+          table={this.props.table}
+          columns={columns}
+          intl={intl}
+          messages={messages}
         />
       </div>
     )

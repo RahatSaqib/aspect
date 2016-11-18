@@ -1,6 +1,6 @@
-let Joi = require('joi')
-let { asyncHandler, validateSortPageParams } = require('../routes')
-let { listPartners, showPartner } = require('./service')
+const Joi = require('joi')
+const { asyncHandler, validateSortPageParams } = require('../routes')
+const { listPartners, showPartner } = require('./service')
 
 module.exports = [
   {
@@ -10,7 +10,7 @@ module.exports = [
     config: {
       description: 'Partner List',
       notes: 'Pageable and sortable list of partners',
-      auth: {scope: ['device', 'site', 'partner']},
+      auth: { scope: ['device', 'site', 'partner'] },
       validate: {
         query: Object.assign({
           name: Joi.string().allow('').description('Filter for partner name')
@@ -25,7 +25,7 @@ module.exports = [
     config: {
       description: 'Partner Detail',
       notes: 'Detail of a partner',
-      auth: {scope: ['device', 'site', 'partner']},
+      auth: { scope: ['device', 'site', 'partner'] },
       validate: {
         params: {
           partnerId: Joi.string().description('Partner ID').required()

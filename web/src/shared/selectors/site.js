@@ -24,3 +24,5 @@ export function address(site) {
     address2: site.get('street2')
   }
 }
+
+export { isEditable as default }

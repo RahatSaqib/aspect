@@ -3,9 +3,9 @@ import { assert } from 'chai'
 import { shallow } from 'enzyme'
 import sinon from 'sinon'
 import proxyquire from 'proxyquire'
-import TimezoneSelect from '../../components/shared/TimezoneSelect'
 import { Field } from 'redux-form/immutable'
 import RaisedButton from 'material-ui/RaisedButton'
+import TimezoneSelect from '../../components/shared/TimezoneSelect'
 
 describe('UserPreferencesForm Component', () => {
   const fakeReactIntl = {
@@ -21,10 +21,11 @@ describe('UserPreferencesForm Component', () => {
       'react-intl': fakeReactIntl
     }).default
 
-    let props, UserPreferencesFormWrapper
+    let props
+    let UserPreferencesFormWrapper
 
-    const shallowRenderForm = props => {
-      UserPreferencesFormWrapper = shallow(<UserPreferencesForm {...props}/>)
+    const shallowRenderForm = (props) => {
+      UserPreferencesFormWrapper = shallow(<UserPreferencesForm {...props} />)
     }
 
     beforeEach(() => {
@@ -107,7 +108,8 @@ describe('UserPreferencesForm Component', () => {
   })
 
   describe('reduxForm', () => {
-    let reduxFormStub, reduxFormConfig
+    let reduxFormStub
+    let reduxFormConfig
 
     beforeEach(() => {
       reduxFormStub = {

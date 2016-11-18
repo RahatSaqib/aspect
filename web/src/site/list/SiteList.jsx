@@ -11,7 +11,7 @@ import { connect } from 'react-redux'
 import Helmet from 'react-helmet'
 
 // Our own imports
-import { DataTable } from '../../components/shared/DataTable'
+import DataTable from '../../components/shared/DataTable'
 import ListFilterContainer from '../../filter/list/ListFilter'
 import { configureListFilter } from '../../filter/FilterRedux'
 import { fetchListFilteredSites } from '../SiteRedux'
@@ -44,7 +44,26 @@ export class SiteList extends PureComponent {
 
   static propTypes = {
     setPageTitle: PropTypes.func.isRequired,
-    table: PropTypes.object.isRequired
+    table: PropTypes.object.isRequired,
+    intl: PropTypes.object.isRequired,
+    router: PropTypes.object.isRequired,
+    fetchListFilteredSites: PropTypes.func.isRequired,
+    items: PropTypes.object.isRequired,
+    configureListFilter: PropTypes.func.isRequired,
+    listFilter: PropTypes.object.isRequired
+  }
+
+  componentWillMount() {
+    const { setPageTitle, configureListFilter, intl } = this.props
+    const { formatMessage } = intl
+    setPageTitle(formatMessage(messages.title))
+    configureListFilter({ geography: true, date: true, deviceName: true, siteName: true })
+  }
+
+  componentWillReceiveProps(nextProps) {
+    if (this.props.listFilter !== nextProps.listFilter) {
+      this.handleFetch()
+    }
   }
 
   handleFetch = (...args) => {
@@ -53,19 +72,6 @@ export class SiteList extends PureComponent {
 
   handleItemIdSelection = (siteId) => {
     this.props.router.push(`/site/${siteId}`)
-  }
-
-  componentWillMount() {
-    const { setPageTitle, configureListFilter, intl } = this.props
-    const { formatMessage } = intl
-    setPageTitle(formatMessage(messages.title))
-    configureListFilter({geography: true, date: true, deviceName: true, siteName: true})
-  }
-
-  componentWillReceiveProps(nextProps) {
-    if (this.props.listFilter !== nextProps.listFilter) {
-      this.handleFetch()
-    }
   }
 
   render() {
@@ -79,9 +85,9 @@ export class SiteList extends PureComponent {
         <DataTable
           selectable
           handleItemIdSelection={this.handleItemIdSelection}
-          handleFetch={ this.handleFetch }
-          items={ this.props.items }
-          table={ this.props.table }
+          handleFetch={this.handleFetch}
+          items={this.props.items}
+          table={this.props.table}
           columns={[
             { db: 'name', title: formatMessage(messages.siteName) },
             { db: 'state', title: formatMessage(messages.state) },

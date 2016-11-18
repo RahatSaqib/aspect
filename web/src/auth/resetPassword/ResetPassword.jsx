@@ -5,8 +5,9 @@ import { bindActionCreators } from 'redux'
 import { connect } from 'react-redux'
 import Helmet from 'react-helmet'
 import { injectIntl, FormattedHTMLMessage } from 'react-intl'
-import {Link} from 'react-router'
+import { Link } from 'react-router'
 import classNames from 'classnames'
+import config from 'config'
 
 // Material-UI
 import Paper from 'material-ui/Paper'
@@ -33,9 +34,8 @@ import styles from './ResetPassword.css'
 import messages from './messages'
 import ResetPasswordEnterEmail from './ResetPasswordEnterEmail'
 import ResetPasswordEnterPassword from './ResetPasswordEnterPassword'
-import config from 'config'
 
-class ResetPassword extends PureComponent {
+export default class ResetPassword extends PureComponent {
   state = {
     emailAddress: '',
     resetPasswordToken: '',
@@ -46,10 +46,12 @@ class ResetPassword extends PureComponent {
 
   componentDidMount() {
     const { location: { query: { token } } } = this.props
+
+    /* eslint-disable react/no-did-mount-set-state */
     this.setState({
       resetPasswordToken: token
     }, () => {
-      if(token) {
+      if (token) {
         this.setState({
           stepIndex: 2
         })
@@ -69,7 +71,7 @@ class ResetPassword extends PureComponent {
     })
   }
 
-  createResetPasswordToken = formValues => {
+  createResetPasswordToken = (formValues) => {
     const { resetPasswordEnterEmailAddress } = this.props
     this.setState({
       resettingPassword: true,
@@ -80,7 +82,9 @@ class ResetPassword extends PureComponent {
 
   createResetPasswordTokenFail = () => {
     const { intl: { formatMessage }, addError } = this.props
-    addError(formatMessage(messages.generateTokenFailedTitle), formatMessage(messages.generateTokenFailed, {supportTelephone: config.supportTelephone, supportEmail: config.supportEmail}))
+    addError(formatMessage(messages.generateTokenFailedTitle),
+      formatMessage(messages.generateTokenFailed, {
+        supportTelephone: config.supportTelephone, supportEmail: config.supportEmail }))
     this.setState({
       resettingPassword: false
     })
@@ -95,9 +99,9 @@ class ResetPassword extends PureComponent {
     addAcknowledgement(formatMessage(messages.emailSent))
   }
 
-  updatePassword = formValues => {
-    const { resetPasswordEnterPassword } = this.props,
-      {resetPasswordToken} = this.state
+  updatePassword = (formValues) => {
+    const { resetPasswordEnterPassword } = this.props
+    const { resetPasswordToken } = this.state
     this.setState({
       resettingPassword: true
     })
@@ -106,7 +110,9 @@ class ResetPassword extends PureComponent {
 
   updatePasswordFail = () => {
     const { intl: { formatMessage }, addError } = this.props
-    addError(formatMessage(messages.passwordUpdateFailedTitle), formatMessage(messages.passwordUpdateFailed, {supportTelephone: config.supportTelephone, supportEmail: config.supportEmail}))
+    addError(formatMessage(messages.passwordUpdateFailedTitle),
+      formatMessage(messages.passwordUpdateFailed, {
+        supportTelephone: config.supportTelephone, supportEmail: config.supportEmail }))
     this.setState({
       resettingPassword: false
     })
@@ -122,21 +128,25 @@ class ResetPassword extends PureComponent {
   }
 
   render() {
-    const { intl: { formatMessage } } = this.props,
-      {stepIndex, emailAddress, resettingPassword} = this.state,
-      adminHelpDialogActions = [
-        <FlatButton label={formatMessage(messages.adminHelpClose)} secondary onTouchTap={this.closeAdminHelpDialog} />,
-        <Link to="login">
-          <FlatButton label={formatMessage(messages.backToLogin)} primary />
-        </Link>
-      ]
+    const { intl: { formatMessage } } = this.props
+    const { stepIndex, emailAddress, resettingPassword } = this.state
+    const adminHelpDialogActions = [
+      <FlatButton
+        label={formatMessage(messages.adminHelpClose)}
+        secondary
+        onTouchTap={this.closeAdminHelpDialog}
+      />,
+      <Link to="login">
+        <FlatButton label={formatMessage(messages.backToLogin)} primary />
+      </Link>
+    ]
 
     return (
       <div className={styles.Background}>
         <Helmet title={formatMessage(messages.title)} titleTemplate="%s - Aspect" defaultTitle="Aspect" />
         <div className={styles.Content}>
           <div className="pure-g">
-            <div className="pure-u-1-24 pure-u-md-1-12 pure-u-xl-1-4"></div>
+            <div className="pure-u-1-24 pure-u-md-1-12 pure-u-xl-1-4" />
             <div className="pure-u-11-12 pure-u-md-5-6 pure-u-xl-1-2">
               <Paper>
                 <div className={classNames('pure-hidden-xs', 'pure-hidden-sm', styles.LargeContent)}>
@@ -155,20 +165,27 @@ class ResetPassword extends PureComponent {
                     </Step>
                   </Stepper>
                   {resettingPassword && <LinearProgress />}
-                  {stepIndex === 0 && <ResetPasswordEnterEmail onSubmit={this.createResetPasswordToken}
-                                                               onSubmitSuccess={this.checkInbox}
-                                                               onSubmitFail={this.createResetPasswordTokenFail}
-                                                               showAdminHelpDialog={this.showAdminHelpDialog} /> }
+                  {stepIndex === 0 && <ResetPasswordEnterEmail
+                    onSubmit={this.createResetPasswordToken}
+                    onSubmitSuccess={this.checkInbox}
+                    onSubmitFail={this.createResetPasswordTokenFail}
+                    showAdminHelpDialog={this.showAdminHelpDialog}
+                  /> }
                   {stepIndex === 1 && <div className={styles.Form}>
-                    <FormattedHTMLMessage {...messages.checkEmailContent} values={{ emailAddress: emailAddress }} />
-                    <a href="#" onClick={this.showAdminHelpDialog}>
+                    <FormattedHTMLMessage
+                      {...messages.checkEmailContent}
+                      values={{ emailAddress }}
+                    />
+                    <a href="#showAdminHelp" onClick={this.showAdminHelpDialog}>
                       {formatMessage(messages.iDidntReceiveAnEmail)}
                     </a>
                   </div> }
                   {stepIndex === 2 && <div>
-                    <ResetPasswordEnterPassword onSubmit={this.updatePassword}
-                                                onSubmitSuccess={this.completeProcess}
-                                                onSubmitFail={this.updatePasswordFail} />
+                    <ResetPasswordEnterPassword
+                      onSubmit={this.updatePassword}
+                      onSubmitSuccess={this.completeProcess}
+                      onSubmitFail={this.updatePasswordFail}
+                    />
                     <br />
                     <br />
                     <br />
@@ -178,7 +195,10 @@ class ResetPassword extends PureComponent {
                     <FormattedHTMLMessage {...messages.finishContent} />
                     <div className={styles.Form__ActionRow}>
                       <Link to="login">
-                        <FlatButton primary label={formatMessage(messages.loginWithMyNewPassword)} />
+                        <FlatButton
+                          primary
+                          label={formatMessage(messages.loginWithMyNewPassword)}
+                        />
                       </Link>
                     </div>
                   </div> }
@@ -189,18 +209,23 @@ class ResetPassword extends PureComponent {
                     <Step>
                       <StepLabel>{formatMessage(messages.enterEmailAddress)}</StepLabel>
                       <StepContent>
-                        <ResetPasswordEnterEmail onSubmit={this.createResetPasswordToken}
-                                                 onSubmitSuccess={this.checkInbox}
-                                                 onSubmitFail={this.createResetPasswordTokenFail}
-                                                 showAdminHelpDialog={this.showAdminHelpDialog} />
+                        <ResetPasswordEnterEmail
+                          onSubmit={this.createResetPasswordToken}
+                          onSubmitSuccess={this.checkInbox}
+                          onSubmitFail={this.createResetPasswordTokenFail}
+                          showAdminHelpDialog={this.showAdminHelpDialog}
+                        />
                       </StepContent>
                     </Step>
                     <Step>
                       <StepLabel>{formatMessage(messages.checkEmail)}</StepLabel>
                       <StepContent>
                         <div className={styles.Form}>
-                          <FormattedHTMLMessage {...messages.checkEmailContent} values={{ emailAddress: emailAddress }} />
-                          <a href="#" onClick={this.showAdminHelpDialog}>
+                          <FormattedHTMLMessage
+                            {...messages.checkEmailContent}
+                            values={{ emailAddress }}
+                          />
+                          <a href="#showAdminHelp" onClick={this.showAdminHelpDialog}>
                             {formatMessage(messages.iDidntReceiveAnEmail)}
                           </a>
                         </div>
@@ -209,9 +234,11 @@ class ResetPassword extends PureComponent {
                     <Step>
                       <StepLabel>{formatMessage(messages.enterNewPassword)}</StepLabel>
                       <StepContent>
-                        <ResetPasswordEnterPassword onSubmit={this.updatePassword}
-                                                    onSubmitSuccess={this.completeProcess}
-                                                    onSubmitFail={this.updatePasswordFail} />
+                        <ResetPasswordEnterPassword
+                          onSubmit={this.updatePassword}
+                          onSubmitSuccess={this.completeProcess}
+                          onSubmitFail={this.updatePasswordFail}
+                        />
                       </StepContent>
                     </Step>
                     <Step>
@@ -221,7 +248,10 @@ class ResetPassword extends PureComponent {
                           <FormattedHTMLMessage {...messages.finishContent} />
                           <div className={styles.Form__ActionRow}>
                             <Link to="login">
-                              <FlatButton primary label={formatMessage(messages.loginWithMyNewPassword)} />
+                              <FlatButton
+                                primary
+                                label={formatMessage(messages.loginWithMyNewPassword)}
+                              />
                             </Link>
                           </div>
                         </div>
@@ -233,12 +263,18 @@ class ResetPassword extends PureComponent {
             </div>
           </div>
         </div>
-        <Dialog title={formatMessage(messages.adminHelpHeader)}
-                actions={adminHelpDialogActions} modal={false}
-                open={this.state.showAdminHelpDialog}
-                onRequestClose={this.closeAdminHelpDialog}>
-          <FormattedHTMLMessage {...messages.adminHelpContent}
-                                values={{supportTelephone: config.supportTelephone, supportEmail: config.supportEmail}} />
+        <Dialog
+          title={formatMessage(messages.adminHelpHeader)}
+          actions={adminHelpDialogActions} modal={false}
+          open={this.state.showAdminHelpDialog}
+          onRequestClose={this.closeAdminHelpDialog}
+        >
+          <FormattedHTMLMessage
+            {...messages.adminHelpContent}
+            values={{
+              supportTelephone: config.supportTelephone,
+              supportEmail: config.supportEmail }}
+          />
         </Dialog>
         <ErrorDisplayContainer />
         <AcknowledgementDisplay />
@@ -260,7 +296,7 @@ function mapDispatchToProps(dispatch) {
   }, dispatch)
 }
 
-export default _.flowRight(
+export const ResetPasswordContainer = _.flowRight(
   injectIntl,
   connect(mapStateToProps, mapDispatchToProps)
 )(ResetPassword)

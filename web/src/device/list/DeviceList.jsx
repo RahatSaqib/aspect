@@ -14,7 +14,7 @@ import Helmet from 'react-helmet'
 import { fetchListFilteredDevices } from '../DeviceRedux'
 import ListFilterContainer from '../../filter/list/ListFilter'
 import { configureListFilter } from '../../filter/FilterRedux'
-import { DataTable } from '../../components/shared/DataTable'
+import DataTable from '../../components/shared/DataTable'
 import styles from './DeviceList.css'
 
 const messages = defineMessages({
@@ -60,7 +60,13 @@ export class DeviceList extends PureComponent {
 
   static propTypes = {
     setPageTitle: PropTypes.func.isRequired,
-    table: PropTypes.object.isRequired
+    table: PropTypes.object.isRequired,
+    intl: PropTypes.object.isRequired,
+    router: PropTypes.object.isRequired,
+    fetchListFilteredDevices: PropTypes.func.isRequired,
+    items: PropTypes.object.isRequired,
+    configureListFilter: PropTypes.func.isRequired,
+    listFilter: PropTypes.object.isRequired
   }
 
   static contextTypes = {
@@ -71,29 +77,23 @@ export class DeviceList extends PureComponent {
     muiTheme: PropTypes.object.isRequired
   }
 
-  handleFetch = (...args) => {
-    this.props.fetchListFilteredDevices(
-      this.getDeviceConfigRoute().deviceConfig.filterParams,
-      ...args
-    )
-  }
+  getChildContext() {
+    const { muiTheme } = this.context
 
-  handleItemIdSelection = (deviceId) => {
-    this.props.router.push(`/device/${deviceId}`)
-  }
-
-  getDeviceConfigRoute({ routes } = this.props) {
-    return _.find(routes, r => r.deviceConfig)
-  }
-
-  getFormattedTitle() {
-    const deviceConfigRoute = this.getDeviceConfigRoute()
-    const { intl } = this.props
-    const { formatMessage } = intl
-    if (deviceConfigRoute.path === 'device') {
-      return formatMessage(messages.devicesTitle)
-    } else {
-      return formatMessage(messages.routersTitle)
+    return {
+      muiTheme: {
+        ...muiTheme,
+        tableHeaderColumn: {
+          // Overrides the style used by <material-ui/Table/TableHeaderColumn /> in <DataTable />
+          ...muiTheme.tableHeaderColumn,
+          spacing: DEVICE_TABLE_COLUMN_SPACING
+        },
+        tableRowColumn: {
+          // Overrides the style used by <material-ui/Table/TableRowColumn /> in <DataTable />
+          ...muiTheme.tableRowColumn,
+          spacing: DEVICE_TABLE_COLUMN_SPACING
+        }
+      }
     }
   }
 
@@ -118,24 +118,29 @@ export class DeviceList extends PureComponent {
     }
   }
 
-  getChildContext() {
-    const { muiTheme } = this.context
+  getDeviceConfigRoute({ routes } = this.props) {
+    return _.find(routes, r => r.deviceConfig)
+  }
 
-    return {
-      muiTheme: {
-        ...muiTheme,
-        tableHeaderColumn: {
-          // Overrides the style used by <material-ui/Table/TableHeaderColumn /> in <DataTable />
-          ...muiTheme.tableHeaderColumn,
-          spacing: DEVICE_TABLE_COLUMN_SPACING
-        },
-        tableRowColumn: {
-          // Overrides the style used by <material-ui/Table/TableRowColumn /> in <DataTable />
-          ...muiTheme.tableRowColumn,
-          spacing: DEVICE_TABLE_COLUMN_SPACING
-        }
-      }
+  getFormattedTitle() {
+    const deviceConfigRoute = this.getDeviceConfigRoute()
+    const { intl } = this.props
+    const { formatMessage } = intl
+    if (deviceConfigRoute.path === 'device') {
+      return formatMessage(messages.devicesTitle)
     }
+    return formatMessage(messages.routersTitle)
+  }
+
+  handleItemIdSelection = (deviceId) => {
+    this.props.router.push(`/device/${deviceId}`)
+  }
+
+  handleFetch = (...args) => {
+    this.props.fetchListFilteredDevices(
+      this.getDeviceConfigRoute().deviceConfig.filterParams,
+      ...args
+    )
   }
 
   render() {
@@ -149,20 +154,28 @@ export class DeviceList extends PureComponent {
         <DataTable
           selectable
           handleItemIdSelection={this.handleItemIdSelection}
-          handleFetch={ this.handleFetch }
-          items={ this.props.items }
-          table={ this.props.table }
+          handleFetch={this.handleFetch}
+          items={this.props.items}
+          table={this.props.table}
           columns={[
-            { db: 'name', title: formatMessage(messages.deviceName),
+            { db: 'name',
+              title: formatMessage(messages.deviceName),
               extraProps: { style: { width: DEVICE_TABLE_NAME_COLUMN_WIDTH } } },
-            { db: 'status', title: formatMessage(messages.status), hideOnXs: true,
+            { db: 'status',
+              title: formatMessage(messages.status),
+              hideOnXs: true,
               extraProps: { style: { width: DEVICE_TABLE_STATUS_COLUMN_WIDTH } } },
-            { db: 'createdOn', title: formatMessage(messages.reportingFor), hideOnXs: true,
-              format: (data) => formatRelative(data) },
-            { db: 'lastSeen', title: formatMessage(messages.lastSeen), hideOnXs: true,
-              format: (data) => formatRelative(data) },
-            { db: 'totalTests', title: formatMessage(messages.totalTests),
-              format: (data) => formatNumber(data) }
+            { db: 'createdOn',
+              title: formatMessage(messages.reportingFor),
+              hideOnXs: true,
+              format: data => formatRelative(data) },
+            { db: 'lastSeen',
+              title: formatMessage(messages.lastSeen),
+              hideOnXs: true,
+              format: data => formatRelative(data) },
+            { db: 'totalTests',
+              title: formatMessage(messages.totalTests),
+              format: data => formatNumber(data) }
           ]}
         />
       </div>

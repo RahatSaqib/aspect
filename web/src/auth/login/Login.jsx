@@ -9,7 +9,7 @@ import {
   injectIntl,
   defineMessages
 } from 'react-intl'
-import {Link} from 'react-router'
+import { Link } from 'react-router'
 
 // Material-UI
 import Paper from 'material-ui/Paper'
@@ -37,12 +37,15 @@ const messages = defineMessages({
   }
 })
 
-class Login extends PureComponent {
+export class Login extends PureComponent {
 
   static propTypes = {
     handleSubmit: PropTypes.func.isRequired,
     pristine: PropTypes.bool.isRequired,
-    submitting: PropTypes.bool.isRequired
+    submitting: PropTypes.bool.isRequired,
+    intl: PropTypes.object.isRequired,
+    location: PropTypes.object.isRequired,
+    initialValues: PropTypes.object.isRequired
   }
 
   render() {
@@ -60,7 +63,7 @@ class Login extends PureComponent {
             <div className="pure-u-lg-1-3 pure-u-md-2-3 pure-u-sm-11-12">
               <Paper>
                 <form onSubmit={handleSubmit} className={styles.Form}>
-                  { location.query.reason ? <div className={styles.Form__Info}>{formatMessage(messages['reason' +location.query.reason])}</div> : null }
+                  { location.query.reason ? <div className={styles.Form__Info}>{formatMessage(messages[`reason${location.query.reason}`])}</div> : null }
                   <TextInput name="user" label="Username" fullWidth autoFocus={_.isEmpty(initialValues.get('user'))} />
                   <TextInput name="password" type="password" label="Password" fullWidth autoFocus={!_.isEmpty(initialValues.get('user'))} />
                   <div className={styles.Form__ActionRow}>
@@ -81,9 +84,9 @@ class Login extends PureComponent {
   }
 }
 
-function mapStateToProps({user: { name }}) {
+function mapStateToProps({ user: { name } }) {
   return {
-    initialValues: {user: name}
+    initialValues: { user: name }
   }
 }
 

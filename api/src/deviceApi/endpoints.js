@@ -1,7 +1,7 @@
-let Joi = require('joi')
-let { asyncHandler, validateSortPageParams } = require('../routes')
-let { addDeviceOperation, addDeviceConfiguration} = require('./device')
-let { addResult, listResults } = require('./result')
+const Joi = require('joi')
+const { asyncHandler, validateSortPageParams } = require('../routes')
+const { addDeviceOperation, addDeviceConfiguration } = require('./device')
+const { addResult, listResults } = require('./result')
 
 module.exports = [
   {

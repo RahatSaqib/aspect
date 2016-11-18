@@ -49,7 +49,7 @@ function receivePersons(json) {
 }
 
 // With state.filter.listFilter & extraFilters
-export function fetchListFilteredPersons(extraFilters = {}, ...args){
+export function fetchListFilteredPersons(extraFilters = {}, ...args) {
   return (dispatch, getState) => {
     const filters = getState()
       .filter
@@ -63,9 +63,8 @@ export function fetchListFilteredPersons(extraFilters = {}, ...args){
   }
 }
 
-export function fetchPersons(filters/* required */, sortCol = 'name', sortDir = 'asc', page = 0, pageSize = 10){
-  return dispatch => {
-
+export function fetchPersons(filters/* required */, sortCol = 'name', sortDir = 'asc', page = 0, pageSize = 10) {
+  return (dispatch) => {
     dispatch(requestPersons(sortCol, sortDir, page, pageSize, filters))
 
     return aspectFetch(`/person?${stringify({
@@ -76,7 +75,7 @@ export function fetchPersons(filters/* required */, sortCol = 'name', sortDir = 
       ...filters
     })}`)
       .then(json => dispatch(receivePersons(json)))
-      .catch(err => {
+      .catch((err) => {
         dispatch(addError('Loading persons failed', err.message, err))
       })
   }
@@ -99,14 +98,13 @@ function receiveSinglePerson(item) {
 }
 
 // load a single person with given personId
-export function fetchSinglePerson(personId){
-  return dispatch => {
-
+export function fetchSinglePerson(personId) {
+  return (dispatch) => {
     dispatch(requestSinglePerson(personId))
 
     return aspectFetch(`/person/${personId}`)
       .then(json => dispatch(receiveSinglePerson(json.data)))
-      .catch(err => {
+      .catch((err) => {
         dispatch(addError(`Loading a person (${personId}) failed`, err.message, err))
       })
   }
@@ -139,8 +137,7 @@ function receiveUpdatedSinglePersonLoadinDetails(updatedInformation) {
 
 // update a single person with given personId and data
 function updatePerson(path, personId, data, fields) {
-  return dispatch => {
-
+  return (dispatch) => {
     dispatch(requestUpdatingSinglePerson(personId, data))
 
     const personJson = data.toJS ? data.toJS() : data
@@ -149,20 +146,19 @@ function updatePerson(path, personId, data, fields) {
       body: JSON.stringify(_.pick(personJson, fields))
     })
       .then(json => dispatch(receiveUpdatedSinglePerson(json.data)))
-      .catch(err => {
+      .catch((err) => {
         dispatch(addError(`Updating a person (${personId}) failed`, err.message, err))
       })
   }
 }
 
-export function updateSinglePerson(personId, data){
+export function updateSinglePerson(personId, data) {
   return updatePerson(`/person/${personId}`, personId, data, ['name', 'title', 'email', 'email2', 'phone',
     'cell', 'countryId', 'stateId', 'lgaId', 'zip', 'notes', 'lastPartnerId'])
 }
 
-export function updateSinglePersonLoginDetails(personId, data){
-  return dispatch => {
-
+export function updateSinglePersonLoginDetails(personId, data) {
+  return (dispatch) => {
     dispatch(requestUpdatingSinglePerson(personId, data))
 
     const loginDetailsJson = data.toJS ? data.toJS() : data
@@ -171,13 +167,13 @@ export function updateSinglePersonLoginDetails(personId, data){
       body: JSON.stringify(_.pick(loginDetailsJson, ['newUsername', 'newPassword']))
     })
       .then(json => dispatch(receiveUpdatedSinglePersonLoadinDetails(json.data)))
-      .catch(err => {
+      .catch((err) => {
         dispatch(addError(`Updating a person (${personId}) failed`, err.message, err))
       })
   }
 }
 
-export function updateSinglePersonUserPreferences(personId, data){
+export function updateSinglePersonUserPreferences(personId, data) {
   return updatePerson(`/person/preferences/${personId}`, personId, data, ['timezone', 'culture'])
 }
 /*
@@ -222,31 +218,33 @@ const initialState = new Person()
 
 export default function personReducer(state = initialState, action) {
   switch (action.type) {
-  case types.REQUEST_PERSONS:
-    return state
+    case types.REQUEST_PERSONS:
+      return state
       .set('table', requestTable(state.table, action))
-  case types.RECEIVE_PERSONS:
-    return state.withMutations(mutState => {
-      const immutList = Immutable.fromJS(action.items)
-      mutState.set('items', receiveList(mutState.items, immutList))
-      mutState.set('table', receiveTableItems(mutState.table, action.total))
-    })
-  case types.RECEIVE_SINGLE_PERSON:
-  case types.RECEIVE_UPDATED_SINGLE_PERSON:
-    return state.withMutations(mutState => {
-      const immutItem = Immutable.fromJS({...action.item, loaded: true})
-      mutState.set('items', receiveItem(mutState.items, immutItem))
-    })
-  case types.RECEIVE_UPDATED_SINGLE_PERSON_LOGIN_DETAILS:
-    return state.withMutations(mutState => {
-      const person = state.items.byId.get(action.personId).merge({loaded: true, username: action.username})
-      mutState.set('items', receiveItem(mutState.items, person))
-    })
-  case types.REQUEST_UPDATING_SINGLE_PERSON:
-    return state.withMutations(mutState => {
-      const person = state.items.byId.get(action.personId).set('loaded', false)
-      mutState.set('items', receiveItem(mutState.items, person))
-    })
+    case types.RECEIVE_PERSONS:
+      return state.withMutations((mutState) => {
+        const immutList = Immutable.fromJS(action.items)
+        mutState.set('items', receiveList(mutState.items, immutList))
+        mutState.set('table', receiveTableItems(mutState.table, action.total))
+      })
+    case types.RECEIVE_SINGLE_PERSON:
+    case types.RECEIVE_UPDATED_SINGLE_PERSON:
+      return state.withMutations((mutState) => {
+        const immutItem = Immutable.fromJS({ ...action.item, loaded: true })
+        mutState.set('items', receiveItem(mutState.items, immutItem))
+      })
+    case types.RECEIVE_UPDATED_SINGLE_PERSON_LOGIN_DETAILS:
+      return state.withMutations((mutState) => {
+        const person = state.items.byId.get(action.personId).merge({
+          loaded: true, username: action.username })
+        mutState.set('items', receiveItem(mutState.items, person))
+      })
+    case types.REQUEST_UPDATING_SINGLE_PERSON:
+      return state.withMutations((mutState) => {
+        const person = state.items.byId.get(action.personId).set('loaded', false)
+        mutState.set('items', receiveItem(mutState.items, person))
+      })
+    default:
+      return state
   }
-  return state
 }

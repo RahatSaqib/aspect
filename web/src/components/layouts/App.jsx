@@ -15,7 +15,7 @@ import getMuiTheme from 'material-ui/styles/getMuiTheme'
 // Our own imports
 import translation from '../../shared/i18n/translation.json'
 import theme from '../../theme'
-import {getUsersTimezone} from '../../shared/utils/timezone'
+import { getUsersTimezone } from '../../shared/utils/timezone'
 
 require('./App.scss')
 require('./pure-grids-responsive-min.scss')
@@ -35,17 +35,17 @@ class App extends PureComponent {
     const messages = translation[locale]
     const formats = {}
 
-    if(timezone) {
+    if (timezone) {
       formats.date = {
         'user-timezone': {
           timeZone: timezone
         },
         '2-digit-date-time': {
           // https://github.com/yahoo/react-intl/wiki/Components#date-formatting-components
-          year  : '2-digit',
-          month : '2-digit',
-          day   : '2-digit',
-          hour  : '2-digit',
+          year: '2-digit',
+          month: '2-digit',
+          day: '2-digit',
+          hour: '2-digit',
           minute: '2-digit',
           second: '2-digit'
         }

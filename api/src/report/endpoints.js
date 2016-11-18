@@ -9,7 +9,7 @@ module.exports = [{
   config: {
     description: 'Report List',
     notes: 'Pageable and sortable list of reports',
-    auth: {scope: ['report:view', 'report:edit']},
+    auth: { scope: ['report:view', 'report:edit'] },
     validate: {
       query: Object.assign({
         name: Joi.string().allow('').description('Filter for report name')

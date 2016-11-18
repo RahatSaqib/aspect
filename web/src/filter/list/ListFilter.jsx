@@ -6,7 +6,7 @@ import { bindActionCreators } from 'redux'
 import { connect } from 'react-redux'
 
 // Material-UI
-import {Card, CardActions, CardText} from 'material-ui/Card'
+import { Card, CardActions, CardText } from 'material-ui/Card'
 import Toggle from 'material-ui/Toggle'
 import FlatButton from 'material-ui/FlatButton'
 
@@ -153,7 +153,7 @@ export class ListFilter extends PureComponent {
                 <div className={styles.Section__Content}>
                   <DateRangeSelector
                     clearButtonTooltip="Clear"
-                    clearButtonStyle={{verticalAlign: 'bottom'}}
+                    clearButtonStyle={{ verticalAlign: 'bottom' }}
                     onChangeDate={this.handleChangeDate}
                     minDate={filter.minDate}
                     maxDate={filter.maxDate}
@@ -170,14 +170,14 @@ export class ListFilter extends PureComponent {
                     onChangeCountry={this.handleChangeCountry}
                     countryId={this.props.filter.countryId}
                     floatingLabelText="Country"
-                    style={{verticalAlign: 'bottom'}}
+                    style={{ verticalAlign: 'bottom' }}
                   />
                   <StateSelectField
                     onChangeState={this.handleChangeState}
                     countryId={this.props.filter.countryId}
                     stateId={this.props.filter.stateId}
                     floatingLabelText="State"
-                    style={{verticalAlign: 'bottom'}}
+                    style={{ verticalAlign: 'bottom' }}
                   />
                   <LgaSelectField
                     onChangeLga={this.handleChangeLga}
@@ -185,7 +185,7 @@ export class ListFilter extends PureComponent {
                     stateId={this.props.filter.stateId}
                     lgaId={this.props.filter.lgaId}
                     floatingLabelText="Area"
-                    style={{verticalAlign: 'bottom'}}
+                    style={{ verticalAlign: 'bottom' }}
                   />
                 </div>
               </section>
@@ -199,7 +199,7 @@ export class ListFilter extends PureComponent {
                       value={filter.assayId}
                       onAssayChange={this.handleAssayIdChange}
                       floatingLabelText="Assay"
-                      style={{verticalAlign: 'bottom'}}
+                      style={{ verticalAlign: 'bottom' }}
                     />
                   )}
                   {config.assayAndResultCategory && (
@@ -209,7 +209,7 @@ export class ListFilter extends PureComponent {
                       value={filter.resultCategoryId}
                       onResultCategoryChange={this.handleResultCategoryChange}
                       floatingLabelText="Result"
-                      style={{verticalAlign: 'bottom'}}
+                      style={{ verticalAlign: 'bottom' }}
                     />
                   )}
                   {config.deviceName && (
@@ -243,7 +243,7 @@ export class ListFilter extends PureComponent {
           <CardActions expandable>
             <FlatButton label="Share" />
             <FlatButton label="Save" />
-            <FlatButton label="Clear" style={{float: 'right'}} onTouchTap={this.props.onClearFilter} />
+            <FlatButton label="Clear" style={{ float: 'right' }} onTouchTap={this.props.onClearFilter} />
           </CardActions>
         </Card>
       </div>

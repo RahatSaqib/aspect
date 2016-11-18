@@ -4,9 +4,9 @@ import { shallow } from 'enzyme'
 import sinon from 'sinon'
 import proxyquire from 'proxyquire'
 import Immutable from 'immutable'
+import RaisedButton from 'material-ui/RaisedButton'
 import TextInput from '../../components/shared/TextInput'
 import StrongPasswordInput from '../../components/shared/StrongPasswordInput'
-import RaisedButton from 'material-ui/RaisedButton'
 
 describe('LoginDetailsForm Component', () => {
   const fakeReactIntl = {
@@ -22,10 +22,11 @@ describe('LoginDetailsForm Component', () => {
       'react-intl': fakeReactIntl
     }).default
 
-    let props, LoginDetailsFormWrapper
+    let props
+    let LoginDetailsFormWrapper
 
-    const shallowRenderForm = props => {
-      LoginDetailsFormWrapper = shallow(<LoginDetailsForm {...props}/>)
+    const shallowRenderForm = (props) => {
+      LoginDetailsFormWrapper = shallow(<LoginDetailsForm {...props} />)
     }
 
     beforeEach(() => {
@@ -59,8 +60,8 @@ describe('LoginDetailsForm Component', () => {
         label: 'New Password',
         disabled: props.loading,
         maxLength: '100',
-        anchorOrigin: {horizontal: 'right',vertical:'top'},
-        targetOrigin: {horizontal: 'left',vertical:'center'}
+        anchorOrigin: { horizontal: 'right', vertical: 'top' },
+        targetOrigin: { horizontal: 'left', vertical: 'center' }
       })
       assert.deepEqual(LoginDetailsFormWrapper.find(TextInput).at(1).props(), {
         name: 'confirmNewPassword',
@@ -72,18 +73,18 @@ describe('LoginDetailsForm Component', () => {
     })
 
     it('Should disable all fields when form is loading', () => {
-      LoginDetailsFormWrapper.find(TextInput).forEach(textInput => {
+      LoginDetailsFormWrapper.find(TextInput).forEach((textInput) => {
         assert.isFalse(textInput.props().disabled)
       })
-      LoginDetailsFormWrapper.find(StrongPasswordInput).forEach(strongPasswordInput => {
+      LoginDetailsFormWrapper.find(StrongPasswordInput).forEach((strongPasswordInput) => {
         assert.isFalse(strongPasswordInput.props().disabled)
       })
       props.loading = true
       shallowRenderForm(props)
-      LoginDetailsFormWrapper.find(TextInput).forEach(textInput => {
+      LoginDetailsFormWrapper.find(TextInput).forEach((textInput) => {
         assert.isTrue(textInput.props().disabled)
       })
-      LoginDetailsFormWrapper.find(StrongPasswordInput).forEach(strongPasswordInput => {
+      LoginDetailsFormWrapper.find(StrongPasswordInput).forEach((strongPasswordInput) => {
         assert.isTrue(strongPasswordInput.props().disabled)
       })
     })
@@ -121,7 +122,8 @@ describe('LoginDetailsForm Component', () => {
   })
 
   describe('reduxForm', () => {
-    let reduxFormStub, reduxFormConfig
+    let reduxFormStub
+    let reduxFormConfig
 
     beforeEach(() => {
       reduxFormStub = {
@@ -144,7 +146,8 @@ describe('LoginDetailsForm Component', () => {
           formatMessage: message => message.defaultMessage
         }
       }
-      let validateFunction, initialLoginDetails
+      let validateFunction
+      let initialLoginDetails
 
       beforeEach(() => {
         validateFunction = reduxFormConfig.validate

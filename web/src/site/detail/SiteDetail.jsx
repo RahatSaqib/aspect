@@ -11,7 +11,7 @@ import Paper from 'material-ui/Paper'
 import LinearProgress from 'material-ui/LinearProgress'
 
 // Our own imports
-import { isEditable } from '../../shared/selectors/site'
+import isEditable from '../../shared/selectors/site'
 import {
   fetchSingleSite,
   updateSingleSite
@@ -28,16 +28,12 @@ export class SiteDetail extends PureComponent {
 
   static propTypes = {
     setPageTitle: PropTypes.func.isRequired,
-    params: PropTypes.object.isRequired
-  }
-
-  handleFetchSite = ({ params }) => {
-    this.props.fetchSingleSite(params.siteId)
-  }
-
-  hasSiteWithLocation() {
-    const { site } = this.props
-    return site && site.has('longitude') && site.has('latitude')
+    params: PropTypes.object.isRequired,
+    intl: PropTypes.object.isRequired,
+    fetchSingleSite: PropTypes.func.isRequired,
+    site: PropTypes.object,
+    updateSingleSite: PropTypes.func.isRequired,
+    editable: PropTypes.bool.isRequired
   }
 
   componentWillMount() {
@@ -54,6 +50,15 @@ export class SiteDetail extends PureComponent {
     if (this.props.params.siteId !== nextProps.params.siteId) {
       this.handleFetchSite(nextProps)
     }
+  }
+
+  handleFetchSite = ({ params }) => {
+    this.props.fetchSingleSite(params.siteId)
+  }
+
+  hasSiteWithLocation() {
+    const { site } = this.props
+    return site && site.has('longitude') && site.has('latitude')
   }
 
   render() {

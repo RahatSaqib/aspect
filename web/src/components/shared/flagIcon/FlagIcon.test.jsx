@@ -33,7 +33,7 @@ describe('FlagIcon', () => {
 
   describe('When styles are specified', () => {
     it('should pass them onto i tag', () => {
-      let FlagIconWrapper = shallow(<FlagIcon style={{color: 'red'}} countryIsoAlpha2Code="ZA" />)
+      const FlagIconWrapper = shallow(<FlagIcon style={{ color: 'red' }} countryIsoAlpha2Code="ZA" />)
       assert.equal(FlagIconWrapper.find('i').props().style.color, 'red')
     })
   })

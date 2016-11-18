@@ -19,41 +19,38 @@ import { fetchSites } from '../../site/SiteRedux'
 
 // use classnames module to handle style classes
 import styles from './DeviceDetail.css'
+
 const cssClasses = classnames.bind(styles)
 
-const renderTextField = ({ input, meta, ...restProps }) => {
-  return (
-    <TextField
-      {...restProps}
-      {...input}
-      fullWidth
-      errorStyle={{ float: 'left' }}
-      errorText={meta.touched && meta.error}
-    />
-  )
-}
+const renderTextField = ({ input, meta, ...restProps }) => (
+  <TextField
+    {...restProps}
+    {...input}
+    fullWidth
+    errorStyle={{ float: 'left' }}
+    errorText={meta.touched && meta.error}
+  />
+)
 
-const renderGoToSiteField = ({ input }) => {
-  return (
-    <Link title="Go to site" to={'/site/' + input.value} >
-      <ExitToApp className={cssClasses('GoToSite')} />
-    </Link>
+const renderGoToSiteField = ({ input }) => (
+  <Link title="Go to site" to={`/site/${input.value}`} >
+    <ExitToApp className={cssClasses('GoToSite')} />
+  </Link>
   )
-}
 
 const handleAutoCompleteChange = (chosenRequest, index, input, allSites) => {
   let value = input.value
 
   // if user typed text and pressed Enter, then index=-1 - and chosenRequest is string value (see API doc - http://www.material-ui.com/#/components/auto-complete)
-  if(index === -1){
+  if (index === -1) {
     const textLo = chosenRequest.toLowerCase().trim()
-    let site = allSites.find(o => o.text.toLowerCase() === textLo)
-    if (site){
+    const site = allSites.find(o => o.text.toLowerCase() === textLo)
+    if (site) {
       value = site.value
     }
-  }
-    // if user selected item from the list then index>=0 and chosenRequest is object literal of default format {text:'', value:''}
-  else{
+  } else {
+    // if user selected item from the list then index>=0 and chosenRequest
+    // is object literal of default format {text:'', value:''}
     value = chosenRequest.value
   }
 
@@ -62,21 +59,21 @@ const handleAutoCompleteChange = (chosenRequest, index, input, allSites) => {
 }
 
 // --------------------------
-// on bluring - check if actual visual site name is correct (exists in datasource) and is equal siteId value stored in props
+// on bluring - check if actual visual site name is correct (exists in datasource)
+// and is equal siteId value stored in props
 // --------------------------
 const handleAutoCompleteBlur = (textValue, input, siteCurrent, allSites) => {
   const textLo = textValue.toLowerCase().trim()
   const siteNew = allSites.find(o => o.text.toLowerCase() === textLo)
 
   // site with this name exists
-  if (siteNew){
+  if (siteNew) {
     // if visual site name differs from currently stored in props - change it
-    if (siteNew.value !== siteCurrent.value){
+    if (siteNew.value !== siteCurrent.value) {
       input.onChange(siteNew.value)
     }
-  }
+  } else {
     // if no site found with this name - empty field
-  else{
     input.onChange(null)
   }
 
@@ -94,9 +91,10 @@ const renderAutoCompleteField = ({ input, meta, ...restProps }) => {
       {...restProps}
       {...input}
       searchText={site ? site.text : ''}
-      onNewRequest={(chosenRequest, index) => handleAutoCompleteChange(chosenRequest, index, input, allSites) }
-      onBlur={ev => handleAutoCompleteBlur(ev.target.value, input, site, allSites) }
-      fullWidth={true}
+      onNewRequest={(chosenRequest, index) =>
+        handleAutoCompleteChange(chosenRequest, index, input, allSites)}
+      onBlur={ev => handleAutoCompleteBlur(ev.target.value, input, site, allSites)}
+      fullWidth
       errorStyle={{ float: 'left' }}
       errorText={meta.touched && meta.error}
     />
@@ -106,7 +104,14 @@ const renderAutoCompleteField = ({ input, meta, ...restProps }) => {
 export class Form extends PureComponent {
 
   static propTypes = {
-    labels: PropTypes.object.isRequired
+    labels: PropTypes.object.isRequired,
+    fetchSites: PropTypes.func.isRequired,
+    items: PropTypes.object.isRequired,
+    table: PropTypes.object.isRequired,
+    handleSubmit: PropTypes.func.isRequired,
+    pristine: PropTypes.bool.isRequired,
+    valid: PropTypes.bool.isRequired,
+    submitting: PropTypes.bool.isRequired
   }
 
   // TODO: if site_id is set to one not present in client redux store,
@@ -121,7 +126,7 @@ export class Form extends PureComponent {
     const { labels, items, table, handleSubmit, pristine, submitting, valid } = this.props
 
     // all sites for dataSource property of 'Site' AutoComplete component
-    const allSites = items.byId.valueSeq().map(item => ({ value:item.get('id'), text:item.get('name') }) ).toJS()
+    const allSites = items.byId.valueSeq().map(item => ({ value: item.get('id'), text: item.get('name') })).toJS()
 
     return (
       <form onSubmit={handleSubmit}>
@@ -131,19 +136,20 @@ export class Form extends PureComponent {
 
         <table className={cssClasses('pure-table', 'SelectSiteRow')}>
           <tbody>
-          <tr>
-            <td>
-              <Field
-              dataSource={allSites}
-              name="site"
-              floatingLabelText={labels.site}
-              component={renderAutoCompleteField}
-              filter={AutoComplete.caseInsensitiveFilter} />
-            </td>
-            <td>
-              <Field name="site" component={renderGoToSiteField} />
-            </td>
-          </tr>
+            <tr>
+              <td>
+                <Field
+                  dataSource={allSites}
+                  name="site"
+                  floatingLabelText={labels.site}
+                  component={renderAutoCompleteField}
+                  filter={AutoComplete.caseInsensitiveFilter}
+                />
+              </td>
+              <td>
+                <Field name="site" component={renderGoToSiteField} />
+              </td>
+            </tr>
           </tbody>
         </table>
         <br />
@@ -170,7 +176,7 @@ function mapDispatchToProps(dispatch) {
 function validate(values) {
   const errors = {}
 
-  if (values){
+  if (values) {
     if (!values.get('name')) {
       errors.name = 'Required'
     }

@@ -20,13 +20,13 @@ export class ResultCategorySelectField extends PureComponent {
     value: PropTypes.string
   }
 
-  handleChange = (event, index, value) => {
-    this.props.onResultCategoryChange(value)
+  componentDidMount() {
+    const { assay } = this.props
+    this.props.fetchAssays(false, assay)
   }
 
-  componentDidMount() {
-    const {assay} = this.props
-    this.props.fetchAssays(false, assay)
+  handleChange = (event, index, value) => {
+    this.props.onResultCategoryChange(value)
   }
 
   render() {

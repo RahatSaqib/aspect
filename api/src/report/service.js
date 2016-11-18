@@ -1,9 +1,7 @@
-const Promise = require('bluebird')
 const _ = require('lodash')
-const { knex, filterParams, sortPageParams } = require('../db')
 
-function* listReports(request){
-  const {query} = request
+function* listReports(request) {
+  const { query } = request
 
   const data = _.sortBy([
     {
@@ -127,7 +125,7 @@ function* listReports(request){
 
   const total = data.length
 
-  const result = {ok: true, total, data, length: data.length}
+  const result = { ok: true, total, data, length: data.length }
 
   return result
 }

@@ -48,38 +48,43 @@ class SideNav extends PureComponent {
   static propTypes = {
     open: PropTypes.bool.isRequired,
     handleClose: PropTypes.func.isRequired,
-    pathname: PropTypes.string.isRequired
+    pathname: PropTypes.string.isRequired,
+    desktop: PropTypes.bool.isRequired
   }
 
   render() {
     return (
       <Drawer
-        docked={ this.props.desktop }
+        docked={this.props.desktop}
         containerClassName={cssClasses({
           'Drawer--desktop': this.props.desktop
         })}
         open={this.props.open}
-        onRequestChange={ this.props.handleClose}
+        onRequestChange={this.props.handleClose}
       >
-        <SelectableList pathname={ this.props.pathname } desktop={ this.props.desktop } handleClose={ this.props.handleClose } >
+        <SelectableList
+          pathname={this.props.pathname}
+          desktop={this.props.desktop}
+          handleClose={this.props.handleClose}
+        >
           <Subheader>Dashboards</Subheader>
           <ListItem
             containerElement={<Link to="/dashboard" />}
-            value={ '/dashboard' }
+            value={'/dashboard'}
             leftIcon={<Home color={green500} />}
             className={styles.Drawer__ListItem}
             primaryText="Home"
           />
           <ListItem
             containerElement={<Link to="/dashboard/inventory" />}
-            value={ '/dashboard/inventory' }
+            value={'/dashboard/inventory'}
             leftIcon={<Cart color={orange500} />}
             className={styles.Drawer__ListItem}
             primaryText="Inventory"
           />
           <ListItem
             containerElement={<Link to="/dashboard/maintenance" />}
-            value={ '/dashboard/maintenance' }
+            value={'/dashboard/maintenance'}
             leftIcon={<Build color={indigo600} />}
             className={styles.Drawer__ListItem}
             primaryText="Maintenance"
@@ -88,49 +93,49 @@ class SideNav extends PureComponent {
           <Subheader>Sections</Subheader>
           <DevicesListItem
             containerElement={<Link to="/device" />}
-            value={ '/device' }
+            value={'/device'}
             leftIcon={<Scanner />}
             className={styles.Drawer__ListItem}
             primaryText="Devices"
           />
           <ResultsListItem
             containerElement={<Link to="/result" />}
-            value={ '/result' }
+            value={'/result'}
             leftIcon={<Assignment />}
             className={styles.Drawer__ListItem}
             primaryText="Results"
           />
           <ContactsListItem
             containerElement={<Link to="/person" />}
-            value={ '/person' }
+            value={'/person'}
             leftIcon={<People />}
             className={styles.Drawer__ListItem}
             primaryText="Contacts"
           />
           <SitesListItem
             containerElement={<Link to="/site" />}
-            value={ '/site' }
+            value={'/site'}
             leftIcon={<Location />}
             className={styles.Drawer__ListItem}
             primaryText="Sites"
           />
-           <ListItem
+          <ListItem
             containerElement={<Link to="/router" />}
-            value={ '/router' }
+            value={'/router'}
             leftIcon={<RssFeed />}
             className={styles.Drawer__ListItem}
             primaryText="Routers"
           />
-            <ListItem
+          <ListItem
             containerElement={<Link to="/notification" />}
-            value={ '/notification' }
+            value={'/notification'}
             leftIcon={<Notifications />}
             className={styles.Drawer__ListItem}
             primaryText="Notifications"
           />
           <ListItem
             containerElement={<Link to="/report" />}
-            value={ '/report' }
+            value={'/report'}
             leftIcon={<Book />}
             className={styles.Drawer__ListItem}
             primaryText="Reports"

@@ -6,50 +6,64 @@ import MenuItem from 'material-ui/MenuItem'
 import ForkedSelectField from '../forkedMaterialUi/ForkedSelectField'
 import styles from './Shared.css'
 
-const MenuItemLabel = props => {
-  const {text, selectedItemStyle} = props
-  return <div style={{...{display: 'inline-block', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis', width: '100%'}, ...selectedItemStyle}}>
+const MenuItemLabel = (props) => {
+  const { text, selectedItemStyle } = props
+  return (<div style={{ ...{ display: 'inline-block', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis', width: '100%' }, ...selectedItemStyle }}>
     {text}
-  </div>
+  </div>)
 }
 
-const renderSelectField = props => {
-  const {onSelectionChanged, input, meta, selectFieldProps, children} = props,
-    {touched, error} = meta
+const renderSelectField = (props) => {
+  const { onSelectionChanged, input, meta, selectFieldProps, children } = props
+  const { touched, error } = meta
   const onChange = (event, index, value) => {
-    if(onSelectionChanged){
+    if (onSelectionChanged) {
       onSelectionChanged(event, index, value)
     }
     input.onChange(value)
   }
   return (
     <ForkedSelectField
-      {...input} errorStyle={{float: 'left'}} style={{verticalAlign: 'bottom'}}
-      errorText={touched && error} {...selectFieldProps} children={children}
+      {...input} errorStyle={{ float: 'left' }} style={{ verticalAlign: 'bottom' }}
+      errorText={touched && error} {...selectFieldProps}
       onChange={onChange} className={styles.Form__Field}
-      tabIndex="0" aria-haspopup />
+      tabIndex="0" aria-haspopup
+    >
+      {children}
+    </ForkedSelectField>
   )
 }
 
-const renderFormField = props => {
-  const {name, label, onChange, fullWidth, disabled, dataSource, dataSourceConfig, autoWidth, selectedItemStyle} = props,
-    valueKey = dataSourceConfig.value, textKey = dataSourceConfig.text
+const renderFormField = (props) => {
+  const {
+    name,
+    label,
+    onChange,
+    fullWidth,
+    disabled,
+    dataSource,
+    dataSourceConfig,
+    autoWidth,
+    selectedItemStyle } = props
+  const valueKey = dataSourceConfig.value
+  const textKey = dataSourceConfig.text
+  const selectItems = _.map(dataSource, item => ({
+    key: item[valueKey] || '-1',
+    value: item[valueKey] || null,
+    primaryText: item[textKey]
+  }))
 
-  const selectItems = _.map(dataSource, item => {
-    return {
-      key: item[valueKey] || '-1',
-      value: item[valueKey] || null,
-      primaryText: item[textKey]
-    }
-  })
-
-  return <Field name={name} onSelectionChanged={onChange}
-                selectFieldProps={{ floatingLabelText: label, fullWidth: fullWidth, disabled: disabled, autoWidth: autoWidth }}
-                component={renderSelectField}>
-      { selectItems.map(item => <MenuItem key={item.key} value={item.value}
-                                          primaryText={item.primaryText}
-                                          label={<MenuItemLabel text={item.primaryText} selectedItemStyle={selectedItemStyle} />} />) }
-    </Field>
+  return (<Field
+    name={name} onSelectionChanged={onChange}
+    selectFieldProps={{ floatingLabelText: label, fullWidth, disabled, autoWidth }}
+    component={renderSelectField}
+  >
+    { selectItems.map(item => <MenuItem
+      key={item.key} value={item.value}
+      primaryText={item.primaryText}
+      label={<MenuItemLabel text={item.primaryText} selectedItemStyle={selectedItemStyle} />}
+    />) }
+  </Field>)
 }
 
 export default renderFormField

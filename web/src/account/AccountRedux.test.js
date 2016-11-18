@@ -3,7 +3,7 @@ import Immutable from 'immutable'
 import _ from 'lodash'
 import proxyquire from 'proxyquire'
 import sinon from 'sinon'
-import accountDetails, {types} from './AccountRedux'
+import accountDetails, { types } from './AccountRedux'
 
 describe('AccountDetailsRedux', () => {
   const accountDetailsData = {
@@ -29,7 +29,7 @@ describe('AccountDetailsRedux', () => {
   describe('account details reducer', () => {
     let initialState
 
-    beforeEach(()=>{
+    beforeEach(() => {
       initialState = accountDetails(undefined, {})
     })
 
@@ -84,7 +84,10 @@ describe('AccountDetailsRedux', () => {
 
       describe('RECEIVE_ACCOUNT_DETAILS', () => {
         it('should show that account details are not loading anymore and populate contactDetails, loginDetails and userPreferences', () => {
-          const state = accountDetails(initialState, { type: types.RECEIVE_ACCOUNT_DETAILS, accountDetails: accountDetailsData })
+          const state = accountDetails(initialState, {
+            type: types.RECEIVE_ACCOUNT_DETAILS,
+            accountDetails: accountDetailsData
+          })
           assert.isFalse(state.get('loading'))
           assert.deepEqual(state.getIn(['data', 'contactDetails']).toJS(), _.omit(accountDetailsData,
             ['username', 'userId', 'timezone', 'culture']))
@@ -130,8 +133,14 @@ describe('AccountDetailsRedux', () => {
             culture: 'en-GB',
             notes: null
           }
-          const state = accountDetails(initialState, { type: types.RECEIVE_ACCOUNT_DETAILS, accountDetails: accountDetailsData })
-          const newState = accountDetails(state, { type: types.RECEIVE_UPDATED_CONTACT_DETAILS, accountDetails: newAccountDetailsData })
+          const state = accountDetails(initialState, {
+            type: types.RECEIVE_ACCOUNT_DETAILS,
+            accountDetails: accountDetailsData
+          })
+          const newState = accountDetails(state, {
+            type: types.RECEIVE_UPDATED_CONTACT_DETAILS,
+            accountDetails: newAccountDetailsData
+          })
 
           assert.isFalse(newState.get('loading'))
           assert.deepEqual(newState.getIn(['data', 'contactDetails']).toJS(), _.omit(newAccountDetailsData,
@@ -155,8 +164,14 @@ describe('AccountDetailsRedux', () => {
           const updateDetailsData = {
             username: 'this username was updated'
           }
-          const state = accountDetails(initialState, { type: types.RECEIVE_ACCOUNT_DETAILS, accountDetails: accountDetailsData })
-          const newState = accountDetails(state, { type: types.RECEIVE_UPDATED_LOGIN_DETAILS, updateDetails: updateDetailsData })
+          const state = accountDetails(initialState, {
+            type: types.RECEIVE_ACCOUNT_DETAILS,
+            accountDetails: accountDetailsData
+          })
+          const newState = accountDetails(state, {
+            type: types.RECEIVE_UPDATED_LOGIN_DETAILS,
+            updateDetails: updateDetailsData
+          })
 
           assert.isFalse(newState.get('loading'))
           assert.deepEqual(newState.getIn(['data', 'contactDetails']).toJS(), _.omit(accountDetailsData,
@@ -194,8 +209,14 @@ describe('AccountDetailsRedux', () => {
             timezone: 'Eastern Standard Time',
             culture: 'en-GB'
           }
-          const state = accountDetails(initialState, { type: types.RECEIVE_ACCOUNT_DETAILS, accountDetails: accountDetailsData })
-          const newState = accountDetails(state, { type: types.RECEIVE_UPDATED_USER_PREFERENCES, accountDetails: newAccountDetailsData })
+          const state = accountDetails(initialState, {
+            type: types.RECEIVE_ACCOUNT_DETAILS,
+            accountDetails: accountDetailsData
+          })
+          const newState = accountDetails(state, {
+            type: types.RECEIVE_UPDATED_USER_PREFERENCES,
+            accountDetails: newAccountDetailsData
+          })
 
           assert.isFalse(newState.get('loading'))
           assert.deepEqual(newState.getIn(['data', 'contactDetails']).toJS(), _.omit(accountDetailsData,
@@ -217,10 +238,11 @@ describe('AccountDetailsRedux', () => {
   })
 
   describe('account details creators', () => {
-    let accountDetailsRedux, dispatch
+    let accountDetailsRedux
+    let dispatch
 
     function createAccountDetailsReduxReduxWithStubs(fetchStub, errorCreatorsStub) {
-      if(!fetchStub.getBrowserNameAndVersion) {
+      if (!fetchStub.getBrowserNameAndVersion) {
         fetchStub.getBrowserNameAndVersion = () => 'Mocha/Chai'
       }
       const proxyDependencies = {
@@ -236,14 +258,14 @@ describe('AccountDetailsRedux', () => {
           changeTimezone: () => {}
         }
       }
-      if(errorCreatorsStub) {
+      if (errorCreatorsStub) {
         proxyDependencies['../error/ErrorRedux'] = errorCreatorsStub
       }
       accountDetailsRedux = proxyquire('./AccountRedux', proxyDependencies)
     }
 
     describe('fetchAccountDetails', () => {
-      const expectedResponseFromServer = Promise.resolve({ok: true, data: accountDetailsData})
+      const expectedResponseFromServer = Promise.resolve({ ok: true, data: accountDetailsData })
       let fetchStub
 
       beforeEach(() => {
@@ -268,21 +290,19 @@ describe('AccountDetailsRedux', () => {
       })
 
       describe('when a response is received from the server', () => {
-        it('Should dispatch a RECEIVE_ACCOUNT_DETAILS action with the account details received', () => {
-          return expectedResponseFromServer.then(response => {
-            assert.deepEqual(response, {ok: true, data: accountDetailsData})
-            assert.deepEqual(dispatch.secondCall.args, [{
-              type: types.RECEIVE_ACCOUNT_DETAILS,
-              accountDetails: accountDetailsData
-            }])
-          })
-        })
+        it('Should dispatch a RECEIVE_ACCOUNT_DETAILS action with the account details received', () => expectedResponseFromServer.then((response) => {
+          assert.deepEqual(response, { ok: true, data: accountDetailsData })
+          assert.deepEqual(dispatch.secondCall.args, [{
+            type: types.RECEIVE_ACCOUNT_DETAILS,
+            accountDetails: accountDetailsData
+          }])
+        }))
       })
 
       describe('when the server encounters a problem', () => {
-        const expectedError = {message: 'An unexpected error happened'},
-          expectedErrorFromServer = Promise.reject(expectedError),
-          expectedErrorAction = { type: 'ERROR' }
+        const expectedError = { message: 'An unexpected error happened' }
+        const expectedErrorFromServer = Promise.reject(expectedError)
+        const expectedErrorAction = { type: 'ERROR' }
         let errorCreatorsStub
 
         beforeEach(() => {
@@ -311,20 +331,18 @@ describe('AccountDetailsRedux', () => {
         })
 
         describe('and an error is received from the server', () => {
-          it('should dispatch an error action', () => {
-            return expectedErrorFromServer.then().catch(err => {
-              assert.deepEqual(err, expectedError)
-              assert.deepEqual(dispatch.secondCall.args, [expectedErrorAction])
-            })
-          })
+          it('should dispatch an error action', () => expectedErrorFromServer.then().catch((err) => {
+            assert.deepEqual(err, expectedError)
+            assert.deepEqual(dispatch.secondCall.args, [expectedErrorAction])
+          }))
         })
       })
     })
 
     describe('saveContactDetails', () => {
-      const expectedResponseFromServer = Promise.resolve({ok: true, data: accountDetailsData}),
-        stubHeaders = { value: 'Stubbed Headers' },
-        contactDetailsData = _.omit(accountDetailsData, ['username', 'userId', 'timezone', 'culture', 'notes', 'lastPartnerId'])
+      const expectedResponseFromServer = Promise.resolve({ ok: true, data: accountDetailsData })
+      const stubHeaders = { value: 'Stubbed Headers' }
+      const contactDetailsData = _.omit(accountDetailsData, ['username', 'userId', 'timezone', 'culture', 'notes', 'lastPartnerId'])
       let fetchStub
 
       beforeEach(() => {
@@ -358,21 +376,19 @@ describe('AccountDetailsRedux', () => {
       })
 
       describe('when a response is received from the server', () => {
-        it('Should dispatch a RECEIVE_UPDATED_CONTACT_DETAILS action with the account details received', () => {
-          return expectedResponseFromServer.then(response => {
-            assert.deepEqual(response, {ok: true, data: accountDetailsData})
-            assert.deepEqual(dispatch.secondCall.args, [{
-              type: types.RECEIVE_UPDATED_CONTACT_DETAILS,
-              accountDetails: accountDetailsData
-            }])
-          })
-        })
+        it('Should dispatch a RECEIVE_UPDATED_CONTACT_DETAILS action with the account details received', () => expectedResponseFromServer.then((response) => {
+          assert.deepEqual(response, { ok: true, data: accountDetailsData })
+          assert.deepEqual(dispatch.secondCall.args, [{
+            type: types.RECEIVE_UPDATED_CONTACT_DETAILS,
+            accountDetails: accountDetailsData
+          }])
+        }))
       })
 
       describe('when the server encounters a problem', () => {
-        const expectedError = {message: 'An unexpected error happened'},
-          expectedErrorFromServer = Promise.reject(expectedError),
-          expectedErrorAction = { type: 'ERROR' }
+        const expectedError = { message: 'An unexpected error happened' }
+        const expectedErrorFromServer = Promise.reject(expectedError)
+        const expectedErrorAction = { type: 'ERROR' }
         let errorCreatorsStub
 
         beforeEach(() => {
@@ -410,33 +426,32 @@ describe('AccountDetailsRedux', () => {
         })
 
         describe('and an error is received from the server', () => {
-          it('should dispatch an error action', () => {
-            return expectedErrorFromServer.then().catch(err => {
-              assert.deepEqual(err, expectedError)
-              assert.deepEqual(dispatch.secondCall.args, [expectedErrorAction])
-            })
-          })
+          it('should dispatch an error action', () => expectedErrorFromServer.then().catch((err) => {
+            assert.deepEqual(err, expectedError)
+            assert.deepEqual(dispatch.secondCall.args, [expectedErrorAction])
+          }))
         })
       })
     })
 
     describe('saveLoginDetails', () => {
-      const updateDetails = { value: 'login details updated' },
-        expectedResponseFromServer = Promise.resolve({ok: true, data: updateDetails}),
-        stubHeaders = { value: 'Stubbed Headers' },
-        loginDetailsData = {
-          id: accountDetailsData.userId,
-          username: accountDetailsData.username,
-          newPassword: null,
-          confirmNewPassword: null,
-          currentPassword: 'current-password'
-        }, requestData = {
-          currentPassword: loginDetailsData.currentPassword,
-          newUsername: loginDetailsData.username,
-          newPassword: loginDetailsData.newPassword,
-          clientId: 'Mocha/Chai',
-          clientName: 'Mocha/Chai on ' + window.navigator.platform
-        }
+      const updateDetails = { value: 'login details updated' }
+      const expectedResponseFromServer = Promise.resolve({ ok: true, data: updateDetails })
+      const stubHeaders = { value: 'Stubbed Headers' }
+      const loginDetailsData = {
+        id: accountDetailsData.userId,
+        username: accountDetailsData.username,
+        newPassword: null,
+        confirmNewPassword: null,
+        currentPassword: 'current-password'
+      }
+      const requestData = {
+        currentPassword: loginDetailsData.currentPassword,
+        newUsername: loginDetailsData.username,
+        newPassword: loginDetailsData.newPassword,
+        clientId: 'Mocha/Chai',
+        clientName: `Mocha/Chai on ${window.navigator.platform}`
+      }
       let fetchStub
 
       beforeEach(() => {
@@ -470,21 +485,19 @@ describe('AccountDetailsRedux', () => {
       })
 
       describe('when a response is received from the server', () => {
-        it('Should dispatch a RECEIVE_UPDATED_LOGIN_DETAILS action with the account details received', () => {
-          return expectedResponseFromServer.then(response => {
-            assert.deepEqual(response, {ok: true, data: updateDetails})
-            assert.deepEqual(dispatch.thirdCall.args, [{
-              type: types.RECEIVE_UPDATED_LOGIN_DETAILS,
-              updateDetails: updateDetails
-            }])
-          })
-        })
+        it('Should dispatch a RECEIVE_UPDATED_LOGIN_DETAILS action with the account details received', () => expectedResponseFromServer.then((response) => {
+          assert.deepEqual(response, { ok: true, data: updateDetails })
+          assert.deepEqual(dispatch.thirdCall.args, [{
+            type: types.RECEIVE_UPDATED_LOGIN_DETAILS,
+            updateDetails
+          }])
+        }))
       })
 
       describe('when the server encounters a problem', () => {
-        const expectedError = {message: 'An unexpected error happened'},
-          expectedErrorFromServer = Promise.reject(expectedError),
-          expectedErrorAction = { type: 'ERROR' }
+        const expectedError = { message: 'An unexpected error happened' }
+        const expectedErrorFromServer = Promise.reject(expectedError)
+        const expectedErrorAction = { type: 'ERROR' }
         let errorCreatorsStub
 
         beforeEach(() => {
@@ -522,20 +535,18 @@ describe('AccountDetailsRedux', () => {
         })
 
         describe('and an error is received from the server', () => {
-          it('should dispatch an error action', () => {
-            return expectedErrorFromServer.then().catch(err => {
-              assert.deepEqual(err, expectedError)
-              assert.deepEqual(dispatch.secondCall.args, [expectedErrorAction])
-            })
-          })
+          it('should dispatch an error action', () => expectedErrorFromServer.then().catch((err) => {
+            assert.deepEqual(err, expectedError)
+            assert.deepEqual(dispatch.secondCall.args, [expectedErrorAction])
+          }))
         })
       })
     })
 
     describe('saveUserPreferences', () => {
-      const expectedResponseFromServer = Promise.resolve({ok: true, data: accountDetailsData}),
-        stubHeaders = { value: 'Stubbed Headers' },
-        userPreferencesData = _.pick(accountDetailsData, ['id', 'timezone', 'culture'])
+      const expectedResponseFromServer = Promise.resolve({ ok: true, data: accountDetailsData })
+      const stubHeaders = { value: 'Stubbed Headers' }
+      const userPreferencesData = _.pick(accountDetailsData, ['id', 'timezone', 'culture'])
       let fetchStub
 
       beforeEach(() => {
@@ -569,21 +580,19 @@ describe('AccountDetailsRedux', () => {
       })
 
       describe('when a response is received from the server', () => {
-        it('Should dispatch a RECEIVE_UPDATED_USER_PREFERENCES action with the account details received', () => {
-          return expectedResponseFromServer.then(response => {
-            assert.deepEqual(response, {ok: true, data: accountDetailsData})
-            assert.deepEqual(dispatch.getCall(3).args, [{
-              type: types.RECEIVE_UPDATED_USER_PREFERENCES,
-              accountDetails: accountDetailsData
-            }])
-          })
-        })
+        it('Should dispatch a RECEIVE_UPDATED_USER_PREFERENCES action with the account details received', () => expectedResponseFromServer.then((response) => {
+          assert.deepEqual(response, { ok: true, data: accountDetailsData })
+          assert.deepEqual(dispatch.getCall(3).args, [{
+            type: types.RECEIVE_UPDATED_USER_PREFERENCES,
+            accountDetails: accountDetailsData
+          }])
+        }))
       })
 
       describe('when the server encounters a problem', () => {
-        const expectedError = {message: 'An unexpected error happened'},
-          expectedErrorFromServer = Promise.reject(expectedError),
-          expectedErrorAction = { type: 'ERROR' }
+        const expectedError = { message: 'An unexpected error happened' }
+        const expectedErrorFromServer = Promise.reject(expectedError)
+        const expectedErrorAction = { type: 'ERROR' }
         let errorCreatorsStub
 
         beforeEach(() => {
@@ -621,12 +630,10 @@ describe('AccountDetailsRedux', () => {
         })
 
         describe('and an error is received from the server', () => {
-          it('should dispatch an error action', () => {
-            return expectedErrorFromServer.then().catch(err => {
-              assert.deepEqual(err, expectedError)
-              assert.deepEqual(dispatch.secondCall.args, [expectedErrorAction])
-            })
-          })
+          it('should dispatch an error action', () => expectedErrorFromServer.then().catch((err) => {
+            assert.deepEqual(err, expectedError)
+            assert.deepEqual(dispatch.secondCall.args, [expectedErrorAction])
+          }))
         })
       })
     })

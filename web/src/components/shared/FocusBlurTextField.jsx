@@ -15,7 +15,8 @@ export class FocusBlurTextField extends PureComponent {
   static propTypes = {
     onBlur: PropTypes.func,
     onFocus: PropTypes.func,
-    onCommitValue: PropTypes.func.isRequired
+    onCommitValue: PropTypes.func.isRequired,
+    value: PropTypes.string
   }
 
   state = {
@@ -23,9 +24,10 @@ export class FocusBlurTextField extends PureComponent {
     pendingValue: this.props.value
   }
 
-  handleFocus = (...args) => {
-    this.setState({ isFocused: true })
-    this.props.onFocus(...args)
+  componentWillReceiveProps(nextProps) {
+    if (!this.state.isFocused) {
+      this.setState({ pendingValue: nextProps.value })
+    }
   }
 
   handleBlur = (...args) => {
@@ -41,10 +43,9 @@ export class FocusBlurTextField extends PureComponent {
     this.setState({ pendingValue: value })
   }
 
-  componentWillReceiveProps(nextProps) {
-    if (!this.state.isFocused) {
-      this.setState({ pendingValue: nextProps.value })
-    }
+  handleFocus = (...args) => {
+    this.setState({ isFocused: true })
+    this.props.onFocus(...args)
   }
 
   render() {

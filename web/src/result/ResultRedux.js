@@ -49,7 +49,7 @@ function receiveResults(json) {
 }
 
 // With state.filter.listFilter & extraFilters
-export function fetchListFilteredResults(extraFilters = {}, ...args){
+export function fetchListFilteredResults(extraFilters = {}, ...args) {
   return (dispatch, getState) => {
     const filters = getState()
       .filter
@@ -63,9 +63,8 @@ export function fetchListFilteredResults(extraFilters = {}, ...args){
   }
 }
 
-export function fetchResults(filters/* required */, sortCol = 'endedOn', sortDir = 'desc', page = 0, pageSize = 20){
-  return dispatch => {
-
+export function fetchResults(filters/* required */, sortCol = 'endedOn', sortDir = 'desc', page = 0, pageSize = 10) {
+  return (dispatch) => {
     dispatch(requestResults(sortCol, sortDir, page, pageSize, filters))
 
     return aspectFetch(`/result?${stringify({
@@ -76,7 +75,7 @@ export function fetchResults(filters/* required */, sortCol = 'endedOn', sortDir
       ...filters
     })}`)
       .then(json => dispatch(receiveResults(json)))
-      .catch(err => {
+      .catch((err) => {
         dispatch(addError('Loading results failed', err.message, err))
       })
   }
@@ -99,14 +98,13 @@ function receiveSingleResult(item) {
 }
 
 // load a single result with given resultId
-export function fetchSingleResult(resultId){
-  return dispatch => {
-
+export function fetchSingleResult(resultId) {
+  return (dispatch) => {
     dispatch(requestSingleResult(resultId))
 
     return aspectFetch(`/result/${resultId}`)
       .then(json => dispatch(receiveSingleResult(json.data)))
-      .catch(err => {
+      .catch((err) => {
         dispatch(addError(`Loading a result (${resultId}) failed`, err.message, err))
       })
   }
@@ -130,9 +128,8 @@ function receiveUpdatedSingleResult(item) {
 }
 
 // update a single result with given resultId and data
-export function updateSingleResult(resultId, data){
-  return dispatch => {
-
+export function updateSingleResult(resultId, data) {
+  return (dispatch) => {
     dispatch(requestUpdatingSingleResult(resultId, data))
 
     return aspectFetch(`/result/${resultId}`, {
@@ -140,7 +137,7 @@ export function updateSingleResult(resultId, data){
       body: JSON.stringify(data)
     })
       .then(json => dispatch(receiveUpdatedSingleResult(json.data)))
-      .catch(err => {
+      .catch((err) => {
         dispatch(addError(`Updating a result (${resultId}) failed`, err.message, err))
       })
   }
@@ -153,7 +150,7 @@ const Result = Immutable.Record({
   table: new Table({
     sortCol: 'endedOn',
     sortDir: 'desc',
-    pageSize: 20,
+    pageSize: 10,
     filters: Immutable.fromJS({ sampleId: '', assayId: null }),
     extraColumns: new Immutable.List()
   })
@@ -163,21 +160,22 @@ const initialState = new Result()
 
 export default function resultReducer(state = initialState, action) {
   switch (action.type) {
-  case types.REQUEST_RESULTS:
-    return state
+    case types.REQUEST_RESULTS:
+      return state
       .set('table', requestTable(state.table, action))
-  case types.RECEIVE_RESULTS:
-    return state.withMutations(mutState => {
-      const immutList = Immutable.fromJS(action.items)
-      mutState.set('items', receiveList(mutState.items, immutList))
-      mutState.set('table', receiveTableItems(mutState.table, action.total, action.extraColumns))
-    })
-  case types.RECEIVE_SINGLE_RESULT:
-  case types.RECEIVE_UPDATED_SINGLE_RESULT:
-    return state.withMutations(mutState => {
-      const immutItem = Immutable.fromJS(action.item)
-      mutState.set('items', receiveItem(mutState.items, immutItem))
-    })
+    case types.RECEIVE_RESULTS:
+      return state.withMutations((mutState) => {
+        const immutList = Immutable.fromJS(action.items)
+        mutState.set('items', receiveList(mutState.items, immutList))
+        mutState.set('table', receiveTableItems(mutState.table, action.total, action.extraColumns))
+      })
+    case types.RECEIVE_SINGLE_RESULT:
+    case types.RECEIVE_UPDATED_SINGLE_RESULT:
+      return state.withMutations((mutState) => {
+        const immutItem = Immutable.fromJS(action.item)
+        mutState.set('items', receiveItem(mutState.items, immutItem))
+      })
+    default:
+      return state
   }
-  return state
 }

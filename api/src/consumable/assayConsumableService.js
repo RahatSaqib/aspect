@@ -6,8 +6,8 @@ const SELECT_LIST_FIELDS = ['ca.consumableId', 'ca.assayId', 'ca.quantity',
   'c.name as consumableName', 'u.name as unitName', 'u.shortname as unitShortName',
   'a.name as assayName', 'a.i18nKey as assayI18nKey']
 
-function* getConsumableAssays(request){
-  const {consumableId} = request.params
+function* getConsumableAssays(request) {
+  const { consumableId } = request.params
 
   const assayConsumables = yield query('Get assay consumables')
     .from('ConsumableAssay as ca')
@@ -17,7 +17,7 @@ function* getConsumableAssays(request){
     .where('ca.consumableId', consumableId)
     .select(SELECT_LIST_FIELDS)
 
-  return {ok: true, data: assayConsumables }
+  return { ok: true, data: assayConsumables }
 }
 
 function getAssayConsumable(assayId, consumableId) {
@@ -31,8 +31,8 @@ function getAssayConsumable(assayId, consumableId) {
     .first(SELECT_LIST_FIELDS)
 }
 
-function* getAssayConsumables(request){
-  const {assayId} = request.params
+function* getAssayConsumables(request) {
+  const { assayId } = request.params
 
   const assayConsumables = yield query('Get assay consumables')
     .from('ConsumableAssay as ca')
@@ -42,18 +42,18 @@ function* getAssayConsumables(request){
     .where('ca.assayId', assayId)
     .select(SELECT_LIST_FIELDS)
 
-  return {ok: true, data: assayConsumables }
+  return { ok: true, data: assayConsumables }
 }
 
 function* createAssayConsumable(request) {
-  const {assayId, consumableId, quantity} = request.payload
+  const { assayId, consumableId, quantity } = request.payload
 
   try {
     yield query('Insert assay consumable')
-      .insert({assayId, consumableId, quantity})
+      .insert({ assayId, consumableId, quantity })
       .into('ConsumableAssay')
   } catch (err) {
-    if(err.code === 'ER_DUP_ENTRY') {
+    if (err.code === 'ER_DUP_ENTRY') {
       return Boom.conflict('There is already an record for this assay and consumable')
     }
     throw err
@@ -65,17 +65,17 @@ function* createAssayConsumable(request) {
 }
 
 function* updateAssayConsumableQuantity(request) {
-  const {params: {assayId, consumableId}, payload: {quantity}} = request
+  const { params: { assayId, consumableId }, payload: { quantity } } = request
 
   yield query('Update assay consumable')
     .from('ConsumableAssay as ca')
     .where('ca.assayId', assayId)
     .andWhere('ca.consumableId', consumableId)
-    .update({'quantity': quantity})
+    .update({ quantity })
 
   const assayConsumable = yield getAssayConsumable(assayId, consumableId)
 
-  if(_.isEmpty(assayConsumable)) {
+  if (_.isEmpty(assayConsumable)) {
     return Boom.notFound('Assay consumable not found')
   }
 
@@ -83,7 +83,7 @@ function* updateAssayConsumableQuantity(request) {
 }
 
 function* deleteAssayConsumable(request) {
-  const {assayId, consumableId} = request.params
+  const { assayId, consumableId } = request.params
 
   yield query('Delete assay consumable')
     .from('ConsumableAssay')

@@ -26,7 +26,7 @@ const messages = defineMessages({
 
 export class StyleguideMain extends PureComponent {
   static propTypes = {
-    state: PropTypes.any
+    intl: PropTypes.any
   }
 
   state = {
@@ -65,7 +65,12 @@ export class StyleguideMain extends PureComponent {
           onChangeFilter={this.handleChangeFilter}
           filter={this.state.filter}
           defaultExpanded
-          config={{assayAndResultCategory: true, geography: true, date: true, deviceName: true, siteName: true, contactNameOrEmail: true}}
+          config={{ assayAndResultCategory: true,
+            geography: true,
+            date: true,
+            deviceName: true,
+            siteName: true,
+            contactNameOrEmail: true }}
         />
         <CountrySelectField
           onChangeCountry={this.handleChangeCountry}

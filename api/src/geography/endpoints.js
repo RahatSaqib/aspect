@@ -1,6 +1,6 @@
-let Joi = require('joi')
-let { asyncHandler } = require('../routes')
-let { buildGeographySelectList, countrySelectList, stateSelectList, lgaSelectList } = require('./service')
+const Joi = require('joi')
+const { asyncHandler } = require('../routes')
+const { buildGeographySelectList, countrySelectList, stateSelectList, lgaSelectList } = require('./service')
 
 module.exports = [{
   method: 'GET',

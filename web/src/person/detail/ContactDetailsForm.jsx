@@ -7,12 +7,12 @@ import LocationSelector from '../../components/shared/LocationSelector'
 import TextInput from '../../components/shared/TextInput'
 import PhoneInput from '../../components/shared/PhoneInput'
 import SelectInput from '../../components/shared/SelectInput'
-import {emailAddress as validateEmailAddress} from '../../shared/utils/validate'
+import validateEmailAddress from '../../shared/utils/validate'
 import messages from './messages'
 import styles from './PersonDetail.css'
 
-const ContactDetailsForm = props => {
-  const { intl: {formatMessage}, handleSubmit, pristine, invalid,
+const ContactDetailsForm = (props) => {
+  const { intl: { formatMessage }, handleSubmit, pristine, invalid,
       loading, initialValues, showNotesField, userIsAdmin, partners } = props
   return (
     <form onSubmit={handleSubmit} className={styles.Form}>
@@ -33,20 +33,26 @@ const ContactDetailsForm = props => {
         </section>
         {userIsAdmin && <section>
           <h1>{formatMessage(messages.partner)}</h1>
-          <SelectInput name="lastPartnerId" label={formatMessage(messages.partner)}
-                       disabled={loading || _.isEmpty(partners)} autoWidth
-                       dataSource={partners} dataSourceConfig={{ text: 'name', value: 'id' }} />
+          <SelectInput
+            name="lastPartnerId" label={formatMessage(messages.partner)}
+            disabled={loading || _.isEmpty(partners)} autoWidth
+            dataSource={partners} dataSourceConfig={{ text: 'name', value: 'id' }}
+          />
         </section>}
         <section>
           <h1>{formatMessage(messages.location)}</h1>
-          <LocationSelector loading={loading} initialValues={initialValues}
-                            formName="accountDetails" countryIdFieldName="countryId"
-                            stateIdFieldName="stateId" lgaIdFieldName="lgaId" />
+          <LocationSelector
+            loading={loading} initialValues={initialValues}
+            formName="accountDetails" countryIdFieldName="countryId"
+            stateIdFieldName="stateId" lgaIdFieldName="lgaId"
+          />
           <TextInput name="zip" label={formatMessage(messages.zip)} disabled={loading} maxLength="45" />
         </section>
         {showNotesField && <section>
-          <TextInput name="notes" label={formatMessage(messages.notes)} disabled={loading} maxLength="1200"
-                     multiLine fullWidth rows={4} />
+          <TextInput
+            name="notes" label={formatMessage(messages.notes)} disabled={loading} maxLength="1200"
+            multiLine fullWidth rows={4}
+          />
         </section>}
       </div>
       <div className={styles.Form__ActionRow}>
@@ -71,14 +77,18 @@ ContactDetailsForm.propTypes = {
     }))
   })),
   showNotesField: PropTypes.bool,
-  onSubmit: PropTypes.func.isRequired,
-  onSubmitSuccess: PropTypes.func
+  handleSubmit: PropTypes.func.isRequired,
+  intl: PropTypes.object,
+  pristine: PropTypes.bool.isRequired,
+  invalid: PropTypes.bool.isRequired,
+  initialValues: PropTypes.object.isRequired,
+  userIsAdmin: PropTypes.bool
 }
 
 const validate = (contactDetails, props) => {
-  const {formatMessage} = props.intl
+  const { formatMessage } = props.intl
   const errors = {}
-  if(contactDetails) {
+  if (contactDetails) {
     if (!contactDetails.get('name')) {
       errors.name = formatMessage(messages.nameRequired)
     }

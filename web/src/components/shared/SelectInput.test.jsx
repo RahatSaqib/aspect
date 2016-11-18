@@ -12,16 +12,16 @@ describe('SelectInput', () => {
     label: 'Field Label',
     autoWidth: false,
     disabled: false,
-    dataSource: [{personId: '123', fullName: 'Jim Jefferson'},
-      {personId: '124', fullName: 'Billy Idol'},
-      {personId: '125', fullName: 'Eddy Grant'}],
+    dataSource: [{ personId: '123', fullName: 'Jim Jefferson' },
+      { personId: '124', fullName: 'Billy Idol' },
+      { personId: '125', fullName: 'Eddy Grant' }],
     dataSourceConfig: { value: 'personId', text: 'fullName' },
     fullWidth: true
   }
   let SelectInputWrapper
 
   beforeEach(() => {
-    SelectInputWrapper = shallow(<SelectInput {...props}/>)
+    SelectInputWrapper = shallow(<SelectInput {...props} />)
   })
 
   it('Should render a SelectField and pass the props assigned to it', () => {
@@ -50,7 +50,7 @@ describe('SelectInput', () => {
     })
 
     assert.equal(selectField.type.name, 'SelectField')
-    assert.deepEqual(selectField.props, {...selectField.props,
+    assert.deepEqual(selectField.props, { ...selectField.props,
       errorStyle: {
         float: 'left'
       },
@@ -65,7 +65,7 @@ describe('SelectInput', () => {
 
   it('Should create menu items from the datasource and datasource config passed to it', () => {
     assert.equal(SelectInputWrapper.find(MenuItem).length, props.dataSource.length)
-    _.each(props.dataSource, item => {
+    _.each(props.dataSource, (item) => {
       assert.equal(SelectInputWrapper.findWhere(
         element => element.type() === MenuItem && element.props().value === item.personId)
         .props().primaryText, item.fullName)

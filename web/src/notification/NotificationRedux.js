@@ -43,7 +43,7 @@ function receiveNotifications(json) {
 }
 
 // With state.filter.listFilter & extraFilters
-export function fetchListFilteredNotifications(extraFilters = {}, ...args){
+export function fetchListFilteredNotifications(extraFilters = {}, ...args) {
   return (dispatch, getState) => {
     const filters = getState()
       .filter
@@ -57,9 +57,8 @@ export function fetchListFilteredNotifications(extraFilters = {}, ...args){
   }
 }
 
-export function fetchNotifications(filters/* required */, sortCol = 'name', sortDir = 'asc', page = 0, pageSize = 10){
-  return dispatch => {
-
+export function fetchNotifications(filters/* required */, sortCol = 'name', sortDir = 'asc', page = 0, pageSize = 10) {
+  return (dispatch) => {
     dispatch(requestNotifications(sortCol, sortDir, page, pageSize, filters))
 
     return aspectFetch(`/notification?${stringify({
@@ -70,7 +69,7 @@ export function fetchNotifications(filters/* required */, sortCol = 'name', sort
       ...filters
     })}`)
       .then(json => dispatch(receiveNotifications(json)))
-      .catch(err => {
+      .catch((err) => {
         dispatch(addError('Loading notifications failed', err.message, err))
       })
   }
@@ -87,15 +86,16 @@ const initialState = new Notification()
 
 export default function notificationReducer(state = initialState, action) {
   switch (action.type) {
-  case types.REQUEST_NOTIFICATIONS:
-    return state
+    case types.REQUEST_NOTIFICATIONS:
+      return state
       .set('table', requestTable(state.table, action))
-  case types.RECEIVE_NOTIFICATIONS:
-    return state.withMutations(mutState => {
-      const immutList = Immutable.fromJS(action.items)
-      mutState.set('items', receiveList(mutState.items, immutList))
-      mutState.set('table', receiveTableItems(mutState.table, action.total))
-    })
+    case types.RECEIVE_NOTIFICATIONS:
+      return state.withMutations((mutState) => {
+        const immutList = Immutable.fromJS(action.items)
+        mutState.set('items', receiveList(mutState.items, immutList))
+        mutState.set('table', receiveTableItems(mutState.table, action.total))
+      })
+    default:
+      return state
   }
-  return state
 }

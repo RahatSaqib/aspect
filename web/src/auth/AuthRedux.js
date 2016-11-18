@@ -1,6 +1,6 @@
 import { stringify } from 'querystring'
 import Immutable from 'immutable'
-import jwt_decode from 'jwt-decode'
+import jwtDecode from 'jwt-decode'
 import { browserHistory } from 'react-router'
 import { SubmissionError } from 'redux-form'
 import { aspectFetch, getHeaders, getBrowserNameAndVersion } from '../shared/utils/fetch'
@@ -39,7 +39,6 @@ export function loginSuccess(name, culture, timezone, permissions) {
 }
 
 export function refreshSuccess(name, culture, timezone, permissions) {
-
   return {
     type: types.LOGIN_SUCCESS,
     name,
@@ -51,7 +50,6 @@ export function refreshSuccess(name, culture, timezone, permissions) {
 }
 
 export function hydrateFromLocalStorage() {
-
   return {
     type: types.HYDRATE_FROM_LOCAL_STORAGE,
     culture: localStorage.getCulture(),
@@ -90,7 +88,6 @@ export function changeTimezone(timezone) {
 }
 
 export function toggleDrawer() {
-
   localStorage.toggleDrawerOpen()
 
   return {
@@ -100,7 +97,6 @@ export function toggleDrawer() {
 }
 
 export function closeDrawer() {
-
   localStorage.closeDrawer()
 
   return {
@@ -114,7 +110,6 @@ export function loginStart(login) {
   const password = login.get('password')
 
   return function (dispatch) {
-
     // First dispatch: the app state is updated to inform
     // that the API call is starting.
     dispatch(loginRequest())
@@ -124,7 +119,7 @@ export function loginStart(login) {
 
     // In this case, we return a promise to wait for.
     // This is not required by thunk middleware, but it is convenient for us.
-    const clientName = getBrowserNameAndVersion() + ' on ' + window.navigator.platform
+    const clientName = `${getBrowserNameAndVersion()} on ${window.navigator.platform}`
 
     return aspectFetch('/auth',
       {
@@ -132,14 +127,13 @@ export function loginStart(login) {
         headers: getHeaders(),
         body: JSON.stringify({
           name: user,
-          password: password,
+          password,
           clientId: localStorage.getClientId(),
-          clientName: clientName
+          clientName
         })
       })
-      .then(json => {
-
-        let jwt = storeAccess(json)
+      .then((json) => {
+        const jwt = storeAccess(json)
 
         // We can dispatch many times!
         // Here, we update the app state with the results of the API call.
@@ -147,7 +141,7 @@ export function loginStart(login) {
 
         browserHistory.push('/dashboard')
       })
-      .catch(err => {
+      .catch((err) => {
         dispatch(loginFailure(err))
         dispatch(addError('Login Failed', err.message, err))
       })
@@ -155,9 +149,7 @@ export function loginStart(login) {
 }
 
 export function logoutStart(reason) {
-
   return function (dispatch) {
-
     // remove access and refresh tokens
     localStorage.clear()
 
@@ -165,14 +157,13 @@ export function logoutStart(reason) {
     dispatch(logoutSuccess())
 
     // now, redirect to login page
-    browserHistory.push('/login' + (typeof reason === 'string' ? '?' + stringify({ reason }) : ''))
+    browserHistory.push(`/login${typeof reason === 'string' ? `?${stringify({ reason })}` : ''}`)
   }
 }
 
 export function refreshStart() {
   return function (dispatch) {
-
-    if (!localStorage.getRefreshToken()){
+    if (!localStorage.getRefreshToken()) {
       return
     }
 
@@ -186,8 +177,8 @@ export function refreshStart() {
           clientId: localStorage.getClientId()
         })
       })
-      .then(json => {
-        let jwt = storeAccess(json)
+      .then((json) => {
+        const jwt = storeAccess(json)
 
         dispatch(refreshSuccess(jwt.name, jwt.culture, jwt.timezone, jwt.permissions))
       })
@@ -199,7 +190,7 @@ export function refreshStart() {
 
 function storeAccess(json) {
   // Store jwt, refresh token, and clientId
-  const jwt = jwt_decode(json.access)
+  const jwt = jwtDecode(json.access)
 
   localStorage.store(json.access, jwt.exp, json.refresh, json.clientId)
 
@@ -217,40 +208,40 @@ function createResetPasswordEnterPasswordSuccess(username) {
 
 export function resetPasswordEnterEmailAddress(emailAddress) {
   return function () {
-    const clientName = getBrowserNameAndVersion() + ' on ' + window.navigator.platform
+    const clientName = `${getBrowserNameAndVersion()} on ${window.navigator.platform}`
     return aspectFetch(`/auth/send-reset-password-token/${emailAddress}`,
       {
         method: 'POST',
         headers: getHeaders(),
         body: JSON.stringify({
           clientId: localStorage.getClientId(),
-          clientName: clientName
+          clientName
         })
       })
-      .catch(err => {
-        throw new SubmissionError({_error: err.message})
+      .catch((err) => {
+        throw new SubmissionError({ _error: err.message })
       })
   }
 }
 
 export function resetPasswordEnterPassword(resetPasswordToken, newPassword) {
   return function (dispatch) {
-    const clientName = getBrowserNameAndVersion() + ' on ' + window.navigator.platform
+    const clientName = `${getBrowserNameAndVersion()} on ${window.navigator.platform}`
     return aspectFetch(`/auth/update-password/${resetPasswordToken}`,
       {
         method: 'PUT',
         headers: getHeaders(),
         body: JSON.stringify({
-          newPassword: newPassword,
+          newPassword,
           clientId: localStorage.getClientId(),
-          clientName: clientName
+          clientName
         })
       })
-      .then(json => {
+      .then((json) => {
         dispatch(createResetPasswordEnterPasswordSuccess(json.username))
       })
-      .catch(err => {
-        throw new SubmissionError({_error: err.message})
+      .catch((err) => {
+        throw new SubmissionError({ _error: err.message })
       })
   }
 }
@@ -271,43 +262,44 @@ const initialState = new User()
 
 export default function authReducer(state = initialState, action) {
   switch (action.type) {
-  case types.HYDRATE_FROM_LOCAL_STORAGE:
-    return state.merge({
-      culture: action.culture,
-      timezone: action.timezone,
-      loggedIn: true
-    })
-  case types.LOGIN_REQUEST:
-    return state.merge({ loggedIn: false })
-  case types.LOGIN_SUCCESS:
-    return state.mergeDeep({
-      name: action.name,
-      culture: action.culture,
-      timezone: action.timezone,
-      permissions: action.permissions,
-      loggedIn: true,
-      drawerOpen: action.drawerOpen
-    })
-  case types.LOGIN_FAILURE:
-    return state.merge({ name: '', loggedIn: false })
-  case types.LOGOUT_SUCCESS:
-    return state.merge({ name: '', loggedIn: false })
-  case types.CHANGE_CULTURE:
-    return state.merge({
-      culture: action.culture
-    })
-  case types.CHANGE_TIMEZONE:
-    return state.merge({
-      timezone: action.timezone
-    })
-  case types.TOGGLE_DRAWER:
-    return state.merge({
-      drawerOpen: action.drawerOpen
-    })
-  case types.RESET_PASSWORD_ENTER_PASSWORD_SUCCESS:
-    return state.merge({
-      name: action.username
-    })
+    case types.HYDRATE_FROM_LOCAL_STORAGE:
+      return state.merge({
+        culture: action.culture,
+        timezone: action.timezone,
+        loggedIn: true
+      })
+    case types.LOGIN_REQUEST:
+      return state.merge({ loggedIn: false })
+    case types.LOGIN_SUCCESS:
+      return state.mergeDeep({
+        name: action.name,
+        culture: action.culture,
+        timezone: action.timezone,
+        permissions: action.permissions,
+        loggedIn: true,
+        drawerOpen: action.drawerOpen
+      })
+    case types.LOGIN_FAILURE:
+      return state.merge({ name: '', loggedIn: false })
+    case types.LOGOUT_SUCCESS:
+      return state.merge({ name: '', loggedIn: false })
+    case types.CHANGE_CULTURE:
+      return state.merge({
+        culture: action.culture
+      })
+    case types.CHANGE_TIMEZONE:
+      return state.merge({
+        timezone: action.timezone
+      })
+    case types.TOGGLE_DRAWER:
+      return state.merge({
+        drawerOpen: action.drawerOpen
+      })
+    case types.RESET_PASSWORD_ENTER_PASSWORD_SUCCESS:
+      return state.merge({
+        name: action.username
+      })
+    default:
+      return state
   }
-  return state
 }

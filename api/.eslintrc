@@ -9,29 +9,24 @@
     "node": true,
     "mocha": true
   },
+  "extends": "airbnb",
   "rules": {
-    "indent": [
+    "semi": [
       "warn",
-      2
+      "never"
     ],
-    "comma-dangle": 1,
-    "quotes": [
-      1,
-      "single"
-    ],
-    "no-var": 1,
-    "no-undef": 1,
-    "global-strict": 0,
-    "no-extra-semi": 1,
-    "no-underscore-dangle": 0,
-    "no-unused-vars": 1,
-    "no-trailing-spaces": [
-      1,
-      {
-        "skipBlankLines": true
-      }
-    ],
-    "no-unreachable": 1,
-    "semi": ["warn", "never"]
+    "comma-dangle": "off",
+    "func-names": "off",
+    "global-require": "off",
+    "newline-per-chained-call": "off",
+    "no-confusing-arrow": ["error", {"allowParens": true}],
+    "no-iterator": "off",
+    "no-nested-ternary": "off",
+    "no-param-reassign": "off",
+    "no-plusplus": ["error", { "allowForLoopAfterthoughts": true }],
+    "no-restricted-syntax": "off",
+    "no-shadow": "off",
+    "no-use-before-define": "off",
+    "require-yield": "off"
   }
 }

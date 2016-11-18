@@ -43,7 +43,7 @@ function receiveReports(json) {
 }
 
 // With state.filter.listFilter & extraFilters
-export function fetchListFilteredReports(extraFilters = {}, ...args){
+export function fetchListFilteredReports(extraFilters = {}, ...args) {
   return (dispatch, getState) => {
     const filters = getState()
       .filter
@@ -57,9 +57,8 @@ export function fetchListFilteredReports(extraFilters = {}, ...args){
   }
 }
 
-export function fetchReports(filters/* required */, sortCol = 'name', sortDir = 'asc', page = 0, pageSize = 10){
-  return dispatch => {
-
+export function fetchReports(filters/* required */, sortCol = 'name', sortDir = 'asc', page = 0, pageSize = 10) {
+  return (dispatch) => {
     dispatch(requestReports(sortCol, sortDir, page, pageSize, filters))
 
     return aspectFetch(`/report?${stringify({
@@ -70,7 +69,7 @@ export function fetchReports(filters/* required */, sortCol = 'name', sortDir = 
       ...filters
     })}`)
       .then(json => dispatch(receiveReports(json)))
-      .catch(err => {
+      .catch((err) => {
         dispatch(addError('Loading reports failed', err.message, err))
       })
   }
@@ -89,15 +88,16 @@ const initialState = new Report()
 
 export default function reportReducer(state = initialState, action) {
   switch (action.type) {
-  case types.REQUEST_REPORTS:
-    return state
+    case types.REQUEST_REPORTS:
+      return state
       .set('table', requestTable(state.table, action))
-  case types.RECEIVE_REPORTS:
-    return state.withMutations(mutState => {
-      const immutList = Immutable.fromJS(action.items)
-      mutState.set('items', receiveList(mutState.items, immutList))
-      mutState.set('table', receiveTableItems(mutState.table, action.total))
-    })
+    case types.RECEIVE_REPORTS:
+      return state.withMutations((mutState) => {
+        const immutList = Immutable.fromJS(action.items)
+        mutState.set('items', receiveList(mutState.items, immutList))
+        mutState.set('table', receiveTableItems(mutState.table, action.total))
+      })
+    default:
+      return state
   }
-  return state
 }

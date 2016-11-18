@@ -1,6 +1,6 @@
 instrumentation:
   extensions: ['.js']
-  excludes: ['**/*.test.js', 'test/*']
+  excludes: ['**/*.test.js', '**/*.test.jsx', 'test/*']
   include-all-sources: true
 reporting:
     print: detail

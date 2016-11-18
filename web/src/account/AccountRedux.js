@@ -1,12 +1,12 @@
 import Immutable from 'immutable'
 import _ from 'lodash'
-import jwt_decode from 'jwt-decode'
+import jwtDecode from 'jwt-decode'
 import { SubmissionError } from 'redux-form'
 import { aspectFetch, getHeaders, getBrowserNameAndVersion } from '../shared/utils/fetch'
 import * as localStorage from '../shared/utils/localStorage'
 import { addError } from '../error/ErrorRedux'
-import {ContactDetails, LoginDetails, UserPreferences} from '../person/PersonRedux'
-import {loginSuccess, changeCulture, changeTimezone} from '../auth/AuthRedux'
+import { ContactDetails, LoginDetails, UserPreferences } from '../person/PersonRedux'
+import { loginSuccess, changeCulture, changeTimezone } from '../auth/AuthRedux'
 
 export const types = {
   REQUEST_ACCOUNT_DETAILS: 'REQUEST_ACCOUNT_DETAILS',
@@ -34,12 +34,12 @@ function createReceiveAccountDetails(accountDetails) {
   }
 }
 
-export function fetchAccountDetails(){
-  return dispatch => {
+export function fetchAccountDetails() {
+  return (dispatch) => {
     dispatch(createRequestAccountDetails())
     return aspectFetch('/account-details/current')
       .then(json => dispatch(createReceiveAccountDetails(json.data)))
-                                      //TODO: i18n these error messages
+                                      // TODO: i18n these error messages
       .catch(err => dispatch(addError('Loading account details failed', err.message, err)))
   }
 }
@@ -58,7 +58,7 @@ function createReceiveUpdatedContactDetails(accountDetails) {
 }
 
 export function saveContactDetails(contactDetails) {
-  return dispatch => {
+  return (dispatch) => {
     dispatch(createSaveAccountDetailsStart())
     const contactDetailsJson = contactDetails.toJS ? contactDetails.toJS() : contactDetails
     return aspectFetch('/account-details/current-contact',
@@ -87,13 +87,13 @@ function createReceiveUpdatedLoginDetailsExpectedError() {
 }
 
 function storeAccess(access, refresh, clientId) {
-  const jwt = jwt_decode(access)
+  const jwt = jwtDecode(access)
   localStorage.store(access, jwt.exp, refresh, clientId)
   return jwt
 }
 
 export function saveLoginDetails(loginDetails) {
-  return dispatch => {
+  return (dispatch) => {
     dispatch(createSaveAccountDetailsStart())
     return aspectFetch('/auth/update-login-details',
       {
@@ -104,22 +104,22 @@ export function saveLoginDetails(loginDetails) {
           newUsername: loginDetails.username,
           newPassword: loginDetails.newPassword,
           clientId: localStorage.getClientId(),
-          clientName: getBrowserNameAndVersion() + ' on ' + window.navigator.platform
+          clientName: `${getBrowserNameAndVersion()} on ${window.navigator.platform}`
         })
       })
-      .then(json => {
-        let jwt = storeAccess(json.access, json.refresh, json.clientId)
+      .then((json) => {
+        const jwt = storeAccess(json.access, json.refresh, json.clientId)
         dispatch(loginSuccess(jwt.name, jwt.culture, jwt.timezone, jwt.permissions))
         dispatch(createReceiveUpdatedLoginDetails(json.data))
       })
-      .catch(err => {
+      .catch((err) => {
         dispatch(addError('Saving login details failed', err.message, err))
-        if(['Incorrect password.', 'Username already in use'].includes(err.message)) {
+        if (['Incorrect password.', 'Username already in use'].includes(err.message)) {
           dispatch(createReceiveUpdatedLoginDetailsExpectedError())
-          const submissionError = {_error: err.message}
-          if(err.message === 'Incorrect password.') {
+          const submissionError = { _error: err.message }
+          if (err.message === 'Incorrect password.') {
             submissionError.currentPassword = 'The password that you entered is not valid'
-          } else if(err.message === 'Username already in use') {
+          } else if (err.message === 'Username already in use') {
             submissionError.username = 'This username is unavailable'
           }
           throw new SubmissionError(submissionError)
@@ -136,7 +136,7 @@ function createReceiveUpdatedUserPreferences(accountDetails) {
 }
 
 export function saveUserPreferences(userPreferences) {
-  return dispatch => {
+  return (dispatch) => {
     dispatch(createSaveAccountDetailsStart())
     return aspectFetch('/account-details/current-preferences',
       {
@@ -144,11 +144,11 @@ export function saveUserPreferences(userPreferences) {
         headers: getHeaders(true),
         body: JSON.stringify(userPreferences)
       })
-      .then(({data}) => {
-        if(_.isString(data.culture)) {
+      .then(({ data }) => {
+        if (_.isString(data.culture)) {
           dispatch(changeCulture(data.culture))
         }
-        if(_.isString(data.timezone)) {
+        if (_.isString(data.timezone)) {
           dispatch(changeTimezone(data.timezone))
         }
         dispatch(createReceiveUpdatedUserPreferences(data))
@@ -185,7 +185,10 @@ function receiveAccountDetails(state, accountDetailsData) {
     saving: false,
     data: new AccountDetailsData({
       contactDetails: new ContactDetails(_.pick(accountDetailsData, Object.keys(state.getIn(['data', 'contactDetails']).toJS()))),
-      loginDetails: new LoginDetails({ id: accountDetailsData.userId, username: accountDetailsData.username }),
+      loginDetails: new LoginDetails({
+        id: accountDetailsData.userId,
+        username: accountDetailsData.username
+      }),
       userPreferences: new UserPreferences(_.pick(accountDetailsData, Object.keys(state.getIn(['data', 'userPreferences']).toJS())))
     })
   })
@@ -215,7 +218,7 @@ function receiveUpdatedLoginDetails(state, updateDetails) {
     saving: false,
     data: new AccountDetailsData({
       contactDetails: state.getIn(['data', 'contactDetails']),
-      loginDetails: new LoginDetails({...state.getIn(['data', 'loginDetails']).toJS(),
+      loginDetails: new LoginDetails({ ...state.getIn(['data', 'loginDetails']).toJS(),
         username: updateDetails.username,
         currentPassword: null
       }),
@@ -230,7 +233,7 @@ function receiveUpdatedLoginDetailsExpectedError(state) {
     saving: false,
     data: new AccountDetailsData({
       contactDetails: state.getIn(['data', 'contactDetails']),
-      loginDetails: new LoginDetails({...state.getIn(['data', 'loginDetails']).toJS(),
+      loginDetails: new LoginDetails({ ...state.getIn(['data', 'loginDetails']).toJS(),
         currentPassword: null
       }),
       userPreferences: state.getIn(['data', 'userPreferences'])
@@ -252,20 +255,21 @@ function receiveUpdatedUserPreferences(state, accountDetailsData) {
 
 export default function accountDetailsReducer(state = initialState, action) {
   switch (action.type) {
-  case types.REQUEST_ACCOUNT_DETAILS:
-    return requestAccountDetails(state)
-  case types.RECEIVE_ACCOUNT_DETAILS:
-    return receiveAccountDetails(state, action.accountDetails)
-  case types.SAVE_ACCOUNT_DETAILS_START:
-    return saveAccountDetailsStart(state)
-  case types.RECEIVE_UPDATED_CONTACT_DETAILS:
-    return receiveUpdatedContactDetails(state, action.accountDetails)
-  case types.RECEIVE_UPDATED_LOGIN_DETAILS:
-    return receiveUpdatedLoginDetails(state, action.updateDetails)
-  case types.RECEIVE_UPDATED_USER_PREFERENCES:
-    return receiveUpdatedUserPreferences(state, action.accountDetails)
-  case types.RECEIVE_UPDATED_LOGIN_DETAILS_EXPECTED_ERROR:
-    return receiveUpdatedLoginDetailsExpectedError(state)
+    case types.REQUEST_ACCOUNT_DETAILS:
+      return requestAccountDetails(state)
+    case types.RECEIVE_ACCOUNT_DETAILS:
+      return receiveAccountDetails(state, action.accountDetails)
+    case types.SAVE_ACCOUNT_DETAILS_START:
+      return saveAccountDetailsStart(state)
+    case types.RECEIVE_UPDATED_CONTACT_DETAILS:
+      return receiveUpdatedContactDetails(state, action.accountDetails)
+    case types.RECEIVE_UPDATED_LOGIN_DETAILS:
+      return receiveUpdatedLoginDetails(state, action.updateDetails)
+    case types.RECEIVE_UPDATED_USER_PREFERENCES:
+      return receiveUpdatedUserPreferences(state, action.accountDetails)
+    case types.RECEIVE_UPDATED_LOGIN_DETAILS_EXPECTED_ERROR:
+      return receiveUpdatedLoginDetailsExpectedError(state)
+    default:
+      return state
   }
-  return state
 }

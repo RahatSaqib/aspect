@@ -1,6 +1,6 @@
-let Joi = require('joi')
-let { asyncHandler, validateSortPageParams } = require('../routes')
-let { listAssays } = require('./service')
+const Joi = require('joi')
+const { asyncHandler, validateSortPageParams } = require('../routes')
+const { listAssays } = require('./service')
 
 module.exports = [
   {
@@ -10,7 +10,7 @@ module.exports = [
     config: {
       description: 'Assay List',
       notes: 'Pageable and sortable list of assays',
-      auth: {scope: ['assay:view', 'assay:edit']},
+      auth: { scope: ['assay:view', 'assay:edit'] },
       validate: {
         query: Object.assign({
           name: Joi.string().allow('').description('Filter for assay name')

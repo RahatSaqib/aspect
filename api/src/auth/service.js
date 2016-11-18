@@ -1,9 +1,9 @@
-let crypto = require('crypto')
-let jwt = require('jsonwebtoken')
-let uuid = require('node-uuid')
-let Promise = require('bluebird')
-let Boom = require('boom')
-let _ = require('lodash')
+const crypto = require('crypto')
+const jwt = require('jsonwebtoken')
+const uuid = require('node-uuid')
+const Promise = require('bluebird')
+const Boom = require('boom')
+const _ = require('lodash')
 const bcrypt = require('bcrypt')
 const { createFetch, base, accept, header, method, body } = require('http-client')
 require('isomorphic-fetch')
@@ -16,15 +16,15 @@ const bcryptHash = Promise.promisify(bcrypt.hash)
 const config = require('../config')
 const { query } = require('../db')
 
-function* checkAuthentication(){
+function* checkAuthentication() {
   return { message: 'Welcome to the API!' }
 }
 
 function getUser(username) {
   return query('Get basic user details').from('User as u')
     .innerJoin('Person as p', 'u.id', 'p.userId')
-    .where({'u.name': username})
-    .first( 'u.lockedOut', 'u.failedPasswordAttempts', 'u.password',
+    .where({ 'u.name': username })
+    .first('u.lockedOut', 'u.failedPasswordAttempts', 'u.password',
       'u.legacyPassword', 'u.id', 'u.name', 'p.culture', 'p.timezone',
       'p.lastPartnerId as partnerId', 'p.lastCountryId as countryId')
 }
@@ -32,24 +32,24 @@ function getUser(username) {
 function getUserByPersonId(personId) {
   return query('Get user details for person').from('Person as p')
     .innerJoin('User as u', 'p.userId', 'u.id')
-    .where({'p.id': personId})
-    .first( 'u.lockedOut', 'u.failedPasswordAttempts', 'u.password',
+    .where({ 'p.id': personId })
+    .first('u.lockedOut', 'u.failedPasswordAttempts', 'u.password',
       'u.legacyPassword', 'u.id', 'u.name', 'p.culture', 'p.timezone',
       'p.lastPartnerId as partnerId', 'p.lastCountryId as countryId')
 }
 
 function getUserId(username) {
   return query('Get user ID for username').from('User as u')
-    .where({'u.name': username})
+    .where({ 'u.name': username })
     .first('u.id')
 }
 
-function* authenticate(request){
-  const {payload} = request
+function* authenticate(request) {
+  const { payload } = request
 
   const user = yield getUser(payload.name)
 
-  if(!user){
+  if (!user) {
     return Boom.unauthorized()
   }
 
@@ -59,8 +59,7 @@ function* authenticate(request){
 
   // if password isn't a bcrypt hash, user was migrated from
   // GxAlert and password wasn't set yet in aspect:
-  if (user.password && user.legacyPassword){
-
+  if (user.password && user.legacyPassword) {
     // use GxAlert API to check pw
     const gxFetch = createFetch(
       method('POST'),
@@ -72,11 +71,11 @@ function* authenticate(request){
 
     const resp = yield gxFetch('/auth')
 
-    if (resp.status === 200){
+    if (resp.status === 200) {
       // we now know that pw is valid. store it in our database:
-      const pw = yield bcryptHash(payload.password, parseInt(config.passwordSaltRounds))
+      const pw = yield bcryptHash(payload.password, parseInt(config.passwordSaltRounds, 10))
       yield query('Update user password in our database').from('User')
-        .where({id: user.id})
+        .where({ id: user.id })
         .update({
           password: pw,
           failedPasswordAttempts: 0,
@@ -90,10 +89,10 @@ function* authenticate(request){
     // this is for "regular" accounts that were either created in aspect
     // or migrated from GxAlert and updated their password
     const pwResult = yield bcryptCompare(payload.password, user.password)
-    if (!pwResult){
+    if (!pwResult) {
       const lock = user.failedPasswordAttempts + 1 >= config.passwordAttempts ? 1 : 0
       const updateFailedPass = query('Update failed password attempts and set locked out status on user').from('User')
-        .where({id: user.id})
+        .where({ id: user.id })
         .update({
           failedPasswordAttempts: user.failedPasswordAttempts + 1,
           lockedOut: lock
@@ -111,7 +110,7 @@ function* authenticate(request){
   yield setRefreshToken(user.id, payload.clientName, clientId, refreshToken, now)
 
   yield query('Update failed password attempts to 0').from('User')
-    .where({id: user.id})
+    .where({ id: user.id })
     .update({
       failedPasswordAttempts: 0,
       lastLogin: now,
@@ -127,30 +126,30 @@ function* authenticate(request){
   }
 }
 
-function setRefreshToken(userId, clientName, clientId, refreshToken, now){
-  const expires = new Date(now.getTime() + 7 * 86400000) // 7 days from now
+function setRefreshToken(userId, clientName, clientId, refreshToken, now) {
+  const expires = new Date(now.getTime() + (7 * 86400000)) // 7 days from now
   // upsert refresh token
   return query('Create new refresh token for the user')
     .raw('INSERT INTO RefreshToken set ? ON DUPLICATE KEY UPDATE ?', [{
-      userId: userId,
+      userId,
       clientId,
-      clientName: clientName,
+      clientName,
       token: refreshToken,
-      expires: expires,
+      expires,
       createdOn: now
     }, {
       token: refreshToken,
-      expires: expires
+      expires
     }])
 }
 
-function* refreshToken(request){
+function* refreshToken(request) {
   // find the token in the db
-  const {clientId, token} = request.payload
+  const { clientId, token } = request.payload
   const data = yield query('Find existing token for client ID').from('RefreshToken as rt')
     .innerJoin('User as u', 'rt.userId', 'u.id')
     .innerJoin('Person as p', 'u.id', 'p.userId')
-    .where({clientId, token, revoked: 0})
+    .where({ clientId, token, revoked: 0 })
     .first('rt.userId as id', 'rt.expires', 'u.name',
       'p.culture', 'p.timezone', 'p.lastPartnerId as partnerId', 'p.lastCountryId as countryId')
 
@@ -166,12 +165,12 @@ function* refreshToken(request){
   }
 
   // looks like we have a valid refresh token. set new one in db
-  const expires = new Date(now.getTime() + 7 * 86400000) // 7 days from now
+  const expires = new Date(now.getTime() + (7 * 86400000)) // 7 days from now
   const refreshToken = crypto.randomBytes(48).toString('base64')
 
   yield query('Update refresh token expiry date').from('RefreshToken')
-    .where({token})
-    .update({token: refreshToken, expires})
+    .where({ token })
+    .update({ token: refreshToken, expires })
 
   const accessToken = yield getAccessToken(data)
   return {
@@ -182,16 +181,16 @@ function* refreshToken(request){
 }
 
 // generate a new jwt for the given user data
-function getAccessToken({id, name, culture, timezone, partnerId, countryId}){
+function getAccessToken({ id, name, culture, timezone, partnerId, countryId }) {
   return query('Get permissions for user and partner')
     .from('Permission as p')
     .innerJoin('RolePermission as rp', 'p.id', 'rp.permissionId')
     .innerJoin('Role as r', 'rp.roleId', 'r.id')
     .innerJoin('UserRole as ur', 'r.id', 'ur.roleId')
-    .where({'ur.userId': id, 'r.partnerId': partnerId})
+    .where({ 'ur.userId': id, 'r.partnerId': partnerId })
     .orderBy(['p.module', 'p.activity'])
     .distinct('p.module', 'p.activity')
-    .then(data => {
+    .then((data) => {
       // create a new token
       const token = jwt.sign({
         name,
@@ -215,32 +214,34 @@ function getAccessToken({id, name, culture, timezone, partnerId, countryId}){
 
 function updateUser(userId, changedFields) {
   return query('Update user details').from('User as u')
-    .where({'u.id': userId})
+    .where({ 'u.id': userId })
     .update(changedFields)
 }
 
 function* isUsernameAlreadyInUseBySomebodyElse(userId, username) {
-  if(username) {
+  if (username) {
     const existingUserIdWithNewUsername = yield getUserId(username)
-    if(existingUserIdWithNewUsername) {
-      if(existingUserIdWithNewUsername.id !== userId) {
+    if (existingUserIdWithNewUsername) {
+      if (existingUserIdWithNewUsername.id !== userId) {
         return Boom.conflict('Username already in use')
       }
     }
   }
+  return null
 }
 
 function* getChangedFields(payload, existingRecord) {
   const changedFields = {}
-  if(payload.newUsername && payload.newUsername != existingRecord.name) {
+  if (payload.newUsername && payload.newUsername !== existingRecord.name) {
     changedFields.name = payload.newUsername
   }
-  if(payload.newPassword) {
+  if (payload.newPassword) {
     const passwordsMatch = yield bcryptCompare(payload.newPassword, existingRecord.password)
-    if(!passwordsMatch) {
-      changedFields.password = yield bcryptHash(payload.newPassword, parseInt(config.passwordSaltRounds))
+    if (!passwordsMatch) {
+      changedFields.password = yield bcryptHash(payload.newPassword,
+        parseInt(config.passwordSaltRounds, 10))
       changedFields.lastPasswordChange = new Date()
-      if(existingRecord.legacyPassword) {
+      if (existingRecord.legacyPassword) {
         changedFields.legacyPassword = 0
       }
     }
@@ -248,40 +249,42 @@ function* getChangedFields(payload, existingRecord) {
   return changedFields
 }
 
-function* updateUsernameAndPasswordForLoggedInUser(request){
-  let {payload} = request
+function* updateUsernameAndPasswordForLoggedInUser(request) {
+  const { payload } = request
 
   let loggedInUser = yield getUser(request.auth.credentials.name)
 
-  if(!loggedInUser){
+  if (!loggedInUser) {
     return Boom.notFound('User not Found')
   }
   const pwResult = yield bcryptCompare(payload.currentPassword, loggedInUser.password)
   if (!pwResult) {
     return Boom.forbidden('Incorrect password.')
   }
-  if(payload.newUsername) {
+
+  if (payload.newUsername) {
     const usernameNotAvailable = yield* isUsernameAlreadyInUseBySomebodyElse(loggedInUser.id,
       payload.newUsername)
-    if(usernameNotAvailable) {
+    if (usernameNotAvailable) {
       return usernameNotAvailable
     }
   }
 
   const changedFields = yield* getChangedFields(payload, loggedInUser)
   const now = new Date()
-  if(payload.newPassword) {
+  if (payload.newPassword) {
     const passwordsMatch = yield bcryptCompare(payload.newPassword, loggedInUser.password)
-    if(!passwordsMatch) {
+    if (!passwordsMatch) {
       changedFields.lockedOut = 0
       changedFields.failedPasswordAttempts = 0
       changedFields.legacyPassword = 0
-      changedFields.password = yield bcryptHash(payload.newPassword, parseInt(config.passwordSaltRounds))
+      changedFields.password = yield bcryptHash(payload.newPassword,
+        parseInt(config.passwordSaltRounds, 10))
       changedFields.lastPasswordChange = now
     }
   }
 
-  if(!_.isEmpty(changedFields)) {
+  if (!_.isEmpty(changedFields)) {
     yield updateUser(loggedInUser.id, changedFields)
     loggedInUser = yield getUser(changedFields.name || loggedInUser.name)
   }
@@ -305,25 +308,26 @@ function* updateUsernameAndPasswordForLoggedInUser(request){
   }
 }
 
-function* createResetPasswordToken(request){
-  const {params} = request
+function* createResetPasswordToken(request) {
+  const { params } = request
 
   const users = yield query('Get user details from email address').from('Person as p')
     .innerJoin('User as u', 'p.userId', 'u.id')
-    .where({'p.email': params.email})
-    .orWhere({'p.email2': params.email})
-    .select( 'u.id', 'p.name', 'p.culture' )
+    .where({ 'p.email': params.email })
+    .orWhere({ 'p.email2': params.email })
+    .select('u.id', 'p.name', 'p.culture')
 
   if (users.length === 1) {
-    const resetPasswordToken = uuid.v4(),
-      now = new Date(),
-      expires = new Date(now.getTime() + 3600000),
-      generatedEmail = yield* templateProcessor.process('resetPassword', {
-        name: users[0].name,
-        aspectUrl: process.env['aspectUrl'],
-        resetPasswordToken: resetPasswordToken
-      }, users[0].culture),
-      inlineImageAttachments = yield* templateProcessor.getInlineImageAttachments(generatedEmail.html)
+    const resetPasswordToken = uuid.v4()
+    const now = new Date()
+    const expires = new Date(now.getTime() + 3600000)
+    const generatedEmail = yield* templateProcessor.process('resetPassword', {
+      name: users[0].name,
+      aspectUrl: process.env.aspectUrl,
+      resetPasswordToken
+    }, users[0].culture)
+    const inlineImageAttachments = yield* templateProcessor
+      .getInlineImageAttachments(generatedEmail.html)
 
     yield* emailUtil.sendEmail(params.email, generatedEmail.subject, generatedEmail.html,
       generatedEmail.text, inlineImageAttachments)
@@ -331,10 +335,10 @@ function* createResetPasswordToken(request){
     yield query('Save reset password token').from('User as u')
       .where('u.id', users[0].id)
       .update({
-        resetPasswordToken: resetPasswordToken,
+        resetPasswordToken,
         resetPasswordTokenExpires: expires
       })
-  } else if(users.length > 1) {
+  } else if (users.length > 1) {
     return Boom.conflict('Could not pinpoint the user from the email address provided')
   }
 
@@ -344,14 +348,14 @@ function* createResetPasswordToken(request){
 }
 
 function* updatePasswordWithResetPasswordToken(request) {
-  let {payload, params} = request
+  const { payload, params } = request
 
-  let userDetails = yield query('Get user with reset password token')
+  const userDetails = yield query('Get user with reset password token')
     .from('User as u')
     .where('u.resetPasswordToken', params.resetPasswordToken)
     .first('u.resetPasswordTokenExpires', 'u.id', 'u.name as username')
 
-  if(userDetails){
+  if (userDetails) {
     const now = new Date()
     if (userDetails.resetPasswordTokenExpires < now) {
       return Boom.resourceGone('The reset password token is no longer valid')
@@ -362,7 +366,7 @@ function* updatePasswordWithResetPasswordToken(request) {
         lockedOut: 0,
         failedPasswordAttempts: 0,
         legacyPassword: 0,
-        password: yield bcryptHash(payload.newPassword, parseInt(config.passwordSaltRounds)),
+        password: yield bcryptHash(payload.newPassword, parseInt(config.passwordSaltRounds, 10)),
         lastPasswordChange: now,
         resetPasswordToken: null,
         resetPasswordTokenExpires: null
@@ -379,12 +383,12 @@ function* updatePasswordWithResetPasswordToken(request) {
 
 function getRolesForUser(userId) {
   return query('Get roles for user').from('UserRole as ur')
-    .where({'ur.userId': userId})
+    .where({ 'ur.userId': userId })
     .select('ur.userId', 'ur.roleId')
 }
 
 function* updateUsernameAndPasswordForPerson(request) {
-  let {params, payload} = request
+  const { params, payload } = request
 
   // TODO: check access level permissions for currently logged in user
 
@@ -414,7 +418,7 @@ function* updateUsernameAndPasswordForPerson(request) {
     yield query('Insert new user details').from('User')
       .insert({
         name: payload.newUsername,
-        password: yield bcryptHash(payload.newPassword, parseInt(config.passwordSaltRounds)),
+        password: yield bcryptHash(payload.newPassword, parseInt(config.passwordSaltRounds, 10)),
         approved: 1,
         createdOn: new Date(),
         lockedOut: 0,

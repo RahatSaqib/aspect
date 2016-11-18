@@ -21,7 +21,7 @@ export class ReadOnlyField extends PureComponent {
         disabled
         value={value}
         floatingLabelText={label}
-        fullWidth={true}
+        fullWidth
       />
     )
   }
@@ -39,7 +39,7 @@ export class ReadOnlyFields extends PureComponent {
 
     return (
       <div {...restProps}>
-        {fields.map(({label, value}) => (
+        {fields.map(({ label, value }) => (
           <ReadOnlyField
             key={label}
             label={label}

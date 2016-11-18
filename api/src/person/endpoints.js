@@ -1,6 +1,6 @@
-let Joi = require('joi')
-let { asyncHandler, validateSortPageParams } = require('../routes')
-let { listPeople, showPerson, updatePerson, updatePersonUserPreferences } = require('./service')
+const Joi = require('joi')
+const { asyncHandler, validateSortPageParams } = require('../routes')
+const { listPeople, showPerson, updatePerson, updatePersonUserPreferences } = require('./service')
 
 module.exports = [{
   method: 'GET',
@@ -9,7 +9,7 @@ module.exports = [{
   config: {
     description: 'People List',
     notes: 'Pageable and sortable list of people',
-    auth: {scope: ['person:view', 'person:edit']},
+    auth: { scope: ['person:view', 'person:edit'] },
     validate: {
       query: Object.assign({
         countryId: Joi.number().allow('').description('Country ID'),
@@ -26,7 +26,7 @@ module.exports = [{
   config: {
     description: 'Person Detail',
     notes: 'Details of a person',
-    auth: {scope: ['person:view', 'person:edit', 'person:admin']},
+    auth: { scope: ['person:view', 'person:edit', 'person:admin'] },
     validate: {
       params: {
         personId: Joi.string().description('Person ID').required()
@@ -40,7 +40,7 @@ module.exports = [{
   config: {
     description: 'Update Person Details',
     notes: 'Details of a person',
-    auth: {scope: ['person:edit', 'person:admin']},
+    auth: { scope: ['person:edit', 'person:admin'] },
     validate: {
       params: {
         personId: Joi.string().description('Person ID').required()
@@ -68,7 +68,7 @@ module.exports = [{
   config: {
     description: 'Update Person\'s User Preferences',
     notes: 'Timezone and Language',
-    auth: {scope: ['person:edit', 'person:admin']},
+    auth: { scope: ['person:edit', 'person:admin'] },
     validate: {
       params: {
         personId: Joi.string().description('Person ID').required()

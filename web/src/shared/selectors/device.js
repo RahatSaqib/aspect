@@ -6,3 +6,5 @@ export function isEditable(user/* TODO: add me back, device */) {
 
   return !notEditable
 }
+
+export { isEditable as default }
