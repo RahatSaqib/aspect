@@ -21,6 +21,7 @@ import Checkbox from 'material-ui/Checkbox'
 import { Unit } from '../../components/pureGrids'
 import {
   fetchSingleResult,
+  updateSingleResult,
   updateResultWorkflowStatus
 } from '../ResultRedux'
 import ReadOnlyFields from '../../components/shared/ReadOnlyFields'
@@ -144,11 +145,11 @@ export class ResultDetail extends PureComponent {
   static propTypes = {
     setPageTitle: PropTypes.func.isRequired,
     fetchSingleResult: PropTypes.func.isRequired,
+    updateResultWorkflowStatus: PropTypes.func.isRequired,
+    updateSingleResult: PropTypes.func.isRequired,
     intl: PropTypes.object.isRequired,
     params: PropTypes.object.isRequired,
     result: PropTypes.object,
-    updateSingleResult: PropTypes.func,
-    updateResultWorkflowStatus: PropTypes.func
   }
 
   componentWillMount() {
@@ -461,6 +462,7 @@ function mapStateToProps(state, props) {
 function mapDispatchToProps(dispatch) {
   return bindActionCreators({
     fetchSingleResult,
+    updateSingleResult,
     updateResultWorkflowStatus
   }, dispatch)
 }

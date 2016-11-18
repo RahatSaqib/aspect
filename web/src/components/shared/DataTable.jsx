@@ -193,7 +193,7 @@ export default class DataTable extends PureComponent {
             enableSelectAll={this.state.enableSelectAll}
           >
             <TableRow>
-              {columns.map((col) => (
+              {columns.map(col => (
                 <Hidden
                   key={col.db}
                   xs={col.hideOnXs}
@@ -201,11 +201,13 @@ export default class DataTable extends PureComponent {
                   tooltip={col.tooltip}
                   {...col.extraProps}
                 >
-                  <span style={{ cursor: 'pointer' }} onTouchTap={() => { this.handleSort(col.db) } }>
+                  <span style={{ cursor: 'pointer' }} onTouchTap={() => { this.handleSort(col.db) }}>
                     {col.title}
                   </span>
-                  <SortIcon color={ table.sortCol == col.db ? 'black' : 'white' }
-                    style={{ height: 18, width: 18, position: 'relative', top: '4px', left: '4px', transform: table.sortDir === 'asc' ? 'scale(1, -1)' : '' }} />
+                  <SortIcon
+                    color={table.sortCol === col.db ? 'black' : 'white'}
+                    style={{ height: 18, width: 18, position: 'relative', top: '4px', left: '4px', transform: table.sortDir === 'asc' ? 'scale(1, -1)' : '' }}
+                  />
                 </Hidden>
               )) }
             </TableRow>
