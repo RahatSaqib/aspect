@@ -1,26 +1,24 @@
-let supertest = require('supertest')
-let chai = require('chai')
-let shared = require('../utils/sharedToken')
-let _ = require('lodash')
+const supertest = require('supertest')
+const chai = require('chai')
+const shared = require('../utils/sharedToken')
+const _ = require('lodash')
 
 // This agent refers to PORT where program is runninng.
-let server = supertest.agent('http://localhost:8080')
-let assert = chai.assert
+const server = supertest.agent('http://localhost:8080')
+const assert = chai.assert
 
-describe('Site routes',function(){
-
-  let path = '/api/site'
+describe('Site routes', () => {
+  const path = '/api/site'
   let siteId = 1
   let siteData
-  describe('GET',function(){
-
+  describe('GET', () => {
     shared.checkToken(server, path)
 
-    it('should return a list of sites when using valid token', function(done){
+    it('should return a list of sites when using valid token', (done) => {
       server
       .get(path)
-      .set('Authorization', 'Bearer ' + shared.token)
-      .end(function(err,res){
+      .set('Authorization', `Bearer ${shared.token}`)
+      .end((err, res) => {
         assert.equal(res.status, 200)
         assert.typeOf(res.body, 'Object')
         assert.property(res.body, 'data')
@@ -35,11 +33,11 @@ describe('Site routes',function(){
         done()
       })
     })
-    it('should return a single site when using a valid token', function(done){
+    it('should return a single site when using a valid token', (done) => {
       server
-      .get(path + '/' + siteId)
-      .set('Authorization', 'Bearer '+shared.token)
-      .end(function(err,res){
+      .get(`${path}/${siteId}`)
+      .set('Authorization', `Bearer ${shared.token}`)
+      .end((err, res) => {
         assert.equal(res.status, 200)
         assert.typeOf(res.body, 'Object')
         assert.property(res.body, 'data')
@@ -66,45 +64,45 @@ describe('Site routes',function(){
       })
     })
   })
-  describe('POST',function(){
+  describe('POST', () => {
   })
 
-  describe('PUT',function(){
-    it('Should update site given a siteId', function(done){
-      let originalStreet2 = siteData.street2
-      let newStreet2 = '15 New Street'
-      let newSiteData = _.omit(siteData, ['id', 'state', 'lga', 'country', 'createdOn', 'totalDevices'])
+  describe('PUT', () => {
+    it('Should update site given a siteId', (done) => {
+      const originalStreet2 = siteData.street2
+      const newStreet2 = '15 New Street'
+      const newSiteData = _.omit(siteData, ['id', 'state', 'lga', 'country', 'createdOn', 'totalDevices'])
       server
-        .put(path + '/' + siteId)
+        .put(`${path}/${siteId}`)
         .send(Object.assign({}, newSiteData, { street2: newStreet2 }))
-        .set('Authorization', 'Bearer' + shared.token)
-        .end(function(err, res){
+        .set('Authorization', `Bearer${shared.token}`)
+        .end((err, res) => {
           assert.equal(res.status, 200)
           assert.typeOf(res.body, 'Object')
           assert.property(res.body, 'data')
           assert.typeOf(res.body.data, 'Object')
-          const siteFieldNames = ['id', 'name', 'shortname', 'state','lga',
+          const siteFieldNames = ['id', 'name', 'shortname', 'state', 'lga',
             'country', 'createdOn', 'totalDevices', 'countryId', 'stateId', 'lgaId',
             'timezone', 'city', 'zip', 'street1', 'street2', 'longitude']
-          _.each(siteFieldNames, function(fieldName){
+          _.each(siteFieldNames, (fieldName) => {
             assert.property(res.body.data, fieldName)
           })
-          //check the updated property
+          // check the updated property
           assert.equal(res.body.data.street2, newStreet2)
 
-          //make sure the data has persisted
+          // make sure the data has persisted
           server
-            .get('/api/site/' + siteId)
-            .set('Authorization', 'Bearer' + shared.token)
-            .end(function(err,res){
+            .get(`/api/site/${siteId}`)
+            .set('Authorization', `Bearer${shared.token}`)
+            .end((err, res) => {
               assert.equal(res.body.data.street2, newStreet2)
-              
+
               // Clean Up: Update street2 with the original street address
               server
-                .put(path + '/' + siteId)
+                .put(`${path}/${siteId}`)
                 .send(Object.assign({}, newSiteData, { street2: originalStreet2 }))
-                .set('Authorization', 'Bearer' + shared.token)
-                .end(function(err, res){
+                .set('Authorization', `Bearer${shared.token}`)
+                .end((err, res) => {
                   assert.equal(res.body.data.street2, originalStreet2)
                   done()
                 })

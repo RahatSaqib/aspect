@@ -1,8 +1,8 @@
-let Promise = require('bluebird')
+const Promise = require('bluebird')
 
-function run(generator, args = []){
-  return Promise.coroutine(function*(reply){
-    let result = yield* generator(...args)
+function run(generator, args = []) {
+  return Promise.coroutine(function* (reply) {
+    const result = yield* generator(...args)
     reply(result)
   })
 }

@@ -1,5 +1,5 @@
-let sinon = require('sinon')
-let knex = require('knex')({
+const sinon = require('sinon')
+const knex = require('knex')({
   client: 'mysql'
 })
 
@@ -8,8 +8,8 @@ function buildKnexSpy(resolveWith) {
   const returnKnexStub = function () {
     return knexSpy
   }
-  for (let property in knex) {
-    if (knex.hasOwnProperty(property) && typeof knex[property] === 'function') {
+  for (const property in knex) {
+    if ({}.hasOwnProperty.call(knex, property) && typeof knex[property] === 'function') {
       knexSpy[property] = returnKnexStub
       sinon.spy(knexSpy, property)
     }
@@ -18,18 +18,18 @@ function buildKnexSpy(resolveWith) {
 }
 
 const knexSpies = {
-  'default': buildKnexSpy()
+  default: buildKnexSpy()
 }
 
-const query = function(queryDescription) {
-  if(queryDescription && knexSpies.hasOwnProperty(queryDescription)){
+const query = function (queryDescription) {
+  if (queryDescription && {}.hasOwnProperty.call(knexSpies, queryDescription)) {
     return knexSpies[queryDescription]
   }
   return knexSpies.default
 }
 query.for = function (queryDescription) {
   return {
-    resolvesWith: function(returnData) {
+    resolvesWith(returnData) {
       knexSpies[queryDescription] = buildKnexSpy(returnData)
     }
   }

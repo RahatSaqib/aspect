@@ -1,25 +1,23 @@
-let supertest = require('supertest')
-let chai = require('chai')
-let _ = require('lodash')
-let shared = require('../utils/sharedToken')
+const supertest = require('supertest')
+const chai = require('chai')
+const _ = require('lodash')
+const shared = require('../utils/sharedToken')
 
 // This agent refers to PORT where program is runninng.
-let server = supertest.agent('http://localhost:8080')
-let assert = chai.assert
+const server = supertest.agent('http://localhost:8080')
+const assert = chai.assert
 
-describe('Device routes',function(){
+describe('Device routes', () => {
+  const path = '/api/device'
 
-  let path = '/api/device'
-
-  describe('GET',function(){
-
+  describe('GET', () => {
     shared.checkToken(server, path)
 
-    it('should return a list of devices when using valid token', function(done){
+    it('should return a list of devices when using valid token', (done) => {
       server
       .get(path)
-      .set('Authorization', 'Bearer '+shared.token)
-      .end(function(err,res){
+      .set('Authorization', `Bearer ${shared.token}`)
+      .end((err, res) => {
         assert.equal(res.status, 200)
         assert.typeOf(res.body, 'Object')
         assert.property(res.body, 'data')
@@ -42,11 +40,11 @@ describe('Device routes',function(){
       })
     })
 
-    it('should return only medical devices if hasResults=1', function(done){
+    it('should return only medical devices if hasResults=1', (done) => {
       server
-      .get(path + '?hasResults=1&page=0&size=100')
-      .set('Authorization', 'Bearer '+shared.token)
-      .end(function(err,res){
+      .get(`${path}?hasResults=1&page=0&size=100`)
+      .set('Authorization', `Bearer ${shared.token}`)
+      .end((err, res) => {
         assert.equal(res.status, 200)
         assert.typeOf(res.body, 'Object')
         assert.property(res.body, 'data')
@@ -64,17 +62,17 @@ describe('Device routes',function(){
         assert.property(res.body.data[0], 'hasConnectivity')
         assert.property(res.body.data[0], 'status')
         assert.property(res.body.data[0], 'totalTests')
-        assert.equal(_.every(res.body.data, (d) => { return d.hasResults === 1 }), true)
+        assert.equal(_.every(res.body.data, d => d.hasResults === 1), true)
         assert.property(res.body, 'total')
         done()
       })
     })
 
-    it('should return only devices that have connectivity hardware if hasConnectivity=1', function(done){
+    it('should return only devices that have connectivity hardware if hasConnectivity=1', (done) => {
       server
-      .get(path + '?hasConnectivity=1&page=0&size=100')
-      .set('Authorization', 'Bearer '+shared.token)
-      .end(function(err,res){
+      .get(`${path}?hasConnectivity=1&page=0&size=100`)
+      .set('Authorization', `Bearer ${shared.token}`)
+      .end((err, res) => {
         assert.equal(res.status, 200)
         assert.typeOf(res.body, 'Object')
         assert.property(res.body, 'data')
@@ -92,14 +90,13 @@ describe('Device routes',function(){
         assert.property(res.body.data[0], 'hasConnectivity')
         assert.property(res.body.data[0], 'status')
         assert.property(res.body.data[0], 'totalTests')
-        assert.equal(_.every(res.body.data, (d) => { return d.hasConnectivity === 1 }), true)
+        assert.equal(_.every(res.body.data, d => d.hasConnectivity === 1), true)
         assert.property(res.body, 'total')
         done()
       })
     })
-
   })
 
-  describe('POST',function(){
+  describe('POST', () => {
   })
 })

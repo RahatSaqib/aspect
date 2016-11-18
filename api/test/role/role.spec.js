@@ -1,24 +1,22 @@
-let supertest = require('supertest')
-let chai = require('chai')
-let shared = require('../utils/sharedToken')
+const supertest = require('supertest')
+const chai = require('chai')
+const shared = require('../utils/sharedToken')
 
 // This agent refers to PORT where program is runninng.
-let server = supertest.agent('http://localhost:8080')
-let assert = chai.assert
+const server = supertest.agent('http://localhost:8080')
+const assert = chai.assert
 
-describe('Role routes',function(){
+describe('Role routes', () => {
+  const path = '/api/role/select-list'
 
-  let path = '/api/role/select-list'
-
-  describe('GET',function(){
-
+  describe('GET', () => {
     shared.checkToken(server, path)
 
-    it('should return a tree structure of partners, organisational units and roles', function(done){
+    it('should return a tree structure of partners, organisational units and roles', (done) => {
       server
         .get(path)
-        .set('Authorization', 'Bearer '+ shared.token)
-        .end(function(err,res){
+        .set('Authorization', `Bearer ${shared.token}`)
+        .end((err, res) => {
           assert.equal(res.status, 200)
           assert.typeOf(res.body, 'Object')
           assert.property(res.body, 'data')

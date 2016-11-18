@@ -1,27 +1,25 @@
-let supertest = require('supertest')
-let chai = require('chai')
-let shared = require('../utils/sharedToken')
-let _ = require('lodash')
+const supertest = require('supertest')
+const chai = require('chai')
+const shared = require('../utils/sharedToken')
+const _ = require('lodash')
 
 // This agent refers to PORT where program is runninng.
-let server = supertest.agent('http://localhost:8080')
-let assert = chai.assert
+const server = supertest.agent('http://localhost:8080')
+const assert = chai.assert
 
-describe('Result routes',function(){
-
-  let path = '/api/result'
+describe('Result routes', () => {
+  const path = '/api/result'
   let resultId = 1
   let assayId = 1
   let initialResultWorkflowStatus = ''
-  describe('GET',function(){
-
+  describe('GET', () => {
     shared.checkToken(server, path)
 
-    it('should return a list of results', function(done){
+    it('should return a list of results', (done) => {
       server
       .get(path)
-      .set('Authorization', 'Bearer '+shared.token)
-      .end(function(err,res){
+      .set('Authorization', `Bearer ${shared.token}`)
+      .end((err, res) => {
         assert.equal(res.status, 200)
         assert.typeOf(res.body, 'Object')
         assert.property(res.body, 'data')
@@ -46,11 +44,11 @@ describe('Result routes',function(){
       })
     })
 
-    it('should return a list of results with assay-specific fields if TB assay is requested', function(done){
+    it('should return a list of results with assay-specific fields if TB assay is requested', (done) => {
       server
-      .get(path + '?assayId=' + assayId)
-      .set('Authorization', 'Bearer '+shared.token)
-      .end(function(err,res){
+      .get(`${path}?assayId=${assayId}`)
+      .set('Authorization', `Bearer ${shared.token}`)
+      .end((err, res) => {
         assert.equal(res.status, 200)
         assert.typeOf(res.body, 'Object')
         assert.property(res.body, 'data')
@@ -73,11 +71,11 @@ describe('Result routes',function(){
       })
     })
 
-    it('should return a single result', function(done){
+    it('should return a single result', (done) => {
       server
-      .get(path + '/' + resultId)
-      .set('Authorization', 'Bearer '+shared.token)
-      .end(function(err,res){
+      .get(`${path}/${resultId}`)
+      .set('Authorization', `Bearer ${shared.token}`)
+      .end((err, res) => {
         assert.equal(res.status, 200)
         assert.typeOf(res.body, 'Object')
         assert.property(res.body, 'data')
@@ -127,25 +125,24 @@ describe('Result routes',function(){
         done()
       })
     })
-
   })
-  describe('PUT',function(){
-    it('Should update result status given a resultId', function(done){
-      let updateWithToken = {
+  describe('PUT', () => {
+    it('Should update result status given a resultId', (done) => {
+      const updateWithToken = {
         resultWorkflowStatusId: null,
         token: 'processed'
       }
-      let updateWithId = {
+      const updateWithId = {
         resultWorkflowStatusId: 1,
         token: null
       }
 
-      //update with token
+      // update with token
       server
-        .put(path + '/workflow-status/' + resultId)
+        .put(`${path}/workflow-status/${resultId}`)
         .send(updateWithToken)
-        .set('Authorization', 'Bearer' + shared.token)
-        .end(function(err, res){
+        .set('Authorization', `Bearer${shared.token}`)
+        .end((err, res) => {
           assert.equal(res.status, 200)
           assert.typeOf(res.body, 'Object')
           assert.property(res.body, 'data')
@@ -155,24 +152,24 @@ describe('Result routes',function(){
           assert.typeOf(res.body.data.resultData, 'Object')
           const resultFieldNames = ['id', 'endedOn', 'deviceName', 'countryName',
             'stateName', 'lgaName', 'resultCategory1Name', 'resultCategory2Name',
-            'resultData','sampleId', 'patientId', 'siteName', 'assayVersion',
+            'resultData', 'sampleId', 'patientId', 'siteName', 'assayVersion',
             'consumableSerial', 'consumableLot', 'consumableExpirationDate',
             'instrumentSerial', 'moduleName', 'moduleSerial', 'researchId',
             'senderVersion', 'senderOperator', 'notes', 'errorCode', 'errorNotes',
             'createdOn', 'updatedOn', 'assayId', 'assay']
-          _.each(resultFieldNames, function(fieldName){
+          _.each(resultFieldNames, (fieldName) => {
             assert.property(res.body.data, fieldName)
           })
 
-          //check the updated fieldName
+          // check the updated fieldName
           assert.equal(res.body.data.resultWorkflowStatus, 'Processed')
-          
-          //update with resultWorkflowStatusId
+
+          // update with resultWorkflowStatusId
           server
-            .put(path + '/workflow-status/' + resultId)
+            .put(`${path}/workflow-status/${resultId}`)
             .send(updateWithId)
-            .set('Authorization', 'Bearer' + shared.token)
-            .end(function(err, res){
+            .set('Authorization', `Bearer${shared.token}`)
+            .end((err, res) => {
               assert.equal(res.status, 200)
               assert.typeOf(res.body, 'Object')
               assert.property(res.body, 'data')
@@ -182,57 +179,53 @@ describe('Result routes',function(){
               assert.typeOf(res.body.data.resultData, 'Object')
               const resultFieldNames = ['id', 'endedOn', 'deviceName', 'countryName',
                 'stateName', 'lgaName', 'resultCategory1Name', 'resultCategory2Name',
-                'resultData','sampleId', 'patientId', 'siteName', 'assayVersion',
+                'resultData', 'sampleId', 'patientId', 'siteName', 'assayVersion',
                 'consumableSerial', 'consumableLot', 'consumableExpirationDate',
                 'instrumentSerial', 'moduleName', 'moduleSerial', 'researchId',
                 'senderVersion', 'senderOperator', 'notes', 'errorCode', 'errorNotes',
                 'createdOn', 'updatedOn', 'assayId', 'assay']
-              _.each(resultFieldNames, function(fieldName){
+              _.each(resultFieldNames, (fieldName) => {
                 assert.property(res.body.data, fieldName)
               })
 
-              //check if resultWorkflowStatus was updated
+              // check if resultWorkflowStatus was updated
               assert.equal(res.body.data.resultWorkflowStatus, 'OK')
 
               // Check if update persisted
               server
-                .get('/api/result/' + resultId)
-                .set('Authorization', 'Bearer' + shared.token)
-                .end(function(err,res){
+                .get(`/api/result/${resultId}`)
+                .set('Authorization', `Bearer${shared.token}`)
+                .end((err, res) => {
                   assert.equal(res.body.data.resultWorkflowStatus, 'OK')
-                  
+
                   // Clean Up: Update resultWorkflowStatus with original status
                   server
-                    .put(path + '/workflow-status/' + resultId)
-                    .send({resultWorkflowStatusId: null, token: initialResultWorkflowStatus})
-                    .set('Authorization', 'Bearer' + shared.token)
-                    .end(function(err, res){
+                    .put(`${path}/workflow-status/${resultId}`)
+                    .send({ resultWorkflowStatusId: null, token: initialResultWorkflowStatus })
+                    .set('Authorization', `Bearer${shared.token}`)
+                    .end((err, res) => {
                       assert.equal(res.body.data.resultWorkflowStatus, initialResultWorkflowStatus)
                       done()
                     })
                 })
-
             })
-
         })
     })
   })
 })
 
 
-describe('Result type routes',function(){
+describe('Result type routes', () => {
+  const path = '/api/result/result-types'
 
-  let path = '/api/result/result-types'
-
-  describe('GET',function(){
-
+  describe('GET', () => {
     shared.checkToken(server, path)
 
-    it('should return a list of result types when using valid token', function(done){
+    it('should return a list of result types when using valid token', (done) => {
       server
       .get(path)
-      .set('Authorization', 'Bearer '+shared.token)
-      .end(function(err,res){
+      .set('Authorization', `Bearer ${shared.token}`)
+      .end((err, res) => {
         assert.equal(res.status, 200)
         assert.typeOf(res.body, 'Object')
         assert.property(res.body, 'data')
