@@ -143,7 +143,7 @@ function* listInventoryItemsGroupedBySiteAndConsumable(request) {
               _.filter(inventoryItems,
                 { siteId: site.siteId, consumableId: consumableInventoryItem.consumableId }),
               inventoryItem => _.pick(inventoryItem, ['id', 'expiresOn', 'quantityOnHand']))
-          })), 'id')
+          })), 'consumableId')
   }))
 
   return { ok: true, total, length: sitesData.length, data: sitesWithConsumablesAndInventoryItems }
