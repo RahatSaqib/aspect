@@ -58,7 +58,7 @@ export function fetchListFilteredInventoryItems(extraFilters = {}, ...args) {
 }
 
 export function fetchInventoryItems(filters /* required */, sortCol = 'siteName', sortDir = 'asc', page = 0, pageSize = 10, groupBy = []) {
-  const path = groupBy.includes('siteId') ? (groupBy.includes('consumableId') ?
+  const path = groupBy && groupBy.includes('siteId') ? (groupBy.includes('consumableId') ?
     '/inventory/group-by-site-and-consumable' : '/inventory/group-by-site') : '/inventory'
   return (dispatch) => {
     dispatch(requestInventoryItems(
@@ -71,13 +71,10 @@ export function fetchInventoryItems(filters /* required */, sortCol = 'siteName'
       ...filters
     })}`)
       .then((json) => {
-        const childrenPropertyPath = []
-        if (groupBy.includes('siteId')) {
-          childrenPropertyPath.push('consumables')
-        }
-        if (groupBy.includes('consumableId')) {
-          childrenPropertyPath.push('inventoryItems')
-        }
+        const childrenPropertyPath = groupBy &&
+        groupBy.includes('siteId') &&
+        groupBy.includes('consumableId') ? ['consumables', 'inventoryItems'] :
+          (groupBy && groupBy.includes('siteId') ? ['inventoryItems'] : [])
         return dispatch(receiveInventoryItems(json, childrenPropertyPath))
       })
       .catch((err) => {
@@ -97,7 +94,7 @@ const Inventory = Immutable.Record({
     pageSize: 10,
     filters: Immutable.fromJS({ siteName: '', consumableId: null }),
     extraColumns: new Immutable.List(),
-    groupBy: new Immutable.List()
+    groupBy: new Immutable.List(['siteId', 'consumableId'])
   })
 })
 

@@ -63,7 +63,6 @@ export class InventoryItemsList extends PureComponent {
 
   componentWillReceiveProps(nextProps) {
     if (this.props.listFilter !== nextProps.listFilter) {
-      console.log('TEST')
       this.handleFetch()
     }
   }
@@ -77,21 +76,17 @@ export class InventoryItemsList extends PureComponent {
     const { formatMessage, formatDate } = intl
     const columns = [{
       fieldName: 'siteName',
-      headerText: formatMessage(messages.siteName),
-      groupChildren: {
-        fieldName: 'inventoryItems',
-        columns: [{
-          fieldName: 'consumableName',
-          headerText: formatMessage(messages.consumableName)
-        }, {
-          fieldName: 'quantityOnHand',
-          headerText: formatMessage(messages.quantityOnHand)
-        }, {
-          fieldName: 'expiresOn',
-          headerText: formatMessage(messages.expiresOn),
-          format: data => formatDate(data, { format: 'user-timezone' })
-        }]
-      }
+      headerText: formatMessage(messages.siteName)
+    }, {
+      fieldName: 'consumableName',
+      headerText: formatMessage(messages.consumableName)
+    }, {
+      fieldName: 'quantityOnHand',
+      headerText: formatMessage(messages.quantityOnHand)
+    }, {
+      fieldName: 'expiresOn',
+      headerText: formatMessage(messages.expiresOn),
+      format: data => formatDate(data, { format: 'user-timezone' })
     }]
     return (
       <div className={styles.Content}>

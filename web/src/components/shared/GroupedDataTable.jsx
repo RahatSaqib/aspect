@@ -64,7 +64,7 @@ export default class GroupedDataTable extends PureComponent {
     this.fetchData()
   }
 
-  getColumns = (flattenedColumns) => {
+  getColumns = (columns) => {
     const {
       table,
       intl,
@@ -73,14 +73,14 @@ export default class GroupedDataTable extends PureComponent {
 
     if (table.extraColumns) {
       // concat the extra columns in table.extraColumns with the columns specified in table.columns
-      return flattenedColumns.concat(table.extraColumns.map(column => _.assign(column, {
+      return columns.concat(table.extraColumns.map(column => _.assign(column, {
         isExtraColumn: true,
         fieldName: column.get('fieldName'),
         format: column.get('type') === 'number' ? (n => (_.isNumber(n) ? intl.formatNumber(n) : null)) : _.identity,
         headerText: column.get('i18nKey') && messages[column.get('i18nKey')] ?
           intl.formatMessage[column.get('i18nKey')] : column.get('title') })).toJS())
     }
-    return flattenedColumns
+    return columns
   }
 
   getPager(page, totalPages) {
@@ -132,11 +132,9 @@ export default class GroupedDataTable extends PureComponent {
   }
 
   handleSort(col) {
-    if (col.canSort) {
-      const table = this.props.table
-      const newSort = table.sortCol === col.fieldName ? (table.sortDir === 'asc' ? 'desc' : 'asc') : table.sortDir
-      this.fetchData(col, newSort)
-    }
+    const table = this.props.table
+    const newSort = table.sortCol === col.fieldName ? (table.sortDir === 'asc' ? 'desc' : 'asc') : table.sortDir
+    this.fetchData(col.fieldName, newSort)
   }
 
   handlePage = (page) => {
@@ -150,31 +148,12 @@ export default class GroupedDataTable extends PureComponent {
       table.groupBy)
   }
 
-  flattenColumnsForHeader = (columns) => {
-    let valuePropertyPath = columns.fieldName ? [columns.fieldName] : []
-    const nestedColumnToHeaderColumn = (column) => {
-      const canSort = column.canSort === undefined ? true : column.canSort
-      const fieldPath = [...valuePropertyPath, column.fieldName]
-      return { ...column, fieldPath, canSort }
-    }
-    let headerColumns = _.map(columns.columns, nestedColumnToHeaderColumn)
-    let children = columns.groupChildren
-    while (children) {
-      valuePropertyPath = [...valuePropertyPath, children.fieldName]
-      headerColumns = [...headerColumns, ..._.map(children.columns, nestedColumnToHeaderColumn)]
-      children = children.groupChildren
-    }
-    return headerColumns
-  }
-
   render() {
     const {
       items,
       table,
       columns
     } = this.props
-
-    const headerColumns = this.getColumns(this.flattenColumnsForHeader(columns))
 
     const loading = table.loading ?
       <LinearProgress /> :
@@ -201,9 +180,9 @@ export default class GroupedDataTable extends PureComponent {
             enableSelectAll={this.state.enableSelectAll}
           >
             <TableRow>
-              {headerColumns.map(col => (
+              {columns.map(col => (
                 <TableHeaderColumn key={col.fieldName} tooltip={col.tooltip} className={col.hideOnXs ? 'pure-hidden-xs' : ''} {...col.extraProps}>
-                  <span style={{ cursor: 'pointer' }} onTouchTap={this.handleSort(col)}>
+                  <span style={{ cursor: 'pointer' }} onTouchTap={() => { this.handleSort(col) }}>
                     {col.headerText}
                   </span>
                   <SortIcon
@@ -227,41 +206,43 @@ export default class GroupedDataTable extends PureComponent {
             showRowHover={this.state.showRowHover}
             stripedRows={this.state.stripedRows}
           >
-            {items.currentIdList.map(itemId => (
-              <TableRow
-                key={itemId}
-                className={cssClasses({
-                  'TableRow--selectable': this.props.selectable
-                })}
-              >
-                {
-                  headerColumns.map((col) => {
-                    const row = items.getIn(['byId', ...itemId])
-                    const visible = col.isExtraColumn || row.get('visibleProperties').includes(col.fieldName)
-                    const rowSpan = col.isExtraColumn ? 1 : row.getIn(['rowSpans', col.fieldName])
-                    const data = row.getIn(col.fieldName)
-                    return (
-                      visible &&
-                      <TableRowColumn
-                        key={col.fieldName}
-                        rowSpan={rowSpan}
-                        className={cssClasses({ 'pure-hidden-xs': col.hideOnXs })}
-                        {...col.extraProps}
-                      >
-                        {(col.format || _.identity)(data, row)}
-                      </TableRowColumn>
-                    )
-                  })
-                }
-              </TableRow>
-            )) }
+            {
+              items.currentIdList.map(itemId => (
+                <TableRow
+                  key={itemId}
+                  className={cssClasses({
+                    'TableRow--selectable': this.props.selectable
+                  })}
+                >
+                  {
+                    columns.map((col) => {
+                      const row = items.getIn(['byId', itemId])
+                      const visible = col.isExtraColumn || row.get('visibleProperties').includes(col.fieldName)
+                      const rowSpan = col.isExtraColumn ? 1 : row.getIn(['rowSpans', col.fieldName])
+                      const data = row.get(col.fieldName)
+                      return (
+                        visible &&
+                        <TableRowColumn
+                          key={col.fieldName}
+                          rowSpan={rowSpan}
+                          className={cssClasses({ 'pure-hidden-xs': col.hideOnXs })}
+                          {...col.extraProps}
+                        >
+                          {(col.format || _.identity)(data, row)}
+                        </TableRowColumn>
+                      )
+                    })
+                  }
+                </TableRow>
+              ))
+            }
           </TableBody>
           <TableFooter adjustForCheckbox>
             <TableRow>
-              <TableRowColumn colSpan={headerColumns.length - 1} style={{ textAlign: 'right', padding: '10px 20px 20px 0' }} >
-                <FlatButton className={styles.Pager__Button} label="< Prev" onTouchTap={this.handlePage(page - 1)} disabled={page === 0} />
+              <TableRowColumn colSpan={columns.length - 1} style={{ textAlign: 'right', padding: '10px 20px 20px 0' }} >
+                <FlatButton className={styles.Pager__Button} label="< Prev" onTouchTap={() => { this.handlePage(page - 1) }} disabled={page === 0} />
                 { pagerItems }
-                <FlatButton className={styles.Pager__Button} label="Next >" onTouchTap={this.handlePage(page + 1)} disabled={page + 1 >= totalPages} />
+                <FlatButton className={styles.Pager__Button} label="Next >" onTouchTap={() => { this.handlePage(page + 1) }} disabled={page + 1 >= totalPages} />
               </TableRowColumn>
             </TableRow>
           </TableFooter>

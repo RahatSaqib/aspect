@@ -29,8 +29,7 @@ export const fetchConsumables = (forceRefresh, consumablesState) => (dispatch) =
   if (!consumablesState.get('loading') && (forceRefresh || !consumablesState.get('lastRefreshed') ||
     Math.abs(now.getTime() - consumablesState.get('lastRefreshed').getTime()) > cacheExpiryTime)) {
     dispatch(createRequestConsumables())
-    const path = '/inventory/consumable-types'
-    return aspectFetch(path)
+    return aspectFetch('/inventory/consumable-types')
       .then(json => dispatch(createReceiveConsumables(json.data)))
       .catch(err => dispatch(addError('Loading consumables failed', err.message, err)))
   }

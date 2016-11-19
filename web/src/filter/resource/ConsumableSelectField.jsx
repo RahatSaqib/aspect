@@ -20,8 +20,8 @@ export class ConsumableSelectField extends PureComponent {
   }
 
   componentDidMount() {
-    const { consumables } = this.props
-    this.props.fetchConsumables(false, consumables)
+    const { fetchConsumables, consumables } = this.props
+    fetchConsumables(false, consumables)
   }
 
   handleChange = (event, index, value) => {
