@@ -31,7 +31,7 @@ export class ConsumableSelectField extends PureComponent {
   render() {
     const { consumables, value } = this.props
     const restProps = _.omit(this.props, [
-      'fetchConsumables', 'consumable', 'onConsumableChange', 'value'
+      'fetchConsumables', 'consumables', 'onConsumableChange', 'value'
     ])
 
     return (
