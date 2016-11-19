@@ -9,6 +9,10 @@ import { bindActionCreators } from 'redux'
 import { connect } from 'react-redux'
 import Helmet from 'react-helmet'
 
+// Material-UI
+import { Card, CardTitle } from 'material-ui/Card'
+import Toggle from 'material-ui/Toggle'
+
 // Our own imports
 import GroupedDataTable from '../../components/shared/GroupedDataTable'
 import ListFilterContainer from '../../filter/list/ListFilter'
@@ -51,6 +55,11 @@ export class InventoryItemsList extends PureComponent {
     items: PropTypes.object.isRequired
   }
 
+  state = {
+    groupBySite: true,
+    groupByConsumable: true
+  }
+
   componentWillMount() {
     const { setPageTitle, configureListFilter, intl: { formatMessage } } = this.props
     setPageTitle(formatMessage(messages.title))
@@ -68,7 +77,21 @@ export class InventoryItemsList extends PureComponent {
   }
 
   handleFetch = (...args) => {
-    this.props.fetchListFilteredInventoryItems({}, ...args)
+    const groupBy = this.state.groupBySite && this.state.groupByConsumable ?
+      ['siteId', 'consumableId'] : (this.state.groupBySite ? ['siteId'] : [])
+    this.props.fetchListFilteredInventoryItems(groupBy, {}, ...args)
+  }
+
+  toggleGroupBySite = () => {
+    this.setState({
+      groupBySite: !this.state.groupBySite
+    }, this.handleFetch)
+  }
+
+  toggleGroupByConsumable = () => {
+    this.setState({
+      groupByConsumable: !this.state.groupByConsumable
+    }, this.handleFetch)
   }
 
   render() {
@@ -86,12 +109,37 @@ export class InventoryItemsList extends PureComponent {
     }, {
       fieldName: 'expiresOn',
       headerText: formatMessage(messages.expiresOn),
-      format: data => formatDate(data, { format: 'user-timezone' })
+      format: data => (data ? formatDate(data, { format: 'user-timezone' }) : 'N/A')
     }]
+    const groupByToggleStyles = {
+      marginLeft: '2em',
+      display: 'inline-block',
+      width: 'auto'
+    }
     return (
       <div className={styles.Content}>
         <Helmet title={formatMessage(messages.title)} titleTemplate="%s - Aspect" defaultTitle="Aspect" />
         <ListFilterContainer />
+        <Card>
+          <CardTitle title="Group Items" className={styles.GroupBy__Header} />
+          <Toggle
+            toggled={this.state.groupBySite}
+            onToggle={this.toggleGroupBySite}
+            label="By Site"
+            labelPosition="right"
+            style={groupByToggleStyles}
+          />
+          {
+            this.state.groupBySite &&
+            <Toggle
+              toggled={this.state.groupByConsumable}
+              onToggle={this.toggleGroupByConsumable}
+              label="By Consumable"
+              labelPosition="right"
+              style={groupByToggleStyles}
+            />
+          }
+        </Card>
         <GroupedDataTable
           handleFetch={this.handleFetch}
           items={items}

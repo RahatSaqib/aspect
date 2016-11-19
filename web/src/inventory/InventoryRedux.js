@@ -43,7 +43,7 @@ function receiveInventoryItems(json, childrenPropertyPath) {
   }
 }
 
-export function fetchListFilteredInventoryItems(extraFilters = {}, ...args) {
+export function fetchListFilteredInventoryItems(groupBy, extraFilters = {}, ...args) {
   return (dispatch, getState) => {
     const filters = getState()
       .filter
@@ -53,11 +53,11 @@ export function fetchListFilteredInventoryItems(extraFilters = {}, ...args) {
       .filter(_.identity)
       .toJS()
 
-    return dispatch(fetchInventoryItems(filters, ...args))
+    return dispatch(fetchInventoryItems(filters, groupBy, ...args))
   }
 }
 
-export function fetchInventoryItems(filters /* required */, sortCol = 'siteName', sortDir = 'asc', page = 0, pageSize = 10, groupBy = []) {
+export function fetchInventoryItems(filters, groupBy /* required */, sortCol = 'siteName', sortDir = 'asc', page = 0, pageSize = 10) {
   const path = groupBy && groupBy.includes('siteId') ? (groupBy.includes('consumableId') ?
     '/inventory/group-by-site-and-consumable' : '/inventory/group-by-site') : '/inventory'
   return (dispatch) => {

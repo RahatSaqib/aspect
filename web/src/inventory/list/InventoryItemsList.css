@@ -13,3 +13,7 @@
 .Toolbar__MenuItem {
   composes: Helper--linky from '../../components/shared/Shared.css';
 }
+
+.GroupBy__Header {
+  display: inline-block;
+}
