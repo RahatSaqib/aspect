@@ -1,7 +1,7 @@
 const Promise = require('bluebird')
 const _ = require('lodash')
 const Boom = require('boom')
-const { query, filterParams, sortPageParams } = require('../db')
+const { query, filterParams, filterDateRangeParams, sortPageParams } = require('../db')
 const { getConstraints, addConstraints } = require('../auth/constraints')
 
 const INVENTORY_ITEMS_SELECT_LIST_FIELDS = [
@@ -22,7 +22,14 @@ const INVENTORY_ITEMS_SORT_FIELDS = {
   expiresOn: 'ii.expiresOn'
 }
 
-const INVENTORY_FILTER_FIELDS = { consumableId: 'ii.consumableId', siteName: 's.name', siteId: 'ii.siteId' }
+const INVENTORY_FILTER_FIELDS = {
+  countryId: 's.countryId',
+  stateId: 's.stateId',
+  lgaId: 's.lgaId',
+  consumableId: 'ii.consumableId',
+  siteName: 's.name',
+  siteId: 'ii.siteId'
+}
 
 const INVENTORY_DATA_CONSTRAINT_ALIASES = { country: 'co', state: 'st', lga: 'l', site: 's' }
 
@@ -44,6 +51,7 @@ function* listInventoryItems(request) {
     .leftOuterJoin('Country as co', 's.countryId', 'co.id')
     .leftOuterJoin('State as st', 's.stateId', 'st.id')
     .leftOuterJoin('Lga as l', 's.lgaId', 'l.id')
+    .modify(filterDateRangeParams, request.query, 'ii.expiresOn')
     .modify(filterParams, request.query, INVENTORY_FILTER_FIELDS)
     .modify(addConstraints, dataConstraints, INVENTORY_DATA_CONSTRAINT_ALIASES)
 
@@ -70,11 +78,12 @@ function* getSitesAndInventoryItems(request) {
   const dataConstraints = yield getConstraints(auth.credentials)
 
   const sitesQuery = query('Search Sites With Inventory Items')
-    .from('Site as s')
-    .leftOuterJoin('InventoryItem as ii', 's.id', 'ii.siteId')
+    .from('InventoryItem as ii')
+    .leftOuterJoin('Site as s', 'ii.siteId', 's.id')
     .leftOuterJoin('Country as co', 's.countryId', 'co.id')
     .leftOuterJoin('State as st', 's.stateId', 'st.id')
     .leftOuterJoin('Lga as l', 's.lgaId', 'l.id')
+    .modify(filterDateRangeParams, request.query, 'ii.expiresOn')
     .modify(filterParams, request.query, INVENTORY_FILTER_FIELDS)
     .modify(addConstraints, dataConstraints, INVENTORY_DATA_CONSTRAINT_ALIASES)
 
@@ -97,6 +106,7 @@ function* getSitesAndInventoryItems(request) {
     .leftOuterJoin('Country as co', 's.countryId', 'co.id')
     .leftOuterJoin('State as st', 's.stateId', 'st.id')
     .leftOuterJoin('Lga as l', 's.lgaId', 'l.id')
+    .modify(filterDateRangeParams, query, 'ii.expiresOn')
     .modify(filterParams, inventoryFilters, INVENTORY_FILTER_FIELDS)
     .modify(addConstraints, dataConstraints, INVENTORY_DATA_CONSTRAINT_ALIASES)
     .select(INVENTORY_ITEMS_SELECT_LIST_FIELDS)

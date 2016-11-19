@@ -1,10 +1,20 @@
 const Joi = require('joi')
-const { asyncHandler, validateSortPageParams } = require('../routes')
+const { validateAllGeographyFilterParams } = require('../geography/requestValidation')
+const {
+  asyncHandler,
+  validateDateRangeParams,
+  validateSortPageParams
+} = require('../routes')
 const {
   listInventoryItems,
   listInventoryItemsGroupedBySite,
   listInventoryItemsGroupedBySiteAndConsumable
 } = require('./service')
+
+const inventoryFilters = {
+  consumableId: Joi.number().integer().positive().allow('', null),
+  siteName: Joi.string().allow('', null)
+}
 
 module.exports = [
   {
@@ -16,10 +26,10 @@ module.exports = [
       notes: 'Pageable and sortable list of inventory items',
       auth: { scope: ['inventory:view', 'inventory:edit'] },
       validate: {
-        query: Object.assign({
-          consumableId: Joi.number().integer().positive().allow('', null),
-          siteName: Joi.string().allow('', null)
-        }, validateSortPageParams())
+        query: Object.assign(inventoryFilters,
+          validateAllGeographyFilterParams(),
+          validateDateRangeParams(),
+          validateSortPageParams())
       }
     }
   }, {
@@ -31,10 +41,10 @@ module.exports = [
       notes: 'Pageable and sortable list of inventory items grouped by site',
       auth: { scope: ['inventory:view', 'inventory:edit'] },
       validate: {
-        query: Object.assign({
-          consumableId: Joi.number().integer().positive().allow('', null),
-          siteName: Joi.string().allow('', null)
-        }, validateSortPageParams())
+        query: Object.assign(inventoryFilters,
+          validateAllGeographyFilterParams(),
+          validateDateRangeParams(),
+          validateSortPageParams())
       }
     }
   }, {
@@ -46,10 +56,10 @@ module.exports = [
       notes: 'Pageable and sortable list of inventory items grouped by site then consumable',
       auth: { scope: ['inventory:view', 'inventory:edit'] },
       validate: {
-        query: Object.assign({
-          consumableId: Joi.number().integer().positive().allow('', null),
-          siteName: Joi.string().allow('', null)
-        }, validateSortPageParams())
+        query: Object.assign(inventoryFilters,
+          validateAllGeographyFilterParams(),
+          validateDateRangeParams(),
+          validateSortPageParams())
       }
     }
   }

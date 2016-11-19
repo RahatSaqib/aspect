@@ -1,30 +1,30 @@
-let supertest = require('supertest')
-let chai = require('chai')
-let shared = require('../utils/sharedToken')
+const supertest = require('supertest')
+const chai = require('chai')
+const shared = require('../utils/sharedToken')
 
 // This agent refers to PORT where program is runninng.
-let server = supertest.agent('http://localhost:8080')
-let assert = chai.assert
+const server = supertest.agent('http://localhost:8080')
+const assert = chai.assert
 
-describe('Inventory Routes',function() {
-  describe('Inventory List Route', function() {
-    describe('/inventory', function () {
-      let path = '/api/inventory'
+describe('Inventory Routes', () => {
+  describe('Inventory List Route', () => {
+    describe('/inventory', () => {
+      const path = '/api/inventory'
 
-      describe('GET', function () {
+      describe('GET', () => {
         shared.checkToken(server, path)
 
-        it('should return a list of inventory items when using valid token', function (done) {
+        it('should return a list of inventory items when using valid token', (done) => {
           server
             .get(path)
             .set('Authorization', `Bearer ${shared.token}`)
-            .end(function (err, res) {
+            .end((err, res) => {
               assert.equal(res.status, 200)
               assert.typeOf(res.body, 'Object')
               assert.property(res.body, 'data')
               assert.typeOf(res.body.data, 'array')
               assert.isAtLeast(res.body.data.length, 5)
-              res.body.data.forEach(function (inventoryItem) {
+              res.body.data.forEach((inventoryItem) => {
                 assert.property(inventoryItem, 'id')
                 assert.property(inventoryItem, 'consumableId')
                 assert.property(inventoryItem, 'siteId')
@@ -46,15 +46,15 @@ describe('Inventory Routes',function() {
             })
         })
 
-        it('should accept consumableId and siteName as query string parameters', function (done) {
+        it('should accept consumableId and siteName as query string parameters', (done) => {
           const consumableId = 2
           const siteNameFilter = 'clinic'
           server
             .get(`${path}?consumableId=${consumableId}&siteName=${siteNameFilter}`)
             .set('Authorization', `Bearer ${shared.token}`)
-            .end(function (err, res) {
+            .end((err, res) => {
               assert.equal(res.status, 200)
-              res.body.data.forEach(function (inventoryItem) {
+              res.body.data.forEach((inventoryItem) => {
                 assert.equal(inventoryItem.consumableId, consumableId)
                 assert.includes(inventoryItem.siteName.toLowerCase(), siteNameFilter.toLowerCase())
               })
@@ -64,23 +64,23 @@ describe('Inventory Routes',function() {
       })
     })
 
-    describe('/inventory/group-by-site', function () {
-      let path = '/api/inventory/group-by-site'
+    describe('/inventory/group-by-site', () => {
+      const path = '/api/inventory/group-by-site'
 
-      describe('GET', function () {
+      describe('GET', () => {
         shared.checkToken(server, path)
 
-        it('should return a list of sites, each with a list of inventory items, when using valid token', function (done) {
+        it('should return a list of sites, each with a list of inventory items, when using valid token', (done) => {
           server
             .get(path)
             .set('Authorization', `Bearer ${shared.token}`)
-            .end(function (err, res) {
+            .end((err, res) => {
               assert.equal(res.status, 200)
               assert.typeOf(res.body, 'Object')
               assert.property(res.body, 'data')
               assert.typeOf(res.body.data, 'array')
               assert.isAtLeast(res.body.data.length, 1)
-              res.body.data.forEach(function (site) {
+              res.body.data.forEach((site) => {
                 assert.property(site, 'siteId')
                 assert.property(site, 'siteName')
                 assert.property(site, 'countryId')
@@ -90,7 +90,7 @@ describe('Inventory Routes',function() {
                 assert.property(site, 'stateName')
                 assert.property(site, 'lgaName')
                 assert.property(site, 'inventoryItems')
-                site.inventoryItems.forEach(function (inventoryItem) {
+                site.inventoryItems.forEach((inventoryItem) => {
                   assert.property(inventoryItem, 'id')
                   assert.property(inventoryItem, 'consumableId')
                   assert.property(inventoryItem, 'expiresOn')
@@ -105,17 +105,17 @@ describe('Inventory Routes',function() {
             })
         })
 
-        it('should accept consumableId and siteName as query string parameters', function (done) {
+        it('should accept consumableId and siteName as query string parameters', (done) => {
           const consumableId = 1
           const siteNameFilter = 'lab'
           server
             .get(`${path}?consumableId=${consumableId}&siteName=${siteNameFilter}`)
             .set('Authorization', `Bearer ${shared.token}`)
-            .end(function (err, res) {
+            .end((err, res) => {
               assert.equal(res.status, 200)
-              res.body.data.forEach(function (site) {
+              res.body.data.forEach((site) => {
                 assert.includes(site.siteName.toLowerCase(), siteNameFilter.toLowerCase())
-                site.inventoryItems.forEach(function (inventoryItem) {
+                site.inventoryItems.forEach((inventoryItem) => {
                   assert.equal(inventoryItem.consumableId, consumableId)
                 })
               })
@@ -125,23 +125,23 @@ describe('Inventory Routes',function() {
       })
     })
 
-    describe('/inventory/group-by-site-and-consumable', function () {
-      let path = '/api/inventory/group-by-site-and-consumable'
+    describe('/inventory/group-by-site-and-consumable', () => {
+      const path = '/api/inventory/group-by-site-and-consumable'
 
-      describe('GET', function () {
+      describe('GET', () => {
         shared.checkToken(server, path)
 
-        it('should return a list of sites, each with a list of consumables (with inventory items), when using valid token', function (done) {
+        it('should return a list of sites, each with a list of consumables (with inventory items), when using valid token', (done) => {
           server
             .get(path)
             .set('Authorization', `Bearer ${shared.token}`)
-            .end(function (err, res) {
+            .end((err, res) => {
               assert.equal(res.status, 200)
               assert.typeOf(res.body, 'Object')
               assert.property(res.body, 'data')
               assert.typeOf(res.body.data, 'array')
               assert.isAtLeast(res.body.data.length, 1)
-              res.body.data.forEach(function (site) {
+              res.body.data.forEach((site) => {
                 assert.property(site, 'siteId')
                 assert.property(site, 'siteName')
                 assert.property(site, 'countryId')
@@ -151,13 +151,13 @@ describe('Inventory Routes',function() {
                 assert.property(site, 'stateName')
                 assert.property(site, 'lgaName')
                 assert.property(site, 'consumables')
-                site.consumables.forEach(function (consumable) {
+                site.consumables.forEach((consumable) => {
                   assert.property(consumable, 'consumableId')
                   assert.property(consumable, 'consumableName')
                   assert.property(consumable, 'manufacturer')
                   assert.property(consumable, 'unitShortName')
                   assert.property(consumable, 'inventoryItems')
-                  consumable.inventoryItems.forEach(function (inventoryItem) {
+                  consumable.inventoryItems.forEach((inventoryItem) => {
                     assert.property(inventoryItem, 'id')
                     assert.property(inventoryItem, 'expiresOn')
                     assert.property(inventoryItem, 'quantityOnHand')
@@ -169,17 +169,17 @@ describe('Inventory Routes',function() {
             })
         })
 
-        it('should accept consumableId and siteName as query string parameters', function (done) {
+        it('should accept consumableId and siteName as query string parameters', (done) => {
           const consumableId = 1
           const siteNameFilter = 'lab'
           server
             .get(`${path}?consumableId=${consumableId}&siteName=${siteNameFilter}`)
             .set('Authorization', `Bearer ${shared.token}`)
-            .end(function (err, res) {
+            .end((err, res) => {
               assert.equal(res.status, 200)
-              res.body.data.forEach(function (site) {
+              res.body.data.forEach((site) => {
                 assert.includes(site.siteName.toLowerCase(), siteNameFilter.toLowerCase())
-                site.consumables.forEach(function (consumable) {
+                site.consumables.forEach((consumable) => {
                   assert.equal(consumable.consumableId, consumableId)
                 })
               })

@@ -137,10 +137,18 @@ function validateSortPageParams(...sortColumns) {
   }
 }
 
+function validateDateRangeParams() {
+  return {
+    minDate: Joi.date().iso().allow(null).description('From Date'),
+    maxDate: Joi.date().iso().allow(null).description('To Date'),
+  }
+}
+
 module.exports = {
   addClientRoutes,
   addDeviceRoutes,
   asyncHandler,
   getSortPageParams,
-  validateSortPageParams
+  validateSortPageParams,
+  validateDateRangeParams
 }

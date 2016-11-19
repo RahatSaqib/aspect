@@ -1,6 +1,16 @@
 const Joi = require('joi')
-const { asyncHandler, validateSortPageParams } = require('../routes')
-const { listResults, showResult, listResultTypes, updateWorkflowStatus } = require('./service')
+const {
+  asyncHandler,
+  validateDateRangeParams,
+  validateSortPageParams
+} = require('../routes')
+const {
+  listResults,
+  showResult,
+  listResultTypes,
+  updateWorkflowStatus
+} = require('./service')
+const { validateAllGeographyFilterParams } = require('../geography/requestValidation')
 
 module.exports = [
   {
@@ -16,16 +26,13 @@ module.exports = [
           deviceId: Joi.number().allow('').description('Filter for device ID'),
           assayId: Joi.number().allow('').description('Filter for assay ID'),
           resultCategoryId: Joi.number().allow('').description('Result Category ID'),
-          minDate: Joi.date().iso().allow(null).description('Start on'),
-          maxDate: Joi.date().iso().allow(null).description('End on'),
-          countryId: Joi.number().allow('').description('Country ID'),
-          stateId: Joi.number().allow('').description('State ID'),
-          lgaId: Joi.number().allow('').description('LGA ID'),
           deviceName: Joi.string().allow('').description('Filter for device name'),
           siteName: Joi.string().allow('').description('Filter for site name'),
           sampleId: Joi.number().allow('').description('Filter for sample ID'),
           jsonFields: Joi.array().max(10).items(Joi.string().max(50)).single().description('Specify which fields to select from the resultDataJSON')
-        }, validateSortPageParams())
+        }, validateAllGeographyFilterParams(),
+          validateDateRangeParams(),
+          validateSortPageParams())
       }
     }
   },
