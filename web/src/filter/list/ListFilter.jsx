@@ -225,12 +225,11 @@ export class ListFilter extends PureComponent {
                   )}
                   {config.consumable && (
                     <ConsumableSelectField
-                      disabled={!filter.consumableId}
-                      consumableId={filter.consumableId}
                       value={filter.consumableId}
                       onConsumableChange={this.handleConsumableIdChange}
                       floatingLabelText="Consumable"
                       style={{ verticalAlign: 'bottom' }}
+                      autoWidth
                     />
                   )}
                   {config.deviceName && (

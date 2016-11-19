@@ -40,7 +40,7 @@ export class ConsumableSelectField extends PureComponent {
         value={value}
         onChange={this.handleChange}
       >
-        {consumables.map(c => (
+        {consumables.items.map(c => (
           <MenuItem key={c.get('id')} value={c.get('id')} primaryText={c.get('name')} />
         ))}
       </SelectField>
