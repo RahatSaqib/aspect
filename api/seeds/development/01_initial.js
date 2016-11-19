@@ -668,7 +668,7 @@ function* seed(knex) {
     autoInclude: 0
   })
 
-  yield knex('Consumable').insert({
+  const [consumableGxHivVlCartridgeId] = yield knex('Consumable').insert({
     name: 'GeneXpert HIV Viral Load Cartridge',
     unit: piece,
     canExpire: 1,
@@ -923,22 +923,57 @@ function* seed(knex) {
     }, auditFields))
   }
 
-  //Insert Inventory Items
+  // Insert Inventory Items
   for (let i = 0; i < siteDatas.length; i++) {
     const siteData = siteDatas[i]
-    //TB Cartridges
+    // TB Cartridges
     yield knex('InventoryItem').insert({
       consumableId: consumableGxTbCartridgeId,
       siteId: siteData.id,
-      expiresOn: new Date((new Date(now.getTime() + _.random(-millisInNormalYear, millisInNormalYear))).setHours(0,0,0,0)),
+      expiresOn: new Date((new Date(now.getTime() +
+        _.random(-millisInNormalYear, millisInNormalYear))).setHours(0, 0, 0, 0)),
       quantityOnHand: _.random(0, 1000)
     })
-    //Gloves
+    if (i % 3 === 0) {
+      yield knex('InventoryItem').insert({
+        consumableId: consumableGxTbCartridgeId,
+        siteId: siteData.id,
+        expiresOn: new Date((new Date(now.getTime() +
+          _.random(-millisInNormalYear, millisInNormalYear))).setHours(0, 0, 0, 0)),
+        quantityOnHand: _.random(0, 1000)
+      })
+    }
+    if (i % 5 === 0) {
+      yield knex('InventoryItem').insert({
+        consumableId: consumableGxEbolaCartridgeId,
+        siteId: siteData.id,
+        expiresOn: new Date((new Date(now.getTime() +
+          _.random(-millisInNormalYear, millisInNormalYear))).setHours(0, 0, 0, 0)),
+        quantityOnHand: _.random(0, 1000)
+      })
+    }
+    if (i % 7 === 0) {
+      yield knex('InventoryItem').insert({
+        consumableId: consumableGxHivVlCartridgeId,
+        siteId: siteData.id,
+        expiresOn: new Date((new Date(now.getTime() +
+          _.random(-millisInNormalYear, millisInNormalYear))).setHours(0, 0, 0, 0)),
+        quantityOnHand: _.random(0, 1000)
+      })
+    }
+    // Gloves
     yield knex('InventoryItem').insert({
       consumableId: consumableGlovesId,
       siteId: siteData.id,
       quantityOnHand: _.random(0, 100)
     })
+    if (i % 5 === 0) {
+      yield knex('InventoryItem').insert({
+        consumableId: consumableGlovesId,
+        siteId: siteData.id,
+        quantityOnHand: _.random(0, 1000)
+      })
+    }
   }
 
   // some TB samples:
