@@ -64,16 +64,17 @@ export default class GroupedDataTable extends PureComponent {
     this.fetchData()
   }
 
-  getColumns = (columns) => {
+  getColumns = () => {
     const {
-      table,
+      table: { extraColumns },
+      columns,
       intl,
       messages
     } = this.props
 
-    if (table.extraColumns) {
+    if (extraColumns) {
       // concat the extra columns in table.extraColumns with the columns specified in table.columns
-      return columns.concat(table.extraColumns.map(column => _.assign(column, {
+      return columns.concat(extraColumns.map(column => _.assign(column, {
         isExtraColumn: true,
         fieldName: column.get('fieldName'),
         format: column.get('type') === 'number' ? (n => (_.isNumber(n) ? intl.formatNumber(n) : null)) : _.identity,
@@ -151,14 +152,14 @@ export default class GroupedDataTable extends PureComponent {
   render() {
     const {
       items,
-      table,
-      columns
+      table
     } = this.props
 
     const loading = table.loading ?
       <LinearProgress /> :
       <div style={{ margin: 0, padding: 0, height: 4 }}>&nbsp; </div>
 
+    const columns = this.getColumns()
     const page = table.page
     const totalPages = Math.ceil(table.total / table.pageSize)
     const pagerItems = this.getPager(page, totalPages)
