@@ -211,6 +211,91 @@ describe('Grouped Items Reducer', () => {
         expiresOn: '2017-04-21T00:00:00.000Z',
         quantityOnHand: 76
       })
+      assert.deepEqual(_.omit(newState.getIn(['byId', 35]).toJS(), 'rowSpans', 'visibleProperties'), {
+        siteId: 16,
+        siteName: 'Franklin County Massachusetts #1',
+        countryId: 3,
+        stateId: 52,
+        lgaId: 6,
+        countryName: 'United States',
+        stateName: 'Massachusetts',
+        lgaName: 'Franklin',
+        consumableId: 2,
+        consumableName: 'GeneXpert TB Cartridge',
+        manufacturer: 'Cepheid',
+        unitShortName: 'pc',
+        id: 35,
+        expiresOn: '2017-08-18T22:00:00.000Z',
+        quantityOnHand: 931
+      })
+      assert.deepEqual(_.omit(newState.getIn(['byId', 36]).toJS(), 'rowSpans', 'visibleProperties'), {
+        siteId: 16,
+        siteName: 'Franklin County Massachusetts #1',
+        countryId: 3,
+        stateId: 52,
+        lgaId: 6,
+        countryName: 'United States',
+        stateName: 'Massachusetts',
+        lgaName: 'Franklin',
+        consumableId: 2,
+        consumableName: 'GeneXpert TB Cartridge',
+        manufacturer: 'Cepheid',
+        unitShortName: 'pc',
+        id: 36,
+        expiresOn: '2017-03-14T22:00:00.000Z',
+        quantityOnHand: 693
+      })
+      assert.deepEqual(_.omit(newState.getIn(['byId', 39]).toJS(), 'rowSpans', 'visibleProperties'), {
+        siteId: 16,
+        siteName: 'Franklin County Massachusetts #1',
+        countryId: 3,
+        stateId: 52,
+        lgaId: 6,
+        countryName: 'United States',
+        stateName: 'Massachusetts',
+        lgaName: 'Franklin',
+        consumableId: 1,
+        consumableName: 'Gloves',
+        manufacturer: 'ABC Company',
+        unitShortName: 'pc',
+        id: 39,
+        expiresOn: null,
+        quantityOnHand: 930
+      })
+      assert.deepEqual(_.omit(newState.getIn(['byId', 38]).toJS(), 'rowSpans', 'visibleProperties'), {
+        siteId: 16,
+        siteName: 'Franklin County Massachusetts #1',
+        countryId: 3,
+        stateId: 52,
+        lgaId: 6,
+        countryName: 'United States',
+        stateName: 'Massachusetts',
+        lgaName: 'Franklin',
+        consumableId: 1,
+        consumableName: 'Gloves',
+        manufacturer: 'ABC Company',
+        unitShortName: 'pc',
+        id: 38,
+        expiresOn: null,
+        quantityOnHand: 92
+      })
+      assert.deepEqual(_.omit(newState.getIn(['byId', 37]).toJS(), 'rowSpans', 'visibleProperties'), {
+        siteId: 16,
+        siteName: 'Franklin County Massachusetts #1',
+        countryId: 3,
+        stateId: 52,
+        lgaId: 6,
+        countryName: 'United States',
+        stateName: 'Massachusetts',
+        lgaName: 'Franklin',
+        consumableId: 3,
+        consumableName: 'GeneXpert Ebola Cartridge',
+        manufacturer: 'Cepheid',
+        unitShortName: 'pc',
+        id: 37,
+        expiresOn: '2016-08-19T22:00:00.000Z',
+        quantityOnHand: 102
+      })
     })
 
     it('should generate rowSpans for each field based the nested structure', () => {
@@ -420,6 +505,91 @@ describe('Grouped Items Reducer', () => {
         expiresOn: 1,
         quantityOnHand: 1
       })
+      assert.deepEqual(newState.getIn(['byId', 35, 'rowSpans']).toJS(), {
+        siteId: 5,
+        siteName: 5,
+        countryId: 5,
+        countryName: 5,
+        stateId: 5,
+        stateName: 5,
+        lgaId: 5,
+        lgaName: 5,
+        consumableId: 2,
+        consumableName: 2,
+        manufacturer: 2,
+        unitShortName: 2,
+        id: 1,
+        expiresOn: 1,
+        quantityOnHand: 1
+      })
+      assert.deepEqual(newState.getIn(['byId', 36, 'rowSpans']).toJS(), {
+        siteId: 5,
+        siteName: 5,
+        countryId: 5,
+        countryName: 5,
+        stateId: 5,
+        stateName: 5,
+        lgaId: 5,
+        lgaName: 5,
+        consumableId: 2,
+        consumableName: 2,
+        manufacturer: 2,
+        unitShortName: 2,
+        id: 1,
+        expiresOn: 1,
+        quantityOnHand: 1
+      })
+      assert.deepEqual(newState.getIn(['byId', 39, 'rowSpans']).toJS(), {
+        siteId: 5,
+        siteName: 5,
+        countryId: 5,
+        countryName: 5,
+        stateId: 5,
+        stateName: 5,
+        lgaId: 5,
+        lgaName: 5,
+        consumableId: 2,
+        consumableName: 2,
+        manufacturer: 2,
+        unitShortName: 2,
+        id: 1,
+        expiresOn: 1,
+        quantityOnHand: 1
+      })
+      assert.deepEqual(newState.getIn(['byId', 38, 'rowSpans']).toJS(), {
+        siteId: 5,
+        siteName: 5,
+        countryId: 5,
+        countryName: 5,
+        stateId: 5,
+        stateName: 5,
+        lgaId: 5,
+        lgaName: 5,
+        consumableId: 2,
+        consumableName: 2,
+        manufacturer: 2,
+        unitShortName: 2,
+        id: 1,
+        expiresOn: 1,
+        quantityOnHand: 1
+      })
+      assert.deepEqual(newState.getIn(['byId', 37, 'rowSpans']).toJS(), {
+        siteId: 5,
+        siteName: 5,
+        countryId: 5,
+        countryName: 5,
+        stateId: 5,
+        stateName: 5,
+        lgaId: 5,
+        lgaName: 5,
+        consumableId: 1,
+        consumableName: 1,
+        manufacturer: 1,
+        unitShortName: 1,
+        id: 1,
+        expiresOn: 1,
+        quantityOnHand: 1
+      })
     })
 
     it('should generate visibleProperties for each field based the nested structure', () => {
@@ -460,6 +630,76 @@ describe('Grouped Items Reducer', () => {
         ['expiresOn', 'id', 'quantityOnHand'])
       assert.deepEqual(newState.getIn(['byId', 47, 'visibleProperties']).toJS().sort(),
         ['expiresOn', 'id', 'quantityOnHand'])
+      assert.deepEqual(newState.getIn(['byId', 35, 'visibleProperties']).toJS().sort(),
+        ['consumableId', 'consumableName', 'countryId', 'countryName', 'expiresOn', 'id',
+          'lgaId', 'lgaName', 'manufacturer', 'quantityOnHand', 'siteId', 'siteName',
+          'stateId', 'stateName', 'unitShortName'])
+      assert.deepEqual(newState.getIn(['byId', 36, 'visibleProperties']).toJS().sort(),
+        ['expiresOn', 'id', 'quantityOnHand'])
+      assert.deepEqual(newState.getIn(['byId', 39, 'visibleProperties']).toJS().sort(),
+        ['consumableId', 'consumableName', 'expiresOn', 'id',
+          'manufacturer', 'quantityOnHand', 'unitShortName'])
+      assert.deepEqual(newState.getIn(['byId', 38, 'visibleProperties']).toJS().sort(),
+        ['expiresOn', 'id', 'quantityOnHand'])
+      assert.deepEqual(newState.getIn(['byId', 37, 'visibleProperties']).toJS().sort(),
+        ['consumableId', 'consumableName', 'expiresOn', 'id',
+          'manufacturer', 'quantityOnHand', 'unitShortName'])
+    })
+
+    it('should return an item ID list that is in the same order as the deepest child IDs passed into it', () => {
+      const idList = _.flattenDeep(_.map(nestedData,
+        site => _.map(site.consumables,
+          consumable => _.map(consumable.inventoryItems, 'id'))))
+      const initialState = new Items()
+      const newState = receiveList(initialState, ['consumables', 'inventoryItems'], nestedData)
+
+      assert.deepEqual(newState.get('currentIdList').toJS(), idList)
+    })
+
+    it('should overwrite column visibility when a new list is received', () => {
+      const initialState = new Items()
+      const nextState = receiveList(initialState, ['consumables', 'inventoryItems'], nestedData)
+      const dataSortedByQuantity = _.map(nestedData, (site) => {
+        return {
+          ...site,
+          consumables: _.map(site.consumables, (consumable) => {
+            return {
+              ...consumable,
+              inventoryItems: _.sortBy(consumable.inventoryItems, 'quantityOnHand')
+            }
+          })
+        }
+      })
+      const newState = receiveList(nextState, ['consumables', 'inventoryItems'], dataSortedByQuantity)
+
+      assert.deepEqual(newState.getIn(['byId', 75, 'visibleProperties']).toJS().sort(),
+        ['expiresOn', 'id', 'quantityOnHand'])
+      assert.deepEqual(newState.getIn(['byId', 79, 'visibleProperties']).toJS().sort(),
+        ['consumableId', 'consumableName', 'expiresOn', 'id',
+          'manufacturer', 'quantityOnHand', 'unitShortName'])
+      assert.deepEqual(newState.getIn(['byId', 63, 'visibleProperties']).toJS().sort(),
+        ['expiresOn', 'id', 'quantityOnHand'])
+      assert.deepEqual(newState.getIn(['byId', 61, 'visibleProperties']).toJS().sort(),
+        ['consumableId', 'consumableName', 'countryId', 'countryName', 'expiresOn', 'id',
+          'lgaId', 'lgaName', 'manufacturer', 'quantityOnHand', 'siteId', 'siteName',
+          'stateId', 'stateName', 'unitShortName'])
+      assert.deepEqual(newState.getIn(['byId', 44, 'visibleProperties']).toJS().sort(),
+        ['expiresOn', 'id', 'quantityOnHand'])
+      assert.deepEqual(newState.getIn(['byId', 45, 'visibleProperties']).toJS().sort(),
+        ['consumableId', 'consumableName', 'countryId', 'countryName', 'expiresOn', 'id',
+          'lgaId', 'lgaName', 'manufacturer', 'quantityOnHand', 'siteId', 'siteName',
+          'stateId', 'stateName', 'unitShortName'])
+      assert.deepEqual(newState.getIn(['byId', 35, 'visibleProperties']).toJS().sort(),
+        ['expiresOn', 'id', 'quantityOnHand'])
+      assert.deepEqual(newState.getIn(['byId', 36, 'visibleProperties']).toJS().sort(),
+        ['consumableId', 'consumableName', 'countryId', 'countryName', 'expiresOn', 'id',
+          'lgaId', 'lgaName', 'manufacturer', 'quantityOnHand', 'siteId', 'siteName',
+          'stateId', 'stateName', 'unitShortName'])
+      assert.deepEqual(newState.getIn(['byId', 39, 'visibleProperties']).toJS().sort(),
+        ['expiresOn', 'id', 'quantityOnHand'])
+      assert.deepEqual(newState.getIn(['byId', 38, 'visibleProperties']).toJS().sort(),
+        ['consumableId', 'consumableName', 'expiresOn', 'id',
+          'manufacturer', 'quantityOnHand', 'unitShortName'])
     })
 
     const nestedData = [{
@@ -590,6 +830,54 @@ describe('Grouped Items Reducer', () => {
           id: 47,
           expiresOn: '2017-04-21T00:00:00.000Z',
           quantityOnHand: 76
+        }]
+      }]
+    }, {
+      siteId: 16,
+      siteName: 'Franklin County Massachusetts #1',
+      countryId: 3,
+      stateId: 52,
+      lgaId: 6,
+      countryName: 'United States',
+      stateName: 'Massachusetts',
+      lgaName: 'Franklin',
+      consumables: [{
+        consumableId: 2,
+        consumableName: 'GeneXpert TB Cartridge',
+        manufacturer: 'Cepheid',
+        unitShortName: 'pc',
+        inventoryItems: [{
+          id: 35,
+          expiresOn: '2017-08-18T22:00:00.000Z',
+          quantityOnHand: 931
+        }, {
+          id: 36,
+          expiresOn: '2017-03-14T22:00:00.000Z',
+          quantityOnHand: 693
+        }]
+      }, {
+        consumableId: 1,
+        consumableName: 'Gloves',
+        manufacturer: 'ABC Company',
+        unitShortName: 'pc',
+        inventoryItems: [{
+          id: 39,
+          expiresOn: null,
+          quantityOnHand: 930
+        }, {
+          id: 38,
+          expiresOn: null,
+          quantityOnHand: 92
+        }]
+      }, {
+        consumableId: 3,
+        consumableName: 'GeneXpert Ebola Cartridge',
+        manufacturer: 'Cepheid',
+        unitShortName: 'pc',
+        inventoryItems: [{
+          id: 37,
+          expiresOn: '2016-08-19T22:00:00.000Z',
+          quantityOnHand: 102
         }]
       }]
     }]

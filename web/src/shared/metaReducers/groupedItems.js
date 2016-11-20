@@ -60,7 +60,7 @@ export function receiveList(items, childrenPropertyPath, listOfTreeObjects) {
 
   const nextById = items.byId.withMutations((mutById) => {
     immutableList.forEach(item =>
-      mutById.mergeDeepIn([item.get('id')], item)
+      mutById.mergeIn([item.get('id')], item)
     )
   })
 
