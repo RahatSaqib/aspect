@@ -1,6 +1,10 @@
 const Promise = require('bluebird')
 const _ = require('lodash')
-const { getSortPageParams } = require('./routes')
+const {
+  getSortPageParams,
+  getSortParams,
+  getPageParams
+} = require('./routes')
 
 let knex = null // see load
 
@@ -10,9 +14,26 @@ function query() {
 
 // extracts the parameters related to sorting and paging from the candidate
 // params and modifies the query builder with the sort & paging modifications
-function sortPageParams(queryBuilder, params, defaultSort) {
-  const sp = getSortPageParams(params, defaultSort)
-  queryBuilder.orderBy(sp.sortCol, sp.sortDir).limit(sp.size).offset(sp.skip)
+function sortPageParams(queryBuilder, params, defaultSort, sortColumnMapping) {
+  const sortingAndPagingValues = getSortPageParams(params, sortColumnMapping, defaultSort)
+  queryBuilder
+    .orderBy(sortingAndPagingValues.sortCol, sortingAndPagingValues.sortDir)
+    .limit(sortingAndPagingValues.size)
+    .offset(sortingAndPagingValues.skip)
+}
+
+// extracts the parameters related to sorting from the candidate params and
+// modifies the query builder with the sort modifications
+function sortParams(queryBuilder, params, defaultSort, sortColumnMapping) {
+  const sortingValues = getSortParams(params, sortColumnMapping, defaultSort)
+  queryBuilder.orderBy(sortingValues.sortCol, sortingValues.sortDir)
+}
+
+// extracts the parameters related to paging from the candidate params and
+// modifies the query builder with the paging modifications
+function pageParams(queryBuilder, params) {
+  const pagingValues = getPageParams(params)
+  queryBuilder.limit(pagingValues.size).offset(pagingValues.skip)
 }
 
 function getWhereArgs(columnName, paramValue) {
@@ -130,6 +151,8 @@ module.exports = {
   filterParams,
   filterDateRangeParams,
   sortPageParams,
+  sortParams,
+  pageParams,
   migration,
   run,
   seed,

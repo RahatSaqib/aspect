@@ -116,11 +116,30 @@ function asyncHandler(handler) {
 
 // extracts and sanitizes the parameters related to sorting and paging
 // from the candidate params and returns them as an object
-function getSortPageParams(params, defaultSort) {
+function getSortPageParams(params, sortColumnMapping, defaultSort) {
+  return Object.assign({}, getSortParams(params, sortColumnMapping, defaultSort),
+    getPageParams(params))
+}
+
+// extracts and sanitizes the parameters related to sorting from the
+// candidate params and returns them as an object
+function getSortParams(params, sortColumnMapping, defaultSort) {
   const result = {}
 
-  result.sortCol = params.sortCol ? params.sortCol : defaultSort
+  result.sortCol = sortColumnMapping &&
+  params.sortCol &&
+  sortColumnMapping[params.sortCol] ? sortColumnMapping[params.sortCol] :
+    (params.sortCol ? params.sortCol : defaultSort)
   result.sortDir = params.sortDir === 'desc' ? 'desc' : 'asc'
+
+  return result
+}
+
+// extracts and sanitizes the parameters related to paging from the
+// candidate params and returns them as an object
+function getPageParams(params) {
+  const result = {}
+
   result.page = parseInt(params.page, 10) || 0
   result.size = parseInt(params.size, 10) || 20
   result.skip = result.page * result.size
@@ -148,6 +167,8 @@ module.exports = {
   addClientRoutes,
   addDeviceRoutes,
   asyncHandler,
+  getSortParams,
+  getPageParams,
   getSortPageParams,
   validateSortPageParams,
   validateDateRangeParams

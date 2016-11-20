@@ -1,8 +1,17 @@
 const Promise = require('bluebird')
 const _ = require('lodash')
 const Boom = require('boom')
-const { query, filterParams, filterDateRangeParams, sortPageParams } = require('../db')
-const { getConstraints, addConstraints } = require('../auth/constraints')
+const {
+  query,
+  filterParams,
+  filterDateRangeParams,
+  sortPageParams,
+  sortParams
+} = require('../db')
+const {
+  getConstraints,
+  addConstraints
+} = require('../auth/constraints')
 
 const INVENTORY_ITEMS_SELECT_LIST_FIELDS = [
   'ii.id', 'ii.consumableId', 'ii.siteId', 'ii.expiresOn', 'ii.quantityOnHand',
@@ -45,12 +54,12 @@ function* listInventoryItems(request) {
 
   const inventoryItemsQuery = query('Search Inventory Items')
     .from('InventoryItem as ii')
-    .leftOuterJoin('Consumable as c', 'ii.consumableId', 'c.id')
-    .leftOuterJoin('Unit as u', 'c.unit', 'u.id')
-    .leftOuterJoin('Site as s', 'ii.siteId', 's.id')
-    .leftOuterJoin('Country as co', 's.countryId', 'co.id')
-    .leftOuterJoin('State as st', 's.stateId', 'st.id')
-    .leftOuterJoin('Lga as l', 's.lgaId', 'l.id')
+    .innerJoin('Consumable as c', 'ii.consumableId', 'c.id')
+    .innerJoin('Unit as u', 'c.unit', 'u.id')
+    .innerJoin('Site as s', 'ii.siteId', 's.id')
+    .leftJoin('Country as co', 's.countryId', 'co.id')
+    .leftJoin('State as st', 's.stateId', 'st.id')
+    .leftJoin('Lga as l', 's.lgaId', 'l.id')
     .modify(filterDateRangeParams, request.query, 'ii.expiresOn')
     .modify(filterParams, request.query, INVENTORY_FILTER_FIELDS)
     .modify(addConstraints, dataConstraints, INVENTORY_DATA_CONSTRAINT_ALIASES)
@@ -59,7 +68,8 @@ function* listInventoryItems(request) {
     .count('ii.id as count').first()
 
   const getItems = inventoryItemsQuery.clone()
-    .modify(sortPageParams, request.query, INVENTORY_ITEMS_SORT_FIELDS.siteName)
+    .modify(sortPageParams, request.query,
+      INVENTORY_ITEMS_SORT_FIELDS.siteName, INVENTORY_ITEMS_SORT_FIELDS)
     .select(INVENTORY_ITEMS_SELECT_LIST_FIELDS)
 
   const [{ count: total }, data] = yield Promise.all([getCount, getItems])
@@ -79,10 +89,12 @@ function* getSitesAndInventoryItems(request) {
 
   const sitesQuery = query('Search Sites With Inventory Items')
     .from('InventoryItem as ii')
-    .leftOuterJoin('Site as s', 'ii.siteId', 's.id')
-    .leftOuterJoin('Country as co', 's.countryId', 'co.id')
-    .leftOuterJoin('State as st', 's.stateId', 'st.id')
-    .leftOuterJoin('Lga as l', 's.lgaId', 'l.id')
+    .innerJoin('Consumable as c', 'ii.consumableId', 'c.id')
+    .innerJoin('Unit as u', 'c.unit', 'u.id')
+    .innerJoin('Site as s', 'ii.siteId', 's.id')
+    .leftJoin('Country as co', 's.countryId', 'co.id')
+    .leftJoin('State as st', 's.stateId', 'st.id')
+    .leftJoin('Lga as l', 's.lgaId', 'l.id')
     .modify(filterDateRangeParams, request.query, 'ii.expiresOn')
     .modify(filterParams, request.query, INVENTORY_FILTER_FIELDS)
     .modify(addConstraints, dataConstraints, INVENTORY_DATA_CONSTRAINT_ALIASES)
@@ -90,7 +102,8 @@ function* getSitesAndInventoryItems(request) {
   const getSiteCount = sitesQuery.clone().countDistinct('s.id as count').first()
 
   const getSites = sitesQuery.clone()
-    .modify(sortPageParams, request.query, INVENTORY_ITEMS_SORT_FIELDS.siteName)
+    .modify(sortPageParams, request.query,
+      INVENTORY_ITEMS_SORT_FIELDS.siteName, INVENTORY_ITEMS_SORT_FIELDS)
     .distinct(SITES_SELECT_LIST_FIELDS)
     .select()
 
@@ -100,15 +113,17 @@ function* getSitesAndInventoryItems(request) {
 
   const inventoryItems = yield query('Search Inventory Items In Sites')
     .from('InventoryItem as ii')
-    .leftOuterJoin('Consumable as c', 'ii.consumableId', 'c.id')
-    .leftOuterJoin('Unit as u', 'c.unit', 'u.id')
-    .leftOuterJoin('Site as s', 'ii.siteId', 's.id')
-    .leftOuterJoin('Country as co', 's.countryId', 'co.id')
-    .leftOuterJoin('State as st', 's.stateId', 'st.id')
-    .leftOuterJoin('Lga as l', 's.lgaId', 'l.id')
+    .innerJoin('Consumable as c', 'ii.consumableId', 'c.id')
+    .innerJoin('Unit as u', 'c.unit', 'u.id')
+    .innerJoin('Site as s', 'ii.siteId', 's.id')
+    .leftJoin('Country as co', 's.countryId', 'co.id')
+    .leftJoin('State as st', 's.stateId', 'st.id')
+    .leftJoin('Lga as l', 's.lgaId', 'l.id')
     .modify(filterDateRangeParams, query, 'ii.expiresOn')
     .modify(filterParams, inventoryFilters, INVENTORY_FILTER_FIELDS)
     .modify(addConstraints, dataConstraints, INVENTORY_DATA_CONSTRAINT_ALIASES)
+    .modify(sortParams, request.query,
+      INVENTORY_ITEMS_SORT_FIELDS.siteName, INVENTORY_ITEMS_SORT_FIELDS)
     .select(INVENTORY_ITEMS_SELECT_LIST_FIELDS)
 
   return {
