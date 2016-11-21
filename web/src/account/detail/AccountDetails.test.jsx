@@ -8,6 +8,8 @@ import LinearProgress from 'material-ui/LinearProgress'
 import Paper from 'material-ui/Paper'
 import Helmet from 'react-helmet'
 import { Tabs, Tab } from 'material-ui/Tabs'
+
+import { Visible } from '../../components/pureGrids'
 import ContactDetailsForm from '../../person/detail/ContactDetailsForm'
 import LoginDetailsForm from '../../person/detail/LoginDetailsForm'
 import UserPreferencesForm from '../../person/detail/UserPreferencesForm'
@@ -95,7 +97,7 @@ describe('AccountDetails Component', () => {
       it('Should show a Contact Details tab containing a contact details form', () => {
         const firstTab = AccountDetailsWrapper.find(Tab).first()
         assert.equal(firstTab.props().label.props.children, 'Contact Details')
-        assert.equal(firstTab.find('h2').text(), 'Contact Details')
+        assert.equal(firstTab.find(Visible).children().text(), 'Contact Details')
 
         const contactDetailsForm = firstTab.find(ContactDetailsForm)
         assert.equal(contactDetailsForm.props().initialValues, props.accountDetails.get('contactDetails'))
@@ -105,7 +107,7 @@ describe('AccountDetails Component', () => {
       it('Should show a Login Details tab', () => {
         const secondTab = AccountDetailsWrapper.find(Tab).at(1)
         assert.equal(secondTab.props().label.props.children, 'Username & Password')
-        assert.equal(secondTab.find('h2').text(), 'Username & Password')
+        assert.equal(secondTab.find(Visible).children().text(), 'Username & Password')
 
         const loginDetailsForm = secondTab.find(LoginDetailsForm)
         assert.equal(loginDetailsForm.props().initialValues, props.accountDetails.get('loginDetails'))
@@ -115,7 +117,7 @@ describe('AccountDetails Component', () => {
       it('Should show a User Preferences tab', () => {
         const thirdTab = AccountDetailsWrapper.find(Tab).at(2)
         assert.equal(thirdTab.props().label.props.children, 'Language & Timezone')
-        assert.equal(thirdTab.find('h2').text(), 'Language & Timezone')
+        assert.equal(thirdTab.find(Visible).children().text(), 'Language & Timezone')
 
         const userPreferencesForm = thirdTab.find(UserPreferencesForm)
         assert.equal(userPreferencesForm.props().initialValues, props.accountDetails.get('userPreferences'))

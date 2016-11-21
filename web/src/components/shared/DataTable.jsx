@@ -10,6 +10,7 @@ import SortIcon from 'material-ui/svg-icons/content/sort'
 import FlatButton from 'material-ui/FlatButton'
 
 // Our own imports
+import { Hidden } from '../../components/pureGrids'
 import styles from './DataTable.css'
 
 const cssClasses = classnames.bind(styles)
@@ -193,7 +194,13 @@ export default class DataTable extends PureComponent {
           >
             <TableRow>
               {columns.map(col => (
-                <TableHeaderColumn key={col.db} tooltip={col.tooltip} className={col.hideOnXs ? 'pure-hidden-xs' : ''} {...col.extraProps}>
+                <Hidden
+                  key={col.db}
+                  xs={col.hideOnXs}
+                  component={TableHeaderColumn}
+                  tooltip={col.tooltip}
+                  {...col.extraProps}
+                >
                   <span style={{ cursor: 'pointer' }} onTouchTap={() => { this.handleSort(col.db) }}>
                     {col.title}
                   </span>
@@ -201,7 +208,7 @@ export default class DataTable extends PureComponent {
                     color={table.sortCol === col.db ? 'black' : 'white'}
                     style={{ height: 18, width: 18, position: 'relative', top: '4px', left: '4px', transform: table.sortDir === 'asc' ? 'scale(1, -1)' : '' }}
                   />
-                </TableHeaderColumn>
+                </Hidden>
               )) }
             </TableRow>
           </TableHeader>
@@ -223,9 +230,14 @@ export default class DataTable extends PureComponent {
                   const row = items.getIn(['byId', itemId])
                   const data = row.get(col.db)
                   return (
-                    <TableRowColumn key={col.db} className={col.hideOnXs ? 'pure-hidden-xs' : ''} {...col.extraProps}>
+                    <Hidden
+                      key={col.db}
+                      xs={col.hideOnXs}
+                      component={TableRowColumn}
+                      {...col.extraProps}
+                    >
                       {(col.format || _.identity)(data, row)}
-                    </TableRowColumn>
+                    </Hidden>
                   )
                 })}
               </TableRow>

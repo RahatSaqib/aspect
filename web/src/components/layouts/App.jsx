@@ -18,7 +18,6 @@ import theme from '../../theme'
 import { getUsersTimezone } from '../../shared/utils/timezone'
 
 require('./App.scss')
-require('./pure-grids-responsive-min.scss')
 
 addLocaleData([...en, ...fr])
 

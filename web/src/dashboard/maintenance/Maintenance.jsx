@@ -8,6 +8,7 @@ import {
 import Helmet from 'react-helmet'
 
 // Our own imports
+import { Unit } from '../../components/pureGrids'
 import MiniChart from '../../components/shared/MiniChart'
 import styles from './Maintenance.css'
 
@@ -25,15 +26,15 @@ export class Maintenance extends PureComponent {
     return (
       <div className={styles.Content}>
         <Helmet title="Maintenance" titleTemplate="%s - Aspect" defaultTitle="Aspect" />
-        <div className="pure-g">
-          <div className="pure-u-lg-1-4 pure-u-md-1-3 pure-u-sm-1-2">
+        <div>
+          <Unit sm="1-2" md="1-3" lg="1-4">
             <Link to="device">
               <MiniChart
                 data={[800, 700, 900, 1200, 1400, 1500, 1600, 1780]}
                 label={'Out of service'} number={45} bgcolor={'#607d8b'}
               />
             </Link>
-          </div>
+          </Unit>
         </div>
       </div>
     )

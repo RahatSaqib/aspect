@@ -5,7 +5,6 @@ import { injectIntl } from 'react-intl'
 import { bindActionCreators } from 'redux'
 import { connect } from 'react-redux'
 import Helmet from 'react-helmet'
-import classNames from 'classnames'
 
 // Material-UI
 import Paper from 'material-ui/Paper'
@@ -19,6 +18,7 @@ import LoginDetailsForm from './LoginDetailsForm'
 import UserPreferencesForm from './UserPreferencesForm'
 
 // Our own imports
+import { Hidden, Visible } from '../../components/pureGrids'
 import isEditable from '../../shared/selectors/person'
 import {
   fetchSinglePerson,
@@ -160,13 +160,13 @@ export class PersonDetail extends PureComponent {
           {editable && <Tabs>
             <Tab
               icon={<MapsPersonPin />}
-              label={<span className="pure-hidden-xs">{formatMessage(messages.contactDetails)}</span>}
+              label={<Hidden xs component="span">{formatMessage(messages.contactDetails)}</Hidden>}
             >
               {(!person) && <LinearProgress />}
               {loading && <LinearProgress />}
-              <h2 className={classNames('pure-visible-xs', styles.Form__Header)}>
+              <Visible xs component="h2" className={styles.Form__Header}>
                 {formatMessage(messages.contactDetails)}
-              </h2>
+              </Visible>
               <ContactDetailsForm
                 loading={loading} initialValues={contactDetails} partners={this.state.partners}
                 showNotesField userIsAdmin onSubmit={this.saveContactDetails}
@@ -175,12 +175,12 @@ export class PersonDetail extends PureComponent {
             </Tab>
             {userIsAdmin && <Tab
               icon={<Lock />}
-              label={<span className="pure-hidden-xs">{formatMessage(messages.systemAccessControl)}</span>}
+              label={<Hidden xs component="span">{formatMessage(messages.systemAccessControl)}</Hidden>}
             >
               {loading && <LinearProgress />}
-              <h2 className={classNames('pure-visible-xs', styles.Form__Header)}>
+              <Visible xs component="h2" className={styles.Form__Header}>
                 {formatMessage(messages.systemAccessControl)}
-              </h2>
+              </Visible>
               <LoginDetailsForm
                 loading={loading} initialValues={loginDetails} onSubmit={this.saveLoginDetails}
                 onSubmitSuccess={saveLoginDetailsSucceeded}
@@ -188,12 +188,12 @@ export class PersonDetail extends PureComponent {
             </Tab>}
             <Tab
               icon={<Language />}
-              label={<span className="pure-hidden-xs">{formatMessage(messages.languageAndTimezone)}</span>}
+              label={<Hidden xs component="span">{formatMessage(messages.languageAndTimezone)}</Hidden>}
             >
               {loading && <LinearProgress />}
-              <h2 className={classNames('pure-visible-xs', styles.Form__Header)}>
+              <Visible xs component="h2" className={styles.Form__Header}>
                 {formatMessage(messages.languageAndTimezone)}
-              </h2>
+              </Visible>
               <UserPreferencesForm
                 loading={loading} initialValues={userPreferences}
                 onSubmit={this.saveUserPreferences}

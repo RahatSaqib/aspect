@@ -18,8 +18,10 @@ import { Card, CardHeader, CardText } from 'material-ui/Card'
 import Checkbox from 'material-ui/Checkbox'
 
 // Our own imports
+import { Unit } from '../../components/pureGrids'
 import {
   fetchSingleResult,
+  updateSingleResult,
   updateResultWorkflowStatus
 } from '../ResultRedux'
 import ReadOnlyFields from '../../components/shared/ReadOnlyFields'
@@ -143,11 +145,11 @@ export class ResultDetail extends PureComponent {
   static propTypes = {
     setPageTitle: PropTypes.func.isRequired,
     fetchSingleResult: PropTypes.func.isRequired,
+    updateResultWorkflowStatus: PropTypes.func.isRequired,
+    updateSingleResult: PropTypes.func.isRequired,
     intl: PropTypes.object.isRequired,
     params: PropTypes.object.isRequired,
     result: PropTypes.object,
-    updateSingleResult: PropTypes.func,
-    updateResultWorkflowStatus: PropTypes.func
   }
 
   componentWillMount() {
@@ -402,23 +404,23 @@ export class ResultDetail extends PureComponent {
   renderContent() {
     return (
       <div className={cssClasses('FieldsContainer')}>
-        <div className="pure-g">
-          <div className="pure-u-lg-1-2 pure-u-md-1-2 pure-u-sm-1-2">
+        <div>
+          <Unit sm="1-2" md="1-2" lg="1-2">
             <div className={cssClasses('FieldsContainer__LeftColumn__Content')}>
               <ReadOnlyFields
                 fields={this.getLeftColumnFields()}
               />
               {this.renderCheckbox()}
             </div>
-          </div>
-          <div className="pure-u-lg-1-2 pure-u-md-1-2 pure-u-sm-1-2">
+          </Unit>
+          <Unit sm="1-2" md="1-2" lg="1-2">
             <div className={cssClasses('FieldsContainer__RightColumn__Content')}>
               <ReadOnlyFields
                 fields={this.getRightColumnFields()}
               />
               {this.renderSchemaFieldsInCards()}
             </div>
-          </div>
+          </Unit>
         </div>
       </div>
     )
@@ -460,6 +462,7 @@ function mapStateToProps(state, props) {
 function mapDispatchToProps(dispatch) {
   return bindActionCreators({
     fetchSingleResult,
+    updateSingleResult,
     updateResultWorkflowStatus
   }, dispatch)
 }
