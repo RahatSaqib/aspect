@@ -64,15 +64,15 @@ function* getDeviceData(context) {
   const [lastDevice, lastResult, lastConfig, lastOp] = yield Promise.all([
     lastDeviceQ, lastResultQ, lastConfigQ, lastOpQ])
 
-  const response = { updatedOn: lastDevice.updatedOn, lastPingOn: lastDevice.lastPingOn }
+  const response = { lastPingOn: lastDevice.lastPingOn }
   if (lastResult) {
-    response.result = { id: lastResult.id, updatedOn: lastResult.updatedOn.toISOString() }
+    response.result = { id: lastResult.id }
   }
   if (lastConfig) {
-    response.configuration = { id: lastConfig.id, updatedOn: lastConfig.updatedOn.toISOString() }
+    response.configuration = { id: lastConfig.id }
   }
   if (lastOp) {
-    response.operation = { id: lastOp.id, updatedOn: lastOp.updatedOn.toISOString() }
+    response.operation = { id: lastOp.id }
   }
 
   return response
@@ -99,7 +99,7 @@ function* addDeviceConfiguration(context) {
         updatedOn: now
       })
   })
-  return { id: externalId, updatedOn: now.toISOString() }
+  return { id: externalId }
 }
 
 function* addDeviceOperation(context) {
@@ -123,7 +123,7 @@ function* addDeviceOperation(context) {
         updatedOn: now
       })
   })
-  return { id: externalId, updatedOn: now.toISOString() }
+  return { id: externalId }
 }
 
 module.exports = {

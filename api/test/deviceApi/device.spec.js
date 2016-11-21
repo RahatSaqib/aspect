@@ -51,7 +51,6 @@ describe('Device API routes', () => {
           assert.equal(res.status, 200)
           assert.typeOf(res.body, 'Object')
           assert.property(res.body, 'id')
-          assert.property(res.body, 'updatedOn')
           configIds.push(res.body.id)
         })
 
@@ -79,7 +78,6 @@ describe('Device API routes', () => {
           assert.typeOf(res.body, 'Object')
           assert.property(res.body, 'configuration')
           assert.property(res.body.configuration, 'id')
-          assert.property(res.body.configuration, 'updatedOn')
           configIds.push(res.body.configuration.id)
         })
 
@@ -161,7 +159,6 @@ describe('Device API routes', () => {
           assert.equal(res.status, 200)
           assert.typeOf(res.body, 'Object')
           assert.property(res.body, 'id')
-          assert.property(res.body, 'updatedOn')
           opIds.push(res.body.id)
         })
 
@@ -189,7 +186,6 @@ describe('Device API routes', () => {
           assert.typeOf(res.body, 'Object')
           assert.typeOf(res.body.operation, 'Object')
           assert.property(res.body.operation, 'id')
-          assert.property(res.body.operation, 'updatedOn')
           opIds.push(res.body.operation.id)
         })
 

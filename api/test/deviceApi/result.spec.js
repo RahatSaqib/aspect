@@ -64,7 +64,6 @@ describe('Device Result API routes', () => {
           assert.typeOf(res.body, 'Object')
           assert.typeOf(res.body.result, 'Object')
           assert.property(res.body.result, 'id')
-          assert.property(res.body.result, 'updatedOn')
           resultIds.push(res.body.result.id)
         })
 
@@ -227,7 +226,6 @@ describe('Device Result API routes', () => {
           assert.equal(res.status, 200)
           assert.typeOf(res.body, 'Object')
           assert.property(res.body, 'id')
-          assert.property(res.body, 'updatedOn')
           resultIds.push(res.body.id)
         })
 
@@ -694,7 +692,6 @@ describe('Device Result API routes', () => {
           assert.equal(res.status, 200)
           assert.typeOf(res.body, 'Object')
           assert.property(res.body, 'id')
-          assert.property(res.body, 'updatedOn')
           resultIds.push(res.body.id)
         })
 

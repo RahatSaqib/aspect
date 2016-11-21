@@ -226,7 +226,7 @@ function* addResult(context) {
       rawMessage: JSON.stringify(payload)
     })
 
-    return { id: externalId, updatedOn: now.toISOString() }
+    return { id: externalId }
   })
 
   return response
