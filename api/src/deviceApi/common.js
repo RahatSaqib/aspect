@@ -15,14 +15,14 @@ function deviceApiHandler(handler, { updatePing }) {
     const context = yield* getDeviceApiContext(request)
     const response = context.error || (yield* handler(context))
 
-    if (updatePing && context.device && context.device.id) {
-      const now = new Date()
+    const { device, now, remoteAddress } = context
+    if (updatePing && device && device.id) {
       yield knex('Device')
-        .where({ id: context.device.id })
+        .where({ id: device.id })
         .update({
           updatedOn: now,
           lastPingOn: now,
-          lastPingFromIp: context.remoteAddress
+          lastPingFromIp: remoteAddress
         })
     }
     return response
@@ -31,6 +31,7 @@ function deviceApiHandler(handler, { updatePing }) {
 
 function* getDeviceApiContext(request) {
   const { auth } = request
+  const now = new Date()
   const devices = yield knex('DeviceApiKey as dak')
     .innerJoin('Device as d', 'dak.deviceId', 'd.id')
     .where({
@@ -48,6 +49,7 @@ function* getDeviceApiContext(request) {
   const remoteAddress = request.info.remoteAddress || ''
 
   return {
+    now,
     device: devices[0],
     constraints,
     payload: request.payload,

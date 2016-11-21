@@ -79,9 +79,8 @@ function* getDeviceData(context) {
 }
 
 function* addDeviceConfiguration(context) {
-  const { payload, device: { id: deviceId } } = context
+  const { payload, device: { id: deviceId }, now } = context
 
-  const now = new Date()
   const externalId = getExternalId(payload.id)
 
   yield transact(function* (knex) {
@@ -104,9 +103,8 @@ function* addDeviceConfiguration(context) {
 }
 
 function* addDeviceOperation(context) {
-  const { payload, device: { id: deviceId } } = context
+  const { payload, device: { id: deviceId }, now } = context
 
-  const now = new Date()
   const externalId = getExternalId(payload.id)
 
   yield transact(function* (knex) {

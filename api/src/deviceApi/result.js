@@ -6,10 +6,9 @@ const { addConstraints } = require('../auth/constraints')
 
 function* addResult(context) {
   const response = yield transact(function* (knex) {
-    const { payload, constraints: dataConstraints } = context
+    const { payload, constraints: dataConstraints, now } = context
 
     // TODO seperate permissions for device add vs update result?
-    const now = new Date()
     const externalId = getExternalId(payload.id)
     const existingResults = yield knex('Result as r')
       .where({ 'r.externalId': externalId })
