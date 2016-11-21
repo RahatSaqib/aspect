@@ -8,11 +8,6 @@ function* addDeviceData(context) {
   const { payload } = context
   const { result, configuration, operation } = payload
 
-  if (result) {
-    response.result = yield* addResult(
-      Object.assign({}, context, { payload: result }))
-  }
-
   if (configuration) {
     response.configuration = yield* addDeviceConfiguration(
       Object.assign({}, context, { payload: configuration }))
@@ -23,10 +18,21 @@ function* addDeviceData(context) {
       Object.assign({}, context, { payload: operation }))
   }
 
-  if (response.result instanceof Error) {
-    // TODO formalize error handling
-    return response.result
+  if (result) {
+    response.result = []
+    for (const r of result) {
+      const resultResponse = yield* addResult(
+        Object.assign({}, context, { payload: r }))
+
+      if (resultResponse instanceof Error) {
+        // TODO formalize error handling
+        return response.result
+      }
+      // Only keep report last updated in response
+      response.result = resultResponse
+    }
   }
+
 
   return response
 }

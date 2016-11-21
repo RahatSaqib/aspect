@@ -105,7 +105,7 @@ module.exports = [
         payload: Joi.object().keys({
           configuration: Joi.object().keys(configurationPayload),
           operation: Joi.object().keys(configurationPayload),
-          result: Joi.object().keys(resultPayload)
+          result: Joi.array().items(Joi.object().keys(resultPayload)).single(true)
         })
       }
     }
