@@ -660,15 +660,17 @@ describe('Grouped Items Reducer', () => {
       const initialState = new Items()
       const nextState = receiveList(initialState, ['consumables', 'inventoryItems'], nestedData)
       const dataSortedByQuantity = _.map(nestedData, (site) => {
-        return {
+        const siteWithConsumblesWithSortedItems = {
           ...site,
           consumables: _.map(site.consumables, (consumable) => {
-            return {
+            const consumableWithSortedItems = {
               ...consumable,
               inventoryItems: _.sortBy(consumable.inventoryItems, 'quantityOnHand')
             }
+            return consumableWithSortedItems
           })
         }
+        return siteWithConsumblesWithSortedItems
       })
       const newState = receiveList(nextState, ['consumables', 'inventoryItems'], dataSortedByQuantity)
 

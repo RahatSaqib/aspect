@@ -529,7 +529,7 @@ function* up(knex) {
     resultWorkflowStatus.string('token')
   })
 
-  yield knex.schema.createTable('InventoryItem', inventoryItem =>{
+  yield knex.schema.createTable('InventoryItem', (inventoryItem) => {
     inventoryItem.increments('id')
     inventoryItem.integer('consumableId').unsigned().notNullable()
       .references('id').inTable('Consumable')

@@ -9,7 +9,6 @@ import {
   TableHeader,
   TableHeaderColumn,
   TableRow,
-  TableRowColumn,
   TableFooter
 } from 'material-ui/Table'
 import GroupedDataTable from './GroupedDataTable'
