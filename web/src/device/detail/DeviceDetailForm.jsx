@@ -16,13 +16,17 @@ import AutoComplete from 'material-ui/AutoComplete'
 import ExitToApp from 'material-ui/svg-icons/action/exit-to-app'
 
 // Our own imports
-import { withFormField, withFormSubmit } from '../../components/recomposeForms'
+import recomposeForm from '../../components/recomposeForm'
 import { fetchSites } from '../../site/SiteRedux'
 import styles from './DeviceDetailForm.css'
 const cssClasses = classnames.bind(styles)
 
 const enhance = compose(
-  defaultProps({
+  recomposeForm({
+    fields: ['name', 'shortname', 'notes', {
+      fieldName: 'siteId',
+      valueFromChangeEvent: _fp.identity
+    }],
     validate: values => {
       const errors = {}
       //
@@ -38,11 +42,6 @@ const enhance = compose(
       return errors
     }
   }),
-  withFormField('name'),
-  withFormField('shortname'),
-  withFormField('notes'),
-  withFormField('siteId', _fp.identity),
-  withFormSubmit(['name', 'shortname', 'siteId']),
   connect(state => {
     const siteList = state.site.items.byId.valueSeq().map(item => ({ value:item.get('id'), text:item.get('name') }) ).toJS()
 
@@ -82,7 +81,7 @@ const enhance = compose(
       // site with this name exists
       if (nextSite){
         // if visual site name differs from currently stored in props - change it
-        if (nextSite.value !== props.siteId.value){
+        if (nextSite.value !== props.values.siteId){
           props.onChangeSiteId(nextSite.value)
         }
       }
@@ -96,43 +95,43 @@ const enhance = compose(
 )
 
 export const DeviceDetailForm = (props) => {
-  const { pristine, valid, name, shortname, notes, siteId } = props
+  const { form, meta, values, labels } = props
 
-  const site = _.find(props.siteList, s => s.value === siteId.value)
+  const site = _.find(props.siteList, s => s.value === values.siteId)
 
   return (
     <form>
       <div>
         <TextField
-          name="__Name"
-          floatingLabelText="++Name"
-          value={name.value}
+          name="Name"
+          floatingLabelText={labels.name}
+          value={values.name}
           onChange={props.onChangeName}
           fullWidth
-          errorText={name.meta.touched && name.meta.error}
+          errorText={meta.name.touched && meta.name.error}
         />
         <TextField
-          name="__Shortname"
-          floatingLabelText="++Shortname"
-          value={shortname.value}
+          name="Shortname"
+          floatingLabelText={labels.shortname}
+          value={values.shortname}
           onChange={props.onChangeShortname}
           fullWidth
-          errorText={shortname.meta.touched && shortname.meta.error}
+          errorText={meta.shortname.touched && meta.shortname.error}
         />
         <TextField
-          name="__Notes"
-          floatingLabelText="++Notes"
-          value={notes.value}
+          name="Notes"
+          floatingLabelText={labels.notes}
+          value={values.notes}
           onChange={props.onChangeNotes}
           fullWidth
-          errorText={notes.meta.touched && notes.meta.error}
+          errorText={meta.notes.touched && meta.notes.error}
         />
         <div className={cssClasses('AutoCompleteField')}>
           <div className={cssClasses('AutoCompleteField__Inner')}>
             <AutoComplete
               className={cssClasses('AutoCompleteField__Inner__AutoComplete')}
-              name="__SiteId"
-              floatingLabelText="++Site"
+              name="SiteId"
+              floatingLabelText={labels.siteId}
               hintText="Enter site name"
               dataSource={props.siteList}
               filter={AutoComplete.caseInsensitiveFilter}
@@ -140,12 +139,12 @@ export const DeviceDetailForm = (props) => {
               onNewRequest={props.onSiteAutoCompleteNewRequest}
               onBlur={props.onSiteAutoCompleteBlur}
               fullWidth
-              errorText={siteId.meta.touched && siteId.meta.error}
+              errorText={meta.siteId.touched && meta.siteId.error}
             />
             <Link
               className={cssClasses('AutoCompleteField__Inner__Link')}
               title="Go to site"
-              to={`/site/${siteId.value}`}
+              to={`/site/${values.siteId}`}
             >
               <ExitToApp />
             </Link>
@@ -154,7 +153,7 @@ export const DeviceDetailForm = (props) => {
       </div>
       <div>
         <RaisedButton
-          disabled={pristine || !valid}
+          disabled={form.pristine || !form.valid || form.submitting}
           onClick={props.handleSubmit}
           type="button"
           label="Update"

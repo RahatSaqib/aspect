@@ -21,7 +21,6 @@ import {
   updateSingleDevice
 } from '../DeviceRedux'
 import ReadOnlyFields from '../../components/shared/ReadOnlyFields'
-import { FormContainer } from './Form'
 import DeviceDetailForm from './DeviceDetailForm'
 import styles from './DeviceDetail.css'
 
@@ -92,6 +91,15 @@ export class DeviceDetail extends PureComponent {
     updateSingleDevice: PropTypes.func.isRequired
   }
 
+  state = {
+    values: {
+      name: '',
+      shortname: '',
+      notes: '',
+      siteId: ''
+    }
+  }
+
   componentWillMount() {
     const { setPageTitle, intl } = this.props
     const { formatMessage } = intl
@@ -110,18 +118,24 @@ export class DeviceDetail extends PureComponent {
 
   handleFetchDevice = () => {
     this.props.fetchSingleDevice(this.props.params.deviceId)
+      .then(() => {
+        const { device } = this.props
+
+        this.handleFormChange({
+          name: device.get('name') || '',
+          shortname: device.get('shortname') || '',
+          notes: device.get('notes') || '',
+          siteId: device.get('siteId')
+        })
+      })
   }
+
+  handleFormChange = values => this.setState({ values })
 
   handleSubmit = (data) => {
     const { device } = this.props
 
-    this.props.updateSingleDevice(device.get('id'), {
-      // Map form fields to API fields
-      name: data.get('name'),
-      shortname: data.get('shortName'),
-      notes: data.get('notes'),
-      siteId: data.get('site')
-    })
+    return this.props.updateSingleDevice(device.get('id'), data)
   }
 
   renderProgress() {
@@ -131,27 +145,20 @@ export class DeviceDetail extends PureComponent {
   }
 
   renderFormContainer() {
-    const { device, intl: { formatMessage } } = this.props
+    const { intl: { formatMessage } } = this.props
     const labels = {
       name: formatMessage(messages.fieldName),
-      shortName: formatMessage(messages.fieldShortname),
+      shortname: formatMessage(messages.fieldShortname),
       notes: formatMessage(messages.fieldNotes),
-      site: formatMessage(messages.fieldSiteId),
+      siteId: formatMessage(messages.fieldSiteId),
       loadMoreText: formatMessage(messages.siteLoadMore),
       loadingMoreText: formatMessage(messages.siteLoadingMore)
     }
-    const initialValues = {
-      // Map API fields to form fields
-      name: device.get('name'),
-      shortName: device.get('shortname'),
-      notes: device.get('notes') || /* FIXME */ '',
-      site: device.get('siteId')
-    }
     return (
-      <FormContainer
+      <DeviceDetailForm
+        onChange={this.handleFormChange}
+        values={this.state.values}
         labels={labels}
-        enableReinitialize
-        initialValues={initialValues}
         onSubmit={this.handleSubmit}
       />
     )
@@ -222,13 +229,6 @@ export class DeviceDetail extends PureComponent {
         <Unit lg="1-2">
           <div>
             {editable ? this.renderFormContainer() : this.renderReadOnlyFields()}
-            <DeviceDetailForm
-              name={device.get('name') || ''}
-              shortname={device.get('shortname') || ''}
-              notes={device.get('notes') || ''}
-              siteId={device.get('siteId')}
-              siteName={device.get('siteName')}
-            />
           </div>
         </Unit>
         <Unit lg="1-2">
