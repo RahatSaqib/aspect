@@ -57,6 +57,47 @@ function* addDeviceData(context) {
   return response
 }
 
+function* getDeviceData(context) {
+  const { device: { id: deviceId }, constraints: dataConstraints } = context
+
+  const lastDeviceQ = knex('Device as d')
+    .where({ 'd.id': deviceId })
+    .first('d.updatedOn', 'd.lastPingOn')
+
+  const lastResultQ = knex('Result as r')
+    .innerJoin('Device as d', 'r.deviceId', 'd.id')
+    .leftJoin('Sample as s', 'r.sampleId', 's.id')
+    .modify(addConstraints, dataConstraints, { device: 'd', sample: 's' })
+    .orderBy('updatedOn', 'desc')
+    .first('r.externalId as id', 'r.updatedOn as updatedOn')
+
+  const lastConfigQ = knex('DeviceConfiguration as c')
+    .innerJoin('Device as d', 'c.id', 'd.deviceConfigurationId')
+    .where({ 'd.id': deviceId })
+    .first('c.externalId as id', 'c.createdOn as updatedOn')
+
+  const lastOpQ = knex('DeviceOperation as o')
+    .innerJoin('Device as d', 'o.id', 'd.deviceOperationId')
+    .where({ 'd.id': deviceId })
+    .first('o.externalId as id', 'o.createdOn as updatedOn')
+
+  const [lastDevice, lastResult, lastConfig, lastOp] = yield Promise.all([
+    lastDeviceQ, lastResultQ, lastConfigQ, lastOpQ])
+
+  const response = { updatedOn: lastDevice.updatedOn, lastPingOn: lastDevice.lastPingOn }
+  if (lastResult) {
+    response.result = { id: lastResult.id, updatedOn: lastResult.updatedOn.toISOString() }
+  }
+  if (lastConfig) {
+    response.configuration = { id: lastConfig.id, updatedOn: lastConfig.updatedOn.toISOString() }
+  }
+  if (lastOp) {
+    response.operation = { id: lastOp.id, updatedOn: lastOp.updatedOn.toISOString() }
+  }
+
+  return response
+}
+
 function* addDeviceConfiguration(context) {
   const { payload, device: { id: deviceId } } = context
 
@@ -109,6 +150,7 @@ function* addDeviceOperation(context) {
 
 module.exports = {
   addDeviceData,
+  getDeviceData,
   addDeviceConfiguration,
   addDeviceOperation
 }
