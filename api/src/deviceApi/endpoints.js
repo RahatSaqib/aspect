@@ -134,7 +134,7 @@ module.exports = [
       notes: 'List of results for authenticated device',
       validate: {
         query: {
-          updatedSince: Joi.date().iso().required()
+          updatedSince: Joi.date().iso()
         }
       }
     }

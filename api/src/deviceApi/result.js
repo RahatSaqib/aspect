@@ -245,8 +245,11 @@ function* listResults(context) {
     .leftJoin('ResultWorkflowStatus as rs', 'r.resultWorkflowStatusId', 'rs.id')
     .leftJoin('Sample as s', 'r.sampleId', 's.id')
     .leftJoin('Site as sos', 's.originSiteId', 'sos.id')
-    .where('r.updatedOn', '>=', query.updatedSince)
     .modify(addConstraints, dataConstraints, { device: 'd', sample: 's' })
+
+  if (query.updatedSince) {
+    resultQuery.where('r.updatedOn', '>=', query.updatedSince)
+  }
 
   // get total count for paging
   const getCount = resultQuery.clone()
