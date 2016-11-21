@@ -191,7 +191,6 @@ describe('Grouped Data Table', () => {
     }
     GroupedDataTableWrapper = shallow(<GroupedDataTable {...props} />)
   })
-  // TODO: i18nKey and Extra Columns
 
   it('should render a table with a header, body and footer', () => {
     const table = GroupedDataTableWrapper.find(Table)

@@ -17,7 +17,11 @@ import Toggle from 'material-ui/Toggle'
 import GroupedDataTable from '../../components/shared/GroupedDataTable'
 import ListFilterContainer from '../../filter/list/ListFilter'
 import { configureListFilter } from '../../filter/FilterRedux'
-import { fetchListFilteredInventoryItems } from '../InventoryRedux'
+import {
+  fetchListFilteredInventoryItems,
+  toggleGroupBySite,
+  toggleGroupByConsumable
+} from '../InventoryRedux'
 import styles from './InventoryItemsList.css'
 
 const messages = defineMessages({
@@ -52,12 +56,9 @@ export class InventoryItemsList extends PureComponent {
     intl: PropTypes.object.isRequired,
     listFilter: PropTypes.object.isRequired,
     fetchListFilteredInventoryItems: PropTypes.func.isRequired,
+    toggleGroupBySite: PropTypes.func.isRequired,
+    toggleGroupByConsumable: PropTypes.func.isRequired,
     items: PropTypes.object.isRequired
-  }
-
-  state = {
-    groupBySite: true,
-    groupByConsumable: true
   }
 
   componentWillMount() {
@@ -77,21 +78,15 @@ export class InventoryItemsList extends PureComponent {
   }
 
   handleFetch = (...args) => {
-    const groupBy = this.state.groupBySite && this.state.groupByConsumable ?
-      ['siteId', 'consumableId'] : (this.state.groupBySite ? ['siteId'] : [])
-    this.props.fetchListFilteredInventoryItems(groupBy, {}, ...args)
+    this.props.fetchListFilteredInventoryItems({}, ...args)
   }
 
   toggleGroupBySite = () => {
-    this.setState({
-      groupBySite: !this.state.groupBySite
-    }, this.handleFetch)
+    this.props.toggleGroupBySite()
   }
 
   toggleGroupByConsumable = () => {
-    this.setState({
-      groupByConsumable: !this.state.groupByConsumable
-    }, this.handleFetch)
+    this.props.toggleGroupByConsumable()
   }
 
   render() {
@@ -123,16 +118,16 @@ export class InventoryItemsList extends PureComponent {
         <Card>
           <CardTitle title="Group Items" className={styles.GroupBy__Header} />
           <Toggle
-            toggled={this.state.groupBySite}
+            toggled={table.get('groupBy').includes('siteId')}
             onToggle={this.toggleGroupBySite}
             label="By Site"
             labelPosition="right"
             style={groupByToggleStyles}
           />
           {
-            this.state.groupBySite &&
+            table.get('groupBy').includes('siteId') &&
             <Toggle
-              toggled={this.state.groupByConsumable}
+              toggled={table.get('groupBy').includes('consumableId')}
               onToggle={this.toggleGroupByConsumable}
               label="By Consumable"
               labelPosition="right"
@@ -164,7 +159,9 @@ function mapStateToProps(state) {
 function mapDispatchToProps(dispatch) {
   return bindActionCreators({
     configureListFilter,
-    fetchListFilteredInventoryItems
+    fetchListFilteredInventoryItems,
+    toggleGroupBySite,
+    toggleGroupByConsumable
   }, dispatch)
 }
 
