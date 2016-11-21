@@ -44,6 +44,10 @@ const messages = defineMessages({
   expiresOn: {
     id: 'pages.InventoryItemsList.expiresOn',
     defaultMessage: 'Expires On'
+  },
+  expiresIn: {
+    id: 'pages.InventoryItemsList.expiresIn',
+    defaultMessage: 'Expires'
   }
 })
 
@@ -91,7 +95,7 @@ export class InventoryItemsList extends PureComponent {
 
   render() {
     const { intl, items, table } = this.props
-    const { formatMessage, formatDate } = intl
+    const { formatMessage, formatDate, formatRelative } = intl
     const columns = [{
       fieldName: 'siteName',
       headerText: formatMessage(messages.siteName)
@@ -105,6 +109,10 @@ export class InventoryItemsList extends PureComponent {
       fieldName: 'expiresOn',
       headerText: formatMessage(messages.expiresOn),
       format: data => (data ? formatDate(data, { format: 'user-timezone' }) : 'N/A')
+    }, {
+      fieldName: 'expiresOn',
+      headerText: formatMessage(messages.expiresIn),
+      format: data => (data ? formatRelative(data) : 'Never')
     }]
     const groupByToggleStyles = {
       marginLeft: '2em',
