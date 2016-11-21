@@ -4,7 +4,15 @@ import classnames from 'classnames/bind'
 import React, { PureComponent, PropTypes } from 'react'
 
 // Material-UI
-import { Table, TableBody, TableHeader, TableHeaderColumn, TableRow, TableRowColumn as TableRowColumnWithBug, TableFooter } from 'material-ui/Table'
+import {
+  Table,
+  TableBody,
+  TableHeader,
+  TableHeaderColumn,
+  TableRow,
+  TableRowColumn as TableRowColumnWithBug,
+  TableFooter
+} from 'material-ui/Table'
 import LinearProgress from 'material-ui/LinearProgress'
 import SortIcon from 'material-ui/svg-icons/content/sort'
 import FlatButton from 'material-ui/FlatButton'

@@ -656,7 +656,7 @@ describe('Grouped Items Reducer', () => {
       assert.deepEqual(newState.get('currentIdList').toJS(), idList)
     })
 
-    it('should overwrite column visibility when a new list is received', () => {
+    it('should not keep stale column visibility state when a new list is received', () => {
       const initialState = new Items()
       const nextState = receiveList(initialState, ['consumables', 'inventoryItems'], nestedData)
       const dataSortedByQuantity = _.map(nestedData, (site) => {
