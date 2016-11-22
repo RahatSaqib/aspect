@@ -1,5 +1,4 @@
 const { knex, transact } = require('../db')
-const { addConstraints } = require('../auth/constraints')
 const { getExternalId } = require('./common')
 const { addResult } = require('./result')
 
@@ -38,44 +37,13 @@ function* addDeviceData(context) {
 }
 
 function* getDeviceData(context) {
-  const { device: { id: deviceId }, constraints: dataConstraints } = context
+  const { device: { id: deviceId } } = context
 
-  const lastDeviceQ = knex('Device as d')
+  const device = yield knex('Device as d')
     .where({ 'd.id': deviceId })
-    .first('d.updatedOn', 'd.lastPingOn')
+    .first('d.lastPingOn')
 
-  const lastResultQ = knex('Result as r')
-    .innerJoin('Device as d', 'r.deviceId', 'd.id')
-    .leftJoin('Sample as s', 'r.sampleId', 's.id')
-    .modify(addConstraints, dataConstraints, { device: 'd', sample: 's' })
-    .orderBy('updatedOn', 'desc')
-    .first('r.externalId as id', 'r.updatedOn as updatedOn')
-
-  const lastConfigQ = knex('DeviceConfiguration as c')
-    .innerJoin('Device as d', 'c.id', 'd.deviceConfigurationId')
-    .where({ 'd.id': deviceId })
-    .first('c.externalId as id', 'c.createdOn as updatedOn')
-
-  const lastOpQ = knex('DeviceOperation as o')
-    .innerJoin('Device as d', 'o.id', 'd.deviceOperationId')
-    .where({ 'd.id': deviceId })
-    .first('o.externalId as id', 'o.createdOn as updatedOn')
-
-  const [lastDevice, lastResult, lastConfig, lastOp] = yield Promise.all([
-    lastDeviceQ, lastResultQ, lastConfigQ, lastOpQ])
-
-  const response = { lastPingOn: lastDevice.lastPingOn }
-  if (lastResult) {
-    response.result = { id: lastResult.id }
-  }
-  if (lastConfig) {
-    response.configuration = { id: lastConfig.id }
-  }
-  if (lastOp) {
-    response.operation = { id: lastOp.id }
-  }
-
-  return response
+  return { lastPingOn: device.lastPingOn }
 }
 
 function* addDeviceConfiguration(context) {
