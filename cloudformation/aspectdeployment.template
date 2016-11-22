@@ -326,11 +326,6 @@
             "Value": "t2.micro"
           },
           {
-            "Namespace": "aws:autoscaling:launchconfiguration",
-            "OptionName": "SecurityGroups",
-            "Value": { "Ref": "APIInstanceSG" }
-          },
-          {
             "Namespace": "aws:autoscaling:trigger",
             "OptionName": "UpperThreshold",
             "Value": "6000000"
@@ -408,11 +403,6 @@
           {
             "Namespace": "aws:elb:loadbalancer",
             "OptionName": "SecurityGroups",
-            "Value": { "Ref": "APILoadBalancerSG" }
-          },
-          {
-            "Namespace": "aws:elb:loadbalancer",
-            "OptionName": "ManagedSecurityGroup",
             "Value": { "Ref": "APILoadBalancerSG" }
           },
           {
