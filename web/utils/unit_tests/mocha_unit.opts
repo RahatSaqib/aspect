@@ -7,4 +7,3 @@
 --recursive
 --env test
 --watch-extensions jsx
-src/**/*.test.js*
