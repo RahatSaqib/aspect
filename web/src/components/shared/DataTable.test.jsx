@@ -1,11 +1,17 @@
 import _ from 'lodash'
 import Immutable from 'immutable'
 import { assert } from 'chai'
+import sinon from 'sinon'
 import React from 'react'
-import { shallow } from 'enzyme'
+import { shallow, mount } from 'enzyme'
+import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider'
 import DataTable from './DataTable'
 
 describe('DataTable module', () => {
+  const mountWithProvider = node => (
+    mount(<MuiThemeProvider>{node}</MuiThemeProvider>).find(node.type)
+  )
+
   describe('DataTable component', () => {
     const defaultProps = {
       selectable: false,
@@ -224,6 +230,67 @@ describe('DataTable module', () => {
         assert.equal(ChildrenWrapper.at(9).prop('label'), '11')
         assert.equal(ChildrenWrapper.at(10).prop('label'), '12')
         assert.equal(ChildrenWrapper.last().prop('label'), 'Next >')
+      })
+    })
+
+    context('when initial mount', () => {
+      it('should call props.handleFetch', () => {
+        const props = _.merge({}, defaultProps, {
+          handleFetch: sinon.spy()
+        })
+        mountWithProvider(<DataTable {...props} />)
+
+        assert.equal(props.handleFetch.calledOnce, true)
+      })
+    })
+
+    context('when sort header clicked', () => {
+      it('should call props.handleFetch with new sort', () => {
+        const props = _.merge({}, defaultProps, {
+          columns: [
+            {
+              db: 'name',
+              title: 'Name'
+            }
+          ],
+          table: {
+            sortCol: 'name',
+            sortDir: 'asc'
+          },
+          handleFetch: sinon.spy()
+        })
+        const ComponentWrapper = mountWithProvider(<DataTable {...props} />)
+        const HiddenWrapper = ComponentWrapper.find('Hidden')
+        const NameSpanInHeader = HiddenWrapper.first().children().find('span')
+
+        NameSpanInHeader.simulate('touchTap')
+        assert.deepEqual(props.handleFetch.lastCall.args, ['name', 'desc', 1, 10])
+      })
+    })
+
+    context('when pager item clicked', () => {
+      it('should call props.handleFetch with new page', () => {
+        const props = _.merge({}, defaultProps, {
+          columns: [
+            {
+              db: 'name',
+              title: 'Name'
+            }
+          ],
+          table: {
+            sortCol: 'name',
+            sortDir: 'asc',
+            page: 0,
+            total: 100,
+            pageSize: 10
+          },
+          handleFetch: sinon.spy()
+        })
+        const ComponentWrapper = mountWithProvider(<DataTable {...props} />)
+        const ThirdPageWrapper = ComponentWrapper.find('span').find({ children: 3 })
+
+        ThirdPageWrapper.simulate('touchTap')
+        assert.deepEqual(props.handleFetch.lastCall.args, ['name', 'asc', 2, 10])
       })
     })
   })
