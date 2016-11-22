@@ -90,16 +90,16 @@ describe('DataTable module', () => {
               return this[key].getIn(rest)
             },
             byId: Immutable.fromJS({
-              '2': {
+              2: {
                 name: 'Aspect'
               },
-              '3': {
+              3: {
                 name: 'Web'
               },
-              '5': {
+              5: {
                 name: 'Api'
               },
-              '7': {
+              7: {
                 name: 'Node'
               }
             }),
@@ -195,7 +195,7 @@ describe('DataTable module', () => {
       it('should render twelfth page', () => {
         const props = _.merge({}, defaultProps, {
           table: {
-            page:11,
+            page: 11,
             total: 120,
             pageSize: 10
           }
