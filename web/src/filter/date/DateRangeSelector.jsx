@@ -29,19 +29,15 @@ export class DateRangeSelector extends PureComponent {
   }
 
   handleMaxDateChange = (_, date) => {
-    this.props.onChangeDate('maxDate', endOfDay(date).toJSON())
+    this.props.onChangeDate({ maxDate: endOfDay(date).toJSON() })
   }
 
-  handleClearMaxDate = () => {
-    this.props.onChangeDate('maxDate', null)
-  }
-
-  handleClearMinDate = () => {
-    this.props.onChangeDate('minDate', null)
+  handleClear = () => {
+    this.props.onChangeDate({ minDate: null, maxDate: null })
   }
 
   handleMinDateChange = (_, date) => {
-    this.props.onChangeDate('minDate', date.toJSON())
+    this.props.onChangeDate({ minDate: date.toJSON() })
   }
 
   render() {
@@ -61,15 +57,6 @@ export class DateRangeSelector extends PureComponent {
           mode="landscape"
           style={{ display: 'inline-block' }}
         />
-        {minDate && (
-          <IconButton
-            tooltip={clearButtonTooltip}
-            style={clearButtonStyle}
-            onTouchTap={this.handleClearMinDate}
-          >
-            <ContentClear />
-          </IconButton>
-        )}
         <DatePicker
           {...restProps}
           value={this.getMaxDate()}
@@ -79,11 +66,11 @@ export class DateRangeSelector extends PureComponent {
           mode="landscape"
           style={{ display: 'inline-block' }}
         />
-        {maxDate && (
+        {(minDate || maxDate) && (
           <IconButton
             tooltip={clearButtonTooltip}
             style={clearButtonStyle}
-            onTouchTap={this.handleClearMaxDate}
+            onTouchTap={this.handleClear}
           >
             <ContentClear />
           </IconButton>
