@@ -55,5 +55,71 @@ describe('DataTable module', () => {
         assert.equal(ComponentWrapper.find('LinearProgress').length, 0)
       })
     })
+
+    context('having columns', () => {
+      it('should render table headers', () => {
+        const props = _.merge({}, defaultProps, {
+          columns: [
+            {
+              db: 'name',
+              title: 'Name'
+            }
+          ]
+        })
+        const ComponentWrapper = shallow(<DataTable {...props} />)
+
+        const HiddenWrapper = ComponentWrapper.find('Hidden')
+        assert.equal(HiddenWrapper.length, 1)
+
+        const NameSpanInHeader = HiddenWrapper.first().children().find('span')
+        assert.equal(NameSpanInHeader.text(), 'Name')
+      })
+    })
+
+    context('having columns and items', () => {
+      it('should render table body with table rows', () => {
+        const props = _.merge({}, defaultProps, {
+          columns: [
+            {
+              db: 'name',
+              title: 'Name'
+            }
+          ],
+          items: {
+            getIn([key, ...rest]) {
+              return this[key].getIn(rest)
+            },
+            byId: Immutable.fromJS({
+              '2': {
+                name: 'Aspect'
+              },
+              '3': {
+                name: 'Web'
+              },
+              '5': {
+                name: 'Api'
+              },
+              '7': {
+                name: 'Node'
+              }
+            }),
+            currentIdList: Immutable.fromJS(['2', '3', '5', '7'])
+          }
+        })
+        const ComponentWrapper = shallow(<DataTable {...props} />)
+
+        const TableBodyWrapper = ComponentWrapper.find('TableBody')
+        assert.equal(TableBodyWrapper.length, 1)
+
+        const TableRowWrapper = TableBodyWrapper.first().children()
+        assert.equal(TableRowWrapper.length, 4)
+
+        const TableRowColumnWrapper = TableRowWrapper.first().children()
+        assert.equal(TableRowColumnWrapper.length, 1)
+
+        const NameWrapper = TableRowColumnWrapper.first().children()
+        assert.equal(NameWrapper.text(), 'Aspect')
+      })
+    })
   })
 })
