@@ -121,5 +121,110 @@ describe('DataTable module', () => {
         assert.equal(NameWrapper.text(), 'Aspect')
       })
     })
+
+    context('for table and pager items', () => {
+      it('should render first page with ellipsis', () => {
+        const props = _.merge({}, defaultProps, {
+          table: {
+            page: 0,
+            total: 100,
+            pageSize: 10
+          }
+        })
+        const ComponentWrapper = shallow(<DataTable {...props} />)
+
+        const TableFooterWrapper = ComponentWrapper.find('TableFooter')
+        assert.equal(TableFooterWrapper.length, 1)
+
+        const TableRowWrapper = TableFooterWrapper.first().children()
+        assert.equal(TableRowWrapper.length, 1)
+
+        const TableRowColumnWrapper = TableRowWrapper.first().children()
+        assert.equal(TableRowColumnWrapper.length, 1)
+
+        const ChildrenWrapper = TableRowColumnWrapper.first().children()
+        assert.equal(ChildrenWrapper.first().prop('label'), '< Prev')
+        assert.equal(ChildrenWrapper.at(1).prop('label'), '1')
+        assert.equal(ChildrenWrapper.at(2).prop('label'), '2')
+        assert.equal(ChildrenWrapper.at(3).prop('label'), '3')
+        assert.equal(ChildrenWrapper.at(4).prop('label'), '4')
+        assert.equal(ChildrenWrapper.at(5).prop('label'), '5')
+        assert.equal(ChildrenWrapper.at(6).prop('label'), '6')
+        assert.equal(ChildrenWrapper.at(7).prop('label'), '7')
+        assert.equal(ChildrenWrapper.at(8).text(), '…')
+        assert.equal(ChildrenWrapper.at(9).prop('label'), '9')
+        assert.equal(ChildrenWrapper.at(10).prop('label'), '10')
+        assert.equal(ChildrenWrapper.last().prop('label'), 'Next >')
+      })
+
+      it('should render sixth page', () => {
+        const props = _.merge({}, defaultProps, {
+          table: {
+            page: 5,
+            total: 120,
+            pageSize: 10
+          }
+        })
+        const ComponentWrapper = shallow(<DataTable {...props} />)
+
+        const TableFooterWrapper = ComponentWrapper.find('TableFooter')
+        assert.equal(TableFooterWrapper.length, 1)
+
+        const TableRowWrapper = TableFooterWrapper.first().children()
+        assert.equal(TableRowWrapper.length, 1)
+
+        const TableRowColumnWrapper = TableRowWrapper.first().children()
+        assert.equal(TableRowColumnWrapper.length, 1)
+
+        const ChildrenWrapper = TableRowColumnWrapper.first().children()
+        assert.equal(ChildrenWrapper.first().prop('label'), '< Prev')
+        assert.equal(ChildrenWrapper.at(1).prop('label'), '1')
+        assert.equal(ChildrenWrapper.at(2).prop('label'), '2')
+        assert.equal(ChildrenWrapper.at(3).text(), '…')
+        assert.equal(ChildrenWrapper.at(4).prop('label'), '4')
+        assert.equal(ChildrenWrapper.at(5).prop('label'), '5')
+        assert.equal(ChildrenWrapper.at(6).prop('label'), '6')
+        assert.equal(ChildrenWrapper.at(7).prop('label'), '7')
+        assert.equal(ChildrenWrapper.at(8).prop('label'), '8')
+        assert.equal(ChildrenWrapper.at(9).text(), '…')
+        assert.equal(ChildrenWrapper.at(10).prop('label'), '11')
+        assert.equal(ChildrenWrapper.at(11).prop('label'), '12')
+        assert.equal(ChildrenWrapper.last().prop('label'), 'Next >')
+      })
+
+      it('should render twelfth page', () => {
+        const props = _.merge({}, defaultProps, {
+          table: {
+            page:11,
+            total: 120,
+            pageSize: 10
+          }
+        })
+        const ComponentWrapper = shallow(<DataTable {...props} />)
+
+        const TableFooterWrapper = ComponentWrapper.find('TableFooter')
+        assert.equal(TableFooterWrapper.length, 1)
+
+        const TableRowWrapper = TableFooterWrapper.first().children()
+        assert.equal(TableRowWrapper.length, 1)
+
+        const TableRowColumnWrapper = TableRowWrapper.first().children()
+        assert.equal(TableRowColumnWrapper.length, 1)
+
+        const ChildrenWrapper = TableRowColumnWrapper.first().children()
+        assert.equal(ChildrenWrapper.first().prop('label'), '< Prev')
+        assert.equal(ChildrenWrapper.at(1).prop('label'), '1')
+        assert.equal(ChildrenWrapper.at(2).prop('label'), '2')
+        assert.equal(ChildrenWrapper.at(3).text(), '…')
+        assert.equal(ChildrenWrapper.at(4).prop('label'), '6')
+        assert.equal(ChildrenWrapper.at(5).prop('label'), '7')
+        assert.equal(ChildrenWrapper.at(6).prop('label'), '8')
+        assert.equal(ChildrenWrapper.at(7).prop('label'), '9')
+        assert.equal(ChildrenWrapper.at(8).prop('label'), '10')
+        assert.equal(ChildrenWrapper.at(9).prop('label'), '11')
+        assert.equal(ChildrenWrapper.at(10).prop('label'), '12')
+        assert.equal(ChildrenWrapper.last().prop('label'), 'Next >')
+      })
+    })
   })
 })
