@@ -1,0 +1,11 @@
+.DateRangeSelector_RangeModeSelector {
+  vertical-align: bottom;
+  text-align: right;
+}
+
+@media screen and (min-width:48em) {
+  .DateRangeSelector_RangeModeSelector {
+    vertical-align: bottom;
+    display: inline-block;
+  }
+}

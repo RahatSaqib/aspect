@@ -35,6 +35,7 @@ import ArrowDropDown from 'material-ui/svg-icons/navigation/arrow-drop-down'
 
 // Our own imports
 import ForkedSelectField from '../../components/forkedMaterialUi/ForkedSelectField'
+import styles from './DateRangeSelector.css'
 
 const messages = defineMessages({
   day: {
@@ -370,14 +371,33 @@ export class DateRangeSelector extends PureComponent {
     ])
     return (
       <div style={{ display: 'inline-block' }}>
-        <FlatButton
-          style={{ display: 'inline-block', verticalAlign: 'bottom', width: '9em' }}
-          label={formatMessage(messages[this.state.rangeMode])}
-          primary
-          labelPosition="before"
-          icon={<ArrowDropDown />}
-          onTouchTap={this.toggleSelectingRangeMode}
-        />
+        <div className={styles.DateRangeSelector_RangeModeSelector}>
+          <FlatButton
+            style={{ verticalAlign: 'bottom', width: '9em' }}
+            label={formatMessage(messages[this.state.rangeMode])}
+            primary
+            labelPosition="before"
+            icon={<ArrowDropDown />}
+            onTouchTap={this.toggleSelectingRangeMode}
+          />
+          <Popover
+            open={this.state.selectingRangeMode}
+            anchorEl={this.state.anchorEl}
+            anchorOrigin={{ horizontal: 'right', vertical: 'bottom' }}
+            targetOrigin={{ horizontal: 'right', vertical: 'top' }}
+            onRequestClose={this.toggleSelectingRangeMode}
+          >
+            <Menu autoWidth onChange={this.handleRangeModeChange}>
+              <MenuItem value="day" primaryText={formatMessage(messages.day)} />
+              <MenuItem value="week" primaryText={formatMessage(messages.week)} />
+              <MenuItem value="month" primaryText={formatMessage(messages.month)} />
+              <MenuItem value="quarter" primaryText={formatMessage(messages.quarter)} />
+              <MenuItem value="year" primaryText={formatMessage(messages.year)} />
+              <Divider />
+              <MenuItem value="custom" primaryText={formatMessage(messages.custom)} />
+            </Menu>
+          </Popover>
+        </div>
         {
           this.state.rangeMode === 'custom' ?
             <div style={{ display: 'inline-block', height: '5em' }}>
@@ -433,23 +453,6 @@ export class DateRangeSelector extends PureComponent {
             <ContentClear />
           </IconButton>
         )}
-        <Popover
-          open={this.state.selectingRangeMode}
-          anchorEl={this.state.anchorEl}
-          anchorOrigin={{ horizontal: 'right', vertical: 'bottom' }}
-          targetOrigin={{ horizontal: 'right', vertical: 'top' }}
-          onRequestClose={this.toggleSelectingRangeMode}
-        >
-          <Menu autoWidth onChange={this.handleRangeModeChange}>
-            <MenuItem value="day" primaryText={formatMessage(messages.day)} />
-            <MenuItem value="week" primaryText={formatMessage(messages.week)} />
-            <MenuItem value="month" primaryText={formatMessage(messages.month)} />
-            <MenuItem value="quarter" primaryText={formatMessage(messages.quarter)} />
-            <MenuItem value="year" primaryText={formatMessage(messages.year)} />
-            <Divider />
-            <MenuItem value="custom" primaryText={formatMessage(messages.custom)} />
-          </Menu>
-        </Popover>
       </div>
     )
   }
