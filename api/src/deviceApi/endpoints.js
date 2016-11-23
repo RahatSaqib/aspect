@@ -151,7 +151,7 @@ module.exports = [
   {
     method: 'POST',
     path: '/result',
-    handler: deviceApiHandler(addResult, { updatePing: true }),
+    handler: deviceApiHandler(addResult, { updatePing: true, updateDeviceLog: true }),
     config: {
       description: 'Result',
       notes: 'Adds new assay result data for the authenticated device',

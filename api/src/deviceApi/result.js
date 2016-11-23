@@ -216,16 +216,10 @@ function* addResult(context) {
       }, result))
     }
 
-    // TODO DeviceLog should be stored even if validation or result parsing fails
-    const [deviceLogId] = yield knex('DeviceLog').insert({
-      deviceId,
-      source: 'ResultAPI',
-      senderIp: context.remoteAddress,
-      // TODO DeviceLog handle non-JSON payloads
-      rawMessage: JSON.stringify(context.rawPayload)
+    yield knex('DeviceLogUpdate').insert({
+      resultId,
+      deviceLogId: context.deviceLogId
     })
-
-    yield knex('DeviceLogUpdate').insert({ deviceLogId, resultId })
 
     return { id: externalId }
   })
