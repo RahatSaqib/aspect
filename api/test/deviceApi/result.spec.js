@@ -886,7 +886,6 @@ describe('Device Result API routes', () => {
           assert.typeOf(res.body.data, 'array')
 
           const result1 = _.find(res.body.data, { id: resultIds[1] })
-          assert.deepEqual(res.body.data[2], result1)
           assert.typeOf(result1, 'Object')
 
           results = res.body.data
