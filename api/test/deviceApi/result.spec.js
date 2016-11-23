@@ -27,10 +27,19 @@ describe('Device Result API routes', () => {
 
     afterEach(() => run(function* (knex) {
       // cleanup
-      yield knex('ResultLog').whereIn('resultId',
-        knex('Result').whereIn('externalId', resultIds).select('id')).delete()
-      yield knex('Result').whereIn('externalId', resultIds).delete()
-      resultIds.splice(0)
+      if (resultIds.length > 0) {
+        const deviceLogIds = yield knex('DeviceLogUpdate as dlu')
+          .innerJoin('Result as r', 'dlu.resultId', 'r.id')
+          .whereIn('r.externalId', resultIds)
+          .select('dlu.deviceLogId')
+          .map(dlu => dlu.deviceLogId)
+
+        yield knex('DeviceLogUpdate').whereIn('deviceLogId', deviceLogIds).delete()
+        yield knex('DeviceLog').whereIn('id', deviceLogIds).delete()
+        yield knex('Result').whereIn('externalId', resultIds).delete()
+
+        resultIds.splice(0)
+      }
     }))
 
     it('should add and return device results', () => run(function* (knex) {
@@ -42,7 +51,7 @@ describe('Device Result API routes', () => {
       const clientAuth = `Bearer ${shared.token}`
       const deviceAuth = `Bearer ${sharedDevice.deviceToken}`
 
-      const [{ count: initialLogLength }] = yield knex('ResultLog').count('id as count')
+      const [{ count: initialLogLength }] = yield knex('DeviceLogUpdate').count('id as count')
 
       yield server.get(clientPath)
         .set('Authorization', clientAuth)
@@ -67,7 +76,7 @@ describe('Device Result API routes', () => {
           resultIds.push(res.body.result.id)
         })
 
-      const [{ count: logLength1 }] = yield knex('ResultLog').count('id as count')
+      const [{ count: logLength1 }] = yield knex('DeviceLogUpdate').count('id as count')
       assert.equal(logLength1, initialLogLength + 1)
 
       yield server.get(clientPath)
@@ -116,9 +125,11 @@ describe('Device Result API routes', () => {
       assert.equal(result1Category1.externalId, 'Success')
       assert.isNotOk(result1Category2)
 
-      const [{ rawMessage: log1Raw, resultId: resultId1 }] = yield knex('ResultLog as rl')
-        .innerJoin('Result as r', 'r.id', 'rl.resultId')
-        .where({ externalId: resultIds[0] }).select('rawMessage', 'resultId')
+      const [{ rawMessage: log1Raw, resultId: resultId1 }] = yield knex('DeviceLog as dl')
+        .innerJoin('DeviceLogUpdate as dlu', 'dl.id', 'dlu.deviceLogId')
+        .innerJoin('Result as r', 'r.id', 'dlu.resultId')
+        .where({ externalId: resultIds[0] })
+        .select('rawMessage', 'resultId')
       assert.deepEqual(JSON.parse(log1Raw), { result: { data: { a: 'b' }, assay: { id: 'HivVl' } } })
 
       yield server.get(clientSingleResultPath + resultId1)
@@ -229,7 +240,7 @@ describe('Device Result API routes', () => {
           resultIds.push(res.body.id)
         })
 
-      const [{ count: logLength2 }] = yield knex('ResultLog').count('id as count')
+      const [{ count: logLength2 }] = yield knex('DeviceLogUpdate').count('id as count')
       assert.equal(logLength2, initialLogLength + 2)
 
       yield server.get(clientPath)
@@ -308,8 +319,9 @@ describe('Device Result API routes', () => {
       assert.equal(result2Category1.externalId, 'Detected')
       assert.equal(result2Category2.externalId, 'Indeterminate')
 
-      const [{ rawMessage: log2Raw, resultId: resultId2 }] = yield knex('ResultLog as rl')
-        .innerJoin('Result as r', 'r.id', 'rl.resultId')
+      const [{ rawMessage: log2Raw, resultId: resultId2 }] = yield knex('DeviceLog as dl')
+        .innerJoin('DeviceLogUpdate as dlu', 'dlu.deviceLogId', 'dl.id')
+        .innerJoin('Result as r', 'r.id', 'dlu.resultId')
         .where({ externalId: resultIds[1] }).select('rawMessage', 'resultId')
       assert.deepEqual(JSON.parse(log2Raw), {
         data: { a: 'b', c: 2, d: false, e: { f: 'g' } },
@@ -453,24 +465,6 @@ describe('Device Result API routes', () => {
               notes: 'Oh NOZE!'
             }
           })
-        })
-
-      // cleanup
-      yield knex('ResultLog').whereIn('resultId',
-        knex('Result').whereIn('externalId', resultIds).select('id')).delete()
-      const [{ count: logLengthClean }] = yield knex('ResultLog').count('id as count')
-      assert.equal(logLengthClean, initialLogLength)
-
-      yield knex('Result').whereIn('externalId', resultIds).delete()
-      yield server.get(clientPath)
-        .set('Authorization', clientAuth)
-        .then((res) => {
-          assert.equal(res.status, 200)
-          assert.typeOf(res.body, 'Object')
-          assert.property(res.body, 'data')
-          assert.typeOf(res.body.data, 'array')
-          assert.equal(res.body.data.length, initialDataLength)
-          assert.property(res.body, 'total')
         })
     }))
 
@@ -915,10 +909,19 @@ describe('Device Result API routes', () => {
 
     afterEach(() => run(function* (knex) {
       // cleanup
-      yield knex('ResultLog').whereIn('resultId',
-        knex('Result').whereIn('externalId', resultIds).select('id')).delete()
-      yield knex('Result').whereIn('externalId', resultIds).delete()
-      resultIds.splice(0)
+      if (resultIds.length > 0) {
+        const deviceLogIds = yield knex('DeviceLogUpdate as dlu')
+          .innerJoin('Result as r', 'dlu.resultId', 'r.id')
+          .whereIn('r.externalId', resultIds)
+          .select('dlu.deviceLogId')
+          .map(dlu => dlu.deviceLogId)
+
+        yield knex('DeviceLogUpdate').whereIn('deviceLogId', deviceLogIds).delete()
+        yield knex('DeviceLog').whereIn('id', deviceLogIds).delete()
+        yield knex('Result').whereIn('externalId', resultIds).delete()
+
+        resultIds.splice(0)
+      }
     }))
 
     it('should honor device role sample origin site', () => run(function* (knex) {
