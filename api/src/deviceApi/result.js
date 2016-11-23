@@ -217,13 +217,12 @@ function* addResult(context) {
     }
 
     // TODO ResultLog should be stored even if validation or result parsing fails
-    // And should contain the RAW payload (prior to transformation during Joi Validation)
     yield knex('ResultLog').insert({
       resultId,
       source: 'ResultAPI',
       senderIp: context.remoteAddress,
       // TODO ResultLog handle non-JSON payloads
-      rawMessage: JSON.stringify(payload)
+      rawMessage: JSON.stringify(context.rawPayload)
     })
 
     return { id: externalId }

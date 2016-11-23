@@ -54,7 +54,8 @@ function* getDeviceApiContext(request) {
     constraints,
     payload: request.payload,
     query: request.query,
-    remoteAddress
+    remoteAddress,
+    rawPayload: request.plugins.rawPayload
   }
 }
 

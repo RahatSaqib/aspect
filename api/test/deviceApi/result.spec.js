@@ -119,7 +119,7 @@ describe('Device Result API routes', () => {
       const [{ rawMessage: log1Raw, resultId: resultId1 }] = yield knex('ResultLog as rl')
         .innerJoin('Result as r', 'r.id', 'rl.resultId')
         .where({ externalId: resultIds[0] }).select('rawMessage', 'resultId')
-      assert.deepEqual(JSON.parse(log1Raw), { data: { a: 'b' }, assay: { id: 'HivVl' } })
+      assert.deepEqual(JSON.parse(log1Raw), { result: { data: { a: 'b' }, assay: { id: 'HivVl' } } })
 
       yield server.get(clientSingleResultPath + resultId1)
         .set('Authorization', clientAuth)
@@ -333,14 +333,13 @@ describe('Device Result API routes', () => {
           longitude: -87.581222,
           latitude: 30.419348
         },
-        // TODO ResultLog should be raw payload (before transformation during validation)
-        startedOn: '2013-12-01T00:00:00.000Z',
-        endedOn: '2013-12-01T01:30:00.000Z',
-        consumable: [{
+        startedOn: '2013-12-01',
+        endedOn: '2013-12-01T01:30',
+        consumable: {
           serial: '132-44-222',
-          expirationDate: '2014-03-01T00:00:00.000Z',
+          expirationDate: '2014-03-01',
           lot: '331-1'
-        }],
+        },
         instrument: {
           serial: '444-3'
         },
@@ -355,7 +354,7 @@ describe('Device Result API routes', () => {
           surname: 'Hope',
           gender: 'M',
           age: 72,
-          dateOfBirth: '1903-05-29T00:00:00.000Z',
+          dateOfBirth: '1903-05-29',
           address: '123 Main Street',
           phone: '856-7909'
         },
