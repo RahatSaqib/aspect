@@ -51,7 +51,6 @@ describe('Device API routes', () => {
           assert.equal(res.status, 200)
           assert.typeOf(res.body, 'Object')
           assert.property(res.body, 'id')
-          assert.property(res.body, 'updatedOn')
           configIds.push(res.body.id)
         })
 
@@ -79,7 +78,6 @@ describe('Device API routes', () => {
           assert.typeOf(res.body, 'Object')
           assert.property(res.body, 'configuration')
           assert.property(res.body.configuration, 'id')
-          assert.property(res.body.configuration, 'updatedOn')
           configIds.push(res.body.configuration.id)
         })
 
@@ -161,7 +159,6 @@ describe('Device API routes', () => {
           assert.equal(res.status, 200)
           assert.typeOf(res.body, 'Object')
           assert.property(res.body, 'id')
-          assert.property(res.body, 'updatedOn')
           opIds.push(res.body.id)
         })
 
@@ -189,7 +186,6 @@ describe('Device API routes', () => {
           assert.typeOf(res.body, 'Object')
           assert.typeOf(res.body.operation, 'Object')
           assert.property(res.body.operation, 'id')
-          assert.property(res.body.operation, 'updatedOn')
           opIds.push(res.body.operation.id)
         })
 
@@ -228,6 +224,113 @@ describe('Device API routes', () => {
           assert.equal(res.body.data.length, initialDataLength)
           assert.property(res.body, 'total')
         })
+    }))
+  })
+  describe('add and get device data', () => {
+    sharedDevice.authenticateUserAndFirstDevice(server, { user: 'admin' })
+
+    const devicePath = '/device'
+
+    it('should add and return device data', () => run(function* (knex) {
+      const { deviceId } = sharedDevice
+
+      const configIds = []
+      const opIds = []
+
+      const deviceAuth = `Bearer ${sharedDevice.deviceToken}`
+
+      const [{ prevConfigId }] = yield knex('Device').where({ id: deviceId })
+        .select('deviceConfigurationId as prevConfigId')
+
+      const [{ prevOpId }] = yield knex('Device').where({ id: deviceId })
+        .select('deviceOperationId as prevOpId')
+
+      let lastPingOn
+
+      yield server.get(devicePath)
+        .set('Authorization', deviceAuth)
+        .then((res) => {
+          assert.equal(res.status, 200)
+          assert.typeOf(res.body, 'Object')
+          assert.property(res.body, 'lastPingOn')
+          const pingOn = Date.parse(res.body.lastPingOn)
+          lastPingOn = pingOn
+        })
+
+      yield server.get(devicePath)
+        .set('Authorization', deviceAuth)
+        .then((res) => {
+          assert.equal(res.status, 200)
+          assert.typeOf(res.body, 'Object')
+          assert.property(res.body, 'lastPingOn')
+          const pingOn = Date.parse(res.body.lastPingOn)
+          assert.equal(+pingOn, +lastPingOn)
+          lastPingOn = pingOn
+        })
+
+      yield server.post(devicePath)
+        .set('Authorization', deviceAuth)
+        .send({
+          configuration: { data: { a: 'b' } },
+          operation: { data: { a: 'b' } }
+        })
+        .then((res) => {
+          assert.equal(res.status, 200)
+          assert.typeOf(res.body, 'Object')
+          assert.property(res.body, 'configuration')
+          assert.property(res.body.configuration, 'id')
+          configIds.push(res.body.configuration.id)
+          assert.typeOf(res.body.operation, 'Object')
+          assert.property(res.body.operation, 'id')
+          opIds.push(res.body.operation.id)
+        })
+
+      yield server.get(devicePath)
+        .set('Authorization', deviceAuth)
+        .then((res) => {
+          assert.equal(res.status, 200)
+          assert.typeOf(res.body, 'Object')
+          assert.property(res.body, 'lastPingOn')
+          const pingOn = new Date(res.body.lastPingOn)
+          assert.isAtLeast(+pingOn, +lastPingOn)
+          lastPingOn = pingOn
+        })
+
+      yield server.post(devicePath)
+        .set('Authorization', deviceAuth)
+        .send({
+          configuration: { data: { a: 'b', c: 2, d: false, e: { f: 'g' } } },
+          operation: { data: { a: 'b', c: 2, d: false, e: { f: 'g' } } }
+        })
+        .then((res) => {
+          assert.equal(res.status, 200)
+          assert.typeOf(res.body, 'Object')
+          assert.property(res.body, 'configuration')
+          assert.property(res.body.configuration, 'id')
+          configIds.push(res.body.configuration.id)
+          assert.typeOf(res.body.operation, 'Object')
+          assert.property(res.body.operation, 'id')
+          opIds.push(res.body.operation.id)
+        })
+
+      yield server.get(devicePath)
+        .set('Authorization', deviceAuth)
+        .then((res) => {
+          assert.equal(res.status, 200)
+          assert.typeOf(res.body, 'Object')
+          assert.property(res.body, 'lastPingOn')
+          const pingOn = new Date(res.body.lastPingOn)
+          assert.isAtLeast(+pingOn, +lastPingOn)
+          lastPingOn = pingOn
+        })
+
+      // cleanup
+      yield knex('Device').where({ id: deviceId }).update({ deviceOperationId: prevOpId })
+      yield knex('DeviceOperation').whereIn('externalId', opIds).delete()
+
+      // cleanup
+      yield knex('Device').where({ id: deviceId }).update({ deviceConfigurationId: prevConfigId })
+      yield knex('DeviceConfiguration').whereIn('externalId', configIds).delete()
     }))
   })
 })

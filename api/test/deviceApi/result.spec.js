@@ -23,6 +23,7 @@ describe('Device Result API routes', () => {
 
     const devicePath = '/device'
     const devicePostResultPath = '/device/result'
+    const deviceGetResultPath = `${devicePostResultPath}?${updatedSince}`
 
     afterEach(() => run(function* (knex) {
       // cleanup
@@ -35,7 +36,6 @@ describe('Device Result API routes', () => {
     it('should add and return device results', () => run(function* (knex) {
       const { deviceId } = sharedDevice
       const clientSingleResultPath = `${clientBasePath}/`
-      const deviceGetResultPath = `${devicePostResultPath}?${updatedSince}`
       const clientPath = `${clientBasePath}?deviceId=${deviceId}`
 
       let initialDataLength = 0
@@ -64,7 +64,6 @@ describe('Device Result API routes', () => {
           assert.typeOf(res.body, 'Object')
           assert.typeOf(res.body.result, 'Object')
           assert.property(res.body.result, 'id')
-          assert.property(res.body.result, 'updatedOn')
           resultIds.push(res.body.result.id)
         })
 
@@ -227,7 +226,6 @@ describe('Device Result API routes', () => {
           assert.equal(res.status, 200)
           assert.typeOf(res.body, 'Object')
           assert.property(res.body, 'id')
-          assert.property(res.body, 'updatedOn')
           resultIds.push(res.body.id)
         })
 
@@ -694,7 +692,6 @@ describe('Device Result API routes', () => {
           assert.equal(res.status, 200)
           assert.typeOf(res.body, 'Object')
           assert.property(res.body, 'id')
-          assert.property(res.body, 'updatedOn')
           resultIds.push(res.body.id)
         })
 
@@ -755,6 +752,159 @@ describe('Device Result API routes', () => {
         .whereIn('id', [result2.resultCategory1, result2.resultCategory2]).select('externalId')
       assert.equal(result2Category1.externalId, 'Detected')
       assert.equal(result2Category2.externalId, 'Indeterminate')
+    }))
+
+    it('should add and return device data', () => run(function* (knex) {
+      const { deviceId } = sharedDevice
+
+      const configIds = []
+      const opIds = []
+
+      const deviceAuth = `Bearer ${sharedDevice.deviceToken}`
+
+      const [{ prevConfigId }] = yield knex('Device').where({ id: deviceId })
+        .select('deviceConfigurationId as prevConfigId')
+
+      const [{ prevOpId }] = yield knex('Device').where({ id: deviceId })
+        .select('deviceOperationId as prevOpId')
+
+      let lastPingOn
+
+      yield server.get(devicePath)
+        .set('Authorization', deviceAuth)
+        .then((res) => {
+          assert.equal(res.status, 200)
+          assert.typeOf(res.body, 'Object')
+          assert.property(res.body, 'lastPingOn')
+          const pingOn = Date.parse(res.body.lastPingOn)
+          lastPingOn = pingOn
+        })
+
+      yield server.get(devicePath)
+        .set('Authorization', deviceAuth)
+        .then((res) => {
+          assert.equal(res.status, 200)
+          assert.typeOf(res.body, 'Object')
+          assert.property(res.body, 'lastPingOn')
+          const pingOn = Date.parse(res.body.lastPingOn)
+          assert.equal(+pingOn, +lastPingOn)
+          lastPingOn = pingOn
+        })
+
+      let prevResults
+      let results
+
+      yield server.get(deviceGetResultPath)
+        .set('Authorization', deviceAuth)
+        .then((res) => {
+          assert.equal(res.status, 200)
+          assert.typeOf(res.body, 'Object')
+          assert.property(res.body, 'data')
+          assert.typeOf(res.body.data, 'array')
+          assert.property(res.body, 'total')
+          assert.property(res.body, 'length')
+          results = res.body.data
+          prevResults = results
+        })
+
+      yield server.post(devicePath)
+        .set('Authorization', deviceAuth)
+        .send({
+          configuration: { data: { a: 'b' } },
+          operation: { data: { a: 'b' } },
+          result: { data: { a: 'b' }, assay: { id: 'HivVl' } }
+        })
+        .then((res) => {
+          assert.equal(res.status, 200)
+          assert.typeOf(res.body, 'Object')
+          assert.property(res.body, 'configuration')
+          assert.property(res.body.configuration, 'id')
+          configIds.push(res.body.configuration.id)
+          assert.typeOf(res.body.operation, 'Object')
+          assert.property(res.body.operation, 'id')
+          opIds.push(res.body.operation.id)
+          assert.typeOf(res.body.result, 'Object')
+          assert.property(res.body.result, 'id')
+          resultIds.push(res.body.result.id)
+        })
+
+      yield server.get(devicePath)
+        .set('Authorization', deviceAuth)
+        .then((res) => {
+          assert.equal(res.status, 200)
+          assert.typeOf(res.body, 'Object')
+          assert.property(res.body, 'lastPingOn')
+          const pingOn = Date.parse(res.body.lastPingOn)
+          assert.isAtLeast(+pingOn, +lastPingOn)
+          lastPingOn = pingOn
+        })
+
+      yield server.get(deviceGetResultPath)
+        .set('Authorization', deviceAuth)
+        .then((res) => {
+          assert.equal(res.status, 200)
+          assert.typeOf(res.body, 'Object')
+          assert.typeOf(res.body.data, 'array')
+
+          const lastResult = _.find(res.body.data, { id: resultIds[0] })
+          assert.typeOf(lastResult, 'Object')
+          assert.deepEqual(lastResult.data, { a: 'b' })
+
+          results = res.body.data
+          assert.equal(results.length, prevResults.length + 1)
+        })
+
+      yield server.post(devicePath)
+        .set('Authorization', deviceAuth)
+        .send({
+          configuration: { data: { a: 'c' } },
+          operation: { data: { a: 'd' } },
+          result: [
+            { data: { a: 'c' }, assay: { id: 'HivVl' } },
+            { data: { a: 'd' }, assay: { id: 'HivVl' } }
+          ]
+        })
+        .then((res) => {
+          assert.equal(res.status, 200)
+          assert.typeOf(res.body, 'Object')
+          assert.property(res.body, 'configuration')
+          assert.property(res.body.configuration, 'id')
+          configIds.push(res.body.configuration.id)
+          assert.typeOf(res.body.operation, 'Object')
+          assert.property(res.body.operation, 'id')
+          opIds.push(res.body.operation.id)
+          assert.typeOf(res.body.result, 'Object')
+          assert.property(res.body.result, 'id')
+          resultIds.push(res.body.result.id)
+        })
+
+      yield server.get(deviceGetResultPath)
+        .set('Authorization', deviceAuth)
+        .then((res) => {
+          assert.equal(res.status, 200)
+          assert.typeOf(res.body, 'Object')
+          assert.typeOf(res.body.data, 'array')
+
+          const result1 = _.find(res.body.data, { id: resultIds[1] })
+          assert.deepEqual(res.body.data[2], result1)
+          assert.typeOf(result1, 'Object')
+
+          results = res.body.data
+          assert.equal(results.length, prevResults.length + 3)
+        })
+
+      const newResults = _.differenceBy(results, prevResults, 'id')
+      assert.equal(newResults.length, 3)
+
+      resultIds.push(..._.map(newResults, 'id'))
+
+      // cleanup
+      yield knex('Device').where({ id: deviceId }).update({ deviceOperationId: prevOpId })
+      yield knex('DeviceOperation').whereIn('externalId', opIds).delete()
+
+      // cleanup
+      yield knex('Device').where({ id: deviceId }).update({ deviceConfigurationId: prevConfigId })
+      yield knex('DeviceConfiguration').whereIn('externalId', configIds).delete()
     }))
   })
 

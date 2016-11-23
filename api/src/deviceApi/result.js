@@ -6,10 +6,9 @@ const { addConstraints } = require('../auth/constraints')
 
 function* addResult(context) {
   const response = yield transact(function* (knex) {
-    const { payload, constraints: dataConstraints } = context
+    const { payload, constraints: dataConstraints, now } = context
 
     // TODO seperate permissions for device add vs update result?
-    const now = new Date()
     const externalId = getExternalId(payload.id)
     const existingResults = yield knex('Result as r')
       .where({ 'r.externalId': externalId })
@@ -227,7 +226,7 @@ function* addResult(context) {
       rawMessage: JSON.stringify(payload)
     })
 
-    return { id: externalId, updatedOn: now.toISOString() }
+    return { id: externalId }
   })
 
   return response
@@ -245,8 +244,11 @@ function* listResults(context) {
     .leftJoin('ResultWorkflowStatus as rs', 'r.resultWorkflowStatusId', 'rs.id')
     .leftJoin('Sample as s', 'r.sampleId', 's.id')
     .leftJoin('Site as sos', 's.originSiteId', 'sos.id')
-    .where('r.updatedOn', '>=', query.updatedSince)
     .modify(addConstraints, dataConstraints, { device: 'd', sample: 's' })
+
+  if (query.updatedSince) {
+    resultQuery.where('r.updatedOn', '>=', query.updatedSince)
+  }
 
   // get total count for paging
   const getCount = resultQuery.clone()
