@@ -280,11 +280,11 @@ export class DateRangeSelector extends PureComponent {
       yearsBeforeLast.push(subtractYears(now, i))
     }
     return [{
-      label: `${formatMessage(messages.thisYear)} (${formatDate(thisYearStart, { year: 'numeric' })}`,
+      label: `${formatMessage(messages.thisYear)} (${formatDate(thisYearStart, { year: 'numeric' })})`,
       minDate: thisYearStart,
       maxDate: thisYearEnd
     }, {
-      label: `${formatMessage(messages.lastYear)} (${formatDate(lastYearStart, { year: 'numeric' })}`,
+      label: `${formatMessage(messages.lastYear)} (${formatDate(lastYearStart, { year: 'numeric' })})`,
       minDate: lastYearStart,
       maxDate: lastYearEnd
     }, ..._.map(yearsBeforeLast, (dayInYear) => {
