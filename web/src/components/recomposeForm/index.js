@@ -78,7 +78,37 @@ const createFormHandlers = fieldNameList => {
   }
 }
 
-
+/*
+ * An HOC that provides various form handlers/props to BaseComponent.
+ * Given the fields = ['name'], we will get:
+ *
+ * 1. form state:
+ *   props.form = {
+        valid: PropTypes.bool
+        pristine: PropTypes.bool
+        submitting: PropTypes.bool
+        submitSucceed: PropTypes.bool
+     }
+     props.handleSubmit: a callback that should be passed into <form onSubmit={props.handleSubmit} />
+ * 2. field state:
+     props.meta.name = {
+       touched: PropTypes.bool
+       error: PropTypes.any
+     }
+     props.onChangeName: a callback that should be passed into <input onChange={props.onChangeName} />
+ *
+ * The valid/error properties reflects the result of calling `validate(values)`.
+ * By default, onChangeName will reads input value from `event.target.value`.
+ * If your change handler does differently, customize it when initializing recomposeForm:
+ *
+     recomposeForm = ({
+       fields: [{
+         fieldName: 'siteId',
+         valueFromChangeEvent: it => it.value
+       }],
+       validate
+     })
+ */
 const recomposeForm = ({
   fields: fieldNameLikeList,
   validate
