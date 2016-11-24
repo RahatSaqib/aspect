@@ -6,4 +6,4 @@
 --ui bdd
 --recursive
 --env test
-src/**/*.test.js*
+--watch-extensions jsx

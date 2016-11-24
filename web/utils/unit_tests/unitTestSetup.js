@@ -1,6 +1,9 @@
 import fetch from 'isomorphic-fetch'
+import injectTapEventPlugin from 'react-tap-event-plugin'
 import { jsdom } from 'jsdom'
 /* eslint-disable no-var*/
+
+injectTapEventPlugin()
 
 process.env.NODE_ENV = 'test'
 
