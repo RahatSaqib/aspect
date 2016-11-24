@@ -1,5 +1,6 @@
 // Imports from packages
-import React, { PureComponent, PropTypes } from 'react'
+import React, { PropTypes } from 'react'
+import { compose, setPropTypes, pure } from 'recompose'
 import { connect } from 'react-redux'
 import {
   addLocaleData,
@@ -21,55 +22,7 @@ require('./App.scss')
 
 addLocaleData([...en, ...fr])
 
-class App extends PureComponent {
-
-  static propTypes = {
-    locale: PropTypes.string.isRequired,
-    timezone: PropTypes.string,
-    children: PropTypes.node.isRequired
-  }
-
-  render() {
-    const { locale, timezone } = this.props
-    const messages = translation[locale]
-    const formats = {}
-
-    if (timezone) {
-      formats.date = {
-        'user-timezone': {
-          timeZone: timezone
-        },
-        '2-digit-date-time': {
-          // https://github.com/yahoo/react-intl/wiki/Components#date-formatting-components
-          year: '2-digit',
-          month: '2-digit',
-          day: '2-digit',
-          hour: '2-digit',
-          minute: '2-digit',
-          second: '2-digit'
-        }
-      }
-      formats.time = {
-        'user-timezone': {
-          timeZone: timezone
-        }
-      }
-    }
-
-    return (
-      <IntlProvider
-        key={/* https://git.io/viGEA */locale}
-        locale={locale === 'en-US' ? 'en' : locale}
-        formats={formats}
-        messages={messages}
-      >
-        <MuiThemeProvider muiTheme={getMuiTheme(theme)}>
-          {this.props.children}
-        </MuiThemeProvider>
-      </IntlProvider>
-    )
-  }
-}
+const DEFAULT_LOCALE = 'en-US'
 
 function mapStateToProps(state) {
   return {
@@ -78,6 +31,56 @@ function mapStateToProps(state) {
   }
 }
 
-const DEFAULT_LOCALE = 'en-US'
+const enhance = compose(
+  setPropTypes({
+    children: PropTypes.node.isRequired
+  }),
+  pure,
+  connect(mapStateToProps),
+  setPropTypes({
+    locale: PropTypes.string.isRequired,
+    timezone: PropTypes.string
+  })
+)
 
-export default connect(mapStateToProps)(App)
+export const App = ({ children, locale, timezone }) => {
+  const messages = translation[locale]
+  const formats = {}
+
+  if (timezone) {
+    formats.date = {
+      'user-timezone': {
+        timeZone: timezone
+      },
+      '2-digit-date-time': {
+        // https://github.com/yahoo/react-intl/wiki/Components#date-formatting-components
+        year: '2-digit',
+        month: '2-digit',
+        day: '2-digit',
+        hour: '2-digit',
+        minute: '2-digit',
+        second: '2-digit'
+      }
+    }
+    formats.time = {
+      'user-timezone': {
+        timeZone: timezone
+      }
+    }
+  }
+
+  return (
+    <IntlProvider
+      key={/* https://git.io/viGEA */locale}
+      locale={locale === 'en-US' ? 'en' : locale}
+      formats={formats}
+      messages={messages}
+    >
+      <MuiThemeProvider muiTheme={getMuiTheme(theme)}>
+        {children}
+      </MuiThemeProvider>
+    </IntlProvider>
+  )
+}
+
+export default enhance(App)
