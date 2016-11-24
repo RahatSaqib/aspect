@@ -1,4 +1,3 @@
-import Immutable from 'immutable'
 import { assert } from 'chai'
 import sinon from 'sinon'
 import React from 'react'
@@ -7,7 +6,7 @@ import recomposeForm from './index'
 
 describe('recomposeForm module', () => {
   describe('recomposeForm HOC', () => {
-    const initialValues = {name: '', email: ''}
+    const initialValues = { name: '', email: '' }
     const validate = () => ({})
     const mockEvent = {
       preventDefault() {},
@@ -31,7 +30,7 @@ describe('recomposeForm module', () => {
       const DecoratedComponent = recomposeForm({
         fields: ['name', 'email'],
         validate
-      })(props => {
+      })((props) => {
         innerProps = props
         return <div />
       })
@@ -53,7 +52,7 @@ describe('recomposeForm module', () => {
       const DecoratedComponent = recomposeForm({
         fields: ['name', 'email'],
         validate
-      })(props => {
+      })((props) => {
         innerProps = props
         return <div />
       })
@@ -77,7 +76,7 @@ describe('recomposeForm module', () => {
       const DecoratedComponent = recomposeForm({
         fields: ['name', 'email'],
         validate
-      })(props => {
+      })((props) => {
         innerProps = props
         return <div />
       })
@@ -95,7 +94,7 @@ describe('recomposeForm module', () => {
         const DecoratedComponent = recomposeForm({
           fields: ['name', 'email'],
           validate
-        })(props => {
+        })((props) => {
           innerProps = props
           return <div />
         })
@@ -141,7 +140,7 @@ describe('recomposeForm module', () => {
         const DecoratedComponent = recomposeForm({
           fields: ['name', 'email'],
           validate
-        })(props => {
+        })((props) => {
           innerProps = props
           return <div />
         })
@@ -186,7 +185,7 @@ describe('recomposeForm module', () => {
       const DecoratedComponent = recomposeForm({
         fields: ['name', 'email'],
         validate
-      })(props => {
+      })((props) => {
         innerProps = props
         return <div />
       })
@@ -205,7 +204,7 @@ describe('recomposeForm module', () => {
       const DecoratedComponent = recomposeForm({
         fields: ['name', 'email'],
         validate
-      })(props => {
+      })((props) => {
         innerProps = props
         return <div />
       })
@@ -239,7 +238,7 @@ describe('recomposeForm module', () => {
             }
             return errors
           }
-        })(props => {
+        })((props) => {
           innerProps = props
           return <div />
         })
@@ -280,7 +279,7 @@ describe('recomposeForm module', () => {
             }
             return errors
           }
-        })(props => {
+        })((props) => {
           innerProps = props
           return <div />
         })

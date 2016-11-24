@@ -1,19 +1,19 @@
 import isPromise from 'is-promise'
 import _fp from 'lodash/fp'
-import React, { PureComponent, PropTypes } from 'react'
+import { PureComponent } from 'react'
 import createHelper from 'recompose/createHelper'
 import createEagerFactory from 'recompose/createEagerFactory'
 
 export const normalChangeEventReader = event => event.target.value
 
-const mapFieldNames = _fp.map((fieldNameLike) => (
+const mapFieldNames = _fp.map(fieldNameLike => (
   _fp.isObject(fieldNameLike) ? fieldNameLike : {
     fieldName: fieldNameLike,
     valueFromChangeEvent: normalChangeEventReader
   })
 )
 
-const createFieldListHandlers = _fp.reduce((acc, {fieldName, valueFromChangeEvent}) => {
+const createFieldListHandlers = _fp.reduce((acc, { fieldName, valueFromChangeEvent }) => {
   const fieldNameUpperFirst = _fp.upperFirst(fieldName)
 
   return _fp.mergeAll([acc, {
@@ -26,7 +26,7 @@ const createFieldListHandlers = _fp.reduce((acc, {fieldName, valueFromChangeEven
       }
     },
     handlers: {
-      [`onChange${fieldNameUpperFirst}`]: function (event) {
+      [`onChange${fieldNameUpperFirst}`](event) {
         const value = valueFromChangeEvent(event)
         const nextValues = {
           ...this.props.values,
@@ -45,38 +45,34 @@ const createFieldListHandlers = _fp.reduce((acc, {fieldName, valueFromChangeEven
       }
     }
   }, {}])
-})
+}, {
+  state: {
+    form: {
+      pristine: true,
+      valid: true,
+      submitting: false,
+      submitSucceed: false
+    }
+  },
+  handlers: {
+    handleSubmit(event) {
+      event.preventDefault()
+      event.stopPropagation()
 
-const createFormHandlers = fieldNameList => {
-  return {
-    state: {
-      form: {
-        pristine: true,
-        valid: true,
-        submitting: false,
-        submitSucceed: false
+      const nextState = this.validateFields()
+      this.setState(state => _fp.mergeAll([state, nextState]))
+      if (!nextState.form.valid) {
+        return
       }
-    },
-    handlers: {
-      handleSubmit: function(event) {
-        event.preventDefault()
-        event.stopPropagation()
-
-        const nextState = this.validateFields()
-        this.setState(state => _fp.mergeAll([state, nextState]))
-        if (!nextState.form.valid) {
-          return
-        }
-        const result = this.props.onSubmit(this.props.values)
-        if (!isPromise(result)) {
-          return
-        }
-        this.handleSubmitting()
-        result.then(this.handleSubmitSucceed, this.handleSubmitFailed)
+      const result = this.props.onSubmit(this.props.values)
+      if (!isPromise(result)) {
+        return
       }
+      this.handleSubmitting()
+      result.then(this.handleSubmitSucceed, this.handleSubmitFailed)
     }
   }
-}
+})
 
 /*
  * An HOC that provides various form handlers/props to BaseComponent.
@@ -89,13 +85,15 @@ const createFormHandlers = fieldNameList => {
         submitting: PropTypes.bool
         submitSucceed: PropTypes.bool
      }
-     props.handleSubmit: a callback that should be passed into <form onSubmit={props.handleSubmit} />
+     props.handleSubmit: a callback that should be passed into:
+       <form onSubmit={props.handleSubmit} />
  * 2. field state:
      props.meta.name = {
        touched: PropTypes.bool
        error: PropTypes.any
      }
-     props.onChangeName: a callback that should be passed into <input onChange={props.onChangeName} />
+     props.onChangeName: a callback that should be passed into:
+       <input onChange={props.onChangeName} />
  *
  * The valid/error properties reflects the result of calling `validate(values)`.
  * By default, onChangeName will reads input value from `event.target.value`.
@@ -112,7 +110,7 @@ const createFormHandlers = fieldNameList => {
 const recomposeForm = ({
   fields: fieldNameLikeList,
   validate
-}) => BaseComponent => {
+}) => (BaseComponent) => {
   const fieldNameList = mapFieldNames(fieldNameLikeList)
   const factory = createEagerFactory(BaseComponent)
 
@@ -121,10 +119,7 @@ const recomposeForm = ({
     constructor(...args) {
       super(...args)
 
-      const {state, handlers} = createFieldListHandlers(
-        createFormHandlers(fieldNameList),
-        fieldNameList
-      )
+      const { state, handlers } = createFieldListHandlers(fieldNameList)
       this.state = state
       this.handlers = _fp.mapValues(_fp.bind(_fp.placeholder, this), handlers)
     }
@@ -132,7 +127,7 @@ const recomposeForm = ({
     validateFields = (values = this.props.values) => {
       const errors = validate(values)
 
-      const meta = _fp.reduce((acc, {fieldName}) => {
+      const meta = _fp.reduce((acc, { fieldName }) => {
         const error = errors[fieldName]
         if (error) {
           return {
@@ -141,12 +136,11 @@ const recomposeForm = ({
               error
             }
           }
-        } else {
-          return {
-            ...acc,
-            [fieldName]: {
-              error: null
-            }
+        }
+        return {
+          ...acc,
+          [fieldName]: {
+            error: null
           }
         }
       }, {}, fieldNameList)
@@ -164,13 +158,13 @@ const recomposeForm = ({
         this.setState(state => _fp.mergeAll([state, { form }]))
     )
 
-    handleSubmitting = _ => {
+    handleSubmitting = () => {
       this.handleFormStateChange({
         submitting: true
       })
     }
 
-    handleSubmitSucceed = _ => {
+    handleSubmitSucceed = () => {
       this.handleFormStateChange({
         pristine: true,
         submitting: false,
@@ -178,7 +172,7 @@ const recomposeForm = ({
       })
     }
 
-    handleSubmitFailed = _ => {
+    handleSubmitFailed = () => {
       this.handleFormStateChange({
         valid: false,
         submitting: false,

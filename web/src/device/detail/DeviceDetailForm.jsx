@@ -2,14 +2,13 @@
 import classnames from 'classnames/bind'
 import _ from 'lodash'
 import _fp from 'lodash/fp'
-import React, { PureComponent, PropTypes } from 'react'
-import { compose, defaultProps, withHandlers, lifecycle, pure } from 'recompose'
+import React, { PropTypes } from 'react'
+import { compose, setPropTypes, withHandlers, lifecycle, pure } from 'recompose'
 import { bindActionCreators } from 'redux'
 import { connect } from 'react-redux'
 import { Link } from 'react-router'
 
 // Material-UI
-import LinearProgress from 'material-ui/LinearProgress'
 import RaisedButton from 'material-ui/RaisedButton'
 import TextField from 'material-ui/TextField'
 import AutoComplete from 'material-ui/AutoComplete'
@@ -19,15 +18,20 @@ import ExitToApp from 'material-ui/svg-icons/action/exit-to-app'
 import recomposeForm from '../../components/recomposeForm'
 import { fetchSites } from '../../site/SiteRedux'
 import styles from './DeviceDetailForm.css'
+
 const cssClasses = classnames.bind(styles)
 
 const enhance = compose(
+  pure,
+  setPropTypes({
+    values: PropTypes.object.isRequired
+  }),
   recomposeForm({
     fields: ['name', 'shortname', 'notes', {
       fieldName: 'siteId',
       valueFromChangeEvent: _fp.identity
     }],
-    validate: values => {
+    validate(values) {
       const errors = {}
       //
       if (!values.name) {
@@ -42,8 +46,8 @@ const enhance = compose(
       return errors
     }
   }),
-  connect(state => {
-    const siteList = state.site.items.byId.valueSeq().map(item => ({ value:item.get('id'), text:item.get('name') }) ).toJS()
+  connect((state) => {
+    const siteList = state.site.items.byId.valueSeq().map(item => ({ value: item.get('id'), text: item.get('name') })).toJS()
 
     return {
       siteList
@@ -58,40 +62,40 @@ const enhance = compose(
   }),
   withHandlers({
     onSiteAutoCompleteNewRequest: props => (chosenRequest, index) => {
-      // if user typed text and pressed Enter, then index=-1 - and chosenRequest is string value (see API doc - http://www.material-ui.com/#/components/auto-complete)
-      if (index === -1){
+      if (index === -1) {
+        // if user typed text and pressed Enter, then index=-1 - and
+        // chosenRequest is string value (see API doc - http://www.material-ui.com/#/components/auto-complete)
         const textLo = chosenRequest.toLowerCase().trim()
         const nextSite = _.find(props.siteList, s => s.text.toLowerCase() === textLo)
-        if (nextSite){
+        if (nextSite) {
           props.onChangeSiteId(nextSite.value)
         }
-      }
-      // if user selected item from the list then index>=0 and chosenRequest is object literal of default format {text:'', value:''}
-      else {
+      } else {
+        // if user selected item from the list then index>=0 and
+        // chosenRequest is object literal of default format {text:'', value:''}
         props.onChangeSiteId(chosenRequest.value)
       }
     },
     // --------------------------
-    // on bluring - check if actual visual site name is correct (exists in datasource) and is equal siteId value stored in props
+    // on bluring - check if actual visual site name is correct (exists in datasource)
+    // and is equal siteId value stored in props
     // --------------------------
-    onSiteAutoCompleteBlur: props => event => {
+    onSiteAutoCompleteBlur: props => (event) => {
       const textLo = event.target.value.toLowerCase().trim()
       const nextSite = _.find(props.siteList, s => s.text.toLowerCase() === textLo)
 
-      // site with this name exists
-      if (nextSite){
-        // if visual site name differs from currently stored in props - change it
-        if (nextSite.value !== props.values.siteId){
+      if (nextSite) {
+        // site with this name exists
+        if (nextSite.value !== props.values.siteId) {
+          // if visual site name differs from currently stored in props - change it
           props.onChangeSiteId(nextSite.value)
         }
-      }
-      // if no site found with this name - empty field
-      else {
+      } else {
+        // if no site found with this name - empty field
         props.onChangeSiteId(null)
       }
     }
-  }),
-  pure
+  })
 )
 
 export const DeviceDetailForm = (props) => {
