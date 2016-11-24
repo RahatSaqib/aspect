@@ -32,11 +32,10 @@ export class FocusBlurTextField extends PureComponent {
     }
   }
 
-  handleBlur = (...args) => {
+  handleBlur = (event) => {
     this.setState({ isFocused: false })
-    this.props.onBlur(...args)
+    this.props.onBlur(event)
 
-    const event = args[0]
     this.props.onCommitValue(event)
   }
 
@@ -52,9 +51,9 @@ export class FocusBlurTextField extends PureComponent {
     this.setState({ pendingValue: value })
   }
 
-  handleFocus = (...args) => {
+  handleFocus = (event) => {
     this.setState({ isFocused: true })
-    this.props.onFocus(...args)
+    this.props.onFocus(event)
   }
 
   render() {
