@@ -28,13 +28,13 @@ const createFieldListHandlers = _fp.reduce((acc, {fieldName, valueFromChangeEven
     handlers: {
       [`onChange${fieldNameUpperFirst}`]: function (event) {
         const value = valueFromChangeEvent(event)
-        const nextValeus = {
+        const nextValues = {
           ...this.props.values,
           [fieldName]: value
         }
 
-        this.props.onChange(nextValeus)
-        const nextState = this.validateFields(nextValeus)
+        this.props.onChange(nextValues)
+        const nextState = this.validateFields(nextValues)
         this.setState(state => _fp.mergeAll([state, nextState, {
           meta: {
             [fieldName]: {
