@@ -1,5 +1,6 @@
 // Imports from packages
-import React, { PureComponent, PropTypes } from 'react'
+import React, { PropTypes } from 'react'
+import { compose, setPropTypes, pure } from 'recompose'
 import {
   injectIntl
 } from 'react-intl'
@@ -8,36 +9,38 @@ import Paper from 'material-ui/Paper'
 
 require('./MiniChart.scss')
 
-class MiniChart extends PureComponent {
-
-  static propTypes = {
+const enhance = compose(
+  setPropTypes({
     bgcolor: PropTypes.string.isRequired,
     data: PropTypes.array.isRequired,
     label: PropTypes.string.isRequired,
-    number: PropTypes.any.isRequired,
+    number: PropTypes.any.isRequired
+  }),
+  pure,
+  injectIntl,
+  setPropTypes({
     intl: PropTypes.object.isRequired
-  }
+  })
+)
 
-  render() {
-    const { intl } = this.props
-    const { formatNumber } = intl
+export const MiniChart = ({ bgcolor, data, label, number, intl }) => {
+  const { formatNumber } = intl
 
-    return (
-      <Paper className="col-margin" style={{ backgroundColor: this.props.bgcolor }}>
-        <div className="minichart-chart">
-          <Sparklines data={this.props.data} width={100} height={80} margin={15} >
-            <SparklinesLine color={'#fff'} style={{ fill: 'none' }} />
-            <SparklinesSpots style={{ fill: '#fff' }} />
-          </Sparklines>
-        </div>
-        <div className="minichart-count">
-          <small>{this.props.label}</small>
-          {formatNumber(this.props.number)}
-        </div>
-        <div className="clear-fix" />
-      </Paper>
-    )
-  }
+  return (
+    <Paper className="col-margin" style={{ backgroundColor: bgcolor }}>
+      <div className="minichart-chart">
+        <Sparklines data={data} width={100} height={80} margin={15} >
+          <SparklinesLine color={'#fff'} style={{ fill: 'none' }} />
+          <SparklinesSpots style={{ fill: '#fff' }} />
+        </Sparklines>
+      </div>
+      <div className="minichart-count">
+        <small>{label}</small>
+        {formatNumber(number)}
+      </div>
+      <div className="clear-fix" />
+    </Paper>
+  )
 }
 
-export default injectIntl(MiniChart)
+export default enhance(MiniChart)
