@@ -42,6 +42,9 @@ export class FocusBlurTextField extends PureComponent {
 
   handleKeyUp = (event) => {
     this.props.onKeyUp(event)
+    if (event.key === 'Enter') {
+      this.props.onCommitValue(event)
+    }
   }
 
   handleChange = (event) => {
