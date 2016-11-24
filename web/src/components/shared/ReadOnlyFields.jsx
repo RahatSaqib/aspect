@@ -1,54 +1,49 @@
 // Imports from packages
-import React, { PureComponent, PropTypes } from 'react'
+import React, { PropTypes } from 'react'
+import { compose, setPropTypes, pure } from 'recompose'
 
 // Material-UI
 import TextField from 'material-ui/TextField'
 
-export class ReadOnlyField extends PureComponent {
-  static propTypes = {
+const enhanceField = compose(
+  setPropTypes({
     label: PropTypes.string.isRequired,
     value: PropTypes.oneOfType([
       PropTypes.string,
       PropTypes.number
     ]).isRequired
-  }
+  }),
+  pure
+)
 
-  render() {
-    const { label, value } = this.props
+export const ReadOnlyField = enhanceField(({ label, value }) => (
+  <TextField
+    disabled
+    value={value}
+    floatingLabelText={label}
+    fullWidth
+  />
+))
 
-    return (
-      <TextField
-        disabled
-        value={value}
-        floatingLabelText={label}
-        fullWidth
-      />
-    )
-  }
-}
-
-export class ReadOnlyFields extends PureComponent {
-  static propTypes = {
+const enhanceFields = compose(
+  setPropTypes({
     fields: PropTypes.arrayOf(
       PropTypes.shape(ReadOnlyField.propTypes)
     ).isRequired
-  }
+  }),
+  pure
+)
 
-  render() {
-    const { fields, ...restProps } = this.props
-
-    return (
-      <div {...restProps}>
-        {fields.map(({ label, value }) => (
-          <ReadOnlyField
-            key={label}
-            label={label}
-            value={value}
-          />
-        ))}
-      </div>
-    )
-  }
-}
+export const ReadOnlyFields = enhanceFields(({ fields, ...restProps }) => (
+  <div {...restProps}>
+    {fields.map(({ label, value }) => (
+      <ReadOnlyField
+        key={label}
+        label={label}
+        value={value}
+      />
+    ))}
+  </div>
+))
 
 export default ReadOnlyFields
