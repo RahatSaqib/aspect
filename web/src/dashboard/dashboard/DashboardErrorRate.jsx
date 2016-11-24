@@ -1,32 +1,31 @@
 // Imports from packages
-import React, { PureComponent, PropTypes } from 'react'
+import React, { PropTypes } from 'react'
+import { compose, setPropTypes, pure } from 'recompose'
 import { Link } from 'react-router'
 
 // Our own imports
 import requirePermissions from '../../components/shared/requirePermissions'
 import MiniChart from '../../components/shared/MiniChart'
 
-export class DashboardErrorRate extends PureComponent {
-  static propTypes = {
+const enhance = compose(
+  setPropTypes({
     label: PropTypes.string.isRequired
-  }
+  }),
+  pure,
+  requirePermissions({
+    permissions: ['result:admin', 'result:view']
+  })
+)
 
-  render() {
-    const { label } = this.props
+export const DashboardErrorRate = ({ label }) => (
+  <Link to="/result">
+    <MiniChart
+      data={[25, 12, 8, 2, 1]}
+      label={label}
+      number={'12'}
+      bgcolor={'#ff9800'}
+    />
+  </Link>
+)
 
-    return (
-      <Link to="/result">
-        <MiniChart
-          data={[25, 12, 8, 2, 1]}
-          label={label}
-          number={'12'}
-          bgcolor={'#ff9800'}
-        />
-      </Link>
-    )
-  }
-}
-
-export default requirePermissions({
-  permissions: ['result:admin', 'result:view']
-})(DashboardErrorRate)
+export default enhance(DashboardErrorRate)
