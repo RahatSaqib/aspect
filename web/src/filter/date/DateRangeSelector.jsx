@@ -326,10 +326,10 @@ export class DateRangeSelector extends PureComponent {
     this.props.onChangeDate({ minDate: null, maxDate: null })
   }
 
-  toggleSelectingRangeMode = (event) => {
+  openRangeModeSelector = (event) => {
     this.setState({
       anchorEl: event.currentTarget,
-      selectingRangeMode: !this.state.selectingRangeMode
+      selectingRangeMode: true
     })
   }
 
@@ -370,22 +370,20 @@ export class DateRangeSelector extends PureComponent {
       'clearButtonTooltip', 'clearButtonStyle', 'onChangeDate', 'minDate', 'maxDate', 'intl'
     ])
     return (
-      <div style={{ display: 'inline-block' }}>
-        <div className={styles.DateRangeSelector_RangeModeSelector}>
+      <div className={styles.DateRangeSelector} style={{ marginTop: this.state.rangeMode === 'custom' ? '0' : '-1.8em' }}>
+        <div className={styles.DateRangeSelector__RangeModeSelector}>
           <FlatButton
-            style={{ verticalAlign: 'bottom', width: '9em' }}
             label={formatMessage(messages[this.state.rangeMode])}
             primary
             labelPosition="before"
             icon={<ArrowDropDown />}
-            onTouchTap={this.toggleSelectingRangeMode}
+            onTouchTap={this.openRangeModeSelector}
           />
           <Popover
             open={this.state.selectingRangeMode}
             anchorEl={this.state.anchorEl}
             anchorOrigin={{ horizontal: 'right', vertical: 'bottom' }}
             targetOrigin={{ horizontal: 'right', vertical: 'top' }}
-            onRequestClose={this.toggleSelectingRangeMode}
           >
             <Menu autoWidth onChange={this.handleRangeModeChange}>
               <MenuItem value="day" primaryText={formatMessage(messages.day)} />
@@ -400,35 +398,34 @@ export class DateRangeSelector extends PureComponent {
         </div>
         {
           this.state.rangeMode === 'custom' ?
-            <div style={{ display: 'inline-block', height: '5em' }}>
+            <div className={styles.DateRangeSelector__ControlContainer}>
               <DatePicker
                 {...restProps}
+                className={styles.DateRangeSelector__DatePicker}
                 value={this.getMinDate()}
                 onChange={this.handleMinDateChange}
                 hintText="Start from"
                 container="inline"
                 mode="landscape"
-                style={{ display: 'inline-block', marginTop: '2em' }}
               />
               <DatePicker
                 {...restProps}
+                className={styles.DateRangeSelector__DatePicker}
                 value={this.getMaxDate()}
                 onChange={this.handleMaxDateChange}
                 hintText="End at"
                 container="inline"
                 mode="landscape"
-                style={{ display: 'inline-block', marginTop: '2em' }}
               />
             </div> :
-            <div style={{ display: 'inline-block' }}>
+            <div className={styles.DateRangeSelector__ControlContainer}>
               <ForkedSelectField
+                className={styles.DateRangeSelector__DropDownList}
                 floatingLabelText={label}
                 value={selectedValue}
                 autoWidth
                 onChange={this.handleDateRangeChange}
                 style={{
-                  display: 'inline-block',
-                  verticalAlign: 'bottom',
                   textOverflow: 'ellipsis',
                   overflow: 'hidden',
                   whiteSpace: 'pre'
@@ -445,13 +442,15 @@ export class DateRangeSelector extends PureComponent {
             </div>
         }
         {(minDate || maxDate) && (
-          <IconButton
-            tooltip={clearButtonTooltip}
-            style={clearButtonStyle}
-            onTouchTap={this.handleClear}
-          >
-            <ContentClear />
-          </IconButton>
+          <div className={styles.DateRangeSelector__ClearButtonContainer}>
+            <IconButton
+              tooltip={clearButtonTooltip}
+              style={clearButtonStyle}
+              onTouchTap={this.handleClear}
+            >
+              <ContentClear />
+            </IconButton>
+          </div>
         )}
       </div>
     )
