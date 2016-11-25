@@ -72,10 +72,10 @@ export class ListFilter extends PureComponent {
     this.props.onChangeFilter(nextFilter)
   }
 
-  handleChangeDate = (name, date) => {
+  handleChangeDate = (dateValues) => {
     const nextFilter = {
       ...this.props.filter,
-      [name]: date
+      ...dateValues
     }
     this.props.onChangeFilter(nextFilter)
   }
