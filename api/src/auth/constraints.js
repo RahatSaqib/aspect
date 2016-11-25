@@ -89,7 +89,6 @@ function getDeviceConstraints(credentials) {
     })
 }
 
-
 function addConstraints(queryBuilder, constraints, aliases) {
   let { site, partner, orgUnit, country, state, lga } = aliases
   const { device, sample } = aliases

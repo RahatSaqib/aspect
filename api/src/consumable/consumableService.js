@@ -1,15 +1,27 @@
 const Promise = require('bluebird')
-const { knex, filterParams, sortPageParams } = require('../db')
+const {
+  knex,
+  filterParams,
+  sortPageParams
+} = require('../db')
+const {
+  getConstraints,
+  addConstraints
+} = require('../auth/constraints')
 
 const SELECT_LIST_FIELDS = [
   'c.id', 'c.name', 'u.name as unit', 'c.canExpire', 'c.manufacturer', 'c.autoInclude'
 ]
 function* listConsumableTypes(request) {
-  const { query } = request
+  const { query, auth } = request
+
+  const dataConstraints = yield getConstraints(auth.credentials)
 
   const consumableQuery = knex('Consumable as c')
     .leftJoin('Unit as u', 'c.unit', 'u.id')
+    .leftJoin('Partner as p', 'c.partnerId', 'p.id')
     .modify(filterParams, query, { name: 'c.name' })
+    .modify(addConstraints, dataConstraints, { partner: 'p' })
 
   // get total count for paging
   const getCount = consumableQuery.clone()
