@@ -26,12 +26,6 @@ npm run serve
 
 # Build the dist version and copy static files
 npm run dist
-```
-
-To make sure everything works, you can spin up a quick web server with this command:
-```bash
-python -m SimpleHTTPServer 8000
-```
 
 # Run unit tests
 npm test
@@ -45,6 +39,7 @@ npm run clean
 # Just copy the static assets
 npm run copy
 ```
+
 
 ## i18n
 
@@ -80,11 +75,11 @@ In step 3, you'll need to create or update `.po` files inside `src/shared/i18n` 
 We're serving the web files from an S3 bucket through cloudfront.
 Here's the command for uploading a directory to an S3 bucket using the S3 CLI:
 
-read```bash
+```bash
 aws s3 cp dist s3://aspect-web-dev --recursive
 ```
 
-##Updating Dependencies
+## Updating Dependencies
 
 To check which dependencies have newer versions available:
 
