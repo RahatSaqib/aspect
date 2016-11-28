@@ -63,8 +63,7 @@ function* addDeviceConfiguration(context) {
     yield knex('Device')
       .where('id', deviceId)
       .update({
-        deviceConfigurationId,
-        updatedOn: now
+        deviceConfigurationId
       })
 
     yield knex('DeviceLogUpdate').insert({
@@ -92,8 +91,7 @@ function* addDeviceOperation(context) {
     yield knex('Device')
       .where('id', deviceId)
       .update({
-        deviceOperationId,
-        updatedOn: now
+        deviceOperationId
       })
 
     yield knex('DeviceLogUpdate').insert({

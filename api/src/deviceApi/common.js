@@ -40,7 +40,6 @@ function deviceApiHandler(handler, { updatePing, updateDeviceLog }) {
         yield knex('Device')
           .where({ id: device.id })
           .update({
-            updatedOn: now,
             lastPingOn: now,
             lastPingFromIp: remoteAddress
           })
