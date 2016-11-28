@@ -2,11 +2,11 @@ const Promise = require('bluebird')
 const _ = require('lodash')
 const Boom = require('boom')
 const {
+  knex,
   query,
   filterParams,
   filterDateRangeParams,
-  sortPageParams,
-  sortParams
+  sortPageParams
 } = require('../db')
 const {
   getConstraints,
@@ -99,22 +99,29 @@ function* getInventoryItemsForSites(request) {
   const getSiteCount = sitesQuery.clone()
     .countDistinct('ii.siteId as count').first()
 
-  const getSites = sitesQuery.clone()
-    .modify(sortPageParams, request.query,
-      INVENTORY_ITEMS_SORT_FIELDS.siteName, INVENTORY_ITEMS_SORT_FIELDS)
-    .distinct('ii.siteId')
-    .select()
+  const sortAggregate = request.query.sortDir === 'desc' ? 'MAX' : 'MIN'
+  const sortColumnName = request.query.sortCol || 'siteName'
+  let sortColumnField = INVENTORY_ITEMS_SORT_FIELDS[sortColumnName]
+  if (sortColumnName === 'expiresOn') {
+    const defaultDateOrderBy = request.query.sortDir === 'desc' ? '1000-01-01 00:00:00' : '9999-12-31 23:59:59'
+    sortColumnField = `COALESCE(${INVENTORY_ITEMS_SORT_FIELDS[sortColumnName]}, '${defaultDateOrderBy}')`
+  }
+  const aggregateColumn = `${sortAggregate}(${sortColumnField}) as ${sortColumnName}`
+  const getSiteIds = sitesQuery.clone()
+    .groupBy('ii.siteId')
+    .select('ii.siteId', knex.raw(aggregateColumn))
+    .modify(sortPageParams, request.query, sortColumnName)
 
-  const [{ count: total }, sitesData] = yield Promise.all([getSiteCount, getSites])
+  const [{ count: total }, sitesData] = yield Promise.all([getSiteCount, getSiteIds])
 
   const inventoryFilters = Object.assign({}, request.query, { siteId: _.map(sitesData, 'siteId') })
 
+  const sortDirection = request.query.sortDir === 'desc' ? 'desc' : 'asc'
   const inventoryItems = yield inventorySiteAndGeographyQuery.clone()
     .modify(filterParams, inventoryFilters, INVENTORY_FILTER_FIELDS)
     .modify(addConstraints, dataConstraints, INVENTORY_DATA_CONSTRAINT_ALIASES)
-    .modify(sortParams, request.query,
-      INVENTORY_ITEMS_SORT_FIELDS.siteName, INVENTORY_ITEMS_SORT_FIELDS)
-    .select(INVENTORY_ITEMS_SELECT_LIST_FIELDS)
+    .orderBy('sortBy', sortDirection)
+    .select([...INVENTORY_ITEMS_SELECT_LIST_FIELDS, knex.raw(`${sortColumnField} as sortBy`)])
 
   return {
     inventoryItems,
