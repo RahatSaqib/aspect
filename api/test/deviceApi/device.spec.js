@@ -104,6 +104,16 @@ describe('Device API routes', () => {
         })
 
       // cleanup
+      const deviceLogIds = yield knex('DeviceLogUpdate as dlu')
+        .leftJoin('DeviceConfiguration as c', 'dlu.deviceConfigurationId', 'c.id')
+        .leftJoin('DeviceOperation as o', 'dlu.deviceOperationId', 'o.id')
+        .whereIn('c.externalId', configIds)
+        .select('dlu.deviceLogId')
+        .map(dlu => dlu.deviceLogId)
+
+      yield knex('DeviceLogUpdate').whereIn('deviceLogId', deviceLogIds).delete()
+      yield knex('DeviceLog').whereIn('id', deviceLogIds).delete()
+
       yield knex('Device').where({ id: deviceId }).update({ deviceConfigurationId: prevConfigId })
       yield knex('DeviceConfiguration').whereIn('externalId', configIds).delete()
       yield server.get(clientPath)
@@ -212,6 +222,16 @@ describe('Device API routes', () => {
         })
 
       // cleanup
+      const deviceLogIds = yield knex('DeviceLogUpdate as dlu')
+        .leftJoin('DeviceConfiguration as c', 'dlu.deviceConfigurationId', 'c.id')
+        .leftJoin('DeviceOperation as o', 'dlu.deviceOperationId', 'o.id')
+        .whereIn('o.externalId', opIds)
+        .select('dlu.deviceLogId')
+        .map(dlu => dlu.deviceLogId)
+
+      yield knex('DeviceLogUpdate').whereIn('deviceLogId', deviceLogIds).delete()
+      yield knex('DeviceLog').whereIn('id', deviceLogIds).delete()
+
       yield knex('Device').where({ id: deviceId }).update({ deviceOperationId: prevOpId })
       yield knex('DeviceOperation').whereIn('externalId', opIds).delete()
       yield server.get(clientPath)
@@ -325,10 +345,20 @@ describe('Device API routes', () => {
         })
 
       // cleanup
+      const deviceLogIds = yield knex('DeviceLogUpdate as dlu')
+        .leftJoin('DeviceConfiguration as c', 'dlu.deviceConfigurationId', 'c.id')
+        .leftJoin('DeviceOperation as o', 'dlu.deviceOperationId', 'o.id')
+        .whereIn('c.externalId', configIds)
+        .orWhereIn('o.externalId', opIds)
+        .select('dlu.deviceLogId')
+        .map(dlu => dlu.deviceLogId)
+
+      yield knex('DeviceLogUpdate').whereIn('deviceLogId', deviceLogIds).delete()
+      yield knex('DeviceLog').whereIn('id', deviceLogIds).delete()
+
       yield knex('Device').where({ id: deviceId }).update({ deviceOperationId: prevOpId })
       yield knex('DeviceOperation').whereIn('externalId', opIds).delete()
 
-      // cleanup
       yield knex('Device').where({ id: deviceId }).update({ deviceConfigurationId: prevConfigId })
       yield knex('DeviceConfiguration').whereIn('externalId', configIds).delete()
     }))

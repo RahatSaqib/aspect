@@ -66,6 +66,11 @@ function* addDeviceConfiguration(context) {
         deviceConfigurationId,
         updatedOn: now
       })
+
+    yield knex('DeviceLogUpdate').insert({
+      deviceConfigurationId,
+      deviceLogId: context.deviceLogId
+    })
   })
   return { id: externalId }
 }
@@ -90,6 +95,11 @@ function* addDeviceOperation(context) {
         deviceOperationId,
         updatedOn: now
       })
+
+    yield knex('DeviceLogUpdate').insert({
+      deviceOperationId,
+      deviceLogId: context.deviceLogId
+    })
   })
   return { id: externalId }
 }

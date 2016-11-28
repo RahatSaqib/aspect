@@ -20,16 +20,15 @@ function deviceApiHandler(handler, { updatePing, updateDeviceLog }) {
 
     const { device, now } = context
 
-    // TODO Does Hapi Remote address work through proxies? Check headers?
-    const remoteAddress = request.info.remoteAddress || ''
-
-    // FIXME Remove check for result payload once DeviceOperation and Config logs are supported
-    const updateDeviceLogTemp = updateDeviceLog || (context.payload && context.payload.result)
     if (device && device.id) {
-      if (updateDeviceLogTemp) {
+      // TODO Does Hapi Remote address work through proxies? Check headers?
+      const remoteAddress = request.info.remoteAddress || ''
+
+      if (updateDeviceLog) {
         const [deviceLogId] = yield knex('DeviceLog').insert({
           deviceId: device.id,
-          source: 'ResultAPI',
+          source: 'DeviceAPI',
+          createdOn: now,
           senderIp: remoteAddress,
           // TODO DeviceLog handle non-JSON payloads
           rawMessage: JSON.stringify(request.plugins.rawPayload)
