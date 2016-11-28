@@ -99,14 +99,14 @@ function mapDispatchToProps(dispatch) {
 
 function validate(values) {
   const errors = {}
-
-  if (!values.get('user')) {
-    errors.user = 'Please enter your username'
+  if (values) {
+    if (!values.get('user')) {
+      errors.user = 'Please enter your username'
+    }
+    if (!values.get('password')) {
+      errors.password = 'Please enter your password'
+    }
   }
-  if (!values.get('password')) {
-    errors.password = 'Please enter your password'
-  }
-
   return errors
 }
 

@@ -63,14 +63,14 @@ export class EditableFieldsForm extends PureComponent {
 
 function validate(values) {
   const errors = {}
-
-  if (!values.get('name')) {
-    errors.name = 'Required'
+  if (values) {
+    if (!values.get('name')) {
+      errors.name = 'Required'
+    }
+    if (!values.get('shortName')) {
+      errors.shortName = 'Required'
+    }
   }
-  if (!values.get('shortName')) {
-    errors.shortName = 'Required'
-  }
-
   return errors
 }
 
