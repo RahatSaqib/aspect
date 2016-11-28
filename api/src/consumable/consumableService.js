@@ -5,8 +5,7 @@ const {
   sortPageParams
 } = require('../db')
 const {
-  getConstraints,
-  addConstraints
+  getConstraints
 } = require('../auth/constraints')
 
 const SELECT_LIST_FIELDS = [
@@ -20,8 +19,8 @@ function* listConsumableTypes(request) {
   const consumableQuery = knex('Consumable as c')
     .leftJoin('Unit as u', 'c.unit', 'u.id')
     .leftJoin('Partner as p', 'c.partnerId', 'p.id')
+    .whereNull('c.partnerId').orWhere({ 'p.id': dataConstraints.partner.id })
     .modify(filterParams, query, { name: 'c.name' })
-    .modify(addConstraints, dataConstraints, { partner: 'p' })
 
   // get total count for paging
   const getCount = consumableQuery.clone()

@@ -694,7 +694,7 @@ function* seed(knex) {
     autoInclude: 0
   })
 
-  const [partnerTwoWipe] = yield knex('Consumable').insert({
+  const [partnerTwoSwab] = yield knex('Consumable').insert({
     name: 'Partner Two Swab',
     partnerId: partnerTwoId,
     unit: piece,
@@ -729,7 +729,7 @@ function* seed(knex) {
   })
 
   yield knex('ConsumableAssay').insert({
-    consumableId: partnerTwoWipe,
+    consumableId: partnerTwoSwab,
     assayId: assayMtbRifId,
     quantity: 2
   })
@@ -1376,6 +1376,11 @@ function* seed(knex) {
     orgUnitId: regionMidwestId
   })
 
+  const [roleIdPartnerTwo] = yield knex('Role').insert({
+    name: 'Partner Two Users',
+    partnerId: partnerTwoId
+  })
+
   // assign permissions to roles
   yield knex('RolePermission').insert([
     { roleId: roleIdAdmin, permissionId: modules.device.admin },
@@ -1412,7 +1417,9 @@ function* seed(knex) {
     { roleId: roleIdNortheast, permissionId: modules.device.edit },
 
     { roleId: roleIdParentOrgUnit, permissionId: modules.site.edit },
-    { roleId: roleIdParentOrgUnit, permissionId: modules.device.edit }
+    { roleId: roleIdParentOrgUnit, permissionId: modules.device.edit },
+
+    { roleId: roleIdPartnerTwo, permissionId: modules.inventory.edit }
   ])
 
 
@@ -1426,6 +1433,7 @@ function* seed(knex) {
     { userId: userIds.jon, roleId: roleIdParentOrgUnit },
     { userId: userIds.ned, roleId: roleIdNortheast },
     { userId: userIds.sam, roleId: roleIdAdmin },
+    { userId: userIds.jason, roleId: roleIdPartnerTwo },
     { userId: userIds.jim, roleId: roleIdParentOrgUnit },
     { userId: userIds.steve, roleId: roleIdMASuffolk },
     { userId: userIds.bill, roleId: roleIdMASuffolk },
