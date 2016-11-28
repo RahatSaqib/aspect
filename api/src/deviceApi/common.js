@@ -13,6 +13,11 @@ function getExternalId(candidateId) {
 function deviceApiHandler(handler, { updatePing, updateDeviceLog }) {
   return asyncHandler(function* (request) {
     const context = yield* getDeviceApiContext(request)
+    if (context.error) {
+      // unauthorized, record nothing
+      return context.error
+    }
+
     const { device, now } = context
 
     // TODO Does Hapi Remote address work through proxies? Check headers?
@@ -20,30 +25,30 @@ function deviceApiHandler(handler, { updatePing, updateDeviceLog }) {
 
     // FIXME Remove check for result payload once DeviceOperation and Config logs are supported
     const updateDeviceLogTemp = updateDeviceLog || (context.payload && context.payload.result)
-    if (updateDeviceLogTemp && device && device.id) {
-      const [deviceLogId] = yield knex('DeviceLog').insert({
-        deviceId: device.id,
-        source: 'ResultAPI',
-        senderIp: remoteAddress,
-        // TODO DeviceLog handle non-JSON payloads
-        rawMessage: JSON.stringify(request.plugins.rawPayload)
-      })
-      context.deviceLogId = deviceLogId
-    }
-
-    const response = context.error || (yield* handler(context))
-
-    if (updatePing && device && device.id) {
-      yield knex('Device')
-        .where({ id: device.id })
-        .update({
-          updatedOn: now,
-          lastPingOn: now,
-          lastPingFromIp: remoteAddress
+    if (device && device.id) {
+      if (updateDeviceLogTemp) {
+        const [deviceLogId] = yield knex('DeviceLog').insert({
+          deviceId: device.id,
+          source: 'ResultAPI',
+          senderIp: remoteAddress,
+          // TODO DeviceLog handle non-JSON payloads
+          rawMessage: JSON.stringify(request.plugins.rawPayload)
         })
+        context.deviceLogId = deviceLogId
+      }
+
+      if (updatePing) {
+        yield knex('Device')
+          .where({ id: device.id })
+          .update({
+            updatedOn: now,
+            lastPingOn: now,
+            lastPingFromIp: remoteAddress
+          })
+      }
     }
 
-    return response
+    return yield* handler(context)
   })
 }
 
