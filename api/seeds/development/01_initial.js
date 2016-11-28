@@ -934,15 +934,6 @@ function* seed(knex) {
         _.random(-millisInNormalYear, millisInNormalYear))).setHours(0, 0, 0, 0)),
       quantityOnHand: _.random(0, 1000)
     })
-    if (i % 3 === 0) {
-      yield knex('InventoryItem').insert({
-        consumableId: consumableGxTbCartridgeId,
-        siteId: siteData.id,
-        expiresOn: new Date((new Date(now.getTime() +
-          _.random(-millisInNormalYear, millisInNormalYear))).setHours(0, 0, 0, 0)),
-        quantityOnHand: _.random(0, 1000)
-      })
-    }
     if (i % 5 === 0) {
       yield knex('InventoryItem').insert({
         consumableId: consumableGxEbolaCartridgeId,
@@ -967,13 +958,6 @@ function* seed(knex) {
       siteId: siteData.id,
       quantityOnHand: _.random(0, 100)
     })
-    if (i % 5 === 0) {
-      yield knex('InventoryItem').insert({
-        consumableId: consumableGlovesId,
-        siteId: siteData.id,
-        quantityOnHand: _.random(0, 1000)
-      })
-    }
   }
 
   // some TB samples:
