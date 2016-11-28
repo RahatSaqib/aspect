@@ -7,10 +7,8 @@
   "scripts": {
     "start": "cross-env NODE_ENV=dev webpack-dev-server --inline --hot --open --env=dev",
     "mocha": "mocha --opts utils/unit_tests/mocha_unit.opts",
-    "run:tests:coverage": "istanbul cover --config utils/unit_tests/istanbul.yml node_modules/mocha/bin/_mocha -- --opts utils/unit_tests/mocha_unit.opts src/**/*.test.js*",
-    "check:coverage": "istanbul check-coverage --config utils/unit_tests/istanbul.yml",
     "pretest": "fsys --task=remove --fileFolder=coverage && fsys --task=remove --fileFolder=mocha.json",
-    "test": "npm-run-all run:tests:coverage check:coverage",
+    "test": "nyc --check-coverage npm run mocha -- 'src/**/*.test.js*'",
     "test:watch": "npm run mocha -- --watch",
     "test:once": "mocha --opts utils/unit_tests/mocha_unit.opts",
     "posttest": "npm run lint",
@@ -28,6 +26,29 @@
   "repository": "",
   "keywords": [],
   "author": "SystemOne",
+  "nyc": {
+    "lines": 9,
+    "statements": 9,
+    "functions": 9,
+    "branches": 9,
+    "extension": [
+      ".jsx",
+      ".js"
+    ],
+    "reporter": [
+      "text",
+      "text-summary",
+      "lcov"
+    ],
+    "exclude": [
+      "src/**/*.test.js*"
+    ],
+    "require": [
+      "babel-register"
+    ],
+    "sourceMap": false,
+    "instrument": false
+  },
   "devDependencies": {
     "babel-cli": "^6.18.0",
     "babel-core": "^6.18.0",
