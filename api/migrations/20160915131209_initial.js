@@ -465,7 +465,6 @@ function* up(knex) {
     deviceLog.increments('id')
     deviceLog.integer('deviceId').unsigned().notNullable()
           .index().references('id').inTable('Device')
-    deviceLog.string('checkpoint')
     deviceLog.string('source').notNullable() // LIS listener, API...
     deviceLog.dateTime('createdOn').notNullable()
     deviceLog.string('senderIp').notNullable()
