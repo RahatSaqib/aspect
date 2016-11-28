@@ -216,10 +216,7 @@ function* addResult(context) {
       }, result))
     }
 
-    yield knex('DeviceLogUpdate').insert({
-      resultId,
-      deviceLogId: context.deviceLogId
-    })
+    context.addResultId(resultId)
 
     return { id: externalId }
   })

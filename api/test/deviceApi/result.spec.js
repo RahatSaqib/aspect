@@ -809,8 +809,8 @@ describe('Device Result API routes', () => {
         .set('Authorization', deviceAuth)
         .send({
           configuration: { data: { a: 'b' } },
-          operation: { data: { a: 'b' } },
-          result: { data: { a: 'b' }, assay: { id: 'HivVl' } }
+          operation: { data: { a: 'c' } },
+          result: { data: { a: 'd' }, assay: { id: 'HivVl' } }
         })
         .then((res) => {
           assert.equal(res.status, 200)
@@ -827,7 +827,30 @@ describe('Device Result API routes', () => {
         })
 
       const [{ count: logLength2 }] = yield knex('DeviceLogUpdate').count('id as count')
-      assert.equal(logLength2, initialLogLength + 3)
+      assert.equal(logLength2, initialLogLength + 1)
+
+      const deviceLogResult2 = yield knex('Result')
+        .where({ externalId: resultIds[resultIds.length - 1] })
+        .first()
+      const deviceLogConfig2 = yield knex('DeviceConfiguration')
+        .where({ externalId: configIds[configIds.length - 1] })
+        .first()
+      const deviceLogOp2 = yield knex('DeviceOperation')
+        .where({ externalId: opIds[opIds.length - 1] })
+        .first()
+      assert.property(deviceLogOp2, 'data')
+      assert.deepEqual(JSON.parse(deviceLogOp2.data), { a: 'c' })
+      assert.property(deviceLogConfig2, 'data')
+      assert.deepEqual(JSON.parse(deviceLogConfig2.data), { a: 'b' })
+      assert.property(deviceLogResult2, 'resultData')
+      assert.deepEqual(JSON.parse(deviceLogResult2.resultData), { a: 'd' })
+      const deviceLogUpdates2 = yield knex('DeviceLogUpdate').where({
+        deviceConfigurationId: deviceLogConfig2.id,
+        deviceOperationId: deviceLogOp2.id
+      })
+      assert.equal(deviceLogUpdates2.length, 1)
+      assert.isOk(deviceLogUpdates2[0].deviceLogId)
+      assert.equal(deviceLogUpdates2[0].resultId, deviceLogResult2.id)
 
       yield server.get(devicePath)
         .set('Authorization', deviceAuth)
@@ -849,7 +872,7 @@ describe('Device Result API routes', () => {
 
           const lastResult = _.find(res.body.data, { id: resultIds[0] })
           assert.typeOf(lastResult, 'Object')
-          assert.deepEqual(lastResult.data, { a: 'b' })
+          assert.deepEqual(lastResult.data, { a: 'd' })
 
           results = res.body.data
           assert.equal(results.length, prevResults.length + 1)
@@ -880,7 +903,28 @@ describe('Device Result API routes', () => {
         })
 
       const [{ count: logLength3 }] = yield knex('DeviceLogUpdate').count('id as count')
-      assert.equal(logLength3, initialLogLength + 7)
+      assert.equal(logLength3, initialLogLength + 3)
+
+      const deviceLogConfig3 = yield knex('DeviceConfiguration')
+        .where({ externalId: configIds[configIds.length - 1] })
+        .first()
+      const deviceLogOp3 = yield knex('DeviceOperation')
+        .where({ externalId: opIds[opIds.length - 1] })
+        .first()
+      assert.property(deviceLogOp3, 'data')
+      assert.deepEqual(JSON.parse(deviceLogOp3.data), { a: 'd' })
+      assert.property(deviceLogConfig3, 'data')
+      assert.deepEqual(JSON.parse(deviceLogConfig3.data), { a: 'c' })
+      const deviceLogUpdates3 = yield knex('DeviceLogUpdate').where({
+        deviceConfigurationId: deviceLogConfig3.id,
+        deviceOperationId: deviceLogOp3.id
+      })
+      assert.equal(deviceLogUpdates3.length, 2)
+      assert.isOk(deviceLogUpdates3[0].deviceLogId)
+      assert.equal(deviceLogUpdates3[0].deviceLogId, deviceLogUpdates3[1].deviceLogId)
+      assert.isOk(deviceLogUpdates3[0].resultId)
+      assert.isOk(deviceLogUpdates3[1].resultId)
+      assert.notEqual(deviceLogUpdates3[0].resultId, deviceLogUpdates3[1].resultId)
 
       yield server.get(deviceGetResultPath)
         .set('Authorization', deviceAuth)

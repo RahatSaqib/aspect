@@ -9,19 +9,19 @@ function* addDeviceData(context) {
 
   if (configuration) {
     response.configuration = yield* addDeviceConfiguration(
-      Object.assign({}, context, { payload: configuration }))
+      context.withPayload(configuration))
   }
 
   if (operation) {
     response.operation = yield* addDeviceOperation(
-      Object.assign({}, context, { payload: operation }))
+      context.withPayload(operation))
   }
 
   if (result) {
     response.result = []
     for (const r of result) {
       const resultResponse = yield* addResult(
-        Object.assign({}, context, { payload: r }))
+        context.withPayload(r))
 
       if (resultResponse instanceof Error) {
         // TODO formalize error handling
@@ -59,17 +59,11 @@ function* addDeviceConfiguration(context) {
         data: JSON.stringify(payload.data),
         createdOn: now
       })
+    context.addDeviceConfigurationId(deviceConfigurationId)
 
     yield knex('Device')
       .where('id', deviceId)
-      .update({
-        deviceConfigurationId
-      })
-
-    yield knex('DeviceLogUpdate').insert({
-      deviceConfigurationId,
-      deviceLogId: context.deviceLogId
-    })
+      .update({ deviceConfigurationId })
   })
   return { id: externalId }
 }
@@ -87,17 +81,11 @@ function* addDeviceOperation(context) {
         data: JSON.stringify(payload.data),
         createdOn: now
       })
+    context.addDeviceOperationId(deviceOperationId)
 
     yield knex('Device')
       .where('id', deviceId)
-      .update({
-        deviceOperationId
-      })
-
-    yield knex('DeviceLogUpdate').insert({
-      deviceOperationId,
-      deviceLogId: context.deviceLogId
-    })
+      .update({ deviceOperationId })
   })
   return { id: externalId }
 }
