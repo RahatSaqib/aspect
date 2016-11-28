@@ -461,14 +461,29 @@ function* up(knex) {
     result.charset('utf8')
   })
 
-  yield knex.schema.createTable('ResultLog', (sample) => {
-    sample.increments('id')
-    sample.integer('resultId').unsigned().notNullable()
+  yield knex.schema.createTable('DeviceLog', (deviceLog) => {
+    deviceLog.increments('id')
+    deviceLog.integer('deviceId').unsigned().notNullable()
+          .index().references('id').inTable('Device')
+    deviceLog.string('source').notNullable() // LIS listener, API...
+    deviceLog.dateTime('createdOn').notNullable()
+    deviceLog.string('senderIp').notNullable()
+    deviceLog.text('rawMessage')
+    deviceLog.charset('utf8')
+  })
+
+  yield knex.schema.createTable('DeviceLogUpdate', (deviceLog) => {
+    deviceLog.increments('id')
+    deviceLog.integer('deviceLogId').unsigned().notNullable()
+          .index().references('id').inTable('DeviceLog')
+    deviceLog.integer('resultId').unsigned()
           .index().references('id').inTable('Result')
-    sample.string('source').notNullable() // LIS listener, API...
-    sample.string('senderIp').notNullable()
-    sample.text('rawMessage')
-    sample.charset('utf8')
+    deviceLog.integer('deviceConfigurationId').unsigned()
+          .index().references('id').inTable('DeviceConfiguration')
+    deviceLog.integer('deviceOperationId').unsigned()
+          .index().references('id').inTable('DeviceOperation')
+    // TODO should we log fields that changed in linked entity or type of update?
+    deviceLog.charset('utf8')
   })
 
   yield knex.schema.createTable('Unit', (unit) => {
@@ -530,6 +545,8 @@ function* down(knex) {
   yield knex.schema.dropTableIfExists('ResultType')
   yield knex.schema.dropTableIfExists('ResultCategory')
   yield knex.schema.dropTableIfExists('ResultLog')
+  yield knex.schema.dropTableIfExists('DeviceLog')
+  yield knex.schema.dropTableIfExists('DeviceLogUpdate')
   yield knex.schema.dropTableIfExists('Result')
   yield knex.schema.dropTableIfExists('Sample')
   yield knex.schema.dropTableIfExists('Assay')

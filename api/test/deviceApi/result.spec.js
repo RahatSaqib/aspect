@@ -27,10 +27,19 @@ describe('Device Result API routes', () => {
 
     afterEach(() => run(function* (knex) {
       // cleanup
-      yield knex('ResultLog').whereIn('resultId',
-        knex('Result').whereIn('externalId', resultIds).select('id')).delete()
-      yield knex('Result').whereIn('externalId', resultIds).delete()
-      resultIds.splice(0)
+      if (resultIds.length > 0) {
+        const deviceLogIds = yield knex('DeviceLogUpdate as dlu')
+          .innerJoin('Result as r', 'dlu.resultId', 'r.id')
+          .whereIn('r.externalId', resultIds)
+          .select('dlu.deviceLogId')
+          .map(dlu => dlu.deviceLogId)
+
+        yield knex('DeviceLogUpdate').whereIn('deviceLogId', deviceLogIds).delete()
+        yield knex('DeviceLog').whereIn('id', deviceLogIds).delete()
+        yield knex('Result').whereIn('externalId', resultIds).delete()
+
+        resultIds.splice(0)
+      }
     }))
 
     it('should add and return device results', () => run(function* (knex) {
@@ -42,7 +51,7 @@ describe('Device Result API routes', () => {
       const clientAuth = `Bearer ${shared.token}`
       const deviceAuth = `Bearer ${sharedDevice.deviceToken}`
 
-      const [{ count: initialLogLength }] = yield knex('ResultLog').count('id as count')
+      const [{ count: initialLogLength }] = yield knex('DeviceLogUpdate').count('id as count')
 
       yield server.get(clientPath)
         .set('Authorization', clientAuth)
@@ -67,7 +76,7 @@ describe('Device Result API routes', () => {
           resultIds.push(res.body.result.id)
         })
 
-      const [{ count: logLength1 }] = yield knex('ResultLog').count('id as count')
+      const [{ count: logLength1 }] = yield knex('DeviceLogUpdate').count('id as count')
       assert.equal(logLength1, initialLogLength + 1)
 
       yield server.get(clientPath)
@@ -116,10 +125,12 @@ describe('Device Result API routes', () => {
       assert.equal(result1Category1.externalId, 'Success')
       assert.isNotOk(result1Category2)
 
-      const [{ rawMessage: log1Raw, resultId: resultId1 }] = yield knex('ResultLog as rl')
-        .innerJoin('Result as r', 'r.id', 'rl.resultId')
-        .where({ externalId: resultIds[0] }).select('rawMessage', 'resultId')
-      assert.deepEqual(JSON.parse(log1Raw), { data: { a: 'b' }, assay: { id: 'HivVl' } })
+      const [{ rawMessage: log1Raw, resultId: resultId1 }] = yield knex('DeviceLog as dl')
+        .innerJoin('DeviceLogUpdate as dlu', 'dl.id', 'dlu.deviceLogId')
+        .innerJoin('Result as r', 'r.id', 'dlu.resultId')
+        .where({ externalId: resultIds[0] })
+        .select('rawMessage', 'resultId')
+      assert.deepEqual(JSON.parse(log1Raw), { result: { data: { a: 'b' }, assay: { id: 'HivVl' } } })
 
       yield server.get(clientSingleResultPath + resultId1)
         .set('Authorization', clientAuth)
@@ -229,7 +240,7 @@ describe('Device Result API routes', () => {
           resultIds.push(res.body.id)
         })
 
-      const [{ count: logLength2 }] = yield knex('ResultLog').count('id as count')
+      const [{ count: logLength2 }] = yield knex('DeviceLogUpdate').count('id as count')
       assert.equal(logLength2, initialLogLength + 2)
 
       yield server.get(clientPath)
@@ -308,8 +319,9 @@ describe('Device Result API routes', () => {
       assert.equal(result2Category1.externalId, 'Detected')
       assert.equal(result2Category2.externalId, 'Indeterminate')
 
-      const [{ rawMessage: log2Raw, resultId: resultId2 }] = yield knex('ResultLog as rl')
-        .innerJoin('Result as r', 'r.id', 'rl.resultId')
+      const [{ rawMessage: log2Raw, resultId: resultId2 }] = yield knex('DeviceLog as dl')
+        .innerJoin('DeviceLogUpdate as dlu', 'dlu.deviceLogId', 'dl.id')
+        .innerJoin('Result as r', 'r.id', 'dlu.resultId')
         .where({ externalId: resultIds[1] }).select('rawMessage', 'resultId')
       assert.deepEqual(JSON.parse(log2Raw), {
         data: { a: 'b', c: 2, d: false, e: { f: 'g' } },
@@ -333,14 +345,13 @@ describe('Device Result API routes', () => {
           longitude: -87.581222,
           latitude: 30.419348
         },
-        // TODO ResultLog should be raw payload (before transformation during validation)
-        startedOn: '2013-12-01T00:00:00.000Z',
-        endedOn: '2013-12-01T01:30:00.000Z',
-        consumable: [{
+        startedOn: '2013-12-01',
+        endedOn: '2013-12-01T01:30',
+        consumable: {
           serial: '132-44-222',
-          expirationDate: '2014-03-01T00:00:00.000Z',
+          expirationDate: '2014-03-01',
           lot: '331-1'
-        }],
+        },
         instrument: {
           serial: '444-3'
         },
@@ -355,7 +366,7 @@ describe('Device Result API routes', () => {
           surname: 'Hope',
           gender: 'M',
           age: 72,
-          dateOfBirth: '1903-05-29T00:00:00.000Z',
+          dateOfBirth: '1903-05-29',
           address: '123 Main Street',
           phone: '856-7909'
         },
@@ -454,24 +465,6 @@ describe('Device Result API routes', () => {
               notes: 'Oh NOZE!'
             }
           })
-        })
-
-      // cleanup
-      yield knex('ResultLog').whereIn('resultId',
-        knex('Result').whereIn('externalId', resultIds).select('id')).delete()
-      const [{ count: logLengthClean }] = yield knex('ResultLog').count('id as count')
-      assert.equal(logLengthClean, initialLogLength)
-
-      yield knex('Result').whereIn('externalId', resultIds).delete()
-      yield server.get(clientPath)
-        .set('Authorization', clientAuth)
-        .then((res) => {
-          assert.equal(res.status, 200)
-          assert.typeOf(res.body, 'Object')
-          assert.property(res.body, 'data')
-          assert.typeOf(res.body.data, 'array')
-          assert.equal(res.body.data.length, initialDataLength)
-          assert.property(res.body, 'total')
         })
     }))
 
@@ -762,6 +755,8 @@ describe('Device Result API routes', () => {
 
       const deviceAuth = `Bearer ${sharedDevice.deviceToken}`
 
+      const [{ count: initialLogLength }] = yield knex('DeviceLogUpdate').count('id as count')
+
       const [{ prevConfigId }] = yield knex('Device').where({ id: deviceId })
         .select('deviceConfigurationId as prevConfigId')
 
@@ -807,12 +802,15 @@ describe('Device Result API routes', () => {
           prevResults = results
         })
 
+      const [{ count: logLength1 }] = yield knex('DeviceLogUpdate').count('id as count')
+      assert.equal(logLength1, initialLogLength)
+
       yield server.post(devicePath)
         .set('Authorization', deviceAuth)
         .send({
           configuration: { data: { a: 'b' } },
-          operation: { data: { a: 'b' } },
-          result: { data: { a: 'b' }, assay: { id: 'HivVl' } }
+          operation: { data: { a: 'c' } },
+          result: { data: { a: 'd' }, assay: { id: 'HivVl' } }
         })
         .then((res) => {
           assert.equal(res.status, 200)
@@ -827,6 +825,32 @@ describe('Device Result API routes', () => {
           assert.property(res.body.result, 'id')
           resultIds.push(res.body.result.id)
         })
+
+      const [{ count: logLength2 }] = yield knex('DeviceLogUpdate').count('id as count')
+      assert.equal(logLength2, initialLogLength + 1)
+
+      const deviceLogResult2 = yield knex('Result')
+        .where({ externalId: resultIds[resultIds.length - 1] })
+        .first()
+      const deviceLogConfig2 = yield knex('DeviceConfiguration')
+        .where({ externalId: configIds[configIds.length - 1] })
+        .first()
+      const deviceLogOp2 = yield knex('DeviceOperation')
+        .where({ externalId: opIds[opIds.length - 1] })
+        .first()
+      assert.property(deviceLogOp2, 'data')
+      assert.deepEqual(JSON.parse(deviceLogOp2.data), { a: 'c' })
+      assert.property(deviceLogConfig2, 'data')
+      assert.deepEqual(JSON.parse(deviceLogConfig2.data), { a: 'b' })
+      assert.property(deviceLogResult2, 'resultData')
+      assert.deepEqual(JSON.parse(deviceLogResult2.resultData), { a: 'd' })
+      const deviceLogUpdates2 = yield knex('DeviceLogUpdate').where({
+        deviceConfigurationId: deviceLogConfig2.id,
+        deviceOperationId: deviceLogOp2.id
+      })
+      assert.equal(deviceLogUpdates2.length, 1)
+      assert.isOk(deviceLogUpdates2[0].deviceLogId)
+      assert.equal(deviceLogUpdates2[0].resultId, deviceLogResult2.id)
 
       yield server.get(devicePath)
         .set('Authorization', deviceAuth)
@@ -848,7 +872,7 @@ describe('Device Result API routes', () => {
 
           const lastResult = _.find(res.body.data, { id: resultIds[0] })
           assert.typeOf(lastResult, 'Object')
-          assert.deepEqual(lastResult.data, { a: 'b' })
+          assert.deepEqual(lastResult.data, { a: 'd' })
 
           results = res.body.data
           assert.equal(results.length, prevResults.length + 1)
@@ -878,6 +902,30 @@ describe('Device Result API routes', () => {
           resultIds.push(res.body.result.id)
         })
 
+      const [{ count: logLength3 }] = yield knex('DeviceLogUpdate').count('id as count')
+      assert.equal(logLength3, initialLogLength + 3)
+
+      const deviceLogConfig3 = yield knex('DeviceConfiguration')
+        .where({ externalId: configIds[configIds.length - 1] })
+        .first()
+      const deviceLogOp3 = yield knex('DeviceOperation')
+        .where({ externalId: opIds[opIds.length - 1] })
+        .first()
+      assert.property(deviceLogOp3, 'data')
+      assert.deepEqual(JSON.parse(deviceLogOp3.data), { a: 'd' })
+      assert.property(deviceLogConfig3, 'data')
+      assert.deepEqual(JSON.parse(deviceLogConfig3.data), { a: 'c' })
+      const deviceLogUpdates3 = yield knex('DeviceLogUpdate').where({
+        deviceConfigurationId: deviceLogConfig3.id,
+        deviceOperationId: deviceLogOp3.id
+      })
+      assert.equal(deviceLogUpdates3.length, 2)
+      assert.isOk(deviceLogUpdates3[0].deviceLogId)
+      assert.equal(deviceLogUpdates3[0].deviceLogId, deviceLogUpdates3[1].deviceLogId)
+      assert.isOk(deviceLogUpdates3[0].resultId)
+      assert.isOk(deviceLogUpdates3[1].resultId)
+      assert.notEqual(deviceLogUpdates3[0].resultId, deviceLogUpdates3[1].resultId)
+
       yield server.get(deviceGetResultPath)
         .set('Authorization', deviceAuth)
         .then((res) => {
@@ -898,10 +946,24 @@ describe('Device Result API routes', () => {
       resultIds.push(..._.map(newResults, 'id'))
 
       // cleanup
+      const deviceLogIds = yield knex('DeviceLogUpdate as dlu')
+        .leftJoin('DeviceConfiguration as c', 'dlu.deviceConfigurationId', 'c.id')
+        .leftJoin('DeviceOperation as o', 'dlu.deviceOperationId', 'o.id')
+        .leftJoin('Result as r', 'dlu.resultId', 'r.id')
+        .whereIn('c.externalId', configIds)
+        .orWhereIn('o.externalId', opIds)
+        .select('dlu.deviceLogId')
+        .map(dlu => dlu.deviceLogId)
+
+      yield knex('DeviceLogUpdate').whereIn('deviceLogId', deviceLogIds).delete()
+      yield knex('DeviceLog').whereIn('id', deviceLogIds).delete()
+
+      const [{ count: logLength4 }] = yield knex('DeviceLogUpdate').count('id as count')
+      assert.equal(logLength4, initialLogLength)
+
       yield knex('Device').where({ id: deviceId }).update({ deviceOperationId: prevOpId })
       yield knex('DeviceOperation').whereIn('externalId', opIds).delete()
 
-      // cleanup
       yield knex('Device').where({ id: deviceId }).update({ deviceConfigurationId: prevConfigId })
       yield knex('DeviceConfiguration').whereIn('externalId', configIds).delete()
     }))
@@ -916,10 +978,19 @@ describe('Device Result API routes', () => {
 
     afterEach(() => run(function* (knex) {
       // cleanup
-      yield knex('ResultLog').whereIn('resultId',
-        knex('Result').whereIn('externalId', resultIds).select('id')).delete()
-      yield knex('Result').whereIn('externalId', resultIds).delete()
-      resultIds.splice(0)
+      if (resultIds.length > 0) {
+        const deviceLogIds = yield knex('DeviceLogUpdate as dlu')
+          .innerJoin('Result as r', 'dlu.resultId', 'r.id')
+          .whereIn('r.externalId', resultIds)
+          .select('dlu.deviceLogId')
+          .map(dlu => dlu.deviceLogId)
+
+        yield knex('DeviceLogUpdate').whereIn('deviceLogId', deviceLogIds).delete()
+        yield knex('DeviceLog').whereIn('id', deviceLogIds).delete()
+        yield knex('Result').whereIn('externalId', resultIds).delete()
+
+        resultIds.splice(0)
+      }
     }))
 
     it('should honor device role sample origin site', () => run(function* (knex) {

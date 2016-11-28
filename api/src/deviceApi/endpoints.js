@@ -85,7 +85,7 @@ module.exports = [
   {
     method: 'GET',
     path: '/',
-    handler: deviceApiHandler(getDeviceData, { updatePing: false }),
+    handler: deviceApiHandler(getDeviceData, {}),
     config: {
       notes: 'Get last updated timestamps and Ids for configuration, operation and result data',
       description: 'Get device configuration, operation or result data for the authenticated device'
@@ -94,7 +94,7 @@ module.exports = [
   {
     method: 'POST',
     path: '/',
-    handler: deviceApiHandler(addDeviceData, { updatePing: true }),
+    handler: deviceApiHandler(addDeviceData, { updatePing: true, updateDeviceLog: true }),
     config: {
       notes: 'Add Device Configuration, operation or Result',
       description: 'Add new device configuration, operation or result data for the authenticated device',
@@ -113,7 +113,7 @@ module.exports = [
   {
     method: 'POST',
     path: '/configuration',
-    handler: deviceApiHandler(addDeviceConfiguration, { updatePing: true }),
+    handler: deviceApiHandler(addDeviceConfiguration, { updatePing: true, updateDeviceLog: true }),
     config: {
       notes: 'Add Device Configuration',
       description: 'Add new device configuration data for the authenticated device',
@@ -125,7 +125,7 @@ module.exports = [
   {
     method: 'POST',
     path: '/operation',
-    handler: deviceApiHandler(addDeviceOperation, { updatePing: true }),
+    handler: deviceApiHandler(addDeviceOperation, { updatePing: true, updateDeviceLog: true }),
     config: {
       description: 'Device Operation',
       notes: 'Adds new device operational data for the authenticated device',
@@ -137,7 +137,7 @@ module.exports = [
   {
     method: 'GET',
     path: '/result',
-    handler: deviceApiHandler(listResults, { updatePing: false }),
+    handler: deviceApiHandler(listResults, {}),
     config: {
       description: 'Result List',
       notes: 'List of results for authenticated device',
@@ -151,7 +151,7 @@ module.exports = [
   {
     method: 'POST',
     path: '/result',
-    handler: deviceApiHandler(addResult, { updatePing: true }),
+    handler: deviceApiHandler(addResult, { updatePing: true, updateDeviceLog: true }),
     config: {
       description: 'Result',
       notes: 'Adds new assay result data for the authenticated device',

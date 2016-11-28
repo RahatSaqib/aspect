@@ -45,7 +45,10 @@ const plugins = [
     options: {
       reporters: loadGoodReporter()
     }
-  }
+  },
+
+  // Set payload prior to validation transformation
+  rawPayloadPlugin
 ]
 
 addRavenPlugin(plugins)
@@ -100,6 +103,22 @@ function addRavenPlugin(plugins) {
     })
   }
 }
+
+
+// Plugin to set payload prior to validation transformation
+function rawPayloadPlugin(server, options, next) {
+  server.ext('onPostAuth', (request, reply) => {
+    request.plugins.rawPayload = request.payload
+    reply.continue()
+  })
+  next()
+}
+
+rawPayloadPlugin.attributes = {
+  name: 'rawPayload',
+  version
+}
+
 
 server.register(plugins, (err) => { if (err) throw err })
 
