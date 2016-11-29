@@ -291,6 +291,7 @@ describe('Device API routes', () => {
       yield server.post(devicePath)
         .set('Authorization', deviceAuth)
         .send({
+          checkpoint: '124j',
           configuration: { data: { a: 'b' } },
           operation: { data: { a: 'b' } }
         })
@@ -310,7 +311,9 @@ describe('Device API routes', () => {
         .then((res) => {
           assert.equal(res.status, 200)
           assert.typeOf(res.body, 'Object')
+          assert.property(res.body, 'checkpoint')
           assert.property(res.body, 'lastPingOn')
+          assert.equal(res.body.checkpoint, '124j')
           const pingOn = new Date(res.body.lastPingOn)
           assert.isAtLeast(+pingOn, +lastPingOn)
           lastPingOn = pingOn

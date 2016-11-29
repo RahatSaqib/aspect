@@ -29,6 +29,7 @@ function deviceApiHandler(handler, { updatePing, updateDeviceLog }) {
       [deviceLogId] = yield knex('DeviceLog').insert({
         deviceId: device.id,
         source: 'DeviceAPI',
+        checkpoint: request.payload && request.payload.checkpoint,
         createdOn: now,
         senderIp: remoteAddress,
         // TODO DeviceLog handle non-JSON payloads
