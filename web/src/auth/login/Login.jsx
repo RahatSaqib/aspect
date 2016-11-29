@@ -1,6 +1,7 @@
 // Imports from packages
 import _ from 'lodash'
-import React, { PureComponent, PropTypes } from 'react'
+import React, { PropTypes } from 'react'
+import { compose, setPropTypes, pure } from 'recompose'
 import { bindActionCreators } from 'redux'
 import { connect } from 'react-redux'
 import { reduxForm } from 'redux-form/immutable'
@@ -38,53 +39,6 @@ const messages = defineMessages({
   }
 })
 
-export class Login extends PureComponent {
-
-  static propTypes = {
-    handleSubmit: PropTypes.func.isRequired,
-    pristine: PropTypes.bool.isRequired,
-    submitting: PropTypes.bool.isRequired,
-    intl: PropTypes.object.isRequired,
-    location: PropTypes.object.isRequired,
-    initialValues: PropTypes.object.isRequired
-  }
-
-  render() {
-    const { intl, handleSubmit, pristine, submitting, location, initialValues } = this.props
-    const { formatMessage } = intl
-
-    return (
-      <div className={styles.Background}>
-        <Helmet title="Login" titleTemplate="%s - Aspect" defaultTitle="Aspect" />
-        <div className={styles.Content}>
-          <div>
-            <Unit sm="1-24" md="1-6" lg="1-3">
-              &nbsp;
-            </Unit>
-            <Unit sm="11-12" md="2-3" lg="1-3">
-              <Paper>
-                <form onSubmit={handleSubmit} className={styles.Form}>
-                  { location.query.reason ? <div className={styles.Form__Info}>{formatMessage(messages[`reason${location.query.reason}`])}</div> : null }
-                  <TextInput name="user" label="Username" fullWidth autoFocus={_.isEmpty(initialValues.get('user'))} />
-                  <TextInput name="password" type="password" label="Password" fullWidth autoFocus={!_.isEmpty(initialValues.get('user'))} />
-                  <div className={styles.Form__ActionRow}>
-                    <Link className={styles.Left_Align} to="reset-password">
-                      {formatMessage(messages.resetPasswordLink)}
-                    </Link>
-                    <RaisedButton disabled={pristine || submitting} label="Log In" secondary type="submit" />
-                  </div>
-                </form>
-                {submitting && <LinearProgress />}
-              </Paper>
-            </Unit>
-          </div>
-        </div>
-        <ErrorDisplayContainer />
-      </div>
-    )
-  }
-}
-
 function mapStateToProps({ user: { name } }) {
   return {
     initialValues: { user: name }
@@ -110,11 +64,60 @@ function validate(values) {
   return errors
 }
 
-export const LoginContainer = _.flowRight(
+const enhance = compose(
+  setPropTypes({
+    location: PropTypes.object.isRequired,
+  }),
+  pure,
   injectIntl,
   connect(mapStateToProps, mapDispatchToProps),
   reduxForm({
     form: 'login',
     validate
+  }),
+  setPropTypes({
+    intl: PropTypes.object.isRequired,
+    handleSubmit: PropTypes.func.isRequired,
+    pristine: PropTypes.bool.isRequired,
+    submitting: PropTypes.bool.isRequired,
+    initialValues: PropTypes.object.isRequired
   })
-)(Login)
+)
+
+export const Login = ({ location, intl, handleSubmit, pristine, submitting, initialValues }) => {
+  const { formatMessage } = intl
+
+  return (
+    <div className={styles.Background}>
+      <Helmet title="Login" titleTemplate="%s - Aspect" defaultTitle="Aspect" />
+      <div className={styles.Content}>
+        <div>
+          <Unit sm="1-24" md="1-6" lg="1-3">
+            &nbsp;
+          </Unit>
+          <Unit sm="11-12" md="2-3" lg="1-3">
+            <Paper>
+              <form onSubmit={handleSubmit} className={styles.Form}>
+                { location.query.reason ? <div className={styles.Form__Info}>{formatMessage(messages[`reason${location.query.reason}`])}</div> : null }
+                <TextInput name="user" label="Username" fullWidth autoFocus={_.isEmpty(initialValues.get('user'))} />
+                <TextInput name="password" type="password" label="Password" fullWidth autoFocus={!_.isEmpty(initialValues.get('user'))} />
+                <div className={styles.Form__ActionRow}>
+                  <Link className={styles.Left_Align} to="reset-password">
+                    {formatMessage(messages.resetPasswordLink)}
+                  </Link>
+                  <RaisedButton disabled={pristine || submitting} label="Log In" secondary type="submit" />
+                </div>
+              </form>
+              {submitting && <LinearProgress />}
+            </Paper>
+          </Unit>
+        </div>
+      </div>
+      <ErrorDisplayContainer />
+    </div>
+  )
+}
+
+export const LoginContainer = enhance(Login)
+
+export default LoginContainer

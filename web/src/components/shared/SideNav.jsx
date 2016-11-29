@@ -1,6 +1,7 @@
 // Imports from packages
 import classnames from 'classnames/bind'
-import React, { PureComponent, PropTypes } from 'react'
+import React, { PropTypes } from 'react'
+import { compose, setPropTypes, pure } from 'recompose'
 import { Link } from 'react-router'
 
 // Material-UI
@@ -43,107 +44,105 @@ const SitesLink = requirePermissions({
   permissions: ['site:admin', 'site:view']
 })(Link)
 
-class SideNav extends PureComponent {
-
-  static propTypes = {
+const enhance = compose(
+  setPropTypes({
     open: PropTypes.bool.isRequired,
     handleClose: PropTypes.func.isRequired,
     pathname: PropTypes.string.isRequired,
     desktop: PropTypes.bool.isRequired
-  }
+  }),
+  pure
+)
 
-  render() {
-    return (
-      <Drawer
-        docked={this.props.desktop}
-        containerClassName={cssClasses({
-          'Drawer--desktop': this.props.desktop
-        })}
-        open={this.props.open}
-        onRequestChange={this.props.handleClose}
-      >
-        <SelectableList
-          pathname={this.props.pathname}
-          desktop={this.props.desktop}
-          handleClose={this.props.handleClose}
-        >
-          <Subheader>Dashboards</Subheader>
-          <ListItem
-            containerElement={<Link to="/dashboard" />}
-            value={'/dashboard'}
-            leftIcon={<Home color={green500} />}
-            className={styles.Drawer__ListItem}
-            primaryText="Home"
-          />
-          <ListItem
-            containerElement={<Link to="/dashboard/inventory" />}
-            value={'/dashboard/inventory'}
-            leftIcon={<Cart color={orange500} />}
-            className={styles.Drawer__ListItem}
-            primaryText="Inventory"
-          />
-          <ListItem
-            containerElement={<Link to="/dashboard/maintenance" />}
-            value={'/dashboard/maintenance'}
-            leftIcon={<Build color={indigo600} />}
-            className={styles.Drawer__ListItem}
-            primaryText="Maintenance"
-          />
-          <Divider />
-          <Subheader>Sections</Subheader>
-          <ListItem
-            containerElement={<DevicesLink to="/device" />}
-            value={'/device'}
-            leftIcon={<Scanner />}
-            className={styles.Drawer__ListItem}
-            primaryText="Devices"
-          />
-          <ListItem
-            containerElement={<ResultsLink to="/result" />}
-            value={'/result'}
-            leftIcon={<Assignment />}
-            className={styles.Drawer__ListItem}
-            primaryText="Results"
-          />
-          <ListItem
-            containerElement={<ContactsLink to="/person" />}
-            value={'/person'}
-            leftIcon={<People />}
-            className={styles.Drawer__ListItem}
-            primaryText="Contacts"
-          />
-          <ListItem
-            containerElement={<SitesLink to="/site" />}
-            value={'/site'}
-            leftIcon={<Location />}
-            className={styles.Drawer__ListItem}
-            primaryText="Sites"
-          />
-          <ListItem
-            containerElement={<Link to="/router" />}
-            value={'/router'}
-            leftIcon={<RssFeed />}
-            className={styles.Drawer__ListItem}
-            primaryText="Routers"
-          />
-          <ListItem
-            containerElement={<Link to="/notification" />}
-            value={'/notification'}
-            leftIcon={<Notifications />}
-            className={styles.Drawer__ListItem}
-            primaryText="Notifications"
-          />
-          <ListItem
-            containerElement={<Link to="/report" />}
-            value={'/report'}
-            leftIcon={<Book />}
-            className={styles.Drawer__ListItem}
-            primaryText="Reports"
-          />
-        </SelectableList>
-      </Drawer>
-    )
-  }
-}
+export const SideNav = ({ open, handleClose, pathname, desktop }) => (
+  <Drawer
+    docked={desktop}
+    containerClassName={cssClasses({
+      'Drawer--desktop': desktop
+    })}
+    open={open}
+    onRequestChange={handleClose}
+  >
+    <SelectableList
+      pathname={pathname}
+      desktop={desktop}
+      handleClose={handleClose}
+    >
+      <Subheader>Dashboards</Subheader>
+      <ListItem
+        containerElement={<Link to="/dashboard" />}
+        value={'/dashboard'}
+        leftIcon={<Home color={green500} />}
+        className={styles.Drawer__ListItem}
+        primaryText="Home"
+      />
+      <ListItem
+        containerElement={<Link to="/dashboard/inventory" />}
+        value={'/dashboard/inventory'}
+        leftIcon={<Cart color={orange500} />}
+        className={styles.Drawer__ListItem}
+        primaryText="Inventory"
+      />
+      <ListItem
+        containerElement={<Link to="/dashboard/maintenance" />}
+        value={'/dashboard/maintenance'}
+        leftIcon={<Build color={indigo600} />}
+        className={styles.Drawer__ListItem}
+        primaryText="Maintenance"
+      />
+      <Divider />
+      <Subheader>Sections</Subheader>
+      <ListItem
+        containerElement={<DevicesLink to="/device" />}
+        value={'/device'}
+        leftIcon={<Scanner />}
+        className={styles.Drawer__ListItem}
+        primaryText="Devices"
+      />
+      <ListItem
+        containerElement={<ResultsLink to="/result" />}
+        value={'/result'}
+        leftIcon={<Assignment />}
+        className={styles.Drawer__ListItem}
+        primaryText="Results"
+      />
+      <ListItem
+        containerElement={<ContactsLink to="/person" />}
+        value={'/person'}
+        leftIcon={<People />}
+        className={styles.Drawer__ListItem}
+        primaryText="Contacts"
+      />
+      <ListItem
+        containerElement={<SitesLink to="/site" />}
+        value={'/site'}
+        leftIcon={<Location />}
+        className={styles.Drawer__ListItem}
+        primaryText="Sites"
+      />
+      <ListItem
+        containerElement={<Link to="/router" />}
+        value={'/router'}
+        leftIcon={<RssFeed />}
+        className={styles.Drawer__ListItem}
+        primaryText="Routers"
+      />
+      <ListItem
+        containerElement={<Link to="/notification" />}
+        value={'/notification'}
+        leftIcon={<Notifications />}
+        className={styles.Drawer__ListItem}
+        primaryText="Notifications"
+      />
+      <ListItem
+        containerElement={<Link to="/report" />}
+        value={'/report'}
+        leftIcon={<Book />}
+        className={styles.Drawer__ListItem}
+        primaryText="Reports"
+      />
+    </SelectableList>
+  </Drawer>
+)
 
-export default SideNav
+export default enhance(SideNav)
