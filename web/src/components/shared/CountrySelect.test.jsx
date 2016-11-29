@@ -5,7 +5,9 @@ import { shallow } from 'enzyme'
 import sinon from 'sinon'
 import MenuItem from 'material-ui/MenuItem'
 import FlagIcon from './flagIcon/FlagIcon'
-import CountrySelect from './CountrySelect'
+import CountrySelect, {
+  MenuItemLabel,
+} from './CountrySelect'
 import ForkedSelectField from '../forkedMaterialUi/ForkedSelectField'
 
 describe('CountrySelect Component', () => {
@@ -58,7 +60,7 @@ describe('CountrySelect Component', () => {
       assert.equal(flagIcon.props.countryIsoAlpha2Code, country.id)
 
       const menuItemLabel = child.props().label
-      assert.equal(menuItemLabel.type.name, 'MenuItemLabel')
+      assert.equal(menuItemLabel.type, MenuItemLabel)
       assert.equal(menuItemLabel.props.country.iso_alpha2_code, country.id)
       assert.equal(menuItemLabel.props.selectedItemStyle, props.selectedItemStyle)
     })
@@ -117,7 +119,7 @@ describe('CountrySelect Component', () => {
           assert.equal(flagIcon.props.countryIsoAlpha2Code, child.props.value)
 
           const menuItemLabel = child.props.label
-          assert.equal(menuItemLabel.type.name, 'MenuItemLabel')
+          assert.equal(menuItemLabel.type, MenuItemLabel)
           assert.equal(menuItemLabel.props.country.iso_alpha2_code, child.props.value)
           assert.equal(menuItemLabel.props.selectedItemStyle, props.selectedItemStyle)
         })

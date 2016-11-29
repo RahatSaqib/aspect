@@ -4,7 +4,7 @@ import MenuItem from 'material-ui/MenuItem'
 import FlagIcon from './flagIcon/FlagIcon'
 import ForkedSelectField from '../forkedMaterialUi/ForkedSelectField'
 
-const MenuItemLabel = (props) => {
+export const MenuItemLabel = (props) => {
   const { country, selectedItemStyle } = props
   return (<div style={{ display: 'inline-block', whiteSpace: 'nowrap', overflow: 'hidden' }}>
     <FlagIcon countryIsoAlpha2Code={country.iso_alpha2_code} />
