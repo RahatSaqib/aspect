@@ -494,8 +494,8 @@ function* up(knex) {
     auditLog.integer('tableId').unsigned().notNullable()
     auditLog.string('operation').notNullable() // insert, update, delete
     auditLog.specificType('fields', 'JSON').notNullable()
-    auditLog.integer('deviceLogId').unsigned()
-          .index().references('id').inTable('DeviceLog')
+    auditLog.integer('deviceId').unsigned()
+          .index().references('id').inTable('Device')
     addCreateFieldsNullable(auditLog)
     auditLog.charset('utf8')
   })
