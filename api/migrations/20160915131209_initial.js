@@ -545,6 +545,25 @@ function* up(knex) {
     consumableAtSite.charset('utf8')
   })
 
+  yield knex.schema.createTable('ConsumableAdjustmentLog', (consumableAdjustmentLog) => {
+    consumableAdjustmentLog.increments('id')
+    consumableAdjustmentLog.integer('consumableAtSiteId').unsigned()
+      .references('id').inTable('ConsumableAtSite')
+    consumableAdjustmentLog.integer('consumableId').unsigned().notNullable()
+      .references('id').inTable('Consumable')
+    consumableAdjustmentLog.integer('siteId').unsigned().notNullable()
+      .references('id').inTable('Site')
+    consumableAdjustmentLog.integer('consumableReasonId').unsigned().notNullable()
+      .references('id').inTable('ConsumableReason')
+    consumableAdjustmentLog.integer('resultId').unsigned()
+      .references('id').inTable('Result')
+    consumableAdjustmentLog.string('lotNumber')
+    consumableAdjustmentLog.dateTime('expiresOn')
+    consumableAdjustmentLog.float('quantity')
+    addCreateFieldsNullable(consumableAdjustmentLog)
+    consumableAdjustmentLog.charset('utf8')
+  })
+
   yield knex.raw('SET foreign_key_checks = 1')
 }
 
