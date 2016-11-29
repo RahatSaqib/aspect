@@ -1,5 +1,8 @@
 const _ = require('lodash')
 const Boom = require('boom')
+const {
+  getConstraints
+} = require('../auth/constraints')
 const { query } = require('../db')
 
 const SELECT_LIST_FIELDS = ['ca.consumableId', 'ca.assayId', 'ca.quantity',
@@ -7,7 +10,9 @@ const SELECT_LIST_FIELDS = ['ca.consumableId', 'ca.assayId', 'ca.quantity',
   'a.name as assayName', 'a.i18nKey as assayI18nKey']
 
 function* getConsumableAssays(request) {
-  const { consumableId } = request.params
+  const { auth, params: { consumableId } } = request
+
+  const dataConstraints = yield getConstraints(auth.credentials)
 
   const assayConsumables = yield query('Get assay consumables')
     .from('ConsumableAssay as ca')
@@ -15,12 +20,16 @@ function* getConsumableAssays(request) {
     .join('Unit as u', 'c.unit', 'u.id')
     .join('Assay as a', 'ca.assayId', 'a.id')
     .where('ca.consumableId', consumableId)
+    .andWhere(function () {
+      this.whereNull('c.partnerId')
+        .orWhere({ 'c.partnerId': dataConstraints.partner.id })
+    })
     .select(SELECT_LIST_FIELDS)
 
   return { ok: true, data: assayConsumables }
 }
 
-function getAssayConsumable(assayId, consumableId) {
+function getAssayConsumable(partnerId, assayId, consumableId) {
   return query('Get assay consumable')
     .from('ConsumableAssay as ca')
     .join('Consumable as c', 'ca.consumableId', 'c.id')
@@ -28,11 +37,17 @@ function getAssayConsumable(assayId, consumableId) {
     .join('Assay as a', 'ca.assayId', 'a.id')
     .where('ca.assayId', assayId)
     .andWhere('ca.consumableId', consumableId)
+    .andWhere(function () {
+      this.whereNull('c.partnerId')
+        .orWhere({ 'c.partnerId': partnerId })
+    })
     .first(SELECT_LIST_FIELDS)
 }
 
 function* getAssayConsumables(request) {
-  const { assayId } = request.params
+  const { auth, params: { assayId } } = request
+
+  const dataConstraints = yield getConstraints(auth.credentials)
 
   const assayConsumables = yield query('Get assay consumables')
     .from('ConsumableAssay as ca')
@@ -40,13 +55,19 @@ function* getAssayConsumables(request) {
     .join('Unit as u', 'c.unit', 'u.id')
     .join('Assay as a', 'ca.assayId', 'a.id')
     .where('ca.assayId', assayId)
+    .andWhere(function () {
+      this.whereNull('c.partnerId')
+        .orWhere({ 'c.partnerId': dataConstraints.partner.id })
+    })
     .select(SELECT_LIST_FIELDS)
 
   return { ok: true, data: assayConsumables }
 }
 
 function* createAssayConsumable(request) {
-  const { assayId, consumableId, quantity } = request.payload
+  const { auth, payload: { assayId, consumableId, quantity } } = request
+
+  const dataConstraints = yield getConstraints(auth.credentials)
 
   try {
     yield query('Insert assay consumable')
@@ -59,13 +80,16 @@ function* createAssayConsumable(request) {
     throw err
   }
 
-  const assayConsumable = yield getAssayConsumable(assayId, consumableId)
+  const assayConsumable = yield getAssayConsumable(dataConstraints.partner.id,
+    assayId, consumableId)
 
   return { ok: true, data: assayConsumable }
 }
 
 function* updateAssayConsumableQuantity(request) {
-  const { params: { assayId, consumableId }, payload: { quantity } } = request
+  const { auth, params: { assayId, consumableId }, payload: { quantity } } = request
+
+  const dataConstraints = yield getConstraints(auth.credentials)
 
   yield query('Update assay consumable')
     .from('ConsumableAssay as ca')
@@ -73,7 +97,8 @@ function* updateAssayConsumableQuantity(request) {
     .andWhere('ca.consumableId', consumableId)
     .update({ quantity })
 
-  const assayConsumable = yield getAssayConsumable(assayId, consumableId)
+  const assayConsumable = yield getAssayConsumable(dataConstraints.partner.id,
+    assayId, consumableId)
 
   if (_.isEmpty(assayConsumable)) {
     return Boom.notFound('Assay consumable not found')

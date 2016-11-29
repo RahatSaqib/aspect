@@ -496,6 +496,8 @@ function* up(knex) {
   yield knex.schema.createTable('Consumable', (consumable) => {
     consumable.increments('id')
     consumable.string('name').notNullable()
+    consumable.integer('partnerId').unsigned()
+      .index().references('id').inTable('Partner')
     consumable.integer('unit').unsigned().notNullable()
       .references('id').inTable('Unit')
     consumable.boolean('canExpire').notNullable().defaultTo(0)

@@ -622,7 +622,7 @@ function* seed(knex) {
     shortname: 'ml'
   })
 
-  yield knex('Unit').insert({
+  const [milligram] = yield knex('Unit').insert({
     name: 'Milligram',
     shortname: 'mg'
   })
@@ -676,6 +676,33 @@ function* seed(knex) {
     autoInclude: 0
   })
 
+  const [partnerOneReagent] = yield knex('Consumable').insert({
+    name: 'Partner One Reagent',
+    partnerId: partnerOneId,
+    unit: milligram,
+    canExpire: 1,
+    manufacturer: 'Unichem',
+    autoInclude: 0
+  })
+
+  const [partnerOneSwab] = yield knex('Consumable').insert({
+    name: 'Partner One Swab',
+    partnerId: partnerOneId,
+    unit: piece,
+    canExpire: 1,
+    manufacturer: 'Johnson & Johnson',
+    autoInclude: 0
+  })
+
+  const [partnerTwoSwab] = yield knex('Consumable').insert({
+    name: 'Partner Two Swab',
+    partnerId: partnerTwoId,
+    unit: piece,
+    canExpire: 1,
+    manufacturer: 'Procter & Gamble',
+    autoInclude: 0
+  })
+
   // Assay Consumables
   yield knex('ConsumableAssay').insert({
     consumableId: consumableGxTbCartridgeId,
@@ -689,6 +716,23 @@ function* seed(knex) {
     quantity: 1
   })
 
+  yield knex('ConsumableAssay').insert({
+    consumableId: partnerOneReagent,
+    assayId: assayMtbRifId,
+    quantity: 500
+  })
+
+  yield knex('ConsumableAssay').insert({
+    consumableId: partnerOneSwab,
+    assayId: assayMtbRifId,
+    quantity: 1
+  })
+
+  yield knex('ConsumableAssay').insert({
+    consumableId: partnerTwoSwab,
+    assayId: assayMtbRifId,
+    quantity: 2
+  })
   // Consumable Reasons
 
   yield knex('ConsumableReason').insert({
@@ -1332,6 +1376,11 @@ function* seed(knex) {
     orgUnitId: regionMidwestId
   })
 
+  const [roleIdPartnerTwo] = yield knex('Role').insert({
+    name: 'Partner Two Users',
+    partnerId: partnerTwoId
+  })
+
   // assign permissions to roles
   yield knex('RolePermission').insert([
     { roleId: roleIdAdmin, permissionId: modules.device.admin },
@@ -1368,7 +1417,9 @@ function* seed(knex) {
     { roleId: roleIdNortheast, permissionId: modules.device.edit },
 
     { roleId: roleIdParentOrgUnit, permissionId: modules.site.edit },
-    { roleId: roleIdParentOrgUnit, permissionId: modules.device.edit }
+    { roleId: roleIdParentOrgUnit, permissionId: modules.device.edit },
+
+    { roleId: roleIdPartnerTwo, permissionId: modules.inventory.edit }
   ])
 
 
@@ -1382,6 +1433,7 @@ function* seed(knex) {
     { userId: userIds.jon, roleId: roleIdParentOrgUnit },
     { userId: userIds.ned, roleId: roleIdNortheast },
     { userId: userIds.sam, roleId: roleIdAdmin },
+    { userId: userIds.jason, roleId: roleIdPartnerTwo },
     { userId: userIds.jim, roleId: roleIdParentOrgUnit },
     { userId: userIds.steve, roleId: roleIdMASuffolk },
     { userId: userIds.bill, roleId: roleIdMASuffolk },
