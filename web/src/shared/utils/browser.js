@@ -1,3 +1,13 @@
+export function isMobile() {
+  // https://developer.mozilla.org/en-US/docs/Web/HTTP/Browser_detection_using_the_user_agent
+  try {
+    const ua = navigator.userAgent
+    return /Mobi/.test(ua)
+  } catch (e) {
+    return false
+  }
+}
+
 export function getBrowserNameAndVersion() {
   const browser = getBrowserInfo()
 
