@@ -242,10 +242,10 @@ describe('AccountDetailsRedux', () => {
     let dispatch
 
     function createAccountDetailsReduxReduxWithStubs(fetchStub, errorCreatorsStub) {
-      if (!fetchStub.getBrowserNameAndVersion) {
-        fetchStub.getBrowserNameAndVersion = () => 'Mocha/Chai'
-      }
       const proxyDependencies = {
+        '../shared/utils/browser': {
+          getBrowserNameAndVersion: () => 'Mocha/Chai'
+        },
         '../shared/utils/fetch': fetchStub,
         'jwt-decode': () => 'decoded-token',
         '../shared/utils/localStorage': {
