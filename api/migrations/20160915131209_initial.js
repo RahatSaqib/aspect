@@ -1,5 +1,7 @@
 module.exports = require('../src/db').migration(up, down)
 
+const { createAuditTriggers, dropAuditTriggers } = require('../src/audit')
+
 function* up(knex) {
   yield knex.raw('SET foreign_key_checks = 0')
 
@@ -486,6 +488,18 @@ function* up(knex) {
     deviceLog.charset('utf8')
   })
 
+  yield knex.schema.createTable('AuditLog', (auditLog) => {
+    auditLog.increments('id')
+    auditLog.string('tableName').notNullable()
+    auditLog.integer('tableId').unsigned().notNullable()
+    auditLog.string('operation').notNullable() // insert, update, delete
+    auditLog.specificType('fields', 'JSON').notNullable()
+    auditLog.integer('deviceLogId').unsigned()
+          .index().references('id').inTable('DeviceLog')
+    addCreateFieldsNullable(auditLog)
+    auditLog.charset('utf8')
+  })
+
   yield knex.schema.createTable('Unit', (unit) => {
     unit.increments('id')
     unit.string('name').notNullable()
@@ -529,11 +543,15 @@ function* up(knex) {
     resultWorkflowStatus.string('token')
   })
 
+  yield* createAuditTriggers(knex, 'DeviceConfiguration', 'DeviceOperation', 'Result')
+
   yield knex.raw('SET foreign_key_checks = 1')
 }
 
 function* down(knex) {
   yield knex.raw('SET foreign_key_checks = 0')
+
+  yield* dropAuditTriggers(knex, 'DeviceConfiguration', 'DeviceOperation', 'Result')
 
   yield knex.schema.dropTableIfExists('ConsumableAssay')
   yield knex.schema.dropTableIfExists('ResultWorkflowStatus')
@@ -547,6 +565,7 @@ function* down(knex) {
   yield knex.schema.dropTableIfExists('ResultLog')
   yield knex.schema.dropTableIfExists('DeviceLog')
   yield knex.schema.dropTableIfExists('DeviceLogUpdate')
+  yield knex.schema.dropTableIfExists('AuditLog')
   yield knex.schema.dropTableIfExists('Result')
   yield knex.schema.dropTableIfExists('Sample')
   yield knex.schema.dropTableIfExists('Assay')
