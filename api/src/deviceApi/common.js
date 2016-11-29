@@ -63,12 +63,18 @@ function deviceApiHandler(handler, { updatePing, updateDeviceLog }) {
     yield transact(function* (knex) {
       context.knex = knex
 
-      response = yield* handler(context)
+      try {
+        yield knex.raw('SET @AuditLog_deviceLogId=?', [deviceLogId])
 
-      // Insert all DeviceLog Updates added to context when calling handler
-      if (deviceLogId !== null && context.deviceLogUpdates.length > 0) {
-        yield knex('DeviceLogUpdate').insert(context.deviceLogUpdates.map(
-          update => Object.assign({ deviceLogId }, update)))
+        response = yield* handler(context)
+
+        // Insert all DeviceLog Updates added to context when calling handler
+        if (deviceLogId !== null && context.deviceLogUpdates.length > 0) {
+          yield knex('DeviceLogUpdate').insert(context.deviceLogUpdates.map(
+            update => Object.assign({ deviceLogId }, update)))
+        }
+      } finally {
+        yield knex.raw('SET @AuditLog_deviceLogId=null')
       }
     })
 

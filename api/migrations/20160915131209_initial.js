@@ -471,6 +471,8 @@ function* up(knex) {
     auditLog.specificType('fields', 'JSON').notNullable()
     auditLog.integer('deviceId').unsigned()
           .index().references('id').inTable('Device')
+    auditLog.integer('deviceLogId').unsigned()
+          .index().references('id').inTable('DeviceLog')
     addCreateFieldsNullable(auditLog)
     auditLog.charset('utf8')
   })
