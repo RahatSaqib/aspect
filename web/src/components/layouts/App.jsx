@@ -83,4 +83,6 @@ export const App = ({ children, locale, timezone }) => {
   )
 }
 
-export default enhance(App)
+export const AppContainer = enhance(App)
+
+export default AppContainer
