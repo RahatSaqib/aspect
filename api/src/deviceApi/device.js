@@ -1,5 +1,4 @@
 const Promise = require('bluebird')
-const { knex, transact } = require('../db')
 const { getExternalId } = require('./common')
 const { addResult } = require('./result')
 
@@ -38,7 +37,7 @@ function* addDeviceData(context) {
 }
 
 function* getDeviceData(context) {
-  const { device: { id: deviceId } } = context
+  const { knex, device: { id: deviceId } } = context
 
   const deviceQ = knex('Device')
     .where({ id: deviceId })
@@ -58,46 +57,44 @@ function* getDeviceData(context) {
 }
 
 function* addDeviceConfiguration(context) {
-  const { payload, device: { id: deviceId }, now } = context
+  const { knex, payload, device: { id: deviceId }, now } = context
 
   const externalId = getExternalId(payload.id)
 
-  yield transact(function* (knex) {
-    const [deviceConfigurationId] = yield knex('DeviceConfiguration')
-      .insert({
-        deviceId,
-        externalId,
-        data: JSON.stringify(payload.data),
-        createdOn: now
-      })
-    context.addDeviceConfigurationId(deviceConfigurationId)
+  const [deviceConfigurationId] = yield knex('DeviceConfiguration')
+    .insert({
+      deviceId,
+      externalId,
+      data: JSON.stringify(payload.data),
+      createdOn: now
+    })
+  context.addDeviceConfigurationId(deviceConfigurationId)
 
-    yield knex('Device')
-      .where('id', deviceId)
-      .update({ deviceConfigurationId })
-  })
+  yield knex('Device')
+    .where('id', deviceId)
+    .update({ deviceConfigurationId })
+
   return { id: externalId }
 }
 
 function* addDeviceOperation(context) {
-  const { payload, device: { id: deviceId }, now } = context
+  const { knex, payload, device: { id: deviceId }, now } = context
 
   const externalId = getExternalId(payload.id)
 
-  yield transact(function* (knex) {
-    const [deviceOperationId] = yield knex('DeviceOperation')
-      .insert({
-        deviceId,
-        externalId,
-        data: JSON.stringify(payload.data),
-        createdOn: now
-      })
-    context.addDeviceOperationId(deviceOperationId)
+  const [deviceOperationId] = yield knex('DeviceOperation')
+    .insert({
+      deviceId,
+      externalId,
+      data: JSON.stringify(payload.data),
+      createdOn: now
+    })
+  context.addDeviceOperationId(deviceOperationId)
 
-    yield knex('Device')
-      .where('id', deviceId)
-      .update({ deviceOperationId })
-  })
+  yield knex('Device')
+    .where('id', deviceId)
+    .update({ deviceOperationId })
+
   return { id: externalId }
 }
 

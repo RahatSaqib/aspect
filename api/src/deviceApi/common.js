@@ -1,6 +1,6 @@
 const crypto = require('crypto')
 const Boom = require('boom')
-const { knex } = require('../db')
+const { knex, transact } = require('../db')
 const { getDeviceConstraints } = require('../auth/constraints')
 const { asyncHandler } = require('../routes')
 
@@ -23,8 +23,8 @@ function deviceApiHandler(handler, { updatePing, updateDeviceLog }) {
     // TODO Does Hapi Remote address work through proxies? Check headers?
     const remoteAddress = request.info.remoteAddress || ''
 
-    // Insert Device Log and Update Ping prior to calling handler so
-    // it is recorded even if handler fails
+    // Insert Device Log and Update Ping prior to calling handler and
+    // in separate tranaction so it is recorded even if handler fails
     let deviceLogId = null
     if (updateDeviceLog) {
       const checkpoint = request.payload && request.payload.checkpoint
@@ -59,13 +59,18 @@ function deviceApiHandler(handler, { updatePing, updateDeviceLog }) {
         })
     }
 
-    const response = yield* handler(context)
+    let response = {}
+    yield transact(function* (knex) {
+      context.knex = knex
 
-    // Insert all DeviceLog Updates added to context when calling handler
-    if (deviceLogId !== null && context.deviceLogUpdates.length > 0) {
-      yield knex('DeviceLogUpdate').insert(context.deviceLogUpdates.map(
-        update => Object.assign({ deviceLogId }, update)))
-    }
+      response = yield* handler(context)
+
+      // Insert all DeviceLog Updates added to context when calling handler
+      if (deviceLogId !== null && context.deviceLogUpdates.length > 0) {
+        yield knex('DeviceLogUpdate').insert(context.deviceLogUpdates.map(
+          update => Object.assign({ deviceLogId }, update)))
+      }
+    })
 
     return response
   })

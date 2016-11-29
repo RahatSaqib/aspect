@@ -466,7 +466,7 @@ function* up(knex) {
   yield knex.schema.createTable('AuditLog', (auditLog) => {
     auditLog.increments('id')
     auditLog.string('tableName').notNullable()
-    auditLog.integer('tableId').unsigned().notNullable()
+    auditLog.integer('tableId').index().unsigned().notNullable()
     auditLog.string('operation').notNullable() // insert, update, delete, checkpoint
     auditLog.specificType('fields', 'JSON').notNullable()
     auditLog.integer('deviceId').unsigned()
@@ -499,7 +499,6 @@ function* up(knex) {
           .index().references('id').inTable('DeviceConfiguration')
     deviceLog.integer('deviceOperationId').unsigned()
           .index().references('id').inTable('DeviceOperation')
-    // TODO should we log fields that changed in linked entity or type of update?
     deviceLog.charset('utf8')
   })
 
