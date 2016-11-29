@@ -28,6 +28,7 @@ import { NotificationListContainer } from '../notification/list/NotificationList
 import { ReportListContainer } from '../report/list/ReportList'
 import { AccountDetailsContainer } from '../account/detail/AccountDetails'
 import { StyleguideMainContainer } from '../styleguide/main/StyleguideMain'
+import { InventoryItemsListContainer } from '../inventory/list/InventoryItemsList'
 
 import { refreshStart } from '../auth/AuthRedux'
 
@@ -103,6 +104,10 @@ const routes =
 
         <Route path="account-details">
           <Route path="current" component={AccountDetailsContainer} />
+        </Route>
+
+        <Route path="inventory">
+          <IndexRoute component={InventoryItemsListContainer} />
         </Route>
 
         <Route path="notification" component={NotificationListContainer} />

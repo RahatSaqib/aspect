@@ -1,6 +1,15 @@
 const Joi = require('joi')
-const { asyncHandler, validateSortPageParams } = require('../routes')
-const { listPeople, showPerson, updatePerson, updatePersonUserPreferences } = require('./service')
+const {
+  asyncHandler,
+  validateSortPageParams
+} = require('../routes')
+const { validateAllGeographyFilterParams } = require('../geography/requestValidation')
+const {
+  listPeople,
+  showPerson,
+  updatePerson,
+  updatePersonUserPreferences
+} = require('./service')
 
 module.exports = [{
   method: 'GET',
@@ -12,11 +21,9 @@ module.exports = [{
     auth: { scope: ['person:view', 'person:edit'] },
     validate: {
       query: Object.assign({
-        countryId: Joi.number().allow('').description('Country ID'),
-        stateId: Joi.number().allow('').description('State ID'),
-        lgaId: Joi.number().allow('').description('LGA ID'),
         contactNameOrEmail: Joi.string().allow('').description('Filter for person name/email')
-      }, validateSortPageParams('name', 'level', 'state', 'lga'))
+      }, validateAllGeographyFilterParams(),
+        validateSortPageParams('name', 'level', 'state', 'lga'))
     }
   }
 }, {

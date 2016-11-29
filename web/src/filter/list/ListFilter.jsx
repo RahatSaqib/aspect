@@ -17,6 +17,7 @@ import StateSelectField from '../geography/StateSelectField'
 import LgaSelectField from '../geography/LgaSelectField'
 import AssaySelectField from '../resource/AssaySelectField'
 import ResultCategorySelectField from '../resource/ResultCategorySelectField'
+import ConsumableSelectField from '../resource/ConsumableSelectField'
 import DateRangeSelector from '../date/DateRangeSelector'
 import {
   clearListFilter,
@@ -39,7 +40,8 @@ export class ListFilter extends PureComponent {
       deviceName: PropTypes.string,
       resultCategoryId: PropTypes.string,
       siteName: PropTypes.string,
-      contactNameOrEmail: PropTypes.string
+      contactNameOrEmail: PropTypes.string,
+      consumableId: PropTypes.string
     }).isRequired, // connect
     defaultExpanded: PropTypes.bool,
     config: PropTypes.shape({
@@ -48,7 +50,8 @@ export class ListFilter extends PureComponent {
       date: PropTypes.bool,
       deviceName: PropTypes.bool,
       siteName: PropTypes.bool,
-      contactNameOrEmail: PropTypes.bool
+      contactNameOrEmail: PropTypes.bool,
+      consumable: PropTypes.bool
     }).isRequired
   }
 
@@ -123,13 +126,21 @@ export class ListFilter extends PureComponent {
     this.props.onChangeFilter(nextFilter)
   }
 
+  handleConsumableIdChange = (consumableId) => {
+    const nextFilter = {
+      ...this.props.filter,
+      consumableId
+    }
+    this.props.onChangeFilter(nextFilter)
+  }
+
   render() {
     const { filter, config } = this.props
     const { expanded } = this.state
     const filterMessage = `\`${JSON.stringify(filter)}\``
     const hasDataSection = (
       config.assay || config.deviceName || config.result ||
-      config.siteName || config.contactNameOrEmail
+      config.siteName || config.contactNameOrEmail || config.consumable
     )
 
     return (
@@ -210,6 +221,15 @@ export class ListFilter extends PureComponent {
                       onResultCategoryChange={this.handleResultCategoryChange}
                       floatingLabelText="Result"
                       style={{ verticalAlign: 'bottom' }}
+                    />
+                  )}
+                  {config.consumable && (
+                    <ConsumableSelectField
+                      value={filter.consumableId}
+                      onConsumableChange={this.handleConsumableIdChange}
+                      floatingLabelText="Consumable"
+                      style={{ verticalAlign: 'bottom' }}
+                      autoWidth
                     />
                   )}
                   {config.deviceName && (

@@ -35,7 +35,7 @@ describe('LoginDetailsForm Component', () => {
         invalid: true,
         loading: false,
         initialValues: { },
-        onSubmit: () => {},
+        handleSubmit: () => {},
         intl: {
           formatMessage: message => message.defaultMessage
         }
@@ -144,7 +144,8 @@ describe('LoginDetailsForm Component', () => {
       const props = {
         intl: {
           formatMessage: message => message.defaultMessage
-        }
+        },
+        handleSubmit: () => {}
       }
       let validateFunction
       let initialLoginDetails
