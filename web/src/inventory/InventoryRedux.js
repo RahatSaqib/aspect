@@ -17,8 +17,7 @@ import {
 export const types = {
   REQUEST_INVENTORY_ITEMS: 'REQUEST_INVENTORY_ITEMS',
   RECEIVE_INVENTORY_ITEMS: 'RECEIVE_INVENTORY_ITEMS',
-  GROUP_BY_SITE: 'GROUP_BY_SITE',
-  GROUP_BY_CONSUMABLE: 'GROUP_BY_CONSUMABLE'
+  TOGGLE_GROUP_BY_SITE: 'TOGGLE_GROUP_BY_SITE'
 }
 /*
  * ---------------- Action Creators -----------------
@@ -53,17 +52,10 @@ function getGroupBy(state) {
   return state.inventory.getIn(['table', 'groupBy'])
 }
 
-export function toggleGroupBySite(extraFilters = {}, ...args) {
+export function toggleGroupBySite(toggleOn) {
   return (dispatch) => {
-    dispatch({ type: types.GROUP_BY_SITE })
-    return dispatch(fetchListFilteredInventoryItems(extraFilters, ...args))
-  }
-}
-
-export function toggleGroupByConsumable(extraFilters = {}, ...args) {
-  return (dispatch) => {
-    dispatch({ type: types.GROUP_BY_CONSUMABLE })
-    return dispatch(fetchListFilteredInventoryItems(extraFilters, ...args))
+    dispatch({ type: types.TOGGLE_GROUP_BY_SITE, toggleOn })
+    return dispatch(fetchListFilteredInventoryItems())
   }
 }
 
@@ -76,8 +68,8 @@ export function fetchListFilteredInventoryItems(extraFilters = {}, ...args) {
 }
 
 export function fetchInventoryItems(groupBy, filters /* required */, sortCol = 'siteName', sortDir = 'asc', page = 0, pageSize = 10) {
-  const path = groupBy && groupBy.includes('siteId') ? (groupBy.includes('consumableId') ?
-    '/inventory/group-by-site-and-consumable' : '/inventory/group-by-site') : '/inventory'
+  const groupBySite = groupBy.includes('siteId')
+  const path = groupBySite ? '/inventory/group-by-site' : '/inventory'
   return (dispatch) => {
     dispatch(requestInventoryItems(
       sortCol, sortDir, page, pageSize, filters, groupBy))
@@ -88,13 +80,7 @@ export function fetchInventoryItems(groupBy, filters /* required */, sortCol = '
       size: pageSize,
       ...filters
     })}`)
-      .then((json) => {
-        const childrenPropertyPath = groupBy &&
-        groupBy.includes('siteId') &&
-        groupBy.includes('consumableId') ? ['consumables', 'inventoryItems'] :
-          (groupBy && groupBy.includes('siteId') ? ['inventoryItems'] : [])
-        return dispatch(receiveInventoryItems(json, childrenPropertyPath))
-      })
+      .then(json => dispatch(receiveInventoryItems(json, groupBySite ? ['inventoryItems'] : [])))
       .catch((err) => {
         dispatch(addError('Loading inventory items failed', err.message, err))
       })
@@ -112,7 +98,7 @@ const Inventory = Immutable.Record({
     pageSize: 10,
     filters: Immutable.fromJS({ siteName: '', consumableId: null }),
     extraColumns: new Immutable.List(),
-    groupBy: new Immutable.List(['siteId', 'consumableId'])
+    groupBy: new Immutable.List(['siteId'])
   })
 })
 
@@ -128,16 +114,10 @@ export default function inventoryItemsReducer(state = initialState, action) {
         mutState.set('items', receiveList(mutState.items, action.childrenPropertyPath, action.items))
         mutState.set('table', receiveTableItems(mutState.table, action.total, action.extraColumns))
       })
-    case types.GROUP_BY_SITE:
+    case types.TOGGLE_GROUP_BY_SITE:
       return state
         .setIn(['table', 'groupBy'],
-          state.getIn(['table', 'groupBy']).includes('siteId') ?
-            new Immutable.List([]) : new Immutable.List(['siteId']))
-    case types.GROUP_BY_CONSUMABLE:
-      return state
-        .setIn(['table', 'groupBy'],
-          state.getIn(['table', 'groupBy']).includes('consumableId') ?
-            new Immutable.List(['siteId']) : new Immutable.List(['siteId', 'consumableId']))
+          action.toggleOn ? new Immutable.List(['siteId']) : new Immutable.List([]))
     default:
       return state
   }

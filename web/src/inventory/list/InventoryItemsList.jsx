@@ -10,8 +10,8 @@ import { connect } from 'react-redux'
 import Helmet from 'react-helmet'
 
 // Material-UI
-import { Card, CardTitle } from 'material-ui/Card'
-import Toggle from 'material-ui/Toggle'
+import { Card } from 'material-ui/Card'
+import Checkbox from 'material-ui/Checkbox'
 
 // Our own imports
 import GroupedDataTable from '../../components/shared/GroupedDataTable'
@@ -19,8 +19,7 @@ import ListFilterContainer from '../../filter/list/ListFilter'
 import { configureListFilter } from '../../filter/FilterRedux'
 import {
   fetchListFilteredInventoryItems,
-  toggleGroupBySite,
-  toggleGroupByConsumable
+  toggleGroupBySite
 } from '../InventoryRedux'
 import styles from './InventoryItemsList.css'
 
@@ -28,6 +27,10 @@ const messages = defineMessages({
   title: {
     id: 'pages.InventoryItemsList.title',
     defaultMessage: 'Inventory on Hand'
+  },
+  groupBySite: {
+    id: 'pages.InventoryItemsList.groupBySite',
+    defaultMessage: 'Group by Site'
   },
   siteName: {
     id: 'pages.InventoryItemsList.siteName',
@@ -61,7 +64,6 @@ export class InventoryItemsList extends PureComponent {
     listFilter: PropTypes.object.isRequired,
     fetchListFilteredInventoryItems: PropTypes.func.isRequired,
     toggleGroupBySite: PropTypes.func.isRequired,
-    toggleGroupByConsumable: PropTypes.func.isRequired,
     items: PropTypes.object.isRequired
   }
 
@@ -85,12 +87,8 @@ export class InventoryItemsList extends PureComponent {
     this.props.fetchListFilteredInventoryItems({}, ...args)
   }
 
-  toggleGroupBySite = () => {
-    this.props.toggleGroupBySite()
-  }
-
-  toggleGroupByConsumable = () => {
-    this.props.toggleGroupByConsumable()
+  groupBySiteChecked = (event, isChecked) => {
+    this.props.toggleGroupBySite(isChecked)
   }
 
   render() {
@@ -114,34 +112,19 @@ export class InventoryItemsList extends PureComponent {
       headerText: formatMessage(messages.expiresIn),
       format: data => (data ? formatRelative(data) : 'Never')
     }]
-    const groupByToggleStyles = {
-      marginLeft: '2em',
-      display: 'inline-block',
-      width: 'auto'
-    }
+
     return (
       <div className={styles.Content}>
         <Helmet title={formatMessage(messages.title)} titleTemplate="%s - Aspect" defaultTitle="Aspect" />
         <ListFilterContainer />
         <Card>
-          <CardTitle title="Group Items" className={styles.GroupBy__Header} />
-          <Toggle
-            toggled={table.get('groupBy').includes('siteId')}
-            onToggle={this.toggleGroupBySite}
-            label="By Site"
+          <Checkbox
+            checked={table.get('groupBy').includes('siteId')}
+            onCheck={this.groupBySiteChecked}
+            label={formatMessage(messages.groupBySite)}
             labelPosition="right"
-            style={groupByToggleStyles}
+            style={{ padding: '1em' }}
           />
-          {
-            table.get('groupBy').includes('siteId') &&
-            <Toggle
-              toggled={table.get('groupBy').includes('consumableId')}
-              onToggle={this.toggleGroupByConsumable}
-              label="By Consumable"
-              labelPosition="right"
-              style={groupByToggleStyles}
-            />
-          }
         </Card>
         <GroupedDataTable
           handleFetch={this.handleFetch}
@@ -168,8 +151,7 @@ function mapDispatchToProps(dispatch) {
   return bindActionCreators({
     configureListFilter,
     fetchListFilteredInventoryItems,
-    toggleGroupBySite,
-    toggleGroupByConsumable
+    toggleGroupBySite
   }, dispatch)
 }
 
