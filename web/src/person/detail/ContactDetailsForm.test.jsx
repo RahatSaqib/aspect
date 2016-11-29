@@ -39,7 +39,7 @@ describe('ContactDetailsForm Component', () => {
           countryId: null,
           stateId: null
         },
-        onSubmit: () => {},
+        handleSubmit: () => {},
         intl: {
           formatMessage: message => message.defaultMessage
         }

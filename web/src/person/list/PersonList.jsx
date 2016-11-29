@@ -75,14 +75,14 @@ export class PersonList extends PureComponent {
   }
 
   render() {
-    const { intl } = this.props
-    const { formatMessage } = intl
+    const { intl: { formatMessage } } = this.props
 
     return (
       <div className={styles.Content}>
         <Helmet title={formatMessage(messages.title)} titleTemplate="%s - Aspect" defaultTitle="Aspect" />
         <ListFilterContainer />
         <DataTable
+          selectable
           handleItemIdSelection={this.handleItemIdSelection}
           handleFetch={this.handleFetch}
           items={this.props.items}
