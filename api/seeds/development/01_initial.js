@@ -974,6 +974,7 @@ function* seed(knex) {
     yield knex('ConsumableAtSite').insert({
       consumableId: consumableGxTbCartridgeId,
       siteId: siteData.id,
+      lotNumber: `${((i + 3) * (i + 1))}${['A', 'B'][i % 2]}-${((siteData.id + i) * consumableGxTbCartridgeId)}`,
       expiresOn: new Date((new Date(now.getTime() +
         _.random(-millisInNormalYear, millisInNormalYear))).setHours(0, 0, 0, 0)),
       quantityOnHand: _.random(0, 1000)
@@ -982,6 +983,7 @@ function* seed(knex) {
       yield knex('ConsumableAtSite').insert({
         consumableId: consumableGxEbolaCartridgeId,
         siteId: siteData.id,
+        lotNumber: `${((i + 7) * (i + 1))}${['Q', 'P'][i % 2]}-${((siteData.id + i) * consumableGxEbolaCartridgeId)}`,
         expiresOn: new Date((new Date(now.getTime() +
           _.random(-millisInNormalYear, millisInNormalYear))).setHours(0, 0, 0, 0)),
         quantityOnHand: _.random(0, 1000)
@@ -991,6 +993,7 @@ function* seed(knex) {
       yield knex('ConsumableAtSite').insert({
         consumableId: consumableGxHivVlCartridgeId,
         siteId: siteData.id,
+        lotNumber: `${((i + 11) * (i + 1))}${['A', 'V'][i % 2]}-${((siteData.id + i) * consumableGxHivVlCartridgeId)}`,
         expiresOn: new Date((new Date(now.getTime() +
           _.random(-millisInNormalYear, millisInNormalYear))).setHours(0, 0, 0, 0)),
         quantityOnHand: _.random(0, 1000)
@@ -1421,7 +1424,6 @@ function* seed(knex) {
 
     { roleId: roleIdPartnerTwo, permissionId: modules.inventory.edit }
   ])
-
 
   // assign roles to users
   yield knex('UserRole').insert([

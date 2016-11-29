@@ -537,6 +537,7 @@ function* up(knex) {
       .references('id').inTable('Consumable')
     consumableAtSite.integer('siteId').unsigned().notNullable()
       .references('id').inTable('Site')
+    consumableAtSite.string('lotNumber')
     consumableAtSite.dateTime('expiresOn')
     consumableAtSite.float('quantityOnHand')
     addCreateFieldsNullable(consumableAtSite)
