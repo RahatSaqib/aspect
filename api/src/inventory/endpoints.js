@@ -6,9 +6,8 @@ const {
   validateSortPageParams
 } = require('../routes')
 const {
-  listInventoryItems,
-  listInventoryItemsGroupedBySite,
-  listInventoryItemsGroupedBySiteAndConsumable
+  listConsumableAtSites,
+  listConsumablesAtSitesGroupedBySite
 } = require('./service')
 
 const inventoryFilters = {
@@ -20,46 +19,31 @@ module.exports = [
   {
     method: 'GET',
     path: '/inventory',
-    handler: asyncHandler(listInventoryItems),
+    handler: asyncHandler(listConsumableAtSites),
     config: {
-      description: 'Inventory List',
-      notes: 'Pageable and sortable list of inventory items',
+      description: 'List of Consumables on Hand At Site',
+      notes: 'Pageable and sortable list of consumables on hand',
       auth: { scope: ['inventory:view', 'inventory:edit'] },
       validate: {
         query: Object.assign(inventoryFilters,
           validateAllGeographyFilterParams(),
           validateDateRangeParams(),
-          validateSortPageParams())
+          validateSortPageParams('consumableName', 'manufacturer', 'siteName', 'countryName', 'stateName', 'lgaName', 'quantityOnHand', 'expiresOn'))
       }
     }
   }, {
     method: 'GET',
     path: '/inventory/group-by-site',
-    handler: asyncHandler(listInventoryItemsGroupedBySite),
+    handler: asyncHandler(listConsumablesAtSitesGroupedBySite),
     config: {
-      description: 'Inventory List Grouped by Site',
-      notes: 'Pageable and sortable list of inventory items grouped by site',
+      description: 'List of Consumables on Hand Grouped by Site',
+      notes: 'Pageable and sortable list of consumables on hand grouped by site',
       auth: { scope: ['inventory:view', 'inventory:edit'] },
       validate: {
         query: Object.assign(inventoryFilters,
           validateAllGeographyFilterParams(),
           validateDateRangeParams(),
-          validateSortPageParams())
-      }
-    }
-  }, {
-    method: 'GET',
-    path: '/inventory/group-by-site-and-consumable',
-    handler: asyncHandler(listInventoryItemsGroupedBySiteAndConsumable),
-    config: {
-      description: 'Inventory List Grouped by Site and then by Consumable',
-      notes: 'Pageable and sortable list of inventory items grouped by site then consumable',
-      auth: { scope: ['inventory:view', 'inventory:edit'] },
-      validate: {
-        query: Object.assign(inventoryFilters,
-          validateAllGeographyFilterParams(),
-          validateDateRangeParams(),
-          validateSortPageParams())
+          validateSortPageParams('consumableName', 'manufacturer', 'siteName', 'countryName', 'stateName', 'lgaName', 'quantityOnHand', 'expiresOn'))
       }
     }
   }

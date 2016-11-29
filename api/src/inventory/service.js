@@ -1,6 +1,5 @@
 const Promise = require('bluebird')
 const _ = require('lodash')
-const Boom = require('boom')
 const {
   knex,
   query,
@@ -13,197 +12,130 @@ const {
   addConstraints
 } = require('../auth/constraints')
 
-const INVENTORY_ITEMS_SELECT_LIST_FIELDS = [
-  'ii.id', 'ii.consumableId', 'ii.siteId', 'ii.expiresOn', 'ii.quantityOnHand',
+const CONSUMABLES_AT_SITE_SELECT_LIST_FIELDS = [
+  'cas.id', 'cas.consumableId', 'cas.siteId', 'cas.expiresOn', 'cas.quantityOnHand',
   'c.name as consumableName', 'c.manufacturer', 'u.shortname as unitShortName',
   's.name as siteName', 's.countryId', 's.stateId', 's.lgaId',
   'co.name as countryName', 'st.name as stateName', 'l.name as lgaName'
 ]
 
-const INVENTORY_ITEMS_SORT_FIELDS = {
+const CONSUMABLES_AT_SITE_SORT_FIELDS = {
   consumableName: 'c.name',
   manufacturer: 'c.manufacturer',
   siteName: 's.name',
   countryName: 'co.name',
   stateName: 'st.name',
   lgaName: 'l.name',
-  quantityOnHand: 'ii.quantityOnHand',
-  expiresOn: 'ii.expiresOn'
+  quantityOnHand: 'cas.quantityOnHand',
+  expiresOn: 'cas.expiresOn'
 }
 
-const INVENTORY_FILTER_FIELDS = {
+const CONSUMABLES_AT_SITE_FILTER_FIELDS = {
   countryId: 's.countryId',
   stateId: 's.stateId',
   lgaId: 's.lgaId',
-  consumableId: 'ii.consumableId',
+  consumableId: 'cas.consumableId',
   siteName: 's.name',
-  siteId: 'ii.siteId'
+  siteId: 'cas.siteId'
 }
 
-const INVENTORY_DATA_CONSTRAINT_ALIASES = { country: 'co', state: 'st', lga: 'l', site: 's' }
+const CONSUMABLES_AT_SITE_DATA_CONSTRAINT_ALIASES = { country: 'co', state: 'st', lga: 'l', site: 's' }
 
-function* listInventoryItems(request) {
+function* listConsumableAtSites(request) {
   const { auth } = request
-
-  if (request.query.sortCol &&
-    !_.keys(INVENTORY_ITEMS_SORT_FIELDS).includes(request.query.sortCol)) {
-    return Boom.badRequest()
-  }
 
   const dataConstraints = yield getConstraints(auth.credentials)
 
-  const inventoryItemsQuery = query('Search Inventory Items')
-    .from('InventoryItem as ii')
-    .innerJoin('Consumable as c', 'ii.consumableId', 'c.id')
+  const consumablesAtSiteQuery = query('Search Consumables at Site')
+    .from('ConsumableAtSite as cas')
+    .innerJoin('Consumable as c', 'cas.consumableId', 'c.id')
     .innerJoin('Unit as u', 'c.unit', 'u.id')
-    .innerJoin('Site as s', 'ii.siteId', 's.id')
+    .innerJoin('Site as s', 'cas.siteId', 's.id')
     .leftJoin('Country as co', 's.countryId', 'co.id')
     .leftJoin('State as st', 's.stateId', 'st.id')
     .leftJoin('Lga as l', 's.lgaId', 'l.id')
-    .modify(filterDateRangeParams, request.query, 'ii.expiresOn')
-    .modify(filterParams, request.query, INVENTORY_FILTER_FIELDS)
-    .modify(addConstraints, dataConstraints, INVENTORY_DATA_CONSTRAINT_ALIASES)
+    .modify(filterDateRangeParams, request.query, 'cas.expiresOn')
+    .modify(filterParams, request.query, CONSUMABLES_AT_SITE_FILTER_FIELDS)
+    .modify(addConstraints, dataConstraints, CONSUMABLES_AT_SITE_DATA_CONSTRAINT_ALIASES)
 
-  const getCount = inventoryItemsQuery.clone()
-    .count('ii.id as count').first()
+  const getCount = consumablesAtSiteQuery.clone()
+    .count('cas.id as count').first()
 
-  const getItems = inventoryItemsQuery.clone()
+  const getItems = consumablesAtSiteQuery.clone()
     .modify(sortPageParams, request.query,
-      INVENTORY_ITEMS_SORT_FIELDS.siteName, INVENTORY_ITEMS_SORT_FIELDS)
-    .select(INVENTORY_ITEMS_SELECT_LIST_FIELDS)
+      CONSUMABLES_AT_SITE_SORT_FIELDS.siteName, CONSUMABLES_AT_SITE_SORT_FIELDS)
+    .select(CONSUMABLES_AT_SITE_SELECT_LIST_FIELDS)
 
   const [{ count: total }, data] = yield Promise.all([getCount, getItems])
 
   return { ok: true, total, length: data.length, data }
 }
 
-function* getInventoryItemsForSites(request) {
+function* listConsumablesAtSitesGroupedBySite(request) {
   const { auth } = request
 
   const dataConstraints = yield getConstraints(auth.credentials)
 
-  const inventorySiteAndGeographyQuery = query('Join Inventory Details, Site Details, and Geography Details')
-    .from('InventoryItem as ii')
-    .innerJoin('Consumable as c', 'ii.consumableId', 'c.id')
+  const consumablesAtSiteByGeographyQuery = query('Join Consumables at Site, Site Details, and Geography Details')
+    .from('ConsumableAtSite as cas')
+    .innerJoin('Consumable as c', 'cas.consumableId', 'c.id')
     .innerJoin('Unit as u', 'c.unit', 'u.id')
-    .innerJoin('Site as s', 'ii.siteId', 's.id')
+    .innerJoin('Site as s', 'cas.siteId', 's.id')
     .leftJoin('Country as co', 's.countryId', 'co.id')
     .leftJoin('State as st', 's.stateId', 'st.id')
     .leftJoin('Lga as l', 's.lgaId', 'l.id')
-    .modify(filterDateRangeParams, request.query, 'ii.expiresOn')
+    .modify(filterDateRangeParams, request.query, 'cas.expiresOn')
 
-  const sitesQuery = inventorySiteAndGeographyQuery.clone()
-    .modify(filterParams, request.query, INVENTORY_FILTER_FIELDS)
-    .modify(addConstraints, dataConstraints, INVENTORY_DATA_CONSTRAINT_ALIASES)
+  const sitesQuery = consumablesAtSiteByGeographyQuery.clone()
+    .modify(filterParams, request.query, CONSUMABLES_AT_SITE_FILTER_FIELDS)
+    .modify(addConstraints, dataConstraints, CONSUMABLES_AT_SITE_DATA_CONSTRAINT_ALIASES)
 
   const getSiteCount = sitesQuery.clone()
-    .countDistinct('ii.siteId as count').first()
+    .countDistinct('cas.siteId as count').first()
 
   const sortAggregate = request.query.sortDir === 'desc' ? 'MAX' : 'MIN'
   const sortColumnName = request.query.sortCol || 'siteName'
-  let sortColumnField = INVENTORY_ITEMS_SORT_FIELDS[sortColumnName]
+  let sortColumnField = CONSUMABLES_AT_SITE_SORT_FIELDS[sortColumnName]
   if (sortColumnName === 'expiresOn') {
     const defaultDateOrderBy = request.query.sortDir === 'desc' ? '1000-01-01 00:00:00' : '9999-12-31 23:59:59'
-    sortColumnField = `COALESCE(${INVENTORY_ITEMS_SORT_FIELDS[sortColumnName]}, '${defaultDateOrderBy}')`
+    sortColumnField = `COALESCE(${CONSUMABLES_AT_SITE_SORT_FIELDS[sortColumnName]}, '${defaultDateOrderBy}')`
   }
   const aggregateColumn = `${sortAggregate}(${sortColumnField}) as ${sortColumnName}`
   const getSiteIds = sitesQuery.clone()
-    .groupBy('ii.siteId')
-    .select('ii.siteId', knex.raw(aggregateColumn))
+    .groupBy('cas.siteId')
+    .select('cas.siteId', knex.raw(aggregateColumn))
     .modify(sortPageParams, request.query, sortColumnName)
 
   const [{ count: total }, sitesData] = yield Promise.all([getSiteCount, getSiteIds])
 
-  const inventoryFilters = Object.assign({}, request.query, { siteId: _.map(sitesData, 'siteId') })
+  const consumablesAtSiteFilters = Object.assign({}, request.query, { siteId: _.map(sitesData, 'siteId') })
 
   const sortDirection = request.query.sortDir === 'desc' ? 'desc' : 'asc'
-  const inventoryItems = yield inventorySiteAndGeographyQuery.clone()
-    .modify(filterParams, inventoryFilters, INVENTORY_FILTER_FIELDS)
-    .modify(addConstraints, dataConstraints, INVENTORY_DATA_CONSTRAINT_ALIASES)
+  const consumablesAtSite = yield consumablesAtSiteByGeographyQuery.clone()
+    .modify(filterParams, consumablesAtSiteFilters, CONSUMABLES_AT_SITE_FILTER_FIELDS)
+    .modify(addConstraints, dataConstraints, CONSUMABLES_AT_SITE_DATA_CONSTRAINT_ALIASES)
     .orderBy('sortBy', sortDirection)
-    .select([...INVENTORY_ITEMS_SELECT_LIST_FIELDS, knex.raw(`${sortColumnField} as sortBy`)])
-
-  return {
-    inventoryItems,
-    total
-  }
-}
-
-function* listInventoryItemsGroupedBySite(request) {
-  if (request.query.sortCol &&
-    !_.keys(INVENTORY_ITEMS_SORT_FIELDS).includes(request.query.sortCol)) {
-    return Boom.badRequest()
-  }
-
-  const { inventoryItems, total } = yield* getInventoryItemsForSites(request)
+    .select([...CONSUMABLES_AT_SITE_SELECT_LIST_FIELDS, knex.raw(`${sortColumnField} as sortBy`)])
 
   const siteFields = ['siteId', 'siteName', 'countryId', 'stateId', 'lgaId', 'countryName', 'stateName', 'lgaName']
-  const inventoryItemFields = ['consumableId', 'consumableName', 'manufacturer', 'unitShortName', 'id', 'expiresOn', 'quantityOnHand']
+  const consumableAtSiteFields = ['consumableId', 'consumableName', 'manufacturer', 'unitShortName', 'id', 'expiresOn', 'quantityOnHand']
   const sites = _.uniqBy(
-    _.map(inventoryItems, inventoryItem =>
-      _.pick(inventoryItem, siteFields)), 'siteId')
-  const sitesWithInventoryItems = _.map(sites, (siteRecord) => {
-    const siteItems = _.filter(inventoryItems, { siteId: siteRecord.siteId })
+    _.map(consumablesAtSite, consumableAtSite =>
+      _.pick(consumableAtSite, siteFields)), 'siteId')
+  const sitesWithConsumables = _.map(sites, (siteRecord) => {
+    const siteItems = _.filter(consumablesAtSite, { siteId: siteRecord.siteId })
     return Object.assign({},
       siteRecord,
       {
         inventoryItems: _.map(siteItems,
-          siteItem => _.pick(siteItem, inventoryItemFields))
+          siteItem => _.pick(siteItem, consumableAtSiteFields))
       })
   })
 
-  return { ok: true, total, length: sitesWithInventoryItems.length, data: sitesWithInventoryItems }
-}
-
-function* listInventoryItemsGroupedBySiteAndConsumable(request) {
-  if (request.query.sortCol &&
-    !_.keys(INVENTORY_ITEMS_SORT_FIELDS).includes(request.query.sortCol)) {
-    return Boom.badRequest()
-  }
-
-  const { inventoryItems, total } = yield* getInventoryItemsForSites(request)
-
-  const siteFields = ['siteId', 'siteName', 'countryId', 'stateId', 'lgaId', 'countryName', 'stateName', 'lgaName']
-  const consumableFields = ['consumableId', 'consumableName', 'manufacturer', 'unitShortName']
-  const inventoryItemFields = ['id', 'expiresOn', 'quantityOnHand']
-  const sites = _.uniqBy(
-    _.map(inventoryItems, inventoryItem =>
-      _.pick(inventoryItem, siteFields)), 'siteId')
-  const consumables = _.uniqWith(
-    _.map(inventoryItems, inventoryItem =>
-      _.pick(inventoryItem, siteFields.concat(consumableFields))), _.isEqual)
-
-  const sitesWithConsumablesWithInventoryItems = _.map(sites, (siteRecord) => {
-    const siteConsumables = _.filter(consumables, { siteId: siteRecord.siteId })
-    return Object.assign({},
-      siteRecord,
-      {
-        consumables: _.map(siteConsumables, (consumableRecord) => {
-          const consumableItems = _.filter(inventoryItems, {
-            siteId: consumableRecord.siteId,
-            consumableId: consumableRecord.consumableId
-          })
-          return Object.assign({},
-            _.pick(consumableRecord,
-              consumableFields),
-            {
-              inventoryItems: _.map(consumableItems,
-                consumableItem => _.pick(consumableItem, inventoryItemFields))
-            })
-        })
-      })
-  })
-
-  return {
-    ok: true,
-    total,
-    length: sitesWithConsumablesWithInventoryItems.length,
-    data: sitesWithConsumablesWithInventoryItems
-  }
+  return { ok: true, total, length: sitesWithConsumables.length, data: sitesWithConsumables }
 }
 
 module.exports = {
-  listInventoryItems,
-  listInventoryItemsGroupedBySite,
-  listInventoryItemsGroupedBySiteAndConsumable
+  listConsumableAtSites,
+  listConsumablesAtSitesGroupedBySite
 }
