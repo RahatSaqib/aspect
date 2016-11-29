@@ -19,6 +19,7 @@ function deviceApiHandler(handler, { updatePing, updateDeviceLog }) {
     }
 
     const { device, now } = context
+    const deviceId = device.id
     // TODO Does Hapi Remote address work through proxies? Check headers?
     const remoteAddress = request.info.remoteAddress || ''
 
@@ -26,10 +27,22 @@ function deviceApiHandler(handler, { updatePing, updateDeviceLog }) {
     // it is recorded even if handler fails
     let deviceLogId = null
     if (updateDeviceLog) {
-      [deviceLogId] = yield knex('DeviceLog').insert({
-        deviceId: device.id,
+      const checkpoint = request.payload && request.payload.checkpoint
+
+      const [auditLogId] = yield knex('AuditLog').insert({
+        deviceId,
+        tableName: 'DeviceApiKey',
+        tableId: +request.auth.credentials.dak,
+        operation: 'checkpoint',
+        fields: JSON.stringify({ checkpoint }),
+        createdOn: now
+      })
+
+      ;[deviceLogId] = yield knex('DeviceLog').insert({
+        deviceId,
+        checkpoint,
+        auditLogId,
         source: 'DeviceAPI',
-        checkpoint: request.payload && request.payload.checkpoint,
         createdOn: now,
         senderIp: remoteAddress,
         // TODO DeviceLog handle non-JSON payloads

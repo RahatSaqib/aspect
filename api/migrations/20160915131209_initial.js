@@ -463,6 +463,18 @@ function* up(knex) {
     result.charset('utf8')
   })
 
+  yield knex.schema.createTable('AuditLog', (auditLog) => {
+    auditLog.increments('id')
+    auditLog.string('tableName').notNullable()
+    auditLog.integer('tableId').unsigned().notNullable()
+    auditLog.string('operation').notNullable() // insert, update, delete, checkpoint
+    auditLog.specificType('fields', 'JSON').notNullable()
+    auditLog.integer('deviceId').unsigned()
+          .index().references('id').inTable('Device')
+    addCreateFieldsNullable(auditLog)
+    auditLog.charset('utf8')
+  })
+
   yield knex.schema.createTable('DeviceLog', (deviceLog) => {
     deviceLog.increments('id')
     deviceLog.integer('deviceId').unsigned().notNullable()
@@ -471,6 +483,8 @@ function* up(knex) {
     deviceLog.dateTime('createdOn').notNullable()
     deviceLog.string('senderIp').notNullable()
     deviceLog.string('checkpoint')
+    deviceLog.integer('auditLogId').unsigned().notNullable()
+          .index().references('id').inTable('AuditLog')
     deviceLog.text('rawMessage')
     deviceLog.charset('utf8')
   })
@@ -487,18 +501,6 @@ function* up(knex) {
           .index().references('id').inTable('DeviceOperation')
     // TODO should we log fields that changed in linked entity or type of update?
     deviceLog.charset('utf8')
-  })
-
-  yield knex.schema.createTable('AuditLog', (auditLog) => {
-    auditLog.increments('id')
-    auditLog.string('tableName').notNullable()
-    auditLog.integer('tableId').unsigned().notNullable()
-    auditLog.string('operation').notNullable() // insert, update, delete
-    auditLog.specificType('fields', 'JSON').notNullable()
-    auditLog.integer('deviceId').unsigned()
-          .index().references('id').inTable('Device')
-    addCreateFieldsNullable(auditLog)
-    auditLog.charset('utf8')
   })
 
   yield knex.schema.createTable('Unit', (unit) => {
@@ -564,9 +566,9 @@ function* down(knex) {
   yield knex.schema.dropTableIfExists('ResultType')
   yield knex.schema.dropTableIfExists('ResultCategory')
   yield knex.schema.dropTableIfExists('ResultLog')
+  yield knex.schema.dropTableIfExists('AuditLog')
   yield knex.schema.dropTableIfExists('DeviceLog')
   yield knex.schema.dropTableIfExists('DeviceLogUpdate')
-  yield knex.schema.dropTableIfExists('AuditLog')
   yield knex.schema.dropTableIfExists('Result')
   yield knex.schema.dropTableIfExists('Sample')
   yield knex.schema.dropTableIfExists('Assay')
