@@ -6,7 +6,7 @@ const sharedDevice = require('./deviceToken')
 
 const { run } = require('../../src/db')
 
-// This agent refers to PORT where program is runninng.
+// This agent refers to PORT where program is running.
 const server = supertest.agent('http://localhost:8080')
 const assert = chai.assert
 
@@ -36,6 +36,8 @@ describe('Device Result API routes', () => {
 
         yield knex('DeviceLogUpdate').whereIn('deviceLogId', deviceLogIds).delete()
         yield knex('DeviceLog').whereIn('id', deviceLogIds).delete()
+        const ourResultIds = yield knex('Result as r').whereIn('externalId', resultIds).select('r.id')
+        yield knex('ConsumableAdjustmentLog').whereIn('resultId', _.map(ourResultIds, 'id')).delete()
         yield knex('Result').whereIn('externalId', resultIds).delete()
 
         resultIds.splice(0)
@@ -967,6 +969,349 @@ describe('Device Result API routes', () => {
       yield knex('Device').where({ id: deviceId }).update({ deviceConfigurationId: prevConfigId })
       yield knex('DeviceConfiguration').whereIn('externalId', configIds).delete()
     }))
+
+    describe('inventory management', () => {
+      function getConsumablesAtSite(knex, siteId) {
+        return knex('ConsumableAtSite')
+          .where({ siteId })
+          .select('consumableId', 'lotNumber', 'expiresOn', 'quantityOnHand')
+      }
+
+      it('should deduct inventory levels from the site', () => run(function* (knex) {
+        const results = [{
+          assayExternalId: 'MtbRif',
+          cartridgeName: 'GeneXpert TB Cartridge',
+          deviceId: sharedDevice.deviceId
+        }, {
+          assayExternalId: 'Ebola',
+          cartridgeName: 'GeneXpert Ebola Cartridge',
+          deviceId: sharedDevice.deviceId
+        }]
+
+        for (const resultDetails of results) {
+          const { siteId } = (yield knex('Device')
+            .where({ id: resultDetails.deviceId })
+            .first('siteId'))
+          const cartridgeId = (yield knex('Consumable')
+            .where({ name: resultDetails.cartridgeName })
+            .first('id')).id
+
+          const consumablesAtSiteBefore = yield getConsumablesAtSite(knex, siteId)
+          const firstCartridgeConsumable = _.find(consumablesAtSiteBefore,
+            { consumableId: cartridgeId })
+
+          const assayConsumables = yield knex('ConsumableAssay as ca')
+            .join('Assay as a', 'ca.assayId', 'a.id')
+            .where('a.externalId', resultDetails.assayExternalId)
+            .select('ca.consumableId', 'ca.assayId', 'ca.quantity')
+
+          yield server.post(devicePostResultPath)
+            .set('Authorization', `Bearer ${sharedDevice.deviceToken}`)
+            .send({
+              data: { a: 'b' },
+              assay: { id: resultDetails.assayExternalId },
+              consumable: {
+                lot: firstCartridgeConsumable.lotNumber,
+                expirationDate: firstCartridgeConsumable.expiresOn.toJSON()
+              }
+            })
+            .then((res) => {
+              assert.equal(res.status, 200)
+            })
+
+          const consumablesAtSiteAfter = yield getConsumablesAtSite(knex, siteId)
+
+          assayConsumables.forEach((assayConsumable) => {
+            const consumableAtSiteBefore = _.find(consumablesAtSiteBefore,
+              { consumableId: assayConsumable.consumableId })
+            const consumableAtSiteAfter = _.find(consumablesAtSiteAfter,
+              { consumableId: assayConsumable.consumableId })
+
+            if (consumableAtSiteBefore) {
+              assert.equal(consumableAtSiteAfter.quantityOnHand,
+                consumableAtSiteBefore.quantityOnHand - assayConsumable.quantity)
+            }
+          })
+        }
+      }))
+
+      it('should try to deduct the correct inventory item based on expiration date and lot number', () => run(function* (knex) {
+        const { deviceId } = sharedDevice
+        const { siteId } = (yield knex('Device')
+          .where({ id: deviceId })
+          .first('siteId'))
+        const assayExternalId = 'MtbRif'
+        const mtbRifCartridgeId = (yield knex('Consumable as c')
+          .where('c.name', 'GeneXpert TB Cartridge')
+          .first('c.id')).id
+
+        let resultDetails = {
+          lotNumber: 'ABC123',
+          expirationDate: '2045-01-30T00:00:00+00:00'
+        }
+
+        const [lotNumberAndExpirationDateMatch] = yield knex('ConsumableAtSite').insert({
+          consumableId: mtbRifCartridgeId,
+          siteId,
+          lotNumber: resultDetails.lotNumber,
+          expiresOn: new Date(resultDetails.expirationDate),
+          quantityOnHand: 20
+        })
+
+        const inventoryConsumedByTest = (yield knex('ConsumableAssay as ca')
+          .join('Assay as a', 'ca.assayId', 'a.id')
+          .where('a.externalId', assayExternalId)
+          .andWhere('ca.consumableId', mtbRifCartridgeId)
+          .first('ca.quantity')).quantity
+
+        let cartridgeAtSiteBefore = _.find((yield getConsumablesAtSite(knex, siteId)),
+          consumableAtSite => consumableAtSite.lotNumber === resultDetails.lotNumber &&
+          consumableAtSite.expiresOn.toJSON() === new Date(resultDetails.expirationDate).toJSON())
+
+        yield server.post(devicePostResultPath)
+          .set('Authorization', `Bearer ${sharedDevice.deviceToken}`)
+          .send({
+            data: { a: 'b' },
+            assay: { id: assayExternalId },
+            consumable: {
+              lot: resultDetails.lotNumber,
+              expirationDate: resultDetails.expirationDate
+            }
+          })
+          .then((res) => {
+            assert.equal(res.status, 200)
+          })
+
+        let cartridgeAtSiteAfter = _.find((yield getConsumablesAtSite(knex, siteId)),
+          consumableAtSite => consumableAtSite.lotNumber === resultDetails.lotNumber &&
+          consumableAtSite.expiresOn.toJSON() === new Date(resultDetails.expirationDate).toJSON())
+
+        assert.equal(cartridgeAtSiteAfter.quantityOnHand,
+          cartridgeAtSiteBefore.quantityOnHand - inventoryConsumedByTest)
+
+        resultDetails = {
+          lotNumber: 'XYZ321',
+          expirationDate: '2035-01-30T00:00:00+00:00'
+        }
+        const randomExpiryDate = new Date('2017-03-05T00:00:00+00:00')
+        const [onlyLotNumberMatches] = yield knex('ConsumableAtSite').insert({
+          consumableId: mtbRifCartridgeId,
+          siteId,
+          lotNumber: resultDetails.lotNumber,
+          expiresOn: randomExpiryDate,
+          quantityOnHand: 30
+        })
+        cartridgeAtSiteBefore = _.find((yield getConsumablesAtSite(knex, siteId)),
+          consumableAtSite => consumableAtSite.lotNumber === resultDetails.lotNumber &&
+          consumableAtSite.expiresOn.toJSON() === new Date(randomExpiryDate).toJSON())
+
+        yield server.post(devicePostResultPath)
+          .set('Authorization', `Bearer ${sharedDevice.deviceToken}`)
+          .send({
+            data: { a: 'b' },
+            assay: { id: assayExternalId },
+            consumable: {
+              lot: resultDetails.lotNumber,
+              expirationDate: resultDetails.expirationDate
+            }
+          }).then((res) => {
+            assert.equal(res.status, 200)
+          })
+
+        cartridgeAtSiteAfter = _.find((yield getConsumablesAtSite(knex, siteId)),
+          consumableAtSite => consumableAtSite.lotNumber === resultDetails.lotNumber &&
+          consumableAtSite.expiresOn.toJSON() === new Date(randomExpiryDate).toJSON())
+
+        assert.equal(cartridgeAtSiteAfter.quantityOnHand,
+          cartridgeAtSiteBefore.quantityOnHand - inventoryConsumedByTest)
+
+        resultDetails = {
+          lotNumber: 'ABC123',
+          expirationDate: '2019-11-16T00:00:00+00:00'
+        }
+        const randomLotNumber = 'RANDOM-LOT'
+        const [onlyExpirationDateMatches] = yield knex('ConsumableAtSite').insert({
+          consumableId: mtbRifCartridgeId,
+          siteId,
+          lotNumber: randomLotNumber,
+          expiresOn: new Date(resultDetails.expirationDate),
+          quantityOnHand: 45
+        })
+        cartridgeAtSiteBefore = _.find((yield getConsumablesAtSite(knex, siteId)),
+          consumableAtSite => consumableAtSite.lotNumber === randomLotNumber &&
+          consumableAtSite.expiresOn.toJSON() === new Date(resultDetails.expirationDate).toJSON())
+
+        yield server.post(devicePostResultPath)
+          .set('Authorization', `Bearer ${sharedDevice.deviceToken}`)
+          .send({
+            data: { a: 'b' },
+            assay: { id: assayExternalId },
+            consumable: {
+              lot: resultDetails.lotNumber,
+              expirationDate: resultDetails.expirationDate
+            }
+          }).then((res) => {
+            assert.equal(res.status, 200)
+          })
+
+        cartridgeAtSiteAfter = _.find((yield getConsumablesAtSite(knex, siteId)),
+          consumableAtSite => consumableAtSite.lotNumber === randomLotNumber &&
+          consumableAtSite.expiresOn.toJSON() === new Date(resultDetails.expirationDate).toJSON())
+
+        assert.equal(cartridgeAtSiteAfter.quantityOnHand,
+          cartridgeAtSiteBefore.quantityOnHand - inventoryConsumedByTest)
+
+        yield knex('ConsumableAdjustmentLog')
+          .whereIn('consumableAtSiteId', [lotNumberAndExpirationDateMatch, onlyLotNumberMatches, onlyExpirationDateMatches])
+          .del()
+        yield knex('ConsumableAtSite')
+          .whereIn('id', [lotNumberAndExpirationDateMatch, onlyLotNumberMatches, onlyExpirationDateMatches])
+          .del()
+      }))
+
+      it('should try to deduct the correct inventory item based on expiration date over lot number', () => run(function* (knex) {
+        const { deviceId } = sharedDevice
+        const { siteId } = (yield knex('Device')
+          .where({ id: deviceId })
+          .first('siteId'))
+        const assayExternalId = 'MtbRif'
+        const mtbRifCartridgeId = (yield knex('Consumable as c')
+          .where('c.name', 'GeneXpert TB Cartridge')
+          .first('c.id')).id
+        const inventoryConsumedByTest = (yield knex('ConsumableAssay as ca')
+          .join('Assay as a', 'ca.assayId', 'a.id')
+          .where('a.externalId', assayExternalId)
+          .andWhere('ca.consumableId', mtbRifCartridgeId)
+          .first('ca.quantity')).quantity
+
+        const resultDetails = {
+          lotNumber: 'QWE987',
+          expirationDate: '2017-12-16T00:00:00+00:00'
+        }
+        const randomExpiryDate = new Date('2017-03-05T00:00:00+00:00')
+        const [onlyLotNumberMatches] = yield knex('ConsumableAtSite').insert({
+          consumableId: mtbRifCartridgeId,
+          siteId,
+          lotNumber: resultDetails.lotNumber,
+          expiresOn: randomExpiryDate,
+          quantityOnHand: 30
+        })
+        const randomLotNumber = 'SOME-LOT-NUMBER'
+        const [onlyExpirationDateMatches] = yield knex('ConsumableAtSite').insert({
+          consumableId: mtbRifCartridgeId,
+          siteId,
+          lotNumber: randomLotNumber,
+          expiresOn: new Date(resultDetails.expirationDate),
+          quantityOnHand: 45
+        })
+        const consumablesAtSiteBefore = yield getConsumablesAtSite(knex, siteId)
+        const matchingLotNumberCartridgeAtSiteBefore = _.find(consumablesAtSiteBefore,
+          consumableAtSite => consumableAtSite.lotNumber === resultDetails.lotNumber &&
+          consumableAtSite.expiresOn.toJSON() === new Date(randomExpiryDate).toJSON())
+        const matchingExpirationDateCartridgeAtSiteBefore = _.find(consumablesAtSiteBefore,
+          consumableAtSite => consumableAtSite.lotNumber === randomLotNumber &&
+          consumableAtSite.expiresOn.toJSON() === new Date(resultDetails.expirationDate).toJSON())
+
+        yield server.post(devicePostResultPath)
+          .set('Authorization', `Bearer ${sharedDevice.deviceToken}`)
+          .send({
+            data: { a: 'b' },
+            assay: { id: assayExternalId },
+            consumable: {
+              lot: resultDetails.lotNumber,
+              expirationDate: resultDetails.expirationDate
+            }
+          }).then((res) => {
+            assert.equal(res.status, 200)
+          })
+
+        const consumablesAtSiteAfter = yield getConsumablesAtSite(knex, siteId)
+        const matchingLotNumberCartridgeAtSiteAfter = _.find(consumablesAtSiteAfter,
+          consumableAtSite => consumableAtSite.lotNumber === resultDetails.lotNumber &&
+          consumableAtSite.expiresOn.toJSON() === new Date(randomExpiryDate).toJSON())
+        const matchingExpirationDateCartridgeAtSiteAfter = _.find(consumablesAtSiteAfter,
+          consumableAtSite => consumableAtSite.lotNumber === randomLotNumber &&
+          consumableAtSite.expiresOn.toJSON() === new Date(resultDetails.expirationDate).toJSON())
+
+        assert.equal(matchingLotNumberCartridgeAtSiteAfter.quantityOnHand,
+          matchingLotNumberCartridgeAtSiteBefore.quantityOnHand)
+
+        assert.equal(matchingExpirationDateCartridgeAtSiteAfter.quantityOnHand,
+          matchingExpirationDateCartridgeAtSiteBefore.quantityOnHand - inventoryConsumedByTest)
+
+        yield knex('ConsumableAdjustmentLog')
+          .whereIn('consumableAtSiteId', [onlyLotNumberMatches, onlyExpirationDateMatches])
+          .del()
+        yield knex('ConsumableAtSite')
+          .whereIn('id', [onlyLotNumberMatches, onlyExpirationDateMatches])
+          .del()
+      }))
+
+      it('should log inventory consumption, even when no inventory item exists for site', () => run(function* (knex) {
+        const { deviceId } = sharedDevice
+        const { siteId } = (yield knex('Device')
+          .where({ id: deviceId })
+          .first('siteId'))
+        const assayExternalId = 'Ebola'
+        const ebolaCartridgeId = (yield knex('Consumable as c')
+          .where('c.name', 'GeneXpert Ebola Cartridge')
+          .first('c.id')).id
+        const inventoryConsumedByTest = (yield knex('ConsumableAssay as ca')
+          .join('Assay as a', 'ca.assayId', 'a.id')
+          .where('a.externalId', assayExternalId)
+          .andWhere('ca.consumableId', ebolaCartridgeId)
+          .first('ca.quantity')).quantity
+
+        const resultDetails = {
+          lotNumber: 'EBO533',
+          expirationDate: new Date((new Date((new Date()).getTime() +
+            _.random(0, (1000 * 60 * 60 * 24 * 365)))).setHours(0, 0, 0, 0)).toJSON()
+        }
+        const consumablesAtSiteBefore = yield getConsumablesAtSite(knex, siteId)
+
+        yield server.post(devicePostResultPath)
+          .set('Authorization', `Bearer ${sharedDevice.deviceToken}`)
+          .send({
+            data: { a: 'b' },
+            assay: { id: assayExternalId },
+            consumable: {
+              lot: resultDetails.lotNumber,
+              expirationDate: resultDetails.expirationDate
+            }
+          }).then((res) => {
+            assert.equal(res.status, 200)
+          })
+
+        const consumablesAtSiteAfter = yield getConsumablesAtSite(knex, siteId)
+
+        assert.deepEqual(consumablesAtSiteAfter, consumablesAtSiteBefore)
+
+        const inventoryConsumptionLog = yield knex('ConsumableAdjustmentLog as cal')
+          .join('ConsumableReason as cr', 'cal.consumableReasonId', 'cr.id')
+          .where('cal.consumableId', ebolaCartridgeId)
+          .andWhere('cal.siteId', siteId)
+          .andWhere('cal.lotNumber', resultDetails.lotNumber)
+          .andWhere('cal.expiresOn', new Date(resultDetails.expirationDate))
+          .first('cal.id', 'cal.consumableAtSiteId', 'cr.name as consumableReasonName',
+            'cal.resultId', 'cal.quantity', 'cal.createdOn')
+
+        assert.isNull(inventoryConsumptionLog.consumableAtSiteId)
+        assert.equal(inventoryConsumptionLog.consumableReasonName, 'Test Conducted')
+        assert.isOk(inventoryConsumptionLog.resultId)
+        assert.equal(inventoryConsumptionLog.quantity, inventoryConsumedByTest)
+
+        const { count: otherInventoryConsumptionLogsForThisTest } = yield knex('ConsumableAdjustmentLog')
+          .whereNot({ id: inventoryConsumptionLog.id })
+          .andWhere({ siteId, createdOn: inventoryConsumptionLog.createdOn })
+          .count('id as count')
+
+        assert.isNotOk(otherInventoryConsumptionLogsForThisTest)
+
+        yield knex('ConsumableAdjustmentLog')
+          .andWhere({ resultId: inventoryConsumptionLog.resultId })
+          .del()
+      }))
+    })
   })
 
   describe('rrt_admin lab/clinic results', () => {

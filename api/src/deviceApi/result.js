@@ -257,20 +257,31 @@ function* addResult(context) {
       !_.map(matchingConsumablesByExpirationOnly, 'consumableId')
         .includes(consumableAtSite.consumableId) &&
       _.some(payload.consumable, consumable => consumable.lot &&
-      consumable.lot === consumableAtSite.lotNumber))
+      consumable.lot === consumableAtSite.lotNumber &&
+      !_.isNull(consumable.expirationDate)))
 
-      // Get remaining assay consumables
-      const remainingConsumables = _.filter(consumablesAtSite, consumableAtSite =>
+      // Get other consumables
+      const otherConsumables = _.map(_.filter(consumablesAtSite, consumableAtSite =>
       !_.map(matchingConsumablesByLotAndExpiration, 'consumableId')
         .includes(consumableAtSite.consumableId) &&
       !_.map(matchingConsumablesByExpirationOnly, 'consumableId')
         .includes(consumableAtSite.consumableId) &&
       !_.map(matchingConsumablesByLotNumberOnly, 'consumableId')
-        .includes(consumableAtSite.consumableId))
+        .includes(consumableAtSite.consumableId)), (consumable) => {
+        const expiresOnString = result.consumableExpirationDate
+        return {
+          id: null,
+          consumableId: consumable.consumableId,
+          quantity: consumable.quantity,
+          lotNumber: result.consumableLot,
+          expiresOn: expiresOnString ? new Date(expiresOnString) : null
+        }
+      })
 
       const matchingConsumablesAtSite = [...matchingConsumablesByLotAndExpiration,
         ...matchingConsumablesByExpirationOnly, ...matchingConsumablesByLotNumberOnly,
-        ...remainingConsumables]
+        ...otherConsumables]
+
       yield knex('ConsumableAdjustmentLog').insert(_.map(matchingConsumablesAtSite,
         (consumableAtSite) => {
           const consumableAdjustmentLog = {
