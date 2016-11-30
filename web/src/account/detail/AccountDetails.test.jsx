@@ -54,7 +54,8 @@ describe('AccountDetails Component', () => {
         saveUserPreferences: () => {},
         intl: {
           formatMessage: message => message.defaultMessage
-        }
+        },
+        addAcknowledgement: () => {}
       }
       shallowRenderAccountDetails()
     })

@@ -142,6 +142,7 @@ describe('LoginDetailsForm Component', () => {
 
     describe('validate function', () => {
       const props = {
+        handleSubmit: () => {},
         intl: {
           formatMessage: message => message.defaultMessage
         },
