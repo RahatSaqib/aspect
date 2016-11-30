@@ -13,16 +13,15 @@ import { fetchAssays } from '../../assay/AssayRedux'
 export class ResultCategorySelectField extends PureComponent {
 
   static propTypes = {
-    assay: PropTypes.object,
     fetchAssays: PropTypes.func.isRequired,
+    assayItems: PropTypes.object.isRequired,
     assayId: PropTypes.string,
     onResultCategoryChange: PropTypes.func.isRequired,
     value: PropTypes.string
   }
 
   componentDidMount() {
-    const { assay } = this.props
-    this.props.fetchAssays(false, assay)
+    this.props.fetchAssays(false)
   }
 
   handleChange = (event, index, value) => {
@@ -30,13 +29,11 @@ export class ResultCategorySelectField extends PureComponent {
   }
 
   render() {
-    const { assay, assayId, value } = this.props
+    const { assayItems, assayId, value } = this.props
     const restProps = _.omit(this.props, [
-      'assay', 'fetchAssays', 'assayId', 'onResultCategoryChange', 'value'
+      'fetchAssays', 'assayItems', 'assayId', 'onResultCategoryChange', 'value'
     ])
-    const possibleAssay = assay
-      .items
-      .find(a => a.get('id') === assayId)
+    const possibleAssay = assayItems.find(a => a.get('id') === assayId)
     const resultCategories = possibleAssay ? possibleAssay.get('resultCategories') : []
 
     return (
@@ -56,7 +53,7 @@ export class ResultCategorySelectField extends PureComponent {
 
 function mapStateToProps(state) {
   return {
-    assay: state.assay
+    assayItems: state.assay.items
   }
 }
 
