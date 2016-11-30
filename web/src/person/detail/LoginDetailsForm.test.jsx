@@ -145,8 +145,7 @@ describe('LoginDetailsForm Component', () => {
         handleSubmit: () => {},
         intl: {
           formatMessage: message => message.defaultMessage
-        },
-        handleSubmit: () => {}
+        }
       }
       let validateFunction
       let initialLoginDetails
