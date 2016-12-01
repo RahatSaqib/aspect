@@ -35,6 +35,94 @@ const messages = defineMessages({
   noFilters: {
     id: 'shared.ListFilter.noFilters',
     defaultMessage: 'No filters set - showing all'
+  },
+  save: {
+    id: 'shared.ListFilter.save',
+    defaultMessage: 'Save'
+  },
+  share: {
+    id: 'shared.ListFilter.share',
+    defaultMessage: 'Share'
+  },
+  clear: {
+    id: 'shared.ListFilter.clear',
+    defaultMessage: 'Clear'
+  },
+  contactNameEmail: {
+    id: 'shared.ListFilter.contactNameEmail',
+    defaultMessage: 'Contact name/email'
+  },
+  setContactNameEmail: {
+    id: 'shared.ListFilter.setContactNameEmail',
+    defaultMessage: 'Enter contact name/email...'
+  },
+  site: {
+    id: 'shared.ListFilter.site',
+    defaultMessage: 'Site'
+  },
+  enterSiteName: {
+    id: 'shared.ListFilter.enterSiteName',
+    defaultMessage: 'Enter site name...'
+  },
+  deviceName: {
+    id: 'shared.ListFilter.deviceName',
+    defaultMessage: 'Device'
+  },
+  enterDeviceName: {
+    id: 'shared.ListFilter.enterDeviceName',
+    defaultMessage: 'Enter device name...'
+  },
+  consumable: {
+    id: 'shared.ListFilter.consumable',
+    defaultMessage: 'Consumable'
+  },
+  selectConsumable: {
+    id: 'shared.ListFilter.selectConsumable',
+    defaultMessage: 'Select consumable...'
+  },
+  result: {
+    id: 'shared.ListFilter.result',
+    defaultMessage: 'Result'
+  },
+  selectResult: {
+    id: 'shared.ListFilter.selectResult',
+    defaultMessage: 'Select result...'
+  },
+  assay: {
+    id: 'shared.ListFilter.assay',
+    defaultMessage: 'Assay'
+  },
+  selectAssay: {
+    id: 'shared.ListFilter.selectAssay',
+    defaultMessage: 'Select assay...'
+  },
+  lga: {
+    id: 'shared.ListFilter.lga',
+    defaultMessage: 'Area'
+  },
+  selectLga: {
+    id: 'shared.ListFilter.selectLga',
+    defaultMessage: 'Select area...'
+  },
+  state: {
+    id: 'shared.ListFilter.state',
+    defaultMessage: 'State'
+  },
+  selectState: {
+    id: 'shared.ListFilter.selectState',
+    defaultMessage: 'Select state...'
+  },
+  country: {
+    id: 'shared.ListFilter.country',
+    defaultMessage: 'Country'
+  },
+  selectCountry: {
+    id: 'shared.ListFilter.selectCountry',
+    defaultMessage: 'Select country...'
+  },
+  setFilters: {
+    id: 'shared.ListFilter.setFilters',
+    defaultMessage: 'Set Filters'
   }
 })
 
@@ -170,15 +258,15 @@ export class ListFilter extends PureComponent {
           <CardText expandable>
             {config.geography && (
               <section className={styles.Section}>
-                <h3 className={styles.Section__Title}>Set Filters</h3>
+                <h3 className={styles.Section__Title}>{formatMessage(messages.setFilters)}</h3>
                 <div className={styles.Section__Content}>
                   <div className={styles.Section__Control}>
                     <CountrySelectField
                       onChangeCountry={this.handleChangeCountry}
                       countryId={this.props.filter.countryId}
                       floatingLabelFixed
-                      hintText="Select Country..."
-                      floatingLabelText="Country"
+                      hintText={formatMessage(messages.selectCountry)}
+                      floatingLabelText={formatMessage(messages.country)}
                       style={{ verticalAlign: 'bottom' }}
                     />
                   </div>
@@ -188,8 +276,8 @@ export class ListFilter extends PureComponent {
                       countryId={this.props.filter.countryId}
                       stateId={this.props.filter.stateId}
                       floatingLabelFixed
-                      hintText="Select State..."
-                      floatingLabelText="State"
+                      hintText={formatMessage(messages.selectState)}
+                      floatingLabelText={formatMessage(messages.state)}
                       style={{ verticalAlign: 'bottom' }}
                     />
                   </div>
@@ -200,8 +288,8 @@ export class ListFilter extends PureComponent {
                       stateId={this.props.filter.stateId}
                       lgaId={this.props.filter.lgaId}
                       floatingLabelFixed
-                      hintText="Select Area..."
-                      floatingLabelText="Area"
+                      hintText={formatMessage(messages.selectLga)}
+                      floatingLabelText={formatMessage(messages.lga)}
                       style={{ verticalAlign: 'bottom' }}
                     />
                   </div>
@@ -217,8 +305,8 @@ export class ListFilter extends PureComponent {
                         value={filter.assayId}
                         onAssayChange={this.handleAssayIdChange}
                         floatingLabelFixed
-                        hintText="Select Assay..."
-                        floatingLabelText="Assay"
+                        hintText={formatMessage(messages.selectAssay)}
+                        floatingLabelText={formatMessage(messages.assay)}
                         style={{ verticalAlign: 'bottom' }}
                       />
                     </div>
@@ -231,8 +319,8 @@ export class ListFilter extends PureComponent {
                         value={filter.resultCategoryId}
                         onResultCategoryChange={this.handleResultCategoryChange}
                         floatingLabelFixed
-                        hintText="Select Result..."
-                        floatingLabelText="Result"
+                        hintText={formatMessage(messages.selectResult)}
+                        floatingLabelText={formatMessage(messages.result)}
                         style={{ verticalAlign: 'bottom' }}
                       />
                     </div>
@@ -243,8 +331,8 @@ export class ListFilter extends PureComponent {
                         value={filter.consumableId}
                         onConsumableChange={this.handleConsumableIdChange}
                         floatingLabelFixed
-                        hintText="Select Consumable..."
-                        floatingLabelText="Consumable"
+                        hintText={formatMessage(messages.selectConsumable)}
+                        floatingLabelText={formatMessage(messages.consumable)}
                         style={{ verticalAlign: 'bottom' }}
                         autoWidth
                       />
@@ -257,8 +345,8 @@ export class ListFilter extends PureComponent {
                         value={filter.deviceName || ''}
                         onCommitValue={this.handleTextFieldCommitValue}
                         floatingLabelFixed
-                        hintText="Enter device name..."
-                        floatingLabelText="Device name"
+                        hintText={formatMessage(messages.enterDeviceName)}
+                        floatingLabelText={formatMessage(messages.deviceName)}
                       />
                     </div>
                   )}
@@ -269,8 +357,8 @@ export class ListFilter extends PureComponent {
                         value={filter.siteName || ''}
                         onCommitValue={this.handleTextFieldCommitValue}
                         floatingLabelFixed
-                        hintText="Enter site name..."
-                        floatingLabelText="Site name"
+                        hintText={formatMessage(messages.enterSiteName)}
+                        floatingLabelText={formatMessage(messages.site)}
                       />
                     </div>
                   )}
@@ -281,8 +369,8 @@ export class ListFilter extends PureComponent {
                         value={filter.contactNameOrEmail || ''}
                         onCommitValue={this.handleTextFieldCommitValue}
                         floatingLabelFixed
-                        hintText="Enter contact name/email..."
-                        floatingLabelText="Contact name/email"
+                        hintText={formatMessage(messages.setContactNameEmail)}
+                        floatingLabelText={formatMessage(messages.contactNameEmail)}
                       />
                     </div>
                   )}
@@ -294,7 +382,7 @@ export class ListFilter extends PureComponent {
                 <div className={styles.Section__Content}>
                   <div className={styles.Section__Control}>
                     <DateRangeSelector
-                      clearButtonTooltip="Clear"
+                      clearButtonTooltip={formatMessage(messages.clear)}
                       clearButtonStyle={{ verticalAlign: 'bottom' }}
                       onChangeDate={this.handleChangeDate}
                       minDate={filter.minDate}
@@ -308,9 +396,9 @@ export class ListFilter extends PureComponent {
           </CardText>
           <CardActions expandable>
             <FlatButton label="OK" primary style={{ float: 'right' }} onTouchTap={() => this.handleExpandChange(false)} />
-            <FlatButton label="Clear" secondary style={{ float: 'right' }} onTouchTap={this.props.onClearFilter} />
-            <FlatButton label="Share" icon={<Share />} />
-            <FlatButton label="Save" icon={<Bookmark />} />
+            <FlatButton label={formatMessage(messages.clear)} secondary style={{ float: 'right' }} onTouchTap={this.props.onClearFilter} />
+            <FlatButton label={formatMessage(messages.share)} icon={<Share />} />
+            <FlatButton label={formatMessage(messages.save)} icon={<Bookmark />} />
           </CardActions>
         </Card>
       </div>
