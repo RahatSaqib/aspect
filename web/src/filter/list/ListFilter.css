@@ -2,11 +2,23 @@
   will-change: transform;
 }
 
+.Section {
+  padding: 0 0 25px 0;
+}
+
 .Section__Title {
+  text-transform: uppercase;
   margin: 0;
-  padding-top: 10px;
+  padding: 0;
+  font-size: .85rem;
+  color: rgba(0, 0, 0, 0.7);
 }
 
 .Section__Content {
-  padding: 0px 20px 5px;
+  padding: 0;
+}
+
+.Section__Control {
+  display: inline;
+  padding-right: 20px;
 }

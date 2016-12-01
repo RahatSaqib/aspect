@@ -12,6 +12,7 @@ import {
 // Material-UI
 import { Card, CardHeader, CardActions, CardText } from 'material-ui/Card'
 import FlatButton from 'material-ui/FlatButton'
+import Subheader from 'material-ui/Subheader'
 
 // Our own imports
 import FocusBlurTextField from '../../components/shared/FocusBlurTextField'
@@ -159,7 +160,7 @@ export class ListFilter extends PureComponent {
 
     return (
       <div className={styles.ListFilter}>
-        <Card expanded={expanded} onExpandChange={this.handleExpandChange}>
+        <Card expanded={true} onExpandChange={this.handleExpandChange}>
           <CardHeader
             subtitle={filterMessage}
             actAsExpander
@@ -170,14 +171,16 @@ export class ListFilter extends PureComponent {
               <section className={styles.Section}>
                 <h3 className={styles.Section__Title}>Date Range</h3>
                 <div className={styles.Section__Content}>
-                  <DateRangeSelector
-                    clearButtonTooltip="Clear"
-                    clearButtonStyle={{ verticalAlign: 'bottom' }}
-                    onChangeDate={this.handleChangeDate}
-                    minDate={filter.minDate}
-                    maxDate={filter.maxDate}
-                    autoOk
-                  />
+                  <div className={styles.Section__Control}>
+                    <DateRangeSelector
+                      clearButtonTooltip="Clear"
+                      clearButtonStyle={{ verticalAlign: 'bottom' }}
+                      onChangeDate={this.handleChangeDate}
+                      minDate={filter.minDate}
+                      maxDate={filter.maxDate}
+                      autoOk
+                    />
+                  </div>
                 </div>
               </section>
             )}
@@ -185,84 +188,120 @@ export class ListFilter extends PureComponent {
               <section className={styles.Section}>
                 <h3 className={styles.Section__Title}>Location</h3>
                 <div className={styles.Section__Content}>
-                  <CountrySelectField
-                    onChangeCountry={this.handleChangeCountry}
-                    countryId={this.props.filter.countryId}
-                    floatingLabelText="Country"
-                    style={{ verticalAlign: 'bottom' }}
-                  />
-                  <StateSelectField
-                    onChangeState={this.handleChangeState}
-                    countryId={this.props.filter.countryId}
-                    stateId={this.props.filter.stateId}
-                    floatingLabelText="State"
-                    style={{ verticalAlign: 'bottom' }}
-                  />
-                  <LgaSelectField
-                    onChangeLga={this.handleChangeLga}
-                    countryId={this.props.filter.countryId}
-                    stateId={this.props.filter.stateId}
-                    lgaId={this.props.filter.lgaId}
-                    floatingLabelText="Area"
-                    style={{ verticalAlign: 'bottom' }}
-                  />
+                  <div className={styles.Section__Control}>
+                    <CountrySelectField
+                      onChangeCountry={this.handleChangeCountry}
+                      countryId={this.props.filter.countryId}
+                      floatingLabelFixed
+                      hintText="Select Country..."
+                      floatingLabelText="Country"
+                      style={{ verticalAlign: 'bottom' }}
+                    />
+                  </div>
+                  <div className={styles.Section__Control}>
+                    <StateSelectField
+                      onChangeState={this.handleChangeState}
+                      countryId={this.props.filter.countryId}
+                      stateId={this.props.filter.stateId}
+                      floatingLabelFixed
+                      hintText="Select State..."
+                      floatingLabelText="State"
+                      style={{ verticalAlign: 'bottom' }}
+                    />
+                  </div>
+                  <div className={styles.Section__Control}>
+                    <LgaSelectField
+                      onChangeLga={this.handleChangeLga}
+                      countryId={this.props.filter.countryId}
+                      stateId={this.props.filter.stateId}
+                      lgaId={this.props.filter.lgaId}
+                      floatingLabelFixed
+                      hintText="Select Area..."
+                      floatingLabelText="Area"
+                      style={{ verticalAlign: 'bottom' }}
+                    />
+                  </div>
                 </div>
               </section>
             )}
             {hasDataSection && (
               <section className={styles.Section}>
-                <h3 className={styles.Section__Title}>Data</h3>
+                <h3 className={styles.Section__Title}>Other Filters</h3>
                 <div className={styles.Section__Content}>
                   {config.assayAndResultCategory && (
-                    <AssaySelectField
-                      value={filter.assayId}
-                      onAssayChange={this.handleAssayIdChange}
-                      floatingLabelText="Assay"
-                      style={{ verticalAlign: 'bottom' }}
-                    />
+                    <div className={styles.Section__Control}>
+                      <AssaySelectField
+                        value={filter.assayId}
+                        onAssayChange={this.handleAssayIdChange}
+                        floatingLabelFixed
+                        hintText="Select Assay..."
+                        floatingLabelText="Assay"
+                        style={{ verticalAlign: 'bottom' }}
+                      />
+                    </div>
                   )}
                   {config.assayAndResultCategory && (
-                    <ResultCategorySelectField
-                      disabled={!filter.assayId}
-                      assayId={filter.assayId}
-                      value={filter.resultCategoryId}
-                      onResultCategoryChange={this.handleResultCategoryChange}
-                      floatingLabelText="Result"
-                      style={{ verticalAlign: 'bottom' }}
-                    />
+                    <div className={styles.Section__Control}>
+                      <ResultCategorySelectField
+                        disabled={!filter.assayId}
+                        assayId={filter.assayId}
+                        value={filter.resultCategoryId}
+                        onResultCategoryChange={this.handleResultCategoryChange}
+                        floatingLabelFixed
+                        hintText="Select Result..."
+                        floatingLabelText="Result"
+                        style={{ verticalAlign: 'bottom' }}
+                      />
+                    </div>
                   )}
                   {config.consumable && (
-                    <ConsumableSelectField
-                      value={filter.consumableId}
-                      onConsumableChange={this.handleConsumableIdChange}
-                      floatingLabelText="Consumable"
-                      style={{ verticalAlign: 'bottom' }}
-                      autoWidth
-                    />
+                    <div className={styles.Section__Control}>
+                      <ConsumableSelectField
+                        value={filter.consumableId}
+                        onConsumableChange={this.handleConsumableIdChange}
+                        floatingLabelFixed
+                        hintText="Select Consumable..."
+                        floatingLabelText="Consumable"
+                        style={{ verticalAlign: 'bottom' }}
+                        autoWidth
+                      />
+                    </div>
                   )}
                   {config.deviceName && (
-                    <FocusBlurTextField
-                      name="deviceName"
-                      value={filter.deviceName || ''}
-                      onCommitValue={this.handleTextFieldCommitValue}
-                      floatingLabelText="Device name"
-                    />
+                    <div className={styles.Section__Control}>
+                      <FocusBlurTextField
+                        name="deviceName"
+                        value={filter.deviceName || ''}
+                        onCommitValue={this.handleTextFieldCommitValue}
+                        floatingLabelFixed
+                        hintText="Enter device name..."
+                        floatingLabelText="Device name"
+                      />
+                    </div>
                   )}
                   {config.siteName && (
-                    <FocusBlurTextField
-                      name="siteName"
-                      value={filter.siteName || ''}
-                      onCommitValue={this.handleTextFieldCommitValue}
-                      floatingLabelText="Site name"
-                    />
+                    <div className={styles.Section__Control}>
+                      <FocusBlurTextField
+                        name="siteName"
+                        value={filter.siteName || ''}
+                        onCommitValue={this.handleTextFieldCommitValue}
+                        floatingLabelFixed
+                        hintText="Enter site name..."
+                        floatingLabelText="Site name"
+                      />
+                    </div>
                   )}
                   {config.contactNameOrEmail && (
-                    <FocusBlurTextField
-                      name="contactNameOrEmail"
-                      value={filter.contactNameOrEmail || ''}
-                      onCommitValue={this.handleTextFieldCommitValue}
-                      floatingLabelText="Contact name/email"
-                    />
+                    <div className={styles.Section__Control}>
+                      <FocusBlurTextField
+                        name="contactNameOrEmail"
+                        value={filter.contactNameOrEmail || ''}
+                        onCommitValue={this.handleTextFieldCommitValue}
+                        floatingLabelFixed
+                        hintText="Enter contact name/email..."
+                        floatingLabelText="Contact name/email"
+                      />
+                    </div>
                   )}
                 </div>
               </section>
