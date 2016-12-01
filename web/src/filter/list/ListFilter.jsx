@@ -4,6 +4,10 @@ import Immutable from 'immutable'
 import React, { PureComponent, PropTypes } from 'react'
 import { bindActionCreators } from 'redux'
 import { connect } from 'react-redux'
+import {
+  injectIntl,
+  defineMessages
+} from 'react-intl'
 
 // Material-UI
 import { Card, CardHeader, CardActions, CardText } from 'material-ui/Card'
@@ -22,7 +26,15 @@ import {
   clearListFilter,
   changeListFilter
 } from '../FilterRedux'
+
 import styles from './ListFilter.css'
+
+const messages = defineMessages({
+  noFilters: {
+    id: 'shared.ListFilter.noFilters',
+    defaultMessage: 'No filters set - showing all'
+  }
+})
 
 export class ListFilter extends PureComponent {
 
@@ -42,6 +54,7 @@ export class ListFilter extends PureComponent {
       contactNameOrEmail: PropTypes.string,
       consumableId: PropTypes.string
     }).isRequired, // connect
+    intl: PropTypes.object.isRequired,
     defaultExpanded: PropTypes.bool,
     config: PropTypes.shape({
       assayAndResultCategory: PropTypes.bool,
@@ -51,7 +64,8 @@ export class ListFilter extends PureComponent {
       siteName: PropTypes.bool,
       contactNameOrEmail: PropTypes.bool,
       consumable: PropTypes.bool
-    }).isRequired
+    }).isRequired,
+    subject: PropTypes.string
   }
 
   state = {
@@ -134,9 +148,10 @@ export class ListFilter extends PureComponent {
   }
 
   render() {
-    const { filter, config } = this.props
+    const { filter, config, subject, intl: { formatMessage } } = this.props
     const { expanded } = this.state
-    const filterMessage = _.every(filter, f => !f) ? 'No Filters Set' : `\`${JSON.stringify(filter)}\``
+    const noFiltersMessage = `${formatMessage(messages.noFilters)} ${subject ? subject.toLowerCase() : ''}`
+    const filterMessage = _.every(filter, f => !f) ? noFiltersMessage : `\`${JSON.stringify(filter)}\``
     const hasDataSection = (
       config.assay || config.deviceName || config.result ||
       config.siteName || config.contactNameOrEmail || config.consumable
@@ -279,6 +294,7 @@ function mapDispatchToProps(dispatch) {
 }
 
 export const ListFilterContainer = _.flowRight(
+  injectIntl,
   connect(mapStateToProps, mapDispatchToProps)
 )(ListFilter)
 
