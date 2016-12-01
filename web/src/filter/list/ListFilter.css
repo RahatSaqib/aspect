@@ -2,22 +2,6 @@
   will-change: transform;
 }
 
-.Header {
-  display: flex;
-}
-
-.Header__Message {
-  flex-grow: 1;
-}
-
-.Header__Toggle {
-  flex-grow: 0;
-}
-
-.Section {
-
-}
-
 .Section__Title {
   margin: 0;
   padding-top: 10px;

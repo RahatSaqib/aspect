@@ -6,8 +6,7 @@ import { bindActionCreators } from 'redux'
 import { connect } from 'react-redux'
 
 // Material-UI
-import { Card, CardActions, CardText } from 'material-ui/Card'
-import Toggle from 'material-ui/Toggle'
+import { Card, CardHeader, CardActions, CardText } from 'material-ui/Card'
 import FlatButton from 'material-ui/FlatButton'
 
 // Our own imports
@@ -137,7 +136,7 @@ export class ListFilter extends PureComponent {
   render() {
     const { filter, config } = this.props
     const { expanded } = this.state
-    const filterMessage = `\`${JSON.stringify(filter)}\``
+    const filterMessage = _.every(filter, f => !f) ? 'No Filters Set' : `\`${JSON.stringify(filter)}\``
     const hasDataSection = (
       config.assay || config.deviceName || config.result ||
       config.siteName || config.contactNameOrEmail || config.consumable
@@ -146,17 +145,11 @@ export class ListFilter extends PureComponent {
     return (
       <div className={styles.ListFilter}>
         <Card expanded={expanded} onExpandChange={this.handleExpandChange}>
-          <CardText>
-            <div className={styles.Header}>
-              <div className={styles.Header__Message}>{filterMessage}</div>
-              <div className={styles.Header__Toggle}>
-                <Toggle
-                  toggled={expanded}
-                  onToggle={this.handleToggle}
-                />
-              </div>
-            </div>
-          </CardText>
+          <CardHeader
+            subtitle={filterMessage}
+            actAsExpander
+            showExpandableButton
+          />
           <CardText expandable>
             {config.date && (
               <section className={styles.Section}>
