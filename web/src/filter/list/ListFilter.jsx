@@ -12,7 +12,8 @@ import {
 // Material-UI
 import { Card, CardHeader, CardActions, CardText } from 'material-ui/Card'
 import FlatButton from 'material-ui/FlatButton'
-import Subheader from 'material-ui/Subheader'
+import Share from 'material-ui/svg-icons/social/share'
+import Bookmark from 'material-ui/svg-icons/action/bookmark-border'
 
 // Our own imports
 import FocusBlurTextField from '../../components/shared/FocusBlurTextField'
@@ -160,7 +161,7 @@ export class ListFilter extends PureComponent {
 
     return (
       <div className={styles.ListFilter}>
-        <Card expanded={true} onExpandChange={this.handleExpandChange}>
+        <Card expanded={expanded} onExpandChange={this.handleExpandChange}>
           <CardHeader
             subtitle={filterMessage}
             actAsExpander
@@ -308,9 +309,10 @@ export class ListFilter extends PureComponent {
             )}
           </CardText>
           <CardActions expandable>
-            <FlatButton label="Share" />
-            <FlatButton label="Save" />
-            <FlatButton label="Clear" style={{ float: 'right' }} onTouchTap={this.props.onClearFilter} />
+            <FlatButton label="Share" icon={<Share />} />
+            <FlatButton label="Save" icon={<Bookmark />} />
+            <FlatButton label="OK" primary style={{ float: 'right' }} onTouchTap={() => this.handleExpandChange(false)} />
+            <FlatButton label="Clear" secondary style={{ float: 'right' }} onTouchTap={this.props.onClearFilter} />
           </CardActions>
         </Card>
       </div>
