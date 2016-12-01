@@ -3,6 +3,7 @@ const _ = require('lodash')
 const { transact, knex } = require('../db')
 const { getExternalId } = require('./common')
 const { addConstraints } = require('../auth/constraints')
+const { consumeInventoryForResult } = require('../inventory/service')
 
 function* addResult(context) {
   const response = yield transact(function* (knex) {
@@ -216,90 +217,10 @@ function* addResult(context) {
       }, result))
 
       // Update Inventory Levels at Site
-      // TODO: Revisit once permissions system allows the use of partnerId only in addConstraints
-      const consumablesAtSite = yield knex('ConsumableAssay as ca')
-        .join('Consumable as c', 'ca.consumableId', 'c.id')
-        .leftJoin('ConsumableAtSite as cas', function () {
-          this.on('cas.consumableId', 'ca.consumableId')
-            .andOn('cas.siteId', knex.raw(site.id))
-        })
-        .where({ 'ca.assayId': assay.id })
-        .andWhere(function () {
-          this.whereNull('c.partnerId')
-          if (dataConstraints.partner && dataConstraints.partner.id) {
-            this.orWhere({ 'c.partnerId': dataConstraints.partner.id })
-          }
-        })
-        .select('cas.id', 'ca.consumableId', 'ca.quantity', 'cas.lotNumber', 'cas.expiresOn')
-
-      const { testRunConsumableReasonId } = yield knex('ConsumableReason as cr')
-        .where({ 'cr.name': 'Test Conducted', 'cr.decrease': 1 })
-        .first('cr.id as testRunConsumableReasonId')
-
-      // Get assay consumables where lot number and expiration date match an inventory item record
-      const matchingConsumablesByLotAndExpiration =
-        _.filter(consumablesAtSite, consumableAtSite =>
-          _.some(payload.consumable, consumable => consumable.lot &&
-          consumable.lot === consumableAtSite.lotNumber && consumable.expirationDate &&
-          consumable.expirationDate.toJSON() === consumableAtSite.expiresOn.toJSON()))
-
-      // Get remaining assay consumables where expiration date matches an inventory item record
-      const matchingConsumablesByExpirationOnly = _.filter(consumablesAtSite, consumableAtSite =>
-      !_.map(matchingConsumablesByLotAndExpiration, 'consumableId')
-        .includes(consumableAtSite.consumableId) &&
-      _.some(payload.consumable, consumable => consumable.expirationDate &&
-      consumable.expirationDate.toJSON() === consumableAtSite.expiresOn.toJSON()))
-
-      // Get remaining assay consumables where lot number matches an inventory item record
-      const matchingConsumablesByLotNumberOnly = _.filter(consumablesAtSite, consumableAtSite =>
-      !_.map(matchingConsumablesByLotAndExpiration, 'consumableId')
-        .includes(consumableAtSite.consumableId) &&
-      !_.map(matchingConsumablesByExpirationOnly, 'consumableId')
-        .includes(consumableAtSite.consumableId) &&
-      _.some(payload.consumable, consumable => consumable.lot &&
-      consumable.lot === consumableAtSite.lotNumber &&
-      !_.isNull(consumable.expirationDate)))
-
-      // Get other consumables
-      const otherConsumables = _.map(_.filter(consumablesAtSite, consumableAtSite =>
-      !_.map(matchingConsumablesByLotAndExpiration, 'consumableId')
-        .includes(consumableAtSite.consumableId) &&
-      !_.map(matchingConsumablesByExpirationOnly, 'consumableId')
-        .includes(consumableAtSite.consumableId) &&
-      !_.map(matchingConsumablesByLotNumberOnly, 'consumableId')
-        .includes(consumableAtSite.consumableId)), (consumable) => {
-        const expiresOnString = result.consumableExpirationDate
-        return {
-          id: null,
-          consumableId: consumable.consumableId,
-          quantity: consumable.quantity,
-          lotNumber: result.consumableLot,
-          expiresOn: expiresOnString ? new Date(expiresOnString) : null
-        }
-      })
-
-      const matchingConsumablesAtSite = [...matchingConsumablesByLotAndExpiration,
-        ...matchingConsumablesByExpirationOnly, ...matchingConsumablesByLotNumberOnly,
-        ...otherConsumables]
-
-      yield knex('ConsumableAdjustmentLog').insert(_.map(matchingConsumablesAtSite,
-        (consumableAtSite) => {
-          const consumableAdjustmentLog = {
-            consumableAtSiteId: consumableAtSite.id,
-            consumableId: consumableAtSite.consumableId,
-            siteId: site.id,
-            consumableReasonId: testRunConsumableReasonId,
-            resultId,
-            lotNumber: consumableAtSite.lotNumber,
-            expiresOn: consumableAtSite.expiresOn,
-            quantity: consumableAtSite.quantity,
-            createdOn: now
-          }
-          return consumableAdjustmentLog
-        }))
-      yield Promise.all(_.map(matchingConsumablesAtSite, matchingConsumableAtSite => knex('ConsumableAtSite')
-        .where({ id: matchingConsumableAtSite.id })
-        .update('quantityOnHand', knex.raw(`quantityOnHand - ${matchingConsumableAtSite.quantity}`))))
+      const partnerId = dataConstraints.partner ? dataConstraints.partner.id : undefined
+      const consumablesInResultData = _.isEmpty(payload.consumable) ? [] : payload.consumable
+      yield* consumeInventoryForResult(
+        resultId, assay.id, site.id, consumablesInResultData, partnerId, knex)
     }
 
     context.addResultId(resultId)

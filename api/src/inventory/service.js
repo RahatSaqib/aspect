@@ -11,6 +11,7 @@ const {
   getConstraints,
   addConstraints
 } = require('../auth/constraints')
+const { selectAssayConsumables } = require('../consumable/assayConsumableService')
 
 const CONSUMABLES_AT_SITE_SELECT_LIST_FIELDS = [
   'cas.id', 'cas.consumableId', 'cas.siteId', 'cas.expiresOn', 'cas.quantityOnHand',
@@ -40,6 +41,105 @@ const CONSUMABLES_AT_SITE_FILTER_FIELDS = {
 }
 
 const CONSUMABLES_AT_SITE_DATA_CONSTRAINT_ALIASES = { country: 'co', state: 'st', lga: 'l', site: 's' }
+
+function selectConsumablesAtSite(siteId, knex) {
+  return knex('ConsumableAtSite')
+    .where({ siteId })
+    .select()
+}
+
+function compareConsumableInResultWithConsumableAtSite(consumableInResult,
+  consumableOnHand, mustMatchExpirationDate, mustMatchLotNumber) {
+  const resultExpirationDate = consumableInResult.expirationDate ?
+    new Date(consumableInResult.expirationDate) : null
+  const onHandExpirationDate = consumableOnHand.expiresOn
+  const resultLotNumber = consumableInResult.lot ? consumableInResult.lot : null
+  const onHandLotNumber = consumableOnHand.lotNumber ? consumableOnHand.lotNumber : null
+
+  return (_.isEqual(resultExpirationDate, onHandExpirationDate) &&
+    (!mustMatchLotNumber || _.isEqual(resultLotNumber, onHandLotNumber))) ||
+    (!mustMatchExpirationDate && _.isEqual(resultLotNumber, onHandLotNumber))
+}
+
+function consumableAtSiteExistsInResultData(consumablesInResultData,
+  consumableOnHand, mustMatchExpirationDate, mustMatchLotNumber) {
+  return _.some(consumablesInResultData,
+    consumableInResultData =>
+      compareConsumableInResultWithConsumableAtSite(
+        consumableInResultData, consumableOnHand, mustMatchExpirationDate, mustMatchLotNumber))
+}
+
+function findConsumableAtSiteMatchingConsumableInResultData(
+  consumablesInResultData, consumablesAtSite) {
+  return _.find(consumablesAtSite,
+    consumableOnHand =>
+    consumableAtSiteExistsInResultData(
+      consumablesInResultData, consumableOnHand, true, true)) ||
+    _.find(consumablesAtSite,
+      consumableOnHand =>
+      consumableAtSiteExistsInResultData(
+        consumablesInResultData, consumableOnHand, true)) ||
+    _.find(consumablesAtSite,
+      consumableOnHand =>
+      consumableAtSiteExistsInResultData(
+        consumablesInResultData, consumableOnHand))
+}
+
+function* consumeInventoryForResult(
+  resultId, assayId, siteId, consumablesInResultData, partnerId, knex) {
+  const now = new Date()
+  const assayConsumables = yield selectAssayConsumables(knex, partnerId, assayId)
+  const consumablesOnHandAtSite = yield selectConsumablesAtSite(siteId, knex)
+  const { testRunConsumableReasonId } = yield knex('ConsumableReason as cr')
+    .where({ 'cr.name': 'Test Conducted', 'cr.decrease': 1 })
+    .first('cr.id as testRunConsumableReasonId')
+
+  const firstUnknownConsumableInResult = _.find(consumablesInResultData,
+      consumableInResultData => !_.some(consumablesOnHandAtSite,
+        consumableOnHand =>
+          !compareConsumableInResultWithConsumableAtSite(
+            consumableInResultData, consumableOnHand))) ||
+    _.isEmpty(consumablesInResultData) ? {
+      lot: null,
+      expirationDate: null,
+      serial: null
+    } : consumablesInResultData[0]
+
+  for (const assayConsumable of assayConsumables) {
+    // Find Inventory on hand where lot number and expiry date match
+    const matchingConsumablesOnHand = _.filter(consumablesOnHandAtSite, {
+      consumableId: assayConsumable.consumableId
+    })
+    const matchingInventoryOnHand =
+      findConsumableAtSiteMatchingConsumableInResultData(
+        consumablesInResultData, matchingConsumablesOnHand) ||
+        {
+          id: null,
+          lotNumber: firstUnknownConsumableInResult.lot,
+          expiresOn: firstUnknownConsumableInResult.expirationDate ?
+            new Date(firstUnknownConsumableInResult.expirationDate) : null
+        }
+    yield knex('ConsumableAdjustmentLog').insert({
+      consumableAtSiteId: matchingInventoryOnHand.id,
+      consumableId: assayConsumable.consumableId,
+      siteId,
+      consumableReasonId: testRunConsumableReasonId,
+      resultId,
+      lotNumber: matchingInventoryOnHand.lotNumber,
+      expiresOn: matchingInventoryOnHand.expiresOn,
+      quantity: assayConsumable.quantity,
+      createdOn: now
+    })
+    if (matchingInventoryOnHand.id) {
+      yield knex('ConsumableAtSite')
+        .where({ id: matchingInventoryOnHand.id })
+        .update({
+          quantityOnHand: knex.raw(`quantityOnHand - ${assayConsumable.quantity}`),
+          updatedOn: now
+        })
+    }
+  }
+}
 
 function* listConsumableAtSites(request) {
   const { auth } = request
@@ -137,5 +237,6 @@ function* listConsumablesAtSitesGroupedBySite(request) {
 
 module.exports = {
   listConsumableAtSites,
-  listConsumablesAtSitesGroupedBySite
+  listConsumablesAtSitesGroupedBySite,
+  consumeInventoryForResult
 }

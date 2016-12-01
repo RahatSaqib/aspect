@@ -1293,11 +1293,13 @@ describe('Device Result API routes', () => {
           .andWhere('cal.lotNumber', resultDetails.lotNumber)
           .andWhere('cal.expiresOn', new Date(resultDetails.expirationDate))
           .first('cal.id', 'cal.consumableAtSiteId', 'cr.name as consumableReasonName',
-            'cal.resultId', 'cal.quantity', 'cal.createdOn')
+            'cal.resultId', 'cal.lotNumber', 'cal.expiresOn', 'cal.quantity', 'cal.createdOn')
 
         assert.isNull(inventoryConsumptionLog.consumableAtSiteId)
         assert.equal(inventoryConsumptionLog.consumableReasonName, 'Test Conducted')
         assert.isOk(inventoryConsumptionLog.resultId)
+        assert.equal(inventoryConsumptionLog.lotNumber, resultDetails.lotNumber)
+        assert.equal(inventoryConsumptionLog.expiresOn.toJSON(), resultDetails.expirationDate)
         assert.equal(inventoryConsumptionLog.quantity, inventoryConsumedByTest)
 
         const { count: otherInventoryConsumptionLogsForThisTest } = yield knex('ConsumableAdjustmentLog')
