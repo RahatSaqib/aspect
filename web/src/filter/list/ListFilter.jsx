@@ -168,26 +168,9 @@ export class ListFilter extends PureComponent {
             showExpandableButton
           />
           <CardText expandable>
-            {config.date && (
-              <section className={styles.Section}>
-                <h3 className={styles.Section__Title}>Date Range</h3>
-                <div className={styles.Section__Content}>
-                  <div className={styles.Section__Control}>
-                    <DateRangeSelector
-                      clearButtonTooltip="Clear"
-                      clearButtonStyle={{ verticalAlign: 'bottom' }}
-                      onChangeDate={this.handleChangeDate}
-                      minDate={filter.minDate}
-                      maxDate={filter.maxDate}
-                      autoOk
-                    />
-                  </div>
-                </div>
-              </section>
-            )}
             {config.geography && (
               <section className={styles.Section}>
-                <h3 className={styles.Section__Title}>Location</h3>
+                <h3 className={styles.Section__Title}>Set Filters</h3>
                 <div className={styles.Section__Content}>
                   <div className={styles.Section__Control}>
                     <CountrySelectField
@@ -227,7 +210,6 @@ export class ListFilter extends PureComponent {
             )}
             {hasDataSection && (
               <section className={styles.Section}>
-                <h3 className={styles.Section__Title}>Other Filters</h3>
                 <div className={styles.Section__Content}>
                   {config.assayAndResultCategory && (
                     <div className={styles.Section__Control}>
@@ -307,12 +289,28 @@ export class ListFilter extends PureComponent {
                 </div>
               </section>
             )}
+            {config.date && (
+              <section className={styles.Section}>
+                <div className={styles.Section__Content}>
+                  <div className={styles.Section__Control}>
+                    <DateRangeSelector
+                      clearButtonTooltip="Clear"
+                      clearButtonStyle={{ verticalAlign: 'bottom' }}
+                      onChangeDate={this.handleChangeDate}
+                      minDate={filter.minDate}
+                      maxDate={filter.maxDate}
+                      autoOk
+                    />
+                  </div>
+                </div>
+              </section>
+            )}
           </CardText>
           <CardActions expandable>
-            <FlatButton label="Share" icon={<Share />} />
-            <FlatButton label="Save" icon={<Bookmark />} />
             <FlatButton label="OK" primary style={{ float: 'right' }} onTouchTap={() => this.handleExpandChange(false)} />
             <FlatButton label="Clear" secondary style={{ float: 'right' }} onTouchTap={this.props.onClearFilter} />
+            <FlatButton label="Share" icon={<Share />} />
+            <FlatButton label="Save" icon={<Bookmark />} />
           </CardActions>
         </Card>
       </div>
