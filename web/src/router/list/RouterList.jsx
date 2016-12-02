@@ -19,31 +19,31 @@ import styles from './RouterList.css'
 
 const messages = defineMessages({
   devicesTitle: {
-    id: 'pages.DeviceList.devicesTitle',
+    id: 'pages.RouterList.devicesTitle',
     defaultMessage: 'Devices'
   },
   routersTitle: {
-    id: 'pages.DeviceList.routersTitle',
+    id: 'pages.RouterList.routersTitle',
     defaultMessage: 'Routers'
   },
   deviceName: {
-    id: 'pages.DeviceList.deviceName',
+    id: 'pages.RouterList.deviceName',
     defaultMessage: 'Device Name'
   },
   shortName: { // FIXME: unused
-    id: 'pages.DeviceList.shortName',
+    id: 'pages.RouterList.shortName',
     defaultMessage: 'Short Name'
   },
   status: {
-    id: 'pages.DeviceList.status',
+    id: 'pages.RouterList.status',
     defaultMessage: 'Status'
   },
   reportingFor: {
-    id: 'pages.DeviceList.reportingFor',
+    id: 'pages.RouterList.reportingFor',
     defaultMessage: 'Reporting For'
   },
   lastSeen: {
-    id: 'pages.DeviceList.lastSeen',
+    id: 'pages.RouterList.lastSeen',
     defaultMessage: 'Last Seen'
   }
 })
