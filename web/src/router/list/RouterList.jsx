@@ -22,8 +22,8 @@ const messages = defineMessages({
     id: 'pages.RouterList.routersTitle',
     defaultMessage: 'Routers'
   },
-  deviceName: {
-    id: 'pages.RouterList.deviceName',
+  routerName: {
+    id: 'pages.RouterList.routerName',
     defaultMessage: 'Device Name'
   },
   status: {
@@ -97,15 +97,6 @@ export class RouterList extends PureComponent {
     }
   }
 
-  componentDidUpdate(prevProps) {
-    const prevDeviceConfigRoute = this.getDeviceConfigRoute(prevProps)
-    const deviceConfigRoute = this.getDeviceConfigRoute()
-    // When switching between routers/devices, re-fetch API
-    if (prevDeviceConfigRoute !== deviceConfigRoute) {
-      this.props.setPageTitle(this.getFormattedTitle())
-    }
-  }
-
   getDeviceConfigRoute({ routes } = this.props) {
     return _.find(routes, r => r.deviceConfig)
   }
@@ -147,7 +138,7 @@ export class RouterList extends PureComponent {
           table={this.props.table}
           columns={[
             { db: 'name',
-              title: formatMessage(messages.deviceName),
+              title: formatMessage(messages.routerName),
               extraProps: { style: { width: DEVICE_TABLE_NAME_COLUMN_WIDTH } } },
             { db: 'status',
               title: formatMessage(messages.status),
