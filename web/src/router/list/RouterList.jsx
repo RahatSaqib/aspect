@@ -40,9 +40,9 @@ const messages = defineMessages({
   }
 })
 
-const DEVICE_TABLE_COLUMN_SPACING = 12
-const DEVICE_TABLE_NAME_COLUMN_WIDTH = '30%'
-const DEVICE_TABLE_STATUS_COLUMN_WIDTH = '15%'
+const ROUTER_TABLE_COLUMN_SPACING = 12
+const ROUTER_TABLE_NAME_COLUMN_WIDTH = '30%'
+const ROUTER_TABLE_STATUS_COLUMN_WIDTH = '15%'
 
 export class RouterList extends PureComponent {
 
@@ -74,12 +74,12 @@ export class RouterList extends PureComponent {
         tableHeaderColumn: {
           // Overrides the style used by <material-ui/Table/TableHeaderColumn /> in <DataTable />
           ...muiTheme.tableHeaderColumn,
-          spacing: DEVICE_TABLE_COLUMN_SPACING
+          spacing: ROUTER_TABLE_COLUMN_SPACING
         },
         tableRowColumn: {
           // Overrides the style used by <material-ui/Table/TableRowColumn /> in <DataTable />
           ...muiTheme.tableRowColumn,
-          spacing: DEVICE_TABLE_COLUMN_SPACING
+          spacing: ROUTER_TABLE_COLUMN_SPACING
         }
       }
     }
@@ -135,11 +135,11 @@ export class RouterList extends PureComponent {
           columns={[
             { db: 'name',
               title: formatMessage(messages.routerName),
-              extraProps: { style: { width: DEVICE_TABLE_NAME_COLUMN_WIDTH } } },
+              extraProps: { style: { width: ROUTER_TABLE_NAME_COLUMN_WIDTH } } },
             { db: 'status',
               title: formatMessage(messages.status),
               hideOnXs: true,
-              extraProps: { style: { width: DEVICE_TABLE_STATUS_COLUMN_WIDTH } } },
+              extraProps: { style: { width: ROUTER_TABLE_STATUS_COLUMN_WIDTH } } },
             { db: 'createdOn',
               title: formatMessage(messages.reportingFor),
               hideOnXs: true,
