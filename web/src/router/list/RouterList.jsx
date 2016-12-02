@@ -18,10 +18,6 @@ import DataTable from '../../components/shared/DataTable'
 import styles from './RouterList.css'
 
 const messages = defineMessages({
-  devicesTitle: {
-    id: 'pages.RouterList.devicesTitle',
-    defaultMessage: 'Devices'
-  },
   routersTitle: {
     id: 'pages.RouterList.routersTitle',
     defaultMessage: 'Routers'
@@ -29,10 +25,6 @@ const messages = defineMessages({
   deviceName: {
     id: 'pages.RouterList.deviceName',
     defaultMessage: 'Device Name'
-  },
-  shortName: { // FIXME: unused
-    id: 'pages.RouterList.shortName',
-    defaultMessage: 'Short Name'
   },
   status: {
     id: 'pages.RouterList.status',
