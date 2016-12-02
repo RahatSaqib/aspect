@@ -143,26 +143,6 @@ describe('LocationSelector Component', () => {
         dataSourceConfig: expectedSelectListDataSourceMappings
       })
     })
-
-    describe('selectState', () => {
-      it('should trigger fetchLgasForLocationSelector when value has been selected', () => {
-        props.selectedCountryId = 1
-        shallowRenderLocationSelector()
-
-        const stateSelect = LocationSelectorWrapper.findWhere(
-          selectInput => selectInput.type() === SelectInput &&
-          selectInput.props().name === props.stateIdFieldName)
-        const selectStateId = 2
-
-        stateSelect.simulate('change', undefined, undefined, selectStateId)
-
-        assert.isTrue(props.fetchLgasForLocationSelector.calledOnce)
-
-        stateSelect.simulate('change', undefined, undefined, undefined)
-
-        assert.isFalse(props.fetchLgasForLocationSelector.calledTwice)
-      })
-    })
   })
 
   describe('react-redux connect', () => {

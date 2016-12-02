@@ -26,7 +26,7 @@ export function getSelectedStateLgas(props) {
   return Immutable.List()
 }
 
-class LgaSelectField extends PureComponent {
+export class LgaSelectField extends PureComponent {
   static propTypes = {
     onChangeLga: PropTypes.func.isRequired,
     stateId: PropTypes.string,
