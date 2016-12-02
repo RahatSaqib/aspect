@@ -102,12 +102,8 @@ export class RouterList extends PureComponent {
   }
 
   getFormattedTitle() {
-    const deviceConfigRoute = this.getDeviceConfigRoute()
     const { intl } = this.props
     const { formatMessage } = intl
-    if (deviceConfigRoute.path === 'device') {
-      return formatMessage(messages.devicesTitle)
-    }
     return formatMessage(messages.routersTitle)
   }
 
