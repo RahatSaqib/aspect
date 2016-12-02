@@ -144,23 +144,6 @@ describe('LocationSelector Component', () => {
       })
     })
 
-    describe('selectCountry', () => {
-      it('should trigger fetchStatesForLocationSelector when value has been selected', () => {
-        const countrySelect = LocationSelectorWrapper.findWhere(
-          selectInput => selectInput.type() === SelectInput &&
-          selectInput.props().name === props.countryIdFieldName)
-        const selectCountryId = 1
-
-        countrySelect.simulate('change', undefined, undefined, selectCountryId)
-
-        assert.isTrue(props.fetchStatesForLocationSelector.calledOnce)
-
-        countrySelect.simulate('change', undefined, undefined, undefined)
-
-        assert.isFalse(props.fetchStatesForLocationSelector.calledTwice)
-      })
-    })
-
     describe('selectState', () => {
       it('should trigger fetchLgasForLocationSelector when value has been selected', () => {
         props.selectedCountryId = 1
