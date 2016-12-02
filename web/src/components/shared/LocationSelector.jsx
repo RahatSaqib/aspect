@@ -99,13 +99,17 @@ class LocationSelector extends React.PureComponent {
 
     const selectedCountry = getSelectedCountry({ countries, countryId: selectedCountryId })
     const statesLoading = !!selectedCountry && selectedCountry.children.loading
-    const statesDisabled = !selectedCountry || statesLoading || selectedCountry.children.items.isEmpty()
+    const statesDisabled = (!selectedCountry || statesLoading ||
+      selectedCountry.children.items.isEmpty()
+    )
 
-    const selectedState = getSelectedState({ countries, countryId: selectedCountryId, stateId: selectedStateId })
+    const selectedState = getSelectedState({
+      countries,
+      countryId: selectedCountryId,
+      stateId: selectedStateId
+    })
     const lgasLoading = !!selectedState && selectedState.children.loading
     const lgasDisabled = !selectedState || lgasLoading || selectedState.children.items.isEmpty()
-
-    console.log(`[LocationSelector] selectedCountryId:${selectedCountryId}, selectedStateId:${selectedStateId}`)
 
     return (
       <div>
@@ -151,7 +155,7 @@ class LocationSelector extends React.PureComponent {
 }
 
 function mapStateToProps(state, ownProps) {
-  const { formName, initialValues, countryIdFieldName, stateIdFieldName, lgaIdFieldName } = ownProps
+  const { formName, countryIdFieldName, stateIdFieldName, lgaIdFieldName } = ownProps
   const selectedCountryId = state.getIn(['form', formName, 'values', countryIdFieldName])
   const selectedStateId = state.getIn(['form', formName, 'values', stateIdFieldName])
   const selectedLgaId = state.getIn(['form', formName, 'values', lgaIdFieldName])
