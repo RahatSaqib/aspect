@@ -108,7 +108,7 @@ export class RouterList extends PureComponent {
   }
 
   handleItemIdSelection = (deviceId) => {
-    this.props.router.push(`/device/${deviceId}`)
+    this.props.router.push(`/router/${deviceId}`)
   }
 
   handleFetch = (...args) => {
