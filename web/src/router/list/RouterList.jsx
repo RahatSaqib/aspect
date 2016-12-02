@@ -44,7 +44,7 @@ const DEVICE_TABLE_COLUMN_SPACING = 12
 const DEVICE_TABLE_NAME_COLUMN_WIDTH = '30%'
 const DEVICE_TABLE_STATUS_COLUMN_WIDTH = '15%'
 
-export class DeviceList extends PureComponent {
+export class RouterList extends PureComponent {
 
   static propTypes = {
     setPageTitle: PropTypes.func.isRequired,
@@ -187,4 +187,4 @@ export const RouterListContainer = _.flowRight(
   injectIntl,
   withRouter,
   connect(mapStateToProps, mapDispatchToProps)
-)(DeviceList)
+)(RouterList)
