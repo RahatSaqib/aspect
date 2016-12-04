@@ -71,7 +71,7 @@ export class NotificationList extends PureComponent {
     return (
       <div className={styles.Content}>
         <Helmet title={formatMessage(messages.title)} titleTemplate="%s - Aspect" defaultTitle="Aspect" />
-        <ListFilterContainer />
+        <ListFilterContainer subject={formatMessage(messages.title)} />
         <DataTable
           handleFetch={this.handleFetch}
           items={this.props.items}

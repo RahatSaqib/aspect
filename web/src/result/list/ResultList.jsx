@@ -100,7 +100,7 @@ export class ResultList extends PureComponent {
     return (
       <div className={styles.Content}>
         <Helmet title={formatMessage(messages.title)} titleTemplate="%s - Aspect" defaultTitle="Aspect" />
-        <ListFilterContainer />
+        <ListFilterContainer subject={formatMessage(messages.title)} />
         <DataTable
           selectable
           handleItemIdSelection={this.handleItemIdSelection}

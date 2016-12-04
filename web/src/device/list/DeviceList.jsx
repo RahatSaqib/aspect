@@ -150,7 +150,7 @@ export class DeviceList extends PureComponent {
     return (
       <div className={styles.Content}>
         <Helmet title={this.getFormattedTitle()} titleTemplate="%s - Aspect" defaultTitle="Aspect" />
-        <ListFilterContainer />
+        <ListFilterContainer subject={this.getFormattedTitle()} />
         <DataTable
           selectable
           handleItemIdSelection={this.handleItemIdSelection}

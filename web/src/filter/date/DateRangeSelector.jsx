@@ -374,7 +374,6 @@ export class DateRangeSelector extends PureComponent {
         <div className={styles.DateRangeSelector__RangeModeSelector}>
           <FlatButton
             label={formatMessage(messages[this.state.rangeMode])}
-            primary
             labelPosition="before"
             icon={<ArrowDropDown />}
             onTouchTap={this.openRangeModeSelector}
