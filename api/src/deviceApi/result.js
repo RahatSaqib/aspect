@@ -233,9 +233,19 @@ function* listResults(context) {
     .leftJoin('Site as sos', 's.originSiteId', 'sos.id')
     .modify(addConstraints, dataConstraints, { device: 'd', sample: 's' })
 
-  if (query.updatedSince) {
-    resultQuery.where('r.updatedOn', '>=', query.updatedSince)
+  if (query.checkpoint) {
+    resultQuery.whereIn('r.id',
+      knex('AuditLog as al')
+        .innerJoin('DeviceLog as dl', 'al.id', '>=', 'dl.auditLogId')
+        .where({
+          'dl.deviceId': knex.raw('al.deviceId'),
+          'dl.checkpoint': query.checkpoint,
+          'al.tableName': 'Result'
+        })
+        .orderBy('al.id')
+        .distinct('al.tableId'))
   }
+  // TODO limit size of result list from Device API?
 
   // get total count for paging
   const getCount = resultQuery.clone()

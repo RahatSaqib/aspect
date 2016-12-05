@@ -11,7 +11,6 @@ const server = supertest.agent('http://localhost:8080')
 const assert = chai.assert
 
 const now = new Date()
-const updatedSince = `updatedSince=${new Date(+now - (1000 * 60 * 60)).toISOString()}`
 
 describe('Device Result API routes', () => {
   describe('admin GeneXpert result', () => {
@@ -23,7 +22,7 @@ describe('Device Result API routes', () => {
 
     const devicePath = '/device'
     const devicePostResultPath = '/device/result'
-    const deviceGetResultPath = `${devicePostResultPath}?${updatedSince}`
+    const deviceGetResultPath = devicePostResultPath
 
     afterEach(() => run(function* (knex) {
       // cleanup
@@ -47,11 +46,10 @@ describe('Device Result API routes', () => {
       const { deviceId } = sharedDevice
       const clientSingleResultPath = `${clientBasePath}/`
       const clientPath = `${clientBasePath}?deviceId=${deviceId}`
-
-      let initialDataLength = 0
       const clientAuth = `Bearer ${shared.token}`
       const deviceAuth = `Bearer ${sharedDevice.deviceToken}`
 
+      let initialDataLength = 0
       const [{ count: initialLogLength }] = yield knex('DeviceLogUpdate').count('id as count')
 
       yield server.get(clientPath)
@@ -68,7 +66,7 @@ describe('Device Result API routes', () => {
 
       yield server.post(devicePath)
         .set('Authorization', deviceAuth)
-        .send({ result: { data: { a: 'b' }, assay: { id: 'HivVl' } } })
+        .send({ checkpoint: 'ck1', result: { data: { a: 'b' }, assay: { id: 'HivVl' } } })
         .then((res) => {
           assert.equal(res.status, 200)
           assert.typeOf(res.body, 'Object')
@@ -131,7 +129,8 @@ describe('Device Result API routes', () => {
         .innerJoin('Result as r', 'r.id', 'dlu.resultId')
         .where({ externalId: resultIds[0] })
         .select('rawMessage', 'resultId')
-      assert.deepEqual(JSON.parse(log1Raw), { result: { data: { a: 'b' }, assay: { id: 'HivVl' } } })
+      assert.deepEqual(JSON.parse(log1Raw), {
+        checkpoint: 'ck1', result: { data: { a: 'b' }, assay: { id: 'HivVl' } } })
 
       yield server.get(clientSingleResultPath + resultId1)
         .set('Authorization', clientAuth)
@@ -143,7 +142,11 @@ describe('Device Result API routes', () => {
           assert.deepEqual(res.body.data.resultData, { a: 'b' })
         })
 
-      yield server.get(deviceGetResultPath)
+      const { checkpoint: checkpoint1 } = yield knex('DeviceLog')
+        .where({ deviceId }).orderBy('id', 'desc').first('checkpoint')
+      assert.equal(checkpoint1, 'ck1')
+
+      yield server.get(`${deviceGetResultPath}?checkpoint=ck1`)
         .set('Authorization', deviceAuth)
         .then((res) => {
           assert.equal(res.status, 200)
@@ -152,6 +155,7 @@ describe('Device Result API routes', () => {
           assert.typeOf(res.body.data, 'array')
           assert.property(res.body, 'total')
           assert.property(res.body, 'length')
+          assert.equal(res.body.length, 1)
 
           const lastResult = _.find(res.body.data, { id: resultIds[0] })
           assert.typeOf(lastResult, 'Object')
@@ -170,6 +174,7 @@ describe('Device Result API routes', () => {
           })
         })
 
+
       const result2SampleSite = yield knex('Site as s')
         .where('partnerId', result1SampleSite.partnerId)
         .where('id', '<>', result1.siteId)
@@ -178,6 +183,7 @@ describe('Device Result API routes', () => {
       yield server.post(devicePostResultPath)
         .set('Authorization', deviceAuth)
         .send({
+          checkpoint: 'ck2',
           data: { a: 'b', c: 2, d: false, e: { f: 'g' } },
           type: { id: 'Study' },
           workflow: { status: { id: 'Acknowledged' } },
@@ -241,6 +247,9 @@ describe('Device Result API routes', () => {
           resultIds.push(res.body.id)
         })
 
+      const { checkpoint: checkpoint2 } = yield knex('DeviceLog')
+        .where({ deviceId }).orderBy('id', 'desc').first('checkpoint')
+      assert.equal(checkpoint2, 'ck2')
       const [{ count: logLength2 }] = yield knex('DeviceLogUpdate').count('id as count')
       assert.equal(logLength2, initialLogLength + 2)
 
@@ -325,6 +334,7 @@ describe('Device Result API routes', () => {
         .innerJoin('Result as r', 'r.id', 'dlu.resultId')
         .where({ externalId: resultIds[1] }).select('rawMessage', 'resultId')
       assert.deepEqual(JSON.parse(log2Raw), {
+        checkpoint: 'ck2',
         data: { a: 'b', c: 2, d: false, e: { f: 'g' } },
         type: { id: 'Study' },
         workflow: { status: { id: 'Acknowledged' } },
@@ -392,7 +402,7 @@ describe('Device Result API routes', () => {
           assert.deepEqual(res.body.data.resultData, { a: 'b', c: 2, d: false, e: { f: 'g' } })
         })
 
-      yield server.get(deviceGetResultPath)
+      yield server.get(`${deviceGetResultPath}?checkpoint=ck1`)
         .set('Authorization', deviceAuth)
         .then((res) => {
           assert.equal(res.status, 200)
@@ -401,6 +411,19 @@ describe('Device Result API routes', () => {
           assert.typeOf(res.body.data, 'array')
           assert.property(res.body, 'total')
           assert.property(res.body, 'length')
+          assert.equal(res.body.length, 2)
+        })
+
+      yield server.get(`${deviceGetResultPath}?checkpoint=ck2`)
+        .set('Authorization', deviceAuth)
+        .then((res) => {
+          assert.equal(res.status, 200)
+          assert.typeOf(res.body, 'Object')
+          assert.property(res.body, 'data')
+          assert.typeOf(res.body.data, 'array')
+          assert.property(res.body, 'total')
+          assert.property(res.body, 'length')
+          assert.equal(res.body.length, 1)
 
           const lastResult = _.find(res.body.data, { id: resultIds[1] })
           assert.typeOf(lastResult, 'Object')
@@ -803,12 +826,10 @@ describe('Device Result API routes', () => {
           prevResults = results
         })
 
-      const [{ count: logLength1 }] = yield knex('DeviceLogUpdate').count('id as count')
-      assert.equal(logLength1, initialLogLength)
-
       yield server.post(devicePath)
         .set('Authorization', deviceAuth)
         .send({
+          checkpoint: 'ck123',
           configuration: { data: { a: 'b' } },
           operation: { data: { a: 'c' } },
           result: { data: { a: 'd' }, assay: { id: 'HivVl' } }
@@ -858,6 +879,8 @@ describe('Device Result API routes', () => {
         .then((res) => {
           assert.equal(res.status, 200)
           assert.typeOf(res.body, 'Object')
+          assert.property(res.body, 'checkpoint')
+          assert.equal(res.body.checkpoint, 'ck123')
           assert.property(res.body, 'lastPingOn')
           const pingOn = Date.parse(res.body.lastPingOn)
           assert.isAtLeast(+pingOn, +lastPingOn)
@@ -998,7 +1021,7 @@ describe('Device Result API routes', () => {
 
     it('should honor device role sample origin site', () => run(function* (knex) {
       const deviceAuth = `Bearer ${sharedDevice.deviceToken}`
-      const deviceGetResultPath = `${devicePostResultPath}?${updatedSince}`
+      const deviceGetResultPath = devicePostResultPath
 
       const [device1315, device1723] = yield knex('Device as d')
         .join('Site as s', 'd.siteId', 's.id')

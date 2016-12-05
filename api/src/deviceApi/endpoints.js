@@ -4,15 +4,18 @@ const { addDeviceData, getDeviceData, addDeviceOperation, addDeviceConfiguration
 const { addResult, listResults } = require('./result')
 
 const configurationPayload = {
+  checkpoint: Joi.string().allow('', null),
   data: Joi.object().required()
 }
 
 const operationPayload = {
+  checkpoint: Joi.string().allow('', null),
   data: Joi.object().required()
 }
 
 const resultPayload = {
   id: Joi.string().allow('', null),
+  checkpoint: Joi.string().allow('', null),
   assay: Joi.object().keys({
     id: Joi.string().required(),
     version: Joi.string().allow('', null)
@@ -103,6 +106,7 @@ module.exports = [
           allowUnknown: true
         },
         payload: Joi.object().keys({
+          checkpoint: Joi.string().allow('', null),
           configuration: Joi.object().keys(configurationPayload),
           operation: Joi.object().keys(configurationPayload),
           result: Joi.array().items(Joi.object().keys(resultPayload)).single(true)
@@ -143,7 +147,7 @@ module.exports = [
       notes: 'List of results for authenticated device',
       validate: {
         query: {
-          updatedSince: Joi.date().iso()
+          checkpoint: Joi.string()
         }
       }
     }

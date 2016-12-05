@@ -484,7 +484,7 @@ function* up(knex) {
     deviceLog.string('source').notNullable() // LIS listener, API...
     deviceLog.dateTime('createdOn').notNullable()
     deviceLog.string('senderIp').notNullable()
-    deviceLog.string('checkpoint')
+    deviceLog.string('checkpoint').index()
     deviceLog.integer('auditLogId').unsigned().notNullable()
           .index().references('id').inTable('AuditLog')
     deviceLog.text('rawMessage')
