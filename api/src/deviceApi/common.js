@@ -109,8 +109,12 @@ class DeviceApiContext {
     Object.assign(this, { deviceLogUpdates: [] }, props)
   }
 
-  withPayload(newPayload) {
-    return new DeviceApiContext(Object.assign({}, this, { payload: newPayload }))
+  withPayload(payload) {
+    return new DeviceApiContext(Object.assign({}, this, { payload }))
+  }
+
+  withQuery(query) {
+    return new DeviceApiContext(Object.assign({}, this, { query }))
   }
 
   addDeviceConfigurationId(id) {

@@ -1,5 +1,5 @@
 const { getExternalId } = require('./common')
-const { addResult } = require('./result')
+const { addResult, listResults } = require('./result')
 
 function* addDeviceData(context) {
   const response = {}
@@ -36,16 +36,22 @@ function* addDeviceData(context) {
 }
 
 function* getDeviceData(context) {
-  const { knex, device: { id: deviceId } } = context
+  const { knex, device: { id: deviceId }, query } = context
 
-  const deviceLog = yield knex('DeviceLog')
-    .where({ deviceId })
-    .orderBy('id', 'desc')
-    .first('checkpoint')
+  let checkpoint = query.checkpoint
+  if (!checkpoint) {
+    // use latest checkpoint if not specified in query string
+    const deviceLog = yield knex('DeviceLog')
+      .where({ deviceId })
+      .orderBy('id', 'desc')
+      .first('checkpoint')
+    checkpoint = deviceLog ? deviceLog.checkpoint : null
+  }
 
-  const checkpoint = deviceLog ? deviceLog.checkpoint : null
+  const result = yield* listResults(context.withQuery({ checkpoint }))
+  // TODO include configuration and operation at checkpoint
 
-  return { checkpoint }
+  return { checkpoint, result }
 }
 
 function* addDeviceConfiguration(context) {

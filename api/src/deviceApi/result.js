@@ -238,7 +238,7 @@ function* listResults(context) {
       knex('AuditLog as al')
         .innerJoin('DeviceLog as dl', 'al.id', '>=', 'dl.auditLogId')
         .where({
-          'dl.deviceId': knex.raw('al.deviceId'),
+          'dl.deviceId': context.device.id,
           'dl.checkpoint': query.checkpoint,
           'al.tableName': 'Result'
         })

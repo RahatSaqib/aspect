@@ -1,7 +1,7 @@
 const Joi = require('joi')
 const { deviceApiHandler } = require('./common')
 const { addDeviceData, getDeviceData, addDeviceOperation, addDeviceConfiguration } = require('./device')
-const { addResult, listResults } = require('./result')
+const { addResult } = require('./result')
 
 const configurationPayload = {
   checkpoint: Joi.string().allow('', null),
@@ -91,7 +91,12 @@ module.exports = [
     handler: deviceApiHandler(getDeviceData, {}),
     config: {
       notes: 'Get last updated timestamps and Ids for configuration, operation and result data',
-      description: 'Get device configuration, operation or result data for the authenticated device'
+      description: 'Get device configuration, operation or result data for the authenticated device',
+      validate: {
+        query: {
+          checkpoint: Joi.string()
+        }
+      }
     }
   },
   {
@@ -135,20 +140,6 @@ module.exports = [
       notes: 'Adds new device operational data for the authenticated device',
       validate: {
         payload: operationPayload
-      }
-    }
-  },
-  {
-    method: 'GET',
-    path: '/result',
-    handler: deviceApiHandler(listResults, {}),
-    config: {
-      description: 'Result List',
-      notes: 'List of results for authenticated device',
-      validate: {
-        query: {
-          checkpoint: Joi.string()
-        }
       }
     }
   },
