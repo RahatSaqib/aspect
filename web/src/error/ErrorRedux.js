@@ -7,12 +7,12 @@ export const types = {
 /*
  * ---------------- Action Creators -----------------
  */
-export function addError(title, desc, obj) {
+export function addError(title, message, error) {
   return {
     type: types.ADD_ERROR,
     title,
-    desc,
-    obj
+    message,
+    error
   }
 }
 
@@ -26,13 +26,13 @@ export function removeError() {
  */
 // this is a very simple error store right now.
 // it will only ever hold one error
-// could be easily extended to hold history of errors, dismissable, etc.
-// desc is a string, details in a js object that can have any shape
+// could be easily extended to hold history of errors, dismissible, etc.
+// message is a string, error is a js object that can have any shape
 const Error = Immutable.Record({
   hasError: false,
   title: null,
-  desc: null,
-  obj: null
+  message: null,
+  error: null
 })
 
 const initialState = new Error()
@@ -43,8 +43,8 @@ export default function errorReducer(state = initialState, action) {
       return state.merge({
         hasError: true,
         title: action.title,
-        desc: action.desc,
-        obj: action.obj
+        message: action.message,
+        error: action.error
       })
     case types.REMOVE_ERROR:
       return state.clear()

@@ -41,7 +41,7 @@ export class ErrorDisplay extends PureComponent {
         open={error.get('hasError')}
         onRequestClose={this.handleClose}
       >
-        {_.isString(error.get('desc')) ? error.get('desc') : JSON.stringify(error.get('desc'), null, '\t')}
+        {_.isString(error.get('message')) ? error.get('message') : JSON.stringify(error.get('message'), null, '\t')}
       </Dialog>
     )
   }
