@@ -247,12 +247,7 @@ function* listResults(context) {
   }
   // TODO limit size of result list from Device API?
 
-  // get total count for paging
-  const getCount = resultQuery.clone()
-    .count('r.id as count').first()
-
-  // get rows
-  const getItems = resultQuery.clone()
+  resultQuery
     .orderBy('updatedOn', 'desc')
     .select(
       'r.externalId as resultId', 'r.resultData', 'r.patientData',
@@ -268,10 +263,8 @@ function* listResults(context) {
     )
 
   // return result when both queries are finished
-  const [{ count: total }, items] = yield Promise.all([getCount, getItems])
-  const data = items.map(rowToResult)
-
-  return { ok: true, total, length: data.length, data }
+  const results = yield resultQuery
+  return results.map(rowToResult)
 }
 
 function rowToResult(row) {

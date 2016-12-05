@@ -150,14 +150,10 @@ describe('Device Result API routes', () => {
         .set('Authorization', deviceAuth)
         .then((res) => {
           assert.equal(res.status, 200)
-          assert.typeOf(res.body, 'Object')
-          assert.property(res.body, 'data')
-          assert.typeOf(res.body.data, 'array')
-          assert.property(res.body, 'total')
-          assert.property(res.body, 'length')
+          assert.typeOf(res.body, 'array')
           assert.equal(res.body.length, 1)
 
-          const lastResult = _.find(res.body.data, { id: resultIds[0] })
+          const lastResult = _.find(res.body, { id: resultIds[0] })
           assert.typeOf(lastResult, 'Object')
           assert.property(lastResult, 'endedOn')
           assert.property(lastResult.sample, 'id')
@@ -406,11 +402,7 @@ describe('Device Result API routes', () => {
         .set('Authorization', deviceAuth)
         .then((res) => {
           assert.equal(res.status, 200)
-          assert.typeOf(res.body, 'Object')
-          assert.property(res.body, 'data')
-          assert.typeOf(res.body.data, 'array')
-          assert.property(res.body, 'total')
-          assert.property(res.body, 'length')
+          assert.typeOf(res.body, 'array')
           assert.equal(res.body.length, 2)
         })
 
@@ -418,14 +410,10 @@ describe('Device Result API routes', () => {
         .set('Authorization', deviceAuth)
         .then((res) => {
           assert.equal(res.status, 200)
-          assert.typeOf(res.body, 'Object')
-          assert.property(res.body, 'data')
-          assert.typeOf(res.body.data, 'array')
-          assert.property(res.body, 'total')
-          assert.property(res.body, 'length')
+          assert.typeOf(res.body, 'array')
           assert.equal(res.body.length, 1)
 
-          const lastResult = _.find(res.body.data, { id: resultIds[1] })
+          const lastResult = _.find(res.body, { id: resultIds[1] })
           assert.typeOf(lastResult, 'Object')
           assert.property(lastResult, 'endedOn')
           assert.property(lastResult.sample, 'id')
@@ -808,12 +796,8 @@ describe('Device Result API routes', () => {
         .set('Authorization', deviceAuth)
         .then((res) => {
           assert.equal(res.status, 200)
-          assert.typeOf(res.body, 'Object')
-          assert.property(res.body, 'data')
-          assert.typeOf(res.body.data, 'array')
-          assert.property(res.body, 'total')
-          assert.property(res.body, 'length')
-          results = res.body.data
+          assert.typeOf(res.body, 'array')
+          results = res.body
           prevResults = results
         })
 
@@ -878,14 +862,13 @@ describe('Device Result API routes', () => {
         .set('Authorization', deviceAuth)
         .then((res) => {
           assert.equal(res.status, 200)
-          assert.typeOf(res.body, 'Object')
-          assert.typeOf(res.body.data, 'array')
+          assert.typeOf(res.body, 'array')
 
-          const lastResult = _.find(res.body.data, { id: resultIds[0] })
+          const lastResult = _.find(res.body, { id: resultIds[0] })
           assert.typeOf(lastResult, 'Object')
           assert.deepEqual(lastResult.data, { a: 'd' })
 
-          results = res.body.data
+          results = res.body
           assert.equal(results.length, prevResults.length + 1)
         })
 
@@ -941,13 +924,12 @@ describe('Device Result API routes', () => {
         .set('Authorization', deviceAuth)
         .then((res) => {
           assert.equal(res.status, 200)
-          assert.typeOf(res.body, 'Object')
-          assert.typeOf(res.body.data, 'array')
+          assert.typeOf(res.body, 'array')
 
-          const result1 = _.find(res.body.data, { id: resultIds[1] })
+          const result1 = _.find(res.body, { id: resultIds[1] })
           assert.typeOf(result1, 'Object')
 
-          results = res.body.data
+          results = res.body
           assert.equal(results.length, prevResults.length + 3)
         })
 
@@ -1047,13 +1029,9 @@ describe('Device Result API routes', () => {
         .set('Authorization', deviceAuth)
         .then((res) => {
           assert.equal(res.status, 200)
-          assert.typeOf(res.body, 'Object')
-          assert.property(res.body, 'data')
-          assert.typeOf(res.body.data, 'array')
-          assert.property(res.body, 'total')
-          assert.property(res.body, 'length')
+          assert.typeOf(res.body, 'array')
 
-          const lastResult = _.find(res.body.data, { id: resultIds[0] })
+          const lastResult = _.find(res.body, { id: resultIds[0] })
           assert.typeOf(lastResult, 'Object')
           assert.property(lastResult, 'endedOn')
           assert.property(lastResult.sample, 'id')
@@ -1078,13 +1056,9 @@ describe('Device Result API routes', () => {
         .set('Authorization', device1315Auth)
         .then((res) => {
           assert.equal(res.status, 200)
-          assert.typeOf(res.body, 'Object')
-          assert.property(res.body, 'data')
-          assert.typeOf(res.body.data, 'array')
-          assert.property(res.body, 'total')
-          assert.property(res.body, 'length')
+          assert.typeOf(res.body, 'array')
 
-          const lastResult = _.find(res.body.data, { id: resultIds[0] })
+          const lastResult = _.find(res.body, { id: resultIds[0] })
           assert.typeOf(lastResult, 'Object')
           assert.property(lastResult, 'endedOn')
           assert.property(lastResult.sample, 'id')
@@ -1109,11 +1083,7 @@ describe('Device Result API routes', () => {
         .set('Authorization', device1723Auth)
         .then((res) => {
           assert.equal(res.status, 200)
-          assert.typeOf(res.body, 'Object')
-          assert.property(res.body, 'data')
-          assert.typeOf(res.body.data, 'array')
-          assert.property(res.body, 'total')
-          assert.property(res.body, 'length')
+          assert.typeOf(res.body, 'array')
 
           const lastResult = _.find(res.body.data, { id: resultIds[0] })
           assert.typeOf(lastResult, 'undefined')
@@ -1142,13 +1112,9 @@ describe('Device Result API routes', () => {
         .set('Authorization', deviceAuth)
         .then((res) => {
           assert.equal(res.status, 200)
-          assert.typeOf(res.body, 'Object')
-          assert.property(res.body, 'data')
-          assert.typeOf(res.body.data, 'array')
-          assert.property(res.body, 'total')
-          assert.property(res.body, 'length')
+          assert.typeOf(res.body, 'array')
 
-          const lastResult = _.find(res.body.data, { id: resultIds[1] })
+          const lastResult = _.find(res.body, { id: resultIds[1] })
           assert.typeOf(lastResult, 'Object')
           assert.property(lastResult, 'endedOn')
           assert.property(lastResult.sample, 'id')
@@ -1173,13 +1139,9 @@ describe('Device Result API routes', () => {
         .set('Authorization', device1723Auth)
         .then((res) => {
           assert.equal(res.status, 200)
-          assert.typeOf(res.body, 'Object')
-          assert.property(res.body, 'data')
-          assert.typeOf(res.body.data, 'array')
-          assert.property(res.body, 'total')
-          assert.property(res.body, 'length')
+          assert.typeOf(res.body, 'array')
 
-          const lastResult = _.find(res.body.data, { id: resultIds[1] })
+          const lastResult = _.find(res.body, { id: resultIds[1] })
           assert.typeOf(lastResult, 'Object')
           assert.property(lastResult, 'endedOn')
           assert.property(lastResult.sample, 'id')
@@ -1204,13 +1166,9 @@ describe('Device Result API routes', () => {
         .set('Authorization', device1315Auth)
         .then((res) => {
           assert.equal(res.status, 200)
-          assert.typeOf(res.body, 'Object')
-          assert.property(res.body, 'data')
-          assert.typeOf(res.body.data, 'array')
-          assert.property(res.body, 'total')
-          assert.property(res.body, 'length')
+          assert.typeOf(res.body, 'array')
 
-          const lastResult = _.find(res.body.data, { id: resultIds[1] })
+          const lastResult = _.find(res.body, { id: resultIds[1] })
           assert.typeOf(lastResult, 'undefined')
         })
 
@@ -1240,13 +1198,9 @@ describe('Device Result API routes', () => {
         .set('Authorization', deviceAuth)
         .then((res) => {
           assert.equal(res.status, 200)
-          assert.typeOf(res.body, 'Object')
-          assert.property(res.body, 'data')
-          assert.typeOf(res.body.data, 'array')
-          assert.property(res.body, 'total')
-          assert.property(res.body, 'length')
+          assert.typeOf(res.body, 'array')
 
-          const lastResult = _.find(res.body.data, { id: resultIds[1] })
+          const lastResult = _.find(res.body, { id: resultIds[1] })
           assert.typeOf(lastResult, 'Object')
           assert.property(lastResult, 'endedOn')
           assert.property(lastResult.sample, 'id')
@@ -1271,13 +1225,9 @@ describe('Device Result API routes', () => {
         .set('Authorization', device1723Auth)
         .then((res) => {
           assert.equal(res.status, 200)
-          assert.typeOf(res.body, 'Object')
-          assert.property(res.body, 'data')
-          assert.typeOf(res.body.data, 'array')
-          assert.property(res.body, 'total')
-          assert.property(res.body, 'length')
+          assert.typeOf(res.body, 'array')
 
-          const lastResult = _.find(res.body.data, { id: resultIds[1] })
+          const lastResult = _.find(res.body, { id: resultIds[1] })
           assert.typeOf(lastResult, 'Object')
           assert.property(lastResult, 'endedOn')
           assert.property(lastResult.sample, 'id')
@@ -1302,13 +1252,9 @@ describe('Device Result API routes', () => {
         .set('Authorization', device1315Auth)
         .then((res) => {
           assert.equal(res.status, 200)
-          assert.typeOf(res.body, 'Object')
-          assert.property(res.body, 'data')
-          assert.typeOf(res.body.data, 'array')
-          assert.property(res.body, 'total')
-          assert.property(res.body, 'length')
+          assert.typeOf(res.body, 'array')
 
-          const lastResult = _.find(res.body.data, { id: resultIds[1] })
+          const lastResult = _.find(res.body, { id: resultIds[1] })
           assert.typeOf(lastResult, 'undefined')
         })
     }))
