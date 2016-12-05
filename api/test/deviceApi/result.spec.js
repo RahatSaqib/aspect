@@ -787,16 +787,11 @@ describe('Device Result API routes', () => {
       const [{ prevOpId }] = yield knex('Device').where({ id: deviceId })
         .select('deviceOperationId as prevOpId')
 
-      let lastPingOn
-
       yield server.get(devicePath)
         .set('Authorization', deviceAuth)
         .then((res) => {
           assert.equal(res.status, 200)
           assert.typeOf(res.body, 'Object')
-          assert.property(res.body, 'lastPingOn')
-          const pingOn = Date.parse(res.body.lastPingOn)
-          lastPingOn = pingOn
         })
 
       yield server.get(devicePath)
@@ -804,10 +799,6 @@ describe('Device Result API routes', () => {
         .then((res) => {
           assert.equal(res.status, 200)
           assert.typeOf(res.body, 'Object')
-          assert.property(res.body, 'lastPingOn')
-          const pingOn = Date.parse(res.body.lastPingOn)
-          assert.equal(+pingOn, +lastPingOn)
-          lastPingOn = pingOn
         })
 
       let prevResults
@@ -881,10 +872,6 @@ describe('Device Result API routes', () => {
           assert.typeOf(res.body, 'Object')
           assert.property(res.body, 'checkpoint')
           assert.equal(res.body.checkpoint, 'ck123')
-          assert.property(res.body, 'lastPingOn')
-          const pingOn = Date.parse(res.body.lastPingOn)
-          assert.isAtLeast(+pingOn, +lastPingOn)
-          lastPingOn = pingOn
         })
 
       yield server.get(deviceGetResultPath)

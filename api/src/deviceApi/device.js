@@ -1,4 +1,3 @@
-const Promise = require('bluebird')
 const { getExternalId } = require('./common')
 const { addResult } = require('./result')
 
@@ -39,21 +38,14 @@ function* addDeviceData(context) {
 function* getDeviceData(context) {
   const { knex, device: { id: deviceId } } = context
 
-  const deviceQ = knex('Device')
-    .where({ id: deviceId })
-    .first('lastPingOn')
-
-  const deviceLogQ = knex('DeviceLog')
+  const deviceLog = yield knex('DeviceLog')
     .where({ deviceId })
     .orderBy('id', 'desc')
     .first('checkpoint')
 
-  const [device, deviceLog] = yield Promise.all([deviceQ, deviceLogQ])
-
-  const lastPingOn = device.lastPingOn
   const checkpoint = deviceLog ? deviceLog.checkpoint : null
 
-  return { lastPingOn, checkpoint }
+  return { checkpoint }
 }
 
 function* addDeviceConfiguration(context) {
