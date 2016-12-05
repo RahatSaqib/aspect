@@ -1,4 +1,5 @@
 import Immutable from 'immutable'
+import differenceInMinutes from 'date-fns/difference_in_minutes'
 import { aspectFetch } from '../shared/utils/fetch'
 import { addError } from '../error/ErrorRedux'
 
@@ -22,12 +23,20 @@ function createReceiveConsumables(consumables) {
   }
 }
 
-const cacheExpiryTime = 1000 * 60 * 5 // five minutes
+export function fetchConsumables(forceRefresh) {
+  return (dispatch, getState) => {
+    const { consumable } = getState()
 
-export const fetchConsumables = (forceRefresh, consumablesState) => (dispatch) => {
-  const now = new Date()
-  if (!consumablesState.get('loading') && (forceRefresh || !consumablesState.get('lastRefreshed') ||
-    Math.abs(now.getTime() - consumablesState.get('lastRefreshed').getTime()) > cacheExpiryTime)) {
+    if (consumable.loading) {
+      return
+    }
+    const shouldFetch = forceRefresh || !consumable.lastRefreshed || (
+      differenceInMinutes(new Date(), consumable.lastRefreshed) > 5 // five minutes
+    )
+    if (!shouldFetch) {
+      return
+    }
+
     dispatch(createRequestConsumables())
     return aspectFetch('/inventory/consumable-types')
       .then(json => dispatch(createReceiveConsumables(json.data)))

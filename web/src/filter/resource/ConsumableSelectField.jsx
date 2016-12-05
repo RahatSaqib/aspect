@@ -14,14 +14,14 @@ export class ConsumableSelectField extends PureComponent {
 
   static propTypes = {
     fetchConsumables: PropTypes.func.isRequired,
-    consumables: PropTypes.object,
+    consumableItems: PropTypes.object,
     onConsumableChange: PropTypes.func.isRequired,
     value: PropTypes.string
   }
 
   componentDidMount() {
-    const { fetchConsumables, consumables } = this.props
-    fetchConsumables(false, consumables)
+    const { fetchConsumables } = this.props
+    fetchConsumables(false)
   }
 
   handleChange = (event, index, value) => {
@@ -29,9 +29,9 @@ export class ConsumableSelectField extends PureComponent {
   }
 
   render() {
-    const { consumables, value } = this.props
+    const { consumableItems, value } = this.props
     const restProps = _.omit(this.props, [
-      'fetchConsumables', 'consumables', 'onConsumableChange', 'value'
+      'fetchConsumables', 'consumableItems', 'onConsumableChange', 'value'
     ])
 
     return (
@@ -40,7 +40,7 @@ export class ConsumableSelectField extends PureComponent {
         value={value}
         onChange={this.handleChange}
       >
-        {consumables.items.map(c => (
+        {consumableItems.map(c => (
           <MenuItem key={c.get('id')} value={c.get('id')} primaryText={c.get('name')} />
         ))}
       </SelectField>
@@ -50,7 +50,7 @@ export class ConsumableSelectField extends PureComponent {
 
 function mapStateToProps(state) {
   return {
-    consumables: state.consumable
+    consumableItems: state.consumable.items
   }
 }
 
