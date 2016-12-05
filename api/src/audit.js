@@ -48,7 +48,7 @@ function* createAuditTriggers(knex, ...tables) {
       after delete on ${table}
       for each row
           insert into AuditLog
-              (tableName, tableId, operation, fields, deviceId, createdBy, createdOn)
+              (tableName, tableId, operation, fields, deviceId, deviceLogId, createdBy, createdOn)
           values
               ('${table}', old.id, 'delete', json_object(), ${deviceIdOld}, ${deviceLogId}, ${updatedByOld},  now())`)
   }

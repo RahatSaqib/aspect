@@ -34,6 +34,7 @@ describe('Device Result API routes', () => {
           .select('dlu.deviceLogId')
           .map(dlu => dlu.deviceLogId)
 
+        yield knex('AuditLog').whereIn('deviceLogId', deviceLogIds).delete()
         yield knex('DeviceLogUpdate').whereIn('deviceLogId', deviceLogIds).delete()
         yield knex('DeviceLog').whereIn('id', deviceLogIds).delete()
         yield knex('Result').whereIn('externalId', resultIds).delete()
@@ -955,6 +956,7 @@ describe('Device Result API routes', () => {
         .select('dlu.deviceLogId')
         .map(dlu => dlu.deviceLogId)
 
+      yield knex('AuditLog').whereIn('deviceLogId', deviceLogIds).delete()
       yield knex('DeviceLogUpdate').whereIn('deviceLogId', deviceLogIds).delete()
       yield knex('DeviceLog').whereIn('id', deviceLogIds).delete()
 
@@ -985,6 +987,7 @@ describe('Device Result API routes', () => {
           .select('dlu.deviceLogId')
           .map(dlu => dlu.deviceLogId)
 
+        yield knex('AuditLog').whereIn('deviceLogId', deviceLogIds).delete()
         yield knex('DeviceLogUpdate').whereIn('deviceLogId', deviceLogIds).delete()
         yield knex('DeviceLog').whereIn('id', deviceLogIds).delete()
         yield knex('Result').whereIn('externalId', resultIds).delete()
