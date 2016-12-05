@@ -8,7 +8,7 @@ import MenuItem from 'material-ui/MenuItem'
 import { fetchCountriesForLocationSelector } from '../../geography/GeographyRedux'
 import ForkedSelectField from '../../components/forkedMaterialUi/ForkedSelectField'
 
-class CountrySelectField extends PureComponent {
+export class CountrySelectField extends PureComponent {
   static propTypes = {
     countries: PropTypes.object.isRequired,
     fetchCountriesForLocationSelector: PropTypes.func.isRequired,

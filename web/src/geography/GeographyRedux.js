@@ -138,9 +138,11 @@ export const fetchLgasForLocationSelector =
 /*
  * ---------------- Reducers -----------------
  */
+const EMPTY_LIST = Immutable.List()
+
 export const LazyLoadItems = Immutable.Record({
   loading: false,
-  items: Immutable.List(),
+  items: EMPTY_LIST,
   lastRefreshed: undefined
 })
 
@@ -158,7 +160,7 @@ export const LazyLoadChild = Immutable.Record({
 const Geography = Immutable.Record({
   countriesForLocationSelector: new LazyLoadItems({
     loading: false,
-    items: Immutable.List([]),
+    items: EMPTY_LIST,
     lastRefreshed: undefined
   })
 })
@@ -187,10 +189,10 @@ function receiveCountriesForLocationSelector(state, countries, lastRefreshed) {
               loading: false,
               lastRefreshed: state.lgas ? lastRefreshed : undefined,
               items: state.lgas ? new Immutable.List(_.map(state.lgas, lga =>
-                new LazyLoadChild(lga))) : undefined
+                new LazyLoadChild(lga))) : EMPTY_LIST
             })
           })
-        )) : undefined
+        )) : EMPTY_LIST
       })
     })))
   }))
@@ -226,7 +228,7 @@ function receiveStatesForLocationSelector(state, states, selectedCountryId, last
               loading: false,
               lastRefreshed: state.lgas ? lastRefreshed : undefined,
               items: state.lgas ?
-                new Immutable.List(_.map(state.lgas, lga => new LazyLoadChild(lga))) : undefined
+                new Immutable.List(_.map(state.lgas, lga => new LazyLoadChild(lga))) : EMPTY_LIST
             })
           })))
         })

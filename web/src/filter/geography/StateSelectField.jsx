@@ -27,7 +27,7 @@ export function getSelectedCountryStates(props) {
   return Immutable.List()
 }
 
-class StateSelectField extends PureComponent {
+export class StateSelectField extends PureComponent {
   static propTypes = {
     fetchStatesForLocationSelector: PropTypes.func.isRequired,
     onChangeState: PropTypes.func.isRequired,

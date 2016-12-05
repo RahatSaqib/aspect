@@ -1,16 +1,18 @@
+import _ from 'lodash'
 import React from 'react'
 import LinearProgress from 'material-ui/LinearProgress'
 import { injectIntl, defineMessages } from 'react-intl'
-import _ from 'lodash'
 import { bindActionCreators } from 'redux'
 import { connect } from 'react-redux'
-import { change as changeFieldValue } from 'redux-form'
-import {
-  fetchCountriesForLocationSelector,
-  fetchStatesForLocationSelector,
-  fetchLgasForLocationSelector
-} from '../../geography/GeographyRedux'
-import SelectInput from './SelectInput'
+import { Field, change as changeFieldValue } from 'redux-form/immutable'
+
+import CountrySelectField from '../../filter/geography/CountrySelectField'
+import StateSelectField, {
+  getSelectedCountry
+} from '../../filter/geography/StateSelectField'
+import LgaSelectField, {
+  getSelectedState
+} from '../../filter/geography/LgaSelectField'
 
 const messages = defineMessages({
   country: {
@@ -27,56 +29,63 @@ const messages = defineMessages({
   }
 })
 
+const styles = {
+  fieldContainer: {
+    display: 'inline-block',
+    position: 'relative'
+  },
+  field: {
+    verticalAlign: 'bottom'
+  },
+  loadingProgress: {
+    position: 'absolute',
+    bottom: '0.5em',
+    width: '85%'
+  }
+}
+
+const renderCountrySelectField = ({ input, meta, ...restProps }) => (
+  <CountrySelectField
+    {...restProps}
+    onChangeCountry={input.onChange}
+    countryId={input.value}
+    errorStyle={{ float: 'left' }}
+    errorText={meta.touched && meta.error}
+    tabIndex="0" aria-haspopup
+  />
+)
+
+const renderStateSelectField = ({ input, meta, ...restProps }) => (
+  <StateSelectField
+    {...restProps}
+    onChangeState={input.onChange}
+    stateId={input.value}
+    errorStyle={{ float: 'left' }}
+    errorText={meta.touched && meta.error}
+    tabIndex="0" aria-haspopup
+  />
+)
+
+const renderLgaSelectField = ({ input, meta, ...restProps }) => (
+  <LgaSelectField
+    {...restProps}
+    onChangeLga={input.onChange}
+    lgaId={input.value}
+    errorStyle={{ float: 'left' }}
+    errorText={meta.touched && meta.error}
+    tabIndex="0" aria-haspopup
+  />
+)
+
 class LocationSelector extends React.PureComponent {
   componentWillReceiveProps(nextProps) {
-    const { fetchCountriesForLocationSelector, countries, loading,
-      selectedCountryId, selectedStateId } = nextProps
-    if (!loading) {
-      fetchCountriesForLocationSelector(false, countries, selectedCountryId, selectedStateId)
-    }
-  }
-
-  onCountryChanged = (event, index, value) => {
-    this.selectCountry(value)
-  }
-
-  onStateChanged = (event, index, value) => {
-    this.selectState(value)
-  }
-
-  findCountry = (countryId) => {
-    const { countries } = this.props
-    if (countryId && countries && countries.get('items')) {
-      return countries.get('items').find(country => country.get('id') === countryId)
-    }
-  }
-
-  findState = (countryId, stateId) => {
-    const country = this.findCountry(countryId)
-    if (country && country.getIn(['children', 'items'])) {
-      return country.getIn(['children', 'items']).find(state => state.get('id') === stateId)
-    }
-  }
-
-  selectCountry = (countryId) => {
-    if (countryId) {
-      const { fetchStatesForLocationSelector, changeFieldValue,
-        formName, stateIdFieldName, lgaIdFieldName } = this.props
+    const { selectedCountryId, selectedStateId } = this.props
+    const { changeFieldValue, formName, stateIdFieldName, lgaIdFieldName } = nextProps
+    if (!_.isEmpty(selectedCountryId) && selectedCountryId !== nextProps.selectedCountryId) {
       changeFieldValue(formName, stateIdFieldName, null)
       changeFieldValue(formName, lgaIdFieldName, null)
-      fetchStatesForLocationSelector(false, this.findCountry(countryId))
-    }
-  }
-
-  selectState = (stateId) => {
-    if (stateId) {
-      const { fetchLgasForLocationSelector, changeFieldValue,
-        formName, lgaIdFieldName, selectedCountryId } = this.props
+    } else if (!_.isEmpty(selectedStateId) && selectedStateId !== nextProps.selectedStateId) {
       changeFieldValue(formName, lgaIdFieldName, null)
-      if (selectedCountryId) {
-        fetchLgasForLocationSelector(false, this.findCountry(selectedCountryId),
-          this.findState(selectedCountryId, stateId))
-      }
     }
   }
 
@@ -85,47 +94,60 @@ class LocationSelector extends React.PureComponent {
       countryIdFieldName, stateIdFieldName, lgaIdFieldName,
       selectedCountryId, selectedStateId } = this.props
 
-    const dataSourceConfig = { text: 'name', value: 'id' }
-    const dropdownCountries = countries ? countries.get('items').toJS() : []
-    const countriesLoading = loading || (_.isEmpty(countries) ? true : countries.get('loading'))
-    const selectedCountry = selectedCountryId ? this.findCountry(selectedCountryId) : undefined
-    const states = selectedCountry ? selectedCountry.getIn(['children', 'items']) : undefined
-    const statesLoading = selectedCountry ? selectedCountry.getIn(['children', 'loading']) : false
-    const dropdownStates = states ? states.toJS() : []
-    const selectedState = selectedCountryId && selectedStateId ?
-      this.findState(selectedCountryId, selectedStateId) : undefined
-    const lgas = selectedState ? selectedState.getIn(['children', 'items']) : undefined
-    const lgasLoading = selectedState ? selectedState.getIn(['children', 'loading']) : false
-    const dropdownLgas = lgas ? lgas.toJS() : []
-    const loadingProgressStyle = { position: 'absolute', bottom: '0.5em', width: '85%' }
+    const countriesLoading = loading || countries.loading
+    const countriesDisabled = countriesLoading || countries.items.isEmpty()
+
+    const selectedCountry = getSelectedCountry({ countries, countryId: selectedCountryId })
+    const statesLoading = !!selectedCountry && selectedCountry.children.loading
+    const statesDisabled = (!selectedCountry || statesLoading ||
+      selectedCountry.children.items.isEmpty()
+    )
+
+    const selectedState = getSelectedState({
+      countries,
+      countryId: selectedCountryId,
+      stateId: selectedStateId
+    })
+    const lgasLoading = !!selectedState && selectedState.children.loading
+    const lgasDisabled = !selectedState || lgasLoading || selectedState.children.items.isEmpty()
 
     return (
       <div>
-        <div style={{ display: 'inline-block', position: 'relative' }}>
-          <SelectInput
-            name={countryIdFieldName} label={formatMessage(messages.country)}
-            disabled={loading || countriesLoading || _.isEmpty(dropdownCountries)}
-            dataSource={dropdownCountries} dataSourceConfig={dataSourceConfig}
-            onChange={this.onCountryChanged}
+        <div style={styles.fieldContainer}>
+          <Field
+            name={countryIdFieldName}
+            component={renderCountrySelectField}
+            // restProps
+            floatingLabelText={formatMessage(messages.country)}
+            style={styles.field}
+            disabled={countriesDisabled}
           />
-          {countriesLoading && <LinearProgress style={loadingProgressStyle} />}
+          {countriesLoading && <LinearProgress style={styles.loadingProgress} />}
         </div>
-        <div style={{ display: 'inline-block', position: 'relative' }}>
-          <SelectInput
-            name={stateIdFieldName} label={formatMessage(messages.state)}
-            disabled={loading || statesLoading || _.isEmpty(dropdownStates)}
-            dataSource={dropdownStates} dataSourceConfig={dataSourceConfig}
-            onChange={this.onStateChanged}
+        <div style={styles.fieldContainer}>
+          <Field
+            name={stateIdFieldName}
+            component={renderStateSelectField}
+            // restProps
+            countryId={selectedCountryId}
+            floatingLabelText={formatMessage(messages.state)}
+            style={styles.field}
+            disabled={statesDisabled}
           />
-          {statesLoading && <LinearProgress style={loadingProgressStyle} />}
+          {statesLoading && <LinearProgress style={styles.loadingProgress} />}
         </div>
-        <div style={{ display: 'inline-block', position: 'relative' }}>
-          <SelectInput
-            name={lgaIdFieldName} label={formatMessage(messages.lga)}
-            disabled={loading || lgasLoading || _.isEmpty(dropdownLgas)}
-            dataSource={dropdownLgas} dataSourceConfig={dataSourceConfig}
+        <div style={styles.fieldContainer}>
+          <Field
+            name={lgaIdFieldName}
+            component={renderLgaSelectField}
+            // restProps
+            countryId={selectedCountryId}
+            stateId={selectedStateId}
+            floatingLabelText={formatMessage(messages.lga)}
+            style={styles.field}
+            disabled={lgasDisabled}
           />
-          {lgasLoading && <LinearProgress style={loadingProgressStyle} />}
+          {lgasLoading && <LinearProgress style={styles.loadingProgress} />}
         </div>
       </div>
     )
@@ -133,10 +155,10 @@ class LocationSelector extends React.PureComponent {
 }
 
 function mapStateToProps(state, ownProps) {
-  const { formName, initialValues, countryIdFieldName, stateIdFieldName, lgaIdFieldName } = ownProps
-  const selectedCountryId = state.getIn(['form', formName, 'values', countryIdFieldName]) || initialValues.get(countryIdFieldName)
-  const selectedStateId = state.getIn(['form', formName, 'values', stateIdFieldName]) || initialValues.get(stateIdFieldName)
-  const selectedLgaId = state.getIn(['form', formName, 'values', lgaIdFieldName]) || initialValues.get(lgaIdFieldName)
+  const { formName, countryIdFieldName, stateIdFieldName, lgaIdFieldName } = ownProps
+  const selectedCountryId = state.getIn(['form', formName, 'values', countryIdFieldName])
+  const selectedStateId = state.getIn(['form', formName, 'values', stateIdFieldName])
+  const selectedLgaId = state.getIn(['form', formName, 'values', lgaIdFieldName])
   return {
     countries: state.getIn(['geography', 'countriesForLocationSelector']),
     selectedCountryId,
@@ -147,9 +169,6 @@ function mapStateToProps(state, ownProps) {
 
 function mapDispatchToProps(dispatch) {
   return bindActionCreators({
-    fetchCountriesForLocationSelector,
-    fetchStatesForLocationSelector,
-    fetchLgasForLocationSelector,
     changeFieldValue
   }, dispatch)
 }

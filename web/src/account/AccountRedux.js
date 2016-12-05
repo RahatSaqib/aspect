@@ -1,7 +1,7 @@
 import Immutable from 'immutable'
 import _ from 'lodash'
 import jwtDecode from 'jwt-decode'
-import { SubmissionError } from 'redux-form'
+import { SubmissionError } from 'redux-form/immutable'
 import { getBrowserNameAndVersion } from '../shared/utils/browser'
 import { aspectFetch, getHeaders } from '../shared/utils/fetch'
 import * as localStorage from '../shared/utils/localStorage'

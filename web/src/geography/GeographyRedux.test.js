@@ -58,7 +58,7 @@ describe('geography reducer', () => {
             assert.include(countryNames, countryRecord.name)
             assert.instanceOf(countryRecord.children, Immutable.Record)
             assert.isFalse(countryRecord.children.loading)
-            assert.isUndefined(countryRecord.children.items)
+            assert.isTrue(countryRecord.children.items.isEmpty())
             assert.isUndefined(countryRecord.children.lastRefreshed)
           })
         })
@@ -114,12 +114,12 @@ describe('geography reducer', () => {
                     assert.include(lgaNames, lgaRecord.name)
                   })
                 } else {
-                  assert.isUndefined(stateRecord.children.items)
+                  assert.isTrue(stateRecord.children.items.isEmpty())
                   assert.isUndefined(stateRecord.children.lastRefreshed)
                 }
               })
             } else {
-              assert.isUndefined(countryRecord.children.items)
+              assert.isTrue(countryRecord.children.items.isEmpty())
               assert.isUndefined(countryRecord.children.lastRefreshed)
             }
           })
@@ -240,7 +240,7 @@ describe('geography reducer', () => {
               assert.include(stateNames, stateRecord.name)
               assert.instanceOf(stateRecord.children, Immutable.Record)
               assert.isFalse(stateRecord.children.loading)
-              assert.isUndefined(stateRecord.children.items)
+              assert.isTrue(stateRecord.children.items.isEmpty())
               assert.isUndefined(stateRecord.children.lastRefreshed)
             })
           })
@@ -283,7 +283,7 @@ describe('geography reducer', () => {
                   assert.include(lgaNames, lgaRecord.name)
                 })
               } else {
-                assert.isUndefined(stateRecord.children.items)
+                assert.isTrue(stateRecord.children.items.isEmpty())
                 assert.isUndefined(stateRecord.children.lastRefreshed)
               }
             })
