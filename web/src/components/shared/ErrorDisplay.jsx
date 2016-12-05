@@ -33,6 +33,7 @@ export class ErrorDisplay extends PureComponent {
       />
     ]
 
+    const errorMessage = error.get('message')
     return (
       <Dialog
         title={error.get('title')}
@@ -41,7 +42,7 @@ export class ErrorDisplay extends PureComponent {
         open={error.get('hasError')}
         onRequestClose={this.handleClose}
       >
-        {_.isString(error.get('message')) ? error.get('message') : JSON.stringify(error.get('message'), null, '\t')}
+        {_.isString(errorMessage) ? <span dangerouslySetInnerHTML={{ __html: errorMessage }} /> : JSON.stringify(errorMessage, null, '\t')}
       </Dialog>
     )
   }
