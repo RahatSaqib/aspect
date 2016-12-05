@@ -29,7 +29,7 @@ export const types = {
 /*
  * ---------------- Action Creators -----------------
  */
-function requestDevices(sortCol, sortDir, page, size, filters) {
+function requestRouters(sortCol, sortDir, page, size, filters) {
   return {
     type: types.REQUEST_DEVICES,
     sortCol,
@@ -40,7 +40,7 @@ function requestDevices(sortCol, sortDir, page, size, filters) {
   }
 }
 
-function receiveDevices(json) {
+function receiveRouters(json) {
   return {
     type: types.RECEIVE_DEVICES,
     items: json.data,
@@ -49,7 +49,7 @@ function receiveDevices(json) {
 }
 
 // With state.filter.listFilter & extraFilters
-export function fetchListFilteredDevices(extraFilters = {}, ...args) {
+export function fetchListFilteredRouters(extraFilters = {}, ...args) {
   return (dispatch, getState) => {
     const filters = getState()
       .filter
@@ -59,13 +59,13 @@ export function fetchListFilteredDevices(extraFilters = {}, ...args) {
       .filter(_.identity)
       .toJS()
 
-    return dispatch(fetchDevices(filters, ...args))
+    return dispatch(fetchRouters(filters, ...args))
   }
 }
 
-export function fetchDevices(filters/* required */, sortCol = 'name', sortDir = 'asc', page = 0, pageSize = 10) {
+export function fetchRouters(filters/* required */, sortCol = 'name', sortDir = 'asc', page = 0, pageSize = 10) {
   return (dispatch) => {
-    dispatch(requestDevices(sortCol, sortDir, page, pageSize, filters))
+    dispatch(requestRouters(sortCol, sortDir, page, pageSize, filters))
 
     return aspectFetch(`/device?${stringify({
       sortCol,
@@ -74,40 +74,40 @@ export function fetchDevices(filters/* required */, sortCol = 'name', sortDir = 
       size: pageSize,
       ...filters
     })}`)
-      .then(json => dispatch(receiveDevices(json)))
+      .then(json => dispatch(receiveRouters(json)))
       .catch((err) => {
         dispatch(addError('Loading devices failed', err.message, err))
       })
   }
 }
 
-function requestSingleDevice(deviceId) {
+function requestSingleRouter(deviceId) {
   return {
     type: types.REQUEST_SINGLE_DEVICE,
     deviceId
   }
 }
 
-function receiveSingleDevice(item) {
+function receiveSingleRouter(item) {
   return {
     type: types.RECEIVE_SINGLE_DEVICE,
     item
   }
 }
 
-export function fetchSingleDevice(deviceId) {
+export function fetchSingleRouter(deviceId) {
   return (dispatch) => {
-    dispatch(requestSingleDevice(deviceId))
+    dispatch(requestSingleRouter(deviceId))
 
     return aspectFetch(`/device/${deviceId}`)
-      .then(json => dispatch(receiveSingleDevice(json.data)))
+      .then(json => dispatch(receiveSingleRouter(json.data)))
       .catch((err) => {
         dispatch(addError(`Loading a device (${deviceId}) failed`, err.message, err))
       })
   }
 }
 
-function requestUpdatingSingleDevice(deviceId, data) {
+function requestUpdatingSingleRouter(deviceId, data) {
   return {
     type: types.REQUEST_UPDATING_SINGLE_DEVICE,
     deviceId,
@@ -115,22 +115,22 @@ function requestUpdatingSingleDevice(deviceId, data) {
   }
 }
 
-function receiveUpdatedSingleDevice(item) {
+function receiveUpdatedSingleRouter(item) {
   return {
     type: types.RECEIVE_UPDATED_SINGLE_DEVICE,
     item
   }
 }
 
-export function updateSingleDevice(deviceId, data) {
+export function updateSingleRouter(deviceId, data) {
   return (dispatch) => {
-    dispatch(requestUpdatingSingleDevice(deviceId, data))
+    dispatch(requestUpdatingSingleRouter(deviceId, data))
 
     return aspectFetch(`/device/${deviceId}`, {
       method: 'PUT',
       body: JSON.stringify(data)
     })
-      .then(json => dispatch(receiveUpdatedSingleDevice(json.data)))
+      .then(json => dispatch(receiveUpdatedSingleRouter(json.data)))
       .catch((err) => {
         dispatch(addError(`Updating a device (${deviceId}) failed`, err.message, err))
       })

@@ -98,7 +98,7 @@ const enhance = compose(
   })
 )
 
-export const DeviceDetailForm = (props) => {
+export const RouterDetailForm = (props) => {
   const { form, meta, values, labels } = props
 
   const site = _.find(props.siteList, s => s.value === values.siteId)
@@ -168,6 +168,6 @@ export const DeviceDetailForm = (props) => {
   )
 }
 
-export const DeviceDetailFormContainer = enhance(DeviceDetailForm)
+export const RouterDetailFormContainer = enhance(RouterDetailForm)
 
-export default DeviceDetailFormContainer
+export default RouterDetailFormContainer

@@ -17,78 +17,78 @@ import LinearProgress from 'material-ui/LinearProgress'
 import { Unit } from '../../components/pureGrids'
 import isEditable from '../../shared/selectors/device'
 import {
-  fetchSingleDevice,
-  updateSingleDevice
+  fetchSingleRouter,
+  updateSingleRouter
 } from '../RouterRedux'
 import ReadOnlyFields from '../../components/shared/ReadOnlyFields'
-import DeviceDetailForm from './RouterDetailForm'
+import RouterDetailForm from './RouterDetailForm'
 import styles from './RouterDetail.css'
 
 const messages = defineMessages({
   title: {
-    id: 'pages.DeviceDetail.title',
-    defaultMessage: 'Device Detail'
+    id: 'pages.RouterDetail.title',
+    defaultMessage: 'Router Detail'
   },
   fieldName: {
-    id: 'pages.DeviceDetail.fieldName',
+    id: 'pages.RouterDetail.fieldName',
     defaultMessage: 'Name'
   },
   fieldShortname: {
-    id: 'pages.DeviceDetail.fieldShortname',
+    id: 'pages.RouterDetail.fieldShortname',
     defaultMessage: 'Shortname'
   },
   fieldNotes: {
-    id: 'pages.DeviceDetail.fieldNotes',
+    id: 'pages.RouterDetail.fieldNotes',
     defaultMessage: 'Notes'
   },
   fieldSiteId: {
-    id: 'pages.DeviceDetail.fieldSiteId',
+    id: 'pages.RouterDetail.fieldSiteId',
     defaultMessage: 'Site'
   },
   siteLoadMore: {
-    id: 'pages.DeviceDetail.siteLoadMore',
+    id: 'pages.RouterDetail.siteLoadMore',
     defaultMessage: 'Load more'
   },
   siteLoadingMore: {
-    id: 'pages.DeviceDetail.siteLoadingMore',
+    id: 'pages.RouterDetail.siteLoadingMore',
     defaultMessage: 'Loading……'
   },
   fieldFirstConnected: {
-    id: 'pages.DeviceDetail.fieldFirstConnected',
+    id: 'pages.RouterDetail.fieldFirstConnected',
     defaultMessage: 'First Connected'
   },
   fieldFirstApprovedOn: {
-    id: 'pages.DeviceDetail.fieldFirstApprovedOn',
+    id: 'pages.RouterDetail.fieldFirstApprovedOn',
     defaultMessage: 'First Approved On'
   },
   fieldFirstApprovedBy: {
-    id: 'pages.DeviceDetail.fieldFirstApprovedBy',
+    id: 'pages.RouterDetail.fieldFirstApprovedBy',
     defaultMessage: 'First Approved By'
   },
   fieldSerial: {
-    id: 'pages.DeviceDetail.fieldSerial',
+    id: 'pages.RouterDetail.fieldSerial',
     defaultMessage: 'Serial'
   },
   fieldLastSeen: {
-    id: 'pages.DeviceDetail.fieldLastSeen',
+    id: 'pages.RouterDetail.fieldLastSeen',
     defaultMessage: 'Last Seen'
   },
   fieldTotalNumberOfTests: {
-    id: 'pages.DeviceDetail.fieldTotalNumberOfTests',
+    id: 'pages.RouterDetail.fieldTotalNumberOfTests',
     defaultMessage: 'Total Number of Tests'
   }
 })
 
-export class DeviceDetail extends PureComponent {
+export class RouterDetail extends PureComponent {
 
   static propTypes = {
     setPageTitle: PropTypes.func.isRequired,
-    fetchSingleDevice: PropTypes.func.isRequired,
+    fetchSingleRouter: PropTypes.func.isRequired,
     params: PropTypes.object.isRequired,
     device: PropTypes.object,
     intl: PropTypes.object.isRequired,
     editable: PropTypes.bool.isRequired,
-    updateSingleDevice: PropTypes.func.isRequired
+    updateSingleRouter: PropTypes.func.isRequired
   }
 
   state = {
@@ -107,17 +107,17 @@ export class DeviceDetail extends PureComponent {
   }
 
   componentDidMount() {
-    this.handleFetchDevice()
+    this.handleFetchRouter()
   }
 
   componentWillReceiveProps(nextProps) {
     if (this.props.params.deviceId !== nextProps.params.deviceId) {
-      this.handleFetchDevice()
+      this.handleFetchRouter()
     }
   }
 
-  handleFetchDevice = () => {
-    this.props.fetchSingleDevice(this.props.params.deviceId)
+  handleFetchRouter = () => {
+    this.props.fetchSingleRouter(this.props.params.deviceId)
       .then(() => {
         const { device } = this.props
 
@@ -135,7 +135,7 @@ export class DeviceDetail extends PureComponent {
   handleSubmit = (data) => {
     const { device } = this.props
 
-    return this.props.updateSingleDevice(device.get('id'), data)
+    return this.props.updateSingleRouter(device.get('id'), data)
   }
 
   renderProgress() {
@@ -155,7 +155,7 @@ export class DeviceDetail extends PureComponent {
       loadingMoreText: formatMessage(messages.siteLoadingMore)
     }
     return (
-      <DeviceDetailForm
+      <RouterDetailForm
         onChange={this.handleFormChange}
         values={this.state.values}
         labels={labels}
@@ -218,10 +218,6 @@ export class DeviceDetail extends PureComponent {
       {
         label: formatMessage(messages.fieldLastSeen),
         value: getFormattedDate(device.get('lastSeen')) || ''
-      },
-      {
-        label: formatMessage(messages.fieldTotalNumberOfTests),
-        value: device.get('totalTests')
       }
     ]
     return (
@@ -269,12 +265,12 @@ function mapStateToProps(state, props) {
 
 function mapDispatchToProps(dispatch) {
   return bindActionCreators({
-    fetchSingleDevice,
-    updateSingleDevice
+    fetchSingleRouter,
+    updateSingleRouter
   }, dispatch)
 }
 
 export const RouterDetailContainer = _.flowRight(
   injectIntl,
   connect(mapStateToProps, mapDispatchToProps)
-)(DeviceDetail)
+)(RouterDetail)

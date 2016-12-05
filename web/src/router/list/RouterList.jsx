@@ -11,7 +11,7 @@ import { connect } from 'react-redux'
 import Helmet from 'react-helmet'
 
 // Our own imports
-import { fetchListFilteredDevices } from '../RouterRedux'
+import { fetchListFilteredRouters } from '../RouterRedux'
 import ListFilterContainer from '../../filter/list/ListFilter'
 import { configureListFilter } from '../../filter/FilterRedux'
 import DataTable from '../../components/shared/DataTable'
@@ -24,7 +24,7 @@ const messages = defineMessages({
   },
   routerName: {
     id: 'pages.RouterList.routerName',
-    defaultMessage: 'Device Name'
+    defaultMessage: 'Router Name'
   },
   status: {
     id: 'pages.RouterList.status',
@@ -51,7 +51,7 @@ export class RouterList extends PureComponent {
     table: PropTypes.object.isRequired,
     intl: PropTypes.object.isRequired,
     router: PropTypes.object.isRequired,
-    fetchListFilteredDevices: PropTypes.func.isRequired,
+    fetchListFilteredRouters: PropTypes.func.isRequired,
     items: PropTypes.object.isRequired,
     configureListFilter: PropTypes.func.isRequired,
     listFilter: PropTypes.object.isRequired
@@ -88,7 +88,7 @@ export class RouterList extends PureComponent {
   componentWillMount() {
     const { setPageTitle, configureListFilter } = this.props
     setPageTitle(this.getFormattedTitle())
-    configureListFilter(this.getDeviceConfigRoute().deviceConfig.filterConfig)
+    configureListFilter(this.getRouterConfigRoute().deviceConfig.filterConfig)
   }
 
   componentWillReceiveProps(nextProps) {
@@ -97,7 +97,7 @@ export class RouterList extends PureComponent {
     }
   }
 
-  getDeviceConfigRoute({ routes } = this.props) {
+  getRouterConfigRoute({ routes } = this.props) {
     return _.find(routes, r => r.deviceConfig)
   }
 
@@ -112,8 +112,8 @@ export class RouterList extends PureComponent {
   }
 
   handleFetch = (...args) => {
-    this.props.fetchListFilteredDevices(
-      this.getDeviceConfigRoute().deviceConfig.filterParams,
+    this.props.fetchListFilteredRouters(
+      this.getRouterConfigRoute().deviceConfig.filterParams,
       ...args
     )
   }
@@ -166,7 +166,7 @@ function mapStateToProps(state) {
 function mapDispatchToProps(dispatch) {
   return bindActionCreators({
     configureListFilter,
-    fetchListFilteredDevices
+    fetchListFilteredRouters
   }, dispatch)
 }
 
