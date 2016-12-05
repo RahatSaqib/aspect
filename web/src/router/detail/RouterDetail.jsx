@@ -85,7 +85,7 @@ export class RouterDetail extends PureComponent {
     setPageTitle: PropTypes.func.isRequired,
     fetchSingleRouter: PropTypes.func.isRequired,
     params: PropTypes.object.isRequired,
-    device: PropTypes.object,
+    router: PropTypes.object,
     intl: PropTypes.object.isRequired,
     editable: PropTypes.bool.isRequired,
     updateSingleRouter: PropTypes.func.isRequired
@@ -119,13 +119,13 @@ export class RouterDetail extends PureComponent {
   handleFetchRouter = () => {
     this.props.fetchSingleRouter(this.props.params.deviceId)
       .then(() => {
-        const { device } = this.props
+        const { router } = this.props
 
         this.handleFormChange({
-          name: device.get('name') || '',
-          shortname: device.get('shortname') || '',
-          notes: device.get('notes') || '',
-          siteId: device.get('siteId')
+          name: router.get('name') || '',
+          shortname: router.get('shortname') || '',
+          notes: router.get('notes') || '',
+          siteId: router.get('siteId')
         })
       })
   }
@@ -133,15 +133,15 @@ export class RouterDetail extends PureComponent {
   handleFormChange = values => this.setState({ values })
 
   handleSubmit = (data) => {
-    const { device } = this.props
+    const { router } = this.props
 
-    return this.props.updateSingleRouter(device.get('id'), data)
+    return this.props.updateSingleRouter(router.get('id'), data)
   }
 
   renderProgress() {
-    const { device } = this.props
+    const { router } = this.props
 
-    return !device && <LinearProgress />
+    return !router && <LinearProgress />
   }
 
   renderFormContainer() {
@@ -165,23 +165,23 @@ export class RouterDetail extends PureComponent {
   }
 
   renderReadOnlyFields() {
-    const { device, intl: { formatMessage } } = this.props
+    const { router, intl: { formatMessage } } = this.props
     const fields = [
       {
         label: formatMessage(messages.fieldName),
-        value: device.get('name')
+        value: router.get('name')
       },
       {
         label: formatMessage(messages.fieldShortname),
-        value: device.get('shortname')
+        value: router.get('shortname')
       },
       {
         label: formatMessage(messages.fieldNotes),
-        value: device.get('notes')
+        value: router.get('notes')
       },
       {
         label: formatMessage(messages.fieldSiteId),
-        value: device.get('siteId')
+        value: router.get('siteId')
       }
     ]
     return (
@@ -190,8 +190,8 @@ export class RouterDetail extends PureComponent {
   }
 
   renderContent() {
-    const { device, editable, intl: { formatMessage, formatDate } } = this.props
-    if (!device) {
+    const { router, editable, intl: { formatMessage, formatDate } } = this.props
+    if (!router) {
       return null
     }
 
@@ -201,23 +201,23 @@ export class RouterDetail extends PureComponent {
     const fields = [
       {
         label: formatMessage(messages.fieldFirstConnected),
-        value: device.get('id')
+        value: router.get('id')
       },
       {
         label: formatMessage(messages.fieldFirstApprovedOn),
-        value: getFormattedDate(device.get('approvedOn')) || ''
+        value: getFormattedDate(router.get('approvedOn')) || ''
       },
       {
         label: formatMessage(messages.fieldFirstApprovedBy),
-        value: device.get('approvedBy') || ''
+        value: router.get('approvedBy') || ''
       },
       {
         label: formatMessage(messages.fieldSerial),
-        value: device.get('serial') || /* FIXME */ '<empty>'
+        value: router.get('serial') || /* FIXME */ '<empty>'
       },
       {
         label: formatMessage(messages.fieldLastSeen),
-        value: getFormattedDate(device.get('lastSeen')) || ''
+        value: getFormattedDate(router.get('lastSeen')) || ''
       }
     ]
     return (
@@ -255,11 +255,11 @@ export class RouterDetail extends PureComponent {
 }
 
 function mapStateToProps(state, props) {
-  const device = state.device.items.byId.get(props.params.deviceId)
+  const router = state.router.items.byId.get(props.params.deviceId)
 
   return {
-    editable: isEditable(state.user, device),
-    device
+    editable: isEditable(state.user, router),
+    router
   }
 }
 

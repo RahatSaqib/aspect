@@ -17,21 +17,21 @@ import {
 } from '../shared/metaReducers/table'
 
 export const types = {
-  REQUEST_DEVICES: 'REQUEST_DEVICES',
-  RECEIVE_DEVICES: 'RECEIVE_DEVICES',
+  REQUEST_ROUTERS: 'REQUEST_ROUTERS',
+  RECEIVE_ROUTERS: 'RECEIVE_ROUTERS',
 
-  REQUEST_SINGLE_DEVICE: 'REQUEST_SINGLE_DEVICE',
-  RECEIVE_SINGLE_DEVICE: 'RECEIVE_SINGLE_DEVICE',
+  REQUEST_SINGLE_ROUTER: 'REQUEST_SINGLE_ROUTER',
+  RECEIVE_SINGLE_ROUTER: 'RECEIVE_SINGLE_ROUTER',
 
-  REQUEST_UPDATING_SINGLE_DEVICE: 'REQUEST_UPDATING_SINGLE_DEVICE',
-  RECEIVE_UPDATED_SINGLE_DEVICE: 'RECEIVE_UPDATED_SINGLE_DEVICE'
+  REQUEST_UPDATING_SINGLE_ROUTER: 'REQUEST_UPDATING_SINGLE_ROUTER',
+  RECEIVE_UPDATED_SINGLE_ROUTER: 'RECEIVE_UPDATED_SINGLE_ROUTER'
 }
 /*
  * ---------------- Action Creators -----------------
  */
 function requestRouters(sortCol, sortDir, page, size, filters) {
   return {
-    type: types.REQUEST_DEVICES,
+    type: types.REQUEST_ROUTERS,
     sortCol,
     sortDir,
     page,
@@ -42,7 +42,7 @@ function requestRouters(sortCol, sortDir, page, size, filters) {
 
 function receiveRouters(json) {
   return {
-    type: types.RECEIVE_DEVICES,
+    type: types.RECEIVE_ROUTERS,
     items: json.data,
     total: json.total
   }
@@ -76,21 +76,21 @@ export function fetchRouters(filters/* required */, sortCol = 'name', sortDir = 
     })}`)
       .then(json => dispatch(receiveRouters(json)))
       .catch((err) => {
-        dispatch(addError('Loading devices failed', err.message, err))
+        dispatch(addError('Loading routers failed', err.message, err))
       })
   }
 }
 
-function requestSingleRouter(deviceId) {
+function requestSingleRouter(routerId) {
   return {
-    type: types.REQUEST_SINGLE_DEVICE,
-    deviceId
+    type: types.REQUEST_SINGLE_ROUTER,
+    routerId
   }
 }
 
 function receiveSingleRouter(item) {
   return {
-    type: types.RECEIVE_SINGLE_DEVICE,
+    type: types.RECEIVE_SINGLE_ROUTER,
     item
   }
 }
@@ -109,7 +109,7 @@ export function fetchSingleRouter(deviceId) {
 
 function requestUpdatingSingleRouter(deviceId, data) {
   return {
-    type: types.REQUEST_UPDATING_SINGLE_DEVICE,
+    type: types.REQUEST_UPDATING_SINGLE_ROUTER,
     deviceId,
     data
   }
@@ -117,7 +117,7 @@ function requestUpdatingSingleRouter(deviceId, data) {
 
 function receiveUpdatedSingleRouter(item) {
   return {
-    type: types.RECEIVE_UPDATED_SINGLE_DEVICE,
+    type: types.RECEIVE_UPDATED_SINGLE_ROUTER,
     item
   }
 }
@@ -132,34 +132,34 @@ export function updateSingleRouter(deviceId, data) {
     })
       .then(json => dispatch(receiveUpdatedSingleRouter(json.data)))
       .catch((err) => {
-        dispatch(addError(`Updating a device (${deviceId}) failed`, err.message, err))
+        dispatch(addError(`Updating a router (${deviceId}) failed`, err.message, err))
       })
   }
 }
 /*
  * ---------------- Reducers -----------------
  */
-const Device = Immutable.Record({
+const Router = Immutable.Record({
   items: new Items(),
   table: new Table()
 })
 
-const initialState = new Device()
+const initialState = new Router()
 
-export default function deviceReducer(state = initialState, action) {
+export default function routerReducer(state = initialState, action) {
   switch (action.type) {
-    case types.REQUEST_DEVICES:
+    case types.REQUEST_ROUTERS:
       return state
       .set('table', requestTable(state.table, action))
-    case types.RECEIVE_DEVICES:
+    case types.RECEIVE_ROUTERS:
       return state
       .withMutations((mutState) => {
         const immutList = Immutable.fromJS(action.items)
         mutState.set('items', receiveList(mutState.items, immutList))
         mutState.set('table', receiveTableItems(mutState.table, action.total))
       })
-    case types.RECEIVE_SINGLE_DEVICE:
-    case types.RECEIVE_UPDATED_SINGLE_DEVICE:
+    case types.RECEIVE_SINGLE_ROUTER:
+    case types.RECEIVE_UPDATED_SINGLE_ROUTER:
       return state.withMutations((mutState) => {
         const immutItem = Immutable.fromJS(action.item)
         mutState.set('items', receiveItem(mutState.items, immutItem))

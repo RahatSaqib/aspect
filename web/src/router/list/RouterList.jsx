@@ -121,7 +121,6 @@ export class RouterList extends PureComponent {
   render() {
     const { intl } = this.props
     const { formatMessage, formatRelative } = intl
-
     return (
       <div className={styles.Content}>
         <Helmet title={this.getFormattedTitle()} titleTemplate="%s - Aspect" defaultTitle="Aspect" />
@@ -158,8 +157,8 @@ export class RouterList extends PureComponent {
 function mapStateToProps(state) {
   return {
     listFilter: state.filter.listFilter,
-    items: state.device.items,
-    table: state.device.table
+    items: state.router.items,
+    table: state.router.table
   }
 }
 
