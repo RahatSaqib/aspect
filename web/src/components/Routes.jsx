@@ -2,7 +2,8 @@ import React, { Component } from 'react'
 import { Router, Route, IndexRoute, IndexRedirect, applyRouterMiddleware, browserHistory } from 'react-router'
 import { useScroll } from 'react-router-scroll'
 import PiwikReactRouter from 'piwik-react-router'
-import config from 'config'
+
+import config from '../config'
 import store from '../store'
 
 // higher level containers/shells

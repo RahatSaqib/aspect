@@ -6,8 +6,8 @@ import {
   accept,
   onResponse
 } from 'http-client'
-import config from 'config'
 
+import config from '../../config'
 import { getJWT } from './localStorage'
 
 // fetch with auth and other headers we need
