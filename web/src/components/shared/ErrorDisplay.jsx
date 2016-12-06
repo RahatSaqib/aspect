@@ -24,23 +24,23 @@ import styles from './ErrorDisplay.css'
 
 const genericErrorMessages = defineMessages({
   title: {
-    id: 'responseMessages.generic.title',
+    id: 'errorResponseMessages.generic.title',
     defaultMessage: 'Aspect has Encountered a Problem.'
   },
   message: {
-    id: 'responseMessages.generic.title',
+    id: 'errorResponseMessages.generic.title',
     defaultMessage: 'Our technical team has been notified of the problem and will attend to it as soon as possible.'
   },
   closeText: {
-    id: 'responseMessages.generic.closeText',
+    id: 'errorResponseMessages.generic.closeText',
     defaultMessage: 'Close'
   },
   proceedText: {
-    id: 'responseMessages.generic.proceedText',
+    id: 'errorResponseMessages.generic.proceedText',
     defaultMessage: 'Proceed'
   },
   moreDetails: {
-    id: 'responseMessages.inline.moreDetails',
+    id: 'errorResponseMessages.inline.moreDetails',
     defaultMessage: 'Details...'
   }
 })
