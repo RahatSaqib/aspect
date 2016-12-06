@@ -8,12 +8,17 @@ import { injectIntl, defineMessages } from 'react-intl'
 // Material-UI
 import Dialog from 'material-ui/Dialog'
 import FlatButton from 'material-ui/FlatButton'
+import ErrorIcon from 'material-ui/svg-icons/alert/error'
+import WarningIcon from 'material-ui/svg-icons/alert/warning'
+import InfoIcon from 'material-ui/svg-icons/action/info-outline'
+import { lightBlue600, orange500, red800 } from 'material-ui/styles/colors'
 
 // Our own imports
 import {
   removeError,
   hideErrorNotification
 } from '../../error/ErrorRedux'
+import styles from './ErrorDisplay.css'
 
 const genericErrorMessages = defineMessages({
   title: {
@@ -103,43 +108,66 @@ export class ErrorDisplay extends PureComponent {
 
     const errorDetails = error.getIn(['errorNotification', 'error']) || {}
     const actions = []
+    const showProceed = error.getIn(['errorNotification', 'showProceed'])
     if (error.getIn(['errorNotification', 'showClose'])) {
       const closeText = errorNotificationMessage('closeText', genericErrorMessages.closeText)
       actions.push(<FlatButton
         label={formatMessage(closeText, errorDetails)}
-        primary={!error.getIn(['errorNotification', 'showProceed'])}
-        onTouchTap={this.handleClose}
+        primary={!showProceed} onTouchTap={this.handleClose}
       />)
     }
-    if (error.getIn(['errorNotification', 'showProceed'])) {
+    if (showProceed) {
       const proceedText = errorNotificationMessage('proceedText', genericErrorMessages.proceedText)
       actions.push(<FlatButton
         label={formatMessage(proceedText, errorDetails)}
-        primary
-        onTouchTap={this.handleProceed}
+        primary onTouchTap={this.handleProceed}
       />)
     }
     const title = errorNotificationMessage('title', genericErrorMessages.title)
     const message = errorNotificationMessage('message', genericErrorMessages.message)
     const resolution = errorNotificationMessage('resolution', genericErrorMessages.resolution)
+    const iconStyle = {
+      width: '6em',
+      height: '6em'
+    }
     return (
       <Dialog
         title={formatMessage(title, errorDetails)}
         actions={actions}
-        modal={false}
+        modal={showProceed}
+        autoScrollBodyContent
         open={error.get('errorNotification') !== null}
         onRequestClose={this.handleClose}
       >
-        <p>
-          <strong
-            dangerouslySetInnerHTML={{
-              __html: formatMessage(message, errorDetails)
-            }}
-          />
-        </p>
-        { resolution &&
-          <p dangerouslySetInnerHTML={{ __html: formatMessage(resolution, errorDetails) }} />
+        {
+          error.getIn(['errorNotification', 'severity']) &&
+            <div className={styles.ErrorDisplay__Dialog__SeverityIconContainer}>
+              {
+                error.getIn(['errorNotification', 'severity']) === 'info' &&
+                <InfoIcon style={iconStyle} color={lightBlue600} />
+              }
+              {
+                error.getIn(['errorNotification', 'severity']) === 'warn' &&
+                <WarningIcon style={iconStyle} color={orange500} />
+              }
+              {
+                error.getIn(['errorNotification', 'severity']) === 'error' &&
+                <ErrorIcon style={iconStyle} color={red800} />
+              }
+            </div>
         }
+        <div className={styles.ErrorDisplay__Dialog__ContentContainer}>
+          <p>
+            <strong
+              dangerouslySetInnerHTML={{
+                __html: formatMessage(message, errorDetails)
+              }}
+            />
+          </p>
+          { resolution &&
+            <p dangerouslySetInnerHTML={{ __html: formatMessage(resolution, errorDetails) }} />
+          }
+        </div>
       </Dialog>
     )
   }

@@ -1,0 +1,22 @@
+.ErrorDisplay__Dialog__SeverityIconContainer {
+  display: block;
+  width: 100%;
+  text-align: center;
+}
+
+.ErrorDisplay__Dialog__ContentContainer {
+  display: block;
+}
+
+@media screen and (min-width:35.5em) {
+  .ErrorDisplay__Dialog__SeverityIconContainer {
+    display: inline-block;
+    width: auto;
+    margin-right: 1em;
+  }
+
+  .ErrorDisplay__Dialog__ContentContainer {
+    display: inline-block;
+    vertical-align: top;
+  }
+}
