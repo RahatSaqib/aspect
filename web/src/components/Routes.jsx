@@ -29,6 +29,8 @@ import { ReportListContainer } from '../report/list/ReportList'
 import { AccountDetailsContainer } from '../account/detail/AccountDetails'
 import { StyleguideMainContainer } from '../styleguide/main/StyleguideMain'
 import { InventoryItemsListContainer } from '../inventory/list/InventoryItemsList'
+import { RouterListContainer } from '../router/list/RouterList'
+import { RouterDetailContainer } from '../router/detail/RouterDetail'
 
 import { refreshStart } from '../auth/AuthRedux'
 
@@ -82,9 +84,9 @@ const routes =
           <Route path=":deviceId" component={DeviceDetailContainer} />
         </Route>
 
-        <Route path="router" deviceConfig={{ filterParams: { hasResults: 0, hasConnectivity: 1 }, filterConfig: { geography: true, date: true, deviceName: true } }}>
-          <IndexRoute component={DeviceListContainer} />
-          <Route path=":deviceId" component={DeviceDetailContainer} />
+        <Route path="router" routerConfig={{ filterParams: { hasResults: 0, hasConnectivity: 1 }, filterConfig: { geography: true, date: true, deviceName: true } }}>
+          <IndexRoute component={RouterListContainer} />
+          <Route path=":routerId" component={RouterDetailContainer} />
         </Route>
 
         <Route path="result">

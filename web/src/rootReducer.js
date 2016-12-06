@@ -21,6 +21,8 @@ import notification from './notification/NotificationRedux'
 import report from './report/ReportRedux'
 import idle from './idle/IdleRedux'
 import roles from './role/RoleRedux'
+import router from './router/RouterRedux'
+
 
 const appReducer = combineReducers({
   form: formReducer,
@@ -40,7 +42,8 @@ const appReducer = combineReducers({
   inventory,
   idle,
   notification,
-  report
+  report,
+  router
 })
 
 const App = Immutable.Record({
@@ -61,7 +64,8 @@ const App = Immutable.Record({
   roles: undefined,
   consumable: undefined,
   inventory: undefined,
-  idle: undefined
+  idle: undefined,
+  router: undefined
 })
 
 const initialState = new App()
