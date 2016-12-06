@@ -443,7 +443,7 @@ export class ResultDetail extends PureComponent {
     const { formatMessage } = intl
 
     return (
-      <div className={cssClasses('Content')}>
+      <div className={cssClasses('ContentDetails')}>
         <Helmet title={formatMessage(messages.title)} titleTemplate="%s - Aspect" defaultTitle="Aspect" />
         {this.renderPaper()}
       </div>

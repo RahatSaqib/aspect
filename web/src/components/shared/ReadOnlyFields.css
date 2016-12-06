@@ -1,0 +1,11 @@
+.FieldContainer {
+  width: 100%;
+  padding: 10px 0 10px 0;
+}
+
+.FieldContainer__Label {
+  font-size: 12px;
+  color: rgba(0, 0, 0, 0.298039);
+  display: block;
+  padding: 0 0 2px 0;
+}

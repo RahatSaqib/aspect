@@ -1,5 +1,5 @@
-.Content {
-  composes: Content from '../../components/shared/Shared.css';
+.ContentDetails {
+  composes: ContentDetails from '../../components/shared/Shared.css';
 }
 
 .FieldsContainer {

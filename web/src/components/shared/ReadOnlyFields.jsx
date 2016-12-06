@@ -1,9 +1,11 @@
 // Imports from packages
 import React, { PropTypes } from 'react'
 import { compose, setPropTypes, pure } from 'recompose'
+import classnames from 'classnames/bind'
 
-// Material-UI
-import TextField from 'material-ui/TextField'
+import styles from './ReadOnlyFields.css'
+
+const cssClasses = classnames.bind(styles)
 
 const enhanceField = compose(
   setPropTypes({
@@ -17,12 +19,10 @@ const enhanceField = compose(
 )
 
 export const ReadOnlyField = enhanceField(({ label, value }) => (
-  <TextField
-    disabled
-    value={value}
-    floatingLabelText={label}
-    fullWidth
-  />
+  <div className={cssClasses('FieldContainer')}>
+    <label htmlFor={label.replace(' ', '_')} className={cssClasses('FieldContainer__Label')}>{label}</label>
+    <div id={label.replace(' ', '_')}>{value || '-'}</div>
+  </div>
 ))
 
 const enhanceFields = compose(
