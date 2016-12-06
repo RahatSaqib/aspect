@@ -3,7 +3,6 @@ import { stringify } from 'querystring'
 import Immutable from 'immutable'
 
 import { aspectFetch } from '../shared/utils/fetch'
-import { addError } from '../error/ErrorRedux'
 import {
   receiveList,
   Items
@@ -13,7 +12,6 @@ import {
   receiveTableItems,
   Table
 } from '../shared/metaReducers/groupedTable'
-import { logoutStart } from '../auth/AuthRedux'
 
 export const types = {
   REQUEST_INVENTORY_ITEMS: 'REQUEST_INVENTORY_ITEMS',
@@ -82,44 +80,14 @@ export function fetchInventoryItems(groupBy, filters /* required */, sortCol = '
       ...filters
     })}`, {
       errorNotifications: {
-        403: {
-          severity: 'warn',
-          showAs: 'inline',
-          title: {
-            id: 'responseMessages.fetchInventoryItems.GET.403.title',
-            defaultMessage: 'Permission Denied'
-          },
-          message: {
-            id: 'responseMessages.fetchInventoryItems.GET.403.message',
-            defaultMessage: 'You are not allowed to view this data.'
-          },
-          resolution: {
-            id: 'responseMessages.fetchInventoryItems.GET.403.resolution',
-            defaultMessage: 'Would you like to login as a different user?'
-          },
-          closeText: {
-            id: 'responseMessages.fetchInventoryItems.GET.403.closeText',
-            defaultMessage: 'No'
-          },
-          showProceed: true,
-          proceedText: {
-            id: 'responseMessages.fetchInventoryItems.GET.403.proceedText',
-            defaultMessage: 'Yes'
-          },
-          onProceed: () => dispatch(logoutStart())
-        },
         default: {
           severity: 'error',
           title: {
-            id: 'responseMessages.fetchInventoryItems.GET.default.title',
+            id: 'errorResponseMessages.fetchInventoryItems.GET.default.title',
             defaultMessage: 'Loading Inventory Items Failed'
           },
-          message: {
-            id: 'responseMessages.fetchInventoryItems.GET.default.message',
-            defaultMessage: '<p>An error occurred when trying load inventory items. Our technical team has been notified of the problem and will attend to it as soon as possible.</p><strong>Error Details</strong><ul><li>Code: {statusCode}</li><li>Error: {error}</li><li>Message: {message}</li></ul>'
-          },
           resolution: {
-            id: 'responseMessages.fetchInventoryItems.GET.default.resolution',
+            id: 'errorResponseMessages.fetchInventoryItems.GET.default.resolution',
             defaultMessage: 'Please try again in a few minutes'
           }
         }
