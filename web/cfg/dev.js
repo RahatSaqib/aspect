@@ -16,6 +16,9 @@ const config = Object.assign({}, baseConfig, {
   devtool: 'inline-source-map',
   plugins: [
     new webpack.NoErrorsPlugin(),
+    new webpack.DefinePlugin({
+      'process.env.ASPECT_ENV': '"dev"'
+    }),
     new CaseSensitivePathsPlugin(),
     new BowerWebpackPlugin({
       searchResolveModulesDirectories: false
