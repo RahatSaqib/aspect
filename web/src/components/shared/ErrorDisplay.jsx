@@ -7,6 +7,7 @@ import { injectIntl, defineMessages } from 'react-intl'
 
 // Material-UI
 import Dialog from 'material-ui/Dialog'
+import Snackbar from 'material-ui/Snackbar'
 import FlatButton from 'material-ui/FlatButton'
 import ErrorIcon from 'material-ui/svg-icons/alert/error'
 import WarningIcon from 'material-ui/svg-icons/alert/warning'
@@ -16,6 +17,7 @@ import { lightBlue600, orange500, red800 } from 'material-ui/styles/colors'
 // Our own imports
 import {
   removeError,
+  showMoreDetails,
   hideErrorNotification
 } from '../../error/ErrorRedux'
 import styles from './ErrorDisplay.css'
@@ -36,6 +38,10 @@ const genericErrorMessages = defineMessages({
   proceedText: {
     id: 'responseMessages.generic.proceedText',
     defaultMessage: 'Proceed'
+  },
+  moreDetails: {
+    id: 'responseMessages.inline.moreDetails',
+    defaultMessage: 'Details...'
   }
 })
 
@@ -45,7 +51,12 @@ export class ErrorDisplay extends PureComponent {
     intl: PropTypes.object.isRequired,
     error: PropTypes.object,
     removeError: PropTypes.func.isRequired,
+    showMoreDetails: PropTypes.func.isRequired,
     hideErrorNotification: PropTypes.func.isRequired
+  }
+
+  handleShowDetails = () => {
+    this.props.showMoreDetails()
   }
 
   handleClose = () => {
@@ -106,24 +117,37 @@ export class ErrorDisplay extends PureComponent {
       return fallbackMessage
     }
 
-    const errorDetails = error.getIn(['errorNotification', 'error']) || {}
+    const errorObject = error.get('error') ? error.get('error').toJS() : {}
+    const title = errorNotificationMessage('title', genericErrorMessages.title)
+    const showErrorDetails = error.get('showDetails')
+    if (error.get('errorNotification') && !showErrorDetails) {
+      return (
+        <Snackbar
+          open
+          message={formatMessage(title, errorObject)}
+          autoHideDuration={4000}
+          action={formatMessage(genericErrorMessages.moreDetails)}
+          onActionTouchTap={this.handleShowDetails}
+          onRequestClose={() => this.handleClose}
+        />
+      )
+    }
     const actions = []
     const showProceed = error.getIn(['errorNotification', 'showProceed'])
     if (error.getIn(['errorNotification', 'showClose'])) {
       const closeText = errorNotificationMessage('closeText', genericErrorMessages.closeText)
       actions.push(<FlatButton
-        label={formatMessage(closeText, errorDetails)}
+        label={formatMessage(closeText, errorObject)}
         primary={!showProceed} onTouchTap={this.handleClose}
       />)
     }
     if (showProceed) {
       const proceedText = errorNotificationMessage('proceedText', genericErrorMessages.proceedText)
       actions.push(<FlatButton
-        label={formatMessage(proceedText, errorDetails)}
+        label={formatMessage(proceedText, errorObject)}
         primary onTouchTap={this.handleProceed}
       />)
     }
-    const title = errorNotificationMessage('title', genericErrorMessages.title)
     const message = errorNotificationMessage('message', genericErrorMessages.message)
     const resolution = errorNotificationMessage('resolution', genericErrorMessages.resolution)
     const iconStyle = {
@@ -132,11 +156,11 @@ export class ErrorDisplay extends PureComponent {
     }
     return (
       <Dialog
-        title={formatMessage(title, errorDetails)}
+        title={formatMessage(title, errorObject)}
         actions={actions}
         modal={showProceed}
         autoScrollBodyContent
-        open={error.get('errorNotification') !== null}
+        open={showErrorDetails}
         onRequestClose={this.handleClose}
       >
         {
@@ -160,12 +184,12 @@ export class ErrorDisplay extends PureComponent {
           <p>
             <strong
               dangerouslySetInnerHTML={{
-                __html: formatMessage(message, errorDetails)
+                __html: formatMessage(message, errorObject)
               }}
             />
           </p>
           { resolution &&
-            <p dangerouslySetInnerHTML={{ __html: formatMessage(resolution, errorDetails) }} />
+            <p dangerouslySetInnerHTML={{ __html: formatMessage(resolution, errorObject) }} />
           }
         </div>
       </Dialog>
@@ -182,6 +206,7 @@ function mapStateToProps(state) {
 function mapDispatchToProps(dispatch) {
   return bindActionCreators({
     removeError,
+    showMoreDetails,
     hideErrorNotification
   }, dispatch)
 }

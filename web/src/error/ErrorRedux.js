@@ -2,6 +2,7 @@ import Immutable from 'immutable'
 
 export const types = {
   SHOW_ERROR_NOTIFICATION: 'SHOW_ERROR_NOTIFICATION',
+  SHOW_MORE_DETAILS: 'SHOW_MORE_DETAILS',
   HIDE_ERROR_NOTIFICATION: 'HIDE_ERROR_NOTIFICATION',
   ADD_ERROR: 'ADD_ERROR',
   REMOVE_ERROR: 'REMOVE_ERROR'
@@ -19,6 +20,12 @@ export function showErrorNotification(errorNotification, error) {
       ...errorNotification
     },
     error
+  }
+}
+
+export function showMoreDetails() {
+  return {
+    type: types.SHOW_MORE_DETAILS
   }
 }
 
@@ -54,6 +61,7 @@ const Error = Immutable.Record({
   title: null,
   message: null,
   error: null,
+  showDetails: false,
   errorNotification: null
 })
 
@@ -64,10 +72,14 @@ export default function errorReducer(state = initialState, action) {
     case types.SHOW_ERROR_NOTIFICATION:
       return state.merge({
         errorNotification: action.errorNotification,
-        error: action.error
+        error: action.error,
+        showDetails: action.errorNotification.showAs === 'interrupt'
       })
+    case types.SHOW_MORE_DETAILS:
+      return state.set('showDetails', true)
     case types.HIDE_ERROR_NOTIFICATION:
       return state.merge({
+        showDetails: false,
         errorNotification: null,
         error: null
       })

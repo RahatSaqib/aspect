@@ -84,6 +84,7 @@ export function fetchInventoryItems(groupBy, filters /* required */, sortCol = '
       errorNotifications: {
         403: {
           severity: 'warn',
+          showAs: 'inline',
           title: {
             id: 'responseMessages.fetchInventoryItems.GET.403.title',
             defaultMessage: 'Permission Denied'
@@ -106,6 +107,21 @@ export function fetchInventoryItems(groupBy, filters /* required */, sortCol = '
             defaultMessage: 'Yes'
           },
           onProceed: () => dispatch(logoutStart())
+        },
+        default: {
+          severity: 'error',
+          title: {
+            id: 'responseMessages.fetchInventoryItems.GET.default.title',
+            defaultMessage: 'Loading Inventory Items Failed'
+          },
+          message: {
+            id: 'responseMessages.fetchInventoryItems.GET.default.message',
+            defaultMessage: '<p>An error occurred when trying load inventory items. Our technical team has been notified of the problem and will attend to it as soon as possible.</p><strong>Error Details</strong><ul><li>Code: {statusCode}</li><li>Error: {error}</li><li>Message: {message}</li></ul>'
+          },
+          resolution: {
+            id: 'responseMessages.fetchInventoryItems.GET.default.resolution',
+            defaultMessage: 'Please try again in a few minutes'
+          }
         }
       }
     }).then(json => dispatch(receiveInventoryItems(json, groupBySite ? ['inventoryItems'] : [])))
