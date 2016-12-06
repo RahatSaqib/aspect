@@ -6,11 +6,9 @@
   "main": "",
   "scripts": {
     "start": "cross-env NODE_ENV=dev webpack-dev-server --inline --hot --open",
-    "mocha": "cross-env ASPECT_ENV=test mocha --opts utils/unit_tests/mocha_unit.opts",
-    "pretest": "fsys --task=remove --fileFolder=coverage && fsys --task=remove --fileFolder=mocha.json",
-    "test": "nyc --check-coverage npm run mocha -- src/**/*.test.js*",
-    "test:watch": "npm run mocha -- --watch",
-    "test:once": "mocha --opts utils/unit_tests/mocha_unit.opts",
+    "pretest": "fsys --task=remove --fileFolder=coverage",
+    "test": "cross-env ASPECT_ENV=test jest --config ./jest.json --coverage",
+    "test:watch": "npm run test -- --watch",
     "posttest": "npm run lint",
     "preupdatemessages:start": "cross-env BABEL_ENV=message babel --quiet --out-dir ./i18n/dist ./src",
     "updatemessages:start": "rip json2pot './i18n/src/**/*.json' -o ./src/shared/i18n/diff.pot",
@@ -26,29 +24,6 @@
   "repository": "",
   "keywords": [],
   "author": "SystemOne",
-  "nyc": {
-    "lines": 9,
-    "statements": 9,
-    "functions": 9,
-    "branches": 9,
-    "extension": [
-      ".jsx",
-      ".js"
-    ],
-    "reporter": [
-      "text",
-      "text-summary",
-      "lcov"
-    ],
-    "exclude": [
-      "src/**/*.test.js*"
-    ],
-    "require": [
-      "babel-register"
-    ],
-    "sourceMap": false,
-    "instrument": false
-  },
   "devDependencies": {
     "babel-cli": "^6.18.0",
     "babel-core": "^6.18.0",
@@ -81,20 +56,16 @@
     "glob": "^7.0.5",
     "html-webpack-plugin": "^2.24.0",
     "html-webpack-plugin-remove": "0.0.2",
-    "isparta-instrumenter-loader": "^1.0.1",
+    "identity-obj-proxy": "^3.0.0",
     "istanbul": "^1.0.0-alpha.2",
+    "jest": "^17.0.3",
     "jsdom": "^9.8.3",
     "json-loader": "^0.5.4",
-    "mocha": "^3.1.0",
-    "mocha-bamboo-reporter": "^1.1.1",
-    "mocha-multi": "^0.9.1",
     "node-sass": "^3.13.0",
     "npm-run-all": "^3.0.0",
     "null-loader": "^0.1.1",
-    "nyc": "^10.0.0",
     "postcss": "^5.2.5",
     "postcss-loader": "^1.1.1",
-    "proxyquire": "^1.7.10",
     "react-addons-test-utils": "^15.4.0",
     "react-hot-loader": "^3.0.0-beta.4",
     "react-intl-po": "^1.0.6",
