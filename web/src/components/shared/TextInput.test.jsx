@@ -25,7 +25,8 @@ describe('TextInput', () => {
       multiLine: props.multiLine,
       rows: props.rows,
       type: 'text',
-      autoFocus: undefined
+      autoFocus: undefined,
+      style: undefined
     })
   })
 
@@ -50,7 +51,8 @@ describe('TextInput', () => {
       multiLine: props.multiLine,
       rows: props.rows,
       type: 'password',
-      autoFocus: undefined
+      autoFocus: undefined,
+      style: undefined
     })
   })
 })

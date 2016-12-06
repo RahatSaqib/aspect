@@ -329,13 +329,6 @@ describe('AccountDetailsRedux', () => {
         it('should request the account details from the server', () => {
           assert(fetchStub.aspectFetch.calledWith('/account-details/current'), 'A request to /account-details/current was not detected')
         })
-
-        describe('and an error is received from the server', () => {
-          it('should dispatch an error action', () => expectedErrorFromServer.then().catch((err) => {
-            assert.deepEqual(err, expectedError)
-            assert.deepEqual(dispatch.secondCall.args, [expectedErrorAction])
-          }))
-        })
       })
     })
 
@@ -354,7 +347,20 @@ describe('AccountDetailsRedux', () => {
         fetchStub.aspectFetch.withArgs('/account-details/current-contact', {
           method: 'PUT',
           headers: stubHeaders,
-          body: JSON.stringify(contactDetailsData)
+          body: JSON.stringify(contactDetailsData),
+          errorNotifications: {
+            default: {
+              severity: 'error',
+              title: {
+                id: 'errorResponseMessages.saveContactDetails.PUT.default.title',
+                defaultMessage: 'Saving Contact Details Failed'
+              },
+              resolution: {
+                id: 'errorResponseMessages.saveContactDetails.PUT.default.resolution',
+                defaultMessage: 'Please try again in a few minutes'
+              }
+            }
+          }
         }).returns(expectedResponseFromServer)
         dispatch = sinon.spy()
         createAccountDetailsReduxReduxWithStubs(fetchStub)
@@ -371,7 +377,20 @@ describe('AccountDetailsRedux', () => {
         assert(fetchStub.aspectFetch.calledWith('/account-details/current-contact', {
           method: 'PUT',
           headers: stubHeaders,
-          body: JSON.stringify(contactDetailsData)
+          body: JSON.stringify(contactDetailsData),
+          errorNotifications: {
+            default: {
+              severity: 'error',
+              title: {
+                id: 'errorResponseMessages.saveContactDetails.PUT.default.title',
+                defaultMessage: 'Saving Contact Details Failed'
+              },
+              resolution: {
+                id: 'errorResponseMessages.saveContactDetails.PUT.default.resolution',
+                defaultMessage: 'Please try again in a few minutes'
+              }
+            }
+          }
         }), 'A PUT to /account-details/current-contact was not detected')
       })
 
@@ -400,7 +419,20 @@ describe('AccountDetailsRedux', () => {
           fetchStub.aspectFetch.withArgs('/account-details/current-contact', {
             method: 'PUT',
             headers: stubHeaders,
-            body: JSON.stringify(contactDetailsData)
+            body: JSON.stringify(contactDetailsData),
+            errorNotifications: {
+              default: {
+                severity: 'error',
+                title: {
+                  id: 'errorResponseMessages.saveContactDetails.PUT.default.title',
+                  defaultMessage: 'Saving Contact Details Failed'
+                },
+                resolution: {
+                  id: 'errorResponseMessages.saveContactDetails.PUT.default.resolution',
+                  defaultMessage: 'Please try again in a few minutes'
+                }
+              }
+            }
           }).returns(expectedErrorFromServer)
           errorCreatorsStub = {
             addError: sinon.stub()
@@ -421,15 +453,21 @@ describe('AccountDetailsRedux', () => {
           assert(fetchStub.aspectFetch.calledWith('/account-details/current-contact', {
             method: 'PUT',
             headers: stubHeaders,
-            body: JSON.stringify(contactDetailsData)
+            body: JSON.stringify(contactDetailsData),
+            errorNotifications: {
+              default: {
+                severity: 'error',
+                title: {
+                  id: 'errorResponseMessages.saveContactDetails.PUT.default.title',
+                  defaultMessage: 'Saving Contact Details Failed'
+                },
+                resolution: {
+                  id: 'errorResponseMessages.saveContactDetails.PUT.default.resolution',
+                  defaultMessage: 'Please try again in a few minutes'
+                }
+              }
+            }
           }), 'A PUT to /account-details/current-contact was not detected')
-        })
-
-        describe('and an error is received from the server', () => {
-          it('should dispatch an error action', () => expectedErrorFromServer.then().catch((err) => {
-            assert.deepEqual(err, expectedError)
-            assert.deepEqual(dispatch.secondCall.args, [expectedErrorAction])
-          }))
         })
       })
     })
@@ -463,7 +501,52 @@ describe('AccountDetailsRedux', () => {
         fetchStub.aspectFetch.withArgs('/auth/update-login-details', {
           method: 'PUT',
           headers: stubHeaders,
-          body: JSON.stringify(requestData)
+          body: JSON.stringify(requestData),
+          errorNotifications: {
+            409: {
+              severity: 'warn',
+              showAs: 'inline',
+              title: {
+                id: 'errorResponseMessages.saveLoginDetails.PUT.409.title',
+                defaultMessage: 'This Username is Unavailable'
+              },
+              message: {
+                id: 'errorResponseMessages.saveLoginDetails.PUT.409.title',
+                defaultMessage: 'The username that you have entered is already in use by another user on the system'
+              },
+              resolution: {
+                id: 'errorResponseMessages.saveLoginDetails.PUT.409.resolution',
+                defaultMessage: 'Please try another username'
+              }
+            },
+            403: {
+              severity: 'warn',
+              showAs: 'inline',
+              title: {
+                id: 'errorResponseMessages.saveLoginDetails.PUT.403.title',
+                defaultMessage: 'Invalid Password'
+              },
+              message: {
+                id: 'errorResponseMessages.saveLoginDetails.PUT.403.title',
+                defaultMessage: 'The current password that you have entered is incorrect.'
+              },
+              resolution: {
+                id: 'errorResponseMessages.saveLoginDetails.PUT.403.resolution',
+                defaultMessage: 'Please try re-entering your password or contact us to reset your login details'
+              }
+            },
+            default: {
+              severity: 'error',
+              title: {
+                id: 'errorResponseMessages.saveLoginDetails.PUT.default.title',
+                defaultMessage: 'Saving Login details Failed'
+              },
+              resolution: {
+                id: 'errorResponseMessages.saveLoginDetails.PUT.default.resolution',
+                defaultMessage: 'Please try again in a few minutes'
+              }
+            }
+          }
         }).returns(expectedResponseFromServer)
         dispatch = sinon.spy()
         createAccountDetailsReduxReduxWithStubs(fetchStub)
@@ -480,7 +563,52 @@ describe('AccountDetailsRedux', () => {
         assert(fetchStub.aspectFetch.calledWith('/auth/update-login-details', {
           method: 'PUT',
           headers: stubHeaders,
-          body: JSON.stringify(requestData)
+          body: JSON.stringify(requestData),
+          errorNotifications: {
+            409: {
+              severity: 'warn',
+              showAs: 'inline',
+              title: {
+                id: 'errorResponseMessages.saveLoginDetails.PUT.409.title',
+                defaultMessage: 'This Username is Unavailable'
+              },
+              message: {
+                id: 'errorResponseMessages.saveLoginDetails.PUT.409.title',
+                defaultMessage: 'The username that you have entered is already in use by another user on the system'
+              },
+              resolution: {
+                id: 'errorResponseMessages.saveLoginDetails.PUT.409.resolution',
+                defaultMessage: 'Please try another username'
+              }
+            },
+            403: {
+              severity: 'warn',
+              showAs: 'inline',
+              title: {
+                id: 'errorResponseMessages.saveLoginDetails.PUT.403.title',
+                defaultMessage: 'Invalid Password'
+              },
+              message: {
+                id: 'errorResponseMessages.saveLoginDetails.PUT.403.title',
+                defaultMessage: 'The current password that you have entered is incorrect.'
+              },
+              resolution: {
+                id: 'errorResponseMessages.saveLoginDetails.PUT.403.resolution',
+                defaultMessage: 'Please try re-entering your password or contact us to reset your login details'
+              }
+            },
+            default: {
+              severity: 'error',
+              title: {
+                id: 'errorResponseMessages.saveLoginDetails.PUT.default.title',
+                defaultMessage: 'Saving Login details Failed'
+              },
+              resolution: {
+                id: 'errorResponseMessages.saveLoginDetails.PUT.default.resolution',
+                defaultMessage: 'Please try again in a few minutes'
+              }
+            }
+          }
         }), 'A PUT to /auth/update-login-details was not detected')
       })
 
@@ -509,7 +637,52 @@ describe('AccountDetailsRedux', () => {
           fetchStub.aspectFetch.withArgs('/auth/update-login-details', {
             method: 'PUT',
             headers: stubHeaders,
-            body: JSON.stringify(requestData)
+            body: JSON.stringify(requestData),
+            errorNotifications: {
+              409: {
+                severity: 'warn',
+                showAs: 'inline',
+                title: {
+                  id: 'errorResponseMessages.saveLoginDetails.PUT.409.title',
+                  defaultMessage: 'This Username is Unavailable'
+                },
+                message: {
+                  id: 'errorResponseMessages.saveLoginDetails.PUT.409.title',
+                  defaultMessage: 'The username that you have entered is already in use by another user on the system'
+                },
+                resolution: {
+                  id: 'errorResponseMessages.saveLoginDetails.PUT.409.resolution',
+                  defaultMessage: 'Please try another username'
+                }
+              },
+              403: {
+                severity: 'warn',
+                showAs: 'inline',
+                title: {
+                  id: 'errorResponseMessages.saveLoginDetails.PUT.403.title',
+                  defaultMessage: 'Invalid Password'
+                },
+                message: {
+                  id: 'errorResponseMessages.saveLoginDetails.PUT.403.title',
+                  defaultMessage: 'The current password that you have entered is incorrect.'
+                },
+                resolution: {
+                  id: 'errorResponseMessages.saveLoginDetails.PUT.403.resolution',
+                  defaultMessage: 'Please try re-entering your password or contact us to reset your login details'
+                }
+              },
+              default: {
+                severity: 'error',
+                title: {
+                  id: 'errorResponseMessages.saveLoginDetails.PUT.default.title',
+                  defaultMessage: 'Saving Login details Failed'
+                },
+                resolution: {
+                  id: 'errorResponseMessages.saveLoginDetails.PUT.default.resolution',
+                  defaultMessage: 'Please try again in a few minutes'
+                }
+              }
+            }
           }).returns(expectedErrorFromServer)
           errorCreatorsStub = {
             addError: sinon.stub()
@@ -530,15 +703,53 @@ describe('AccountDetailsRedux', () => {
           assert(fetchStub.aspectFetch.calledWith('/auth/update-login-details', {
             method: 'PUT',
             headers: stubHeaders,
-            body: JSON.stringify(requestData)
+            body: JSON.stringify(requestData),
+            errorNotifications: {
+              409: {
+                severity: 'warn',
+                showAs: 'inline',
+                title: {
+                  id: 'errorResponseMessages.saveLoginDetails.PUT.409.title',
+                  defaultMessage: 'This Username is Unavailable'
+                },
+                message: {
+                  id: 'errorResponseMessages.saveLoginDetails.PUT.409.title',
+                  defaultMessage: 'The username that you have entered is already in use by another user on the system'
+                },
+                resolution: {
+                  id: 'errorResponseMessages.saveLoginDetails.PUT.409.resolution',
+                  defaultMessage: 'Please try another username'
+                }
+              },
+              403: {
+                severity: 'warn',
+                showAs: 'inline',
+                title: {
+                  id: 'errorResponseMessages.saveLoginDetails.PUT.403.title',
+                  defaultMessage: 'Invalid Password'
+                },
+                message: {
+                  id: 'errorResponseMessages.saveLoginDetails.PUT.403.title',
+                  defaultMessage: 'The current password that you have entered is incorrect.'
+                },
+                resolution: {
+                  id: 'errorResponseMessages.saveLoginDetails.PUT.403.resolution',
+                  defaultMessage: 'Please try re-entering your password or contact us to reset your login details'
+                }
+              },
+              default: {
+                severity: 'error',
+                title: {
+                  id: 'errorResponseMessages.saveLoginDetails.PUT.default.title',
+                  defaultMessage: 'Saving Login details Failed'
+                },
+                resolution: {
+                  id: 'errorResponseMessages.saveLoginDetails.PUT.default.resolution',
+                  defaultMessage: 'Please try again in a few minutes'
+                }
+              }
+            }
           }), 'A PUT to /auth/update-login-details was not detected')
-        })
-
-        describe('and an error is received from the server', () => {
-          it('should dispatch an error action', () => expectedErrorFromServer.then().catch((err) => {
-            assert.deepEqual(err, expectedError)
-            assert.deepEqual(dispatch.secondCall.args, [expectedErrorAction])
-          }))
         })
       })
     })
@@ -558,7 +769,20 @@ describe('AccountDetailsRedux', () => {
         fetchStub.aspectFetch.withArgs('/account-details/current-preferences', {
           method: 'PUT',
           headers: stubHeaders,
-          body: JSON.stringify(userPreferencesData)
+          body: JSON.stringify(userPreferencesData),
+          errorNotifications: {
+            default: {
+              severity: 'error',
+              title: {
+                id: 'errorResponseMessages.saveUserPreferences.PUT.default.title',
+                defaultMessage: 'Saving User preferences Failed'
+              },
+              resolution: {
+                id: 'errorResponseMessages.saveUserPreferences.PUT.default.resolution',
+                defaultMessage: 'Please try again in a few minutes'
+              }
+            }
+          }
         }).returns(expectedResponseFromServer)
         dispatch = sinon.spy()
         createAccountDetailsReduxReduxWithStubs(fetchStub)
@@ -575,7 +799,20 @@ describe('AccountDetailsRedux', () => {
         assert(fetchStub.aspectFetch.calledWith('/account-details/current-preferences', {
           method: 'PUT',
           headers: stubHeaders,
-          body: JSON.stringify(userPreferencesData)
+          body: JSON.stringify(userPreferencesData),
+          errorNotifications: {
+            default: {
+              severity: 'error',
+              title: {
+                id: 'errorResponseMessages.saveUserPreferences.PUT.default.title',
+                defaultMessage: 'Saving User preferences Failed'
+              },
+              resolution: {
+                id: 'errorResponseMessages.saveUserPreferences.PUT.default.resolution',
+                defaultMessage: 'Please try again in a few minutes'
+              }
+            }
+          }
         }), 'A PUT to /account-details/current-preferences was not detected')
       })
 
@@ -604,7 +841,20 @@ describe('AccountDetailsRedux', () => {
           fetchStub.aspectFetch.withArgs('/account-details/current-preferences', {
             method: 'PUT',
             headers: stubHeaders,
-            body: JSON.stringify(userPreferencesData)
+            body: JSON.stringify(userPreferencesData),
+            errorNotifications: {
+              default: {
+                severity: 'error',
+                title: {
+                  id: 'errorResponseMessages.saveUserPreferences.PUT.default.title',
+                  defaultMessage: 'Saving User preferences Failed'
+                },
+                resolution: {
+                  id: 'errorResponseMessages.saveUserPreferences.PUT.default.resolution',
+                  defaultMessage: 'Please try again in a few minutes'
+                }
+              }
+            }
           }).returns(expectedErrorFromServer)
           errorCreatorsStub = {
             addError: sinon.stub()
@@ -625,15 +875,21 @@ describe('AccountDetailsRedux', () => {
           assert(fetchStub.aspectFetch.calledWith('/account-details/current-preferences', {
             method: 'PUT',
             headers: stubHeaders,
-            body: JSON.stringify(userPreferencesData)
+            body: JSON.stringify(userPreferencesData),
+            errorNotifications: {
+              default: {
+                severity: 'error',
+                title: {
+                  id: 'errorResponseMessages.saveUserPreferences.PUT.default.title',
+                  defaultMessage: 'Saving User preferences Failed'
+                },
+                resolution: {
+                  id: 'errorResponseMessages.saveUserPreferences.PUT.default.resolution',
+                  defaultMessage: 'Please try again in a few minutes'
+                }
+              }
+            }
           }), 'A PUT to /account-details/current-preferences was not detected')
-        })
-
-        describe('and an error is received from the server', () => {
-          it('should dispatch an error action', () => expectedErrorFromServer.then().catch((err) => {
-            assert.deepEqual(err, expectedError)
-            assert.deepEqual(dispatch.secondCall.args, [expectedErrorAction])
-          }))
         })
       })
     })
