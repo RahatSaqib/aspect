@@ -971,7 +971,7 @@ function* seed(knex) {
   for (let i = 0; i < siteDatas.length; i++) {
     const siteData = siteDatas[i]
     // TB Cartridges
-    yield knex('ConsumableAtSite').insert({
+    yield knex('InventoryItem').insert({
       consumableId: consumableGxTbCartridgeId,
       siteId: siteData.id,
       lotNumber: `${((i + 3) * (i + 1))}${['A', 'B'][i % 2]}-${((siteData.id + i) * consumableGxTbCartridgeId)}`,
@@ -980,7 +980,7 @@ function* seed(knex) {
       quantityOnHand: _.random(0, 1000)
     })
     if (i % 5 === 0) {
-      yield knex('ConsumableAtSite').insert({
+      yield knex('InventoryItem').insert({
         consumableId: consumableGxEbolaCartridgeId,
         siteId: siteData.id,
         lotNumber: `${((i + 7) * (i + 1))}${['Q', 'P'][i % 2]}-${((siteData.id + i) * consumableGxEbolaCartridgeId)}`,
@@ -990,7 +990,7 @@ function* seed(knex) {
       })
     }
     if (i % 7 === 0) {
-      yield knex('ConsumableAtSite').insert({
+      yield knex('InventoryItem').insert({
         consumableId: consumableGxHivVlCartridgeId,
         siteId: siteData.id,
         lotNumber: `${((i + 11) * (i + 1))}${['A', 'V'][i % 2]}-${((siteData.id + i) * consumableGxHivVlCartridgeId)}`,
@@ -1000,7 +1000,7 @@ function* seed(knex) {
       })
     }
     // Gloves
-    yield knex('ConsumableAtSite').insert({
+    yield knex('InventoryItem').insert({
       consumableId: consumableGlovesId,
       siteId: siteData.id,
       quantityOnHand: _.random(0, 100)
