@@ -88,7 +88,7 @@ export class RouterList extends PureComponent {
   componentWillMount() {
     const { setPageTitle, configureListFilter } = this.props
     setPageTitle(this.getFormattedTitle())
-    configureListFilter(this.getRouterConfigRoute().deviceConfig.filterConfig)
+    configureListFilter(this.getRouterConfigRoute().routerConfig.filterConfig)
   }
 
   componentWillReceiveProps(nextProps) {
@@ -98,7 +98,7 @@ export class RouterList extends PureComponent {
   }
 
   getRouterConfigRoute({ routes } = this.props) {
-    return _.find(routes, r => r.deviceConfig)
+    return _.find(routes, r => r.routerConfig)
   }
 
   getFormattedTitle() {
@@ -107,13 +107,13 @@ export class RouterList extends PureComponent {
     return formatMessage(messages.routersTitle)
   }
 
-  handleItemIdSelection = (deviceId) => {
-    this.props.router.push(`/router/${deviceId}`)
+  handleItemIdSelection = (routerId) => {
+    this.props.router.push(`/router/${routerId}`)
   }
 
   handleFetch = (...args) => {
     this.props.fetchListFilteredRouters(
-      this.getRouterConfigRoute().deviceConfig.filterParams,
+      this.getRouterConfigRoute().routerConfig.filterParams,
       ...args
     )
   }

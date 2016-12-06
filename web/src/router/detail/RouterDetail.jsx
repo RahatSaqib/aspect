@@ -111,13 +111,13 @@ export class RouterDetail extends PureComponent {
   }
 
   componentWillReceiveProps(nextProps) {
-    if (this.props.params.deviceId !== nextProps.params.deviceId) {
+    if (this.props.params.routerId !== nextProps.params.routerId) {
       this.handleFetchRouter()
     }
   }
 
   handleFetchRouter = () => {
-    this.props.fetchSingleRouter(this.props.params.deviceId)
+    this.props.fetchSingleRouter(this.props.params.routerId)
       .then(() => {
         const { router } = this.props
 
@@ -255,7 +255,7 @@ export class RouterDetail extends PureComponent {
 }
 
 function mapStateToProps(state, props) {
-  const router = state.router.items.byId.get(props.params.deviceId)
+  const router = state.router.items.byId.get(props.params.routerId)
 
   return {
     editable: isEditable(state.user, router),

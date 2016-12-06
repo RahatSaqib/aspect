@@ -95,22 +95,22 @@ function receiveSingleRouter(item) {
   }
 }
 
-export function fetchSingleRouter(deviceId) {
+export function fetchSingleRouter(routerId) {
   return (dispatch) => {
-    dispatch(requestSingleRouter(deviceId))
+    dispatch(requestSingleRouter(routerId))
 
-    return aspectFetch(`/device/${deviceId}`)
+    return aspectFetch(`/device/${routerId}`)
       .then(json => dispatch(receiveSingleRouter(json.data)))
       .catch((err) => {
-        dispatch(addError(`Loading a device (${deviceId}) failed`, err.message, err))
+        dispatch(addError(`Loading a device (${routerId}) failed`, err.message, err))
       })
   }
 }
 
-function requestUpdatingSingleRouter(deviceId, data) {
+function requestUpdatingSingleRouter(routerId, data) {
   return {
     type: types.REQUEST_UPDATING_SINGLE_ROUTER,
-    deviceId,
+    routerId,
     data
   }
 }
@@ -122,17 +122,17 @@ function receiveUpdatedSingleRouter(item) {
   }
 }
 
-export function updateSingleRouter(deviceId, data) {
+export function updateSingleRouter(routerId, data) {
   return (dispatch) => {
-    dispatch(requestUpdatingSingleRouter(deviceId, data))
+    dispatch(requestUpdatingSingleRouter(routerId, data))
 
-    return aspectFetch(`/device/${deviceId}`, {
+    return aspectFetch(`/device/${routerId}`, {
       method: 'PUT',
       body: JSON.stringify(data)
     })
       .then(json => dispatch(receiveUpdatedSingleRouter(json.data)))
       .catch((err) => {
-        dispatch(addError(`Updating a router (${deviceId}) failed`, err.message, err))
+        dispatch(addError(`Updating a router (${routerId}) failed`, err.message, err))
       })
   }
 }
