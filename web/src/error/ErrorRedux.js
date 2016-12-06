@@ -1,12 +1,33 @@
 import Immutable from 'immutable'
 
 export const types = {
+  SHOW_ERROR_NOTIFICATION: 'SHOW_ERROR_NOTIFICATION',
+  HIDE_ERROR_NOTIFICATION: 'HIDE_ERROR_NOTIFICATION',
   ADD_ERROR: 'ADD_ERROR',
   REMOVE_ERROR: 'REMOVE_ERROR'
 }
 /*
  * ---------------- Action Creators -----------------
  */
+export function showErrorNotification(errorNotification, error) {
+  return {
+    type: types.SHOW_ERROR_NOTIFICATION,
+    errorNotification: {
+      showAs: 'interrupt',
+      showClose: true,
+      showProceed: false,
+      ...errorNotification
+    },
+    error
+  }
+}
+
+export function hideErrorNotification() {
+  return {
+    type: types.HIDE_ERROR_NOTIFICATION
+  }
+}
+
 export function addError(title, message, error) {
   return {
     type: types.ADD_ERROR,
@@ -32,13 +53,24 @@ const Error = Immutable.Record({
   hasError: false,
   title: null,
   message: null,
-  error: null
+  error: null,
+  errorNotification: null
 })
 
 const initialState = new Error()
 
 export default function errorReducer(state = initialState, action) {
   switch (action.type) {
+    case types.SHOW_ERROR_NOTIFICATION:
+      return state.merge({
+        errorNotification: action.errorNotification,
+        error: action.error
+      })
+    case types.HIDE_ERROR_NOTIFICATION:
+      return state.merge({
+        errorNotification: null,
+        error: null
+      })
     case types.ADD_ERROR:
       return state.merge({
         hasError: true,
@@ -47,7 +79,12 @@ export default function errorReducer(state = initialState, action) {
         error: action.error
       })
     case types.REMOVE_ERROR:
-      return state.clear()
+      return state.merge({
+        hasError: false,
+        title: null,
+        message: null,
+        error: null
+      })
     default:
       return state
   }

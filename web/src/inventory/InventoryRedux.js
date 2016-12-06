@@ -106,7 +106,7 @@ export function fetchInventoryItems(groupBy, filters /* required */, sortCol = '
             id: 'responseMessages.fetchInventoryItems.GET.403.proceedText',
             defaultMessage: 'Yes'
           },
-          onProceed: () => dispatch(logoutStart('elevate'))
+          onProceed: () => dispatch(logoutStart())
         }
       }
     }).then(json => dispatch(receiveInventoryItems(json, groupBySite ? ['inventoryItems'] : [])))

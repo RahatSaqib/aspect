@@ -6,7 +6,7 @@ import {
   accept,
   recv
 } from 'http-client'
-import { addError } from '../../error/ErrorRedux'
+import { showErrorNotification } from '../../error/ErrorRedux'
 
 import config from '../../config'
 import { getJWT } from './localStorage'
@@ -61,11 +61,8 @@ export function handleFetchResponse(options) {
       if (options && options.errorNotifications && options.dispatch) {
         const errorNotification = options.errorNotifications[err.statusCode] ||
           options.errorNotifications.default
-        if (errorNotification) {
-          options.dispatch(
-            addError(errorNotification.title.defaultMessage,
-              errorNotification.message.defaultMessage, err))
-        }
+        options.dispatch(
+          showErrorNotification(errorNotification, err))
       }
       return Promise.reject(err)
     })
