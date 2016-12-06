@@ -66,7 +66,8 @@ const LoginDetailsForm = (props) => {
       >
         {formatMessage(messages.currentPasswordDialogMessage)}
         <TextInput
-          name="currentPassword" autoFocus fullWidth disabled={loading} maxLength="100"
+          name="currentPassword" autoFocus fullWidth disabled={loading}
+          maxLength="100" style={{ marginRight: '0' }}
           onKeyPress={onCurrentPasswordKeyPress} type="password"
         />
       </Dialog>

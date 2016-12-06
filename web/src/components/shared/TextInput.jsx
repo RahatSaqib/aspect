@@ -15,12 +15,13 @@ const renderTextField = (props) => {
 }
 
 const renderFormField = (props) => {
-  const { name, label, fullWidth, autoFocus, disabled, maxLength,
+  const { name, label, fullWidth, autoFocus, style, disabled, maxLength,
     multiLine, rows, type, onChange, onKeyPress } = props
   const textFieldProps = {
     floatingLabelText: label,
     fullWidth,
     autoFocus,
+    style,
     disabled,
     maxLength,
     multiLine,
