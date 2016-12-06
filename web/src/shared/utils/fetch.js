@@ -61,7 +61,7 @@ export function handleFetchResponse(options) {
       const errorNotification = _.get(options, `errorNotifications.${err.statusCode}`) ||
         _.get(options, 'errorNotifications.default')
       if (errorNotification) {
-        const store = require('../../store')
+        const store = require('../../store').default
         store.dispatch(showErrorNotification(errorNotification, err))
       }
       return Promise.reject(err)
