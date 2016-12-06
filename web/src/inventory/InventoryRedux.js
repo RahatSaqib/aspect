@@ -13,6 +13,7 @@ import {
   receiveTableItems,
   Table
 } from '../shared/metaReducers/groupedTable'
+import { logoutStart } from '../auth/AuthRedux'
 
 export const types = {
   REQUEST_INVENTORY_ITEMS: 'REQUEST_INVENTORY_ITEMS',
@@ -79,11 +80,36 @@ export function fetchInventoryItems(groupBy, filters /* required */, sortCol = '
       page,
       size: pageSize,
       ...filters
-    })}`)
-      .then(json => dispatch(receiveInventoryItems(json, groupBySite ? ['inventoryItems'] : [])))
-      .catch((err) => {
-        dispatch(addError('Loading inventory items failed', err.message, err))
-      })
+    })}`, {
+      dispatch,
+      errorNotifications: {
+        403: {
+          severity: 'warn',
+          title: {
+            id: 'responseMessages.fetchInventoryItems.GET.403.title',
+            defaultMessage: 'Permission Denied'
+          },
+          message: {
+            id: 'responseMessages.fetchInventoryItems.GET.403.message',
+            defaultMessage: 'You are not allowed to view this data.'
+          },
+          resolution: {
+            id: 'responseMessages.fetchInventoryItems.GET.403.resolution',
+            defaultMessage: 'Would you like to login as a different user?'
+          },
+          closeText: {
+            id: 'responseMessages.fetchInventoryItems.GET.403.closeText',
+            defaultMessage: 'No'
+          },
+          showProceed: true,
+          proceedText: {
+            id: 'responseMessages.fetchInventoryItems.GET.403.proceedText',
+            defaultMessage: 'Yes'
+          },
+          onProceed: () => dispatch(logoutStart('elevate'))
+        }
+      }
+    }).then(json => dispatch(receiveInventoryItems(json, groupBySite ? ['inventoryItems'] : [])))
   }
 }
 

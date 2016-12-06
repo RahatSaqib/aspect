@@ -4,20 +4,24 @@ import {
   base,
   header,
   accept,
-  onResponse
+  recv
 } from 'http-client'
+import { addError } from '../../error/ErrorRedux'
 
 import config from '../../config'
 import { getJWT } from './localStorage'
 
 // fetch with auth and other headers we need
-export const aspectFetch = createFetch(
-  base(config.aspectApi),
-  accept('application/json'),
-  header('Content-Type', 'application/json'),
-  addAuthHeaderMiddleware,
-  onResponse(handleFetchResponse)
-)
+export function aspectFetch(path, options) {
+  const fetch = createFetch(
+    base(config.aspectApi),
+    accept('application/json'),
+    header('Content-Type', 'application/json'),
+    addAuthHeaderMiddleware,
+    recv(handleFetchResponse(options))
+  )
+  return fetch(path, options)
+}
 
 function addAuthHeaderMiddleware(fetch, input, options = {}) {
   const token = getJWT()
@@ -44,16 +48,28 @@ export function getHeaders(json) {
 }
 
 // using this in a fetch (ajax request) to check if request was successful
-export function handleFetchResponse(resp) {
-  const json = resp.json()
-
-  if (resp.ok) {
-    return json.then((prevJson) => {
-      const nextJson = changeAllIdsToString(prevJson)
-      return nextJson
+export function handleFetchResponse(options) {
+  return (resp) => {
+    const json = resp.json()
+    if (resp.ok) {
+      return json.then((prevJson) => {
+        const nextJson = changeAllIdsToString(prevJson)
+        return nextJson
+      })
+    }
+    return json.then((err) => {
+      if (options && options.errorNotifications && options.dispatch) {
+        const errorNotification = options.errorNotifications[err.statusCode] ||
+          options.errorNotifications.default
+        if (errorNotification) {
+          options.dispatch(
+            addError(errorNotification.title.defaultMessage,
+              errorNotification.message.defaultMessage, err))
+        }
+      }
+      return Promise.reject(err)
     })
   }
-  return json.then(Promise.reject.bind(Promise))
 }
 
 // check if a property looks like an ID (key is equal to 'id' or ends with 'Id')
