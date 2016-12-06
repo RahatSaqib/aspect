@@ -81,7 +81,6 @@ export function fetchInventoryItems(groupBy, filters /* required */, sortCol = '
       size: pageSize,
       ...filters
     })}`, {
-      dispatch,
       errorNotifications: {
         403: {
           severity: 'warn',

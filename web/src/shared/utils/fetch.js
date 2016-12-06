@@ -9,6 +9,7 @@ import {
 import { showErrorNotification } from '../../error/ErrorRedux'
 
 import config from '../../config'
+import store from '../../store'
 import { getJWT } from './localStorage'
 
 // fetch with auth and other headers we need
@@ -58,11 +59,10 @@ export function handleFetchResponse(options) {
       })
     }
     return json.then((err) => {
-      if (options && options.errorNotifications && options.dispatch) {
-        const errorNotification = options.errorNotifications[err.statusCode] ||
-          options.errorNotifications.default
-        options.dispatch(
-          showErrorNotification(errorNotification, err))
+      const errorNotification = _.get(options, `errorNotifications.${err.statusCode}`) ||
+        _.get(options, 'errorNotifications.default')
+      if (errorNotification) {
+        store.dispatch(showErrorNotification(errorNotification, err))
       }
       return Promise.reject(err)
     })
