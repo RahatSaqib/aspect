@@ -34,7 +34,7 @@ import ResetPasswordEnterPassword from './ResetPasswordEnterPassword'
 import AppNotificationSnackBar from '../../appNotification/AppNotificationSnackBar'
 import AppNotificationDialog from '../../appNotification/AppNotificationDialog'
 
-export default class ResetPassword extends PureComponent {
+export class ResetPassword extends PureComponent {
   state = {
     emailAddress: '',
     resetPasswordToken: '',

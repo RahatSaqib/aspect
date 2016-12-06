@@ -8,6 +8,10 @@ import { LazyLoadItems, LazyLoadParent, LazyLoadChild } from '../../geography/Ge
 import ForkedSelectField from '../../components/forkedMaterialUi/ForkedSelectField'
 
 describe('LgaSelectField module', () => {
+  const {
+    LgaSelectField
+  } = require('./LgaSelectField')
+
   const mountWithMuiTheme = node => (
     mount(node, {
       context: {
@@ -78,13 +82,6 @@ describe('LgaSelectField module', () => {
   })
 
   describe('LgaSelectField component', () => {
-    let LgaSelectField
-
-    before(() => {
-      const LgaSelectFieldModule = require('./LgaSelectField')
-      LgaSelectField = LgaSelectFieldModule.LgaSelectField
-    })
-
     it('should trigger fetchLgasForLocationSelector on mount', () => {
       const props = {
         countries: countriesForLocationSelector,

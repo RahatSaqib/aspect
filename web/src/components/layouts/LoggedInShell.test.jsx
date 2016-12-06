@@ -23,6 +23,6 @@ describe('LoggedInShell', () => {
 
   it('Is a div that contains ErrorDisplay, SideNav, Nav and at least one other child', () => {
     expect(output.node.type).toEqual('div')
-    expect(output.props().children.length).toBeGreaterThanOrEqualTo(4)
+    expect(output.props().children.length).toBeGreaterThanOrEqual(4)
   })
 })

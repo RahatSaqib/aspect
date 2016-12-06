@@ -69,12 +69,12 @@ describe('CountrySelect Component', () => {
 
   describe('Selecting one of the countries in the list', () => {
     it('should call the onChange method with the value of the country', () => {
-      expect(props.onChange.notCalled).toBeTruthy()
+      expect(props.onChange.notCalled).toBe(true)
       const selectField = CountrySelectWrapper.find(ForkedSelectField)
       const valueToSelect = props.dataSourceConfig.valuePredicate(props.dataSource[0])
       selectField.simulate('change', undefined, undefined, valueToSelect)
 
-      expect(props.onChange.calledOnce).toBeTruthy()
+      expect(props.onChange.calledOnce).toBe(true)
       expect(props.onChange.firstCall.args).toEqual([undefined, undefined, valueToSelect])
     })
   })
@@ -88,7 +88,7 @@ describe('CountrySelect Component', () => {
 
     it('should render a SelectField with with items for each country built into the CountrySelect component', () => {
       const selectField = CountrySelectWrapper.find(ForkedSelectField)
-      expect(selectField.props().children.length).toBeGreaterThanOrEqualTo(242)
+      expect(selectField.props().children.length).toBeGreaterThanOrEqual(242)
     })
 
     describe('and no DataSource config is specified', () => {
@@ -107,7 +107,7 @@ describe('CountrySelect Component', () => {
           onChange: props.onChange
         })
 
-        expect(selectField.props().children.length).toBeGreaterThanOrEqualTo(242)
+        expect(selectField.props().children.length).toBeGreaterThanOrEqual(242)
 
         _.each(selectField.props().children, (child) => {
           expect(child.type).toEqual(MenuItem)

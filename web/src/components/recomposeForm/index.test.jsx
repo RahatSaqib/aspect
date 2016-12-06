@@ -87,7 +87,7 @@ describe('recomposeForm module', () => {
       expect(typeof innerProps.handleSubmit).toBe('function')
     })
 
-    context('passing onSubmit with a function returning a resolved promise', () => {
+    describe('passing onSubmit with a function returning a resolved promise', () => {
       it('should update in form state from props', () => {
         let innerProps
         const DecoratedComponent = recomposeForm({
@@ -133,7 +133,7 @@ describe('recomposeForm module', () => {
       })
     })
 
-    context('passing onSubmit with a function returning a rejected promise', () => {
+    describe('passing onSubmit with a function returning a rejected promise', () => {
       it('should update in form state from props', () => {
         let innerProps
         const DecoratedComponent = recomposeForm({
@@ -224,7 +224,7 @@ describe('recomposeForm module', () => {
       expect(handleChange.called).toBe(true)
     })
 
-    context('calling onChangeName with valid value', () => {
+    describe('calling onChangeName with valid value', () => {
       it('should update field states from props', () => {
         let innerProps
         const handleChange = values => ComponentWrapper.setProps({ values })
@@ -265,7 +265,7 @@ describe('recomposeForm module', () => {
       })
     })
 
-    context('calling onChangeName with invalid value', () => {
+    describe('calling onChangeName with invalid value', () => {
       it('should update field states from props', () => {
         let innerProps
         const handleChange = values => ComponentWrapper.setProps({ values })

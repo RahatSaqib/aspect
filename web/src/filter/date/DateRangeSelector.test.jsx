@@ -579,11 +579,11 @@ describe('DateRangeSelector Component', () => {
       describe('Different Range Types', () => {
         let clock
 
-        before(() => {
+        beforeAll(() => {
           clock = sinon.useFakeTimers(expectedDateTest.now.getTime())
         })
 
-        after(() => {
+        afterAll(() => {
           clock.restore()
         })
 
