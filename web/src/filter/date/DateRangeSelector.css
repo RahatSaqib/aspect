@@ -20,6 +20,11 @@
     display: inline-block;
     vertical-align: bottom;
     width: 5.5em !important;
+    padding-right: 1em;
+  }
+
+  .DateRangeSelector__RangeModeSelector div hr {
+    width: 5.5em !important;
   }
 
   .DateRangeSelector__RangeModeSelector div div svg {
@@ -27,13 +32,18 @@
     left: 4.1em
   }
 
-  .DateRangeSelector__DatePicker,
   .DateRangeSelector__DatePickerContainer {
     display: inline-block;
   }
 
+  .DateRangeSelector__DatePicker {
+    display: inline-block;
+    padding-right: 1em;
+  }
+
   .DateRangeSelector__DropDownList {
     display: inline-block;
+    padding-right: 1em;
     vertical-align: bottom;
     text-overflow: ellipsis;
     overflow: hidden;
