@@ -22,18 +22,17 @@ import Dialog from 'material-ui/Dialog'
 // Our own imports
 import config from '../../config'
 import { Unit, Hidden } from '../../components/pureGrids'
-import { ErrorDisplayContainer } from '../../components/shared/ErrorDisplay'
-import AcknowledgementDisplay from '../../components/shared/AcknowledgementDisplay'
 import {
   resetPasswordEnterEmailAddress,
   resetPasswordEnterPassword
 } from '../AuthRedux'
-import { addAcknowledgement } from '../../acknowledgement/AcknowledgementRedux'
-import { showErrorNotification } from '../../error/ErrorRedux'
+import { showError, showAcknowledgement } from '../../appNotification/AppNotificationRedux'
 import styles from './ResetPassword.css'
 import messages from './messages'
 import ResetPasswordEnterEmail from './ResetPasswordEnterEmail'
 import ResetPasswordEnterPassword from './ResetPasswordEnterPassword'
+import AppNotificationSnackBar from '../../appNotification/AppNotificationSnackBar'
+import AppNotificationDialog from '../../appNotification/AppNotificationDialog'
 
 export default class ResetPassword extends PureComponent {
   state = {
@@ -81,7 +80,7 @@ export default class ResetPassword extends PureComponent {
   }
 
   createResetPasswordTokenFail = () => {
-    this.props.showErrorNotification({
+    this.props.showError({
       severity: 'warn',
       title: messages.generateTokenFailedTitle,
       message: messages.generateTokenFailedMessage,
@@ -97,12 +96,17 @@ export default class ResetPassword extends PureComponent {
   }
 
   checkInbox = () => {
-    const { intl: { formatMessage }, addAcknowledgement } = this.props
     this.setState({
       resettingPassword: false,
       stepIndex: 1
     })
-    addAcknowledgement(formatMessage(messages.emailSent))
+    this.props.showAcknowledgement({
+      title: messages.emailSent,
+      message: messages.checkEmailContent,
+      messageValues: {
+        emailAddress: this.state.emailAddress
+      }
+    })
   }
 
   updatePassword = (formValues) => {
@@ -115,7 +119,7 @@ export default class ResetPassword extends PureComponent {
   }
 
   updatePasswordFail = () => {
-    this.props.showErrorNotification({
+    this.props.showError({
       severity: 'warn',
       title: messages.passwordUpdateFailedTitle,
       message: messages.passwordUpdateFailedMessage,
@@ -131,12 +135,15 @@ export default class ResetPassword extends PureComponent {
   }
 
   completeProcess = () => {
-    const { intl: { formatMessage }, addAcknowledgement } = this.props
     this.setState({
       resettingPassword: false,
       stepIndex: 3
     })
-    addAcknowledgement(formatMessage(messages.passwordUpdated))
+    this.props.showAcknowledgement({
+      severity: 'info',
+      title: messages.passwordUpdatedTitle,
+      message: messages.passwordUpdatedMessage
+    })
   }
 
   render() {
@@ -275,6 +282,8 @@ export default class ResetPassword extends PureComponent {
             </Unit>
           </div>
         </div>
+        <AppNotificationDialog />
+        <AppNotificationSnackBar />
         <Dialog
           title={formatMessage(messages.adminHelpHeader)}
           actions={adminHelpDialogActions} modal={false}
@@ -288,8 +297,6 @@ export default class ResetPassword extends PureComponent {
               supportEmail: config.supportEmail }}
           />
         </Dialog>
-        <ErrorDisplayContainer />
-        <AcknowledgementDisplay />
       </div>
     )
   }
@@ -303,8 +310,8 @@ function mapDispatchToProps(dispatch) {
   return bindActionCreators({
     resetPasswordEnterEmailAddress,
     resetPasswordEnterPassword,
-    addAcknowledgement,
-    showErrorNotification
+    showError,
+    showAcknowledgement
   }, dispatch)
 }
 

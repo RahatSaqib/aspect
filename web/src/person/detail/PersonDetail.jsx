@@ -30,7 +30,7 @@ import {
   UserPreferences
 } from '../PersonRedux'
 import { fetchPartnersAndRolesForSelectList } from '../../role/RoleRedux'
-import { addAcknowledgement } from '../../acknowledgement/AcknowledgementRedux'
+import { showAcknowledgement } from '../../appNotification/AppNotificationRedux'
 
 import messages from './messages'
 import styles from './PersonDetail.css'
@@ -47,7 +47,7 @@ export class PersonDetail extends PureComponent {
     person: PropTypes.object.isRequired,
     user: PropTypes.object.isRequired,
     editable: PropTypes.bool.isRequired,
-    addAcknowledgement: PropTypes.func.isRequired,
+    showAcknowledgement: PropTypes.func.isRequired,
     partnersAndRolesForSelectList: PropTypes.object.isRequired,
     updateSinglePerson: PropTypes.func.isRequired,
     updateSinglePersonLoginDetails: PropTypes.func.isRequired,
@@ -135,7 +135,7 @@ export class PersonDetail extends PureComponent {
   render() {
     const {
         intl: { formatMessage },
-        person, user, editable, addAcknowledgement
+        person, user, editable, showAcknowledgement
       } = this.props
     const contactDetails = new ContactDetails(person)
     const loginDetails = new LoginDetails(person)
@@ -143,13 +143,22 @@ export class PersonDetail extends PureComponent {
     const userIsAdmin = user.get('permissions').includes('person:admin')
     const loading = !person || person.get('loaded') !== true
     const saveContactDetailsSucceeded = () => {
-      addAcknowledgement(formatMessage(messages.contactDetailsUpdated))
+      showAcknowledgement({
+        title: messages.detailsUpdatedSuccessfully,
+        message: messages.contactDetailsUpdatedMessage
+      })
     }
     const saveLoginDetailsSucceeded = () => {
-      addAcknowledgement(formatMessage(messages.loginDetailsUpdated))
+      showAcknowledgement({
+        title: messages.detailsUpdatedSuccessfully,
+        message: messages.loginDetailsUpdatedMessage
+      })
     }
     const saveUserPreferencesSucceeded = () => {
-      addAcknowledgement(formatMessage(messages.userPreferencesUpdated))
+      showAcknowledgement({
+        title: messages.detailsUpdatedSuccessfully,
+        message: messages.userPreferencesUpdatedMessage
+      })
     }
 
     return (
@@ -224,7 +233,7 @@ function mapDispatchToProps(dispatch) {
     updateSinglePersonLoginDetails,
     updateSinglePersonUserPreferences,
     fetchPartnersAndRolesForSelectList,
-    addAcknowledgement
+    showAcknowledgement
   }, dispatch)
 }
 

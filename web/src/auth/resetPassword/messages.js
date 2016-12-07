@@ -55,7 +55,7 @@ export default defineMessages({
   },
   checkEmailContent: {
     id: 'pages.ResetPassword.checkEmailContent',
-    defaultMessage: '<p>We have sent an email to {emailAddress} that contains a link which will allow you to reset your password.</p><p>Please check your inbox?</p>'
+    defaultMessage: '<p>We have sent an email to {emailAddress} that contains a link which will allow you to reset your password.</p><p>Please check your inbox</p>'
   },
   iDidntReceiveAnEmail: {
     id: 'pages.ResetPassword.iDidntReceiveAnEmail',
@@ -109,9 +109,13 @@ export default defineMessages({
     id: 'pages.ResetPassword.passwordsDoNotMatch',
     defaultMessage: 'These passwords don\'t match'
   },
-  passwordUpdated: {
-    id: 'pages.ResetPassword.passwordUpdated',
-    defaultMessage: 'Your password has been changed successfully'
+  passwordUpdatedTitle: {
+    id: 'pages.ResetPassword.passwordUpdatedTitle',
+    defaultMessage: 'Password Changed Successfully'
+  },
+  passwordUpdatedMessage: {
+    id: 'pages.ResetPassword.passwordUpdatedMessage',
+    defaultMessage: 'You may now login with your new login details.'
   },
   passwordUpdateFailedTitle: {
     id: 'pages.ResetPassword.passwordUpdateFailedTitle',

@@ -41,8 +41,8 @@ describe('ResetPassword Component', () => {
       props = {
         resetPasswordEnterEmailAddress: () => {},
         resetPasswordEnterPassword: () => {},
-        addAcknowledgement: () => {},
-        showErrorNotification: () => {},
+        showAcknowledgement: () => {},
+        showError: () => {},
         intl: {
           formatMessage: message => message.defaultMessage
         }

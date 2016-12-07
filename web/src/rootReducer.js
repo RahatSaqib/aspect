@@ -2,8 +2,7 @@ import Immutable from 'immutable'
 import { reducer as formReducer } from 'redux-form/immutable'
 import { combineReducers } from 'redux-immutable'
 
-import acknowledgement from './acknowledgement/AcknowledgementRedux'
-import error from './error/ErrorRedux'
+import appNotification from './appNotification/AppNotificationRedux'
 import filter from './filter/FilterRedux'
 import user, {
   types as authTypes
@@ -26,8 +25,7 @@ import router from './router/RouterRedux'
 
 const appReducer = combineReducers({
   form: formReducer,
-  acknowledgement,
-  error,
+  appNotification,
   filter,
   user,
   device,
@@ -48,8 +46,7 @@ const appReducer = combineReducers({
 
 const App = Immutable.Record({
   form: undefined,
-  acknowledgement: undefined,
-  error: undefined,
+  appNotification: undefined,
   filter: undefined,
   user: undefined,
   device: undefined,

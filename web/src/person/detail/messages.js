@@ -23,16 +23,20 @@ export default defineMessages({
     id: 'pages.PersonDetails.languageAndTimezone',
     defaultMessage: 'Language & Timezone'
   },
-  contactDetailsUpdated: {
-    id: 'pages.PersonDetails.contactDetailsUpdated',
+  detailsUpdatedSuccessfully: {
+    id: 'pages.PersonDetails.detailsUpdatedSuccessfully',
+    defaultMessage: 'Details Changed Successfully'
+  },
+  contactDetailsUpdatedMessage: {
+    id: 'pages.PersonDetails.contactDetailsUpdatedMessage',
     defaultMessage: 'Contact details changed successfully'
   },
-  loginDetailsUpdated: {
-    id: 'pages.PersonDetails.loginDetailsUpdated',
-    defaultMessage: 'Login details changed successfully'
+  loginDetailsUpdatedMessage: {
+    id: 'pages.PersonDetails.loginDetailsUpdatedMessage',
+    defaultMessage: 'You can now login with the new login details'
   },
-  userPreferencesUpdated: {
-    id: 'pages.PersonDetails.userPreferencesUpdated',
+  userPreferencesUpdatedMessage: {
+    id: 'pages.PersonDetails.userPreferencesUpdatedMessage',
     defaultMessage: 'User preferences changed successfully'
   },
   fullName: {

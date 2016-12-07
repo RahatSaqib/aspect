@@ -20,9 +20,10 @@ import RaisedButton from 'material-ui/RaisedButton'
 // Our own imports
 import { Unit } from '../../components/pureGrids'
 import TextInput from '../../components/shared/TextInput'
-import { ErrorDisplayContainer } from '../../components/shared/ErrorDisplay'
 import { loginStart } from '../AuthRedux'
 import styles from './Login.css'
+import AppNotificationSnackBar from '../../appNotification/AppNotificationSnackBar'
+import AppNotificationDialog from '../../appNotification/AppNotificationDialog'
 
 const messages = defineMessages({
   title: {
@@ -113,7 +114,8 @@ export const Login = ({ location, intl, handleSubmit, pristine, submitting, init
           </Unit>
         </div>
       </div>
-      <ErrorDisplayContainer />
+      <AppNotificationDialog />
+      <AppNotificationSnackBar />
     </div>
   )
 }
