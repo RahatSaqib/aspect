@@ -1230,6 +1230,17 @@ describe('Device Result API routes', () => {
       yield server.post(devicePostResultPath)
         .set('Authorization', device1723Auth)
         .send({
+          id: resultIds[0],
+          workflow: { status: { id: 'Acknowledged' } }
+        })
+        .then((res) => {
+          // Device 1723 does not have access to resultIds[0]
+          assert.equal(res.status, 400)
+        })
+
+      yield server.post(devicePostResultPath)
+        .set('Authorization', device1723Auth)
+        .send({
           id: resultIds[1],
           workflow: { status: { id: 'Acknowledged' } }
         })
@@ -1238,16 +1249,6 @@ describe('Device Result API routes', () => {
           resultIds.push(res.body.id)
         })
 
-      yield server.post(devicePostResultPath)
-        .set('Authorization', device1723Auth)
-        .send({
-          id: resultIds[0],
-          workflow: { status: { id: 'Acknowledged' } }
-        })
-        .then((res) => {
-          // Device 1723 does not have access to resultIds[0]
-          assert.equal(res.status, 400)
-        })
 
       yield server.get(devicePath)
         .set('Authorization', deviceAuth)

@@ -38,17 +38,17 @@ function* addDeviceData(context) {
 function* getDeviceData(context) {
   const { knex, device: { id: deviceId }, query } = context
 
-  let checkpoint = query.checkpoint
-  if (!checkpoint) {
-    // use latest checkpoint if not specified in query string
-    const deviceLog = yield knex('DeviceLog')
-      .where({ deviceId })
-      .orderBy('id', 'desc')
-      .first('checkpoint')
-    checkpoint = deviceLog ? deviceLog.checkpoint : null
+  const deviceLogQ = knex('DeviceLog')
+    .where({ deviceId })
+    .orderBy('id', 'desc')
+  // use specified checkpoint, otherwise just select latest
+  if (query.checkpoint) {
+    deviceLogQ.where({ checkpoint: query.checkpoint })
   }
+  const { checkpoint, auditLogId } = (
+    (yield deviceLogQ.first('checkpoint', 'auditLogId')) || {})
 
-  const result = yield* listResults(context.withQuery({ checkpoint }))
+  const result = yield* listResults(context, auditLogId)
   // TODO include configuration and operation at checkpoint
 
   return { checkpoint, result }

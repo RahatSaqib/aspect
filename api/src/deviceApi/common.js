@@ -113,10 +113,6 @@ class DeviceApiContext {
     return new DeviceApiContext(Object.assign({}, this, { payload }))
   }
 
-  withQuery(query) {
-    return new DeviceApiContext(Object.assign({}, this, { query }))
-  }
-
   addDeviceConfigurationId(id) {
     this.addDeviceLogUpdate('deviceConfigurationId', id)
   }

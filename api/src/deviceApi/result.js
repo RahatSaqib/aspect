@@ -219,8 +219,8 @@ function* addResult(context) {
   return { id: externalId }
 }
 
-function* listResults(context) {
-  const { knex, constraints: dataConstraints, query } = context
+function* listResults(context, auditLogId) {
+  const { knex, constraints: dataConstraints } = context
 
   const resultQuery = knex('Result as r')
     .innerJoin('Assay as a', 'r.assayId', 'a.id')
@@ -233,15 +233,11 @@ function* listResults(context) {
     .leftJoin('Site as sos', 's.originSiteId', 'sos.id')
     .modify(addConstraints, dataConstraints, { device: 'd', sample: 's' })
 
-  if (query.checkpoint) {
+  if (auditLogId > 0) {
     resultQuery.whereIn('r.id',
       knex('AuditLog as al')
-        .innerJoin('DeviceLog as dl', 'al.id', '>=', 'dl.auditLogId')
-        .where({
-          'dl.deviceId': context.device.id,
-          'dl.checkpoint': query.checkpoint,
-          'al.tableName': 'Result'
-        })
+        .where({ 'al.tableName': 'Result' })
+        .andWhere('al.id', '>=', auditLogId)
         .orderBy('al.id')
         .distinct('al.tableId'))
   }
