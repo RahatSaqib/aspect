@@ -10,18 +10,17 @@ const cssClasses = classnames.bind(styles)
 const enhanceField = compose(
   setPropTypes({
     label: PropTypes.string.isRequired,
-    value: PropTypes.oneOfType([
-      PropTypes.string,
-      PropTypes.number
-    ]).isRequired
+    value: PropTypes.any,
+    lg: PropTypes.bool,
+    format: PropTypes.func
   }),
   pure
 )
 
-export const ReadOnlyField = enhanceField(({ label, value }) => (
-  <div className={cssClasses('FieldContainer')}>
-    <label htmlFor={label.replace(' ', '_')} className={cssClasses('FieldContainer__Label')}>{label}</label>
-    <div id={label.replace(' ', '_')}>{value || '-'}</div>
+export const ReadOnlyField = enhanceField(({ label, value, lg, format }) => (
+  <div className={cssClasses(lg ? 'FieldContainerLarge' : 'FieldContainer')}>
+    <label htmlFor={label.replace(' ', '_')} className={cssClasses(lg ? 'FieldContainerLarge__Label' : 'FieldContainer__Label')}>{label}</label>
+    <div id={label.replace(' ', '_')}>{format ? format(value || '-') : value || '-'}</div>
   </div>
 ))
 

@@ -17,6 +17,15 @@ body {
     background-color: #f2f2f2;
 }
 
+a {
+  color: #4687f4;
+  text-decoration: none;
+}
+
+a:hover {
+  text-decoration: underline;
+}
+
 /*Get rid of ugly yellow background on Chrome login autocomplete*/
 input:-webkit-autofill {
     box-shadow: 0 0 0 300px white inset !important;

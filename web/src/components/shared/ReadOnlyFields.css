@@ -3,9 +3,18 @@
   padding: 10px 0 10px 0;
 }
 
+.FieldContainerLarge {
+  composes: FieldContainer;
+  font-size: 1.15rem;
+}
+
 .FieldContainer__Label {
-  font-size: 12px;
-  color: rgba(0, 0, 0, 0.298039);
+  font-size: .7em;
+  color: rgba(0, 0, 0, 0.35);
   display: block;
   padding: 0 0 2px 0;
+}
+
+.FieldContainerLarge__Label {
+  composes: FieldContainer__Label;
 }

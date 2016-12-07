@@ -10,11 +10,12 @@ import {
 import { bindActionCreators } from 'redux'
 import { connect } from 'react-redux'
 import Helmet from 'react-helmet'
+import { Link } from 'react-router'
 
 // Material-UI
-import Paper from 'material-ui/Paper'
 import LinearProgress from 'material-ui/LinearProgress'
 import { Card, CardHeader, CardText } from 'material-ui/Card'
+import Divider from 'material-ui/Divider'
 import Checkbox from 'material-ui/Checkbox'
 
 // Our own imports
@@ -24,7 +25,7 @@ import {
   updateSingleResult,
   updateResultWorkflowStatus
 } from '../ResultRedux'
-import ReadOnlyFields from '../../components/shared/ReadOnlyFields'
+import { ReadOnlyFields, ReadOnlyField } from '../../components/shared/ReadOnlyFields'
 import styles from './ResultDetail.css'
 
 const cssClasses = classnames.bind(styles)
@@ -49,6 +50,10 @@ const messages = defineMessages({
   fieldSiteName: {
     id: 'pages.ResultDetail.fieldSiteName',
     defaultMessage: 'Site Name'
+  },
+  fieldDeviceName: {
+    id: 'pages.ResultDetail.fieldDeviceName',
+    defaultMessage: 'Device Name'
   },
   fieldEndedOn: {
     id: 'pages.ResultDetail.fieldEndedOn',
@@ -129,6 +134,14 @@ const messages = defineMessages({
   fieldUpdatedOn: {
     id: 'pages.ResultDetail.fieldUpdatedOn',
     defaultMessage: 'Updated'
+  },
+  fieldDate: {
+    id: 'pages.ResultDetail.fieldDate',
+    defaultMessage: 'Date'
+  },
+  fieldSource: {
+    id: 'pages.ResultDetail.fieldSource',
+    defaultMessage: 'Source'
   }
 })
 
@@ -402,8 +415,53 @@ export class ResultDetail extends PureComponent {
   }
 
   renderContent() {
+    const { result, intl: { formatMessage, formatDate } } = this.props
+
     return (
       <div className={cssClasses('FieldsContainer')}>
+        <div>
+
+          <Card>
+            <CardText>
+            <Unit sm="1-2" md="1-2" lg="5-12">
+              <ReadOnlyField lg label={formatMessage(messages.fieldSampleId)} value={result.get('sampleId')} />
+            </Unit>
+            <Unit sm="1-2" md="1-2" lg="5-12">
+              <ReadOnlyField lg label={formatMessage(messages.fieldPatientId)} value={result.get('patientId')} />
+            </Unit>
+            <Unit sm="1-2" md="1-2" lg="1-6">
+              <ReadOnlyField lg label={formatMessage(messages.fieldDate)} value={result.get('endedOn')} format={formatDate} />
+            </Unit>
+            </CardText>
+          </Card>
+          <Card>
+            <CardText>
+              <ReadOnlyField
+                lg
+                label={formatMessage(messages.fieldSource)}
+                value={result.get('siteName')}
+                format={v =>
+                  <div>
+                    <Link to={'site/' + result.get('siteId')}>
+                      {v}
+                    </Link>
+                    &nbsp;at&nbsp;
+                    <Link to={'site/' + result.get('siteId')}>
+                      {result.get('siteName')}
+                    </Link>
+                  </div>
+                }
+              />
+            </CardText>
+          </Card>
+
+
+        </div>
+        <br />
+        <br />
+        <hr />
+        <br />
+        <br />
         <div>
           <Unit sm="1-2" md="1-2" lg="1-2">
             <div className={cssClasses('FieldsContainer__LeftColumn__Content')}>
@@ -428,13 +486,13 @@ export class ResultDetail extends PureComponent {
 
   renderPaper() {
     return (
-      <Paper>
+      <div>
         {
           this.hasResultWithAssay() ?
           this.renderContent() :
           this.renderProgress()
         }
-      </Paper>
+      </div>
     )
   }
 
