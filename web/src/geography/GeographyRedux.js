@@ -1,7 +1,7 @@
 import _ from 'lodash'
 import Immutable from 'immutable'
 import { aspectFetch } from '../shared/utils/fetch'
-import { addError } from '../error/ErrorRedux'
+import { errorPleaseTryAgainInAFewMinutes } from '../error/CommonErrorNotifications'
 
 export const types = {
   REQUEST_COUNTRIES_FOR_LOCATION_SELECTOR: 'REQUEST_COUNTRIES_FOR_LOCATION_SELECTOR',
@@ -80,9 +80,14 @@ export const fetchCountriesForLocationSelector = function (forceRefresh, countri
             path += `/${selectedStateId}`
           }
         }
-        return aspectFetch(path)
-          .then(json => dispatch(createReceiveCountriesForLocationSelector(json.data)))
-          .catch(err => dispatch(addError('Loading countries failed', err.message, err)))
+        return aspectFetch(path, {
+          errorNotifications: {
+            default: errorPleaseTryAgainInAFewMinutes({
+              id: 'errorResponseMessages.fetchCountriesForLocationSelector.GET.default.title',
+              defaultMessage: 'Error Loading Countries'
+            })
+          }
+        }).then(json => dispatch(createReceiveCountriesForLocationSelector(json.data)))
       }
     } else if (selectedCountryId) {
       const selectedCountry = countriesState.get('items').find(country => country.get('id') === selectedCountryId)
@@ -106,9 +111,15 @@ export const fetchStatesForLocationSelector =
           if (selectedStateId) {
             path += `/${selectedStateId}`
           }
-          return aspectFetch(path)
-            .then(json => dispatch(createReceiveStatesForLocationSelector(json.data, selectedCountry.get('id'))))
-            .catch(err => dispatch(addError('Loading states failed', err.message, err)))
+          return aspectFetch(path, {
+            errorNotifications: {
+              default: errorPleaseTryAgainInAFewMinutes({
+                id: 'errorResponseMessages.fetchStatesForLocationSelector.GET.default.title',
+                defaultMessage: 'Error Loading States for {countryName}'
+              }, { countryName: selectedCountry.get('name') })
+            }
+          }).then(json =>
+            dispatch(createReceiveStatesForLocationSelector(json.data, selectedCountry.get('id'))))
         }
       } else if (selectedStateId) {
         const selectedState = selectedCountry.getIn(['children', 'items']).find(state => state.get('id') === selectedStateId)
@@ -127,9 +138,16 @@ export const fetchLgasForLocationSelector =
       return (dispatch) => {
         dispatch(createRequestLgasForLocationSelector(selectedCountry.get('id'), selectedState.get('id')))
         const path = `/geography/lga-select-list/${selectedState.get('id')}`
-        return aspectFetch(path)
-          .then(json => dispatch(createReceiveLgasForLocationSelector(json.data, selectedCountry.get('id'), selectedState.get('id'))))
-          .catch(err => dispatch(addError('Loading LGAs failed', err.message, err)))
+        return aspectFetch(path, {
+          errorNotifications: {
+            default: errorPleaseTryAgainInAFewMinutes({
+              id: 'errorResponseMessages.fetchLgasForLocationSelector.GET.default.title',
+              defaultMessage: 'Error Loading Areas for {stateName}'
+            }, { stateName: selectedCountry.get('selectedState') })
+          }
+        }).then(json =>
+          dispatch(createReceiveLgasForLocationSelector(json.data,
+            selectedCountry.get('id'), selectedState.get('id'))))
       }
     }
     return () => {}

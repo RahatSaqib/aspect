@@ -875,47 +875,6 @@ describe('geography action creators', () => {
         })
       })
     })
-
-    describe('When the server encounters a problem', () => {
-      const expectedError = { message: 'An unexpected error happened' }
-      const expectedResponseFromServer = Promise.reject(expectedError)
-      const expectedErrorAction = { type: 'ERROR' }
-      let fetchStub
-      let errorCreatorsStub
-
-      beforeEach(() => {
-        fetchStub = {
-          aspectFetch: sinon.stub()
-        }
-        fetchStub.aspectFetch.withArgs('/geography/country-select-list')
-          .returns(expectedResponseFromServer)
-        errorCreatorsStub = {
-          addError: sinon.stub()
-        }
-        errorCreatorsStub.addError.withArgs('Loading countries failed', expectedError.message, expectedError)
-          .returns(expectedErrorAction)
-        dispatch = sinon.spy()
-        createGeographyReduxWithStubs(fetchStub, errorCreatorsStub)
-        const dispatchFunction = geographyRedux
-          .fetchCountriesForLocationSelector(true, countriesState)
-        dispatchFunction(dispatch)
-      })
-
-      it('Should dispatch a REQUEST_COUNTRIES_FOR_LOCATION_SELECTOR action', () => {
-        assert.deepEqual(dispatch.firstCall.args, [{ type: types.REQUEST_COUNTRIES_FOR_LOCATION_SELECTOR }], 'REQUEST_COUNTRIES_FOR_LOCATION_SELECTOR Was Not Dispatched')
-      })
-
-      it('Should request a new list of countries from the server', () => {
-        assert(fetchStub.aspectFetch.calledWith('/geography/country-select-list'), 'A request to /geography/country-select-list was not detected')
-      })
-
-      describe('and a response is received from the server', () => {
-        it('Should dispatch an error action', () => expectedResponseFromServer.then().catch((err) => {
-          assert.deepEqual(err, expectedError)
-          assert.deepEqual(dispatch.secondCall.args, [expectedErrorAction])
-        }))
-      })
-    })
   })
 
   describe('fetchStatesForLocationSelector', () => {
@@ -1171,52 +1130,6 @@ describe('geography action creators', () => {
               lastRefreshed: now }])
           }))
         })
-      })
-    })
-
-    describe('When the server encounters a problem', () => {
-      const expectedError = { message: 'An unexpected error happened' }
-      const expectedResponseFromServer = Promise.reject(expectedError)
-      const expectedErrorAction = { type: 'ERROR' }
-      let fetchStub
-      let errorCreatorsStub
-
-      beforeEach(() => {
-        fetchStub = {
-          aspectFetch: sinon.stub()
-        }
-        fetchStub.aspectFetch.withArgs('/geography/state-select-list/1')
-          .returns(expectedResponseFromServer)
-        errorCreatorsStub = {
-          addError: sinon.stub()
-        }
-        errorCreatorsStub.addError.withArgs('Loading states failed', expectedError.message, expectedError)
-          .returns(expectedErrorAction)
-        dispatch = sinon.spy()
-        createGeographyReduxWithStubs(fetchStub, errorCreatorsStub)
-        countriesState = setLastRefreshedTimeOnCountryStates(0, undefined)
-        const selectedCountry = getCountryAt(0)
-        const dispatchFunction = geographyRedux
-          .fetchStatesForLocationSelector(true, selectedCountry)
-        dispatchFunction(dispatch)
-      })
-
-      it('Should dispatch a REQUEST_STATES_FOR_LOCATION_SELECTOR action', () => {
-        assert.deepEqual(dispatch.firstCall.args, [{
-          type: types.REQUEST_STATES_FOR_LOCATION_SELECTOR,
-          selectedCountryId: 1
-        }], 'REQUEST_STATES_FOR_LOCATION_SELECTOR Was Not Dispatched')
-      })
-
-      it('Should request a new list of states from the server', () => {
-        assert(fetchStub.aspectFetch.calledWith('/geography/state-select-list/1'), 'A request to /geography/state-select-list/{countryId} was not detected')
-      })
-
-      describe('and a response is received from the server', () => {
-        it('Should dispatch an error action', () => expectedResponseFromServer.then().catch((err) => {
-          assert.deepEqual(err, expectedError)
-          assert.deepEqual(dispatch.secondCall.args, [expectedErrorAction])
-        }))
       })
     })
   })
@@ -1494,54 +1407,6 @@ describe('geography action creators', () => {
               lastRefreshed: now }])
           }))
         })
-      })
-    })
-
-    describe('When the server encounters a problem', () => {
-      const expectedError = { message: 'An unexpected error happened' }
-      const expectedResponseFromServer = Promise.reject(expectedError)
-      const expectedErrorAction = { type: 'ERROR' }
-      let fetchStub
-      let errorCreatorsStub
-
-      beforeEach(() => {
-        fetchStub = {
-          aspectFetch: sinon.stub()
-        }
-        fetchStub.aspectFetch.withArgs('/geography/lga-select-list/1')
-          .returns(expectedResponseFromServer)
-        errorCreatorsStub = {
-          addError: sinon.stub()
-        }
-        errorCreatorsStub.addError.withArgs('Loading LGAs failed', expectedError.message, expectedError)
-          .returns(expectedErrorAction)
-        dispatch = sinon.spy()
-        createGeographyReduxWithStubs(fetchStub, errorCreatorsStub)
-        countriesState = setLastRefreshedTimeOnStateLGAs(0, 0, undefined)
-        const selectedCountry = getCountryAt(0)
-        const selectedState = getStateAt(0, 0)
-        const dispatchFunction = geographyRedux
-            .fetchLgasForLocationSelector(true, selectedCountry, selectedState)
-        dispatchFunction(dispatch)
-      })
-
-      it('Should dispatch a REQUEST_LGAS_FOR_LOCATION_SELECTOR action', () => {
-        assert.deepEqual(dispatch.firstCall.args, [{
-          type: types.REQUEST_LGAS_FOR_LOCATION_SELECTOR,
-          selectedCountryId: 1,
-          selectedStateId: 1
-        }], 'REQUEST_LGAS_FOR_LOCATION_SELECTOR Was Not Dispatched')
-      })
-
-      it('Should request a new list of LGAs from the server', () => {
-        assert(fetchStub.aspectFetch.calledWith('/geography/lga-select-list/1'), 'A request to /geography/lga-select-list/{stateId} was not detected')
-      })
-
-      describe('and a response is received from the server', () => {
-        it('Should dispatch an error action', () => expectedResponseFromServer.then().catch((err) => {
-          assert.deepEqual(err, expectedError)
-          assert.deepEqual(dispatch.secondCall.args, [expectedErrorAction])
-        }))
       })
     })
   })

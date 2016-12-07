@@ -1,10 +1,26 @@
-export function errorPleaseTryAgainInAFewMinutes(titleDescriptor) {
+export function errorPleaseTryAgainInAFewMinutes(titleDescriptor, messageValues) {
   return {
     severity: 'error',
     title: titleDescriptor,
     resolution: {
       id: 'errorResponseMessages.common.tryAgainLater.resolution',
       defaultMessage: 'Please try again in a few minutes'
+    },
+    messageValues
+  }
+}
+
+export function errorNotFound(titleDescriptor) {
+  return {
+    severity: 'error',
+    title: titleDescriptor,
+    message: {
+      id: 'errorResponseMessages.common.notFound.message',
+      defaultMessage: 'It might have been deleted or renamed'
+    },
+    resolution: {
+      id: 'errorResponseMessages.common.notFound.resolution',
+      defaultMessage: 'Please check that it still exists'
     }
   }
 }

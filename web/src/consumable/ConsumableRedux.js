@@ -1,7 +1,10 @@
 import Immutable from 'immutable'
 import differenceInMinutes from 'date-fns/difference_in_minutes'
 import { aspectFetch } from '../shared/utils/fetch'
-import { addError } from '../error/ErrorRedux'
+import {
+  filterFieldsRejectedError,
+  errorPleaseTryAgainInAFewMinutes
+} from '../error/CommonErrorNotifications'
 
 export const types = {
   REQUEST_CONSUMABLES: 'REQUEST_CONSUMABLES',
@@ -38,9 +41,20 @@ export function fetchConsumables(forceRefresh) {
     }
 
     dispatch(createRequestConsumables())
-    return aspectFetch('/inventory/consumable-types')
+    return aspectFetch('/inventory/consumable-types',
+      {
+        errorNotifications: {
+          400: filterFieldsRejectedError({
+            id: 'errorResponseMessages.fetchConsumables.GET.400.title',
+            defaultMessage: 'Searching Consumables Failed'
+          }),
+          default: errorPleaseTryAgainInAFewMinutes({
+            id: 'errorResponseMessages.fetchConsumables.GET.default.title',
+            defaultMessage: 'Loading Consumables Failed'
+          })
+        }
+      })
       .then(json => dispatch(createReceiveConsumables(json.data)))
-      .catch(err => dispatch(addError('Loading consumables failed', err.message, err)))
   }
 }
 
