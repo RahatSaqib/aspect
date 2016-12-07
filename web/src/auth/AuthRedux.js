@@ -7,7 +7,10 @@ import config from 'config'
 import { getBrowserNameAndVersion } from '../shared/utils/browser'
 import { aspectFetch, getHeaders } from '../shared/utils/fetch'
 import * as localStorage from '../shared/utils/localStorage'
-import { errorPleaseTryAgainInAFewMinutes } from '../error/CommonErrorNotifications'
+import {
+  errorPleaseTryAgainInAFewMinutes,
+  inlineErrorPleaseTryAgainInAFewMinutes
+} from '../error/CommonErrorNotifications'
 
 export const types = {
   HYDRATE_FROM_LOCAL_STORAGE: 'HYDRATE_FROM_LOCAL_STORAGE',
@@ -257,7 +260,13 @@ export function resetPasswordEnterEmailAddress(emailAddress) {
         body: JSON.stringify({
           clientId: localStorage.getClientId(),
           clientName
-        })
+        }),
+        errorNotifications: {
+          default: inlineErrorPleaseTryAgainInAFewMinutes({
+            id: 'errorResponseMessages.resetPasswordEnterEmailAddress.POST.default.title',
+            defaultMessage: 'Error Sending Reset Password Email'
+          })
+        }
       })
       .catch((err) => {
         throw new SubmissionError({ _error: err.message })
@@ -276,7 +285,13 @@ export function resetPasswordEnterPassword(resetPasswordToken, newPassword) {
           newPassword,
           clientId: localStorage.getClientId(),
           clientName
-        })
+        }),
+        errorNotifications: {
+          default: inlineErrorPleaseTryAgainInAFewMinutes({
+            id: 'errorResponseMessages.resetPasswordEnterPassword.POST.default.title',
+            defaultMessage: 'Error Saving New Password'
+          })
+        }
       })
       .then((json) => {
         dispatch(createResetPasswordEnterPasswordSuccess(json.username))

@@ -10,6 +10,13 @@ export function errorPleaseTryAgainInAFewMinutes(titleDescriptor, messageValues)
   }
 }
 
+export function inlineErrorPleaseTryAgainInAFewMinutes(titleDescriptor, messageValues) {
+  return {
+    ...errorPleaseTryAgainInAFewMinutes(titleDescriptor, messageValues),
+    showAs: 'inline'
+  }
+}
+
 export function errorNotFound(titleDescriptor) {
   return {
     severity: 'error',

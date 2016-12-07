@@ -154,7 +154,7 @@ export function updateSingleDevice(deviceId, data) {
       errorNotifications: {
         default: errorPleaseTryAgainInAFewMinutes({
           id: 'errorResponseMessages.updateSingleDevice.PUT.default.title',
-          defaultMessage: 'An Error Occurred When Trying to Update the Device'
+          defaultMessage: 'An Error Occurred When Trying to Save the Device'
         })
       }
     }).then(json => dispatch(receiveUpdatedSingleDevice(json.data)))

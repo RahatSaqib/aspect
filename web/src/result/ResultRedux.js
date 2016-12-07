@@ -3,7 +3,11 @@ import { stringify } from 'querystring'
 import Immutable from 'immutable'
 
 import { aspectFetch } from '../shared/utils/fetch'
-import { addError } from '../error/ErrorRedux'
+import {
+  errorNotFound,
+  filterFieldsRejectedError,
+  errorPleaseTryAgainInAFewMinutes
+} from '../error/CommonErrorNotifications'
 import {
   receiveList,
   receiveItem,
@@ -73,11 +77,18 @@ export function fetchResults(filters/* required */, sortCol = 'endedOn', sortDir
       page,
       size: pageSize,
       ...filters
-    })}`)
-      .then(json => dispatch(receiveResults(json)))
-      .catch((err) => {
-        dispatch(addError('Loading results failed', err.message, err))
-      })
+    })}`, {
+      errorNotifications: {
+        400: filterFieldsRejectedError({
+          id: 'errorResponseMessages.fetchResults.GET.400.title',
+          defaultMessage: 'Searching Results Failed'
+        }),
+        default: errorPleaseTryAgainInAFewMinutes({
+          id: 'errorResponseMessages.fetchResults.GET.default.title',
+          defaultMessage: 'Loading Results Failed'
+        })
+      }
+    }).then(json => dispatch(receiveResults(json)))
   }
 }
 
@@ -102,11 +113,18 @@ export function fetchSingleResult(resultId) {
   return (dispatch) => {
     dispatch(requestSingleResult(resultId))
 
-    return aspectFetch(`/result/${resultId}`)
-      .then(json => dispatch(receiveSingleResult(json.data)))
-      .catch((err) => {
-        dispatch(addError(`Loading a result (${resultId}) failed`, err.message, err))
-      })
+    return aspectFetch(`/result/${resultId}`, {
+      errorNotifications: {
+        404: errorNotFound({
+          id: 'errorResponseMessages.fetchSingleResult.GET.404.title',
+          defaultMessage: 'Could Not Find Test Result'
+        }),
+        default: errorPleaseTryAgainInAFewMinutes({
+          id: 'errorResponseMessages.fetchSingleResult.GET.default.title',
+          defaultMessage: 'Error Loading Result Details'
+        })
+      }
+    }).then(json => dispatch(receiveSingleResult(json.data)))
   }
 }
 
@@ -134,12 +152,14 @@ export function updateSingleResult(resultId, data) {
 
     return aspectFetch(`/result/${resultId}`, {
       method: 'PUT',
-      body: JSON.stringify(data)
-    })
-      .then(json => dispatch(receiveUpdatedSingleResult(json.data)))
-      .catch((err) => {
-        dispatch(addError(`Updating a result (${resultId}) failed`, err.message, err))
-      })
+      body: JSON.stringify(data),
+      errorNotifications: {
+        default: errorPleaseTryAgainInAFewMinutes({
+          id: 'errorResponseMessages.updateSingleResult.PUT.default.title',
+          defaultMessage: 'An Error Occurred When Trying to Save the Result'
+        })
+      }
+    }).then(json => dispatch(receiveUpdatedSingleResult(json.data)))
   }
 }
 
@@ -162,12 +182,14 @@ export function updateResultWorkflowStatus(resultId) {
 
     return aspectFetch(`/result/workflow-status/${resultId}`, {
       method: 'PUT',
-      body: JSON.stringify({ token })
-    })
-      .then(json => dispatch(receiveUpdatedSingleResult(json.data)))
-      .catch((err) => {
-        dispatch(addError(`Updating a result workflow status (${resultId}) failed`, err.message, err))
-      })
+      body: JSON.stringify({ token }),
+      errorNotifications: {
+        default: errorPleaseTryAgainInAFewMinutes({
+          id: 'errorResponseMessages.updateResultWorkflowStatus.PUT.default.title',
+          defaultMessage: 'An Error Occurred When Trying to Save the Workflow Status'
+        })
+      }
+    }).then(json => dispatch(receiveUpdatedSingleResult(json.data)))
   }
 }
 /*

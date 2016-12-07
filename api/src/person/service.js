@@ -1,5 +1,6 @@
 const Promise = require('bluebird')
 const _ = require('lodash')
+const Boom = require('boom')
 const { query, knex, filterParams, sortPageParams } = require('../db')
 const userService = require('../auth/service')
 
@@ -57,6 +58,9 @@ function* showPerson(request) {
   const { params } = request
 
   const personDetails = yield getPersonDetails(params.personId)
+  if (_.isEmpty(personDetails)) {
+    return Boom.notFound()
+  }
   const rolesForUser = personDetails.userId ?
     yield userService.getRolesForUser(personDetails.userId) : []
 
@@ -83,6 +87,9 @@ function* savePerson(request, updatablePersonFields) {
   const currentlyLoggedInUser = yield userService.getUser(request.auth.credentials.name)
 
   const personDetails = yield getPersonDetails(params.personId)
+  if (_.isEmpty(personDetails)) {
+    return Boom.notFound()
+  }
   const changedFields = _.reduce(payload, (result, value, key) => {
     if (_.includes(updatablePersonFields, key) && key in personDetails &&
         personDetails[key] !== value) {

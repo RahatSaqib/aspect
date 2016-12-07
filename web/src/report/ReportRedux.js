@@ -3,7 +3,10 @@ import Immutable from 'immutable'
 import { stringify } from 'querystring'
 
 import { aspectFetch } from '../shared/utils/fetch'
-import { addError } from '../error/ErrorRedux'
+import {
+  filterFieldsRejectedError,
+  errorPleaseTryAgainInAFewMinutes
+} from '../error/CommonErrorNotifications'
 import {
   receiveList,
   Items
@@ -67,11 +70,18 @@ export function fetchReports(filters/* required */, sortCol = 'name', sortDir = 
       page,
       size: pageSize,
       ...filters
-    })}`)
-      .then(json => dispatch(receiveReports(json)))
-      .catch((err) => {
-        dispatch(addError('Loading reports failed', err.message, err))
-      })
+    })}`, {
+      errorNotifications: {
+        400: filterFieldsRejectedError({
+          id: 'errorResponseMessages.fetchReports.GET.400.title',
+          defaultMessage: 'Searching Reports Failed'
+        }),
+        default: errorPleaseTryAgainInAFewMinutes({
+          id: 'errorResponseMessages.fetchReports.GET.default.title',
+          defaultMessage: 'Loading Reports Failed'
+        })
+      }
+    }).then(json => dispatch(receiveReports(json)))
   }
 }
 /*
