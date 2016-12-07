@@ -496,12 +496,9 @@ describe('geography action creators', () => {
     lastRefreshed: undefined
   })
 
-  function createGeographyReduxWithStubs(fetchStub, errorCreatorsStub) {
+  function createGeographyReduxWithStubs(fetchStub) {
     const proxyDependencies = {
       '../shared/utils/fetch': fetchStub
-    }
-    if (errorCreatorsStub) {
-      proxyDependencies['../error/ErrorRedux'] = errorCreatorsStub
     }
     geographyRedux = proxyquire('./GeographyRedux', proxyDependencies)
   }

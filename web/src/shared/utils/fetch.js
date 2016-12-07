@@ -6,7 +6,7 @@ import {
   accept,
   recv
 } from 'http-client'
-import { showErrorNotification } from '../../error/ErrorRedux'
+import { showError } from '../../appNotification/AppNotificationRedux'
 
 import config from '../../config'
 import { getJWT } from './localStorage'
@@ -67,7 +67,7 @@ export function handleFetchResponse(options) {
           errorNotification = errorNotification.default
         }
         const store = require('../../store').default
-        store.dispatch(showErrorNotification(errorNotification, err))
+        store.dispatch(showError(errorNotification, err))
       }
       return Promise.reject(err)
     })
