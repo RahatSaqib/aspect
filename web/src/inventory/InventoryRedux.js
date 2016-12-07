@@ -12,7 +12,7 @@ import {
   receiveTableItems,
   Table
 } from '../shared/metaReducers/groupedTable'
-import { errorPleaseTryAgainInAFewMinutes } from '../error/ErrorNotifications'
+import { errorPleaseTryAgainInAFewMinutes } from '../error/CommonErrorNotifications'
 
 export const types = {
   REQUEST_INVENTORY_ITEMS: 'REQUEST_INVENTORY_ITEMS',
@@ -81,6 +81,10 @@ export function fetchInventoryItems(groupBy, filters /* required */, sortCol = '
       ...filters
     })}`, {
       errorNotifications: {
+        400: filterFieldsRejectedError({
+          id: 'errorResponseMessages.fetchInventoryItems.GET.400.title',
+          defaultMessage: 'Searching Inventory Items Failed'
+        }),
         default: errorPleaseTryAgainInAFewMinutes({
           id: 'errorResponseMessages.fetchInventoryItems.GET.default.title',
           defaultMessage: 'Loading Inventory Items Failed'

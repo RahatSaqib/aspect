@@ -1,7 +1,10 @@
 import Immutable from 'immutable'
 import differenceInMinutes from 'date-fns/difference_in_minutes'
 import { aspectFetch } from '../shared/utils/fetch'
-import { addError } from '../error/ErrorRedux'
+import {
+  filterFieldsRejectedError,
+  errorPleaseTryAgainInAFewMinutes
+} from '../error/CommonErrorNotifications'
 
 export const types = {
   REQUEST_ASSAYS: 'REQUEST_ASSAYS',
@@ -39,9 +42,20 @@ export function fetchAssays(forceRefresh) {
 
     dispatch(createRequestAssays())
     const path = '/assay'
-    return aspectFetch(path)
+    return aspectFetch(path,
+      {
+        errorNotifications: {
+          400: filterFieldsRejectedError({
+            id: 'errorResponseMessages.fetchAssays.GET.400.title',
+            defaultMessage: 'Searching Assays Failed'
+          }),
+          default: errorPleaseTryAgainInAFewMinutes({
+            id: 'errorResponseMessages.fetchAssays.GET.default.title',
+            defaultMessage: 'Loading Assays Failed'
+          })
+        }
+      })
       .then(json => dispatch(createReceiveAssays(json.data)))
-      .catch(err => dispatch(addError('Loading assays failed', err.message, err)))
   }
 }
 

@@ -10,7 +10,7 @@ import { loginSuccess, changeCulture, changeTimezone } from '../auth/AuthRedux'
 import {
   errorPleaseTryAgainInAFewMinutes,
   inlineWarning
-} from '../error/ErrorNotifications'
+} from '../error/CommonErrorNotifications'
 
 export const types = {
   REQUEST_ACCOUNT_DETAILS: 'REQUEST_ACCOUNT_DETAILS',
