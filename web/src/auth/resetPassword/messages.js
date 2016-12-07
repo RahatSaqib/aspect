@@ -25,9 +25,13 @@ export default defineMessages({
     id: 'pages.ResetPassword.generateTokenFailedTitle',
     defaultMessage: 'Unable to Reset Password'
   },
-  generateTokenFailed: {
-    id: 'pages.ResetPassword.passwordUpdateFailed',
-    defaultMessage: 'We were unable to reset your password. You can request further help by sending an email to {supportEmail} or calling us on {supportTelephone}'
+  generateTokenFailedMessage: {
+    id: 'pages.ResetPassword.generateTokenFailedMessage',
+    defaultMessage: 'We were unable to reset your password.'
+  },
+  generateTokenFailedResolution: {
+    id: 'pages.ResetPassword.generateTokenFailedResolution',
+    defaultMessage: 'You can request further help by sending an email to <a href="mailto:{supportEmail}">{supportEmail}</a> or calling us on {supportTelephone}'
   },
   iDontHaveAnEmailAddress: {
     id: 'pages.ResetPassword.iDontHaveAnEmailAddress',
@@ -113,9 +117,13 @@ export default defineMessages({
     id: 'pages.ResetPassword.passwordUpdateFailedTitle',
     defaultMessage: 'Password Reset Failed'
   },
-  passwordUpdateFailed: {
-    id: 'pages.ResetPassword.passwordUpdateFailed',
-    defaultMessage: 'We were unable to reset your password. You can request further help by sending an email to {supportEmail} or calling us on {supportTelephone}'
+  passwordUpdateFailedMessage: {
+    id: 'pages.ResetPassword.passwordUpdateFailedMessage',
+    defaultMessage: 'We were unable to reset your password.'
+  },
+  passwordUpdateFailedResolution: {
+    id: 'pages.ResetPassword.passwordUpdateFailedResolution',
+    defaultMessage: 'You can request further help by sending an email to <a href="mailto:{supportEmail}">{supportEmail}</a> or calling us on {supportTelephone}'
   },
   finish: {
     id: 'pages.ResetPassword.finish',

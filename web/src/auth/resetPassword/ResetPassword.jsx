@@ -29,7 +29,7 @@ import {
   resetPasswordEnterPassword
 } from '../AuthRedux'
 import { addAcknowledgement } from '../../acknowledgement/AcknowledgementRedux'
-import { addError } from '../../error/ErrorRedux'
+import { showErrorNotification } from '../../error/ErrorRedux'
 import styles from './ResetPassword.css'
 import messages from './messages'
 import ResetPasswordEnterEmail from './ResetPasswordEnterEmail'
@@ -81,10 +81,16 @@ export default class ResetPassword extends PureComponent {
   }
 
   createResetPasswordTokenFail = () => {
-    const { intl: { formatMessage }, addError } = this.props
-    addError(formatMessage(messages.generateTokenFailedTitle),
-      formatMessage(messages.generateTokenFailed, {
-        supportTelephone: config.supportTelephone, supportEmail: config.supportEmail }))
+    this.props.showErrorNotification({
+      severity: 'warn',
+      title: messages.generateTokenFailedTitle,
+      message: messages.generateTokenFailedMessage,
+      resolution: messages.generateTokenFailedResolution,
+      messageValues: {
+        supportTelephone: config.supportTelephone,
+        supportEmail: config.supportEmail
+      }
+    })
     this.setState({
       resettingPassword: false
     })
@@ -109,10 +115,16 @@ export default class ResetPassword extends PureComponent {
   }
 
   updatePasswordFail = () => {
-    const { intl: { formatMessage }, addError } = this.props
-    addError(formatMessage(messages.passwordUpdateFailedTitle),
-      formatMessage(messages.passwordUpdateFailed, {
-        supportTelephone: config.supportTelephone, supportEmail: config.supportEmail }))
+    this.props.showErrorNotification({
+      severity: 'warn',
+      title: messages.passwordUpdateFailedTitle,
+      message: messages.passwordUpdateFailedMessage,
+      resolution: messages.passwordUpdateFailedResolution,
+      messageValues: {
+        supportTelephone: config.supportTelephone,
+        supportEmail: config.supportEmail
+      }
+    })
     this.setState({
       resettingPassword: false
     })
@@ -292,7 +304,7 @@ function mapDispatchToProps(dispatch) {
     resetPasswordEnterEmailAddress,
     resetPasswordEnterPassword,
     addAcknowledgement,
-    addError
+    showErrorNotification
   }, dispatch)
 }
 

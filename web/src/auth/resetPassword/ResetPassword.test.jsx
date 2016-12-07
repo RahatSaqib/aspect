@@ -42,7 +42,7 @@ describe('ResetPassword Component', () => {
         resetPasswordEnterEmailAddress: () => {},
         resetPasswordEnterPassword: () => {},
         addAcknowledgement: () => {},
-        addError: () => {},
+        showErrorNotification: () => {},
         intl: {
           formatMessage: message => message.defaultMessage
         }

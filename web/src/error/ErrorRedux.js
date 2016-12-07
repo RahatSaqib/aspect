@@ -3,9 +3,7 @@ import Immutable from 'immutable'
 export const types = {
   SHOW_ERROR_NOTIFICATION: 'SHOW_ERROR_NOTIFICATION',
   SHOW_MORE_DETAILS: 'SHOW_MORE_DETAILS',
-  HIDE_ERROR_NOTIFICATION: 'HIDE_ERROR_NOTIFICATION',
-  ADD_ERROR: 'ADD_ERROR',
-  REMOVE_ERROR: 'REMOVE_ERROR'
+  HIDE_ERROR_NOTIFICATION: 'HIDE_ERROR_NOTIFICATION'
 }
 /*
  * ---------------- Action Creators -----------------
@@ -19,7 +17,7 @@ export function showErrorNotification(errorNotification, error) {
       showProceed: false,
       ...errorNotification
     },
-    error
+    error: error || {}
   }
 }
 
@@ -35,20 +33,6 @@ export function hideErrorNotification() {
   }
 }
 
-export function addError(title, message, error) {
-  return {
-    type: types.ADD_ERROR,
-    title,
-    message,
-    error
-  }
-}
-
-export function removeError() {
-  return {
-    type: types.REMOVE_ERROR
-  }
-}
 /*
  * ---------------- Reducers -----------------
  */
@@ -58,8 +42,6 @@ export function removeError() {
 // message is a string, error is a js object that can have any shape
 const Error = Immutable.Record({
   hasError: false,
-  title: null,
-  message: null,
   error: null,
   showDetails: false,
   errorNotification: null
@@ -71,6 +53,7 @@ export default function errorReducer(state = initialState, action) {
   switch (action.type) {
     case types.SHOW_ERROR_NOTIFICATION:
       return state.merge({
+        hasError: true,
         errorNotification: action.errorNotification,
         error: action.error,
         showDetails: action.errorNotification.showAs === 'interrupt'
@@ -79,22 +62,9 @@ export default function errorReducer(state = initialState, action) {
       return state.set('showDetails', true)
     case types.HIDE_ERROR_NOTIFICATION:
       return state.merge({
+        hasError: false,
         showDetails: false,
         errorNotification: null,
-        error: null
-      })
-    case types.ADD_ERROR:
-      return state.merge({
-        hasError: true,
-        title: action.title,
-        message: action.message,
-        error: action.error
-      })
-    case types.REMOVE_ERROR:
-      return state.merge({
-        hasError: false,
-        title: null,
-        message: null,
         error: null
       })
     default:

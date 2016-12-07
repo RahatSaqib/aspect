@@ -16,7 +16,6 @@ import { lightBlue600, orange500, red800 } from 'material-ui/styles/colors'
 
 // Our own imports
 import {
-  removeError,
   showMoreDetails,
   hideErrorNotification
 } from '../../error/ErrorRedux'
@@ -50,7 +49,6 @@ export class ErrorDisplay extends PureComponent {
   static propTypes = {
     intl: PropTypes.object.isRequired,
     error: PropTypes.object,
-    removeError: PropTypes.func.isRequired,
     showMoreDetails: PropTypes.func.isRequired,
     hideErrorNotification: PropTypes.func.isRequired
   }
@@ -64,12 +62,8 @@ export class ErrorDisplay extends PureComponent {
     if (onClose) {
       onClose()
     }
-    if (this.props.error.get('errorNotification')) {
-      this.props.hideErrorNotification()
-    }
-    // TODO: Refactor this out
     if (this.props.error.get('hasError')) {
-      this.props.removeError()
+      this.props.hideErrorNotification()
     }
   }
 
@@ -85,29 +79,6 @@ export class ErrorDisplay extends PureComponent {
 
   render() {
     const { error, intl: { formatMessage } } = this.props
-
-    if (error.get('hasError')) {
-      // TODO: Refactor this out
-      const actions = [
-        <FlatButton
-          label="Close"
-          primary
-          onTouchTap={this.handleClose}
-        />
-      ]
-      const errorMessage = error.get('message')
-      return (
-        <Dialog
-          title={error.get('title')}
-          actions={actions}
-          modal={false}
-          open={error.get('hasError')}
-          onRequestClose={this.handleClose}
-        >
-          {_.isString(errorMessage) ? <span dangerouslySetInnerHTML={{ __html: errorMessage }} /> : JSON.stringify(errorMessage, null, '\t')}
-        </Dialog>
-      )
-    }
 
     const errorNotificationMessage = (messageKey, fallbackMessage) => {
       const messageDescriptor = error.getIn(['errorNotification', messageKey])
@@ -206,7 +177,6 @@ function mapStateToProps(state) {
 
 function mapDispatchToProps(dispatch) {
   return bindActionCreators({
-    removeError,
     showMoreDetails,
     hideErrorNotification
   }, dispatch)
