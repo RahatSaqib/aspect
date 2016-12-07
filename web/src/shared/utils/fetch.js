@@ -58,9 +58,14 @@ export function handleFetchResponse(options) {
       })
     }
     return json.then((err) => {
-      const errorNotification = _.get(options, `errorNotifications.${err.statusCode}`) ||
+      let errorNotification = _.get(options, `errorNotifications.${err.statusCode}`) ||
         _.get(options, 'errorNotifications.default')
       if (errorNotification) {
+        if (errorNotification[err.message]) {
+          errorNotification = errorNotification[err.message]
+        } else if (errorNotification.default) {
+          errorNotification = errorNotification.default
+        }
         const store = require('../../store').default
         store.dispatch(showErrorNotification(errorNotification, err))
       }

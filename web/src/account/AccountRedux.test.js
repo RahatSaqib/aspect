@@ -4,6 +4,10 @@ import _ from 'lodash'
 import proxyquire from 'proxyquire'
 import sinon from 'sinon'
 import accountDetails, { types } from './AccountRedux'
+import {
+  errorPleaseTryAgainInAFewMinutes,
+  inlineWarning
+} from '../error/CommonErrorNotifications'
 
 describe('AccountDetailsRedux', () => {
   const accountDetailsData = {
@@ -349,17 +353,10 @@ describe('AccountDetailsRedux', () => {
           headers: stubHeaders,
           body: JSON.stringify(contactDetailsData),
           errorNotifications: {
-            default: {
-              severity: 'error',
-              title: {
-                id: 'errorResponseMessages.saveContactDetails.PUT.default.title',
-                defaultMessage: 'Saving Contact Details Failed'
-              },
-              resolution: {
-                id: 'errorResponseMessages.saveContactDetails.PUT.default.resolution',
-                defaultMessage: 'Please try again in a few minutes'
-              }
-            }
+            default: errorPleaseTryAgainInAFewMinutes({
+              id: 'errorResponseMessages.saveContactDetails.PUT.default.title',
+              defaultMessage: 'Saving Contact Details Failed'
+            })
           }
         }).returns(expectedResponseFromServer)
         dispatch = sinon.spy()
@@ -379,17 +376,10 @@ describe('AccountDetailsRedux', () => {
           headers: stubHeaders,
           body: JSON.stringify(contactDetailsData),
           errorNotifications: {
-            default: {
-              severity: 'error',
-              title: {
-                id: 'errorResponseMessages.saveContactDetails.PUT.default.title',
-                defaultMessage: 'Saving Contact Details Failed'
-              },
-              resolution: {
-                id: 'errorResponseMessages.saveContactDetails.PUT.default.resolution',
-                defaultMessage: 'Please try again in a few minutes'
-              }
-            }
+            default: errorPleaseTryAgainInAFewMinutes({
+              id: 'errorResponseMessages.saveContactDetails.PUT.default.title',
+              defaultMessage: 'Saving Contact Details Failed'
+            })
           }
         }), 'A PUT to /account-details/current-contact was not detected')
       })
@@ -421,17 +411,10 @@ describe('AccountDetailsRedux', () => {
             headers: stubHeaders,
             body: JSON.stringify(contactDetailsData),
             errorNotifications: {
-              default: {
-                severity: 'error',
-                title: {
-                  id: 'errorResponseMessages.saveContactDetails.PUT.default.title',
-                  defaultMessage: 'Saving Contact Details Failed'
-                },
-                resolution: {
-                  id: 'errorResponseMessages.saveContactDetails.PUT.default.resolution',
-                  defaultMessage: 'Please try again in a few minutes'
-                }
-              }
+              default: errorPleaseTryAgainInAFewMinutes({
+                id: 'errorResponseMessages.saveContactDetails.PUT.default.title',
+                defaultMessage: 'Saving Contact Details Failed'
+              })
             }
           }).returns(expectedErrorFromServer)
           errorCreatorsStub = {
@@ -455,17 +438,10 @@ describe('AccountDetailsRedux', () => {
             headers: stubHeaders,
             body: JSON.stringify(contactDetailsData),
             errorNotifications: {
-              default: {
-                severity: 'error',
-                title: {
-                  id: 'errorResponseMessages.saveContactDetails.PUT.default.title',
-                  defaultMessage: 'Saving Contact Details Failed'
-                },
-                resolution: {
-                  id: 'errorResponseMessages.saveContactDetails.PUT.default.resolution',
-                  defaultMessage: 'Please try again in a few minutes'
-                }
-              }
+              default: errorPleaseTryAgainInAFewMinutes({
+                id: 'errorResponseMessages.saveContactDetails.PUT.default.title',
+                defaultMessage: 'Saving Contact Details Failed'
+              })
             }
           }), 'A PUT to /account-details/current-contact was not detected')
         })
@@ -503,49 +479,30 @@ describe('AccountDetailsRedux', () => {
           headers: stubHeaders,
           body: JSON.stringify(requestData),
           errorNotifications: {
-            409: {
-              severity: 'warn',
-              showAs: 'inline',
-              title: {
-                id: 'errorResponseMessages.saveLoginDetails.PUT.409.title',
-                defaultMessage: 'This Username is Unavailable'
-              },
-              message: {
-                id: 'errorResponseMessages.saveLoginDetails.PUT.409.title',
-                defaultMessage: 'The username that you have entered is already in use by another user on the system'
-              },
-              resolution: {
-                id: 'errorResponseMessages.saveLoginDetails.PUT.409.resolution',
-                defaultMessage: 'Please try another username'
-              }
-            },
-            403: {
-              severity: 'warn',
-              showAs: 'inline',
-              title: {
-                id: 'errorResponseMessages.saveLoginDetails.PUT.403.title',
-                defaultMessage: 'Invalid Password'
-              },
-              message: {
-                id: 'errorResponseMessages.saveLoginDetails.PUT.403.title',
-                defaultMessage: 'The current password that you have entered is incorrect.'
-              },
-              resolution: {
-                id: 'errorResponseMessages.saveLoginDetails.PUT.403.resolution',
-                defaultMessage: 'Please try re-entering your password or contact us to reset your login details'
-              }
-            },
-            default: {
-              severity: 'error',
-              title: {
-                id: 'errorResponseMessages.saveLoginDetails.PUT.default.title',
-                defaultMessage: 'Saving Login details Failed'
-              },
-              resolution: {
-                id: 'errorResponseMessages.saveLoginDetails.PUT.default.resolution',
-                defaultMessage: 'Please try again in a few minutes'
-              }
-            }
+            409: inlineWarning({
+              id: 'errorResponseMessages.saveLoginDetails.PUT.409.title',
+              defaultMessage: 'This Username is Unavailable'
+            }, {
+              id: 'errorResponseMessages.saveLoginDetails.PUT.409.title',
+              defaultMessage: 'The username that you have entered is already in use by another user on the system'
+            }, {
+              id: 'errorResponseMessages.saveLoginDetails.PUT.409.resolution',
+              defaultMessage: 'Please try another username'
+            }),
+            403: inlineWarning({
+              id: 'errorResponseMessages.saveLoginDetails.PUT.403.title',
+              defaultMessage: 'Invalid Password'
+            }, {
+              id: 'errorResponseMessages.saveLoginDetails.PUT.403.message',
+              defaultMessage: 'The current password that you have entered is incorrect.'
+            }, {
+              id: 'errorResponseMessages.saveLoginDetails.PUT.403.resolution',
+              defaultMessage: 'Please try re-entering your password or contact us to reset your login details'
+            }),
+            default: errorPleaseTryAgainInAFewMinutes({
+              id: 'errorResponseMessages.saveLoginDetails.PUT.default.title',
+              defaultMessage: 'Saving Login Details Failed'
+            })
           }
         }).returns(expectedResponseFromServer)
         dispatch = sinon.spy()
@@ -565,49 +522,30 @@ describe('AccountDetailsRedux', () => {
           headers: stubHeaders,
           body: JSON.stringify(requestData),
           errorNotifications: {
-            409: {
-              severity: 'warn',
-              showAs: 'inline',
-              title: {
-                id: 'errorResponseMessages.saveLoginDetails.PUT.409.title',
-                defaultMessage: 'This Username is Unavailable'
-              },
-              message: {
-                id: 'errorResponseMessages.saveLoginDetails.PUT.409.title',
-                defaultMessage: 'The username that you have entered is already in use by another user on the system'
-              },
-              resolution: {
-                id: 'errorResponseMessages.saveLoginDetails.PUT.409.resolution',
-                defaultMessage: 'Please try another username'
-              }
-            },
-            403: {
-              severity: 'warn',
-              showAs: 'inline',
-              title: {
-                id: 'errorResponseMessages.saveLoginDetails.PUT.403.title',
-                defaultMessage: 'Invalid Password'
-              },
-              message: {
-                id: 'errorResponseMessages.saveLoginDetails.PUT.403.title',
-                defaultMessage: 'The current password that you have entered is incorrect.'
-              },
-              resolution: {
-                id: 'errorResponseMessages.saveLoginDetails.PUT.403.resolution',
-                defaultMessage: 'Please try re-entering your password or contact us to reset your login details'
-              }
-            },
-            default: {
-              severity: 'error',
-              title: {
-                id: 'errorResponseMessages.saveLoginDetails.PUT.default.title',
-                defaultMessage: 'Saving Login details Failed'
-              },
-              resolution: {
-                id: 'errorResponseMessages.saveLoginDetails.PUT.default.resolution',
-                defaultMessage: 'Please try again in a few minutes'
-              }
-            }
+            409: inlineWarning({
+              id: 'errorResponseMessages.saveLoginDetails.PUT.409.title',
+              defaultMessage: 'This Username is Unavailable'
+            }, {
+              id: 'errorResponseMessages.saveLoginDetails.PUT.409.title',
+              defaultMessage: 'The username that you have entered is already in use by another user on the system'
+            }, {
+              id: 'errorResponseMessages.saveLoginDetails.PUT.409.resolution',
+              defaultMessage: 'Please try another username'
+            }),
+            403: inlineWarning({
+              id: 'errorResponseMessages.saveLoginDetails.PUT.403.title',
+              defaultMessage: 'Invalid Password'
+            }, {
+              id: 'errorResponseMessages.saveLoginDetails.PUT.403.message',
+              defaultMessage: 'The current password that you have entered is incorrect.'
+            }, {
+              id: 'errorResponseMessages.saveLoginDetails.PUT.403.resolution',
+              defaultMessage: 'Please try re-entering your password or contact us to reset your login details'
+            }),
+            default: errorPleaseTryAgainInAFewMinutes({
+              id: 'errorResponseMessages.saveLoginDetails.PUT.default.title',
+              defaultMessage: 'Saving Login Details Failed'
+            })
           }
         }), 'A PUT to /auth/update-login-details was not detected')
       })
@@ -639,49 +577,30 @@ describe('AccountDetailsRedux', () => {
             headers: stubHeaders,
             body: JSON.stringify(requestData),
             errorNotifications: {
-              409: {
-                severity: 'warn',
-                showAs: 'inline',
-                title: {
-                  id: 'errorResponseMessages.saveLoginDetails.PUT.409.title',
-                  defaultMessage: 'This Username is Unavailable'
-                },
-                message: {
-                  id: 'errorResponseMessages.saveLoginDetails.PUT.409.title',
-                  defaultMessage: 'The username that you have entered is already in use by another user on the system'
-                },
-                resolution: {
-                  id: 'errorResponseMessages.saveLoginDetails.PUT.409.resolution',
-                  defaultMessage: 'Please try another username'
-                }
-              },
-              403: {
-                severity: 'warn',
-                showAs: 'inline',
-                title: {
-                  id: 'errorResponseMessages.saveLoginDetails.PUT.403.title',
-                  defaultMessage: 'Invalid Password'
-                },
-                message: {
-                  id: 'errorResponseMessages.saveLoginDetails.PUT.403.title',
-                  defaultMessage: 'The current password that you have entered is incorrect.'
-                },
-                resolution: {
-                  id: 'errorResponseMessages.saveLoginDetails.PUT.403.resolution',
-                  defaultMessage: 'Please try re-entering your password or contact us to reset your login details'
-                }
-              },
-              default: {
-                severity: 'error',
-                title: {
-                  id: 'errorResponseMessages.saveLoginDetails.PUT.default.title',
-                  defaultMessage: 'Saving Login details Failed'
-                },
-                resolution: {
-                  id: 'errorResponseMessages.saveLoginDetails.PUT.default.resolution',
-                  defaultMessage: 'Please try again in a few minutes'
-                }
-              }
+              409: inlineWarning({
+                id: 'errorResponseMessages.saveLoginDetails.PUT.409.title',
+                defaultMessage: 'This Username is Unavailable'
+              }, {
+                id: 'errorResponseMessages.saveLoginDetails.PUT.409.title',
+                defaultMessage: 'The username that you have entered is already in use by another user on the system'
+              }, {
+                id: 'errorResponseMessages.saveLoginDetails.PUT.409.resolution',
+                defaultMessage: 'Please try another username'
+              }),
+              403: inlineWarning({
+                id: 'errorResponseMessages.saveLoginDetails.PUT.403.title',
+                defaultMessage: 'Invalid Password'
+              }, {
+                id: 'errorResponseMessages.saveLoginDetails.PUT.403.message',
+                defaultMessage: 'The current password that you have entered is incorrect.'
+              }, {
+                id: 'errorResponseMessages.saveLoginDetails.PUT.403.resolution',
+                defaultMessage: 'Please try re-entering your password or contact us to reset your login details'
+              }),
+              default: errorPleaseTryAgainInAFewMinutes({
+                id: 'errorResponseMessages.saveLoginDetails.PUT.default.title',
+                defaultMessage: 'Saving Login Details Failed'
+              })
             }
           }).returns(expectedErrorFromServer)
           errorCreatorsStub = {
@@ -705,49 +624,30 @@ describe('AccountDetailsRedux', () => {
             headers: stubHeaders,
             body: JSON.stringify(requestData),
             errorNotifications: {
-              409: {
-                severity: 'warn',
-                showAs: 'inline',
-                title: {
-                  id: 'errorResponseMessages.saveLoginDetails.PUT.409.title',
-                  defaultMessage: 'This Username is Unavailable'
-                },
-                message: {
-                  id: 'errorResponseMessages.saveLoginDetails.PUT.409.title',
-                  defaultMessage: 'The username that you have entered is already in use by another user on the system'
-                },
-                resolution: {
-                  id: 'errorResponseMessages.saveLoginDetails.PUT.409.resolution',
-                  defaultMessage: 'Please try another username'
-                }
-              },
-              403: {
-                severity: 'warn',
-                showAs: 'inline',
-                title: {
-                  id: 'errorResponseMessages.saveLoginDetails.PUT.403.title',
-                  defaultMessage: 'Invalid Password'
-                },
-                message: {
-                  id: 'errorResponseMessages.saveLoginDetails.PUT.403.title',
-                  defaultMessage: 'The current password that you have entered is incorrect.'
-                },
-                resolution: {
-                  id: 'errorResponseMessages.saveLoginDetails.PUT.403.resolution',
-                  defaultMessage: 'Please try re-entering your password or contact us to reset your login details'
-                }
-              },
-              default: {
-                severity: 'error',
-                title: {
-                  id: 'errorResponseMessages.saveLoginDetails.PUT.default.title',
-                  defaultMessage: 'Saving Login details Failed'
-                },
-                resolution: {
-                  id: 'errorResponseMessages.saveLoginDetails.PUT.default.resolution',
-                  defaultMessage: 'Please try again in a few minutes'
-                }
-              }
+              409: inlineWarning({
+                id: 'errorResponseMessages.saveLoginDetails.PUT.409.title',
+                defaultMessage: 'This Username is Unavailable'
+              }, {
+                id: 'errorResponseMessages.saveLoginDetails.PUT.409.title',
+                defaultMessage: 'The username that you have entered is already in use by another user on the system'
+              }, {
+                id: 'errorResponseMessages.saveLoginDetails.PUT.409.resolution',
+                defaultMessage: 'Please try another username'
+              }),
+              403: inlineWarning({
+                id: 'errorResponseMessages.saveLoginDetails.PUT.403.title',
+                defaultMessage: 'Invalid Password'
+              }, {
+                id: 'errorResponseMessages.saveLoginDetails.PUT.403.message',
+                defaultMessage: 'The current password that you have entered is incorrect.'
+              }, {
+                id: 'errorResponseMessages.saveLoginDetails.PUT.403.resolution',
+                defaultMessage: 'Please try re-entering your password or contact us to reset your login details'
+              }),
+              default: errorPleaseTryAgainInAFewMinutes({
+                id: 'errorResponseMessages.saveLoginDetails.PUT.default.title',
+                defaultMessage: 'Saving Login Details Failed'
+              })
             }
           }), 'A PUT to /auth/update-login-details was not detected')
         })
@@ -771,17 +671,10 @@ describe('AccountDetailsRedux', () => {
           headers: stubHeaders,
           body: JSON.stringify(userPreferencesData),
           errorNotifications: {
-            default: {
-              severity: 'error',
-              title: {
-                id: 'errorResponseMessages.saveUserPreferences.PUT.default.title',
-                defaultMessage: 'Saving User preferences Failed'
-              },
-              resolution: {
-                id: 'errorResponseMessages.saveUserPreferences.PUT.default.resolution',
-                defaultMessage: 'Please try again in a few minutes'
-              }
-            }
+            default: errorPleaseTryAgainInAFewMinutes({
+              id: 'errorResponseMessages.saveUserPreferences.PUT.default.title',
+              defaultMessage: 'Saving User Preferences Failed'
+            })
           }
         }).returns(expectedResponseFromServer)
         dispatch = sinon.spy()
@@ -801,17 +694,10 @@ describe('AccountDetailsRedux', () => {
           headers: stubHeaders,
           body: JSON.stringify(userPreferencesData),
           errorNotifications: {
-            default: {
-              severity: 'error',
-              title: {
-                id: 'errorResponseMessages.saveUserPreferences.PUT.default.title',
-                defaultMessage: 'Saving User preferences Failed'
-              },
-              resolution: {
-                id: 'errorResponseMessages.saveUserPreferences.PUT.default.resolution',
-                defaultMessage: 'Please try again in a few minutes'
-              }
-            }
+            default: errorPleaseTryAgainInAFewMinutes({
+              id: 'errorResponseMessages.saveUserPreferences.PUT.default.title',
+              defaultMessage: 'Saving User Preferences Failed'
+            })
           }
         }), 'A PUT to /account-details/current-preferences was not detected')
       })
@@ -843,17 +729,10 @@ describe('AccountDetailsRedux', () => {
             headers: stubHeaders,
             body: JSON.stringify(userPreferencesData),
             errorNotifications: {
-              default: {
-                severity: 'error',
-                title: {
-                  id: 'errorResponseMessages.saveUserPreferences.PUT.default.title',
-                  defaultMessage: 'Saving User preferences Failed'
-                },
-                resolution: {
-                  id: 'errorResponseMessages.saveUserPreferences.PUT.default.resolution',
-                  defaultMessage: 'Please try again in a few minutes'
-                }
-              }
+              default: errorPleaseTryAgainInAFewMinutes({
+                id: 'errorResponseMessages.saveUserPreferences.PUT.default.title',
+                defaultMessage: 'Saving User Preferences Failed'
+              })
             }
           }).returns(expectedErrorFromServer)
           errorCreatorsStub = {
@@ -877,17 +756,10 @@ describe('AccountDetailsRedux', () => {
             headers: stubHeaders,
             body: JSON.stringify(userPreferencesData),
             errorNotifications: {
-              default: {
-                severity: 'error',
-                title: {
-                  id: 'errorResponseMessages.saveUserPreferences.PUT.default.title',
-                  defaultMessage: 'Saving User preferences Failed'
-                },
-                resolution: {
-                  id: 'errorResponseMessages.saveUserPreferences.PUT.default.resolution',
-                  defaultMessage: 'Please try again in a few minutes'
-                }
-              }
+              default: errorPleaseTryAgainInAFewMinutes({
+                id: 'errorResponseMessages.saveUserPreferences.PUT.default.title',
+                defaultMessage: 'Saving User Preferences Failed'
+              })
             }
           }), 'A PUT to /account-details/current-preferences was not detected')
         })

@@ -142,7 +142,7 @@ export function saveLoginDetails(loginDetails) {
           }),
           default: errorPleaseTryAgainInAFewMinutes({
             id: 'errorResponseMessages.saveLoginDetails.PUT.default.title',
-            defaultMessage: 'Saving Login details Failed'
+            defaultMessage: 'Saving Login Details Failed'
           })
         }
       })
@@ -184,7 +184,7 @@ export function saveUserPreferences(userPreferences) {
         errorNotifications: {
           default: errorPleaseTryAgainInAFewMinutes({
             id: 'errorResponseMessages.saveUserPreferences.PUT.default.title',
-            defaultMessage: 'Saving User preferences Failed'
+            defaultMessage: 'Saving User Preferences Failed'
           })
         }
       })

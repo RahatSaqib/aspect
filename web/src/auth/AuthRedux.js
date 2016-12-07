@@ -3,10 +3,11 @@ import Immutable from 'immutable'
 import jwtDecode from 'jwt-decode'
 import { browserHistory } from 'react-router'
 import { SubmissionError } from 'redux-form/immutable'
+import config from 'config'
 import { getBrowserNameAndVersion } from '../shared/utils/browser'
 import { aspectFetch, getHeaders } from '../shared/utils/fetch'
 import * as localStorage from '../shared/utils/localStorage'
-import { addError } from '../error/ErrorRedux'
+import { errorPleaseTryAgainInAFewMinutes } from '../error/CommonErrorNotifications'
 
 export const types = {
   HYDRATE_FROM_LOCAL_STORAGE: 'HYDRATE_FROM_LOCAL_STORAGE',
@@ -131,7 +132,49 @@ export function loginStart(login) {
           password,
           clientId: localStorage.getClientId(),
           clientName
-        })
+        }),
+        errorNotifications: {
+          401: {
+            'Your account is locked.': {
+              severity: 'warn',
+              title: {
+                id: 'errorResponseMessages.loginStart.POST.401.accountLocked.title',
+                defaultMessage: 'Login Failed'
+              },
+              message: {
+                id: 'errorResponseMessages.loginStart.POST.401.accountLocked.message',
+                defaultMessage: 'Your user account has been locked'
+              },
+              resolution: {
+                id: 'errorResponseMessages.loginStart.POST.401.accountLocked.resolution',
+                defaultMessage: '<p>You can contact us to unlock your account for you using one of the following methods:</p><ul><li>Email: <a href="mailto:{supportEmail}">{supportEmail}</a></li><li>Telephone: {supportTelephone}</li></ul>'
+              },
+              messageValues: {
+                supportTelephone: config.supportTelephone,
+                supportEmail: config.supportEmail
+              }
+            },
+            default: {
+              severity: 'warn',
+              title: {
+                id: 'errorResponseMessages.loginStart.POST.401.default.title',
+                defaultMessage: 'Login Failed'
+              },
+              message: {
+                id: 'errorResponseMessages.loginStart.POST.401.default.message',
+                defaultMessage: 'The details that you have entered are incorrect'
+              },
+              resolution: {
+                id: 'errorResponseMessages.loginStart.POST.401.accountLocked.resolution',
+                defaultMessage: 'Please re-enter your login details and try again?'
+              }
+            }
+          },
+          default: errorPleaseTryAgainInAFewMinutes({
+            id: 'errorResponseMessages.loginStart.POST.default.title',
+            defaultMessage: 'Login Error'
+          })
+        }
       })
       .then((json) => {
         const jwt = storeAccess(json)
@@ -142,10 +185,7 @@ export function loginStart(login) {
 
         browserHistory.push('/dashboard')
       })
-      .catch((err) => {
-        dispatch(loginFailure(err))
-        dispatch(addError('Login Failed', err.message, err))
-      })
+      .catch(err => dispatch(loginFailure(err)))
   }
 }
 

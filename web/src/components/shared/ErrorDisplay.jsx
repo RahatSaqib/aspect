@@ -117,10 +117,11 @@ export class ErrorDisplay extends PureComponent {
       return fallbackMessage
     }
 
-    const errorObject = error.get('error') ? error.get('error').toJS() : {}
+    const errorNotification = error.get('errorNotification') ? error.get('errorNotification').toJS() : {}
+    const errorObject = { ...(error.get('error') ? error.get('error').toJS() : {}), ...errorNotification.messageValues }
     const title = errorNotificationMessage('title', genericErrorMessages.title)
     const showErrorDetails = error.get('showDetails')
-    if (error.get('errorNotification') && !showErrorDetails) {
+    if (_.isEmpty(errorNotification) && !showErrorDetails) {
       return (
         <Snackbar
           open
@@ -133,8 +134,8 @@ export class ErrorDisplay extends PureComponent {
       )
     }
     const actions = []
-    const showProceed = error.getIn(['errorNotification', 'showProceed'])
-    if (error.getIn(['errorNotification', 'showClose'])) {
+    const showProceed = errorNotification.showProceed
+    if (errorNotification.showClose) {
       const closeText = errorNotificationMessage('closeText', genericErrorMessages.closeText)
       actions.push(<FlatButton
         label={formatMessage(closeText, errorObject)}
@@ -164,18 +165,18 @@ export class ErrorDisplay extends PureComponent {
         onRequestClose={this.handleClose}
       >
         {
-          error.getIn(['errorNotification', 'severity']) &&
+          errorNotification.severity &&
             <div className={styles.ErrorDisplay__Dialog__SeverityIconContainer}>
               {
-                error.getIn(['errorNotification', 'severity']) === 'info' &&
+                errorNotification.severity === 'info' &&
                 <InfoIcon style={iconStyle} color={lightBlue600} />
               }
               {
-                error.getIn(['errorNotification', 'severity']) === 'warn' &&
+                errorNotification.severity === 'warn' &&
                 <WarningIcon style={iconStyle} color={orange500} />
               }
               {
-                error.getIn(['errorNotification', 'severity']) === 'error' &&
+                errorNotification.severity === 'error' &&
                 <ErrorIcon style={iconStyle} color={red800} />
               }
             </div>

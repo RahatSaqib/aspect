@@ -12,7 +12,10 @@ import {
   receiveTableItems,
   Table
 } from '../shared/metaReducers/groupedTable'
-import { errorPleaseTryAgainInAFewMinutes } from '../error/CommonErrorNotifications'
+import {
+  filterFieldsRejectedError,
+  errorPleaseTryAgainInAFewMinutes
+} from '../error/CommonErrorNotifications'
 
 export const types = {
   REQUEST_INVENTORY_ITEMS: 'REQUEST_INVENTORY_ITEMS',
