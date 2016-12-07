@@ -12,6 +12,7 @@ import {
   receiveTableItems,
   Table
 } from '../shared/metaReducers/groupedTable'
+import { errorPleaseTryAgainInAFewMinutes } from '../error/ErrorNotifications'
 
 export const types = {
   REQUEST_INVENTORY_ITEMS: 'REQUEST_INVENTORY_ITEMS',
@@ -80,17 +81,10 @@ export function fetchInventoryItems(groupBy, filters /* required */, sortCol = '
       ...filters
     })}`, {
       errorNotifications: {
-        default: {
-          severity: 'error',
-          title: {
-            id: 'errorResponseMessages.fetchInventoryItems.GET.default.title',
-            defaultMessage: 'Loading Inventory Items Failed'
-          },
-          resolution: {
-            id: 'errorResponseMessages.fetchInventoryItems.GET.default.resolution',
-            defaultMessage: 'Please try again in a few minutes'
-          }
-        }
+        default: errorPleaseTryAgainInAFewMinutes({
+          id: 'errorResponseMessages.fetchInventoryItems.GET.default.title',
+          defaultMessage: 'Loading Inventory Items Failed'
+        })
       }
     }).then(json => dispatch(receiveInventoryItems(json, groupBySite ? ['inventoryItems'] : [])))
   }

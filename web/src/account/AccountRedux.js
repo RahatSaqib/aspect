@@ -7,6 +7,10 @@ import { aspectFetch, getHeaders } from '../shared/utils/fetch'
 import * as localStorage from '../shared/utils/localStorage'
 import { ContactDetails, LoginDetails, UserPreferences } from '../person/PersonRedux'
 import { loginSuccess, changeCulture, changeTimezone } from '../auth/AuthRedux'
+import {
+  errorPleaseTryAgainInAFewMinutes,
+  inlineWarning
+} from '../error/ErrorNotifications'
 
 export const types = {
   REQUEST_ACCOUNT_DETAILS: 'REQUEST_ACCOUNT_DETAILS',
@@ -39,17 +43,10 @@ export function fetchAccountDetails() {
     dispatch(createRequestAccountDetails())
     return aspectFetch('/account-details/current', {
       errorNotifications: {
-        default: {
-          severity: 'error',
-          title: {
-            id: 'errorResponseMessages.fetchAccountDetails.GET.default.title',
-            defaultMessage: 'Loading Account Details Failed'
-          },
-          resolution: {
-            id: 'errorResponseMessages.fetchAccountDetails.GET.default.resolution',
-            defaultMessage: 'Please try again in a few minutes'
-          }
-        }
+        default: errorPleaseTryAgainInAFewMinutes({
+          id: 'errorResponseMessages.fetchAccountDetails.GET.default.title',
+          defaultMessage: 'Loading Account Details Failed'
+        })
       }
     }).then(json => dispatch(createReceiveAccountDetails(json.data)))
   }
@@ -79,17 +76,10 @@ export function saveContactDetails(contactDetails) {
         body: JSON.stringify(_.pick(contactDetailsJson, ['id', 'name', 'title', 'email', 'email2',
           'phone', 'cell', 'countryId', 'stateId', 'lgaId', 'zip'])),
         errorNotifications: {
-          default: {
-            severity: 'error',
-            title: {
-              id: 'errorResponseMessages.saveContactDetails.PUT.default.title',
-              defaultMessage: 'Saving Contact Details Failed'
-            },
-            resolution: {
-              id: 'errorResponseMessages.saveContactDetails.PUT.default.resolution',
-              defaultMessage: 'Please try again in a few minutes'
-            }
-          }
+          default: errorPleaseTryAgainInAFewMinutes({
+            id: 'errorResponseMessages.saveContactDetails.PUT.default.title',
+            defaultMessage: 'Saving Contact Details Failed'
+          })
         }
       })
       .then(json => dispatch(createReceiveUpdatedContactDetails(json.data)))
@@ -130,49 +120,30 @@ export function saveLoginDetails(loginDetails) {
           clientName: `${getBrowserNameAndVersion()} on ${window.navigator.platform}`
         }),
         errorNotifications: {
-          409: {
-            severity: 'warn',
-            showAs: 'inline',
-            title: {
-              id: 'errorResponseMessages.saveLoginDetails.PUT.409.title',
-              defaultMessage: 'This Username is Unavailable'
-            },
-            message: {
-              id: 'errorResponseMessages.saveLoginDetails.PUT.409.title',
-              defaultMessage: 'The username that you have entered is already in use by another user on the system'
-            },
-            resolution: {
-              id: 'errorResponseMessages.saveLoginDetails.PUT.409.resolution',
-              defaultMessage: 'Please try another username'
-            }
-          },
-          403: {
-            severity: 'warn',
-            showAs: 'inline',
-            title: {
-              id: 'errorResponseMessages.saveLoginDetails.PUT.403.title',
-              defaultMessage: 'Invalid Password'
-            },
-            message: {
-              id: 'errorResponseMessages.saveLoginDetails.PUT.403.title',
-              defaultMessage: 'The current password that you have entered is incorrect.'
-            },
-            resolution: {
-              id: 'errorResponseMessages.saveLoginDetails.PUT.403.resolution',
-              defaultMessage: 'Please try re-entering your password or contact us to reset your login details'
-            }
-          },
-          default: {
-            severity: 'error',
-            title: {
-              id: 'errorResponseMessages.saveLoginDetails.PUT.default.title',
-              defaultMessage: 'Saving Login details Failed'
-            },
-            resolution: {
-              id: 'errorResponseMessages.saveLoginDetails.PUT.default.resolution',
-              defaultMessage: 'Please try again in a few minutes'
-            }
-          }
+          409: inlineWarning({
+            id: 'errorResponseMessages.saveLoginDetails.PUT.409.title',
+            defaultMessage: 'This Username is Unavailable'
+          }, {
+            id: 'errorResponseMessages.saveLoginDetails.PUT.409.title',
+            defaultMessage: 'The username that you have entered is already in use by another user on the system'
+          }, {
+            id: 'errorResponseMessages.saveLoginDetails.PUT.409.resolution',
+            defaultMessage: 'Please try another username'
+          }),
+          403: inlineWarning({
+            id: 'errorResponseMessages.saveLoginDetails.PUT.403.title',
+            defaultMessage: 'Invalid Password'
+          }, {
+            id: 'errorResponseMessages.saveLoginDetails.PUT.403.message',
+            defaultMessage: 'The current password that you have entered is incorrect.'
+          }, {
+            id: 'errorResponseMessages.saveLoginDetails.PUT.403.resolution',
+            defaultMessage: 'Please try re-entering your password or contact us to reset your login details'
+          }),
+          default: errorPleaseTryAgainInAFewMinutes({
+            id: 'errorResponseMessages.saveLoginDetails.PUT.default.title',
+            defaultMessage: 'Saving Login details Failed'
+          })
         }
       })
       .then((json) => {
@@ -211,17 +182,10 @@ export function saveUserPreferences(userPreferences) {
         headers: getHeaders(true),
         body: JSON.stringify(userPreferences),
         errorNotifications: {
-          default: {
-            severity: 'error',
-            title: {
-              id: 'errorResponseMessages.saveUserPreferences.PUT.default.title',
-              defaultMessage: 'Saving User preferences Failed'
-            },
-            resolution: {
-              id: 'errorResponseMessages.saveUserPreferences.PUT.default.resolution',
-              defaultMessage: 'Please try again in a few minutes'
-            }
-          }
+          default: errorPleaseTryAgainInAFewMinutes({
+            id: 'errorResponseMessages.saveUserPreferences.PUT.default.title',
+            defaultMessage: 'Saving User preferences Failed'
+          })
         }
       })
       .then(({ data }) => {
