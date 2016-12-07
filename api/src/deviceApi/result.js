@@ -244,7 +244,8 @@ function* listResults(context, auditLogId) {
     resultQuery.whereIn('r.id',
       knex('AuditLog as al')
         .whereIn('al.deviceId', authorizedDeviceIds)
-        .where('al.id', '>=', auditLogId)
+        .where('al.id', '>', auditLogId)
+        .where('al.sourceAuditLogId', '<>', auditLogId)
         .where({ 'al.tableName': 'Result' })
         .distinct('al.tableId')
         .orderBy('al.id'))

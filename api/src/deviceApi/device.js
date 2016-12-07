@@ -17,7 +17,6 @@ function* addDeviceData(context) {
   }
 
   if (result) {
-    response.result = []
     for (const r of result) {
       const resultResponse = yield* addResult(
         context.withPayload(r))

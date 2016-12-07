@@ -15,7 +15,7 @@ function* createAuditTriggers(knex, ...tables) {
     const createdBy = columns.indexOf('createdBy') > 0 ? 'new.createdBy' : 'null'
     const updatedBy = columns.indexOf('updatedBy') > 0 ? 'new.createdBy' : createdBy
     const deviceId = columns.indexOf('deviceId') > 0 ? 'new.deviceId' : 'null'
-    const deviceLogId = '@AuditLog_deviceLogId'
+    const sourceAuditLogId = '@AuditLog_sourceAuditLogId'
 
     const columnFields = columns.map(c => `'${c}', new.${c}`).join(', ')
     const fields = `json_object(${columnFields})`
@@ -26,9 +26,10 @@ function* createAuditTriggers(knex, ...tables) {
       after insert on ${table}
       for each row
           insert into AuditLog
-              (tableName, tableId, operation, fields, deviceId, deviceLogId, createdBy, createdOn)
+              (tableName, tableId, operation, fields, deviceId, sourceAuditLogId, createdBy, createdOn)
           values
-              ('${table}', new.id, 'insert', ${fields}, ${deviceId}, ${deviceLogId}, ${createdBy}, now())`)
+              ('${table}', new.id, 'insert', ${fields}, ${deviceId},
+                ${sourceAuditLogId}, ${createdBy}, now())`)
 
     yield knex.raw(`drop trigger if exists AuditLogUpdate${table}`)
     yield knex.raw(`
@@ -36,9 +37,10 @@ function* createAuditTriggers(knex, ...tables) {
       after update on ${table}
       for each row
           insert into AuditLog
-              (tableName, tableId, operation, fields, deviceId, deviceLogId, createdBy, createdOn)
+              (tableName, tableId, operation, fields, deviceId, sourceAuditLogId, createdBy, createdOn)
           values
-              ('${table}', new.id, 'update', ${fields}, ${deviceId}, ${deviceLogId}, ${updatedBy}, now())`)
+              ('${table}', new.id, 'update', ${fields}, ${deviceId},
+                ${sourceAuditLogId}, ${updatedBy}, now())`)
 
     const deviceIdOld = deviceId.replace('new', 'old')
     const updatedByOld = updatedBy.replace('new', 'old')
@@ -48,9 +50,10 @@ function* createAuditTriggers(knex, ...tables) {
       after delete on ${table}
       for each row
           insert into AuditLog
-              (tableName, tableId, operation, fields, deviceId, deviceLogId, createdBy, createdOn)
+              (tableName, tableId, operation, fields, deviceId, sourceAuditLogId, createdBy, createdOn)
           values
-              ('${table}', old.id, 'delete', json_object(), ${deviceIdOld}, ${deviceLogId}, ${updatedByOld},  now())`)
+              ('${table}', old.id, 'delete', json_object(), ${deviceIdOld},
+                ${sourceAuditLogId}, ${updatedByOld},  now())`)
   }
 }
 

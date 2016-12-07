@@ -26,6 +26,7 @@ function deviceApiHandler(handler, { updatePing, updateDeviceLog }) {
     // Insert Device Log and Update Ping prior to calling handler and
     // in separate tranaction so it is recorded even if handler fails
     let deviceLogId = null
+    let sourceAuditLogId = null
     if (updateDeviceLog) {
       const checkpoint = request.payload && request.payload.checkpoint
 
@@ -37,6 +38,8 @@ function deviceApiHandler(handler, { updatePing, updateDeviceLog }) {
         fields: JSON.stringify({ checkpoint }),
         createdOn: now
       })
+
+      sourceAuditLogId = auditLogId
 
       ;[deviceLogId] = yield knex('DeviceLog').insert({
         deviceId,
@@ -62,7 +65,7 @@ function deviceApiHandler(handler, { updatePing, updateDeviceLog }) {
     let response = {}
     yield transact(function* (knex) {
       context.knex = knex
-      yield knex.raw('SET @AuditLog_deviceLogId=?', [deviceLogId])
+      yield knex.raw('SET @AuditLog_sourceAuditLogId=?', [sourceAuditLogId])
 
       response = yield* handler(context)
 
@@ -71,8 +74,8 @@ function deviceApiHandler(handler, { updatePing, updateDeviceLog }) {
         yield knex('DeviceLogUpdate').insert(context.deviceLogUpdates.map(
           update => Object.assign({ deviceLogId }, update)))
       }
-      yield knex.raw('SET @AuditLog_deviceLogId=null')
-    }).finally(() => knex.raw('SET @AuditLog_deviceLogId=null'))
+      yield knex.raw('SET @AuditLog_sourceAuditLogId=null')
+    }).finally(() => knex.raw('SET @AuditLog_sourceAuditLogId=null'))
 
     return response
   })
