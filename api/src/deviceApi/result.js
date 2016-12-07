@@ -222,24 +222,32 @@ function* addResult(context) {
 function* listResults(context, auditLogId) {
   const { knex, constraints: dataConstraints } = context
 
-  const resultQuery = knex('Result as r')
-    .innerJoin('Assay as a', 'r.assayId', 'a.id')
+  const authorizedResultQuery = knex('Result as r')
     .innerJoin('Device as d', 'r.deviceId', 'd.id')
-    .leftJoin('ResultCategory as rc1', 'r.resultCategory1', 'rc1.id')
-    .leftJoin('ResultCategory as rc2', 'r.resultCategory2', 'rc2.id')
-    .leftJoin('ResultType as rt', 'r.resultTypeId', 'rt.id')
-    .leftJoin('ResultWorkflowStatus as rs', 'r.resultWorkflowStatusId', 'rs.id')
     .leftJoin('Sample as s', 'r.sampleId', 's.id')
     .leftJoin('Site as sos', 's.originSiteId', 'sos.id')
     .modify(addConstraints, dataConstraints, { device: 'd', sample: 's' })
 
+  const authorizedDeviceIds = yield authorizedResultQuery.clone()
+    .distinct('d.id')
+    .map(d => d.id)
+
+  const resultQuery = authorizedResultQuery.clone()
+    .whereIn('d.id', authorizedDeviceIds)
+    .innerJoin('Assay as a', 'r.assayId', 'a.id')
+    .leftJoin('ResultCategory as rc1', 'r.resultCategory1', 'rc1.id')
+    .leftJoin('ResultCategory as rc2', 'r.resultCategory2', 'rc2.id')
+    .leftJoin('ResultType as rt', 'r.resultTypeId', 'rt.id')
+    .leftJoin('ResultWorkflowStatus as rs', 'r.resultWorkflowStatusId', 'rs.id')
+
   if (auditLogId > 0) {
     resultQuery.whereIn('r.id',
       knex('AuditLog as al')
+        .whereIn('al.deviceId', authorizedDeviceIds)
+        .where('al.id', '>=', auditLogId)
         .where({ 'al.tableName': 'Result' })
-        .andWhere('al.id', '>=', auditLogId)
-        .orderBy('al.id')
-        .distinct('al.tableId'))
+        .distinct('al.tableId')
+        .orderBy('al.id'))
   }
   // TODO limit size of result list from Device API?
 
@@ -259,8 +267,7 @@ function* listResults(context, auditLogId) {
     )
 
   // return result when both queries are finished
-  const results = yield resultQuery
-  return results.map(rowToResult)
+  return yield resultQuery.map(rowToResult)
 }
 
 function rowToResult(row) {
