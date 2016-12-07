@@ -116,7 +116,10 @@ export class InventoryItemsList extends PureComponent {
     return (
       <div className={styles.Content}>
         <Helmet title={formatMessage(messages.title)} titleTemplate="%s - Aspect" defaultTitle="Aspect" />
-        <ListFilterContainer subject={formatMessage(messages.title)} />
+        <ListFilterContainer
+          subject={formatMessage(messages.title)}
+          dateFilterLabel={formatMessage(messages.expiresOn)}
+        />
         <Card>
           <Checkbox
             checked={table.get('groupBy').includes('siteId')}
