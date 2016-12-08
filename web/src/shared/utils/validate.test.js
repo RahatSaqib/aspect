@@ -33,13 +33,13 @@ describe('validate', () => {
 
     it('should return false for invalid email addresses', () => {
       _.each(invalidEmailAddresses, (address) => {
-        expect(emailAddress(address).isValid()).toBe(`"${address}" is an invalid email address`)
+        expect(emailAddress(address).isValid()).toBe(false, `"${address}" is an invalid email address`)
       })
     })
 
     it('should return false for blank email addresses by default', () => {
       _.each(['', null, undefined], (address) => {
-        expect(emailAddress(address).isValid()).toBe('Blank email addresses are invalid unless optional is called')
+        expect(emailAddress(address).isValid()).toBe(false, 'Blank email addresses are invalid unless optional is called')
       })
     })
 

@@ -113,7 +113,7 @@ describe('Reset Password Enter Password Form', () => {
       props.invalid = false
       shallowRenderResetPasswordEnterPassword(props)
       submitButton = ResetPasswordEnterPasswordWrapper.find(RaisedButton)
-      expect(submitButton.props().disabled).toBe()
+      expect(submitButton.props().disabled).toBe(false)
 
       props.pristine = true
       shallowRenderResetPasswordEnterPassword(props)

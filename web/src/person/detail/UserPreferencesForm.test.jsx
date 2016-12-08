@@ -65,8 +65,8 @@ describe('UserPreferencesForm Component', () => {
     })
 
     it('Should disable all fields when form is loading', () => {
-      expect(UserPreferencesFormWrapper.find(TimezoneSelect).props().disabled).toBe()
-      expect(UserPreferencesFormWrapper.find(Field).props().selectFieldProps.disabled).toBe()
+      expect(UserPreferencesFormWrapper.find(TimezoneSelect).props().disabled).toBe(false)
+      expect(UserPreferencesFormWrapper.find(Field).props().selectFieldProps.disabled).toBe(false)
       props.loading = true
       shallowRenderForm(props)
       expect(UserPreferencesFormWrapper.find(TimezoneSelect).props().disabled).toBe(true)
@@ -97,7 +97,7 @@ describe('UserPreferencesForm Component', () => {
       props.invalid = false
       shallowRenderForm(props)
       submitButton = UserPreferencesFormWrapper.find(RaisedButton)
-      expect(submitButton.props().disabled).toBe()
+      expect(submitButton.props().disabled).toBe(false)
 
       props.pristine = true
       shallowRenderForm(props)

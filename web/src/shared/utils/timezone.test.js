@@ -6,7 +6,8 @@ describe('timezone', () => {
     const culture = 'en-ZA'
     timezones.forEach((timezone) => {
       try {
-        expect(dateToFormat.toLocaleTimeString(culture, { timeZone: timezone.timeZone })).toBeTruthy()
+        const str = dateToFormat.toLocaleTimeString(culture, { timeZone: timezone.timeZone })
+        expect(str).toBeTruthy()
       } catch (ex) {
         expect(false).toBe(true)
       }
@@ -21,7 +22,6 @@ describe('timezone', () => {
   })
 
   it('should return the browser\'s the timezone when ID is not set or not found in list', () => {
-    const deviceTimezone = Intl.DateTimeFormat().resolvedOptions().timeZone
     expect(getTimezoneById()).toBeTruthy()
     expect(getTimezoneById(null)).toBeTruthy()
     expect(getTimezoneById('Some random timezone ID')).toBeTruthy()

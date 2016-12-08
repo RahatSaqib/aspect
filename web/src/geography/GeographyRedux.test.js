@@ -13,10 +13,10 @@ describe('geography reducer', () => {
     })
 
     it('should contain an empty LazyLoadItems object that isn\'t loading and has not been refreshed yet', () => {
-      expect(initialState.countriesForLocationSelector).toBeInstanceOf(Immutable.Record)
-      expect(initialState.countriesForLocationSelector.loading).toBe()
-      expect(initialState.countriesForLocationSelector.lastRefreshed).not.toBeDefined()
-      expect(initialState.countriesForLocationSelector.items).toBeInstanceOf(Immutable.List)
+      expect(initialState.countriesForLocationSelector).toBeA(Immutable.Record)
+      expect(initialState.countriesForLocationSelector.loading).toBe(false)
+      expect(initialState.countriesForLocationSelector.lastRefreshed).toNotExist()
+      expect(initialState.countriesForLocationSelector.items).toBeA(Immutable.List)
       expect(initialState.countriesForLocationSelector.items.size).toEqual(0)
     })
   })
@@ -36,7 +36,7 @@ describe('geography reducer', () => {
           countries: [],
           lastRefreshed: now
         })
-        expect(state.countriesForLocationSelector.loading).toBe()
+        expect(state.countriesForLocationSelector.loading).toBe(false)
         expect(state.countriesForLocationSelector.lastRefreshed).toEqual(now)
       })
 
@@ -51,14 +51,14 @@ describe('geography reducer', () => {
           const countryIds = _.map(countriesReceived, 'id')
           const countryNames = _.map(countriesReceived, 'name')
 
-          expect(state.countriesForLocationSelector.items).toBeInstanceOf(Immutable.List)
+          expect(state.countriesForLocationSelector.items).toBeA(Immutable.List)
           state.countriesForLocationSelector.items.forEach((countryRecord) => {
             expect(countryIds).toContain(countryRecord.id)
             expect(countryNames).toContain(countryRecord.name)
-            expect(countryRecord.children).toBeInstanceOf(Immutable.Record)
-            expect(countryRecord.children.loading).toBe()
+            expect(countryRecord.children).toBeA(Immutable.Record)
+            expect(countryRecord.children.loading).toBe(false)
             expect(countryRecord.children.items.isEmpty()).toBe(true)
-            expect(countryRecord.children.lastRefreshed).not.toBeDefined()
+            expect(countryRecord.children.lastRefreshed).toNotExist()
           })
         })
       })
@@ -85,28 +85,28 @@ describe('geography reducer', () => {
           const countryIds = _.map(countriesReceived, 'id')
           const countryNames = _.map(countriesReceived, 'name')
 
-          expect(state.countriesForLocationSelector.items).toBeInstanceOf(Immutable.List)
+          expect(state.countriesForLocationSelector.items).toBeA(Immutable.List)
           state.countriesForLocationSelector.items.forEach((countryRecord) => {
             expect(countryIds).toContain(countryRecord.id)
             expect(countryNames).toContain(countryRecord.name)
-            expect(countryRecord.children).toBeInstanceOf(Immutable.Record)
-            expect(countryRecord.children.loading).toBe()
+            expect(countryRecord.children).toBeA(Immutable.Record)
+            expect(countryRecord.children.loading).toBe(false)
             const countryReceived = _.find(countriesReceived, { id: countryRecord.id })
             if (countryReceived.states) {
               const stateIds = _.map(countryReceived.states, 'id')
               const stateNames = _.map(countryReceived.states, 'name')
-              expect(countryRecord.children.items).toBeInstanceOf(Immutable.List)
+              expect(countryRecord.children.items).toBeA(Immutable.List)
               expect(countryRecord.children.lastRefreshed).toEqual(now)
               countryRecord.children.items.forEach((stateRecord) => {
                 expect(stateIds).toContain(stateRecord.id)
                 expect(stateNames).toContain(stateRecord.name)
-                expect(stateRecord.children).toBeInstanceOf(Immutable.Record)
-                expect(stateRecord.children.loading).toBe()
+                expect(stateRecord.children).toBeA(Immutable.Record)
+                expect(stateRecord.children.loading).toBe(false)
                 const stateReceived = _.find(countryReceived.states, { id: stateRecord.id })
                 if (stateReceived.lgas) {
                   const lgaIds = _.map(stateReceived.lgas, 'id')
                   const lgaNames = _.map(stateReceived.lgas, 'name')
-                  expect(stateRecord.children.items).toBeInstanceOf(Immutable.List)
+                  expect(stateRecord.children.items).toBeA(Immutable.List)
                   expect(stateRecord.children.lastRefreshed).toEqual(now)
                   stateRecord.children.items.forEach((lgaRecord) => {
                     expect(lgaIds).toContain(lgaRecord.id)
@@ -114,12 +114,12 @@ describe('geography reducer', () => {
                   })
                 } else {
                   expect(stateRecord.children.items.isEmpty()).toBe(true)
-                  expect(stateRecord.children.lastRefreshed).not.toBeDefined()
+                  expect(stateRecord.children.lastRefreshed).toNotExist()
                 }
               })
             } else {
               expect(countryRecord.children.items.isEmpty()).toBe(true)
-              expect(countryRecord.children.lastRefreshed).not.toBeDefined()
+              expect(countryRecord.children.lastRefreshed).toNotExist()
             }
           })
         })
@@ -203,7 +203,7 @@ describe('geography reducer', () => {
           expect(initialState.getIn(['countriesForLocationSelector', 'items',
             indexOfSelectedCountry, 'children', 'loading'])).toBe(true)
           expect(initialState.getIn(['countriesForLocationSelector', 'items',
-            indexOfSelectedCountry, 'children', 'lastRefreshed'])).not.toBeDefined()
+            indexOfSelectedCountry, 'children', 'lastRefreshed'])).toNotExist()
           const newState = geography(initialState, {
             type: types.RECEIVE_STATES_FOR_LOCATION_SELECTOR,
             states: [],
@@ -212,7 +212,7 @@ describe('geography reducer', () => {
           })
 
           expect(newState.getIn(['countriesForLocationSelector', 'items',
-            indexOfSelectedCountry, 'children', 'loading'])).toBe()
+            indexOfSelectedCountry, 'children', 'loading'])).toBe(false)
           expect(newState.getIn(['countriesForLocationSelector', 'items',
             indexOfSelectedCountry, 'children', 'lastRefreshed'])).toEqual(now)
         })
@@ -232,15 +232,15 @@ describe('geography reducer', () => {
             })
             const selectedCountryStates = newState.getIn(['countriesForLocationSelector', 'items', indexOfSelectedCountry, 'children', 'items'])
 
-            expect(selectedCountryStates).toBeInstanceOf(Immutable.List)
+            expect(selectedCountryStates).toBeA(Immutable.List)
             expect(selectedCountryStates.size).toEqual(statesReceived.length)
             selectedCountryStates.forEach((stateRecord) => {
               expect(stateIds).toContain(stateRecord.id)
               expect(stateNames).toContain(stateRecord.name)
-              expect(stateRecord.children).toBeInstanceOf(Immutable.Record)
-              expect(stateRecord.children.loading).toBe()
+              expect(stateRecord.children).toBeA(Immutable.Record)
+              expect(stateRecord.children.loading).toBe(false)
               expect(stateRecord.children.items.isEmpty()).toBe(true)
-              expect(stateRecord.children.lastRefreshed).not.toBeDefined()
+              expect(stateRecord.children.lastRefreshed).toNotExist()
             })
           })
         })
@@ -264,18 +264,18 @@ describe('geography reducer', () => {
             })
             const selectedCountryStates = newState.getIn(['countriesForLocationSelector', 'items', indexOfSelectedCountry, 'children', 'items'])
 
-            expect(selectedCountryStates).toBeInstanceOf(Immutable.List)
+            expect(selectedCountryStates).toBeA(Immutable.List)
             expect(selectedCountryStates.size).toEqual(statesReceived.length)
             selectedCountryStates.forEach((stateRecord) => {
               expect(stateIds).toContain(stateRecord.id)
               expect(stateNames).toContain(stateRecord.name)
-              expect(stateRecord.children).toBeInstanceOf(Immutable.Record)
-              expect(stateRecord.children.loading).toBe()
+              expect(stateRecord.children).toBeA(Immutable.Record)
+              expect(stateRecord.children.loading).toBe(false)
               const stateReceived = _.find(statesReceived, { id: stateRecord.id })
               if (stateReceived.lgas) {
                 const lgaIds = _.map(stateReceived.lgas, 'id')
                 const lgaNames = _.map(stateReceived.lgas, 'name')
-                expect(stateRecord.children.items).toBeInstanceOf(Immutable.List)
+                expect(stateRecord.children.items).toBeA(Immutable.List)
                 expect(stateRecord.children.lastRefreshed).toEqual(now)
                 stateRecord.children.items.forEach((lgaRecord) => {
                   expect(lgaIds).toContain(lgaRecord.id)
@@ -283,7 +283,7 @@ describe('geography reducer', () => {
                 })
               } else {
                 expect(stateRecord.children.items.isEmpty()).toBe(true)
-                expect(stateRecord.children.lastRefreshed).not.toBeDefined()
+                expect(stateRecord.children.lastRefreshed).toNotExist()
               }
             })
           })
@@ -439,7 +439,7 @@ describe('geography reducer', () => {
             'loading'])).toBe(true)
           expect(initialState.getIn(['countriesForLocationSelector', 'items',
             indexOfSelectedCountry, 'children', 'items', indexOfSelectedState, 'children',
-            'lastRefreshed'])).not.toBeDefined()
+            'lastRefreshed'])).toNotExist()
           const newState = geography(initialState, { type: types.RECEIVE_LGAS_FOR_LOCATION_SELECTOR,
             lgas: [],
             selectedCountryId,
@@ -449,7 +449,7 @@ describe('geography reducer', () => {
 
           expect(newState.getIn(['countriesForLocationSelector', 'items',
             indexOfSelectedCountry, 'children', 'items', indexOfSelectedState, 'children',
-            'loading'])).toBe()
+            'loading'])).toBe(false)
           expect(newState.getIn(['countriesForLocationSelector', 'items',
             indexOfSelectedCountry, 'children', 'items', indexOfSelectedState, 'children',
             'lastRefreshed'])).toEqual(now)
@@ -470,7 +470,7 @@ describe('geography reducer', () => {
           const selectedStateLgas = newState.getIn(['countriesForLocationSelector', 'items', indexOfSelectedCountry,
             'children', 'items', indexOfSelectedState, 'children', 'items'])
 
-          expect(selectedStateLgas).toBeInstanceOf(Immutable.List)
+          expect(selectedStateLgas).toBeA(Immutable.List)
           expect(selectedStateLgas.size).toEqual(lgasReceived.length)
           selectedStateLgas.forEach((lgaRecord) => {
             expect(lgaIds).toContain(lgaRecord.id)
@@ -641,7 +641,9 @@ describe('geography action creators', () => {
         })
 
         it('Should dispatch a REQUEST_COUNTRIES_FOR_LOCATION_SELECTOR action', () => {
-          expect(dispatch.firstCall.args).toEqual([{ type: types.REQUEST_COUNTRIES_FOR_LOCATION_SELECTOR }])
+          expect(dispatch.firstCall.args).toEqual([
+            { type: types.REQUEST_COUNTRIES_FOR_LOCATION_SELECTOR }
+          ])
         })
 
         it('Should request a new list of countries from the server', () => {
@@ -684,7 +686,9 @@ describe('geography action creators', () => {
         })
 
         it('Should dispatch a REQUEST_COUNTRIES_FOR_LOCATION_SELECTOR action', () => {
-          expect(dispatch.firstCall.args).toEqual([{ type: types.REQUEST_COUNTRIES_FOR_LOCATION_SELECTOR }])
+          expect(dispatch.firstCall.args).toEqual([
+            { type: types.REQUEST_COUNTRIES_FOR_LOCATION_SELECTOR }
+          ])
         })
 
         it('Should request a new list of countries from the server', () => {
@@ -725,7 +729,9 @@ describe('geography action creators', () => {
         })
 
         it('Should dispatch a REQUEST_COUNTRIES_FOR_LOCATION_SELECTOR action', () => {
-          expect(dispatch.firstCall.args).toEqual([{ type: types.REQUEST_COUNTRIES_FOR_LOCATION_SELECTOR }])
+          expect(dispatch.firstCall.args).toEqual([
+            { type: types.REQUEST_COUNTRIES_FOR_LOCATION_SELECTOR }
+          ])
         })
 
         it('Should request a new list of countries from the server', () => {
@@ -766,7 +772,9 @@ describe('geography action creators', () => {
         })
 
         it('Should dispatch a REQUEST_COUNTRIES_FOR_LOCATION_SELECTOR action', () => {
-          expect(dispatch.firstCall.args).toEqual([{ type: types.REQUEST_COUNTRIES_FOR_LOCATION_SELECTOR }])
+          expect(dispatch.firstCall.args).toEqual([
+            { type: types.REQUEST_COUNTRIES_FOR_LOCATION_SELECTOR }
+          ])
         })
 
         it('Should request a new list of countries from the server', () => {
@@ -809,7 +817,9 @@ describe('geography action creators', () => {
         })
 
         it('Should dispatch a REQUEST_COUNTRIES_FOR_LOCATION_SELECTOR action', () => {
-          expect(dispatch.firstCall.args).toEqual([{ type: types.REQUEST_COUNTRIES_FOR_LOCATION_SELECTOR }])
+          expect(dispatch.firstCall.args).toEqual([
+            { type: types.REQUEST_COUNTRIES_FOR_LOCATION_SELECTOR }
+          ])
         })
 
         it('Should request a new list of countries from the server', () => {
@@ -857,7 +867,9 @@ describe('geography action creators', () => {
         })
 
         it('Should dispatch a REQUEST_COUNTRIES_FOR_LOCATION_SELECTOR action', () => {
-          expect(dispatch.firstCall.args).toEqual([{ type: types.REQUEST_COUNTRIES_FOR_LOCATION_SELECTOR }])
+          expect(dispatch.firstCall.args).toEqual([
+            { type: types.REQUEST_COUNTRIES_FOR_LOCATION_SELECTOR }
+          ])
         })
 
         it('Should request a new list of countries from the server', () => {

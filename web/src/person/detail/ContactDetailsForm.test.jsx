@@ -77,7 +77,7 @@ describe('ContactDetailsForm Component', () => {
 
     it('Should disable all fields when form is loading', () => {
       ContactDetailsFormWrapper.find(TextInput).forEach((textInput) => {
-        expect(textInput.props().disabled).toBe()
+        expect(textInput.props().disabled).toBe(false)
       })
       props.loading = true
       shallowRenderForm(props)
@@ -123,7 +123,7 @@ describe('ContactDetailsForm Component', () => {
       props.invalid = false
       shallowRenderForm(props)
       submitButton = ContactDetailsFormWrapper.find(RaisedButton)
-      expect(submitButton.props().disabled).toBe()
+      expect(submitButton.props().disabled).toBe(false)
 
       props.pristine = true
       shallowRenderForm(props)

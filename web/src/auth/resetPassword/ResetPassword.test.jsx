@@ -103,18 +103,34 @@ describe('ResetPassword Component', () => {
       largeScreenDiv = ResetPasswordWrapper.find(Hidden).find({ xs: true, sm: true })
       const largeScreenStep4Finish = largeScreenDiv.children().at(1)
 
-      expect(largeScreenStep1Label.children().text()).toEqual(smallScreenStep1Label.children().text())
-      expect(largeScreenStep2Label.children().text()).toEqual(smallScreenStep2Label.children().text())
-      expect(largeScreenStep3Label.children().text()).toEqual(smallScreenStep3Label.children().text())
-      expect(largeScreenStep4Label.children().text()).toEqual(smallScreenStep4Label.children().text())
+      expect(largeScreenStep1Label.children().text()).toEqual(
+        smallScreenStep1Label.children().text()
+      )
+      expect(largeScreenStep2Label.children().text()).toEqual(
+        smallScreenStep2Label.children().text()
+      )
+      expect(largeScreenStep3Label.children().text()).toEqual(
+        smallScreenStep3Label.children().text()
+      )
+      expect(largeScreenStep4Label.children().text()).toEqual(
+        smallScreenStep4Label.children().text()
+      )
 
-      expect(largeScreenStep1ResetPasswordEnterEmail.props()).toEqual(smallScreenStep1ResetPasswordEnterEmail.props())
+      expect(largeScreenStep1ResetPasswordEnterEmail.props()).toEqual(
+        smallScreenStep1ResetPasswordEnterEmail.props()
+      )
       for (let i = 0; i < largeScreenStep2CheckInbox.children().length; i++) {
-        expect(largeScreenStep2CheckInbox.children().at(i).props()).toEqual(smallScreenStep2CheckInbox.children().at(i).props())
+        expect(largeScreenStep2CheckInbox.children().at(i).props()).toEqual(
+          smallScreenStep2CheckInbox.children().at(i).props()
+        )
       }
-      expect(largeScreenStep3ResetPasswordEnterPassword.props()).toEqual(smallScreenStep3ResetPasswordEnterPassword.props())
+      expect(largeScreenStep3ResetPasswordEnterPassword.props()).toEqual(
+        smallScreenStep3ResetPasswordEnterPassword.props()
+      )
       for (let i = 0; i < largeScreenStep4Finish.children().length; i++) {
-        expect(largeScreenStep4Finish.children().at(i).props()).toEqual(smallScreenStep4Finish.children().at(i).props())
+        expect(largeScreenStep4Finish.children().at(i).props()).toEqual(
+          smallScreenStep4Finish.children().at(i).props()
+        )
       }
     })
 
@@ -155,7 +171,7 @@ describe('ResetPassword Component', () => {
         const adminHelpDialog = ResetPasswordWrapper.find(Dialog)
 
         expect(adminHelpDialog.props().title).toEqual('Request a New Password From Aspect')
-        expect(adminHelpDialog.props().open).toBe()
+        expect(adminHelpDialog.props().open).toBe(false)
         expect(adminHelpDialog.children().props().id).toEqual('pages.ResetPassword.adminHelpContent')
         expect(
           {}.hasOwnProperty.call(adminHelpDialog.children().props().values, 'supportEmail')
@@ -190,7 +206,7 @@ describe('ResetPassword Component', () => {
         adminHelpDialog.props().actions[0].props.onTouchTap()
         ResetPasswordWrapper.update()
         adminHelpDialog = ResetPasswordWrapper.find(Dialog)
-        expect(adminHelpDialog.props().open).toBe()
+        expect(adminHelpDialog.props().open).toBe(false)
       })
 
       it('should allow the user to go back to the login page', () => {

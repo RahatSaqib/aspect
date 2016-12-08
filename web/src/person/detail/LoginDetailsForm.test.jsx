@@ -73,10 +73,10 @@ describe('LoginDetailsForm Component', () => {
 
     it('Should disable all fields when form is loading', () => {
       LoginDetailsFormWrapper.find(TextInput).forEach((textInput) => {
-        expect(textInput.props().disabled).toBe()
+        expect(textInput.props().disabled).toBe(false)
       })
       LoginDetailsFormWrapper.find(StrongPasswordInput).forEach((strongPasswordInput) => {
-        expect(strongPasswordInput.props().disabled).toBe()
+        expect(strongPasswordInput.props().disabled).toBe(false)
       })
       props.loading = true
       shallowRenderForm(props)
@@ -111,7 +111,7 @@ describe('LoginDetailsForm Component', () => {
       props.invalid = false
       shallowRenderForm(props)
       submitButton = LoginDetailsFormWrapper.find(RaisedButton)
-      expect(submitButton.props().disabled).toBe()
+      expect(submitButton.props().disabled).toBe(false)
 
       props.pristine = true
       shallowRenderForm(props)

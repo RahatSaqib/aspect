@@ -216,7 +216,7 @@ describe('recomposeForm module', () => {
 
       expect(ComponentWrapper.find('div').length).toEqual(1)
       expect(typeof innerProps.onChangeName).toBe('function')
-      expect(handleChange.called).toBe()
+      expect(handleChange.called).toBe(false)
 
       innerProps.onChangeName({
         target: { value: 'Jeremy' }

@@ -39,7 +39,7 @@ describe('requirePermissions', () => {
           optional: []
         })
 
-        expect(isPermitted).toBe()
+        expect(isPermitted).toBe(false)
       })
     })
 
@@ -73,7 +73,7 @@ describe('requirePermissions', () => {
           optional: []
         })
 
-        expect(isPermitted).toBe()
+        expect(isPermitted).toBe(false)
       })
     })
 
@@ -95,7 +95,7 @@ describe('requirePermissions', () => {
           optional: ['device:view']
         })
 
-        expect(isPermitted).toBe()
+        expect(isPermitted).toBe(false)
       })
     })
   })

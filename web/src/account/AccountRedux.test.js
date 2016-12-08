@@ -38,12 +38,12 @@ describe('AccountDetailsRedux', () => {
 
     describe('initial state', () => {
       it('should contain an empty AccountDetails object that isn\'t loading or saving', () => {
-        expect(initialState.get('data')).toBeInstanceOf(Immutable.Record)
-        expect(initialState.getIn(['data', 'contactDetails'])).toBeInstanceOf(Immutable.Record)
-        expect(initialState.getIn(['data', 'loginDetails'])).toBeInstanceOf(Immutable.Record)
-        expect(initialState.getIn(['data', 'userPreferences'])).toBeInstanceOf(Immutable.Record)
-        expect(initialState.get('loading')).toBe()
-        expect(initialState.get('saving')).toBe()
+        expect(initialState.get('data')).toBeA(Immutable.Record)
+        expect(initialState.getIn(['data', 'contactDetails'])).toBeA(Immutable.Record)
+        expect(initialState.getIn(['data', 'loginDetails'])).toBeA(Immutable.Record)
+        expect(initialState.getIn(['data', 'userPreferences'])).toBeA(Immutable.Record)
+        expect(initialState.get('loading')).toBe(false)
+        expect(initialState.get('saving')).toBe(false)
         expect(initialState.getIn(['data', 'contactDetails']).toJS()).toEqual({
           id: null,
           lastPartnerId: null,
@@ -91,7 +91,7 @@ describe('AccountDetailsRedux', () => {
             type: types.RECEIVE_ACCOUNT_DETAILS,
             accountDetails: accountDetailsData
           })
-          expect(state.get('loading')).toBe()
+          expect(state.get('loading')).toBe(false)
           expect(state.getIn(['data', 'contactDetails']).toJS()).toEqual(_.omit(accountDetailsData,
             ['username', 'userId', 'timezone', 'culture']))
           expect(state.getIn(['data', 'loginDetails']).toJS()).toEqual({
@@ -145,7 +145,7 @@ describe('AccountDetailsRedux', () => {
             accountDetails: newAccountDetailsData
           })
 
-          expect(newState.get('loading')).toBe()
+          expect(newState.get('loading')).toBe(false)
           expect(newState.getIn(['data', 'contactDetails']).toJS()).toEqual(_.omit(newAccountDetailsData,
             ['username', 'userId', 'timezone', 'culture']))
           expect(newState.getIn(['data', 'loginDetails']).toJS()).toEqual({
@@ -176,7 +176,7 @@ describe('AccountDetailsRedux', () => {
             updateDetails: updateDetailsData
           })
 
-          expect(newState.get('loading')).toBe()
+          expect(newState.get('loading')).toBe(false)
           expect(newState.getIn(['data', 'contactDetails']).toJS()).toEqual(_.omit(accountDetailsData,
             ['username', 'userId', 'timezone', 'culture']))
           expect(newState.getIn(['data', 'loginDetails']).toJS()).toEqual({
@@ -221,7 +221,7 @@ describe('AccountDetailsRedux', () => {
             accountDetails: newAccountDetailsData
           })
 
-          expect(newState.get('loading')).toBe()
+          expect(newState.get('loading')).toBe(false)
           expect(newState.getIn(['data', 'contactDetails']).toJS()).toEqual(_.omit(accountDetailsData,
             ['username', 'userId', 'timezone', 'culture']))
           expect(newState.getIn(['data', 'loginDetails']).toJS()).toEqual({
