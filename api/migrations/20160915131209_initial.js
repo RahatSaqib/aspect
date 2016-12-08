@@ -474,7 +474,7 @@ function* up(knex) {
   })
 
   yield knex.schema.createTable('DeviceLogUpdate', (deviceLog) => {
-    deviceLog.increments('id')
+    deviceLog.bigincrements('id')
     deviceLog.integer('deviceLogId').unsigned().notNullable()
           .index().references('id').inTable('DeviceLog')
     deviceLog.integer('resultId').unsigned()
