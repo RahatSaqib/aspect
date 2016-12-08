@@ -243,9 +243,9 @@ function* listResults(context, deviceLogId) {
   if (deviceLogId > 0) {
     resultQuery.whereIn('r.id',
       knex('DeviceLogUpdate as dlu')
-        .where('dlu.id', '>', knex('DeviceLogUpdate as dlu')
-          .where('dlu.deviceLogId', deviceLogId)
-          .min('id as minDeviceLogUpdateId'))
+        .where('dlu.id', '>', knex('DeviceLogUpdate as dluMin')
+          .where('dluMin.deviceLogId', deviceLogId)
+          .min('dluMin.id as minDeviceLogUpdateId'))
         .where('dlu.deviceLogId', '<>', deviceLogId)
         .distinct('dlu.resultId')
         .orderBy('dlu.id'))
