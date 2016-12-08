@@ -3,12 +3,13 @@ const _ = require('lodash')
 const { transact, knex } = require('../db')
 const { getExternalId } = require('./common')
 const { addConstraints } = require('../auth/constraints')
+const { consumeInventoryForResult } = require('../inventory/service')
 
 function* addResult(context) {
   const response = yield transact(function* (knex) {
     const { payload, constraints: dataConstraints, now } = context
 
-    // TODO seperate permissions for device add vs update result?
+    // TODO separate permissions for device add vs update result?
     const externalId = getExternalId(payload.id)
     const existingResults = yield knex('Result as r')
       .where({ 'r.externalId': externalId })
@@ -214,6 +215,12 @@ function* addResult(context) {
         siteId: site.id,
         createdOn: now
       }, result))
+
+      // Update Inventory Levels at Site
+      const partnerId = dataConstraints.partner ? dataConstraints.partner.id : undefined
+      const consumablesInResultData = _.isEmpty(payload.consumable) ? [] : payload.consumable
+      yield* consumeInventoryForResult(
+        resultId, assay.id, site.id, consumablesInResultData, partnerId, knex)
     }
 
     context.addResultId(resultId)

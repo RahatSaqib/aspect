@@ -29,37 +29,33 @@ function* getConsumableAssays(request) {
   return { ok: true, data: assayConsumables }
 }
 
-function getAssayConsumable(partnerId, assayId, consumableId) {
-  return query('Get assay consumable')
-    .from('ConsumableAssay as ca')
+function selectAssayConsumables(knex, partnerId, assayId, consumableId) {
+  return knex('ConsumableAssay as ca')
     .join('Consumable as c', 'ca.consumableId', 'c.id')
     .join('Unit as u', 'c.unit', 'u.id')
     .join('Assay as a', 'ca.assayId', 'a.id')
-    .where('ca.assayId', assayId)
-    .andWhere('ca.consumableId', consumableId)
+    .where(function () {
+      this.where('ca.assayId', assayId)
+      if (consumableId) {
+        this.andWhere('ca.consumableId', consumableId)
+      }
+    })
+    // TODO: Revisit once permissions system allows the use of partnerId only in addConstraints
     .andWhere(function () {
       this.whereNull('c.partnerId')
-        .orWhere({ 'c.partnerId': partnerId })
+      if (partnerId) {
+        this.orWhere({ 'c.partnerId': partnerId })
+      }
     })
-    .first(SELECT_LIST_FIELDS)
+    .select(SELECT_LIST_FIELDS)
 }
 
 function* getAssayConsumables(request) {
   const { auth, params: { assayId } } = request
 
-  const dataConstraints = yield getConstraints(auth.credentials)
+  const { partner: { id: partnerId } } = yield getConstraints(auth.credentials)
 
-  const assayConsumables = yield query('Get assay consumables')
-    .from('ConsumableAssay as ca')
-    .join('Consumable as c', 'ca.consumableId', 'c.id')
-    .join('Unit as u', 'c.unit', 'u.id')
-    .join('Assay as a', 'ca.assayId', 'a.id')
-    .where('ca.assayId', assayId)
-    .andWhere(function () {
-      this.whereNull('c.partnerId')
-        .orWhere({ 'c.partnerId': dataConstraints.partner.id })
-    })
-    .select(SELECT_LIST_FIELDS)
+  const assayConsumables = yield selectAssayConsumables(query('Get assay consumable'), partnerId, assayId)
 
   return { ok: true, data: assayConsumables }
 }
@@ -80,10 +76,10 @@ function* createAssayConsumable(request) {
     throw err
   }
 
-  const assayConsumable = yield getAssayConsumable(dataConstraints.partner.id,
-    assayId, consumableId)
+  const assayConsumables = yield selectAssayConsumables(
+    query('Get assay consumable'), dataConstraints.partner.id, assayId, consumableId)
 
-  return { ok: true, data: assayConsumable }
+  return { ok: true, data: _.head(assayConsumables) }
 }
 
 function* updateAssayConsumableQuantity(request) {
@@ -97,14 +93,14 @@ function* updateAssayConsumableQuantity(request) {
     .andWhere('ca.consumableId', consumableId)
     .update({ quantity })
 
-  const assayConsumable = yield getAssayConsumable(dataConstraints.partner.id,
-    assayId, consumableId)
+  const assayConsumables = yield selectAssayConsumables(
+    query('Get assay consumable'), dataConstraints.partner.id, assayId, consumableId)
 
-  if (_.isEmpty(assayConsumable)) {
+  if (_.isEmpty(assayConsumables)) {
     return Boom.notFound('Assay consumable not found')
   }
 
-  return { ok: true, data: assayConsumable }
+  return { ok: true, data: _.head(assayConsumables) }
 }
 
 function* deleteAssayConsumable(request) {
@@ -121,6 +117,7 @@ function* deleteAssayConsumable(request) {
 
 module.exports = {
   getConsumableAssays,
+  selectAssayConsumables,
   getAssayConsumables,
   createAssayConsumable,
   updateAssayConsumableQuantity,

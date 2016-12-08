@@ -6,8 +6,8 @@ const {
   validateSortPageParams
 } = require('../routes')
 const {
-  listConsumableAtSites,
-  listConsumablesAtSitesGroupedBySite
+  listInventoryItems,
+  listInventoryItemsGroupedBySite
 } = require('./service')
 
 const inventoryFilters = {
@@ -19,10 +19,10 @@ module.exports = [
   {
     method: 'GET',
     path: '/inventory',
-    handler: asyncHandler(listConsumableAtSites),
+    handler: asyncHandler(listInventoryItems),
     config: {
       description: 'List of Consumables on Hand At Site',
-      notes: 'Pageable and sortable list of consumables on hand',
+      notes: 'Pageable and sortable list of inventory items',
       auth: { scope: ['inventory:view', 'inventory:edit'] },
       validate: {
         query: Object.assign(inventoryFilters,
@@ -34,10 +34,10 @@ module.exports = [
   }, {
     method: 'GET',
     path: '/inventory/group-by-site',
-    handler: asyncHandler(listConsumablesAtSitesGroupedBySite),
+    handler: asyncHandler(listInventoryItemsGroupedBySite),
     config: {
       description: 'List of Consumables on Hand Grouped by Site',
-      notes: 'Pageable and sortable list of consumables on hand grouped by site',
+      notes: 'Pageable and sortable list of inventory items grouped by site',
       auth: { scope: ['inventory:view', 'inventory:edit'] },
       validate: {
         query: Object.assign(inventoryFilters,
