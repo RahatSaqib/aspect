@@ -2,17 +2,7 @@
   composes: ContentDetails from '../../components/shared/Shared.css';
 }
 
-.FieldsContainer {
-}
-
-.FieldsContainer__LeftColumn__Content {
-  padding-right: 10px;
-}
-
-.FieldsContainer__RightColumn__Content {
-  padding-left: 10px;
-}
-
-.Card {
-  margin-top: 20px;
+.ExpandButton {
+  float: right;
+  margin-right: -15px;
 }

@@ -16,6 +16,9 @@ import { Link } from 'react-router'
 import LinearProgress from 'material-ui/LinearProgress'
 import { Card, CardHeader, CardText } from 'material-ui/Card'
 import Checkbox from 'material-ui/Checkbox'
+import IconButton from 'material-ui/IconButton'
+import ExpandMore from 'material-ui/svg-icons/navigation/expand-more'
+import ExpandLess from 'material-ui/svg-icons/navigation/expand-less'
 
 // Our own imports
 import { Unit } from '../../components/pureGrids'
@@ -128,7 +131,7 @@ const messages = defineMessages({
   },
   fieldCreatedOn: {
     id: 'pages.ResultDetail.fieldCreatedOn',
-    defaultMessage: 'Added'
+    defaultMessage: 'Added to Aspect'
   },
   fieldUpdatedOn: {
     id: 'pages.ResultDetail.fieldUpdatedOn',
@@ -137,6 +140,38 @@ const messages = defineMessages({
   fieldDate: {
     id: 'pages.ResultDetail.fieldDate',
     defaultMessage: 'Date'
+  },
+  noAdditionalResultData: {
+    id: 'pages.ResultDetail.noAdditionalResultData',
+    defaultMessage: 'No additional result data'
+  },
+  fieldPatientAddress: {
+    id: 'pages.ResultDetail.fieldPatientAddress',
+    defaultMessage: 'Address'
+  },
+  fieldPatientAge: {
+    id: 'pages.ResultDetail.fieldPatientAge',
+    defaultMessage: 'Age'
+  },
+  fieldPatientGender: {
+    id: 'pages.ResultDetail.fieldPatientGender',
+    defaultMessage: 'Gender'
+  },
+  fieldPatientName: {
+    id: 'pages.ResultDetail.fieldPatientName',
+    defaultMessage: 'Name'
+  },
+  fieldPatientPhone: {
+    id: 'pages.ResultDetail.fieldPatientPhone',
+    defaultMessage: 'Phone'
+  },
+  fieldPatientHivStatus: {
+    id: 'pages.ResultDetail.fieldPatientHivStatus',
+    defaultMessage: 'HIV Status'
+  },
+  fieldDuration: {
+    id: 'pages.ResultDetail.fieldDuration',
+    defaultMessage: 'Duration'
   }
 })
 
@@ -160,6 +195,10 @@ export class ResultDetail extends PureComponent {
     result: PropTypes.object,
   }
 
+  state = {
+    resultExpanded: false
+  }
+
   componentWillMount() {
     const { setPageTitle, intl } = this.props
     const { formatMessage } = intl
@@ -180,7 +219,7 @@ export class ResultDetail extends PureComponent {
     if (!this.hasResultWithAssay()) {
       return false
     }
-    const { result } = this.props
+    const { result, intl: { formatNumber } } = this.props
     const resultDataSchema = result.getIn(['assay', 'resultDataSchema'])
     const resultData = result.get('resultData')
 
@@ -188,11 +227,29 @@ export class ResultDetail extends PureComponent {
       .filter((value, key) => key !== 'resultText' && value.get('type') !== 'object')
       .entrySeq()
       .map(([key, value]) =>
-        // Level 1: "Probes"
-         ({
-           label: value.get('title'),
-           value: resultData.get(key) || ''
-         }))
+        (
+          <Unit sm="1-2" md="1-2" lg="1-4" key={key}>
+            <ReadOnlyField
+              label={value.get('title')}
+              value={resultData.get(key) || ''}
+              format={formatNumber}
+            />
+          </Unit>
+      ))
+  }
+
+  getDuration(startedOn, endedOn) {
+    if (!startedOn || !endedOn) {
+      return null
+    }
+
+    const duration = new Date(endedOn) - new Date(startedOn)
+
+    const seconds = parseInt((duration / 1000) % 60, 10)
+    const minutes = parseInt((duration / (1000 * 60)) % 60, 10)
+    const hours = parseInt((duration / (1000 * 60 * 60)) % 24, 10)
+
+    return `${hours}h ${minutes}m ${seconds}s`
   }
 
   getLeftColumnFields() {
@@ -235,7 +292,6 @@ export class ResultDetail extends PureComponent {
           value: result.get('resultCategory2Name')
         })
       ])
-      .concat(this.getAssayFields())
       .concat([
         (result.get('errorCode') && {
           label: formatMessage(messages.fieldErrorCode),
@@ -365,18 +421,19 @@ export class ResultDetail extends PureComponent {
       <Checkbox
         disabled={checked}
         label="Acknowledged"
-        style={{ margin: 20 }}
+        labelStyle={{ marginLeft: -12 }}
+        style={{ marginTop: 16 }}
         checked={checked}
         onCheck={this.handleCheck}
       />
     )
   }
 
-  renderSchemaFieldsInCards() {
+  renderLowerLevelSchemaFields() {
     if (!this.hasResultWithAssay()) {
       return false
     }
-    const { result } = this.props
+    const { result, intl: { formatMessage } } = this.props
     const resultDataSchema = result.getIn(['assay', 'resultDataSchema'])
     const resultData = result.get('resultData')
 
@@ -393,29 +450,19 @@ export class ResultDetail extends PureComponent {
           .toJS()
 
         return (
-          <Card className={cssClasses('Card')} key={key}>
-            <CardHeader
-              title={value.get('title')/* TODO: i18n */}
-              actAsExpander
-              showExpandableButton
-            />
-            <CardText expandable>
-              <ReadOnlyFields
-                fields={fields}
-              />
-            </CardText>
-          </Card>
+          fields.length > 0 ? fields.map(field => <Unit sm="1-2" md="1-3" lg="1-3"><ReadOnlyField label={field.label} value={field.value} /></Unit>) : <span>{formatMessage(messages.noAdditionalResultData)}</span>
         )
       })
   }
 
   renderContent() {
-    const { result, intl: { formatMessage, formatDate } } = this.props
+    const { result, intl: { formatMessage, formatDate, formatTime } } = this.props
+    const assay = result.get('assay')
 
     return (
       <div className={cssClasses('FieldsContainer')}>
         <div>
-
+          { /* IDs and device/site */ }
           <Card>
             <CardText>
               <Unit sm="1-2" md="1-2" lg="5-12">
@@ -444,8 +491,134 @@ export class ResultDetail extends PureComponent {
               />
             </CardText>
           </Card>
-
-
+          { /* Result-related data (categories, resultText, probes...) */ }
+          <Card expanded={this.state.resultExpanded}>
+            <CardText>
+              { result.get('resultCategory1Name') &&
+                <Unit sm="1-2" md="1-2" lg="1-4">
+                  <ReadOnlyField label={assay.get('resultCategory1Label')} value={result.get('resultCategory1Name')} />
+                </Unit> }
+              { result.get('resultCategory2Name') &&
+                <Unit sm="1-2" md="1-3" lg="1-4">
+                  <ReadOnlyField label={assay.get('resultCategory2Label')} value={result.get('resultCategory2Name')} />
+                </Unit> }
+              {
+                this.getAssayFields()
+              }
+              <Unit sm="1-1" md="1-2" lg="1-4">
+                {this.renderCheckbox()}
+              </Unit>
+              <div className={cssClasses('ExpandButton')}>
+                <IconButton onClick={() => this.setState({ resultExpanded: !this.state.resultExpanded })}>
+                  { this.state.resultExpanded ? <ExpandLess /> : <ExpandMore /> }
+                </IconButton>
+              </div>
+              { result.get('errorCode') ?
+                <Unit sm="1-2" md="1-2" lg="1-4">
+                  <ReadOnlyField label={formatMessage(messages.fieldErrorCode)} value={result.get('errorCode')} />
+                </Unit> :
+                null }
+              { result.get('errorNotes') ?
+                <Unit sm="1-2" md="1-2" lg="3-4">
+                  <ReadOnlyField label={formatMessage(messages.fieldErrorNotes)} value={result.get('errorNotes')} />
+                </Unit> :
+                null }
+              <Unit sm="1-1" md="1-1" lg="1-2">
+                <ReadOnlyField label={formatMessage(messages.fieldResultDataResultText)} value={result.getIn(['resultData', 'resultText'])} />
+              </Unit>
+              <Unit sm="1-1" md="1-1" lg="1-2">
+                <ReadOnlyField label={formatMessage(messages.fieldNotes)} value={result.get('notes')} />
+              </Unit>
+            </CardText>
+            <CardText expandable>
+              {this.renderLowerLevelSchemaFields()}
+            </CardText>
+          </Card>
+          { /* Patient Info */ }
+          <Card initiallyExpanded>
+            <CardHeader title="Patient Information" actAsExpander showExpandableButton />
+            <CardText actAsExpander expandable style={{ paddingTop: 0 }}>
+              <Unit sm="1-1" md="1-1" lg="1-2">
+                <ReadOnlyField label={formatMessage(messages.fieldPatientName)} value={'Bill Burton'} />
+              </Unit>
+              <Unit sm="1-1" md="1-1" lg="1-2">
+                <ReadOnlyField label={formatMessage(messages.fieldPatientAddress)} value={'23 Abbey Lane, London, UK'} />
+              </Unit>
+              <Unit sm="1-1" md="1-1" lg="1-2">
+                <ReadOnlyField label={formatMessage(messages.fieldPatientPhone)} value={'+49 7623 998877'} />
+              </Unit>
+              <Unit sm="1-1" md="1-1" lg="1-2">
+                <ReadOnlyField label={formatMessage(messages.fieldPatientAge)} value={24} />
+              </Unit>
+              <Unit sm="1-1" md="1-1" lg="1-2">
+                <ReadOnlyField label={formatMessage(messages.fieldPatientGender)} value={'Male'} />
+              </Unit>
+              <Unit sm="1-1" md="1-1" lg="1-2">
+                <ReadOnlyField label={formatMessage(messages.fieldPatientHivStatus)} value={'Negative'} />
+              </Unit>
+            </CardText>
+          </Card>
+          { /* Technical Info */ }
+          <Card initiallyExpanded>
+            <CardHeader title="Technical Information" actAsExpander showExpandableButton />
+            <CardText actAsExpander expandable style={{ paddingTop: 0 }}>
+              <Unit sm="1-1" md="1-2" lg="1-3">
+                <ReadOnlyField
+                  label={formatMessage(messages.fieldStartedOn)}
+                  value={result.get('startedOn')}
+                  format={v => `${formatDate(v)} ${formatTime(v)}`}
+                />
+              </Unit>
+              <Unit sm="1-1" md="1-2" lg="1-3">
+                <ReadOnlyField
+                  label={formatMessage(messages.fieldEndedOn)}
+                  value={result.get('endedOn')}
+                  format={v => `${formatDate(v)} ${formatTime(v)}`}
+                />
+              </Unit>
+              <Unit sm="1-1" md="1-2" lg="1-3">
+                <ReadOnlyField label={formatMessage(messages.fieldDuration)} value={this.getDuration(result.get('startedOn'), result.get('endedOn'))} />
+              </Unit>
+              <Unit sm="1-1" md="1-2" lg="1-3">
+                <ReadOnlyField
+                  label={formatMessage(messages.fieldCreatedOn)}
+                  value={result.get('createdOn')}
+                  format={v => `${formatDate(v)} ${formatTime(v)}`}
+                />
+              </Unit>
+              <Unit sm="1-1" md="1-2" lg="2-3">
+                <ReadOnlyField
+                  label={formatMessage(messages.fieldUpdatedOn)}
+                  value={result.get('updatedOn')}
+                  format={v => `${formatDate(v)} ${formatTime(v)}`}
+                />
+              </Unit>
+              <Unit sm="1-1" md="1-2" lg="1-3">
+                <ReadOnlyField label={formatMessage(messages.fieldReagentLotID)} value={result.get('consumableLot')} />
+              </Unit>
+              <Unit sm="1-1" md="1-2" lg="1-3">
+                <ReadOnlyField label={formatMessage(messages.fieldConsumableSerial)} value={result.get('consumableSerial')} />
+              </Unit>
+              <Unit sm="1-1" md="1-2" lg="1-3">
+                <ReadOnlyField label={formatMessage(messages.fieldConsumableExpirationDate)} value={result.get('consumableExpirationDate')} format={formatDate} />
+              </Unit>
+              <Unit sm="1-1" md="1-2" lg="1-3">
+                <ReadOnlyField label={formatMessage(messages.fieldInstrumentSerial)} value={result.get('instrumentSerial')} />
+              </Unit>
+              <Unit sm="1-1" md="1-2" lg="1-3">
+                <ReadOnlyField label={formatMessage(messages.fieldModuleSerial)} value={result.get('moduleSerial')} />
+              </Unit>
+              <Unit sm="1-1" md="1-2" lg="1-3">
+                <ReadOnlyField label={formatMessage(messages.fieldModuleName)} value={result.get('moduleName')} />
+              </Unit>
+              <Unit sm="1-1" md="1-2" lg="1-3">
+                <ReadOnlyField label={formatMessage(messages.fieldSenderOperator)} value={result.get('senderOperator')} />
+              </Unit>
+              <Unit sm="1-1" md="1-2" lg="2-3">
+                <ReadOnlyField label={formatMessage(messages.fieldSenderVersion)} value={result.get('senderVersion')} />
+              </Unit>
+            </CardText>
+          </Card>
         </div>
         <br />
         <br />
@@ -466,7 +639,7 @@ export class ResultDetail extends PureComponent {
               <ReadOnlyFields
                 fields={this.getRightColumnFields()}
               />
-              {this.renderSchemaFieldsInCards()}
+              {this.renderLowerLevelSchemaFields()}
             </div>
           </Unit>
         </div>
