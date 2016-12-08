@@ -1,4 +1,3 @@
-import { assert } from 'chai'
 import React from 'react'
 import { shallow } from 'enzyme'
 import proxyquire from 'proxyquire'
@@ -25,7 +24,7 @@ describe('Hidden module', () => {
         lg: true
       })
 
-      assert.deepEqual(className, ['abc', 'pure-hidden-xs', 'pure-hidden-sm', 'pure-hidden-lg'])
+      expect(className).toEqual(['abc', 'pure-hidden-xs', 'pure-hidden-sm', 'pure-hidden-lg'])
     })
   })
 
@@ -35,8 +34,8 @@ describe('Hidden module', () => {
         <Hidden md xl />
       )
 
-      assert.equal(ComponentWrapper.type(), 'div')
-      assert.equal(ComponentWrapper.props().className, 'pure-hidden-md pure-hidden-xl')
+      expect(ComponentWrapper.type()).toEqual('div')
+      expect(ComponentWrapper.props().className).toEqual('pure-hidden-md pure-hidden-xl')
     })
 
     context('Given component = span', () => {
@@ -45,8 +44,8 @@ describe('Hidden module', () => {
           <Hidden component="span" md xl />
         )
 
-        assert.equal(ComponentWrapper.type(), 'span')
-        assert.equal(ComponentWrapper.props().className, 'pure-hidden-md pure-hidden-xl')
+        expect(ComponentWrapper.type()).toEqual('span')
+        expect(ComponentWrapper.props().className).toEqual('pure-hidden-md pure-hidden-xl')
       })
     })
   })

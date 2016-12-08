@@ -1,5 +1,4 @@
 import _ from 'lodash'
-import { assert } from 'chai'
 import emailAddress from './validate'
 
 describe('validate', () => {
@@ -28,25 +27,25 @@ describe('validate', () => {
 
     it('should return true for valid email addresses', () => {
       _.each(validEmailAddresses, (address) => {
-        assert.isTrue(emailAddress(address).isValid(), `"${address}" is a valid email address`)
+        expect(emailAddress(address).isValid()).toBe(true)
       })
     })
 
     it('should return false for invalid email addresses', () => {
       _.each(invalidEmailAddresses, (address) => {
-        assert.isFalse(emailAddress(address).isValid(), `"${address}" is an invalid email address`)
+        expect(emailAddress(address).isValid()).toBe(`"${address}" is an invalid email address`)
       })
     })
 
     it('should return false for blank email addresses by default', () => {
       _.each(['', null, undefined], (address) => {
-        assert.isFalse(emailAddress(address).isValid(), 'Blank email addresses are invalid unless optional is called')
+        expect(emailAddress(address).isValid()).toBe('Blank email addresses are invalid unless optional is called')
       })
     })
 
     it('should return true for blank email addresses is optional was called', () => {
       _.each(['', null, undefined], (address) => {
-        assert.isTrue(emailAddress(address).optional().isValid(), 'Blank email addresses are invalid unless isOptional is specified')
+        expect(emailAddress(address).optional().isValid()).toBe(true)
       })
     })
   })

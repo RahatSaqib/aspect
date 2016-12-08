@@ -1,4 +1,3 @@
-import { assert } from 'chai'
 import sinon from 'sinon'
 import React from 'react'
 import { shallow } from 'enzyme'
@@ -22,7 +21,7 @@ describe('recomposeForm module', () => {
         <DecoratedComponent values={initialValues} />
       )
 
-      assert.equal(ComponentWrapper.find('div').length, 1)
+      expect(ComponentWrapper.find('div').length).toEqual(1)
     })
 
     it('should pass in form state from props', () => {
@@ -38,8 +37,8 @@ describe('recomposeForm module', () => {
         <DecoratedComponent values={initialValues} />
       )
 
-      assert.equal(ComponentWrapper.find('div').length, 1)
-      assert.deepEqual(innerProps.form, {
+      expect(ComponentWrapper.find('div').length).toEqual(1)
+      expect(innerProps.form).toEqual({
         pristine: true,
         valid: true,
         submitting: false,
@@ -60,12 +59,12 @@ describe('recomposeForm module', () => {
         <DecoratedComponent values={initialValues} />
       )
 
-      assert.equal(ComponentWrapper.find('div').length, 1)
-      assert.deepEqual(innerProps.meta.name, {
+      expect(ComponentWrapper.find('div').length).toEqual(1)
+      expect(innerProps.meta.name).toEqual({
         touched: false,
         error: null
       })
-      assert.deepEqual(innerProps.meta.email, {
+      expect(innerProps.meta.email).toEqual({
         touched: false,
         error: null
       })
@@ -84,8 +83,8 @@ describe('recomposeForm module', () => {
         <DecoratedComponent values={initialValues} />
       )
 
-      assert.equal(ComponentWrapper.find('div').length, 1)
-      assert.isFunction(innerProps.handleSubmit)
+      expect(ComponentWrapper.find('div').length).toEqual(1)
+      expect(typeof innerProps.handleSubmit).toBe('function')
     })
 
     context('passing onSubmit with a function returning a resolved promise', () => {
@@ -105,17 +104,17 @@ describe('recomposeForm module', () => {
           />
         )
 
-        assert.equal(ComponentWrapper.find('div').length, 1)
-        assert.deepEqual(innerProps.form, {
+        expect(ComponentWrapper.find('div').length).toEqual(1)
+        expect(innerProps.form).toEqual({
           pristine: true,
           valid: true,
           submitting: false,
           submitSucceed: false
         })
-        assert.isFunction(innerProps.handleSubmit)
+        expect(typeof innerProps.handleSubmit).toBe('function')
         innerProps.handleSubmit(mockEvent)
 
-        assert.deepEqual(innerProps.form, {
+        expect(innerProps.form).toEqual({
           pristine: false,
           valid: true,
           submitting: true,
@@ -124,7 +123,7 @@ describe('recomposeForm module', () => {
 
         return new Promise(resolve => setTimeout(resolve, 50))
           .then(() => {
-            assert.deepEqual(innerProps.form, {
+            expect(innerProps.form).toEqual({
               pristine: true,
               valid: true,
               submitting: false,
@@ -151,17 +150,17 @@ describe('recomposeForm module', () => {
           />
         )
 
-        assert.equal(ComponentWrapper.find('div').length, 1)
-        assert.deepEqual(innerProps.form, {
+        expect(ComponentWrapper.find('div').length).toEqual(1)
+        expect(innerProps.form).toEqual({
           pristine: true,
           valid: true,
           submitting: false,
           submitSucceed: false
         })
-        assert.isFunction(innerProps.handleSubmit)
+        expect(typeof innerProps.handleSubmit).toBe('function')
         innerProps.handleSubmit(mockEvent)
 
-        assert.deepEqual(innerProps.form, {
+        expect(innerProps.form).toEqual({
           pristine: false,
           valid: true,
           submitting: true,
@@ -170,7 +169,7 @@ describe('recomposeForm module', () => {
 
         return new Promise(resolve => setTimeout(resolve, 50))
           .then(() => {
-            assert.deepEqual(innerProps.form, {
+            expect(innerProps.form).toEqual({
               pristine: false,
               valid: false,
               submitting: false,
@@ -193,9 +192,9 @@ describe('recomposeForm module', () => {
         <DecoratedComponent values={initialValues} />
       )
 
-      assert.equal(ComponentWrapper.find('div').length, 1)
-      assert.isFunction(innerProps.onChangeName)
-      assert.isFunction(innerProps.onChangeEmail)
+      expect(ComponentWrapper.find('div').length).toEqual(1)
+      expect(typeof innerProps.onChangeName).toBe('function')
+      expect(typeof innerProps.onChangeEmail).toBe('function')
     })
 
     it('should call onChange when fields are changed', () => {
@@ -215,14 +214,14 @@ describe('recomposeForm module', () => {
         />
       )
 
-      assert.equal(ComponentWrapper.find('div').length, 1)
-      assert.isFunction(innerProps.onChangeName)
-      assert.isFalse(handleChange.called)
+      expect(ComponentWrapper.find('div').length).toEqual(1)
+      expect(typeof innerProps.onChangeName).toBe('function')
+      expect(handleChange.called).toBe()
 
       innerProps.onChangeName({
         target: { value: 'Jeremy' }
       })
-      assert.isTrue(handleChange.called)
+      expect(handleChange.called).toBe(true)
     })
 
     context('calling onChangeName with valid value', () => {
@@ -249,17 +248,17 @@ describe('recomposeForm module', () => {
           />
         )
 
-        assert.equal(ComponentWrapper.find('div').length, 1)
-        assert.deepEqual(innerProps.meta.name, {
+        expect(ComponentWrapper.find('div').length).toEqual(1)
+        expect(innerProps.meta.name).toEqual({
           touched: false,
           error: null
         })
-        assert.isFunction(innerProps.onChangeName)
+        expect(typeof innerProps.onChangeName).toBe('function')
 
         innerProps.onChangeName({
           target: { value: 'Jeremy' }
         })
-        assert.deepEqual(innerProps.meta.name, {
+        expect(innerProps.meta.name).toEqual({
           touched: true,
           error: null
         })
@@ -290,17 +289,17 @@ describe('recomposeForm module', () => {
           />
         )
 
-        assert.equal(ComponentWrapper.find('div').length, 1)
-        assert.deepEqual(innerProps.meta.name, {
+        expect(ComponentWrapper.find('div').length).toEqual(1)
+        expect(innerProps.meta.name).toEqual({
           touched: false,
           error: null
         })
-        assert.isFunction(innerProps.onChangeName)
+        expect(typeof innerProps.onChangeName).toBe('function')
 
         innerProps.onChangeName({
           target: { value: '' }
         })
-        assert.deepEqual(innerProps.meta.name, {
+        expect(innerProps.meta.name).toEqual({
           touched: true,
           error: 'Required'
         })

@@ -1,5 +1,4 @@
 import Immutable from 'immutable'
-import { assert } from 'chai'
 import React from 'react'
 import { shallow } from 'enzyme'
 import { groupByPermissionTypes, isPermittedUser, requirePermissions } from './requirePermissions'
@@ -10,7 +9,7 @@ describe('requirePermissions', () => {
       it('should parse correctly', () => {
         const permissionsByTypes = groupByPermissionTypes(['person:admin'])
 
-        assert.deepEqual(permissionsByTypes, {
+        expect(permissionsByTypes).toEqual({
           required: [],
           forbidden: [],
           optional: ['person:admin']
@@ -28,7 +27,7 @@ describe('requirePermissions', () => {
           optional: []
         })
 
-        assert.isTrue(isPermitted)
+        expect(isPermitted).toBe(true)
       })
     })
 
@@ -40,7 +39,7 @@ describe('requirePermissions', () => {
           optional: []
         })
 
-        assert.isFalse(isPermitted)
+        expect(isPermitted).toBe()
       })
     })
 
@@ -52,7 +51,7 @@ describe('requirePermissions', () => {
           optional: ['person:admin', 'site:admin']
         })
 
-        assert.isTrue(isPermitted)
+        expect(isPermitted).toBe(true)
       })
     })
 
@@ -64,7 +63,7 @@ describe('requirePermissions', () => {
           optional: []
         })
 
-        assert.isTrue(isPermitted)
+        expect(isPermitted).toBe(true)
       })
 
       it('should be invalid for admin user', () => {
@@ -74,7 +73,7 @@ describe('requirePermissions', () => {
           optional: []
         })
 
-        assert.isFalse(isPermitted)
+        expect(isPermitted).toBe()
       })
     })
 
@@ -86,7 +85,7 @@ describe('requirePermissions', () => {
           optional: ['device:view']
         })
 
-        assert.isTrue(isPermitted)
+        expect(isPermitted).toBe(true)
       })
 
       it('should be invalid for admin user', () => {
@@ -96,7 +95,7 @@ describe('requirePermissions', () => {
           optional: ['device:view']
         })
 
-        assert.isFalse(isPermitted)
+        expect(isPermitted).toBe()
       })
     })
   })
@@ -131,8 +130,8 @@ describe('requirePermissions', () => {
         }
       )
 
-      assert.equal(ComponentWrapper.find(WrappedComponent).length, 1)
-      assert.equal(ComponentWrapper.find(ForbiddenComponent).length, 0)
+      expect(ComponentWrapper.find(WrappedComponent).length).toEqual(1)
+      expect(ComponentWrapper.find(ForbiddenComponent).length).toEqual(0)
     })
 
     it('should render WrappedComponent', () => {
@@ -143,8 +142,8 @@ describe('requirePermissions', () => {
         }
       )
 
-      assert.equal(ComponentWrapper.find(WrappedComponent).length, 1)
-      assert.equal(ComponentWrapper.find(ForbiddenComponent).length, 0)
+      expect(ComponentWrapper.find(WrappedComponent).length).toEqual(1)
+      expect(ComponentWrapper.find(ForbiddenComponent).length).toEqual(0)
     })
   })
 
@@ -162,8 +161,8 @@ describe('requirePermissions', () => {
         }
       )
 
-      assert.equal(ComponentWrapper.find(WrappedComponent).length, 0)
-      assert.equal(ComponentWrapper.find(ForbiddenComponent).length, 1)
+      expect(ComponentWrapper.find(WrappedComponent).length).toEqual(0)
+      expect(ComponentWrapper.find(ForbiddenComponent).length).toEqual(1)
     })
 
     it('should render ForbiddenComponent', () => {
@@ -174,8 +173,8 @@ describe('requirePermissions', () => {
         }
       )
 
-      assert.equal(ComponentWrapper.find(WrappedComponent).length, 0)
-      assert.equal(ComponentWrapper.find(ForbiddenComponent).length, 1)
+      expect(ComponentWrapper.find(WrappedComponent).length).toEqual(0)
+      expect(ComponentWrapper.find(ForbiddenComponent).length).toEqual(1)
     })
   })
 })

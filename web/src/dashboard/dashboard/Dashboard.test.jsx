@@ -3,7 +3,6 @@ import React from 'react'
 import sinon from 'sinon'
 import { mount } from 'enzyme'
 import Immutable from 'immutable'
-import { assert } from 'chai'
 
 import { Dashboard } from './Dashboard'
 
@@ -41,12 +40,12 @@ describe('Dashboard', () => {
             intl={intl}
           />
         )
-        assert.isTrue(showAcknowledgement.notCalled)
+        expect(showAcknowledgement.notCalled).toBe(true)
 
         Wrapper.setProps({
           userName: user.get('name')
         })
-        assert.isTrue(showAcknowledgement.called)
+        expect(showAcknowledgement.called).toBe(true)
       })
     })
 
@@ -65,12 +64,12 @@ describe('Dashboard', () => {
           />
         )
 
-        assert.isTrue(showAcknowledgement.notCalled)
+        expect(showAcknowledgement.notCalled).toBe(true)
 
         Wrapper.setProps({
           userName: user.get('name')
         })
-        assert.isTrue(showAcknowledgement.notCalled)
+        expect(showAcknowledgement.notCalled).toBe(true)
       })
     })
   })

@@ -1,6 +1,5 @@
 import Immutable from 'immutable'
 import React from 'react'
-import { assert } from 'chai'
 import { shallow } from 'enzyme'
 import sinon from 'sinon'
 import proxyquire from 'proxyquire'
@@ -109,18 +108,18 @@ describe('LocationSelector Component', () => {
     })
 
     it('Should be a div', () => {
-      assert.equal(LocationSelectorWrapper.node.type, 'div')
+      expect(LocationSelectorWrapper.node.type).toEqual('div')
     })
 
     it('Should contain three Field for country, state and LGA', () => {
       const CountrySelectFieldWrapper = LocationSelectorWrapper.find(Field).filter({ name: 'countryId' })
-      assert.equal(CountrySelectFieldWrapper.length, 1)
+      expect(CountrySelectFieldWrapper.length).toEqual(1)
 
       const StateSelectFieldWrapper = LocationSelectorWrapper.find(Field).filter({ name: 'stateId' })
-      assert.equal(StateSelectFieldWrapper.length, 1)
+      expect(StateSelectFieldWrapper.length).toEqual(1)
 
       const LgaSelectFieldWrapper = LocationSelectorWrapper.find(Field).filter({ name: 'lgaId' })
-      assert.equal(LgaSelectFieldWrapper.length, 1)
+      expect(LgaSelectFieldWrapper.length).toEqual(1)
     })
   })
 
@@ -155,8 +154,8 @@ describe('LocationSelector Component', () => {
 
     it('mapDispatchToProps should bind changeFieldValue action creators to the component\'s properties', () => {
       const expectedDispatcher = { value: 'I am a dispatch function' }
-      assert.equal(mapDispatchToProps(expectedDispatcher), expectedBoundActionCreators)
-      assert.deepEqual(reduxStub.bindActionCreators.lastCall.args, [{
+      expect(mapDispatchToProps(expectedDispatcher)).toEqual(expectedBoundActionCreators)
+      expect(reduxStub.bindActionCreators.lastCall.args).toEqual([{
         changeFieldValue: reduxFormStub.change
       },
         expectedDispatcher])

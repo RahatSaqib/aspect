@@ -1,6 +1,5 @@
 import Immutable from 'immutable'
 import React, { PropTypes } from 'react'
-import { assert } from 'chai'
 import sinon from 'sinon'
 import { shallow, mount } from 'enzyme'
 import getMuiTheme from 'material-ui/styles/getMuiTheme'
@@ -95,7 +94,7 @@ describe('StateSelectField module', () => {
       }
       mountWithMuiTheme(<StateSelectField {...props} />)
 
-      assert.isTrue(props.fetchStatesForLocationSelector.calledOnce)
+      expect(props.fetchStatesForLocationSelector.calledOnce).toBe(true)
     })
 
     it('should trigger fetchStatesForLocationSelector when countryId has changed', () => {
@@ -106,10 +105,10 @@ describe('StateSelectField module', () => {
         countryId: '2'
       }
       const StateSelectFieldWrapper = mountWithMuiTheme(<StateSelectField {...props} />)
-      assert.isTrue(props.fetchStatesForLocationSelector.calledOnce)
+      expect(props.fetchStatesForLocationSelector.calledOnce).toBe(true)
 
       StateSelectFieldWrapper.setProps({ countryId: '1' })
-      assert.isTrue(props.fetchStatesForLocationSelector.calledTwice)
+      expect(props.fetchStatesForLocationSelector.calledTwice).toBe(true)
     })
 
     it('should trigger onChangeState when value has been selected', () => {
@@ -123,12 +122,12 @@ describe('StateSelectField module', () => {
       const ForkedSelectFieldWrapper = StateSelectFieldWrapper.find(ForkedSelectField)
 
       ForkedSelectFieldWrapper.simulate('change', undefined, undefined, '2')
-      assert.isTrue(props.onChangeState.calledOnce)
-      assert.isTrue(props.onChangeState.calledWith('2'))
+      expect(props.onChangeState.calledOnce).toBe(true)
+      expect(props.onChangeState.calledWith('2')).toBe(true)
 
       ForkedSelectFieldWrapper.simulate('change', undefined, undefined, undefined)
-      assert.isTrue(props.onChangeState.calledTwice)
-      assert.isTrue(props.onChangeState.calledWith(undefined))
+      expect(props.onChangeState.calledTwice).toBe(true)
+      expect(props.onChangeState.calledWith(undefined)).toBe(true)
     })
   })
 })

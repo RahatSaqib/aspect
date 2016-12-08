@@ -1,4 +1,3 @@
-import { assert } from 'chai'
 import Immutable from 'immutable'
 import _ from 'lodash'
 import proxyquire from 'proxyquire'
@@ -39,13 +38,13 @@ describe('AccountDetailsRedux', () => {
 
     describe('initial state', () => {
       it('should contain an empty AccountDetails object that isn\'t loading or saving', () => {
-        assert.instanceOf(initialState.get('data'), Immutable.Record)
-        assert.instanceOf(initialState.getIn(['data', 'contactDetails']), Immutable.Record)
-        assert.instanceOf(initialState.getIn(['data', 'loginDetails']), Immutable.Record)
-        assert.instanceOf(initialState.getIn(['data', 'userPreferences']), Immutable.Record)
-        assert.isFalse(initialState.get('loading'))
-        assert.isFalse(initialState.get('saving'))
-        assert.deepEqual(initialState.getIn(['data', 'contactDetails']).toJS(), {
+        expect(initialState.get('data')).toBeInstanceOf(Immutable.Record)
+        expect(initialState.getIn(['data', 'contactDetails'])).toBeInstanceOf(Immutable.Record)
+        expect(initialState.getIn(['data', 'loginDetails'])).toBeInstanceOf(Immutable.Record)
+        expect(initialState.getIn(['data', 'userPreferences'])).toBeInstanceOf(Immutable.Record)
+        expect(initialState.get('loading')).toBe()
+        expect(initialState.get('saving')).toBe()
+        expect(initialState.getIn(['data', 'contactDetails']).toJS()).toEqual({
           id: null,
           lastPartnerId: null,
           name: null,
@@ -60,7 +59,7 @@ describe('AccountDetailsRedux', () => {
           zip: null,
           notes: null
         })
-        assert.deepEqual(initialState.getIn(['data', 'loginDetails']).toJS(), {
+        expect(initialState.getIn(['data', 'loginDetails']).toJS()).toEqual({
           id: null,
           username: null,
           newPassword: null,
@@ -70,7 +69,7 @@ describe('AccountDetailsRedux', () => {
           orgUnitId: null,
           roles: []
         })
-        assert.deepEqual(initialState.getIn(['data', 'userPreferences']).toJS(), {
+        expect(initialState.getIn(['data', 'userPreferences']).toJS()).toEqual({
           id: null,
           timezone: null,
           culture: null
@@ -82,7 +81,7 @@ describe('AccountDetailsRedux', () => {
       describe('REQUEST_ACCOUNT_DETAILS', () => {
         it('should show that account details are busy loading', () => {
           const state = accountDetails(initialState, { type: types.REQUEST_ACCOUNT_DETAILS })
-          assert.isTrue(state.get('loading'))
+          expect(state.get('loading')).toBe(true)
         })
       })
 
@@ -92,10 +91,10 @@ describe('AccountDetailsRedux', () => {
             type: types.RECEIVE_ACCOUNT_DETAILS,
             accountDetails: accountDetailsData
           })
-          assert.isFalse(state.get('loading'))
-          assert.deepEqual(state.getIn(['data', 'contactDetails']).toJS(), _.omit(accountDetailsData,
+          expect(state.get('loading')).toBe()
+          expect(state.getIn(['data', 'contactDetails']).toJS()).toEqual(_.omit(accountDetailsData,
             ['username', 'userId', 'timezone', 'culture']))
-          assert.deepEqual(state.getIn(['data', 'loginDetails']).toJS(), {
+          expect(state.getIn(['data', 'loginDetails']).toJS()).toEqual({
             id: accountDetailsData.userId,
             username: accountDetailsData.username,
             newPassword: null,
@@ -105,14 +104,14 @@ describe('AccountDetailsRedux', () => {
             orgUnitId: null,
             roles: []
           })
-          assert.deepEqual(state.getIn(['data', 'userPreferences']).toJS(), _.pick(accountDetailsData, ['id', 'timezone', 'culture']))
+          expect(state.getIn(['data', 'userPreferences']).toJS()).toEqual(_.pick(accountDetailsData, ['id', 'timezone', 'culture']))
         })
       })
 
       describe('SAVE_ACCOUNT_DETAILS_START', () => {
         it('should show that account details are busy saving', () => {
           const state = accountDetails(initialState, { type: types.SAVE_ACCOUNT_DETAILS_START })
-          assert.isTrue(state.get('saving'))
+          expect(state.get('saving')).toBe(true)
         })
       })
 
@@ -146,10 +145,10 @@ describe('AccountDetailsRedux', () => {
             accountDetails: newAccountDetailsData
           })
 
-          assert.isFalse(newState.get('loading'))
-          assert.deepEqual(newState.getIn(['data', 'contactDetails']).toJS(), _.omit(newAccountDetailsData,
+          expect(newState.get('loading')).toBe()
+          expect(newState.getIn(['data', 'contactDetails']).toJS()).toEqual(_.omit(newAccountDetailsData,
             ['username', 'userId', 'timezone', 'culture']))
-          assert.deepEqual(newState.getIn(['data', 'loginDetails']).toJS(), {
+          expect(newState.getIn(['data', 'loginDetails']).toJS()).toEqual({
             id: accountDetailsData.userId,
             username: accountDetailsData.username,
             newPassword: null,
@@ -159,7 +158,7 @@ describe('AccountDetailsRedux', () => {
             orgUnitId: null,
             roles: []
           })
-          assert.deepEqual(newState.getIn(['data', 'userPreferences']).toJS(), _.pick(accountDetailsData, ['id', 'timezone', 'culture']))
+          expect(newState.getIn(['data', 'userPreferences']).toJS()).toEqual(_.pick(accountDetailsData, ['id', 'timezone', 'culture']))
         })
       })
 
@@ -177,10 +176,10 @@ describe('AccountDetailsRedux', () => {
             updateDetails: updateDetailsData
           })
 
-          assert.isFalse(newState.get('loading'))
-          assert.deepEqual(newState.getIn(['data', 'contactDetails']).toJS(), _.omit(accountDetailsData,
+          expect(newState.get('loading')).toBe()
+          expect(newState.getIn(['data', 'contactDetails']).toJS()).toEqual(_.omit(accountDetailsData,
             ['username', 'userId', 'timezone', 'culture']))
-          assert.deepEqual(newState.getIn(['data', 'loginDetails']).toJS(), {
+          expect(newState.getIn(['data', 'loginDetails']).toJS()).toEqual({
             id: accountDetailsData.userId,
             username: updateDetailsData.username,
             newPassword: null,
@@ -190,7 +189,7 @@ describe('AccountDetailsRedux', () => {
             orgUnitId: null,
             roles: []
           })
-          assert.deepEqual(newState.getIn(['data', 'userPreferences']).toJS(), _.pick(accountDetailsData, ['id', 'timezone', 'culture']))
+          expect(newState.getIn(['data', 'userPreferences']).toJS()).toEqual(_.pick(accountDetailsData, ['id', 'timezone', 'culture']))
         })
       })
 
@@ -222,10 +221,10 @@ describe('AccountDetailsRedux', () => {
             accountDetails: newAccountDetailsData
           })
 
-          assert.isFalse(newState.get('loading'))
-          assert.deepEqual(newState.getIn(['data', 'contactDetails']).toJS(), _.omit(accountDetailsData,
+          expect(newState.get('loading')).toBe()
+          expect(newState.getIn(['data', 'contactDetails']).toJS()).toEqual(_.omit(accountDetailsData,
             ['username', 'userId', 'timezone', 'culture']))
-          assert.deepEqual(newState.getIn(['data', 'loginDetails']).toJS(), {
+          expect(newState.getIn(['data', 'loginDetails']).toJS()).toEqual({
             id: accountDetailsData.userId,
             username: accountDetailsData.username,
             newPassword: null,
@@ -235,7 +234,7 @@ describe('AccountDetailsRedux', () => {
             orgUnitId: null,
             roles: []
           })
-          assert.deepEqual(newState.getIn(['data', 'userPreferences']).toJS(), _.pick(newAccountDetailsData, ['id', 'timezone', 'culture']))
+          expect(newState.getIn(['data', 'userPreferences']).toJS()).toEqual(_.pick(newAccountDetailsData, ['id', 'timezone', 'culture']))
         })
       })
     })
@@ -283,17 +282,17 @@ describe('AccountDetailsRedux', () => {
       })
 
       it('should dispatch a REQUEST_ACCOUNT_DETAILS action', () => {
-        assert.deepEqual(dispatch.firstCall.args, [{ type: types.REQUEST_ACCOUNT_DETAILS }], 'REQUEST_ACCOUNT_DETAILS Was Not Dispatched')
+        expect(dispatch.firstCall.args).toEqual([{ type: types.REQUEST_ACCOUNT_DETAILS }])
       })
 
       it('should request the account details from the server', () => {
-        assert(fetchStub.aspectFetch.calledWith('/account-details/current'), 'A request to /account-details/current was not detected')
+        expect(fetchStub.aspectFetch.calledWith('/account-details/current')).toBeTruthy()
       })
 
       describe('when a response is received from the server', () => {
         it('Should dispatch a RECEIVE_ACCOUNT_DETAILS action with the account details received', () => expectedResponseFromServer.then((response) => {
-          assert.deepEqual(response, { ok: true, data: accountDetailsData })
-          assert.deepEqual(dispatch.secondCall.args, [{
+          expect(response).toEqual({ ok: true, data: accountDetailsData })
+          expect(dispatch.secondCall.args).toEqual([{
             type: types.RECEIVE_ACCOUNT_DETAILS,
             accountDetails: accountDetailsData
           }])
@@ -332,11 +331,11 @@ describe('AccountDetailsRedux', () => {
       })
 
       it('should dispatch a SAVE_ACCOUNT_DETAILS_START action', () => {
-        assert.deepEqual(dispatch.firstCall.args, [{ type: types.SAVE_ACCOUNT_DETAILS_START }], 'SAVE_ACCOUNT_DETAILS_START Was Not Dispatched')
+        expect(dispatch.firstCall.args).toEqual([{ type: types.SAVE_ACCOUNT_DETAILS_START }])
       })
 
       it('should send a PUT request to the server with the correct headers and the account details passed to it', () => {
-        assert(fetchStub.aspectFetch.calledWith('/account-details/current-contact', {
+        expect(fetchStub.aspectFetch.calledWith('/account-details/current-contact', {
           method: 'PUT',
           headers: stubHeaders,
           body: JSON.stringify(contactDetailsData),
@@ -346,13 +345,13 @@ describe('AccountDetailsRedux', () => {
               defaultMessage: 'Saving Contact Details Failed'
             } })
           }
-        }), 'A PUT to /account-details/current-contact was not detected')
+        })).toBeTruthy()
       })
 
       describe('when a response is received from the server', () => {
         it('Should dispatch a RECEIVE_UPDATED_CONTACT_DETAILS action with the account details received', () => expectedResponseFromServer.then((response) => {
-          assert.deepEqual(response, { ok: true, data: accountDetailsData })
-          assert.deepEqual(dispatch.secondCall.args, [{
+          expect(response).toEqual({ ok: true, data: accountDetailsData })
+          expect(dispatch.secondCall.args).toEqual([{
             type: types.RECEIVE_UPDATED_CONTACT_DETAILS,
             accountDetails: accountDetailsData
           }])
@@ -435,11 +434,11 @@ describe('AccountDetailsRedux', () => {
       })
 
       it('should dispatch a SAVE_ACCOUNT_DETAILS_START action', () => {
-        assert.deepEqual(dispatch.firstCall.args, [{ type: types.SAVE_ACCOUNT_DETAILS_START }], 'SAVE_ACCOUNT_DETAILS_START Was Not Dispatched')
+        expect(dispatch.firstCall.args).toEqual([{ type: types.SAVE_ACCOUNT_DETAILS_START }])
       })
 
       it('should send a PUT request to the server with the correct headers and the account details passed to it', () => {
-        assert(fetchStub.aspectFetch.calledWith('/auth/update-login-details', {
+        expect(fetchStub.aspectFetch.calledWith('/auth/update-login-details', {
           method: 'PUT',
           headers: stubHeaders,
           body: JSON.stringify(requestData),
@@ -478,13 +477,13 @@ describe('AccountDetailsRedux', () => {
               }
             })
           }
-        }), 'A PUT to /auth/update-login-details was not detected')
+        })).toBeTruthy()
       })
 
       describe('when a response is received from the server', () => {
         it('Should dispatch a RECEIVE_UPDATED_LOGIN_DETAILS action with the account details received', () => expectedResponseFromServer.then((response) => {
-          assert.deepEqual(response, { ok: true, data: updateDetails })
-          assert.deepEqual(dispatch.thirdCall.args, [{
+          expect(response).toEqual({ ok: true, data: updateDetails })
+          expect(dispatch.thirdCall.args).toEqual([{
             type: types.RECEIVE_UPDATED_LOGIN_DETAILS,
             updateDetails
           }])
@@ -523,11 +522,11 @@ describe('AccountDetailsRedux', () => {
       })
 
       it('should dispatch a SAVE_ACCOUNT_DETAILS_START action', () => {
-        assert.deepEqual(dispatch.firstCall.args, [{ type: types.SAVE_ACCOUNT_DETAILS_START }], 'SAVE_ACCOUNT_DETAILS_START Was Not Dispatched')
+        expect(dispatch.firstCall.args).toEqual([{ type: types.SAVE_ACCOUNT_DETAILS_START }])
       })
 
       it('should send a PUT request to the server with the correct headers and the account details passed to it', () => {
-        assert(fetchStub.aspectFetch.calledWith('/account-details/current-preferences', {
+        expect(fetchStub.aspectFetch.calledWith('/account-details/current-preferences', {
           method: 'PUT',
           headers: stubHeaders,
           body: JSON.stringify(userPreferencesData),
@@ -539,13 +538,13 @@ describe('AccountDetailsRedux', () => {
               }
             })
           }
-        }), 'A PUT to /account-details/current-preferences was not detected')
+        })).toBeTruthy()
       })
 
       describe('when a response is received from the server', () => {
         it('Should dispatch a RECEIVE_UPDATED_USER_PREFERENCES action with the account details received', () => expectedResponseFromServer.then((response) => {
-          assert.deepEqual(response, { ok: true, data: accountDetailsData })
-          assert.deepEqual(dispatch.getCall(3).args, [{
+          expect(response).toEqual({ ok: true, data: accountDetailsData })
+          expect(dispatch.getCall(3).args).toEqual([{
             type: types.RECEIVE_UPDATED_USER_PREFERENCES,
             accountDetails: accountDetailsData
           }])

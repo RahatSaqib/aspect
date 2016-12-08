@@ -1,4 +1,3 @@
-import { assert } from 'chai'
 import theme from './theme'
 
 describe('Theme', () => {
