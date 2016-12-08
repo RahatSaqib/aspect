@@ -246,7 +246,8 @@ function* listResults(context, deviceLogId) {
   // TODO limit size of result list from Device API?
 
   resultQuery
-    .orderBy('updatedOn', 'desc')
+    .orderBy('r.updatedOn', 'asc')
+    .orderBy('r.id', 'asc')
     .select(
       'r.externalId as resultId', 'r.resultData', 'r.patientData',
       'r.startedOn', 'r.endedOn', 'r.updatedOn', 'r.researchId', 'r.notes',
