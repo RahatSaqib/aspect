@@ -15,7 +15,6 @@ import { Link } from 'react-router'
 // Material-UI
 import LinearProgress from 'material-ui/LinearProgress'
 import { Card, CardHeader, CardText } from 'material-ui/Card'
-import Divider from 'material-ui/Divider'
 import Checkbox from 'material-ui/Checkbox'
 
 // Our own imports
@@ -53,7 +52,7 @@ const messages = defineMessages({
   },
   fieldDeviceName: {
     id: 'pages.ResultDetail.fieldDeviceName',
-    defaultMessage: 'Device Name'
+    defaultMessage: 'Device'
   },
   fieldEndedOn: {
     id: 'pages.ResultDetail.fieldEndedOn',
@@ -138,10 +137,6 @@ const messages = defineMessages({
   fieldDate: {
     id: 'pages.ResultDetail.fieldDate',
     defaultMessage: 'Date'
-  },
-  fieldSource: {
-    id: 'pages.ResultDetail.fieldSource',
-    defaultMessage: 'Source'
   }
 })
 
@@ -423,30 +418,25 @@ export class ResultDetail extends PureComponent {
 
           <Card>
             <CardText>
-            <Unit sm="1-2" md="1-2" lg="5-12">
-              <ReadOnlyField lg label={formatMessage(messages.fieldSampleId)} value={result.get('sampleId')} />
-            </Unit>
-            <Unit sm="1-2" md="1-2" lg="5-12">
-              <ReadOnlyField lg label={formatMessage(messages.fieldPatientId)} value={result.get('patientId')} />
-            </Unit>
-            <Unit sm="1-2" md="1-2" lg="1-6">
-              <ReadOnlyField lg label={formatMessage(messages.fieldDate)} value={result.get('endedOn')} format={formatDate} />
-            </Unit>
-            </CardText>
-          </Card>
-          <Card>
-            <CardText>
+              <Unit sm="1-2" md="1-2" lg="5-12">
+                <ReadOnlyField label={formatMessage(messages.fieldSampleId)} value={result.get('sampleId')} />
+              </Unit>
+              <Unit sm="1-2" md="1-2" lg="5-12">
+                <ReadOnlyField label={formatMessage(messages.fieldPatientId)} value={result.get('patientId')} />
+              </Unit>
+              <Unit sm="1-2" md="1-2" lg="1-6">
+                <ReadOnlyField label={formatMessage(messages.fieldDate)} value={result.get('endedOn')} format={formatDate} />
+              </Unit>
               <ReadOnlyField
-                lg
-                label={formatMessage(messages.fieldSource)}
+                label={formatMessage(messages.fieldDeviceName)}
                 value={result.get('siteName')}
                 format={v =>
                   <div>
-                    <Link to={'site/' + result.get('siteId')}>
+                    <Link to={`site/${result.get('siteId')}`}>
                       {v}
                     </Link>
                     &nbsp;at&nbsp;
-                    <Link to={'site/' + result.get('siteId')}>
+                    <Link to={`site/${result.get('siteId')}`}>
                       {result.get('siteName')}
                     </Link>
                   </div>
