@@ -13,10 +13,10 @@ const SELECT_LIST_FIELDS = [
 ]
 
 const SELECT_SHOW_FIELDS = [
-  'r.id', 'r.externalId', 'r.startedOn', 'r.endedOn', 'd.name as deviceName',
+  'r.id', 'r.externalId', 'r.startedOn', 'r.endedOn', 'r.deviceId', 'd.name as deviceName',
   'c.name as countryName', 'st.name as stateName', 'lg.name as lgaName',
   'rc1.name as resultCategory1Name', 'rc2.name as resultCategory2Name', 'rs.name as resultWorkflowStatus',
-  'r.resultData', 's.externalId as sampleId', 'si.name as siteName', 'r.assayVersion',
+  'r.resultData', 's.externalId as sampleId', 'r.siteId', 'si.name as siteName', 'r.assayVersion',
   'r.consumableSerial', 'r.consumableLot', 'r.consumableExpirationDate', 'r.instrumentSerial',
   'r.moduleName', 'r.moduleSerial', 'r.researchId', 'r.senderVersion', 'r.senderOperator',
   'r.notes', 'r.errorCode', 'r.errorNotes', 'r.createdOn', 'r.updatedOn', 'r.assayId',

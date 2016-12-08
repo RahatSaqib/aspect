@@ -429,10 +429,10 @@ export class ResultDetail extends PureComponent {
               </Unit>
               <ReadOnlyField
                 label={formatMessage(messages.fieldDeviceName)}
-                value={result.get('siteName')}
+                value={result.get('deviceName')}
                 format={v =>
                   <div>
-                    <Link to={`site/${result.get('siteId')}`}>
+                    <Link to={`device/${result.get('deviceId')}`}>
                       {v}
                     </Link>
                     &nbsp;at&nbsp;
