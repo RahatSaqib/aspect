@@ -5,6 +5,7 @@ import { connect } from 'react-redux'
 import Helmet from 'react-helmet'
 
 // Our own imports
+import { isMobile } from '../../shared/utils/browser'
 import { logoutStart, toggleDrawer, closeDrawer } from '../../auth/AuthRedux'
 import Nav from '../shared/Nav'
 import SideNav from '../shared/SideNav'
@@ -25,7 +26,7 @@ export class LoggedInShell extends PureComponent {
 
   state = {
     pageTitle: null,
-    desktop: true
+    desktop: !isMobile()
   }
 
   handleSetPageTitle = (pageTitle) => {

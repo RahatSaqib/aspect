@@ -1,6 +1,5 @@
 import path from 'path'
 
-const srcPath = path.join(__dirname, '/../src')
 const dfltPort = 8000
 
 function getDefaultModules() {
@@ -48,7 +47,6 @@ function getDefaultModules() {
 }
 
 export default {
-  srcPath,
   publicPath: '/assets/',
   port: dfltPort,
   getDefaultModules,

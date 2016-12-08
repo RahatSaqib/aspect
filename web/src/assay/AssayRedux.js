@@ -1,4 +1,5 @@
 import Immutable from 'immutable'
+import differenceInMinutes from 'date-fns/difference_in_minutes'
 import { aspectFetch } from '../shared/utils/fetch'
 import { addError } from '../error/ErrorRedux'
 
@@ -22,19 +23,25 @@ function createReceiveAssays(assays) {
   }
 }
 
-const fiveMinutes = 300000 // five minutes
+export function fetchAssays(forceRefresh) {
+  return (dispatch, getState) => {
+    const { assay } = getState()
 
-export const fetchAssays = function (forceRefresh, assaysState) {
-  return (dispatch) => {
-    const now = new Date()
-    if (!assaysState.get('loading') && (forceRefresh || !assaysState.get('lastRefreshed') ||
-      Math.abs(now.getTime() - assaysState.get('lastRefreshed').getTime()) > fiveMinutes)) {
-      dispatch(createRequestAssays())
-      const path = '/assay'
-      return aspectFetch(path)
-        .then(json => dispatch(createReceiveAssays(json.data)))
-        .catch(err => dispatch(addError('Loading assays failed', err.message, err)))
+    if (assay.loading) {
+      return
     }
+    const shouldFetch = forceRefresh || !assay.lastRefreshed || (
+      differenceInMinutes(new Date(), assay.lastRefreshed) > 5 // five minutes
+    )
+    if (!shouldFetch) {
+      return
+    }
+
+    dispatch(createRequestAssays())
+    const path = '/assay'
+    return aspectFetch(path)
+      .then(json => dispatch(createReceiveAssays(json.data)))
+      .catch(err => dispatch(addError('Loading assays failed', err.message, err)))
   }
 }
 

@@ -110,9 +110,8 @@ export class PersonDetail extends PureComponent {
     fetchSinglePerson(params.personId)
   }
 
-  handleFetchPartnersAndRoles = ({ partnersAndRolesForSelectList,
-    fetchPartnersAndRolesForSelectList }) => {
-    fetchPartnersAndRolesForSelectList(partnersAndRolesForSelectList)
+  handleFetchPartnersAndRoles = ({ fetchPartnersAndRolesForSelectList }) => {
+    fetchPartnersAndRolesForSelectList()
   }
 
   saveContactDetails = (formValues) => {

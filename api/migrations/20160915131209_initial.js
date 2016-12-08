@@ -496,6 +496,8 @@ function* up(knex) {
   yield knex.schema.createTable('Consumable', (consumable) => {
     consumable.increments('id')
     consumable.string('name').notNullable()
+    consumable.integer('partnerId').unsigned()
+      .index().references('id').inTable('Partner')
     consumable.integer('unit').unsigned().notNullable()
       .references('id').inTable('Unit')
     consumable.boolean('canExpire').notNullable().defaultTo(0)
@@ -529,15 +531,50 @@ function* up(knex) {
     resultWorkflowStatus.string('token')
   })
 
+  yield knex.schema.createTable('InventoryItem', (inventoryItem) => {
+    inventoryItem.increments('id')
+    inventoryItem.integer('consumableId').unsigned().notNullable()
+      .references('id').inTable('Consumable')
+    inventoryItem.integer('siteId').unsigned().notNullable()
+      .references('id').inTable('Site')
+    inventoryItem.string('lotNumber')
+    inventoryItem.dateTime('expiresOn')
+    inventoryItem.float('quantityOnHand')
+    addCreateFieldsNullable(inventoryItem)
+    addUpdateFieldsNullable(inventoryItem)
+    inventoryItem.charset('utf8')
+  })
+
+  yield knex.schema.createTable('InventoryLog', (inventoryLog) => {
+    inventoryLog.increments('id')
+    inventoryLog.integer('inventoryItemId').unsigned()
+      .references('id').inTable('InventoryItem')
+    inventoryLog.integer('consumableId').unsigned().notNullable()
+      .references('id').inTable('Consumable')
+    inventoryLog.integer('siteId').unsigned().notNullable()
+      .references('id').inTable('Site')
+    inventoryLog.integer('consumableReasonId').unsigned().notNullable()
+      .references('id').inTable('ConsumableReason')
+    inventoryLog.integer('resultId').unsigned()
+      .references('id').inTable('Result')
+    inventoryLog.string('lotNumber')
+    inventoryLog.dateTime('expiresOn')
+    inventoryLog.float('quantity')
+    addCreateFieldsNullable(inventoryLog)
+    inventoryLog.charset('utf8')
+  })
+
   yield knex.raw('SET foreign_key_checks = 1')
 }
 
 function* down(knex) {
   yield knex.raw('SET foreign_key_checks = 0')
 
+  yield knex.schema.dropTableIfExists('InventoryLog')
   yield knex.schema.dropTableIfExists('ConsumableAssay')
   yield knex.schema.dropTableIfExists('ResultWorkflowStatus')
   yield knex.schema.dropTableIfExists('ConsumableAssay')
+  yield knex.schema.dropTableIfExists('InventoryItem')
   yield knex.schema.dropTableIfExists('ConsumableReason')
   yield knex.schema.dropTableIfExists('Unit')
   yield knex.schema.dropTableIfExists('Consumable')

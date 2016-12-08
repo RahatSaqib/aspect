@@ -1,6 +1,15 @@
 const Joi = require('joi')
-const { asyncHandler, validateSortPageParams } = require('../routes')
-const { listSites, showSite, updateSite } = require('./service')
+const { validateAllGeographyFilterParams } = require('../geography/requestValidation')
+const {
+  asyncHandler,
+  validateDateRangeParams,
+  validateSortPageParams
+} = require('../routes')
+const {
+  listSites,
+  showSite,
+  updateSite
+} = require('./service')
 
 module.exports = [
   {
@@ -13,14 +22,11 @@ module.exports = [
       auth: { scope: ['site:view', 'site:edit'] },
       validate: {
         query: Object.assign({
-          minDate: Joi.date().iso().allow(null).description('Start on'),
-          maxDate: Joi.date().iso().allow(null).description('End on'),
-          countryId: Joi.number().allow('').description('Country ID'),
-          stateId: Joi.number().allow('').description('State ID'),
-          lgaId: Joi.number().allow('').description('LGA ID'),
           deviceName: Joi.string().allow('').description('Filter for device name'),
           siteName: Joi.string().allow('').description('Filter for site name')
-        }, validateSortPageParams('name', 'shortname', 'state', 'lga', 'createdOn', 'totalDevices'))
+        }, validateAllGeographyFilterParams(),
+          validateDateRangeParams(),
+          validateSortPageParams('name', 'shortname', 'state', 'lga', 'createdOn', 'totalDevices'))
       }
     }
   },

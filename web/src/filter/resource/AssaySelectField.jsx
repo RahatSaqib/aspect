@@ -14,14 +14,13 @@ export class AssaySelectField extends PureComponent {
 
   static propTypes = {
     fetchAssays: PropTypes.func.isRequired,
-    assay: PropTypes.object,
+    assayItems: PropTypes.object.isRequired,
     onAssayChange: PropTypes.func.isRequired,
     value: PropTypes.string
   }
 
   componentDidMount() {
-    const { assay } = this.props
-    this.props.fetchAssays(false, assay)
+    this.props.fetchAssays(false)
   }
 
   handleChange = (event, index, value) => {
@@ -29,11 +28,11 @@ export class AssaySelectField extends PureComponent {
   }
 
   render() {
-    const { assay, value } = this.props
+    const { assayItems, value } = this.props
     const restProps = _.omit(this.props, [
-      'fetchAssays', 'assay', 'onAssayChange', 'value'
+      'fetchAssays', 'assayItems', 'onAssayChange', 'value'
     ])
-    const validAssays = assay ? assay.items.filter(a => a.get('hasResults')) : []
+    const validAssays = assayItems.filter(a => a.get('hasResults'))
 
     return (
       <SelectField
@@ -51,7 +50,7 @@ export class AssaySelectField extends PureComponent {
 
 function mapStateToProps(state) {
   return {
-    assay: state.assay
+    assayItems: state.assay.items
   }
 }
 

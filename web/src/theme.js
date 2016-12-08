@@ -16,6 +16,10 @@ export default {
   drawer: {
     width: 220
   },
+  menu: {
+    textColor: grey700,
+    color: lightGreen300
+  },
   spacing: {
     iconSize: 24
     // desktopGutter: 20,

@@ -2,6 +2,7 @@ const Boom = require('boom')
 const _ = require('lodash')
 const { getExternalId } = require('./common')
 const { addConstraints } = require('../auth/constraints')
+const { consumeInventoryForResult } = require('../inventory/service')
 
 function* addResult(context) {
   const { knex, payload, constraints: dataConstraints, now } = context
@@ -121,6 +122,7 @@ function* addResult(context) {
     }
   }
 
+
   // TODO result data validate against assay schema
   // TODO should we merge within patient or result data payload?
   const resultData = _.has(payload, 'data')
@@ -213,8 +215,13 @@ function* addResult(context) {
       createdOn: now
     }, result))
   }
-
   context.addResultId(resultId)
+
+  // Update Inventory Levels at Site
+  const partnerId = dataConstraints.partner ? dataConstraints.partner.id : undefined
+  const consumablesInResultData = _.isEmpty(payload.consumable) ? [] : payload.consumable
+  yield* consumeInventoryForResult(
+    resultId, assay.id, site.id, consumablesInResultData, partnerId, knex)
 
   return { id: externalId }
 }

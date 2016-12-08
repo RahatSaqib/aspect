@@ -1,6 +1,6 @@
 // Imports from packages
-import _ from 'lodash'
-import React, { PureComponent, PropTypes } from 'react'
+import React, { PropTypes } from 'react'
+import { compose, setPropTypes, pure } from 'recompose'
 import { connect } from 'react-redux'
 import Dialog from 'material-ui/Dialog'
 import {
@@ -19,36 +19,36 @@ const messages = defineMessages({
   }
 })
 
-export class IdleDialog extends PureComponent {
-
-  static propTypes = {
-    idleStatus: PropTypes.string.isRequired,
-    intl: PropTypes.object.isRequired
-  }
-
-  render() {
-    const { intl } = this.props
-    const { formatMessage } = intl
-
-    return (
-      <Dialog
-        title={formatMessage(messages.title)}
-        modal
-        open={this.props.idleStatus === 'IDLESTATUS_INACTIVE'}
-      >
-        <span dangerouslySetInnerHTML={{ __html: formatMessage(messages.help) }} />
-      </Dialog>
-    )
-  }
-}
-
 function mapStateToProps(state) {
   return {
     idleStatus: state.idle.idleStatus
   }
 }
 
-export const IdleDialogContainer = _.flowRight(
+const enhance = compose(
+  pure,
   injectIntl,
-  connect(mapStateToProps)
-)(IdleDialog)
+  connect(mapStateToProps),
+  setPropTypes({
+    intl: PropTypes.object.isRequired,
+    idleStatus: PropTypes.string.isRequired
+  })
+)
+
+export const IdleDialog = ({ intl, idleStatus }) => {
+  const { formatMessage } = intl
+
+  return (
+    <Dialog
+      title={formatMessage(messages.title)}
+      modal
+      open={idleStatus === 'IDLESTATUS_INACTIVE'}
+    >
+      <span dangerouslySetInnerHTML={{ __html: formatMessage(messages.help) }} />
+    </Dialog>
+  )
+}
+
+export const IdleDialogContainer = enhance(IdleDialog)
+
+export default IdleDialogContainer

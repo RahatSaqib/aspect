@@ -89,7 +89,6 @@ function getDeviceConstraints(credentials) {
     })
 }
 
-
 function addConstraints(queryBuilder, constraints, aliases) {
   let { site, partner, orgUnit, country, state, lga } = aliases
   const { device, sample } = aliases
@@ -131,7 +130,9 @@ function addConstraints(queryBuilder, constraints, aliases) {
 
   // Partner, country, and org unit constraints are ANDed
   if (constraints.partner) {
-    queryBuilder.where({ [`${partner}.id`]: constraints.partner.id })
+    queryBuilder.where(function () {
+      this.whereNull(`${partner}.id`).orWhere({ [`${partner}.id`]: constraints.partner.id })
+    })
   }
   if (constraints.country) {
     queryBuilder.where({ [`${country}.id`]: constraints.country.id })

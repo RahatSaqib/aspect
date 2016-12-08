@@ -6,7 +6,6 @@ import { connect } from 'react-redux'
 import Helmet from 'react-helmet'
 import { injectIntl, FormattedHTMLMessage } from 'react-intl'
 import { Link } from 'react-router'
-import config from 'config'
 
 // Material-UI
 import Paper from 'material-ui/Paper'
@@ -21,6 +20,7 @@ import LinearProgress from 'material-ui/LinearProgress'
 import Dialog from 'material-ui/Dialog'
 
 // Our own imports
+import config from '../../config'
 import { Unit, Hidden } from '../../components/pureGrids'
 import { ErrorDisplayContainer } from '../../components/shared/ErrorDisplay'
 import AcknowledgementDisplay from '../../components/shared/AcknowledgementDisplay'

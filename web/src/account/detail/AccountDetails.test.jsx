@@ -43,6 +43,7 @@ describe('AccountDetails Component', () => {
 
     beforeEach(() => {
       props = {
+        addAcknowledgement: () => {},
         fetchAccountDetails: () => {},
         setPageTitle: () => {},
         loading: false,

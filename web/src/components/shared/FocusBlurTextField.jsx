@@ -9,12 +9,14 @@ export class FocusBlurTextField extends PureComponent {
 
   static defaultProps = {
     onBlur: _.noop,
-    onFocus: _.noop
+    onFocus: _.noop,
+    onKeyUp: _.noop
   }
 
   static propTypes = {
     onBlur: PropTypes.func,
     onFocus: PropTypes.func,
+    onKeyUp: PropTypes.func,
     onCommitValue: PropTypes.func.isRequired,
     value: PropTypes.string
   }
@@ -30,12 +32,18 @@ export class FocusBlurTextField extends PureComponent {
     }
   }
 
-  handleBlur = (...args) => {
+  handleBlur = (event) => {
     this.setState({ isFocused: false })
-    this.props.onBlur(...args)
+    this.props.onBlur(event)
 
-    const event = args[0]
     this.props.onCommitValue(event)
+  }
+
+  handleKeyUp = (event) => {
+    this.props.onKeyUp(event)
+    if (event.key === 'Enter') {
+      this.props.onCommitValue(event)
+    }
   }
 
   handleChange = (event) => {
@@ -43,9 +51,9 @@ export class FocusBlurTextField extends PureComponent {
     this.setState({ pendingValue: value })
   }
 
-  handleFocus = (...args) => {
+  handleFocus = (event) => {
     this.setState({ isFocused: true })
-    this.props.onFocus(...args)
+    this.props.onFocus(event)
   }
 
   render() {
@@ -58,6 +66,7 @@ export class FocusBlurTextField extends PureComponent {
         {...restProps}
         onFocus={this.handleFocus}
         onBlur={this.handleBlur}
+        onKeyUp={this.handleKeyUp}
         onChange={this.handleChange}
         value={value}
       />

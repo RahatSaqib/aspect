@@ -1,5 +1,6 @@
 import _ from 'lodash'
 import Immutable from 'immutable'
+import differenceInMinutes from 'date-fns/difference_in_minutes'
 import { aspectFetch } from '../shared/utils/fetch'
 import { addError } from '../error/ErrorRedux'
 
@@ -22,21 +23,27 @@ function createReceivePartnersAndRolesForSelectList(partners) {
   }
 }
 
-const cacheExpiryTime = 5 * 60 * 1000 // five minutes
+export function fetchPartnersAndRolesForSelectList(forceRefresh) {
+  return (dispatch, getState) => {
+    const { partnersAndRolesForSelectList } = getState().roles
 
-export const fetchPartnersAndRolesForSelectList =
-  function (partnersAndRolesForSelectList, forceRefresh) {
-    return (dispatch) => {
-      const now = new Date()
-      if (forceRefresh || !partnersAndRolesForSelectList.get('lastRefreshed') ||
-        Math.abs(now.getTime() - partnersAndRolesForSelectList.get('lastRefreshed').getTime()) > cacheExpiryTime) {
-        dispatch(createRequestPartnersAndRolesForSelectList())
-        return aspectFetch('/role/select-list')
-          .then(json => dispatch(createReceivePartnersAndRolesForSelectList(json.data)))
-          .catch(err => dispatch(addError('Loading partners and roles failed', err.message, err)))
-      }
+    if (partnersAndRolesForSelectList.loading) {
+      return
     }
+    const { lastRefreshed } = partnersAndRolesForSelectList
+    const shouldFetch = forceRefresh || !lastRefreshed || (
+      differenceInMinutes(new Date(), lastRefreshed) > 5 // five minutes
+    )
+    if (!shouldFetch) {
+      return
+    }
+
+    dispatch(createRequestPartnersAndRolesForSelectList())
+    return aspectFetch('/role/select-list')
+      .then(json => dispatch(createReceivePartnersAndRolesForSelectList(json.data)))
+      .catch(err => dispatch(addError('Loading partners and roles failed', err.message, err)))
   }
+}
 
 /*
  * ---------------- Reducers -----------------

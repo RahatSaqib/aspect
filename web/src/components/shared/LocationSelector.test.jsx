@@ -1,11 +1,12 @@
+import Immutable from 'immutable'
 import React from 'react'
 import { assert } from 'chai'
 import { shallow } from 'enzyme'
 import sinon from 'sinon'
 import proxyquire from 'proxyquire'
-import Immutable from 'immutable'
+import { Field } from 'redux-form/immutable'
+
 import { LazyLoadItems, LazyLoadParent, LazyLoadChild } from '../../geography/GeographyRedux'
-import SelectInput from './SelectInput'
 
 describe('LocationSelector Component', () => {
   const now = new Date()
@@ -111,74 +112,15 @@ describe('LocationSelector Component', () => {
       assert.equal(LocationSelectorWrapper.node.type, 'div')
     })
 
-    it('Should contain SelectInput controls for country, state and LGA', () => {
-      const expectedSelectListDataSourceMappings = { text: 'name', value: 'id' }
-      const selectInputs = LocationSelectorWrapper.find(SelectInput)
-      assert.equal(selectInputs.length, 3)
-      const countrySelect = selectInputs
-        .findWhere(selectInput => selectInput.props().name === props.countryIdFieldName)
-      assert.deepEqual(countrySelect.props(), { ...countrySelect.props(),
-        name: props.countryIdFieldName,
-        label: 'Country',
-        disabled: props.disabled || countriesForLocationSelector.get('loading') || !countriesForLocationSelector.get('items').size,
-        dataSource: countriesForLocationSelector.get('items').toJS(),
-        dataSourceConfig: expectedSelectListDataSourceMappings
-      })
-      const stateSelect = selectInputs.findWhere(
-        selectInput => selectInput.props().name === props.stateIdFieldName)
-      assert.deepEqual(stateSelect.props(), { ...stateSelect.props(),
-        name: props.stateIdFieldName,
-        label: 'State',
-        disabled: true,
-        dataSource: [],
-        dataSourceConfig: expectedSelectListDataSourceMappings
-      })
-      const lgaSelect = selectInputs.findWhere(
-        selectInput => selectInput.props().name === props.lgaIdFieldName)
-      assert.deepEqual(lgaSelect.props(), { ...lgaSelect.props(),
-        name: props.lgaIdFieldName,
-        label: 'Area',
-        disabled: true,
-        dataSource: [],
-        dataSourceConfig: expectedSelectListDataSourceMappings
-      })
-    })
+    it('Should contain three Field for country, state and LGA', () => {
+      const CountrySelectFieldWrapper = LocationSelectorWrapper.find(Field).filter({ name: 'countryId' })
+      assert.equal(CountrySelectFieldWrapper.length, 1)
 
-    describe('selectCountry', () => {
-      it('should trigger fetchStatesForLocationSelector when value has been selected', () => {
-        const countrySelect = LocationSelectorWrapper.findWhere(
-          selectInput => selectInput.type() === SelectInput &&
-          selectInput.props().name === props.countryIdFieldName)
-        const selectCountryId = 1
+      const StateSelectFieldWrapper = LocationSelectorWrapper.find(Field).filter({ name: 'stateId' })
+      assert.equal(StateSelectFieldWrapper.length, 1)
 
-        countrySelect.simulate('change', undefined, undefined, selectCountryId)
-
-        assert.isTrue(props.fetchStatesForLocationSelector.calledOnce)
-
-        countrySelect.simulate('change', undefined, undefined, undefined)
-
-        assert.isFalse(props.fetchStatesForLocationSelector.calledTwice)
-      })
-    })
-
-    describe('selectState', () => {
-      it('should trigger fetchLgasForLocationSelector when value has been selected', () => {
-        props.selectedCountryId = 1
-        shallowRenderLocationSelector()
-
-        const stateSelect = LocationSelectorWrapper.findWhere(
-          selectInput => selectInput.type() === SelectInput &&
-          selectInput.props().name === props.stateIdFieldName)
-        const selectStateId = 2
-
-        stateSelect.simulate('change', undefined, undefined, selectStateId)
-
-        assert.isTrue(props.fetchLgasForLocationSelector.calledOnce)
-
-        stateSelect.simulate('change', undefined, undefined, undefined)
-
-        assert.isFalse(props.fetchLgasForLocationSelector.calledTwice)
-      })
+      const LgaSelectFieldWrapper = LocationSelectorWrapper.find(Field).filter({ name: 'lgaId' })
+      assert.equal(LgaSelectFieldWrapper.length, 1)
     })
   })
 
@@ -186,10 +128,8 @@ describe('LocationSelector Component', () => {
     const expectedBoundActionCreators = { value: 'Bound Action Creators' }
     let reactReduxStub
     let intlStub
-    let mapStateToProps
     let mapDispatchToProps
     let reduxStub
-    let geographyCreatorsStub
     let reduxFormStub
     beforeEach(() => {
       reactReduxStub = {
@@ -201,11 +141,6 @@ describe('LocationSelector Component', () => {
       reduxStub = {
         bindActionCreators: sinon.stub().returns(expectedBoundActionCreators)
       }
-      geographyCreatorsStub = {
-        fetchCountriesForLocationSelector: () => {},
-        fetchStatesForLocationSelector: () => {},
-        fetchLgasForLocationSelector: () => {}
-      }
       reduxFormStub = {
         change: () => {}
       }
@@ -213,40 +148,18 @@ describe('LocationSelector Component', () => {
         'react-intl': intlStub,
         'react-redux': reactReduxStub,
         redux: reduxStub,
-        'redux-form': reduxFormStub,
-        '../../geography/GeographyRedux': geographyCreatorsStub
+        'redux-form/immutable': reduxFormStub
       })
-      mapStateToProps = reactReduxStub.connect.firstCall.args[0]
       mapDispatchToProps = reactReduxStub.connect.firstCall.args[1]
     })
 
-    it('mapDispatchToProps should bind fetchCountriesForLocationSelector action creators to the component\'s properties', () => {
+    it('mapDispatchToProps should bind changeFieldValue action creators to the component\'s properties', () => {
       const expectedDispatcher = { value: 'I am a dispatch function' }
       assert.equal(mapDispatchToProps(expectedDispatcher), expectedBoundActionCreators)
       assert.deepEqual(reduxStub.bindActionCreators.lastCall.args, [{
-        fetchCountriesForLocationSelector: geographyCreatorsStub.fetchCountriesForLocationSelector,
-        fetchStatesForLocationSelector: geographyCreatorsStub.fetchStatesForLocationSelector,
-        fetchLgasForLocationSelector: geographyCreatorsStub.fetchLgasForLocationSelector,
         changeFieldValue: reduxFormStub.change
       },
         expectedDispatcher])
-    })
-
-    it('mapStateToProps should map countriesForLocationSelector from countriesForLocationSelector on state', () => {
-      const Geograpy = Immutable.Record({
-        countriesForLocationSelector
-      })
-      const App = Immutable.Record({
-        geography: new Geograpy()
-      })
-
-      const state = new App()
-      assert.deepEqual(mapStateToProps(state, { initialValues: { get: () => 'selected id' } }), {
-        countries: countriesForLocationSelector,
-        selectedCountryId: 'selected id',
-        selectedStateId: 'selected id',
-        selectedLgaId: 'selected id'
-      })
     })
   })
 })

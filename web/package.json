@@ -5,12 +5,10 @@
   "description": "The web client for the aspect API",
   "main": "",
   "scripts": {
-    "start": "cross-env NODE_ENV=dev webpack-dev-server --inline --hot --open --env=dev",
-    "mocha": "mocha --opts utils/unit_tests/mocha_unit.opts",
-    "run:tests:coverage": "istanbul cover --config utils/unit_tests/istanbul.yml node_modules/mocha/bin/_mocha -- --opts utils/unit_tests/mocha_unit.opts src/**/*.test.js*",
-    "check:coverage": "istanbul check-coverage --config utils/unit_tests/istanbul.yml",
+    "start": "cross-env NODE_ENV=dev webpack-dev-server --inline --hot --open",
+    "mocha": "cross-env ASPECT_ENV=test mocha --opts utils/unit_tests/mocha_unit.opts",
     "pretest": "fsys --task=remove --fileFolder=coverage && fsys --task=remove --fileFolder=mocha.json",
-    "test": "npm-run-all run:tests:coverage check:coverage",
+    "test": "nyc --check-coverage npm run mocha -- src/**/*.test.js*",
     "test:watch": "npm run mocha -- --watch",
     "test:once": "mocha --opts utils/unit_tests/mocha_unit.opts",
     "posttest": "npm run lint",
@@ -18,7 +16,7 @@
     "updatemessages:start": "rip json2pot './i18n/src/**/*.json' -o ./src/shared/i18n/diff.pot",
     "updatemessages:end": "rip po2json './src/shared/i18n/web.*.po' -m './i18n/src/**/*.json' -o ./src/shared/i18n/translation.json",
     "postupdatemessages:end": "fsys --task=remove --fileFolder=i18n && fsys --task=remove --fileFolder=src/shared/i18n/diff.pot",
-    "dist": "webpack --config=webpack.config.babel.js --env=dist",
+    "dist": "webpack",
     "lint": "eslint ./src --ext .js --ext .jsx",
     "clean": "fsys --task=emptyDir --dir=dist",
     "release:major": "npm version major && npm publish && git push --follow-tags",
@@ -28,14 +26,37 @@
   "repository": "",
   "keywords": [],
   "author": "SystemOne",
+  "nyc": {
+    "lines": 9,
+    "statements": 9,
+    "functions": 9,
+    "branches": 9,
+    "extension": [
+      ".jsx",
+      ".js"
+    ],
+    "reporter": [
+      "text",
+      "text-summary",
+      "lcov"
+    ],
+    "exclude": [
+      "src/**/*.test.js*"
+    ],
+    "require": [
+      "babel-register"
+    ],
+    "sourceMap": false,
+    "instrument": false
+  },
   "devDependencies": {
     "babel-cli": "^6.18.0",
     "babel-core": "^6.18.0",
     "babel-eslint": "^7.1.1",
     "babel-loader": "^6.2.8",
+    "babel-plugin-istanbul": "^3.0.0",
     "babel-plugin-lodash": "^3.2.8",
     "babel-plugin-react-intl": "^2.2.0",
-    "babel-plugin-webpack-alias": "^1.9.0",
     "babel-polyfill": "^6.16.0",
     "babel-preset-es2015": "^6.18.0",
     "babel-preset-react": "^6.16.0",
@@ -65,13 +86,13 @@
     "istanbul": "^1.0.0-alpha.2",
     "jsdom": "^9.8.3",
     "json-loader": "^0.5.4",
-    "minimist": "^1.2.0",
     "mocha": "^3.1.0",
     "mocha-bamboo-reporter": "^1.1.1",
     "mocha-multi": "^0.9.1",
     "node-sass": "^3.13.0",
     "npm-run-all": "^3.0.0",
     "null-loader": "^0.1.1",
+    "nyc": "^10.0.0",
     "postcss": "^5.2.5",
     "postcss-loader": "^1.1.1",
     "proxyquire": "^1.7.10",

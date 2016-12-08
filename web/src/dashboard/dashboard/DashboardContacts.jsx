@@ -1,32 +1,31 @@
 // Imports from packages
-import React, { PureComponent, PropTypes } from 'react'
+import React, { PropTypes } from 'react'
+import { compose, setPropTypes, pure } from 'recompose'
 import { Link } from 'react-router'
 
 // Our own imports
 import requirePermissions from '../../components/shared/requirePermissions'
 import MiniChart from '../../components/shared/MiniChart'
 
-export class DashboardContacts extends PureComponent {
-  static propTypes = {
+const enhance = compose(
+  setPropTypes({
     label: PropTypes.string.isRequired
-  }
+  }),
+  pure,
+  requirePermissions({
+    permissions: ['person:admin', 'person:view']
+  })
+)
 
-  render() {
-    const { label } = this.props
+export const DashboardContacts = ({ label }) => (
+  <Link to="/person">
+    <MiniChart
+      data={[800, 700, 900, 1200, 1400, 1500, 1600, 1780]}
+      label={label}
+      number={12}
+      bgcolor={'#FBC02D'}
+    />
+  </Link>
+)
 
-    return (
-      <Link to="/person">
-        <MiniChart
-          data={[800, 700, 900, 1200, 1400, 1500, 1600, 1780]}
-          label={label}
-          number={12}
-          bgcolor={'#FBC02D'}
-        />
-      </Link>
-    )
-  }
-}
-
-export default requirePermissions({
-  permissions: ['person:admin', 'person:view']
-})(DashboardContacts)
+export default enhance(DashboardContacts)

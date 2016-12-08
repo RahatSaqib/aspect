@@ -17,6 +17,7 @@ function addClientRoutes(server) {
   server.route(require('./role/endpoints').map(decorateClientAPI('person')))
   server.route(require('./consumable/endpoints').map(decorateClientAPI('inventory')))
   server.route(require('./notification/endpoints').map(decorateClientAPI('notification')))
+  server.route(require('./inventory/endpoints').map(decorateClientAPI('inventory')))
 }
 
 function addDeviceRoutes(server) {
@@ -104,7 +105,7 @@ function asyncHandler(handler) {
       const result = yield* handler(request)
       reply(result)
     } catch (err) {
-      console.error(err)
+      console.error(err) // eslint-disable-line no-console
       reply(Boom.wrap(err, 500))
       // Need to rethrow error for detection of plugins
       throw err
@@ -115,11 +116,30 @@ function asyncHandler(handler) {
 
 // extracts and sanitizes the parameters related to sorting and paging
 // from the candidate params and returns them as an object
-function getSortPageParams(params, defaultSort) {
+function getSortPageParams(params, sortColumnMapping, defaultSort) {
+  return Object.assign({}, getSortParams(params, sortColumnMapping, defaultSort),
+    getPageParams(params))
+}
+
+// extracts and sanitizes the parameters related to sorting from the
+// candidate params and returns them as an object
+function getSortParams(params, sortColumnMapping, defaultSort) {
   const result = {}
 
-  result.sortCol = params.sortCol ? params.sortCol : defaultSort
+  result.sortCol = sortColumnMapping &&
+  params.sortCol &&
+  sortColumnMapping[params.sortCol] ? sortColumnMapping[params.sortCol] :
+    (params.sortCol ? params.sortCol : defaultSort)
   result.sortDir = params.sortDir === 'desc' ? 'desc' : 'asc'
+
+  return result
+}
+
+// extracts and sanitizes the parameters related to paging from the
+// candidate params and returns them as an object
+function getPageParams(params) {
+  const result = {}
+
   result.page = parseInt(params.page, 10) || 0
   result.size = parseInt(params.size, 10) || 20
   result.skip = result.page * result.size
@@ -136,10 +156,20 @@ function validateSortPageParams(...sortColumns) {
   }
 }
 
+function validateDateRangeParams() {
+  return {
+    minDate: Joi.date().iso().allow(null).description('From Date'),
+    maxDate: Joi.date().iso().allow(null).description('To Date'),
+  }
+}
+
 module.exports = {
   addClientRoutes,
   addDeviceRoutes,
   asyncHandler,
+  getSortParams,
+  getPageParams,
   getSortPageParams,
-  validateSortPageParams
+  validateSortPageParams,
+  validateDateRangeParams
 }

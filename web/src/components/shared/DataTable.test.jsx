@@ -5,6 +5,8 @@ import sinon from 'sinon'
 import React from 'react'
 import { shallow, mount } from 'enzyme'
 import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider'
+import { Items } from '../../shared/metaReducers/items'
+import { Table } from '../../shared/metaReducers/table'
 import DataTable from './DataTable'
 
 describe('DataTable module', () => {
@@ -17,18 +19,15 @@ describe('DataTable module', () => {
       selectable: false,
       handleItemIdSelection: _.noop,
       handleFetch: _.noop,
-      items: {
-        byId: {},
-        currentIdList: []
-      },
-      table: {
+      items: new Items(),
+      table: new Table({
         loading: false,
         sortCol: '',
         sortDir: '',
         page: 1,
         pageSize: 10,
         total: 10
-      },
+      }),
       columns: [],
       intl: {
         formatMessages: _.noop
@@ -39,9 +38,7 @@ describe('DataTable module', () => {
     context('table.loading is true', () => {
       it('should render progress', () => {
         const props = _.merge({}, defaultProps, {
-          table: {
-            loading: true
-          }
+          table: defaultProps.table.set('loading', true)
         })
         const ComponentWrapper = shallow(<DataTable {...props} />)
 
@@ -91,10 +88,7 @@ describe('DataTable module', () => {
               title: 'Name'
             }
           ],
-          items: {
-            getIn([key, ...rest]) {
-              return this[key].getIn(rest)
-            },
+          items: defaultProps.items.mergeDeep({
             byId: Immutable.fromJS({
               2: {
                 name: 'Aspect'
@@ -110,7 +104,7 @@ describe('DataTable module', () => {
               }
             }),
             currentIdList: Immutable.fromJS(['2', '3', '5', '7'])
-          }
+          })
         })
         const ComponentWrapper = shallow(<DataTable {...props} />)
 
@@ -131,11 +125,11 @@ describe('DataTable module', () => {
     context('for table and pager items', () => {
       it('should render first page with ellipsis', () => {
         const props = _.merge({}, defaultProps, {
-          table: {
+          table: defaultProps.table.merge({
             page: 0,
             total: 100,
             pageSize: 10
-          }
+          })
         })
         const ComponentWrapper = shallow(<DataTable {...props} />)
 
@@ -165,11 +159,11 @@ describe('DataTable module', () => {
 
       it('should render sixth page', () => {
         const props = _.merge({}, defaultProps, {
-          table: {
+          table: defaultProps.table.merge({
             page: 5,
             total: 120,
             pageSize: 10
-          }
+          })
         })
         const ComponentWrapper = shallow(<DataTable {...props} />)
 
@@ -200,11 +194,11 @@ describe('DataTable module', () => {
 
       it('should render twelfth page', () => {
         const props = _.merge({}, defaultProps, {
-          table: {
+          table: defaultProps.table.merge({
             page: 11,
             total: 120,
             pageSize: 10
-          }
+          })
         })
         const ComponentWrapper = shallow(<DataTable {...props} />)
 
@@ -253,10 +247,10 @@ describe('DataTable module', () => {
               title: 'Name'
             }
           ],
-          table: {
+          table: defaultProps.table.merge({
             sortCol: 'name',
             sortDir: 'asc'
-          },
+          }),
           handleFetch: sinon.spy()
         })
         const ComponentWrapper = mountWithProvider(<DataTable {...props} />)
@@ -277,13 +271,13 @@ describe('DataTable module', () => {
               title: 'Name'
             }
           ],
-          table: {
+          table: defaultProps.table.merge({
             sortCol: 'name',
             sortDir: 'asc',
             page: 0,
             total: 100,
             pageSize: 10
-          },
+          }),
           handleFetch: sinon.spy()
         })
         const ComponentWrapper = mountWithProvider(<DataTable {...props} />)

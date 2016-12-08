@@ -2,7 +2,8 @@ import React, { Component } from 'react'
 import { Router, Route, IndexRoute, IndexRedirect, applyRouterMiddleware, browserHistory } from 'react-router'
 import { useScroll } from 'react-router-scroll'
 import PiwikReactRouter from 'piwik-react-router'
-import config from 'config'
+
+import config from '../config'
 import store from '../store'
 
 // higher level containers/shells
@@ -28,6 +29,9 @@ import { NotificationListContainer } from '../notification/list/NotificationList
 import { ReportListContainer } from '../report/list/ReportList'
 import { AccountDetailsContainer } from '../account/detail/AccountDetails'
 import { StyleguideMainContainer } from '../styleguide/main/StyleguideMain'
+import { InventoryItemsListContainer } from '../inventory/list/InventoryItemsList'
+import { RouterListContainer } from '../router/list/RouterList'
+import { RouterDetailContainer } from '../router/detail/RouterDetail'
 
 import { refreshStart } from '../auth/AuthRedux'
 
@@ -81,9 +85,9 @@ const routes =
           <Route path=":deviceId" component={DeviceDetailContainer} />
         </Route>
 
-        <Route path="router" deviceConfig={{ filterParams: { hasResults: 0, hasConnectivity: 1 }, filterConfig: { geography: true, date: true, deviceName: true } }}>
-          <IndexRoute component={DeviceListContainer} />
-          <Route path=":deviceId" component={DeviceDetailContainer} />
+        <Route path="router" routerConfig={{ filterParams: { hasResults: 0, hasConnectivity: 1 }, filterConfig: { geography: true, date: true, deviceName: true } }}>
+          <IndexRoute component={RouterListContainer} />
+          <Route path=":routerId" component={RouterDetailContainer} />
         </Route>
 
         <Route path="result">
@@ -103,6 +107,10 @@ const routes =
 
         <Route path="account-details">
           <Route path="current" component={AccountDetailsContainer} />
+        </Route>
+
+        <Route path="inventory">
+          <IndexRoute component={InventoryItemsListContainer} />
         </Route>
 
         <Route path="notification" component={NotificationListContainer} />

@@ -1,6 +1,7 @@
 // Imports from packages
 import _ from 'lodash'
-import React, { PureComponent, PropTypes } from 'react'
+import React, { PropTypes } from 'react'
+import { compose, setPropTypes, pure } from 'recompose'
 
 import styles from './pure-grids-responsive-min.css'
 
@@ -32,20 +33,17 @@ export function getClassNames(props) {
   }, initial)
 }
 
-export class Unit extends PureComponent {
-
-  static propTypes = {
+const enhance = compose(
+  setPropTypes({
     className: PropTypes.string,
-    ...pureGridPropTypes
-  }
+  }),
+  pure
+)
 
-  render() {
-    return (
-      <div className={getClassNames(this.props).join(' ')}>
-        {this.props.children}
-      </div>
-    )
-  }
-}
+export const Unit = props => (
+  <div className={getClassNames(props).join(' ')}>
+    {props.children}
+  </div>
+)
 
-export default Unit
+export default enhance(Unit)

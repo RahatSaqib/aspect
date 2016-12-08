@@ -1,7 +1,18 @@
 const Joi = require('joi')
-const { asyncHandler, validateSortPageParams } = require('../routes')
-const { listDevices, showDevice, updateDevice, getDeviceApiKey,
-  listDeviceOperation, listDeviceConfiguration } = require('./service')
+const {
+  asyncHandler,
+  validateDateRangeParams,
+  validateSortPageParams
+} = require('../routes')
+const {
+  listDevices,
+  showDevice,
+  updateDevice,
+  getDeviceApiKey,
+  listDeviceOperation,
+  listDeviceConfiguration
+} = require('./service')
+const { validateAllGeographyFilterParams } = require('../geography/requestValidation')
 
 module.exports = [
   {
@@ -18,16 +29,13 @@ module.exports = [
           hasConnectivity: Joi.number().allow('').min(0).max(1).description('Filter for getting devices that can have connectivity'),
           assayId: Joi.number().allow('').description('Assay ID'),
           resultCategoryId: Joi.number().allow('').description('Result Category ID'),
-          minDate: Joi.date().iso().allow(null).description('Start on'),
-          maxDate: Joi.date().iso().allow(null).description('End on'),
-          countryId: Joi.number().allow('').description('Country ID'),
-          stateId: Joi.number().allow('').description('State ID'),
-          lgaId: Joi.number().allow('').description('LGA ID'),
           deviceName: Joi.string().allow('').description('Filter for device name'),
           category: Joi.string().description('Filter for device type category'),
           type: Joi.string().description('Filter for device type'),
           name: Joi.string().allow('').description('Filter for device name')
-        }, validateSortPageParams('name', 'status', 'createdOn', 'lastSeen', 'totalTests'))
+        }, validateAllGeographyFilterParams(),
+          validateDateRangeParams(),
+          validateSortPageParams('name', 'status', 'createdOn', 'lastSeen', 'totalTests'))
       }
     }
   },
