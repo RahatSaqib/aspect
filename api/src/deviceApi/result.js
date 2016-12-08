@@ -222,31 +222,23 @@ function* addResult(context) {
 function* listResults(context, deviceLogId) {
   const { knex, constraints: dataConstraints } = context
 
-  const authorizedResultQuery = knex('Result as r')
+  const resultQuery = knex('Result as r')
     .innerJoin('Device as d', 'r.deviceId', 'd.id')
+    .innerJoin('Assay as a', 'r.assayId', 'a.id')
     .leftJoin('Sample as s', 'r.sampleId', 's.id')
     .leftJoin('Site as sos', 's.originSiteId', 'sos.id')
-    .modify(addConstraints, dataConstraints, { device: 'd', sample: 's' })
-
-  const authorizedDeviceIds = yield authorizedResultQuery.clone()
-    .distinct('d.id')
-    .map(d => d.id)
-
-  const resultQuery = authorizedResultQuery.clone()
-    .whereIn('d.id', authorizedDeviceIds)
-    .innerJoin('Assay as a', 'r.assayId', 'a.id')
     .leftJoin('ResultCategory as rc1', 'r.resultCategory1', 'rc1.id')
     .leftJoin('ResultCategory as rc2', 'r.resultCategory2', 'rc2.id')
     .leftJoin('ResultType as rt', 'r.resultTypeId', 'rt.id')
     .leftJoin('ResultWorkflowStatus as rs', 'r.resultWorkflowStatusId', 'rs.id')
+    .modify(addConstraints, dataConstraints, { device: 'd', sample: 's' })
 
   if (deviceLogId > 0) {
-    const [{ minDeviceLogUpdateId }] = yield knex('DeviceLogUpdate as dlu')
-        .where('dlu.deviceLogId', deviceLogId)
-        .max('id as minDeviceLogUpdateId')
     resultQuery.whereIn('r.id',
       knex('DeviceLogUpdate as dlu')
-        .where('dlu.id', '>', minDeviceLogUpdateId)
+        .where('dlu.id', '>', knex('DeviceLogUpdate as dlu')
+          .where('dlu.deviceLogId', deviceLogId)
+          .min('id as minDeviceLogUpdateId'))
         .where('dlu.deviceLogId', '<>', deviceLogId)
         .distinct('dlu.resultId')
         .orderBy('dlu.id'))
