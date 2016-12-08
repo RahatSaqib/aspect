@@ -44,10 +44,10 @@ function* getDeviceData(context) {
   if (query.checkpoint) {
     deviceLogQ.where({ checkpoint: query.checkpoint })
   }
-  const { checkpoint, auditLogId } = (
-    (yield deviceLogQ.first('checkpoint', 'auditLogId')) || {})
+  const { checkpoint, id: deviceLogId } = (
+    (yield deviceLogQ.first('checkpoint', 'id')) || {})
 
-  const result = yield* listResults(context, auditLogId)
+  const result = yield* listResults(context, deviceLogId)
   // TODO include configuration and operation at checkpoint
 
   return { checkpoint, result }

@@ -1,7 +1,5 @@
 module.exports = require('../src/db').migration(up, down)
 
-const { createAuditTriggers, dropAuditTriggers } = require('../src/audit')
-
 function* up(knex) {
   yield knex.raw('SET foreign_key_checks = 0')
 
@@ -485,8 +483,6 @@ function* up(knex) {
     deviceLog.dateTime('createdOn').notNullable()
     deviceLog.string('senderIp').notNullable()
     deviceLog.string('checkpoint').index()
-    deviceLog.integer('auditLogId').unsigned().notNullable()
-          .index().references('id').inTable('AuditLog')
     deviceLog.text('rawMessage')
     deviceLog.charset('utf8')
   })
@@ -547,15 +543,11 @@ function* up(knex) {
     resultWorkflowStatus.string('token')
   })
 
-  yield* createAuditTriggers(knex, 'DeviceConfiguration', 'DeviceOperation', 'Result')
-
   yield knex.raw('SET foreign_key_checks = 1')
 }
 
 function* down(knex) {
   yield knex.raw('SET foreign_key_checks = 0')
-
-  yield* dropAuditTriggers(knex, 'DeviceConfiguration', 'DeviceOperation', 'Result')
 
   yield knex.schema.dropTableIfExists('ConsumableAssay')
   yield knex.schema.dropTableIfExists('ResultWorkflowStatus')

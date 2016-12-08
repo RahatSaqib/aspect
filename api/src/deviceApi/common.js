@@ -24,32 +24,28 @@ function deviceApiHandler(handler, { updatePing, updateDeviceLog }) {
     const remoteAddress = request.info.remoteAddress || ''
 
     // Insert Device Log and Update Ping prior to calling handler and
-    // in separate tranaction so it is recorded even if handler fails
+    // in separate transaction so it is recorded even if handler fails
     let deviceLogId = null
-    let sourceAuditLogId = null
+    let deviceLogUpdateId = null
     if (updateDeviceLog) {
       const checkpoint = request.payload && request.payload.checkpoint
-
-      const [auditLogId] = yield knex('AuditLog').insert({
-        deviceId,
-        tableName: 'DeviceApiKey',
-        tableId: +request.auth.credentials.dak,
-        operation: 'checkpoint',
-        fields: JSON.stringify({ checkpoint }),
-        createdOn: now
-      })
-
-      sourceAuditLogId = auditLogId
 
       ;[deviceLogId] = yield knex('DeviceLog').insert({
         deviceId,
         checkpoint,
-        auditLogId,
         source: 'DeviceAPI',
         createdOn: now,
         senderIp: remoteAddress,
         // TODO DeviceLog handle non-JSON payloads
         rawMessage: JSON.stringify(request.plugins.rawPayload)
+      })
+
+      // Need to insert first as checkpoint with log as other
+      // updates my occur while next transaction is processing
+      // and also to ensure we have a checkpoint even if no
+      // updates to related tables occur (checkpoint only request)
+      ;[deviceLogUpdateId] = yield knex('DeviceLogUpdate').insert({
+        deviceLogId
       })
     }
 
@@ -65,17 +61,21 @@ function deviceApiHandler(handler, { updatePing, updateDeviceLog }) {
     let response = {}
     yield transact(function* (knex) {
       context.knex = knex
-      yield knex.raw('SET @AuditLog_sourceAuditLogId=?', [sourceAuditLogId])
 
       response = yield* handler(context)
 
       // Insert all DeviceLog Updates added to context when calling handler
       if (deviceLogId !== null && context.deviceLogUpdates.length > 0) {
-        yield knex('DeviceLogUpdate').insert(context.deviceLogUpdates.map(
-          update => Object.assign({ deviceLogId }, update)))
+        const [firstUpdate, ...restUpdates] = context.deviceLogUpdates
+        yield knex('DeviceLogUpdate')
+          .where({ id: deviceLogUpdateId })
+          .update(firstUpdate)
+        if (restUpdates.length > 0) {
+          yield knex('DeviceLogUpdate').insert(restUpdates.map(
+            update => Object.assign({ deviceLogId }, update)))
+        }
       }
-      yield knex.raw('SET @AuditLog_sourceAuditLogId=null')
-    }).finally(() => knex.raw('SET @AuditLog_sourceAuditLogId=null'))
+    })
 
     return response
   })

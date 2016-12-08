@@ -32,8 +32,6 @@ describe('Device Result API routes', () => {
           .select('dlu.deviceLogId')
           .map(dlu => dlu.deviceLogId)
 
-        yield knex('AuditLog').whereIn('sourceAuditLogId',
-          knex('DeviceLog').whereIn('id', deviceLogIds).select('auditLogId')).delete()
         yield knex('DeviceLogUpdate').whereIn('deviceLogId', deviceLogIds).delete()
         yield knex('DeviceLog').whereIn('id', deviceLogIds).delete()
         yield knex('Result').whereIn('externalId', resultIds).delete()
@@ -93,7 +91,7 @@ describe('Device Result API routes', () => {
         })
 
       const [{ count: logLength1 }] = yield knex('DeviceLogUpdate').count('id as count')
-      assert.equal(logLength1, initialLogLength + 1)
+      assert.equal(logLength1, initialLogLength + 2) // checkpoint + post
 
       yield server.get(clientPath)
         .set('Authorization', clientAuth)
@@ -277,7 +275,7 @@ describe('Device Result API routes', () => {
         .where({ deviceId }).orderBy('id', 'desc').first('checkpoint')
       assert.equal(checkpoint2, 'ck2')
       const [{ count: logLength2 }] = yield knex('DeviceLogUpdate').count('id as count')
-      assert.equal(logLength2, initialLogLength + 2)
+      assert.equal(logLength2, initialLogLength + 3)
 
       yield server.get(clientPath)
         .set('Authorization', clientAuth)
@@ -802,6 +800,7 @@ describe('Device Result API routes', () => {
       const deviceAuth = `Bearer ${sharedDevice.deviceToken}`
 
       const [{ count: initialLogLength }] = yield knex('DeviceLogUpdate').count('id as count')
+      const [{ initialLogId }] = yield knex('DeviceLogUpdate').max('id as initialLogId')
 
       const [{ prevConfigId }] = yield knex('Device').where({ id: deviceId })
         .select('deviceConfigurationId as prevConfigId')
@@ -849,7 +848,7 @@ describe('Device Result API routes', () => {
         })
 
       const [{ count: logLength2 }] = yield knex('DeviceLogUpdate').count('id as count')
-      assert.equal(logLength2, initialLogLength + 1)
+      assert.equal(logLength2, initialLogLength + 2)
 
       const deviceLogResult2 = yield knex('Result')
         .where({ externalId: resultIds[resultIds.length - 1] })
@@ -935,7 +934,7 @@ describe('Device Result API routes', () => {
         })
 
       const [{ count: logLength3 }] = yield knex('DeviceLogUpdate').count('id as count')
-      assert.equal(logLength3, initialLogLength + 3)
+      assert.equal(logLength3, initialLogLength + 4)  // previous + 2 results
 
       const deviceLogConfig3 = yield knex('DeviceConfiguration')
         .where({ externalId: configIds[configIds.length - 1] })
@@ -1009,16 +1008,10 @@ describe('Device Result API routes', () => {
 
       // cleanup
       const deviceLogIds = yield knex('DeviceLogUpdate as dlu')
-        .leftJoin('DeviceConfiguration as c', 'dlu.deviceConfigurationId', 'c.id')
-        .leftJoin('DeviceOperation as o', 'dlu.deviceOperationId', 'o.id')
-        .leftJoin('Result as r', 'dlu.resultId', 'r.id')
-        .whereIn('c.externalId', configIds)
-        .orWhereIn('o.externalId', opIds)
+        .where('dlu.id', '>', initialLogId)
         .select('dlu.deviceLogId')
         .map(dlu => dlu.deviceLogId)
 
-      yield knex('AuditLog').whereIn('sourceAuditLogId',
-        knex('DeviceLog').whereIn('id', deviceLogIds).select('auditLogId')).delete()
       yield knex('DeviceLogUpdate').whereIn('deviceLogId', deviceLogIds).delete()
       yield knex('DeviceLog').whereIn('id', deviceLogIds).delete()
 
@@ -1049,8 +1042,6 @@ describe('Device Result API routes', () => {
           .select('dlu.deviceLogId')
           .map(dlu => dlu.deviceLogId)
 
-        yield knex('AuditLog').whereIn('sourceAuditLogId',
-          knex('DeviceLog').whereIn('id', deviceLogIds).select('auditLogId')).delete()
         yield knex('DeviceLogUpdate').whereIn('deviceLogId', deviceLogIds).delete()
         yield knex('DeviceLog').whereIn('id', deviceLogIds).delete()
         yield knex('Result').whereIn('externalId', resultIds).delete()

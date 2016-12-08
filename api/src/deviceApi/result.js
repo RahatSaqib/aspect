@@ -219,7 +219,7 @@ function* addResult(context) {
   return { id: externalId }
 }
 
-function* listResults(context, auditLogId) {
+function* listResults(context, deviceLogId) {
   const { knex, constraints: dataConstraints } = context
 
   const authorizedResultQuery = knex('Result as r')
@@ -240,15 +240,16 @@ function* listResults(context, auditLogId) {
     .leftJoin('ResultType as rt', 'r.resultTypeId', 'rt.id')
     .leftJoin('ResultWorkflowStatus as rs', 'r.resultWorkflowStatusId', 'rs.id')
 
-  if (auditLogId > 0) {
+  if (deviceLogId > 0) {
+    const [{ minDeviceLogUpdateId }] = yield knex('DeviceLogUpdate as dlu')
+        .where('dlu.deviceLogId', deviceLogId)
+        .max('id as minDeviceLogUpdateId')
     resultQuery.whereIn('r.id',
-      knex('AuditLog as al')
-        .whereIn('al.deviceId', authorizedDeviceIds)
-        .where('al.id', '>', auditLogId)
-        .where('al.sourceAuditLogId', '<>', auditLogId)
-        .where({ 'al.tableName': 'Result' })
-        .distinct('al.tableId')
-        .orderBy('al.id'))
+      knex('DeviceLogUpdate as dlu')
+        .where('dlu.id', '>', minDeviceLogUpdateId)
+        .where('dlu.deviceLogId', '<>', deviceLogId)
+        .distinct('dlu.resultId')
+        .orderBy('dlu.id'))
   }
   // TODO limit size of result list from Device API?
 
