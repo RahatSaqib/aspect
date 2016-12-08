@@ -461,20 +461,6 @@ function* up(knex) {
     result.charset('utf8')
   })
 
-  yield knex.schema.createTable('AuditLog', (auditLog) => {
-    auditLog.increments('id')
-    auditLog.string('tableName').notNullable()
-    auditLog.integer('tableId').index().unsigned().notNullable()
-    auditLog.string('operation').notNullable() // insert, update, delete, checkpoint
-    auditLog.specificType('fields', 'JSON').notNullable()
-    auditLog.integer('deviceId').unsigned()
-          .index().references('id').inTable('Device')
-    auditLog.integer('sourceAuditLogId').unsigned()
-          .index().references('id').inTable('AuditLog')
-    addCreateFieldsNullable(auditLog)
-    auditLog.charset('utf8')
-  })
-
   yield knex.schema.createTable('DeviceLog', (deviceLog) => {
     deviceLog.increments('id')
     deviceLog.integer('deviceId').unsigned().notNullable()
@@ -559,7 +545,6 @@ function* down(knex) {
   yield knex.schema.dropTableIfExists('ResultType')
   yield knex.schema.dropTableIfExists('ResultCategory')
   yield knex.schema.dropTableIfExists('ResultLog')
-  yield knex.schema.dropTableIfExists('AuditLog')
   yield knex.schema.dropTableIfExists('DeviceLog')
   yield knex.schema.dropTableIfExists('DeviceLogUpdate')
   yield knex.schema.dropTableIfExists('Result')
