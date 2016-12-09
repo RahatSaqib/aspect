@@ -12,6 +12,10 @@ import Helmet from 'react-helmet'
 // Material-UI
 import { Card } from 'material-ui/Card'
 import Checkbox from 'material-ui/Checkbox'
+import FloatingActionButton from 'material-ui/FloatingActionButton'
+import AddIcon from 'material-ui/svg-icons/content/add'
+import TransferIcon from 'material-ui/svg-icons/action/swap-horiz'
+import RemoveIcon from 'material-ui/svg-icons/content/remove'
 
 // Our own imports
 import EmptyList from '../../components/shared/EmptyList'
@@ -52,6 +56,22 @@ const messages = defineMessages({
   expiresIn: {
     id: 'pages.InventoryItemsList.expiresIn',
     defaultMessage: 'Expires'
+  },
+  adjust: {
+    id: 'pages.InventoryItemsList.adjust',
+    defaultMessage: 'Adjust'
+  },
+  addInventory: {
+    id: 'pages.InventoryItemsList.addInventory',
+    defaultMessage: 'Add Inventory'
+  },
+  transferInventory: {
+    id: 'pages.InventoryItemsList.transferInventory',
+    defaultMessage: 'Transfer Inventory'
+  },
+  removeInventory: {
+    id: 'pages.InventoryItemsList.removeInventory',
+    defaultMessage: 'Remove Inventory'
   },
   filterTemplate: {
     id: 'pages.InventoryItemsList.filterTemplate',
@@ -104,6 +124,48 @@ export class InventoryItemsList extends PureComponent {
     this.props.toggleGroupBySite(isChecked)
   }
 
+  showAddInventoryForm = (...rest) => {
+    console.log(rest)
+  }
+
+  showTransferInventoryForm = (...rest) => {
+    console.log(rest)
+  }
+
+  showRemoveInventoryForm = (...rest) => {
+    console.log(rest)
+  }
+
+  inventoryLevelAdjustmentIconButtons = (itemId) => {
+    const { intl: { formatMessage } } = this.props
+    const buttonStyle = {
+      marginRight: '1em'
+    }
+    return (<div>
+      <FloatingActionButton
+        mini secondary style={buttonStyle}
+        title={formatMessage(messages.addInventory)}
+        onTouchTap={() => this.showAddInventoryForm(itemId)}
+      >
+        <AddIcon />
+      </FloatingActionButton>
+      <FloatingActionButton
+        mini style={buttonStyle}
+        title={formatMessage(messages.transferInventory)}
+        onTouchTap={() => this.showTransferInventoryForm(itemId)}
+      >
+        <TransferIcon />
+      </FloatingActionButton>
+      <FloatingActionButton
+        mini secondary style={buttonStyle}
+        title={formatMessage(messages.removeInventory)}
+        onTouchTap={() => this.showRemoveInventoryForm(itemId)}
+      >
+        <RemoveIcon />
+      </FloatingActionButton>
+    </div>)
+  }
+
   render() {
     const { intl, items, table } = this.props
     const { formatMessage, formatDate, formatRelative } = intl
@@ -154,6 +216,7 @@ export class InventoryItemsList extends PureComponent {
             columns={columns}
             intl={intl}
             messages={messages}
+            actionComponent={this.inventoryLevelAdjustmentIconButtons}
           />
         )}
       </div>

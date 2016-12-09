@@ -54,7 +54,8 @@ export default class GroupedDataTable extends PureComponent {
     }).isRequired,
     columns: PropTypes.array.isRequired,
     intl: PropTypes.object,
-    messages: PropTypes.object
+    messages: PropTypes.object,
+    actionComponent: PropTypes.func
   }
 
   state = {
@@ -65,7 +66,8 @@ export default class GroupedDataTable extends PureComponent {
     showCheckboxes: false,
     enableSelectAll: false,
     showRowHover: true,
-    stripedRows: false
+    stripedRows: false,
+    actionsVisibility: 'hidden'
   }
 
   getColumns = () => {
@@ -124,14 +126,11 @@ export default class GroupedDataTable extends PureComponent {
     return pagerItems
   }
 
-  handleRowSelection = this.handleRowSelection.bind(this)
-
-  handleRowSelection([selectedIndex]) {
+  handleRowSelection = ([selectedIndex]) => {
     const {
       handleItemIdSelection = _.noop,
       items
     } = this.props
-
     const selectedId = items.currentIdList.get(selectedIndex)
     handleItemIdSelection(selectedId)
   }
@@ -147,16 +146,22 @@ export default class GroupedDataTable extends PureComponent {
   }
 
   fetchData = (col, newSort, page) => {
-    const { table, handleFetch } = this.props
-    handleFetch(col || table.sortCol, newSort || table.sortDir,
-      page == null ? table.page : page, table.pageSize,
-      table.groupBy)
+    setTimeout(() => this.setState({ actionsVisibility: 'hidden' },
+      () => {
+        const { table, handleFetch } = this.props
+        handleFetch(col || table.sortCol, newSort || table.sortDir,
+          page == null ? table.page : page, table.pageSize,
+          table.groupBy)
+        setTimeout(() => this.setState({ actionsVisibility: 'visible' }), 1000)
+      }
+    ))
   }
 
   render() {
     const {
       items,
-      table
+      table,
+      actionComponent
     } = this.props
 
     const loading = table.loading ?
@@ -216,6 +221,7 @@ export default class GroupedDataTable extends PureComponent {
                 <TableRow
                   key={itemId}
                   className={cssClasses({
+                    TableRow: true,
                     'TableRow--selectable': this.props.selectable
                   })}
                 >
@@ -237,6 +243,19 @@ export default class GroupedDataTable extends PureComponent {
                         </TableRowColumn>
                       )
                     })
+                  }
+                  {
+                    actionComponent &&
+                    <TableRowColumn style={{ width: '0', position: 'relative', overflow: 'visible' }}>
+                      <div
+                        style={{ position: 'absolute', right: '0', top: '0.2em', visibility: this.state.actionsVisibility }}
+                        className={cssClasses('TableRow__Actions')}
+                      >
+                        {
+                          (actionComponent(itemId))
+                        }
+                      </div>
+                    </TableRowColumn>
                   }
                 </TableRow>
               ))
