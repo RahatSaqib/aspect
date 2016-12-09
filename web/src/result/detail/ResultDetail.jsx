@@ -16,9 +16,6 @@ import { Link } from 'react-router'
 import LinearProgress from 'material-ui/LinearProgress'
 import { Card, CardHeader, CardText } from 'material-ui/Card'
 import Checkbox from 'material-ui/Checkbox'
-import IconButton from 'material-ui/IconButton'
-import ExpandMore from 'material-ui/svg-icons/navigation/expand-more'
-import ExpandLess from 'material-ui/svg-icons/navigation/expand-less'
 
 // Our own imports
 import { Unit } from '../../components/pureGrids'
@@ -193,10 +190,6 @@ export class ResultDetail extends PureComponent {
     intl: PropTypes.object.isRequired,
     params: PropTypes.object.isRequired,
     result: PropTypes.object,
-  }
-
-  state = {
-    resultExpanded: false
   }
 
   componentWillMount() {
@@ -429,30 +422,44 @@ export class ResultDetail extends PureComponent {
     )
   }
 
-  renderLowerLevelSchemaFields() {
+  renderLowerLevelSchemaSections() {
     if (!this.hasResultWithAssay()) {
       return false
     }
-    const { result, intl: { formatMessage } } = this.props
+
+    const { result } = this.props
     const resultDataSchema = result.getIn(['assay', 'resultDataSchema'])
     const resultData = result.get('resultData')
 
     return resultDataSchema
       .filter((value, key) => key !== 'resultText' && value.get('type') === 'object')
       .entrySeq()
-      .map(([key, value]) => {
-        // Level 2: "Probes.ProbeA"
-        const fields = value
-          .get('properties')
-          .entrySeq()
-          .map(makeLevel2TupleMapper(resultData, key))
-          .sortBy(({ label }) => label)
-          .toJS()
+      .map(([key, value]) =>
+        <Card key={key}>
+          <CardHeader title={value.get('title')} actAsExpander showExpandableButton />
+          <CardText actAsExpander expandable style={{ paddingTop: 0 }}>
+            {this.renderLowerLevelSchemaFields(key, value, resultData)}
+          </CardText>
+        </Card>
+      )
+  }
 
-        return (
-          fields.length > 0 ? fields.map(field => <Unit sm="1-2" md="1-3" lg="1-3"><ReadOnlyField label={field.label} value={field.value} /></Unit>) : <span>{formatMessage(messages.noAdditionalResultData)}</span>
-        )
-      })
+  renderLowerLevelSchemaFields(sectionKey, sectionValue, resultData) {
+    // Level 2: "Probes.ProbeA"
+    const fields = sectionValue
+      .get('properties')
+      .entrySeq()
+      .map(makeLevel2TupleMapper(resultData, sectionKey))
+      .sortBy(({ label }) => label)
+      .toJS()
+
+    return (
+      fields.map(field =>
+        <Unit key={field.label} sm="1-2" md="1-3" lg="1-3">
+          <ReadOnlyField label={field.label} value={field.value} />
+        </Unit>
+      )
+    )
   }
 
   renderContent() {
@@ -492,7 +499,7 @@ export class ResultDetail extends PureComponent {
             </CardText>
           </Card>
           { /* Result-related data (categories, resultText, probes...) */ }
-          <Card expanded={this.state.resultExpanded}>
+          <Card>
             <CardText>
               { result.get('resultCategory1Name') &&
                 <Unit sm="1-2" md="1-2" lg="1-4">
@@ -508,11 +515,6 @@ export class ResultDetail extends PureComponent {
               <Unit sm="1-1" md="1-2" lg="1-4">
                 {this.renderCheckbox()}
               </Unit>
-              <div className={cssClasses('ExpandButton')}>
-                <IconButton onClick={() => this.setState({ resultExpanded: !this.state.resultExpanded })}>
-                  { this.state.resultExpanded ? <ExpandLess /> : <ExpandMore /> }
-                </IconButton>
-              </div>
               { result.get('errorCode') ?
                 <Unit sm="1-2" md="1-2" lg="1-4">
                   <ReadOnlyField label={formatMessage(messages.fieldErrorCode)} value={result.get('errorCode')} />
@@ -529,9 +531,6 @@ export class ResultDetail extends PureComponent {
               <Unit sm="1-1" md="1-1" lg="1-2">
                 <ReadOnlyField label={formatMessage(messages.fieldNotes)} value={result.get('notes')} />
               </Unit>
-            </CardText>
-            <CardText expandable>
-              {this.renderLowerLevelSchemaFields()}
             </CardText>
           </Card>
           { /* Patient Info */ }
@@ -619,6 +618,8 @@ export class ResultDetail extends PureComponent {
               </Unit>
             </CardText>
           </Card>
+          { /* Render lower-level sections in assay schema in cards */ }
+          {this.renderLowerLevelSchemaSections()}
         </div>
         <br />
         <br />
@@ -639,7 +640,6 @@ export class ResultDetail extends PureComponent {
               <ReadOnlyFields
                 fields={this.getRightColumnFields()}
               />
-              {this.renderLowerLevelSchemaFields()}
             </div>
           </Unit>
         </div>
