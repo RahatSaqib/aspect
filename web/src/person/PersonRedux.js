@@ -1,3 +1,4 @@
+import { defineMessages } from 'react-intl'
 import _ from 'lodash'
 import Immutable from 'immutable'
 import { stringify } from 'querystring'
@@ -80,14 +81,18 @@ export function fetchPersons(filters/* required */, sortCol = 'name', sortDir = 
       ...filters
     })}`, {
       errorNotifications: {
-        400: filterFieldsRejectedError({
-          id: 'errorResponseMessages.fetchPersons.GET.400.title',
-          defaultMessage: 'Searching Contacts Failed'
-        }),
-        default: errorPleaseTryAgainInAFewMinutes({
-          id: 'errorResponseMessages.fetchPersons.GET.default.title',
-          defaultMessage: 'Loading Contacts Failed'
-        })
+        400: filterFieldsRejectedError(defineMessages({
+          title: {
+            id: 'errorResponseMessages.fetchPersons.GET.400.title',
+            defaultMessage: 'Searching Contacts Failed'
+          }
+        })),
+        default: errorPleaseTryAgainInAFewMinutes(defineMessages({
+          title: {
+            id: 'errorResponseMessages.fetchPersons.GET.default.title',
+            defaultMessage: 'Loading Contacts Failed'
+          }
+        }))
       }
     }).then(json => dispatch(receivePersons(json)))
   }
@@ -116,14 +121,18 @@ export function fetchSinglePerson(personId) {
 
     return aspectFetch(`/person/${personId}`, {
       errorNotifications: {
-        404: errorNotFound({
-          id: 'errorResponseMessages.fetchSinglePerson.GET.404.title',
-          defaultMessage: 'Could Not Find Contact\'s Details'
-        }),
-        default: errorPleaseTryAgainInAFewMinutes({
-          id: 'errorResponseMessages.fetchSinglePerson.GET.default.title',
-          defaultMessage: 'Error Loading Contact\'s Details'
-        })
+        404: errorNotFound(defineMessages({
+          title: {
+            id: 'errorResponseMessages.fetchSinglePerson.GET.404.title',
+            defaultMessage: 'Could Not Find Contact\'s Details'
+          }
+        })),
+        default: errorPleaseTryAgainInAFewMinutes(defineMessages({
+          title: {
+            id: 'errorResponseMessages.fetchSinglePerson.GET.default.title',
+            defaultMessage: 'Error Loading Contact\'s Details'
+          }
+        }))
       }
     }).then(json => dispatch(receiveSinglePerson(json.data)))
   }
@@ -164,14 +173,18 @@ function updatePerson(path, personId, data, fields) {
       method: 'PUT',
       body: JSON.stringify(_.pick(personJson, fields)),
       errorNotifications: {
-        404: errorNotFound({
-          id: 'errorResponseMessages.updatePerson.PUT.404.title',
-          defaultMessage: 'Could Not Find Contact\'s Details'
-        }),
-        default: errorPleaseTryAgainInAFewMinutes({
-          id: 'errorResponseMessages.updatePerson.PUT.default.title',
-          defaultMessage: 'An Error Occurred When Trying to Save the Contact'
-        })
+        404: errorNotFound(defineMessages({
+          title: {
+            id: 'errorResponseMessages.updatePerson.PUT.404.title',
+            defaultMessage: 'Could Not Find Contact\'s Details'
+          }
+        })),
+        default: errorPleaseTryAgainInAFewMinutes(defineMessages({
+          title: {
+            id: 'errorResponseMessages.updatePerson.PUT.default.title',
+            defaultMessage: 'An Error Occurred When Trying to Save the Contact'
+          }
+        }))
       }
     }).then(json => dispatch(receiveUpdatedSinglePerson(json.data)))
   }
@@ -191,24 +204,32 @@ export function updateSinglePersonLoginDetails(personId, data) {
       method: 'PUT',
       body: JSON.stringify(_.pick(loginDetailsJson, ['newUsername', 'newPassword'])),
       errorNotifications: {
-        409: inlineWarning({
-          id: 'errorResponseMessages.updateSinglePersonLoginDetails.PUT.409.title',
-          defaultMessage: 'This Username is Unavailable'
-        }, {
-          id: 'errorResponseMessages.updateSinglePersonLoginDetails.PUT.409.title',
-          defaultMessage: 'The username that you have entered is already in use by another user on the system'
-        }, {
-          id: 'errorResponseMessages.updateSinglePersonLoginDetails.PUT.409.resolution',
-          defaultMessage: 'Please try another username'
-        }),
-        404: errorNotFound({
-          id: 'errorResponseMessages.updateSinglePersonLoginDetails.PUT.404.title',
-          defaultMessage: 'Could Not Find User\'s Details'
-        }),
-        default: errorPleaseTryAgainInAFewMinutes({
-          id: 'errorResponseMessages.updateSinglePersonLoginDetails.PUT.default.title',
-          defaultMessage: 'Saving Login Details Failed'
-        })
+        409: inlineWarning(defineMessages({
+          title: {
+            id: 'errorResponseMessages.updateSinglePersonLoginDetails.PUT.409.title',
+            defaultMessage: 'This Username is Unavailable'
+          },
+          message: {
+            id: 'errorResponseMessages.updateSinglePersonLoginDetails.PUT.409.message',
+            defaultMessage: 'The username that you have entered is already in use by another user on the system'
+          },
+          resolution: {
+            id: 'errorResponseMessages.updateSinglePersonLoginDetails.PUT.409.resolution',
+            defaultMessage: 'Please try another username'
+          }
+        })),
+        404: errorNotFound(defineMessages({
+          title: {
+            id: 'errorResponseMessages.updateSinglePersonLoginDetails.PUT.404.title',
+            defaultMessage: 'Could Not Find User\'s Details'
+          }
+        })),
+        default: errorPleaseTryAgainInAFewMinutes(defineMessages({
+          title: {
+            id: 'errorResponseMessages.updateSinglePersonLoginDetails.PUT.default.title',
+            defaultMessage: 'Saving Login Details Failed'
+          }
+        }))
       }
     }).then(json => dispatch(receiveUpdatedSinglePersonLoadinDetails(json.data)))
   }

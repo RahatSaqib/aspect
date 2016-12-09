@@ -1,3 +1,4 @@
+import { defineMessages } from 'react-intl'
 import Immutable from 'immutable'
 import differenceInMinutes from 'date-fns/difference_in_minutes'
 import { aspectFetch } from '../shared/utils/fetch'
@@ -45,14 +46,18 @@ export function fetchAssays(forceRefresh) {
     return aspectFetch(path,
       {
         errorNotifications: {
-          400: filterFieldsRejectedError({
-            id: 'errorResponseMessages.fetchAssays.GET.400.title',
-            defaultMessage: 'Searching Assays Failed'
-          }),
-          default: errorPleaseTryAgainInAFewMinutes({
-            id: 'errorResponseMessages.fetchAssays.GET.default.title',
-            defaultMessage: 'Loading Assays Failed'
-          })
+          400: filterFieldsRejectedError(defineMessages({
+            title: {
+              id: 'errorResponseMessages.fetchAssays.GET.400.title',
+              defaultMessage: 'Searching Assays Failed'
+            }
+          })),
+          default: errorPleaseTryAgainInAFewMinutes(defineMessages({
+            title: {
+              id: 'errorResponseMessages.fetchAssays.GET.default.title',
+              defaultMessage: 'Loading Assays Failed'
+            }
+          }))
         }
       })
       .then(json => dispatch(createReceiveAssays(json.data)))

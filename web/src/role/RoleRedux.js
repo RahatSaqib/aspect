@@ -1,3 +1,4 @@
+import { defineMessages } from 'react-intl'
 import _ from 'lodash'
 import Immutable from 'immutable'
 import differenceInMinutes from 'date-fns/difference_in_minutes'
@@ -41,10 +42,12 @@ export function fetchPartnersAndRolesForSelectList(forceRefresh) {
     dispatch(createRequestPartnersAndRolesForSelectList())
     return aspectFetch('/role/select-list', {
       errorNotifications: {
-        default: errorPleaseTryAgainInAFewMinutes({
-          id: 'errorResponseMessages.fetchPartnersAndRolesForSelectList.GET.default.title',
-          defaultMessage: 'Error Loading Partners And Roles'
-        })
+        default: errorPleaseTryAgainInAFewMinutes(defineMessages({
+          title: {
+            id: 'errorResponseMessages.fetchPartnersAndRolesForSelectList.GET.default.title',
+            defaultMessage: 'Error Loading Partners And Roles'
+          }
+        }))
       }
     }).then(json =>
       dispatch(createReceivePartnersAndRolesForSelectList(json.data)))

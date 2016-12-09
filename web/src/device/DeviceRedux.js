@@ -1,3 +1,4 @@
+import { defineMessages } from 'react-intl'
 import _ from 'lodash'
 import Immutable from 'immutable'
 import { stringify } from 'querystring'
@@ -80,14 +81,18 @@ export function fetchDevices(filters/* required */, sortCol = 'name', sortDir = 
     })}`,
       {
         errorNotifications: {
-          400: filterFieldsRejectedError({
-            id: 'errorResponseMessages.fetchDevices.GET.400.title',
-            defaultMessage: 'Searching Devices Failed'
-          }),
-          default: errorPleaseTryAgainInAFewMinutes({
-            id: 'errorResponseMessages.fetchDevices.GET.default.title',
-            defaultMessage: 'Loading Devices Failed'
-          })
+          400: filterFieldsRejectedError(defineMessages({
+            title: {
+              id: 'errorResponseMessages.fetchDevices.GET.400.title',
+              defaultMessage: 'Searching Devices Failed'
+            }
+          })),
+          default: errorPleaseTryAgainInAFewMinutes(defineMessages({
+            title: {
+              id: 'errorResponseMessages.fetchDevices.GET.default.title',
+              defaultMessage: 'Loading Devices Failed'
+            }
+          }))
         }
       })
       .then(json => dispatch(receiveDevices(json)))
@@ -115,14 +120,18 @@ export function fetchSingleDevice(deviceId) {
     return aspectFetch(`/device/${deviceId}`,
       {
         errorNotifications: {
-          404: errorNotFound({
-            id: 'errorResponseMessages.fetchSingleDevice.GET.404.title',
-            defaultMessage: 'Could Not Find Device Details'
-          }),
-          default: errorPleaseTryAgainInAFewMinutes({
-            id: 'errorResponseMessages.fetchSingleDevice.GET.default.title',
-            defaultMessage: 'Error Loading Device Details'
-          })
+          404: errorNotFound(defineMessages({
+            title: {
+              id: 'errorResponseMessages.fetchSingleDevice.GET.404.title',
+              defaultMessage: 'Could Not Find Device Details'
+            }
+          })),
+          default: errorPleaseTryAgainInAFewMinutes(defineMessages({
+            title: {
+              id: 'errorResponseMessages.fetchSingleDevice.GET.default.title',
+              defaultMessage: 'Error Loading Device Details'
+            }
+          }))
         }
       })
       .then(json => dispatch(receiveSingleDevice(json.data)))
@@ -152,10 +161,12 @@ export function updateSingleDevice(deviceId, data) {
       method: 'PUT',
       body: JSON.stringify(data),
       errorNotifications: {
-        default: errorPleaseTryAgainInAFewMinutes({
-          id: 'errorResponseMessages.updateSingleDevice.PUT.default.title',
-          defaultMessage: 'An Error Occurred When Trying to Save the Device'
-        })
+        default: errorPleaseTryAgainInAFewMinutes(defineMessages({
+          title: {
+            id: 'errorResponseMessages.updateSingleDevice.PUT.default.title',
+            defaultMessage: 'An Error Occurred When Trying to Save the Device'
+          }
+        }))
       }
     }).then(json => dispatch(receiveUpdatedSingleDevice(json.data)))
   }

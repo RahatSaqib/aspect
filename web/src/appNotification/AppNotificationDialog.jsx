@@ -23,7 +23,7 @@ const genericMessages = defineMessages({
     defaultMessage: 'Aspect has Encountered a Problem.'
   },
   message: {
-    id: 'errorResponseMessages.generic.title',
+    id: 'errorResponseMessages.generic.message',
     defaultMessage: 'Our technical team has been notified of the problem and will attend to it as soon as possible.'
   },
   closeText: {

@@ -1,3 +1,4 @@
+import { defineMessages } from 'react-intl'
 import Immutable from 'immutable'
 import differenceInMinutes from 'date-fns/difference_in_minutes'
 import { aspectFetch } from '../shared/utils/fetch'
@@ -44,14 +45,18 @@ export function fetchConsumables(forceRefresh) {
     return aspectFetch('/inventory/consumable-types',
       {
         errorNotifications: {
-          400: filterFieldsRejectedError({
-            id: 'errorResponseMessages.fetchConsumables.GET.400.title',
-            defaultMessage: 'Searching Consumables Failed'
-          }),
-          default: errorPleaseTryAgainInAFewMinutes({
-            id: 'errorResponseMessages.fetchConsumables.GET.default.title',
-            defaultMessage: 'Loading Consumables Failed'
-          })
+          400: filterFieldsRejectedError(defineMessages({
+            title: {
+              id: 'errorResponseMessages.fetchConsumables.GET.400.title',
+              defaultMessage: 'Searching Consumables Failed'
+            }
+          })),
+          default: errorPleaseTryAgainInAFewMinutes(defineMessages({
+            title: {
+              id: 'errorResponseMessages.fetchConsumables.GET.default.title',
+              defaultMessage: 'Loading Consumables Failed'
+            }
+          }))
         }
       })
       .then(json => dispatch(createReceiveConsumables(json.data)))

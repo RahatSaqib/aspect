@@ -1,3 +1,4 @@
+import { defineMessages } from 'react-intl'
 import _ from 'lodash'
 import Immutable from 'immutable'
 import { stringify } from 'querystring'
@@ -72,14 +73,18 @@ export function fetchReports(filters/* required */, sortCol = 'name', sortDir = 
       ...filters
     })}`, {
       errorNotifications: {
-        400: filterFieldsRejectedError({
-          id: 'errorResponseMessages.fetchReports.GET.400.title',
-          defaultMessage: 'Searching Reports Failed'
-        }),
-        default: errorPleaseTryAgainInAFewMinutes({
-          id: 'errorResponseMessages.fetchReports.GET.default.title',
-          defaultMessage: 'Loading Reports Failed'
-        })
+        400: filterFieldsRejectedError(defineMessages({
+          title: {
+            id: 'errorResponseMessages.fetchReports.GET.400.title',
+            defaultMessage: 'Searching Reports Failed'
+          }
+        })),
+        default: errorPleaseTryAgainInAFewMinutes(defineMessages({
+          title: {
+            id: 'errorResponseMessages.fetchReports.GET.default.title',
+            defaultMessage: 'Loading Reports Failed'
+          }
+        }))
       }
     }).then(json => dispatch(receiveReports(json)))
   }

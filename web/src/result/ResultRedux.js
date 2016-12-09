@@ -1,3 +1,4 @@
+import { defineMessages } from 'react-intl'
 import _ from 'lodash'
 import { stringify } from 'querystring'
 import Immutable from 'immutable'
@@ -79,14 +80,18 @@ export function fetchResults(filters/* required */, sortCol = 'endedOn', sortDir
       ...filters
     })}`, {
       errorNotifications: {
-        400: filterFieldsRejectedError({
-          id: 'errorResponseMessages.fetchResults.GET.400.title',
-          defaultMessage: 'Searching Results Failed'
-        }),
-        default: errorPleaseTryAgainInAFewMinutes({
-          id: 'errorResponseMessages.fetchResults.GET.default.title',
-          defaultMessage: 'Loading Results Failed'
-        })
+        400: filterFieldsRejectedError(defineMessages({
+          title: {
+            id: 'errorResponseMessages.fetchResults.GET.400.title',
+            defaultMessage: 'Searching Results Failed'
+          }
+        })),
+        default: errorPleaseTryAgainInAFewMinutes(defineMessages({
+          title: {
+            id: 'errorResponseMessages.fetchResults.GET.default.title',
+            defaultMessage: 'Loading Results Failed'
+          }
+        }))
       }
     }).then(json => dispatch(receiveResults(json)))
   }
@@ -115,14 +120,18 @@ export function fetchSingleResult(resultId) {
 
     return aspectFetch(`/result/${resultId}`, {
       errorNotifications: {
-        404: errorNotFound({
-          id: 'errorResponseMessages.fetchSingleResult.GET.404.title',
-          defaultMessage: 'Could Not Find Test Result'
-        }),
-        default: errorPleaseTryAgainInAFewMinutes({
-          id: 'errorResponseMessages.fetchSingleResult.GET.default.title',
-          defaultMessage: 'Error Loading Result Details'
-        })
+        404: errorNotFound(defineMessages({
+          title: {
+            id: 'errorResponseMessages.fetchSingleResult.GET.404.title',
+            defaultMessage: 'Could Not Find Test Result'
+          }
+        })),
+        default: errorPleaseTryAgainInAFewMinutes(defineMessages({
+          title: {
+            id: 'errorResponseMessages.fetchSingleResult.GET.default.title',
+            defaultMessage: 'Error Loading Result Details'
+          }
+        }))
       }
     }).then(json => dispatch(receiveSingleResult(json.data)))
   }
@@ -154,10 +163,12 @@ export function updateSingleResult(resultId, data) {
       method: 'PUT',
       body: JSON.stringify(data),
       errorNotifications: {
-        default: errorPleaseTryAgainInAFewMinutes({
-          id: 'errorResponseMessages.updateSingleResult.PUT.default.title',
-          defaultMessage: 'An Error Occurred When Trying to Save the Result'
-        })
+        default: errorPleaseTryAgainInAFewMinutes(defineMessages({
+          title: {
+            id: 'errorResponseMessages.updateSingleResult.PUT.default.title',
+            defaultMessage: 'An Error Occurred When Trying to Save the Result'
+          }
+        }))
       }
     }).then(json => dispatch(receiveUpdatedSingleResult(json.data)))
   }
@@ -184,10 +195,12 @@ export function updateResultWorkflowStatus(resultId) {
       method: 'PUT',
       body: JSON.stringify({ token }),
       errorNotifications: {
-        default: errorPleaseTryAgainInAFewMinutes({
-          id: 'errorResponseMessages.updateResultWorkflowStatus.PUT.default.title',
-          defaultMessage: 'An Error Occurred When Trying to Save the Workflow Status'
-        })
+        default: errorPleaseTryAgainInAFewMinutes(defineMessages({
+          title: {
+            id: 'errorResponseMessages.updateResultWorkflowStatus.PUT.default.title',
+            defaultMessage: 'An Error Occurred When Trying to Save the Workflow Status'
+          }
+        }))
       }
     }).then(json => dispatch(receiveUpdatedSingleResult(json.data)))
   }

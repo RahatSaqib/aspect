@@ -1,3 +1,4 @@
+import { defineMessages } from 'react-intl'
 import _ from 'lodash'
 import Immutable from 'immutable'
 import { aspectFetch } from '../shared/utils/fetch'
@@ -82,10 +83,12 @@ export const fetchCountriesForLocationSelector = function (forceRefresh, countri
         }
         return aspectFetch(path, {
           errorNotifications: {
-            default: errorPleaseTryAgainInAFewMinutes({
-              id: 'errorResponseMessages.fetchCountriesForLocationSelector.GET.default.title',
-              defaultMessage: 'Error Loading Countries'
-            })
+            default: errorPleaseTryAgainInAFewMinutes(defineMessages({
+              title: {
+                id: 'errorResponseMessages.fetchCountriesForLocationSelector.GET.default.title',
+                defaultMessage: 'Error Loading Countries'
+              }
+            }))
           }
         }).then(json => dispatch(createReceiveCountriesForLocationSelector(json.data)))
       }
@@ -113,10 +116,12 @@ export const fetchStatesForLocationSelector =
           }
           return aspectFetch(path, {
             errorNotifications: {
-              default: errorPleaseTryAgainInAFewMinutes({
-                id: 'errorResponseMessages.fetchStatesForLocationSelector.GET.default.title',
-                defaultMessage: 'Error Loading States for {countryName}'
-              }, { countryName: selectedCountry.get('name') })
+              default: errorPleaseTryAgainInAFewMinutes(defineMessages({
+                title: {
+                  id: 'errorResponseMessages.fetchStatesForLocationSelector.GET.default.title',
+                  defaultMessage: 'Error Loading States for {countryName}'
+                }
+              }), { countryName: selectedCountry.get('name') })
             }
           }).then(json =>
             dispatch(createReceiveStatesForLocationSelector(json.data, selectedCountry.get('id'))))
@@ -140,10 +145,12 @@ export const fetchLgasForLocationSelector =
         const path = `/geography/lga-select-list/${selectedState.get('id')}`
         return aspectFetch(path, {
           errorNotifications: {
-            default: errorPleaseTryAgainInAFewMinutes({
-              id: 'errorResponseMessages.fetchLgasForLocationSelector.GET.default.title',
-              defaultMessage: 'Error Loading Areas for {stateName}'
-            }, { stateName: selectedCountry.get('selectedState') })
+            default: errorPleaseTryAgainInAFewMinutes(defineMessages({
+              title: {
+                id: 'errorResponseMessages.fetchLgasForLocationSelector.GET.default.title',
+                defaultMessage: 'Error Loading Areas for {stateName}'
+              }
+            }), { stateName: selectedCountry.get('selectedState') })
           }
         }).then(json =>
           dispatch(createReceiveLgasForLocationSelector(json.data,

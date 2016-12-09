@@ -1,3 +1,4 @@
+import { defineMessages } from 'react-intl'
 import _ from 'lodash'
 import { stringify } from 'querystring'
 import Immutable from 'immutable'
@@ -79,14 +80,18 @@ export function fetchSites(filters/* required */, sortCol = 'name', sortDir = 'a
       ...filters
     })}`, {
       errorNotifications: {
-        400: filterFieldsRejectedError({
-          id: 'errorResponseMessages.fetchSites.GET.400.title',
-          defaultMessage: 'Searching Sites Failed'
-        }),
-        default: errorPleaseTryAgainInAFewMinutes({
-          id: 'errorResponseMessages.fetchSites.GET.default.title',
-          defaultMessage: 'Loading Sites Failed'
-        })
+        400: filterFieldsRejectedError(defineMessages({
+          title: {
+            id: 'errorResponseMessages.fetchSites.GET.400.title',
+            defaultMessage: 'Searching Sites Failed'
+          }
+        })),
+        default: errorPleaseTryAgainInAFewMinutes(defineMessages({
+          title: {
+            id: 'errorResponseMessages.fetchSites.GET.default.title',
+            defaultMessage: 'Loading Sites Failed'
+          }
+        }))
       }
     }).then(json => dispatch(receiveSites(json)))
   }
@@ -115,14 +120,18 @@ export function fetchSingleSite(siteId) {
 
     return aspectFetch(`/site/${siteId}`, {
       errorNotifications: {
-        404: errorNotFound({
-          id: 'errorResponseMessages.fetchSingleSite.GET.404.title',
-          defaultMessage: 'Could Not Find Site Details'
-        }),
-        default: errorPleaseTryAgainInAFewMinutes({
-          id: 'errorResponseMessages.fetchSingleSite.GET.default.title',
-          defaultMessage: 'Error Loading Site Details'
-        })
+        404: errorNotFound(defineMessages({
+          title: {
+            id: 'errorResponseMessages.fetchSingleSite.GET.404.title',
+            defaultMessage: 'Could Not Find Site Details'
+          }
+        })),
+        default: errorPleaseTryAgainInAFewMinutes(defineMessages({
+          title: {
+            id: 'errorResponseMessages.fetchSingleSite.GET.default.title',
+            defaultMessage: 'Error Loading Site Details'
+          }
+        }))
       }
     }).then(json => dispatch(receiveSingleSite(json.data)))
   }
@@ -154,10 +163,12 @@ export function updateSingleSite(siteId, data) {
       method: 'PUT',
       body: JSON.stringify(data),
       errorNotifications: {
-        default: errorPleaseTryAgainInAFewMinutes({
-          id: 'errorResponseMessages.updateSingleSite.PUT.default.title',
-          defaultMessage: 'An Error Occurred When Trying to Save the Site'
-        })
+        default: errorPleaseTryAgainInAFewMinutes(defineMessages({
+          title: {
+            id: 'errorResponseMessages.updateSingleSite.PUT.default.title',
+            defaultMessage: 'An Error Occurred When Trying to Save the Site'
+          }
+        }))
       }
     }).then(json => dispatch(receiveUpdatedSingleSite(json.data)))
   }

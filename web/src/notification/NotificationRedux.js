@@ -1,3 +1,4 @@
+import { defineMessages } from 'react-intl'
 import _ from 'lodash'
 import Immutable from 'immutable'
 import { stringify } from 'querystring'
@@ -72,14 +73,18 @@ export function fetchNotifications(filters/* required */, sortCol = 'name', sort
       ...filters
     })}`, {
       errorNotifications: {
-        400: filterFieldsRejectedError({
-          id: 'errorResponseMessages.fetchNotifications.GET.400.title',
-          defaultMessage: 'Searching Notifications Failed'
-        }),
-        default: errorPleaseTryAgainInAFewMinutes({
-          id: 'errorResponseMessages.fetchNotifications.GET.default.title',
-          defaultMessage: 'Loading Notifications Failed'
-        })
+        400: filterFieldsRejectedError(defineMessages({
+          title: {
+            id: 'errorResponseMessages.fetchNotifications.GET.400.title',
+            defaultMessage: 'Searching Notifications Failed'
+          }
+        })),
+        default: errorPleaseTryAgainInAFewMinutes(defineMessages({
+          title: {
+            id: 'errorResponseMessages.fetchNotifications.GET.default.title',
+            defaultMessage: 'Loading Notifications Failed'
+          }
+        }))
       }
     }).then(json => dispatch(receiveNotifications(json)))
   }

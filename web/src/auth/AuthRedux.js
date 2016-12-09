@@ -1,3 +1,4 @@
+import { defineMessages } from 'react-intl'
 import { stringify } from 'querystring'
 import Immutable from 'immutable'
 import jwtDecode from 'jwt-decode'
@@ -140,18 +141,20 @@ export function loginStart(login) {
           401: {
             'Your account is locked.': {
               severity: 'warn',
-              title: {
-                id: 'errorResponseMessages.loginStart.POST.401.accountLocked.title',
-                defaultMessage: 'Login Failed'
-              },
-              message: {
-                id: 'errorResponseMessages.loginStart.POST.401.accountLocked.message',
-                defaultMessage: 'Your user account has been locked'
-              },
-              resolution: {
-                id: 'errorResponseMessages.loginStart.POST.401.accountLocked.resolution',
-                defaultMessage: '<p>You can contact us to unlock your account for you using one of the following methods:</p><ul><li>Email: <a href="mailto:{supportEmail}">{supportEmail}</a></li><li>Telephone: {supportTelephone}</li></ul>'
-              },
+              ...defineMessages({
+                title: {
+                  id: 'errorResponseMessages.loginStart.POST.401.accountLocked.title',
+                  defaultMessage: 'Login Failed'
+                },
+                message: {
+                  id: 'errorResponseMessages.loginStart.POST.401.accountLocked.message',
+                  defaultMessage: 'Your user account has been locked'
+                },
+                resolution: {
+                  id: 'errorResponseMessages.loginStart.POST.401.accountLocked.resolution',
+                  defaultMessage: '<p>You can contact us to unlock your account for you using one of the following methods:</p><ul><li>Email: <a href="mailto:{supportEmail}">{supportEmail}</a></li><li>Telephone: {supportTelephone}</li></ul>'
+                }
+              }),
               messageValues: {
                 supportTelephone: config.supportTelephone,
                 supportEmail: config.supportEmail
@@ -159,24 +162,28 @@ export function loginStart(login) {
             },
             default: {
               severity: 'warn',
-              title: {
-                id: 'errorResponseMessages.loginStart.POST.401.default.title',
-                defaultMessage: 'Login Failed'
-              },
-              message: {
-                id: 'errorResponseMessages.loginStart.POST.401.default.message',
-                defaultMessage: 'The details that you have entered are incorrect'
-              },
-              resolution: {
-                id: 'errorResponseMessages.loginStart.POST.401.accountLocked.resolution',
-                defaultMessage: 'Please re-enter your login details and try again?'
-              }
+              ...defineMessages({
+                title: {
+                  id: 'errorResponseMessages.loginStart.POST.default.default.title',
+                  defaultMessage: 'Login Failed'
+                },
+                message: {
+                  id: 'errorResponseMessages.loginStart.POST.default.default.message',
+                  defaultMessage: 'The details that you have entered are incorrect'
+                },
+                resolution: {
+                  id: 'errorResponseMessages.loginStart.POST.default.resolution',
+                  defaultMessage: 'Please re-enter your login details and try again?'
+                }
+              })
             }
           },
-          default: errorPleaseTryAgainInAFewMinutes({
-            id: 'errorResponseMessages.loginStart.POST.default.title',
-            defaultMessage: 'Login Error'
-          })
+          default: errorPleaseTryAgainInAFewMinutes(defineMessages({
+            title: {
+              id: 'errorResponseMessages.loginStart.POST.default.title',
+              defaultMessage: 'Login Error'
+            }
+          }))
         }
       })
       .then((json) => {
@@ -262,10 +269,12 @@ export function resetPasswordEnterEmailAddress(emailAddress) {
           clientName
         }),
         errorNotifications: {
-          default: inlineErrorPleaseTryAgainInAFewMinutes({
-            id: 'errorResponseMessages.resetPasswordEnterEmailAddress.POST.default.title',
-            defaultMessage: 'Error Sending Reset Password Email'
-          })
+          default: inlineErrorPleaseTryAgainInAFewMinutes(defineMessages({
+            title: {
+              id: 'errorResponseMessages.resetPasswordEnterEmailAddress.POST.default.title',
+              defaultMessage: 'Error Sending Reset Password Email'
+            }
+          }))
         }
       })
       .catch((err) => {
@@ -287,10 +296,12 @@ export function resetPasswordEnterPassword(resetPasswordToken, newPassword) {
           clientName
         }),
         errorNotifications: {
-          default: inlineErrorPleaseTryAgainInAFewMinutes({
-            id: 'errorResponseMessages.resetPasswordEnterPassword.POST.default.title',
-            defaultMessage: 'Error Saving New Password'
-          })
+          default: inlineErrorPleaseTryAgainInAFewMinutes(defineMessages({
+            title: {
+              id: 'errorResponseMessages.resetPasswordEnterPassword.POST.default.title',
+              defaultMessage: 'Error Saving New Password'
+            }
+          }))
         }
       })
       .then((json) => {
