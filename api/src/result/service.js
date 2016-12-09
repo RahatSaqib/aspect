@@ -20,7 +20,7 @@ const SELECT_SHOW_FIELDS = [
   'r.consumableSerial', 'r.consumableLot', 'r.consumableExpirationDate', 'r.instrumentSerial',
   'r.moduleName', 'r.moduleSerial', 'r.researchId', 'r.senderVersion', 'r.senderOperator',
   'r.notes', 'r.errorCode', 'r.errorNotes', 'r.createdOn', 'r.updatedOn', 'r.assayId',
-  knex.raw('JSON_UNQUOTE(JSON_EXTRACT(r.patientData, "$.id")) as patientId')
+  knex.raw('JSON_UNQUOTE(JSON_EXTRACT(r.patientData, "$.id")) as patientId'), 'r.patientData'
 ]
 
 const SORT_FIELDS = [
@@ -164,6 +164,7 @@ function* getResultByResultId(request, fields = SELECT_SHOW_FIELDS) {
     results[0].resultData = JSON.parse(results[0].resultData)
     results[0].assay = yield knex('Assay as a').where('a.id', results[0].assayId).first()
     results[0].assay.resultDataSchema = JSON.parse(results[0].assay.resultDataSchema)
+    results[0].assay.patientDataSchema = JSON.parse(results[0].assay.patientDataSchema)
   }
 
   return { ok: results.length === 1, data: results[0] }

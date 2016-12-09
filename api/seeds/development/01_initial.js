@@ -5,6 +5,7 @@ const _ = require('lodash')
 const bcrypt = require('bcrypt')
 const permissions = require('./fixtures/permissions.json')
 const geography = require('./fixtures/geography.json')
+const patients = require('./fixtures/patients.json')
 
 const millisInHour = 1000 * 60 * 60
 const millisInNormalYear = 1000 * 60 * 60 * 24 * 365
@@ -342,6 +343,50 @@ function* seed(knex) {
     }
   })
 
+  // define patientData object
+  const geneXpertPatientDataSchema = JSON.stringify({
+    id: {
+      title: 'Patient ID',
+      type: 'string'
+    },
+    name: {
+      title: 'Name',
+      type: 'string'
+    },
+    street: {
+      title: 'Street',
+      type: 'string'
+    },
+    city: {
+      title: 'City',
+      type: 'string'
+    },
+    state: {
+      title: 'State',
+      type: 'string'
+    },
+    zip: {
+      title: 'Zip',
+      type: 'string'
+    },
+    phone: {
+      title: 'Phone',
+      type: 'string'
+    },
+    hiv: {
+      title: 'HIV Status',
+      type: 'string'
+    },
+    age: {
+      title: 'Age (in years)',
+      type: 'int'
+    },
+    gender: {
+      title: 'Gender',
+      type: 'string'
+    }
+  })
+
   const [assayMtbRifId] = yield knex('Assay').insert({
     name: 'GeneXpert MTB/Rif',
     i18nKey: 'assayGeneXpertMtbRif',
@@ -352,7 +397,8 @@ function* seed(knex) {
     resultCategory1i18nKey: 'resultCategoryMtb',
     resultCategory2Label: 'Rif',
     resultCategory2i18nKey: 'resultCategoryRif',
-    resultDataSchema: geneXpertResultDataSchema
+    resultDataSchema: geneXpertResultDataSchema,
+    patientDataSchema: geneXpertPatientDataSchema
   })
 
   const [assayHivVlId] = yield knex('Assay').insert({
@@ -365,7 +411,8 @@ function* seed(knex) {
     resultCategory1i18nKey: 'resultCategoryHiv',
     resultCategory2Label: null,
     resultCategory2i18nKey: null,
-    resultDataSchema: geneXpertResultDataSchemaHiv
+    resultDataSchema: geneXpertResultDataSchemaHiv,
+    patientDataSchema: geneXpertPatientDataSchema
   })
 
   const [assayEbolaId] = yield knex('Assay').insert({
@@ -378,7 +425,8 @@ function* seed(knex) {
     resultCategory1i18nKey: 'resultCategoryEbolaGp',
     resultCategory2Label: 'NP',
     resultCategory2i18nKey: 'resultCategoryEbolaNp',
-    resultDataSchema: geneXpertResultDataSchema
+    resultDataSchema: geneXpertResultDataSchema,
+    patientDataSchema: geneXpertPatientDataSchema
   })
 
   yield knex('Assay').insert({
@@ -1091,7 +1139,7 @@ function* seed(knex) {
       moduleName: 'Module A',
       moduleSerial: `M-1234-${i % 4}`,
       researchId: `R-ID-${i}`,
-      patientData: JSON.stringify({ id: `TB-PAT-ID-${i}` }),
+      patientData: JSON.stringify(patients[Math.round(Math.random() * 100)]),
       senderVersion: '4.6b',
       senderOperator: 'Marsha',
       notes: 'This is a test... result',
@@ -1187,7 +1235,7 @@ function* seed(knex) {
       moduleName: 'Module A',
       moduleSerial: `M-1234-${i % 4}`,
       researchId: `R-ID-${i}`,
-      patientData: JSON.stringify({ id: `EB-PAT-ID-${i}` }),
+      patientData: JSON.stringify(patients[Math.round(Math.random() * 100)]),
       senderVersion: '4.7a',
       senderOperator: 'Marsha',
       notes: 'This is an Ebola test result',
@@ -1281,7 +1329,7 @@ function* seed(knex) {
       moduleName: 'Module A',
       moduleSerial: `M-1234-${i % 4}`,
       researchId: `R-ID-${i}`,
-      patientData: JSON.stringify({ id: `HIV-PAT-ID-${i}` }),
+      patientData: JSON.stringify(patients[Math.round(Math.random() * 100)]),
       senderVersion: '4.4',
       senderOperator: 'Marsha',
       notes: 'This is an HIV test result',
