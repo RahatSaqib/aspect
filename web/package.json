@@ -14,6 +14,7 @@
     "dist": "cross-env ASPECT_ENV=dist npm-run-all webpack:dll webpack:dist",
     "pretest": "fsys --task=remove --fileFolder=coverage && fsys --task=remove --fileFolder=mocha.json",
     "test": "cross-env ASPECT_ENV=test JEST_FILE=mocha.json jest --config ./jest.json --coverage",
+    "test:snapshot": "cross-env ASPECT_ENV=test JEST_FILE=mocha.json jest --config ./jest.json -u",
     "test:watch": "npm run test -- --watch",
     "posttest": "npm run lint",
     "preupdatemessages:start": "cross-env BABEL_ENV=message babel --quiet --out-dir ./i18n/dist ./src",
