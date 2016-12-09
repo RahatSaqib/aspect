@@ -74,6 +74,7 @@
     "react-addons-test-utils": "^15.4.1",
     "react-hot-loader": "^3.0.0-beta.4",
     "react-intl-po": "^1.0.6",
+    "react-test-renderer": "^15.4.1",
     "sass-loader": "^4.1.0",
     "sinon": "^1.17.6",
     "static-loader": "^0.1.8",
