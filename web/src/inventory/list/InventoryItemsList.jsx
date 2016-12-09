@@ -139,6 +139,7 @@ export class InventoryItemsList extends PureComponent {
   inventoryLevelAdjustmentIconButtons = (itemId) => {
     const { intl: { formatMessage } } = this.props
     const buttonStyle = {
+      marginTop: '0.2em',
       marginRight: '1em'
     }
     return (<div>

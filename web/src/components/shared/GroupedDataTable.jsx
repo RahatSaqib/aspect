@@ -66,8 +66,7 @@ export default class GroupedDataTable extends PureComponent {
     showCheckboxes: false,
     enableSelectAll: false,
     showRowHover: true,
-    stripedRows: false,
-    actionsVisibility: 'hidden'
+    stripedRows: false
   }
 
   getColumns = () => {
@@ -146,15 +145,10 @@ export default class GroupedDataTable extends PureComponent {
   }
 
   fetchData = (col, newSort, page) => {
-    setTimeout(() => this.setState({ actionsVisibility: 'hidden' },
-      () => {
-        const { table, handleFetch } = this.props
-        handleFetch(col || table.sortCol, newSort || table.sortDir,
-          page == null ? table.page : page, table.pageSize,
-          table.groupBy)
-        setTimeout(() => this.setState({ actionsVisibility: 'visible' }), 1000)
-      }
-    ))
+    const { table, handleFetch } = this.props
+    handleFetch(col || table.sortCol, newSort || table.sortDir,
+      page == null ? table.page : page, table.pageSize,
+      table.groupBy)
   }
 
   render() {
@@ -248,7 +242,7 @@ export default class GroupedDataTable extends PureComponent {
                     actionComponent &&
                     <TableRowColumn style={{ width: '0', position: 'relative', overflow: 'visible' }}>
                       <div
-                        style={{ position: 'absolute', right: '0', top: '0.2em', visibility: this.state.actionsVisibility }}
+                        style={{ position: 'absolute', right: '0', top: '0' }}
                         className={cssClasses('TableRow__Actions')}
                       >
                         {
