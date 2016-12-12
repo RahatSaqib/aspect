@@ -3,187 +3,187 @@
         {
             "externalId": "1723",
             "name": "Dedza Clinic",
-            "shortname": "C: Dedza",
+            "shortname": "Dedza Clinic",
             "stateName": "Dedza"
         },
         {
             "externalId": "1315",
             "name": "Dowa Clinic",
-            "shortname": "C: Dowa",
+            "shortname": "Dowa Clinic",
             "stateName": "Dowa"
         },
         {
-            "externalId": "clinic_Kasungu",
+            "externalId": "1002",
             "name": "Kasungu Clinic",
-            "shortname": "C: Kasungu",
+            "shortname": "Kasungu Clinic",
             "stateName": "Kasungu"
         },
         {
             "externalId": "1538",
             "name": "Lilongwe Clinic",
-            "shortname": "C: Lilongwe",
+            "shortname": "Lilongwe Clinic",
             "stateName": "Lilongwe"
         },
         {
-            "externalId": "clinic_Mchinji",
+            "externalId": "1004",
             "name": "Mchinji Clinic",
-            "shortname": "C: Mchinji",
+            "shortname": "Mchinji Clinic",
             "stateName": "Mchinji"
         },
         {
             "externalId": "1111",
             "name": "Nkhotakota Clinic",
-            "shortname": "C: Nkhotakota",
+            "shortname": "Nkhotakota Clinic",
             "stateName": "Nkhotakota"
         },
         {
             "externalId": "1802",
             "name": "Ntcheu Clinic",
-            "shortname": "C: Ntcheu",
+            "shortname": "Ntcheu Clinic",
             "stateName": "Ntcheu"
         },
         {
             "externalId": "1210",
             "name": "Ntchisi Clinic",
-            "shortname": "C: Ntchisi",
+            "shortname": "Ntchisi Clinic",
             "stateName": "Ntchisi"
         },
         {
-            "externalId": "clinic_Salima",
+            "externalId": "1008",
             "name": "Salima Clinic",
-            "shortname": "C: Salima",
+            "shortname": "Salima Clinic",
             "stateName": "Salima"
         },
         {
-            "externalId": "clinic_Chitipa",
+            "externalId": "1009",
             "name": "Chitipa Clinic",
-            "shortname": "C: Chitipa",
+            "shortname": "Chitipa Clinic",
             "stateName": "Chitipa"
         },
         {
-            "externalId": "clinic_Karonga",
+            "externalId": "1010",
             "name": "Karonga Clinic",
-            "shortname": "C: Karonga",
+            "shortname": "Karonga Clinic",
             "stateName": "Karonga"
         },
         {
-            "externalId": "clinic_Likoma",
+            "externalId": "1011",
             "name": "Likoma Clinic",
-            "shortname": "C: Likoma",
+            "shortname": "Likoma Clinic",
             "stateName": "Likoma"
         },
         {
-            "externalId": "clinic_Mzimba",
+            "externalId": "1012",
             "name": "Mzimba Clinic",
-            "shortname": "C: Mzimba",
+            "shortname": "Mzimba Clinic",
             "stateName": "Mzimba"
         },
         {
-            "externalId": "clinic_Nkhata Bay",
+            "externalId": "1013",
             "name": "Nkhata Bay Clinic",
-            "shortname": "C: Nkhata Bay",
+            "shortname": "Nkhata Bay Clinic",
             "stateName": "Nkhata Bay"
         },
         {
-            "externalId": "clinic_Rumphi",
+            "externalId": "1014",
             "name": "Rumphi Clinic",
-            "shortname": "C: Rumphi",
+            "shortname": "Rumphi Clinic",
             "stateName": "Rumphi"
         },
         {
-            "externalId": "clinic_Balaka",
+            "externalId": "1015",
             "name": "Balaka Clinic",
-            "shortname": "C: Balaka",
+            "shortname": "Balaka Clinic",
             "stateName": "Balaka"
         },
         {
-            "externalId": "clinic_Blantyre",
+            "externalId": "1016",
             "name": "Blantyre Clinic",
-            "shortname": "C: Blantyre",
+            "shortname": "Blantyre Clinic",
             "stateName": "Blantyre"
         },
         {
-            "externalId": "clinic_Chikwawa",
+            "externalId": "1017",
             "name": "Chikwawa Clinic",
-            "shortname": "C: Chikwawa",
+            "shortname": "Chikwawa Clinic",
             "stateName": "Chikwawa"
         },
         {
-            "externalId": "clinic_Chiradzulu",
+            "externalId": "1018",
             "name": "Chiradzulu Clinic",
-            "shortname": "C: Chiradzulu",
+            "shortname": "Chiradzulu Clinic",
             "stateName": "Chiradzulu"
         },
         {
-            "externalId": "clinic_Machinga",
+            "externalId": "1019",
             "name": "Machinga Clinic",
-            "shortname": "C: Machinga",
+            "shortname": "Machinga Clinic",
             "stateName": "Machinga"
         },
         {
-            "externalId": "clinic_Mangochi",
+            "externalId": "1020",
             "name": "Mangochi Clinic",
-            "shortname": "C: Mangochi",
+            "shortname": "Mangochi Clinic",
             "stateName": "Mangochi"
         },
         {
-            "externalId": "clinic_Mulanje",
+            "externalId": "1021",
             "name": "Mulanje Clinic",
-            "shortname": "C: Mulanje",
+            "shortname": "Mulanje Clinic",
             "stateName": "Mulanje"
         },
         {
-            "externalId": "clinic_Mwanza",
+            "externalId": "1022",
             "name": "Mwanza Clinic",
-            "shortname": "C: Mwanza",
+            "shortname": "Mwanza Clinic",
             "stateName": "Mwanza"
         },
         {
-            "externalId": "clinic_Nsanje",
+            "externalId": "1023",
             "name": "Nsanje Clinic",
-            "shortname": "C: Nsanje",
+            "shortname": "Nsanje Clinic",
             "stateName": "Nsanje"
         },
         {
-            "externalId": "clinic_Thyolo",
+            "externalId": "1024",
             "name": "Thyolo Clinic",
-            "shortname": "C: Thyolo",
+            "shortname": "Thyolo Clinic",
             "stateName": "Thyolo"
         },
         {
-            "externalId": "clinic_Phalombe",
+            "externalId": "1025",
             "name": "Phalombe Clinic",
-            "shortname": "C: Phalombe",
+            "shortname": "Phalombe Clinic",
             "stateName": "Phalombe"
         },
         {
-            "externalId": "clinic_Zomba",
+            "externalId": "1026",
             "name": "Zomba Clinic",
-            "shortname": "C: Zomba",
+            "shortname": "Zomba Clinic",
             "stateName": "Zomba"
         },
         {
-            "externalId": "clinic_Neno",
+            "externalId": "1027",
             "name": "Neno Clinic",
-            "shortname": "C: Neno",
+            "shortname": "Neno Clinic",
             "stateName": "Neno"
         }
     ],
     "labs": [
         {
-            "externalId": "lab_Dedza",
+            "externalId": "DEDZ",
             "name": "Dedza Lab",
-            "shortname": "L: Dedza"
+            "shortname": "Dedza Lab"
         },
         {
-            "externalId": "lab_Chitipa",
+            "externalId": "CHIT",
             "name": "Chitipa Lab",
-            "shortname": "L: Chitipa"
+            "shortname": "Chitipa Lab"
         },
         {
-            "externalId": "lab_Balaka",
+            "externalId": "BALA",
             "name": "Balaka Lab",
-            "shortname": "L: Balaka"
+            "shortname": "Balaka Lab"
         }
     ]
 }

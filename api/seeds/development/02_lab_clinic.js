@@ -116,8 +116,8 @@ function* seed(knex) {
 
     // Router
     const [routerId] = yield knex('Device').insert(Object.assign({}, auditFields, {
-      name: `Router at ${siteData.name}`,
-      shortname: `r${siteData.shortname}`,
+      name: `${siteData.name} Router`,
+      shortname: `${siteData.name} Router`,
       deviceTypeId: deviceTypes['Metacom Router'].id,
       siteId: siteData.id,
       createdOn: new Date(+now - (3 * millisInHour)),
@@ -133,8 +133,8 @@ function* seed(knex) {
 
     // RRT Terminal
     const [deviceId] = yield knex('Device').insert(Object.assign({
-      name: `RRT at ${siteData.name}`,
-      shortname: `d${siteData.shortname}`,
+      name: `${siteData.name} RRT`,
+      shortname: `${siteData.name} RRT`,
       deviceTypeId: deviceTypes.RRT.id,
       siteId: siteData.id,
       deviceId: routerId,
@@ -159,7 +159,7 @@ function* seed(knex) {
     })
 
     const [roleIdSite] = yield knex('Role').insert({
-      name: `RRT at ${siteData.name} Samples`,
+      name: `${siteData.name} RRT Samples`,
       partnerId,
       dataFilterId
     })
@@ -190,8 +190,8 @@ function* seed(knex) {
 
     // Router
     const [routerId] = yield knex('Device').insert(Object.assign({}, auditFields, {
-      name: `Router at Lab ${siteData.name}`,
-      shortname: `r${siteData.shortname}`,
+      name: `${siteData.name} Router`,
+      shortname: `${siteData.shortname} Router`,
       deviceTypeId: deviceTypes['Metacom Router'].id,
       siteId: siteData.id,
       createdOn: new Date(+now - (3 * millisInHour)),
@@ -207,8 +207,8 @@ function* seed(knex) {
 
     // RRT Terminal
     const [deviceId] = yield knex('Device').insert(Object.assign({
-      name: `m2000 at ${siteData.name}`,
-      shortname: `d${siteData.shortname}`,
+      name: `${siteData.name} m2000`,
+      shortname: `${siteData.shortname} m2000`,
       deviceTypeId: deviceTypes.m2000.id,
       siteId: siteData.id,
       deviceId: routerId,
