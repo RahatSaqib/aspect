@@ -61,11 +61,8 @@ class AppNotificationSnackBar extends PureComponent {
 
     const notificationOptions = appNotification.get('notificationOptions') ?
       appNotification.get('notificationOptions').toJS() : {}
-    const messageValues = {
-      ...(appNotification.get('messageValues') ?
-        appNotification.get('messageValues').toJS() : {}),
-      ...notificationOptions.messageValues
-    }
+    const messageValues = appNotification.get('messageValues')
+
     const isError = appNotification.getIn(['notificationOptions', 'notificationType']) === 'error'
     const title = appNotificationMessageOrDefault('title', isError ? genericMessages.title : undefined)
     const showProceed = notificationOptions.showProceed

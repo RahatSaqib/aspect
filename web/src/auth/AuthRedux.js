@@ -152,7 +152,7 @@ export function loginStart(login) {
                 },
                 resolution: {
                   id: 'errorResponseMessages.loginStart.POST.401.accountLocked.resolution',
-                  defaultMessage: '<p>You can contact us to unlock your account for you using one of the following methods:</p><ul><li>Email: <a href="mailto:{supportEmail}">{supportEmail}</a></li><li>Telephone: {supportTelephone}</li></ul>'
+                  defaultMessage: 'You can contact us to unlock your account for you, either by email ({supportEmail}) or by telephone ({supportTelephone})'
                 }
               }),
               messageValues: {

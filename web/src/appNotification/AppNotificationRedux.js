@@ -48,7 +48,7 @@ export function hideAppNotification() {
 const Error = Immutable.Record({
   hasNotification: false,
   notificationType: null,
-  messageValues: null,
+  messageValues: {},
   showDetails: false,
   notificationOptions: null
 })
@@ -62,7 +62,7 @@ export default function appNotificationReducer(state = initialState, action) {
         hasNotification: true,
         notificationType: action.notificationType,
         notificationOptions: action.notificationOptions,
-        messageValues: action.messageValues,
+        messageValues: action.messageValues || {},
         showDetails: action.notificationOptions.showAs === 'interrupt'
       })
     case types.SHOW_MORE_DETAILS:
@@ -73,7 +73,7 @@ export default function appNotificationReducer(state = initialState, action) {
         notificationType: null,
         showDetails: false,
         notificationOptions: null,
-        messageValues: null
+        messageValues: {}
       })
     default:
       return state

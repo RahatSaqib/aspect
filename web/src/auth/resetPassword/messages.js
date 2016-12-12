@@ -31,7 +31,7 @@ export default defineMessages({
   },
   generateTokenFailedResolution: {
     id: 'pages.ResetPassword.generateTokenFailedResolution',
-    defaultMessage: 'You can request further help by sending an email to <a href="mailto:{supportEmail}">{supportEmail}</a> or calling us on {supportTelephone}'
+    defaultMessage: 'You can request further help by sending an email to {supportEmail} or calling us on {supportTelephone}'
   },
   iDontHaveAnEmailAddress: {
     id: 'pages.ResetPassword.iDontHaveAnEmailAddress',
@@ -55,7 +55,7 @@ export default defineMessages({
   },
   checkEmailContent: {
     id: 'pages.ResetPassword.checkEmailContent',
-    defaultMessage: '<p>We have sent an email to {emailAddress} that contains a link which will allow you to reset your password.</p><p>Please check your inbox</p>'
+    defaultMessage: 'We have sent an email to {emailAddress} that contains a link which will allow you to reset your password. Please check your inbox'
   },
   iDidntReceiveAnEmail: {
     id: 'pages.ResetPassword.iDidntReceiveAnEmail',
@@ -71,7 +71,7 @@ export default defineMessages({
   },
   adminHelpContent: {
     id: 'pages.ResetPassword.adminHelpContent',
-    defaultMessage: '<p>If you you need help to recover you login details, please contact us so that we may assist you.</p><p>You can request our help by sending an email to <a href="mailto:{supportEmail}">{supportEmail}</a></p><p>or calling us on {supportTelephone}</p>'
+    defaultMessage: 'If you you need help to recover you login details, please contact us so that we may assist you. You can request our help by sending an email to {supportEmail} or calling us on {supportTelephone}'
   },
   adminHelpClose: {
     id: 'pages.ResetPassword.adminHelpClose',
@@ -127,7 +127,7 @@ export default defineMessages({
   },
   passwordUpdateFailedResolution: {
     id: 'pages.ResetPassword.passwordUpdateFailedResolution',
-    defaultMessage: 'You can request further help by sending an email to <a href="mailto:{supportEmail}">{supportEmail}</a> or calling us on {supportTelephone}'
+    defaultMessage: 'You can request further help by sending an email to {supportEmail} or calling us on {supportTelephone}'
   },
   finish: {
     id: 'pages.ResetPassword.finish',
@@ -135,7 +135,7 @@ export default defineMessages({
   },
   finishContent: {
     id: 'pages.ResetPassword.finishContent',
-    defaultMessage: '<p>Your password has been changed successfully.</p><p>You can now login with your new password</p>'
+    defaultMessage: 'Your password has been changed successfully. You can now login with your new details'
   },
   loginWithMyNewPassword: {
     id: 'pages.ResetPassword.loginWithMyNewPassword',

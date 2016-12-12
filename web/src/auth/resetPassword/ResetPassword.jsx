@@ -140,7 +140,6 @@ export default class ResetPassword extends PureComponent {
       stepIndex: 3
     })
     this.props.showAcknowledgement({
-      severity: 'info',
       title: messages.passwordUpdatedTitle,
       message: messages.passwordUpdatedMessage
     })

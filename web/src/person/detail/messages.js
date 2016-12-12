@@ -33,7 +33,7 @@ export default defineMessages({
   },
   loginDetailsUpdatedMessage: {
     id: 'pages.PersonDetails.loginDetailsUpdatedMessage',
-    defaultMessage: 'You can now login with the new login details'
+    defaultMessage: 'You can now login with these new details'
   },
   userPreferencesUpdatedMessage: {
     id: 'pages.PersonDetails.userPreferencesUpdatedMessage',

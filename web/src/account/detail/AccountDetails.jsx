@@ -87,8 +87,8 @@ export class AccountDetails extends PureComponent {
     const saveLoginDetailsSucceeded = () => {
       this.closeCurrentPasswordInputDialog()
       showAcknowledgement({
-        message: personDetailsMessages.detailsUpdatedSuccessfully,
-        title: personDetailsMessages.loginDetailsUpdatedMessage
+        title: personDetailsMessages.detailsUpdatedSuccessfully,
+        message: personDetailsMessages.loginDetailsUpdatedMessage
       })
     }
     return (

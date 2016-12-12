@@ -53,11 +53,11 @@ export function filterFieldsRejectedError(messageDescriptors) {
     ...defineMessages({
       message: {
         id: 'errorResponseMessages.common.filterError.message',
-        defaultMessage: '<p>The server rejected the values specified in these filter fields.</p><p>Our technical team has been notified and will attend to the problem as soon as possible.</p>'
+        defaultMessage: 'The server rejected the values specified in these filter fields. Our technical team has been notified and will attend to the problem as soon as possible.'
       },
       resolution: {
         id: 'errorResponseMessages.common.filterError.resolution',
-        defaultMessage: '<p>In the meantime, you could try one of the following and search again:</p><ul><li>Adjust the values in these filter fields</li><li>Change the column that you are sorting on in the list</li><li>Change the page number that you are viewing</li></ul>'
+        defaultMessage: 'In the meantime, you could try to adjust the values in these filter fields, change the column that you are sorting on in the list or change the page number that you are viewing'
       }
     }),
     ...messageDescriptors

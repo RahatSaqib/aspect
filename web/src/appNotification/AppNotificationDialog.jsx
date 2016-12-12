@@ -3,7 +3,11 @@ import React, { PureComponent, PropTypes } from 'react'
 import { bindActionCreators } from 'redux'
 import { connect } from 'react-redux'
 import _ from 'lodash'
-import { injectIntl, defineMessages } from 'react-intl'
+import {
+  injectIntl,
+  defineMessages,
+  FormattedMessage
+} from 'react-intl'
 
 // Material-UI
 import Dialog from 'material-ui/Dialog'
@@ -67,21 +71,14 @@ class AppNotificationDialog extends PureComponent {
   render() {
     const { appNotification, intl: { formatMessage } } = this.props
 
-    const appNotificationMessageOrDefault = (messageKey, fallbackMessage) => {
-      const messageDescriptor = appNotification.getIn(['notificationOptions', messageKey])
-      if (messageDescriptor) {
-        return messageDescriptor.toJS()
-      }
-      return fallbackMessage
-    }
+    const toJSOrDefault = (immutableObject, defaultValue) =>
+      (immutableObject && immutableObject.toJS ? immutableObject.toJS() : defaultValue)
+    const appNotificationMessageOrDefault = (messageKey, fallbackMessage) =>
+      toJSOrDefault(appNotification.getIn(['notificationOptions', messageKey]), fallbackMessage)
 
-    const notificationOptions = appNotification.get('notificationOptions') ?
-      appNotification.get('notificationOptions').toJS() : {}
-    const messageValues = {
-      ...(appNotification.get('messageValues') ?
-        appNotification.get('messageValues').toJS() : {}),
-      ...notificationOptions.messageValues
-    }
+    const notificationOptions = toJSOrDefault(appNotification.get('notificationOptions'), {})
+    const messageValues = toJSOrDefault(appNotification.get('messageValues'), {})
+
     const isError = appNotification.getIn(['notificationOptions', 'notificationType']) === 'error'
     const title = appNotificationMessageOrDefault('title',
       isError ? genericMessages.title : undefined)
@@ -140,15 +137,17 @@ class AppNotificationDialog extends PureComponent {
           </div>
         }
         <div className={styles.AppNotificationDialogDialog__ContentContainer}>
-          <p>
-            <strong
-              dangerouslySetInnerHTML={{
-                __html: message ? formatMessage(message, messageValues) : ''
-              }}
-            />
-          </p>
+          { message &&
+            <p>
+              <strong>
+                <FormattedMessage {...message} values={messageValues} />
+              </strong>
+            </p>
+          }
           { resolution &&
-          <p dangerouslySetInnerHTML={{ __html: resolution ? formatMessage(resolution, messageValues) : '' }} />
+            <p>
+              <FormattedMessage {...resolution} values={messageValues} />
+            </p>
           }
         </div>
       </Dialog>
