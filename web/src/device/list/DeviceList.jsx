@@ -14,6 +14,7 @@ import Helmet from 'react-helmet'
 import { fetchListFilteredDevices } from '../DeviceRedux'
 import ListFilterContainer from '../../filter/list/ListFilter'
 import { configureListFilter } from '../../filter/FilterRedux'
+import EmptyList from '../../components/shared/EmptyList'
 import DataTable from '../../components/shared/DataTable'
 import styles from './DeviceList.css'
 
@@ -144,13 +145,14 @@ export class DeviceList extends PureComponent {
   }
 
   render() {
-    const { intl } = this.props
+    const { intl, items } = this.props
     const { formatMessage, formatRelative, formatNumber } = intl
 
     return (
       <div className={styles.Content}>
         <Helmet title={this.getFormattedTitle()} titleTemplate="%s - Aspect" defaultTitle="Aspect" />
         <ListFilterContainer subject={this.getFormattedTitle()} />
+        <EmptyList isEmpty={items.currentIdList.isEmpty()} />
         <DataTable
           selectable
           handleItemIdSelection={this.handleItemIdSelection}
