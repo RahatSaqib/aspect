@@ -10,6 +10,7 @@ import { connect } from 'react-redux'
 import Helmet from 'react-helmet'
 
 // Our own imports
+import EmptyList from '../../components/shared/EmptyList'
 import DataTable from '../../components/shared/DataTable'
 import ListFilterContainer from '../../filter/list/ListFilter'
 import { configureListFilter } from '../../filter/FilterRedux'
@@ -65,13 +66,14 @@ export class NotificationList extends PureComponent {
   }
 
   render() {
-    const { intl } = this.props
+    const { intl, items } = this.props
     const { formatMessage } = intl
 
     return (
       <div className={styles.Content}>
         <Helmet title={formatMessage(messages.title)} titleTemplate="%s - Aspect" defaultTitle="Aspect" />
         <ListFilterContainer subject={formatMessage(messages.title)} />
+        <EmptyList isEmpty={items.currentIdList.isEmpty()} />
         <DataTable
           handleFetch={this.handleFetch}
           items={this.props.items}
