@@ -1,0 +1,189 @@
+{
+    "clinics": [
+        {
+            "externalId": "1723",
+            "name": "Dedza Clinic",
+            "shortname": "Dedza Clinic",
+            "stateName": "Dedza"
+        },
+        {
+            "externalId": "1315",
+            "name": "Dowa Clinic",
+            "shortname": "Dowa Clinic",
+            "stateName": "Dowa"
+        },
+        {
+            "externalId": "1002",
+            "name": "Kasungu Clinic",
+            "shortname": "Kasungu Clinic",
+            "stateName": "Kasungu"
+        },
+        {
+            "externalId": "1538",
+            "name": "Lilongwe Clinic",
+            "shortname": "Lilongwe Clinic",
+            "stateName": "Lilongwe"
+        },
+        {
+            "externalId": "1004",
+            "name": "Mchinji Clinic",
+            "shortname": "Mchinji Clinic",
+            "stateName": "Mchinji"
+        },
+        {
+            "externalId": "1111",
+            "name": "Nkhotakota Clinic",
+            "shortname": "Nkhotakota Clinic",
+            "stateName": "Nkhotakota"
+        },
+        {
+            "externalId": "1802",
+            "name": "Ntcheu Clinic",
+            "shortname": "Ntcheu Clinic",
+            "stateName": "Ntcheu"
+        },
+        {
+            "externalId": "1210",
+            "name": "Ntchisi Clinic",
+            "shortname": "Ntchisi Clinic",
+            "stateName": "Ntchisi"
+        },
+        {
+            "externalId": "1008",
+            "name": "Salima Clinic",
+            "shortname": "Salima Clinic",
+            "stateName": "Salima"
+        },
+        {
+            "externalId": "1009",
+            "name": "Chitipa Clinic",
+            "shortname": "Chitipa Clinic",
+            "stateName": "Chitipa"
+        },
+        {
+            "externalId": "1010",
+            "name": "Karonga Clinic",
+            "shortname": "Karonga Clinic",
+            "stateName": "Karonga"
+        },
+        {
+            "externalId": "1011",
+            "name": "Likoma Clinic",
+            "shortname": "Likoma Clinic",
+            "stateName": "Likoma"
+        },
+        {
+            "externalId": "1012",
+            "name": "Mzimba Clinic",
+            "shortname": "Mzimba Clinic",
+            "stateName": "Mzimba"
+        },
+        {
+            "externalId": "1013",
+            "name": "Nkhata Bay Clinic",
+            "shortname": "Nkhata Bay Clinic",
+            "stateName": "Nkhata Bay"
+        },
+        {
+            "externalId": "1014",
+            "name": "Rumphi Clinic",
+            "shortname": "Rumphi Clinic",
+            "stateName": "Rumphi"
+        },
+        {
+            "externalId": "1015",
+            "name": "Balaka Clinic",
+            "shortname": "Balaka Clinic",
+            "stateName": "Balaka"
+        },
+        {
+            "externalId": "1016",
+            "name": "Blantyre Clinic",
+            "shortname": "Blantyre Clinic",
+            "stateName": "Blantyre"
+        },
+        {
+            "externalId": "1017",
+            "name": "Chikwawa Clinic",
+            "shortname": "Chikwawa Clinic",
+            "stateName": "Chikwawa"
+        },
+        {
+            "externalId": "1018",
+            "name": "Chiradzulu Clinic",
+            "shortname": "Chiradzulu Clinic",
+            "stateName": "Chiradzulu"
+        },
+        {
+            "externalId": "1019",
+            "name": "Machinga Clinic",
+            "shortname": "Machinga Clinic",
+            "stateName": "Machinga"
+        },
+        {
+            "externalId": "1020",
+            "name": "Mangochi Clinic",
+            "shortname": "Mangochi Clinic",
+            "stateName": "Mangochi"
+        },
+        {
+            "externalId": "1021",
+            "name": "Mulanje Clinic",
+            "shortname": "Mulanje Clinic",
+            "stateName": "Mulanje"
+        },
+        {
+            "externalId": "1022",
+            "name": "Mwanza Clinic",
+            "shortname": "Mwanza Clinic",
+            "stateName": "Mwanza"
+        },
+        {
+            "externalId": "1023",
+            "name": "Nsanje Clinic",
+            "shortname": "Nsanje Clinic",
+            "stateName": "Nsanje"
+        },
+        {
+            "externalId": "1024",
+            "name": "Thyolo Clinic",
+            "shortname": "Thyolo Clinic",
+            "stateName": "Thyolo"
+        },
+        {
+            "externalId": "1025",
+            "name": "Phalombe Clinic",
+            "shortname": "Phalombe Clinic",
+            "stateName": "Phalombe"
+        },
+        {
+            "externalId": "1026",
+            "name": "Zomba Clinic",
+            "shortname": "Zomba Clinic",
+            "stateName": "Zomba"
+        },
+        {
+            "externalId": "1027",
+            "name": "Neno Clinic",
+            "shortname": "Neno Clinic",
+            "stateName": "Neno"
+        }
+    ],
+    "labs": [
+        {
+            "externalId": "DEDZ",
+            "name": "Dedza Lab",
+            "shortname": "Dedza Lab"
+        },
+        {
+            "externalId": "CHIT",
+            "name": "Chitipa Lab",
+            "shortname": "Chitipa Lab"
+        },
+        {
+            "externalId": "BALA",
+            "name": "Balaka Lab",
+            "shortname": "Balaka Lab"
+        }
+    ]
+}
