@@ -1,6 +1,6 @@
 const crypto = require('crypto')
 const Boom = require('boom')
-const { knex } = require('../db')
+const { knex, transact } = require('../db')
 const { getDeviceConstraints } = require('../auth/constraints')
 const { asyncHandler } = require('../routes')
 
@@ -19,20 +19,33 @@ function deviceApiHandler(handler, { updatePing, updateDeviceLog }) {
     }
 
     const { device, now } = context
+    const deviceId = device.id
     // TODO Does Hapi Remote address work through proxies? Check headers?
     const remoteAddress = request.info.remoteAddress || ''
 
-    // Insert Device Log and Update Ping prior to calling handler so
-    // it is recorded even if handler fails
+    // Insert Device Log and Update Ping prior to calling handler and
+    // in separate transaction so it is recorded even if handler fails
     let deviceLogId = null
+    let deviceLogUpdateId = null
     if (updateDeviceLog) {
-      [deviceLogId] = yield knex('DeviceLog').insert({
-        deviceId: device.id,
+      const checkpoint = request.payload && request.payload.checkpoint
+
+      ;[deviceLogId] = yield knex('DeviceLog').insert({
+        deviceId,
+        checkpoint,
         source: 'DeviceAPI',
         createdOn: now,
         senderIp: remoteAddress,
         // TODO DeviceLog handle non-JSON payloads
         rawMessage: JSON.stringify(request.plugins.rawPayload)
+      })
+
+      // Need to insert first as checkpoint with log as other
+      // updates my occur while next transaction is processing
+      // and also to ensure we have a checkpoint even if no
+      // updates to related tables occur (checkpoint only request)
+      ;[deviceLogUpdateId] = yield knex('DeviceLogUpdate').insert({
+        deviceLogId
       })
     }
 
@@ -45,13 +58,24 @@ function deviceApiHandler(handler, { updatePing, updateDeviceLog }) {
         })
     }
 
-    const response = yield* handler(context)
+    let response = {}
+    yield transact(function* (knex) {
+      context.knex = knex
 
-    // Insert all DeviceLog Updates added to context when calling handler
-    if (deviceLogId !== null && context.deviceLogUpdates.length > 0) {
-      yield knex('DeviceLogUpdate').insert(context.deviceLogUpdates.map(
-        update => Object.assign({ deviceLogId }, update)))
-    }
+      response = yield* handler(context)
+
+      // Insert all DeviceLog Updates added to context when calling handler
+      if (deviceLogId !== null && context.deviceLogUpdates.length > 0) {
+        const [firstUpdate, ...restUpdates] = context.deviceLogUpdates
+        yield knex('DeviceLogUpdate')
+          .where({ id: deviceLogUpdateId })
+          .update(firstUpdate)
+        if (restUpdates.length > 0) {
+          yield knex('DeviceLogUpdate').insert(restUpdates.map(
+            update => Object.assign({ deviceLogId }, update)))
+        }
+      }
+    })
 
     return response
   })
@@ -88,8 +112,8 @@ class DeviceApiContext {
     Object.assign(this, { deviceLogUpdates: [] }, props)
   }
 
-  withPayload(newPayload) {
-    return new DeviceApiContext(Object.assign({}, this, { payload: newPayload }))
+  withPayload(payload) {
+    return new DeviceApiContext(Object.assign({}, this, { payload }))
   }
 
   addDeviceConfigurationId(id) {

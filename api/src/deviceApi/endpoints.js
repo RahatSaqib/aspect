@@ -1,18 +1,21 @@
 const Joi = require('joi')
 const { deviceApiHandler } = require('./common')
 const { addDeviceData, getDeviceData, addDeviceOperation, addDeviceConfiguration } = require('./device')
-const { addResult, listResults } = require('./result')
+const { addResult } = require('./result')
 
 const configurationPayload = {
+  checkpoint: Joi.string().allow('', null),
   data: Joi.object().required()
 }
 
 const operationPayload = {
+  checkpoint: Joi.string().allow('', null),
   data: Joi.object().required()
 }
 
 const resultPayload = {
   id: Joi.string().allow('', null),
+  checkpoint: Joi.string().allow('', null),
   assay: Joi.object().keys({
     id: Joi.string().required(),
     version: Joi.string().allow('', null)
@@ -88,7 +91,12 @@ module.exports = [
     handler: deviceApiHandler(getDeviceData, {}),
     config: {
       notes: 'Get last updated timestamps and Ids for configuration, operation and result data',
-      description: 'Get device configuration, operation or result data for the authenticated device'
+      description: 'Get device configuration, operation or result data for the authenticated device',
+      validate: {
+        query: {
+          checkpoint: Joi.string()
+        }
+      }
     }
   },
   {
@@ -103,6 +111,7 @@ module.exports = [
           allowUnknown: true
         },
         payload: Joi.object().keys({
+          checkpoint: Joi.string().allow('', null),
           configuration: Joi.object().keys(configurationPayload),
           operation: Joi.object().keys(configurationPayload),
           result: Joi.array().items(Joi.object().keys(resultPayload)).single(true)
@@ -131,20 +140,6 @@ module.exports = [
       notes: 'Adds new device operational data for the authenticated device',
       validate: {
         payload: operationPayload
-      }
-    }
-  },
-  {
-    method: 'GET',
-    path: '/result',
-    handler: deviceApiHandler(listResults, {}),
-    config: {
-      description: 'Result List',
-      notes: 'List of results for authenticated device',
-      validate: {
-        query: {
-          updatedSince: Joi.date().iso()
-        }
       }
     }
   },

@@ -468,12 +468,13 @@ function* up(knex) {
     deviceLog.string('source').notNullable() // LIS listener, API...
     deviceLog.dateTime('createdOn').notNullable()
     deviceLog.string('senderIp').notNullable()
+    deviceLog.string('checkpoint').index()
     deviceLog.text('rawMessage')
     deviceLog.charset('utf8')
   })
 
   yield knex.schema.createTable('DeviceLogUpdate', (deviceLog) => {
-    deviceLog.increments('id')
+    deviceLog.bigincrements('id')
     deviceLog.integer('deviceLogId').unsigned().notNullable()
           .index().references('id').inTable('DeviceLog')
     deviceLog.integer('resultId').unsigned()
@@ -482,7 +483,6 @@ function* up(knex) {
           .index().references('id').inTable('DeviceConfiguration')
     deviceLog.integer('deviceOperationId').unsigned()
           .index().references('id').inTable('DeviceOperation')
-    // TODO should we log fields that changed in linked entity or type of update?
     deviceLog.charset('utf8')
   })
 

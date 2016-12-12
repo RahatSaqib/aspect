@@ -265,16 +265,11 @@ describe('Device API routes', () => {
       const [{ prevOpId }] = yield knex('Device').where({ id: deviceId })
         .select('deviceOperationId as prevOpId')
 
-      let lastPingOn
-
       yield server.get(devicePath)
         .set('Authorization', deviceAuth)
         .then((res) => {
           assert.equal(res.status, 200)
           assert.typeOf(res.body, 'Object')
-          assert.property(res.body, 'lastPingOn')
-          const pingOn = Date.parse(res.body.lastPingOn)
-          lastPingOn = pingOn
         })
 
       yield server.get(devicePath)
@@ -282,15 +277,12 @@ describe('Device API routes', () => {
         .then((res) => {
           assert.equal(res.status, 200)
           assert.typeOf(res.body, 'Object')
-          assert.property(res.body, 'lastPingOn')
-          const pingOn = Date.parse(res.body.lastPingOn)
-          assert.equal(+pingOn, +lastPingOn)
-          lastPingOn = pingOn
         })
 
       yield server.post(devicePath)
         .set('Authorization', deviceAuth)
         .send({
+          checkpoint: '124j',
           configuration: { data: { a: 'b' } },
           operation: { data: { a: 'b' } }
         })
@@ -310,10 +302,8 @@ describe('Device API routes', () => {
         .then((res) => {
           assert.equal(res.status, 200)
           assert.typeOf(res.body, 'Object')
-          assert.property(res.body, 'lastPingOn')
-          const pingOn = new Date(res.body.lastPingOn)
-          assert.isAtLeast(+pingOn, +lastPingOn)
-          lastPingOn = pingOn
+          assert.property(res.body, 'checkpoint')
+          assert.equal(res.body.checkpoint, '124j')
         })
 
       yield server.post(devicePath)
@@ -338,10 +328,6 @@ describe('Device API routes', () => {
         .then((res) => {
           assert.equal(res.status, 200)
           assert.typeOf(res.body, 'Object')
-          assert.property(res.body, 'lastPingOn')
-          const pingOn = new Date(res.body.lastPingOn)
-          assert.isAtLeast(+pingOn, +lastPingOn)
-          lastPingOn = pingOn
         })
 
       // cleanup

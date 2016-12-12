@@ -1,6 +1,5 @@
-const { knex, transact } = require('../db')
 const { getExternalId } = require('./common')
-const { addResult } = require('./result')
+const { addResult, listResults } = require('./result')
 
 function* addDeviceData(context) {
   const response = {}
@@ -18,7 +17,6 @@ function* addDeviceData(context) {
   }
 
   if (result) {
-    response.result = []
     for (const r of result) {
       const resultResponse = yield* addResult(
         context.withPayload(r))
@@ -37,56 +35,63 @@ function* addDeviceData(context) {
 }
 
 function* getDeviceData(context) {
-  const { device: { id: deviceId } } = context
+  const { knex, device: { id: deviceId }, query } = context
 
-  const device = yield knex('Device as d')
-    .where({ 'd.id': deviceId })
-    .first('d.lastPingOn')
+  const deviceLogQ = knex('DeviceLog')
+    .where({ deviceId })
+    .orderBy('id', 'desc')
+  // use specified checkpoint, otherwise just select latest
+  if (query.checkpoint) {
+    deviceLogQ.where({ checkpoint: query.checkpoint })
+  }
+  const { checkpoint, id: deviceLogId } = (
+    (yield deviceLogQ.first('checkpoint', 'id')) || {})
 
-  return { lastPingOn: device.lastPingOn }
+  const result = yield* listResults(context, deviceLogId)
+  // TODO include configuration and operation at checkpoint
+
+  return { checkpoint, result }
 }
 
 function* addDeviceConfiguration(context) {
-  const { payload, device: { id: deviceId }, now } = context
+  const { knex, payload, device: { id: deviceId }, now } = context
 
   const externalId = getExternalId(payload.id)
 
-  yield transact(function* (knex) {
-    const [deviceConfigurationId] = yield knex('DeviceConfiguration')
-      .insert({
-        deviceId,
-        externalId,
-        data: JSON.stringify(payload.data),
-        createdOn: now
-      })
-    context.addDeviceConfigurationId(deviceConfigurationId)
+  const [deviceConfigurationId] = yield knex('DeviceConfiguration')
+    .insert({
+      deviceId,
+      externalId,
+      data: JSON.stringify(payload.data),
+      createdOn: now
+    })
+  context.addDeviceConfigurationId(deviceConfigurationId)
 
-    yield knex('Device')
-      .where('id', deviceId)
-      .update({ deviceConfigurationId })
-  })
+  yield knex('Device')
+    .where('id', deviceId)
+    .update({ deviceConfigurationId })
+
   return { id: externalId }
 }
 
 function* addDeviceOperation(context) {
-  const { payload, device: { id: deviceId }, now } = context
+  const { knex, payload, device: { id: deviceId }, now } = context
 
   const externalId = getExternalId(payload.id)
 
-  yield transact(function* (knex) {
-    const [deviceOperationId] = yield knex('DeviceOperation')
-      .insert({
-        deviceId,
-        externalId,
-        data: JSON.stringify(payload.data),
-        createdOn: now
-      })
-    context.addDeviceOperationId(deviceOperationId)
+  const [deviceOperationId] = yield knex('DeviceOperation')
+    .insert({
+      deviceId,
+      externalId,
+      data: JSON.stringify(payload.data),
+      createdOn: now
+    })
+  context.addDeviceOperationId(deviceOperationId)
 
-    yield knex('Device')
-      .where('id', deviceId)
-      .update({ deviceOperationId })
-  })
+  yield knex('Device')
+    .where('id', deviceId)
+    .update({ deviceOperationId })
+
   return { id: externalId }
 }
 
