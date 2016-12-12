@@ -14,6 +14,7 @@ import Helmet from 'react-helmet'
 import { fetchListFilteredRouters } from '../RouterRedux'
 import ListFilterContainer from '../../filter/list/ListFilter'
 import { configureListFilter } from '../../filter/FilterRedux'
+import EmptyList from '../../components/shared/EmptyList'
 import DataTable from '../../components/shared/DataTable'
 import styles from './RouterList.css'
 
@@ -119,12 +120,14 @@ export class RouterList extends PureComponent {
   }
 
   render() {
-    const { intl } = this.props
+    const { intl, items } = this.props
     const { formatMessage, formatRelative } = intl
+
     return (
       <div className={styles.Content}>
         <Helmet title={this.getFormattedTitle()} titleTemplate="%s - Aspect" defaultTitle="Aspect" />
         <ListFilterContainer />
+        <EmptyList isEmpty={items.currentIdList.isEmpty()} />
         <DataTable
           selectable
           handleItemIdSelection={this.handleItemIdSelection}
