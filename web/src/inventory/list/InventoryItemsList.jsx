@@ -14,6 +14,7 @@ import { Card } from 'material-ui/Card'
 import Checkbox from 'material-ui/Checkbox'
 
 // Our own imports
+import EmptyList from '../../components/shared/EmptyList'
 import GroupedDataTable from '../../components/shared/GroupedDataTable'
 import ListFilterContainer from '../../filter/list/ListFilter'
 import { configureListFilter } from '../../filter/FilterRedux'
@@ -129,6 +130,7 @@ export class InventoryItemsList extends PureComponent {
             style={{ padding: '1em' }}
           />
         </Card>
+        <EmptyList isEmpty={items.currentIdList.isEmpty()} />
         <GroupedDataTable
           handleFetch={this.handleFetch}
           items={items}
