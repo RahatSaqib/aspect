@@ -221,6 +221,49 @@ function* seed(knex) {
       deviceId,
       revoked: 0
     }, auditFields))
+
+    // create lab admin user with permission to view data to own lab
+    const [labAdminUserId] = yield knex('User').insert({
+      name: `rrt_${lab.externalId.toLowerCase()}`,
+      password: bcrypt.hashSync('test07', saltRounds),
+      approved: 1,
+      createdOn: now,
+      lockedOut: 0,
+      failedPasswordAttempts: 0
+    })
+
+    yield knex('Person').insert(Object.assign({
+      userId: labAdminUserId,
+      name: `${lab.shortname} Admin`,
+      lastPartnerId: partnerId,
+      lastCountryId: countryId,
+      countryId,
+      stateId: malawiStates[0].stateId,
+      culture,
+      timezone
+    }, auditFields))
+
+    const [labAdminDataFilterId] = yield knex('DataFilter').insert({
+      name: `${siteData.name} Filter`,
+      constraint: JSON.stringify({
+        site: {
+          id: siteId
+        }
+      })
+    })
+
+    const [roleIdLabAdmin] = yield knex('Role').insert({
+      name: `${lab.shortname} Admin`,
+      dataFilterId: labAdminDataFilterId,
+      partnerId
+    })
+
+    yield knex('RolePermission').insert([
+      { roleId: roleIdLabAdmin, permissionId: modules.device.admin },
+      { roleId: roleIdLabAdmin, permissionId: modules.result.admin }])
+
+    yield knex('UserRole').insert([
+      { userId: labAdminUserId, roleId: roleIdLabAdmin }])
   }
 }
 
