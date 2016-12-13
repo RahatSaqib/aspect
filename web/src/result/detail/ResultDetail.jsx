@@ -241,6 +241,7 @@ export class ResultDetail extends PureComponent {
 
     return schema
       .filter((value, key) => key !== 'resultText' && value && value.get('type') !== 'object')
+      .sortBy(value => value.get('order'))
       .entrySeq()
       .map(([key, value]) =>
         (

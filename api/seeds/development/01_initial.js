@@ -349,43 +349,53 @@ function* seed(knex) {
     // trouble with any field ending in "id"
     patientIdNumber: {
       title: 'Patient ID',
-      type: 'string'
+      type: 'string',
+      order: 0
     },
     name: {
       title: 'Name',
-      type: 'string'
+      type: 'string',
+      order: 1
     },
     street: {
       title: 'Street',
-      type: 'string'
+      type: 'string',
+      order: 2
     },
     city: {
       title: 'City',
-      type: 'string'
+      type: 'string',
+      order: 3
     },
     state: {
       title: 'State',
-      type: 'string'
+      type: 'string',
+      order: 4
     },
     zip: {
       title: 'Zip',
-      type: 'string'
+      type: 'string',
+      order: 5
     },
     phone: {
       title: 'Phone',
-      type: 'string'
+      type: 'string',
+      order: 6
     },
     hiv: {
       title: 'HIV Status',
-      type: 'string'
+      type: 'string',
+      order: 7
     },
     age: {
       title: 'Age (in years)',
-      type: 'number'
+      type: 'number',
+      order: 8
     },
     gender: {
       title: 'Gender',
-      type: 'string'
+      type: 'string',
+      order: 9
     }
   })
 
