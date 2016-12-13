@@ -7,32 +7,16 @@ import {
 } from 'react-intl'
 import { bindActionCreators } from 'redux'
 import { connect } from 'react-redux'
-import { reduxForm, SubmissionError } from 'redux-form/immutable'
+import { reduxForm } from 'redux-form/immutable'
 
 // Material-UI
 
 // Our own imports
 import { fetchSites } from '../../site/SiteRedux'
 import { fetchConsumableReasons } from '../../consumable/ConsumableRedux'
-import {
-  addInventory,
-  removeInventory,
-  transferInventory
-} from '../InventoryRedux'
+import { addOperation, removeOperation, transferOperation } from '../InventoryRedux'
 
 const messages = defineMessages({
-  addTitle: {
-    id: 'pages.InventoryAdjustmentForm.addTitle',
-    defaultMessage: 'Add {consumableName}'
-  },
-  removeTitle: {
-    id: 'pages.InventoryAdjustmentForm.removeTitle',
-    defaultMessage: 'Remove {consumableName}'
-  },
-  transferTitle: {
-    id: 'pages.InventoryAdjustmentForm.transferTitle',
-    defaultMessage: 'Transfer {consumableName}'
-  },
   lotNumber: {
     id: 'pages.InventoryAdjustmentForm.lotNumber',
     defaultMessage: 'Lot Number'
@@ -107,20 +91,16 @@ const messages = defineMessages({
   }
 })
 
-export const addOperation = 'add'
-export const removeOperation = 'remove'
-export const transferOperation = 'transfer'
-
 class InventoryAdjustmentForm extends PureComponent {
   static propTypes = {
     intl: PropTypes.object.isRequired,
     operation: PropTypes.oneOf([addOperation, removeOperation, transferOperation]).isRequired,
+    handleSubmit: PropTypes.func.isRequired,
+    pristine: PropTypes.bool.isRequired,
+    invalid: PropTypes.bool.isRequired,
     initialValues: PropTypes.object.isRequired,
     fetchSites: PropTypes.func.isRequired,
-    fetchConsumableReasons: PropTypes.func.isRequired,
-    addInventory: PropTypes.func.isRequired,
-    removeInventory: PropTypes.func.isRequired,
-    transferInventory: PropTypes.func.isRequired
+    fetchConsumableReasons: PropTypes.func.isRequired
   }
 
   componentDidMount() {
@@ -128,32 +108,28 @@ class InventoryAdjustmentForm extends PureComponent {
     fetchSites()
     fetchConsumableReasons()
   }
-  handleSubmit = (formValues) => {
-    const { operation, addInventory, removeInventory, transferInventory } = this.props
-    switch (operation) {
-      case addOperation:
-        return addInventory(formValues.get('id'), formValues.toJS())
-      case removeOperation:
-        return removeInventory(formValues.get('id'), formValues.toJS())
-      case transferOperation:
-        return transferInventory(formValues.get('id'), formValues.toJS())
-      default:
-        throw new SubmissionError({ _error: `Invalid operation ${operation} for inventory adjustment form` })
-    }
-  }
 
   render() {
-    const { intl: { formatMessage }, operation, initialValues } = this.props
-
-    const formHeaderValues = { consumableName: initialValues.get('consumableName') }
-    const formHeader = operation === addOperation ?
-      formatMessage(messages.addTitle, formHeaderValues) :
-      (operation === removeOperation ?
-        formatMessage(messages.removeTitle, formHeaderValues) :
-        formatMessage(messages.transferTitle, formHeaderValues))
+    const {
+      intl: { formatMessage },
+      handleSubmit, operation, initialValues, pristine, invalid } = this.props
     return (
-      <form onSubmit={this.handleSubmit}>
-        <h3>{formHeader}</h3>
+      <form onSubmit={handleSubmit}>
+        <p>
+          { operation }
+        </p>
+        <p>
+          { formatMessage(messages.lotNumber) }
+        </p>
+        <p>
+          { JSON.stringify(initialValues) }
+        </p>
+        <span>
+          { pristine }
+        </span>
+        <span>
+          { invalid }
+        </span>
       </form>
     )
   }
@@ -168,10 +144,7 @@ function mapStateToProps(state) {
 function mapDispatchToProps(dispatch) {
   return bindActionCreators({
     fetchSites,
-    fetchConsumableReasons,
-    addInventory,
-    removeInventory,
-    transferInventory
+    fetchConsumableReasons
   }, dispatch)
 }
 
@@ -186,7 +159,7 @@ const validate = (inventoryAdjustmentDetails, props) => {
   return errors
 }
 
-export const InventoryAdjustmentFormContainer = _.flowRight(
+export default _.flowRight(
   injectIntl,
   connect(mapStateToProps, mapDispatchToProps),
   reduxForm({

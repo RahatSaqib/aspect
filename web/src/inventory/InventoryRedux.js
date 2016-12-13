@@ -25,11 +25,16 @@ export const types = {
   TOGGLE_GROUP_BY_SITE: 'TOGGLE_GROUP_BY_SITE',
   RECEIVE_SINGLE_INVENTORY_ITEM: 'RECEIVE_SINGLE_INVENTORY_ITEM',
   ADJUST_INVENTORY_LEVELS: 'ADJUST_INVENTORY_LEVELS',
-  CANCEL_ADJUST_INVENTORY_LEVELS: 'CANCEL_ADJUST_INVENTORY_LEVELS',
+  FINISH_ADJUSTING_INVENTORY_LEVELS: 'FINISH_ADJUSTING_INVENTORY_LEVELS',
   ADD_INVENTORY: 'ADD_INVENTORY',
   REMOVE_INVENTORY: 'REMOVE_INVENTORY',
   TRANSFER_INVENTORY: 'TRANSFER_INVENTORY'
 }
+
+export const addOperation = 'add'
+export const removeOperation = 'remove'
+export const transferOperation = 'transfer'
+
 /*
  * ---------------- Action Creators -----------------
  */
@@ -146,10 +151,9 @@ export function adjustInventoryLevels(inventoryItemId, operation) {
   })
 }
 
-export function cancelAdjustInventoryLevels(operation) {
+export function finishAdjustingInventoryLevels() {
   return dispatch => dispatch({
-    type: types.CANCEL_ADJUST_INVENTORY_LEVELS,
-    operation
+    type: types.FINISH_ADJUSTING_INVENTORY_LEVELS
   })
 }
 
@@ -161,7 +165,10 @@ export function addInventory(inventoryItemId, data) {
     dispatch(startAddingInventory(data))
     const path = groupBySite ? '/inventory/group-by-site/add' : '/inventory/add'
     return aspectFetch(`${path}/${inventoryItemId}`)
-      .then(json => dispatch(receiveSingleInventoryItem(json.data, groupBySite ? ['inventoryItems'] : [])))
+      .then((json) => {
+        dispatch(receiveSingleInventoryItem(json.data, groupBySite ? ['inventoryItems'] : []))
+        dispatch(finishAdjustingInventoryLevels())
+      })
       .catch((err) => {
         dispatch(addError('Adding inventory failed', err.message, err))
       })
@@ -179,10 +186,12 @@ export function removeInventory(inventoryItemId, data) {
     return aspectFetch(`${path}/${inventoryItemId}`, {
       method: 'PUT',
       body: JSON.stringify(data)
-    }).then(json => dispatch(receiveSingleInventoryItem(json.data, groupBySite ? ['inventoryItems'] : [])))
-      .catch((err) => {
-        dispatch(addError('Removing inventory failed', err.message, err))
-      })
+    }).then((json) => {
+      dispatch(receiveSingleInventoryItem(json.data, groupBySite ? ['inventoryItems'] : []))
+      dispatch(finishAdjustingInventoryLevels())
+    }).catch((err) => {
+      dispatch(addError('Removing inventory failed', err.message, err))
+    })
   }
 }
 
@@ -199,6 +208,7 @@ export function transferInventory(inventoryItemId, data) {
     }).then((json) => {
       dispatch(receiveSingleInventoryItem(json.data.existingInventoryItem, groupBySite ? ['inventoryItems'] : []))
       dispatch(receiveSingleInventoryItem(json.data.newInventoryItem, groupBySite ? ['inventoryItems'] : []))
+      dispatch(finishAdjustingInventoryLevels())
     }).catch((err) => {
       dispatch(addError('Transferring inventory failed', err.message, err))
     })
@@ -211,6 +221,7 @@ export function transferInventory(inventoryItemId, data) {
 const Inventory = Immutable.Record({
   updating: false,
   currentAdjustmentOperation: null,
+  adjustingInventoryItemId: null,
   items: new Items(),
   table: new Table({
     sortCol: 'siteName',
@@ -239,9 +250,16 @@ export default function inventoryItemsReducer(state = initialState, action) {
         .setIn(['table', 'groupBy'],
           action.toggleOn ? new Immutable.List(['siteId']) : new Immutable.List([]))
     case types.ADJUST_INVENTORY_LEVELS:
-      return state.set('currentAdjustmentOperation', action.operation)
-    case types.CANCEL_ADJUST_INVENTORY_LEVELS:
-      return state.set('currentAdjustmentOperation', null)
+      return state.withMutations((mutState) => {
+        mutState.set('currentAdjustmentOperation', action.operation)
+        mutState.set('adjustingInventoryItemId', action.inventoryItemId)
+      })
+    case types.FINISH_ADJUSTING_INVENTORY_LEVELS:
+      return state.withMutations((mutState) => {
+        mutState.set('currentAdjustmentOperation', null)
+        mutState.set('adjustingInventoryItemId', null)
+        mutState.set('updating', false)
+      })
     case types.ADD_INVENTORY:
     case types.REMOVE_INVENTORY:
     case types.TRANSFER_INVENTORY:
@@ -249,7 +267,6 @@ export default function inventoryItemsReducer(state = initialState, action) {
     case types.RECEIVE_SINGLE_INVENTORY_ITEM:
       return state.withMutations((mutState) => {
         mutState.set('items', receiveItem(mutState.items, action.childrenPropertyPath, action.item))
-        mutState.set('updating', false)
       })
     default:
       return state

@@ -8,6 +8,7 @@ import {
 import { bindActionCreators } from 'redux'
 import { connect } from 'react-redux'
 import Helmet from 'react-helmet'
+import { SubmissionError } from 'redux-form/immutable'
 
 // Material-UI
 import { Card } from 'material-ui/Card'
@@ -16,6 +17,7 @@ import FloatingActionButton from 'material-ui/FloatingActionButton'
 import AddIcon from 'material-ui/svg-icons/content/add'
 import TransferIcon from 'material-ui/svg-icons/action/swap-horiz'
 import RemoveIcon from 'material-ui/svg-icons/content/remove'
+import Dialog from 'material-ui/Dialog'
 
 // Our own imports
 import EmptyList from '../../components/shared/EmptyList'
@@ -24,8 +26,16 @@ import ListFilterContainer from '../../filter/list/ListFilter'
 import { configureListFilter } from '../../filter/FilterRedux'
 import {
   fetchListFilteredInventoryItems,
-  toggleGroupBySite
+  toggleGroupBySite,
+  addOperation,
+  removeOperation,
+  transferOperation,
+  adjustInventoryLevels,
+  addInventory,
+  removeInventory,
+  transferInventory
 } from '../InventoryRedux'
+import InventoryAdjustmentForm from '../adjustment/InventoryAdjustmentForm'
 import styles from './InventoryItemsList.css'
 
 const messages = defineMessages({
@@ -73,6 +83,18 @@ const messages = defineMessages({
     id: 'pages.InventoryItemsList.removeInventory',
     defaultMessage: 'Remove Inventory'
   },
+  addTitle: {
+    id: 'pages.InventoryAdjustmentForm.addTitle',
+    defaultMessage: 'Add {consumableName}'
+  },
+  removeTitle: {
+    id: 'pages.InventoryAdjustmentForm.removeTitle',
+    defaultMessage: 'Remove {consumableName}'
+  },
+  transferTitle: {
+    id: 'pages.InventoryAdjustmentForm.transferTitle',
+    defaultMessage: 'Transfer {consumableName}'
+  },
   filterTemplate: {
     id: 'pages.InventoryItemsList.filterTemplate',
     defaultMessage: 'Viewing <CONSUMABLE> <GEOGRAPHY> at all sites<NAME>.'
@@ -93,7 +115,13 @@ export class InventoryItemsList extends PureComponent {
     listFilter: PropTypes.object.isRequired,
     fetchListFilteredInventoryItems: PropTypes.func.isRequired,
     toggleGroupBySite: PropTypes.func.isRequired,
-    items: PropTypes.object.isRequired
+    adjustInventoryLevels: PropTypes.func.isRequired,
+    items: PropTypes.object.isRequired,
+    currentAdjustmentOperation: PropTypes.string,
+    adjustingInventoryItemId: PropTypes.string,
+    addInventory: PropTypes.func.isRequired,
+    removeInventory: PropTypes.func.isRequired,
+    transferInventory: PropTypes.func.isRequired
   }
 
   componentWillMount() {
@@ -124,20 +152,8 @@ export class InventoryItemsList extends PureComponent {
     this.props.toggleGroupBySite(isChecked)
   }
 
-  showAddInventoryForm = (...rest) => {
-    console.log(rest)
-  }
-
-  showTransferInventoryForm = (...rest) => {
-    console.log(rest)
-  }
-
-  showRemoveInventoryForm = (...rest) => {
-    console.log(rest)
-  }
-
   inventoryLevelAdjustmentIconButtons = (itemId) => {
-    const { intl: { formatMessage } } = this.props
+    const { intl: { formatMessage }, adjustInventoryLevels } = this.props
     const buttonStyle = {
       marginTop: '0.2em',
       marginRight: '1em'
@@ -146,31 +162,65 @@ export class InventoryItemsList extends PureComponent {
       <FloatingActionButton
         mini secondary style={buttonStyle}
         title={formatMessage(messages.addInventory)}
-        onTouchTap={() => this.showAddInventoryForm(itemId)}
+        onTouchTap={() => adjustInventoryLevels(itemId, addOperation)}
       >
         <AddIcon />
       </FloatingActionButton>
       <FloatingActionButton
         mini style={buttonStyle}
         title={formatMessage(messages.transferInventory)}
-        onTouchTap={() => this.showTransferInventoryForm(itemId)}
+        onTouchTap={() => adjustInventoryLevels(itemId, transferOperation)}
       >
         <TransferIcon />
       </FloatingActionButton>
       <FloatingActionButton
         mini secondary style={buttonStyle}
         title={formatMessage(messages.removeInventory)}
-        onTouchTap={() => this.showRemoveInventoryForm(itemId)}
+        onTouchTap={() => adjustInventoryLevels(itemId, removeOperation)}
       >
         <RemoveIcon />
       </FloatingActionButton>
     </div>)
   }
 
+  handleInventoryAdjustmentSubmit = (formValues) => {
+    const {
+      currentAdjustmentOperation,
+      addInventory,
+      removeInventory,
+      transferInventory
+    } = this.props
+    switch (currentAdjustmentOperation) {
+      case addOperation:
+        return addInventory(formValues.get('id'), formValues.toJS())
+      case removeOperation:
+        return removeInventory(formValues.get('id'), formValues.toJS())
+      case transferOperation:
+        return transferInventory(formValues.get('id'), formValues.toJS())
+      default:
+        throw new SubmissionError({ _error: `Invalid operation ${currentAdjustmentOperation} for inventory adjustment form` })
+    }
+  }
+
+  adjustInventorySucceeded = (...rest) => {
+    console.log(rest)
+  }
+
   render() {
-    const { intl, items, table } = this.props
-    const { formatMessage, formatDate, formatRelative } = intl
+    const {
+      intl,
+      items,
+      table,
+      adjustingInventoryItemId,
+      currentAdjustmentOperation
+    } = this.props
+    const {
+      formatMessage,
+      formatDate,
+      formatRelative
+    } = intl
     const isSettledAndEmpty = !table.loading && items.currentIdList.isEmpty()
+
     const columns = [{
       fieldName: 'siteName',
       headerText: formatMessage(messages.siteName)
@@ -189,6 +239,15 @@ export class InventoryItemsList extends PureComponent {
       headerText: formatMessage(messages.expiresIn),
       format: data => (data ? formatRelative(data) : 'Never')
     }]
+
+    const adjustingInventoryItem = adjustingInventoryItemId ? items.getIn(['byId', adjustingInventoryItemId]) : null
+    const formHeaderValues = { consumableName: adjustingInventoryItem ? adjustingInventoryItem.get('consumableName') : null }
+    const formHeader = currentAdjustmentOperation === addOperation ?
+      formatMessage(messages.addTitle, formHeaderValues) :
+      (currentAdjustmentOperation === removeOperation ?
+        formatMessage(messages.removeTitle, formHeaderValues) :
+        (currentAdjustmentOperation === transferOperation ?
+          formatMessage(messages.transferTitle, formHeaderValues) : null))
 
     return (
       <div className={styles.Content}>
@@ -220,6 +279,17 @@ export class InventoryItemsList extends PureComponent {
             actionComponent={this.inventoryLevelAdjustmentIconButtons}
           />
         )}
+        <Dialog
+          title={formHeader} modal={false}
+          open={currentAdjustmentOperation !== null && adjustingInventoryItem != null}
+        >
+          <InventoryAdjustmentForm
+            operation={currentAdjustmentOperation}
+            initialValues={adjustingInventoryItem}
+            onSubmit={this.handleInventoryAdjustmentSubmit}
+            onSubmitSuccess={this.adjustInventorySucceeded}
+          />
+        </Dialog>
       </div>
     )
   }
@@ -229,7 +299,9 @@ function mapStateToProps(state) {
   return {
     listFilter: state.filter.listFilter,
     items: state.inventory.items,
-    table: state.inventory.table
+    table: state.inventory.table,
+    currentAdjustmentOperation: state.inventory.currentAdjustmentOperation,
+    adjustingInventoryItemId: state.inventory.adjustingInventoryItemId
   }
 }
 
@@ -237,7 +309,11 @@ function mapDispatchToProps(dispatch) {
   return bindActionCreators({
     configureListFilter,
     fetchListFilteredInventoryItems,
-    toggleGroupBySite
+    toggleGroupBySite,
+    adjustInventoryLevels,
+    addInventory,
+    removeInventory,
+    transferInventory
   }, dispatch)
 }
 
