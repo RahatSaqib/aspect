@@ -3,6 +3,7 @@ const chai = require('chai')
 const _ = require('lodash')
 const shared = require('../utils/sharedToken')
 const sharedDevice = require('./deviceToken')
+const { deleteTestDataFromCheckpoint } = require('./utils')
 
 const { run } = require('../../src/db')
 
@@ -13,7 +14,9 @@ const assert = chai.assert
 const now = new Date()
 
 describe('Device Result API routes', () => {
-  describe('admin GeneXpert result', () => {
+  describe('admin result updates', () => {
+    let testCheckpoint
+    const testDeviceIds = []
     const resultIds = []
 
     const clientBasePath = '/api/result'
@@ -23,26 +26,46 @@ describe('Device Result API routes', () => {
     const devicePath = '/device'
     const devicePostResultPath = '/device/result'
 
-    afterEach(() => run(function* (knex) {
-      // cleanup
-      if (resultIds.length > 0) {
-        const deviceLogIds = yield knex('DeviceLogUpdate as dlu')
-          .innerJoin('Result as r', 'dlu.resultId', 'r.id')
-          .whereIn('r.externalId', resultIds)
-          .select('dlu.deviceLogId')
-          .map(dlu => dlu.deviceLogId)
-
-        yield knex('DeviceLogUpdate').whereIn('deviceLogId', deviceLogIds).delete()
-        yield knex('DeviceLog').whereIn('id', deviceLogIds).delete()
-        const ourResultIds = yield knex('Result as r').whereIn('externalId', resultIds).select('r.id')
-        yield knex('InventoryLog').whereIn('resultId', _.map(ourResultIds, 'id')).delete()
-        yield knex('Result').whereIn('externalId', resultIds).delete()
-
-        resultIds.splice(0)
-      }
+    beforeEach(() => run(function* () {
+      testCheckpoint = null
+      testDeviceIds.splice(0)
     }))
 
-    it('should add and return device results', () => run(function* (knex) {
+    function runTest(test) {
+      return run(function* (knex) {
+        const { deviceId, deviceToken } = sharedDevice
+        testDeviceIds.push(deviceId)
+
+        const deviceAuth = `Bearer ${deviceToken}`
+
+        // Does not currently work to create initial checkpoint in beforeEach
+        // because of how Device Token is setup, so runTest creates an initial
+        // checkpoint and then runs test using db.run
+        testCheckpoint = `Device API Result Tests ${new Date()}`
+        yield server.post(devicePath)
+          .set('Authorization', deviceAuth)
+          .send({ checkpoint: testCheckpoint })
+          .then((res) => {
+            assert.equal(res.status, 200)
+            assert.typeOf(res.body, 'Object')
+          })
+
+        return yield* test(knex)
+      })
+    }
+
+
+    afterEach(() => run(function* (knex) {
+      // cleanup
+      if (testCheckpoint) {
+        yield* deleteTestDataFromCheckpoint(knex, testCheckpoint, testDeviceIds)
+        testCheckpoint = null
+        testDeviceIds.splice(0)
+      }
+      resultIds.splice(0)
+    }))
+
+    it('should add and return device results', () => runTest(function* (knex) {
       const { deviceId } = sharedDevice
       const clientSingleResultPath = `${clientBasePath}/`
       const clientPath = `${clientBasePath}?deviceId=${deviceId}`
@@ -513,7 +536,7 @@ describe('Device Result API routes', () => {
         })
     }))
 
-    it('should set default result status and categories', () => run(function* (knex) {
+    it('should set default result status and categories', () => runTest(function* (knex) {
       const deviceAuth = `Bearer ${sharedDevice.deviceToken}`
 
       yield server.post(devicePostResultPath)
@@ -609,7 +632,7 @@ describe('Device Result API routes', () => {
       assert.equal(result4Category2.externalId, 'NotDetected')
     }))
 
-    it('should merge results with same id', () => run(function* (knex) {
+    it('should merge results with same id', () => runTest(function* (knex) {
       const deviceAuth = `Bearer ${sharedDevice.deviceToken}`
       resultIds.push(`R1${now}`, `R2${now}`)
       const countResults = () => knex('Result').count('id as cnt').then(([{ cnt }]) => cnt)
@@ -792,22 +815,13 @@ describe('Device Result API routes', () => {
       assert.equal(result2Category2.externalId, 'Indeterminate')
     }))
 
-    it('should add and return device data', () => run(function* (knex) {
-      const { deviceId } = sharedDevice
-
+    it('should add and return device data', () => runTest(function* (knex) {
       const configIds = []
       const opIds = []
 
       const deviceAuth = `Bearer ${sharedDevice.deviceToken}`
 
       const [{ count: initialLogLength }] = yield knex('DeviceLogUpdate').count('id as count')
-      const [{ initialLogId }] = yield knex('DeviceLogUpdate').max('id as initialLogId')
-
-      const [{ prevConfigId }] = yield knex('Device').where({ id: deviceId })
-        .select('deviceConfigurationId as prevConfigId')
-
-      const [{ prevOpId }] = yield knex('Device').where({ id: deviceId })
-        .select('deviceOperationId as prevOpId')
 
       let prevResults
       let results
@@ -1006,24 +1020,6 @@ describe('Device Result API routes', () => {
       assert.equal(newResults.length, 3)
 
       resultIds.push(..._.map(newResults, 'id'))
-
-      // cleanup
-      const deviceLogIds = yield knex('DeviceLogUpdate as dlu')
-        .where('dlu.id', '>', initialLogId)
-        .select('dlu.deviceLogId')
-        .map(dlu => dlu.deviceLogId)
-
-      yield knex('DeviceLogUpdate').whereIn('deviceLogId', deviceLogIds).delete()
-      yield knex('DeviceLog').whereIn('id', deviceLogIds).delete()
-
-      const [{ count: logLength4 }] = yield knex('DeviceLogUpdate').count('id as count')
-      assert.equal(logLength4, initialLogLength)
-
-      yield knex('Device').where({ id: deviceId }).update({ deviceOperationId: prevOpId })
-      yield knex('DeviceOperation').whereIn('externalId', opIds).delete()
-
-      yield knex('Device').where({ id: deviceId }).update({ deviceConfigurationId: prevConfigId })
-      yield knex('DeviceConfiguration').whereIn('externalId', configIds).delete()
     }))
 
     describe('inventory management', () => {
@@ -1033,7 +1029,7 @@ describe('Device Result API routes', () => {
           .select('consumableId', 'lotNumber', 'expiresOn', 'quantityOnHand')
       }
 
-      it('should deduct inventory levels from the site', () => run(function* (knex) {
+      it('should deduct inventory levels from the site', () => runTest(function* (knex) {
         const results = [{
           assayExternalId: 'MtbRif',
           cartridgeName: 'GeneXpert TB Cartridge',
@@ -1091,7 +1087,7 @@ describe('Device Result API routes', () => {
         }
       }))
 
-      it('should try to deduct the correct inventory item based on expiration date and lot number', () => run(function* (knex) {
+      it('should try to deduct the correct inventory item based on expiration date and lot number', () => runTest(function* (knex) {
         const { deviceId } = sharedDevice
         const { siteId } = (yield knex('Device')
           .where({ id: deviceId })
@@ -1225,7 +1221,7 @@ describe('Device Result API routes', () => {
           .del()
       }))
 
-      it('should try to deduct the correct inventory item based on expiration date over lot number', () => run(function* (knex) {
+      it('should try to deduct the correct inventory item based on expiration date over lot number', () => runTest(function* (knex) {
         const { deviceId } = sharedDevice
         const { siteId } = (yield knex('Device')
           .where({ id: deviceId })
@@ -1303,7 +1299,7 @@ describe('Device Result API routes', () => {
           .del()
       }))
 
-      it('should log inventory consumption, even when no inventory item exists for site', () => run(function* (knex) {
+      it('should log inventory consumption, even when no inventory item exists for site', () => runTest(function* (knex) {
         const { deviceId } = sharedDevice
         const { siteId } = (yield knex('Device')
           .where({ id: deviceId })
@@ -1370,33 +1366,12 @@ describe('Device Result API routes', () => {
           .del()
       }))
     })
-  })
 
-  describe('rrt_admin lab/clinic results', () => {
-    const resultIds = []
 
+    // RRT Tests
     sharedDevice.authenticateUserAndFirstDevice(server, { user: 'rrt_admin', type: 'm2000' })
 
-    const devicePostResultPath = '/device/result'
-
-    afterEach(() => run(function* (knex) {
-      // cleanup
-      if (resultIds.length > 0) {
-        const deviceLogIds = yield knex('DeviceLogUpdate as dlu')
-          .innerJoin('Result as r', 'dlu.resultId', 'r.id')
-          .whereIn('r.externalId', resultIds)
-          .select('dlu.deviceLogId')
-          .map(dlu => dlu.deviceLogId)
-
-        yield knex('DeviceLogUpdate').whereIn('deviceLogId', deviceLogIds).delete()
-        yield knex('DeviceLog').whereIn('id', deviceLogIds).delete()
-        yield knex('Result').whereIn('externalId', resultIds).delete()
-
-        resultIds.splice(0)
-      }
-    }))
-
-    it('should honor device role sample origin site', () => run(function* (knex) {
+    it('should honor device role sample origin site', () => runTest(function* (knex) {
       const deviceAuth = `Bearer ${sharedDevice.deviceToken}`
       const devicePath = '/device'
 
@@ -1407,6 +1382,7 @@ describe('Device Result API routes', () => {
         .where('dt.name', 'RRT')
         .orderBy('s.externalId')
         .select('d.*')
+      testDeviceIds.push(device1315.id, device1723.id)
 
       const device1315Key = yield sharedDevice.getApiKey(server, device1315.id)
       const device1723Key = yield sharedDevice.getApiKey(server, device1723.id)
