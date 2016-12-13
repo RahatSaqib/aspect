@@ -9,6 +9,7 @@ import {
 } from 'react-intl'
 
 // Material-UI
+import Paper from 'material-ui/Paper'
 import FlatButton from 'material-ui/FlatButton'
 
 // Our own imports
@@ -40,13 +41,13 @@ const enhance = compose(
 
 export const EmptyList = ({ isEmpty, intl, clearListFilter }) => (
   isEmpty && (
-    <div style={{ textAlign: 'center' }}>
+    <Paper style={{ textAlign: 'center', padding: 10 }}>
       <p>{intl.formatMessage(messages.noResultsTitle)}</p>
       <FlatButton
         label={intl.formatMessage(messages.clearFilters)}
         onTouchTap={clearListFilter}
       />
-    </div>
+    </Paper>
   )
 )
 
