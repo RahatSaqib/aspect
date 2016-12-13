@@ -1,9 +1,13 @@
 const chai = require('chai')
-
-const assert = chai.assert
+const _ = require('lodash')
 const jwt = require('jsonwebtoken')
 const config = require('../../src/config')
 const sharedToken = require('../utils/sharedToken')
+const { run } = require('../../src/db')
+const { deleteTestDataFromCheckpoint } = require('./utils')
+
+const assert = chai.assert
+const devicePath = '/device'
 
 const shared = module.exports = {
   checkDeviceToken(server, path, deviceId, opts) {
@@ -88,9 +92,65 @@ const shared = module.exports = {
       })
   },
 
+  createTestContext(server) {
+    return new DeviceApiTestContext(server)
+  },
+
   // use this in your tests to get a valid device token for testing
   deviceToken: '',
 
   // Authenticated deviceId
   deviceId: -1
+}
+
+class DeviceApiTestContext {
+  constructor(server) {
+    this.server = server
+    this.checkpoint = null
+    this.deviceIds = []
+
+    _.bindAll(this, ['beforeEach', 'afterEach', 'runTest'])
+  }
+
+  beforeEach() {
+    const self = this
+    return run(function* () {
+      self.checkpoint = null
+      self.deviceIds.splice(0)
+    })
+  }
+
+  // Does not currently work to create initial checkpoint in beforeEach
+  // because of how Device Token is setup, so runTest creates an initial
+  // checkpoint and then runs test using db.run
+  runTest(test) {
+    const self = this
+    return run(function* (knex) {
+      const { deviceId, deviceToken } = shared
+      self.deviceIds.splice(0)
+      self.deviceIds.push(deviceId)
+
+      const deviceAuth = `Bearer ${deviceToken}`
+
+      self.checkpoint = `Device API Device Tests ${new Date()}`
+      yield self.server.post(devicePath)
+        .set('Authorization', deviceAuth)
+        .send({ checkpoint: self.checkpoint })
+        .then((res) => {
+          assert.equal(res.status, 200)
+          assert.typeOf(res.body, 'Object')
+        })
+
+      return yield* test(knex)
+    })
+  }
+
+  afterEach() {
+    const self = this
+    return run(function* (knex) {
+      if (self.checkpoint) {
+        yield* deleteTestDataFromCheckpoint(knex, self.checkpoint, self.deviceIds)
+      }
+    })
+  }
 }

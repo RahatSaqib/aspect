@@ -3,56 +3,19 @@ const chai = require('chai')
 const _ = require('lodash')
 const shared = require('../utils/sharedToken')
 const sharedDevice = require('./deviceToken')
-const { deleteTestDataFromCheckpoint } = require('./utils')
-
-const { run } = require('../../src/db')
 
 // This agent refers to PORT where program is runninng.
 const server = supertest.agent('http://localhost:8080')
 const assert = chai.assert
+const context = sharedDevice.createTestContext(server)
 
 describe('Device API routes', () => {
   const devicePath = '/device'
 
-  let testCheckpoint
-  const testDeviceIds = []
+  const runTest = context.runTest
 
-  beforeEach(() => run(function* () {
-    testCheckpoint = null
-    testDeviceIds.splice(0)
-  }))
-
-  function runTest(test) {
-    return run(function* (knex) {
-      const { deviceId, deviceToken } = sharedDevice
-      testDeviceIds.push(deviceId)
-
-      const deviceAuth = `Bearer ${deviceToken}`
-
-      // Does not currently work to create initial checkpoint in beforeEach
-      // because of how Device Token is setup, so runTest creates an initial
-      // checkpoint and then runs test using db.run
-      testCheckpoint = `Device API Device Tests ${new Date()}`
-      yield server.post(devicePath)
-        .set('Authorization', deviceAuth)
-        .send({ checkpoint: testCheckpoint })
-        .then((res) => {
-          assert.equal(res.status, 200)
-          assert.typeOf(res.body, 'Object')
-        })
-
-      return yield* test(knex)
-    })
-  }
-
-  afterEach(() => run(function* (knex) {
-    // cleanup
-    if (testCheckpoint) {
-      yield* deleteTestDataFromCheckpoint(knex, testCheckpoint, testDeviceIds)
-      testCheckpoint = null
-      testDeviceIds.splice(0)
-    }
-  }))
+  beforeEach(context.beforeEach)
+  afterEach(context.afterEach)
 
   describe('configuration', () => {
     let clientPath = '/api/device/configuration'

@@ -3,22 +3,16 @@ const chai = require('chai')
 const _ = require('lodash')
 const shared = require('../utils/sharedToken')
 const sharedDevice = require('./deviceToken')
-const { deleteTestDataFromCheckpoint } = require('./utils')
-
-const { run } = require('../../src/db')
 
 // This agent refers to PORT where program is running.
 const server = supertest.agent('http://localhost:8080')
 const assert = chai.assert
+const context = sharedDevice.createTestContext(server)
 
 const now = new Date()
 
 describe('Device Result API routes', () => {
   describe('admin result updates', () => {
-    let testCheckpoint
-    const testDeviceIds = []
-    const resultIds = []
-
     const clientBasePath = '/api/result'
     shared.checkToken(server, clientBasePath)
     sharedDevice.authenticateUserAndFirstDevice(server, { user: 'admin', type: 'GeneXpert' })
@@ -26,46 +20,13 @@ describe('Device Result API routes', () => {
     const devicePath = '/device'
     const devicePostResultPath = '/device/result'
 
-    beforeEach(() => run(function* () {
-      testCheckpoint = null
-      testDeviceIds.splice(0)
-    }))
+    const runTest = context.runTest
 
-    function runTest(test) {
-      return run(function* (knex) {
-        const { deviceId, deviceToken } = sharedDevice
-        testDeviceIds.push(deviceId)
-
-        const deviceAuth = `Bearer ${deviceToken}`
-
-        // Does not currently work to create initial checkpoint in beforeEach
-        // because of how Device Token is setup, so runTest creates an initial
-        // checkpoint and then runs test using db.run
-        testCheckpoint = `Device API Result Tests ${new Date()}`
-        yield server.post(devicePath)
-          .set('Authorization', deviceAuth)
-          .send({ checkpoint: testCheckpoint })
-          .then((res) => {
-            assert.equal(res.status, 200)
-            assert.typeOf(res.body, 'Object')
-          })
-
-        return yield* test(knex)
-      })
-    }
-
-
-    afterEach(() => run(function* (knex) {
-      // cleanup
-      if (testCheckpoint) {
-        yield* deleteTestDataFromCheckpoint(knex, testCheckpoint, testDeviceIds)
-        testCheckpoint = null
-        testDeviceIds.splice(0)
-      }
-      resultIds.splice(0)
-    }))
+    beforeEach(context.beforeEach)
+    afterEach(context.afterEach)
 
     it('should add and return device results', () => runTest(function* (knex) {
+      const resultIds = []
       const { deviceId } = sharedDevice
       const clientSingleResultPath = `${clientBasePath}/`
       const clientPath = `${clientBasePath}?deviceId=${deviceId}`
@@ -537,6 +498,7 @@ describe('Device Result API routes', () => {
     }))
 
     it('should set default result status and categories', () => runTest(function* (knex) {
+      const resultIds = []
       const deviceAuth = `Bearer ${sharedDevice.deviceToken}`
 
       yield server.post(devicePostResultPath)
@@ -633,6 +595,7 @@ describe('Device Result API routes', () => {
     }))
 
     it('should merge results with same id', () => runTest(function* (knex) {
+      const resultIds = []
       const deviceAuth = `Bearer ${sharedDevice.deviceToken}`
       resultIds.push(`R1${now}`, `R2${now}`)
       const countResults = () => knex('Result').count('id as cnt').then(([{ cnt }]) => cnt)
@@ -816,6 +779,7 @@ describe('Device Result API routes', () => {
     }))
 
     it('should add and return device data', () => runTest(function* (knex) {
+      const resultIds = []
       const configIds = []
       const opIds = []
 
@@ -1372,6 +1336,7 @@ describe('Device Result API routes', () => {
     sharedDevice.authenticateUserAndFirstDevice(server, { user: 'rrt_admin', type: 'm2000' })
 
     it('should honor device role sample origin site', () => runTest(function* (knex) {
+      const resultIds = []
       const deviceAuth = `Bearer ${sharedDevice.deviceToken}`
       const devicePath = '/device'
 
@@ -1382,7 +1347,7 @@ describe('Device Result API routes', () => {
         .where('dt.name', 'RRT')
         .orderBy('s.externalId')
         .select('d.*')
-      testDeviceIds.push(device1315.id, device1723.id)
+      context.deviceIds.push(device1315.id, device1723.id)
 
       const device1315Key = yield sharedDevice.getApiKey(server, device1315.id)
       const device1723Key = yield sharedDevice.getApiKey(server, device1723.id)

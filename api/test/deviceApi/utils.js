@@ -1,16 +1,16 @@
 const _ = require('lodash')
 
-function* deleteTestDataFromCheckpoint(knex, testCheckpoint, testDeviceIds) {
+function* deleteTestDataFromCheckpoint(knex, checkpoint, deviceIds) {
   const { id: minDeviceLogUpdateId } = yield knex('DeviceLogUpdate as dlu')
     .innerJoin('DeviceLog as dl', 'dl.id', 'dlu.deviceLogId')
-    .where('dl.checkpoint', testCheckpoint)
+    .where('dl.checkpoint', checkpoint)
     .orderBy('dlu.id', 'desc')
     .first('dlu.id as id')
 
   const deviceUpdates = yield knex('DeviceLogUpdate as dlu')
     .innerJoin('DeviceLog as dl', 'dl.id', 'dlu.deviceLogId')
     .where('dlu.id', '>=', minDeviceLogUpdateId)
-    .whereIn('dl.deviceId', testDeviceIds)
+    .whereIn('dl.deviceId', deviceIds)
     .select(
       'dlu.id', 'dlu.deviceLogId', 'dlu.resultId',
       'dlu.deviceConfigurationId', 'dlu.deviceOperationId')
@@ -20,7 +20,7 @@ function* deleteTestDataFromCheckpoint(knex, testCheckpoint, testDeviceIds) {
   const configIds = _.uniq(_.map(deviceUpdates, 'deviceConfigurationId'))
   const opIds = _.uniq(_.map(deviceUpdates, 'deviceOperationId'))
 
-  for (const deviceId of testDeviceIds) {
+  for (const deviceId of deviceIds) {
     yield knex('Device')
       .where({ id: deviceId })
       .update({
