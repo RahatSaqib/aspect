@@ -78,6 +78,10 @@ export class InventoryItemsList extends PureComponent {
       siteName: true })
   }
 
+  componentDidMount() {
+    this.handleFetch()
+  }
+
   componentWillReceiveProps(nextProps) {
     if (this.props.listFilter !== nextProps.listFilter) {
       this.handleFetch()

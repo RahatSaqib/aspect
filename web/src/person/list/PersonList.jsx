@@ -61,6 +61,10 @@ export class PersonList extends PureComponent {
     configureListFilter({ geography: true, contactNameOrEmail: true })
   }
 
+  componentDidMount() {
+    this.handleFetch()
+  }
+
   componentWillReceiveProps(nextProps) {
     if (this.props.listFilter !== nextProps.listFilter) {
       this.handleFetch()

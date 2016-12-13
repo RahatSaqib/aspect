@@ -92,6 +92,10 @@ export class RouterList extends PureComponent {
     configureListFilter(this.getRouterConfigRoute().routerConfig.filterConfig)
   }
 
+  componentDidMount() {
+    this.handleFetch()
+  }
+
   componentWillReceiveProps(nextProps) {
     if (this.props.listFilter !== nextProps.listFilter) {
       this.handleFetch()

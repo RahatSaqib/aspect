@@ -55,6 +55,10 @@ export class NotificationList extends PureComponent {
     configureListFilter({ contactNameOrEmail: true })
   }
 
+  componentDidMount() {
+    this.handleFetch()
+  }
+
   componentWillReceiveProps(nextProps) {
     if (this.props.listFilter !== nextProps.listFilter) {
       this.handleFetch()

@@ -104,6 +104,10 @@ export class DeviceList extends PureComponent {
     configureListFilter(this.getDeviceConfigRoute().deviceConfig.filterConfig)
   }
 
+  componentDidMount() {
+    this.handleFetch()
+  }
+
   componentWillReceiveProps(nextProps) {
     if (this.props.listFilter !== nextProps.listFilter) {
       this.handleFetch()

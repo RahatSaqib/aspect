@@ -61,6 +61,10 @@ export class SiteList extends PureComponent {
     configureListFilter({ geography: true, date: true, deviceName: true, siteName: true })
   }
 
+  componentDidMount() {
+    this.handleFetch()
+  }
+
   componentWillReceiveProps(nextProps) {
     if (this.props.listFilter !== nextProps.listFilter) {
       this.handleFetch()
