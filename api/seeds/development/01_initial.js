@@ -1071,7 +1071,7 @@ function* seed(knex) {
   // Results section
 
   // TB results:
-  let possibleResults = [{ resultText: 'Not Detected', category1: resultCategoryDetectedId, category2: null },
+  let possibleResults = [{ resultText: 'Not Detected', category1: resultCategoryNotDetectedId, category2: null },
                           { resultText: 'MTB Detected, Rif Resistance Not Detected', category1: resultCategoryDetectedId, category2: resultCategoryNotDetectedId },
                           { resultText: 'MTB Detected, Rif Indeterminate', category1: resultCategoryDetectedId, category2: resultCategoryIndeterminateId },
                           { resultText: 'ERROR', category1: resultCategoryErrorId, category2: null },
