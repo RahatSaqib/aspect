@@ -33,7 +33,7 @@ const resultPayload = {
   id: Joi.string().allow('', null).description(
     'Identifies this result to allow future updates.  If the ID is specified by the client,'
     + ' multiple result updates with the same ID will merge into the same result.  If no ID is'
-    + ' specified, a new result is creating with every POST.'),
+    + ' specified, a new result is created with every POST.'),
   checkpoint: Joi.string().allow('', null).description('The client checkpoint'),
   assay: Joi.object().keys({
     id: Joi.string().required().description(
