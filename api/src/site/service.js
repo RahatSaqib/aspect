@@ -108,8 +108,25 @@ function* updateSite(request) {
   return yield* showSite(request)
 }
 
+function* listSitesForSelectList(request) {
+  const { auth } = request
+
+  // get data constraints
+  const dataConstraints = yield getConstraints(auth.credentials)
+
+  const sites = yield knex('Site as s')
+    .leftOuterJoin('State as st', 's.stateId', 'st.id')
+    .leftOuterJoin('Lga as l', 's.lgaId', 'l.id')
+    .modify(addConstraints, dataConstraints, { site: 's', state: 'st', lga: 'l' })
+    .orderBy(['s.name'], 'asc')
+    .select('s.id', 's.name')
+
+  return { ok: true, data: sites }
+}
+
 module.exports = {
   listSites,
   showSite,
-  updateSite
+  updateSite,
+  listSitesForSelectList
 }
