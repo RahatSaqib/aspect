@@ -482,6 +482,7 @@ function* up(knex) {
   yield knex.schema.createTable('ConsumableReason', (consumableReason) => {
     consumableReason.increments('id')
     consumableReason.string('name').notNullable()
+    consumableReason.string('i18nKey')
     consumableReason.boolean('decrease').notNullable().defaultTo(0)
     consumableReason.charset('utf8')
   })

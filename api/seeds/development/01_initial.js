@@ -795,21 +795,25 @@ function* seed(knex) {
 
   yield knex('ConsumableReason').insert({
     name: 'Test Conducted',
+    i18nKey: 'ConsumableReason_TestConducted',
     decrease: 1
   })
 
   yield knex('ConsumableReason').insert({
     name: 'Expired',
+    i18nKey: 'ConsumableReason_Expired',
     decrease: 1
   })
 
   yield knex('ConsumableReason').insert({
     name: 'Stolen',
+    i18nKey: 'ConsumableReason_Stolen',
     decrease: 1
   })
 
   yield knex('ConsumableReason').insert({
     name: 'Lost',
+    i18nKey: 'ConsumableReason_Lost',
     decrease: 1
   })
 

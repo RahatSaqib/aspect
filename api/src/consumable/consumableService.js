@@ -53,7 +53,7 @@ function* listConsumableReasons(request) {
   // get rows
   const getItems = consumableReasonQuery.clone()
     .modify(sortPageParams, query, 'name')
-    .select(['id', 'name', 'decrease'])
+    .select(['id', 'name', 'i18nKey', 'decrease'])
 
   const [{ count: total }, data] = yield Promise.all([getCount, getItems])
 
