@@ -1,61 +1,52 @@
-.DateRangeSelector {
-  display: inline-block;
-  width: auto;
-  min-height: 5em;
-}
-
+.DateRangeSelector__DropDownList,
 .DateRangeSelector__RangeModeSelector {
-  text-align: right;
-  margin-right: -0.9em;
-}
-
-.DateRangeSelector__ControlContainer {
-  display: inline-block;
-  width: auto;
-}
-
-.DateRangeSelector__DatePicker {
-  display: inline-block;
-  width: auto;
-}
-
-.DateRangeSelector__DropDownList {
-  display: inline-block;
   vertical-align: bottom;
-  margin-top: -1em;
 }
 
-.DateRangeSelector__ClearButtonContainer {
-  text-align: right;
-  margin-right: -0.9em;
+.DateRangeSelector__RangeModeSelector div div div {
+  text-transform: uppercase;
+  font-weight: 500;
+  color: #7cb342 !important;
 }
 
 @media screen and (min-width:48em) {
-  .DateRangeSelector__RangeModeSelector {
-    text-align: left;
+  .DateRangeSelector {
+    overflow: visible;
+    white-space: nowrap;
     display: inline-block;
-    vertical-align: bottom;
-    margin-right: 0;
   }
 
-  .DateRangeSelector__ControlContainer {
-    height: 5em;
+  .DateRangeSelector__RangeModeSelector {
+    display: inline-block;
+    vertical-align: bottom;
+    width: 5.5em !important;
+    padding-right: 1em;
+  }
+
+  .DateRangeSelector__RangeModeSelector div hr {
+    width: 5.5em !important;
+  }
+
+  .DateRangeSelector__RangeModeSelector div div svg {
+    position: absolute;
+    left: 4.1em
+  }
+
+  .DateRangeSelector__DatePickerContainer {
+    display: inline-block;
   }
 
   .DateRangeSelector__DatePicker {
-    margin-top: 2em;
+    display: inline-block;
+    padding-right: 1em;
   }
 
   .DateRangeSelector__DropDownList {
-    margin-bottom: -3.7em;
-    margin-top: 0;
-  }
-
-  .DateRangeSelector__ClearButtonContainer {
     display: inline-block;
-    text-align: left;
+    padding-right: 1em;
     vertical-align: bottom;
-    margin-right: 0;
-    margin-bottom: -0.5em;
+    text-overflow: ellipsis;
+    overflow: hidden;
+    white-space: pre;
   }
 }

@@ -64,6 +64,10 @@ const messages = defineMessages({
     id: 'shared.ListFilter.enterSiteName',
     defaultMessage: 'Enter site name...'
   },
+  date: {
+    id: 'shared.ListFilter.date',
+    defaultMessage: 'Date'
+  },
   deviceName: {
     id: 'shared.ListFilter.deviceName',
     defaultMessage: 'Device'
@@ -155,7 +159,8 @@ export class ListFilter extends PureComponent {
       contactNameOrEmail: PropTypes.bool,
       consumable: PropTypes.bool
     }).isRequired,
-    subject: PropTypes.string
+    subject: PropTypes.string,
+    dateFilterLabel: PropTypes.string
   }
 
   state = {
@@ -238,7 +243,7 @@ export class ListFilter extends PureComponent {
   }
 
   render() {
-    const { filter, config, subject, intl: { formatMessage } } = this.props
+    const { filter, config, subject, dateFilterLabel, intl: { formatMessage } } = this.props
     const { expanded } = this.state
     const noFiltersMessage = `${formatMessage(messages.noFilters)} ${subject ? subject.toLowerCase() : ''}`
     const filterMessage = _.every(filter, f => !f) ? noFiltersMessage : `\`${JSON.stringify(filter)}\``
@@ -382,8 +387,7 @@ export class ListFilter extends PureComponent {
                 <div className={styles.Section__Content}>
                   <div className={styles.Section__Control}>
                     <DateRangeSelector
-                      clearButtonTooltip={formatMessage(messages.clear)}
-                      clearButtonStyle={{ verticalAlign: 'bottom' }}
+                      floatingLabelText={dateFilterLabel || formatMessage(messages.date)}
                       onChangeDate={this.handleChangeDate}
                       minDate={filter.minDate}
                       maxDate={filter.maxDate}

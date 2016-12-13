@@ -3,7 +3,6 @@ import { assert } from 'chai'
 import { shallow } from 'enzyme'
 import sinon from 'sinon'
 import DatePicker from 'material-ui/DatePicker'
-import IconButton from 'material-ui/IconButton'
 import MenuItem from 'material-ui/MenuItem'
 import ForkedSelectField from '../../components/forkedMaterialUi/ForkedSelectField'
 import { DateRangeSelector } from './DateRangeSelector'
@@ -16,7 +15,8 @@ describe('DateRangeSelector Component', () => {
     },
     clearButtonTooltip: 'Clear',
     clearButtonStyle: {},
-    onChangeDate: sinon.spy()
+    onChangeDate: sinon.spy(),
+    floatingLabelText: 'Date Range'
   }
   let DateRangeSelectorWrapper
 
@@ -29,7 +29,7 @@ describe('DateRangeSelector Component', () => {
       DateRangeSelectorWrapper.setState({
         rangeMode: 'custom'
       })
-      assert.isNotOk(DateRangeSelectorWrapper.find(ForkedSelectField).length)
+      assert.equal(DateRangeSelectorWrapper.find(ForkedSelectField).length, 1)
       assert.equal(DateRangeSelectorWrapper.find(DatePicker).length, 2)
     })
 
@@ -592,7 +592,8 @@ describe('DateRangeSelector Component', () => {
           DateRangeSelectorWrapper.setState({
             rangeMode: 'day'
           })
-          const dropDownListItems = DateRangeSelectorWrapper.find(ForkedSelectField).find(MenuItem)
+          const dropDownListItems = DateRangeSelectorWrapper.find(ForkedSelectField)
+            .at(1).find(MenuItem)
           assert.equal(dropDownListItems.length, 8)
           const firstItemInDropDownList = dropDownListItems.at(0)
           assert.deepEqual(firstItemInDropDownList.props(), {
@@ -648,7 +649,8 @@ describe('DateRangeSelector Component', () => {
           DateRangeSelectorWrapper.setState({
             rangeMode: 'week'
           })
-          const dropDownListItems = DateRangeSelectorWrapper.find(ForkedSelectField).find(MenuItem)
+          const dropDownListItems = DateRangeSelectorWrapper.find(ForkedSelectField)
+            .at(1).find(MenuItem)
           assert.equal(dropDownListItems.length, 9)
           const firstItemInDropDownList = dropDownListItems.at(0)
           assert.deepEqual(firstItemInDropDownList.props(), {
@@ -710,7 +712,8 @@ describe('DateRangeSelector Component', () => {
           DateRangeSelectorWrapper.setState({
             rangeMode: 'month'
           })
-          const dropDownListItems = DateRangeSelectorWrapper.find(ForkedSelectField).find(MenuItem)
+          const dropDownListItems = DateRangeSelectorWrapper.find(ForkedSelectField)
+            .at(1).find(MenuItem)
           assert.equal(dropDownListItems.length, 13)
           const firstItemInDropDownList = dropDownListItems.at(0)
           assert.deepEqual(firstItemInDropDownList.props(), {
@@ -796,7 +799,8 @@ describe('DateRangeSelector Component', () => {
           DateRangeSelectorWrapper.setState({
             rangeMode: 'quarter'
           })
-          const dropDownListItems = DateRangeSelectorWrapper.find(ForkedSelectField).find(MenuItem)
+          const dropDownListItems = DateRangeSelectorWrapper.find(ForkedSelectField)
+            .at(1).find(MenuItem)
           assert.equal(dropDownListItems.length, 12)
           const firstItemInDropDownList = dropDownListItems.at(0)
           assert.deepEqual(firstItemInDropDownList.props(), {
@@ -876,7 +880,8 @@ describe('DateRangeSelector Component', () => {
           DateRangeSelectorWrapper.setState({
             rangeMode: 'year'
           })
-          const dropDownListItems = DateRangeSelectorWrapper.find(ForkedSelectField).find(MenuItem)
+          const dropDownListItems = DateRangeSelectorWrapper.find(ForkedSelectField)
+            .at(1).find(MenuItem)
           assert.equal(dropDownListItems.length, 7)
           const firstItemInDropDownList = dropDownListItems.at(0)
           assert.deepEqual(firstItemInDropDownList.props(), {
@@ -926,7 +931,8 @@ describe('DateRangeSelector Component', () => {
           DateRangeSelectorWrapper.setState({
             rangeMode: 'day'
           })
-          DateRangeSelectorWrapper.find(ForkedSelectField).simulate('change', undefined, undefined, expectedDateTest.twoDaysAgo)
+          DateRangeSelectorWrapper.find(ForkedSelectField).at(1)
+            .simulate('change', undefined, undefined, expectedDateTest.twoDaysAgo)
           assert.deepEqual(props.onChangeDate.lastCall.args[0], {
             minDate: expectedDateTest.twoDaysAgo.minDate.toJSON(),
             maxDate: expectedDateTest.twoDaysAgo.maxDate.toJSON()
@@ -934,40 +940,14 @@ describe('DateRangeSelector Component', () => {
           DateRangeSelectorWrapper.setState({
             rangeMode: 'week'
           })
-          DateRangeSelectorWrapper.find(ForkedSelectField).simulate('change', undefined, undefined, expectedDateTest.lastWeek)
+          DateRangeSelectorWrapper.find(ForkedSelectField)
+            .at(1).simulate('change', undefined, undefined, expectedDateTest.lastWeek)
           assert.deepEqual(props.onChangeDate.lastCall.args[0], {
             minDate: expectedDateTest.lastWeek.minDate.toJSON(),
             maxDate: expectedDateTest.lastWeek.maxDate.toJSON()
           })
         })
       })
-    })
-  })
-
-  describe('Clear Button', () => {
-    it('should only be visible when a date is selected', () => {
-      assert.isNotOk(DateRangeSelectorWrapper.find(IconButton).length)
-      const propsWithDates = {
-        ...props,
-        minDate: (new Date(2016, 10, 16)).toJSON(),
-        maxDate: (new Date((new Date(2016, 10, 17)).getTime() - 1)).toJSON()
-      }
-      DateRangeSelectorWrapper = shallow(<DateRangeSelector {...propsWithDates} />)
-      assert.isOk(DateRangeSelectorWrapper.find(IconButton).length)
-      const propsWithMinDate = {
-        ...props,
-        minDate: (new Date(2016, 10, 16)).toJSON()
-      }
-      DateRangeSelectorWrapper = shallow(<DateRangeSelector {...propsWithMinDate} />)
-      assert.isOk(DateRangeSelectorWrapper.find(IconButton).length)
-      const propsWithMaxDate = {
-        ...props,
-        maxDate: (new Date((new Date(2016, 10, 17)).getTime() - 1)).toJSON()
-      }
-      DateRangeSelectorWrapper = shallow(<DateRangeSelector {...propsWithMaxDate} />)
-      assert.isOk(DateRangeSelectorWrapper.find(IconButton).length)
-      DateRangeSelectorWrapper = shallow(<DateRangeSelector {...props} />)
-      assert.isNotOk(DateRangeSelectorWrapper.find(IconButton).length)
     })
   })
 })
