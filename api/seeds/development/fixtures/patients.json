@@ -1,6 +1,6 @@
 [
 	{
-		"id": "40662717-9",
+		"patientIdNumber": "40662717-9",
 		"name": "Susan Curtis",
 		"street": "Ap #906-7907 Auctor Road",
 		"city": "Bauchi",
@@ -9,10 +9,10 @@
 		"phone": "1-369-429-3917",
 		"age": 35,
 		"gender": "",
-		"hivStatus": ""
+		"hiv": ""
 	},
 	{
-		"id": "27200823-K",
+		"patientIdNumber": "27200823-K",
 		"name": "Chadwick Henry",
 		"street": "P.O. Box 452, 5067 Eleifend Street",
 		"city": "Maringá",
@@ -21,10 +21,10 @@
 		"phone": "407-3736",
 		"age": 2,
 		"gender": "Female",
-		"hivStatus": "Unknown"
+		"hiv": "Unknown"
 	},
 	{
-		"id": "21481368-8",
+		"patientIdNumber": "21481368-8",
 		"name": "Raja Johnston",
 		"street": "319-7608 Nostra, St.",
 		"city": "Lens",
@@ -33,10 +33,10 @@
 		"phone": "1-865-855-8848",
 		"age": 16,
 		"gender": "",
-		"hivStatus": ""
+		"hiv": ""
 	},
 	{
-		"id": "34396818-3",
+		"patientIdNumber": "34396818-3",
 		"name": "Thor Johns",
 		"street": "8759 Risus. St.",
 		"city": "Vetlanda",
@@ -45,10 +45,10 @@
 		"phone": "1-520-290-9900",
 		"age": 76,
 		"gender": "",
-		"hivStatus": ""
+		"hiv": ""
 	},
 	{
-		"id": "10853807-4",
+		"patientIdNumber": "10853807-4",
 		"name": "Ila Wilkinson",
 		"street": "748-8440 Vitae, Av.",
 		"city": "La Cisterna",
@@ -57,10 +57,10 @@
 		"phone": "1-315-746-5420",
 		"age": 53,
 		"gender": "",
-		"hivStatus": "Positive"
+		"hiv": "Positive"
 	},
 	{
-		"id": "26526138-8",
+		"patientIdNumber": "26526138-8",
 		"name": "Candice Calderon",
 		"street": "317 Eu Road",
 		"city": "San José de Alajuela",
@@ -69,10 +69,10 @@
 		"phone": "1-106-602-6180",
 		"age": 78,
 		"gender": "",
-		"hivStatus": "Unknown"
+		"hiv": "Unknown"
 	},
 	{
-		"id": "9897814-3",
+		"patientIdNumber": "9897814-3",
 		"name": "Idola Mckinney",
 		"street": "302-8142 Purus. Av.",
 		"city": "Chañaral",
@@ -81,10 +81,10 @@
 		"phone": "1-210-940-6886",
 		"age": 88,
 		"gender": "",
-		"hivStatus": ""
+		"hiv": ""
 	},
 	{
-		"id": "26175581-5",
+		"patientIdNumber": "26175581-5",
 		"name": "Maxwell Day",
 		"street": "325-6558 Diam Ave",
 		"city": "Liverpool",
@@ -93,10 +93,10 @@
 		"phone": "591-7268",
 		"age": 36,
 		"gender": "Female",
-		"hivStatus": ""
+		"hiv": ""
 	},
 	{
-		"id": "36352641-1",
+		"patientIdNumber": "36352641-1",
 		"name": "Lydia Mckinney",
 		"street": "773 Vel Rd.",
 		"city": "Columbia",
@@ -105,10 +105,10 @@
 		"phone": "1-762-703-7121",
 		"age": 58,
 		"gender": "",
-		"hivStatus": ""
+		"hiv": ""
 	},
 	{
-		"id": "23450441-K",
+		"patientIdNumber": "23450441-K",
 		"name": "Lois Hester",
 		"street": "992-8626 Non St.",
 		"city": "Kano",
@@ -117,10 +117,10 @@
 		"phone": "1-421-449-5054",
 		"age": 55,
 		"gender": "Female",
-		"hivStatus": ""
+		"hiv": ""
 	},
 	{
-		"id": "7097207-7",
+		"patientIdNumber": "7097207-7",
 		"name": "Lyle Evans",
 		"street": "Ap #109-7929 Sed St.",
 		"city": "Waitara",
@@ -129,10 +129,10 @@
 		"phone": "1-207-836-9569",
 		"age": 76,
 		"gender": "",
-		"hivStatus": "Unknown"
+		"hiv": "Unknown"
 	},
 	{
-		"id": "49826321-6",
+		"patientIdNumber": "49826321-6",
 		"name": "Tobias Owens",
 		"street": "P.O. Box 769, 2603 Non St.",
 		"city": "Igboho",
@@ -141,10 +141,10 @@
 		"phone": "1-210-936-8455",
 		"age": 23,
 		"gender": "Female",
-		"hivStatus": ""
+		"hiv": ""
 	},
 	{
-		"id": "13443208-K",
+		"patientIdNumber": "13443208-K",
 		"name": "Alika Donaldson",
 		"street": "P.O. Box 215, 9812 Egestas. Rd.",
 		"city": "Silvan",
@@ -153,10 +153,10 @@
 		"phone": "1-194-435-3872",
 		"age": 32,
 		"gender": "Female",
-		"hivStatus": ""
+		"hiv": ""
 	},
 	{
-		"id": "46464360-5",
+		"patientIdNumber": "46464360-5",
 		"name": "Liberty Holden",
 		"street": "Ap #303-3210 Eget, Road",
 		"city": "Dublin",
@@ -165,10 +165,10 @@
 		"phone": "886-5876",
 		"age": 41,
 		"gender": "",
-		"hivStatus": "Positive"
+		"hiv": "Positive"
 	},
 	{
-		"id": "28570878-8",
+		"patientIdNumber": "28570878-8",
 		"name": "Hermione Huber",
 		"street": "711-4416 At, Ave",
 		"city": "Vienna",
@@ -177,10 +177,10 @@
 		"phone": "926-2031",
 		"age": 35,
 		"gender": "",
-		"hivStatus": ""
+		"hiv": ""
 	},
 	{
-		"id": "35476473-3",
+		"patientIdNumber": "35476473-3",
 		"name": "Abdul Riley",
 		"street": "368-1573 Cras Ave",
 		"city": "Värnamo",
@@ -189,10 +189,10 @@
 		"phone": "1-879-253-1200",
 		"age": 20,
 		"gender": "Male",
-		"hivStatus": "Positive"
+		"hiv": "Positive"
 	},
 	{
-		"id": "43849695-5",
+		"patientIdNumber": "43849695-5",
 		"name": "Edan Vaughan",
 		"street": "247-5338 Enim. Av.",
 		"city": "Paraíso",
@@ -201,10 +201,10 @@
 		"phone": "1-371-876-8904",
 		"age": 82,
 		"gender": "",
-		"hivStatus": ""
+		"hiv": ""
 	},
 	{
-		"id": "42385106-6",
+		"patientIdNumber": "42385106-6",
 		"name": "Catherine Warren",
 		"street": "2002 Risus St.",
 		"city": "Mackay",
@@ -213,10 +213,10 @@
 		"phone": "119-7839",
 		"age": 91,
 		"gender": "",
-		"hivStatus": ""
+		"hiv": ""
 	},
 	{
-		"id": "36906526-2",
+		"patientIdNumber": "36906526-2",
 		"name": "Ashely Medina",
 		"street": "209-1948 Et Street",
 		"city": "Wrocław",
@@ -225,10 +225,10 @@
 		"phone": "844-4248",
 		"age": 86,
 		"gender": "Female",
-		"hivStatus": ""
+		"hiv": ""
 	},
 	{
-		"id": "39024841-5",
+		"patientIdNumber": "39024841-5",
 		"name": "Acton Carlson",
 		"street": "Ap #360-4282 Ullamcorper, St.",
 		"city": "Santa Luzia",
@@ -237,10 +237,10 @@
 		"phone": "1-787-276-7619",
 		"age": 10,
 		"gender": "",
-		"hivStatus": ""
+		"hiv": ""
 	},
 	{
-		"id": "48606817-5",
+		"patientIdNumber": "48606817-5",
 		"name": "Doris Caldwell",
 		"street": "3350 Nam St.",
 		"city": "Kungälv",
@@ -249,10 +249,10 @@
 		"phone": "256-5492",
 		"age": 70,
 		"gender": "",
-		"hivStatus": "Negative"
+		"hiv": "Negative"
 	},
 	{
-		"id": "11800606-2",
+		"patientIdNumber": "11800606-2",
 		"name": "Kameko Fields",
 		"street": "312-224 Ultrices Rd.",
 		"city": "Rothesay",
@@ -261,10 +261,10 @@
 		"phone": "478-8942",
 		"age": 34,
 		"gender": "Male",
-		"hivStatus": ""
+		"hiv": ""
 	},
 	{
-		"id": "5809258-4",
+		"patientIdNumber": "5809258-4",
 		"name": "Ian Hubbard",
 		"street": "Ap #761-6870 Blandit Road",
 		"city": "Villata",
@@ -273,10 +273,10 @@
 		"phone": "928-1110",
 		"age": 18,
 		"gender": "Female",
-		"hivStatus": ""
+		"hiv": ""
 	},
 	{
-		"id": "6849325-0",
+		"patientIdNumber": "6849325-0",
 		"name": "Kerry Pitts",
 		"street": "Ap #395-6083 Pede, Rd.",
 		"city": "Melton",
@@ -285,10 +285,10 @@
 		"phone": "1-248-719-3578",
 		"age": 71,
 		"gender": "Female",
-		"hivStatus": ""
+		"hiv": ""
 	},
 	{
-		"id": "21286204-5",
+		"patientIdNumber": "21286204-5",
 		"name": "August Mayo",
 		"street": "279-1506 Duis Ave",
 		"city": "Vienna",
@@ -297,10 +297,10 @@
 		"phone": "1-899-715-9081",
 		"age": 69,
 		"gender": "Female",
-		"hivStatus": ""
+		"hiv": ""
 	},
 	{
-		"id": "24173598-2",
+		"patientIdNumber": "24173598-2",
 		"name": "Claire Kelly",
 		"street": "4683 Nullam Av.",
 		"city": "Glendale",
@@ -309,10 +309,10 @@
 		"phone": "1-140-414-7907",
 		"age": 35,
 		"gender": "Female",
-		"hivStatus": "Positive"
+		"hiv": "Positive"
 	},
 	{
-		"id": "48170639-4",
+		"patientIdNumber": "48170639-4",
 		"name": "Dale Flowers",
 		"street": "4520 Feugiat St.",
 		"city": "Kalisz",
@@ -321,10 +321,10 @@
 		"phone": "1-478-566-4602",
 		"age": 48,
 		"gender": "",
-		"hivStatus": "Unknown"
+		"hiv": "Unknown"
 	},
 	{
-		"id": "46881390-4",
+		"patientIdNumber": "46881390-4",
 		"name": "Olympia Steele",
 		"street": "P.O. Box 239, 3634 Sagittis St.",
 		"city": "Tarsus",
@@ -333,10 +333,10 @@
 		"phone": "1-490-869-5572",
 		"age": 31,
 		"gender": "",
-		"hivStatus": ""
+		"hiv": ""
 	},
 	{
-		"id": "10602928-8",
+		"patientIdNumber": "10602928-8",
 		"name": "Addison Neal",
 		"street": "Ap #512-9374 In St.",
 		"city": "Vienna",
@@ -345,10 +345,10 @@
 		"phone": "1-923-478-4972",
 		"age": 79,
 		"gender": "Male",
-		"hivStatus": ""
+		"hiv": ""
 	},
 	{
-		"id": "50943394-1",
+		"patientIdNumber": "50943394-1",
 		"name": "Bruce Mcfadden",
 		"street": "P.O. Box 362, 6611 Suspendisse St.",
 		"city": "Keswick",
@@ -357,10 +357,10 @@
 		"phone": "1-137-351-0801",
 		"age": 67,
 		"gender": "",
-		"hivStatus": ""
+		"hiv": ""
 	},
 	{
-		"id": "27830264-4",
+		"patientIdNumber": "27830264-4",
 		"name": "Imogene Beck",
 		"street": "Ap #687-2316 Tellus. St.",
 		"city": "Lanaken",
@@ -369,10 +369,10 @@
 		"phone": "1-350-577-7062",
 		"age": 91,
 		"gender": "Female",
-		"hivStatus": ""
+		"hiv": ""
 	},
 	{
-		"id": "17900086-5",
+		"patientIdNumber": "17900086-5",
 		"name": "Robert Blackburn",
 		"street": "6339 Et, Rd.",
 		"city": "Acquafondata",
@@ -381,10 +381,10 @@
 		"phone": "670-7787",
 		"age": 71,
 		"gender": "Female",
-		"hivStatus": ""
+		"hiv": ""
 	},
 	{
-		"id": "31841760-1",
+		"patientIdNumber": "31841760-1",
 		"name": "Odysseus Wilkins",
 		"street": "P.O. Box 504, 3226 Et Rd.",
 		"city": "Neufeld an der Leitha",
@@ -393,10 +393,10 @@
 		"phone": "733-5530",
 		"age": 49,
 		"gender": "Male",
-		"hivStatus": "Negative"
+		"hiv": "Negative"
 	},
 	{
-		"id": "38241399-7",
+		"patientIdNumber": "38241399-7",
 		"name": "Charde Miranda",
 		"street": "6155 Mus. Avenue",
 		"city": "Kulti-Barakar",
@@ -405,10 +405,10 @@
 		"phone": "1-174-793-4819",
 		"age": 21,
 		"gender": "",
-		"hivStatus": "Negative"
+		"hiv": "Negative"
 	},
 	{
-		"id": "47183249-9",
+		"patientIdNumber": "47183249-9",
 		"name": "Laurel Kent",
 		"street": "Ap #336-1117 Leo St.",
 		"city": "Oviedo",
@@ -417,10 +417,10 @@
 		"phone": "1-401-227-9869",
 		"age": 81,
 		"gender": "",
-		"hivStatus": "Negative"
+		"hiv": "Negative"
 	},
 	{
-		"id": "21803171-4",
+		"patientIdNumber": "21803171-4",
 		"name": "Kalia Rivers",
 		"street": "P.O. Box 261, 3940 Hendrerit. Road",
 		"city": "Şereflikoçhisar",
@@ -429,10 +429,10 @@
 		"phone": "598-9804",
 		"age": 74,
 		"gender": "",
-		"hivStatus": "Positive"
+		"hiv": "Positive"
 	},
 	{
-		"id": "27520794-2",
+		"patientIdNumber": "27520794-2",
 		"name": "Quamar Warner",
 		"street": "Ap #958-3090 Tincidunt Avenue",
 		"city": "Gdynia",
@@ -441,10 +441,10 @@
 		"phone": "1-985-987-8827",
 		"age": 76,
 		"gender": "Male",
-		"hivStatus": "Unknown"
+		"hiv": "Unknown"
 	},
 	{
-		"id": "10179032-0",
+		"patientIdNumber": "10179032-0",
 		"name": "Jolene Richard",
 		"street": "P.O. Box 213, 8580 Libero. Road",
 		"city": "Amqui",
@@ -453,10 +453,10 @@
 		"phone": "903-6873",
 		"age": 31,
 		"gender": "Male",
-		"hivStatus": "Positive"
+		"hiv": "Positive"
 	},
 	{
-		"id": "45114355-7",
+		"patientIdNumber": "45114355-7",
 		"name": "Silas Wagner",
 		"street": "Ap #422-8306 Habitant Ave",
 		"city": "Ledbury",
@@ -465,10 +465,10 @@
 		"phone": "619-2679",
 		"age": 63,
 		"gender": "Male",
-		"hivStatus": "Negative"
+		"hiv": "Negative"
 	},
 	{
-		"id": "16618017-1",
+		"patientIdNumber": "16618017-1",
 		"name": "Laith Dejesus",
 		"street": "P.O. Box 203, 2005 Tempor Street",
 		"city": "Ramara",
@@ -477,10 +477,10 @@
 		"phone": "1-685-215-1455",
 		"age": 93,
 		"gender": "",
-		"hivStatus": ""
+		"hiv": ""
 	},
 	{
-		"id": "19193172-6",
+		"patientIdNumber": "19193172-6",
 		"name": "Geraldine Frazier",
 		"street": "Ap #277-7142 Dictum Av.",
 		"city": "Istanbul",
@@ -489,10 +489,10 @@
 		"phone": "870-9930",
 		"age": 13,
 		"gender": "Female",
-		"hivStatus": ""
+		"hiv": ""
 	},
 	{
-		"id": "29438477-4",
+		"patientIdNumber": "29438477-4",
 		"name": "Burton Fry",
 		"street": "8879 Metus Av.",
 		"city": "Bauchi",
@@ -501,10 +501,10 @@
 		"phone": "838-3442",
 		"age": 20,
 		"gender": "",
-		"hivStatus": ""
+		"hiv": ""
 	},
 	{
-		"id": "48673148-6",
+		"patientIdNumber": "48673148-6",
 		"name": "Mallory Huff",
 		"street": "Ap #586-2214 Cras Road",
 		"city": "Berlin",
@@ -513,10 +513,10 @@
 		"phone": "1-169-409-2527",
 		"age": 100,
 		"gender": "",
-		"hivStatus": "Unknown"
+		"hiv": "Unknown"
 	},
 	{
-		"id": "18616804-6",
+		"patientIdNumber": "18616804-6",
 		"name": "Justina Witt",
 		"street": "P.O. Box 382, 4150 Arcu. Street",
 		"city": "Christchurch",
@@ -525,10 +525,10 @@
 		"phone": "1-912-896-3979",
 		"age": 100,
 		"gender": "",
-		"hivStatus": "Positive"
+		"hiv": "Positive"
 	},
 	{
-		"id": "26083869-5",
+		"patientIdNumber": "26083869-5",
 		"name": "Martina Becker",
 		"street": "890-5784 Amet, Street",
 		"city": "Petrolina",
@@ -537,10 +537,10 @@
 		"phone": "1-790-960-0465",
 		"age": 46,
 		"gender": "",
-		"hivStatus": "Negative"
+		"hiv": "Negative"
 	},
 	{
-		"id": "38605777-K",
+		"patientIdNumber": "38605777-K",
 		"name": "Isaac Wiggins",
 		"street": "Ap #203-3139 Molestie St.",
 		"city": "Doetinchem",
@@ -549,10 +549,10 @@
 		"phone": "1-927-497-9754",
 		"age": 70,
 		"gender": "Female",
-		"hivStatus": ""
+		"hiv": ""
 	},
 	{
-		"id": "11422429-4",
+		"patientIdNumber": "11422429-4",
 		"name": "Irene Greene",
 		"street": "4587 Vestibulum Rd.",
 		"city": "Salt Lake City",
@@ -561,10 +561,10 @@
 		"phone": "338-0691",
 		"age": 25,
 		"gender": "",
-		"hivStatus": "Positive"
+		"hiv": "Positive"
 	},
 	{
-		"id": "12666920-8",
+		"patientIdNumber": "12666920-8",
 		"name": "Beck Kramer",
 		"street": "1012 Diam. Rd.",
 		"city": "Norfolk",
@@ -573,10 +573,10 @@
 		"phone": "1-658-901-9680",
 		"age": 32,
 		"gender": "Female",
-		"hivStatus": "Unknown"
+		"hiv": "Unknown"
 	},
 	{
-		"id": "23116150-3",
+		"patientIdNumber": "23116150-3",
 		"name": "Alma Atkinson",
 		"street": "Ap #465-698 Pellentesque Street",
 		"city": "Lasnigo",
@@ -585,10 +585,10 @@
 		"phone": "945-5544",
 		"age": 78,
 		"gender": "",
-		"hivStatus": "Unknown"
+		"hiv": "Unknown"
 	},
 	{
-		"id": "6831421-6",
+		"patientIdNumber": "6831421-6",
 		"name": "Leila Ferguson",
 		"street": "876-7784 Suspendisse St.",
 		"city": "Albury",
@@ -597,10 +597,10 @@
 		"phone": "1-834-426-7908",
 		"age": 4,
 		"gender": "",
-		"hivStatus": ""
+		"hiv": ""
 	},
 	{
-		"id": "33904755-3",
+		"patientIdNumber": "33904755-3",
 		"name": "Kane Thompson",
 		"street": "P.O. Box 733, 7706 Dictum Ave",
 		"city": "Daly",
@@ -609,10 +609,10 @@
 		"phone": "1-701-430-3447",
 		"age": 11,
 		"gender": "",
-		"hivStatus": ""
+		"hiv": ""
 	},
 	{
-		"id": "31580238-5",
+		"patientIdNumber": "31580238-5",
 		"name": "Damon Fulton",
 		"street": "5094 Morbi Av.",
 		"city": "Wodonga",
@@ -621,10 +621,10 @@
 		"phone": "1-807-645-3143",
 		"age": 63,
 		"gender": "",
-		"hivStatus": ""
+		"hiv": ""
 	},
 	{
-		"id": "22182026-6",
+		"patientIdNumber": "22182026-6",
 		"name": "Garrett Cline",
 		"street": "Ap #243-3192 Erat Avenue",
 		"city": "Çermik",
@@ -633,10 +633,10 @@
 		"phone": "1-253-442-7506",
 		"age": 92,
 		"gender": "Female",
-		"hivStatus": ""
+		"hiv": ""
 	},
 	{
-		"id": "46594196-0",
+		"patientIdNumber": "46594196-0",
 		"name": "Emerald Stewart",
 		"street": "Ap #555-5522 Et St.",
 		"city": "Pointe-du-Lac",
@@ -645,10 +645,10 @@
 		"phone": "1-787-163-6706",
 		"age": 58,
 		"gender": "",
-		"hivStatus": ""
+		"hiv": ""
 	},
 	{
-		"id": "38847315-0",
+		"patientIdNumber": "38847315-0",
 		"name": "Hilda Snow",
 		"street": "P.O. Box 597, 963 Nulla Street",
 		"city": "Pittsburgh",
@@ -657,10 +657,10 @@
 		"phone": "1-245-967-0341",
 		"age": 31,
 		"gender": "Female",
-		"hivStatus": ""
+		"hiv": ""
 	},
 	{
-		"id": "50958649-7",
+		"patientIdNumber": "50958649-7",
 		"name": "Quemby Lott",
 		"street": "699-3897 Eros Road",
 		"city": "Wanneroo",
@@ -669,10 +669,10 @@
 		"phone": "1-946-619-2434",
 		"age": 80,
 		"gender": "",
-		"hivStatus": "Positive"
+		"hiv": "Positive"
 	},
 	{
-		"id": "19602417-4",
+		"patientIdNumber": "19602417-4",
 		"name": "Savannah Shields",
 		"street": "3346 Duis St.",
 		"city": "Wommelgem",
@@ -681,10 +681,10 @@
 		"phone": "1-449-919-1614",
 		"age": 95,
 		"gender": "",
-		"hivStatus": "Negative"
+		"hiv": "Negative"
 	},
 	{
-		"id": "17172801-0",
+		"patientIdNumber": "17172801-0",
 		"name": "Kessie Garner",
 		"street": "Ap #342-800 Molestie St.",
 		"city": "Torchiarolo",
@@ -693,10 +693,10 @@
 		"phone": "515-1192",
 		"age": 39,
 		"gender": "Male",
-		"hivStatus": "Negative"
+		"hiv": "Negative"
 	},
 	{
-		"id": "17744641-6",
+		"patientIdNumber": "17744641-6",
 		"name": "Lana Malone",
 		"street": "P.O. Box 120, 3944 Mattis. Rd.",
 		"city": "Beausejour",
@@ -705,10 +705,10 @@
 		"phone": "1-805-805-1310",
 		"age": 88,
 		"gender": "",
-		"hivStatus": ""
+		"hiv": ""
 	},
 	{
-		"id": "11685574-7",
+		"patientIdNumber": "11685574-7",
 		"name": "Demetrius Head",
 		"street": "3926 Luctus Rd.",
 		"city": "Sale",
@@ -717,10 +717,10 @@
 		"phone": "1-702-512-4986",
 		"age": 64,
 		"gender": "Male",
-		"hivStatus": ""
+		"hiv": ""
 	},
 	{
-		"id": "32391211-4",
+		"patientIdNumber": "32391211-4",
 		"name": "Zoe Berry",
 		"street": "216 Sem, Street",
 		"city": "West Jordan",
@@ -729,10 +729,10 @@
 		"phone": "165-0888",
 		"age": 58,
 		"gender": "",
-		"hivStatus": "Positive"
+		"hiv": "Positive"
 	},
 	{
-		"id": "19222641-4",
+		"patientIdNumber": "19222641-4",
 		"name": "Idona Larsen",
 		"street": "P.O. Box 132, 9669 Mauris Street",
 		"city": "Broken Hill",
@@ -741,10 +741,10 @@
 		"phone": "1-781-179-9834",
 		"age": 27,
 		"gender": "Female",
-		"hivStatus": "Negative"
+		"hiv": "Negative"
 	},
 	{
-		"id": "40396835-8",
+		"patientIdNumber": "40396835-8",
 		"name": "Kenneth Swanson",
 		"street": "7534 Fusce Av.",
 		"city": "Montes Claros",
@@ -753,10 +753,10 @@
 		"phone": "891-2638",
 		"age": 69,
 		"gender": "Male",
-		"hivStatus": "Negative"
+		"hiv": "Negative"
 	},
 	{
-		"id": "41776155-1",
+		"patientIdNumber": "41776155-1",
 		"name": "Ira Baker",
 		"street": "170 Mattis Road",
 		"city": "Argenteuil",
@@ -765,10 +765,10 @@
 		"phone": "1-728-437-8138",
 		"age": 14,
 		"gender": "Female",
-		"hivStatus": "Positive"
+		"hiv": "Positive"
 	},
 	{
-		"id": "17209694-8",
+		"patientIdNumber": "17209694-8",
 		"name": "Emily Duncan",
 		"street": "Ap #166-3208 Ligula. St.",
 		"city": "Markham",
@@ -777,10 +777,10 @@
 		"phone": "869-8657",
 		"age": 25,
 		"gender": "",
-		"hivStatus": "Negative"
+		"hiv": "Negative"
 	},
 	{
-		"id": "25697148-8",
+		"patientIdNumber": "25697148-8",
 		"name": "Jaime Smith",
 		"street": "4466 Mi Rd.",
 		"city": "Darwin",
@@ -789,10 +789,10 @@
 		"phone": "1-326-997-6501",
 		"age": 82,
 		"gender": "Male",
-		"hivStatus": "Unknown"
+		"hiv": "Unknown"
 	},
 	{
-		"id": "41648466-K",
+		"patientIdNumber": "41648466-K",
 		"name": "Mariam Compton",
 		"street": "Ap #502-5668 Quis, Avenue",
 		"city": "Geel",
@@ -801,10 +801,10 @@
 		"phone": "559-3749",
 		"age": 83,
 		"gender": "Male",
-		"hivStatus": "Negative"
+		"hiv": "Negative"
 	},
 	{
-		"id": "23232806-1",
+		"patientIdNumber": "23232806-1",
 		"name": "Kamal Alvarado",
 		"street": "5366 Nec, Rd.",
 		"city": "Berlin",
@@ -813,10 +813,10 @@
 		"phone": "742-2020",
 		"age": 11,
 		"gender": "",
-		"hivStatus": ""
+		"hiv": ""
 	},
 	{
-		"id": "44988043-9",
+		"patientIdNumber": "44988043-9",
 		"name": "Scarlet Graves",
 		"street": "4944 Malesuada Rd.",
 		"city": "Blue Mountains",
@@ -825,10 +825,10 @@
 		"phone": "1-411-402-5792",
 		"age": 10,
 		"gender": "Female",
-		"hivStatus": "Negative"
+		"hiv": "Negative"
 	},
 	{
-		"id": "17611186-0",
+		"patientIdNumber": "17611186-0",
 		"name": "Vladimir Singleton",
 		"street": "9787 Eleifend Ave",
 		"city": "Vienna",
@@ -837,10 +837,10 @@
 		"phone": "680-6410",
 		"age": 69,
 		"gender": "Female",
-		"hivStatus": ""
+		"hiv": ""
 	},
 	{
-		"id": "29344662-8",
+		"patientIdNumber": "29344662-8",
 		"name": "Charles Chavez",
 		"street": "8909 Dui Street",
 		"city": "Puri",
@@ -849,10 +849,10 @@
 		"phone": "194-5259",
 		"age": 97,
 		"gender": "Female",
-		"hivStatus": "Unknown"
+		"hiv": "Unknown"
 	},
 	{
-		"id": "8552825-4",
+		"patientIdNumber": "8552825-4",
 		"name": "Velma Pate",
 		"street": "652-9608 Libero Road",
 		"city": "Dublin",
@@ -861,10 +861,10 @@
 		"phone": "431-0983",
 		"age": 14,
 		"gender": "",
-		"hivStatus": "Positive"
+		"hiv": "Positive"
 	},
 	{
-		"id": "35771497-4",
+		"patientIdNumber": "35771497-4",
 		"name": "Ingrid May",
 		"street": "Ap #269-5574 Porttitor Street",
 		"city": "Southend",
@@ -873,10 +873,10 @@
 		"phone": "1-779-412-9613",
 		"age": 45,
 		"gender": "",
-		"hivStatus": ""
+		"hiv": ""
 	},
 	{
-		"id": "41373112-7",
+		"patientIdNumber": "41373112-7",
 		"name": "Yael Riggs",
 		"street": "9898 Arcu. Rd.",
 		"city": "Kalken",
@@ -885,10 +885,10 @@
 		"phone": "955-9328",
 		"age": 35,
 		"gender": "Male",
-		"hivStatus": "Positive"
+		"hiv": "Positive"
 	},
 	{
-		"id": "35772136-9",
+		"patientIdNumber": "35772136-9",
 		"name": "Kaye Thornton",
 		"street": "Ap #345-2408 Erat. Rd.",
 		"city": "Quickborn",
@@ -897,10 +897,10 @@
 		"phone": "1-665-269-2823",
 		"age": 52,
 		"gender": "",
-		"hivStatus": ""
+		"hiv": ""
 	},
 	{
-		"id": "5337958-3",
+		"patientIdNumber": "5337958-3",
 		"name": "Cailin Copeland",
 		"street": "Ap #600-6448 Purus. St.",
 		"city": "Alajuela",
@@ -909,10 +909,10 @@
 		"phone": "908-4158",
 		"age": 53,
 		"gender": "",
-		"hivStatus": "Unknown"
+		"hiv": "Unknown"
 	},
 	{
-		"id": "11168703-K",
+		"patientIdNumber": "11168703-K",
 		"name": "Aurora Dennis",
 		"street": "273-8158 Nulla Street",
 		"city": "Colico",
@@ -921,10 +921,10 @@
 		"phone": "509-9214",
 		"age": 60,
 		"gender": "Female",
-		"hivStatus": "Positive"
+		"hiv": "Positive"
 	},
 	{
-		"id": "32636577-7",
+		"patientIdNumber": "32636577-7",
 		"name": "Carter Hanson",
 		"street": "P.O. Box 786, 3409 Ut St.",
 		"city": "Kearny",
@@ -933,10 +933,10 @@
 		"phone": "313-0967",
 		"age": 81,
 		"gender": "",
-		"hivStatus": ""
+		"hiv": ""
 	},
 	{
-		"id": "25282187-2",
+		"patientIdNumber": "25282187-2",
 		"name": "Hilary Hodge",
 		"street": "Ap #793-9674 Sem Ave",
 		"city": "Radom",
@@ -945,10 +945,10 @@
 		"phone": "391-4418",
 		"age": 61,
 		"gender": "",
-		"hivStatus": ""
+		"hiv": ""
 	},
 	{
-		"id": "50601185-K",
+		"patientIdNumber": "50601185-K",
 		"name": "Eliana Nash",
 		"street": "Ap #913-6001 Sagittis Road",
 		"city": "Caloundra",
@@ -957,10 +957,10 @@
 		"phone": "101-6446",
 		"age": 52,
 		"gender": "",
-		"hivStatus": "Negative"
+		"hiv": "Negative"
 	},
 	{
-		"id": "27887513-K",
+		"patientIdNumber": "27887513-K",
 		"name": "Brennan Rowland",
 		"street": "424-9276 Aliquam, Street",
 		"city": "Berlin",
@@ -969,10 +969,10 @@
 		"phone": "843-8039",
 		"age": 6,
 		"gender": "",
-		"hivStatus": ""
+		"hiv": ""
 	},
 	{
-		"id": "27937092-9",
+		"patientIdNumber": "27937092-9",
 		"name": "Wesley Guy",
 		"street": "3123 Nec, St.",
 		"city": "CŽroux-Mousty",
@@ -981,10 +981,10 @@
 		"phone": "854-3320",
 		"age": 88,
 		"gender": "Male",
-		"hivStatus": "Unknown"
+		"hiv": "Unknown"
 	},
 	{
-		"id": "44043454-1",
+		"patientIdNumber": "44043454-1",
 		"name": "Casey Small",
 		"street": "P.O. Box 890, 9868 Netus St.",
 		"city": "Gladstone",
@@ -993,10 +993,10 @@
 		"phone": "1-957-346-0244",
 		"age": 78,
 		"gender": "",
-		"hivStatus": ""
+		"hiv": ""
 	},
 	{
-		"id": "12301765-K",
+		"patientIdNumber": "12301765-K",
 		"name": "Beck Blake",
 		"street": "727-7548 Sed St.",
 		"city": "Castelló",
@@ -1005,10 +1005,10 @@
 		"phone": "1-404-777-4967",
 		"age": 81,
 		"gender": "Male",
-		"hivStatus": "Negative"
+		"hiv": "Negative"
 	},
 	{
-		"id": "14931966-2",
+		"patientIdNumber": "14931966-2",
 		"name": "Mallory Bonner",
 		"street": "4387 Nec Rd.",
 		"city": "Dublin",
@@ -1017,10 +1017,10 @@
 		"phone": "1-105-943-6758",
 		"age": 100,
 		"gender": "Female",
-		"hivStatus": ""
+		"hiv": ""
 	},
 	{
-		"id": "7954806-5",
+		"patientIdNumber": "7954806-5",
 		"name": "Melvin Whitehead",
 		"street": "Ap #894-4801 Elit. St.",
 		"city": "Sluis",
@@ -1029,10 +1029,10 @@
 		"phone": "1-291-797-3370",
 		"age": 82,
 		"gender": "Male",
-		"hivStatus": ""
+		"hiv": ""
 	},
 	{
-		"id": "41563185-5",
+		"patientIdNumber": "41563185-5",
 		"name": "Darrel Sweet",
 		"street": "P.O. Box 395, 5033 Justo. Street",
 		"city": "Lidingo",
@@ -1041,10 +1041,10 @@
 		"phone": "1-735-814-6044",
 		"age": 57,
 		"gender": "Male",
-		"hivStatus": ""
+		"hiv": ""
 	},
 	{
-		"id": "40493455-4",
+		"patientIdNumber": "40493455-4",
 		"name": "Cadman Le",
 		"street": "7537 Ac Road",
 		"city": "Ełk",
@@ -1053,10 +1053,10 @@
 		"phone": "1-246-106-3465",
 		"age": 58,
 		"gender": "",
-		"hivStatus": "Unknown"
+		"hiv": "Unknown"
 	},
 	{
-		"id": "31124873-1",
+		"patientIdNumber": "31124873-1",
 		"name": "Remedios Fulton",
 		"street": "P.O. Box 922, 6026 Maecenas Rd.",
 		"city": "Kearney",
@@ -1065,10 +1065,10 @@
 		"phone": "119-4032",
 		"age": 55,
 		"gender": "Male",
-		"hivStatus": "Negative"
+		"hiv": "Negative"
 	},
 	{
-		"id": "38026680-6",
+		"patientIdNumber": "38026680-6",
 		"name": "Fuller Patton",
 		"street": "971-9150 Sagittis Road",
 		"city": "Vertou",
@@ -1077,10 +1077,10 @@
 		"phone": "1-600-920-7557",
 		"age": 61,
 		"gender": "Female",
-		"hivStatus": ""
+		"hiv": ""
 	},
 	{
-		"id": "9034930-9",
+		"patientIdNumber": "9034930-9",
 		"name": "Marah Black",
 		"street": "P.O. Box 643, 786 Non St.",
 		"city": "Aubagne",
@@ -1089,10 +1089,10 @@
 		"phone": "1-830-534-9766",
 		"age": 3,
 		"gender": "",
-		"hivStatus": ""
+		"hiv": ""
 	},
 	{
-		"id": "32585406-5",
+		"patientIdNumber": "32585406-5",
 		"name": "Michael Petty",
 		"street": "Ap #412-7314 Scelerisque Rd.",
 		"city": "Lawton",
@@ -1101,10 +1101,10 @@
 		"phone": "713-2053",
 		"age": 44,
 		"gender": "Female",
-		"hivStatus": "Positive"
+		"hiv": "Positive"
 	},
 	{
-		"id": "8388579-3",
+		"patientIdNumber": "8388579-3",
 		"name": "Connor Wright",
 		"street": "Ap #684-7146 Ornare, St.",
 		"city": "Dos Hermanas",
@@ -1113,10 +1113,10 @@
 		"phone": "246-2572",
 		"age": 68,
 		"gender": "",
-		"hivStatus": "Negative"
+		"hiv": "Negative"
 	},
 	{
-		"id": "34303579-9",
+		"patientIdNumber": "34303579-9",
 		"name": "Derek Slater",
 		"street": "P.O. Box 654, 2373 Tempor St.",
 		"city": "Blue Mountains",
@@ -1125,10 +1125,10 @@
 		"phone": "164-3892",
 		"age": 62,
 		"gender": "Female",
-		"hivStatus": "Negative"
+		"hiv": "Negative"
 	},
 	{
-		"id": "8151197-7",
+		"patientIdNumber": "8151197-7",
 		"name": "Beau Bruce",
 		"street": "379-8165 Pede, St.",
 		"city": "Berlin",
@@ -1137,10 +1137,10 @@
 		"phone": "1-965-330-4236",
 		"age": 1,
 		"gender": "Male",
-		"hivStatus": ""
+		"hiv": ""
 	},
 	{
-		"id": "34501873-5",
+		"patientIdNumber": "34501873-5",
 		"name": "Jackson Brewer",
 		"street": "8959 Dolor, Rd.",
 		"city": "Springfield",
@@ -1149,10 +1149,10 @@
 		"phone": "107-1108",
 		"age": 50,
 		"gender": "",
-		"hivStatus": ""
+		"hiv": ""
 	},
 	{
-		"id": "10537653-7",
+		"patientIdNumber": "10537653-7",
 		"name": "Jarrod Petersen",
 		"street": "Ap #640-5143 Nibh Av.",
 		"city": "Queanbeyan",
@@ -1161,10 +1161,10 @@
 		"phone": "1-331-274-5807",
 		"age": 100,
 		"gender": "Female",
-		"hivStatus": ""
+		"hiv": ""
 	},
 	{
-		"id": "45056800-7",
+		"patientIdNumber": "45056800-7",
 		"name": "Davis Hill",
 		"street": "2529 Luctus Road",
 		"city": "Sambalpur",
@@ -1173,10 +1173,10 @@
 		"phone": "340-0410",
 		"age": 28,
 		"gender": "",
-		"hivStatus": ""
+		"hiv": ""
 	},
 	{
-		"id": "14710402-2",
+		"patientIdNumber": "14710402-2",
 		"name": "Valentine Schultz",
 		"street": "P.O. Box 515, 1632 Phasellus St.",
 		"city": "Tranås",
@@ -1185,10 +1185,10 @@
 		"phone": "1-744-473-5962",
 		"age": 82,
 		"gender": "",
-		"hivStatus": ""
+		"hiv": ""
 	},
 	{
-		"id": "48880213-5",
+		"patientIdNumber": "48880213-5",
 		"name": "Madaline Ferguson",
 		"street": "P.O. Box 997, 6323 Dapibus Avenue",
 		"city": "Waiuku",
@@ -1197,6 +1197,6 @@
 		"phone": "548-6131",
 		"age": 58,
 		"gender": "",
-		"hivStatus": ""
+		"hiv": ""
 	}
 ]

@@ -345,7 +345,9 @@ function* seed(knex) {
 
   // define patientData object
   const geneXpertPatientDataSchema = JSON.stringify({
-    id: {
+    // Why not just id, you ask? Because Immutable.JS has
+    // trouble with any field ending in "id"
+    patientIdNumber: {
       title: 'Patient ID',
       type: 'string'
     },
@@ -379,7 +381,7 @@ function* seed(knex) {
     },
     age: {
       title: 'Age (in years)',
-      type: 'int'
+      type: 'number'
     },
     gender: {
       title: 'Gender',

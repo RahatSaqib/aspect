@@ -212,20 +212,44 @@ export class ResultDetail extends PureComponent {
     if (!this.hasResultWithAssay()) {
       return false
     }
-    const { result, intl: { formatNumber } } = this.props
+
+    const { result } = this.props
     const resultDataSchema = result.getIn(['assay', 'resultDataSchema'])
     const resultData = result.get('resultData')
 
-    return resultDataSchema
-      .filter((value, key) => key !== 'resultText' && value.get('type') !== 'object')
+    return this.getSchemaFields(resultDataSchema, resultData)
+  }
+
+  getPatientFields() {
+    if (!this.hasResultWithAssay()) {
+      return false
+    }
+
+    const { result } = this.props
+    const patientDataSchema = result.getIn(['assay', 'patientDataSchema'])
+    const patientData = result.get('patientData')
+
+    return this.getSchemaFields(patientDataSchema, patientData, 'yep')
+  }
+
+  /*
+    Takes a schema definition and JSON data field and
+    returns the data as ReadOnlyFields
+   */
+  getSchemaFields(schema, data) {
+    const { intl: { formatNumber } } = this.props
+
+    return schema
+      .filter((value, key) => key !== 'resultText' && value && value.get('type') !== 'object')
       .entrySeq()
       .map(([key, value]) =>
         (
           <Unit sm="1-2" md="1-2" lg="1-4" key={key}>
+            { /* Todo: i18n */ }
             <ReadOnlyField
               label={value.get('title')}
-              value={resultData.get(key) || ''}
-              format={formatNumber}
+              value={data.get(key) || ''}
+              format={value.get('type') === 'number' ? formatNumber : null}
             />
           </Unit>
       ))
@@ -415,7 +439,7 @@ export class ResultDetail extends PureComponent {
         disabled={checked}
         label="Acknowledged"
         labelStyle={{ marginLeft: -12 }}
-        style={{ marginTop: 16 }}
+        style={{ marginTop: 23 }}
         checked={checked}
         onCheck={this.handleCheck}
       />
@@ -456,6 +480,7 @@ export class ResultDetail extends PureComponent {
     return (
       fields.map(field =>
         <Unit key={field.label} sm="1-2" md="1-3" lg="1-3">
+          { /* Todo: i18n */ }
           <ReadOnlyField label={field.label} value={field.value} />
         </Unit>
       )
@@ -537,24 +562,9 @@ export class ResultDetail extends PureComponent {
           <Card initiallyExpanded>
             <CardHeader title="Patient Information" actAsExpander showExpandableButton />
             <CardText actAsExpander expandable style={{ paddingTop: 0 }}>
-              <Unit sm="1-1" md="1-1" lg="1-2">
-                <ReadOnlyField label={formatMessage(messages.fieldPatientName)} value={'Bill Burton'} />
-              </Unit>
-              <Unit sm="1-1" md="1-1" lg="1-2">
-                <ReadOnlyField label={formatMessage(messages.fieldPatientAddress)} value={'23 Abbey Lane, London, UK'} />
-              </Unit>
-              <Unit sm="1-1" md="1-1" lg="1-2">
-                <ReadOnlyField label={formatMessage(messages.fieldPatientPhone)} value={'+49 7623 998877'} />
-              </Unit>
-              <Unit sm="1-1" md="1-1" lg="1-2">
-                <ReadOnlyField label={formatMessage(messages.fieldPatientAge)} value={24} />
-              </Unit>
-              <Unit sm="1-1" md="1-1" lg="1-2">
-                <ReadOnlyField label={formatMessage(messages.fieldPatientGender)} value={'Male'} />
-              </Unit>
-              <Unit sm="1-1" md="1-1" lg="1-2">
-                <ReadOnlyField label={formatMessage(messages.fieldPatientHivStatus)} value={'Negative'} />
-              </Unit>
+              {
+                this.getPatientFields()
+              }
             </CardText>
           </Card>
           { /* Technical Info */ }

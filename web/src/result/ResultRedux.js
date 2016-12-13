@@ -104,9 +104,9 @@ export function fetchSingleResult(resultId) {
 
     return aspectFetch(`/result/${resultId}`)
       .then(json => dispatch(receiveSingleResult(json.data)))
-      .catch((err) => {
-        dispatch(addError(`Loading a result (${resultId}) failed`, err.message, err))
-      })
+      // .catch((err) => {
+      //   dispatch(addError(`Loading a result (${resultId}) failed`, err.message, err))
+      // })
   }
 }
 
