@@ -6,6 +6,7 @@ import {
   accept,
   recv
 } from 'http-client'
+import { defineMessages } from 'react-intl'
 import { showError } from '../../appNotification/AppNotificationRedux'
 
 import config from '../../config'
@@ -28,7 +29,11 @@ function addAuthHeaderMiddleware(fetch, input, options = {}) {
   if (token) {
     (options.headers || (options.headers = {})).Authorization = `Bearer ${token}`
   }
-  return fetch(input, options)
+  return fetch(input, options).catch(() => {
+    Promise.reject({
+      statusCode: 0
+    })
+  })
 }
 
 // adds authorization and content type headers to a request
@@ -50,8 +55,10 @@ export function getHeaders(json) {
 // using this in a fetch (ajax request) to check if request was successful
 export function handleFetchResponse(options) {
   return (resp) => {
-    const json = resp.json()
-    if (resp.ok) {
+    const json = resp ? resp.json() : Promise.resolve({
+      statusCode: 0
+    })
+    if (resp && resp.ok) {
       return json.then((prevJson) => {
         const nextJson = changeAllIdsToString(prevJson)
         return nextJson
@@ -67,6 +74,17 @@ export function handleFetchResponse(options) {
           errorNotification = errorNotification.default
         }
         const store = require('../../store').default
+        if (err.statusCode === 0) {
+          errorNotification = {
+            ...defineMessages({
+              message: {
+                id: 'errorResponseMessages.disconnected.default.message',
+                defaultMessage: 'Either your computer has been disconnected from the internet or our server has failed to respond.'
+              }
+            }),
+            ...errorNotification
+          }
+        }
         store.dispatch(showError(errorNotification, err))
       }
       return Promise.reject(err)
