@@ -169,10 +169,10 @@ function* addResult(context) {
       payload, 'instrument.serial',
       _.get(existingResult, 'instrumentSerial', null)),
     moduleSerial: _.get(
-      payload, 'module.serial',
+      payload, 'instrument.module.serial',
       _.get(existingResult, 'moduleSerial', null)),
     moduleName: _.get(
-      payload, 'module.name',
+      payload, 'instrument.module.name',
       _.get(existingResult, 'moduleName', null)),
     researchId: _.get(
       payload, 'research.id',
@@ -307,7 +307,10 @@ function rowToResult(row) {
   if (row.startedOn != null) {
     result.startedOn = row.startedOn
   }
-  result.endedOn = row.endedOn
+
+  if (row.endedOn != null) {
+    result.endedOn = row.endedOn
+  }
 
   const consumable = {
     serial: row.consumableSerial,
@@ -321,13 +324,13 @@ function rowToResult(row) {
   }
 
   const instrument = { serial: row.instrumentSerial }
-  if (instrument.serial != null) {
-    result.instrument = instrument
-  }
-
   const module = { name: row.moduleName, serial: row.moduleSerial }
   if (module.name != null || module.serial != null) {
-    result.module = module
+    instrument.module = module
+  }
+
+  if (instrument.serial != null || instrument.module != null) {
+    result.instrument = instrument
   }
 
   const research = { id: row.researchId }
