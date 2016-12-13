@@ -70,24 +70,28 @@ export class NotificationList extends PureComponent {
   }
 
   render() {
-    const { intl, items } = this.props
+    const { intl, items, table } = this.props
     const { formatMessage } = intl
+    const isSettledAndEmpty = !table.loading && items.currentIdList.isEmpty()
+    const columns = [
+      { db: 'type', title: formatMessage(messages.type), hideOnXs: true },
+      { db: 'name', title: formatMessage(messages.name) },
+      { db: 'assignedContacts', title: formatMessage(messages.assignedContacts) }
+    ]
 
     return (
       <div className={styles.Content}>
         <Helmet title={formatMessage(messages.title)} titleTemplate="%s - Aspect" defaultTitle="Aspect" />
         <ListFilterContainer subject={formatMessage(messages.title)} />
-        <EmptyList isEmpty={items.currentIdList.isEmpty()} />
-        <DataTable
-          handleFetch={this.handleFetch}
-          items={this.props.items}
-          table={this.props.table}
-          columns={[
-            { db: 'type', title: formatMessage(messages.type), hideOnXs: true },
-            { db: 'name', title: formatMessage(messages.name) },
-            { db: 'assignedContacts', title: formatMessage(messages.assignedContacts) }
-          ]}
-        />
+        <EmptyList isEmpty={isSettledAndEmpty} />
+        {!isSettledAndEmpty && (
+          <DataTable
+            handleFetch={this.handleFetch}
+            items={this.props.items}
+            table={this.props.table}
+            columns={columns}
+          />
+        )}
       </div>
     )
   }

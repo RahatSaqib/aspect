@@ -92,9 +92,9 @@ export class ResultList extends PureComponent {
   }
 
   render() {
-    const { intl, items } = this.props
+    const { intl, items, table } = this.props
     const { formatMessage, formatDate } = intl
-
+    const isSettledAndEmpty = !table.loading && items.currentIdList.isEmpty()
     const columns = [
       { db: 'endedOn', title: formatMessage(messages.endedOn), format: data => formatDate(data) },
       { db: 'deviceName', title: formatMessage(messages.deviceName) },
@@ -106,17 +106,19 @@ export class ResultList extends PureComponent {
       <div className={styles.Content}>
         <Helmet title={formatMessage(messages.title)} titleTemplate="%s - Aspect" defaultTitle="Aspect" />
         <ListFilterContainer subject={formatMessage(messages.title)} />
-        <EmptyList isEmpty={items.currentIdList.isEmpty()} />
-        <DataTable
-          selectable
-          handleItemIdSelection={this.handleItemIdSelection}
-          handleFetch={this.handleFetch}
-          items={this.props.items}
-          table={this.props.table}
-          columns={columns}
-          intl={intl}
-          messages={messages}
-        />
+        <EmptyList isEmpty={isSettledAndEmpty} />
+        {!isSettledAndEmpty && (
+          <DataTable
+            selectable
+            handleItemIdSelection={this.handleItemIdSelection}
+            handleFetch={this.handleFetch}
+            items={this.props.items}
+            table={this.props.table}
+            columns={columns}
+            intl={intl}
+            messages={messages}
+          />
+        )}
       </div>
     )
   }

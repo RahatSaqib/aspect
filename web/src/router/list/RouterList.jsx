@@ -124,38 +124,42 @@ export class RouterList extends PureComponent {
   }
 
   render() {
-    const { intl, items } = this.props
+    const { intl, items, table } = this.props
     const { formatMessage, formatRelative } = intl
+    const isSettledAndEmpty = !table.loading && items.currentIdList.isEmpty()
+    const columns = [
+      { db: 'name',
+        title: formatMessage(messages.routerName),
+        extraProps: { style: { width: ROUTER_TABLE_NAME_COLUMN_WIDTH } } },
+      { db: 'status',
+        title: formatMessage(messages.status),
+        hideOnXs: true,
+        extraProps: { style: { width: ROUTER_TABLE_STATUS_COLUMN_WIDTH } } },
+      { db: 'createdOn',
+        title: formatMessage(messages.reportingFor),
+        hideOnXs: true,
+        format: data => formatRelative(data) },
+      { db: 'lastSeen',
+        title: formatMessage(messages.lastSeen),
+        hideOnXs: true,
+        format: data => formatRelative(data) }
+    ]
 
     return (
       <div className={styles.Content}>
         <Helmet title={this.getFormattedTitle()} titleTemplate="%s - Aspect" defaultTitle="Aspect" />
         <ListFilterContainer />
-        <EmptyList isEmpty={items.currentIdList.isEmpty()} />
-        <DataTable
-          selectable
-          handleItemIdSelection={this.handleItemIdSelection}
-          handleFetch={this.handleFetch}
-          items={this.props.items}
-          table={this.props.table}
-          columns={[
-            { db: 'name',
-              title: formatMessage(messages.routerName),
-              extraProps: { style: { width: ROUTER_TABLE_NAME_COLUMN_WIDTH } } },
-            { db: 'status',
-              title: formatMessage(messages.status),
-              hideOnXs: true,
-              extraProps: { style: { width: ROUTER_TABLE_STATUS_COLUMN_WIDTH } } },
-            { db: 'createdOn',
-              title: formatMessage(messages.reportingFor),
-              hideOnXs: true,
-              format: data => formatRelative(data) },
-            { db: 'lastSeen',
-              title: formatMessage(messages.lastSeen),
-              hideOnXs: true,
-              format: data => formatRelative(data) }
-          ]}
-        />
+        <EmptyList isEmpty={isSettledAndEmpty} />
+        {!isSettledAndEmpty && (
+          <DataTable
+            selectable
+            handleItemIdSelection={this.handleItemIdSelection}
+            handleFetch={this.handleFetch}
+            items={this.props.items}
+            table={this.props.table}
+            columns={columns}
+          />
+        )}
       </div>
     )
   }

@@ -99,6 +99,7 @@ export class InventoryItemsList extends PureComponent {
   render() {
     const { intl, items, table } = this.props
     const { formatMessage, formatDate, formatRelative } = intl
+    const isSettledAndEmpty = !table.loading && items.currentIdList.isEmpty()
     const columns = [{
       fieldName: 'siteName',
       headerText: formatMessage(messages.siteName)
@@ -134,15 +135,17 @@ export class InventoryItemsList extends PureComponent {
             style={{ padding: '1em' }}
           />
         </Card>
-        <EmptyList isEmpty={items.currentIdList.isEmpty()} />
-        <GroupedDataTable
-          handleFetch={this.handleFetch}
-          items={items}
-          table={table}
-          columns={columns}
-          intl={intl}
-          messages={messages}
-        />
+        <EmptyList isEmpty={isSettledAndEmpty} />
+        {!isSettledAndEmpty && (
+          <GroupedDataTable
+            handleFetch={this.handleFetch}
+            items={items}
+            table={table}
+            columns={columns}
+            intl={intl}
+            messages={messages}
+          />
+        )}
       </div>
     )
   }

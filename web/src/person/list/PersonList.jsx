@@ -80,27 +80,31 @@ export class PersonList extends PureComponent {
   }
 
   render() {
-    const { intl, items } = this.props
+    const { intl, items, table } = this.props
     const { formatMessage } = intl
+    const isSettledAndEmpty = !table.loading && items.currentIdList.isEmpty()
+    const columns = [
+      { db: 'name', title: formatMessage(messages.personName) },
+      { db: 'level', title: formatMessage(messages.level), hideOnXs: true },
+      { db: 'state', title: formatMessage(messages.state), hideOnXs: true },
+      { db: 'lga', title: formatMessage(messages.lga), hideOnXs: true }
+    ]
 
     return (
       <div className={styles.Content}>
         <Helmet title={formatMessage(messages.title)} titleTemplate="%s - Aspect" defaultTitle="Aspect" />
         <ListFilterContainer subject={formatMessage(messages.title)} />
-        <EmptyList isEmpty={items.currentIdList.isEmpty()} />
-        <DataTable
-          selectable
-          handleItemIdSelection={this.handleItemIdSelection}
-          handleFetch={this.handleFetch}
-          items={this.props.items}
-          table={this.props.table}
-          columns={[
-            { db: 'name', title: formatMessage(messages.personName) },
-            { db: 'level', title: formatMessage(messages.level), hideOnXs: true },
-            { db: 'state', title: formatMessage(messages.state), hideOnXs: true },
-            { db: 'lga', title: formatMessage(messages.lga), hideOnXs: true }
-          ]}
-        />
+        <EmptyList isEmpty={isSettledAndEmpty} />
+        {!isSettledAndEmpty && (
+          <DataTable
+            selectable
+            handleItemIdSelection={this.handleItemIdSelection}
+            handleFetch={this.handleFetch}
+            items={this.props.items}
+            table={this.props.table}
+            columns={columns}
+          />
+        )}
       </div>
     )
   }

@@ -82,27 +82,31 @@ export class ReportList extends PureComponent {
   }
 
   render() {
-    const { intl, items } = this.props
+    const { intl, items, table } = this.props
     const { formatMessage } = intl
+    const isSettledAndEmpty = !table.loading && items.currentIdList.isEmpty()
+    const columns = [
+      { db: 'deploymentName', title: formatMessage(messages.deploymentName) },
+      { db: 'moduleSerial', title: formatMessage(messages.moduleSerial) },
+      { db: 'dateOfError', title: formatMessage(messages.dateOfError) },
+      { db: 'error', title: formatMessage(messages.error) },
+      { db: 'totalTestsRun', title: formatMessage(messages.totalTestsRun) },
+      { db: 'totalErrors', title: formatMessage(messages.totalErrors) }
+    ]
 
     return (
       <div className={styles.Content}>
         <Helmet title={formatMessage(messages.title)} titleTemplate="%s - Aspect" defaultTitle="Aspect" />
         <ListFilterContainer subject={formatMessage(messages.title)} />
-        <EmptyList isEmpty={items.currentIdList.isEmpty()} />
-        <DataTable
-          handleFetch={this.handleFetch}
-          items={this.props.items}
-          table={this.props.table}
-          columns={[
-            { db: 'deploymentName', title: formatMessage(messages.deploymentName) },
-            { db: 'moduleSerial', title: formatMessage(messages.moduleSerial) },
-            { db: 'dateOfError', title: formatMessage(messages.dateOfError) },
-            { db: 'error', title: formatMessage(messages.error) },
-            { db: 'totalTestsRun', title: formatMessage(messages.totalTestsRun) },
-            { db: 'totalErrors', title: formatMessage(messages.totalErrors) }
-          ]}
-        />
+        <EmptyList isEmpty={isSettledAndEmpty} />
+        {!isSettledAndEmpty && (
+          <DataTable
+            handleFetch={this.handleFetch}
+            items={this.props.items}
+            table={this.props.table}
+            columns={columns}
+          />
+        )}
       </div>
     )
   }
