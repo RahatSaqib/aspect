@@ -185,12 +185,11 @@ describe('Device Result API routes', () => {
 
           const lastResult = _.find(res.body.result, { id: resultIds[0] })
           assert.typeOf(lastResult, 'Object')
-          assert.property(lastResult, 'endedOn')
           assert.property(lastResult.sample, 'id')
           assert.property(lastResult.sample.originSite, 'id')
           assert.equal(lastResult.sample.originSite.id, result1SampleSite.externalId)
 
-          assert.deepEqual(_.omit(lastResult, 'endedOn', 'sample'), {
+          assert.deepEqual(_.omit(lastResult, 'sample'), {
             id: resultIds[0],
             data: { a: 'b' },
             assay: { id: 'HivVl' },
@@ -1464,12 +1463,11 @@ describe('Device Result API routes', () => {
 
           const lastResult = _.find(res.body.result, { id: resultIds[0] })
           assert.typeOf(lastResult, 'Object')
-          assert.property(lastResult, 'endedOn')
           assert.property(lastResult.sample, 'id')
           assert.property(lastResult.sample.originSite, 'id')
           assert.equal(lastResult.sample.originSite.id, '1315')
 
-          assert.deepEqual(_.omit(lastResult, 'endedOn', 'sample'), {
+          assert.deepEqual(_.omit(lastResult, 'sample'), {
             id: resultIds[0],
             data: {
               resultText: '454112',
@@ -1491,12 +1489,11 @@ describe('Device Result API routes', () => {
 
           const lastResult = _.find(res.body.result, { id: resultIds[0] })
           assert.typeOf(lastResult, 'Object')
-          assert.property(lastResult, 'endedOn')
           assert.property(lastResult.sample, 'id')
           assert.property(lastResult.sample.originSite, 'id')
           assert.equal(lastResult.sample.originSite.id, '1315')
 
-          assert.deepEqual(_.omit(lastResult, 'endedOn', 'sample'), {
+          assert.deepEqual(_.omit(lastResult, 'sample'), {
             id: resultIds[0],
             data: {
               resultText: '454112',
@@ -1548,12 +1545,11 @@ describe('Device Result API routes', () => {
 
           const lastResult = _.find(res.body.result, { id: resultIds[1] })
           assert.typeOf(lastResult, 'Object')
-          assert.property(lastResult, 'endedOn')
           assert.property(lastResult.sample, 'id')
           assert.property(lastResult.sample.originSite, 'id')
           assert.equal(lastResult.sample.originSite.id, '1723')
 
-          assert.deepEqual(_.omit(lastResult, 'endedOn', 'sample'), {
+          assert.deepEqual(_.omit(lastResult, 'sample'), {
             id: resultIds[1],
             data: {
               resultText: '154112',
@@ -1575,12 +1571,11 @@ describe('Device Result API routes', () => {
 
           const lastResult = _.find(res.body.result, { id: resultIds[1] })
           assert.typeOf(lastResult, 'Object')
-          assert.property(lastResult, 'endedOn')
           assert.property(lastResult.sample, 'id')
           assert.property(lastResult.sample.originSite, 'id')
           assert.equal(lastResult.sample.originSite.id, '1723')
 
-          assert.deepEqual(_.omit(lastResult, 'endedOn', 'sample'), {
+          assert.deepEqual(_.omit(lastResult, 'sample'), {
             id: resultIds[1],
             data: {
               resultText: '154112',
@@ -1637,12 +1632,11 @@ describe('Device Result API routes', () => {
 
           const lastResult = _.find(res.body.result, { id: resultIds[1] })
           assert.typeOf(lastResult, 'Object')
-          assert.property(lastResult, 'endedOn')
           assert.property(lastResult.sample, 'id')
           assert.property(lastResult.sample.originSite, 'id')
           assert.equal(lastResult.sample.originSite.id, '1723')
 
-          assert.deepEqual(_.omit(lastResult, 'endedOn', 'sample'), {
+          assert.deepEqual(_.omit(lastResult, 'sample'), {
             id: resultIds[1],
             workflow: { status: { id: 'Acknowledged' } },
             data: {
@@ -1664,12 +1658,11 @@ describe('Device Result API routes', () => {
 
           const lastResult = _.find(res.body.result, { id: resultIds[1] })
           assert.typeOf(lastResult, 'Object')
-          assert.property(lastResult, 'endedOn')
           assert.property(lastResult.sample, 'id')
           assert.property(lastResult.sample.originSite, 'id')
           assert.equal(lastResult.sample.originSite.id, '1723')
 
-          assert.deepEqual(_.omit(lastResult, 'endedOn', 'sample'), {
+          assert.deepEqual(_.omit(lastResult, 'sample'), {
             id: resultIds[1],
             data: {
               resultText: '154112',

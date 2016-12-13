@@ -3,6 +3,17 @@ const { deviceApiHandler } = require('./common')
 const { addDeviceData, getDeviceData, addDeviceOperation, addDeviceConfiguration } = require('./device')
 const { addResult } = require('./result')
 
+const errorPayload = Joi.object().keys({
+  code: Joi.string().allow('', null).description(
+    'Error code'),
+  notes: Joi.string().allow('', null).description(
+    'Description of the error')
+})
+
+// TODO remove external ID from device API ASP-242
+const externalIdPayload = Joi.string().allow('', null).description(
+    'External ID')
+
 const configurationPayload = {
   checkpoint: Joi.string().allow('', null).description(
     'The client checkpoint'),
@@ -118,12 +129,7 @@ const resultPayload = {
   }),
   notes: Joi.string().allow('', null).description(
     'Any additional notes associated with this result'),
-  error: Joi.object().keys({
-    code: Joi.string().allow('', null).description(
-      'Error code'),
-    notes: Joi.string().allow('', null).description(
-      'Description of the error')
-  })
+  error: errorPayload
 }
 
 module.exports = [
@@ -140,6 +146,19 @@ module.exports = [
           checkpoint: Joi.string().description(
             'The client checkpoint.  If the checkpoint is specified as a query parameter, it will be'
             + ' used.  Otherwise will return the latest checkpoint uploaded from the authenticated device.')
+        }
+      },
+      response: {
+        schema: {
+          checkpoint: Joi.string().allow('', null).description(
+            'The client checkpoint'),
+          configuration: Joi.object().keys(configurationPayload).description(
+            'Device Configuration Data'),
+          operation: Joi.object().keys(configurationPayload).description(
+            'Device Operation Data'),
+          result: Joi.array().items(Joi.object().keys(resultPayload)).description(
+            'Device Result Data. Multiple results are allowed in a single request.'),
+          error: errorPayload
         }
       }
     }
@@ -165,6 +184,14 @@ module.exports = [
           result: Joi.array().items(Joi.object().keys(resultPayload)).single(true).description(
             'Device Result Data. Multiple results are allowed in a single request.')
         })
+      },
+      response: {
+        schema: {
+          configuration: Joi.object().keys({ id: externalIdPayload }),
+          operation: Joi.object().keys({ id: externalIdPayload }),
+          result: Joi.object().keys({ id: externalIdPayload }),
+          error: errorPayload
+        }
       }
     }
   },
@@ -178,6 +205,12 @@ module.exports = [
         + ' serial numbers, etc.',
       validate: {
         payload: configurationPayload
+      },
+      response: {
+        schema: {
+          id: externalIdPayload,
+          error: errorPayload
+        }
       }
     }
   },
@@ -191,6 +224,12 @@ module.exports = [
         + ' statistics, status of mechanical systems, calibration information etc. ',
       validate: {
         payload: operationPayload
+      },
+      response: {
+        schema: {
+          id: externalIdPayload,
+          error: errorPayload
+        }
       }
     }
   },
@@ -208,6 +247,12 @@ module.exports = [
           allowUnknown: true
         },
         payload: resultPayload
+      },
+      response: {
+        schema: {
+          id: externalIdPayload,
+          error: errorPayload
+        }
       }
     }
   }

@@ -307,7 +307,10 @@ function rowToResult(row) {
   if (row.startedOn != null) {
     result.startedOn = row.startedOn
   }
-  result.endedOn = row.endedOn
+
+  if (row.endedOn != null) {
+    result.endedOn = row.endedOn
+  }
 
   const consumable = {
     serial: row.consumableSerial,
