@@ -5,6 +5,7 @@ import Immutable from 'immutable'
 
 import { aspectFetch } from '../shared/utils/fetch'
 import {
+  receiveItem,
   receiveList,
   Items
 } from '../shared/metaReducers/groupedItems'
@@ -21,7 +22,13 @@ import {
 export const types = {
   REQUEST_INVENTORY_ITEMS: 'REQUEST_INVENTORY_ITEMS',
   RECEIVE_INVENTORY_ITEMS: 'RECEIVE_INVENTORY_ITEMS',
-  TOGGLE_GROUP_BY_SITE: 'TOGGLE_GROUP_BY_SITE'
+  TOGGLE_GROUP_BY_SITE: 'TOGGLE_GROUP_BY_SITE',
+  RECEIVE_SINGLE_INVENTORY_ITEM: 'RECEIVE_SINGLE_INVENTORY_ITEM',
+  ADJUST_INVENTORY_LEVELS: 'ADJUST_INVENTORY_LEVELS',
+  CANCEL_ADJUST_INVENTORY_LEVELS: 'CANCEL_ADJUST_INVENTORY_LEVELS',
+  ADD_INVENTORY: 'ADD_INVENTORY',
+  REMOVE_INVENTORY: 'REMOVE_INVENTORY',
+  TRANSFER_INVENTORY: 'TRANSFER_INVENTORY'
 }
 /*
  * ---------------- Action Creators -----------------
@@ -45,6 +52,14 @@ function receiveInventoryItems(json, childrenPropertyPath) {
     items: json.data,
     total: json.total,
     childrenPropertyPath
+  }
+}
+
+function receiveSingleInventoryItem(item, childrenPropertyPath) {
+  return {
+    type: types.RECEIVE_SINGLE_INVENTORY_ITEM,
+    childrenPropertyPath,
+    item
   }
 }
 
@@ -102,10 +117,100 @@ export function fetchInventoryItems(groupBy, filters /* required */, sortCol = '
   }
 }
 
+function startAddingInventory(details) {
+  return {
+    type: types.ADD_INVENTORY,
+    details
+  }
+}
+
+function startRemovingInventory(details) {
+  return {
+    type: types.REMOVE_INVENTORY,
+    details
+  }
+}
+
+function startTransferringInventory(details) {
+  return {
+    type: types.TRANSFER_INVENTORY,
+    details
+  }
+}
+
+export function adjustInventoryLevels(inventoryItemId, operation) {
+  return dispatch => dispatch({
+    type: types.ADJUST_INVENTORY_LEVELS,
+    inventoryItemId,
+    operation
+  })
+}
+
+export function cancelAdjustInventoryLevels(operation) {
+  return dispatch => dispatch({
+    type: types.CANCEL_ADJUST_INVENTORY_LEVELS,
+    operation
+  })
+}
+
+// data: { expiryDate, lotNumber, toSiteId, quantity, reasonId, dateAdded, notes }
+export function addInventory(inventoryItemId, data) {
+  return (dispatch, getState) => {
+    const { inventory } = getState()
+    const groupBySite = inventory.getIn(['table', 'groupBy']).includes('siteId')
+    dispatch(startAddingInventory(data))
+    const path = groupBySite ? '/inventory/group-by-site/add' : '/inventory/add'
+    return aspectFetch(`${path}/${inventoryItemId}`)
+      .then(json => dispatch(receiveSingleInventoryItem(json.data, groupBySite ? ['inventoryItems'] : [])))
+      .catch((err) => {
+        dispatch(addError('Adding inventory failed', err.message, err))
+      })
+  }
+}
+
+// data: { expiryDate, lotNumber, fromSiteId, quantity, reasonId,
+//         dateRemovedFrom, dateRemovedTo, notes }
+export function removeInventory(inventoryItemId, data) {
+  return (dispatch, getState) => {
+    const { inventory } = getState()
+    const groupBySite = inventory.getIn(['table', 'groupBy']).includes('siteId')
+    dispatch(startRemovingInventory(data))
+    const path = groupBySite ? '/inventory/group-by-site/remove' : '/inventory/remove'
+    return aspectFetch(`${path}/${inventoryItemId}`, {
+      method: 'PUT',
+      body: JSON.stringify(data)
+    }).then(json => dispatch(receiveSingleInventoryItem(json.data, groupBySite ? ['inventoryItems'] : [])))
+      .catch((err) => {
+        dispatch(addError('Removing inventory failed', err.message, err))
+      })
+  }
+}
+
+// data: { expiryDate, lotNumber, fromSiteId, toSiteId, quantity, dateTransferred, notes }
+export function transferInventory(inventoryItemId, data) {
+  return (dispatch, getState) => {
+    const { inventory } = getState()
+    const groupBySite = inventory.getIn(['table', 'groupBy']).includes('siteId')
+    dispatch(startTransferringInventory(data))
+    const path = groupBySite ? '/inventory/group-by-site/transfer' : '/inventory/transfer'
+    return aspectFetch(`${path}/${inventoryItemId}`, {
+      method: 'PUT',
+      body: JSON.stringify(data)
+    }).then((json) => {
+      dispatch(receiveSingleInventoryItem(json.data.existingInventoryItem, groupBySite ? ['inventoryItems'] : []))
+      dispatch(receiveSingleInventoryItem(json.data.newInventoryItem, groupBySite ? ['inventoryItems'] : []))
+    }).catch((err) => {
+      dispatch(addError('Transferring inventory failed', err.message, err))
+    })
+  }
+}
+
 /*
  * ---------------- Reducers -----------------
  */
 const Inventory = Immutable.Record({
+  updating: false,
+  currentAdjustmentOperation: null,
   items: new Items(),
   table: new Table({
     sortCol: 'siteName',
@@ -133,6 +238,19 @@ export default function inventoryItemsReducer(state = initialState, action) {
       return state
         .setIn(['table', 'groupBy'],
           action.toggleOn ? new Immutable.List(['siteId']) : new Immutable.List([]))
+    case types.ADJUST_INVENTORY_LEVELS:
+      return state.set('currentAdjustmentOperation', action.operation)
+    case types.CANCEL_ADJUST_INVENTORY_LEVELS:
+      return state.set('currentAdjustmentOperation', null)
+    case types.ADD_INVENTORY:
+    case types.REMOVE_INVENTORY:
+    case types.TRANSFER_INVENTORY:
+      return state.set('updating', true)
+    case types.RECEIVE_SINGLE_INVENTORY_ITEM:
+      return state.withMutations((mutState) => {
+        mutState.set('items', receiveItem(mutState.items, action.childrenPropertyPath, action.item))
+        mutState.set('updating', false)
+      })
     default:
       return state
   }

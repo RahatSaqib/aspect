@@ -71,6 +71,13 @@ export function receiveList(items, childrenPropertyPath, listOfTreeObjects) {
     .set('currentIdList', nextCurrentIdList)
 }
 
+export function receiveItem(items, childrenPropertyPath, nestedItem) {
+  const flattenedItem = Immutable.fromJS(
+    _.head(_.flattenDeep(flattenItem(nestedItem, childrenPropertyPath))))
+
+  return items.mergeDeepIn(['byId', flattenedItem.get('id')], flattenedItem)
+}
+
 export const Items = Immutable.Record({
   byId: Immutable.Map(),
   currentIdList: Immutable.List()
