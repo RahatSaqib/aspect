@@ -9,8 +9,9 @@ import Drawer from 'material-ui/Drawer'
 import { ListItem } from 'material-ui/List'
 import Divider from 'material-ui/Divider'
 import Subheader from 'material-ui/Subheader'
-import { green500, orange500, indigo600 } from 'material-ui/styles/colors'
+import { green500, red400, blue800, orange500, indigo600 } from 'material-ui/styles/colors'
 import Home from 'material-ui/svg-icons/action/home'
+import Favorite from 'material-ui/svg-icons/action/favorite'
 import Cart from 'material-ui/svg-icons/action/shopping-cart'
 import Build from 'material-ui/svg-icons/action/build'
 import Scanner from 'material-ui/svg-icons/hardware/scanner'
@@ -74,14 +75,28 @@ export const SideNav = ({ open, handleClose, pathname, desktop }) => (
         value={'/dashboard'}
         leftIcon={<Home color={green500} />}
         className={styles.Drawer__ListItem}
-        primaryText="Home"
+        primaryText="Overview"
       />
       <ListItem
-        containerElement={<Link to="/dashboard/inventory" />}
-        value={'/dashboard/inventory'}
+        containerElement={<Link to="/dashboard/patient-care" />}
+        value={'/dashboard/patient-care'}
+        leftIcon={<Favorite color={red400} />}
+        className={styles.Drawer__ListItem}
+        primaryText="Patient Care"
+      />
+      <ListItem
+        containerElement={<Link to="/dashboard/manage-devices" />}
+        value={'/dashboard/manage-devices'}
+        leftIcon={<Scanner color={blue800} />}
+        className={styles.Drawer__ListItem}
+        primaryText="Manage Devices"
+      />
+      <ListItem
+        containerElement={<Link to="/dashboard/manage-supplies" />}
+        value={'/dashboard/manage-supplies'}
         leftIcon={<Cart color={orange500} />}
         className={styles.Drawer__ListItem}
-        primaryText="Inventory"
+        primaryText="Manage Supplies"
       />
       <ListItem
         containerElement={<Link to="/dashboard/maintenance" />}
