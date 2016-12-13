@@ -9,7 +9,10 @@ import {
 
 export const types = {
   REQUEST_CONSUMABLES: 'REQUEST_CONSUMABLES',
-  RECEIVE_CONSUMABLES: 'RECEIVE_CONSUMABLES'
+  RECEIVE_CONSUMABLES: 'RECEIVE_CONSUMABLES',
+
+  REQUEST_CONSUMABLE_REASONS: 'REQUEST_CONSUMABLE_REASONS',
+  RECEIVE_CONSUMABLE_REASONS: 'RECEIVE_CONSUMABLE_REASONS'
 }
 
 /*
@@ -31,11 +34,11 @@ export function fetchConsumables(forceRefresh) {
   return (dispatch, getState) => {
     const { consumable } = getState()
 
-    if (consumable.loading) {
+    if (consumable.getIn(['consumables', 'loading'])) {
       return
     }
-    const shouldFetch = forceRefresh || !consumable.lastRefreshed || (
-      differenceInMinutes(new Date(), consumable.lastRefreshed) > 5 // five minutes
+    const shouldFetch = forceRefresh || !consumable.getIn(['consumables', 'lastRefreshed']) || (
+      differenceInMinutes(new Date(), consumable.getIn(['consumables', 'lastRefreshed'])) > 5 // five minutes
     )
     if (!shouldFetch) {
       return
@@ -63,35 +66,71 @@ export function fetchConsumables(forceRefresh) {
   }
 }
 
+function createRequestConsumableReasons() {
+  return { type: types.REQUEST_CONSUMABLE_REASONS }
+}
+
+function createReceiveConsumableReasons(consumableReasons) {
+  return {
+    type: types.RECEIVE_CONSUMABLE_REASONS,
+    items: consumableReasons,
+    lastRefreshed: new Date()
+  }
+}
+
+export function fetchConsumableReasons(forceRefresh) {
+  return (dispatch, getState) => {
+    const { consumable } = getState()
+
+    if (consumable.getIn(['consumableReasons', 'loading'])) {
+      return
+    }
+    const shouldFetch = forceRefresh || !consumable.getIn(['consumableReasons', 'lastRefreshed']) || (
+        differenceInMinutes(new Date(), consumable.getIn(['consumableReasons', 'lastRefreshed'])) > 5 // five minutes
+      )
+    if (!shouldFetch) {
+      return
+    }
+
+    dispatch(createRequestConsumableReasons())
+    return aspectFetch('/inventory/consumable-reason')
+      .then(json => dispatch(createReceiveConsumableReasons(json.data)))
+      .catch(err => dispatch(addError('Loading consumable reasons failed', err.message, err)))
+  }
+}
+
 /*
  * ---------------- Reducers -----------------
  */
-const Consumable = Immutable.Record({
+const ConsumableItems = Immutable.Record({
   loading: false,
   items: Immutable.List([]),
   lastRefreshed: undefined
 })
-
+const Consumable = Immutable.Record({
+  consumables: new ConsumableItems(),
+  consumableReasons: new ConsumableItems()
+})
 const initialState = new Consumable()
-
-function requestConsumables(state) {
-  return state.set('loading', true)
-}
-
-function receiveConsumables(state, consumables, lastRefreshed) {
-  return state.merge({
-    loading: false,
-    lastRefreshed,
-    items: new Immutable.fromJS(consumables)
-  })
-}
 
 export default function consumableReducer(state = initialState, action) {
   switch (action.type) {
     case types.REQUEST_CONSUMABLES:
-      return requestConsumables(state)
+      return state.setIn(['consumables', 'loading'], true)
     case types.RECEIVE_CONSUMABLES:
-      return receiveConsumables(state, action.items, action.lastRefreshed)
+      return state.mergeIn(['consumables'], {
+        loading: false,
+        lastRefreshed: action.lastRefreshed,
+        items: new Immutable.fromJS(action.items)
+      })
+    case types.REQUEST_CONSUMABLE_REASONS:
+      return state.setIn(['consumableReasons', 'loading'], true)
+    case types.RECEIVE_CONSUMABLE_REASONS:
+      return state.mergeIn(['consumableReasons'], {
+        loading: false,
+        lastRefreshed: action.lastRefreshed,
+        items: new Immutable.fromJS(action.items)
+      })
     default:
       return state
   }
