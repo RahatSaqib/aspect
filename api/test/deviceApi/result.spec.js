@@ -239,11 +239,11 @@ describe('Device Result API routes', () => {
             lot: '331-1'
           },
           instrument: {
-            serial: '444-3'
-          },
-          module: {
-            name: 'ModA',
-            serial: '555-8'
+            serial: '444-3',
+            module: {
+              name: 'ModA',
+              serial: '555-8'
+            },
           },
           research: { id: 'R123' },
           patient: {
@@ -390,11 +390,11 @@ describe('Device Result API routes', () => {
           lot: '331-1'
         },
         instrument: {
-          serial: '444-3'
-        },
-        module: {
-          name: 'ModA',
-          serial: '555-8'
+          serial: '444-3',
+          module: {
+            name: 'ModA',
+            serial: '555-8'
+          },
         },
         research: { id: 'R123' },
         patient: {
@@ -484,11 +484,11 @@ describe('Device Result API routes', () => {
               lot: '331-1'
             }],
             instrument: {
-              serial: '444-3'
-            },
-            module: {
-              name: 'ModA',
-              serial: '555-8'
+              serial: '444-3',
+              module: {
+                name: 'ModA',
+                serial: '555-8'
+              },
             },
             research: { id: 'R123' },
             patient: {
@@ -700,11 +700,11 @@ describe('Device Result API routes', () => {
             lot: '331-1'
           },
           instrument: {
-            serial: '444-3'
-          },
-          module: {
-            name: 'ModA',
-            serial: '555-8'
+            serial: '444-3',
+            module: {
+              name: 'ModA',
+              serial: '555-8'
+            },
           },
           research: { id: 'R123' },
           patient: {
