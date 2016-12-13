@@ -4,12 +4,6 @@ material-ui renders styles inline, so there's no other
 way to override them
 */
 
-html,
-body,
-body>div {
-    height: 100%;
-}
-
 body {
     font-family: Roboto, sans-serif;
     padding: 0;

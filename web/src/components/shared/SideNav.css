@@ -2,6 +2,7 @@
 .Drawer--desktop {
   position: absolute !important;
   top: 68px !important;
+  height: calc(100% - 68px) !important;
   background-color: #f2f2f2 !important;
   box-shadow: none !important;
 }
