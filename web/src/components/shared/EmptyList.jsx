@@ -1,6 +1,6 @@
 // Imports from packages
-import React, { PropTypes } from 'react'
-import { compose, setPropTypes, pure } from 'recompose'
+import React from 'react'
+import { compose, pure } from 'recompose'
 import { bindActionCreators } from 'redux'
 import { connect } from 'react-redux'
 import {
@@ -29,26 +29,21 @@ const messages = defineMessages({
 })
 
 const enhance = compose(
+  pure,
+  injectIntl,
   connect(false, bindActionCreators.bind(null, {
     clearListFilter
-  })),
-  injectIntl,
-  setPropTypes({
-    isEmpty: PropTypes.bool.isRequired
-  }),
-  pure
+  }))
 )
 
-export const EmptyList = ({ isEmpty, intl, clearListFilter }) => (
-  isEmpty && (
-    <Paper style={{ textAlign: 'center', padding: 10 }}>
-      <p>{intl.formatMessage(messages.noResultsTitle)}</p>
-      <FlatButton
-        label={intl.formatMessage(messages.clearFilters)}
-        onTouchTap={clearListFilter}
-      />
-    </Paper>
-  )
+export const EmptyList = ({ intl, clearListFilter }) => (
+  <Paper style={{ textAlign: 'center', padding: 10 }}>
+    <p>{intl.formatMessage(messages.noResultsTitle)}</p>
+    <FlatButton
+      label={intl.formatMessage(messages.clearFilters)}
+      onTouchTap={clearListFilter}
+    />
+  </Paper>
 )
 
 export default enhance(EmptyList)
