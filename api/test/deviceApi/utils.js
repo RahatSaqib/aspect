@@ -26,7 +26,7 @@ function* deleteTestDataFromCheckpoint(knex, checkpoint, deviceIds) {
       .update({
         deviceOperationId: knex('DeviceOperation')
           .where({ deviceId })
-          .whereNotIn('id', configIds)
+          .whereNotIn('id', opIds)
           .max('id'),
         deviceConfigurationId: knex('DeviceConfiguration')
           .where({ deviceId })
