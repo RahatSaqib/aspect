@@ -705,8 +705,6 @@ describe('Device Result API routes', () => {
         .then((res) => {
           assert.equal(res.status, 200)
           assert.typeOf(res.body, 'Object')
-          assert.property(res.body, 'id')
-          resultIds.push(res.body.id)
         })
 
       lastResultId = yield* getLastResultId(knex, deviceId)

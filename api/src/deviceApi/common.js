@@ -1,14 +1,7 @@
-const crypto = require('crypto')
 const Boom = require('boom')
 const { knex, transact } = require('../db')
 const { getDeviceConstraints } = require('../auth/constraints')
 const { asyncHandler } = require('../routes')
-
-function getExternalId(candidateId) {
-  return typeof candidateId !== 'undefined'
-      ? candidateId
-      : crypto.randomBytes(48).toString('base64') // TODO UUID?
-}
 
 function deviceApiHandler(handler, { updatePing, updateDeviceLog }) {
   return asyncHandler(function* (request) {
@@ -146,6 +139,5 @@ class DeviceApiContext {
 
 
 module.exports = {
-  getExternalId,
   deviceApiHandler
 }
