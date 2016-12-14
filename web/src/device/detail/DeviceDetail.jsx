@@ -197,7 +197,10 @@ export class DeviceDetail extends PureComponent {
 
   renderDemoButton() {
     return (
-      <DeviceDemoLink to={`/demo/device/${this.props.params.deviceId}`}>
+      <DeviceDemoLink
+        to={`/demo/device/${this.props.params.deviceId}`}
+        className={styles.DemoLink}
+      >
         Demo
       </DeviceDemoLink>
     )
@@ -266,8 +269,8 @@ export class DeviceDetail extends PureComponent {
         <Paper>
           {this.renderProgress()}
           {this.renderContent()}
-          {this.renderDemoButton()}
         </Paper>
+        {this.renderDemoButton()}
       </div>
     )
   }

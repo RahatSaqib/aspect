@@ -89,7 +89,6 @@ export class DeviceDemo extends PureComponent {
       <div className={styles.Content}>
         <Helmet title="Device Demo" titleTemplate="%s - Aspect" defaultTitle="Aspect" />
         <Paper>
-          <div>Device Demo!!!! {this.props.params.deviceId}</div>
           {this.renderContent()}
         </Paper>
       </div>
