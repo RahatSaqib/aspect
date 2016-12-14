@@ -6,12 +6,12 @@ function* addDeviceData(context) {
   const { result, configuration, operation } = payload
 
   if (configuration) {
-    response.configuration = yield* addDeviceConfiguration(
+    yield* addDeviceConfiguration(
       context.withPayload(configuration))
   }
 
   if (operation) {
-    response.operation = yield* addDeviceOperation(
+    yield* addDeviceOperation(
       context.withPayload(operation))
   }
 
@@ -22,10 +22,8 @@ function* addDeviceData(context) {
 
       if (resultResponse instanceof Error) {
         // TODO formalize error handling
-        return response.result
+        return resultResponse
       }
-      // Only keep report last updated in response
-      response.result = resultResponse
     }
   }
 

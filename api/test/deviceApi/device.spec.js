@@ -168,7 +168,6 @@ describe('Device API routes', () => {
         .then((res) => {
           assert.equal(res.status, 200)
           assert.typeOf(res.body, 'Object')
-          assert.typeOf(res.body.operation, 'Object')
         })
 
       previousOpId = currentOpId
@@ -227,8 +226,6 @@ describe('Device API routes', () => {
         .then((res) => {
           assert.equal(res.status, 200)
           assert.typeOf(res.body, 'Object')
-          assert.property(res.body, 'configuration')
-          assert.typeOf(res.body.operation, 'Object')
         })
 
       yield server.get(devicePath)
@@ -249,8 +246,6 @@ describe('Device API routes', () => {
         .then((res) => {
           assert.equal(res.status, 200)
           assert.typeOf(res.body, 'Object')
-          assert.property(res.body, 'configuration')
-          assert.typeOf(res.body.operation, 'Object')
         })
 
       yield server.get(devicePath)
