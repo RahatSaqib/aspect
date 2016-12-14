@@ -2,7 +2,10 @@
   composes: Content from '../../components/shared/Shared.css';
 }
 
-.BackLink{
-    font-size: 65%;
-    text-transform: uppercase;
+.RowContainer{
+  padding: 10px;
+}
+
+.RowContainer > div > div{
+  margin: 10px;
 }
