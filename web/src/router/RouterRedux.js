@@ -1,9 +1,14 @@
+import { defineMessages } from 'react-intl'
 import _ from 'lodash'
 import Immutable from 'immutable'
 import { stringify } from 'querystring'
 
 import { aspectFetch } from '../shared/utils/fetch'
-import { addError } from '../error/ErrorRedux'
+import {
+  filterFieldsRejectedError,
+  errorNotFound,
+  errorPleaseTryAgainInAFewMinutes
+} from '../error/CommonErrorNotifications'
 
 import {
   receiveList,
@@ -73,11 +78,22 @@ export function fetchRouters(filters/* required */, sortCol = 'name', sortDir = 
       page,
       size: pageSize,
       ...filters
-    })}`)
-      .then(json => dispatch(receiveRouters(json)))
-      .catch((err) => {
-        dispatch(addError('Loading routers failed', err.message, err))
-      })
+    })}`, {
+      errorNotifications: {
+        400: filterFieldsRejectedError(defineMessages({
+          title: {
+            id: 'errorResponseMessages.fetchRouters.GET.400.title',
+            defaultMessage: 'Searching Routers Failed'
+          }
+        })),
+        default: errorPleaseTryAgainInAFewMinutes(defineMessages({
+          title: {
+            id: 'errorResponseMessages.fetchRouters.GET.default.title',
+            defaultMessage: 'Loading Routers Failed'
+          }
+        }))
+      }
+    }).then(json => dispatch(receiveRouters(json)))
   }
 }
 
@@ -99,11 +115,22 @@ export function fetchSingleRouter(routerId) {
   return (dispatch) => {
     dispatch(requestSingleRouter(routerId))
 
-    return aspectFetch(`/device/${routerId}`)
-      .then(json => dispatch(receiveSingleRouter(json.data)))
-      .catch((err) => {
-        dispatch(addError(`Loading a device (${routerId}) failed`, err.message, err))
-      })
+    return aspectFetch(`/device/${routerId}`, {
+      errorNotifications: {
+        404: errorNotFound(defineMessages({
+          title: {
+            id: 'errorResponseMessages.fetchSingleRouter.GET.404.title',
+            defaultMessage: 'Could Not Find Router Details'
+          }
+        })),
+        default: errorPleaseTryAgainInAFewMinutes(defineMessages({
+          title: {
+            id: 'errorResponseMessages.fetchSingleRouter.GET.default.title',
+            defaultMessage: 'Error Loading Router Details'
+          }
+        }))
+      }
+    }).then(json => dispatch(receiveSingleRouter(json.data)))
   }
 }
 
@@ -128,12 +155,16 @@ export function updateSingleRouter(routerId, data) {
 
     return aspectFetch(`/device/${routerId}`, {
       method: 'PUT',
-      body: JSON.stringify(data)
-    })
-      .then(json => dispatch(receiveUpdatedSingleRouter(json.data)))
-      .catch((err) => {
-        dispatch(addError(`Updating a router (${routerId}) failed`, err.message, err))
-      })
+      body: JSON.stringify(data),
+      errorNotifications: {
+        default: errorPleaseTryAgainInAFewMinutes(defineMessages({
+          title: {
+            id: 'errorResponseMessages.updateSingleRouter.PUT.default.title',
+            defaultMessage: 'An Error Occurred When Trying to Save the Router'
+          }
+        }))
+      }
+    }).then(json => dispatch(receiveUpdatedSingleRouter(json.data)))
   }
 }
 /*

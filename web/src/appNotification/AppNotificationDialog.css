@@ -1,0 +1,24 @@
+.AppNotificationDialogDialog__SeverityIconContainer {
+  display: block;
+  width: 100%;
+  text-align: center;
+}
+
+.AppNotificationDialogDialog__ContentContainer {
+  display: block;
+}
+
+@media screen and (min-width:35.5em) {
+  .AppNotificationDialogDialog__SeverityIconContainer {
+    display: inline-block;
+    width: auto;
+    margin-top: 1em;
+    margin-right: 1em;
+  }
+
+  .AppNotificationDialogDialog__ContentContainer {
+    display: inline-block;
+    vertical-align: top;
+    max-width: 38em;
+  }
+}

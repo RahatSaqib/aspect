@@ -1,8 +1,9 @@
+import { defineMessages } from 'react-intl'
 import _ from 'lodash'
 import Immutable from 'immutable'
 import differenceInMinutes from 'date-fns/difference_in_minutes'
 import { aspectFetch } from '../shared/utils/fetch'
-import { addError } from '../error/ErrorRedux'
+import { errorPleaseTryAgainInAFewMinutes } from '../error/CommonErrorNotifications'
 
 export const types = {
   REQUEST_PARTNERS_AND_ROLES_FOR_SELECT_LIST: 'REQUEST_PARTNERS_AND_ROLES_FOR_SELECT_LIST',
@@ -39,9 +40,17 @@ export function fetchPartnersAndRolesForSelectList(forceRefresh) {
     }
 
     dispatch(createRequestPartnersAndRolesForSelectList())
-    return aspectFetch('/role/select-list')
-      .then(json => dispatch(createReceivePartnersAndRolesForSelectList(json.data)))
-      .catch(err => dispatch(addError('Loading partners and roles failed', err.message, err)))
+    return aspectFetch('/role/select-list', {
+      errorNotifications: {
+        default: errorPleaseTryAgainInAFewMinutes(defineMessages({
+          title: {
+            id: 'errorResponseMessages.fetchPartnersAndRolesForSelectList.GET.default.title',
+            defaultMessage: 'Error Loading Partners And Roles'
+          }
+        }))
+      }
+    }).then(json =>
+      dispatch(createReceivePartnersAndRolesForSelectList(json.data)))
   }
 }
 

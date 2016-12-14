@@ -1,9 +1,14 @@
+import { defineMessages } from 'react-intl'
 import _ from 'lodash'
 import Immutable from 'immutable'
 import { stringify } from 'querystring'
 
 import { aspectFetch } from '../shared/utils/fetch'
-import { addError } from '../error/ErrorRedux'
+import {
+  filterFieldsRejectedError,
+  errorNotFound,
+  errorPleaseTryAgainInAFewMinutes
+} from '../error/CommonErrorNotifications'
 
 import {
   receiveList,
@@ -73,11 +78,24 @@ export function fetchDevices(filters/* required */, sortCol = 'name', sortDir = 
       page,
       size: pageSize,
       ...filters
-    })}`)
-      .then(json => dispatch(receiveDevices(json)))
-      .catch((err) => {
-        dispatch(addError('Loading devices failed', err.message, err))
+    })}`,
+      {
+        errorNotifications: {
+          400: filterFieldsRejectedError(defineMessages({
+            title: {
+              id: 'errorResponseMessages.fetchDevices.GET.400.title',
+              defaultMessage: 'Searching Devices Failed'
+            }
+          })),
+          default: errorPleaseTryAgainInAFewMinutes(defineMessages({
+            title: {
+              id: 'errorResponseMessages.fetchDevices.GET.default.title',
+              defaultMessage: 'Loading Devices Failed'
+            }
+          }))
+        }
       })
+      .then(json => dispatch(receiveDevices(json)))
   }
 }
 
@@ -99,11 +117,24 @@ export function fetchSingleDevice(deviceId) {
   return (dispatch) => {
     dispatch(requestSingleDevice(deviceId))
 
-    return aspectFetch(`/device/${deviceId}`)
-      .then(json => dispatch(receiveSingleDevice(json.data)))
-      .catch((err) => {
-        dispatch(addError(`Loading a device (${deviceId}) failed`, err.message, err))
+    return aspectFetch(`/device/${deviceId}`,
+      {
+        errorNotifications: {
+          404: errorNotFound(defineMessages({
+            title: {
+              id: 'errorResponseMessages.fetchSingleDevice.GET.404.title',
+              defaultMessage: 'Could Not Find Device Details'
+            }
+          })),
+          default: errorPleaseTryAgainInAFewMinutes(defineMessages({
+            title: {
+              id: 'errorResponseMessages.fetchSingleDevice.GET.default.title',
+              defaultMessage: 'Error Loading Device Details'
+            }
+          }))
+        }
       })
+      .then(json => dispatch(receiveSingleDevice(json.data)))
   }
 }
 
@@ -128,12 +159,16 @@ export function updateSingleDevice(deviceId, data) {
 
     return aspectFetch(`/device/${deviceId}`, {
       method: 'PUT',
-      body: JSON.stringify(data)
-    })
-      .then(json => dispatch(receiveUpdatedSingleDevice(json.data)))
-      .catch((err) => {
-        dispatch(addError(`Updating a device (${deviceId}) failed`, err.message, err))
-      })
+      body: JSON.stringify(data),
+      errorNotifications: {
+        default: errorPleaseTryAgainInAFewMinutes(defineMessages({
+          title: {
+            id: 'errorResponseMessages.updateSingleDevice.PUT.default.title',
+            defaultMessage: 'An Error Occurred When Trying to Save the Device'
+          }
+        }))
+      }
+    }).then(json => dispatch(receiveUpdatedSingleDevice(json.data)))
   }
 }
 /*
