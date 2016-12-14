@@ -1444,6 +1444,7 @@ function* seed(knex) {
 
   // assign permissions to roles
   yield knex('RolePermission').insert([
+    { roleId: roleIdAdmin, permissionId: modules.demo.admin },
     { roleId: roleIdAdmin, permissionId: modules.device.admin },
     { roleId: roleIdAdmin, permissionId: modules.person.admin },
     { roleId: roleIdAdmin, permissionId: modules.result.admin },

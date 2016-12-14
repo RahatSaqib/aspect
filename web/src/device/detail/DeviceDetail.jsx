@@ -8,6 +8,7 @@ import {
 import { bindActionCreators } from 'redux'
 import { connect } from 'react-redux'
 import Helmet from 'react-helmet'
+import { Link } from 'react-router'
 
 // Material-UI
 import Paper from 'material-ui/Paper'
@@ -22,6 +23,7 @@ import {
 } from '../DeviceRedux'
 import ReadOnlyFields from '../../components/shared/ReadOnlyFields'
 import DeviceDetailForm from './DeviceDetailForm'
+import requirePermissions from '../../components/shared/requirePermissions'
 import styles from './DeviceDetail.css'
 
 const messages = defineMessages({
@@ -78,6 +80,10 @@ const messages = defineMessages({
     defaultMessage: 'Total Number of Tests'
   }
 })
+
+const DeviceDemoLink = requirePermissions({
+  permissions: ['demo:admin']
+})(Link)
 
 export class DeviceDetail extends PureComponent {
 
@@ -189,6 +195,14 @@ export class DeviceDetail extends PureComponent {
     )
   }
 
+  renderDemoButton() {
+    return (
+      <DeviceDemoLink to={`/demo/device/${this.props.params.deviceId}`}>
+        Demo
+      </DeviceDemoLink>
+    )
+  }
+
   renderContent() {
     const { device, editable, intl: { formatMessage, formatDate } } = this.props
     if (!device) {
@@ -252,6 +266,7 @@ export class DeviceDetail extends PureComponent {
         <Paper>
           {this.renderProgress()}
           {this.renderContent()}
+          {this.renderDemoButton()}
         </Paper>
       </div>
     )

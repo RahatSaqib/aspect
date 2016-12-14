@@ -17,6 +17,7 @@ import { ResetPasswordContainer } from '../auth/resetPassword/ResetPassword'
 import { DashboardContainer } from '../dashboard/dashboard/Dashboard'
 import { InventoryContainer } from '../dashboard/inventory/Inventory'
 import { MaintenanceContainer } from '../dashboard/maintenance/Maintenance'
+import { DeviceDemoContainer } from '../demo/device/DeviceDemo'
 import { DeviceListContainer } from '../device/list/DeviceList'
 import { DeviceDetailContainer } from '../device/detail/DeviceDetail'
 import { SiteListContainer } from '../site/list/SiteList'
@@ -78,6 +79,12 @@ const routes =
           <IndexRoute component={DashboardContainer} />
           <Route path="inventory" component={InventoryContainer} />
           <Route path="maintenance" component={MaintenanceContainer} />
+        </Route>
+
+        <Route path="demo" >
+          <Route path="device" >
+            <Route path=":deviceId" component={DeviceDemoContainer} />
+          </Route>
         </Route>
 
         <Route path="device" deviceConfig={{ filterParams: { hasResults: 1 }, filterConfig: { assayAndResultCategory: true, geography: true, date: true, deviceName: true } }}>

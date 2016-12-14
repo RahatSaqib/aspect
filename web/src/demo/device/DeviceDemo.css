@@ -1,0 +1,8 @@
+.Content {
+  composes: Content from '../../components/shared/Shared.css';
+}
+
+.BackLink{
+    font-size: 65%;
+    text-transform: uppercase;
+}
