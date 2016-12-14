@@ -68,10 +68,6 @@ export default class GroupedDataTable extends PureComponent {
     stripedRows: false
   }
 
-  componentDidMount() {
-    this.fetchData()
-  }
-
   getColumns = () => {
     const {
       table: { extraColumns },
