@@ -43,6 +43,22 @@ function* deleteTestDataFromCheckpoint(knex, checkpoint, deviceIds) {
   yield knex('DeviceOperation').whereIn('id', opIds).delete()
 }
 
+function* getLastDeviceConfigurationId(knex, deviceId) {
+  const { deviceConfigurationId } = yield knex('Device')
+    .where({ id: deviceId })
+    .first('deviceConfigurationId')
+  return deviceConfigurationId
+}
+
+function* getLastDeviceOperationId(knex, deviceId) {
+  const { deviceOperationId } = yield knex('Device')
+    .where({ id: deviceId })
+    .first('deviceOperationId')
+  return deviceOperationId
+}
+
 module.exports = {
-  deleteTestDataFromCheckpoint
+  deleteTestDataFromCheckpoint,
+  getLastDeviceConfigurationId,
+  getLastDeviceOperationId
 }

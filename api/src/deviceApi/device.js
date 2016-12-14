@@ -1,4 +1,3 @@
-const { getExternalId } = require('./common')
 const { addResult, listResults } = require('./result')
 
 function* addDeviceData(context) {
@@ -56,12 +55,10 @@ function* getDeviceData(context) {
 function* addDeviceConfiguration(context) {
   const { knex, payload, device: { id: deviceId }, now } = context
 
-  const externalId = getExternalId(payload.id)
-
   const [deviceConfigurationId] = yield knex('DeviceConfiguration')
     .insert({
       deviceId,
-      externalId,
+      externalId: payload.id,
       data: JSON.stringify(payload.data),
       createdOn: now
     })
@@ -71,18 +68,16 @@ function* addDeviceConfiguration(context) {
     .where('id', deviceId)
     .update({ deviceConfigurationId })
 
-  return { id: externalId }
+  return {}
 }
 
 function* addDeviceOperation(context) {
   const { knex, payload, device: { id: deviceId }, now } = context
 
-  const externalId = getExternalId(payload.id)
-
   const [deviceOperationId] = yield knex('DeviceOperation')
     .insert({
       deviceId,
-      externalId,
+      externalId: payload.id,
       data: JSON.stringify(payload.data),
       createdOn: now
     })
@@ -92,7 +87,7 @@ function* addDeviceOperation(context) {
     .where('id', deviceId)
     .update({ deviceOperationId })
 
-  return { id: externalId }
+  return {}
 }
 
 module.exports = {

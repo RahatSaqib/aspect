@@ -333,7 +333,7 @@ function* up(knex) {
     config.increments('id')
     config.integer('deviceId').unsigned().notNullable()
       .index().references('id').inTable('Device')
-    config.string('externalId').notNullable()
+    config.string('externalId')
     config.specificType('data', 'JSON').notNullable()
     addCreateFieldsNullable(config)
     config.charset('utf8')
@@ -343,7 +343,7 @@ function* up(knex) {
     config.increments('id')
     config.integer('deviceId').unsigned().notNullable()
       .index().references('id').inTable('Device')
-    config.string('externalId').notNullable()
+    config.string('externalId')
     config.specificType('data', 'JSON').notNullable()
     addCreateFieldsNullable(config)
     config.charset('utf8')
@@ -402,7 +402,7 @@ function* up(knex) {
   // the sample that the result is based on (multiple results can refer to the same sample)
   yield knex.schema.createTable('Sample', (sample) => {
     sample.increments('id')
-    sample.string('externalId').notNullable()
+    sample.string('externalId')
     sample.integer('originSiteId').unsigned()
           .index().references('id').inTable('Site')
     sample.charset('utf8')
@@ -410,7 +410,7 @@ function* up(knex) {
 
   yield knex.schema.createTable('Result', (result) => {
     result.increments('id')
-    result.string('externalId').notNullable()
+    result.string('externalId')
     result.integer('assayId').unsigned().notNullable()
       .index().references('id').inTable('Assay')
     result.integer('partnerId').unsigned()

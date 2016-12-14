@@ -3,6 +3,7 @@ const chai = require('chai')
 const _ = require('lodash')
 const shared = require('../utils/sharedToken')
 const sharedDevice = require('./deviceToken')
+const { getLastDeviceConfigurationId, getLastDeviceOperationId } = require('./utils')
 
 // This agent refers to PORT where program is runninng.
 const server = supertest.agent('http://localhost:8080')
@@ -24,12 +25,11 @@ describe('Device API routes', () => {
 
     const deviceConfigurationPath = '/device/configuration'
 
-    it('should add and return device configuration', () => runTest(function* () {
+    it('should add and return device configuration', () => runTest(function* (knex) {
       const { deviceId } = sharedDevice
       clientPath += (`?deviceId=${deviceId}`)
 
       let initialDataLength = 0
-      const configIds = []
 
       const clientAuth = `Bearer ${shared.token}`
       const deviceAuth = `Bearer ${sharedDevice.deviceToken}`
@@ -52,9 +52,10 @@ describe('Device API routes', () => {
         .then((res) => {
           assert.equal(res.status, 200)
           assert.typeOf(res.body, 'Object')
-          assert.property(res.body, 'id')
-          configIds.push(res.body.id)
         })
+
+      let previousConfigId = null
+      let currentConfigId = yield* getLastDeviceConfigurationId(knex, deviceId)
 
       yield server.get(clientPath)
         .set('Authorization', clientAuth)
@@ -66,9 +67,9 @@ describe('Device API routes', () => {
           assert.property(res.body, 'total')
 
           assert.equal(res.body.data.length, initialDataLength + 1)
-          const lastConfig = _.find(res.body.data, { externalId: configIds[0] })
+          const lastConfig = _.find(res.body.data, { id: currentConfigId })
           assert.typeOf(lastConfig, 'Object')
-          assert.equal(lastConfig.externalId, configIds[0])
+          assert.equal(lastConfig.id, currentConfigId)
           assert.deepEqual(lastConfig.data, { a: 'b' })
         })
 
@@ -77,11 +78,10 @@ describe('Device API routes', () => {
         .send({ configuration: { data: { a: 'b', c: 2, d: false, e: { f: 'g' } } } })
         .then((res) => {
           assert.equal(res.status, 200)
-          assert.typeOf(res.body, 'Object')
-          assert.property(res.body, 'configuration')
-          assert.property(res.body.configuration, 'id')
-          configIds.push(res.body.configuration.id)
         })
+
+      previousConfigId = currentConfigId
+      currentConfigId = yield* getLastDeviceConfigurationId(knex, deviceId)
 
       yield server.get(clientPath)
         .set('Authorization', clientAuth)
@@ -94,14 +94,14 @@ describe('Device API routes', () => {
 
           assert.equal(res.body.data.length, initialDataLength + 2)
 
-          const prevConfig = _.find(res.body.data, { externalId: configIds[0] })
+          const prevConfig = _.find(res.body.data, { id: previousConfigId })
           assert.typeOf(prevConfig, 'Object')
-          assert.equal(prevConfig.externalId, configIds[0])
+          assert.equal(prevConfig.id, previousConfigId)
           assert.deepEqual(prevConfig.data, { a: 'b' })
 
-          const lastConfig = _.find(res.body.data, { externalId: configIds[1] })
+          const lastConfig = _.find(res.body.data, { id: currentConfigId })
           assert.typeOf(lastConfig, 'Object')
-          assert.equal(lastConfig.externalId, configIds[1])
+          assert.equal(lastConfig.id, currentConfigId)
           assert.deepEqual(lastConfig.data, { a: 'b', c: 2, d: false, e: { f: 'g' } })
         })
     }))
@@ -114,12 +114,11 @@ describe('Device API routes', () => {
 
     const deviceOperationPath = '/device/operation'
 
-    it('should add and return device operation', () => runTest(function* () {
+    it('should add and return device operation', () => runTest(function* (knex) {
       const { deviceId } = sharedDevice
       clientPath += (`?deviceId=${deviceId}`)
 
       let initialDataLength = 0
-      const opIds = []
 
       const clientAuth = `Bearer ${shared.token}`
       const deviceAuth = `Bearer ${sharedDevice.deviceToken}`
@@ -142,9 +141,10 @@ describe('Device API routes', () => {
         .then((res) => {
           assert.equal(res.status, 200)
           assert.typeOf(res.body, 'Object')
-          assert.property(res.body, 'id')
-          opIds.push(res.body.id)
         })
+
+      let previousOpId = null
+      let currentOpId = yield* getLastDeviceOperationId(knex, deviceId)
 
       yield server.get(clientPath)
         .set('Authorization', clientAuth)
@@ -156,9 +156,9 @@ describe('Device API routes', () => {
           assert.property(res.body, 'total')
 
           assert.equal(res.body.data.length, initialDataLength + 1)
-          const lastOp = _.find(res.body.data, { externalId: opIds[0] })
+          const lastOp = _.find(res.body.data, { id: currentOpId })
           assert.typeOf(lastOp, 'Object')
-          assert.equal(lastOp.externalId, opIds[0])
+          assert.equal(lastOp.id, currentOpId)
           assert.deepEqual(lastOp.data, { a: 'b' })
         })
 
@@ -169,9 +169,10 @@ describe('Device API routes', () => {
           assert.equal(res.status, 200)
           assert.typeOf(res.body, 'Object')
           assert.typeOf(res.body.operation, 'Object')
-          assert.property(res.body.operation, 'id')
-          opIds.push(res.body.operation.id)
         })
+
+      previousOpId = currentOpId
+      currentOpId = yield* getLastDeviceOperationId(knex, deviceId)
 
       yield server.get(clientPath)
         .set('Authorization', clientAuth)
@@ -184,14 +185,14 @@ describe('Device API routes', () => {
 
           assert.equal(res.body.data.length, initialDataLength + 2)
 
-          const prevOp = _.find(res.body.data, { externalId: opIds[0] })
+          const prevOp = _.find(res.body.data, { id: previousOpId })
           assert.typeOf(prevOp, 'Object')
-          assert.equal(prevOp.externalId, opIds[0])
+          assert.equal(prevOp.id, previousOpId)
           assert.deepEqual(prevOp.data, { a: 'b' })
 
-          const lastOp = _.find(res.body.data, { externalId: opIds[1] })
+          const lastOp = _.find(res.body.data, { id: currentOpId })
           assert.typeOf(lastOp, 'Object')
-          assert.equal(lastOp.externalId, opIds[1])
+          assert.equal(lastOp.id, currentOpId)
           assert.deepEqual(lastOp.data, { a: 'b', c: 2, d: false, e: { f: 'g' } })
         })
     }))
@@ -200,9 +201,6 @@ describe('Device API routes', () => {
     sharedDevice.authenticateUserAndFirstDevice(server, { user: 'admin' })
 
     it('should add and return device data', () => runTest(function* () {
-      const configIds = []
-      const opIds = []
-
       const deviceAuth = `Bearer ${sharedDevice.deviceToken}`
 
       yield server.get(devicePath)
@@ -230,11 +228,7 @@ describe('Device API routes', () => {
           assert.equal(res.status, 200)
           assert.typeOf(res.body, 'Object')
           assert.property(res.body, 'configuration')
-          assert.property(res.body.configuration, 'id')
-          configIds.push(res.body.configuration.id)
           assert.typeOf(res.body.operation, 'Object')
-          assert.property(res.body.operation, 'id')
-          opIds.push(res.body.operation.id)
         })
 
       yield server.get(devicePath)
@@ -256,11 +250,7 @@ describe('Device API routes', () => {
           assert.equal(res.status, 200)
           assert.typeOf(res.body, 'Object')
           assert.property(res.body, 'configuration')
-          assert.property(res.body.configuration, 'id')
-          configIds.push(res.body.configuration.id)
           assert.typeOf(res.body.operation, 'Object')
-          assert.property(res.body.operation, 'id')
-          opIds.push(res.body.operation.id)
         })
 
       yield server.get(devicePath)
