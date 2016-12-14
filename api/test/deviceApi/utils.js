@@ -57,8 +57,19 @@ function* getLastDeviceOperationId(knex, deviceId) {
   return deviceOperationId
 }
 
+function* getLastResultId(knex, deviceId) {
+  const { resultId } = yield knex('DeviceLogUpdate as dlu')
+    .innerJoin('DeviceLog as dl', 'dl.id', 'dlu.deviceLogId')
+    .where('dl.deviceId', deviceId)
+    .whereNotNull('dlu.resultId')
+    .orderBy('dlu.id', 'desc')
+    .first('dlu.resultId')
+  return resultId
+}
+
 module.exports = {
   deleteTestDataFromCheckpoint,
   getLastDeviceConfigurationId,
-  getLastDeviceOperationId
+  getLastDeviceOperationId,
+  getLastResultId
 }

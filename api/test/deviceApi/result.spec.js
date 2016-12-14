@@ -3,7 +3,7 @@ const chai = require('chai')
 const _ = require('lodash')
 const shared = require('../utils/sharedToken')
 const sharedDevice = require('./deviceToken')
-const { getLastDeviceConfigurationId, getLastDeviceOperationId } = require('./utils')
+const { getLastDeviceConfigurationId, getLastDeviceOperationId, getLastResultId } = require('./utils')
 
 // This agent refers to PORT where program is running.
 const server = supertest.agent('http://localhost:8080')
@@ -72,10 +72,9 @@ describe('Device Result API routes', () => {
         .then((res) => {
           assert.equal(res.status, 200)
           assert.typeOf(res.body, 'Object')
-          assert.typeOf(res.body.result, 'Object')
-          assert.property(res.body.result, 'id')
-          resultIds.push(res.body.result.id)
         })
+
+      resultIds.push(yield* getLastResultId(knex, deviceId))
 
       const [{ count: logLength1 }] = yield knex('DeviceLogUpdate').count('id as count')
       assert.equal(logLength1, initialLogLength + 2) // checkpoint + post
@@ -90,14 +89,13 @@ describe('Device Result API routes', () => {
           assert.property(res.body, 'total')
 
           assert.equal(res.body.data.length, initialDataLength + 1)
-          const lastResult = _.find(res.body.data, { externalId: resultIds[0] })
+          const lastResult = _.find(res.body.data, { id: resultIds[0] })
           assert.typeOf(lastResult, 'Object')
-          assert.equal(lastResult.externalId, resultIds[0])
+          assert.equal(lastResult.id, resultIds[0])
         })
 
       const result1 = yield knex('Result as r')
-        .where({ externalId: resultIds[0] }).first()
-      assert.equal(result1.externalId, resultIds[0])
+        .where({ id: resultIds[0] }).first()
       assert.deepEqual(JSON.parse(result1.resultData), { a: 'b' })
 
       const result1Type = yield knex('ResultType as rt')
@@ -129,7 +127,7 @@ describe('Device Result API routes', () => {
       const [{ rawMessage: log1Raw, resultId: resultId1 }] = yield knex('DeviceLog as dl')
         .innerJoin('DeviceLogUpdate as dlu', 'dl.id', 'dlu.deviceLogId')
         .innerJoin('Result as r', 'r.id', 'dlu.resultId')
-        .where({ externalId: resultIds[0] })
+        .where({ 'r.id': resultIds[0] })
         .select('rawMessage', 'resultId')
       assert.deepEqual(JSON.parse(log1Raw), {
         checkpoint: 'ck1', result: { data: { a: 'b' }, assay: { id: 'HivVl' } } })
@@ -168,14 +166,13 @@ describe('Device Result API routes', () => {
           assert.typeOf(res.body.result, 'array')
           assert.equal(res.body.result.length, 1)
 
-          const lastResult = _.find(res.body.result, { id: resultIds[0] })
+          const lastResult = res.body.result[0]
           assert.typeOf(lastResult, 'Object')
           assert.property(lastResult.sample, 'id')
           assert.property(lastResult.sample.originSite, 'id')
           assert.equal(lastResult.sample.originSite.id, result1SampleSite.externalId)
 
-          assert.deepEqual(_.omit(lastResult, 'sample'), {
-            id: resultIds[0],
+          assert.deepEqual(_.omit(lastResult, 'id', 'sample'), {
             data: { a: 'b' },
             assay: { id: 'HivVl' },
             category: [{ id: 'Success' }],
@@ -183,7 +180,6 @@ describe('Device Result API routes', () => {
             workflow: { status: { id: 'OK' } }
           })
         })
-
 
       const result2SampleSite = yield knex('Site as s')
         .where('partnerId', result1SampleSite.partnerId)
@@ -253,9 +249,9 @@ describe('Device Result API routes', () => {
         .then((res) => {
           assert.equal(res.status, 200)
           assert.typeOf(res.body, 'Object')
-          assert.property(res.body, 'id')
-          resultIds.push(res.body.id)
         })
+
+      resultIds.push(yield* getLastResultId(knex, deviceId))
 
       const { checkpoint: checkpoint2 } = yield knex('DeviceLog')
         .where({ deviceId }).orderBy('id', 'desc').first('checkpoint')
@@ -273,19 +269,10 @@ describe('Device Result API routes', () => {
           assert.property(res.body, 'total')
 
           assert.equal(res.body.data.length, initialDataLength + 2)
-
-          const prevResult = _.find(res.body.data, { externalId: resultIds[0] })
-          assert.typeOf(prevResult, 'Object')
-          assert.equal(prevResult.externalId, resultIds[0])
-
-          const lastResult = _.find(res.body.data, { externalId: resultIds[1] })
-          assert.typeOf(lastResult, 'Object')
-          assert.equal(lastResult.externalId, resultIds[1])
         })
 
       const result2 = yield knex('Result as r')
-        .where({ externalId: resultIds[1] }).first()
-      assert.equal(result2.externalId, resultIds[1])
+        .where({ 'r.id': resultIds[1] }).first()
       assert.deepEqual(JSON.parse(result2.resultData), { a: 'b', c: 2, d: false, e: { f: 'g' } })
       assert.equal(result2.assayVersion, '1a.c1')
       assert.approximately(result2.latitude, 30.419348, 0.000001)
@@ -342,7 +329,7 @@ describe('Device Result API routes', () => {
       const [{ rawMessage: log2Raw, resultId: resultId2 }] = yield knex('DeviceLog as dl')
         .innerJoin('DeviceLogUpdate as dlu', 'dlu.deviceLogId', 'dl.id')
         .innerJoin('Result as r', 'r.id', 'dlu.resultId')
-        .where({ externalId: resultIds[1] }).select('rawMessage', 'resultId')
+        .where({ 'r.id': resultIds[1] }).select('rawMessage', 'resultId')
       assert.deepEqual(JSON.parse(log2Raw), {
         checkpoint: 'ck2',
         data: { a: 'b', c: 2, d: false, e: { f: 'g' } },
@@ -431,7 +418,7 @@ describe('Device Result API routes', () => {
           assert.typeOf(res.body.result, 'array')
           assert.equal(res.body.result.length, 2)
 
-          const lastResult = _.find(res.body.result, { id: resultIds[1] })
+          const lastResult = _.find(res.body.result, { endedOn: '2013-12-01T01:30:00.000Z' })
           assert.typeOf(lastResult, 'Object')
           assert.property(lastResult, 'endedOn')
           assert.property(lastResult.sample, 'id')
@@ -441,8 +428,7 @@ describe('Device Result API routes', () => {
           assert.approximately(lastResult.location.latitude, 30.419348, 0.000001)
           assert.approximately(lastResult.location.longitude, -87.581222, 0.000001)
 
-          assert.deepEqual(_.omit(lastResult, 'location'), {
-            id: resultIds[1],
+          assert.deepEqual(_.omit(lastResult, 'id', 'location'), {
             data: { a: 'b', c: 2, d: false, e: { f: 'g' } },
             assay: {
               id: 'MtbRif',
@@ -500,6 +486,7 @@ describe('Device Result API routes', () => {
 
     it('should set default result status and categories', () => runTest(function* (knex) {
       const resultIds = []
+      const { deviceId } = sharedDevice
       const deviceAuth = `Bearer ${sharedDevice.deviceToken}`
 
       yield server.post(devicePostResultPath)
@@ -507,12 +494,11 @@ describe('Device Result API routes', () => {
         .send({ data: { a: 'b' }, assay: { id: 'HivVl' } })
         .then((res) => {
           assert.equal(res.status, 200)
-          resultIds.push(res.body.id)
         })
+      resultIds.push(yield* getLastResultId(knex, deviceId))
 
       const result1 = yield knex('Result as r')
-        .where({ externalId: resultIds[0] }).first()
-      assert.equal(result1.externalId, resultIds[0])
+        .where({ id: resultIds[0] }).first()
       assert.deepEqual(JSON.parse(result1.resultData), { a: 'b' })
       assert.isNotOk(result1.errorCode)
 
@@ -530,12 +516,11 @@ describe('Device Result API routes', () => {
         .send({ data: { a: 'c' }, error: { code: '1' }, assay: { id: 'HivVl' } })
         .then((res) => {
           assert.equal(res.status, 200)
-          resultIds.push(res.body.id)
         })
+      resultIds.push(yield* getLastResultId(knex, deviceId))
 
       const result2 = yield knex('Result as r')
-        .where({ externalId: resultIds[1] }).first()
-      assert.equal(result2.externalId, resultIds[1])
+        .where({ id: resultIds[1] }).first()
       assert.deepEqual(JSON.parse(result2.resultData), { a: 'c' })
       assert.equal(result2.errorCode, '1')
 
@@ -553,12 +538,11 @@ describe('Device Result API routes', () => {
         .send({ data: { a: 'd' }, category: { id: 'Invalid' }, error: { code: '1' }, assay: { id: 'HivVl' } })
         .then((res) => {
           assert.equal(res.status, 200)
-          resultIds.push(res.body.id)
         })
+      resultIds.push(yield* getLastResultId(knex, deviceId))
 
       const result3 = yield knex('Result as r')
-        .where({ externalId: resultIds[2] }).first()
-      assert.equal(result3.externalId, resultIds[2])
+        .where({ id: resultIds[2] }).first()
       assert.deepEqual(JSON.parse(result3.resultData), { a: 'd' })
       assert.equal(result3.errorCode, '1')
 
@@ -576,12 +560,11 @@ describe('Device Result API routes', () => {
         .send({ data: { a: 'e' }, category: [{ id: 'Detected' }, { id: 'NotDetected' }], assay: { id: 'HivVl' } })
         .then((res) => {
           assert.equal(res.status, 200)
-          resultIds.push(res.body.id)
         })
+      resultIds.push(yield* getLastResultId(knex, deviceId))
 
       const result4 = yield knex('Result as r')
-        .where({ externalId: resultIds[3] }).first()
-      assert.equal(result4.externalId, resultIds[3])
+        .where({ id: resultIds[3] }).first()
       assert.deepEqual(JSON.parse(result4.resultData), { a: 'e' })
       assert.isNotOk(result4.errorCode)
 
@@ -596,53 +579,59 @@ describe('Device Result API routes', () => {
     }))
 
     it('should merge results with same id', () => runTest(function* (knex) {
-      const resultIds = []
+      const { deviceId } = sharedDevice
       const deviceAuth = `Bearer ${sharedDevice.deviceToken}`
-      resultIds.push(`R1${now}`, `R2${now}`)
+
+      const resultIds = []
+      const resultExternalIds = []
+      resultExternalIds.push(`R1${now}`, `R2${now}`)
       const countResults = () => knex('Result').count('id as cnt').then(([{ cnt }]) => cnt)
       const initialCount = yield countResults()
 
       yield server.post(devicePostResultPath)
         .set('Authorization', deviceAuth)
-        .send({ id: resultIds[0], data: { a: 'b' }, assay: { id: 'HivVl' } })
+        .send({ id: resultExternalIds[0], data: { a: 'b' }, assay: { id: 'HivVl' } })
         .then((res) => {
           assert.equal(res.status, 200)
-          assert.equal(res.body.id, resultIds[0])
         })
+      resultIds.push(yield* getLastResultId(knex, deviceId))
 
       let result1 = yield knex('Result as r')
-        .where({ externalId: resultIds[0] }).first()
-      assert.equal(result1.externalId, resultIds[0])
+        .where({ id: resultIds[0] }).first()
+      assert.equal(result1.externalId, resultExternalIds[0])
       assert.deepEqual(JSON.parse(result1.resultData), { a: 'b' })
       assert.isNotOk(result1.errorCode)
       assert.equal(initialCount + 1, yield countResults())
 
       yield server.post(devicePostResultPath)
         .set('Authorization', deviceAuth)
-        .send({ id: resultIds[0], data: { a: 'b', c: 'd' }, assay: { id: 'HivVl' } })
+        .send({ id: resultExternalIds[0], data: { a: 'b', c: 'd' }, assay: { id: 'HivVl' } })
         .then((res) => {
           assert.equal(res.status, 200)
-          assert.equal(res.body.id, resultIds[0])
         })
+      let lastResultId = yield* getLastResultId(knex, deviceId)
+      assert.equal(lastResultId, resultIds[0])
 
       result1 = yield knex('Result as r')
-        .where({ externalId: resultIds[0] }).first()
-      assert.equal(result1.externalId, resultIds[0])
+        .where({ id: resultIds[0] }).first()
+      assert.equal(result1.externalId, resultExternalIds[0])
       assert.deepEqual(JSON.parse(result1.resultData), { a: 'b', c: 'd' })
       assert.isNotOk(result1.errorCode)
       assert.equal(initialCount + 1, yield countResults())
 
       yield server.post(devicePostResultPath)
         .set('Authorization', deviceAuth)
-        .send({ id: resultIds[1], data: { a: 'b' }, assay: { id: 'HivVl' } })
+        .send({ id: resultExternalIds[1], data: { a: 'b' }, assay: { id: 'HivVl' } })
         .then((res) => {
           assert.equal(res.status, 200)
-          assert.equal(res.body.id, resultIds[1])
         })
+      lastResultId = yield* getLastResultId(knex, deviceId)
+      assert.notEqual(lastResultId, resultIds[0])
+      resultIds.push(lastResultId)
 
       let result2 = yield knex('Result as r')
-        .where({ externalId: resultIds[1] }).first()
-      assert.equal(result2.externalId, resultIds[1])
+        .where({ id: resultIds[1] }).first()
+      assert.equal(result2.externalId, resultExternalIds[1])
       assert.equal(initialCount + 2, yield countResults())
 
       const result1SampleSite = yield knex('Site as s')
@@ -656,7 +645,7 @@ describe('Device Result API routes', () => {
       yield server.post(devicePostResultPath)
         .set('Authorization', deviceAuth)
         .send({
-          id: resultIds[1],
+          id: resultExternalIds[1],
           data: { a: 'b', c: 2, d: false, e: { f: 'g' } },
           type: { id: 'Study' },
           workflow: { status: { id: 'Acknowledged' } },
@@ -720,10 +709,13 @@ describe('Device Result API routes', () => {
           resultIds.push(res.body.id)
         })
 
+      lastResultId = yield* getLastResultId(knex, deviceId)
+      assert.equal(lastResultId, resultIds[1])
+
       result2 = yield knex('Result as r')
-        .where({ externalId: resultIds[1] }).first()
+        .where({ id: resultIds[1] }).first()
       assert.equal(initialCount + 2, yield countResults())
-      assert.equal(result2.externalId, resultIds[1])
+      assert.equal(result2.externalId, resultExternalIds[1])
       assert.deepEqual(JSON.parse(result2.resultData), { a: 'b', c: 2, d: false, e: { f: 'g' } })
       assert.equal(result2.assayVersion, '1a.c1')
       assert.approximately(result2.latitude, 30.419348, 0.000001)
@@ -789,17 +781,12 @@ describe('Device Result API routes', () => {
 
       const [{ count: initialLogLength }] = yield knex('DeviceLogUpdate').count('id as count')
 
-      let prevResults
-      let results
-
       yield server.get(devicePath)
         .set('Authorization', deviceAuth)
         .then((res) => {
           assert.equal(res.status, 200)
           assert.typeOf(res.body.result, 'array')
           assert.property(res.body, 'checkpoint')
-          results = res.body.result
-          prevResults = results
         })
 
       yield server.post(devicePath)
@@ -817,11 +804,9 @@ describe('Device Result API routes', () => {
         .then((res) => {
           assert.equal(res.status, 200)
           assert.typeOf(res.body, 'Object')
-          assert.typeOf(res.body.result, 'Object')
-          assert.property(res.body.result, 'id')
-          resultIds.push(res.body.result.id)
         })
 
+      resultIds.push(yield* getLastResultId(knex, deviceId))
       configIds.push(yield* getLastDeviceConfigurationId(knex, deviceId))
       opIds.push(yield* getLastDeviceOperationId(knex, deviceId))
 
@@ -829,7 +814,7 @@ describe('Device Result API routes', () => {
       assert.equal(logLength2, initialLogLength + 2)
 
       const deviceLogResult2 = yield knex('Result')
-        .where({ externalId: resultIds[resultIds.length - 1] })
+        .where({ id: resultIds[resultIds.length - 1] })
         .first()
       const deviceLogConfig2 = yield knex('DeviceConfiguration')
         .where({ id: configIds[configIds.length - 1] })
@@ -877,13 +862,12 @@ describe('Device Result API routes', () => {
           assert.equal(res.body.checkpoint, 'ck000')
           assert.typeOf(res.body.result, 'array')
 
-          const lastResult = _.find(res.body.result, { id: resultIds[0] })
+          const results = res.body.result
+          assert.equal(results.length, 1)
+
+          const lastResult = results[0]
           assert.typeOf(lastResult, 'Object')
           assert.deepEqual(lastResult.data, { a: 'd' })
-
-          results = res.body.result
-          assert.equal(results.length, 1)
-          assert.equal(res.status, 200)
         })
 
       yield server.post(devicePath)
@@ -900,11 +884,9 @@ describe('Device Result API routes', () => {
         .then((res) => {
           assert.equal(res.status, 200)
           assert.typeOf(res.body, 'Object')
-          assert.typeOf(res.body.result, 'Object')
-          assert.property(res.body.result, 'id')
-          resultIds.push(res.body.result.id)
         })
 
+      resultIds.push(yield* getLastResultId(knex, deviceId))
       configIds.push(yield* getLastDeviceConfigurationId(knex, deviceId))
       opIds.push(yield* getLastDeviceOperationId(knex, deviceId))
 
@@ -955,10 +937,7 @@ describe('Device Result API routes', () => {
           assert.typeOf(res.body.result, 'array')
           assert.equal(res.body.checkpoint, 'ck123')
 
-          const result1 = _.find(res.body.result, { id: resultIds[1] })
-          assert.typeOf(result1, 'Object')
-
-          results = res.body.result
+          const results = res.body.result
           assert.equal(results.length, 2)
         })
 
@@ -969,17 +948,9 @@ describe('Device Result API routes', () => {
           assert.typeOf(res.body.result, 'array')
           assert.equal(res.body.checkpoint, 'ck000')
 
-          const result1 = _.find(res.body.result, { id: resultIds[1] })
-          assert.typeOf(result1, 'Object')
-
-          results = res.body.result
+          const results = res.body.result
           assert.equal(results.length, 3)
         })
-
-      const newResults = _.differenceBy(results, prevResults, 'id')
-      assert.equal(newResults.length, 3)
-
-      resultIds.push(..._.map(newResults, 'id'))
     }))
 
     describe('inventory management', () => {
@@ -1332,7 +1303,6 @@ describe('Device Result API routes', () => {
     sharedDevice.authenticateUserAndFirstDevice(server, { user: 'rrt_admin', type: 'm2000' })
 
     it('should honor device role sample origin site', () => runTest(function* (knex) {
-      const resultIds = []
       const deviceAuth = `Bearer ${sharedDevice.deviceToken}`
       const devicePath = '/device'
 
@@ -1350,6 +1320,9 @@ describe('Device Result API routes', () => {
 
       const device1315Auth = `Bearer ${device1315Key}`
       const device1723Auth = `Bearer ${device1723Key}`
+
+      const device1315ExternalId = `1315-${new Date()}`
+      const device1723ExternalId = `1723-${new Date()}`
 
       yield server.post(devicePath)
         .set('Authorization', deviceAuth)
@@ -1375,6 +1348,7 @@ describe('Device Result API routes', () => {
       yield server.post(devicePostResultPath)
         .set('Authorization', deviceAuth)
         .send({
+          id: device1315ExternalId,
           checkpoint: 'rrt_1',
           data: {
             resultText: '454112',
@@ -1389,7 +1363,6 @@ describe('Device Result API routes', () => {
         })
         .then((res) => {
           assert.equal(res.status, 200)
-          resultIds.push(res.body.id)
         })
 
       yield server.get(`${devicePath}?checkpoint=rrt_0`)
@@ -1397,15 +1370,16 @@ describe('Device Result API routes', () => {
         .then((res) => {
           assert.equal(res.status, 200)
           assert.typeOf(res.body.result, 'array')
+          assert.equal(res.body.result.length, 1)
 
-          const lastResult = _.find(res.body.result, { id: resultIds[0] })
+          const lastResult = res.body.result[0]
           assert.typeOf(lastResult, 'Object')
           assert.property(lastResult.sample, 'id')
           assert.property(lastResult.sample.originSite, 'id')
           assert.equal(lastResult.sample.originSite.id, '1315')
 
           assert.deepEqual(_.omit(lastResult, 'sample'), {
-            id: resultIds[0],
+            id: device1315ExternalId,
             data: {
               resultText: '454112',
               copies: 454112
@@ -1423,15 +1397,16 @@ describe('Device Result API routes', () => {
         .then((res) => {
           assert.equal(res.status, 200)
           assert.typeOf(res.body.result, 'array')
+          assert.equal(res.body.result.length, 1)
 
-          const lastResult = _.find(res.body.result, { id: resultIds[0] })
+          const lastResult = res.body.result[0]
           assert.typeOf(lastResult, 'Object')
           assert.property(lastResult.sample, 'id')
           assert.property(lastResult.sample.originSite, 'id')
           assert.equal(lastResult.sample.originSite.id, '1315')
 
           assert.deepEqual(_.omit(lastResult, 'sample'), {
-            id: resultIds[0],
+            id: device1315ExternalId,
             data: {
               resultText: '454112',
               copies: 454112
@@ -1449,14 +1424,13 @@ describe('Device Result API routes', () => {
         .then((res) => {
           assert.equal(res.status, 200)
           assert.typeOf(res.body.result, 'array')
-
-          const lastResult = _.find(res.body.result, { id: resultIds[0] })
-          assert.typeOf(lastResult, 'undefined')
+          assert.equal(res.body.result.length, 0)
         })
 
       yield server.post(devicePostResultPath)
         .set('Authorization', deviceAuth)
         .send({
+          id: device1723ExternalId,
           checkpoint: 'rrt_2',
           data: {
             resultText: '154112',
@@ -1471,7 +1445,6 @@ describe('Device Result API routes', () => {
         })
         .then((res) => {
           assert.equal(res.status, 200)
-          resultIds.push(res.body.id)
         })
 
       yield server.get(`${devicePath}?checkpoint=rrt_1`)
@@ -1479,15 +1452,16 @@ describe('Device Result API routes', () => {
         .then((res) => {
           assert.equal(res.status, 200)
           assert.typeOf(res.body.result, 'array')
+          assert.equal(res.body.result.length, 1)
 
-          const lastResult = _.find(res.body.result, { id: resultIds[1] })
+          const lastResult = res.body.result[0]
           assert.typeOf(lastResult, 'Object')
           assert.property(lastResult.sample, 'id')
           assert.property(lastResult.sample.originSite, 'id')
           assert.equal(lastResult.sample.originSite.id, '1723')
 
           assert.deepEqual(_.omit(lastResult, 'sample'), {
-            id: resultIds[1],
+            id: device1723ExternalId,
             data: {
               resultText: '154112',
               copies: 154112
@@ -1505,15 +1479,16 @@ describe('Device Result API routes', () => {
         .then((res) => {
           assert.equal(res.status, 200)
           assert.typeOf(res.body.result, 'array')
+          assert.equal(res.body.result.length, 1)
 
-          const lastResult = _.find(res.body.result, { id: resultIds[1] })
+          const lastResult = res.body.result[0]
           assert.typeOf(lastResult, 'Object')
           assert.property(lastResult.sample, 'id')
           assert.property(lastResult.sample.originSite, 'id')
           assert.equal(lastResult.sample.originSite.id, '1723')
 
           assert.deepEqual(_.omit(lastResult, 'sample'), {
-            id: resultIds[1],
+            id: device1723ExternalId,
             data: {
               resultText: '154112',
               copies: 154112
@@ -1531,16 +1506,14 @@ describe('Device Result API routes', () => {
         .then((res) => {
           assert.equal(res.status, 200)
           assert.typeOf(res.body.result, 'array')
-
-          const lastResult = _.find(res.body.result, { id: resultIds[1] })
-          assert.typeOf(lastResult, 'undefined')
+          assert.equal(res.body.result.length, 1)
         })
 
       yield server.post(devicePostResultPath)
         .set('Authorization', device1723Auth)
         .send({
           checkpoint: 'rrt1723_1',
-          id: resultIds[0],
+          id: device1315ExternalId,
           workflow: { status: { id: 'Acknowledged' } }
         })
         .then((res) => {
@@ -1552,12 +1525,11 @@ describe('Device Result API routes', () => {
         .set('Authorization', device1723Auth)
         .send({
           checkpoint: 'rrt1723_2',
-          id: resultIds[1],
+          id: device1723ExternalId,
           workflow: { status: { id: 'Acknowledged' } }
         })
         .then((res) => {
           assert.equal(res.status, 200)
-          resultIds.push(res.body.id)
         })
 
 
@@ -1567,14 +1539,14 @@ describe('Device Result API routes', () => {
           assert.equal(res.status, 200)
           assert.typeOf(res.body.result, 'array')
 
-          const lastResult = _.find(res.body.result, { id: resultIds[1] })
+          const lastResult = _.find(res.body.result, { id: device1723ExternalId })
           assert.typeOf(lastResult, 'Object')
           assert.property(lastResult.sample, 'id')
           assert.property(lastResult.sample.originSite, 'id')
           assert.equal(lastResult.sample.originSite.id, '1723')
 
           assert.deepEqual(_.omit(lastResult, 'sample'), {
-            id: resultIds[1],
+            id: device1723ExternalId,
             workflow: { status: { id: 'Acknowledged' } },
             data: {
               resultText: '154112',
@@ -1593,14 +1565,14 @@ describe('Device Result API routes', () => {
           assert.equal(res.status, 200)
           assert.typeOf(res.body.result, 'array')
 
-          const lastResult = _.find(res.body.result, { id: resultIds[1] })
+          const lastResult = _.find(res.body.result, { id: device1723ExternalId })
           assert.typeOf(lastResult, 'Object')
           assert.property(lastResult.sample, 'id')
           assert.property(lastResult.sample.originSite, 'id')
           assert.equal(lastResult.sample.originSite.id, '1723')
 
           assert.deepEqual(_.omit(lastResult, 'sample'), {
-            id: resultIds[1],
+            id: device1723ExternalId,
             data: {
               resultText: '154112',
               copies: 154112
@@ -1619,7 +1591,7 @@ describe('Device Result API routes', () => {
           assert.equal(res.status, 200)
           assert.typeOf(res.body.result, 'array')
 
-          const lastResult = _.find(res.body.result, { id: resultIds[1] })
+          const lastResult = _.find(res.body.result, { id: device1723ExternalId })
           assert.typeOf(lastResult, 'undefined')
         })
     }))
