@@ -14,8 +14,7 @@ import Helmet from 'react-helmet'
 import { fetchListFilteredRouters } from '../RouterRedux'
 import ListFilterContainer from '../../filter/list/ListFilter'
 import { configureListFilter } from '../../filter/FilterRedux'
-import EmptyList from '../../components/shared/EmptyList'
-import DataTable from '../../components/shared/DataTable'
+import DataTableWithEmptyList from '../../components/shared/DataTableWithEmptyList'
 import styles from './RouterList.css'
 
 const messages = defineMessages({
@@ -124,9 +123,8 @@ export class RouterList extends PureComponent {
   }
 
   render() {
-    const { intl, items, table } = this.props
+    const { intl } = this.props
     const { formatMessage, formatRelative } = intl
-    const isSettledAndEmpty = !table.loading && items.currentIdList.isEmpty()
     const columns = [
       { db: 'name',
         title: formatMessage(messages.routerName),
@@ -149,17 +147,14 @@ export class RouterList extends PureComponent {
       <div className={styles.Content}>
         <Helmet title={this.getFormattedTitle()} titleTemplate="%s - Aspect" defaultTitle="Aspect" />
         <ListFilterContainer />
-        <EmptyList isEmpty={isSettledAndEmpty} />
-        {!isSettledAndEmpty && (
-          <DataTable
-            selectable
-            handleItemIdSelection={this.handleItemIdSelection}
-            handleFetch={this.handleFetch}
-            items={this.props.items}
-            table={this.props.table}
-            columns={columns}
-          />
-        )}
+        <DataTableWithEmptyList
+          selectable
+          handleItemIdSelection={this.handleItemIdSelection}
+          handleFetch={this.handleFetch}
+          items={this.props.items}
+          table={this.props.table}
+          columns={columns}
+        />
       </div>
     )
   }

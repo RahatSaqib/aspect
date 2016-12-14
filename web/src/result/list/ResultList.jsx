@@ -11,8 +11,7 @@ import { connect } from 'react-redux'
 import Helmet from 'react-helmet'
 
 // Our own imports
-import EmptyList from '../../components/shared/EmptyList'
-import DataTable from '../../components/shared/DataTable'
+import DataTableWithEmptyList from '../../components/shared/DataTableWithEmptyList'
 import ListFilterContainer from '../../filter/list/ListFilter'
 import { configureListFilter } from '../../filter/FilterRedux'
 import { fetchListFilteredResults } from '../ResultRedux'
@@ -92,9 +91,8 @@ export class ResultList extends PureComponent {
   }
 
   render() {
-    const { intl, items, table } = this.props
+    const { intl } = this.props
     const { formatMessage, formatDate } = intl
-    const isSettledAndEmpty = !table.loading && items.currentIdList.isEmpty()
     const columns = [
       { db: 'endedOn', title: formatMessage(messages.endedOn), format: data => formatDate(data) },
       { db: 'deviceName', title: formatMessage(messages.deviceName) },
@@ -106,19 +104,16 @@ export class ResultList extends PureComponent {
       <div className={styles.Content}>
         <Helmet title={formatMessage(messages.title)} titleTemplate="%s - Aspect" defaultTitle="Aspect" />
         <ListFilterContainer subject={formatMessage(messages.title)} />
-        <EmptyList isEmpty={isSettledAndEmpty} />
-        {!isSettledAndEmpty && (
-          <DataTable
-            selectable
-            handleItemIdSelection={this.handleItemIdSelection}
-            handleFetch={this.handleFetch}
-            items={this.props.items}
-            table={this.props.table}
-            columns={columns}
-            intl={intl}
-            messages={messages}
-          />
-        )}
+        <DataTableWithEmptyList
+          selectable
+          handleItemIdSelection={this.handleItemIdSelection}
+          handleFetch={this.handleFetch}
+          items={this.props.items}
+          table={this.props.table}
+          columns={columns}
+          intl={intl}
+          messages={messages}
+        />
       </div>
     )
   }

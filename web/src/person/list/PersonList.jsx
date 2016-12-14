@@ -11,8 +11,7 @@ import { connect } from 'react-redux'
 import Helmet from 'react-helmet'
 
 // Our own imports
-import EmptyList from '../../components/shared/EmptyList'
-import DataTable from '../../components/shared/DataTable'
+import DataTableWithEmptyList from '../../components/shared/DataTableWithEmptyList'
 import ListFilterContainer from '../../filter/list/ListFilter'
 import { configureListFilter } from '../../filter/FilterRedux'
 import { fetchListFilteredPersons } from '../PersonRedux'
@@ -80,9 +79,8 @@ export class PersonList extends PureComponent {
   }
 
   render() {
-    const { intl, items, table } = this.props
+    const { intl } = this.props
     const { formatMessage } = intl
-    const isSettledAndEmpty = !table.loading && items.currentIdList.isEmpty()
     const columns = [
       { db: 'name', title: formatMessage(messages.personName) },
       { db: 'level', title: formatMessage(messages.level), hideOnXs: true },
@@ -94,17 +92,14 @@ export class PersonList extends PureComponent {
       <div className={styles.Content}>
         <Helmet title={formatMessage(messages.title)} titleTemplate="%s - Aspect" defaultTitle="Aspect" />
         <ListFilterContainer subject={formatMessage(messages.title)} />
-        <EmptyList isEmpty={isSettledAndEmpty} />
-        {!isSettledAndEmpty && (
-          <DataTable
-            selectable
-            handleItemIdSelection={this.handleItemIdSelection}
-            handleFetch={this.handleFetch}
-            items={this.props.items}
-            table={this.props.table}
-            columns={columns}
-          />
-        )}
+        <DataTableWithEmptyList
+          selectable
+          handleItemIdSelection={this.handleItemIdSelection}
+          handleFetch={this.handleFetch}
+          items={this.props.items}
+          table={this.props.table}
+          columns={columns}
+        />
       </div>
     )
   }

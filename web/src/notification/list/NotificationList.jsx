@@ -10,8 +10,7 @@ import { connect } from 'react-redux'
 import Helmet from 'react-helmet'
 
 // Our own imports
-import EmptyList from '../../components/shared/EmptyList'
-import DataTable from '../../components/shared/DataTable'
+import DataTableWithEmptyList from '../../components/shared/DataTableWithEmptyList'
 import ListFilterContainer from '../../filter/list/ListFilter'
 import { configureListFilter } from '../../filter/FilterRedux'
 import { fetchListFilteredNotifications } from '../NotificationRedux'
@@ -70,9 +69,8 @@ export class NotificationList extends PureComponent {
   }
 
   render() {
-    const { intl, items, table } = this.props
+    const { intl } = this.props
     const { formatMessage } = intl
-    const isSettledAndEmpty = !table.loading && items.currentIdList.isEmpty()
     const columns = [
       { db: 'type', title: formatMessage(messages.type), hideOnXs: true },
       { db: 'name', title: formatMessage(messages.name) },
@@ -83,15 +81,12 @@ export class NotificationList extends PureComponent {
       <div className={styles.Content}>
         <Helmet title={formatMessage(messages.title)} titleTemplate="%s - Aspect" defaultTitle="Aspect" />
         <ListFilterContainer subject={formatMessage(messages.title)} />
-        <EmptyList isEmpty={isSettledAndEmpty} />
-        {!isSettledAndEmpty && (
-          <DataTable
-            handleFetch={this.handleFetch}
-            items={this.props.items}
-            table={this.props.table}
-            columns={columns}
-          />
-        )}
+        <DataTableWithEmptyList
+          handleFetch={this.handleFetch}
+          items={this.props.items}
+          table={this.props.table}
+          columns={columns}
+        />
       </div>
     )
   }
