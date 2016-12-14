@@ -12,15 +12,15 @@ import Paper from 'material-ui/Paper'
 // Our own imports
 import { Unit } from '../../components/pureGrids'
 import {
-  fetchSingleDevice
-} from '../../device/DeviceRedux'
+  fetchDemoDevice
+} from '../DemoRedux'
 import ReadOnlyFields from '../../components/shared/ReadOnlyFields'
 import styles from './DeviceDemo.css'
 
 export class DeviceDemo extends PureComponent {
   static propTypes = {
     params: PropTypes.object.isRequired,
-    fetchSingleDevice: PropTypes.func.isRequired,
+    fetchDemoDevice: PropTypes.func.isRequired,
     device: PropTypes.object
   }
 
@@ -41,13 +41,12 @@ export class DeviceDemo extends PureComponent {
   }
 
   handleFetchDevice = () => {
-    this.props.fetchSingleDevice(this.props.params.deviceId)
+    this.props.fetchDemoDevice(this.props.params.deviceId)
       .then(() => {
         const { device } = this.props
 
         this.handleFormChange({
-          name: device.get('name') || '',
-          shortname: device.get('shortname') || ''
+          name: device.get('name') || ''
         })
       })
   }
@@ -106,7 +105,7 @@ function mapStateToProps(state, props) {
 
 function mapDispatchToProps(dispatch) {
   return bindActionCreators({
-    fetchSingleDevice
+    fetchDemoDevice
   }, dispatch)
 }
 
