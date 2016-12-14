@@ -15,7 +15,9 @@ import { NotFoundContainer } from '../error/notFound/NotFound'
 import { LoginContainer } from '../auth/login/Login'
 import { ResetPasswordContainer } from '../auth/resetPassword/ResetPassword'
 import { DashboardContainer } from '../dashboard/dashboard/Dashboard'
-import { InventoryContainer } from '../dashboard/inventory/Inventory'
+import { PatientCareContainer } from '../dashboard/patient-care/PatientCare'
+import { ManageDevicesContainer } from '../dashboard/manage-devices/ManageDevices'
+import { ManageSuppliesContainer } from '../dashboard/manage-supplies/ManageSupplies'
 import { MaintenanceContainer } from '../dashboard/maintenance/Maintenance'
 import { DeviceListContainer } from '../device/list/DeviceList'
 import { DeviceDetailContainer } from '../device/detail/DeviceDetail'
@@ -76,7 +78,9 @@ const routes =
 
         <Route path="dashboard" >
           <IndexRoute component={DashboardContainer} />
-          <Route path="inventory" component={InventoryContainer} />
+          <Route path="patient-care" component={PatientCareContainer} />
+          <Route path="manage-devices" component={ManageDevicesContainer} />
+          <Route path="manage-supplies" component={ManageSuppliesContainer} />
           <Route path="maintenance" component={MaintenanceContainer} />
         </Route>
 

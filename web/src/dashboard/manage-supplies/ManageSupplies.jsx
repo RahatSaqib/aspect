@@ -7,6 +7,7 @@ import {
 import Helmet from 'react-helmet'
 
 // Our own imports
+import DashboardInventory from '../dashboard/DashboardInventory'
 import { Unit } from '../../components/pureGrids'
 import styles from './ManageSupplies.css'
 
@@ -26,6 +27,7 @@ export class ManageSupplies extends PureComponent {
         <Helmet title="ManageSupplies" titleTemplate="%s - Aspect" defaultTitle="Aspect" />
         <div>
           <Unit sm="1-2" md="1-3" lg="1-4">
+            <DashboardInventory label={'Cartridges'} />
           </Unit>
         </div>
       </div>
