@@ -1,7 +1,12 @@
+import { defineMessages } from 'react-intl'
 import Immutable from 'immutable'
 
 import { aspectFetch } from '../shared/utils/fetch'
-import { addError } from '../error/ErrorRedux'
+
+import {
+  errorNotFound,
+  errorPleaseTryAgainInAFewMinutes
+} from '../error/CommonErrorNotifications'
 
 import {
   receiveItem,
@@ -12,6 +17,7 @@ export const types = {
   DEMO_REQUEST_DEVICE: 'DEMO_REQUEST_DEVICE',
   DEMO_RECEIVE_DEVICE: 'DEMO_RECEIVE_DEVICE',
 }
+
 /*
  * ---------------- Action Creators -----------------
  */
@@ -34,11 +40,24 @@ export function fetchDemoDevice(deviceId) {
   return (dispatch) => {
     dispatch(requestDemoDevice(deviceId))
 
-    return aspectFetch(`/device/${deviceId}`)
-      .then(json => dispatch(receiveDemoDevice(json.data)))
-      .catch((err) => {
-        dispatch(addError(`Loading a device (${deviceId}) failed`, err.message, err))
+    return aspectFetch(`/device/${deviceId}`,
+      {
+        errorNotifications: {
+          404: errorNotFound(defineMessages({
+            title: {
+              id: 'errorResponseMessages.fetchSingleDevice.GET.404.title',
+              defaultMessage: 'Could Not Find Device Details'
+            }
+          })),
+          default: errorPleaseTryAgainInAFewMinutes(defineMessages({
+            title: {
+              id: 'errorResponseMessages.fetchSingleDevice.GET.default.title',
+              defaultMessage: 'Error Loading Device Details'
+            }
+          }))
+        }
       })
+      .then(json => dispatch(receiveDemoDevice(json.data)))
   }
 }
 
