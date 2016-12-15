@@ -93,9 +93,18 @@ export function fetchConsumableReasons(forceRefresh) {
     }
 
     dispatch(createRequestConsumableReasons())
-    return aspectFetch('/inventory/consumable-reason')
+    return aspectFetch('/inventory/consumable-reason',
+      {
+        errorNotifications: {
+          default: errorPleaseTryAgainInAFewMinutes(defineMessages({
+            title: {
+              id: 'errorResponseMessages.fetchConsumableReasons.GET.default.title',
+              defaultMessage: 'Loading Consumable Reasons Failed'
+            }
+          }))
+        }
+      })
       .then(json => dispatch(createReceiveConsumableReasons(json.data)))
-      .catch(err => dispatch(addError('Loading consumable reasons failed', err.message, err)))
   }
 }
 
