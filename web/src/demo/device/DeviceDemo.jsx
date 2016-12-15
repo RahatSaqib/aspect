@@ -7,21 +7,31 @@ import { connect } from 'react-redux'
 import Helmet from 'react-helmet'
 
 // Material-UI
+import LinearProgress from 'material-ui/LinearProgress'
+import MenuItem from 'material-ui/MenuItem'
 import Paper from 'material-ui/Paper'
+import SelectField from 'material-ui/SelectField'
 
 // Our own imports
-import { Unit } from '../../components/pureGrids'
 import {
   fetchDemoDevice
 } from '../DemoRedux'
+
+import { Unit } from '../../components/pureGrids'
 import ReadOnlyFields from '../../components/shared/ReadOnlyFields'
 import styles from './DeviceDemo.css'
+
 
 export class DeviceDemo extends PureComponent {
   static propTypes = {
     params: PropTypes.object.isRequired,
     fetchDemoDevice: PropTypes.func.isRequired,
     device: PropTypes.object
+  }
+
+  state = {
+    assayId: null,
+    resultId: null
   }
 
   componentDidMount() {
@@ -37,6 +47,76 @@ export class DeviceDemo extends PureComponent {
   handleFetchDevice = () => {
     this.props.fetchDemoDevice(this.props.params.deviceId)
   }
+
+  handleSelectFieldChange = field => (event, index, value) => {
+    this.setState(Object.assign({}, this.state, { [field]: value }))
+  }
+
+  renderProgress() {
+    const { device } = this.props
+
+    return !device && <LinearProgress />
+  }
+
+  renderFormContainer() {
+    const { device } = this.props
+    let { assayId, resultId } = this.state
+
+    const assays = device.get('assays')
+    let assay = assays.find(a => a.get('id') === assayId)
+    if (!assay) {
+      assay = assays.get(0)
+      assayId = assay && assay.get('id')
+    }
+
+    let results = []
+    if (assay) {
+      results = assay.get('results')
+      let result = results.find(r => r.get('id') === resultId)
+      if (!result) {
+        result = results.get(0)
+        resultId = result && result.get('id')
+      }
+    }
+
+    return (
+      <div>
+        <div>
+          <SelectField
+            value={assayId}
+            floatingLabelText="Assay"
+            fullWidth
+            onChange={this.handleSelectFieldChange('assayId')}
+          >
+            {assays.map(a => (
+              <MenuItem
+                key={a.get('id')}
+                value={a.get('id')}
+                primaryText={a.get('name')}
+              />
+            ))}
+          </SelectField>
+        </div>
+        <div>
+          <SelectField
+            value={resultId}
+            floatingLabelText="Result"
+            fullWidth
+            onChange={this.handleSelectFieldChange('resultId')}
+          >
+            {results.map(r => (
+              <MenuItem
+                key={r.get('id')}
+                value={r.get('id')}
+                primaryText={r.get('name')}
+              />
+            ))}
+          </SelectField>
+        </div>
+      </div>
+    )
+  }
+
 
   renderReadOnlyFields() {
     const { device } = this.props
@@ -67,6 +147,9 @@ export class DeviceDemo extends PureComponent {
           <div>
             {this.renderReadOnlyFields()}
           </div>
+          <div>
+            {this.renderFormContainer()}
+          </div>
         </Unit>
       </div>
     )
@@ -77,6 +160,7 @@ export class DeviceDemo extends PureComponent {
       <div className={styles.Content}>
         <Helmet title="Device Demo" titleTemplate="%s - Aspect" defaultTitle="Aspect" />
         <Paper>
+          {this.renderProgress()}
           {this.renderContent()}
         </Paper>
       </div>

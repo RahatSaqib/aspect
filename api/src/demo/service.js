@@ -1,3 +1,4 @@
+const _ = require('lodash')
 const Boom = require('boom')
 const jwt = require('jsonwebtoken')
 const { knex } = require('../db')
@@ -15,10 +16,12 @@ function* getDemoDevice(request) {
     .leftOuterJoin('User as u', 'u.id', 'd.approvedBy')
     .where('d.id', +params.deviceId)
     .modify(addConstraints, dataConstraints, { device: 'd' })
-    .first('d.id', 'd.name')
+    .first('d.id', 'd.name', 'd.deviceTypeId')
   if (!device) {
     return Boom.notFound()
   }
+
+  const result = { id: device.id, name: device.name }
 
   const apiKey = yield knex('DeviceApiKey as dak')
     .innerJoin('Device as d', 'dak.deviceId', 'd.id')
@@ -27,10 +30,26 @@ function* getDemoDevice(request) {
     .first('dak.id as dak')
 
   if (apiKey) {
-    device.access = jwt.sign(apiKey, config.secret)
+    result.access = jwt.sign(apiKey, config.secret)
   }
 
-  return device
+  const assays = yield knex('Assay as a')
+    .innerJoin('DeviceType as dt', 'dt.id', 'a.deviceTypeId')
+    .where({ 'dt.id': device.deviceTypeId })
+    .orderBy('a.name')
+    .select('a.id', 'a.name')
+
+  result.assays = []
+  for (const assay of assays) {
+    const results = yield knex('Result as r')
+      .where('r.assayId', assay.id)
+      .select('id', knex.raw('JSON_UNQUOTE(JSON_EXTRACT(resultData, "$.resultText")) as name'))
+      .orderBy('name')
+      .limit(100)
+    result.assays.push(Object.assign({ results: _.sortedUniqBy(results, 'name') }, assay))
+  }
+
+  return result
 }
 
 
