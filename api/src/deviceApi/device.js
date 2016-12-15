@@ -1,4 +1,3 @@
-const { getExternalId } = require('./common')
 const { addResult, listResults } = require('./result')
 
 function* addDeviceData(context) {
@@ -7,12 +6,12 @@ function* addDeviceData(context) {
   const { result, configuration, operation } = payload
 
   if (configuration) {
-    response.configuration = yield* addDeviceConfiguration(
+    yield* addDeviceConfiguration(
       context.withPayload(configuration))
   }
 
   if (operation) {
-    response.operation = yield* addDeviceOperation(
+    yield* addDeviceOperation(
       context.withPayload(operation))
   }
 
@@ -23,10 +22,8 @@ function* addDeviceData(context) {
 
       if (resultResponse instanceof Error) {
         // TODO formalize error handling
-        return response.result
+        return resultResponse
       }
-      // Only keep report last updated in response
-      response.result = resultResponse
     }
   }
 
@@ -56,12 +53,10 @@ function* getDeviceData(context) {
 function* addDeviceConfiguration(context) {
   const { knex, payload, device: { id: deviceId }, now } = context
 
-  const externalId = getExternalId(payload.id)
-
   const [deviceConfigurationId] = yield knex('DeviceConfiguration')
     .insert({
       deviceId,
-      externalId,
+      externalId: payload.id,
       data: JSON.stringify(payload.data),
       createdOn: now
     })
@@ -71,18 +66,16 @@ function* addDeviceConfiguration(context) {
     .where('id', deviceId)
     .update({ deviceConfigurationId })
 
-  return { id: externalId }
+  return {}
 }
 
 function* addDeviceOperation(context) {
   const { knex, payload, device: { id: deviceId }, now } = context
 
-  const externalId = getExternalId(payload.id)
-
   const [deviceOperationId] = yield knex('DeviceOperation')
     .insert({
       deviceId,
-      externalId,
+      externalId: payload.id,
       data: JSON.stringify(payload.data),
       createdOn: now
     })
@@ -92,7 +85,7 @@ function* addDeviceOperation(context) {
     .where('id', deviceId)
     .update({ deviceOperationId })
 
-  return { id: externalId }
+  return {}
 }
 
 module.exports = {

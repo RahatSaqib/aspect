@@ -10,10 +10,6 @@ const errorPayload = Joi.object().keys({
     'Description of the error')
 })
 
-// TODO remove external ID from device API ASP-242
-const externalIdPayload = Joi.string().allow('', null).description(
-    'External ID')
-
 const configurationPayload = {
   checkpoint: Joi.string().allow('', null).description(
     'The client checkpoint'),
@@ -187,9 +183,6 @@ module.exports = [
       },
       response: {
         schema: {
-          configuration: Joi.object().keys({ id: externalIdPayload }),
-          operation: Joi.object().keys({ id: externalIdPayload }),
-          result: Joi.object().keys({ id: externalIdPayload }),
           error: errorPayload
         }
       }
@@ -208,7 +201,6 @@ module.exports = [
       },
       response: {
         schema: {
-          id: externalIdPayload,
           error: errorPayload
         }
       }
@@ -227,7 +219,6 @@ module.exports = [
       },
       response: {
         schema: {
-          id: externalIdPayload,
           error: errorPayload
         }
       }
@@ -250,7 +241,6 @@ module.exports = [
       },
       response: {
         schema: {
-          id: externalIdPayload,
           error: errorPayload
         }
       }
