@@ -26,7 +26,8 @@ export class DeviceDemo extends PureComponent {
 
   state = {
     values: {
-      name: ''
+      name: '',
+      access: ''
     }
   }
 
@@ -59,6 +60,10 @@ export class DeviceDemo extends PureComponent {
       {
         label: 'Name',
         value: device.get('name')
+      },
+      {
+        label: 'API Key',
+        value: device.get('access')
       }
     ]
     return (
@@ -74,7 +79,7 @@ export class DeviceDemo extends PureComponent {
 
     return (
       <div className={styles.RowContainer}>
-        <Unit lg="1-2">
+        <Unit lg="2-1">
           <div>
             {this.renderReadOnlyFields()}
           </div>
@@ -96,7 +101,7 @@ export class DeviceDemo extends PureComponent {
 }
 
 function mapStateToProps(state, props) {
-  const device = state.device.items.byId.get(props.params.deviceId)
+  const device = state.demo.deviceItems.byId.get(props.params.deviceId)
 
   return {
     device

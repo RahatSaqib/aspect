@@ -40,7 +40,7 @@ export function fetchDemoDevice(deviceId) {
   return (dispatch) => {
     dispatch(requestDemoDevice(deviceId))
 
-    return aspectFetch(`/device/${deviceId}`,
+    return aspectFetch(`/demo/device/${deviceId}`,
       {
         errorNotifications: {
           404: errorNotFound(defineMessages({
@@ -57,7 +57,7 @@ export function fetchDemoDevice(deviceId) {
           }))
         }
       })
-      .then(json => dispatch(receiveDemoDevice(json.data)))
+      .then(json => dispatch(receiveDemoDevice(json)))
   }
 }
 
@@ -65,7 +65,7 @@ export function fetchDemoDevice(deviceId) {
  * ---------------- Reducers -----------------
  */
 const Demo = Immutable.Record({
-  items: new Items()
+  deviceItems: new Items()
 })
 
 const initialState = new Demo()
@@ -75,7 +75,7 @@ export default function demoReducer(state = initialState, action) {
     case types.DEMO_RECEIVE_DEVICE:
       return state.withMutations((mutState) => {
         const immutItem = Immutable.fromJS(action.item)
-        mutState.set('items', receiveItem(mutState.items, immutItem))
+        mutState.set('deviceItems', receiveItem(mutState.deviceItems, immutItem))
       })
     default:
       return state
