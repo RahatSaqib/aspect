@@ -1,11 +1,15 @@
 // This file contains all possible settings for
 // customizing the material-ui theme
+// See here for the possible properties:
+// https://github.com/callemall/material-ui/blob/master/src/styles/getMuiTheme.js
 import {
   lightGreen300,
   lightGreen600,
   lightGreen700,
   orange700,
   grey700,
+  grey500,
+  grey400,
   grey100
 } from 'material-ui/styles/colors'
 
@@ -22,16 +26,6 @@ export default {
   },
   spacing: {
     iconSize: 24
-    // desktopGutter: 20,
-    // desktopGutterMore: 32,
-    // desktopGutterLess: 16,
-    // desktopGutterMini: 8,
-    // desktopKeylineIncrement: 64,
-    // desktopDropDownMenuItemHeight: 32,
-    // desktopDropDownMenuFontSize: 15,
-    // desktopDrawerMenuItemHeight: 48,
-    // desktopSubheaderHeight: 48,
-    // desktopToolbarHeight: 77
   },
   tableHeaderColumn: {
     textColor: grey700,
@@ -45,6 +39,11 @@ export default {
     height: 24,
     spacing: 12
   },
+  textField: {
+    floatingLabelColor: grey500,
+    // disabledTextColor: palette.disabledColor,
+    borderColor: grey400
+  },
   fontFamily: 'Roboto, sans-serif',
   palette: {
     primary1Color: lightGreen600,
@@ -53,13 +52,5 @@ export default {
     accent1Color: orange700,
     accent2Color: lightGreen300,
     accent3Color: orange700
-      // textColor: black,
-      // alternateTextColor: white,
-      // canvasColor: white,
-      // disabledColor: ColorManipulator.fade(darkBlack, 0.3),
-      // borderColor: grey300,
-      // pickerHeaderColor: cyan500,
-      // clockCircleColor: ColorManipulator.fade(darkBlack, 0.07),
-      // shadowColor: fullBlack,
   }
 }

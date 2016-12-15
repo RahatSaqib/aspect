@@ -370,6 +370,7 @@ function* up(knex) {
     assay.string('resultCategory2Label')
     assay.string('resultCategory2i18nKey')
     assay.specificType('resultDataSchema', 'JSON')
+    assay.specificType('patientDataSchema', 'JSON')
     assay.charset('utf8')
   })
 

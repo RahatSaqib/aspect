@@ -26,6 +26,13 @@
     margin: auto;
   }
 }
+
+/*container for details*/
+.ContentDetails {
+  composes: Content;
+  max-width: 800px;
+}
+
 /* --- Helper classes --- */
 
 /*Make items with touch event behave like links*/

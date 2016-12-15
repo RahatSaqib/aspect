@@ -28,7 +28,6 @@ const vendorPackages = [
   'keycode',
   'lodash',
   'material-ui',
-  'moment',
   'piwik-react-router',
   'raven-js',
   'react',

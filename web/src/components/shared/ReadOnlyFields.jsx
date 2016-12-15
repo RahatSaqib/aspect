@@ -1,28 +1,27 @@
 // Imports from packages
 import React, { PropTypes } from 'react'
 import { compose, setPropTypes, pure } from 'recompose'
+import classnames from 'classnames/bind'
 
-// Material-UI
-import TextField from 'material-ui/TextField'
+import styles from './ReadOnlyFields.css'
+
+const cssClasses = classnames.bind(styles)
 
 const enhanceField = compose(
   setPropTypes({
     label: PropTypes.string.isRequired,
-    value: PropTypes.oneOfType([
-      PropTypes.string,
-      PropTypes.number
-    ]).isRequired
+    value: PropTypes.any,
+    lg: PropTypes.bool,
+    format: PropTypes.func
   }),
   pure
 )
 
-export const ReadOnlyField = enhanceField(({ label, value }) => (
-  <TextField
-    disabled
-    value={value}
-    floatingLabelText={label}
-    fullWidth
-  />
+export const ReadOnlyField = enhanceField(({ label, value, lg, format }) => (
+  <div className={cssClasses('FieldContainer', { 'FieldContainer--large': lg })}>
+    <label htmlFor={label.replace(' ', '_')} className={cssClasses('FieldContainer__Label')}>{label}</label>
+    <div id={label.replace(' ', '_')}>{format && value ? format(value) : value || '-'}</div>
+  </div>
 ))
 
 const enhanceFields = compose(
