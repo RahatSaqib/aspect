@@ -9,6 +9,7 @@ import { bindActionCreators } from 'redux'
 import { connect } from 'react-redux'
 import Helmet from 'react-helmet'
 import { SubmissionError } from 'redux-form/immutable'
+import startOfToday from 'date-fns/start_of_today'
 
 // Material-UI
 import { Card } from 'material-ui/Card'
@@ -117,8 +118,7 @@ export class InventoryItemsList extends PureComponent {
     toggleGroupBySite: PropTypes.func.isRequired,
     adjustInventoryLevels: PropTypes.func.isRequired,
     items: PropTypes.object.isRequired,
-    currentAdjustmentOperation: PropTypes.string,
-    adjustingInventoryItemId: PropTypes.string,
+    inventoryAdjustment: PropTypes.string,
     addInventory: PropTypes.func.isRequired,
     removeInventory: PropTypes.func.isRequired,
     transferInventory: PropTypes.func.isRequired
@@ -144,16 +144,18 @@ export class InventoryItemsList extends PureComponent {
     }
   }
 
-  handleFetch = (...args) => {
-    this.props.fetchListFilteredInventoryItems({}, ...args)
-  }
-
   groupBySiteChecked = (event, isChecked) => {
     this.props.toggleGroupBySite(isChecked)
   }
 
+  adjustInventoryLevels = (inventoryItemId, operation) => {
+    const { adjustInventoryLevels, items } = this.props
+    const inventoryItem = items.getIn(['byId', inventoryItemId])
+    adjustInventoryLevels(inventoryItem, operation)
+  }
+
   inventoryLevelAdjustmentIconButtons = (itemId) => {
-    const { intl: { formatMessage }, adjustInventoryLevels } = this.props
+    const { intl: { formatMessage } } = this.props
     const buttonStyle = {
       marginTop: '0.2em',
       marginRight: '1em'
@@ -162,21 +164,21 @@ export class InventoryItemsList extends PureComponent {
       <FloatingActionButton
         mini secondary style={buttonStyle}
         title={formatMessage(messages.addInventory)}
-        onTouchTap={() => adjustInventoryLevels(itemId, addOperation)}
+        onTouchTap={() => this.adjustInventoryLevels(itemId, addOperation)}
       >
         <AddIcon />
       </FloatingActionButton>
       <FloatingActionButton
         mini style={buttonStyle}
         title={formatMessage(messages.transferInventory)}
-        onTouchTap={() => adjustInventoryLevels(itemId, transferOperation)}
+        onTouchTap={() => this.adjustInventoryLevels(itemId, transferOperation)}
       >
         <TransferIcon />
       </FloatingActionButton>
       <FloatingActionButton
         mini secondary style={buttonStyle}
         title={formatMessage(messages.removeInventory)}
-        onTouchTap={() => adjustInventoryLevels(itemId, removeOperation)}
+        onTouchTap={() => this.adjustInventoryLevels(itemId, removeOperation)}
       >
         <RemoveIcon />
       </FloatingActionButton>
@@ -185,12 +187,12 @@ export class InventoryItemsList extends PureComponent {
 
   handleInventoryAdjustmentSubmit = (formValues) => {
     const {
-      currentAdjustmentOperation,
+      inventoryAdjustment,
       addInventory,
       removeInventory,
       transferInventory
     } = this.props
-    switch (currentAdjustmentOperation) {
+    switch (inventoryAdjustment.get('operation')) {
       case addOperation:
         return addInventory(formValues.get('id'), formValues.toJS())
       case removeOperation:
@@ -198,7 +200,7 @@ export class InventoryItemsList extends PureComponent {
       case transferOperation:
         return transferInventory(formValues.get('id'), formValues.toJS())
       default:
-        throw new SubmissionError({ _error: `Invalid operation ${currentAdjustmentOperation} for inventory adjustment form` })
+        throw new SubmissionError({ _error: `Invalid operation ${inventoryAdjustment.get('operation')} for inventory adjustment form` })
     }
   }
 
@@ -206,13 +208,16 @@ export class InventoryItemsList extends PureComponent {
     console.log(rest)
   }
 
+  handleFetch = (...args) => {
+    this.props.fetchListFilteredInventoryItems({}, ...args)
+  }
+
   render() {
     const {
       intl,
       items,
       table,
-      adjustingInventoryItemId,
-      currentAdjustmentOperation
+      inventoryAdjustment
     } = this.props
     const {
       formatMessage,
@@ -240,13 +245,15 @@ export class InventoryItemsList extends PureComponent {
       format: data => (data ? formatRelative(data) : 'Never')
     }]
 
-    const adjustingInventoryItem = adjustingInventoryItemId ? items.getIn(['byId', adjustingInventoryItemId]) : null
-    const formHeaderValues = { consumableName: adjustingInventoryItem ? adjustingInventoryItem.get('consumableName') : null }
-    const formHeader = currentAdjustmentOperation === addOperation ?
+    const adjustingInventoryItem = inventoryAdjustment.get('adjustmentDetails')
+    const formHeaderValues = {
+      consumableName: adjustingInventoryItem ? adjustingInventoryItem.get('consumableName') : null
+    }
+    const formHeader = inventoryAdjustment.get('operation') === addOperation ?
       formatMessage(messages.addTitle, formHeaderValues) :
-      (currentAdjustmentOperation === removeOperation ?
+      (inventoryAdjustment.get('operation') === removeOperation ?
         formatMessage(messages.removeTitle, formHeaderValues) :
-        (currentAdjustmentOperation === transferOperation ?
+        (inventoryAdjustment.get('operation') === transferOperation ?
           formatMessage(messages.transferTitle, formHeaderValues) : null))
 
     return (
@@ -281,10 +288,10 @@ export class InventoryItemsList extends PureComponent {
         )}
         <Dialog
           title={formHeader} modal={false}
-          open={currentAdjustmentOperation !== null && adjustingInventoryItem != null}
+          open={inventoryAdjustment.get('operation') !== null && adjustingInventoryItem != null}
+          autoScrollBodyContent
         >
           <InventoryAdjustmentForm
-            operation={currentAdjustmentOperation}
             initialValues={adjustingInventoryItem}
             onSubmit={this.handleInventoryAdjustmentSubmit}
             onSubmitSuccess={this.adjustInventorySucceeded}
@@ -300,8 +307,7 @@ function mapStateToProps(state) {
     listFilter: state.filter.listFilter,
     items: state.inventory.items,
     table: state.inventory.table,
-    currentAdjustmentOperation: state.inventory.currentAdjustmentOperation,
-    adjustingInventoryItemId: state.inventory.adjustingInventoryItemId
+    inventoryAdjustment: state.inventory.inventoryAdjustment
   }
 }
 

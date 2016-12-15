@@ -2,6 +2,7 @@ import { defineMessages } from 'react-intl'
 import _ from 'lodash'
 import { stringify } from 'querystring'
 import Immutable from 'immutable'
+import startOfToday from 'date-fns/start_of_today'
 
 import { aspectFetch } from '../shared/utils/fetch'
 import {
@@ -143,10 +144,46 @@ function startTransferringInventory(details) {
   }
 }
 
-export function adjustInventoryLevels(inventoryItemId, operation) {
+export function adjustInventoryLevels(inventoryItem, operation) {
+  const expiresOn = inventoryItem.get('expiresOn')
+  const adjustmentDetails = {
+    expiresOn: expiresOn ? new Date(expiresOn) : undefined,
+    canExpire: inventoryItem.get('canExpire') === 1,
+    lotNumber: inventoryItem.get('lotNumber'),
+    consumableName: inventoryItem.get('consumableName'),
+    quantity: 0,
+    quantityOnHand: inventoryItem.get('quantityOnHand'),
+    unitShortName: inventoryItem.get('unitShortName'),
+    notes: '',
+    dateAdjusted: startOfToday(),
+    dateAdjustedFrom: startOfToday(),
+    dateAdjustedTo: startOfToday(),
+    toSiteId: -1,
+    fromSiteId: -1,
+    reasonId: -1
+  }
+  let operationAdjustmentDetails = {}
+  if (operation === addOperation) {
+    operationAdjustmentDetails = {
+      toSiteId: inventoryItem.get('siteId')
+    }
+  }
+  if (operation === removeOperation) {
+    operationAdjustmentDetails = {
+      fromSiteId: inventoryItem.get('siteId')
+    }
+  }
+  if (operation === transferOperation) {
+    operationAdjustmentDetails = {
+      fromSiteId: inventoryItem.get('siteId')
+    }
+  }
   return dispatch => dispatch({
     type: types.ADJUST_INVENTORY_LEVELS,
-    inventoryItemId,
+    adjustmentDetails: {
+      ...adjustmentDetails,
+      ...operationAdjustmentDetails
+    },
     operation
   })
 }
@@ -157,26 +194,33 @@ export function finishAdjustingInventoryLevels() {
   })
 }
 
-// data: { expiryDate, lotNumber, toSiteId, quantity, reasonId, dateAdded, notes }
+// data: { expiresOn, lotNumber, toSiteId, quantity, reasonId, dateAdjusted, notes }
 export function addInventory(inventoryItemId, data) {
   return (dispatch, getState) => {
     const { inventory } = getState()
     const groupBySite = inventory.getIn(['table', 'groupBy']).includes('siteId')
     dispatch(startAddingInventory(data))
     const path = groupBySite ? '/inventory/group-by-site/add' : '/inventory/add'
-    return aspectFetch(`${path}/${inventoryItemId}`)
-      .then((json) => {
-        dispatch(receiveSingleInventoryItem(json.data, groupBySite ? ['inventoryItems'] : []))
-        dispatch(finishAdjustingInventoryLevels())
-      })
-      .catch((err) => {
-        dispatch(addError('Adding inventory failed', err.message, err))
-      })
+    return aspectFetch(`${path}/${inventoryItemId}`, {
+      method: 'PUT',
+      body: JSON.stringify(data),
+      errorNotifications: {
+        default: errorPleaseTryAgainInAFewMinutes(defineMessages({
+          title: {
+            id: 'errorResponseMessages.addInventory.PUT.default.title',
+            defaultMessage: 'Adjusting Inventory Failed'
+          }
+        }))
+      }
+    }).then((json) => {
+      dispatch(receiveSingleInventoryItem(json.data, groupBySite ? ['inventoryItems'] : []))
+      dispatch(finishAdjustingInventoryLevels())
+    })
   }
 }
 
-// data: { expiryDate, lotNumber, fromSiteId, quantity, reasonId,
-//         dateRemovedFrom, dateRemovedTo, notes }
+// data: { expiresOn, lotNumber, fromSiteId, quantity, reasonId,
+//         dateAdjustedFrom, dateAdjustedTo, notes }
 export function removeInventory(inventoryItemId, data) {
   return (dispatch, getState) => {
     const { inventory } = getState()
@@ -185,17 +229,23 @@ export function removeInventory(inventoryItemId, data) {
     const path = groupBySite ? '/inventory/group-by-site/remove' : '/inventory/remove'
     return aspectFetch(`${path}/${inventoryItemId}`, {
       method: 'PUT',
-      body: JSON.stringify(data)
+      body: JSON.stringify(data),
+      errorNotifications: {
+        default: errorPleaseTryAgainInAFewMinutes(defineMessages({
+          title: {
+            id: 'errorResponseMessages.removeInventory.PUT.default.title',
+            defaultMessage: 'Adjusting Inventory Failed'
+          }
+        }))
+      }
     }).then((json) => {
       dispatch(receiveSingleInventoryItem(json.data, groupBySite ? ['inventoryItems'] : []))
       dispatch(finishAdjustingInventoryLevels())
-    }).catch((err) => {
-      dispatch(addError('Removing inventory failed', err.message, err))
     })
   }
 }
 
-// data: { expiryDate, lotNumber, fromSiteId, toSiteId, quantity, dateTransferred, notes }
+// data: { expiresOn, lotNumber, fromSiteId, toSiteId, quantity, dateAdjusted, notes }
 export function transferInventory(inventoryItemId, data) {
   return (dispatch, getState) => {
     const { inventory } = getState()
@@ -204,13 +254,19 @@ export function transferInventory(inventoryItemId, data) {
     const path = groupBySite ? '/inventory/group-by-site/transfer' : '/inventory/transfer'
     return aspectFetch(`${path}/${inventoryItemId}`, {
       method: 'PUT',
-      body: JSON.stringify(data)
+      body: JSON.stringify(data),
+      errorNotifications: {
+        default: errorPleaseTryAgainInAFewMinutes(defineMessages({
+          title: {
+            id: 'errorResponseMessages.transferInventory.PUT.default.title',
+            defaultMessage: 'Adjusting Inventory Failed'
+          }
+        }))
+      }
     }).then((json) => {
       dispatch(receiveSingleInventoryItem(json.data.existingInventoryItem, groupBySite ? ['inventoryItems'] : []))
       dispatch(receiveSingleInventoryItem(json.data.newInventoryItem, groupBySite ? ['inventoryItems'] : []))
       dispatch(finishAdjustingInventoryLevels())
-    }).catch((err) => {
-      dispatch(addError('Transferring inventory failed', err.message, err))
     })
   }
 }
@@ -218,10 +274,30 @@ export function transferInventory(inventoryItemId, data) {
 /*
  * ---------------- Reducers -----------------
  */
+const AdjustmentDetails = Immutable.Record({
+  expiresOn: null,
+  canExpire: false,
+  lotNumber: '',
+  consumableName: '',
+  quantity: 0,
+  quantityOnHand: 0,
+  unitShortName: 0,
+  notes: '',
+  dateAdjusted: startOfToday(),
+  dateAdjustedFrom: startOfToday(),
+  dateAdjustedTo: startOfToday()
+})
+const InventoryAdjustment = Immutable.Record({
+  updating: false,
+  operation: null,
+  adjustmentDetails: new AdjustmentDetails()
+})
 const Inventory = Immutable.Record({
   updating: false,
   currentAdjustmentOperation: null,
   adjustingInventoryItemId: null,
+
+  inventoryAdjustment: new InventoryAdjustment(),
   items: new Items(),
   table: new Table({
     sortCol: 'siteName',
@@ -250,20 +326,20 @@ export default function inventoryItemsReducer(state = initialState, action) {
         .setIn(['table', 'groupBy'],
           action.toggleOn ? new Immutable.List(['siteId']) : new Immutable.List([]))
     case types.ADJUST_INVENTORY_LEVELS:
-      return state.withMutations((mutState) => {
-        mutState.set('currentAdjustmentOperation', action.operation)
-        mutState.set('adjustingInventoryItemId', action.inventoryItemId)
+      return state.mergeDeepIn('inventoryAdjustment', {
+        operation: action.operation,
+        adjustmentDetails: new AdjustmentDetails(action.adjustmentDetails)
       })
     case types.FINISH_ADJUSTING_INVENTORY_LEVELS:
-      return state.withMutations((mutState) => {
-        mutState.set('currentAdjustmentOperation', null)
-        mutState.set('adjustingInventoryItemId', null)
-        mutState.set('updating', false)
+      return state.mergeDeepIn('inventoryAdjustment', {
+        updating: false,
+        operation: null,
+        adjustmentDetails: new AdjustmentDetails()
       })
     case types.ADD_INVENTORY:
     case types.REMOVE_INVENTORY:
     case types.TRANSFER_INVENTORY:
-      return state.set('updating', true)
+      return state.setIn(['inventoryAdjustment', 'updating'], true)
     case types.RECEIVE_SINGLE_INVENTORY_ITEM:
       return state.withMutations((mutState) => {
         mutState.set('items', receiveItem(mutState.items, action.childrenPropertyPath, action.item))
