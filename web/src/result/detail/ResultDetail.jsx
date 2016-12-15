@@ -178,7 +178,7 @@ export class ResultDetail extends PureComponent {
     const patientDataSchema = result.getIn(['assay', 'patientDataSchema'])
     const patientData = result.get('patientData')
 
-    return this.getSchemaFields(patientDataSchema, patientData, 'yep')
+    return this.getSchemaFields(patientDataSchema, patientData)
   }
 
   /*

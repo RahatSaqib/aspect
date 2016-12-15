@@ -9,7 +9,7 @@ const SELECT_LIST_FIELDS = [
   'c.name as countryName', 'st.name as stateName', 'lg.name as lgaName',
   'rc1.name as resultCategory1Name', 'rc2.name as resultCategory2Name', 'rs.name as resultWorkflowStatus',
   's.externalId as sampleId', 'a.name as assayName', 'a.id as assayId',
-  knex.raw('JSON_UNQUOTE(JSON_EXTRACT(r.patientData, "$.patientIdNumber")) as patientId')
+  knex.raw('JSON_UNQUOTE(JSON_EXTRACT(r.patientData, "$.id")) as patientId')
 ]
 
 const SELECT_SHOW_FIELDS = [
@@ -20,7 +20,7 @@ const SELECT_SHOW_FIELDS = [
   'r.consumableSerial', 'r.consumableLot', 'r.consumableExpirationDate', 'r.instrumentSerial',
   'r.moduleName', 'r.moduleSerial', 'r.researchId', 'r.senderVersion', 'r.senderOperator',
   'r.notes', 'r.errorCode', 'r.errorNotes', 'r.createdOn', 'r.updatedOn', 'r.assayId',
-  knex.raw('JSON_UNQUOTE(JSON_EXTRACT(r.patientData, "$.patientIdNumber")) as patientId'), 'r.patientData'
+  knex.raw('JSON_UNQUOTE(JSON_EXTRACT(r.patientData, "$.id")) as patientId'), 'r.patientData'
 ]
 
 const SORT_FIELDS = [
