@@ -16,6 +16,8 @@ import {
 export const types = {
   DEMO_REQUEST_DEVICE: 'DEMO_REQUEST_DEVICE',
   DEMO_RECEIVE_DEVICE: 'DEMO_RECEIVE_DEVICE',
+  DEMO_POSTING_RESULT: 'DEMO_POSTING_RESULT',
+  DEMO_POSTED_RESULT: 'DEMO_POSTED_RESULT'
 }
 
 /*
@@ -58,6 +60,39 @@ export function fetchDemoDevice(deviceId) {
         }
       })
       .then(json => dispatch(receiveDemoDevice(json)))
+  }
+}
+
+function requestPostingResult(deviceId, data) {
+  return {
+    type: types.DEMO_POSTING_RESULT,
+    deviceId,
+    data
+  }
+}
+
+function receivePostedResult() {
+  return {
+    type: types.DEMO_POSTED_RESULT
+  }
+}
+
+export function postDemoDeviceResult(deviceId, data) {
+  return (dispatch) => {
+    dispatch(requestPostingResult(deviceId, data))
+
+    return aspectFetch(`/demo/device/${deviceId}/result`, {
+      method: 'POST',
+      body: JSON.stringify(data),
+      errorNotifications: {
+        default: errorPleaseTryAgainInAFewMinutes(defineMessages({
+          title: {
+            id: 'errorResponseMessages.updateSingleDevice.PUT.default.title',
+            defaultMessage: 'An Error Occurred When Trying to Save the Device'
+          }
+        }))
+      }
+    }).then(() => dispatch(receivePostedResult()))
   }
 }
 

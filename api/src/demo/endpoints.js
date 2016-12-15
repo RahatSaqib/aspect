@@ -3,7 +3,8 @@ const {
   asyncHandler
 } = require('../routes')
 const {
-  getDemoDevice
+  getDemoDevice,
+  postDemoDeviceResult
 } = require('./service')
 
 module.exports = [
@@ -17,6 +18,23 @@ module.exports = [
       validate: {
         params: {
           deviceId: Joi.string().description('Device id').required()
+        }
+      }
+    }
+  },
+  {
+    method: 'POST',
+    path: '/demo/device/{deviceId}/result',
+    handler: asyncHandler(postDemoDeviceResult),
+    config: {
+      description: 'Device Demo Detail',
+      notes: 'Detail of a device for the dmeo page',
+      validate: {
+        params: {
+          deviceId: Joi.string().description('Device id').required()
+        },
+        payload: {
+          resultId: Joi.number().integer().description('Result Id').required()
         }
       }
     }

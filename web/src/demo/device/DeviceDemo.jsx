@@ -10,11 +10,13 @@ import Helmet from 'react-helmet'
 import LinearProgress from 'material-ui/LinearProgress'
 import MenuItem from 'material-ui/MenuItem'
 import Paper from 'material-ui/Paper'
+import RaisedButton from 'material-ui/RaisedButton'
 import SelectField from 'material-ui/SelectField'
 
 // Our own imports
 import {
-  fetchDemoDevice
+  fetchDemoDevice,
+  postDemoDeviceResult
 } from '../DemoRedux'
 
 import { Unit } from '../../components/pureGrids'
@@ -26,12 +28,14 @@ export class DeviceDemo extends PureComponent {
   static propTypes = {
     params: PropTypes.object.isRequired,
     fetchDemoDevice: PropTypes.func.isRequired,
+    postDemoDeviceResult: PropTypes.func.isRequired,
     device: PropTypes.object
   }
 
   state = {
     assayId: null,
-    resultId: null
+    resultId: null,
+    posting: false
   }
 
   componentDidMount() {
@@ -44,6 +48,10 @@ export class DeviceDemo extends PureComponent {
     }
   }
 
+  setPosting = (posting) => {
+    this.setState(Object.assign({}, this.state, { posting }))
+  }
+
   handleFetchDevice = () => {
     this.props.fetchDemoDevice(this.props.params.deviceId)
   }
@@ -52,32 +60,32 @@ export class DeviceDemo extends PureComponent {
     this.setState(Object.assign({}, this.state, { [field]: value }))
   }
 
+  handlePostResult = () => {
+    this.setPosting(true)
+    const { resultId } = this.state
+    this.props.postDemoDeviceResult(this.props.params.deviceId, { resultId })
+      .then(() => this.setPosting(false))
+      .catch(() => this.setPosting(false))
+  }
+
   renderProgress() {
+    const { posting } = this.state
     const { device } = this.props
 
-    return !device && <LinearProgress />
+    return (posting || !device) && <LinearProgress />
   }
 
   renderFormContainer() {
     const { device } = this.props
-    let { assayId, resultId } = this.state
+    const { assayId, resultId, posting } = this.state
 
     const assays = device.get('assays')
-    let assay = assays.find(a => a.get('id') === assayId)
-    if (!assay) {
-      assay = assays.get(0)
-      assayId = assay && assay.get('id')
-    }
+    const assay = assays.find(a => a.get('id') === assayId)
 
-    let results = []
-    if (assay) {
-      results = assay.get('results')
-      let result = results.find(r => r.get('id') === resultId)
-      if (!result) {
-        result = results.get(0)
-        resultId = result && result.get('id')
-      }
-    }
+    const results = assay ? assay.get('results') : []
+    const result = assay && results.find(r => r.get('id') === resultId)
+
+    const postEnabled = !posting && assay && result
 
     return (
       <div>
@@ -112,6 +120,14 @@ export class DeviceDemo extends PureComponent {
               />
             ))}
           </SelectField>
+        </div>
+        <div>
+          <RaisedButton
+            primary
+            label="Post New Result"
+            onTouchTap={this.handlePostResult}
+            disabled={!postEnabled}
+          />
         </div>
       </div>
     )
@@ -171,14 +187,13 @@ export class DeviceDemo extends PureComponent {
 function mapStateToProps(state, props) {
   const device = state.demo.deviceItems.byId.get(props.params.deviceId)
 
-  return {
-    device
-  }
+  return { device }
 }
 
 function mapDispatchToProps(dispatch) {
   return bindActionCreators({
-    fetchDemoDevice
+    fetchDemoDevice,
+    postDemoDeviceResult
   }, dispatch)
 }
 

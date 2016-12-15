@@ -53,6 +53,13 @@ function* getDemoDevice(request) {
 }
 
 
+function* postDemoDeviceResult(request) {
+  const { payload } = request
+  const { resultId } = payload
+  console.log(`POSTING RESULT ${resultId}`)
+}
+
 module.exports = {
-  getDemoDevice
+  getDemoDevice,
+  postDemoDeviceResult
 }
