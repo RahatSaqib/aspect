@@ -285,7 +285,10 @@ const AdjustmentDetails = Immutable.Record({
   notes: '',
   dateAdjusted: startOfToday(),
   dateAdjustedFrom: startOfToday(),
-  dateAdjustedTo: startOfToday()
+  dateAdjustedTo: startOfToday(),
+  toSiteId: -1,
+  fromSiteId: -1,
+  reasonId: -1
 })
 const InventoryAdjustment = Immutable.Record({
   updating: false,
@@ -293,10 +296,6 @@ const InventoryAdjustment = Immutable.Record({
   adjustmentDetails: new AdjustmentDetails()
 })
 const Inventory = Immutable.Record({
-  updating: false,
-  currentAdjustmentOperation: null,
-  adjustingInventoryItemId: null,
-
   inventoryAdjustment: new InventoryAdjustment(),
   items: new Items(),
   table: new Table({
@@ -326,12 +325,12 @@ export default function inventoryItemsReducer(state = initialState, action) {
         .setIn(['table', 'groupBy'],
           action.toggleOn ? new Immutable.List(['siteId']) : new Immutable.List([]))
     case types.ADJUST_INVENTORY_LEVELS:
-      return state.mergeDeepIn('inventoryAdjustment', {
+      return state.mergeDeepIn(['inventoryAdjustment'], {
         operation: action.operation,
         adjustmentDetails: new AdjustmentDetails(action.adjustmentDetails)
       })
     case types.FINISH_ADJUSTING_INVENTORY_LEVELS:
-      return state.mergeDeepIn('inventoryAdjustment', {
+      return state.mergeDeepIn(['inventoryAdjustment'], {
         updating: false,
         operation: null,
         adjustmentDetails: new AdjustmentDetails()

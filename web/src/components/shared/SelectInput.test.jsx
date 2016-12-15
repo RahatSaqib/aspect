@@ -15,7 +15,8 @@ describe('SelectInput', () => {
       { personId: '124', fullName: 'Billy Idol' },
       { personId: '125', fullName: 'Eddy Grant' }],
     dataSourceConfig: { value: 'personId', text: 'fullName' },
-    fullWidth: true
+    fullWidth: true,
+    style: {}
   }
   let SelectInputWrapper
 
@@ -31,7 +32,8 @@ describe('SelectInput', () => {
       floatingLabelText: props.label,
       fullWidth: props.fullWidth,
       disabled: props.disabled,
-      autoWidth: false
+      autoWidth: false,
+      style: props.style
     })
   })
 

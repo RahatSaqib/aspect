@@ -8,7 +8,11 @@ import {
 } from 'react-intl'
 import { bindActionCreators } from 'redux'
 import { connect } from 'react-redux'
-import { reduxForm } from 'redux-form/immutable'
+import { reduxForm, change as changeFieldValue } from 'redux-form/immutable'
+
+// Material UI
+import RaisedButton from 'material-ui/RaisedButton'
+import FlatButton from 'material-ui/FlatButton'
 
 // Our own imports
 import TextInput from '../../components/shared/TextInput'
@@ -17,6 +21,7 @@ import SelectInput from '../../components/shared/SelectInput'
 import { fetchSitesForSelectList } from '../../site/SiteRedux'
 import { fetchConsumableReasons } from '../../consumable/ConsumableRedux'
 import { addOperation, removeOperation, transferOperation } from '../InventoryRedux'
+import styles from './InventoryAdjustmentForm.css'
 
 const messages = defineMessages({
   lotNumber: {
@@ -37,7 +42,7 @@ const messages = defineMessages({
   },
   currentQuantityOnHand: {
     id: 'pages.InventoryAdjustmentForm.currentQuantityOnHand',
-    defaultMessage: 'Current Quantity on Hand: {quantityOnHand} {unitShortName}'
+    defaultMessage: '(Current Quantity on Hand: {quantityOnHand} {unitShortName})'
   },
   addQuantity: {
     id: 'pages.InventoryAdjustmentForm.addQuantity',
@@ -96,9 +101,11 @@ const messages = defineMessages({
 class InventoryAdjustmentForm extends PureComponent {
   static propTypes = {
     intl: PropTypes.object.isRequired,
-    operation: PropTypes.oneOf([addOperation, removeOperation, transferOperation]).isRequired,
+    operation: PropTypes.oneOf([addOperation, removeOperation, transferOperation]),
     updating: PropTypes.bool.isRequired,
     handleSubmit: PropTypes.func.isRequired,
+    onCancel: PropTypes.func.isRequired,
+    changeFieldValue: PropTypes.func.isRequired,
     pristine: PropTypes.bool.isRequired,
     invalid: PropTypes.bool.isRequired,
     initialValues: PropTypes.object.isRequired,
@@ -109,7 +116,7 @@ class InventoryAdjustmentForm extends PureComponent {
   }
 
   state = {
-    selectedReasonTestsRun: false
+    selectedReasonKey: null
   }
 
   componentDidMount() {
@@ -118,20 +125,25 @@ class InventoryAdjustmentForm extends PureComponent {
     fetchConsumableReasons()
   }
 
-  reasonChanged = (event, index, value) => {
-    const { consumableReasons: { items } } = this.props
-    const selectedReason = items.find(reason => reason.get('id') === value)
+  handleReasonChange = (event, index, value) => {
+    const selectedAdjustmentReason =
+      this.props.consumableReasons.items.find(reason => reason.get('id') === value)
     this.setState({
-      selectedReasonTestRun: selectedReason &&
-        selectedReason.get('i18nKey') === 'ConsumableReason_TestConducted'
+      selectedReasonKey: selectedAdjustmentReason.get('i18nKey')
     })
+  }
+
+  handleQuantityChanged = (event, value) => {
+    if (/^\d*\.?\d*$/.test(value)) {
+      this.props.changeFieldValue('inventoryAdjustment', 'quantity', value)
+    }
   }
 
   render() {
     const {
       intl: { formatMessage },
-      consumableReasons, sitesSelectList, operation, updating,
-      handleSubmit, initialValues } = this.props
+      consumableReasons, sitesSelectList, operation, updating, onCancel,
+      handleSubmit, pristine, invalid, initialValues } = this.props
 
     const sitesLoading = sitesSelectList.loading
     const sites = sitesSelectList.items.toJS()
@@ -147,7 +159,7 @@ class InventoryAdjustmentForm extends PureComponent {
       display: 'inline-block',
       marginRight: '1em'
     }
-    console.log(operation, this.state.selectedReasonTestsRun)
+
     return (
       <form onSubmit={handleSubmit}>
         <section>
@@ -185,9 +197,13 @@ class InventoryAdjustmentForm extends PureComponent {
           }
         </section>
         <section>
-          <TextInput name="quantity" label={quantityLabel} disabled={updating} />
+          <TextInput
+            name="quantity" label={quantityLabel} disabled={updating}
+            style={formFieldStyle} inputStyle={{ textAlign: 'right' }}
+            onChange={this.handleQuantityChanged}
+          />
           { initialValues.get('unitShortName') }
-          <br />
+          &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
           <FormattedMessage
             {...messages.currentQuantityOnHand}
             values={{
@@ -204,15 +220,14 @@ class InventoryAdjustmentForm extends PureComponent {
               disabled={updating ||
               consumableReasonsLoading ||
               _.isEmpty(consumableReasonsForDropDownList)}
-              onChange={this.reasonChanged}
               autoWidth dataSource={consumableReasonsForDropDownList}
               dataSourceConfig={{ text: 'name', value: 'id' }}
-              style={formFieldStyle}
+              style={formFieldStyle} onChange={this.handleReasonChange}
             />
           </section>
         }
         {
-          operation === removeOperation && this.state.selectedReasonTestsRun &&
+          this.state.selectedReasonKey === 'ConsumableReason_TestConducted' &&
           <section>
             <DateInput
               name="dateAdjustedFrom" label={formatMessage(messages.testsRunBetween)}
@@ -227,7 +242,7 @@ class InventoryAdjustmentForm extends PureComponent {
           </section>
         }
         {
-          (!this.state.selectedReasonTestsRun) &&
+          this.state.selectedReasonKey !== 'ConsumableReason_TestConducted' &&
           <section>
             <DateInput
               name="dateAdjusted" label={dateAdjustedLabel}
@@ -236,6 +251,17 @@ class InventoryAdjustmentForm extends PureComponent {
             />
           </section>
         }
+        <div className={styles.Form__ActionRow}>
+          <RaisedButton
+            disabled={pristine || invalid || updating}
+            label={formatMessage(messages.submit)} secondary type="submit"
+          />
+          &nbsp;
+          <FlatButton
+            disabled={updating} onTouchTap={onCancel} secondary
+            label={formatMessage(messages.cancel)}
+          />
+        </div>
       </form>
     )
   }
@@ -253,7 +279,8 @@ function mapStateToProps(state) {
 function mapDispatchToProps(dispatch) {
   return bindActionCreators({
     fetchSitesForSelectList,
-    fetchConsumableReasons
+    fetchConsumableReasons,
+    changeFieldValue
   }, dispatch)
 }
 
@@ -273,7 +300,6 @@ export default _.flowRight(
   connect(mapStateToProps, mapDispatchToProps),
   reduxForm({
     form: 'inventoryAdjustment',
-    enableReinitialize: true,
     validate
   })
 )(InventoryAdjustmentForm)

@@ -9,7 +9,6 @@ import { bindActionCreators } from 'redux'
 import { connect } from 'react-redux'
 import Helmet from 'react-helmet'
 import { SubmissionError } from 'redux-form/immutable'
-import startOfToday from 'date-fns/start_of_today'
 
 // Material-UI
 import { Card } from 'material-ui/Card'
@@ -32,6 +31,7 @@ import {
   removeOperation,
   transferOperation,
   adjustInventoryLevels,
+  finishAdjustingInventoryLevels,
   addInventory,
   removeInventory,
   transferInventory
@@ -117,8 +117,9 @@ export class InventoryItemsList extends PureComponent {
     fetchListFilteredInventoryItems: PropTypes.func.isRequired,
     toggleGroupBySite: PropTypes.func.isRequired,
     adjustInventoryLevels: PropTypes.func.isRequired,
+    finishAdjustingInventoryLevels: PropTypes.func.isRequired,
     items: PropTypes.object.isRequired,
-    inventoryAdjustment: PropTypes.string,
+    inventoryAdjustment: PropTypes.object,
     addInventory: PropTypes.func.isRequired,
     removeInventory: PropTypes.func.isRequired,
     transferInventory: PropTypes.func.isRequired
@@ -202,6 +203,10 @@ export class InventoryItemsList extends PureComponent {
       default:
         throw new SubmissionError({ _error: `Invalid operation ${inventoryAdjustment.get('operation')} for inventory adjustment form` })
     }
+  }
+
+  handleInventoryAdjustmentCancel = () => {
+    this.props.finishAdjustingInventoryLevels()
   }
 
   adjustInventorySucceeded = (...rest) => {
@@ -295,6 +300,7 @@ export class InventoryItemsList extends PureComponent {
             initialValues={adjustingInventoryItem}
             onSubmit={this.handleInventoryAdjustmentSubmit}
             onSubmitSuccess={this.adjustInventorySucceeded}
+            onCancel={this.handleInventoryAdjustmentCancel}
           />
         </Dialog>
       </div>
@@ -317,6 +323,7 @@ function mapDispatchToProps(dispatch) {
     fetchListFilteredInventoryItems,
     toggleGroupBySite,
     adjustInventoryLevels,
+    finishAdjustingInventoryLevels,
     addInventory,
     removeInventory,
     transferInventory
