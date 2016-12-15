@@ -15,7 +15,7 @@ const messages = defineMessages({
   },
   help: {
     id: 'shared.IdleDialog.help',
-    defaultMessage: '<p>You will be logged out automatically in one minute due to inactivity.</p><p>To stay logged in, hit any button or move your mouse.</p>'
+    defaultMessage: 'You will be logged out automatically in one minute due to inactivity. To stay logged in, hit any button or move your mouse.'
   }
 })
 

@@ -28,49 +28,49 @@ describe('Dashboard', () => {
     })
 
     context('if query string contains "fl=1', () => {
-      it('calls addAcknowledgement with user name when receiving new user', () => {
+      it('calls showAcknowledgement with user name when receiving new user', () => {
         const location = makeLocationObject({ fl: '1' })
-        const addAcknowledgement = sinon.stub()
+        const showAcknowledgement = sinon.stub()
 
         const Wrapper = mount(
           <Dashboard
             setPageTitle={_.noop}
-            addAcknowledgement={addAcknowledgement}
+            showAcknowledgement={showAcknowledgement}
             location={location}
             userName=""
             intl={intl}
           />
         )
-        assert.isTrue(addAcknowledgement.notCalled)
+        assert.isTrue(showAcknowledgement.notCalled)
 
         Wrapper.setProps({
           userName: user.get('name')
         })
-        assert.isTrue(addAcknowledgement.called)
+        assert.isTrue(showAcknowledgement.called)
       })
     })
 
     context('if query string oes not contains "fl=1', () => {
-      it('calls addAcknowledgement with user name when receiving new user', () => {
+      it('calls showAcknowledgement with user name when receiving new user', () => {
         const location = makeLocationObject({ test: '2' })
-        const addAcknowledgement = sinon.stub()
+        const showAcknowledgement = sinon.stub()
 
         const Wrapper = mount(
           <Dashboard
             setPageTitle={_.noop}
-            addAcknowledgement={addAcknowledgement}
+            showAcknowledgement={showAcknowledgement}
             location={location}
             userName=""
             intl={intl}
           />
         )
 
-        assert.isTrue(addAcknowledgement.notCalled)
+        assert.isTrue(showAcknowledgement.notCalled)
 
         Wrapper.setProps({
           userName: user.get('name')
         })
-        assert.isTrue(addAcknowledgement.notCalled)
+        assert.isTrue(showAcknowledgement.notCalled)
       })
     })
   })

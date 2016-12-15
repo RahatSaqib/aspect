@@ -29,12 +29,6 @@
       "plugins": [
         [
           "babel-plugin-istanbul"
-        ],
-        [
-          "babel-plugin-webpack-alias",
-          {
-            "config": "./webpack.config.babel.js"
-          }
         ]
       ]
     }

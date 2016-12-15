@@ -43,7 +43,7 @@ describe('AccountDetails Component', () => {
 
     beforeEach(() => {
       props = {
-        addAcknowledgement: () => {},
+        showAcknowledgement: () => {},
         fetchAccountDetails: () => {},
         setPageTitle: () => {},
         loading: false,
@@ -153,14 +153,14 @@ describe('AccountDetails Component', () => {
         saveUserPreferences: () => {}
       }
       acknowledgementCreatorsStub = {
-        addAcknowledgement: () => {}
+        showAcknowledgement: () => {}
       }
       proxyquire('./AccountDetails', {
         'react-intl': intlStub,
         'react-redux': reactReduxStub,
         redux: reduxStub,
         '../AccountRedux': accountDetailsCreatorsStub,
-        '../../acknowledgement/AcknowledgementRedux': acknowledgementCreatorsStub
+        '../../appNotification/AppNotificationRedux': acknowledgementCreatorsStub
       })
       mapStateToProps = reactReduxStub.connect.firstCall.args[0]
       mapDispatchToProps = reactReduxStub.connect.firstCall.args[1]
@@ -170,7 +170,7 @@ describe('AccountDetails Component', () => {
       const expectedDispatcher = { value: 'I am a dispatch function' }
       assert.equal(mapDispatchToProps(expectedDispatcher), expectedBoundActionCreators)
       assert.deepEqual(reduxStub.bindActionCreators.lastCall.args, [{
-        addAcknowledgement: acknowledgementCreatorsStub.addAcknowledgement,
+        showAcknowledgement: acknowledgementCreatorsStub.showAcknowledgement,
         fetchAccountDetails: accountDetailsCreatorsStub.fetchAccountDetails,
         saveContactDetails: accountDetailsCreatorsStub.saveContactDetails,
         saveLoginDetails: accountDetailsCreatorsStub.saveLoginDetails,

@@ -11,7 +11,7 @@ import Helmet from 'react-helmet'
 
 // Our own imports
 import { Unit } from '../../components/pureGrids'
-import { addAcknowledgement } from '../../acknowledgement/AcknowledgementRedux'
+import { showAcknowledgement } from '../../appNotification/AppNotificationRedux'
 import DashboardDevices from './DashboardDevices'
 import DashboardTests from './DashboardTests'
 import DashboardSites from './DashboardSites'
@@ -24,6 +24,10 @@ const messages = defineMessages({
   title: {
     id: 'pages.Dashboard.title',
     defaultMessage: 'Dashboard'
+  },
+  welcome: {
+    id: 'pages.Dashboard.welcome',
+    defaultMessage: 'Welcome {userName}'
   }
 })
 
@@ -31,7 +35,7 @@ export class Dashboard extends PureComponent {
 
   static propTypes = {
     setPageTitle: PropTypes.func.isRequired,
-    addAcknowledgement: PropTypes.func.isRequired,
+    showAcknowledgement: PropTypes.func.isRequired,
     userName: PropTypes.string,
     location: PropTypes.object.isRequired,
     intl: PropTypes.object.isRequired
@@ -42,15 +46,17 @@ export class Dashboard extends PureComponent {
   }
 
   componentWillReceiveProps(nextProps) {
-    const { location, addAcknowledgement, userName } = nextProps
+    const { location, showAcknowledgement, userName } = nextProps
     if (location.query.fl && nextProps.userName !== this.props.userName) {
-      addAcknowledgement(`Welcome, ${userName}!`)
+      showAcknowledgement({
+        title: messages.welcome,
+        messageValues: { userName }
+      })
     }
   }
 
   render() {
-    const { intl } = this.props
-    const { formatMessage } = intl
+    const { intl: { formatMessage } } = this.props
 
     return (
       <div className={styles.Content}>
@@ -88,7 +94,7 @@ function mapStateToProps(state) {
 
 function mapDispatchToProps(dispatch) {
   return bindActionCreators({
-    addAcknowledgement
+    showAcknowledgement
   }, dispatch)
 }
 

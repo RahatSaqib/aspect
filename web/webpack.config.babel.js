@@ -1,21 +1,7 @@
 import path from 'path'
-import minimist from 'minimist'
-
-const args = minimist(process.argv.slice(2));
 
 // List of allowed environments
-const allowedEnvs = ['dev', 'dist', 'test'];
-
-// Set the correct environment
-let env;
-if (args._.length > 0 && args._.indexOf('start') !== -1) {
-  env = 'test';
-} else if (args.env) {
-  env = args.env;
-} else {
-  env = 'dev';
-}
-process.env.REACT_WEBPACK_ENV = args.deployment || env;
+const allowedEnvs = ['dev', 'dist'];
 
 /**
  * Build the webpack configuration
@@ -29,4 +15,4 @@ function buildConfig(wantedEnv) {
   return config;
 }
 
-export default buildConfig(env);
+export default buildConfig(process.env.ASPECT_ENV);

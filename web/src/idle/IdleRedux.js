@@ -1,7 +1,7 @@
 import _ from 'lodash'
 import configure from 'redux-idle-monitor'
-import config from 'config'
 
+import config from '../config'
 import { logoutStart } from '../auth/AuthRedux'
 
 const types = {

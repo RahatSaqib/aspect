@@ -4,6 +4,10 @@ import _ from 'lodash'
 import proxyquire from 'proxyquire'
 import sinon from 'sinon'
 import accountDetails, { types } from './AccountRedux'
+import {
+  errorPleaseTryAgainInAFewMinutes,
+  inlineWarning
+} from '../error/CommonErrorNotifications'
 
 describe('AccountDetailsRedux', () => {
   const accountDetailsData = {
@@ -241,7 +245,7 @@ describe('AccountDetailsRedux', () => {
     let accountDetailsRedux
     let dispatch
 
-    function createAccountDetailsReduxReduxWithStubs(fetchStub, errorCreatorsStub) {
+    function createAccountDetailsReduxReduxWithStubs(fetchStub) {
       const proxyDependencies = {
         '../shared/utils/browser': {
           getBrowserNameAndVersion: () => 'Mocha/Chai'
@@ -257,9 +261,6 @@ describe('AccountDetailsRedux', () => {
           changeCulture: () => {},
           changeTimezone: () => {}
         }
-      }
-      if (errorCreatorsStub) {
-        proxyDependencies['../error/ErrorRedux'] = errorCreatorsStub
       }
       accountDetailsRedux = proxyquire('./AccountRedux', proxyDependencies)
     }
@@ -298,45 +299,6 @@ describe('AccountDetailsRedux', () => {
           }])
         }))
       })
-
-      describe('when the server encounters a problem', () => {
-        const expectedError = { message: 'An unexpected error happened' }
-        const expectedErrorFromServer = Promise.reject(expectedError)
-        const expectedErrorAction = { type: 'ERROR' }
-        let errorCreatorsStub
-
-        beforeEach(() => {
-          fetchStub = {
-            aspectFetch: sinon.stub()
-          }
-          fetchStub.aspectFetch.withArgs('/account-details/current')
-            .returns(expectedErrorFromServer)
-          errorCreatorsStub = {
-            addError: sinon.stub()
-          }
-          errorCreatorsStub.addError.withArgs('Loading account details failed', expectedError.message, expectedError)
-            .returns(expectedErrorAction)
-          dispatch = sinon.spy()
-          createAccountDetailsReduxReduxWithStubs(fetchStub, errorCreatorsStub)
-          const dispatchFunction = accountDetailsRedux.fetchAccountDetails()
-          dispatchFunction(dispatch)
-        })
-
-        it('should dispatch a REQUEST_ACCOUNT_DETAILS action', () => {
-          assert.deepEqual(dispatch.firstCall.args, [{ type: types.REQUEST_ACCOUNT_DETAILS }], 'REQUEST_ACCOUNT_DETAILS Was Not Dispatched')
-        })
-
-        it('should request the account details from the server', () => {
-          assert(fetchStub.aspectFetch.calledWith('/account-details/current'), 'A request to /account-details/current was not detected')
-        })
-
-        describe('and an error is received from the server', () => {
-          it('should dispatch an error action', () => expectedErrorFromServer.then().catch((err) => {
-            assert.deepEqual(err, expectedError)
-            assert.deepEqual(dispatch.secondCall.args, [expectedErrorAction])
-          }))
-        })
-      })
     })
 
     describe('saveContactDetails', () => {
@@ -354,7 +316,13 @@ describe('AccountDetailsRedux', () => {
         fetchStub.aspectFetch.withArgs('/account-details/current-contact', {
           method: 'PUT',
           headers: stubHeaders,
-          body: JSON.stringify(contactDetailsData)
+          body: JSON.stringify(contactDetailsData),
+          errorNotifications: {
+            default: errorPleaseTryAgainInAFewMinutes({ title: {
+              id: 'errorResponseMessages.saveContactDetails.PUT.default.title',
+              defaultMessage: 'Saving Contact Details Failed'
+            } })
+          }
         }).returns(expectedResponseFromServer)
         dispatch = sinon.spy()
         createAccountDetailsReduxReduxWithStubs(fetchStub)
@@ -371,7 +339,13 @@ describe('AccountDetailsRedux', () => {
         assert(fetchStub.aspectFetch.calledWith('/account-details/current-contact', {
           method: 'PUT',
           headers: stubHeaders,
-          body: JSON.stringify(contactDetailsData)
+          body: JSON.stringify(contactDetailsData),
+          errorNotifications: {
+            default: errorPleaseTryAgainInAFewMinutes({ title: {
+              id: 'errorResponseMessages.saveContactDetails.PUT.default.title',
+              defaultMessage: 'Saving Contact Details Failed'
+            } })
+          }
         }), 'A PUT to /account-details/current-contact was not detected')
       })
 
@@ -383,54 +357,6 @@ describe('AccountDetailsRedux', () => {
             accountDetails: accountDetailsData
           }])
         }))
-      })
-
-      describe('when the server encounters a problem', () => {
-        const expectedError = { message: 'An unexpected error happened' }
-        const expectedErrorFromServer = Promise.reject(expectedError)
-        const expectedErrorAction = { type: 'ERROR' }
-        let errorCreatorsStub
-
-        beforeEach(() => {
-          fetchStub = {
-            aspectFetch: sinon.stub(),
-            getHeaders: sinon.stub()
-          }
-          fetchStub.getHeaders.returns(stubHeaders)
-          fetchStub.aspectFetch.withArgs('/account-details/current-contact', {
-            method: 'PUT',
-            headers: stubHeaders,
-            body: JSON.stringify(contactDetailsData)
-          }).returns(expectedErrorFromServer)
-          errorCreatorsStub = {
-            addError: sinon.stub()
-          }
-          errorCreatorsStub.addError.withArgs('Saving contact details failed', expectedError.message, expectedError)
-            .returns(expectedErrorAction)
-          dispatch = sinon.spy()
-          createAccountDetailsReduxReduxWithStubs(fetchStub, errorCreatorsStub)
-          const dispatchFunction = accountDetailsRedux.saveContactDetails(contactDetailsData)
-          dispatchFunction(dispatch)
-        })
-
-        it('should dispatch a SAVE_ACCOUNT_DETAILS_START action', () => {
-          assert.deepEqual(dispatch.firstCall.args, [{ type: types.SAVE_ACCOUNT_DETAILS_START }], 'SAVE_ACCOUNT_DETAILS_START Was Not Dispatched')
-        })
-
-        it('should send a PUT request to the server with the correct headers and the account details passed to it', () => {
-          assert(fetchStub.aspectFetch.calledWith('/account-details/current-contact', {
-            method: 'PUT',
-            headers: stubHeaders,
-            body: JSON.stringify(contactDetailsData)
-          }), 'A PUT to /account-details/current-contact was not detected')
-        })
-
-        describe('and an error is received from the server', () => {
-          it('should dispatch an error action', () => expectedErrorFromServer.then().catch((err) => {
-            assert.deepEqual(err, expectedError)
-            assert.deepEqual(dispatch.secondCall.args, [expectedErrorAction])
-          }))
-        })
       })
     })
 
@@ -463,7 +389,43 @@ describe('AccountDetailsRedux', () => {
         fetchStub.aspectFetch.withArgs('/auth/update-login-details', {
           method: 'PUT',
           headers: stubHeaders,
-          body: JSON.stringify(requestData)
+          body: JSON.stringify(requestData),
+          errorNotifications: {
+            409: inlineWarning({
+              title: {
+                id: 'errorResponseMessages.saveLoginDetails.PUT.409.title',
+                defaultMessage: 'This Username is Unavailable'
+              },
+              message: {
+                id: 'errorResponseMessages.saveLoginDetails.PUT.409.message',
+                defaultMessage: 'The username that you have entered is already in use by another user on the system'
+              },
+              resolution: {
+                id: 'errorResponseMessages.saveLoginDetails.PUT.409.resolution',
+                defaultMessage: 'Please try another username'
+              }
+            }),
+            403: inlineWarning({
+              title: {
+                id: 'errorResponseMessages.saveLoginDetails.PUT.403.title',
+                defaultMessage: 'Invalid Password'
+              },
+              message: {
+                id: 'errorResponseMessages.saveLoginDetails.PUT.403.message',
+                defaultMessage: 'The current password that you have entered is incorrect.'
+              },
+              resolution: {
+                id: 'errorResponseMessages.saveLoginDetails.PUT.403.resolution',
+                defaultMessage: 'Please try re-entering your password or contact us to reset your login details'
+              }
+            }),
+            default: errorPleaseTryAgainInAFewMinutes({
+              title: {
+                id: 'errorResponseMessages.saveLoginDetails.PUT.default.title',
+                defaultMessage: 'Saving Login Details Failed'
+              }
+            })
+          }
         }).returns(expectedResponseFromServer)
         dispatch = sinon.spy()
         createAccountDetailsReduxReduxWithStubs(fetchStub)
@@ -480,7 +442,42 @@ describe('AccountDetailsRedux', () => {
         assert(fetchStub.aspectFetch.calledWith('/auth/update-login-details', {
           method: 'PUT',
           headers: stubHeaders,
-          body: JSON.stringify(requestData)
+          body: JSON.stringify(requestData),
+          errorNotifications: {
+            409: inlineWarning({
+              title: {
+                id: 'errorResponseMessages.saveLoginDetails.PUT.409.title',
+                defaultMessage: 'This Username is Unavailable'
+              },
+              message: {
+                id: 'errorResponseMessages.saveLoginDetails.PUT.409.message',
+                defaultMessage: 'The username that you have entered is already in use by another user on the system'
+              },
+              resolution: {
+                id: 'errorResponseMessages.saveLoginDetails.PUT.409.resolution',
+                defaultMessage: 'Please try another username'
+              } }),
+            403: inlineWarning({
+              title: {
+                id: 'errorResponseMessages.saveLoginDetails.PUT.403.title',
+                defaultMessage: 'Invalid Password'
+              },
+              message: {
+                id: 'errorResponseMessages.saveLoginDetails.PUT.403.message',
+                defaultMessage: 'The current password that you have entered is incorrect.'
+              },
+              resolution: {
+                id: 'errorResponseMessages.saveLoginDetails.PUT.403.resolution',
+                defaultMessage: 'Please try re-entering your password or contact us to reset your login details'
+              }
+            }),
+            default: errorPleaseTryAgainInAFewMinutes({
+              title: {
+                id: 'errorResponseMessages.saveLoginDetails.PUT.default.title',
+                defaultMessage: 'Saving Login Details Failed'
+              }
+            })
+          }
         }), 'A PUT to /auth/update-login-details was not detected')
       })
 
@@ -492,54 +489,6 @@ describe('AccountDetailsRedux', () => {
             updateDetails
           }])
         }))
-      })
-
-      describe('when the server encounters a problem', () => {
-        const expectedError = { message: 'An unexpected error happened' }
-        const expectedErrorFromServer = Promise.reject(expectedError)
-        const expectedErrorAction = { type: 'ERROR' }
-        let errorCreatorsStub
-
-        beforeEach(() => {
-          fetchStub = {
-            aspectFetch: sinon.stub(),
-            getHeaders: sinon.stub()
-          }
-          fetchStub.getHeaders.returns(stubHeaders)
-          fetchStub.aspectFetch.withArgs('/auth/update-login-details', {
-            method: 'PUT',
-            headers: stubHeaders,
-            body: JSON.stringify(requestData)
-          }).returns(expectedErrorFromServer)
-          errorCreatorsStub = {
-            addError: sinon.stub()
-          }
-          errorCreatorsStub.addError.withArgs('Saving login details failed', expectedError.message, expectedError)
-            .returns(expectedErrorAction)
-          dispatch = sinon.spy()
-          createAccountDetailsReduxReduxWithStubs(fetchStub, errorCreatorsStub)
-          const dispatchFunction = accountDetailsRedux.saveLoginDetails(loginDetailsData)
-          dispatchFunction(dispatch)
-        })
-
-        it('should dispatch a SAVE_ACCOUNT_DETAILS_START action', () => {
-          assert.deepEqual(dispatch.firstCall.args, [{ type: types.SAVE_ACCOUNT_DETAILS_START }], 'SAVE_ACCOUNT_DETAILS_START Was Not Dispatched')
-        })
-
-        it('should send a PUT request to the server with the correct headers and the account details passed to it', () => {
-          assert(fetchStub.aspectFetch.calledWith('/auth/update-login-details', {
-            method: 'PUT',
-            headers: stubHeaders,
-            body: JSON.stringify(requestData)
-          }), 'A PUT to /auth/update-login-details was not detected')
-        })
-
-        describe('and an error is received from the server', () => {
-          it('should dispatch an error action', () => expectedErrorFromServer.then().catch((err) => {
-            assert.deepEqual(err, expectedError)
-            assert.deepEqual(dispatch.secondCall.args, [expectedErrorAction])
-          }))
-        })
       })
     })
 
@@ -558,7 +507,13 @@ describe('AccountDetailsRedux', () => {
         fetchStub.aspectFetch.withArgs('/account-details/current-preferences', {
           method: 'PUT',
           headers: stubHeaders,
-          body: JSON.stringify(userPreferencesData)
+          body: JSON.stringify(userPreferencesData),
+          errorNotifications: {
+            default: errorPleaseTryAgainInAFewMinutes({ title: {
+              id: 'errorResponseMessages.saveUserPreferences.PUT.default.title',
+              defaultMessage: 'Saving User Preferences Failed'
+            } })
+          }
         }).returns(expectedResponseFromServer)
         dispatch = sinon.spy()
         createAccountDetailsReduxReduxWithStubs(fetchStub)
@@ -575,7 +530,15 @@ describe('AccountDetailsRedux', () => {
         assert(fetchStub.aspectFetch.calledWith('/account-details/current-preferences', {
           method: 'PUT',
           headers: stubHeaders,
-          body: JSON.stringify(userPreferencesData)
+          body: JSON.stringify(userPreferencesData),
+          errorNotifications: {
+            default: errorPleaseTryAgainInAFewMinutes({
+              title: {
+                id: 'errorResponseMessages.saveUserPreferences.PUT.default.title',
+                defaultMessage: 'Saving User Preferences Failed'
+              }
+            })
+          }
         }), 'A PUT to /account-details/current-preferences was not detected')
       })
 
@@ -587,54 +550,6 @@ describe('AccountDetailsRedux', () => {
             accountDetails: accountDetailsData
           }])
         }))
-      })
-
-      describe('when the server encounters a problem', () => {
-        const expectedError = { message: 'An unexpected error happened' }
-        const expectedErrorFromServer = Promise.reject(expectedError)
-        const expectedErrorAction = { type: 'ERROR' }
-        let errorCreatorsStub
-
-        beforeEach(() => {
-          fetchStub = {
-            aspectFetch: sinon.stub(),
-            getHeaders: sinon.stub()
-          }
-          fetchStub.getHeaders.returns(stubHeaders)
-          fetchStub.aspectFetch.withArgs('/account-details/current-preferences', {
-            method: 'PUT',
-            headers: stubHeaders,
-            body: JSON.stringify(userPreferencesData)
-          }).returns(expectedErrorFromServer)
-          errorCreatorsStub = {
-            addError: sinon.stub()
-          }
-          errorCreatorsStub.addError.withArgs('Saving user preferences failed', expectedError.message, expectedError)
-            .returns(expectedErrorAction)
-          dispatch = sinon.spy()
-          createAccountDetailsReduxReduxWithStubs(fetchStub, errorCreatorsStub)
-          const dispatchFunction = accountDetailsRedux.saveUserPreferences(userPreferencesData)
-          dispatchFunction(dispatch)
-        })
-
-        it('should dispatch a SAVE_ACCOUNT_DETAILS_START action', () => {
-          assert.deepEqual(dispatch.firstCall.args, [{ type: types.SAVE_ACCOUNT_DETAILS_START }], 'SAVE_ACCOUNT_DETAILS_START Was Not Dispatched')
-        })
-
-        it('should send a PUT request to the server with the correct headers and the account details passed to it', () => {
-          assert(fetchStub.aspectFetch.calledWith('/account-details/current-preferences', {
-            method: 'PUT',
-            headers: stubHeaders,
-            body: JSON.stringify(userPreferencesData)
-          }), 'A PUT to /account-details/current-preferences was not detected')
-        })
-
-        describe('and an error is received from the server', () => {
-          it('should dispatch an error action', () => expectedErrorFromServer.then().catch((err) => {
-            assert.deepEqual(err, expectedError)
-            assert.deepEqual(dispatch.secondCall.args, [expectedErrorAction])
-          }))
-        })
       })
     })
   })

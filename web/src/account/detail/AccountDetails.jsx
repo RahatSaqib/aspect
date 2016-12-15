@@ -21,7 +21,7 @@ import {
   saveLoginDetails,
   saveUserPreferences
 } from '../AccountRedux'
-import { addAcknowledgement } from '../../acknowledgement/AcknowledgementRedux'
+import { showAcknowledgement } from '../../appNotification/AppNotificationRedux'
 import styles from './AccountDetails.css'
 import accountDetailsMessages from './messages'
 import personDetailsMessages from '../../person/detail/messages'
@@ -37,7 +37,7 @@ export class AccountDetails extends PureComponent {
     saveContactDetails: PropTypes.func.isRequired,
     saveLoginDetails: PropTypes.func.isRequired,
     saveUserPreferences: PropTypes.func.isRequired,
-    addAcknowledgement: PropTypes.func.isRequired
+    showAcknowledgement: PropTypes.func.isRequired
   }
 
   constructor(props) {
@@ -78,7 +78,7 @@ export class AccountDetails extends PureComponent {
 
   render() {
     const { intl: { formatMessage }, loading, saving, accountDetails, saveContactDetails,
-        saveUserPreferences, saveLoginDetails, addAcknowledgement } = this.props
+        saveUserPreferences, saveLoginDetails, showAcknowledgement } = this.props
     const saveLoginDetailsFailed = (errors) => {
       if (!errors.currentPassword) {
         this.closeCurrentPasswordInputDialog()
@@ -86,7 +86,10 @@ export class AccountDetails extends PureComponent {
     }
     const saveLoginDetailsSucceeded = () => {
       this.closeCurrentPasswordInputDialog()
-      addAcknowledgement(formatMessage(personDetailsMessages.loginDetailsUpdated))
+      showAcknowledgement({
+        title: personDetailsMessages.detailsUpdatedSuccessfully,
+        message: personDetailsMessages.loginDetailsUpdatedMessage
+      })
     }
     return (
       <div className={styles.Content}>
@@ -160,7 +163,7 @@ function mapDispatchToProps(dispatch) {
     saveContactDetails,
     saveLoginDetails,
     saveUserPreferences,
-    addAcknowledgement
+    showAcknowledgement
   }, dispatch)
 }
 

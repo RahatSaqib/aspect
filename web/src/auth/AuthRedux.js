@@ -1,12 +1,17 @@
+import { defineMessages } from 'react-intl'
 import { stringify } from 'querystring'
 import Immutable from 'immutable'
 import jwtDecode from 'jwt-decode'
 import { browserHistory } from 'react-router'
 import { SubmissionError } from 'redux-form/immutable'
+import config from '../config'
 import { getBrowserNameAndVersion } from '../shared/utils/browser'
 import { aspectFetch, getHeaders } from '../shared/utils/fetch'
 import * as localStorage from '../shared/utils/localStorage'
-import { addError } from '../error/ErrorRedux'
+import {
+  errorPleaseTryAgainInAFewMinutes,
+  inlineErrorPleaseTryAgainInAFewMinutes
+} from '../error/CommonErrorNotifications'
 
 export const types = {
   HYDRATE_FROM_LOCAL_STORAGE: 'HYDRATE_FROM_LOCAL_STORAGE',
@@ -131,7 +136,55 @@ export function loginStart(login) {
           password,
           clientId: localStorage.getClientId(),
           clientName
-        })
+        }),
+        errorNotifications: {
+          401: {
+            'Your account is locked.': {
+              severity: 'warn',
+              ...defineMessages({
+                title: {
+                  id: 'errorResponseMessages.loginStart.POST.401.accountLocked.title',
+                  defaultMessage: 'Login Failed'
+                },
+                message: {
+                  id: 'errorResponseMessages.loginStart.POST.401.accountLocked.message',
+                  defaultMessage: 'Your user account has been locked'
+                },
+                resolution: {
+                  id: 'errorResponseMessages.loginStart.POST.401.accountLocked.resolution',
+                  defaultMessage: 'You can contact us to unlock your account for you, either by email ({supportEmail}) or by telephone ({supportTelephone})'
+                }
+              }),
+              messageValues: {
+                supportTelephone: config.supportTelephone,
+                supportEmail: config.supportEmail
+              }
+            },
+            default: {
+              severity: 'warn',
+              ...defineMessages({
+                title: {
+                  id: 'errorResponseMessages.loginStart.POST.default.default.title',
+                  defaultMessage: 'Login Failed'
+                },
+                message: {
+                  id: 'errorResponseMessages.loginStart.POST.default.default.message',
+                  defaultMessage: 'The details that you have entered are incorrect'
+                },
+                resolution: {
+                  id: 'errorResponseMessages.loginStart.POST.default.resolution',
+                  defaultMessage: 'Please re-enter your login details and try again?'
+                }
+              })
+            }
+          },
+          default: errorPleaseTryAgainInAFewMinutes(defineMessages({
+            title: {
+              id: 'errorResponseMessages.loginStart.POST.default.title',
+              defaultMessage: 'Login Error'
+            }
+          }))
+        }
       })
       .then((json) => {
         const jwt = storeAccess(json)
@@ -142,10 +195,7 @@ export function loginStart(login) {
 
         browserHistory.push('/dashboard')
       })
-      .catch((err) => {
-        dispatch(loginFailure(err))
-        dispatch(addError('Login Failed', err.message, err))
-      })
+      .catch(err => dispatch(loginFailure(err)))
   }
 }
 
@@ -217,7 +267,15 @@ export function resetPasswordEnterEmailAddress(emailAddress) {
         body: JSON.stringify({
           clientId: localStorage.getClientId(),
           clientName
-        })
+        }),
+        errorNotifications: {
+          default: inlineErrorPleaseTryAgainInAFewMinutes(defineMessages({
+            title: {
+              id: 'errorResponseMessages.resetPasswordEnterEmailAddress.POST.default.title',
+              defaultMessage: 'Error Sending Reset Password Email'
+            }
+          }))
+        }
       })
       .catch((err) => {
         throw new SubmissionError({ _error: err.message })
@@ -236,7 +294,15 @@ export function resetPasswordEnterPassword(resetPasswordToken, newPassword) {
           newPassword,
           clientId: localStorage.getClientId(),
           clientName
-        })
+        }),
+        errorNotifications: {
+          default: inlineErrorPleaseTryAgainInAFewMinutes(defineMessages({
+            title: {
+              id: 'errorResponseMessages.resetPasswordEnterPassword.POST.default.title',
+              defaultMessage: 'Error Saving New Password'
+            }
+          }))
+        }
       })
       .then((json) => {
         dispatch(createResetPasswordEnterPasswordSuccess(json.username))

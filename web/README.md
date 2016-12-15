@@ -44,9 +44,9 @@ npm run copy
 ## i18n
 
 1. Edit your components in `src/**/*`
-2. `npm run updatemessages:start`
+2. `yarn run updatemessages:start`
 3. Create or update `.po` files. See below.
-4. `npm run updatemessages:end`
+4. `yarn run updatemessages:end`
 5. Commit stuff in `src/shared/i18n/**/*`
 
 In step 3, you'll need to create or update `.po` files inside `src/shared/i18n` folder. The `.po` files store translations for each locale. Creating a `.po` file mean adding new locale support. Updating `.po` files means updating existing translations with newly added messages due to changes in step 1.

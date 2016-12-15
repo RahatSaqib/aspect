@@ -333,7 +333,7 @@ function* up(knex) {
     config.increments('id')
     config.integer('deviceId').unsigned().notNullable()
       .index().references('id').inTable('Device')
-    config.string('externalId').notNullable()
+    config.string('externalId')
     config.specificType('data', 'JSON').notNullable()
     addCreateFieldsNullable(config)
     config.charset('utf8')
@@ -343,7 +343,7 @@ function* up(knex) {
     config.increments('id')
     config.integer('deviceId').unsigned().notNullable()
       .index().references('id').inTable('Device')
-    config.string('externalId').notNullable()
+    config.string('externalId')
     config.specificType('data', 'JSON').notNullable()
     addCreateFieldsNullable(config)
     config.charset('utf8')
@@ -403,7 +403,7 @@ function* up(knex) {
   // the sample that the result is based on (multiple results can refer to the same sample)
   yield knex.schema.createTable('Sample', (sample) => {
     sample.increments('id')
-    sample.string('externalId').notNullable()
+    sample.string('externalId')
     sample.integer('originSiteId').unsigned()
           .index().references('id').inTable('Site')
     sample.charset('utf8')
@@ -411,7 +411,7 @@ function* up(knex) {
 
   yield knex.schema.createTable('Result', (result) => {
     result.increments('id')
-    result.string('externalId').notNullable()
+    result.string('externalId')
     result.integer('assayId').unsigned().notNullable()
       .index().references('id').inTable('Assay')
     result.integer('partnerId').unsigned()
@@ -469,12 +469,13 @@ function* up(knex) {
     deviceLog.string('source').notNullable() // LIS listener, API...
     deviceLog.dateTime('createdOn').notNullable()
     deviceLog.string('senderIp').notNullable()
+    deviceLog.string('checkpoint').index()
     deviceLog.text('rawMessage')
     deviceLog.charset('utf8')
   })
 
   yield knex.schema.createTable('DeviceLogUpdate', (deviceLog) => {
-    deviceLog.increments('id')
+    deviceLog.bigincrements('id')
     deviceLog.integer('deviceLogId').unsigned().notNullable()
           .index().references('id').inTable('DeviceLog')
     deviceLog.integer('resultId').unsigned()
@@ -483,7 +484,6 @@ function* up(knex) {
           .index().references('id').inTable('DeviceConfiguration')
     deviceLog.integer('deviceOperationId').unsigned()
           .index().references('id').inTable('DeviceOperation')
-    // TODO should we log fields that changed in linked entity or type of update?
     deviceLog.charset('utf8')
   })
 
@@ -532,17 +532,37 @@ function* up(knex) {
     resultWorkflowStatus.string('token')
   })
 
-  yield knex.schema.createTable('ConsumableAtSite', (consumableAtSite) => {
-    consumableAtSite.increments('id')
-    consumableAtSite.integer('consumableId').unsigned().notNullable()
+  yield knex.schema.createTable('InventoryItem', (inventoryItem) => {
+    inventoryItem.increments('id')
+    inventoryItem.integer('consumableId').unsigned().notNullable()
       .references('id').inTable('Consumable')
-    consumableAtSite.integer('siteId').unsigned().notNullable()
+    inventoryItem.integer('siteId').unsigned().notNullable()
       .references('id').inTable('Site')
-    consumableAtSite.dateTime('expiresOn')
-    consumableAtSite.float('quantityOnHand')
-    addCreateFieldsNullable(consumableAtSite)
-    addUpdateFieldsNullable(consumableAtSite)
-    consumableAtSite.charset('utf8')
+    inventoryItem.string('lotNumber')
+    inventoryItem.dateTime('expiresOn')
+    inventoryItem.float('quantityOnHand')
+    addCreateFieldsNullable(inventoryItem)
+    addUpdateFieldsNullable(inventoryItem)
+    inventoryItem.charset('utf8')
+  })
+
+  yield knex.schema.createTable('InventoryLog', (inventoryLog) => {
+    inventoryLog.increments('id')
+    inventoryLog.integer('inventoryItemId').unsigned()
+      .references('id').inTable('InventoryItem')
+    inventoryLog.integer('consumableId').unsigned().notNullable()
+      .references('id').inTable('Consumable')
+    inventoryLog.integer('siteId').unsigned().notNullable()
+      .references('id').inTable('Site')
+    inventoryLog.integer('consumableReasonId').unsigned().notNullable()
+      .references('id').inTable('ConsumableReason')
+    inventoryLog.integer('resultId').unsigned()
+      .references('id').inTable('Result')
+    inventoryLog.string('lotNumber')
+    inventoryLog.dateTime('expiresOn')
+    inventoryLog.float('quantity')
+    addCreateFieldsNullable(inventoryLog)
+    inventoryLog.charset('utf8')
   })
 
   yield knex.raw('SET foreign_key_checks = 1')
@@ -551,10 +571,11 @@ function* up(knex) {
 function* down(knex) {
   yield knex.raw('SET foreign_key_checks = 0')
 
+  yield knex.schema.dropTableIfExists('InventoryLog')
   yield knex.schema.dropTableIfExists('ConsumableAssay')
   yield knex.schema.dropTableIfExists('ResultWorkflowStatus')
   yield knex.schema.dropTableIfExists('ConsumableAssay')
-  yield knex.schema.dropTableIfExists('ConsumableAtSite')
+  yield knex.schema.dropTableIfExists('InventoryItem')
   yield knex.schema.dropTableIfExists('ConsumableReason')
   yield knex.schema.dropTableIfExists('Unit')
   yield knex.schema.dropTableIfExists('Consumable')

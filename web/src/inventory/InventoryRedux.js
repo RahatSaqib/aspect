@@ -1,9 +1,9 @@
+import { defineMessages } from 'react-intl'
 import _ from 'lodash'
 import { stringify } from 'querystring'
 import Immutable from 'immutable'
 
 import { aspectFetch } from '../shared/utils/fetch'
-import { addError } from '../error/ErrorRedux'
 import {
   receiveList,
   Items
@@ -13,6 +13,10 @@ import {
   receiveTableItems,
   Table
 } from '../shared/metaReducers/groupedTable'
+import {
+  filterFieldsRejectedError,
+  errorPleaseTryAgainInAFewMinutes
+} from '../error/CommonErrorNotifications'
 
 export const types = {
   REQUEST_INVENTORY_ITEMS: 'REQUEST_INVENTORY_ITEMS',
@@ -79,11 +83,22 @@ export function fetchInventoryItems(groupBy, filters /* required */, sortCol = '
       page,
       size: pageSize,
       ...filters
-    })}`)
-      .then(json => dispatch(receiveInventoryItems(json, groupBySite ? ['inventoryItems'] : [])))
-      .catch((err) => {
-        dispatch(addError('Loading inventory items failed', err.message, err))
-      })
+    })}`, {
+      errorNotifications: {
+        400: filterFieldsRejectedError(defineMessages({
+          title: {
+            id: 'errorResponseMessages.fetchInventoryItems.GET.400.title',
+            defaultMessage: 'Searching Inventory Items Failed'
+          }
+        })),
+        default: errorPleaseTryAgainInAFewMinutes(defineMessages({
+          title: {
+            id: 'errorResponseMessages.fetchInventoryItems.GET.default.title',
+            defaultMessage: 'Loading Inventory Items Failed'
+          }
+        }))
+      }
+    }).then(json => dispatch(receiveInventoryItems(json, groupBySite ? ['inventoryItems'] : [])))
   }
 }
 

@@ -10,8 +10,8 @@ import { logoutStart, toggleDrawer, closeDrawer } from '../../auth/AuthRedux'
 import Nav from '../shared/Nav'
 import SideNav from '../shared/SideNav'
 import { IdleDialogContainer } from '../../idle/dialog/IdleDialog'
-import { ErrorDisplayContainer } from '../shared/ErrorDisplay'
-import AcknowledgementDisplay from '../shared/AcknowledgementDisplay'
+import AppNotificationSnackBar from '../../appNotification/AppNotificationSnackBar'
+import AppNotificationDialog from '../../appNotification/AppNotificationDialog'
 
 export class LoggedInShell extends PureComponent {
 
@@ -41,8 +41,6 @@ export class LoggedInShell extends PureComponent {
     return (
       <div>
         <Helmet title="Aspect" defaultTitle="Aspect" />
-        <ErrorDisplayContainer />
-        <AcknowledgementDisplay />
         <IdleDialogContainer />
         <SideNav
           open={this.props.drawerOpen}
@@ -61,6 +59,8 @@ export class LoggedInShell extends PureComponent {
             setPageTitle: this.handleSetPageTitle
           })}
         </div>
+        <AppNotificationDialog />
+        <AppNotificationSnackBar />
       </div>
     )
   }

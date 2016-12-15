@@ -4,27 +4,36 @@ import {
   base,
   header,
   accept,
-  onResponse
+  recv
 } from 'http-client'
-import config from 'config'
+import { defineMessages } from 'react-intl'
+import { showError } from '../../appNotification/AppNotificationRedux'
 
+import config from '../../config'
 import { getJWT } from './localStorage'
 
 // fetch with auth and other headers we need
-export const aspectFetch = createFetch(
-  base(config.aspectApi),
-  accept('application/json'),
-  header('Content-Type', 'application/json'),
-  addAuthHeaderMiddleware,
-  onResponse(handleFetchResponse)
-)
+export function aspectFetch(path, options) {
+  const fetch = createFetch(
+    base(config.aspectApi),
+    accept('application/json'),
+    header('Content-Type', 'application/json'),
+    addAuthHeaderMiddleware,
+    recv(handleFetchResponse(options))
+  )
+  return fetch(path, options)
+}
 
 function addAuthHeaderMiddleware(fetch, input, options = {}) {
   const token = getJWT()
   if (token) {
     (options.headers || (options.headers = {})).Authorization = `Bearer ${token}`
   }
-  return fetch(input, options)
+  return fetch(input, options).catch(() => {
+    Promise.reject({
+      statusCode: 0
+    })
+  })
 }
 
 // adds authorization and content type headers to a request
@@ -44,16 +53,43 @@ export function getHeaders(json) {
 }
 
 // using this in a fetch (ajax request) to check if request was successful
-export function handleFetchResponse(resp) {
-  const json = resp.json()
-
-  if (resp.ok) {
-    return json.then((prevJson) => {
-      const nextJson = changeAllIdsToString(prevJson)
-      return nextJson
+export function handleFetchResponse(options) {
+  return (resp) => {
+    const json = resp ? resp.json() : Promise.resolve({
+      statusCode: 0
+    })
+    if (resp && resp.ok) {
+      return json.then((prevJson) => {
+        const nextJson = changeAllIdsToString(prevJson)
+        return nextJson
+      })
+    }
+    return json.then((err) => {
+      let errorNotification = _.get(options, `errorNotifications.${err.statusCode}`) ||
+        _.get(options, 'errorNotifications.default')
+      if (errorNotification) {
+        if (errorNotification[err.message]) {
+          errorNotification = errorNotification[err.message]
+        } else if (errorNotification.default) {
+          errorNotification = errorNotification.default
+        }
+        const store = require('../../store').default
+        if (err.statusCode === 0) {
+          errorNotification = {
+            ...defineMessages({
+              message: {
+                id: 'errorResponseMessages.disconnected.default.message',
+                defaultMessage: 'Either your computer has been disconnected from the internet or our server has failed to respond.'
+              }
+            }),
+            ...errorNotification
+          }
+        }
+        store.dispatch(showError(errorNotification, err))
+      }
+      return Promise.reject(err)
     })
   }
-  return json.then(Promise.reject.bind(Promise))
 }
 
 // check if a property looks like an ID (key is equal to 'id' or ends with 'Id')
