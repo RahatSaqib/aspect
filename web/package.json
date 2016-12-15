@@ -6,8 +6,8 @@
   "main": "",
   "scripts": {
     "start": "cross-env NODE_ENV=dev webpack-dev-server --inline --hot --open",
-    "pretest": "fsys --task=remove --fileFolder=coverage",
-    "test": "cross-env ASPECT_ENV=test jest --config ./jest.json --coverage",
+    "pretest": "fsys --task=remove --fileFolder=coverage && fsys --task=remove --fileFolder=mocha.json",
+    "test": "cross-env ASPECT_ENV=test JEST_FILE=mocha.json jest --config ./jest.json --coverage",
     "test:watch": "npm run test -- --watch",
     "posttest": "npm run lint",
     "preupdatemessages:start": "cross-env BABEL_ENV=message babel --quiet --out-dir ./i18n/dist ./src",
