@@ -1,5 +1,4 @@
-import path from 'path'
-
+import invariant from 'invariant'
 // List of allowed environments
 const allowedEnvs = ['dev', 'dist'];
 
@@ -8,11 +7,10 @@ const allowedEnvs = ['dev', 'dist'];
  * @param  {String} wantedEnv The wanted environment
  * @return {Object} Webpack config
  */
-function buildConfig(wantedEnv) {
+function buildConfig(wantedEnv = process.env.ASPECT_ENV) {
   const isValid = wantedEnv && wantedEnv.length > 0 && allowedEnvs.indexOf(wantedEnv) !== -1;
-  const validEnv = isValid ? wantedEnv : 'dev';
-  const config = require(path.join(__dirname, 'cfg', validEnv)).default;
-  return config;
+  invariant(isValid, `You should set ASPECT_ENV correctly. Allowed values are: ${allowedEnvs.join(', ')}`)
+  return require(`./${wantedEnv}`).default;
 }
 
-export default buildConfig(process.env.ASPECT_ENV);
+export default buildConfig();
