@@ -14,10 +14,10 @@ const {
 const { selectAssayConsumables } = require('../consumable/assayConsumableService')
 
 const INVENTORY_ITEM_SELECT_LIST_FIELDS = [
-  'ii.id', 'ii.consumableId', 'ii.siteId', 'ii.expiresOn', 'ii.quantityOnHand',
-  'c.name as consumableName', 'c.manufacturer', 'u.shortname as unitShortName',
-  's.name as siteName', 'g.countryId', 'g.stateId', 'g.lgaId',
-  'co.name as countryName', 'st.name as stateName', 'l.name as lgaName'
+  'ii.id', 'ii.consumableId', 'ii.siteId', 'ii.expiresOn', 'ii.lotNumber',
+  'ii.quantityOnHand', 'c.name as consumableName', 'c.manufacturer', 'c.canExpire',
+  'u.shortname as unitShortName', 's.name as siteName', 'g.countryId', 'g.stateId',
+  'g.lgaId', 'co.name as countryName', 'st.name as stateName', 'l.name as lgaName'
 ]
 
 const INVENTORY_ITEM_SORT_FIELDS = {
@@ -28,7 +28,8 @@ const INVENTORY_ITEM_SORT_FIELDS = {
   stateName: 'st.name',
   lgaName: 'l.name',
   quantityOnHand: 'ii.quantityOnHand',
-  expiresOn: 'ii.expiresOn'
+  expiresOn: 'ii.expiresOn',
+  lotNumber: 'ii.lotNumber'
 }
 
 const INVENTORY_ITEM_FILTER_FIELDS = {
@@ -220,7 +221,8 @@ function* listInventoryItemsGroupedBySite(request) {
     .select([...INVENTORY_ITEM_SELECT_LIST_FIELDS, knex.raw(`${sortColumnField} as sortBy`)])
 
   const siteFields = ['siteId', 'siteName', 'countryId', 'stateId', 'lgaId', 'countryName', 'stateName', 'lgaName']
-  const inventoryItemFields = ['consumableId', 'consumableName', 'manufacturer', 'unitShortName', 'id', 'expiresOn', 'quantityOnHand']
+  const inventoryItemFields = ['consumableId', 'consumableName', 'manufacturer', 'unitShortName', 'id', 'expiresOn',
+    'lotNumber', 'quantityOnHand', 'canExpire']
   const sites = _.uniqBy(
     _.map(inventoryItems, inventoryItem =>
       _.pick(inventoryItem, siteFields)), 'siteId')
