@@ -5,6 +5,8 @@
   "description": "The web client for the aspect API",
   "main": "",
   "scripts": {
+    "prewebpack:dll": "fsys --task=remove --fileFolder=dist/assets/dll.vendor.js && fsys --task=remove --fileFolder=src/template/dll.vendor.manifest.json && fsys --task=remove --fileFolder=src/template/index.html",
+    "webpack:dll": "webpack --config cfg/dll/index.babel.js",
     "start": "cross-env NODE_ENV=dev webpack-dev-server --inline --hot --open",
     "pretest": "fsys --task=remove --fileFolder=coverage && fsys --task=remove --fileFolder=mocha.json",
     "test": "cross-env ASPECT_ENV=test JEST_FILE=mocha.json jest --config ./jest.json --coverage",
