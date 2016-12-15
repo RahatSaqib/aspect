@@ -2,6 +2,7 @@ import _ from 'lodash'
 import React from 'react'
 import { Field } from 'redux-form/immutable'
 import MenuItem from 'material-ui/MenuItem'
+import classNames from 'classnames'
 
 import ForkedSelectField from '../forkedMaterialUi/ForkedSelectField'
 import styles from './Shared.css'
@@ -22,12 +23,13 @@ const renderSelectField = (props) => {
     }
     input.onChange(value)
   }
+  const selectFieldStyle = { verticalAlign: 'bottom', ...selectFieldProps.style }
   return (
     <ForkedSelectField
-      {...input} errorStyle={{ float: 'left' }} style={{ verticalAlign: 'bottom' }}
-      errorText={touched && error} {...selectFieldProps}
-      onChange={onChange} className={styles.Form__Field}
-      tabIndex="0" aria-haspopup
+      {...input} errorStyle={{ float: 'left' }} {...selectFieldProps}
+      errorText={touched && error} style={selectFieldStyle}
+      onChange={onChange} tabIndex="0" aria-haspopup
+      className={classNames({ [styles.Form__Field]: selectFieldProps.fullWidth })}
     >
       {children}
     </ForkedSelectField>
@@ -44,7 +46,9 @@ const renderFormField = (props) => {
     dataSource,
     dataSourceConfig,
     autoWidth,
-    selectedItemStyle } = props
+    selectedItemStyle,
+    style
+  } = props
   const valueKey = dataSourceConfig.value
   const textKey = dataSourceConfig.text
   const selectItems = _.map(dataSource, item => ({
@@ -55,7 +59,7 @@ const renderFormField = (props) => {
 
   return (<Field
     name={name} onSelectionChanged={onChange}
-    selectFieldProps={{ floatingLabelText: label, fullWidth, disabled, autoWidth }}
+    selectFieldProps={{ floatingLabelText: label, fullWidth, disabled, autoWidth, style }}
     component={renderSelectField}
   >
     { selectItems.map(item => <MenuItem
