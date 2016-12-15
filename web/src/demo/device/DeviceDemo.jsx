@@ -24,13 +24,6 @@ export class DeviceDemo extends PureComponent {
     device: PropTypes.object
   }
 
-  state = {
-    values: {
-      name: '',
-      access: ''
-    }
-  }
-
   componentDidMount() {
     this.handleFetchDevice()
   }
@@ -43,16 +36,7 @@ export class DeviceDemo extends PureComponent {
 
   handleFetchDevice = () => {
     this.props.fetchDemoDevice(this.props.params.deviceId)
-      .then(() => {
-        const { device } = this.props
-
-        this.handleFormChange({
-          name: device.get('name') || ''
-        })
-      })
   }
-
-  handleFormChange = values => this.setState({ values })
 
   renderReadOnlyFields() {
     const { device } = this.props
