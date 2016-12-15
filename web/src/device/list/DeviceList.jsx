@@ -10,8 +10,13 @@ import { bindActionCreators } from 'redux'
 import { connect } from 'react-redux'
 import Helmet from 'react-helmet'
 
+// Material-UI
+import { Card } from 'material-ui/Card'
+import FlatButton from 'material-ui/FlatButton'
+import IconExportExcel from 'material-ui/svg-icons/file/file-download'
+
 // Our own imports
-import { fetchListFilteredDevices } from '../DeviceRedux'
+import { fetchListFilteredDevices, exportDevices } from '../DeviceRedux'
 import ListFilterContainer from '../../filter/list/ListFilter'
 import { configureListFilter } from '../../filter/FilterRedux'
 import DataTable from '../../components/shared/DataTable'
@@ -49,6 +54,14 @@ const messages = defineMessages({
   totalTests: {
     id: 'pages.DeviceList.totalTests',
     defaultMessage: 'Total Tests'
+  },
+  exportExcel: {
+    id: 'pages.DeviceList.exportExcel',
+    defaultMessage: 'Excel'
+  },
+  exportCsv: {
+    id: 'pages.DeviceList.exportCsv',
+    defaultMessage: 'CSV'
   }
 })
 
@@ -66,7 +79,8 @@ export class DeviceList extends PureComponent {
     fetchListFilteredDevices: PropTypes.func.isRequired,
     items: PropTypes.object.isRequired,
     configureListFilter: PropTypes.func.isRequired,
-    listFilter: PropTypes.object.isRequired
+    listFilter: PropTypes.object.isRequired,
+    exportDevices: PropTypes.func.isRequired
   }
 
   static contextTypes = {
@@ -143,6 +157,23 @@ export class DeviceList extends PureComponent {
     )
   }
 
+  exportClicked = (format) => {
+    this.props.exportDevices(
+      this.getDeviceConfigRoute().deviceConfig.filterParams,
+      format,
+      this.props.table.sortCol,
+      this.props.table.sortDir,
+      this.props.table.page,
+      this.props.table.pageSize
+    )
+  }
+  exportExcelClicked = (event) => {
+    this.exportClicked('excel')
+  }
+  exportCsvClicked = (event) => {
+    this.exportClicked('csv')
+  }
+
   render() {
     const { intl } = this.props
     const { formatMessage, formatRelative, formatNumber } = intl
@@ -151,6 +182,14 @@ export class DeviceList extends PureComponent {
       <div className={styles.Content}>
         <Helmet title={this.getFormattedTitle()} titleTemplate="%s - Aspect" defaultTitle="Aspect" />
         <ListFilterContainer subject={this.getFormattedTitle()} />
+        <Card>
+          <FlatButton onClick={this.exportExcelClicked}
+            label={formatMessage(messages.exportExcel)}
+            icon={<IconExportExcel />} />
+          <FlatButton onClick={this.exportCsvClicked}
+            label={formatMessage(messages.exportCsv)}
+            icon={<IconExportExcel />} />
+        </Card>
         <DataTable
           selectable
           handleItemIdSelection={this.handleItemIdSelection}
@@ -194,7 +233,8 @@ function mapStateToProps(state) {
 function mapDispatchToProps(dispatch) {
   return bindActionCreators({
     configureListFilter,
-    fetchListFilteredDevices
+    fetchListFilteredDevices,
+    exportDevices
   }, dispatch)
 }
 

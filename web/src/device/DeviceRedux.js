@@ -29,7 +29,10 @@ export const types = {
   RECEIVE_SINGLE_DEVICE: 'RECEIVE_SINGLE_DEVICE',
 
   REQUEST_UPDATING_SINGLE_DEVICE: 'REQUEST_UPDATING_SINGLE_DEVICE',
-  RECEIVE_UPDATED_SINGLE_DEVICE: 'RECEIVE_UPDATED_SINGLE_DEVICE'
+  RECEIVE_UPDATED_SINGLE_DEVICE: 'RECEIVE_UPDATED_SINGLE_DEVICE',
+
+  REQUEST_EXPORT_EXCEL_DEVICES: 'REQUEST_EXPORT_EXCEL_DEVICES',
+  RECEIVE_EXPORT_EXCEL_DEVICES: 'RECEIVE_EXPORT_EXCEL_DEVICES'
 }
 /*
  * ---------------- Action Creators -----------------
@@ -171,6 +174,82 @@ export function updateSingleDevice(deviceId, data) {
     }).then(json => dispatch(receiveUpdatedSingleDevice(json.data)))
   }
 }
+
+
+
+
+
+
+
+
+
+
+
+
+export function requestExportExcel(listFilter, sortCol = 'name', sortDir = 'asc', page = 0, pageSize = 10) {
+  return {
+    type: types.REQUEST_EXPORT_EXCEL_DEVICES,
+    sortCol,
+    sortDir,
+    page,
+    size: pageSize,
+    format: 'excel',
+    listFilter
+  }
+}
+
+function receiveExportResponse(json) {
+  return {
+    type: types.RECEIVE_EXPORT_EXCEL_DEVICES,
+    items: json.data,
+    total: json.total
+  }
+}
+
+// With state.filter.listFilter & extraFilters
+export function exportDevices(extraFilters = {}, format, sortCol, sortDir, page, pageSize) { //} ...args) {
+  return (dispatch, getState) => {
+    const filters = getState()
+      .filter
+      .listFilter
+      .toMap()
+      .merge(extraFilters)
+      .filter(_.identity)
+      .toJS()
+
+    //return dispatch(exportDevices(filters, format, sortCol, sortDir, page, pageSize)) //...args))
+
+    //dispatch(requestExportExcel(sortCol, sortDir, page, pageSize, filters))
+
+
+    return aspectFetch(`/device/export?${stringify({
+      sortCol,
+      sortDir,
+      page,
+      size: pageSize,
+      format,
+      ...filters
+    })}`,
+      {
+        errorNotifications: {
+          400: filterFieldsRejectedError(defineMessages({
+            title: {
+              id: 'errorResponseMessages.exportDevices.GET.400.title',
+              defaultMessage: 'Exporting Devices Failed'
+            }
+          })),
+          default: errorPleaseTryAgainInAFewMinutes(defineMessages({
+            title: {
+              id: 'errorResponseMessages.exportDevices.GET.default.title',
+              defaultMessage: 'Exporting Devices Failed'
+            }
+          }))
+        }
+      })
+      .then(json => dispatch(receiveExportResponse(json)))
+  }
+}
+
 /*
  * ---------------- Reducers -----------------
  */
@@ -199,6 +278,12 @@ export default function deviceReducer(state = initialState, action) {
         const immutItem = Immutable.fromJS(action.item)
         mutState.set('items', receiveItem(mutState.items, immutItem))
       })
+
+    // case types.REQUEST_EXPORT_EXCEL_DEVICES:
+    //   return state
+    // case types.RECEIVE_EXPORT_EXCEL_DEVICES:
+    //   return state
+
     default:
       return state
   }

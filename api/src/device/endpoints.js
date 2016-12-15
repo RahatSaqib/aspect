@@ -10,7 +10,8 @@ const {
   updateDevice,
   getDeviceApiKey,
   listDeviceOperation,
-  listDeviceConfiguration
+  listDeviceConfiguration,
+  exportDevices
 } = require('./service')
 const { validateAllGeographyFilterParams } = require('../geography/requestValidation')
 
@@ -121,5 +122,43 @@ module.exports = [
         }, validateSortPageParams('deviceName', 'createdOn', 'updatedOn'))
       }
     }
+  },
+  {
+    method: 'GET',
+    path: '/device/export',
+    //handler: asyncHandler(listDeviceOperation),
+    handler: asyncHandler(exportDevices),
+    config: {
+      description: 'Export Device List into Excel or CSV',
+      notes: 'Filtered and sorted list of devices',
+      auth: { scope: ['device:view'] },
+      validate: {
+        query: Object.assign({
+          format: Joi.string().valid('excel', 'csv').description('Export list of devices to allowed file format'),
+          hasResults: Joi.number().allow('').min(0).max(1).description('Filter for getting devices that can have results'),
+          hasConnectivity: Joi.number().allow('').min(0).max(1).description('Filter for getting devices that can have connectivity'),
+          assayId: Joi.number().allow('').description('Assay ID'),
+          resultCategoryId: Joi.number().allow('').description('Result Category ID'),
+          deviceName: Joi.string().allow('').description('Filter for device name'),
+          category: Joi.string().description('Filter for device type category'),
+          type: Joi.string().description('Filter for device type'),
+          name: Joi.string().allow('').description('Filter for device name')
+        }, validateAllGeographyFilterParams(),
+          validateDateRangeParams(),
+          validateSortPageParams('name', 'status', 'createdOn', 'lastSeen', 'totalTests'))
+      }
+    }
+
+    // config: {
+    //   notes: 'List Device Operation',
+    //   description: 'List device operational data for the specified device',
+    //   auth: { scope: ['device:view', 'device:edit'] },
+    //   validate: {
+    //     query: Object.assign({
+    //       deviceId: Joi.string().description('Device id').description('Filter for device id'),
+    //       deviceName: Joi.string().allow('').description('Filter for device name')
+    //     }, validateSortPageParams('deviceName', 'createdOn', 'updatedOn'))
+    //   }
+    // }
   }
 ]

@@ -224,11 +224,51 @@ function* listDeviceOperation(request) {
   return result
 }
 
+function* exportDevices(request){
+  const { query, auth } = request
+
+  // get data constraints
+  const dataConstraints = yield getConstraints(auth.credentials)
+
+  if (query.format === 'excel'){
+
+  }
+  else if (query.format === 'csv'){
+
+  }
+
+
+  return { ok: true, total: 0, length: 0, data: [] }
+
+  // const configQuery = knex('DeviceConfiguration as dc')
+  //   .leftJoin('Device as d', 'dc.deviceId', 'd.id')
+  //   .modify(filterParams, query, { deviceId: 'd.id', deviceName: 'd.name' })
+  //   .modify(addConstraints, dataConstraints, { device: 'd' })
+
+  // // get total count for paging
+  // const getCount = configQuery.clone()
+  //   .count('dc.id as count').first()
+
+  // // get rows
+  // const getItems = configQuery.clone()
+  //   .modify(sortPageParams, query, 'deviceName')
+  //   .select('dc.id', 'dc.externalId', 'dc.createdOn', 'dc.data', 'dc.deviceId', 'd.name as deviceName')
+  //   .map(item => Object.assign({}, item, { data: JSON.parse(item.data) }))
+
+  // // return result when both queries are finished
+  // const [{ count: total }, data] = yield Promise.all([getCount, getItems])
+
+  // const result = { ok: true, total, length: data.length, data }
+
+  // return result
+}
+
 module.exports = {
   listDevices,
   showDevice,
   updateDevice,
   getDeviceApiKey,
   listDeviceConfiguration,
-  listDeviceOperation
+  listDeviceOperation,
+  exportDevices
 }
