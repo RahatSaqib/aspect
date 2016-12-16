@@ -62,10 +62,6 @@ export default class DataTable extends PureComponent {
     stripedRows: false
   }
 
-  componentDidMount() {
-    this.fetchData()
-  }
-
   getColumns() {
     const {
       table,

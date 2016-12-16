@@ -14,7 +14,7 @@ import Helmet from 'react-helmet'
 import { fetchListFilteredDevices } from '../DeviceRedux'
 import ListFilterContainer from '../../filter/list/ListFilter'
 import { configureListFilter } from '../../filter/FilterRedux'
-import DataTable from '../../components/shared/DataTable'
+import DataTableWithEmptyList from '../../components/shared/DataTableWithEmptyList'
 import styles from './DeviceList.css'
 
 const messages = defineMessages({
@@ -103,6 +103,10 @@ export class DeviceList extends PureComponent {
     configureListFilter(this.getDeviceConfigRoute().deviceConfig.filterConfig)
   }
 
+  componentDidMount() {
+    this.handleFetch()
+  }
+
   componentWillReceiveProps(nextProps) {
     if (this.props.listFilter !== nextProps.listFilter) {
       this.handleFetch()
@@ -146,37 +150,38 @@ export class DeviceList extends PureComponent {
   render() {
     const { intl } = this.props
     const { formatMessage, formatRelative, formatNumber } = intl
+    const columns = [
+      { db: 'name',
+        title: formatMessage(messages.deviceName),
+        extraProps: { style: { width: DEVICE_TABLE_NAME_COLUMN_WIDTH } } },
+      { db: 'status',
+        title: formatMessage(messages.status),
+        hideOnXs: true,
+        extraProps: { style: { width: DEVICE_TABLE_STATUS_COLUMN_WIDTH } } },
+      { db: 'createdOn',
+        title: formatMessage(messages.reportingFor),
+        hideOnXs: true,
+        format: data => formatRelative(data) },
+      { db: 'lastSeen',
+        title: formatMessage(messages.lastSeen),
+        hideOnXs: true,
+        format: data => formatRelative(data) },
+      { db: 'totalTests',
+        title: formatMessage(messages.totalTests),
+        format: data => formatNumber(data) }
+    ]
 
     return (
       <div className={styles.Content}>
         <Helmet title={this.getFormattedTitle()} titleTemplate="%s - Aspect" defaultTitle="Aspect" />
         <ListFilterContainer subject={this.getFormattedTitle()} />
-        <DataTable
+        <DataTableWithEmptyList
           selectable
           handleItemIdSelection={this.handleItemIdSelection}
           handleFetch={this.handleFetch}
           items={this.props.items}
           table={this.props.table}
-          columns={[
-            { db: 'name',
-              title: formatMessage(messages.deviceName),
-              extraProps: { style: { width: DEVICE_TABLE_NAME_COLUMN_WIDTH } } },
-            { db: 'status',
-              title: formatMessage(messages.status),
-              hideOnXs: true,
-              extraProps: { style: { width: DEVICE_TABLE_STATUS_COLUMN_WIDTH } } },
-            { db: 'createdOn',
-              title: formatMessage(messages.reportingFor),
-              hideOnXs: true,
-              format: data => formatRelative(data) },
-            { db: 'lastSeen',
-              title: formatMessage(messages.lastSeen),
-              hideOnXs: true,
-              format: data => formatRelative(data) },
-            { db: 'totalTests',
-              title: formatMessage(messages.totalTests),
-              format: data => formatNumber(data) }
-          ]}
+          columns={columns}
         />
       </div>
     )

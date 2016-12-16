@@ -14,7 +14,7 @@ import Helmet from 'react-helmet'
 import { fetchListFilteredRouters } from '../RouterRedux'
 import ListFilterContainer from '../../filter/list/ListFilter'
 import { configureListFilter } from '../../filter/FilterRedux'
-import DataTable from '../../components/shared/DataTable'
+import DataTableWithEmptyList from '../../components/shared/DataTableWithEmptyList'
 import styles from './RouterList.css'
 
 const messages = defineMessages({
@@ -91,6 +91,10 @@ export class RouterList extends PureComponent {
     configureListFilter(this.getRouterConfigRoute().routerConfig.filterConfig)
   }
 
+  componentDidMount() {
+    this.handleFetch()
+  }
+
   componentWillReceiveProps(nextProps) {
     if (this.props.listFilter !== nextProps.listFilter) {
       this.handleFetch()
@@ -121,33 +125,35 @@ export class RouterList extends PureComponent {
   render() {
     const { intl } = this.props
     const { formatMessage, formatRelative } = intl
+    const columns = [
+      { db: 'name',
+        title: formatMessage(messages.routerName),
+        extraProps: { style: { width: ROUTER_TABLE_NAME_COLUMN_WIDTH } } },
+      { db: 'status',
+        title: formatMessage(messages.status),
+        hideOnXs: true,
+        extraProps: { style: { width: ROUTER_TABLE_STATUS_COLUMN_WIDTH } } },
+      { db: 'createdOn',
+        title: formatMessage(messages.reportingFor),
+        hideOnXs: true,
+        format: data => formatRelative(data) },
+      { db: 'lastSeen',
+        title: formatMessage(messages.lastSeen),
+        hideOnXs: true,
+        format: data => formatRelative(data) }
+    ]
+
     return (
       <div className={styles.Content}>
         <Helmet title={this.getFormattedTitle()} titleTemplate="%s - Aspect" defaultTitle="Aspect" />
         <ListFilterContainer />
-        <DataTable
+        <DataTableWithEmptyList
           selectable
           handleItemIdSelection={this.handleItemIdSelection}
           handleFetch={this.handleFetch}
           items={this.props.items}
           table={this.props.table}
-          columns={[
-            { db: 'name',
-              title: formatMessage(messages.routerName),
-              extraProps: { style: { width: ROUTER_TABLE_NAME_COLUMN_WIDTH } } },
-            { db: 'status',
-              title: formatMessage(messages.status),
-              hideOnXs: true,
-              extraProps: { style: { width: ROUTER_TABLE_STATUS_COLUMN_WIDTH } } },
-            { db: 'createdOn',
-              title: formatMessage(messages.reportingFor),
-              hideOnXs: true,
-              format: data => formatRelative(data) },
-            { db: 'lastSeen',
-              title: formatMessage(messages.lastSeen),
-              hideOnXs: true,
-              format: data => formatRelative(data) }
-          ]}
+          columns={columns}
         />
       </div>
     )

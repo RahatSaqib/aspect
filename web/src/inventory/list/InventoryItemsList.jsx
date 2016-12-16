@@ -14,6 +14,7 @@ import { Card } from 'material-ui/Card'
 import Checkbox from 'material-ui/Checkbox'
 
 // Our own imports
+import EmptyList from '../../components/shared/EmptyList'
 import GroupedDataTable from '../../components/shared/GroupedDataTable'
 import ListFilterContainer from '../../filter/list/ListFilter'
 import { configureListFilter } from '../../filter/FilterRedux'
@@ -77,6 +78,10 @@ export class InventoryItemsList extends PureComponent {
       siteName: true })
   }
 
+  componentDidMount() {
+    this.handleFetch()
+  }
+
   componentWillReceiveProps(nextProps) {
     if (this.props.listFilter !== nextProps.listFilter) {
       this.handleFetch()
@@ -94,6 +99,7 @@ export class InventoryItemsList extends PureComponent {
   render() {
     const { intl, items, table } = this.props
     const { formatMessage, formatDate, formatRelative } = intl
+    const isSettledAndEmpty = !table.loading && items.currentIdList.isEmpty()
     const columns = [{
       fieldName: 'siteName',
       headerText: formatMessage(messages.siteName)
@@ -129,14 +135,17 @@ export class InventoryItemsList extends PureComponent {
             style={{ padding: '1em' }}
           />
         </Card>
-        <GroupedDataTable
-          handleFetch={this.handleFetch}
-          items={items}
-          table={table}
-          columns={columns}
-          intl={intl}
-          messages={messages}
-        />
+        <EmptyList isEmpty={isSettledAndEmpty} />
+        {!isSettledAndEmpty && (
+          <GroupedDataTable
+            handleFetch={this.handleFetch}
+            items={items}
+            table={table}
+            columns={columns}
+            intl={intl}
+            messages={messages}
+          />
+        )}
       </div>
     )
   }
