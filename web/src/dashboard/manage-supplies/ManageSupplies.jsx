@@ -9,22 +9,22 @@ import Helmet from 'react-helmet'
 // Our own imports
 import DashboardInventory from '../dashboard/DashboardInventory'
 import { Unit } from '../../components/pureGrids'
-import styles from './Inventory.css'
+import styles from './ManageSupplies.css'
 
-export class Inventory extends PureComponent {
+export class ManageSupplies extends PureComponent {
 
   static propTypes = {
     setPageTitle: PropTypes.func.isRequired
   }
 
   componentWillMount() {
-    this.props.setPageTitle('Inventory')
+    this.props.setPageTitle('ManageSupplies')
   }
 
   render() {
     return (
       <div className={styles.Content}>
-        <Helmet title="Inventory" titleTemplate="%s - Aspect" defaultTitle="Aspect" />
+        <Helmet title="ManageSupplies" titleTemplate="%s - Aspect" defaultTitle="Aspect" />
         <div>
           <Unit sm="1-2" md="1-3" lg="1-4">
             <DashboardInventory label={'Cartridges'} />
@@ -35,7 +35,7 @@ export class Inventory extends PureComponent {
   }
 }
 
-export const InventoryContainer = _.flowRight(
+export const ManageSuppliesContainer = _.flowRight(
   injectIntl
-)(Inventory)
+)(ManageSupplies)
 
