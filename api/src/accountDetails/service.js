@@ -1,13 +1,15 @@
 const _ = require('lodash')
 const Boom = require('boom')
 const { query } = require('../db')
+const { transformGeographyFromUpdates } = require('../geography/service')
 
 function getAccountDetailsForUsername(username) {
   return query('Get account details for currently logged in user').from('User as u')
     .leftJoin('Person as p', 'u.id', 'p.userId')
+    .leftOuterJoin('Geography as g', 'g.id', 'p.geographyId')
     .where({ 'u.name': username })
     .first('p.id', 'p.userId', 'u.name as username', 'p.name', 'p.title', 'p.email', 'p.email2',
-      'p.phone', 'p.cell', 'p.countryId', 'p.stateId', 'p.lgaId', 'p.zip', 'p.timezone', 'p.culture')
+      'p.phone', 'p.cell', 'g.countryId', 'g.stateId', 'g.lgaId', 'p.zip', 'p.timezone', 'p.culture')
 }
 
 function* getAccountDetailsForLoggedInUser(request) {
@@ -36,13 +38,15 @@ function* saveDetailsForLoggedInUser(request, updatablePersonFields) {
   }, {})
 
   // Update record if any values have changed
-  if (!_.isEmpty(changedFields)) {
-    changedFields.updatedOn = new Date()
-    changedFields.updatedBy = accountDetails.userId
+  const changedPersonFields = yield* transformGeographyFromUpdates(changedFields)
+
+  if (!_.isEmpty(changedPersonFields)) {
+    changedPersonFields.updatedOn = new Date()
+    changedPersonFields.updatedBy = accountDetails.userId
 
     yield query('Save account details for currently logged in user').from('Person as p')
       .where({ 'p.id': accountDetails.id })
-      .update(changedFields)
+      .update(changedPersonFields)
     accountDetails = yield getAccountDetailsForUsername(username)
   }
 

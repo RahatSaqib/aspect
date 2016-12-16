@@ -36,6 +36,7 @@ function* listDevices(request) {
     .innerJoin('DeviceType as dt', 'd.deviceTypeId', 'dt.id')
     .innerJoin('DeviceTypeCategory as dc', 'dt.deviceTypeCategoryId', 'dc.id')
     .innerJoin('Site as s', 'd.siteId', 's.id')
+    .leftJoin('Geography as g', 's.geographyId', 'g.id')
     .modify((queryBuilder) => {
       if (!query.assayId) {
         return
@@ -52,9 +53,9 @@ function* listDevices(request) {
         .where('rca.resultCategoryId', query.resultCategoryId)
     })
     .modify(filterParams, query, {
-      countryId: 's.countryId',
-      stateId: 's.stateId',
-      lgaId: 's.lgaId',
+      countryId: 'g.countryId',
+      stateId: 'g.stateId',
+      lgaId: 'g.lgaId',
       deviceName: 'd.name',
       hasConnectivity: 'dc.hasConnectivity',
       hasResults: 'dc.hasResults',

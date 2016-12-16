@@ -3,17 +3,19 @@ const _ = require('lodash')
 const Boom = require('boom')
 const { query, knex, filterParams, sortPageParams } = require('../db')
 const userService = require('../auth/service')
+const { transformGeographyFromUpdates } = require('../geography/service')
 
 function* listPeople(request) {
   const { query } = request
 
   const personQuery = knex('Person as p')
-    .leftOuterJoin('State as s', 'p.stateId', 's.id')
-    .leftOuterJoin('Lga as l', 'p.lgaId', 'l.id')
+    .leftJoin('Geography as g', 'p.geographyId', 'g.id')
+    .leftOuterJoin('State as s', 'g.stateId', 's.id')
+    .leftOuterJoin('Lga as l', 'g.lgaId', 'l.id')
     .modify(filterParams, query, {
-      countryId: 'p.countryId',
-      stateId: 'p.stateId',
-      lgaId: 'p.lgaId',
+      countryId: 'g.countryId',
+      stateId: 'g.stateId',
+      lgaId: 'g.lgaId',
       contactNameOrEmail: ['p.name', 'p.email', 'p.email2']
     })
 
@@ -43,13 +45,14 @@ function* listPeople(request) {
 
 function getPersonDetails(personId) {
   return query('Get person details').from('Person as p')
+    .leftJoin('Geography as g', 'p.geographyId', 'g.id')
     .leftJoin('User as u', 'p.userId', 'u.id')
-    .leftOuterJoin('State as s', 'p.stateId', 's.id')
-    .leftOuterJoin('Country as c', 'p.countryId', 'c.id')
-    .leftOuterJoin('Lga as l', 'p.lgaId', 'l.id')
+    .leftOuterJoin('State as s', 'g.stateId', 's.id')
+    .leftOuterJoin('Country as c', 'g.countryId', 'c.id')
+    .leftOuterJoin('Lga as l', 'g.lgaId', 'l.id')
     .where({ 'p.id': personId })
     .first('p.id', 'p.userId', 'u.name as username', 'p.name', 'p.title', 'p.email', 'p.email2',
-      'p.phone', 'p.cell', 'p.countryId', 'p.stateId', 'p.lgaId', 'p.zip', 'p.timezone', 'p.culture',
+      'p.phone', 'p.cell', 'g.countryId', 'g.stateId', 'g.lgaId', 'p.zip', 'p.timezone', 'p.culture',
       'p.notes', 'p.lastPartnerId', 'p.hidePatientId', 'p.hideSampleId', 'p.hideNotes',
       'c.name as country', 's.name as stateName', 'l.name as lgaName')
 }
@@ -99,9 +102,11 @@ function* savePerson(request, updatablePersonFields) {
   }, {})
 
   // Update record if any values have changed
-  if (!_.isEmpty(changedFields)) {
+  const changedPersonFields = yield* transformGeographyFromUpdates(changedFields)
+  // FIXME!!
+  if (!_.isEmpty(changedPersonFields)) {
     if (changedFields.countryId && personDetails.lastCountryId !== changedFields.countryId) {
-      changedFields.lastCountryId = changedFields.countryId
+      changedPersonFields.lastCountryId = changedFields.countryId
     }
 
     changedFields.updatedOn = new Date()
@@ -109,7 +114,7 @@ function* savePerson(request, updatablePersonFields) {
 
     yield query('Save person details').from('Person as p')
       .where({ 'p.id': personDetails.id })
-      .update(changedFields)
+      .update(changedPersonFields)
   }
 
   return yield* showPerson(request)

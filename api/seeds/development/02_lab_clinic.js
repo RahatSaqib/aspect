@@ -65,14 +65,17 @@ function* seed(knex) {
 
   const { culture, timezone, id: countryId } = malawiCountry
 
+  const { id: geographyId } = yield knex('Geography')
+    .where({ countryId })
+    .first()
+
   // Permissions for RRT Admin
   yield knex('Person').insert(Object.assign({
     userId: adminId,
     name: 'RRT Admin',
     lastPartnerId: partnerId,
     lastCountryId: countryId,
-    countryId,
-    stateId: malawiStates[0].stateId,
+    geographyId,
     culture,
     timezone
   }, auditFields))
@@ -100,18 +103,21 @@ function* seed(knex) {
 
   // every clinic has a site, RRT device and a user assigned to it
   for (const clinic of labClinic.clinics) {
-    const geoData = {
-      countryId,
-      stateId: (statesByName[clinic.stateName.toLowerCase()] || { id: null }).id
-    }
+    const { id: clinicGeographyId } = yield knex('Geography')
+      .where({
+        countryId,
+        stateId: (statesByName[clinic.stateName.toLowerCase()] || { id: null }).id
+      })
+      .first()
 
     // sites
     const siteData = Object.assign({
       partnerId,
+      geographyId: clinicGeographyId,
       name: clinic.name,
       shortname: clinic.shortname,
       externalId: clinic.externalId
-    }, geoData, auditFields)
+    }, auditFields)
     const [siteId] = yield knex('Site').insert(siteData)
     siteData.id = siteId
 
@@ -175,17 +181,14 @@ function* seed(knex) {
 
   // Labs have m2000 and modem
   for (const lab of labClinic.labs) {
-    const geoData = {
-      countryId
-    }
-
     // every clinic has a site, RRT device and a user assigned to it
     const siteData = Object.assign({
       partnerId,
+      geographyId,
       name: lab.name,
       shortname: lab.shortname,
       externalId: lab.externalId
-    }, geoData, auditFields)
+    }, auditFields)
     const [siteId] = yield knex('Site').insert(siteData)
     siteData.id = siteId
 
@@ -238,8 +241,7 @@ function* seed(knex) {
       name: `${lab.shortname} Admin`,
       lastPartnerId: partnerId,
       lastCountryId: countryId,
-      countryId,
-      stateId: malawiStates[0].stateId,
+      geographyId,
       culture,
       timezone
     }, auditFields))

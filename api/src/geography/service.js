@@ -152,9 +152,24 @@ function* lgaSelectList(request) {
   return { ok: true, data: lgas }
 }
 
+function* transformGeographyFromUpdates(updates) {
+  const geoFieldNames = ['countryId', 'stateId', 'lgaId']
+  const geoFields = _.pick(updates, geoFieldNames)
+  const transformedFields = _.omit(updates, geoFieldNames)
+
+  if (!_.isEmpty(geoFields)) {
+    const geography = yield knex('Geography')
+      .where(geoFields)
+      .first('id')
+    transformedFields.geographyId = geography ? geography.id : null
+  }
+  return transformedFields
+}
+
 module.exports = {
   buildGeographySelectList,
   countrySelectList,
   stateSelectList,
-  lgaSelectList
+  lgaSelectList,
+  transformGeographyFromUpdates
 }

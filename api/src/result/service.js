@@ -83,9 +83,10 @@ function* listResults(request) {
   const resultQuery = knex('Result as r')
     .innerJoin('Assay as a', 'r.assayId', 'a.id')
     .innerJoin('Device as d', 'r.deviceId', 'd.id')
-    .leftJoin('Country as c', 'r.countryId', 'c.id')
-    .leftJoin('State as st', 'r.stateId', 'st.id')
-    .leftJoin('Lga as lg', 'r.lgaId', 'lg.id')
+    .leftJoin('Geography as g', 'r.geographyId', 'g.id')
+    .leftJoin('Country as c', 'g.countryId', 'c.id')
+    .leftJoin('State as st', 'g.stateId', 'st.id')
+    .leftJoin('Lga as lg', 'g.lgaId', 'lg.id')
     .leftJoin('ResultCategory as rc1', 'r.resultCategory1', 'rc1.id')
     .leftJoin('ResultCategory as rc2', 'r.resultCategory2', 'rc2.id')
     .leftJoin('Sample as s', 'r.sampleId', 's.id')
@@ -96,9 +97,9 @@ function* listResults(request) {
       deviceId: 'd.id',
       assayId: 'r.assayId',
       resultCategoryId: 'r.resultCategory1',
-      countryId: 'Site.countryId',
-      stateId: 'Site.stateId',
-      lgaId: 'Site.lgaId',
+      countryId: 'g.countryId',
+      stateId: 'g.stateId',
+      lgaId: 'g.lgaId',
       deviceName: 'd.name',
       siteName: 'Site.name',
       sampleId: 's.externalId'
@@ -146,10 +147,11 @@ function* getResultByResultId(request, fields = SELECT_SHOW_FIELDS) {
   const results = yield knex('Result as r')
     .innerJoin('Device as d', 'r.deviceId', 'd.id')
     .innerJoin('Assay as a', 'r.assayId', 'a.id')
+    .leftJoin('Geography as g', 'r.geographyId', 'g.id')
     .leftJoin('Site as si', 'r.siteId', 'si.id')
-    .leftJoin('Country as c', 'r.countryId', 'c.id')
-    .leftJoin('State as st', 'r.stateId', 'st.id')
-    .leftJoin('Lga as lg', 'r.lgaId', 'lg.id')
+    .leftJoin('Country as c', 'g.countryId', 'c.id')
+    .leftJoin('State as st', 'g.stateId', 'st.id')
+    .leftJoin('Lga as lg', 'g.lgaId', 'lg.id')
     .leftJoin('ResultCategory as rc1', 'r.resultCategory1', 'rc1.id')
     .leftJoin('ResultCategory as rc2', 'r.resultCategory2', 'rc2.id')
     .leftJoin('Sample as s', 'r.sampleId', 's.id')

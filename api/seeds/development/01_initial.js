@@ -867,7 +867,7 @@ function* seed(knex) {
 
   // Create geographic hierarchy
   const countries = {}
-  const geoDatas = []
+  const geographies = []
   const siteDatas = []
   for (const country of geography.countries) {
     const countryData = _.pick(country, [
@@ -878,6 +878,8 @@ function* seed(knex) {
     countryData.id = countryId
     countries[country.abbreviation] = countryData
     countryData.states = {}
+
+    yield knex('Geography').insert({ countryId })
 
     for (const state of (country.states || [])) {
       const stateData = Object.assign(
@@ -894,6 +896,8 @@ function* seed(knex) {
         : _.includes(['MA', 'NY'], state.abbreviation) ? regionNortheastId
         : partnerOneOrgUnitId
 
+      yield knex('Geography').insert({ countryId, stateId })
+
       for (const lga of (state.lgas || [])) {
         const lgaData = Object.assign(
           { stateId: stateData.id },
@@ -909,20 +913,22 @@ function* seed(knex) {
           stateId: stateData.id,
           lgaId: lgaData.id
         }
-        geoDatas.push(geoData)
+        const [geographyId] = yield knex('Geography').insert(geoData)
+        geographies.push(Object.assign({ id: geographyId }, geoData))
 
         // up to 5 of sites at each LGA
         for (const siteNumber of _.range(1, 6 - (lgaData.id % 5))) {
           const siteData = Object.assign({
             partnerId: partnerOneId,
             orgUnitId,
+            geographyId,
             externalId: `${state.name}_${siteNumber}`,
             name: `${lga.name} ${country.lgaLabel} ${state.name} #${siteNumber}`,
             shortname: `${lga.name}, ${stateKey} #${siteNumber}`,
             city: `${lga.name} City`,
             street1: `${lgaData.id} Main Street`,
             zip: `12345-${lgaData.id}`
-          }, geoData, auditFields)
+          }, auditFields)
           const [siteId] = yield knex('Site').insert(siteData)
           siteData.id = siteId
           siteDatas.push(siteData)
@@ -965,8 +971,9 @@ function* seed(knex) {
       lastPartnerId,
       lastCountryId,
       timezone,
-      culture
-    }, geoDatas[geoDatas.length % userId], auditFields))
+      culture,
+      geographyId: geographies[geographies.length % userId].id
+    }, auditFields))
   }
 
   // insert some routers with sims:
@@ -1129,9 +1136,7 @@ function* seed(knex) {
       assayId: assayMtbRifId,
       partnerId: partnerOneId,
       orgUnitId: partnerOneOrgUnitId,
-      countryId: siteData.countryId,
-      stateId: siteData.stateId,
-      lgaId: siteData.lgaId,
+      geographyId: siteData.geographyId,
       siteId: siteData.id,
       deviceId: device.id,
       resultWorkflowStatusId: ordered,
@@ -1225,9 +1230,7 @@ function* seed(knex) {
       assayId: assayEbolaId,
       partnerId: partnerOneId,
       orgUnitId: partnerOneOrgUnitId,
-      countryId: siteData.countryId,
-      stateId: siteData.stateId,
-      lgaId: siteData.lgaId,
+      geographyId: siteData.geographyId,
       siteId: siteData.id,
       deviceId: device.id,
       resultWorkflowStatusId: processed,
@@ -1320,9 +1323,7 @@ function* seed(knex) {
       assayId: assayHivVlId,
       partnerId: partnerOneId,
       orgUnitId: partnerOneOrgUnitId,
-      countryId: siteData.countryId,
-      stateId: siteData.stateId,
-      lgaId: siteData.lgaId,
+      geographyId: siteData.geographyId,
       siteId: siteData.id,
       deviceId: device.id,
       resultWorkflowStatusId: acknowledged,

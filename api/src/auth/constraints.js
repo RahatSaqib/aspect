@@ -90,7 +90,7 @@ function getDeviceConstraints(credentials) {
 }
 
 function addConstraints(queryBuilder, constraints, aliases) {
-  let { site, partner, orgUnit, country, state, lga } = aliases
+  let { site, partner, orgUnit, geography, country, state, lga } = aliases
   const { device, sample } = aliases
 
   // TODO generalize constraint building
@@ -113,19 +113,24 @@ function addConstraints(queryBuilder, constraints, aliases) {
     queryBuilder.leftOuterJoin(`OrgUnit as ${orgUnit}`, `${site}.orgUnitId`, `${orgUnit}.id`)
   }
 
+  if (!geography) {
+    geography = alias('Geography')
+    queryBuilder.leftOuterJoin(`Geography as ${geography}`, `${site}.geographyId`, `${geography}.id`)
+  }
+
   if (!country) {
     country = alias('Country')
-    queryBuilder.leftOuterJoin(`Country as ${country}`, `${site}.countryId`, `${country}.id`)
+    queryBuilder.leftOuterJoin(`Country as ${country}`, `${geography}.countryId`, `${country}.id`)
   }
 
   if (!state) {
     state = alias('State')
-    queryBuilder.leftOuterJoin(`State as ${state}`, `${site}.stateId`, `${state}.id`)
+    queryBuilder.leftOuterJoin(`State as ${state}`, `${geography}.stateId`, `${state}.id`)
   }
 
   if (!lga) {
     lga = alias('Lga')
-    queryBuilder.leftOuterJoin(`Lga as ${lga}`, `${site}.lgaId`, `${lga}.id`)
+    queryBuilder.leftOuterJoin(`Lga as ${lga}`, `${geography}.lgaId`, `${lga}.id`)
   }
 
   // Partner, country, and org unit constraints are ANDed
