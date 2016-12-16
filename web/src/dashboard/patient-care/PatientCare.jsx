@@ -24,7 +24,8 @@ export class PatientCare extends PureComponent {
         type: PropTypes.string
       })
     }).isRequired,
-    setPageTitle: PropTypes.func.isRequired
+    setPageTitle: PropTypes.func.isRequired,
+    configureListFilter: PropTypes.func.isRequired
   }
 
   componentWillMount() {
