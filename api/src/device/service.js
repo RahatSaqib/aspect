@@ -18,6 +18,8 @@ const SELECT_SHOW_FIELDS = [
   knex.raw('\'Active\' as status'),
   knex.raw('d.id * 134 as totalTests'),
   'd.siteId',
+  's.name as siteName',
+  'd.hostId',
   // TODO: First Connected
   'd.approvedOn',
   'u.name as approvedBy',
@@ -122,11 +124,22 @@ function* getDeviceByDeviceId(request, fields = SELECT_SHOW_FIELDS) {
   const devices = yield knex('Device as d')
     .innerJoin('DeviceType as dt', 'd.deviceTypeId', 'dt.id')
     .innerJoin('DeviceTypeCategory as dc', 'dt.deviceTypeCategoryId', 'dc.id')
+    .innerJoin('Site as s', 'd.siteId', 's.id')
     .leftOuterJoin('User as u', 'u.id', 'd.approvedBy')
     .where('d.id', +params.deviceId)
     .modify(addConstraints, dataConstraints, { device: 'd' })
     .select(fields)
-  return { ok: devices.length === 1, data: devices[0] }
+
+  const contacts = yield knex('Person as p')
+    .select('p.id', 'p.name')
+    .limit(50)
+
+  return {
+    ok: devices.length === 1,
+    data: _.assign({}, devices[0], {
+      contacts: _.times(3, () => contacts.splice(_.random(0, contacts.length - 1), 1)[0])
+    })
+  }
 }
 
 function* showDevice(request) {
