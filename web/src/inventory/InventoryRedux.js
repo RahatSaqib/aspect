@@ -147,6 +147,7 @@ function startTransferringInventory(details) {
 export function adjustInventoryLevels(inventoryItem, operation) {
   const expiresOn = inventoryItem.get('expiresOn')
   const adjustmentDetails = {
+    inventoryItemId: inventoryItem.get('id'),
     expiresOn: expiresOn ? new Date(expiresOn) : undefined,
     canExpire: inventoryItem.get('canExpire') === 1,
     lotNumber: inventoryItem.get('lotNumber'),
@@ -199,6 +200,7 @@ export function addInventory(inventoryItemId, data) {
   return (dispatch, getState) => {
     const { inventory } = getState()
     const groupBySite = inventory.getIn(['table', 'groupBy']).includes('siteId')
+    const inventoryItem = inventory.getIn(['items', 'byId', inventoryItemId])
     dispatch(startAddingInventory(data))
     const path = groupBySite ? '/inventory/group-by-site/add' : '/inventory/add'
     return aspectFetch(`${path}/${inventoryItemId}`, {
@@ -208,13 +210,17 @@ export function addInventory(inventoryItemId, data) {
         default: errorPleaseTryAgainInAFewMinutes(defineMessages({
           title: {
             id: 'errorResponseMessages.addInventory.PUT.default.title',
-            defaultMessage: 'Adjusting Inventory Failed'
-          }
+            defaultMessage: 'Adding Inventory Failed'
+          },
+          onClose: () => dispatch(adjustInventoryLevels(inventoryItem, addOperation))
         }))
       }
     }).then((json) => {
       dispatch(receiveSingleInventoryItem(json.data, groupBySite ? ['inventoryItems'] : []))
       dispatch(finishAdjustingInventoryLevels())
+    }).catch((err) => {
+      dispatch(finishAdjustingInventoryLevels())
+      throw err
     })
   }
 }
@@ -225,6 +231,7 @@ export function removeInventory(inventoryItemId, data) {
   return (dispatch, getState) => {
     const { inventory } = getState()
     const groupBySite = inventory.getIn(['table', 'groupBy']).includes('siteId')
+    const inventoryItem = inventory.getIn(['items', 'byId', inventoryItemId])
     dispatch(startRemovingInventory(data))
     const path = groupBySite ? '/inventory/group-by-site/remove' : '/inventory/remove'
     return aspectFetch(`${path}/${inventoryItemId}`, {
@@ -234,13 +241,17 @@ export function removeInventory(inventoryItemId, data) {
         default: errorPleaseTryAgainInAFewMinutes(defineMessages({
           title: {
             id: 'errorResponseMessages.removeInventory.PUT.default.title',
-            defaultMessage: 'Adjusting Inventory Failed'
-          }
+            defaultMessage: 'Removing Inventory Failed'
+          },
+          onClose: () => dispatch(adjustInventoryLevels(inventoryItem, removeOperation))
         }))
       }
     }).then((json) => {
       dispatch(receiveSingleInventoryItem(json.data, groupBySite ? ['inventoryItems'] : []))
       dispatch(finishAdjustingInventoryLevels())
+    }).catch((err) => {
+      dispatch(finishAdjustingInventoryLevels())
+      throw err
     })
   }
 }
@@ -250,6 +261,7 @@ export function transferInventory(inventoryItemId, data) {
   return (dispatch, getState) => {
     const { inventory } = getState()
     const groupBySite = inventory.getIn(['table', 'groupBy']).includes('siteId')
+    const inventoryItem = inventory.getIn(['items', 'byId', inventoryItemId])
     dispatch(startTransferringInventory(data))
     const path = groupBySite ? '/inventory/group-by-site/transfer' : '/inventory/transfer'
     return aspectFetch(`${path}/${inventoryItemId}`, {
@@ -259,14 +271,18 @@ export function transferInventory(inventoryItemId, data) {
         default: errorPleaseTryAgainInAFewMinutes(defineMessages({
           title: {
             id: 'errorResponseMessages.transferInventory.PUT.default.title',
-            defaultMessage: 'Adjusting Inventory Failed'
-          }
+            defaultMessage: 'Transferring Inventory Failed'
+          },
+          onClose: () => dispatch(adjustInventoryLevels(inventoryItem, transferOperation))
         }))
       }
     }).then((json) => {
       dispatch(receiveSingleInventoryItem(json.data.existingInventoryItem, groupBySite ? ['inventoryItems'] : []))
       dispatch(receiveSingleInventoryItem(json.data.newInventoryItem, groupBySite ? ['inventoryItems'] : []))
       dispatch(finishAdjustingInventoryLevels())
+    }).catch((err) => {
+      dispatch(finishAdjustingInventoryLevels())
+      throw err
     })
   }
 }
@@ -275,6 +291,7 @@ export function transferInventory(inventoryItemId, data) {
  * ---------------- Reducers -----------------
  */
 const AdjustmentDetails = Immutable.Record({
+  inventoryItemId: null,
   expiresOn: null,
   canExpire: false,
   lotNumber: '',

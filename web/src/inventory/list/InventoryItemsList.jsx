@@ -195,11 +195,11 @@ export class InventoryItemsList extends PureComponent {
     } = this.props
     switch (inventoryAdjustment.get('operation')) {
       case addOperation:
-        return addInventory(formValues.get('id'), formValues.toJS())
+        return addInventory(inventoryAdjustment.getIn(['adjustmentDetails', 'inventoryItemId']), formValues.toJS())
       case removeOperation:
-        return removeInventory(formValues.get('id'), formValues.toJS())
+        return removeInventory(inventoryAdjustment.getIn(['adjustmentDetails', 'inventoryItemId']), formValues.toJS())
       case transferOperation:
-        return transferInventory(formValues.get('id'), formValues.toJS())
+        return transferInventory(inventoryAdjustment.getIn(['adjustmentDetails', 'inventoryItemId']), formValues.toJS())
       default:
         throw new SubmissionError({ _error: `Invalid operation ${inventoryAdjustment.get('operation')} for inventory adjustment form` })
     }
@@ -292,7 +292,7 @@ export class InventoryItemsList extends PureComponent {
           />
         )}
         <Dialog
-          title={formHeader} modal={false}
+          title={formHeader}
           open={inventoryAdjustment.get('operation') !== null && adjustingInventoryItem != null}
           autoScrollBodyContent
         >
