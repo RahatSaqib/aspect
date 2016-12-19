@@ -55,11 +55,11 @@ export default class PageableSelectField extends PureComponent {
             primaryText={loadingMoreText}
           />
           :
-            <MenuItem
-              key={VALUE_LOAD_MORE}
-              value={VALUE_LOAD_MORE}
-              primaryText={loadMoreText}
-            />
+          <MenuItem
+            key={VALUE_LOAD_MORE}
+            value={VALUE_LOAD_MORE}
+            primaryText={loadMoreText}
+          />
         }
       </SelectField>
     )
