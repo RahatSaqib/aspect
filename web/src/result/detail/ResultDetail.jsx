@@ -314,7 +314,7 @@ export class ResultDetail extends PureComponent {
     const assay = result.get('assay')
 
     return (
-      <div className={cssClasses('FieldsContainer')}>
+      <div>
         { /* IDs and device/site */ }
         <Card>
           <CardText>
