@@ -58,13 +58,13 @@ function* getLastDeviceOperationId(knex, deviceId) {
 }
 
 function* getLastResultId(knex, deviceId) {
-  const { resultId } = yield knex('DeviceLogUpdate as dlu')
+  const result = yield knex('DeviceLogUpdate as dlu')
     .innerJoin('DeviceLog as dl', 'dl.id', 'dlu.deviceLogId')
     .where('dl.deviceId', deviceId)
     .whereNotNull('dlu.resultId')
     .orderBy('dlu.id', 'desc')
     .first('dlu.resultId')
-  return resultId
+  return result && result.resultId
 }
 
 module.exports = {

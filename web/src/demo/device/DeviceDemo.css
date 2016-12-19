@@ -1,0 +1,11 @@
+.Content {
+  composes: Content from '../../components/shared/Shared.css';
+}
+
+.RowContainer{
+  padding: 10px;
+}
+
+.RowContainer > div > div{
+  margin: 10px;
+}

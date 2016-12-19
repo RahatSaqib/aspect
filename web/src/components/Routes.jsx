@@ -19,6 +19,7 @@ import { PatientCareContainer } from '../dashboard/patient-care/PatientCare'
 import { ManageDevicesContainer } from '../dashboard/manage-devices/ManageDevices'
 import { ManageSuppliesContainer } from '../dashboard/manage-supplies/ManageSupplies'
 import { MaintenanceContainer } from '../dashboard/maintenance/Maintenance'
+import { DeviceDemoContainer } from '../demo/device/DeviceDemo'
 import { DeviceListContainer } from '../device/list/DeviceList'
 import { DeviceDetailContainer } from '../device/detail/DeviceDetail'
 import { SiteListContainer } from '../site/list/SiteList'
@@ -82,6 +83,12 @@ const routes =
           <Route path="manage-devices" component={ManageDevicesContainer} />
           <Route path="manage-supplies" component={ManageSuppliesContainer} />
           <Route path="maintenance" component={MaintenanceContainer} />
+        </Route>
+
+        <Route path="demo" >
+          <Route path="device" >
+            <Route path=":deviceId" component={DeviceDemoContainer} />
+          </Route>
         </Route>
 
         <Route path="device" deviceConfig={{ filterParams: { hasResults: 1 }, filterConfig: { assayAndResultCategory: true, geography: true, date: true, deviceName: true } }}>
