@@ -1,5 +1,4 @@
 import React from 'react'
-import { assert } from 'chai'
 import { shallow } from 'enzyme'
 import proxyquire from 'proxyquire'
 import Immutable from 'immutable'
@@ -52,23 +51,23 @@ describe('Reset Password Enter Password Form', () => {
     })
 
     it('Should be a form', () => {
-      assert.equal(ResetPasswordEnterPasswordWrapper.node.type, 'form')
-      assert.equal(ResetPasswordEnterPasswordWrapper.find('form').props().onSubmit, props.handleSubmit)
+      expect(ResetPasswordEnterPasswordWrapper.node.type).toEqual('form')
+      expect(ResetPasswordEnterPasswordWrapper.find('form').props().onSubmit).toEqual(props.handleSubmit)
     })
 
     it('Should render a message', () => {
-      assert.equal(ResetPasswordEnterPasswordWrapper.find('p').text(), 'Please enter your new password?')
+      expect(ResetPasswordEnterPasswordWrapper.find('p').text()).toEqual('Please enter your new password?')
     })
 
     it('Should contain fields to enter and confirm a password', () => {
-      assert.deepEqual(ResetPasswordEnterPasswordWrapper.find(StrongPasswordInput).props(), {
+      expect(ResetPasswordEnterPasswordWrapper.find(StrongPasswordInput).props()).toEqual({
         name: 'newPassword',
         label: 'New Password',
         maxLength: '100',
         autoFocus: true,
         fullWidth: true
       })
-      assert.deepEqual(ResetPasswordEnterPasswordWrapper.find(TextInput).props(), {
+      expect(ResetPasswordEnterPasswordWrapper.find(TextInput).props()).toEqual({
         name: 'confirmNewPassword',
         label: 'Confirm New Password',
         maxLength: '100',
@@ -78,7 +77,7 @@ describe('Reset Password Enter Password Form', () => {
     })
 
     it('Should contain a submit button', () => {
-      assert.deepEqual(ResetPasswordEnterPasswordWrapper.find(RaisedButton).props(), {
+      expect(ResetPasswordEnterPasswordWrapper.find(RaisedButton).props()).toEqual({
         disabled: true,
         label: 'Next',
         primary: true,
@@ -91,10 +90,10 @@ describe('Reset Password Enter Password Form', () => {
 
     it('Should contain a cancel button', () => {
       const cancelLink = ResetPasswordEnterPasswordWrapper.find(Link)
-      assert.equal(cancelLink.props().to, 'login')
-      assert.equal(cancelLink.props().children.type, FlatButton)
+      expect(cancelLink.props().to).toEqual('login')
+      expect(cancelLink.props().children.type).toEqual(FlatButton)
       const cancelButton = cancelLink.props().children
-      assert.deepEqual(cancelButton.props, {
+      expect(cancelButton.props).toEqual({
         ...cancelButton.props,
         disabled: false,
         label: 'Cancel',
@@ -104,22 +103,22 @@ describe('Reset Password Enter Password Form', () => {
 
     it('Should enable the submit button when the form is dirty, valid and not submitting', () => {
       let submitButton = ResetPasswordEnterPasswordWrapper.find(RaisedButton)
-      assert.isTrue(submitButton.props().disabled)
+      expect(submitButton.props().disabled).toBe(true)
 
       props.pristine = false
       shallowRenderResetPasswordEnterPassword(props)
       submitButton = ResetPasswordEnterPasswordWrapper.find(RaisedButton)
-      assert.isTrue(submitButton.props().disabled)
+      expect(submitButton.props().disabled).toBe(true)
 
       props.invalid = false
       shallowRenderResetPasswordEnterPassword(props)
       submitButton = ResetPasswordEnterPasswordWrapper.find(RaisedButton)
-      assert.isFalse(submitButton.props().disabled)
+      expect(submitButton.props().disabled).toBe(false)
 
       props.pristine = true
       shallowRenderResetPasswordEnterPassword(props)
       submitButton = ResetPasswordEnterPasswordWrapper.find(RaisedButton)
-      assert.isTrue(submitButton.props().disabled)
+      expect(submitButton.props().disabled).toBe(true)
     })
   })
 
@@ -139,7 +138,7 @@ describe('Reset Password Enter Password Form', () => {
     })
 
     it('Should create a form called \'resetPasswordEnterNewPassword\'', () => {
-      assert.equal(reduxFormConfig.form, 'resetPasswordEnterNewPassword')
+      expect(reduxFormConfig.form).toEqual('resetPasswordEnterNewPassword')
     })
 
     describe('validate function', () => {
@@ -160,38 +159,38 @@ describe('Reset Password Enter Password Form', () => {
       })
 
       it('Should validate required password', () => {
-        assert.deepEqual(validateFunction(initialPasswordFields, props), {
+        expect(validateFunction(initialPasswordFields, props)).toEqual({
           newPassword: 'Please enter a new password'
         })
       })
 
       it('Should validate that the new password is valid', () => {
         let passwordFields = initialPasswordFields.set('newPassword', 'test')
-        assert.deepEqual(validateFunction(passwordFields, props), {
+        expect(validateFunction(passwordFields, props)).toEqual({
           newPassword: 'Your password needs to be at least 8 characters long',
           confirmNewPassword: 'These passwords don\'t match'
         })
 
         passwordFields = initialPasswordFields.set('newPassword', 'testabcd')
-        assert.deepEqual(validateFunction(passwordFields, props), {
+        expect(validateFunction(passwordFields, props)).toEqual({
           newPassword: 'Your password needs to contain at least one number or special character (%!$*...)',
           confirmNewPassword: 'These passwords don\'t match'
         })
 
         passwordFields = initialPasswordFields.set('newPassword', 'testabc1')
-        assert.deepEqual(validateFunction(passwordFields, props), {
+        expect(validateFunction(passwordFields, props)).toEqual({
           confirmNewPassword: 'These passwords don\'t match'
         })
       })
 
       it('Should validate confirm password is equal to password', () => {
         let passwordFields = initialPasswordFields.set('newPassword', 'testab1$')
-        assert.deepEqual(validateFunction(passwordFields, props), {
+        expect(validateFunction(passwordFields, props)).toEqual({
           confirmNewPassword: 'These passwords don\'t match'
         })
 
         passwordFields = passwordFields.set('confirmNewPassword', 'testab1$')
-        assert.deepEqual(validateFunction(passwordFields, props), { })
+        expect(validateFunction(passwordFields, props)).toEqual({ })
       })
     })
   })

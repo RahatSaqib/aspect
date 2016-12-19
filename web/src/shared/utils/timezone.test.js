@@ -1,4 +1,3 @@
-import { assert } from 'chai'
 import { timezones, getTimezoneById } from './timezone'
 
 describe('timezone', () => {
@@ -7,9 +6,10 @@ describe('timezone', () => {
     const culture = 'en-ZA'
     timezones.forEach((timezone) => {
       try {
-        assert.isOk(dateToFormat.toLocaleTimeString(culture, { timeZone: timezone.timeZone }))
+        const str = dateToFormat.toLocaleTimeString(culture, { timeZone: timezone.timeZone })
+        expect(str).toBeTruthy()
       } catch (ex) {
-        assert.fail(timezone.timeZone, ex.message)
+        expect(false).toBe(true)
       }
     })
   })
@@ -17,14 +17,13 @@ describe('timezone', () => {
   it('should get the timezone by ID', () => {
     timezones.forEach((timezone) => {
       const timeZone = getTimezoneById(timezone.id)
-      assert.equal(timezone.timeZone, timeZone)
+      expect(timezone.timeZone).toEqual(timeZone)
     })
   })
 
   it('should return the browser\'s the timezone when ID is not set or not found in list', () => {
-    const deviceTimezone = Intl.DateTimeFormat().resolvedOptions().timeZone
-    assert(getTimezoneById(), deviceTimezone)
-    assert(getTimezoneById(null), deviceTimezone)
-    assert(getTimezoneById('Some random timezone ID'), deviceTimezone)
+    expect(getTimezoneById()).toBeTruthy()
+    expect(getTimezoneById(null)).toBeTruthy()
+    expect(getTimezoneById('Some random timezone ID')).toBeTruthy()
   })
 })

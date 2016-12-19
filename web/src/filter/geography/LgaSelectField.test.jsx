@@ -1,6 +1,5 @@
 import Immutable from 'immutable'
 import React, { PropTypes } from 'react'
-import { assert } from 'chai'
 import sinon from 'sinon'
 import { shallow, mount } from 'enzyme'
 import getMuiTheme from 'material-ui/styles/getMuiTheme'
@@ -96,7 +95,7 @@ describe('LgaSelectField module', () => {
       }
       mountWithMuiTheme(<LgaSelectField {...props} />)
 
-      assert.isTrue(props.fetchLgasForLocationSelector.calledOnce)
+      expect(props.fetchLgasForLocationSelector.calledOnce).toBe(true)
     })
 
     it('should trigger fetchLgasForLocationSelector when stateId has changed', () => {
@@ -108,10 +107,10 @@ describe('LgaSelectField module', () => {
         stateId: '2'
       }
       const LgaSelectFieldWrapper = mountWithMuiTheme(<LgaSelectField {...props} />)
-      assert.isTrue(props.fetchLgasForLocationSelector.calledOnce)
+      expect(props.fetchLgasForLocationSelector.calledOnce).toBe(true)
 
       LgaSelectFieldWrapper.setProps({ stateId: '1' })
-      assert.isTrue(props.fetchLgasForLocationSelector.calledTwice)
+      expect(props.fetchLgasForLocationSelector.calledTwice).toBe(true)
     })
 
 
@@ -126,12 +125,12 @@ describe('LgaSelectField module', () => {
       const ForkedSelectFieldWrapper = LgaSelectFieldWrapper.find(ForkedSelectField)
 
       ForkedSelectFieldWrapper.simulate('change', undefined, undefined, '2')
-      assert.isTrue(props.onChangeLga.calledOnce)
-      assert.isTrue(props.onChangeLga.calledWith('2'))
+      expect(props.onChangeLga.calledOnce).toBe(true)
+      expect(props.onChangeLga.calledWith('2')).toBe(true)
 
       ForkedSelectFieldWrapper.simulate('change', undefined, undefined, undefined)
-      assert.isTrue(props.onChangeLga.calledTwice)
-      assert.isTrue(props.onChangeLga.calledWith(undefined))
+      expect(props.onChangeLga.calledTwice).toBe(true)
+      expect(props.onChangeLga.calledWith(undefined)).toBe(true)
     })
   })
 })

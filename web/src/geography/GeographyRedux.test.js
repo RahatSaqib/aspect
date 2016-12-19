@@ -1,4 +1,3 @@
-import { assert } from 'chai'
 import Immutable from 'immutable'
 import _ from 'lodash'
 import proxyquire from 'proxyquire'
@@ -14,11 +13,11 @@ describe('geography reducer', () => {
     })
 
     it('should contain an empty LazyLoadItems object that isn\'t loading and has not been refreshed yet', () => {
-      assert.instanceOf(initialState.countriesForLocationSelector, Immutable.Record)
-      assert.isFalse(initialState.countriesForLocationSelector.loading)
-      assert.isUndefined(initialState.countriesForLocationSelector.lastRefreshed)
-      assert.instanceOf(initialState.countriesForLocationSelector.items, Immutable.List)
-      assert.equal(initialState.countriesForLocationSelector.items.size, 0)
+      expect(initialState.countriesForLocationSelector).toBeA(Immutable.Record)
+      expect(initialState.countriesForLocationSelector.loading).toBe(false)
+      expect(initialState.countriesForLocationSelector.lastRefreshed).toNotExist()
+      expect(initialState.countriesForLocationSelector.items).toBeA(Immutable.List)
+      expect(initialState.countriesForLocationSelector.items.size).toEqual(0)
     })
   })
 
@@ -26,7 +25,7 @@ describe('geography reducer', () => {
     describe('REQUEST_COUNTRIES_FOR_LOCATION_SELECTOR', () => {
       it('should show that countries are busy loading', () => {
         const state = geography(undefined, { type: types.REQUEST_COUNTRIES_FOR_LOCATION_SELECTOR })
-        assert.isTrue(state.countriesForLocationSelector.loading)
+        expect(state.countriesForLocationSelector.loading).toBe(true)
       })
     })
 
@@ -37,8 +36,8 @@ describe('geography reducer', () => {
           countries: [],
           lastRefreshed: now
         })
-        assert.isFalse(state.countriesForLocationSelector.loading)
-        assert.equal(state.countriesForLocationSelector.lastRefreshed, now)
+        expect(state.countriesForLocationSelector.loading).toBe(false)
+        expect(state.countriesForLocationSelector.lastRefreshed).toEqual(now)
       })
 
       describe('with shallow country list', () => {
@@ -52,14 +51,14 @@ describe('geography reducer', () => {
           const countryIds = _.map(countriesReceived, 'id')
           const countryNames = _.map(countriesReceived, 'name')
 
-          assert.instanceOf(state.countriesForLocationSelector.items, Immutable.List)
+          expect(state.countriesForLocationSelector.items).toBeA(Immutable.List)
           state.countriesForLocationSelector.items.forEach((countryRecord) => {
-            assert.include(countryIds, countryRecord.id)
-            assert.include(countryNames, countryRecord.name)
-            assert.instanceOf(countryRecord.children, Immutable.Record)
-            assert.isFalse(countryRecord.children.loading)
-            assert.isTrue(countryRecord.children.items.isEmpty())
-            assert.isUndefined(countryRecord.children.lastRefreshed)
+            expect(countryIds).toContain(countryRecord.id)
+            expect(countryNames).toContain(countryRecord.name)
+            expect(countryRecord.children).toBeA(Immutable.Record)
+            expect(countryRecord.children.loading).toBe(false)
+            expect(countryRecord.children.items.isEmpty()).toBe(true)
+            expect(countryRecord.children.lastRefreshed).toNotExist()
           })
         })
       })
@@ -86,41 +85,41 @@ describe('geography reducer', () => {
           const countryIds = _.map(countriesReceived, 'id')
           const countryNames = _.map(countriesReceived, 'name')
 
-          assert.instanceOf(state.countriesForLocationSelector.items, Immutable.List)
+          expect(state.countriesForLocationSelector.items).toBeA(Immutable.List)
           state.countriesForLocationSelector.items.forEach((countryRecord) => {
-            assert.include(countryIds, countryRecord.id)
-            assert.include(countryNames, countryRecord.name)
-            assert.instanceOf(countryRecord.children, Immutable.Record)
-            assert.isFalse(countryRecord.children.loading)
+            expect(countryIds).toContain(countryRecord.id)
+            expect(countryNames).toContain(countryRecord.name)
+            expect(countryRecord.children).toBeA(Immutable.Record)
+            expect(countryRecord.children.loading).toBe(false)
             const countryReceived = _.find(countriesReceived, { id: countryRecord.id })
             if (countryReceived.states) {
               const stateIds = _.map(countryReceived.states, 'id')
               const stateNames = _.map(countryReceived.states, 'name')
-              assert.instanceOf(countryRecord.children.items, Immutable.List)
-              assert.equal(countryRecord.children.lastRefreshed, now)
+              expect(countryRecord.children.items).toBeA(Immutable.List)
+              expect(countryRecord.children.lastRefreshed).toEqual(now)
               countryRecord.children.items.forEach((stateRecord) => {
-                assert.include(stateIds, stateRecord.id)
-                assert.include(stateNames, stateRecord.name)
-                assert.instanceOf(stateRecord.children, Immutable.Record)
-                assert.isFalse(stateRecord.children.loading)
+                expect(stateIds).toContain(stateRecord.id)
+                expect(stateNames).toContain(stateRecord.name)
+                expect(stateRecord.children).toBeA(Immutable.Record)
+                expect(stateRecord.children.loading).toBe(false)
                 const stateReceived = _.find(countryReceived.states, { id: stateRecord.id })
                 if (stateReceived.lgas) {
                   const lgaIds = _.map(stateReceived.lgas, 'id')
                   const lgaNames = _.map(stateReceived.lgas, 'name')
-                  assert.instanceOf(stateRecord.children.items, Immutable.List)
-                  assert.equal(stateRecord.children.lastRefreshed, now)
+                  expect(stateRecord.children.items).toBeA(Immutable.List)
+                  expect(stateRecord.children.lastRefreshed).toEqual(now)
                   stateRecord.children.items.forEach((lgaRecord) => {
-                    assert.include(lgaIds, lgaRecord.id)
-                    assert.include(lgaNames, lgaRecord.name)
+                    expect(lgaIds).toContain(lgaRecord.id)
+                    expect(lgaNames).toContain(lgaRecord.name)
                   })
                 } else {
-                  assert.isTrue(stateRecord.children.items.isEmpty())
-                  assert.isUndefined(stateRecord.children.lastRefreshed)
+                  expect(stateRecord.children.items.isEmpty()).toBe(true)
+                  expect(stateRecord.children.lastRefreshed).toNotExist()
                 }
               })
             } else {
-              assert.isTrue(countryRecord.children.items.isEmpty())
-              assert.isUndefined(countryRecord.children.lastRefreshed)
+              expect(countryRecord.children.items.isEmpty()).toBe(true)
+              expect(countryRecord.children.lastRefreshed).toNotExist()
             }
           })
         })
@@ -136,7 +135,7 @@ describe('geography reducer', () => {
             selectedCountryId: 1
           })
 
-          assert.deepEqual(initialState, newState)
+          expect(initialState).toEqual(newState)
         })
       })
 
@@ -156,7 +155,7 @@ describe('geography reducer', () => {
           const selectedCountry = newState.countriesForLocationSelector.items
             .find(val => val.id === selectedCountryId)
 
-          assert.isTrue(selectedCountry.children.loading)
+          expect(selectedCountry.children.loading).toBe(true)
         })
       })
     })
@@ -173,7 +172,7 @@ describe('geography reducer', () => {
             selectedCountryId: 1
           })
 
-          assert.deepEqual(initialState, newState)
+          expect(initialState).toEqual(newState)
         })
       })
 
@@ -201,10 +200,10 @@ describe('geography reducer', () => {
         })
 
         it('should show that states for the selected country are not loading anymore and update the last refreshed date', () => {
-          assert.isTrue(initialState.getIn(['countriesForLocationSelector', 'items',
-            indexOfSelectedCountry, 'children', 'loading']))
-          assert.isUndefined(initialState.getIn(['countriesForLocationSelector', 'items',
-            indexOfSelectedCountry, 'children', 'lastRefreshed']))
+          expect(initialState.getIn(['countriesForLocationSelector', 'items',
+            indexOfSelectedCountry, 'children', 'loading'])).toBe(true)
+          expect(initialState.getIn(['countriesForLocationSelector', 'items',
+            indexOfSelectedCountry, 'children', 'lastRefreshed'])).toNotExist()
           const newState = geography(initialState, {
             type: types.RECEIVE_STATES_FOR_LOCATION_SELECTOR,
             states: [],
@@ -212,10 +211,10 @@ describe('geography reducer', () => {
             lastRefreshed: now
           })
 
-          assert.isFalse(newState.getIn(['countriesForLocationSelector', 'items',
-            indexOfSelectedCountry, 'children', 'loading']))
-          assert.equal(newState.getIn(['countriesForLocationSelector', 'items',
-            indexOfSelectedCountry, 'children', 'lastRefreshed']), now)
+          expect(newState.getIn(['countriesForLocationSelector', 'items',
+            indexOfSelectedCountry, 'children', 'loading'])).toBe(false)
+          expect(newState.getIn(['countriesForLocationSelector', 'items',
+            indexOfSelectedCountry, 'children', 'lastRefreshed'])).toEqual(now)
         })
 
         describe('with shallow states list', () => {
@@ -233,15 +232,15 @@ describe('geography reducer', () => {
             })
             const selectedCountryStates = newState.getIn(['countriesForLocationSelector', 'items', indexOfSelectedCountry, 'children', 'items'])
 
-            assert.instanceOf(selectedCountryStates, Immutable.List)
-            assert.equal(selectedCountryStates.size, statesReceived.length)
+            expect(selectedCountryStates).toBeA(Immutable.List)
+            expect(selectedCountryStates.size).toEqual(statesReceived.length)
             selectedCountryStates.forEach((stateRecord) => {
-              assert.include(stateIds, stateRecord.id)
-              assert.include(stateNames, stateRecord.name)
-              assert.instanceOf(stateRecord.children, Immutable.Record)
-              assert.isFalse(stateRecord.children.loading)
-              assert.isTrue(stateRecord.children.items.isEmpty())
-              assert.isUndefined(stateRecord.children.lastRefreshed)
+              expect(stateIds).toContain(stateRecord.id)
+              expect(stateNames).toContain(stateRecord.name)
+              expect(stateRecord.children).toBeA(Immutable.Record)
+              expect(stateRecord.children.loading).toBe(false)
+              expect(stateRecord.children.items.isEmpty()).toBe(true)
+              expect(stateRecord.children.lastRefreshed).toNotExist()
             })
           })
         })
@@ -265,26 +264,26 @@ describe('geography reducer', () => {
             })
             const selectedCountryStates = newState.getIn(['countriesForLocationSelector', 'items', indexOfSelectedCountry, 'children', 'items'])
 
-            assert.instanceOf(selectedCountryStates, Immutable.List)
-            assert.equal(selectedCountryStates.size, statesReceived.length)
+            expect(selectedCountryStates).toBeA(Immutable.List)
+            expect(selectedCountryStates.size).toEqual(statesReceived.length)
             selectedCountryStates.forEach((stateRecord) => {
-              assert.include(stateIds, stateRecord.id)
-              assert.include(stateNames, stateRecord.name)
-              assert.instanceOf(stateRecord.children, Immutable.Record)
-              assert.isFalse(stateRecord.children.loading)
+              expect(stateIds).toContain(stateRecord.id)
+              expect(stateNames).toContain(stateRecord.name)
+              expect(stateRecord.children).toBeA(Immutable.Record)
+              expect(stateRecord.children.loading).toBe(false)
               const stateReceived = _.find(statesReceived, { id: stateRecord.id })
               if (stateReceived.lgas) {
                 const lgaIds = _.map(stateReceived.lgas, 'id')
                 const lgaNames = _.map(stateReceived.lgas, 'name')
-                assert.instanceOf(stateRecord.children.items, Immutable.List)
-                assert.equal(stateRecord.children.lastRefreshed, now)
+                expect(stateRecord.children.items).toBeA(Immutable.List)
+                expect(stateRecord.children.lastRefreshed).toEqual(now)
                 stateRecord.children.items.forEach((lgaRecord) => {
-                  assert.include(lgaIds, lgaRecord.id)
-                  assert.include(lgaNames, lgaRecord.name)
+                  expect(lgaIds).toContain(lgaRecord.id)
+                  expect(lgaNames).toContain(lgaRecord.name)
                 })
               } else {
-                assert.isTrue(stateRecord.children.items.isEmpty())
-                assert.isUndefined(stateRecord.children.lastRefreshed)
+                expect(stateRecord.children.items.isEmpty()).toBe(true)
+                expect(stateRecord.children.lastRefreshed).toNotExist()
               }
             })
           })
@@ -302,7 +301,7 @@ describe('geography reducer', () => {
             selectedStateId: 1
           })
 
-          assert.deepEqual(initialState, newState)
+          expect(initialState).toEqual(newState)
         })
       })
 
@@ -315,13 +314,15 @@ describe('geography reducer', () => {
             countries: countriesReceived,
             lastRefreshed: now
           })
-          assert.equal(stateWithCountriesLoaded.getIn(['countriesForLocationSelector', 'items']).size, 2)
+          expect(
+            stateWithCountriesLoaded.getIn(['countriesForLocationSelector', 'items']).size
+          ).toEqual(2)
           const newState = geography(stateWithCountriesLoaded, {
             type: types.REQUEST_LGAS_FOR_LOCATION_SELECTOR,
             selectedCountryId: 1,
             selectedStateId: 1
           })
-          assert.deepEqual(stateWithCountriesLoaded, newState)
+          expect(stateWithCountriesLoaded).toEqual(newState)
         })
       })
 
@@ -352,7 +353,7 @@ describe('geography reducer', () => {
           const selectedState = selectedCountry.children.items
             .find(state => state.id === selectedStateId)
 
-          assert.isTrue(selectedState.children.loading)
+          expect(selectedState.children.loading).toBe(true)
         })
       })
     })
@@ -370,7 +371,7 @@ describe('geography reducer', () => {
             selectedStateId: 2
           })
 
-          assert.deepEqual(initialState, newState)
+          expect(initialState).toEqual(newState)
         })
       })
 
@@ -392,7 +393,7 @@ describe('geography reducer', () => {
             selectedStateId: 2
           })
 
-          assert.deepEqual(stateWithCountriesLoaded, newState)
+          expect(stateWithCountriesLoaded).toEqual(newState)
         })
       })
 
@@ -433,12 +434,12 @@ describe('geography reducer', () => {
         })
 
         it('should show that LGAs for the selected state are not loading anymore and update the last refreshed date', () => {
-          assert.isTrue(initialState.getIn(['countriesForLocationSelector', 'items',
+          expect(initialState.getIn(['countriesForLocationSelector', 'items',
             indexOfSelectedCountry, 'children', 'items', indexOfSelectedState, 'children',
-            'loading']))
-          assert.isUndefined(initialState.getIn(['countriesForLocationSelector', 'items',
+            'loading'])).toBe(true)
+          expect(initialState.getIn(['countriesForLocationSelector', 'items',
             indexOfSelectedCountry, 'children', 'items', indexOfSelectedState, 'children',
-            'lastRefreshed']))
+            'lastRefreshed'])).toNotExist()
           const newState = geography(initialState, { type: types.RECEIVE_LGAS_FOR_LOCATION_SELECTOR,
             lgas: [],
             selectedCountryId,
@@ -446,12 +447,12 @@ describe('geography reducer', () => {
             lastRefreshed: now
           })
 
-          assert.isFalse(newState.getIn(['countriesForLocationSelector', 'items',
+          expect(newState.getIn(['countriesForLocationSelector', 'items',
             indexOfSelectedCountry, 'children', 'items', indexOfSelectedState, 'children',
-            'loading']))
-          assert.equal(newState.getIn(['countriesForLocationSelector', 'items',
+            'loading'])).toBe(false)
+          expect(newState.getIn(['countriesForLocationSelector', 'items',
             indexOfSelectedCountry, 'children', 'items', indexOfSelectedState, 'children',
-            'lastRefreshed']), now)
+            'lastRefreshed'])).toEqual(now)
         })
 
         it('should update the items of the selected country to a list of LazyLoadParents', () => {
@@ -469,11 +470,11 @@ describe('geography reducer', () => {
           const selectedStateLgas = newState.getIn(['countriesForLocationSelector', 'items', indexOfSelectedCountry,
             'children', 'items', indexOfSelectedState, 'children', 'items'])
 
-          assert.instanceOf(selectedStateLgas, Immutable.List)
-          assert.equal(selectedStateLgas.size, lgasReceived.length)
+          expect(selectedStateLgas).toBeA(Immutable.List)
+          expect(selectedStateLgas.size).toEqual(lgasReceived.length)
           selectedStateLgas.forEach((lgaRecord) => {
-            assert.include(lgaIds, lgaRecord.id)
-            assert.include(lgaNames, lgaRecord.name)
+            expect(lgaIds).toContain(lgaRecord.id)
+            expect(lgaNames).toContain(lgaRecord.name)
           })
         })
       })
@@ -570,7 +571,7 @@ describe('geography action creators', () => {
           const dispatchFunction = geographyRedux
             .fetchCountriesForLocationSelector(false, countriesState)
           dispatchFunction(dispatch)
-          assert.isTrue(dispatch.notCalled)
+          expect(dispatch.notCalled).toBe(true)
         })
       })
 
@@ -597,19 +598,19 @@ describe('geography action creators', () => {
         })
 
         it('Should dispatch a REQUEST_COUNTRIES_FOR_LOCATION_SELECTOR action', () => {
-          assert.deepEqual(dispatch.firstCall.args, [{
+          expect(dispatch.firstCall.args).toEqual([{
             type: types.REQUEST_COUNTRIES_FOR_LOCATION_SELECTOR
-          }], 'REQUEST_COUNTRIES_FOR_LOCATION_SELECTOR Was Not Dispatched')
+          }])
         })
 
         it('Should request a new list of countries from the server', () => {
-          assert(fetchStub.aspectFetch.calledWith('/geography/country-select-list'), 'A request to /geography/country-select-list was not detected')
+          expect(fetchStub.aspectFetch.calledWith('/geography/country-select-list')).toBeTruthy()
         })
 
         describe('and a response is received from the server', () => {
           it('Should dispatch a RECEIVE_COUNTRIES_FOR_LOCATION_SELECTOR action with the countries received and the current date', () => expectedResponseFromServer.then((response) => {
-            assert.deepEqual(response, { ok: true, data: expectedCountriesToDispatch })
-            assert.deepEqual(dispatch.secondCall.args, [{
+            expect(response).toEqual({ ok: true, data: expectedCountriesToDispatch })
+            expect(dispatch.secondCall.args).toEqual([{
               type: types.RECEIVE_COUNTRIES_FOR_LOCATION_SELECTOR,
               countries: expectedCountriesToDispatch,
               lastRefreshed: now }])
@@ -640,17 +641,19 @@ describe('geography action creators', () => {
         })
 
         it('Should dispatch a REQUEST_COUNTRIES_FOR_LOCATION_SELECTOR action', () => {
-          assert.deepEqual(dispatch.firstCall.args, [{ type: types.REQUEST_COUNTRIES_FOR_LOCATION_SELECTOR }], 'REQUEST_COUNTRIES_FOR_LOCATION_SELECTOR Was Not Dispatched')
+          expect(dispatch.firstCall.args).toEqual([
+            { type: types.REQUEST_COUNTRIES_FOR_LOCATION_SELECTOR }
+          ])
         })
 
         it('Should request a new list of countries from the server', () => {
-          assert(fetchStub.aspectFetch.calledWith('/geography/country-select-list'), 'A request to /geography/country-select-list was not detected')
+          expect(fetchStub.aspectFetch.calledWith('/geography/country-select-list')).toBeTruthy()
         })
 
         describe('and a response is received from the server', () => {
           it('Should dispatch a RECEIVE_COUNTRIES_FOR_LOCATION_SELECTOR action with the countries received and the current date', () => expectedResponseFromServer.then((response) => {
-            assert.deepEqual(response, { ok: true, data: expectedCountriesToDispatch })
-            assert.deepEqual(dispatch.secondCall.args, [{
+            expect(response).toEqual({ ok: true, data: expectedCountriesToDispatch })
+            expect(dispatch.secondCall.args).toEqual([{
               type: types.RECEIVE_COUNTRIES_FOR_LOCATION_SELECTOR,
               countries: expectedCountriesToDispatch,
               lastRefreshed: now }])
@@ -683,17 +686,19 @@ describe('geography action creators', () => {
         })
 
         it('Should dispatch a REQUEST_COUNTRIES_FOR_LOCATION_SELECTOR action', () => {
-          assert.deepEqual(dispatch.firstCall.args, [{ type: types.REQUEST_COUNTRIES_FOR_LOCATION_SELECTOR }], 'REQUEST_COUNTRIES_FOR_LOCATION_SELECTOR Was Not Dispatched')
+          expect(dispatch.firstCall.args).toEqual([
+            { type: types.REQUEST_COUNTRIES_FOR_LOCATION_SELECTOR }
+          ])
         })
 
         it('Should request a new list of countries from the server', () => {
-          assert(fetchStub.aspectFetch.calledWith('/geography/country-select-list'), 'A request to /geography/country-select-list was not detected')
+          expect(fetchStub.aspectFetch.calledWith('/geography/country-select-list')).toBeTruthy()
         })
 
         describe('and a response is received from the server', () => {
           it('Should dispatch a RECEIVE_COUNTRIES_FOR_LOCATION_SELECTOR action with the countries received and the current date', () => expectedResponseFromServer.then((response) => {
-            assert.deepEqual(response, { ok: true, data: expectedCountriesToDispatch })
-            assert.deepEqual(dispatch.secondCall.args, [{
+            expect(response).toEqual({ ok: true, data: expectedCountriesToDispatch })
+            expect(dispatch.secondCall.args).toEqual([{
               type: types.RECEIVE_COUNTRIES_FOR_LOCATION_SELECTOR,
               countries: expectedCountriesToDispatch,
               lastRefreshed: now }])
@@ -724,17 +729,19 @@ describe('geography action creators', () => {
         })
 
         it('Should dispatch a REQUEST_COUNTRIES_FOR_LOCATION_SELECTOR action', () => {
-          assert.deepEqual(dispatch.firstCall.args, [{ type: types.REQUEST_COUNTRIES_FOR_LOCATION_SELECTOR }], 'REQUEST_COUNTRIES_FOR_LOCATION_SELECTOR Was Not Dispatched')
+          expect(dispatch.firstCall.args).toEqual([
+            { type: types.REQUEST_COUNTRIES_FOR_LOCATION_SELECTOR }
+          ])
         })
 
         it('Should request a new list of countries from the server', () => {
-          assert(fetchStub.aspectFetch.calledWith('/geography/country-select-list'), 'A request to /geography/country-select-list was not detected')
+          expect(fetchStub.aspectFetch.calledWith('/geography/country-select-list')).toBeTruthy()
         })
 
         describe('and a response is received from the server', () => {
           it('Should dispatch a RECEIVE_COUNTRIES_FOR_LOCATION_SELECTOR action with the countries received and the current date', () => expectedResponseFromServer.then((response) => {
-            assert.deepEqual(response, { ok: true, data: expectedCountriesToDispatch })
-            assert.deepEqual(dispatch.secondCall.args, [{
+            expect(response).toEqual({ ok: true, data: expectedCountriesToDispatch })
+            expect(dispatch.secondCall.args).toEqual([{
               type: types.RECEIVE_COUNTRIES_FOR_LOCATION_SELECTOR,
               countries: expectedCountriesToDispatch,
               lastRefreshed: now }])
@@ -765,17 +772,19 @@ describe('geography action creators', () => {
         })
 
         it('Should dispatch a REQUEST_COUNTRIES_FOR_LOCATION_SELECTOR action', () => {
-          assert.deepEqual(dispatch.firstCall.args, [{ type: types.REQUEST_COUNTRIES_FOR_LOCATION_SELECTOR }], 'REQUEST_COUNTRIES_FOR_LOCATION_SELECTOR Was Not Dispatched')
+          expect(dispatch.firstCall.args).toEqual([
+            { type: types.REQUEST_COUNTRIES_FOR_LOCATION_SELECTOR }
+          ])
         })
 
         it('Should request a new list of countries from the server', () => {
-          assert(fetchStub.aspectFetch.calledWith('/geography/country-select-list'), 'A request to /geography/country-select-list was not detected')
+          expect(fetchStub.aspectFetch.calledWith('/geography/country-select-list')).toBeTruthy()
         })
 
         describe('and a response is received from the server', () => {
           it('Should dispatch a RECEIVE_COUNTRIES_FOR_LOCATION_SELECTOR action with the countries received and the current date', () => expectedResponseFromServer.then((response) => {
-            assert.deepEqual(response, { ok: true, data: expectedCountriesToDispatch })
-            assert.deepEqual(dispatch.secondCall.args, [{
+            expect(response).toEqual({ ok: true, data: expectedCountriesToDispatch })
+            expect(dispatch.secondCall.args).toEqual([{
               type: types.RECEIVE_COUNTRIES_FOR_LOCATION_SELECTOR,
               countries: expectedCountriesToDispatch,
               lastRefreshed: now }])
@@ -808,17 +817,21 @@ describe('geography action creators', () => {
         })
 
         it('Should dispatch a REQUEST_COUNTRIES_FOR_LOCATION_SELECTOR action', () => {
-          assert.deepEqual(dispatch.firstCall.args, [{ type: types.REQUEST_COUNTRIES_FOR_LOCATION_SELECTOR }], 'REQUEST_COUNTRIES_FOR_LOCATION_SELECTOR Was Not Dispatched')
+          expect(dispatch.firstCall.args).toEqual([
+            { type: types.REQUEST_COUNTRIES_FOR_LOCATION_SELECTOR }
+          ])
         })
 
         it('Should request a new list of countries from the server', () => {
-          assert(fetchStub.aspectFetch.calledWith(`/geography/country-select-list/${selectedCountryId}`), 'A request to /geography/country-select-list/{countryId} was not detected')
+          expect(
+            fetchStub.aspectFetch.calledWith(`/geography/country-select-list/${selectedCountryId}`)
+          ).toBeTruthy()
         })
 
         describe('and a response is received from the server', () => {
           it('Should dispatch a RECEIVE_COUNTRIES_FOR_LOCATION_SELECTOR action with the countries received and the current date', () => expectedResponseFromServer.then((response) => {
-            assert.deepEqual(response, { ok: true, data: expectedCountriesToDispatch })
-            assert.deepEqual(dispatch.secondCall.args, [{
+            expect(response).toEqual({ ok: true, data: expectedCountriesToDispatch })
+            expect(dispatch.secondCall.args).toEqual([{
               type: types.RECEIVE_COUNTRIES_FOR_LOCATION_SELECTOR,
               countries: expectedCountriesToDispatch,
               lastRefreshed: now }])
@@ -854,17 +867,21 @@ describe('geography action creators', () => {
         })
 
         it('Should dispatch a REQUEST_COUNTRIES_FOR_LOCATION_SELECTOR action', () => {
-          assert.deepEqual(dispatch.firstCall.args, [{ type: types.REQUEST_COUNTRIES_FOR_LOCATION_SELECTOR }], 'REQUEST_COUNTRIES_FOR_LOCATION_SELECTOR Was Not Dispatched')
+          expect(dispatch.firstCall.args).toEqual([
+            { type: types.REQUEST_COUNTRIES_FOR_LOCATION_SELECTOR }
+          ])
         })
 
         it('Should request a new list of countries from the server', () => {
-          assert(fetchStub.aspectFetch.calledWith(`/geography/country-select-list/${selectedCountryId}/${selectedStateId}`), 'A request to /geography/country-select-list/{countryId} was not detected')
+          expect(
+            fetchStub.aspectFetch.calledWith(`/geography/country-select-list/${selectedCountryId}/${selectedStateId}`)
+          ).toBeTruthy()
         })
 
         describe('and a response is received from the server', () => {
           it('Should dispatch a RECEIVE_COUNTRIES_FOR_LOCATION_SELECTOR action with the countries received and the current date', () => expectedResponseFromServer.then((response) => {
-            assert.deepEqual(response, { ok: true, data: expectedCountriesToDispatch })
-            assert.deepEqual(dispatch.secondCall.args, [{
+            expect(response).toEqual({ ok: true, data: expectedCountriesToDispatch })
+            expect(dispatch.secondCall.args).toEqual([{
               type: types.RECEIVE_COUNTRIES_FOR_LOCATION_SELECTOR,
               countries: expectedCountriesToDispatch,
               lastRefreshed: now }])
@@ -893,7 +910,7 @@ describe('geography action creators', () => {
           const dispatchFunction = geographyRedux.fetchStatesForLocationSelector(false,
             selectedCountry)
           dispatchFunction(dispatch)
-          assert.isTrue(dispatch.notCalled)
+          expect(dispatch.notCalled).toBe(true)
         })
       })
 
@@ -921,20 +938,20 @@ describe('geography action creators', () => {
         })
 
         it('Should dispatch a REQUEST_STATES_FOR_LOCATION_SELECTOR action', () => {
-          assert.deepEqual(dispatch.firstCall.args, [{
+          expect(dispatch.firstCall.args).toEqual([{
             type: types.REQUEST_STATES_FOR_LOCATION_SELECTOR,
             selectedCountryId: 1
-          }], 'REQUEST_STATES_FOR_LOCATION_SELECTOR Was Not Dispatched')
+          }])
         })
 
         it('Should request a new list of states from the server', () => {
-          assert(fetchStub.aspectFetch.calledWith('/geography/state-select-list/1'), 'A request to /geography/state-select-list/{countryId} was not detected')
+          expect(fetchStub.aspectFetch.calledWith('/geography/state-select-list/1')).toBeTruthy()
         })
 
         describe('and a response is received from the server', () => {
           it('Should dispatch a RECEIVE_STATES_FOR_LOCATION_SELECTOR action with the states received and the current date', () => expectedResponseFromServer.then((response) => {
-            assert.deepEqual(response, { ok: true, data: expectedStatesToDispatch })
-            assert.deepEqual(dispatch.secondCall.args, [{
+            expect(response).toEqual({ ok: true, data: expectedStatesToDispatch })
+            expect(dispatch.secondCall.args).toEqual([{
               type: types.RECEIVE_STATES_FOR_LOCATION_SELECTOR,
               states: expectedStatesToDispatch,
               selectedCountryId: 1,
@@ -967,20 +984,20 @@ describe('geography action creators', () => {
         })
 
         it('Should dispatch a REQUEST_STATES_FOR_LOCATION_SELECTOR action', () => {
-          assert.deepEqual(dispatch.firstCall.args, [{
+          expect(dispatch.firstCall.args).toEqual([{
             type: types.REQUEST_STATES_FOR_LOCATION_SELECTOR,
             selectedCountryId: 1
-          }], 'REQUEST_STATES_FOR_LOCATION_SELECTOR Was Not Dispatched')
+          }])
         })
 
         it('Should request a new list of states from the server', () => {
-          assert(fetchStub.aspectFetch.calledWith('/geography/state-select-list/1'), 'A request to /geography/state-select-list/{countryId} was not detected')
+          expect(fetchStub.aspectFetch.calledWith('/geography/state-select-list/1')).toBeTruthy()
         })
 
         describe('and a response is received from the server', () => {
           it('Should dispatch a RECEIVE_STATES_FOR_LOCATION_SELECTOR action with the states received and the current date', () => expectedResponseFromServer.then((response) => {
-            assert.deepEqual(response, { ok: true, data: expectedStatesToDispatch })
-            assert.deepEqual(dispatch.secondCall.args, [{
+            expect(response).toEqual({ ok: true, data: expectedStatesToDispatch })
+            expect(dispatch.secondCall.args).toEqual([{
               type: types.RECEIVE_STATES_FOR_LOCATION_SELECTOR,
               states: expectedStatesToDispatch,
               selectedCountryId: 1,
@@ -1015,20 +1032,20 @@ describe('geography action creators', () => {
         })
 
         it('Should dispatch a REQUEST_STATES_FOR_LOCATION_SELECTOR action', () => {
-          assert.deepEqual(dispatch.firstCall.args, [{
+          expect(dispatch.firstCall.args).toEqual([{
             type: types.REQUEST_STATES_FOR_LOCATION_SELECTOR,
             selectedCountryId: 1
-          }], 'REQUEST_STATES_FOR_LOCATION_SELECTOR Was Not Dispatched')
+          }])
         })
 
         it('Should request a new list of states from the server', () => {
-          assert(fetchStub.aspectFetch.calledWith('/geography/state-select-list/1'), 'A request to /geography/state-select-list/{countryId} was not detected')
+          expect(fetchStub.aspectFetch.calledWith('/geography/state-select-list/1')).toBeTruthy()
         })
 
         describe('and a response is received from the server', () => {
           it('Should dispatch a RECEIVE_STATES_FOR_LOCATION_SELECTOR action with the states received and the current date', () => expectedResponseFromServer.then((response) => {
-            assert.deepEqual(response, { ok: true, data: expectedStatesToDispatch })
-            assert.deepEqual(dispatch.secondCall.args, [{
+            expect(response).toEqual({ ok: true, data: expectedStatesToDispatch })
+            expect(dispatch.secondCall.args).toEqual([{
               type: types.RECEIVE_STATES_FOR_LOCATION_SELECTOR,
               states: expectedStatesToDispatch,
               selectedCountryId: 1,
@@ -1061,20 +1078,20 @@ describe('geography action creators', () => {
         })
 
         it('Should dispatch a REQUEST_STATES_FOR_LOCATION_SELECTOR action', () => {
-          assert.deepEqual(dispatch.firstCall.args, [{
+          expect(dispatch.firstCall.args).toEqual([{
             type: types.REQUEST_STATES_FOR_LOCATION_SELECTOR,
             selectedCountryId: 1
-          }], 'REQUEST_STATES_FOR_LOCATION_SELECTOR Was Not Dispatched')
+          }])
         })
 
         it('Should request a new list of states from the server', () => {
-          assert(fetchStub.aspectFetch.calledWith('/geography/state-select-list/1'), 'A request to /geography/state-select-list/{countryId} was not detected')
+          expect(fetchStub.aspectFetch.calledWith('/geography/state-select-list/1')).toBeTruthy()
         })
 
         describe('and a response is received from the server', () => {
           it('Should dispatch a RECEIVE_STATES_FOR_LOCATION_SELECTOR action with the states received and the current date', () => expectedResponseFromServer.then((response) => {
-            assert.deepEqual(response, { ok: true, data: expectedStatesToDispatch })
-            assert.deepEqual(dispatch.secondCall.args, [{
+            expect(response).toEqual({ ok: true, data: expectedStatesToDispatch })
+            expect(dispatch.secondCall.args).toEqual([{
               type: types.RECEIVE_STATES_FOR_LOCATION_SELECTOR,
               states: expectedStatesToDispatch,
               selectedCountryId: 1,
@@ -1107,20 +1124,20 @@ describe('geography action creators', () => {
         })
 
         it('Should dispatch a REQUEST_STATES_FOR_LOCATION_SELECTOR action', () => {
-          assert.deepEqual(dispatch.firstCall.args, [{
+          expect(dispatch.firstCall.args).toEqual([{
             type: types.REQUEST_STATES_FOR_LOCATION_SELECTOR,
             selectedCountryId: 1
-          }], 'REQUEST_STATES_FOR_LOCATION_SELECTOR Was Not Dispatched')
+          }])
         })
 
         it('Should request a new list of states from the server', () => {
-          assert(fetchStub.aspectFetch.calledWith('/geography/state-select-list/1'), 'A request to /geography/state-select-list/{countryId} was not detected')
+          expect(fetchStub.aspectFetch.calledWith('/geography/state-select-list/1')).toBeTruthy()
         })
 
         describe('and a response is received from the server', () => {
           it('Should dispatch a RECEIVE_STATES_FOR_LOCATION_SELECTOR action with the states received and the current date', () => expectedResponseFromServer.then((response) => {
-            assert.deepEqual(response, { ok: true, data: expectedStatesToDispatch })
-            assert.deepEqual(dispatch.secondCall.args, [{
+            expect(response).toEqual({ ok: true, data: expectedStatesToDispatch })
+            expect(dispatch.secondCall.args).toEqual([{
               type: types.RECEIVE_STATES_FOR_LOCATION_SELECTOR,
               states: expectedStatesToDispatch,
               selectedCountryId: 1,
@@ -1155,7 +1172,7 @@ describe('geography action creators', () => {
           const dispatchFunction = geographyRedux
             .fetchLgasForLocationSelector(false, selectedCountry, selectedState)
           dispatchFunction(dispatch)
-          assert.isTrue(dispatch.notCalled)
+          expect(dispatch.notCalled).toBe(true)
         })
       })
 
@@ -1184,21 +1201,21 @@ describe('geography action creators', () => {
         })
 
         it('Should dispatch a REQUEST_LGAS_FOR_LOCATION_SELECTOR action', () => {
-          assert.deepEqual(dispatch.firstCall.args, [{
+          expect(dispatch.firstCall.args).toEqual([{
             type: types.REQUEST_LGAS_FOR_LOCATION_SELECTOR,
             selectedCountryId: 1,
             selectedStateId: 1
-          }], 'REQUEST_LGAS_FOR_LOCATION_SELECTOR Was Not Dispatched')
+          }])
         })
 
         it('Should request a new list of LGAs from the server', () => {
-          assert(fetchStub.aspectFetch.calledWith('/geography/lga-select-list/1'), 'A request to /geography/lga-select-list/{stateId} was not detected')
+          expect(fetchStub.aspectFetch.calledWith('/geography/lga-select-list/1')).toBeTruthy()
         })
 
         describe('and a response is received from the server', () => {
           it('Should dispatch a RECEIVE_LGAS_FOR_LOCATION_SELECTOR action with the lgas received and the current date', () => expectedResponseFromServer.then((response) => {
-            assert.deepEqual(response, { ok: true, data: expectedLgasToDispatch })
-            assert.deepEqual(dispatch.secondCall.args, [{
+            expect(response).toEqual({ ok: true, data: expectedLgasToDispatch })
+            expect(dispatch.secondCall.args).toEqual([{
               type: types.RECEIVE_LGAS_FOR_LOCATION_SELECTOR,
               lgas: expectedLgasToDispatch,
               selectedCountryId: 1,
@@ -1233,21 +1250,21 @@ describe('geography action creators', () => {
         })
 
         it('Should dispatch a REQUEST_LGAS_FOR_LOCATION_SELECTOR action', () => {
-          assert.deepEqual(dispatch.firstCall.args, [{
+          expect(dispatch.firstCall.args).toEqual([{
             type: types.REQUEST_LGAS_FOR_LOCATION_SELECTOR,
             selectedCountryId: 1,
             selectedStateId: 1
-          }], 'REQUEST_LGAS_FOR_LOCATION_SELECTOR Was Not Dispatched')
+          }])
         })
 
         it('Should request a new list of LGAs from the server', () => {
-          assert(fetchStub.aspectFetch.calledWith('/geography/lga-select-list/1'), 'A request to /geography/lga-select-list/{stateId} was not detected')
+          expect(fetchStub.aspectFetch.calledWith('/geography/lga-select-list/1')).toBeTruthy()
         })
 
         describe('and a response is received from the server', () => {
           it('Should dispatch a RECEIVE_LGAS_FOR_LOCATION_SELECTOR action with the LGAs received and the current date', () => expectedResponseFromServer.then((response) => {
-            assert.deepEqual(response, { ok: true, data: expectedLGAsToDispatch })
-            assert.deepEqual(dispatch.secondCall.args, [{
+            expect(response).toEqual({ ok: true, data: expectedLGAsToDispatch })
+            expect(dispatch.secondCall.args).toEqual([{
               type: types.RECEIVE_LGAS_FOR_LOCATION_SELECTOR,
               lgas: expectedLGAsToDispatch,
               selectedCountryId: 1,
@@ -1284,21 +1301,21 @@ describe('geography action creators', () => {
         })
 
         it('Should dispatch a REQUEST_LGAS_FOR_LOCATION_SELECTOR action', () => {
-          assert.deepEqual(dispatch.firstCall.args, [{
+          expect(dispatch.firstCall.args).toEqual([{
             type: types.REQUEST_LGAS_FOR_LOCATION_SELECTOR,
             selectedCountryId: 1,
             selectedStateId: 1
-          }], 'REQUEST_LGAS_FOR_LOCATION_SELECTOR Was Not Dispatched')
+          }])
         })
 
         it('Should request a new list of LGAs from the server', () => {
-          assert(fetchStub.aspectFetch.calledWith('/geography/lga-select-list/1'), 'A request to /geography/lga-select-list/{stateId} was not detected')
+          expect(fetchStub.aspectFetch.calledWith('/geography/lga-select-list/1')).toBeTruthy()
         })
 
         describe('and a response is received from the server', () => {
           it('Should dispatch a RECEIVE_LGAS_FOR_LOCATION_SELECTOR action with the LGAs received and the current date', () => expectedResponseFromServer.then((response) => {
-            assert.deepEqual(response, { ok: true, data: expectedLgasToDispatch })
-            assert.deepEqual(dispatch.secondCall.args, [{
+            expect(response).toEqual({ ok: true, data: expectedLgasToDispatch })
+            expect(dispatch.secondCall.args).toEqual([{
               type: types.RECEIVE_LGAS_FOR_LOCATION_SELECTOR,
               lgas: expectedLgasToDispatch,
               selectedCountryId: 1,
@@ -1333,21 +1350,21 @@ describe('geography action creators', () => {
         })
 
         it('Should dispatch a REQUEST_LGAS_FOR_LOCATION_SELECTOR action', () => {
-          assert.deepEqual(dispatch.firstCall.args, [{
+          expect(dispatch.firstCall.args).toEqual([{
             type: types.REQUEST_LGAS_FOR_LOCATION_SELECTOR,
             selectedCountryId: 1,
             selectedStateId: 1
-          }], 'REQUEST_LGAS_FOR_LOCATION_SELECTOR Was Not Dispatched')
+          }])
         })
 
         it('Should request a new list of LGAs from the server', () => {
-          assert(fetchStub.aspectFetch.calledWith('/geography/lga-select-list/1'), 'A request to /geography/lga-select-list/{stateId} was not detected')
+          expect(fetchStub.aspectFetch.calledWith('/geography/lga-select-list/1')).toBeTruthy()
         })
 
         describe('and a response is received from the server', () => {
           it('Should dispatch a RECEIVE_LGAS_FOR_LOCATION_SELECTOR action with the LGAs received and the current date', () => expectedResponseFromServer.then((response) => {
-            assert.deepEqual(response, { ok: true, data: expectedLgasToDispatch })
-            assert.deepEqual(dispatch.secondCall.args, [{
+            expect(response).toEqual({ ok: true, data: expectedLgasToDispatch })
+            expect(dispatch.secondCall.args).toEqual([{
               type: types.RECEIVE_LGAS_FOR_LOCATION_SELECTOR,
               lgas: expectedLgasToDispatch,
               selectedCountryId: 1,
@@ -1382,21 +1399,21 @@ describe('geography action creators', () => {
         })
 
         it('Should dispatch a REQUEST_LGAS_FOR_LOCATION_SELECTOR action', () => {
-          assert.deepEqual(dispatch.firstCall.args, [{
+          expect(dispatch.firstCall.args).toEqual([{
             type: types.REQUEST_LGAS_FOR_LOCATION_SELECTOR,
             selectedCountryId: 1,
             selectedStateId: 1
-          }], 'REQUEST_LGAS_FOR_LOCATION_SELECTOR Was Not Dispatched')
+          }])
         })
 
         it('Should request a new list of LGAs from the server', () => {
-          assert(fetchStub.aspectFetch.calledWith('/geography/lga-select-list/1'), 'A request to /geography/lga-select-list/{stateId} was not detected')
+          expect(fetchStub.aspectFetch.calledWith('/geography/lga-select-list/1')).toBeTruthy()
         })
 
         describe('and a response is received from the server', () => {
           it('Should dispatch a RECEIVE_LGAS_FOR_LOCATION_SELECTOR action with the LGAs received and the current date', () => expectedResponseFromServer.then((response) => {
-            assert.deepEqual(response, { ok: true, data: expectedLgasToDispatch })
-            assert.deepEqual(dispatch.secondCall.args, [{
+            expect(response).toEqual({ ok: true, data: expectedLgasToDispatch })
+            expect(dispatch.secondCall.args).toEqual([{
               type: types.RECEIVE_LGAS_FOR_LOCATION_SELECTOR,
               lgas: expectedLgasToDispatch,
               selectedCountryId: 1,

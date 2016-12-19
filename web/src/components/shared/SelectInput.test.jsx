@@ -1,6 +1,5 @@
 import React from 'react'
 import { Field } from 'redux-form/immutable'
-import { assert } from 'chai'
 import { shallow } from 'enzyme'
 import _ from 'lodash'
 import MenuItem from 'material-ui/MenuItem'
@@ -27,8 +26,8 @@ describe('SelectInput', () => {
   it('Should render a SelectField and pass the props assigned to it', () => {
     const selectInputProps = SelectInputWrapper.find(Field).props()
 
-    assert.equal(selectInputProps.name, props.name)
-    assert.deepEqual(selectInputProps.selectFieldProps, {
+    expect(selectInputProps.name).toEqual(props.name)
+    expect(selectInputProps.selectFieldProps).toEqual({
       floatingLabelText: props.label,
       fullWidth: props.fullWidth,
       disabled: props.disabled,
@@ -49,8 +48,8 @@ describe('SelectInput', () => {
       children: []
     })
 
-    assert.equal(selectField.type.name, 'SelectField')
-    assert.deepEqual(selectField.props, { ...selectField.props,
+    expect(selectField.type.name).toEqual('SelectField')
+    expect(selectField.props).toEqual({ ...selectField.props,
       errorStyle: {
         float: 'left'
       },
@@ -64,11 +63,11 @@ describe('SelectInput', () => {
   })
 
   it('Should create menu items from the datasource and datasource config passed to it', () => {
-    assert.equal(SelectInputWrapper.find(MenuItem).length, props.dataSource.length)
+    expect(SelectInputWrapper.find(MenuItem).length).toEqual(props.dataSource.length)
     _.each(props.dataSource, (item) => {
-      assert.equal(SelectInputWrapper.findWhere(
+      expect(SelectInputWrapper.findWhere(
         element => element.type() === MenuItem && element.props().value === item.personId)
-        .props().primaryText, item.fullName)
+        .props().primaryText).toEqual(item.fullName)
     })
   })
 })

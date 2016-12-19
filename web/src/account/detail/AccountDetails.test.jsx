@@ -1,5 +1,4 @@
 import React from 'react'
-import { assert } from 'chai'
 import { shallow } from 'enzyme'
 import sinon from 'sinon'
 import proxyquire from 'proxyquire'
@@ -60,7 +59,7 @@ describe('AccountDetails Component', () => {
     })
 
     it('Should be a div', () => {
-      assert.equal(AccountDetailsWrapper.node.type, 'div')
+      expect(AccountDetailsWrapper.node.type).toEqual('div')
     })
 
     describe('When loading is true', () => {
@@ -71,58 +70,60 @@ describe('AccountDetails Component', () => {
 
       it('Should show a progress bar in each tab', () => {
         const firstTab = AccountDetailsWrapper.find(Tab).first()
-        assert.equal(firstTab.find(LinearProgress).length, 1)
+        expect(firstTab.find(LinearProgress).length).toEqual(1)
         const secondTab = AccountDetailsWrapper.find(Tab).at(1)
-        assert.equal(secondTab.find(LinearProgress).length, 1)
+        expect(secondTab.find(LinearProgress).length).toEqual(1)
         const thirdTab = AccountDetailsWrapper.find(Tab).at(2)
-        assert.equal(thirdTab.find(LinearProgress).length, 1)
+        expect(thirdTab.find(LinearProgress).length).toEqual(1)
       })
     })
 
     describe('When loading is false', () => {
       it('Should not show a loading message and a progress bar', () => {
-        assert.equal(AccountDetailsWrapper.findWhere(element => element.type() === 'span' && element.text() === 'Loading...').length, 0)
-        assert.equal(AccountDetailsWrapper.find(LinearProgress).length, 0)
+        expect(
+          AccountDetailsWrapper.findWhere(element => element.type() === 'span' && element.text() === 'Loading...').length
+        ).toEqual(0)
+        expect(AccountDetailsWrapper.find(LinearProgress).length).toEqual(0)
       })
 
       it('Should show a paper container with three tabs', () => {
-        assert.equal(AccountDetailsWrapper.node.props.children.length, 2)
-        assert.equal(AccountDetailsWrapper.node.props.children[0].type, Helmet)
-        assert.equal(AccountDetailsWrapper.node.props.children[1].type, Paper)
+        expect(AccountDetailsWrapper.node.props.children.length).toEqual(2)
+        expect(AccountDetailsWrapper.node.props.children[0].type).toEqual(Helmet)
+        expect(AccountDetailsWrapper.node.props.children[1].type).toEqual(Paper)
         const paperContainer = AccountDetailsWrapper.find(Paper)
-        assert.equal(paperContainer.length, 1)
+        expect(paperContainer.length).toEqual(1)
         const tabsContainer = paperContainer.find(Tabs)
-        assert.equal(tabsContainer.children().length, 3)
+        expect(tabsContainer.children().length).toEqual(3)
       })
 
       it('Should show a Contact Details tab containing a contact details form', () => {
         const firstTab = AccountDetailsWrapper.find(Tab).first()
-        assert.equal(firstTab.props().label.props.children, 'Contact Details')
-        assert.equal(firstTab.find(Visible).children().text(), 'Contact Details')
+        expect(firstTab.props().label.props.children).toEqual('Contact Details')
+        expect(firstTab.find(Visible).children().text()).toEqual('Contact Details')
 
         const contactDetailsForm = firstTab.find(ContactDetailsForm)
-        assert.equal(contactDetailsForm.props().initialValues, props.accountDetails.get('contactDetails'))
-        assert.equal(contactDetailsForm.props().onSubmit, props.saveContactDetails)
+        expect(contactDetailsForm.props().initialValues).toEqual(props.accountDetails.get('contactDetails'))
+        expect(contactDetailsForm.props().onSubmit).toEqual(props.saveContactDetails)
       })
 
       it('Should show a Login Details tab', () => {
         const secondTab = AccountDetailsWrapper.find(Tab).at(1)
-        assert.equal(secondTab.props().label.props.children, 'Username & Password')
-        assert.equal(secondTab.find(Visible).children().text(), 'Username & Password')
+        expect(secondTab.props().label.props.children).toEqual('Username & Password')
+        expect(secondTab.find(Visible).children().text()).toEqual('Username & Password')
 
         const loginDetailsForm = secondTab.find(LoginDetailsForm)
-        assert.equal(loginDetailsForm.props().initialValues, props.accountDetails.get('loginDetails'))
-        assert.equal(loginDetailsForm.props().onSubmit, props.saveLoginDetails)
+        expect(loginDetailsForm.props().initialValues).toEqual(props.accountDetails.get('loginDetails'))
+        expect(loginDetailsForm.props().onSubmit).toEqual(props.saveLoginDetails)
       })
 
       it('Should show a User Preferences tab', () => {
         const thirdTab = AccountDetailsWrapper.find(Tab).at(2)
-        assert.equal(thirdTab.props().label.props.children, 'Language & Timezone')
-        assert.equal(thirdTab.find(Visible).children().text(), 'Language & Timezone')
+        expect(thirdTab.props().label.props.children).toEqual('Language & Timezone')
+        expect(thirdTab.find(Visible).children().text()).toEqual('Language & Timezone')
 
         const userPreferencesForm = thirdTab.find(UserPreferencesForm)
-        assert.equal(userPreferencesForm.props().initialValues, props.accountDetails.get('userPreferences'))
-        assert.equal(userPreferencesForm.props().onSubmit, props.saveUserPreferences)
+        expect(userPreferencesForm.props().initialValues).toEqual(props.accountDetails.get('userPreferences'))
+        expect(userPreferencesForm.props().onSubmit).toEqual(props.saveUserPreferences)
       })
     })
   })
@@ -168,8 +169,8 @@ describe('AccountDetails Component', () => {
 
     it('mapDispatchToProps should bind fetchAccountDetails and saveAccountDetails action creators to the component\'s properties', () => {
       const expectedDispatcher = { value: 'I am a dispatch function' }
-      assert.equal(mapDispatchToProps(expectedDispatcher), expectedBoundActionCreators)
-      assert.deepEqual(reduxStub.bindActionCreators.lastCall.args, [{
+      expect(mapDispatchToProps(expectedDispatcher)).toEqual(expectedBoundActionCreators)
+      expect(reduxStub.bindActionCreators.lastCall.args).toEqual([{
         showAcknowledgement: acknowledgementCreatorsStub.showAcknowledgement,
         fetchAccountDetails: accountDetailsCreatorsStub.fetchAccountDetails,
         saveContactDetails: accountDetailsCreatorsStub.saveContactDetails,
@@ -187,7 +188,7 @@ describe('AccountDetails Component', () => {
       const state = {
         accountDetails: Immutable.Map(accountDetails)
       }
-      assert.deepEqual(mapStateToProps(state), {
+      expect(mapStateToProps(state)).toEqual({
         loading: accountDetails.loading,
         saving: accountDetails.saving,
         accountDetails: accountDetails.data

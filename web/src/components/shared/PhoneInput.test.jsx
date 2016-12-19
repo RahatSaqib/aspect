@@ -1,5 +1,4 @@
 import React from 'react'
-import { assert } from 'chai'
 import { shallow } from 'enzyme'
 import sinon from 'sinon'
 import TextField from 'material-ui/TextField'
@@ -23,8 +22,8 @@ describe('PhoneInput Field Component', () => {
   })
 
   it('Should render a Field and pass the props assigned to it', () => {
-    assert.equal(phoneInputProps.name, props.name)
-    assert.deepEqual(phoneInputProps.textFieldProps, {
+    expect(phoneInputProps.name).toEqual(props.name)
+    expect(phoneInputProps.textFieldProps).toEqual({
       floatingLabelText: props.label,
       disabled: props.disabled,
       maxLength: props.maxLength
@@ -62,12 +61,12 @@ describe('PhoneInput Field Component', () => {
     })
 
     it('Should render a CountrySelect and a TextField', () => {
-      assert.equal(PhoneInputWrapper.find(CountrySelect).length, 1)
-      assert.equal(PhoneInputWrapper.find(TextField).length, 1)
+      expect(PhoneInputWrapper.find(CountrySelect).length).toEqual(1)
+      expect(PhoneInputWrapper.find(TextField).length).toEqual(1)
     })
 
     it('Should have an initial state of US and no phone number', () => {
-      assert.deepEqual(PhoneInputWrapper.state(), {
+      expect(PhoneInputWrapper.state()).toEqual({
         selectedIsoAlpha2Code: 'US',
         number: ''
       })
@@ -75,7 +74,7 @@ describe('PhoneInput Field Component', () => {
 
     it('Should set the country dialing code when it is entered into the text field', () => {
       PhoneInputWrapper.find(TextField).simulate('change', { target: { value: '+44 0711 234 3211' } })
-      assert.deepEqual(PhoneInputWrapper.state(), {
+      expect(PhoneInputWrapper.state()).toEqual({
         selectedIsoAlpha2Code: 'GB',
         number: '0711 234 3211'
       })
@@ -83,14 +82,14 @@ describe('PhoneInput Field Component', () => {
 
     it('Should set the country code of the phone number when a country is selected in the dropdown', () => {
       PhoneInputWrapper.find(CountrySelect).simulate('change', undefined, undefined, 'US')
-      assert.deepEqual(phoneFieldProps.input.onChange.lastCall.args, ['+1'])
+      expect(phoneFieldProps.input.onChange.lastCall.args).toEqual(['+1'])
     })
 
     it('Should set the call onChange with the full phone number when the country is changed and a number is entered into the text field', () => {
       PhoneInputWrapper.find(CountrySelect).simulate('change', undefined, undefined, 'ZA')
       PhoneInputWrapper.find(TextField).simulate('change', { target: { value: '123 4567' } })
 
-      assert.deepEqual(phoneFieldProps.input.onChange.lastCall.args, ['+27 123 4567'])
+      expect(phoneFieldProps.input.onChange.lastCall.args).toEqual(['+27 123 4567'])
     })
   })
 })

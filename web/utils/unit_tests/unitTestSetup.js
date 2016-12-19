@@ -1,3 +1,4 @@
+import expect from 'expect'
 import fetch from 'isomorphic-fetch'
 import injectTapEventPlugin from 'react-tap-event-plugin'
 import { jsdom } from 'jsdom'
@@ -12,6 +13,7 @@ require.extensions['.scss'] = function () {return null}
 require.extensions['.png'] = function () {return null}
 require.extensions['.jpg'] = function () {return null}
 
+global.expect = expect
 global.fetch = fetch
 global.document = jsdom('')
 global.window = document.defaultView

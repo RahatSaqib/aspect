@@ -1,5 +1,4 @@
 import React from 'react'
-import { assert } from 'chai'
 import { shallow } from 'enzyme'
 import sinon from 'sinon'
 import proxyquire from 'proxyquire'
@@ -44,18 +43,18 @@ describe('LoginDetailsForm Component', () => {
     })
 
     it('Should be a form', () => {
-      assert.equal(LoginDetailsFormWrapper.node.type, 'form')
-      assert.equal(LoginDetailsFormWrapper.find('form').props().onSubmit, props.handleSubmit)
+      expect(LoginDetailsFormWrapper.node.type).toEqual('form')
+      expect(LoginDetailsFormWrapper.find('form').props().onSubmit).toEqual(props.handleSubmit)
     })
 
     it('Should contain fields for username and password', () => {
-      assert.deepEqual(LoginDetailsFormWrapper.find(TextInput).at(0).props(), {
+      expect(LoginDetailsFormWrapper.find(TextInput).at(0).props()).toEqual({
         name: 'username',
         label: 'Username',
         disabled: props.loading,
         maxLength: '255'
       })
-      assert.deepEqual(LoginDetailsFormWrapper.find(StrongPasswordInput).props(), {
+      expect(LoginDetailsFormWrapper.find(StrongPasswordInput).props()).toEqual({
         name: 'newPassword',
         label: 'New Password',
         disabled: props.loading,
@@ -63,7 +62,7 @@ describe('LoginDetailsForm Component', () => {
         anchorOrigin: { horizontal: 'right', vertical: 'top' },
         targetOrigin: { horizontal: 'left', vertical: 'center' }
       })
-      assert.deepEqual(LoginDetailsFormWrapper.find(TextInput).at(1).props(), {
+      expect(LoginDetailsFormWrapper.find(TextInput).at(1).props()).toEqual({
         name: 'confirmNewPassword',
         label: 'Confirm New Password',
         disabled: props.loading,
@@ -74,25 +73,25 @@ describe('LoginDetailsForm Component', () => {
 
     it('Should disable all fields when form is loading', () => {
       LoginDetailsFormWrapper.find(TextInput).forEach((textInput) => {
-        assert.isFalse(textInput.props().disabled)
+        expect(textInput.props().disabled).toBe(false)
       })
       LoginDetailsFormWrapper.find(StrongPasswordInput).forEach((strongPasswordInput) => {
-        assert.isFalse(strongPasswordInput.props().disabled)
+        expect(strongPasswordInput.props().disabled).toBe(false)
       })
       props.loading = true
       shallowRenderForm(props)
       LoginDetailsFormWrapper.find(TextInput).forEach((textInput) => {
-        assert.isTrue(textInput.props().disabled)
+        expect(textInput.props().disabled).toBe(true)
       })
       LoginDetailsFormWrapper.find(StrongPasswordInput).forEach((strongPasswordInput) => {
-        assert.isTrue(strongPasswordInput.props().disabled)
+        expect(strongPasswordInput.props().disabled).toBe(true)
       })
     })
 
     it('Should contain a submit button', () => {
       const submitButton = LoginDetailsFormWrapper.find(RaisedButton)
-      assert.equal(submitButton.length, 1)
-      assert.deepEqual(submitButton.props(), {
+      expect(submitButton.length).toEqual(1)
+      expect(submitButton.props()).toEqual({
         ...submitButton.props(),
         label: 'Save',
         secondary: true,
@@ -102,22 +101,22 @@ describe('LoginDetailsForm Component', () => {
 
     it('Should enable the submit button when the form is dirty, valid and not submitting', () => {
       let submitButton = LoginDetailsFormWrapper.find(RaisedButton)
-      assert.isTrue(submitButton.props().disabled)
+      expect(submitButton.props().disabled).toBe(true)
 
       props.pristine = false
       shallowRenderForm(props)
       submitButton = LoginDetailsFormWrapper.find(RaisedButton)
-      assert.isTrue(submitButton.props().disabled)
+      expect(submitButton.props().disabled).toBe(true)
 
       props.invalid = false
       shallowRenderForm(props)
       submitButton = LoginDetailsFormWrapper.find(RaisedButton)
-      assert.isFalse(submitButton.props().disabled)
+      expect(submitButton.props().disabled).toBe(false)
 
       props.pristine = true
       shallowRenderForm(props)
       submitButton = LoginDetailsFormWrapper.find(RaisedButton)
-      assert.isTrue(submitButton.props().disabled)
+      expect(submitButton.props().disabled).toBe(true)
     })
   })
 
@@ -137,7 +136,7 @@ describe('LoginDetailsForm Component', () => {
     })
 
     it('Should create a form called \'loginDetails\'', () => {
-      assert.equal(reduxFormConfig.form, 'loginDetails')
+      expect(reduxFormConfig.form).toEqual('loginDetails')
     })
 
     describe('validate function', () => {
@@ -160,11 +159,11 @@ describe('LoginDetailsForm Component', () => {
       })
 
       it('should validate that a username has been entered', () => {
-        assert.deepEqual(validateFunction(initialLoginDetails, props), {
+        expect(validateFunction(initialLoginDetails, props)).toEqual({
           currentPassword: 'Please enter your current password to update your login details'
         })
         const loginDetails = initialLoginDetails.set('username', '')
-        assert.deepEqual(validateFunction(loginDetails, props), {
+        expect(validateFunction(loginDetails, props)).toEqual({
           currentPassword: 'Please enter your current password to update your login details',
           username: 'A username is required'
         })
@@ -172,7 +171,7 @@ describe('LoginDetailsForm Component', () => {
 
       it('should validate password if it has been entered', () => {
         let loginDetails = initialLoginDetails.set('newPassword', 'invalid')
-        assert.deepEqual(validateFunction(loginDetails, props), {
+        expect(validateFunction(loginDetails, props)).toEqual({
           currentPassword: 'Please enter your current password to update your login details',
           newPassword: 'The password needs to be at least 8 characters long',
           confirmNewPassword: 'These passwords don\'t match'
@@ -182,25 +181,25 @@ describe('LoginDetailsForm Component', () => {
           newPassword: 'lessInvalid',
           confirmNewPassword: 'lessInvalid'
         })
-        assert.deepEqual(validateFunction(loginDetails, props), {
+        expect(validateFunction(loginDetails, props)).toEqual({
           currentPassword: 'Please enter your current password to update your login details',
           newPassword: 'The password needs to contain at least one number or special character (%!$*...)'
         })
 
         loginDetails = initialLoginDetails.set('newPassword', 'valid123')
-        assert.deepEqual(validateFunction(loginDetails, props), {
+        expect(validateFunction(loginDetails, props)).toEqual({
           currentPassword: 'Please enter your current password to update your login details',
           confirmNewPassword: 'These passwords don\'t match'
         })
 
         loginDetails = initialLoginDetails.set('confirmNewPassword', 'valid123')
-        assert.deepEqual(validateFunction(loginDetails, props), {
+        expect(validateFunction(loginDetails, props)).toEqual({
           currentPassword: 'Please enter your current password to update your login details'
         })
       })
 
       it('should be able to handle an undefined parameter', () => {
-        assert.deepEqual(validateFunction(undefined, props), {})
+        expect(validateFunction(undefined, props)).toEqual({})
       })
     })
   })

@@ -1,5 +1,4 @@
 import subMinutes from 'date-fns/sub_minutes'
-import { assert } from 'chai'
 import proxyquire from 'proxyquire'
 import sinon from 'sinon'
 
@@ -87,11 +86,11 @@ describe('AssayRedux module', () => {
       })
 
       it('should dispatch a REQUEST_ASSAYS action', () => {
-        assert.deepEqual(dispatchStub.firstCall.args, [{ type: AssayRedux.types.REQUEST_ASSAYS }], 'REQUEST_ASSAYS Was Not Dispatched')
+        expect(dispatchStub.firstCall.args).toEqual([{ type: AssayRedux.types.REQUEST_ASSAYS }])
       })
 
       it('should request the account details from the server', () => {
-        assert(fetchStub.aspectFetch.calledWith('/assay'), 'A request to /assay was not detected')
+        expect(fetchStub.aspectFetch.calledWith('/assay')).toBeTruthy()
       })
     })
 
@@ -123,11 +122,11 @@ describe('AssayRedux module', () => {
       })
 
       it('should not dispatch a REQUEST_ASSAYS action', () => {
-        assert.isNotOk(dispatchStub.called, 'REQUEST_ASSAYS Was Dispatched')
+        expect(dispatchStub.called).toBeFalsy()
       })
 
       it('should not request the account details from the server', () => {
-        assert.isNotOk(fetchStub.aspectFetch.called, 'A request to /assay not detected')
+        expect(fetchStub.aspectFetch.called).toBeFalsy()
       })
     })
 
@@ -159,11 +158,11 @@ describe('AssayRedux module', () => {
       })
 
       it('should dispatch a REQUEST_ASSAYS action', () => {
-        assert.deepEqual(dispatchStub.firstCall.args, [{ type: AssayRedux.types.REQUEST_ASSAYS }], 'REQUEST_ASSAYS Was Not Dispatched')
+        expect(dispatchStub.firstCall.args).toEqual([{ type: AssayRedux.types.REQUEST_ASSAYS }])
       })
 
       it('should request the account details from the server', () => {
-        assert(fetchStub.aspectFetch.calledWith('/assay'), 'A request to /assay was not detected')
+        expect(fetchStub.aspectFetch.calledWith('/assay')).toBeTruthy()
       })
     })
   })

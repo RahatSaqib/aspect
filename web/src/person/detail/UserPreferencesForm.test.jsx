@@ -1,5 +1,4 @@
 import React from 'react'
-import { assert } from 'chai'
 import { shallow } from 'enzyme'
 import sinon from 'sinon'
 import proxyquire from 'proxyquire'
@@ -44,40 +43,40 @@ describe('UserPreferencesForm Component', () => {
     })
 
     it('Should be a form', () => {
-      assert.equal(UserPreferencesFormWrapper.node.type, 'form')
-      assert.equal(UserPreferencesFormWrapper.find('form').props().onSubmit, props.handleSubmit)
+      expect(UserPreferencesFormWrapper.node.type).toEqual('form')
+      expect(UserPreferencesFormWrapper.find('form').props().onSubmit).toEqual(props.handleSubmit)
     })
 
     it('Should contain fields for time zone and language', () => {
-      assert.deepEqual(UserPreferencesFormWrapper.find(TimezoneSelect).props(), {
+      expect(UserPreferencesFormWrapper.find(TimezoneSelect).props()).toEqual({
         name: 'timezone',
         label: 'Time Zone',
         disabled: props.loading || props.saving,
         autoWidth: true
       })
       const languageSelector = UserPreferencesFormWrapper.find(Field)
-      assert.equal(languageSelector.props().name, 'culture')
-      assert.deepEqual(languageSelector.props().selectFieldProps, {
+      expect(languageSelector.props().name).toEqual('culture')
+      expect(languageSelector.props().selectFieldProps).toEqual({
         floatingLabelText: 'Language',
         disabled: props.loading || props.saving,
         autoWidth: true
       })
-      assert.equal(languageSelector.props().disabled, props.loading || props.saving)
+      expect(languageSelector.props().disabled).toEqual(props.loading || props.saving)
     })
 
     it('Should disable all fields when form is loading', () => {
-      assert.isFalse(UserPreferencesFormWrapper.find(TimezoneSelect).props().disabled)
-      assert.isFalse(UserPreferencesFormWrapper.find(Field).props().selectFieldProps.disabled)
+      expect(UserPreferencesFormWrapper.find(TimezoneSelect).props().disabled).toBe(false)
+      expect(UserPreferencesFormWrapper.find(Field).props().selectFieldProps.disabled).toBe(false)
       props.loading = true
       shallowRenderForm(props)
-      assert.isTrue(UserPreferencesFormWrapper.find(TimezoneSelect).props().disabled)
-      assert.isTrue(UserPreferencesFormWrapper.find(Field).props().selectFieldProps.disabled)
+      expect(UserPreferencesFormWrapper.find(TimezoneSelect).props().disabled).toBe(true)
+      expect(UserPreferencesFormWrapper.find(Field).props().selectFieldProps.disabled).toBe(true)
     })
 
     it('Should contain a submit button', () => {
       const submitButton = UserPreferencesFormWrapper.find(RaisedButton)
-      assert.equal(submitButton.length, 1)
-      assert.deepEqual(submitButton.props(), {
+      expect(submitButton.length).toEqual(1)
+      expect(submitButton.props()).toEqual({
         ...submitButton.props(),
         label: 'Save',
         secondary: true,
@@ -88,22 +87,22 @@ describe('UserPreferencesForm Component', () => {
 
     it('Should enable the submit button when the form is dirty, valid and not submitting', () => {
       let submitButton = UserPreferencesFormWrapper.find(RaisedButton)
-      assert.isTrue(submitButton.props().disabled)
+      expect(submitButton.props().disabled).toBe(true)
 
       props.pristine = false
       shallowRenderForm(props)
       submitButton = UserPreferencesFormWrapper.find(RaisedButton)
-      assert.isTrue(submitButton.props().disabled)
+      expect(submitButton.props().disabled).toBe(true)
 
       props.invalid = false
       shallowRenderForm(props)
       submitButton = UserPreferencesFormWrapper.find(RaisedButton)
-      assert.isFalse(submitButton.props().disabled)
+      expect(submitButton.props().disabled).toBe(false)
 
       props.pristine = true
       shallowRenderForm(props)
       submitButton = UserPreferencesFormWrapper.find(RaisedButton)
-      assert.isTrue(submitButton.props().disabled)
+      expect(submitButton.props().disabled).toBe(true)
     })
   })
 
@@ -123,7 +122,7 @@ describe('UserPreferencesForm Component', () => {
     })
 
     it('Should create a form called \'userPreferences\'', () => {
-      assert.equal(reduxFormConfig.form, 'userPreferences')
+      expect(reduxFormConfig.form).toEqual('userPreferences')
     })
   })
 })

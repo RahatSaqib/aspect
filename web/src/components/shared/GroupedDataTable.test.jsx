@@ -1,5 +1,4 @@
 import React from 'react'
-import { assert } from 'chai'
 import sinon from 'sinon'
 import Immutable from 'immutable'
 import { shallow } from 'enzyme'
@@ -193,9 +192,9 @@ describe('Grouped Data Table', () => {
 
   it('should render a table with a header, body and footer', () => {
     const table = GroupedDataTableWrapper.find(Table)
-    assert.equal(table.find(TableHeader).length, 1)
-    assert.equal(table.find(TableBody).length, 1)
-    assert.equal(table.find(TableFooter).length, 1)
+    expect(table.find(TableHeader).length).toEqual(1)
+    expect(table.find(TableBody).length).toEqual(1)
+    expect(table.find(TableFooter).length).toEqual(1)
   })
 
   it('should render columns in the table header', () => {
@@ -204,29 +203,30 @@ describe('Grouped Data Table', () => {
       .find(TableHeader)
       .find(TableRow)
       .find(TableHeaderColumn)
-    assert.equal(tableHeaderColumns.length,
-      props.columns.length + (props.table.get('extraColumns') ? props.table.get('extraColumns').size : 0))
+    expect(tableHeaderColumns.length).toEqual(
+      props.columns.length + (props.table.get('extraColumns') ? props.table.get('extraColumns').size : 0)
+    )
     for (let i = 0; i < props.columns.length; i++) {
-      assert.deepEqual(tableHeaderColumns.at(i).props(), {
+      expect(tableHeaderColumns.at(i).props()).toEqual({
         ...tableHeaderColumns.at(i).props(),
         tooltip: props.columns[i].tooltip,
         className: props.columns[i].hideOnXs ? 'pure-hidden-xs' : '',
         ...props.columns[i].extraProps
       })
       const headerText = tableHeaderColumns.at(i).find('span').text()
-      assert.equal(headerText, props.columns[i].headerText)
+      expect(headerText).toEqual(props.columns[i].headerText)
     }
     if (props.table.get('extraColumns')) {
       for (let i = 0; i < props.table.get('extraColumns').size; i++) {
         const extraColumn = props.table.getIn(['extraColumns', i])
-        assert.deepEqual(tableHeaderColumns.at(props.columns.length + i).props(), {
+        expect(tableHeaderColumns.at(props.columns.length + i).props()).toEqual({
           ...tableHeaderColumns.at(i).props(),
           tooltip: extraColumn.get('tooltip'),
           className: extraColumn.get('hideOnXs') ? 'pure-hidden-xs' : '',
           ...extraColumn.get('extraProps').toJS()
         })
         const headerText = tableHeaderColumns.at(props.columns.length + i).find('span').text()
-        assert.equal(headerText, extraColumn.get('title'))
+        expect(headerText).toEqual(extraColumn.get('title'))
       }
     }
   })
@@ -237,7 +237,7 @@ describe('Grouped Data Table', () => {
       .find(TableBody)
       .find(TableRow)
 
-    assert.equal(tableRows.length, props.items.get('currentIdList').size)
+    expect(tableRows.length).toEqual(props.items.get('currentIdList').size)
   })
 
   it('should render cells in each row for each of the visible properties in the item', () => {
@@ -251,7 +251,7 @@ describe('Grouped Data Table', () => {
       const tableRow = tableRows.at(i)
       const id = props.items.getIn(['currentIdList', i])
       const record = props.items.getIn(['byId', id])
-      assert.equal(tableRow.children().length, record.get('visibleProperties').size + extraColumns.size)
+      expect(tableRow.children().length).toEqual(record.get('visibleProperties').size + extraColumns.size)
     }
   })
 
@@ -268,9 +268,9 @@ describe('Grouped Data Table', () => {
       tableRow.children().forEach((tableRowColumn) => {
         const fieldName = tableRowColumn.node.key
         if (recordRowSpans.has(fieldName)) {
-          assert.equal(tableRowColumn.props().rowSpan, recordRowSpans.get(fieldName))
+          expect(tableRowColumn.props().rowSpan).toEqual(recordRowSpans.get(fieldName))
         } else {
-          assert.equal(tableRowColumn.props().rowSpan, 1)
+          expect(tableRowColumn.props().rowSpan).toEqual(1)
         }
       })
     }
