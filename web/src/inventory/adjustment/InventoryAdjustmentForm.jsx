@@ -251,6 +251,12 @@ class InventoryAdjustmentForm extends PureComponent {
             />
           </section>
         }
+        <section>
+          <TextInput
+            name="notes" label={formatMessage(messages.notes)} disabled={updating} maxLength="2000"
+            multiLine fullWidth rows={2} style={formFieldStyle}
+          />
+        </section>
         <div className={styles.Form__ActionRow}>
           <RaisedButton
             disabled={pristine || invalid || updating}

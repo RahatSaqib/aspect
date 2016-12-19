@@ -534,6 +534,7 @@ function* up(knex) {
     inventoryLog.string('lotNumber')
     inventoryLog.dateTime('expiresOn')
     inventoryLog.float('quantity')
+    inventoryLog.string('notes', 2000)
     addCreateFieldsNullable(inventoryLog)
     inventoryLog.charset('utf8')
   })
