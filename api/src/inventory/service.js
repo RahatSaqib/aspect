@@ -298,7 +298,7 @@ function* addInventory(request) {
     return {
       ok: true,
       data: Object.assign({}, _.pick(updatedInventoryItem, siteFields), {
-        inventoryItems: _.pick(updatedInventoryItem, inventoryItemFields)
+        inventoryItems: [_.pick(updatedInventoryItem, inventoryItemFields)]
       })
     }
   }
@@ -365,7 +365,7 @@ function* removeInventory(request) {
     return {
       ok: true,
       data: Object.assign({}, _.pick(updatedInventoryItem, siteFields), {
-        inventoryItems: _.pick(updatedInventoryItem, inventoryItemFields)
+        inventoryItems: [_.pick(updatedInventoryItem, inventoryItemFields)]
       })
     }
   }
@@ -480,10 +480,10 @@ function* transferInventory(request) {
       ok: true,
       data: {
         existingInventoryItem: Object.assign({}, _.pick(updatedSourceInventoryItem, siteFields), {
-          inventoryItems: _.pick(updatedSourceInventoryItem, inventoryItemFields)
+          inventoryItems: [_.pick(updatedSourceInventoryItem, inventoryItemFields)]
         }),
         newInventoryItem: Object.assign({}, _.pick(updatedDestinationInventoryItem, siteFields), {
-          inventoryItems: _.pick(updatedDestinationInventoryItem, inventoryItemFields)
+          inventoryItems: [_.pick(updatedDestinationInventoryItem, inventoryItemFields)]
         })
       }
     }

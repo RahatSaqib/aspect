@@ -74,8 +74,14 @@ export function receiveList(items, childrenPropertyPath, listOfTreeObjects) {
 export function receiveItem(items, childrenPropertyPath, nestedItem) {
   const flattenedItem = Immutable.fromJS(
     _.head(_.flattenDeep(flattenItem(nestedItem, childrenPropertyPath))))
-
-  return items.mergeDeepIn(['byId', flattenedItem.get('id')], flattenedItem)
+  const existingItem = items.getIn(['byId', flattenedItem.get('id')])
+  if (existingItem) {
+    return items.mergeDeepIn(['byId', flattenedItem.get('id')], flattenedItem.merge({
+      rowSpans: existingItem.get('rowSpans'),
+      visibleProperties: existingItem.get('visibleProperties')
+    }))
+  }
+  return items.mergeDeepIn(['byId', flattenedItem.get('id')], Immutable.fromJS(flattenedItem))
 }
 
 export const Items = Immutable.Record({
