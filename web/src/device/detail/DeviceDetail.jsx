@@ -7,11 +7,15 @@ import {
 } from 'react-intl'
 import { bindActionCreators } from 'redux'
 import { connect } from 'react-redux'
+import { Link } from 'react-router'
 import Helmet from 'react-helmet'
 
 // Material-UI
 import Paper from 'material-ui/Paper'
 import LinearProgress from 'material-ui/LinearProgress'
+import { Card, CardHeader, CardText } from 'material-ui/Card'
+import IconButton from 'material-ui/IconButton'
+import ModeEdit from 'material-ui/svg-icons/editor/mode-edit'
 
 // Our own imports
 import { Unit } from '../../components/pureGrids'
@@ -21,6 +25,7 @@ import {
   updateSingleDevice
 } from '../DeviceRedux'
 import ReadOnlyFields from '../../components/shared/ReadOnlyFields'
+import { ReadOnlyField } from '../../components/shared/ReadOnlyFields'
 import DeviceDetailForm from './DeviceDetailForm'
 import DeviceDemoLink from '../DeviceDemoLink'
 import styles from './DeviceDetail.css'
@@ -29,6 +34,10 @@ const messages = defineMessages({
   title: {
     id: 'pages.DeviceDetail.title',
     defaultMessage: 'Device Detail'
+  },
+  editTooltip: {
+    id: 'pages.DeviceDetail.editTooltip',
+    defaultMessage: 'Edit'
   },
   fieldName: {
     id: 'pages.DeviceDetail.fieldName',
@@ -54,10 +63,6 @@ const messages = defineMessages({
     id: 'pages.DeviceDetail.siteLoadingMore',
     defaultMessage: 'Loading……'
   },
-  fieldFirstConnected: {
-    id: 'pages.DeviceDetail.fieldFirstConnected',
-    defaultMessage: 'First Connected'
-  },
   fieldFirstApprovedOn: {
     id: 'pages.DeviceDetail.fieldFirstApprovedOn',
     defaultMessage: 'First Approved On'
@@ -65,6 +70,10 @@ const messages = defineMessages({
   fieldFirstApprovedBy: {
     id: 'pages.DeviceDetail.fieldFirstApprovedBy',
     defaultMessage: 'First Approved By'
+  },
+  fieldHostId: {
+    id: 'pages.DeviceDetail.fieldHostId',
+    defaultMessage: 'Host Id'
   },
   fieldSerial: {
     id: 'pages.DeviceDetail.fieldSerial',
@@ -74,9 +83,17 @@ const messages = defineMessages({
     id: 'pages.DeviceDetail.fieldLastSeen',
     defaultMessage: 'Last Seen'
   },
+  fieldFirstConnected: {
+    id: 'pages.DeviceDetail.fieldFirstConnected',
+    defaultMessage: 'Connected'
+  },
+  fieldStatus: {
+    id: 'pages.DeviceDetail.fieldStatus',
+    defaultMessage: 'Status'
+  },
   fieldTotalNumberOfTests: {
     id: 'pages.DeviceDetail.fieldTotalNumberOfTests',
-    defaultMessage: 'Total Number of Tests'
+    defaultMessage: 'Tests'
   }
 })
 
@@ -140,9 +157,9 @@ export class DeviceDetail extends PureComponent {
   }
 
   renderProgress() {
-    const { device } = this.props
-
-    return !device && <LinearProgress />
+    return (
+      <LinearProgress />
+    )
   }
 
   renderFormContainer() {
@@ -165,28 +182,126 @@ export class DeviceDetail extends PureComponent {
     )
   }
 
-  renderReadOnlyFields() {
-    const { device, intl: { formatMessage } } = this.props
-    const fields = [
-      {
-        label: formatMessage(messages.fieldName),
-        value: device.get('name')
-      },
-      {
-        label: formatMessage(messages.fieldShortname),
-        value: device.get('shortname')
-      },
-      {
-        label: formatMessage(messages.fieldNotes),
-        value: device.get('notes')
-      },
-      {
-        label: formatMessage(messages.fieldSiteId),
-        value: device.get('siteId')
-      }
-    ]
+  renderContent() {
+    const { device, editable, intl } = this.props
+    const { formatMessage, formatDate, formatRelative } = intl
+
     return (
-      <ReadOnlyFields fields={fields} />
+      <div>
+        { /* IDs and site/results */ }
+        <Card>
+          <CardText>
+            <Unit sm="5-6" md="11-12">
+              <ReadOnlyField
+                label=""
+                value={device.get('name')}
+                format={v =>
+                  <div>
+                    <h1 className={styles.Name}>
+                      {v}
+                    </h1>
+                    <div>
+                      <Link to={`/site/${device.get('siteId')}`}>
+                        {device.get('siteName')}
+                      </Link>
+                    </div>
+                    <div>
+                      <span className={styles.LastSeen}>
+                        {formatMessage(messages.fieldLastSeen)} {formatRelative(device.get('lastSeen'))}
+                      </span>
+                      &nbsp;&nbsp;
+                      {formatMessage(messages.fieldFirstConnected)} {formatRelative(device.get('createdOn'))}
+                    </div>
+                    <div>
+                      {formatMessage(messages.fieldStatus)}: {device.get('status')}
+                      &nbsp;&nbsp;
+                      <Link to={`/result`}>
+                        {device.get('totalTests')} {formatMessage(messages.fieldTotalNumberOfTests)}
+                      </Link>
+                    </div>
+                  </div>
+                }
+              />
+            </Unit>
+            <Unit sm="1-6" md="1-12">
+              <IconButton tooltip={formatMessage(messages.editTooltip)}>
+                <ModeEdit />
+              </IconButton>
+            </Unit>
+          </CardText>
+        </Card>
+        { /* Graphs */ }
+        <Card initiallyExpanded>
+          <CardText style={{ paddingTop: 0 }}>
+            <Unit sm="1-1" md="1-2">
+              <CardHeader title="Utilization Rate Over Time" />
+              <ReadOnlyField
+                label=""
+                value={true}
+                format={() =>
+                  <img role="presentation" src={require('./utilization_rate.png')} style={{ width: '100%' }} />
+                }
+              />
+            </Unit>
+            <Unit sm="1-1" md="1-2">
+              <CardHeader title="Error Rates Over Time" />
+              <ReadOnlyField
+                label=""
+                value={true}
+                format={() =>
+                  <img role="presentation" src={require('./error_rates.png')} style={{ width: '100%' }} />
+                }
+              />
+            </Unit>
+          </CardText>
+        </Card>
+        { /* Contacts */ }
+        <Card initiallyExpanded>
+          <CardHeader title="Contacts" actAsExpander showExpandableButton />
+          <CardText actAsExpander expandable style={{ paddingTop: 0 }}>
+            User 1, 2, 3, 4…
+          </CardText>
+        </Card>
+        { /* Calibration */ }
+        <Card>
+          <CardHeader title="Calibration" actAsExpander showExpandableButton />
+          <CardText actAsExpander expandable style={{ paddingTop: 0 }}>
+            Not implemented
+          </CardText>
+        </Card>
+        { /* Warranty */ }
+        <Card>
+          <CardHeader title="Warranty" actAsExpander showExpandableButton />
+          <CardText actAsExpander expandable style={{ paddingTop: 0 }}>
+            Not implemented
+          </CardText>
+        </Card>
+        { /* Configuration */ }
+        <Card>
+          <CardHeader title="Configuration" actAsExpander showExpandableButton />
+          <CardText actAsExpander expandable style={{ paddingTop: 0 }}>
+            Not implemented
+          </CardText>
+        </Card>
+        { /* Technical information */ }
+        <Card>
+          <CardHeader title="Technical information" actAsExpander showExpandableButton />
+          <CardText actAsExpander expandable style={{ paddingTop: 0 }}>
+            <Unit sm="1-2" md="1-3" lg="1-4">
+              <ReadOnlyField label={formatMessage(messages.fieldFirstApprovedOn)} value={device.get('approvedOn')} />
+            </Unit>
+            <Unit sm="1-2" md="1-3" lg="1-4">
+              <ReadOnlyField label={formatMessage(messages.fieldFirstApprovedBy)} value={device.get('approvedBy')} />
+            </Unit>
+            <Unit sm="1-2" md="1-3" lg="1-4">
+              <ReadOnlyField label={formatMessage(messages.fieldHostId)} value={device.get('HostId')} />
+            </Unit>
+            <Unit sm="1-2" md="1-3" lg="1-4">
+              <ReadOnlyField label={formatMessage(messages.fieldSerial)} value={device.get('serial')} />
+            </Unit>
+          </CardText>
+        </Card>
+      </div>
     )
   }
 
@@ -202,55 +317,14 @@ export class DeviceDetail extends PureComponent {
     )
   }
 
-  renderContent() {
-    const { device, editable, intl: { formatMessage, formatDate } } = this.props
-    if (!device) {
-      return null
-    }
-
-    // get date for current locale, 'date' - is a Date object or string value in DateTime format
-    const getFormattedDate = date => (date !== null && date !== '' && isFinite(new Date(date)) ? formatDate(date) : date)
-
-    const fields = [
-      {
-        label: formatMessage(messages.fieldFirstConnected),
-        value: device.get('id')
-      },
-      {
-        label: formatMessage(messages.fieldFirstApprovedOn),
-        value: getFormattedDate(device.get('approvedOn')) || ''
-      },
-      {
-        label: formatMessage(messages.fieldFirstApprovedBy),
-        value: device.get('approvedBy') || ''
-      },
-      {
-        label: formatMessage(messages.fieldSerial),
-        value: device.get('serial') || /* FIXME */ '<empty>'
-      },
-      {
-        label: formatMessage(messages.fieldLastSeen),
-        value: getFormattedDate(device.get('lastSeen')) || ''
-      },
-      {
-        label: formatMessage(messages.fieldTotalNumberOfTests),
-        value: device.get('totalTests')
-      }
-    ]
+  renderPaper() {
     return (
-      <div className={styles.RowContainer}>
-        <Unit lg="1-2">
-          <div>
-            {editable ? this.renderFormContainer() : this.renderReadOnlyFields()}
-          </div>
-        </Unit>
-        <Unit lg="1-2">
-          <div>
-            <ReadOnlyFields
-              fields={fields}
-            />
-          </div>
-        </Unit>
+      <div>
+        {
+          this.props.device ?
+          this.renderContent() :
+          this.renderProgress()
+        }
       </div>
     )
   }
@@ -260,12 +334,9 @@ export class DeviceDetail extends PureComponent {
     const { formatMessage } = intl
 
     return (
-      <div className={styles.Content}>
+      <div className={styles.ContentDetails}>
         <Helmet title={formatMessage(messages.title)} titleTemplate="%s - Aspect" defaultTitle="Aspect" />
-        <Paper>
-          {this.renderProgress()}
-          {this.renderContent()}
-        </Paper>
+        {this.renderPaper()}
         {this.renderDemoButton()}
       </div>
     )
