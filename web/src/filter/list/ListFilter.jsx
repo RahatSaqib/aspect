@@ -193,7 +193,7 @@ export class ListFilter extends PureComponent {
     expanded: !!this.props.defaultExpanded
   }
 
-  getFilterMessage = (filter, subject, template, countingTemplate, formatMessage, formatDate) => {
+  getFilterMessage = (filter, subject, template, optionalTemplate, formatMessage, formatDate) => {
     // return empty message if no filters set
     if (_.every(filter, f => !f)) {
       return `${formatMessage(messages.noFilters)} ${subject ? subject.toLowerCase() : ''}`
@@ -201,9 +201,9 @@ export class ListFilter extends PureComponent {
 
     // location-related strings
     let geography = ''
-    const country = filter.countryId ? this.props.countries.get('items').find(c => c.id === filter.countryId) : ''
-    const state = country && filter.stateId ? country.getIn(['children', 'items']).find(s => s.id === filter.stateId) : ''
-    const lga = state && filter.lgaId ? state.getIn(['children', 'items']).find(s => s.id === filter.lgaId) : ''
+    const country = filter.countryId ? this.props.countries.get('items').find(c => c.id === filter.countryId) : null
+    const state = country && filter.stateId ? country.getIn(['children', 'items']).find(s => s.id === filter.stateId) : null
+    const lga = state && filter.lgaId ? state.getIn(['children', 'items']).find(s => s.id === filter.lgaId) : null
 
     if (country || state || lga) {
       geography = ` ${formatMessage(messages.geographyIn)}
@@ -214,11 +214,12 @@ export class ListFilter extends PureComponent {
 
     // name-filter
     const name = `${filter.contactNameOrEmail || ''}${filter.deviceName || ''}${filter.siteName || ''}`
-    const nameString = name && name !== 'undefined' ? ` ${formatMessage(messages.whoseNameIncludes)} "${name}"` : ''
+    const nameString = name ? ` ${formatMessage(messages.whoseNameIncludes)} "${name}"` : ''
 
     // assay/result
     const assay = filter.assayId ? this.props.assay.get('items').find(a => a.get('id') === filter.assayId) : null
-    const result = assay && filter.resultCategoryId ? assay.get('resultCategories').find(r => r.get('id') === String(filter.resultCategoryId)) : null
+    const result = assay && filter.resultCategoryId ?
+      assay.get('resultCategories').find(r => r.get('id') === String(filter.resultCategoryId)) : null
     const assayString = assay ? `${assay.get('name')} ${formatMessage(messages.assays)}` : ''
     const resultString = result ? ` ${formatMessage(messages.withResult)} "${result.get('name')}"` : ''
 
@@ -228,14 +229,25 @@ export class ListFilter extends PureComponent {
 
     // TODO: This could be a little nicer and use the date type from the filter.
     // Could say "the year 2015" or "the month of August"
-    const date = `${dateFrom ? ` ${dateFrom}` : ''}${dateTo && dateFrom ? ` ${dateTo}` : dateTo}`
+    const dateString = `${dateFrom ? ` ${dateFrom}` : ''}${dateTo && dateFrom ? ` ${dateTo}` : dateTo}`
 
-    let countingMessage = ''
-    if (countingTemplate && (assay || result || date)) {
-      countingMessage = countingTemplate.replace('<ASSAY>', assayString).replace('<RESULT>', resultString).replace('<DATE>', date)
+    // The optional template lets us specify a message that only shows up if
+    // assay, result, or date is set. For example, if we want to show a message that explains
+    // the number of results on a device
+    let optionalMessage = ''
+    if (optionalTemplate && (assayString || resultString || dateString)) {
+      optionalMessage = optionalTemplate
+                          .replace('<ASSAY>', assayString)
+                          .replace('<RESULT>', resultString)
+                          .replace('<DATE>', dateString)
     }
 
-    const message = `${template.replace('<GEOGRAPHY>', geography).replace('<NAME>', nameString).replace('<ASSAY>', assay).replace('<RESULT>', result).replace('<DATE>', date)} ${countingMessage}`
+    const message = `${template
+                          .replace('<GEOGRAPHY>', geography)
+                          .replace('<NAME>', nameString)
+                          .replace('<ASSAY>', assayString)
+                          .replace('<RESULT>', resultString)
+                          .replace('<DATE>', dateString)} ${optionalMessage}`
 
     return message
 
@@ -249,7 +261,7 @@ export class ListFilter extends PureComponent {
 
     /*
     Devices: Viewing devices in AREA, STATE, COUNTRY whose name includes "NAME".
-    Only counting ASSAY result with result "RESULT" DATE
+    Only counting ASSAY result with result "RESULT" <DATE></DATE>
 
     Routers: Viewing routers in AREA, STATE, COUNTRY whose name includes "NAME".
     Only counting ASSAY result with result "RESULT" DATE
