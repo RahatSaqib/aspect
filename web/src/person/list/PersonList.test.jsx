@@ -4,7 +4,7 @@ import sinon from 'sinon'
 import Helmet from 'react-helmet'
 import { Items } from '../../shared/metaReducers/items'
 import { Table } from '../../shared/metaReducers/table'
-import DataTable from '../../components/shared/DataTable'
+import DataTableWithEmptyList from '../../components/shared/DataTableWithEmptyList'
 import ListFilterContainer from '../../filter/list/ListFilter'
 import { PersonList } from './PersonList'
 
@@ -33,8 +33,8 @@ describe('Person List Component', () => {
       shallowRenderPersonList()
     })
 
-    it('should contain a selectable DataTable with columns for person records', () => {
-      const dataTable = PersonListWrapper.find(DataTable)
+    it('should contain a selectable DataTableWithEmptyList with columns for person records', () => {
+      const dataTable = PersonListWrapper.find(DataTableWithEmptyList)
       expect(dataTable.length).toEqual(1)
       expect(dataTable.props().selectable).toBe(true)
       expect(dataTable.props().columns).toEqual([

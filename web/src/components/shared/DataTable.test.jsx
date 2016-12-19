@@ -226,17 +226,6 @@ describe('DataTable module', () => {
       })
     })
 
-    describe('when initial mount', () => {
-      it('should call props.handleFetch', () => {
-        const props = _.merge({}, defaultProps, {
-          handleFetch: sinon.spy()
-        })
-        mountWithProvider(<DataTable {...props} />)
-
-        expect(props.handleFetch.calledOnce).toEqual(true)
-      })
-    })
-
     describe('when sort header clicked', () => {
       it('should call props.handleFetch with new sort', () => {
         const props = _.merge({}, defaultProps, {
