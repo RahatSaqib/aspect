@@ -1268,7 +1268,7 @@ describe('Device Result API routes', () => {
         assert.isOk(inventoryConsumptionLog.resultId)
         assert.equal(inventoryConsumptionLog.lotNumber, resultDetails.lotNumber)
         assert.equal(inventoryConsumptionLog.expiresOn.toJSON(), resultDetails.expirationDate)
-        assert.equal(inventoryConsumptionLog.quantity, inventoryConsumedByTest)
+        assert.equal(inventoryConsumptionLog.quantity, -inventoryConsumedByTest)
 
         const { count: otherInventoryConsumptionLogsForThisTest } = yield knex('InventoryLog')
           .whereNot({ id: inventoryConsumptionLog.id })

@@ -127,7 +127,7 @@ class StrongPasswordInput extends React.PureComponent {
       (passwordStrengthResults.isWeak ? weakStyle : okayStyle)
     return (<div>
       <TextField
-        {...input} errorStyle={{ float: 'left' }}
+        {...input} errorStyle={{ float: 'left', whiteSpace: 'nowrap', textOverflow: 'visible' }}
         errorText={(touched || dirty) && error} {...textFieldProps}
         className={classNames({ [styles.Form__Field]: textFieldProps.fullWidth })}
         onFocus={this.handleFocus} onBlur={this.handleBlur}

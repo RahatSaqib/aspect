@@ -17,7 +17,6 @@ import SelectInput from '../../components/shared/SelectInput'
 import { fetchSitesForSelectList } from '../../site/SiteRedux'
 import { fetchConsumableReasons } from '../../consumable/ConsumableRedux'
 import { addOperation, removeOperation, transferOperation } from '../InventoryRedux'
-import styles from './InventoryAdjustmentForm.css'
 
 const messages = defineMessages({
   lotNumber: {
@@ -126,6 +125,8 @@ const messages = defineMessages({
   }
 })
 
+const testConductedReasonI18nKey = 'ConsumableReason_TestConducted'
+
 class InventoryAdjustmentForm extends PureComponent {
   static propTypes = {
     intl: PropTypes.object.isRequired,
@@ -153,6 +154,14 @@ class InventoryAdjustmentForm extends PureComponent {
   handleReasonChange = (event, index, value) => {
     const selectedAdjustmentReason =
       this.props.consumableReasons.items.find(reason => reason.get('id') === value)
+    if (this.state.selectedReasonKey === testConductedReasonI18nKey &&
+      selectedAdjustmentReason.get('i18nKey') !== testConductedReasonI18nKey) {
+      this.props.changeFieldValue('inventoryAdjustment', 'dateAdjustedFrom', undefined)
+      this.props.changeFieldValue('inventoryAdjustment', 'dateAdjustedTo', undefined)
+    } else if (this.state.selectedReasonKey !== testConductedReasonI18nKey &&
+      selectedAdjustmentReason.get('i18nKey') === testConductedReasonI18nKey) {
+      this.props.changeFieldValue('inventoryAdjustment', 'dateAdjusted', undefined)
+    }
     this.setState({
       selectedReasonKey: selectedAdjustmentReason.get('i18nKey')
     })
@@ -258,7 +267,7 @@ class InventoryAdjustmentForm extends PureComponent {
           </section>
         }
         {
-          this.state.selectedReasonKey === 'ConsumableReason_TestConducted' &&
+          this.state.selectedReasonKey === testConductedReasonI18nKey &&
           <section>
             <DateInput
               name="dateAdjustedFrom" label={formatMessage(messages.testsRunBetween)}
@@ -273,7 +282,7 @@ class InventoryAdjustmentForm extends PureComponent {
           </section>
         }
         {
-          this.state.selectedReasonKey !== 'ConsumableReason_TestConducted' &&
+          this.state.selectedReasonKey !== testConductedReasonI18nKey &&
           <section>
             <DateInput
               name="dateAdjusted" label={dateAdjustedLabel}
@@ -319,11 +328,13 @@ const validate = (inventoryAdjustmentDetails, props) => {
       errors.expiresOn = formatMessage(messages.expiryDateRequired)
     }
     if ([removeOperation, transferOperation].includes(operation) &&
-      !inventoryAdjustmentDetails.get('fromSiteId')) {
+      (!inventoryAdjustmentDetails.get('fromSiteId') ||
+       inventoryAdjustmentDetails.get('fromSiteId') <= 0)) {
       errors.fromSiteId = formatMessage(messages.siteRequired)
     }
     if ([addOperation, transferOperation].includes(operation) &&
-      !inventoryAdjustmentDetails.get('toSiteId')) {
+      (!inventoryAdjustmentDetails.get('toSiteId') ||
+       inventoryAdjustmentDetails.get('toSiteId') <= 0)) {
       errors.toSiteId = formatMessage(messages.siteRequired)
     }
     if (operation === transferOperation && !errors.toSiteId &&
@@ -334,13 +345,15 @@ const validate = (inventoryAdjustmentDetails, props) => {
       inventoryAdjustmentDetails.get('quantity') <= 0) {
       errors.quantity = formatMessage(messages.quantityRequired, { operation })
     }
-    if (operation === removeOperation && !inventoryAdjustmentDetails.get('reasonId')) {
+    if (operation === removeOperation &&
+      (!inventoryAdjustmentDetails.get('reasonId') ||
+      inventoryAdjustmentDetails.get('reasonId') <= 0)) {
       errors.reasonId = formatMessage(messages.reasonRequired)
     }
     const selectedReason = props.consumableReasons.items.find(
       reason => reason.get('id') === inventoryAdjustmentDetails.get('reasonId'))
     if (operation === removeOperation && selectedReason &&
-      selectedReason.get('i18nKey') === 'ConsumableReason_TestConducted') {
+      selectedReason.get('i18nKey') === testConductedReasonI18nKey) {
       if (!inventoryAdjustmentDetails.get('dateAdjustedFrom')) {
         errors.dateAdjustedFrom = formatMessage(messages.dateRequired)
       }

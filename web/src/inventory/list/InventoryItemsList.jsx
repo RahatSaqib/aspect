@@ -40,6 +40,7 @@ import {
 } from '../InventoryRedux'
 import InventoryAdjustmentForm from '../adjustment/InventoryAdjustmentForm'
 import styles from './InventoryItemsList.css'
+import { showAcknowledgement } from '../../appNotification/AppNotificationRedux'
 
 const messages = defineMessages({
   title: {
@@ -106,6 +107,10 @@ const messages = defineMessages({
     id: 'pages.InventoryItemsList.cancel',
     defaultMessage: 'Cancel'
   },
+  inventoryAdjustedSuccessfully: {
+    id: 'pages.InventoryItemsList.inventoryAdjustedSuccessfully',
+    defaultMessage: 'Inventory levels have been adjusted successfully'
+  },
   filterTemplate: {
     id: 'pages.InventoryItemsList.filterTemplate',
     defaultMessage: 'Viewing <CONSUMABLE> <GEOGRAPHY> at all sites<NAME>.'
@@ -133,7 +138,8 @@ export class InventoryItemsList extends PureComponent {
     addInventory: PropTypes.func.isRequired,
     removeInventory: PropTypes.func.isRequired,
     transferInventory: PropTypes.func.isRequired,
-    submit: PropTypes.func.isRequired
+    submit: PropTypes.func.isRequired,
+    showAcknowledgement: PropTypes.func.isRequired
   }
 
   componentWillMount() {
@@ -206,11 +212,44 @@ export class InventoryItemsList extends PureComponent {
     } = this.props
     switch (inventoryAdjustment.get('operation')) {
       case addOperation:
-        return addInventory(inventoryAdjustment.getIn(['adjustmentDetails', 'inventoryItemId']), formValues.toJS())
+        return addInventory(inventoryAdjustment.getIn(['adjustmentDetails', 'inventoryItemId']), {
+          lotNumber: formValues.get('lotNumber'),
+          expiresOn: formValues.get('expiresOn'),
+          quantity: formValues.get('quantity'),
+          notes: formValues.get('notes'),
+          toSiteId: formValues.get('toSiteId'),
+          dateAdjusted: formValues.get('dateAdjusted')
+        })
       case removeOperation:
-        return removeInventory(inventoryAdjustment.getIn(['adjustmentDetails', 'inventoryItemId']), formValues.toJS())
+        return removeInventory(inventoryAdjustment.getIn(['adjustmentDetails', 'inventoryItemId']), formValues.get('dateAdjusted') ?
+          {
+            lotNumber: formValues.get('lotNumber'),
+            expiresOn: formValues.get('expiresOn'),
+            quantity: formValues.get('quantity'),
+            notes: formValues.get('notes'),
+            fromSiteId: formValues.get('fromSiteId'),
+            reasonId: formValues.get('reasonId'),
+            dateAdjusted: formValues.get('dateAdjusted')
+          } : {
+            lotNumber: formValues.get('lotNumber'),
+            expiresOn: formValues.get('expiresOn'),
+            quantity: formValues.get('quantity'),
+            notes: formValues.get('notes'),
+            fromSiteId: formValues.get('fromSiteId'),
+            reasonId: formValues.get('reasonId'),
+            dateAdjustedFrom: formValues.get('dateAdjustedFrom'),
+            dateAdjustedTo: formValues.get('dateAdjustedTo')
+          })
       case transferOperation:
-        return transferInventory(inventoryAdjustment.getIn(['adjustmentDetails', 'inventoryItemId']), formValues.toJS())
+        return transferInventory(inventoryAdjustment.getIn(['adjustmentDetails', 'inventoryItemId']), {
+          lotNumber: formValues.get('lotNumber'),
+          expiresOn: formValues.get('expiresOn'),
+          quantity: formValues.get('quantity'),
+          notes: formValues.get('notes'),
+          fromSiteId: formValues.get('fromSiteId'),
+          toSiteId: formValues.get('toSiteId'),
+          dateAdjusted: formValues.get('dateAdjusted')
+        })
       default:
         throw new SubmissionError({ _error: `Invalid operation ${inventoryAdjustment.get('operation')} for inventory adjustment form` })
     }
@@ -220,8 +259,10 @@ export class InventoryItemsList extends PureComponent {
     this.props.finishAdjustingInventoryLevels()
   }
 
-  adjustInventorySucceeded = (...rest) => {
-    console.log(rest)
+  adjustInventorySucceeded = () => {
+    this.props.showAcknowledgement({
+      title: messages.inventoryAdjustedSuccessfully
+    })
   }
 
   handleFetch = (...args) => {
@@ -340,7 +381,8 @@ function mapDispatchToProps(dispatch) {
     addInventory,
     removeInventory,
     transferInventory,
-    submit
+    submit,
+    showAcknowledgement
   }, dispatch)
 }
 

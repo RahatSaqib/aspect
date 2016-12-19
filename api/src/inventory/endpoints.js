@@ -7,13 +7,34 @@ const {
 } = require('../routes')
 const {
   listInventoryItems,
-  listInventoryItemsGroupedBySite
+  listInventoryItemsGroupedBySite,
+  addInventory,
+  removeInventory,
+  transferInventory
 } = require('./service')
 
 const inventoryFilters = {
   consumableId: Joi.number().integer().positive().allow('', null),
   siteName: Joi.string().allow('', null)
 }
+
+const adjustInventoryCommonParamsFields = {
+  inventoryItemId: Joi.number().integer().positive().required(),
+  groupBySite: Joi.boolean().truthy('true')
+}
+
+const adjustInventoryCommonPayloadFields = {
+  lotNumber: Joi.string().max(255).allow('', null),
+  expiresOn: Joi.date().iso().allow(null),
+  quantity: Joi.number().positive().required(),
+  notes: Joi.string().max(2000).allow('', null)
+}
+
+const removeInventoryCommonPayloadFields = Object.assign({},
+  adjustInventoryCommonPayloadFields, {
+    fromSiteId: Joi.number().integer().positive().required(),
+    reasonId: Joi.number().integer().positive().required()
+  })
 
 module.exports = [
   {
@@ -25,7 +46,7 @@ module.exports = [
       notes: 'Pageable and sortable list of inventory items',
       auth: { scope: ['inventory:view', 'inventory:edit'] },
       validate: {
-        query: Object.assign(inventoryFilters,
+        query: Object.assign({}, inventoryFilters,
           validateAllGeographyFilterParams(),
           validateDateRangeParams(),
           validateSortPageParams('consumableName', 'manufacturer', 'siteName', 'countryName', 'stateName', 'lgaName', 'quantityOnHand', 'expiresOn'))
@@ -40,10 +61,67 @@ module.exports = [
       notes: 'Pageable and sortable list of inventory items grouped by site',
       auth: { scope: ['inventory:view', 'inventory:edit'] },
       validate: {
-        query: Object.assign(inventoryFilters,
+        query: Object.assign({}, inventoryFilters,
           validateAllGeographyFilterParams(),
           validateDateRangeParams(),
           validateSortPageParams('consumableName', 'manufacturer', 'siteName', 'countryName', 'stateName', 'lgaName', 'quantityOnHand', 'expiresOn'))
+      }
+    }
+  }, {
+    method: 'PUT',
+    path: '/inventory/add/{inventoryItemId}/{groupBySite}',
+    handler: asyncHandler(addInventory),
+    config: {
+      description: 'Add Inventory',
+      notes: 'Adds quantity to inventory item at site',
+      auth: { scope: ['inventory:edit'] },
+      validate: {
+        params: adjustInventoryCommonParamsFields,
+        payload: Object.assign({},
+          adjustInventoryCommonPayloadFields, {
+            toSiteId: Joi.number().integer().positive().required(),
+            dateAdjusted: Joi.date().iso().required()
+          })
+      }
+    }
+  }, {
+    method: 'PUT',
+    path: '/inventory/remove/{inventoryItemId}/{groupBySite}',
+    handler: asyncHandler(removeInventory),
+    config: {
+      description: 'Remove Inventory',
+      notes: 'Removes quantity from inventory item at site',
+      auth: { scope: ['inventory:edit'] },
+      validate: {
+        params: adjustInventoryCommonParamsFields,
+        payload: Joi.alternatives().try(
+          Joi.object().keys(Object.assign({},
+            removeInventoryCommonPayloadFields, {
+              dateAdjusted: Joi.date().iso().required()
+            })),
+          Object.assign({},
+            removeInventoryCommonPayloadFields, {
+              dateAdjustedFrom: Joi.date().iso().required(),
+              dateAdjustedTo: Joi.date().iso().required()
+            }))
+      }
+    }
+  }, {
+    method: 'PUT',
+    path: '/inventory/transfer/{inventoryItemId}/{groupBySite}',
+    handler: asyncHandler(transferInventory),
+    config: {
+      description: 'Transfer Inventory',
+      notes: 'Transfers quantity from inventory item between sites',
+      auth: { scope: ['inventory:edit'] },
+      validate: {
+        params: adjustInventoryCommonParamsFields,
+        payload: Object.assign({},
+          adjustInventoryCommonPayloadFields, {
+            fromSiteId: Joi.number().integer().positive().required(),
+            toSiteId: Joi.number().integer().positive().required(),
+            dateAdjusted: Joi.date().iso().required()
+          })
       }
     }
   }

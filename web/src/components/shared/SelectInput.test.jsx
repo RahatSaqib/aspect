@@ -53,7 +53,9 @@ describe('SelectInput', () => {
     expect(selectField.type.name).toEqual('SelectField')
     expect(selectField.props).toEqual({ ...selectField.props,
       errorStyle: {
-        float: 'left'
+        float: 'left',
+        whiteSpace: 'nowrap',
+        textOverflow: 'visible'
       },
       style: {
         verticalAlign: 'bottom'

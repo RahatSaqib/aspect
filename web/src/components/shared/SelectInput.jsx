@@ -26,7 +26,7 @@ const renderSelectField = (props) => {
   const selectFieldStyle = { verticalAlign: 'bottom', ...selectFieldProps.style }
   return (
     <ForkedSelectField
-      {...input} errorStyle={{ float: 'left' }} {...selectFieldProps}
+      {...input} errorStyle={{ float: 'left', whiteSpace: 'nowrap', textOverflow: 'visible' }} {...selectFieldProps}
       errorText={touched && error} style={selectFieldStyle}
       onChange={onChange} tabIndex="0" aria-haspopup
       className={classNames({ [styles.Form__Field]: selectFieldProps.fullWidth })}

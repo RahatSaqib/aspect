@@ -195,15 +195,13 @@ export function finishAdjustingInventoryLevels() {
   })
 }
 
-// data: { expiresOn, lotNumber, toSiteId, quantity, reasonId, dateAdjusted, notes }
 export function addInventory(inventoryItemId, data) {
   return (dispatch, getState) => {
     const { inventory } = getState()
     const groupBySite = inventory.getIn(['table', 'groupBy']).includes('siteId')
     const inventoryItem = inventory.getIn(['items', 'byId', inventoryItemId])
     dispatch(startAddingInventory(data))
-    const path = groupBySite ? '/inventory/group-by-site/add' : '/inventory/add'
-    return aspectFetch(`${path}/${inventoryItemId}`, {
+    return aspectFetch(`/inventory/add/${inventoryItemId}/${groupBySite}`, {
       method: 'PUT',
       body: JSON.stringify(data),
       errorNotifications: {
@@ -225,16 +223,13 @@ export function addInventory(inventoryItemId, data) {
   }
 }
 
-// data: { expiresOn, lotNumber, fromSiteId, quantity, reasonId,
-//         dateAdjustedFrom, dateAdjustedTo, notes }
 export function removeInventory(inventoryItemId, data) {
   return (dispatch, getState) => {
     const { inventory } = getState()
     const groupBySite = inventory.getIn(['table', 'groupBy']).includes('siteId')
     const inventoryItem = inventory.getIn(['items', 'byId', inventoryItemId])
     dispatch(startRemovingInventory(data))
-    const path = groupBySite ? '/inventory/group-by-site/remove' : '/inventory/remove'
-    return aspectFetch(`${path}/${inventoryItemId}`, {
+    return aspectFetch(`/inventory/remove/${inventoryItemId}/${groupBySite}`, {
       method: 'PUT',
       body: JSON.stringify(data),
       errorNotifications: {
@@ -256,15 +251,13 @@ export function removeInventory(inventoryItemId, data) {
   }
 }
 
-// data: { expiresOn, lotNumber, fromSiteId, toSiteId, quantity, dateAdjusted, notes }
 export function transferInventory(inventoryItemId, data) {
   return (dispatch, getState) => {
     const { inventory } = getState()
     const groupBySite = inventory.getIn(['table', 'groupBy']).includes('siteId')
     const inventoryItem = inventory.getIn(['items', 'byId', inventoryItemId])
     dispatch(startTransferringInventory(data))
-    const path = groupBySite ? '/inventory/group-by-site/transfer' : '/inventory/transfer'
-    return aspectFetch(`${path}/${inventoryItemId}`, {
+    return aspectFetch(`/inventory/transfer/${inventoryItemId}/${groupBySite}`, {
       method: 'PUT',
       body: JSON.stringify(data),
       errorNotifications: {

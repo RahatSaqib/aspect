@@ -14,7 +14,7 @@ const renderDateField = (props) => {
     }
   }
   return (<DatePicker
-    {...input} onChange={onChange} errorStyle={{ float: 'left' }}
+    {...input} onChange={onChange} errorStyle={{ float: 'left', whiteSpace: 'nowrap', textOverflow: 'visible' }}
     errorText={touched && error} {...dateFieldProps}
     className={classNames({ [styles.Form__Field]: dateFieldProps.fullWidth })}
   />)

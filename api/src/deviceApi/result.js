@@ -217,7 +217,7 @@ function* addResult(context) {
   const partnerId = dataConstraints.partner ? dataConstraints.partner.id : undefined
   const consumablesInResultData = _.isEmpty(payload.consumable) ? [] : payload.consumable
   yield* consumeInventoryForResult(
-    resultId, assay.id, site.id, consumablesInResultData, partnerId, knex)
+    resultId, assay.id, site.id, consumablesInResultData, partnerId, result.startedOn, knex)
 
   return {}
 }
