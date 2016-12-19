@@ -59,9 +59,10 @@ function* seed(knex) {
     .where({ 'c.a3': 'MWI' })
     .select('c.id', 'c.culture', 'c.timezone')
 
-  const malawiStates = yield knex('State as s')
-    .where({ 's.countryId': malawiCountry.id })
-    .select('s.countryId', 's.id', 's.name')
+  const malawiStates = yield knex('Geography as g')
+    .innerJoin('State as s', 's.id', 'g.stateId')
+    .where({ 'g.countryId': malawiCountry.id })
+    .select('g.countryId', 's.id', 's.name')
 
   const { culture, timezone, id: countryId } = malawiCountry
 

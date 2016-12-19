@@ -84,8 +84,6 @@ function* up(knex) {
 
   yield knex.schema.createTable('State', (state) => {
     state.increments('id')
-    state.integer('countryId').unsigned()
-      .index().references('id').inTable('Country')
     state.string('name').notNullable()
     state.string('abbreviation', 10)
     state.charset('utf8')
@@ -93,8 +91,6 @@ function* up(knex) {
 
   yield knex.schema.createTable('Lga', (lga) => {
     lga.increments('id')
-    lga.integer('stateId').unsigned()
-      .index().references('id').inTable('State')
     lga.string('name').notNullable()
     lga.charset('utf8')
   })

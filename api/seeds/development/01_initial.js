@@ -882,9 +882,7 @@ function* seed(knex) {
     yield knex('Geography').insert({ countryId })
 
     for (const state of (country.states || [])) {
-      const stateData = Object.assign(
-        { countryId: countryData.id },
-        _.pick(state, ['abbreviation', 'name']))
+      const stateData = _.pick(state, ['abbreviation', 'name'])
       const [stateId] = yield knex('State').insert(stateData)
       stateData.id = stateId
       const stateKey = state.abbreviation || state.name
@@ -899,20 +897,14 @@ function* seed(knex) {
       yield knex('Geography').insert({ countryId, stateId })
 
       for (const lga of (state.lgas || [])) {
-        const lgaData = Object.assign(
-          { stateId: stateData.id },
-          _.pick(lga, ['name']))
+        const lgaData = _.pick(lga, ['name'])
 
         const [lgaId] = yield knex('Lga').insert(lgaData)
         lgaData.id = lgaId
         stateData.lgas[lga.name] = lgaData
         lgaData.sites = {}
 
-        const geoData = {
-          countryId: countryData.id,
-          stateId: stateData.id,
-          lgaId: lgaData.id
-        }
+        const geoData = { countryId, stateId, lgaId }
         const [geographyId] = yield knex('Geography').insert(geoData)
         geographies.push(Object.assign({ id: geographyId }, geoData))
 

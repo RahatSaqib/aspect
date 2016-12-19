@@ -90,9 +90,9 @@ describe('geography service', () => {
       const countriesStatesAndLGAsQuery = dbSpy.query.withArgs('Get countries, states and LGAs for select lists').lastCall.returnValue
       assert.equal(countriesStatesAndLGAsQuery.from.lastCall.args[0], 'Country as c')
       const leftJoins = countriesStatesAndLGAsQuery.leftJoin.getCalls()
-      const statesLeftJoin = _.find(leftJoins, leftJoin => _.isEqual(leftJoin.args, ['State as s', 'c.id', 's.countryId']))
+      const statesLeftJoin = _.find(leftJoins, leftJoin => _.isEqual(leftJoin.args, ['State as s', 's.id', 'g.stateId']))
       assert.isOk(statesLeftJoin, 'Can\'t find the join to the states table')
-      const lgasLeftJoin = _.find(leftJoins, leftJoin => _.isEqual(leftJoin.args, ['Lga as l', 's.id', 'l.stateId']))
+      const lgasLeftJoin = _.find(leftJoins, leftJoin => _.isEqual(leftJoin.args, ['Lga as l', 'l.id', 'g.lgaId']))
       assert.isOk(lgasLeftJoin, 'Can\'t find the join to the LGAs table')
       assert.deepEqual(countriesStatesAndLGAsQuery.orderBy.lastCall.args, [['c.name', 's.name', 'l.name'], 'asc'], 'The orderBy clause seems to be incorrect')
       assert.deepEqual(countriesStatesAndLGAsQuery.select.lastCall.args, ['c.id as countryId', 'c.name as countryName', 's.id as stateId', 's.name as stateName', 'l.id as lgaId', 'l.name as lgaName'], 'The select clause seems to be incorrect')
@@ -170,11 +170,11 @@ describe('geography service', () => {
         dbSpy.knex.raw.withArgs(2).returns(`${selectedCountryId}`)
         boundJoinOnCallbackFunction()
         assert.isOk(knexQueryBuilderSpy.on.calledTwice)
-        assert.deepEqual(knexQueryBuilderSpy.on.firstCall.args, ['c.id', 's.countryId'])
-        assert.deepEqual(knexQueryBuilderSpy.on.secondCall.args, [{ countryId: `${selectedCountryId}` }])
+        assert.deepEqual(knexQueryBuilderSpy.on.firstCall.args, ['s.id', 'g.stateId'])
+        assert.deepEqual(knexQueryBuilderSpy.on.secondCall.args, [{ 'g.countryId': `${selectedCountryId}` }])
 
         assert.deepEqual(countryQuery.orderBy.lastCall.args, [['c.name', 's.name'], 'asc'], 'The orderBy clause seems to be incorrect')
-        assert.deepEqual(countryQuery.select.lastCall.args, ['c.id as countryId', 'c.name as countryName', 's.id as stateId', 's.name as stateName'], 'The select clause seems to be incorrect')
+        assert.deepEqual(countryQuery.distinct.lastCall.args, ['c.id as countryId', 'c.name as countryName', 's.id as stateId', 's.name as stateName'], 'The select clause seems to be incorrect')
       }))
 
       it('Should return a list of countries with the selected country\'s states populated', () => {
@@ -232,8 +232,8 @@ describe('geography service', () => {
         dbSpy.knex.raw.withArgs(2).returns(`${selectedCountryId}`)
         boundStateJoinOnCallbackFunction()
         assert.isOk(knexQueryBuilderSpy.on.calledTwice)
-        assert.deepEqual(knexQueryBuilderSpy.on.firstCall.args, ['c.id', 's.countryId'])
-        assert.deepEqual(knexQueryBuilderSpy.on.secondCall.args, [{ countryId: `${selectedCountryId}` }])
+        assert.deepEqual(knexQueryBuilderSpy.on.firstCall.args, ['s.id', 'g.stateId'])
+        assert.deepEqual(knexQueryBuilderSpy.on.secondCall.args, [{ 'g.countryId': `${selectedCountryId}` }])
 
         knexQueryBuilderSpy = {
           on: sinon.stub()
@@ -245,12 +245,12 @@ describe('geography service', () => {
         dbSpy.knex.raw.withArgs(32).returns(`${selectedStateId}`)
         boundLgaJoinOnCallbackFunction()
         assert.isOk(knexQueryBuilderSpy.on.calledTwice)
-        assert.deepEqual(knexQueryBuilderSpy.on.firstCall.args, ['s.id', 'l.stateId'])
-        assert.deepEqual(knexQueryBuilderSpy.on.secondCall.args, [{ stateId: `${selectedStateId}` }])
+        assert.deepEqual(knexQueryBuilderSpy.on.firstCall.args, ['l.id', 'g.lgaId'])
+        assert.deepEqual(knexQueryBuilderSpy.on.secondCall.args, [{ 'g.stateId': `${selectedStateId}` }])
 
 
         assert.deepEqual(countryQuery.orderBy.lastCall.args, [['c.name', 's.name', 'l.name'], 'asc'], 'The orderBy clause seems to be incorrect')
-        assert.deepEqual(countryQuery.select.lastCall.args, ['c.id as countryId', 'c.name as countryName', 's.id as stateId', 's.name as stateName', 'l.id as lgaId', 'l.name as lgaName'], 'The select clause seems to be incorrect')
+        assert.deepEqual(countryQuery.distinct.lastCall.args, ['c.id as countryId', 'c.name as countryName', 's.id as stateId', 's.name as stateName', 'l.id as lgaId', 'l.name as lgaName'], 'The select clause seems to be incorrect')
       }))
 
       it('Should return a list of countries with the selected country\'s states populated and the selected state\'s LGAs populated', () => {
@@ -299,9 +299,9 @@ describe('geography service', () => {
     it('Should query the state table, filtering by country ID, sorting the results by state name', () => run(service.stateSelectList, [requestData])(() => {
       const stateQuery = dbSpy.query.withArgs('Get states for select list').lastCall.returnValue
       assert.equal(stateQuery.from.lastCall.args[0], 'State as s')
-      assert.deepEqual(stateQuery.where.lastCall.args, ['s.countryId', requestData.params.countryId], 'The where clause seems to be incorrect')
+      assert.deepEqual(stateQuery.where.lastCall.args, ['g.countryId', requestData.params.countryId], 'The where clause seems to be incorrect')
       assert.deepEqual(stateQuery.orderBy.lastCall.args, [['s.name'], 'asc'], 'The orderBy clause seems to be incorrect')
-      assert.deepEqual(stateQuery.select.lastCall.args, ['s.id', 's.name'], 'The select clause seems to be incorrect')
+      assert.deepEqual(stateQuery.distinct.lastCall.args, ['s.id', 's.name'], 'The select clause seems to be incorrect')
     }))
 
     it('Should return a list of states', () => run(service.stateSelectList, [requestData])((response) => {
@@ -325,9 +325,9 @@ describe('geography service', () => {
     it('Should query the lga table, filtering by state ID, sorting the results by LGA name', () => run(service.lgaSelectList, [requestData])(() => {
       const stateQuery = dbSpy.query.withArgs('Get LGAs for select list').lastCall.returnValue
       assert.equal(stateQuery.from.lastCall.args[0], 'Lga as l')
-      assert.deepEqual(stateQuery.where.lastCall.args, ['l.stateId', requestData.params.stateId], 'The orderBy clause seems to be incorrect')
+      assert.deepEqual(stateQuery.where.lastCall.args, ['g.stateId', requestData.params.stateId], 'The orderBy clause seems to be incorrect')
       assert.deepEqual(stateQuery.orderBy.lastCall.args, [['l.name'], 'asc'], 'The orderBy clause seems to be incorrect')
-      assert.deepEqual(stateQuery.select.lastCall.args, ['l.id', 'l.name'], 'The select clause seems to be incorrect')
+      assert.deepEqual(stateQuery.distinct.lastCall.args, ['l.id', 'l.name'], 'The select clause seems to be incorrect')
     }))
 
     it('Should return a list of LGAs', () => run(service.lgaSelectList, [requestData])((response) => {
