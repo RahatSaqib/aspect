@@ -1,6 +1,7 @@
 // This is the entry point for our app
 import 'react-hot-loader/patch'
-import 'core-js/fn/object/assign'
+import 'core-js/modules/es6.object.assign'
+import 'whatwg-fetch'
 import React from 'react'
 import promise from 'es6-promise'
 import { render } from 'react-dom'

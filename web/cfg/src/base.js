@@ -1,15 +1,32 @@
 import path from 'path'
+import webpack from 'webpack'
 
-const dfltPort = 8000
+import CaseSensitivePathsPlugin from 'case-sensitive-paths-webpack-plugin'
 
-function getDefaultModules() {
-  return {
+export default {
+  entry: './src/index',
+  output: {
+    path: path.join(__dirname, '../../dist/assets'),
+    filename: '[name].js',
+    publicPath: '/assets/',
+  },
+  resolve: {
+    extensions: ['', '.js', '.jsx']
+  },
+  module: {
     // preLoaders: [{
     //   test: /\.(js|jsx)$/,
     //   include: srcPath,
     //   loader: 'eslint-loader'
     // }],
     loaders: [
+      {
+        test: /\.(js|jsx)$/,
+        loader: 'babel-loader',
+        include: [
+          path.join(__dirname, '../../src')
+        ]
+      },
       {
         test: /\.json$/,
         loader: 'json-loader'
@@ -43,13 +60,15 @@ function getDefaultModules() {
         loader: 'file-loader'
       }
     ]
-  }
-}
-
-export default {
-  publicPath: '/assets/',
-  port: dfltPort,
-  getDefaultModules,
+  },
+  plugins: [
+    new webpack.DllReferencePlugin({
+      context: path.join(__dirname, '../../src'),
+      manifest: require('../../src/template/dll.vendor.manifest.json')
+    }),
+    new webpack.NoErrorsPlugin(),
+    new CaseSensitivePathsPlugin()
+  ],
   postcss() {
     return []
   }
