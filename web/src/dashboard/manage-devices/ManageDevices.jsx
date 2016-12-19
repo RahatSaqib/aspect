@@ -20,7 +20,8 @@ import styles from './ManageDevices.css'
 export class ManageDevices extends PureComponent {
 
   static propTypes = {
-    setPageTitle: PropTypes.func.isRequired
+    setPageTitle: PropTypes.func.isRequired,
+    configureListFilter: PropTypes.func.isRequired
   }
 
   componentWillMount() {
