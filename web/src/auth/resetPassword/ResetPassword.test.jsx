@@ -1,6 +1,5 @@
 import React from 'react'
 import { shallow } from 'enzyme'
-import proxyquire from 'proxyquire'
 import LinearProgress from 'material-ui/LinearProgress'
 import Dialog from 'material-ui/Dialog'
 import {
@@ -12,23 +11,12 @@ import {
 import { Hidden } from '../../components/pureGrids'
 import ResetPasswordEnterEmail from './ResetPasswordEnterEmail'
 
-describe('ResetPassword Component', () => {
-  describe('ResetPassword', () => {
-    const fakeIntl = {
-      injectIntl: component => component
-    }
-    const fakeReactRedux = {
-      connect: () => component => component
-    }
-    const fakeRedux = {
-      bindActionCreators: actionCreators => actionCreators
-    }
-    const ResetPassword = proxyquire('./ResetPassword', {
-      'react-intl': fakeIntl,
-      'react-redux': fakeReactRedux,
-      redux: fakeRedux
-    }).default
+describe('ResetPassword module', () => {
+  const {
+    ResetPassword
+  } = require('./ResetPassword')
 
+  describe('ResetPassword Component', () => {
     let props
     let ResetPasswordWrapper
 

@@ -2,12 +2,15 @@ import Immutable from 'immutable'
 import React from 'react'
 import { shallow } from 'enzyme'
 import sinon from 'sinon'
-import proxyquire from 'proxyquire'
 import { Field } from 'redux-form/immutable'
 
 import { LazyLoadItems, LazyLoadParent, LazyLoadChild } from '../../geography/GeographyRedux'
 
-describe('LocationSelector Component', () => {
+describe('LocationSelector module', () => {
+  const {
+    LocationSelector
+  } = require('./LocationSelector')
+
   const now = new Date()
   const countriesForLocationSelector = new LazyLoadItems({
     loading: false,
@@ -66,22 +69,7 @@ describe('LocationSelector Component', () => {
     ])
   })
 
-  describe('LocationSelector', () => {
-    const fakeIntl = {
-      injectIntl: component => component
-    }
-    const fakeReactRedux = {
-      connect: () => component => component
-    }
-    const fakeRedux = {
-      bindActionCreators: actionCreators => actionCreators
-    }
-    const LocationSelector = proxyquire('./LocationSelector', {
-      'react-intl': fakeIntl,
-      'react-redux': fakeReactRedux,
-      redux: fakeRedux
-    }).default
-
+  describe('LocationSelector component', () => {
     let props
     let LocationSelectorWrapper
 
@@ -120,45 +108,6 @@ describe('LocationSelector Component', () => {
 
       const LgaSelectFieldWrapper = LocationSelectorWrapper.find(Field).filter({ name: 'lgaId' })
       expect(LgaSelectFieldWrapper.length).toEqual(1)
-    })
-  })
-
-  describe('react-redux connect', () => {
-    const expectedBoundActionCreators = { value: 'Bound Action Creators' }
-    let reactReduxStub
-    let intlStub
-    let mapDispatchToProps
-    let reduxStub
-    let reduxFormStub
-    beforeEach(() => {
-      reactReduxStub = {
-        connect: sinon.stub().returns(() => {})
-      }
-      intlStub = {
-        injectIntl: sinon.stub().returns(() => {})
-      }
-      reduxStub = {
-        bindActionCreators: sinon.stub().returns(expectedBoundActionCreators)
-      }
-      reduxFormStub = {
-        change: () => {}
-      }
-      proxyquire('./LocationSelector', {
-        'react-intl': intlStub,
-        'react-redux': reactReduxStub,
-        redux: reduxStub,
-        'redux-form/immutable': reduxFormStub
-      })
-      mapDispatchToProps = reactReduxStub.connect.firstCall.args[1]
-    })
-
-    it('mapDispatchToProps should bind changeFieldValue action creators to the component\'s properties', () => {
-      const expectedDispatcher = { value: 'I am a dispatch function' }
-      expect(mapDispatchToProps(expectedDispatcher)).toEqual(expectedBoundActionCreators)
-      expect(reduxStub.bindActionCreators.lastCall.args).toEqual([{
-        changeFieldValue: reduxFormStub.change
-      },
-        expectedDispatcher])
     })
   })
 })

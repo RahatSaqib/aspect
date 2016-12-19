@@ -1,26 +1,17 @@
 import React from 'react'
 import { shallow } from 'enzyme'
-import sinon from 'sinon'
-import proxyquire from 'proxyquire'
 import Immutable from 'immutable'
 import RaisedButton from 'material-ui/RaisedButton'
 import TextInput from '../../components/shared/TextInput'
 import StrongPasswordInput from '../../components/shared/StrongPasswordInput'
 
-describe('LoginDetailsForm Component', () => {
-  const fakeReactIntl = {
-    injectIntl: component => component
-  }
+describe('LoginDetailsForm module', () => {
+  const {
+    validate,
+    LoginDetailsForm
+  } = require('./LoginDetailsForm')
 
-  describe('ContactDetailsForm', () => {
-    const fakeReduxForm = {
-      reduxForm: () => component => component
-    }
-    const LoginDetailsForm = proxyquire('./LoginDetailsForm', {
-      'redux-form/immutable': fakeReduxForm,
-      'react-intl': fakeReactIntl
-    }).default
-
+  describe('LoginDetailsForm component', () => {
     let props
     let LoginDetailsFormWrapper
 
@@ -120,87 +111,64 @@ describe('LoginDetailsForm Component', () => {
     })
   })
 
-  describe('reduxForm', () => {
-    let reduxFormStub
-    let reduxFormConfig
+  describe('validate function', () => {
+    const props = {
+      intl: {
+        formatMessage: message => message.defaultMessage
+      }
+    }
+    let initialLoginDetails
 
     beforeEach(() => {
-      reduxFormStub = {
-        reduxForm: sinon.stub().returns(() => {})
-      }
-      proxyquire('./LoginDetailsForm', {
-        'redux-form/immutable': reduxFormStub,
-        'react-intl': fakeReactIntl
+      initialLoginDetails = Immutable.Map({
+        username: 'admin',
+        newPassword: null,
+        confirmNewPassword: null
       })
-      reduxFormConfig = reduxFormStub.reduxForm.firstCall.args[0]
     })
 
-    it('Should create a form called \'loginDetails\'', () => {
-      expect(reduxFormConfig.form).toEqual('loginDetails')
+    it('should validate that a username has been entered', () => {
+      expect(validate(initialLoginDetails, props)).toEqual({
+        currentPassword: 'Please enter your current password to update your login details'
+      })
+      const loginDetails = initialLoginDetails.set('username', '')
+      expect(validate(loginDetails, props)).toEqual({
+        currentPassword: 'Please enter your current password to update your login details',
+        username: 'A username is required'
+      })
     })
 
-    describe('validate function', () => {
-      const props = {
-        handleSubmit: () => {},
-        intl: {
-          formatMessage: message => message.defaultMessage
-        }
-      }
-      let validateFunction
-      let initialLoginDetails
-
-      beforeEach(() => {
-        validateFunction = reduxFormConfig.validate
-        initialLoginDetails = Immutable.Map({
-          username: 'admin',
-          newPassword: null,
-          confirmNewPassword: null
-        })
+    it('should validate password if it has been entered', () => {
+      let loginDetails = initialLoginDetails.set('newPassword', 'invalid')
+      expect(validate(loginDetails, props)).toEqual({
+        currentPassword: 'Please enter your current password to update your login details',
+        newPassword: 'The password needs to be at least 8 characters long',
+        confirmNewPassword: 'These passwords don\'t match'
       })
 
-      it('should validate that a username has been entered', () => {
-        expect(validateFunction(initialLoginDetails, props)).toEqual({
-          currentPassword: 'Please enter your current password to update your login details'
-        })
-        const loginDetails = initialLoginDetails.set('username', '')
-        expect(validateFunction(loginDetails, props)).toEqual({
-          currentPassword: 'Please enter your current password to update your login details',
-          username: 'A username is required'
-        })
+      loginDetails = initialLoginDetails.merge({
+        newPassword: 'lessInvalid',
+        confirmNewPassword: 'lessInvalid'
+      })
+      expect(validate(loginDetails, props)).toEqual({
+        currentPassword: 'Please enter your current password to update your login details',
+        newPassword: 'The password needs to contain at least one number or special character (%!$*...)'
       })
 
-      it('should validate password if it has been entered', () => {
-        let loginDetails = initialLoginDetails.set('newPassword', 'invalid')
-        expect(validateFunction(loginDetails, props)).toEqual({
-          currentPassword: 'Please enter your current password to update your login details',
-          newPassword: 'The password needs to be at least 8 characters long',
-          confirmNewPassword: 'These passwords don\'t match'
-        })
-
-        loginDetails = initialLoginDetails.merge({
-          newPassword: 'lessInvalid',
-          confirmNewPassword: 'lessInvalid'
-        })
-        expect(validateFunction(loginDetails, props)).toEqual({
-          currentPassword: 'Please enter your current password to update your login details',
-          newPassword: 'The password needs to contain at least one number or special character (%!$*...)'
-        })
-
-        loginDetails = initialLoginDetails.set('newPassword', 'valid123')
-        expect(validateFunction(loginDetails, props)).toEqual({
-          currentPassword: 'Please enter your current password to update your login details',
-          confirmNewPassword: 'These passwords don\'t match'
-        })
-
-        loginDetails = initialLoginDetails.set('confirmNewPassword', 'valid123')
-        expect(validateFunction(loginDetails, props)).toEqual({
-          currentPassword: 'Please enter your current password to update your login details'
-        })
+      loginDetails = initialLoginDetails.set('newPassword', 'valid123')
+      expect(validate(loginDetails, props)).toEqual({
+        currentPassword: 'Please enter your current password to update your login details',
+        confirmNewPassword: 'These passwords don\'t match'
       })
 
-      it('should be able to handle an undefined parameter', () => {
-        expect(validateFunction(undefined, props)).toEqual({})
+      loginDetails = initialLoginDetails.set('confirmNewPassword', 'valid123')
+      expect(validate(loginDetails, props)).toEqual({
+        currentPassword: 'Please enter your current password to update your login details'
       })
+    })
+
+    it('should be able to handle an undefined parameter', () => {
+      expect(validate(undefined, props)).toEqual({})
     })
   })
 })

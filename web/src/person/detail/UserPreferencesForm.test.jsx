@@ -1,25 +1,15 @@
 import React from 'react'
 import { shallow } from 'enzyme'
-import sinon from 'sinon'
-import proxyquire from 'proxyquire'
 import { Field } from 'redux-form/immutable'
 import RaisedButton from 'material-ui/RaisedButton'
 import TimezoneSelect from '../../components/shared/TimezoneSelect'
 
-describe('UserPreferencesForm Component', () => {
-  const fakeReactIntl = {
-    injectIntl: component => component
-  }
+describe('UserPreferencesForm module', () => {
+  const {
+    UserPreferencesForm
+  } = require('./UserPreferencesForm')
 
-  describe('UserPreferencesForm', () => {
-    const fakeReduxForm = {
-      reduxForm: () => component => component
-    }
-    const UserPreferencesForm = proxyquire('./UserPreferencesForm', {
-      'redux-form/immutable': fakeReduxForm,
-      'react-intl': fakeReactIntl
-    }).default
-
+  describe('UserPreferencesForm component', () => {
     let props
     let UserPreferencesFormWrapper
 
@@ -67,6 +57,7 @@ describe('UserPreferencesForm Component', () => {
     it('Should disable all fields when form is loading', () => {
       expect(UserPreferencesFormWrapper.find(TimezoneSelect).props().disabled).toBe(false)
       expect(UserPreferencesFormWrapper.find(Field).props().selectFieldProps.disabled).toBe(false)
+
       props.loading = true
       shallowRenderForm(props)
       expect(UserPreferencesFormWrapper.find(TimezoneSelect).props().disabled).toBe(true)
@@ -103,26 +94,6 @@ describe('UserPreferencesForm Component', () => {
       shallowRenderForm(props)
       submitButton = UserPreferencesFormWrapper.find(RaisedButton)
       expect(submitButton.props().disabled).toBe(true)
-    })
-  })
-
-  describe('reduxForm', () => {
-    let reduxFormStub
-    let reduxFormConfig
-
-    beforeEach(() => {
-      reduxFormStub = {
-        reduxForm: sinon.stub().returns(() => {})
-      }
-      proxyquire('./UserPreferencesForm', {
-        'redux-form/immutable': reduxFormStub,
-        'react-intl': fakeReactIntl
-      })
-      reduxFormConfig = reduxFormStub.reduxForm.firstCall.args[0]
-    })
-
-    it('Should create a form called \'userPreferences\'', () => {
-      expect(reduxFormConfig.form).toEqual('userPreferences')
     })
   })
 })

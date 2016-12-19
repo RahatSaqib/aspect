@@ -34,7 +34,7 @@ describe('DataTable module', () => {
       messages: {}
     }
 
-    context('table.loading is true', () => {
+    describe('table.loading is true', () => {
       it('should render progress', () => {
         const props = _.merge({}, defaultProps, {
           table: defaultProps.table.set('loading', true)
@@ -45,7 +45,7 @@ describe('DataTable module', () => {
       })
     })
 
-    context('table.loading is false', () => {
+    describe('table.loading is false', () => {
       it('should not render progress', () => {
         const props = _.merge({}, defaultProps, {
           table: {
@@ -58,7 +58,7 @@ describe('DataTable module', () => {
       })
     })
 
-    context('having columns', () => {
+    describe('having columns', () => {
       it('should render table headers', () => {
         const props = _.merge({}, defaultProps, {
           columns: [
@@ -78,7 +78,7 @@ describe('DataTable module', () => {
       })
     })
 
-    context('having columns and items', () => {
+    describe('having columns and items', () => {
       it('should render table body with table rows', () => {
         const props = _.merge({}, defaultProps, {
           columns: [
@@ -121,7 +121,7 @@ describe('DataTable module', () => {
       })
     })
 
-    context('for table and pager items', () => {
+    describe('for table and pager items', () => {
       it('should render first page with ellipsis', () => {
         const props = _.merge({}, defaultProps, {
           table: defaultProps.table.merge({
@@ -143,16 +143,16 @@ describe('DataTable module', () => {
 
         const ChildrenWrapper = TableRowColumnWrapper.first().children()
         expect(ChildrenWrapper.first().prop('label')).toEqual('< Prev')
-        expect(ChildrenWrapper.at(1).prop('label')).toEqual('1')
-        expect(ChildrenWrapper.at(2).prop('label')).toEqual('2')
-        expect(ChildrenWrapper.at(3).prop('label')).toEqual('3')
-        expect(ChildrenWrapper.at(4).prop('label')).toEqual('4')
-        expect(ChildrenWrapper.at(5).prop('label')).toEqual('5')
-        expect(ChildrenWrapper.at(6).prop('label')).toEqual('6')
-        expect(ChildrenWrapper.at(7).prop('label')).toEqual('7')
+        expect(ChildrenWrapper.at(1).prop('label')).toEqual(1)
+        expect(ChildrenWrapper.at(2).prop('label')).toEqual(2)
+        expect(ChildrenWrapper.at(3).prop('label')).toEqual(3)
+        expect(ChildrenWrapper.at(4).prop('label')).toEqual(4)
+        expect(ChildrenWrapper.at(5).prop('label')).toEqual(5)
+        expect(ChildrenWrapper.at(6).prop('label')).toEqual(6)
+        expect(ChildrenWrapper.at(7).prop('label')).toEqual(7)
         expect(ChildrenWrapper.at(8).text()).toEqual('…')
-        expect(ChildrenWrapper.at(9).prop('label')).toEqual('9')
-        expect(ChildrenWrapper.at(10).prop('label')).toEqual('10')
+        expect(ChildrenWrapper.at(9).prop('label')).toEqual(9)
+        expect(ChildrenWrapper.at(10).prop('label')).toEqual(10)
         expect(ChildrenWrapper.last().prop('label')).toEqual('Next >')
       })
 
@@ -177,17 +177,17 @@ describe('DataTable module', () => {
 
         const ChildrenWrapper = TableRowColumnWrapper.first().children()
         expect(ChildrenWrapper.first().prop('label')).toEqual('< Prev')
-        expect(ChildrenWrapper.at(1).prop('label')).toEqual('1')
-        expect(ChildrenWrapper.at(2).prop('label')).toEqual('2')
+        expect(ChildrenWrapper.at(1).prop('label')).toEqual(1)
+        expect(ChildrenWrapper.at(2).prop('label')).toEqual(2)
         expect(ChildrenWrapper.at(3).text()).toEqual('…')
-        expect(ChildrenWrapper.at(4).prop('label')).toEqual('4')
-        expect(ChildrenWrapper.at(5).prop('label')).toEqual('5')
-        expect(ChildrenWrapper.at(6).prop('label')).toEqual('6')
-        expect(ChildrenWrapper.at(7).prop('label')).toEqual('7')
-        expect(ChildrenWrapper.at(8).prop('label')).toEqual('8')
+        expect(ChildrenWrapper.at(4).prop('label')).toEqual(4)
+        expect(ChildrenWrapper.at(5).prop('label')).toEqual(5)
+        expect(ChildrenWrapper.at(6).prop('label')).toEqual(6)
+        expect(ChildrenWrapper.at(7).prop('label')).toEqual(7)
+        expect(ChildrenWrapper.at(8).prop('label')).toEqual(8)
         expect(ChildrenWrapper.at(9).text()).toEqual('…')
-        expect(ChildrenWrapper.at(10).prop('label')).toEqual('11')
-        expect(ChildrenWrapper.at(11).prop('label')).toEqual('12')
+        expect(ChildrenWrapper.at(10).prop('label')).toEqual(11)
+        expect(ChildrenWrapper.at(11).prop('label')).toEqual(12)
         expect(ChildrenWrapper.last().prop('label')).toEqual('Next >')
       })
 
@@ -212,32 +212,21 @@ describe('DataTable module', () => {
 
         const ChildrenWrapper = TableRowColumnWrapper.first().children()
         expect(ChildrenWrapper.first().prop('label')).toEqual('< Prev')
-        expect(ChildrenWrapper.at(1).prop('label')).toEqual('1')
-        expect(ChildrenWrapper.at(2).prop('label')).toEqual('2')
+        expect(ChildrenWrapper.at(1).prop('label')).toEqual(1)
+        expect(ChildrenWrapper.at(2).prop('label')).toEqual(2)
         expect(ChildrenWrapper.at(3).text()).toEqual('…')
-        expect(ChildrenWrapper.at(4).prop('label')).toEqual('6')
-        expect(ChildrenWrapper.at(5).prop('label')).toEqual('7')
-        expect(ChildrenWrapper.at(6).prop('label')).toEqual('8')
-        expect(ChildrenWrapper.at(7).prop('label')).toEqual('9')
-        expect(ChildrenWrapper.at(8).prop('label')).toEqual('10')
-        expect(ChildrenWrapper.at(9).prop('label')).toEqual('11')
-        expect(ChildrenWrapper.at(10).prop('label')).toEqual('12')
+        expect(ChildrenWrapper.at(4).prop('label')).toEqual(6)
+        expect(ChildrenWrapper.at(5).prop('label')).toEqual(7)
+        expect(ChildrenWrapper.at(6).prop('label')).toEqual(8)
+        expect(ChildrenWrapper.at(7).prop('label')).toEqual(9)
+        expect(ChildrenWrapper.at(8).prop('label')).toEqual(10)
+        expect(ChildrenWrapper.at(9).prop('label')).toEqual(11)
+        expect(ChildrenWrapper.at(10).prop('label')).toEqual(12)
         expect(ChildrenWrapper.last().prop('label')).toEqual('Next >')
       })
     })
 
-    context('when initial mount', () => {
-      it('should call props.handleFetch', () => {
-        const props = _.merge({}, defaultProps, {
-          handleFetch: sinon.spy()
-        })
-        mountWithProvider(<DataTable {...props} />)
-
-        expect(props.handleFetch.calledOnce).toEqual(true)
-      })
-    })
-
-    context('when sort header clicked', () => {
+    describe('when sort header clicked', () => {
       it('should call props.handleFetch with new sort', () => {
         const props = _.merge({}, defaultProps, {
           columns: [
@@ -261,7 +250,7 @@ describe('DataTable module', () => {
       })
     })
 
-    context('when pager item clicked', () => {
+    describe('when pager item clicked', () => {
       it('should call props.handleFetch with new page', () => {
         const props = _.merge({}, defaultProps, {
           columns: [

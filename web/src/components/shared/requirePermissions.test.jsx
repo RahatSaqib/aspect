@@ -5,7 +5,7 @@ import { groupByPermissionTypes, isPermittedUser, requirePermissions } from './r
 
 describe('requirePermissions', () => {
   describe('groupByPermissionTypes', () => {
-    context('only required', () => {
+    describe('only required', () => {
       it('should parse correctly', () => {
         const permissionsByTypes = groupByPermissionTypes(['person:admin'])
 
@@ -19,7 +19,7 @@ describe('requirePermissions', () => {
   })
 
   describe('isPermittedUser', () => {
-    context('only required', () => {
+    describe('only required', () => {
       it('should be valid for admin user', () => {
         const isPermitted = isPermittedUser(Immutable.Set(['person:admin']), {
           required: ['person:admin'],
@@ -31,7 +31,7 @@ describe('requirePermissions', () => {
       })
     })
 
-    context('only forbidden', () => {
+    describe('only forbidden', () => {
       it('should be invalid for admin user', () => {
         const isPermitted = isPermittedUser(Immutable.Set(['person:admin']), {
           required: [],
@@ -43,7 +43,7 @@ describe('requirePermissions', () => {
       })
     })
 
-    context('only optional', () => {
+    describe('only optional', () => {
       it('should be valid for admin user', () => {
         const isPermitted = isPermittedUser(Immutable.Set(['person:admin']), {
           required: [],
@@ -55,7 +55,7 @@ describe('requirePermissions', () => {
       })
     })
 
-    context('required and forbidden', () => {
+    describe('required and forbidden', () => {
       it('should be valid for admin user', () => {
         const isPermitted = isPermittedUser(Immutable.Set(['person:admin']), {
           required: ['person:admin'],
@@ -77,7 +77,7 @@ describe('requirePermissions', () => {
       })
     })
 
-    context('required, forbidden and optional', () => {
+    describe('required, forbidden and optional', () => {
       it('should be valid for admin user', () => {
         const isPermitted = isPermittedUser(Immutable.Set(['person:admin', 'device:view']), {
           required: ['person:admin'],
@@ -116,7 +116,7 @@ describe('requirePermissions', () => {
     }
   }
 
-  context('given right user permissions', () => {
+  describe('given right user permissions', () => {
     const DecoratedComponent = requirePermissions({
       permissions: ['person:admin'],
       ForbiddenComponent
@@ -147,7 +147,7 @@ describe('requirePermissions', () => {
     })
   })
 
-  context('given wrong user permissions', () => {
+  describe('given wrong user permissions', () => {
     const DecoratedComponent = requirePermissions({
       permissions: ['person:admin'],
       ForbiddenComponent

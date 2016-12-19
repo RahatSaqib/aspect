@@ -28,9 +28,10 @@ const renderLanguageField = (props) => {
   )
 }
 
-const UserPreferencesForm = (props) => {
-  const { handleSubmit, pristine, invalid, loading, saving } = props
-  const { formatMessage } = props.intl
+export function UserPreferencesForm({
+  intl, handleSubmit, pristine, invalid, loading, saving
+}) {
+  const { formatMessage } = intl
 
   return (
     <form onSubmit={handleSubmit} className={styles.Form}>

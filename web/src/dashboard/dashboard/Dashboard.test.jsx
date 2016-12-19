@@ -16,17 +16,17 @@ describe('Dashboard', () => {
     formatMessage: message => message.defaultMessage
   }
 
-  context('React lifecycles', () => {
+  describe('React lifecycles', () => {
     let renderStub
-    before(() => {
+    beforeAll(() => {
       renderStub = sinon.stub(Dashboard.prototype, 'render', () => false)
     })
 
-    after(() => {
+    afterAll(() => {
       renderStub.restore()
     })
 
-    context('if query string contains "fl=1', () => {
+    describe('if query string contains "fl=1', () => {
       it('calls showAcknowledgement with user name when receiving new user', () => {
         const location = makeLocationObject({ fl: '1' })
         const showAcknowledgement = sinon.stub()
@@ -49,7 +49,7 @@ describe('Dashboard', () => {
       })
     })
 
-    context('if query string oes not contains "fl=1', () => {
+    describe('if query string oes not contains "fl=1', () => {
       it('calls showAcknowledgement with user name when receiving new user', () => {
         const location = makeLocationObject({ test: '2' })
         const showAcknowledgement = sinon.stub()

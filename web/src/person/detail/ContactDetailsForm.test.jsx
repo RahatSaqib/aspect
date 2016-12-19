@@ -1,27 +1,18 @@
 import React from 'react'
 import { shallow } from 'enzyme'
-import sinon from 'sinon'
-import proxyquire from 'proxyquire'
 import Immutable from 'immutable'
 import RaisedButton from 'material-ui/RaisedButton'
 import TextInput from '../../components/shared/TextInput'
 import PhoneInput from '../../components/shared/PhoneInput'
 import LocationSelector from '../../components/shared/LocationSelector'
 
-describe('ContactDetailsForm Component', () => {
-  const fakeReactIntl = {
-    injectIntl: component => component
-  }
+describe('ContactDetailsForm module', () => {
+  const {
+    validate,
+    ContactDetailsForm
+  } = require('./ContactDetailsForm')
 
-  describe('ContactDetailsForm', () => {
-    const fakeReduxForm = {
-      reduxForm: () => component => component
-    }
-    const ContactDetailsForm = proxyquire('./ContactDetailsForm', {
-      'redux-form/immutable': fakeReduxForm,
-      'react-intl': fakeReactIntl
-    }).default
-
+  describe('ContactDetailsForm component', () => {
     let props
     let ContactDetailsFormWrapper
 
@@ -132,94 +123,73 @@ describe('ContactDetailsForm Component', () => {
     })
   })
 
-  describe('reduxForm', () => {
-    let reduxFormStub
-    let reduxFormConfig
+
+  describe('validate function', () => {
+    const props = {
+      handleSubmit: () => {},
+      intl: {
+        formatMessage: message => message.defaultMessage
+      }
+    }
+    let initialContactDetails
 
     beforeEach(() => {
-      reduxFormStub = {
-        reduxForm: sinon.stub().returns(() => {})
-      }
-      proxyquire('./ContactDetailsForm', {
-        'redux-form/immutable': reduxFormStub,
-        'react-intl': fakeReactIntl
+      initialContactDetails = Immutable.Map({
+        name: 'John Smith',
+        email: null,
+        email2: null
       })
-      reduxFormConfig = reduxFormStub.reduxForm.firstCall.args[0]
     })
 
-    it('Should create a form called \'accountDetails\'', () => {
-      expect(reduxFormConfig.form).toEqual('accountDetails')
+    it('should validate that name has been entered', () => {
+      expect(validate(initialContactDetails, props)).toEqual({})
+      const contactDetails = initialContactDetails.set('name', '')
+      expect(validate(contactDetails, props)).toEqual({
+        name: 'Please enter your Full name'
+      })
     })
 
-    describe('validate function', () => {
-      const props = {
-        intl: {
-          formatMessage: message => message.defaultMessage
-        },
-        handleSubmit: () => {}
-      }
-      let validateFunction
-      let initialContactDetails
-
-      beforeEach(() => {
-        validateFunction = reduxFormConfig.validate
-        initialContactDetails = Immutable.Map({
-          name: 'John Smith',
-          email: null,
-          email2: null
-        })
+    it('should validate email addresses if they have been entered', () => {
+      let contactDetails = initialContactDetails.set('email', 'invalid email')
+      expect(validate(contactDetails, props)).toEqual({
+        email: 'Please enter a valid email address'
       })
 
-      it('should validate that name has been entered', () => {
-        expect(validateFunction(initialContactDetails, props)).toEqual({})
-        const contactDetails = initialContactDetails.set('name', '')
-        expect(validateFunction(contactDetails, props)).toEqual({
-          name: 'Please enter your Full name'
-        })
+      contactDetails = initialContactDetails.set('email2', 'invalid email')
+      expect(validate(contactDetails, props)).toEqual({
+        email2: 'Please enter a valid email address'
+      })
+    })
+
+    it('should validate name and both email addresses', () => {
+      let contactDetails = initialContactDetails.merge({
+        name: '',
+        email: 'Invalid Email',
+        email2: 'Another Invalid Email'
+      })
+      expect(validate(contactDetails, props)).toEqual({
+        email: 'Please enter a valid email address',
+        email2: 'Please enter a valid email address',
+        name: 'Please enter your Full name'
       })
 
-      it('should validate email addresses if they have been entered', () => {
-        let contactDetails = initialContactDetails.set('email', 'invalid email')
-        expect(validateFunction(contactDetails, props)).toEqual({
-          email: 'Please enter a valid email address'
-        })
-
-        contactDetails = initialContactDetails.set('email2', 'invalid email')
-        expect(validateFunction(contactDetails, props)).toEqual({
-          email2: 'Please enter a valid email address'
-        })
+      contactDetails = contactDetails.set('name', 'Abu Jenkins')
+      expect(validate(contactDetails, props)).toEqual({
+        email: 'Please enter a valid email address',
+        email2: 'Please enter a valid email address'
       })
 
-      it('should validate name and both email addresses', () => {
-        let contactDetails = initialContactDetails.merge({
-          name: '',
-          email: 'Invalid Email',
-          email2: 'Another Invalid Email'
-        })
-        expect(validateFunction(contactDetails, props)).toEqual({
-          email: 'Please enter a valid email address',
-          email2: 'Please enter a valid email address',
-          name: 'Please enter your Full name'
-        })
-
-        contactDetails = contactDetails.set('name', 'Abu Jenkins')
-        expect(validateFunction(contactDetails, props)).toEqual({
-          email: 'Please enter a valid email address',
-          email2: 'Please enter a valid email address'
-        })
-
-        contactDetails = contactDetails.set('email2', 'valid@email.address')
-        expect(validateFunction(contactDetails, props)).toEqual({
-          email: 'Please enter a valid email address'
-        })
-
-        contactDetails = contactDetails.set('email', 'another.valid@email.address')
-        expect(validateFunction(contactDetails, props)).toEqual({})
+      contactDetails = contactDetails.set('email2', 'valid@email.address')
+      expect(validate(contactDetails, props)).toEqual({
+        email: 'Please enter a valid email address'
       })
 
-      it('should be able to handle an undefined parameter', () => {
-        expect(validateFunction(undefined, props)).toEqual({})
-      })
+      contactDetails = contactDetails.set('email', 'another.valid@email.address')
+      expect(validate(contactDetails, props)).toEqual({})
+    })
+
+    it('should be able to handle an undefined parameter', () => {
+      expect(validate(undefined, props)).toEqual({})
     })
   })
 })

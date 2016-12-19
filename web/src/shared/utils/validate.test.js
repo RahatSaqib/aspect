@@ -25,26 +25,26 @@ describe('validate', () => {
       'IP-and-port@127.0.0.1:25', 'trailing-dots@test.de.', 'dot-on-dot-in-domainname@te..st.de',
       'dot-first-in-domain@.test.de', 'mg@ns.i']
 
-    it('should return true for valid email addresses', () => {
-      _.each(validEmailAddresses, (address) => {
+    _.each(validEmailAddresses, (address) => {
+      it(`should return true for valid email address (${address})`, () => {
         expect(emailAddress(address).isValid()).toBe(true)
       })
     })
 
-    it('should return false for invalid email addresses', () => {
-      _.each(invalidEmailAddresses, (address) => {
-        expect(emailAddress(address).isValid()).toBe(false, `"${address}" is an invalid email address`)
+    _.each(invalidEmailAddresses, (address) => {
+      it(`should return false for invalid email address (${address})`, () => {
+        expect(emailAddress(address).isValid()).toBe(false)
       })
     })
 
-    it('should return false for blank email addresses by default', () => {
-      _.each(['', null, undefined], (address) => {
-        expect(emailAddress(address).isValid()).toBe(false, 'Blank email addresses are invalid unless optional is called')
+    _.each(['', null, undefined], (address) => {
+      it(`should return false for blank email address (${address}) by default`, () => {
+        expect(emailAddress(address).isValid()).toBe(false)
       })
     })
 
-    it('should return true for blank email addresses is optional was called', () => {
-      _.each(['', null, undefined], (address) => {
+    _.each(['', null, undefined], (address) => {
+      it(`should return true for blank email address (${address}) when is optional was called`, () => {
         expect(emailAddress(address).optional().isValid()).toBe(true)
       })
     })

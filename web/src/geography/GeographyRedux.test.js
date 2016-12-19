@@ -1,6 +1,5 @@
 import Immutable from 'immutable'
 import _ from 'lodash'
-import proxyquire from 'proxyquire'
 import sinon from 'sinon'
 import geography, { types, LazyLoadItems, LazyLoadParent, LazyLoadChild } from './GeographyRedux'
 
@@ -13,10 +12,10 @@ describe('geography reducer', () => {
     })
 
     it('should contain an empty LazyLoadItems object that isn\'t loading and has not been refreshed yet', () => {
-      expect(initialState.countriesForLocationSelector).toBeA(Immutable.Record)
+      expect(initialState.countriesForLocationSelector).toBeInstanceOf(Immutable.Record)
       expect(initialState.countriesForLocationSelector.loading).toBe(false)
-      expect(initialState.countriesForLocationSelector.lastRefreshed).toNotExist()
-      expect(initialState.countriesForLocationSelector.items).toBeA(Immutable.List)
+      expect(initialState.countriesForLocationSelector.lastRefreshed).not.toBeDefined()
+      expect(initialState.countriesForLocationSelector.items).toBeInstanceOf(Immutable.List)
       expect(initialState.countriesForLocationSelector.items.size).toEqual(0)
     })
   })
@@ -51,14 +50,14 @@ describe('geography reducer', () => {
           const countryIds = _.map(countriesReceived, 'id')
           const countryNames = _.map(countriesReceived, 'name')
 
-          expect(state.countriesForLocationSelector.items).toBeA(Immutable.List)
+          expect(state.countriesForLocationSelector.items).toBeInstanceOf(Immutable.List)
           state.countriesForLocationSelector.items.forEach((countryRecord) => {
             expect(countryIds).toContain(countryRecord.id)
             expect(countryNames).toContain(countryRecord.name)
-            expect(countryRecord.children).toBeA(Immutable.Record)
+            expect(countryRecord.children).toBeInstanceOf(Immutable.Record)
             expect(countryRecord.children.loading).toBe(false)
             expect(countryRecord.children.items.isEmpty()).toBe(true)
-            expect(countryRecord.children.lastRefreshed).toNotExist()
+            expect(countryRecord.children.lastRefreshed).not.toBeDefined()
           })
         })
       })
@@ -85,28 +84,28 @@ describe('geography reducer', () => {
           const countryIds = _.map(countriesReceived, 'id')
           const countryNames = _.map(countriesReceived, 'name')
 
-          expect(state.countriesForLocationSelector.items).toBeA(Immutable.List)
+          expect(state.countriesForLocationSelector.items).toBeInstanceOf(Immutable.List)
           state.countriesForLocationSelector.items.forEach((countryRecord) => {
             expect(countryIds).toContain(countryRecord.id)
             expect(countryNames).toContain(countryRecord.name)
-            expect(countryRecord.children).toBeA(Immutable.Record)
+            expect(countryRecord.children).toBeInstanceOf(Immutable.Record)
             expect(countryRecord.children.loading).toBe(false)
             const countryReceived = _.find(countriesReceived, { id: countryRecord.id })
             if (countryReceived.states) {
               const stateIds = _.map(countryReceived.states, 'id')
               const stateNames = _.map(countryReceived.states, 'name')
-              expect(countryRecord.children.items).toBeA(Immutable.List)
+              expect(countryRecord.children.items).toBeInstanceOf(Immutable.List)
               expect(countryRecord.children.lastRefreshed).toEqual(now)
               countryRecord.children.items.forEach((stateRecord) => {
                 expect(stateIds).toContain(stateRecord.id)
                 expect(stateNames).toContain(stateRecord.name)
-                expect(stateRecord.children).toBeA(Immutable.Record)
+                expect(stateRecord.children).toBeInstanceOf(Immutable.Record)
                 expect(stateRecord.children.loading).toBe(false)
                 const stateReceived = _.find(countryReceived.states, { id: stateRecord.id })
                 if (stateReceived.lgas) {
                   const lgaIds = _.map(stateReceived.lgas, 'id')
                   const lgaNames = _.map(stateReceived.lgas, 'name')
-                  expect(stateRecord.children.items).toBeA(Immutable.List)
+                  expect(stateRecord.children.items).toBeInstanceOf(Immutable.List)
                   expect(stateRecord.children.lastRefreshed).toEqual(now)
                   stateRecord.children.items.forEach((lgaRecord) => {
                     expect(lgaIds).toContain(lgaRecord.id)
@@ -114,12 +113,12 @@ describe('geography reducer', () => {
                   })
                 } else {
                   expect(stateRecord.children.items.isEmpty()).toBe(true)
-                  expect(stateRecord.children.lastRefreshed).toNotExist()
+                  expect(stateRecord.children.lastRefreshed).not.toBeDefined()
                 }
               })
             } else {
               expect(countryRecord.children.items.isEmpty()).toBe(true)
-              expect(countryRecord.children.lastRefreshed).toNotExist()
+              expect(countryRecord.children.lastRefreshed).not.toBeDefined()
             }
           })
         })
@@ -203,7 +202,7 @@ describe('geography reducer', () => {
           expect(initialState.getIn(['countriesForLocationSelector', 'items',
             indexOfSelectedCountry, 'children', 'loading'])).toBe(true)
           expect(initialState.getIn(['countriesForLocationSelector', 'items',
-            indexOfSelectedCountry, 'children', 'lastRefreshed'])).toNotExist()
+            indexOfSelectedCountry, 'children', 'lastRefreshed'])).not.toBeDefined()
           const newState = geography(initialState, {
             type: types.RECEIVE_STATES_FOR_LOCATION_SELECTOR,
             states: [],
@@ -232,15 +231,15 @@ describe('geography reducer', () => {
             })
             const selectedCountryStates = newState.getIn(['countriesForLocationSelector', 'items', indexOfSelectedCountry, 'children', 'items'])
 
-            expect(selectedCountryStates).toBeA(Immutable.List)
+            expect(selectedCountryStates).toBeInstanceOf(Immutable.List)
             expect(selectedCountryStates.size).toEqual(statesReceived.length)
             selectedCountryStates.forEach((stateRecord) => {
               expect(stateIds).toContain(stateRecord.id)
               expect(stateNames).toContain(stateRecord.name)
-              expect(stateRecord.children).toBeA(Immutable.Record)
+              expect(stateRecord.children).toBeInstanceOf(Immutable.Record)
               expect(stateRecord.children.loading).toBe(false)
               expect(stateRecord.children.items.isEmpty()).toBe(true)
-              expect(stateRecord.children.lastRefreshed).toNotExist()
+              expect(stateRecord.children.lastRefreshed).not.toBeDefined()
             })
           })
         })
@@ -264,18 +263,18 @@ describe('geography reducer', () => {
             })
             const selectedCountryStates = newState.getIn(['countriesForLocationSelector', 'items', indexOfSelectedCountry, 'children', 'items'])
 
-            expect(selectedCountryStates).toBeA(Immutable.List)
+            expect(selectedCountryStates).toBeInstanceOf(Immutable.List)
             expect(selectedCountryStates.size).toEqual(statesReceived.length)
             selectedCountryStates.forEach((stateRecord) => {
               expect(stateIds).toContain(stateRecord.id)
               expect(stateNames).toContain(stateRecord.name)
-              expect(stateRecord.children).toBeA(Immutable.Record)
+              expect(stateRecord.children).toBeInstanceOf(Immutable.Record)
               expect(stateRecord.children.loading).toBe(false)
               const stateReceived = _.find(statesReceived, { id: stateRecord.id })
               if (stateReceived.lgas) {
                 const lgaIds = _.map(stateReceived.lgas, 'id')
                 const lgaNames = _.map(stateReceived.lgas, 'name')
-                expect(stateRecord.children.items).toBeA(Immutable.List)
+                expect(stateRecord.children.items).toBeInstanceOf(Immutable.List)
                 expect(stateRecord.children.lastRefreshed).toEqual(now)
                 stateRecord.children.items.forEach((lgaRecord) => {
                   expect(lgaIds).toContain(lgaRecord.id)
@@ -283,7 +282,7 @@ describe('geography reducer', () => {
                 })
               } else {
                 expect(stateRecord.children.items.isEmpty()).toBe(true)
-                expect(stateRecord.children.lastRefreshed).toNotExist()
+                expect(stateRecord.children.lastRefreshed).not.toBeDefined()
               }
             })
           })
@@ -439,7 +438,7 @@ describe('geography reducer', () => {
             'loading'])).toBe(true)
           expect(initialState.getIn(['countriesForLocationSelector', 'items',
             indexOfSelectedCountry, 'children', 'items', indexOfSelectedState, 'children',
-            'lastRefreshed'])).toNotExist()
+            'lastRefreshed'])).not.toBeDefined()
           const newState = geography(initialState, { type: types.RECEIVE_LGAS_FOR_LOCATION_SELECTOR,
             lgas: [],
             selectedCountryId,
@@ -470,7 +469,7 @@ describe('geography reducer', () => {
           const selectedStateLgas = newState.getIn(['countriesForLocationSelector', 'items', indexOfSelectedCountry,
             'children', 'items', indexOfSelectedState, 'children', 'items'])
 
-          expect(selectedStateLgas).toBeA(Immutable.List)
+          expect(selectedStateLgas).toBeInstanceOf(Immutable.List)
           expect(selectedStateLgas.size).toEqual(lgasReceived.length)
           selectedStateLgas.forEach((lgaRecord) => {
             expect(lgaIds).toContain(lgaRecord.id)
@@ -498,10 +497,11 @@ describe('geography action creators', () => {
   })
 
   function createGeographyReduxWithStubs(fetchStub) {
-    const proxyDependencies = {
-      '../shared/utils/fetch': fetchStub
-    }
-    geographyRedux = proxyquire('./GeographyRedux', proxyDependencies)
+    jest
+      .resetModules()
+      .mock('../shared/utils/fetch', () => fetchStub)
+
+    geographyRedux = require('./GeographyRedux')
   }
 
   function createCountriesStateWith(countries, lastRefreshed) {
@@ -547,14 +547,14 @@ describe('geography action creators', () => {
     return countriesState.getIn(['items', countryIndex, 'children', 'items', stateIndex])
   }
 
-  before(() => {
+  beforeAll(() => {
     now = new Date()
     clock = sinon.useFakeTimers(now.getTime())
     freshCacheTime = new Date(now - (fiveMinutes - 1))
     expiredCacheTime = new Date(now - fiveMinutes - 1)
   })
 
-  after(() => {
+  afterAll(() => {
     clock.restore()
   })
 
@@ -892,7 +892,7 @@ describe('geography action creators', () => {
   })
 
   describe('fetchStatesForLocationSelector', () => {
-    before(() => {
+    beforeAll(() => {
       countriesState = createCountriesStateWith([{ id: 1, name: 'South Africa' },
         { id: 2, name: 'United States' }], now)
     })
@@ -1149,7 +1149,7 @@ describe('geography action creators', () => {
   })
 
   describe('fetchLgasForLocationSelector', () => {
-    before(() => {
+    beforeAll(() => {
       countriesState = createCountriesStateWith([{
         id: 1,
         name: 'South Africa',

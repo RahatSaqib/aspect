@@ -1,44 +1,28 @@
 import React from 'react'
 import { shallow } from 'enzyme'
-import sinon from 'sinon'
-import proxyquire from 'proxyquire'
-import Immutable from 'immutable'
+import Helmet from 'react-helmet'
 import LinearProgress from 'material-ui/LinearProgress'
 import Paper from 'material-ui/Paper'
-import Helmet from 'react-helmet'
 import { Tabs, Tab } from 'material-ui/Tabs'
 
 import { Visible } from '../../components/pureGrids'
 import ContactDetailsForm from '../../person/detail/ContactDetailsForm'
 import LoginDetailsForm from '../../person/detail/LoginDetailsForm'
 import UserPreferencesForm from '../../person/detail/UserPreferencesForm'
-import { AccountDetails } from '../AccountRedux'
+import { AccountDetailsData } from '../AccountRedux'
 
-describe('AccountDetails Component', () => {
-  describe('AccountDetails', () => {
-    const fakeIntl = {
-      injectIntl: component => component
-    }
-    const fakeReactRedux = {
-      connect: () => component => component
-    }
-    const fakeRedux = {
-      bindActionCreators: actionCreators => actionCreators
-    }
-    const AccountDetailsComponent = proxyquire('./AccountDetails', {
-      'react-intl': fakeIntl,
-      'react-redux': fakeReactRedux,
-      redux: fakeRedux
-    }).AccountDetailsContainer
+describe('AccountDetails module', () => {
+  const {
+    AccountDetails
+  } = require('./AccountDetails')
 
+  describe('AccountDetails component', () => {
     let props
     let AccountDetailsWrapper
 
     const shallowRenderAccountDetails = () => {
-      AccountDetailsWrapper = shallow(<AccountDetailsComponent {...props} />)
+      AccountDetailsWrapper = shallow(<AccountDetails {...props} />)
     }
-
-    const AccountDetailsRecord = new AccountDetails()
 
     beforeEach(() => {
       props = {
@@ -47,7 +31,7 @@ describe('AccountDetails Component', () => {
         setPageTitle: () => {},
         loading: false,
         saving: false,
-        accountDetails: AccountDetailsRecord.get('data'),
+        accountDetails: new AccountDetailsData(),
         saveContactDetails: () => {},
         saveLoginDetails: () => {},
         saveUserPreferences: () => {},
@@ -124,74 +108,6 @@ describe('AccountDetails Component', () => {
         const userPreferencesForm = thirdTab.find(UserPreferencesForm)
         expect(userPreferencesForm.props().initialValues).toEqual(props.accountDetails.get('userPreferences'))
         expect(userPreferencesForm.props().onSubmit).toEqual(props.saveUserPreferences)
-      })
-    })
-  })
-
-  describe('react-redux connect', () => {
-    const expectedBoundActionCreators = { value: 'Bound Action Creators' }
-    let reactReduxStub
-    let intlStub
-    let mapStateToProps
-    let mapDispatchToProps
-    let reduxStub
-    let accountDetailsCreatorsStub
-    let acknowledgementCreatorsStub
-    beforeEach(() => {
-      reactReduxStub = {
-        connect: sinon.stub().returns(() => {})
-      }
-      intlStub = {
-        injectIntl: sinon.stub().returns(() => {})
-      }
-      reduxStub = {
-        bindActionCreators: sinon.stub().returns(expectedBoundActionCreators)
-      }
-      accountDetailsCreatorsStub = {
-        fetchAccountDetails: () => {},
-        saveContactDetails: () => {},
-        saveLoginDetails: () => {},
-        saveUserPreferences: () => {}
-      }
-      acknowledgementCreatorsStub = {
-        showAcknowledgement: () => {}
-      }
-      proxyquire('./AccountDetails', {
-        'react-intl': intlStub,
-        'react-redux': reactReduxStub,
-        redux: reduxStub,
-        '../AccountRedux': accountDetailsCreatorsStub,
-        '../../appNotification/AppNotificationRedux': acknowledgementCreatorsStub
-      })
-      mapStateToProps = reactReduxStub.connect.firstCall.args[0]
-      mapDispatchToProps = reactReduxStub.connect.firstCall.args[1]
-    })
-
-    it('mapDispatchToProps should bind fetchAccountDetails and saveAccountDetails action creators to the component\'s properties', () => {
-      const expectedDispatcher = { value: 'I am a dispatch function' }
-      expect(mapDispatchToProps(expectedDispatcher)).toEqual(expectedBoundActionCreators)
-      expect(reduxStub.bindActionCreators.lastCall.args).toEqual([{
-        showAcknowledgement: acknowledgementCreatorsStub.showAcknowledgement,
-        fetchAccountDetails: accountDetailsCreatorsStub.fetchAccountDetails,
-        saveContactDetails: accountDetailsCreatorsStub.saveContactDetails,
-        saveLoginDetails: accountDetailsCreatorsStub.saveLoginDetails,
-        saveUserPreferences: accountDetailsCreatorsStub.saveUserPreferences
-      }, expectedDispatcher])
-    })
-
-    it('mapStateToProps should map loading, saving and accountDetails from accountDetails on state', () => {
-      const accountDetails = {
-        loading: false,
-        saving: false,
-        data: { value: 'This object contains the user\'s account details' }
-      }
-      const state = {
-        accountDetails: Immutable.Map(accountDetails)
-      }
-      expect(mapStateToProps(state)).toEqual({
-        loading: accountDetails.loading,
-        saving: accountDetails.saving,
-        accountDetails: accountDetails.data
       })
     })
   })

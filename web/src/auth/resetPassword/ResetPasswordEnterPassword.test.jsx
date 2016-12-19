@@ -1,32 +1,19 @@
 import React from 'react'
 import { shallow } from 'enzyme'
-import proxyquire from 'proxyquire'
 import Immutable from 'immutable'
-import sinon from 'sinon'
 import { Link } from 'react-router'
 import RaisedButton from 'material-ui/RaisedButton'
 import FlatButton from 'material-ui/FlatButton'
 import TextInput from '../../components/shared/TextInput'
 import StrongPasswordInput from '../../components/shared/StrongPasswordInput'
 
-describe('Reset Password Enter Password Form', () => {
-  const fakeReactIntl = {
-    injectIntl: component => component,
-    defineMessages: messages => messages
-  }
+describe('ResetPasswordEnterPassword module', () => {
+  const {
+    ResetPasswordEnterPassword,
+    validate
+  } = require('./ResetPasswordEnterPassword')
 
   describe('ResetPasswordEnterPassword component', () => {
-    const fakeReduxForm = {
-      reduxForm: () => component => component
-    }
-    const ResetPasswordEnterPassword = proxyquire('./ResetPasswordEnterPassword', {
-      'redux-form/immutable': fakeReduxForm,
-      'react-intl': fakeReactIntl,
-      './messages': proxyquire('./messages', {
-        'react-intl': fakeReactIntl
-      }).default
-    }).default
-
     let props
     let ResetPasswordEnterPasswordWrapper
 
@@ -122,76 +109,54 @@ describe('Reset Password Enter Password Form', () => {
     })
   })
 
-  describe('reduxForm', () => {
-    let reduxFormStub
-    let reduxFormConfig
+  describe('validate function', () => {
+    const props = {
+      intl: {
+        formatMessage: message => message.defaultMessage
+      }
+    }
+    let initialPasswordFields
 
     beforeEach(() => {
-      reduxFormStub = {
-        reduxForm: sinon.stub().returns(() => {})
-      }
-      proxyquire('./ResetPasswordEnterPassword', {
-        'redux-form/immutable': reduxFormStub,
-        'react-intl': fakeReactIntl
+      initialPasswordFields = Immutable.Map({
+        newPassword: '',
+        confirmNewPassword: ''
       })
-      reduxFormConfig = reduxFormStub.reduxForm.firstCall.args[0]
     })
 
-    it('Should create a form called \'resetPasswordEnterNewPassword\'', () => {
-      expect(reduxFormConfig.form).toEqual('resetPasswordEnterNewPassword')
+    it('Should validate required password', () => {
+      expect(validate(initialPasswordFields, props)).toEqual({
+        newPassword: 'Please enter a new password'
+      })
     })
 
-    describe('validate function', () => {
-      const props = {
-        intl: {
-          formatMessage: message => message.defaultMessage
-        }
-      }
-      let validateFunction
-      let initialPasswordFields
-
-      beforeEach(() => {
-        validateFunction = reduxFormConfig.validate
-        initialPasswordFields = Immutable.Map({
-          newPassword: '',
-          confirmNewPassword: ''
-        })
+    it('Should validate that the new password is valid', () => {
+      let passwordFields = initialPasswordFields.set('newPassword', 'test')
+      expect(validate(passwordFields, props)).toEqual({
+        newPassword: 'Your password needs to be at least 8 characters long',
+        confirmNewPassword: 'These passwords don\'t match'
       })
 
-      it('Should validate required password', () => {
-        expect(validateFunction(initialPasswordFields, props)).toEqual({
-          newPassword: 'Please enter a new password'
-        })
+      passwordFields = initialPasswordFields.set('newPassword', 'testabcd')
+      expect(validate(passwordFields, props)).toEqual({
+        newPassword: 'Your password needs to contain at least one number or special character (%!$*...)',
+        confirmNewPassword: 'These passwords don\'t match'
       })
 
-      it('Should validate that the new password is valid', () => {
-        let passwordFields = initialPasswordFields.set('newPassword', 'test')
-        expect(validateFunction(passwordFields, props)).toEqual({
-          newPassword: 'Your password needs to be at least 8 characters long',
-          confirmNewPassword: 'These passwords don\'t match'
-        })
+      passwordFields = initialPasswordFields.set('newPassword', 'testabc1')
+      expect(validate(passwordFields, props)).toEqual({
+        confirmNewPassword: 'These passwords don\'t match'
+      })
+    })
 
-        passwordFields = initialPasswordFields.set('newPassword', 'testabcd')
-        expect(validateFunction(passwordFields, props)).toEqual({
-          newPassword: 'Your password needs to contain at least one number or special character (%!$*...)',
-          confirmNewPassword: 'These passwords don\'t match'
-        })
-
-        passwordFields = initialPasswordFields.set('newPassword', 'testabc1')
-        expect(validateFunction(passwordFields, props)).toEqual({
-          confirmNewPassword: 'These passwords don\'t match'
-        })
+    it('Should validate confirm password is equal to password', () => {
+      let passwordFields = initialPasswordFields.set('newPassword', 'testab1$')
+      expect(validate(passwordFields, props)).toEqual({
+        confirmNewPassword: 'These passwords don\'t match'
       })
 
-      it('Should validate confirm password is equal to password', () => {
-        let passwordFields = initialPasswordFields.set('newPassword', 'testab1$')
-        expect(validateFunction(passwordFields, props)).toEqual({
-          confirmNewPassword: 'These passwords don\'t match'
-        })
-
-        passwordFields = passwordFields.set('confirmNewPassword', 'testab1$')
-        expect(validateFunction(passwordFields, props)).toEqual({ })
-      })
+      passwordFields = passwordFields.set('confirmNewPassword', 'testab1$')
+      expect(validate(passwordFields, props)).toEqual({ })
     })
   })
 })

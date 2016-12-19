@@ -1,19 +1,9 @@
 import React from 'react'
 import { shallow } from 'enzyme'
-import proxyquire from 'proxyquire'
+
+import FlagIcon from './FlagIcon'
 
 describe('FlagIcon', () => {
-  let FlagIcon
-
-  beforeEach(() => {
-    FlagIcon = proxyquire('./FlagIcon', {
-      './FlagIcon.css': {
-        'flag-icon': 'flag-icon',
-        'flag-za': 'flag-za'
-      }
-    }).default
-  })
-
   it('should render an i tag with the correct flag class names', () => {
     const FlagIconWrapper = shallow(<FlagIcon countryIsoAlpha2Code="ZA" />)
 

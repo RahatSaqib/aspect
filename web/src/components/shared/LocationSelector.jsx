@@ -1,5 +1,5 @@
 import _ from 'lodash'
-import React from 'react'
+import React, { PureComponent } from 'react'
 import LinearProgress from 'material-ui/LinearProgress'
 import { injectIntl, defineMessages } from 'react-intl'
 import { bindActionCreators } from 'redux'
@@ -77,7 +77,7 @@ const renderLgaSelectField = ({ input, meta, ...restProps }) => (
   />
 )
 
-class LocationSelector extends React.PureComponent {
+export class LocationSelector extends PureComponent {
   componentWillReceiveProps(nextProps) {
     const { selectedCountryId, selectedStateId } = this.props
     const { changeFieldValue, formName, stateIdFieldName, lgaIdFieldName } = nextProps

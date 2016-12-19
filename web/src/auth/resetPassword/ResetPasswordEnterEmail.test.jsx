@@ -1,6 +1,5 @@
 import React from 'react'
 import { shallow } from 'enzyme'
-import proxyquire from 'proxyquire'
 import Immutable from 'immutable'
 import sinon from 'sinon'
 import RaisedButton from 'material-ui/RaisedButton'
@@ -8,24 +7,13 @@ import { Link } from 'react-router'
 import FlatButton from 'material-ui/FlatButton'
 import TextInput from '../../components/shared/TextInput'
 
-describe('Reset Password Enter Email Form', () => {
-  const fakeReactIntl = {
-    injectIntl: component => component,
-    defineMessages: messages => messages
-  }
+describe('ResetPasswordEnterEmail module', () => {
+  const {
+    ResetPasswordEnterEmail,
+    validate
+  } = require('./ResetPasswordEnterEmail')
 
   describe('ResetPasswordEnterEmail component', () => {
-    const fakeReduxForm = {
-      reduxForm: () => component => component
-    }
-    const ResetPasswordEnterEmail = proxyquire('./ResetPasswordEnterEmail', {
-      'redux-form/immutable': fakeReduxForm,
-      'react-intl': fakeReactIntl,
-      './messages': proxyquire('./messages', {
-        'react-intl': fakeReactIntl
-      }).default
-    }).default
-
     let props
     let ResetPasswordEnterEmailWrapper
 
@@ -126,61 +114,39 @@ describe('Reset Password Enter Email Form', () => {
     })
   })
 
-  describe('reduxForm', () => {
-    let reduxFormStub
-    let reduxFormConfig
+  describe('validate function', () => {
+    const props = {
+      intl: {
+        formatMessage: message => message.defaultMessage
+      }
+    }
+    let initialEmailField
 
     beforeEach(() => {
-      reduxFormStub = {
-        reduxForm: sinon.stub().returns(() => {})
-      }
-      proxyquire('./ResetPasswordEnterEmail', {
-        'redux-form/immutable': reduxFormStub,
-        'react-intl': fakeReactIntl
+      initialEmailField = Immutable.Map({
+        emailAddress: ''
       })
-      reduxFormConfig = reduxFormStub.reduxForm.firstCall.args[0]
     })
 
-    it('Should create a form called \'resetPasswordEnterEmail\'', () => {
-      expect(reduxFormConfig.form).toEqual('resetPasswordEnterEmail')
+    it('Should validate required email address', () => {
+      expect(validate(initialEmailField, props)).toEqual({
+        emailAddress: 'Please enter a valid email address'
+      })
     })
 
-    describe('validate function', () => {
-      const props = {
-        intl: {
-          formatMessage: message => message.defaultMessage
-        }
-      }
-      let validateFunction
-      let initialEmailField
-
-      beforeEach(() => {
-        validateFunction = reduxFormConfig.validate
-        initialEmailField = Immutable.Map({
-          emailAddress: ''
-        })
+    it('Should validate that the email address is valid', () => {
+      let emailField = initialEmailField.set('emailAddress', 'test')
+      expect(validate(emailField, props)).toEqual({
+        emailAddress: 'Please enter a valid email address'
       })
 
-      it('Should validate required email address', () => {
-        expect(validateFunction(initialEmailField, props)).toEqual({
-          emailAddress: 'Please enter a valid email address'
-        })
+      emailField = initialEmailField.set('emailAddress', 'test@example')
+      expect(validate(emailField, props)).toEqual({
+        emailAddress: 'Please enter a valid email address'
       })
 
-      it('Should validate that the email address is valid', () => {
-        let emailField = initialEmailField.set('emailAddress', 'test')
-        expect(validateFunction(emailField, props)).toEqual({
-          emailAddress: 'Please enter a valid email address'
-        })
-
-        emailField = initialEmailField.set('emailAddress', 'test@example')
-        expect(validateFunction(emailField, props)).toEqual({
-          emailAddress: 'Please enter a valid email address'
-        })
-
-        emailField = initialEmailField.set('emailAddress', 'test@example.com')
-        expect(validateFunction(emailField, props)).toEqual({ })
-      })
+      emailField = initialEmailField.set('emailAddress', 'test@example.com')
+      expect(validate(emailField, props)).toEqual({ })
     })
   })
 })
