@@ -92,9 +92,33 @@ const messages = defineMessages({
     id: 'pages.InventoryAdjustmentForm.cancel',
     defaultMessage: 'Cancel'
   },
+  expiryDateRequired: {
+    id: 'pages.InventoryAdjustmentForm.expiryDateRequired',
+    defaultMessage: 'Please specify an expiry date'
+  },
+  siteRequired: {
+    id: 'pages.InventoryAdjustmentForm.siteRequired',
+    defaultMessage: 'Please select a site'
+  },
+  siteShouldBeDifferent: {
+    id: 'pages.InventoryAdjustmentForm.siteShouldBeDifferent',
+    defaultMessage: 'Please choose a different site'
+  },
   quantityRequired: {
     id: 'pages.InventoryAdjustmentForm.quantityRequired',
     defaultMessage: 'Please specify the quantity that you wish to {operation}'
+  },
+  reasonRequired: {
+    id: 'pages.InventoryAdjustmentForm.reasonRequired',
+    defaultMessage: 'Please select a reason'
+  },
+  dateRequired: {
+    id: 'pages.InventoryAdjustmentForm.dateRequired',
+    defaultMessage: 'Please specify a date'
+  },
+  dateFromAfterDateTo: {
+    id: 'pages.InventoryAdjustmentForm.dateFromAfterDateTo',
+    defaultMessage: 'Please choose a date later or equal to from date'
   },
   ConsumableReason_Expired: {
     id: 'pages.InventoryAdjustmentForm.ConsumableReason_Expired',
@@ -316,8 +340,43 @@ const validate = (inventoryAdjustmentDetails, props) => {
   const { intl: { formatMessage }, operation } = props
   const errors = {}
   if (inventoryAdjustmentDetails) {
-    if (!inventoryAdjustmentDetails.get('quantity')) {
+    if (inventoryAdjustmentDetails.get('canExpire') &&
+      !inventoryAdjustmentDetails.get('expiresOn')) {
+      errors.expiresOn = formatMessage(messages.expiryDateRequired)
+    }
+    if ([removeOperation, transferOperation].includes(operation) &&
+      !inventoryAdjustmentDetails.get('fromSiteId')) {
+      errors.fromSiteId = formatMessage(messages.siteRequired)
+    }
+    if ([addOperation, transferOperation].includes(operation) &&
+      !inventoryAdjustmentDetails.get('toSiteId')) {
+      errors.toSiteId = formatMessage(messages.siteRequired)
+    }
+    if (operation === transferOperation && !errors.toSiteId &&
+      inventoryAdjustmentDetails.get('fromSiteId') === inventoryAdjustmentDetails.get('toSiteId')) {
+      errors.toSiteId = formatMessage(messages.siteShouldBeDifferent)
+    }
+    if (!inventoryAdjustmentDetails.get('quantity') ||
+      inventoryAdjustmentDetails.get('quantity') <= 0) {
       errors.quantity = formatMessage(messages.quantityRequired, { operation })
+    }
+    if (operation === removeOperation && !inventoryAdjustmentDetails.get('reasonId')) {
+      errors.reasonId = formatMessage(messages.reasonRequired)
+    }
+    const selectedReason = props.consumableReasons.items.find(
+      reason => reason.get('id') === inventoryAdjustmentDetails.get('reasonId'))
+    if (operation === removeOperation && selectedReason &&
+      selectedReason.get('i18nKey') === 'ConsumableReason_TestConducted') {
+      if (!inventoryAdjustmentDetails.get('dateAdjustedFrom')) {
+        errors.dateAdjustedFrom = formatMessage(messages.dateRequired)
+      }
+      if (!inventoryAdjustmentDetails.get('dateAdjustedTo')) {
+        errors.dateAdjustedTo = formatMessage(messages.dateRequired)
+      } else if (inventoryAdjustmentDetails.get('dateAdjustedFrom') > inventoryAdjustmentDetails.get('dateAdjustedTo')) {
+        errors.dateAdjustedTo = formatMessage(messages.dateFromAfterDateTo)
+      }
+    } else if (!inventoryAdjustmentDetails.get('dateAdjusted')) {
+      errors.dateAdjusted = formatMessage(messages.dateRequired)
     }
   }
   return errors
