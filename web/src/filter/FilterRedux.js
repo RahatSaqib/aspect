@@ -5,7 +5,14 @@ export const types = {
   CONFIGURE_LIST_FILTER: 'CONFIGURE_LIST_FILTER',
 
   CLEAR_LIST_FILTER: 'CLEAR_LIST_FILTER',
-  CHANGE_LIST_FILTER: 'CHANGE_LIST_FILTER'
+  CHANGE_LIST_FILTER: 'CHANGE_LIST_FILTER',
+
+  EXPORT_SHOW_BUTTONS: 'EXPORT_SHOW_BUTTONS',
+  EXPORT_EXCEL: 'EXPORT_EXCEL',
+  EXPORT_CSV: 'EXPORT_CSV',
+  EXPORT_CONFIRMATION_ASK: 'EXPORT_CONFIRMATION_ASK',
+  EXPORT_NOT_CONFIRMED: 'EXPORT_NOT_CONFIRMED',
+  EXPORT_RESPONSE_RECEIVED: 'EXPORT_RESPONSE_RECEIVED',
 }
 /*
  * ---------------- Action Creators -----------------
@@ -29,6 +36,30 @@ export function changeListFilter(listFilter) {
     listFilter
   }
 }
+
+
+// -------------------------------
+export function askExportConfirmation(listCommand){
+  return {
+    type: types.EXPORT_CONFIRMATION_ASK,
+    listCommand
+  }
+}
+
+export function closeExportConfirmation(listCommand){
+  return {
+    type: types.EXPORT_NOT_CONFIRMED,
+    listCommand
+  }
+}
+
+export function receivedExportResponse(listCommand) {
+  return {
+    type: types.EXPORT_RESPONSE_RECEIVED,
+    listCommand
+  }
+}
+
 /*
  * ---------------- Reducers -----------------
  */
@@ -56,9 +87,17 @@ const ListFilter = Immutable.Record({
   consumableId: undefined
 })
 
+const ListCommand = Immutable.Record({
+  processingExportExcel: false,
+  processingExportCsv: false,
+  currentCommand: undefined,
+  askingConfirmation: false
+})
+
 const Filter = Immutable.Record({
   listConfig: new ListConfig(),
-  listFilter: new ListFilter()
+  listFilter: new ListFilter(),
+  listCommand: new ListCommand()
 })
 
 const initialState = new Filter()
@@ -104,6 +143,12 @@ export default function filterReducer(state = initialState, action) {
     case types.CHANGE_LIST_FILTER:
       return state
       .mergeIn(['listFilter'], action.listFilter)
+
+    case types.EXPORT_CONFIRMATION_ASK:
+    case types.EXPORT_NOT_CONFIRMED:
+    case types.EXPORT_RESPONSE_RECEIVED:
+      return state.mergeIn(['listCommand'], action.listCommand)
+
     default:
       return state
   }

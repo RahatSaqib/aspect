@@ -30,9 +30,6 @@ export const types = {
 
   REQUEST_UPDATING_SINGLE_DEVICE: 'REQUEST_UPDATING_SINGLE_DEVICE',
   RECEIVE_UPDATED_SINGLE_DEVICE: 'RECEIVE_UPDATED_SINGLE_DEVICE',
-
-  REQUEST_EXPORT_EXCEL_DEVICES: 'REQUEST_EXPORT_EXCEL_DEVICES',
-  RECEIVE_EXPORT_EXCEL_DEVICES: 'RECEIVE_EXPORT_EXCEL_DEVICES'
 }
 /*
  * ---------------- Action Creators -----------------
@@ -177,37 +174,9 @@ export function updateSingleDevice(deviceId, data) {
 
 
 
-
-
-
-
-
-
-
-
-
-export function requestExportExcel(listFilter, sortCol = 'name', sortDir = 'asc', page = 0, pageSize = 10) {
-  return {
-    type: types.REQUEST_EXPORT_EXCEL_DEVICES,
-    sortCol,
-    sortDir,
-    page,
-    size: pageSize,
-    format: 'excel',
-    listFilter
-  }
-}
-
-function receiveExportResponse(json) {
-  return {
-    type: types.RECEIVE_EXPORT_EXCEL_DEVICES,
-    items: json.data,
-    total: json.total
-  }
-}
-
-// With state.filter.listFilter & extraFilters
-export function exportDevices(extraFilters = {}, format, sortCol, sortDir, page, pageSize) { //} ...args) {
+// similar call as fetchListFilteredDevices
+// notice that on receiving result call outer function 'receivedExportResponse'' from ListFilter component
+export function exportDevices(extraFilters = {}, format, sortCol, sortDir, page, pageSize, receivedExportResponse) {
   return (dispatch, getState) => {
     const filters = getState()
       .filter
@@ -216,11 +185,6 @@ export function exportDevices(extraFilters = {}, format, sortCol, sortDir, page,
       .merge(extraFilters)
       .filter(_.identity)
       .toJS()
-
-    //return dispatch(exportDevices(filters, format, sortCol, sortDir, page, pageSize)) //...args))
-
-    //dispatch(requestExportExcel(sortCol, sortDir, page, pageSize, filters))
-
 
     return aspectFetch(`/device/export?${stringify({
       sortCol,
@@ -246,7 +210,11 @@ export function exportDevices(extraFilters = {}, format, sortCol, sortDir, page,
           }))
         }
       })
-      .then(json => dispatch(receiveExportResponse(json)))
+      .then(json => {
+        if (receivedExportResponse){
+          receivedExportResponse(format,json)
+        }
+      })
   }
 }
 
@@ -278,12 +246,6 @@ export default function deviceReducer(state = initialState, action) {
         const immutItem = Immutable.fromJS(action.item)
         mutState.set('items', receiveItem(mutState.items, immutItem))
       })
-
-    // case types.REQUEST_EXPORT_EXCEL_DEVICES:
-    //   return state
-    // case types.RECEIVE_EXPORT_EXCEL_DEVICES:
-    //   return state
-
     default:
       return state
   }

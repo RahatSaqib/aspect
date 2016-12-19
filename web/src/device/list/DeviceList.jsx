@@ -14,11 +14,18 @@ import Helmet from 'react-helmet'
 import { Card } from 'material-ui/Card'
 import FlatButton from 'material-ui/FlatButton'
 import IconExportExcel from 'material-ui/svg-icons/file/file-download'
+import Dialog from 'material-ui/Dialog'
 
 // Our own imports
-import { fetchListFilteredDevices, exportDevices } from '../DeviceRedux'
+import {
+  fetchListFilteredDevices,
+  exportDevices
+} from '../DeviceRedux'
 import ListFilterContainer from '../../filter/list/ListFilter'
-import { configureListFilter } from '../../filter/FilterRedux'
+import {
+  configureListFilter,
+  types as filterActionType
+} from '../../filter/FilterRedux'
 import DataTable from '../../components/shared/DataTable'
 import styles from './DeviceList.css'
 
@@ -80,6 +87,7 @@ export class DeviceList extends PureComponent {
     items: PropTypes.object.isRequired,
     configureListFilter: PropTypes.func.isRequired,
     listFilter: PropTypes.object.isRequired,
+
     exportDevices: PropTypes.func.isRequired
   }
 
@@ -157,21 +165,16 @@ export class DeviceList extends PureComponent {
     )
   }
 
-  exportClicked = (format) => {
+  clickDeviceListExport(exportCommand, receivedExportResponse){
     this.props.exportDevices(
       this.getDeviceConfigRoute().deviceConfig.filterParams,
-      format,
+      exportCommand === filterActionType.EXPORT_EXCEL ? 'excel' : 'csv',
       this.props.table.sortCol,
       this.props.table.sortDir,
       this.props.table.page,
-      this.props.table.pageSize
+      this.props.table.pageSize,
+      receivedExportResponse
     )
-  }
-  exportExcelClicked = (event) => {
-    this.exportClicked('excel')
-  }
-  exportCsvClicked = (event) => {
-    this.exportClicked('csv')
   }
 
   render() {
@@ -181,15 +184,11 @@ export class DeviceList extends PureComponent {
     return (
       <div className={styles.Content}>
         <Helmet title={this.getFormattedTitle()} titleTemplate="%s - Aspect" defaultTitle="Aspect" />
-        <ListFilterContainer subject={this.getFormattedTitle()} />
-        <Card>
-          <FlatButton onClick={this.exportExcelClicked}
-            label={formatMessage(messages.exportExcel)}
-            icon={<IconExportExcel />} />
-          <FlatButton onClick={this.exportCsvClicked}
-            label={formatMessage(messages.exportCsv)}
-            icon={<IconExportExcel />} />
-        </Card>
+        <ListFilterContainer subject={this.getFormattedTitle()}
+          defaultExpanded={true}
+          onClickExport={this.clickDeviceListExport}
+          owner={this}
+         />
         <DataTable
           selectable
           handleItemIdSelection={this.handleItemIdSelection}
@@ -226,7 +225,9 @@ function mapStateToProps(state) {
   return {
     listFilter: state.filter.listFilter,
     items: state.device.items,
-    table: state.device.table
+    table: state.device.table,
+
+    listCommand: state.filter.listCommand
   }
 }
 
@@ -234,7 +235,8 @@ function mapDispatchToProps(dispatch) {
   return bindActionCreators({
     configureListFilter,
     fetchListFilteredDevices,
-    exportDevices
+
+    exportDevices,
   }, dispatch)
 }
 

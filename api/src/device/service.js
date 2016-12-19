@@ -26,9 +26,10 @@ const SELECT_SHOW_FIELDS = [
   'd.serial'
 ]
 
-function* listDevices(request) {
-  const { query, auth } = request
-
+// ---------------------------------
+// basic method for reading dataset of devices
+// ---------------------------------
+function* getListDevices(query, auth) {
   // get data constraints
   const dataConstraints = yield getConstraints(auth.credentials)
 
@@ -97,6 +98,18 @@ function* listDevices(request) {
   }))
 
   const result = { ok: true, total, length: data.length, data }
+
+  return result
+}
+
+// ---------------------------------
+// reading dataset for Devices grid
+// ---------------------------------
+function* listDevices(request) {
+  const { query, auth } = request
+
+  // get dataset for current query params (sorting, filtering and pagination) and auth constraints
+  const result = yield* getListDevices(query, auth)
 
   return result
 }
@@ -224,43 +237,77 @@ function* listDeviceOperation(request) {
   return result
 }
 
+
+function createDirectory(path){
+  const fs = require('fs')
+  const folderNames = path.split('/')
+
+  // loop paths and make sure all exist
+  let dirPath = '.'
+  folderNames.forEach((name,index) => {
+    dirPath += '/' + name
+    if (!fs.existsSync(dirPath)){
+      fs.mkdirSync(dirPath)
+    }
+  })
+
+  return path
+}
+
+function getExportDirectory(){
+  const dt = new Date()
+  const uuid = require('node-uuid')
+
+  // pattern for random directory is temp/YYYY-MM-DD/HH/uuid, using time-based UUID (v1)
+  const dirPath = `temp/${dt.getUTCFullYear()}-${dt.getUTCMonth()+1}-${dt.getUTCDate()}/${dt.getUTCHours()}/${uuid.v1()}`
+  //---memo--------
+  // time part (YYYY-MM-DD/HH) allows auto-deleting old folders by external process - i.e. every 2 hours delete folders from 2-hours back
+  // if lots of files are being generated (millions every hour) - may add MM for tracking minutes too
+  //-----------
+  return createDirectory(dirPath)
+}
+
+
 function* exportDevices(request){
+
+  const json2csv = require('json2csv')
+  const fs = require('fs')
+  const path = require('path')
+
   const { query, auth } = request
 
-  // get data constraints
-  const dataConstraints = yield getConstraints(auth.credentials)
+  // ---------------
+  // change query page/size values to get whole dataset (not only currently paged items)
+  query.page = 0
+  // do not export more than 100.000 records
+  query.size = 1e5
 
+  // get whole dataset - based on current query params (sorting, filtering) and auth constraints
+  const result = yield* getListDevices(query, auth)
+
+  let ok = false
+  let url = ''
+  let message = null
   if (query.format === 'excel'){
-
+    // -----------------
+    // TODO after completing client-side
+    // -----------------
   }
   else if (query.format === 'csv'){
+    const fields = ['name', 'shortName', 'status', 'createdOn', 'lastSeen', 'type', 'category', 'hasConnectivity',  'totalTests']
+    const fieldNames = ['Device Name', 'Short Name', 'Status', 'Created On', 'Last Seen', 'Type', 'Category', 'Connected',  'Total Tests']
 
+    const csv = json2csv({ data: result.data, fields: fields, fieldNames: fieldNames })
+    const dir = getExportDirectory()
+    url = `${dir}/file.csv`
+
+    fs.writeFileSync(url, csv)
+
+    ok = true
+    url = '/' + url
   }
 
-
-  return { ok: true, total: 0, length: 0, data: [] }
-
-  // const configQuery = knex('DeviceConfiguration as dc')
-  //   .leftJoin('Device as d', 'dc.deviceId', 'd.id')
-  //   .modify(filterParams, query, { deviceId: 'd.id', deviceName: 'd.name' })
-  //   .modify(addConstraints, dataConstraints, { device: 'd' })
-
-  // // get total count for paging
-  // const getCount = configQuery.clone()
-  //   .count('dc.id as count').first()
-
-  // // get rows
-  // const getItems = configQuery.clone()
-  //   .modify(sortPageParams, query, 'deviceName')
-  //   .select('dc.id', 'dc.externalId', 'dc.createdOn', 'dc.data', 'dc.deviceId', 'd.name as deviceName')
-  //   .map(item => Object.assign({}, item, { data: JSON.parse(item.data) }))
-
-  // // return result when both queries are finished
-  // const [{ count: total }, data] = yield Promise.all([getCount, getItems])
-
-  // const result = { ok: true, total, length: data.length, data }
-
-  // return result
+  return { ok: ok, url: url, message: message }
 }
 
 module.exports = {

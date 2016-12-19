@@ -126,7 +126,6 @@ module.exports = [
   {
     method: 'GET',
     path: '/device/export',
-    //handler: asyncHandler(listDeviceOperation),
     handler: asyncHandler(exportDevices),
     config: {
       description: 'Export Device List into Excel or CSV',
@@ -134,7 +133,6 @@ module.exports = [
       auth: { scope: ['device:view'] },
       validate: {
         query: Object.assign({
-          format: Joi.string().valid('excel', 'csv').description('Export list of devices to allowed file format'),
           hasResults: Joi.number().allow('').min(0).max(1).description('Filter for getting devices that can have results'),
           hasConnectivity: Joi.number().allow('').min(0).max(1).description('Filter for getting devices that can have connectivity'),
           assayId: Joi.number().allow('').description('Assay ID'),
@@ -142,23 +140,12 @@ module.exports = [
           deviceName: Joi.string().allow('').description('Filter for device name'),
           category: Joi.string().description('Filter for device type category'),
           type: Joi.string().description('Filter for device type'),
-          name: Joi.string().allow('').description('Filter for device name')
+          name: Joi.string().allow('').description('Filter for device name'),
+          format: Joi.string().valid('excel', 'csv').description('Export list of devices to allowed file format')
         }, validateAllGeographyFilterParams(),
           validateDateRangeParams(),
           validateSortPageParams('name', 'status', 'createdOn', 'lastSeen', 'totalTests'))
       }
     }
-
-    // config: {
-    //   notes: 'List Device Operation',
-    //   description: 'List device operational data for the specified device',
-    //   auth: { scope: ['device:view', 'device:edit'] },
-    //   validate: {
-    //     query: Object.assign({
-    //       deviceId: Joi.string().description('Device id').description('Filter for device id'),
-    //       deviceName: Joi.string().allow('').description('Filter for device name')
-    //     }, validateSortPageParams('deviceName', 'createdOn', 'updatedOn'))
-    //   }
-    // }
   }
 ]
