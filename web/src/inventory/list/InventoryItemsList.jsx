@@ -8,7 +8,7 @@ import {
 import { bindActionCreators } from 'redux'
 import { connect } from 'react-redux'
 import Helmet from 'react-helmet'
-import { SubmissionError } from 'redux-form/immutable'
+import { SubmissionError, submit } from 'redux-form/immutable'
 
 // Material-UI
 import { Card } from 'material-ui/Card'
@@ -18,6 +18,8 @@ import AddIcon from 'material-ui/svg-icons/content/add'
 import TransferIcon from 'material-ui/svg-icons/action/swap-horiz'
 import RemoveIcon from 'material-ui/svg-icons/content/remove'
 import Dialog from 'material-ui/Dialog'
+import RaisedButton from 'material-ui/RaisedButton'
+import FlatButton from 'material-ui/FlatButton'
 
 // Our own imports
 import EmptyList from '../../components/shared/EmptyList'
@@ -85,16 +87,24 @@ const messages = defineMessages({
     defaultMessage: 'Remove Inventory'
   },
   addTitle: {
-    id: 'pages.InventoryAdjustmentForm.addTitle',
+    id: 'pages.InventoryItemsList.addTitle',
     defaultMessage: 'Add {consumableName}'
   },
   removeTitle: {
-    id: 'pages.InventoryAdjustmentForm.removeTitle',
+    id: 'pages.InventoryItemsList.removeTitle',
     defaultMessage: 'Remove {consumableName}'
   },
   transferTitle: {
-    id: 'pages.InventoryAdjustmentForm.transferTitle',
+    id: 'pages.InventoryItemsList.transferTitle',
     defaultMessage: 'Transfer {consumableName}'
+  },
+  submit: {
+    id: 'pages.InventoryItemsList.submit',
+    defaultMessage: 'Submit'
+  },
+  cancel: {
+    id: 'pages.InventoryItemsList.cancel',
+    defaultMessage: 'Cancel'
   },
   filterTemplate: {
     id: 'pages.InventoryItemsList.filterTemplate',
@@ -122,7 +132,8 @@ export class InventoryItemsList extends PureComponent {
     inventoryAdjustment: PropTypes.object,
     addInventory: PropTypes.func.isRequired,
     removeInventory: PropTypes.func.isRequired,
-    transferInventory: PropTypes.func.isRequired
+    transferInventory: PropTypes.func.isRequired,
+    submit: PropTypes.func.isRequired
   }
 
   componentWillMount() {
@@ -218,17 +229,8 @@ export class InventoryItemsList extends PureComponent {
   }
 
   render() {
-    const {
-      intl,
-      items,
-      table,
-      inventoryAdjustment
-    } = this.props
-    const {
-      formatMessage,
-      formatDate,
-      formatRelative
-    } = intl
+    const { intl, items, table, inventoryAdjustment, submit } = this.props
+    const { formatMessage, formatDate, formatRelative } = intl
     const isSettledAndEmpty = !table.loading && items.currentIdList.isEmpty()
 
     const columns = [{
@@ -261,6 +263,18 @@ export class InventoryItemsList extends PureComponent {
         (inventoryAdjustment.get('operation') === transferOperation ?
           formatMessage(messages.transferTitle, formHeaderValues) : null))
 
+    const inventoryAdjustmentActions = [
+      <RaisedButton
+        disabled={inventoryAdjustment.get('updating')}
+        onTouchTap={() => submit('inventoryAdjustment')}
+        label={formatMessage(messages.submit)} secondary
+      />,
+      <FlatButton
+        disabled={inventoryAdjustment.get('updating')}
+        onTouchTap={this.handleInventoryAdjustmentCancel}
+        secondary label={formatMessage(messages.cancel)}
+      />
+    ]
     return (
       <div className={styles.Content}>
         <Helmet title={formatMessage(messages.title)} titleTemplate="%s - Aspect" defaultTitle="Aspect" />
@@ -292,7 +306,7 @@ export class InventoryItemsList extends PureComponent {
           />
         )}
         <Dialog
-          title={formHeader}
+          title={formHeader} actions={inventoryAdjustmentActions}
           open={inventoryAdjustment.get('operation') !== null && adjustingInventoryItem != null}
           autoScrollBodyContent
         >
@@ -300,7 +314,6 @@ export class InventoryItemsList extends PureComponent {
             initialValues={adjustingInventoryItem}
             onSubmit={this.handleInventoryAdjustmentSubmit}
             onSubmitSuccess={this.adjustInventorySucceeded}
-            onCancel={this.handleInventoryAdjustmentCancel}
           />
         </Dialog>
       </div>
@@ -326,7 +339,8 @@ function mapDispatchToProps(dispatch) {
     finishAdjustingInventoryLevels,
     addInventory,
     removeInventory,
-    transferInventory
+    transferInventory,
+    submit
   }, dispatch)
 }
 

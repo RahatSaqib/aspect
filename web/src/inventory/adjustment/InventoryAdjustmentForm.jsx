@@ -10,10 +10,6 @@ import { bindActionCreators } from 'redux'
 import { connect } from 'react-redux'
 import { reduxForm, change as changeFieldValue } from 'redux-form/immutable'
 
-// Material UI
-import RaisedButton from 'material-ui/RaisedButton'
-import FlatButton from 'material-ui/FlatButton'
-
 // Our own imports
 import TextInput from '../../components/shared/TextInput'
 import DateInput from '../../components/shared/DateInput'
@@ -84,14 +80,6 @@ const messages = defineMessages({
     id: 'pages.InventoryAdjustmentForm.notes',
     defaultMessage: 'Notes'
   },
-  submit: {
-    id: 'pages.InventoryAdjustmentForm.submit',
-    defaultMessage: 'Submit'
-  },
-  cancel: {
-    id: 'pages.InventoryAdjustmentForm.cancel',
-    defaultMessage: 'Cancel'
-  },
   expiryDateRequired: {
     id: 'pages.InventoryAdjustmentForm.expiryDateRequired',
     defaultMessage: 'Please specify an expiry date'
@@ -144,10 +132,7 @@ class InventoryAdjustmentForm extends PureComponent {
     operation: PropTypes.oneOf([addOperation, removeOperation, transferOperation]),
     updating: PropTypes.bool.isRequired,
     handleSubmit: PropTypes.func.isRequired,
-    onCancel: PropTypes.func.isRequired,
     changeFieldValue: PropTypes.func.isRequired,
-    pristine: PropTypes.bool.isRequired,
-    invalid: PropTypes.bool.isRequired,
     initialValues: PropTypes.object.isRequired,
     fetchSitesForSelectList: PropTypes.func.isRequired,
     fetchConsumableReasons: PropTypes.func.isRequired,
@@ -182,8 +167,8 @@ class InventoryAdjustmentForm extends PureComponent {
   render() {
     const {
       intl: { formatMessage },
-      consumableReasons, sitesSelectList, operation, updating, onCancel,
-      handleSubmit, pristine, invalid, initialValues } = this.props
+      consumableReasons, sitesSelectList, operation, updating,
+      handleSubmit, initialValues } = this.props
 
     const sitesLoading = sitesSelectList.loading
     const sites = sitesSelectList.items.toJS()
@@ -303,17 +288,6 @@ class InventoryAdjustmentForm extends PureComponent {
             multiLine fullWidth rows={2} style={formFieldStyle}
           />
         </section>
-        <div className={styles.Form__ActionRow}>
-          <RaisedButton
-            disabled={pristine || invalid || updating}
-            label={formatMessage(messages.submit)} secondary type="submit"
-          />
-          &nbsp;
-          <FlatButton
-            disabled={updating} onTouchTap={onCancel} secondary
-            label={formatMessage(messages.cancel)}
-          />
-        </div>
       </form>
     )
   }
