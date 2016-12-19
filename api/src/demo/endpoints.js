@@ -14,7 +14,7 @@ module.exports = [
     handler: asyncHandler(getDemoDevice),
     config: {
       description: 'Device Demo Detail',
-      notes: 'Detail of a device for the dmeo page',
+      notes: 'Detail of a device for the demo page',
       validate: {
         params: {
           deviceId: Joi.string().description('Device id').required()
@@ -28,7 +28,7 @@ module.exports = [
     handler: asyncHandler(postDemoDeviceResult),
     config: {
       description: 'Device Demo Detail',
-      notes: 'Detail of a device for the dmeo page',
+      notes: 'Posts a new result from template from the device demo page',
       validate: {
         params: {
           deviceId: Joi.string().description('Device id').required()

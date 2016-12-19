@@ -200,6 +200,7 @@ export class DeviceDetail extends PureComponent {
       <DeviceDemoLink
         to={`/demo/device/${this.props.params.deviceId}`}
         className={styles.DemoLink}
+        target="_blank"
       >
         Demo
       </DeviceDemoLink>
