@@ -127,6 +127,30 @@ const messages = defineMessages({
   setFilters: {
     id: 'shared.ListFilter.setFilters',
     defaultMessage: 'Set Filters'
+  },
+  geographyIn: {
+    id: 'shared.ListFilter.geographyIn',
+    defaultMessage: 'in'
+  },
+  whoseNameIncludes: {
+    id: 'shared.ListFilter.whoseNameIncludes',
+    defaultMessage: 'whose name includes'
+  },
+  assays: {
+    id: 'shared.ListFilter.assays',
+    defaultMessage: 'assays'
+  },
+  withResult: {
+    id: 'shared.ListFilter.withResult',
+    defaultMessage: 'with result'
+  },
+  dateFrom: {
+    id: 'shared.ListFilter.dateFrom',
+    defaultMessage: 'from'
+  },
+  dateTo: {
+    id: 'shared.ListFilter.dateTo',
+    defaultMessage: 'to'
   }
 })
 
@@ -160,11 +184,88 @@ export class ListFilter extends PureComponent {
       consumable: PropTypes.bool
     }).isRequired,
     subject: PropTypes.string,
-    dateFilterLabel: PropTypes.string
+    dateFilterLabel: PropTypes.string,
+    countries: PropTypes.object.isRequired,
+    assay: PropTypes.object.isRequired
   }
 
   state = {
     expanded: !!this.props.defaultExpanded
+  }
+
+  getFilterMessage = (filter, subject, template, countingTemplate, formatMessage, formatDate) => {
+    // return empty message if no filters set
+    if (_.every(filter, f => !f)) {
+      return `${formatMessage(messages.noFilters)} ${subject ? subject.toLowerCase() : ''}`
+    }
+
+    // location-related strings
+    let geography = ''
+    const country = filter.countryId ? this.props.countries.get('items').find(c => c.id === filter.countryId) : ''
+    const state = country && filter.stateId ? country.getIn(['children', 'items']).find(s => s.id === filter.stateId) : ''
+    const lga = state && filter.lgaId ? state.getIn(['children', 'items']).find(s => s.id === filter.lgaId) : ''
+
+    if (country || state || lga) {
+      geography = ` ${formatMessage(messages.geographyIn)}
+                    ${lga ? `${lga.get('name')}, ` : ''}
+                    ${state ? `${state.get('name')}, ` : ''}
+                    ${country.get('name')}`
+    }
+
+    // name-filter
+    const name = `${filter.contactNameOrEmail || ''}${filter.deviceName || ''}${filter.siteName || ''}`
+    const nameString = name && name !== 'undefined' ? ` ${formatMessage(messages.whoseNameIncludes)} "${name}"` : ''
+
+    // assay/result
+    const assay = filter.assayId ? this.props.assay.get('items').find(a => a.get('id') === filter.assayId) : null
+    const result = assay && filter.resultCategoryId ? assay.get('resultCategories').find(r => r.get('id') === String(filter.resultCategoryId)) : null
+    const assayString = assay ? `${assay.get('name')} ${formatMessage(messages.assays)}` : ''
+    const resultString = result ? ` ${formatMessage(messages.withResult)} "${result.get('name')}"` : ''
+
+    // date
+    const dateFrom = filter.minDate ? `${formatMessage(messages.dateFrom)} ${formatDate(filter.minDate)}` : ''
+    const dateTo = filter.maxDate ? `${formatMessage(messages.dateTo)} ${formatDate(filter.maxDate)}` : ''
+
+    // TODO: This could be a little nicer and use the date type from the filter.
+    // Could say "the year 2015" or "the month of August"
+    const date = `${dateFrom ? ` ${dateFrom}` : ''}${dateTo && dateFrom ? ` ${dateTo}` : dateTo}`
+
+    let countingMessage = ''
+    if (countingTemplate && (assay || result || date)) {
+      countingMessage = countingTemplate.replace('<ASSAY>', assayString).replace('<RESULT>', resultString).replace('<DATE>', date)
+    }
+
+    const message = `${template.replace('<GEOGRAPHY>', geography).replace('<NAME>', nameString).replace('<ASSAY>', assay).replace('<RESULT>', result).replace('<DATE>', date)} ${countingMessage}`
+
+    return message
+
+    // return `\`${JSON.stringify(filter)}\``
+
+    /*
+    countryId
+    minDate
+    maxDate
+    */
+
+    /*
+    Devices: Viewing devices in AREA, STATE, COUNTRY whose name includes "NAME".
+    Only counting ASSAY result with result "RESULT" DATE
+
+    Routers: Viewing routers in AREA, STATE, COUNTRY whose name includes "NAME".
+    Only counting ASSAY result with result "RESULT" DATE
+
+    Sites: Viewing sites in AREA, STATE, COUNTRY whose name includes "NAME"
+    (and which have a device named "NAME")
+
+    Results: Viewing ASSAY results DATE with result "RESULT" in AREA, STATE, COUNTRY from sites
+    whose name includes "NAME"
+
+    Contacts: Viewing contacts in AREA, STATE, COUNTRY whose name or email inclues "NAME".
+
+    Notification: Viewing notifications whose name inclues "NAME"
+
+    Reports: Viewing reports whose name includes "NAME"
+    */
   }
 
   handleExpandChange = (expanded) => {
@@ -243,14 +344,19 @@ export class ListFilter extends PureComponent {
   }
 
   render() {
-    const { filter, config, subject, dateFilterLabel, intl: { formatMessage } } = this.props
+    const { filter,
+            config,
+            subject,
+            dateFilterLabel,
+            intl: { formatMessage, formatDate } } = this.props
     const { expanded } = this.state
-    const noFiltersMessage = `${formatMessage(messages.noFilters)} ${subject ? subject.toLowerCase() : ''}`
-    const filterMessage = _.every(filter, f => !f) ? noFiltersMessage : `\`${JSON.stringify(filter)}\``
+
     const hasDataSection = (
       config.assay || config.deviceName || config.result ||
       config.siteName || config.contactNameOrEmail || config.consumable
     )
+
+    const filterMessage = this.getFilterMessage(filter, subject, 'Viewing all devices<GEOGRAPHY><NAME>.', 'Counting only <ASSAY><RESULT><DATE>.', formatMessage, formatDate)
 
     return (
       <div className={styles.ListFilter}>
@@ -413,7 +519,9 @@ export class ListFilter extends PureComponent {
 function mapStateToProps(state) {
   return {
     config: state.filter.listConfig,
-    filter: state.filter.listFilter.toJS()
+    filter: state.filter.listFilter.toJS(),
+    countries: state.geography.countriesForLocationSelector,
+    assay: state.assay
   }
 }
 
