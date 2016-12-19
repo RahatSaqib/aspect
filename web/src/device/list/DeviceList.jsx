@@ -22,10 +22,7 @@ import {
   exportDevices
 } from '../DeviceRedux'
 import ListFilterContainer from '../../filter/list/ListFilter'
-import {
-  configureListFilter,
-  types as filterActionType
-} from '../../filter/FilterRedux'
+import { configureListFilter, types as filterActionType } from '../../filter/FilterRedux'
 import DataTable from '../../components/shared/DataTable'
 import styles from './DeviceList.css'
 
@@ -184,11 +181,7 @@ export class DeviceList extends PureComponent {
     return (
       <div className={styles.Content}>
         <Helmet title={this.getFormattedTitle()} titleTemplate="%s - Aspect" defaultTitle="Aspect" />
-        <ListFilterContainer subject={this.getFormattedTitle()}
-          defaultExpanded={true}
-          onClickExport={this.clickDeviceListExport}
-          owner={this}
-         />
+        <ListFilterContainer subject={this.getFormattedTitle()} defaultExpanded={true} onClickExport={this.clickDeviceListExport} owner={this} />
         <DataTable
           selectable
           handleItemIdSelection={this.handleItemIdSelection}
