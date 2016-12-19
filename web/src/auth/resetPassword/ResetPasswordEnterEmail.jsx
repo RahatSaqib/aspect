@@ -15,8 +15,10 @@ import messages from './messages'
 import validateEmailAddress from '../../shared/utils/validate'
 import TextInput from '../../components/shared/TextInput'
 
-const ResetPasswordEnterEmail = (props) => {
-  const { intl: { formatMessage }, handleSubmit, pristine, invalid, showAdminHelpDialog } = props
+export function ResetPasswordEnterEmail({
+  intl, handleSubmit, pristine, invalid, showAdminHelpDialog
+}) {
+  const { formatMessage } = intl
   return (
     <form onSubmit={handleSubmit} className={styles.Form}>
       <div className={styles.Form__Content}>
@@ -36,7 +38,7 @@ const ResetPasswordEnterEmail = (props) => {
   )
 }
 
-const validate = (emailInput, props) => {
+export function validate(emailInput, props) {
   const { formatMessage } = props.intl
   const errors = {}
   if (!validateEmailAddress(emailInput.get('emailAddress')).isValid()) {

@@ -10,10 +10,12 @@ import StrongPasswordInput from '../../components/shared/StrongPasswordInput'
 import messages from './messages'
 import styles from './PersonDetail.css'
 
-const LoginDetailsForm = (props) => {
-  const { intl: { formatMessage }, handleSubmit, pristine, invalid, loading,
-      currentPasswordInputDialogOpen, openCurrentPasswordInputDialog,
-      closeCurrentPasswordInputDialog } = props
+export function LoginDetailsForm({
+  intl, handleSubmit, pristine, invalid, loading,
+  currentPasswordInputDialogOpen, openCurrentPasswordInputDialog,
+  closeCurrentPasswordInputDialog
+}) {
+  const { formatMessage } = intl
   const onCurrentPasswordKeyPress = (event) => {
     if (event.key === 'Enter') {
       return handleSubmit()
@@ -86,7 +88,7 @@ LoginDetailsForm.propTypes = {
   invalid: PropTypes.bool.isRequired
 }
 
-const validate = (loginDetails, props) => {
+export function validate(loginDetails, props) {
   const { formatMessage } = props.intl
   const errors = {}
   if (loginDetails) {

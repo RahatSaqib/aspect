@@ -1,6 +1,5 @@
 const Boom = require('boom')
 const _ = require('lodash')
-const { getExternalId } = require('./common')
 const { addConstraints } = require('../auth/constraints')
 const { consumeInventoryForResult } = require('../inventory/service')
 
@@ -8,9 +7,8 @@ function* addResult(context) {
   const { knex, payload, constraints: dataConstraints, now } = context
 
   // TODO seperate permissions for device add vs update result?
-  const externalId = getExternalId(payload.id)
-  const existingResults = yield knex('Result as r')
-    .where({ 'r.externalId': externalId })
+  const existingResults = !payload.id ? [] : yield knex('Result as r')
+    .where({ 'r.externalId': payload.id })
     .innerJoin('Device as d', 'r.deviceId', 'd.id')
     .leftJoin('Sample as s', 'r.sampleId', 's.id')
     .modify(addConstraints, dataConstraints, { device: 'd', sample: 's' })
@@ -102,7 +100,7 @@ function* addResult(context) {
   let sampleId
   if (!existingResult) {
     [sampleId] = yield knex('Sample').insert({
-      externalId: _.get(payload, 'sample.id', `sample_${externalId}`),
+      externalId: _.get(payload, 'sample.id', null),
       originSiteId: sampleOriginSiteId
     })
   } else {
@@ -204,7 +202,7 @@ function* addResult(context) {
       .update(result)
   } else {
     [resultId] = yield knex('Result').insert(Object.assign({
-      externalId,
+      externalId: payload.id,
       deviceId,
       partnerId: site.partnerId,
       orgUnitId: site.orgUnitId,
@@ -223,7 +221,7 @@ function* addResult(context) {
   yield* consumeInventoryForResult(
     resultId, assay.id, site.id, consumablesInResultData, partnerId, knex)
 
-  return { id: externalId }
+  return {}
 }
 
 function* listResults(context, deviceLogId) {
@@ -275,7 +273,11 @@ function* listResults(context, deviceLogId) {
 function rowToResult(row) {
   // TODO allow filtering on fields of interest, similar to client device API
   // but JSON paths from result data in same format as POST
-  const result = { id: row.resultId }
+  const result = {}
+
+  if (row.resultId != null) {
+    result.id = row.resultId
+  }
 
   result.assay = { id: row.assayId }
   if (row.assayVersion != null) {

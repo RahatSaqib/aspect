@@ -1,5 +1,4 @@
 import React from 'react'
-import { assert } from 'chai'
 import _ from 'lodash'
 import { shallow } from 'enzyme'
 import sinon from 'sinon'
@@ -36,7 +35,7 @@ describe('CountrySelect Component', () => {
 
   it('should render a SelectField with with items for each country in the datasource', () => {
     const selectField = CountrySelectWrapper.find(ForkedSelectField)
-    assert.deepEqual(selectField.props(), { ...selectField.props(),
+    expect(selectField.props()).toEqual({ ...selectField.props(),
       value: props.value,
       style: props.selectFieldStyle,
       underlineStyle: props.underlineStyle,
@@ -44,37 +43,39 @@ describe('CountrySelect Component', () => {
       onChange: props.onChange
     })
 
-    assert.equal(selectField.props().children.length, props.dataSource.length)
+    expect(selectField.props().children.length).toEqual(props.dataSource.length)
 
     _.each(props.dataSource, (country) => {
       const child = selectField.findWhere(
         menuItem => menuItem.type() === MenuItem &&
           menuItem.props().value === props.dataSourceConfig.valuePredicate(country))
 
-      assert.equal(child.length, 1)
-      assert.equal(child.props().primaryText, props.dataSourceConfig.menuItemTextPredicate(country))
+      expect(child.length).toEqual(1)
+      expect(child.props().primaryText).toEqual(
+        props.dataSourceConfig.menuItemTextPredicate(country)
+      )
 
       const flagIcon = child.props().leftIcon
-      assert.equal(flagIcon.type, FlagIcon)
-      assert.deepEqual(flagIcon.props.style, { margin: '0.3em 0' })
-      assert.equal(flagIcon.props.countryIsoAlpha2Code, country.id)
+      expect(flagIcon.type).toEqual(FlagIcon)
+      expect(flagIcon.props.style).toEqual({ margin: '0.3em 0' })
+      expect(flagIcon.props.countryIsoAlpha2Code).toEqual(country.id)
 
       const menuItemLabel = child.props().label
-      assert.equal(menuItemLabel.type, MenuItemLabel)
-      assert.equal(menuItemLabel.props.country.iso_alpha2_code, country.id)
-      assert.equal(menuItemLabel.props.selectedItemStyle, props.selectedItemStyle)
+      expect(menuItemLabel.type).toEqual(MenuItemLabel)
+      expect(menuItemLabel.props.country.iso_alpha2_code).toEqual(country.id)
+      expect(menuItemLabel.props.selectedItemStyle).toEqual(props.selectedItemStyle)
     })
   })
 
   describe('Selecting one of the countries in the list', () => {
     it('should call the onChange method with the value of the country', () => {
-      assert.isOk(props.onChange.notCalled)
+      expect(props.onChange.notCalled).toBe(true)
       const selectField = CountrySelectWrapper.find(ForkedSelectField)
       const valueToSelect = props.dataSourceConfig.valuePredicate(props.dataSource[0])
       selectField.simulate('change', undefined, undefined, valueToSelect)
 
-      assert.isOk(props.onChange.calledOnce)
-      assert.deepEqual(props.onChange.firstCall.args, [undefined, undefined, valueToSelect])
+      expect(props.onChange.calledOnce).toBe(true)
+      expect(props.onChange.firstCall.args).toEqual([undefined, undefined, valueToSelect])
     })
   })
 
@@ -87,7 +88,7 @@ describe('CountrySelect Component', () => {
 
     it('should render a SelectField with with items for each country built into the CountrySelect component', () => {
       const selectField = CountrySelectWrapper.find(ForkedSelectField)
-      assert.isAtLeast(selectField.props().children.length, 242)
+      expect(selectField.props().children.length).toBeGreaterThanOrEqual(242)
     })
 
     describe('and no DataSource config is specified', () => {
@@ -98,7 +99,7 @@ describe('CountrySelect Component', () => {
 
       it('should render a SelectField with with items for each country', () => {
         const selectField = CountrySelectWrapper.find(ForkedSelectField)
-        assert.deepEqual(selectField.props(), { ...selectField.props(),
+        expect(selectField.props()).toEqual({ ...selectField.props(),
           value: props.value,
           style: props.selectFieldStyle,
           underlineStyle: props.underlineStyle,
@@ -106,22 +107,22 @@ describe('CountrySelect Component', () => {
           onChange: props.onChange
         })
 
-        assert.isAtLeast(selectField.props().children.length, 242)
+        expect(selectField.props().children.length).toBeGreaterThanOrEqual(242)
 
         _.each(selectField.props().children, (child) => {
-          assert.equal(child.type, MenuItem)
-          assert.equal(child.props.value.length, 2)
-          assert.isOk(child.props.primaryText)
+          expect(child.type).toEqual(MenuItem)
+          expect(child.props.value.length).toEqual(2)
+          expect(child.props.primaryText).toBeTruthy()
 
           const flagIcon = child.props.leftIcon
-          assert.equal(flagIcon.type, FlagIcon)
-          assert.deepEqual(flagIcon.props.style, { margin: '0.3em 0' })
-          assert.equal(flagIcon.props.countryIsoAlpha2Code, child.props.value)
+          expect(flagIcon.type).toEqual(FlagIcon)
+          expect(flagIcon.props.style).toEqual({ margin: '0.3em 0' })
+          expect(flagIcon.props.countryIsoAlpha2Code).toEqual(child.props.value)
 
           const menuItemLabel = child.props.label
-          assert.equal(menuItemLabel.type, MenuItemLabel)
-          assert.equal(menuItemLabel.props.country.iso_alpha2_code, child.props.value)
-          assert.equal(menuItemLabel.props.selectedItemStyle, props.selectedItemStyle)
+          expect(menuItemLabel.type).toEqual(MenuItemLabel)
+          expect(menuItemLabel.props.country.iso_alpha2_code).toEqual(child.props.value)
+          expect(menuItemLabel.props.selectedItemStyle).toEqual(props.selectedItemStyle)
         })
       })
     })

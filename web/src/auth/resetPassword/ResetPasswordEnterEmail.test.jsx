@@ -1,7 +1,5 @@
 import React from 'react'
-import { assert } from 'chai'
 import { shallow } from 'enzyme'
-import proxyquire from 'proxyquire'
 import Immutable from 'immutable'
 import sinon from 'sinon'
 import RaisedButton from 'material-ui/RaisedButton'
@@ -9,24 +7,13 @@ import { Link } from 'react-router'
 import FlatButton from 'material-ui/FlatButton'
 import TextInput from '../../components/shared/TextInput'
 
-describe('Reset Password Enter Email Form', () => {
-  const fakeReactIntl = {
-    injectIntl: component => component,
-    defineMessages: messages => messages
-  }
+describe('ResetPasswordEnterEmail module', () => {
+  const {
+    ResetPasswordEnterEmail,
+    validate
+  } = require('./ResetPasswordEnterEmail')
 
   describe('ResetPasswordEnterEmail component', () => {
-    const fakeReduxForm = {
-      reduxForm: () => component => component
-    }
-    const ResetPasswordEnterEmail = proxyquire('./ResetPasswordEnterEmail', {
-      'redux-form/immutable': fakeReduxForm,
-      'react-intl': fakeReactIntl,
-      './messages': proxyquire('./messages', {
-        'react-intl': fakeReactIntl
-      }).default
-    }).default
-
     let props
     let ResetPasswordEnterEmailWrapper
 
@@ -51,16 +38,16 @@ describe('Reset Password Enter Email Form', () => {
     })
 
     it('Should be a form', () => {
-      assert.equal(ResetPasswordEnterEmailWrapper.node.type, 'form')
-      assert.equal(ResetPasswordEnterEmailWrapper.find('form').props().onSubmit, props.handleSubmit)
+      expect(ResetPasswordEnterEmailWrapper.node.type).toEqual('form')
+      expect(ResetPasswordEnterEmailWrapper.find('form').props().onSubmit).toEqual(props.handleSubmit)
     })
 
     it('Should render a message', () => {
-      assert.equal(ResetPasswordEnterEmailWrapper.find('p').text(), 'Please enter the email address that you are registered with')
+      expect(ResetPasswordEnterEmailWrapper.find('p').text()).toEqual('Please enter the email address that you are registered with')
     })
 
     it('Should contain a field to enter an email address', () => {
-      assert.deepEqual(ResetPasswordEnterEmailWrapper.find(TextInput).props(), {
+      expect(ResetPasswordEnterEmailWrapper.find(TextInput).props()).toEqual({
         autoFocus: true,
         name: 'emailAddress',
         label: 'Email Address',
@@ -71,18 +58,18 @@ describe('Reset Password Enter Email Form', () => {
 
     it('Should contain a link that calls the showAdminHelpDialog function when clicked', () => {
       const anchorTag = ResetPasswordEnterEmailWrapper.find('a')
-      assert.deepEqual(anchorTag.props(), {
+      expect(anchorTag.props()).toEqual({
         children: 'I don\'t know what email address I am registered with',
         href: '#showAdminHelp',
         onClick: props.showAdminHelpDialog
       })
-      assert.isTrue(props.showAdminHelpDialog.notCalled)
+      expect(props.showAdminHelpDialog.notCalled).toBe(true)
       anchorTag.simulate('click')
-      assert.isTrue(props.showAdminHelpDialog.calledOnce)
+      expect(props.showAdminHelpDialog.calledOnce).toBe(true)
     })
 
     it('Should contain a submit button', () => {
-      assert.deepEqual(ResetPasswordEnterEmailWrapper.find(RaisedButton).props(), {
+      expect(ResetPasswordEnterEmailWrapper.find(RaisedButton).props()).toEqual({
         disabled: true,
         label: 'Next',
         primary: true,
@@ -95,10 +82,10 @@ describe('Reset Password Enter Email Form', () => {
 
     it('Should contain a cancel button', () => {
       const cancelLink = ResetPasswordEnterEmailWrapper.find(Link)
-      assert.equal(cancelLink.props().to, 'login')
-      assert.equal(cancelLink.props().children.type, FlatButton)
+      expect(cancelLink.props().to).toEqual('login')
+      expect(cancelLink.props().children.type).toEqual(FlatButton)
       const cancelButton = cancelLink.props().children
-      assert.deepEqual(cancelButton.props, {
+      expect(cancelButton.props).toEqual({
         ...cancelButton.props,
         disabled: false,
         label: 'Cancel',
@@ -108,80 +95,58 @@ describe('Reset Password Enter Email Form', () => {
 
     it('Should enable the submit button when the form is dirty, valid and not submitting', () => {
       let submitButton = ResetPasswordEnterEmailWrapper.find(RaisedButton)
-      assert.isTrue(submitButton.props().disabled)
+      expect(submitButton.props().disabled).toBe(true)
 
       props.pristine = false
       shallowRenderResetPasswordEnterEmail(props)
       submitButton = ResetPasswordEnterEmailWrapper.find(RaisedButton)
-      assert.isTrue(submitButton.props().disabled)
+      expect(submitButton.props().disabled).toBe(true)
 
       props.invalid = false
       shallowRenderResetPasswordEnterEmail(props)
       submitButton = ResetPasswordEnterEmailWrapper.find(RaisedButton)
-      assert.isFalse(submitButton.props().disabled)
+      expect(submitButton.props().disabled).toBe(false)
 
       props.pristine = true
       shallowRenderResetPasswordEnterEmail(props)
       submitButton = ResetPasswordEnterEmailWrapper.find(RaisedButton)
-      assert.isTrue(submitButton.props().disabled)
+      expect(submitButton.props().disabled).toBe(true)
     })
   })
 
-  describe('reduxForm', () => {
-    let reduxFormStub
-    let reduxFormConfig
+  describe('validate function', () => {
+    const props = {
+      intl: {
+        formatMessage: message => message.defaultMessage
+      }
+    }
+    let initialEmailField
 
     beforeEach(() => {
-      reduxFormStub = {
-        reduxForm: sinon.stub().returns(() => {})
-      }
-      proxyquire('./ResetPasswordEnterEmail', {
-        'redux-form/immutable': reduxFormStub,
-        'react-intl': fakeReactIntl
+      initialEmailField = Immutable.Map({
+        emailAddress: ''
       })
-      reduxFormConfig = reduxFormStub.reduxForm.firstCall.args[0]
     })
 
-    it('Should create a form called \'resetPasswordEnterEmail\'', () => {
-      assert.equal(reduxFormConfig.form, 'resetPasswordEnterEmail')
+    it('Should validate required email address', () => {
+      expect(validate(initialEmailField, props)).toEqual({
+        emailAddress: 'Please enter a valid email address'
+      })
     })
 
-    describe('validate function', () => {
-      const props = {
-        intl: {
-          formatMessage: message => message.defaultMessage
-        }
-      }
-      let validateFunction
-      let initialEmailField
-
-      beforeEach(() => {
-        validateFunction = reduxFormConfig.validate
-        initialEmailField = Immutable.Map({
-          emailAddress: ''
-        })
+    it('Should validate that the email address is valid', () => {
+      let emailField = initialEmailField.set('emailAddress', 'test')
+      expect(validate(emailField, props)).toEqual({
+        emailAddress: 'Please enter a valid email address'
       })
 
-      it('Should validate required email address', () => {
-        assert.deepEqual(validateFunction(initialEmailField, props), {
-          emailAddress: 'Please enter a valid email address'
-        })
+      emailField = initialEmailField.set('emailAddress', 'test@example')
+      expect(validate(emailField, props)).toEqual({
+        emailAddress: 'Please enter a valid email address'
       })
 
-      it('Should validate that the email address is valid', () => {
-        let emailField = initialEmailField.set('emailAddress', 'test')
-        assert.deepEqual(validateFunction(emailField, props), {
-          emailAddress: 'Please enter a valid email address'
-        })
-
-        emailField = initialEmailField.set('emailAddress', 'test@example')
-        assert.deepEqual(validateFunction(emailField, props), {
-          emailAddress: 'Please enter a valid email address'
-        })
-
-        emailField = initialEmailField.set('emailAddress', 'test@example.com')
-        assert.deepEqual(validateFunction(emailField, props), { })
-      })
+      emailField = initialEmailField.set('emailAddress', 'test@example.com')
+      expect(validate(emailField, props)).toEqual({ })
     })
   })
 })

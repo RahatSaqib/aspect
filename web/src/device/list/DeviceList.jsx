@@ -202,10 +202,10 @@ export class DeviceList extends PureComponent {
         format: data => formatNumber(data) }
     ]
 
-
     return (
       <div className={styles.Content}>
         <Helmet title={this.getFormattedTitle()} titleTemplate="%s - Aspect" defaultTitle="Aspect" />
+
         <ListFilterContainer subject={this.getFormattedTitle()} defaultExpanded={true} onClickExport={this.clickDeviceListExport} owner={this} />
         <DataTableWithEmptyList
           selectable

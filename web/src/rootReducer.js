@@ -7,6 +7,7 @@ import filter from './filter/FilterRedux'
 import user, {
   types as authTypes
 } from './auth/AuthRedux'
+import demo from './demo/DemoRedux'
 import device from './device/DeviceRedux'
 import site from './site/SiteRedux'
 import result from './result/ResultRedux'
@@ -28,6 +29,7 @@ const appReducer = combineReducers({
   appNotification,
   filter,
   user,
+  demo,
   device,
   site,
   person,
@@ -49,6 +51,7 @@ const App = Immutable.Record({
   appNotification: undefined,
   filter: undefined,
   user: undefined,
+  demo: undefined,
   device: undefined,
   site: undefined,
   person: undefined,

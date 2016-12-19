@@ -11,7 +11,7 @@ import { connect } from 'react-redux'
 import Helmet from 'react-helmet'
 
 // Our own imports
-import DataTable from '../../components/shared/DataTable'
+import DataTableWithEmptyList from '../../components/shared/DataTableWithEmptyList'
 import ListFilterContainer from '../../filter/list/ListFilter'
 import { configureListFilter } from '../../filter/FilterRedux'
 import { fetchListFilteredResults } from '../ResultRedux'
@@ -72,6 +72,10 @@ export class ResultList extends PureComponent {
       siteName: true })
   }
 
+  componentDidMount() {
+    this.handleFetch()
+  }
+
   componentWillReceiveProps(nextProps) {
     if (this.props.listFilter !== nextProps.listFilter) {
       this.handleFetch()
@@ -89,7 +93,6 @@ export class ResultList extends PureComponent {
   render() {
     const { intl } = this.props
     const { formatMessage, formatDate } = intl
-
     const columns = [
       { db: 'endedOn', title: formatMessage(messages.endedOn), format: data => formatDate(data) },
       { db: 'deviceName', title: formatMessage(messages.deviceName) },
@@ -101,7 +104,7 @@ export class ResultList extends PureComponent {
       <div className={styles.Content}>
         <Helmet title={formatMessage(messages.title)} titleTemplate="%s - Aspect" defaultTitle="Aspect" />
         <ListFilterContainer subject={formatMessage(messages.title)} />
-        <DataTable
+        <DataTableWithEmptyList
           selectable
           handleItemIdSelection={this.handleItemIdSelection}
           handleFetch={this.handleFetch}

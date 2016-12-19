@@ -11,9 +11,11 @@ import validateEmailAddress from '../../shared/utils/validate'
 import messages from './messages'
 import styles from './PersonDetail.css'
 
-const ContactDetailsForm = (props) => {
-  const { intl: { formatMessage }, handleSubmit, pristine, invalid,
-      loading, initialValues, showNotesField, userIsAdmin, partners } = props
+export function ContactDetailsForm({
+  intl, handleSubmit, pristine, invalid,
+  loading, initialValues, showNotesField, userIsAdmin, partners
+}) {
+  const { formatMessage } = intl
   return (
     <form onSubmit={handleSubmit} className={styles.Form}>
       <div className={styles.Form__Content}>
@@ -85,7 +87,7 @@ ContactDetailsForm.propTypes = {
   userIsAdmin: PropTypes.bool
 }
 
-const validate = (contactDetails, props) => {
+export function validate(contactDetails, props) {
   const { formatMessage } = props.intl
   const errors = {}
   if (contactDetails) {

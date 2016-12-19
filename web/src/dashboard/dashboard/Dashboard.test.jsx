@@ -3,7 +3,6 @@ import React from 'react'
 import sinon from 'sinon'
 import { mount } from 'enzyme'
 import Immutable from 'immutable'
-import { assert } from 'chai'
 
 import { Dashboard } from './Dashboard'
 
@@ -17,17 +16,17 @@ describe('Dashboard', () => {
     formatMessage: message => message.defaultMessage
   }
 
-  context('React lifecycles', () => {
+  describe('React lifecycles', () => {
     let renderStub
-    before(() => {
+    beforeAll(() => {
       renderStub = sinon.stub(Dashboard.prototype, 'render', () => false)
     })
 
-    after(() => {
+    afterAll(() => {
       renderStub.restore()
     })
 
-    context('if query string contains "fl=1', () => {
+    describe('if query string contains "fl=1', () => {
       it('calls showAcknowledgement with user name when receiving new user', () => {
         const location = makeLocationObject({ fl: '1' })
         const showAcknowledgement = sinon.stub()
@@ -41,16 +40,16 @@ describe('Dashboard', () => {
             intl={intl}
           />
         )
-        assert.isTrue(showAcknowledgement.notCalled)
+        expect(showAcknowledgement.notCalled).toBe(true)
 
         Wrapper.setProps({
           userName: user.get('name')
         })
-        assert.isTrue(showAcknowledgement.called)
+        expect(showAcknowledgement.called).toBe(true)
       })
     })
 
-    context('if query string oes not contains "fl=1', () => {
+    describe('if query string oes not contains "fl=1', () => {
       it('calls showAcknowledgement with user name when receiving new user', () => {
         const location = makeLocationObject({ test: '2' })
         const showAcknowledgement = sinon.stub()
@@ -65,12 +64,12 @@ describe('Dashboard', () => {
           />
         )
 
-        assert.isTrue(showAcknowledgement.notCalled)
+        expect(showAcknowledgement.notCalled).toBe(true)
 
         Wrapper.setProps({
           userName: user.get('name')
         })
-        assert.isTrue(showAcknowledgement.notCalled)
+        expect(showAcknowledgement.notCalled).toBe(true)
       })
     })
   })

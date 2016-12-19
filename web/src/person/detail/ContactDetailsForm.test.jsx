@@ -1,28 +1,18 @@
 import React from 'react'
-import { assert } from 'chai'
 import { shallow } from 'enzyme'
-import sinon from 'sinon'
-import proxyquire from 'proxyquire'
 import Immutable from 'immutable'
 import RaisedButton from 'material-ui/RaisedButton'
 import TextInput from '../../components/shared/TextInput'
 import PhoneInput from '../../components/shared/PhoneInput'
 import LocationSelector from '../../components/shared/LocationSelector'
 
-describe('ContactDetailsForm Component', () => {
-  const fakeReactIntl = {
-    injectIntl: component => component
-  }
+describe('ContactDetailsForm module', () => {
+  const {
+    validate,
+    ContactDetailsForm
+  } = require('./ContactDetailsForm')
 
-  describe('ContactDetailsForm', () => {
-    const fakeReduxForm = {
-      reduxForm: () => component => component
-    }
-    const ContactDetailsForm = proxyquire('./ContactDetailsForm', {
-      'redux-form/immutable': fakeReduxForm,
-      'react-intl': fakeReactIntl
-    }).default
-
+  describe('ContactDetailsForm component', () => {
     let props
     let ContactDetailsFormWrapper
 
@@ -48,8 +38,8 @@ describe('ContactDetailsForm Component', () => {
     })
 
     it('Should be a form', () => {
-      assert.equal(ContactDetailsFormWrapper.node.type, 'form')
-      assert.equal(ContactDetailsFormWrapper.find('form').props().onSubmit, props.handleSubmit)
+      expect(ContactDetailsFormWrapper.node.type).toEqual('form')
+      expect(ContactDetailsFormWrapper.find('form').props().onSubmit).toEqual(props.handleSubmit)
     })
 
     it('Should contain fields for all contact details', () => {
@@ -67,30 +57,30 @@ describe('ContactDetailsForm Component', () => {
       const textInputs = ContactDetailsFormWrapper.find(TextInput)
       const phoneInputs = ContactDetailsFormWrapper.find(PhoneInput)
 
-      assert.equal(textInputs.length, Object.keys(expectedTextFieldLabels).length)
+      expect(textInputs.length).toEqual(Object.keys(expectedTextFieldLabels).length)
       textInputs.forEach((textInput) => {
-        assert.equal(textInput.props().label, expectedTextFieldLabels[textInput.props().name])
+        expect(textInput.props().label).toEqual(expectedTextFieldLabels[textInput.props().name])
       })
       phoneInputs.forEach((phoneInput) => {
-        assert.equal(phoneInput.props().label, expectedPhoneFieldLabels[phoneInput.props().name])
+        expect(phoneInput.props().label).toEqual(expectedPhoneFieldLabels[phoneInput.props().name])
       })
     })
 
     it('Should disable all fields when form is loading', () => {
       ContactDetailsFormWrapper.find(TextInput).forEach((textInput) => {
-        assert.isFalse(textInput.props().disabled)
+        expect(textInput.props().disabled).toBe(false)
       })
       props.loading = true
       shallowRenderForm(props)
       ContactDetailsFormWrapper.find(TextInput).forEach((textInput) => {
-        assert.isTrue(textInput.props().disabled)
+        expect(textInput.props().disabled).toBe(true)
       })
     })
 
     it('Should contain a location selector', () => {
       const locationSelector = ContactDetailsFormWrapper.find(LocationSelector)
-      assert.equal(locationSelector.length, 1)
-      assert.deepEqual(locationSelector.props(), {
+      expect(locationSelector.length).toEqual(1)
+      expect(locationSelector.props()).toEqual({
         initialValues: props.initialValues,
         formName: 'accountDetails',
         countryIdFieldName: 'countryId',
@@ -102,8 +92,8 @@ describe('ContactDetailsForm Component', () => {
 
     it('Should contain a submit button', () => {
       const submitButton = ContactDetailsFormWrapper.find(RaisedButton)
-      assert.equal(submitButton.length, 1)
-      assert.deepEqual(submitButton.props(), {
+      expect(submitButton.length).toEqual(1)
+      expect(submitButton.props()).toEqual({
         ...submitButton.props(),
         label: 'Save',
         secondary: true,
@@ -114,113 +104,92 @@ describe('ContactDetailsForm Component', () => {
 
     it('Should enable the submit button when the form is dirty, valid and not submitting', () => {
       let submitButton = ContactDetailsFormWrapper.find(RaisedButton)
-      assert.isTrue(submitButton.props().disabled)
+      expect(submitButton.props().disabled).toBe(true)
 
       props.pristine = false
       shallowRenderForm(props)
       submitButton = ContactDetailsFormWrapper.find(RaisedButton)
-      assert.isTrue(submitButton.props().disabled)
+      expect(submitButton.props().disabled).toBe(true)
 
       props.invalid = false
       shallowRenderForm(props)
       submitButton = ContactDetailsFormWrapper.find(RaisedButton)
-      assert.isFalse(submitButton.props().disabled)
+      expect(submitButton.props().disabled).toBe(false)
 
       props.pristine = true
       shallowRenderForm(props)
       submitButton = ContactDetailsFormWrapper.find(RaisedButton)
-      assert.isTrue(submitButton.props().disabled)
+      expect(submitButton.props().disabled).toBe(true)
     })
   })
 
-  describe('reduxForm', () => {
-    let reduxFormStub
-    let reduxFormConfig
+
+  describe('validate function', () => {
+    const props = {
+      handleSubmit: () => {},
+      intl: {
+        formatMessage: message => message.defaultMessage
+      }
+    }
+    let initialContactDetails
 
     beforeEach(() => {
-      reduxFormStub = {
-        reduxForm: sinon.stub().returns(() => {})
-      }
-      proxyquire('./ContactDetailsForm', {
-        'redux-form/immutable': reduxFormStub,
-        'react-intl': fakeReactIntl
+      initialContactDetails = Immutable.Map({
+        name: 'John Smith',
+        email: null,
+        email2: null
       })
-      reduxFormConfig = reduxFormStub.reduxForm.firstCall.args[0]
     })
 
-    it('Should create a form called \'accountDetails\'', () => {
-      assert.equal(reduxFormConfig.form, 'accountDetails')
+    it('should validate that name has been entered', () => {
+      expect(validate(initialContactDetails, props)).toEqual({})
+      const contactDetails = initialContactDetails.set('name', '')
+      expect(validate(contactDetails, props)).toEqual({
+        name: 'Please enter your Full name'
+      })
     })
 
-    describe('validate function', () => {
-      const props = {
-        intl: {
-          formatMessage: message => message.defaultMessage
-        },
-        handleSubmit: () => {}
-      }
-      let validateFunction
-      let initialContactDetails
-
-      beforeEach(() => {
-        validateFunction = reduxFormConfig.validate
-        initialContactDetails = Immutable.Map({
-          name: 'John Smith',
-          email: null,
-          email2: null
-        })
+    it('should validate email addresses if they have been entered', () => {
+      let contactDetails = initialContactDetails.set('email', 'invalid email')
+      expect(validate(contactDetails, props)).toEqual({
+        email: 'Please enter a valid email address'
       })
 
-      it('should validate that name has been entered', () => {
-        assert.deepEqual(validateFunction(initialContactDetails, props), {})
-        const contactDetails = initialContactDetails.set('name', '')
-        assert.deepEqual(validateFunction(contactDetails, props), {
-          name: 'Please enter your Full name'
-        })
+      contactDetails = initialContactDetails.set('email2', 'invalid email')
+      expect(validate(contactDetails, props)).toEqual({
+        email2: 'Please enter a valid email address'
+      })
+    })
+
+    it('should validate name and both email addresses', () => {
+      let contactDetails = initialContactDetails.merge({
+        name: '',
+        email: 'Invalid Email',
+        email2: 'Another Invalid Email'
+      })
+      expect(validate(contactDetails, props)).toEqual({
+        email: 'Please enter a valid email address',
+        email2: 'Please enter a valid email address',
+        name: 'Please enter your Full name'
       })
 
-      it('should validate email addresses if they have been entered', () => {
-        let contactDetails = initialContactDetails.set('email', 'invalid email')
-        assert.deepEqual(validateFunction(contactDetails, props), {
-          email: 'Please enter a valid email address'
-        })
-
-        contactDetails = initialContactDetails.set('email2', 'invalid email')
-        assert.deepEqual(validateFunction(contactDetails, props), {
-          email2: 'Please enter a valid email address'
-        })
+      contactDetails = contactDetails.set('name', 'Abu Jenkins')
+      expect(validate(contactDetails, props)).toEqual({
+        email: 'Please enter a valid email address',
+        email2: 'Please enter a valid email address'
       })
 
-      it('should validate name and both email addresses', () => {
-        let contactDetails = initialContactDetails.merge({
-          name: '',
-          email: 'Invalid Email',
-          email2: 'Another Invalid Email'
-        })
-        assert.deepEqual(validateFunction(contactDetails, props), {
-          email: 'Please enter a valid email address',
-          email2: 'Please enter a valid email address',
-          name: 'Please enter your Full name'
-        })
-
-        contactDetails = contactDetails.set('name', 'Abu Jenkins')
-        assert.deepEqual(validateFunction(contactDetails, props), {
-          email: 'Please enter a valid email address',
-          email2: 'Please enter a valid email address'
-        })
-
-        contactDetails = contactDetails.set('email2', 'valid@email.address')
-        assert.deepEqual(validateFunction(contactDetails, props), {
-          email: 'Please enter a valid email address'
-        })
-
-        contactDetails = contactDetails.set('email', 'another.valid@email.address')
-        assert.deepEqual(validateFunction(contactDetails, props), {})
+      contactDetails = contactDetails.set('email2', 'valid@email.address')
+      expect(validate(contactDetails, props)).toEqual({
+        email: 'Please enter a valid email address'
       })
 
-      it('should be able to handle an undefined parameter', () => {
-        assert.deepEqual(validateFunction(undefined, props), {})
-      })
+      contactDetails = contactDetails.set('email', 'another.valid@email.address')
+      expect(validate(contactDetails, props)).toEqual({})
+    })
+
+    it('should be able to handle an undefined parameter', () => {
+      expect(validate(undefined, props)).toEqual({})
     })
   })
 })

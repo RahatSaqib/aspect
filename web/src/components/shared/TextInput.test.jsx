@@ -1,6 +1,5 @@
 import React from 'react'
 import { Field } from 'redux-form/immutable'
-import { assert } from 'chai'
 import { shallow } from 'enzyme'
 import TextInput from './TextInput'
 
@@ -16,8 +15,8 @@ describe('TextInput', () => {
     const TextInputWrapper = shallow(<TextInput {...props} />)
     const textInputProps = TextInputWrapper.find(Field).props()
 
-    assert.equal(textInputProps.name, props.name)
-    assert.deepEqual(textInputProps.textFieldProps, {
+    expect(textInputProps.name).toEqual(props.name)
+    expect(textInputProps.textFieldProps).toEqual({
       floatingLabelText: props.label,
       fullWidth: props.fullWidth,
       disabled: props.disabled,
@@ -42,8 +41,8 @@ describe('TextInput', () => {
     const TextInputWrapper = shallow(<TextInput {...props} />)
     const textInputProps = TextInputWrapper.find(Field).props()
 
-    assert.equal(textInputProps.name, props.name)
-    assert.deepEqual(textInputProps.textFieldProps, {
+    expect(textInputProps.name).toEqual(props.name)
+    expect(textInputProps.textFieldProps).toEqual({
       floatingLabelText: props.label,
       fullWidth: props.fullWidth,
       disabled: props.disabled,

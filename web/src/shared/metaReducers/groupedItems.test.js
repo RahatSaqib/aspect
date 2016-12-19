@@ -1,4 +1,3 @@
-import { assert } from 'chai'
 import _ from 'lodash'
 import { Items, receiveList } from './groupedItems'
 
@@ -7,7 +6,9 @@ describe('Grouped Items Reducer', () => {
     it('should flatten the nested structure', () => {
       const initialState = new Items()
       const newState = receiveList(initialState, ['consumables', 'inventoryItems'], nestedData)
-      assert.deepEqual(_.omit(newState.getIn(['byId', 76]).toJS(), 'rowSpans', 'visibleProperties'), {
+      expect(
+        _.omit(newState.getIn(['byId', 76]).toJS(), 'rowSpans', 'visibleProperties')
+      ).toEqual({
         siteId: 38,
         siteName: 'Cuyahoga County Ohio #1',
         countryId: 3,
@@ -24,7 +25,9 @@ describe('Grouped Items Reducer', () => {
         expiresOn: null,
         quantityOnHand: 53
       })
-      assert.deepEqual(_.omit(newState.getIn(['byId', 75]).toJS(), 'rowSpans', 'visibleProperties'), {
+      expect(
+        _.omit(newState.getIn(['byId', 75]).toJS(), 'rowSpans', 'visibleProperties')
+      ).toEqual({
         siteId: 38,
         siteName: 'Cuyahoga County Ohio #1',
         countryId: 3,
@@ -41,7 +44,9 @@ describe('Grouped Items Reducer', () => {
         expiresOn: '2016-06-23T19:26:29.000Z',
         quantityOnHand: 34
       })
-      assert.deepEqual(_.omit(newState.getIn(['byId', 79]).toJS(), 'rowSpans', 'visibleProperties'), {
+      expect(
+        _.omit(newState.getIn(['byId', 79]).toJS(), 'rowSpans', 'visibleProperties')
+      ).toEqual({
         siteId: 38,
         siteName: 'Cuyahoga County Ohio #1',
         countryId: 3,
@@ -58,7 +63,9 @@ describe('Grouped Items Reducer', () => {
         expiresOn: '2016-12-15T00:00:00.000Z',
         quantityOnHand: 18
       })
-      assert.deepEqual(_.omit(newState.getIn(['byId', 78]).toJS(), 'rowSpans', 'visibleProperties'), {
+      expect(
+        _.omit(newState.getIn(['byId', 78]).toJS(), 'rowSpans', 'visibleProperties')
+      ).toEqual({
         siteId: 39,
         siteName: 'Cuyahoga County Ohio #2',
         countryId: 3,
@@ -75,7 +82,9 @@ describe('Grouped Items Reducer', () => {
         expiresOn: null,
         quantityOnHand: 8
       })
-      assert.deepEqual(_.omit(newState.getIn(['byId', 77]).toJS(), 'rowSpans', 'visibleProperties'), {
+      expect(
+        _.omit(newState.getIn(['byId', 77]).toJS(), 'rowSpans', 'visibleProperties')
+      ).toEqual({
         siteId: 39,
         siteName: 'Cuyahoga County Ohio #2',
         countryId: 3,
@@ -92,7 +101,9 @@ describe('Grouped Items Reducer', () => {
         expiresOn: '2017-02-27T09:17:09.000Z',
         quantityOnHand: 225
       })
-      assert.deepEqual(_.omit(newState.getIn(['byId', 63]).toJS(), 'rowSpans', 'visibleProperties'), {
+      expect(
+        _.omit(newState.getIn(['byId', 63]).toJS(), 'rowSpans', 'visibleProperties')
+      ).toEqual({
         siteId: 32,
         siteName: 'Wayne County Nebraska #2',
         countryId: 3,
@@ -109,7 +120,9 @@ describe('Grouped Items Reducer', () => {
         expiresOn: '2016-03-31T00:33:37.000Z',
         quantityOnHand: 860
       })
-      assert.deepEqual(_.omit(newState.getIn(['byId', 61]).toJS(), 'rowSpans', 'visibleProperties'), {
+      expect(
+        _.omit(newState.getIn(['byId', 61]).toJS(), 'rowSpans', 'visibleProperties')
+      ).toEqual({
         siteId: 32,
         siteName: 'Wayne County Nebraska #2',
         countryId: 3,
@@ -126,7 +139,9 @@ describe('Grouped Items Reducer', () => {
         expiresOn: '2017-04-31T00:33:37.000Z',
         quantityOnHand: 13
       })
-      assert.deepEqual(_.omit(newState.getIn(['byId', 44]).toJS(), 'rowSpans', 'visibleProperties'), {
+      expect(
+        _.omit(newState.getIn(['byId', 44]).toJS(), 'rowSpans', 'visibleProperties')
+      ).toEqual({
         siteId: 22,
         siteName: 'Suffolk County Massachusetts #3',
         countryId: 3,
@@ -143,7 +158,9 @@ describe('Grouped Items Reducer', () => {
         expiresOn: null,
         quantityOnHand: 24
       })
-      assert.deepEqual(_.omit(newState.getIn(['byId', 45]).toJS(), 'rowSpans', 'visibleProperties'), {
+      expect(
+        _.omit(newState.getIn(['byId', 45]).toJS(), 'rowSpans', 'visibleProperties')
+      ).toEqual({
         siteId: 22,
         siteName: 'Suffolk County Massachusetts #3',
         countryId: 3,
@@ -160,7 +177,9 @@ describe('Grouped Items Reducer', () => {
         expiresOn: null,
         quantityOnHand: 16
       })
-      assert.deepEqual(_.omit(newState.getIn(['byId', 43]).toJS(), 'rowSpans', 'visibleProperties'), {
+      expect(
+        _.omit(newState.getIn(['byId', 43]).toJS(), 'rowSpans', 'visibleProperties')
+      ).toEqual({
         siteId: 22,
         siteName: 'Suffolk County Massachusetts #3',
         countryId: 3,
@@ -177,7 +196,9 @@ describe('Grouped Items Reducer', () => {
         expiresOn: '2017-03-23T14:21:28.000Z',
         quantityOnHand: 76
       })
-      assert.deepEqual(_.omit(newState.getIn(['byId', 46]).toJS(), 'rowSpans', 'visibleProperties'), {
+      expect(
+        _.omit(newState.getIn(['byId', 46]).toJS(), 'rowSpans', 'visibleProperties')
+      ).toEqual({
         siteId: 22,
         siteName: 'Suffolk County Massachusetts #3',
         countryId: 3,
@@ -194,7 +215,9 @@ describe('Grouped Items Reducer', () => {
         expiresOn: '2017-05-01T00:00:00.000Z',
         quantityOnHand: 76
       })
-      assert.deepEqual(_.omit(newState.getIn(['byId', 47]).toJS(), 'rowSpans', 'visibleProperties'), {
+      expect(
+        _.omit(newState.getIn(['byId', 47]).toJS(), 'rowSpans', 'visibleProperties')
+      ).toEqual({
         siteId: 22,
         siteName: 'Suffolk County Massachusetts #3',
         countryId: 3,
@@ -211,7 +234,9 @@ describe('Grouped Items Reducer', () => {
         expiresOn: '2017-04-21T00:00:00.000Z',
         quantityOnHand: 76
       })
-      assert.deepEqual(_.omit(newState.getIn(['byId', 35]).toJS(), 'rowSpans', 'visibleProperties'), {
+      expect(
+        _.omit(newState.getIn(['byId', 35]).toJS(), 'rowSpans', 'visibleProperties')
+      ).toEqual({
         siteId: 16,
         siteName: 'Franklin County Massachusetts #1',
         countryId: 3,
@@ -228,7 +253,9 @@ describe('Grouped Items Reducer', () => {
         expiresOn: '2017-08-18T22:00:00.000Z',
         quantityOnHand: 931
       })
-      assert.deepEqual(_.omit(newState.getIn(['byId', 36]).toJS(), 'rowSpans', 'visibleProperties'), {
+      expect(
+        _.omit(newState.getIn(['byId', 36]).toJS(), 'rowSpans', 'visibleProperties')
+      ).toEqual({
         siteId: 16,
         siteName: 'Franklin County Massachusetts #1',
         countryId: 3,
@@ -245,7 +272,9 @@ describe('Grouped Items Reducer', () => {
         expiresOn: '2017-03-14T22:00:00.000Z',
         quantityOnHand: 693
       })
-      assert.deepEqual(_.omit(newState.getIn(['byId', 39]).toJS(), 'rowSpans', 'visibleProperties'), {
+      expect(
+        _.omit(newState.getIn(['byId', 39]).toJS(), 'rowSpans', 'visibleProperties')
+      ).toEqual({
         siteId: 16,
         siteName: 'Franklin County Massachusetts #1',
         countryId: 3,
@@ -262,7 +291,9 @@ describe('Grouped Items Reducer', () => {
         expiresOn: null,
         quantityOnHand: 930
       })
-      assert.deepEqual(_.omit(newState.getIn(['byId', 38]).toJS(), 'rowSpans', 'visibleProperties'), {
+      expect(
+        _.omit(newState.getIn(['byId', 38]).toJS(), 'rowSpans', 'visibleProperties')
+      ).toEqual({
         siteId: 16,
         siteName: 'Franklin County Massachusetts #1',
         countryId: 3,
@@ -279,7 +310,9 @@ describe('Grouped Items Reducer', () => {
         expiresOn: null,
         quantityOnHand: 92
       })
-      assert.deepEqual(_.omit(newState.getIn(['byId', 37]).toJS(), 'rowSpans', 'visibleProperties'), {
+      expect(
+        _.omit(newState.getIn(['byId', 37]).toJS(), 'rowSpans', 'visibleProperties')
+      ).toEqual({
         siteId: 16,
         siteName: 'Franklin County Massachusetts #1',
         countryId: 3,
@@ -301,7 +334,7 @@ describe('Grouped Items Reducer', () => {
     it('should generate rowSpans for each field based the nested structure', () => {
       const initialState = new Items()
       const newState = receiveList(initialState, ['consumables', 'inventoryItems'], nestedData)
-      assert.deepEqual(newState.getIn(['byId', 76, 'rowSpans']).toJS(), {
+      expect(newState.getIn(['byId', 76, 'rowSpans']).toJS()).toEqual({
         siteId: 3,
         siteName: 3,
         countryId: 3,
@@ -318,7 +351,7 @@ describe('Grouped Items Reducer', () => {
         expiresOn: 1,
         quantityOnHand: 1
       })
-      assert.deepEqual(newState.getIn(['byId', 75, 'rowSpans']).toJS(), {
+      expect(newState.getIn(['byId', 75, 'rowSpans']).toJS()).toEqual({
         siteId: 3,
         siteName: 3,
         countryId: 3,
@@ -335,7 +368,7 @@ describe('Grouped Items Reducer', () => {
         expiresOn: 1,
         quantityOnHand: 1
       })
-      assert.deepEqual(newState.getIn(['byId', 79, 'rowSpans']).toJS(), {
+      expect(newState.getIn(['byId', 79, 'rowSpans']).toJS()).toEqual({
         siteId: 3,
         siteName: 3,
         countryId: 3,
@@ -352,7 +385,7 @@ describe('Grouped Items Reducer', () => {
         expiresOn: 1,
         quantityOnHand: 1
       })
-      assert.deepEqual(newState.getIn(['byId', 78, 'rowSpans']).toJS(), {
+      expect(newState.getIn(['byId', 78, 'rowSpans']).toJS()).toEqual({
         siteId: 2,
         siteName: 2,
         countryId: 2,
@@ -369,7 +402,7 @@ describe('Grouped Items Reducer', () => {
         expiresOn: 1,
         quantityOnHand: 1
       })
-      assert.deepEqual(newState.getIn(['byId', 77, 'rowSpans']).toJS(), {
+      expect(newState.getIn(['byId', 77, 'rowSpans']).toJS()).toEqual({
         siteId: 2,
         siteName: 2,
         countryId: 2,
@@ -386,7 +419,7 @@ describe('Grouped Items Reducer', () => {
         expiresOn: 1,
         quantityOnHand: 1
       })
-      assert.deepEqual(newState.getIn(['byId', 63, 'rowSpans']).toJS(), {
+      expect(newState.getIn(['byId', 63, 'rowSpans']).toJS()).toEqual({
         siteId: 2,
         siteName: 2,
         countryId: 2,
@@ -403,7 +436,7 @@ describe('Grouped Items Reducer', () => {
         expiresOn: 1,
         quantityOnHand: 1
       })
-      assert.deepEqual(newState.getIn(['byId', 61, 'rowSpans']).toJS(), {
+      expect(newState.getIn(['byId', 61, 'rowSpans']).toJS()).toEqual({
         siteId: 2,
         siteName: 2,
         countryId: 2,
@@ -420,7 +453,7 @@ describe('Grouped Items Reducer', () => {
         expiresOn: 1,
         quantityOnHand: 1
       })
-      assert.deepEqual(newState.getIn(['byId', 44, 'rowSpans']).toJS(), {
+      expect(newState.getIn(['byId', 44, 'rowSpans']).toJS()).toEqual({
         siteId: 5,
         siteName: 5,
         countryId: 5,
@@ -437,7 +470,7 @@ describe('Grouped Items Reducer', () => {
         expiresOn: 1,
         quantityOnHand: 1
       })
-      assert.deepEqual(newState.getIn(['byId', 45, 'rowSpans']).toJS(), {
+      expect(newState.getIn(['byId', 45, 'rowSpans']).toJS()).toEqual({
         siteId: 5,
         siteName: 5,
         countryId: 5,
@@ -454,7 +487,7 @@ describe('Grouped Items Reducer', () => {
         expiresOn: 1,
         quantityOnHand: 1
       })
-      assert.deepEqual(newState.getIn(['byId', 43, 'rowSpans']).toJS(), {
+      expect(newState.getIn(['byId', 43, 'rowSpans']).toJS()).toEqual({
         siteId: 5,
         siteName: 5,
         countryId: 5,
@@ -471,7 +504,7 @@ describe('Grouped Items Reducer', () => {
         expiresOn: 1,
         quantityOnHand: 1
       })
-      assert.deepEqual(newState.getIn(['byId', 46, 'rowSpans']).toJS(), {
+      expect(newState.getIn(['byId', 46, 'rowSpans']).toJS()).toEqual({
         siteId: 5,
         siteName: 5,
         countryId: 5,
@@ -488,7 +521,7 @@ describe('Grouped Items Reducer', () => {
         expiresOn: 1,
         quantityOnHand: 1
       })
-      assert.deepEqual(newState.getIn(['byId', 47, 'rowSpans']).toJS(), {
+      expect(newState.getIn(['byId', 47, 'rowSpans']).toJS()).toEqual({
         siteId: 5,
         siteName: 5,
         countryId: 5,
@@ -505,7 +538,7 @@ describe('Grouped Items Reducer', () => {
         expiresOn: 1,
         quantityOnHand: 1
       })
-      assert.deepEqual(newState.getIn(['byId', 35, 'rowSpans']).toJS(), {
+      expect(newState.getIn(['byId', 35, 'rowSpans']).toJS()).toEqual({
         siteId: 5,
         siteName: 5,
         countryId: 5,
@@ -522,7 +555,7 @@ describe('Grouped Items Reducer', () => {
         expiresOn: 1,
         quantityOnHand: 1
       })
-      assert.deepEqual(newState.getIn(['byId', 36, 'rowSpans']).toJS(), {
+      expect(newState.getIn(['byId', 36, 'rowSpans']).toJS()).toEqual({
         siteId: 5,
         siteName: 5,
         countryId: 5,
@@ -539,7 +572,7 @@ describe('Grouped Items Reducer', () => {
         expiresOn: 1,
         quantityOnHand: 1
       })
-      assert.deepEqual(newState.getIn(['byId', 39, 'rowSpans']).toJS(), {
+      expect(newState.getIn(['byId', 39, 'rowSpans']).toJS()).toEqual({
         siteId: 5,
         siteName: 5,
         countryId: 5,
@@ -556,7 +589,7 @@ describe('Grouped Items Reducer', () => {
         expiresOn: 1,
         quantityOnHand: 1
       })
-      assert.deepEqual(newState.getIn(['byId', 38, 'rowSpans']).toJS(), {
+      expect(newState.getIn(['byId', 38, 'rowSpans']).toJS()).toEqual({
         siteId: 5,
         siteName: 5,
         countryId: 5,
@@ -573,7 +606,7 @@ describe('Grouped Items Reducer', () => {
         expiresOn: 1,
         quantityOnHand: 1
       })
-      assert.deepEqual(newState.getIn(['byId', 37, 'rowSpans']).toJS(), {
+      expect(newState.getIn(['byId', 37, 'rowSpans']).toJS()).toEqual({
         siteId: 5,
         siteName: 5,
         countryId: 5,
@@ -595,55 +628,48 @@ describe('Grouped Items Reducer', () => {
     it('should generate visibleProperties for each field based the nested structure', () => {
       const initialState = new Items()
       const newState = receiveList(initialState, ['consumables', 'inventoryItems'], nestedData)
-      assert.deepEqual(newState.getIn(['byId', 76, 'visibleProperties']).toJS().sort(),
+      expect(newState.getIn(['byId', 76, 'visibleProperties']).toJS().sort()).toEqual(
         ['consumableId', 'consumableName', 'countryId', 'countryName', 'expiresOn', 'id',
           'lgaId', 'lgaName', 'manufacturer', 'quantityOnHand', 'siteId', 'siteName',
-          'stateId', 'stateName', 'unitShortName'])
-      assert.deepEqual(newState.getIn(['byId', 75, 'visibleProperties']).toJS().sort(),
-        ['consumableId', 'consumableName', 'expiresOn', 'id',
-          'manufacturer', 'quantityOnHand', 'unitShortName'])
-      assert.deepEqual(newState.getIn(['byId', 79, 'visibleProperties']).toJS().sort(),
-        ['expiresOn', 'id', 'quantityOnHand'])
-      assert.deepEqual(newState.getIn(['byId', 78, 'visibleProperties']).toJS().sort(),
+          'stateId', 'stateName', 'unitShortName']
+      )
+      expect(newState.getIn(['byId', 75, 'visibleProperties']).toJS().sort()).toEqual(['consumableId', 'consumableName', 'expiresOn', 'id',
+        'manufacturer', 'quantityOnHand', 'unitShortName'])
+      expect(newState.getIn(['byId', 79, 'visibleProperties']).toJS().sort()).toEqual(['expiresOn', 'id', 'quantityOnHand'])
+      expect(newState.getIn(['byId', 78, 'visibleProperties']).toJS().sort()).toEqual(
         ['consumableId', 'consumableName', 'countryId', 'countryName', 'expiresOn', 'id',
           'lgaId', 'lgaName', 'manufacturer', 'quantityOnHand', 'siteId', 'siteName',
-          'stateId', 'stateName', 'unitShortName'])
-      assert.deepEqual(newState.getIn(['byId', 77, 'visibleProperties']).toJS().sort(),
-        ['consumableId', 'consumableName', 'expiresOn', 'id',
-          'manufacturer', 'quantityOnHand', 'unitShortName'])
-      assert.deepEqual(newState.getIn(['byId', 63, 'visibleProperties']).toJS().sort(),
+          'stateId', 'stateName', 'unitShortName']
+      )
+      expect(newState.getIn(['byId', 77, 'visibleProperties']).toJS().sort()).toEqual(['consumableId', 'consumableName', 'expiresOn', 'id',
+        'manufacturer', 'quantityOnHand', 'unitShortName'])
+      expect(newState.getIn(['byId', 63, 'visibleProperties']).toJS().sort()).toEqual(
         ['consumableId', 'consumableName', 'countryId', 'countryName', 'expiresOn', 'id',
           'lgaId', 'lgaName', 'manufacturer', 'quantityOnHand', 'siteId', 'siteName',
-          'stateId', 'stateName', 'unitShortName'])
-      assert.deepEqual(newState.getIn(['byId', 61, 'visibleProperties']).toJS().sort(),
-        ['expiresOn', 'id', 'quantityOnHand'])
-      assert.deepEqual(newState.getIn(['byId', 44, 'visibleProperties']).toJS().sort(),
+          'stateId', 'stateName', 'unitShortName']
+      )
+      expect(newState.getIn(['byId', 61, 'visibleProperties']).toJS().sort()).toEqual(['expiresOn', 'id', 'quantityOnHand'])
+      expect(newState.getIn(['byId', 44, 'visibleProperties']).toJS().sort()).toEqual(
         ['consumableId', 'consumableName', 'countryId', 'countryName', 'expiresOn', 'id',
           'lgaId', 'lgaName', 'manufacturer', 'quantityOnHand', 'siteId', 'siteName',
-          'stateId', 'stateName', 'unitShortName'])
-      assert.deepEqual(newState.getIn(['byId', 45, 'visibleProperties']).toJS().sort(),
-        ['expiresOn', 'id', 'quantityOnHand'])
-      assert.deepEqual(newState.getIn(['byId', 43, 'visibleProperties']).toJS().sort(),
-        ['consumableId', 'consumableName', 'expiresOn', 'id',
-          'manufacturer', 'quantityOnHand', 'unitShortName'])
-      assert.deepEqual(newState.getIn(['byId', 46, 'visibleProperties']).toJS().sort(),
-        ['expiresOn', 'id', 'quantityOnHand'])
-      assert.deepEqual(newState.getIn(['byId', 47, 'visibleProperties']).toJS().sort(),
-        ['expiresOn', 'id', 'quantityOnHand'])
-      assert.deepEqual(newState.getIn(['byId', 35, 'visibleProperties']).toJS().sort(),
+          'stateId', 'stateName', 'unitShortName']
+      )
+      expect(newState.getIn(['byId', 45, 'visibleProperties']).toJS().sort()).toEqual(['expiresOn', 'id', 'quantityOnHand'])
+      expect(newState.getIn(['byId', 43, 'visibleProperties']).toJS().sort()).toEqual(['consumableId', 'consumableName', 'expiresOn', 'id',
+        'manufacturer', 'quantityOnHand', 'unitShortName'])
+      expect(newState.getIn(['byId', 46, 'visibleProperties']).toJS().sort()).toEqual(['expiresOn', 'id', 'quantityOnHand'])
+      expect(newState.getIn(['byId', 47, 'visibleProperties']).toJS().sort()).toEqual(['expiresOn', 'id', 'quantityOnHand'])
+      expect(newState.getIn(['byId', 35, 'visibleProperties']).toJS().sort()).toEqual(
         ['consumableId', 'consumableName', 'countryId', 'countryName', 'expiresOn', 'id',
           'lgaId', 'lgaName', 'manufacturer', 'quantityOnHand', 'siteId', 'siteName',
-          'stateId', 'stateName', 'unitShortName'])
-      assert.deepEqual(newState.getIn(['byId', 36, 'visibleProperties']).toJS().sort(),
-        ['expiresOn', 'id', 'quantityOnHand'])
-      assert.deepEqual(newState.getIn(['byId', 39, 'visibleProperties']).toJS().sort(),
-        ['consumableId', 'consumableName', 'expiresOn', 'id',
-          'manufacturer', 'quantityOnHand', 'unitShortName'])
-      assert.deepEqual(newState.getIn(['byId', 38, 'visibleProperties']).toJS().sort(),
-        ['expiresOn', 'id', 'quantityOnHand'])
-      assert.deepEqual(newState.getIn(['byId', 37, 'visibleProperties']).toJS().sort(),
-        ['consumableId', 'consumableName', 'expiresOn', 'id',
-          'manufacturer', 'quantityOnHand', 'unitShortName'])
+          'stateId', 'stateName', 'unitShortName']
+      )
+      expect(newState.getIn(['byId', 36, 'visibleProperties']).toJS().sort()).toEqual(['expiresOn', 'id', 'quantityOnHand'])
+      expect(newState.getIn(['byId', 39, 'visibleProperties']).toJS().sort()).toEqual(['consumableId', 'consumableName', 'expiresOn', 'id',
+        'manufacturer', 'quantityOnHand', 'unitShortName'])
+      expect(newState.getIn(['byId', 38, 'visibleProperties']).toJS().sort()).toEqual(['expiresOn', 'id', 'quantityOnHand'])
+      expect(newState.getIn(['byId', 37, 'visibleProperties']).toJS().sort()).toEqual(['consumableId', 'consumableName', 'expiresOn', 'id',
+        'manufacturer', 'quantityOnHand', 'unitShortName'])
     })
 
     it('should return an item ID list that is in the same order as the deepest child IDs passed into it', () => {
@@ -653,7 +679,7 @@ describe('Grouped Items Reducer', () => {
       const initialState = new Items()
       const newState = receiveList(initialState, ['consumables', 'inventoryItems'], nestedData)
 
-      assert.deepEqual(newState.get('currentIdList').toJS(), idList)
+      expect(newState.get('currentIdList').toJS()).toEqual(idList)
     })
 
     it('should not keep stale column visibility state when a new list is received', () => {
@@ -674,34 +700,30 @@ describe('Grouped Items Reducer', () => {
       })
       const newState = receiveList(nextState, ['consumables', 'inventoryItems'], dataSortedByQuantity)
 
-      assert.deepEqual(newState.getIn(['byId', 75, 'visibleProperties']).toJS().sort(),
-        ['expiresOn', 'id', 'quantityOnHand'])
-      assert.deepEqual(newState.getIn(['byId', 79, 'visibleProperties']).toJS().sort(),
-        ['consumableId', 'consumableName', 'expiresOn', 'id',
-          'manufacturer', 'quantityOnHand', 'unitShortName'])
-      assert.deepEqual(newState.getIn(['byId', 63, 'visibleProperties']).toJS().sort(),
-        ['expiresOn', 'id', 'quantityOnHand'])
-      assert.deepEqual(newState.getIn(['byId', 61, 'visibleProperties']).toJS().sort(),
+      expect(newState.getIn(['byId', 75, 'visibleProperties']).toJS().sort()).toEqual(['expiresOn', 'id', 'quantityOnHand'])
+      expect(newState.getIn(['byId', 79, 'visibleProperties']).toJS().sort()).toEqual(['consumableId', 'consumableName', 'expiresOn', 'id',
+        'manufacturer', 'quantityOnHand', 'unitShortName'])
+      expect(newState.getIn(['byId', 63, 'visibleProperties']).toJS().sort()).toEqual(['expiresOn', 'id', 'quantityOnHand'])
+      expect(newState.getIn(['byId', 61, 'visibleProperties']).toJS().sort()).toEqual(
         ['consumableId', 'consumableName', 'countryId', 'countryName', 'expiresOn', 'id',
           'lgaId', 'lgaName', 'manufacturer', 'quantityOnHand', 'siteId', 'siteName',
-          'stateId', 'stateName', 'unitShortName'])
-      assert.deepEqual(newState.getIn(['byId', 44, 'visibleProperties']).toJS().sort(),
-        ['expiresOn', 'id', 'quantityOnHand'])
-      assert.deepEqual(newState.getIn(['byId', 45, 'visibleProperties']).toJS().sort(),
+          'stateId', 'stateName', 'unitShortName']
+      )
+      expect(newState.getIn(['byId', 44, 'visibleProperties']).toJS().sort()).toEqual(['expiresOn', 'id', 'quantityOnHand'])
+      expect(newState.getIn(['byId', 45, 'visibleProperties']).toJS().sort()).toEqual(
         ['consumableId', 'consumableName', 'countryId', 'countryName', 'expiresOn', 'id',
           'lgaId', 'lgaName', 'manufacturer', 'quantityOnHand', 'siteId', 'siteName',
-          'stateId', 'stateName', 'unitShortName'])
-      assert.deepEqual(newState.getIn(['byId', 35, 'visibleProperties']).toJS().sort(),
-        ['expiresOn', 'id', 'quantityOnHand'])
-      assert.deepEqual(newState.getIn(['byId', 36, 'visibleProperties']).toJS().sort(),
+          'stateId', 'stateName', 'unitShortName']
+      )
+      expect(newState.getIn(['byId', 35, 'visibleProperties']).toJS().sort()).toEqual(['expiresOn', 'id', 'quantityOnHand'])
+      expect(newState.getIn(['byId', 36, 'visibleProperties']).toJS().sort()).toEqual(
         ['consumableId', 'consumableName', 'countryId', 'countryName', 'expiresOn', 'id',
           'lgaId', 'lgaName', 'manufacturer', 'quantityOnHand', 'siteId', 'siteName',
-          'stateId', 'stateName', 'unitShortName'])
-      assert.deepEqual(newState.getIn(['byId', 39, 'visibleProperties']).toJS().sort(),
-        ['expiresOn', 'id', 'quantityOnHand'])
-      assert.deepEqual(newState.getIn(['byId', 38, 'visibleProperties']).toJS().sort(),
-        ['consumableId', 'consumableName', 'expiresOn', 'id',
-          'manufacturer', 'quantityOnHand', 'unitShortName'])
+          'stateId', 'stateName', 'unitShortName']
+      )
+      expect(newState.getIn(['byId', 39, 'visibleProperties']).toJS().sort()).toEqual(['expiresOn', 'id', 'quantityOnHand'])
+      expect(newState.getIn(['byId', 38, 'visibleProperties']).toJS().sort()).toEqual(['consumableId', 'consumableName', 'expiresOn', 'id',
+        'manufacturer', 'quantityOnHand', 'unitShortName'])
     })
 
     const nestedData = [{
@@ -889,7 +911,9 @@ describe('Grouped Items Reducer', () => {
     it('should return the same data', () => {
       const initialState = new Items()
       const newState = receiveList(initialState, [], flatData)
-      assert.deepEqual(_.omit(newState.getIn(['byId', 76]).toJS(), 'rowSpans', 'visibleProperties'), {
+      expect(
+        _.omit(newState.getIn(['byId', 76]).toJS(), 'rowSpans', 'visibleProperties')
+      ).toEqual({
         siteId: 38,
         siteName: 'Cuyahoga County Ohio #1',
         countryId: 3,
@@ -906,7 +930,9 @@ describe('Grouped Items Reducer', () => {
         expiresOn: null,
         quantityOnHand: 53
       })
-      assert.deepEqual(_.omit(newState.getIn(['byId', 75]).toJS(), 'rowSpans', 'visibleProperties'), {
+      expect(
+        _.omit(newState.getIn(['byId', 75]).toJS(), 'rowSpans', 'visibleProperties')
+      ).toEqual({
         siteId: 38,
         siteName: 'Cuyahoga County Ohio #1',
         countryId: 3,
@@ -923,7 +949,9 @@ describe('Grouped Items Reducer', () => {
         expiresOn: '2016-06-23T19:26:29.000Z',
         quantityOnHand: 34
       })
-      assert.deepEqual(_.omit(newState.getIn(['byId', 79]).toJS(), 'rowSpans', 'visibleProperties'), {
+      expect(
+        _.omit(newState.getIn(['byId', 79]).toJS(), 'rowSpans', 'visibleProperties')
+      ).toEqual({
         siteId: 38,
         siteName: 'Cuyahoga County Ohio #1',
         countryId: 3,
@@ -940,7 +968,9 @@ describe('Grouped Items Reducer', () => {
         expiresOn: '2016-12-15T00:00:00.000Z',
         quantityOnHand: 18
       })
-      assert.deepEqual(_.omit(newState.getIn(['byId', 78]).toJS(), 'rowSpans', 'visibleProperties'), {
+      expect(
+        _.omit(newState.getIn(['byId', 78]).toJS(), 'rowSpans', 'visibleProperties')
+      ).toEqual({
         siteId: 39,
         siteName: 'Cuyahoga County Ohio #2',
         countryId: 3,
@@ -957,7 +987,9 @@ describe('Grouped Items Reducer', () => {
         expiresOn: null,
         quantityOnHand: 8
       })
-      assert.deepEqual(_.omit(newState.getIn(['byId', 77]).toJS(), 'rowSpans', 'visibleProperties'), {
+      expect(
+        _.omit(newState.getIn(['byId', 77]).toJS(), 'rowSpans', 'visibleProperties')
+      ).toEqual({
         siteId: 39,
         siteName: 'Cuyahoga County Ohio #2',
         countryId: 3,
@@ -974,7 +1006,9 @@ describe('Grouped Items Reducer', () => {
         expiresOn: '2017-02-27T09:17:09.000Z',
         quantityOnHand: 225
       })
-      assert.deepEqual(_.omit(newState.getIn(['byId', 63]).toJS(), 'rowSpans', 'visibleProperties'), {
+      expect(
+        _.omit(newState.getIn(['byId', 63]).toJS(), 'rowSpans', 'visibleProperties')
+      ).toEqual({
         siteId: 32,
         siteName: 'Wayne County Nebraska #2',
         countryId: 3,
@@ -991,7 +1025,9 @@ describe('Grouped Items Reducer', () => {
         expiresOn: '2016-03-31T00:33:37.000Z',
         quantityOnHand: 860
       })
-      assert.deepEqual(_.omit(newState.getIn(['byId', 61]).toJS(), 'rowSpans', 'visibleProperties'), {
+      expect(
+        _.omit(newState.getIn(['byId', 61]).toJS(), 'rowSpans', 'visibleProperties')
+      ).toEqual({
         siteId: 32,
         siteName: 'Wayne County Nebraska #2',
         countryId: 3,
@@ -1013,7 +1049,7 @@ describe('Grouped Items Reducer', () => {
     it('should create rowSpans of 1', () => {
       const initialState = new Items()
       const newState = receiveList(initialState, [], flatData)
-      assert.deepEqual(newState.getIn(['byId', 76, 'rowSpans']).toJS(), {
+      expect(newState.getIn(['byId', 76, 'rowSpans']).toJS()).toEqual({
         siteId: 1,
         siteName: 1,
         countryId: 1,
@@ -1030,7 +1066,7 @@ describe('Grouped Items Reducer', () => {
         expiresOn: 1,
         quantityOnHand: 1
       })
-      assert.deepEqual(newState.getIn(['byId', 75, 'rowSpans']).toJS(), {
+      expect(newState.getIn(['byId', 75, 'rowSpans']).toJS()).toEqual({
         siteId: 1,
         siteName: 1,
         countryId: 1,
@@ -1047,7 +1083,7 @@ describe('Grouped Items Reducer', () => {
         expiresOn: 1,
         quantityOnHand: 1
       })
-      assert.deepEqual(newState.getIn(['byId', 79, 'rowSpans']).toJS(), {
+      expect(newState.getIn(['byId', 79, 'rowSpans']).toJS()).toEqual({
         siteId: 1,
         siteName: 1,
         countryId: 1,
@@ -1064,7 +1100,7 @@ describe('Grouped Items Reducer', () => {
         expiresOn: 1,
         quantityOnHand: 1
       })
-      assert.deepEqual(newState.getIn(['byId', 78, 'rowSpans']).toJS(), {
+      expect(newState.getIn(['byId', 78, 'rowSpans']).toJS()).toEqual({
         siteId: 1,
         siteName: 1,
         countryId: 1,
@@ -1081,7 +1117,7 @@ describe('Grouped Items Reducer', () => {
         expiresOn: 1,
         quantityOnHand: 1
       })
-      assert.deepEqual(newState.getIn(['byId', 77, 'rowSpans']).toJS(), {
+      expect(newState.getIn(['byId', 77, 'rowSpans']).toJS()).toEqual({
         siteId: 1,
         siteName: 1,
         countryId: 1,
@@ -1098,7 +1134,7 @@ describe('Grouped Items Reducer', () => {
         expiresOn: 1,
         quantityOnHand: 1
       })
-      assert.deepEqual(newState.getIn(['byId', 63, 'rowSpans']).toJS(), {
+      expect(newState.getIn(['byId', 63, 'rowSpans']).toJS()).toEqual({
         siteId: 1,
         siteName: 1,
         countryId: 1,
@@ -1115,7 +1151,7 @@ describe('Grouped Items Reducer', () => {
         expiresOn: 1,
         quantityOnHand: 1
       })
-      assert.deepEqual(newState.getIn(['byId', 61, 'rowSpans']).toJS(), {
+      expect(newState.getIn(['byId', 61, 'rowSpans']).toJS()).toEqual({
         siteId: 1,
         siteName: 1,
         countryId: 1,
@@ -1138,20 +1174,13 @@ describe('Grouped Items Reducer', () => {
       const initialState = new Items()
       const newState = receiveList(initialState, [], flatData)
       const allProperties = Object.keys(flatData[0])
-      assert.deepEqual(newState.getIn(['byId', 76, 'visibleProperties']).toJS().sort(),
-        allProperties.sort())
-      assert.deepEqual(newState.getIn(['byId', 75, 'visibleProperties']).toJS().sort(),
-        allProperties.sort())
-      assert.deepEqual(newState.getIn(['byId', 79, 'visibleProperties']).toJS().sort(),
-        allProperties.sort())
-      assert.deepEqual(newState.getIn(['byId', 78, 'visibleProperties']).toJS().sort(),
-        allProperties.sort())
-      assert.deepEqual(newState.getIn(['byId', 77, 'visibleProperties']).toJS().sort(),
-        allProperties.sort())
-      assert.deepEqual(newState.getIn(['byId', 63, 'visibleProperties']).toJS().sort(),
-        allProperties.sort())
-      assert.deepEqual(newState.getIn(['byId', 61, 'visibleProperties']).toJS().sort(),
-        allProperties.sort())
+      expect(newState.getIn(['byId', 76, 'visibleProperties']).toJS().sort()).toEqual(allProperties.sort())
+      expect(newState.getIn(['byId', 75, 'visibleProperties']).toJS().sort()).toEqual(allProperties.sort())
+      expect(newState.getIn(['byId', 79, 'visibleProperties']).toJS().sort()).toEqual(allProperties.sort())
+      expect(newState.getIn(['byId', 78, 'visibleProperties']).toJS().sort()).toEqual(allProperties.sort())
+      expect(newState.getIn(['byId', 77, 'visibleProperties']).toJS().sort()).toEqual(allProperties.sort())
+      expect(newState.getIn(['byId', 63, 'visibleProperties']).toJS().sort()).toEqual(allProperties.sort())
+      expect(newState.getIn(['byId', 61, 'visibleProperties']).toJS().sort()).toEqual(allProperties.sort())
     })
 
     const flatData = [{

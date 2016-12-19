@@ -44,7 +44,6 @@
     "jsonwebtoken": "^7.1.0",
     "knex": "^0.12.6",
     "lodash": "^4.17.2",
-    "moment": "^2.16.0",
     "mysql": "^2.11.1",
     "node-base64-image": "^1.0.1",
     "node-uuid": "^1.4.7",

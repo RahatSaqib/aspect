@@ -1,16 +1,15 @@
 import Immutable from 'immutable'
-import { assert } from 'chai'
 import React from 'react'
 import { shallow } from 'enzyme'
 import { groupByPermissionTypes, isPermittedUser, requirePermissions } from './requirePermissions'
 
 describe('requirePermissions', () => {
   describe('groupByPermissionTypes', () => {
-    context('only required', () => {
+    describe('only required', () => {
       it('should parse correctly', () => {
         const permissionsByTypes = groupByPermissionTypes(['person:admin'])
 
-        assert.deepEqual(permissionsByTypes, {
+        expect(permissionsByTypes).toEqual({
           required: [],
           forbidden: [],
           optional: ['person:admin']
@@ -20,7 +19,7 @@ describe('requirePermissions', () => {
   })
 
   describe('isPermittedUser', () => {
-    context('only required', () => {
+    describe('only required', () => {
       it('should be valid for admin user', () => {
         const isPermitted = isPermittedUser(Immutable.Set(['person:admin']), {
           required: ['person:admin'],
@@ -28,11 +27,11 @@ describe('requirePermissions', () => {
           optional: []
         })
 
-        assert.isTrue(isPermitted)
+        expect(isPermitted).toBe(true)
       })
     })
 
-    context('only forbidden', () => {
+    describe('only forbidden', () => {
       it('should be invalid for admin user', () => {
         const isPermitted = isPermittedUser(Immutable.Set(['person:admin']), {
           required: [],
@@ -40,11 +39,11 @@ describe('requirePermissions', () => {
           optional: []
         })
 
-        assert.isFalse(isPermitted)
+        expect(isPermitted).toBe(false)
       })
     })
 
-    context('only optional', () => {
+    describe('only optional', () => {
       it('should be valid for admin user', () => {
         const isPermitted = isPermittedUser(Immutable.Set(['person:admin']), {
           required: [],
@@ -52,11 +51,11 @@ describe('requirePermissions', () => {
           optional: ['person:admin', 'site:admin']
         })
 
-        assert.isTrue(isPermitted)
+        expect(isPermitted).toBe(true)
       })
     })
 
-    context('required and forbidden', () => {
+    describe('required and forbidden', () => {
       it('should be valid for admin user', () => {
         const isPermitted = isPermittedUser(Immutable.Set(['person:admin']), {
           required: ['person:admin'],
@@ -64,7 +63,7 @@ describe('requirePermissions', () => {
           optional: []
         })
 
-        assert.isTrue(isPermitted)
+        expect(isPermitted).toBe(true)
       })
 
       it('should be invalid for admin user', () => {
@@ -74,11 +73,11 @@ describe('requirePermissions', () => {
           optional: []
         })
 
-        assert.isFalse(isPermitted)
+        expect(isPermitted).toBe(false)
       })
     })
 
-    context('required, forbidden and optional', () => {
+    describe('required, forbidden and optional', () => {
       it('should be valid for admin user', () => {
         const isPermitted = isPermittedUser(Immutable.Set(['person:admin', 'device:view']), {
           required: ['person:admin'],
@@ -86,7 +85,7 @@ describe('requirePermissions', () => {
           optional: ['device:view']
         })
 
-        assert.isTrue(isPermitted)
+        expect(isPermitted).toBe(true)
       })
 
       it('should be invalid for admin user', () => {
@@ -96,7 +95,7 @@ describe('requirePermissions', () => {
           optional: ['device:view']
         })
 
-        assert.isFalse(isPermitted)
+        expect(isPermitted).toBe(false)
       })
     })
   })
@@ -117,7 +116,7 @@ describe('requirePermissions', () => {
     }
   }
 
-  context('given right user permissions', () => {
+  describe('given right user permissions', () => {
     const DecoratedComponent = requirePermissions({
       permissions: ['person:admin'],
       ForbiddenComponent
@@ -131,8 +130,8 @@ describe('requirePermissions', () => {
         }
       )
 
-      assert.equal(ComponentWrapper.find(WrappedComponent).length, 1)
-      assert.equal(ComponentWrapper.find(ForbiddenComponent).length, 0)
+      expect(ComponentWrapper.find(WrappedComponent).length).toEqual(1)
+      expect(ComponentWrapper.find(ForbiddenComponent).length).toEqual(0)
     })
 
     it('should render WrappedComponent', () => {
@@ -143,12 +142,12 @@ describe('requirePermissions', () => {
         }
       )
 
-      assert.equal(ComponentWrapper.find(WrappedComponent).length, 1)
-      assert.equal(ComponentWrapper.find(ForbiddenComponent).length, 0)
+      expect(ComponentWrapper.find(WrappedComponent).length).toEqual(1)
+      expect(ComponentWrapper.find(ForbiddenComponent).length).toEqual(0)
     })
   })
 
-  context('given wrong user permissions', () => {
+  describe('given wrong user permissions', () => {
     const DecoratedComponent = requirePermissions({
       permissions: ['person:admin'],
       ForbiddenComponent
@@ -162,8 +161,8 @@ describe('requirePermissions', () => {
         }
       )
 
-      assert.equal(ComponentWrapper.find(WrappedComponent).length, 0)
-      assert.equal(ComponentWrapper.find(ForbiddenComponent).length, 1)
+      expect(ComponentWrapper.find(WrappedComponent).length).toEqual(0)
+      expect(ComponentWrapper.find(ForbiddenComponent).length).toEqual(1)
     })
 
     it('should render ForbiddenComponent', () => {
@@ -174,8 +173,8 @@ describe('requirePermissions', () => {
         }
       )
 
-      assert.equal(ComponentWrapper.find(WrappedComponent).length, 0)
-      assert.equal(ComponentWrapper.find(ForbiddenComponent).length, 1)
+      expect(ComponentWrapper.find(WrappedComponent).length).toEqual(0)
+      expect(ComponentWrapper.find(ForbiddenComponent).length).toEqual(1)
     })
   })
 })

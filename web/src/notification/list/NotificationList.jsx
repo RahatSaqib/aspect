@@ -10,7 +10,7 @@ import { connect } from 'react-redux'
 import Helmet from 'react-helmet'
 
 // Our own imports
-import DataTable from '../../components/shared/DataTable'
+import DataTableWithEmptyList from '../../components/shared/DataTableWithEmptyList'
 import ListFilterContainer from '../../filter/list/ListFilter'
 import { configureListFilter } from '../../filter/FilterRedux'
 import { fetchListFilteredNotifications } from '../NotificationRedux'
@@ -54,6 +54,10 @@ export class NotificationList extends PureComponent {
     configureListFilter({ contactNameOrEmail: true })
   }
 
+  componentDidMount() {
+    this.handleFetch()
+  }
+
   componentWillReceiveProps(nextProps) {
     if (this.props.listFilter !== nextProps.listFilter) {
       this.handleFetch()
@@ -67,20 +71,21 @@ export class NotificationList extends PureComponent {
   render() {
     const { intl } = this.props
     const { formatMessage } = intl
+    const columns = [
+      { db: 'type', title: formatMessage(messages.type), hideOnXs: true },
+      { db: 'name', title: formatMessage(messages.name) },
+      { db: 'assignedContacts', title: formatMessage(messages.assignedContacts) }
+    ]
 
     return (
       <div className={styles.Content}>
         <Helmet title={formatMessage(messages.title)} titleTemplate="%s - Aspect" defaultTitle="Aspect" />
         <ListFilterContainer subject={formatMessage(messages.title)} />
-        <DataTable
+        <DataTableWithEmptyList
           handleFetch={this.handleFetch}
           items={this.props.items}
           table={this.props.table}
-          columns={[
-            { db: 'type', title: formatMessage(messages.type), hideOnXs: true },
-            { db: 'name', title: formatMessage(messages.name) },
-            { db: 'assignedContacts', title: formatMessage(messages.assignedContacts) }
-          ]}
+          columns={columns}
         />
       </div>
     )

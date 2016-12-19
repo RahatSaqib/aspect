@@ -10,7 +10,7 @@ import { connect } from 'react-redux'
 import Helmet from 'react-helmet'
 
 // Our own imports
-import DataTable from '../../components/shared/DataTable'
+import DataTableWithEmptyList from '../../components/shared/DataTableWithEmptyList'
 import ListFilterContainer from '../../filter/list/ListFilter'
 import { configureListFilter } from '../../filter/FilterRedux'
 import { fetchListFilteredReports } from '../ReportRedux'
@@ -66,6 +66,10 @@ export class ReportList extends PureComponent {
     configureListFilter({ contactNameOrEmail: true })
   }
 
+  componentDidMount() {
+    this.handleFetch()
+  }
+
   componentWillReceiveProps(nextProps) {
     if (this.props.listFilter !== nextProps.listFilter) {
       this.handleFetch()
@@ -79,23 +83,24 @@ export class ReportList extends PureComponent {
   render() {
     const { intl } = this.props
     const { formatMessage } = intl
+    const columns = [
+      { db: 'deploymentName', title: formatMessage(messages.deploymentName) },
+      { db: 'moduleSerial', title: formatMessage(messages.moduleSerial) },
+      { db: 'dateOfError', title: formatMessage(messages.dateOfError) },
+      { db: 'error', title: formatMessage(messages.error) },
+      { db: 'totalTestsRun', title: formatMessage(messages.totalTestsRun) },
+      { db: 'totalErrors', title: formatMessage(messages.totalErrors) }
+    ]
 
     return (
       <div className={styles.Content}>
         <Helmet title={formatMessage(messages.title)} titleTemplate="%s - Aspect" defaultTitle="Aspect" />
         <ListFilterContainer subject={formatMessage(messages.title)} />
-        <DataTable
+        <DataTableWithEmptyList
           handleFetch={this.handleFetch}
           items={this.props.items}
           table={this.props.table}
-          columns={[
-            { db: 'deploymentName', title: formatMessage(messages.deploymentName) },
-            { db: 'moduleSerial', title: formatMessage(messages.moduleSerial) },
-            { db: 'dateOfError', title: formatMessage(messages.dateOfError) },
-            { db: 'error', title: formatMessage(messages.error) },
-            { db: 'totalTestsRun', title: formatMessage(messages.totalTestsRun) },
-            { db: 'totalErrors', title: formatMessage(messages.totalErrors) }
-          ]}
+          columns={columns}
         />
       </div>
     )

@@ -1,5 +1,4 @@
 import _ from 'lodash'
-import { assert } from 'chai'
 import emailAddress from './validate'
 
 describe('validate', () => {
@@ -26,27 +25,27 @@ describe('validate', () => {
       'IP-and-port@127.0.0.1:25', 'trailing-dots@test.de.', 'dot-on-dot-in-domainname@te..st.de',
       'dot-first-in-domain@.test.de', 'mg@ns.i']
 
-    it('should return true for valid email addresses', () => {
-      _.each(validEmailAddresses, (address) => {
-        assert.isTrue(emailAddress(address).isValid(), `"${address}" is a valid email address`)
+    _.each(validEmailAddresses, (address) => {
+      it(`should return true for valid email address (${address})`, () => {
+        expect(emailAddress(address).isValid()).toBe(true)
       })
     })
 
-    it('should return false for invalid email addresses', () => {
-      _.each(invalidEmailAddresses, (address) => {
-        assert.isFalse(emailAddress(address).isValid(), `"${address}" is an invalid email address`)
+    _.each(invalidEmailAddresses, (address) => {
+      it(`should return false for invalid email address (${address})`, () => {
+        expect(emailAddress(address).isValid()).toBe(false)
       })
     })
 
-    it('should return false for blank email addresses by default', () => {
-      _.each(['', null, undefined], (address) => {
-        assert.isFalse(emailAddress(address).isValid(), 'Blank email addresses are invalid unless optional is called')
+    _.each(['', null, undefined], (address) => {
+      it(`should return false for blank email address (${address}) by default`, () => {
+        expect(emailAddress(address).isValid()).toBe(false)
       })
     })
 
-    it('should return true for blank email addresses is optional was called', () => {
-      _.each(['', null, undefined], (address) => {
-        assert.isTrue(emailAddress(address).optional().isValid(), 'Blank email addresses are invalid unless isOptional is specified')
+    _.each(['', null, undefined], (address) => {
+      it(`should return true for blank email address (${address}) when is optional was called`, () => {
+        expect(emailAddress(address).optional().isValid()).toBe(true)
       })
     })
   })

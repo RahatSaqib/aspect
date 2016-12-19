@@ -1,5 +1,4 @@
 import React from 'react'
-import { assert } from 'chai'
 import { shallow } from 'enzyme'
 import sinon from 'sinon'
 import DatePicker from 'material-ui/DatePicker'
@@ -29,8 +28,8 @@ describe('DateRangeSelector Component', () => {
       DateRangeSelectorWrapper.setState({
         rangeMode: 'custom'
       })
-      assert.equal(DateRangeSelectorWrapper.find(ForkedSelectField).length, 1)
-      assert.equal(DateRangeSelectorWrapper.find(DatePicker).length, 2)
+      expect(DateRangeSelectorWrapper.find(ForkedSelectField).length).toEqual(1)
+      expect(DateRangeSelectorWrapper.find(DatePicker).length).toEqual(2)
     })
 
     it('should call onDateChanged when date is picked', () => {
@@ -40,12 +39,12 @@ describe('DateRangeSelector Component', () => {
       const minDate = new Date(2014, 1, 23)
       const maxDate = new Date(2016, 10, 2)
       DateRangeSelectorWrapper.find(DatePicker).first().simulate('change', undefined, minDate)
-      assert.deepEqual(props.onChangeDate.lastCall.args[0], {
+      expect(props.onChangeDate.lastCall.args[0]).toEqual({
         minDate: minDate.toJSON()
       })
       DateRangeSelectorWrapper.find(DatePicker).last().simulate('change', undefined, maxDate)
       const endOfDayMilliseconds = (1000 * 60 * 60 * 24) - 1
-      assert.deepEqual(props.onChangeDate.lastCall.args[0], {
+      expect(props.onChangeDate.lastCall.args[0]).toEqual({
         maxDate: (new Date(maxDate.getTime() + endOfDayMilliseconds)).toJSON()
       })
     })
@@ -56,28 +55,28 @@ describe('DateRangeSelector Component', () => {
       DateRangeSelectorWrapper.setState({
         rangeMode: 'day'
       })
-      assert.isOk(DateRangeSelectorWrapper.find(ForkedSelectField).length)
-      assert.isNotOk(DateRangeSelectorWrapper.find(DatePicker).length)
+      expect(DateRangeSelectorWrapper.find(ForkedSelectField).length).toBeTruthy()
+      expect(DateRangeSelectorWrapper.find(DatePicker).length).toBeFalsy()
       DateRangeSelectorWrapper.setState({
         rangeMode: 'week'
       })
-      assert.isOk(DateRangeSelectorWrapper.find(ForkedSelectField).length)
-      assert.isNotOk(DateRangeSelectorWrapper.find(DatePicker).length)
+      expect(DateRangeSelectorWrapper.find(ForkedSelectField).length).toBeTruthy()
+      expect(DateRangeSelectorWrapper.find(DatePicker).length).toBeFalsy()
       DateRangeSelectorWrapper.setState({
         rangeMode: 'month'
       })
-      assert.isOk(DateRangeSelectorWrapper.find(ForkedSelectField).length)
-      assert.isNotOk(DateRangeSelectorWrapper.find(DatePicker).length)
+      expect(DateRangeSelectorWrapper.find(ForkedSelectField).length).toBeTruthy()
+      expect(DateRangeSelectorWrapper.find(DatePicker).length).toBeFalsy()
       DateRangeSelectorWrapper.setState({
         rangeMode: 'quarter'
       })
-      assert.isOk(DateRangeSelectorWrapper.find(ForkedSelectField).length)
-      assert.isNotOk(DateRangeSelectorWrapper.find(DatePicker).length)
+      expect(DateRangeSelectorWrapper.find(ForkedSelectField).length).toBeTruthy()
+      expect(DateRangeSelectorWrapper.find(DatePicker).length).toBeFalsy()
       DateRangeSelectorWrapper.setState({
         rangeMode: 'year'
       })
-      assert.isOk(DateRangeSelectorWrapper.find(ForkedSelectField).length)
-      assert.isNotOk(DateRangeSelectorWrapper.find(DatePicker).length)
+      expect(DateRangeSelectorWrapper.find(ForkedSelectField).length).toBeTruthy()
+      expect(DateRangeSelectorWrapper.find(DatePicker).length).toBeFalsy()
     })
 
     const expectedDateTests = [{
@@ -580,11 +579,11 @@ describe('DateRangeSelector Component', () => {
       describe('Different Range Types', () => {
         let clock
 
-        before(() => {
+        beforeAll(() => {
           clock = sinon.useFakeTimers(expectedDateTest.now.getTime())
         })
 
-        after(() => {
+        afterAll(() => {
           clock.restore()
         })
 
@@ -594,51 +593,51 @@ describe('DateRangeSelector Component', () => {
           })
           const dropDownListItems = DateRangeSelectorWrapper.find(ForkedSelectField)
             .at(1).find(MenuItem)
-          assert.equal(dropDownListItems.length, 8)
+          expect(dropDownListItems.length).toEqual(8)
           const firstItemInDropDownList = dropDownListItems.at(0)
-          assert.deepEqual(firstItemInDropDownList.props(), {
+          expect(firstItemInDropDownList.props()).toEqual({
             ...firstItemInDropDownList.props(),
             value: expectedDateTest.today,
             primaryText: expectedDateTest.today.label
           })
           const secondItemInDropDownList = dropDownListItems.at(1)
-          assert.deepEqual(secondItemInDropDownList.props(), {
+          expect(secondItemInDropDownList.props()).toEqual({
             ...secondItemInDropDownList.props(),
             value: expectedDateTest.yesterday,
             primaryText: expectedDateTest.yesterday.label
           })
           const thirdItemInDropDownList = dropDownListItems.at(2)
-          assert.deepEqual(thirdItemInDropDownList.props(), {
+          expect(thirdItemInDropDownList.props()).toEqual({
             ...thirdItemInDropDownList.props(),
             value: expectedDateTest.twoDaysAgo,
             primaryText: expectedDateTest.twoDaysAgo.label
           })
           const forthItemInDropDownList = dropDownListItems.at(3)
-          assert.deepEqual(forthItemInDropDownList.props(), {
+          expect(forthItemInDropDownList.props()).toEqual({
             ...forthItemInDropDownList.props(),
             value: expectedDateTest.threeDaysAgo,
             primaryText: expectedDateTest.threeDaysAgo.label
           })
           const fifthItemInDropDownList = dropDownListItems.at(4)
-          assert.deepEqual(fifthItemInDropDownList.props(), {
+          expect(fifthItemInDropDownList.props()).toEqual({
             ...fifthItemInDropDownList.props(),
             value: expectedDateTest.fourDaysAgo,
             primaryText: expectedDateTest.fourDaysAgo.label
           })
           const sixthItemInDropDownList = dropDownListItems.at(5)
-          assert.deepEqual(sixthItemInDropDownList.props(), {
+          expect(sixthItemInDropDownList.props()).toEqual({
             ...sixthItemInDropDownList.props(),
             value: expectedDateTest.fiveDaysAgo,
             primaryText: expectedDateTest.fiveDaysAgo.label
           })
           const seventhItemInDropDownList = dropDownListItems.at(6)
-          assert.deepEqual(seventhItemInDropDownList.props(), {
+          expect(seventhItemInDropDownList.props()).toEqual({
             ...seventhItemInDropDownList.props(),
             value: expectedDateTest.sixDaysAgo,
             primaryText: expectedDateTest.sixDaysAgo.label
           })
           const lastItemInDropDownList = dropDownListItems.last()
-          assert.deepEqual(lastItemInDropDownList.props(), {
+          expect(lastItemInDropDownList.props()).toEqual({
             ...lastItemInDropDownList.props(),
             value: expectedDateTest.sevenDaysAgo,
             primaryText: expectedDateTest.sevenDaysAgo.label
@@ -651,57 +650,57 @@ describe('DateRangeSelector Component', () => {
           })
           const dropDownListItems = DateRangeSelectorWrapper.find(ForkedSelectField)
             .at(1).find(MenuItem)
-          assert.equal(dropDownListItems.length, 9)
+          expect(dropDownListItems.length).toEqual(9)
           const firstItemInDropDownList = dropDownListItems.at(0)
-          assert.deepEqual(firstItemInDropDownList.props(), {
+          expect(firstItemInDropDownList.props()).toEqual({
             ...firstItemInDropDownList.props(),
             value: expectedDateTest.last7Days,
             primaryText: expectedDateTest.last7Days.label
           })
           const secondItemInDropDownList = dropDownListItems.at(1)
-          assert.deepEqual(secondItemInDropDownList.props(), {
+          expect(secondItemInDropDownList.props()).toEqual({
             ...secondItemInDropDownList.props(),
             value: expectedDateTest.thisWeek,
             primaryText: expectedDateTest.thisWeek.label
           })
           const thirdItemInDropDownList = dropDownListItems.at(2)
-          assert.deepEqual(thirdItemInDropDownList.props(), {
+          expect(thirdItemInDropDownList.props()).toEqual({
             ...thirdItemInDropDownList.props(),
             value: expectedDateTest.lastWeek,
             primaryText: expectedDateTest.lastWeek.label
           })
           const forthItemInDropDownList = dropDownListItems.at(3)
-          assert.deepEqual(forthItemInDropDownList.props(), {
+          expect(forthItemInDropDownList.props()).toEqual({
             ...forthItemInDropDownList.props(),
             value: expectedDateTest.twoWeeksAgo,
             primaryText: expectedDateTest.twoWeeksAgo.label
           })
           const fifthItemInDropDownList = dropDownListItems.at(4)
-          assert.deepEqual(fifthItemInDropDownList.props(), {
+          expect(fifthItemInDropDownList.props()).toEqual({
             ...fifthItemInDropDownList.props(),
             value: expectedDateTest.threeWeeksAgo,
             primaryText: expectedDateTest.threeWeeksAgo.label
           })
           const sixthItemInDropDownList = dropDownListItems.at(5)
-          assert.deepEqual(sixthItemInDropDownList.props(), {
+          expect(sixthItemInDropDownList.props()).toEqual({
             ...sixthItemInDropDownList.props(),
             value: expectedDateTest.fourWeeksAgo,
             primaryText: expectedDateTest.fourWeeksAgo.label
           })
           const seventhItemInDropDownList = dropDownListItems.at(6)
-          assert.deepEqual(seventhItemInDropDownList.props(), {
+          expect(seventhItemInDropDownList.props()).toEqual({
             ...seventhItemInDropDownList.props(),
             value: expectedDateTest.fiveWeeksAgo,
             primaryText: expectedDateTest.fiveWeeksAgo.label
           })
           const eighthItemInDropDownList = dropDownListItems.at(7)
-          assert.deepEqual(eighthItemInDropDownList.props(), {
+          expect(eighthItemInDropDownList.props()).toEqual({
             ...eighthItemInDropDownList.props(),
             value: expectedDateTest.sixWeeksAgo,
             primaryText: expectedDateTest.sixWeeksAgo.label
           })
           const lastItemInDropDownList = dropDownListItems.last()
-          assert.deepEqual(lastItemInDropDownList.props(), {
+          expect(lastItemInDropDownList.props()).toEqual({
             ...lastItemInDropDownList.props(),
             value: expectedDateTest.sevenWeeksAgo,
             primaryText: expectedDateTest.sevenWeeksAgo.label
@@ -714,81 +713,81 @@ describe('DateRangeSelector Component', () => {
           })
           const dropDownListItems = DateRangeSelectorWrapper.find(ForkedSelectField)
             .at(1).find(MenuItem)
-          assert.equal(dropDownListItems.length, 13)
+          expect(dropDownListItems.length).toEqual(13)
           const firstItemInDropDownList = dropDownListItems.at(0)
-          assert.deepEqual(firstItemInDropDownList.props(), {
+          expect(firstItemInDropDownList.props()).toEqual({
             ...firstItemInDropDownList.props(),
             value: expectedDateTest.last30Days,
             primaryText: expectedDateTest.last30Days.label
           })
           const secondItemInDropDownList = dropDownListItems.at(1)
-          assert.deepEqual(secondItemInDropDownList.props(), {
+          expect(secondItemInDropDownList.props()).toEqual({
             ...secondItemInDropDownList.props(),
             value: expectedDateTest.thisMonth,
             primaryText: expectedDateTest.thisMonth.label
           })
           const thirdItemInDropDownList = dropDownListItems.at(2)
-          assert.deepEqual(thirdItemInDropDownList.props(), {
+          expect(thirdItemInDropDownList.props()).toEqual({
             ...thirdItemInDropDownList.props(),
             value: expectedDateTest.lastMonth,
             primaryText: expectedDateTest.lastMonth.label
           })
           const forthItemInDropDownList = dropDownListItems.at(3)
-          assert.deepEqual(forthItemInDropDownList.props(), {
+          expect(forthItemInDropDownList.props()).toEqual({
             ...forthItemInDropDownList.props(),
             value: expectedDateTest.twoMonthsAgo,
             primaryText: expectedDateTest.twoMonthsAgo.label
           })
           const fifthItemInDropDownList = dropDownListItems.at(4)
-          assert.deepEqual(fifthItemInDropDownList.props(), {
+          expect(fifthItemInDropDownList.props()).toEqual({
             ...fifthItemInDropDownList.props(),
             value: expectedDateTest.threeMonthsAgo,
             primaryText: expectedDateTest.threeMonthsAgo.label
           })
           const sixthItemInDropDownList = dropDownListItems.at(5)
-          assert.deepEqual(sixthItemInDropDownList.props(), {
+          expect(sixthItemInDropDownList.props()).toEqual({
             ...sixthItemInDropDownList.props(),
             value: expectedDateTest.fourMonthsAgo,
             primaryText: expectedDateTest.fourMonthsAgo.label
           })
           const seventhItemInDropDownList = dropDownListItems.at(6)
-          assert.deepEqual(seventhItemInDropDownList.props(), {
+          expect(seventhItemInDropDownList.props()).toEqual({
             ...seventhItemInDropDownList.props(),
             value: expectedDateTest.fiveMonthsAgo,
             primaryText: expectedDateTest.fiveMonthsAgo.label
           })
           const eighthItemInDropDownList = dropDownListItems.at(7)
-          assert.deepEqual(eighthItemInDropDownList.props(), {
+          expect(eighthItemInDropDownList.props()).toEqual({
             ...eighthItemInDropDownList.props(),
             value: expectedDateTest.sixMonthsAgo,
             primaryText: expectedDateTest.sixMonthsAgo.label
           })
           const ninthItemInDropDownList = dropDownListItems.at(8)
-          assert.deepEqual(ninthItemInDropDownList.props(), {
+          expect(ninthItemInDropDownList.props()).toEqual({
             ...ninthItemInDropDownList.props(),
             value: expectedDateTest.sevenMonthsAgo,
             primaryText: expectedDateTest.sevenMonthsAgo.label
           })
           const tenthItemInDropDownList = dropDownListItems.at(9)
-          assert.deepEqual(tenthItemInDropDownList.props(), {
+          expect(tenthItemInDropDownList.props()).toEqual({
             ...tenthItemInDropDownList.props(),
             value: expectedDateTest.eightMonthsAgo,
             primaryText: expectedDateTest.eightMonthsAgo.label
           })
           const eleventhItemInDropDownList = dropDownListItems.at(10)
-          assert.deepEqual(eleventhItemInDropDownList.props(), {
+          expect(eleventhItemInDropDownList.props()).toEqual({
             ...eleventhItemInDropDownList.props(),
             value: expectedDateTest.nineMonthsAgo,
             primaryText: expectedDateTest.nineMonthsAgo.label
           })
           const twelfthItemInDropDownList = dropDownListItems.at(11)
-          assert.deepEqual(twelfthItemInDropDownList.props(), {
+          expect(twelfthItemInDropDownList.props()).toEqual({
             ...twelfthItemInDropDownList.props(),
             value: expectedDateTest.tenMonthsAgo,
             primaryText: expectedDateTest.tenMonthsAgo.label
           })
           const lastItemInDropDownList = dropDownListItems.last()
-          assert.deepEqual(lastItemInDropDownList.props(), {
+          expect(lastItemInDropDownList.props()).toEqual({
             ...lastItemInDropDownList.props(),
             value: expectedDateTest.elevenMonthsAgo,
             primaryText: expectedDateTest.elevenMonthsAgo.label
@@ -801,75 +800,75 @@ describe('DateRangeSelector Component', () => {
           })
           const dropDownListItems = DateRangeSelectorWrapper.find(ForkedSelectField)
             .at(1).find(MenuItem)
-          assert.equal(dropDownListItems.length, 12)
+          expect(dropDownListItems.length).toEqual(12)
           const firstItemInDropDownList = dropDownListItems.at(0)
-          assert.deepEqual(firstItemInDropDownList.props(), {
+          expect(firstItemInDropDownList.props()).toEqual({
             ...firstItemInDropDownList.props(),
             value: expectedDateTest.thisQuarter,
             primaryText: expectedDateTest.thisQuarter.label
           })
           const secondItemInDropDownList = dropDownListItems.at(1)
-          assert.deepEqual(secondItemInDropDownList.props(), {
+          expect(secondItemInDropDownList.props()).toEqual({
             ...secondItemInDropDownList.props(),
             value: expectedDateTest.lastQuarter,
             primaryText: expectedDateTest.lastQuarter.label
           })
           const thirdItemInDropDownList = dropDownListItems.at(2)
-          assert.deepEqual(thirdItemInDropDownList.props(), {
+          expect(thirdItemInDropDownList.props()).toEqual({
             ...thirdItemInDropDownList.props(),
             value: expectedDateTest.twoQuartersAgo,
             primaryText: expectedDateTest.twoQuartersAgo.label
           })
           const forthItemInDropDownList = dropDownListItems.at(3)
-          assert.deepEqual(forthItemInDropDownList.props(), {
+          expect(forthItemInDropDownList.props()).toEqual({
             ...forthItemInDropDownList.props(),
             value: expectedDateTest.threeQuartersAgo,
             primaryText: expectedDateTest.threeQuartersAgo.label
           })
           const fifthItemInDropDownList = dropDownListItems.at(4)
-          assert.deepEqual(fifthItemInDropDownList.props(), {
+          expect(fifthItemInDropDownList.props()).toEqual({
             ...fifthItemInDropDownList.props(),
             value: expectedDateTest.fourQuartersAgo,
             primaryText: expectedDateTest.fourQuartersAgo.label
           })
           const sixthItemInDropDownList = dropDownListItems.at(5)
-          assert.deepEqual(sixthItemInDropDownList.props(), {
+          expect(sixthItemInDropDownList.props()).toEqual({
             ...sixthItemInDropDownList.props(),
             value: expectedDateTest.fiveQuartersAgo,
             primaryText: expectedDateTest.fiveQuartersAgo.label
           })
           const seventhItemInDropDownList = dropDownListItems.at(6)
-          assert.deepEqual(seventhItemInDropDownList.props(), {
+          expect(seventhItemInDropDownList.props()).toEqual({
             ...seventhItemInDropDownList.props(),
             value: expectedDateTest.sixQuartersAgo,
             primaryText: expectedDateTest.sixQuartersAgo.label
           })
           const eighthItemInDropDownList = dropDownListItems.at(7)
-          assert.deepEqual(eighthItemInDropDownList.props(), {
+          expect(eighthItemInDropDownList.props()).toEqual({
             ...eighthItemInDropDownList.props(),
             value: expectedDateTest.sevenQuartersAgo,
             primaryText: expectedDateTest.sevenQuartersAgo.label
           })
           const ninthItemInDropDownList = dropDownListItems.at(8)
-          assert.deepEqual(ninthItemInDropDownList.props(), {
+          expect(ninthItemInDropDownList.props()).toEqual({
             ...ninthItemInDropDownList.props(),
             value: expectedDateTest.eightQuartersAgo,
             primaryText: expectedDateTest.eightQuartersAgo.label
           })
           const tenthItemInDropDownList = dropDownListItems.at(9)
-          assert.deepEqual(tenthItemInDropDownList.props(), {
+          expect(tenthItemInDropDownList.props()).toEqual({
             ...tenthItemInDropDownList.props(),
             value: expectedDateTest.nineQuartersAgo,
             primaryText: expectedDateTest.nineQuartersAgo.label
           })
           const eleventhItemInDropDownList = dropDownListItems.at(10)
-          assert.deepEqual(eleventhItemInDropDownList.props(), {
+          expect(eleventhItemInDropDownList.props()).toEqual({
             ...eleventhItemInDropDownList.props(),
             value: expectedDateTest.tenQuartersAgo,
             primaryText: expectedDateTest.tenQuartersAgo.label
           })
           const lastItemInDropDownList = dropDownListItems.last()
-          assert.deepEqual(lastItemInDropDownList.props(), {
+          expect(lastItemInDropDownList.props()).toEqual({
             ...lastItemInDropDownList.props(),
             value: expectedDateTest.elevenQuartersAgo,
             primaryText: expectedDateTest.elevenQuartersAgo.label
@@ -882,45 +881,45 @@ describe('DateRangeSelector Component', () => {
           })
           const dropDownListItems = DateRangeSelectorWrapper.find(ForkedSelectField)
             .at(1).find(MenuItem)
-          assert.equal(dropDownListItems.length, 7)
+          expect(dropDownListItems.length).toEqual(7)
           const firstItemInDropDownList = dropDownListItems.at(0)
-          assert.deepEqual(firstItemInDropDownList.props(), {
+          expect(firstItemInDropDownList.props()).toEqual({
             ...firstItemInDropDownList.props(),
             value: expectedDateTest.thisYear,
             primaryText: expectedDateTest.thisYear.label
           })
           const secondItemInDropDownList = dropDownListItems.at(1)
-          assert.deepEqual(secondItemInDropDownList.props(), {
+          expect(secondItemInDropDownList.props()).toEqual({
             ...secondItemInDropDownList.props(),
             value: expectedDateTest.lastYear,
             primaryText: expectedDateTest.lastYear.label
           })
           const thirdItemInDropDownList = dropDownListItems.at(2)
-          assert.deepEqual(thirdItemInDropDownList.props(), {
+          expect(thirdItemInDropDownList.props()).toEqual({
             ...thirdItemInDropDownList.props(),
             value: expectedDateTest.twoYearsAgo,
             primaryText: expectedDateTest.twoYearsAgo.label
           })
           const forthItemInDropDownList = dropDownListItems.at(3)
-          assert.deepEqual(forthItemInDropDownList.props(), {
+          expect(forthItemInDropDownList.props()).toEqual({
             ...forthItemInDropDownList.props(),
             value: expectedDateTest.threeYearsAgo,
             primaryText: expectedDateTest.threeYearsAgo.label
           })
           const fifthItemInDropDownList = dropDownListItems.at(4)
-          assert.deepEqual(fifthItemInDropDownList.props(), {
+          expect(fifthItemInDropDownList.props()).toEqual({
             ...fifthItemInDropDownList.props(),
             value: expectedDateTest.fourYearsAgo,
             primaryText: expectedDateTest.fourYearsAgo.label
           })
           const sixthItemInDropDownList = dropDownListItems.at(5)
-          assert.deepEqual(sixthItemInDropDownList.props(), {
+          expect(sixthItemInDropDownList.props()).toEqual({
             ...sixthItemInDropDownList.props(),
             value: expectedDateTest.fiveYearsAgo,
             primaryText: expectedDateTest.fiveYearsAgo.label
           })
           const lastItemInDropDownList = dropDownListItems.last()
-          assert.deepEqual(lastItemInDropDownList.props(), {
+          expect(lastItemInDropDownList.props()).toEqual({
             ...lastItemInDropDownList.props(),
             value: expectedDateTest.sixYearsAgo,
             primaryText: expectedDateTest.sixYearsAgo.label
@@ -933,7 +932,7 @@ describe('DateRangeSelector Component', () => {
           })
           DateRangeSelectorWrapper.find(ForkedSelectField).at(1)
             .simulate('change', undefined, undefined, expectedDateTest.twoDaysAgo)
-          assert.deepEqual(props.onChangeDate.lastCall.args[0], {
+          expect(props.onChangeDate.lastCall.args[0]).toEqual({
             minDate: expectedDateTest.twoDaysAgo.minDate.toJSON(),
             maxDate: expectedDateTest.twoDaysAgo.maxDate.toJSON()
           })
@@ -942,7 +941,7 @@ describe('DateRangeSelector Component', () => {
           })
           DateRangeSelectorWrapper.find(ForkedSelectField)
             .at(1).simulate('change', undefined, undefined, expectedDateTest.lastWeek)
-          assert.deepEqual(props.onChangeDate.lastCall.args[0], {
+          expect(props.onChangeDate.lastCall.args[0]).toEqual({
             minDate: expectedDateTest.lastWeek.minDate.toJSON(),
             maxDate: expectedDateTest.lastWeek.maxDate.toJSON()
           })

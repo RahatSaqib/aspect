@@ -13,14 +13,14 @@ const SELECT_LIST_FIELDS = [
 ]
 
 const SELECT_SHOW_FIELDS = [
-  'r.id', 'r.externalId', 'r.startedOn', 'r.endedOn', 'd.name as deviceName',
+  'r.id', 'r.externalId', 'r.startedOn', 'r.endedOn', 'r.deviceId', 'd.name as deviceName',
   'c.name as countryName', 'st.name as stateName', 'lg.name as lgaName',
   'rc1.name as resultCategory1Name', 'rc2.name as resultCategory2Name', 'rs.name as resultWorkflowStatus',
-  'r.resultData', 's.externalId as sampleId', 'si.name as siteName', 'r.assayVersion',
+  'r.resultData', 's.externalId as sampleId', 'r.siteId', 'si.name as siteName', 'r.assayVersion',
   'r.consumableSerial', 'r.consumableLot', 'r.consumableExpirationDate', 'r.instrumentSerial',
   'r.moduleName', 'r.moduleSerial', 'r.researchId', 'r.senderVersion', 'r.senderOperator',
   'r.notes', 'r.errorCode', 'r.errorNotes', 'r.createdOn', 'r.updatedOn', 'r.assayId',
-  knex.raw('JSON_UNQUOTE(JSON_EXTRACT(r.patientData, "$.id")) as patientId')
+  knex.raw('JSON_UNQUOTE(JSON_EXTRACT(r.patientData, "$.id")) as patientId'), 'r.patientData'
 ]
 
 const SORT_FIELDS = [
@@ -152,7 +152,7 @@ function* getResultByResultId(request, fields = SELECT_SHOW_FIELDS) {
     .leftJoin('Lga as lg', 'r.lgaId', 'lg.id')
     .leftJoin('ResultCategory as rc1', 'r.resultCategory1', 'rc1.id')
     .leftJoin('ResultCategory as rc2', 'r.resultCategory2', 'rc2.id')
-    .leftJoin('Sample as s', 'r.externalId', 's.id')
+    .leftJoin('Sample as s', 'r.sampleId', 's.id')
     .leftJoin('ResultWorkflowStatus as rs', 'r.resultWorkflowStatusId', 'rs.id')
     .where('r.id', +params.resultId)
     .modify(addConstraints, dataConstraints, { device: 'd' })
@@ -162,8 +162,10 @@ function* getResultByResultId(request, fields = SELECT_SHOW_FIELDS) {
   // if selecting the result was successful
   if (results.length === 1) {
     results[0].resultData = JSON.parse(results[0].resultData)
+    results[0].patientData = JSON.parse(results[0].patientData)
     results[0].assay = yield knex('Assay as a').where('a.id', results[0].assayId).first()
     results[0].assay.resultDataSchema = JSON.parse(results[0].assay.resultDataSchema)
+    results[0].assay.patientDataSchema = JSON.parse(results[0].assay.patientDataSchema)
   }
 
   return { ok: results.length === 1, data: results[0] }

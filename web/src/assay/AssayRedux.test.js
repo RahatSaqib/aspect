@@ -1,9 +1,7 @@
 import subMinutes from 'date-fns/sub_minutes'
-import { assert } from 'chai'
-import proxyquire from 'proxyquire'
-import sinon from 'sinon'
 
 describe('AssayRedux module', () => {
+  let fetchStub
   let AssayRedux
 
   const assaysData = [
@@ -57,26 +55,28 @@ describe('AssayRedux module', () => {
   ]
 
   describe('fetchAssays action', () => {
-    let fetchStub
     let dispatchStub
 
-    context('initial fetch', () => {
-      beforeEach(() => {
-        const expectedResponseFromServer = Promise.resolve({ ok: true, data: assaysData })
+    beforeAll(() => {
+      jest
+        .resetModules()
+        .mock('../shared/utils/fetch', () => {
+          const expectedResponseFromServer = Promise.resolve({ ok: true, data: assaysData })
 
-        fetchStub = {
-          aspectFetch: sinon.stub()
-        }
+          fetchStub = {
+            aspectFetch: jest.fn(() => expectedResponseFromServer)
+          }
 
-        fetchStub.aspectFetch
-          .withArgs('/assay')
-          .returns(expectedResponseFromServer)
-
-        AssayRedux = proxyquire('./AssayRedux', {
-          '../shared/utils/fetch': fetchStub
+          return fetchStub
         })
 
-        dispatchStub = sinon.stub()
+      AssayRedux = require('./AssayRedux')
+
+      dispatchStub = jest.fn()
+    })
+
+    describe('initial fetch', () => {
+      beforeAll(() => {
         const thunk = AssayRedux.fetchAssays(false)
 
         thunk(dispatchStub, () => ({
@@ -86,32 +86,22 @@ describe('AssayRedux module', () => {
         }))
       })
 
+      afterAll(() => {
+        dispatchStub.mockClear()
+        fetchStub.aspectFetch.mockClear()
+      })
+
       it('should dispatch a REQUEST_ASSAYS action', () => {
-        assert.deepEqual(dispatchStub.firstCall.args, [{ type: AssayRedux.types.REQUEST_ASSAYS }], 'REQUEST_ASSAYS Was Not Dispatched')
+        expect(dispatchStub).toHaveBeenCalledWith({ type: AssayRedux.types.REQUEST_ASSAYS })
       })
 
       it('should request the account details from the server', () => {
-        assert(fetchStub.aspectFetch.calledWith('/assay'), 'A request to /assay was not detected')
+        expect(fetchStub.aspectFetch.mock.calls[0][0]).toBe('/assay')
       })
     })
 
-    context('subsequent calls within 5 minutes', () => {
-      beforeEach(() => {
-        const expectedResponseFromServer = Promise.resolve({ ok: true, data: assaysData })
-
-        fetchStub = {
-          aspectFetch: sinon.stub()
-        }
-
-        fetchStub.aspectFetch
-          .withArgs('/assay')
-          .returns(expectedResponseFromServer)
-
-        AssayRedux = proxyquire('./AssayRedux', {
-          '../shared/utils/fetch': fetchStub
-        })
-
-        dispatchStub = sinon.stub()
+    describe('subsequent calls within 5 minutes', () => {
+      beforeAll(() => {
         const thunk = AssayRedux.fetchAssays(false)
 
         thunk(dispatchStub, () => ({
@@ -122,32 +112,22 @@ describe('AssayRedux module', () => {
         }))
       })
 
+      afterAll(() => {
+        fetchStub.aspectFetch.mockClear()
+        dispatchStub.mockClear()
+      })
+
       it('should not dispatch a REQUEST_ASSAYS action', () => {
-        assert.isNotOk(dispatchStub.called, 'REQUEST_ASSAYS Was Dispatched')
+        expect(dispatchStub).not.toHaveBeenCalled()
       })
 
       it('should not request the account details from the server', () => {
-        assert.isNotOk(fetchStub.aspectFetch.called, 'A request to /assay not detected')
+        expect(fetchStub.aspectFetch).not.toHaveBeenCalled()
       })
     })
 
-    context('subsequent calls after 5 minutes', () => {
-      beforeEach(() => {
-        const expectedResponseFromServer = Promise.resolve({ ok: true, data: assaysData })
-
-        fetchStub = fetchStub = {
-          aspectFetch: sinon.stub()
-        }
-
-        fetchStub.aspectFetch
-          .withArgs('/assay')
-          .returns(expectedResponseFromServer)
-
-        AssayRedux = proxyquire('./AssayRedux', {
-          '../shared/utils/fetch': fetchStub
-        })
-
-        dispatchStub = sinon.stub()
+    describe('subsequent calls after 5 minutes', () => {
+      beforeAll(() => {
         const thunk = AssayRedux.fetchAssays(false)
 
         thunk(dispatchStub, () => ({
@@ -158,12 +138,17 @@ describe('AssayRedux module', () => {
         }))
       })
 
+      afterAll(() => {
+        fetchStub.aspectFetch.mockClear()
+        dispatchStub.mockClear()
+      })
+
       it('should dispatch a REQUEST_ASSAYS action', () => {
-        assert.deepEqual(dispatchStub.firstCall.args, [{ type: AssayRedux.types.REQUEST_ASSAYS }], 'REQUEST_ASSAYS Was Not Dispatched')
+        expect(dispatchStub).toHaveBeenCalledWith({ type: AssayRedux.types.REQUEST_ASSAYS })
       })
 
       it('should request the account details from the server', () => {
-        assert(fetchStub.aspectFetch.calledWith('/assay'), 'A request to /assay was not detected')
+        expect(fetchStub.aspectFetch.mock.calls[0][0]).toBe('/assay')
       })
     })
   })

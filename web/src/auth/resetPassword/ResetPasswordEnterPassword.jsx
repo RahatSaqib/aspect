@@ -15,8 +15,10 @@ import messages from './messages'
 import TextInput from '../../components/shared/TextInput'
 import StrongPasswordInput from '../../components/shared/StrongPasswordInput'
 
-const ResetPasswordEnterPassword = (props) => {
-  const { intl: { formatMessage }, handleSubmit, pristine, invalid } = props
+export function ResetPasswordEnterPassword({
+  intl, handleSubmit, pristine, invalid
+}) {
+  const { formatMessage } = intl
   return (
     <form onSubmit={handleSubmit} className={styles.Form}>
       <div className={styles.Form__Content}>
@@ -40,7 +42,7 @@ const ResetPasswordEnterPassword = (props) => {
   )
 }
 
-const validate = (passwordInput, props) => {
+export function validate(passwordInput, props) {
   const { formatMessage } = props.intl
   const errors = {}
   if (passwordInput.get('newPassword')) {

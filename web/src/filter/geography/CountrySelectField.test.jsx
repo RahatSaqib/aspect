@@ -1,6 +1,5 @@
 import Immutable from 'immutable'
 import React, { PropTypes } from 'react'
-import { assert } from 'chai'
 import sinon from 'sinon'
 import { shallow, mount } from 'enzyme'
 import getMuiTheme from 'material-ui/styles/getMuiTheme'
@@ -9,6 +8,10 @@ import { LazyLoadItems, LazyLoadParent, LazyLoadChild } from '../../geography/Ge
 import ForkedSelectField from '../../components/forkedMaterialUi/ForkedSelectField'
 
 describe('CountrySelectField module', () => {
+  const {
+    CountrySelectField
+  } = require('./CountrySelectField')
+
   const mountWithMuiTheme = node => (
     mount(node, {
       context: {
@@ -79,13 +82,6 @@ describe('CountrySelectField module', () => {
   })
 
   describe('CountrySelectField component', () => {
-    let CountrySelectField
-
-    before(() => {
-      const CountrySelectFieldModule = require('./CountrySelectField')
-      CountrySelectField = CountrySelectFieldModule.CountrySelectField
-    })
-
     it('should trigger fetchCountriesForLocationSelector on mount', () => {
       const props = {
         countries: countriesForLocationSelector,
@@ -95,7 +91,7 @@ describe('CountrySelectField module', () => {
       }
       mountWithMuiTheme(<CountrySelectField {...props} />)
 
-      assert.isTrue(props.fetchCountriesForLocationSelector.calledOnce)
+      expect(props.fetchCountriesForLocationSelector.calledOnce).toBe(true)
     })
 
     it('should trigger onChangeCountry when value has been selected', () => {
@@ -109,12 +105,12 @@ describe('CountrySelectField module', () => {
       const ForkedSelectFieldWrapper = CountrySelectFieldWrapper.find(ForkedSelectField)
 
       ForkedSelectFieldWrapper.simulate('change', undefined, undefined, '2')
-      assert.isTrue(props.onChangeCountry.calledOnce)
-      assert.isTrue(props.onChangeCountry.calledWith('2'))
+      expect(props.onChangeCountry.calledOnce).toBe(true)
+      expect(props.onChangeCountry.calledWith('2')).toBe(true)
 
       ForkedSelectFieldWrapper.simulate('change', undefined, undefined, undefined)
-      assert.isTrue(props.onChangeCountry.calledTwice)
-      assert.isTrue(props.onChangeCountry.calledWith(undefined))
+      expect(props.onChangeCountry.calledTwice).toBe(true)
+      expect(props.onChangeCountry.calledWith(undefined)).toBe(true)
     })
   })
 })
