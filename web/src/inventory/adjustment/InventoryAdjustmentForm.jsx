@@ -95,6 +95,22 @@ const messages = defineMessages({
   quantityRequired: {
     id: 'pages.InventoryAdjustmentForm.quantityRequired',
     defaultMessage: 'Please specify the quantity that you wish to {operation}'
+  },
+  ConsumableReason_Expired: {
+    id: 'pages.InventoryAdjustmentForm.ConsumableReason_Expired',
+    defaultMessage: 'Expired'
+  },
+  ConsumableReason_Lost: {
+    id: 'pages.InventoryAdjustmentForm.ConsumableReason_Lost',
+    defaultMessage: 'Lost'
+  },
+  ConsumableReason_Stolen: {
+    id: 'pages.InventoryAdjustmentForm.ConsumableReason_Stolen',
+    defaultMessage: 'Stolen'
+  },
+  ConsumableReason_TestConducted: {
+    id: 'pages.InventoryAdjustmentForm.ConsumableReason_TestConducted',
+    defaultMessage: 'Test Conducted'
   }
 })
 
@@ -154,7 +170,13 @@ class InventoryAdjustmentForm extends PureComponent {
       (operation === removeOperation ? formatMessage(messages.removeDateLabel) :
       formatMessage(messages.transferDateLabel))
     const consumableReasonsLoading = consumableReasons.loading
-    const consumableReasonsForDropDownList = consumableReasons.items.toJS()
+    const consumableReasonsForDropDownList =
+      _.map(consumableReasons.items.toJS(), consumableReason => ({
+        id: consumableReason.id,
+        name: messages[consumableReason.i18nKey] ?
+          formatMessage(messages[consumableReason.i18nKey]) :
+          consumableReason.name
+      }))
     const formFieldStyle = {
       display: 'inline-block',
       marginRight: '1em'
