@@ -12,7 +12,7 @@ module.exports = [{
     auth: { scope: ['notification:view', 'notification:edit'] },
     validate: {
       query: Object.assign({
-        contactNameOrEmail: Joi.string().allow('').description('Filter for report name')
+        contactNameOrEmail: Joi.string().allow('').description('Filter for notification name')
       }, validateSortPageParams('type', 'name', 'assignedContacts'))
     }
   }
