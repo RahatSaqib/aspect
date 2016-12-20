@@ -11,6 +11,7 @@ import { Link } from 'react-router'
 import Helmet from 'react-helmet'
 
 // Material-UI
+import Dialog from 'material-ui/Dialog'
 import Paper from 'material-ui/Paper'
 import LinearProgress from 'material-ui/LinearProgress'
 import { Card, CardHeader, CardText } from 'material-ui/Card'
@@ -110,6 +111,7 @@ export class DeviceDetail extends PureComponent {
   }
 
   state = {
+    isDemoDialogOpen: false,
     values: {
       name: '',
       shortname: '',
@@ -132,6 +134,10 @@ export class DeviceDetail extends PureComponent {
     if (this.props.params.deviceId !== nextProps.params.deviceId) {
       this.handleFetchDevice()
     }
+  }
+
+  handleToggleDialog = () => {
+    this.setState({ isDemoDialogOpen: !this.state.isDemoDialogOpen })
   }
 
   handleFetchDevice = () => {
@@ -256,6 +262,14 @@ export class DeviceDetail extends PureComponent {
             </Unit>
           </CardText>
         </Card>
+        { /* Dialog for demo purpose */ }
+        <Dialog
+          modal={false}
+          open={this.state.isDemoDialogOpen}
+          onRequestClose={this.handleToggleDialog}
+        >
+          Not yet implemented
+        </Dialog>
         { /* Contacts */ }
         <Card initiallyExpanded>
           <CardHeader title="Contacts" actAsExpander showExpandableButton />
@@ -264,25 +278,16 @@ export class DeviceDetail extends PureComponent {
           </CardText>
         </Card>
         { /* Calibration */ }
-        <Card>
+        <Card onClick={this.handleToggleDialog}>
           <CardHeader title="Calibration" actAsExpander showExpandableButton />
-          <CardText actAsExpander expandable style={{ paddingTop: 5 }}>
-            Not implemented
-          </CardText>
         </Card>
         { /* Warranty */ }
-        <Card>
+        <Card onClick={this.handleToggleDialog}>
           <CardHeader title="Warranty" actAsExpander showExpandableButton />
-          <CardText actAsExpander expandable style={{ paddingTop: 5 }}>
-            Not implemented
-          </CardText>
         </Card>
         { /* Configuration */ }
-        <Card>
+        <Card onClick={this.handleToggleDialog}>
           <CardHeader title="Configuration" actAsExpander showExpandableButton />
-          <CardText actAsExpander expandable style={{ paddingTop: 5 }}>
-            Not implemented
-          </CardText>
         </Card>
         { /* Technical information */ }
         <Card>
