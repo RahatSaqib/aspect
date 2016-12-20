@@ -33,6 +33,7 @@ export const types = {
 export const addOperation = 'add'
 export const removeOperation = 'remove'
 export const transferOperation = 'transfer'
+export const receiveOperation = 'receive'
 
 /*
  * ---------------- Action Creators -----------------

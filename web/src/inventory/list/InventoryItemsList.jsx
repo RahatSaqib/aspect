@@ -17,6 +17,7 @@ import FloatingActionButton from 'material-ui/FloatingActionButton'
 import AddIcon from 'material-ui/svg-icons/content/add'
 import TransferIcon from 'material-ui/svg-icons/action/swap-horiz'
 import RemoveIcon from 'material-ui/svg-icons/content/remove'
+import DoneIcon from 'material-ui/svg-icons/action/done'
 import Dialog from 'material-ui/Dialog'
 import RaisedButton from 'material-ui/RaisedButton'
 import FlatButton from 'material-ui/FlatButton'
@@ -32,6 +33,7 @@ import {
   addOperation,
   removeOperation,
   transferOperation,
+  receiveOperation,
   adjustInventoryLevels,
   finishAdjustingInventoryLevels,
   addInventory,
@@ -65,6 +67,10 @@ const messages = defineMessages({
     id: 'pages.InventoryItemsList.quantityOnHand',
     defaultMessage: 'Quantity on Hand'
   },
+  inTransitFromSiteName: {
+    id: 'pages.InventoryItemsList.inTransitFromSiteName',
+    defaultMessage: '* in transit from {inTransitFromSiteName}'
+  },
   expiresOn: {
     id: 'pages.InventoryItemsList.expiresOn',
     defaultMessage: 'Expires On'
@@ -84,6 +90,10 @@ const messages = defineMessages({
   transferInventory: {
     id: 'pages.InventoryItemsList.transferInventory',
     defaultMessage: 'Transfer Inventory'
+  },
+  receiveInventory: {
+    id: 'pages.InventoryItemsList.receiveInventory',
+    defaultMessage: 'Receive Inventory in Transit'
   },
   removeInventory: {
     id: 'pages.InventoryItemsList.removeInventory',
@@ -176,10 +186,22 @@ export class InventoryItemsList extends PureComponent {
   }
 
   inventoryLevelAdjustmentIconButtons = (itemId) => {
-    const { intl: { formatMessage } } = this.props
+    const { intl: { formatMessage }, items } = this.props
+    const item = items.getIn(['byId', itemId])
     const buttonStyle = {
       marginTop: '0.2em',
       marginRight: '1em'
+    }
+    if (item.get('inTransitFromSiteId')) {
+      return (<div>
+        <FloatingActionButton
+          mini primary style={buttonStyle}
+          title={formatMessage(messages.receiveInventory)}
+          onTouchTap={() => this.adjustInventoryLevels(itemId, receiveOperation)}
+        >
+          <DoneIcon />
+        </FloatingActionButton>
+      </div>)
     }
     return (<div>
       <FloatingActionButton
@@ -277,7 +299,7 @@ export class InventoryItemsList extends PureComponent {
 
   render() {
     const { intl, items, table, inventoryAdjustment, submit } = this.props
-    const { formatMessage, formatDate, formatRelative } = intl
+    const { formatMessage, formatDate, formatRelative, formatNumber } = intl
     const isSettledAndEmpty = !table.loading && items.currentIdList.isEmpty()
 
     const columns = [{
@@ -288,7 +310,23 @@ export class InventoryItemsList extends PureComponent {
       headerText: formatMessage(messages.consumableName)
     }, {
       fieldName: 'quantityOnHand',
-      headerText: formatMessage(messages.quantityOnHand)
+      headerText: formatMessage(messages.quantityOnHand),
+      format: (data, item) => {
+        if (item.get('inTransitFromSiteName')) {
+          return (<span>
+            { formatNumber(data) }
+            &nbsp;
+            <small>
+              {
+                formatMessage(messages.inTransitFromSiteName, {
+                  inTransitFromSiteName: item.get('inTransitFromSiteName')
+                })
+              }
+            </small>
+          </span>)
+        }
+        return formatNumber(data)
+      }
     }, {
       fieldName: 'expiresOn',
       headerText: formatMessage(messages.expiresOn),
