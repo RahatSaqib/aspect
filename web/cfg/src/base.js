@@ -1,7 +1,8 @@
 import path from 'path'
-import webpack from 'webpack'
 
+import webpack from 'webpack'
 import CaseSensitivePathsPlugin from 'case-sensitive-paths-webpack-plugin'
+import pxToRem from 'postcss-pxtorem'
 
 export default {
   entry: './src/index',
@@ -70,6 +71,11 @@ export default {
     new CaseSensitivePathsPlugin()
   ],
   postcss() {
-    return []
+    return [
+      pxToRem({
+        // See available options: https://github.com/cuth/postcss-pxtorem#options
+        rootValue: 16
+      })
+    ]
   }
 }
