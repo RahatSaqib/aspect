@@ -7,6 +7,7 @@ const { run } = require('../utils/generatorFunctionUtils')
 describe('account details service', () => {
   let dbSpy
   let service
+  const geographyId = 7
   const accountDetails = {
     id: 68,
     name: 'Installer Name',
@@ -25,7 +26,19 @@ describe('account details service', () => {
     dbSpy = require('../utils/dbSpy')
     sinon.spy(dbSpy, 'query')
     service = proxyquire.noCallThru().load('../../src/accountDetails/service', {
-      '../db': dbSpy
+      '../db': dbSpy,
+      '../geography/service': {
+        * transformGeographyFromUpdates(updates) {
+          const geoFieldNames = ['countryId', 'stateId', 'lgaId']
+          const geoFields = _.pick(updates, geoFieldNames)
+          if (!_.isEmpty(geoFields)) {
+            const transformed = _.omit(updates, geoFieldNames)
+            transformed.geographyId = geographyId
+            return transformed
+          }
+          return updates
+        }
+      }
     })
   })
 
@@ -111,7 +124,7 @@ describe('account details service', () => {
         assert.equal(savePersonQuery.from.lastCall.args[0], 'Person as p')
         assert.deepEqual(savePersonQuery.where.lastCall.args[0], { 'p.id': contactDetails.id })
         assert.deepEqual(savePersonQuery.update.lastCall.args[0],
-          Object.assign({}, changedRequestProperties, {
+          Object.assign({ geographyId }, _.omit(changedRequestProperties, ['countryId']), {
             updatedOn: now,
             updatedBy: contactDetails.userId
           }))

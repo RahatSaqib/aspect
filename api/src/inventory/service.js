@@ -16,7 +16,7 @@ const { selectAssayConsumables } = require('../consumable/assayConsumableService
 const INVENTORY_ITEM_SELECT_LIST_FIELDS = [
   'ii.id', 'ii.consumableId', 'ii.siteId', 'ii.expiresOn', 'ii.quantityOnHand',
   'c.name as consumableName', 'c.manufacturer', 'u.shortname as unitShortName',
-  's.name as siteName', 's.countryId', 's.stateId', 's.lgaId',
+  's.name as siteName', 'g.countryId', 'g.stateId', 'g.lgaId',
   'co.name as countryName', 'st.name as stateName', 'l.name as lgaName'
 ]
 
@@ -32,9 +32,9 @@ const INVENTORY_ITEM_SORT_FIELDS = {
 }
 
 const INVENTORY_ITEM_FILTER_FIELDS = {
-  countryId: 's.countryId',
-  stateId: 's.stateId',
-  lgaId: 's.lgaId',
+  countryId: 'g.countryId',
+  stateId: 'g.stateId',
+  lgaId: 'g.lgaId',
   consumableId: 'ii.consumableId',
   siteName: 's.name',
   siteId: 'ii.siteId'
@@ -151,9 +151,10 @@ function* listInventoryItems(request) {
     .innerJoin('Consumable as c', 'ii.consumableId', 'c.id')
     .innerJoin('Unit as u', 'c.unit', 'u.id')
     .innerJoin('Site as s', 'ii.siteId', 's.id')
-    .leftJoin('Country as co', 's.countryId', 'co.id')
-    .leftJoin('State as st', 's.stateId', 'st.id')
-    .leftJoin('Lga as l', 's.lgaId', 'l.id')
+    .leftJoin('Geography as g', 's.geographyId', 'g.id')
+    .leftJoin('Country as co', 'g.countryId', 'co.id')
+    .leftJoin('State as st', 'g.stateId', 'st.id')
+    .leftJoin('Lga as l', 'g.lgaId', 'l.id')
     .modify(filterDateRangeParams, request.query, 'ii.expiresOn')
     .modify(filterParams, request.query, INVENTORY_ITEM_FILTER_FIELDS)
     .modify(addConstraints, dataConstraints, INVENTORY_ITEM_DATA_CONSTRAINT_ALIASES)
@@ -181,9 +182,10 @@ function* listInventoryItemsGroupedBySite(request) {
     .innerJoin('Consumable as c', 'ii.consumableId', 'c.id')
     .innerJoin('Unit as u', 'c.unit', 'u.id')
     .innerJoin('Site as s', 'ii.siteId', 's.id')
-    .leftJoin('Country as co', 's.countryId', 'co.id')
-    .leftJoin('State as st', 's.stateId', 'st.id')
-    .leftJoin('Lga as l', 's.lgaId', 'l.id')
+    .leftJoin('Geography as g', 's.geographyId', 'g.id')
+    .leftJoin('Country as co', 'g.countryId', 'co.id')
+    .leftJoin('State as st', 'g.stateId', 'st.id')
+    .leftJoin('Lga as l', 'g.lgaId', 'l.id')
     .modify(filterDateRangeParams, request.query, 'ii.expiresOn')
 
   const sitesQuery = inventoryItemsSiteByGeographyQuery.clone()

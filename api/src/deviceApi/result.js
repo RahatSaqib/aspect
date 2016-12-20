@@ -37,7 +37,7 @@ function* addResult(context) {
     .join('Device as d', 's.id', 'd.siteId')
     .where({ 'd.id': deviceId })
     .first('s.id', 's.partnerId', 's.orgUnitId',
-      's.countryId', 's.stateId', 's.lgaId', 's.latitude', 's.longitude')
+      's.geographyId', 's.latitude', 's.longitude')
 
   // Select ResultType if specified, otherwise Patient
   const resultTypeQ = knex('ResultType as rt')
@@ -206,9 +206,7 @@ function* addResult(context) {
       deviceId,
       partnerId: site.partnerId,
       orgUnitId: site.orgUnitId,
-      countryId: site.countryId,
-      stateId: site.stateId,
-      lgaId: site.lgaId,
+      geographyId: site.geographyId,
       siteId: site.id,
       createdOn: now
     }, result))
