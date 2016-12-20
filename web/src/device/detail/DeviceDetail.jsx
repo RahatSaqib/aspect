@@ -201,20 +201,21 @@ export class DeviceDetail extends PureComponent {
                       {v}
                     </h1>
                     <div>
-                      <Link to={`/site/${device.get('siteId')}`}>
+                      <Link
+                        to={`/site/${device.get('siteId')}`}
+                        className={styles.Site}
+                      >
                         {device.get('siteName')}
                       </Link>
                     </div>
                     <div>
-                      <span className={styles.LastSeen}>
-                        {formatMessage(messages.fieldLastSeen)} {formatRelative(device.get('lastSeen'))}
-                      </span>
+                      {formatMessage(messages.fieldLastSeen)} {formatRelative(device.get('lastSeen'))}
                       &nbsp;&nbsp;
                       {formatMessage(messages.fieldFirstConnected)} {formatRelative(device.get('createdOn'))}
                     </div>
                     <div>
                       {formatMessage(messages.fieldStatus)}: {device.get('status')}
-                      &nbsp;&nbsp;
+                      &nbsp;•&nbsp;
                       <Link to={`/result`}>
                         {device.get('totalTests')} {formatMessage(messages.fieldTotalNumberOfTests)}
                       </Link>
@@ -232,7 +233,7 @@ export class DeviceDetail extends PureComponent {
         </Card>
         { /* Graphs */ }
         <Card initiallyExpanded>
-          <CardText style={{ paddingTop: 0 }}>
+          <CardText style={{ paddingTop: 5 }} className={styles.CardText}>
             <Unit sm="1-1" md="1-2">
               <CardHeader title="Utilization Rate Over Time" />
               <ReadOnlyField
@@ -258,35 +259,35 @@ export class DeviceDetail extends PureComponent {
         { /* Contacts */ }
         <Card initiallyExpanded>
           <CardHeader title="Contacts" actAsExpander showExpandableButton />
-          <CardText actAsExpander expandable style={{ paddingTop: 0 }}>
+          <CardText actAsExpander expandable style={{ paddingTop: 5 }}>
             User 1, 2, 3, 4…
           </CardText>
         </Card>
         { /* Calibration */ }
         <Card>
           <CardHeader title="Calibration" actAsExpander showExpandableButton />
-          <CardText actAsExpander expandable style={{ paddingTop: 0 }}>
+          <CardText actAsExpander expandable style={{ paddingTop: 5 }}>
             Not implemented
           </CardText>
         </Card>
         { /* Warranty */ }
         <Card>
           <CardHeader title="Warranty" actAsExpander showExpandableButton />
-          <CardText actAsExpander expandable style={{ paddingTop: 0 }}>
+          <CardText actAsExpander expandable style={{ paddingTop: 5 }}>
             Not implemented
           </CardText>
         </Card>
         { /* Configuration */ }
         <Card>
           <CardHeader title="Configuration" actAsExpander showExpandableButton />
-          <CardText actAsExpander expandable style={{ paddingTop: 0 }}>
+          <CardText actAsExpander expandable style={{ paddingTop: 5 }}>
             Not implemented
           </CardText>
         </Card>
         { /* Technical information */ }
         <Card>
           <CardHeader title="Technical information" actAsExpander showExpandableButton />
-          <CardText actAsExpander expandable style={{ paddingTop: 0 }}>
+          <CardText actAsExpander expandable style={{ paddingTop: 5 }} className={styles.CardText}>
             <Unit sm="1-2" md="1-3" lg="1-4">
               <ReadOnlyField label={formatMessage(messages.fieldFirstApprovedOn)} value={device.get('approvedOn')} />
             </Unit>
@@ -294,7 +295,7 @@ export class DeviceDetail extends PureComponent {
               <ReadOnlyField label={formatMessage(messages.fieldFirstApprovedBy)} value={device.get('approvedBy')} />
             </Unit>
             <Unit sm="1-2" md="1-3" lg="1-4">
-              <ReadOnlyField label={formatMessage(messages.fieldHostId)} value={device.get('HostId')} />
+              <ReadOnlyField label={formatMessage(messages.fieldHostId)} value={device.get('hostId')} />
             </Unit>
             <Unit sm="1-2" md="1-3" lg="1-4">
               <ReadOnlyField label={formatMessage(messages.fieldSerial)} value={device.get('serial')} />
