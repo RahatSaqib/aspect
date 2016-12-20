@@ -45,6 +45,10 @@ const messages = defineMessages({
   resultCategoryCopiesMl: {
     id: 'pages.ResultList.resultCategoryHiv',
     defaultMessage: 'HIV'
+  },
+  filterTemplate: {
+    id: 'pages.ResultList.filterTemplate',
+    defaultMessage: 'Viewing <ASSAY> results <DATE><RESULT> from all sites<GEOGRAPHY><NAME>'
   }
 })
 
@@ -103,7 +107,7 @@ export class ResultList extends PureComponent {
     return (
       <div className={styles.Content}>
         <Helmet title={formatMessage(messages.title)} titleTemplate="%s - Aspect" defaultTitle="Aspect" />
-        <ListFilterContainer subject={formatMessage(messages.title)} />
+        <ListFilterContainer subject={formatMessage(messages.title)} filterTemplate={formatMessage(messages.filterTemplate)} />
         <DataTableWithEmptyList
           selectable
           handleItemIdSelection={this.handleItemIdSelection}

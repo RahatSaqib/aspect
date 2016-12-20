@@ -91,12 +91,12 @@ const routes =
           </Route>
         </Route>
 
-        <Route path="device" deviceConfig={{ filterParams: { hasResults: 1 }, filterConfig: { assayAndResultCategory: true, geography: true, date: true, deviceName: true } }}>
+        <Route path="device">
           <IndexRoute component={DeviceListContainer} />
           <Route path=":deviceId" component={DeviceDetailContainer} />
         </Route>
 
-        <Route path="router" routerConfig={{ filterParams: { hasResults: 0, hasConnectivity: 1 }, filterConfig: { geography: true, deviceName: true } }}>
+        <Route path="router">
           <IndexRoute component={RouterListContainer} />
           <Route path=":routerId" component={RouterDetailContainer} />
         </Route>

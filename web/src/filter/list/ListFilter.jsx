@@ -186,7 +186,9 @@ export class ListFilter extends PureComponent {
     subject: PropTypes.string,
     dateFilterLabel: PropTypes.string,
     countries: PropTypes.object.isRequired,
-    assay: PropTypes.object.isRequired
+    assay: PropTypes.object.isRequired,
+    filterTemplate: PropTypes.string.isRequired,
+    filterTemplateOptional: PropTypes.string
   }
 
   state = {
@@ -220,7 +222,7 @@ export class ListFilter extends PureComponent {
     const assay = filter.assayId ? this.props.assay.get('items').find(a => a.get('id') === filter.assayId) : null
     const result = assay && filter.resultCategoryId ?
       assay.get('resultCategories').find(r => r.get('id') === String(filter.resultCategoryId)) : null
-    const assayString = assay ? `${assay.get('name')} ${formatMessage(messages.assays)}` : ''
+    const assayString = assay ? assay.get('name') : ''
     const resultString = result ? ` ${formatMessage(messages.withResult)} "${result.get('name')}"` : ''
 
     // date
@@ -359,6 +361,8 @@ export class ListFilter extends PureComponent {
     const { filter,
             config,
             subject,
+            filterTemplate,
+            filterTemplateOptional,
             dateFilterLabel,
             intl: { formatMessage, formatDate } } = this.props
     const { expanded } = this.state
@@ -368,7 +372,12 @@ export class ListFilter extends PureComponent {
       config.siteName || config.contactNameOrEmail || config.consumable
     )
 
-    const filterMessage = this.getFilterMessage(filter, subject, 'Viewing all devices<GEOGRAPHY><NAME>.', 'Counting only <ASSAY><RESULT><DATE>.', formatMessage, formatDate)
+    const filterMessage = this.getFilterMessage(filter,
+      subject,
+      filterTemplate,
+      filterTemplateOptional,
+      formatMessage,
+      formatDate)
 
     return (
       <div className={styles.ListFilter}>
