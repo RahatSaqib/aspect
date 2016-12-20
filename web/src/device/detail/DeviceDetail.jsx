@@ -271,10 +271,17 @@ export class DeviceDetail extends PureComponent {
           Not yet implemented
         </Dialog>
         { /* Contacts */ }
-        <Card initiallyExpanded>
-          <CardHeader title="Contacts" actAsExpander showExpandableButton />
-          <CardText actAsExpander expandable style={{ paddingTop: 5 }}>
-            User 1, 2, 3, 4…
+        <Card expanded>
+          <CardHeader title="Contacts" showExpandableButton />
+          <CardText style={{ paddingTop: 5 }}>
+            {device.get('contacts').map(c => (
+              <Link
+                key={c.get('id')}
+                to={`/person/${c.get('id')}`}
+                className={styles.Contact}
+                children={c.get('name')}
+              />
+            ))}
           </CardText>
         </Card>
         { /* Calibration */ }
@@ -327,7 +334,7 @@ export class DeviceDetail extends PureComponent {
     return (
       <div>
         {
-          this.props.device ?
+          this.props.device && this.props.device.has('contacts') ?
           this.renderContent() :
           this.renderProgress()
         }
