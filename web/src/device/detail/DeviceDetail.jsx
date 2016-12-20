@@ -12,7 +12,6 @@ import Helmet from 'react-helmet'
 
 // Material-UI
 import Dialog from 'material-ui/Dialog'
-import Paper from 'material-ui/Paper'
 import LinearProgress from 'material-ui/LinearProgress'
 import { Card, CardHeader, CardText } from 'material-ui/Card'
 import IconButton from 'material-ui/IconButton'
@@ -25,7 +24,6 @@ import {
   fetchSingleDevice,
   updateSingleDevice
 } from '../DeviceRedux'
-import ReadOnlyFields from '../../components/shared/ReadOnlyFields'
 import { ReadOnlyField } from '../../components/shared/ReadOnlyFields'
 import DeviceDetailForm from './DeviceDetailForm'
 import DeviceDemoLink from '../DeviceDemoLink'
@@ -174,8 +172,12 @@ export class DeviceDetail extends PureComponent {
     )
   }
 
-  renderFormContainer() {
-    const { intl: { formatMessage } } = this.props
+  renderEditButtonWithDialog() {
+    const { editable, intl } = this.props
+    if (!editable) {
+      return false
+    }
+    const { formatMessage } = intl
     const labels = {
       name: formatMessage(messages.fieldName),
       shortname: formatMessage(messages.fieldShortname),
@@ -185,18 +187,35 @@ export class DeviceDetail extends PureComponent {
       loadingMoreText: formatMessage(messages.siteLoadingMore)
     }
     return (
-      <DeviceDetailForm
-        onChange={this.handleFormChange}
-        values={this.state.values}
-        labels={labels}
-        onSubmit={this.handleSubmit}
-      />
+      <div>
+        <IconButton
+          tooltip={formatMessage(messages.editTooltip)}
+          onTouchTap={this.handleToggleEditDialog}
+        >
+          <ModeEdit />
+        </IconButton>
+        <Dialog
+          modal
+          open={this.state.isEditDialogOpen}
+          onRequestClose={this.handleToggleEditDialog}
+        >
+          <DeviceDetailForm
+            onChange={this.handleFormChange}
+            values={this.state.values}
+            labels={labels}
+            onSubmit={this.handleSubmit}
+          />
+        </Dialog>
+      </div>
     )
   }
 
   renderContent() {
-    const { device, editable, intl } = this.props
+    const { device, intl } = this.props
     const { formatMessage, formatDate, formatRelative } = intl
+
+    // get date for current locale, 'date' - is a Date object or string value in DateTime format
+    const getFormattedDate = date => (date !== null && date !== '' && isFinite(new Date(date)) ? formatDate(date) : date)
 
     return (
       <div>
@@ -228,7 +247,7 @@ export class DeviceDetail extends PureComponent {
                     <div>
                       {formatMessage(messages.fieldStatus)}: {device.get('status')}
                       &nbsp;•&nbsp;
-                      <Link to={`/result`}>
+                      <Link to="/result">
                         {device.get('totalTests')} {formatMessage(messages.fieldTotalNumberOfTests)}
                       </Link>
                     </div>
@@ -238,19 +257,7 @@ export class DeviceDetail extends PureComponent {
             </Unit>
             <Unit sm="1-6" md="1-12">
               { /* Dialog for DeviceDetailForm */ }
-              <Dialog
-                modal
-                open={this.state.isEditDialogOpen}
-                onRequestClose={this.handleToggleEditDialog}
-              >
-                {this.renderFormContainer()}
-              </Dialog>
-              <IconButton
-                tooltip={formatMessage(messages.editTooltip)}
-                onTouchTap={this.handleToggleEditDialog}
-              >
-                <ModeEdit />
-              </IconButton>
+              {this.renderEditButtonWithDialog()}
             </Unit>
           </CardText>
         </Card>
@@ -261,7 +268,7 @@ export class DeviceDetail extends PureComponent {
               <CardHeader title="Utilization Rate Over Time" />
               <ReadOnlyField
                 label=""
-                value={true}
+                value
                 format={() =>
                   <img role="presentation" src={require('./utilization_rate.png')} style={{ width: '100%' }} />
                 }
@@ -271,7 +278,7 @@ export class DeviceDetail extends PureComponent {
               <CardHeader title="Error Rates Over Time" />
               <ReadOnlyField
                 label=""
-                value={true}
+                value
                 format={() =>
                   <img role="presentation" src={require('./error_rates.png')} style={{ width: '100%' }} />
                 }
@@ -296,8 +303,9 @@ export class DeviceDetail extends PureComponent {
                 key={c.get('id')}
                 to={`/person/${c.get('id')}`}
                 className={styles.Contact}
-                children={c.get('name')}
-              />
+              >
+                {c.get('name')}
+              </Link>
             ))}
           </CardText>
         </Card>
@@ -318,7 +326,7 @@ export class DeviceDetail extends PureComponent {
           <CardHeader title="Technical information" actAsExpander showExpandableButton />
           <CardText actAsExpander expandable style={{ paddingTop: 5 }} className={styles.CardText}>
             <Unit sm="1-2" md="1-3" lg="1-4">
-              <ReadOnlyField label={formatMessage(messages.fieldFirstApprovedOn)} value={device.get('approvedOn')} />
+              <ReadOnlyField label={formatMessage(messages.fieldFirstApprovedOn)} value={getFormattedDate(device.get('approvedOn'))} />
             </Unit>
             <Unit sm="1-2" md="1-3" lg="1-4">
               <ReadOnlyField label={formatMessage(messages.fieldFirstApprovedBy)} value={device.get('approvedBy')} />
