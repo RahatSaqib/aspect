@@ -5,9 +5,9 @@
   "description": "The web client for the aspect API",
   "main": "",
   "scripts": {
-    "prewebpack:dll": "fsys --task=remove --fileFolder=dist/assets/dll.vendor.js && fsys --task=remove --fileFolder=src/template/dll.vendor.manifest.json && fsys --task=remove --fileFolder=src/template/index.html",
+    "prewebpack:dll": "fsys --task=emptyDir --dir=dist && fsys --task=remove --fileFolder=src/template/dll.vendor.manifest.json && fsys --task=remove --fileFolder=src/template/index.html",
     "webpack:dll": "webpack --config cfg/dll/index.babel.js",
-    "prewebpack-dev-server:start": "cp src/template/index.html dist",
+    "prewebpack-dev-server:start": "cd src/template && fsys --task=copy --filesFolders=index.html --destination=../../dist --clobber='false' --preserveTimestamps='false' && cd ../../",
     "webpack-dev-server:start": "webpack-dev-server --config cfg/src/index.babel.js --inline --hot --open",
     "webpack:dist": "webpack --config cfg/src/index.babel.js",
     "start": "cross-env ASPECT_ENV=dev npm-run-all webpack:dll webpack-dev-server:start",
