@@ -38,6 +38,14 @@ const messages = defineMessages({
     id: 'pages.DeviceDetail.editTooltip',
     defaultMessage: 'Edit'
   },
+  cancel: {
+    id: 'pages.DeviceDetail.cancel',
+    defaultMessage: 'Cancel'
+  },
+  update: {
+    id: 'pages.DeviceDetail.update',
+    defaultMessage: 'Update'
+  },
   fieldName: {
     id: 'pages.DeviceDetail.fieldName',
     defaultMessage: 'Name'
@@ -53,14 +61,6 @@ const messages = defineMessages({
   fieldSiteId: {
     id: 'pages.DeviceDetail.fieldSiteId',
     defaultMessage: 'Site'
-  },
-  siteLoadMore: {
-    id: 'pages.DeviceDetail.siteLoadMore',
-    defaultMessage: 'Load more'
-  },
-  siteLoadingMore: {
-    id: 'pages.DeviceDetail.siteLoadingMore',
-    defaultMessage: 'Loading……'
   },
   fieldFirstApprovedOn: {
     id: 'pages.DeviceDetail.fieldFirstApprovedOn',
@@ -183,8 +183,8 @@ export class DeviceDetail extends PureComponent {
       shortname: formatMessage(messages.fieldShortname),
       notes: formatMessage(messages.fieldNotes),
       siteId: formatMessage(messages.fieldSiteId),
-      loadMoreText: formatMessage(messages.siteLoadMore),
-      loadingMoreText: formatMessage(messages.siteLoadingMore)
+      cancel: formatMessage(messages.cancel),
+      update: formatMessage(messages.update)
     }
     return (
       <div>
@@ -200,6 +200,7 @@ export class DeviceDetail extends PureComponent {
           onRequestClose={this.handleToggleEditDialog}
         >
           <DeviceDetailForm
+            onCancel={this.handleToggleEditDialog}
             onChange={this.handleFormChange}
             values={this.state.values}
             labels={labels}

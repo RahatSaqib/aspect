@@ -9,7 +9,7 @@ import { connect } from 'react-redux'
 import { Link } from 'react-router'
 
 // Material-UI
-import RaisedButton from 'material-ui/RaisedButton'
+import FlatButton from 'material-ui/FlatButton'
 import TextField from 'material-ui/TextField'
 import AutoComplete from 'material-ui/AutoComplete'
 import ExitToApp from 'material-ui/svg-icons/action/exit-to-app'
@@ -24,6 +24,7 @@ const cssClasses = classnames.bind(styles)
 const enhance = compose(
   pure,
   setPropTypes({
+    onCancel: PropTypes.func,
     values: PropTypes.object.isRequired
   }),
   recomposeForm({
@@ -155,12 +156,21 @@ export const DeviceDetailForm = (props) => {
           </div>
         </div>
       </div>
-      <div>
-        <RaisedButton
+      <div style={{ textAlign: 'right' }}>
+        {props.onCancel && (
+          <FlatButton
+            onClick={props.onCancel}
+            type="button"
+            label={labels.cancel}
+            primary
+            style={{ marginRight: 10 }}
+          />
+        )}
+        <FlatButton
           disabled={form.pristine || !form.valid || form.submitting}
           onClick={props.handleSubmit}
           type="button"
-          label="Update"
+          label={labels.update}
           secondary
         />
       </div>
