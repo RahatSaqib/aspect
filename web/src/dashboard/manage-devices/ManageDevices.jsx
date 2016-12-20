@@ -2,7 +2,8 @@
 import _ from 'lodash'
 import React, { PureComponent, PropTypes } from 'react'
 import {
-  injectIntl
+  injectIntl,
+  defineMessages
 } from 'react-intl'
 import { bindActionCreators } from 'redux'
 import { connect } from 'react-redux'
@@ -17,11 +18,23 @@ import ListFilterContainer from '../../filter/list/ListFilter'
 import { configureListFilter } from '../../filter/FilterRedux'
 import styles from './ManageDevices.css'
 
+const messages = defineMessages({
+  filterTemplate: {
+    id: 'pages.ManageDevices.filterTemplate',
+    defaultMessage: 'Viewing all devices<GEOGRAPHY><NAME>.'
+  },
+  filterTemplateOptional: {
+    id: 'pages.ManageDevices.filterTemplateOptional',
+    defaultMessage: 'Counting only <ASSAY> assays<RESULT><DATE>.'
+  }
+})
+
 export class ManageDevices extends PureComponent {
 
   static propTypes = {
     setPageTitle: PropTypes.func.isRequired,
-    configureListFilter: PropTypes.func.isRequired
+    configureListFilter: PropTypes.func.isRequired,
+    intl: PropTypes.object.isRequired
   }
 
   componentWillMount() {
@@ -35,10 +48,15 @@ export class ManageDevices extends PureComponent {
   }
 
   render() {
+    const { intl: { formatMessage } } = this.props
     return (
       <div className={styles.Content}>
         <Helmet title="ManageDevices" titleTemplate="%s - Aspect" defaultTitle="Aspect" />
-        <ListFilterContainer subject="devices" />
+        <ListFilterContainer
+          subject="devices"
+          filterTemplate={formatMessage(messages.filterTemplate)}
+          filterTemplateOptional={formatMessage(messages.filterTemplateOptional)}
+        />
         <Paper>
           <Unit sm="1-2" md="2-3">
             <div>

@@ -2,7 +2,8 @@
 import _ from 'lodash'
 import React, { PureComponent, PropTypes } from 'react'
 import {
-  injectIntl
+  injectIntl,
+  defineMessages
 } from 'react-intl'
 import { bindActionCreators } from 'redux'
 import { connect } from 'react-redux'
@@ -16,6 +17,13 @@ import ListFilterContainer from '../../filter/list/ListFilter'
 import { configureListFilter } from '../../filter/FilterRedux'
 import styles from './PatientCare.css'
 
+const messages = defineMessages({
+  filterTemplate: {
+    id: 'pages.PatientCare.filterTemplate',
+    defaultMessage: 'Viewing <ASSAY> results <DATE><RESULT> from all sites<GEOGRAPHY><NAME>'
+  }
+})
+
 export class PatientCare extends PureComponent {
 
   static propTypes = {
@@ -24,6 +32,7 @@ export class PatientCare extends PureComponent {
         type: PropTypes.string
       })
     }).isRequired,
+    intl: PropTypes.object.isRequired,
     setPageTitle: PropTypes.func.isRequired,
     configureListFilter: PropTypes.func.isRequired
   }
@@ -39,10 +48,14 @@ export class PatientCare extends PureComponent {
   }
 
   render() {
+    const { intl: { formatMessage } } = this.props
     return (
       <div className={styles.Content}>
         <Helmet title="PatientCare" titleTemplate="%s - Aspect" defaultTitle="Aspect" />
-        <ListFilterContainer subject={this.props.location.query.type === 'TB' ? 'TB' : 'HCV'} />
+        <ListFilterContainer
+          subject={this.props.location.query.type === 'TB' ? 'TB' : 'HCV'}
+          filterTemplate={formatMessage(messages.filterTemplate)}
+        />
         <Paper>
           <Link to="/result">
             <img

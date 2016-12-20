@@ -104,7 +104,12 @@ export class DeviceList extends PureComponent {
   componentWillMount() {
     const { setPageTitle, configureListFilter, intl: { formatMessage } } = this.props
     setPageTitle(formatMessage(messages.devicesTitle))
-    configureListFilter({ assayAndResultCategory: true, geography: true, date: true, deviceName: true })
+    configureListFilter({
+      assayAndResultCategory: true,
+      geography: true,
+      date: true,
+      deviceName: true
+    })
   }
 
   componentDidMount() {
