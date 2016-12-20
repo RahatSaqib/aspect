@@ -111,6 +111,7 @@ export class DeviceDetail extends PureComponent {
   }
 
   state = {
+    isEditDialogOpen: false,
     isDemoDialogOpen: false,
     values: {
       name: '',
@@ -134,6 +135,10 @@ export class DeviceDetail extends PureComponent {
     if (this.props.params.deviceId !== nextProps.params.deviceId) {
       this.handleFetchDevice()
     }
+  }
+
+  handleToggleEditDialog = () => {
+    this.setState({ isEditDialogOpen: !this.state.isEditDialogOpen })
   }
 
   handleToggleDialog = () => {
@@ -160,6 +165,7 @@ export class DeviceDetail extends PureComponent {
     const { device } = this.props
 
     return this.props.updateSingleDevice(device.get('id'), data)
+      .then(this.handleToggleEditDialog)
   }
 
   renderProgress() {
@@ -231,7 +237,18 @@ export class DeviceDetail extends PureComponent {
               />
             </Unit>
             <Unit sm="1-6" md="1-12">
-              <IconButton tooltip={formatMessage(messages.editTooltip)}>
+              { /* Dialog for DeviceDetailForm */ }
+              <Dialog
+                modal
+                open={this.state.isEditDialogOpen}
+                onRequestClose={this.handleToggleEditDialog}
+              >
+                {this.renderFormContainer()}
+              </Dialog>
+              <IconButton
+                tooltip={formatMessage(messages.editTooltip)}
+                onTouchTap={this.handleToggleEditDialog}
+              >
                 <ModeEdit />
               </IconButton>
             </Unit>
