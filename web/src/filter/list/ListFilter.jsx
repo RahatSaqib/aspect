@@ -252,34 +252,6 @@ export class ListFilter extends PureComponent {
                           .replace('<DATE>', dateString)} ${optionalMessage}`
 
     return message
-
-    // return `\`${JSON.stringify(filter)}\``
-
-    /*
-    countryId
-    minDate
-    maxDate
-    */
-
-    /*
-    Devices: Viewing devices in AREA, STATE, COUNTRY whose name includes "NAME".
-    Only counting ASSAY result with result "RESULT" <DATE></DATE>
-
-    Routers: Viewing routers in AREA, STATE, COUNTRY whose name includes "NAME".
-    Only counting ASSAY result with result "RESULT" DATE
-
-    Sites: Viewing sites in AREA, STATE, COUNTRY whose name includes "NAME"
-    (and which have a device named "NAME")
-
-    Results: Viewing ASSAY results DATE with result "RESULT" in AREA, STATE, COUNTRY from sites
-    whose name includes "NAME"
-
-    Contacts: Viewing contacts in AREA, STATE, COUNTRY whose name or email inclues "NAME".
-
-    Notification: Viewing notifications whose name inclues "NAME"
-
-    Reports: Viewing reports whose name includes "NAME"
-    */
   }
 
   handleExpandChange = (expanded) => {
