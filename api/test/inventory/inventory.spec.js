@@ -159,7 +159,6 @@ describe('Inventory Routes', () => {
                   })
                   .set('Authorization', `Bearer ${shared.token}`)
                   .end((err, res) => {
-                    console.log(res)
                     assert.equal(res.status, 200)
                     assert.typeOf(res.body, 'Object')
                     assert.property(res.body, 'data')
@@ -205,6 +204,119 @@ describe('Inventory Routes', () => {
                     assert.typeOf(res.body.data, 'Object')
                     assert.equal(res.body.data.quantityOnHand,
                       sourceInventoryItem.quantityOnHand - quantityToAdjust)
+                    done()
+                  })
+              })
+          })
+        })
+      })
+
+      describe('/inventory/transfer/{inventoryItemId}', () => {
+        const path = '/api/inventory/transfer'
+
+        describe('PUT', () => {
+          it('should add an inventory item in transit to the destination site', (done) => {
+            server
+              .get('/api/inventory/group-by-site')
+              .set('Authorization', `Bearer ${shared.token}`)
+              .end((err, res) => {
+                const sourceSite = _.find(res.body.data,
+                  site => _.some(site.inventoryItems, { consumableName }))
+                const sourceInventoryItem =
+                  _.find(sourceSite.inventoryItems, { consumableName })
+                const destinationSite = _.find(res.body.data,
+                  site => site.siteId !== sourceSite.siteId)
+                const existingTransitItem = _.find(destinationSite.inventoryItems, {
+                  inTransitFromSiteId: sourceSite.siteId,
+                  expiresOn: sourceInventoryItem.expiresOn,
+                  consumableId: sourceInventoryItem.consumableId
+                })
+                server
+                  .put(`${path}/${sourceInventoryItem.id}`)
+                  .send({
+                    lotNumber: sourceInventoryItem.lotNumber,
+                    expiresOn: sourceInventoryItem.expiresOn,
+                    quantity: quantityToAdjust,
+                    notes: '',
+                    fromSiteId: sourceSite.siteId,
+                    toSiteId: destinationSite.siteId,
+                    dateAdjusted: (new Date()).toISOString()
+                  })
+                  .set('Authorization', `Bearer ${shared.token}`)
+                  .end((err, res) => {
+                    assert.equal(res.status, 200)
+                    assert.typeOf(res.body, 'Object')
+                    assert.property(res.body, 'data')
+                    assert.typeOf(res.body.data, 'Object')
+                    assert.equal(res.body.data.existingInventoryItem.quantityOnHand,
+                      sourceInventoryItem.quantityOnHand - quantityToAdjust)
+                    const transitItem = res.body.data.newInventoryItem
+                    assert.deepEqual(transitItem, Object.assign({},
+                      transitItem,
+                      {
+                        quantityOnHand: existingTransitItem ?
+                          existingTransitItem.quantityOnHand + quantityToAdjust :
+                          quantityToAdjust,
+                        inTransitFromSiteId: sourceSite.siteId,
+                        siteId: destinationSite.siteId,
+                        lotNumber: sourceInventoryItem.lotNumber,
+                        expiresOn: sourceInventoryItem.expiresOn
+                      }))
+                    done()
+                  })
+              })
+          })
+        })
+      })
+
+      describe('/inventory/receive/{inventoryItemId}', () => {
+        const path = '/api/inventory/receive'
+
+        describe('PUT', () => {
+          it('should add an inventory item to the site', (done) => {
+            server
+              .get('/api/inventory/group-by-site')
+              .set('Authorization', `Bearer ${shared.token}`)
+              .end((err, res) => {
+                const sourceSite = _.find(res.body.data,
+                  site => _.some(site.inventoryItems,
+                    inventoryItem => inventoryItem.inTransitFromSiteId !== null))
+                const sourceInventoryItem =
+                  _.find(sourceSite.inventoryItems,
+                    inventoryItem => inventoryItem.inTransitFromSiteId !== null)
+                const destinationSite = _.find(res.body.data,
+                  site => site.siteId !== sourceInventoryItem.siteId)
+                const existingDestinationItem = _.find(destinationSite.inventoryItems, {
+                  expiresOn: sourceInventoryItem.expiresOn,
+                  consumableId: sourceInventoryItem.consumableId
+                })
+                server
+                  .put(`${path}/${sourceInventoryItem.id}`)
+                  .send({
+                    lotNumber: sourceInventoryItem.lotNumber,
+                    expiresOn: sourceInventoryItem.expiresOn,
+                    quantity: quantityToAdjust,
+                    notes: '',
+                    fromSiteId: sourceSite.siteId,
+                    toSiteId: destinationSite.siteId,
+                    dateAdjusted: (new Date()).toISOString()
+                  })
+                  .set('Authorization', `Bearer ${shared.token}`)
+                  .end((err, res) => {
+                    assert.equal(res.status, 200)
+                    assert.typeOf(res.body, 'Object')
+                    assert.property(res.body, 'data')
+                    assert.typeOf(res.body.data, 'Object')
+                    assert.deepEqual(res.body.data, Object.assign({},
+                      res.body.data,
+                      {
+                        quantityOnHand: existingDestinationItem ?
+                          existingDestinationItem.quantityOnHand + quantityToAdjust :
+                          quantityToAdjust,
+                        siteId: destinationSite.siteId,
+                        lotNumber: sourceInventoryItem.lotNumber,
+                        expiresOn: sourceInventoryItem.expiresOn
+                      }))
                     done()
                   })
               })

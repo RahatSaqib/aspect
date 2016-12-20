@@ -523,7 +523,7 @@ function* up(knex) {
   yield knex.schema.createTable('InventoryLog', (inventoryLog) => {
     inventoryLog.increments('id')
     inventoryLog.integer('inventoryItemId').unsigned()
-      .references('id').inTable('InventoryItem')
+      .references('id').inTable('InventoryItem').onDelete('SET NULL')
     inventoryLog.integer('consumableId').unsigned().notNullable()
       .references('id').inTable('Consumable')
     inventoryLog.integer('siteId').unsigned().notNullable()
