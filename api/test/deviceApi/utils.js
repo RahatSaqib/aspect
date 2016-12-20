@@ -38,6 +38,7 @@ function* deleteTestDataFromCheckpoint(knex, checkpoint, deviceIds) {
   yield knex('DeviceLogUpdate').whereIn('deviceLogId', deviceLogIds).delete()
   yield knex('DeviceLog').whereIn('id', deviceLogIds).delete()
   yield knex('InventoryLog').whereIn('resultId', resultIds).delete()
+  yield knex('ResultWorkflowLog').whereIn('resultId', resultIds).delete()
   yield knex('Result').whereIn('id', resultIds).delete()
   yield knex('DeviceConfiguration').whereIn('id', configIds).delete()
   yield knex('DeviceOperation').whereIn('id', opIds).delete()

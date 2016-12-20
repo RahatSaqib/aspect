@@ -525,6 +525,16 @@ function* up(knex) {
     resultWorkflowStatus.string('token')
   })
 
+  yield knex.schema.createTable('ResultWorkflowLog', (resultWorkflowLog) => {
+    resultWorkflowLog.increments('id')
+    resultWorkflowLog.integer('resultId').unsigned()
+      .references('id').inTable('Result')
+    resultWorkflowLog.integer('resultWorkflowStatusId').unsigned().notNullable()
+          .index().references('id').inTable('ResultWorkflowStatus')
+    resultWorkflowLog.string('operator')
+    addCreateFieldsNullable(resultWorkflowLog)
+  })
+
   yield knex.schema.createTable('InventoryItem', (inventoryItem) => {
     inventoryItem.increments('id')
     inventoryItem.integer('consumableId').unsigned().notNullable()
@@ -566,6 +576,7 @@ function* down(knex) {
 
   yield knex.schema.dropTableIfExists('InventoryLog')
   yield knex.schema.dropTableIfExists('ConsumableAssay')
+  yield knex.schema.dropTableIfExists('ResultWorkflowLog')
   yield knex.schema.dropTableIfExists('ResultWorkflowStatus')
   yield knex.schema.dropTableIfExists('ConsumableAssay')
   yield knex.schema.dropTableIfExists('InventoryItem')
