@@ -302,7 +302,7 @@ export class ListFilter extends PureComponent {
       ...prop
     })
   }
-  exportFileIsReady = (format, json) => {
+  exportFileIsReady = (format, serverResponse) => {
     const { command, receivedExportResponse } = this.props
     const prop = {}
     if (format === 'excel'){ prop.processingExportExcel = false }
@@ -311,7 +311,9 @@ export class ListFilter extends PureComponent {
 
     receivedExportResponse(nextCommand)
 
-    browserHistory.push(json.url)
+    if (serverResponse.ok === true){
+      browserHistory.push(serverResponse.url)
+    }
   }
 
   exportConfirmationDisagreed = () => {
