@@ -221,16 +221,20 @@ export class InventoryItemsList extends PureComponent {
           dateAdjusted: formValues.get('dateAdjusted')
         })
       case removeOperation:
-        return removeInventory(inventoryAdjustment.getIn(['adjustmentDetails', 'inventoryItemId']), formValues.get('dateAdjusted') ?
+        if (formValues.get('dateAdjusted')) {
+          return removeInventory(inventoryAdjustment.getIn(['adjustmentDetails', 'inventoryItemId']),
+            {
+              lotNumber: formValues.get('lotNumber'),
+              expiresOn: formValues.get('expiresOn'),
+              quantity: formValues.get('quantity'),
+              notes: formValues.get('notes'),
+              fromSiteId: formValues.get('fromSiteId'),
+              reasonId: formValues.get('reasonId'),
+              dateAdjusted: formValues.get('dateAdjusted')
+            })
+        }
+        return removeInventory(inventoryAdjustment.getIn(['adjustmentDetails', 'inventoryItemId']),
           {
-            lotNumber: formValues.get('lotNumber'),
-            expiresOn: formValues.get('expiresOn'),
-            quantity: formValues.get('quantity'),
-            notes: formValues.get('notes'),
-            fromSiteId: formValues.get('fromSiteId'),
-            reasonId: formValues.get('reasonId'),
-            dateAdjusted: formValues.get('dateAdjusted')
-          } : {
             lotNumber: formValues.get('lotNumber'),
             expiresOn: formValues.get('expiresOn'),
             quantity: formValues.get('quantity'),
