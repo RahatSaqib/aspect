@@ -38,7 +38,9 @@ import {
   removeInventory,
   transferInventory
 } from '../InventoryRedux'
-import InventoryAdjustmentForm from '../adjustment/InventoryAdjustmentForm'
+import InventoryAdjustmentForm, {
+  testConductedReasonI18nKey
+} from '../adjustment/InventoryAdjustmentForm'
 import styles from './InventoryItemsList.css'
 import { showAcknowledgement } from '../../appNotification/AppNotificationRedux'
 
@@ -133,6 +135,7 @@ export class InventoryItemsList extends PureComponent {
     toggleGroupBySite: PropTypes.func.isRequired,
     adjustInventoryLevels: PropTypes.func.isRequired,
     finishAdjustingInventoryLevels: PropTypes.func.isRequired,
+    consumableReasons: PropTypes.object.isRequired,
     items: PropTypes.object.isRequired,
     inventoryAdjustment: PropTypes.object,
     addInventory: PropTypes.func.isRequired,
@@ -208,7 +211,8 @@ export class InventoryItemsList extends PureComponent {
       inventoryAdjustment,
       addInventory,
       removeInventory,
-      transferInventory
+      transferInventory,
+      consumableReasons
     } = this.props
     switch (inventoryAdjustment.get('operation')) {
       case addOperation:
@@ -220,30 +224,24 @@ export class InventoryItemsList extends PureComponent {
           toSiteId: formValues.get('toSiteId'),
           dateAdjusted: formValues.get('dateAdjusted')
         })
-      case removeOperation:
-        if (formValues.get('dateAdjusted')) {
-          return removeInventory(inventoryAdjustment.getIn(['adjustmentDetails', 'inventoryItemId']),
-            {
-              lotNumber: formValues.get('lotNumber'),
-              expiresOn: formValues.get('expiresOn'),
-              quantity: formValues.get('quantity'),
-              notes: formValues.get('notes'),
-              fromSiteId: formValues.get('fromSiteId'),
-              reasonId: formValues.get('reasonId'),
-              dateAdjusted: formValues.get('dateAdjusted')
-            })
-        }
+      case removeOperation: {
+        const selectedAdjustmentReason =
+          consumableReasons.items.find(reason => reason.get('id') === formValues.get('reasonId'))
+        const dateValues = selectedAdjustmentReason.get('i18nKey') === testConductedReasonI18nKey ? {
+          dateAdjustedFrom: formValues.get('dateAdjustedFrom'),
+          dateAdjustedTo: formValues.get('dateAdjustedTo')
+        } : { dateAdjusted: formValues.get('dateAdjusted') }
         return removeInventory(inventoryAdjustment.getIn(['adjustmentDetails', 'inventoryItemId']),
           {
+            ...dateValues,
             lotNumber: formValues.get('lotNumber'),
             expiresOn: formValues.get('expiresOn'),
             quantity: formValues.get('quantity'),
             notes: formValues.get('notes'),
             fromSiteId: formValues.get('fromSiteId'),
-            reasonId: formValues.get('reasonId'),
-            dateAdjustedFrom: formValues.get('dateAdjustedFrom'),
-            dateAdjustedTo: formValues.get('dateAdjustedTo')
+            reasonId: formValues.get('reasonId')
           })
+      }
       case transferOperation:
         return transferInventory(inventoryAdjustment.getIn(['adjustmentDetails', 'inventoryItemId']), {
           lotNumber: formValues.get('lotNumber'),
@@ -259,18 +257,22 @@ export class InventoryItemsList extends PureComponent {
     }
   }
 
+  handleFetch = (...args) => {
+    this.props.fetchListFilteredInventoryItems({}, ...args)
+  }
+
   handleInventoryAdjustmentCancel = () => {
     this.props.finishAdjustingInventoryLevels()
   }
 
   adjustInventorySucceeded = () => {
-    this.props.showAcknowledgement({
+    const { showAcknowledgement, table } = this.props
+    showAcknowledgement({
       title: messages.inventoryAdjustedSuccessfully
     })
-  }
-
-  handleFetch = (...args) => {
-    this.props.fetchListFilteredInventoryItems({}, ...args)
+    this.handleFetch(table.get('sortCol') || 'siteName',
+      table.get('sortDir') || 'asc', table.get('page') || 0,
+      table.get('pageSize') || 10)
   }
 
   render() {
@@ -368,6 +370,7 @@ export class InventoryItemsList extends PureComponent {
 
 function mapStateToProps(state) {
   return {
+    consumableReasons: state.consumable.get('consumableReasons'),
     listFilter: state.filter.listFilter,
     items: state.inventory.items,
     table: state.inventory.table,

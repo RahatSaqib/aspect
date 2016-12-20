@@ -6,7 +6,6 @@ import startOfToday from 'date-fns/start_of_today'
 
 import { aspectFetch } from '../shared/utils/fetch'
 import {
-  receiveItem,
   receiveList,
   Items
 } from '../shared/metaReducers/groupedItems'
@@ -24,7 +23,6 @@ export const types = {
   REQUEST_INVENTORY_ITEMS: 'REQUEST_INVENTORY_ITEMS',
   RECEIVE_INVENTORY_ITEMS: 'RECEIVE_INVENTORY_ITEMS',
   TOGGLE_GROUP_BY_SITE: 'TOGGLE_GROUP_BY_SITE',
-  RECEIVE_SINGLE_INVENTORY_ITEM: 'RECEIVE_SINGLE_INVENTORY_ITEM',
   ADJUST_INVENTORY_LEVELS: 'ADJUST_INVENTORY_LEVELS',
   FINISH_ADJUSTING_INVENTORY_LEVELS: 'FINISH_ADJUSTING_INVENTORY_LEVELS',
   ADD_INVENTORY: 'ADD_INVENTORY',
@@ -58,14 +56,6 @@ function receiveInventoryItems(json, childrenPropertyPath) {
     items: json.data,
     total: json.total,
     childrenPropertyPath
-  }
-}
-
-function receiveSingleInventoryItem(item, childrenPropertyPath) {
-  return {
-    type: types.RECEIVE_SINGLE_INVENTORY_ITEM,
-    childrenPropertyPath,
-    item
   }
 }
 
@@ -198,10 +188,9 @@ export function finishAdjustingInventoryLevels() {
 export function addInventory(inventoryItemId, data) {
   return (dispatch, getState) => {
     const { inventory } = getState()
-    const groupBySite = inventory.getIn(['table', 'groupBy']).includes('siteId')
     const inventoryItem = inventory.getIn(['items', 'byId', inventoryItemId])
     dispatch(startAddingInventory(data))
-    return aspectFetch(`/inventory/add/${inventoryItemId}/${groupBySite}`, {
+    return aspectFetch(`/inventory/add/${inventoryItemId}`, {
       method: 'PUT',
       body: JSON.stringify(data),
       errorNotifications: {
@@ -213,23 +202,20 @@ export function addInventory(inventoryItemId, data) {
           onClose: () => dispatch(adjustInventoryLevels(inventoryItem, addOperation))
         }))
       }
-    }).then((json) => {
-      dispatch(receiveSingleInventoryItem(json.data, groupBySite ? ['inventoryItems'] : []))
-      dispatch(finishAdjustingInventoryLevels())
-    }).catch((err) => {
-      dispatch(finishAdjustingInventoryLevels())
-      throw err
-    })
+    }).then(() => dispatch(finishAdjustingInventoryLevels()))
+      .catch((err) => {
+        dispatch(finishAdjustingInventoryLevels())
+        throw err
+      })
   }
 }
 
 export function removeInventory(inventoryItemId, data) {
   return (dispatch, getState) => {
     const { inventory } = getState()
-    const groupBySite = inventory.getIn(['table', 'groupBy']).includes('siteId')
     const inventoryItem = inventory.getIn(['items', 'byId', inventoryItemId])
     dispatch(startRemovingInventory(data))
-    return aspectFetch(`/inventory/remove/${inventoryItemId}/${groupBySite}`, {
+    return aspectFetch(`/inventory/remove/${inventoryItemId}`, {
       method: 'PUT',
       body: JSON.stringify(data),
       errorNotifications: {
@@ -241,23 +227,20 @@ export function removeInventory(inventoryItemId, data) {
           onClose: () => dispatch(adjustInventoryLevels(inventoryItem, removeOperation))
         }))
       }
-    }).then((json) => {
-      dispatch(receiveSingleInventoryItem(json.data, groupBySite ? ['inventoryItems'] : []))
-      dispatch(finishAdjustingInventoryLevels())
-    }).catch((err) => {
-      dispatch(finishAdjustingInventoryLevels())
-      throw err
-    })
+    }).then(() => dispatch(finishAdjustingInventoryLevels()))
+      .catch((err) => {
+        dispatch(finishAdjustingInventoryLevels())
+        throw err
+      })
   }
 }
 
 export function transferInventory(inventoryItemId, data) {
   return (dispatch, getState) => {
     const { inventory } = getState()
-    const groupBySite = inventory.getIn(['table', 'groupBy']).includes('siteId')
     const inventoryItem = inventory.getIn(['items', 'byId', inventoryItemId])
     dispatch(startTransferringInventory(data))
-    return aspectFetch(`/inventory/transfer/${inventoryItemId}/${groupBySite}`, {
+    return aspectFetch(`/inventory/transfer/${inventoryItemId}`, {
       method: 'PUT',
       body: JSON.stringify(data),
       errorNotifications: {
@@ -269,14 +252,11 @@ export function transferInventory(inventoryItemId, data) {
           onClose: () => dispatch(adjustInventoryLevels(inventoryItem, transferOperation))
         }))
       }
-    }).then((json) => {
-      dispatch(receiveSingleInventoryItem(json.data.existingInventoryItem, groupBySite ? ['inventoryItems'] : []))
-      dispatch(receiveSingleInventoryItem(json.data.newInventoryItem, groupBySite ? ['inventoryItems'] : []))
-      dispatch(finishAdjustingInventoryLevels())
-    }).catch((err) => {
-      dispatch(finishAdjustingInventoryLevels())
-      throw err
-    })
+    }).then(() => dispatch(finishAdjustingInventoryLevels()))
+      .catch((err) => {
+        dispatch(finishAdjustingInventoryLevels())
+        throw err
+      })
   }
 }
 
@@ -349,10 +329,6 @@ export default function inventoryItemsReducer(state = initialState, action) {
     case types.REMOVE_INVENTORY:
     case types.TRANSFER_INVENTORY:
       return state.setIn(['inventoryAdjustment', 'updating'], true)
-    case types.RECEIVE_SINGLE_INVENTORY_ITEM:
-      return state.withMutations((mutState) => {
-        mutState.set('items', receiveItem(mutState.items, action.childrenPropertyPath, action.item))
-      })
     default:
       return state
   }

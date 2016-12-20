@@ -125,7 +125,7 @@ const messages = defineMessages({
   }
 })
 
-const testConductedReasonI18nKey = 'ConsumableReason_TestConducted'
+export const testConductedReasonI18nKey = 'ConsumableReason_TestConducted'
 
 class InventoryAdjustmentForm extends PureComponent {
   static propTypes = {
@@ -152,15 +152,16 @@ class InventoryAdjustmentForm extends PureComponent {
   }
 
   handleReasonChange = (event, index, value) => {
+    const { consumableReasons, changeFieldValue } = this.props
     const selectedAdjustmentReason =
-      this.props.consumableReasons.items.find(reason => reason.get('id') === value)
+      consumableReasons.items.find(reason => reason.get('id') === value)
     if (this.state.selectedReasonKey === testConductedReasonI18nKey &&
       selectedAdjustmentReason.get('i18nKey') !== testConductedReasonI18nKey) {
-      this.props.changeFieldValue('inventoryAdjustment', 'dateAdjustedFrom', undefined)
-      this.props.changeFieldValue('inventoryAdjustment', 'dateAdjustedTo', undefined)
+      changeFieldValue('inventoryAdjustment', 'dateAdjustedFrom', undefined)
+      changeFieldValue('inventoryAdjustment', 'dateAdjustedTo', undefined)
     } else if (this.state.selectedReasonKey !== testConductedReasonI18nKey &&
       selectedAdjustmentReason.get('i18nKey') === testConductedReasonI18nKey) {
-      this.props.changeFieldValue('inventoryAdjustment', 'dateAdjusted', undefined)
+      changeFieldValue('inventoryAdjustment', 'dateAdjusted', undefined)
     }
     this.setState({
       selectedReasonKey: selectedAdjustmentReason.get('i18nKey')
@@ -200,6 +201,8 @@ class InventoryAdjustmentForm extends PureComponent {
       marginRight: '1em'
     }
 
+    const hiddenStyles = { display: 'none' }
+    const visibleStyles = { display: 'block' }
     return (
       <form onSubmit={handleSubmit}>
         <section>
@@ -266,31 +269,31 @@ class InventoryAdjustmentForm extends PureComponent {
             />
           </section>
         }
-        {
-          this.state.selectedReasonKey === testConductedReasonI18nKey &&
-          <section>
-            <DateInput
-              name="dateAdjustedFrom" label={formatMessage(messages.testsRunBetween)}
-              disabled={updating} container="inline" mode="landscape" autoOk
-              style={formFieldStyle}
-            />
-            <DateInput
-              name="dateAdjustedTo" label={formatMessage(messages.and)}
-              disabled={updating} container="inline" mode="landscape" autoOk
-              style={formFieldStyle}
-            />
-          </section>
-        }
-        {
-          this.state.selectedReasonKey !== testConductedReasonI18nKey &&
-          <section>
-            <DateInput
-              name="dateAdjusted" label={dateAdjustedLabel}
-              disabled={updating} container="inline" mode="landscape" autoOk
-              style={formFieldStyle}
-            />
-          </section>
-        }
+        <section
+          style={this.state.selectedReasonKey === testConductedReasonI18nKey ?
+            visibleStyles : hiddenStyles}
+        >
+          <DateInput
+            name="dateAdjustedFrom" label={formatMessage(messages.testsRunBetween)}
+            disabled={updating} container="inline" mode="landscape" autoOk
+            style={formFieldStyle}
+          />
+          <DateInput
+            name="dateAdjustedTo" label={formatMessage(messages.and)}
+            disabled={updating} container="inline" mode="landscape" autoOk
+            style={formFieldStyle}
+          />
+        </section>
+        <section
+          style={this.state.selectedReasonKey === testConductedReasonI18nKey ?
+            hiddenStyles : visibleStyles}
+        >
+          <DateInput
+            name="dateAdjusted" label={dateAdjustedLabel}
+            disabled={updating} container="inline" mode="landscape" autoOk
+            style={formFieldStyle}
+          />
+        </section>
         <section>
           <TextInput
             name="notes" label={formatMessage(messages.notes)} disabled={updating} maxLength="2000"

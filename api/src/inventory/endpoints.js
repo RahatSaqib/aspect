@@ -19,8 +19,7 @@ const inventoryFilters = {
 }
 
 const adjustInventoryCommonParamsFields = {
-  inventoryItemId: Joi.number().integer().positive().required(),
-  groupBySite: Joi.boolean().truthy('true')
+  inventoryItemId: Joi.number().integer().positive().required()
 }
 
 const adjustInventoryCommonPayloadFields = {
@@ -69,7 +68,7 @@ module.exports = [
     }
   }, {
     method: 'PUT',
-    path: '/inventory/add/{inventoryItemId}/{groupBySite}',
+    path: '/inventory/add/{inventoryItemId}',
     handler: asyncHandler(addInventory),
     config: {
       description: 'Add Inventory',
@@ -86,7 +85,7 @@ module.exports = [
     }
   }, {
     method: 'PUT',
-    path: '/inventory/remove/{inventoryItemId}/{groupBySite}',
+    path: '/inventory/remove/{inventoryItemId}',
     handler: asyncHandler(removeInventory),
     config: {
       description: 'Remove Inventory',
@@ -108,7 +107,7 @@ module.exports = [
     }
   }, {
     method: 'PUT',
-    path: '/inventory/transfer/{inventoryItemId}/{groupBySite}',
+    path: '/inventory/transfer/{inventoryItemId}',
     handler: asyncHandler(transferInventory),
     config: {
       description: 'Transfer Inventory',
