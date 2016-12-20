@@ -103,7 +103,6 @@ function* savePerson(request, updatablePersonFields) {
 
   // Update record if any values have changed
   const changedPersonFields = yield* transformGeographyFromUpdates(changedFields)
-  // FIXME!!
   if (!_.isEmpty(changedPersonFields)) {
     if (changedFields.countryId && personDetails.lastCountryId !== changedFields.countryId) {
       changedPersonFields.lastCountryId = changedFields.countryId
