@@ -10,7 +10,8 @@ const {
   listInventoryItemsGroupedBySite,
   addInventory,
   removeInventory,
-  transferInventory
+  transferInventory,
+  receiveInventory
 } = require('./service')
 
 const inventoryFilters = {
@@ -111,7 +112,25 @@ module.exports = [
     handler: asyncHandler(transferInventory),
     config: {
       description: 'Transfer Inventory',
-      notes: 'Transfers quantity from inventory item between sites',
+      notes: 'Transfers quantity from inventory item to in transit',
+      auth: { scope: ['inventory:edit'] },
+      validate: {
+        params: adjustInventoryCommonParamsFields,
+        payload: Object.assign({},
+          adjustInventoryCommonPayloadFields, {
+            fromSiteId: Joi.number().integer().positive().required(),
+            toSiteId: Joi.number().integer().positive().required(),
+            dateAdjusted: Joi.date().iso().required()
+          })
+      }
+    }
+  }, {
+    method: 'PUT',
+    path: '/inventory/receive/{inventoryItemId}',
+    handler: asyncHandler(receiveInventory),
+    config: {
+      description: 'Receive Inventory',
+      notes: 'Received quantity from inventory item in transit',
       auth: { scope: ['inventory:edit'] },
       validate: {
         params: adjustInventoryCommonParamsFields,

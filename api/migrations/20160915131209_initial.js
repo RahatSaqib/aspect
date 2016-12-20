@@ -511,6 +511,7 @@ function* up(knex) {
       .references('id').inTable('Consumable')
     inventoryItem.integer('siteId').unsigned().notNullable()
       .references('id').inTable('Site')
+    inventoryItem.integer('inTransitFromSiteId').unsigned()
     inventoryItem.string('lotNumber')
     inventoryItem.dateTime('expiresOn')
     inventoryItem.float('quantityOnHand')

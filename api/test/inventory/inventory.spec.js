@@ -1,6 +1,7 @@
 const supertest = require('supertest')
 const chai = require('chai')
 const shared = require('../utils/sharedToken')
+const _ = require('lodash')
 
 // This agent refers to PORT where program is runninng.
 const server = supertest.agent('http://localhost:8080')
@@ -125,6 +126,89 @@ describe('Inventory Routes', () => {
               })
               done()
             })
+        })
+      })
+    })
+
+    describe('Inventory Adjustments', () => {
+      const consumableName = 'GeneXpert TB Cartridge'
+      const quantityToAdjust = 11
+
+      describe('/inventory/add/{inventoryItemId}', () => {
+        const path = '/api/inventory/add'
+
+        describe('PUT', () => {
+          it('should update the quantity of an inventory item', (done) => {
+            server
+              .get('/api/inventory/group-by-site')
+              .set('Authorization', `Bearer ${shared.token}`)
+              .end((err, res) => {
+                const destinationSite = _.find(res.body.data,
+                  site => _.some(site.inventoryItems, { consumableName }))
+                const destinationInventoryItem =
+                  _.find(destinationSite.inventoryItems, { consumableName })
+                server
+                  .put(`${path}/${destinationInventoryItem.id}`)
+                  .send({
+                    lotNumber: destinationInventoryItem.lotNumber,
+                    expiresOn: destinationInventoryItem.expiresOn,
+                    quantity: quantityToAdjust,
+                    notes: '',
+                    toSiteId: destinationSite.siteId,
+                    dateAdjusted: (new Date()).toISOString()
+                  })
+                  .set('Authorization', `Bearer ${shared.token}`)
+                  .end((err, res) => {
+                    console.log(res)
+                    assert.equal(res.status, 200)
+                    assert.typeOf(res.body, 'Object')
+                    assert.property(res.body, 'data')
+                    assert.typeOf(res.body.data, 'Object')
+                    assert.equal(res.body.data.quantityOnHand,
+                      destinationInventoryItem.quantityOnHand + quantityToAdjust)
+                    done()
+                  })
+              })
+          })
+        })
+      })
+
+      describe('/inventory/remove/{inventoryItemId}', () => {
+        const path = '/api/inventory/remove'
+
+        describe('PUT', () => {
+          it('should update the quantity of an inventory item', (done) => {
+            server
+              .get('/api/inventory/group-by-site')
+              .set('Authorization', `Bearer ${shared.token}`)
+              .end((err, res) => {
+                const sourceSite = _.find(res.body.data,
+                  site => _.some(site.inventoryItems, { consumableName }))
+                const sourceInventoryItem =
+                  _.find(sourceSite.inventoryItems, { consumableName })
+                server
+                  .put(`${path}/${sourceInventoryItem.id}`)
+                  .send({
+                    lotNumber: sourceInventoryItem.lotNumber,
+                    expiresOn: sourceInventoryItem.expiresOn,
+                    quantity: quantityToAdjust,
+                    notes: '',
+                    fromSiteId: sourceSite.siteId,
+                    reasonId: 1,
+                    dateAdjusted: (new Date()).toISOString()
+                  })
+                  .set('Authorization', `Bearer ${shared.token}`)
+                  .end((err, res) => {
+                    assert.equal(res.status, 200)
+                    assert.typeOf(res.body, 'Object')
+                    assert.property(res.body, 'data')
+                    assert.typeOf(res.body.data, 'Object')
+                    assert.equal(res.body.data.quantityOnHand,
+                      sourceInventoryItem.quantityOnHand - quantityToAdjust)
+                    done()
+                  })
+              })
+          })
         })
       })
     })
