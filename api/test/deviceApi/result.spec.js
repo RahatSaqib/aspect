@@ -3,6 +3,7 @@ const chai = require('chai')
 const _ = require('lodash')
 const {
   createTestContext,
+  getDeviceConfigurationData,
   getLastDeviceOperationId,
   getLastResultId
 } = require('./utils')
@@ -807,9 +808,11 @@ describe('Device Result API routes', () => {
       const deviceLogResult2 = yield knex('Result')
         .where({ id: resultIds[resultIds.length - 1] })
         .first()
+      const deviceLogConfig2 = yield* getDeviceConfigurationData(knex, deviceId)
       const deviceLogOp2 = yield knex('DeviceOperation')
         .where({ id: opIds[opIds.length - 1] })
         .first()
+      assert.deepEqual(deviceLogConfig2, { a: 'b' })
       assert.property(deviceLogOp2, 'data')
       assert.deepEqual(JSON.parse(deviceLogOp2.data), { a: 'c' })
       assert.property(deviceLogResult2, 'resultData')
@@ -878,9 +881,11 @@ describe('Device Result API routes', () => {
       const [{ count: logLength3 }] = yield knex('DeviceLogUpdate').count('id as count')
       assert.equal(logLength3, initialLogLength + 4)  // previous + 2 results
 
+      const deviceLogConfig3 = yield* getDeviceConfigurationData(knex, deviceId)
       const deviceLogOp3 = yield knex('DeviceOperation')
         .where({ id: opIds[opIds.length - 1] })
         .first()
+      assert.deepEqual(deviceLogConfig3, { a: 'c' })
       assert.property(deviceLogOp3, 'data')
       assert.deepEqual(JSON.parse(deviceLogOp3.data), { a: 'd' })
       const deviceLogUpdates3 = yield knex('DeviceLogUpdate').where({

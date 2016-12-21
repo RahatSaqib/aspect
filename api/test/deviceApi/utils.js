@@ -41,6 +41,26 @@ function* deleteTestDataFromCheckpoint(knex, checkpoint, deviceIds) {
   yield knex('DeviceOperation').whereIn('id', opIds).delete()
 }
 
+function* getDeviceConfigurationData(knex, deviceId) {
+  const { configurationData } = yield knex('Device')
+    .where({ id: deviceId })
+    .first('configurationData')
+
+  return JSON.parse(configurationData || null)
+}
+
+function* getLastDeviceOperationData(knex, deviceId) {
+  const lastOpId = yield* getLastDeviceOperationId(knex, deviceId)
+  if (!lastOpId) {
+    return null
+  }
+
+  const { data } = yield knex('DeviceOperation')
+    .where({ id: lastOpId })
+    .first('data')
+  return JSON.parse(data || null)
+}
+
 function* getLastDeviceOperationId(knex, deviceId) {
   const op = yield knex('DeviceLogUpdate as dlu')
     .innerJoin('DeviceLog as dl', 'dl.id', 'dlu.deviceLogId')
@@ -177,6 +197,8 @@ class DeviceApiTestContext {
 
 module.exports = {
   createTestContext,
+  getDeviceConfigurationData,
+  getLastDeviceOperationData,
   getLastDeviceOperationId,
   getLastResultId
 }
