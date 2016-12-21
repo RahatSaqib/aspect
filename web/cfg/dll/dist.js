@@ -9,7 +9,7 @@ export default {
     new webpack.NoErrorsPlugin(),
     new webpack.DefinePlugin({
       'process.env.NODE_ENV': '"production"',
-      'process.env.ASPECT_ENV': '"dev"'
+      'process.env.ASPECT_ENV': '"dist"'
     }),
     new webpack.optimize.UglifyJsPlugin()
   ]
