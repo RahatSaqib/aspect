@@ -26,7 +26,7 @@ export default {
     ...baseConfig.plugins,
     new webpack.DefinePlugin({
       'process.env.NODE_ENV': '"production"',
-      'process.env.ASPECT_ENV': '"dev"'
+      'process.env.ASPECT_ENV': '"dist"'
     }),
     new webpack.optimize.DedupePlugin(),
     new webpack.optimize.UglifyJsPlugin(),
