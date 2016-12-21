@@ -12,8 +12,8 @@ module.exports = [{
     auth: { scope: ['report:view', 'report:edit'] },
     validate: {
       query: Object.assign({
-        name: Joi.string().allow('').description('Filter for report name')
-      }, validateSortPageParams('deploymentName', 'moduleSerial', 'dateOfError', 'error', 'totalTestsRun', 'totalErrors'))
+        contactNameOrEmail: Joi.string().allow('').description('Filter for report name')
+      }, validateSortPageParams('name', 'deploymentName', 'moduleSerial', 'dateOfError', 'error', 'totalTestsRun', 'totalErrors'))
     }
   }
 }]

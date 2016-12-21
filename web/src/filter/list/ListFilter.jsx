@@ -28,14 +28,11 @@ import {
   clearListFilter,
   changeListFilter
 } from '../FilterRedux'
+import getFilterMessage from '../formatting'
 
 import styles from './ListFilter.css'
 
 const messages = defineMessages({
-  noFilters: {
-    id: 'shared.ListFilter.noFilters',
-    defaultMessage: 'No filters set - showing all'
-  },
   save: {
     id: 'shared.ListFilter.save',
     defaultMessage: 'Save'
@@ -160,7 +157,12 @@ export class ListFilter extends PureComponent {
       consumable: PropTypes.bool
     }).isRequired,
     subject: PropTypes.string,
-    dateFilterLabel: PropTypes.string
+    dateFilterLabel: PropTypes.string,
+    countries: PropTypes.object.isRequired,
+    assay: PropTypes.object.isRequired,
+    consumableItems: PropTypes.object.isRequired,
+    filterTemplate: PropTypes.string.isRequired,
+    filterTemplateOptional: PropTypes.string
   }
 
   state = {
@@ -243,14 +245,32 @@ export class ListFilter extends PureComponent {
   }
 
   render() {
-    const { filter, config, subject, dateFilterLabel, intl: { formatMessage } } = this.props
+    const { filter,
+            countries,
+            assay,
+            consumableItems,
+            config,
+            subject,
+            filterTemplate,
+            filterTemplateOptional,
+            dateFilterLabel,
+            intl: { formatMessage, formatDate } } = this.props
     const { expanded } = this.state
-    const noFiltersMessage = `${formatMessage(messages.noFilters)} ${subject ? subject.toLowerCase() : ''}`
-    const filterMessage = _.every(filter, f => !f) ? noFiltersMessage : `\`${JSON.stringify(filter)}\``
+
     const hasDataSection = (
       config.assay || config.deviceName || config.result ||
       config.siteName || config.contactNameOrEmail || config.consumable
     )
+
+    const filterMessage = getFilterMessage(filter,
+      countries,
+      assay,
+      consumableItems,
+      subject,
+      filterTemplate,
+      filterTemplateOptional,
+      formatMessage,
+      formatDate)
 
     return (
       <div className={styles.ListFilter}>
@@ -413,7 +433,10 @@ export class ListFilter extends PureComponent {
 function mapStateToProps(state) {
   return {
     config: state.filter.listConfig,
-    filter: state.filter.listFilter.toJS()
+    filter: state.filter.listFilter.toJS(),
+    countries: state.geography.countriesForLocationSelector,
+    assay: state.assay,
+    consumableItems: state.consumable.items
   }
 }
 

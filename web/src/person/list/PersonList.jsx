@@ -37,6 +37,10 @@ const messages = defineMessages({
   lga: {
     id: 'pages.PersonList.lga',
     defaultMessage: 'County'
+  },
+  filterTemplate: {
+    id: 'pages.ResultList.filterTemplate',
+    defaultMessage: 'Viewing contacts <GEOGRAPHY><NAME>'
   }
 })
 
@@ -91,7 +95,10 @@ export class PersonList extends PureComponent {
     return (
       <div className={styles.Content}>
         <Helmet title={formatMessage(messages.title)} titleTemplate="%s - Aspect" defaultTitle="Aspect" />
-        <ListFilterContainer subject={formatMessage(messages.title)} />
+        <ListFilterContainer
+          subject={formatMessage(messages.title)}
+          filterTemplate={formatMessage(messages.filterTemplate)}
+        />
         <DataTableWithEmptyList
           selectable
           handleItemIdSelection={this.handleItemIdSelection}

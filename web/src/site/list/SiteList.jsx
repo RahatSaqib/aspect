@@ -37,6 +37,10 @@ const messages = defineMessages({
   totalDevices: {
     id: 'pages.SiteList.totalDevices',
     defaultMessage: 'Number of Devices'
+  },
+  filterTemplate: {
+    id: 'pages.SiteList.filterTemplate',
+    defaultMessage: 'Viewing all sites<GEOGRAPHY><NAME>.'
   }
 })
 
@@ -57,7 +61,7 @@ export class SiteList extends PureComponent {
     const { setPageTitle, configureListFilter, intl } = this.props
     const { formatMessage } = intl
     setPageTitle(formatMessage(messages.title))
-    configureListFilter({ geography: true, date: true, deviceName: true, siteName: true })
+    configureListFilter({ geography: true, siteName: true })
   }
 
   componentDidMount() {
@@ -91,7 +95,10 @@ export class SiteList extends PureComponent {
     return (
       <div className={styles.Content}>
         <Helmet title={formatMessage(messages.title)} titleTemplate="%s - Aspect" defaultTitle="Aspect" />
-        <ListFilterContainer subject={formatMessage(messages.title)} />
+        <ListFilterContainer
+          subject={formatMessage(messages.title)}
+          filterTemplate={formatMessage(messages.filterTemplate)}
+        />
         <DataTableWithEmptyList
           selectable
           handleItemIdSelection={this.handleItemIdSelection}
