@@ -51,6 +51,9 @@ export default function getFilterMessage(
     return `${formatMessage(messages.noFilters)} ${subject ? subject.toLowerCase() : ''}`
   }
 
+  // using a constant for space for better readability
+  const SPACE = ' '
+
   // location-related strings
   let geography = ''
   const country = filter.countryId ? countries.get('items').find(c => c.id === filter.countryId) : null
@@ -58,30 +61,30 @@ export default function getFilterMessage(
   const lga = state && filter.lgaId ? state.getIn(['children', 'items']).find(s => s.id === filter.lgaId) : null
 
   if (country || state || lga) {
-    geography = ` ${formatMessage(messages.geographyIn)}
-                  ${lga ? `${lga.get('name')}, ` : ''}
-                  ${state ? `${state.get('name')}, ` : ''}
+    geography = ` ${formatMessage(messages.geographyIn)}${SPACE}
+                  ${lga ? `${lga.get('name')},${SPACE}` : ''}
+                  ${state ? `${state.get('name')},${SPACE}` : ''}
                   ${country.get('name')}`
   }
 
   // name-filter
   const name = `${filter.contactNameOrEmail || ''}${filter.deviceName || ''}${filter.siteName || ''}`
-  const nameString = name ? ` ${formatMessage(messages.whoseNameIncludes)} "${name}"` : ''
+  const nameString = name ? `${SPACE}${formatMessage(messages.whoseNameIncludes)}${SPACE}"${name}"` : ''
 
   // assay/result
   const assay = filter.assayId ? assays.get('items').find(a => a.get('id') === filter.assayId) : null
   const result = assay && filter.resultCategoryId ?
     assay.get('resultCategories').find(r => r.get('id') === String(filter.resultCategoryId)) : null
   const assayString = assay ? assay.get('name') : ''
-  const resultString = result ? ` ${formatMessage(messages.withResult)} "${result.get('name')}"` : ''
+  const resultString = result ? `${SPACE}${formatMessage(messages.withResult)}${SPACE}"${result.get('name')}"` : ''
 
   // date
-  const dateFrom = filter.minDate ? `${formatMessage(messages.dateFrom)} ${formatDate(filter.minDate)}` : ''
-  const dateTo = filter.maxDate ? `${formatMessage(messages.dateTo)} ${formatDate(filter.maxDate)}` : ''
+  const dateFrom = filter.minDate ? `${formatMessage(messages.dateFrom)}${SPACE}${formatDate(filter.minDate)}` : ''
+  const dateTo = filter.maxDate ? `${formatMessage(messages.dateTo)}${SPACE}${formatDate(filter.maxDate)}` : ''
 
   // TODO: This could be a little nicer and use the date type from the filter.
   // Could say "the year 2015" or "the month of August"
-  const dateString = `${dateFrom ? ` ${dateFrom}` : ''}${dateTo && dateFrom ? ` ${dateTo}` : dateTo}`
+  const dateString = `${dateFrom ? `${SPACE}${dateFrom}` : ''}${dateTo && dateFrom ? `${SPACE}${dateTo}` : dateTo}`
 
   // The optional template lets us specify a message that only shows up if
   // assay, result, or date is set. For example, if we want to show a message that explains
