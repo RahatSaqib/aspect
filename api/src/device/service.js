@@ -1,9 +1,7 @@
 const Promise = require('bluebird')
 const _ = require('lodash')
 const Boom = require('boom')
-const jwt = require('jsonwebtoken')
 const { knex, filterParams, filterDateRangeParams, sortPageParams } = require('../db')
-const config = require('../config')
 const { getConstraints, addConstraints } = require('../auth/constraints')
 
 
@@ -143,93 +141,8 @@ function* updateDevice(request) {
   return yield* showDevice(request)
 }
 
-function* getDeviceApiKey(request) {
-  const { auth, params } = request
-  const dataConstraints = yield getConstraints(auth.credentials)
-
-  const devices = yield knex('DeviceApiKey as dak')
-    .innerJoin('Device as d', 'dak.deviceId', 'd.id')
-    .where({ 'd.id': +params.deviceId, 'dak.revoked': 0 })
-    .modify(addConstraints, dataConstraints, { device: 'd' })
-    .select('dak.id as id')
-
-  if (devices.length !== 1) {
-    return Boom.notFound()
-  }
-
-  const { id: dak } = devices[0]
-
-  // create a new token
-  const token = jwt.sign({ dak }, config.secret)
-
-  return { access: token }
-}
-
-
-function* listDeviceConfiguration(request) {
-  const { query, auth } = request
-
-  // get data constraints
-  const dataConstraints = yield getConstraints(auth.credentials)
-
-  const configQuery = knex('DeviceConfiguration as dc')
-    .leftJoin('Device as d', 'dc.deviceId', 'd.id')
-    .modify(filterParams, query, { deviceId: 'd.id', deviceName: 'd.name' })
-    .modify(addConstraints, dataConstraints, { device: 'd' })
-
-  // get total count for paging
-  const getCount = configQuery.clone()
-    .count('dc.id as count').first()
-
-  // get rows
-  const getItems = configQuery.clone()
-    .modify(sortPageParams, query, 'deviceName')
-    .select('dc.id', 'dc.externalId', 'dc.createdOn', 'dc.data', 'dc.deviceId', 'd.name as deviceName')
-    .map(item => Object.assign({}, item, { data: JSON.parse(item.data) }))
-
-  // return result when both queries are finished
-  const [{ count: total }, data] = yield Promise.all([getCount, getItems])
-
-  const result = { ok: true, total, length: data.length, data }
-
-  return result
-}
-
-
-function* listDeviceOperation(request) {
-  const { query, auth } = request
-
-  // get data constraints
-  const dataConstraints = yield getConstraints(auth.credentials)
-
-  const opQuery = knex('DeviceOperation as do')
-    .leftJoin('Device as d', 'do.deviceId', 'd.id')
-    .modify(filterParams, query, { deviceId: 'd.id', deviceName: 'd.name' })
-    .modify(addConstraints, dataConstraints, { device: 'd' })
-
-  // get total count for paging
-  const getCount = opQuery.clone()
-    .count('do.id as count').first()
-
-  // get rows
-  const getItems = opQuery.clone()
-    .modify(sortPageParams, query, 'deviceName')
-    .select('do.id', 'do.externalId', 'do.createdOn', 'do.data', 'do.deviceId', 'd.name as deviceName')
-    .map(item => Object.assign({}, item, { data: JSON.parse(item.data) }))
-
-  // return result when both queries are finished
-  const [{ count: total }, data] = yield Promise.all([getCount, getItems])
-
-  const result = { ok: true, total, length: data.length, data }
-
-  return result
-}
-
 module.exports = {
   listDevices,
   showDevice,
   updateDevice,
-  getDeviceApiKey,
-  listDeviceConfiguration,
-  listDeviceOperation
 }

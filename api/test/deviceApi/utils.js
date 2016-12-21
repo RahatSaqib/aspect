@@ -1,4 +1,20 @@
 const _ = require('lodash')
+const chai = require('chai')
+const jwt = require('jsonwebtoken')
+const config = require('../../src/config')
+const { run } = require('../../src/db')
+
+const assert = chai.assert
+
+const devicePath = '/device'
+
+function* getApiKey(knex, deviceId) {
+  const apiKey = yield knex('DeviceApiKey as dak')
+    .innerJoin('Device as d', 'dak.deviceId', 'd.id')
+    .where({ 'd.id': +deviceId, 'dak.revoked': 0 })
+    .first('dak.id as dak')
+  return apiKey && jwt.sign(apiKey, config.secret)
+}
 
 function* deleteTestDataFromCheckpoint(knex, checkpoint, deviceIds) {
   const { id: minDeviceLogUpdateId } = yield knex('DeviceLogUpdate as dlu')
@@ -67,7 +83,100 @@ function* getLastResultId(knex, deviceId) {
   return result && result.resultId
 }
 
+function createTestContext(server, auth) {
+  return new DeviceApiTestContext(server, auth)
+}
+
+class DeviceApiTestContext {
+  constructor(server, auth) {
+    this.auth = auth
+
+    this.server = server
+    this.checkpoint = null
+    this.deviceIds = []
+
+    _.bindAll(this, ['beforeEach', 'afterEach', 'runTest'])
+  }
+
+  beforeEach() {
+    const self = this
+    return run(function* () {
+      self.checkpoint = null
+      self.deviceIds.splice(0)
+    })
+  }
+
+  // Does not currently work to create initial checkpoint in beforeEach
+  // because of how Device Token is setup, so runTest creates an initial
+  // checkpoint and then runs test using db.run
+  // Also allows device authentication in setup of test without relying
+  // on run order of tests
+  runTest(test) {
+    const self = this
+    return run(function* (knex) {
+      // Authenticates device and user from auth setup
+      const { server, auth } = self
+      const { user, type } = auth
+
+      const clientToken = yield server.post('/api/auth')
+        .send({ name: user, password: 'test07', clientName: 'Mocha/Chai' })
+        .then((res) => {
+          assert.equal(res.status, 200)
+          assert.isAbove(res.body.access.length, 100)
+          assert.isAbove(res.body.refresh.length, 50)
+          assert.isAbove(res.body.clientId.length, 32)
+          return res.body.access
+        })
+
+      const deviceId = yield server
+        .get(`/api/device?size=1${type ? `&type=${type}` : ''}`)
+        .set('Authorization', `Bearer ${clientToken}`)
+        .then((res) => {
+          assert.equal(res.status, 200)
+
+          assert.property(res.body, 'data')
+          assert.typeOf(res.body.data, 'array')
+          assert.equal(res.body.data.length, 1)
+          assert.property(res.body.data[0], 'id')
+          return res.body.data[0].id
+        })
+
+      // save device id for the following tests
+      self.deviceId = deviceId
+
+      const deviceToken = yield* getApiKey(knex, deviceId)
+      self.clientAuth = `Bearer ${clientToken}`
+      self.deviceAuth = `Bearer ${deviceToken}`
+
+      self.deviceIds.splice(0)
+      self.deviceIds.push(deviceId)
+
+      self.checkpoint = `Device API Device Tests ${new Date()}`
+      yield self.server.post(devicePath)
+        .set('Authorization', self.deviceAuth)
+        .send({ checkpoint: self.checkpoint })
+        .then((res) => {
+          assert.equal(res.status, 200)
+          assert.typeOf(res.body, 'Object')
+        })
+
+      return yield* test(knex)
+    })
+  }
+
+  afterEach() {
+    const self = this
+    return run(function* (knex) {
+      if (self.checkpoint) {
+        yield* deleteTestDataFromCheckpoint(knex, self.checkpoint, self.deviceIds)
+      }
+    })
+  }
+}
+
 module.exports = {
+  getApiKey,
+  createTestContext,
   deleteTestDataFromCheckpoint,
   getLastDeviceConfigurationId,
   getLastDeviceOperationId,
