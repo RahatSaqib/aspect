@@ -41,6 +41,11 @@ import getFilterMessage from '../formatting'
 
 import styles from './ListFilter.css'
 
+export const formatTypes = {
+  EXCEL: 'excel',
+  CSV: 'csv'
+}
+
 const messages = defineMessages({
   save: {
     id: 'shared.ListFilter.save',
@@ -276,10 +281,10 @@ export class ListFilter extends PureComponent {
     this.props.askExportConfirmation(newCommand)
   }
   clickExportExcel = (event) => {
-    this.askExportConfirmation(filterActionTypes.EXPORT_EXCEL)
+    this.askExportConfirmation(formatTypes.EXCEL)
   }
   clickExportCsv = (event) => {
-    this.askExportConfirmation(filterActionTypes.EXPORT_CSV)
+    this.askExportConfirmation(formatTypes.CSV)
   }
 
   exportConfirmationAgreed = () => {
@@ -289,7 +294,7 @@ export class ListFilter extends PureComponent {
     }
 
     if (this.props.onClickExport){
-      if (this.props.command.currentCommand === filterActionTypes.EXPORT_EXCEL)
+      if (this.props.command.currentCommand === formatTypes.EXCEL)
         prop.processingExportExcel = true
       else
         prop.processingExportCsv = true
@@ -306,8 +311,8 @@ export class ListFilter extends PureComponent {
   exportFileIsReady = (format, serverResponse) => {
     const { command, receivedExportResponse } = this.props
     const prop = {}
-    if (format === 'excel'){ prop.processingExportExcel = false }
-    else if (format === 'csv'){ prop.processingExportCsv = false }
+    if (format === formatTypes.EXCEL){ prop.processingExportExcel = false }
+    else if (format === formatTypes.CSV){ prop.processingExportCsv = false }
     const nextCommand = {...command, ...prop}
 
     receivedExportResponse(nextCommand)
@@ -339,7 +344,7 @@ export class ListFilter extends PureComponent {
           intl: { formatMessage, formatDate },
           command,
           onClickExport} = this.props
-            
+
     const { expanded, showExportExcel, showExportCsv } = this.state
 
     const hasDataSection = (
@@ -527,7 +532,7 @@ export class ListFilter extends PureComponent {
           modal={true}
           open={command.askingConfirmation}
         >
-          Do you want to export whole list to {command.currentCommand === filterActionTypes.EXPORT_EXCEL ? 'Excel' : 'CSV'}  file?
+          Do you want to export whole list to {command.currentCommand === formatTypes.EXCEL ? 'Excel' : 'CSV'}  file?
         </Dialog>
       </div>
     )
