@@ -61,7 +61,6 @@
     "html-webpack-plugin": "^2.24.0",
     "html-webpack-plugin-remove": "0.0.2",
     "identity-obj-proxy": "^3.0.0",
-    "istanbul": "^1.0.0-alpha.2",
     "jest": "^17.0.3",
     "jest-bamboo-formatter": "^0.0.3",
     "json-loader": "^0.5.4",
