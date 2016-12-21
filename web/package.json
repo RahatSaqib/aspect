@@ -65,7 +65,6 @@
     "istanbul": "^1.0.0-alpha.2",
     "jest": "^17.0.3",
     "jest-bamboo-formatter": "^0.0.3",
-    "jsdom": "^9.9.1",
     "json-loader": "^0.5.4",
     "node-sass": "^4.1.0",
     "npm-run-all": "^3.1.2",
