@@ -179,15 +179,14 @@ export class ListFilter extends PureComponent {
     subject: PropTypes.string,
     dateFilterLabel: PropTypes.string,
 
-    // below props are passing by parent component which uses ListFilter
+    //  props from parent component
     onClickExport: PropTypes.func,
-    owner: PropTypes.object
   }
 
   state = {
     expanded: !!this.props.defaultExpanded,
-    showExportExcel: !!this.props.onClickExport && !!this.props.owner,
-    showExportCsv: !!this.props.onClickExport && !!this.props.owner,
+    showExportExcel: !!this.props.onClickExport,
+    showExportCsv: !!this.props.onClickExport
   }
 
   handleExpandChange = (expanded) => {
@@ -293,8 +292,8 @@ export class ListFilter extends PureComponent {
       else
         prop.processingExportCsv = true
 
-      // process exporting data by owner component
-      this.props.onClickExport.bind(this.props.owner)(this.props.command.currentCommand, this.exportFileIsReady.bind(this))
+      // process exporting data by caller component
+      this.props.onClickExport(this.props.command.currentCommand, this.exportFileIsReady)
     }
 
     this.props.closeExportConfirmation({

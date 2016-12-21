@@ -166,7 +166,7 @@ export class DeviceList extends PureComponent {
     )
   }
 
-  clickDeviceListExport(exportCommand, receivedExportResponse){
+  clickDeviceListExport = (exportCommand, receivedExportResponse) => {
     this.props.exportDevices(
       this.getDeviceConfigRoute().deviceConfig.filterParams,
       exportCommand === filterActionType.EXPORT_EXCEL ? 'excel' : 'csv',
@@ -206,7 +206,7 @@ export class DeviceList extends PureComponent {
       <div className={styles.Content}>
         <Helmet title={this.getFormattedTitle()} titleTemplate="%s - Aspect" defaultTitle="Aspect" />
 
-        <ListFilterContainer subject={this.getFormattedTitle()} defaultExpanded={true} onClickExport={this.clickDeviceListExport} owner={this} />
+        <ListFilterContainer subject={this.getFormattedTitle()} defaultExpanded={true} onClickExport={this.clickDeviceListExport} />
         <DataTableWithEmptyList
           selectable
           handleItemIdSelection={this.handleItemIdSelection}
