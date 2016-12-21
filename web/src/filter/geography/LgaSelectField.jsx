@@ -20,10 +20,13 @@ export function getSelectedState(props) {
 
 export function getSelectedStateLgas(props) {
   const selectedState = getSelectedState(props)
-  if (selectedState && selectedState.children.items) {
-    return selectedState.children.items
+  if (selectedState && selectedState.children) {
+    return selectedState.children
   }
-  return Immutable.List()
+  return {
+    loading: false,
+    items: Immutable.List(),
+  }
 }
 
 export class LgaSelectField extends PureComponent {
@@ -62,14 +65,16 @@ export class LgaSelectField extends PureComponent {
     const restProps = _.omit(this.props, [
       'countries', 'onChangeLga', 'countryId', 'stateId', 'lgaId', 'fetchLgasForLocationSelector'
     ])
+    const lgas = getSelectedStateLgas(this.props)
 
     return (
       <ForkedSelectField
         {...restProps}
+        disabled={lgas.loading || lgas.items.isEmpty()}
         value={lgaId}
         onChange={this.handleSelectFieldChange}
       >
-        {getSelectedStateLgas(this.props).map(l => (
+        {lgas.items.map(l => (
           <MenuItem
             key={l.id}
             value={l.id}
