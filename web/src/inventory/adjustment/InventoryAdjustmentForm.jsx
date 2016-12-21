@@ -16,7 +16,7 @@ import DateInput from '../../components/shared/DateInput'
 import SelectInput from '../../components/shared/SelectInput'
 import { fetchSitesForSelectList } from '../../site/SiteRedux'
 import { fetchConsumableReasons } from '../../consumable/ConsumableRedux'
-import { addOperation, removeOperation, transferOperation } from '../InventoryRedux'
+import { addOperation, removeOperation, transferOperation, receiveOperation } from '../InventoryRedux'
 
 const messages = defineMessages({
   lotNumber: {
@@ -39,6 +39,10 @@ const messages = defineMessages({
     id: 'pages.InventoryAdjustmentForm.currentQuantityOnHand',
     defaultMessage: '(Current Quantity on Hand: {quantityOnHand} {unitShortName})'
   },
+  quantityTransferred: {
+    id: 'pages.InventoryAdjustmentForm.quantityTransferred',
+    defaultMessage: '(Quantity Transferred: {quantityOnHand} {unitShortName})'
+  },
   addQuantity: {
     id: 'pages.InventoryAdjustmentForm.addQuantity',
     defaultMessage: 'Quantity to Add'
@@ -50,6 +54,10 @@ const messages = defineMessages({
   transferQuantity: {
     id: 'pages.InventoryAdjustmentForm.transferQuantity',
     defaultMessage: 'Quantity to Transfer'
+  },
+  receiveQuantity: {
+    id: 'pages.InventoryAdjustmentForm.receiveQuantity',
+    defaultMessage: 'Quantity Received'
   },
   reason: {
     id: 'pages.InventoryAdjustmentForm.reason',
@@ -75,6 +83,10 @@ const messages = defineMessages({
     id: 'pages.InventoryAdjustmentForm.transferDateLabel',
     defaultMessage: 'Date Transferred'
   },
+  receivedDateLabel: {
+    id: 'pages.InventoryAdjustmentForm.receivedDateLabel',
+    defaultMessage: 'Date Received'
+  },
   notes: {
     id: 'pages.InventoryAdjustmentForm.notes',
     defaultMessage: 'Notes'
@@ -93,7 +105,7 @@ const messages = defineMessages({
   },
   quantityRequired: {
     id: 'pages.InventoryAdjustmentForm.quantityRequired',
-    defaultMessage: 'Please specify the quantity that you wish to {operation}'
+    defaultMessage: 'Please specify the quantity to {operation}'
   },
   reasonRequired: {
     id: 'pages.InventoryAdjustmentForm.reasonRequired',
@@ -130,7 +142,8 @@ export const testConductedReasonI18nKey = 'ConsumableReason_TestConducted'
 class InventoryAdjustmentForm extends PureComponent {
   static propTypes = {
     intl: PropTypes.object.isRequired,
-    operation: PropTypes.oneOf([addOperation, removeOperation, transferOperation]),
+    operation: PropTypes.oneOf(
+      [addOperation, removeOperation, transferOperation, receiveOperation]),
     updating: PropTypes.bool.isRequired,
     handleSubmit: PropTypes.func.isRequired,
     changeFieldValue: PropTypes.func.isRequired,
@@ -184,10 +197,12 @@ class InventoryAdjustmentForm extends PureComponent {
     const sites = sitesSelectList.items.toJS()
     const quantityLabel = operation === addOperation ? formatMessage(messages.addQuantity) :
       (operation === removeOperation ? formatMessage(messages.removeQuantity) :
-      formatMessage(messages.transferQuantity))
+        (operation === transferOperation ? formatMessage(messages.transferQuantity) :
+          formatMessage(messages.receiveQuantity)))
     const dateAdjustedLabel = operation === addOperation ? formatMessage(messages.addDateLabel) :
       (operation === removeOperation ? formatMessage(messages.removeDateLabel) :
-      formatMessage(messages.transferDateLabel))
+        (operation === transferOperation ? formatMessage(messages.transferDateLabel) :
+          formatMessage(messages.receivedDateLabel)))
     const consumableReasonsLoading = consumableReasons.loading
     const consumableReasonsForDropDownList =
       _.map(consumableReasons.items.toJS(), consumableReason => ({
@@ -221,7 +236,7 @@ class InventoryAdjustmentForm extends PureComponent {
         </section>
         <section>
           {
-            [removeOperation, transferOperation].includes(operation) &&
+            [removeOperation, transferOperation, receiveOperation].includes(operation) &&
             <SelectInput
               name="fromSiteId" label={formatMessage(messages.fromSiteName)}
               disabled={updating || sitesLoading || _.isEmpty(sites)} autoWidth
@@ -230,7 +245,7 @@ class InventoryAdjustmentForm extends PureComponent {
             />
           }
           {
-            [addOperation, transferOperation].includes(operation) &&
+            [addOperation, transferOperation, receiveOperation].includes(operation) &&
             <SelectInput
               name="toSiteId" label={formatMessage(messages.toSiteName)}
               disabled={updating || sitesLoading || _.isEmpty(sites)} autoWidth
@@ -248,7 +263,9 @@ class InventoryAdjustmentForm extends PureComponent {
           { initialValues.get('unitShortName') }
           &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
           <FormattedMessage
-            {...messages.currentQuantityOnHand}
+            {...(operation === receiveOperation ?
+              messages.quantityTransferred :
+              messages.currentQuantityOnHand)}
             values={{
               quantityOnHand: initialValues.get('quantityOnHand'),
               unitShortName: initialValues.get('unitShortName')
@@ -330,17 +347,17 @@ const validate = (inventoryAdjustmentDetails, props) => {
       !inventoryAdjustmentDetails.get('expiresOn')) {
       errors.expiresOn = formatMessage(messages.expiryDateRequired)
     }
-    if ([removeOperation, transferOperation].includes(operation) &&
+    if ([removeOperation, transferOperation, receiveOperation].includes(operation) &&
       (!inventoryAdjustmentDetails.get('fromSiteId') ||
        inventoryAdjustmentDetails.get('fromSiteId') <= 0)) {
       errors.fromSiteId = formatMessage(messages.siteRequired)
     }
-    if ([addOperation, transferOperation].includes(operation) &&
+    if ([addOperation, transferOperation, receiveOperation].includes(operation) &&
       (!inventoryAdjustmentDetails.get('toSiteId') ||
        inventoryAdjustmentDetails.get('toSiteId') <= 0)) {
       errors.toSiteId = formatMessage(messages.siteRequired)
     }
-    if (operation === transferOperation && !errors.toSiteId &&
+    if ([transferOperation, receiveOperation].includes(operation) && !errors.toSiteId &&
       inventoryAdjustmentDetails.get('fromSiteId') === inventoryAdjustmentDetails.get('toSiteId')) {
       errors.toSiteId = formatMessage(messages.siteShouldBeDifferent)
     }

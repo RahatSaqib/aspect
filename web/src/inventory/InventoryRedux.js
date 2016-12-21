@@ -27,7 +27,8 @@ export const types = {
   FINISH_ADJUSTING_INVENTORY_LEVELS: 'FINISH_ADJUSTING_INVENTORY_LEVELS',
   ADD_INVENTORY: 'ADD_INVENTORY',
   REMOVE_INVENTORY: 'REMOVE_INVENTORY',
-  TRANSFER_INVENTORY: 'TRANSFER_INVENTORY'
+  TRANSFER_INVENTORY: 'TRANSFER_INVENTORY',
+  RECEIVE_INVENTORY: 'RECEIVE_INVENTORY'
 }
 
 export const addOperation = 'add'
@@ -135,6 +136,13 @@ function startTransferringInventory(details) {
   }
 }
 
+function startReceivingInventory(details) {
+  return {
+    type: types.RECEIVE_INVENTORY,
+    details
+  }
+}
+
 export function adjustInventoryLevels(inventoryItem, operation) {
   const expiresOn = inventoryItem.get('expiresOn')
   const adjustmentDetails = {
@@ -168,6 +176,13 @@ export function adjustInventoryLevels(inventoryItem, operation) {
   if (operation === transferOperation) {
     operationAdjustmentDetails = {
       fromSiteId: inventoryItem.get('siteId')
+    }
+  }
+  if (operation === receiveOperation) {
+    operationAdjustmentDetails = {
+      fromSiteId: inventoryItem.get('inTransitFromSiteId'),
+      toSiteId: inventoryItem.get('siteId'),
+      quantity: inventoryItem.get('quantityOnHand')
     }
   }
   return dispatch => dispatch({
@@ -261,6 +276,31 @@ export function transferInventory(inventoryItemId, data) {
   }
 }
 
+export function receiveInventory(inventoryItemId, data) {
+  return (dispatch, getState) => {
+    const { inventory } = getState()
+    const inventoryItem = inventory.getIn(['items', 'byId', inventoryItemId])
+    dispatch(startReceivingInventory(data))
+    return aspectFetch(`/inventory/receive/${inventoryItemId}`, {
+      method: 'PUT',
+      body: JSON.stringify(data),
+      errorNotifications: {
+        default: errorPleaseTryAgainInAFewMinutes(defineMessages({
+          title: {
+            id: 'errorResponseMessages.receiveInventory.PUT.default.title',
+            defaultMessage: 'Receiving Inventory Failed'
+          },
+          onClose: () => dispatch(adjustInventoryLevels(inventoryItem, receiveOperation))
+        }))
+      }
+    }).then(() => dispatch(finishAdjustingInventoryLevels()))
+      .catch((err) => {
+        dispatch(finishAdjustingInventoryLevels())
+        throw err
+      })
+  }
+}
+
 /*
  * ---------------- Reducers -----------------
  */
@@ -329,6 +369,7 @@ export default function inventoryItemsReducer(state = initialState, action) {
     case types.ADD_INVENTORY:
     case types.REMOVE_INVENTORY:
     case types.TRANSFER_INVENTORY:
+    case types.RECEIVE_INVENTORY:
       return state.setIn(['inventoryAdjustment', 'updating'], true)
     default:
       return state

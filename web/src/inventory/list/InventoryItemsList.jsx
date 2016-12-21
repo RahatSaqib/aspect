@@ -38,7 +38,8 @@ import {
   finishAdjustingInventoryLevels,
   addInventory,
   removeInventory,
-  transferInventory
+  transferInventory,
+  receiveInventory
 } from '../InventoryRedux'
 import InventoryAdjustmentForm, {
   testConductedReasonI18nKey
@@ -110,6 +111,10 @@ const messages = defineMessages({
   transferTitle: {
     id: 'pages.InventoryItemsList.transferTitle',
     defaultMessage: 'Transfer {consumableName}'
+  },
+  receiveTitle: {
+    id: 'pages.InventoryItemsList.receiveTitle',
+    defaultMessage: 'Receive {consumableName}'
   },
   submit: {
     id: 'pages.InventoryItemsList.submit',
@@ -195,7 +200,7 @@ export class InventoryItemsList extends PureComponent {
     if (item.get('inTransitFromSiteId')) {
       return (<div>
         <FloatingActionButton
-          mini primary style={buttonStyle}
+          mini style={buttonStyle}
           title={formatMessage(messages.receiveInventory)}
           onTouchTap={() => this.adjustInventoryLevels(itemId, receiveOperation)}
         >
@@ -234,6 +239,7 @@ export class InventoryItemsList extends PureComponent {
       addInventory,
       removeInventory,
       transferInventory,
+      receiveInventory,
       consumableReasons
     } = this.props
     switch (inventoryAdjustment.get('operation')) {
@@ -266,6 +272,16 @@ export class InventoryItemsList extends PureComponent {
       }
       case transferOperation:
         return transferInventory(inventoryAdjustment.getIn(['adjustmentDetails', 'inventoryItemId']), {
+          lotNumber: formValues.get('lotNumber'),
+          expiresOn: formValues.get('expiresOn'),
+          quantity: formValues.get('quantity'),
+          notes: formValues.get('notes'),
+          fromSiteId: formValues.get('fromSiteId'),
+          toSiteId: formValues.get('toSiteId'),
+          dateAdjusted: formValues.get('dateAdjusted')
+        })
+      case receiveOperation:
+        return receiveInventory(inventoryAdjustment.getIn(['adjustmentDetails', 'inventoryItemId']), {
           lotNumber: formValues.get('lotNumber'),
           expiresOn: formValues.get('expiresOn'),
           quantity: formValues.get('quantity'),
@@ -346,7 +362,9 @@ export class InventoryItemsList extends PureComponent {
       (inventoryAdjustment.get('operation') === removeOperation ?
         formatMessage(messages.removeTitle, formHeaderValues) :
         (inventoryAdjustment.get('operation') === transferOperation ?
-          formatMessage(messages.transferTitle, formHeaderValues) : null))
+          formatMessage(messages.transferTitle, formHeaderValues) :
+          (inventoryAdjustment.get('operation') === receiveOperation ?
+            formatMessage(messages.receiveTitle, formHeaderValues) : null)))
 
     const inventoryAdjustmentActions = [
       <RaisedButton
@@ -426,6 +444,7 @@ function mapDispatchToProps(dispatch) {
     addInventory,
     removeInventory,
     transferInventory,
+    receiveInventory,
     submit,
     showAcknowledgement
   }, dispatch)
