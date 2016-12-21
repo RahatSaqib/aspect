@@ -6,31 +6,35 @@ import {
 
 const messages = defineMessages({
   noFilters: {
-    id: 'shared.ListFilter.noFilters',
+    id: 'shared.FormatFilters.noFilters',
     defaultMessage: 'No filters set - showing all'
   },
   geographyIn: {
-    id: 'shared.ListFilter.geographyIn',
+    id: 'shared.FormatFilters.geographyIn',
     defaultMessage: 'in'
   },
   whoseNameIncludes: {
-    id: 'shared.ListFilter.whoseNameIncludes',
+    id: 'shared.FormatFilters.whoseNameIncludes',
     defaultMessage: 'whose name includes'
   },
   assays: {
-    id: 'shared.ListFilter.assays',
+    id: 'shared.FormatFilters.assays',
     defaultMessage: 'assays'
   },
+  consumables: {
+    id: 'shared.FormatFilters.consumables',
+    defaultMessage: 'consumables'
+  },
   withResult: {
-    id: 'shared.ListFilter.withResult',
+    id: 'shared.FormatFilters.withResult',
     defaultMessage: 'with result'
   },
   dateFrom: {
-    id: 'shared.ListFilter.dateFrom',
+    id: 'shared.FormatFilters.dateFrom',
     defaultMessage: 'from'
   },
   dateTo: {
-    id: 'shared.ListFilter.dateTo',
+    id: 'shared.FormatFilters.dateTo',
     defaultMessage: 'to'
   }
 })
@@ -41,8 +45,9 @@ export default function getFilterMessage(
   filter,
   countries,
   assays,
+  consumables,
   subject,
-  template,
+  template = 'Viewing items<GEOGRAPHY><NAME>',
   optionalTemplate,
   formatMessage,
   formatDate) {
@@ -86,6 +91,10 @@ export default function getFilterMessage(
   // Could say "the year 2015" or "the month of August"
   const dateString = `${dateFrom ? `${SPACE}${dateFrom}` : ''}${dateTo && dateFrom ? `${SPACE}${dateTo}` : dateTo}`
 
+  // inventory item
+  const consumable = filter.consumableId ? consumables.find(a => a.get('id') === filter.consumableId) : null
+  const consumableString = consumable ? consumable.get('name') : formatMessage(messages.consumables)
+
   // The optional template lets us specify a message that only shows up if
   // assay, result, or date is set. For example, if we want to show a message that explains
   // the number of results on a device
@@ -95,6 +104,7 @@ export default function getFilterMessage(
                         .replace('<ASSAY>', assayString)
                         .replace('<RESULT>', resultString)
                         .replace('<DATE>', dateString)
+                        .replace('<CONSUMABLE>', consumableString)
   }
 
   const message = `${template
@@ -103,6 +113,7 @@ export default function getFilterMessage(
                         .replace('<ASSAY>', assayString)
                         .replace('<RESULT>', resultString)
                         .replace('<DATE>', dateString)} ${optionalMessage}`
+                        .replace('<CONSUMABLE>', consumableString)
 
   return message
 }

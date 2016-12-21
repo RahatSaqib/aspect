@@ -160,6 +160,7 @@ export class ListFilter extends PureComponent {
     dateFilterLabel: PropTypes.string,
     countries: PropTypes.object.isRequired,
     assay: PropTypes.object.isRequired,
+    consumableItems: PropTypes.object.isRequired,
     filterTemplate: PropTypes.string.isRequired,
     filterTemplateOptional: PropTypes.string
   }
@@ -247,6 +248,7 @@ export class ListFilter extends PureComponent {
     const { filter,
             countries,
             assay,
+            consumableItems,
             config,
             subject,
             filterTemplate,
@@ -263,6 +265,7 @@ export class ListFilter extends PureComponent {
     const filterMessage = getFilterMessage(filter,
       countries,
       assay,
+      consumableItems,
       subject,
       filterTemplate,
       filterTemplateOptional,
@@ -432,7 +435,8 @@ function mapStateToProps(state) {
     config: state.filter.listConfig,
     filter: state.filter.listFilter.toJS(),
     countries: state.geography.countriesForLocationSelector,
-    assay: state.assay
+    assay: state.assay,
+    consumableItems: state.consumable.items
   }
 }
 
