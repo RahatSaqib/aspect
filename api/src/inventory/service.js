@@ -255,9 +255,10 @@ function getInventoryItemQuery(inventoryItemId, includeTransitItems) {
     .innerJoin('Consumable as c', 'ii.consumableId', 'c.id')
     .innerJoin('Unit as u', 'c.unit', 'u.id')
     .innerJoin('Site as s', 'ii.siteId', 's.id')
-    .leftJoin('Country as co', 's.countryId', 'co.id')
-    .leftJoin('State as st', 's.stateId', 'st.id')
-    .leftJoin('Lga as l', 's.lgaId', 'l.id')
+    .leftJoin('Geography as g', 's.geographyId', 'g.id')
+    .leftJoin('Country as co', 'g.countryId', 'co.id')
+    .leftJoin('State as st', 'g.stateId', 'st.id')
+    .leftJoin('Lga as l', 'g.lgaId', 'l.id')
     .leftJoin('Site as itfs', 'ii.inTransitFromSiteId', 'itfs.id')
   if (includeTransitItems) {
     if (inventoryItemId && inventoryItemId > 0) {
