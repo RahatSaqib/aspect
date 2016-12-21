@@ -14,17 +14,13 @@ import NotificationsIcon from 'material-ui/svg-icons/social/notifications'
 // Our own imports
 import styles from './Nav.css'
 
-class Nav extends PureComponent {
+export class Nav extends PureComponent {
 
   static propTypes = {
     pageTitle: PropTypes.string,
     pagePath: PropTypes.string,
     handleHamburger: PropTypes.func.isRequired,
     handleSignOut: PropTypes.func.isRequired
-  }
-
-  static contextTypes = {
-    router: PropTypes.object.isRequired
   }
 
   renderPageFragment() {

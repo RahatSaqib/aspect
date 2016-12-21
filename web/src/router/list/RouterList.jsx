@@ -37,6 +37,10 @@ const messages = defineMessages({
   lastSeen: {
     id: 'pages.RouterList.lastSeen',
     defaultMessage: 'Last Seen'
+  },
+  filterTemplate: {
+    id: 'pages.RouterList.filterTemplate',
+    defaultMessage: 'Viewing all routers<GEOGRAPHY><NAME>.'
   }
 })
 
@@ -86,9 +90,9 @@ export class RouterList extends PureComponent {
   }
 
   componentWillMount() {
-    const { setPageTitle, configureListFilter } = this.props
-    setPageTitle(this.getFormattedTitle())
-    configureListFilter(this.getRouterConfigRoute().routerConfig.filterConfig)
+    const { setPageTitle, configureListFilter, intl: { formatMessage } } = this.props
+    setPageTitle(formatMessage(messages.routersTitle))
+    configureListFilter({ geography: true, deviceName: true })
   }
 
   componentDidMount() {
@@ -101,23 +105,13 @@ export class RouterList extends PureComponent {
     }
   }
 
-  getRouterConfigRoute({ routes } = this.props) {
-    return _.find(routes, r => r.routerConfig)
-  }
-
-  getFormattedTitle() {
-    const { intl } = this.props
-    const { formatMessage } = intl
-    return formatMessage(messages.routersTitle)
-  }
-
   handleItemIdSelection = (routerId) => {
     this.props.router.push(`/router/${routerId}`)
   }
 
   handleFetch = (...args) => {
     this.props.fetchListFilteredRouters(
-      this.getRouterConfigRoute().routerConfig.filterParams,
+      { hasResults: 0, hasConnectivity: 1 },
       ...args
     )
   }
@@ -145,8 +139,11 @@ export class RouterList extends PureComponent {
 
     return (
       <div className={styles.Content}>
-        <Helmet title={this.getFormattedTitle()} titleTemplate="%s - Aspect" defaultTitle="Aspect" />
-        <ListFilterContainer />
+        <Helmet title={formatMessage(messages.routersTitle)} titleTemplate="%s - Aspect" defaultTitle="Aspect" />
+        <ListFilterContainer
+          subject={formatMessage(messages.routersTitle)}
+          filterTemplate={formatMessage(messages.filterTemplate)}
+        />
         <DataTableWithEmptyList
           selectable
           handleItemIdSelection={this.handleItemIdSelection}

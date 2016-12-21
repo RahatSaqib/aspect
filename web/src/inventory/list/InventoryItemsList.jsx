@@ -52,6 +52,14 @@ const messages = defineMessages({
   expiresIn: {
     id: 'pages.InventoryItemsList.expiresIn',
     defaultMessage: 'Expires'
+  },
+  filterTemplate: {
+    id: 'pages.InventoryItemsList.filterTemplate',
+    defaultMessage: 'Viewing <CONSUMABLE> <GEOGRAPHY> at all sites<NAME>.'
+  },
+  filterTemplateOptional: {
+    id: 'pages.InventoryItemsList.filterTemplateOptional',
+    defaultMessage: 'Expiring<DATE>.'
   }
 })
 
@@ -125,6 +133,8 @@ export class InventoryItemsList extends PureComponent {
         <ListFilterContainer
           subject={formatMessage(messages.title)}
           dateFilterLabel={formatMessage(messages.expiresOn)}
+          filterTemplate={formatMessage(messages.filterTemplate)}
+          filterTemplateOptional={formatMessage(messages.filterTemplateOptional)}
         />
         <Card>
           <Checkbox

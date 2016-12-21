@@ -2,7 +2,6 @@
   composes: ContentDetails from '../../components/shared/Shared.css';
 }
 
-.ExpandButton {
-  float: right;
-  margin-right: -15px;
+.FieldsContainer {
+  padding: 0 0 50px 0;
 }

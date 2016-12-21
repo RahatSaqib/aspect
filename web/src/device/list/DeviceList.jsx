@@ -31,10 +31,6 @@ const messages = defineMessages({
     id: 'pages.DeviceList.devicesTitle',
     defaultMessage: 'Devices'
   },
-  routersTitle: {
-    id: 'pages.DeviceList.routersTitle',
-    defaultMessage: 'Routers'
-  },
   deviceName: {
     id: 'pages.DeviceList.deviceName',
     defaultMessage: 'Device Name'
@@ -66,6 +62,14 @@ const messages = defineMessages({
   exportCsv: {
     id: 'pages.DeviceList.exportCsv',
     defaultMessage: 'CSV'
+  },
+  filterTemplate: {
+    id: 'pages.DeviceList.filterTemplate',
+    defaultMessage: 'Viewing all devices<GEOGRAPHY><NAME>.'
+  },
+  filterTemplateOptional: {
+    id: 'pages.DeviceList.filterTemplateOptional',
+    defaultMessage: 'Counting only <ASSAY> assays<RESULT><DATE>.'
   }
 })
 
@@ -117,9 +121,14 @@ export class DeviceList extends PureComponent {
   }
 
   componentWillMount() {
-    const { setPageTitle, configureListFilter } = this.props
-    setPageTitle(this.getFormattedTitle())
-    configureListFilter(this.getDeviceConfigRoute().deviceConfig.filterConfig)
+    const { setPageTitle, configureListFilter, intl: { formatMessage } } = this.props
+    setPageTitle(formatMessage(messages.devicesTitle))
+    configureListFilter({
+      assayAndResultCategory: true,
+      geography: true,
+      date: true,
+      deviceName: true
+    })
   }
 
   componentDidMount() {
@@ -132,36 +141,13 @@ export class DeviceList extends PureComponent {
     }
   }
 
-  componentDidUpdate(prevProps) {
-    const prevDeviceConfigRoute = this.getDeviceConfigRoute(prevProps)
-    const deviceConfigRoute = this.getDeviceConfigRoute()
-    // When switching between routers/devices, re-fetch API
-    if (prevDeviceConfigRoute !== deviceConfigRoute) {
-      this.props.setPageTitle(this.getFormattedTitle())
-    }
-  }
-
-  getDeviceConfigRoute({ routes } = this.props) {
-    return _.find(routes, r => r.deviceConfig)
-  }
-
-  getFormattedTitle() {
-    const deviceConfigRoute = this.getDeviceConfigRoute()
-    const { intl } = this.props
-    const { formatMessage } = intl
-    if (deviceConfigRoute.path === 'device') {
-      return formatMessage(messages.devicesTitle)
-    }
-    return formatMessage(messages.routersTitle)
-  }
-
   handleItemIdSelection = (deviceId) => {
     this.props.router.push(`/device/${deviceId}`)
   }
 
   handleFetch = (...args) => {
     this.props.fetchListFilteredDevices(
-      this.getDeviceConfigRoute().deviceConfig.filterParams,
+      { hasResults: 1 },
       ...args
     )
   }
@@ -204,9 +190,16 @@ export class DeviceList extends PureComponent {
 
     return (
       <div className={styles.Content}>
-        <Helmet title={this.getFormattedTitle()} titleTemplate="%s - Aspect" defaultTitle="Aspect" />
 
-        <ListFilterContainer subject={this.getFormattedTitle()} defaultExpanded={true} onClickExport={this.clickDeviceListExport} />
+        <Helmet title={formatMessage(messages.devicesTitle)} titleTemplate="%s - Aspect" defaultTitle="Aspect" />
+        <ListFilterContainer
+          subject={formatMessage(messages.devicesTitle)}
+          filterTemplate={formatMessage(messages.filterTemplate)}
+          filterTemplateOptional={formatMessage(messages.filterTemplateOptional)}
+          defaultExpanded={true} 
+          onClickExport={this.clickDeviceListExport} 
+        />
+
         <DataTableWithEmptyList
           selectable
           handleItemIdSelection={this.handleItemIdSelection}

@@ -44,6 +44,10 @@ const messages = defineMessages({
   totalErrors: {
     id: 'pages.ReportList.totalErrors',
     defaultMessage: 'Total Errors'
+  },
+  filterTemplate: {
+    id: 'pages.ReportList.filterTemplate',
+    defaultMessage: 'Viewing all reports<NAME>.'
   }
 })
 
@@ -95,7 +99,10 @@ export class ReportList extends PureComponent {
     return (
       <div className={styles.Content}>
         <Helmet title={formatMessage(messages.title)} titleTemplate="%s - Aspect" defaultTitle="Aspect" />
-        <ListFilterContainer subject={formatMessage(messages.title)} />
+        <ListFilterContainer
+          subject={formatMessage(messages.title)}
+          filterTemplate={formatMessage(messages.filterTemplate)}
+        />
         <DataTableWithEmptyList
           handleFetch={this.handleFetch}
           items={this.props.items}

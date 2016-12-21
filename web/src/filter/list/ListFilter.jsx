@@ -37,14 +37,11 @@ import {
   askExportConfirmation,
   receivedExportResponse
 } from '../FilterRedux'
+import getFilterMessage from '../formatting'
 
 import styles from './ListFilter.css'
 
 const messages = defineMessages({
-  noFilters: {
-    id: 'shared.ListFilter.noFilters',
-    defaultMessage: 'No filters set - showing all'
-  },
   save: {
     id: 'shared.ListFilter.save',
     defaultMessage: 'Save'
@@ -179,8 +176,13 @@ export class ListFilter extends PureComponent {
     subject: PropTypes.string,
     dateFilterLabel: PropTypes.string,
 
-    //  props from parent component
     onClickExport: PropTypes.func,
+
+    countries: PropTypes.object.isRequired,
+    assay: PropTypes.object.isRequired,
+    consumableItems: PropTypes.object.isRequired,
+    filterTemplate: PropTypes.string.isRequired,
+    filterTemplateOptional: PropTypes.string
   }
 
   state = {
@@ -324,10 +326,22 @@ export class ListFilter extends PureComponent {
   }
 
   render() {
-    const { filter, config, subject, dateFilterLabel, intl: { formatMessage }, command, onClickExport } = this.props
+
+  const { filter,
+          countries,
+          assay,
+          consumableItems,
+          config,
+          subject,
+          filterTemplate,
+          filterTemplateOptional,
+          dateFilterLabel,
+          intl: { formatMessage, formatDate },
+          command,
+          onClickExport} = this.props
+            
     const { expanded, showExportExcel, showExportCsv } = this.state
-    const noFiltersMessage = `${formatMessage(messages.noFilters)} ${subject ? subject.toLowerCase() : ''}`
-    const filterMessage = _.every(filter, f => !f) ? noFiltersMessage : `\`${JSON.stringify(filter)}\``
+
     const hasDataSection = (
       config.assay || config.deviceName || config.result ||
       config.siteName || config.contactNameOrEmail || config.consumable
@@ -337,6 +351,16 @@ export class ListFilter extends PureComponent {
       <FlatButton primary={true} label="Yes, Export" onTouchTap={this.exportConfirmationAgreed} />,
       <FlatButton primary={true} label="No, Cancel"  onTouchTap={this.exportConfirmationDisagreed} />
     ]
+
+    const filterMessage = getFilterMessage(filter,
+      countries,
+      assay,
+      consumableItems,
+      subject,
+      filterTemplate,
+      filterTemplateOptional,
+      formatMessage,
+      formatDate)
 
     return (
       <div className={styles.ListFilter}>
@@ -514,7 +538,10 @@ function mapStateToProps(state) {
   return {
     config: state.filter.listConfig,
     filter: state.filter.listFilter.toJS(),
-    command: state.filter.listCommand.toJS()
+    command: state.filter.listCommand.toJS(),
+    countries: state.geography.countriesForLocationSelector,
+    assay: state.assay,
+    consumableItems: state.consumable.items
   }
 }
 

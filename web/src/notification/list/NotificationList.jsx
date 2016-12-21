@@ -32,6 +32,10 @@ const messages = defineMessages({
   assignedContacts: {
     id: 'pages.NotificationList.assignedContacts',
     defaultMessage: 'Assigned Contacts'
+  },
+  filterTemplate: {
+    id: 'pages.NotificationList.filterTemplate',
+    defaultMessage: 'Viewing all notifications<NAME>.'
   }
 })
 
@@ -80,7 +84,10 @@ export class NotificationList extends PureComponent {
     return (
       <div className={styles.Content}>
         <Helmet title={formatMessage(messages.title)} titleTemplate="%s - Aspect" defaultTitle="Aspect" />
-        <ListFilterContainer subject={formatMessage(messages.title)} />
+        <ListFilterContainer
+          subject={formatMessage(messages.title)}
+          filterTemplate={formatMessage(messages.filterTemplate)}
+        />
         <DataTableWithEmptyList
           handleFetch={this.handleFetch}
           items={this.props.items}
