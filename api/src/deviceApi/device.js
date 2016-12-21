@@ -81,10 +81,6 @@ function* addDeviceOperation(context) {
     })
   context.addDeviceOperationId(deviceOperationId)
 
-  yield knex('Device')
-    .where('id', deviceId)
-    .update({ deviceOperationId })
-
   return {}
 }
 

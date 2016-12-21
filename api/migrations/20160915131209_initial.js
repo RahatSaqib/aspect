@@ -268,11 +268,9 @@ function* up(knex) {
     device.integer('deviceTypeId').unsigned().notNullable()
       .index().references('id').inTable('DeviceType')
 
-    // current configuration and operation (history maintained with backref)
+    // current device configuration
     device.integer('deviceConfigurationId').unsigned()
-      .index().references('id').inTable('DeviceConfiguration')
-    device.integer('deviceOperationId').unsigned()
-      .index().references('id').inTable('DeviceOperation')
+      .index().references('id').inTable('DeviceConfiguration').notNullable()
 
     // TODO Add device id1 - id4 or equivalent
     // used to uniquely identify provisioned devices, still to be discussed

@@ -40,10 +40,6 @@ function* deleteTestDataFromCheckpoint(knex, checkpoint, deviceIds) {
     yield knex('Device')
       .where({ id: deviceId })
       .update({
-        deviceOperationId: knex('DeviceOperation')
-          .where({ deviceId })
-          .whereNotIn('id', opIds)
-          .max('id'),
         deviceConfigurationId: knex('DeviceConfiguration')
           .where({ deviceId })
           .whereNotIn('id', configIds)
@@ -67,10 +63,13 @@ function* getLastDeviceConfigurationId(knex, deviceId) {
 }
 
 function* getLastDeviceOperationId(knex, deviceId) {
-  const { deviceOperationId } = yield knex('Device')
-    .where({ id: deviceId })
-    .first('deviceOperationId')
-  return deviceOperationId
+  const op = yield knex('DeviceLogUpdate as dlu')
+    .innerJoin('DeviceLog as dl', 'dl.id', 'dlu.deviceLogId')
+    .where('dl.deviceId', deviceId)
+    .whereNotNull('dlu.deviceOperationId')
+    .orderBy('dlu.id', 'desc')
+    .first('dlu.deviceOperationId as id')
+  return op && op.id
 }
 
 function* getLastResultId(knex, deviceId) {
