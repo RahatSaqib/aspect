@@ -41,7 +41,6 @@ function tryLogin(done) {
       jwt.verify(res.body.access, config.secret, (err, decoded) => {
         assert.isNotOk(err)
         assert.property(decoded, 'name')
-        assert.property(decoded, 'modules')
         assert.property(decoded, 'permissions')
         assert.property(decoded, 'iat')
         assert.property(decoded, 'exp')
@@ -64,7 +63,6 @@ function tryRefreshToken(refreshToken, clientId, done) {
       jwt.verify(res.body.access, config.secret, (err, decoded) => {
         assert.isNotOk(err)
         assert.property(decoded, 'name')
-        assert.property(decoded, 'modules')
         assert.property(decoded, 'permissions')
         assert.property(decoded, 'iat')
         assert.property(decoded, 'exp')
