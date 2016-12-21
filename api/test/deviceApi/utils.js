@@ -28,38 +28,17 @@ function* deleteTestDataFromCheckpoint(knex, checkpoint, deviceIds) {
     .where('dlu.id', '>=', minDeviceLogUpdateId)
     .whereIn('dl.deviceId', deviceIds)
     .select(
-      'dlu.id', 'dlu.deviceLogId', 'dlu.resultId',
-      'dlu.deviceConfigurationId', 'dlu.deviceOperationId')
+      'dlu.id', 'dlu.deviceLogId', 'dlu.resultId', 'dlu.deviceOperationId')
 
   const deviceLogIds = _.uniq(_.map(deviceUpdates, 'deviceLogId'))
   const resultIds = _.uniq(_.map(deviceUpdates, 'resultId'))
-  const configIds = _.uniq(_.map(deviceUpdates, 'deviceConfigurationId'))
   const opIds = _.uniq(_.map(deviceUpdates, 'deviceOperationId'))
-
-  for (const deviceId of deviceIds) {
-    yield knex('Device')
-      .where({ id: deviceId })
-      .update({
-        deviceConfigurationId: knex('DeviceConfiguration')
-          .where({ deviceId })
-          .whereNotIn('id', configIds)
-          .max('id')
-      })
-  }
 
   yield knex('DeviceLogUpdate').whereIn('deviceLogId', deviceLogIds).delete()
   yield knex('DeviceLog').whereIn('id', deviceLogIds).delete()
   yield knex('InventoryLog').whereIn('resultId', resultIds).delete()
   yield knex('Result').whereIn('id', resultIds).delete()
-  yield knex('DeviceConfiguration').whereIn('id', configIds).delete()
   yield knex('DeviceOperation').whereIn('id', opIds).delete()
-}
-
-function* getLastDeviceConfigurationId(knex, deviceId) {
-  const { deviceConfigurationId } = yield knex('Device')
-    .where({ id: deviceId })
-    .first('deviceConfigurationId')
-  return deviceConfigurationId
 }
 
 function* getLastDeviceOperationId(knex, deviceId) {
@@ -93,6 +72,7 @@ class DeviceApiTestContext {
     this.server = server
     this.checkpoint = null
     this.deviceIds = []
+    this.initialConfigurationData = {}
 
     _.bindAll(this, ['beforeEach', 'afterEach', 'runTest'])
   }
@@ -102,6 +82,7 @@ class DeviceApiTestContext {
     return run(function* () {
       self.checkpoint = null
       self.deviceIds.splice(0)
+      self.initialConfigurationData = {}
     })
   }
 
@@ -141,13 +122,13 @@ class DeviceApiTestContext {
         })
 
       // save device id for the following tests
+      self.deviceIds.splice(0)
       self.deviceId = deviceId
 
-      const deviceToken = yield* getApiKey(knex, deviceId)
       self.clientAuth = `Bearer ${clientToken}`
-      self.deviceAuth = `Bearer ${deviceToken}`
+      self.deviceAuth = yield* self.getDeviceAuth(knex, deviceId)
+      self.deviceConfigurationData = JSON.parse(self.initialConfigurationData[deviceId])
 
-      self.deviceIds.splice(0)
       self.deviceIds.push(deviceId)
 
       self.checkpoint = `Device API Device Tests ${new Date()}`
@@ -163,9 +144,30 @@ class DeviceApiTestContext {
     })
   }
 
+  * getDeviceAuth(knex, deviceId) {
+    this.deviceIds.push(deviceId)
+
+    const { configurationData } = yield knex('Device')
+      .where({ id: deviceId })
+      .first('configurationData')
+
+    this.initialConfigurationData[deviceId] = configurationData || null
+
+    const deviceToken = yield* getApiKey(knex, deviceId)
+    return `Bearer ${deviceToken}`
+  }
+
   afterEach() {
     const self = this
     return run(function* (knex) {
+      // Reset to previous device configuration
+      for (const deviceId of self.deviceIds) {
+        const configurationData = self.initialConfigurationData[deviceId] || null
+        yield knex('Device')
+          .where({ id: deviceId })
+          .update({ configurationData })
+      }
+
       if (self.checkpoint) {
         yield* deleteTestDataFromCheckpoint(knex, self.checkpoint, self.deviceIds)
       }
@@ -174,10 +176,7 @@ class DeviceApiTestContext {
 }
 
 module.exports = {
-  getApiKey,
   createTestContext,
-  deleteTestDataFromCheckpoint,
-  getLastDeviceConfigurationId,
   getLastDeviceOperationId,
   getLastResultId
 }

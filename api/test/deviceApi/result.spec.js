@@ -3,8 +3,6 @@ const chai = require('chai')
 const _ = require('lodash')
 const {
   createTestContext,
-  getApiKey,
-  getLastDeviceConfigurationId,
   getLastDeviceOperationId,
   getLastResultId
 } = require('./utils')
@@ -771,7 +769,6 @@ describe('Device Result API routes', () => {
     it('should add and return device data', () => runTest(function* (knex) {
       const { deviceId, deviceAuth } = context
       const resultIds = []
-      const configIds = []
       const opIds = []
 
       const [{ count: initialLogLength }] = yield knex('DeviceLogUpdate').count('id as count')
@@ -802,7 +799,6 @@ describe('Device Result API routes', () => {
         })
 
       resultIds.push(yield* getLastResultId(knex, deviceId))
-      configIds.push(yield* getLastDeviceConfigurationId(knex, deviceId))
       opIds.push(yield* getLastDeviceOperationId(knex, deviceId))
 
       const [{ count: logLength2 }] = yield knex('DeviceLogUpdate').count('id as count')
@@ -811,20 +807,15 @@ describe('Device Result API routes', () => {
       const deviceLogResult2 = yield knex('Result')
         .where({ id: resultIds[resultIds.length - 1] })
         .first()
-      const deviceLogConfig2 = yield knex('DeviceConfiguration')
-        .where({ id: configIds[configIds.length - 1] })
-        .first()
       const deviceLogOp2 = yield knex('DeviceOperation')
         .where({ id: opIds[opIds.length - 1] })
         .first()
       assert.property(deviceLogOp2, 'data')
       assert.deepEqual(JSON.parse(deviceLogOp2.data), { a: 'c' })
-      assert.property(deviceLogConfig2, 'data')
-      assert.deepEqual(JSON.parse(deviceLogConfig2.data), { a: 'b' })
       assert.property(deviceLogResult2, 'resultData')
       assert.deepEqual(JSON.parse(deviceLogResult2.resultData), { a: 'd' })
       const deviceLogUpdates2 = yield knex('DeviceLogUpdate').where({
-        deviceConfigurationId: deviceLogConfig2.id,
+        deviceConfigurationUpdated: true,
         deviceOperationId: deviceLogOp2.id
       })
       assert.equal(deviceLogUpdates2.length, 1)
@@ -882,24 +873,18 @@ describe('Device Result API routes', () => {
         })
 
       resultIds.push(yield* getLastResultId(knex, deviceId))
-      configIds.push(yield* getLastDeviceConfigurationId(knex, deviceId))
       opIds.push(yield* getLastDeviceOperationId(knex, deviceId))
 
       const [{ count: logLength3 }] = yield knex('DeviceLogUpdate').count('id as count')
       assert.equal(logLength3, initialLogLength + 4)  // previous + 2 results
 
-      const deviceLogConfig3 = yield knex('DeviceConfiguration')
-        .where({ id: configIds[configIds.length - 1] })
-        .first()
       const deviceLogOp3 = yield knex('DeviceOperation')
         .where({ id: opIds[opIds.length - 1] })
         .first()
       assert.property(deviceLogOp3, 'data')
       assert.deepEqual(JSON.parse(deviceLogOp3.data), { a: 'd' })
-      assert.property(deviceLogConfig3, 'data')
-      assert.deepEqual(JSON.parse(deviceLogConfig3.data), { a: 'c' })
       const deviceLogUpdates3 = yield knex('DeviceLogUpdate').where({
-        deviceConfigurationId: deviceLogConfig3.id,
+        deviceConfigurationUpdated: true,
         deviceOperationId: deviceLogOp3.id
       })
       assert.equal(deviceLogUpdates3.length, 2)
@@ -1315,11 +1300,8 @@ describe('Device Result API routes', () => {
         .select('d.*')
       context.deviceIds.push(device1315.id, device1723.id)
 
-      const device1315Key = yield* getApiKey(knex, device1315.id)
-      const device1723Key = yield* getApiKey(knex, device1723.id)
-
-      const device1315Auth = `Bearer ${device1315Key}`
-      const device1723Auth = `Bearer ${device1723Key}`
+      const device1315Auth = yield* context.getDeviceAuth(knex, device1315.id)
+      const device1723Auth = yield* context.getDeviceAuth(knex, device1723.id)
 
       const device1315ExternalId = `1315-${new Date()}`
       const device1723ExternalId = `1723-${new Date()}`

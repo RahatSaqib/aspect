@@ -2,7 +2,6 @@ const supertest = require('supertest')
 const chai = require('chai')
 const {
   createTestContext,
-  getLastDeviceConfigurationId,
   getLastDeviceOperationId } = require('./utils')
 
 // This agent refers to PORT where program is runninng.
@@ -22,7 +21,7 @@ describe('Device API routes', () => {
     const deviceConfigurationPath = '/device/configuration'
 
     it('should add and return device configuration', () => runTest(function* (knex) {
-      const { deviceId, deviceAuth } = context
+      const { deviceAuth } = context
 
       yield server.post(deviceConfigurationPath)
         .set('Authorization', deviceAuth)
@@ -32,18 +31,12 @@ describe('Device API routes', () => {
           assert.typeOf(res.body, 'Object')
         })
 
-      let previousConfigId = null
-      let currentConfigId = yield* getLastDeviceConfigurationId(knex, deviceId)
-
       yield server.post(devicePath)
         .set('Authorization', deviceAuth)
         .send({ configuration: { data: { a: 'b', c: 2, d: false, e: { f: 'g' } } } })
         .then((res) => {
           assert.equal(res.status, 200)
         })
-
-      previousConfigId = currentConfigId
-      currentConfigId = yield* getLastDeviceConfigurationId(knex, deviceId)
     }))
   })
 

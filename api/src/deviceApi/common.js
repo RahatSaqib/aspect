@@ -58,14 +58,22 @@ function deviceApiHandler(handler, { updatePing, updateDeviceLog }) {
       response = yield* handler(context)
 
       // Insert all DeviceLog Updates added to context when calling handler
-      if (deviceLogId !== null && context.deviceLogUpdates.length > 0) {
-        const [firstUpdate, ...restUpdates] = context.deviceLogUpdates
-        yield knex('DeviceLogUpdate')
-          .where({ id: deviceLogUpdateId })
-          .update(firstUpdate)
-        if (restUpdates.length > 0) {
-          yield knex('DeviceLogUpdate').insert(restUpdates.map(
-            update => Object.assign({ deviceLogId }, update)))
+      if (deviceLogId !== null) {
+        const { deviceConfigurationUpdated, deviceLogUpdates } = context
+        if (deviceLogUpdates.length > 0) {
+          const [firstUpdate, ...restUpdates] = deviceLogUpdates
+          yield knex('DeviceLogUpdate')
+            .where({ id: deviceLogUpdateId })
+            .update(Object.assign({ deviceConfigurationUpdated }, firstUpdate))
+          if (restUpdates.length > 0) {
+            yield knex('DeviceLogUpdate').insert(restUpdates.map(
+              update => Object.assign({ deviceLogId, deviceConfigurationUpdated }, update)))
+          }
+        } else if (deviceConfigurationUpdated) {
+          // configuration update but no results or operation
+          yield knex('DeviceLogUpdate')
+            .where({ id: deviceLogUpdateId })
+            .update({ deviceConfigurationUpdated })
         }
       }
     })
@@ -102,15 +110,18 @@ function* getDeviceApiContext(request) {
 
 class DeviceApiContext {
   constructor(props) {
-    Object.assign(this, { deviceLogUpdates: [] }, props)
+    Object.assign(this, { deviceConfigurationUpdated: false, deviceLogUpdates: [] }, props)
   }
 
   withPayload(payload) {
-    return new DeviceApiContext(Object.assign({}, this, { payload }))
+    return new DeviceApiContext(Object.assign({}, this, { payload, parent: this }))
   }
 
-  addDeviceConfigurationId(id) {
-    this.addDeviceLogUpdate('deviceConfigurationId', id)
+  markDeviceConfigurationUpdated() {
+    this.deviceConfigurationUpdated = true
+    if (this.parent) {
+      this.parent.markDeviceConfigurationUpdated()
+    }
   }
 
   addDeviceOperationId(id) {

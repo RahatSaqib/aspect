@@ -1,6 +1,6 @@
 const Joi = require('joi')
 const { deviceApiHandler } = require('./common')
-const { addDeviceData, getDeviceData, addDeviceOperation, addDeviceConfiguration } = require('./device')
+const { addDeviceData, getDeviceData, addDeviceOperation, updateDeviceConfiguration } = require('./device')
 const { addResult } = require('./result')
 
 const errorPayload = Joi.object().keys({
@@ -191,7 +191,8 @@ module.exports = [
   {
     method: 'POST',
     path: '/configuration',
-    handler: deviceApiHandler(addDeviceConfiguration, { updatePing: true, updateDeviceLog: true }),
+    handler: deviceApiHandler(
+      updateDeviceConfiguration, { updatePing: true, updateDeviceLog: true }),
     config: {
       description: 'Update Device Configuration',
       notes: 'Device configuration information, such as firmware revision, software versions,'

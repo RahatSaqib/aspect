@@ -268,35 +268,25 @@ function* up(knex) {
     device.integer('deviceTypeId').unsigned().notNullable()
       .index().references('id').inTable('DeviceType')
 
-    // current device configuration
-    device.integer('deviceConfigurationId').unsigned()
-      .index().references('id').inTable('DeviceConfiguration').notNullable()
-
     // TODO Add device id1 - id4 or equivalent
     // used to uniquely identify provisioned devices, still to be discussed
     device.string('name').notNullable()
     device.string('shortname', 45)
+    device.string('macAddress')
     device.string('serial')
     device.string('hostId')
+    device.string('culture', 45)
+    device.string('timezone', 45)
     device.string('notes', 2000)
     device.dateTime('lastPingOn')
     device.string('lastPingFromIp', 45)
-    device.string('macAddress')
-    device.string('culture', 45)
-    device.string('operatingSystem')
-    device.string('timezone', 45)
     device.dateTime('putInService')
     device.string('putInServiceSource')
-    // TODO add db and lis fields to "Operational Data" model
-    // device.string('dbVersion', 45)
-    // device.boolean('dbOk', 45)
-    // device.string('lisConfig', 1200)
-    // device.boolean('lisOk', 4)
-    device.string('clientVersion', 45)
     device.boolean('approved')
     device.dateTime('approvedOn')
     device.integer('approvedBy').unsigned()
       .index().references('id').inTable('User')
+    device.specificType('configurationData', 'JSON')
     addCreateFields(device)
     addUpdateFields(device)
     device.charset('utf8')
@@ -322,16 +312,6 @@ function* up(knex) {
     addCreateFields(history)
     history.primary(['deviceId', 'siteId'])
     history.charset('utf8')
-  })
-
-  yield knex.schema.createTable('DeviceConfiguration', (config) => {
-    config.increments('id')
-    config.integer('deviceId').unsigned().notNullable()
-      .index().references('id').inTable('Device')
-    config.string('externalId')
-    config.specificType('data', 'JSON').notNullable()
-    addCreateFieldsNullable(config)
-    config.charset('utf8')
   })
 
   yield knex.schema.createTable('DeviceOperation', (config) => {
@@ -469,10 +449,9 @@ function* up(knex) {
     deviceLog.bigincrements('id')
     deviceLog.integer('deviceLogId').unsigned().notNullable()
           .index().references('id').inTable('DeviceLog')
+    deviceLog.boolean('deviceConfigurationUpdated').notNullable().defaultTo(0)
     deviceLog.integer('resultId').unsigned()
           .index().references('id').inTable('Result')
-    deviceLog.integer('deviceConfigurationId').unsigned()
-          .index().references('id').inTable('DeviceConfiguration')
     deviceLog.integer('deviceOperationId').unsigned()
           .index().references('id').inTable('DeviceOperation')
     deviceLog.charset('utf8')
