@@ -1,5 +1,6 @@
 const _ = require('lodash')
 const { query, knex } = require('../db')
+const { getUser } = require('./service')
 
 // A prefix for joined table aliases intended to avoid
 // conflict with caller supplied table aliases
@@ -9,53 +10,55 @@ function alias(table) {
 }
 
 function getConstraints(credentials) {
-  // FIXME only include roles that assign permissions of interest
-  const dataFilters = query('Get constraints for user credentials')
-    .from('DataFilter as f')
-    .innerJoin('Role as r', 'f.id', 'r.dataFilterId')
-    .innerJoin('UserRole as ur', 'r.id', 'ur.roleId')
-    .where({
-      'ur.userId': credentials.id,
-      'r.partnerId': credentials.partnerId
-    })
-    .select('f.constraint')
-    .map(f => JSON.parse(f.constraint))
+  return getUser(credentials.name).then((user) => {
+    // FIXME only include roles that assign permissions of interest
+    const dataFilters = query('Get constraints for user credentials')
+      .from('DataFilter as f')
+      .innerJoin('Role as r', 'f.id', 'r.dataFilterId')
+      .innerJoin('UserRole as ur', 'r.id', 'ur.roleId')
+      .where({
+        'ur.userId': user.id,
+        'r.partnerId': user.partnerId
+      })
+      .select('f.constraint')
+      .map(f => JSON.parse(f.constraint))
 
-  const topOrgUnit = query('Get top org unit for user credentials')
-    .from('OrgUnit as o')
-    .innerJoin('Role as r', 'o.id', 'r.orgUnitId')
-    .innerJoin('UserRole as ur', 'r.id', 'ur.roleId')
-    .where({
-      'ur.userId': credentials.id,
-      'r.partnerId': credentials.partnerId
-    })
-    .orderBy('o.depth')
-    .first('o.id')
+    const topOrgUnit = query('Get top org unit for user credentials')
+      .from('OrgUnit as o')
+      .innerJoin('Role as r', 'o.id', 'r.orgUnitId')
+      .innerJoin('UserRole as ur', 'r.id', 'ur.roleId')
+      .where({
+        'ur.userId': user.id,
+        'r.partnerId': user.partnerId
+      })
+      .orderBy('o.depth')
+      .first('o.id')
 
-  return Promise.all([dataFilters, topOrgUnit])
-    .then(([filterConstraints, orgUnit]) => {
-      // TODO define constraints schema
-      const constraints = {
-        partner: {
-          id: credentials.partnerId
-        },
-        country: {
-          id: credentials.countryId
+    return Promise.all([dataFilters, topOrgUnit])
+      .then(([filterConstraints, orgUnit]) => {
+        // TODO define constraints schema
+        const constraints = {
+          partner: {
+            id: user.partnerId
+          },
+          country: {
+            id: user.countryId
+          }
         }
-      }
 
-      if (orgUnit) {
-        constraints.orgUnit = {
-          id: orgUnit.id
+        if (orgUnit) {
+          constraints.orgUnit = {
+            id: orgUnit.id
+          }
         }
-      }
 
-      if (filterConstraints.length) {
-        constraints.$or = filterConstraints
-      }
+        if (filterConstraints.length) {
+          constraints.$or = filterConstraints
+        }
 
-      return constraints
-    })
+        return constraints
+      })
+  })
 }
 
 function getDeviceConstraints(credentials) {
