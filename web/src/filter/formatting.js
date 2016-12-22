@@ -97,7 +97,7 @@ export default function getFilterMessage(
   const dateString = `${dateFrom ? `${SPACE}${dateFrom}` : ''}${dateTo && dateFrom ? `${SPACE}${dateTo}` : dateTo}`
 
   // inventory item
-  const consumable = filter.consumableId ? consumables.find(a => a.get('id') === filter.consumableId) : null
+  const consumable = filter.consumableId ? consumables.get('items').find(a => a.get('id') === filter.consumableId) : null
   const consumableString = consumable ? consumable.get('name') : formatMessage(messages.consumables)
 
   // result workflow status

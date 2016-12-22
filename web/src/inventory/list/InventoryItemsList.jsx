@@ -156,6 +156,7 @@ export class InventoryItemsList extends PureComponent {
     addInventory: PropTypes.func.isRequired,
     removeInventory: PropTypes.func.isRequired,
     transferInventory: PropTypes.func.isRequired,
+    receiveInventory: PropTypes.func.isRequired,
     submit: PropTypes.func.isRequired,
     showAcknowledgement: PropTypes.func.isRequired
   }
