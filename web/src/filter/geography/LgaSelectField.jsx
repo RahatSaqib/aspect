@@ -41,7 +41,7 @@ export class LgaSelectField extends PureComponent {
     const selectedCountry = getSelectedCountry(this.props)
     const selectedState = getSelectedState(this.props)
     if (selectedState) {
-      this.props.fetchLgasForLocationSelector(true, selectedCountry, selectedState)
+      this.props.fetchLgasForLocationSelector(false, selectedCountry, selectedState)
     }
   }
 
@@ -52,7 +52,7 @@ export class LgaSelectField extends PureComponent {
       !prevSelectedState || prevSelectedState.get('id') !== selectedState.get('id')
     )) {
       const selectedCountry = getSelectedCountry(this.props)
-      this.props.fetchLgasForLocationSelector(true, selectedCountry, selectedState)
+      this.props.fetchLgasForLocationSelector(false, selectedCountry, selectedState)
     }
   }
 
