@@ -147,6 +147,7 @@ export function adjustInventoryLevels(inventoryItem, operation) {
   const expiresOn = inventoryItem.get('expiresOn')
   const adjustmentDetails = {
     inventoryItemId: inventoryItem.get('id'),
+    consumableId: inventoryItem.get('consumableId'),
     expiresOn: expiresOn ? new Date(expiresOn) : undefined,
     canExpire: inventoryItem.get('canExpire') === 1,
     lotNumber: inventoryItem.get('lotNumber'),
@@ -306,6 +307,7 @@ export function receiveInventory(inventoryItemId, data) {
  */
 const AdjustmentDetails = Immutable.Record({
   inventoryItemId: null,
+  consumableId: null,
   expiresOn: null,
   canExpire: false,
   lotNumber: '',

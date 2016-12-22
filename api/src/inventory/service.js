@@ -62,6 +62,8 @@ function compareConsumableInResultWithInventoryItem(consumableInResult,
   const resultLotNumber = consumableInResult.lot ? consumableInResult.lot : null
   const inventoryItemLotNumber = inventoryItem.lotNumber ? inventoryItem.lotNumber : null
 
+  /* TODO: If we can't match on expiration date and lot number,
+     we need to find the item with the nearest expiration date */
   return inventoryItem.inTransitFromSiteId === null &&
     ((_.isEqual(resultExpirationDate, inventoryItemExpirationDate) &&
     (!mustMatchLotNumber || _.isEqual(resultLotNumber, inventoryItemLotNumber))) ||
@@ -135,16 +137,26 @@ function* consumeInventoryForResult(
       lotNumber: matchingInventoryOnHand.lotNumber,
       expiresOn: matchingInventoryOnHand.expiresOn,
       quantity: -assayConsumable.quantity,
+      operation: 'result',
       adjustedFrom: testStartedOn,
       createdOn: now
     })
     if (matchingInventoryOnHand.id) {
-      yield knex('InventoryItem')
+      const currentQuantity = (yield knex('InventoryItem')
         .where({ id: matchingInventoryOnHand.id })
-        .update({
-          quantityOnHand: knex.raw(`quantityOnHand - ${assayConsumable.quantity}`),
-          updatedOn: now
-        })
+        .first('quantityOnHand')).quantityOnHand
+      if (assayConsumable.quantity === currentQuantity) {
+        yield knex('InventoryItem')
+          .where({ id: matchingInventoryOnHand.id })
+          .delete()
+      } else {
+        yield knex('InventoryItem')
+          .where({ id: matchingInventoryOnHand.id })
+          .update({
+            quantityOnHand: knex.raw(`quantityOnHand - ${assayConsumable.quantity}`),
+            updatedOn: now
+          })
+      }
     }
   }
 }
@@ -164,6 +176,7 @@ function* listInventoryItems(request) {
     .leftJoin('State as st', 'g.stateId', 'st.id')
     .leftJoin('Lga as l', 'g.lgaId', 'l.id')
     .leftJoin('Site as itfs', 'ii.inTransitFromSiteId', 'itfs.id')
+    .where('ii.quantityOnHand', '<>', 0)
     .modify(filterDateRangeParams, request.query, 'ii.expiresOn')
     .modify(filterParams, request.query, INVENTORY_ITEM_FILTER_FIELDS)
     .modify(addConstraints, dataConstraints, INVENTORY_ITEM_DATA_CONSTRAINT_ALIASES)
@@ -190,6 +203,9 @@ function* listInventoryItemsGroupedBySite(request) {
 
   const dataConstraints = yield getConstraints(auth.credentials)
 
+  /* TODO: Add inventory item <--> site bridging table and fix this query so that
+     user can view items that are out of stock */
+  /* TODO: Add option to break out by expiration date */
   const inventoryItemsSiteByGeographyQuery = query('Join Inventory Items, Site Details, and Geography Details')
     .from('InventoryItem as ii')
     .innerJoin('Consumable as c', 'ii.consumableId', 'c.id')
@@ -200,6 +216,7 @@ function* listInventoryItemsGroupedBySite(request) {
     .leftJoin('State as st', 'g.stateId', 'st.id')
     .leftJoin('Lga as l', 'g.lgaId', 'l.id')
     .leftJoin('Site as itfs', 'ii.inTransitFromSiteId', 'itfs.id')
+    .where('ii.quantityOnHand', '<>', 0)
     .modify(filterDateRangeParams, request.query, 'ii.expiresOn')
 
   const sitesQuery = inventoryItemsSiteByGeographyQuery.clone()
@@ -249,8 +266,9 @@ function* listInventoryItemsGroupedBySite(request) {
   return { ok: true, total, length: sitesWithConsumables.length, data: sitesWithConsumables }
 }
 
-function getInventoryItemQuery(inventoryItemId, includeTransitItems) {
-  const inventoryItemQuery = query('Find inventory item')
+function* findInventoryItem(
+  siteId, consumableId, expiresOn, lotNumber, inTransitFromSiteId) {
+  let matchingInventoryItemsQuery = query('Find Inventory Item')
     .from('InventoryItem as ii')
     .innerJoin('Consumable as c', 'ii.consumableId', 'c.id')
     .innerJoin('Unit as u', 'c.unit', 'u.id')
@@ -260,202 +278,228 @@ function getInventoryItemQuery(inventoryItemId, includeTransitItems) {
     .leftJoin('State as st', 'g.stateId', 'st.id')
     .leftJoin('Lga as l', 'g.lgaId', 'l.id')
     .leftJoin('Site as itfs', 'ii.inTransitFromSiteId', 'itfs.id')
-  if (includeTransitItems) {
-    if (inventoryItemId && inventoryItemId > 0) {
-      return inventoryItemQuery.clone()
-        .where('ii.id', inventoryItemId)
-    }
-    return inventoryItemQuery
+    .where({
+      'ii.siteId': siteId,
+      'ii.consumableId': consumableId
+    })
+  if (expiresOn) {
+    matchingInventoryItemsQuery = matchingInventoryItemsQuery.clone()
+      .where('ii.expiresOn', expiresOn)
+  } else {
+    matchingInventoryItemsQuery = matchingInventoryItemsQuery.clone()
+      .whereNull('ii.expiresOn')
   }
-  if (inventoryItemId && inventoryItemId > 0) {
-    return inventoryItemQuery.clone()
+  if (inTransitFromSiteId) {
+    matchingInventoryItemsQuery = matchingInventoryItemsQuery.clone()
+      .where('ii.inTransitFromSiteId', inTransitFromSiteId)
+  } else {
+    matchingInventoryItemsQuery = matchingInventoryItemsQuery.clone()
       .whereNull('ii.inTransitFromSiteId')
-      .andWhere('ii.id', inventoryItemId)
   }
-  return inventoryItemQuery.clone()
-    .whereNull('ii.inTransitFromSiteId')
+  const matchingInventoryItems = yield matchingInventoryItemsQuery.clone()
+    .select(INVENTORY_ITEM_SELECT_LIST_FIELDS)
+  return _.find(matchingInventoryItems, { lotNumber }) || _.head(matchingInventoryItems)
+}
+
+function getInventoryItem(inventoryItemId) {
+  return query('Get Inventory Item')
+    .from('InventoryItem as ii')
+    .innerJoin('Consumable as c', 'ii.consumableId', 'c.id')
+    .innerJoin('Unit as u', 'c.unit', 'u.id')
+    .innerJoin('Site as s', 'ii.siteId', 's.id')
+    .leftJoin('Geography as g', 's.geographyId', 'g.id')
+    .leftJoin('Country as co', 'g.countryId', 'co.id')
+    .leftJoin('State as st', 'g.stateId', 'st.id')
+    .leftJoin('Lga as l', 'g.lgaId', 'l.id')
+    .leftJoin('Site as itfs', 'ii.inTransitFromSiteId', 'itfs.id')
+    .where('ii.id', inventoryItemId)
+    .first(INVENTORY_ITEM_SELECT_LIST_FIELDS)
+}
+
+function* upsertInventoryItem(knex, inventoryItem, consumableId,
+  siteId, lotNumber, expiresOn, quantity, now, userId, inTransitFromSiteId) {
+  let inventoryItemId = -1
+  if (_.isEmpty(inventoryItem)) {
+    [inventoryItemId] = yield knex('InventoryItem').insert({
+      consumableId,
+      inTransitFromSiteId: inTransitFromSiteId || null,
+      siteId,
+      lotNumber,
+      expiresOn,
+      quantityOnHand: quantity,
+      createdOn: now,
+      createdBy: userId
+    })
+  } else {
+    inventoryItemId = inventoryItem.id
+    yield knex('InventoryItem')
+      .where({ id: inventoryItemId })
+      .update({
+        expiresOn,
+        lotNumber,
+        siteId,
+        quantityOnHand: knex.raw(`quantityOnHand + ${quantity}`),
+        updatedOn: now,
+        updatedBy: userId
+      })
+  }
+  return inventoryItemId
 }
 
 function* addInventory(request) {
-  const { auth, params, payload } = request
+  const {
+    auth: {
+      credentials: {
+        name: username
+      }
+    },
+    payload: { toSiteId, consumableId, expiresOn, lotNumber, quantity, dateAdjusted, notes }
+  } = request
 
-  const currentlyLoggedInUser = yield getUser(auth.credentials.name)
+  const currentlyLoggedInUser = yield getUser(username)
   const now = new Date()
-
-  const inventoryItemQuery = getInventoryItemQuery(params.inventoryItemId)
-
-  const inventoryItem = yield inventoryItemQuery.clone()
-    .first(INVENTORY_ITEM_SELECT_LIST_FIELDS)
-
-  if (_.isEmpty(inventoryItem)) {
-    return Boom.notFound('Could not find inventory item')
-  }
-
+  const inventoryItem = yield* findInventoryItem(
+    toSiteId, consumableId, expiresOn, lotNumber)
+  let inventoryItemId = -1
   yield transact(function* (knex) {
+    inventoryItemId = yield* upsertInventoryItem(
+      knex, inventoryItem, consumableId, toSiteId, lotNumber,
+      expiresOn, quantity, now, currentlyLoggedInUser.id)
+
     yield knex('InventoryLog').insert({
-      inventoryItemId: inventoryItem.id,
-      consumableId: inventoryItem.consumableId,
-      siteId: payload.toSiteId,
-      lotNumber: payload.lotNumber,
-      expiresOn: payload.expiresOn,
-      quantity: payload.quantity,
-      notes: payload.notes,
-      adjustedFrom: payload.dateAdjusted,
+      inventoryItemId,
+      consumableId,
+      siteId: toSiteId,
+      lotNumber,
+      expiresOn,
+      quantity,
+      operation: 'add',
+      notes,
+      adjustedFrom: dateAdjusted,
       createdOn: now,
       createdBy: currentlyLoggedInUser.id
     })
-
-    yield knex('InventoryItem')
-      .where({ id: inventoryItem.id })
-      .update({
-        expiresOn: payload.expiresOn,
-        lotNumber: payload.lotNumber,
-        siteId: payload.toSiteId,
-        quantityOnHand: knex.raw(`quantityOnHand + ${payload.quantity}`),
-        updatedOn: now,
-        updatedBy: currentlyLoggedInUser.id
-      })
   })
 
   return {
     ok: true,
-    data: yield inventoryItemQuery.clone()
-      .first(INVENTORY_ITEM_SELECT_LIST_FIELDS)
+    data: yield getInventoryItem(inventoryItemId)
   }
 }
 
 function* removeInventory(request) {
-  const { auth, params, payload } = request
+  const {
+    auth: {
+      credentials: {
+        name: username
+      }
+    },
+    payload: {
+      fromSiteId, consumableId, expiresOn, lotNumber,
+      quantity, reasonId, dateAdjusted, dateAdjustedFrom,
+      dateAdjustedTo, notes
+    }
+  } = request
 
-  const currentlyLoggedInUser = yield getUser(auth.credentials.name)
+  const currentlyLoggedInUser = yield getUser(username)
   const now = new Date()
-
-  const inventoryItemQuery = getInventoryItemQuery(params.inventoryItemId)
-
-  const inventoryItem = yield inventoryItemQuery.clone()
-    .first(INVENTORY_ITEM_SELECT_LIST_FIELDS)
-
-  if (_.isEmpty(inventoryItem)) {
-    return Boom.notFound('Could not find inventory item')
-  }
-
+  const inventoryItem = yield* findInventoryItem(
+    fromSiteId, consumableId, expiresOn, lotNumber)
+  let inventoryItemId = -1
   yield transact(function* (knex) {
+    inventoryItemId = yield* upsertInventoryItem(
+      knex, inventoryItem, consumableId, fromSiteId, lotNumber,
+      expiresOn, -quantity, now, currentlyLoggedInUser.id)
+
     yield knex('InventoryLog').insert({
-      inventoryItemId: inventoryItem.id,
-      consumableId: inventoryItem.consumableId,
-      siteId: payload.fromSiteId,
-      lotNumber: payload.lotNumber,
-      expiresOn: payload.expiresOn,
-      quantity: -payload.quantity,
-      consumableReasonId: payload.reasonId,
-      notes: payload.notes,
-      adjustedFrom: payload.dateAdjusted || payload.dateAdjustedFrom,
-      adjustedTo: payload.dateAdjustedTo,
+      inventoryItemId,
+      consumableId,
+      siteId: fromSiteId,
+      lotNumber,
+      expiresOn,
+      quantity: -quantity,
+      consumableReasonId: reasonId,
+      operation: 'remove',
+      notes,
+      adjustedFrom: dateAdjusted || dateAdjustedFrom,
+      adjustedTo: dateAdjustedTo,
       createdOn: now,
       createdBy: currentlyLoggedInUser.id
     })
-
-    yield knex('InventoryItem')
-      .where({ id: inventoryItem.id })
-      .update({
-        expiresOn: payload.expiresOn,
-        lotNumber: payload.lotNumber,
-        siteId: payload.fromSiteId,
-        quantityOnHand: knex.raw(`quantityOnHand - ${payload.quantity}`),
-        updatedOn: now,
-        updatedBy: currentlyLoggedInUser.id
-      })
   })
 
   return {
     ok: true,
-    data: yield inventoryItemQuery.clone()
-      .first(INVENTORY_ITEM_SELECT_LIST_FIELDS)
+    data: yield getInventoryItem(inventoryItemId)
   }
 }
 
 function* transferInventory(request) {
-  const { auth, params, payload } = request
+  const {
+    auth: {
+      credentials: {
+        name: username
+      }
+    },
+    payload: {
+      fromSiteId, toSiteId, consumableId, expiresOn,
+      lotNumber, quantity, dateAdjusted, notes
+    },
+    params: {
+      inventoryItemId
+    }
+  } = request
 
-  const currentlyLoggedInUser = yield getUser(auth.credentials.name)
+  const currentlyLoggedInUser = yield getUser(username)
   const now = new Date()
-
-  const sourceInventoryItemQuery = getInventoryItemQuery(params.inventoryItemId)
-  const destinationInventoryItemQuery = getInventoryItemQuery(undefined, true)
-
-  const sourceInventoryItem = yield sourceInventoryItemQuery.clone()
-    .first(INVENTORY_ITEM_SELECT_LIST_FIELDS)
-
+  const sourceInventoryItem = yield getInventoryItem(inventoryItemId)
   if (_.isEmpty(sourceInventoryItem)) {
-    return Boom.notFound('Could not find inventory item')
+    return Boom.notFound('Could not find source item')
   }
 
-  let destinationInventoryItemId = 0
+  const destinationInventoryItem = yield* findInventoryItem(
+    toSiteId, consumableId, expiresOn, lotNumber, fromSiteId)
+  let destinationInventoryItemId = -1
   yield transact(function* (knex) {
-    const destinationInventoryItem = yield destinationInventoryItemQuery.clone()
-      .andWhere('ii.inTransitFromSiteId', payload.fromSiteId)
-      .andWhere('ii.siteId', payload.toSiteId)
-      .andWhere('ii.consumableId', sourceInventoryItem.consumableId)
-      .andWhere('ii.expiresOn', payload.expiresOn)
-      .first(INVENTORY_ITEM_SELECT_LIST_FIELDS)
-
-    if (_.isEmpty(destinationInventoryItem)) {
-      [destinationInventoryItemId] = yield knex('InventoryItem').insert({
-        consumableId: sourceInventoryItem.consumableId,
-        inTransitFromSiteId: payload.fromSiteId,
-        siteId: payload.toSiteId,
-        lotNumber: payload.lotNumber,
-        expiresOn: payload.expiresOn,
-        quantityOnHand: payload.quantity,
-        createdOn: now,
-        createdBy: currentlyLoggedInUser.id
-      })
-    } else {
-      destinationInventoryItemId = destinationInventoryItem.id
-      yield knex('InventoryItem')
-        .where('id', destinationInventoryItem.id)
-        .update({
-          lotNumber: payload.lotNumber,
-          siteId: payload.toSiteId,
-          quantityOnHand: knex.raw(`quantityOnHand + ${payload.quantity}`),
-          updatedOn: now,
-          updatedBy: currentlyLoggedInUser.id
-        })
-    }
+    destinationInventoryItemId = yield* upsertInventoryItem(
+      knex, destinationInventoryItem, consumableId, toSiteId, lotNumber,
+      expiresOn, quantity, now, currentlyLoggedInUser.id, fromSiteId)
 
     yield knex('InventoryLog').insert({
-      inventoryItemId: sourceInventoryItem.id,
-      consumableId: sourceInventoryItem.consumableId,
-      siteId: payload.fromSiteId,
-      lotNumber: payload.lotNumber,
-      expiresOn: payload.expiresOn,
-      quantity: -payload.quantity,
-      notes: payload.notes,
-      adjustedFrom: payload.dateAdjusted,
+      inventoryItemId,
+      consumableId,
+      siteId: fromSiteId,
+      lotNumber,
+      expiresOn,
+      quantity: -quantity,
+      operation: 'transfer from',
+      notes,
+      adjustedFrom: dateAdjusted,
       createdOn: now,
       createdBy: currentlyLoggedInUser.id
     })
 
     yield knex('InventoryLog').insert({
       inventoryItemId: destinationInventoryItemId,
-      consumableId: sourceInventoryItem.consumableId,
-      siteId: payload.toSiteId,
-      lotNumber: payload.lotNumber,
-      expiresOn: payload.expiresOn,
-      quantity: payload.quantity,
-      notes: payload.notes,
-      adjustedFrom: payload.dateAdjusted,
+      consumableId,
+      siteId: toSiteId,
+      lotNumber,
+      expiresOn,
+      quantity,
+      operation: 'transfer to',
+      notes,
+      adjustedFrom: dateAdjusted,
       createdOn: now,
       createdBy: currentlyLoggedInUser.id
     })
 
     yield knex('InventoryItem')
-      .where('id', sourceInventoryItem.id)
+      .where('id', inventoryItemId)
       .update({
-        expiresOn: payload.expiresOn,
-        lotNumber: payload.lotNumber,
-        siteId: payload.fromSiteId,
-        quantityOnHand: knex.raw(`quantityOnHand - ${payload.quantity}`),
+        expiresOn,
+        lotNumber,
+        siteId: fromSiteId,
+        quantityOnHand: knex.raw(`quantityOnHand - ${quantity}`),
         updatedOn: now,
         updatedBy: currentlyLoggedInUser.id
       })
@@ -464,98 +508,77 @@ function* transferInventory(request) {
   return {
     ok: true,
     data: {
-      existingInventoryItem: yield sourceInventoryItemQuery.clone()
-        .first(INVENTORY_ITEM_SELECT_LIST_FIELDS),
-      newInventoryItem: yield destinationInventoryItemQuery.clone()
-        .where('ii.id', destinationInventoryItemId)
-        .first(INVENTORY_ITEM_SELECT_LIST_FIELDS)
+      existingInventoryItem: yield getInventoryItem(inventoryItemId),
+      newInventoryItem: yield getInventoryItem(destinationInventoryItemId)
     }
   }
 }
 
 function* receiveInventory(request) {
-  const { auth, params, payload } = request
-
-  const currentlyLoggedInUser = yield getUser(auth.credentials.name)
-  const now = new Date()
-
-  const sourceInventoryItemQuery = getInventoryItemQuery(params.inventoryItemId, true)
-  const destinationInventoryItemQuery = getInventoryItemQuery()
-
-  const sourceInventoryItem = yield sourceInventoryItemQuery.clone()
-    .first(INVENTORY_ITEM_SELECT_LIST_FIELDS)
-
-  if (_.isEmpty(sourceInventoryItem)) {
-    return Boom.notFound('Could not find inventory item')
-  }
-
-  let destinationInventoryItemId = 0
-  yield transact(function* (knex) {
-    const destinationInventoryItem = yield destinationInventoryItemQuery.clone()
-      .whereNull('ii.inTransitFromSiteId')
-      .andWhere('ii.siteId', payload.toSiteId)
-      .andWhere('ii.consumableId', sourceInventoryItem.consumableId)
-      .andWhere('ii.expiresOn', payload.expiresOn)
-      .first(INVENTORY_ITEM_SELECT_LIST_FIELDS)
-
-    if (_.isEmpty(destinationInventoryItem)) {
-      [destinationInventoryItemId] = yield knex('InventoryItem').insert({
-        consumableId: sourceInventoryItem.consumableId,
-        siteId: payload.toSiteId,
-        lotNumber: payload.lotNumber,
-        expiresOn: payload.expiresOn,
-        quantityOnHand: payload.quantity,
-        createdOn: now,
-        createdBy: currentlyLoggedInUser.id
-      })
-    } else {
-      destinationInventoryItemId = destinationInventoryItem.id
-      yield knex('InventoryItem')
-        .where('id', destinationInventoryItem.id)
-        .update({
-          lotNumber: payload.lotNumber,
-          siteId: payload.toSiteId,
-          quantityOnHand: knex.raw(`quantityOnHand + ${payload.quantity}`),
-          updatedOn: now,
-          updatedBy: currentlyLoggedInUser.id
-        })
+  const {
+    auth: {
+      credentials: {
+        name: username
+      }
+    },
+    payload: {
+      fromSiteId, toSiteId, consumableId, expiresOn,
+      lotNumber, quantity, dateAdjusted, notes
+    },
+    params: {
+      inventoryItemId
     }
+  } = request
+
+  const currentlyLoggedInUser = yield getUser(username)
+  const now = new Date()
+  const sourceInventoryItem = yield getInventoryItem(inventoryItemId)
+  if (_.isEmpty(sourceInventoryItem)) {
+    return Boom.notFound('Could not find source item')
+  }
+  const destinationInventoryItem = yield* findInventoryItem(
+    toSiteId, consumableId, expiresOn, lotNumber)
+  let destinationInventoryItemId = -1
+  yield transact(function* (knex) {
+    destinationInventoryItemId = yield* upsertInventoryItem(
+      knex, destinationInventoryItem, consumableId, toSiteId, lotNumber,
+      expiresOn, quantity, now, currentlyLoggedInUser.id)
 
     yield knex('InventoryLog').insert({
-      consumableId: sourceInventoryItem.consumableId,
-      siteId: payload.fromSiteId,
-      lotNumber: payload.lotNumber,
-      expiresOn: payload.expiresOn,
-      quantity: -payload.quantity,
-      notes: payload.notes,
-      adjustedFrom: payload.dateAdjusted,
+      consumableId,
+      siteId: fromSiteId,
+      lotNumber,
+      expiresOn,
+      quantity: -quantity,
+      operation: 'receive from',
+      notes,
+      adjustedFrom: dateAdjusted,
       createdOn: now,
       createdBy: currentlyLoggedInUser.id
     })
 
     yield knex('InventoryLog').insert({
       inventoryItemId: destinationInventoryItemId,
-      consumableId: sourceInventoryItem.consumableId,
-      siteId: payload.toSiteId,
-      lotNumber: payload.lotNumber,
-      expiresOn: payload.expiresOn,
-      quantity: payload.quantity,
-      notes: payload.notes,
-      adjustedFrom: payload.dateAdjusted,
+      consumableId,
+      siteId: toSiteId,
+      lotNumber,
+      expiresOn,
+      quantity,
+      operation: 'receive to',
+      notes,
+      adjustedFrom: dateAdjusted,
       createdOn: now,
       createdBy: currentlyLoggedInUser.id
     })
 
     yield knex('InventoryItem')
-      .where('id', sourceInventoryItem.id)
+      .where('id', inventoryItemId)
       .delete()
   })
 
   return {
     ok: true,
-    data: yield destinationInventoryItemQuery.clone()
-      .where('ii.id', destinationInventoryItemId)
-      .first(INVENTORY_ITEM_SELECT_LIST_FIELDS)
+    data: yield getInventoryItem(destinationInventoryItemId)
   }
 }
 

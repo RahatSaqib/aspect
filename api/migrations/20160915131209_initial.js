@@ -532,6 +532,7 @@ function* up(knex) {
       .references('id').inTable('ConsumableReason')
     inventoryLog.integer('resultId').unsigned()
       .references('id').inTable('Result')
+    inventoryLog.string('operation', 50)
     inventoryLog.string('lotNumber')
     inventoryLog.dateTime('expiresOn')
     inventoryLog.float('quantity')

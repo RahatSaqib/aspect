@@ -133,78 +133,175 @@ describe('Inventory Routes', () => {
     describe('Inventory Adjustments', () => {
       const consumableName = 'GeneXpert TB Cartridge'
       const quantityToAdjust = 11
+      const getAllInventoryPath = '/api/inventory/group-by-site'
+      const addInventoryPath = '/api/inventory/add'
+      const removeInventoryPath = '/api/inventory/remove'
+      const transferInventoryPath = '/api/inventory/transfer'
+      const receiveInventoryPath = '/api/inventory/receive'
+      let allInventoryItems = []
+
+      beforeEach((done) => {
+        server
+          .get(getAllInventoryPath)
+          .set('Authorization', `Bearer ${shared.token}`)
+          .end((err, res) => {
+            allInventoryItems = res.body.data
+            done()
+          })
+      })
+
+      afterEach((done) => {
+        server
+          .get(getAllInventoryPath)
+          .set('Authorization', `Bearer ${shared.token}`)
+          .end((err, res) => {
+            const removeInventoryItemIds = inventoryItemsGroupedBySite =>
+              _.map(inventoryItemsGroupedBySite, site =>
+                Object.assign({}, site, {
+                  inventoryItems: _.map(site.inventoryItems,
+                    inventoryItem => _.omit(inventoryItem, 'id'))
+                }))
+            const allInventoryItemsAfter = removeInventoryItemIds(res.body.data)
+            assert.deepEqual(allInventoryItemsAfter, removeInventoryItemIds(allInventoryItems),
+            'Inventory has changed after test. Did you clean up after yourself?')
+            done()
+          })
+      })
 
       describe('/inventory/add/{inventoryItemId}', () => {
-        const path = '/api/inventory/add'
-
         describe('PUT', () => {
           it('should update the quantity of an inventory item', (done) => {
+            const destinationSite = _.find(allInventoryItems,
+              site => _.some(site.inventoryItems,
+                inventoryItem => inventoryItem.consumableName === consumableName &&
+                inventoryItem.quantityOnHand !== -quantityToAdjust))
+            const destinationInventoryItem =
+              _.find(destinationSite.inventoryItems, { consumableName })
             server
-              .get('/api/inventory/group-by-site')
+              .put(`${addInventoryPath}/${destinationInventoryItem.id}`)
+              .send({
+                consumableId: destinationInventoryItem.consumableId,
+                lotNumber: destinationInventoryItem.lotNumber,
+                expiresOn: destinationInventoryItem.expiresOn,
+                quantity: quantityToAdjust,
+                notes: 'Testing add',
+                toSiteId: destinationSite.siteId,
+                dateAdjusted: (new Date()).toISOString()
+              })
               .set('Authorization', `Bearer ${shared.token}`)
               .end((err, res) => {
-                const destinationSite = _.find(res.body.data,
-                  site => _.some(site.inventoryItems, { consumableName }))
-                const destinationInventoryItem =
-                  _.find(destinationSite.inventoryItems, { consumableName })
+                assert.equal(res.status, 200)
+                assert.typeOf(res.body, 'Object')
+                assert.property(res.body, 'data')
+                assert.typeOf(res.body.data, 'Object')
+                assert.equal(res.body.data.quantityOnHand,
+                  destinationInventoryItem.quantityOnHand + quantityToAdjust)
+                // Clean up
                 server
-                  .put(`${path}/${destinationInventoryItem.id}`)
+                  .put(`${removeInventoryPath}/${destinationInventoryItem.id}`)
                   .send({
+                    consumableId: destinationInventoryItem.consumableId,
                     lotNumber: destinationInventoryItem.lotNumber,
                     expiresOn: destinationInventoryItem.expiresOn,
                     quantity: quantityToAdjust,
-                    notes: '',
-                    toSiteId: destinationSite.siteId,
+                    notes: 'Cleaning up after testing add',
+                    fromSiteId: destinationSite.siteId,
+                    reasonId: 1,
                     dateAdjusted: (new Date()).toISOString()
                   })
                   .set('Authorization', `Bearer ${shared.token}`)
-                  .end((err, res) => {
-                    assert.equal(res.status, 200)
-                    assert.typeOf(res.body, 'Object')
-                    assert.property(res.body, 'data')
-                    assert.typeOf(res.body.data, 'Object')
-                    assert.equal(res.body.data.quantityOnHand,
-                      destinationInventoryItem.quantityOnHand + quantityToAdjust)
-                    done()
-                  })
+                  .end(done)
               })
           })
         })
       })
 
       describe('/inventory/remove/{inventoryItemId}', () => {
-        const path = '/api/inventory/remove'
-
         describe('PUT', () => {
           it('should update the quantity of an inventory item', (done) => {
+            const sourceSite = _.find(allInventoryItems,
+              site => _.some(site.inventoryItems,
+                inventoryItem => inventoryItem.consumableName === consumableName &&
+                inventoryItem.quantityOnHand !== quantityToAdjust))
+            const sourceInventoryItem =
+              _.find(sourceSite.inventoryItems, { consumableName })
             server
-              .get('/api/inventory/group-by-site')
+              .put(`${removeInventoryPath}/${sourceInventoryItem.id}`)
+              .send({
+                consumableId: sourceInventoryItem.consumableId,
+                lotNumber: sourceInventoryItem.lotNumber,
+                expiresOn: sourceInventoryItem.expiresOn,
+                quantity: quantityToAdjust,
+                notes: 'Testing remove',
+                fromSiteId: sourceSite.siteId,
+                reasonId: 1,
+                dateAdjusted: (new Date()).toISOString()
+              })
               .set('Authorization', `Bearer ${shared.token}`)
               .end((err, res) => {
-                const sourceSite = _.find(res.body.data,
-                  site => _.some(site.inventoryItems, { consumableName }))
-                const sourceInventoryItem =
-                  _.find(sourceSite.inventoryItems, { consumableName })
+                assert.equal(res.status, 200)
+                assert.typeOf(res.body, 'Object')
+                assert.property(res.body, 'data')
+                assert.typeOf(res.body.data, 'Object')
+                assert.equal(res.body.data.quantityOnHand,
+                  sourceInventoryItem.quantityOnHand - quantityToAdjust)
+                // Clean up
                 server
-                  .put(`${path}/${sourceInventoryItem.id}`)
+                  .put(`${addInventoryPath}/${sourceInventoryItem.id}`)
                   .send({
+                    consumableId: sourceInventoryItem.consumableId,
                     lotNumber: sourceInventoryItem.lotNumber,
                     expiresOn: sourceInventoryItem.expiresOn,
                     quantity: quantityToAdjust,
-                    notes: '',
-                    fromSiteId: sourceSite.siteId,
-                    reasonId: 1,
+                    notes: 'Cleaning up after testing remove',
+                    toSiteId: sourceSite.siteId,
                     dateAdjusted: (new Date()).toISOString()
                   })
                   .set('Authorization', `Bearer ${shared.token}`)
+                  .end(done)
+              })
+          })
+
+          it('should remove the inventory item from view quantity is zero', (done) => {
+            const sourceSite = _.find(allInventoryItems,
+              site => _.some(site.inventoryItems, { consumableName }))
+            const sourceInventoryItem =
+              _.find(sourceSite.inventoryItems, { consumableName })
+            server
+              .put(`${removeInventoryPath}/${sourceInventoryItem.id}`)
+              .send({
+                consumableId: sourceInventoryItem.consumableId,
+                lotNumber: sourceInventoryItem.lotNumber,
+                expiresOn: sourceInventoryItem.expiresOn,
+                quantity: sourceInventoryItem.quantityOnHand,
+                notes: 'Testing removal of all inventory on hand',
+                fromSiteId: sourceSite.siteId,
+                reasonId: 1,
+                dateAdjusted: (new Date()).toISOString()
+              })
+              .set('Authorization', `Bearer ${shared.token}`)
+              .end((err, res) => {
+                assert.equal(res.status, 200)
+                server
+                  .get(getAllInventoryPath)
+                  .set('Authorization', `Bearer ${shared.token}`)
                   .end((err, res) => {
-                    assert.equal(res.status, 200)
-                    assert.typeOf(res.body, 'Object')
-                    assert.property(res.body, 'data')
-                    assert.typeOf(res.body.data, 'Object')
-                    assert.equal(res.body.data.quantityOnHand,
-                      sourceInventoryItem.quantityOnHand - quantityToAdjust)
-                    done()
+                    assert.isFalse(_.some(res.body.data,
+                      site => _.some(site.inventoryItems, { id: sourceInventoryItem.id })))
+                    // Clean up
+                    server
+                      .put(`${addInventoryPath}/999`) // TODO: Add another item so that we can add using a different ID
+                      .send({
+                        consumableId: sourceInventoryItem.consumableId,
+                        lotNumber: sourceInventoryItem.lotNumber,
+                        expiresOn: sourceInventoryItem.expiresOn,
+                        quantity: sourceInventoryItem.quantityOnHand,
+                        notes: 'Cleaning up after testing removal of all inventory on hand',
+                        toSiteId: sourceSite.siteId,
+                        dateAdjusted: (new Date()).toISOString()
+                      })
+                      .set('Authorization', `Bearer ${shared.token}`)
+                      .end(done)
                   })
               })
           })
@@ -212,57 +309,95 @@ describe('Inventory Routes', () => {
       })
 
       describe('/inventory/transfer/{inventoryItemId}', () => {
-        const path = '/api/inventory/transfer'
-
         describe('PUT', () => {
           it('should add an inventory item in transit to the destination site', (done) => {
+            const sourceSite = _.find(allInventoryItems,
+              site => _.some(site.inventoryItems, { consumableName }))
+            const sourceInventoryItem =
+              _.find(sourceSite.inventoryItems, { consumableName })
+            const destinationSite = _.find(allInventoryItems,
+              site => site.siteId !== sourceSite.siteId)
+            const existingTransitItem = _.find(destinationSite.inventoryItems, {
+              inTransitFromSiteId: sourceSite.siteId,
+              expiresOn: sourceInventoryItem.expiresOn,
+              consumableId: sourceInventoryItem.consumableId
+            })
             server
-              .get('/api/inventory/group-by-site')
+              .put(`${transferInventoryPath}/${sourceInventoryItem.id}`)
+              .send({
+                consumableId: sourceInventoryItem.consumableId,
+                lotNumber: sourceInventoryItem.lotNumber,
+                expiresOn: sourceInventoryItem.expiresOn,
+                quantity: quantityToAdjust,
+                notes: 'Testing transfer',
+                fromSiteId: sourceSite.siteId,
+                toSiteId: destinationSite.siteId,
+                dateAdjusted: (new Date()).toISOString()
+              })
               .set('Authorization', `Bearer ${shared.token}`)
               .end((err, res) => {
-                const sourceSite = _.find(res.body.data,
-                  site => _.some(site.inventoryItems, { consumableName }))
-                const sourceInventoryItem =
-                  _.find(sourceSite.inventoryItems, { consumableName })
-                const destinationSite = _.find(res.body.data,
-                  site => site.siteId !== sourceSite.siteId)
-                const existingTransitItem = _.find(destinationSite.inventoryItems, {
-                  inTransitFromSiteId: sourceSite.siteId,
-                  expiresOn: sourceInventoryItem.expiresOn,
-                  consumableId: sourceInventoryItem.consumableId
-                })
-                server
-                  .put(`${path}/${sourceInventoryItem.id}`)
-                  .send({
+                assert.equal(res.status, 200)
+                assert.typeOf(res.body, 'Object')
+                assert.property(res.body, 'data')
+                assert.typeOf(res.body.data, 'Object')
+                assert.equal(res.body.data.existingInventoryItem.quantityOnHand,
+                  sourceInventoryItem.quantityOnHand - quantityToAdjust)
+                const transitItem = res.body.data.newInventoryItem
+                assert.deepEqual(transitItem, Object.assign({},
+                  transitItem,
+                  {
+                    quantityOnHand: existingTransitItem ?
+                      existingTransitItem.quantityOnHand + quantityToAdjust :
+                      quantityToAdjust,
+                    inTransitFromSiteId: sourceSite.siteId,
+                    siteId: destinationSite.siteId,
                     lotNumber: sourceInventoryItem.lotNumber,
-                    expiresOn: sourceInventoryItem.expiresOn,
-                    quantity: quantityToAdjust,
-                    notes: '',
-                    fromSiteId: sourceSite.siteId,
+                    expiresOn: sourceInventoryItem.expiresOn
+                  }))
+                // Clean up
+                server
+                  .put(`${receiveInventoryPath}/${transitItem.id}`)
+                  .send({
+                    consumableId: transitItem.consumableId,
+                    lotNumber: transitItem.lotNumber,
+                    expiresOn: transitItem.expiresOn,
+                    quantity: transitItem.quantityOnHand,
+                    notes: 'Cleaning up after testing transfer 1',
+                    fromSiteId: transitItem.siteId,
                     toSiteId: destinationSite.siteId,
                     dateAdjusted: (new Date()).toISOString()
                   })
                   .set('Authorization', `Bearer ${shared.token}`)
                   .end((err, res) => {
-                    assert.equal(res.status, 200)
-                    assert.typeOf(res.body, 'Object')
-                    assert.property(res.body, 'data')
-                    assert.typeOf(res.body.data, 'Object')
-                    assert.equal(res.body.data.existingInventoryItem.quantityOnHand,
-                      sourceInventoryItem.quantityOnHand - quantityToAdjust)
-                    const transitItem = res.body.data.newInventoryItem
-                    assert.deepEqual(transitItem, Object.assign({},
-                      transitItem,
-                      {
-                        quantityOnHand: existingTransitItem ?
-                          existingTransitItem.quantityOnHand + quantityToAdjust :
-                          quantityToAdjust,
-                        inTransitFromSiteId: sourceSite.siteId,
-                        siteId: destinationSite.siteId,
+                    const receivedItem = res.body.data
+                    server
+                      .put(`${addInventoryPath}/${sourceInventoryItem.id}`)
+                      .send({
+                        consumableId: sourceInventoryItem.consumableId,
                         lotNumber: sourceInventoryItem.lotNumber,
-                        expiresOn: sourceInventoryItem.expiresOn
-                      }))
-                    done()
+                        expiresOn: sourceInventoryItem.expiresOn,
+                        quantity: quantityToAdjust,
+                        notes: 'Cleaning up after testing transfer 2',
+                        toSiteId: sourceSite.siteId,
+                        dateAdjusted: (new Date()).toISOString()
+                      })
+                      .set('Authorization', `Bearer ${shared.token}`)
+                      .end(() => {
+                        server
+                          .put(`${removeInventoryPath}/${receivedItem.id}`)
+                          .send({
+                            consumableId: receivedItem.consumableId,
+                            lotNumber: receivedItem.lotNumber,
+                            expiresOn: receivedItem.expiresOn,
+                            quantity: quantityToAdjust,
+                            notes: 'Cleaning up after testing add 3',
+                            fromSiteId: destinationSite.siteId,
+                            reasonId: 1,
+                            dateAdjusted: (new Date()).toISOString()
+                          })
+                          .set('Authorization', `Bearer ${shared.token}`)
+                          .end(done)
+                      })
                   })
               })
           })
@@ -270,33 +405,41 @@ describe('Inventory Routes', () => {
       })
 
       describe('/inventory/receive/{inventoryItemId}', () => {
-        const path = '/api/inventory/receive'
-
         describe('PUT', () => {
           it('should add an inventory item to the site', (done) => {
+            const sourceSite = _.find(allInventoryItems,
+              site => _.some(site.inventoryItems, { consumableName }))
+            const sourceInventoryItem =
+              _.find(sourceSite.inventoryItems, { consumableName })
+            const destinationSite = _.find(allInventoryItems,
+              site => site.siteId !== sourceSite.siteId)
+            const existingDestinationItem = _.find(destinationSite.inventoryItems, {
+              expiresOn: sourceInventoryItem.expiresOn,
+              consumableId: sourceInventoryItem.consumableId
+            })
             server
-              .get('/api/inventory/group-by-site')
+              .put(`${transferInventoryPath}/${sourceInventoryItem.id}`)
+              .send({
+                consumableId: sourceInventoryItem.consumableId,
+                lotNumber: sourceInventoryItem.lotNumber,
+                expiresOn: sourceInventoryItem.expiresOn,
+                quantity: quantityToAdjust,
+                notes: 'Creating a transfer to test receiving an item',
+                fromSiteId: sourceSite.siteId,
+                toSiteId: destinationSite.siteId,
+                dateAdjusted: (new Date()).toISOString()
+              })
               .set('Authorization', `Bearer ${shared.token}`)
               .end((err, res) => {
-                const sourceSite = _.find(res.body.data,
-                  site => _.some(site.inventoryItems,
-                    inventoryItem => inventoryItem.inTransitFromSiteId !== null))
-                const sourceInventoryItem =
-                  _.find(sourceSite.inventoryItems,
-                    inventoryItem => inventoryItem.inTransitFromSiteId !== null)
-                const destinationSite = _.find(res.body.data,
-                  site => site.siteId !== sourceInventoryItem.siteId)
-                const existingDestinationItem = _.find(destinationSite.inventoryItems, {
-                  expiresOn: sourceInventoryItem.expiresOn,
-                  consumableId: sourceInventoryItem.consumableId
-                })
+                const transitItem = res.body.data.newInventoryItem
                 server
-                  .put(`${path}/${sourceInventoryItem.id}`)
+                  .put(`${receiveInventoryPath}/${transitItem.id}`)
                   .send({
-                    lotNumber: sourceInventoryItem.lotNumber,
-                    expiresOn: sourceInventoryItem.expiresOn,
-                    quantity: quantityToAdjust,
-                    notes: '',
+                    consumableId: transitItem.consumableId,
+                    lotNumber: transitItem.lotNumber,
+                    expiresOn: transitItem.expiresOn,
+                    quantity: transitItem.quantityOnHand,
+                    notes: 'Testing receiving a lot in transit',
                     fromSiteId: sourceSite.siteId,
                     toSiteId: destinationSite.siteId,
                     dateAdjusted: (new Date()).toISOString()
@@ -305,9 +448,8 @@ describe('Inventory Routes', () => {
                   .end((err, res) => {
                     assert.equal(res.status, 200)
                     assert.typeOf(res.body, 'Object')
-                    assert.property(res.body, 'data')
-                    assert.typeOf(res.body.data, 'Object')
-                    assert.deepEqual(res.body.data, Object.assign({},
+                    const receivedItem = res.body.data
+                    assert.deepEqual(receivedItem, Object.assign({},
                       res.body.data,
                       {
                         quantityOnHand: existingDestinationItem ?
@@ -317,7 +459,35 @@ describe('Inventory Routes', () => {
                         lotNumber: sourceInventoryItem.lotNumber,
                         expiresOn: sourceInventoryItem.expiresOn
                       }))
-                    done()
+                    // Clean up
+                    server
+                      .put(`${addInventoryPath}/${sourceInventoryItem.id}`)
+                      .send({
+                        consumableId: sourceInventoryItem.consumableId,
+                        lotNumber: sourceInventoryItem.lotNumber,
+                        expiresOn: sourceInventoryItem.expiresOn,
+                        quantity: quantityToAdjust,
+                        notes: 'Cleaning up after testing receiving a lot in transit 1',
+                        toSiteId: sourceSite.siteId,
+                        dateAdjusted: (new Date()).toISOString()
+                      })
+                      .set('Authorization', `Bearer ${shared.token}`)
+                      .end(() => {
+                        server
+                          .put(`${removeInventoryPath}/${receivedItem.id}`)
+                          .send({
+                            consumableId: receivedItem.consumableId,
+                            lotNumber: receivedItem.lotNumber,
+                            expiresOn: receivedItem.expiresOn,
+                            quantity: quantityToAdjust,
+                            notes: 'Cleaning up after testing receiving a lot in transit 2',
+                            fromSiteId: destinationSite.siteId,
+                            reasonId: 1,
+                            dateAdjusted: (new Date()).toISOString()
+                          })
+                          .set('Authorization', `Bearer ${shared.token}`)
+                          .end(done)
+                      })
                   })
               })
           })

@@ -243,13 +243,17 @@ export class InventoryItemsList extends PureComponent {
       receiveInventory,
       consumableReasons
     } = this.props
+    const commonFormValues = {
+      consumableId: inventoryAdjustment.getIn(['adjustmentDetails', 'consumableId']),
+      lotNumber: formValues.get('lotNumber'),
+      expiresOn: formValues.get('expiresOn'),
+      quantity: formValues.get('quantity'),
+      notes: formValues.get('notes')
+    }
     switch (inventoryAdjustment.get('operation')) {
       case addOperation:
         return addInventory(inventoryAdjustment.getIn(['adjustmentDetails', 'inventoryItemId']), {
-          lotNumber: formValues.get('lotNumber'),
-          expiresOn: formValues.get('expiresOn'),
-          quantity: formValues.get('quantity'),
-          notes: formValues.get('notes'),
+          ...commonFormValues,
           toSiteId: formValues.get('toSiteId'),
           dateAdjusted: formValues.get('dateAdjusted')
         })
@@ -263,30 +267,21 @@ export class InventoryItemsList extends PureComponent {
         return removeInventory(inventoryAdjustment.getIn(['adjustmentDetails', 'inventoryItemId']),
           {
             ...dateValues,
-            lotNumber: formValues.get('lotNumber'),
-            expiresOn: formValues.get('expiresOn'),
-            quantity: formValues.get('quantity'),
-            notes: formValues.get('notes'),
+            ...commonFormValues,
             fromSiteId: formValues.get('fromSiteId'),
             reasonId: formValues.get('reasonId')
           })
       }
       case transferOperation:
         return transferInventory(inventoryAdjustment.getIn(['adjustmentDetails', 'inventoryItemId']), {
-          lotNumber: formValues.get('lotNumber'),
-          expiresOn: formValues.get('expiresOn'),
-          quantity: formValues.get('quantity'),
-          notes: formValues.get('notes'),
+          ...commonFormValues,
           fromSiteId: formValues.get('fromSiteId'),
           toSiteId: formValues.get('toSiteId'),
           dateAdjusted: formValues.get('dateAdjusted')
         })
       case receiveOperation:
         return receiveInventory(inventoryAdjustment.getIn(['adjustmentDetails', 'inventoryItemId']), {
-          lotNumber: formValues.get('lotNumber'),
-          expiresOn: formValues.get('expiresOn'),
-          quantity: formValues.get('quantity'),
-          notes: formValues.get('notes'),
+          ...commonFormValues,
           fromSiteId: formValues.get('fromSiteId'),
           toSiteId: formValues.get('toSiteId'),
           dateAdjusted: formValues.get('dateAdjusted')

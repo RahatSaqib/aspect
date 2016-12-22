@@ -19,11 +19,16 @@ const inventoryFilters = {
   siteName: Joi.string().allow('', null)
 }
 
-const adjustInventoryCommonParamsFields = {
+const addRemoveInventoryCommonParams = {
+  inventoryItemId: Joi.number().integer().positive().allow('', null)
+}
+
+const transferReceiveInventoryCommonParams = {
   inventoryItemId: Joi.number().integer().positive().required()
 }
 
 const adjustInventoryCommonPayloadFields = {
+  consumableId: Joi.number().positive().required(),
   lotNumber: Joi.string().max(255).allow('', null),
   expiresOn: Joi.date().iso().allow(null),
   quantity: Joi.number().positive().required(),
@@ -76,7 +81,7 @@ module.exports = [
       notes: 'Adds quantity to inventory item at site',
       auth: { scope: ['inventory:edit'] },
       validate: {
-        params: adjustInventoryCommonParamsFields,
+        params: addRemoveInventoryCommonParams,
         payload: Object.assign({},
           adjustInventoryCommonPayloadFields, {
             toSiteId: Joi.number().integer().positive().required(),
@@ -93,7 +98,7 @@ module.exports = [
       notes: 'Removes quantity from inventory item at site',
       auth: { scope: ['inventory:edit'] },
       validate: {
-        params: adjustInventoryCommonParamsFields,
+        params: addRemoveInventoryCommonParams,
         payload: Joi.alternatives().try(
           Joi.object().keys(Object.assign({},
             removeInventoryCommonPayloadFields, {
@@ -115,7 +120,7 @@ module.exports = [
       notes: 'Transfers quantity from inventory item to in transit',
       auth: { scope: ['inventory:edit'] },
       validate: {
-        params: adjustInventoryCommonParamsFields,
+        params: transferReceiveInventoryCommonParams,
         payload: Object.assign({},
           adjustInventoryCommonPayloadFields, {
             fromSiteId: Joi.number().integer().positive().required(),
@@ -133,7 +138,7 @@ module.exports = [
       notes: 'Received quantity from inventory item in transit',
       auth: { scope: ['inventory:edit'] },
       validate: {
-        params: adjustInventoryCommonParamsFields,
+        params: transferReceiveInventoryCommonParams,
         payload: Object.assign({},
           adjustInventoryCommonPayloadFields, {
             fromSiteId: Joi.number().integer().positive().required(),
