@@ -20,16 +20,19 @@ export function getSelectedState(props) {
 
 export function getSelectedStateLgas(props) {
   const selectedState = getSelectedState(props)
-  if (selectedState && selectedState.children.items) {
-    return selectedState.children.items
+  if (selectedState && selectedState.children) {
+    return selectedState.children
   }
-  return Immutable.List()
+  return {
+    loading: false,
+    items: Immutable.List(),
+  }
 }
 
 export class LgaSelectField extends PureComponent {
   static propTypes = {
     onChangeLga: PropTypes.func.isRequired,
-    stateId: PropTypes.string,
+    stateId: PropTypes.string, // eslint-disable-line react/no-unused-prop-types
     lgaId: PropTypes.string,
     fetchLgasForLocationSelector: PropTypes.func
   }
@@ -38,17 +41,18 @@ export class LgaSelectField extends PureComponent {
     const selectedCountry = getSelectedCountry(this.props)
     const selectedState = getSelectedState(this.props)
     if (selectedState) {
-      this.props.fetchLgasForLocationSelector(true, selectedCountry, selectedState)
+      this.props.fetchLgasForLocationSelector(false, selectedCountry, selectedState)
     }
   }
 
   componentDidUpdate(prevProps) {
-    if (this.props.stateId !== prevProps.stateId) {
+    const prevSelectedState = getSelectedState(prevProps)
+    const selectedState = getSelectedState(this.props)
+    if (selectedState && (
+      !prevSelectedState || prevSelectedState.get('id') !== selectedState.get('id')
+    )) {
       const selectedCountry = getSelectedCountry(this.props)
-      const selectedState = getSelectedState(this.props)
-      if (selectedState) {
-        this.props.fetchLgasForLocationSelector(true, selectedCountry, selectedState)
-      }
+      this.props.fetchLgasForLocationSelector(false, selectedCountry, selectedState)
     }
   }
 
@@ -61,14 +65,16 @@ export class LgaSelectField extends PureComponent {
     const restProps = _.omit(this.props, [
       'countries', 'onChangeLga', 'countryId', 'stateId', 'lgaId', 'fetchLgasForLocationSelector'
     ])
+    const lgas = getSelectedStateLgas(this.props)
 
     return (
       <ForkedSelectField
         {...restProps}
+        disabled={lgas.loading || lgas.items.isEmpty()}
         value={lgaId}
         onChange={this.handleSelectFieldChange}
       >
-        {getSelectedStateLgas(this.props).map(l => (
+        {lgas.items.map(l => (
           <MenuItem
             key={l.id}
             value={l.id}

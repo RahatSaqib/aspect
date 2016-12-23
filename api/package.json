@@ -12,8 +12,10 @@
     "mocha:unit:check:coverage": "istanbul check-coverage --config test/istanbul.yml",
     "test:unit": "npm-run-all lint mocha:unit:clear:coverage mocha:unit:coverage mocha:unit:check:coverage",
     "start": "node src/server.js",
-    "start:background": "forever start src/server.js",
+    "prestart:background": "fsys --task=remove --fileFolder=out.log && fsys --task=remove --fileFolder=err.log",
+    "start:background": "forever start -o out.log -e err.log src/server.js",
     "stop:background": "forever stop src/server.js",
+    "poststop:background": "shx echo API LOGS: && shx echo ------------------------------------------------------------- && shx cat out.log && shx echo API ERRORS: && shx echo ------------------------------------------------------------- && shx cat err.log",
     "mocha:contract": "mocha --opts test/contract.mocha.opts",
     "test:contract": "npm-run-all -c start:background mocha:contract stop:background",
     "test": "npm-run-all test:unit test:contract",
@@ -67,6 +69,7 @@
     "mocha-multi": "^0.9.1",
     "npm-run-all": "^3.1.2",
     "proxyquire": "^1.7.10",
+    "shx": "^0.2.1",
     "sinon": "^1.17.5",
     "supertest": "^2.0.1"
   }

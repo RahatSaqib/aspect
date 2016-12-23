@@ -97,7 +97,6 @@ describe('Authentication routes', () => {
         jwt.verify(res.body.access, config.secret, (err, decoded) => {
           assert.isNotOk(err) // isNotOk = is falsy
           assert.property(decoded, 'name')
-          assert.property(decoded, 'modules')
           assert.property(decoded, 'permissions')
           assert.property(decoded, 'iat')
           assert.property(decoded, 'exp')
@@ -176,7 +175,6 @@ describe('Authentication routes', () => {
         jwt.verify(res.body.access, config.secret, (err, decoded) => {
           assert.isNotOk(err) // isNotOk = is falsy
           assert.property(decoded, 'name')
-          assert.property(decoded, 'modules')
           assert.property(decoded, 'permissions')
           assert.property(decoded, 'iat')
           assert.property(decoded, 'exp')
@@ -215,7 +213,6 @@ describe('Authentication routes', () => {
             assert.isNotOk(err) // isNotOk = is falsy
             assert.property(decoded, 'name')
             assert.equal(decoded.name, newUsername)
-            assert.property(decoded, 'modules')
             assert.property(decoded, 'permissions')
             assert.property(decoded, 'iat')
             assert.property(decoded, 'exp')
@@ -240,7 +237,6 @@ describe('Authentication routes', () => {
                   assert.isNotOk(err) // isNotOk = is falsy
                   assert.property(decoded, 'name')
                   assert.equal(decoded.name, newUsername)
-                  assert.property(decoded, 'modules')
                   assert.property(decoded, 'permissions')
                   assert.property(decoded, 'iat')
                   assert.property(decoded, 'exp')
@@ -267,7 +263,6 @@ describe('Authentication routes', () => {
                         assert.isNotOk(err) // isNotOk = is falsy
                         assert.property(decoded, 'name')
                         assert.equal(decoded.name, adminUsername)
-                        assert.property(decoded, 'modules')
                         assert.property(decoded, 'permissions')
                         assert.property(decoded, 'iat')
                         assert.property(decoded, 'exp')
@@ -292,7 +287,6 @@ describe('Authentication routes', () => {
                               assert.isNotOk(err) // isNotOk = is falsy
                               assert.property(decoded, 'name')
                               assert.equal(decoded.name, adminUsername)
-                              assert.property(decoded, 'modules')
                               assert.property(decoded, 'permissions')
                               assert.property(decoded, 'iat')
                               assert.property(decoded, 'exp')
@@ -331,7 +325,6 @@ describe('Authentication routes', () => {
             assert.isNotOk(err) // isNotOk = is falsy
             assert.property(decoded, 'name')
             assert.equal(decoded.name, adminUsername)
-            assert.property(decoded, 'modules')
             assert.property(decoded, 'permissions')
             assert.property(decoded, 'iat')
             assert.property(decoded, 'exp')
@@ -356,7 +349,6 @@ describe('Authentication routes', () => {
                   assert.isNotOk(err) // isNotOk = is falsy
                   assert.property(decoded, 'name')
                   assert.equal(decoded.name, adminUsername)
-                  assert.property(decoded, 'modules')
                   assert.property(decoded, 'permissions')
                   assert.property(decoded, 'iat')
                   assert.property(decoded, 'exp')
@@ -383,7 +375,6 @@ describe('Authentication routes', () => {
                         assert.isNotOk(err) // isNotOk = is falsy
                         assert.property(decoded, 'name')
                         assert.equal(decoded.name, adminUsername)
-                        assert.property(decoded, 'modules')
                         assert.property(decoded, 'permissions')
                         assert.property(decoded, 'iat')
                         assert.property(decoded, 'exp')
@@ -408,7 +399,6 @@ describe('Authentication routes', () => {
                               assert.isNotOk(err) // isNotOk = is falsy
                               assert.property(decoded, 'name')
                               assert.equal(decoded.name, adminUsername)
-                              assert.property(decoded, 'modules')
                               assert.property(decoded, 'permissions')
                               assert.property(decoded, 'iat')
                               assert.property(decoded, 'exp')
@@ -448,7 +438,6 @@ describe('Authentication routes', () => {
             assert.isNotOk(err) // isNotOk = is falsy
             assert.property(decoded, 'name')
             assert.equal(decoded.name, newUsername)
-            assert.property(decoded, 'modules')
             assert.property(decoded, 'permissions')
             assert.property(decoded, 'iat')
             assert.property(decoded, 'exp')
@@ -473,7 +462,6 @@ describe('Authentication routes', () => {
                   assert.isNotOk(err) // isNotOk = is falsy
                   assert.property(decoded, 'name')
                   assert.equal(decoded.name, newUsername)
-                  assert.property(decoded, 'modules')
                   assert.property(decoded, 'permissions')
                   assert.property(decoded, 'iat')
                   assert.property(decoded, 'exp')
@@ -500,7 +488,6 @@ describe('Authentication routes', () => {
                         assert.isNotOk(err) // isNotOk = is falsy
                         assert.property(decoded, 'name')
                         assert.equal(decoded.name, adminUsername)
-                        assert.property(decoded, 'modules')
                         assert.property(decoded, 'permissions')
                         assert.property(decoded, 'iat')
                         assert.property(decoded, 'exp')
@@ -525,7 +512,6 @@ describe('Authentication routes', () => {
                               assert.isNotOk(err) // isNotOk = is falsy
                               assert.property(decoded, 'name')
                               assert.equal(decoded.name, adminUsername)
-                              assert.property(decoded, 'modules')
                               assert.property(decoded, 'permissions')
                               assert.property(decoded, 'iat')
                               assert.property(decoded, 'exp')

@@ -1,6 +1,7 @@
 // =======================
 // configuration =========
 // =======================
+const _ = require('lodash')
 const config = require('./config')
 const { version } = require('./../package.json')
 const { addClientRoutes, addDeviceRoutes } = require('./routes')
@@ -141,9 +142,14 @@ server.auth.strategy('jwt', 'jwt', {
     //   and either "site:view" or "site:edit" permissions
 
     const isDeviceApi = (+decoded.dak > 0)
+    const modules = decoded.permissions ? _.uniq(
+      _.map(
+        _.filter(decoded.permissions,
+          permission => permission.indexOf(':') > 0),
+        permission => permission.substr(0, permission.indexOf(':')))) :
+      []
     const scope = [isDeviceApi ? 'deviceApi' : 'clientApi']
-      .concat(decoded.modules || [], decoded.permissions || [])
-
+      .concat(modules, decoded.permissions || [])
     callback(null, valid, Object.assign({ scope }, decoded))
   }
   // TODO JWT verfication algorithm verifyOptions: { algorithms: [ 'HS256' ] }
