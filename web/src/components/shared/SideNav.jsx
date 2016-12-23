@@ -21,6 +21,7 @@ import People from 'material-ui/svg-icons/social/people'
 import Notifications from 'material-ui/svg-icons/social/notifications'
 import Book from 'material-ui/svg-icons/action/book'
 import RssFeed from 'material-ui/svg-icons/communication/rss-feed'
+import Computer from 'material-ui/svg-icons/hardware/computer'
 
 // Our own imports
 import requirePermissions from './requirePermissions'
@@ -141,6 +142,13 @@ export const SideNav = ({ open, handleClose, pathname, desktop }) => (
         leftIcon={<RssFeed />}
         className={styles.Drawer__ListItem}
         primaryText="Routers"
+      />
+      <ListItem
+        containerElement={<Link to="/terminal" />}
+        value={'/terminal'}
+        leftIcon={<Computer />}
+        className={styles.Drawer__ListItem}
+        primaryText="Terminals"
       />
       <ListItem
         containerElement={<Link to="/notification" />}
