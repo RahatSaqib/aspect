@@ -162,41 +162,9 @@ describe('auth endpoints', () => {
             .handleResponseWith(() => {
               const unsignedToken = jwt.sign.lastCall.args[0]
               assert.deepEqual(unsignedToken, {
-                id: 123,
-                partnerId: 2,
-                countryId: 3,
                 name: britishUser.name,
-                modules: permissions.map(p => p.module),
-                permissions: permissions.map(p => `${p.module}:${p.activity}`),
-                culture: britishUser.culture,
-                timezone: britishUser.timezone
+                permissions: permissions.map(p => `${p.module}:${p.activity}`)
               })
-            })
-            .thenCall(done)
-            .execute()
-        })
-
-        it('Should set the user\'s culture to en-US if not specified', (done) => {
-          dbSpy.query.for('Get basic user details').resolvesWith({
-            lockedOut: 0,
-            failedPasswordAttempts: 0,
-            id: 123,
-            name: 'admin',
-            password: validHashedPassword,
-            culture: ''
-          })
-          const requestData = {
-            payload: {
-              name: 'admin',
-              password: validPassword,
-              clientId: 'request client id'
-            }
-          }
-          endpointUtils.callHandlerOn(endpoint)
-            .with(requestData)
-            .handleResponseWith(() => {
-              const unsignedToken = jwt.sign.lastCall.args[0]
-              assert.equal(unsignedToken.culture, 'en-US')
             })
             .thenCall(done)
             .execute()
@@ -702,34 +670,9 @@ describe('auth endpoints', () => {
             .handleResponseWith(() => {
               const unsignedToken = jwt.sign.lastCall.args[0]
               assert.deepEqual(unsignedToken, {
-                id: 123,
-                partnerId: 2,
-                countryId: 3,
                 name: southAfricanUser.name,
-                modules: permissions.map(p => p.module),
-                permissions: permissions.map(p => `${p.module}:${p.activity}`),
-                culture: southAfricanUser.culture,
-                timezone: southAfricanUser.timezone
+                permissions: permissions.map(p => `${p.module}:${p.activity}`)
               })
-            })
-            .thenCall(done)
-            .execute()
-        })
-
-        it('Should set the user\'s culture to en-US if not specified', (done) => {
-          dbSpy.query.for('Get basic user details').resolvesWith({
-            lockedOut: 0,
-            failedPasswordAttempts: 0,
-            id: 123,
-            name: 'admin',
-            password: validHashedPassword,
-            culture: ''
-          })
-          endpointUtils.callHandlerOn(endpoint)
-            .with(requestData)
-            .handleResponseWith(() => {
-              const unsignedToken = jwt.sign.lastCall.args[0]
-              assert.equal(unsignedToken.culture, 'en-US')
             })
             .thenCall(done)
             .execute()

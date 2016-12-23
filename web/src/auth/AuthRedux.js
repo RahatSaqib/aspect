@@ -191,7 +191,7 @@ export function loginStart(login) {
 
         // We can dispatch many times!
         // Here, we update the app state with the results of the API call.
-        dispatch(loginSuccess(jwt.name, jwt.culture, jwt.timezone, jwt.permissions))
+        dispatch(loginSuccess(jwt.name, json.culture, json.timezone, jwt.permissions))
 
         browserHistory.push('/dashboard')
       })
@@ -213,7 +213,7 @@ export function logoutStart(reason) {
 }
 
 export function refreshStart() {
-  return function (dispatch) {
+  return function (dispatch, getState) {
     if (!localStorage.getRefreshToken()) {
       return
     }
@@ -230,8 +230,8 @@ export function refreshStart() {
       })
       .then((json) => {
         const jwt = storeAccess(json)
-
-        dispatch(refreshSuccess(jwt.name, jwt.culture, jwt.timezone, jwt.permissions))
+        const user = getState().user
+        dispatch(refreshSuccess(jwt.name, user.culture, user.timezone, jwt.permissions))
       })
       .catch(() => {
         dispatch(logoutStart())
@@ -245,8 +245,12 @@ function storeAccess(json) {
 
   localStorage.store(json.access, jwt.exp, json.refresh, json.clientId)
 
-  localStorage.updateCulture(jwt.culture)
-  localStorage.updateTimezone(jwt.timezone)
+  if (json.culture) {
+    localStorage.updateCulture(json.culture)
+  }
+  if (json.culture) {
+    localStorage.updateTimezone(json.timezone)
+  }
   return jwt
 }
 

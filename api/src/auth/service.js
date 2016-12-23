@@ -122,7 +122,9 @@ function* authenticate(request) {
   return {
     access: accessToken,
     refresh: refreshToken,
-    clientId
+    clientId,
+    culture: user.culture || 'en-US',
+    timezone: user.timezone || 'Eastern Standard Time'
   }
 }
 
@@ -181,7 +183,7 @@ function* refreshToken(request) {
 }
 
 // generate a new jwt for the given user data
-function getAccessToken({ id, name, culture, timezone, partnerId, countryId }) {
+function getAccessToken({ id, name, partnerId }) {
   return query('Get permissions for user and partner')
     .from('Permission as p')
     .innerJoin('RolePermission as rp', 'p.id', 'rp.permissionId')
@@ -194,14 +196,7 @@ function getAccessToken({ id, name, culture, timezone, partnerId, countryId }) {
       // create a new token
       const token = jwt.sign({
         name,
-        id,
-        partnerId,
-        countryId,
-        // TODO should we remove modules since same info in permissions to reduce size of JWT?
-        modules: data.map(p => p.module),
-        permissions: data.map(p => `${p.module}:${p.activity}`),
-        culture: culture || 'en-US',
-        timezone: timezone || 'Eastern Standard Time'
+        permissions: data.map(p => `${p.module}:${p.activity}`)
       },
       config.secret, {
         expiresIn: '1 hour',

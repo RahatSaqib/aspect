@@ -111,7 +111,7 @@ function storeAccess(access, refresh, clientId) {
 }
 
 export function saveLoginDetails(loginDetails) {
-  return (dispatch) => {
+  return (dispatch, getState) => {
     dispatch(createSaveAccountDetailsStart())
     return aspectFetch('/auth/update-login-details',
       {
@@ -163,7 +163,9 @@ export function saveLoginDetails(loginDetails) {
       })
       .then((json) => {
         const jwt = storeAccess(json.access, json.refresh, json.clientId)
-        dispatch(loginSuccess(jwt.name, jwt.culture, jwt.timezone, jwt.permissions))
+        const user = getState().user
+        dispatch(loginSuccess(jwt.name, user.culture,
+          user.timezone, jwt.permissions))
         dispatch(createReceiveUpdatedLoginDetails(json.data))
       })
       .catch((err) => {
