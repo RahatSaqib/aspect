@@ -22,6 +22,7 @@ import {
 } from '../RouterRedux'
 import ReadOnlyFields from '../../components/shared/ReadOnlyFields'
 import RouterDetailForm from './RouterDetailForm'
+import DeviceDemoLink from '../../device/DeviceDemoLink'
 import styles from './RouterDetail.css'
 
 const messages = defineMessages({
@@ -189,6 +190,18 @@ export class RouterDetail extends PureComponent {
     )
   }
 
+  renderDemoButton() {
+    return (
+      <DeviceDemoLink
+        to={`/demo/device/${this.props.params.routerId}`}
+        className={styles.DemoLink}
+        target="_blank"
+      >
+        Demo
+      </DeviceDemoLink>
+    )
+  }
+
   renderContent() {
     const { router, editable, intl: { formatMessage, formatDate } } = this.props
     if (!router) {
@@ -249,6 +262,7 @@ export class RouterDetail extends PureComponent {
           {this.renderProgress()}
           {this.renderContent()}
         </Paper>
+        {this.renderDemoButton()}
       </div>
     )
   }

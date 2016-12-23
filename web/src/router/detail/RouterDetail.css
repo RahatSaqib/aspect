@@ -33,3 +33,8 @@
     font-size: 65%;
     text-transform: uppercase;
 }
+
+.DemoLink {
+  text-decoration: none;
+  color: #ccc;
+}

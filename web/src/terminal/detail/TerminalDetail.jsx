@@ -22,6 +22,7 @@ import {
 } from '../TerminalRedux'
 import ReadOnlyFields from '../../components/shared/ReadOnlyFields'
 import TerminalDetailForm from './TerminalDetailForm'
+import DeviceDemoLink from '../../device/DeviceDemoLink'
 import styles from './TerminalDetail.css'
 
 const messages = defineMessages({
@@ -189,6 +190,18 @@ export class TerminalDetail extends PureComponent {
     )
   }
 
+  renderDemoButton() {
+    return (
+      <DeviceDemoLink
+        to={`/demo/device/${this.props.params.terminalId}`}
+        className={styles.DemoLink}
+        target="_blank"
+      >
+        Demo
+      </DeviceDemoLink>
+    )
+  }
+
   renderContent() {
     const { terminal, editable, intl: { formatMessage, formatDate } } = this.props
     if (!terminal) {
@@ -249,6 +262,7 @@ export class TerminalDetail extends PureComponent {
           {this.renderProgress()}
           {this.renderContent()}
         </Paper>
+        {this.renderDemoButton()}
       </div>
     )
   }
