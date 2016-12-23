@@ -36,6 +36,7 @@ import { InventoryItemsListContainer } from '../inventory/list/InventoryItemsLis
 import { RouterListContainer } from '../router/list/RouterList'
 import { RouterDetailContainer } from '../router/detail/RouterDetail'
 import { TerminalListContainer } from '../terminal/list/TerminalList'
+import { TerminalDetailContainer } from '../terminal/detail/TerminalDetail'
 
 import { refreshStart } from '../auth/AuthRedux'
 
@@ -104,6 +105,7 @@ const routes =
 
         <Route path="terminal">
           <IndexRoute component={TerminalListContainer} />
+          <Route path=":terminalId" component={TerminalDetailContainer} />
         </Route>
 
         <Route path="result">
