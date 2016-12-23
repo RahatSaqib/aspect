@@ -31,23 +31,24 @@ export class StateSelectField extends PureComponent {
   static propTypes = {
     fetchStatesForLocationSelector: PropTypes.func.isRequired,
     onChangeState: PropTypes.func.isRequired,
-    countryId: PropTypes.string,
+    countryId: PropTypes.string, // eslint-disable-line react/no-unused-prop-types
     stateId: PropTypes.string
   }
 
   componentDidMount() {
     const selectedCountry = getSelectedCountry(this.props)
     if (selectedCountry) {
-      this.props.fetchStatesForLocationSelector(true, selectedCountry)
+      this.props.fetchStatesForLocationSelector(false, selectedCountry)
     }
   }
 
   componentDidUpdate(prevProps) {
-    if (this.props.countryId !== prevProps.countryId) {
-      const selectedCountry = getSelectedCountry(this.props)
-      if (selectedCountry) {
-        this.props.fetchStatesForLocationSelector(true, selectedCountry)
-      }
+    const prevSelectedCountry = getSelectedCountry(prevProps)
+    const selectedCountry = getSelectedCountry(this.props)
+    if (selectedCountry && (
+      !prevSelectedCountry || prevSelectedCountry.get('id') !== selectedCountry.get('id')
+    )) {
+      this.props.fetchStatesForLocationSelector(false, selectedCountry)
     }
   }
 
