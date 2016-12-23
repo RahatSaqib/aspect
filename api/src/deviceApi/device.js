@@ -1,3 +1,4 @@
+const _ = require('lodash')
 const { addResult, listResults } = require('./result')
 
 function* addDeviceData(context) {
@@ -6,7 +7,7 @@ function* addDeviceData(context) {
   const { result, configuration, operation } = payload
 
   if (configuration) {
-    yield* addDeviceConfiguration(
+    yield* updateDeviceConfiguration(
       context.withPayload(configuration))
   }
 
@@ -26,7 +27,6 @@ function* addDeviceData(context) {
       }
     }
   }
-
 
   return response
 }
@@ -50,21 +50,20 @@ function* getDeviceData(context) {
   return { checkpoint, result }
 }
 
-function* addDeviceConfiguration(context) {
-  const { knex, payload, device: { id: deviceId }, now } = context
+function* updateDeviceConfiguration(context) {
+  const { knex, payload, device: { id: deviceId } } = context
 
-  const [deviceConfigurationId] = yield knex('DeviceConfiguration')
-    .insert({
-      deviceId,
-      externalId: payload.id,
-      data: JSON.stringify(payload.data),
-      createdOn: now
-    })
-  context.addDeviceConfigurationId(deviceConfigurationId)
+  const { previousConfigData } = yield knex('Device')
+    .where({ id: deviceId })
+    .first('configurationData as previousConfigData')
+
+  const configurationData = previousConfigData == null ? payload.data :
+    _.merge(JSON.parse(previousConfigData), payload.data)
 
   yield knex('Device')
-    .where('id', deviceId)
-    .update({ deviceConfigurationId })
+    .where({ id: deviceId })
+    .update({ configurationData: JSON.stringify(configurationData) })
+  context.markDeviceConfigurationUpdated()
 
   return {}
 }
@@ -81,16 +80,12 @@ function* addDeviceOperation(context) {
     })
   context.addDeviceOperationId(deviceOperationId)
 
-  yield knex('Device')
-    .where('id', deviceId)
-    .update({ deviceOperationId })
-
   return {}
 }
 
 module.exports = {
   addDeviceData,
   getDeviceData,
-  addDeviceConfiguration,
+  updateDeviceConfiguration,
   addDeviceOperation
 }

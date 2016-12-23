@@ -1,6 +1,11 @@
+// All Device API endpoints in this file are relative to /device/ and
+// require Device Token authentication. In general, a POST to /device
+// also has a corresponding endpoint to a single update, for example,
+// POST /device {result: {}} is equivalent to POST /device/result if
+// only result data is posted.
 const Joi = require('joi')
 const { deviceApiHandler } = require('./common')
-const { addDeviceData, getDeviceData, addDeviceOperation, addDeviceConfiguration } = require('./device')
+const { addDeviceData, getDeviceData, addDeviceOperation, updateDeviceConfiguration } = require('./device')
 const { addResult } = require('./result')
 
 const errorPayload = Joi.object().keys({
@@ -130,6 +135,7 @@ const resultPayload = {
 
 module.exports = [
   {
+    // GET /device
     method: 'GET',
     path: '/',
     handler: deviceApiHandler(getDeviceData, {}),
@@ -160,6 +166,7 @@ module.exports = [
     }
   },
   {
+    // POST /device { checkpoint, configuration, operation, result }
     method: 'POST',
     path: '/',
     handler: deviceApiHandler(addDeviceData, { updatePing: true, updateDeviceLog: true }),
@@ -189,9 +196,11 @@ module.exports = [
     }
   },
   {
+    // POST /device/configuration
     method: 'POST',
     path: '/configuration',
-    handler: deviceApiHandler(addDeviceConfiguration, { updatePing: true, updateDeviceLog: true }),
+    handler: deviceApiHandler(
+      updateDeviceConfiguration, { updatePing: true, updateDeviceLog: true }),
     config: {
       description: 'Update Device Configuration',
       notes: 'Device configuration information, such as firmware revision, software versions,'
@@ -207,6 +216,7 @@ module.exports = [
     }
   },
   {
+    // POST /device/operation
     method: 'POST',
     path: '/operation',
     handler: deviceApiHandler(addDeviceOperation, { updatePing: true, updateDeviceLog: true }),
@@ -225,6 +235,7 @@ module.exports = [
     }
   },
   {
+    // POST /device/result
     method: 'POST',
     path: '/result',
     handler: deviceApiHandler(addResult, { updatePing: true, updateDeviceLog: true }),

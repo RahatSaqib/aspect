@@ -7,10 +7,7 @@ const {
 const {
   listDevices,
   showDevice,
-  updateDevice,
-  getDeviceApiKey,
-  listDeviceOperation,
-  listDeviceConfiguration
+  updateDevice
 } = require('./service')
 const { validateAllGeographyFilterParams } = require('../geography/requestValidation')
 
@@ -72,53 +69,6 @@ module.exports = [
           shortname: Joi.string().required(),
           notes: Joi.string().allow('')
         }
-      }
-    }
-  },
-  {
-    method: 'GET',
-    path: '/device/{deviceId}/api-key',
-    handler: asyncHandler(getDeviceApiKey),
-    config: {
-      description: 'Get Device API Key',
-      notes: 'Get API Key for the specified device',
-      // auth: {scope: []},  admin only
-      validate: {
-        params: {
-          deviceId: Joi.string().description('Device id').required()
-        }
-      }
-    }
-  },
-  {
-    method: 'GET',
-    path: '/device/configuration',
-    handler: asyncHandler(listDeviceConfiguration),
-    config: {
-      notes: 'List Device Configuration',
-      description: 'List device configuration data for the specified device',
-      auth: { scope: ['device:view', 'device:edit'] },
-      validate: {
-        query: Object.assign({
-          deviceId: Joi.string().description('Device id').description('Filter for device id'),
-          deviceName: Joi.string().allow('').description('Filter for device name')
-        }, validateSortPageParams('deviceName', 'createdOn', 'updatedOn'))
-      }
-    }
-  },
-  {
-    method: 'GET',
-    path: '/device/operation',
-    handler: asyncHandler(listDeviceOperation),
-    config: {
-      notes: 'List Device Operation',
-      description: 'List device operational data for the specified device',
-      auth: { scope: ['device:view', 'device:edit'] },
-      validate: {
-        query: Object.assign({
-          deviceId: Joi.string().description('Device id').description('Filter for device id'),
-          deviceName: Joi.string().allow('').description('Filter for device name')
-        }, validateSortPageParams('deviceName', 'createdOn', 'updatedOn'))
       }
     }
   }
