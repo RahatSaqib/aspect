@@ -80,6 +80,10 @@ export class DeviceDemo extends PureComponent {
     const { assayId, resultId, posting } = this.state
 
     const assays = device.get('assays')
+    if (assays.isEmpty()) {
+      return false
+    }
+
     const assay = assays.find(a => a.get('id') === assayId)
 
     const results = assay ? assay.get('results') : []
