@@ -2,7 +2,6 @@
 import _ from 'lodash'
 import Immutable from 'immutable'
 import React, { PureComponent, PropTypes } from 'react'
-import { browserHistory } from 'react-router'
 import { bindActionCreators } from 'redux'
 import { connect } from 'react-redux'
 import {
@@ -15,7 +14,6 @@ import { Card, CardHeader, CardActions, CardText } from 'material-ui/Card'
 import FlatButton from 'material-ui/FlatButton'
 import Share from 'material-ui/svg-icons/social/share'
 import Bookmark from 'material-ui/svg-icons/action/bookmark-border'
-//import IconExport from 'material-ui/svg-icons/file/file-download'
 import IconExport from 'material-ui/svg-icons/navigation/arrow-forward'
 import Dialog from 'material-ui/Dialog'
 
@@ -32,19 +30,14 @@ import {
   clearListFilter,
   changeListFilter,
 
-  types as filterActionTypes,
-  closeExportConfirmation,
+  exportFormatTypes,
   askExportConfirmation,
-  receivedExportResponse
+  closeExportConfirmation,
+  beginListExportProcessing
 } from '../FilterRedux'
 import getFilterMessage from '../formatting'
 
 import styles from './ListFilter.css'
-
-export const formatTypes = {
-  EXCEL: 'excel',
-  CSV: 'csv'
-}
 
 const messages = defineMessages({
   save: {
@@ -140,11 +133,11 @@ const messages = defineMessages({
     defaultMessage: 'Set Filters'
   },
   exportExcel: {
-    id: 'pages.ListCommand.exportExcel',
+    id: 'pages.ListExport.exportExcel',
     defaultMessage: 'Excel'
   },
   exportCsv: {
-    id: 'pages.ListCommand.exportCsv',
+    id: 'pages.ListExport.exportCsv',
     defaultMessage: 'CSV'
   }
 })
@@ -181,19 +174,24 @@ export class ListFilter extends PureComponent {
     subject: PropTypes.string,
     dateFilterLabel: PropTypes.string,
 
-    onClickExport: PropTypes.func,
-
     countries: PropTypes.object.isRequired,
     assay: PropTypes.object.isRequired,
     consumableItems: PropTypes.object.isRequired,
     filterTemplate: PropTypes.string.isRequired,
-    filterTemplateOptional: PropTypes.string
+    filterTemplateOptional: PropTypes.string,
+
+    // for store.filter.ListExport
+    onClickExport: PropTypes.func,
+    listExport: PropTypes.shape({
+      askingConfirmation: PropTypes.bool.isRequired,
+      processingExportExcel: PropTypes.bool.isRequired,
+      processingExportCsv: PropTypes.bool.isRequired,
+      currentFormatType: PropTypes.string
+    }),
   }
 
   state = {
     expanded: !!this.props.defaultExpanded,
-    showExportExcel: !!this.props.onClickExport,
-    showExportCsv: !!this.props.onClickExport
   }
 
   handleExpandChange = (expanded) => {
@@ -272,67 +270,18 @@ export class ListFilter extends PureComponent {
   }
 
 
-  askExportConfirmation = (currentCommand) => {
-    const newCommand = {
-      ...this.props.command,
-      askingConfirmation: true,
-      currentCommand
-    }
-    this.props.askExportConfirmation(newCommand)
-  }
-  clickExportExcel = (event) => {
-    this.askExportConfirmation(formatTypes.EXCEL)
-  }
-  clickExportCsv = (event) => {
-    this.askExportConfirmation(formatTypes.CSV)
-  }
-
-  exportConfirmationAgreed = () => {
-    var prop = {
-      askingConfirmation: false,
-      currentCommand: undefined
-    }
-
-    if (this.props.onClickExport){
-      if (this.props.command.currentCommand === formatTypes.EXCEL)
-        prop.processingExportExcel = true
-      else
-        prop.processingExportCsv = true
-
-      // process exporting data by caller component
-      this.props.onClickExport(this.props.command.currentCommand, this.exportFileIsReady)
-    }
-
-    this.props.closeExportConfirmation({
-      ...this.props.command,
-      ...prop
-    })
-  }
-  exportFileIsReady = (format, serverResponse) => {
-    const { command, receivedExportResponse } = this.props
-    const prop = {}
-    if (format === formatTypes.EXCEL){ prop.processingExportExcel = false }
-    else if (format === formatTypes.CSV){ prop.processingExportCsv = false }
-    const nextCommand = {...command, ...prop}
-
-    receivedExportResponse(nextCommand)
-
-    if (serverResponse.ok === true){
-      browserHistory.push(serverResponse.url)
-    }
-  }
-
-  exportConfirmationDisagreed = () => {
-    this.props.closeExportConfirmation({
-      ...this.props.command,
-      askingConfirmation: false,
-      currentCommand: undefined
-    })
+  clickExportExcel      = (event)   => { this.props.askExportConfirmation(exportFormatTypes.EXCEL) }
+  clickExportCsv        = (event)   => { this.props.askExportConfirmation(exportFormatTypes.CSV) }
+  confirmationDisagreed = ()        => { this.props.closeExportConfirmation() }
+  confirmationAgreed    = (event) => {
+    this.props.beginListExportProcessing(this.props.listExport.currentFormatType)
+    this.props.onClickExport(this.props.listExport.currentFormatType)
+    this.props.closeExportConfirmation()
   }
 
   render() {
 
-  const { filter,
+    const { filter,
           countries,
           assay,
           consumableItems,
@@ -342,20 +291,21 @@ export class ListFilter extends PureComponent {
           filterTemplateOptional,
           dateFilterLabel,
           intl: { formatMessage, formatDate },
-          command,
-          onClickExport} = this.props
 
-    const { expanded, showExportExcel, showExportCsv } = this.state
+          onClickExport,
+          showExportExcel,
+          showExportCsv,
+          listExport
+        } = this.props
+    const showExcel = !!onClickExport && (showExportExcel || true) === true
+    const showCsv = !!onClickExport && (showExportCsv || true) === true
+
+    const { expanded } = this.state
 
     const hasDataSection = (
       config.assay || config.deviceName || config.result ||
       config.siteName || config.contactNameOrEmail || config.consumable
     )
-
-    const exportConfirmationActions = [
-      <FlatButton primary={true} label="Yes, Export" onTouchTap={this.exportConfirmationAgreed} />,
-      <FlatButton primary={true} label="No, Cancel"  onTouchTap={this.exportConfirmationDisagreed} />
-    ]
 
     const filterMessage = getFilterMessage(filter,
       countries,
@@ -519,21 +469,23 @@ export class ListFilter extends PureComponent {
             <FlatButton label={formatMessage(messages.share)} icon={<Share />} />
             <FlatButton label={formatMessage(messages.save)} icon={<Bookmark />} />
 
-            <FlatButton label={formatMessage(messages.exportExcel)} icon={<IconExport />} disabled={command.processingExportExcel} onTouchTap={this.clickExportExcel}
-              style={{ display:showExportExcel?'':'none', marginLeft: '30px' }} />
-            <FlatButton label={formatMessage(messages.exportCsv)}   icon={<IconExport />} disabled={command.processingExportCsv}   onTouchTap={this.clickExportCsv}
-              style={{ display:showExportCsv?'':'none' }} />
+
+            <FlatButton label={formatMessage(messages.exportExcel)} icon={<IconExport />} disabled={listExport.processingExportExcel} onTouchTap={this.clickExportExcel} style={{ display:showExcel?'':'none', marginLeft: '30px' }} />
+            <FlatButton label={formatMessage(messages.exportCsv)}   icon={<IconExport />} disabled={listExport.processingExportCsv}   onTouchTap={this.clickExportCsv}   style={{ display:showCsv?'':'none' }} />
+            <Dialog
+              title="Export Confirmation"
+              actions={[
+                <FlatButton primary={true} label="Yes, Export" onTouchTap={this.confirmationAgreed} />,
+                <FlatButton primary={true} label="No, Cancel"  onTouchTap={this.confirmationDisagreed} />
+              ]}
+              modal={true}
+              open={listExport.askingConfirmation}
+            >
+              Do you want to export whole list to <strong>{(listExport.currentFormatType||'').toUpperCase()}</strong> file?
+            </Dialog>
+
           </CardActions>
         </Card>
-
-        <Dialog
-          title="Export Confirmation"
-          actions={exportConfirmationActions}
-          modal={true}
-          open={command.askingConfirmation}
-        >
-          Do you want to export whole list to {command.currentCommand === formatTypes.EXCEL ? 'Excel' : 'CSV'}  file?
-        </Dialog>
       </div>
     )
   }
@@ -543,7 +495,7 @@ function mapStateToProps(state) {
   return {
     config: state.filter.listConfig,
     filter: state.filter.listFilter.toJS(),
-    command: state.filter.listCommand.toJS(),
+    listExport: state.filter.listExport,
     countries: state.geography.countriesForLocationSelector,
     assay: state.assay,
     consumableItems: state.consumable.items
@@ -557,7 +509,7 @@ function mapDispatchToProps(dispatch) {
 
     askExportConfirmation,
     closeExportConfirmation,
-    receivedExportResponse
+    beginListExportProcessing
   }, dispatch)
 }
 

@@ -1,5 +1,10 @@
 import invariant from 'invariant'
 import Immutable from 'immutable'
+import { combineReducers } from 'redux-immutable'
+import { browserHistory } from 'react-router'
+
+//import exportReducer from '../exportList/ListExportRedux'
+//import ListExport from '../exportList/ListExportRedux'
 
 export const types = {
   CONFIGURE_LIST_FILTER: 'CONFIGURE_LIST_FILTER',
@@ -11,8 +16,15 @@ export const types = {
   // EXPORT_CSV: 'EXPORT_CSV',
   EXPORT_CONFIRMATION_ASK: 'EXPORT_CONFIRMATION_ASK',
   EXPORT_NOT_CONFIRMED: 'EXPORT_NOT_CONFIRMED',
+  EXPORT_BEGIN_PROCESSING: 'EXPORT_BEGIN_PROCESSING',
   EXPORT_RESPONSE_RECEIVED: 'EXPORT_RESPONSE_RECEIVED',
 }
+
+export const exportFormatTypes = {
+  EXCEL: 'excel',
+  CSV: 'csv'
+}
+
 /*
  * ---------------- Action Creators -----------------
  */
@@ -38,24 +50,42 @@ export function changeListFilter(listFilter) {
 
 
 // -------------------------------
-export function askExportConfirmation(listCommand){
+export function askExportConfirmation(currentFormatType){
   return {
     type: types.EXPORT_CONFIRMATION_ASK,
-    listCommand
+    currentFormatType
   }
 }
-
-export function closeExportConfirmation(listCommand){
+export function closeExportConfirmation(){
   return {
-    type: types.EXPORT_NOT_CONFIRMED,
-    listCommand
+    type: types.EXPORT_NOT_CONFIRMED
+  }
+}
+export function beginListExportProcessing(currentFormatType){
+  const args = {}
+  if (currentFormatType === exportFormatTypes.EXCEL)
+    args.processingExportExcel = true
+  else
+    args.processingExportCsv = true
+
+  return {
+    type: types.EXPORT_BEGIN_PROCESSING,
+    args
   }
 }
 
-export function receivedExportResponse(listCommand) {
+export function receivedExportResponse(currentFormatType, response) {
+
+  const args = {}
+  if (currentFormatType === exportFormatTypes.EXCEL)
+    args.processingExportExcel = false
+  else
+    args.processingExportCsv = false
+
   return {
     type: types.EXPORT_RESPONSE_RECEIVED,
-    listCommand
+    args,
+    response
   }
 }
 
@@ -86,17 +116,17 @@ const ListFilter = Immutable.Record({
   consumableId: undefined
 })
 
-const ListCommand = Immutable.Record({
+const ListExport = Immutable.Record({
+  askingConfirmation: false,
   processingExportExcel: false,
   processingExportCsv: false,
-  currentCommand: undefined,
-  askingConfirmation: false
+  currentFormatType: undefined,
 })
 
 const Filter = Immutable.Record({
   listConfig: new ListConfig(),
   listFilter: new ListFilter(),
-  listCommand: new ListCommand()
+  listExport: new ListExport(),
 })
 
 const initialState = new Filter()
@@ -143,10 +173,23 @@ export default function filterReducer(state = initialState, action) {
       return state
       .mergeIn(['listFilter'], action.listFilter)
 
+    // -----------
+    // List Export actions
+    // -----------
     case types.EXPORT_CONFIRMATION_ASK:
+      return state.mergeIn(['listExport'], {askingConfirmation: true, currentFormatType: action.currentFormatType})
+
     case types.EXPORT_NOT_CONFIRMED:
+      return state.mergeIn(['listExport'], {askingConfirmation: false, currentFormatType: undefined})
+
+    case types.EXPORT_BEGIN_PROCESSING:
+      return state.mergeIn(['listExport'], action.args)
+
     case types.EXPORT_RESPONSE_RECEIVED:
-      return state.mergeIn(['listCommand'], action.listCommand)
+      if (action.response.ok === true){
+        browserHistory.push(action.response.url)
+      }
+      return state.mergeIn(['listExport'], action.args)
 
     default:
       return state

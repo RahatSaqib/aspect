@@ -21,8 +21,8 @@ import {
   fetchListFilteredDevices,
   exportDevices
 } from '../DeviceRedux'
-import ListFilterContainer from '../../filter/list/ListFilter'
-import { configureListFilter, types as filterActionType } from '../../filter/FilterRedux'
+import { ListFilterContainer, formatTypes } from '../../filter/list/ListFilter'
+import { configureListFilter } from '../../filter/FilterRedux'
 import DataTableWithEmptyList from '../../components/shared/DataTableWithEmptyList'
 import styles from './DeviceList.css'
 
@@ -152,10 +152,10 @@ export class DeviceList extends PureComponent {
     )
   }
 
-  clickDeviceListExport = (exportCommand, receivedExportResponse) => {
+  clickDeviceListExport = (formatType, receivedExportResponse) => {
     this.props.exportDevices(
-      this.getDeviceConfigRoute().deviceConfig.filterParams,
-      exportCommand === filterActionType.EXPORT_EXCEL ? 'excel' : 'csv',
+      { hasResults: 1 },
+      formatType,
       this.props.table.sortCol,
       this.props.table.sortDir,
       this.props.table.page,
@@ -196,8 +196,8 @@ export class DeviceList extends PureComponent {
           subject={formatMessage(messages.devicesTitle)}
           filterTemplate={formatMessage(messages.filterTemplate)}
           filterTemplateOptional={formatMessage(messages.filterTemplateOptional)}
-          defaultExpanded={true} 
-          onClickExport={this.clickDeviceListExport} 
+          defaultExpanded={true}
+          onClickExport={this.clickDeviceListExport}
         />
 
         <DataTableWithEmptyList

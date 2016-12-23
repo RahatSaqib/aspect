@@ -20,6 +20,8 @@ import {
   receiveTableItems,
   Table
 } from '../shared/metaReducers/table'
+import { receivedExportResponse } from '../filter/FilterRedux'
+
 
 export const types = {
   REQUEST_DEVICES: 'REQUEST_DEVICES',
@@ -172,11 +174,7 @@ export function updateSingleDevice(deviceId, data) {
   }
 }
 
-
-
-// similar call as fetchListFilteredDevices
-// notice that on receiving result call outer function 'receivedExportResponse'' from ListFilter component
-export function exportDevices(extraFilters = {}, format, sortCol, sortDir, page, pageSize, receivedExportResponse) {
+export function exportDevices(extraFilters = {}, format, sortCol, sortDir, page, pageSize) {
   return (dispatch, getState) => {
     const filters = getState()
       .filter
@@ -211,9 +209,7 @@ export function exportDevices(extraFilters = {}, format, sortCol, sortDir, page,
         }
       })
       .then(json => {
-        if (receivedExportResponse){
-          receivedExportResponse(format,json)
-        }
+        dispatch(receivedExportResponse(format, json))
       })
   }
 }
