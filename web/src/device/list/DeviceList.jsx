@@ -196,7 +196,6 @@ export class DeviceList extends PureComponent {
           subject={formatMessage(messages.devicesTitle)}
           filterTemplate={formatMessage(messages.filterTemplate)}
           filterTemplateOptional={formatMessage(messages.filterTemplateOptional)}
-          defaultExpanded={true}
           onClickExport={this.clickDeviceListExport}
         />
 
