@@ -48,7 +48,7 @@ const messages = defineMessages({
   },
   filterTemplate: {
     id: 'pages.ResultList.filterTemplate',
-    defaultMessage: 'Viewing <ASSAY> results <DATE><RESULT> from all sites<GEOGRAPHY><NAME>'
+    defaultMessage: 'Viewing <ASSAY> results <DATE><RESULT> from all sites<GEOGRAPHY><NAME> <WORKFLOWSTATUS>'
   }
 })
 
@@ -73,7 +73,8 @@ export class ResultList extends PureComponent {
       assayAndResultCategory: true,
       geography: true,
       date: true,
-      siteName: true })
+      siteName: true,
+      workflowStatus: true })
   }
 
   componentDidMount() {
@@ -110,6 +111,7 @@ export class ResultList extends PureComponent {
         <ListFilterContainer
           subject={formatMessage(messages.title)}
           filterTemplate={formatMessage(messages.filterTemplate)}
+          defaultExpanded={true}
         />
         <DataTableWithEmptyList
           selectable

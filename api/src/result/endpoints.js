@@ -8,7 +8,8 @@ const {
   listResults,
   showResult,
   listResultTypes,
-  updateWorkflowStatus
+  updateWorkflowStatus,
+  listWorkflowStatusTypes
 } = require('./service')
 const { validateAllGeographyFilterParams } = require('../geography/requestValidation')
 
@@ -29,6 +30,7 @@ module.exports = [
           deviceName: Joi.string().allow('').description('Filter for device name'),
           siteName: Joi.string().allow('').description('Filter for site name'),
           sampleId: Joi.number().allow('').description('Filter for sample ID'),
+          workflowStatusId: Joi.number().allow('').description('Filter for Result Workflow Status ID'),
           jsonFields: Joi.array().max(10).items(Joi.string().max(50)).single().description('Specify which fields to select from the resultDataJSON')
         }, validateAllGeographyFilterParams(),
           validateDateRangeParams(),
@@ -83,6 +85,16 @@ module.exports = [
           token: Joi.string().allow('', null)
         }
       }
+    }
+  },
+  {
+    method: 'GET',
+    path: '/result/workflow-status-types',
+    handler: asyncHandler(listWorkflowStatusTypes),
+    config: {
+      description: 'Result Workflow Status List',
+      notes: 'Dictionary set of Result Workflow Status options',
+      auth: { scope: ['result:view', 'result:edit'] }
     }
   }
 ]

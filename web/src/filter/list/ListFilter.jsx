@@ -24,6 +24,7 @@ import AssaySelectField from '../resource/AssaySelectField'
 import ResultCategorySelectField from '../resource/ResultCategorySelectField'
 import ConsumableSelectField from '../resource/ConsumableSelectField'
 import DateRangeSelector from '../date/DateRangeSelector'
+import ResultWorkflowStatusSelectField from '../resource/ResultWorkflowStatusSelectField'
 import {
   clearListFilter,
   changeListFilter
@@ -124,6 +125,14 @@ const messages = defineMessages({
   setFilters: {
     id: 'shared.ListFilter.setFilters',
     defaultMessage: 'Set Filters'
+  },
+  workflowStatus: {
+    id: 'shared.ListFilter.workflowStatus',
+    defaultMessage: 'Workflow Status'
+  },
+  selectWorkflowStatus: {
+    id: 'shared.ListFilter.selectWorkflowStatus',
+    defaultMessage: 'Select status...'
   }
 })
 
@@ -143,7 +152,8 @@ export class ListFilter extends PureComponent {
       resultCategoryId: PropTypes.string,
       siteName: PropTypes.string,
       contactNameOrEmail: PropTypes.string,
-      consumableId: PropTypes.string
+      consumableId: PropTypes.string,
+      workflowStatusId: PropTypes.string
     }).isRequired, // connect
     intl: PropTypes.object.isRequired,
     defaultExpanded: PropTypes.bool,
@@ -154,13 +164,18 @@ export class ListFilter extends PureComponent {
       deviceName: PropTypes.bool,
       siteName: PropTypes.bool,
       contactNameOrEmail: PropTypes.bool,
-      consumable: PropTypes.bool
+      consumable: PropTypes.bool,
+      workflowStatus: PropTypes.bool
     }).isRequired,
     subject: PropTypes.string,
     dateFilterLabel: PropTypes.string,
     countries: PropTypes.object.isRequired,
     assay: PropTypes.object.isRequired,
     consumableItems: PropTypes.object.isRequired,
+    workflowStatusItems: PropTypes.shape({
+      id: PropTypes.string,
+      name: PropTypes.string
+    }), //.isRequired,
     filterTemplate: PropTypes.string.isRequired,
     filterTemplateOptional: PropTypes.string
   }
@@ -244,6 +259,14 @@ export class ListFilter extends PureComponent {
     this.props.onChangeFilter(nextFilter)
   }
 
+  handleWorkflowStatusIdChange = (workflowStatusId) => {
+    const nextFilter = {
+      ...this.props.filter,
+      workflowStatusId
+    }
+    this.props.onChangeFilter(nextFilter)
+  }
+
   render() {
     const { filter,
             countries,
@@ -254,12 +277,17 @@ export class ListFilter extends PureComponent {
             filterTemplate,
             filterTemplateOptional,
             dateFilterLabel,
-            intl: { formatMessage, formatDate } } = this.props
+            intl: { formatMessage, formatDate },
+            workflowStatusItems } = this.props
     const { expanded } = this.state
 
     const hasDataSection = (
       config.assay || config.deviceName || config.result ||
       config.siteName || config.contactNameOrEmail || config.consumable
+    )
+
+    const hasDataSection2 = (
+      config.date || config.workflowStatus
     )
 
     const filterMessage = getFilterMessage(filter,
@@ -270,7 +298,8 @@ export class ListFilter extends PureComponent {
       filterTemplate,
       filterTemplateOptional,
       formatMessage,
-      formatDate)
+      formatDate,
+      workflowStatusItems)
 
     return (
       <div className={styles.ListFilter}>
@@ -402,18 +431,33 @@ export class ListFilter extends PureComponent {
                 </div>
               </section>
             )}
-            {config.date && (
+            {hasDataSection2 && (
               <section className={styles.Section}>
                 <div className={styles.Section__Content}>
-                  <div className={styles.Section__Control}>
-                    <DateRangeSelector
-                      floatingLabelText={dateFilterLabel || formatMessage(messages.date)}
-                      onChangeDate={this.handleChangeDate}
-                      minDate={filter.minDate}
-                      maxDate={filter.maxDate}
-                      autoOk
-                    />
-                  </div>
+                  {config.date && (
+                    <div className={styles.Section__Control}>
+                      <DateRangeSelector
+                        floatingLabelText={dateFilterLabel || formatMessage(messages.date)}
+                        onChangeDate={this.handleChangeDate}
+                        minDate={filter.minDate}
+                        maxDate={filter.maxDate}
+                        autoOk
+                      />
+                    </div>
+                  )}
+                  {config.workflowStatus && (
+                    <div className={styles.Section__Control}>
+                      <ResultWorkflowStatusSelectField
+                        value={filter.workflowStatusId}
+                        onWorkflowStatusChange={this.handleWorkflowStatusIdChange}
+                        floatingLabelFixed
+                        hintText={formatMessage(messages.selectWorkflowStatus)}
+                        floatingLabelText={formatMessage(messages.workflowStatus)}
+                        style={{ verticalAlign: 'bottom' }}
+                        autoWidth
+                      />
+                    </div>
+                  )}
                 </div>
               </section>
             )}
@@ -436,7 +480,8 @@ function mapStateToProps(state) {
     filter: state.filter.listFilter.toJS(),
     countries: state.geography.countriesForLocationSelector,
     assay: state.assay,
-    consumableItems: state.consumable.items
+    consumableItems: state.consumable.items,
+    workflowStatusItems: state.resultWorkflowStatus.items
   }
 }
 
