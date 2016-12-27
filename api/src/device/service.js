@@ -1,9 +1,10 @@
 const Promise = require('bluebird')
 const _ = require('lodash')
 const Boom = require('boom')
+
 const { knex, filterParams, filterDateRangeParams, sortPageParams } = require('../db')
 const { getConstraints, addConstraints } = require('../auth/constraints')
-
+const { getCellsByValue, generateExcelFile, generateCsvFile } = require('../shared/io')
 
 const SELECT_LIST_FIELDS = [
   'd.id', 'd.name', 'd.shortname', 'd.createdOn', 'd.lastPingOn', 'd.updatedOn as lastSeen',
@@ -154,44 +155,13 @@ function* updateDevice(request) {
   return yield* showDevice(request)
 }
 
-// ---------------------------------
-// create missing directories in the path and return path back
-// Notice - path should NOT start with /
-// ---------------------------------
-function createDirectory(path){
-  const fs = require('fs')
-  const folderNames = path.split('/')
 
-  // loop paths and make sure all exist
-  let dirPath = '.'
-  folderNames.forEach((name) => {
-    dirPath += '/' + name
-    if (!fs.existsSync(dirPath)){
-      fs.mkdirSync(dirPath)
-    }
-  })
 
-  return path
-}
+
+
 
 // ---------------------------------
-// get directory for export file - with pattern 'temp/YYYY-MM-DD/HH/UUID'
-// ---------------------------------
-function getExportDirectory(){
-  const dt = new Date()
-  const uuid = require('node-uuid')
-
-  // pattern for random directory is temp/YYYY-MM-DD/HH/uuid, using time-based UUID (v1)
-  const dirPath = `temp/${dt.getUTCFullYear()}-${dt.getUTCMonth()+1}-${dt.getUTCDate()}/${dt.getUTCHours()}/${uuid.v1()}`
-  //---memo--------
-  // time part (YYYY-MM-DD/HH) allows auto-deleting old folders by external process - i.e. every 2 hours delete folders from 2-hours back
-  // if lots of files are being generated (millions every hour) - may add MM to path for tracking minutes too
-  //-----------
-  return createDirectory(dirPath)
-}
-
-// ---------------------------------
-// generator for exporting Devices data
+// exporting Devices data
 // ---------------------------------
 function* exportDevices(request){
   const { query, auth } = request
@@ -203,95 +173,59 @@ function* exportDevices(request){
   query.size = 1e5
 
   // get whole dataset - based on current query params (sorting, filtering) and auth constraints
-  const result = yield* getListDevices(query, auth)
+  const devices = yield* getListDevices(query, auth)
 
-  let ok = false
-  let url = null
-  let message = null
+  let result = null
 
   if (query.format === 'excel'){
-    // see https://www.npmjs.com/package/exceljs
-    const excel = require('exceljs')
+    // fill in data into given workbook
+    const populateData = workbook => {
+      // get 1st sheet (1-based)
+      const worksheet = workbook.getWorksheet(1)
 
-    // template file is /templates/Devices.xlsx
-    const templateFileName = `${createDirectory('templates')}/Devices.xlsx`
+      // locate cell(s) with needed value
+      let cells = getCellsByValue(worksheet, '<DeviceListRows>')
+      if (cells.length > 0){
+        // empty such cells
+        cells.forEach(cell => cell.value = '')
 
-    // read file into workbook - module API returns Promice for readFile, so 'synchronize' it with coroutine
-    const readFile = Promise.coroutine(function* (fileName) { return yield new excel.Workbook().xlsx.readFile(fileName).then((workbook) => workbook) })
-    const workbook = yield readFile(templateFileName)
+        // use 1st cell only (actually, should not be more than one)
+        const patternRowNumber = cells[0].row + 2
 
-    // get 1st sheet (1-based)
-    const worksheet = workbook.getWorksheet(1)
-
-    // helper function for getting all cells on gived worksheet which have requested value - TODO: put in another file cuz it is general method
-    const getCellsByValue = (sheet, value) => {
-      const cells = []
-      sheet.eachRow((row) => {
-        row.eachCell((cell) => {
-          if (cell.value === value){
-            cells.push(cell)
-          }
+        // fill in array 'rows'
+        const rows = []
+        devices.data.forEach(d => {
+          // ------
+          // --->>> order of array elements for each dataItem should match columns order in template file
+          // ------
+          rows.push([
+            d.name,
+            d.status,
+            d.createdOn,
+            d.lastSeen,
+            d.totalTests
+          ])
         })
-      })
-      return cells
+
+        // insert rows from patternRowNumber, and remove row number 'patternRowNumber'
+        worksheet.spliceRows(patternRowNumber, 1, ...rows)
+      }
     }
 
-    // locate cell(s) with needed value
-    let cells = getCellsByValue(worksheet, '<DeviceListRows>')
-    if (cells.length > 0){
-      // empty such cells
-      cells.forEach((cell) => cell.value = '')
-
-      // use 1st cell only, should not be more than one
-      const patternRowNumber = cells[0].row + 2
-
-      // fill in array 'rows'
-      const rows = []
-      result.data.forEach((d) => {
-        // order of array elements for each dataItem should match columns in template file
-        rows.push([
-          d.name,
-          d.status,
-          d.createdOn,
-          d.lastSeen,
-          d.totalTests
-        ])
-      })
-
-      // insert rows from patternRowNumber, and remove row number 'patternRowNumber'
-      worksheet.spliceRows(patternRowNumber, 1, ...rows)
-    }
-
-    // get path for export directory
-    const dir = getExportDirectory()
-    url = `${dir}/devices.xlsx`
-    const writeFile = Promise.coroutine(function* (fileName) { return yield workbook.xlsx.writeFile(fileName).then(() => true) })
-    ok = yield writeFile(url)
+    result = yield* generateExcelFile({
+      templateFileName: 'Devices.xlsx',
+      outputFileName: 'devices.xlsx',
+      populateData
+    })
   }
   else if (query.format === 'csv'){
-    // see https://www.npmjs.com/package/json2csv
-    const json2csv = require('json2csv')
-
-    const csv = json2csv({
-      data: result.data,
-      fieldNames: ['Device Name', 'Short Name', 'Status', 'Created On', 'Last Seen', 'Type', 'Category', 'Connected',  'Total Tests'],
-      fields: ['name', 'shortName', 'status', 'createdOn', 'lastSeen', 'type', 'category', 'hasConnectivity',  'totalTests']
-    })
-
-    // get path for export directory
-    const dir = getExportDirectory()
-    url = `${dir}/devices.csv`
-
-    const fs = require('fs')
-    const path = require('path')
-    fs.writeFileSync(url, csv)
-
-    ok = true
+    const items = devices.data
+    const columnNames = ['Device Name', 'Short Name', 'Status', 'Created On', 'Last Seen', 'Type', 'Category', 'Connected',       'Total Tests']
+    const fieldNames =  ['name',        'shortName',  'status', 'createdOn',  'lastSeen',  'type', 'category', 'hasConnectivity', 'totalTests']
+    result = yield* generateCsvFile('devices.csv', items, columnNames, fieldNames)
   }
 
-  if (url) url = '/' + url
-
-  return { ok: ok, url: url, message: message }
+  return result
 }
 
 module.exports = {
