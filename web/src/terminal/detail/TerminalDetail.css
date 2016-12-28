@@ -1,0 +1,40 @@
+.Content {
+  composes: Content from '../../components/shared/Shared.css';
+}
+
+.FieldsContainer {
+  padding: 20px;
+}
+
+.RowContainer{
+  padding: 10px;
+}
+
+.RowContainer > div > div{
+  margin: 10px;
+}
+
+.SelectSiteRow{
+    width: 100%;
+}
+
+.SelectSiteRow tbody tr td:first-of-type{
+    width:100%;
+}
+
+.SelectSiteRow tbody tr td:last-of-type{
+    vertical-align: bottom;
+}
+.SelectSiteRow tbody tr td:last-of-type .GoToSite{
+    padding-bottom: 5px;
+}
+
+.BackLink{
+    font-size: 65%;
+    text-transform: uppercase;
+}
+
+.DemoLink {
+  text-decoration: none;
+  color: #ccc;
+}

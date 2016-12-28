@@ -23,6 +23,7 @@ import idle from './idle/IdleRedux'
 import roles from './role/RoleRedux'
 import router from './router/RouterRedux'
 import resultWorkflowStatus from './resultWorkflowStatus/ResultWorkflowStatusRedux'
+import terminal from './terminal/TerminalRedux'
 
 const appReducer = combineReducers({
   form: formReducer,
@@ -44,7 +45,8 @@ const appReducer = combineReducers({
   notification,
   report,
   router,
-  resultWorkflowStatus
+  resultWorkflowStatus,
+  terminal
 })
 
 const App = Immutable.Record({
@@ -67,7 +69,8 @@ const App = Immutable.Record({
   inventory: undefined,
   idle: undefined,
   router: undefined,
-  resultWorkflowStatus: undefined
+  resultWorkflowStatus: undefined,
+  terminal: undefined
 })
 
 const initialState = new App()
