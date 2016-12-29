@@ -171,7 +171,7 @@ function* seed(knex) {
     return memo
   }, {})
 
-  const configurationData = {
+  const rrtConfigurationData = {
     rrtField1: 'aaaaaa',
     rrtField2: 'yyyy',
     rrtField3: 'zzzzz',
@@ -187,6 +187,19 @@ function* seed(knex) {
       user4Name: _.times(4, () => String.fromCharCode(65 + _.random(25) + (_.random(1) > 0 ? 32 : 0))).join(''),
       user5Pin: '99999',
       user5Name: _.times(4, () => String.fromCharCode(65 + _.random(25) + (_.random(1) > 0 ? 32 : 0))).join('')
+    }
+  }
+
+  const m2000ConfigurationData = {
+    field1: 'xx',
+    field2: 'yyyy',
+    field3: 'zzzzz',
+    field4: 'aaaaaa',
+    nestedFields: {
+      nestedA: '111111',
+      nestedB: '2222',
+      nestedC: '333',
+      nestedD: '44',
     }
   }
 
@@ -232,7 +245,7 @@ function* seed(knex) {
       name: `${siteData.name} RRT`,
       shortname: `${siteData.shortname} RRT`,
       deviceTypeId: deviceTypes.RRT.id,
-      configurationData: JSON.stringify(configurationData),
+      configurationData: JSON.stringify(rrtConfigurationData),
       siteId: siteData.id,
       deviceId: routerId,
       createdOn: new Date(+now - (3 * millisInHour)),
@@ -304,7 +317,7 @@ function* seed(knex) {
       name: `${siteData.name} m2000`,
       shortname: `${siteData.shortname} m2000`,
       deviceTypeId: deviceTypes.m2000.id,
-      configurationData: JSON.stringify(configurationData),
+      configurationData: JSON.stringify(m2000ConfigurationData),
       siteId: siteData.id,
       deviceId: routerId,
       createdOn: new Date(+now - (3 * millisInHour)),

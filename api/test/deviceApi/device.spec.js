@@ -1,3 +1,4 @@
+const _ = require('lodash')
 const supertest = require('supertest')
 const chai = require('chai')
 const {
@@ -11,6 +12,19 @@ const {
 const server = supertest.agent('http://localhost:8080')
 const assert = chai.assert
 const context = createTestContext(server, { user: 'admin' })
+
+const baseConfig = {
+  field1: 'xx',
+  field2: 'yyyy',
+  field3: 'zzzzz',
+  field4: 'aaaaaa',
+  nestedFields: {
+    nestedA: '111111',
+    nestedB: '2222',
+    nestedC: '333',
+    nestedD: '44'
+  }
+}
 
 describe('Device API routes', () => {
   const devicePath = '/device'
@@ -34,7 +48,7 @@ describe('Device API routes', () => {
           assert.typeOf(res.body, 'Object')
         })
       const config1 = yield* getDeviceConfigurationData(knex, deviceId)
-      assert.deepEqual(config1, { a: 'b' })
+      assert.deepEqual(config1, _.assign({}, baseConfig, { a: 'b' }))
 
       yield server.post(deviceConfigurationPath)
         .set('Authorization', deviceAuth)
@@ -44,7 +58,7 @@ describe('Device API routes', () => {
           assert.typeOf(res.body, 'Object')
         })
       const config2 = yield* getDeviceConfigurationData(knex, deviceId)
-      assert.deepEqual(config2, { a: 'b', b: 3 })
+      assert.deepEqual(config2, _.assign({}, baseConfig, { a: 'b', b: 3 }))
 
       yield server.post(devicePath)
         .set('Authorization', deviceAuth)
@@ -53,7 +67,7 @@ describe('Device API routes', () => {
           assert.equal(res.status, 200)
         })
       const config3 = yield* getDeviceConfigurationData(knex, deviceId)
-      assert.deepEqual(config3, { a: 'e', b: 3, c: 2, d: false, e: { f: 'g' } })
+      assert.deepEqual(config3, _.assign({}, baseConfig, { a: 'e', b: 3, c: 2, d: false, e: { f: 'g' } }))
 
       yield server.post(devicePath)
         .set('Authorization', deviceAuth)
@@ -62,7 +76,7 @@ describe('Device API routes', () => {
           assert.equal(res.status, 200)
         })
       const config4 = yield* getDeviceConfigurationData(knex, deviceId)
-      assert.deepEqual(config4, { a: 'e', b: 3, c: 2, d: false, e: { f: 'h' } })
+      assert.deepEqual(config4, _.assign({}, baseConfig, { a: 'e', b: 3, c: 2, d: false, e: { f: 'h' } }))
     }))
   })
 
@@ -136,7 +150,7 @@ describe('Device API routes', () => {
 
       const config1 = yield* getDeviceConfigurationData(knex, deviceId)
       const op1 = yield* getLastDeviceOperationData(knex, deviceId)
-      assert.deepEqual(config1, { a: 'b' })
+      assert.deepEqual(config1, _.assign({}, baseConfig, { a: 'b' }))
       assert.deepEqual(op1, { a: 'b' })
 
       yield server.get(devicePath)
@@ -161,7 +175,7 @@ describe('Device API routes', () => {
 
       const config2 = yield* getDeviceConfigurationData(knex, deviceId)
       const op2 = yield* getLastDeviceOperationData(knex, deviceId)
-      assert.deepEqual(config2, { a: 'c', c: 2, d: false, e: { f: 'g' } })
+      assert.deepEqual(config2, _.assign({}, baseConfig, { a: 'c', c: 2, d: false, e: { f: 'g' } }))
       assert.deepEqual(op2, { a: 'b', c: 2, d: false, e: { f: 'g' } })
 
       yield server.get(devicePath)
