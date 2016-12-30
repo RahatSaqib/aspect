@@ -23,7 +23,6 @@ const vendor = [
   'immutable',
   'intl',
   'invariant',
-  'isomorphic-fetch',
   'jwt-decode',
   'keycode',
   'material-ui',
