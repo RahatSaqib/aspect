@@ -231,7 +231,6 @@ function* listWorkflowStatusTypes(request) {
   const { query } = request
 
   const resultQuery = knex('ResultWorkflowStatus as rs')
-    //.modify(filterParams, query, { name: 'rs.name' })
 
   // get total count for paging
   const getCount = resultQuery.clone()

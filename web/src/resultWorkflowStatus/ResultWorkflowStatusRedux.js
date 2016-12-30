@@ -22,7 +22,7 @@ function createRequestWorkflowStatuses() {
 function createReceiveWorkflowStatuses(items) {
   return {
     type: types.RECEIVE_WORKFLOW_STATUSES,
-    items: items,
+    items,
     lastRefreshed: new Date()
   }
 }
@@ -35,7 +35,8 @@ export function fetchWorkflowStatuses(forceRefresh) {
       return
     }
     const shouldFetch = forceRefresh || !workflowStatus.lastRefreshed || (
-      differenceInMinutes(new Date(), workflowStatus.lastRefreshed) > 60 // check every 60 mins in case new option added in db
+      // check every 60 mins in case new option added in db
+      differenceInMinutes(new Date(), workflowStatus.lastRefreshed) > 60
     )
     if (!shouldFetch) {
       return

@@ -175,7 +175,7 @@ export class ListFilter extends PureComponent {
     workflowStatusItems: PropTypes.shape({
       id: PropTypes.string,
       name: PropTypes.string
-    }), //.isRequired,
+    }),
     filterTemplate: PropTypes.string.isRequired,
     filterTemplateOptional: PropTypes.string
   }

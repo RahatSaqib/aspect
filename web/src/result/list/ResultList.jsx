@@ -111,7 +111,6 @@ export class ResultList extends PureComponent {
         <ListFilterContainer
           subject={formatMessage(messages.title)}
           filterTemplate={formatMessage(messages.filterTemplate)}
-          defaultExpanded={true}
         />
         <DataTableWithEmptyList
           selectable
