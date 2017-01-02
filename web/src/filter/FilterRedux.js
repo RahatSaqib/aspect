@@ -1,6 +1,5 @@
 import invariant from 'invariant'
 import Immutable from 'immutable'
-import { browserHistory } from 'react-router'
 
 export const types = {
   CONFIGURE_LIST_FILTER: 'CONFIGURE_LIST_FILTER',
@@ -184,7 +183,11 @@ export default function filterReducer(state = initialState, action) {
 
     case types.EXPORT_RESPONSE_RECEIVED:
       if (action.response.ok === true) {
-        browserHistory.push(action.response.url)
+        // import { browserHistory } from 'react-router'
+        // browserHistory.push(action.response.url)
+        const a = document.getElementById('anchorExportProxy')
+        a.href = action.response.url
+        a.click()
       }
       return state.mergeIn(['listExport'], action.args)
 

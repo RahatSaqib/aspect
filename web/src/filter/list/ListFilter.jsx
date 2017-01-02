@@ -490,6 +490,7 @@ export class ListFilter extends PureComponent {
 
             <FlatButton label={formatMessage(messages.exportExcel)} icon={<IconExport />} disabled={listExport.processingExportExcel} onTouchTap={this.clickExportExcel} style={{ display: showExcel ? '' : 'none', marginLeft: '30px' }} />
             <FlatButton label={formatMessage(messages.exportCsv)} icon={<IconExport />} disabled={listExport.processingExportCsv} onTouchTap={this.clickExportCsv} style={{ display: showCsv ? '' : 'none' }} />
+            <a id='anchorExportProxy'></a>
             <Dialog
               title="Export Confirmation"
               actions={[

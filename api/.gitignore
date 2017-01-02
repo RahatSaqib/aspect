@@ -38,6 +38,3 @@ bower_components/
 
 #Environment specific configuration
 .env
-
-#temp folder
-temp

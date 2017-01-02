@@ -27,13 +27,20 @@ function createDirectory(path){
 function getExportDirectory(){
   const dt = new Date()
 
-  // pattern for random directory is temp/YYYY-MM-DD/HH/uuid, using time-based UUID (v1)
-  const dirPath = `temp/${dt.getUTCFullYear()}-${dt.getUTCMonth()+1}-${dt.getUTCDate()}/${dt.getUTCHours()}/${uuid.v1()}`
+  // pattern for random directory is /temp/YYYY-MM-DD/HH/uuid, using time-based UUID (v1)
+  const relPath = `/temp/${dt.getUTCFullYear()}-${dt.getUTCMonth()+1}-${dt.getUTCDate()}/${dt.getUTCHours()}/${uuid.v1()}`
+
+  // export directory is in 'dist/temp' folder of the web site
+  const dirFull = `./../web/dist/${relPath}`
+
   //---memo--------
   // time part (YYYY-MM-DD/HH) allows auto-deleting old folders by external process - i.e. every 2 hours delete folders from 2-hours back
   // if lots of files are being generated (millions every hour) - may add MM to path for tracking minutes too
   //-----------
-  return createDirectory(dirPath)
+  return {
+      full: createDirectory(dirFull),
+      url: relPath
+  }
 }
 
 // ---------------------------------
@@ -78,10 +85,8 @@ function* generateExcelFile(props){
     props.populateData(workbook)
 
     const dir = getExportDirectory()    // get path for export directory
-    const url = `${dir}/${props.outputFileName}`
-    const ok = yield* writeExcelFile(url, workbook)
-
-    return {ok, url: '/' + url, message}
+    const ok = yield* writeExcelFile(`${dir.full}/${props.outputFileName}`, workbook)
+    return {ok, url: `${dir.url}/${props.outputFileName}`, message}
 }
 
 
@@ -109,10 +114,8 @@ function* generateCsvFile(outputFileName, items, columnNames, fieldNames){
     worksheet.addRows(rows);
 
     const dir = getExportDirectory()    // get path for export directory
-    const url = `${dir}/${outputFileName}`
-    const ok = yield* writeCsvFile(url, workbook)
-
-    return {ok, url: '/' + url, message}
+    const ok = yield* writeCsvFile(`${dir.full}/${outputFileName}`, workbook)
+    return {ok, url: `${dir.url}/${outputFileName}`, message}
 }
 
 
