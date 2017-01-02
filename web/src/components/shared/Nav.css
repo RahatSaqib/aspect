@@ -6,6 +6,10 @@
   color: #fff;
 }
 
+.Brand:hover{
+  text-decoration: none;
+}
+
 .Badge {
   padding: 6px 0 0 0 !important;
 }
