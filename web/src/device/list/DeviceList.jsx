@@ -181,6 +181,7 @@ export class DeviceList extends PureComponent {
         title: formatMessage(messages.totalTests),
         format: data => formatNumber(data) }
     ]
+    const askConfirmationForExport = this.props.table.total > 1000
 
     return (
       <div className={styles.Content}>
@@ -190,7 +191,9 @@ export class DeviceList extends PureComponent {
           subject={formatMessage(messages.devicesTitle)}
           filterTemplate={formatMessage(messages.filterTemplate)}
           filterTemplateOptional={formatMessage(messages.filterTemplateOptional)}
+
           onClickExport={this.clickDeviceListExport}
+          askConfirmationForExport={askConfirmationForExport}
         />
 
         <DataTableWithEmptyList

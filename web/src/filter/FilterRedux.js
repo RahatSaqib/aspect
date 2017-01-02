@@ -56,7 +56,9 @@ export function closeExportConfirmation() {
   }
 }
 export function beginListExportProcessing(currentFormatType) {
-  const args = {}
+  const args = {
+    currentFormatType
+  }
   if (currentFormatType === exportFormatTypes.EXCEL) {
     args.processingExportExcel = true
   } else {

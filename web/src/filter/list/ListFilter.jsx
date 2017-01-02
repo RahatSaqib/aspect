@@ -193,10 +193,12 @@ export class ListFilter extends PureComponent {
     askExportConfirmation: PropTypes.func,
     closeExportConfirmation: PropTypes.func,
     beginListExportProcessing: PropTypes.func,
+    askConfirmationForExport: PropTypes.bool,
   }
 
   state = {
     expanded: !!this.props.defaultExpanded,
+    askConfirmationForExport: this.props.askConfirmationForExport || false
   }
 
   handleExpandChange = (expanded) => {
@@ -274,8 +276,19 @@ export class ListFilter extends PureComponent {
     this.props.onChangeFilter(nextFilter)
   }
 
-  clickExportExcel = () => { this.props.askExportConfirmation(exportFormatTypes.EXCEL) }
-  clickExportCsv = () => { this.props.askExportConfirmation(exportFormatTypes.CSV) }
+  // ----------------------
+  // functions for List Export
+  // ----------------------
+  clickExportExcel = () => { this.clickExport(exportFormatTypes.EXCEL) }
+  clickExportCsv = () => { this.clickExport(exportFormatTypes.CSV) }
+  clickExport = (formatType) => {
+    if (this.state.askConfirmationForExport === true) {
+      this.props.askExportConfirmation(formatType)
+    } else {
+      this.props.beginListExportProcessing(formatType)
+      this.props.onClickExport(formatType)
+    }
+  }
   confirmationDisagreed = () => { this.props.closeExportConfirmation() }
   confirmationAgreed = () => {
     this.props.beginListExportProcessing(this.props.listExport.currentFormatType)
