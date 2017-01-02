@@ -10,18 +10,12 @@ import { bindActionCreators } from 'redux'
 import { connect } from 'react-redux'
 import Helmet from 'react-helmet'
 
-// Material-UI
-import { Card } from 'material-ui/Card'
-import FlatButton from 'material-ui/FlatButton'
-import IconExportExcel from 'material-ui/svg-icons/file/file-download'
-import Dialog from 'material-ui/Dialog'
-
 // Our own imports
 import {
   fetchListFilteredDevices,
   exportDevices
 } from '../DeviceRedux'
-import { ListFilterContainer, formatTypes } from '../../filter/list/ListFilter'
+import { ListFilterContainer } from '../../filter/list/ListFilter'
 import { configureListFilter } from '../../filter/FilterRedux'
 import DataTableWithEmptyList from '../../components/shared/DataTableWithEmptyList'
 import styles from './DeviceList.css'

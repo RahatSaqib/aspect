@@ -1,10 +1,6 @@
 import invariant from 'invariant'
 import Immutable from 'immutable'
-import { combineReducers } from 'redux-immutable'
 import { browserHistory } from 'react-router'
-
-//import exportReducer from '../exportList/ListExportRedux'
-//import ListExport from '../exportList/ListExportRedux'
 
 export const types = {
   CONFIGURE_LIST_FILTER: 'CONFIGURE_LIST_FILTER',
@@ -12,8 +8,6 @@ export const types = {
   CLEAR_LIST_FILTER: 'CLEAR_LIST_FILTER',
   CHANGE_LIST_FILTER: 'CHANGE_LIST_FILTER',
 
-  // EXPORT_EXCEL: 'EXPORT_EXCEL',
-  // EXPORT_CSV: 'EXPORT_CSV',
   EXPORT_CONFIRMATION_ASK: 'EXPORT_CONFIRMATION_ASK',
   EXPORT_NOT_CONFIRMED: 'EXPORT_NOT_CONFIRMED',
   EXPORT_BEGIN_PROCESSING: 'EXPORT_BEGIN_PROCESSING',
@@ -50,23 +44,24 @@ export function changeListFilter(listFilter) {
 
 
 // -------------------------------
-export function askExportConfirmation(currentFormatType){
+export function askExportConfirmation(currentFormatType) {
   return {
     type: types.EXPORT_CONFIRMATION_ASK,
     currentFormatType
   }
 }
-export function closeExportConfirmation(){
+export function closeExportConfirmation() {
   return {
     type: types.EXPORT_NOT_CONFIRMED
   }
 }
-export function beginListExportProcessing(currentFormatType){
+export function beginListExportProcessing(currentFormatType) {
   const args = {}
-  if (currentFormatType === exportFormatTypes.EXCEL)
+  if (currentFormatType === exportFormatTypes.EXCEL) {
     args.processingExportExcel = true
-  else
+  } else {
     args.processingExportCsv = true
+  }
 
   return {
     type: types.EXPORT_BEGIN_PROCESSING,
@@ -75,12 +70,12 @@ export function beginListExportProcessing(currentFormatType){
 }
 
 export function receivedExportResponse(currentFormatType, response) {
-
   const args = {}
-  if (currentFormatType === exportFormatTypes.EXCEL)
+  if (currentFormatType === exportFormatTypes.EXCEL) {
     args.processingExportExcel = false
-  else
+  } else {
     args.processingExportCsv = false
+  }
 
   return {
     type: types.EXPORT_RESPONSE_RECEIVED,
@@ -177,16 +172,16 @@ export default function filterReducer(state = initialState, action) {
     // List Export actions
     // -----------
     case types.EXPORT_CONFIRMATION_ASK:
-      return state.mergeIn(['listExport'], {askingConfirmation: true, currentFormatType: action.currentFormatType})
+      return state.mergeIn(['listExport'], { askingConfirmation: true, currentFormatType: action.currentFormatType })
 
     case types.EXPORT_NOT_CONFIRMED:
-      return state.mergeIn(['listExport'], {askingConfirmation: false, currentFormatType: undefined})
+      return state.mergeIn(['listExport'], { askingConfirmation: false, currentFormatType: undefined })
 
     case types.EXPORT_BEGIN_PROCESSING:
       return state.mergeIn(['listExport'], action.args)
 
     case types.EXPORT_RESPONSE_RECEIVED:
-      if (action.response.ok === true){
+      if (action.response.ok === true) {
         browserHistory.push(action.response.url)
       }
       return state.mergeIn(['listExport'], action.args)

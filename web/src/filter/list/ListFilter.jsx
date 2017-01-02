@@ -188,6 +188,11 @@ export class ListFilter extends PureComponent {
       processingExportCsv: PropTypes.bool.isRequired,
       currentFormatType: PropTypes.string
     }),
+    showExportExcel: PropTypes.bool,
+    showExportCsv: PropTypes.bool,
+    askExportConfirmation: PropTypes.func,
+    closeExportConfirmation: PropTypes.func,
+    beginListExportProcessing: PropTypes.func,
   }
 
   state = {
@@ -269,18 +274,16 @@ export class ListFilter extends PureComponent {
     this.props.onChangeFilter(nextFilter)
   }
 
-
-  clickExportExcel      = (event)   => { this.props.askExportConfirmation(exportFormatTypes.EXCEL) }
-  clickExportCsv        = (event)   => { this.props.askExportConfirmation(exportFormatTypes.CSV) }
-  confirmationDisagreed = ()        => { this.props.closeExportConfirmation() }
-  confirmationAgreed    = (event) => {
+  clickExportExcel = () => { this.props.askExportConfirmation(exportFormatTypes.EXCEL) }
+  clickExportCsv = () => { this.props.askExportConfirmation(exportFormatTypes.CSV) }
+  confirmationDisagreed = () => { this.props.closeExportConfirmation() }
+  confirmationAgreed = () => {
     this.props.beginListExportProcessing(this.props.listExport.currentFormatType)
     this.props.onClickExport(this.props.listExport.currentFormatType)
     this.props.closeExportConfirmation()
   }
 
   render() {
-
     const { filter,
           countries,
           assay,
@@ -299,6 +302,8 @@ export class ListFilter extends PureComponent {
         } = this.props
     const showExcel = !!onClickExport && (showExportExcel || true) === true
     const showCsv = !!onClickExport && (showExportCsv || true) === true
+    const isPrimary = true
+    const isModal = true
 
     const { expanded } = this.state
 
@@ -470,18 +475,18 @@ export class ListFilter extends PureComponent {
             <FlatButton label={formatMessage(messages.save)} icon={<Bookmark />} />
 
 
-            <FlatButton label={formatMessage(messages.exportExcel)} icon={<IconExport />} disabled={listExport.processingExportExcel} onTouchTap={this.clickExportExcel} style={{ display:showExcel?'':'none', marginLeft: '30px' }} />
-            <FlatButton label={formatMessage(messages.exportCsv)}   icon={<IconExport />} disabled={listExport.processingExportCsv}   onTouchTap={this.clickExportCsv}   style={{ display:showCsv?'':'none' }} />
+            <FlatButton label={formatMessage(messages.exportExcel)} icon={<IconExport />} disabled={listExport.processingExportExcel} onTouchTap={this.clickExportExcel} style={{ display: showExcel ? '' : 'none', marginLeft: '30px' }} />
+            <FlatButton label={formatMessage(messages.exportCsv)} icon={<IconExport />} disabled={listExport.processingExportCsv} onTouchTap={this.clickExportCsv} style={{ display: showCsv ? '' : 'none' }} />
             <Dialog
               title="Export Confirmation"
               actions={[
-                <FlatButton primary={true} label="Yes, Export" onTouchTap={this.confirmationAgreed} />,
-                <FlatButton primary={true} label="No, Cancel"  onTouchTap={this.confirmationDisagreed} />
+                <FlatButton primary={isPrimary} label="Yes, Export" onTouchTap={this.confirmationAgreed} />,
+                <FlatButton primary={isPrimary} label="No, Cancel" onTouchTap={this.confirmationDisagreed} />
               ]}
-              modal={true}
+              modal={isModal}
               open={listExport.askingConfirmation}
             >
-              Do you want to export whole list to <strong>{(listExport.currentFormatType||'').toUpperCase()}</strong> file?
+              Do you want to export whole list to <strong>{(listExport.currentFormatType || '').toUpperCase()}</strong> file?
             </Dialog>
 
           </CardActions>

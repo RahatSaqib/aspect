@@ -208,7 +208,7 @@ export function exportDevices(extraFilters = {}, format, sortCol, sortDir, page,
           }))
         }
       })
-      .then(json => {
+      .then((json) => {
         dispatch(receivedExportResponse(format, json))
       })
   }
