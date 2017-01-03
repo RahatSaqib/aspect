@@ -392,7 +392,7 @@ export class InventoryItemsList extends PureComponent {
             style={{ padding: '1em' }}
           />
         </Card>
-        <EmptyList isEmpty={isSettledAndEmpty} />
+        {isSettledAndEmpty && <EmptyList />}
         {!isSettledAndEmpty && (
           <GroupedDataTable
             handleFetch={this.handleFetch}
