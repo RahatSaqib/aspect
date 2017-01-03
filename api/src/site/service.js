@@ -11,7 +11,7 @@ const SELECT_LIST_FIELDS = [
 ]
 
 const SELECT_SHOW_FIELDS = [
-  's.id', 's.name', 's.shortname',
+  's.id', 's.name', 's.shortname', 's.externalId',
   'st.name as state', 'l.name as lga', 'ct.name as country',
   's.createdOn', knex.raw('s.id + 2 as totalDevices'),
   'g.countryId', 'g.stateId', 'g.lgaId',
@@ -96,7 +96,7 @@ function* updateSite(request) {
   const updatedCount = yield knex('Site')
     .where('id', params.siteId)
     .update(Object.assign(
-      _.pick(changedSiteFields, ['name', 'shortname', 'street1', 'street2',
+      _.pick(changedSiteFields, ['name', 'shortname', 'externalId', 'street1', 'street2',
         'geographyId', 'city', 'state', 'zip', 'latitude', 'longitude']),
       { timezoneId: changedSiteFields.timezone } // TODO standardize timezone name
     ))
