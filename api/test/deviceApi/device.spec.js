@@ -3,6 +3,7 @@ const chai = require('chai')
 const {
   createTestContext,
   getDeviceConfigurationData,
+  getLastDeviceOperation,
   getLastDeviceOperationData,
   getLastDeviceOperationId } = require('./utils')
 
@@ -87,14 +88,22 @@ describe('Device API routes', () => {
 
       yield server.post(devicePath)
         .set('Authorization', deviceAuth)
-        .send({ operation: { data: { a: 'b', c: 2, d: false, e: { f: 'g' } } } })
+        .send({
+          operation: {
+            startedOn: '2013-12-01',
+            endedOn: '2013-12-01T01:30',
+            data: { a: 'b', c: 2, d: false, e: { f: 'g' } }
+          }
+        })
         .then((res) => {
           assert.equal(res.status, 200)
           assert.typeOf(res.body, 'Object')
         })
 
-      const op2 = yield* getLastDeviceOperationData(knex, deviceId)
-      assert.deepEqual(op2, { a: 'b', c: 2, d: false, e: { f: 'g' } })
+      const op2 = yield* getLastDeviceOperation(knex, deviceId)
+      assert.deepEqual(op2.data, { a: 'b', c: 2, d: false, e: { f: 'g' } })
+      assert.deepEqual(op2.startedOn, new Date('2013-12-01'))
+      assert.deepEqual(op2.endedOn, new Date('2013-12-01T01:30'))
 
       previousOpId = currentOpId
       currentOpId = yield* getLastDeviceOperationId(knex, deviceId)

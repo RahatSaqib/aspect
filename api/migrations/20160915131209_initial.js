@@ -314,14 +314,16 @@ function* up(knex) {
     history.charset('utf8')
   })
 
-  yield knex.schema.createTable('DeviceOperation', (config) => {
-    config.increments('id')
-    config.integer('deviceId').unsigned().notNullable()
+  yield knex.schema.createTable('DeviceOperation', (op) => {
+    op.increments('id')
+    op.integer('deviceId').unsigned().notNullable()
       .index().references('id').inTable('Device')
-    config.string('externalId')
-    config.specificType('data', 'JSON').notNullable()
-    addCreateFieldsNullable(config)
-    config.charset('utf8')
+    op.string('externalId')
+    op.dateTime('startedOn')
+    op.dateTime('endedOn')
+    op.specificType('data', 'JSON').notNullable()
+    addCreateFieldsNullable(op)
+    op.charset('utf8')
   })
 
   yield knex.schema.createTable('AssayType', (assayType) => {

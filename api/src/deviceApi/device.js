@@ -76,6 +76,8 @@ function* addDeviceOperation(context) {
       deviceId,
       externalId: payload.id,
       data: JSON.stringify(payload.data),
+      startedOn: payload.startedOn,
+      endedOn: payload.endedOn,
       createdOn: now
     })
   context.addDeviceOperationId(deviceOperationId)
