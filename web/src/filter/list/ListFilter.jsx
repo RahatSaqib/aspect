@@ -38,7 +38,10 @@ import {
   closeExportConfirmation,
   beginListExportProcessing
 } from '../FilterRedux'
-import getFilterMessage from '../formatting'
+import {
+  nonEmptyFilterValue,
+  getFilterMessage
+} from '../utils'
 
 import styles from './ListFilter.css'
 
@@ -368,7 +371,7 @@ export class ListFilter extends PureComponent {
       config.date || config.workflowStatus
     )
 
-    const nonEmptyFilter = !_.isEmpty(_.filter(filter, x => !_.isNull(x) && !_.isUndefined(x)))
+    const nonEmptyFilter = !_.isEmpty(_.filter(filter, nonEmptyFilterValue))
 
     const filterMessage = getFilterMessage(filter,
       countries,
