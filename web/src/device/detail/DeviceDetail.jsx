@@ -240,12 +240,12 @@ export class DeviceDetail extends PureComponent {
                         {device.get('siteName')}
                       </Link>
                     </div>
-                    <div>
+                    <div className={styles.CardText}>
                       {formatMessage(messages.fieldLastSeen)} {formatRelative(device.get('lastSeen'))}
                       &nbsp;&nbsp;
                       {formatMessage(messages.fieldFirstConnected)} {formatRelative(device.get('createdOn'))}
                     </div>
-                    <div>
+                    <div className={styles.CardText}>
                       {formatMessage(messages.fieldStatus)}: {device.get('status')}
                       &nbsp;•&nbsp;
                       <Link to="/result">
