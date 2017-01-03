@@ -407,7 +407,7 @@ export class InventoryItemsList extends PureComponent {
         <Dialog
           title={formHeader} actions={inventoryAdjustmentActions}
           open={inventoryAdjustment.get('operation') !== null && adjustingInventoryItem != null}
-          autoScrollBodyContent
+          autoScrollBodyContent onRequestClose={this.handleInventoryAdjustmentCancel}
         >
           <InventoryAdjustmentForm
             initialValues={adjustingInventoryItem}
