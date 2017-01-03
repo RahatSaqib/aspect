@@ -363,15 +363,15 @@ export class InventoryItemsList extends PureComponent {
             formatMessage(messages.receiveTitle, formHeaderValues) : null)))
 
     const inventoryAdjustmentActions = [
-      <RaisedButton
-        disabled={inventoryAdjustment.get('updating')}
-        onTouchTap={() => submit('inventoryAdjustment')}
-        label={formatMessage(messages.submit)} secondary
-      />,
       <FlatButton
         disabled={inventoryAdjustment.get('updating')}
         onTouchTap={this.handleInventoryAdjustmentCancel}
         secondary label={formatMessage(messages.cancel)}
+      />,
+      <RaisedButton
+        disabled={inventoryAdjustment.get('updating')}
+        onTouchTap={() => submit('inventoryAdjustment')}
+        label={formatMessage(messages.submit)} primary
       />
     ]
     return (
