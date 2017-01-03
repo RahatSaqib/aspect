@@ -21,6 +21,7 @@ import DoneIcon from 'material-ui/svg-icons/action/done'
 import Dialog from 'material-ui/Dialog'
 import RaisedButton from 'material-ui/RaisedButton'
 import FlatButton from 'material-ui/FlatButton'
+import IconButton from 'material-ui/IconButton'
 
 // Our own imports
 import EmptyList from '../../components/shared/EmptyList'
@@ -35,6 +36,7 @@ import {
   transferOperation,
   receiveOperation,
   adjustInventoryLevels,
+  addInventoryItem,
   finishAdjustingInventoryLevels,
   addInventory,
   removeInventory,
@@ -149,6 +151,7 @@ export class InventoryItemsList extends PureComponent {
     fetchListFilteredInventoryItems: PropTypes.func.isRequired,
     toggleGroupBySite: PropTypes.func.isRequired,
     adjustInventoryLevels: PropTypes.func.isRequired,
+    addInventoryItem: PropTypes.func.isRequired,
     finishAdjustingInventoryLevels: PropTypes.func.isRequired,
     consumableReasons: PropTypes.object.isRequired,
     items: PropTypes.object.isRequired,
@@ -185,10 +188,10 @@ export class InventoryItemsList extends PureComponent {
     this.props.toggleGroupBySite(isChecked)
   }
 
-  adjustInventoryLevels = (inventoryItemId, operation) => {
+  adjustInventoryLevels = (operation, inventoryItemId) => {
     const { adjustInventoryLevels, items } = this.props
     const inventoryItem = items.getIn(['byId', inventoryItemId])
-    adjustInventoryLevels(inventoryItem, operation)
+    adjustInventoryLevels(operation, inventoryItem)
   }
 
   inventoryLevelAdjustmentIconButtons = (itemId) => {
@@ -203,7 +206,7 @@ export class InventoryItemsList extends PureComponent {
         <FloatingActionButton
           mini style={buttonStyle}
           title={formatMessage(messages.receiveInventory)}
-          onTouchTap={() => this.adjustInventoryLevels(itemId, receiveOperation)}
+          onTouchTap={() => this.adjustInventoryLevels(receiveOperation, itemId)}
         >
           <DoneIcon />
         </FloatingActionButton>
@@ -213,21 +216,21 @@ export class InventoryItemsList extends PureComponent {
       <FloatingActionButton
         mini secondary style={buttonStyle}
         title={formatMessage(messages.addInventory)}
-        onTouchTap={() => this.adjustInventoryLevels(itemId, addOperation)}
+        onTouchTap={() => this.adjustInventoryLevels(addOperation, itemId)}
       >
         <AddIcon />
       </FloatingActionButton>
       <FloatingActionButton
         mini style={buttonStyle}
         title={formatMessage(messages.transferInventory)}
-        onTouchTap={() => this.adjustInventoryLevels(itemId, transferOperation)}
+        onTouchTap={() => this.adjustInventoryLevels(transferOperation, itemId)}
       >
         <TransferIcon />
       </FloatingActionButton>
       <FloatingActionButton
         mini secondary style={buttonStyle}
         title={formatMessage(messages.removeInventory)}
-        onTouchTap={() => this.adjustInventoryLevels(itemId, removeOperation)}
+        onTouchTap={() => this.adjustInventoryLevels(removeOperation, itemId)}
       >
         <RemoveIcon />
       </FloatingActionButton>
@@ -244,7 +247,7 @@ export class InventoryItemsList extends PureComponent {
       consumableReasons
     } = this.props
     const commonFormValues = {
-      consumableId: inventoryAdjustment.getIn(['adjustmentDetails', 'consumableId']),
+      consumableId: formValues.get('consumableId') || inventoryAdjustment.getIn(['adjustmentDetails', 'consumableId']),
       lotNumber: formValues.get('lotNumber'),
       expiresOn: formValues.get('expiresOn'),
       quantity: formValues.get('quantity'),
@@ -310,7 +313,7 @@ export class InventoryItemsList extends PureComponent {
   }
 
   render() {
-    const { intl, items, table, inventoryAdjustment, submit } = this.props
+    const { intl, items, table, addInventoryItem, inventoryAdjustment, submit } = this.props
     const { formatMessage, formatDate, formatRelative, formatNumber } = intl
     const isSettledAndEmpty = !table.loading && items.currentIdList.isEmpty()
 
@@ -351,7 +354,8 @@ export class InventoryItemsList extends PureComponent {
 
     const adjustingInventoryItem = inventoryAdjustment.get('adjustmentDetails')
     const formHeaderValues = {
-      consumableName: adjustingInventoryItem ? adjustingInventoryItem.get('consumableName') : null
+      consumableName: adjustingInventoryItem ?
+        adjustingInventoryItem.get('consumableName') || 'Inventory Item' : null
     }
     const formHeader = inventoryAdjustment.get('operation') === addOperation ?
       formatMessage(messages.addTitle, formHeaderValues) :
@@ -389,8 +393,15 @@ export class InventoryItemsList extends PureComponent {
             onCheck={this.groupBySiteChecked}
             label={formatMessage(messages.groupBySite)}
             labelPosition="right"
-            style={{ padding: '1em' }}
+            style={{ padding: '1em', width: '10em', display: 'inline-block' }}
           />
+          <IconButton
+            onTouchTap={addInventoryItem}
+            tooltip={formatMessage(messages.addInventory)}
+            style={{ float: 'right', margin: '0.3em 0 0', fontSize: 'auto' }}
+          >
+            <AddIcon />
+          </IconButton>
         </Card>
         {isSettledAndEmpty && <EmptyList />}
         {!isSettledAndEmpty && (
@@ -436,6 +447,7 @@ function mapDispatchToProps(dispatch) {
     fetchListFilteredInventoryItems,
     toggleGroupBySite,
     adjustInventoryLevels,
+    addInventoryItem,
     finishAdjustingInventoryLevels,
     addInventory,
     removeInventory,

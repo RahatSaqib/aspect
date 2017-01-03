@@ -73,6 +73,22 @@ module.exports = [
       }
     }
   }, {
+    method: 'POST',
+    path: '/inventory/add',
+    handler: asyncHandler(addInventory),
+    config: {
+      description: 'Add Inventory',
+      notes: 'Adds an inventory item at a site',
+      auth: { scope: ['inventory:edit'] },
+      validate: {
+        payload: Object.assign({},
+          adjustInventoryCommonPayloadFields, {
+            toSiteId: Joi.number().integer().positive().required(),
+            dateAdjusted: Joi.date().iso().required()
+          })
+      }
+    }
+  }, {
     method: 'PUT',
     path: '/inventory/add/{inventoryItemId}',
     handler: asyncHandler(addInventory),

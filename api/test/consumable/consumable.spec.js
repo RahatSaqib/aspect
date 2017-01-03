@@ -26,6 +26,7 @@ describe('Assay Consumable Routes', () => {
             assert.property(res.body.data[0], 'id')
             assert.property(res.body.data[0], 'name')
             assert.property(res.body.data[0], 'unit')
+            assert.property(res.body.data[0], 'unitShortName')
             assert.property(res.body.data[0], 'canExpire')
             assert.property(res.body.data[0], 'manufacturer')
             assert.property(res.body.data[0], 'autoInclude')

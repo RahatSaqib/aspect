@@ -15,10 +15,20 @@ import TextInput from '../../components/shared/TextInput'
 import DateInput from '../../components/shared/DateInput'
 import SelectInput from '../../components/shared/SelectInput'
 import { fetchSitesForSelectList } from '../../site/SiteRedux'
-import { fetchConsumableReasons } from '../../consumable/ConsumableRedux'
-import { addOperation, removeOperation, transferOperation, receiveOperation } from '../InventoryRedux'
+import { fetchConsumables, fetchConsumableReasons } from '../../consumable/ConsumableRedux'
+import {
+  addOperation,
+  removeOperation,
+  transferOperation,
+  receiveOperation,
+  changeAdjustmentConsumable
+} from '../InventoryRedux'
 
 const messages = defineMessages({
+  consumable: {
+    id: 'pages.InventoryAdjustmentForm.consumable',
+    defaultMessage: 'Consumable'
+  },
   lotNumber: {
     id: 'pages.InventoryAdjustmentForm.lotNumber',
     defaultMessage: 'Lot Number'
@@ -91,6 +101,10 @@ const messages = defineMessages({
     id: 'pages.InventoryAdjustmentForm.notes',
     defaultMessage: 'Notes'
   },
+  consumableRequired: {
+    id: 'pages.InventoryAdjustmentForm.consumableRequired',
+    defaultMessage: 'Please specify a consumable'
+  },
   expiryDateRequired: {
     id: 'pages.InventoryAdjustmentForm.expiryDateRequired',
     defaultMessage: 'Please specify an expiry date'
@@ -153,7 +167,10 @@ class InventoryAdjustmentForm extends PureComponent {
     changeFieldValue: PropTypes.func.isRequired,
     initialValues: PropTypes.object.isRequired,
     fetchSitesForSelectList: PropTypes.func.isRequired,
+    fetchConsumables: PropTypes.func.isRequired,
     fetchConsumableReasons: PropTypes.func.isRequired,
+    changeAdjustmentConsumable: PropTypes.func.isRequired,
+    consumables: PropTypes.object.isRequired,
     consumableReasons: PropTypes.object.isRequired,
     sitesSelectList: PropTypes.object.isRequired
   }
@@ -164,8 +181,9 @@ class InventoryAdjustmentForm extends PureComponent {
   }
 
   componentDidMount() {
-    const { fetchSitesForSelectList, fetchConsumableReasons } = this.props
+    const { fetchSitesForSelectList, fetchConsumables, fetchConsumableReasons } = this.props
     fetchSitesForSelectList()
+    fetchConsumables()
     fetchConsumableReasons()
   }
 
@@ -186,6 +204,13 @@ class InventoryAdjustmentForm extends PureComponent {
     })
   }
 
+  handleConsumableTypeChange = (event, index, value) => {
+    const { consumables: { items }, changeAdjustmentConsumable } = this.props
+    const selectedConsumable = items.find(
+      consumable => consumable.get('id') === value)
+    changeAdjustmentConsumable(selectedConsumable)
+  }
+
   handleQuantityChanged = (event, value) => {
     if (/^\d*\.?\d*$/.test(value)) {
       this.props.changeFieldValue('inventoryAdjustment', 'quantity', value)
@@ -198,17 +223,20 @@ class InventoryAdjustmentForm extends PureComponent {
   render() {
     const {
       intl: { formatMessage },
-      consumableReasons, sitesSelectList, operation, updating,
-      handleSubmit, initialValues } = this.props
+      consumables, consumableReasons, sitesSelectList, operation,
+      updating, handleSubmit, initialValues } = this.props
 
     const sitesLoading = sitesSelectList.loading
     const sites = sitesSelectList.items.toJS()
+
+    const consumablesLoading = consumables.loading
+    const consumablesList = consumables.items.toJS()
     const quantityLabel = operation === addOperation ? formatMessage(messages.addQuantity) :
       (operation === removeOperation ? formatMessage(messages.removeQuantity) :
         (operation === transferOperation ? formatMessage(messages.transferQuantity) :
           formatMessage(messages.receiveQuantity)))
     const newQuantityOnHand = [addOperation, receiveOperation].includes(operation) ?
-      initialValues.get('quantityOnHand') + this.state.adjustmentQuantity :
+      (initialValues.get('quantityOnHand') || 0) + (this.state.adjustmentQuantity || 0) :
       initialValues.get('quantityOnHand') - this.state.adjustmentQuantity
     const dateAdjustedLabel = operation === addOperation ? formatMessage(messages.addDateLabel) :
       (operation === removeOperation ? formatMessage(messages.removeDateLabel) :
@@ -231,6 +259,17 @@ class InventoryAdjustmentForm extends PureComponent {
     const visibleStyles = { display: 'block' }
     return (
       <form onSubmit={handleSubmit}>
+        {
+          initialValues.get('inventoryItemId') <= 0 &&
+          <section>
+            <SelectInput
+              name="consumableId" label={formatMessage(messages.consumable)}
+              disabled={updating || consumablesLoading || _.isEmpty(consumables)} autoWidth
+              dataSource={consumablesList} dataSourceConfig={{ text: 'name', value: 'id' }}
+              style={formFieldStyle} onChange={this.handleConsumableTypeChange}
+            />
+          </section>
+        }
         <section>
           <TextInput
             name="lotNumber" label={formatMessage(messages.lotNumber)}
@@ -279,7 +318,7 @@ class InventoryAdjustmentForm extends PureComponent {
               messages.quantityTransferred :
               messages.newQuantityOnHand)}
             values={{
-              newQuantityOnHand,
+              newQuantityOnHand: newQuantityOnHand.toString(),
               unitShortName: initialValues.get('unitShortName')
             }}
           />
@@ -338,6 +377,7 @@ function mapStateToProps(state) {
   return {
     updating: state.inventory.getIn(['inventoryAdjustment', 'updating']),
     operation: state.inventory.getIn(['inventoryAdjustment', 'operation']),
+    consumables: state.consumable.get('consumables'),
     consumableReasons: state.consumable.get('consumableReasons'),
     sitesSelectList: state.site.get('selectList')
   }
@@ -346,8 +386,10 @@ function mapStateToProps(state) {
 function mapDispatchToProps(dispatch) {
   return bindActionCreators({
     fetchSitesForSelectList,
+    fetchConsumables,
     fetchConsumableReasons,
-    changeFieldValue
+    changeFieldValue,
+    changeAdjustmentConsumable
   }, dispatch)
 }
 
@@ -355,6 +397,10 @@ const validate = (inventoryAdjustmentDetails, props) => {
   const { intl: { formatMessage }, initialValues, operation } = props
   const errors = {}
   if (inventoryAdjustmentDetails) {
+    if (!inventoryAdjustmentDetails.get('consumableId') ||
+      inventoryAdjustmentDetails.get('consumableId') <= 0) {
+      errors.consumableId = formatMessage(messages.consumableRequired)
+    }
     if (inventoryAdjustmentDetails.get('canExpire') &&
       !inventoryAdjustmentDetails.get('expiresOn')) {
       errors.expiresOn = formatMessage(messages.expiryDateRequired)

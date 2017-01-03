@@ -24,11 +24,13 @@ export const types = {
   RECEIVE_INVENTORY_ITEMS: 'RECEIVE_INVENTORY_ITEMS',
   TOGGLE_GROUP_BY_SITE: 'TOGGLE_GROUP_BY_SITE',
   ADJUST_INVENTORY_LEVELS: 'ADJUST_INVENTORY_LEVELS',
+  ADD_INVENTORY_ITEM: 'ADD_INVENTORY_ITEM',
   FINISH_ADJUSTING_INVENTORY_LEVELS: 'FINISH_ADJUSTING_INVENTORY_LEVELS',
   ADD_INVENTORY: 'ADD_INVENTORY',
   REMOVE_INVENTORY: 'REMOVE_INVENTORY',
   TRANSFER_INVENTORY: 'TRANSFER_INVENTORY',
-  RECEIVE_INVENTORY: 'RECEIVE_INVENTORY'
+  RECEIVE_INVENTORY: 'RECEIVE_INVENTORY',
+  CHANGE_ADJUSTMENT_CONSUMABLE: 'CHANGE_ADJUSTMENT_CONSUMABLE'
 }
 
 export const addOperation = 'add'
@@ -143,7 +145,7 @@ function startReceivingInventory(details) {
   }
 }
 
-export function adjustInventoryLevels(inventoryItem, operation) {
+export function adjustInventoryLevels(operation, inventoryItem) {
   const expiresOn = inventoryItem.get('expiresOn')
   const adjustmentDetails = {
     inventoryItemId: inventoryItem.get('id'),
@@ -196,6 +198,46 @@ export function adjustInventoryLevels(inventoryItem, operation) {
   })
 }
 
+export function changeAdjustmentConsumable(consumable) {
+  const expiresOn = startOfToday()
+  const adjustmentConsumableDetails = {
+    consumableId: consumable.get('id'),
+    expiresOn: consumable.get('canExpire') === 1 ? new Date(expiresOn) : undefined,
+    canExpire: consumable.get('canExpire') === 1,
+    consumableName: consumable.get('name'),
+    unitShortName: consumable.get('unitShortName')
+  }
+  return dispatch => dispatch({
+    type: types.CHANGE_ADJUSTMENT_CONSUMABLE,
+    adjustmentConsumableDetails
+  })
+}
+
+export function addInventoryItem() {
+  const adjustmentDetails = {
+    inventoryItemId: -1,
+    consumableId: -1,
+    expiresOn: startOfToday(),
+    canExpire: true,
+    lotNumber: undefined,
+    consumableName: undefined,
+    quantity: 0,
+    quantityOnHand: 0,
+    unitShortName: 'pc',
+    notes: '',
+    dateAdjusted: startOfToday(),
+    dateAdjustedFrom: startOfToday(),
+    dateAdjustedTo: startOfToday(),
+    toSiteId: -1,
+    fromSiteId: -1,
+    reasonId: -1
+  }
+  return dispatch => dispatch({
+    type: types.ADD_INVENTORY_ITEM,
+    adjustmentDetails
+  })
+}
+
 export function finishAdjustingInventoryLevels() {
   return dispatch => dispatch({
     type: types.FINISH_ADJUSTING_INVENTORY_LEVELS
@@ -207,16 +249,35 @@ export function addInventory(inventoryItemId, data) {
     const { inventory } = getState()
     const inventoryItem = inventory.getIn(['items', 'byId', inventoryItemId])
     dispatch(startAddingInventory(data))
-    return aspectFetch(`/inventory/add/${inventoryItemId}`, {
-      method: 'PUT',
+    if (inventoryItemId > 0) {
+      return aspectFetch(`/inventory/add/${inventoryItemId}`, {
+        method: 'PUT',
+        body: JSON.stringify(data),
+        errorNotifications: {
+          default: errorPleaseTryAgainInAFewMinutes(defineMessages({
+            title: {
+              id: 'errorResponseMessages.addInventory.PUT.default.title',
+              defaultMessage: 'Adding Inventory Failed'
+            },
+            onClose: () => dispatch(adjustInventoryLevels(addOperation, inventoryItem))
+          }))
+        }
+      }).then(() => dispatch(finishAdjustingInventoryLevels()))
+        .catch((err) => {
+          dispatch(finishAdjustingInventoryLevels())
+          throw err
+        })
+    }
+    return aspectFetch('/inventory/add', {
+      method: 'POST',
       body: JSON.stringify(data),
       errorNotifications: {
         default: errorPleaseTryAgainInAFewMinutes(defineMessages({
           title: {
-            id: 'errorResponseMessages.addInventory.PUT.default.title',
+            id: 'errorResponseMessages.addInventory.POST.default.title',
             defaultMessage: 'Adding Inventory Failed'
           },
-          onClose: () => dispatch(adjustInventoryLevels(inventoryItem, addOperation))
+          onClose: () => dispatch(addInventoryItem())
         }))
       }
     }).then(() => dispatch(finishAdjustingInventoryLevels()))
@@ -241,7 +302,7 @@ export function removeInventory(inventoryItemId, data) {
             id: 'errorResponseMessages.removeInventory.PUT.default.title',
             defaultMessage: 'Removing Inventory Failed'
           },
-          onClose: () => dispatch(adjustInventoryLevels(inventoryItem, removeOperation))
+          onClose: () => dispatch(adjustInventoryLevels(removeOperation, inventoryItem))
         }))
       }
     }).then(() => dispatch(finishAdjustingInventoryLevels()))
@@ -266,7 +327,7 @@ export function transferInventory(inventoryItemId, data) {
             id: 'errorResponseMessages.transferInventory.PUT.default.title',
             defaultMessage: 'Transferring Inventory Failed'
           },
-          onClose: () => dispatch(adjustInventoryLevels(inventoryItem, transferOperation))
+          onClose: () => dispatch(adjustInventoryLevels(transferOperation, inventoryItem))
         }))
       }
     }).then(() => dispatch(finishAdjustingInventoryLevels()))
@@ -291,7 +352,7 @@ export function receiveInventory(inventoryItemId, data) {
             id: 'errorResponseMessages.receiveInventory.PUT.default.title',
             defaultMessage: 'Receiving Inventory Failed'
           },
-          onClose: () => dispatch(adjustInventoryLevels(inventoryItem, receiveOperation))
+          onClose: () => dispatch(adjustInventoryLevels(receiveOperation, inventoryItem))
         }))
       }
     }).then(() => dispatch(finishAdjustingInventoryLevels()))
@@ -362,6 +423,11 @@ export default function inventoryItemsReducer(state = initialState, action) {
         operation: action.operation,
         adjustmentDetails: new AdjustmentDetails(action.adjustmentDetails)
       })
+    case types.ADD_INVENTORY_ITEM:
+      return state.mergeDeepIn(['inventoryAdjustment'], {
+        operation: addOperation,
+        adjustmentDetails: new AdjustmentDetails(action.adjustmentDetails)
+      })
     case types.FINISH_ADJUSTING_INVENTORY_LEVELS:
       return state.mergeDeepIn(['inventoryAdjustment'], {
         updating: false,
@@ -373,6 +439,8 @@ export default function inventoryItemsReducer(state = initialState, action) {
     case types.TRANSFER_INVENTORY:
     case types.RECEIVE_INVENTORY:
       return state.setIn(['inventoryAdjustment', 'updating'], true)
+    case types.CHANGE_ADJUSTMENT_CONSUMABLE:
+      return state.mergeIn(['inventoryAdjustment', 'adjustmentDetails'], action.adjustmentConsumableDetails)
     default:
       return state
   }
