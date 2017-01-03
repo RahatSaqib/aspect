@@ -35,9 +35,9 @@ const messages = defineMessages({
     id: 'pages.InventoryAdjustmentForm.fromSiteName',
     defaultMessage: 'From Site'
   },
-  currentQuantityOnHand: {
-    id: 'pages.InventoryAdjustmentForm.currentQuantityOnHand',
-    defaultMessage: '(Current Quantity on Hand: {quantityOnHand} {unitShortName})'
+  newQuantityOnHand: {
+    id: 'pages.InventoryAdjustmentForm.newQuantityOnHand',
+    defaultMessage: '(New Quantity on Hand: {newQuantityOnHand} {unitShortName})'
   },
   quantityTransferred: {
     id: 'pages.InventoryAdjustmentForm.quantityTransferred',
@@ -155,7 +155,8 @@ class InventoryAdjustmentForm extends PureComponent {
   }
 
   state = {
-    selectedReasonKey: null
+    selectedReasonKey: null,
+    adjustmentQuantity: 0
   }
 
   componentDidMount() {
@@ -184,6 +185,9 @@ class InventoryAdjustmentForm extends PureComponent {
   handleQuantityChanged = (event, value) => {
     if (/^\d*\.?\d*$/.test(value)) {
       this.props.changeFieldValue('inventoryAdjustment', 'quantity', value)
+      this.setState({
+        adjustmentQuantity: Number(value)
+      })
     }
   }
 
@@ -265,9 +269,9 @@ class InventoryAdjustmentForm extends PureComponent {
           <FormattedMessage
             {...(operation === receiveOperation ?
               messages.quantityTransferred :
-              messages.currentQuantityOnHand)}
+              messages.newQuantityOnHand)}
             values={{
-              quantityOnHand: initialValues.get('quantityOnHand'),
+              newQuantityOnHand: initialValues.get('quantityOnHand') + this.state.adjustmentQuantity,
               unitShortName: initialValues.get('unitShortName')
             }}
           />
