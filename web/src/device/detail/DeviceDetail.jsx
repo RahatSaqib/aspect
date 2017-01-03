@@ -264,7 +264,7 @@ export class DeviceDetail extends PureComponent {
         </Card>
         { /* Graphs */ }
         <Card initiallyExpanded>
-          <CardText style={{ paddingTop: 5 }} className={styles.CardText}>
+          <CardText style={{ paddingTop: 10 }} className={styles.CardText}>
             <Unit sm="1-1" md="1-2">
               <CardHeader title="Utilization Rate Over Time" />
               <ReadOnlyField
@@ -298,7 +298,7 @@ export class DeviceDetail extends PureComponent {
         { /* Contacts */ }
         <Card expanded>
           <CardHeader title="Contacts" showExpandableButton />
-          <CardText style={{ paddingTop: 5 }}>
+          <CardText style={{ paddingTop: 10 }}>
             {device.get('contacts').map(c => (
               <Link
                 key={c.get('id')}
@@ -325,7 +325,7 @@ export class DeviceDetail extends PureComponent {
         { /* Technical information */ }
         <Card>
           <CardHeader title="Technical information" actAsExpander showExpandableButton />
-          <CardText actAsExpander expandable style={{ paddingTop: 5 }} className={styles.CardText}>
+          <CardText actAsExpander expandable style={{ paddingTop: 10 }} className={styles.CardText}>
             <Unit sm="1-2" md="1-3" lg="1-4">
               <ReadOnlyField label={formatMessage(messages.fieldFirstApprovedOn)} value={getFormattedDate(device.get('approvedOn'))} />
             </Unit>
