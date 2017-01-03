@@ -311,16 +311,25 @@ export class DeviceDetail extends PureComponent {
           </CardText>
         </Card>
         { /* Calibration */ }
-        <Card onClick={this.handleToggleDialog}>
+        <Card onClick={this.handleToggleDialog} expanded>
           <CardHeader title="Calibration" actAsExpander showExpandableButton />
+          <CardText style={{ paddingTop: 10 }}>
+            Last calibrated 12/1/2016
+          </CardText>
         </Card>
         { /* Warranty */ }
-        <Card onClick={this.handleToggleDialog}>
+        <Card onClick={this.handleToggleDialog} expanded>
           <CardHeader title="Warranty" actAsExpander showExpandableButton />
+          <CardText style={{ paddingTop: 10 }}>
+            Expires 12/31/2018
+          </CardText>
         </Card>
         { /* Configuration */ }
-        <Card onClick={this.handleToggleDialog}>
+        <Card onClick={this.handleToggleDialog} expanded>
           <CardHeader title="Configuration" actAsExpander showExpandableButton />
+          <CardText style={{ paddingTop: 10 }}>
+            Automatic Upload: Enabled, Custom Fields: Disabled, Require Login: No
+          </CardText>
         </Card>
         { /* Technical information */ }
         <Card>
