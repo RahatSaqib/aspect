@@ -37,7 +37,7 @@ const messages = defineMessages({
   },
   newQuantityOnHand: {
     id: 'pages.InventoryAdjustmentForm.newQuantityOnHand',
-    defaultMessage: '(New Quantity on Hand: {newQuantityOnHand} {unitShortName})'
+    defaultMessage: '(New quantity on hand: {newQuantityOnHand} {unitShortName})'
   },
   quantityTransferred: {
     id: 'pages.InventoryAdjustmentForm.quantityTransferred',
@@ -106,6 +106,10 @@ const messages = defineMessages({
   quantityRequired: {
     id: 'pages.InventoryAdjustmentForm.quantityRequired',
     defaultMessage: 'Please specify the quantity to {operation}'
+  },
+  positiveQuantityRequired: {
+    id: 'pages.InventoryAdjustmentForm.positiveQuantityRequired',
+    defaultMessage: 'The most that you can {operation} is {currentQuantity}'
   },
   reasonRequired: {
     id: 'pages.InventoryAdjustmentForm.reasonRequired',
@@ -203,6 +207,9 @@ class InventoryAdjustmentForm extends PureComponent {
       (operation === removeOperation ? formatMessage(messages.removeQuantity) :
         (operation === transferOperation ? formatMessage(messages.transferQuantity) :
           formatMessage(messages.receiveQuantity)))
+    const newQuantityOnHand = [addOperation, receiveOperation].includes(operation) ?
+      initialValues.get('quantityOnHand') + this.state.adjustmentQuantity :
+      initialValues.get('quantityOnHand') - this.state.adjustmentQuantity
     const dateAdjustedLabel = operation === addOperation ? formatMessage(messages.addDateLabel) :
       (operation === removeOperation ? formatMessage(messages.removeDateLabel) :
         (operation === transferOperation ? formatMessage(messages.transferDateLabel) :
@@ -228,6 +235,7 @@ class InventoryAdjustmentForm extends PureComponent {
           <TextInput
             name="lotNumber" label={formatMessage(messages.lotNumber)}
             disabled={updating} maxLength="255" style={formFieldStyle}
+            autoFocus
           />
           {
             initialValues.get('canExpire') &&
@@ -271,7 +279,7 @@ class InventoryAdjustmentForm extends PureComponent {
               messages.quantityTransferred :
               messages.newQuantityOnHand)}
             values={{
-              newQuantityOnHand: initialValues.get('quantityOnHand') + this.state.adjustmentQuantity,
+              newQuantityOnHand,
               unitShortName: initialValues.get('unitShortName')
             }}
           />
@@ -344,7 +352,7 @@ function mapDispatchToProps(dispatch) {
 }
 
 const validate = (inventoryAdjustmentDetails, props) => {
-  const { intl: { formatMessage }, operation } = props
+  const { intl: { formatMessage }, initialValues, operation } = props
   const errors = {}
   if (inventoryAdjustmentDetails) {
     if (inventoryAdjustmentDetails.get('canExpire') &&
@@ -368,6 +376,10 @@ const validate = (inventoryAdjustmentDetails, props) => {
     if (!inventoryAdjustmentDetails.get('quantity') ||
       inventoryAdjustmentDetails.get('quantity') <= 0) {
       errors.quantity = formatMessage(messages.quantityRequired, { operation })
+    } else if ([removeOperation, transferOperation].includes(operation) &&
+      inventoryAdjustmentDetails.get('quantity') > initialValues.get('quantityOnHand')) {
+      errors.quantity = formatMessage(messages.positiveQuantityRequired,
+        { operation, currentQuantity: initialValues.get('quantityOnHand') })
     }
     if (operation === removeOperation &&
       (!inventoryAdjustmentDetails.get('reasonId') ||
