@@ -332,7 +332,7 @@ export class DeviceDetail extends PureComponent {
           </CardText>
         </Card>
         { /* Technical information */ }
-        <Card>
+        <Card initiallyExpanded>
           <CardHeader title="Technical information" actAsExpander showExpandableButton />
           <CardText actAsExpander expandable style={{ paddingTop: 10 }} className={styles.CardText}>
             <Unit sm="1-2" md="1-3" lg="1-4">
