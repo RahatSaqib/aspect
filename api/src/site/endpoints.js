@@ -60,6 +60,7 @@ module.exports = [
         payload: {
           name: Joi.string().required(),
           shortname: Joi.string().required(),
+          externalId: Joi.string().allow('', null),
           timezone: Joi.string().allow('', null),
           countryId: Joi.number().integer().positive().allow('', null),
           stateId: Joi.number().integer().positive().allow('', null),

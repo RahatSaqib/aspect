@@ -60,6 +60,7 @@ export const EditableFieldsForm = ({
   <form onSubmit={handleSubmit}>
     <Field name="name" floatingLabelText={labels.name} component={renderTextField} />
     <Field name="shortName" floatingLabelText={labels.shortName} component={renderTextField} />
+    <Field name="externalId" floatingLabelText={labels.externalId} component={renderTextField} />
     <TimezoneSelect name="timezone" label={labels.timezone} disabled={loading || submitting} fullWidth />
     <LocationSelector
       loading={loading}

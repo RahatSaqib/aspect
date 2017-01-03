@@ -15,6 +15,10 @@ export default defineMessages({
     id: 'pages.SiteDetail.fieldShortname',
     defaultMessage: 'Shortname'
   },
+  fieldExternalId: {
+    id: 'pages.SiteDetail.fieldExternalId',
+    defaultMessage: 'Facility Code'
+  },
   fieldTimeZone: {
     id: 'pages.SiteDetail.fieldTimeZone',
     defaultMessage: 'Time Zone'
