@@ -230,7 +230,7 @@ export class DeviceDetail extends PureComponent {
                 format={v =>
                   <div>
                     <h1 className={styles.Name}>
-                      {v}
+                      {v} <small>[{device.get('shortname')}]</small>
                     </h1>
                     <div>
                       <Link
