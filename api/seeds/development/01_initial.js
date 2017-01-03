@@ -1015,7 +1015,11 @@ function* seed(knex) {
       deviceId: routerId || null,
       createdOn: new Date(+now - (3 * i * millisInHour)),
       updatedOn: new Date(+now - (i * millisInHour)),
-      lastPingOn: new Date(+now - ((i * millisInHour) / 3))
+      lastPingOn: new Date(+now - ((i * millisInHour) / 3)),
+      approvedOn: new Date(+now - (2 * i * millisInHour)),
+      approvedBy: _.values(userIds)[_.random(_.size(userIds) - 1)],
+      hostId: _.times(8, () => String.fromCharCode(65 + _.random(25) + (_.random(1) > 0 ? 32 : 0))).join(''),
+      serial: _.times(24, () => String.fromCharCode(65 + _.random(25) + (_.random(1) > 0 ? 32 : 0))).join('')
     })
 
     device.id = yield knex('Device').insert(device)
