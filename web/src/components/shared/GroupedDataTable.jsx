@@ -240,15 +240,10 @@ export default class GroupedDataTable extends PureComponent {
                   }
                   {
                     actionComponent &&
-                    <TableRowColumn style={{ width: '0', position: 'relative', overflow: 'visible' }}>
-                      <div
-                        style={{ position: 'absolute', right: '0', top: '0' }}
-                        className={cssClasses('TableRow__Actions')}
-                      >
-                        {
-                          (actionComponent(itemId))
-                        }
-                      </div>
+                    <TableRowColumn style={{ width: '2.5em' }}>
+                      {
+                        actionComponent(itemId)
+                      }
                     </TableRowColumn>
                   }
                 </TableRow>

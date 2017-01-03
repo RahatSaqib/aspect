@@ -13,7 +13,6 @@ import { SubmissionError, submit } from 'redux-form/immutable'
 // Material-UI
 import { Card } from 'material-ui/Card'
 import Checkbox from 'material-ui/Checkbox'
-import FloatingActionButton from 'material-ui/FloatingActionButton'
 import AddIcon from 'material-ui/svg-icons/content/add'
 import TransferIcon from 'material-ui/svg-icons/action/swap-horiz'
 import RemoveIcon from 'material-ui/svg-icons/content/remove'
@@ -22,6 +21,9 @@ import Dialog from 'material-ui/Dialog'
 import RaisedButton from 'material-ui/RaisedButton'
 import FlatButton from 'material-ui/FlatButton'
 import IconButton from 'material-ui/IconButton'
+import IconMenu from 'material-ui/IconMenu'
+import MenuItem from 'material-ui/MenuItem'
+import MoreVertIcon from 'material-ui/svg-icons/navigation/more-vert'
 
 // Our own imports
 import EmptyList from '../../components/shared/EmptyList'
@@ -197,44 +199,49 @@ export class InventoryItemsList extends PureComponent {
   inventoryLevelAdjustmentIconButtons = (itemId) => {
     const { intl: { formatMessage }, items } = this.props
     const item = items.getIn(['byId', itemId])
-    const buttonStyle = {
-      marginTop: '0.2em',
-      marginRight: '1em'
+    const onItemTouchTap = (event, child) => {
+      this.adjustInventoryLevels(child.props.value, itemId)
     }
-    if (item.get('inTransitFromSiteId')) {
-      return (<div>
-        <FloatingActionButton
-          mini style={buttonStyle}
-          title={formatMessage(messages.receiveInventory)}
-          onTouchTap={() => this.adjustInventoryLevels(receiveOperation, itemId)}
-        >
-          <DoneIcon />
-        </FloatingActionButton>
-      </div>)
-    }
-    return (<div>
-      <FloatingActionButton
-        mini secondary style={buttonStyle}
-        title={formatMessage(messages.addInventory)}
-        onTouchTap={() => this.adjustInventoryLevels(addOperation, itemId)}
+    return (
+      <IconMenu
+        iconButtonElement={
+          <IconButton>
+            <MoreVertIcon />
+          </IconButton>
+        } anchorOrigin={{ horizontal: 'right', vertical: 'top' }}
+        targetOrigin={{ horizontal: 'right', vertical: 'top' }}
+        useLayerForClickAway onItemTouchTap={onItemTouchTap}
       >
-        <AddIcon />
-      </FloatingActionButton>
-      <FloatingActionButton
-        mini style={buttonStyle}
-        title={formatMessage(messages.transferInventory)}
-        onTouchTap={() => this.adjustInventoryLevels(transferOperation, itemId)}
-      >
-        <TransferIcon />
-      </FloatingActionButton>
-      <FloatingActionButton
-        mini secondary style={buttonStyle}
-        title={formatMessage(messages.removeInventory)}
-        onTouchTap={() => this.adjustInventoryLevels(removeOperation, itemId)}
-      >
-        <RemoveIcon />
-      </FloatingActionButton>
-    </div>)
+        {
+          item.get('inTransitFromSiteId') &&
+          <MenuItem
+            primaryText={formatMessage(messages.receiveInventory)}
+            leftIcon={<DoneIcon />} value={receiveOperation}
+          />
+        }
+        {
+          !item.get('inTransitFromSiteId') &&
+          <MenuItem
+            primaryText={formatMessage(messages.addInventory)}
+            leftIcon={<AddIcon />} value={addOperation}
+          />
+        }
+        {
+          !item.get('inTransitFromSiteId') &&
+          <MenuItem
+            primaryText={formatMessage(messages.transferInventory)}
+            leftIcon={<TransferIcon />} value={transferOperation}
+          />
+        }
+        {
+          !item.get('inTransitFromSiteId') &&
+          <MenuItem
+            primaryText={formatMessage(messages.removeInventory)}
+            leftIcon={<RemoveIcon />} value={removeOperation}
+          />
+        }
+      </IconMenu>
+    )
   }
 
   handleInventoryAdjustmentSubmit = (formValues) => {

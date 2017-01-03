@@ -318,6 +318,7 @@ class InventoryAdjustmentForm extends PureComponent {
               messages.quantityTransferred :
               messages.newQuantityOnHand)}
             values={{
+              quantityOnHand: initialValues.get('quantityOnHand'),
               newQuantityOnHand: newQuantityOnHand.toString(),
               unitShortName: initialValues.get('unitShortName')
             }}
