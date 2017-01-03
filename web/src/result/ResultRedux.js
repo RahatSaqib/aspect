@@ -1,9 +1,9 @@
 import { defineMessages } from 'react-intl'
-import _ from 'lodash'
 import { stringify } from 'querystring'
 import Immutable from 'immutable'
 
 import { aspectFetch } from '../shared/utils/fetch'
+import { nonEmptyFilterValue } from '../filter/utils'
 import {
   errorNotFound,
   filterFieldsRejectedError,
@@ -61,7 +61,7 @@ export function fetchListFilteredResults(extraFilters = {}, ...args) {
       .listFilter
       .toMap()
       .merge(extraFilters)
-      .filter(_.identity)
+      .filter(nonEmptyFilterValue)
       .toJS()
 
     return dispatch(fetchResults(filters, ...args))

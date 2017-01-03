@@ -4,6 +4,7 @@ import Immutable from 'immutable'
 import { stringify } from 'querystring'
 
 import { aspectFetch } from '../shared/utils/fetch'
+import { nonEmptyFilterValue } from '../filter/utils'
 import {
   filterFieldsRejectedError,
   inlineWarning,
@@ -62,7 +63,7 @@ export function fetchListFilteredPersons(extraFilters = {}, ...args) {
       .listFilter
       .toMap()
       .merge(extraFilters)
-      .filter(_.identity)
+      .filter(nonEmptyFilterValue)
       .toJS()
 
     return dispatch(fetchPersons(filters, ...args))
