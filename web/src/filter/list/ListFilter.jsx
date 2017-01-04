@@ -500,7 +500,7 @@ export class ListFilter extends PureComponent {
               modal={isModal}
               open={listExport.askingConfirmation}
             >
-              You are exporting a large number of items into <strong>{(listExport.currentFormatType || '').toUpperCase()}</strong> file.
+              You are exporting a large number of items to <strong>{(listExport.currentFormatType || '').toUpperCase()}</strong> file.
               This may take a while. Continue?
             </Dialog>
 
