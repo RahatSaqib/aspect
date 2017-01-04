@@ -156,6 +156,7 @@ function* consumeInventoryForResult(
           .where({ id: matchingInventoryOnHand.id })
           .update({
             quantityOnHand: knex.raw(`quantityOnHand - ${assayConsumable.quantity}`),
+            updatedBy: null,
             updatedOn: now
           })
       }
@@ -329,6 +330,8 @@ function* upsertInventoryItem(knex, inventoryItem, consumableId,
       lotNumber,
       expiresOn,
       quantityOnHand: quantity,
+      updatedOn: now,
+      updatedBy: userId,
       createdOn: now,
       createdBy: userId
     })

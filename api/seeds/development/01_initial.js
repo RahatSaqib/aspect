@@ -1032,40 +1032,40 @@ function* seed(knex) {
   for (let i = 0; i < siteDatas.length; i++) {
     const siteData = siteDatas[i]
     // TB Cartridges
-    yield knex('InventoryItem').insert({
+    yield knex('InventoryItem').insert(Object.assign({
       consumableId: consumableGxTbCartridgeId,
       siteId: siteData.id,
       lotNumber: `${((i + 3) * (i + 1))}${['A', 'B'][i % 2]}-${((siteData.id + i) * consumableGxTbCartridgeId)}`,
       expiresOn: new Date((new Date(now.getTime() +
         _.random(-millisInNormalYear, millisInNormalYear))).setHours(0, 0, 0, 0)),
       quantityOnHand: _.random(0, 1000)
-    })
+    }, auditFields))
     if (i % 5 === 0) {
-      yield knex('InventoryItem').insert({
+      yield knex('InventoryItem').insert(Object.assign({
         consumableId: consumableGxEbolaCartridgeId,
         siteId: siteData.id,
         lotNumber: `${((i + 7) * (i + 1))}${['Q', 'P'][i % 2]}-${((siteData.id + i) * consumableGxEbolaCartridgeId)}`,
         expiresOn: new Date((new Date(now.getTime() +
           _.random(-millisInNormalYear, millisInNormalYear))).setHours(0, 0, 0, 0)),
         quantityOnHand: _.random(0, 1000)
-      })
+      }, auditFields))
     }
     if (i % 7 === 0) {
-      yield knex('InventoryItem').insert({
+      yield knex('InventoryItem').insert(Object.assign({
         consumableId: consumableGxHivVlCartridgeId,
         siteId: siteData.id,
         lotNumber: `${((i + 11) * (i + 1))}${['A', 'V'][i % 2]}-${((siteData.id + i) * consumableGxHivVlCartridgeId)}`,
         expiresOn: new Date((new Date(now.getTime() +
           _.random(-millisInNormalYear, millisInNormalYear))).setHours(0, 0, 0, 0)),
         quantityOnHand: _.random(0, 1000)
-      })
+      }, auditFields))
     }
     // Gloves
-    yield knex('InventoryItem').insert({
+    yield knex('InventoryItem').insert(Object.assign({
       consumableId: consumableGlovesId,
       siteId: siteData.id,
       quantityOnHand: _.random(0, 100)
-    })
+    }, auditFields))
   }
 
   // some TB samples:
