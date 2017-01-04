@@ -102,7 +102,8 @@ function* listResults(request) {
       lgaId: 'g.lgaId',
       deviceName: 'd.name',
       siteName: 'Site.name',
-      sampleId: 's.externalId'
+      sampleId: 's.externalId',
+      workflowStatusId: 'r.resultWorkflowStatusId'
     })
     .modify(addConstraints, dataConstraints, { device: 'd', sample: 's' })
 
@@ -226,9 +227,30 @@ function* updateWorkflowStatus(request) {
   return yield* showResult(request)
 }
 
+function* listWorkflowStatusTypes() {
+  const resultQuery = knex('ResultWorkflowStatus as rs')
+
+  // get total count for paging
+  const getCount = resultQuery.clone()
+    .count('rs.id as count').first()
+
+  // get rows
+  const getItems = resultQuery.clone()
+    .orderBy('id', 'asc')
+    .select('id', 'name')
+
+  // return result when both queries are finished
+  const [{ count: total }, data] = yield Promise.all([getCount, getItems])
+
+  const result = { ok: true, total, length: data.length, data }
+
+  return result
+}
+
 module.exports = {
   listResults,
   showResult,
   listResultTypes,
-  updateWorkflowStatus
+  updateWorkflowStatus,
+  listWorkflowStatusTypes
 }
