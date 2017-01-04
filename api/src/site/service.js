@@ -49,7 +49,7 @@ function* listSites(request) {
       lgaId: 'g.lgaId',
       siteName: 's.name'
     })
-    .modify(addConstraints, dataConstraints, { site: 's', state: 'st', lga: 'l' })
+    .modify(addConstraints, dataConstraints, { site: 's', geography: 'g', state: 'st', lga: 'l' })
 
   // get total count for paging
   const getCount = siteQuery.clone()
@@ -115,9 +115,6 @@ function* listSitesForSelectList(request) {
   const dataConstraints = yield getConstraints(auth.credentials)
 
   const sites = yield knex('Site as s')
-    .leftOuterJoin('Geography as g', 's.geographyId', 'g.id')
-    .leftOuterJoin('State as st', 'g.stateId', 'st.id')
-    .leftOuterJoin('Lga as l', 'g.lgaId', 'l.id')
     .modify(addConstraints, dataConstraints, { site: 's', state: 'st', lga: 'l' })
     .orderBy(['s.name'], 'asc')
     .select('s.id', 's.name')
