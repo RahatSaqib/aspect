@@ -95,7 +95,7 @@ function findInventoryItemMatchingConsumableInResultData(
 }
 
 function* consumeInventoryForResult(
-  resultId, assayId, siteId, consumablesInResultData, partnerId, testStartedOn, knex) {
+  resultId, assayId, siteId, consumablesInResultData, partnerId, testStartedOn, testEndedOn, knex) {
   const now = new Date()
   const assayConsumables = yield selectAssayConsumables(knex, partnerId, assayId)
   const inventoryItemsAtSite = yield selectInventoryItemsAtSite(siteId, knex)
@@ -139,6 +139,7 @@ function* consumeInventoryForResult(
       quantity: -assayConsumable.quantity,
       operation: 'result',
       adjustedFrom: testStartedOn,
+      adjustedTo: testEndedOn,
       createdOn: now
     })
     if (matchingInventoryOnHand.id) {
