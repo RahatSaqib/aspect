@@ -25,6 +25,7 @@ import { showAcknowledgement } from '../../appNotification/AppNotificationRedux'
 import styles from './AccountDetails.css'
 import accountDetailsMessages from './messages'
 import personDetailsMessages from '../../person/detail/messages'
+import { ContactDetails, LoginDetails, UserPreferences } from '../../person/PersonRedux'
 
 export class AccountDetails extends PureComponent {
   static propTypes = {
@@ -34,36 +35,9 @@ export class AccountDetails extends PureComponent {
     loading: PropTypes.bool.isRequired,
     saving: PropTypes.bool.isRequired,
     accountDetails: PropTypes.shape({
-      contactDetails: PropTypes.shape({ // see /person/PersonRedux.js, ContactDetails
-        id: PropTypes.number,
-        name: PropTypes.string,
-        title: PropTypes.string,
-        email: PropTypes.string,
-        email2: PropTypes.string,
-        phone: PropTypes.string,
-        cell: PropTypes.string,
-        countryId: PropTypes.number,
-        stateId: PropTypes.number,
-        lgaId: PropTypes.number,
-        zip: PropTypes.string,
-        notes: PropTypes.string,
-        lastPartnerId: PropTypes.number,
-      }),
-      loginDetails: PropTypes.shape({ // see /person/PersonRedux.js, LoginDetails
-        id: PropTypes.number,
-        username: PropTypes.string,
-        newPassword: PropTypes.string,
-        confirmNewPassword: PropTypes.string,
-        currentPassword: PropTypes.string,
-        partnerId: PropTypes.number,
-        orgUnitId: PropTypes.number,
-        roles: PropTypes.arrayOf(PropTypes.number)
-      }),
-      userPreferences: PropTypes.shape({ // see /person/PersonRedux.js, UserPreferences
-        id: PropTypes.number,
-        timezone: PropTypes.string,
-        culture: PropTypes.string
-      })
+      contactDetails: PropTypes.instanceOf(ContactDetails),
+      loginDetails: PropTypes.instanceOf(LoginDetails),
+      userPreferences: PropTypes.instanceOf(UserPreferences),
     }).isRequired,
     saveContactDetails: PropTypes.func.isRequired,
     saveLoginDetails: PropTypes.func.isRequired,
