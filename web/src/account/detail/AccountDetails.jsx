@@ -35,9 +35,9 @@ export class AccountDetails extends PureComponent {
     loading: PropTypes.bool.isRequired,
     saving: PropTypes.bool.isRequired,
     accountDetails: PropTypes.shape({
-      contactDetails: PropTypes.instanceOf(ContactDetails),
-      loginDetails: PropTypes.instanceOf(LoginDetails),
-      userPreferences: PropTypes.instanceOf(UserPreferences),
+      contactDetails: PropTypes.objectOf(ContactDetails),
+      loginDetails: PropTypes.objectOf(LoginDetails),
+      userPreferences: PropTypes.objectOf(UserPreferences),
     }).isRequired,
     saveContactDetails: PropTypes.func.isRequired,
     saveLoginDetails: PropTypes.func.isRequired,

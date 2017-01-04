@@ -43,7 +43,7 @@ const ListConfig = Immutable.Record({
   workflowStatus: false
 })
 
-const ListFilter = Immutable.Record({
+export const ListFilter = Immutable.Record({
   assayId: undefined,
   countryId: undefined,
   stateId: undefined,
