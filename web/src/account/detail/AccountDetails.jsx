@@ -33,7 +33,38 @@ export class AccountDetails extends PureComponent {
     fetchAccountDetails: PropTypes.func.isRequired,
     loading: PropTypes.bool.isRequired,
     saving: PropTypes.bool.isRequired,
-    accountDetails: PropTypes.object.isRequired,
+    accountDetails: PropTypes.shape({
+      contactDetails: PropTypes.shape({ // see /person/PersonRedux.js, ContactDetails
+        id: PropTypes.number,
+        name: PropTypes.string,
+        title: PropTypes.string,
+        email: PropTypes.string,
+        email2: PropTypes.string,
+        phone: PropTypes.string,
+        cell: PropTypes.string,
+        countryId: PropTypes.number,
+        stateId: PropTypes.number,
+        lgaId: PropTypes.number,
+        zip: PropTypes.string,
+        notes: PropTypes.string,
+        lastPartnerId: PropTypes.number,
+      }),
+      loginDetails: PropTypes.shape({ // see /person/PersonRedux.js, LoginDetails
+        id: PropTypes.number,
+        username: PropTypes.string,
+        newPassword: PropTypes.string,
+        confirmNewPassword: PropTypes.string,
+        currentPassword: PropTypes.string,
+        partnerId: PropTypes.number,
+        orgUnitId: PropTypes.number,
+        roles: PropTypes.arrayOf(PropTypes.number)
+      }),
+      userPreferences: PropTypes.shape({ // see /person/PersonRedux.js, UserPreferences
+        id: PropTypes.number,
+        timezone: PropTypes.string,
+        culture: PropTypes.string
+      })
+    }).isRequired,
     saveContactDetails: PropTypes.func.isRequired,
     saveLoginDetails: PropTypes.func.isRequired,
     saveUserPreferences: PropTypes.func.isRequired,

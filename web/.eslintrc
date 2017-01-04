@@ -45,7 +45,7 @@
     "no-use-before-define": "off",
     "react/no-multi-comp": "off",
     "react/prop-types": ["error", { "skipUndeclared": true }],
-    "react/forbid-prop-types": "off",
+    "react/forbid-prop-types": "error",
     "require-yield": "off",
     "linebreak-style": "off"
   }
