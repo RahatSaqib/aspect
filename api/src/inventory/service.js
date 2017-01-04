@@ -479,20 +479,6 @@ function* transferInventory(request) {
       createdBy: currentlyLoggedInUser.id
     })
 
-    yield knex('InventoryLog').insert({
-      inventoryItemId: destinationInventoryItemId,
-      consumableId,
-      siteId: toSiteId,
-      lotNumber,
-      expiresOn,
-      quantity,
-      operation: 'transfer to',
-      notes,
-      adjustedFrom: dateAdjusted,
-      createdOn: now,
-      createdBy: currentlyLoggedInUser.id
-    })
-
     yield knex('InventoryItem')
       .where('id', inventoryItemId)
       .update({
@@ -522,7 +508,7 @@ function* receiveInventory(request) {
       }
     },
     payload: {
-      fromSiteId, toSiteId, consumableId, expiresOn,
+      toSiteId, consumableId, expiresOn,
       lotNumber, quantity, dateAdjusted, notes
     },
     params: {
@@ -543,19 +529,6 @@ function* receiveInventory(request) {
     destinationInventoryItemId = yield* upsertInventoryItem(
       knex, destinationInventoryItem, consumableId, toSiteId, lotNumber,
       expiresOn, quantity, now, currentlyLoggedInUser.id)
-
-    yield knex('InventoryLog').insert({
-      consumableId,
-      siteId: fromSiteId,
-      lotNumber,
-      expiresOn,
-      quantity: -quantity,
-      operation: 'receive from',
-      notes,
-      adjustedFrom: dateAdjusted,
-      createdOn: now,
-      createdBy: currentlyLoggedInUser.id
-    })
 
     yield knex('InventoryLog').insert({
       inventoryItemId: destinationInventoryItemId,
