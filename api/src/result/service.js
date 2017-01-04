@@ -227,9 +227,7 @@ function* updateWorkflowStatus(request) {
   return yield* showResult(request)
 }
 
-function* listWorkflowStatusTypes(request) {
-  const { query } = request
-
+function* listWorkflowStatusTypes() {
   const resultQuery = knex('ResultWorkflowStatus as rs')
 
   // get total count for paging

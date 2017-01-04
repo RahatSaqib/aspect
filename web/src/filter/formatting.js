@@ -102,7 +102,8 @@ export default function getFilterMessage(
 
   // result workflow status
   const workflowStatus = filter.workflowStatusId ? workflowStatuses.find(a => a.get('id') === filter.workflowStatusId) : null
-  const workflowStatusString = workflowStatus ? `with workflow status ${workflowStatus.get('name')}` : formatMessage(messages.workflowStatuses)
+  const noWorkflowStatus = ''
+  const workflowStatusString = workflowStatus ? `with workflow status ${workflowStatus.get('name')}` : noWorkflowStatus
 
   // The optional template lets us specify a message that only shows up if
   // assay, result, or date is set. For example, if we want to show a message that explains
