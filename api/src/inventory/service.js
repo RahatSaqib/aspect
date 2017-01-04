@@ -15,6 +15,7 @@ const {
 } = require('../auth/constraints')
 const { selectAssayConsumables } = require('../consumable/assayConsumableService')
 const { getUser } = require('../auth/service')
+const { getSite } = require('../site/service')
 
 const INVENTORY_ITEM_SELECT_LIST_FIELDS = [
   'ii.id', 'ii.consumableId', 'ii.siteId', 'ii.inTransitFromSiteId', 'ii.expiresOn',
@@ -349,15 +350,19 @@ function* upsertInventoryItem(knex, inventoryItem, consumableId,
 
 function* addInventory(request) {
   const {
-    auth: {
-      credentials: {
-        name: username
-      }
-    },
+    auth,
     payload: { toSiteId, consumableId, expiresOn, lotNumber, quantity, dateAdjusted, notes }
   } = request
 
-  const currentlyLoggedInUser = yield getUser(username)
+  const dataConstraints = yield getConstraints(auth.credentials)
+
+  const toSite = yield getSite(toSiteId, dataConstraints)
+
+  if (!toSite) {
+    return Boom.forbidden('You are not permitted to add inventory to this site')
+  }
+
+  const currentlyLoggedInUser = yield getUser(auth.credentials.name)
   const now = new Date()
   const inventoryItem = yield* findInventoryItem(
     toSiteId, consumableId, expiresOn, lotNumber)
@@ -390,11 +395,7 @@ function* addInventory(request) {
 
 function* removeInventory(request) {
   const {
-    auth: {
-      credentials: {
-        name: username
-      }
-    },
+    auth,
     payload: {
       fromSiteId, consumableId, expiresOn, lotNumber,
       quantity, reasonId, dateAdjusted, dateAdjustedFrom,
@@ -402,7 +403,15 @@ function* removeInventory(request) {
     }
   } = request
 
-  const currentlyLoggedInUser = yield getUser(username)
+  const dataConstraints = yield getConstraints(auth.credentials)
+
+  const fromSite = yield getSite(fromSiteId, dataConstraints)
+
+  if (!fromSite) {
+    return Boom.forbidden('You are not permitted to remove inventory from this site')
+  }
+
+  const currentlyLoggedInUser = yield getUser(auth.credentials.name)
   const now = new Date()
   const inventoryItem = yield* findInventoryItem(
     fromSiteId, consumableId, expiresOn, lotNumber)
@@ -437,11 +446,7 @@ function* removeInventory(request) {
 
 function* transferInventory(request) {
   const {
-    auth: {
-      credentials: {
-        name: username
-      }
-    },
+    auth,
     payload: {
       fromSiteId, toSiteId, consumableId, expiresOn,
       lotNumber, quantity, dateAdjusted, notes
@@ -451,7 +456,21 @@ function* transferInventory(request) {
     }
   } = request
 
-  const currentlyLoggedInUser = yield getUser(username)
+  const dataConstraints = yield getConstraints(auth.credentials)
+
+  const toSite = yield getSite(toSiteId, dataConstraints)
+
+  if (!toSite) {
+    return Boom.forbidden('You are not permitted to transfer inventory to this site')
+  }
+
+  const fromSite = yield getSite(fromSiteId, dataConstraints)
+
+  if (!fromSite) {
+    return Boom.forbidden('You are not permitted to transfer inventory from this site')
+  }
+
+  const currentlyLoggedInUser = yield getUser(auth.credentials.name)
   const now = new Date()
   const sourceInventoryItem = yield getInventoryItem(inventoryItemId)
   if (_.isEmpty(sourceInventoryItem)) {
@@ -503,11 +522,7 @@ function* transferInventory(request) {
 
 function* receiveInventory(request) {
   const {
-    auth: {
-      credentials: {
-        name: username
-      }
-    },
+    auth,
     payload: {
       toSiteId, consumableId, expiresOn,
       lotNumber, quantity, dateAdjusted, notes
@@ -517,7 +532,15 @@ function* receiveInventory(request) {
     }
   } = request
 
-  const currentlyLoggedInUser = yield getUser(username)
+  const dataConstraints = yield getConstraints(auth.credentials)
+
+  const toSite = yield getSite(toSiteId, dataConstraints)
+
+  if (!toSite) {
+    return Boom.forbidden('You are not permitted to add inventory to this site')
+  }
+
+  const currentlyLoggedInUser = yield getUser(auth.credentials.name)
   const now = new Date()
   const sourceInventoryItem = yield getInventoryItem(inventoryItemId)
   if (_.isEmpty(sourceInventoryItem)) {

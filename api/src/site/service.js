@@ -68,17 +68,24 @@ function* listSites(request) {
   return result
 }
 
-function* showSite(request) {
-  const { params } = request
-
-  // get item
-  const [item] = yield knex('Site as s')
+function getSite(siteId, dataConstraints) {
+  return knex('Site as s')
     .leftOuterJoin('Geography as g', 's.geographyId', 'g.id')
     .leftOuterJoin('State as st', 'g.stateId', 'st.id')
     .leftOuterJoin('Country as ct', 'g.countryId', 'ct.id')
     .leftOuterJoin('Lga as l', 'g.lgaId', 'l.id')
-    .where('s.id', params.siteId)
-    .select(SELECT_SHOW_FIELDS)
+    .where('s.id', siteId)
+    .modify(addConstraints, dataConstraints, { site: 's', geography: 'g', state: 'st', lga: 'l' })
+    .first(SELECT_SHOW_FIELDS)
+}
+
+function* showSite(request) {
+  const { params, auth } = request
+
+  const dataConstraints = yield getConstraints(auth.credentials)
+
+  // get item
+  const item = yield getSite(params.siteId, dataConstraints)
 
   const result = { ok: true, data: item }
 
@@ -124,6 +131,7 @@ function* listSitesForSelectList(request) {
 
 module.exports = {
   listSites,
+  getSite,
   showSite,
   updateSite,
   listSitesForSelectList
