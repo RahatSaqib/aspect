@@ -49,16 +49,21 @@ function* getDeviceConfigurationData(knex, deviceId) {
   return JSON.parse(configurationData || null)
 }
 
-function* getLastDeviceOperationData(knex, deviceId) {
+function* getLastDeviceOperation(knex, deviceId) {
   const lastOpId = yield* getLastDeviceOperationId(knex, deviceId)
   if (!lastOpId) {
     return null
   }
 
-  const { data } = yield knex('DeviceOperation')
+  const op = yield knex('DeviceOperation')
     .where({ id: lastOpId })
-    .first('data')
-  return JSON.parse(data || null)
+    .first('id', 'startedOn', 'endedOn', 'data')
+  return Object.assign(op, { data: JSON.parse(op.data || null) })
+}
+
+function* getLastDeviceOperationData(knex, deviceId) {
+  const op = yield* getLastDeviceOperation(knex, deviceId)
+  return op ? op.data : null
 }
 
 function* getLastDeviceOperationId(knex, deviceId) {
@@ -198,6 +203,7 @@ class DeviceApiTestContext {
 module.exports = {
   createTestContext,
   getDeviceConfigurationData,
+  getLastDeviceOperation,
   getLastDeviceOperationData,
   getLastDeviceOperationId,
   getLastResultId
