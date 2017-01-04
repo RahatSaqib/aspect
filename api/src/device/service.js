@@ -156,14 +156,10 @@ function* updateDevice(request) {
 }
 
 
-
-
-
-
 // ---------------------------------
 // exporting Devices data
 // ---------------------------------
-function* exportDevices(request){
+function* exportDevices(request) {
   const { query, auth } = request
 
   // ---------------
@@ -177,26 +173,26 @@ function* exportDevices(request){
 
   let result = null
 
-  if (query.format === 'excel'){
+  if (query.format === 'excel') {
     // fill in data into given workbook
-    const populateData = workbook => {
+    const populateData = (workbook) => {
       // get 1st sheet (1-based)
       const worksheet = workbook.getWorksheet(1)
 
       // locate cell(s) with needed value
-      let cells = getCellsByValue(worksheet, '<DeviceListRows>')
-      if (cells.length > 0){
+      const cells = getCellsByValue(worksheet, '<DeviceListRows>')
+      if (cells.length > 0) {
         // empty such cells
-        cells.forEach(cell => cell.value = '')
+        cells.forEach((cell) => { cell.value = '' })
 
         // use 1st cell only (actually, should not be more than one)
         const patternRowNumber = cells[0].row + 2
 
         // fill in array 'rows'
         const rows = []
-        devices.data.forEach(d => {
+        devices.data.forEach((d) => {
           // ------
-          // --->>> order of array elements for each dataItem should match columns order in template file
+          // --->>> order of array elements should match columns order in template file
           // ------
           rows.push([
             d.name,
@@ -217,11 +213,10 @@ function* exportDevices(request){
       outputFileName: 'devices.xlsx',
       populateData
     })
-  }
-  else if (query.format === 'csv'){
+  } else if (query.format === 'csv') {
     const items = devices.data
-    const columnNames = ['Device Name', 'Short Name', 'Status', 'Created On', 'Last Seen', 'Type', 'Category', 'Connected',       'Total Tests']
-    const fieldNames =  ['name',        'shortName',  'status', 'createdOn',  'lastSeen',  'type', 'category', 'hasConnectivity', 'totalTests']
+    const columnNames = ['Device Name', 'Short Name', 'Status', 'Created On', 'Last Seen', 'Type', 'Category', 'Connected', 'Total Tests']
+    const fieldNames = ['name', 'shortName', 'status', 'createdOn', 'lastSeen', 'type', 'category', 'hasConnectivity', 'totalTests']
     result = yield* generateCsvFile('devices.csv', items, columnNames, fieldNames)
   }
 
