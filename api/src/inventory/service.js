@@ -185,7 +185,7 @@ function* listInventoryItems(request) {
   const getCount = inventoryItemsQuery.clone()
     .count('ii.id as count').first()
 
-  const getItems = inventoryItemsQuery.clone()
+  const getItems = inventoryItemsQuery
     .modify(sortPageParams, request.query,
       INVENTORY_ITEM_SORT_FIELDS.siteName, INVENTORY_ITEM_SORT_FIELDS)
     .select(INVENTORY_ITEM_SELECT_LIST_FIELDS)
@@ -235,7 +235,7 @@ function* listInventoryItemsGroupedBySite(request) {
     sortColumnField = `COALESCE(${INVENTORY_ITEM_SORT_FIELDS[sortColumnName]}, '${defaultDateOrderBy}')`
   }
   const aggregateColumn = `${sortAggregate}(${sortColumnField}) as ${sortColumnName}`
-  const getSiteIds = sitesQuery.clone()
+  const getSiteIds = sitesQuery
     .groupBy('ii.siteId')
     .select('ii.siteId', knex.raw(aggregateColumn))
     .modify(sortPageParams, request.query, sortColumnName)
@@ -245,7 +245,7 @@ function* listInventoryItemsGroupedBySite(request) {
   const inventoryItemFilters = Object.assign({}, request.query, { siteId: _.map(sitesData, 'siteId') })
 
   const sortDirection = request.query.sortDir === 'desc' ? 'desc' : 'asc'
-  const inventoryItems = yield inventoryItemsSiteByGeographyQuery.clone()
+  const inventoryItems = yield inventoryItemsSiteByGeographyQuery
     .modify(filterParams, inventoryItemFilters, INVENTORY_ITEM_FILTER_FIELDS)
     .modify(addConstraints, dataConstraints, INVENTORY_ITEM_DATA_CONSTRAINT_ALIASES)
     .orderBy('sortBy', sortDirection)
@@ -269,7 +269,7 @@ function* listInventoryItemsGroupedBySite(request) {
 
 function* findInventoryItem(
   siteId, consumableId, expiresOn, lotNumber, inTransitFromSiteId) {
-  let matchingInventoryItemsQuery = query('Find Inventory Item')
+  const matchingInventoryItemsQuery = query('Find Inventory Item')
     .from('InventoryItem as ii')
     .innerJoin('Consumable as c', 'ii.consumableId', 'c.id')
     .innerJoin('Unit as u', 'c.unit', 'u.id')
@@ -284,20 +284,20 @@ function* findInventoryItem(
       'ii.consumableId': consumableId
     })
   if (expiresOn) {
-    matchingInventoryItemsQuery = matchingInventoryItemsQuery.clone()
+    matchingInventoryItemsQuery
       .where('ii.expiresOn', expiresOn)
   } else {
-    matchingInventoryItemsQuery = matchingInventoryItemsQuery.clone()
+    matchingInventoryItemsQuery
       .whereNull('ii.expiresOn')
   }
   if (inTransitFromSiteId) {
-    matchingInventoryItemsQuery = matchingInventoryItemsQuery.clone()
+    matchingInventoryItemsQuery
       .where('ii.inTransitFromSiteId', inTransitFromSiteId)
   } else {
-    matchingInventoryItemsQuery = matchingInventoryItemsQuery.clone()
+    matchingInventoryItemsQuery
       .whereNull('ii.inTransitFromSiteId')
   }
-  const matchingInventoryItems = yield matchingInventoryItemsQuery.clone()
+  const matchingInventoryItems = yield matchingInventoryItemsQuery
     .select(INVENTORY_ITEM_SELECT_LIST_FIELDS)
   return _.find(matchingInventoryItems, { lotNumber }) || _.head(matchingInventoryItems)
 }
