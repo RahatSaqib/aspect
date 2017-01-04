@@ -60,7 +60,8 @@ function* getListDevices(query, auth) {
       hasConnectivity: 'dc.hasConnectivity',
       hasResults: 'dc.hasResults',
       category: 'dc.name',
-      type: 'dt.name'
+      type: 'dt.name',
+      siteExternalId: 's.externalId',
     })
     .modify(addConstraints, dataConstraints, { device: 'd' })
 
