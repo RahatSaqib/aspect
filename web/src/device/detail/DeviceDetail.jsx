@@ -85,8 +85,31 @@ export class DeviceDetail extends PureComponent {
   static propTypes = {
     setPageTitle: PropTypes.func.isRequired,
     fetchSingleDevice: PropTypes.func.isRequired,
-    params: PropTypes.object.isRequired,
-    device: PropTypes.object,
+    params: PropTypes.shape({
+      // see /api/src/device/endPoint.js, path: '/device/{deviceId}'
+      deviceId: PropTypes.string.isRequired
+    }).isRequired,
+    device: PropTypes.shape({
+      // see /api/src/device/endPoint.js, path: '/device'
+      // see /api/src/device/service.js, const SELECT_SHOW_FIELDS
+      id: PropTypes.number,
+      name: PropTypes.string,
+      shortname: PropTypes.string,
+      createdOn: PropTypes.string,
+      lastPingOn: PropTypes.string,
+      lastSeen: PropTypes.string,
+      type: PropTypes.string,
+      category: PropTypes.string,
+      hasResults: PropTypes.number,
+      hasConnectivity: PropTypes.number,
+      status: PropTypes.string,
+      totalTests: PropTypes.number,
+      siteId: PropTypes.number,
+      approvedOn: PropTypes.string,
+      approvedBy: PropTypes.string,
+      notes: PropTypes.string,
+      serial: PropTypes.string,
+    }),
     intl: PropTypes.object.isRequired,
     editable: PropTypes.bool.isRequired,
     updateSingleDevice: PropTypes.func.isRequired
