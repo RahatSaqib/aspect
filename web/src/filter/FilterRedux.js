@@ -95,7 +95,8 @@ const ListConfig = Immutable.Record({
   deviceName: false,
   siteName: false,
   contactNameOrEmail: false,
-  consumable: false
+  consumable: false,
+  workflowStatus: false
 })
 
 const ListFilter = Immutable.Record({
@@ -109,7 +110,8 @@ const ListFilter = Immutable.Record({
   resultCategoryId: undefined,
   siteName: undefined,
   contactNameOrEmail: undefined,
-  consumableId: undefined
+  consumableId: undefined,
+  workflowStatusId: undefined
 })
 
 const ListExport = Immutable.Record({
@@ -155,6 +157,8 @@ export default function filterReducer(state = initialState, action) {
                 return acc.delete(key)
               case 'consumable':
                 return acc.delete('consumableId')
+              case 'workflowStatus':
+                return acc.delete('workflowStatusId')
               default:
                 invariant(false, 'Unreachable')
             }
