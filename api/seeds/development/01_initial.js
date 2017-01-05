@@ -851,13 +851,6 @@ function* seed(knex) {
     externalId: 'Acknowledged'
   })
 
-  yield knex('ResultWorkflowStatus').insert({
-    name: 'Flagged',
-    i18nkey: 'ResultWorkflowStatusFlagged',
-    token: 'flagged',
-    externalId: 'Flagged'
-  })
-
   // Create permissions
   const modules = {}
   for (const module of permissions.modules) {
