@@ -13,11 +13,12 @@ import FlatButton from 'material-ui/FlatButton'
 import TextField from 'material-ui/TextField'
 import AutoComplete from 'material-ui/AutoComplete'
 import ExitToApp from 'material-ui/svg-icons/action/exit-to-app'
+import Dialog from 'material-ui/Dialog'
 
 // Our own imports
 import recomposeForm from '../../components/recomposeForm'
 import { fetchSites } from '../../site/SiteRedux'
-import styles from './DeviceDetailForm.css'
+import styles from './DeviceDetailModalForm.css'
 
 const cssClasses = classnames.bind(styles)
 
@@ -25,6 +26,7 @@ const enhance = compose(
   pure,
   setPropTypes({
     onCancel: PropTypes.func,
+    isDialogOpen: PropTypes.bool.isRequired,
     values: PropTypes.object.isRequired
   }),
   recomposeForm({
@@ -99,14 +101,38 @@ const enhance = compose(
   })
 )
 
-export const DeviceDetailForm = (props) => {
+export const DeviceDetailModalForm = (props) => {
   const { form, meta, values, labels } = props
 
   const site = _.find(props.siteList, s => s.value === values.siteId)
 
+  const actions = [
+    props.onCancel && (
+      <FlatButton
+        onClick={props.onCancel}
+        type="button"
+        label={labels.cancel}
+        primary
+        style={{ marginRight: 10 }}
+      />
+    ),
+    <FlatButton
+      disabled={form.pristine || !form.valid || form.submitting}
+      onClick={props.handleSubmit}
+      type="button"
+      label={labels.update}
+      secondary
+    />
+  ]
+
   return (
-    <form>
-      <div>
+    <Dialog
+      modal
+      actions={actions}
+      open={props.isDialogOpen}
+      onRequestClose={props.onCancel}
+    >
+      <form>
         <TextField
           name="Name"
           floatingLabelText={labels.name}
@@ -155,29 +181,11 @@ export const DeviceDetailForm = (props) => {
             </Link>
           </div>
         </div>
-      </div>
-      <div style={{ textAlign: 'right' }}>
-        {props.onCancel && (
-          <FlatButton
-            onClick={props.onCancel}
-            type="button"
-            label={labels.cancel}
-            primary
-            style={{ marginRight: 10 }}
-          />
-        )}
-        <FlatButton
-          disabled={form.pristine || !form.valid || form.submitting}
-          onClick={props.handleSubmit}
-          type="button"
-          label={labels.update}
-          secondary
-        />
-      </div>
-    </form>
+      </form>
+    </Dialog>
   )
 }
 
-export const DeviceDetailFormContainer = enhance(DeviceDetailForm)
+export const DeviceDetailModalFormContainer = enhance(DeviceDetailModalForm)
 
-export default DeviceDetailFormContainer
+export default DeviceDetailModalFormContainer

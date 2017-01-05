@@ -25,7 +25,7 @@ import {
   updateSingleDevice
 } from '../DeviceRedux'
 import { ReadOnlyField } from '../../components/shared/ReadOnlyFields'
-import DeviceDetailForm from './DeviceDetailForm'
+import DeviceDetailModalForm from './DeviceDetailModalForm'
 import DeviceDemoLink from '../DeviceDemoLink'
 import styles from './DeviceDetail.css'
 
@@ -194,19 +194,14 @@ export class DeviceDetail extends PureComponent {
         >
           <ModeEdit />
         </IconButton>
-        <Dialog
-          modal
-          open={this.state.isEditDialogOpen}
-          onRequestClose={this.handleToggleEditDialog}
-        >
-          <DeviceDetailForm
-            onCancel={this.handleToggleEditDialog}
-            onChange={this.handleFormChange}
-            values={this.state.values}
-            labels={labels}
-            onSubmit={this.handleSubmit}
-          />
-        </Dialog>
+        <DeviceDetailModalForm
+          isDialogOpen={this.state.isEditDialogOpen}
+          onCancel={this.handleToggleEditDialog}
+          onChange={this.handleFormChange}
+          values={this.state.values}
+          labels={labels}
+          onSubmit={this.handleSubmit}
+        />
       </div>
     )
   }
@@ -257,7 +252,7 @@ export class DeviceDetail extends PureComponent {
               />
             </Unit>
             <Unit sm="1-6" md="1-12">
-              { /* Dialog for DeviceDetailForm */ }
+              { /* Dialog for DeviceDetailModalForm */ }
               {this.renderEditButtonWithDialog()}
             </Unit>
           </CardText>
