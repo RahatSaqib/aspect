@@ -50,7 +50,7 @@ export class ConsumableSelectField extends PureComponent {
 
 function mapStateToProps(state) {
   return {
-    consumableItems: state.consumable.items
+    consumableItems: state.consumable.consumables.items
   }
 }
 

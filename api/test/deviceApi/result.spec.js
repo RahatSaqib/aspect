@@ -22,7 +22,6 @@ describe('Device Result API routes', () => {
     const context = createTestContext(server, { user: 'admin', type: 'GeneXpert' })
     const clientBasePath = '/api/result'
 
-
     const runTest = context.runTest
 
     beforeEach(context.beforeEach)
@@ -1008,6 +1007,9 @@ describe('Device Result API routes', () => {
         const { siteId } = (yield knex('Device')
           .where({ id: deviceId })
           .first('siteId'))
+        const { id: adminId } = (yield knex('User')
+          .where({ name: context.auth.user })
+          .first('id'))
         const assayExternalId = 'MtbRif'
         const mtbRifCartridgeId = (yield knex('Consumable as c')
           .where('c.name', 'GeneXpert TB Cartridge')
@@ -1023,7 +1025,11 @@ describe('Device Result API routes', () => {
           siteId,
           lotNumber: resultDetails.lotNumber,
           expiresOn: new Date(resultDetails.expirationDate),
-          quantityOnHand: 20
+          quantityOnHand: 20,
+          createdBy: adminId,
+          createdOn: now,
+          updatedBy: adminId,
+          updatedOn: now
         })
 
         const inventoryConsumedByTest = (yield knex('ConsumableAssay as ca')
@@ -1067,7 +1073,11 @@ describe('Device Result API routes', () => {
           siteId,
           lotNumber: resultDetails.lotNumber,
           expiresOn: randomExpiryDate,
-          quantityOnHand: 30
+          quantityOnHand: 30,
+          createdBy: adminId,
+          createdOn: now,
+          updatedBy: adminId,
+          updatedOn: now
         })
         cartridgeAtSiteBefore = _.find((yield getInventoryItemsAtSite(knex, siteId)),
           inventoryItem => inventoryItem.lotNumber === resultDetails.lotNumber &&
@@ -1103,7 +1113,11 @@ describe('Device Result API routes', () => {
           siteId,
           lotNumber: randomLotNumber,
           expiresOn: new Date(resultDetails.expirationDate),
-          quantityOnHand: 45
+          quantityOnHand: 45,
+          createdBy: adminId,
+          createdOn: now,
+          updatedBy: adminId,
+          updatedOn: now
         })
         cartridgeAtSiteBefore = _.find((yield getInventoryItemsAtSite(knex, siteId)),
           inventoryItem => inventoryItem.lotNumber === randomLotNumber &&
@@ -1142,6 +1156,9 @@ describe('Device Result API routes', () => {
         const { siteId } = (yield knex('Device')
           .where({ id: deviceId })
           .first('siteId'))
+        const { id: adminId } = (yield knex('User')
+          .where({ name: context.auth.user })
+          .first('id'))
         const assayExternalId = 'MtbRif'
         const mtbRifCartridgeId = (yield knex('Consumable as c')
           .where('c.name', 'GeneXpert TB Cartridge')
@@ -1162,7 +1179,11 @@ describe('Device Result API routes', () => {
           siteId,
           lotNumber: resultDetails.lotNumber,
           expiresOn: randomExpiryDate,
-          quantityOnHand: 30
+          quantityOnHand: 30,
+          createdBy: adminId,
+          createdOn: now,
+          updatedBy: adminId,
+          updatedOn: now
         })
         const randomLotNumber = 'SOME-LOT-NUMBER'
         const [onlyExpirationDateMatches] = yield knex('InventoryItem').insert({
@@ -1170,7 +1191,11 @@ describe('Device Result API routes', () => {
           siteId,
           lotNumber: randomLotNumber,
           expiresOn: new Date(resultDetails.expirationDate),
-          quantityOnHand: 45
+          quantityOnHand: 45,
+          createdBy: adminId,
+          createdOn: now,
+          updatedBy: adminId,
+          updatedOn: now
         })
         const inventoryItemsBefore = yield getInventoryItemsAtSite(knex, siteId)
         const matchingLotNumberCartridgeAtSiteBefore = _.find(inventoryItemsBefore,
@@ -1268,7 +1293,7 @@ describe('Device Result API routes', () => {
         assert.isOk(inventoryConsumptionLog.resultId)
         assert.equal(inventoryConsumptionLog.lotNumber, resultDetails.lotNumber)
         assert.equal(inventoryConsumptionLog.expiresOn.toJSON(), resultDetails.expirationDate)
-        assert.equal(inventoryConsumptionLog.quantity, inventoryConsumedByTest)
+        assert.equal(inventoryConsumptionLog.quantity, -inventoryConsumedByTest)
 
         const { count: otherInventoryConsumptionLogsForThisTest } = yield knex('InventoryLog')
           .whereNot({ id: inventoryConsumptionLog.id })

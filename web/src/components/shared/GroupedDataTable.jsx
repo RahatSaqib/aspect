@@ -54,7 +54,8 @@ export default class GroupedDataTable extends PureComponent {
     }).isRequired,
     columns: PropTypes.array.isRequired,
     intl: PropTypes.object,
-    messages: PropTypes.object
+    messages: PropTypes.object,
+    actionComponent: PropTypes.func
   }
 
   state = {
@@ -124,14 +125,11 @@ export default class GroupedDataTable extends PureComponent {
     return pagerItems
   }
 
-  handleRowSelection = this.handleRowSelection.bind(this)
-
-  handleRowSelection([selectedIndex]) {
+  handleRowSelection = ([selectedIndex]) => {
     const {
       handleItemIdSelection = _.noop,
       items
     } = this.props
-
     const selectedId = items.currentIdList.get(selectedIndex)
     handleItemIdSelection(selectedId)
   }
@@ -156,7 +154,8 @@ export default class GroupedDataTable extends PureComponent {
   render() {
     const {
       items,
-      table
+      table,
+      actionComponent
     } = this.props
 
     const loading = table.loading ?
@@ -216,6 +215,7 @@ export default class GroupedDataTable extends PureComponent {
                 <TableRow
                   key={itemId}
                   className={cssClasses({
+                    TableRow: true,
                     'TableRow--selectable': this.props.selectable
                   })}
                 >
@@ -237,6 +237,14 @@ export default class GroupedDataTable extends PureComponent {
                         </TableRowColumn>
                       )
                     })
+                  }
+                  {
+                    actionComponent &&
+                    <TableRowColumn style={{ width: '2.5em' }}>
+                      {
+                        actionComponent(itemId)
+                      }
+                    </TableRowColumn>
                   }
                 </TableRow>
               ))

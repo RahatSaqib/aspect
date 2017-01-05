@@ -9,7 +9,7 @@ const {
 } = require('../auth/constraints')
 
 const SELECT_LIST_FIELDS = [
-  'c.id', 'c.name', 'u.name as unit', 'c.canExpire', 'c.manufacturer', 'c.autoInclude'
+  'c.id', 'c.name', 'u.name as unit', 'u.shortName as unitShortName', 'c.canExpire', 'c.manufacturer', 'c.autoInclude'
 ]
 function* listConsumableTypes(request) {
   const { query, auth } = request
@@ -53,7 +53,7 @@ function* listConsumableReasons(request) {
   // get rows
   const getItems = consumableReasonQuery.clone()
     .modify(sortPageParams, query, 'name')
-    .select(['id', 'name', 'decrease'])
+    .select(['id', 'name', 'i18nKey', 'decrease'])
 
   const [{ count: total }, data] = yield Promise.all([getCount, getItems])
 

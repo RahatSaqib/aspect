@@ -8,7 +8,8 @@ const {
 const {
   listSites,
   showSite,
-  updateSite
+  updateSite,
+  listSitesForSelectList
 } = require('./service')
 
 module.exports = [
@@ -73,6 +74,15 @@ module.exports = [
           latitude: Joi.number().allow('', null)
         }
       }
+    }
+  },
+  {
+    method: 'GET',
+    path: '/site/select-list',
+    handler: asyncHandler(listSitesForSelectList),
+    config: {
+      description: 'Sites for Select List',
+      notes: 'List of site ID\'s and names'
     }
   }
 ]

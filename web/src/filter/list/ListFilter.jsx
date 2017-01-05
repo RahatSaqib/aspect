@@ -188,7 +188,7 @@ export class ListFilter extends PureComponent {
 
     countries: PropTypes.object.isRequired,
     assay: PropTypes.object.isRequired,
-    consumableItems: PropTypes.object.isRequired,
+    consumable: PropTypes.object.isRequired,
     workflowStatusItems: PropTypes.shape({
       id: PropTypes.string,
       name: PropTypes.string
@@ -318,14 +318,13 @@ export class ListFilter extends PureComponent {
     this.props.beginListExportProcessing(this.props.listExport.currentFormatType)
     this.props.onClickExport(this.props.listExport.currentFormatType)
     this.props.closeExportConfirmation()
-
   }
 
   render() {
     const { filter,
           countries,
           assay,
-          consumableItems,
+          consumable,
           config,
           subject,
           filterTemplate,
@@ -333,7 +332,7 @@ export class ListFilter extends PureComponent {
           dateFilterLabel,
           intl: { formatMessage, formatDate },
           workflowStatusItems,
-        
+
           onClickExport,
           showExportExcel,
           showExportCsv,
@@ -357,7 +356,7 @@ export class ListFilter extends PureComponent {
     const filterMessage = getFilterMessage(filter,
       countries,
       assay,
-      consumableItems,
+      consumable,
       subject,
       filterTemplate,
       filterTemplateOptional,
@@ -563,7 +562,7 @@ function mapStateToProps(state) {
     listExport: state.filter.listExport,
     countries: state.geography.countriesForLocationSelector,
     assay: state.assay,
-    consumableItems: state.consumable.items,
+    consumable: state.consumable.consumables,
     workflowStatusItems: state.resultWorkflowStatus.items
   }
 }

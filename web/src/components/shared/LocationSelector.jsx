@@ -49,7 +49,7 @@ const renderCountrySelectField = ({ input, meta, ...restProps }) => (
     {...restProps}
     onChangeCountry={input.onChange}
     countryId={input.value}
-    errorStyle={{ float: 'left' }}
+    errorStyle={{ float: 'left', whiteSpace: 'nowrap', textOverflow: 'visible' }}
     errorText={meta.touched && meta.error}
     tabIndex="0" aria-haspopup
   />
@@ -60,7 +60,7 @@ const renderStateSelectField = ({ input, meta, ...restProps }) => (
     {...restProps}
     onChangeState={input.onChange}
     stateId={input.value}
-    errorStyle={{ float: 'left' }}
+    errorStyle={{ float: 'left', whiteSpace: 'nowrap', textOverflow: 'visible' }}
     errorText={meta.touched && meta.error}
     tabIndex="0" aria-haspopup
   />
@@ -71,7 +71,7 @@ const renderLgaSelectField = ({ input, meta, ...restProps }) => (
     {...restProps}
     onChangeLga={input.onChange}
     lgaId={input.value}
-    errorStyle={{ float: 'left' }}
+    errorStyle={{ float: 'left', whiteSpace: 'nowrap', textOverflow: 'visible' }}
     errorText={meta.touched && meta.error}
     tabIndex="0" aria-haspopup
   />
