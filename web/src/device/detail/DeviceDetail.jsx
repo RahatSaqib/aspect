@@ -230,9 +230,9 @@ export class DeviceDetail extends PureComponent {
                 format={v =>
                   <div>
                     <h1 className={styles.Name}>
-                      {v} <small>[{device.get('shortname')}]</small>
+                      {v} <small>({device.get('shortname')})</small>
                     </h1>
-                    <div>
+                    <div className={styles.StatusText}>
                       <Link
                         to={`/site/${device.get('siteId')}`}
                         className={styles.Site}
@@ -240,12 +240,12 @@ export class DeviceDetail extends PureComponent {
                         {device.get('siteName')}
                       </Link>
                     </div>
-                    <div className={styles.CardText}>
+                    <div className={styles.StatusText}>
                       {formatMessage(messages.fieldLastSeen)} {formatRelative(device.get('lastSeen'))}
                       &nbsp;&nbsp;
                       {formatMessage(messages.fieldFirstConnected)} {formatRelative(device.get('createdOn'))}
                     </div>
-                    <div className={styles.CardText}>
+                    <div className={styles.StatusText}>
                       {formatMessage(messages.fieldStatus)}: {device.get('status')}
                       &nbsp;•&nbsp;
                       <Link to="/result">
@@ -263,7 +263,7 @@ export class DeviceDetail extends PureComponent {
           </CardText>
         </Card>
         { /* Graphs */ }
-        <Card initiallyExpanded>
+        <Card expanded>
           <CardText style={{ paddingTop: 10 }} className={styles.CardText}>
             <Unit sm="1-1" md="1-2">
               <CardHeader title="Utilization Rate Over Time" />
@@ -296,9 +296,9 @@ export class DeviceDetail extends PureComponent {
           Not yet implemented
         </Dialog>
         { /* Contacts */ }
-        <Card expanded>
-          <CardHeader title="Contacts" showExpandableButton />
-          <CardText style={{ paddingTop: 10 }}>
+        <Card initiallyExpanded>
+          <CardHeader title="Contacts" actAsExpander showExpandableButton />
+          <CardText actAsExpander expandable style={{ paddingTop: 10 }}>
             {device.get('contacts').map(c => (
               <Link
                 key={c.get('id')}

@@ -12,6 +12,11 @@
   font-size: 16px;
 }
 
+.StatusText {
+  padding: 5px 0;
+  font-size: 14px;
+}
+
 .Contact {
   padding: 0 5px;
 }
