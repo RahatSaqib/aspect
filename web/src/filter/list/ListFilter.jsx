@@ -318,7 +318,6 @@ export class ListFilter extends PureComponent {
     this.props.beginListExportProcessing(this.props.listExport.currentFormatType)
     this.props.onClickExport(this.props.listExport.currentFormatType)
     this.props.closeExportConfirmation()
-
   }
 
   render() {

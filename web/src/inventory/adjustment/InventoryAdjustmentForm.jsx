@@ -185,6 +185,10 @@ class InventoryAdjustmentForm extends PureComponent {
     fetchSitesForSelectList()
     fetchConsumables()
     fetchConsumableReasons()
+    // TODO: Move this to onDialogOpen method when available https://github.com/callemall/material-ui/issues/3618
+    setTimeout(() => {
+      document.querySelector('input[name="lotNumber"]').focus()
+    }, 1000)
   }
 
   handleReasonChange = (event, index, value) => {
