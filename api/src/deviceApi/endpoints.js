@@ -25,9 +25,12 @@ const configurationPayload = {
 const operationPayload = {
   checkpoint: Joi.string().allow('', null).description(
     'The client checkpoint'),
+  startedOn: Joi.date().iso().description(
+    'Date and optional time the operation began. If only one date is available, use endedOn'),
+  endedOn: Joi.date().iso().description(
+    'Date and optional time the operation finished.'),
   data: Joi.object().required().description(
     'Device operational data.  The valid keys are dependent on Device Type.')
-
 }
 
 const resultPayload = {
@@ -36,6 +39,12 @@ const resultPayload = {
     + ' multiple result updates with the same ID will merge into the same result.  If no ID is'
     + ' specified, a new result is created with every POST.'),
   checkpoint: Joi.string().allow('', null).description('The client checkpoint'),
+  startedOn: Joi.date().iso().description(
+    'Date and optional time the test began. If only one date is available, use endedOn'),
+  endedOn: Joi.date().iso().description(
+    'Date and optional time the test finished.'),
+  data: Joi.object().description(
+    'Assay dependent test result data.'),
   assay: Joi.object().keys({
     id: Joi.string().required().description(
       'A known Assay configured within Aspect.'),
@@ -74,12 +83,6 @@ const resultPayload = {
       )
     })
   ).min(0).max(2).single(true),
-  data: Joi.object().description(
-    'Assay dependent test result data.'),
-  startedOn: Joi.date().iso().description(
-    'Date and optional time the test began. If only one date is available, use endedOn'),
-  endedOn: Joi.date().iso().description(
-    'Date and optional time the test finished.'),
   consumable: Joi.array().items(
     Joi.object().keys({
       serial: Joi.string().allow('', null).description(
@@ -151,12 +154,15 @@ module.exports = [
         }
       },
       response: {
+        options: {
+          allowUnknown: true
+        },
         schema: {
           checkpoint: Joi.string().allow('', null).description(
             'The client checkpoint'),
           configuration: Joi.object().keys(configurationPayload).description(
             'Device Configuration Data'),
-          operation: Joi.object().keys(configurationPayload).description(
+          operation: Joi.object().keys(operationPayload).description(
             'Device Operation Data'),
           result: Joi.array().items(Joi.object().keys(resultPayload)).description(
             'Device Result Data. Multiple results are allowed in a single request.'),
@@ -182,7 +188,7 @@ module.exports = [
             'The client checkpoint'),
           configuration: Joi.object().keys(configurationPayload).description(
             'Device Configuration Data'),
-          operation: Joi.object().keys(configurationPayload).description(
+          operation: Joi.object().keys(operationPayload).description(
             'Device Operation Data'),
           result: Joi.array().items(Joi.object().keys(resultPayload)).single(true).description(
             'Device Result Data. Multiple results are allowed in a single request.')

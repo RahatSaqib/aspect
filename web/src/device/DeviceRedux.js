@@ -20,6 +20,8 @@ import {
   receiveTableItems,
   Table
 } from '../shared/metaReducers/table'
+import { receivedExportResponse } from '../filter/FilterRedux'
+
 
 export const types = {
   REQUEST_DEVICES: 'REQUEST_DEVICES',
@@ -29,7 +31,7 @@ export const types = {
   RECEIVE_SINGLE_DEVICE: 'RECEIVE_SINGLE_DEVICE',
 
   REQUEST_UPDATING_SINGLE_DEVICE: 'REQUEST_UPDATING_SINGLE_DEVICE',
-  RECEIVE_UPDATED_SINGLE_DEVICE: 'RECEIVE_UPDATED_SINGLE_DEVICE'
+  RECEIVE_UPDATED_SINGLE_DEVICE: 'RECEIVE_UPDATED_SINGLE_DEVICE',
 }
 /*
  * ---------------- Action Creators -----------------
@@ -171,6 +173,47 @@ export function updateSingleDevice(deviceId, data) {
     }).then(json => dispatch(receiveUpdatedSingleDevice(json.data)))
   }
 }
+
+export function exportDevices(extraFilters = {}, format, sortCol, sortDir, page, pageSize) {
+  return (dispatch, getState) => {
+    const filters = getState()
+      .filter
+      .listFilter
+      .toMap()
+      .merge(extraFilters)
+      .filter(_.identity)
+      .toJS()
+
+    return aspectFetch(`/device/export?${stringify({
+      sortCol,
+      sortDir,
+      page,
+      size: pageSize,
+      format,
+      ...filters
+    })}`,
+      {
+        errorNotifications: {
+          400: filterFieldsRejectedError(defineMessages({
+            title: {
+              id: 'errorResponseMessages.exportDevices.GET.400.title',
+              defaultMessage: 'Exporting Devices Failed'
+            }
+          })),
+          default: errorPleaseTryAgainInAFewMinutes(defineMessages({
+            title: {
+              id: 'errorResponseMessages.exportDevices.GET.default.title',
+              defaultMessage: 'Exporting Devices Failed'
+            }
+          }))
+        }
+      })
+      .then((json) => {
+        dispatch(receivedExportResponse(format, json))
+      })
+  }
+}
+
 /*
  * ---------------- Reducers -----------------
  */

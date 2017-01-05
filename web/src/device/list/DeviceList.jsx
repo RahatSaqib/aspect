@@ -11,8 +11,11 @@ import { connect } from 'react-redux'
 import Helmet from 'react-helmet'
 
 // Our own imports
-import { fetchListFilteredDevices } from '../DeviceRedux'
-import ListFilterContainer from '../../filter/list/ListFilter'
+import {
+  fetchListFilteredDevices,
+  exportDevices
+} from '../DeviceRedux'
+import { ListFilterContainer } from '../../filter/list/ListFilter'
 import { ListFilter, configureListFilter } from '../../filter/FilterRedux'
 import DataTableWithEmptyList from '../../components/shared/DataTableWithEmptyList'
 import styles from './DeviceList.css'
@@ -48,6 +51,14 @@ const messages = defineMessages({
     id: 'pages.DeviceList.totalTests',
     defaultMessage: 'Total Tests'
   },
+  exportExcel: {
+    id: 'pages.DeviceList.exportExcel',
+    defaultMessage: 'Excel'
+  },
+  exportCsv: {
+    id: 'pages.DeviceList.exportCsv',
+    defaultMessage: 'CSV'
+  },
   filterTemplate: {
     id: 'pages.DeviceList.filterTemplate',
     defaultMessage: 'Viewing all devices<GEOGRAPHY><NAME>.'
@@ -72,7 +83,8 @@ export class DeviceList extends PureComponent {
     fetchListFilteredDevices: PropTypes.func.isRequired,
     items: PropTypes.objectOf(Items).isRequired,
     configureListFilter: PropTypes.func.isRequired,
-    listFilter: PropTypes.objectOf(ListFilter).isRequired
+    listFilter: PropTypes.objectOf(ListFilter).isRequired,
+    exportDevices: PropTypes.func.isRequired
   }
 
   static contextTypes = {
@@ -135,6 +147,18 @@ export class DeviceList extends PureComponent {
     )
   }
 
+  clickDeviceListExport = (formatType, receivedExportResponse) => {
+    this.props.exportDevices(
+      { hasResults: 1 },
+      formatType,
+      this.props.table.sortCol,
+      this.props.table.sortDir,
+      this.props.table.page,
+      this.props.table.pageSize,
+      receivedExportResponse
+    )
+  }
+
   render() {
     const { intl } = this.props
     const { formatMessage, formatRelative, formatNumber } = intl
@@ -158,15 +182,21 @@ export class DeviceList extends PureComponent {
         title: formatMessage(messages.totalTests),
         format: data => formatNumber(data) }
     ]
+    const askConfirmationForExport = this.props.table.total > 1000
 
     return (
       <div className={styles.Content}>
+
         <Helmet title={formatMessage(messages.devicesTitle)} titleTemplate="%s - Aspect" defaultTitle="Aspect" />
         <ListFilterContainer
           subject={formatMessage(messages.devicesTitle)}
           filterTemplate={formatMessage(messages.filterTemplate)}
           filterTemplateOptional={formatMessage(messages.filterTemplateOptional)}
+
+          onClickExport={this.clickDeviceListExport}
+          askConfirmationForExport={askConfirmationForExport}
         />
+
         <DataTableWithEmptyList
           selectable
           handleItemIdSelection={this.handleItemIdSelection}
@@ -184,14 +214,18 @@ function mapStateToProps(state) {
   return {
     listFilter: state.filter.listFilter,
     items: state.device.items,
-    table: state.device.table
+    table: state.device.table,
+
+    listCommand: state.filter.listCommand
   }
 }
 
 function mapDispatchToProps(dispatch) {
   return bindActionCreators({
     configureListFilter,
-    fetchListFilteredDevices
+    fetchListFilteredDevices,
+
+    exportDevices,
   }, dispatch)
 }
 

@@ -7,34 +7,43 @@ const {
 const {
   listDevices,
   showDevice,
-  updateDevice
+  updateDevice,
+  exportDevices
 } = require('./service')
 const { validateAllGeographyFilterParams } = require('../geography/requestValidation')
+
+function listDevicesBaseConfig() {
+  return {
+    auth: { scope: ['device:view', 'device:edit'] },
+    validate: {
+      query: Object.assign({
+        hasResults: Joi.number().allow('').min(0).max(1).description('Filter for getting devices that can have results'),
+        hasConnectivity: Joi.number().allow('').min(0).max(1).description('Filter for getting devices that can have connectivity'),
+        assayId: Joi.number().allow('').description('Assay ID'),
+        resultCategoryId: Joi.number().allow('').description('Result Category ID'),
+        deviceName: Joi.string().allow('').description('Filter for device name'),
+        category: Joi.string().description('Filter for device type category'),
+        type: Joi.string().description('Filter for device type'),
+        name: Joi.string().allow('').description('Filter for device name'),
+        // query param 'format' is applicable only for handler 'exportDevices'
+        format: Joi.string().allow('').description('File format for exporting data')
+      },
+      validateAllGeographyFilterParams(),
+      validateDateRangeParams(),
+      validateSortPageParams('name', 'status', 'createdOn', 'lastSeen', 'totalTests')
+    ) }
+  }
+}
 
 module.exports = [
   {
     method: 'GET',
     path: '/device',
     handler: asyncHandler(listDevices),
-    config: {
+    config: Object.assign({
       description: 'Device List',
-      notes: 'Pageable and sortable list of devices',
-      auth: { scope: ['device:view', 'device:edit'] },
-      validate: {
-        query: Object.assign({
-          hasResults: Joi.number().allow('').min(0).max(1).description('Filter for getting devices that can have results'),
-          hasConnectivity: Joi.number().allow('').min(0).max(1).description('Filter for getting devices that can have connectivity'),
-          assayId: Joi.number().allow('').description('Assay ID'),
-          resultCategoryId: Joi.number().allow('').description('Result Category ID'),
-          deviceName: Joi.string().allow('').description('Filter for device name'),
-          category: Joi.string().description('Filter for device type category'),
-          type: Joi.string().description('Filter for device type'),
-          name: Joi.string().allow('').description('Filter for device name')
-        }, validateAllGeographyFilterParams(),
-          validateDateRangeParams(),
-          validateSortPageParams('name', 'status', 'createdOn', 'lastSeen', 'totalTests'))
-      }
-    }
+      notes: 'Pageable and sortable list of devices'
+    }, listDevicesBaseConfig())
   },
   {
     method: 'GET',
@@ -71,5 +80,14 @@ module.exports = [
         }
       }
     }
+  },
+  {
+    method: 'GET',
+    path: '/device/export',
+    handler: asyncHandler(exportDevices),
+    config: Object.assign({
+      description: 'Export Device List into Excel or CSV',
+      notes: 'Filtered and sorted list of devices'
+    }, listDevicesBaseConfig())
   }
 ]
