@@ -14,6 +14,8 @@ import { Card, CardHeader, CardActions, CardText } from 'material-ui/Card'
 import FlatButton from 'material-ui/FlatButton'
 import Share from 'material-ui/svg-icons/social/share'
 import Bookmark from 'material-ui/svg-icons/action/bookmark-border'
+import IconExport from 'material-ui/svg-icons/navigation/arrow-forward'
+import Dialog from 'material-ui/Dialog'
 
 // Our own imports
 import FocusBlurTextField from '../../components/shared/FocusBlurTextField'
@@ -27,7 +29,12 @@ import DateRangeSelector from '../date/DateRangeSelector'
 import ResultWorkflowStatusSelectField from '../resource/ResultWorkflowStatusSelectField'
 import {
   clearListFilter,
-  changeListFilter
+  changeListFilter,
+
+  exportFormatTypes,
+  askExportConfirmation,
+  closeExportConfirmation,
+  beginListExportProcessing
 } from '../FilterRedux'
 import getFilterMessage from '../formatting'
 
@@ -126,6 +133,15 @@ const messages = defineMessages({
     id: 'shared.ListFilter.setFilters',
     defaultMessage: 'Set Filters'
   },
+
+  exportExcel: {
+    id: 'pages.ListExport.exportExcel',
+    defaultMessage: 'Excel'
+  },
+  exportCsv: {
+    id: 'pages.ListExport.exportCsv',
+    defaultMessage: 'CSV'
+  },
   workflowStatus: {
     id: 'shared.ListFilter.workflowStatus',
     defaultMessage: 'Workflow Status'
@@ -169,6 +185,7 @@ export class ListFilter extends PureComponent {
     }).isRequired,
     subject: PropTypes.string,
     dateFilterLabel: PropTypes.string,
+
     countries: PropTypes.object.isRequired,
     assay: PropTypes.object.isRequired,
     consumableItems: PropTypes.object.isRequired,
@@ -177,11 +194,27 @@ export class ListFilter extends PureComponent {
       name: PropTypes.string
     }),
     filterTemplate: PropTypes.string.isRequired,
-    filterTemplateOptional: PropTypes.string
+    filterTemplateOptional: PropTypes.string,
+
+    // for store.filter.ListExport
+    onClickExport: PropTypes.func,
+    listExport: PropTypes.shape({
+      askingConfirmation: PropTypes.bool.isRequired,
+      processingExportExcel: PropTypes.bool.isRequired,
+      processingExportCsv: PropTypes.bool.isRequired,
+      currentFormatType: PropTypes.string
+    }),
+    showExportExcel: PropTypes.bool,
+    showExportCsv: PropTypes.bool,
+    askExportConfirmation: PropTypes.func,
+    closeExportConfirmation: PropTypes.func,
+    beginListExportProcessing: PropTypes.func,
+    askConfirmationForExport: PropTypes.bool,
   }
 
   state = {
-    expanded: !!this.props.defaultExpanded
+    expanded: !!this.props.defaultExpanded,
+    askConfirmationForExport: this.props.askConfirmationForExport || false
   }
 
   handleExpandChange = (expanded) => {
@@ -267,18 +300,49 @@ export class ListFilter extends PureComponent {
     this.props.onChangeFilter(nextFilter)
   }
 
+  // ----------------------
+  // functions for List Export
+  // ----------------------
+  clickExportExcel = () => { this.clickExport(exportFormatTypes.EXCEL) }
+  clickExportCsv = () => { this.clickExport(exportFormatTypes.CSV) }
+  clickExport = (formatType) => {
+    if (this.state.askConfirmationForExport === true) {
+      this.props.askExportConfirmation(formatType)
+    } else {
+      this.props.beginListExportProcessing(formatType)
+      this.props.onClickExport(formatType)
+    }
+  }
+  confirmationDisagreed = () => { this.props.closeExportConfirmation() }
+  confirmationAgreed = () => {
+    this.props.beginListExportProcessing(this.props.listExport.currentFormatType)
+    this.props.onClickExport(this.props.listExport.currentFormatType)
+    this.props.closeExportConfirmation()
+
+  }
+
   render() {
     const { filter,
-            countries,
-            assay,
-            consumableItems,
-            config,
-            subject,
-            filterTemplate,
-            filterTemplateOptional,
-            dateFilterLabel,
-            intl: { formatMessage, formatDate },
-            workflowStatusItems } = this.props
+          countries,
+          assay,
+          consumableItems,
+          config,
+          subject,
+          filterTemplate,
+          filterTemplateOptional,
+          dateFilterLabel,
+          intl: { formatMessage, formatDate },
+          workflowStatusItems,
+        
+          onClickExport,
+          showExportExcel,
+          showExportCsv,
+          listExport
+        } = this.props
+    const showExcel = !!onClickExport && (showExportExcel || true) === true
+    const showCsv = !!onClickExport && (showExportCsv || true) === true
+    const isPrimary = true
+    const isModal = true
     const { expanded } = this.state
 
     const hasDataSection = (
@@ -467,6 +531,24 @@ export class ListFilter extends PureComponent {
             <FlatButton label={formatMessage(messages.clear)} secondary style={{ float: 'right' }} onTouchTap={this.props.onClearFilter} />
             <FlatButton label={formatMessage(messages.share)} icon={<Share />} />
             <FlatButton label={formatMessage(messages.save)} icon={<Bookmark />} />
+
+
+            <FlatButton label={formatMessage(messages.exportExcel)} icon={<IconExport />} disabled={listExport.processingExportExcel} onTouchTap={this.clickExportExcel} style={{ display: showExcel ? '' : 'none', marginLeft: '30px' }} />
+            <FlatButton label={formatMessage(messages.exportCsv)} icon={<IconExport />} disabled={listExport.processingExportCsv} onTouchTap={this.clickExportCsv} style={{ display: showCsv ? '' : 'none' }} />
+            <a id="anchorExportProxy" />
+            <Dialog
+              title="Export Confirmation"
+              actions={[
+                <FlatButton primary={isPrimary} label="Yes, Export" onTouchTap={this.confirmationAgreed} />,
+                <FlatButton primary={isPrimary} label="No, Cancel" onTouchTap={this.confirmationDisagreed} />
+              ]}
+              modal={isModal}
+              open={listExport.askingConfirmation}
+            >
+              You are exporting a large number of items to <strong>{(listExport.currentFormatType || '').toUpperCase()}</strong> file.
+              This may take a while. Continue?
+            </Dialog>
+
           </CardActions>
         </Card>
       </div>
@@ -478,6 +560,7 @@ function mapStateToProps(state) {
   return {
     config: state.filter.listConfig,
     filter: state.filter.listFilter.toJS(),
+    listExport: state.filter.listExport,
     countries: state.geography.countriesForLocationSelector,
     assay: state.assay,
     consumableItems: state.consumable.items,
@@ -488,7 +571,11 @@ function mapStateToProps(state) {
 function mapDispatchToProps(dispatch) {
   return bindActionCreators({
     onClearFilter: clearListFilter,
-    onChangeFilter: _.flowRight(changeListFilter, Immutable.fromJS)
+    onChangeFilter: _.flowRight(changeListFilter, Immutable.fromJS),
+
+    askExportConfirmation,
+    closeExportConfirmation,
+    beginListExportProcessing
   }, dispatch)
 }
 
