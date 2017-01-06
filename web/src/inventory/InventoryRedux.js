@@ -1,10 +1,10 @@
 import { defineMessages } from 'react-intl'
-import _ from 'lodash'
 import { stringify } from 'querystring'
 import Immutable from 'immutable'
 import startOfToday from 'date-fns/start_of_today'
 
 import { aspectFetch } from '../shared/utils/fetch'
+import { nonEmptyFilterValue } from '../filter/utils'
 import {
   receiveList,
   Items
@@ -64,7 +64,7 @@ function receiveInventoryItems(json, childrenPropertyPath) {
 }
 
 function getFilters(state, extraFilters) {
-  return state.filter.listFilter.toMap().merge(extraFilters).filter(_.identity).toJS()
+  return state.filter.listFilter.toMap().merge(extraFilters).filter(nonEmptyFilterValue).toJS()
 }
 
 function getGroupBy(state) {

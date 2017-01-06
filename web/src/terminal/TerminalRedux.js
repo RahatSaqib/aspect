@@ -1,9 +1,9 @@
 import { defineMessages } from 'react-intl'
-import _ from 'lodash'
 import Immutable from 'immutable'
 import { stringify } from 'querystring'
 
 import { aspectFetch } from '../shared/utils/fetch'
+import { nonEmptyFilterValue } from '../filter/utils'
 import {
   filterFieldsRejectedError,
   errorNotFound,
@@ -61,7 +61,7 @@ export function fetchListFilteredTerminals(extraFilters = {}, ...args) {
       .listFilter
       .toMap()
       .merge(extraFilters)
-      .filter(x => !_.isNull(x) && !_.isUndefined(x)/* previous BUG: need to allow 0 to pass by */)
+      .filter(nonEmptyFilterValue)
       .toJS()
 
     return dispatch(fetchTerminals(filters, ...args))

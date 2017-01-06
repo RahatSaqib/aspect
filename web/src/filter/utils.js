@@ -4,6 +4,10 @@ import {
   defineMessages
 } from 'react-intl'
 
+export function nonEmptyFilterValue(x) {
+  return !_.isNull(x) && !_.isUndefined(x)
+}
+
 const messages = defineMessages({
   noFilters: {
     id: 'shared.FormatFilters.noFilters',
@@ -45,7 +49,7 @@ const messages = defineMessages({
 
 // takes template message and filter settings and translates it into
 // a human readable string
-export default function getFilterMessage(
+export function getFilterMessage(
   filter,
   countries,
   assays,
