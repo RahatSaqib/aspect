@@ -2,7 +2,7 @@ module.exports = require('../../src/db').seed(seed)
 
 const config = require('../../src/config')
 const _ = require('lodash')
-const bcrypt = require('bcrypt')
+const bcrypt = require('bcryptjs')
 const permissions = require('./fixtures/permissions.json')
 const geography = require('./fixtures/geography.json')
 const patients = require('./fixtures/patients.json')
