@@ -14,3 +14,7 @@
   display: block;
   padding: 0 0 2px 0;
 }
+
+.FieldContainer__Value {
+  word-break: break-all;
+}
