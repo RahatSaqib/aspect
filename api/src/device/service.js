@@ -136,9 +136,17 @@ function* getDeviceByDeviceId(request, fields = SELECT_SHOW_FIELDS) {
     const device = devices[0]
     const deviceType = yield knex('DeviceType as dt').where('dt.id', device.deviceTypeId).first()
     deviceType.configurationDataSchema = JSON.parse(deviceType.configurationDataSchema) || {}
+    deviceType.deviceOperationSchema = JSON.parse(deviceType.deviceOperationSchema) || {}
 
     device.configurationData = JSON.parse(device.configurationData) || {}
     device.deviceType = deviceType
+    device.deviceOperations = yield knex('DeviceOperation as do')
+      .where('do.deviceId', device.id)
+      .limit(10)
+      .orderBy('do.startedOn', 'desc')
+      .map(deviceOperation => _.assign(deviceOperation, {
+        data: JSON.parse(deviceOperation.data) || {}
+      }))
 
     const contacts = yield knex('Person as p')
       .select('p.id', 'p.name')
