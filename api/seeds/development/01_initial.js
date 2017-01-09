@@ -210,12 +210,25 @@ function* seed(knex) {
     }
   })
 
+  // define deviceOperation object
+  const deviceOperationSchema = JSON.stringify({
+    voltage: {
+      title: 'Voltage',
+      type: 'number'
+    },
+    temperature: {
+      title: 'Temperature',
+      type: 'number'
+    }
+  })
+
   // Device Types
   const [deviceTypeGeneXpertId] = yield knex('DeviceType').insert({
     name: 'GeneXpert',
     manufacturer: 'Cepheid',
     deviceTypeCategoryId: deviceTypeCategoryLab,
-    configurationDataSchema: geneXpertConfigurationDataSchema
+    configurationDataSchema: geneXpertConfigurationDataSchema,
+    deviceOperationSchema
   })
 
   const [deviceTypeAfinionId] = yield knex('DeviceType').insert({
@@ -234,7 +247,8 @@ function* seed(knex) {
     name: 'm2000',
     manufacturer: 'Abbott',
     deviceTypeCategoryId: deviceTypeCategoryLab,
-    configurationDataSchema: m2000ConfigurationDataSchema
+    configurationDataSchema: m2000ConfigurationDataSchema,
+    deviceOperationSchema
   })
 
   yield knex('DeviceType').insert({
@@ -1154,6 +1168,21 @@ function* seed(knex) {
       deviceId: device.id,
       revoked: device.id % 5 === 0
     }, auditFields))
+
+    // Create DeviceOperation
+    const operationNumber = _.random(3, 11)
+    for (let j = 0; j < operationNumber; j++) {
+      yield knex('DeviceOperation')
+        .insert({
+          deviceId: device.id,
+          data: JSON.stringify({
+            voltage: _.random(1.35, 1.65, true),
+            temperature: _.random(30, 70)
+          }),
+          startedOn: new Date(+now + _.random(j, j+1, true) * millisInHour),
+          createdOn: now
+        })
+    }
   }
 
   // Insert Inventory Items

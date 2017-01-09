@@ -227,6 +227,7 @@ function* up(knex) {
     deviceType.string('name').notNullable()
     deviceType.string('manufacturer').notNullable()
     deviceType.specificType('configurationDataSchema', 'JSON')
+    deviceType.specificType('deviceOperationSchema', 'JSON')
     deviceType.charset('utf8')
     // TODO add device_type id1 - id4_query or appropriate alternative
     // used to uniquely identify devices and still to be discussed
