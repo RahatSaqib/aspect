@@ -1,5 +1,6 @@
 // Imports from packages
 import _ from 'lodash'
+import Immutable from 'immutable'
 import React, { PureComponent, PropTypes } from 'react'
 import {
   injectIntl,
@@ -241,9 +242,47 @@ export class DeviceDetail extends PureComponent {
     // get date for current locale, 'date' - is a Date object or string value in DateTime format
     const getFormattedDate = date => (date !== null && date !== '' && isFinite(new Date(date)) ? formatDate(date) : date)
 
+    const getDeviceOperationKey = deviceOperation => (
+      `#${deviceOperation.get('id')} - ${
+        formatDate(deviceOperation.get('startedOn'), {
+          year: 'numeric',
+          month: 'numeric',
+          day: 'numeric',
+          hour: 'numeric',
+          minute: 'numeric',
+          second: 'numeric'
+        })
+      }`
+    )
+
     const configurationDataSchema = device
       .getIn(['deviceType', 'configurationDataSchema'])
       .sortBy((value, key) => `${value.get('type') !== 'object' ? '_' : ''}${key}`)
+
+    const deviceOperations = Immutable.OrderedMap(
+      device
+        .get('deviceOperations')
+        .map(deviceOperation => [
+          getDeviceOperationKey(deviceOperation),
+          deviceOperation
+            .get('data')
+            .map((value, key) => {
+              switch(key) {
+                case 'voltage': return `${value.toFixed(2)}V`
+                case 'temperature': return `${value}F`
+                default: return value
+              }
+            })
+        ])
+    )
+
+    // Convert single object schema to list of deviceOperations schema
+    const deviceOperationsSchema = deviceOperations
+      .map(() => Immutable.Map({
+        type: 'object',
+        title: 'Device Operation',
+        properties: device.getIn(['deviceType', 'deviceOperationSchema'])
+      }))
 
     return (
       <div>
@@ -378,6 +417,13 @@ export class DeviceDetail extends PureComponent {
             </Unit>
           </CardText>
         </Card>
+        <JSONSchemaCard
+          title="Device Operation Data"
+          renderField={field => <ReadOnlyField {...field} />}
+          formatNestedSubtitle={this.handleFormatNestedSubtitle}
+          dataSchema={deviceOperationsSchema}
+          data={deviceOperations}
+        />
       </div>
     )
   }
