@@ -88,7 +88,7 @@ db.password=96loETfSyBSF6PLX
 - 11.2. Create front end bundle for this deployment by running `yarn run dist -- --deployment=malawi`
 - 11.3. Upload the bundle assets to S3 by running `aws s3 cp dist s3://aspect-web-malawi --recursive`
 
-12. Lastly, create the following A records with the aspect.id DNS provider
+12. Lastly, create the following records with the aspect.id DNS provider.  Use either A with an Alias Record Set (Route 53 specific) or CNAME records to the Beanstalk URL ([documentation](http://docs.aws.amazon.com/elasticbeanstalk/latest/dg/customdomains.html)).
 - [malawi.aspect.id]() pointing to the CloudFront distribution observed in Step 7
 - [malawiapi.aspect.id]() pointing to the Elastic Beanstalk environment
 
