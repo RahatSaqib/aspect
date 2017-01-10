@@ -102,11 +102,120 @@ function* seed(knex) {
     hasResults: 0
   })
 
+  // define configurationData object
+  const geneXpertConfigurationDataSchema = JSON.stringify({
+    field1: {
+      title: 'Field 1',
+      type: 'string'
+    },
+    field2: {
+      title: 'Field 2',
+      type: 'string'
+    },
+    field3: {
+      title: 'Field 3',
+      type: 'string'
+    },
+    field4: {
+      title: 'Field 4',
+      type: 'string'
+    },
+    nestedFields: {
+      title: 'Nested Fields',
+      type: 'object',
+      i18nKey: 'Nested Fields',
+      properties: {
+        nestedA: {
+          title: 'Nested A',
+          type: 'string'
+        },
+        nestedB: {
+          title: 'Nested B',
+          type: 'string'
+        },
+        nestedC: {
+          title: 'Nested C',
+          type: 'string'
+        },
+        nestedD: {
+          title: 'Nested D',
+          type: 'string'
+        }
+      }
+    }
+  })
+  const m2000ConfigurationDataSchema = JSON.stringify({
+    rrtField1: {
+      title: 'RRT Field 1',
+      type: 'string'
+    },
+    rrtField2: {
+      title: 'RRT Field 2',
+      type: 'string'
+    },
+    rrtField3: {
+      title: 'RRT Field 3',
+      type: 'string'
+    },
+    rrtField4: {
+      title: 'RRT Field 4',
+      type: 'string'
+    },
+    nestedFields: {
+      title: 'Pins',
+      type: 'object',
+      i18nKey: 'User Pins',
+      properties: {
+        user1Pin: {
+          title: 'user1Pin',
+          type: 'string'
+        },
+        user1Name: {
+          title: 'user1Name',
+          type: 'string'
+        },
+        user2Pin: {
+          title: 'user2Pin',
+          type: 'string'
+        },
+        user2Name: {
+          title: 'user2Name',
+          type: 'string'
+        },
+        user3Pin: {
+          title: 'user3Pin',
+          type: 'string'
+        },
+        user3Name: {
+          title: 'user3Name',
+          type: 'string'
+        },
+        user4Pin: {
+          title: 'user4Pin',
+          type: 'string'
+        },
+        user4Name: {
+          title: 'user4Name',
+          type: 'string'
+        },
+        user5Pin: {
+          title: 'user5Pin',
+          type: 'string'
+        },
+        user5Name: {
+          title: 'user5Name',
+          type: 'string'
+        }
+      }
+    }
+  })
+
   // Device Types
   const [deviceTypeGeneXpertId] = yield knex('DeviceType').insert({
     name: 'GeneXpert',
     manufacturer: 'Cepheid',
-    deviceTypeCategoryId: deviceTypeCategoryLab
+    deviceTypeCategoryId: deviceTypeCategoryLab,
+    configurationDataSchema: geneXpertConfigurationDataSchema
   })
 
   const [deviceTypeAfinionId] = yield knex('DeviceType').insert({
@@ -124,7 +233,8 @@ function* seed(knex) {
   const [deviceTypeM2000Id] = yield knex('DeviceType').insert({
     name: 'm2000',
     manufacturer: 'Abbott',
-    deviceTypeCategoryId: deviceTypeCategoryLab
+    deviceTypeCategoryId: deviceTypeCategoryLab,
+    configurationDataSchema: m2000ConfigurationDataSchema
   })
 
   yield knex('DeviceType').insert({
@@ -1001,6 +1111,19 @@ function* seed(knex) {
   })
   yield knex('DeviceSim').insert(sims)
 
+  const configurationData = {
+    field1: 'xx',
+    field2: 'yyyy',
+    field3: 'zzzzz',
+    field4: 'aaaaaa',
+    nestedFields: {
+      nestedA: '111111',
+      nestedB: '2222',
+      nestedC: '333',
+      nestedD: '44',
+    }
+  }
+
   // insert GeneXpert devices
   const devices = []
   for (let i = 0; i < deviceNumber; i++) {
@@ -1010,6 +1133,7 @@ function* seed(knex) {
       name: `D${i} ${siteData.shortname}`,
       shortname: `d${i}`,
       deviceTypeId: deviceTypeGeneXpertId,
+      configurationData: JSON.stringify(configurationData),
       siteId: siteData.id,
       // not all sites will have a router - we only added routers to some site
       deviceId: routerId || null,

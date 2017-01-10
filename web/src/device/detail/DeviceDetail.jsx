@@ -25,6 +25,7 @@ import {
   updateSingleDevice
 } from '../DeviceRedux'
 import { ReadOnlyField } from '../../components/shared/ReadOnlyFields'
+import JSONSchemaCard from '../../components/shared/JSONSchemaCard'
 import DeviceDetailModalForm from './DeviceDetailModalForm'
 import DeviceDemoLink from '../DeviceDemoLink'
 import styles from './DeviceDetail.css'
@@ -62,6 +63,10 @@ const messages = defineMessages({
     id: 'pages.DeviceDetail.fieldSiteId',
     defaultMessage: 'Site'
   },
+  fieldConfiguration: {
+    id: 'pages.DeviceDetail.fieldConfiguration',
+    defaultMessage: 'Configuration'
+  },
   fieldFirstApprovedOn: {
     id: 'pages.DeviceDetail.fieldFirstApprovedOn',
     defaultMessage: 'First Approved On'
@@ -93,6 +98,10 @@ const messages = defineMessages({
   fieldTotalNumberOfTests: {
     id: 'pages.DeviceDetail.fieldTotalNumberOfTests',
     defaultMessage: 'Tests'
+  },
+  nestedDataSubtitle: {
+    id: 'pages.DeviceDetail.nestedDataSubtitle',
+    defaultMessage: '{count} fields'
   }
 })
 
@@ -152,17 +161,25 @@ export class DeviceDetail extends PureComponent {
           name: device.get('name') || '',
           shortname: device.get('shortname') || '',
           notes: device.get('notes') || '',
-          siteId: device.get('siteId')
+          siteId: device.get('siteId'),
+          configurationData: device.get('configurationData')
         })
       })
   }
+
+  handleFormatNestedSubtitle = data => (
+    this.props.intl.formatMessage(messages.nestedDataSubtitle, { count: data.size })
+  )
 
   handleFormChange = values => this.setState({ values })
 
   handleSubmit = (data) => {
     const { device } = this.props
 
-    return this.props.updateSingleDevice(device.get('id'), data)
+    return this.props.updateSingleDevice(device.get('id'), {
+      ...data,
+      configurationData: data.configurationData.toJS()
+    })
       .then(this.handleToggleEditDialog)
   }
 
@@ -173,19 +190,24 @@ export class DeviceDetail extends PureComponent {
   }
 
   renderEditButtonWithDialog() {
-    const { editable, intl } = this.props
-    if (!editable) {
+    const { device, editable, intl } = this.props
+    if (!editable || !device || !device.has('deviceType')) {
       return false
     }
+
     const { formatMessage } = intl
     const labels = {
       name: formatMessage(messages.fieldName),
       shortname: formatMessage(messages.fieldShortname),
       notes: formatMessage(messages.fieldNotes),
       siteId: formatMessage(messages.fieldSiteId),
+      configuration: formatMessage(messages.fieldConfiguration),
       cancel: formatMessage(messages.cancel),
       update: formatMessage(messages.update)
     }
+    const dataSchema = device
+      .getIn(['deviceType', 'configurationDataSchema'])
+
     return (
       <div>
         <IconButton
@@ -195,6 +217,8 @@ export class DeviceDetail extends PureComponent {
           <ModeEdit />
         </IconButton>
         <DeviceDetailModalForm
+          formatNestedSubtitle={this.handleFormatNestedSubtitle}
+          configurationDataSchema={dataSchema}
           isDialogOpen={this.state.isEditDialogOpen}
           onCancel={this.handleToggleEditDialog}
           onChange={this.handleFormChange}
@@ -210,8 +234,16 @@ export class DeviceDetail extends PureComponent {
     const { device, intl } = this.props
     const { formatMessage, formatDate, formatRelative } = intl
 
+    if (!device || !device.has('deviceType')) {
+      return false
+    }
+
     // get date for current locale, 'date' - is a Date object or string value in DateTime format
     const getFormattedDate = date => (date !== null && date !== '' && isFinite(new Date(date)) ? formatDate(date) : date)
+
+    const configurationDataSchema = device
+      .getIn(['deviceType', 'configurationDataSchema'])
+      .sortBy((value, key) => `${value.get('type') !== 'object' ? '_' : ''}${key}`)
 
     return (
       <div>
@@ -320,12 +352,14 @@ export class DeviceDetail extends PureComponent {
           </CardText>
         </Card>
         { /* Configuration */ }
-        <Card onClick={this.handleToggleDialog} expanded>
-          <CardHeader title="Configuration" actAsExpander showExpandableButton />
-          <CardText style={{ paddingTop: 10 }}>
-            Automatic Upload: Enabled, Custom Fields: Disabled, Require Login: No
-          </CardText>
-        </Card>
+        <JSONSchemaCard
+          title={formatMessage(messages.fieldConfiguration)}
+          initiallyExpanded
+          renderField={field => <ReadOnlyField {...field} />}
+          formatNestedSubtitle={this.handleFormatNestedSubtitle}
+          dataSchema={configurationDataSchema}
+          data={device.get('configurationData')}
+        />
         { /* Technical information */ }
         <Card initiallyExpanded>
           <CardHeader title="Technical information" actAsExpander showExpandableButton />

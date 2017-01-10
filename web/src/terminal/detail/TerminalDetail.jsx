@@ -7,11 +7,15 @@ import {
 } from 'react-intl'
 import { bindActionCreators } from 'redux'
 import { connect } from 'react-redux'
+import { Link } from 'react-router'
 import Helmet from 'react-helmet'
 
 // Material-UI
-import Paper from 'material-ui/Paper'
+import Dialog from 'material-ui/Dialog'
 import LinearProgress from 'material-ui/LinearProgress'
+import { Card, CardHeader, CardText } from 'material-ui/Card'
+import IconButton from 'material-ui/IconButton'
+import ModeEdit from 'material-ui/svg-icons/editor/mode-edit'
 
 // Our own imports
 import { Unit } from '../../components/pureGrids'
@@ -20,8 +24,9 @@ import {
   fetchSingleTerminal,
   updateSingleTerminal
 } from '../TerminalRedux'
-import ReadOnlyFields from '../../components/shared/ReadOnlyFields'
-import TerminalDetailForm from './TerminalDetailForm'
+import { ReadOnlyField } from '../../components/shared/ReadOnlyFields'
+import JSONSchemaCard from '../../components/shared/JSONSchemaCard'
+import TerminalDetailModalForm from './TerminalDetailModalForm'
 import DeviceDemoLink from '../../device/DeviceDemoLink'
 import styles from './TerminalDetail.css'
 
@@ -29,6 +34,18 @@ const messages = defineMessages({
   title: {
     id: 'pages.TerminalDetail.title',
     defaultMessage: 'Terminal Detail'
+  },
+  editTooltip: {
+    id: 'pages.TerminalDetail.editTooltip',
+    defaultMessage: 'Edit'
+  },
+  cancel: {
+    id: 'pages.TerminalDetail.cancel',
+    defaultMessage: 'Cancel'
+  },
+  update: {
+    id: 'pages.TerminalDetail.update',
+    defaultMessage: 'Update'
   },
   fieldName: {
     id: 'pages.TerminalDetail.fieldName',
@@ -46,17 +63,9 @@ const messages = defineMessages({
     id: 'pages.TerminalDetail.fieldSiteId',
     defaultMessage: 'Site'
   },
-  siteLoadMore: {
-    id: 'pages.TerminalDetail.siteLoadMore',
-    defaultMessage: 'Load more'
-  },
-  siteLoadingMore: {
-    id: 'pages.TerminalDetail.siteLoadingMore',
-    defaultMessage: 'Loading……'
-  },
-  fieldFirstConnected: {
-    id: 'pages.TerminalDetail.fieldFirstConnected',
-    defaultMessage: 'First Connected'
+  fieldConfiguration: {
+    id: 'pages.DeviceDetail.fieldConfiguration',
+    defaultMessage: 'Configuration'
   },
   fieldFirstApprovedOn: {
     id: 'pages.TerminalDetail.fieldFirstApprovedOn',
@@ -66,6 +75,10 @@ const messages = defineMessages({
     id: 'pages.TerminalDetail.fieldFirstApprovedBy',
     defaultMessage: 'First Approved By'
   },
+  fieldHostId: {
+    id: 'pages.TerminalDetail.fieldHostId',
+    defaultMessage: 'Host Id'
+  },
   fieldSerial: {
     id: 'pages.TerminalDetail.fieldSerial',
     defaultMessage: 'Serial'
@@ -74,9 +87,21 @@ const messages = defineMessages({
     id: 'pages.TerminalDetail.fieldLastSeen',
     defaultMessage: 'Last Seen'
   },
+  fieldFirstConnected: {
+    id: 'pages.TerminalDetail.fieldFirstConnected',
+    defaultMessage: 'Connected'
+  },
+  fieldStatus: {
+    id: 'pages.TerminalDetail.fieldStatus',
+    defaultMessage: 'Status'
+  },
   fieldTotalNumberOfTests: {
     id: 'pages.TerminalDetail.fieldTotalNumberOfTests',
-    defaultMessage: 'Total Number of Tests'
+    defaultMessage: 'Tests'
+  },
+  nestedDataSubtitle: {
+    id: 'pages.TerminalDetail.nestedDataSubtitle',
+    defaultMessage: '{count} fields'
   }
 })
 
@@ -93,6 +118,8 @@ export class TerminalDetail extends PureComponent {
   }
 
   state = {
+    isEditDialogOpen: false,
+    isDemoDialogOpen: false,
     values: {
       name: '',
       shortname: '',
@@ -117,6 +144,14 @@ export class TerminalDetail extends PureComponent {
     }
   }
 
+  handleToggleEditDialog = () => {
+    this.setState({ isEditDialogOpen: !this.state.isEditDialogOpen })
+  }
+
+  handleToggleDialog = () => {
+    this.setState({ isDemoDialogOpen: !this.state.isDemoDialogOpen })
+  }
+
   handleFetchTerminal = () => {
     this.props.fetchSingleTerminal(this.props.params.terminalId)
       .then(() => {
@@ -126,67 +161,209 @@ export class TerminalDetail extends PureComponent {
           name: terminal.get('name') || '',
           shortname: terminal.get('shortname') || '',
           notes: terminal.get('notes') || '',
-          siteId: terminal.get('siteId')
+          siteId: terminal.get('siteId'),
+          configurationData: terminal.get('configurationData')
         })
       })
   }
+
+  handleFormatNestedSubtitle = data => (
+    this.props.intl.formatMessage(messages.nestedDataSubtitle, { count: data.size })
+  )
 
   handleFormChange = values => this.setState({ values })
 
   handleSubmit = (data) => {
     const { terminal } = this.props
 
-    return this.props.updateSingleTerminal(terminal.get('id'), data)
+    return this.props.updateSingleTerminal(terminal.get('id'), {
+      ...data,
+      configurationData: data.configurationData.toJS()
+    })
+      .then(this.handleToggleEditDialog)
   }
 
   renderProgress() {
-    const { terminal } = this.props
-
-    return !terminal && <LinearProgress />
+    return (
+      <LinearProgress />
+    )
   }
 
-  renderFormContainer() {
-    const { intl: { formatMessage } } = this.props
+  renderEditButtonWithDialog() {
+    const { terminal, editable, intl } = this.props
+    if (!editable || !terminal || !terminal.has('deviceType')) {
+      return false
+    }
+
+    const { formatMessage } = intl
     const labels = {
       name: formatMessage(messages.fieldName),
       shortname: formatMessage(messages.fieldShortname),
       notes: formatMessage(messages.fieldNotes),
       siteId: formatMessage(messages.fieldSiteId),
-      loadMoreText: formatMessage(messages.siteLoadMore),
-      loadingMoreText: formatMessage(messages.siteLoadingMore)
+      configuration: formatMessage(messages.fieldConfiguration),
+      cancel: formatMessage(messages.cancel),
+      update: formatMessage(messages.update)
     }
+    const dataSchema = terminal
+      .getIn(['deviceType', 'configurationDataSchema'])
+
     return (
-      <TerminalDetailForm
-        onChange={this.handleFormChange}
-        values={this.state.values}
-        labels={labels}
-        onSubmit={this.handleSubmit}
-      />
+      <div>
+        <IconButton
+          tooltip={formatMessage(messages.editTooltip)}
+          onTouchTap={this.handleToggleEditDialog}
+        >
+          <ModeEdit />
+        </IconButton>
+        <TerminalDetailModalForm
+          formatNestedSubtitle={this.handleFormatNestedSubtitle}
+          configurationDataSchema={dataSchema}
+          isDialogOpen={this.state.isEditDialogOpen}
+          onCancel={this.handleToggleEditDialog}
+          onChange={this.handleFormChange}
+          values={this.state.values}
+          labels={labels}
+          onSubmit={this.handleSubmit}
+        />
+      </div>
     )
   }
 
-  renderReadOnlyFields() {
-    const { terminal, intl: { formatMessage } } = this.props
-    const fields = [
-      {
-        label: formatMessage(messages.fieldName),
-        value: terminal.get('name')
-      },
-      {
-        label: formatMessage(messages.fieldShortname),
-        value: terminal.get('shortname')
-      },
-      {
-        label: formatMessage(messages.fieldNotes),
-        value: terminal.get('notes')
-      },
-      {
-        label: formatMessage(messages.fieldSiteId),
-        value: terminal.get('siteId')
-      }
-    ]
+  renderContent() {
+    const { terminal, intl } = this.props
+    const { formatMessage, formatDate, formatRelative } = intl
+
+    if (!terminal || !terminal.has('deviceType')) {
+      return false
+    }
+
+    // get date for current locale, 'date' - is a Date object or string value in DateTime format
+    const getFormattedDate = date => (date !== null && date !== '' && isFinite(new Date(date)) ? formatDate(date) : date)
+
+    const configurationDataSchema = terminal
+      .getIn(['deviceType', 'configurationDataSchema'])
+      .sortBy((value, key) => `${value.get('type') !== 'object' ? '_' : ''}${key}`)
+
     return (
-      <ReadOnlyFields fields={fields} />
+      <div>
+        { /* IDs and site/results */ }
+        <Card>
+          <CardText>
+            <Unit sm="5-6" md="11-12">
+              <ReadOnlyField
+                label=""
+                value={terminal.get('name')}
+                format={v =>
+                  <div>
+                    <h1 className={styles.Name}>
+                      {v} <small>({terminal.get('shortname')})</small>
+                    </h1>
+                    <div className={styles.StatusText}>
+                      <Link
+                        to={`/site/${terminal.get('siteId')}`}
+                        className={styles.Site}
+                      >
+                        {terminal.get('siteName')}
+                      </Link>
+                    </div>
+                    <div className={styles.StatusText}>
+                      {formatMessage(messages.fieldLastSeen)} {formatRelative(terminal.get('lastSeen'))}
+                      &nbsp;&nbsp;
+                      {formatMessage(messages.fieldFirstConnected)} {formatRelative(terminal.get('createdOn'))}
+                    </div>
+                    <div className={styles.StatusText}>
+                      {formatMessage(messages.fieldStatus)}: {terminal.get('status')}
+                      &nbsp;•&nbsp;
+                      <Link to="/result">
+                        {terminal.get('totalTests')} {formatMessage(messages.fieldTotalNumberOfTests)}
+                      </Link>
+                    </div>
+                  </div>
+                }
+              />
+            </Unit>
+            <Unit sm="1-6" md="1-12">
+              { /* Dialog for TerminalDetailModalForm */ }
+              {this.renderEditButtonWithDialog()}
+            </Unit>
+          </CardText>
+        </Card>
+        { /* Graphs */ }
+        <Card expanded>
+          <CardText style={{ paddingTop: 10 }} className={styles.CardText}>
+            <Unit sm="1-1" md="1-2">
+              <CardHeader title="Utilization Rate Over Time" />
+              <ReadOnlyField
+                label=""
+                value
+                format={() =>
+                  <img role="presentation" src={require('../../device/detail/utilization_rate.png')} style={{ width: '100%' }} />
+                }
+              />
+            </Unit>
+            <Unit sm="1-1" md="1-2">
+              <CardHeader title="Error Rates Over Time" />
+              <ReadOnlyField
+                label=""
+                value
+                format={() =>
+                  <img role="presentation" src={require('../../device/detail/error_rates.png')} style={{ width: '100%' }} />
+                }
+              />
+            </Unit>
+          </CardText>
+        </Card>
+        { /* Dialog for demo purpose */ }
+        <Dialog
+          modal={false}
+          open={this.state.isDemoDialogOpen}
+          onRequestClose={this.handleToggleDialog}
+        >
+          Not yet implemented
+        </Dialog>
+        { /* Calibration */ }
+        <Card onClick={this.handleToggleDialog} expanded>
+          <CardHeader title="Calibration" actAsExpander showExpandableButton />
+          <CardText style={{ paddingTop: 10 }}>
+            Last calibrated 12/1/2016
+          </CardText>
+        </Card>
+        { /* Warranty */ }
+        <Card onClick={this.handleToggleDialog} expanded>
+          <CardHeader title="Warranty" actAsExpander showExpandableButton />
+          <CardText style={{ paddingTop: 10 }}>
+            Expires 12/31/2018
+          </CardText>
+        </Card>
+        { /* Configuration */ }
+        <JSONSchemaCard
+          title={formatMessage(messages.fieldConfiguration)}
+          initiallyExpanded
+          renderField={field => <ReadOnlyField {...field} />}
+          formatNestedSubtitle={this.handleFormatNestedSubtitle}
+          dataSchema={configurationDataSchema}
+          data={terminal.get('configurationData')}
+        />
+        { /* Technical information */ }
+        <Card initiallyExpanded>
+          <CardHeader title="Technical information" actAsExpander showExpandableButton />
+          <CardText actAsExpander expandable style={{ paddingTop: 10 }} className={styles.CardText}>
+            <Unit sm="1-2" md="1-3" lg="1-4">
+              <ReadOnlyField label={formatMessage(messages.fieldFirstApprovedOn)} value={getFormattedDate(terminal.get('approvedOn'))} />
+            </Unit>
+            <Unit sm="1-2" md="1-3" lg="1-4">
+              <ReadOnlyField label={formatMessage(messages.fieldFirstApprovedBy)} value={terminal.get('approvedBy')} />
+            </Unit>
+            <Unit sm="1-2" md="1-3" lg="1-4">
+              <ReadOnlyField label={formatMessage(messages.fieldHostId)} value={terminal.get('hostId')} />
+            </Unit>
+            <Unit sm="1-2" md="1-3" lg="1-4">
+              <ReadOnlyField label={formatMessage(messages.fieldSerial)} value={terminal.get('serial')} />
+            </Unit>
+          </CardText>
+        </Card>
+      </div>
     )
   }
 
@@ -202,51 +379,14 @@ export class TerminalDetail extends PureComponent {
     )
   }
 
-  renderContent() {
-    const { terminal, editable, intl: { formatMessage, formatDate } } = this.props
-    if (!terminal) {
-      return null
-    }
-
-    // get date for current locale, 'date' - is a Date object or string value in DateTime format
-    const getFormattedDate = date => (date !== null && date !== '' && isFinite(new Date(date)) ? formatDate(date) : date)
-
-    const fields = [
-      {
-        label: formatMessage(messages.fieldFirstConnected),
-        value: terminal.get('id')
-      },
-      {
-        label: formatMessage(messages.fieldFirstApprovedOn),
-        value: getFormattedDate(terminal.get('approvedOn')) || ''
-      },
-      {
-        label: formatMessage(messages.fieldFirstApprovedBy),
-        value: terminal.get('approvedBy') || ''
-      },
-      {
-        label: formatMessage(messages.fieldSerial),
-        value: terminal.get('serial') || /* FIXME */ '<empty>'
-      },
-      {
-        label: formatMessage(messages.fieldLastSeen),
-        value: getFormattedDate(terminal.get('lastSeen')) || ''
-      }
-    ]
+  renderPaper() {
     return (
-      <div className={styles.RowContainer}>
-        <Unit lg="1-2">
-          <div>
-            {editable ? this.renderFormContainer() : this.renderReadOnlyFields()}
-          </div>
-        </Unit>
-        <Unit lg="1-2">
-          <div>
-            <ReadOnlyFields
-              fields={fields}
-            />
-          </div>
-        </Unit>
+      <div>
+        {
+          this.props.terminal && this.props.terminal.has('deviceType') ?
+          this.renderContent() :
+          this.renderProgress()
+        }
       </div>
     )
   }
@@ -258,10 +398,7 @@ export class TerminalDetail extends PureComponent {
     return (
       <div className={styles.Content}>
         <Helmet title={formatMessage(messages.title)} titleTemplate="%s - Aspect" defaultTitle="Aspect" />
-        <Paper>
-          {this.renderProgress()}
-          {this.renderContent()}
-        </Paper>
+        {this.renderPaper()}
         {this.renderDemoButton()}
       </div>
     )

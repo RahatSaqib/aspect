@@ -23,6 +23,8 @@ const SELECT_SHOW_FIELDS = [
   // TODO: First Connected
   'd.approvedOn',
   'u.name as approvedBy',
+  'd.deviceTypeId',
+  'd.configurationData',
   'd.notes',
   'd.serial'
 ]
@@ -130,15 +132,27 @@ function* getDeviceByDeviceId(request, fields = SELECT_SHOW_FIELDS) {
     .modify(addConstraints, dataConstraints, { device: 'd' })
     .select(fields)
 
-  const contacts = yield knex('Person as p')
-    .select('p.id', 'p.name')
-    .limit(50)
+  if (devices.length === 1) {
+    const device = devices[0]
+    const deviceType = yield knex('DeviceType as dt').where('dt.id', device.deviceTypeId).first()
+    deviceType.configurationDataSchema = JSON.parse(deviceType.configurationDataSchema) || {}
 
+    device.configurationData = JSON.parse(device.configurationData) || {}
+    device.deviceType = deviceType
+
+    const contacts = yield knex('Person as p')
+      .select('p.id', 'p.name')
+      .limit(50)
+
+    device.contacts = _.times(3, () => contacts.splice(_.random(0, contacts.length - 1), 1)[0])
+
+    return {
+      ok: true,
+      data: device
+    }
+  }
   return {
-    ok: devices.length === 1,
-    data: _.assign({}, devices[0], {
-      contacts: _.times(3, () => contacts.splice(_.random(0, contacts.length - 1), 1)[0])
-    })
+    ok: false
   }
 }
 
@@ -152,6 +166,10 @@ function* updateDevice(request) {
 
   // TODO: check permission
 
+  const device = yield* showDevice(request)
+
+  const configurationData = _.assign({}, device.configurationData, payload.configurationData)
+
   // update item
   const updatedCount = yield knex('Device')
     .where('id', params.deviceId)
@@ -159,11 +177,12 @@ function* updateDevice(request) {
       name: payload.name,
       shortname: payload.shortname,
       notes: payload.notes,
-      siteId: payload.siteId
+      siteId: payload.siteId,
+      configurationData: JSON.stringify(configurationData)
     })
 
   if (updatedCount !== 1) {
-    throw new Error('Unknown error')
+    return Boom.badRequest()
   }
 
   return yield* showDevice(request)
