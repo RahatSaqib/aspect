@@ -1,7 +1,7 @@
 module.exports = require('../../src/db').seed(seed)
 
 const config = require('../../src/config')
-const bcrypt = require('bcrypt')
+const bcrypt = require('bcryptjs')
 const labClinic = require('./fixtures/labClinic.json')
 
 const millisInHour = 1000 * 60 * 60

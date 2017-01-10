@@ -88,6 +88,69 @@ db.password=96loETfSyBSF6PLX
 - 11.2. Create front end bundle for this deployment by running `yarn run dist -- --deployment=malawi`
 - 11.3. Upload the bundle assets to S3 by running `aws s3 cp dist s3://aspect-web-malawi --recursive`
 
-12. Lastly, create the following A records with the aspect.id DNS provider
+12. Lastly, create the following records with the aspect.id DNS provider.  Use either A with an Alias Record Set (Route 53 specific) or CNAME records to the Beanstalk URL ([documentation](http://docs.aws.amazon.com/elasticbeanstalk/latest/dg/customdomains.html)).
 - [malawi.aspect.id]() pointing to the CloudFront distribution observed in Step 7
 - [malawiapi.aspect.id]() pointing to the Elastic Beanstalk environment
+
+
+# Update an existing Aspect installation
+
+Make sure AWS CLI is installed and configured with your AWS credentials and EB CLI installed.
+
+
+## Migrate database
+
+Edit your `.env` file to use same as above or configure your `db.host`, `db.user`, `db.password` and `seeds.directory` then rollback, migrate and seed.
+
+```bash
+# Edit db connection and seed.directory in .env
+npm run knex migrate:rollback
+npm run knex migrate:latest
+npm run knex seed:run
+```
+
+## Update API
+
+Initialize elastic beanstalk configuration for Aspect API.
+
+```bash
+cd aspect/api
+eb init -i
+
+# Select us-east-1 region
+# Select aspect-api application
+# Select environment you wish to update
+```
+
+Deploy the update
+
+```bash
+eb deploy
+```
+
+## Update Web
+
+Create new distribution and upload to S3
+
+```bash
+cd aspect/web
+yarn run dist -- --deployment=malawi
+aws s3 cp dist s3://aspect-web-malawi --recursive
+```
+
+
+# Troubleshooting
+
+Some tips when things break.
+
+## Database host
+
+To find Database Host, navigate to RDS dashboard, click Instances and expand DB for your environment. The host is labeled "Endpoint".
+
+## SSH Keypair
+
+EC2 is configured with a single SSH key.  If you need to change it, navigate to EB dashboard, select Configuration, click Instance gear, select your key, click apply. This will allow `eb ssh` with that key.  NOTE: this will  setup a new EC2 instance and may take more than 20 minutes. If you simply need to add a new user, collect their public key and add to `~/.ssh/authorized_keys` as normal.
+
+## Native Packages
+
+Some native extensions and other libraries require YUM packages to be installed. You can usually determine missing packages by seeing errors on `npm install` in `eb logs`. Add required packages to `aspect/api/.ebextensions/aspect.config`

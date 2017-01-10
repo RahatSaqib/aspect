@@ -9,6 +9,7 @@ module.exports = {
     connectionLimit: process.env['db.connectionLimit'],
     host: process.env['db.host'],
     user: process.env['db.user'],
+    port: process.env['db.port'] || 3306,
     password: process.env['db.password'],
     database: process.env['db.databaseName'],
     debug: process.env['db.debug'] === 'true'

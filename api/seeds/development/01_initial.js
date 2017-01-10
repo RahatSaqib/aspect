@@ -2,7 +2,7 @@ module.exports = require('../../src/db').seed(seed)
 
 const config = require('../../src/config')
 const _ = require('lodash')
-const bcrypt = require('bcrypt')
+const bcrypt = require('bcryptjs')
 const permissions = require('./fixtures/permissions.json')
 const geography = require('./fixtures/geography.json')
 const patients = require('./fixtures/patients.json')
@@ -501,6 +501,8 @@ function* seed(knex) {
     externalId: 'HivVl',
     assayTypeId: assayTypeHivVlId,
     deviceTypeId: deviceTypeM2000Id,
+    resultCategory1Label: 'HIV',
+    resultCategory1i18nKey: 'resultCategoryHivVl',
     resultDataSchema: JSON.stringify({
       resultText: {
         title: 'Result Text',
@@ -509,6 +511,38 @@ function* seed(knex) {
       copies: {
         title: 'copies/mL',
         type: 'number'
+      }
+    }),
+    patientDataSchema: JSON.stringify({
+      id: {
+        title: 'Patient ID',
+        type: 'string',
+        order: 0
+      },
+      name: {
+        title: 'Name',
+        type: 'string',
+        order: 1
+      },
+      surname: {
+        title: 'Surname',
+        type: 'string',
+        order: 2
+      },
+      gender: {
+        title: 'Gender',
+        type: 'string',
+        order: 3
+      },
+      provider: {
+        title: 'Provider',
+        type: 'string',
+        order: 4
+      },
+      artNumber: {
+        title: 'ART Number',
+        type: 'string',
+        order: 5
       }
     })
   })
@@ -853,6 +887,13 @@ function* seed(knex) {
     i18nkey: 'ResultWorkflowStatusAcknowledged',
     token: 'acknowledged',
     externalId: 'Acknowledged'
+  })
+
+  yield knex('ResultWorkflowStatus').insert({
+    name: 'Flagged',
+    i18nkey: 'ResultWorkflowStatusFlagged',
+    token: 'flagged',
+    externalId: 'Flagged'
   })
 
   // Create permissions
