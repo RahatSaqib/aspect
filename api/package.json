@@ -24,7 +24,7 @@
   "author": "SystemOne",
   "license": "ISC",
   "dependencies": {
-    "bcryptjs": "^2.4.0",
+    "bcrypt": "^1.0.2",
     "bluebird": "^3.4.3",
     "boom": "^4.2.0",
     "dotenv-safe": "^3.0.0",
