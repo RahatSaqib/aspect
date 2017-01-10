@@ -13,11 +13,10 @@ const lodashModularPackages = fs.readdirSync(path.join(__dirname, '../../node_mo
 const vendor = [
   ...lodashModularPackages,
   'classnames',
-  'core-js',
+  'core-js/shim',
   'date-fns',
   'dom-helpers',
   'email-validator',
-  'es6-promise',
   'global',
   'http-client',
   'immutable',

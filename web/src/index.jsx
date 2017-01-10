@@ -1,9 +1,8 @@
 // This is the entry point for our app
 import 'react-hot-loader/patch'
-import 'core-js/modules/es6.object.assign'
+import 'core-js/shim'
 import 'whatwg-fetch'
 import React from 'react'
-import promise from 'es6-promise'
 import { render } from 'react-dom'
 import { Provider } from 'react-redux'
 import { AppContainer } from 'react-hot-loader'
@@ -25,10 +24,6 @@ if (config.sentry) {
 // This won't be necessary when facebook updates react
 // http://stackoverflow.com/a/34015469/988941
 injectTapEventPlugin()
-
-// polyfill promise if necessary
-// http://caniuse.com/#feat=promises
-promise.polyfill()
 
 // polyfill intl if necessary
 // http://formatjs.io/guides/runtime-environments/
