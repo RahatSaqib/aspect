@@ -1,17 +1,10 @@
-import fs from 'fs'
 import path from 'path'
 import webpack from 'webpack'
 
 import HtmlWebpackPlugin from 'html-webpack-plugin'
 
-// We include lodash modules independently since we're using 'babel-plugin-lodash'
-const lodashModularPackages = fs.readdirSync(path.join(__dirname, '../../node_modules/lodash'))
-  .filter(it => !it.startsWith('_') && it.endsWith('.js') && it.substr(0, 6) !== 'lodash')
-  .map(it => `lodash/${it}`)
-
 // vendor packages so we can create a separate bundle
 const vendor = [
-  ...lodashModularPackages,
   'classnames',
   'core-js/shim',
   'date-fns',
