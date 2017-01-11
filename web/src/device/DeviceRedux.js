@@ -1,9 +1,9 @@
 import { defineMessages } from 'react-intl'
-import _ from 'lodash'
 import Immutable from 'immutable'
 import { stringify } from 'querystring'
 
 import { aspectFetch } from '../shared/utils/fetch'
+import { nonEmptyFilterValue } from '../filter/utils'
 import {
   filterFieldsRejectedError,
   errorNotFound,
@@ -63,7 +63,7 @@ export function fetchListFilteredDevices(extraFilters = {}, ...args) {
       .listFilter
       .toMap()
       .merge(extraFilters)
-      .filter(_.identity)
+      .filter(nonEmptyFilterValue)
       .toJS()
 
     return dispatch(fetchDevices(filters, ...args))
@@ -181,7 +181,7 @@ export function exportDevices(extraFilters = {}, format, sortCol, sortDir, page,
       .listFilter
       .toMap()
       .merge(extraFilters)
-      .filter(_.identity)
+      .filter(nonEmptyFilterValue)
       .toJS()
 
     return aspectFetch(`/device/export?${stringify({

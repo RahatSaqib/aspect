@@ -8,20 +8,21 @@ const renderTextField = (props) => {
   const { input, meta, textFieldProps } = props
   const { touched, error } = meta
   return (<TextField
-    {...input} errorStyle={{ float: 'left' }}
+    {...input} errorStyle={{ float: 'left', whiteSpace: 'nowrap', textOverflow: 'visible' }}
     errorText={touched && error} {...textFieldProps}
     className={classNames({ [styles.Form__Field]: textFieldProps.fullWidth })}
   />)
 }
 
 const renderFormField = (props) => {
-  const { name, label, fullWidth, autoFocus, style, disabled, maxLength,
+  const { name, label, fullWidth, autoFocus, style, inputStyle, disabled, maxLength,
     multiLine, rows, type, onChange, onKeyPress } = props
   const textFieldProps = {
     floatingLabelText: label,
     fullWidth,
     autoFocus,
     style,
+    inputStyle,
     disabled,
     maxLength,
     multiLine,

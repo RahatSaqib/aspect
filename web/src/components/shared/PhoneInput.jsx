@@ -110,7 +110,7 @@ class PhoneInput extends React.PureComponent {
         </div>
         <div style={{ float: 'left' }}>
           <TextField
-            errorStyle={{ float: 'left' }} errorText={touched && error}
+            errorStyle={{ float: 'left', whiteSpace: 'nowrap', textOverflow: 'visible' }} errorText={touched && error}
             {...textFieldProps} style={{ marginLeft: '5.5em', width: '10.5em' }}
             floatingLabelFocusStyle={{ marginLeft: '-5.5em' }}
             underlineStyle={{ marginLeft: '-5.5em', width: '16em' }} onChange={this.onNumberChanged}

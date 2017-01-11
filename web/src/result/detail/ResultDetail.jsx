@@ -314,7 +314,7 @@ export class ResultDetail extends PureComponent {
     const assay = result.get('assay')
 
     return (
-      <div className={cssClasses('FieldsContainer')}>
+      <div>
         { /* IDs and device/site */ }
         <Card>
           <CardText>
@@ -332,11 +332,11 @@ export class ResultDetail extends PureComponent {
               value={result.get('deviceName')}
               format={v =>
                 <div>
-                  <Link to={`device/${result.get('deviceId')}`}>
+                  <Link to={`/device/${result.get('deviceId')}`}>
                     {v}
                   </Link>
                   &nbsp;at&nbsp;
-                  <Link to={`site/${result.get('siteId')}`}>
+                  <Link to={`/site/${result.get('siteId')}`}>
                     {result.get('siteName')}
                   </Link>
                 </div>

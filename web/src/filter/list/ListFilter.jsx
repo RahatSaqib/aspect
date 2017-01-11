@@ -11,11 +11,13 @@ import {
 
 // Material-UI
 import { Card, CardHeader, CardActions, CardText } from 'material-ui/Card'
+import IconButton from 'material-ui/IconButton'
 import FlatButton from 'material-ui/FlatButton'
+import Dialog from 'material-ui/Dialog'
 import Share from 'material-ui/svg-icons/social/share'
 import Bookmark from 'material-ui/svg-icons/action/bookmark-border'
 import IconExport from 'material-ui/svg-icons/navigation/arrow-forward'
-import Dialog from 'material-ui/Dialog'
+import Close from 'material-ui/svg-icons/navigation/close'
 
 // Our own imports
 import FocusBlurTextField from '../../components/shared/FocusBlurTextField'
@@ -36,11 +38,18 @@ import {
   closeExportConfirmation,
   beginListExportProcessing
 } from '../FilterRedux'
-import getFilterMessage from '../formatting'
+import {
+  nonEmptyFilterValue,
+  getFilterMessage
+} from '../utils'
 
 import styles from './ListFilter.css'
 
 const messages = defineMessages({
+  clearTooltip: {
+    id: 'shared.ListFilter.clear',
+    defaultMessage: 'Clear Filters'
+  },
   save: {
     id: 'shared.ListFilter.save',
     defaultMessage: 'Save'
@@ -188,7 +197,7 @@ export class ListFilter extends PureComponent {
 
     countries: PropTypes.object.isRequired,
     assay: PropTypes.object.isRequired,
-    consumableItems: PropTypes.object.isRequired,
+    consumable: PropTypes.object.isRequired,
     workflowStatusItems: PropTypes.shape({
       id: PropTypes.string,
       name: PropTypes.string
@@ -212,6 +221,10 @@ export class ListFilter extends PureComponent {
     askConfirmationForExport: PropTypes.bool,
   }
 
+  static contextTypes = {
+    muiTheme: PropTypes.object.isRequired
+  }
+
   state = {
     expanded: !!this.props.defaultExpanded,
     askConfirmationForExport: this.props.askConfirmationForExport || false
@@ -223,6 +236,11 @@ export class ListFilter extends PureComponent {
 
   handleToggle = (event, toggle) => {
     this.setState({ expanded: toggle })
+  }
+
+  handleClearFilter = (event) => {
+    event.stopPropagation() // prevent triggering expanded inside <CardHeader />
+    this.props.onClearFilter()
   }
 
   handleAssayIdChange = (assayId) => {
@@ -324,7 +342,7 @@ export class ListFilter extends PureComponent {
     const { filter,
           countries,
           assay,
-          consumableItems,
+          consumable,
           config,
           subject,
           filterTemplate,
@@ -352,10 +370,12 @@ export class ListFilter extends PureComponent {
       config.date || config.workflowStatus
     )
 
+    const nonEmptyFilter = !_.isEmpty(_.filter(filter, nonEmptyFilterValue))
+
     const filterMessage = getFilterMessage(filter,
       countries,
       assay,
-      consumableItems,
+      consumable,
       subject,
       filterTemplate,
       filterTemplateOptional,
@@ -367,7 +387,21 @@ export class ListFilter extends PureComponent {
       <div className={styles.ListFilter}>
         <Card expanded={expanded} onExpandChange={this.handleExpandChange}>
           <CardHeader
-            subtitle={filterMessage}
+            subtitle={
+              <span style={{ verticalAlign: 'middle' }}>
+                {filterMessage}
+                {!expanded && nonEmptyFilter && (
+                  <IconButton
+                    tooltip={formatMessage(messages.clearTooltip)}
+                    onTouchTap={this.handleClearFilter}
+                    style={{ padding: 0, height: 18, width: 18, verticalAlign: 'middle' }}
+                    iconStyle={{ height: 18, width: 18 }}
+                  >
+                    <Close color={this.context.muiTheme.flatButton.secondaryTextColor} />
+                  </IconButton>
+                )}
+              </span>
+            }
             actAsExpander
             showExpandableButton
           />
@@ -561,7 +595,7 @@ function mapStateToProps(state) {
     listExport: state.filter.listExport,
     countries: state.geography.countriesForLocationSelector,
     assay: state.assay,
-    consumableItems: state.consumable.items,
+    consumable: state.consumable.consumables,
     workflowStatusItems: state.resultWorkflowStatus.items
   }
 }

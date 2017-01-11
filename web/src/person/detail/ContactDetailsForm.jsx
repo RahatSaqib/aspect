@@ -52,7 +52,7 @@ export function ContactDetailsForm({
         </section>
         {showNotesField && <section>
           <TextInput
-            name="notes" label={formatMessage(messages.notes)} disabled={loading} maxLength="1200"
+            name="notes" label={formatMessage(messages.notes)} disabled={loading} maxLength="2000"
             multiLine fullWidth rows={4}
           />
         </section>}

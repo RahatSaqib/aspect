@@ -501,6 +501,8 @@ function* seed(knex) {
     externalId: 'HivVl',
     assayTypeId: assayTypeHivVlId,
     deviceTypeId: deviceTypeM2000Id,
+    resultCategory1Label: 'HIV',
+    resultCategory1i18nKey: 'resultCategoryHivVl',
     resultDataSchema: JSON.stringify({
       resultText: {
         title: 'Result Text',
@@ -509,6 +511,38 @@ function* seed(knex) {
       copies: {
         title: 'copies/mL',
         type: 'number'
+      }
+    }),
+    patientDataSchema: JSON.stringify({
+      id: {
+        title: 'Patient ID',
+        type: 'string',
+        order: 0
+      },
+      name: {
+        title: 'Name',
+        type: 'string',
+        order: 1
+      },
+      surname: {
+        title: 'Surname',
+        type: 'string',
+        order: 2
+      },
+      gender: {
+        title: 'Gender',
+        type: 'string',
+        order: 3
+      },
+      provider: {
+        title: 'Provider',
+        type: 'string',
+        order: 4
+      },
+      artNumber: {
+        title: 'ART Number',
+        type: 'string',
+        order: 5
       }
     })
   })
@@ -795,21 +829,25 @@ function* seed(knex) {
 
   yield knex('ConsumableReason').insert({
     name: 'Test Conducted',
+    i18nKey: 'ConsumableReason_TestConducted',
     decrease: 1
   })
 
   yield knex('ConsumableReason').insert({
     name: 'Expired',
+    i18nKey: 'ConsumableReason_Expired',
     decrease: 1
   })
 
   yield knex('ConsumableReason').insert({
     name: 'Stolen',
+    i18nKey: 'ConsumableReason_Stolen',
     decrease: 1
   })
 
   yield knex('ConsumableReason').insert({
     name: 'Lost',
+    i18nKey: 'ConsumableReason_Lost',
     decrease: 1
   })
 
@@ -849,6 +887,13 @@ function* seed(knex) {
     i18nkey: 'ResultWorkflowStatusAcknowledged',
     token: 'acknowledged',
     externalId: 'Acknowledged'
+  })
+
+  yield knex('ResultWorkflowStatus').insert({
+    name: 'Flagged',
+    i18nkey: 'ResultWorkflowStatusFlagged',
+    token: 'flagged',
+    externalId: 'Flagged'
   })
 
   // Create permissions
@@ -1011,7 +1056,11 @@ function* seed(knex) {
       deviceId: routerId || null,
       createdOn: new Date(+now - (3 * i * millisInHour)),
       updatedOn: new Date(+now - (i * millisInHour)),
-      lastPingOn: new Date(+now - ((i * millisInHour) / 3))
+      lastPingOn: new Date(+now - ((i * millisInHour) / 3)),
+      approvedOn: new Date(+now - (2 * i * millisInHour)),
+      approvedBy: _.values(userIds)[_.random(_.size(userIds) - 1)],
+      hostId: _.times(8, () => String.fromCharCode(65 + _.random(25) + (_.random(1) > 0 ? 32 : 0))).join(''),
+      serial: _.times(24, () => String.fromCharCode(65 + _.random(25) + (_.random(1) > 0 ? 32 : 0))).join('')
     })
 
     device.id = yield knex('Device').insert(device)
@@ -1028,40 +1077,40 @@ function* seed(knex) {
   for (let i = 0; i < siteDatas.length; i++) {
     const siteData = siteDatas[i]
     // TB Cartridges
-    yield knex('InventoryItem').insert({
+    yield knex('InventoryItem').insert(Object.assign({
       consumableId: consumableGxTbCartridgeId,
       siteId: siteData.id,
       lotNumber: `${((i + 3) * (i + 1))}${['A', 'B'][i % 2]}-${((siteData.id + i) * consumableGxTbCartridgeId)}`,
       expiresOn: new Date((new Date(now.getTime() +
         _.random(-millisInNormalYear, millisInNormalYear))).setHours(0, 0, 0, 0)),
       quantityOnHand: _.random(0, 1000)
-    })
+    }, auditFields))
     if (i % 5 === 0) {
-      yield knex('InventoryItem').insert({
+      yield knex('InventoryItem').insert(Object.assign({
         consumableId: consumableGxEbolaCartridgeId,
         siteId: siteData.id,
         lotNumber: `${((i + 7) * (i + 1))}${['Q', 'P'][i % 2]}-${((siteData.id + i) * consumableGxEbolaCartridgeId)}`,
         expiresOn: new Date((new Date(now.getTime() +
           _.random(-millisInNormalYear, millisInNormalYear))).setHours(0, 0, 0, 0)),
         quantityOnHand: _.random(0, 1000)
-      })
+      }, auditFields))
     }
     if (i % 7 === 0) {
-      yield knex('InventoryItem').insert({
+      yield knex('InventoryItem').insert(Object.assign({
         consumableId: consumableGxHivVlCartridgeId,
         siteId: siteData.id,
         lotNumber: `${((i + 11) * (i + 1))}${['A', 'V'][i % 2]}-${((siteData.id + i) * consumableGxHivVlCartridgeId)}`,
         expiresOn: new Date((new Date(now.getTime() +
           _.random(-millisInNormalYear, millisInNormalYear))).setHours(0, 0, 0, 0)),
         quantityOnHand: _.random(0, 1000)
-      })
+      }, auditFields))
     }
     // Gloves
-    yield knex('InventoryItem').insert({
+    yield knex('InventoryItem').insert(Object.assign({
       consumableId: consumableGlovesId,
       siteId: siteData.id,
       quantityOnHand: _.random(0, 100)
-    })
+    }, auditFields))
   }
 
   // some TB samples:

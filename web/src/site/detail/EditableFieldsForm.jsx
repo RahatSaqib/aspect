@@ -17,7 +17,7 @@ const renderTextField = ({ input, meta, ...restProps }) => (
     {...restProps}
     {...input}
     fullWidth
-    errorStyle={{ float: 'left' }}
+    errorStyle={{ float: 'left', whiteSpace: 'nowrap', textOverflow: 'visible' }}
     errorText={meta.touched && meta.error}
   />
 )

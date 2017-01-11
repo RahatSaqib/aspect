@@ -82,7 +82,7 @@ class AppNotificationSnackBar extends PureComponent {
         autoHideDuration={4000}
         action={actionText}
         onActionTouchTap={actionTouchTap}
-        onRequestClose={() => this.handleClose}
+        onRequestClose={this.handleClose}
       />
     )
   }
