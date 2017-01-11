@@ -28,13 +28,6 @@
           }
         ]
       ]
-    },
-    "test": {
-      "plugins": [
-        [
-          "babel-plugin-istanbul"
-        ]
-      ]
     }
   },
   "presets": [
