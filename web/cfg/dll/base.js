@@ -7,7 +7,6 @@ import HtmlWebpackPlugin from 'html-webpack-plugin'
 const vendor = [
   'classnames',
   'core-js/shim',
-  'date-fns',
   'dom-helpers',
   'email-validator',
   'global',
