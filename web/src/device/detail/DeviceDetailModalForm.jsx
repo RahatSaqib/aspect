@@ -17,6 +17,7 @@ import Dialog from 'material-ui/Dialog'
 
 // Our own imports
 import recomposeForm from '../../components/recomposeForm'
+import JSONSchemaCard from '../../components/shared/JSONSchemaCard'
 import { fetchSites } from '../../site/SiteRedux'
 import styles from './DeviceDetailModalForm.css'
 
@@ -26,12 +27,17 @@ const enhance = compose(
   pure,
   setPropTypes({
     onCancel: PropTypes.func,
+    formatNestedSubtitle: PropTypes.func.isRequired,
+    configurationDataSchema: PropTypes.object.isRequired,
     isDialogOpen: PropTypes.bool.isRequired,
     values: PropTypes.object.isRequired
   }),
   recomposeForm({
     fields: ['name', 'shortname', 'notes', {
       fieldName: 'siteId',
+      valueFromChangeEvent: _fp.identity
+    }, {
+      fieldName: 'configurationData',
       valueFromChangeEvent: _fp.identity
     }],
     validate(values) {
@@ -181,9 +187,34 @@ export const DeviceDetailModalForm = (props) => {
             </Link>
           </div>
         </div>
+        <JSONSchemaCard
+          initiallyExpanded
+          title={labels.configuration}
+          renderField={field => (
+            <TextField
+              name={field.key}
+              floatingLabelText={field.label}
+              value={field.value}
+              onTouchTap={stopEventPropagation}
+              onChange={event => (
+                props.onChangeConfigurationData(
+                  values.configurationData.setIn(field.path, event.target.value)
+                )
+              )}
+              fullWidth
+            />
+          )}
+          formatNestedSubtitle={props.formatNestedSubtitle}
+          dataSchema={props.configurationDataSchema}
+          data={values.configurationData}
+        />
       </form>
     </Dialog>
   )
+}
+
+function stopEventPropagation(event) {
+  event.stopPropagation()
 }
 
 export const DeviceDetailModalFormContainer = enhance(DeviceDetailModalForm)

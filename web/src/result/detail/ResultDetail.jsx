@@ -18,6 +18,7 @@ import Checkbox from 'material-ui/Checkbox'
 
 // Our own imports
 import { Unit } from '../../components/pureGrids'
+import JSONSchemaCard from '../../components/shared/JSONSchemaCard'
 import {
   fetchSingleResult,
   updateSingleResult,
@@ -120,6 +121,10 @@ const messages = defineMessages({
   fieldDuration: {
     id: 'pages.ResultDetail.fieldDuration',
     defaultMessage: 'Duration'
+  },
+  nestedDataSubtitle: {
+    id: 'pages.ResultDetail.nestedDataSubtitle',
+    defaultMessage: '{count} fields'
   }
 })
 
@@ -274,38 +279,20 @@ export class ResultDetail extends PureComponent {
       return false
     }
 
-    const { result } = this.props
-    const resultDataSchema = result.getIn(['assay', 'resultDataSchema'])
-    const resultData = result.get('resultData')
-
-    return resultDataSchema
-      .filter((value, key) => key !== 'resultText' && value.get('type') === 'object')
-      .entrySeq()
-      .map(([key, value]) =>
-        <Card key={key}>
-          <CardHeader title={value.get('title')} actAsExpander showExpandableButton />
-          <CardText actAsExpander expandable style={{ paddingTop: 0 }}>
-            {this.renderLowerLevelSchemaFields(key, value, resultData)}
-          </CardText>
-        </Card>
-      )
-  }
-
-  renderLowerLevelSchemaFields(sectionKey, sectionValue, resultData) {
-    const fields = sectionValue
-      .get('properties')
-      .entrySeq()
-      .map(makeLevel2TupleMapper(resultData, sectionKey))
-      .sortBy(({ label }) => label)
-      .toJS()
+    const { result, intl } = this.props
+    const dataSchema = result
+      .getIn(['assay', 'resultDataSchema'])
+      .delete('resultText')
 
     return (
-      fields.map(field =>
-        <Unit key={field.label} sm="1-2" md="1-3" lg="1-3">
-          { /* Todo: i18n */ }
-          <ReadOnlyField label={field.label} value={field.value} />
-        </Unit>
-      )
+      <JSONSchemaCard
+        title="Data"
+        formatNestedSubtitle={
+          data => intl.formatMessage(messages.nestedDataSubtitle, { count: data.size })
+        }
+        dataSchema={dataSchema}
+        data={result.get('resultData')}
+      />
     )
   }
 
