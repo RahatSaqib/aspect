@@ -64,7 +64,9 @@ const resultPayload = {
     status: Joi.object().keys({
       id: Joi.string().required().description(
         'The workflow status. Default Error if error specified, otherwise OK')
-    })
+    }),
+    operator: Joi.string().allow('', null).description(
+      'The person who updated the workflow')
   }),
   sample: Joi.object().keys({
     id: Joi.string().allow('', null).description(

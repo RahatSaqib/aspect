@@ -213,6 +213,17 @@ function* addResult(context) {
   }
   context.addResultId(resultId)
 
+  // Log Result Workflow Update
+  if (_.has(payload, 'workflow') || !existingResult ||
+      existingResult.resultWorkflowStatusId !== result.resultWorkflowStatusId) {
+    yield knex('ResultWorkflowLog').insert({
+      resultId,
+      resultWorkflowStatusId: result.resultWorkflowStatusId,
+      operator: _.get(payload, 'workflow.operator', null),
+      createdOn: now
+    })
+  }
+
   // Update Inventory Levels at Site
   const partnerId = dataConstraints.partner ? dataConstraints.partner.id : undefined
   const consumablesInResultData = _.isEmpty(payload.consumable) ? [] : payload.consumable

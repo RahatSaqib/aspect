@@ -1318,14 +1318,14 @@ function* seed(knex) {
     }
   }
 
-  const resultsMtb = _.range(1, resultMtbNumber + 1).map((i) => {
+  for (const i of _.range(1, resultMtbNumber + 1)) {
     const device = devices[i % devices.length]
     const siteData = siteDatas.find(site => site.id === device.siteId)
     const sample = samples[i % samples.length]
     const result = possibleResults[i % 5]
     resultData.resultText = result.resultText
 
-    return Object.assign({}, auditFields, {
+    const resultId = yield knex('Result').insert(Object.assign({}, auditFields, {
       externalId: `UQTB-${i}`,
       assayId: assayMtbRifId,
       partnerId: partnerOneId,
@@ -1357,9 +1357,25 @@ function* seed(knex) {
       notes: 'This is a test... result',
       errorCode: result.category1 === resultCategoryErrorId ? '1024' : null,
       errorNotes: result.category1 === resultCategoryErrorId ? 'Exceeded cycle threshold' : null
+    }))
+
+    yield knex('ResultWorkflowLog').insert({
+      resultId,
+      resultWorkflowStatusId: acknowledged,
+      operator: 'John',
+      createdOn: new Date(+now - (48 * millisInHour)),
+      createdBy: adminId
     })
-  })
-  yield knex('Result').insert(resultsMtb)
+
+    yield knex('ResultWorkflowLog').insert({
+      resultId,
+      resultWorkflowStatusId: ordered,
+      operator: 'Marsha',
+      createdOn: now,
+      createdBy: adminId
+    })
+  }
+
 
   // some Ebola samples:
   samples = []
@@ -1412,14 +1428,14 @@ function* seed(knex) {
     }
   }
 
-  const resultsEbola = _.range(1, resultEbolaNumber + 1).map((i) => {
+  for (const i of _.range(1, resultEbolaNumber + 1)) {
     const device = devices[i % devices.length]
     const siteData = siteDatas.find(site => site.id === device.siteId)
     const sample = samples[i % samples.length]
     const result = possibleResults[i % 5]
     resultData.resultText = result.resultText
 
-    return Object.assign({}, auditFields, {
+    const resultId = yield knex('Result').insert(Object.assign({}, auditFields, {
       externalId: `UQEB-${i}`,
       assayId: assayEbolaId,
       partnerId: partnerOneId,
@@ -1451,9 +1467,32 @@ function* seed(knex) {
       notes: 'This is an Ebola test result',
       errorCode: result.category1 === resultCategoryErrorId ? '1024' : null,
       errorNotes: result.category1 === resultCategoryErrorId ? 'Exceeded cycle threshold' : null
+    }))
+
+    yield knex('ResultWorkflowLog').insert({
+      resultId,
+      resultWorkflowStatusId: acknowledged,
+      operator: 'John',
+      createdOn: new Date(+now - (98 * millisInHour)),
+      createdBy: adminId
     })
-  })
-  yield knex('Result').insert(resultsEbola)
+
+    yield knex('ResultWorkflowLog').insert({
+      resultId,
+      resultWorkflowStatusId: ordered,
+      operator: 'Bill',
+      createdOn: new Date(+now - (36 * millisInHour)),
+      createdBy: adminId
+    })
+
+    yield knex('ResultWorkflowLog').insert({
+      resultId,
+      resultWorkflowStatusId: processed,
+      operator: 'Marsha',
+      createdOn: now,
+      createdBy: adminId
+    })
+  }
 
   // some HIV VL samples:
   samples = []
@@ -1493,7 +1532,7 @@ function* seed(knex) {
     }
   }
 
-  const resultsHiv = _.range(1, resultHivVlNumber + 1).map((i) => {
+  for (const i of _.range(1, resultHivVlNumber + 1)) {
     const device = devices[i % devices.length]
     const siteData = siteDatas.find(site => site.id === device.siteId)
     const sample = samples[i % samples.length]
@@ -1512,7 +1551,7 @@ function* seed(knex) {
     resultData.log = log
     resultData.resultText = result.resultText.replace('{0}', copies).replace('{1}', log)
 
-    return Object.assign({}, auditFields, {
+    const resultId = yield knex('Result').insert(Object.assign({}, auditFields, {
       externalId: `UQHIV-${i}`,
       assayId: assayHivVlId,
       partnerId: partnerOneId,
@@ -1543,9 +1582,16 @@ function* seed(knex) {
       notes: 'This is an HIV test result',
       errorCode: result.category1 === resultCategoryErrorId ? '1024' : null,
       errorNotes: result.category1 === resultCategoryErrorId ? 'Exceeded cycle threshold' : null
+    }))
+
+    yield knex('ResultWorkflowLog').insert({
+      resultId,
+      resultWorkflowStatusId: acknowledged,
+      operator: 'Marsha',
+      createdOn: now,
+      createdBy: adminId
     })
-  })
-  yield knex('Result').insert(resultsHiv)
+  }
 
   // data filters
   const [dataFilterIdOH] = yield knex('DataFilter').insert({

@@ -198,7 +198,10 @@ function* listResultTypes(request) {
 }
 
 function* updateWorkflowStatus(request) {
-  const { params, payload } = request
+  const { auth, params, payload } = request
+  const now = new Date()
+  const { resultId } = params
+  const { id: currentUserId } = auth.credentials
 
   // TODO: check permission
 
@@ -218,12 +221,19 @@ function* updateWorkflowStatus(request) {
 
   // update the resultWorkflowStatusId
   yield knex('Result')
-      .where('id', params.resultId)
+      .where('id', resultId)
       .update({
         resultWorkflowStatusId,
-        updatedOn: new Date()
+        updatedBy: currentUserId,
+        updatedOn: now
       })
 
+  yield knex('ResultWorkflowLog').insert({
+    resultId,
+    resultWorkflowStatusId,
+    createdBy: currentUserId,
+    createdOn: now
+  })
   return yield* showResult(request)
 }
 
