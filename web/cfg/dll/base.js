@@ -1,23 +1,14 @@
-import fs from 'fs'
 import path from 'path'
 import webpack from 'webpack'
 
 import HtmlWebpackPlugin from 'html-webpack-plugin'
 
-// We include lodash modules independently since we're using 'babel-plugin-lodash'
-const lodashModularPackages = fs.readdirSync(path.join(__dirname, '../../node_modules/lodash'))
-  .filter(it => !it.startsWith('_') && it.endsWith('.js') && it.substr(0, 6) !== 'lodash')
-  .map(it => `lodash/${it}`)
-
 // vendor packages so we can create a separate bundle
 const vendor = [
-  ...lodashModularPackages,
   'classnames',
-  'core-js',
-  'date-fns',
+  'core-js/shim',
   'dom-helpers',
   'email-validator',
-  'es6-promise',
   'global',
   'http-client',
   'immutable',
@@ -41,7 +32,7 @@ const vendor = [
   'react-tap-event-plugin',
   'recompose',
   'redux',
-  'redux-form',
+  'redux-form/immutable',
   'redux-idle-monitor',
   'redux-immutable',
   'redux-thunk',

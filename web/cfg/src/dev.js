@@ -16,6 +16,10 @@ export default {
     publicPath: baseConfig.publicPath,
     noInfo: false
   },
+  output: {
+    ...baseConfig.output,
+    pathinfo: true
+  },
   module: {
     ...baseConfig.module,
     loaders: [
