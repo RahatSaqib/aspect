@@ -40,7 +40,7 @@ const vendor = [
   'react-tap-event-plugin',
   'recompose',
   'redux',
-  'redux-form',
+  'redux-form/immutable',
   'redux-idle-monitor',
   'redux-immutable',
   'redux-thunk',
