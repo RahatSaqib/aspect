@@ -25,6 +25,7 @@ import { showAcknowledgement } from '../../appNotification/AppNotificationRedux'
 import styles from './AccountDetails.css'
 import accountDetailsMessages from './messages'
 import personDetailsMessages from '../../person/detail/messages'
+import { ContactDetails, LoginDetails, UserPreferences } from '../../person/PersonRedux'
 
 export class AccountDetails extends PureComponent {
   static propTypes = {
@@ -33,7 +34,11 @@ export class AccountDetails extends PureComponent {
     fetchAccountDetails: PropTypes.func.isRequired,
     loading: PropTypes.bool.isRequired,
     saving: PropTypes.bool.isRequired,
-    accountDetails: PropTypes.object.isRequired,
+    accountDetails: PropTypes.shape({
+      contactDetails: PropTypes.objectOf(ContactDetails),
+      loginDetails: PropTypes.objectOf(LoginDetails),
+      userPreferences: PropTypes.objectOf(UserPreferences),
+    }).isRequired,
     saveContactDetails: PropTypes.func.isRequired,
     saveLoginDetails: PropTypes.func.isRequired,
     saveUserPreferences: PropTypes.func.isRequired,

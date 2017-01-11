@@ -350,7 +350,6 @@ export class ListFilter extends PureComponent {
           dateFilterLabel,
           intl: { formatMessage, formatDate },
           workflowStatusItems,
-
           onClickExport,
           showExportExcel,
           showExportCsv,

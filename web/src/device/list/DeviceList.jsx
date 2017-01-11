@@ -16,9 +16,11 @@ import {
   exportDevices
 } from '../DeviceRedux'
 import { ListFilterContainer } from '../../filter/list/ListFilter'
-import { configureListFilter } from '../../filter/FilterRedux'
+import { ListFilter, configureListFilter } from '../../filter/FilterRedux'
 import DataTableWithEmptyList from '../../components/shared/DataTableWithEmptyList'
 import styles from './DeviceList.css'
+import { Items } from '../../shared/metaReducers/items'
+import { Table } from '../../shared/metaReducers/table'
 
 const messages = defineMessages({
   devicesTitle: {
@@ -75,14 +77,13 @@ export class DeviceList extends PureComponent {
 
   static propTypes = {
     setPageTitle: PropTypes.func.isRequired,
-    table: PropTypes.object.isRequired,
+    table: PropTypes.objectOf(Table).isRequired,
     intl: PropTypes.object.isRequired,
     router: PropTypes.object.isRequired,
     fetchListFilteredDevices: PropTypes.func.isRequired,
-    items: PropTypes.object.isRequired,
+    items: PropTypes.objectOf(Items).isRequired,
     configureListFilter: PropTypes.func.isRequired,
-    listFilter: PropTypes.object.isRequired,
-
+    listFilter: PropTypes.objectOf(ListFilter).isRequired,
     exportDevices: PropTypes.func.isRequired
   }
 
