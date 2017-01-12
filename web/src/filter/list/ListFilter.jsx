@@ -82,6 +82,14 @@ const messages = defineMessages({
     id: 'shared.ListFilter.enterSiteName',
     defaultMessage: 'Enter site name...'
   },
+  sampleOriginSite: {
+    id: 'shared.ListFilter.sampleOriginSite',
+    defaultMessage: 'Sample origin site'
+  },
+  enterSampleOriginSiteName: {
+    id: 'shared.ListFilter.enterSampleOriginSiteName',
+    defaultMessage: 'Enter sample origin site name...'
+  },
   date: {
     id: 'shared.ListFilter.date',
     defaultMessage: 'Date'
@@ -376,7 +384,7 @@ export class ListFilter extends PureComponent {
     const hasDataSection = (
       config.assay || config.deviceName || config.result ||
       config.siteName || config.contactNameOrEmail || config.consumable ||
-      config.sampleId
+      config.sampleId || config.sampleOriginSiteName
     )
 
     const hasDataSection2 = (
@@ -540,6 +548,18 @@ export class ListFilter extends PureComponent {
                         floatingLabelFixed
                         hintText={formatMessage(messages.enterSiteName)}
                         floatingLabelText={formatMessage(messages.site)}
+                      />
+                    </div>
+                  )}
+                  {config.sampleOriginSiteName && (
+                    <div className={styles.Section__Control}>
+                      <FocusBlurTextField
+                        name="sampleOriginSiteName"
+                        value={filter.sampleOriginSiteName || ''}
+                        onCommitValue={this.handleTextFieldCommitValue}
+                        floatingLabelFixed
+                        hintText={formatMessage(messages.enterSampleOriginSiteName)}
+                        floatingLabelText={formatMessage(messages.sampleOriginSite)}
                       />
                     </div>
                   )}

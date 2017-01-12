@@ -86,7 +86,7 @@ export function getFilterMessage(
   }
 
   // name-filter
-  const name = `${filter.contactNameOrEmail || ''}${filter.deviceName || ''}${filter.siteName || ''}`
+  const name = `${filter.contactNameOrEmail || ''}${filter.deviceName || ''}${filter.siteName || ''}${filter.sampleOriginSiteName || ''}`
   const nameString = name ? `${SPACE}${formatMessage(messages.whoseNameIncludes)}${SPACE}"${name}"` : ''
 
   // sample id
