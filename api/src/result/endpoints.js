@@ -29,7 +29,7 @@ module.exports = [
           resultCategoryId: Joi.number().allow('').description('Result Category ID'),
           deviceName: Joi.string().allow('').description('Filter for device name'),
           siteName: Joi.string().allow('').description('Filter for site name'),
-          sampleId: Joi.number().allow('').description('Filter for sample ID'),
+          sampleId: Joi.string().allow('').description('Filter for sample ID'),
           workflowStatusId: Joi.number().allow('').description('Filter for Result Workflow Status ID'),
           jsonFields: Joi.array().max(10).items(Joi.string().max(50)).single().description('Specify which fields to select from the resultDataJSON')
         }, validateAllGeographyFilterParams(),

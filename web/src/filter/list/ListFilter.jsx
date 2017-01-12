@@ -102,6 +102,14 @@ const messages = defineMessages({
     id: 'shared.ListFilter.selectConsumable',
     defaultMessage: 'Select consumable...'
   },
+  sampleId: {
+    id: 'shared.ListFilter.sampleId',
+    defaultMessage: 'Sample ID'
+  },
+  enterSampleId: {
+    id: 'shared.ListFilter.enterSampleId',
+    defaultMessage: 'Enter sample ID...'
+  },
   result: {
     id: 'shared.ListFilter.result',
     defaultMessage: 'Result'
@@ -367,7 +375,8 @@ export class ListFilter extends PureComponent {
 
     const hasDataSection = (
       config.assay || config.deviceName || config.result ||
-      config.siteName || config.contactNameOrEmail || config.consumable
+      config.siteName || config.contactNameOrEmail || config.consumable ||
+      config.sampleId
     )
 
     const hasDataSection2 = (
@@ -495,6 +504,18 @@ export class ListFilter extends PureComponent {
                         floatingLabelText={formatMessage(messages.consumable)}
                         style={{ verticalAlign: 'bottom' }}
                         autoWidth
+                      />
+                    </div>
+                  )}
+                  {config.sampleId && (
+                    <div className={styles.Section__Control}>
+                      <FocusBlurTextField
+                        name="sampleId"
+                        value={filter.sampleId || ''}
+                        onCommitValue={this.handleTextFieldCommitValue}
+                        floatingLabelFixed
+                        hintText={formatMessage(messages.enterSampleId)}
+                        floatingLabelText={formatMessage(messages.sampleId)}
                       />
                     </div>
                   )}
