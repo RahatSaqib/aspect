@@ -15,6 +15,19 @@ const assert = chai.assert
 const devicePath = '/device'
 const devicePostResultPath = '/device/result'
 
+const baseConfig = {
+  field1: 'xx',
+  field2: 'yyyy',
+  field3: 'zzzzz',
+  field4: 'aaaaaa',
+  nestedFields: {
+    nestedA: '111111',
+    nestedB: '2222',
+    nestedC: '333',
+    nestedD: '44'
+  }
+}
+
 const now = new Date()
 
 describe('Device Result API routes', () => {
@@ -811,7 +824,7 @@ describe('Device Result API routes', () => {
       const deviceLogOp2 = yield knex('DeviceOperation')
         .where({ id: opIds[opIds.length - 1] })
         .first()
-      assert.deepEqual(deviceLogConfig2, { a: 'b' })
+      assert.deepEqual(deviceLogConfig2, _.assign({}, baseConfig, { a: 'b' }))
       assert.property(deviceLogOp2, 'data')
       assert.deepEqual(JSON.parse(deviceLogOp2.data), { a: 'c' })
       assert.property(deviceLogResult2, 'resultData')
@@ -884,7 +897,7 @@ describe('Device Result API routes', () => {
       const deviceLogOp3 = yield knex('DeviceOperation')
         .where({ id: opIds[opIds.length - 1] })
         .first()
-      assert.deepEqual(deviceLogConfig3, { a: 'c' })
+      assert.deepEqual(deviceLogConfig3, _.assign({}, baseConfig, { a: 'c' }))
       assert.property(deviceLogOp3, 'data')
       assert.deepEqual(JSON.parse(deviceLogOp3.data), { a: 'd' })
       const deviceLogUpdates3 = yield knex('DeviceLogUpdate').where({

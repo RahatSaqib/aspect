@@ -144,71 +144,7 @@ function* seed(knex) {
       }
     }
   })
-  const m2000ConfigurationDataSchema = JSON.stringify({
-    rrtField1: {
-      title: 'RRT Field 1',
-      type: 'string'
-    },
-    rrtField2: {
-      title: 'RRT Field 2',
-      type: 'string'
-    },
-    rrtField3: {
-      title: 'RRT Field 3',
-      type: 'string'
-    },
-    rrtField4: {
-      title: 'RRT Field 4',
-      type: 'string'
-    },
-    nestedFields: {
-      title: 'Pins',
-      type: 'object',
-      i18nKey: 'User Pins',
-      properties: {
-        user1Pin: {
-          title: 'user1Pin',
-          type: 'string'
-        },
-        user1Name: {
-          title: 'user1Name',
-          type: 'string'
-        },
-        user2Pin: {
-          title: 'user2Pin',
-          type: 'string'
-        },
-        user2Name: {
-          title: 'user2Name',
-          type: 'string'
-        },
-        user3Pin: {
-          title: 'user3Pin',
-          type: 'string'
-        },
-        user3Name: {
-          title: 'user3Name',
-          type: 'string'
-        },
-        user4Pin: {
-          title: 'user4Pin',
-          type: 'string'
-        },
-        user4Name: {
-          title: 'user4Name',
-          type: 'string'
-        },
-        user5Pin: {
-          title: 'user5Pin',
-          type: 'string'
-        },
-        user5Name: {
-          title: 'user5Name',
-          type: 'string'
-        }
-      }
-    }
-  })
+  const m2000ConfigurationDataSchema = geneXpertConfigurationDataSchema
 
   // define deviceOperation object
   const deviceOperationSchema = JSON.stringify({
