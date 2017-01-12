@@ -287,6 +287,7 @@ export class ResultDetail extends PureComponent {
     return (
       <JSONSchemaCard
         title="Data"
+        renderField={field => <ReadOnlyField {...field} />}
         formatNestedSubtitle={
           data => intl.formatMessage(messages.nestedDataSubtitle, { count: data.size })
         }
