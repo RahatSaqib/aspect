@@ -292,6 +292,7 @@ export class ResultDetail extends PureComponent {
         }
         dataSchema={dataSchema}
         data={result.get('resultData')}
+        renderField={field => <ReadOnlyField {...field} />}
       />
     )
   }
