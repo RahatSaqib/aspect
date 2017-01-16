@@ -11,8 +11,11 @@ import Helmet from 'react-helmet'
 import { Link } from 'react-router'
 
 import Paper from 'material-ui/Paper'
-import FlatButton from 'material-ui/FlatButton'
-import { Card, CardActions, CardHeader, CardText } from 'material-ui/Card';
+import IconButton from 'material-ui/IconButton'
+import NavigationCheck from 'material-ui/svg-icons/navigation/check'
+import PrioHigh from 'material-ui/svg-icons/notification/priority-high'
+import Build from 'material-ui/svg-icons/action/build'
+import { Card, CardActions, CardHeader, CardText } from 'material-ui/Card'
 
 // Our own imports
 import { Unit } from '../../components/pureGrids'
@@ -140,21 +143,75 @@ export class Dashboard extends PureComponent {
               <header className={styles.Section__Header}>
                 <h2>Recommendations</h2>
               </header>
-              <div>
-              <br/>
+              <div style={{ paddingTop: '15px' }}>
                 <Card>
-    <CardHeader
-      title="Device Offline"
-    />
-    <CardText>
-      The Device X has been offline for Y days!
-    </CardText>
-    <CardActions>
-      <FlatButton label="Fix it" />
-      <FlatButton label="Dismiss" primary />
-
-    </CardActions>
-  </Card>
+                  <CardHeader title="GeneXpert Franklin" />
+                  <CardText>
+                    This device hasn&#39;t reported in <b>8</b> days.
+                  </CardText>
+                  <CardActions style={{ textAlign: 'right' }}>
+                    <IconButton tooltip="Fix this" iconStyle={{ color: 'gray' }} >
+                      <Build />
+                    </IconButton>
+                    <IconButton tooltip="Escalate" iconStyle={{ color: '#f57c00' }} >
+                      <PrioHigh />
+                    </IconButton>
+                    <IconButton tooltip="Hide this notification" iconStyle={{ color: '#63a021' }} >
+                      <NavigationCheck primary />
+                    </IconButton>
+                  </CardActions>
+                </Card>
+                <Card style={{ marginTop: '15px' }}>
+                  <CardHeader title="Daktari Omaha" />
+                  <CardText>
+                    This device is low on inventory (<b>54 cartridges</b>) and will run out in <b>9 days</b> given the curent utilization rate.
+                  </CardText>
+                  <CardActions style={{ textAlign: 'right' }}>
+                    <IconButton tooltip="Fix this" iconStyle={{ color: 'gray' }} >
+                      <Build />
+                    </IconButton>
+                    <IconButton tooltip="Escalate" iconStyle={{ color: '#f57c00' }} >
+                      <PrioHigh />
+                    </IconButton>
+                    <IconButton tooltip="Hide this notification" iconStyle={{ color: '#63a021' }} >
+                      <NavigationCheck primary />
+                    </IconButton>
+                  </CardActions>
+                </Card>
+                <Card style={{ marginTop: '15px' }}>
+                  <CardHeader title="Daktari Dayton" />
+                  <CardText>
+                    Has a high error rate (<b>11%</b>). The average error rate for Daktari devices is <b>5%</b>.
+                  </CardText>
+                  <CardActions style={{ textAlign: 'right' }}>
+                    <IconButton tooltip="Fix this" iconStyle={{ color: 'gray' }} >
+                      <Build />
+                    </IconButton>
+                    <IconButton tooltip="Escalate" iconStyle={{ color: '#f57c00' }} >
+                      <PrioHigh />
+                    </IconButton>
+                    <IconButton tooltip="Hide this notification" iconStyle={{ color: '#63a021' }} >
+                      <NavigationCheck primary />
+                    </IconButton>
+                  </CardActions>
+                </Card>
+                <Card style={{ marginTop: '15px' }}>
+                  <CardHeader title="GeneXpert Boston" />
+                  <CardText>
+                    This device was expected to come back online <b>yesterday</b> after being serviced but has not connected yet.
+                  </CardText>
+                  <CardActions style={{ textAlign: 'right' }}>
+                    <IconButton tooltip="Fix this" iconStyle={{ color: 'gray' }} >
+                      <Build />
+                    </IconButton>
+                    <IconButton tooltip="Escalate" iconStyle={{ color: '#f57c00' }} >
+                      <PrioHigh />
+                    </IconButton>
+                    <IconButton tooltip="Hide this notification" iconStyle={{ color: '#63a021' }} >
+                      <NavigationCheck primary />
+                    </IconButton>
+                  </CardActions>
+                </Card>
               </div>
             </section>
           </Unit>
