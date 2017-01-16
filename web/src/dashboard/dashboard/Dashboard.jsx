@@ -11,6 +11,8 @@ import Helmet from 'react-helmet'
 import { Link } from 'react-router'
 
 import Paper from 'material-ui/Paper'
+import FlatButton from 'material-ui/FlatButton'
+import { Card, CardActions, CardHeader, CardText } from 'material-ui/Card';
 
 // Our own imports
 import { Unit } from '../../components/pureGrids'
@@ -53,25 +55,30 @@ export class Dashboard extends PureComponent {
   }
 
   render() {
-    const { intl: { formatMessage } } = this.props
+    const { intl: { formatMessage, formatNumber } } = this.props
 
     return (
       <div className={styles.Content}>
         <Helmet title={formatMessage(messages.title)} titleTemplate="%s - Aspect" defaultTitle="Aspect" />
         <Paper>
           <Unit sm="1-2" md="2-3">
-            <section className={styles.Section}>
+            <section style={{ height: '220px' }} className={styles.Section}>
               <header className={styles.Section__Header}>
                 <h2>Right Now</h2>
               </header>
               <div>
-                <img role="presentation" src={require('./right-now.png')} />
+                <p>
+                  <span className={styles.Count__Emphasis}>{formatNumber(126)}</span> Devices at {formatNumber(53)} Sites Managed
+                </p>
+                <p>
+                  <span className={styles.Count__Emphasis}>{formatNumber(1435)}</span> Results in the last 30 days (<span className={styles.Count__Positive}>+{formatNumber(15)} today</span>)
+                </p>
               </div>
             </section>
             <section className={styles.Section}>
               <header className={styles.Section__Header}>
                 <h2>
-                  Patient Care<small> (1435 results in last 30 days)</small>
+                  Patient Care<small> ({formatNumber(1435)} results in last 30 days)</small>
                 </h2>
               </header>
               <div>
@@ -119,12 +126,14 @@ export class Dashboard extends PureComponent {
             </section>
           </Unit>
           <Unit sm="1-2" md="1-3">
-            <section className={styles.Section}>
+            <section style={{ height: '220px' }} className={styles.Section}>
               <header className={styles.Section__Header}>
                 <h2>To Do</h2>
               </header>
-              <div>
-                <img role="presentation" src={require('./todos.png')} />
+              <div style={{ width: '180px' }}>
+                <p>Result Alerts <span className={styles.Alert__Positive}>0</span></p>
+                <p>Device Alerts <span className={styles.Alert__Negative}>4</span></p>
+                <p>Inventory Alerts <span className={styles.Alert__Negative}>3</span></p>
               </div>
             </section>
             <section className={styles.Section}>
@@ -132,21 +141,20 @@ export class Dashboard extends PureComponent {
                 <h2>Recommendations</h2>
               </header>
               <div>
-                <img
-                  role="presentation"
-                  src={require('./recommendation.png')}
-                  style={{ display: 'block', width: '100%' }}
-                />
-                <img
-                  role="presentation"
-                  src={require('./recommendation.png')}
-                  style={{ display: 'block', width: '100%' }}
-                />
-                <img
-                  role="presentation"
-                  src={require('./recommendation.png')}
-                  style={{ display: 'block', width: '100%' }}
-                />
+              <br/>
+                <Card>
+    <CardHeader
+      title="Device Offline"
+    />
+    <CardText>
+      The Device X has been offline for Y days!
+    </CardText>
+    <CardActions>
+      <FlatButton label="Fix it" />
+      <FlatButton label="Dismiss" primary />
+
+    </CardActions>
+  </Card>
               </div>
             </section>
           </Unit>

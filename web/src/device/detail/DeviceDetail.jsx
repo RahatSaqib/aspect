@@ -290,7 +290,7 @@ export class DeviceDetail extends PureComponent {
           deviceOperation
             .get('data')
             .map((value, key) => {
-              switch(key) {
+              switch (key) {
                 case 'voltage': return `${value.toFixed(2)}V`
                 case 'temperature': return `${value}F`
                 default: return value

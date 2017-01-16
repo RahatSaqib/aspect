@@ -9,3 +9,29 @@
 .Section__Header {
   border-bottom: 1px solid #aaa;
 }
+
+.Count__Emphasis {
+  font-size: 32px;
+  margin-right: 5px;
+}
+
+.Count__Positive {
+  color: #7CB342;
+}
+
+.Alert__Positive {
+  background-color:#7CB342;
+  color: #fff;
+  padding: 1px 6px;
+  margin-left: 5px;
+  float: right;
+}
+
+.Alert__Negative {
+  background-color:#f85358;
+  color: #fff;
+  padding: 1px 6px;
+  margin-left: 5px;
+  margin-top: -1px;
+  float: right;
+}
