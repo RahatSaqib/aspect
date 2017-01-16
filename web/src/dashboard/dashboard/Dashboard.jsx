@@ -10,7 +10,9 @@ import { connect } from 'react-redux'
 import Helmet from 'react-helmet'
 import { Link } from 'react-router'
 
+// Material-UI
 import Paper from 'material-ui/Paper'
+import LinearProgress from 'material-ui/LinearProgress'
 import IconButton from 'material-ui/IconButton'
 import NavigationCheck from 'material-ui/svg-icons/navigation/check'
 import PrioHigh from 'material-ui/svg-icons/notification/priority-high'
@@ -21,6 +23,7 @@ import { Card, CardActions, CardHeader, CardText } from 'material-ui/Card'
 import { Unit } from '../../components/pureGrids'
 import { showAcknowledgement } from '../../appNotification/AppNotificationRedux'
 import styles from './Dashboard.css'
+import { fetchDashboardHome } from '../DashboardRedux'
 
 const messages = defineMessages({
   title: {
@@ -40,11 +43,17 @@ export class Dashboard extends PureComponent {
     showAcknowledgement: PropTypes.func.isRequired,
     userName: PropTypes.string,
     location: PropTypes.object.isRequired,
-    intl: PropTypes.object.isRequired
+    intl: PropTypes.object.isRequired,
+    fetchDashboardHome: PropTypes.func.isRequired,
+    totals: PropTypes.object
   }
 
   componentWillMount() {
     this.props.setPageTitle(null)
+  }
+
+  componentDidMount() {
+    this.props.fetchDashboardHome()
   }
 
   componentWillReceiveProps(nextProps) {
@@ -58,7 +67,7 @@ export class Dashboard extends PureComponent {
   }
 
   render() {
-    const { intl: { formatMessage, formatNumber } } = this.props
+    const { totals, intl: { formatMessage, formatNumber } } = this.props
 
     return (
       <div className={styles.Content}>
@@ -69,14 +78,17 @@ export class Dashboard extends PureComponent {
               <header className={styles.Section__Header}>
                 <h2>Right Now</h2>
               </header>
-              <div>
-                <p>
-                  <span className={styles.Count__Emphasis}>{formatNumber(126)}</span> Devices at {formatNumber(53)} Sites Managed
-                </p>
-                <p>
-                  <span className={styles.Count__Emphasis}>{formatNumber(1435)}</span> Results in the last 30 days (<span className={styles.Count__Positive}>+{formatNumber(15)} today</span>)
-                </p>
-              </div>
+              {!totals && <LinearProgress />}
+              {totals && totals.get !== undefined &&
+                <div>
+                  <p>
+                    <span className={styles.Count__Emphasis}>{formatNumber(totals.get('devicesTotal'))}</span> Devices at {formatNumber(totals.get('sitesTotal'))} Sites Managed
+                  </p>
+                  <p>
+                    <span className={styles.Count__Emphasis}>{formatNumber(totals.get('resultsTotal30d'))}</span> Results in the last 30 days (<span className={styles.Count__Positive}>+{formatNumber(totals.get('resultsTotal1d'))} today</span>)
+                  </p>
+                </div>
+              }
             </section>
             <section className={styles.Section}>
               <header className={styles.Section__Header}>
@@ -157,14 +169,15 @@ export class Dashboard extends PureComponent {
                       <PrioHigh />
                     </IconButton>
                     <IconButton tooltip="Hide this notification" iconStyle={{ color: '#63a021' }} >
-                      <NavigationCheck primary />
+                      <NavigationCheck />
                     </IconButton>
                   </CardActions>
                 </Card>
                 <Card style={{ marginTop: '15px' }}>
                   <CardHeader title="Daktari Omaha" />
                   <CardText>
-                    This device is low on inventory (<b>54 cartridges</b>) and will run out in <b>9 days</b> given the curent utilization rate.
+                    This device is low on inventory (<b>54 cartridges</b>).
+                    It will run out in <b>9 days</b> given the curent utilization rate.
                   </CardText>
                   <CardActions style={{ textAlign: 'right' }}>
                     <IconButton tooltip="Fix this" iconStyle={{ color: 'gray' }} >
@@ -174,14 +187,15 @@ export class Dashboard extends PureComponent {
                       <PrioHigh />
                     </IconButton>
                     <IconButton tooltip="Hide this notification" iconStyle={{ color: '#63a021' }} >
-                      <NavigationCheck primary />
+                      <NavigationCheck />
                     </IconButton>
                   </CardActions>
                 </Card>
                 <Card style={{ marginTop: '15px' }}>
                   <CardHeader title="Daktari Dayton" />
                   <CardText>
-                    Has a high error rate (<b>11%</b>). The average error rate for Daktari devices is <b>5%</b>.
+                    Has a high error rate (<b>11%</b>).
+                    The average error rate for Daktari devices is <b>5%</b>.
                   </CardText>
                   <CardActions style={{ textAlign: 'right' }}>
                     <IconButton tooltip="Fix this" iconStyle={{ color: 'gray' }} >
@@ -191,14 +205,15 @@ export class Dashboard extends PureComponent {
                       <PrioHigh />
                     </IconButton>
                     <IconButton tooltip="Hide this notification" iconStyle={{ color: '#63a021' }} >
-                      <NavigationCheck primary />
+                      <NavigationCheck />
                     </IconButton>
                   </CardActions>
                 </Card>
                 <Card style={{ marginTop: '15px' }}>
                   <CardHeader title="GeneXpert Boston" />
                   <CardText>
-                    This device was expected to come back online <b>yesterday</b> after being serviced but has not connected yet.
+                    This device was expected to come back online <b>yesterday </b>
+                    after being serviced but has not connected yet.
                   </CardText>
                   <CardActions style={{ textAlign: 'right' }}>
                     <IconButton tooltip="Fix this" iconStyle={{ color: 'gray' }} >
@@ -208,7 +223,7 @@ export class Dashboard extends PureComponent {
                       <PrioHigh />
                     </IconButton>
                     <IconButton tooltip="Hide this notification" iconStyle={{ color: '#63a021' }} >
-                      <NavigationCheck primary />
+                      <NavigationCheck />
                     </IconButton>
                   </CardActions>
                 </Card>
@@ -223,13 +238,15 @@ export class Dashboard extends PureComponent {
 
 function mapStateToProps(state) {
   return {
-    userName: state.getIn(['user', 'name'])
+    userName: state.getIn(['user', 'name']),
+    totals: state.getIn(['dashboard', 'home'])
   }
 }
 
 function mapDispatchToProps(dispatch) {
   return bindActionCreators({
-    showAcknowledgement
+    showAcknowledgement,
+    fetchDashboardHome
   }, dispatch)
 }
 
