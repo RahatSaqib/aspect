@@ -52,13 +52,13 @@ function* homeDashboard(request) {
     sitesTotalQuery, devicesTotalQuery, resultsTotalQuery30d, resultsTotalQuery1d
   ])
 
-  const result = Object.assign({
+  const result = Object.assign({ data: {
     sitesTotal: sitesTotal[0].cnt,
     devicesTotal: devicesTotal[0].cnt,
     // TODO: Remove magic numbers below when moving to "real" dashboard
     resultsTotal30d: 1234 + resultsTotal30d[0].cnt,
     resultsTotal1d: 15 + resultsTotal1d[0].cnt
-  })
+  } })
 
   return result
 }

@@ -1232,7 +1232,7 @@ function* seed(knex) {
             voltage: _.random(1.35, 1.65, true),
             temperature: _.random(30, 70)
           }),
-          startedOn: new Date(+now + _.random(j, j+1, true) * millisInHour),
+          startedOn: new Date(+now + (_.random(j, j + 1, true) * millisInHour)),
           createdOn: now
         })
     }
@@ -1279,7 +1279,7 @@ function* seed(knex) {
             voltage: _.random(1.35, 1.65, true),
             temperature: _.random(30, 70)
           }),
-          startedOn: new Date(+now + _.random(j, j+1, true) * millisInHour),
+          startedOn: new Date(+now + (_.random(j, j + 1, true) * millisInHour)),
           createdOn: now
         })
     }
