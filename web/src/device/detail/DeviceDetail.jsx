@@ -290,7 +290,7 @@ export class DeviceDetail extends PureComponent {
           deviceOperation
             .get('data')
             .map((value, key) => {
-              switch(key) {
+              switch (key) {
                 case 'voltage': return `${value.toFixed(2)}V`
                 case 'temperature': return `${value}F`
                 default: return value
@@ -467,6 +467,7 @@ export class DeviceDetail extends PureComponent {
     return (
       <div>
         {
+          // eslint-disable-next-line react/prop-types
           this.props.device && this.props.device.has('contacts') ?
           this.renderContent() :
           this.renderProgress()
