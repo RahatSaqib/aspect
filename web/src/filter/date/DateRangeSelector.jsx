@@ -32,6 +32,10 @@ import ForkedSelectField from '../../components/forkedMaterialUi/ForkedSelectFie
 import styles from './DateRangeSelector.css'
 
 const messages = defineMessages({
+  any: {
+    id: 'pages.dateRangeSelector.any',
+    defaultMessage: 'Any'
+  },
   day: {
     id: 'pages.dateRangeSelector.day',
     defaultMessage: 'Day'
@@ -141,7 +145,7 @@ export class DateRangeSelector extends PureComponent {
   }
 
   state = {
-    rangeMode: 'month'
+    rangeMode: 'any'
   }
 
   getDaysSelectList = () => {
@@ -332,6 +336,7 @@ export class DateRangeSelector extends PureComponent {
     const { intl: { formatMessage }, floatingLabelText } = this.props
 
     const dropDownSelectItems = {
+      any: [],
       day: this.getDaysSelectList(),
       week: this.getWeeksSelectList(),
       month: this.getMonthsSelectList(),
@@ -341,6 +346,7 @@ export class DateRangeSelector extends PureComponent {
     }[this.state.rangeMode]
 
     const dropDownListHintText = {
+      any: '',
       day: formatMessage(messages.selectDay),
       week: formatMessage(messages.selectWeek),
       month: formatMessage(messages.selectMonth),
@@ -366,6 +372,8 @@ export class DateRangeSelector extends PureComponent {
           onChange={this.handleRangeModeChange}
           menuStyle={{ minWidth: '7em' }}
         >
+          <MenuItem value="any" primaryText={formatMessage(messages.any)} />
+          <Divider />
           <MenuItem value="day" primaryText={formatMessage(messages.day)} />
           <MenuItem value="week" primaryText={formatMessage(messages.week)} />
           <MenuItem value="month" primaryText={formatMessage(messages.month)} />
@@ -374,50 +382,56 @@ export class DateRangeSelector extends PureComponent {
           <Divider />
           <MenuItem value="custom" primaryText={formatMessage(messages.custom)} />
         </ForkedSelectField>
-        {
-          this.state.rangeMode === 'custom' ?
-            <div className={styles.DateRangeSelector__DatePickerContainer}>
-              <DatePicker
-                {...restProps}
+        {(() => {
+          switch (this.state.rangeMode) {
+            case 'any': return false
+            case 'custom': return (
+              <div className={styles.DateRangeSelector__DatePickerContainer}>
+                <DatePicker
+                  {...restProps}
+                  floatingLabelText=" "
+                  floatingLabelFixed
+                  className={styles.DateRangeSelector__DatePicker}
+                  value={this.getMinDate()}
+                  onChange={this.handleMinDateChange}
+                  hintText={formatMessage(messages.fromDate)}
+                  container="inline"
+                  mode="landscape"
+                />
+                <DatePicker
+                  {..._.omit(restProps, 'floatingLabelText')}
+                  floatingLabelText=" "
+                  floatingLabelFixed
+                  className={styles.DateRangeSelector__DatePicker}
+                  value={this.getMaxDate()}
+                  onChange={this.handleMaxDateChange}
+                  hintText={formatMessage(messages.toDate)}
+                  container="inline"
+                  mode="landscape"
+                />
+              </div>
+            )
+            default: return (
+              <ForkedSelectField
+                className={styles.DateRangeSelector__DropDownList}
                 floatingLabelText=" "
                 floatingLabelFixed
-                className={styles.DateRangeSelector__DatePicker}
-                value={this.getMinDate()}
-                onChange={this.handleMinDateChange}
-                hintText={formatMessage(messages.fromDate)}
-                container="inline"
-                mode="landscape"
-              />
-              <DatePicker
-                {..._.omit(restProps, 'floatingLabelText')}
-                floatingLabelText=" "
-                floatingLabelFixed
-                className={styles.DateRangeSelector__DatePicker}
-                value={this.getMaxDate()}
-                onChange={this.handleMaxDateChange}
-                hintText={formatMessage(messages.toDate)}
-                container="inline"
-                mode="landscape"
-              />
-            </div> :
-            <ForkedSelectField
-              className={styles.DateRangeSelector__DropDownList}
-              floatingLabelText=" "
-              floatingLabelFixed
-              hintText={dropDownListHintText}
-              value={selectedValue}
-              autoWidth
-              onChange={this.handleDateRangeChange}
-            >
-              {
-                dropDownSelectItems.map(dropDownSelectItem =>
-                  <MenuItem
-                    key={dropDownSelectItem.minDate} value={dropDownSelectItem}
-                    primaryText={dropDownSelectItem.label}
-                  />)
-              }
-            </ForkedSelectField>
-        }
+                hintText={dropDownListHintText}
+                value={selectedValue}
+                autoWidth
+                onChange={this.handleDateRangeChange}
+              >
+                {
+                  dropDownSelectItems.map(dropDownSelectItem =>
+                    <MenuItem
+                      key={dropDownSelectItem.minDate} value={dropDownSelectItem}
+                      primaryText={dropDownSelectItem.label}
+                    />)
+                }
+              </ForkedSelectField>
+            )
+          }
+        })()}
       </div>
     )
   }
