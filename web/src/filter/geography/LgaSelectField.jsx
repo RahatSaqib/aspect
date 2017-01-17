@@ -31,6 +31,7 @@ export function getSelectedStateLgas(props) {
 
 export class LgaSelectField extends PureComponent {
   static propTypes = {
+    allItemText: PropTypes.string,
     onChangeLga: PropTypes.func.isRequired,
     stateId: PropTypes.string, // eslint-disable-line react/no-unused-prop-types
     lgaId: PropTypes.string,
@@ -57,13 +58,13 @@ export class LgaSelectField extends PureComponent {
   }
 
   handleSelectFieldChange = (event, index, value) => {
-    this.props.onChangeLga(value)
+    this.props.onChangeLga(index === 0 ? undefined : value)
   }
 
   render() {
-    const { lgaId } = this.props
+    const { allItemText, lgaId } = this.props
     const restProps = _.omit(this.props, [
-      'countries', 'onChangeLga', 'countryId', 'stateId', 'lgaId', 'fetchLgasForLocationSelector'
+      'allItemText', 'countries', 'onChangeLga', 'countryId', 'stateId', 'lgaId', 'fetchLgasForLocationSelector'
     ])
     const lgas = getSelectedStateLgas(this.props)
 
@@ -74,6 +75,12 @@ export class LgaSelectField extends PureComponent {
         value={lgaId}
         onChange={this.handleSelectFieldChange}
       >
+        {allItemText && (
+          <MenuItem
+            value="all"
+            primaryText={allItemText}
+          />
+        )}
         {lgas.items.map(l => (
           <MenuItem
             key={l.id}

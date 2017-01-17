@@ -10,6 +10,7 @@ import ForkedSelectField from '../../components/forkedMaterialUi/ForkedSelectFie
 
 export class CountrySelectField extends PureComponent {
   static propTypes = {
+    allItemText: PropTypes.string,
     countries: PropTypes.object.isRequired,
     fetchCountriesForLocationSelector: PropTypes.func.isRequired,
     onChangeCountry: PropTypes.func.isRequired,
@@ -22,13 +23,13 @@ export class CountrySelectField extends PureComponent {
   }
 
   handleSelectFieldChange = (event, index, value) => {
-    this.props.onChangeCountry(value)
+    this.props.onChangeCountry(index === 0 ? undefined : value)
   }
 
   render() {
-    const { countries, countryId } = this.props
+    const { allItemText, countries, countryId } = this.props
     const restProps = _.omit(this.props, [
-      'countries', 'onChangeCountry', 'countryId', 'fetchCountriesForLocationSelector'
+      'allItemText', 'countries', 'onChangeCountry', 'countryId', 'fetchCountriesForLocationSelector'
     ])
 
     return (
@@ -37,6 +38,12 @@ export class CountrySelectField extends PureComponent {
         value={countryId}
         onChange={this.handleSelectFieldChange}
       >
+        {allItemText && (
+          <MenuItem
+            value="all"
+            primaryText={allItemText}
+          />
+        )}
         {countries.items.map(c => (
           <MenuItem
             key={c.id}
