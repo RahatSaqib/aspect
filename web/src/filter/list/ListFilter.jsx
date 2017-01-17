@@ -459,6 +459,7 @@ export class ListFilter extends PureComponent {
                   {config.assayAndResultCategory && (
                     <div className={styles.Section__Control}>
                       <AssaySelectField
+                        allItemText={formatMessage(messages.all)}
                         value={filter.assayId}
                         onAssayChange={this.handleAssayIdChange}
                         floatingLabelFixed
@@ -471,6 +472,7 @@ export class ListFilter extends PureComponent {
                   {config.assayAndResultCategory && (
                     <div className={styles.Section__Control}>
                       <ResultCategorySelectField
+                        allItemText={formatMessage(messages.all)}
                         disabled={!filter.assayId}
                         assayId={filter.assayId}
                         value={filter.resultCategoryId}
@@ -485,6 +487,7 @@ export class ListFilter extends PureComponent {
                   {config.consumable && (
                     <div className={styles.Section__Control}>
                       <ConsumableSelectField
+                        allItemText={formatMessage(messages.all)}
                         value={filter.consumableId}
                         onConsumableChange={this.handleConsumableIdChange}
                         floatingLabelFixed
@@ -551,6 +554,7 @@ export class ListFilter extends PureComponent {
                   {config.workflowStatus && (
                     <div className={styles.Section__Control}>
                       <ResultWorkflowStatusSelectField
+                        allItemText={formatMessage(messages.all)}
                         value={filter.workflowStatusId}
                         onWorkflowStatusChange={this.handleWorkflowStatusIdChange}
                         floatingLabelFixed

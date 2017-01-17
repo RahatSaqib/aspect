@@ -13,6 +13,7 @@ import { fetchWorkflowStatuses } from '../../resultWorkflowStatus/ResultWorkflow
 export class ResultWorkflowStatusSelectField extends PureComponent {
 
   static propTypes = {
+    allItemText: PropTypes.string,
     fetchWorkflowStatuses: PropTypes.func.isRequired,
     workflowStatusItems: PropTypes.shape({
       id: PropTypes.string,
@@ -27,13 +28,13 @@ export class ResultWorkflowStatusSelectField extends PureComponent {
   }
 
   handleChange = (event, index, value) => {
-    this.props.onWorkflowStatusChange(value)
+    this.props.onWorkflowStatusChange(index === 0 ? undefined : value)
   }
 
   render() {
-    const { workflowStatusItems, value } = this.props
+    const { allItemText, workflowStatusItems, value } = this.props
     const restProps = _.omit(this.props, [
-      'fetchWorkflowStatuses', 'workflowStatusItems', 'onWorkflowStatusChange', 'value'
+      'allItemText', 'fetchWorkflowStatuses', 'workflowStatusItems', 'onWorkflowStatusChange', 'value'
     ])
 
     return (
@@ -42,6 +43,12 @@ export class ResultWorkflowStatusSelectField extends PureComponent {
         value={value}
         onChange={this.handleChange}
       >
+        {allItemText && (
+          <MenuItem
+            value="all"
+            primaryText={allItemText}
+          />
+        )}
         {workflowStatusItems.map(c => (
           <MenuItem key={c.get('id')} value={c.get('id')} primaryText={c.get('name')} />
         ))}

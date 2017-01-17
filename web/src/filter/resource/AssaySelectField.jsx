@@ -13,6 +13,7 @@ import { fetchAssays } from '../../assay/AssayRedux'
 export class AssaySelectField extends PureComponent {
 
   static propTypes = {
+    allItemText: PropTypes.string,
     fetchAssays: PropTypes.func.isRequired,
     assayItems: PropTypes.object.isRequired,
     onAssayChange: PropTypes.func.isRequired,
@@ -24,13 +25,13 @@ export class AssaySelectField extends PureComponent {
   }
 
   handleChange = (event, index, value) => {
-    this.props.onAssayChange(value)
+    this.props.onAssayChange(index === 0 ? undefined : value)
   }
 
   render() {
-    const { assayItems, value } = this.props
+    const { allItemText, assayItems, value } = this.props
     const restProps = _.omit(this.props, [
-      'fetchAssays', 'assayItems', 'onAssayChange', 'value'
+      'allItemText', 'fetchAssays', 'assayItems', 'onAssayChange', 'value'
     ])
     const validAssays = assayItems.filter(a => a.get('hasResults'))
 
@@ -40,6 +41,12 @@ export class AssaySelectField extends PureComponent {
         value={value}
         onChange={this.handleChange}
       >
+        {allItemText && (
+          <MenuItem
+            value="all"
+            primaryText={allItemText}
+          />
+        )}
         {validAssays.map(a => (
           <MenuItem key={a.get('id')} value={a.get('id')} primaryText={a.get('name')} />
         ))}

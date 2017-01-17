@@ -13,6 +13,7 @@ import { fetchAssays } from '../../assay/AssayRedux'
 export class ResultCategorySelectField extends PureComponent {
 
   static propTypes = {
+    allItemText: PropTypes.string,
     fetchAssays: PropTypes.func.isRequired,
     assayItems: PropTypes.object.isRequired,
     assayId: PropTypes.string,
@@ -25,13 +26,13 @@ export class ResultCategorySelectField extends PureComponent {
   }
 
   handleChange = (event, index, value) => {
-    this.props.onResultCategoryChange(value)
+    this.props.onResultCategoryChange(index === 0 ? undefined : value)
   }
 
   render() {
-    const { assayItems, assayId, value } = this.props
+    const { allItemText, assayItems, assayId, value } = this.props
     const restProps = _.omit(this.props, [
-      'fetchAssays', 'assayItems', 'assayId', 'onResultCategoryChange', 'value'
+      'allItemText', 'fetchAssays', 'assayItems', 'assayId', 'onResultCategoryChange', 'value'
     ])
     const possibleAssay = assayItems.find(a => a.get('id') === assayId)
     const resultCategories = possibleAssay ? possibleAssay.get('resultCategories') : []
@@ -42,6 +43,12 @@ export class ResultCategorySelectField extends PureComponent {
         value={value}
         onChange={this.handleChange}
       >
+        {allItemText && (
+          <MenuItem
+            value="all"
+            primaryText={allItemText}
+          />
+        )}
         {resultCategories.map(rc => (
           <MenuItem key={rc.get('id')} value={rc.get('id')} primaryText={rc.get('name')} />
         ))}

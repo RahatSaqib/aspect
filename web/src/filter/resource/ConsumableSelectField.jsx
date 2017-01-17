@@ -13,6 +13,7 @@ import { fetchConsumables } from '../../consumable/ConsumableRedux'
 export class ConsumableSelectField extends PureComponent {
 
   static propTypes = {
+    allItemText: PropTypes.string,
     fetchConsumables: PropTypes.func.isRequired,
     consumableItems: PropTypes.object,
     onConsumableChange: PropTypes.func.isRequired,
@@ -25,13 +26,13 @@ export class ConsumableSelectField extends PureComponent {
   }
 
   handleChange = (event, index, value) => {
-    this.props.onConsumableChange(value)
+    this.props.onConsumableChange(index === 0 ? undefined : value)
   }
 
   render() {
-    const { consumableItems, value } = this.props
+    const { allItemText, consumableItems, value } = this.props
     const restProps = _.omit(this.props, [
-      'fetchConsumables', 'consumableItems', 'onConsumableChange', 'value'
+      'allItemText', 'fetchConsumables', 'consumableItems', 'onConsumableChange', 'value'
     ])
 
     return (
@@ -40,6 +41,12 @@ export class ConsumableSelectField extends PureComponent {
         value={value}
         onChange={this.handleChange}
       >
+        {allItemText && (
+          <MenuItem
+            value="all"
+            primaryText={allItemText}
+          />
+        )}
         {consumableItems.map(c => (
           <MenuItem key={c.get('id')} value={c.get('id')} primaryText={c.get('name')} />
         ))}
