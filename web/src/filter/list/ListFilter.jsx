@@ -29,6 +29,7 @@ import ResultCategorySelectField from '../resource/ResultCategorySelectField'
 import ConsumableSelectField from '../resource/ConsumableSelectField'
 import DateRangeSelector from '../date/DateRangeSelector'
 import ResultWorkflowStatusSelectField from '../resource/ResultWorkflowStatusSelectField'
+import FilterMessage from './FilterMessage'
 import {
   clearListFilter,
   changeListFilter,
@@ -39,8 +40,7 @@ import {
   beginListExportProcessing
 } from '../FilterRedux'
 import {
-  nonEmptyFilterValue,
-  getFilterMessage
+  nonEmptyFilterValue
 } from '../utils'
 
 import styles from './ListFilter.css'
@@ -187,6 +187,7 @@ export class ListFilter extends PureComponent {
     onClearFilter: PropTypes.func.isRequired, // connect
     onChangeFilter: PropTypes.func.isRequired, // connect
     listFilter: PropTypes.shape({
+      toJS: PropTypes.func,
       assayId: PropTypes.string,
       countryId: PropTypes.string,
       stateId: PropTypes.string,
@@ -215,13 +216,6 @@ export class ListFilter extends PureComponent {
     subject: PropTypes.string,
     dateFilterLabel: PropTypes.string,
 
-    countries: PropTypes.object.isRequired,
-    assay: PropTypes.object.isRequired,
-    consumable: PropTypes.object.isRequired,
-    workflowStatusItems: PropTypes.shape({
-      id: PropTypes.string,
-      name: PropTypes.string
-    }),
     filterTemplate: PropTypes.string.isRequired,
     filterTemplateOptional: PropTypes.string,
 
@@ -360,16 +354,12 @@ export class ListFilter extends PureComponent {
 
   render() {
     const { listFilter,
-          countries,
-          assay,
-          consumable,
           config,
           subject,
           filterTemplate,
           filterTemplateOptional,
           dateFilterLabel,
-          intl: { formatMessage, formatDate },
-          workflowStatusItems,
+          intl: { formatMessage },
           onClickExport,
           showExportExcel,
           showExportCsv,
@@ -394,24 +384,17 @@ export class ListFilter extends PureComponent {
 
     const nonEmptyFilter = !_.isEmpty(_.filter(filter, nonEmptyFilterValue))
 
-    const filterMessage = getFilterMessage(filter,
-      countries,
-      assay,
-      consumable,
-      subject,
-      filterTemplate,
-      filterTemplateOptional,
-      formatMessage,
-      formatDate,
-      workflowStatusItems)
-
     return (
       <div className={styles.ListFilter}>
         <Card expanded={expanded} onExpandChange={this.handleExpandChange}>
           <CardHeader
             subtitle={
               <span style={{ verticalAlign: 'middle' }}>
-                {filterMessage}
+                <FilterMessage
+                  subject={subject}
+                  filterTemplate={filterTemplate}
+                  filterTemplateOptional={filterTemplateOptional}
+                />
                 {!expanded && nonEmptyFilter && (
                   <IconButton
                     tooltip={formatMessage(messages.clearTooltip)}
@@ -645,11 +628,7 @@ function mapStateToProps(state) {
   return {
     config: state.filter.listConfig,
     listFilter: state.filter.listFilter,
-    listExport: state.filter.listExport,
-    countries: state.geography.countriesForLocationSelector,
-    assay: state.assay,
-    consumable: state.consumable.consumables,
-    workflowStatusItems: state.resultWorkflowStatus.items
+    listExport: state.filter.listExport
   }
 }
 
