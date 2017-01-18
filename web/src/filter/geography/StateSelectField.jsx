@@ -29,6 +29,7 @@ export function getSelectedCountryStates(props) {
 
 export class StateSelectField extends PureComponent {
   static propTypes = {
+    allItemText: PropTypes.string,
     fetchStatesForLocationSelector: PropTypes.func.isRequired,
     onChangeState: PropTypes.func.isRequired,
     countryId: PropTypes.string, // eslint-disable-line react/no-unused-prop-types
@@ -53,13 +54,13 @@ export class StateSelectField extends PureComponent {
   }
 
   handleSelectFieldChange = (event, index, value) => {
-    this.props.onChangeState(value)
+    this.props.onChangeState(index === 0 ? undefined : value)
   }
 
   render() {
-    const { stateId } = this.props
+    const { allItemText, stateId } = this.props
     const restProps = _.omit(this.props, [
-      'countries', 'onChangeState', 'countryId', 'stateId', 'fetchStatesForLocationSelector'
+      'allItemText', 'countries', 'onChangeState', 'countryId', 'stateId', 'fetchStatesForLocationSelector'
     ])
 
     return (
@@ -68,6 +69,12 @@ export class StateSelectField extends PureComponent {
         value={stateId}
         onChange={this.handleSelectFieldChange}
       >
+        {allItemText && (
+          <MenuItem
+            value="all"
+            primaryText={allItemText}
+          />
+        )}
         {getSelectedCountryStates(this.props).map(s => (
           <MenuItem
             key={s.id}

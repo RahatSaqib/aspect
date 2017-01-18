@@ -62,6 +62,10 @@ const messages = defineMessages({
     id: 'shared.ListFilter.clear',
     defaultMessage: 'Clear'
   },
+  all: {
+    id: 'shared.ListFilter.all',
+    defaultMessage: 'All'
+  },
   contactNameEmail: {
     id: 'shared.ListFilter.contactNameEmail',
     defaultMessage: 'Contact name/email'
@@ -412,6 +416,7 @@ export class ListFilter extends PureComponent {
                 <div className={styles.Section__Content}>
                   <div className={styles.Section__Control}>
                     <CountrySelectField
+                      allItemText={formatMessage(messages.all)}
                       onChangeCountry={this.handleChangeCountry}
                       countryId={this.props.filter.countryId}
                       floatingLabelFixed
@@ -422,6 +427,7 @@ export class ListFilter extends PureComponent {
                   </div>
                   <div className={styles.Section__Control}>
                     <StateSelectField
+                      allItemText={formatMessage(messages.all)}
                       onChangeState={this.handleChangeState}
                       countryId={this.props.filter.countryId}
                       stateId={this.props.filter.stateId}
@@ -433,6 +439,7 @@ export class ListFilter extends PureComponent {
                   </div>
                   <div className={styles.Section__Control}>
                     <LgaSelectField
+                      allItemText={formatMessage(messages.all)}
                       onChangeLga={this.handleChangeLga}
                       countryId={this.props.filter.countryId}
                       stateId={this.props.filter.stateId}
@@ -452,6 +459,7 @@ export class ListFilter extends PureComponent {
                   {config.assayAndResultCategory && (
                     <div className={styles.Section__Control}>
                       <AssaySelectField
+                        allItemText={formatMessage(messages.all)}
                         value={filter.assayId}
                         onAssayChange={this.handleAssayIdChange}
                         floatingLabelFixed
@@ -464,6 +472,7 @@ export class ListFilter extends PureComponent {
                   {config.assayAndResultCategory && (
                     <div className={styles.Section__Control}>
                       <ResultCategorySelectField
+                        allItemText={formatMessage(messages.all)}
                         disabled={!filter.assayId}
                         assayId={filter.assayId}
                         value={filter.resultCategoryId}
@@ -478,6 +487,7 @@ export class ListFilter extends PureComponent {
                   {config.consumable && (
                     <div className={styles.Section__Control}>
                       <ConsumableSelectField
+                        allItemText={formatMessage(messages.all)}
                         value={filter.consumableId}
                         onConsumableChange={this.handleConsumableIdChange}
                         floatingLabelFixed
@@ -544,6 +554,7 @@ export class ListFilter extends PureComponent {
                   {config.workflowStatus && (
                     <div className={styles.Section__Control}>
                       <ResultWorkflowStatusSelectField
+                        allItemText={formatMessage(messages.all)}
                         value={filter.workflowStatusId}
                         onWorkflowStatusChange={this.handleWorkflowStatusIdChange}
                         floatingLabelFixed
