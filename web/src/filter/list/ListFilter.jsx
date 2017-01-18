@@ -82,6 +82,14 @@ const messages = defineMessages({
     id: 'shared.ListFilter.enterSiteName',
     defaultMessage: 'Enter site name...'
   },
+  sampleOriginSite: {
+    id: 'shared.ListFilter.sampleOriginSite',
+    defaultMessage: 'Sample origin site'
+  },
+  enterSampleOriginSiteName: {
+    id: 'shared.ListFilter.enterSampleOriginSiteName',
+    defaultMessage: 'Enter sample origin site name...'
+  },
   date: {
     id: 'shared.ListFilter.date',
     defaultMessage: 'Date'
@@ -101,6 +109,14 @@ const messages = defineMessages({
   selectConsumable: {
     id: 'shared.ListFilter.selectConsumable',
     defaultMessage: 'Select consumable...'
+  },
+  sampleId: {
+    id: 'shared.ListFilter.sampleId',
+    defaultMessage: 'Sample ID'
+  },
+  enterSampleId: {
+    id: 'shared.ListFilter.enterSampleId',
+    defaultMessage: 'Enter sample ID...'
   },
   result: {
     id: 'shared.ListFilter.result',
@@ -367,7 +383,8 @@ export class ListFilter extends PureComponent {
 
     const hasDataSection = (
       config.assay || config.deviceName || config.result ||
-      config.siteName || config.contactNameOrEmail || config.consumable
+      config.siteName || config.contactNameOrEmail || config.consumable ||
+      config.sampleId || config.sampleOriginSiteName
     )
 
     const hasDataSection2 = (
@@ -498,6 +515,18 @@ export class ListFilter extends PureComponent {
                       />
                     </div>
                   )}
+                  {config.sampleId && (
+                    <div className={styles.Section__Control}>
+                      <FocusBlurTextField
+                        name="sampleId"
+                        value={filter.sampleId || ''}
+                        onCommitValue={this.handleTextFieldCommitValue}
+                        floatingLabelFixed
+                        hintText={formatMessage(messages.enterSampleId)}
+                        floatingLabelText={formatMessage(messages.sampleId)}
+                      />
+                    </div>
+                  )}
                   {config.deviceName && (
                     <div className={styles.Section__Control}>
                       <FocusBlurTextField
@@ -519,6 +548,18 @@ export class ListFilter extends PureComponent {
                         floatingLabelFixed
                         hintText={formatMessage(messages.enterSiteName)}
                         floatingLabelText={formatMessage(messages.site)}
+                      />
+                    </div>
+                  )}
+                  {config.sampleOriginSiteName && (
+                    <div className={styles.Section__Control}>
+                      <FocusBlurTextField
+                        name="sampleOriginSiteName"
+                        value={filter.sampleOriginSiteName || ''}
+                        onCommitValue={this.handleTextFieldCommitValue}
+                        floatingLabelFixed
+                        hintText={formatMessage(messages.enterSampleOriginSiteName)}
+                        floatingLabelText={formatMessage(messages.sampleOriginSite)}
                       />
                     </div>
                   )}

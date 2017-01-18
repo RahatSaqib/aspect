@@ -8,7 +8,7 @@ const SELECT_LIST_FIELDS = [
   'r.id', 'r.externalId', 'r.endedOn', 'd.name as deviceName',
   'c.name as countryName', 'st.name as stateName', 'lg.name as lgaName',
   'rc1.name as resultCategory1Name', 'rc2.name as resultCategory2Name', 'rs.name as resultWorkflowStatus',
-  's.externalId as sampleId', 'a.name as assayName', 'a.id as assayId',
+  'sp.externalId as sampleId', 'a.name as assayName', 'a.id as assayId',
   knex.raw('JSON_UNQUOTE(JSON_EXTRACT(r.patientData, "$.id")) as patientId')
 ]
 
@@ -89,9 +89,10 @@ function* listResults(request) {
     .leftJoin('Lga as lg', 'g.lgaId', 'lg.id')
     .leftJoin('ResultCategory as rc1', 'r.resultCategory1', 'rc1.id')
     .leftJoin('ResultCategory as rc2', 'r.resultCategory2', 'rc2.id')
-    .leftJoin('Sample as s', 'r.sampleId', 's.id')
+    .leftJoin('Sample as sp', 'r.sampleId', 'sp.id')
+    .leftJoin('Site as so', 'sp.originSiteId', 'so.id')
     .leftJoin('ResultWorkflowStatus as rs', 'r.resultWorkflowStatusId', 'rs.id')
-    .leftJoin('Site', 'r.siteId', 'Site.id')
+    .leftJoin('Site as sr', 'r.siteId', 'sr.id')
     .modify(filterDateRangeParams, query, 'r.endedOn')
     .modify(filterParams, query, {
       deviceId: 'd.id',
@@ -101,8 +102,9 @@ function* listResults(request) {
       stateId: 'g.stateId',
       lgaId: 'g.lgaId',
       deviceName: 'd.name',
-      siteName: 'Site.name',
-      sampleId: 's.externalId',
+      siteName: 'sr.name',
+      sampleId: 'sp.externalId',
+      sampleOriginSiteName: 'so.name',
       workflowStatusId: 'r.resultWorkflowStatusId'
     })
     .modify(addConstraints, dataConstraints, { device: 'd', sample: 's' })

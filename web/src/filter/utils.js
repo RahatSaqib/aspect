@@ -29,6 +29,10 @@ const messages = defineMessages({
     id: 'shared.FormatFilters.consumables',
     defaultMessage: 'consumables'
   },
+  sampleId: {
+    id: 'shared.FormatFilters.sampleId',
+    defaultMessage: 'sample'
+  },
   withResult: {
     id: 'shared.FormatFilters.withResult',
     defaultMessage: 'with result'
@@ -82,8 +86,12 @@ export function getFilterMessage(
   }
 
   // name-filter
-  const name = `${filter.contactNameOrEmail || ''}${filter.deviceName || ''}${filter.siteName || ''}`
+  const name = `${filter.contactNameOrEmail || ''}${filter.deviceName || ''}${filter.siteName || ''}${filter.sampleOriginSiteName || ''}`
   const nameString = name ? `${SPACE}${formatMessage(messages.whoseNameIncludes)}${SPACE}"${name}"` : ''
+
+  // sample id
+  const sampleId = filter.sampleId
+  const sampleIdString = sampleId ? `${formatMessage(messages.sampleId)}${SPACE}(${sampleId}),${SPACE}` : ''
 
   // assay/result
   const assay = filter.assayId ? assays.get('items').find(a => a.get('id') === filter.assayId) : null
@@ -124,6 +132,7 @@ export function getFilterMessage(
   const message = `${template
                         .replace('<GEOGRAPHY>', geography)
                         .replace('<NAME>', nameString)
+                        .replace('<SAMPLE_ID>', sampleIdString)
                         .replace('<ASSAY>', assayString)
                         .replace('<RESULT>', resultString)
                         .replace('<DATE>', dateString)} ${optionalMessage}`

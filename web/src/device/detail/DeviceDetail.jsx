@@ -116,6 +116,7 @@ export class DeviceDetail extends PureComponent {
       deviceId: PropTypes.string.isRequired
     }).isRequired,
     device: PropTypes.shape({
+      has: PropTypes.func.isRequired,
       // see /api/src/device/endPoint.js, path: '/device'
       // see /api/src/device/service.js, const SELECT_SHOW_FIELDS
       id: PropTypes.number,
@@ -467,7 +468,6 @@ export class DeviceDetail extends PureComponent {
     return (
       <div>
         {
-          // eslint-disable-next-line react/prop-types
           this.props.device && this.props.device.has('contacts') ?
           this.renderContent() :
           this.renderProgress()
