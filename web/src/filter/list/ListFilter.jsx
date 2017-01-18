@@ -186,7 +186,7 @@ export class ListFilter extends PureComponent {
   static propTypes = {
     onClearFilter: PropTypes.func.isRequired, // connect
     onChangeFilter: PropTypes.func.isRequired, // connect
-    filter: PropTypes.shape({
+    listFilter: PropTypes.shape({
       assayId: PropTypes.string,
       countryId: PropTypes.string,
       stateId: PropTypes.string,
@@ -265,7 +265,7 @@ export class ListFilter extends PureComponent {
 
   handleAssayIdChange = (assayId) => {
     const nextFilter = {
-      ...this.props.filter,
+      ...this.props.listFilter.toJS(),
       assayId
     }
     this.props.onChangeFilter(nextFilter)
@@ -273,7 +273,7 @@ export class ListFilter extends PureComponent {
 
   handleChangeDate = (dateValues) => {
     const nextFilter = {
-      ...this.props.filter,
+      ...this.props.listFilter.toJS(),
       ...dateValues
     }
     this.props.onChangeFilter(nextFilter)
@@ -281,7 +281,7 @@ export class ListFilter extends PureComponent {
 
   handleChangeCountry = (countryId) => {
     const nextFilter = {
-      ...this.props.filter,
+      ...this.props.listFilter.toJS(),
       countryId,
       stateId: undefined,
       lgaId: undefined
@@ -291,7 +291,7 @@ export class ListFilter extends PureComponent {
 
   handleChangeState = (stateId) => {
     const nextFilter = {
-      ...this.props.filter,
+      ...this.props.listFilter.toJS(),
       stateId,
       lgaId: undefined
     }
@@ -300,7 +300,7 @@ export class ListFilter extends PureComponent {
 
   handleChangeLga = (lgaId) => {
     const nextFilter = {
-      ...this.props.filter,
+      ...this.props.listFilter.toJS(),
       lgaId
     }
     this.props.onChangeFilter(nextFilter)
@@ -308,7 +308,7 @@ export class ListFilter extends PureComponent {
 
   handleResultCategoryChange = (resultCategoryId) => {
     const nextFilter = {
-      ...this.props.filter,
+      ...this.props.listFilter.toJS(),
       resultCategoryId
     }
     this.props.onChangeFilter(nextFilter)
@@ -316,7 +316,7 @@ export class ListFilter extends PureComponent {
 
   handleTextFieldCommitValue = (event) => {
     const nextFilter = {
-      ...this.props.filter,
+      ...this.props.listFilter.toJS(),
       [event.target.name]: event.target.value
     }
     this.props.onChangeFilter(nextFilter)
@@ -324,7 +324,7 @@ export class ListFilter extends PureComponent {
 
   handleConsumableIdChange = (consumableId) => {
     const nextFilter = {
-      ...this.props.filter,
+      ...this.props.listFilter.toJS(),
       consumableId
     }
     this.props.onChangeFilter(nextFilter)
@@ -332,7 +332,7 @@ export class ListFilter extends PureComponent {
 
   handleWorkflowStatusIdChange = (workflowStatusId) => {
     const nextFilter = {
-      ...this.props.filter,
+      ...this.props.listFilter.toJS(),
       workflowStatusId
     }
     this.props.onChangeFilter(nextFilter)
@@ -359,7 +359,7 @@ export class ListFilter extends PureComponent {
   }
 
   render() {
-    const { filter,
+    const { listFilter,
           countries,
           assay,
           consumable,
@@ -375,6 +375,7 @@ export class ListFilter extends PureComponent {
           showExportCsv,
           listExport
         } = this.props
+    const filter = listFilter.toJS()
     const showExcel = !!onClickExport && (showExportExcel || true) === true
     const showCsv = !!onClickExport && (showExportCsv || true) === true
     const isPrimary = true
@@ -435,7 +436,7 @@ export class ListFilter extends PureComponent {
                     <CountrySelectField
                       allItemText={formatMessage(messages.all)}
                       onChangeCountry={this.handleChangeCountry}
-                      countryId={this.props.filter.countryId}
+                      countryId={this.props.listFilter.countryId}
                       floatingLabelFixed
                       hintText={formatMessage(messages.selectCountry)}
                       floatingLabelText={formatMessage(messages.country)}
@@ -446,8 +447,8 @@ export class ListFilter extends PureComponent {
                     <StateSelectField
                       allItemText={formatMessage(messages.all)}
                       onChangeState={this.handleChangeState}
-                      countryId={this.props.filter.countryId}
-                      stateId={this.props.filter.stateId}
+                      countryId={this.props.listFilter.countryId}
+                      stateId={this.props.listFilter.stateId}
                       floatingLabelFixed
                       hintText={formatMessage(messages.selectState)}
                       floatingLabelText={formatMessage(messages.state)}
@@ -458,9 +459,9 @@ export class ListFilter extends PureComponent {
                     <LgaSelectField
                       allItemText={formatMessage(messages.all)}
                       onChangeLga={this.handleChangeLga}
-                      countryId={this.props.filter.countryId}
-                      stateId={this.props.filter.stateId}
-                      lgaId={this.props.filter.lgaId}
+                      countryId={this.props.listFilter.countryId}
+                      stateId={this.props.listFilter.stateId}
+                      lgaId={this.props.listFilter.lgaId}
                       floatingLabelFixed
                       hintText={formatMessage(messages.selectLga)}
                       floatingLabelText={formatMessage(messages.lga)}
@@ -643,7 +644,7 @@ export class ListFilter extends PureComponent {
 function mapStateToProps(state) {
   return {
     config: state.filter.listConfig,
-    filter: state.filter.listFilter.toJS(),
+    listFilter: state.filter.listFilter,
     listExport: state.filter.listExport,
     countries: state.geography.countriesForLocationSelector,
     assay: state.assay,
