@@ -29,6 +29,7 @@ import ResultCategorySelectField from '../resource/ResultCategorySelectField'
 import ConsumableSelectField from '../resource/ConsumableSelectField'
 import DateRangeSelector from '../date/DateRangeSelector'
 import ResultWorkflowStatusSelectField from '../resource/ResultWorkflowStatusSelectField'
+import FilterMessage from './FilterMessage'
 import {
   clearListFilter,
   changeListFilter,
@@ -39,8 +40,7 @@ import {
   beginListExportProcessing
 } from '../FilterRedux'
 import {
-  nonEmptyFilterValue,
-  getFilterMessage
+  nonEmptyFilterValue
 } from '../utils'
 
 import styles from './ListFilter.css'
@@ -186,7 +186,8 @@ export class ListFilter extends PureComponent {
   static propTypes = {
     onClearFilter: PropTypes.func.isRequired, // connect
     onChangeFilter: PropTypes.func.isRequired, // connect
-    filter: PropTypes.shape({
+    listFilter: PropTypes.shape({
+      toJS: PropTypes.func,
       assayId: PropTypes.string,
       countryId: PropTypes.string,
       stateId: PropTypes.string,
@@ -215,13 +216,6 @@ export class ListFilter extends PureComponent {
     subject: PropTypes.string,
     dateFilterLabel: PropTypes.string,
 
-    countries: PropTypes.object.isRequired,
-    assay: PropTypes.object.isRequired,
-    consumable: PropTypes.object.isRequired,
-    workflowStatusItems: PropTypes.shape({
-      id: PropTypes.string,
-      name: PropTypes.string
-    }),
     filterTemplate: PropTypes.string.isRequired,
     filterTemplateOptional: PropTypes.string,
 
@@ -265,7 +259,7 @@ export class ListFilter extends PureComponent {
 
   handleAssayIdChange = (assayId) => {
     const nextFilter = {
-      ...this.props.filter,
+      ...this.props.listFilter.toJS(),
       assayId
     }
     this.props.onChangeFilter(nextFilter)
@@ -273,7 +267,7 @@ export class ListFilter extends PureComponent {
 
   handleChangeDate = (dateValues) => {
     const nextFilter = {
-      ...this.props.filter,
+      ...this.props.listFilter.toJS(),
       ...dateValues
     }
     this.props.onChangeFilter(nextFilter)
@@ -281,7 +275,7 @@ export class ListFilter extends PureComponent {
 
   handleChangeCountry = (countryId) => {
     const nextFilter = {
-      ...this.props.filter,
+      ...this.props.listFilter.toJS(),
       countryId,
       stateId: undefined,
       lgaId: undefined
@@ -291,7 +285,7 @@ export class ListFilter extends PureComponent {
 
   handleChangeState = (stateId) => {
     const nextFilter = {
-      ...this.props.filter,
+      ...this.props.listFilter.toJS(),
       stateId,
       lgaId: undefined
     }
@@ -300,7 +294,7 @@ export class ListFilter extends PureComponent {
 
   handleChangeLga = (lgaId) => {
     const nextFilter = {
-      ...this.props.filter,
+      ...this.props.listFilter.toJS(),
       lgaId
     }
     this.props.onChangeFilter(nextFilter)
@@ -308,7 +302,7 @@ export class ListFilter extends PureComponent {
 
   handleResultCategoryChange = (resultCategoryId) => {
     const nextFilter = {
-      ...this.props.filter,
+      ...this.props.listFilter.toJS(),
       resultCategoryId
     }
     this.props.onChangeFilter(nextFilter)
@@ -316,7 +310,7 @@ export class ListFilter extends PureComponent {
 
   handleTextFieldCommitValue = (event) => {
     const nextFilter = {
-      ...this.props.filter,
+      ...this.props.listFilter.toJS(),
       [event.target.name]: event.target.value
     }
     this.props.onChangeFilter(nextFilter)
@@ -324,7 +318,7 @@ export class ListFilter extends PureComponent {
 
   handleConsumableIdChange = (consumableId) => {
     const nextFilter = {
-      ...this.props.filter,
+      ...this.props.listFilter.toJS(),
       consumableId
     }
     this.props.onChangeFilter(nextFilter)
@@ -332,7 +326,7 @@ export class ListFilter extends PureComponent {
 
   handleWorkflowStatusIdChange = (workflowStatusId) => {
     const nextFilter = {
-      ...this.props.filter,
+      ...this.props.listFilter.toJS(),
       workflowStatusId
     }
     this.props.onChangeFilter(nextFilter)
@@ -359,22 +353,19 @@ export class ListFilter extends PureComponent {
   }
 
   render() {
-    const { filter,
-          countries,
-          assay,
-          consumable,
+    const { listFilter,
           config,
           subject,
           filterTemplate,
           filterTemplateOptional,
           dateFilterLabel,
-          intl: { formatMessage, formatDate },
-          workflowStatusItems,
+          intl: { formatMessage },
           onClickExport,
           showExportExcel,
           showExportCsv,
           listExport
         } = this.props
+    const filter = listFilter.toJS()
     const showExcel = !!onClickExport && (showExportExcel || true) === true
     const showCsv = !!onClickExport && (showExportCsv || true) === true
     const isPrimary = true
@@ -393,24 +384,17 @@ export class ListFilter extends PureComponent {
 
     const nonEmptyFilter = !_.isEmpty(_.filter(filter, nonEmptyFilterValue))
 
-    const filterMessage = getFilterMessage(filter,
-      countries,
-      assay,
-      consumable,
-      subject,
-      filterTemplate,
-      filterTemplateOptional,
-      formatMessage,
-      formatDate,
-      workflowStatusItems)
-
     return (
       <div className={styles.ListFilter}>
         <Card expanded={expanded} onExpandChange={this.handleExpandChange}>
           <CardHeader
             subtitle={
               <span style={{ verticalAlign: 'middle' }}>
-                {filterMessage}
+                <FilterMessage
+                  subject={subject}
+                  filterTemplate={filterTemplate}
+                  filterTemplateOptional={filterTemplateOptional}
+                />
                 {!expanded && nonEmptyFilter && (
                   <IconButton
                     tooltip={formatMessage(messages.clearTooltip)}
@@ -435,7 +419,7 @@ export class ListFilter extends PureComponent {
                     <CountrySelectField
                       allItemText={formatMessage(messages.all)}
                       onChangeCountry={this.handleChangeCountry}
-                      countryId={this.props.filter.countryId}
+                      countryId={this.props.listFilter.countryId}
                       floatingLabelFixed
                       hintText={formatMessage(messages.selectCountry)}
                       floatingLabelText={formatMessage(messages.country)}
@@ -446,8 +430,8 @@ export class ListFilter extends PureComponent {
                     <StateSelectField
                       allItemText={formatMessage(messages.all)}
                       onChangeState={this.handleChangeState}
-                      countryId={this.props.filter.countryId}
-                      stateId={this.props.filter.stateId}
+                      countryId={this.props.listFilter.countryId}
+                      stateId={this.props.listFilter.stateId}
                       floatingLabelFixed
                       hintText={formatMessage(messages.selectState)}
                       floatingLabelText={formatMessage(messages.state)}
@@ -458,9 +442,9 @@ export class ListFilter extends PureComponent {
                     <LgaSelectField
                       allItemText={formatMessage(messages.all)}
                       onChangeLga={this.handleChangeLga}
-                      countryId={this.props.filter.countryId}
-                      stateId={this.props.filter.stateId}
-                      lgaId={this.props.filter.lgaId}
+                      countryId={this.props.listFilter.countryId}
+                      stateId={this.props.listFilter.stateId}
+                      lgaId={this.props.listFilter.lgaId}
                       floatingLabelFixed
                       hintText={formatMessage(messages.selectLga)}
                       floatingLabelText={formatMessage(messages.lga)}
@@ -643,12 +627,8 @@ export class ListFilter extends PureComponent {
 function mapStateToProps(state) {
   return {
     config: state.filter.listConfig,
-    filter: state.filter.listFilter.toJS(),
-    listExport: state.filter.listExport,
-    countries: state.geography.countriesForLocationSelector,
-    assay: state.assay,
-    consumable: state.consumable.consumables,
-    workflowStatusItems: state.resultWorkflowStatus.items
+    listFilter: state.filter.listFilter,
+    listExport: state.filter.listExport
   }
 }
 
