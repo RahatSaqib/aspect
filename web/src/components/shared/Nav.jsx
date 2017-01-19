@@ -47,7 +47,7 @@ export class Nav extends PureComponent {
       >
         <div>
           <Badge secondary badgeContent={7} className={styles.Badge}>
-            <IconButton tooltip="You have 4 unread notifications">
+            <IconButton tooltip="You have 7 unread notifications">
               <NotificationsIcon color={'#fff'} />
             </IconButton>
           </Badge>

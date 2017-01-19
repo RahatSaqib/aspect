@@ -58,7 +58,7 @@ export default function dashboardReducer(state = initialState, action) {
   switch (action.type) {
     case types.REQUEST_DASHBOARD_HOME:
       return state
-      .set('home', requestDashboardHome())
+      .set('home', undefined)
     case types.RECEIVE_DASHBOARD_HOME:
       return state.withMutations((mutState) => {
         const immutItem = Immutable.fromJS(action.item)

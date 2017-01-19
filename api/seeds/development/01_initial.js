@@ -1238,7 +1238,7 @@ function* seed(knex) {
     }
   }
 
-  // insert GeneXpert devices
+  // insert Daktari devices
   const devicesDaktari = []
   for (let i = 0; i < deviceNumber; i++) {
     const siteData = siteDatas[i % siteDatas.length]
