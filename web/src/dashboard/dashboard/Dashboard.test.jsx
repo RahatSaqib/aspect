@@ -33,6 +33,7 @@ describe('Dashboard', () => {
 
         const Wrapper = mount(
           <Dashboard
+            fetchDashboardHome={_.noop}
             setPageTitle={_.noop}
             showAcknowledgement={showAcknowledgement}
             location={location}
@@ -56,6 +57,7 @@ describe('Dashboard', () => {
 
         const Wrapper = mount(
           <Dashboard
+            fetchDashboardHome={_.noop}
             setPageTitle={_.noop}
             showAcknowledgement={showAcknowledgement}
             location={location}
