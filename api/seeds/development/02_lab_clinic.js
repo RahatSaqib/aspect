@@ -109,6 +109,7 @@ function* seed(knex) {
     configurationDataSchema: rrtConfigurationDataSchema
   })
   const deviceTypes = yield rowsAsObject(knex, 'DeviceType')
+  const deviceStatuses = yield rowsAsObject(knex, 'DeviceStatus')
 
   // const assayTypes = yield rowsAsObject(knex, 'AssayType')
   // const assays = yield rowsAsObject(knex, 'Assay')
@@ -228,6 +229,7 @@ function* seed(knex) {
       name: `${siteData.name} Router`,
       shortname: `${siteData.shortname} Router`,
       deviceTypeId: deviceTypes['Metacom Router'].id,
+      deviceStatusId: deviceStatuses.Approved.id,
       siteId: siteData.id,
       createdOn: new Date(+now - (3 * millisInHour)),
       updatedOn: new Date(+now - millisInHour),
@@ -245,6 +247,7 @@ function* seed(knex) {
       name: `${siteData.name} RRT`,
       shortname: `${siteData.shortname} RRT`,
       deviceTypeId: deviceTypes.RRT.id,
+      deviceStatusId: deviceStatuses.Approved.id,
       configurationData: JSON.stringify(rrtConfigurationData),
       siteId: siteData.id,
       deviceId: routerId,
@@ -300,6 +303,7 @@ function* seed(knex) {
       name: `${siteData.name} Router`,
       shortname: `${siteData.shortname} Router`,
       deviceTypeId: deviceTypes['Metacom Router'].id,
+      deviceStatusId: deviceStatuses.Approved.id,
       siteId: siteData.id,
       createdOn: new Date(+now - (3 * millisInHour)),
       updatedOn: new Date(+now - millisInHour),
@@ -317,6 +321,7 @@ function* seed(knex) {
       name: `${siteData.name} m2000`,
       shortname: `${siteData.shortname} m2000`,
       deviceTypeId: deviceTypes.m2000.id,
+      deviceStatusId: deviceStatuses.Approved.id,
       configurationData: JSON.stringify(m2000ConfigurationData),
       siteId: siteData.id,
       deviceId: routerId,

@@ -202,6 +202,17 @@ function* seed(knex) {
     deviceTypeCategoryId: deviceTypeCategoryConnectivity
   })
 
+  // DeviceStatus
+  const [deviceStatusApproved] = yield knex('DeviceStatus').insert({
+    name: 'Approved',
+    token: 'approved'
+  })
+
+  const [deviceStatusUnapproved] = yield knex('DeviceStatus').insert({
+    name: 'Unapproved',
+    token: 'unapproved'
+  })
+
   // Assays and AssayTypes
   const [assayTypeMTBRifId] = yield knex('AssayType').insert({
     name: 'MTB/Rif',
@@ -1157,6 +1168,7 @@ function* seed(knex) {
       name: `Router at ${i} ${siteData.shortname}`,
       shortname: `r${i}`,
       deviceTypeId: deviceTypeIdRouter,
+      deviceStatusId: deviceStatusApproved,
       siteId: siteData.id,
       createdOn: new Date(+now - (3 * i * millisInHour)),
       updatedOn: new Date(+now - (i * millisInHour)),
@@ -1200,6 +1212,7 @@ function* seed(knex) {
       name: `GeneXpert #${i} ${siteData.shortname}`,
       shortname: `GeneXpert #${i}`,
       deviceTypeId: deviceTypeGeneXpertId,
+      deviceStatusId: _.random(1) > 0 ? deviceStatusApproved : deviceStatusUnapproved,
       configurationData: JSON.stringify(configurationData),
       siteId: siteData.id,
       // not all sites will have a router - we only added routers to some site
@@ -1247,6 +1260,7 @@ function* seed(knex) {
       name: `Daktari #${i} ${siteData.shortname}`,
       shortname: `Daktari #${i}`,
       deviceTypeId: deviceTypeDaktariId,
+      deviceStatusId: deviceStatusApproved,
       configurationData: JSON.stringify(configurationData),
       siteId: siteData.id,
       // not all sites will have a router - we only added routers to some site
