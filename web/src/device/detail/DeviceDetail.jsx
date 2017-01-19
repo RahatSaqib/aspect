@@ -48,6 +48,10 @@ const messages = defineMessages({
     id: 'pages.DeviceDetail.update',
     defaultMessage: 'Update'
   },
+  approved: {
+    id: 'pages.DeviceDetail.approved',
+    defaultMessage: 'Approved'
+  },
   fieldName: {
     id: 'pages.DeviceDetail.fieldName',
     defaultMessage: 'Name'
@@ -186,6 +190,7 @@ export class DeviceDetail extends PureComponent {
           name: device.get('name') || '',
           shortname: device.get('shortname') || '',
           notes: device.get('notes') || '',
+          statusToken: device.get('statusToken') || '',
           siteId: device.get('siteId'),
           configurationData: device.get('configurationData')
         })
@@ -226,6 +231,7 @@ export class DeviceDetail extends PureComponent {
       shortname: formatMessage(messages.fieldShortname),
       notes: formatMessage(messages.fieldNotes),
       siteId: formatMessage(messages.fieldSiteId),
+      statusToken: formatMessage(messages.approved),
       configuration: formatMessage(messages.fieldConfiguration),
       cancel: formatMessage(messages.cancel),
       update: formatMessage(messages.update)
