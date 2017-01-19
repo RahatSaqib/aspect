@@ -136,6 +136,7 @@ export class DeviceDetail extends PureComponent {
       approvedBy: PropTypes.string,
       notes: PropTypes.string,
       serial: PropTypes.string,
+      has: PropTypes.func
     }),
     intl: PropTypes.object.isRequired,
     editable: PropTypes.bool.isRequired,

@@ -13,7 +13,8 @@ const deviceNumber = 50
 const routerNumber = 20
 const resultMtbNumber = 200
 const resultEbolaNumber = 100
-const resultHivVlNumber = 50
+const resultHivVlNumber = 75
+const resultHcvNumber = 125
 
 const saltRounds = parseInt(config.passwordSaltRounds, 10)
 
@@ -187,10 +188,12 @@ function* seed(knex) {
     deviceOperationSchema
   })
 
-  yield knex('DeviceType').insert({
+  const [deviceTypeDaktariId] = yield knex('DeviceType').insert({
     name: 'Daktari',
     manufacturer: 'Daktari',
-    deviceTypeCategoryId: deviceTypeCategoryLab
+    deviceTypeCategoryId: deviceTypeCategoryLab,
+    configurationDataSchema: geneXpertConfigurationDataSchema,
+    deviceOperationSchema
   })
 
   const [deviceTypeIdRouter] = yield knex('DeviceType').insert({
@@ -213,6 +216,11 @@ function* seed(knex) {
   const [assayTypeHivVlId] = yield knex('AssayType').insert({
     name: 'HIV VL',
     i18nKey: 'assayTypeHivVl'
+  })
+
+  const [assayTypeHcvId] = yield knex('AssayType').insert({
+    name: 'HCV',
+    i18nKey: 'assayTypeHcv'
   })
 
   const [assayTypeLipidPanelId] = yield knex('AssayType').insert({
@@ -477,6 +485,34 @@ function* seed(knex) {
     externalId: 'HivVl',
     assayTypeId: assayTypeHivVlId,
     deviceTypeId: deviceTypeGeneXpertId,
+    resultCategory1Label: 'HIV',
+    resultCategory1i18nKey: 'resultCategoryHiv',
+    resultCategory2Label: null,
+    resultCategory2i18nKey: null,
+    resultDataSchema: geneXpertResultDataSchemaHiv,
+    patientDataSchema: geneXpertPatientDataSchema
+  })
+
+  const [assayDaktariHcvId] = yield knex('Assay').insert({
+    name: 'Daktari HCV',
+    i18nKey: 'assayDaktariHcv',
+    externalId: 'DaktariHcv',
+    assayTypeId: assayTypeHcvId,
+    deviceTypeId: deviceTypeDaktariId,
+    resultCategory1Label: 'HCV',
+    resultCategory1i18nKey: 'resultCategoryHcv',
+    resultCategory2Label: null,
+    resultCategory2i18nKey: null,
+    resultDataSchema: geneXpertResultDataSchemaHiv,
+    patientDataSchema: geneXpertPatientDataSchema
+  })
+
+  const [assayDaktariHivVlId] = yield knex('Assay').insert({
+    name: 'Daktari HIV-VL',
+    i18nKey: 'assayDaktariHivVl',
+    externalId: 'DaktariHiv',
+    assayTypeId: assayTypeHivVlId,
+    deviceTypeId: deviceTypeDaktariId,
     resultCategory1Label: 'HIV',
     resultCategory1i18nKey: 'resultCategoryHiv',
     resultCategory2Label: null,
@@ -755,6 +791,46 @@ function* seed(knex) {
   yield knex('ResultCategoryAssay').insert({
     resultCategoryId: resultCategoryErrorId,
     assayId: assayHivVlId
+  })
+
+  yield knex('ResultCategoryAssay').insert({
+    resultCategoryId: resultCategorySuccessId,
+    assayId: assayDaktariHivVlId
+  })
+
+  yield knex('ResultCategoryAssay').insert({
+    resultCategoryId: resultCategoryInvalidId,
+    assayId: assayDaktariHivVlId
+  })
+
+  yield knex('ResultCategoryAssay').insert({
+    resultCategoryId: resultCategoryNoResultId,
+    assayId: assayDaktariHivVlId
+  })
+
+  yield knex('ResultCategoryAssay').insert({
+    resultCategoryId: resultCategoryErrorId,
+    assayId: assayDaktariHivVlId
+  })
+
+  yield knex('ResultCategoryAssay').insert({
+    resultCategoryId: resultCategorySuccessId,
+    assayId: assayDaktariHcvId
+  })
+
+  yield knex('ResultCategoryAssay').insert({
+    resultCategoryId: resultCategoryInvalidId,
+    assayId: assayDaktariHcvId
+  })
+
+  yield knex('ResultCategoryAssay').insert({
+    resultCategoryId: resultCategoryNoResultId,
+    assayId: assayDaktariHcvId
+  })
+
+  yield knex('ResultCategoryAssay').insert({
+    resultCategoryId: resultCategoryErrorId,
+    assayId: assayDaktariHcvId
   })
 
 
@@ -1116,13 +1192,13 @@ function* seed(knex) {
   }
 
   // insert GeneXpert devices
-  const devices = []
+  const devicesGeneXpert = []
   for (let i = 0; i < deviceNumber; i++) {
     const siteData = siteDatas[i % siteDatas.length]
     const routerId = routerIds[i]
     const device = Object.assign({}, auditFields, {
-      name: `D${i} ${siteData.shortname}`,
-      shortname: `d${i}`,
+      name: `GeneXpert #${i} ${siteData.shortname}`,
+      shortname: `GeneXpert #${i}`,
       deviceTypeId: deviceTypeGeneXpertId,
       configurationData: JSON.stringify(configurationData),
       siteId: siteData.id,
@@ -1138,7 +1214,54 @@ function* seed(knex) {
     })
 
     device.id = yield knex('Device').insert(device)
-    devices.push(device)
+    devicesGeneXpert.push(device)
+
+    // Create API Keys
+    yield knex('DeviceApiKey').insert(Object.assign({
+      deviceId: device.id,
+      revoked: device.id % 5 === 0
+    }, auditFields))
+
+    // Create DeviceOperation
+    const operationNumber = _.random(3, 11)
+    for (let j = 0; j < operationNumber; j++) {
+      yield knex('DeviceOperation')
+        .insert({
+          deviceId: device.id,
+          data: JSON.stringify({
+            voltage: _.random(1.35, 1.65, true),
+            temperature: _.random(30, 70)
+          }),
+          startedOn: new Date(+now + (_.random(j, j + 1, true) * millisInHour)),
+          createdOn: now
+        })
+    }
+  }
+
+  // insert Daktari devices
+  const devicesDaktari = []
+  for (let i = 0; i < deviceNumber; i++) {
+    const siteData = siteDatas[i % siteDatas.length]
+    const routerId = routerIds[i]
+    const device = Object.assign({}, auditFields, {
+      name: `Daktari #${i} ${siteData.shortname}`,
+      shortname: `Daktari #${i}`,
+      deviceTypeId: deviceTypeDaktariId,
+      configurationData: JSON.stringify(configurationData),
+      siteId: siteData.id,
+      // not all sites will have a router - we only added routers to some site
+      deviceId: routerId || null,
+      createdOn: new Date(+now - (3 * i * millisInHour)),
+      updatedOn: new Date(+now - (i * millisInHour)),
+      lastPingOn: new Date(+now - ((i * millisInHour) / 3)),
+      approvedOn: new Date(+now - (2 * i * millisInHour)),
+      approvedBy: _.values(userIds)[_.random(_.size(userIds) - 1)],
+      hostId: _.times(8, () => String.fromCharCode(65 + _.random(25) + (_.random(1) > 0 ? 32 : 0))).join(''),
+      serial: _.times(24, () => String.fromCharCode(65 + _.random(25) + (_.random(1) > 0 ? 32 : 0))).join('')
+    })
+
+    device.id = yield knex('Device').insert(device)
+    devicesDaktari.push(device)
 
     // Create API Keys
     yield knex('DeviceApiKey').insert(Object.assign({
@@ -1255,7 +1378,7 @@ function* seed(knex) {
   }
 
   for (const i of _.range(1, resultMtbNumber + 1)) {
-    const device = devices[i % devices.length]
+    const device = devicesGeneXpert[i % devicesGeneXpert.length]
     const siteData = siteDatas.find(site => site.id === device.siteId)
     const sample = samples[i % samples.length]
     const result = possibleResults[i % 5]
@@ -1365,7 +1488,7 @@ function* seed(knex) {
   }
 
   for (const i of _.range(1, resultEbolaNumber + 1)) {
-    const device = devices[i % devices.length]
+    const device = devicesGeneXpert[i % devicesGeneXpert.length]
     const siteData = siteDatas.find(site => site.id === device.siteId)
     const sample = samples[i % samples.length]
     const result = possibleResults[i % 5]
@@ -1469,7 +1592,7 @@ function* seed(knex) {
   }
 
   for (const i of _.range(1, resultHivVlNumber + 1)) {
-    const device = devices[i % devices.length]
+    const device = devicesGeneXpert[i % devicesGeneXpert.length]
     const siteData = siteDatas.find(site => site.id === device.siteId)
     const sample = samples[i % samples.length]
     const result = possibleResults[i % 5]
@@ -1524,6 +1647,204 @@ function* seed(knex) {
       resultId,
       resultWorkflowStatusId: acknowledged,
       operator: 'Marsha',
+      createdOn: now,
+      createdBy: adminId
+    })
+  }
+
+  // some HIV VL samples for Daktari
+  samples = []
+  for (let i = 0; i < resultHivVlNumber / 2; i++) {
+    const siteData = siteDatas[i % siteDatas.length]
+    const sample = Object.assign({}, {
+      externalId: `SMP-HIV-DAK-${i}`,
+      originSiteId: siteData.id
+    })
+
+    sample.id = yield knex('Sample').insert(sample)
+
+    samples.push(sample)
+  }
+
+  // HIV VL Results:
+  possibleResults = [{ resultText: 'HIV Detected (log {1})', category1: resultCategoryDetectedId },
+                          { resultText: 'HIV Not Detected', category1: resultCategoryNotDetectedId },
+                          { resultText: 'NO Result', category1: resultCategoryNoResultId },
+                          { resultText: 'Error', category1: resultCategoryErrorId },
+                          { resultText: 'Invalid', category1: resultCategoryInvalidId }]
+
+  resultData = {
+    probes: {
+      gpCt: 25.40,
+      gpEndPt: 558.00,
+      cicCt: 23.90,
+      cicEndPt: 289.00,
+      sacCt: 33.80,
+      sacEndPt: 650.00,
+      npCt: 12.2,
+      npEndPt: null,
+      qc1Ct: 0.32,
+      qc1Endpt: 0,
+      qc2Ct: 11.4,
+      qc2Endpt: 0.5
+    }
+  }
+
+  for (const i of _.range(1, resultHivVlNumber + 1)) {
+    const device = devicesDaktari[i % devicesDaktari.length]
+    const siteData = siteDatas.find(site => site.id === device.siteId)
+    const sample = samples[i % samples.length]
+    const result = possibleResults[i % 5]
+    let copies = 3200
+    let log = 5
+    if (result === possibleResults[0]) {
+      copies = Math.floor(Math.random() * 500000)
+      log = Math.round(Math.random() * 600) / 100
+    } else {
+      copies = null
+      log = null
+    }
+
+    resultData.copies = copies
+    resultData.log = log
+    resultData.resultText = result.resultText.replace('{0}', copies).replace('{1}', log)
+
+    const resultId = yield knex('Result').insert(Object.assign({}, auditFields, {
+      externalId: `UQ-DAK-HIV-${i}`,
+      assayId: assayDaktariHivVlId,
+      partnerId: partnerOneId,
+      orgUnitId: partnerOneOrgUnitId,
+      geographyId: siteData.geographyId,
+      siteId: siteData.id,
+      deviceId: device.id,
+      resultWorkflowStatusId: acknowledged,
+      longitude: -81.581222,
+      latitude: 28.419348,
+      resultTypeId: resultTypePatientId,
+      sampleId: sample.id,
+      resultCategory1: result.category1,
+      resultData: JSON.stringify(resultData),
+      assayVersion: '4',
+      startedOn: new Date(+now - (12 * i * millisInHour)),
+      endedOn: new Date(+now - (10 * i * millisInHour)),
+      consumableSerial: `${i}12`,
+      consumableExpirationDate: new Date(+now + (200 * i * millisInHour)),
+      consumableLot: `Lot ${i % 5}`,
+      instrumentSerial: `S-1234-${i % 3}`,
+      moduleName: 'Module A',
+      moduleSerial: `M-1234-${i % 4}`,
+      researchId: `R-ID-${i}`,
+      patientData: JSON.stringify(patients[_.random(99)]),
+      senderVersion: '4.4',
+      senderOperator: 'Aaron',
+      notes: 'This is an HIV test result',
+      errorCode: result.category1 === resultCategoryErrorId ? '1024' : null,
+      errorNotes: result.category1 === resultCategoryErrorId ? 'Exceeded cycle threshold' : null
+    }))
+
+    yield knex('ResultWorkflowLog').insert({
+      resultId,
+      resultWorkflowStatusId: acknowledged,
+      operator: 'Aaron',
+      createdOn: now,
+      createdBy: adminId
+    })
+  }
+
+  // some HCV samples for Daktari
+  samples = []
+  for (let i = 0; i < resultHivVlNumber / 2; i++) {
+    const siteData = siteDatas[i % siteDatas.length]
+    const sample = Object.assign({}, {
+      externalId: `SMP-HCV-DAK-${i}`,
+      originSiteId: siteData.id
+    })
+
+    sample.id = yield knex('Sample').insert(sample)
+
+    samples.push(sample)
+  }
+
+  // HIV VL Results:
+  possibleResults = [{ resultText: 'HCV Detected (log {1})', category1: resultCategoryDetectedId },
+                          { resultText: 'HCV Not Detected', category1: resultCategoryNotDetectedId },
+                          { resultText: 'NO Result', category1: resultCategoryNoResultId },
+                          { resultText: 'Error', category1: resultCategoryErrorId },
+                          { resultText: 'Invalid', category1: resultCategoryInvalidId }]
+
+  resultData = {
+    probes: {
+      gpCt: 25.40,
+      gpEndPt: 558.00,
+      cicCt: 23.90,
+      cicEndPt: 289.00,
+      sacCt: 33.80,
+      sacEndPt: 650.00,
+      npCt: 12.2,
+      npEndPt: null,
+      qc1Ct: 0.32,
+      qc1Endpt: 0,
+      qc2Ct: 11.4,
+      qc2Endpt: 0.5
+    }
+  }
+
+  for (const i of _.range(1, resultHcvNumber + 1)) {
+    const device = devicesDaktari[i % devicesDaktari.length]
+    const siteData = siteDatas.find(site => site.id === device.siteId)
+    const sample = samples[i % samples.length]
+    const result = possibleResults[i % 5]
+    let copies = 3200
+    let log = 5
+    if (result === possibleResults[0]) {
+      copies = Math.floor(Math.random() * 500000)
+      log = Math.round(Math.random() * 600) / 100
+    } else {
+      copies = null
+      log = null
+    }
+
+    resultData.copies = copies
+    resultData.log = log
+    resultData.resultText = result.resultText.replace('{0}', copies).replace('{1}', log)
+
+    const resultId = yield knex('Result').insert(Object.assign({}, auditFields, {
+      externalId: `UQ-DAK-HCV-${i}`,
+      assayId: assayDaktariHcvId,
+      partnerId: partnerOneId,
+      orgUnitId: partnerOneOrgUnitId,
+      geographyId: siteData.geographyId,
+      siteId: siteData.id,
+      deviceId: device.id,
+      resultWorkflowStatusId: acknowledged,
+      longitude: -81.581222,
+      latitude: 28.419348,
+      resultTypeId: resultTypePatientId,
+      sampleId: sample.id,
+      resultCategory1: result.category1,
+      resultData: JSON.stringify(resultData),
+      assayVersion: '4',
+      startedOn: new Date(+now - (12 * i * millisInHour)),
+      endedOn: new Date(+now - (10 * i * millisInHour)),
+      consumableSerial: `${i}12`,
+      consumableExpirationDate: new Date(+now + (200 * i * millisInHour)),
+      consumableLot: `Lot ${i % 5}`,
+      instrumentSerial: `S-1234-${i % 3}`,
+      moduleName: 'Module A',
+      moduleSerial: `M-1234-${i % 4}`,
+      researchId: `R-ID-${i}`,
+      patientData: JSON.stringify(patients[_.random(99)]),
+      senderVersion: '4.4',
+      senderOperator: 'Aaron',
+      notes: 'This is an HCV test result',
+      errorCode: result.category1 === resultCategoryErrorId ? '1024' : null,
+      errorNotes: result.category1 === resultCategoryErrorId ? 'Exceeded cycle threshold' : null
+    }))
+
+    yield knex('ResultWorkflowLog').insert({
+      resultId,
+      resultWorkflowStatusId: acknowledged,
+      operator: 'Aaron',
       createdOn: now,
       createdBy: adminId
     })

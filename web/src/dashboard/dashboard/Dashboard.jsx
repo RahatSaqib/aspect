@@ -10,12 +10,20 @@ import { connect } from 'react-redux'
 import Helmet from 'react-helmet'
 import { Link } from 'react-router'
 
+// Material-UI
 import Paper from 'material-ui/Paper'
+import LinearProgress from 'material-ui/LinearProgress'
+import IconButton from 'material-ui/IconButton'
+import NavigationCheck from 'material-ui/svg-icons/navigation/check'
+import PrioHigh from 'material-ui/svg-icons/notification/priority-high'
+import Build from 'material-ui/svg-icons/action/build'
+import { Card, CardActions, CardHeader, CardText } from 'material-ui/Card'
 
 // Our own imports
 import { Unit } from '../../components/pureGrids'
 import { showAcknowledgement } from '../../appNotification/AppNotificationRedux'
 import styles from './Dashboard.css'
+import { fetchDashboardHome } from '../DashboardRedux'
 
 const messages = defineMessages({
   title: {
@@ -35,11 +43,17 @@ export class Dashboard extends PureComponent {
     showAcknowledgement: PropTypes.func.isRequired,
     userName: PropTypes.string,
     location: PropTypes.object.isRequired,
-    intl: PropTypes.object.isRequired
+    intl: PropTypes.object.isRequired,
+    fetchDashboardHome: PropTypes.func.isRequired,
+    totals: PropTypes.object
   }
 
   componentWillMount() {
     this.props.setPageTitle(null)
+  }
+
+  componentDidMount() {
+    this.props.fetchDashboardHome()
   }
 
   componentWillReceiveProps(nextProps) {
@@ -53,25 +67,33 @@ export class Dashboard extends PureComponent {
   }
 
   render() {
-    const { intl: { formatMessage } } = this.props
+    const { totals, intl: { formatMessage, formatNumber } } = this.props
 
     return (
       <div className={styles.Content}>
         <Helmet title={formatMessage(messages.title)} titleTemplate="%s - Aspect" defaultTitle="Aspect" />
         <Paper>
           <Unit sm="1-2" md="2-3">
-            <section className={styles.Section}>
+            <section style={{ height: '220px' }} className={styles.Section}>
               <header className={styles.Section__Header}>
                 <h2>Right Now</h2>
               </header>
-              <div>
-                <img role="presentation" src={require('./right-now.png')} />
-              </div>
+              {!totals && <LinearProgress />}
+              {totals && totals.get !== undefined &&
+                <div>
+                  <p>
+                    <span className={styles.Count__Emphasis}>{formatNumber(totals.get('devicesTotal'))}</span> Devices at {formatNumber(totals.get('sitesTotal'))} Sites Managed
+                  </p>
+                  <p>
+                    <span className={styles.Count__Emphasis}>{formatNumber(totals.get('resultsTotal30d'))}</span> Results in the last 30 days (<span className={styles.Count__Positive}>+{formatNumber(totals.get('resultsTotal1d'))} today</span>)
+                  </p>
+                </div>
+              }
             </section>
             <section className={styles.Section}>
               <header className={styles.Section__Header}>
                 <h2>
-                  Patient Care<small> (1435 results in last 30 days)</small>
+                  Patient Care<small> ({formatNumber(1435)} results in last 30 days)</small>
                 </h2>
               </header>
               <div>
@@ -119,34 +141,92 @@ export class Dashboard extends PureComponent {
             </section>
           </Unit>
           <Unit sm="1-2" md="1-3">
-            <section className={styles.Section}>
+            <section style={{ height: '220px' }} className={styles.Section}>
               <header className={styles.Section__Header}>
                 <h2>To Do</h2>
               </header>
-              <div>
-                <img role="presentation" src={require('./todos.png')} />
+              <div style={{ width: '180px' }}>
+                <p>Result Alerts <span className={styles.Alert__Positive}>0</span></p>
+                <p>Device Alerts <span className={styles.Alert__Negative}>4</span></p>
+                <p>Inventory Alerts <span className={styles.Alert__Negative}>3</span></p>
               </div>
             </section>
             <section className={styles.Section}>
               <header className={styles.Section__Header}>
                 <h2>Recommendations</h2>
               </header>
-              <div>
-                <img
-                  role="presentation"
-                  src={require('./recommendation.png')}
-                  style={{ display: 'block', width: '100%' }}
-                />
-                <img
-                  role="presentation"
-                  src={require('./recommendation.png')}
-                  style={{ display: 'block', width: '100%' }}
-                />
-                <img
-                  role="presentation"
-                  src={require('./recommendation.png')}
-                  style={{ display: 'block', width: '100%' }}
-                />
+              <div style={{ paddingTop: '15px' }}>
+                <Card>
+                  <CardHeader title="GeneXpert Franklin" />
+                  <CardText>
+                    This device hasn&#39;t reported in <b>8</b> days.
+                  </CardText>
+                  <CardActions style={{ textAlign: 'right' }}>
+                    <IconButton tooltip="Fix this" iconStyle={{ color: 'gray' }} >
+                      <Build />
+                    </IconButton>
+                    <IconButton tooltip="Escalate" iconStyle={{ color: '#f57c00' }} >
+                      <PrioHigh />
+                    </IconButton>
+                    <IconButton tooltip="Hide this notification" iconStyle={{ color: '#63a021' }} >
+                      <NavigationCheck />
+                    </IconButton>
+                  </CardActions>
+                </Card>
+                <Card style={{ marginTop: '15px' }}>
+                  <CardHeader title="Daktari Omaha" />
+                  <CardText>
+                    This device is low on inventory (<b>54 cartridges</b>).
+                    It will run out in <b>9 days</b> given the curent utilization rate.
+                  </CardText>
+                  <CardActions style={{ textAlign: 'right' }}>
+                    <IconButton tooltip="Fix this" iconStyle={{ color: 'gray' }} >
+                      <Build />
+                    </IconButton>
+                    <IconButton tooltip="Escalate" iconStyle={{ color: '#f57c00' }} >
+                      <PrioHigh />
+                    </IconButton>
+                    <IconButton tooltip="Hide this notification" iconStyle={{ color: '#63a021' }} >
+                      <NavigationCheck />
+                    </IconButton>
+                  </CardActions>
+                </Card>
+                <Card style={{ marginTop: '15px' }}>
+                  <CardHeader title="Daktari Dayton" />
+                  <CardText>
+                    Has a high error rate (<b>11%</b>).
+                    The average error rate for Daktari devices is <b>5%</b>.
+                  </CardText>
+                  <CardActions style={{ textAlign: 'right' }}>
+                    <IconButton tooltip="Fix this" iconStyle={{ color: 'gray' }} >
+                      <Build />
+                    </IconButton>
+                    <IconButton tooltip="Escalate" iconStyle={{ color: '#f57c00' }} >
+                      <PrioHigh />
+                    </IconButton>
+                    <IconButton tooltip="Hide this notification" iconStyle={{ color: '#63a021' }} >
+                      <NavigationCheck />
+                    </IconButton>
+                  </CardActions>
+                </Card>
+                <Card style={{ marginTop: '15px' }}>
+                  <CardHeader title="GeneXpert Boston" />
+                  <CardText>
+                    This device was expected to come back online <b>yesterday </b>
+                    after being serviced but has not connected yet.
+                  </CardText>
+                  <CardActions style={{ textAlign: 'right' }}>
+                    <IconButton tooltip="Fix this" iconStyle={{ color: 'gray' }} >
+                      <Build />
+                    </IconButton>
+                    <IconButton tooltip="Escalate" iconStyle={{ color: '#f57c00' }} >
+                      <PrioHigh />
+                    </IconButton>
+                    <IconButton tooltip="Hide this notification" iconStyle={{ color: '#63a021' }} >
+                      <NavigationCheck />
+                    </IconButton>
+                  </CardActions>
+                </Card>
               </div>
             </section>
           </Unit>
@@ -158,13 +238,15 @@ export class Dashboard extends PureComponent {
 
 function mapStateToProps(state) {
   return {
-    userName: state.getIn(['user', 'name'])
+    userName: state.getIn(['user', 'name']),
+    totals: state.getIn(['dashboard', 'home'])
   }
 }
 
 function mapDispatchToProps(dispatch) {
   return bindActionCreators({
-    showAcknowledgement
+    showAcknowledgement,
+    fetchDashboardHome
   }, dispatch)
 }
 

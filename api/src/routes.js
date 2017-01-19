@@ -19,6 +19,7 @@ function addClientRoutes(server) {
   server.route(require('./consumable/endpoints').map(decorateClientAPI('inventory')))
   server.route(require('./notification/endpoints').map(decorateClientAPI('notification')))
   server.route(require('./inventory/endpoints').map(decorateClientAPI('inventory')))
+  server.route(require('./dashboard/endpoints').map(decorateClientAPI('dashboard')))
 }
 
 function addDeviceRoutes(server) {
