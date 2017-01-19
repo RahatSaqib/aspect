@@ -226,7 +226,7 @@ exports[`Nav module Nav component should render correctly 1`] = `
                   "whiteSpace": "nowrap",
                 }
               }>
-              You have 4 unread notifications
+              You have 7 unread notifications
             </span>
           </div>
           <svg
@@ -272,7 +272,7 @@ exports[`Nav module Nav component should render correctly 1`] = `
             "width": 24,
           }
         }>
-        4
+        7
       </span>
     </div>
     <div
@@ -602,7 +602,7 @@ exports[`Nav module Nav component should render pageTitle and pagePath correctly
                   "whiteSpace": "nowrap",
                 }
               }>
-              You have 4 unread notifications
+              You have 7 unread notifications
             </span>
           </div>
           <svg
@@ -648,7 +648,7 @@ exports[`Nav module Nav component should render pageTitle and pagePath correctly
             "width": 24,
           }
         }>
-        4
+        7
       </span>
     </div>
     <div
