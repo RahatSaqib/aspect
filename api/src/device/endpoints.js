@@ -80,6 +80,7 @@ module.exports = [
           name: Joi.string().required(),
           shortname: Joi.string().required(),
           notes: Joi.string().allow(''),
+          statusToken: Joi.string().allow(''),
           configurationData: Joi.object().required().description(
             'Device configuration data.  The valid keys are dependent on Device Type.'
           )
