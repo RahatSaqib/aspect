@@ -264,9 +264,30 @@ function* exportDevices(request) {
   return result
 }
 
+function* listStatusTypes() {
+  const resultQuery = knex('DeviceStatus as ds')
+
+  // get total count for paging
+  const getCount = resultQuery.clone()
+    .count('ds.id as count').first()
+
+  // get rows
+  const getItems = resultQuery.clone()
+    .orderBy('id', 'asc')
+    .select('id', 'name')
+
+  // return result when both queries are finished
+  const [{ count: total }, data] = yield Promise.all([getCount, getItems])
+
+  const result = { ok: true, total, length: data.length, data }
+
+  return result
+}
+
 module.exports = {
   listDevices,
   showDevice,
   updateDevice,
+  listStatusTypes,
   exportDevices
 }

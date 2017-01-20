@@ -8,6 +8,7 @@ const {
   listDevices,
   showDevice,
   updateDevice,
+  listStatusTypes,
   exportDevices
 } = require('./service')
 const { validateAllGeographyFilterParams } = require('../geography/requestValidation')
@@ -83,6 +84,16 @@ module.exports = [
           )
         }
       }
+    }
+  },
+  {
+    method: 'GET',
+    path: '/device/status-types',
+    handler: asyncHandler(listStatusTypes),
+    config: {
+      description: 'Device Status List',
+      notes: 'Dictionary set of Device Status options',
+      auth: { scope: ['device:view', 'device:edit'] }
     }
   },
   {
