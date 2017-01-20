@@ -92,7 +92,11 @@ export class RouterList extends PureComponent {
   componentWillMount() {
     const { setPageTitle, configureListFilter, intl: { formatMessage } } = this.props
     setPageTitle(formatMessage(messages.routersTitle))
-    configureListFilter({ geography: true, deviceName: true })
+    configureListFilter({
+      geography: true,
+      deviceName: true,
+      deviceStatus: true
+    })
   }
 
   componentDidMount() {

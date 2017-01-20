@@ -92,7 +92,11 @@ export class TerminalList extends PureComponent {
   componentWillMount() {
     const { setPageTitle, configureListFilter, intl: { formatMessage } } = this.props
     setPageTitle(formatMessage(messages.terminalsTitle))
-    configureListFilter({ geography: true, deviceName: true })
+    configureListFilter({
+      geography: true,
+      deviceName: true,
+      deviceStatus: true
+    })
   }
 
   componentDidMount() {

@@ -122,7 +122,8 @@ export class DeviceList extends PureComponent {
       assayAndResultCategory: true,
       geography: true,
       date: true,
-      deviceName: true
+      deviceName: true,
+      deviceStatus: true
     })
   }
 
