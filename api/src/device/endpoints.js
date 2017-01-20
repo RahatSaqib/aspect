@@ -23,6 +23,7 @@ function listDevicesBaseConfig() {
         assayId: Joi.number().allow('').description('Assay ID'),
         resultCategoryId: Joi.number().allow('').description('Result Category ID'),
         deviceName: Joi.string().allow('').description('Filter for device name'),
+        deviceStatusId: Joi.number().allow('').description('Filter for device status ID'),
         category: Joi.string().description('Filter for device type category'),
         type: Joi.string().description('Filter for device type'),
         name: Joi.string().allow('').description('Filter for device name'),
