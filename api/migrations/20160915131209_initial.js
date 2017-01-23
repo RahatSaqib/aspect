@@ -379,10 +379,21 @@ function* up(knex) {
     resultTypeCategoryAssay.unique(['resultCategoryId', 'assayId'])
   })
 
+  yield knex.schema.createTable('SampleType', (sampleType) => {
+    sampleType.increments('id')
+    sampleType.string('name').notNullable()
+    sampleType.string('i18nKey').notNullable()
+    sampleType.string('externalId').notNullable()
+    sampleType.charset('utf8')
+  })
+
   // the sample that the result is based on (multiple results can refer to the same sample)
   yield knex.schema.createTable('Sample', (sample) => {
     sample.increments('id')
     sample.string('externalId')
+    sample.dateTime('collectedOn')
+    sample.integer('sampleTypeId').unsigned()
+          .index().references('id').inTable('SampleType')
     sample.integer('originSiteId').unsigned()
           .index().references('id').inTable('Site')
     sample.charset('utf8')
@@ -583,6 +594,7 @@ function* down(knex) {
   yield knex.schema.dropTableIfExists('DeviceLog')
   yield knex.schema.dropTableIfExists('DeviceLogUpdate')
   yield knex.schema.dropTableIfExists('Result')
+  yield knex.schema.dropTableIfExists('SampleType')
   yield knex.schema.dropTableIfExists('Sample')
   yield knex.schema.dropTableIfExists('Assay')
   yield knex.schema.dropTableIfExists('AssayType')

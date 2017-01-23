@@ -121,6 +121,8 @@ describe('Device Result API routes', () => {
       const result1Sample = yield knex('Sample as s')
         .where({ id: result1.sampleId }).first()
       assert.equal(result1.siteId, result1Sample.originSiteId)
+      assert.equal(result1Sample.collectedOn, null)
+      assert.equal(result1Sample.sampleTypeId, null)
 
       const result1SampleSite = yield knex('Site as s')
         .where({ id: result1Sample.originSiteId }).first()
@@ -215,6 +217,10 @@ describe('Device Result API routes', () => {
           },
           sample: {
             id: `Sample${now}`,
+            collectedOn: '2013-11-25',
+            type: {
+              id: 'DBS'
+            },
             originSite: {
               id: result2SampleSite.externalId
             }
@@ -357,6 +363,10 @@ describe('Device Result API routes', () => {
         },
         sample: {
           id: `Sample${now}`,
+          collectedOn: '2013-11-25',
+          type: {
+            id: 'DBS'
+          },
           originSite: {
             id: result2SampleSite.externalId
           }
@@ -454,6 +464,10 @@ describe('Device Result API routes', () => {
             ],
             sample: {
               id: `Sample${now}`,
+              collectedOn: '2013-11-25T00:00:00.000Z',
+              type: {
+                id: 'DBS'
+              },
               originSite: {
                 id: result2SampleSite.externalId
               }
@@ -669,6 +683,9 @@ describe('Device Result API routes', () => {
           },
           sample: {
             id: `Sample${now}`,
+            type: {
+              id: 'Plasma'
+            },
             originSite: {
               id: result2SampleSite.externalId
             }
