@@ -1325,12 +1325,35 @@ function* seed(knex) {
     }, auditFields))
   }
 
+  const [sampleTypeDBSId] = yield knex('SampleType')
+    .insert({
+      name: 'DBS',
+      i18nKey: 'sampleTypeDBS',
+      externalId: 'DBS'
+    })
+
+  const [sampleTypePlasmaId] = yield knex('SampleType')
+    .insert({
+      name: 'Plasma',
+      i18nKey: 'sampleTypePlasma',
+      externalId: 'Plasma'
+    })
+
+  yield knex('SampleType')
+    .insert({
+      name: 'Other',
+      i18nKey: 'sampleTypeOther',
+      externalId: 'Other'
+    })
+
   // some TB samples:
   let samples = []
   for (let i = 0; i < resultMtbNumber / 2; i++) {
     const siteData = siteDatas[i % siteDatas.length]
     const sample = Object.assign({}, {
       externalId: `SMP-TB-${i}`,
+      collectedOn: new Date(),
+      sampleTypeId: sampleTypeDBSId,
       originSiteId: siteData.id
     })
 
@@ -1442,6 +1465,8 @@ function* seed(knex) {
     const siteData = siteDatas[i % siteDatas.length]
     const sample = Object.assign({}, {
       externalId: `SMP-EB-${i}`,
+      collectedOn: new Date(),
+      sampleTypeId: sampleTypePlasmaId,
       originSiteId: siteData.id
     })
 
@@ -1559,6 +1584,8 @@ function* seed(knex) {
     const siteData = siteDatas[i % siteDatas.length]
     const sample = Object.assign({}, {
       externalId: `SMP-HIV-${i}`,
+      collectedOn: new Date(),
+      sampleTypeId: sampleTypeDBSId,
       originSiteId: siteData.id
     })
 
@@ -1658,6 +1685,8 @@ function* seed(knex) {
     const siteData = siteDatas[i % siteDatas.length]
     const sample = Object.assign({}, {
       externalId: `SMP-HIV-DAK-${i}`,
+      collectedOn: new Date(),
+      sampleTypeId: sampleTypeDBSId,
       originSiteId: siteData.id
     })
 
@@ -1757,6 +1786,8 @@ function* seed(knex) {
     const siteData = siteDatas[i % siteDatas.length]
     const sample = Object.assign({}, {
       externalId: `SMP-HCV-DAK-${i}`,
+      collectedOn: new Date(),
+      sampleTypeId: sampleTypeDBSId,
       originSiteId: siteData.id
     })
 

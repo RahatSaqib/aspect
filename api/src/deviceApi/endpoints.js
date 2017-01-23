@@ -71,6 +71,12 @@ const resultPayload = {
   sample: Joi.object().keys({
     id: Joi.string().allow('', null).description(
       'Client specific identifier of the sample tested.'),
+    collectedOn: Joi.date().iso().description(
+      'Date and optional time the sample was collected.'),
+    type: Joi.object().keys({
+      id: Joi.string().required().description(
+        'ID of the Sample Type')
+    }),
     originSite: Joi.object().keys({
       id: Joi.string().required().description(
         'ID of the site where the sample was collected')

@@ -88,6 +88,14 @@ function* addResult(context) {
 
   const assay = assays[0]
 
+  let sampleTypeId = null
+  const payloadSampleTypeId = _.get(payload, 'sample.type.id', false)
+  if (payloadSampleTypeId) {
+    sampleTypeId = (yield knex('SampleType')
+      .where({ externalId: payloadSampleTypeId })
+      .first('id')).id
+  }
+
   let sampleOriginSiteId = site.id
   const payloadOriginSiteId = _.get(payload, 'sample.originSite.id', false)
   if (payloadOriginSiteId) {
@@ -101,6 +109,9 @@ function* addResult(context) {
   if (!existingResult) {
     [sampleId] = yield knex('Sample').insert({
       externalId: _.get(payload, 'sample.id', null),
+      collectedOn: _.get(
+        payload, 'sample.collectedOn', null),
+      sampleTypeId,
       originSiteId: sampleOriginSiteId
     })
   } else {
@@ -108,11 +119,17 @@ function* addResult(context) {
     if (_.has(payload, 'sample')) {
       const existingSample = yield knex('Sample')
         .where({ id: sampleId })
-        .first('externalId', 'originSiteId')
+        .first('externalId', 'collectedOn', 'sampleTypeId', 'originSiteId')
       yield knex('Sample')
         .where({ id: sampleId })
         .update({
           externalId: _.get(payload, 'sample.id', existingSample.externalId),
+          collectedOn: _.get(
+            payload, 'sample.collectedOn',
+            _.get(existingSample, 'collectedOn', null)),
+          sampleTypeId: payloadSampleTypeId
+            ? sampleTypeId
+            : existingSample.sampleTypeId,
           originSiteId: payloadOriginSiteId
             ? sampleOriginSiteId
             : existingSample.originSiteId
@@ -120,8 +137,6 @@ function* addResult(context) {
     }
   }
 
-
-  // TODO result data validate against assay schema
   // TODO should we merge within patient or result data payload?
   const resultData = _.has(payload, 'data')
     ? JSON.stringify(payload.data)
@@ -241,6 +256,7 @@ function* listResults(context, deviceLogId) {
     .innerJoin('Device as d', 'r.deviceId', 'd.id')
     .innerJoin('Assay as a', 'r.assayId', 'a.id')
     .leftJoin('Sample as s', 'r.sampleId', 's.id')
+    .leftJoin('SampleType as st', 's.sampleTypeId', 'st.id')
     .leftJoin('Site as sos', 's.originSiteId', 'sos.id')
     .leftJoin('ResultCategory as rc1', 'r.resultCategory1', 'rc1.id')
     .leftJoin('ResultCategory as rc2', 'r.resultCategory2', 'rc2.id')
@@ -272,7 +288,8 @@ function* listResults(context, deviceLogId) {
       'a.externalId as assayId', 'r.assayVersion',
       'r.latitude', 'r.longitude', 'rt.externalId as resultTypeId',
       'rs.externalId as resultWorkflowStatusId',
-      's.externalId as sampleId', 'sos.externalId as sampleOriginSiteId',
+      's.externalId as sampleId', 's.collectedOn as sampleCollectedOn',
+      'sos.externalId as sampleOriginSiteId', 'st.externalId as sampleTypeId',
       'rc1.externalId as category1Id', 'rc2.externalId as category2Id'
     )
 
@@ -301,13 +318,20 @@ function rowToResult(row) {
   result.type = { id: row.resultTypeId }
   result.workflow = { status: { id: row.resultWorkflowStatusId } }
 
-  result.sample = { id: row.sampleId, originSite: { id: row.sampleOriginSiteId } }
+  const sample = { id: row.sampleId, originSite: { id: row.sampleOriginSiteId } }
+  if (row.sampleCollectedOn != null) {
+    sample.collectedOn = row.sampleCollectedOn
+  }
+  if (row.sampleTypeId != null) {
+    sample.type = { id: row.sampleTypeId }
+  }
+  result.sample = sample
 
   const categories = []
-  if (row.category1Id !== null) {
+  if (row.category1Id != null) {
     categories.push({ id: row.category1Id })
   }
-  if (row.category2Id !== null) {
+  if (row.category2Id != null) {
     categories.push({ id: row.category2Id })
   }
   if (categories.length > 0) {
