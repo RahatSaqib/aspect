@@ -7,6 +7,11 @@ import {
   errorPleaseTryAgainInAFewMinutes
 } from '../error/CommonErrorNotifications'
 
+export const tokens = {
+  APPROVED: 'approved',
+  UNAPPROVED: 'unapproved'
+}
+
 export const types = {
   REQUEST_DEVICE_STATUSES: 'REQUEST_DEVICE_STATUSES',
   RECEIVE_DEVICE_STATUSES: 'RECEIVE_DEVICE_STATUSES'
