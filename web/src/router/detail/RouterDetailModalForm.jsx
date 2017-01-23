@@ -9,26 +9,42 @@ import { connect } from 'react-redux'
 import { Link } from 'react-router'
 
 // Material-UI
-import RaisedButton from 'material-ui/RaisedButton'
+import FlatButton from 'material-ui/FlatButton'
 import TextField from 'material-ui/TextField'
+import Checkbox from 'material-ui/Checkbox'
 import AutoComplete from 'material-ui/AutoComplete'
 import ExitToApp from 'material-ui/svg-icons/action/exit-to-app'
+import Dialog from 'material-ui/Dialog'
 
 // Our own imports
 import recomposeForm from '../../components/recomposeForm'
+import JSONSchemaCard from '../../components/shared/JSONSchemaCard'
+import { tokens } from '../../deviceStatus/DeviceStatusRedux'
 import { fetchSites } from '../../site/SiteRedux'
-import styles from './RouterDetailForm.css'
+import styles from './RouterDetailModalForm.css'
 
 const cssClasses = classnames.bind(styles)
 
 const enhance = compose(
   pure,
   setPropTypes({
+    onCancel: PropTypes.func,
+    formatNestedSubtitle: PropTypes.func.isRequired,
+    configurationDataSchema: PropTypes.object.isRequired,
+    isDialogOpen: PropTypes.bool.isRequired,
     values: PropTypes.object.isRequired
   }),
   recomposeForm({
     fields: ['name', 'shortname', 'notes', {
+      fieldName: 'statusToken',
+      valueFromChangeEvent(e, isInputChecked) {
+        return isInputChecked ? tokens.APPROVED : tokens.UNAPPROVED
+      },
+    }, {
       fieldName: 'siteId',
+      valueFromChangeEvent: _fp.identity
+    }, {
+      fieldName: 'configurationData',
       valueFromChangeEvent: _fp.identity
     }],
     validate(values) {
@@ -98,14 +114,38 @@ const enhance = compose(
   })
 )
 
-export const RouterDetailForm = (props) => {
+export const RouterDetailModalForm = (props) => {
   const { form, meta, values, labels } = props
 
   const site = _.find(props.siteList, s => s.value === values.siteId)
 
+  const actions = [
+    props.onCancel && (
+      <FlatButton
+        onClick={props.onCancel}
+        type="button"
+        label={labels.cancel}
+        primary
+        style={{ marginRight: 10 }}
+      />
+    ),
+    <FlatButton
+      disabled={form.pristine || !form.valid || form.submitting}
+      onClick={props.handleSubmit}
+      type="button"
+      label={labels.update}
+      secondary
+    />
+  ]
+
   return (
-    <form>
-      <div>
+    <Dialog
+      modal
+      actions={actions}
+      open={props.isDialogOpen}
+      onRequestClose={props.onCancel}
+    >
+      <form>
         <TextField
           name="Name"
           floatingLabelText={labels.name}
@@ -129,6 +169,13 @@ export const RouterDetailForm = (props) => {
           onChange={props.onChangeNotes}
           fullWidth
           errorText={meta.notes.touched && meta.notes.error}
+        />
+        <Checkbox
+          name="Status"
+          label={labels.statusToken}
+          style={{ padding: '10px 0' }}
+          checked={values.statusToken === tokens.APPROVED}
+          onCheck={props.onChangeStatusToken}
         />
         <div className={cssClasses('AutoCompleteField')}>
           <div className={cssClasses('AutoCompleteField__Inner')}>
@@ -154,20 +201,36 @@ export const RouterDetailForm = (props) => {
             </Link>
           </div>
         </div>
-      </div>
-      <div>
-        <RaisedButton
-          disabled={form.pristine || !form.valid || form.submitting}
-          onClick={props.handleSubmit}
-          type="button"
-          label="Update"
-          secondary
+        <JSONSchemaCard
+          initiallyExpanded
+          title={labels.configuration}
+          renderField={field => (
+            <TextField
+              name={field.key}
+              floatingLabelText={field.label}
+              value={field.value}
+              onTouchTap={stopEventPropagation}
+              onChange={event => (
+                props.onChangeConfigurationData(
+                  values.configurationData.setIn(field.path, event.target.value)
+                )
+              )}
+              fullWidth
+            />
+          )}
+          formatNestedSubtitle={props.formatNestedSubtitle}
+          dataSchema={props.configurationDataSchema}
+          data={values.configurationData}
         />
-      </div>
-    </form>
+      </form>
+    </Dialog>
   )
 }
 
-export const RouterDetailFormContainer = enhance(RouterDetailForm)
+function stopEventPropagation(event) {
+  event.stopPropagation()
+}
 
-export default RouterDetailFormContainer
+export const RouterDetailModalFormContainer = enhance(RouterDetailModalForm)
+
+export default RouterDetailModalFormContainer
