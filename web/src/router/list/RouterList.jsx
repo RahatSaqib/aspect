@@ -40,7 +40,7 @@ const messages = defineMessages({
   },
   filterTemplate: {
     id: 'pages.RouterList.filterTemplate',
-    defaultMessage: 'Viewing all routers<GEOGRAPHY><NAME>.'
+    defaultMessage: 'Viewing all routers<GEOGRAPHY><NAME><DEVICESTATUS>.'
   }
 })
 

@@ -61,7 +61,7 @@ const messages = defineMessages({
   },
   filterTemplate: {
     id: 'pages.DeviceList.filterTemplate',
-    defaultMessage: 'Viewing all devices<GEOGRAPHY><NAME>.'
+    defaultMessage: 'Viewing all devices<GEOGRAPHY><NAME><DEVICESTATUS>.'
   },
   filterTemplateOptional: {
     id: 'pages.DeviceList.filterTemplateOptional',

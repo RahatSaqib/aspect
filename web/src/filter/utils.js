@@ -52,6 +52,10 @@ const messages = defineMessages({
   workflowStatuses: {
     id: 'shared.FormatFilters.workflowStatuses',
     defaultMessage: ''
+  },
+  withDeviceStatus: {
+    id: 'shared.FormatFilters.withDeviceStatus',
+    defaultMessage: 'with device status'
   }
 })
 
@@ -68,7 +72,8 @@ export function getFilterMessage(
   optionalTemplate,
   formatMessage,
   formatDate,
-  workflowStatuses) {
+  workflowStatuses,
+  deviceStatuses) {
   // return empty message if no filters set
   if (_.every(filter, f => !f)) {
     return `${formatMessage(messages.noFilters)} ${subject ? subject.toLowerCase() : ''}`
@@ -126,6 +131,11 @@ export function getFilterMessage(
   const noWorkflowStatus = ''
   const workflowStatusString = workflowStatus ? `with workflow status ${workflowStatus.get('name')}` : noWorkflowStatus
 
+  // device status
+  const deviceStatus = filter.deviceStatusId ? deviceStatuses.find(s => s.get('id') === filter.deviceStatusId) : null
+  const noDeviceStatus = ''
+  const deviceStatusString = deviceStatus ? `${SPACE}${formatMessage(messages.withDeviceStatus)}${SPACE}"${deviceStatus.get('name')}"` : noDeviceStatus
+
   // The optional template lets us specify a message that only shows up if
   // assay, result, or date is set. For example, if we want to show a message that explains
   // the number of results on a device
@@ -148,6 +158,7 @@ export function getFilterMessage(
                         .replace('<DATE>', dateString)} ${optionalMessage}`
                         .replace('<CONSUMABLE>', consumableString)
                         .replace('<WORKFLOWSTATUS>', workflowStatusString)
+                        .replace('<DEVICESTATUS>', deviceStatusString)
 
   return message
 }

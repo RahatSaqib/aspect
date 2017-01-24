@@ -18,6 +18,7 @@ export const FilterMessage = ({
   consumable,
   siteItemsById,
   workflowStatusItems,
+  deviceStatusItems,
   subject,
   filterTemplate,
   filterTemplateOptional
@@ -33,7 +34,8 @@ export const FilterMessage = ({
       filterTemplateOptional,
       formatMessage,
       formatDate,
-      workflowStatusItems)
+      workflowStatusItems,
+      deviceStatusItems)
     }
   </span>
 )
@@ -49,6 +51,7 @@ FilterMessage.propTypes = {
     id: PropTypes.string,
     name: PropTypes.string
   }),
+  deviceStatusItems: PropTypes.object.isRequired,
   subject: PropTypes.string,
   filterTemplate: PropTypes.string.isRequired,
   filterTemplateOptional: PropTypes.string,
@@ -61,7 +64,8 @@ function mapStateToProps(state) {
     assay: state.assay,
     consumable: state.consumable.consumables,
     siteItemsById: state.site.items.byId,
-    workflowStatusItems: state.resultWorkflowStatus.items
+    workflowStatusItems: state.resultWorkflowStatus.items,
+    deviceStatusItems: state.deviceStatus.items
   }
 }
 

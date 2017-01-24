@@ -40,7 +40,7 @@ const messages = defineMessages({
   },
   filterTemplate: {
     id: 'pages.TerminalList.filterTemplate',
-    defaultMessage: 'Viewing all terminals<GEOGRAPHY><NAME>.'
+    defaultMessage: 'Viewing all terminals<GEOGRAPHY><NAME><DEVICESTATUS>.'
   }
 })
 
