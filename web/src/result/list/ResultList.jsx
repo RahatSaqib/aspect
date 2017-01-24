@@ -107,6 +107,7 @@ export class ResultList extends PureComponent {
     const columns = [
       { db: 'endedOn', title: formatMessage(messages.endedOn), format: data => formatDate(data) },
       { db: 'deviceName', title: formatMessage(messages.deviceName) },
+      { db: 'sampleOriginSiteName', title: formatMessage(messages.sampleOriginSiteName) },
       { db: 'sampleId', title: formatMessage(messages.sampleId) },
       { db: 'patientId', title: formatMessage(messages.patiendId) }
     ]

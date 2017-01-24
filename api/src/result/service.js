@@ -8,6 +8,7 @@ const SELECT_LIST_FIELDS = [
   'r.id', 'r.externalId', 'r.endedOn', 'd.name as deviceName',
   'c.name as countryName', 'st.name as stateName', 'lg.name as lgaName',
   'rc1.name as resultCategory1Name', 'rc2.name as resultCategory2Name', 'rs.name as resultWorkflowStatus',
+  'so.name as sampleOriginSiteName',
   'sp.externalId as sampleId', 'a.name as assayName', 'a.id as assayId',
   knex.raw('JSON_UNQUOTE(JSON_EXTRACT(r.patientData, "$.id")) as patientId')
 ]
@@ -104,7 +105,7 @@ function* listResults(request) {
       deviceName: 'd.name',
       siteName: 'sr.name',
       sampleId: 'sp.externalId',
-      sampleOriginSiteName: 'so.name',
+      sampleOriginSiteId: 'sp.originSiteId',
       workflowStatusId: 'r.resultWorkflowStatusId'
     })
     .modify(addConstraints, dataConstraints, { device: 'd', sample: 's' })
