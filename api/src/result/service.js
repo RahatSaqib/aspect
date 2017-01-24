@@ -17,10 +17,11 @@ const SELECT_SHOW_FIELDS = [
   'r.id', 'r.externalId', 'r.startedOn', 'r.endedOn', 'r.deviceId', 'd.name as deviceName',
   'c.name as countryName', 'st.name as stateName', 'lg.name as lgaName',
   'rc1.name as resultCategory1Name', 'rc2.name as resultCategory2Name', 'rs.name as resultWorkflowStatus',
-  'r.resultData', 's.externalId as sampleId', 'r.siteId', 'si.name as siteName', 'r.assayVersion',
+  'r.resultData', 'r.siteId', 'si.name as siteName', 'r.assayVersion',
   'r.consumableSerial', 'r.consumableLot', 'r.consumableExpirationDate', 'r.instrumentSerial',
   'r.moduleName', 'r.moduleSerial', 'r.researchId', 'r.senderVersion', 'r.senderOperator',
   'r.notes', 'r.errorCode', 'r.errorNotes', 'r.createdOn', 'r.updatedOn', 'r.assayId',
+  'sp.externalId as sampleId', 'sp.originSiteId as sampleOriginSiteId', 'so.name as sampleOriginSiteName',
   knex.raw('JSON_UNQUOTE(JSON_EXTRACT(r.patientData, "$.id")) as patientId'), 'r.patientData'
 ]
 
@@ -158,7 +159,8 @@ function* getResultByResultId(request, fields = SELECT_SHOW_FIELDS) {
     .leftJoin('Lga as lg', 'g.lgaId', 'lg.id')
     .leftJoin('ResultCategory as rc1', 'r.resultCategory1', 'rc1.id')
     .leftJoin('ResultCategory as rc2', 'r.resultCategory2', 'rc2.id')
-    .leftJoin('Sample as s', 'r.sampleId', 's.id')
+    .leftJoin('Sample as sp', 'r.sampleId', 'sp.id')
+    .leftJoin('Site as so', 'sp.originSiteId', 'so.id')
     .leftJoin('ResultWorkflowStatus as rs', 'r.resultWorkflowStatusId', 'rs.id')
     .where('r.id', +params.resultId)
     .modify(addConstraints, dataConstraints, { device: 'd' })
