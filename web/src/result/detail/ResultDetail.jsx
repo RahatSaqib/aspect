@@ -34,9 +34,13 @@ const messages = defineMessages({
     id: 'pages.ResultDetail.title',
     defaultMessage: 'Result Detail'
   },
-  fieldDeviceName: {
-    id: 'pages.ResultDetail.fieldDeviceName',
+  fieldDevice: {
+    id: 'pages.ResultDetail.fieldDevice',
     defaultMessage: 'Device'
+  },
+  fieldSampleOriginSite: {
+    id: 'pages.ResultDetail.fieldSampleOriginSite',
+    defaultMessage: 'Sample Origin Site'
   },
   fieldEndedOn: {
     id: 'pages.ResultDetail.fieldEndedOn',
@@ -293,7 +297,6 @@ export class ResultDetail extends PureComponent {
         }
         dataSchema={dataSchema}
         data={result.get('resultData')}
-        renderField={field => <ReadOnlyField {...field} />}
       />
     )
   }
@@ -307,6 +310,17 @@ export class ResultDetail extends PureComponent {
         { /* IDs and device/site */ }
         <Card>
           <CardText>
+            <ReadOnlyField
+              label={formatMessage(messages.fieldSampleOriginSite)}
+              value={result.get('sampleOriginSiteName')}
+              format={v =>
+                <div>
+                  <Link to={`/site/${result.get('sampleOriginSiteId')}`}>
+                    {v}
+                  </Link>
+                </div>
+              }
+            />
             <Unit sm="1-2" md="1-2" lg="5-12">
               <ReadOnlyField label={formatMessage(messages.fieldSampleId)} value={result.get('sampleId')} />
             </Unit>
@@ -317,7 +331,7 @@ export class ResultDetail extends PureComponent {
               <ReadOnlyField label={formatMessage(messages.fieldDate)} value={result.get('endedOn')} format={formatDate} />
             </Unit>
             <ReadOnlyField
-              label={formatMessage(messages.fieldDeviceName)}
+              label={formatMessage(messages.fieldDevice)}
               value={result.get('deviceName')}
               format={v =>
                 <div>

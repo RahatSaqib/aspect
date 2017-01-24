@@ -16,6 +16,7 @@ export const FilterMessage = ({
   countries,
   assay,
   consumable,
+  siteItemsById,
   workflowStatusItems,
   subject,
   filterTemplate,
@@ -26,6 +27,7 @@ export const FilterMessage = ({
       countries,
       assay,
       consumable,
+      siteItemsById,
       subject,
       filterTemplate,
       filterTemplateOptional,
@@ -42,6 +44,7 @@ FilterMessage.propTypes = {
   countries: PropTypes.object.isRequired,
   assay: PropTypes.object.isRequired,
   consumable: PropTypes.object.isRequired,
+  siteItemsById: PropTypes.object.isRequired,
   workflowStatusItems: PropTypes.shape({
     id: PropTypes.string,
     name: PropTypes.string
@@ -57,6 +60,7 @@ function mapStateToProps(state) {
     countries: state.geography.countriesForLocationSelector,
     assay: state.assay,
     consumable: state.consumable.consumables,
+    siteItemsById: state.site.items.byId,
     workflowStatusItems: state.resultWorkflowStatus.items
   }
 }

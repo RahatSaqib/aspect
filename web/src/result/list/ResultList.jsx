@@ -30,6 +30,10 @@ const messages = defineMessages({
     id: 'pages.ResultList.deviceName',
     defaultMessage: 'Device'
   },
+  sampleOriginSiteName: {
+    id: 'pages.ResultList.sampleOriginSiteName',
+    defaultMessage: 'Sample Origin Site'
+  },
   sampleId: {
     id: 'pages.ResultList.sampleId',
     defaultMessage: 'Sample ID'
@@ -48,7 +52,7 @@ const messages = defineMessages({
   },
   filterTemplate: {
     id: 'pages.ResultList.filterTemplate',
-    defaultMessage: 'Viewing <SAMPLE_ID><ASSAY> results <DATE><RESULT> from all sites<GEOGRAPHY><NAME> <WORKFLOWSTATUS>'
+    defaultMessage: 'Viewing <SAMPLE_ORIGIN_SITE_ID><SAMPLE_ID><ASSAY> results <DATE><RESULT> from all sites<GEOGRAPHY><NAME> <WORKFLOWSTATUS>'
   }
 })
 
@@ -75,7 +79,7 @@ export class ResultList extends PureComponent {
       date: true,
       sampleId: true,
       siteName: true,
-      sampleOriginSiteName: true,
+      sampleOriginSiteId: true,
       workflowStatus: true })
   }
 
@@ -103,6 +107,7 @@ export class ResultList extends PureComponent {
     const columns = [
       { db: 'endedOn', title: formatMessage(messages.endedOn), format: data => formatDate(data) },
       { db: 'deviceName', title: formatMessage(messages.deviceName) },
+      { db: 'sampleOriginSiteName', title: formatMessage(messages.sampleOriginSiteName) },
       { db: 'sampleId', title: formatMessage(messages.sampleId) },
       { db: 'patientId', title: formatMessage(messages.patiendId) }
     ]

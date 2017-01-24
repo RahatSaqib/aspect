@@ -27,6 +27,7 @@ import LgaSelectField from '../geography/LgaSelectField'
 import AssaySelectField from '../resource/AssaySelectField'
 import ResultCategorySelectField from '../resource/ResultCategorySelectField'
 import ConsumableSelectField from '../resource/ConsumableSelectField'
+import SiteAutoCompleteField from '../resource/SiteAutoCompleteField'
 import DateRangeSelector from '../date/DateRangeSelector'
 import ResultWorkflowStatusSelectField from '../resource/ResultWorkflowStatusSelectField'
 import FilterMessage from './FilterMessage'
@@ -86,8 +87,8 @@ const messages = defineMessages({
     id: 'shared.ListFilter.sampleOriginSite',
     defaultMessage: 'Sample origin site'
   },
-  enterSampleOriginSiteName: {
-    id: 'shared.ListFilter.enterSampleOriginSiteName',
+  enterSampleOriginSiteId: {
+    id: 'shared.ListFilter.enterSampleOriginSiteId',
     defaultMessage: 'Enter sample origin site name...'
   },
   date: {
@@ -324,6 +325,14 @@ export class ListFilter extends PureComponent {
     this.props.onChangeFilter(nextFilter)
   }
 
+  handleSampleOriginSiteIdChange = (sampleOriginSiteId) => {
+    const nextFilter = {
+      ...this.props.listFilter.toJS(),
+      sampleOriginSiteId
+    }
+    this.props.onChangeFilter(nextFilter)
+  }
+
   handleWorkflowStatusIdChange = (workflowStatusId) => {
     const nextFilter = {
       ...this.props.listFilter.toJS(),
@@ -375,7 +384,7 @@ export class ListFilter extends PureComponent {
     const hasDataSection = (
       config.assay || config.deviceName || config.result ||
       config.siteName || config.contactNameOrEmail || config.consumable ||
-      config.sampleId || config.sampleOriginSiteName
+      config.sampleId || config.sampleOriginSiteId
     )
 
     const hasDataSection2 = (
@@ -535,14 +544,14 @@ export class ListFilter extends PureComponent {
                       />
                     </div>
                   )}
-                  {config.sampleOriginSiteName && (
+                  {config.sampleOriginSiteId && (
                     <div className={styles.Section__Control}>
-                      <FocusBlurTextField
-                        name="sampleOriginSiteName"
-                        value={filter.sampleOriginSiteName || ''}
-                        onCommitValue={this.handleTextFieldCommitValue}
-                        floatingLabelFixed
-                        hintText={formatMessage(messages.enterSampleOriginSiteName)}
+                      <SiteAutoCompleteField
+                        name="sampleOriginSiteId"
+                        value={filter.sampleOriginSiteId || ''}
+                        onChangeSiteId={this.handleSampleOriginSiteIdChange}
+                        itemTextGetter={site => `${site.get('name')} (${site.get('state')})`}
+                        hintText={formatMessage(messages.enterSampleOriginSiteId)}
                         floatingLabelText={formatMessage(messages.sampleOriginSite)}
                       />
                     </div>
