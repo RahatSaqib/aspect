@@ -14,6 +14,7 @@ const enhance = compose(
   pure,
   setPropTypes({
     onChangeSiteId: PropTypes.func.isRequired,
+    itemTextGetter: PropTypes.func.isRequired,
     value: PropTypes.string
   }),
   connect(state => ({
@@ -22,12 +23,12 @@ const enhance = compose(
     fetchSites
   })),
   mapProps(props => ({
-    ..._fp.omit(['siteItemsById'], props),
+    ..._fp.omit(['siteItemsById', 'itemTextGetter'], props),
     siteList: props.siteItemsById
       .valueSeq()
       .map(item => ({
         value: item.get('id'),
-        text: item.get('name')
+        text: props.itemTextGetter(item)
       }))
       .toJS()
   })),
