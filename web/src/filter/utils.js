@@ -29,6 +29,10 @@ const messages = defineMessages({
     id: 'shared.FormatFilters.consumables',
     defaultMessage: 'consumables'
   },
+  sampleOriginSiteId: {
+    id: 'shared.FormatFilters.sampleOriginSiteId',
+    defaultMessage: 'sample origin site'
+  },
   sampleId: {
     id: 'shared.FormatFilters.sampleId',
     defaultMessage: 'sample'
@@ -58,6 +62,7 @@ export function getFilterMessage(
   countries,
   assays,
   consumables,
+  siteItemsById,
   subject,
   template = 'Viewing items<GEOGRAPHY><NAME>',
   optionalTemplate,
@@ -86,8 +91,12 @@ export function getFilterMessage(
   }
 
   // name-filter
-  const name = `${filter.contactNameOrEmail || ''}${filter.deviceName || ''}${filter.siteName || ''}${filter.sampleOriginSiteName || ''}`
+  const name = `${filter.contactNameOrEmail || ''}${filter.deviceName || ''}${filter.siteName || ''}`
   const nameString = name ? `${SPACE}${formatMessage(messages.whoseNameIncludes)}${SPACE}"${name}"` : ''
+
+  // sample origin site id
+  const sampleOriginSite = filter.sampleOriginSiteId ? siteItemsById.valueSeq().find(s => s.get('id') === filter.sampleOriginSiteId) : null
+  const sampleOriignSiteIdString = sampleOriginSite ? `${formatMessage(messages.sampleOriginSiteId)}${SPACE}(${sampleOriginSite.get('name')}),${SPACE}` : ''
 
   // sample id
   const sampleId = filter.sampleId
@@ -132,6 +141,7 @@ export function getFilterMessage(
   const message = `${template
                         .replace('<GEOGRAPHY>', geography)
                         .replace('<NAME>', nameString)
+                        .replace('<SAMPLE_ORIGIN_SITE_ID>', sampleOriignSiteIdString)
                         .replace('<SAMPLE_ID>', sampleIdString)
                         .replace('<ASSAY>', assayString)
                         .replace('<RESULT>', resultString)
