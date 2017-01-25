@@ -569,6 +569,7 @@ export class ListFilter extends PureComponent {
                         name="sampleOriginSiteId"
                         value={filter.sampleOriginSiteId || ''}
                         onChangeSiteId={this.handleSampleOriginSiteIdChange}
+                        floatingLabelFixed
                         itemTextGetter={site => `${site.get('name')} (${site.get('state')})`}
                         hintText={formatMessage(messages.enterSampleOriginSiteId)}
                         floatingLabelText={formatMessage(messages.sampleOriginSite)}
