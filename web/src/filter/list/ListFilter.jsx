@@ -30,6 +30,7 @@ import ConsumableSelectField from '../resource/ConsumableSelectField'
 import SiteAutoCompleteField from '../resource/SiteAutoCompleteField'
 import DateRangeSelector from '../date/DateRangeSelector'
 import ResultWorkflowStatusSelectField from '../resource/ResultWorkflowStatusSelectField'
+import DeviceStatusSelectField from '../resource/DeviceStatusSelectField'
 import FilterMessage from './FilterMessage'
 import {
   clearListFilter,
@@ -179,6 +180,14 @@ const messages = defineMessages({
   selectWorkflowStatus: {
     id: 'shared.ListFilter.selectWorkflowStatus',
     defaultMessage: 'Select status...'
+  },
+  deviceStatus: {
+    id: 'shared.ListFilter.deviceStatus',
+    defaultMessage: 'Device Status'
+  },
+  selectDeviceStatus: {
+    id: 'shared.ListFilter.selectDeviceStatus',
+    defaultMessage: 'Select status...'
   }
 })
 
@@ -200,7 +209,8 @@ export class ListFilter extends PureComponent {
       siteName: PropTypes.string,
       contactNameOrEmail: PropTypes.string,
       consumableId: PropTypes.string,
-      workflowStatusId: PropTypes.string
+      workflowStatusId: PropTypes.string,
+      deviceStatusId: PropTypes.string
     }).isRequired, // connect
     intl: PropTypes.object.isRequired,
     defaultExpanded: PropTypes.bool,
@@ -212,7 +222,8 @@ export class ListFilter extends PureComponent {
       siteName: PropTypes.bool,
       contactNameOrEmail: PropTypes.bool,
       consumable: PropTypes.bool,
-      workflowStatus: PropTypes.bool
+      workflowStatus: PropTypes.bool,
+      deviceStatus: PropTypes.bool
     }).isRequired,
     subject: PropTypes.string,
     dateFilterLabel: PropTypes.string,
@@ -341,6 +352,14 @@ export class ListFilter extends PureComponent {
     this.props.onChangeFilter(nextFilter)
   }
 
+  handleDeviceStatusIdChange = (deviceStatusId) => {
+    const nextFilter = {
+      ...this.props.listFilter.toJS(),
+      deviceStatusId
+    }
+    this.props.onChangeFilter(nextFilter)
+  }
+
   // ----------------------
   // functions for List Export
   // ----------------------
@@ -388,7 +407,7 @@ export class ListFilter extends PureComponent {
     )
 
     const hasDataSection2 = (
-      config.date || config.workflowStatus
+      config.date || config.workflowStatus || config.deviceStatus
     )
 
     const nonEmptyFilter = !_.isEmpty(_.filter(filter, nonEmptyFilterValue))
@@ -594,6 +613,20 @@ export class ListFilter extends PureComponent {
                         floatingLabelFixed
                         hintText={formatMessage(messages.selectWorkflowStatus)}
                         floatingLabelText={formatMessage(messages.workflowStatus)}
+                        style={{ verticalAlign: 'bottom' }}
+                        autoWidth
+                      />
+                    </div>
+                  )}
+                  {config.deviceStatus && (
+                    <div className={styles.Section__Control}>
+                      <DeviceStatusSelectField
+                        allItemText={formatMessage(messages.all)}
+                        value={filter.deviceStatusId}
+                        onDeviceStatusChange={this.handleDeviceStatusIdChange}
+                        floatingLabelFixed
+                        hintText={formatMessage(messages.selectDeviceStatus)}
+                        floatingLabelText={formatMessage(messages.deviceStatus)}
                         style={{ verticalAlign: 'bottom' }}
                         autoWidth
                       />

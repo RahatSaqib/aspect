@@ -40,7 +40,7 @@ const messages = defineMessages({
   },
   filterTemplate: {
     id: 'pages.RouterList.filterTemplate',
-    defaultMessage: 'Viewing all routers<GEOGRAPHY><NAME>.'
+    defaultMessage: 'Viewing all routers<GEOGRAPHY><NAME><DEVICESTATUS>.'
   }
 })
 
@@ -92,7 +92,11 @@ export class RouterList extends PureComponent {
   componentWillMount() {
     const { setPageTitle, configureListFilter, intl: { formatMessage } } = this.props
     setPageTitle(formatMessage(messages.routersTitle))
-    configureListFilter({ geography: true, deviceName: true })
+    configureListFilter({
+      geography: true,
+      deviceName: true,
+      deviceStatus: true
+    })
   }
 
   componentDidMount() {

@@ -61,7 +61,7 @@ const messages = defineMessages({
   },
   filterTemplate: {
     id: 'pages.DeviceList.filterTemplate',
-    defaultMessage: 'Viewing all devices<GEOGRAPHY><NAME>.'
+    defaultMessage: 'Viewing all devices<GEOGRAPHY><NAME><DEVICESTATUS>.'
   },
   filterTemplateOptional: {
     id: 'pages.DeviceList.filterTemplateOptional',
@@ -122,7 +122,8 @@ export class DeviceList extends PureComponent {
       assayAndResultCategory: true,
       geography: true,
       date: true,
-      deviceName: true
+      deviceName: true,
+      deviceStatus: true
     })
   }
 

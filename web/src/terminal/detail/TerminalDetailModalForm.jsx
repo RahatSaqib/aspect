@@ -11,6 +11,7 @@ import { Link } from 'react-router'
 // Material-UI
 import FlatButton from 'material-ui/FlatButton'
 import TextField from 'material-ui/TextField'
+import Checkbox from 'material-ui/Checkbox'
 import AutoComplete from 'material-ui/AutoComplete'
 import ExitToApp from 'material-ui/svg-icons/action/exit-to-app'
 import Dialog from 'material-ui/Dialog'
@@ -18,6 +19,7 @@ import Dialog from 'material-ui/Dialog'
 // Our own imports
 import recomposeForm from '../../components/recomposeForm'
 import JSONSchemaCard from '../../components/shared/JSONSchemaCard'
+import { tokens } from '../../deviceStatus/DeviceStatusRedux'
 import { fetchSites } from '../../site/SiteRedux'
 import styles from './TerminalDetailModalForm.css'
 
@@ -34,6 +36,11 @@ const enhance = compose(
   }),
   recomposeForm({
     fields: ['name', 'shortname', 'notes', {
+      fieldName: 'statusToken',
+      valueFromChangeEvent(e, isInputChecked) {
+        return isInputChecked ? tokens.APPROVED : tokens.UNAPPROVED
+      },
+    }, {
       fieldName: 'siteId',
       valueFromChangeEvent: _fp.identity
     }, {
@@ -162,6 +169,13 @@ export const TerminalDetailModalForm = (props) => {
           onChange={props.onChangeNotes}
           fullWidth
           errorText={meta.notes.touched && meta.notes.error}
+        />
+        <Checkbox
+          name="Status"
+          label={labels.statusToken}
+          style={{ padding: '10px 0' }}
+          checked={values.statusToken === tokens.APPROVED}
+          onCheck={props.onChangeStatusToken}
         />
         <div className={cssClasses('AutoCompleteField')}>
           <div className={cssClasses('AutoCompleteField__Inner')}>

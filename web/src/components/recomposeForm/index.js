@@ -26,8 +26,8 @@ const createFieldListHandlers = _fp.reduce((acc, { fieldName, valueFromChangeEve
       }
     },
     handlers: {
-      [`onChange${fieldNameUpperFirst}`](event) {
-        const value = valueFromChangeEvent(event)
+      [`onChange${fieldNameUpperFirst}`](...args) {
+        const value = valueFromChangeEvent(...args)
         const nextValues = {
           ...this.props.values,
           [fieldName]: value

@@ -40,7 +40,7 @@ const messages = defineMessages({
   },
   filterTemplate: {
     id: 'pages.TerminalList.filterTemplate',
-    defaultMessage: 'Viewing all terminals<GEOGRAPHY><NAME>.'
+    defaultMessage: 'Viewing all terminals<GEOGRAPHY><NAME><DEVICESTATUS>.'
   }
 })
 
@@ -92,7 +92,11 @@ export class TerminalList extends PureComponent {
   componentWillMount() {
     const { setPageTitle, configureListFilter, intl: { formatMessage } } = this.props
     setPageTitle(formatMessage(messages.terminalsTitle))
-    configureListFilter({ geography: true, deviceName: true })
+    configureListFilter({
+      geography: true,
+      deviceName: true,
+      deviceStatus: true
+    })
   }
 
   componentDidMount() {

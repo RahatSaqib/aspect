@@ -47,6 +47,10 @@ const messages = defineMessages({
     id: 'pages.TerminalDetail.update',
     defaultMessage: 'Update'
   },
+  approved: {
+    id: 'pages.DeviceDetail.approved',
+    defaultMessage: 'Approved'
+  },
   fieldName: {
     id: 'pages.TerminalDetail.fieldName',
     defaultMessage: 'Name'
@@ -110,8 +114,32 @@ export class TerminalDetail extends PureComponent {
   static propTypes = {
     setPageTitle: PropTypes.func.isRequired,
     fetchSingleTerminal: PropTypes.func.isRequired,
-    params: PropTypes.object.isRequired,
-    terminal: PropTypes.object,
+    params: PropTypes.shape({
+      // see /api/src/device/endPoint.js, path: '/device/{terminalId}'
+      terminalId: PropTypes.string.isRequired
+    }).isRequired,
+    terminal: PropTypes.shape({
+      has: PropTypes.func.isRequired,
+      // see /api/src/device/endPoint.js, path: '/device'
+      // see /api/src/device/service.js, const SELECT_SHOW_FIELDS
+      id: PropTypes.number,
+      name: PropTypes.string,
+      shortname: PropTypes.string,
+      createdOn: PropTypes.string,
+      lastPingOn: PropTypes.string,
+      lastSeen: PropTypes.string,
+      type: PropTypes.string,
+      category: PropTypes.string,
+      hasResults: PropTypes.number,
+      hasConnectivity: PropTypes.number,
+      status: PropTypes.string,
+      totalTests: PropTypes.number,
+      siteId: PropTypes.number,
+      approvedOn: PropTypes.string,
+      approvedBy: PropTypes.string,
+      notes: PropTypes.string,
+      serial: PropTypes.string
+    }),
     intl: PropTypes.object.isRequired,
     editable: PropTypes.bool.isRequired,
     updateSingleTerminal: PropTypes.func.isRequired
@@ -161,6 +189,7 @@ export class TerminalDetail extends PureComponent {
           name: terminal.get('name') || '',
           shortname: terminal.get('shortname') || '',
           notes: terminal.get('notes') || '',
+          statusToken: terminal.get('statusToken') || '',
           siteId: terminal.get('siteId'),
           configurationData: terminal.get('configurationData')
         })
@@ -200,6 +229,7 @@ export class TerminalDetail extends PureComponent {
       name: formatMessage(messages.fieldName),
       shortname: formatMessage(messages.fieldShortname),
       notes: formatMessage(messages.fieldNotes),
+      statusToken: formatMessage(messages.approved),
       siteId: formatMessage(messages.fieldSiteId),
       configuration: formatMessage(messages.fieldConfiguration),
       cancel: formatMessage(messages.cancel),

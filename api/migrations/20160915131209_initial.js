@@ -233,6 +233,13 @@ function* up(knex) {
     // used to uniquely identify devices and still to be discussed
   })
 
+  yield knex.schema.createTable('DeviceStatus', (deviceStatus) => {
+    deviceStatus.increments('id')
+    deviceStatus.string('name').notNullable()
+    deviceStatus.string('i18nKey')
+    deviceStatus.string('token')
+  })
+
   yield knex.schema.createTable('Site', (site) => {
     site.increments('id')
     site.string('name').notNullable()
@@ -269,6 +276,8 @@ function* up(knex) {
       .index().references('id').inTable('Site')
     device.integer('deviceTypeId').unsigned().notNullable()
       .index().references('id').inTable('DeviceType')
+    device.integer('deviceStatusId').unsigned().notNullable()
+      .index().references('id').inTable('DeviceStatus')
 
     // TODO Add device id1 - id4 or equivalent
     // used to uniquely identify provisioned devices, still to be discussed
@@ -605,6 +614,7 @@ function* down(knex) {
   yield knex.schema.dropTableIfExists('DeviceConfiguration')
   yield knex.schema.dropTableIfExists('DeviceOperation')
   yield knex.schema.dropTableIfExists('DeviceType')
+  yield knex.schema.dropTableIfExists('DeviceStatus')
   yield knex.schema.dropTableIfExists('DeviceRole')
   yield knex.schema.dropTableIfExists('DeviceApiKey')
   yield knex.schema.dropTableIfExists('RefreshToken')

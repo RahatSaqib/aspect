@@ -8,14 +8,16 @@ const { getCellsByValue, generateExcelFile, generateCsvFile } = require('../shar
 
 const SELECT_LIST_FIELDS = [
   'd.id', 'd.name', 'd.shortname', 'd.createdOn', 'd.lastPingOn', 'd.updatedOn as lastSeen',
-  'dt.name as type', 'dc.name as category', 'dc.hasResults', 'dc.hasConnectivity',
-  knex.raw('\'Active\' as status')
+  'dt.name as type',
+  'ds.name as status',
+  'dc.name as category', 'dc.hasResults', 'dc.hasConnectivity'
 ]
 
 const SELECT_SHOW_FIELDS = [
   'd.id', 'd.name', 'd.shortname', 'd.createdOn', 'd.lastPingOn', 'd.updatedOn as lastSeen',
-  'dt.name as type', 'dc.name as category', 'dc.hasResults', 'dc.hasConnectivity',
-  knex.raw('\'Active\' as status'),
+  'dt.name as type',
+  'ds.name as status', 'ds.token as statusToken',
+  'dc.name as category', 'dc.hasResults', 'dc.hasConnectivity',
   knex.raw('d.id * 134 as totalTests'),
   'd.siteId',
   's.name as siteName',
@@ -24,6 +26,7 @@ const SELECT_SHOW_FIELDS = [
   'd.approvedOn',
   'u.name as approvedBy',
   'd.deviceTypeId',
+  'd.deviceStatusId',
   'd.configurationData',
   'd.notes',
   'd.serial'
@@ -38,6 +41,7 @@ function* getListDevices(query, auth) {
 
   const deviceQuery = knex('Device as d')
     .innerJoin('DeviceType as dt', 'd.deviceTypeId', 'dt.id')
+    .innerJoin('DeviceStatus as ds', 'd.deviceStatusId', 'ds.id')
     .innerJoin('DeviceTypeCategory as dc', 'dt.deviceTypeCategoryId', 'dc.id')
     .innerJoin('Site as s', 'd.siteId', 's.id')
     .leftJoin('Geography as g', 's.geographyId', 'g.id')
@@ -61,6 +65,7 @@ function* getListDevices(query, auth) {
       stateId: 'g.stateId',
       lgaId: 'g.lgaId',
       deviceName: 'd.name',
+      deviceStatusId: 'd.deviceStatusId',
       hasConnectivity: 'dc.hasConnectivity',
       hasResults: 'dc.hasResults',
       category: 'dc.name',
@@ -125,6 +130,7 @@ function* getDeviceByDeviceId(request, fields = SELECT_SHOW_FIELDS) {
 
   const devices = yield knex('Device as d')
     .innerJoin('DeviceType as dt', 'd.deviceTypeId', 'dt.id')
+    .innerJoin('DeviceStatus as ds', 'd.deviceStatusId', 'ds.id')
     .innerJoin('DeviceTypeCategory as dc', 'dt.deviceTypeCategoryId', 'dc.id')
     .innerJoin('Site as s', 'd.siteId', 's.id')
     .leftOuterJoin('User as u', 'u.id', 'd.approvedBy')
@@ -178,6 +184,14 @@ function* updateDevice(request) {
 
   const configurationData = _.assign({}, device.configurationData, payload.configurationData)
 
+  let { deviceStatusId } = device
+  // check if a statusToken is provided
+  if (device.statusToken !== payload.statusToken) {
+    ({ id: deviceStatusId } = yield knex('DeviceStatus as ds')
+      .where('ds.token', payload.statusToken)
+      .first('ds.id'))
+  }
+
   // update item
   const updatedCount = yield knex('Device')
     .where('id', params.deviceId)
@@ -186,6 +200,7 @@ function* updateDevice(request) {
       shortname: payload.shortname,
       notes: payload.notes,
       siteId: payload.siteId,
+      deviceStatusId,
       configurationData: JSON.stringify(configurationData)
     })
 
@@ -195,7 +210,6 @@ function* updateDevice(request) {
 
   return yield* showDevice(request)
 }
-
 
 // ---------------------------------
 // exporting Devices data
@@ -264,9 +278,30 @@ function* exportDevices(request) {
   return result
 }
 
+function* listStatusTypes() {
+  const resultQuery = knex('DeviceStatus as ds')
+
+  // get total count for paging
+  const getCount = resultQuery.clone()
+    .count('ds.id as count').first()
+
+  // get rows
+  const getItems = resultQuery.clone()
+    .orderBy('id', 'asc')
+    .select('id', 'name')
+
+  // return result when both queries are finished
+  const [{ count: total }, data] = yield Promise.all([getCount, getItems])
+
+  const result = { ok: true, total, length: data.length, data }
+
+  return result
+}
+
 module.exports = {
   listDevices,
   showDevice,
   updateDevice,
+  listStatusTypes,
   exportDevices
 }
