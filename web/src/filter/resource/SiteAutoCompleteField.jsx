@@ -10,6 +10,8 @@ import AutoComplete from 'material-ui/AutoComplete'
 
 import { fetchSites } from '../../site/SiteRedux'
 
+const filter = AutoComplete.caseInsensitiveFilter
+
 const enhance = compose(
   pure,
   setPropTypes({
@@ -42,8 +44,10 @@ const enhance = compose(
       if (index === -1) {
         // if user typed text and pressed Enter, then index=-1 - and
         // chosenRequest is string value (see API doc - http://www.material-ui.com/#/components/auto-complete)
-        const textLo = chosenRequest.toLowerCase().trim()
-        const nextSite = _fp.find(s => s.text.toLowerCase() === textLo, props.siteList)
+        const searchText = chosenRequest
+        // Apply our filter and find the first item matched
+        const nextSite = _fp.find(s => filter(searchText, s.text), props.siteList)
+        // Select the first match if available
         if (nextSite) {
           props.onChangeSiteId(nextSite.value)
         }
@@ -89,7 +93,7 @@ export function SiteAutoCompleteField({
     <AutoComplete
       {...restProps}
       dataSource={siteList}
-      filter={AutoComplete.caseInsensitiveFilter}
+      filter={filter}
       searchText={_fp.get('text', site)}
       onNewRequest={onSiteAutoCompleteNewRequest}
       onBlur={onSiteAutoCompleteBlur}
