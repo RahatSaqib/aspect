@@ -422,6 +422,74 @@ function* seed(knex) {
     }
   })
 
+  const geneXpertResultDataSchemaHcv = JSON.stringify({
+    resultText: {
+      title: 'Result Text',
+      type: 'string',
+      i18nKey: 'resultText'
+    },
+    count: {
+      title: 'HCV Count',
+      type: 'number',
+      list: true
+    },
+    probes: {
+      title: 'Probes',
+      type: 'object',
+      i18nKey: 'probes',
+      properties: {
+        gpCt: {
+          title: 'GP Ct',
+          type: 'number'
+        },
+        gpEndPt: {
+          title: 'GP Endpt',
+          type: 'number'
+        },
+        cicCt: {
+          title: 'CIC Ct',
+          type: 'number'
+        },
+        cicEndPt: {
+          title: 'CIC EndPt',
+          type: 'number'
+        },
+        sacCt: {
+          title: 'SAC Ct',
+          type: 'number'
+        },
+        sacEndPt: {
+          title: 'SAC EndPt',
+          type: 'number'
+        },
+        npCt: {
+          title: 'NP Ct',
+          type: 'number'
+        },
+        npEndPt: {
+          title: 'NP EndPt',
+          type: 'number'
+        },
+        qc1Ct: {
+          title: 'QC1 Ct',
+          type: 'number'
+        },
+        qc1Endpt: {
+          title: 'QC1 EndPt',
+          type: 'number'
+        },
+        qc2Ct: {
+          title: 'QC2 Ct',
+          type: 'number'
+        },
+        qc2Endpt: {
+          title: 'Qc2Endpt',
+          type: 'number'
+        }
+      }
+    }
+  })
+
   // define patientData object
   const geneXpertPatientDataSchema = JSON.stringify({
     id: {
@@ -504,6 +572,20 @@ function* seed(knex) {
     patientDataSchema: geneXpertPatientDataSchema
   })
 
+  const [assayGeneXpertHcvId] = yield knex('Assay').insert({
+    name: 'GeneXpert HCV',
+    i18nKey: 'assayGeneXpertHcv',
+    externalId: 'GeneXpertHcv',
+    assayTypeId: assayTypeHcvId,
+    deviceTypeId: deviceTypeGeneXpertId,
+    resultCategory1Label: 'HCV',
+    resultCategory1i18nKey: 'resultCategoryHcv',
+    resultCategory2Label: null,
+    resultCategory2i18nKey: null,
+    resultDataSchema: geneXpertResultDataSchemaHcv,
+    patientDataSchema: geneXpertPatientDataSchema
+  })
+
   const [assayDaktariHcvId] = yield knex('Assay').insert({
     name: 'Daktari HCV',
     i18nKey: 'assayDaktariHcv',
@@ -514,7 +596,7 @@ function* seed(knex) {
     resultCategory1i18nKey: 'resultCategoryHcv',
     resultCategory2Label: null,
     resultCategory2i18nKey: null,
-    resultDataSchema: geneXpertResultDataSchemaHiv,
+    resultDataSchema: geneXpertResultDataSchemaHcv,
     patientDataSchema: geneXpertPatientDataSchema
   })
 
@@ -1693,6 +1775,101 @@ function* seed(knex) {
     })
   }
 
+  // some HCV samples for GeneXpert
+  samples = []
+  for (let i = 0; i < resultHcvNumber / 2; i++) {
+    const sample = Object.assign({}, {
+      externalId: `SMP-HCV-GX-${i}`,
+      collectedOn: new Date(),
+      sampleTypeId: sampleTypeDBSId
+    })
+
+    sample.id = yield knex('Sample').insert(sample)
+
+    samples.push(sample)
+  }
+
+  // Daktari HCV Results:
+  possibleResults = [{ resultText: 'HCV Detected - {0}', category1: resultCategoryDetectedId },
+                          { resultText: 'HCV Not Detected', category1: resultCategoryNotDetectedId },
+                          { resultText: 'No Result', category1: resultCategoryNoResultId },
+                          { resultText: 'Error', category1: resultCategoryErrorId },
+                          { resultText: 'Invalid', category1: resultCategoryInvalidId }]
+
+  resultData = {
+    probes: {
+      gpCt: 25.40,
+      gpEndPt: 558.00,
+      cicCt: 23.90,
+      cicEndPt: 289.00,
+      sacCt: 33.80,
+      sacEndPt: 650.00,
+      npCt: 12.2,
+      npEndPt: null,
+      qc1Ct: 0.32,
+      qc1Endpt: 0,
+      qc2Ct: 11.4,
+      qc2Endpt: 0.5
+    }
+  }
+
+  for (const i of _.range(1, resultHcvNumber + 1)) {
+    const device = devicesDaktari[i % devicesDaktari.length]
+    const siteData = siteDatas.find(site => site.id === device.siteId)
+    const sample = samples[i % samples.length]
+    const result = possibleResults[i % 5]
+    let count = 3200
+    if (result === possibleResults[0]) {
+      count = Math.floor(Math.random() * 100000000)
+    } else {
+      count = null
+    }
+
+    resultData.count = count
+    resultData.resultText = result.resultText.replace('{0}', count)
+
+    const resultId = yield knex('Result').insert(Object.assign({}, auditFields, {
+      externalId: `UQ-GX-HCV-${i}`,
+      assayId: assayGeneXpertHcvId,
+      partnerId: partnerOneId,
+      orgUnitId: partnerOneOrgUnitId,
+      geographyId: siteData.geographyId,
+      siteId: siteData.id,
+      deviceId: device.id,
+      resultWorkflowStatusId: processed,
+      longitude: -81.581222,
+      latitude: 28.419348,
+      resultTypeId: resultTypePatientId,
+      sampleId: sample.id,
+      resultCategory1: result.category1,
+      resultData: JSON.stringify(resultData),
+      assayVersion: '4.7',
+      startedOn: new Date(+now - (12 * i * millisInHour)),
+      endedOn: new Date(+now - (10 * i * millisInHour)),
+      consumableSerial: `${i}12`,
+      consumableExpirationDate: new Date(+now + (200 * i * millisInHour)),
+      consumableLot: `Lot ${i % 5}`,
+      instrumentSerial: `S-1234-${i % 3}`,
+      moduleName: 'Module A',
+      moduleSerial: `M-1234-${i % 4}`,
+      researchId: `R-ID-${i}`,
+      patientData: JSON.stringify(patients[_.random(99)]),
+      senderVersion: '4.7b',
+      senderOperator: 'Gene Hackman',
+      notes: 'This is an HCV test result',
+      errorCode: result.category1 === resultCategoryErrorId ? '1024' : null,
+      errorNotes: result.category1 === resultCategoryErrorId ? 'Exceeded cycle threshold' : null
+    }))
+
+    yield knex('ResultWorkflowLog').insert({
+      resultId,
+      resultWorkflowStatusId: processed,
+      operator: 'Gene Hackman',
+      createdOn: now,
+      createdBy: adminId
+    })
+  }
+
   // some HIV VL samples for Daktari
   samples = []
   for (let i = 0; i < resultHivVlNumber / 2; i++) {
@@ -1712,7 +1889,7 @@ function* seed(knex) {
   // HIV VL Results:
   possibleResults = [{ resultText: 'HIV Detected (log {1})', category1: resultCategoryDetectedId },
                           { resultText: 'HIV Not Detected', category1: resultCategoryNotDetectedId },
-                          { resultText: 'NO Result', category1: resultCategoryNoResultId },
+                          { resultText: 'No Result', category1: resultCategoryNoResultId },
                           { resultText: 'Error', category1: resultCategoryErrorId },
                           { resultText: 'Invalid', category1: resultCategoryInvalidId }]
 
@@ -1796,7 +1973,7 @@ function* seed(knex) {
 
   // some HCV samples for Daktari
   samples = []
-  for (let i = 0; i < resultHivVlNumber / 2; i++) {
+  for (let i = 0; i < resultHcvNumber / 2; i++) {
     const siteData = siteDatas[i % siteDatas.length]
     const sample = Object.assign({}, {
       externalId: `SMP-HCV-DAK-${i}`,
@@ -1810,10 +1987,10 @@ function* seed(knex) {
     samples.push(sample)
   }
 
-  // HIV VL Results:
+  // Daktari HCV Results:
   possibleResults = [{ resultText: 'HCV Detected (log {1})', category1: resultCategoryDetectedId },
                           { resultText: 'HCV Not Detected', category1: resultCategoryNotDetectedId },
-                          { resultText: 'NO Result', category1: resultCategoryNoResultId },
+                          { resultText: 'No Result', category1: resultCategoryNoResultId },
                           { resultText: 'Error', category1: resultCategoryErrorId },
                           { resultText: 'Invalid', category1: resultCategoryInvalidId }]
 
