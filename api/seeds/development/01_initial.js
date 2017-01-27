@@ -11,10 +11,10 @@ const millisInHour = 1000 * 60 * 60
 const millisInNormalYear = 1000 * 60 * 60 * 24 * 365
 const deviceNumber = 50
 const routerNumber = 20
-const resultMtbNumber = 200
-const resultEbolaNumber = 100
-const resultHivVlNumber = 75
-const resultHcvNumber = 125
+const resultMtbNumber = 1523
+const resultEbolaNumber = 500
+const resultHivVlNumber = 500
+const resultHcvNumber = 500
 
 const saltRounds = parseInt(config.passwordSaltRounds, 10)
 
