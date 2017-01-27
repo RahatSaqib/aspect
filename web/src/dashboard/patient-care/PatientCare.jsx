@@ -39,7 +39,7 @@ export class PatientCare extends PureComponent {
 
   componentWillMount() {
     const { setPageTitle, configureListFilter } = this.props
-    setPageTitle('PatientCare')
+    setPageTitle('Patient Care')
     configureListFilter({
       assayAndResultCategory: true,
       geography: true,
@@ -51,7 +51,7 @@ export class PatientCare extends PureComponent {
     const { intl: { formatMessage } } = this.props
     return (
       <div className={styles.Content}>
-        <Helmet title="PatientCare" titleTemplate="%s - Aspect" defaultTitle="Aspect" />
+        <Helmet title="Patient Care" titleTemplate="%s - Aspect" defaultTitle="Aspect" />
         <ListFilterContainer
           subject={this.props.location.query.type === 'TB' ? 'TB' : 'HCV'}
           filterTemplate={formatMessage(messages.filterTemplate)}

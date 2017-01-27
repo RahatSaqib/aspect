@@ -56,7 +56,7 @@ export class ManageDevices extends PureComponent {
     const { intl: { formatMessage } } = this.props
     return (
       <div className={styles.Content}>
-        <Helmet title="ManageDevices" titleTemplate="%s - Aspect" defaultTitle="Aspect" />
+        <Helmet title="Manage Devices" titleTemplate="%s - Aspect" defaultTitle="Aspect" />
         <ListFilterContainer
           subject="devices"
           filterTemplate={formatMessage(messages.filterTemplate)}
