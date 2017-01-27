@@ -18,13 +18,13 @@ export class ManageSupplies extends PureComponent {
   }
 
   componentWillMount() {
-    this.props.setPageTitle('ManageSupplies')
+    this.props.setPageTitle('Manage Supplies')
   }
 
   render() {
     return (
       <div className={styles.Content}>
-        <Helmet title="ManageSupplies" titleTemplate="%s - Aspect" defaultTitle="Aspect" />
+        <Helmet title="Manage Supplies" titleTemplate="%s - Aspect" defaultTitle="Aspect" />
         <div>
           <Unit sm="1-2" md="1-3" lg="1-4">
             <DashboardInventory label={'Cartridges'} />
