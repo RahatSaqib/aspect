@@ -44,7 +44,7 @@ export class ManageDevices extends PureComponent {
 
   componentWillMount() {
     const { setPageTitle, configureListFilter } = this.props
-    setPageTitle('ManageDevices')
+    setPageTitle('Manage Devices')
     configureListFilter({
       assayAndResultCategory: true,
       geography: true,
