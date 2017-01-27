@@ -26,7 +26,7 @@ const SELECT_SHOW_FIELDS = [
 ]
 
 const SORT_FIELDS = [
-  'endedOn', 'deviceName', 'stateName', 'lgaName', 'sampleId', 'patientId', 'resultCategory1Name', 'resultCategory2Name'
+  'endedOn', 'deviceName', 'sampleOriginSiteName', 'stateName', 'lgaName', 'sampleId', 'patientId', 'resultCategory1Name', 'resultCategory2Name'
 ]
 
 function* listResults(request) {
