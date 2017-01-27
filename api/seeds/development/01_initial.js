@@ -804,7 +804,7 @@ function* seed(knex) {
     externalId: 'Error'
   })
 
-  const [resultCategorySuccessId] = yield knex('ResultCategory').insert({
+  yield knex('ResultCategory').insert({
     name: 'Success',
     i18nKey: 'resultCategorySuccess',
     externalId: 'Success'
@@ -867,7 +867,7 @@ function* seed(knex) {
   })
 
   yield knex('ResultCategoryAssay').insert({
-    resultCategoryId: resultCategorySuccessId,
+    resultCategoryId: resultCategoryDetectedId,
     assayId: assayHivVlId
   })
 
@@ -887,7 +887,7 @@ function* seed(knex) {
   })
 
   yield knex('ResultCategoryAssay').insert({
-    resultCategoryId: resultCategorySuccessId,
+    resultCategoryId: resultCategoryDetectedId,
     assayId: assayDaktariHivVlId
   })
 
@@ -907,7 +907,7 @@ function* seed(knex) {
   })
 
   yield knex('ResultCategoryAssay').insert({
-    resultCategoryId: resultCategorySuccessId,
+    resultCategoryId: resultCategoryDetectedId,
     assayId: assayDaktariHcvId
   })
 
@@ -924,6 +924,26 @@ function* seed(knex) {
   yield knex('ResultCategoryAssay').insert({
     resultCategoryId: resultCategoryErrorId,
     assayId: assayDaktariHcvId
+  })
+
+  yield knex('ResultCategoryAssay').insert({
+    resultCategoryId: resultCategoryDetectedId,
+    assayId: assayGeneXpertHcvId
+  })
+
+  yield knex('ResultCategoryAssay').insert({
+    resultCategoryId: resultCategoryInvalidId,
+    assayId: assayGeneXpertHcvId
+  })
+
+  yield knex('ResultCategoryAssay').insert({
+    resultCategoryId: resultCategoryNoResultId,
+    assayId: assayGeneXpertHcvId
+  })
+
+  yield knex('ResultCategoryAssay').insert({
+    resultCategoryId: resultCategoryErrorId,
+    assayId: assayGeneXpertHcvId
   })
 
 
