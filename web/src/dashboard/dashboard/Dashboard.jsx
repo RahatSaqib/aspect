@@ -92,9 +92,11 @@ export class Dashboard extends PureComponent {
             </section>
             <section className={styles.Section}>
               <header className={styles.Section__Header}>
+                {totals && totals.get !== undefined &&
                 <h2>
-                  Patient Care<small> ({formatNumber(1435)} results in last 30 days)</small>
+                  Patient Care<small> ({formatNumber(totals.get('resultsTotal30d'))} results in last 30 days)</small>
                 </h2>
+              }
               </header>
               <div>
                 <Unit sm="1-2">
