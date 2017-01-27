@@ -28,7 +28,7 @@ describe('Result routes', () => {
         assert.property(res.body.data[0], 'id')
         assert.property(res.body.data[0], 'endedOn')
         assert.property(res.body.data[0], 'deviceName')
-        assert.property(res.body.data[0], 'sampleSiteName')
+        assert.property(res.body.data[0], 'sampleOriginSiteName')
         assert.property(res.body.data[0], 'countryName')
         assert.property(res.body.data[0], 'stateName')
         assert.property(res.body.data[0], 'lgaName')
