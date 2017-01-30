@@ -28,7 +28,10 @@ export const types = {
   RECEIVE_SINGLE_RESULT: 'RECEIVE_SINGLE_RESULT',
 
   REQUEST_UPDATING_SINGLE_RESULT: 'REQUEST_UPDATING_SINGLE_RESULT',
-  RECEIVE_UPDATED_SINGLE_RESULT: 'RECEIVE_UPDATED_SINGLE_RESULT'
+  RECEIVE_UPDATED_SINGLE_RESULT: 'RECEIVE_UPDATED_SINGLE_RESULT',
+
+  REQUEST_WORKFLOW_LOG: 'REQUEST_WORKFLOW_LOG',
+  RECEIVE_WORKFLOW_LOG: 'RECEIVE_WORKFLOW_LOG'
 }
 /*
  * ---------------- Action Creators -----------------
@@ -205,10 +208,77 @@ export function updateResultWorkflowStatus(resultId) {
     }).then(json => dispatch(receiveUpdatedSingleResult(json.data)))
   }
 }
+
+/*
+ * ---------------- Result Workflow Status Logs -----------------
+ */
+// action for setting table's prop loading:true
+function requestWorkflowStatusLogsAction(sortCol, sortDir, page, size) {
+  return {
+    type: types.REQUEST_WORKFLOW_LOG,
+    sortCol,
+    sortDir,
+    page,
+    size
+  }
+}
+
+// received list of workflow-status-logs
+function receiveWorkflowStatusLogsAction(json) {
+  return {
+    type: types.RECEIVE_WORKFLOW_LOG,
+    items: json.data,
+    total: json.total
+  }
+}
+
+// load a list of workflow-status-logs for given resultId
+export function fetchWorkflowStatusLogs(resultId, sortCol = 'createdOn', sortDir = 'desc', page = 0, pageSize = 10) {
+  return (dispatch) => {
+    // action to set table's prop loading:true
+    dispatch(requestWorkflowStatusLogsAction(sortCol, sortDir, page, pageSize))
+
+    // request sorted/paged dataset from api
+    return aspectFetch(`/result/workflow-status-logs/${resultId}?${stringify({
+      sortCol,
+      sortDir,
+      page,
+      size: pageSize
+    })}`, {
+      errorNotifications: {
+        400: filterFieldsRejectedError(defineMessages({
+          title: {
+            id: 'errorResponseMessages.fetchWorkflowLogs.GET.400.title',
+            defaultMessage: 'Searching Result Workflow Status Logs Failed'
+          }
+        })),
+        default: errorPleaseTryAgainInAFewMinutes(defineMessages({
+          title: {
+            id: 'errorResponseMessages.fetchWorkflowLogs.GET.default.title',
+            defaultMessage: 'Loading Result Workflow Status Logs Failed'
+          }
+        }))
+      }
+    }).then(json => dispatch(receiveWorkflowStatusLogsAction(json)))
+  }
+}
+
+
 /*
  * ---------------- Reducers -----------------
  */
-const Result = Immutable.Record({
+const WorkflowLog = Immutable.Record({
+  items: new Items(),
+  table: new Table({
+    sortCol: 'createdOn',
+    sortDir: 'desc',
+    page: 0,
+    pageSize: 10,
+  }),
+})
+
+// base record for initialState - export to be able to PropTypes.objectOf(Result) in ResultDetails.js
+export const Result = Immutable.Record({
   items: new Items(),
   table: new Table({
     sortCol: 'endedOn',
@@ -216,7 +286,8 @@ const Result = Immutable.Record({
     pageSize: 10,
     filters: Immutable.fromJS({ sampleId: '', assayId: null }),
     extraColumns: new Immutable.List()
-  })
+  }),
+  workflowLog: new WorkflowLog()
 })
 
 const initialState = new Result()
@@ -237,6 +308,21 @@ export default function resultReducer(state = initialState, action) {
       return state.withMutations((mutState) => {
         const immutItem = Immutable.fromJS(action.item)
         mutState.set('items', receiveItem(mutState.items, immutItem))
+      })
+
+    case types.REQUEST_WORKFLOW_LOG:
+      return state.withMutations((mutState) => {
+        const workflowLog = mutState.workflowLog.mergeIn(['table'], requestTable(mutState.workflowLog.table, action))
+        mutState.set('workflowLog', workflowLog)
+      })
+    case types.RECEIVE_WORKFLOW_LOG:
+      return state.withMutations((mutState) => {
+        const immutList = Immutable.fromJS(action.items)
+        const workflowLog = mutState.workflowLog.withMutations((mutLog) => {
+          mutLog.set('items', receiveList(mutLog.items, immutList))
+          mutLog.set('table', receiveTableItems(mutLog.table, action.total, action.extraColumns))
+        })
+        mutState.set('workflowLog', workflowLog)
       })
     default:
       return state

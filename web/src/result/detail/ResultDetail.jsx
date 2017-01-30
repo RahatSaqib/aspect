@@ -13,8 +13,10 @@ import { Link } from 'react-router'
 
 // Material-UI
 import LinearProgress from 'material-ui/LinearProgress'
+import Paper from 'material-ui/Paper'
 import { Card, CardHeader, CardText } from 'material-ui/Card'
 import Checkbox from 'material-ui/Checkbox'
+import DataTable from '../../components/shared/DataTable'
 
 // Our own imports
 import { Unit } from '../../components/pureGrids'
@@ -22,10 +24,23 @@ import JSONSchemaCard from '../../components/shared/JSONSchemaCard'
 import {
   fetchSingleResult,
   updateSingleResult,
-  updateResultWorkflowStatus
+  updateResultWorkflowStatus,
+
+  fetchWorkflowStatusLogs,
+  Result
 } from '../ResultRedux'
 import { ReadOnlyField } from '../../components/shared/ReadOnlyFields'
 import styles from './ResultDetail.css'
+import {
+  receiveList,
+  receiveItem,
+  Items
+} from '../../shared/metaReducers/items'
+import {
+  requestTable,
+  receiveTableItems,
+  Table
+} from '../../shared/metaReducers/table'
 
 const cssClasses = classnames.bind(styles)
 
@@ -129,6 +144,23 @@ const messages = defineMessages({
   nestedDataSubtitle: {
     id: 'pages.ResultDetail.nestedDataSubtitle',
     defaultMessage: '{count} fields'
+  },
+
+  logCreatedOn: {
+    id: 'pages.ResultDetail.logCreatedOn',
+    defaultMessage: 'Changed On'
+  },
+  logStatus: {
+    id: 'pages.ResultDetail.logStatus',
+    defaultMessage: 'Status'
+  },
+  logOperator: {
+    id: 'pages.ResultDetail.logOperator',
+    defaultMessage: 'Operator'
+  },
+  noWorkflowStatusLog: {
+    id: 'pages.ResultDetail.noWorkflowStatusLog',
+    defaultMessage: 'No logs available for Result Workflow Status'
   }
 })
 
@@ -147,7 +179,8 @@ export class ResultDetail extends PureComponent {
     updateSingleResult: PropTypes.func.isRequired,
     intl: PropTypes.object.isRequired,
     params: PropTypes.object.isRequired,
-    result: PropTypes.object,
+    result: PropTypes.objectOf(Result),
+    fetchWorkflowStatusLogs: PropTypes.func.isRequired
   }
 
   componentWillMount() {
@@ -236,6 +269,13 @@ export class ResultDetail extends PureComponent {
 
   handleFetchResult = () => {
     this.props.fetchSingleResult(this.props.params.resultId)
+
+    // refresh grid 'Result Workflow Status Logs'
+    this.handleFetchWorkflowStatusLogs()
+  }
+
+  handleFetchWorkflowStatusLogs = (...args) => {
+     this.props.fetchWorkflowStatusLogs(this.props.params.resultId, ...args)
   }
 
   hasResultWithAssay() {
@@ -461,6 +501,50 @@ export class ResultDetail extends PureComponent {
     )
   }
 
+  renderResultWorkflowLog() {
+    if (!this.hasResultWithAssay()) {
+      return false
+    }
+
+    const { workflowLog, intl } = this.props
+    const { formatMessage, formatDate } = intl
+    const columns = [
+      { db: 'createdOn', title: formatMessage(messages.logCreatedOn), format: data => formatDate(data) },
+      { db: 'statusName', title: formatMessage(messages.logStatus) },
+      { db: 'operator', title: formatMessage(messages.logOperator) },
+    ]
+    const items = workflowLog.items
+    const table = workflowLog.table
+
+    const title = `Result Workflow Status Log ${table.total > 0 ? '(' + table.total + ')' : ''}`
+
+    return (
+      <div>
+        <Card initiallyExpanded>
+          <CardHeader title={title} actAsExpander showExpandableButton />
+          <CardText expandable style={{ paddingTop: 0 }}>
+            {!table.loading && items.currentIdList.isEmpty()
+              ? (
+                <Paper style={{ textAlign: 'center', padding: 10 }}>
+                  <p>{intl.formatMessage(messages.noWorkflowStatusLog)}</p>
+                </Paper>
+              )
+              : (
+                <DataTable
+                  items={items}
+                  table={table}
+                  columns={columns}
+                  intl={intl}
+                  messages={messages}
+                  handleFetch={this.handleFetchWorkflowStatusLogs}
+                />
+              )}
+          </CardText>
+        </Card>
+      </div>
+    )
+  }
+
   renderPaper() {
     return (
       <div>
@@ -468,6 +552,10 @@ export class ResultDetail extends PureComponent {
           this.hasResultWithAssay() ?
           this.renderContent() :
           this.renderProgress()
+        }
+
+        {
+          this.renderResultWorkflowLog()
         }
       </div>
     )
@@ -488,9 +576,9 @@ export class ResultDetail extends PureComponent {
 
 function mapStateToProps(state, props) {
   const result = state.result.items.byId.get(props.params.resultId)
-
   return {
-    result
+    result,
+    workflowLog: state.result.workflowLog
   }
 }
 
@@ -498,7 +586,8 @@ function mapDispatchToProps(dispatch) {
   return bindActionCreators({
     fetchSingleResult,
     updateSingleResult,
-    updateResultWorkflowStatus
+    updateResultWorkflowStatus,
+    fetchWorkflowStatusLogs
   }, dispatch)
 }
 
