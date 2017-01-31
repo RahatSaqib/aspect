@@ -72,6 +72,10 @@ const messages = defineMessages({
     id: 'pages.DeviceDetail.fieldConfiguration',
     defaultMessage: 'Configuration'
   },
+  fieldOperationalData: {
+    id: 'pages.DeviceDetail.fieldOperationalData',
+    defaultMessage: 'Operational Data'
+  },
   fieldFirstApprovedOn: {
     id: 'pages.DeviceDetail.fieldFirstApprovedOn',
     defaultMessage: 'First Approved On'
@@ -338,7 +342,7 @@ export class DeviceDetail extends PureComponent {
                     </div>
                     <div className={styles.StatusText}>
                       {formatMessage(messages.fieldLastSeen)} {formatRelative(device.get('lastSeen'))}
-                      &nbsp;&nbsp;
+                      &nbsp;•&nbsp;
                       {formatMessage(messages.fieldFirstConnected)} {formatRelative(device.get('createdOn'))}
                     </div>
                     <div className={styles.StatusText}>
@@ -420,15 +424,6 @@ export class DeviceDetail extends PureComponent {
             Expires 12/31/2018
           </CardText>
         </Card>
-        { /* Configuration */ }
-        <JSONSchemaCard
-          title={formatMessage(messages.fieldConfiguration)}
-          initiallyExpanded
-          renderField={field => <ReadOnlyField {...field} />}
-          formatNestedSubtitle={this.handleFormatNestedSubtitle}
-          dataSchema={configurationDataSchema}
-          data={device.get('configurationData')}
-        />
         { /* Technical information */ }
         <Card initiallyExpanded>
           <CardHeader title="Technical information" actAsExpander showExpandableButton />
@@ -447,8 +442,17 @@ export class DeviceDetail extends PureComponent {
             </Unit>
           </CardText>
         </Card>
+        { /* Configuration */ }
         <JSONSchemaCard
-          title="Device Operation Data"
+          title={formatMessage(messages.fieldConfiguration)}
+          renderField={field => <ReadOnlyField {...field} />}
+          formatNestedSubtitle={this.handleFormatNestedSubtitle}
+          dataSchema={configurationDataSchema}
+          data={device.get('configurationData')}
+        />
+        { /* Operational Data */ }
+        <JSONSchemaCard
+          title={formatMessage(messages.fieldOperationalData)}
           renderField={field => <ReadOnlyField {...field} />}
           formatNestedSubtitle={this.handleFormatNestedSubtitle}
           dataSchema={deviceOperationsSchema}
