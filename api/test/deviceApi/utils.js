@@ -17,11 +17,16 @@ function* getApiKey(knex, deviceId) {
 }
 
 function* deleteTestDataFromCheckpoint(knex, checkpoint, deviceIds) {
-  const { id: minDeviceLogUpdateId } = yield knex('DeviceLogUpdate as dlu')
+  const minDeviceLogUpdate = yield knex('DeviceLogUpdate as dlu')
     .innerJoin('DeviceLog as dl', 'dl.id', 'dlu.deviceLogId')
     .where('dl.checkpoint', checkpoint)
     .orderBy('dlu.id', 'desc')
     .first('dlu.id as id')
+  if (!minDeviceLogUpdate) {
+    // if no updates, nothing to delete
+    return
+  }
+  const minDeviceLogUpdateId = minDeviceLogUpdate.id
 
   const deviceUpdates = yield knex('DeviceLogUpdate as dlu')
     .innerJoin('DeviceLog as dl', 'dl.id', 'dlu.deviceLogId')
@@ -122,7 +127,12 @@ class DeviceApiTestContext {
     return run(function* (knex) {
       // Authenticates device and user from auth setup
       const { server, auth } = self
-      const { user, type } = auth
+      const { user, type, status = 'approved' } = auth
+
+      const { id: deviceStatusId } = yield knex('DeviceStatus')
+        .where({ token: status })
+        .first('id')
+      assert.isOk(deviceStatusId)
 
       const clientToken = yield server.post('/api/auth')
         .send({ name: user, password: 'test07', clientName: 'Mocha/Chai' })
@@ -135,7 +145,12 @@ class DeviceApiTestContext {
         })
 
       const deviceId = yield server
-        .get(`/api/device?size=1${type ? `&type=${type}` : ''}`)
+        .get('/api/device')
+        .query({
+          size: 1,
+          type,
+          deviceStatusId
+        })
         .set('Authorization', `Bearer ${clientToken}`)
         .then((res) => {
           assert.equal(res.status, 200)
@@ -162,7 +177,7 @@ class DeviceApiTestContext {
         .set('Authorization', self.deviceAuth)
         .send({ checkpoint: self.checkpoint })
         .then((res) => {
-          assert.equal(res.status, 200)
+          assert.equal(res.status, status === 'approved' ? 200 : 401)
           assert.typeOf(res.body, 'Object')
         })
 

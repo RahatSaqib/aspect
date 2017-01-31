@@ -87,9 +87,11 @@ function* getDeviceApiContext(request) {
   const now = new Date()
   const devices = yield knex('DeviceApiKey as dak')
     .innerJoin('Device as d', 'dak.deviceId', 'd.id')
+    .innerJoin('DeviceStatus as ds', 'd.deviceStatusId', 'ds.id')
     .where({
       'dak.id': +auth.credentials.dak,
-      'dak.revoked': false
+      'dak.revoked': false,
+      'ds.token': 'approved'
     })
     .select('d.id')
 
