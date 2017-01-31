@@ -2,6 +2,7 @@
 import _ from 'lodash'
 import classnames from 'classnames/bind'
 import React, { PureComponent, PropTypes } from 'react'
+import { intlShape } from 'react-intl'
 
 // Material-UI
 import { Table, TableBody, TableHeader, TableHeaderColumn, TableRow, TableRowColumn as TableRowColumnWithBug, TableFooter } from 'material-ui/Table'
@@ -47,7 +48,7 @@ export default class DataTable extends PureComponent {
       total: PropTypes.number.isRequired
     }).isRequired,
     columns: PropTypes.array.isRequired,
-    intl: PropTypes.object,
+    intl: intlShape,
     messages: PropTypes.object
   }
 

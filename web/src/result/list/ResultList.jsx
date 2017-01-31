@@ -3,7 +3,8 @@ import _ from 'lodash'
 import React, { PureComponent, PropTypes } from 'react'
 import {
   injectIntl,
-  defineMessages
+  defineMessages,
+  intlShape
 } from 'react-intl'
 import { withRouter } from 'react-router'
 import { bindActionCreators } from 'redux'
@@ -62,7 +63,7 @@ export class ResultList extends PureComponent {
     setPageTitle: PropTypes.func.isRequired,
     table: PropTypes.object.isRequired,
     configureListFilter: PropTypes.func.isRequired,
-    intl: PropTypes.object.isRequired,
+    intl: intlShape.isRequired,
     listFilter: PropTypes.object.isRequired,
     fetchListFilteredResults: PropTypes.func.isRequired,
     router: PropTypes.object.isRequired,

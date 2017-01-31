@@ -3,7 +3,8 @@ import _ from 'lodash'
 import React, { PureComponent, PropTypes } from 'react'
 import {
   injectIntl,
-  defineMessages
+  defineMessages,
+  intlShape
 } from 'react-intl'
 import { bindActionCreators } from 'redux'
 import { connect } from 'react-redux'
@@ -32,7 +33,7 @@ export class PatientCare extends PureComponent {
         type: PropTypes.string
       })
     }).isRequired,
-    intl: PropTypes.object.isRequired,
+    intl: intlShape.isRequired,
     setPageTitle: PropTypes.func.isRequired,
     configureListFilter: PropTypes.func.isRequired
   }

@@ -2,7 +2,7 @@ import React, { PropTypes } from 'react'
 import { reduxForm } from 'redux-form/immutable'
 import RaisedButton from 'material-ui/RaisedButton'
 import _ from 'lodash'
-import { injectIntl } from 'react-intl'
+import { injectIntl, intlShape } from 'react-intl'
 import LocationSelector from '../../components/shared/LocationSelector'
 import TextInput from '../../components/shared/TextInput'
 import PhoneInput from '../../components/shared/PhoneInput'
@@ -80,7 +80,7 @@ ContactDetailsForm.propTypes = {
   })),
   showNotesField: PropTypes.bool,
   handleSubmit: PropTypes.func.isRequired,
-  intl: PropTypes.object,
+  intl: intlShape,
   pristine: PropTypes.bool.isRequired,
   invalid: PropTypes.bool.isRequired,
   initialValues: PropTypes.object.isRequired,

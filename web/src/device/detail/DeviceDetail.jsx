@@ -4,7 +4,8 @@ import Immutable from 'immutable'
 import React, { PureComponent, PropTypes } from 'react'
 import {
   injectIntl,
-  defineMessages
+  defineMessages,
+  intlShape
 } from 'react-intl'
 import { bindActionCreators } from 'redux'
 import { connect } from 'react-redux'
@@ -145,7 +146,7 @@ export class DeviceDetail extends PureComponent {
       notes: PropTypes.string,
       serial: PropTypes.string
     }),
-    intl: PropTypes.object.isRequired,
+    intl: intlShape.isRequired,
     editable: PropTypes.bool.isRequired,
     updateSingleDevice: PropTypes.func.isRequired
   }

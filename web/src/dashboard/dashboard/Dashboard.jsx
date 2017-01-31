@@ -4,7 +4,8 @@ import React, { PureComponent, PropTypes } from 'react'
 import { bindActionCreators } from 'redux'
 import {
   injectIntl,
-  defineMessages
+  defineMessages,
+  intlShape
 } from 'react-intl'
 import { connect } from 'react-redux'
 import Helmet from 'react-helmet'
@@ -43,7 +44,7 @@ export class Dashboard extends PureComponent {
     showAcknowledgement: PropTypes.func.isRequired,
     userName: PropTypes.string,
     location: PropTypes.object.isRequired,
-    intl: PropTypes.object.isRequired,
+    intl: intlShape.isRequired,
     fetchDashboardHome: PropTypes.func.isRequired,
     totals: PropTypes.object
   }
