@@ -494,6 +494,7 @@ export class DeviceDetail extends PureComponent {
       <div className={styles.ContentDetails}>
         <Helmet title={formatMessage(messages.title)} titleTemplate="%s - Aspect" defaultTitle="Aspect" />
         {this.renderPaper()}
+        <br />
         {this.renderDemoButton()}
       </div>
     )
