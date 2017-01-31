@@ -17,14 +17,12 @@ function* addDeviceData(context) {
   }
 
   if (result) {
-    for (const r of result) {
-      const resultResponse = yield* addResult(
-        context.withPayload(r))
+    const resultResponse = yield* addResult(
+      context.withPayload(result))
 
-      if (resultResponse instanceof Error) {
-        // TODO formalize error handling
-        return resultResponse
-      }
+    if (resultResponse instanceof Error) {
+      // TODO formalize error handling
+      return resultResponse
     }
   }
 

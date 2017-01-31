@@ -894,10 +894,7 @@ describe('Device Result API routes', () => {
           checkpoint: 'ck234',
           configuration: { data: { a: 'c' } },
           operation: { data: { a: 'd' } },
-          result: [
-            { data: { a: 'c' }, assay: { id: 'HivVl' } },
-            { data: { a: 'd' }, assay: { id: 'HivVl' } }
-          ]
+          result: { data: { a: 'd' }, assay: { id: 'HivVl' } }
         })
         .then((res) => {
           assert.equal(res.status, 200)
@@ -908,7 +905,7 @@ describe('Device Result API routes', () => {
       opIds.push(yield* getLastDeviceOperationId(knex, deviceId))
 
       const [{ count: logLength3 }] = yield knex('DeviceLogUpdate').count('id as count')
-      assert.equal(logLength3, initialLogLength + 4)  // previous + 2 results
+      assert.equal(logLength3, initialLogLength + 3)  // previous + 1 result
 
       const deviceLogConfig3 = yield* getDeviceConfigurationData(knex, deviceId)
       const deviceLogOp3 = yield knex('DeviceOperation')
@@ -921,12 +918,9 @@ describe('Device Result API routes', () => {
         deviceConfigurationUpdated: true,
         deviceOperationId: deviceLogOp3.id
       })
-      assert.equal(deviceLogUpdates3.length, 2)
+      assert.equal(deviceLogUpdates3.length, 1)
       assert.isOk(deviceLogUpdates3[0].deviceLogId)
-      assert.equal(deviceLogUpdates3[0].deviceLogId, deviceLogUpdates3[1].deviceLogId)
       assert.isOk(deviceLogUpdates3[0].resultId)
-      assert.isOk(deviceLogUpdates3[1].resultId)
-      assert.notEqual(deviceLogUpdates3[0].resultId, deviceLogUpdates3[1].resultId)
 
       yield server.get(devicePath)
         .set('Authorization', deviceAuth)
@@ -952,7 +946,7 @@ describe('Device Result API routes', () => {
           assert.equal(res.body.checkpoint, 'ck123')
 
           const results = res.body.result
-          assert.equal(results.length, 2)
+          assert.equal(results.length, 1)
         })
 
       yield server.get(`${devicePath}?checkpoint=ck000`)
@@ -963,7 +957,7 @@ describe('Device Result API routes', () => {
           assert.equal(res.body.checkpoint, 'ck000')
 
           const results = res.body.result
-          assert.equal(results.length, 3)
+          assert.equal(results.length, 2)
         })
     }))
 

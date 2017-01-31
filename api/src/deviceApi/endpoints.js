@@ -173,7 +173,7 @@ module.exports = [
           operation: Joi.object().keys(operationPayload).description(
             'Device Operation Data'),
           result: Joi.array().items(Joi.object().keys(resultPayload)).description(
-            'Device Result Data. Multiple results are allowed in a single request.'),
+            'Device Result Data..'),
           error: errorPayload
         }
       }
@@ -198,8 +198,8 @@ module.exports = [
             'Device Configuration Data'),
           operation: Joi.object().keys(operationPayload).description(
             'Device Operation Data'),
-          result: Joi.array().items(Joi.object().keys(resultPayload)).single(true).description(
-            'Device Result Data. Multiple results are allowed in a single request.')
+          result: Joi.object().keys(resultPayload).description(
+            'Device Result Data.')
         })
       },
       response: {
