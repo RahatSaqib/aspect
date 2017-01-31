@@ -177,7 +177,7 @@ class DeviceApiTestContext {
         .set('Authorization', self.deviceAuth)
         .send({ checkpoint: self.checkpoint })
         .then((res) => {
-          assert.equal(res.status, status === 'approved' ? 200 : 401)
+          assert.equal(res.status, 200)
           assert.typeOf(res.body, 'Object')
         })
 

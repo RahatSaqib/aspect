@@ -33,38 +33,37 @@ describe('Device API status tests', () => {
         })
 
       const configPre = yield* getDeviceConfigurationData(knex, deviceId)
-      const opPre = yield* getLastDeviceOperationData(knex, deviceId)
       yield server.post(devicePath)
         .set('Authorization', deviceAuth)
         .send({
-          configuration: { data: { shouldNotUpdateThisThing: 'b' } },
-          operation: { data: { shouldNotUpdateThisOtherThing: 'c' } }
+          configuration: { data: { shouldChangeThisThing: 'b' } },
+          operation: { data: { shouldChangeThisOtherThing: 'c' } }
         })
         .then((res) => {
-          assert.equal(res.status, 401)
+          assert.equal(res.status, 200)
         })
       const configPost1 = yield* getDeviceConfigurationData(knex, deviceId)
-      assert.deepEqual(configPre, configPost1)
+      assert.deepEqual(Object.assign({ shouldChangeThisThing: 'b' }, configPre), configPost1)
       const opPost1 = yield* getLastDeviceOperationData(knex, deviceId)
-      assert.deepEqual(opPre, opPost1)
+      assert.deepEqual({ shouldChangeThisOtherThing: 'c' }, opPost1)
 
       yield server.post(deviceConfigurationPath)
         .set('Authorization', deviceAuth)
-        .send({ data: { shouldNotUpdateThisThing: 'c' } })
+        .send({ data: { shouldChangeThisThing: 'c' } })
         .then((res) => {
-          assert.equal(res.status, 401)
+          assert.equal(res.status, 200)
         })
       const configPost2 = yield* getDeviceConfigurationData(knex, deviceId)
-      assert.deepEqual(configPre, configPost2)
+      assert.deepEqual(Object.assign({ shouldChangeThisThing: 'c' }, configPre), configPost2)
 
       yield server.post(deviceOperationPath)
         .set('Authorization', deviceAuth)
-        .send({ data: { shouldNotUpdateThisOtherThing: 'e' } })
+        .send({ data: { shouldChangeThisOtherThing: 'e' } })
         .then((res) => {
-          assert.equal(res.status, 401)
+          assert.equal(res.status, 200)
         })
       const opPost2 = yield* getLastDeviceOperationData(knex, deviceId)
-      assert.deepEqual(opPre, opPost2)
+      assert.deepEqual({ shouldChangeThisOtherThing: 'e' }, opPost2)
     }))
   })
 })
