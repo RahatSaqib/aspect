@@ -1,5 +1,5 @@
 const _ = require('lodash')
-const { addResult, listResults } = require('./result')
+const { addResult, getResult } = require('./result')
 
 function* addDeviceData(context) {
   const response = {}
@@ -30,6 +30,7 @@ function* addDeviceData(context) {
 }
 
 function* getDeviceData(context) {
+  const response = {}
   const { knex, device: { id: deviceId }, query } = context
 
   const deviceLogQ = knex('DeviceLog')
@@ -41,11 +42,15 @@ function* getDeviceData(context) {
   }
   const { checkpoint, id: deviceLogId } = (
     (yield deviceLogQ.first('checkpoint', 'id')) || {})
+  response.checkpoint = checkpoint
 
-  const result = yield* listResults(context, deviceLogId)
+  const result = yield* getResult(context, deviceLogId)
+  if (result != null) {
+    response.result = result
+  }
   // TODO include configuration and operation at checkpoint
 
-  return { checkpoint, result }
+  return response
 }
 
 function* updateDeviceConfiguration(context) {

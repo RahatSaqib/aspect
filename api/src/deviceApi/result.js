@@ -249,7 +249,7 @@ function* addResult(context) {
   return {}
 }
 
-function* listResults(context, deviceLogId) {
+function* getResult(context, deviceLogId) {
   const { knex, constraints: dataConstraints } = context
 
   const resultQuery = knex('Result as r')
@@ -263,23 +263,9 @@ function* listResults(context, deviceLogId) {
     .leftJoin('ResultType as rt', 'r.resultTypeId', 'rt.id')
     .leftJoin('ResultWorkflowStatus as rs', 'r.resultWorkflowStatusId', 'rs.id')
     .modify(addConstraints, dataConstraints, { device: 'd', sample: 's' })
-
-  if (deviceLogId > 0) {
-    resultQuery.whereIn('r.id',
-      knex('DeviceLogUpdate as dlu')
-        .where('dlu.id', '>', knex('DeviceLogUpdate as dluMin')
-          .where('dluMin.deviceLogId', deviceLogId)
-          .min('dluMin.id as minDeviceLogUpdateId'))
-        .where('dlu.deviceLogId', '<>', deviceLogId)
-        .distinct('dlu.resultId')
-        .orderBy('dlu.id'))
-  }
-  // TODO limit size of result list from Device API?
-
-  resultQuery
     .orderBy('r.updatedOn', 'asc')
     .orderBy('r.id', 'asc')
-    .select(
+    .first(
       'r.externalId as resultId', 'r.resultData', 'r.patientData',
       'r.startedOn', 'r.endedOn', 'r.updatedOn', 'r.researchId', 'r.notes',
       'r.senderVersion', 'r.senderOperator', 'r.errorCode', 'r.errorNotes',
@@ -293,8 +279,14 @@ function* listResults(context, deviceLogId) {
       'rc1.externalId as category1Id', 'rc2.externalId as category2Id'
     )
 
-  // return result when both queries are finished
-  return yield resultQuery.map(rowToResult)
+  if (deviceLogId > 0) {
+    resultQuery
+      .innerJoin('DeviceLog as dl', 'dl.resultId', 'r.id')
+      .where({ 'dl.id': deviceLogId })
+  }
+
+  const result = yield resultQuery
+  return result ? rowToResult(result) : null
 }
 
 function rowToResult(row) {
@@ -396,5 +388,5 @@ function rowToResult(row) {
 
 module.exports = {
   addResult,
-  listResults
+  getResult
 }
