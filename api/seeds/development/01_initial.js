@@ -19,6 +19,12 @@ const resultHcvNumber = 125
 const saltRounds = parseInt(config.passwordSaltRounds, 10)
 
 function* seed(knex) {
+  // Skip this seed file if we already have an admin user
+  const existingAdminUser = yield knex('User').where({ name: 'admin' }).first('id')
+  if (existingAdminUser) {
+    return
+  }
+
   // Create admin user and audit fields
   const now = new Date()
   const [adminId] = yield knex('User').insert({

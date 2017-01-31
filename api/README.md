@@ -239,7 +239,7 @@ Now you can run all seed files within that directory (alphabetical order).
 npm run knex seed:run
 ```
 
-Unlike migrations ALL seed files are run every time.  You should structure your seed files to take this into account.  The files are run in alphabetical order, so it is good practice to prefix your seed name with the order to run.
+Unlike migrations ALL seed files are run every time.  You should structure your seed files to take this into account.  The files are run in alphabetical order, so it is good practice to prefix your seed name with the order to run. If a seed file should only be executed once, check for existing data and return early before inserting new seed data.
 
 ##Stress test with siege
 Install siege: http://jason.pureconcepts.net/2011/09/installing-siege-mac-os-x-lion/
