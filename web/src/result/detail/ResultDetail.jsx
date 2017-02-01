@@ -27,20 +27,11 @@ import {
   updateResultWorkflowStatus,
 
   fetchWorkflowStatusLogs,
+  WorkflowLog,
   Result
 } from '../ResultRedux'
 import { ReadOnlyField } from '../../components/shared/ReadOnlyFields'
 import styles from './ResultDetail.css'
-import {
-  receiveList,
-  receiveItem,
-  Items
-} from '../../shared/metaReducers/items'
-import {
-  requestTable,
-  receiveTableItems,
-  Table
-} from '../../shared/metaReducers/table'
 
 const cssClasses = classnames.bind(styles)
 
@@ -160,7 +151,7 @@ const messages = defineMessages({
   },
   noWorkflowStatusLog: {
     id: 'pages.ResultDetail.noWorkflowStatusLog',
-    defaultMessage: 'No logs available for Result Workflow Status'
+    defaultMessage: 'No logs for this result.'
   }
 })
 
@@ -180,7 +171,8 @@ export class ResultDetail extends PureComponent {
     intl: PropTypes.object.isRequired,
     params: PropTypes.object.isRequired,
     result: PropTypes.objectOf(Result),
-    fetchWorkflowStatusLogs: PropTypes.func.isRequired
+    fetchWorkflowStatusLogs: PropTypes.func.isRequired,
+    workflowLog: PropTypes.objectOf(WorkflowLog),
   }
 
   componentWillMount() {
@@ -275,7 +267,7 @@ export class ResultDetail extends PureComponent {
   }
 
   handleFetchWorkflowStatusLogs = (...args) => {
-     this.props.fetchWorkflowStatusLogs(this.props.params.resultId, ...args)
+    this.props.fetchWorkflowStatusLogs(this.props.params.resultId, ...args)
   }
 
   hasResultWithAssay() {
@@ -516,11 +508,12 @@ export class ResultDetail extends PureComponent {
     const items = workflowLog.items
     const table = workflowLog.table
 
-    const title = `Result Workflow Status Log ${table.total > 0 ? '(' + table.total + ')' : ''}`
+    const totals = table.total > 0 ? `(${table.total})` : ''
+    const title = `Result Workflow Status Log ${totals}`
 
     return (
       <div>
-        <Card initiallyExpanded>
+        <Card>
           <CardHeader title={title} actAsExpander showExpandableButton />
           <CardText expandable style={{ paddingTop: 0 }}>
             {!table.loading && items.currentIdList.isEmpty()

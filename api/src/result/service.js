@@ -166,7 +166,7 @@ function* getResultByResultId(request, fields = SELECT_SHOW_FIELDS) {
     .modify(addConstraints, dataConstraints, { device: 'd' })
     .select(fields)
 
-  let data = null;
+  let data = null
 
   // translate result data back to an object and get assay details
   // if selecting the result was successful
@@ -179,7 +179,7 @@ function* getResultByResultId(request, fields = SELECT_SHOW_FIELDS) {
     data.assay.patientDataSchema = JSON.parse(data.assay.patientDataSchema)
   }
 
-  return { ok: results.length === 1, data: data }
+  return { ok: results.length === 1, data }
 }
 
 function* listResultTypes(request) {
@@ -271,23 +271,20 @@ function* listWorkflowStatusLog(request) {
 }
 
 function* getWorkflowStatusLogByResultId(request) {
-  const { query, params, auth } = request
+  const { query, params } = request
 
   const selectFields = [
     'log.id', 'log.operator', 'log.createdOn', 'log.createdBy',
     'rs.name as statusName', 'rs.i18nKey', 'rs.token'
   ]
   const sortableFields = [
-    'operator', 'createdOn',  'statusName'
+    'operator', 'createdOn', 'statusName'
   ]
 
   // now we know if the sort that was passed is valid:
   if (query.sortCol && !sortableFields.includes(query.sortCol)) {
     return Boom.badRequest()
   }
-
-  // get data constraints
-  const dataConstraints = yield getConstraints(auth.credentials)
 
   const resultQuery = knex('ResultWorkflowLog as log')
       .innerJoin('ResultWorkflowStatus as rs', 'log.resultWorkflowStatusId', 'rs.id')

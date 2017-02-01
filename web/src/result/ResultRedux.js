@@ -267,7 +267,8 @@ export function fetchWorkflowStatusLogs(resultId, sortCol = 'createdOn', sortDir
 /*
  * ---------------- Reducers -----------------
  */
-const WorkflowLog = Immutable.Record({
+// export to be able to PropTypes.objectOf(WorkflowLog), etc in ResultDetails.js
+export const WorkflowLog = Immutable.Record({
   items: new Items(),
   table: new Table({
     sortCol: 'createdOn',
@@ -277,7 +278,6 @@ const WorkflowLog = Immutable.Record({
   }),
 })
 
-// base record for initialState - export to be able to PropTypes.objectOf(Result) in ResultDetails.js
 export const Result = Immutable.Record({
   items: new Items(),
   table: new Table({
