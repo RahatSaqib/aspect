@@ -44,11 +44,18 @@ function* getDeviceData(context) {
     (yield deviceLogQ.first('checkpoint', 'id')) || {})
   response.checkpoint = checkpoint
 
+  // TODO include configuration and operation at checkpoint
+  // once we do this, we need to consider DeviceLogs without
+  // the result constraints and return the first entry (minimum log id)
+  // Two steps are required because results might be allowed from a
+  // different sample origin site (lab/clinic) but device configuration
+  // and operation updates are currently always constrained by device
+  // We also need to make sure to adjust the offset passed to the getResult
+  // query accordingly to skip device configuration and operation logs
   const result = yield* getResult(context, deviceLogId, +(query.offset || 0))
   if (result != null) {
     response.result = result
   }
-  // TODO include configuration and operation at checkpoint
 
   return response
 }

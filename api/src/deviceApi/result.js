@@ -277,28 +277,37 @@ function* getResult(context, deviceLogId, offset) {
       'rc1.externalId as category1Id', 'rc2.externalId as category2Id'
     )
 
-  let resultQueryOrder = 'asc'
-  if (deviceLogId > 0) {
+  if (!deviceLogId) {
+    // If device log id not specified, select result last updated
+    // with stable ordering
     resultQuery
-      .innerJoin('DeviceLog as dl', 'dl.resultId', 'r.id')
-    let deviceLogOp = '='
-    if (offset > 0) {
-      deviceLogOp = '>'
-    } else if (offset < 0) {
-      deviceLogOp = '<'
-      resultQueryOrder = 'desc'
-    }
-    resultQuery.where('dl.id', deviceLogOp, deviceLogId)
-    const resultQueryOffset = Math.abs(offset) - 1
-    if (resultQueryOffset > 0) {
-      resultQuery.offset(resultQueryOffset)
-    }
-    resultQuery
-      .orderBy('dl.id', resultQueryOrder)
+      .orderBy('r.updatedOn', 'asc')
+      .orderBy('r.id', 'asc')
   } else {
     resultQuery
-      .orderBy('r.updatedOn', resultQueryOrder)
-      .orderBy('r.id', resultQueryOrder)
+      .innerJoin('DeviceLog as dl', 'dl.resultId', 'r.id')
+    if (offset === 0) {
+      // select result at specified log entry
+      resultQuery.where('dl.id', '=', deviceLogId)
+    } else if (offset > 0) {
+      // select result after specified log entry
+      resultQuery
+        .where('dl.id', '>', deviceLogId)
+        .orderBy('dl.id', 'asc')
+      if (offset > 1) {
+        // specify query offset if immediately after
+        resultQuery.offset(offset - 1)
+      }
+    } else if (offset < 0) {
+      // select result before specified log entry
+      resultQuery
+        .where('dl.id', '<', deviceLogId)
+        .orderBy('dl.id', 'desc')
+      if (offset < -1) {
+        // specify query offset if immediately before
+        resultQuery.offset(-offset - 1)
+      }
+    }
   }
 
   const row = yield resultQuery
