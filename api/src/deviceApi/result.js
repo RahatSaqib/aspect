@@ -249,7 +249,7 @@ function* addResult(context) {
   return {}
 }
 
-function* getResult(context, deviceLogId) {
+function* getResult(context, deviceLogId, offset) {
   const { knex, constraints: dataConstraints } = context
 
   const resultQuery = knex('Result as r')
@@ -263,8 +263,6 @@ function* getResult(context, deviceLogId) {
     .leftJoin('ResultType as rt', 'r.resultTypeId', 'rt.id')
     .leftJoin('ResultWorkflowStatus as rs', 'r.resultWorkflowStatusId', 'rs.id')
     .modify(addConstraints, dataConstraints, { device: 'd', sample: 's' })
-    .orderBy('r.updatedOn', 'asc')
-    .orderBy('r.id', 'asc')
     .first(
       'r.externalId as resultId', 'r.resultData', 'r.patientData',
       'r.startedOn', 'r.endedOn', 'r.updatedOn', 'r.researchId', 'r.notes',
@@ -279,17 +277,35 @@ function* getResult(context, deviceLogId) {
       'rc1.externalId as category1Id', 'rc2.externalId as category2Id'
     )
 
+  let resultQueryOrder = 'asc'
   if (deviceLogId > 0) {
     resultQuery
       .innerJoin('DeviceLog as dl', 'dl.resultId', 'r.id')
-      .where({ 'dl.id': deviceLogId })
+    let deviceLogOp = '='
+    if (offset > 0) {
+      deviceLogOp = '>'
+    } else if (offset < 0) {
+      deviceLogOp = '<'
+      resultQueryOrder = 'desc'
+    }
+    resultQuery.where('dl.id', deviceLogOp, deviceLogId)
+    const resultQueryOffset = Math.abs(offset) - 1
+    if (resultQueryOffset > 0) {
+      resultQuery.offset(resultQueryOffset)
+    }
+    resultQuery
+      .orderBy('dl.id', resultQueryOrder)
+  } else {
+    resultQuery
+      .orderBy('r.updatedOn', resultQueryOrder)
+      .orderBy('r.id', resultQueryOrder)
   }
 
-  const result = yield resultQuery
-  return result ? rowToResult(result) : null
-}
+  const row = yield resultQuery
+  if (row == null) {
+    return null
+  }
 
-function rowToResult(row) {
   // TODO allow filtering on fields of interest, similar to client device API
   // but JSON paths from result data in same format as POST
   const result = {}

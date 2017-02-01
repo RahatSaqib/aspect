@@ -44,7 +44,7 @@ function* getDeviceData(context) {
     (yield deviceLogQ.first('checkpoint', 'id')) || {})
   response.checkpoint = checkpoint
 
-  const result = yield* getResult(context, deviceLogId)
+  const result = yield* getResult(context, deviceLogId, +(query.offset || 0))
   if (result != null) {
     response.result = result
   }

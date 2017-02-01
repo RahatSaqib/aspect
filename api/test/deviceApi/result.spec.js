@@ -1315,7 +1315,7 @@ describe('Device Result API routes', () => {
     })
   })
 
-  describe.skip('RRT Lab/Clinic Tests', () => {
+  describe('RRT Lab/Clinic Tests', () => {
     const context = createTestContext(server, { user: 'rrt_admin', type: 'm2000' })
 
     const runTest = context.runTest
@@ -1415,7 +1415,33 @@ describe('Device Result API routes', () => {
           })
         })
 
-      yield server.get(`${devicePath}?checkpoint=rrt1315_0`)
+      yield server.get(`${devicePath}?checkpoint=rrt_0&offset=1`)
+        .set('Authorization', deviceAuth)
+        .then((res) => {
+          assert.equal(res.status, 200)
+
+          const lastResult = res.body.result
+          assert.typeOf(lastResult, 'Object')
+          assert.property(lastResult.sample, 'id')
+          assert.property(lastResult.sample.originSite, 'id')
+          assert.equal(lastResult.sample.originSite.id, '1315')
+
+          assert.deepEqual(_.omit(lastResult, 'sample'), {
+            id: device1315ExternalId,
+            data: {
+              resultText: '454112',
+              copies: 454112
+            },
+            assay: { id: 'HivVl' },
+            category: [{ id: 'Success' }],
+            type: { id: 'Patient' },
+            workflow: { status: { id: 'OK' } },
+            notes: '454,112 Copies / mL'
+          })
+        })
+
+
+      yield server.get(`${devicePath}?checkpoint=rrt1315_0&offset=1`)
         .set('Authorization', device1315Auth)
         .then((res) => {
           assert.equal(res.status, 200)
@@ -1440,11 +1466,11 @@ describe('Device Result API routes', () => {
           })
         })
 
-      yield server.get(`${devicePath}?checkpoint=rrt1723_0`)
+      yield server.get(`${devicePath}?checkpoint=rrt1723_0&offset=1`)
         .set('Authorization', device1723Auth)
         .then((res) => {
           assert.equal(res.status, 200)
-          assert.typeOf(res.body.result, 'Object')
+          assert.typeOf(res.body.result, 'undefined')
         })
 
       yield server.post(devicePostResultPath)
@@ -1467,7 +1493,7 @@ describe('Device Result API routes', () => {
           assert.equal(res.status, 200)
         })
 
-      yield server.get(`${devicePath}?checkpoint=rrt_1`)
+      yield server.get(`${devicePath}?checkpoint=rrt_0&offset=2`)
         .set('Authorization', deviceAuth)
         .then((res) => {
           assert.equal(res.status, 200)
@@ -1492,7 +1518,83 @@ describe('Device Result API routes', () => {
           })
         })
 
-      yield server.get(`${devicePath}?checkpoint=rrt1723_0`)
+      yield server.get(`${devicePath}?checkpoint=rrt_1&offset=1`)
+        .set('Authorization', deviceAuth)
+        .then((res) => {
+          assert.equal(res.status, 200)
+
+          const lastResult = res.body.result
+          assert.typeOf(lastResult, 'Object')
+          assert.property(lastResult.sample, 'id')
+          assert.property(lastResult.sample.originSite, 'id')
+          assert.equal(lastResult.sample.originSite.id, '1723')
+
+          assert.deepEqual(_.omit(lastResult, 'sample'), {
+            id: device1723ExternalId,
+            data: {
+              resultText: '154112',
+              copies: 154112
+            },
+            assay: { id: 'HivVl' },
+            category: [{ id: 'Success' }],
+            type: { id: 'Patient' },
+            workflow: { status: { id: 'OK' } },
+            notes: '154,112 Copies / mL'
+          })
+        })
+
+      yield server.get(`${devicePath}?checkpoint=rrt_2`)
+        .set('Authorization', deviceAuth)
+        .then((res) => {
+          assert.equal(res.status, 200)
+
+          const lastResult = res.body.result
+          assert.typeOf(lastResult, 'Object')
+          assert.property(lastResult.sample, 'id')
+          assert.property(lastResult.sample.originSite, 'id')
+          assert.equal(lastResult.sample.originSite.id, '1723')
+
+          assert.deepEqual(_.omit(lastResult, 'sample'), {
+            id: device1723ExternalId,
+            data: {
+              resultText: '154112',
+              copies: 154112
+            },
+            assay: { id: 'HivVl' },
+            category: [{ id: 'Success' }],
+            type: { id: 'Patient' },
+            workflow: { status: { id: 'OK' } },
+            notes: '154,112 Copies / mL'
+          })
+        })
+
+      yield server.get(`${devicePath}?checkpoint=rrt_2&offset=-1`)
+        .set('Authorization', deviceAuth)
+        .then((res) => {
+          assert.equal(res.status, 200)
+
+          const lastResult = res.body.result
+          assert.typeOf(lastResult, 'Object')
+          assert.property(lastResult.sample, 'id')
+          assert.property(lastResult.sample.originSite, 'id')
+          assert.equal(lastResult.sample.originSite.id, '1315')
+
+          assert.deepEqual(_.omit(lastResult, 'sample'), {
+            id: device1315ExternalId,
+            data: {
+              resultText: '454112',
+              copies: 454112
+            },
+            assay: { id: 'HivVl' },
+            category: [{ id: 'Success' }],
+            type: { id: 'Patient' },
+            workflow: { status: { id: 'OK' } },
+            notes: '454,112 Copies / mL'
+          })
+        })
+
+
+      yield server.get(`${devicePath}?checkpoint=rrt1723_0&offset=1`)
         .set('Authorization', device1723Auth)
         .then((res) => {
           assert.equal(res.status, 200)
@@ -1517,11 +1619,43 @@ describe('Device Result API routes', () => {
           })
         })
 
-      yield server.get(`${devicePath}?checkpoint=rrt1315_0`)
+      yield server.get(`${devicePath}?checkpoint=rrt1723_0&offset=2`)
+        .set('Authorization', device1723Auth)
+        .then((res) => {
+          assert.equal(res.status, 200)
+          assert.typeOf(res.body.result, 'undefined')
+        })
+
+      yield server.get(`${devicePath}?checkpoint=rrt1315_0&offset=1`)
         .set('Authorization', device1315Auth)
         .then((res) => {
           assert.equal(res.status, 200)
-          assert.typeOf(res.body.result, 'Object')
+
+          const lastResult = res.body.result
+          assert.typeOf(lastResult, 'Object')
+          assert.property(lastResult.sample, 'id')
+          assert.property(lastResult.sample.originSite, 'id')
+          assert.equal(lastResult.sample.originSite.id, '1315')
+
+          assert.deepEqual(_.omit(lastResult, 'sample'), {
+            id: device1315ExternalId,
+            data: {
+              resultText: '454112',
+              copies: 454112
+            },
+            assay: { id: 'HivVl' },
+            category: [{ id: 'Success' }],
+            type: { id: 'Patient' },
+            workflow: { status: { id: 'OK' } },
+            notes: '454,112 Copies / mL'
+          })
+        })
+
+      yield server.get(`${devicePath}?checkpoint=rrt1315_0&offset=2`)
+        .set('Authorization', device1315Auth)
+        .then((res) => {
+          assert.equal(res.status, 200)
+          assert.typeOf(res.body.result, 'undefined')
         })
 
       yield server.post(devicePostResultPath)
@@ -1574,7 +1708,7 @@ describe('Device Result API routes', () => {
           })
         })
 
-      yield server.get(`${devicePath}?checkpoint=rrt1723_0`)
+      yield server.get(`${devicePath}?checkpoint=rrt1723_2`)
         .set('Authorization', device1723Auth)
         .then((res) => {
           assert.equal(res.status, 200)
@@ -1600,7 +1734,33 @@ describe('Device Result API routes', () => {
           })
         })
 
-      yield server.get(`${devicePath}?checkpoint=rrt1315_0`)
+      yield server.get(`${devicePath}?checkpoint=rrt1723_0&offset=1`)
+        .set('Authorization', device1723Auth)
+        .then((res) => {
+          assert.equal(res.status, 200)
+
+          const lastResult = res.body.result
+          assert.typeOf(lastResult, 'Object')
+          assert.equal(lastResult.id, device1723ExternalId)
+          assert.property(lastResult.sample, 'id')
+          assert.property(lastResult.sample.originSite, 'id')
+          assert.equal(lastResult.sample.originSite.id, '1723')
+
+          assert.deepEqual(_.omit(lastResult, 'sample'), {
+            id: device1723ExternalId,
+            data: {
+              resultText: '154112',
+              copies: 154112
+            },
+            assay: { id: 'HivVl' },
+            category: [{ id: 'Success' }],
+            type: { id: 'Patient' },
+            workflow: { status: { id: 'Acknowledged' } },
+            notes: '154,112 Copies / mL'
+          })
+        })
+
+      yield server.get(`${devicePath}?checkpoint=rrt1315_0&offset=1`)
         .set('Authorization', device1315Auth)
         .then((res) => {
           assert.equal(res.status, 200)
@@ -1608,6 +1768,226 @@ describe('Device Result API routes', () => {
           const lastResult = res.body.result
           assert.typeOf(lastResult, 'Object')
           assert.notEqual(lastResult.id, device1723ExternalId)
+        })
+
+      yield server.post(devicePostResultPath)
+        .set('Authorization', deviceAuth)
+        .send({
+          checkpoint: 'rrt_3',
+          data: {
+            resultText: '155115',
+            copies: 155115
+          },
+          sample: {
+            originSite: {
+              id: '1723'
+            }
+          },
+          notes: '155,115 Copies / mL'
+        })
+        .then((res) => {
+          assert.equal(res.status, 200)
+        })
+
+      yield server.get(`${devicePath}?checkpoint=rrt_0&offset=2`)
+        .set('Authorization', deviceAuth)
+        .then((res) => {
+          assert.equal(res.status, 200)
+
+          const lastResult = res.body.result
+          assert.typeOf(lastResult, 'Object')
+          assert.property(lastResult.sample, 'id')
+          assert.property(lastResult.sample.originSite, 'id')
+          assert.equal(lastResult.sample.originSite.id, '1723')
+
+          assert.deepEqual(_.omit(lastResult, 'sample'), {
+            id: device1723ExternalId,
+            data: {
+              resultText: '154112',
+              copies: 154112
+            },
+            assay: { id: 'HivVl' },
+            category: [{ id: 'Success' }],
+            type: { id: 'Patient' },
+            workflow: { status: { id: 'Acknowledged' } },
+            notes: '154,112 Copies / mL'
+          })
+        })
+
+      yield server.get(`${devicePath}?checkpoint=rrt_0&offset=3`)
+        .set('Authorization', deviceAuth)
+        .then((res) => {
+          assert.equal(res.status, 200)
+
+          const lastResult = res.body.result
+          assert.typeOf(lastResult, 'Object')
+          assert.property(lastResult.sample, 'id')
+          assert.property(lastResult.sample.originSite, 'id')
+          assert.equal(lastResult.sample.originSite.id, '1723')
+
+          assert.deepEqual(_.omit(lastResult, 'sample'), {
+            id: device1723ExternalId,
+            data: {
+              resultText: '154112',
+              copies: 154112
+            },
+            assay: { id: 'HivVl' },
+            category: [{ id: 'Success' }],
+            type: { id: 'Patient' },
+            workflow: { status: { id: 'Acknowledged' } },
+            notes: '154,112 Copies / mL'
+          })
+        })
+
+
+      yield server.get(`${devicePath}?checkpoint=rrt_0&offset=4`)
+        .set('Authorization', deviceAuth)
+        .then((res) => {
+          assert.equal(res.status, 200)
+
+          const lastResult = res.body.result
+          assert.typeOf(lastResult, 'Object')
+          assert.property(lastResult.sample, 'id')
+          assert.property(lastResult.sample.originSite, 'id')
+          assert.equal(lastResult.sample.originSite.id, '1723')
+
+          assert.deepEqual(_.omit(lastResult, 'sample'), {
+            data: {
+              resultText: '155115',
+              copies: 155115
+            },
+            assay: { id: 'HivVl' },
+            category: [{ id: 'Success' }],
+            type: { id: 'Patient' },
+            workflow: { status: { id: 'OK' } },
+            notes: '155,115 Copies / mL'
+          })
+        })
+
+
+      yield server.get(`${devicePath}?checkpoint=rrt_1&offset=1`)
+        .set('Authorization', deviceAuth)
+        .then((res) => {
+          assert.equal(res.status, 200)
+
+          const lastResult = res.body.result
+          assert.typeOf(lastResult, 'Object')
+          assert.property(lastResult.sample, 'id')
+          assert.property(lastResult.sample.originSite, 'id')
+          assert.equal(lastResult.sample.originSite.id, '1723')
+
+          assert.deepEqual(_.omit(lastResult, 'sample'), {
+            id: device1723ExternalId,
+            data: {
+              resultText: '154112',
+              copies: 154112
+            },
+            assay: { id: 'HivVl' },
+            category: [{ id: 'Success' }],
+            type: { id: 'Patient' },
+            workflow: { status: { id: 'Acknowledged' } },
+            notes: '154,112 Copies / mL'
+          })
+        })
+
+      yield server.get(`${devicePath}?checkpoint=rrt_2`)
+        .set('Authorization', deviceAuth)
+        .then((res) => {
+          assert.equal(res.status, 200)
+
+          const lastResult = res.body.result
+          assert.typeOf(lastResult, 'Object')
+          assert.property(lastResult.sample, 'id')
+          assert.property(lastResult.sample.originSite, 'id')
+          assert.equal(lastResult.sample.originSite.id, '1723')
+
+          assert.deepEqual(_.omit(lastResult, 'sample'), {
+            id: device1723ExternalId,
+            data: {
+              resultText: '154112',
+              copies: 154112
+            },
+            assay: { id: 'HivVl' },
+            category: [{ id: 'Success' }],
+            type: { id: 'Patient' },
+            workflow: { status: { id: 'Acknowledged' } },
+            notes: '154,112 Copies / mL'
+          })
+        })
+
+      yield server.get(`${devicePath}?checkpoint=rrt_2&offset=-1`)
+        .set('Authorization', deviceAuth)
+        .then((res) => {
+          assert.equal(res.status, 200)
+
+          const lastResult = res.body.result
+          assert.typeOf(lastResult, 'Object')
+          assert.property(lastResult.sample, 'id')
+          assert.property(lastResult.sample.originSite, 'id')
+          assert.equal(lastResult.sample.originSite.id, '1315')
+
+          assert.deepEqual(_.omit(lastResult, 'sample'), {
+            id: device1315ExternalId,
+            data: {
+              resultText: '454112',
+              copies: 454112
+            },
+            assay: { id: 'HivVl' },
+            category: [{ id: 'Success' }],
+            type: { id: 'Patient' },
+            workflow: { status: { id: 'OK' } },
+            notes: '454,112 Copies / mL'
+          })
+        })
+
+      yield server.get(`${devicePath}?checkpoint=rrt_3&offset=-2`)
+        .set('Authorization', deviceAuth)
+        .then((res) => {
+          assert.equal(res.status, 200)
+
+          const lastResult = res.body.result
+          assert.typeOf(lastResult, 'Object')
+          assert.property(lastResult.sample, 'id')
+          assert.property(lastResult.sample.originSite, 'id')
+          assert.equal(lastResult.sample.originSite.id, '1723')
+
+          assert.deepEqual(_.omit(lastResult, 'sample'), {
+            id: device1723ExternalId,
+            data: {
+              resultText: '154112',
+              copies: 154112
+            },
+            assay: { id: 'HivVl' },
+            category: [{ id: 'Success' }],
+            type: { id: 'Patient' },
+            workflow: { status: { id: 'Acknowledged' } },
+            notes: '154,112 Copies / mL'
+          })
+        })
+
+      yield server.get(`${devicePath}?checkpoint=rrt_3&offset=-3`)
+        .set('Authorization', deviceAuth)
+        .then((res) => {
+          assert.equal(res.status, 200)
+
+          const lastResult = res.body.result
+          assert.typeOf(lastResult, 'Object')
+          assert.property(lastResult.sample, 'id')
+          assert.property(lastResult.sample.originSite, 'id')
+          assert.equal(lastResult.sample.originSite.id, '1315')
+
+          assert.deepEqual(_.omit(lastResult, 'sample'), {
+            id: device1315ExternalId,
+            data: {
+              resultText: '454112',
+              copies: 454112
+            },
+            assay: { id: 'HivVl' },
+            category: [{ id: 'Success' }],
+            type: { id: 'Patient' },
+            workflow: { status: { id: 'OK' } },
+            notes: '454,112 Copies / mL'
+          })
         })
     }))
   })

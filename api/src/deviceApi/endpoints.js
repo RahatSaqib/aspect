@@ -158,7 +158,13 @@ module.exports = [
         query: {
           checkpoint: Joi.string().description(
             'The client checkpoint.  If the checkpoint is specified as a query parameter, it will be'
-            + ' used.  Otherwise will return the latest checkpoint uploaded from the authenticated device.')
+            + ' used.  Otherwise will return the latest checkpoint uploaded from the authenticated device.'),
+          offset: Joi.string().description(
+            'The result offset from the  client checkpoint, default 0. If offset is 0, device data'
+            + ' uploaded with the specified checkpoint will be retreived. A positive offset will retreive'
+            + ' the data uploaded after the checkpoint, e.g. to download data updated after the last'
+            + ' Device Checkin from an outside source. A negative offset will retreive data uploaded'
+            + ' before the checkpoint, e.g. to download historical data')
         }
       },
       response: {
