@@ -1344,19 +1344,6 @@ function* seed(knex) {
   })
   yield knex('DeviceSim').insert(sims)
 
-  const configurationData = {
-    field1: 'xx',
-    field2: 'yyyy',
-    field3: 'zzzzz',
-    field4: 'aaaaaa',
-    nestedFields: {
-      nestedA: '111111',
-      nestedB: '2222',
-      nestedC: '333',
-      nestedD: '44',
-    }
-  }
-
   // insert GeneXpert devices
   const devicesGeneXpert = []
   for (let i = 0; i < deviceNumber; i++) {
@@ -1367,7 +1354,17 @@ function* seed(knex) {
       shortname: `GeneXpert #${i}`,
       deviceTypeId: deviceTypeGeneXpertId,
       deviceStatusId: _.random(1) > 0 ? deviceStatusApproved : deviceStatusUnapproved,
-      configurationData: JSON.stringify(configurationData),
+      configurationData: JSON.stringify({
+        requirePrinter: _.random(1) > 0 ? 'yes' : 'no',
+        adminPassword: 'pwd123',
+        firmwareUpdateRequired: _.random(1) > 0 ? 'yes' : 'no',
+        modules: {
+          module1: _.times(8, () => _.random(0, 9)).join(''),
+          module2: _.times(8, () => _.random(0, 9)).join(''),
+          module3: _.times(8, () => _.random(0, 9)).join(''),
+          module4: _.times(8, () => _.random(0, 9)).join(''),
+        }
+      }),
       siteId: siteData.id,
       // not all sites will have a router - we only added routers to some site
       deviceId: routerId || null,
@@ -1415,7 +1412,11 @@ function* seed(knex) {
       shortname: `Daktari #${i}`,
       deviceTypeId: deviceTypeDaktariId,
       deviceStatusId: deviceStatusApproved,
-      configurationData: JSON.stringify(configurationData),
+      configurationData: JSON.stringify({
+        requirePrinter: _.random(1) > 0 ? 'yes' : 'no',
+        adminPassword: 'pwd123',
+        firmwareUpdateRequired: _.random(1) > 0 ? 'yes' : 'no'
+      }),
       siteId: siteData.id,
       // not all sites will have a router - we only added routers to some site
       deviceId: routerId || null,
