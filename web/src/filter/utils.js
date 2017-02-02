@@ -29,6 +29,10 @@ const messages = defineMessages({
     id: 'shared.FormatFilters.consumables',
     defaultMessage: 'consumables'
   },
+  patientOrResearchId: {
+    id: 'shared.FormatFilters.patientOrResearchId',
+    defaultMessage: 'patient/study ID'
+  },
   sampleOriginSiteId: {
     id: 'shared.FormatFilters.sampleOriginSiteId',
     defaultMessage: 'sample origin site'
@@ -99,6 +103,10 @@ export function getFilterMessage(
   const name = `${filter.contactNameOrEmail || ''}${filter.deviceName || ''}${filter.siteName || ''}`
   const nameString = name ? `${SPACE}${formatMessage(messages.whoseNameIncludes)}${SPACE}"${name}"` : ''
 
+  // patient id
+  const patientOrResearchId = filter.patientOrResearchId
+  const patientOrResearchIdString = patientOrResearchId ? `${formatMessage(messages.patientOrResearchId)}${SPACE}(${patientOrResearchId}),${SPACE}` : ''
+
   // sample origin site id
   const sampleOriginSite = filter.sampleOriginSiteId ? siteItemsById.valueSeq().find(s => s.get('id') === filter.sampleOriginSiteId) : null
   const sampleOriignSiteIdString = sampleOriginSite ? `${formatMessage(messages.sampleOriginSiteId)}${SPACE}(${sampleOriginSite.get('name')}),${SPACE}` : ''
@@ -151,6 +159,7 @@ export function getFilterMessage(
   const message = `${template
                         .replace('<GEOGRAPHY>', geography)
                         .replace('<NAME>', nameString)
+                        .replace('<PATIENT_OR_RESEARCH_ID>', patientOrResearchIdString)
                         .replace('<SAMPLE_ORIGIN_SITE_ID>', sampleOriignSiteIdString)
                         .replace('<SAMPLE_ID>', sampleIdString)
                         .replace('<ASSAY>', assayString)
