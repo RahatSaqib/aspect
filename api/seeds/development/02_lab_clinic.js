@@ -42,23 +42,19 @@ function* seed(knex) {
 
   // define configurationData object
   const rrtConfigurationDataSchema = JSON.stringify({
-    rrtField1: {
-      title: 'RRT Field 1',
+    requirePrinter: {
+      title: 'Require printer',
       type: 'string'
     },
-    rrtField2: {
-      title: 'RRT Field 2',
+    adminPassword: {
+      title: 'Admin password',
       type: 'string'
     },
-    rrtField3: {
-      title: 'RRT Field 3',
+    firmwareUpdateRequired: {
+      title: 'Firmware update required',
       type: 'string'
     },
-    rrtField4: {
-      title: 'RRT Field 4',
-      type: 'string'
-    },
-    nestedFields: {
+    userPins: {
       title: 'Pins',
       type: 'object',
       i18nKey: 'User Pins',
