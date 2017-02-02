@@ -1,4 +1,5 @@
 const _ = require('lodash')
+const Boom = require('boom')
 const { addResult, getResultAndDeviceLog } = require('./result')
 
 function* addDeviceData(context) {
@@ -65,6 +66,9 @@ function* getDeviceData(context) {
   } else if (deviceLogId != null && offset === 0) {
     // set checkpoint if one found even if we couldn't find result
     response.checkpoint = checkpoint
+  } else {
+    // cannot find specified checkpoint with offset
+    return Boom.notFound()
   }
 
   return response

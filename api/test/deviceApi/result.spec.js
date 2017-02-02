@@ -1474,10 +1474,8 @@ describe('Device Result API routes', () => {
       yield server.get(`${devicePath}?checkpoint=rrt1723_0&offset=1`)
         .set('Authorization', device1723Auth)
         .then((res) => {
-          assert.equal(res.status, 200)
           // no checkpoint at this offset
-          assert.typeOf(res.body.checkpoint, 'undefined')
-          assert.typeOf(res.body.result, 'undefined')
+          assert.equal(res.status, 404)
         })
 
       yield server.post(devicePostResultPath)
@@ -1634,9 +1632,7 @@ describe('Device Result API routes', () => {
       yield server.get(`${devicePath}?checkpoint=rrt1723_0&offset=2`)
         .set('Authorization', device1723Auth)
         .then((res) => {
-          assert.equal(res.status, 200)
-          assert.typeOf(res.body.checkpoint, 'undefined')
-          assert.typeOf(res.body.result, 'undefined')
+          assert.equal(res.status, 404)
         })
 
       yield server.get(`${devicePath}?checkpoint=rrt1315_0&offset=1`)
@@ -1668,9 +1664,7 @@ describe('Device Result API routes', () => {
       yield server.get(`${devicePath}?checkpoint=rrt1315_0&offset=2`)
         .set('Authorization', device1315Auth)
         .then((res) => {
-          assert.equal(res.status, 200)
-          assert.typeOf(res.body.result, 'undefined')
-          assert.typeOf(res.body.checkpoint, 'undefined')
+          assert.equal(res.status, 404)
         })
 
       yield server.post(devicePostResultPath)
