@@ -109,6 +109,12 @@ function* listResults(request) {
       sampleOriginSiteId: 'sp.originSiteId',
       workflowStatusId: 'r.resultWorkflowStatusId'
     })
+    .modify((queryBuilder, params) => {
+      if (params.patientOrResearchId) {
+        queryBuilder.whereRaw('JSON_EXTRACT(r.patientData, "$.id") like ?', [`%${params.patientOrResearchId}%`])
+          .orWhere('r.researchId', 'like', `%${params.patientOrResearchId}%`)
+      }
+    }, query)
     .modify(addConstraints, dataConstraints, { device: 'd', sample: 's' })
 
   // get total count for paging
