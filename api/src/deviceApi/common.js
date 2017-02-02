@@ -3,9 +3,9 @@ const { knex, transact } = require('../db')
 const { getDeviceConstraints } = require('../auth/constraints')
 const { asyncHandler } = require('../routes')
 
-function deviceApiHandler(handler, { updatePing, updateDeviceLog }) {
+function deviceApiHandler(handler, { updatePing, updateDeviceLog, requiredStatus = null }) {
   return asyncHandler(function* (request) {
-    const context = yield* getDeviceApiContext(request)
+    const context = yield* getDeviceApiContext(request, requiredStatus)
     if (context.error) {
       // unauthorized, record nothing
       return context.error
@@ -82,17 +82,23 @@ function deviceApiHandler(handler, { updatePing, updateDeviceLog }) {
   })
 }
 
-function* getDeviceApiContext(request) {
+function* getDeviceApiContext(request, requiredStatus) {
   const { auth } = request
   const now = new Date()
-  const devices = yield knex('DeviceApiKey as dak')
+  const devicesQ = knex('DeviceApiKey as dak')
     .innerJoin('Device as d', 'dak.deviceId', 'd.id')
     .where({
       'dak.id': +auth.credentials.dak,
       'dak.revoked': false
     })
-    .select('d.id')
 
+  if (requiredStatus != null) {
+    devicesQ
+      .innerJoin('DeviceStatus as ds', 'd.deviceStatusId', 'ds.id')
+      .where({ 'ds.token': requiredStatus })
+  }
+
+  const devices = yield devicesQ.select('d.id')
   if (devices.length !== 1) {
     return { error: Boom.unauthorized() }
   }
