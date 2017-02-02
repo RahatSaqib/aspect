@@ -249,7 +249,7 @@ function* addResult(context) {
   return {}
 }
 
-function* getResult(context, deviceLogId, offset) {
+function* getResultAndDeviceLog(context, deviceLogId, offset) {
   const { knex, constraints: dataConstraints } = context
 
   const resultQuery = knex('Result as r')
@@ -263,19 +263,18 @@ function* getResult(context, deviceLogId, offset) {
     .leftJoin('ResultType as rt', 'r.resultTypeId', 'rt.id')
     .leftJoin('ResultWorkflowStatus as rs', 'r.resultWorkflowStatusId', 'rs.id')
     .modify(addConstraints, dataConstraints, { device: 'd', sample: 's' })
-    .first(
-      'r.externalId as resultId', 'r.resultData', 'r.patientData',
-      'r.startedOn', 'r.endedOn', 'r.updatedOn', 'r.researchId', 'r.notes',
-      'r.senderVersion', 'r.senderOperator', 'r.errorCode', 'r.errorNotes',
-      'r.consumableSerial', 'r.consumableExpirationDate', 'r.consumableLot',
-      'r.instrumentSerial', 'r.moduleName', 'r.moduleSerial',
-      'a.externalId as assayId', 'r.assayVersion',
-      'r.latitude', 'r.longitude', 'rt.externalId as resultTypeId',
-      'rs.externalId as resultWorkflowStatusId',
-      's.externalId as sampleId', 's.collectedOn as sampleCollectedOn',
-      'sos.externalId as sampleOriginSiteId', 'st.externalId as sampleTypeId',
-      'rc1.externalId as category1Id', 'rc2.externalId as category2Id'
-    )
+  const resultQueryCols = [
+    'r.externalId as resultId', 'r.resultData', 'r.patientData',
+    'r.startedOn', 'r.endedOn', 'r.updatedOn', 'r.researchId', 'r.notes',
+    'r.senderVersion', 'r.senderOperator', 'r.errorCode', 'r.errorNotes',
+    'r.consumableSerial', 'r.consumableExpirationDate', 'r.consumableLot',
+    'r.instrumentSerial', 'r.moduleName', 'r.moduleSerial',
+    'a.externalId as assayId', 'r.assayVersion',
+    'r.latitude', 'r.longitude', 'rt.externalId as resultTypeId',
+    'rs.externalId as resultWorkflowStatusId',
+    's.externalId as sampleId', 's.collectedOn as sampleCollectedOn',
+    'sos.externalId as sampleOriginSiteId', 'st.externalId as sampleTypeId',
+    'rc1.externalId as category1Id', 'rc2.externalId as category2Id']
 
   if (!deviceLogId) {
     // If device log id not specified, select result last updated
@@ -284,6 +283,9 @@ function* getResult(context, deviceLogId, offset) {
       .orderBy('r.updatedOn', 'asc')
       .orderBy('r.id', 'asc')
   } else {
+    resultQueryCols.push(
+      'dl.id as deviceLogId', 'dl.deviceId as deviceLogDeviceId',
+      'dl.checkpoint as deviceLogCheckpoint')
     resultQuery
       .innerJoin('DeviceLog as dl', 'dl.resultId', 'r.id')
     if (offset === 0) {
@@ -310,9 +312,16 @@ function* getResult(context, deviceLogId, offset) {
     }
   }
 
-  const row = yield resultQuery
+  const row = yield resultQuery.first(resultQueryCols)
   if (row == null) {
-    return null
+    return { result: null, deviceLog: null }
+  }
+
+  const deviceLog = {}
+  if (row.deviceLogId != null) {
+    deviceLog.id = row.deviceLogId
+    deviceLog.deviceId = row.deviceLogDeviceId
+    deviceLog.checkpoint = row.deviceLogCheckpoint
   }
 
   // TODO allow filtering on fields of interest, similar to client device API
@@ -407,11 +416,12 @@ function* getResult(context, deviceLogId, offset) {
   if (error.code != null || error.notes != null) {
     result.error = error
   }
-  return result
+
+  return { result, deviceLog }
 }
 
 
 module.exports = {
   addResult,
-  getResult
+  getResultAndDeviceLog
 }

@@ -1387,6 +1387,7 @@ describe('Device Result API routes', () => {
         .set('Authorization', deviceAuth)
         .then((res) => {
           assert.equal(res.status, 200)
+          assert.equal(res.body.checkpoint, 'rrt_0')
           assert.typeOf(res.body.result, 'undefined')
         })
 
@@ -1394,6 +1395,7 @@ describe('Device Result API routes', () => {
         .set('Authorization', deviceAuth)
         .then((res) => {
           assert.equal(res.status, 200)
+          assert.equal(res.body.checkpoint, 'rrt_1')
 
           const lastResult = res.body.result
           assert.typeOf(lastResult, 'Object')
@@ -1419,6 +1421,7 @@ describe('Device Result API routes', () => {
         .set('Authorization', deviceAuth)
         .then((res) => {
           assert.equal(res.status, 200)
+          assert.equal(res.body.checkpoint, 'rrt_1')
 
           const lastResult = res.body.result
           assert.typeOf(lastResult, 'Object')
@@ -1445,6 +1448,8 @@ describe('Device Result API routes', () => {
         .set('Authorization', device1315Auth)
         .then((res) => {
           assert.equal(res.status, 200)
+          // no checkpoint for this Device (even though there is for the Lab)
+          assert.typeOf(res.body.checkpoint, 'undefined')
 
           const lastResult = res.body.result
           assert.typeOf(lastResult, 'Object')
@@ -1470,6 +1475,8 @@ describe('Device Result API routes', () => {
         .set('Authorization', device1723Auth)
         .then((res) => {
           assert.equal(res.status, 200)
+          // no checkpoint at this offset
+          assert.typeOf(res.body.checkpoint, 'undefined')
           assert.typeOf(res.body.result, 'undefined')
         })
 
@@ -1497,6 +1504,7 @@ describe('Device Result API routes', () => {
         .set('Authorization', deviceAuth)
         .then((res) => {
           assert.equal(res.status, 200)
+          assert.equal(res.body.checkpoint, 'rrt_2')
 
           const lastResult = res.body.result
           assert.typeOf(lastResult, 'Object')
@@ -1522,6 +1530,7 @@ describe('Device Result API routes', () => {
         .set('Authorization', deviceAuth)
         .then((res) => {
           assert.equal(res.status, 200)
+          assert.equal(res.body.checkpoint, 'rrt_2')
 
           const lastResult = res.body.result
           assert.typeOf(lastResult, 'Object')
@@ -1547,6 +1556,7 @@ describe('Device Result API routes', () => {
         .set('Authorization', deviceAuth)
         .then((res) => {
           assert.equal(res.status, 200)
+          assert.equal(res.body.checkpoint, 'rrt_2')
 
           const lastResult = res.body.result
           assert.typeOf(lastResult, 'Object')
@@ -1572,6 +1582,7 @@ describe('Device Result API routes', () => {
         .set('Authorization', deviceAuth)
         .then((res) => {
           assert.equal(res.status, 200)
+          assert.equal(res.body.checkpoint, 'rrt_1')
 
           const lastResult = res.body.result
           assert.typeOf(lastResult, 'Object')
@@ -1598,6 +1609,7 @@ describe('Device Result API routes', () => {
         .set('Authorization', device1723Auth)
         .then((res) => {
           assert.equal(res.status, 200)
+          assert.typeOf(res.body.checkpoint, 'undefined')
 
           const lastResult = res.body.result
           assert.typeOf(lastResult, 'Object')
@@ -1623,6 +1635,7 @@ describe('Device Result API routes', () => {
         .set('Authorization', device1723Auth)
         .then((res) => {
           assert.equal(res.status, 200)
+          assert.typeOf(res.body.checkpoint, 'undefined')
           assert.typeOf(res.body.result, 'undefined')
         })
 
@@ -1630,6 +1643,7 @@ describe('Device Result API routes', () => {
         .set('Authorization', device1315Auth)
         .then((res) => {
           assert.equal(res.status, 200)
+          assert.typeOf(res.body.checkpoint, 'undefined')
 
           const lastResult = res.body.result
           assert.typeOf(lastResult, 'Object')
@@ -1656,6 +1670,7 @@ describe('Device Result API routes', () => {
         .then((res) => {
           assert.equal(res.status, 200)
           assert.typeOf(res.body.result, 'undefined')
+          assert.typeOf(res.body.checkpoint, 'undefined')
         })
 
       yield server.post(devicePostResultPath)
@@ -1686,6 +1701,7 @@ describe('Device Result API routes', () => {
         .set('Authorization', deviceAuth)
         .then((res) => {
           assert.equal(res.status, 200)
+          assert.equal(res.body.checkpoint, 'rrt_2')
 
           const lastResult = res.body.result
           assert.typeOf(lastResult, 'Object')

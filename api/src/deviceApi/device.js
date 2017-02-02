@@ -1,5 +1,5 @@
 const _ = require('lodash')
-const { addResult, getResult } = require('./result')
+const { addResult, getResultAndDeviceLog } = require('./result')
 
 function* addDeviceData(context) {
   const response = {}
@@ -42,7 +42,7 @@ function* getDeviceData(context) {
   }
   const { checkpoint, id: deviceLogId } = (
     (yield deviceLogQ.first('checkpoint', 'id')) || {})
-  response.checkpoint = checkpoint
+  const offset = +(query.offset || 0)
 
   // TODO include configuration and operation at checkpoint
   // once we do this, we need to consider DeviceLogs without
@@ -52,9 +52,19 @@ function* getDeviceData(context) {
   // and operation updates are currently always constrained by device
   // We also need to make sure to adjust the offset passed to the getResult
   // query accordingly to skip device configuration and operation logs
-  const result = yield* getResult(context, deviceLogId, +(query.offset || 0))
+  const { result, deviceLog: resultDeviceLog } = yield* getResultAndDeviceLog(
+    context, deviceLogId, offset)
   if (result != null) {
     response.result = result
+
+    // set actual checkpoint if log changed during query, e.g, due to offset
+    // but do not leak checkpoint from different device
+    if (resultDeviceLog.deviceId === deviceId) {
+      response.checkpoint = resultDeviceLog.checkpoint
+    }
+  } else if (deviceLogId != null && offset === 0) {
+    // set checkpoint if one found even if we couldn't find result
+    response.checkpoint = checkpoint
   }
 
   return response
