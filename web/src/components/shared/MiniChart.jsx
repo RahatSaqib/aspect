@@ -2,7 +2,8 @@
 import React, { PropTypes } from 'react'
 import { compose, setPropTypes, pure } from 'recompose'
 import {
-  injectIntl
+  injectIntl,
+  intlShape
 } from 'react-intl'
 import { Sparklines, SparklinesLine, SparklinesSpots } from 'react-sparklines'
 import Paper from 'material-ui/Paper'
@@ -19,7 +20,7 @@ const enhance = compose(
   pure,
   injectIntl,
   setPropTypes({
-    intl: PropTypes.object.isRequired
+    intl: intlShape.isRequired,
   })
 )
 

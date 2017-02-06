@@ -26,6 +26,7 @@
 }
 
 .DemoLink {
+  padding: 0 16px;
   text-decoration: none;
   color: #ccc;
 }

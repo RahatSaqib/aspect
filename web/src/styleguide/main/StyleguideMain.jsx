@@ -1,9 +1,10 @@
 // Imports from packages
 import _ from 'lodash'
-import React, { PureComponent, PropTypes } from 'react'
+import React, { PureComponent } from 'react'
 import {
   injectIntl,
-  defineMessages
+  defineMessages,
+  intlShape
 } from 'react-intl'
 import { withRouter } from 'react-router'
 import { bindActionCreators } from 'redux'
@@ -26,7 +27,7 @@ const messages = defineMessages({
 
 export class StyleguideMain extends PureComponent {
   static propTypes = {
-    intl: PropTypes.any
+    intl: intlShape
   }
 
   state = {

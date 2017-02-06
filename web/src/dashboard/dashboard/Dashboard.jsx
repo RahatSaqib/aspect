@@ -4,7 +4,8 @@ import React, { PureComponent, PropTypes } from 'react'
 import { bindActionCreators } from 'redux'
 import {
   injectIntl,
-  defineMessages
+  defineMessages,
+  intlShape
 } from 'react-intl'
 import { connect } from 'react-redux'
 import Helmet from 'react-helmet'
@@ -43,7 +44,7 @@ export class Dashboard extends PureComponent {
     showAcknowledgement: PropTypes.func.isRequired,
     userName: PropTypes.string,
     location: PropTypes.object.isRequired,
-    intl: PropTypes.object.isRequired,
+    intl: intlShape.isRequired,
     fetchDashboardHome: PropTypes.func.isRequired,
     totals: PropTypes.object
   }
@@ -92,9 +93,11 @@ export class Dashboard extends PureComponent {
             </section>
             <section className={styles.Section}>
               <header className={styles.Section__Header}>
+                {totals && totals.get !== undefined &&
                 <h2>
-                  Patient Care<small> ({formatNumber(1435)} results in last 30 days)</small>
+                  Patient Care<small> ({formatNumber(totals.get('resultsTotal30d'))} results in last 30 days)</small>
                 </h2>
+              }
               </header>
               <div>
                 <Unit sm="1-2">
@@ -109,7 +112,7 @@ export class Dashboard extends PureComponent {
                 </Unit>
                 <Unit sm="1-2">
                   <h3>
-                    HCV<small> (885 results)</small>
+                    HCV<small> (790 results)</small>
                   </h3>
                   <div>
                     <Link to="/dashboard/patient-care?type=HCV">
@@ -118,9 +121,11 @@ export class Dashboard extends PureComponent {
                   </div>
                 </Unit>
                 <Unit sm="1-2">
+                  {totals && totals.get !== undefined &&
                   <h3>
-                    Devices<small> (126 at 53 sites)</small>
+                    Devices<small> ({totals.get('devicesTotal')} at {totals.get('sitesTotal')} sites)</small>
                   </h3>
+                  }
                   <div>
                     <Link to="/dashboard/manage-devices">
                       <img role="presentation" src={require('./devices.png')} />
@@ -129,7 +134,7 @@ export class Dashboard extends PureComponent {
                 </Unit>
                 <Unit sm="1-2">
                   <h3>
-                    Supplies<small> (6 types of disposables at 53 sites)</small>
+                    Supplies<small> (2 disposable types at 24 sites)</small>
                   </h3>
                   <div>
                     <Link to="/dashboard/manage-supplies">

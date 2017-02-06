@@ -3,7 +3,8 @@ import _ from 'lodash'
 import React, { PureComponent, PropTypes } from 'react'
 import {
   injectIntl,
-  defineMessages
+  defineMessages,
+  intlShape
 } from 'react-intl'
 import { bindActionCreators } from 'redux'
 import { connect } from 'react-redux'
@@ -140,7 +141,7 @@ export class RouterDetail extends PureComponent {
       notes: PropTypes.string,
       serial: PropTypes.string
     }),
-    intl: PropTypes.object.isRequired,
+    intl: intlShape.isRequired,
     editable: PropTypes.bool.isRequired,
     updateSingleRouter: PropTypes.func.isRequired
   }

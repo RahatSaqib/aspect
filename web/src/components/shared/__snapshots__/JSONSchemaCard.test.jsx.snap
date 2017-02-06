@@ -429,12 +429,12 @@ exports[`JSONSchemaCard module PropertiesSchemaCard component should handle nest
         className="FieldContainer">
         <label
           className="FieldContainer__Label"
-          htmlFor="cicCt">
-          cicCt
+          htmlFor="CIC_Ct">
+          CIC Ct
         </label>
         <div
           className="FieldContainer__Value"
-          id="cicCt">
+          id="CIC_Ct">
           23.9
         </div>
       </div>
@@ -445,12 +445,12 @@ exports[`JSONSchemaCard module PropertiesSchemaCard component should handle nest
         className="FieldContainer">
         <label
           className="FieldContainer__Label"
-          htmlFor="cicEndPt">
-          cicEndPt
+          htmlFor="CIC_EndPt">
+          CIC EndPt
         </label>
         <div
           className="FieldContainer__Value"
-          id="cicEndPt">
+          id="CIC_EndPt">
           289
         </div>
       </div>
@@ -461,12 +461,12 @@ exports[`JSONSchemaCard module PropertiesSchemaCard component should handle nest
         className="FieldContainer">
         <label
           className="FieldContainer__Label"
-          htmlFor="gpCt">
-          gpCt
+          htmlFor="GP_Ct">
+          GP Ct
         </label>
         <div
           className="FieldContainer__Value"
-          id="gpCt">
+          id="GP_Ct">
           25.4
         </div>
       </div>
@@ -477,12 +477,12 @@ exports[`JSONSchemaCard module PropertiesSchemaCard component should handle nest
         className="FieldContainer">
         <label
           className="FieldContainer__Label"
-          htmlFor="gpEndPt">
-          gpEndPt
+          htmlFor="GP_Endpt">
+          GP Endpt
         </label>
         <div
           className="FieldContainer__Value"
-          id="gpEndPt">
+          id="GP_Endpt">
           558
         </div>
       </div>
@@ -493,12 +493,12 @@ exports[`JSONSchemaCard module PropertiesSchemaCard component should handle nest
         className="FieldContainer">
         <label
           className="FieldContainer__Label"
-          htmlFor="npCt">
-          npCt
+          htmlFor="NP_Ct">
+          NP Ct
         </label>
         <div
           className="FieldContainer__Value"
-          id="npCt">
+          id="NP_Ct">
           12.2
         </div>
       </div>
@@ -509,12 +509,12 @@ exports[`JSONSchemaCard module PropertiesSchemaCard component should handle nest
         className="FieldContainer">
         <label
           className="FieldContainer__Label"
-          htmlFor="npEndPt">
-          npEndPt
+          htmlFor="NP_EndPt">
+          NP EndPt
         </label>
         <div
           className="FieldContainer__Value"
-          id="npEndPt">
+          id="NP_EndPt">
           -
         </div>
       </div>
@@ -525,12 +525,12 @@ exports[`JSONSchemaCard module PropertiesSchemaCard component should handle nest
         className="FieldContainer">
         <label
           className="FieldContainer__Label"
-          htmlFor="qc1Ct">
-          qc1Ct
+          htmlFor="QC1_Ct">
+          QC1 Ct
         </label>
         <div
           className="FieldContainer__Value"
-          id="qc1Ct">
+          id="QC1_Ct">
           0.32
         </div>
       </div>
@@ -541,12 +541,12 @@ exports[`JSONSchemaCard module PropertiesSchemaCard component should handle nest
         className="FieldContainer">
         <label
           className="FieldContainer__Label"
-          htmlFor="qc1Endpt">
-          qc1Endpt
+          htmlFor="QC1_EndPt">
+          QC1 EndPt
         </label>
         <div
           className="FieldContainer__Value"
-          id="qc1Endpt">
+          id="QC1_EndPt">
           -
         </div>
       </div>
@@ -557,12 +557,12 @@ exports[`JSONSchemaCard module PropertiesSchemaCard component should handle nest
         className="FieldContainer">
         <label
           className="FieldContainer__Label"
-          htmlFor="qc2Ct">
-          qc2Ct
+          htmlFor="QC2_Ct">
+          QC2 Ct
         </label>
         <div
           className="FieldContainer__Value"
-          id="qc2Ct">
+          id="QC2_Ct">
           11.4
         </div>
       </div>
@@ -573,12 +573,12 @@ exports[`JSONSchemaCard module PropertiesSchemaCard component should handle nest
         className="FieldContainer">
         <label
           className="FieldContainer__Label"
-          htmlFor="qc2Endpt">
-          qc2Endpt
+          htmlFor="Qc2Endpt">
+          Qc2Endpt
         </label>
         <div
           className="FieldContainer__Value"
-          id="qc2Endpt">
+          id="Qc2Endpt">
           0.5
         </div>
       </div>
@@ -589,12 +589,12 @@ exports[`JSONSchemaCard module PropertiesSchemaCard component should handle nest
         className="FieldContainer">
         <label
           className="FieldContainer__Label"
-          htmlFor="sacCt">
-          sacCt
+          htmlFor="SAC_Ct">
+          SAC Ct
         </label>
         <div
           className="FieldContainer__Value"
-          id="sacCt">
+          id="SAC_Ct">
           33.8
         </div>
       </div>
@@ -605,12 +605,12 @@ exports[`JSONSchemaCard module PropertiesSchemaCard component should handle nest
         className="FieldContainer">
         <label
           className="FieldContainer__Label"
-          htmlFor="sacEndPt">
-          sacEndPt
+          htmlFor="SAC_EndPt">
+          SAC EndPt
         </label>
         <div
           className="FieldContainer__Value"
-          id="sacEndPt">
+          id="SAC_EndPt">
           650
         </div>
       </div>

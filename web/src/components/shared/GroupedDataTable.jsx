@@ -2,6 +2,7 @@
 import _ from 'lodash'
 import classnames from 'classnames/bind'
 import React, { PureComponent, PropTypes } from 'react'
+import { intlShape } from 'react-intl'
 
 // Material-UI
 import {
@@ -53,7 +54,7 @@ export default class GroupedDataTable extends PureComponent {
       total: PropTypes.number.isRequired
     }).isRequired,
     columns: PropTypes.array.isRequired,
-    intl: PropTypes.object,
+    intl: intlShape.isRequired,
     messages: PropTypes.object,
     actionComponent: PropTypes.func
   }

@@ -6,7 +6,8 @@ import { bindActionCreators } from 'redux'
 import { connect } from 'react-redux'
 import {
   injectIntl,
-  defineMessages
+  defineMessages,
+  intlShape
 } from 'react-intl'
 
 // Material-UI
@@ -212,7 +213,7 @@ export class ListFilter extends PureComponent {
       workflowStatusId: PropTypes.string,
       deviceStatusId: PropTypes.string
     }).isRequired, // connect
-    intl: PropTypes.object.isRequired,
+    intl: intlShape.isRequired,
     defaultExpanded: PropTypes.bool,
     config: PropTypes.shape({
       assayAndResultCategory: PropTypes.bool,
