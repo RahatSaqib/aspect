@@ -13,14 +13,12 @@ import { Link } from 'react-router'
 
 // Material-UI
 import LinearProgress from 'material-ui/LinearProgress'
-import Paper from 'material-ui/Paper'
 import { Card, CardHeader, CardText } from 'material-ui/Card'
 import Checkbox from 'material-ui/Checkbox'
 import IconButton from 'material-ui/IconButton'
 import Share from 'material-ui/svg-icons/social/share'
 
 // Our own imports
-import DataTable from '../../components/shared/DataTable'
 import { Unit } from '../../components/pureGrids'
 import JSONSchemaCard from '../../components/shared/JSONSchemaCard'
 import {
@@ -29,9 +27,12 @@ import {
   updateResultWorkflowStatus,
 
   fetchWorkflowStatusLogs,
-  WorkflowLog,
   Result
 } from '../ResultRedux'
+
+import WorkflowLogModel from '../../resultWorkflowStatus/log/WorkflowLogModel'
+import ResultWorkflowStatusLog from '../../resultWorkflowStatus/log/WorkflowLog'
+
 import { ReadOnlyField } from '../../components/shared/ReadOnlyFields'
 import styles from './ResultDetail.css'
 
@@ -138,23 +139,6 @@ const messages = defineMessages({
     id: 'pages.ResultDetail.nestedDataSubtitle',
     defaultMessage: '{count} fields'
   },
-
-  logCreatedOn: {
-    id: 'pages.ResultDetail.logCreatedOn',
-    defaultMessage: 'Changed On'
-  },
-  logStatus: {
-    id: 'pages.ResultDetail.logStatus',
-    defaultMessage: 'Status'
-  },
-  logOperator: {
-    id: 'pages.ResultDetail.logOperator',
-    defaultMessage: 'Operator'
-  },
-  noWorkflowStatusLog: {
-    id: 'pages.ResultDetail.noWorkflowStatusLog',
-    defaultMessage: 'No logs for this result.'
-  }
 })
 
 // Iterate JSON schema level 2 and reduce it with resultData into a fields list
@@ -173,8 +157,9 @@ export class ResultDetail extends PureComponent {
     intl: PropTypes.object.isRequired,
     params: PropTypes.object.isRequired,
     result: PropTypes.objectOf(Result),
+
     fetchWorkflowStatusLogs: PropTypes.func.isRequired,
-    workflowLog: PropTypes.objectOf(WorkflowLog),
+    workflowLog: PropTypes.objectOf(WorkflowLogModel).isRequired
   }
 
   componentWillMount() {
@@ -510,51 +495,6 @@ export class ResultDetail extends PureComponent {
     )
   }
 
-  renderResultWorkflowLog() {
-    if (!this.hasResultWithAssay()) {
-      return false
-    }
-
-    const { workflowLog, intl } = this.props
-    const { formatMessage, formatDate } = intl
-    const columns = [
-      { db: 'createdOn', title: formatMessage(messages.logCreatedOn), format: data => formatDate(data) },
-      { db: 'statusName', title: formatMessage(messages.logStatus) },
-      { db: 'operator', title: formatMessage(messages.logOperator) },
-    ]
-    const items = workflowLog.items
-    const table = workflowLog.table
-
-    const totals = table.total > 0 ? `(${table.total})` : ''
-    const title = `Result Workflow Status Log ${totals}`
-
-    return (
-      <div>
-        <Card>
-          <CardHeader title={title} actAsExpander showExpandableButton />
-          <CardText expandable style={{ paddingTop: 0 }}>
-            {!table.loading && items.currentIdList.isEmpty()
-              ? (
-                <Paper style={{ textAlign: 'center', padding: 10 }}>
-                  <p>{intl.formatMessage(messages.noWorkflowStatusLog)}</p>
-                </Paper>
-              )
-              : (
-                <DataTable
-                  items={items}
-                  table={table}
-                  columns={columns}
-                  intl={intl}
-                  messages={messages}
-                  handleFetch={this.handleFetchWorkflowStatusLogs}
-                />
-              )}
-          </CardText>
-        </Card>
-      </div>
-    )
-  }
-
   renderPaper() {
     return (
       <div>
@@ -563,22 +503,26 @@ export class ResultDetail extends PureComponent {
           this.renderContent() :
           this.renderProgress()
         }
-
-        {
-          this.renderResultWorkflowLog()
-        }
       </div>
     )
   }
 
   render() {
-    const { intl } = this.props
+    const { intl, workflowLog } = this.props
     const { formatMessage } = intl
 
     return (
       <div className={cssClasses('ContentDetails')}>
         <Helmet title={formatMessage(messages.title)} titleTemplate="%s - Aspect" defaultTitle="Aspect" />
+
         {this.renderPaper()}
+
+        <ResultWorkflowStatusLog
+          intl={intl}
+          workflowLog={workflowLog}
+          handleFetch={this.handleFetchWorkflowStatusLogs}
+        />
+
       </div>
     )
   }

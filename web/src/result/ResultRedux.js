@@ -20,6 +20,8 @@ import {
   Table
 } from '../shared/metaReducers/table'
 
+import WorkflowLogModel from '../resultWorkflowStatus/log/WorkflowLogModel'
+
 export const types = {
   REQUEST_RESULTS: 'REQUEST_RESULTS',
   RECEIVE_RESULTS: 'RECEIVE_RESULTS',
@@ -267,17 +269,6 @@ export function fetchWorkflowStatusLogs(resultId, sortCol = 'createdOn', sortDir
 /*
  * ---------------- Reducers -----------------
  */
-// export to be able to PropTypes.objectOf(WorkflowLog), etc in ResultDetails.js
-export const WorkflowLog = Immutable.Record({
-  items: new Items(),
-  table: new Table({
-    sortCol: 'createdOn',
-    sortDir: 'desc',
-    page: 0,
-    pageSize: 10,
-  }),
-})
-
 export const Result = Immutable.Record({
   items: new Items(),
   table: new Table({
@@ -287,7 +278,7 @@ export const Result = Immutable.Record({
     filters: Immutable.fromJS({ sampleId: '', assayId: null }),
     extraColumns: new Immutable.List()
   }),
-  workflowLog: new WorkflowLog()
+  workflowLog: new WorkflowLogModel()
 })
 
 const initialState = new Result()
@@ -324,6 +315,7 @@ export default function resultReducer(state = initialState, action) {
         })
         mutState.set('workflowLog', workflowLog)
       })
+
     default:
       return state
   }
