@@ -145,6 +145,10 @@ export class TerminalDetail extends PureComponent {
     updateSingleTerminal: PropTypes.func.isRequired
   }
 
+  static defaultProps = {
+    terminal: {}
+  }
+
   state = {
     isEditDialogOpen: false,
     isDemoDialogOpen: false,
@@ -328,7 +332,7 @@ export class TerminalDetail extends PureComponent {
                 label=""
                 value
                 format={() =>
-                  <img role="presentation" src={require('../../device/detail/utilization_rate.png')} style={{ width: '100%' }} />
+                  <img alt="utilization rate" src={require('../../device/detail/utilization_rate.png')} style={{ width: '100%' }} />
                 }
               />
             </Unit>
@@ -338,7 +342,7 @@ export class TerminalDetail extends PureComponent {
                 label=""
                 value
                 format={() =>
-                  <img role="presentation" src={require('../../device/detail/error_rates.png')} style={{ width: '100%' }} />
+                  <img alt="error rate" src={require('../../device/detail/error_rates.png')} style={{ width: '100%' }} />
                 }
               />
             </Unit>

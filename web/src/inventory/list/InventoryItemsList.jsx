@@ -166,6 +166,10 @@ export class InventoryItemsList extends PureComponent {
     showAcknowledgement: PropTypes.func.isRequired
   }
 
+  static defaultProps = {
+    inventoryAdjustment: {}
+  }
+
   componentWillMount() {
     const { setPageTitle, configureListFilter, intl: { formatMessage } } = this.props
     setPageTitle(formatMessage(messages.title))

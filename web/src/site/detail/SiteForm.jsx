@@ -17,6 +17,10 @@ export default class SiteForm extends PureComponent {
     site: PropTypes.object
   }
 
+  static defaultProps = {
+    site: {}
+  }
+
   handleSubmit = (data) => {
     const { site } = this.props
 

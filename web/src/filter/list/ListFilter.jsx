@@ -247,6 +247,25 @@ export class ListFilter extends PureComponent {
     askConfirmationForExport: PropTypes.bool,
   }
 
+  static defaultProps = {
+    defaultExpanded: false,
+    subject: '',
+    dateFilterLabel: '',
+    filterTemplateOptional: '',
+    onClickExport: undefined,
+    listExport: {
+      askingConfirmation: false,
+      processingExportExcel: false,
+      processingExportCsv: false,
+      currentFormatType: 'csv' },
+    showExportExcel: false,
+    showExportCsv: false,
+    askExportConfirmation: false,
+    closeExportConfirmation: false,
+    beginListExportProcessing: undefined,
+    askConfirmationForExport: false
+  }
+
   static contextTypes = {
     muiTheme: PropTypes.object.isRequired
   }

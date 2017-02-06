@@ -57,6 +57,12 @@ FilterMessage.propTypes = {
   filterTemplateOptional: PropTypes.string,
 }
 
+FilterMessage.defaultProps = {
+  workflowStatusItems: {},
+  subject: '',
+  filterTemplateOptional: ''
+}
+
 function mapStateToProps(state) {
   return {
     listFilter: state.filter.listFilter,

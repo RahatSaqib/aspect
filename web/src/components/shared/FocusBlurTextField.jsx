@@ -10,7 +10,8 @@ export class FocusBlurTextField extends PureComponent {
   static defaultProps = {
     onBlur: _.noop,
     onFocus: _.noop,
-    onKeyUp: _.noop
+    onKeyUp: _.noop,
+    value: ''
   }
 
   static propTypes = {

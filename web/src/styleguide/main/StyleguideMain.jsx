@@ -29,6 +29,10 @@ export class StyleguideMain extends PureComponent {
     intl: PropTypes.any
   }
 
+  static defaultProps = {
+    intl: {}
+  }
+
   state = {
     filter: {},
     countryId: null,

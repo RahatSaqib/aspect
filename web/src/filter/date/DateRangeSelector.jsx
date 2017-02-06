@@ -144,6 +144,11 @@ export class DateRangeSelector extends PureComponent {
     maxDate: PropTypes.string
   }
 
+  static defaultProps = {
+    minDate: null,
+    maxDate: null
+  }
+
   state = {
     rangeMode: 'any'
   }

@@ -59,6 +59,11 @@ export const requirePermissions = ({ permissions: permissionsInConfig = [],
       extraPermissions: PropTypes.arrayOf(PropTypes.string)
     }
 
+    static defaultProps = {
+      overriddenPermissions: [],
+      extraPermissions: []
+    }
+
     static contextTypes = {
       store: PropTypes.object.isRequired
     }

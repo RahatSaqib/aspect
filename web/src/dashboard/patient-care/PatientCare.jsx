@@ -59,7 +59,7 @@ export class PatientCare extends PureComponent {
         <Paper>
           <Link to="/result">
             <img
-              role="presentation"
+              alt="disease graph"
               src={
                 this.props.location.query.type === 'TB' ?
                 require('./TB.png') :

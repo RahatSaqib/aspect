@@ -48,6 +48,10 @@ class AppNotificationDialog extends PureComponent {
     hideAppNotification: PropTypes.func.isRequired
   }
 
+  static defaultProps = {
+    appNotification: {}
+  }
+
   handleClose = () => {
     const onClose = this.props.appNotification.getIn(['notificationOptions', 'onClose'])
     if (onClose) {

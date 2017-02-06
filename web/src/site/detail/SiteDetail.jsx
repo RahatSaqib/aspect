@@ -36,6 +36,10 @@ export class SiteDetail extends PureComponent {
     editable: PropTypes.bool.isRequired
   }
 
+  static defaultProps = {
+    site: {}
+  }
+
   componentWillMount() {
     const { setPageTitle, intl } = this.props
     const { formatMessage } = intl
