@@ -3,7 +3,8 @@ import _ from 'lodash'
 import React, { PureComponent, PropTypes } from 'react'
 import {
   injectIntl,
-  defineMessages
+  defineMessages,
+  intlShape
 } from 'react-intl'
 import { withRouter } from 'react-router'
 import { bindActionCreators } from 'redux'
@@ -52,7 +53,7 @@ const messages = defineMessages({
   },
   filterTemplate: {
     id: 'pages.ResultList.filterTemplate',
-    defaultMessage: 'Viewing <SAMPLE_ORIGIN_SITE_ID><SAMPLE_ID><ASSAY> results <DATE><RESULT> from all sites<GEOGRAPHY><NAME> <WORKFLOWSTATUS>'
+    defaultMessage: 'Viewing <PATIENT_OR_RESEARCH_ID><SAMPLE_ORIGIN_SITE_ID><SAMPLE_ID><ASSAY> results <DATE><RESULT> from all sites<GEOGRAPHY><NAME> <WORKFLOWSTATUS>'
   }
 })
 
@@ -62,7 +63,7 @@ export class ResultList extends PureComponent {
     setPageTitle: PropTypes.func.isRequired,
     table: PropTypes.object.isRequired,
     configureListFilter: PropTypes.func.isRequired,
-    intl: PropTypes.object.isRequired,
+    intl: intlShape.isRequired,
     listFilter: PropTypes.object.isRequired,
     fetchListFilteredResults: PropTypes.func.isRequired,
     router: PropTypes.object.isRequired,
@@ -77,6 +78,7 @@ export class ResultList extends PureComponent {
       assayAndResultCategory: true,
       geography: true,
       date: true,
+      patientOrResearchId: true,
       sampleId: true,
       siteName: true,
       sampleOriginSiteId: true,

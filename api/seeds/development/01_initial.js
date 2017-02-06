@@ -8,13 +8,14 @@ const geography = require('./fixtures/geography.json')
 const patients = require('./fixtures/patients.json')
 
 const millisInHour = 1000 * 60 * 60
+const millisInMinute = 1000 * 60
 const millisInNormalYear = 1000 * 60 * 60 * 24 * 365
 const deviceNumber = 50
 const routerNumber = 20
-const resultMtbNumber = 200
-const resultEbolaNumber = 100
-const resultHivVlNumber = 75
-const resultHcvNumber = 125
+const resultMtbNumber = 1000
+const resultEbolaNumber = 500
+const resultHivVlNumber = 500
+const resultHcvNumber = 500
 
 const saltRounds = parseInt(config.passwordSaltRounds, 10)
 
@@ -184,7 +185,7 @@ function* seed(knex) {
       }
     }
   })
-  const daktariConfigurationDataSchema = const geneXpertConfigurationDataSchema = JSON.stringify({
+  const daktariConfigurationDataSchema = JSON.stringify({
     requirePrinter: {
       title: 'Require printer',
       type: 'string'
@@ -655,7 +656,7 @@ function* seed(knex) {
   const [assayDaktariHivVlId] = yield knex('Assay').insert({
     name: 'Daktari HIV-VL',
     i18nKey: 'assayDaktariHivVl',
-    externalId: 'DaktariHiv',
+    externalId: 'DaktariHivVl',
     assayTypeId: assayTypeHivVlId,
     deviceTypeId: deviceTypeDaktariId,
     resultCategory1Label: 'HIV',
@@ -683,7 +684,7 @@ function* seed(knex) {
   yield knex('Assay').insert({
     name: 'Afinion HIV VL',
     i18nKey: 'assayAfinionHivVl',
-    externalId: 'HivVl',
+    externalId: 'AfinionHivVl',
     assayTypeId: assayTypeHivVlId,
     deviceTypeId: deviceTypeAfinionId,
     resultDataSchema: JSON.stringify({
@@ -1521,7 +1522,7 @@ function* seed(knex) {
     const siteData = siteDatas[i % siteDatas.length]
     const sample = Object.assign({}, {
       externalId: `SMP-TB-${i}`,
-      collectedOn: new Date(),
+      collectedOn: new Date(+now - (120 * millisInHour)),
       sampleTypeId: sampleTypeDBSId,
       originSiteId: siteData.id
     })
@@ -1574,6 +1575,7 @@ function* seed(knex) {
     const siteData = siteDatas.find(site => site.id === device.siteId)
     const sample = samples[i % samples.length]
     const result = possibleResults[i % 5]
+    const randomTimespan = _.random(6000) * millisInMinute
     resultData.resultText = result.resultText
 
     const resultId = yield knex('Result').insert(Object.assign({}, auditFields, {
@@ -1593,8 +1595,8 @@ function* seed(knex) {
       resultCategory2: result.category2,
       resultData: JSON.stringify(resultData),
       assayVersion: '4',
-      startedOn: new Date(+now - (12 * i * millisInHour)),
-      endedOn: new Date(+now - (10 * i * millisInHour)),
+      startedOn: new Date(+now - randomTimespan - (12 * millisInHour)),
+      endedOn: new Date(+now - randomTimespan - (10 * millisInHour)),
       consumableSerial: `${i}12`,
       consumableExpirationDate: new Date(+now + (200 * i * millisInHour)),
       consumableLot: `Lot ${i % 5}`,
@@ -1612,17 +1614,17 @@ function* seed(knex) {
 
     yield knex('ResultWorkflowLog').insert({
       resultId,
-      resultWorkflowStatusId: acknowledged,
-      operator: 'John',
-      createdOn: new Date(+now - (48 * millisInHour)),
+      resultWorkflowStatusId: ordered,
+      operator: 'Marsha',
+      createdOn: new Date(+now - randomTimespan - (26 * millisInHour)),
       createdBy: adminId
     })
 
     yield knex('ResultWorkflowLog').insert({
       resultId,
-      resultWorkflowStatusId: ordered,
-      operator: 'Marsha',
-      createdOn: now,
+      resultWorkflowStatusId: acknowledged,
+      operator: 'John',
+      createdOn: new Date(+now - randomTimespan - (1 * millisInHour)),
       createdBy: adminId
     })
   }
@@ -1634,7 +1636,7 @@ function* seed(knex) {
     const siteData = siteDatas[i % siteDatas.length]
     const sample = Object.assign({}, {
       externalId: `SMP-EB-${i}`,
-      collectedOn: new Date(),
+      collectedOn: new Date(+now - (120 * millisInHour)),
       sampleTypeId: sampleTypePlasmaId,
       originSiteId: siteData.id
     })
@@ -1686,6 +1688,7 @@ function* seed(knex) {
     const siteData = siteDatas.find(site => site.id === device.siteId)
     const sample = samples[i % samples.length]
     const result = possibleResults[i % 5]
+    const randomTimespan = _.random(6000) * millisInMinute
     resultData.resultText = result.resultText
 
     const resultId = yield knex('Result').insert(Object.assign({}, auditFields, {
@@ -1705,8 +1708,8 @@ function* seed(knex) {
       resultCategory2: result.category2,
       resultData: JSON.stringify(resultData),
       assayVersion: '4',
-      startedOn: new Date(+now - (12 * i * millisInHour)),
-      endedOn: new Date(+now - (10 * i * millisInHour)),
+      startedOn: new Date(+now - randomTimespan - (12 * millisInHour)),
+      endedOn: new Date(+now - randomTimespan - (10 * millisInHour)),
       consumableSerial: `${i}12`,
       consumableExpirationDate: new Date(+now + (200 * i * millisInHour)),
       consumableLot: `Lot ${i % 5}`,
@@ -1724,17 +1727,9 @@ function* seed(knex) {
 
     yield knex('ResultWorkflowLog').insert({
       resultId,
-      resultWorkflowStatusId: acknowledged,
-      operator: 'John',
-      createdOn: new Date(+now - (98 * millisInHour)),
-      createdBy: adminId
-    })
-
-    yield knex('ResultWorkflowLog').insert({
-      resultId,
       resultWorkflowStatusId: ordered,
       operator: 'Bill',
-      createdOn: new Date(+now - (36 * millisInHour)),
+      createdOn: new Date(+now - randomTimespan - (35 * millisInHour)),
       createdBy: adminId
     })
 
@@ -1742,7 +1737,15 @@ function* seed(knex) {
       resultId,
       resultWorkflowStatusId: processed,
       operator: 'Marsha',
-      createdOn: now,
+      createdOn: new Date(+now - randomTimespan - (12 * millisInHour)),
+      createdBy: adminId
+    })
+
+    yield knex('ResultWorkflowLog').insert({
+      resultId,
+      resultWorkflowStatusId: acknowledged,
+      operator: 'John',
+      createdOn: new Date(+now + (42 * millisInHour)),
       createdBy: adminId
     })
   }
@@ -1753,7 +1756,7 @@ function* seed(knex) {
     const siteData = siteDatas[i % siteDatas.length]
     const sample = Object.assign({}, {
       externalId: `SMP-HIV-${i}`,
-      collectedOn: new Date(),
+      collectedOn: new Date(+now - (120 * millisInHour)),
       sampleTypeId: sampleTypeDBSId,
       originSiteId: siteData.id
     })
@@ -1792,6 +1795,7 @@ function* seed(knex) {
     const siteData = siteDatas.find(site => site.id === device.siteId)
     const sample = samples[i % samples.length]
     const result = possibleResults[i % 5]
+    const randomTimespan = _.random(6000) * millisInMinute
     let copies = 3200
     let log = 5
     if (result === possibleResults[0]) {
@@ -1822,8 +1826,8 @@ function* seed(knex) {
       resultCategory1: result.category1,
       resultData: JSON.stringify(resultData),
       assayVersion: '4',
-      startedOn: new Date(+now - (12 * i * millisInHour)),
-      endedOn: new Date(+now - (10 * i * millisInHour)),
+      startedOn: new Date(+now - randomTimespan - (12 * millisInHour)),
+      endedOn: new Date(+now - randomTimespan - (10 * millisInHour)),
       consumableSerial: `${i}12`,
       consumableExpirationDate: new Date(+now + (200 * i * millisInHour)),
       consumableLot: `Lot ${i % 5}`,
@@ -1843,7 +1847,7 @@ function* seed(knex) {
       resultId,
       resultWorkflowStatusId: acknowledged,
       operator: 'Marsha',
-      createdOn: now,
+      createdOn: new Date(+now - randomTimespan - (2 * millisInHour)),
       createdBy: adminId
     })
   }
@@ -1949,7 +1953,7 @@ function* seed(knex) {
     const siteData = siteDatas[i % siteDatas.length]
     const sample = Object.assign({}, {
       externalId: `SMP-HIV-DAK-${i}`,
-      collectedOn: new Date(),
+      collectedOn: new Date(+now - (120 * millisInHour)),
       sampleTypeId: sampleTypeDBSId,
       originSiteId: siteData.id
     })
@@ -1988,6 +1992,7 @@ function* seed(knex) {
     const siteData = siteDatas.find(site => site.id === device.siteId)
     const sample = samples[i % samples.length]
     const result = possibleResults[i % 5]
+    const randomTimespan = _.random(6000) * millisInMinute
     let copies = 3200
     let log = 5
     if (result === possibleResults[0]) {
@@ -2018,8 +2023,8 @@ function* seed(knex) {
       resultCategory1: result.category1,
       resultData: JSON.stringify(resultData),
       assayVersion: '4',
-      startedOn: new Date(+now - (12 * i * millisInHour)),
-      endedOn: new Date(+now - (10 * i * millisInHour)),
+      startedOn: new Date(+now - randomTimespan - (12 * millisInHour)),
+      endedOn: new Date(+now - randomTimespan - (11 * millisInHour)),
       consumableSerial: `${i}12`,
       consumableExpirationDate: new Date(+now + (200 * i * millisInHour)),
       consumableLot: `Lot ${i % 5}`,
@@ -2039,7 +2044,7 @@ function* seed(knex) {
       resultId,
       resultWorkflowStatusId: acknowledged,
       operator: 'Aaron',
-      createdOn: now,
+      createdOn: new Date(+now - randomTimespan - (1 * millisInHour)),
       createdBy: adminId
     })
   }
@@ -2050,7 +2055,7 @@ function* seed(knex) {
     const siteData = siteDatas[i % siteDatas.length]
     const sample = Object.assign({}, {
       externalId: `SMP-HCV-DAK-${i}`,
-      collectedOn: new Date(),
+      collectedOn: new Date(+now - (120 * millisInHour)),
       sampleTypeId: sampleTypeDBSId,
       originSiteId: siteData.id
     })
@@ -2089,6 +2094,7 @@ function* seed(knex) {
     const siteData = siteDatas.find(site => site.id === device.siteId)
     const sample = samples[i % samples.length]
     const result = possibleResults[i % 5]
+    const randomTimespan = _.random(6000) * millisInMinute
     let copies = 3200
     let log = 5
     if (result === possibleResults[0]) {
@@ -2119,8 +2125,8 @@ function* seed(knex) {
       resultCategory1: result.category1,
       resultData: JSON.stringify(resultData),
       assayVersion: '4',
-      startedOn: new Date(+now - (12 * i * millisInHour)),
-      endedOn: new Date(+now - (10 * i * millisInHour)),
+      startedOn: new Date(+now - randomTimespan - (12 * millisInHour)),
+      endedOn: new Date(+now - randomTimespan - (11 * millisInHour)),
       consumableSerial: `${i}12`,
       consumableExpirationDate: new Date(+now + (200 * i * millisInHour)),
       consumableLot: `Lot ${i % 5}`,
@@ -2140,7 +2146,7 @@ function* seed(knex) {
       resultId,
       resultWorkflowStatusId: acknowledged,
       operator: 'Aaron',
-      createdOn: now,
+      createdOn: new Date(+now - randomTimespan - (2 * millisInHour)),
       createdBy: adminId
     })
   }

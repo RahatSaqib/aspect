@@ -1,7 +1,7 @@
 // Imports from packages
 import _ from 'lodash'
 import React, { PureComponent, PropTypes } from 'react'
-import { injectIntl } from 'react-intl'
+import { injectIntl, intlShape } from 'react-intl'
 import { bindActionCreators } from 'redux'
 import { connect } from 'react-redux'
 import Helmet from 'react-helmet'
@@ -43,7 +43,7 @@ export class PersonDetail extends PureComponent {
   static propTypes = {
     setPageTitle: PropTypes.func.isRequired,
     params: PropTypes.object.isRequired,
-    intl: PropTypes.object.isRequired,
+    intl: intlShape.isRequired,
     person: PropTypes.object.isRequired,
     user: PropTypes.object.isRequired,
     editable: PropTypes.bool.isRequired,

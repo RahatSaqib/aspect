@@ -3,7 +3,8 @@ import _ from 'lodash'
 import React, { PureComponent, PropTypes } from 'react'
 import {
   injectIntl,
-  defineMessages
+  defineMessages,
+  intlShape
 } from 'react-intl'
 import { withRouter } from 'react-router'
 import { bindActionCreators } from 'redux'
@@ -49,7 +50,7 @@ export class PersonList extends PureComponent {
   static propTypes = {
     setPageTitle: PropTypes.func.isRequired,
     table: PropTypes.object.isRequired,
-    intl: PropTypes.object.isRequired,
+    intl: intlShape.isRequired,
     items: PropTypes.object.isRequired,
     configureListFilter: PropTypes.func.isRequired,
     listFilter: PropTypes.object.isRequired,

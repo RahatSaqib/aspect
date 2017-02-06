@@ -18,7 +18,6 @@ const SELECT_SHOW_FIELDS = [
   'dt.name as type',
   'ds.name as status', 'ds.token as statusToken',
   'dc.name as category', 'dc.hasResults', 'dc.hasConnectivity',
-  knex.raw('d.id * 134 as totalTests'),
   'd.siteId',
   's.name as siteName',
   'd.hostId',
@@ -153,6 +152,8 @@ function* getDeviceByDeviceId(request, fields = SELECT_SHOW_FIELDS) {
       .map(deviceOperation => _.assign(deviceOperation, {
         data: JSON.parse(deviceOperation.data) || {}
       }))
+
+    device.totalTests = yield knex('Result as r').where('r.deviceId', device.id).count()
 
     const contacts = yield knex('Person as p')
       .select('p.id', 'p.name')

@@ -8,7 +8,8 @@ import { reduxForm } from 'redux-form/immutable'
 import Helmet from 'react-helmet'
 import {
   injectIntl,
-  defineMessages
+  defineMessages,
+  intlShape
 } from 'react-intl'
 import { Link } from 'react-router'
 
@@ -77,7 +78,7 @@ const enhance = compose(
     validate
   }),
   setPropTypes({
-    intl: PropTypes.object.isRequired,
+    intl: intlShape.isRequired,
     handleSubmit: PropTypes.func.isRequired,
     pristine: PropTypes.bool.isRequired,
     submitting: PropTypes.bool.isRequired,

@@ -1,7 +1,7 @@
 import React, { PureComponent, PropTypes } from 'react'
 import { bindActionCreators } from 'redux'
 import Helmet from 'react-helmet'
-import { injectIntl } from 'react-intl'
+import { injectIntl, intlShape } from 'react-intl'
 import _ from 'lodash'
 import { connect } from 'react-redux'
 import LinearProgress from 'material-ui/LinearProgress'
@@ -30,7 +30,7 @@ import { ContactDetails, LoginDetails, UserPreferences } from '../../person/Pers
 export class AccountDetails extends PureComponent {
   static propTypes = {
     setPageTitle: PropTypes.func.isRequired,
-    intl: PropTypes.object.isRequired,
+    intl: intlShape.isRequired,
     fetchAccountDetails: PropTypes.func.isRequired,
     loading: PropTypes.bool.isRequired,
     saving: PropTypes.bool.isRequired,

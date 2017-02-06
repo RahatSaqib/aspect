@@ -6,7 +6,8 @@ import { bindActionCreators } from 'redux'
 import { connect } from 'react-redux'
 import {
   injectIntl,
-  defineMessages
+  defineMessages,
+  intlShape
 } from 'react-intl'
 
 // Material-UI
@@ -112,6 +113,14 @@ const messages = defineMessages({
     id: 'shared.ListFilter.selectConsumable',
     defaultMessage: 'Select consumable...'
   },
+  patientOrResearchId: {
+    id: 'shared.ListFilter.patientOrResearchId',
+    defaultMessage: 'Patient/Study ID'
+  },
+  enterPatientOrResearchId: {
+    id: 'shared.ListFilter.enterPatientOrResearchId',
+    defaultMessage: 'Enter patient/study ID...'
+  },
   sampleId: {
     id: 'shared.ListFilter.sampleId',
     defaultMessage: 'Sample ID'
@@ -212,7 +221,7 @@ export class ListFilter extends PureComponent {
       workflowStatusId: PropTypes.string,
       deviceStatusId: PropTypes.string
     }).isRequired, // connect
-    intl: PropTypes.object.isRequired,
+    intl: intlShape.isRequired,
     defaultExpanded: PropTypes.bool,
     config: PropTypes.shape({
       assayAndResultCategory: PropTypes.bool,
@@ -403,6 +412,7 @@ export class ListFilter extends PureComponent {
     const hasDataSection = (
       config.assay || config.deviceName || config.result ||
       config.siteName || config.contactNameOrEmail || config.consumable ||
+      config.patientOrResearchId ||
       config.sampleId || config.sampleOriginSiteId
     )
 
@@ -524,6 +534,18 @@ export class ListFilter extends PureComponent {
                         floatingLabelText={formatMessage(messages.consumable)}
                         style={{ verticalAlign: 'bottom' }}
                         autoWidth
+                      />
+                    </div>
+                  )}
+                  {config.patientOrResearchId && (
+                    <div className={styles.Section__Control}>
+                      <FocusBlurTextField
+                        name="patientOrResearchId"
+                        value={filter.patientOrResearchId || ''}
+                        onCommitValue={this.handleTextFieldCommitValue}
+                        floatingLabelFixed
+                        hintText={formatMessage(messages.enterPatientOrResearchId)}
+                        floatingLabelText={formatMessage(messages.patientOrResearchId)}
                       />
                     </div>
                   )}

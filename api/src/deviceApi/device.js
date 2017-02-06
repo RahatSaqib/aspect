@@ -1,5 +1,6 @@
 const _ = require('lodash')
-const { addResult, listResults } = require('./result')
+const Boom = require('boom')
+const { addResult, getResultAndDeviceLog } = require('./result')
 
 function* addDeviceData(context) {
   const response = {}
@@ -17,14 +18,12 @@ function* addDeviceData(context) {
   }
 
   if (result) {
-    for (const r of result) {
-      const resultResponse = yield* addResult(
-        context.withPayload(r))
+    const resultResponse = yield* addResult(
+      context.withPayload(result))
 
-      if (resultResponse instanceof Error) {
-        // TODO formalize error handling
-        return resultResponse
-      }
+    if (resultResponse instanceof Error) {
+      // TODO formalize error handling
+      return resultResponse
     }
   }
 
@@ -32,6 +31,7 @@ function* addDeviceData(context) {
 }
 
 function* getDeviceData(context) {
+  const response = {}
   const { knex, device: { id: deviceId }, query } = context
 
   const deviceLogQ = knex('DeviceLog')
@@ -43,11 +43,35 @@ function* getDeviceData(context) {
   }
   const { checkpoint, id: deviceLogId } = (
     (yield deviceLogQ.first('checkpoint', 'id')) || {})
+  const offset = +(query.offset || 0)
 
-  const result = yield* listResults(context, deviceLogId)
   // TODO include configuration and operation at checkpoint
+  // once we do this, we need to consider DeviceLogs without
+  // the result constraints and return the first entry (minimum log id)
+  // Two steps are required because results might be allowed from a
+  // different sample origin site (lab/clinic) but device configuration
+  // and operation updates are currently always constrained by device
+  // We also need to make sure to adjust the offset passed to the getResult
+  // query accordingly to skip device configuration and operation logs
+  const { result, deviceLog: resultDeviceLog } = yield* getResultAndDeviceLog(
+    context, deviceLogId, offset)
+  if (result != null) {
+    response.result = result
 
-  return { checkpoint, result }
+    // set actual checkpoint if log changed during query, e.g, due to offset
+    // but do not leak checkpoint from different device
+    if (resultDeviceLog.deviceId === deviceId) {
+      response.checkpoint = resultDeviceLog.checkpoint
+    }
+  } else if (deviceLogId != null && offset === 0) {
+    // set checkpoint if one found even if we couldn't find result
+    response.checkpoint = checkpoint
+  } else {
+    // cannot find specified checkpoint with offset
+    return Boom.notFound()
+  }
+
+  return response
 }
 
 function* updateDeviceConfiguration(context) {

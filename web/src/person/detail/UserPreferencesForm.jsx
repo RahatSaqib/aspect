@@ -2,7 +2,7 @@ import React, { PropTypes } from 'react'
 import { reduxForm, Field } from 'redux-form/immutable'
 import RaisedButton from 'material-ui/RaisedButton'
 import _ from 'lodash'
-import { injectIntl } from 'react-intl'
+import { injectIntl, intlShape } from 'react-intl'
 import TimezoneSelect from '../../components/shared/TimezoneSelect'
 import CountrySelect from '../../components/shared/CountrySelect'
 import messages from './messages'
@@ -62,7 +62,7 @@ UserPreferencesForm.propTypes = {
   handleSubmit: PropTypes.func.isRequired,
   pristine: PropTypes.bool.isRequired,
   invalid: PropTypes.bool.isRequired,
-  intl: PropTypes.object.isRequired
+  intl: intlShape.isRequired
 }
 
 export default _.flowRight(
