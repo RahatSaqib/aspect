@@ -16,9 +16,11 @@ import LinearProgress from 'material-ui/LinearProgress'
 import Paper from 'material-ui/Paper'
 import { Card, CardHeader, CardText } from 'material-ui/Card'
 import Checkbox from 'material-ui/Checkbox'
-import DataTable from '../../components/shared/DataTable'
+import IconButton from 'material-ui/IconButton'
+import Share from 'material-ui/svg-icons/social/share'
 
 // Our own imports
+import DataTable from '../../components/shared/DataTable'
 import { Unit } from '../../components/pureGrids'
 import JSONSchemaCard from '../../components/shared/JSONSchemaCard'
 import {
@@ -333,6 +335,16 @@ export class ResultDetail extends PureComponent {
     )
   }
 
+  renderShareButton() {
+    return (
+      <div>
+        <IconButton>
+          <Share />
+        </IconButton>
+      </div>
+    )
+  }
+
   renderContent() {
     const { result, intl: { formatMessage, formatDate, formatTime } } = this.props
     const assay = result.get('assay')
@@ -342,17 +354,22 @@ export class ResultDetail extends PureComponent {
         { /* IDs and device/site */ }
         <Card>
           <CardText>
-            <ReadOnlyField
-              label={formatMessage(messages.fieldSampleOriginSite)}
-              value={result.get('sampleOriginSiteName')}
-              format={v =>
-                <div>
-                  <Link to={`/site/${result.get('sampleOriginSiteId')}`}>
-                    {v}
-                  </Link>
-                </div>
-              }
-            />
+            <Unit sm="5-6" md="11-12">
+              <ReadOnlyField
+                label={formatMessage(messages.fieldSampleOriginSite)}
+                value={result.get('sampleOriginSiteName')}
+                format={v =>
+                  <div>
+                    <Link to={`/site/${result.get('sampleOriginSiteId')}`}>
+                      {v}
+                    </Link>
+                  </div>
+                }
+              />
+            </Unit>
+            <Unit sm="1-6" md="1-12">
+              {this.renderShareButton()}
+            </Unit>
             <Unit sm="1-2" md="1-2" lg="5-12">
               <ReadOnlyField label={formatMessage(messages.fieldSampleId)} value={result.get('sampleId')} />
             </Unit>
