@@ -42,23 +42,19 @@ function* seed(knex) {
 
   // define configurationData object
   const rrtConfigurationDataSchema = JSON.stringify({
-    rrtField1: {
-      title: 'RRT Field 1',
+    requirePrinter: {
+      title: 'Require printer',
       type: 'string'
     },
-    rrtField2: {
-      title: 'RRT Field 2',
+    adminPassword: {
+      title: 'Admin password',
       type: 'string'
     },
-    rrtField3: {
-      title: 'RRT Field 3',
+    firmwareUpdateRequired: {
+      title: 'Firmware update required',
       type: 'string'
     },
-    rrtField4: {
-      title: 'RRT Field 4',
-      type: 'string'
-    },
-    nestedFields: {
+    userPins: {
       title: 'Pins',
       type: 'object',
       i18nKey: 'User Pins',
@@ -178,38 +174,6 @@ function* seed(knex) {
     return memo
   }, {})
 
-  const rrtConfigurationData = {
-    rrtField1: 'aaaaaa',
-    rrtField2: 'yyyy',
-    rrtField3: 'zzzzz',
-    rrtField4: 'x',
-    nestedFields: {
-      user1Pin: '111111',
-      user1Name: _.times(4, () => String.fromCharCode(65 + _.random(25) + (_.random(1) > 0 ? 32 : 0))).join(''),
-      user2Pin: '333',
-      user2Name: _.times(4, () => String.fromCharCode(65 + _.random(25) + (_.random(1) > 0 ? 32 : 0))).join(''),
-      user3Pin: '555',
-      user3Name: _.times(4, () => String.fromCharCode(65 + _.random(25) + (_.random(1) > 0 ? 32 : 0))).join(''),
-      user4Pin: '777',
-      user4Name: _.times(4, () => String.fromCharCode(65 + _.random(25) + (_.random(1) > 0 ? 32 : 0))).join(''),
-      user5Pin: '99999',
-      user5Name: _.times(4, () => String.fromCharCode(65 + _.random(25) + (_.random(1) > 0 ? 32 : 0))).join('')
-    }
-  }
-
-  const m2000ConfigurationData = {
-    field1: 'xx',
-    field2: 'yyyy',
-    field3: 'zzzzz',
-    field4: 'aaaaaa',
-    nestedFields: {
-      nestedA: '111111',
-      nestedB: '2222',
-      nestedC: '333',
-      nestedD: '44',
-    }
-  }
-
   // every clinic has a site, RRT device and a user assigned to it
   for (const clinic of labClinic.clinics) {
     const { id: clinicGeographyId } = yield knex('Geography')
@@ -254,7 +218,23 @@ function* seed(knex) {
       shortname: `${siteData.shortname} RRT`,
       deviceTypeId: deviceTypes.RRT.id,
       deviceStatusId: deviceStatuses.Approved.id,
-      configurationData: JSON.stringify(rrtConfigurationData),
+      configurationData: JSON.stringify({
+        requirePrinter: _.random(1) > 0 ? 'yes' : 'no',
+        adminPassword: 'pwd123',
+        firmwareUpdateRequired: _.random(1) > 0 ? 'yes' : 'no',
+        userPins: {
+          user1Pin: '111111',
+          user1Name: _.times(4, () => String.fromCharCode(65 + _.random(25) + (_.random(1) > 0 ? 32 : 0))).join(''),
+          user2Pin: '333',
+          user2Name: _.times(4, () => String.fromCharCode(65 + _.random(25) + (_.random(1) > 0 ? 32 : 0))).join(''),
+          user3Pin: '555',
+          user3Name: _.times(4, () => String.fromCharCode(65 + _.random(25) + (_.random(1) > 0 ? 32 : 0))).join(''),
+          user4Pin: '777',
+          user4Name: _.times(4, () => String.fromCharCode(65 + _.random(25) + (_.random(1) > 0 ? 32 : 0))).join(''),
+          user5Pin: '99999',
+          user5Name: _.times(4, () => String.fromCharCode(65 + _.random(25) + (_.random(1) > 0 ? 32 : 0))).join('')
+        }
+      }),
       siteId: siteData.id,
       deviceId: routerId,
       createdOn: new Date(+now - (3 * millisInHour)),
@@ -328,7 +308,17 @@ function* seed(knex) {
       shortname: `${siteData.shortname} m2000`,
       deviceTypeId: deviceTypes.m2000.id,
       deviceStatusId: deviceStatuses.Approved.id,
-      configurationData: JSON.stringify(m2000ConfigurationData),
+      configurationData: JSON.stringify({
+        requirePrinter: _.random(1) > 0 ? 'yes' : 'no',
+        adminPassword: 'pwd123',
+        firmwareUpdateRequired: _.random(1) > 0 ? 'yes' : 'no',
+        firmwareVersions: {
+          versionAlpha: '0.9.12-alpha',
+          versionBeta: '1.0.0-beta',
+          versionRC: '1.0.1-rc',
+          versionGold: '1.1.0',
+        }
+      }),
       siteId: siteData.id,
       deviceId: routerId,
       createdOn: new Date(+now - (3 * millisInHour)),

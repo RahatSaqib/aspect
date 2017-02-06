@@ -112,47 +112,93 @@ function* seed(knex) {
 
   // define configurationData object
   const geneXpertConfigurationDataSchema = JSON.stringify({
-    field1: {
-      title: 'Field 1',
+    requirePrinter: {
+      title: 'Require printer',
       type: 'string'
     },
-    field2: {
-      title: 'Field 2',
+    adminPassword: {
+      title: 'Admin password',
       type: 'string'
     },
-    field3: {
-      title: 'Field 3',
+    firmwareUpdateRequired: {
+      title: 'Firmware update required',
       type: 'string'
     },
-    field4: {
-      title: 'Field 4',
-      type: 'string'
-    },
-    nestedFields: {
-      title: 'Nested Fields',
+    modules: {
+      title: 'Modules',
       type: 'object',
-      i18nKey: 'Nested Fields',
+      i18nKey: 'Modules',
       properties: {
-        nestedA: {
-          title: 'Nested A',
+        module1: {
+          title: 'Module 1',
           type: 'string'
         },
-        nestedB: {
-          title: 'Nested B',
+        module2: {
+          title: 'Module 2',
           type: 'string'
         },
-        nestedC: {
-          title: 'Nested C',
+        module3: {
+          title: 'Module 3',
           type: 'string'
         },
-        nestedD: {
-          title: 'Nested D',
+        module4: {
+          title: 'Module 4',
           type: 'string'
         }
       }
     }
   })
-  const m2000ConfigurationDataSchema = geneXpertConfigurationDataSchema
+  const m2000ConfigurationDataSchema = JSON.stringify({
+    requirePrinter: {
+      title: 'Require printer',
+      type: 'string'
+    },
+    adminPassword: {
+      title: 'Admin password',
+      type: 'string'
+    },
+    firmwareUpdateRequired: {
+      title: 'Firmware update required',
+      type: 'string'
+    },
+    firmwareVersions: {
+      title: 'Firmware versions',
+      type: 'object',
+      i18nKey: 'Firmware versions',
+      properties: {
+        versionAlpha: {
+          title: 'Alpha',
+          type: 'string'
+        },
+        versionBeta: {
+          title: 'Beta',
+          type: 'string'
+        },
+        versionRC: {
+          title: 'RC',
+          type: 'string'
+        },
+        versionGold: {
+          title: 'Gold',
+          type: 'string'
+        }
+      }
+    }
+  })
+  const daktariConfigurationDataSchema = JSON.stringify({
+    requirePrinter: {
+      title: 'Require printer',
+      type: 'string'
+    },
+    adminPassword: {
+      title: 'Admin password',
+      type: 'string'
+    },
+    firmwareUpdateRequired: {
+      title: 'Firmware update required',
+      type: 'string'
+    }
+  })
 
   // define deviceOperation object
   const deviceOperationSchema = JSON.stringify({
@@ -199,7 +245,7 @@ function* seed(knex) {
     name: 'Daktari',
     manufacturer: 'Daktari',
     deviceTypeCategoryId: deviceTypeCategoryLab,
-    configurationDataSchema: geneXpertConfigurationDataSchema,
+    configurationDataSchema: daktariConfigurationDataSchema,
     deviceOperationSchema
   })
 
@@ -1299,19 +1345,6 @@ function* seed(knex) {
   })
   yield knex('DeviceSim').insert(sims)
 
-  const configurationData = {
-    field1: 'xx',
-    field2: 'yyyy',
-    field3: 'zzzzz',
-    field4: 'aaaaaa',
-    nestedFields: {
-      nestedA: '111111',
-      nestedB: '2222',
-      nestedC: '333',
-      nestedD: '44',
-    }
-  }
-
   // insert GeneXpert devices
   const devicesGeneXpert = []
   for (let i = 0; i < deviceNumber; i++) {
@@ -1321,8 +1354,18 @@ function* seed(knex) {
       name: `GeneXpert #${i} ${siteData.shortname}`,
       shortname: `GeneXpert #${i}`,
       deviceTypeId: deviceTypeGeneXpertId,
-      deviceStatusId: i < 10 || _.random(1) > 0 ? deviceStatusApproved : deviceStatusUnapproved,
-      configurationData: JSON.stringify(configurationData),
+      deviceStatusId: _.random(1) > 0 ? deviceStatusApproved : deviceStatusUnapproved,
+      configurationData: JSON.stringify({
+        requirePrinter: _.random(1) > 0 ? 'yes' : 'no',
+        adminPassword: 'pwd123',
+        firmwareUpdateRequired: _.random(1) > 0 ? 'yes' : 'no',
+        modules: {
+          module1: _.times(8, () => _.random(0, 9)).join(''),
+          module2: _.times(8, () => _.random(0, 9)).join(''),
+          module3: _.times(8, () => _.random(0, 9)).join(''),
+          module4: _.times(8, () => _.random(0, 9)).join(''),
+        }
+      }),
       siteId: siteData.id,
       // not all sites will have a router - we only added routers to some site
       deviceId: routerId || null,
@@ -1370,7 +1413,11 @@ function* seed(knex) {
       shortname: `Daktari #${i}`,
       deviceTypeId: deviceTypeDaktariId,
       deviceStatusId: deviceStatusApproved,
-      configurationData: JSON.stringify(configurationData),
+      configurationData: JSON.stringify({
+        requirePrinter: _.random(1) > 0 ? 'yes' : 'no',
+        adminPassword: 'pwd123',
+        firmwareUpdateRequired: _.random(1) > 0 ? 'yes' : 'no'
+      }),
       siteId: siteData.id,
       // not all sites will have a router - we only added routers to some site
       deviceId: routerId || null,
