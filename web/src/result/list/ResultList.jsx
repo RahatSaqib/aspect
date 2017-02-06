@@ -53,7 +53,7 @@ const messages = defineMessages({
   },
   filterTemplate: {
     id: 'pages.ResultList.filterTemplate',
-    defaultMessage: 'Viewing <SAMPLE_ORIGIN_SITE_ID><SAMPLE_ID><ASSAY> results <DATE><RESULT> from all sites<GEOGRAPHY><NAME> <WORKFLOWSTATUS>'
+    defaultMessage: 'Viewing <PATIENT_OR_RESEARCH_ID><SAMPLE_ORIGIN_SITE_ID><SAMPLE_ID><ASSAY> results <DATE><RESULT> from all sites<GEOGRAPHY><NAME> <WORKFLOWSTATUS>'
   }
 })
 
@@ -78,6 +78,7 @@ export class ResultList extends PureComponent {
       assayAndResultCategory: true,
       geography: true,
       date: true,
+      patientOrResearchId: true,
       sampleId: true,
       siteName: true,
       sampleOriginSiteId: true,
