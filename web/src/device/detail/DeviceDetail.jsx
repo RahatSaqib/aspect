@@ -1,6 +1,5 @@
 // Imports from packages
 import _ from 'lodash'
-import Immutable from 'immutable'
 import React, { PureComponent, PropTypes } from 'react'
 import {
   injectIntl,
