@@ -1218,7 +1218,7 @@ function* seed(knex) {
       name: `GeneXpert #${i} ${siteData.shortname}`,
       shortname: `GeneXpert #${i}`,
       deviceTypeId: deviceTypeGeneXpertId,
-      deviceStatusId: _.random(1) > 0 ? deviceStatusApproved : deviceStatusUnapproved,
+      deviceStatusId: i < 10 || _.random(1) > 0 ? deviceStatusApproved : deviceStatusUnapproved,
       configurationData: JSON.stringify(configurationData),
       siteId: siteData.id,
       // not all sites will have a router - we only added routers to some site
