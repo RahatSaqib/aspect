@@ -91,7 +91,7 @@ ContactDetailsForm.defaultProps = {
   loading: false,
   partners: [],
   showNotesField: false,
-  intl: {},
+  intl: null,
   userIsAdmin: false
 }
 

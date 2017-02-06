@@ -30,7 +30,7 @@ export class StyleguideMain extends PureComponent {
   }
 
   static defaultProps = {
-    intl: {}
+    intl: null
   }
 
   state = {

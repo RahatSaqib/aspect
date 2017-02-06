@@ -37,7 +37,7 @@ export class SiteDetail extends PureComponent {
   }
 
   static defaultProps = {
-    site: {}
+    site: null
   }
 
   componentWillMount() {

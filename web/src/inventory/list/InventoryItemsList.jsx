@@ -167,7 +167,7 @@ export class InventoryItemsList extends PureComponent {
   }
 
   static defaultProps = {
-    inventoryAdjustment: {}
+    inventoryAdjustment: null
   }
 
   componentWillMount() {

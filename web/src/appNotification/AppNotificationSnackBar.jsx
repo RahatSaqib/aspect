@@ -35,7 +35,7 @@ class AppNotificationSnackBar extends PureComponent {
   }
 
   static defaultProps = {
-    appNotification: {}
+    appNotification: null
   }
 
   handleShowDetails = () => {

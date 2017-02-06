@@ -146,7 +146,7 @@ export class RouterDetail extends PureComponent {
   }
 
   static defaultProps = {
-    router: {}
+    router: null
   }
 
   state = {

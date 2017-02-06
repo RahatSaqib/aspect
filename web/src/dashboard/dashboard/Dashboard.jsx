@@ -50,7 +50,7 @@ export class Dashboard extends PureComponent {
 
   static defaultProps = {
     userName: '',
-    totals: {}
+    totals: null
   }
 
   componentWillMount() {

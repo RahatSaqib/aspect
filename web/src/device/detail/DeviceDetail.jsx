@@ -147,7 +147,7 @@ export class DeviceDetail extends PureComponent {
   }
 
   static defaultProps = {
-    device: {}
+    device: null
   }
 
   state = {

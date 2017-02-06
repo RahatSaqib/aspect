@@ -33,7 +33,7 @@ export class DeviceDemo extends PureComponent {
   }
 
   static defaultProps = {
-    device: {}
+    device: null
   }
 
   state = {

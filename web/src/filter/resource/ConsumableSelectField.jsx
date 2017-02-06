@@ -22,7 +22,7 @@ export class ConsumableSelectField extends PureComponent {
 
   static defaultProps = {
     allItemText: 'All',
-    consumableItems: {},
+    consumableItems: null,
     value: ''
   }
 

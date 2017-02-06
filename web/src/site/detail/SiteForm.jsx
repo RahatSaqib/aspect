@@ -18,7 +18,7 @@ export default class SiteForm extends PureComponent {
   }
 
   static defaultProps = {
-    site: {}
+    site: null
   }
 
   handleSubmit = (data) => {

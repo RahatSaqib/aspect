@@ -153,7 +153,7 @@ export class ResultDetail extends PureComponent {
   }
 
   static defaultProps = {
-    result: {}
+    result: null
   }
 
   componentWillMount() {

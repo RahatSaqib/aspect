@@ -49,7 +49,7 @@ class AppNotificationDialog extends PureComponent {
   }
 
   static defaultProps = {
-    appNotification: {}
+    appNotification: null
   }
 
   handleClose = () => {

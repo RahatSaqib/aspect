@@ -146,7 +146,7 @@ export class TerminalDetail extends PureComponent {
   }
 
   static defaultProps = {
-    terminal: {}
+    terminal: null
   }
 
   state = {

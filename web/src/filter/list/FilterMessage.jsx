@@ -58,7 +58,7 @@ FilterMessage.propTypes = {
 }
 
 FilterMessage.defaultProps = {
-  workflowStatusItems: {},
+  workflowStatusItems: null,
   subject: '',
   filterTemplateOptional: ''
 }
