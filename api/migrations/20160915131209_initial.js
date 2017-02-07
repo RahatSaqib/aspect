@@ -458,7 +458,7 @@ function* up(knex) {
   })
 
   yield knex.schema.createTable('DeviceLog', (deviceLog) => {
-    deviceLog.increments('id')
+    deviceLog.bigincrements('id')
     deviceLog.integer('deviceId').unsigned().notNullable()
           .index().references('id').inTable('Device')
     deviceLog.string('source').notNullable() // LIS listener, API...
@@ -466,13 +466,6 @@ function* up(knex) {
     deviceLog.string('senderIp').notNullable()
     deviceLog.string('checkpoint').index()
     deviceLog.text('rawMessage')
-    deviceLog.charset('utf8')
-  })
-
-  yield knex.schema.createTable('DeviceLogUpdate', (deviceLog) => {
-    deviceLog.bigincrements('id')
-    deviceLog.integer('deviceLogId').unsigned().notNullable()
-          .index().references('id').inTable('DeviceLog')
     deviceLog.boolean('deviceConfigurationUpdated').notNullable().defaultTo(0)
     deviceLog.integer('resultId').unsigned()
           .index().references('id').inTable('Result')

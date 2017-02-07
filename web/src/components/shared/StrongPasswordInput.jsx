@@ -1,6 +1,6 @@
 import React, { PropTypes } from 'react'
 import _ from 'lodash'
-import { injectIntl, defineMessages } from 'react-intl'
+import { injectIntl, defineMessages, intlShape } from 'react-intl'
 import { Field } from 'redux-form/immutable'
 import TextField from 'material-ui/TextField'
 import Popover from 'material-ui/Popover'
@@ -47,7 +47,7 @@ class StrongPasswordInput extends React.PureComponent {
     meta: PropTypes.object.isRequired,
     textFieldProps: PropTypes.object.isRequired,
     popOverProps: PropTypes.object.isRequired,
-    intl: PropTypes.object.isRequired
+    intl: intlShape.isRequired
   }
 
   constructor(props) {

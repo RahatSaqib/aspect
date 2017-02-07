@@ -88,6 +88,7 @@ export const DeviceDetailModalForm = (props) => {
       actions={actions}
       open={props.isDialogOpen}
       onRequestClose={props.onCancel}
+      autoScrollBodyContent
     >
       <form>
         <TextField
@@ -144,7 +145,6 @@ export const DeviceDetailModalForm = (props) => {
           </div>
         </div>
         <JSONSchemaCard
-          initiallyExpanded
           title={labels.configuration}
           renderField={field => (
             <TextField
