@@ -20,6 +20,12 @@ export class ConsumableSelectField extends PureComponent {
     value: PropTypes.string
   }
 
+  static defaultProps = {
+    allItemText: 'All',
+    consumableItems: null,
+    value: ''
+  }
+
   componentDidMount() {
     const { fetchConsumables } = this.props
     fetchConsumables(false)

@@ -29,12 +29,9 @@ exports[`Nav module Nav component should render correctly 1`] = `
     onFocus={[Function]}
     onKeyDown={[Function]}
     onKeyUp={[Function]}
-    onMouseDown={[Function]}
     onMouseEnter={[Function]}
     onMouseLeave={[Function]}
     onMouseOut={[Function]}
-    onMouseUp={[Function]}
-    onTouchEnd={[Function]}
     onTouchStart={[Function]}
     onTouchTap={[Function]}
     style={
@@ -59,7 +56,6 @@ exports[`Nav module Nav component should render correctly 1`] = `
         "padding": 12,
         "position": "relative",
         "textDecoration": "none",
-        "transform": "translate(0, 0)",
         "transition": "all 450ms cubic-bezier(0.23, 1, 0.32, 1) 0ms",
         "verticalAlign": null,
         "width": 48,
@@ -142,12 +138,9 @@ exports[`Nav module Nav component should render correctly 1`] = `
         onFocus={[Function]}
         onKeyDown={[Function]}
         onKeyUp={[Function]}
-        onMouseDown={[Function]}
         onMouseEnter={[Function]}
         onMouseLeave={[Function]}
         onMouseOut={[Function]}
-        onMouseUp={[Function]}
-        onTouchEnd={[Function]}
         onTouchStart={[Function]}
         onTouchTap={[Function]}
         style={
@@ -169,7 +162,6 @@ exports[`Nav module Nav component should render correctly 1`] = `
             "padding": 12,
             "position": "relative",
             "textDecoration": "none",
-            "transform": "translate(0, 0)",
             "transition": "all 450ms cubic-bezier(0.23, 1, 0.32, 1) 0ms",
             "verticalAlign": null,
             "width": 48,
@@ -297,12 +289,9 @@ exports[`Nav module Nav component should render correctly 1`] = `
         onFocus={[Function]}
         onKeyDown={[Function]}
         onKeyUp={[Function]}
-        onMouseDown={[Function]}
         onMouseEnter={[Function]}
         onMouseLeave={[Function]}
         onMouseOut={[Function]}
-        onMouseUp={[Function]}
-        onTouchEnd={[Function]}
         onTouchStart={[Function]}
         onTouchTap={[Function]}
         style={
@@ -324,7 +313,6 @@ exports[`Nav module Nav component should render correctly 1`] = `
             "padding": 12,
             "position": "relative",
             "textDecoration": "none",
-            "transform": "translate(0, 0)",
             "transition": "all 450ms cubic-bezier(0.23, 1, 0.32, 1) 0ms",
             "verticalAlign": null,
             "width": 48,
@@ -359,7 +347,12 @@ exports[`Nav module Nav component should render correctly 1`] = `
           </svg>
         </div>
       </button>
-      <div />
+      <div
+        style={
+          Object {
+            "display": "none",
+          }
+        } />
     </div>
   </div>
 </div>
@@ -396,12 +389,9 @@ exports[`Nav module Nav component should render pageTitle and pagePath correctly
     onFocus={[Function]}
     onKeyDown={[Function]}
     onKeyUp={[Function]}
-    onMouseDown={[Function]}
     onMouseEnter={[Function]}
     onMouseLeave={[Function]}
     onMouseOut={[Function]}
-    onMouseUp={[Function]}
-    onTouchEnd={[Function]}
     onTouchStart={[Function]}
     onTouchTap={[Function]}
     style={
@@ -426,7 +416,6 @@ exports[`Nav module Nav component should render pageTitle and pagePath correctly
         "padding": 12,
         "position": "relative",
         "textDecoration": "none",
-        "transform": "translate(0, 0)",
         "transition": "all 450ms cubic-bezier(0.23, 1, 0.32, 1) 0ms",
         "verticalAlign": null,
         "width": 48,
@@ -518,12 +507,9 @@ exports[`Nav module Nav component should render pageTitle and pagePath correctly
         onFocus={[Function]}
         onKeyDown={[Function]}
         onKeyUp={[Function]}
-        onMouseDown={[Function]}
         onMouseEnter={[Function]}
         onMouseLeave={[Function]}
         onMouseOut={[Function]}
-        onMouseUp={[Function]}
-        onTouchEnd={[Function]}
         onTouchStart={[Function]}
         onTouchTap={[Function]}
         style={
@@ -545,7 +531,6 @@ exports[`Nav module Nav component should render pageTitle and pagePath correctly
             "padding": 12,
             "position": "relative",
             "textDecoration": "none",
-            "transform": "translate(0, 0)",
             "transition": "all 450ms cubic-bezier(0.23, 1, 0.32, 1) 0ms",
             "verticalAlign": null,
             "width": 48,
@@ -673,12 +658,9 @@ exports[`Nav module Nav component should render pageTitle and pagePath correctly
         onFocus={[Function]}
         onKeyDown={[Function]}
         onKeyUp={[Function]}
-        onMouseDown={[Function]}
         onMouseEnter={[Function]}
         onMouseLeave={[Function]}
         onMouseOut={[Function]}
-        onMouseUp={[Function]}
-        onTouchEnd={[Function]}
         onTouchStart={[Function]}
         onTouchTap={[Function]}
         style={
@@ -700,7 +682,6 @@ exports[`Nav module Nav component should render pageTitle and pagePath correctly
             "padding": 12,
             "position": "relative",
             "textDecoration": "none",
-            "transform": "translate(0, 0)",
             "transition": "all 450ms cubic-bezier(0.23, 1, 0.32, 1) 0ms",
             "verticalAlign": null,
             "width": 48,
@@ -735,7 +716,12 @@ exports[`Nav module Nav component should render pageTitle and pagePath correctly
           </svg>
         </div>
       </button>
-      <div />
+      <div
+        style={
+          Object {
+            "display": "none",
+          }
+        } />
     </div>
   </div>
 </div>

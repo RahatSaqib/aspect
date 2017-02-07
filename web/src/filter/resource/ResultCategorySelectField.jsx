@@ -21,6 +21,12 @@ export class ResultCategorySelectField extends PureComponent {
     value: PropTypes.string
   }
 
+  static defaultProps = {
+    allItemText: 'All',
+    assayId: '',
+    value: ''
+  }
+
   componentDidMount() {
     this.props.fetchAssays(false)
   }

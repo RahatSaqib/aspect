@@ -49,6 +49,11 @@ export class Dashboard extends PureComponent {
     totals: PropTypes.object
   }
 
+  static defaultProps = {
+    userName: '',
+    totals: null
+  }
+
   componentWillMount() {
     this.props.setPageTitle(null)
   }
@@ -106,7 +111,7 @@ export class Dashboard extends PureComponent {
                   </h3>
                   <div>
                     <Link to="/dashboard/patient-care?type=TB">
-                      <img role="presentation" src={require('./TB.png')} />
+                      <img alt="tb" src={require('./TB.png')} />
                     </Link>
                   </div>
                 </Unit>
@@ -116,7 +121,7 @@ export class Dashboard extends PureComponent {
                   </h3>
                   <div>
                     <Link to="/dashboard/patient-care?type=HCV">
-                      <img role="presentation" src={require('./HCV.png')} />
+                      <img alt="hcv" src={require('./HCV.png')} />
                     </Link>
                   </div>
                 </Unit>
@@ -128,7 +133,7 @@ export class Dashboard extends PureComponent {
                   }
                   <div>
                     <Link to="/dashboard/manage-devices">
-                      <img role="presentation" src={require('./devices.png')} />
+                      <img alt="devices" src={require('./devices.png')} />
                     </Link>
                   </div>
                 </Unit>
@@ -138,7 +143,7 @@ export class Dashboard extends PureComponent {
                   </h3>
                   <div>
                     <Link to="/dashboard/manage-supplies">
-                      <img role="presentation" src={require('./supplies.png')} />
+                      <img alt="supplies" src={require('./supplies.png')} />
                     </Link>
                   </div>
                 </Unit>

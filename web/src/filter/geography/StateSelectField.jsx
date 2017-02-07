@@ -36,6 +36,12 @@ export class StateSelectField extends PureComponent {
     stateId: PropTypes.string
   }
 
+  static defaultProps = {
+    allItemText: 'All',
+    countryId: '',
+    stateId: ''
+  }
+
   componentDidMount() {
     const selectedCountry = getSelectedCountry(this.props)
     if (selectedCountry) {

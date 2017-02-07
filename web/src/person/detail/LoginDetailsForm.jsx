@@ -88,6 +88,13 @@ LoginDetailsForm.propTypes = {
   invalid: PropTypes.bool.isRequired
 }
 
+LoginDetailsForm.defaultProps = {
+  loading: true,
+  currentPasswordInputDialogOpen: false,
+  openCurrentPasswordInputDialog: undefined,
+  closeCurrentPasswordInputDialog: undefined
+}
+
 export function validate(loginDetails, props) {
   const { formatMessage } = props.intl
   const errors = {}

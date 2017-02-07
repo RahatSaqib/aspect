@@ -146,6 +146,10 @@ export class RouterDetail extends PureComponent {
     updateSingleRouter: PropTypes.func.isRequired
   }
 
+  static defaultProps = {
+    router: null
+  }
+
   state = {
     isEditDialogOpen: false,
     isDemoDialogOpen: false,
@@ -329,7 +333,7 @@ export class RouterDetail extends PureComponent {
                 label=""
                 value
                 format={() =>
-                  <img role="presentation" src={require('../../device/detail/utilization_rate.png')} style={{ width: '100%' }} />
+                  <img alt="utilization rate" src={require('../../device/detail/utilization_rate.png')} style={{ width: '100%' }} />
                 }
               />
             </Unit>
@@ -339,7 +343,7 @@ export class RouterDetail extends PureComponent {
                 label=""
                 value
                 format={() =>
-                  <img role="presentation" src={require('../../device/detail/error_rates.png')} style={{ width: '100%' }} />
+                  <img alt="error rates" src={require('../../device/detail/error_rates.png')} style={{ width: '100%' }} />
                 }
               />
             </Unit>

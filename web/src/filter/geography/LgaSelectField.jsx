@@ -38,6 +38,13 @@ export class LgaSelectField extends PureComponent {
     fetchLgasForLocationSelector: PropTypes.func
   }
 
+  static defaultProps = {
+    allItemText: 'All',
+    stateId: '',
+    lgaId: '',
+    fetchLgasForLocationSelector: undefined
+  }
+
   componentDidMount() {
     const selectedCountry = getSelectedCountry(this.props)
     const selectedState = getSelectedState(this.props)

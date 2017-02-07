@@ -87,6 +87,14 @@ ContactDetailsForm.propTypes = {
   userIsAdmin: PropTypes.bool
 }
 
+ContactDetailsForm.defaultProps = {
+  loading: false,
+  partners: [],
+  showNotesField: false,
+  intl: null,
+  userIsAdmin: false
+}
+
 export function validate(contactDetails, props) {
   const { formatMessage } = props.intl
   const errors = {}

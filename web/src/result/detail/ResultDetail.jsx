@@ -153,6 +153,10 @@ export class ResultDetail extends PureComponent {
     result: PropTypes.object,
   }
 
+  static defaultProps = {
+    result: null
+  }
+
   componentWillMount() {
     const { setPageTitle, intl } = this.props
     const { formatMessage } = intl

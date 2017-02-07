@@ -30,6 +30,10 @@ export class StyleguideMain extends PureComponent {
     intl: intlShape
   }
 
+  static defaultProps = {
+    intl: null
+  }
+
   state = {
     filter: {},
     countryId: null,

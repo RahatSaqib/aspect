@@ -32,6 +32,10 @@ export class DeviceDemo extends PureComponent {
     device: PropTypes.object
   }
 
+  static defaultProps = {
+    device: null
+  }
+
   state = {
     assayId: null,
     resultId: null,

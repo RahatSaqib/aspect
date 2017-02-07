@@ -73,7 +73,7 @@ export class ManageDevices extends PureComponent {
                   </header>
                   <div>
                     <img
-                      role="presentation"
+                      alt="current status"
                       src={require('./current-status.png')}
                       style={{ display: 'block', width: '100%' }}
                     />
@@ -91,7 +91,7 @@ export class ManageDevices extends PureComponent {
               <div>
                 <Link to="/device">
                   <img
-                    role="presentation"
+                    alt="devices"
                     src={require('./devices.png')}
                     style={{ display: 'block', width: '100%' }}
                   />
@@ -108,7 +108,7 @@ export class ManageDevices extends PureComponent {
                   </header>
                   <div>
                     <img
-                      role="presentation"
+                      alt="inventory"
                       src={require('./inventory.png')}
                       style={{ display: 'block', width: '100%' }}
                     />
@@ -124,7 +124,7 @@ export class ManageDevices extends PureComponent {
                   </header>
                   <div>
                     <img
-                      role="presentation"
+                      alt="staff"
                       src={require('./staff.png')}
                       style={{ display: 'block', width: '100%' }}
                     />

@@ -176,6 +176,10 @@ class InventoryAdjustmentForm extends PureComponent {
     sitesSelectList: PropTypes.object.isRequired
   }
 
+  static defaultProps = {
+    operation: undefined
+  }
+
   state = {
     selectedReasonKey: null,
     adjustmentQuantity: 0

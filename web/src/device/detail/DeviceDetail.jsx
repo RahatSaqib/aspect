@@ -151,6 +151,10 @@ export class DeviceDetail extends PureComponent {
     updateSingleDevice: PropTypes.func.isRequired
   }
 
+  static defaultProps = {
+    device: null
+  }
+
   state = {
     isEditDialogOpen: false,
     isDemoDialogOpen: false,
@@ -372,7 +376,7 @@ export class DeviceDetail extends PureComponent {
                 label=""
                 value
                 format={() =>
-                  <img role="presentation" src={require('./utilization_rate.png')} style={{ width: '100%' }} />
+                  <img alt="utilization rate" src={require('./utilization_rate.png')} style={{ width: '100%' }} />
                 }
               />
             </Unit>
@@ -382,7 +386,7 @@ export class DeviceDetail extends PureComponent {
                 label=""
                 value
                 format={() =>
-                  <img role="presentation" src={require('./error_rates.png')} style={{ width: '100%' }} />
+                  <img alt="error rate" src={require('./error_rates.png')} style={{ width: '100%' }} />
                 }
               />
             </Unit>

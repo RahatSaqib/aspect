@@ -34,6 +34,10 @@ class AppNotificationSnackBar extends PureComponent {
     hideAppNotification: PropTypes.func.isRequired
   }
 
+  static defaultProps = {
+    appNotification: null
+  }
+
   handleShowDetails = () => {
     this.props.showMoreDetails()
   }
