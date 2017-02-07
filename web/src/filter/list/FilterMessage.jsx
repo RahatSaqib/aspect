@@ -3,6 +3,7 @@ import _ from 'lodash'
 import React, { PropTypes } from 'react'
 import {
   injectIntl,
+  intlShape
 } from 'react-intl'
 import { connect } from 'react-redux'
 
@@ -41,7 +42,7 @@ export const FilterMessage = ({
 )
 
 FilterMessage.propTypes = {
-  intl: PropTypes.object.isRequired,
+  intl: intlShape.isRequired,
   listFilter: PropTypes.object.isRequired,
   countries: PropTypes.object.isRequired,
   assay: PropTypes.object.isRequired,
@@ -55,6 +56,12 @@ FilterMessage.propTypes = {
   subject: PropTypes.string,
   filterTemplate: PropTypes.string.isRequired,
   filterTemplateOptional: PropTypes.string,
+}
+
+FilterMessage.defaultProps = {
+  workflowStatusItems: null,
+  subject: '',
+  filterTemplateOptional: ''
 }
 
 function mapStateToProps(state) {

@@ -3,7 +3,7 @@ import React, { PureComponent, PropTypes } from 'react'
 import { bindActionCreators } from 'redux'
 import { connect } from 'react-redux'
 import _ from 'lodash'
-import { injectIntl, defineMessages } from 'react-intl'
+import { injectIntl, defineMessages, intlShape } from 'react-intl'
 
 // Material-UI
 import Snackbar from 'material-ui/Snackbar'
@@ -28,10 +28,14 @@ const genericMessages = defineMessages({
 class AppNotificationSnackBar extends PureComponent {
 
   static propTypes = {
-    intl: PropTypes.object.isRequired,
+    intl: intlShape.isRequired,
     appNotification: PropTypes.object,
     showMoreDetails: PropTypes.func.isRequired,
     hideAppNotification: PropTypes.func.isRequired
+  }
+
+  static defaultProps = {
+    appNotification: null
   }
 
   handleShowDetails = () => {

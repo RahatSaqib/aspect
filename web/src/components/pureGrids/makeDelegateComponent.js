@@ -33,7 +33,8 @@ export function makeDelegateComponent(componentName, pureGridPropTypes, keyToCla
     static displayName = componentName
 
     static defaultProps = {
-      component: 'div'
+      component: 'div',
+      className: null
     }
 
     static propTypes = propTypes

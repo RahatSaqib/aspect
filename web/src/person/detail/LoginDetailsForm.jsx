@@ -4,7 +4,7 @@ import RaisedButton from 'material-ui/RaisedButton'
 import Dialog from 'material-ui/Dialog'
 import FlatButton from 'material-ui/FlatButton'
 import _ from 'lodash'
-import { injectIntl } from 'react-intl'
+import { injectIntl, intlShape } from 'react-intl'
 import TextInput from '../../components/shared/TextInput'
 import StrongPasswordInput from '../../components/shared/StrongPasswordInput'
 import messages from './messages'
@@ -82,10 +82,17 @@ LoginDetailsForm.propTypes = {
   currentPasswordInputDialogOpen: PropTypes.bool,
   openCurrentPasswordInputDialog: PropTypes.func,
   closeCurrentPasswordInputDialog: PropTypes.func,
-  intl: PropTypes.object.isRequired,
+  intl: intlShape.isRequired,
   handleSubmit: PropTypes.func.isRequired,
   pristine: PropTypes.bool.isRequired,
   invalid: PropTypes.bool.isRequired
+}
+
+LoginDetailsForm.defaultProps = {
+  loading: true,
+  currentPasswordInputDialogOpen: false,
+  openCurrentPasswordInputDialog: undefined,
+  closeCurrentPasswordInputDialog: undefined
 }
 
 export function validate(loginDetails, props) {

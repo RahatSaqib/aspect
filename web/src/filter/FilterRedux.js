@@ -92,6 +92,7 @@ const ListConfig = Immutable.Record({
   assayAndResultCategory: false,
   geography: false,
   date: false,
+  patientOrResearchId: false,
   sampleId: false,
   deviceName: false,
   siteName: false,
@@ -109,6 +110,7 @@ export const ListFilter = Immutable.Record({
   lgaId: undefined,
   minDate: undefined,
   maxDate: undefined,
+  patientOrResearchId: undefined,
   sampleId: undefined,
   deviceName: undefined,
   resultCategoryId: undefined,
@@ -157,6 +159,7 @@ export default function filterReducer(state = initialState, action) {
                 return ['countryId', 'stateId', 'lgaId'].reduce(deleteFromMap, acc)
               case 'date':
                 return ['minDate', 'maxDate'].reduce(deleteFromMap, acc)
+              case 'patientOrResearchId':
               case 'sampleId':
               case 'deviceName':
               case 'siteName':

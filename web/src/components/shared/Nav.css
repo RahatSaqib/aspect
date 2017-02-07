@@ -14,7 +14,7 @@
   padding: 6px 0 0 0 !important;
 }
 
-.Badge span {/* FIXME: use classname */
+.Badge>span {/* FIXME: use classname */
     height: 20px !important;
     width: 20px !important;
     font-size: 11px !important;

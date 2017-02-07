@@ -17,6 +17,11 @@ export class CountrySelectField extends PureComponent {
     countryId: PropTypes.string
   }
 
+  static defaultProps = {
+    allItemText: 'All',
+    countryId: ''
+  }
+
   componentDidMount() {
     const { countries, countryId } = this.props
     this.props.fetchCountriesForLocationSelector(false, countries, countryId, null)

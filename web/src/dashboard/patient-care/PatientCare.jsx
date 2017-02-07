@@ -3,7 +3,8 @@ import _ from 'lodash'
 import React, { PureComponent, PropTypes } from 'react'
 import {
   injectIntl,
-  defineMessages
+  defineMessages,
+  intlShape
 } from 'react-intl'
 import { bindActionCreators } from 'redux'
 import { connect } from 'react-redux'
@@ -32,14 +33,14 @@ export class PatientCare extends PureComponent {
         type: PropTypes.string
       })
     }).isRequired,
-    intl: PropTypes.object.isRequired,
+    intl: intlShape.isRequired,
     setPageTitle: PropTypes.func.isRequired,
     configureListFilter: PropTypes.func.isRequired
   }
 
   componentWillMount() {
     const { setPageTitle, configureListFilter } = this.props
-    setPageTitle('PatientCare')
+    setPageTitle('Patient Care')
     configureListFilter({
       assayAndResultCategory: true,
       geography: true,
@@ -51,7 +52,7 @@ export class PatientCare extends PureComponent {
     const { intl: { formatMessage } } = this.props
     return (
       <div className={styles.Content}>
-        <Helmet title="PatientCare" titleTemplate="%s - Aspect" defaultTitle="Aspect" />
+        <Helmet title="Patient Care" titleTemplate="%s - Aspect" defaultTitle="Aspect" />
         <ListFilterContainer
           subject={this.props.location.query.type === 'TB' ? 'TB' : 'HCV'}
           filterTemplate={formatMessage(messages.filterTemplate)}
@@ -59,7 +60,7 @@ export class PatientCare extends PureComponent {
         <Paper>
           <Link to="/result">
             <img
-              role="presentation"
+              alt="disease graph"
               src={
                 this.props.location.query.type === 'TB' ?
                 require('./TB.png') :

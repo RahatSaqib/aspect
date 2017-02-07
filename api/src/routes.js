@@ -143,7 +143,7 @@ function getPageParams(params) {
   const result = {}
 
   result.page = parseInt(params.page, 10) || 0
-  result.size = parseInt(params.size, 10) || 20
+  result.size = parseInt(params.size, 10) || 50
   result.skip = result.page * result.size
 
   return result

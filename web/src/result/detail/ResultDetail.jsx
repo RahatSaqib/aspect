@@ -4,7 +4,8 @@ import classnames from 'classnames/bind'
 import React, { PureComponent, PropTypes } from 'react'
 import {
   injectIntl,
-  defineMessages
+  defineMessages,
+  intlShape
 } from 'react-intl'
 import { bindActionCreators } from 'redux'
 import { connect } from 'react-redux'
@@ -147,9 +148,13 @@ export class ResultDetail extends PureComponent {
     fetchSingleResult: PropTypes.func.isRequired,
     updateResultWorkflowStatus: PropTypes.func.isRequired,
     updateSingleResult: PropTypes.func.isRequired,
-    intl: PropTypes.object.isRequired,
+    intl: intlShape.isRequired,
     params: PropTypes.object.isRequired,
     result: PropTypes.object,
+  }
+
+  static defaultProps = {
+    result: null
   }
 
   componentWillMount() {

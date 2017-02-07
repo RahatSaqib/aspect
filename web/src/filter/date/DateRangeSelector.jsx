@@ -19,7 +19,8 @@ import subtractYears from 'date-fns/sub_years'
 import React, { PureComponent, PropTypes } from 'react'
 import {
   injectIntl,
-  defineMessages
+  defineMessages,
+  intlShape
 } from 'react-intl'
 
 // Material-UI
@@ -137,11 +138,16 @@ const messages = defineMessages({
 export class DateRangeSelector extends PureComponent {
 
   static propTypes = {
-    intl: PropTypes.object.isRequired,
+    intl: intlShape.isRequired,
     onChangeDate: PropTypes.func.isRequired,
     floatingLabelText: PropTypes.string.isRequired,
     minDate: PropTypes.string,
     maxDate: PropTypes.string
+  }
+
+  static defaultProps = {
+    minDate: null,
+    maxDate: null
   }
 
   state = {

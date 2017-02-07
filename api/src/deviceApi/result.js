@@ -249,7 +249,7 @@ function* addResult(context) {
   return {}
 }
 
-function* listResults(context, deviceLogId) {
+function* getResultAndDeviceLog(context, deviceLogId, offset) {
   const { knex, constraints: dataConstraints } = context
 
   const resultQuery = knex('Result as r')
@@ -263,41 +263,67 @@ function* listResults(context, deviceLogId) {
     .leftJoin('ResultType as rt', 'r.resultTypeId', 'rt.id')
     .leftJoin('ResultWorkflowStatus as rs', 'r.resultWorkflowStatusId', 'rs.id')
     .modify(addConstraints, dataConstraints, { device: 'd', sample: 's' })
+  const resultQueryCols = [
+    'r.externalId as resultId', 'r.resultData', 'r.patientData',
+    'r.startedOn', 'r.endedOn', 'r.updatedOn', 'r.researchId', 'r.notes',
+    'r.senderVersion', 'r.senderOperator', 'r.errorCode', 'r.errorNotes',
+    'r.consumableSerial', 'r.consumableExpirationDate', 'r.consumableLot',
+    'r.instrumentSerial', 'r.moduleName', 'r.moduleSerial',
+    'a.externalId as assayId', 'r.assayVersion',
+    'r.latitude', 'r.longitude', 'rt.externalId as resultTypeId',
+    'rs.externalId as resultWorkflowStatusId',
+    's.externalId as sampleId', 's.collectedOn as sampleCollectedOn',
+    'sos.externalId as sampleOriginSiteId', 'st.externalId as sampleTypeId',
+    'rc1.externalId as category1Id', 'rc2.externalId as category2Id']
 
-  if (deviceLogId > 0) {
-    resultQuery.whereIn('r.id',
-      knex('DeviceLogUpdate as dlu')
-        .where('dlu.id', '>', knex('DeviceLogUpdate as dluMin')
-          .where('dluMin.deviceLogId', deviceLogId)
-          .min('dluMin.id as minDeviceLogUpdateId'))
-        .where('dlu.deviceLogId', '<>', deviceLogId)
-        .distinct('dlu.resultId')
-        .orderBy('dlu.id'))
+  if (!deviceLogId) {
+    // If device log id not specified, select result last updated
+    // with stable ordering
+    resultQuery
+      .orderBy('r.updatedOn', 'asc')
+      .orderBy('r.id', 'asc')
+  } else {
+    resultQueryCols.push(
+      'dl.id as deviceLogId', 'dl.deviceId as deviceLogDeviceId',
+      'dl.checkpoint as deviceLogCheckpoint')
+    resultQuery
+      .innerJoin('DeviceLog as dl', 'dl.resultId', 'r.id')
+    if (offset === 0) {
+      // select result at specified log entry
+      resultQuery.where('dl.id', '=', deviceLogId)
+    } else if (offset > 0) {
+      // select result after specified log entry
+      resultQuery
+        .where('dl.id', '>', deviceLogId)
+        .orderBy('dl.id', 'asc')
+      if (offset > 1) {
+        // specify query offset if immediately after
+        resultQuery.offset(offset - 1)
+      }
+    } else if (offset < 0) {
+      // select result before specified log entry
+      resultQuery
+        .where('dl.id', '<', deviceLogId)
+        .orderBy('dl.id', 'desc')
+      if (offset < -1) {
+        // specify query offset if immediately before
+        resultQuery.offset(-offset - 1)
+      }
+    }
   }
-  // TODO limit size of result list from Device API?
 
-  resultQuery
-    .orderBy('r.updatedOn', 'asc')
-    .orderBy('r.id', 'asc')
-    .select(
-      'r.externalId as resultId', 'r.resultData', 'r.patientData',
-      'r.startedOn', 'r.endedOn', 'r.updatedOn', 'r.researchId', 'r.notes',
-      'r.senderVersion', 'r.senderOperator', 'r.errorCode', 'r.errorNotes',
-      'r.consumableSerial', 'r.consumableExpirationDate', 'r.consumableLot',
-      'r.instrumentSerial', 'r.moduleName', 'r.moduleSerial',
-      'a.externalId as assayId', 'r.assayVersion',
-      'r.latitude', 'r.longitude', 'rt.externalId as resultTypeId',
-      'rs.externalId as resultWorkflowStatusId',
-      's.externalId as sampleId', 's.collectedOn as sampleCollectedOn',
-      'sos.externalId as sampleOriginSiteId', 'st.externalId as sampleTypeId',
-      'rc1.externalId as category1Id', 'rc2.externalId as category2Id'
-    )
+  const row = yield resultQuery.first(resultQueryCols)
+  if (row == null) {
+    return { result: null, deviceLog: null }
+  }
 
-  // return result when both queries are finished
-  return yield resultQuery.map(rowToResult)
-}
+  const deviceLog = {}
+  if (row.deviceLogId != null) {
+    deviceLog.id = row.deviceLogId
+    deviceLog.deviceId = row.deviceLogDeviceId
+    deviceLog.checkpoint = row.deviceLogCheckpoint
+  }
 
-function rowToResult(row) {
   // TODO allow filtering on fields of interest, similar to client device API
   // but JSON paths from result data in same format as POST
   const result = {}
@@ -390,11 +416,12 @@ function rowToResult(row) {
   if (error.code != null || error.notes != null) {
     result.error = error
   }
-  return result
+
+  return { result, deviceLog }
 }
 
 
 module.exports = {
   addResult,
-  listResults
+  getResultAndDeviceLog
 }

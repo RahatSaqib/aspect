@@ -47,7 +47,7 @@ export const PropertiesSchemaCard = compose(
           .map(key => ({
             key,
             path: [...props.path, key],
-            label: key, /* Todo: i18n */
+            label: props.dataSchema.getIn([key, 'title']), /* Todo: i18n */
             type: props.dataSchema.getIn([key, 'type']),
             value: props.data.get(key)
           }))
@@ -86,7 +86,7 @@ export const JSONSchemaCard = ({
         .map(key => ({
           key,
           path: [key],
-          label: key, /* Todo: i18n */
+          label: dataSchema.getIn([key, 'title']), /* Todo: i18n */
           type: dataSchema.getIn([key, 'type']),
           value: data.get(key)
         }))

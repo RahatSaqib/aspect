@@ -6,7 +6,8 @@ import _ from 'lodash'
 import {
   injectIntl,
   defineMessages,
-  FormattedMessage
+  FormattedMessage,
+  intlShape
 } from 'react-intl'
 
 // Material-UI
@@ -43,9 +44,13 @@ const genericMessages = defineMessages({
 class AppNotificationDialog extends PureComponent {
 
   static propTypes = {
-    intl: PropTypes.object.isRequired,
+    intl: intlShape.isRequired,
     appNotification: PropTypes.object,
     hideAppNotification: PropTypes.func.isRequired
+  }
+
+  static defaultProps = {
+    appNotification: null
   }
 
   handleClose = () => {

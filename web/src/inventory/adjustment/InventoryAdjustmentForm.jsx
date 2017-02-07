@@ -4,7 +4,8 @@ import _ from 'lodash'
 import {
   injectIntl,
   defineMessages,
-  FormattedMessage
+  FormattedMessage,
+  intlShape
 } from 'react-intl'
 import { bindActionCreators } from 'redux'
 import { connect } from 'react-redux'
@@ -159,7 +160,7 @@ export const testConductedReasonI18nKey = 'ConsumableReason_TestConducted'
 
 class InventoryAdjustmentForm extends PureComponent {
   static propTypes = {
-    intl: PropTypes.object.isRequired,
+    intl: intlShape.isRequired,
     operation: PropTypes.oneOf(
       [addOperation, removeOperation, transferOperation, receiveOperation]),
     updating: PropTypes.bool.isRequired,
@@ -173,6 +174,10 @@ class InventoryAdjustmentForm extends PureComponent {
     consumables: PropTypes.object.isRequired,
     consumableReasons: PropTypes.object.isRequired,
     sitesSelectList: PropTypes.object.isRequired
+  }
+
+  static defaultProps = {
+    operation: undefined
   }
 
   state = {

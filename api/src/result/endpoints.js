@@ -29,6 +29,7 @@ module.exports = [
           resultCategoryId: Joi.number().allow('').description('Result Category ID'),
           deviceName: Joi.string().allow('').description('Filter for device name'),
           siteName: Joi.string().allow('').description('Filter for site name'),
+          patientOrResearchId: Joi.string().allow('').description('Filter for patient/research ID'),
           sampleId: Joi.string().allow('').description('Filter for sample ID'),
           sampleOriginSite: Joi.string().allow('').description('Filter for sample origin site ID'),
           workflowStatusId: Joi.number().allow('').description('Filter for Result Workflow Status ID'),

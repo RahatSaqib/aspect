@@ -4,7 +4,8 @@ import Immutable from 'immutable'
 import React, { PureComponent, PropTypes } from 'react'
 import {
   injectIntl,
-  defineMessages
+  defineMessages,
+  intlShape
 } from 'react-intl'
 import { bindActionCreators } from 'redux'
 import { connect } from 'react-redux'
@@ -71,6 +72,10 @@ const messages = defineMessages({
   fieldConfiguration: {
     id: 'pages.DeviceDetail.fieldConfiguration',
     defaultMessage: 'Configuration'
+  },
+  fieldOperationalData: {
+    id: 'pages.DeviceDetail.fieldOperationalData',
+    defaultMessage: 'Operational Data'
   },
   fieldFirstApprovedOn: {
     id: 'pages.DeviceDetail.fieldFirstApprovedOn',
@@ -141,9 +146,13 @@ export class DeviceDetail extends PureComponent {
       notes: PropTypes.string,
       serial: PropTypes.string
     }),
-    intl: PropTypes.object.isRequired,
+    intl: intlShape.isRequired,
     editable: PropTypes.bool.isRequired,
     updateSingleDevice: PropTypes.func.isRequired
+  }
+
+  static defaultProps = {
+    device: null
   }
 
   state = {
@@ -338,7 +347,7 @@ export class DeviceDetail extends PureComponent {
                     </div>
                     <div className={styles.StatusText}>
                       {formatMessage(messages.fieldLastSeen)} {formatRelative(device.get('lastSeen'))}
-                      &nbsp;&nbsp;
+                      &nbsp;•&nbsp;
                       {formatMessage(messages.fieldFirstConnected)} {formatRelative(device.get('createdOn'))}
                     </div>
                     <div className={styles.StatusText}>
@@ -367,7 +376,7 @@ export class DeviceDetail extends PureComponent {
                 label=""
                 value
                 format={() =>
-                  <img role="presentation" src={require('./utilization_rate.png')} style={{ width: '100%' }} />
+                  <img alt="utilization rate" src={require('./utilization_rate.png')} style={{ width: '100%' }} />
                 }
               />
             </Unit>
@@ -377,7 +386,7 @@ export class DeviceDetail extends PureComponent {
                 label=""
                 value
                 format={() =>
-                  <img role="presentation" src={require('./error_rates.png')} style={{ width: '100%' }} />
+                  <img alt="error rate" src={require('./error_rates.png')} style={{ width: '100%' }} />
                 }
               />
             </Unit>
@@ -420,15 +429,6 @@ export class DeviceDetail extends PureComponent {
             Expires 12/31/2018
           </CardText>
         </Card>
-        { /* Configuration */ }
-        <JSONSchemaCard
-          title={formatMessage(messages.fieldConfiguration)}
-          initiallyExpanded
-          renderField={field => <ReadOnlyField {...field} />}
-          formatNestedSubtitle={this.handleFormatNestedSubtitle}
-          dataSchema={configurationDataSchema}
-          data={device.get('configurationData')}
-        />
         { /* Technical information */ }
         <Card initiallyExpanded>
           <CardHeader title="Technical information" actAsExpander showExpandableButton />
@@ -447,8 +447,17 @@ export class DeviceDetail extends PureComponent {
             </Unit>
           </CardText>
         </Card>
+        { /* Configuration */ }
         <JSONSchemaCard
-          title="Device Operation Data"
+          title={formatMessage(messages.fieldConfiguration)}
+          renderField={field => <ReadOnlyField {...field} />}
+          formatNestedSubtitle={this.handleFormatNestedSubtitle}
+          dataSchema={configurationDataSchema}
+          data={device.get('configurationData')}
+        />
+        { /* Operational Data */ }
+        <JSONSchemaCard
+          title={formatMessage(messages.fieldOperationalData)}
           renderField={field => <ReadOnlyField {...field} />}
           formatNestedSubtitle={this.handleFormatNestedSubtitle}
           dataSchema={deviceOperationsSchema}
@@ -490,6 +499,7 @@ export class DeviceDetail extends PureComponent {
       <div className={styles.ContentDetails}>
         <Helmet title={formatMessage(messages.title)} titleTemplate="%s - Aspect" defaultTitle="Aspect" />
         {this.renderPaper()}
+        <br />
         {this.renderDemoButton()}
       </div>
     )

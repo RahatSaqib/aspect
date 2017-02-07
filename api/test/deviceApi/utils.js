@@ -17,29 +17,24 @@ function* getApiKey(knex, deviceId) {
 }
 
 function* deleteTestDataFromCheckpoint(knex, checkpoint, deviceIds) {
-  const minDeviceLogUpdate = yield knex('DeviceLogUpdate as dlu')
-    .innerJoin('DeviceLog as dl', 'dl.id', 'dlu.deviceLogId')
+  const minDeviceLog = yield knex('DeviceLog as dl')
     .where('dl.checkpoint', checkpoint)
-    .orderBy('dlu.id', 'desc')
-    .first('dlu.id as id')
-  if (!minDeviceLogUpdate) {
+    .first('dl.id as id')
+  if (!minDeviceLog) {
     // if no updates, nothing to delete
     return
   }
-  const minDeviceLogUpdateId = minDeviceLogUpdate.id
 
-  const deviceUpdates = yield knex('DeviceLogUpdate as dlu')
-    .innerJoin('DeviceLog as dl', 'dl.id', 'dlu.deviceLogId')
-    .where('dlu.id', '>=', minDeviceLogUpdateId)
+  const deviceUpdates = yield knex('DeviceLog as dl')
+    .where('dl.id', '>=', minDeviceLog.id)
     .whereIn('dl.deviceId', deviceIds)
     .select(
-      'dlu.id', 'dlu.deviceLogId', 'dlu.resultId', 'dlu.deviceOperationId')
+      'dl.id', 'dl.resultId', 'dl.deviceOperationId')
 
-  const deviceLogIds = _.uniq(_.map(deviceUpdates, 'deviceLogId'))
+  const deviceLogIds = _.uniq(_.map(deviceUpdates, 'id'))
   const resultIds = _.uniq(_.map(deviceUpdates, 'resultId'))
   const opIds = _.uniq(_.map(deviceUpdates, 'deviceOperationId'))
 
-  yield knex('DeviceLogUpdate').whereIn('deviceLogId', deviceLogIds).delete()
   yield knex('DeviceLog').whereIn('id', deviceLogIds).delete()
   yield knex('InventoryLog').whereIn('resultId', resultIds).delete()
   yield knex('ResultWorkflowLog').whereIn('resultId', resultIds).delete()
@@ -73,22 +68,20 @@ function* getLastDeviceOperationData(knex, deviceId) {
 }
 
 function* getLastDeviceOperationId(knex, deviceId) {
-  const op = yield knex('DeviceLogUpdate as dlu')
-    .innerJoin('DeviceLog as dl', 'dl.id', 'dlu.deviceLogId')
+  const op = yield knex('DeviceLog as dl')
     .where('dl.deviceId', deviceId)
-    .whereNotNull('dlu.deviceOperationId')
-    .orderBy('dlu.id', 'desc')
-    .first('dlu.deviceOperationId as id')
+    .whereNotNull('dl.deviceOperationId')
+    .orderBy('dl.id', 'desc')
+    .first('dl.deviceOperationId as id')
   return op && op.id
 }
 
 function* getLastResultId(knex, deviceId) {
-  const result = yield knex('DeviceLogUpdate as dlu')
-    .innerJoin('DeviceLog as dl', 'dl.id', 'dlu.deviceLogId')
+  const result = yield knex('DeviceLog as dl')
     .where('dl.deviceId', deviceId)
-    .whereNotNull('dlu.resultId')
-    .orderBy('dlu.id', 'desc')
-    .first('dlu.resultId')
+    .whereNotNull('dl.resultId')
+    .orderBy('dl.id', 'desc')
+    .first('dl.resultId')
   return result && result.resultId
 }
 

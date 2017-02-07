@@ -20,6 +20,11 @@ export class AssaySelectField extends PureComponent {
     value: PropTypes.string
   }
 
+  static defaultProps = {
+    allItemText: 'All',
+    value: ''
+  }
+
   componentDidMount() {
     this.props.fetchAssays(false)
   }

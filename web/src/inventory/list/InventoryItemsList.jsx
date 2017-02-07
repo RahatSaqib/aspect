@@ -3,7 +3,8 @@ import _ from 'lodash'
 import React, { PureComponent, PropTypes } from 'react'
 import {
   injectIntl,
-  defineMessages
+  defineMessages,
+  intlShape
 } from 'react-intl'
 import { bindActionCreators } from 'redux'
 import { connect } from 'react-redux'
@@ -148,7 +149,7 @@ export class InventoryItemsList extends PureComponent {
     setPageTitle: PropTypes.func.isRequired,
     table: PropTypes.object.isRequired,
     configureListFilter: PropTypes.func.isRequired,
-    intl: PropTypes.object.isRequired,
+    intl: intlShape.isRequired,
     listFilter: PropTypes.object.isRequired,
     fetchListFilteredInventoryItems: PropTypes.func.isRequired,
     toggleGroupBySite: PropTypes.func.isRequired,
@@ -164,6 +165,10 @@ export class InventoryItemsList extends PureComponent {
     receiveInventory: PropTypes.func.isRequired,
     submit: PropTypes.func.isRequired,
     showAcknowledgement: PropTypes.func.isRequired
+  }
+
+  static defaultProps = {
+    inventoryAdjustment: null
   }
 
   componentWillMount() {

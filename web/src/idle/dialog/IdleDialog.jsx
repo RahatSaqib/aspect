@@ -5,7 +5,8 @@ import { connect } from 'react-redux'
 import Dialog from 'material-ui/Dialog'
 import {
   injectIntl,
-  defineMessages
+  defineMessages,
+  intlShape
 } from 'react-intl'
 
 const messages = defineMessages({
@@ -30,7 +31,7 @@ const enhance = compose(
   injectIntl,
   connect(mapStateToProps),
   setPropTypes({
-    intl: PropTypes.object.isRequired,
+    intl: intlShape.isRequired,
     idleStatus: PropTypes.string.isRequired
   })
 )

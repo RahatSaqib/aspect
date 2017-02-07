@@ -3,7 +3,8 @@ import _ from 'lodash'
 import React, { PureComponent, PropTypes } from 'react'
 import {
   injectIntl,
-  defineMessages
+  defineMessages,
+  intlShape
 } from 'react-intl'
 import { bindActionCreators } from 'redux'
 import { connect } from 'react-redux'
@@ -11,6 +12,11 @@ import Helmet from 'react-helmet'
 import { Link } from 'react-router'
 
 import Paper from 'material-ui/Paper'
+import IconButton from 'material-ui/IconButton'
+import NavigationCheck from 'material-ui/svg-icons/navigation/check'
+import PrioHigh from 'material-ui/svg-icons/notification/priority-high'
+import Build from 'material-ui/svg-icons/action/build'
+import { Card, CardActions, CardHeader, CardText } from 'material-ui/Card'
 
 // Our own imports
 import { Unit } from '../../components/pureGrids'
@@ -34,12 +40,12 @@ export class ManageDevices extends PureComponent {
   static propTypes = {
     setPageTitle: PropTypes.func.isRequired,
     configureListFilter: PropTypes.func.isRequired,
-    intl: PropTypes.object.isRequired
+    intl: intlShape.isRequired,
   }
 
   componentWillMount() {
     const { setPageTitle, configureListFilter } = this.props
-    setPageTitle('ManageDevices')
+    setPageTitle('Manage Devices')
     configureListFilter({
       assayAndResultCategory: true,
       geography: true,
@@ -51,7 +57,7 @@ export class ManageDevices extends PureComponent {
     const { intl: { formatMessage } } = this.props
     return (
       <div className={styles.Content}>
-        <Helmet title="ManageDevices" titleTemplate="%s - Aspect" defaultTitle="Aspect" />
+        <Helmet title="Manage Devices" titleTemplate="%s - Aspect" defaultTitle="Aspect" />
         <ListFilterContainer
           subject="devices"
           filterTemplate={formatMessage(messages.filterTemplate)}
@@ -67,7 +73,7 @@ export class ManageDevices extends PureComponent {
                   </header>
                   <div>
                     <img
-                      role="presentation"
+                      alt="current status"
                       src={require('./current-status.png')}
                       style={{ display: 'block', width: '100%' }}
                     />
@@ -85,7 +91,7 @@ export class ManageDevices extends PureComponent {
               <div>
                 <Link to="/device">
                   <img
-                    role="presentation"
+                    alt="devices"
                     src={require('./devices.png')}
                     style={{ display: 'block', width: '100%' }}
                   />
@@ -102,7 +108,7 @@ export class ManageDevices extends PureComponent {
                   </header>
                   <div>
                     <img
-                      role="presentation"
+                      alt="inventory"
                       src={require('./inventory.png')}
                       style={{ display: 'block', width: '100%' }}
                     />
@@ -118,7 +124,7 @@ export class ManageDevices extends PureComponent {
                   </header>
                   <div>
                     <img
-                      role="presentation"
+                      alt="staff"
                       src={require('./staff.png')}
                       style={{ display: 'block', width: '100%' }}
                     />
@@ -132,27 +138,78 @@ export class ManageDevices extends PureComponent {
               <header className={styles.Section__Header}>
                 <h2>Recommendations</h2>
               </header>
-              <div>
-                <img
-                  role="presentation"
-                  src={require('./recommendation.png')}
-                  style={{ display: 'block', width: '100%' }}
-                />
-                <img
-                  role="presentation"
-                  src={require('./recommendation.png')}
-                  style={{ display: 'block', width: '100%' }}
-                />
-                <img
-                  role="presentation"
-                  src={require('./recommendation.png')}
-                  style={{ display: 'block', width: '100%' }}
-                />
-                <img
-                  role="presentation"
-                  src={require('./recommendation.png')}
-                  style={{ display: 'block', width: '100%' }}
-                />
+              <div style={{ paddingTop: '15px' }}>
+                <Card>
+                  <CardHeader title="GeneXpert Franklin" />
+                  <CardText>
+                    This device hasn&#39;t reported in <b>8</b> days.
+                  </CardText>
+                  <CardActions style={{ textAlign: 'right' }}>
+                    <IconButton tooltip="Fix this" iconStyle={{ color: 'gray' }} >
+                      <Build />
+                    </IconButton>
+                    <IconButton tooltip="Escalate" iconStyle={{ color: '#f57c00' }} >
+                      <PrioHigh />
+                    </IconButton>
+                    <IconButton tooltip="Hide this notification" iconStyle={{ color: '#63a021' }} >
+                      <NavigationCheck />
+                    </IconButton>
+                  </CardActions>
+                </Card>
+                <Card style={{ marginTop: '15px' }}>
+                  <CardHeader title="Daktari Omaha" />
+                  <CardText>
+                    This device is low on inventory (<b>54 cartridges</b>).
+                    It will run out in <b>9 days</b> given the curent utilization rate.
+                  </CardText>
+                  <CardActions style={{ textAlign: 'right' }}>
+                    <IconButton tooltip="Fix this" iconStyle={{ color: 'gray' }} >
+                      <Build />
+                    </IconButton>
+                    <IconButton tooltip="Escalate" iconStyle={{ color: '#f57c00' }} >
+                      <PrioHigh />
+                    </IconButton>
+                    <IconButton tooltip="Hide this notification" iconStyle={{ color: '#63a021' }} >
+                      <NavigationCheck />
+                    </IconButton>
+                  </CardActions>
+                </Card>
+                <Card style={{ marginTop: '15px' }}>
+                  <CardHeader title="Daktari Dayton" />
+                  <CardText>
+                    Has a high error rate (<b>11%</b>).
+                    The average error rate for Daktari devices is <b>5%</b>.
+                  </CardText>
+                  <CardActions style={{ textAlign: 'right' }}>
+                    <IconButton tooltip="Fix this" iconStyle={{ color: 'gray' }} >
+                      <Build />
+                    </IconButton>
+                    <IconButton tooltip="Escalate" iconStyle={{ color: '#f57c00' }} >
+                      <PrioHigh />
+                    </IconButton>
+                    <IconButton tooltip="Hide this notification" iconStyle={{ color: '#63a021' }} >
+                      <NavigationCheck />
+                    </IconButton>
+                  </CardActions>
+                </Card>
+                <Card style={{ marginTop: '15px' }}>
+                  <CardHeader title="GeneXpert Boston" />
+                  <CardText>
+                    This device was expected to come back online <b>yesterday </b>
+                    after being serviced but has not connected yet.
+                  </CardText>
+                  <CardActions style={{ textAlign: 'right' }}>
+                    <IconButton tooltip="Fix this" iconStyle={{ color: 'gray' }} >
+                      <Build />
+                    </IconButton>
+                    <IconButton tooltip="Escalate" iconStyle={{ color: '#f57c00' }} >
+                      <PrioHigh />
+                    </IconButton>
+                    <IconButton tooltip="Hide this notification" iconStyle={{ color: '#63a021' }} >
+                      <NavigationCheck />
+                    </IconButton>
+                  </CardActions>
+                </Card>
               </div>
             </section>
           </Unit>

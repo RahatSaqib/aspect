@@ -56,8 +56,8 @@ function* homeDashboard(request) {
     sitesTotal: sitesTotal[0].cnt,
     devicesTotal: devicesTotal[0].cnt,
     // TODO: Remove magic numbers below when moving to "real" dashboard
-    resultsTotal30d: 1234 + resultsTotal30d[0].cnt,
-    resultsTotal1d: 15 + resultsTotal1d[0].cnt
+    resultsTotal30d: resultsTotal30d[0].cnt,
+    resultsTotal1d: resultsTotal1d[0].cnt
   } })
 
   return result

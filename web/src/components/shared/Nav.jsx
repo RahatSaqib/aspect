@@ -23,6 +23,11 @@ export class Nav extends PureComponent {
     handleSignOut: PropTypes.func.isRequired
   }
 
+  static defaultProps = {
+    pageTitle: '',
+    pagePath: ''
+  }
+
   renderPageFragment() {
     const { pageTitle, pagePath } = this.props
 

@@ -137,6 +137,13 @@ export const SideNav = ({ open, handleClose, pathname, desktop }) => (
         primaryText="Sites"
       />
       <ListItem
+        containerElement={<Link to="/inventory" />}
+        value={'/inventory'}
+        leftIcon={<Cart />}
+        className={styles.Drawer__ListItem}
+        primaryText="Supplies"
+      />
+      <ListItem
         containerElement={<Link to="/router" />}
         value={'/router'}
         leftIcon={<RssFeed />}

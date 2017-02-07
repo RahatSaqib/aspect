@@ -14,7 +14,8 @@ import LinearProgress from 'material-ui/LinearProgress'
 import isEditable from '../../shared/selectors/site'
 import {
   fetchSingleSite,
-  updateSingleSite
+  updateSingleSite,
+  intlShape
 } from '../SiteRedux'
 import SiteForm from './SiteForm'
 import SiteLocationFormMap from './SiteLocationFormMap'
@@ -29,11 +30,15 @@ export class SiteDetail extends PureComponent {
   static propTypes = {
     setPageTitle: PropTypes.func.isRequired,
     params: PropTypes.object.isRequired,
-    intl: PropTypes.object.isRequired,
+    intl: intlShape,
     fetchSingleSite: PropTypes.func.isRequired,
     site: PropTypes.object,
     updateSingleSite: PropTypes.func.isRequired,
     editable: PropTypes.bool.isRequired
+  }
+
+  static defaultProps = {
+    site: null
   }
 
   componentWillMount() {
