@@ -15,9 +15,10 @@ const filter = AutoComplete.caseInsensitiveFilter
 const enhance = compose(
   pure,
   setPropTypes({
-    onChangeSiteId: PropTypes.func.isRequired,
+    onChangeSite: PropTypes.func.isRequired,
     itemTextGetter: PropTypes.func.isRequired,
-    value: PropTypes.string
+    value: PropTypes.string,
+    oldValue: PropTypes.string
   }),
   connect(state => ({
     siteItemsById: state.site.items.byId
@@ -25,15 +26,16 @@ const enhance = compose(
     fetchSites
   })),
   mapProps(props => ({
-    ..._fp.omit(['siteItemsById', 'itemTextGetter'], props),
-    siteList: props.siteItemsById
-      .valueSeq()
-      .map(item => ({
-        value: item.get('id'),
-        text: props.itemTextGetter(item)
-      }))
-      .toJS()
-  })),
+      ..._fp.omit(['siteItemsById', 'itemTextGetter'], props),
+      siteList: props.siteItemsById
+        .valueSeq()
+        .map(item => ({
+          value: item.get('name'),
+          text: props.itemTextGetter(item)
+        }))
+        .toJS(),
+      oldValue: props.value || ''
+    })),
   lifecycle({
     componentDidMount() {
       this.props.fetchSites({}, undefined, undefined, 0, 99999)
@@ -43,18 +45,13 @@ const enhance = compose(
     onSiteAutoCompleteNewRequest: props => (chosenRequest, index) => {
       if (index === -1) {
         // if user typed text and pressed Enter, then index=-1 - and
-        // chosenRequest is string value (see API doc - http://www.material-ui.com/#/components/auto-complete)
-        const searchText = chosenRequest
-        // Apply our filter and find the first item matched
-        const nextSite = _fp.find(s => filter(searchText, s.text), props.siteList)
-        // Select the first match if available
-        if (nextSite) {
-          props.onChangeSiteId(nextSite.value)
-        }
+        // chosenRequest is string value
+        // (see API doc - http://www.material-ui.com/#/components/auto-complete)
+        props.onChangeSite(chosenRequest)
       } else {
-        // if user selected item from the list then index>=0 and
+        // if user selected item from the popup menu list then index>=0 and
         // chosenRequest is object literal of default format {text:'', value:''}
-        props.onChangeSiteId(chosenRequest.value)
+        props.onChangeSite(chosenRequest.value)
       }
     },
     // --------------------------
@@ -62,41 +59,64 @@ const enhance = compose(
     // and is equal to value stored in props
     // --------------------------
     onSiteAutoCompleteBlur: props => (event) => {
-      const textLo = event.target.value.toLowerCase().trim()
-      const nextSite = _fp.find(s => s.text.toLowerCase() === textLo, props.siteList)
-
-      if (nextSite) {
-        // site with this name exists
-        if (nextSite.value !== props.value) {
-          // if visual site name differs from currently stored in props - change it
-          props.onChangeSiteId(nextSite.value)
-        }
-      } else {
-        // if no site found with this name - empty field
-        props.onChangeSiteId(null)
+      const newValue = event.target.value.trim()
+      const { oldValue } = props
+      if (newValue.toLowerCase() !== oldValue.toLowerCase()){
+        props.onChangeSite(newValue)
       }
-    }
+    },
+    onSiteAutoCompleteKeyUp: props => (event, newValue) => {
+      if (event.key === 'Enter'){
+        // --------------------------
+        // FYI: NewRequest event is triggered only if input control has value (even spaces)
+        // So,
+        // - if control has no value and original value was not null/empty - then clear
+        // - if control has value - do nothing because NewRequest is triggering next
+        // --------------------------
+        const newValue = event.target.value.trim()
+        const { oldValue } = props
+        if (newValue === '' && oldValue !== ''){
+          props.onChangeSite(null)
+        }
+      }
+    },
   }),
-  mapProps(_fp.omit(['onChangeSiteId', 'fetchSites']))
+  mapProps(_fp.omit(['onChangeSite', 'fetchSites']))
 )
 
+/*
+Event order
+             | Mouse  |       |  Click   |
+             | Select | ENTER | Outside  | onKeyPress (Enter/Esc)
+====================================================
+onBlur       |   1    |       |     1    |
+----------------------------------------------------
+onUpdateInput|   2    |       |          |     1
+----------------------------------------------------
+onClose      | 3 (x2) |   1   |     2    |           MenuClose
+----------------------------------------------------
+onNewRequest |   4    |   2   |          |
+====================================================
+             |   n    |   y   |     n    |     y    cursor-in
+*/
 export function SiteAutoCompleteField({
   value,
   siteList,
   onSiteAutoCompleteNewRequest,
   onSiteAutoCompleteBlur,
+  onSiteAutoCompleteKeyUp,
   ...restProps
 }) {
-  const site = _fp.find(s => s.value === value, siteList)
-
   return (
     <AutoComplete
       {...restProps}
       dataSource={siteList}
       filter={filter}
-      searchText={_fp.get('text', site)}
+      searchText={value}
       onNewRequest={onSiteAutoCompleteNewRequest}
       onBlur={onSiteAutoCompleteBlur}
+      onKeyUp={onSiteAutoCompleteKeyUp}
+      listStyle={{ width: 'auto' }}
     />
   )
 }

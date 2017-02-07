@@ -106,7 +106,7 @@ function* listResults(request) {
       deviceName: 'd.name',
       siteName: 'sr.name',
       sampleId: 'sp.externalId',
-      sampleOriginSiteId: 'sp.originSiteId',
+      sampleOriginSite: 'so.name',
       workflowStatusId: 'r.resultWorkflowStatusId'
     })
     .modify(addConstraints, dataConstraints, { device: 'd', sample: 's' })

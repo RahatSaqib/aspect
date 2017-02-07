@@ -79,7 +79,7 @@ export class ResultList extends PureComponent {
       date: true,
       sampleId: true,
       siteName: true,
-      sampleOriginSiteId: true,
+      sampleOriginSite: true,
       workflowStatus: true })
   }
 
