@@ -17,8 +17,7 @@ const enhance = compose(
   setPropTypes({
     onChangeSite: PropTypes.func.isRequired,
     itemTextGetter: PropTypes.func.isRequired,
-    value: PropTypes.string,
-    oldValue: PropTypes.string
+    value: PropTypes.string
   }),
   connect(state => ({
     siteItemsById: state.site.items.byId
@@ -33,8 +32,7 @@ const enhance = compose(
           value: item.get('name'),
           text: props.itemTextGetter(item)
         }))
-        .toJS(),
-      oldValue: props.value || ''
+        .toJS()
     })),
   lifecycle({
     componentDidMount() {
@@ -60,10 +58,7 @@ const enhance = compose(
     // --------------------------
     onSiteAutoCompleteBlur: props => (event) => {
       const newValue = event.target.value.trim()
-      const { oldValue } = props
-      if (newValue.toLowerCase() !== oldValue.toLowerCase()){
-        props.onChangeSite(newValue)
-      }
+      props.onChangeSite(newValue)
     },
     onSiteAutoCompleteKeyUp: props => (event, newValue) => {
       if (event.key === 'Enter'){
@@ -73,9 +68,7 @@ const enhance = compose(
         // - if control has no value and original value was not null/empty - then clear
         // - if control has value - do nothing because NewRequest is triggering next
         // --------------------------
-        const newValue = event.target.value.trim()
-        const { oldValue } = props
-        if (newValue === '' && oldValue !== ''){
+        if (event.target.value.trim() === '') {
           props.onChangeSite(null)
         }
       }
