@@ -30,8 +30,8 @@ import {
   Result
 } from '../ResultRedux'
 
-import WorkflowLogModel from '../../resultWorkflowStatus/log/WorkflowLogModel'
-import ResultWorkflowStatusLog from '../../resultWorkflowStatus/log/WorkflowLog'
+import WorkflowLogModel from './WorkflowLogModel'
+import ResultWorkflowStatusLog from './WorkflowLog'
 
 import { ReadOnlyField } from '../../components/shared/ReadOnlyFields'
 import styles from './ResultDetail.css'
