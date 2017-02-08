@@ -153,7 +153,11 @@ function* getDeviceByDeviceId(request, fields = SELECT_SHOW_FIELDS) {
         data: JSON.parse(deviceOperation.data) || {}
       }))
 
-    device.totalTests = yield knex('Result as r').where('r.deviceId', device.id).count()
+    const [{ count: totalTests }] = yield knex('Result as r')
+      .where('r.deviceId', device.id)
+      .count('r.id as count')
+
+    device.totalTests = totalTests
 
     const contacts = yield knex('Person as p')
       .select('p.id', 'p.name')
