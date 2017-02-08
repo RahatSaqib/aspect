@@ -204,11 +204,17 @@ function* seed(knex) {
   const deviceOperationSchema = JSON.stringify({
     voltage: {
       title: 'Voltage',
-      type: 'number'
+      type: 'number',
+      prefix: '',
+      suffix: 'V',
+      decimals: 2
     },
     temperature: {
       title: 'Temperature',
-      type: 'number'
+      type: 'number',
+      prefix: '',
+      suffix: 'F',
+      decimals: 1
     }
   })
 
