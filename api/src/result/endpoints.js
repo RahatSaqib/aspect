@@ -31,7 +31,7 @@ module.exports = [
           siteName: Joi.string().allow('').description('Filter for site name'),
           patientOrResearchId: Joi.string().allow('').description('Filter for patient/research ID'),
           sampleId: Joi.string().allow('').description('Filter for sample ID'),
-          sampleOriginSiteId: Joi.string().allow('').description('Filter for sample origin site ID'),
+          sampleOriginSite: Joi.string().allow('').description('Filter for sample origin site ID'),
           workflowStatusId: Joi.number().allow('').description('Filter for Result Workflow Status ID'),
           jsonFields: Joi.array().max(10).items(Joi.string().max(50)).single().description('Specify which fields to select from the resultDataJSON')
         }, validateAllGeographyFilterParams(),

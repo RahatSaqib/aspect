@@ -89,8 +89,8 @@ const messages = defineMessages({
     id: 'shared.ListFilter.sampleOriginSite',
     defaultMessage: 'Sample origin site'
   },
-  enterSampleOriginSiteId: {
-    id: 'shared.ListFilter.enterSampleOriginSiteId',
+  enterSampleOriginSite: {
+    id: 'shared.ListFilter.enterSampleOriginSite',
     defaultMessage: 'Enter sample origin site name...'
   },
   date: {
@@ -364,10 +364,18 @@ export class ListFilter extends PureComponent {
     this.props.onChangeFilter(nextFilter)
   }
 
-  handleSampleOriginSiteIdChange = (sampleOriginSiteId) => {
+  handleSampleOriginSiteChange = (sampleOriginSite) => {
     const nextFilter = {
       ...this.props.listFilter.toJS(),
-      sampleOriginSiteId
+      sampleOriginSite
+    }
+    this.props.onChangeFilter(nextFilter)
+  }
+
+  handleSiteChange = (siteName) => {
+    const nextFilter = {
+      ...this.props.listFilter.toJS(),
+      siteName
     }
     this.props.onChangeFilter(nextFilter)
   }
@@ -432,7 +440,7 @@ export class ListFilter extends PureComponent {
       config.assay || config.deviceName || config.result ||
       config.siteName || config.contactNameOrEmail || config.consumable ||
       config.patientOrResearchId ||
-      config.sampleId || config.sampleOriginSiteId
+      config.sampleId || config.sampleOriginSite
     )
 
     const hasDataSection2 = (
@@ -594,25 +602,26 @@ export class ListFilter extends PureComponent {
                   )}
                   {config.siteName && (
                     <div className={styles.Section__Control}>
-                      <FocusBlurTextField
+                      <SiteAutoCompleteField
                         name="siteName"
                         value={filter.siteName || ''}
-                        onCommitValue={this.handleTextFieldCommitValue}
+                        onChangeSite={this.handleSiteChange}
                         floatingLabelFixed
+                        itemTextGetter={site => `${site.get('name')} (${site.get('state')})`}
                         hintText={formatMessage(messages.enterSiteName)}
                         floatingLabelText={formatMessage(messages.site)}
                       />
                     </div>
                   )}
-                  {config.sampleOriginSiteId && (
+                  {config.sampleOriginSite && (
                     <div className={styles.Section__Control}>
                       <SiteAutoCompleteField
-                        name="sampleOriginSiteId"
-                        value={filter.sampleOriginSiteId || ''}
-                        onChangeSiteId={this.handleSampleOriginSiteIdChange}
+                        name="sampleOriginSite"
+                        value={filter.sampleOriginSite || ''}
+                        onChangeSite={this.handleSampleOriginSiteChange}
                         floatingLabelFixed
                         itemTextGetter={site => `${site.get('name')} (${site.get('state')})`}
-                        hintText={formatMessage(messages.enterSampleOriginSiteId)}
+                        hintText={formatMessage(messages.enterSampleOriginSite)}
                         floatingLabelText={formatMessage(messages.sampleOriginSite)}
                       />
                     </div>

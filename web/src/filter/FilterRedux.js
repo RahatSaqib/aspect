@@ -96,7 +96,7 @@ const ListConfig = Immutable.Record({
   sampleId: false,
   deviceName: false,
   siteName: false,
-  sampleOriginSiteId: false,
+  sampleOriginSite: false,
   contactNameOrEmail: false,
   consumable: false,
   workflowStatus: false,
@@ -115,7 +115,7 @@ export const ListFilter = Immutable.Record({
   deviceName: undefined,
   resultCategoryId: undefined,
   siteName: undefined,
-  sampleOriginSiteId: undefined,
+  sampleOriginSite: undefined,
   contactNameOrEmail: undefined,
   consumableId: undefined,
   workflowStatusId: undefined,
@@ -163,7 +163,7 @@ export default function filterReducer(state = initialState, action) {
               case 'sampleId':
               case 'deviceName':
               case 'siteName':
-              case 'sampleOriginSiteId':
+              case 'sampleOriginSite':
               case 'contactNameOrEmail':
                 return acc.delete(key)
               case 'consumable':
