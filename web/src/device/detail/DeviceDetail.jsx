@@ -21,6 +21,7 @@ import ModeEdit from 'material-ui/svg-icons/editor/mode-edit'
 
 // Our own imports
 import { Unit } from '../../components/pureGrids'
+import { longNumericFormat } from '../../shared/utils/dateFormat'
 import isEditable from '../../shared/selectors/device'
 import {
   fetchSingleDevice,
@@ -286,14 +287,7 @@ export class DeviceDetail extends PureComponent {
       .sortBy((value, key) => `${value.get('type') !== 'object' ? '_' : ''}${key}`)
 
     const formatDeviceOperationStartedOn = startedOn => (
-      formatDate(startedOn, {
-        year: 'numeric',
-        month: 'numeric',
-        day: 'numeric',
-        hour: 'numeric',
-        minute: 'numeric',
-        second: 'numeric'
-      })
+      formatDate(startedOn, longNumericFormat)
     )
 
     const formatDeviceOperationData = (value, key) => {
