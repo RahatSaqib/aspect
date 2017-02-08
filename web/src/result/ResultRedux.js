@@ -20,8 +20,6 @@ import {
   Table
 } from '../shared/metaReducers/table'
 
-import WorkflowLogModel from './detail/WorkflowLogModel'
-
 export const types = {
   REQUEST_RESULTS: 'REQUEST_RESULTS',
   RECEIVE_RESULTS: 'RECEIVE_RESULTS',
@@ -269,6 +267,16 @@ export function fetchWorkflowStatusLogs(resultId, sortCol = 'createdOn', sortDir
 /*
  * ---------------- Reducers -----------------
  */
+export const WorkflowLogModel = Immutable.Record({
+  items: new Items(),
+  table: new Table({
+    sortCol: 'createdOn',
+    sortDir: 'desc',
+    page: 0,
+    pageSize: 10,
+  }),
+})
+
 export const Result = Immutable.Record({
   items: new Items(),
   table: new Table({

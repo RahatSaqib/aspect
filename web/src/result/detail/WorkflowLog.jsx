@@ -10,7 +10,7 @@ import { Card, CardHeader, CardText } from 'material-ui/Card'
 
 // Our own imports
 import DataTable from '../../components/shared/DataTable'
-import WorkflowLogModel from './WorkflowLogModel'
+import { WorkflowLogModel } from '../ResultRedux'
 
 
 const messages = defineMessages({
