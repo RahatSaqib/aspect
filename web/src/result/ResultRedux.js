@@ -20,7 +20,7 @@ import {
   Table
 } from '../shared/metaReducers/table'
 
-import WorkflowLogModel from '../resultWorkflowStatus/log/WorkflowLogModel'
+import WorkflowLogModel from './detail/WorkflowLogModel'
 
 export const types = {
   REQUEST_RESULTS: 'REQUEST_RESULTS',
