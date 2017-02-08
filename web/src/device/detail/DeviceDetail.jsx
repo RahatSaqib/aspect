@@ -289,14 +289,17 @@ export class DeviceDetail extends PureComponent {
     const formatDeviceOperationStartedOn = startedOn => (
       formatDate(startedOn, longNumericFormat)
     )
-
-    const formatDeviceOperationData = (value, key) => {
-      switch (key) {
-        case 'voltage': return `${value.toFixed(2)}V`
-        case 'temperature': return `${value}F`
+    const formatDeviceOperationValue = (properties, value) => {
+      switch (properties.get('type')) {
+        case 'number': return `${value.toFixed(properties.get('decimals'))}`
         default: return value
       }
     }
+    const formatDeviceOperationData = (properties, value) => ([
+      properties.get('prefix'),
+      formatDeviceOperationValue(properties, value),
+      properties.get('suffix')
+    ].join(''))
 
     return (
       <div>
@@ -453,7 +456,7 @@ export class DeviceDetail extends PureComponent {
                     </TableRowColumn>
                     {device.getIn(['deviceType', 'deviceOperationSchema']).map((properties, key) => (
                       <TableHeaderColumn key={key}>
-                        {formatDeviceOperationData(deviceOperation.getIn(['data', key]), key)}
+                        {formatDeviceOperationData(properties, deviceOperation.getIn(['data', key]))}
                       </TableHeaderColumn>
                     )).valueSeq()}
                   </TableRow>
