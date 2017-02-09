@@ -16,15 +16,14 @@ const devicePath = '/device'
 const devicePostResultPath = '/device/result'
 
 const baseConfig = {
-  field1: 'xx',
-  field2: 'yyyy',
-  field3: 'zzzzz',
-  field4: 'aaaaaa',
-  nestedFields: {
-    nestedA: '111111',
-    nestedB: '2222',
-    nestedC: '333',
-    nestedD: '44'
+  requirePrinter: 'no',
+  adminPassword: 'pwd123',
+  firmwareUpdateRequired: 'yes',
+  modules: {
+    module1: '18889030',
+    module2: '51395910',
+    module3: '33550994',
+    module4: '73235848'
   }
 }
 

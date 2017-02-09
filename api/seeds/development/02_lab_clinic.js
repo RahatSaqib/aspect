@@ -219,9 +219,9 @@ function* seed(knex) {
       deviceTypeId: deviceTypes.RRT.id,
       deviceStatusId: deviceStatuses.Approved.id,
       configurationData: JSON.stringify({
-        requirePrinter: _.random(1) > 0 ? 'yes' : 'no',
+        requirePrinter: 'yes',
         adminPassword: 'pwd123',
-        firmwareUpdateRequired: _.random(1) > 0 ? 'yes' : 'no',
+        firmwareUpdateRequired: 'no',
         userPins: {
           user1Pin: '111111',
           user1Name: _.times(4, () => String.fromCharCode(65 + _.random(25) + (_.random(1) > 0 ? 32 : 0))).join(''),
@@ -309,9 +309,9 @@ function* seed(knex) {
       deviceTypeId: deviceTypes.m2000.id,
       deviceStatusId: deviceStatuses.Approved.id,
       configurationData: JSON.stringify({
-        requirePrinter: _.random(1) > 0 ? 'yes' : 'no',
+        requirePrinter: 'yes',
         adminPassword: 'pwd123',
-        firmwareUpdateRequired: _.random(1) > 0 ? 'yes' : 'no',
+        firmwareUpdateRequired: 'yes',
         firmwareVersions: {
           versionAlpha: '0.9.12-alpha',
           versionBeta: '1.0.0-beta',
