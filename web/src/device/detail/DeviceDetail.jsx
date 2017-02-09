@@ -1,6 +1,5 @@
 // Imports from packages
 import _ from 'lodash'
-import Immutable from 'immutable'
 import React, { PureComponent, PropTypes } from 'react'
 import {
   injectIntl,
@@ -15,12 +14,14 @@ import Helmet from 'react-helmet'
 // Material-UI
 import Dialog from 'material-ui/Dialog'
 import LinearProgress from 'material-ui/LinearProgress'
+import { Table, TableBody, TableHeader, TableHeaderColumn, TableRow, TableRowColumn } from 'material-ui/Table'
 import { Card, CardHeader, CardText } from 'material-ui/Card'
 import IconButton from 'material-ui/IconButton'
 import ModeEdit from 'material-ui/svg-icons/editor/mode-edit'
 
 // Our own imports
 import { Unit } from '../../components/pureGrids'
+import { longNumericFormat } from '../../shared/utils/dateFormat'
 import isEditable from '../../shared/selectors/device'
 import {
   fetchSingleDevice,
@@ -281,47 +282,24 @@ export class DeviceDetail extends PureComponent {
     // get date for current locale, 'date' - is a Date object or string value in DateTime format
     const getFormattedDate = date => (date !== null && date !== '' && isFinite(new Date(date)) ? formatDate(date) : date)
 
-    const getDeviceOperationKey = deviceOperation => (
-      `#${deviceOperation.get('id')} - ${
-        formatDate(deviceOperation.get('startedOn'), {
-          year: 'numeric',
-          month: 'numeric',
-          day: 'numeric',
-          hour: 'numeric',
-          minute: 'numeric',
-          second: 'numeric'
-        })
-      }`
-    )
-
     const configurationDataSchema = device
       .getIn(['deviceType', 'configurationDataSchema'])
       .sortBy((value, key) => `${value.get('type') !== 'object' ? '_' : ''}${key}`)
 
-    const deviceOperations = Immutable.OrderedMap(
-      device
-        .get('deviceOperations')
-        .map(deviceOperation => [
-          getDeviceOperationKey(deviceOperation),
-          deviceOperation
-            .get('data')
-            .map((value, key) => {
-              switch (key) {
-                case 'voltage': return `${value.toFixed(2)}V`
-                case 'temperature': return `${value}F`
-                default: return value
-              }
-            })
-        ])
+    const formatDeviceOperationStartedOn = startedOn => (
+      formatDate(startedOn, longNumericFormat)
     )
-
-    // Convert single object schema to list of deviceOperations schema
-    const deviceOperationsSchema = deviceOperations
-      .map(() => Immutable.Map({
-        type: 'object',
-        title: 'Device Operation',
-        properties: device.getIn(['deviceType', 'deviceOperationSchema'])
-      }))
+    const formatDeviceOperationValue = (properties, value) => {
+      switch (properties.get('type')) {
+        case 'number': return `${value.toFixed(properties.get('decimals'))}`
+        default: return value
+      }
+    }
+    const formatDeviceOperationData = (properties, value) => ([
+      properties.get('prefix'),
+      formatDeviceOperationValue(properties, value),
+      properties.get('suffix')
+    ].join(''))
 
     return (
       <div>
@@ -456,13 +434,37 @@ export class DeviceDetail extends PureComponent {
           data={device.get('configurationData')}
         />
         { /* Operational Data */ }
-        <JSONSchemaCard
-          title={formatMessage(messages.fieldOperationalData)}
-          renderField={field => <ReadOnlyField {...field} />}
-          formatNestedSubtitle={this.handleFormatNestedSubtitle}
-          dataSchema={deviceOperationsSchema}
-          data={deviceOperations}
-        />
+        <Card>
+          <CardHeader title="Device Operation Data" actAsExpander showExpandableButton />
+          <CardText actAsExpander expandable style={{ paddingTop: 10 }}>
+            <Table selectable={false}>
+              <TableHeader adjustForCheckbox={false} displaySelectAll={false}>
+                <TableRow>
+                  <TableHeaderColumn style={{ width: '10%' }}>ID</TableHeaderColumn>
+                  <TableHeaderColumn>Started On</TableHeaderColumn>
+                  {device.getIn(['deviceType', 'deviceOperationSchema']).map((properties, key) => (
+                    <TableHeaderColumn key={key}>{properties.get('title')}</TableHeaderColumn>
+                  )).valueSeq()}
+                </TableRow>
+              </TableHeader>
+              <TableBody displayRowCheckbox={false}>
+                {device.get('deviceOperations').map(deviceOperation => (
+                  <TableRow key={deviceOperation.get('id')}>
+                    <TableRowColumn style={{ width: '10%' }}>{deviceOperation.get('id')}</TableRowColumn>
+                    <TableRowColumn>
+                      {formatDeviceOperationStartedOn(deviceOperation.get('startedOn'))}
+                    </TableRowColumn>
+                    {device.getIn(['deviceType', 'deviceOperationSchema']).map((properties, key) => (
+                      <TableHeaderColumn key={key}>
+                        {formatDeviceOperationData(properties, deviceOperation.getIn(['data', key]))}
+                      </TableHeaderColumn>
+                    )).valueSeq()}
+                  </TableRow>
+                ))}
+              </TableBody>
+            </Table>
+          </CardText>
+        </Card>
       </div>
     )
   }

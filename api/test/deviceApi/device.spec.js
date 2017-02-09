@@ -14,16 +14,9 @@ const assert = chai.assert
 const context = createTestContext(server, { user: 'admin' })
 
 const baseConfig = {
-  field1: 'xx',
-  field2: 'yyyy',
-  field3: 'zzzzz',
-  field4: 'aaaaaa',
-  nestedFields: {
-    nestedA: '111111',
-    nestedB: '2222',
-    nestedC: '333',
-    nestedD: '44'
-  }
+  requirePrinter: 'yes',
+  adminPassword: 'pwd123',
+  firmwareUpdateRequired: 'no'
 }
 
 describe('Device API routes', () => {

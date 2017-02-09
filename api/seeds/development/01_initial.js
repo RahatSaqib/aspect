@@ -204,11 +204,17 @@ function* seed(knex) {
   const deviceOperationSchema = JSON.stringify({
     voltage: {
       title: 'Voltage',
-      type: 'number'
+      type: 'number',
+      prefix: '',
+      suffix: 'V',
+      decimals: 2
     },
     temperature: {
       title: 'Temperature',
-      type: 'number'
+      type: 'number',
+      prefix: '',
+      suffix: 'F',
+      decimals: 1
     }
   })
 
@@ -1356,14 +1362,14 @@ function* seed(knex) {
       deviceTypeId: deviceTypeGeneXpertId,
       deviceStatusId: _.random(1) > 0 ? deviceStatusApproved : deviceStatusUnapproved,
       configurationData: JSON.stringify({
-        requirePrinter: _.random(1) > 0 ? 'yes' : 'no',
+        requirePrinter: 'no',
         adminPassword: 'pwd123',
-        firmwareUpdateRequired: _.random(1) > 0 ? 'yes' : 'no',
+        firmwareUpdateRequired: 'yes',
         modules: {
-          module1: _.times(8, () => _.random(0, 9)).join(''),
-          module2: _.times(8, () => _.random(0, 9)).join(''),
-          module3: _.times(8, () => _.random(0, 9)).join(''),
-          module4: _.times(8, () => _.random(0, 9)).join(''),
+          module1: '18889030',
+          module2: '51395910',
+          module3: '33550994',
+          module4: '73235848'
         }
       }),
       siteId: siteData.id,
@@ -1414,9 +1420,9 @@ function* seed(knex) {
       deviceTypeId: deviceTypeDaktariId,
       deviceStatusId: deviceStatusApproved,
       configurationData: JSON.stringify({
-        requirePrinter: _.random(1) > 0 ? 'yes' : 'no',
+        requirePrinter: 'yes',
         adminPassword: 'pwd123',
-        firmwareUpdateRequired: _.random(1) > 0 ? 'yes' : 'no'
+        firmwareUpdateRequired: 'no'
       }),
       siteId: siteData.id,
       // not all sites will have a router - we only added routers to some site
