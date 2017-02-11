@@ -26,11 +26,11 @@ import {
   updateSingleResult,
   updateResultWorkflowStatus,
 
+  WorkflowLogModel,
   fetchWorkflowStatusLogs,
   Result
 } from '../ResultRedux'
 
-import WorkflowLogModel from './WorkflowLogModel'
 import ResultWorkflowStatusLog from './WorkflowLog'
 
 import { ReadOnlyField } from '../../components/shared/ReadOnlyFields'
