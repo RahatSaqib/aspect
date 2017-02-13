@@ -189,7 +189,6 @@ describe('Device Result API routes', () => {
 
           const lastResult = res.body.result
           assert.typeOf(lastResult, 'Object')
-          assert.property(lastResult.sample, 'id')
           assert.property(lastResult.sample.originSite, 'id')
           assert.equal(lastResult.sample.originSite.id, result1SampleSite.externalId)
           assert.typeOf(lastResult.workflow, 'Object')
@@ -1471,7 +1470,6 @@ describe('Device Result API routes', () => {
 
           const lastResult = res.body.result
           assert.typeOf(lastResult, 'Object')
-          assert.property(lastResult.sample, 'id')
           assert.property(lastResult.sample.originSite, 'id')
           assert.equal(lastResult.sample.originSite.id, '1315')
           assert.equal(lastResult.workflow.status.id, 'OK')
@@ -1498,7 +1496,6 @@ describe('Device Result API routes', () => {
 
           const lastResult = res.body.result
           assert.typeOf(lastResult, 'Object')
-          assert.property(lastResult.sample, 'id')
           assert.property(lastResult.sample.originSite, 'id')
           assert.equal(lastResult.sample.originSite.id, '1315')
           assert.equal(lastResult.workflow.status.id, 'OK')
@@ -1526,8 +1523,6 @@ describe('Device Result API routes', () => {
           assert.typeOf(res.body.checkpoint, 'undefined')
 
           const lastResult = res.body.result
-          assert.typeOf(lastResult, 'Object')
-          assert.property(lastResult.sample, 'id')
           assert.property(lastResult.sample.originSite, 'id')
           assert.equal(lastResult.sample.originSite.id, '1315')
           assert.equal(lastResult.workflow.status.id, 'OK')
@@ -1582,7 +1577,6 @@ describe('Device Result API routes', () => {
 
           const lastResult = res.body.result
           assert.typeOf(lastResult, 'Object')
-          assert.property(lastResult.sample, 'id')
           assert.property(lastResult.sample.originSite, 'id')
           assert.equal(lastResult.sample.originSite.id, '1723')
           assert.equal(lastResult.workflow.status.id, 'OK')
@@ -1609,7 +1603,6 @@ describe('Device Result API routes', () => {
 
           const lastResult = res.body.result
           assert.typeOf(lastResult, 'Object')
-          assert.property(lastResult.sample, 'id')
           assert.property(lastResult.sample.originSite, 'id')
           assert.equal(lastResult.sample.originSite.id, '1723')
           assert.equal(lastResult.workflow.status.id, 'OK')
@@ -1636,7 +1629,6 @@ describe('Device Result API routes', () => {
 
           const lastResult = res.body.result
           assert.typeOf(lastResult, 'Object')
-          assert.property(lastResult.sample, 'id')
           assert.property(lastResult.sample.originSite, 'id')
           assert.equal(lastResult.sample.originSite.id, '1723')
           assert.equal(lastResult.workflow.status.id, 'OK')
@@ -1663,7 +1655,6 @@ describe('Device Result API routes', () => {
 
           const lastResult = res.body.result
           assert.typeOf(lastResult, 'Object')
-          assert.property(lastResult.sample, 'id')
           assert.property(lastResult.sample.originSite, 'id')
           assert.equal(lastResult.sample.originSite.id, '1315')
           assert.equal(lastResult.workflow.status.id, 'OK')
@@ -1691,7 +1682,6 @@ describe('Device Result API routes', () => {
 
           const lastResult = res.body.result
           assert.typeOf(lastResult, 'Object')
-          assert.property(lastResult.sample, 'id')
           assert.property(lastResult.sample.originSite, 'id')
           assert.equal(lastResult.sample.originSite.id, '1723')
           assert.equal(lastResult.workflow.status.id, 'OK')
@@ -1724,7 +1714,6 @@ describe('Device Result API routes', () => {
 
           const lastResult = res.body.result
           assert.typeOf(lastResult, 'Object')
-          assert.property(lastResult.sample, 'id')
           assert.property(lastResult.sample.originSite, 'id')
           assert.equal(lastResult.sample.originSite.id, '1315')
           assert.equal(lastResult.workflow.status.id, 'OK')
@@ -1782,7 +1771,6 @@ describe('Device Result API routes', () => {
           const lastResult = res.body.result
           assert.typeOf(lastResult, 'Object')
           assert.equal(lastResult.id, device1723ExternalId)
-          assert.property(lastResult.sample, 'id')
           assert.property(lastResult.sample.originSite, 'id')
           assert.equal(lastResult.sample.originSite.id, '1723')
           assert.equal(lastResult.workflow.status.id, 'Acknowledged')
@@ -1809,7 +1797,6 @@ describe('Device Result API routes', () => {
           const lastResult = res.body.result
           assert.typeOf(lastResult, 'Object')
           assert.equal(lastResult.id, device1723ExternalId)
-          assert.property(lastResult.sample, 'id')
           assert.property(lastResult.sample.originSite, 'id')
           assert.equal(lastResult.sample.originSite.id, '1723')
           assert.equal(lastResult.workflow.status.id, 'Acknowledged')
@@ -1836,7 +1823,6 @@ describe('Device Result API routes', () => {
           const lastResult = res.body.result
           assert.typeOf(lastResult, 'Object')
           assert.equal(lastResult.id, device1723ExternalId)
-          assert.property(lastResult.sample, 'id')
           assert.property(lastResult.sample.originSite, 'id')
           assert.equal(lastResult.sample.originSite.id, '1723')
           assert.equal(lastResult.workflow.status.id, 'Acknowledged')
@@ -1892,7 +1878,6 @@ describe('Device Result API routes', () => {
 
           const lastResult = res.body.result
           assert.typeOf(lastResult, 'Object')
-          assert.property(lastResult.sample, 'id')
           assert.property(lastResult.sample.originSite, 'id')
           assert.equal(lastResult.sample.originSite.id, '1723')
           assert.equal(lastResult.workflow.status.id, 'Acknowledged')
@@ -1918,7 +1903,6 @@ describe('Device Result API routes', () => {
 
           const lastResult = res.body.result
           assert.typeOf(lastResult, 'Object')
-          assert.property(lastResult.sample, 'id')
           assert.property(lastResult.sample.originSite, 'id')
           assert.equal(lastResult.sample.originSite.id, '1723')
           assert.equal(lastResult.workflow.status.id, 'Acknowledged')
@@ -1945,7 +1929,6 @@ describe('Device Result API routes', () => {
 
           const lastResult = res.body.result
           assert.typeOf(lastResult, 'Object')
-          assert.property(lastResult.sample, 'id')
           assert.property(lastResult.sample.originSite, 'id')
           assert.equal(lastResult.sample.originSite.id, '1723')
           assert.equal(lastResult.workflow.status.id, 'OK')
@@ -1971,7 +1954,6 @@ describe('Device Result API routes', () => {
 
           const lastResult = res.body.result
           assert.typeOf(lastResult, 'Object')
-          assert.property(lastResult.sample, 'id')
           assert.property(lastResult.sample.originSite, 'id')
           assert.equal(lastResult.sample.originSite.id, '1723')
           assert.equal(lastResult.workflow.status.id, 'Acknowledged')
@@ -1997,7 +1979,6 @@ describe('Device Result API routes', () => {
 
           const lastResult = res.body.result
           assert.typeOf(lastResult, 'Object')
-          assert.property(lastResult.sample, 'id')
           assert.property(lastResult.sample.originSite, 'id')
           assert.equal(lastResult.sample.originSite.id, '1723')
           assert.equal(lastResult.workflow.status.id, 'Acknowledged')
@@ -2023,7 +2004,6 @@ describe('Device Result API routes', () => {
 
           const lastResult = res.body.result
           assert.typeOf(lastResult, 'Object')
-          assert.property(lastResult.sample, 'id')
           assert.property(lastResult.sample.originSite, 'id')
           assert.equal(lastResult.sample.originSite.id, '1315')
           assert.equal(lastResult.workflow.status.id, 'OK')
@@ -2049,7 +2029,6 @@ describe('Device Result API routes', () => {
 
           const lastResult = res.body.result
           assert.typeOf(lastResult, 'Object')
-          assert.property(lastResult.sample, 'id')
           assert.property(lastResult.sample.originSite, 'id')
           assert.equal(lastResult.sample.originSite.id, '1723')
           assert.equal(lastResult.workflow.status.id, 'Acknowledged')
@@ -2075,7 +2054,6 @@ describe('Device Result API routes', () => {
 
           const lastResult = res.body.result
           assert.typeOf(lastResult, 'Object')
-          assert.property(lastResult.sample, 'id')
           assert.property(lastResult.sample.originSite, 'id')
           assert.equal(lastResult.sample.originSite.id, '1315')
           assert.equal(lastResult.workflow.status.id, 'OK')

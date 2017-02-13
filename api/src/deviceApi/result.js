@@ -332,14 +332,22 @@ function* getResult(context) {
     }
   }
 
-  const sample = { id: row.sampleId, originSite: { id: row.sampleOriginSiteId } }
+  const sample = {}
+  if (row.sampleId != null) {
+    sample.id = row.sampleId
+  }
   if (row.sampleCollectedOn != null) {
     sample.collectedOn = row.sampleCollectedOn
   }
   if (row.sampleTypeId != null) {
     sample.type = { id: row.sampleTypeId }
   }
-  result.sample = sample
+  if (row.sampleOriginSiteId != null) {
+    sample.originSite = { id: row.sampleOriginSiteId }
+  }
+  if (!_.isEmpty(sample)) {
+    result.sample = sample
+  }
 
   const categories = []
   if (row.category1Id != null) {
