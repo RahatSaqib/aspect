@@ -37,8 +37,8 @@ function* addDeviceData(context) {
 }
 
 function* getDeviceData(context) {
-  const { knex, device: { id: deviceId, name: deviceName }, query } = context
-  const response = { name: deviceName }
+  const { now, knex, device: { id: deviceId, name: deviceName }, query } = context
+  const response = { name: deviceName, time: now.toISOString() }
 
   const deviceLogQ = knex('DeviceLog')
     .where({ deviceId })
