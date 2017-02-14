@@ -68,18 +68,26 @@ describe('Device Result API routes', () => {
           assert.typeOf(res.body, 'Object')
         })
 
+      let deviceFirstName
+      const deviceChangedName = `Device Changed Name ${now}`
       yield server.get(`${devicePath}?checkpoint=ck0`)
         .set('Authorization', deviceAuth)
         .then((res) => {
           assert.equal(res.status, 200)
           assert.typeOf(res.body, 'Object')
+          assert.typeOf(res.body.name, 'string')
           assert.equal(res.body.checkpoint, 'ck0')
+          deviceFirstName = res.body.name
         })
-
 
       yield server.post(devicePath)
         .set('Authorization', deviceAuth)
-        .send({ checkpoint: 'ck1', result: { data: { a: 'b' }, assay: { id: 'HivVl' } } })
+        .send({
+          name: deviceChangedName,
+          checkpoint: 'ck1',
+          result: { data: { a: 'b' },
+            assay: { id: 'HivVl' } }
+        })
         .then((res) => {
           assert.equal(res.status, 200)
           assert.typeOf(res.body, 'Object')
@@ -142,7 +150,10 @@ describe('Device Result API routes', () => {
         .where({ 'r.id': resultIds[0] })
         .select('rawMessage', 'resultId')
       assert.deepEqual(JSON.parse(log1Raw), {
-        checkpoint: 'ck1', result: { data: { a: 'b' }, assay: { id: 'HivVl' } } })
+        name: deviceChangedName,
+        checkpoint: 'ck1',
+        result: { data: { a: 'b' }, assay: { id: 'HivVl' } }
+      })
 
       yield server.get(clientSingleResultPath + resultId1)
         .set('Authorization', clientAuth)
@@ -173,6 +184,7 @@ describe('Device Result API routes', () => {
           assert.equal(res.status, 200)
           assert.typeOf(res.body, 'Object')
           assert.equal(res.body.checkpoint, 'ck1')
+          assert.equal(res.body.name, deviceChangedName)
           assert.typeOf(res.body.result, 'Object')
 
           const lastResult = res.body.result
@@ -499,6 +511,22 @@ describe('Device Result API routes', () => {
               notes: 'Oh NOZE!'
             }
           })
+        })
+
+      yield server.post(devicePath)
+        .set('Authorization', deviceAuth)
+        .send({ name: deviceFirstName })
+        .then((res) => {
+          assert.equal(res.status, 200)
+          assert.typeOf(res.body, 'Object')
+        })
+
+      yield server.get(`${devicePath}`)
+        .set('Authorization', deviceAuth)
+        .then((res) => {
+          assert.equal(res.status, 200)
+          assert.typeOf(res.body, 'Object')
+          assert.equal(res.body.name, deviceFirstName)
         })
     }))
 
