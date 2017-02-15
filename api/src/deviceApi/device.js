@@ -47,10 +47,17 @@ function* getDeviceData(context) {
   if (config != null) {
     response.configuration = config
   }
+
+  const op = yield* getDeviceOperation(context)
+  if (op != null) {
+    response.operation = op
+  }
+
   const result = yield* getResult(context)
   if (result != null) {
     response.result = result
   }
+
   return response
 }
 
@@ -107,6 +114,34 @@ function* addDeviceOperation(context) {
   context.addDeviceOperationId(deviceOperationId)
 
   return {}
+}
+
+function* getDeviceOperation(context) {
+  const { knex, deviceLog: { id: deviceLogId } } = context
+  const op = yield knex('DeviceOperation as do')
+    .innerJoin('DeviceLog as dl', 'dl.deviceOperationId', 'do.id')
+    .where({
+      'dl.id': deviceLogId
+    })
+    .first('externalId as id', 'data', 'startedOn', 'endedOn')
+  if (op == null) {
+    return null
+  }
+
+  const result = {}
+  if (op.id != null) {
+    result.id = op.id
+  }
+  if (op.data != null) {
+    result.data = JSON.parse(op.data)
+  }
+  if (op.startedOn != null) {
+    result.startedOn = op.startedOn.toISOString()
+  }
+  if (op.endedOn != null) {
+    result.endedOn = op.endedOn.toISOString()
+  }
+  return result
 }
 
 module.exports = {
