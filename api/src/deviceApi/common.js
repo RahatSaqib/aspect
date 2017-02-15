@@ -160,7 +160,7 @@ function* getDeviceLog(deviceId, dataConstraints, checkpoint, offset) {
   const { checkpoint: initialCheckpoint, id: initialDeviceLogId } = (
     (yield initialDeviceLogQuery.first('checkpoint', 'id')) || {})
   if (!initialDeviceLogId) {
-    //
+    // No log found at checkpoint for this device
     return null
   } else if (offset === 0) {
     // If no offset, return log at checkpoint for this device
