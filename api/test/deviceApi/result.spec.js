@@ -542,6 +542,15 @@ describe('Device Result API routes', () => {
         })
       resultIds.push(yield* getLastResultId(knex, deviceId))
 
+      yield server.get(devicePath)
+        .set('Authorization', deviceAuth)
+        .then((res) => {
+          assert.equal(res.status, 200)
+          assert.typeOf(res.body, 'Object')
+          assert.typeOf(res.body.result, 'Object')
+          assert.deepEqual(res.body.result.data, { a: 'b' })
+        })
+
       const result1 = yield knex('Result as r')
         .where({ id: resultIds[0] }).first()
       assert.deepEqual(JSON.parse(result1.resultData), { a: 'b' })
@@ -563,6 +572,15 @@ describe('Device Result API routes', () => {
           assert.equal(res.status, 200)
         })
       resultIds.push(yield* getLastResultId(knex, deviceId))
+
+      yield server.get(devicePath)
+        .set('Authorization', deviceAuth)
+        .then((res) => {
+          assert.equal(res.status, 200)
+          assert.typeOf(res.body, 'Object')
+          // Do not include result with error status
+          assert.typeOf(res.body.result, 'undefined')
+        })
 
       const result2 = yield knex('Result as r')
         .where({ id: resultIds[1] }).first()
@@ -607,6 +625,16 @@ describe('Device Result API routes', () => {
           assert.equal(res.status, 200)
         })
       resultIds.push(yield* getLastResultId(knex, deviceId))
+
+      yield server.get(devicePath)
+        .set('Authorization', deviceAuth)
+        .then((res) => {
+          assert.equal(res.status, 200)
+          assert.typeOf(res.body, 'Object')
+          assert.typeOf(res.body.result, 'Object')
+          assert.deepEqual(res.body.result.data, { a: 'e' })
+          assert.deepEqual(res.body.result.category, [{ id: 'Detected' }, { id: 'NotDetected' }])
+        })
 
       const result4 = yield knex('Result as r')
         .where({ id: resultIds[3] }).first()
