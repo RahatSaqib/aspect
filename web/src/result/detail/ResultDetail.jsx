@@ -25,8 +25,15 @@ import JSONSchemaCard from '../../components/shared/JSONSchemaCard'
 import {
   fetchSingleResult,
   updateSingleResult,
-  updateResultWorkflowStatus
+  updateResultWorkflowStatus,
+
+  WorkflowLogModel,
+  fetchWorkflowStatusLogs,
+  Result
 } from '../ResultRedux'
+
+import ResultWorkflowStatusLog from './WorkflowLog'
+
 import { ReadOnlyField } from '../../components/shared/ReadOnlyFields'
 import styles from './ResultDetail.css'
 
@@ -132,7 +139,7 @@ const messages = defineMessages({
   nestedDataSubtitle: {
     id: 'pages.ResultDetail.nestedDataSubtitle',
     defaultMessage: '{count} fields'
-  }
+  },
 })
 
 // Iterate JSON schema level 2 and reduce it with resultData into a fields list
@@ -150,7 +157,10 @@ export class ResultDetail extends PureComponent {
     updateSingleResult: PropTypes.func.isRequired,
     intl: intlShape.isRequired,
     params: PropTypes.object.isRequired,
-    result: PropTypes.object,
+    result: PropTypes.objectOf(Result),
+
+    fetchWorkflowStatusLogs: PropTypes.func.isRequired,
+    workflowLog: PropTypes.objectOf(WorkflowLogModel).isRequired
   }
 
   static defaultProps = {
@@ -243,6 +253,13 @@ export class ResultDetail extends PureComponent {
 
   handleFetchResult = () => {
     this.props.fetchSingleResult(this.props.params.resultId)
+
+    // refresh grid 'Result Workflow Status Logs'
+    this.handleFetchWorkflowStatusLogs()
+  }
+
+  handleFetchWorkflowStatusLogs = (...args) => {
+    this.props.fetchWorkflowStatusLogs(this.props.params.resultId, ...args)
   }
 
   hasResultWithAssay() {
@@ -496,13 +513,21 @@ export class ResultDetail extends PureComponent {
   }
 
   render() {
-    const { intl } = this.props
+    const { intl, workflowLog } = this.props
     const { formatMessage } = intl
 
     return (
       <div className={cssClasses('ContentDetails')}>
         <Helmet title={formatMessage(messages.title)} titleTemplate="%s - Aspect" defaultTitle="Aspect" />
+
         {this.renderPaper()}
+
+        <ResultWorkflowStatusLog
+          intl={intl}
+          workflowLog={workflowLog}
+          handleFetch={this.handleFetchWorkflowStatusLogs}
+        />
+
       </div>
     )
   }
@@ -510,9 +535,9 @@ export class ResultDetail extends PureComponent {
 
 function mapStateToProps(state, props) {
   const result = state.result.items.byId.get(props.params.resultId)
-
   return {
-    result
+    result,
+    workflowLog: state.result.workflowLog
   }
 }
 
@@ -520,7 +545,8 @@ function mapDispatchToProps(dispatch) {
   return bindActionCreators({
     fetchSingleResult,
     updateSingleResult,
-    updateResultWorkflowStatus
+    updateResultWorkflowStatus,
+    fetchWorkflowStatusLogs
   }, dispatch)
 }
 

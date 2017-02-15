@@ -172,17 +172,20 @@ function* getResultByResultId(request, fields = SELECT_SHOW_FIELDS) {
     .modify(addConstraints, dataConstraints, { device: 'd' })
     .select(fields)
 
+  let data = null
+
   // translate result data back to an object and get assay details
   // if selecting the result was successful
   if (results.length === 1) {
-    results[0].resultData = JSON.parse(results[0].resultData)
-    results[0].patientData = JSON.parse(results[0].patientData)
-    results[0].assay = yield knex('Assay as a').where('a.id', results[0].assayId).first()
-    results[0].assay.resultDataSchema = JSON.parse(results[0].assay.resultDataSchema)
-    results[0].assay.patientDataSchema = JSON.parse(results[0].assay.patientDataSchema)
+    data = results[0]
+    data.resultData = JSON.parse(data.resultData)
+    data.patientData = JSON.parse(data.patientData)
+    data.assay = yield knex('Assay as a').where('a.id', data.assayId).first()
+    data.assay.resultDataSchema = JSON.parse(data.assay.resultDataSchema)
+    data.assay.patientDataSchema = JSON.parse(data.assay.patientDataSchema)
   }
 
-  return { ok: results.length === 1, data: results[0] }
+  return { ok: results.length === 1, data }
 }
 
 function* listResultTypes(request) {
@@ -268,10 +271,53 @@ function* listWorkflowStatusTypes() {
   return result
 }
 
+function* listWorkflowStatusLog(request) {
+  const result = yield* getWorkflowStatusLogByResultId(request)
+  return result.ok ? result : Boom.notFound()
+}
+
+function* getWorkflowStatusLogByResultId(request) {
+  const { query, params } = request
+
+  const selectFields = [
+    'log.id', 'log.operator', 'log.createdOn', 'log.createdBy',
+    'rs.name as statusName', 'rs.i18nKey', 'rs.token'
+  ]
+  const sortableFields = [
+    'operator', 'createdOn', 'statusName'
+  ]
+
+  // now we know if the sort that was passed is valid:
+  if (query.sortCol && !sortableFields.includes(query.sortCol)) {
+    return Boom.badRequest()
+  }
+
+  const resultQuery = knex('ResultWorkflowLog as log')
+      .innerJoin('ResultWorkflowStatus as rs', 'log.resultWorkflowStatusId', 'rs.id')
+      .where('log.resultId', +params.resultId)
+
+  // get total count for paging
+  const getCount = resultQuery.clone()
+    .count('log.id as count').first()
+
+  // get rows
+  const getItems = resultQuery.clone()
+    .modify(sortPageParams, query, 'createdOn')
+    .select(selectFields)
+
+  // return result when both queries are finished
+  const [{ count: total }, data] = yield Promise.all([getCount, getItems])
+
+  const result = { ok: true, total, length: data.length, data }
+
+  return result
+}
+
 module.exports = {
   listResults,
   showResult,
   listResultTypes,
   updateWorkflowStatus,
-  listWorkflowStatusTypes
+  listWorkflowStatusTypes,
+  listWorkflowStatusLog
 }

@@ -9,7 +9,10 @@ import {
 
 export const types = {
   REQUEST_WORKFLOW_STATUSES: 'REQUEST_WORKFLOW_STATUSES',
-  RECEIVE_WORKFLOW_STATUSES: 'RECEIVE_WORKFLOW_STATUSES'
+  RECEIVE_WORKFLOW_STATUSES: 'RECEIVE_WORKFLOW_STATUSES',
+
+  REQUEST_WORKFLOW_LOG: 'REQUEST_WORKFLOW_LOG',
+  RECEIVE_WORKFLOW_LOG: 'RECEIVE_WORKFLOW_LOG'
 }
 
 /*
@@ -70,7 +73,7 @@ export function fetchWorkflowStatuses(forceRefresh) {
 const WorkflowStatus = Immutable.Record({
   loading: false,
   items: Immutable.List([]),
-  lastRefreshed: undefined
+  lastRefreshed: undefined,
 })
 
 const initialState = new WorkflowStatus()
@@ -83,7 +86,7 @@ function receiveWorkflowStatuses(state, items, lastRefreshed) {
   return state.merge({
     loading: false,
     lastRefreshed,
-    items: new Immutable.fromJS(items)
+    items: new Immutable.fromJS(items),
   })
 }
 

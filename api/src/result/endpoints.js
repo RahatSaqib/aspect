@@ -9,7 +9,8 @@ const {
   showResult,
   listResultTypes,
   updateWorkflowStatus,
-  listWorkflowStatusTypes
+  listWorkflowStatusTypes,
+  listWorkflowStatusLog
 } = require('./service')
 const { validateAllGeographyFilterParams } = require('../geography/requestValidation')
 
@@ -97,6 +98,22 @@ module.exports = [
       description: 'Result Workflow Status List',
       notes: 'Dictionary set of Result Workflow Status options',
       auth: { scope: ['result:view', 'result:edit'] }
+    }
+  },
+  {
+    method: 'GET',
+    path: '/result/workflow-status-logs/{resultId}',
+    handler: asyncHandler(listWorkflowStatusLog),
+    config: {
+      description: 'Result Workflow Status Logs',
+      notes: 'Pageable and sortable list of workflow status logs for current result',
+      auth: { scope: ['result:view', 'result:edit'] },
+      validate: {
+        query: validateSortPageParams(),
+        params: {
+          resultId: Joi.string().description('Result ID').required()
+        }
+      }
     }
   }
 ]
