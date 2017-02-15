@@ -276,7 +276,7 @@ function* getResultAndDeviceLog(context, deviceLogId, offset) {
     'sos.externalId as sampleOriginSiteId', 'st.externalId as sampleTypeId',
     'rc1.externalId as category1Id', 'rc2.externalId as category2Id']
 
-  // Do not send if result cateogory is Error ASP-247
+  // Do not send if result category is Error ASP-247
   resultQuery
     .where(function () {
       this
