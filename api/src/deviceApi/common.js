@@ -1,11 +1,16 @@
 const Boom = require('boom')
 const { knex, transact } = require('../db')
-const { getDeviceConstraints } = require('../auth/constraints')
+const { getDeviceConstraints, addConstraints } = require('../auth/constraints')
 const { asyncHandler } = require('../routes')
 
-function deviceApiHandler(handler, { updatePing, updateDeviceLog, requiredStatus = null }) {
+function deviceApiHandler(handler, {
+  updatePing = false,
+  updateDeviceLog = false,
+  requiredStatus = null,
+  requireDeviceLog = false
+}) {
   return asyncHandler(function* (request) {
-    const context = yield* getDeviceApiContext(request, requiredStatus)
+    const context = yield* getDeviceApiContext(request, requiredStatus, requireDeviceLog)
     if (context.error) {
       // unauthorized, record nothing
       return context.error
@@ -64,7 +69,7 @@ function deviceApiHandler(handler, { updatePing, updateDeviceLog, requiredStatus
   })
 }
 
-function* getDeviceApiContext(request, requiredStatus) {
+function* getDeviceApiContext(request, requiredStatus, requireDeviceLog) {
   const { auth } = request
   const now = new Date()
   const devicesQ = knex('DeviceApiKey as dak')
@@ -87,13 +92,25 @@ function* getDeviceApiContext(request, requiredStatus) {
 
   const constraints = yield getDeviceConstraints(auth.credentials)
 
-  return new DeviceApiContext({
+  const context = new DeviceApiContext({
     now,
     device: devices[0],
     constraints,
     payload: request.payload,
     query: request.query
   })
+
+  if (requireDeviceLog) {
+    const offset = +(request.query.offset || 0)
+    const deviceLog = yield* getDeviceLog(
+      devices[0].id, constraints, request.query.checkpoint, offset)
+    context.deviceLog = deviceLog
+    if (deviceLog == null) {
+      return { error: Boom.notFound() }
+    }
+  }
+
+  return context
 }
 
 class DeviceApiContext {
@@ -129,6 +146,91 @@ class DeviceApiContext {
       this.parent.addDeviceLogUpdate(prop, value)
     }
   }
+}
+
+function* getDeviceLog(deviceId, dataConstraints, checkpoint, offset) {
+  // Find device log at checkpoint or latest
+  const initialDeviceLogQuery = knex('DeviceLog')
+    .where({ deviceId })
+    .orderBy('id', 'desc')
+  // use specified checkpoint, otherwise just select latest
+  if (checkpoint) {
+    initialDeviceLogQuery.where({ checkpoint })
+  }
+  const { checkpoint: initialCheckpoint, id: initialDeviceLogId } = (
+    (yield initialDeviceLogQuery.first('checkpoint', 'id')) || {})
+  if (!initialDeviceLogId) {
+    //
+    return null
+  } else if (offset === 0) {
+    // If no offset, return log at checkpoint for this device
+    // as checkpoints are unique per device
+    return {
+      id: initialDeviceLogId,
+      checkpoint: initialCheckpoint
+    }
+  }
+
+  // We need to consider DeviceLogs with and without
+  // the result constraints and return the first entry (minimum log id)
+  // Two steps are required because results might be allowed from a
+  // different sample origin site (lab/clinic) but device configuration
+  // and operation updates are currently always constrained by device
+  const deviceLogOffsetQuery = knex('Device as d')
+    .innerJoin('DeviceLog as dl', 'dl.deviceId', 'd.id')
+    .where({ 'd.id': deviceId })
+    .union(function () {
+      this.from('Result as r')
+        .innerJoin('Device as d', 'r.deviceId', 'd.id')
+        .innerJoin('DeviceLog as dl', 'dl.resultId', 'r.id')
+        .leftJoin('Sample as s', 'r.sampleId', 's.id')
+        .leftJoin('Site as sos', 's.originSiteId', 'sos.id')
+        .modify(addConstraints, dataConstraints, { device: 'd', sample: 's' })
+        .select('dl.id')
+    })
+    .select('dl.id')
+    .as('dls')
+
+  const deviceLogQuery = knex('DeviceLog as dl')
+    .innerJoin(deviceLogOffsetQuery, 'dl.id', 'dls.id')
+    .first(
+      'dl.id as deviceLogId',
+      'dl.deviceId as deviceLogDeviceId',
+      'dl.checkpoint as deviceLogCheckpoint')
+  if (offset > 0) {
+    // select result after specified log entry
+    deviceLogQuery
+      .where('dl.id', '>', initialDeviceLogId)
+      .orderBy('dl.id', 'asc')
+    if (offset > 1) {
+      // specify query offset if immediately after
+      deviceLogQuery.offset(offset - 1)
+    }
+  } else if (offset < 0) {
+    // select result before specified log entry
+    deviceLogQuery
+      .where('dl.id', '<', initialDeviceLogId)
+      .orderBy('dl.id', 'desc')
+    if (offset < -1) {
+      // specify query offset if immediately before
+      deviceLogQuery.offset(-offset - 1)
+    }
+  }
+
+  const deviceLog = yield deviceLogQuery
+  if (deviceLog == null) {
+    return null
+  }
+
+  const { deviceLogId, deviceLogDeviceId, deviceLogCheckpoint } = deviceLog
+
+  const response = { id: deviceLogId }
+  // set checkpoint if log changed during query, e.g, due to offset
+  // but do not leak checkpoint from different device
+  if (deviceLogDeviceId === deviceId) {
+    response.checkpoint = deviceLogCheckpoint
+  }
+  return response
 }
 
 module.exports = {

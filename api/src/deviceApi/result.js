@@ -249,8 +249,8 @@ function* addResult(context) {
   return {}
 }
 
-function* getResult(context, deviceLogId) {
-  const { knex, constraints: dataConstraints } = context
+function* getResult(context) {
+  const { knex, constraints: dataConstraints, deviceLog: { id: deviceLogId } } = context
 
   const resultQuery = knex('Result as r')
     .innerJoin('Device as d', 'r.deviceId', 'd.id')
