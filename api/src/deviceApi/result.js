@@ -276,6 +276,19 @@ function* getResultAndDeviceLog(context, deviceLogId, offset) {
     'sos.externalId as sampleOriginSiteId', 'st.externalId as sampleTypeId',
     'rc1.externalId as category1Id', 'rc2.externalId as category2Id']
 
+  // Do not send if result category is Error ASP-247
+  resultQuery
+    .where(function () {
+      this
+        .whereNull('rc1.externalId')
+        .orWhere('rc1.externalId', '<>', 'Error')
+    })
+    .where(function () {
+      this
+        .whereNull('rc2.externalId')
+        .orWhere('rc2.externalId', '<>', 'Error')
+    })
+
   if (!deviceLogId) {
     // If device log id not specified, select result last updated
     // with stable ordering

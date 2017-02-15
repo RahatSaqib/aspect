@@ -172,6 +172,8 @@ module.exports = [
           allowUnknown: true
         },
         schema: {
+          name: Joi.string().allow('', null).description(
+            'The device name'),
           checkpoint: Joi.string().allow('', null).description(
             'The client checkpoint'),
           configuration: Joi.object().keys(configurationPayload).description(
@@ -198,6 +200,8 @@ module.exports = [
           allowUnknown: true
         },
         payload: Joi.object().keys({
+          name: Joi.string().allow('', null).description(
+            'The device name'),
           checkpoint: Joi.string().allow('', null).description(
             'The client checkpoint'),
           configuration: Joi.object().keys(configurationPayload).description(

@@ -80,7 +80,7 @@ function* getDeviceApiContext(request, requiredStatus) {
       .where({ 'ds.token': requiredStatus })
   }
 
-  const devices = yield devicesQ.select('d.id')
+  const devices = yield devicesQ.select('d.id', 'd.name')
   if (devices.length !== 1) {
     return { error: Boom.unauthorized() }
   }

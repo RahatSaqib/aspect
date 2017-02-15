@@ -4,8 +4,14 @@ const { addResult, getResultAndDeviceLog } = require('./result')
 
 function* addDeviceData(context) {
   const response = {}
-  const { payload } = context
-  const { result, configuration, operation } = payload
+  const { knex, now, payload, device: { id: deviceId } } = context
+  const { name, result, configuration, operation } = payload
+
+  if (name) {
+    yield knex('Device')
+      .where({ id: deviceId })
+      .update({ name, updatedOn: now })
+  }
 
   if (configuration) {
     yield* updateDeviceConfiguration(
@@ -31,8 +37,8 @@ function* addDeviceData(context) {
 }
 
 function* getDeviceData(context) {
-  const response = {}
-  const { knex, device: { id: deviceId }, query } = context
+  const { now, knex, device: { id: deviceId, name: deviceName }, query } = context
+  const response = { name: deviceName, time: now.toISOString() }
 
   const deviceLogQ = knex('DeviceLog')
     .where({ deviceId })
