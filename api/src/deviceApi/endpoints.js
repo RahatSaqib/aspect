@@ -66,7 +66,9 @@ const resultPayload = {
         'The workflow status. Default Error if error specified, otherwise OK')
     }),
     operator: Joi.string().allow('', null).description(
-      'The person who updated the workflow')
+      'The person who updated the workflow'),
+    changedOn: Joi.date().iso().description(
+      'Date and optional time the workflow changed.')
   }),
   sample: Joi.object().keys({
     id: Joi.string().allow('', null).description(

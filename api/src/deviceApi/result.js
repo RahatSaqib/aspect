@@ -228,14 +228,24 @@ function* addResult(context) {
   }
   context.addResultId(resultId)
 
-  // Log Result Workflow Update
-  if (_.has(payload, 'workflow') || !existingResult ||
-      existingResult.resultWorkflowStatusId !== result.resultWorkflowStatusId) {
+  // Log Result Workflow Update if any field changed
+  let resultWorkflowChanged = !existingResult ||
+    existingResult.resultWorkflowStatusId !== result.resultWorkflowStatusId
+  if (!resultWorkflowChanged && (_.has(payload, 'workflow.operator')
+      || _.has(payload, 'workflow.changedOn'))) {
+    // check to see if operator or changedOn is different from latest log
+    const resultWorkflowLog = yield* getLatestResultWorkflowLog(knex, existingResult.id)
+    resultWorkflowChanged = !resultWorkflowLog ||
+      _.get(payload, 'workflow.operator', null) !== resultWorkflowLog.operator ||
+      +_.get(payload, 'workflow.changedOn', NaN) !== +resultWorkflowLog.changedOn
+  }
+
+  if (resultWorkflowChanged) {
     yield knex('ResultWorkflowLog').insert({
       resultId,
       resultWorkflowStatusId: result.resultWorkflowStatusId,
       operator: _.get(payload, 'workflow.operator', null),
-      changedOn: now,
+      changedOn: _.get(payload, 'workflow.changedOn', now),
       createdOn: now
     })
   }
@@ -265,11 +275,11 @@ function* getResult(context) {
     .leftJoin('ResultWorkflowStatus as rs', 'r.resultWorkflowStatusId', 'rs.id')
     .modify(addConstraints, dataConstraints, { device: 'd', sample: 's' })
     .first(
-      'r.externalId as resultId', 'r.resultData', 'r.patientData',
+      'r.externalId as resultExternalId', 'r.resultData', 'r.patientData',
       'r.startedOn', 'r.endedOn', 'r.updatedOn', 'r.researchId', 'r.notes',
       'r.senderVersion', 'r.senderOperator', 'r.errorCode', 'r.errorNotes',
       'r.consumableSerial', 'r.consumableExpirationDate', 'r.consumableLot',
-      'r.instrumentSerial', 'r.moduleName', 'r.moduleSerial',
+      'r.instrumentSerial', 'r.moduleName', 'r.moduleSerial', 'r.id as resultId',
       'a.externalId as assayId', 'r.assayVersion',
       'r.latitude', 'r.longitude', 'rt.externalId as resultTypeId',
       'rs.externalId as resultWorkflowStatusId',
@@ -307,12 +317,14 @@ function* getResult(context) {
     return null
   }
 
+  const resultWorkflowLog = yield* getLatestResultWorkflowLog(knex, row.resultId)
+
   // TODO allow filtering on fields of interest, similar to client device API
   // but JSON paths from result data in same format as POST
   const result = {}
 
-  if (row.resultId != null) {
-    result.id = row.resultId
+  if (row.resultExternalId != null) {
+    result.id = row.resultExternalId
   }
 
   result.assay = { id: row.assayId }
@@ -326,6 +338,12 @@ function* getResult(context) {
   }
   result.type = { id: row.resultTypeId }
   result.workflow = { status: { id: row.resultWorkflowStatusId } }
+  if (resultWorkflowLog) {
+    result.workflow.changedOn = resultWorkflowLog.changedOn
+    if (resultWorkflowLog.operator != null) {
+      result.workflow.operator = resultWorkflowLog.operator
+    }
+  }
 
   const sample = { id: row.sampleId, originSite: { id: row.sampleOriginSiteId } }
   if (row.sampleCollectedOn != null) {
@@ -401,6 +419,15 @@ function* getResult(context) {
   }
 
   return result
+}
+
+
+function* getLatestResultWorkflowLog(knex, resultId) {
+  return yield knex('ResultWorkflowLog')
+    .where({ resultId })
+    .orderBy('createdOn', 'desc')
+    .orderBy('id', 'desc')
+    .first('operator', 'changedOn')
 }
 
 
