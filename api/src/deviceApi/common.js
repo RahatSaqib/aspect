@@ -157,17 +157,16 @@ function* getDeviceLog(deviceId, dataConstraints, checkpoint, offset) {
   if (checkpoint) {
     initialDeviceLogQuery.where({ checkpoint })
   }
-  const { checkpoint: initialCheckpoint, id: initialDeviceLogId } = (
-    (yield initialDeviceLogQuery.first('checkpoint', 'id')) || {})
-  if (!initialDeviceLogId) {
+  const initialDeviceLog = yield initialDeviceLogQuery.first('checkpoint', 'id')
+  if (!initialDeviceLog) {
     // No log found at checkpoint for this device
     return null
   } else if (offset === 0) {
     // If no offset, return log at checkpoint for this device
     // as checkpoints are unique per device
     return {
-      id: initialDeviceLogId,
-      checkpoint: initialCheckpoint
+      id: initialDeviceLog.id,
+      checkpoint: initialDeviceLog.checkpoint
     }
   }
 
@@ -200,7 +199,7 @@ function* getDeviceLog(deviceId, dataConstraints, checkpoint, offset) {
   if (offset > 0) {
     // select result after specified log entry
     deviceLogQuery
-      .where('dl.id', '>', initialDeviceLogId)
+      .where('dl.id', '>', initialDeviceLog.id)
       .orderBy('dl.id', 'asc')
     if (offset > 1) {
       // specify query offset if immediately after
@@ -209,7 +208,7 @@ function* getDeviceLog(deviceId, dataConstraints, checkpoint, offset) {
   } else if (offset < 0) {
     // select result before specified log entry
     deviceLogQuery
-      .where('dl.id', '<', initialDeviceLogId)
+      .where('dl.id', '<', initialDeviceLog.id)
       .orderBy('dl.id', 'desc')
     if (offset < -1) {
       // specify query offset if immediately before
