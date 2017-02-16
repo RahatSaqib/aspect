@@ -1432,6 +1432,7 @@ describe('Device Result API routes', () => {
               id: '1315'
             }
           },
+          assay: { id: 'HivVl' },
           notes: '454,112 Copies / mL'
         })
         .then((res) => {
@@ -1547,6 +1548,7 @@ describe('Device Result API routes', () => {
               id: '1723'
             }
           },
+          assay: { id: 'HivVl' },
           notes: '154,112 Copies / mL'
         })
         .then((res) => {
@@ -1843,6 +1845,7 @@ describe('Device Result API routes', () => {
             resultText: '155115',
             copies: 155115
           },
+          assay: { id: 'HivVl' },
           sample: {
             originSite: {
               id: '1723'
