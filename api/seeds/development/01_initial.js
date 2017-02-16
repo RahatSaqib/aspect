@@ -288,6 +288,11 @@ function* seed(knex) {
     i18nKey: 'assayTypeHivVl'
   })
 
+  const [assayTypeEid] = yield knex('AssayType').insert({
+    name: 'EID',
+    i18nKey: 'assayTypeEid'
+  })
+
   const [assayTypeHcvId] = yield knex('AssayType').insert({
     name: 'HCV',
     i18nKey: 'assayTypeHcv'
@@ -752,45 +757,96 @@ function* seed(knex) {
     resultCategory1Label: 'HIV',
     resultCategory1i18nKey: 'resultCategoryHivVl',
     resultDataSchema: JSON.stringify({
-      resultText: {
-        title: 'Result Text',
-        type: 'string'
-      },
       copies: {
-        title: 'copies/mL',
+        list: true,
+        title: 'VL Count',
         type: 'number'
       }
     }),
     patientDataSchema: JSON.stringify({
-      id: {
-        title: 'Patient ID',
-        type: 'string',
-        order: 0
+      provider: {
+        title: 'Provider ID',
+        type: 'string'
       },
       name: {
-        title: 'Name',
+        title: 'Client Name',
         type: 'string',
         order: 1
       },
       surname: {
-        title: 'Surname',
+        title: 'Client Surname',
         type: 'string',
         order: 2
+      },
+      addressPhone: {
+        title: 'Address/Phone',
+        type: 'string',
+        order: 3
+      },
+      artNumber: {
+        title: 'ART #',
+        type: 'string',
+        order: 4
       },
       gender: {
         title: 'Gender',
         type: 'string',
+        order: 5
+      }
+    })
+  })
+
+  yield knex('Assay').insert({
+    name: 'Abbot m2000 EID',
+    i18nKey: 'AssayAbbotM2000Eid',
+    externalId: 'EID',
+    assayTypeId: assayTypeEid,
+    deviceTypeId: deviceTypeM2000Id,
+    resultCategory1Label: 'EID',
+    resultCategory1i18nKey: 'resultCategoryEid',
+    resultDataSchema: JSON.stringify({
+      resultText: {
+        list: true,
+        title: 'Result',
+        type: 'string'
+      }
+    }),
+    patientDataSchema: JSON.stringify({
+      provider: {
+        title: 'Provider ID',
+        type: 'string',
+        order: 0
+      },
+      name: {
+        title: 'Client Name',
+        type: 'string',
+        order: 1
+      },
+      surname: {
+        title: 'Client Surname',
+        type: 'string',
+        order: 2
+      },
+      addressPhone: {
+        title: 'Address/Phone',
+        type: 'string',
         order: 3
       },
-      provider: {
-        title: 'Provider',
+      nameMother: {
+        title: 'Mother\'s Name',
         type: 'string',
         order: 4
       },
-      artNumber: {
-        title: 'ART Number',
+      hccNumber: {
+        list: true,
+        title: 'HCC #',
         type: 'string',
         order: 5
+      },
+      gender: {
+        title: 'Gender',
+        type: 'string',
+        order: 6
       }
     })
   })

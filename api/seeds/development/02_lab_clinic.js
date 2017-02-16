@@ -67,6 +67,10 @@ function* seed(knex) {
           title: 'user1Name',
           type: 'string'
         },
+        user1Assays: {
+          title: 'user1Assays',
+          type: 'array'
+        },
         user2Pin: {
           title: 'user2Pin',
           type: 'string'
@@ -74,6 +78,10 @@ function* seed(knex) {
         user2Name: {
           title: 'user2Name',
           type: 'string'
+        },
+        user2Assays: {
+          title: 'user2Assays',
+          type: 'array'
         },
         user3Pin: {
           title: 'user3Pin',
@@ -83,6 +91,10 @@ function* seed(knex) {
           title: 'user3Name',
           type: 'string'
         },
+        user3Assays: {
+          title: 'user3Assays',
+          type: 'array'
+        },
         user4Pin: {
           title: 'user4Pin',
           type: 'string'
@@ -91,6 +103,10 @@ function* seed(knex) {
           title: 'user4Name',
           type: 'string'
         },
+        user4Assays: {
+          title: 'user4Assays',
+          type: 'array'
+        },
         user5Pin: {
           title: 'user5Pin',
           type: 'string'
@@ -98,6 +114,22 @@ function* seed(knex) {
         user5Name: {
           title: 'user5Name',
           type: 'string'
+        },
+        user5Assays: {
+          title: 'user5Assays',
+          type: 'array'
+        },
+        adminPin: {
+          title: 'adminPin',
+          type: 'string'
+        },
+        adminName: {
+          title: 'adminName',
+          type: 'string'
+        },
+        adminAssays: {
+          title: 'adminAssays',
+          type: 'array'
         }
       }
     }
@@ -223,16 +255,24 @@ function* seed(knex) {
         adminPassword: 'pwd123',
         firmwareUpdateRequired: 'no',
         userPins: {
-          user1Pin: '111111',
+          user1Pin: '1234',
           user1Name: _.times(4, () => String.fromCharCode(65 + _.random(25) + (_.random(1) > 0 ? 32 : 0))).join(''),
-          user2Pin: '333',
+          user1Assays: ['HivVl', 'Eid'],
+          user2Pin: '2345',
           user2Name: _.times(4, () => String.fromCharCode(65 + _.random(25) + (_.random(1) > 0 ? 32 : 0))).join(''),
-          user3Pin: '555',
+          user2Assays: ['HivVl'],
+          user3Pin: '3456',
           user3Name: _.times(4, () => String.fromCharCode(65 + _.random(25) + (_.random(1) > 0 ? 32 : 0))).join(''),
-          user4Pin: '777',
+          user3Assays: ['Eid'],
+          user4Pin: '4567',
           user4Name: _.times(4, () => String.fromCharCode(65 + _.random(25) + (_.random(1) > 0 ? 32 : 0))).join(''),
-          user5Pin: '99999',
-          user5Name: _.times(4, () => String.fromCharCode(65 + _.random(25) + (_.random(1) > 0 ? 32 : 0))).join('')
+          user4Assays: ['HivVl', 'Eid'],
+          user5Pin: '5678',
+          user5Name: _.times(4, () => String.fromCharCode(65 + _.random(25) + (_.random(1) > 0 ? 32 : 0))).join(''),
+          user5Assays: ['HivVl'],
+          adminPin: '99999',
+          adminName: _.times(4, () => String.fromCharCode(65 + _.random(25) + (_.random(1) > 0 ? 32 : 0))).join(''),
+          adminAssays: ['HivVl', 'Eid']
         }
       }),
       siteId: siteData.id,
