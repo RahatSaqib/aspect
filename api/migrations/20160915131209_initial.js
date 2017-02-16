@@ -527,6 +527,7 @@ function* up(knex) {
     resultWorkflowLog.integer('resultWorkflowStatusId').unsigned().notNullable()
           .index().references('id').inTable('ResultWorkflowStatus')
     resultWorkflowLog.string('operator')
+    resultWorkflowLog.dateTime('changedOn').notNullable()
     addCreateFieldsNullable(resultWorkflowLog)
   })
 

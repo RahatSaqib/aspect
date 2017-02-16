@@ -235,6 +235,7 @@ function* addResult(context) {
       resultId,
       resultWorkflowStatusId: result.resultWorkflowStatusId,
       operator: _.get(payload, 'workflow.operator', null),
+      changedOn: now,
       createdOn: now
     })
   }

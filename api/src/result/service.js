@@ -246,6 +246,7 @@ function* updateWorkflowStatus(request) {
     resultId,
     resultWorkflowStatusId,
     createdBy: currentUserId,
+    changedOn: now,
     createdOn: now
   })
   return yield* showResult(request)
@@ -280,11 +281,11 @@ function* getWorkflowStatusLogByResultId(request) {
   const { query, params } = request
 
   const selectFields = [
-    'log.id', 'log.operator', 'log.createdOn', 'log.createdBy',
+    'log.id', 'log.operator', 'log.changedOn', 'log.createdOn', 'log.createdBy',
     'rs.name as statusName', 'rs.i18nKey', 'rs.token'
   ]
   const sortableFields = [
-    'operator', 'createdOn', 'statusName'
+    'operator', 'changedOn', 'statusName'
   ]
 
   // now we know if the sort that was passed is valid:
@@ -302,7 +303,7 @@ function* getWorkflowStatusLogByResultId(request) {
 
   // get rows
   const getItems = resultQuery.clone()
-    .modify(sortPageParams, query, 'createdOn')
+    .modify(sortPageParams, query, 'changedOn')
     .select(selectFields)
 
   // return result when both queries are finished

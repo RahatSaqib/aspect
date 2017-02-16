@@ -1622,6 +1622,7 @@ function* seed(knex) {
       resultId,
       resultWorkflowStatusId: ordered,
       operator: 'Marsha',
+      changedOn: new Date(+now - randomTimespan - (25 * millisInHour)),
       createdOn: new Date(+now - randomTimespan - (26 * millisInHour)),
       createdBy: adminId
     })
@@ -1630,6 +1631,7 @@ function* seed(knex) {
       resultId,
       resultWorkflowStatusId: acknowledged,
       operator: 'John',
+      changedOn: new Date(+now - randomTimespan - (2 * millisInHour)),
       createdOn: new Date(+now - randomTimespan - (1 * millisInHour)),
       createdBy: adminId
     })
@@ -1735,6 +1737,7 @@ function* seed(knex) {
       resultId,
       resultWorkflowStatusId: ordered,
       operator: 'Bill',
+      changedOn: new Date(+now - randomTimespan - (34 * millisInHour)),
       createdOn: new Date(+now - randomTimespan - (35 * millisInHour)),
       createdBy: adminId
     })
@@ -1743,6 +1746,7 @@ function* seed(knex) {
       resultId,
       resultWorkflowStatusId: processed,
       operator: 'Marsha',
+      changedOn: new Date(+now - randomTimespan - (13 * millisInHour)),
       createdOn: new Date(+now - randomTimespan - (12 * millisInHour)),
       createdBy: adminId
     })
@@ -1751,6 +1755,7 @@ function* seed(knex) {
       resultId,
       resultWorkflowStatusId: acknowledged,
       operator: 'John',
+      changedOn: new Date(+now + (41 * millisInHour)),
       createdOn: new Date(+now + (42 * millisInHour)),
       createdBy: adminId
     })
@@ -1853,6 +1858,7 @@ function* seed(knex) {
       resultId,
       resultWorkflowStatusId: acknowledged,
       operator: 'Marsha',
+      changedOn: new Date(+now - randomTimespan - (3 * millisInHour)),
       createdOn: new Date(+now - randomTimespan - (2 * millisInHour)),
       createdBy: adminId
     })
@@ -1948,6 +1954,7 @@ function* seed(knex) {
       resultId,
       resultWorkflowStatusId: processed,
       operator: 'Gene Hackman',
+      changedOn: now,
       createdOn: now,
       createdBy: adminId
     })
@@ -2050,6 +2057,7 @@ function* seed(knex) {
       resultId,
       resultWorkflowStatusId: acknowledged,
       operator: 'Aaron',
+      changedOn: new Date(+now - randomTimespan - (2 * millisInHour)),
       createdOn: new Date(+now - randomTimespan - (1 * millisInHour)),
       createdBy: adminId
     })
@@ -2152,6 +2160,7 @@ function* seed(knex) {
       resultId,
       resultWorkflowStatusId: acknowledged,
       operator: 'Aaron',
+      changedOn: new Date(+now - randomTimespan - (1 * millisInHour)),
       createdOn: new Date(+now - randomTimespan - (2 * millisInHour)),
       createdBy: adminId
     })
