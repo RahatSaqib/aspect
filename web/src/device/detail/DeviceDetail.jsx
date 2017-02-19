@@ -442,8 +442,8 @@ export class DeviceDetail extends PureComponent {
                 <TableRow>
                   <TableHeaderColumn style={{ width: '10%' }}>ID</TableHeaderColumn>
                   <TableHeaderColumn>Started On</TableHeaderColumn>
-                  {device.getIn(['deviceType', 'deviceOperationSchema']).map((properties, key) => (
-                    <TableHeaderColumn key={key}>{properties.get('title')}</TableHeaderColumn>
+                  {device.getIn(['deviceType', 'deviceOperationSchema']).map(properties => (
+                    <TableHeaderColumn key={`dos${properties.get('title')}`}>{properties.get('title')}</TableHeaderColumn>
                   )).valueSeq()}
                 </TableRow>
               </TableHeader>
@@ -455,9 +455,9 @@ export class DeviceDetail extends PureComponent {
                       {formatDeviceOperationStartedOn(deviceOperation.get('startedOn'))}
                     </TableRowColumn>
                     {device.getIn(['deviceType', 'deviceOperationSchema']).map((properties, key) => (
-                      <TableHeaderColumn key={key}>
+                      <TableRowColumn key={`${deviceOperation.get('id')}${deviceOperation.getIn(['data', key])}`}>
                         {formatDeviceOperationData(properties, deviceOperation.getIn(['data', key]))}
-                      </TableHeaderColumn>
+                      </TableRowColumn>
                     )).valueSeq()}
                   </TableRow>
                 ))}
