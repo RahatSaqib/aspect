@@ -10,3 +10,15 @@ export const longNumericFormat = {
   minute: 'numeric',
   second: 'numeric'
 }
+
+export const shortNumericDate = {
+  year: 'numeric',
+  month: 'numeric',
+  day: 'numeric'
+}
+
+export const shortNumericTime = {
+  hour: 'numeric',
+  minute: 'numeric',
+  second: 'numeric'
+}

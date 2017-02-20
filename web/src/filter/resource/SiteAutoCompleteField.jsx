@@ -25,15 +25,15 @@ const enhance = compose(
     fetchSites
   })),
   mapProps(props => ({
-      ..._fp.omit(['siteItemsById', 'itemTextGetter'], props),
-      siteList: props.siteItemsById
-        .valueSeq()
-        .map(item => ({
-          value: item.get('name'),
-          text: props.itemTextGetter(item)
-        }))
-        .toJS()
-    })),
+    ..._fp.omit(['siteItemsById', 'itemTextGetter'], props),
+    siteList: props.siteItemsById
+      .valueSeq()
+      .map(item => ({
+        value: item.get('name'),
+        text: props.itemTextGetter(item)
+      }))
+      .toJS()
+  })),
   lifecycle({
     componentDidMount() {
       this.props.fetchSites({}, undefined, undefined, 0, 99999)
@@ -60,8 +60,8 @@ const enhance = compose(
       const newValue = event.target.value.trim()
       props.onChangeSite(newValue)
     },
-    onSiteAutoCompleteKeyUp: props => (event, newValue) => {
-      if (event.key === 'Enter'){
+    onSiteAutoCompleteKeyUp: props => (event) => {
+      if (event.key === 'Enter') {
         // --------------------------
         // FYI: NewRequest event is triggered only if input control has value (even spaces)
         // So,
