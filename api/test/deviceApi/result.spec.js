@@ -194,7 +194,6 @@ describe('Device Result API routes', () => {
           assert.equal(lastResult.sample.originSite.id, result1SampleSite.externalId)
           assert.typeOf(lastResult.workflow, 'Object')
           assert.typeOf(lastResult.workflow.status, 'Object')
-          assert.equal(lastResult.workflow.status.id, 'OK')
           assert.property(lastResult.workflow, 'changedOn')
 
           assert.deepEqual(_.omit(lastResult, 'id', 'sample', 'workflow'), {
@@ -573,7 +572,7 @@ describe('Device Result API routes', () => {
 
       const result1Status = yield knex('ResultWorkflowStatus as rs')
         .where({ id: result1.resultWorkflowStatusId }).first('externalId')
-      assert.equal(result1Status.externalId, 'OK')
+      assert.equal(result1Status.externalId, 'Delivered')
 
       const [result1Category1, result1Category2] = yield knex('ResultCategory as rt')
         .whereIn('id', [result1.resultCategory1, result1.resultCategory2]).select('externalId')
@@ -658,7 +657,7 @@ describe('Device Result API routes', () => {
 
       const result4Status = yield knex('ResultWorkflowStatus as rs')
         .where({ id: result4.resultWorkflowStatusId }).first('externalId')
-      assert.equal(result4Status.externalId, 'OK')
+      assert.equal(result4Status.externalId, 'Delivered')
 
       const [result4Category1, result4Category2] = yield knex('ResultCategory as rt')
         .whereIn('id', [result4.resultCategory1, result4.resultCategory2]).select('externalId')
@@ -1473,7 +1472,6 @@ describe('Device Result API routes', () => {
           assert.property(lastResult.sample, 'id')
           assert.property(lastResult.sample.originSite, 'id')
           assert.equal(lastResult.sample.originSite.id, '1315')
-          assert.equal(lastResult.workflow.status.id, 'OK')
           assert.property(lastResult.workflow, 'changedOn')
 
           assert.deepEqual(_.omit(lastResult, 'sample', 'workflow'), {
@@ -1500,7 +1498,6 @@ describe('Device Result API routes', () => {
           assert.property(lastResult.sample, 'id')
           assert.property(lastResult.sample.originSite, 'id')
           assert.equal(lastResult.sample.originSite.id, '1315')
-          assert.equal(lastResult.workflow.status.id, 'OK')
           assert.property(lastResult.workflow, 'changedOn')
 
           assert.deepEqual(_.omit(lastResult, 'sample', 'workflow'), {
@@ -1529,7 +1526,6 @@ describe('Device Result API routes', () => {
           assert.property(lastResult.sample, 'id')
           assert.property(lastResult.sample.originSite, 'id')
           assert.equal(lastResult.sample.originSite.id, '1315')
-          assert.equal(lastResult.workflow.status.id, 'OK')
           assert.property(lastResult.workflow, 'changedOn')
 
           assert.deepEqual(_.omit(lastResult, 'sample', 'workflow'), {
@@ -1584,7 +1580,6 @@ describe('Device Result API routes', () => {
           assert.property(lastResult.sample, 'id')
           assert.property(lastResult.sample.originSite, 'id')
           assert.equal(lastResult.sample.originSite.id, '1723')
-          assert.equal(lastResult.workflow.status.id, 'OK')
           assert.property(lastResult.workflow, 'changedOn')
 
           assert.deepEqual(_.omit(lastResult, 'sample', 'workflow'), {
@@ -1611,7 +1606,6 @@ describe('Device Result API routes', () => {
           assert.property(lastResult.sample, 'id')
           assert.property(lastResult.sample.originSite, 'id')
           assert.equal(lastResult.sample.originSite.id, '1723')
-          assert.equal(lastResult.workflow.status.id, 'OK')
           assert.property(lastResult.workflow, 'changedOn')
 
           assert.deepEqual(_.omit(lastResult, 'sample', 'workflow'), {
@@ -1638,7 +1632,6 @@ describe('Device Result API routes', () => {
           assert.property(lastResult.sample, 'id')
           assert.property(lastResult.sample.originSite, 'id')
           assert.equal(lastResult.sample.originSite.id, '1723')
-          assert.equal(lastResult.workflow.status.id, 'OK')
           assert.property(lastResult.workflow, 'changedOn')
 
           assert.deepEqual(_.omit(lastResult, 'sample', 'workflow'), {
@@ -1665,7 +1658,6 @@ describe('Device Result API routes', () => {
           assert.property(lastResult.sample, 'id')
           assert.property(lastResult.sample.originSite, 'id')
           assert.equal(lastResult.sample.originSite.id, '1315')
-          assert.equal(lastResult.workflow.status.id, 'OK')
           assert.property(lastResult.workflow, 'changedOn')
 
           assert.deepEqual(_.omit(lastResult, 'sample', 'workflow'), {
@@ -1693,7 +1685,6 @@ describe('Device Result API routes', () => {
           assert.property(lastResult.sample, 'id')
           assert.property(lastResult.sample.originSite, 'id')
           assert.equal(lastResult.sample.originSite.id, '1723')
-          assert.equal(lastResult.workflow.status.id, 'OK')
           assert.property(lastResult.workflow, 'changedOn')
 
           assert.deepEqual(_.omit(lastResult, 'sample', 'workflow'), {
@@ -1726,7 +1717,6 @@ describe('Device Result API routes', () => {
           assert.property(lastResult.sample, 'id')
           assert.property(lastResult.sample.originSite, 'id')
           assert.equal(lastResult.sample.originSite.id, '1315')
-          assert.equal(lastResult.workflow.status.id, 'OK')
           assert.property(lastResult.workflow, 'changedOn')
 
           assert.deepEqual(_.omit(lastResult, 'sample', 'workflow'), {
@@ -1947,7 +1937,6 @@ describe('Device Result API routes', () => {
           assert.property(lastResult.sample, 'id')
           assert.property(lastResult.sample.originSite, 'id')
           assert.equal(lastResult.sample.originSite.id, '1723')
-          assert.equal(lastResult.workflow.status.id, 'OK')
           assert.property(lastResult.workflow, 'changedOn')
 
           assert.deepEqual(_.omit(lastResult, 'sample', 'workflow'), {
@@ -2025,7 +2014,6 @@ describe('Device Result API routes', () => {
           assert.property(lastResult.sample, 'id')
           assert.property(lastResult.sample.originSite, 'id')
           assert.equal(lastResult.sample.originSite.id, '1315')
-          assert.equal(lastResult.workflow.status.id, 'OK')
           assert.property(lastResult.workflow, 'changedOn')
 
           assert.deepEqual(_.omit(lastResult, 'sample', 'workflow'), {
@@ -2077,7 +2065,6 @@ describe('Device Result API routes', () => {
           assert.property(lastResult.sample, 'id')
           assert.property(lastResult.sample.originSite, 'id')
           assert.equal(lastResult.sample.originSite.id, '1315')
-          assert.equal(lastResult.workflow.status.id, 'OK')
           assert.property(lastResult.workflow, 'changedOn')
 
           assert.deepEqual(_.omit(lastResult, 'sample', 'workflow'), {
@@ -2092,6 +2079,69 @@ describe('Device Result API routes', () => {
             notes: '454,112 Copies / mL'
           })
         })
+    }))
+
+    it('should set the status of a result to delivered when it is sent to a terminal', () => runTest(function* (knex) {
+      const { deviceAuth } = context
+      const devicePath = '/device'
+
+      const [device] = yield knex('Device as d')
+        .join('Site as s', 'd.siteId', 's.id')
+        .join('DeviceType as dt', 'd.deviceTypeId', 'dt.id')
+        .whereIn('s.externalId', ['1315'])
+        .where('dt.name', 'RRT')
+        .orderBy('s.externalId')
+        .select('d.*')
+      context.deviceIds.push(device.id)
+
+      const externalId = `1315-${new Date()}`
+
+      yield server.post(devicePath)
+        .set('Authorization', deviceAuth)
+        .send({ checkpoint: 'rrt_0' })
+        .then((res) => {
+          assert.equal(res.status, 200)
+        })
+
+      yield server.post(devicePostResultPath)
+        .set('Authorization', deviceAuth)
+        .send({
+          id: externalId,
+          checkpoint: 'rrt_1',
+          data: {
+            resultText: '454112',
+            copies: 454112
+          },
+          sample: {
+            originSite: {
+              id: '1315'
+            }
+          },
+          assay: { id: 'HivVl' },
+          notes: '454,112 Copies / mL'
+        })
+        .then((res) => {
+          assert.equal(res.status, 200)
+        })
+
+      yield server.get(`${devicePath}?checkpoint=rrt_1`)
+        .set('Authorization', deviceAuth)
+        .then((res) => {
+          assert.equal(res.status, 200)
+          assert.equal(res.body.checkpoint, 'rrt_1')
+
+          const lastResult = res.body.result
+          assert.typeOf(lastResult, 'Object')
+        })
+
+      const result = yield knex('Result as r')
+        .where({ externalId }).first()
+      assert.deepEqual(JSON.parse(result.resultData), { resultText: '454112', copies: 454112 })
+      assert.isNotOk(result.errorCode)
+
+      const resultWorkflowStatus = yield knex('ResultWorkflowStatus as rs')
+        .where({ id: result.resultWorkflowStatusId }).first('externalId')
+      assert.equal(resultWorkflowStatus.externalId, 'Delivered')
     }))
   })
 })

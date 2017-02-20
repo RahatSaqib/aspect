@@ -1,6 +1,8 @@
 const _ = require('lodash')
 const { addResult, getResult, updateResultWorkflowStatus } = require('./result')
 
+const DONOT_LOG_DELIVERED = ['Delivered', 'Acknowledged', 'Flagged']
+
 function* addDeviceData(context) {
   const response = {}
   const { knex, now, payload, device: { id: deviceId } } = context
@@ -54,15 +56,16 @@ function* getDeviceData(context) {
   }
 
   const result = yield* getResult(context)
-
   if (result != null) {
-    response.result = result
-
     // only set to delivered the first time and
     // only if not acknowledged or flagged already
-    if (_.indexOf(['Delivered', 'Acknowledged', 'Flagged'], result.workflow.status.id) === -1) {
-      yield* updateResultWorkflowStatus(context, result.id, 'Delivered')
+    if (!result.workflow || _.indexOf(DONOT_LOG_DELIVERED, result.workflow.status.id) === -1) {
+      yield* updateResultWorkflowStatus(context, result.internalId, 'Delivered')
     }
+
+    // remove our internal ID before sending to client
+    delete result.internalId
+    response.result = result
   }
 
   return response

@@ -310,7 +310,6 @@ function* getResult(context) {
       .innerJoin('DeviceLog as dl', 'dl.resultId', 'r.id')
       .where('dl.id', '=', deviceLogId)
   }
-
   const row = yield resultQuery
   if (row == null) {
     return null
@@ -321,6 +320,8 @@ function* getResult(context) {
   // TODO allow filtering on fields of interest, similar to client device API
   // but JSON paths from result data in same format as POST
   const result = {}
+
+  result.internalId = row.resultId
 
   if (row.resultExternalId != null) {
     result.id = row.resultExternalId
@@ -421,7 +422,7 @@ function* getResult(context) {
 }
 
 function* updateResultWorkflowStatus(
-  context, resultExternalId, workflowStatusExternalId, operator, userId) {
+  context, resultId, workflowStatusExternalId, operator, userId) {
   const { knex, now, constraints: dataConstraints } = context
 
   // get internal workflow status id based on the external id we got
@@ -435,16 +436,14 @@ function* updateResultWorkflowStatus(
                 .innerJoin('Device as d', 'r.deviceId', 'd.id')
                 .leftJoin('Sample as s', 'r.sampleId', 's.id')
                 .modify(addConstraints, dataConstraints, { device: 'd', sample: 's' })
-                .where('r.externalId', resultExternalId)
+                .where('r.id', resultId)
                 .update('resultWorkflowStatusId', workflowStatusRow.id)
 
   // keep log if update was successful. don't need to check permission again because
   // rows would be 0 if no permission in query above
   if (rows) {
-    const result = yield knex('Result').where('externalId', resultExternalId).select('id').first()
-
     yield knex('ResultWorkflowLog').insert({
-      resultId: result.id,
+      resultId,
       resultWorkflowStatusId: workflowStatusRow.id,
       operator,
       changedOn: now,
