@@ -593,8 +593,9 @@ describe('Device Result API routes', () => {
         .then((res) => {
           assert.equal(res.status, 200)
           assert.typeOf(res.body, 'Object')
-          // Do not include result with error status
-          assert.typeOf(res.body.result, 'undefined')
+          assert.typeOf(res.body.result, 'Object')
+          assert.deepEqual(res.body.result.data, { a: 'c' })
+          assert.deepEqual(res.body.result.error.code, '1')
         })
 
       const result2 = yield knex('Result as r')
