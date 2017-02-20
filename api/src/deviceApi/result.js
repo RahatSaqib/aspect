@@ -262,7 +262,6 @@ function* addResult(context) {
 
 function* getResult(context) {
   const { knex, constraints: dataConstraints, deviceLog: { id: deviceLogId } } = context
-
   const resultQuery = knex('Result as r')
     .innerJoin('Device as d', 'r.deviceId', 'd.id')
     .innerJoin('Assay as a', 'r.assayId', 'a.id')
@@ -421,6 +420,41 @@ function* getResult(context) {
   return result
 }
 
+function* updateResultWorkflowStatus(
+  context, resultExternalId, workflowStatusExternalId, operator, userId) {
+  const { knex, now, constraints: dataConstraints } = context
+
+  // get internal workflow status id based on the external id we got
+  const workflowStatusRow = yield knex('ResultWorkflowStatus').where('externalId', workflowStatusExternalId).select('id').first()
+  if (workflowStatusRow === null) {
+    return Boom.badRequest()
+  }
+
+  // update result
+  const rows = yield knex('Result as r')
+                .innerJoin('Device as d', 'r.deviceId', 'd.id')
+                .leftJoin('Sample as s', 'r.sampleId', 's.id')
+                .modify(addConstraints, dataConstraints, { device: 'd', sample: 's' })
+                .where('r.externalId', resultExternalId)
+                .update('resultWorkflowStatusId', workflowStatusRow.id)
+
+  // keep log if update was successful. don't need to check permission again because
+  // rows would be 0 if no permission in query above
+  if (rows) {
+    const result = yield knex('Result').where('externalId', resultExternalId).select('id').first()
+
+    yield knex('ResultWorkflowLog').insert({
+      resultId: result.id,
+      resultWorkflowStatusId: workflowStatusRow.id,
+      operator,
+      changedOn: now,
+      createdOn: now,
+      createdBy: userId
+    })
+  }
+
+  return {}
+}
 
 function* getLatestResultWorkflowLog(knex, resultId) {
   return yield knex('ResultWorkflowLog')
@@ -430,8 +464,8 @@ function* getLatestResultWorkflowLog(knex, resultId) {
     .first('operator', 'changedOn')
 }
 
-
 module.exports = {
   addResult,
-  getResult
+  getResult,
+  updateResultWorkflowStatus
 }

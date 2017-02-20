@@ -1,5 +1,5 @@
 const _ = require('lodash')
-const { addResult, getResult } = require('./result')
+const { addResult, getResult, updateResultWorkflowStatus } = require('./result')
 
 function* addDeviceData(context) {
   const response = {}
@@ -54,8 +54,15 @@ function* getDeviceData(context) {
   }
 
   const result = yield* getResult(context)
+
   if (result != null) {
     response.result = result
+
+    // only set to delivered the first time and
+    // only if not acknowledged or flagged already
+    if (_.indexOf(['Delivered', 'Acknowledged', 'Flagged'], result.workflow.status.id) === -1) {
+      yield* updateResultWorkflowStatus(context, result.id, 'Delivered')
+    }
   }
 
   return response
