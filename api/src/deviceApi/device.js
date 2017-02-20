@@ -1,6 +1,5 @@
 const _ = require('lodash')
-const Boom = require('boom')
-const { addResult, getResultAndDeviceLog } = require('./result')
+const { addResult, getResult } = require('./result')
 
 function* addDeviceData(context) {
   const response = {}
@@ -37,44 +36,26 @@ function* addDeviceData(context) {
 }
 
 function* getDeviceData(context) {
-  const { now, knex, device: { id: deviceId, name: deviceName }, query } = context
+  const { now, device: { name: deviceName }, deviceLog: { checkpoint } } = context
+
   const response = { name: deviceName, time: now.toISOString() }
-
-  const deviceLogQ = knex('DeviceLog')
-    .where({ deviceId })
-    .orderBy('id', 'desc')
-  // use specified checkpoint, otherwise just select latest
-  if (query.checkpoint) {
-    deviceLogQ.where({ checkpoint: query.checkpoint })
+  if (checkpoint != null) {
+    response.checkpoint = checkpoint
   }
-  const { checkpoint, id: deviceLogId } = (
-    (yield deviceLogQ.first('checkpoint', 'id')) || {})
-  const offset = +(query.offset || 0)
 
-  // TODO include configuration and operation at checkpoint
-  // once we do this, we need to consider DeviceLogs without
-  // the result constraints and return the first entry (minimum log id)
-  // Two steps are required because results might be allowed from a
-  // different sample origin site (lab/clinic) but device configuration
-  // and operation updates are currently always constrained by device
-  // We also need to make sure to adjust the offset passed to the getResult
-  // query accordingly to skip device configuration and operation logs
-  const { result, deviceLog: resultDeviceLog } = yield* getResultAndDeviceLog(
-    context, deviceLogId, offset)
+  const config = yield* getDeviceConfiguration(context, true)
+  if (config != null) {
+    response.configuration = config
+  }
+
+  const op = yield* getDeviceOperation(context)
+  if (op != null) {
+    response.operation = op
+  }
+
+  const result = yield* getResult(context)
   if (result != null) {
     response.result = result
-
-    // set actual checkpoint if log changed during query, e.g, due to offset
-    // but do not leak checkpoint from different device
-    if (resultDeviceLog.deviceId === deviceId) {
-      response.checkpoint = resultDeviceLog.checkpoint
-    }
-  } else if (deviceLogId != null && offset === 0) {
-    // set checkpoint if one found even if we couldn't find result
-    response.checkpoint = checkpoint
-  } else {
-    // cannot find specified checkpoint with offset
-    return Boom.notFound()
   }
 
   return response
@@ -83,12 +64,9 @@ function* getDeviceData(context) {
 function* updateDeviceConfiguration(context) {
   const { knex, payload, device: { id: deviceId } } = context
 
-  const { previousConfigData } = yield knex('Device')
-    .where({ id: deviceId })
-    .first('configurationData as previousConfigData')
-
-  const configurationData = previousConfigData == null ? payload.data :
-    _.merge(JSON.parse(previousConfigData), payload.data)
+  const previousConfig = yield* getDeviceConfiguration(context)
+  const configurationData = previousConfig == null ? payload.data :
+    _.merge(previousConfig.data, payload.data)
 
   yield knex('Device')
     .where({ id: deviceId })
@@ -96,6 +74,29 @@ function* updateDeviceConfiguration(context) {
   context.markDeviceConfigurationUpdated()
 
   return {}
+}
+
+function* getDeviceConfiguration(context, requireUpdated = false) {
+  const { knex, device: { id: deviceId } } = context
+  const deviceQuery = knex('Device as d')
+    .first('d.configurationData')
+  if (requireUpdated) {
+    deviceQuery
+      .innerJoin('DeviceLog as dl', 'dl.deviceId', 'd.id')
+      .where({
+        'dl.id': context.deviceLog.id,
+        'dl.deviceConfigurationUpdated': true
+      })
+  } else {
+    deviceQuery
+      .where({ id: deviceId })
+  }
+
+  const device = yield deviceQuery
+  if (device == null || device.configurationData == null) {
+    return null
+  }
+  return { data: JSON.parse(device.configurationData) }
 }
 
 function* addDeviceOperation(context) {
@@ -113,6 +114,34 @@ function* addDeviceOperation(context) {
   context.addDeviceOperationId(deviceOperationId)
 
   return {}
+}
+
+function* getDeviceOperation(context) {
+  const { knex, deviceLog: { id: deviceLogId } } = context
+  const op = yield knex('DeviceOperation as do')
+    .innerJoin('DeviceLog as dl', 'dl.deviceOperationId', 'do.id')
+    .where({
+      'dl.id': deviceLogId
+    })
+    .first('externalId as id', 'data', 'startedOn', 'endedOn')
+  if (op == null) {
+    return null
+  }
+
+  const result = {}
+  if (op.id != null) {
+    result.id = op.id
+  }
+  if (op.data != null) {
+    result.data = JSON.parse(op.data)
+  }
+  if (op.startedOn != null) {
+    result.startedOn = op.startedOn.toISOString()
+  }
+  if (op.endedOn != null) {
+    result.endedOn = op.endedOn.toISOString()
+  }
+  return result
 }
 
 module.exports = {

@@ -153,6 +153,10 @@ describe('Device API routes', () => {
           assert.typeOf(res.body, 'Object')
           assert.property(res.body, 'checkpoint')
           assert.equal(res.body.checkpoint, '124j')
+          assert.typeOf(res.body.configuration, 'Object')
+          assert.deepEqual(res.body.configuration.data, config1)
+          assert.typeOf(res.body.operation, 'Object')
+          assert.deepEqual(res.body.operation.data, op1)
         })
 
       yield server.post(devicePath)
@@ -176,6 +180,10 @@ describe('Device API routes', () => {
         .then((res) => {
           assert.equal(res.status, 200)
           assert.typeOf(res.body, 'Object')
+          assert.typeOf(res.body.configuration, 'Object')
+          assert.deepEqual(res.body.configuration.data, config2)
+          assert.typeOf(res.body.operation, 'Object')
+          assert.deepEqual(res.body.operation.data, op2)
         })
     }))
   })

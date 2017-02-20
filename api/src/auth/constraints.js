@@ -166,23 +166,23 @@ function addConstraints(queryBuilder, constraints, aliases) {
   if (constraints.$or && constraints.$or.length) {
     queryBuilder.where(function () {
       for (const constraint of constraints.$or) {
-        if (constraint.state) {
+        if (state && constraint.state) {
           this.orWhere(_.mapKeys(constraint.state, (v, k) => `${state}.${k}`))
         }
 
-        if (constraint.lga) {
+        if (lga && constraint.lga) {
           this.orWhere(_.mapKeys(constraint.lga, (v, k) => `${lga}.${k}`))
         }
 
-        if (constraint.site) {
+        if (site && constraint.site) {
           this.orWhere(_.mapKeys(constraint.site, (v, k) => `${site}.${k}`))
         }
 
-        if (constraint.device) {
+        if (device && constraint.device) {
           this.orWhere(_.mapKeys(constraint.device, (v, k) => `${device}.${k}`))
         }
 
-        if (constraint.sample) {
+        if (sample && constraint.sample) {
           this.orWhere(_.mapKeys(constraint.sample, (v, k) => `${sample}.${k}`))
         }
       }

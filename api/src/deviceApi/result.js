@@ -228,13 +228,24 @@ function* addResult(context) {
   }
   context.addResultId(resultId)
 
-  // Log Result Workflow Update
-  if (_.has(payload, 'workflow') || !existingResult ||
-      existingResult.resultWorkflowStatusId !== result.resultWorkflowStatusId) {
+  // Log Result Workflow Update if any field changed
+  let resultWorkflowChanged = !existingResult ||
+    existingResult.resultWorkflowStatusId !== result.resultWorkflowStatusId
+  if (!resultWorkflowChanged && (_.has(payload, 'workflow.operator')
+      || _.has(payload, 'workflow.changedOn'))) {
+    // check to see if operator or changedOn is different from latest log
+    const resultWorkflowLog = yield* getLatestResultWorkflowLog(knex, existingResult.id)
+    resultWorkflowChanged = !resultWorkflowLog ||
+      _.get(payload, 'workflow.operator', null) !== resultWorkflowLog.operator ||
+      +_.get(payload, 'workflow.changedOn', NaN) !== +resultWorkflowLog.changedOn
+  }
+
+  if (resultWorkflowChanged) {
     yield knex('ResultWorkflowLog').insert({
       resultId,
       resultWorkflowStatusId: result.resultWorkflowStatusId,
       operator: _.get(payload, 'workflow.operator', null),
+      changedOn: _.get(payload, 'workflow.changedOn', now),
       createdOn: now
     })
   }
@@ -249,8 +260,8 @@ function* addResult(context) {
   return {}
 }
 
-function* getResultAndDeviceLog(context, deviceLogId, offset) {
-  const { knex, constraints: dataConstraints } = context
+function* getResult(context) {
+  const { knex, constraints: dataConstraints, deviceLog: { id: deviceLogId } } = context
 
   const resultQuery = knex('Result as r')
     .innerJoin('Device as d', 'r.deviceId', 'd.id')
@@ -263,18 +274,18 @@ function* getResultAndDeviceLog(context, deviceLogId, offset) {
     .leftJoin('ResultType as rt', 'r.resultTypeId', 'rt.id')
     .leftJoin('ResultWorkflowStatus as rs', 'r.resultWorkflowStatusId', 'rs.id')
     .modify(addConstraints, dataConstraints, { device: 'd', sample: 's' })
-  const resultQueryCols = [
-    'r.externalId as resultId', 'r.resultData', 'r.patientData',
-    'r.startedOn', 'r.endedOn', 'r.updatedOn', 'r.researchId', 'r.notes',
-    'r.senderVersion', 'r.senderOperator', 'r.errorCode', 'r.errorNotes',
-    'r.consumableSerial', 'r.consumableExpirationDate', 'r.consumableLot',
-    'r.instrumentSerial', 'r.moduleName', 'r.moduleSerial',
-    'a.externalId as assayId', 'r.assayVersion',
-    'r.latitude', 'r.longitude', 'rt.externalId as resultTypeId',
-    'rs.externalId as resultWorkflowStatusId',
-    's.externalId as sampleId', 's.collectedOn as sampleCollectedOn',
-    'sos.externalId as sampleOriginSiteId', 'st.externalId as sampleTypeId',
-    'rc1.externalId as category1Id', 'rc2.externalId as category2Id']
+    .first(
+      'r.externalId as resultExternalId', 'r.resultData', 'r.patientData',
+      'r.startedOn', 'r.endedOn', 'r.updatedOn', 'r.researchId', 'r.notes',
+      'r.senderVersion', 'r.senderOperator', 'r.errorCode', 'r.errorNotes',
+      'r.consumableSerial', 'r.consumableExpirationDate', 'r.consumableLot',
+      'r.instrumentSerial', 'r.moduleName', 'r.moduleSerial', 'r.id as resultId',
+      'a.externalId as assayId', 'r.assayVersion',
+      'r.latitude', 'r.longitude', 'rt.externalId as resultTypeId',
+      'rs.externalId as resultWorkflowStatusId',
+      's.externalId as sampleId', 's.collectedOn as sampleCollectedOn',
+      'sos.externalId as sampleOriginSiteId', 'st.externalId as sampleTypeId',
+      'rc1.externalId as category1Id', 'rc2.externalId as category2Id')
 
   // Do not send if result category is Error ASP-247
   resultQuery
@@ -296,53 +307,24 @@ function* getResultAndDeviceLog(context, deviceLogId, offset) {
       .orderBy('r.updatedOn', 'asc')
       .orderBy('r.id', 'asc')
   } else {
-    resultQueryCols.push(
-      'dl.id as deviceLogId', 'dl.deviceId as deviceLogDeviceId',
-      'dl.checkpoint as deviceLogCheckpoint')
     resultQuery
       .innerJoin('DeviceLog as dl', 'dl.resultId', 'r.id')
-    if (offset === 0) {
-      // select result at specified log entry
-      resultQuery.where('dl.id', '=', deviceLogId)
-    } else if (offset > 0) {
-      // select result after specified log entry
-      resultQuery
-        .where('dl.id', '>', deviceLogId)
-        .orderBy('dl.id', 'asc')
-      if (offset > 1) {
-        // specify query offset if immediately after
-        resultQuery.offset(offset - 1)
-      }
-    } else if (offset < 0) {
-      // select result before specified log entry
-      resultQuery
-        .where('dl.id', '<', deviceLogId)
-        .orderBy('dl.id', 'desc')
-      if (offset < -1) {
-        // specify query offset if immediately before
-        resultQuery.offset(-offset - 1)
-      }
-    }
+      .where('dl.id', '=', deviceLogId)
   }
 
-  const row = yield resultQuery.first(resultQueryCols)
+  const row = yield resultQuery
   if (row == null) {
-    return { result: null, deviceLog: null }
+    return null
   }
 
-  const deviceLog = {}
-  if (row.deviceLogId != null) {
-    deviceLog.id = row.deviceLogId
-    deviceLog.deviceId = row.deviceLogDeviceId
-    deviceLog.checkpoint = row.deviceLogCheckpoint
-  }
+  const resultWorkflowLog = yield* getLatestResultWorkflowLog(knex, row.resultId)
 
   // TODO allow filtering on fields of interest, similar to client device API
   // but JSON paths from result data in same format as POST
   const result = {}
 
-  if (row.resultId != null) {
-    result.id = row.resultId
+  if (row.resultExternalId != null) {
+    result.id = row.resultExternalId
   }
 
   result.assay = { id: row.assayId }
@@ -356,6 +338,12 @@ function* getResultAndDeviceLog(context, deviceLogId, offset) {
   }
   result.type = { id: row.resultTypeId }
   result.workflow = { status: { id: row.resultWorkflowStatusId } }
+  if (resultWorkflowLog) {
+    result.workflow.changedOn = resultWorkflowLog.changedOn
+    if (resultWorkflowLog.operator != null) {
+      result.workflow.operator = resultWorkflowLog.operator
+    }
+  }
 
   const sample = { id: row.sampleId, originSite: { id: row.sampleOriginSiteId } }
   if (row.sampleCollectedOn != null) {
@@ -430,11 +418,20 @@ function* getResultAndDeviceLog(context, deviceLogId, offset) {
     result.error = error
   }
 
-  return { result, deviceLog }
+  return result
+}
+
+
+function* getLatestResultWorkflowLog(knex, resultId) {
+  return yield knex('ResultWorkflowLog')
+    .where({ resultId })
+    .orderBy('createdOn', 'desc')
+    .orderBy('id', 'desc')
+    .first('operator', 'changedOn')
 }
 
 
 module.exports = {
   addResult,
-  getResultAndDeviceLog
+  getResult
 }

@@ -14,8 +14,8 @@ import { WorkflowLogModel } from '../ResultRedux'
 
 
 const messages = defineMessages({
-  logCreatedOn: {
-    id: 'pages.ResultWorkflowStatusLog.logCreatedOn',
+  logChangedOn: {
+    id: 'pages.ResultWorkflowStatusLog.logChangedOn',
     defaultMessage: 'Changed On'
   },
   logStatus: {
@@ -48,7 +48,7 @@ export default class ResultWorkflowStatusLog extends PureComponent {
     const { workflowLog, intl } = this.props
     const { formatMessage, formatDate } = intl
     const columns = [
-      { db: 'createdOn', title: formatMessage(messages.logCreatedOn), format: data => formatDate(data) },
+      { db: 'changedOn', title: formatMessage(messages.logChangedOn), format: data => formatDate(data) },
       { db: 'statusName', title: formatMessage(messages.logStatus) },
       { db: 'operator', title: formatMessage(messages.logOperator) },
     ]

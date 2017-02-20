@@ -233,7 +233,7 @@ function receiveWorkflowStatusLogsAction(json) {
 }
 
 // load a list of workflow-status-logs for given resultId
-export function fetchWorkflowStatusLogs(resultId, sortCol = 'createdOn', sortDir = 'desc', page = 0, pageSize = 10) {
+export function fetchWorkflowStatusLogs(resultId, sortCol = 'changedOn', sortDir = 'desc', page = 0, pageSize = 10) {
   return (dispatch) => {
     // action to set table's prop loading:true
     dispatch(requestWorkflowStatusLogsAction(sortCol, sortDir, page, pageSize))
@@ -270,7 +270,7 @@ export function fetchWorkflowStatusLogs(resultId, sortCol = 'createdOn', sortDir
 export const WorkflowLogModel = Immutable.Record({
   items: new Items(),
   table: new Table({
-    sortCol: 'createdOn',
+    sortCol: 'changedOn',
     sortDir: 'desc',
     page: 0,
     pageSize: 10,

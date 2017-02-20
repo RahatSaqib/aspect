@@ -66,7 +66,9 @@ const resultPayload = {
         'The workflow status. Default Error if error specified, otherwise OK')
     }),
     operator: Joi.string().allow('', null).description(
-      'The person who updated the workflow')
+      'The person who updated the workflow'),
+    changedOn: Joi.date().iso().description(
+      'Date and optional time the workflow changed.')
   }),
   sample: Joi.object().keys({
     id: Joi.string().allow('', null).description(
@@ -149,7 +151,7 @@ module.exports = [
     // GET /device
     method: 'GET',
     path: '/',
-    handler: deviceApiHandler(getDeviceData, { requiredStatus: 'approved' }),
+    handler: deviceApiHandler(getDeviceData, { requiredStatus: 'approved', requireDeviceLog: true }),
     config: {
       description: 'Get Device Data',
       notes: 'Get device configuration, operational and result data since the specified checkpoint.'

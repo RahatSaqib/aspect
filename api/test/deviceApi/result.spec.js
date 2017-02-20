@@ -192,13 +192,16 @@ describe('Device Result API routes', () => {
           assert.property(lastResult.sample, 'id')
           assert.property(lastResult.sample.originSite, 'id')
           assert.equal(lastResult.sample.originSite.id, result1SampleSite.externalId)
+          assert.typeOf(lastResult.workflow, 'Object')
+          assert.typeOf(lastResult.workflow.status, 'Object')
+          assert.equal(lastResult.workflow.status.id, 'OK')
+          assert.property(lastResult.workflow, 'changedOn')
 
-          assert.deepEqual(_.omit(lastResult, 'id', 'sample'), {
+          assert.deepEqual(_.omit(lastResult, 'id', 'sample', 'workflow'), {
             data: { a: 'b' },
             assay: { id: 'HivVl' },
             category: [{ id: 'Success' }],
-            type: { id: 'Patient' },
-            workflow: { status: { id: 'OK' } }
+            type: { id: 'Patient' }
           })
         })
 
@@ -213,7 +216,11 @@ describe('Device Result API routes', () => {
           checkpoint: 'ck2',
           data: { a: 'b', c: 2, d: false, e: { f: 'g' } },
           type: { id: 'Study' },
-          workflow: { status: { id: 'Acknowledged' } },
+          workflow: {
+            status: { id: 'Acknowledged' },
+            operator: 'Goody Two Shoes',
+            changedOn: '2013-12-01T01:35'
+          },
           category: [
             { id: 'Detected' },
             { id: 'Indeterminate' }
@@ -358,7 +365,11 @@ describe('Device Result API routes', () => {
         checkpoint: 'ck2',
         data: { a: 'b', c: 2, d: false, e: { f: 'g' } },
         type: { id: 'Study' },
-        workflow: { status: { id: 'Acknowledged' } },
+        workflow: {
+          status: { id: 'Acknowledged' },
+          operator: 'Goody Two Shoes',
+          changedOn: '2013-12-01T01:35'
+        },
         category: [
           { id: 'Detected' },
           { id: 'Indeterminate' }
@@ -461,7 +472,11 @@ describe('Device Result API routes', () => {
               version: '1a.c1'
             },
             type: { id: 'Study' },
-            workflow: { status: { id: 'Acknowledged' } },
+            workflow: {
+              status: { id: 'Acknowledged' },
+              operator: 'Goody Two Shoes',
+              changedOn: '2013-12-01T01:35:00.000Z'
+            },
             category: [
               { id: 'Detected' },
               { id: 'Indeterminate' }
@@ -1458,8 +1473,10 @@ describe('Device Result API routes', () => {
           assert.property(lastResult.sample, 'id')
           assert.property(lastResult.sample.originSite, 'id')
           assert.equal(lastResult.sample.originSite.id, '1315')
+          assert.equal(lastResult.workflow.status.id, 'OK')
+          assert.property(lastResult.workflow, 'changedOn')
 
-          assert.deepEqual(_.omit(lastResult, 'sample'), {
+          assert.deepEqual(_.omit(lastResult, 'sample', 'workflow'), {
             id: device1315ExternalId,
             data: {
               resultText: '454112',
@@ -1468,7 +1485,6 @@ describe('Device Result API routes', () => {
             assay: { id: 'HivVl' },
             category: [{ id: 'Success' }],
             type: { id: 'Patient' },
-            workflow: { status: { id: 'OK' } },
             notes: '454,112 Copies / mL'
           })
         })
@@ -1484,8 +1500,10 @@ describe('Device Result API routes', () => {
           assert.property(lastResult.sample, 'id')
           assert.property(lastResult.sample.originSite, 'id')
           assert.equal(lastResult.sample.originSite.id, '1315')
+          assert.equal(lastResult.workflow.status.id, 'OK')
+          assert.property(lastResult.workflow, 'changedOn')
 
-          assert.deepEqual(_.omit(lastResult, 'sample'), {
+          assert.deepEqual(_.omit(lastResult, 'sample', 'workflow'), {
             id: device1315ExternalId,
             data: {
               resultText: '454112',
@@ -1494,7 +1512,6 @@ describe('Device Result API routes', () => {
             assay: { id: 'HivVl' },
             category: [{ id: 'Success' }],
             type: { id: 'Patient' },
-            workflow: { status: { id: 'OK' } },
             notes: '454,112 Copies / mL'
           })
         })
@@ -1512,8 +1529,10 @@ describe('Device Result API routes', () => {
           assert.property(lastResult.sample, 'id')
           assert.property(lastResult.sample.originSite, 'id')
           assert.equal(lastResult.sample.originSite.id, '1315')
+          assert.equal(lastResult.workflow.status.id, 'OK')
+          assert.property(lastResult.workflow, 'changedOn')
 
-          assert.deepEqual(_.omit(lastResult, 'sample'), {
+          assert.deepEqual(_.omit(lastResult, 'sample', 'workflow'), {
             id: device1315ExternalId,
             data: {
               resultText: '454112',
@@ -1522,7 +1541,6 @@ describe('Device Result API routes', () => {
             assay: { id: 'HivVl' },
             category: [{ id: 'Success' }],
             type: { id: 'Patient' },
-            workflow: { status: { id: 'OK' } },
             notes: '454,112 Copies / mL'
           })
         })
@@ -1566,8 +1584,10 @@ describe('Device Result API routes', () => {
           assert.property(lastResult.sample, 'id')
           assert.property(lastResult.sample.originSite, 'id')
           assert.equal(lastResult.sample.originSite.id, '1723')
+          assert.equal(lastResult.workflow.status.id, 'OK')
+          assert.property(lastResult.workflow, 'changedOn')
 
-          assert.deepEqual(_.omit(lastResult, 'sample'), {
+          assert.deepEqual(_.omit(lastResult, 'sample', 'workflow'), {
             id: device1723ExternalId,
             data: {
               resultText: '154112',
@@ -1576,7 +1596,6 @@ describe('Device Result API routes', () => {
             assay: { id: 'HivVl' },
             category: [{ id: 'Success' }],
             type: { id: 'Patient' },
-            workflow: { status: { id: 'OK' } },
             notes: '154,112 Copies / mL'
           })
         })
@@ -1592,8 +1611,10 @@ describe('Device Result API routes', () => {
           assert.property(lastResult.sample, 'id')
           assert.property(lastResult.sample.originSite, 'id')
           assert.equal(lastResult.sample.originSite.id, '1723')
+          assert.equal(lastResult.workflow.status.id, 'OK')
+          assert.property(lastResult.workflow, 'changedOn')
 
-          assert.deepEqual(_.omit(lastResult, 'sample'), {
+          assert.deepEqual(_.omit(lastResult, 'sample', 'workflow'), {
             id: device1723ExternalId,
             data: {
               resultText: '154112',
@@ -1602,7 +1623,6 @@ describe('Device Result API routes', () => {
             assay: { id: 'HivVl' },
             category: [{ id: 'Success' }],
             type: { id: 'Patient' },
-            workflow: { status: { id: 'OK' } },
             notes: '154,112 Copies / mL'
           })
         })
@@ -1618,8 +1638,10 @@ describe('Device Result API routes', () => {
           assert.property(lastResult.sample, 'id')
           assert.property(lastResult.sample.originSite, 'id')
           assert.equal(lastResult.sample.originSite.id, '1723')
+          assert.equal(lastResult.workflow.status.id, 'OK')
+          assert.property(lastResult.workflow, 'changedOn')
 
-          assert.deepEqual(_.omit(lastResult, 'sample'), {
+          assert.deepEqual(_.omit(lastResult, 'sample', 'workflow'), {
             id: device1723ExternalId,
             data: {
               resultText: '154112',
@@ -1628,7 +1650,6 @@ describe('Device Result API routes', () => {
             assay: { id: 'HivVl' },
             category: [{ id: 'Success' }],
             type: { id: 'Patient' },
-            workflow: { status: { id: 'OK' } },
             notes: '154,112 Copies / mL'
           })
         })
@@ -1644,8 +1665,10 @@ describe('Device Result API routes', () => {
           assert.property(lastResult.sample, 'id')
           assert.property(lastResult.sample.originSite, 'id')
           assert.equal(lastResult.sample.originSite.id, '1315')
+          assert.equal(lastResult.workflow.status.id, 'OK')
+          assert.property(lastResult.workflow, 'changedOn')
 
-          assert.deepEqual(_.omit(lastResult, 'sample'), {
+          assert.deepEqual(_.omit(lastResult, 'sample', 'workflow'), {
             id: device1315ExternalId,
             data: {
               resultText: '454112',
@@ -1654,7 +1677,6 @@ describe('Device Result API routes', () => {
             assay: { id: 'HivVl' },
             category: [{ id: 'Success' }],
             type: { id: 'Patient' },
-            workflow: { status: { id: 'OK' } },
             notes: '454,112 Copies / mL'
           })
         })
@@ -1671,8 +1693,10 @@ describe('Device Result API routes', () => {
           assert.property(lastResult.sample, 'id')
           assert.property(lastResult.sample.originSite, 'id')
           assert.equal(lastResult.sample.originSite.id, '1723')
+          assert.equal(lastResult.workflow.status.id, 'OK')
+          assert.property(lastResult.workflow, 'changedOn')
 
-          assert.deepEqual(_.omit(lastResult, 'sample'), {
+          assert.deepEqual(_.omit(lastResult, 'sample', 'workflow'), {
             id: device1723ExternalId,
             data: {
               resultText: '154112',
@@ -1681,7 +1705,6 @@ describe('Device Result API routes', () => {
             assay: { id: 'HivVl' },
             category: [{ id: 'Success' }],
             type: { id: 'Patient' },
-            workflow: { status: { id: 'OK' } },
             notes: '154,112 Copies / mL'
           })
         })
@@ -1703,8 +1726,10 @@ describe('Device Result API routes', () => {
           assert.property(lastResult.sample, 'id')
           assert.property(lastResult.sample.originSite, 'id')
           assert.equal(lastResult.sample.originSite.id, '1315')
+          assert.equal(lastResult.workflow.status.id, 'OK')
+          assert.property(lastResult.workflow, 'changedOn')
 
-          assert.deepEqual(_.omit(lastResult, 'sample'), {
+          assert.deepEqual(_.omit(lastResult, 'sample', 'workflow'), {
             id: device1315ExternalId,
             data: {
               resultText: '454112',
@@ -1713,7 +1738,6 @@ describe('Device Result API routes', () => {
             assay: { id: 'HivVl' },
             category: [{ id: 'Success' }],
             type: { id: 'Patient' },
-            workflow: { status: { id: 'OK' } },
             notes: '454,112 Copies / mL'
           })
         })
@@ -1760,10 +1784,11 @@ describe('Device Result API routes', () => {
           assert.property(lastResult.sample, 'id')
           assert.property(lastResult.sample.originSite, 'id')
           assert.equal(lastResult.sample.originSite.id, '1723')
+          assert.equal(lastResult.workflow.status.id, 'Acknowledged')
+          assert.property(lastResult.workflow, 'changedOn')
 
-          assert.deepEqual(_.omit(lastResult, 'sample'), {
+          assert.deepEqual(_.omit(lastResult, 'sample', 'workflow'), {
             id: device1723ExternalId,
-            workflow: { status: { id: 'Acknowledged' } },
             data: {
               resultText: '154112',
               copies: 154112
@@ -1786,8 +1811,10 @@ describe('Device Result API routes', () => {
           assert.property(lastResult.sample, 'id')
           assert.property(lastResult.sample.originSite, 'id')
           assert.equal(lastResult.sample.originSite.id, '1723')
+          assert.equal(lastResult.workflow.status.id, 'Acknowledged')
+          assert.property(lastResult.workflow, 'changedOn')
 
-          assert.deepEqual(_.omit(lastResult, 'sample'), {
+          assert.deepEqual(_.omit(lastResult, 'sample', 'workflow'), {
             id: device1723ExternalId,
             data: {
               resultText: '154112',
@@ -1796,7 +1823,6 @@ describe('Device Result API routes', () => {
             assay: { id: 'HivVl' },
             category: [{ id: 'Success' }],
             type: { id: 'Patient' },
-            workflow: { status: { id: 'Acknowledged' } },
             notes: '154,112 Copies / mL'
           })
         })
@@ -1812,8 +1838,10 @@ describe('Device Result API routes', () => {
           assert.property(lastResult.sample, 'id')
           assert.property(lastResult.sample.originSite, 'id')
           assert.equal(lastResult.sample.originSite.id, '1723')
+          assert.equal(lastResult.workflow.status.id, 'Acknowledged')
+          assert.property(lastResult.workflow, 'changedOn')
 
-          assert.deepEqual(_.omit(lastResult, 'sample'), {
+          assert.deepEqual(_.omit(lastResult, 'sample', 'workflow'), {
             id: device1723ExternalId,
             data: {
               resultText: '154112',
@@ -1822,7 +1850,6 @@ describe('Device Result API routes', () => {
             assay: { id: 'HivVl' },
             category: [{ id: 'Success' }],
             type: { id: 'Patient' },
-            workflow: { status: { id: 'Acknowledged' } },
             notes: '154,112 Copies / mL'
           })
         })
@@ -1867,8 +1894,10 @@ describe('Device Result API routes', () => {
           assert.property(lastResult.sample, 'id')
           assert.property(lastResult.sample.originSite, 'id')
           assert.equal(lastResult.sample.originSite.id, '1723')
+          assert.equal(lastResult.workflow.status.id, 'Acknowledged')
+          assert.property(lastResult.workflow, 'changedOn')
 
-          assert.deepEqual(_.omit(lastResult, 'sample'), {
+          assert.deepEqual(_.omit(lastResult, 'sample', 'workflow'), {
             id: device1723ExternalId,
             data: {
               resultText: '154112',
@@ -1877,7 +1906,6 @@ describe('Device Result API routes', () => {
             assay: { id: 'HivVl' },
             category: [{ id: 'Success' }],
             type: { id: 'Patient' },
-            workflow: { status: { id: 'Acknowledged' } },
             notes: '154,112 Copies / mL'
           })
         })
@@ -1892,8 +1920,10 @@ describe('Device Result API routes', () => {
           assert.property(lastResult.sample, 'id')
           assert.property(lastResult.sample.originSite, 'id')
           assert.equal(lastResult.sample.originSite.id, '1723')
+          assert.equal(lastResult.workflow.status.id, 'Acknowledged')
+          assert.property(lastResult.workflow, 'changedOn')
 
-          assert.deepEqual(_.omit(lastResult, 'sample'), {
+          assert.deepEqual(_.omit(lastResult, 'sample', 'workflow'), {
             id: device1723ExternalId,
             data: {
               resultText: '154112',
@@ -1902,7 +1932,6 @@ describe('Device Result API routes', () => {
             assay: { id: 'HivVl' },
             category: [{ id: 'Success' }],
             type: { id: 'Patient' },
-            workflow: { status: { id: 'Acknowledged' } },
             notes: '154,112 Copies / mL'
           })
         })
@@ -1918,8 +1947,10 @@ describe('Device Result API routes', () => {
           assert.property(lastResult.sample, 'id')
           assert.property(lastResult.sample.originSite, 'id')
           assert.equal(lastResult.sample.originSite.id, '1723')
+          assert.equal(lastResult.workflow.status.id, 'OK')
+          assert.property(lastResult.workflow, 'changedOn')
 
-          assert.deepEqual(_.omit(lastResult, 'sample'), {
+          assert.deepEqual(_.omit(lastResult, 'sample', 'workflow'), {
             data: {
               resultText: '155115',
               copies: 155115
@@ -1927,7 +1958,6 @@ describe('Device Result API routes', () => {
             assay: { id: 'HivVl' },
             category: [{ id: 'Success' }],
             type: { id: 'Patient' },
-            workflow: { status: { id: 'OK' } },
             notes: '155,115 Copies / mL'
           })
         })
@@ -1943,8 +1973,10 @@ describe('Device Result API routes', () => {
           assert.property(lastResult.sample, 'id')
           assert.property(lastResult.sample.originSite, 'id')
           assert.equal(lastResult.sample.originSite.id, '1723')
+          assert.equal(lastResult.workflow.status.id, 'Acknowledged')
+          assert.property(lastResult.workflow, 'changedOn')
 
-          assert.deepEqual(_.omit(lastResult, 'sample'), {
+          assert.deepEqual(_.omit(lastResult, 'sample', 'workflow'), {
             id: device1723ExternalId,
             data: {
               resultText: '154112',
@@ -1953,7 +1985,6 @@ describe('Device Result API routes', () => {
             assay: { id: 'HivVl' },
             category: [{ id: 'Success' }],
             type: { id: 'Patient' },
-            workflow: { status: { id: 'Acknowledged' } },
             notes: '154,112 Copies / mL'
           })
         })
@@ -1968,8 +1999,10 @@ describe('Device Result API routes', () => {
           assert.property(lastResult.sample, 'id')
           assert.property(lastResult.sample.originSite, 'id')
           assert.equal(lastResult.sample.originSite.id, '1723')
+          assert.equal(lastResult.workflow.status.id, 'Acknowledged')
+          assert.property(lastResult.workflow, 'changedOn')
 
-          assert.deepEqual(_.omit(lastResult, 'sample'), {
+          assert.deepEqual(_.omit(lastResult, 'sample', 'workflow'), {
             id: device1723ExternalId,
             data: {
               resultText: '154112',
@@ -1978,7 +2011,6 @@ describe('Device Result API routes', () => {
             assay: { id: 'HivVl' },
             category: [{ id: 'Success' }],
             type: { id: 'Patient' },
-            workflow: { status: { id: 'Acknowledged' } },
             notes: '154,112 Copies / mL'
           })
         })
@@ -1993,8 +2025,10 @@ describe('Device Result API routes', () => {
           assert.property(lastResult.sample, 'id')
           assert.property(lastResult.sample.originSite, 'id')
           assert.equal(lastResult.sample.originSite.id, '1315')
+          assert.equal(lastResult.workflow.status.id, 'OK')
+          assert.property(lastResult.workflow, 'changedOn')
 
-          assert.deepEqual(_.omit(lastResult, 'sample'), {
+          assert.deepEqual(_.omit(lastResult, 'sample', 'workflow'), {
             id: device1315ExternalId,
             data: {
               resultText: '454112',
@@ -2003,7 +2037,6 @@ describe('Device Result API routes', () => {
             assay: { id: 'HivVl' },
             category: [{ id: 'Success' }],
             type: { id: 'Patient' },
-            workflow: { status: { id: 'OK' } },
             notes: '454,112 Copies / mL'
           })
         })
@@ -2018,8 +2051,10 @@ describe('Device Result API routes', () => {
           assert.property(lastResult.sample, 'id')
           assert.property(lastResult.sample.originSite, 'id')
           assert.equal(lastResult.sample.originSite.id, '1723')
+          assert.equal(lastResult.workflow.status.id, 'Acknowledged')
+          assert.property(lastResult.workflow, 'changedOn')
 
-          assert.deepEqual(_.omit(lastResult, 'sample'), {
+          assert.deepEqual(_.omit(lastResult, 'sample', 'workflow'), {
             id: device1723ExternalId,
             data: {
               resultText: '154112',
@@ -2028,7 +2063,6 @@ describe('Device Result API routes', () => {
             assay: { id: 'HivVl' },
             category: [{ id: 'Success' }],
             type: { id: 'Patient' },
-            workflow: { status: { id: 'Acknowledged' } },
             notes: '154,112 Copies / mL'
           })
         })
@@ -2043,8 +2077,10 @@ describe('Device Result API routes', () => {
           assert.property(lastResult.sample, 'id')
           assert.property(lastResult.sample.originSite, 'id')
           assert.equal(lastResult.sample.originSite.id, '1315')
+          assert.equal(lastResult.workflow.status.id, 'OK')
+          assert.property(lastResult.workflow, 'changedOn')
 
-          assert.deepEqual(_.omit(lastResult, 'sample'), {
+          assert.deepEqual(_.omit(lastResult, 'sample', 'workflow'), {
             id: device1315ExternalId,
             data: {
               resultText: '454112',
@@ -2053,7 +2089,6 @@ describe('Device Result API routes', () => {
             assay: { id: 'HivVl' },
             category: [{ id: 'Success' }],
             type: { id: 'Patient' },
-            workflow: { status: { id: 'OK' } },
             notes: '454,112 Copies / mL'
           })
         })
