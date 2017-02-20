@@ -1246,6 +1246,12 @@ function* seed(knex) {
     token: 'processed',
     externalId: 'Processed'
   })
+  yield knex('ResultWorkflowStatus').insert({
+    name: 'Delivered',
+    i18nkey: 'ResultWorkflowStatusDelivered',
+    token: 'Delivered',
+    externalId: 'delivered'
+  })
   const [acknowledged] = yield knex('ResultWorkflowStatus').insert({
     name: 'Acknowledged',
     i18nkey: 'ResultWorkflowStatusAcknowledged',
