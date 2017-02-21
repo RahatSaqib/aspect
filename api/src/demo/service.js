@@ -1,6 +1,5 @@
 const _ = require('lodash')
 const Boom = require('boom')
-const jwt = require('jsonwebtoken')
 const { knex } = require('../db')
 const config = require('../config')
 const { getConstraints, addConstraints } = require('../auth/constraints')
@@ -51,8 +50,8 @@ function* getApiKey(deviceId, userConstraints) {
     .innerJoin('Device as d', 'dak.deviceId', 'd.id')
     .where({ 'd.id': +deviceId, 'dak.revoked': 0 })
     .modify(addConstraints, userConstraints, { device: 'd' })
-    .first('dak.id as dak')
-  return apiKey && jwt.sign(apiKey, config.secret)
+    .first('dak.token')
+  return apiKey == null ? null : apiKey.token
 }
 
 
