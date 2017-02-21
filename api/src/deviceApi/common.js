@@ -3,6 +3,8 @@ const { knex, transact } = require('../db')
 const { getDeviceConstraints, addConstraints } = require('../auth/constraints')
 const { asyncHandler } = require('../routes')
 
+const millisInDay = 1000 * 60 * 60 * 24
+
 function deviceApiHandler(handler, {
   updatePing = false,
   updateDeviceLog = false,
@@ -154,11 +156,21 @@ class DeviceApiContext {
 }
 
 function* getDeviceLog(deviceId, dataConstraints, checkpoint, offset) {
+  // Calculate min log date configured by Partner
+  const partner = yield knex('Partner as p')
+    .innerJoin('Device as d', 'd.partnerId', 'd.id')
+    .first('deviceLogHistoryDays')
+  if (!partner) {
+    return null
+  }
+  const historyCutoff = new Date(+new Date() - (partner.deviceLogHistoryDays * millisInDay))
+
   // Find device log at checkpoint or latest
   // normally we want to get the last device log for given device and checkpoint
   let initialDeviceLogOrder = 'desc'
   const initialDeviceLogQuery = knex('DeviceLog')
     .where({ deviceId })
+    .where('createdOn', '>=', historyCutoff)
   // use specified checkpoint, otherwise just select latest
   if (checkpoint) {
     initialDeviceLogQuery.where({ checkpoint })
@@ -192,9 +204,9 @@ function* getDeviceLog(deviceId, dataConstraints, checkpoint, offset) {
   // Two steps are required because results might be allowed from a
   // different sample origin site (lab/clinic) but device configuration
   // and operation updates are currently always constrained by device
-  const deviceLogOffsetQuery = knex('Device as d')
-    .innerJoin('DeviceLog as dl', 'dl.deviceId', 'd.id')
-    .where({ 'd.id': deviceId })
+  const deviceLogOffsetQuery = knex('DeviceLog as dl')
+    .where({ 'dl.deviceId': deviceId })
+    .where('dl.createdOn', '>=', historyCutoff)
     .union(function () {
       this.from('Result as r')
         .innerJoin('Device as d', 'r.deviceId', 'd.id')
@@ -202,6 +214,7 @@ function* getDeviceLog(deviceId, dataConstraints, checkpoint, offset) {
         .leftJoin('Sample as s', 'r.sampleId', 's.id')
         .leftJoin('Site as sos', 's.originSiteId', 'sos.id')
         .modify(addConstraints, dataConstraints, { device: 'd', sample: 's' })
+        .where('dl.createdOn', '>=', historyCutoff)
         .select('dl.id')
     })
     .select('dl.id')
@@ -209,6 +222,7 @@ function* getDeviceLog(deviceId, dataConstraints, checkpoint, offset) {
 
   const deviceLogQuery = knex('DeviceLog as dl')
     .innerJoin(deviceLogOffsetQuery, 'dl.id', 'dls.id')
+    .where('dl.createdOn', '>=', historyCutoff)
     .where(function () {
       // do not include logs with same checkpoint for same device
       // since we are retrieving logs with offset from checkpoint
