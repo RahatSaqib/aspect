@@ -159,6 +159,15 @@ describe('Device API routes', () => {
           assert.deepEqual(res.body.operation.data, op1)
         })
 
+      yield server.get(`${devicePath}/checkpoint`)
+        .set('Authorization', deviceAuth)
+        .then((res) => {
+          assert.equal(res.status, 200)
+          assert.typeOf(res.body, 'Object')
+          assert.property(res.body, 'checkpoint')
+          assert.equal(res.body.checkpoint, '124j')
+        })
+
       yield server.post(devicePath)
         .set('Authorization', deviceAuth)
         .send({

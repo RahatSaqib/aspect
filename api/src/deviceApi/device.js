@@ -1,4 +1,5 @@
 const _ = require('lodash')
+const Boom = require('boom')
 const { addResult, getResult } = require('./result')
 
 function* addDeviceData(context) {
@@ -63,6 +64,19 @@ function* getDeviceData(context) {
   }
 
   return response
+}
+
+function* getDeviceCheckpoint(context) {
+  const { knex, device: { id: deviceId } } = context
+  const deviceLog = yield knex('DeviceLog')
+    .where({ deviceId })
+    .whereNotNull('checkpoint')
+    .orderBy('id', 'desc')
+    .first('checkpoint')
+  if (deviceLog != null) {
+    return { checkpoint: deviceLog.checkpoint }
+  }
+  return Boom.notFound()
 }
 
 function* updateDeviceConfiguration(context) {
@@ -151,6 +165,7 @@ function* getDeviceOperation(context) {
 module.exports = {
   addDeviceData,
   getDeviceData,
+  getDeviceCheckpoint,
   updateDeviceConfiguration,
   addDeviceOperation
 }
