@@ -31,22 +31,24 @@ function addDeviceRoutes(server) {
 function decorateClientAPI(module) {
   // must always be authenticated using Client JWT
   const scope = ['+clientApi']
+  const strategies = ['clientApi']
 
   if (module) {
     // If module specified, must have one of admin or `{module}:admin`
     // in addition to any other listed in scope of routes.
     scope.push('admin', `${module}:admin`)
   }
-  return decorateAPI({ scope })
+  return decorateAPI({ scope, strategies })
 }
 
 function decorateDeviceAPI() {
   // must always be authenticated using Device JWT
   const scope = ['+deviceApi']
-  return decorateAPI({ scope })
+  const strategies = ['deviceApi']
+  return decorateAPI({ scope, strategies })
 }
 
-function decorateAPI({ scope }) {
+function decorateAPI({ scope, strategies }) {
   return (route) => {
     // add ['api'] tag by default so available in Hapi-Swagger
     let { config } = route
@@ -67,6 +69,7 @@ function decorateAPI({ scope }) {
           auth = {}
           config.auth = auth
         }
+        auth.strategies = strategies.concat(auth.strategies || [])
         auth.scope = scope.concat(auth.scope || [])
       }
 
