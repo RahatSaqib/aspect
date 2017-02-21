@@ -36,11 +36,15 @@ function* addDeviceData(context) {
 }
 
 function* getDeviceData(context) {
-  const { now, device: { name: deviceName }, deviceLog: { checkpoint } } = context
+  const { now, device, deviceLog } = context
 
-  const response = { name: deviceName, time: now.toISOString() }
-  if (checkpoint != null) {
-    response.checkpoint = checkpoint
+  const response = {
+    name: device.name,
+    requestedOn: now.toISOString(),
+    loggedOn: deviceLog.createdOn
+  }
+  if (deviceLog.checkpoint != null) {
+    response.checkpoint = deviceLog.checkpoint
   }
 
   const config = yield* getDeviceConfiguration(context, true)

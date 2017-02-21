@@ -173,7 +173,7 @@ function* getDeviceLog(deviceId, dataConstraints, checkpoint, offset) {
   initialDeviceLogQuery.orderBy('id', initialDeviceLogOrder)
 
   const initialDeviceLog = yield initialDeviceLogQuery
-    .first('checkpoint', 'deviceId', 'id')
+    .first('id', 'checkpoint', 'deviceId', 'createdOn')
   if (!initialDeviceLog) {
     // No log found at checkpoint for this device
     return null
@@ -182,7 +182,8 @@ function* getDeviceLog(deviceId, dataConstraints, checkpoint, offset) {
     // as checkpoints are unique per device
     return {
       id: initialDeviceLog.id,
-      checkpoint: initialDeviceLog.checkpoint
+      checkpoint: initialDeviceLog.checkpoint,
+      createdOn: initialDeviceLog.createdOn
     }
   }
 
@@ -236,12 +237,12 @@ function* getDeviceLog(deviceId, dataConstraints, checkpoint, offset) {
   }
 
   const deviceLog = yield deviceLogQuery
-    .first('dl.id', 'dl.deviceId', 'dl.checkpoint')
+    .first('dl.id', 'dl.deviceId', 'dl.checkpoint', 'dl.createdOn')
   if (deviceLog == null) {
     return null
   }
 
-  const response = { id: deviceLog.id }
+  const response = { id: deviceLog.id, createdOn: deviceLog.createdOn }
   // set checkpoint if log changed during query, e.g, due to offset
   // but do not leak checkpoint from different device
   if (deviceLog.deviceId === deviceId) {
