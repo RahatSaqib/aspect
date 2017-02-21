@@ -109,12 +109,25 @@ function* getDeviceApiContext(request, requiredStatus, requireDeviceLog) {
       // must specify checkpoint if using offset
       return { error: Boom.badRequest() }
     }
-    const deviceLog = yield* getDeviceLog(
-      devices[0].id, constraints, checkpoint, offset)
-    context.deviceLog = deviceLog
-    if (deviceLog == null) {
-      return { error: Boom.notFound() }
+
+    // Calculate min log date configured by Partner
+    const partner = yield knex('Partner as p')
+      .innerJoin('Device as d', 'd.partnerId', 'd.id')
+      .first('deviceLogHistoryDays')
+    if (!partner) {
+      return null
     }
+    const historyCutoff = new Date(+new Date() - (partner.deviceLogHistoryDays * millisInDay))
+
+    const deviceLog = yield* getDeviceLog(
+      devices[0].id, constraints, checkpoint, offset, historyCutoff)
+    if (deviceLog == null) {
+      // See if requested log is forbidden or not found
+      const deviceLogNoHistory = yield* getDeviceLog(
+        devices[0].id, constraints, checkpoint, offset)
+      return { error: deviceLogNoHistory == null ? Boom.notFound() : Boom.forbidden() }
+    }
+    context.deviceLog = deviceLog
   }
 
   return context
@@ -155,22 +168,12 @@ class DeviceApiContext {
   }
 }
 
-function* getDeviceLog(deviceId, dataConstraints, checkpoint, offset) {
-  // Calculate min log date configured by Partner
-  const partner = yield knex('Partner as p')
-    .innerJoin('Device as d', 'd.partnerId', 'd.id')
-    .first('deviceLogHistoryDays')
-  if (!partner) {
-    return null
-  }
-  const historyCutoff = new Date(+new Date() - (partner.deviceLogHistoryDays * millisInDay))
-
+function* getDeviceLog(deviceId, dataConstraints, checkpoint, offset, historyCutoff) {
   // Find device log at checkpoint or latest
   // normally we want to get the last device log for given device and checkpoint
   let initialDeviceLogOrder = 'desc'
   const initialDeviceLogQuery = knex('DeviceLog')
     .where({ deviceId })
-    .where('createdOn', '>=', historyCutoff)
   // use specified checkpoint, otherwise just select latest
   if (checkpoint) {
     initialDeviceLogQuery.where({ checkpoint })
@@ -181,6 +184,9 @@ function* getDeviceLog(deviceId, dataConstraints, checkpoint, offset) {
       // from other sources while data with checkpoint is being posted
       initialDeviceLogOrder = 'asc'
     }
+  }
+  if (historyCutoff != null) {
+    initialDeviceLogQuery.where('createdOn', '>=', historyCutoff)
   }
   initialDeviceLogQuery.orderBy('id', initialDeviceLogOrder)
 
@@ -206,7 +212,6 @@ function* getDeviceLog(deviceId, dataConstraints, checkpoint, offset) {
   // and operation updates are currently always constrained by device
   const deviceLogOffsetQuery = knex('DeviceLog as dl')
     .where({ 'dl.deviceId': deviceId })
-    .where('dl.createdOn', '>=', historyCutoff)
     .union(function () {
       this.from('Result as r')
         .innerJoin('Device as d', 'r.deviceId', 'd.id')
@@ -214,15 +219,20 @@ function* getDeviceLog(deviceId, dataConstraints, checkpoint, offset) {
         .leftJoin('Sample as s', 'r.sampleId', 's.id')
         .leftJoin('Site as sos', 's.originSiteId', 'sos.id')
         .modify(addConstraints, dataConstraints, { device: 'd', sample: 's' })
-        .where('dl.createdOn', '>=', historyCutoff)
         .select('dl.id')
+      if (historyCutoff != null) {
+        this.where('dl.createdOn', '>=', historyCutoff)
+      }
     })
     .select('dl.id')
     .as('dls')
 
+  if (historyCutoff != null) {
+    deviceLogOffsetQuery.where('dl.createdOn', '>=', historyCutoff)
+  }
+
   const deviceLogQuery = knex('DeviceLog as dl')
     .innerJoin(deviceLogOffsetQuery, 'dl.id', 'dls.id')
-    .where('dl.createdOn', '>=', historyCutoff)
     .where(function () {
       // do not include logs with same checkpoint for same device
       // since we are retrieving logs with offset from checkpoint
@@ -248,6 +258,10 @@ function* getDeviceLog(deviceId, dataConstraints, checkpoint, offset) {
       // specify query offset if immediately before
       deviceLogQuery.offset(-offset - 1)
     }
+  }
+
+  if (historyCutoff != null) {
+    deviceLogQuery.where('dl.createdOn', '>=', historyCutoff)
   }
 
   const deviceLog = yield deviceLogQuery
