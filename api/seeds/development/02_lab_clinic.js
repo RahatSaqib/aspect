@@ -3,6 +3,7 @@ module.exports = require('../../src/db').seed(seed)
 const config = require('../../src/config')
 const _ = require('lodash')
 const bcrypt = require('bcrypt')
+const crypto = require('crypto')
 const labClinic = require('./fixtures/labClinic.json')
 
 const millisInHour = 1000 * 60 * 60
@@ -286,8 +287,13 @@ function* seed(knex) {
     }, auditFields))
 
     yield knex('DeviceApiKey').insert(Object.assign({
-      deviceId,
-      revoked: 0
+      token: crypto.randomBytes(48).toString('base64'),
+      revoked: 0,
+      partnerId: siteData.partnerId,
+      orgUnitId: siteData.orgUnitId,
+      geographyId: siteData.geographyId,
+      siteId: siteData.id,
+      deviceId
     }, auditFields))
 
     // Roles and permissions
@@ -372,8 +378,13 @@ function* seed(knex) {
     }, auditFields))
 
     yield knex('DeviceApiKey').insert(Object.assign({
-      deviceId,
-      revoked: 0
+      token: crypto.randomBytes(48).toString('base64'),
+      revoked: 0,
+      partnerId: siteData.partnerId,
+      orgUnitId: siteData.orgUnitId,
+      geographyId: siteData.geographyId,
+      siteId: siteData.id,
+      deviceId
     }, auditFields))
 
     // create lab admin user with permission to view data to own lab
