@@ -8,8 +8,10 @@ import {
 } from '../error/CommonErrorNotifications'
 
 export const tokens = {
+  PROVISIONED: 'provisioned',
+  ASSIGNED: 'assigned',
   APPROVED: 'approved',
-  UNAPPROVED: 'unapproved'
+  DECOMMISSIONED: 'decommissioned',
 }
 
 export const types = {
