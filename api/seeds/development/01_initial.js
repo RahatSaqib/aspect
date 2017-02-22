@@ -1606,6 +1606,7 @@ function* seed(knex) {
     const siteData = siteDatas[i % siteDatas.length]
     const sample = Object.assign({}, {
       externalId: `SMP-TB-${i}`,
+      runNumber: `${(i % 2) + 1}`,
       collectedOn: new Date(+now - (120 * millisInHour)),
       sampleTypeId: sampleTypeDBSId,
       originSiteId: siteData.id
@@ -1722,6 +1723,7 @@ function* seed(knex) {
     const siteData = siteDatas[i % siteDatas.length]
     const sample = Object.assign({}, {
       externalId: `SMP-EB-${i}`,
+      runNumber: `${(i % 2) + 1}`,
       collectedOn: new Date(+now - (120 * millisInHour)),
       sampleTypeId: sampleTypePlasmaId,
       originSiteId: siteData.id
@@ -1845,6 +1847,7 @@ function* seed(knex) {
     const siteData = siteDatas[i % siteDatas.length]
     const sample = Object.assign({}, {
       externalId: `SMP-HIV-${i}`,
+      runNumber: `${(i % 2) + 1}`,
       collectedOn: new Date(+now - (120 * millisInHour)),
       sampleTypeId: sampleTypeDBSId,
       originSiteId: siteData.id
@@ -1947,6 +1950,7 @@ function* seed(knex) {
   for (let i = 0; i < resultHcvNumber / 2; i++) {
     const sample = Object.assign({}, {
       externalId: `SMP-HCV-GX-${i}`,
+      runNumber: `${(i % 2) + 1}`,
       collectedOn: new Date(),
       sampleTypeId: sampleTypeDBSId
     })
@@ -2044,6 +2048,7 @@ function* seed(knex) {
     const siteData = siteDatas[i % siteDatas.length]
     const sample = Object.assign({}, {
       externalId: `SMP-HIV-DAK-${i}`,
+      runNumber: `${(i % 2) + 1}`,
       collectedOn: new Date(+now - (120 * millisInHour)),
       sampleTypeId: sampleTypeDBSId,
       originSiteId: siteData.id
@@ -2147,6 +2152,7 @@ function* seed(knex) {
     const siteData = siteDatas[i % siteDatas.length]
     const sample = Object.assign({}, {
       externalId: `SMP-HCV-DAK-${i}`,
+      runNumber: `${(i % 2) + 1}`,
       collectedOn: new Date(+now - (120 * millisInHour)),
       sampleTypeId: sampleTypeDBSId,
       originSiteId: siteData.id

@@ -114,6 +114,8 @@ function* addResult(context) {
       externalId: _.get(payload, 'sample.id', null),
       collectedOn: _.get(
         payload, 'sample.collectedOn', null),
+      runNumber: _.get(
+        payload, 'sample.runNumber', null),
       sampleTypeId,
       originSiteId: sampleOriginSiteId
     })
@@ -130,6 +132,9 @@ function* addResult(context) {
           collectedOn: _.get(
             payload, 'sample.collectedOn',
             _.get(existingSample, 'collectedOn', null)),
+          runNumber: _.get(
+            payload, 'sample.runNumber',
+            _.get(existingSample, 'runNumber', null)),
           sampleTypeId: payloadSampleTypeId
             ? sampleTypeId
             : existingSample.sampleTypeId,
@@ -284,7 +289,7 @@ function* getResult(context) {
       'r.instrumentSerial', 'r.moduleName', 'r.moduleSerial', 'r.id as resultId',
       'a.externalId as assayId', 'r.assayVersion',
       'r.latitude', 'r.longitude', 'rt.externalId as resultTypeId',
-      'rs.externalId as resultWorkflowStatusId',
+      'rs.externalId as resultWorkflowStatusId', 's.runNumber as sampleRunNumber',
       's.externalId as sampleId', 's.collectedOn as sampleCollectedOn',
       'sos.externalId as sampleOriginSiteId', 'st.externalId as sampleTypeId',
       'rc1.externalId as category1Id', 'rc2.externalId as category2Id')
@@ -352,6 +357,9 @@ function* getResult(context) {
   }
   if (row.sampleOriginSiteId != null) {
     sample.originSite = { id: row.sampleOriginSiteId }
+  }
+  if (row.sampleRunNumber != null) {
+    sample.runNumber = row.sampleRunNumber
   }
   if (!_.isEmpty(sample)) {
     result.sample = sample
