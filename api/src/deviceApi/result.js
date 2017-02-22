@@ -318,13 +318,14 @@ function* getResult(context) {
     return null
   }
 
-  const resultWorkflowLog = yield* getLatestResultWorkflowLog(knex, row.resultId)
-
   // only set to delivered the first time and
   // only if not acknowledged or flagged already
-  if (!resultWorkflowLog || _.indexOf(DONOT_LOG_DELIVERED, row.resultWorkflowStatusId) === -1) {
+  if (_.indexOf(DONOT_LOG_DELIVERED, row.resultWorkflowStatusId) === -1) {
     yield* updateResultWorkflowStatus(context, row.resultId, DELIVERED_EXTERNALID)
+    row.resultWorkflowStatusId = DELIVERED_EXTERNALID
   }
+
+  const resultWorkflowLog = yield* getLatestResultWorkflowLog(knex, row.resultId)
 
   // TODO allow filtering on fields of interest, similar to client device API
   // but JSON paths from result data in same format as POST
@@ -430,19 +431,18 @@ function* getResult(context) {
 
 function* updateResultWorkflowStatus(
   context, resultId, workflowStatusExternalId, operator, userId) {
-  const { knex, now, constraints: dataConstraints } = context
+  const { knex, now } = context
 
   // get internal workflow status id based on the external id we got
   const workflowStatusRow = yield knex('ResultWorkflowStatus').where('externalId', workflowStatusExternalId).select('id').first()
   if (workflowStatusRow === null) {
-    return Boom.badRequest()
+    throw new Error(`Workflow status with external ID "${workflowStatusExternalId}" not found`)
   }
 
   // update result
   const rows = yield knex('Result as r')
                 .innerJoin('Device as d', 'r.deviceId', 'd.id')
                 .leftJoin('Sample as s', 'r.sampleId', 's.id')
-                .modify(addConstraints, dataConstraints, { device: 'd', sample: 's' })
                 .where('r.id', resultId)
                 .update('resultWorkflowStatusId', workflowStatusRow.id)
 
