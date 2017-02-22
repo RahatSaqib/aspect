@@ -3,6 +3,9 @@ const _ = require('lodash')
 const { addConstraints } = require('../auth/constraints')
 const { consumeInventoryForResult } = require('../inventory/service')
 
+const DONOT_LOG_DELIVERED = ['Delivered', 'Acknowledged', 'Flagged']
+const DELIVERED_EXTERNALID = 'Delivered'
+
 function* addResult(context) {
   const { knex, payload, constraints: dataConstraints, now } = context
 
@@ -317,11 +320,15 @@ function* getResult(context) {
 
   const resultWorkflowLog = yield* getLatestResultWorkflowLog(knex, row.resultId)
 
+  // only set to delivered the first time and
+  // only if not acknowledged or flagged already
+  if (!resultWorkflowLog || _.indexOf(DONOT_LOG_DELIVERED, row.resultWorkflowStatusId) === -1) {
+    yield* updateResultWorkflowStatus(context, row.resultId, DELIVERED_EXTERNALID)
+  }
+
   // TODO allow filtering on fields of interest, similar to client device API
   // but JSON paths from result data in same format as POST
   const result = {}
-
-  result.internalId = row.resultId
 
   if (row.resultExternalId != null) {
     result.id = row.resultExternalId
@@ -465,6 +472,5 @@ function* getLatestResultWorkflowLog(knex, resultId) {
 
 module.exports = {
   addResult,
-  getResult,
-  updateResultWorkflowStatus
+  getResult
 }
