@@ -441,8 +441,6 @@ function* updateResultWorkflowStatus(
 
   // update result
   const rows = yield knex('Result as r')
-                .innerJoin('Device as d', 'r.deviceId', 'd.id')
-                .leftJoin('Sample as s', 'r.sampleId', 's.id')
                 .where('r.id', resultId)
                 .update('resultWorkflowStatusId', workflowStatusRow.id)
 
