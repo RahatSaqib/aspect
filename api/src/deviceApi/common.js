@@ -75,7 +75,7 @@ function* getDeviceApiContext(request, requiredStatus, requireDeviceLog) {
   const devicesQ = knex('DeviceApiKey as dak')
     .innerJoin('Device as d', 'dak.deviceId', 'd.id')
     .where({
-      'dak.token': auth.credentials.dak,
+      'dak.token': auth.credentials.token,
       'dak.revoked': false
     })
 

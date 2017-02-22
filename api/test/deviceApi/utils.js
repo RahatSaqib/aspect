@@ -11,7 +11,7 @@ function* getApiKey(knex, deviceId) {
     .innerJoin('Device as d', 'dak.deviceId', 'd.id')
     .where({ 'd.id': +deviceId, 'dak.revoked': 0 })
     .first('dak.token')
-  return apiKey ? null : apiKey.token
+  return apiKey == null ? null : apiKey.token
 }
 
 function* deleteTestDataFromCheckpoint(knex, checkpoint, deviceIds) {

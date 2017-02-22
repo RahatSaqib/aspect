@@ -26,8 +26,11 @@ const plugins = [
   // view layer (hapi-swagger dependency)
   require('vision'),
 
-  // JWT for authentication
+  // JWT for authentication in client API
   require('hapi-auth-jwt2'),
+
+  // API Key in Device API
+  require('./deviceApi/deviceApiKeyPlugin'),
 
   // SwaggerUI and documentation
   {
@@ -126,6 +129,9 @@ server.register(plugins, (err) => { if (err) throw err })
 // ================================================
 // Authentication strategy and Authorization Scopes
 // ================================================
+// use config: { auth: false } on route definition to disable authentication
+// Device API uses API Keys
+server.auth.strategy('deviceApi', 'deviceApiKey')
 // Client API uses JWT
 server.auth.strategy('clientApi', 'jwt', {
   key: config.secret,
@@ -154,17 +160,6 @@ server.auth.strategy('clientApi', 'jwt', {
   }
   // TODO JWT verfication algorithm verifyOptions: { algorithms: [ 'HS256' ] }
 })
-
-server.auth.strategy('deviceApi', 'jwt', {
-  key: config.secret,
-  validateFunc(decoded, request, callback) {
-    const valid = true
-    const scope = ['deviceApi']
-    callback(null, valid, Object.assign({ scope }, decoded))
-  }
-  // TODO JWT verfication algorithm verifyOptions: { algorithms: [ 'HS256' ] }
-})
-// use config: { auth: false } on route definition to disable authentication
 
 // =======================
 // routes ================
