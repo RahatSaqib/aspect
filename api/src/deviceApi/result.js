@@ -3,7 +3,7 @@ const _ = require('lodash')
 const { addConstraints } = require('../auth/constraints')
 const { consumeInventoryForResult } = require('../inventory/service')
 
-const DONOT_LOG_DELIVERED = ['Delivered', 'Acknowledged', 'Flagged']
+const DONOT_LOG_DELIVERED = ['Delivered', 'Acknowledged', 'Flagged', 'Error']
 const DELIVERED_EXTERNALID = 'Delivered'
 
 function* addResult(context) {
