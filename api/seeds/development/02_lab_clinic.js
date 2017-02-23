@@ -278,7 +278,9 @@ function* seed(knex) {
           adminAssays: ['HivVl', 'Eid']
         }
       }),
-      partnerId,
+      partnerId: siteData.partnerId,
+      orgUnitId: siteData.orgUnitId,
+      geographyId: siteData.geographyId,
       siteId: siteData.id,
       deviceId: routerId,
       createdOn: new Date(+now - (3 * millisInHour)),
@@ -293,6 +295,7 @@ function* seed(knex) {
       orgUnitId: siteData.orgUnitId,
       geographyId: siteData.geographyId,
       siteId: siteData.id,
+      deviceTypeId: deviceTypes.RRT.id,
       deviceId
     }, auditFields))
 
@@ -339,7 +342,9 @@ function* seed(knex) {
       shortname: `${siteData.shortname} Router`,
       deviceTypeId: deviceTypes['Metacom Router'].id,
       deviceStatusId: deviceStatuses.Approved.id,
-      partnerId,
+      partnerId: siteData.partnerId,
+      orgUnitId: siteData.orgUnitId,
+      geographyId: siteData.geographyId,
       siteId: siteData.id,
       createdOn: new Date(+now - (3 * millisInHour)),
       updatedOn: new Date(+now - millisInHour),
@@ -369,7 +374,9 @@ function* seed(knex) {
           versionGold: '1.1.0',
         }
       }),
-      partnerId,
+      partnerId: siteData.partnerId,
+      orgUnitId: siteData.orgUnitId,
+      geographyId: siteData.geographyId,
       siteId: siteData.id,
       deviceId: routerId,
       createdOn: new Date(+now - (3 * millisInHour)),
@@ -384,6 +391,7 @@ function* seed(knex) {
       orgUnitId: siteData.orgUnitId,
       geographyId: siteData.geographyId,
       siteId: siteData.id,
+      deviceTypeId: deviceTypes.m2000.id,
       deviceId
     }, auditFields))
 
