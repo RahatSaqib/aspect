@@ -1,18 +1,11 @@
 const _ = require('lodash')
 const chai = require('chai')
 const { run } = require('../../src/db')
+const { getConstraints, addConstraints } = require('../../src/auth/constraints')
 
 const assert = chai.assert
 
 const devicePath = '/device'
-
-function* getApiKey(knex, deviceId) {
-  const apiKey = yield knex('DeviceApiKey as dak')
-    .innerJoin('Device as d', 'dak.deviceId', 'd.id')
-    .where({ 'd.id': +deviceId, 'dak.revoked': 0 })
-    .first('dak.token')
-  return apiKey == null ? null : apiKey.token
-}
 
 function* deleteTestDataFromCheckpoint(knex, checkpoint, deviceIds) {
   const minDeviceLog = yield knex('DeviceLog as dl')
@@ -120,11 +113,6 @@ class DeviceApiTestContext {
       const { server, auth } = self
       const { user, type, status = 'approved' } = auth
 
-      const { id: deviceStatusId } = yield knex('DeviceStatus')
-        .where({ token: status })
-        .first('id')
-      assert.isOk(deviceStatusId)
-
       const clientToken = yield server.post('/api/auth')
         .send({ name: user, password: 'test07', clientName: 'Mocha/Chai' })
         .then((res) => {
@@ -134,34 +122,52 @@ class DeviceApiTestContext {
           assert.isAbove(res.body.clientId.length, 32)
           return res.body.access
         })
+      const dataConstraints = yield getConstraints({ name: user })
 
-      const deviceId = yield server
-        .get('/api/device')
-        .query({
-          size: 1,
-          type,
-          deviceStatusId
-        })
-        .set('Authorization', `Bearer ${clientToken}`)
-        .then((res) => {
-          assert.equal(res.status, 200)
-
-          assert.property(res.body, 'data')
-          assert.typeOf(res.body.data, 'array')
-          assert.equal(res.body.data.length, 1)
-          assert.property(res.body.data[0], 'id')
-          return res.body.data[0].id
-        })
+      const device = yield knex('Device as d')
+        .innerJoin('DeviceApiKey as dak', 'dak.deviceId', 'd.id')
+        .innerJoin('DeviceType as dt', 'dt.id', 'd.deviceTypeId')
+        .innerJoin('DeviceStatus as ds', 'ds.id', 'd.deviceStatusId')
+        .modify(addConstraints, dataConstraints, { device: 'd' })
+        .where(Object.assign({
+          'ds.token': status,
+          'dak.revoked': 0
+        }, type ? { 'dt.name': type } : {}))
+        .orderBy('d.name')
+        .first('dak.token', 'd.id')
+      let apiKey = null
+      if (device != null) {
+        apiKey = { token: device.token }
+      } else {
+        // if we can't find device, look for API Key
+        assert.isNotOk(auth.status)  // make sure we didn't request specific status
+        ;apiKey = yield knex('DeviceApiKey as dak')
+          .innerJoin('DeviceType as dt', 'dt.id', 'dak.deviceTypeId')
+          .where({
+            'dt.name': type,
+            'dak.revoked': 0
+          })
+          .first('dak.token')
+      }
+      assert.isOk(apiKey)
+      self.deviceIds.splice(0)
 
       // save device id for the following tests
-      self.deviceIds.splice(0)
-      self.deviceId = deviceId
 
       self.clientAuth = `Bearer ${clientToken}`
-      self.deviceAuth = yield* self.getDeviceAuth(knex, deviceId)
-      self.deviceConfigurationData = JSON.parse(self.initialConfigurationData[deviceId])
+      self.deviceAuth = `Bearer ${apiKey.token}`
 
-      self.deviceIds.push(deviceId)
+      if (device) {
+        self.deviceId = device.id
+
+        self.deviceIds.push(device.id)
+        const { configurationData } = yield knex('Device')
+          .where({ id: device.id })
+          .first('configurationData')
+
+        self.initialConfigurationData[device.id] = configurationData || null
+        self.deviceConfigurationData = JSON.parse(self.initialConfigurationData[device.id])
+      }
 
       self.checkpoint = `Device API Device Tests ${new Date()}`
       yield self.server.post(devicePath)
@@ -174,19 +180,6 @@ class DeviceApiTestContext {
 
       return yield* test(knex)
     })
-  }
-
-  * getDeviceAuth(knex, deviceId) {
-    this.deviceIds.push(deviceId)
-
-    const { configurationData } = yield knex('Device')
-      .where({ id: deviceId })
-      .first('configurationData')
-
-    this.initialConfigurationData[deviceId] = configurationData || null
-
-    const deviceToken = yield* getApiKey(knex, deviceId)
-    return `Bearer ${deviceToken}`
   }
 
   afterEach() {

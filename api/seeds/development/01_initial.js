@@ -1453,7 +1453,7 @@ function* seed(knex) {
     // Create API Keys
     yield knex('DeviceApiKey').insert(Object.assign({
       token: crypto.randomBytes(48).toString('base64'),
-      revoked: device.id % 5 === 0,
+      revoked: 0,
       partnerId: siteData.partnerId,
       orgUnitId: siteData.orgUnitId,
       geographyId: siteData.geographyId,
@@ -1514,7 +1514,7 @@ function* seed(knex) {
     // Create API Keys
     yield knex('DeviceApiKey').insert(Object.assign({
       token: crypto.randomBytes(48).toString('base64'),
-      revoked: device.id % 5 === 0,
+      revoked: 0,
       partnerId: siteData.partnerId,
       orgUnitId: siteData.orgUnitId,
       geographyId: siteData.geographyId,

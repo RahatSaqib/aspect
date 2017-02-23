@@ -3,17 +3,13 @@ const { knex, transact } = require('../db')
 const { getDeviceConstraints, addConstraints } = require('../auth/constraints')
 const { asyncHandler } = require('../routes')
 
-function deviceApiHandler(handler, {
-  updatePing = false,
-  updateDeviceLog = false,
-  requiredStatus = null,
-  requireDeviceLog = false
-}) {
+function deviceApiHandler(handler, handlerOptions) {
   return asyncHandler(function* (request) {
-    const context = yield* getDeviceApiContext(request, requiredStatus, requireDeviceLog)
-    if (context.error) {
-      // unauthorized, record nothing
-      return context.error
+    const { error, context } = yield* createDeviceApiContext(request, handlerOptions)
+    const { updatePing = false, updateDeviceLog = false } = handlerOptions
+    if (error) {
+      // unauthorized or other error record nothing
+      return error
     }
 
     const { device, now } = context
@@ -69,48 +65,132 @@ function deviceApiHandler(handler, {
   })
 }
 
-function* getDeviceApiContext(request, requiredStatus, requireDeviceLog) {
+function* createDeviceApiContext(request, handlerOptions) {
+  const {
+    createDevice = false,
+    requiredStatus = null,
+    requireDeviceLog = false
+  } = handlerOptions
   const { auth } = request
   const now = new Date()
-  const devicesQ = knex('DeviceApiKey as dak')
+  const devices = yield knex('DeviceApiKey as dak')
     .innerJoin('Device as d', 'dak.deviceId', 'd.id')
+    .innerJoin('DeviceStatus as ds', 'd.deviceStatusId', 'ds.id')
     .where({
       'dak.token': auth.credentials.token,
       'dak.revoked': false
     })
+    .select('d.id', 'd.name', 'd.serial', 'ds.token as status')
+    .limit(2)
 
-  if (requiredStatus != null) {
-    devicesQ
-      .innerJoin('DeviceStatus as ds', 'd.deviceStatusId', 'ds.id')
-      .where({ 'ds.token': requiredStatus })
+  let device = devices.length === 1 ? devices[0] : null
+  if (devices.length === 0 && createDevice) {
+    const deviceAndError = yield createNewDevice(request, now)
+    if (deviceAndError.error) {
+      return deviceAndError
+    }
+    device = deviceAndError.device
   }
 
-  const devices = yield devicesQ.select('d.id', 'd.name')
-  if (devices.length !== 1) {
+  if (device == null) {
+    // Trying to retrieve data for Device that has
+    // none uploaded yet, but we have authorized the token
+    return { error: Boom.notFound() }
+  }
+
+  if (requiredStatus != null && requiredStatus !== device.status) {
+    // found device, but not correct status
     return { error: Boom.unauthorized() }
   }
 
   const constraints = yield getDeviceConstraints(auth.credentials)
 
-  const context = new DeviceApiContext({
-    now,
-    device: devices[0],
-    constraints,
-    payload: request.payload,
-    query: request.query
-  })
-
+  let deviceLog = null
   if (requireDeviceLog) {
     const offset = +(request.query.offset || 0)
-    const deviceLog = yield* getDeviceLog(
-      devices[0].id, constraints, request.query.checkpoint, offset)
-    context.deviceLog = deviceLog
+    deviceLog = yield* getDeviceLog(
+      device.id, constraints, request.query.checkpoint, offset)
     if (deviceLog == null) {
       return { error: Boom.notFound() }
     }
   }
 
-  return context
+  const context = new DeviceApiContext({
+    now,
+    device,
+    deviceLog,
+    constraints,
+    payload: request.payload,
+    query: request.query
+  })
+
+  return { context }
+}
+
+function createNewDevice(request, now) {
+  return transact(function* (knex) {
+    const { auth, payload } = request
+
+    // Find API Key to use as template for new device
+    const apiKey = yield knex('DeviceApiKey')
+      .where({
+        token: auth.credentials.token,
+        revoked: false,
+        deviceId: null
+      })
+      .first('id', 'partnerId', 'orgUnitId', 'geographyId', 'siteId', 'deviceTypeId')
+    if (apiKey == null) {
+      return { error: Boom.notFound() }
+    }
+
+    // create new device based on API Key
+    const device = {
+      name: payload.name || payload.serial || null,
+      serial: payload.serial || null,
+      status: apiKey.siteId ? 'approved' : 'provisioned'
+    }
+    const inserts = {
+      partnerId: apiKey.partnerId,
+      orgUnitId: apiKey.orgUnitId,
+      geographyId: apiKey.geographyId,
+      siteId: apiKey.siteId,
+      deviceTypeId: apiKey.deviceTypeId,
+      deviceStatusId: knex('DeviceStatus').where({ token: device.status }),
+      name: device.name,
+      serial: device.serial,
+      configurationData: '{}',
+      putInService: now,
+      createdOn: now,
+      updatedOn: now
+    }
+    if (device.status === 'approved') {
+      inserts.approved = 1
+      inserts.approvedOn = now
+    }
+    const [deviceId] = yield knex('Device').insert(inserts)
+    device.id = deviceId
+
+    // generate serial and name if not specified
+    if (!device.serial) {
+      const updates = {}
+      updates.serial = `ASP-${123456789 + deviceId}`
+      if (!device.name) {
+        device.name = updates.serial
+        updates.name = device.name
+      }
+      device.name = device.name || device.serial
+      yield knex('Device')
+        .where({ id: device.id })
+        .update(updates)
+    }
+
+    // Assign new device to API Key
+    yield knex('DeviceApiKey')
+      .where({ id: apiKey.id })
+      .update({ deviceId, updatedOn: now })
+
+    return { device }
+  })
 }
 
 class DeviceApiContext {

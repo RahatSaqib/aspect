@@ -1386,7 +1386,7 @@ describe('Device Result API routes', () => {
     })
   })
 
-  describe('RRT Lab/Clinic Tests', () => {
+  describe.skip('RRT Lab/Clinic Tests', () => {
     const context = createTestContext(server, { user: 'rrt_admin', type: 'm2000' })
 
     const runTest = context.runTest
