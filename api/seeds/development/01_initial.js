@@ -1387,6 +1387,9 @@ function* seed(knex) {
       shortname: `r${i}`,
       deviceTypeId: deviceTypeIdRouter,
       deviceStatusId: deviceStatusApproved,
+      partnerId: siteData.partnerId,
+      orgUnitId: siteData.orgUnitId,
+      geographyId: siteData.geographyId,
       siteId: siteData.id,
       createdOn: new Date(+now - (3 * i * millisInHour)),
       updatedOn: new Date(+now - (i * millisInHour)),
@@ -1429,6 +1432,9 @@ function* seed(knex) {
           module4: '73235848'
         }
       }),
+      partnerId: siteData.partnerId,
+      orgUnitId: siteData.orgUnitId,
+      geographyId: siteData.geographyId,
       siteId: siteData.id,
       // not all sites will have a router - we only added routers to some site
       deviceId: routerId || null,
@@ -1452,6 +1458,7 @@ function* seed(knex) {
       orgUnitId: siteData.orgUnitId,
       geographyId: siteData.geographyId,
       siteId: siteData.id,
+      deviceTypeId: device.deviceTypeId,
       deviceId: device.id
     }, auditFields))
 
@@ -1486,6 +1493,9 @@ function* seed(knex) {
         adminPassword: 'pwd123',
         firmwareUpdateRequired: 'no'
       }),
+      partnerId: siteData.partnerId,
+      orgUnitId: siteData.orgUnitId,
+      geographyId: siteData.geographyId,
       siteId: siteData.id,
       // not all sites will have a router - we only added routers to some site
       deviceId: routerId || null,
@@ -1509,6 +1519,7 @@ function* seed(knex) {
       orgUnitId: siteData.orgUnitId,
       geographyId: siteData.geographyId,
       siteId: siteData.id,
+      deviceTypeId: device.deviceTypeId,
       deviceId: device.id
     }, auditFields))
 
