@@ -403,7 +403,6 @@ function* up(knex) {
   yield knex.schema.createTable('Sample', (sample) => {
     sample.increments('id')
     sample.string('externalId')
-    sample.string('runNumber')
     sample.dateTime('collectedOn')
     sample.integer('sampleTypeId').unsigned()
           .index().references('id').inTable('SampleType')
@@ -435,6 +434,7 @@ function* up(knex) {
       .index().references('id').inTable('ResultType')
     result.integer('sampleId').unsigned().notNullable()
       .index().references('id').inTable('Sample')
+    result.string('sampleRunNumber')
     result.integer('resultCategory1').unsigned()
       .index().references('id').inTable('ResultCategory')
     result.integer('resultCategory2').unsigned()
