@@ -3,7 +3,7 @@ module.exports = require('../../src/db').seed(seed)
 const config = require('../../src/config')
 const _ = require('lodash')
 const bcrypt = require('bcrypt')
-const crypto = require('crypto')
+const { randomToken } = require('../../src/deviceApi/apiKey')
 const permissions = require('./fixtures/permissions.json')
 const geography = require('./fixtures/geography.json')
 const patients = require('./fixtures/patients.json')
@@ -1471,7 +1471,7 @@ function* seed(knex) {
 
     // Create API Keys
     yield knex('DeviceApiKey').insert(Object.assign({
-      token: crypto.randomBytes(48).toString('base64'),
+      token: randomToken(),
       revoked: device.id % 5 === 0,
       partnerId: siteData.partnerId,
       orgUnitId: siteData.orgUnitId,
@@ -1532,7 +1532,7 @@ function* seed(knex) {
 
     // Create API Keys
     yield knex('DeviceApiKey').insert(Object.assign({
-      token: crypto.randomBytes(48).toString('base64'),
+      token: randomToken(),
       revoked: device.id % 5 === 0,
       partnerId: siteData.partnerId,
       orgUnitId: siteData.orgUnitId,

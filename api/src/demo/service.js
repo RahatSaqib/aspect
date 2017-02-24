@@ -1,8 +1,8 @@
 const _ = require('lodash')
 const Boom = require('boom')
 const { knex } = require('../db')
-const config = require('../config')
 const { getConstraints, addConstraints } = require('../auth/constraints')
+const { groupToken } = require('../deviceApi/apiKey')
 
 const { createFetch, base, accept, header, method, body } = require('http-client')
 
@@ -51,7 +51,7 @@ function* getApiKey(deviceId, userConstraints) {
     .where({ 'd.id': +deviceId, 'dak.revoked': 0 })
     .modify(addConstraints, userConstraints, { device: 'd' })
     .first('dak.token')
-  return apiKey == null ? null : apiKey.token
+  return apiKey == null ? '' : groupToken(apiKey.token)
 }
 
 

@@ -3,7 +3,7 @@ module.exports = require('../../src/db').seed(seed)
 const config = require('../../src/config')
 const _ = require('lodash')
 const bcrypt = require('bcrypt')
-const crypto = require('crypto')
+const { randomToken } = require('../../src/deviceApi/apiKey')
 const labClinic = require('./fixtures/labClinic.json')
 
 const millisInHour = 1000 * 60 * 60
@@ -289,7 +289,7 @@ function* seed(knex) {
     }, auditFields))
 
     yield knex('DeviceApiKey').insert(Object.assign({
-      token: crypto.randomBytes(48).toString('base64'),
+      token: randomToken(),
       revoked: 0,
       partnerId: siteData.partnerId,
       orgUnitId: siteData.orgUnitId,
@@ -385,7 +385,7 @@ function* seed(knex) {
     }, auditFields))
 
     yield knex('DeviceApiKey').insert(Object.assign({
-      token: crypto.randomBytes(48).toString('base64'),
+      token: randomToken(),
       revoked: 0,
       partnerId: siteData.partnerId,
       orgUnitId: siteData.orgUnitId,
