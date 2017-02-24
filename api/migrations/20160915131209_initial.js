@@ -13,7 +13,7 @@ function* up(knex) {
     partner.integer('partnerTypeId').unsigned().notNullable()
       .index().references('id').inTable('PartnerType')
     partner.string('name').notNullable()
-    partner.integer('deviceLogHistoryDays').notNullable().defaultTo(0)
+    partner.integer('deviceLogHistoryDays').notNullable().defaultTo(30)
   })
 
   yield knex.schema.createTable('OrgUnit', (orgUnit) => {
