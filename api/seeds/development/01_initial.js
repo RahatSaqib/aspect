@@ -58,12 +58,14 @@ function* seed(knex) {
   // Create partners
   const [partnerOneId] = yield knex('Partner').insert({
     name: 'Partner One',
-    partnerTypeId: partnerTypeFundingId
+    partnerTypeId: partnerTypeFundingId,
+    deviceLogHistoryDays: 14
   })
 
   const [partnerTwoId] = yield knex('Partner').insert({
     name: 'Partner Two',
-    partnerTypeId: partnerTypeImplementingId
+    partnerTypeId: partnerTypeImplementingId,
+    deviceLogHistoryDays: 14
   })
   const [partnerOneOrgUnitId] = yield knex('OrgUnit').insert({
     name: 'Partner One',
@@ -1392,6 +1394,7 @@ function* seed(knex) {
       shortname: `r${i}`,
       deviceTypeId: deviceTypeIdRouter,
       deviceStatusId: deviceStatusApproved,
+      partnerId: partnerOneId,
       siteId: siteData.id,
       createdOn: new Date(+now - (3 * i * millisInHour)),
       updatedOn: new Date(+now - (i * millisInHour)),
@@ -1435,6 +1438,7 @@ function* seed(knex) {
         }
       }),
       siteId: siteData.id,
+      partnerId: partnerOneId,
       // not all sites will have a router - we only added routers to some site
       deviceId: routerId || null,
       createdOn: new Date(+now - (3 * i * millisInHour)),
@@ -1486,6 +1490,7 @@ function* seed(knex) {
         adminPassword: 'pwd123',
         firmwareUpdateRequired: 'no'
       }),
+      partnerId: partnerOneId,
       siteId: siteData.id,
       // not all sites will have a router - we only added routers to some site
       deviceId: routerId || null,

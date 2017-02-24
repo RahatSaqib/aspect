@@ -13,6 +13,7 @@ function* up(knex) {
     partner.integer('partnerTypeId').unsigned().notNullable()
       .index().references('id').inTable('PartnerType')
     partner.string('name').notNullable()
+    partner.integer('deviceLogHistoryDays').notNullable().defaultTo(30)
   })
 
   yield knex.schema.createTable('OrgUnit', (orgUnit) => {
@@ -272,7 +273,9 @@ function* up(knex) {
     device.increments('id')
     device.integer('deviceId').unsigned()
       .index().references('id').inTable('Device')
-    device.integer('siteId').unsigned().notNullable()
+    device.integer('partnerId').unsigned()
+        .index().references('id').inTable('Partner')
+    device.integer('siteId').unsigned()
       .index().references('id').inTable('Site')
     device.integer('deviceTypeId').unsigned().notNullable()
       .index().references('id').inTable('DeviceType')
@@ -462,7 +465,7 @@ function* up(knex) {
     deviceLog.integer('deviceId').unsigned().notNullable()
           .index().references('id').inTable('Device')
     deviceLog.string('source').notNullable() // LIS listener, API...
-    deviceLog.dateTime('createdOn').notNullable()
+    deviceLog.dateTime('createdOn').notNullable().index()
     deviceLog.string('senderIp').notNullable()
     deviceLog.string('checkpoint').index()
     deviceLog.text('rawMessage')

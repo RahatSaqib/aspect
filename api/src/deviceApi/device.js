@@ -1,4 +1,5 @@
 const _ = require('lodash')
+const Boom = require('boom')
 const { addResult, getResult } = require('./result')
 
 function* addDeviceData(context) {
@@ -36,11 +37,15 @@ function* addDeviceData(context) {
 }
 
 function* getDeviceData(context) {
-  const { now, device: { name: deviceName }, deviceLog: { checkpoint } } = context
+  const { now, device, deviceLog } = context
 
-  const response = { name: deviceName, time: now.toISOString() }
-  if (checkpoint != null) {
-    response.checkpoint = checkpoint
+  const response = {
+    name: device.name,
+    requestedOn: now.toISOString(),
+    loggedOn: deviceLog.createdOn
+  }
+  if (deviceLog.checkpoint != null) {
+    response.checkpoint = deviceLog.checkpoint
   }
 
   const config = yield* getDeviceConfiguration(context, true)
@@ -59,6 +64,19 @@ function* getDeviceData(context) {
   }
 
   return response
+}
+
+function* getDeviceCheckpoint(context) {
+  const { knex, device: { id: deviceId } } = context
+  const deviceLog = yield knex('DeviceLog')
+    .where({ deviceId })
+    .whereNotNull('checkpoint')
+    .orderBy('id', 'desc')
+    .first('checkpoint')
+  if (deviceLog != null) {
+    return { checkpoint: deviceLog.checkpoint }
+  }
+  return Boom.notFound()
 }
 
 function* updateDeviceConfiguration(context) {
@@ -147,6 +165,7 @@ function* getDeviceOperation(context) {
 module.exports = {
   addDeviceData,
   getDeviceData,
+  getDeviceCheckpoint,
   updateDeviceConfiguration,
   addDeviceOperation
 }
