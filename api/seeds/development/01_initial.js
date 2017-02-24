@@ -264,14 +264,25 @@ function* seed(knex) {
   })
 
   // DeviceStatus
+  yield knex('DeviceStatus').insert({
+    name: 'Provisioned',
+    i18nKey: 'deviceStatusProvisioned',
+    token: 'provisioned'
+  })
+  const [deviceStatusAssigned] = yield knex('DeviceStatus').insert({
+    name: 'Assigned',
+    i18nKey: 'deviceStatusAssigned',
+    token: 'assigned'
+  })
   const [deviceStatusApproved] = yield knex('DeviceStatus').insert({
     name: 'Approved',
+    i18nKey: 'deviceStatusApproved',
     token: 'approved'
   })
-
-  const [deviceStatusUnapproved] = yield knex('DeviceStatus').insert({
-    name: 'Unapproved',
-    token: 'unapproved'
+  yield knex('DeviceStatus').insert({
+    name: 'Decommissioned',
+    i18nKey: 'deviceStatusDecommissioned',
+    token: 'decommissioned'
   })
 
   // Assays and AssayTypes
@@ -1425,7 +1436,7 @@ function* seed(knex) {
       name: `GeneXpert #${i} ${siteData.shortname}`,
       shortname: `GeneXpert #${i}`,
       deviceTypeId: deviceTypeGeneXpertId,
-      deviceStatusId: _.random(1) > 0 ? deviceStatusApproved : deviceStatusUnapproved,
+      deviceStatusId: _.random(1) > 0 ? deviceStatusApproved : deviceStatusAssigned,
       configurationData: JSON.stringify({
         requirePrinter: 'no',
         adminPassword: 'pwd123',
