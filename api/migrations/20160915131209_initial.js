@@ -310,7 +310,6 @@ function* up(knex) {
     device.string('lastPingFromIp', 45)
     device.dateTime('putInService')
     device.string('putInServiceSource')
-    device.boolean('approved')
     device.dateTime('approvedOn')
     device.integer('approvedBy').unsigned()
       .index().references('id').inTable('User')

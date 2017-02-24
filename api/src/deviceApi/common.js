@@ -73,18 +73,16 @@ function* createDeviceApiContext(request, handlerOptions) {
   } = handlerOptions
   const { auth } = request
   const now = new Date()
-  const devices = yield knex('DeviceApiKey as dak')
+  let device = yield knex('DeviceApiKey as dak')
     .innerJoin('Device as d', 'dak.deviceId', 'd.id')
     .innerJoin('DeviceStatus as ds', 'd.deviceStatusId', 'ds.id')
     .where({
       'dak.token': auth.credentials.token,
       'dak.revoked': false
     })
-    .select('d.id', 'd.name', 'd.serial', 'ds.token as status')
-    .limit(2)
+    .first('d.id', 'd.name', 'd.serial', 'ds.token as status')
 
-  let device = devices.length === 1 ? devices[0] : null
-  if (devices.length === 0 && createDevice) {
+  if (device == null && createDevice) {
     const deviceAndError = yield createNewDevice(request, now)
     if (deviceAndError.error) {
       return deviceAndError
@@ -164,7 +162,7 @@ function createNewDevice(request, now) {
       updatedOn: now
     }
     if (device.status === 'approved') {
-      inserts.approved = 1
+      // TODO DeviceStatusLog ASP-340
       inserts.approvedOn = now
     }
     const [deviceId] = yield knex('Device').insert(inserts)
