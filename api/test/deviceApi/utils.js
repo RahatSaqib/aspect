@@ -33,12 +33,44 @@ function* deleteTestDataFromCheckpoint(knex, checkpoint, deviceIds) {
   yield knex('DeviceOperation').whereIn('id', opIds).delete()
 }
 
+function* deleteDeviceAndTestData(knex, apiKeys) {
+  const deviceIds = yield knex('Device as d')
+    .innerJoin('DeviceApiKey as dak', 'dak.deviceId', 'd.id')
+    .whereIn('dak.token', apiKeys.map(key => key.token))
+    .select('d.id')
+    .map(device => device.id)
+
+  const resultIds = yield knex('Result')
+    .whereIn('deviceId', deviceIds)
+    .map(result => result.id)
+
+  const opIds = yield knex('DeviceOperation')
+    .whereIn('deviceId', deviceIds)
+    .map(op => op.id)
+
+  yield knex('DeviceLog').whereIn('deviceId', deviceIds).delete()
+  yield knex('InventoryLog').whereIn('resultId', resultIds).delete()
+  yield knex('ResultWorkflowLog').whereIn('resultId', resultIds).delete()
+  yield knex('Result').whereIn('id', resultIds).delete()
+  yield knex('DeviceOperation').whereIn('id', opIds).delete()
+  yield knex('DeviceApiKey').whereIn('deviceId', deviceIds).update({ deviceId: null })
+  yield knex('Device').whereIn('id', deviceIds).delete()
+}
+
 function* getDeviceConfigurationData(knex, deviceId) {
   const { configurationData } = yield knex('Device')
     .where({ id: deviceId })
     .first('configurationData')
 
   return JSON.parse(configurationData || null)
+}
+
+function* getDeviceFromApiKey(knex, apiKey) {
+  const device = yield knex('Device as d')
+    .innerJoin('DeviceApiKey as dak', 'd.id', 'dak.deviceId')
+    .where('dak.token', apiKey.token)
+    .first()
+  return device
 }
 
 function* getLastDeviceOperation(knex, deviceId) {
@@ -88,6 +120,7 @@ class DeviceApiTestContext {
     this.checkpoint = null
     this.deviceIds = []
     this.initialConfigurationData = {}
+    this.apiKeysWithoutDevice = []
 
     _.bindAll(this, ['beforeEach', 'afterEach', 'runTest'])
   }
@@ -98,6 +131,7 @@ class DeviceApiTestContext {
       self.checkpoint = null
       self.deviceIds.splice(0)
       self.initialConfigurationData = {}
+      self.apiKeysWithoutDevice.splice(0)
     })
   }
 
@@ -151,13 +185,16 @@ class DeviceApiTestContext {
       }
       assert.isOk(apiKey)
       self.deviceIds.splice(0)
+      self.apiKeysWithoutDevice.splice(0)
 
       // save device id for the following tests
-
+      self.apiKey = apiKey
       self.clientAuth = `Bearer ${clientToken}`
       self.deviceAuth = `Bearer ${apiKey.token}`
 
-      if (device) {
+      if (!device) {
+        self.apiKeysWithoutDevice.push(apiKey)
+      } else {
         self.deviceId = device.id
 
         self.deviceIds.push(device.id)
@@ -167,16 +204,16 @@ class DeviceApiTestContext {
 
         self.initialConfigurationData[device.id] = configurationData || null
         self.deviceConfigurationData = JSON.parse(self.initialConfigurationData[device.id])
-      }
 
-      self.checkpoint = `Device API Device Tests ${new Date()}`
-      yield self.server.post(devicePath)
-        .set('Authorization', self.deviceAuth)
-        .send({ checkpoint: self.checkpoint })
-        .then((res) => {
-          assert.equal(res.status, 200)
-          assert.typeOf(res.body, 'Object')
-        })
+        self.checkpoint = `Device API Device Tests ${new Date()}`
+        yield self.server.post(devicePath)
+          .set('Authorization', self.deviceAuth)
+          .send({ checkpoint: self.checkpoint })
+          .then((res) => {
+            assert.equal(res.status, 200)
+            assert.typeOf(res.body, 'Object')
+          })
+      }
 
       return yield* test(knex)
     })
@@ -196,6 +233,10 @@ class DeviceApiTestContext {
       if (self.checkpoint) {
         yield* deleteTestDataFromCheckpoint(knex, self.checkpoint, self.deviceIds)
       }
+
+      if (self.apiKeysWithoutDevice.length > 0) {
+        yield* deleteDeviceAndTestData(knex, self.apiKeysWithoutDevice)
+      }
     })
   }
 }
@@ -203,6 +244,7 @@ class DeviceApiTestContext {
 module.exports = {
   createTestContext,
   getDeviceConfigurationData,
+  getDeviceFromApiKey,
   getLastDeviceOperation,
   getLastDeviceOperationData,
   getLastDeviceOperationId,

@@ -315,8 +315,8 @@ function* up(knex) {
     device.integer('approvedBy').unsigned()
       .index().references('id').inTable('User')
     device.specificType('configurationData', 'JSON')
-    addCreateFields(device)
-    addUpdateFields(device)
+    addCreateFieldsNullable(device)
+    addUpdateFieldsNullable(device)
     device.charset('utf8')
   })
 

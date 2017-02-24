@@ -4,6 +4,7 @@ const _ = require('lodash')
 const {
   createTestContext,
   getDeviceConfigurationData,
+  getDeviceFromApiKey,
   getLastDeviceOperationId,
   getLastResultId
 } = require('./utils')
@@ -1386,7 +1387,7 @@ describe('Device Result API routes', () => {
     })
   })
 
-  describe.skip('RRT Lab/Clinic Tests', () => {
+  describe('RRT Lab/Clinic Tests', () => {
     const context = createTestContext(server, { user: 'rrt_admin', type: 'm2000' })
 
     const runTest = context.runTest
@@ -1394,7 +1395,102 @@ describe('Device Result API routes', () => {
     beforeEach(context.beforeEach)
     afterEach(context.afterEach)
 
-    it('should honor device role sample origin site', () => runTest(function* (knex) {
+    it('should create Device on first post with API Key', () => runTest(function* (knex) {
+      const { apiKey, deviceAuth } = context
+      assert.isOk(apiKey)
+      const device1 = yield* getDeviceFromApiKey(knex, apiKey)
+      assert.isNotOk(device1)
+      let serial = null
+      yield server.post(devicePath)
+        .set('Authorization', deviceAuth)
+        .send({})
+        .then((res) => {
+          assert.equal(res.status, 200)
+          serial = res.body.serial
+          assert.isOk(serial)
+        })
+      const device2 = yield* getDeviceFromApiKey(knex, apiKey)
+      assert.isOk(device2)
+      assert.equal(device2.serial, serial)
+      assert.equal(device2.name, serial)
+
+      yield server.post(devicePath)
+        .set('Authorization', deviceAuth)
+        .send({ name: 'MY AWESOME DEVICE!', serial: 'DO NOT CHANGE SERIAL' })
+        .then((res) => {
+          assert.equal(res.status, 200)
+          serial = res.body.serial
+          assert.isOk(serial)
+        })
+
+      const device3 = yield* getDeviceFromApiKey(knex, apiKey)
+      assert.isOk(device3)
+      assert.equal(device3.id, device2.id)
+      assert.equal(device3.serial, serial)
+      assert.equal(device3.name, 'MY AWESOME DEVICE!')
+    }))
+
+    it('should create Device on first post with API Key and name', () => runTest(function* (knex) {
+      const { apiKey, deviceAuth } = context
+      assert.isOk(apiKey)
+      const device1 = yield* getDeviceFromApiKey(knex, apiKey)
+      assert.isNotOk(device1)
+      let serial = null
+      yield server.post(devicePath)
+        .set('Authorization', deviceAuth)
+        .send({ name: 'SHINY NEW' })
+        .then((res) => {
+          assert.equal(res.status, 200)
+          serial = res.body.serial
+          assert.isOk(serial)
+        })
+      const device2 = yield* getDeviceFromApiKey(knex, apiKey)
+      assert.isOk(device2)
+      assert.equal(device2.serial, serial)
+      assert.equal(device2.name, 'SHINY NEW')
+    }))
+
+    it('should create Device on first post with API Key and serial', () => runTest(function* (knex) {
+      const { apiKey, deviceAuth } = context
+      assert.isOk(apiKey)
+      const device1 = yield* getDeviceFromApiKey(knex, apiKey)
+      assert.isNotOk(device1)
+      let serial = null
+      yield server.post(devicePath)
+        .set('Authorization', deviceAuth)
+        .send({ serial: 'OMAN-123456' })
+        .then((res) => {
+          assert.equal(res.status, 200)
+          serial = res.body.serial
+          assert.equal(serial, 'OMAN-123456')
+        })
+      const device2 = yield* getDeviceFromApiKey(knex, apiKey)
+      assert.isOk(device2)
+      assert.equal(device2.serial, serial)
+      assert.equal(device2.name, serial)
+    }))
+
+    it('should create Device on first post with API Key and serial', () => runTest(function* (knex) {
+      const { apiKey, deviceAuth } = context
+      assert.isOk(apiKey)
+      const device1 = yield* getDeviceFromApiKey(knex, apiKey)
+      assert.isNotOk(device1)
+      let serial = null
+      yield server.post(devicePath)
+        .set('Authorization', deviceAuth)
+        .send({ serial: 'OMAN-123456', name: 'SHINY NEW' })
+        .then((res) => {
+          assert.equal(res.status, 200)
+          serial = res.body.serial
+          assert.equal(serial, 'OMAN-123456')
+        })
+      const device2 = yield* getDeviceFromApiKey(knex, apiKey)
+      assert.isOk(device2)
+      assert.equal(device2.serial, serial)
+      assert.equal(device2.name, 'SHINY NEW')
+    }))
+
+    it.skip('should honor device role sample origin site', () => runTest(function* (knex) {
       const { deviceAuth } = context
       const devicePath = '/device'
 
