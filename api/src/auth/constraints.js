@@ -61,37 +61,6 @@ function getConstraints(credentials) {
   })
 }
 
-function getDeviceConstraints(credentials) {
-  const deviceId = query('Get device id for device credentials')
-    .from('Device as d')
-    .innerJoin('DeviceApiKey as dak', 'd.id', 'dak.deviceId')
-    .where({
-      'dak.token': credentials.token,
-      'dak.revoked': false
-    })
-    .first('d.id as deviceId')
-
-  const dataFilters = query('Get constraints for device credentials')
-    .from('DataFilter as f')
-    .innerJoin('Role as r', 'f.id', 'r.dataFilterId')
-    .innerJoin('DeviceRole as dr', 'r.id', 'dr.roleId')
-    .innerJoin('DeviceApiKey as dak', 'dak.deviceId', 'dr.deviceId')
-    .where({
-      'dak.token': credentials.token,
-      'dak.revoked': false
-    })
-    .select('f.constraint')
-    .map(f => JSON.parse(f.constraint))
-
-  return Promise.all([deviceId, dataFilters])
-    .then(([deviceId, filterConstraints]) => {
-      const constraints = {
-        $or: [{ device: { id: deviceId.deviceId } }].concat(filterConstraints)
-      }
-      return constraints
-    })
-}
-
 function addConstraints(queryBuilder, constraints, aliases) {
   let { site, partner, orgUnit, geography, country, state, lga } = aliases
   const { device, sample } = aliases
@@ -192,6 +161,5 @@ function addConstraints(queryBuilder, constraints, aliases) {
 
 module.exports = {
   getConstraints,
-  getDeviceConstraints,
   addConstraints
 }

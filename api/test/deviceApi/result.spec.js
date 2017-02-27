@@ -1504,21 +1504,36 @@ describe('Device Result API routes', () => {
       assert.deepEqual(op2, { a: 'basd' })
     }))
 
-    it.skip('should honor device role sample origin site', () => runTest(function* (knex) {
-      const { deviceAuth } = context
+    it('should honor device role sample origin site', () => runTest(function* (knex) {
+      const { deviceAuth, apiKey: labKey } = context
       const devicePath = '/device'
 
-      const [device1315, device1723] = yield knex('Device as d')
-        .join('Site as s', 'd.siteId', 's.id')
-        .join('DeviceType as dt', 'd.deviceTypeId', 'dt.id')
-        .whereIn('s.externalId', ['1315', '1723'])
-        .where('dt.name', 'RRT')
-        .orderBy('s.externalId')
-        .select('d.*')
-      context.deviceIds.push(device1315.id, device1723.id)
+      let deviceLab = yield* getDeviceFromApiKey(knex, labKey)
+      assert.isNotOk(deviceLab)
 
-      const device1315Auth = yield* context.getDeviceAuth(knex, device1315.id)
-      const device1723Auth = yield* context.getDeviceAuth(knex, device1723.id)
+      const [device1315Key, device1723Key] = yield knex('DeviceApiKey as dak')
+        .join('Site as s', 'dak.siteId', 's.id')
+        .join('DeviceType as dt', 'dak.deviceTypeId', 'dt.id')
+        .whereIn('s.externalId', ['1315', '1723'])
+        .where({
+          'dt.name': 'RRT',
+          'dak.revoked': false
+        })
+        .orderBy('s.externalId')
+        .select('dak.token')
+      assert.isOk(device1315Key)
+      assert.isOk(device1315Key.token)
+      assert.isOk(device1723Key)
+      assert.isOk(device1723Key.token)
+
+      let device1315 = yield* getDeviceFromApiKey(knex, device1315Key)
+      let device1723 = yield* getDeviceFromApiKey(knex, device1723Key)
+      assert.isNotOk(device1315)
+      assert.isNotOk(device1723)
+
+      context.apiKeysWithoutDevice.push(device1315Key, device1723Key)
+      const device1315Auth = `Bearer ${device1315Key.token}`
+      const device1723Auth = `Bearer ${device1723Key.token}`
 
       const device1315ExternalId = `1315-${new Date()}`
       const device1723ExternalId = `1723-${new Date()}`
@@ -1530,6 +1545,13 @@ describe('Device Result API routes', () => {
           assert.equal(res.status, 200)
         })
 
+      deviceLab = yield* getDeviceFromApiKey(knex, labKey)
+      device1315 = yield* getDeviceFromApiKey(knex, device1315Key)
+      device1723 = yield* getDeviceFromApiKey(knex, device1723Key)
+      assert.isOk(deviceLab)
+      assert.isNotOk(device1315)
+      assert.isNotOk(device1723)
+
       yield server.post(devicePath)
         .set('Authorization', device1315Auth)
         .send({ checkpoint: 'rrt1315_0' })
@@ -1537,12 +1559,26 @@ describe('Device Result API routes', () => {
           assert.equal(res.status, 200)
         })
 
+      deviceLab = yield* getDeviceFromApiKey(knex, labKey)
+      device1315 = yield* getDeviceFromApiKey(knex, device1315Key)
+      device1723 = yield* getDeviceFromApiKey(knex, device1723Key)
+      assert.isOk(deviceLab)
+      assert.isOk(device1315)
+      assert.isNotOk(device1723)
+
       yield server.post(devicePath)
         .set('Authorization', device1723Auth)
         .send({ checkpoint: 'rrt1723_0' })
         .then((res) => {
           assert.equal(res.status, 200)
         })
+
+      deviceLab = yield* getDeviceFromApiKey(knex, labKey)
+      device1315 = yield* getDeviceFromApiKey(knex, device1315Key)
+      device1723 = yield* getDeviceFromApiKey(knex, device1723Key)
+      assert.isOk(deviceLab)
+      assert.isOk(device1315)
+      assert.isOk(device1723)
 
       yield server.post(devicePostResultPath)
         .set('Authorization', deviceAuth)
@@ -2031,33 +2067,6 @@ describe('Device Result API routes', () => {
           assert.property(lastResult.sample, 'id')
           assert.property(lastResult.sample.originSite, 'id')
           assert.equal(lastResult.sample.originSite.id, '1723')
-          assert.equal(lastResult.workflow.status.id, 'Acknowledged')
-          assert.property(lastResult.workflow, 'changedOn')
-
-          assert.deepEqual(_.omit(lastResult, 'sample', 'workflow'), {
-            id: device1723ExternalId,
-            data: {
-              resultText: '154112',
-              copies: 154112
-            },
-            assay: { id: 'HivVl' },
-            category: [{ id: 'Success' }],
-            type: { id: 'Patient' },
-            notes: '154,112 Copies / mL'
-          })
-        })
-
-
-      yield server.get(`${devicePath}?checkpoint=rrt_0&offset=4`)
-        .set('Authorization', deviceAuth)
-        .then((res) => {
-          assert.equal(res.status, 200)
-
-          const lastResult = res.body.result
-          assert.typeOf(lastResult, 'Object')
-          assert.property(lastResult.sample, 'id')
-          assert.property(lastResult.sample.originSite, 'id')
-          assert.equal(lastResult.sample.originSite.id, '1723')
           assert.equal(lastResult.workflow.status.id, 'OK')
           assert.property(lastResult.workflow, 'changedOn')
 
@@ -2153,32 +2162,6 @@ describe('Device Result API routes', () => {
         })
 
       yield server.get(`${devicePath}?checkpoint=rrt_3&offset=-2`)
-        .set('Authorization', deviceAuth)
-        .then((res) => {
-          assert.equal(res.status, 200)
-
-          const lastResult = res.body.result
-          assert.typeOf(lastResult, 'Object')
-          assert.property(lastResult.sample, 'id')
-          assert.property(lastResult.sample.originSite, 'id')
-          assert.equal(lastResult.sample.originSite.id, '1723')
-          assert.equal(lastResult.workflow.status.id, 'Acknowledged')
-          assert.property(lastResult.workflow, 'changedOn')
-
-          assert.deepEqual(_.omit(lastResult, 'sample', 'workflow'), {
-            id: device1723ExternalId,
-            data: {
-              resultText: '154112',
-              copies: 154112
-            },
-            assay: { id: 'HivVl' },
-            category: [{ id: 'Success' }],
-            type: { id: 'Patient' },
-            notes: '154,112 Copies / mL'
-          })
-        })
-
-      yield server.get(`${devicePath}?checkpoint=rrt_3&offset=-3`)
         .set('Authorization', deviceAuth)
         .then((res) => {
           assert.equal(res.status, 200)

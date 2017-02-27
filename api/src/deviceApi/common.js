@@ -1,6 +1,5 @@
 const Boom = require('boom')
 const { knex, transact } = require('../db')
-const { getDeviceConstraints, addConstraints } = require('../auth/constraints')
 const { asyncHandler } = require('../routes')
 
 function deviceApiHandler(handler, handlerOptions) {
@@ -73,16 +72,23 @@ function* createDeviceApiContext(request, handlerOptions) {
   } = handlerOptions
   const { auth } = request
   const now = new Date()
-  let device = yield knex('DeviceApiKey as dak')
+  const existingDeviceAndData = yield knex('DeviceApiKey as dak')
     .innerJoin('Device as d', 'dak.deviceId', 'd.id')
     .innerJoin('DeviceStatus as ds', 'd.deviceStatusId', 'ds.id')
+    .innerJoin('DeviceType as dt', 'd.deviceTypeId', 'dt.id')
+    .innerJoin('DeviceTypeCategory as dtc', 'dtc.id', 'dt.deviceTypeCategoryId')
     .where({
       'dak.token': auth.credentials.token,
       'dak.revoked': false
     })
-    .first('d.id', 'd.name', 'd.serial', 'ds.token as status')
+    .first(
+      'd.id', 'd.name', 'd.serial', 'd.siteId',
+      'ds.token as status', 'dtc.name as deviceTypeCategory')
 
-  if (device == null && createDevice) {
+  let device = null
+  if (existingDeviceAndData != null) {
+    device = existingDeviceAndData
+  } else if (createDevice) {
     const deviceAndError = yield createNewDevice(request, now)
     if (deviceAndError.error) {
       return deviceAndError
@@ -101,27 +107,32 @@ function* createDeviceApiContext(request, handlerOptions) {
     return { error: Boom.unauthorized() }
   }
 
-  const constraints = yield getDeviceConstraints(auth.credentials)
-
-  let deviceLog = null
-  if (requireDeviceLog) {
-    const offset = +(request.query.offset || 0)
-    deviceLog = yield* getDeviceLog(
-      device.id, constraints, request.query.checkpoint, offset)
-    if (deviceLog == null) {
-      return { error: Boom.notFound() }
-    }
-  }
-
   const context = new DeviceApiContext({
     now,
     device,
-    deviceLog,
-    constraints,
     payload: request.payload,
     query: request.query
   })
 
+  // Add Device Log if requested
+  let deviceLog = null
+  if (requireDeviceLog) {
+    if (existingDeviceAndData != null) {
+      // We will only have a device log if we already had a device
+      // This also ensures we have all appropriate fields on device
+      // object from initial query
+      const offset = +(request.query.offset || 0)
+      deviceLog = yield* getDeviceLog(context, request.query.checkpoint, offset)
+    }
+
+    if (deviceLog == null) {
+      // We've asked for a log but can't find it
+      return { error: Boom.notFound() }
+    }
+    context.deviceLog = deviceLog
+  }
+
+  // finally, all is well
   return { context }
 }
 
@@ -226,10 +237,12 @@ class DeviceApiContext {
   }
 }
 
-function* getDeviceLog(deviceId, dataConstraints, checkpoint, offset) {
+function* getDeviceLog(context, checkpoint, offset) {
+  const { device } = context
+
   // Find device log at checkpoint or latest
   const initialDeviceLogQuery = knex('DeviceLog')
-    .where({ deviceId })
+    .where({ deviceId: device.id })
     .orderBy('id', 'desc')
   // use specified checkpoint, otherwise just select latest
   if (checkpoint) {
@@ -248,28 +261,8 @@ function* getDeviceLog(deviceId, dataConstraints, checkpoint, offset) {
     }
   }
 
-  // We need to consider DeviceLogs with and without
-  // the result constraints and return the first entry (minimum log id)
-  // Two steps are required because results might be allowed from a
-  // different sample origin site (lab/clinic) but device configuration
-  // and operation updates are currently always constrained by device
-  const deviceLogOffsetQuery = knex('Device as d')
-    .innerJoin('DeviceLog as dl', 'dl.deviceId', 'd.id')
-    .where({ 'd.id': deviceId })
-    .union(function () {
-      this.from('Result as r')
-        .innerJoin('Device as d', 'r.deviceId', 'd.id')
-        .innerJoin('DeviceLog as dl', 'dl.resultId', 'r.id')
-        .leftJoin('Sample as s', 'r.sampleId', 's.id')
-        .leftJoin('Site as sos', 's.originSiteId', 'sos.id')
-        .modify(addConstraints, dataConstraints, { device: 'd', sample: 's' })
-        .select('dl.id')
-    })
-    .select('dl.id')
-    .as('dls')
-
+  // Find log at specified offset from checkpoint
   const deviceLogQuery = knex('DeviceLog as dl')
-    .innerJoin(deviceLogOffsetQuery, 'dl.id', 'dls.id')
     .first(
       'dl.id as deviceLogId',
       'dl.deviceId as deviceLogDeviceId',
@@ -294,6 +287,32 @@ function* getDeviceLog(deviceId, dataConstraints, checkpoint, offset) {
     }
   }
 
+  if (device.siteId == null || device.deviceTypeCategory !== 'Client') {
+    // If the device is not assigned to site or if it's not a client
+    // device, we only need to ensure log originates from device
+    deviceLogQuery.where({ 'dl.deviceId': device.id })
+  } else {
+    // We need to consider DeviceLogs with and without
+    // the result constraints and return the first entry (minimum log id)
+    // Two steps are required because results might be allowed from a
+    // different sample origin site (lab/clinic) but device configuration
+    // and operation updates are currently always constrained by device
+    const deviceLogOffsetQuery = knex('Device as d')
+      .innerJoin('DeviceLog as dl', 'dl.deviceId', 'd.id')
+      .where({ 'd.id': device.id })
+      .select('dl.id')
+      .union(function () {
+        this.from('Result as r')
+          .innerJoin('Device as d', 'r.deviceId', 'd.id')
+          .innerJoin('DeviceLog as dl', 'dl.resultId', 'r.id')
+          .leftJoin('Sample as s', 'r.sampleId', 's.id')
+          .modify(addResultConstraints, context, { device: 'd', result: 'r', sample: 's' })
+          .select('dl.id')
+      })
+      .as('dls')
+    deviceLogQuery.innerJoin(deviceLogOffsetQuery, 'dl.id', 'dls.id')
+  }
+
   const deviceLog = yield deviceLogQuery
   if (deviceLog == null) {
     return null
@@ -304,12 +323,32 @@ function* getDeviceLog(deviceId, dataConstraints, checkpoint, offset) {
   const response = { id: deviceLogId }
   // set checkpoint if log changed during query, e.g, due to offset
   // but do not leak checkpoint from different device
-  if (deviceLogDeviceId === deviceId) {
+  if (deviceLogDeviceId === device.id) {
     response.checkpoint = deviceLogCheckpoint
   }
   return response
 }
 
+function addResultConstraints(queryBuilder, context, aliases) {
+  const { device } = context
+  if (device.siteId == null || device.deviceTypeCategory !== 'Client') {
+    // If the device is not assigned to site or if it's not a client
+    // device, we only need to ensure log originates from device
+    queryBuilder.where(`${aliases.device}.id`, device.id)
+  } else {
+    // We need to consider DeviceLogs with and without
+    // the result constraints and return the first entry (minimum log id)
+    // Two steps are required because results might be allowed from a
+    // different sample origin site (lab/clinic) but device configuration
+    // and operation updates are currently always constrained by device
+    queryBuilder.where(function () {
+      this.where(`${aliases.device}.id`, device.id)
+      this.orWhere(`${aliases.sample}.originSiteId`, device.siteId)
+    })
+  }
+}
+
 module.exports = {
-  deviceApiHandler
+  deviceApiHandler,
+  addResultConstraints
 }
