@@ -6,6 +6,7 @@ const {
   getDeviceConfigurationData,
   getDeviceFromApiKey,
   getLastDeviceOperationId,
+  getLastDeviceOperationData,
   getLastResultId
 } = require('./utils')
 
@@ -1475,10 +1476,16 @@ describe('Device Result API routes', () => {
       assert.isOk(apiKey)
       const device1 = yield* getDeviceFromApiKey(knex, apiKey)
       assert.isNotOk(device1)
+
       let serial = null
       yield server.post(devicePath)
         .set('Authorization', deviceAuth)
-        .send({ serial: 'OMAN-123456', name: 'SHINY NEW' })
+        .send({
+          serial: 'OMAN-123456',
+          name: 'SHINY NEW',
+          operation: { data: { a: 'basd' } },
+          configuration: { data: { as: 'df' } }
+        })
         .then((res) => {
           assert.equal(res.status, 200)
           serial = res.body.serial
@@ -1486,8 +1493,15 @@ describe('Device Result API routes', () => {
         })
       const device2 = yield* getDeviceFromApiKey(knex, apiKey)
       assert.isOk(device2)
+      assert.isOk(device2.id)
       assert.equal(device2.serial, serial)
       assert.equal(device2.name, 'SHINY NEW')
+
+      assert.deepEqual(JSON.parse(device2.configurationData), { as: 'df' })
+      const config2 = yield* getDeviceConfigurationData(knex, device2.id)
+      assert.deepEqual(config2, { as: 'df' })
+      const op2 = yield* getLastDeviceOperationData(knex, device2.id)
+      assert.deepEqual(op2, { a: 'basd' })
     }))
 
     it.skip('should honor device role sample origin site', () => runTest(function* (knex) {

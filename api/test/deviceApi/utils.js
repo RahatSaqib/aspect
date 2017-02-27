@@ -69,7 +69,7 @@ function* getDeviceFromApiKey(knex, apiKey) {
   const device = yield knex('Device as d')
     .innerJoin('DeviceApiKey as dak', 'd.id', 'dak.deviceId')
     .where('dak.token', apiKey.token)
-    .first()
+    .first('d.*')
   return device
 }
 
