@@ -3,6 +3,7 @@ module.exports = require('../../src/db').seed(seed)
 const config = require('../../src/config')
 const _ = require('lodash')
 const bcrypt = require('bcrypt')
+const { randomToken } = require('../../src/deviceApi/apiKey')
 const permissions = require('./fixtures/permissions.json')
 const geography = require('./fixtures/geography.json')
 const patients = require('./fixtures/patients.json')
@@ -1405,7 +1406,9 @@ function* seed(knex) {
       shortname: `r${i}`,
       deviceTypeId: deviceTypeIdRouter,
       deviceStatusId: deviceStatusApproved,
-      partnerId: partnerOneId,
+      partnerId: siteData.partnerId,
+      orgUnitId: siteData.orgUnitId,
+      geographyId: siteData.geographyId,
       siteId: siteData.id,
       createdOn: new Date(+now - (3 * i * millisInHour)),
       updatedOn: new Date(+now - (i * millisInHour)),
@@ -1448,8 +1451,10 @@ function* seed(knex) {
           module4: '73235848'
         }
       }),
+      partnerId: siteData.partnerId,
+      orgUnitId: siteData.orgUnitId,
+      geographyId: siteData.geographyId,
       siteId: siteData.id,
-      partnerId: partnerOneId,
       // not all sites will have a router - we only added routers to some site
       deviceId: routerId || null,
       createdOn: new Date(+now - (3 * i * millisInHour)),
@@ -1466,8 +1471,14 @@ function* seed(knex) {
 
     // Create API Keys
     yield knex('DeviceApiKey').insert(Object.assign({
-      deviceId: device.id,
-      revoked: device.id % 5 === 0
+      token: randomToken(),
+      revoked: device.id % 5 === 0,
+      partnerId: siteData.partnerId,
+      orgUnitId: siteData.orgUnitId,
+      geographyId: siteData.geographyId,
+      siteId: siteData.id,
+      deviceTypeId: device.deviceTypeId,
+      deviceId: device.id
     }, auditFields))
 
     // Create DeviceOperation
@@ -1501,7 +1512,9 @@ function* seed(knex) {
         adminPassword: 'pwd123',
         firmwareUpdateRequired: 'no'
       }),
-      partnerId: partnerOneId,
+      partnerId: siteData.partnerId,
+      orgUnitId: siteData.orgUnitId,
+      geographyId: siteData.geographyId,
       siteId: siteData.id,
       // not all sites will have a router - we only added routers to some site
       deviceId: routerId || null,
@@ -1519,8 +1532,14 @@ function* seed(knex) {
 
     // Create API Keys
     yield knex('DeviceApiKey').insert(Object.assign({
-      deviceId: device.id,
-      revoked: device.id % 5 === 0
+      token: randomToken(),
+      revoked: device.id % 5 === 0,
+      partnerId: siteData.partnerId,
+      orgUnitId: siteData.orgUnitId,
+      geographyId: siteData.geographyId,
+      siteId: siteData.id,
+      deviceTypeId: device.deviceTypeId,
+      deviceId: device.id
     }, auditFields))
 
     // Create DeviceOperation

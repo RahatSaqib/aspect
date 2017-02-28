@@ -1,7 +1,5 @@
 const _ = require('lodash')
 const chai = require('chai')
-const jwt = require('jsonwebtoken')
-const config = require('../../src/config')
 const { run } = require('../../src/db')
 
 const assert = chai.assert
@@ -12,8 +10,8 @@ function* getApiKey(knex, deviceId) {
   const apiKey = yield knex('DeviceApiKey as dak')
     .innerJoin('Device as d', 'dak.deviceId', 'd.id')
     .where({ 'd.id': +deviceId, 'dak.revoked': 0 })
-    .first('dak.id as dak')
-  return apiKey && jwt.sign(apiKey, config.secret)
+    .first('dak.token')
+  return apiKey == null ? null : apiKey.token
 }
 
 function* deleteTestDataFromCheckpoint(knex, checkpoint, deviceIds) {

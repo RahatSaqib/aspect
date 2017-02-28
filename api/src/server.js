@@ -26,8 +26,11 @@ const plugins = [
   // view layer (hapi-swagger dependency)
   require('vision'),
 
-  // JWT for authentication
+  // JWT for authentication in client API
   require('hapi-auth-jwt2'),
+
+  // API Key in Device API
+  require('./deviceApi/deviceApiKeyPlugin'),
 
   // SwaggerUI and documentation
   {
@@ -126,7 +129,11 @@ server.register(plugins, (err) => { if (err) throw err })
 // ================================================
 // Authentication strategy and Authorization Scopes
 // ================================================
-server.auth.strategy('jwt', 'jwt', {
+// use config: { auth: false } on route definition to disable authentication
+// Device API uses API Keys
+server.auth.strategy('deviceApi', 'deviceApiKey')
+// Client API uses JWT
+server.auth.strategy('clientApi', 'jwt', {
   key: config.secret,
   validateFunc(decoded, request, callback) {
     // TODO What do we want to do to validate data within decoded JWT token?
@@ -141,23 +148,18 @@ server.auth.strategy('jwt', 'jwt', {
     // ["+device", "site:view", "site:edit"] will authorize anyone with device (required)
     //   and either "site:view" or "site:edit" permissions
 
-    const isDeviceApi = (+decoded.dak > 0)
     const modules = decoded.permissions ? _.uniq(
       _.map(
         _.filter(decoded.permissions,
           permission => permission.indexOf(':') > 0),
         permission => permission.substr(0, permission.indexOf(':')))) :
       []
-    const scope = [isDeviceApi ? 'deviceApi' : 'clientApi']
+    const scope = ['clientApi']
       .concat(modules, decoded.permissions || [])
     callback(null, valid, Object.assign({ scope }, decoded))
   }
   // TODO JWT verfication algorithm verifyOptions: { algorithms: [ 'HS256' ] }
 })
-
-// all routes use JWT authentication by default
-// use config: { auth: false } on route definition to disable authentication
-server.auth.default('jwt')
 
 // =======================
 // routes ================

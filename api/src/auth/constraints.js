@@ -66,7 +66,7 @@ function getDeviceConstraints(credentials) {
     .from('Device as d')
     .innerJoin('DeviceApiKey as dak', 'd.id', 'dak.deviceId')
     .where({
-      'dak.id': +credentials.dak,
+      'dak.token': credentials.token,
       'dak.revoked': false
     })
     .first('d.id as deviceId')
@@ -77,7 +77,7 @@ function getDeviceConstraints(credentials) {
     .innerJoin('DeviceRole as dr', 'r.id', 'dr.roleId')
     .innerJoin('DeviceApiKey as dak', 'dak.deviceId', 'dr.deviceId')
     .where({
-      'dak.id': +credentials.dak,
+      'dak.token': credentials.token,
       'dak.revoked': false
     })
     .select('f.constraint')

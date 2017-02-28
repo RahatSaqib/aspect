@@ -3,6 +3,7 @@ module.exports = require('../../src/db').seed(seed)
 const config = require('../../src/config')
 const _ = require('lodash')
 const bcrypt = require('bcrypt')
+const { randomToken } = require('../../src/deviceApi/apiKey')
 const labClinic = require('./fixtures/labClinic.json')
 
 const millisInHour = 1000 * 60 * 60
@@ -277,7 +278,9 @@ function* seed(knex) {
           adminAssays: ['HivVl', 'Eid']
         }
       }),
-      partnerId,
+      partnerId: siteData.partnerId,
+      orgUnitId: siteData.orgUnitId,
+      geographyId: siteData.geographyId,
       siteId: siteData.id,
       deviceId: routerId,
       createdOn: new Date(+now - (3 * millisInHour)),
@@ -286,8 +289,14 @@ function* seed(knex) {
     }, auditFields))
 
     yield knex('DeviceApiKey').insert(Object.assign({
-      deviceId,
-      revoked: 0
+      token: randomToken(),
+      revoked: 0,
+      partnerId: siteData.partnerId,
+      orgUnitId: siteData.orgUnitId,
+      geographyId: siteData.geographyId,
+      siteId: siteData.id,
+      deviceTypeId: deviceTypes.RRT.id,
+      deviceId
     }, auditFields))
 
     // Roles and permissions
@@ -333,7 +342,9 @@ function* seed(knex) {
       shortname: `${siteData.shortname} Router`,
       deviceTypeId: deviceTypes['Metacom Router'].id,
       deviceStatusId: deviceStatuses.Approved.id,
-      partnerId,
+      partnerId: siteData.partnerId,
+      orgUnitId: siteData.orgUnitId,
+      geographyId: siteData.geographyId,
       siteId: siteData.id,
       createdOn: new Date(+now - (3 * millisInHour)),
       updatedOn: new Date(+now - millisInHour),
@@ -363,7 +374,9 @@ function* seed(knex) {
           versionGold: '1.1.0',
         }
       }),
-      partnerId,
+      partnerId: siteData.partnerId,
+      orgUnitId: siteData.orgUnitId,
+      geographyId: siteData.geographyId,
       siteId: siteData.id,
       deviceId: routerId,
       createdOn: new Date(+now - (3 * millisInHour)),
@@ -372,8 +385,14 @@ function* seed(knex) {
     }, auditFields))
 
     yield knex('DeviceApiKey').insert(Object.assign({
-      deviceId,
-      revoked: 0
+      token: randomToken(),
+      revoked: 0,
+      partnerId: siteData.partnerId,
+      orgUnitId: siteData.orgUnitId,
+      geographyId: siteData.geographyId,
+      siteId: siteData.id,
+      deviceTypeId: deviceTypes.m2000.id,
+      deviceId
     }, auditFields))
 
     // create lab admin user with permission to view data to own lab
