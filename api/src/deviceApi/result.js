@@ -163,6 +163,9 @@ function* addResult(context) {
     resultTypeId: resultType.id,
     resultWorkflowStatusId: resultWorkflowStatus.id,
     sampleId,
+    sampleRunNumber: _.get(
+      payload, 'sample.runNumber',
+      _.get(existingResult, 'sampleRunNumber', null)),
     resultCategory1: _.get(categories, '[0].id', null),
     resultCategory2: _.get(categories, '[1].id', null),
     resultData,
@@ -284,7 +287,7 @@ function* getResult(context) {
       'r.instrumentSerial', 'r.moduleName', 'r.moduleSerial', 'r.id as resultId',
       'a.externalId as assayId', 'r.assayVersion',
       'r.latitude', 'r.longitude', 'rt.externalId as resultTypeId',
-      'rs.externalId as resultWorkflowStatusId',
+      'rs.externalId as resultWorkflowStatusId', 'r.sampleRunNumber',
       's.externalId as sampleId', 's.collectedOn as sampleCollectedOn',
       'sos.externalId as sampleOriginSiteId', 'st.externalId as sampleTypeId',
       'rc1.externalId as category1Id', 'rc2.externalId as category2Id')
@@ -352,6 +355,9 @@ function* getResult(context) {
   }
   if (row.sampleOriginSiteId != null) {
     sample.originSite = { id: row.sampleOriginSiteId }
+  }
+  if (row.sampleRunNumber != null) {
+    sample.runNumber = row.sampleRunNumber
   }
   if (!_.isEmpty(sample)) {
     result.sample = sample

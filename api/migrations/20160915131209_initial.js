@@ -449,6 +449,7 @@ function* up(knex) {
       .index().references('id').inTable('ResultType')
     result.integer('sampleId').unsigned().notNullable()
       .index().references('id').inTable('Sample')
+    result.string('sampleRunNumber')
     result.integer('resultCategory1').unsigned()
       .index().references('id').inTable('ResultCategory')
     result.integer('resultCategory2').unsigned()

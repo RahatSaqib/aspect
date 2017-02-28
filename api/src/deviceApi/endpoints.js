@@ -80,6 +80,8 @@ const resultPayload = {
       'Client specific identifier of the sample tested.'),
     collectedOn: Joi.date().iso().description(
       'Date and optional time the sample was collected.'),
+    runNumber: Joi.string().allow('', null).description(
+      'Sample run number.'),
     type: Joi.object().keys({
       id: Joi.string().required().description(
         'ID of the Sample Type')
