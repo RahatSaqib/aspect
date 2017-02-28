@@ -1,12 +1,10 @@
 module.exports = require('../../src/db').seed(seed)
 
 const config = require('../../src/config')
-const _ = require('lodash')
 const bcrypt = require('bcrypt')
 const { randomToken } = require('../../src/deviceApi/apiKey')
 const labClinic = require('./fixtures/labClinic.json')
 
-const millisInHour = 1000 * 60 * 60
 const saltRounds = parseInt(config.passwordSaltRounds, 10)
 
 function* seed(knex) {
@@ -144,12 +142,7 @@ function* seed(knex) {
     deviceTypeCategoryId: deviceTypeCategories.Client.id,
     configurationDataSchema: rrtConfigurationDataSchema
   })
-  const deviceTypes = yield rowsAsObject(knex, 'DeviceType')
-  const deviceStatuses = yield rowsAsObject(knex, 'DeviceStatus')
 
-  // const assayTypes = yield rowsAsObject(knex, 'AssayType')
-  // const assays = yield rowsAsObject(knex, 'Assay')
-  // const resultTypes = yield rowsAsObject(knex, 'ResultType')
   const modules = yield knex('Permission')
     .reduce((memo, row) => {
       if (!memo[row.module]) {
@@ -228,99 +221,15 @@ function* seed(knex) {
     const [siteId] = yield knex('Site').insert(siteData)
     siteData.id = siteId
 
-    // Router
-    const [routerId] = yield knex('Device').insert(Object.assign({}, auditFields, {
-      name: `${siteData.name} Router`,
-      shortname: `${siteData.shortname} Router`,
-      deviceTypeId: deviceTypes['Metacom Router'].id,
-      deviceStatusId: deviceStatuses.Approved.id,
-      partnerId,
-      siteId: siteData.id,
-      createdOn: new Date(+now - (3 * millisInHour)),
-      updatedOn: new Date(+now - millisInHour),
-      lastPingOn: new Date(+now - (millisInHour / 3))
-    }))
-    yield knex('DeviceSim').insert(Object.assign({
-      deviceId: routerId,
-      provider: 'Vodafone',
-      serial: `SRL-${routerId}`,
-      number: `+1 413 123 45${routerId}`
-    }, auditFields))
-
     // RRT Terminal
-    const [deviceId] = yield knex('Device').insert(Object.assign({
-      name: `${siteData.name} RRT`,
-      shortname: `${siteData.shortname} RRT`,
-      deviceTypeId: deviceTypes.RRT.id,
-      deviceStatusId: deviceStatuses.Approved.id,
-      configurationData: JSON.stringify({
-        requirePrinter: 'yes',
-        adminPassword: 'pwd123',
-        firmwareUpdateRequired: 'no',
-        userPins: {
-          user1Pin: '1234',
-          user1Name: _.times(4, () => String.fromCharCode(65 + _.random(25) + (_.random(1) > 0 ? 32 : 0))).join(''),
-          user1Assays: ['HivVl', 'Eid'],
-          user2Pin: '2345',
-          user2Name: _.times(4, () => String.fromCharCode(65 + _.random(25) + (_.random(1) > 0 ? 32 : 0))).join(''),
-          user2Assays: ['HivVl'],
-          user3Pin: '3456',
-          user3Name: _.times(4, () => String.fromCharCode(65 + _.random(25) + (_.random(1) > 0 ? 32 : 0))).join(''),
-          user3Assays: ['Eid'],
-          user4Pin: '4567',
-          user4Name: _.times(4, () => String.fromCharCode(65 + _.random(25) + (_.random(1) > 0 ? 32 : 0))).join(''),
-          user4Assays: ['HivVl', 'Eid'],
-          user5Pin: '5678',
-          user5Name: _.times(4, () => String.fromCharCode(65 + _.random(25) + (_.random(1) > 0 ? 32 : 0))).join(''),
-          user5Assays: ['HivVl'],
-          adminPin: '99999',
-          adminName: _.times(4, () => String.fromCharCode(65 + _.random(25) + (_.random(1) > 0 ? 32 : 0))).join(''),
-          adminAssays: ['HivVl', 'Eid']
-        }
-      }),
-      partnerId: siteData.partnerId,
-      orgUnitId: siteData.orgUnitId,
-      geographyId: siteData.geographyId,
-      siteId: siteData.id,
-      deviceId: routerId,
-      createdOn: new Date(+now - (3 * millisInHour)),
-      updatedOn: new Date(+now - (millisInHour)),
-      lastPingOn: new Date(+now - (millisInHour / 3))
-    }, auditFields))
-
     yield knex('DeviceApiKey').insert(Object.assign({
       token: randomToken(),
       revoked: 0,
       partnerId: siteData.partnerId,
       orgUnitId: siteData.orgUnitId,
       geographyId: siteData.geographyId,
-      siteId: siteData.id,
-      deviceTypeId: deviceTypes.RRT.id,
-      deviceId
+      siteId: siteData.id
     }, auditFields))
-
-    // Roles and permissions
-    const [dataFilterId] = yield knex('DataFilter').insert({
-      name: `${siteData.name} Filter`,
-      constraint: JSON.stringify({
-        sample: {
-          originSiteId: siteId
-        }
-      })
-    })
-
-    const [roleIdSite] = yield knex('Role').insert({
-      name: `${siteData.name} RRT Samples`,
-      partnerId,
-      dataFilterId
-    })
-
-    yield knex('RolePermission').insert([
-      { roleId: roleIdSite, permissionId: modules.device.edit }
-    ])
-
-    yield knex('DeviceRole').insert([
-       { deviceId, roleId: roleIdSite }])
   }
 
   // Labs have m2000 and modem
@@ -336,63 +245,14 @@ function* seed(knex) {
     const [siteId] = yield knex('Site').insert(siteData)
     siteData.id = siteId
 
-    // Router
-    const [routerId] = yield knex('Device').insert(Object.assign({}, auditFields, {
-      name: `${siteData.name} Router`,
-      shortname: `${siteData.shortname} Router`,
-      deviceTypeId: deviceTypes['Metacom Router'].id,
-      deviceStatusId: deviceStatuses.Approved.id,
-      partnerId: siteData.partnerId,
-      orgUnitId: siteData.orgUnitId,
-      geographyId: siteData.geographyId,
-      siteId: siteData.id,
-      createdOn: new Date(+now - (3 * millisInHour)),
-      updatedOn: new Date(+now - millisInHour),
-      lastPingOn: new Date(+now - (millisInHour / 3))
-    }))
-    yield knex('DeviceSim').insert(Object.assign({
-      deviceId: routerId,
-      provider: 'Vodafone',
-      serial: `SRL-${routerId}`,
-      number: `+1 413 123 45${routerId}`
-    }, auditFields))
-
     // M2000 Device
-    const [deviceId] = yield knex('Device').insert(Object.assign({
-      name: `${siteData.name} m2000`,
-      shortname: `${siteData.shortname} m2000`,
-      deviceTypeId: deviceTypes.m2000.id,
-      deviceStatusId: deviceStatuses.Approved.id,
-      configurationData: JSON.stringify({
-        requirePrinter: 'yes',
-        adminPassword: 'pwd123',
-        firmwareUpdateRequired: 'yes',
-        firmwareVersions: {
-          versionAlpha: '0.9.12-alpha',
-          versionBeta: '1.0.0-beta',
-          versionRC: '1.0.1-rc',
-          versionGold: '1.1.0',
-        }
-      }),
-      partnerId: siteData.partnerId,
-      orgUnitId: siteData.orgUnitId,
-      geographyId: siteData.geographyId,
-      siteId: siteData.id,
-      deviceId: routerId,
-      createdOn: new Date(+now - (3 * millisInHour)),
-      updatedOn: new Date(+now - millisInHour),
-      lastPingOn: new Date(+now - (millisInHour / 3))
-    }, auditFields))
-
     yield knex('DeviceApiKey').insert(Object.assign({
       token: randomToken(),
       revoked: 0,
       partnerId: siteData.partnerId,
       orgUnitId: siteData.orgUnitId,
       geographyId: siteData.geographyId,
-      siteId: siteData.id,
-      deviceTypeId: deviceTypes.m2000.id,
-      deviceId
+      siteId: siteData.id
     }, auditFields))
 
     // create lab admin user with permission to view data to own lab

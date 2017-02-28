@@ -1,6 +1,6 @@
 const _ = require('lodash')
 const Boom = require('boom')
-const { knex } = require('../db')
+const { knex, filterParams, sortPageParams } = require('../db')
 const { getConstraints, addConstraints } = require('../auth/constraints')
 const { groupToken } = require('../deviceApi/apiKey')
 
@@ -43,6 +43,21 @@ function* getDemoDevice(request) {
   }
 
   return result
+}
+
+function* getDemoDeviceApiKey(request) {
+  // FIXME Remove demo device api key once key management UI/API available
+  const { query } = request
+
+  const data = yield knex('DeviceApiKey as dak')
+    .innerJoin('Site as s', 'dak.siteId', 's.id')
+    .modify(filterParams, query, {
+      siteExternalId: 's.externalId',
+    })
+    .modify(sortPageParams, query, 'id')
+    .select('dak.id', 'dak.token')
+
+  return { ok: true, length: data.length, data }
 }
 
 function* getApiKey(deviceId, userConstraints) {
@@ -197,5 +212,6 @@ function* postDemoDeviceResult(request) {
 
 module.exports = {
   getDemoDevice,
+  getDemoDeviceApiKey,
   postDemoDeviceResult
 }

@@ -1,9 +1,11 @@
 const Joi = require('joi')
 const {
-  asyncHandler
+  asyncHandler,
+  validateSortPageParams
 } = require('../routes')
 const {
   getDemoDevice,
+  getDemoDeviceApiKey,
   postDemoDeviceResult
 } = require('./service')
 
@@ -19,6 +21,21 @@ module.exports = [
         params: {
           deviceId: Joi.string().description('Device id').required()
         }
+      }
+    }
+  },
+  {
+    method: 'GET',
+    path: '/demo/device/api-key',
+    handler: asyncHandler(getDemoDeviceApiKey),
+    config: {
+      description: 'Search for API Key',
+      notes: 'Lookup API Keys by query filters',
+      validate: {
+        query: Object.assign({
+          siteExternalId: Joi.string().allow('').description('Filter for facility code'),
+        },
+        validateSortPageParams('name', 'status', 'createdOn', 'lastSeen', 'totalTests'))
       }
     }
   },

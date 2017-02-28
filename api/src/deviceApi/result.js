@@ -1,27 +1,29 @@
 const Boom = require('boom')
 const _ = require('lodash')
-const { addConstraints } = require('../auth/constraints')
 const { consumeInventoryForResult } = require('../inventory/service')
+const { addResultConstraints } = require('./common')
 
 const DONOT_LOG_DELIVERED = ['Delivered', 'Acknowledged', 'Flagged', 'Error']
 const DELIVERED_EXTERNALID = 'Delivered'
 
 function* addResult(context) {
-  const { knex, payload, constraints: dataConstraints, now } = context
-
+  const { knex, payload, now } = context
   // TODO seperate permissions for device add vs update result?
-  const existingResults = !payload.id ? [] : yield knex('Result as r')
-    .where({ 'r.externalId': payload.id })
-    .innerJoin('Device as d', 'r.deviceId', 'd.id')
-    .leftJoin('Sample as s', 'r.sampleId', 's.id')
-    .modify(addConstraints, dataConstraints, { device: 'd', sample: 's' })
-    .distinct('r.*')
-    .limit(2)
-
-  if (existingResults.length > 1) {
-    return Boom.badRequest()
+  // Look up existing result matching external id if specified
+  let existingResult = null
+  if (payload.id) {
+    const existingResults = yield knex('Result as r')
+      .where({ 'r.externalId': payload.id })
+      .innerJoin('Device as d', 'r.deviceId', 'd.id')
+      .leftJoin('Sample as s', 'r.sampleId', 's.id')
+      .modify(addResultConstraints, context, { device: 'd', result: 'r', sample: 's' })
+      .distinct('r.*')
+      .limit(2)
+    if (existingResults.length > 1) {
+      return Boom.badRequest(`Cannot find unique result with id ${payload.id}`)
+    }
+    existingResult = existingResults[0]
   }
-  const existingResult = existingResults[0]
   const deviceId = existingResult ? existingResult.deviceId : context.device.id
 
   const assayQ = knex('Assay as a')
@@ -86,7 +88,23 @@ function* addResult(context) {
 
   if (!site || !resultType || !resultWorkflowStatus ||
       categories.length === 0 || assays.length !== 1) {
-    return Boom.badRequest()
+    const requestErrors = []
+    if (!site) {
+      requestErrors.push('assigned site for device')
+    }
+    if (!resultType) {
+      requestErrors.push(`result type with id ${_.get(payload, 'type.id')}`)
+    }
+    if (!resultWorkflowStatus) {
+      requestErrors.push(`result workflow status id ${_.get(payload, 'workflow.status.id')}`)
+    }
+    if (categories.length === 0) {
+      requestErrors.push(`result categories with ids ${categoryIds.join(' ')}`)
+    }
+    if (assays.length !== 1) {
+      requestErrors.push(`assay with id ${_.get(payload, 'assay.id')}`)
+    }
+    return Boom.badRequest(`Cannot find ${requestErrors.join(', ')}`)
   }
 
   const assay = assays[0]
@@ -257,17 +275,17 @@ function* addResult(context) {
   }
 
   // Update Inventory Levels at Site
-  const partnerId = dataConstraints.partner ? dataConstraints.partner.id : undefined
   const consumablesInResultData = _.isEmpty(payload.consumable) ? [] : payload.consumable
   yield* consumeInventoryForResult(
-    resultId, assay.id, site.id, consumablesInResultData, partnerId,
+    resultId, assay.id, site.id, consumablesInResultData, site.partnerId,
     result.startedOn, result.endedOn, knex)
 
   return {}
 }
 
 function* getResult(context) {
-  const { knex, constraints: dataConstraints, deviceLog: { id: deviceLogId } } = context
+  const { knex, deviceLog } = context
+
   const resultQuery = knex('Result as r')
     .innerJoin('Device as d', 'r.deviceId', 'd.id')
     .innerJoin('Assay as a', 'r.assayId', 'a.id')
@@ -278,7 +296,8 @@ function* getResult(context) {
     .leftJoin('ResultCategory as rc2', 'r.resultCategory2', 'rc2.id')
     .leftJoin('ResultType as rt', 'r.resultTypeId', 'rt.id')
     .leftJoin('ResultWorkflowStatus as rs', 'r.resultWorkflowStatusId', 'rs.id')
-    .modify(addConstraints, dataConstraints, { device: 'd', sample: 's' })
+    .innerJoin('DeviceLog as dl', 'dl.resultId', 'r.id')
+    .where('dl.id', deviceLog.id)
     .first(
       'r.externalId as resultExternalId', 'r.resultData', 'r.patientData',
       'r.startedOn', 'r.endedOn', 'r.updatedOn', 'r.researchId', 'r.notes',
@@ -292,17 +311,6 @@ function* getResult(context) {
       'sos.externalId as sampleOriginSiteId', 'st.externalId as sampleTypeId',
       'rc1.externalId as category1Id', 'rc2.externalId as category2Id')
 
-  if (!deviceLogId) {
-    // If device log id not specified, select result last updated
-    // with stable ordering
-    resultQuery
-      .orderBy('r.updatedOn', 'asc')
-      .orderBy('r.id', 'asc')
-  } else {
-    resultQuery
-      .innerJoin('DeviceLog as dl', 'dl.resultId', 'r.id')
-      .where('dl.id', '=', deviceLogId)
-  }
   const row = yield resultQuery
   if (row == null) {
     return null

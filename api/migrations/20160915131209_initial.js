@@ -206,22 +206,11 @@ function* up(knex) {
       .index().references('id').inTable('Geography')
     apiKey.integer('siteId').unsigned()
       .index().references('id').inTable('Site')
-    apiKey.integer('deviceTypeId').unsigned().notNullable()
-      .index().references('id').inTable('DeviceType')
     apiKey.integer('deviceId').unsigned()
       .index().references('id').inTable('Device')
     addCreateFields(apiKey)
     addUpdateFields(apiKey)
     apiKey.charset('utf8')
-  })
-
-  yield knex.schema.createTable('DeviceRole', (deviceRole) => {
-    deviceRole.integer('deviceId').unsigned()
-      .index().references('id').inTable('Device')
-    deviceRole.integer('roleId').unsigned()
-      .index().references('id').inTable('Role')
-    deviceRole.primary(['deviceId', 'roleId'])
-    deviceRole.charset('utf8')
   })
 
   yield knex.schema.createTable('DeviceTypeCategory', (deviceTypeFeature) => {
@@ -311,13 +300,12 @@ function* up(knex) {
     device.string('lastPingFromIp', 45)
     device.dateTime('putInService')
     device.string('putInServiceSource')
-    device.boolean('approved')
     device.dateTime('approvedOn')
     device.integer('approvedBy').unsigned()
       .index().references('id').inTable('User')
     device.specificType('configurationData', 'JSON')
-    addCreateFields(device)
-    addUpdateFields(device)
+    addCreateFieldsNullable(device)
+    addUpdateFieldsNullable(device)
     device.charset('utf8')
   })
 

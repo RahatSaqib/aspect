@@ -4,12 +4,12 @@ const { addResult, getResult } = require('./result')
 
 function* addDeviceData(context) {
   const response = {}
-  const { knex, now, payload, device: { id: deviceId } } = context
+  const { knex, now, payload, device } = context
   const { name, result, configuration, operation } = payload
 
   if (name) {
     yield knex('Device')
-      .where({ id: deviceId })
+      .where({ id: device.id })
       .update({ name, updatedOn: now })
   }
 
@@ -76,7 +76,7 @@ function* getDeviceCheckpoint(context) {
   if (deviceLog != null) {
     return { checkpoint: deviceLog.checkpoint }
   }
-  return Boom.notFound()
+  return Boom.notFound('Cannot find log at checkpoint')
 }
 
 function* updateDeviceConfiguration(context) {

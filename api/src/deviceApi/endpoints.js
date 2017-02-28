@@ -20,6 +20,14 @@ const errorPayload = Joi.object().keys({
     'Description of the error')
 })
 
+const devicePayload = {
+  name: Joi.string().allow('', null).description('The device name'),
+  serial: Joi.string().allow('', null).description('The device serial number'),
+  type: Joi.object().keys({
+    id: Joi.string().required().description('The Device Type. Required on first request with API Key')
+  }),
+}
+
 const configurationPayload = {
   checkpoint: Joi.string().allow('', null).description(
     'The client checkpoint'),
@@ -180,9 +188,7 @@ module.exports = [
         options: {
           allowUnknown: true
         },
-        schema: {
-          name: Joi.string().allow('', null).description(
-            'The device name'),
+        schema: Object.assign({}, devicePayload, {
           checkpoint: Joi.string().allow('', null).description(
             'The client checkpoint'),
           configuration: Joi.object().keys(configurationPayload).description(
@@ -192,7 +198,7 @@ module.exports = [
           result: Joi.object().keys(resultPayload).description(
             'Device Result Data.'),
           error: errorPayload
-        }
+        })
       }
     }
   },
@@ -217,7 +223,8 @@ module.exports = [
     // POST /device { checkpoint, configuration, operation, result }
     method: 'POST',
     path: '/',
-    handler: deviceApiHandler(addDeviceData, { updatePing: true, updateDeviceLog: true }),
+    handler: deviceApiHandler(addDeviceData, {
+      createDevice: true, updatePing: true, updateDeviceLog: true }),
     config: {
       description: 'Update Device Data',
       notes: 'Updates latest device configuration, operational and result data in a single request.',
@@ -225,7 +232,7 @@ module.exports = [
         options: {
           allowUnknown: true
         },
-        payload: Joi.object().keys({
+        payload: Joi.object().keys(Object.assign({}, devicePayload, {
           name: Joi.string().allow('', null).description(
             'The device name'),
           checkpoint: Joi.string().allow('', null).description(
@@ -236,7 +243,7 @@ module.exports = [
             'Device Operation Data'),
           result: Joi.object().keys(resultPayload).description(
             'Device Result Data.')
-        })
+        })),
       },
       response: {
         schema: {
