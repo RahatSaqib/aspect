@@ -102,12 +102,12 @@ function* createDeviceApiContext(request, handlerOptions) {
   if (device == null) {
     // Trying to retrieve data for Device that has
     // none uploaded yet, but we have authorized the token
-    return { error: Boom.notFound() }
+    return { error: Boom.notFound('No device found') }
   }
 
   if (requiredStatus != null && requiredStatus !== device.status) {
     // found device, but not correct status
-    return { error: Boom.unauthorized() }
+    return { error: Boom.unauthorized('Device not approved') }
   }
 
   const context = new DeviceApiContext({
@@ -121,14 +121,14 @@ function* createDeviceApiContext(request, handlerOptions) {
   if (requireDeviceLog) {
     if (existingDeviceAndData == null) {
       // We will only have a device log if we already had a device
-      return { error: Boom.notFound() }
+      return { error: Boom.notFound('Device does not have data.') }
     }
 
     const { checkpoint } = request.query
     const offset = +(request.query.offset || 0)
     if (checkpoint == null && offset !== 0) {
       // must specify checkpoint if using offset
-      return { error: Boom.badRequest() }
+      return { error: Boom.badRequest('Must specify checkpoint if using offset') }
     }
 
     // Calculate min log date configured by Partner
@@ -144,7 +144,9 @@ function* createDeviceApiContext(request, handlerOptions) {
     if (deviceLog == null) {
       // See if requested log is forbidden or not found
       const deviceLogNoHistory = yield* getDeviceLog(context, checkpoint, offset, null)
-      return { error: deviceLogNoHistory == null ? Boom.notFound() : Boom.forbidden() }
+      return { error: deviceLogNoHistory == null
+        ? Boom.notFound('Cannot find specified checkpoint and offset')
+        : Boom.forbidden('Not authorized to view specified checkpoint and offset') }
     }
 
     context.deviceLog = deviceLog
@@ -161,11 +163,11 @@ function createNewDevice(request, now) {
     // Require Device Type when creating device
     const deviceTypeExternalId = _.get(payload, 'type.id', null)
     if (deviceTypeExternalId == null) {
-      return { error: Boom.badRequest() }
+      return { error: Boom.badRequest('Must specify device type on first request with new key') }
     }
     const deviceType = yield knex('DeviceType').where({ name: deviceTypeExternalId }).first('id')
     if (deviceType == null) {
-      return { error: Boom.badRequest() }
+      return { error: Boom.badRequest(`Cannot find DeviceType with id ${deviceTypeExternalId}`) }
     }
 
     // Find API Key to use as template for new device
@@ -177,7 +179,7 @@ function createNewDevice(request, now) {
       })
       .first('id', 'partnerId', 'orgUnitId', 'geographyId', 'siteId')
     if (apiKey == null) {
-      return { error: Boom.notFound() }
+      return { error: Boom.notFound('Cannot find available API Key when creating new device') }
     }
 
     // create new device based on API Key

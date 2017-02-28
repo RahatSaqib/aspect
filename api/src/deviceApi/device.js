@@ -76,7 +76,7 @@ function* getDeviceCheckpoint(context) {
   if (deviceLog != null) {
     return { checkpoint: deviceLog.checkpoint }
   }
-  return Boom.notFound()
+  return Boom.notFound('Cannot find log at checkpoint')
 }
 
 function* updateDeviceConfiguration(context) {

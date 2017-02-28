@@ -20,7 +20,7 @@ function* addResult(context) {
       .distinct('r.*')
       .limit(2)
     if (existingResults.length > 1) {
-      return Boom.badRequest()
+      return Boom.badRequest(`Cannot find unique result with id ${payload.id}`)
     }
     existingResult = existingResults[0]
   }
@@ -88,7 +88,23 @@ function* addResult(context) {
 
   if (!site || !resultType || !resultWorkflowStatus ||
       categories.length === 0 || assays.length !== 1) {
-    return Boom.badRequest()
+    const requestErrors = []
+    if (!site) {
+      requestErrors.push('assigned site for device')
+    }
+    if (!resultType) {
+      requestErrors.push(`result type with id ${_.get(payload, 'type.id')}`)
+    }
+    if (!resultWorkflowStatus) {
+      requestErrors.push(`result workflow status id ${_.get(payload, 'workflow.status.id')}`)
+    }
+    if (categories.length === 0) {
+      requestErrors.push(`result categories with ids ${categoryIds.join(' ')}`)
+    }
+    if (assays.length !== 1) {
+      requestErrors.push(`assay with id ${_.get(payload, 'assay.id')}`)
+    }
+    return Boom.badRequest(`Cannot find ${requestErrors.join(', ')}`)
   }
 
   const assay = assays[0]

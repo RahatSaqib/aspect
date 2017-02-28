@@ -30,7 +30,7 @@ function authenticate(request, reply) {
 
   if (!token) {
     // token not specified
-    reply(Boom.unauthorized())
+    reply(Boom.unauthorized('Invalid API Key'))
   } else {
     // lookup single non-revoked API Key
     knex('DeviceApiKey')
@@ -45,7 +45,7 @@ function authenticate(request, reply) {
           reply.continue({ credentials })
         }
       })
-      .catch(() => reply(Boom.unauthorized()))
+      .catch(() => reply(Boom.unauthorized('Cannot authorize API Key')))
   }
 }
 
