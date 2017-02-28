@@ -5,7 +5,12 @@
 // only result data is posted.
 const Joi = require('joi')
 const { deviceApiHandler } = require('./common')
-const { addDeviceData, getDeviceData, addDeviceOperation, updateDeviceConfiguration } = require('./device')
+const {
+  addDeviceData,
+  getDeviceData,
+  getDeviceCheckpoint,
+  addDeviceOperation,
+  updateDeviceConfiguration } = require('./device')
 const { addResult } = require('./result')
 
 const errorPayload = Joi.object().keys({
@@ -189,6 +194,23 @@ module.exports = [
             'Device Result Data.'),
           error: errorPayload
         })
+      }
+    }
+  },
+  {
+    // GET /device/checkpoint
+    method: 'GET',
+    path: '/checkpoint',
+    handler: deviceApiHandler(getDeviceCheckpoint, { requiredStatus: 'approved' }),
+    config: {
+      description: 'Get Device Checkpoint',
+      notes: 'Get the last checkpoint posted for this Device',
+      response: {
+        schema: {
+          checkpoint: Joi.string().allow('', null).description(
+            'The client checkpoint'),
+          error: errorPayload
+        }
       }
     }
   },

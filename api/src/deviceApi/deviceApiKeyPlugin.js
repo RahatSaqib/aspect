@@ -1,6 +1,7 @@
 const Boom = require('boom')
 const { knex } = require('../db')
 const { version } = require('../../package.json')
+const { normalizeToken } = require('./apiKey')
 
 function register(plugin, options, next) {
   plugin.auth.scheme('deviceApiKey', () => ({ authenticate }))
@@ -15,7 +16,7 @@ register.attributes = {
 
 function authenticate(request, reply) {
   const { query, headers } = request
-  let token = null
+  let token = ''
   if (query.token) {
     // prefer token in query string
     token = query.token
@@ -24,8 +25,8 @@ function authenticate(request, reply) {
     token = headers.authorization.replace(/Bearer/gi, '')
   }
 
-  // Remove whitespace
-  token = token.replace(/ /g, '')
+  // Remove whitespace and dashes
+  token = normalizeToken(token)
 
   if (!token) {
     // token not specified
@@ -44,7 +45,7 @@ function authenticate(request, reply) {
           reply.continue({ credentials })
         }
       })
-      .catch(() => Boom.unauthorized())
+      .catch(() => reply(Boom.unauthorized()))
   }
 }
 

@@ -2,6 +2,8 @@ const Boom = require('boom')
 const { knex, transact } = require('../db')
 const { asyncHandler } = require('../routes')
 
+const millisInDay = 1000 * 60 * 60 * 24
+
 function deviceApiHandler(handler, handlerOptions) {
   return asyncHandler(function* (request) {
     const { error, context } = yield* createDeviceApiContext(request, handlerOptions)
@@ -115,20 +117,35 @@ function* createDeviceApiContext(request, handlerOptions) {
   })
 
   // Add Device Log if requested
-  let deviceLog = null
   if (requireDeviceLog) {
-    if (existingDeviceAndData != null) {
+    if (existingDeviceAndData == null) {
       // We will only have a device log if we already had a device
-      // This also ensures we have all appropriate fields on device
-      // object from initial query
-      const offset = +(request.query.offset || 0)
-      deviceLog = yield* getDeviceLog(context, request.query.checkpoint, offset)
-    }
-
-    if (deviceLog == null) {
-      // We've asked for a log but can't find it
       return { error: Boom.notFound() }
     }
+
+    const { checkpoint } = request.query
+    const offset = +(request.query.offset || 0)
+    if (checkpoint == null && offset !== 0) {
+      // must specify checkpoint if using offset
+      return { error: Boom.badRequest() }
+    }
+
+    // Calculate min log date configured by Partner
+    const partner = yield knex('Partner as p')
+      .innerJoin('Device as d', 'd.partnerId', 'd.id')
+      .first('deviceLogHistoryDays')
+    if (!partner) {
+      return null
+    }
+    const historyCutoff = new Date(+new Date() - (partner.deviceLogHistoryDays * millisInDay))
+
+    const deviceLog = yield* getDeviceLog(context, checkpoint, offset, historyCutoff)
+    if (deviceLog == null) {
+      // See if requested log is forbidden or not found
+      const deviceLogNoHistory = yield* getDeviceLog(context, checkpoint, offset, null)
+      return { error: deviceLogNoHistory == null ? Boom.notFound() : Boom.forbidden() }
+    }
+
     context.deviceLog = deviceLog
   }
 
@@ -237,18 +254,33 @@ class DeviceApiContext {
   }
 }
 
-function* getDeviceLog(context, checkpoint, offset) {
+function* getDeviceLog(context, checkpoint, offset, historyCutoff) {
   const { device } = context
 
   // Find device log at checkpoint or latest
+  // normally we want to get the last device log for given device and checkpoint
+  let initialDeviceLogOrder = 'desc'
   const initialDeviceLogQuery = knex('DeviceLog')
     .where({ deviceId: device.id })
-    .orderBy('id', 'desc')
+
   // use specified checkpoint, otherwise just select latest
   if (checkpoint) {
     initialDeviceLogQuery.where({ checkpoint })
+
+    if (offset > 0) {
+      // If we are querying future data, must use minimum device log for
+      // this device with same checkpoint so we don't miss data interleaving
+      // from other sources while data with checkpoint is being posted
+      initialDeviceLogOrder = 'asc'
+    }
   }
-  const initialDeviceLog = yield initialDeviceLogQuery.first('checkpoint', 'id')
+  if (historyCutoff != null) {
+    initialDeviceLogQuery.where('createdOn', '>=', historyCutoff)
+  }
+  initialDeviceLogQuery.orderBy('id', initialDeviceLogOrder)
+
+  const initialDeviceLog = yield initialDeviceLogQuery
+    .first('id', 'checkpoint', 'deviceId', 'createdOn')
   if (!initialDeviceLog) {
     // No log found at checkpoint for this device
     return null
@@ -257,16 +289,21 @@ function* getDeviceLog(context, checkpoint, offset) {
     // as checkpoints are unique per device
     return {
       id: initialDeviceLog.id,
-      checkpoint: initialDeviceLog.checkpoint
+      checkpoint: initialDeviceLog.checkpoint,
+      createdOn: initialDeviceLog.createdOn
     }
   }
 
   // Find log at specified offset from checkpoint
   const deviceLogQuery = knex('DeviceLog as dl')
-    .first(
-      'dl.id as deviceLogId',
-      'dl.deviceId as deviceLogDeviceId',
-      'dl.checkpoint as deviceLogCheckpoint')
+    .where(function () {
+      // do not include logs with same checkpoint for same device
+      // since we are retrieving logs with offset from checkpoint
+      this.where('dl.deviceId', '<>', initialDeviceLog.deviceId)
+        .orWhere('dl.checkpoint', '<>', initialDeviceLog.checkpoint)
+        .orWhereNull('dl.checkpoint')
+    })
+
   if (offset > 0) {
     // select result after specified log entry
     deviceLogQuery
@@ -308,23 +345,33 @@ function* getDeviceLog(context, checkpoint, offset) {
           .leftJoin('Sample as s', 'r.sampleId', 's.id')
           .modify(addResultConstraints, context, { device: 'd', result: 'r', sample: 's' })
           .select('dl.id')
+        if (historyCutoff != null) {
+          this.where('dl.createdOn', '>=', historyCutoff)
+        }
       })
       .as('dls')
+    if (historyCutoff != null) {
+      deviceLogOffsetQuery.where('dl.createdOn', '>=', historyCutoff)
+    }
+
     deviceLogQuery.innerJoin(deviceLogOffsetQuery, 'dl.id', 'dls.id')
   }
 
+  if (historyCutoff != null) {
+    deviceLogQuery.where('dl.createdOn', '>=', historyCutoff)
+  }
+
   const deviceLog = yield deviceLogQuery
+    .first('dl.id', 'dl.deviceId', 'dl.checkpoint', 'dl.createdOn')
   if (deviceLog == null) {
     return null
   }
 
-  const { deviceLogId, deviceLogDeviceId, deviceLogCheckpoint } = deviceLog
-
-  const response = { id: deviceLogId }
+  const response = { id: deviceLog.id, createdOn: deviceLog.createdOn }
   // set checkpoint if log changed during query, e.g, due to offset
   // but do not leak checkpoint from different device
-  if (deviceLogDeviceId === device.id) {
-    response.checkpoint = deviceLogCheckpoint
+  if (deviceLog.deviceId === device.id) {
+    response.checkpoint = deviceLog.checkpoint
   }
   return response
 }

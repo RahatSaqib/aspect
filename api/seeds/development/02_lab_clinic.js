@@ -2,7 +2,7 @@ module.exports = require('../../src/db').seed(seed)
 
 const config = require('../../src/config')
 const bcrypt = require('bcrypt')
-const crypto = require('crypto')
+const { randomToken } = require('../../src/deviceApi/apiKey')
 const labClinic = require('./fixtures/labClinic.json')
 
 const saltRounds = parseInt(config.passwordSaltRounds, 10)
@@ -35,7 +35,8 @@ function* seed(knex) {
   const partnerTypes = yield rowsAsObject(knex, 'PartnerType')
   const [partnerId] = yield knex('Partner').insert({
     name: 'RRT',
-    partnerTypeId: partnerTypes.Operating.id
+    partnerTypeId: partnerTypes.Operating.id,
+    deviceLogHistoryDays: 14
   })
   const deviceTypeCategories = yield rowsAsObject(knex, 'DeviceTypeCategory')
 
@@ -224,10 +225,9 @@ function* seed(knex) {
     const [siteId] = yield knex('Site').insert(siteData)
     siteData.id = siteId
 
-
     // RRT Terminal
     yield knex('DeviceApiKey').insert(Object.assign({
-      token: crypto.randomBytes(48).toString('base64'),
+      token: randomToken(),
       revoked: 0,
       partnerId: siteData.partnerId,
       orgUnitId: siteData.orgUnitId,
@@ -252,7 +252,7 @@ function* seed(knex) {
 
     // M2000 Device
     yield knex('DeviceApiKey').insert(Object.assign({
-      token: crypto.randomBytes(48).toString('base64'),
+      token: randomToken(),
       revoked: 0,
       partnerId: siteData.partnerId,
       orgUnitId: siteData.orgUnitId,

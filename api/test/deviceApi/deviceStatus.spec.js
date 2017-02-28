@@ -8,7 +8,7 @@ const {
 
 const server = supertest.agent('http://localhost:8080')
 const assert = chai.assert
-const context = createTestContext(server, { user: 'admin', status: 'unapproved' })
+const context = createTestContext(server, { user: 'admin', status: 'assigned' })
 
 
 describe('Device API status tests', () => {

@@ -3,7 +3,7 @@ module.exports = require('../../src/db').seed(seed)
 const config = require('../../src/config')
 const _ = require('lodash')
 const bcrypt = require('bcrypt')
-const crypto = require('crypto')
+const { randomToken } = require('../../src/deviceApi/apiKey')
 const permissions = require('./fixtures/permissions.json')
 const geography = require('./fixtures/geography.json')
 const patients = require('./fixtures/patients.json')
@@ -59,12 +59,14 @@ function* seed(knex) {
   // Create partners
   const [partnerOneId] = yield knex('Partner').insert({
     name: 'Partner One',
-    partnerTypeId: partnerTypeFundingId
+    partnerTypeId: partnerTypeFundingId,
+    deviceLogHistoryDays: 14
   })
 
   const [partnerTwoId] = yield knex('Partner').insert({
     name: 'Partner Two',
-    partnerTypeId: partnerTypeImplementingId
+    partnerTypeId: partnerTypeImplementingId,
+    deviceLogHistoryDays: 14
   })
   const [partnerOneOrgUnitId] = yield knex('OrgUnit').insert({
     name: 'Partner One',
@@ -263,14 +265,25 @@ function* seed(knex) {
   })
 
   // DeviceStatus
+  yield knex('DeviceStatus').insert({
+    name: 'Provisioned',
+    i18nKey: 'deviceStatusProvisioned',
+    token: 'provisioned'
+  })
+  const [deviceStatusAssigned] = yield knex('DeviceStatus').insert({
+    name: 'Assigned',
+    i18nKey: 'deviceStatusAssigned',
+    token: 'assigned'
+  })
   const [deviceStatusApproved] = yield knex('DeviceStatus').insert({
     name: 'Approved',
+    i18nKey: 'deviceStatusApproved',
     token: 'approved'
   })
-
-  const [deviceStatusUnapproved] = yield knex('DeviceStatus').insert({
-    name: 'Unapproved',
-    token: 'unapproved'
+  yield knex('DeviceStatus').insert({
+    name: 'Decommissioned',
+    i18nKey: 'deviceStatusDecommissioned',
+    token: 'decommissioned'
   })
 
   // Assays and AssayTypes
@@ -1247,6 +1260,12 @@ function* seed(knex) {
     token: 'processed',
     externalId: 'Processed'
   })
+  yield knex('ResultWorkflowStatus').insert({
+    name: 'Delivered',
+    i18nkey: 'ResultWorkflowStatusDelivered',
+    token: 'delivered',
+    externalId: 'Delivered'
+  })
   const [acknowledged] = yield knex('ResultWorkflowStatus').insert({
     name: 'Acknowledged',
     i18nkey: 'ResultWorkflowStatusAcknowledged',
@@ -1420,7 +1439,7 @@ function* seed(knex) {
       name: `GeneXpert #${i} ${siteData.shortname}`,
       shortname: `GeneXpert #${i}`,
       deviceTypeId: deviceTypeGeneXpertId,
-      deviceStatusId: _.random(1) > 0 ? deviceStatusApproved : deviceStatusUnapproved,
+      deviceStatusId: _.random(1) > 0 ? deviceStatusApproved : deviceStatusAssigned,
       configurationData: JSON.stringify({
         requirePrinter: 'no',
         adminPassword: 'pwd123',
@@ -1452,7 +1471,7 @@ function* seed(knex) {
 
     // Create API Keys
     yield knex('DeviceApiKey').insert(Object.assign({
-      token: crypto.randomBytes(48).toString('base64'),
+      token: randomToken(),
       revoked: 0,
       partnerId: siteData.partnerId,
       orgUnitId: siteData.orgUnitId,
@@ -1513,7 +1532,7 @@ function* seed(knex) {
 
     // Create API Keys
     yield knex('DeviceApiKey').insert(Object.assign({
-      token: crypto.randomBytes(48).toString('base64'),
+      token: randomToken(),
       revoked: 0,
       partnerId: siteData.partnerId,
       orgUnitId: siteData.orgUnitId,

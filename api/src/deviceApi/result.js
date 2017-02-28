@@ -3,6 +3,9 @@ const _ = require('lodash')
 const { consumeInventoryForResult } = require('../inventory/service')
 const { addResultConstraints } = require('./common')
 
+const DONOT_LOG_DELIVERED = ['Delivered', 'Acknowledged', 'Flagged', 'Error']
+const DELIVERED_EXTERNALID = 'Delivered'
+
 function* addResult(context) {
   const { knex, payload, now } = context
   // TODO seperate permissions for device add vs update result?
@@ -294,6 +297,13 @@ function* getResult(context) {
     return null
   }
 
+  // only set to delivered the first time and
+  // only if not acknowledged or flagged already
+  if (_.indexOf(DONOT_LOG_DELIVERED, row.resultWorkflowStatusId) === -1) {
+    yield* updateResultWorkflowStatus(context, row.resultId, DELIVERED_EXTERNALID)
+    row.resultWorkflowStatusId = DELIVERED_EXTERNALID
+  }
+
   const resultWorkflowLog = yield* getLatestResultWorkflowLog(knex, row.resultId)
 
   // TODO allow filtering on fields of interest, similar to client device API
@@ -322,14 +332,22 @@ function* getResult(context) {
     }
   }
 
-  const sample = { id: row.sampleId, originSite: { id: row.sampleOriginSiteId } }
+  const sample = {}
+  if (row.sampleId != null) {
+    sample.id = row.sampleId
+  }
   if (row.sampleCollectedOn != null) {
     sample.collectedOn = row.sampleCollectedOn
   }
   if (row.sampleTypeId != null) {
     sample.type = { id: row.sampleTypeId }
   }
-  result.sample = sample
+  if (row.sampleOriginSiteId != null) {
+    sample.originSite = { id: row.sampleOriginSiteId }
+  }
+  if (!_.isEmpty(sample)) {
+    result.sample = sample
+  }
 
   const categories = []
   if (row.category1Id != null) {
@@ -398,6 +416,36 @@ function* getResult(context) {
   return result
 }
 
+function* updateResultWorkflowStatus(
+  context, resultId, workflowStatusExternalId, operator, userId) {
+  const { knex, now } = context
+
+  // get internal workflow status id based on the external id we got
+  const workflowStatusRow = yield knex('ResultWorkflowStatus').where('externalId', workflowStatusExternalId).select('id').first()
+  if (workflowStatusRow === null) {
+    throw new Error(`Workflow status with external ID "${workflowStatusExternalId}" not found`)
+  }
+
+  // update result
+  const rows = yield knex('Result as r')
+                .where('r.id', resultId)
+                .update('resultWorkflowStatusId', workflowStatusRow.id)
+
+  // keep log if update was successful. don't need to check permission again because
+  // rows would be 0 if no permission in query above
+  if (rows) {
+    yield knex('ResultWorkflowLog').insert({
+      resultId,
+      resultWorkflowStatusId: workflowStatusRow.id,
+      operator,
+      changedOn: now,
+      createdOn: now,
+      createdBy: userId
+    })
+  }
+
+  return {}
+}
 
 function* getLatestResultWorkflowLog(knex, resultId) {
   return yield knex('ResultWorkflowLog')
@@ -406,7 +454,6 @@ function* getLatestResultWorkflowLog(knex, resultId) {
     .orderBy('id', 'desc')
     .first('operator', 'changedOn')
 }
-
 
 module.exports = {
   addResult,
