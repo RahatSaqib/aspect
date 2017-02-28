@@ -5,12 +5,20 @@ const { addResult, getResult } = require('./result')
 function* addDeviceData(context) {
   const response = {}
   const { knex, now, payload, device } = context
-  const { name, result, configuration, operation } = payload
+  const { name, site, result, configuration, operation } = payload
 
   if (name) {
     yield knex('Device')
       .where({ id: device.id })
       .update({ name, updatedOn: now })
+  }
+
+  if (site) {
+    const siteResponse = yield* updateSite(
+      context.withPayload(site))
+    if (siteResponse instanceof Error) {
+      return siteResponse
+    }
   }
 
   if (configuration) {
@@ -26,9 +34,7 @@ function* addDeviceData(context) {
   if (result) {
     const resultResponse = yield* addResult(
       context.withPayload(result))
-
     if (resultResponse instanceof Error) {
-      // TODO formalize error handling
       return resultResponse
     }
   }
@@ -159,6 +165,51 @@ function* getDeviceOperation(context) {
   if (op.endedOn != null) {
     result.endedOn = op.endedOn.toISOString()
   }
+  return result
+}
+
+function* updateSite(context) {
+  const { knex, payload, device, now } = context
+  const result = {}
+  const siteExternalId = payload.id || null
+  if (siteExternalId == null) {
+    return Boom.badRequest('Must specify site id to update Site')
+  }
+
+  // Find unique site with specified external ID for same partner as device
+  const sites = yield knex('Site as s')
+    .where({
+      partnerId: device.partnerId,
+      externalId: siteExternalId
+    })
+    .select('id')
+    .limit(2)
+  if (sites.length !== 1) {
+    return Boom.badRequest(`Cannot find unique site with id ${siteExternalId}`)
+  }
+  const site = sites[0]
+
+  if (device.siteId === site.id) {
+    // Device is already assigned to requested site, nothing to do
+    return result
+  }
+
+  const status = device.siteId == null ? 'approved' : 'assigned'
+
+  yield knex('Device')
+    .where({ id: device.id })
+    .update({
+      siteId: site.id,
+      deviceStatusId: knex('DeviceStatus').where({ token: status }).select('id')
+    })
+
+  yield knex('DeviceSiteHistory')
+    .insert({
+      deviceId: device.id,
+      siteId: site.id,
+      createdOn: now
+    })
+
   return result
 }
 

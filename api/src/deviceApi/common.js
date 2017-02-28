@@ -85,7 +85,7 @@ function* createDeviceApiContext(request, handlerOptions) {
       'dak.revoked': false
     })
     .first(
-      'd.id', 'd.name', 'd.serial', 'd.siteId',
+      'd.id', 'd.name', 'd.serial', 'd.partnerId', 'd.siteId',
       'ds.token as status', 'dtc.name as deviceTypeCategory')
 
   let device = null
@@ -184,15 +184,17 @@ function createNewDevice(request, now) {
 
     // create new device based on API Key
     const device = {
+      partnerId: apiKey.partnerId,
+      siteId: apiKey.siteId,
       name: payload.name || payload.serial || '',
       serial: payload.serial,
       status: apiKey.siteId ? 'approved' : 'provisioned'
     }
     const inserts = {
-      partnerId: apiKey.partnerId,
+      partnerId: device.partnerId,
       orgUnitId: apiKey.orgUnitId,
       geographyId: apiKey.geographyId,
-      siteId: apiKey.siteId,
+      siteId: device.siteId,
       deviceTypeId: deviceType.id,
       deviceStatusId: knex('DeviceStatus').where({ token: device.status }).select('id'),
       name: device.name,
