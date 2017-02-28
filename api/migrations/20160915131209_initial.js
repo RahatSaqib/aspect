@@ -206,8 +206,6 @@ function* up(knex) {
       .index().references('id').inTable('Geography')
     apiKey.integer('siteId').unsigned()
       .index().references('id').inTable('Site')
-    apiKey.integer('deviceTypeId').unsigned().notNullable()
-      .index().references('id').inTable('DeviceType')
     apiKey.integer('deviceId').unsigned()
       .index().references('id').inTable('Device')
     addCreateFields(apiKey)

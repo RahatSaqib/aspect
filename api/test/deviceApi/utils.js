@@ -175,13 +175,16 @@ class DeviceApiTestContext {
       } else {
         // if we can't find device, look for API Key
         assert.isNotOk(auth.status)  // make sure we didn't request specific status
-        ;apiKey = yield knex('DeviceApiKey as dak')
-          .innerJoin('DeviceType as dt', 'dt.id', 'dak.deviceTypeId')
-          .where({
-            'dt.name': type,
-            'dak.revoked': 0
-          })
-          .first('dak.token')
+        assert.isOk(auth.site) // need to specify site if we don't have key with Device
+        apiKey = yield knex('DeviceApiKey as dak')
+        .join('Site as s', 'dak.siteId', 's.id')
+        .where({
+          's.externalId': auth.site,
+          'dak.deviceId': null,
+          'dak.revoked': false
+        })
+        .orderBy('s.externalId')
+        .first('dak.token')
       }
       assert.isOk(apiKey)
       self.deviceIds.splice(0)

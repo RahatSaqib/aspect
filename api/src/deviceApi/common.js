@@ -1,4 +1,5 @@
 const Boom = require('boom')
+const _ = require('lodash')
 const { knex, transact } = require('../db')
 const { asyncHandler } = require('../routes')
 
@@ -157,6 +158,16 @@ function createNewDevice(request, now) {
   return transact(function* (knex) {
     const { auth, payload } = request
 
+    // Require Device Type when creating device
+    const deviceTypeExternalId = _.get(payload, 'type.id', null)
+    if (deviceTypeExternalId == null) {
+      return { error: Boom.badRequest() }
+    }
+    const deviceType = yield knex('DeviceType').where({ name: deviceTypeExternalId }).first('id')
+    if (deviceType == null) {
+      return { error: Boom.badRequest() }
+    }
+
     // Find API Key to use as template for new device
     const apiKey = yield knex('DeviceApiKey')
       .where({
@@ -164,7 +175,7 @@ function createNewDevice(request, now) {
         revoked: false,
         deviceId: null
       })
-      .first('id', 'partnerId', 'orgUnitId', 'geographyId', 'siteId', 'deviceTypeId')
+      .first('id', 'partnerId', 'orgUnitId', 'geographyId', 'siteId')
     if (apiKey == null) {
       return { error: Boom.notFound() }
     }
@@ -180,7 +191,7 @@ function createNewDevice(request, now) {
       orgUnitId: apiKey.orgUnitId,
       geographyId: apiKey.geographyId,
       siteId: apiKey.siteId,
-      deviceTypeId: apiKey.deviceTypeId,
+      deviceTypeId: deviceType.id,
       deviceStatusId: knex('DeviceStatus').where({ token: device.status }).select('id'),
       name: device.name,
       serial: device.serial,

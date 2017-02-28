@@ -142,11 +142,7 @@ function* seed(knex) {
     deviceTypeCategoryId: deviceTypeCategories.Client.id,
     configurationDataSchema: rrtConfigurationDataSchema
   })
-  const deviceTypes = yield rowsAsObject(knex, 'DeviceType')
-  // const deviceStatuses = yield rowsAsObject(knex, 'DeviceStatus')
-  // const assayTypes = yield rowsAsObject(knex, 'AssayType')
-  // const assays = yield rowsAsObject(knex, 'Assay')
-  // const resultTypes = yield rowsAsObject(knex, 'ResultType')
+
   const modules = yield knex('Permission')
     .reduce((memo, row) => {
       if (!memo[row.module]) {
@@ -232,8 +228,7 @@ function* seed(knex) {
       partnerId: siteData.partnerId,
       orgUnitId: siteData.orgUnitId,
       geographyId: siteData.geographyId,
-      siteId: siteData.id,
-      deviceTypeId: deviceTypes.RRT.id
+      siteId: siteData.id
     }, auditFields))
   }
 
@@ -257,8 +252,7 @@ function* seed(knex) {
       partnerId: siteData.partnerId,
       orgUnitId: siteData.orgUnitId,
       geographyId: siteData.geographyId,
-      siteId: siteData.id,
-      deviceTypeId: deviceTypes.m2000.id
+      siteId: siteData.id
     }, auditFields))
 
     // create lab admin user with permission to view data to own lab

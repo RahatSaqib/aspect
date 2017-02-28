@@ -22,7 +22,10 @@ const errorPayload = Joi.object().keys({
 
 const devicePayload = {
   name: Joi.string().allow('', null).description('The device name'),
-  serial: Joi.string().allow('', null).description('The device serial number')
+  serial: Joi.string().allow('', null).description('The device serial number'),
+  type: Joi.object().keys({
+    id: Joi.string().required().description('The Device Type. Required on first request with API Key')
+  }),
 }
 
 const configurationPayload = {

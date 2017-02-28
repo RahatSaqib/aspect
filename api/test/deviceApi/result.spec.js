@@ -1387,7 +1387,7 @@ describe('Device Result API routes', () => {
   })
 
   describe('RRT Lab/Clinic Tests', () => {
-    const context = createTestContext(server, { user: 'rrt_admin', type: 'm2000' })
+    const context = createTestContext(server, { user: 'rrt_admin', site: 'DEDZ' })
 
     const runTest = context.runTest
 
@@ -1401,7 +1401,7 @@ describe('Device Result API routes', () => {
       assert.isNotOk(device1)
       yield server.post(devicePath)
         .set('Authorization', deviceAuth)
-        .send({})
+        .send({ type: { id: 'm2000' } })
         .then((res) => {
           assert.equal(res.status, 200)
         })
@@ -1431,7 +1431,7 @@ describe('Device Result API routes', () => {
       const serial = 'OMAN-123456'
       yield server.post(devicePath)
         .set('Authorization', deviceAuth)
-        .send({ serial })
+        .send({ serial, type: { id: 'm2000' } })
         .then((res) => {
           assert.equal(res.status, 200)
         })
@@ -1452,6 +1452,7 @@ describe('Device Result API routes', () => {
         .set('Authorization', deviceAuth)
         .send({
           serial,
+          type: { id: 'm2000' },
           name: 'SHINY NEW',
           operation: { data: { a: 'basd' } },
           configuration: { data: { as: 'df' } }
@@ -1479,12 +1480,18 @@ describe('Device Result API routes', () => {
       let deviceLab = yield* getDeviceFromApiKey(knex, labKey)
       assert.isNotOk(deviceLab)
 
+      yield server.post(devicePath)
+        .set('Authorization', deviceAuth)
+        .send({ checkpoint: 'rrt_0', type: { id: 'm2000' } })
+        .then((res) => {
+          assert.equal(res.status, 200)
+        })
+
       const [device1315Key, device1723Key] = yield knex('DeviceApiKey as dak')
         .join('Site as s', 'dak.siteId', 's.id')
-        .join('DeviceType as dt', 'dak.deviceTypeId', 'dt.id')
         .whereIn('s.externalId', ['1315', '1723'])
         .where({
-          'dt.name': 'RRT',
+          'dak.deviceId': null,
           'dak.revoked': false
         })
         .orderBy('s.externalId')
@@ -1494,8 +1501,10 @@ describe('Device Result API routes', () => {
       assert.isOk(device1723Key)
       assert.isOk(device1723Key.token)
 
+      deviceLab = yield* getDeviceFromApiKey(knex, labKey)
       let device1315 = yield* getDeviceFromApiKey(knex, device1315Key)
       let device1723 = yield* getDeviceFromApiKey(knex, device1723Key)
+      assert.isOk(deviceLab)
       assert.isNotOk(device1315)
       assert.isNotOk(device1723)
 
@@ -1506,13 +1515,6 @@ describe('Device Result API routes', () => {
       const device1315ExternalId = `1315-${new Date()}`
       const device1723ExternalId = `1723-${new Date()}`
 
-      yield server.post(devicePath)
-        .set('Authorization', deviceAuth)
-        .send({ checkpoint: 'rrt_0' })
-        .then((res) => {
-          assert.equal(res.status, 200)
-        })
-
       deviceLab = yield* getDeviceFromApiKey(knex, labKey)
       device1315 = yield* getDeviceFromApiKey(knex, device1315Key)
       device1723 = yield* getDeviceFromApiKey(knex, device1723Key)
@@ -1522,7 +1524,7 @@ describe('Device Result API routes', () => {
 
       yield server.post(devicePath)
         .set('Authorization', device1315Auth)
-        .send({ checkpoint: 'rrt1315_0' })
+        .send({ checkpoint: 'rrt1315_0', type: { id: 'RRT' } })
         .then((res) => {
           assert.equal(res.status, 200)
         })
@@ -1536,7 +1538,7 @@ describe('Device Result API routes', () => {
 
       yield server.post(devicePath)
         .set('Authorization', device1723Auth)
-        .send({ checkpoint: 'rrt1723_0' })
+        .send({ checkpoint: 'rrt1723_0', type: { id: 'RRT' } })
         .then((res) => {
           assert.equal(res.status, 200)
         })
@@ -2134,7 +2136,7 @@ describe('Device Result API routes', () => {
 
       yield server.post(devicePath)
         .set('Authorization', deviceAuth)
-        .send({ checkpoint: 'rrt_0' })
+        .send({ checkpoint: 'rrt_0', type: { id: 'm2000' } })
         .then((res) => {
           assert.equal(res.status, 200)
         })

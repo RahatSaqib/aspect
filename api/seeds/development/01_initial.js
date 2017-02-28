@@ -1477,7 +1477,6 @@ function* seed(knex) {
       orgUnitId: siteData.orgUnitId,
       geographyId: siteData.geographyId,
       siteId: siteData.id,
-      deviceTypeId: device.deviceTypeId,
       deviceId: device.id
     }, auditFields))
 
@@ -1538,7 +1537,6 @@ function* seed(knex) {
       orgUnitId: siteData.orgUnitId,
       geographyId: siteData.geographyId,
       siteId: siteData.id,
-      deviceTypeId: device.deviceTypeId,
       deviceId: device.id
     }, auditFields))
 
