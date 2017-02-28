@@ -1399,54 +1399,28 @@ describe('Device Result API routes', () => {
       assert.isOk(apiKey)
       const device1 = yield* getDeviceFromApiKey(knex, apiKey)
       assert.isNotOk(device1)
-      let serial = null
       yield server.post(devicePath)
         .set('Authorization', deviceAuth)
         .send({})
         .then((res) => {
           assert.equal(res.status, 200)
-          serial = res.body.serial
-          assert.isOk(serial)
         })
       const device2 = yield* getDeviceFromApiKey(knex, apiKey)
       assert.isOk(device2)
-      assert.equal(device2.serial, serial)
-      assert.equal(device2.name, serial)
+      assert.equal(device2.serial, null)
 
       yield server.post(devicePath)
         .set('Authorization', deviceAuth)
         .send({ name: 'MY AWESOME DEVICE!', serial: 'DO NOT CHANGE SERIAL' })
         .then((res) => {
           assert.equal(res.status, 200)
-          serial = res.body.serial
-          assert.isOk(serial)
         })
 
       const device3 = yield* getDeviceFromApiKey(knex, apiKey)
       assert.isOk(device3)
       assert.equal(device3.id, device2.id)
-      assert.equal(device3.serial, serial)
+      assert.equal(device3.serial, null)
       assert.equal(device3.name, 'MY AWESOME DEVICE!')
-    }))
-
-    it('should create Device on first post with API Key and name', () => runTest(function* (knex) {
-      const { apiKey, deviceAuth } = context
-      assert.isOk(apiKey)
-      const device1 = yield* getDeviceFromApiKey(knex, apiKey)
-      assert.isNotOk(device1)
-      let serial = null
-      yield server.post(devicePath)
-        .set('Authorization', deviceAuth)
-        .send({ name: 'SHINY NEW' })
-        .then((res) => {
-          assert.equal(res.status, 200)
-          serial = res.body.serial
-          assert.isOk(serial)
-        })
-      const device2 = yield* getDeviceFromApiKey(knex, apiKey)
-      assert.isOk(device2)
-      assert.equal(device2.serial, serial)
-      assert.equal(device2.name, 'SHINY NEW')
     }))
 
     it('should create Device on first post with API Key and serial', () => runTest(function* (knex) {
@@ -1454,14 +1428,12 @@ describe('Device Result API routes', () => {
       assert.isOk(apiKey)
       const device1 = yield* getDeviceFromApiKey(knex, apiKey)
       assert.isNotOk(device1)
-      let serial = null
+      const serial = 'OMAN-123456'
       yield server.post(devicePath)
         .set('Authorization', deviceAuth)
-        .send({ serial: 'OMAN-123456' })
+        .send({ serial })
         .then((res) => {
           assert.equal(res.status, 200)
-          serial = res.body.serial
-          assert.equal(serial, 'OMAN-123456')
         })
       const device2 = yield* getDeviceFromApiKey(knex, apiKey)
       assert.isOk(device2)
@@ -1475,19 +1447,17 @@ describe('Device Result API routes', () => {
       const device1 = yield* getDeviceFromApiKey(knex, apiKey)
       assert.isNotOk(device1)
 
-      let serial = null
+      const serial = 'OMAN-123457'
       yield server.post(devicePath)
         .set('Authorization', deviceAuth)
         .send({
-          serial: 'OMAN-123456',
+          serial,
           name: 'SHINY NEW',
           operation: { data: { a: 'basd' } },
           configuration: { data: { as: 'df' } }
         })
         .then((res) => {
           assert.equal(res.status, 200)
-          serial = res.body.serial
-          assert.equal(serial, 'OMAN-123456')
         })
       const device2 = yield* getDeviceFromApiKey(knex, apiKey)
       assert.isOk(device2)

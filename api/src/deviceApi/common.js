@@ -172,7 +172,7 @@ function createNewDevice(request, now) {
     // create new device based on API Key
     const device = {
       name: payload.name || payload.serial || '',
-      serial: payload.serial || '',
+      serial: payload.serial,
       status: apiKey.siteId ? 'approved' : 'provisioned'
     }
     const inserts = {
@@ -195,20 +195,6 @@ function createNewDevice(request, now) {
     }
     const [deviceId] = yield knex('Device').insert(inserts)
     device.id = deviceId
-
-    // generate serial and name if not specified
-    if (!device.serial) {
-      const updates = {}
-      device.serial = `ASP-${103539183 + deviceId}`
-      updates.serial = device.serial
-      if (!device.name) {
-        device.name = device.serial
-        updates.name = device.name
-      }
-      yield knex('Device')
-        .where({ id: device.id })
-        .update(updates)
-    }
 
     // Assign new device to API Key
     yield knex('DeviceApiKey')

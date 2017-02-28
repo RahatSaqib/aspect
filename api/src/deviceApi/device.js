@@ -13,10 +13,6 @@ function* addDeviceData(context) {
       .update({ name, updatedOn: now })
   }
 
-  if (device.serial) {
-    response.serial = device.serial
-  }
-
   if (configuration) {
     yield* updateDeviceConfiguration(
       context.withPayload(configuration))

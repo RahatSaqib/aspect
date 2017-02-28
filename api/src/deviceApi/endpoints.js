@@ -242,7 +242,6 @@ module.exports = [
       },
       response: {
         schema: {
-          serial: Joi.string().allow('', null).description('The device serial number'),
           error: errorPayload
         }
       }
