@@ -213,15 +213,6 @@ function* up(knex) {
     apiKey.charset('utf8')
   })
 
-  yield knex.schema.createTable('DeviceRole', (deviceRole) => {
-    deviceRole.integer('deviceId').unsigned()
-      .index().references('id').inTable('Device')
-    deviceRole.integer('roleId').unsigned()
-      .index().references('id').inTable('Role')
-    deviceRole.primary(['deviceId', 'roleId'])
-    deviceRole.charset('utf8')
-  })
-
   yield knex.schema.createTable('DeviceTypeCategory', (deviceTypeFeature) => {
     deviceTypeFeature.increments('id')
     deviceTypeFeature.string('name').notNullable()
