@@ -15,7 +15,8 @@ import isEditable from '../../shared/selectors/site'
 import {
   fetchSingleSite,
   updateSingleSite,
-  intlShape
+  intlShape,
+  Site
 } from '../SiteRedux'
 import SiteForm from './SiteForm'
 import SiteLocationFormMap from './SiteLocationFormMap'
@@ -32,7 +33,7 @@ export class SiteDetail extends PureComponent {
     params: PropTypes.object.isRequired,
     intl: intlShape,
     fetchSingleSite: PropTypes.func.isRequired,
-    site: PropTypes.object,
+    site: PropTypes.objectOf(Site),
     updateSingleSite: PropTypes.func.isRequired,
     editable: PropTypes.bool.isRequired
   }

@@ -13,9 +13,12 @@ import Helmet from 'react-helmet'
 // Our own imports
 import DataTableWithEmptyList from '../../components/shared/DataTableWithEmptyList'
 import ListFilterContainer from '../../filter/list/ListFilter'
-import { configureListFilter } from '../../filter/FilterRedux'
+import { configureListFilter, ListFilter } from '../../filter/FilterRedux'
 import { fetchListFilteredNotifications } from '../NotificationRedux'
 import styles from './NotificationList.css'
+import { Items } from '../../shared/metaReducers/items'
+import { Table } from '../../shared/metaReducers/table'
+
 
 const messages = defineMessages({
   title: {
@@ -44,12 +47,12 @@ export class NotificationList extends PureComponent {
 
   static propTypes = {
     setPageTitle: PropTypes.func.isRequired,
-    table: PropTypes.object.isRequired,
+    table: PropTypes.objectOf(Table).isRequired,
     configureListFilter: PropTypes.func.isRequired,
     intl: intlShape.isRequired,
-    listFilter: PropTypes.object.isRequired,
+    listFilter: PropTypes.objectOf(ListFilter).isRequired,
     fetchListFilteredNotifications: PropTypes.func.isRequired,
-    items: PropTypes.object.isRequired
+    items: PropTypes.objectOf(Items).isRequired
   }
 
   componentWillMount() {

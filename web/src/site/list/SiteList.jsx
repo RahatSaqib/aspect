@@ -6,7 +6,7 @@ import {
   defineMessages,
   intlShape
 } from 'react-intl'
-import { withRouter } from 'react-router'
+import { withRouter, routerShape } from 'react-router'
 import { bindActionCreators } from 'redux'
 import { connect } from 'react-redux'
 import Helmet from 'react-helmet'
@@ -14,9 +14,11 @@ import Helmet from 'react-helmet'
 // Our own imports
 import DataTableWithEmptyList from '../../components/shared/DataTableWithEmptyList'
 import ListFilterContainer from '../../filter/list/ListFilter'
-import { configureListFilter } from '../../filter/FilterRedux'
+import { configureListFilter, ListFilter } from '../../filter/FilterRedux'
 import { fetchListFilteredSites } from '../SiteRedux'
 import styles from './SiteList.css'
+import { Items } from '../../shared/metaReducers/items'
+import { Table } from '../../shared/metaReducers/table'
 
 const messages = defineMessages({
   title: {
@@ -49,13 +51,13 @@ export class SiteList extends PureComponent {
 
   static propTypes = {
     setPageTitle: PropTypes.func.isRequired,
-    table: PropTypes.object.isRequired,
+    table: PropTypes.objectOf(Table).isRequired,
     intl: intlShape.isRequired,
-    router: PropTypes.object.isRequired,
+    router: routerShape.isRequired,
     fetchListFilteredSites: PropTypes.func.isRequired,
-    items: PropTypes.object.isRequired,
+    items: PropTypes.objectOf(Items).isRequired,
     configureListFilter: PropTypes.func.isRequired,
-    listFilter: PropTypes.object.isRequired
+    listFilter: PropTypes.objectOf(ListFilter).isRequired
   }
 
   componentWillMount() {

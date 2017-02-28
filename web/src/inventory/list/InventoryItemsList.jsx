@@ -30,7 +30,7 @@ import MoreVertIcon from 'material-ui/svg-icons/navigation/more-vert'
 import EmptyList from '../../components/shared/EmptyList'
 import GroupedDataTable from '../../components/shared/GroupedDataTable'
 import ListFilterContainer from '../../filter/list/ListFilter'
-import { configureListFilter } from '../../filter/FilterRedux'
+import { configureListFilter, ListFilter } from '../../filter/FilterRedux'
 import {
   fetchListFilteredInventoryItems,
   toggleGroupBySite,
@@ -51,6 +51,8 @@ import InventoryAdjustmentForm, {
 } from '../adjustment/InventoryAdjustmentForm'
 import styles from './InventoryItemsList.css'
 import { showAcknowledgement } from '../../appNotification/AppNotificationRedux'
+import { Items } from '../../shared/metaReducers/items'
+import { Table } from '../../shared/metaReducers/table'
 
 const messages = defineMessages({
   title: {
@@ -147,17 +149,17 @@ export class InventoryItemsList extends PureComponent {
 
   static propTypes = {
     setPageTitle: PropTypes.func.isRequired,
-    table: PropTypes.object.isRequired,
+    table: PropTypes.objectOf(Table).isRequired,
     configureListFilter: PropTypes.func.isRequired,
     intl: intlShape.isRequired,
-    listFilter: PropTypes.object.isRequired,
+    listFilter: PropTypes.objectOf(ListFilter).isRequired,
     fetchListFilteredInventoryItems: PropTypes.func.isRequired,
     toggleGroupBySite: PropTypes.func.isRequired,
     adjustInventoryLevels: PropTypes.func.isRequired,
     addInventoryItem: PropTypes.func.isRequired,
     finishAdjustingInventoryLevels: PropTypes.func.isRequired,
     consumableReasons: PropTypes.object.isRequired,
-    items: PropTypes.object.isRequired,
+    items: PropTypes.objectOf(Items).isRequired,
     inventoryAdjustment: PropTypes.object,
     addInventory: PropTypes.func.isRequired,
     removeInventory: PropTypes.func.isRequired,
