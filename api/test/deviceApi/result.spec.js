@@ -1390,7 +1390,7 @@ describe('Device Result API routes', () => {
   })
 
   describe('RRT Lab/Clinic Tests', () => {
-    const context = createTestContext(server, { user: 'rrt_admin', site: 'DEDZ' })
+    const context = createTestContext(server, { user: 'rrt_admin', site: 'CHIZ' })
 
     const runTest = context.runTest
 
@@ -2197,7 +2197,7 @@ describe('Device Result API routes', () => {
         .send({
           name: 'Device 123',
           type: { id: 'm2000' },
-          site: { id: 'DEDZ' },
+          site: { id: 'CHIZ' },
           checkpoint: 'ck1',
           result: { data: { a: 'b' },
             assay: { id: 'HivVl' } }
@@ -2216,7 +2216,7 @@ describe('Device Result API routes', () => {
         .innerJoin('DeviceStatus as ds', 'ds.id', 'd.deviceStatusId')
         .where('d.id', device.id)
         .first('d.id', 's.externalId as site', 'ds.token as status')
-      assert.equal(device.site, 'DEDZ')
+      assert.equal(device.site, 'CHIZ')
       assert.equal(device.status, 'approved')
 
       yield server.post(devicePath)
@@ -2224,7 +2224,7 @@ describe('Device Result API routes', () => {
         .send({
           name: 'Device 123',
           type: { id: 'm2000' },
-          site: { id: 'BALA' },
+          site: { id: 'BALAKA' },
           checkpoint: 'ck1',
           result: { data: { a: 'b' },
             assay: { id: 'HivVl' } }
@@ -2239,7 +2239,7 @@ describe('Device Result API routes', () => {
         .innerJoin('DeviceStatus as ds', 'ds.id', 'd.deviceStatusId')
         .where('d.id', device.id)
         .first('d.id', 's.externalId as site', 'ds.token as status')
-      assert.equal(device.site, 'BALA')
+      assert.equal(device.site, 'BALAKA')
       assert.equal(device.status, 'assigned')
 
       yield server.post(devicePath)
@@ -2247,7 +2247,7 @@ describe('Device Result API routes', () => {
         .send({
           name: 'Device 123',
           type: { id: 'm2000' },
-          site: { id: 'DEDZ' },
+          site: { id: 'CHIZ' },
           checkpoint: 'ck1',
           result: { data: { a: 'b' },
             assay: { id: 'HivVl' } }
@@ -2262,7 +2262,7 @@ describe('Device Result API routes', () => {
         .innerJoin('DeviceStatus as ds', 'ds.id', 'd.deviceStatusId')
         .where('d.id', device.id)
         .first('d.id', 's.externalId as site', 'ds.token as status')
-      assert.equal(device.site, 'DEDZ')
+      assert.equal(device.site, 'CHIZ')
       assert.equal(device.status, 'assigned')
     }))
   })
