@@ -322,12 +322,12 @@ function* up(knex) {
   })
 
   yield knex.schema.createTable('DeviceSiteHistory', (history) => {
+    history.increments('id')
     history.integer('deviceId').unsigned().notNullable()
       .index().references('id').inTable('Device')
     history.integer('siteId').unsigned().notNullable()
       .index().references('id').inTable('Site')
-    addCreateFields(history)
-    history.primary(['deviceId', 'siteId'])
+    addCreateFieldsNullable(history)
     history.charset('utf8')
   })
 

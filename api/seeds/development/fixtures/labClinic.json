@@ -1,189 +1,1405 @@
 {
     "clinics": [
         {
+            "externalId": "1422",
+            "name": "Lifeline Health Center",
+            "shortname": "Lifeline Health Center",
+            "stateName": "Salima"
+        },
+        {
+            "externalId": "1008",
+            "name": "Kasungu District Hospital",
+            "shortname": "Kasungu District Hospital",
+            "stateName": "Kasungu"
+        },
+        {
+            "externalId": "1111",
+            "name": "Nkhotakota District Hospital",
+            "shortname": "Nkhotakota District Hospital",
+            "stateName": "Nkhotakota"
+        },
+        {
+            "externalId": "1415",
+            "name": "Salima District Hospital",
+            "shortname": "Salima District Hospital",
+            "stateName": "Salima"
+        },
+        {
+            "externalId": "1406",
+            "name": "Khombedza Health Center",
+            "shortname": "Khombedza Health Center",
+            "stateName": "Salima"
+        },
+        {
+            "externalId": "1402",
+            "name": "Chipoka Health Center",
+            "shortname": "Chipoka Health Center",
+            "stateName": "Salima"
+        },
+        {
+            "externalId": "1407",
+            "name": "Lifuwu Health Center",
+            "shortname": "Lifuwu Health Center",
+            "stateName": "Salima"
+        },
+        {
+            "externalId": "1118",
+            "name": "Matiki Health Center",
+            "shortname": "Matiki Health Center",
+            "stateName": "Nkhotakota"
+        },
+        {
+            "externalId": "1311",
+            "name": "Madisi Mission Hospital",
+            "shortname": "Madisi Mission Hospital",
+            "stateName": "Dowa"
+        },
+        {
+            "externalId": "1313",
+            "name": "Mponela Rural Hospital",
+            "shortname": "Mponela Rural Hospital",
+            "stateName": "Dowa"
+        },
+        {
+            "externalId": "1420",
+            "name": "Mafco Health Center",
+            "shortname": "Mafco Health Center",
+            "stateName": "Salima"
+        },
+        {
+            "externalId": "4040",
+            "name": "ABC Health Center",
+            "shortname": "ABC Health Center",
+            "stateName": "Lilongwe"
+        },
+        {
+            "externalId": "1113",
+            "name": "Alinafe Rehab Centre",
+            "shortname": "Alinafe Rehab Centre",
+            "stateName": "Nkhotakota"
+        },
+        {
+            "externalId": "1501",
+            "name": "Area 18 Health Center",
+            "shortname": "Area 18 Health Center",
+            "stateName": "Lilongwe"
+        },
+        {
+            "externalId": "1502",
+            "name": "Area 25 Health Center",
+            "shortname": "Area 25 Health Center",
+            "stateName": "Lilongwe"
+        },
+        {
+            "externalId": "1701",
+            "name": "Bembeke Health Centre",
+            "shortname": "Bembeke Health Centre",
+            "stateName": "Dedza"
+        },
+        {
+            "externalId": "1101",
+            "name": "Benga Health Center",
+            "shortname": "Benga Health Center",
+            "stateName": "Nkhotakota"
+        },
+        {
+            "externalId": "1801",
+            "name": "Bilira Health Center",
+            "shortname": "Bilira Health Center",
+            "stateName": "Ntcheu"
+        },
+        {
+            "externalId": "1802",
+            "name": "Biriwiri Health Center",
+            "shortname": "Biriwiri Health Center",
+            "stateName": "Ntcheu"
+        },
+        {
+            "externalId": "1301",
+            "name": "Bowe Health Centre",
+            "shortname": "Bowe Health Centre",
+            "stateName": "Dowa"
+        },
+        {
+            "externalId": "1102",
+            "name": "Bua (Nkhotakota) Dispensary",
+            "shortname": "Bua (Nkhotakota) Dispensary",
+            "stateName": "Nkhotakota"
+        },
+        {
+            "externalId": "1803",
+            "name": "Bwanje Health Center",
+            "shortname": "Bwanje Health Center",
+            "stateName": "Ntcheu"
+        },
+        {
+            "externalId": "1547",
+            "name": "Chadza Health Center",
+            "shortname": "Chadza Health Center",
+            "stateName": "Lilongwe"
+        },
+        {
+            "externalId": "1302",
+            "name": "Chakhaza Health Centre",
+            "shortname": "Chakhaza Health Centre",
+            "stateName": "Dowa"
+        },
+        {
+            "externalId": "1303",
+            "name": "Chankhungu Health Centre",
+            "shortname": "Chankhungu Health Centre",
+            "stateName": "Dowa"
+        },
+        {
+            "externalId": "1103",
+            "name": "Chididi (Nkhotakota) Health Center",
+            "shortname": "Chididi (Nkhotakota) Health Center",
+            "stateName": "Nkhotakota"
+        },
+        {
+            "externalId": "1804",
+            "name": "Chigodi Health Center",
+            "shortname": "Chigodi Health Center",
+            "stateName": "Ntcheu"
+        },
+        {
+            "externalId": "1805",
+            "name": "Chikande Health Center",
+            "shortname": "Chikande Health Center",
+            "stateName": "Ntcheu"
+        },
+        {
+            "externalId": "1702",
+            "name": "Chikuse Health Centre",
+            "shortname": "Chikuse Health Centre",
+            "stateName": "Dedza"
+        },
+        {
+            "externalId": "1505",
+            "name": "Chileka (Lilongwe) Health Center",
+            "shortname": "Chileka (Lilongwe) Health Center",
+            "stateName": "Lilongwe"
+        },
+        {
+            "externalId": "1506",
+            "name": "Chimbalanga Health Centre",
+            "shortname": "Chimbalanga Health Centre",
+            "stateName": "Lilongwe"
+        },
+        {
+            "externalId": "1703",
+            "name": "Chimoto Health Centre",
+            "shortname": "Chimoto Health Centre",
+            "stateName": "Dedza"
+        },
+        {
+            "externalId": "1201",
+            "name": "Chinguluwe (Ntchisi) Health Centre",
+            "shortname": "Chinguluwe (Ntchisi) Health Centre",
+            "stateName": "Ntchisi"
+        },
+        {
+            "externalId": "1401",
+            "name": "Chinguluwe (Salima) Health Center",
+            "shortname": "Chinguluwe (Salima) Health Center",
+            "stateName": "Salima"
+        },
+        {
+            "externalId": "1305",
+            "name": "Chinkhwiri Health Centre",
+            "shortname": "Chinkhwiri Health Centre",
+            "stateName": "Dowa"
+        },
+        {
+            "externalId": "1565",
+            "name": "Chinsapo Dispensary",
+            "shortname": "Chinsapo Dispensary",
+            "stateName": "Lilongwe"
+        },
+        {
+            "externalId": "1202",
+            "name": "Chinthembwe Health Centre",
+            "shortname": "Chinthembwe Health Centre",
+            "stateName": "Ntchisi"
+        },
+        {
+            "externalId": "1602",
+            "name": "Chipumi Health Center",
+            "shortname": "Chipumi Health Center",
+            "stateName": "Mchinji"
+        },
+        {
+            "externalId": "1704",
+            "name": "Chiphwanya St Joseph Health Centre",
+            "shortname": "Chiphwanya St Joseph Health Centre",
+            "stateName": "Dedza"
+        },
+        {
+            "externalId": "1306",
+            "name": "Chisepo Health Centre",
+            "shortname": "Chisepo Health Centre",
+            "stateName": "Dowa"
+        },
+        {
+            "externalId": "1403",
+            "name": "Chitala Health Center",
+            "shortname": "Chitala Health Center",
+            "stateName": "Salima"
+        },
+        {
+            "externalId": "1507",
+            "name": "Chitedze Health Center",
+            "shortname": "Chitedze Health Center",
+            "stateName": "Lilongwe"
+        },
+        {
+            "externalId": "1705",
+            "name": "Chitowo Health Centre",
+            "shortname": "Chitowo Health Centre",
+            "stateName": "Dedza"
+        },
+        {
+            "externalId": "1509",
+            "name": "Chiwamba Health Center",
+            "shortname": "Chiwamba Health Center",
+            "stateName": "Lilongwe"
+        },
+        {
+            "externalId": "1321",
+            "name": "Chizolowondo Health Centre",
+            "shortname": "Chizolowondo Health Centre",
+            "stateName": "Dowa"
+        },
+        {
+            "externalId": "1706",
+            "name": "Chongoni Health Centre",
+            "shortname": "Chongoni Health Centre",
+            "stateName": "Dedza"
+        },
+        {
+            "externalId": "1707",
+            "name": "Dedza District Hospital",
+            "shortname": "Dedza District Hospital",
+            "stateName": "Dedza"
+        },
+        {
+            "externalId": "1511",
+            "name": "Diamphwi Health Centre",
+            "shortname": "Diamphwi Health Centre",
+            "stateName": "Lilongwe"
+        },
+        {
+            "externalId": "1307",
+            "name": "Dowa District Hospital",
+            "shortname": "Dowa District Hospital",
+            "stateName": "Dowa"
+        },
+        {
+            "externalId": "1104",
+            "name": "Dwambazi Rural Hospital",
+            "shortname": "Dwambazi Rural Hospital",
+            "stateName": "Nkhotakota"
+        },
+        {
+            "externalId": "1120",
+            "name": "Dwangwa Clinic Dispensary",
+            "shortname": "Dwangwa Clinic Dispensary",
+            "stateName": "Nkhotakota"
+        },
+        {
+            "externalId": "1308",
+            "name": "Dzaleka Ref Camp Health Centre",
+            "shortname": "Dzaleka Ref Camp Health Centre",
+            "stateName": "Dowa"
+        },
+        {
+            "externalId": "1513",
+            "name": "Dzenza Health Center",
+            "shortname": "Dzenza Health Center",
+            "stateName": "Lilongwe"
+        },
+        {
+            "externalId": "1708",
+            "name": "Dzindevu Health Centre",
+            "shortname": "Dzindevu Health Centre",
+            "stateName": "Dedza"
+        },
+        {
+            "externalId": "1309",
+            "name": "Dzoole Health Centre",
+            "shortname": "Dzoole Health Centre",
+            "stateName": "Dowa"
+        },
+        {
+            "externalId": "1808",
+            "name": "Ganya Maternity",
+            "shortname": "Ganya Maternity",
+            "stateName": "Ntcheu"
+        },
+        {
+            "externalId": "1725",
+            "name": "Golomoti Health Centre",
+            "shortname": "Golomoti Health Centre",
+            "stateName": "Dedza"
+        },
+        {
+            "externalId": "1809",
+            "name": "Gowa Health Center",
+            "shortname": "Gowa Health Center",
+            "stateName": "Ntcheu"
+        },
+        {
+            "externalId": "1603",
+            "name": "Guilleme Health Center",
+            "shortname": "Guilleme Health Center",
+            "stateName": "Mchinji"
+        },
+        {
+            "externalId": "1514",
+            "name": "Kabudula Rural Hospital",
+            "shortname": "Kabudula Rural Hospital",
+            "stateName": "Lilongwe"
+        },
+        {
+            "externalId": "1709",
+            "name": "Kafele Health Centre",
+            "shortname": "Kafele Health Centre",
+            "stateName": "Dedza"
+        },
+        {
+            "externalId": "1604",
+            "name": "Kaigwazanga Health Center",
+            "shortname": "Kaigwazanga Health Center",
+            "stateName": "Mchinji"
+        },
+        {
+            "externalId": "1710",
+            "name": "Kalulu Health Centre",
+            "shortname": "Kalulu Health Centre",
+            "stateName": "Dedza"
+        },
+        {
+            "externalId": "1203",
+            "name": "Kamsonga Health Centre",
+            "shortname": "Kamsonga Health Centre",
+            "stateName": "Ntchisi"
+        },
+        {
+            "externalId": "1545",
+            "name": "Kamuzu Barracks Health Centre",
+            "shortname": "Kamuzu Barracks Health Centre",
+            "stateName": "Lilongwe"
+        },
+        {
+            "externalId": "1812",
+            "name": "Kandeu Dispensary",
+            "shortname": "Kandeu Dispensary",
+            "stateName": "Ntcheu"
+        },
+        {
+            "externalId": "1204",
+            "name": "Kangolwa Health Centre",
+            "shortname": "Kangolwa Health Centre",
+            "stateName": "Ntchisi"
+        },
+        {
+            "externalId": "1711",
+            "name": "Kanyama Health Centre",
+            "shortname": "Kanyama Health Centre",
+            "stateName": "Dedza"
+        },
+        {
+            "externalId": "1712",
+            "name": "Kanyezi Health Centre",
+            "shortname": "Kanyezi Health Centre",
+            "stateName": "Dedza"
+        },
+        {
+            "externalId": "1605",
+            "name": "Kapanga Health Center",
+            "shortname": "Kapanga Health Center",
+            "stateName": "Mchinji"
+        },
+        {
+            "externalId": "1813",
+            "name": "Kapeni Health Center",
+            "shortname": "Kapeni Health Center",
+            "stateName": "Ntcheu"
+        },
+        {
+            "externalId": "1713",
+            "name": "Kaphuka Health Centre",
+            "shortname": "Kaphuka Health Centre",
+            "stateName": "Dedza"
+        },
+        {
+            "externalId": "1105",
+            "name": "Kapili (Nkhotakota) Health Centre ",
+            "shortname": "Kapili (Nkhotakota) Health Centre ",
+            "stateName": "Nkhotakota"
+        },
+        {
+            "externalId": "1606",
+            "name": "Kapiri Health Center",
+            "shortname": "Kapiri Health Center",
+            "stateName": "Mchinji"
+        },
+        {
+            "externalId": "1714",
+            "name": "Kasina Health Centre",
+            "shortname": "Kasina Health Centre",
+            "stateName": "Dedza"
+        },
+        {
+            "externalId": "1814",
+            "name": "Kasinje Health Center",
+            "shortname": "Kasinje Health Center",
+            "stateName": "Ntcheu"
+        },
+        {
+            "externalId": "1119",
+            "name": "Kasitu Dispensary",
+            "shortname": "Kasitu Dispensary",
+            "stateName": "Nkhotakota"
+        },
+        {
+            "externalId": "1114",
+            "name": "Katimbila Health Center",
+            "shortname": "Katimbila Health Center",
+            "stateName": "Nkhotakota"
+        },
+        {
+            "externalId": "1815",
+            "name": "Katsekera Health Center",
+            "shortname": "Katsekera Health Center",
+            "stateName": "Ntcheu"
+        },
+        {
+            "externalId": "1726",
+            "name": "Kaundu Health Centre",
+            "shortname": "Kaundu Health Centre",
+            "stateName": "Dedza"
+        },
+        {
+            "externalId": "1517",
+            "name": "Kawale Health Center",
+            "shortname": "Kawale Health Center",
+            "stateName": "Lilongwe"
+        },
+        {
+            "externalId": "1310",
+            "name": "Kayembe Health Centre",
+            "shortname": "Kayembe Health Centre",
+            "stateName": "Dowa"
+        },
+        {
+            "externalId": "1518",
+            "name": "Khongoni Health Center",
+            "shortname": "Khongoni Health Center",
+            "stateName": "Lilongwe"
+        },
+        {
+            "externalId": "1205",
+            "name": "Khuwi Health Centre",
+            "shortname": "Khuwi Health Centre",
+            "stateName": "Ntchisi"
+        },
+        {
+            "externalId": "1607",
+            "name": "Kochilira Hospital",
+            "shortname": "Kochilira Hospital",
+            "stateName": "Mchinji"
+        },
+        {
+            "externalId": "1835",
+            "name": "Lakeview Health Center",
+            "shortname": "Lakeview Health Center",
+            "stateName": "Ntcheu"
+        },
+        {
+            "externalId": "1519",
+            "name": "Likuni Hospital",
+            "shortname": "Likuni Hospital",
+            "stateName": "Lilongwe"
+        },
+        {
+            "externalId": "1106",
+            "name": "Liwaladzi Health Center",
+            "shortname": "Liwaladzi Health Center",
+            "stateName": "Nkhotakota"
+        },
+        {
+            "externalId": "1816",
+            "name": "Lizulu Health Center",
+            "shortname": "Lizulu Health Center",
+            "stateName": "Ntcheu"
+        },
+        {
+            "externalId": "1715",
+            "name": "Lobi Health Centre",
+            "shortname": "Lobi Health Centre",
+            "stateName": "Dedza"
+        },
+        {
+            "externalId": "1608",
+            "name": "Ludzi St Josephs Health Center",
+            "shortname": "Ludzi St Josephs Health Center",
+            "stateName": "Mchinji"
+        },
+        {
+            "externalId": "1521",
+            "name": "Lumbadzi Health Centre",
+            "shortname": "Lumbadzi Health Centre",
+            "stateName": "Lilongwe"
+        },
+        {
+            "externalId": "1408",
+            "name": "Maganga Health Center",
+            "shortname": "Maganga Health Center",
+            "stateName": "Salima"
+        },
+        {
+            "externalId": "1522",
+            "name": "Malingunde Health Center",
+            "shortname": "Malingunde Health Center",
+            "stateName": "Lilongwe"
+        },
+        {
+            "externalId": "1116",
+            "name": "Maloa Dispensary",
+            "shortname": "Maloa Dispensary",
+            "stateName": "Nkhotakota"
+        },
+        {
+            "externalId": "1206",
+            "name": "Malomo Health Centre",
+            "shortname": "Malomo Health Centre",
+            "stateName": "Ntchisi"
+        },
+        {
+            "externalId": "1817",
+            "name": "Manjawira Maternity",
+            "shortname": "Manjawira Maternity",
+            "stateName": "Ntcheu"
+        },
+        {
+            "externalId": "1832",
+            "name": "Masasa Dispensary",
+            "shortname": "Masasa Dispensary",
+            "stateName": "Ntcheu"
+        },
+        {
+            "externalId": "1818",
+            "name": "Matanda Dispensary",
+            "shortname": "Matanda Dispensary",
+            "stateName": "Ntcheu"
+        },
+        {
+            "externalId": "3706",
+            "name": "Matandani Health Center",
+            "shortname": "Matandani Health Center",
+            "stateName": "Neno"
+        },
+        {
+            "externalId": "1524",
+            "name": "Matapila Health Centre",
+            "shortname": "Matapila Health Centre",
+            "stateName": "Lilongwe"
+        },
+        {
+            "externalId": "1717",
+            "name": "Matumba Health Centre",
+            "shortname": "Matumba Health Centre",
+            "stateName": "Dedza"
+        },
+        {
+            "externalId": "1718",
+            "name": "Mayani Health Centre",
+            "shortname": "Mayani Health Centre",
+            "stateName": "Dedza"
+        },
+        {
+            "externalId": "1312",
+            "name": "Mbingwa Health Centre",
+            "shortname": "Mbingwa Health Centre",
+            "stateName": "Dowa"
+        },
+        {
+            "externalId": "1528",
+            "name": "Mbwatalika Health Center",
+            "shortname": "Mbwatalika Health Center",
+            "stateName": "Lilongwe"
+        },
+        {
+            "externalId": "1609",
+            "name": "Mchinji District Hospital",
+            "shortname": "Mchinji District Hospital",
+            "stateName": "Mchinji"
+        },
+        {
+            "externalId": "1410",
+            "name": "Mchoka Health Center",
+            "shortname": "Mchoka Health Center",
+            "stateName": "Salima"
+        },
+        {
+            "externalId": "1730",
+            "name": "Mganja Maternity",
+            "shortname": "Mganja Maternity",
+            "stateName": "Dedza"
+        },
+        {
+            "externalId": "1719",
+            "name": "Mikondo Health Centre",
+            "shortname": "Mikondo Health Centre",
+            "stateName": "Dedza"
+        },
+        {
+            "externalId": "1610",
+            "name": "Mikundi Health Center",
+            "shortname": "Mikundi Health Center",
+            "stateName": "Mchinji"
+        },
+        {
+            "externalId": "1530",
+            "name": "Mitundu Hospital",
+            "shortname": "Mitundu Hospital",
+            "stateName": "Lilongwe"
+        },
+        {
+            "externalId": "1611",
+            "name": "Mkanda Health Center",
+            "shortname": "Mkanda Health Center",
+            "stateName": "Mchinji"
+        },
+        {
+            "externalId": "1207",
+            "name": "Mkhuzi Health Centre",
+            "shortname": "Mkhuzi Health Centre",
+            "stateName": "Ntchisi"
+        },
+        {
+            "externalId": "1531",
+            "name": "Mlale Hospital",
+            "shortname": "Mlale Hospital",
+            "stateName": "Lilongwe"
+        },
+        {
+            "externalId": "1819",
+            "name": "Mlanda Health Center",
+            "shortname": "Mlanda Health Center",
+            "stateName": "Ntcheu"
+        },
+        {
+            "externalId": "1820",
+            "name": "Mlangeni Health Center",
+            "shortname": "Mlangeni Health Center",
+            "stateName": "Ntcheu"
+        },
+        {
+            "externalId": "1107",
+            "name": "Mpamantha Dispensary",
+            "shortname": "Mpamantha Dispensary",
+            "stateName": "Nkhotakota"
+        },
+        {
+            "externalId": "1721",
+            "name": "Mphathi Health Centre",
+            "shortname": "Mphathi Health Centre",
+            "stateName": "Dedza"
+        },
+        {
+            "externalId": "1208",
+            "name": "Malambo  Health Centre",
+            "shortname": "Malambo  Health Centre",
+            "stateName": "Ntchisi"
+        },
+        {
+            "externalId": "1722",
+            "name": "Mphunzi Health Centre",
+            "shortname": "Mphunzi Health Centre",
+            "stateName": "Dedza"
+        },
+        {
+            "externalId": "1314",
+            "name": "Msakambewa Health Centre",
+            "shortname": "Msakambewa Health Centre",
+            "stateName": "Dowa"
+        },
+        {
+            "externalId": "1117",
+            "name": "Msenjere Health Center",
+            "shortname": "Msenjere Health Center",
+            "stateName": "Nkhotakota"
+        },
+        {
+            "externalId": "1727",
+            "name": "Mtakataka Health Centre",
+            "shortname": "Mtakataka Health Centre",
+            "stateName": "Dedza"
+        },
+        {
+            "externalId": "1728",
+            "name": "Mtakataka Police Health Centre",
+            "shortname": "Mtakataka Police Health Centre",
+            "stateName": "Dedza"
+        },
+        {
             "externalId": "1723",
-            "name": "Dedza Clinic",
-            "shortname": "Dedza Clinic",
+            "name": "Mtendere Health Centre",
+            "shortname": "Mtendere Health Centre",
             "stateName": "Dedza"
         },
         {
             "externalId": "1315",
-            "name": "Dowa Clinic",
-            "shortname": "Dowa Clinic",
+            "name": "Mtengowanthenga Community Hospital",
+            "shortname": "Mtengowanthenga Community Hospital",
             "stateName": "Dowa"
         },
         {
-            "externalId": "1002",
-            "name": "Kasungu Clinic",
-            "shortname": "Kasungu Clinic",
-            "stateName": "Kasungu"
-        },
-        {
-            "externalId": "1538",
-            "name": "Lilongwe Clinic",
-            "shortname": "Lilongwe Clinic",
+            "externalId": "1532",
+            "name": "Mtenthera Health Centre",
+            "shortname": "Mtenthera Health Centre",
             "stateName": "Lilongwe"
         },
         {
-            "externalId": "1004",
-            "name": "Mchinji Clinic",
-            "shortname": "Mchinji Clinic",
-            "stateName": "Mchinji"
+            "externalId": "1823",
+            "name": "Ntonda Health Center",
+            "shortname": "Ntonda Health Center",
+            "stateName": "Ntcheu"
         },
         {
-            "externalId": "1111",
-            "name": "Nkhotakota Clinic",
-            "shortname": "Nkhotakota Clinic",
+            "externalId": "1108",
+            "name": "Mtosa Health Center",
+            "shortname": "Mtosa Health Center",
             "stateName": "Nkhotakota"
         },
         {
-            "externalId": "1802",
-            "name": "Ntcheu Clinic",
-            "shortname": "Ntcheu Clinic",
+            "externalId": "1731",
+            "name": "Mua Hospital ",
+            "shortname": "Mua Hospital ",
+            "stateName": "Dedza"
+        },
+        {
+            "externalId": "1316",
+            "name": "Mvera Army Camp Hospital",
+            "shortname": "Mvera Army Camp Hospital",
+            "stateName": "Dowa"
+        },
+        {
+            "externalId": "1317",
+            "name": "Mvera Mission Health Centre",
+            "shortname": "Mvera Mission Health Centre",
+            "stateName": "Dowa"
+        },
+        {
+            "externalId": "1318",
+            "name": "Mwangala Health Centre",
+            "shortname": "Mwangala Health Centre",
+            "stateName": "Dowa"
+        },
+        {
+            "externalId": "1109",
+            "name": "Mwansambo Health Center",
+            "shortname": "Mwansambo Health Center",
+            "stateName": "Nkhotakota"
+        },
+        {
+            "externalId": "1209",
+            "name": "Mzandu Health Centre",
+            "shortname": "Mzandu Health Centre",
+            "stateName": "Ntchisi"
+        },
+        {
+            "externalId": "1732",
+            "name": "Nakalazi Health Centre",
+            "shortname": "Nakalazi Health Centre",
+            "stateName": "Dedza"
+        },
+        {
+            "externalId": "1319",
+            "name": "Nalunga Mafika Health Centre",
+            "shortname": "Nalunga Mafika Health Centre",
+            "stateName": "Dowa"
+        },
+        {
+            "externalId": "1534",
+            "name": "Nathenje Health Centre",
+            "shortname": "Nathenje Health Centre",
+            "stateName": "Lilongwe"
+        },
+        {
+            "externalId": "1212",
+            "name": "Ndinda Dispensary",
+            "shortname": "Ndinda Dispensary",
+            "stateName": "Ntchisi"
+        },
+        {
+            "externalId": "1110",
+            "name": "Ngala Health Center",
+            "shortname": "Ngala Health Center",
+            "stateName": "Nkhotakota"
+        },
+        {
+            "externalId": "1414",
+            "name": "Ngodzi Health Center",
+            "shortname": "Ngodzi Health Center",
+            "stateName": "Salima"
+        },
+        {
+            "externalId": "1537",
+            "name": "Ngoni Health Center",
+            "shortname": "Ngoni Health Center",
+            "stateName": "Lilongwe"
+        },
+        {
+            "externalId": "1538",
+            "name": "Nkhoma Mission Hospital",
+            "shortname": "Nkhoma Mission Hospital",
+            "stateName": "Lilongwe"
+        },
+        {
+            "externalId": "1112",
+            "name": "Nkhunga Health Center",
+            "shortname": "Nkhunga Health Center",
+            "stateName": "Nkhotakota"
+        },
+        {
+            "externalId": "1612",
+            "name": "Nkhwazi Health Center",
+            "shortname": "Nkhwazi Health Center",
+            "stateName": "Mchinji"
+        },
+        {
+            "externalId": "1539",
+            "name": "Nsaru Health Center",
+            "shortname": "Nsaru Health Center",
+            "stateName": "Lilongwe"
+        },
+        {
+            "externalId": "1825",
+            "name": "Nsipe Health Center",
+            "shortname": "Nsipe Health Center",
+            "stateName": "Ntcheu"
+        },
+        {
+            "externalId": "1826",
+            "name": "Nsiyaludzu Health Center",
+            "shortname": "Nsiyaludzu Health Center",
+            "stateName": "Ntcheu"
+        },
+        {
+            "externalId": "1827",
+            "name": "Ntcheu District Hospital",
+            "shortname": "Ntcheu District Hospital",
             "stateName": "Ntcheu"
         },
         {
             "externalId": "1210",
-            "name": "Ntchisi Clinic",
-            "shortname": "Ntchisi Clinic",
+            "name": "Ntchisi District Hospital",
+            "shortname": "Ntchisi District Hospital",
             "stateName": "Ntchisi"
         },
         {
-            "externalId": "1008",
-            "name": "Salima Clinic",
-            "shortname": "Salima Clinic",
+            "externalId": "1540",
+            "name": "Nthondo (Lilongwe) Health Center",
+            "shortname": "Nthondo (Lilongwe) Health Center",
+            "stateName": "Lilongwe"
+        },
+        {
+            "externalId": "1211",
+            "name": "Nthondo (Ntchisi) Health Centre",
+            "shortname": "Nthondo (Ntchisi) Health Centre",
+            "stateName": "Ntchisi"
+        },
+        {
+            "externalId": "1828",
+            "name": "Nzama Health Center",
+            "shortname": "Nzama Health Center",
+            "stateName": "Ntcheu"
+        },
+        {
+            "externalId": "1544",
+            "name": "Police Area 30 Dispensary",
+            "shortname": "Police Area 30 Dispensary",
+            "stateName": "Lilongwe"
+        },
+        {
+            "externalId": "1419",
+            "name": "Police College Dispensary",
+            "shortname": "Police College Dispensary",
             "stateName": "Salima"
         },
         {
-            "externalId": "1009",
-            "name": "Chitipa Clinic",
-            "shortname": "Chitipa Clinic",
-            "stateName": "Chitipa"
+            "externalId": "1416",
+            "name": "Senga Bay Baptist Dispensary",
+            "shortname": "Senga Bay Baptist Dispensary",
+            "stateName": "Salima"
         },
         {
-            "externalId": "1010",
-            "name": "Karonga Clinic",
-            "shortname": "Karonga Clinic",
+            "externalId": "1829",
+            "name": "Senzani Health Center",
+            "shortname": "Senzani Health Center",
+            "stateName": "Ntcheu"
+        },
+        {
+            "externalId": "1830",
+            "name": "Sharpevale Maternity",
+            "shortname": "Sharpevale Maternity",
+            "stateName": "Ntcheu"
+        },
+        {
+            "externalId": "1836",
+            "name": "Sister Theresa Hospital",
+            "shortname": "Sister Theresa Hospital",
+            "stateName": "Ntcheu"
+        },
+        {
+            "externalId": "0213",
+            "name": "St Annes Health Center",
+            "shortname": "St Annes Health Center",
             "stateName": "Karonga"
         },
         {
-            "externalId": "1011",
-            "name": "Likoma Clinic",
-            "shortname": "Likoma Clinic",
-            "stateName": "Likoma"
+            "externalId": "1115",
+            "name": "St Annes Hospital",
+            "shortname": "St Annes Hospital",
+            "stateName": "Nkhotakota"
         },
         {
-            "externalId": "1012",
-            "name": "Mzimba Clinic",
-            "shortname": "Mzimba Clinic",
-            "stateName": "Mzimba"
+            "externalId": "1541",
+            "name": "St Gabriel MIssion Hospital",
+            "shortname": "St Gabriel MIssion Hospital",
+            "stateName": "Lilongwe"
         },
         {
-            "externalId": "1013",
-            "name": "Nkhata Bay Clinic",
-            "shortname": "Nkhata Bay Clinic",
-            "stateName": "Nkhata Bay"
+            "externalId": "1613",
+            "name": "Tembwe Health Center",
+            "shortname": "Tembwe Health Center",
+            "stateName": "Mchinji"
         },
         {
-            "externalId": "1014",
-            "name": "Rumphi Clinic",
-            "shortname": "Rumphi Clinic",
-            "stateName": "Rumphi"
+            "externalId": "1320",
+            "name": "Thonje Health Centre",
+            "shortname": "Thonje Health Centre",
+            "stateName": "Dowa"
         },
         {
-            "externalId": "1015",
-            "name": "Balaka Clinic",
-            "shortname": "Balaka Clinic",
-            "stateName": "Balaka"
+            "externalId": "1831",
+            "name": "Tsangano Dispensary",
+            "shortname": "Tsangano Dispensary",
+            "stateName": "Ntcheu"
         },
         {
-            "externalId": "1016",
-            "name": "Blantyre Clinic",
-            "shortname": "Blantyre Clinic",
-            "stateName": "Blantyre"
+            "externalId": "1503",
+            "name": "Bwaila Hospital Martin Preuss Centre",
+            "shortname": "Bwaila Hospital Martin Preuss Centre",
+            "stateName": "Lilongwe"
         },
         {
-            "externalId": "1017",
-            "name": "Chikwawa Clinic",
-            "shortname": "Chikwawa Clinic",
+            "externalId": "1322",
+            "name": "Kasese Health Centre",
+            "shortname": "Kasese Health Centre",
+            "stateName": "Dowa"
+        },
+        {
+            "externalId": "1553",
+            "name": "Daeyang Luke Hospital",
+            "shortname": "Daeyang Luke Hospital",
+            "stateName": "Lilongwe"
+        },
+        {
+            "externalId": "1423",
+            "name": "CHAGUNDA H/C",
+            "shortname": "CHAGUNDA H/C",
+            "stateName": "Salima"
+        },
+        {
+            "externalId": "1555",
+            "name": "Partners in Hope",
+            "shortname": "Partners in Hope",
+            "stateName": "Lilongwe"
+        },
+        {
+            "externalId": "1551",
+            "name": "SOS Clinic",
+            "shortname": "SOS Clinic",
+            "stateName": "Lilongwe"
+        },
+        {
+            "externalId": "1838",
+            "name": "Champiti Health Centre",
+            "shortname": "Champiti Health Centre",
+            "stateName": "Ntcheu"
+        },
+        {
+            "externalId": "1562",
+            "name": "MACRO",
+            "shortname": "MACRO",
+            "stateName": "Lilongwe"
+        },
+        {
+            "externalId": "1570",
+            "name": "DR David Livingstone Memorial Clinic",
+            "shortname": "DR David Livingstone Memorial Clinic",
+            "stateName": "Lilongwe"
+        },
+        {
+            "externalId": "5050",
+            "name": "Unknown Facilities from PIH Lab",
+            "shortname": "Unknown Facilities from PIH Lab",
+            "stateName": "Lilongwe"
+        },
+        {
+            "externalId": "1520",
+            "name": "Kamuzu (KCH) Central Hospital ",
+            "shortname": "Kamuzu (KCH) Central Hospital ",
+            "stateName": "Lilongwe"
+        },
+        {
+            "externalId": "1563",
+            "name": "Adventist Health Center",
+            "shortname": "Adventist Health Center",
+            "stateName": "Lilongwe"
+        },
+        {
+            "externalId": "1516",
+            "name": "Kachere Private Clinic",
+            "shortname": "Kachere Private Clinic",
+            "stateName": "Lilongwe"
+        },
+        {
+            "externalId": "1515",
+            "name": "Kangoma Health Center",
+            "shortname": "Kangoma Health Center",
+            "stateName": "Lilongwe"
+        },
+        {
+            "externalId": "3318",
+            "name": "Kapichira Health Center",
+            "shortname": "Kapichira Health Center",
             "stateName": "Chikwawa"
         },
         {
-            "externalId": "1018",
-            "name": "Chiradzulu Clinic",
-            "shortname": "Chiradzulu Clinic",
-            "stateName": "Chiradzulu"
-        },
-        {
-            "externalId": "1019",
-            "name": "Machinga Clinic",
-            "shortname": "Machinga Clinic",
-            "stateName": "Machinga"
-        },
-        {
-            "externalId": "1020",
-            "name": "Mangochi Clinic",
-            "shortname": "Mangochi Clinic",
-            "stateName": "Mangochi"
-        },
-        {
-            "externalId": "1021",
-            "name": "Mulanje Clinic",
-            "shortname": "Mulanje Clinic",
+            "externalId": "3204",
+            "name": "Chonde Health Center",
+            "shortname": "Chonde Health Center",
             "stateName": "Mulanje"
         },
         {
-            "externalId": "1022",
-            "name": "Mwanza Clinic",
-            "shortname": "Mwanza Clinic",
-            "stateName": "Mwanza"
+            "externalId": "3210",
+            "name": "Mpala Health Center",
+            "shortname": "Mpala Health Center",
+            "stateName": "Mulanje"
         },
         {
-            "externalId": "1023",
-            "name": "Nsanje Clinic",
-            "shortname": "Nsanje Clinic",
-            "stateName": "Nsanje"
+            "externalId": "1822",
+            "name": "Mphepozinai Dispensary",
+            "shortname": "Mphepozinai Dispensary",
+            "stateName": "Ntcheu"
         },
         {
-            "externalId": "1024",
-            "name": "Thyolo Clinic",
-            "shortname": "Thyolo Clinic",
-            "stateName": "Thyolo"
+            "externalId": "3211",
+            "name": "Mulanje District Hospital",
+            "shortname": "Mulanje District Hospital",
+            "stateName": "Mulanje"
         },
         {
-            "externalId": "1025",
-            "name": "Phalombe Clinic",
-            "shortname": "Phalombe Clinic",
+            "externalId": "0308",
+            "name": "Kachere Health Center",
+            "shortname": "Kachere Health Center",
+            "stateName": "Nkhata bay"
+        },
+        {
+            "externalId": "3508",
+            "name": "Mpasa Health Center",
+            "shortname": "Mpasa Health Center",
             "stateName": "Phalombe"
         },
         {
-            "externalId": "1026",
-            "name": "Zomba Clinic",
-            "shortname": "Zomba Clinic",
-            "stateName": "Zomba"
+            "externalId": "1214",
+            "name": "Nthondo (Ntchisi) Health Center",
+            "shortname": "Nthondo (Ntchisi) Health Center",
+            "stateName": "Ntchisi"
         },
         {
-            "externalId": "1027",
-            "name": "Neno Clinic",
-            "shortname": "Neno Clinic",
-            "stateName": "Neno"
+            "externalId": "3514",
+            "name": "Gogo Nazombe Health Center",
+            "shortname": "Gogo Nazombe Health Center",
+            "stateName": "Phalombe"
+        },
+        {
+            "externalId": "3513",
+            "name": "Sukasanje Health Center",
+            "shortname": "Sukasanje Health Center",
+            "stateName": "Phalombe"
+        },
+        {
+            "externalId": "3512",
+            "name": "Phalombe District Hospital",
+            "shortname": "Phalombe District Hospital",
+            "stateName": "Phalombe"
+        },
+        {
+            "externalId": "3511",
+            "name": "Nkhulambe Health Center",
+            "shortname": "Nkhulambe Health Center",
+            "stateName": "Phalombe"
+        },
+        {
+            "externalId": "3121",
+            "name": "THYOLO DISTRICT HOSPITAL",
+            "shortname": "THYOLO DISTRICT HOSPITAL",
+            "stateName": "Thyolo"
+        },
+        {
+            "externalId": "3151",
+            "name": "NCHIMA HEALTH CENTER",
+            "shortname": "NCHIMA HEALTH CENTER",
+            "stateName": "Thyolo"
+        },
+        {
+            "externalId": "3201",
+            "name": "Bondo Health Center",
+            "shortname": "Bondo Health Center",
+            "stateName": "Mulanje"
+        },
+        {
+            "externalId": "3202",
+            "name": "Chambe Health Center",
+            "shortname": "Chambe Health Center",
+            "stateName": "Mulanje"
+        },
+        {
+            "externalId": "3203",
+            "name": "Chinyama Health Center",
+            "shortname": "Chinyama Health Center",
+            "stateName": "Mulanje"
+        },
+        {
+            "externalId": "3205",
+            "name": "Dzenje Maternity",
+            "shortname": "Dzenje Maternity",
+            "stateName": "Mulanje"
+        },
+        {
+            "externalId": "3206",
+            "name": "Kambenje Health Center",
+            "shortname": "Kambenje Health Center",
+            "stateName": "Mulanje"
+        },
+        {
+            "externalId": "3207",
+            "name": "Mbiza Health Center",
+            "shortname": "Mbiza Health Center",
+            "stateName": "Mulanje"
+        },
+        {
+            "externalId": "3208",
+            "name": "Milonde Health Center",
+            "shortname": "Milonde Health Center",
+            "stateName": "Mulanje"
+        },
+        {
+            "externalId": "3209",
+            "name": "Mimosa Dispensary",
+            "shortname": "Mimosa Dispensary",
+            "stateName": "Mulanje"
+        },
+        {
+            "externalId": "3212",
+            "name": "Mulanje Mission Hospital",
+            "shortname": "Mulanje Mission Hospital",
+            "stateName": "Mulanje"
+        },
+        {
+            "externalId": "3213",
+            "name": "Mulomba Health Center",
+            "shortname": "Mulomba Health Center",
+            "stateName": "Mulanje"
+        },
+        {
+            "externalId": "3214",
+            "name": "Muloza Health Center",
+            "shortname": "Muloza Health Center",
+            "stateName": "Mulanje"
+        },
+        {
+            "externalId": "3215",
+            "name": "Namasalima (Mulanje) Health Center",
+            "shortname": "Namasalima (Mulanje) Health Center",
+            "stateName": "Mulanje"
+        },
+        {
+            "externalId": "3216",
+            "name": "Namphungo Health Center",
+            "shortname": "Namphungo Health Center",
+            "stateName": "Mulanje"
+        },
+        {
+            "externalId": "3217",
+            "name": "Namulenga Health Center",
+            "shortname": "Namulenga Health Center",
+            "stateName": "Mulanje"
+        },
+        {
+            "externalId": "3218",
+            "name": "Thembe Dispensary",
+            "shortname": "Thembe Dispensary",
+            "stateName": "Mulanje"
+        },
+        {
+            "externalId": "3219",
+            "name": "Thuchila Health Center",
+            "shortname": "Thuchila Health Center",
+            "stateName": "Mulanje"
+        },
+        {
+            "externalId": "3220",
+            "name": "Lujeri Health Center",
+            "shortname": "Lujeri Health Center",
+            "stateName": "Mulanje"
+        },
+        {
+            "externalId": "3221",
+            "name": "Chisitu Health Center",
+            "shortname": "Chisitu Health Center",
+            "stateName": "Mulanje"
+        },
+        {
+            "externalId": "3222",
+            "name": "Naphimba Health Center",
+            "shortname": "Naphimba Health Center",
+            "stateName": "Mulanje"
+        },
+        {
+            "externalId": "3223",
+            "name": "Mkomaula Health Centre",
+            "shortname": "Mkomaula Health Centre",
+            "stateName": "Mulanje"
+        },
+        {
+            "externalId": "3401",
+            "name": "CHIDIDI HEALTH CENTER",
+            "shortname": "CHIDIDI HEALTH CENTER",
+            "stateName": "Nsanje"
+        },
+        {
+            "externalId": "3501",
+            "name": "Chiringa Dispensary",
+            "shortname": "Chiringa Dispensary",
+            "stateName": "Phalombe"
+        },
+        {
+            "externalId": "3502",
+            "name": "Chiringa Maternity",
+            "shortname": "Chiringa Maternity",
+            "stateName": "Phalombe"
+        },
+        {
+            "externalId": "3503",
+            "name": "Chitekesa Health Center",
+            "shortname": "Chitekesa Health Center",
+            "stateName": "Phalombe"
+        },
+        {
+            "externalId": "3504",
+            "name": "Phalombe Mission Hospital",
+            "shortname": "Phalombe Mission Hospital",
+            "stateName": "Phalombe"
+        },
+        {
+            "externalId": "3505",
+            "name": "Kalinde Dispensary",
+            "shortname": "Kalinde Dispensary",
+            "stateName": "Phalombe"
+        },
+        {
+            "externalId": "3506",
+            "name": "Migowi Health Center",
+            "shortname": "Migowi Health Center",
+            "stateName": "Phalombe"
+        },
+        {
+            "externalId": "3507",
+            "name": "Mkhwayi Health Center",
+            "shortname": "Mkhwayi Health Center",
+            "stateName": "Phalombe"
+        },
+        {
+            "externalId": "3509",
+            "name": "Mwanga Health Center",
+            "shortname": "Mwanga Health Center",
+            "stateName": "Phalombe"
+        },
+        {
+            "externalId": "3510",
+            "name": "Nambazo Health Center",
+            "shortname": "Nambazo Health Center",
+            "stateName": "Phalombe"
+        },
+        {
+            "externalId": "1839",
+            "name": "Kalimanjira Health Centre",
+            "shortname": "Kalimanjira Health Centre",
+            "stateName": "Ntcheu"
         }
     ],
     "labs": [
         {
-            "externalId": "DEDZ",
-            "name": "Dedza Lab",
-            "shortname": "Dedza Lab"
+            "externalId": "PIH",
+            "name": "Partners In Hope",
+            "shortname": "PIH"
         },
         {
-            "externalId": "CHIT",
-            "name": "Chitipa Lab",
-            "shortname": "Chitipa Lab"
+            "externalId": "QUEENS",
+            "name": "Blantyre Queen Elizabeth Central Hospital",
+            "shortname": "Blantyre Queens"
         },
         {
-            "externalId": "BALA",
-            "name": "Balaka Lab",
-            "shortname": "Balaka Lab"
+            "externalId": "KCH",
+            "name": "Kamuzu Central Hospital",
+            "shortname": "Kamuzu"
+        },
+        {
+            "externalId": "ZCH",
+            "name": "Zomba Central Hospital",
+            "shortname": "Zomba"
+        },
+        {
+            "externalId": "THYOLO",
+            "name": "Thyolo District Hospital",
+            "shortname": "Thyolo"
+        },
+        {
+            "externalId": "MZUZU",
+            "name": "Mzuzu District Hospital",
+            "shortname": "Mzuzu"
+        },
+        {
+            "externalId": "MZIMBA",
+            "name": "Mzimba District Hospital",
+            "shortname": "Mzimba"
+        },
+        {
+            "externalId": "DREAM",
+            "name": "Blantyre Dream Project",
+            "shortname": "Dream"
+        },
+        {
+            "externalId": "BALAKA",
+            "name": "Balaka Dream Clinic",
+            "shortname": "Balaka"
+        },
+        {
+            "externalId": "NSANJE",
+            "name": "Nsanje District Hospital",
+            "shortname": "Nsanje"
+        },
+        {
+            "externalId": "CHIZ",
+            "name": "Chiradzulu District Hospital",
+            "shortname": "Chiradzulu"
         }
     ]
 }

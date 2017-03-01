@@ -1390,7 +1390,7 @@ describe('Device Result API routes', () => {
   })
 
   describe('RRT Lab/Clinic Tests', () => {
-    const context = createTestContext(server, { user: 'rrt_admin', site: 'DEDZ' })
+    const context = createTestContext(server, { user: 'rrt_admin', site: 'CHIZ' })
 
     const runTest = context.runTest
 
@@ -2183,6 +2183,87 @@ describe('Device Result API routes', () => {
       const resultWorkflowStatus = yield knex('ResultWorkflowStatus as rs')
         .where({ id: result.resultWorkflowStatusId }).first('externalId')
       assert.equal(resultWorkflowStatus.externalId, 'Delivered')
+    }))
+
+    it('should change site', () => runTest(function* (knex) {
+      const { apiKey, deviceAuth } = context
+      assert.isOk(apiKey)
+
+      let device = yield* getDeviceFromApiKey(knex, apiKey)
+      assert.isNotOk(device)
+
+      yield server.post(devicePath)
+        .set('Authorization', deviceAuth)
+        .send({
+          name: 'Device 123',
+          type: { id: 'm2000' },
+          site: { id: 'CHIZ' },
+          checkpoint: 'ck1',
+          result: { data: { a: 'b' },
+            assay: { id: 'HivVl' } }
+        })
+        .then((res) => {
+          assert.equal(res.status, 200)
+          assert.typeOf(res.body, 'Object')
+        })
+
+      device = yield* getDeviceFromApiKey(knex, apiKey)
+      assert.isOk(device)
+      assert.isOk(device.id)
+
+      device = yield knex('Site as s')
+        .innerJoin('Device as d', 'd.siteId', 's.id')
+        .innerJoin('DeviceStatus as ds', 'ds.id', 'd.deviceStatusId')
+        .where('d.id', device.id)
+        .first('d.id', 's.externalId as site', 'ds.token as status')
+      assert.equal(device.site, 'CHIZ')
+      assert.equal(device.status, 'approved')
+
+      yield server.post(devicePath)
+        .set('Authorization', deviceAuth)
+        .send({
+          name: 'Device 123',
+          type: { id: 'm2000' },
+          site: { id: 'BALAKA' },
+          checkpoint: 'ck1',
+          result: { data: { a: 'b' },
+            assay: { id: 'HivVl' } }
+        })
+        .then((res) => {
+          assert.equal(res.status, 200)
+          assert.typeOf(res.body, 'Object')
+        })
+
+      device = yield knex('Site as s')
+        .innerJoin('Device as d', 'd.siteId', 's.id')
+        .innerJoin('DeviceStatus as ds', 'ds.id', 'd.deviceStatusId')
+        .where('d.id', device.id)
+        .first('d.id', 's.externalId as site', 'ds.token as status')
+      assert.equal(device.site, 'BALAKA')
+      assert.equal(device.status, 'assigned')
+
+      yield server.post(devicePath)
+        .set('Authorization', deviceAuth)
+        .send({
+          name: 'Device 123',
+          type: { id: 'm2000' },
+          site: { id: 'CHIZ' },
+          checkpoint: 'ck1',
+          result: { data: { a: 'b' },
+            assay: { id: 'HivVl' } }
+        })
+        .then((res) => {
+          assert.equal(res.status, 200)
+          assert.typeOf(res.body, 'Object')
+        })
+
+      device = yield knex('Site as s')
+        .innerJoin('Device as d', 'd.siteId', 's.id')
+        .innerJoin('DeviceStatus as ds', 'ds.id', 'd.deviceStatusId')
+        .where('d.id', device.id)
+        .first('d.id', 's.externalId as site', 'ds.token as status')
+      assert.equal(device.site, 'CHIZ')
+      assert.equal(device.status, 'assigned')
     }))
   })
 })

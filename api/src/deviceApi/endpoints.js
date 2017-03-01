@@ -26,6 +26,10 @@ const devicePayload = {
   type: Joi.object().keys({
     id: Joi.string().required().description('The Device Type. Required on first request with API Key')
   }),
+  site: Joi.object().keys({
+    id: Joi.string().required().description(
+      'ID of the site where the device is located')
+  })
 }
 
 const configurationPayload = {
