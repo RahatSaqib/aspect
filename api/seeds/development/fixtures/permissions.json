@@ -9,6 +9,10 @@
       "activities": ["admin"]
     },
     {
+      "name": "deviceApiKey",
+      "activities": ["view", "edit", "admin"]
+    },
+    {
       "name": "device",
       "activities": ["view", "edit", "admin"]
     },
