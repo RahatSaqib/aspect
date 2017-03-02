@@ -48,41 +48,36 @@ function* getDeviceData(context) {
   const response = {
     name: device.name,
     requestedOn: now.toISOString(),
-    loggedOn: deviceLog.createdOn
-  }
-  if (deviceLog.checkpoint != null) {
-    response.checkpoint = deviceLog.checkpoint
   }
 
-  const config = yield* getDeviceConfiguration(context, true)
-  if (config != null) {
-    response.configuration = config
+  const site = yield* getSite(context)
+  if (site != null) {
+    response.site = site
   }
 
-  const op = yield* getDeviceOperation(context)
-  if (op != null) {
-    response.operation = op
-  }
+  if (deviceLog != null) {
+    response.loggedOn = deviceLog.createdOn
+    if (deviceLog.checkpoint != null) {
+      response.checkpoint = deviceLog.checkpoint
+    }
 
-  const result = yield* getResult(context)
-  if (result != null) {
-    response.result = result
+    const config = yield* getDeviceConfiguration(context, true)
+    if (config != null) {
+      response.configuration = config
+    }
+
+    const op = yield* getDeviceOperation(context)
+    if (op != null) {
+      response.operation = op
+    }
+
+    const result = yield* getResult(context)
+    if (result != null) {
+      response.result = result
+    }
   }
 
   return response
-}
-
-function* getDeviceCheckpoint(context) {
-  const { knex, device: { id: deviceId } } = context
-  const deviceLog = yield knex('DeviceLog')
-    .where({ deviceId })
-    .whereNotNull('checkpoint')
-    .orderBy('id', 'desc')
-    .first('checkpoint')
-  if (deviceLog != null) {
-    return { checkpoint: deviceLog.checkpoint }
-  }
-  return Boom.notFound('Cannot find log at checkpoint')
 }
 
 function* updateDeviceConfiguration(context) {
@@ -213,10 +208,18 @@ function* updateSite(context) {
   return result
 }
 
+function* getSite(context) {
+  const { knex, device } = context
+  const site = yield knex('Site as s')
+    .innerJoin('Device as d', 'd.siteId', 's.id')
+    .where('d.id', device.id)
+    .first('s.externalId')
+  return site == null ? null : { id: site.externalId }
+}
+
 module.exports = {
   addDeviceData,
   getDeviceData,
-  getDeviceCheckpoint,
   updateDeviceConfiguration,
   addDeviceOperation
 }

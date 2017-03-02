@@ -554,13 +554,13 @@ describe('Device Result API routes', () => {
 
       yield server.post(devicePostResultPath)
         .set('Authorization', deviceAuth)
-        .send({ data: { a: 'b' }, assay: { id: 'HivVl' } })
+        .send({ checkpoint: '3123', data: { a: 'b' }, assay: { id: 'HivVl' } })
         .then((res) => {
           assert.equal(res.status, 200)
         })
       resultIds.push(yield* getLastResultId(knex, deviceId))
 
-      yield server.get(devicePath)
+      yield server.get(`${devicePath}?checkpoint=3123`)
         .set('Authorization', deviceAuth)
         .then((res) => {
           assert.equal(res.status, 200)
@@ -585,13 +585,13 @@ describe('Device Result API routes', () => {
 
       yield server.post(devicePostResultPath)
         .set('Authorization', deviceAuth)
-        .send({ data: { a: 'c' }, error: { code: '1' }, assay: { id: 'HivVl' } })
+        .send({ checkpoint: '312', data: { a: 'c' }, error: { code: '1' }, assay: { id: 'HivVl' } })
         .then((res) => {
           assert.equal(res.status, 200)
         })
       resultIds.push(yield* getLastResultId(knex, deviceId))
 
-      yield server.get(devicePath)
+      yield server.get(`${devicePath}?checkpoint=312`)
         .set('Authorization', deviceAuth)
         .then((res) => {
           assert.equal(res.status, 200)
@@ -639,13 +639,13 @@ describe('Device Result API routes', () => {
 
       yield server.post(devicePostResultPath)
         .set('Authorization', deviceAuth)
-        .send({ data: { a: 'e' }, category: [{ id: 'Detected' }, { id: 'NotDetected' }], assay: { id: 'HivVl' } })
+        .send({ checkpoint: '31', data: { a: 'e' }, category: [{ id: 'Detected' }, { id: 'NotDetected' }], assay: { id: 'HivVl' } })
         .then((res) => {
           assert.equal(res.status, 200)
         })
       resultIds.push(yield* getLastResultId(knex, deviceId))
 
-      yield server.get(devicePath)
+      yield server.get(`${devicePath}?checkpoint=31`)
         .set('Authorization', deviceAuth)
         .then((res) => {
           assert.equal(res.status, 200)

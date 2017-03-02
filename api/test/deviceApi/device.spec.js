@@ -159,7 +159,7 @@ describe('Device API routes', () => {
           assert.deepEqual(res.body.operation.data, op1)
         })
 
-      yield server.get(`${devicePath}/checkpoint`)
+      yield server.get(devicePath)
         .set('Authorization', deviceAuth)
         .then((res) => {
           assert.equal(res.status, 200)
@@ -171,6 +171,7 @@ describe('Device API routes', () => {
       yield server.post(devicePath)
         .set('Authorization', deviceAuth)
         .send({
+          checkpoint: '12313',
           configuration: { data: { a: 'c', c: 2, d: false, e: { f: 'g' } } },
           operation: { data: { a: 'b', c: 2, d: false, e: { f: 'g' } } }
         })
@@ -184,7 +185,7 @@ describe('Device API routes', () => {
       assert.deepEqual(config2, _.assign({}, baseConfig, { a: 'c', c: 2, d: false, e: { f: 'g' } }))
       assert.deepEqual(op2, { a: 'b', c: 2, d: false, e: { f: 'g' } })
 
-      yield server.get(devicePath)
+      yield server.get(`${devicePath}?checkpoint=12313`)
         .set('Authorization', deviceAuth)
         .then((res) => {
           assert.equal(res.status, 200)
