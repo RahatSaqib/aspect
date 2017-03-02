@@ -40,6 +40,7 @@ function* seed(knex) {
   })
   const deviceTypeCategories = yield rowsAsObject(knex, 'DeviceTypeCategory')
 
+  /* TODO Add configuration schema once UI supports and we synchronize correctly
   // define configurationData object
   const rrtConfigurationDataSchema = JSON.stringify({
     requirePrinter: {
@@ -134,13 +135,14 @@ function* seed(knex) {
       }
     }
   })
+*/
 
   // RRT Device Type
   yield knex('DeviceType').insert({
     name: 'RRT',
     manufacturer: 'SystemOne',
     deviceTypeCategoryId: deviceTypeCategories.Client.id,
-    configurationDataSchema: rrtConfigurationDataSchema
+    // configurationDataSchema: rrtConfigurationDataSchema
   })
 
   const modules = yield knex('Permission')
