@@ -176,7 +176,9 @@ function createNewDevice(request, now) {
     if (deviceTypeExternalId == null) {
       return { error: Boom.badRequest('Must specify device type on first request with new key') }
     }
-    const deviceType = yield knex('DeviceType').where({ name: deviceTypeExternalId }).first('id')
+    const deviceType = yield knex('DeviceType')
+      .where({ name: deviceTypeExternalId })
+      .first('id', 'name')
     if (deviceType == null) {
       return { error: Boom.badRequest(`Cannot find DeviceType with id ${deviceTypeExternalId}`) }
     }
@@ -193,11 +195,30 @@ function createNewDevice(request, now) {
       return { error: Boom.notFound('Cannot find available API Key when creating new device') }
     }
 
+    // Use or generate device name
+    const names = {}
+    if (payload.name) {
+      names.name = payload.name
+      names.shortname = names.name
+    } else if (payload.serial) {
+      names.name = payload.serial
+      names.shortname = names.name
+    } else {
+      const [deviceCount] = yield knex('Device')
+        .where({
+          partnerId: apiKey.partnerId,
+          deviceTypeId: deviceType.id
+        })
+        .count('id as cnt')
+      names.name = `${deviceType.name} #${deviceCount.cnt + 1}`
+      names.shortname = names.name
+    }
+
     // create new device based on API Key
     const device = {
       partnerId: apiKey.partnerId,
       siteId: apiKey.siteId,
-      name: payload.name || payload.serial || '',
+      name: names.name,
       serial: payload.serial,
       status: apiKey.siteId ? 'approved' : 'provisioned'
     }
@@ -209,6 +230,7 @@ function createNewDevice(request, now) {
       deviceTypeId: deviceType.id,
       deviceStatusId: knex('DeviceStatus').where({ token: device.status }).select('id'),
       name: device.name,
+      shortname: names.shortname,
       serial: device.serial,
       configurationData: '{}',
       putInService: now,
