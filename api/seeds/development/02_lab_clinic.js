@@ -222,16 +222,6 @@ function* seed(knex) {
     }, auditFields)
     const [siteId] = yield knex('Site').insert(siteData)
     siteData.id = siteId
-
-    // RRT Terminal
-    yield knex('DeviceApiKey').insert(Object.assign({
-      token: randomToken(),
-      revoked: 0,
-      partnerId: siteData.partnerId,
-      orgUnitId: siteData.orgUnitId,
-      geographyId: siteData.geographyId,
-      siteId: siteData.id
-    }, auditFields))
   }
 
   // Labs have m2000 and modem
@@ -246,16 +236,6 @@ function* seed(knex) {
     }, auditFields)
     const [siteId] = yield knex('Site').insert(siteData)
     siteData.id = siteId
-
-    // M2000 Device
-    yield knex('DeviceApiKey').insert(Object.assign({
-      token: randomToken(),
-      revoked: 0,
-      partnerId: siteData.partnerId,
-      orgUnitId: siteData.orgUnitId,
-      geographyId: siteData.geographyId,
-      siteId: siteData.id
-    }, auditFields))
 
     // create lab admin user with permission to view data to own lab
     const [labAdminUserId] = yield knex('User').insert({
