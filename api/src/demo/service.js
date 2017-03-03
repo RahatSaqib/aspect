@@ -1,8 +1,8 @@
 const _ = require('lodash')
 const Boom = require('boom')
-const { knex, filterParams, sortPageParams } = require('../db')
+const { knex } = require('../db')
 const { getConstraints, addConstraints } = require('../auth/constraints')
-const { groupToken } = require('../deviceApi/apiKey')
+const { groupToken, randomToken } = require('../deviceApi/apiKey')
 
 const { createFetch, base, accept, header, method, body } = require('http-client')
 
@@ -45,19 +45,29 @@ function* getDemoDevice(request) {
   return result
 }
 
-function* getDemoDeviceApiKey(request) {
+function* createDemoDeviceApiKey(request) {
   // FIXME Remove demo device api key once key management UI/API available
-  const { query } = request
+  const { auth } = request
+  const now = new Date()
+  const user = yield knex('Person as p')
+    .join('User as u', 'u.id', 'p.userId')
+    .where('u.name', auth.credentials.name)
+    .first('u.id', 'p.lastPartnerId as partnerId')
+  if (user == null || user.partnerId == null) {
+    return Boom.badRequest('Cannot find partner for user')
+  }
 
-  const data = yield knex('DeviceApiKey as dak')
-    .innerJoin('Site as s', 'dak.siteId', 's.id')
-    .modify(filterParams, query, {
-      siteExternalId: 's.externalId',
-    })
-    .modify(sortPageParams, query, 'id')
-    .select('dak.id', 'dak.token')
-
-  return { ok: true, length: data.length, data }
+  const apiKey = { token: randomToken() }
+  yield knex('DeviceApiKey').insert({
+    token: apiKey.token,
+    revoked: 0,
+    partnerId: user.partnerId,
+    createdOn: now,
+    createdBy: user.id,
+    updatedOn: now,
+    updatedBy: user.id
+  })
+  return apiKey
 }
 
 function* getApiKey(deviceId, userConstraints) {
@@ -212,6 +222,6 @@ function* postDemoDeviceResult(request) {
 
 module.exports = {
   getDemoDevice,
-  getDemoDeviceApiKey,
+  createDemoDeviceApiKey,
   postDemoDeviceResult
 }
