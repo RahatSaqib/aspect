@@ -199,10 +199,8 @@ function createNewDevice(request, now) {
     const names = {}
     if (payload.name) {
       names.name = payload.name
-      names.shortname = names.name
     } else if (payload.serial) {
       names.name = payload.serial
-      names.shortname = names.name
     } else {
       const [deviceCount] = yield knex('Device')
         .where({
@@ -211,8 +209,8 @@ function createNewDevice(request, now) {
         })
         .count('id as cnt')
       names.name = `${deviceType.name} #${deviceCount.cnt + 1}`
-      names.shortname = names.name
     }
+    names.shortname = names.name
 
     // create new device based on API Key
     const device = {
