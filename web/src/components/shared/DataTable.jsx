@@ -52,17 +52,6 @@ export default class DataTable extends PureComponent {
     messages: PropTypes.object
   }
 
-  state = {
-    height: 'inherit',
-    fixedHeader: true,
-    fixedFooter: true,
-    multiSelectable: false,
-    showCheckboxes: false,
-    enableSelectAll: false,
-    showRowHover: true,
-    stripedRows: false
-  }
-
   getColumns() {
     const {
       table,
@@ -177,19 +166,19 @@ export default class DataTable extends PureComponent {
       <div>
         { loading }
         <Table
-          height={this.state.height}
-          fixedHeader={this.state.fixedHeader}
-          fixedFooter={this.state.fixedFooter}
+          height="inherit"
+          fixedHeader={true}
+          fixedFooter={true}
           selectable={this.props.selectable}
-          multiSelectable={this.state.multiSelectable}
+          multiSelectable={false}
           onRowSelection={this.handleRowSelection}
         >
 
           { /* Header - Sort on click in header columns */ }
           <TableHeader
-            displaySelectAll={this.state.showCheckboxes}
-            adjustForCheckbox={this.state.showCheckboxes}
-            enableSelectAll={this.state.enableSelectAll}
+            displaySelectAll={false}
+            adjustForCheckbox={false}
+            enableSelectAll={false}
           >
             <TableRow>
               {columns.map(col => (
@@ -214,10 +203,9 @@ export default class DataTable extends PureComponent {
 
           { /* Body - this is where we fill the table with the data (List of items) */ }
           <TableBody
-            displayRowCheckbox={this.state.showCheckboxes}
-            deselectOnClickaway={this.state.deselectOnClickaway}
-            showRowHover={this.state.showRowHover}
-            stripedRows={this.state.stripedRows}
+            displayRowCheckbox={false}
+            showRowHover={true}
+            stripedRows={false}
           >
             {items.currentIdList.map(itemId => (
               <TableRow
