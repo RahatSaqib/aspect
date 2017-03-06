@@ -41,6 +41,10 @@ const messages = defineMessages({
     id: 'shared.FormatFilters.sampleId',
     defaultMessage: 'sample'
   },
+  partnerId: {
+    id: 'shared.FormatFilters.partnerId',
+    defaultMessage: 'partner'
+  },
   withResult: {
     id: 'shared.FormatFilters.withResult',
     defaultMessage: 'with result'
@@ -76,6 +80,7 @@ export function getFilterMessage(
   optionalTemplate,
   formatMessage,
   formatDate,
+  partners,
   workflowStatuses,
   deviceStatuses) {
   // return empty message if no filters set
@@ -115,6 +120,11 @@ export function getFilterMessage(
   const sampleId = filter.sampleId
   const sampleIdString = sampleId ? `${formatMessage(messages.sampleId)}${SPACE}(${sampleId}),${SPACE}` : ''
 
+  // partner id
+  const partnerId = filter.partnerId
+  const partner = partnerId ? partners.find(p => p.get('id') === partnerId) : null
+  const partnerString = partner ? `${formatMessage(messages.partnerId)}${SPACE}(${partner.get('name')})` : ''
+
   // assay/result
   const assay = filter.assayId ? assays.get('items').find(a => a.get('id') === filter.assayId) : null
   const result = assay && filter.resultCategoryId ?
@@ -148,12 +158,15 @@ export function getFilterMessage(
   // assay, result, or date is set. For example, if we want to show a message that explains
   // the number of results on a device
   let optionalMessage = ''
-  if (optionalTemplate && (assayString || resultString || dateString)) {
+  if (optionalTemplate && (
+    assayString || resultString || dateString || consumableString || partnerString)
+  ) {
     optionalMessage = optionalTemplate
                         .replace('<ASSAY>', assayString)
                         .replace('<RESULT>', resultString)
                         .replace('<DATE>', dateString)
                         .replace('<CONSUMABLE>', consumableString)
+                        .replace('<PARTNER_ID>', partnerString)
   }
 
   const message = `${template
