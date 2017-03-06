@@ -226,6 +226,8 @@ export class ListFilter extends PureComponent {
     config: PropTypes.shape({
       assayAndResultCategory: PropTypes.bool,
       geography: PropTypes.bool, // country, state, lga
+      state: PropTypes.bool,
+      lga: PropTypes.bool,
       date: PropTypes.bool,
       deviceName: PropTypes.bool,
       siteName: PropTypes.bool,
@@ -491,31 +493,35 @@ export class ListFilter extends PureComponent {
                       style={{ verticalAlign: 'bottom' }}
                     />
                   </div>
-                  <div className={styles.Section__Control}>
-                    <StateSelectField
-                      allItemText={formatMessage(messages.all)}
-                      onChangeState={this.handleChangeState}
-                      countryId={this.props.listFilter.countryId}
-                      stateId={this.props.listFilter.stateId}
-                      floatingLabelFixed
-                      hintText={formatMessage(messages.selectState)}
-                      floatingLabelText={formatMessage(messages.state)}
-                      style={{ verticalAlign: 'bottom' }}
-                    />
-                  </div>
-                  <div className={styles.Section__Control}>
-                    <LgaSelectField
-                      allItemText={formatMessage(messages.all)}
-                      onChangeLga={this.handleChangeLga}
-                      countryId={this.props.listFilter.countryId}
-                      stateId={this.props.listFilter.stateId}
-                      lgaId={this.props.listFilter.lgaId}
-                      floatingLabelFixed
-                      hintText={formatMessage(messages.selectLga)}
-                      floatingLabelText={formatMessage(messages.lga)}
-                      style={{ verticalAlign: 'bottom' }}
-                    />
-                  </div>
+                  {config.state && (
+                    <div className={styles.Section__Control}>
+                      <StateSelectField
+                        allItemText={formatMessage(messages.all)}
+                        onChangeState={this.handleChangeState}
+                        countryId={this.props.listFilter.countryId}
+                        stateId={this.props.listFilter.stateId}
+                        floatingLabelFixed
+                        hintText={formatMessage(messages.selectState)}
+                        floatingLabelText={formatMessage(messages.state)}
+                        style={{ verticalAlign: 'bottom' }}
+                      />
+                    </div>
+                  )}
+                  {config.state && config.lga && (
+                    <div className={styles.Section__Control}>
+                      <LgaSelectField
+                        allItemText={formatMessage(messages.all)}
+                        onChangeLga={this.handleChangeLga}
+                        countryId={this.props.listFilter.countryId}
+                        stateId={this.props.listFilter.stateId}
+                        lgaId={this.props.listFilter.lgaId}
+                        floatingLabelFixed
+                        hintText={formatMessage(messages.selectLga)}
+                        floatingLabelText={formatMessage(messages.lga)}
+                        style={{ verticalAlign: 'bottom' }}
+                      />
+                    </div>
+                  )}
                 </div>
               </section>
             )}

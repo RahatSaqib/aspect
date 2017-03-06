@@ -91,6 +91,8 @@ export function receivedExportResponse(currentFormatType, response) {
 const ListConfig = Immutable.Record({
   assayAndResultCategory: false,
   geography: false,
+  state: true, // under geography, optional
+  lga: true, // under geography, optional
   date: false,
   patientOrResearchId: false,
   sampleId: false,
@@ -157,6 +159,9 @@ export default function filterReducer(state = initialState, action) {
                 return ['assayId', 'resultCategoryId'].reduce(deleteFromMap, acc)
               case 'geography':
                 return ['countryId', 'stateId', 'lgaId'].reduce(deleteFromMap, acc)
+              case 'state':
+              case 'lga':
+                return acc
               case 'date':
                 return ['minDate', 'maxDate'].reduce(deleteFromMap, acc)
               case 'patientOrResearchId':
