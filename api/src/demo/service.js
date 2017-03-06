@@ -36,9 +36,9 @@ function* getDemoDevice(request) {
   for (const assay of assays) {
     const results = yield knex('Result as r')
       .where('r.assayId', assay.id)
-      .select('id', knex.raw('JSON_UNQUOTE(JSON_EXTRACT(resultData, "$.resultText")) as name'))
+      .distinct('id', knex.raw('JSON_UNQUOTE(JSON_EXTRACT(resultData, "$.resultText")) as name'))
       .orderBy('name')
-      .limit(100)
+      .limit(1000)
     result.assays.push(Object.assign({ results: _.sortedUniqBy(results, 'name') }, assay))
   }
 
