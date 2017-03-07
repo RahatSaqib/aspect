@@ -280,6 +280,8 @@ export class RouterDetail extends PureComponent {
       .getIn(['deviceType', 'configurationDataSchema'])
       .sortBy((value, key) => `${value.get('type') !== 'object' ? '_' : ''}${key}`)
 
+    const shortname = router.get('shortname')
+
     return (
       <div>
         { /* IDs and site/results */ }
@@ -292,7 +294,7 @@ export class RouterDetail extends PureComponent {
                 format={v =>
                   <div>
                     <h1 className={styles.Name}>
-                      {v} <small>({router.get('shortname')})</small>
+                      {v} {shortname && <small>({shortname})</small>}
                     </h1>
                     <div className={styles.StatusText}>
                       <Link

@@ -196,11 +196,11 @@ function createNewDevice(request, now) {
     }
 
     // Use or generate device name
-    const names = {}
+    let name
     if (payload.name) {
-      names.name = payload.name
+      name = payload.name
     } else if (payload.serial) {
-      names.name = payload.serial
+      name = payload.serial
     } else {
       const [deviceCount] = yield knex('Device')
         .where({
@@ -208,15 +208,14 @@ function createNewDevice(request, now) {
           deviceTypeId: deviceType.id
         })
         .count('id as cnt')
-      names.name = `${deviceType.name} #${deviceCount.cnt + 1}`
+      name = `${deviceType.name} #${deviceCount.cnt + 1}`
     }
-    names.shortname = names.name
 
     // create new device based on API Key
     const device = {
       partnerId: apiKey.partnerId,
       siteId: apiKey.siteId,
-      name: names.name,
+      name,
       serial: payload.serial,
       status: apiKey.siteId ? 'approved' : 'provisioned'
     }
@@ -228,7 +227,6 @@ function createNewDevice(request, now) {
       deviceTypeId: deviceType.id,
       deviceStatusId: knex('DeviceStatus').where({ token: device.status }).select('id'),
       name: device.name,
-      shortname: names.shortname,
       serial: device.serial,
       configurationData: '{}',
       putInService: now,

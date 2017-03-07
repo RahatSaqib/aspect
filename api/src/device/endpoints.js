@@ -78,7 +78,7 @@ module.exports = [
         payload: {
           siteId: Joi.number().required(),
           name: Joi.string().required(),
-          shortname: Joi.string().required(),
+          shortname: Joi.string().allow(''),
           notes: Joi.string().allow(''),
           statusToken: Joi.string().allow(''),
           configurationData: Joi.object().required().description(

@@ -301,6 +301,8 @@ export class DeviceDetail extends PureComponent {
       properties.get('suffix')
     ].join(''))
 
+    const shortname = device.get('shortname')
+
     return (
       <div>
         { /* IDs and site/results */ }
@@ -313,7 +315,7 @@ export class DeviceDetail extends PureComponent {
                 format={v =>
                   <div>
                     <h1 className={styles.Name}>
-                      {v} <small>({device.get('shortname')})</small>
+                      {v} {shortname && <small>({shortname})</small>}
                     </h1>
                     <div className={styles.StatusText}>
                       <Link
