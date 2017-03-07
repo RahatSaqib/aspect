@@ -1411,7 +1411,6 @@ describe('Device Result API routes', () => {
       const device2 = yield* getDeviceFromApiKey(knex, apiKey)
       assert.isOk(device2)
       assert.isOk(device2.name)
-      assert.isOk(device2.shortname)
       assert.equal(device2.serial, null)
 
       yield server.post(devicePath)
