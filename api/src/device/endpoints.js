@@ -9,7 +9,8 @@ const {
   showDevice,
   updateDevice,
   listStatusTypes,
-  exportDevices
+  exportDevices,
+  listDevicesForSelectList
 } = require('./service')
 const { validateAllGeographyFilterParams } = require('../geography/requestValidation')
 
@@ -106,5 +107,21 @@ module.exports = [
       description: 'Export Device List into Excel or CSV',
       notes: 'Filtered and sorted list of devices'
     }, listDevicesBaseConfig())
+  },
+  {
+    method: 'GET',
+    path: '/device/select-list',
+    handler: asyncHandler(listDevicesForSelectList),
+    config: {
+      description: 'Device for Select List',
+      notes: 'List of device ID\'s and names',
+      validate: {
+        query: {
+          countryId: Joi.number().allow('').description('Country ID'),
+          partnerId: Joi.number().allow('').description('Partner ID'),
+          siteId: Joi.number().allow('').description('Site ID')
+        }
+      }
+    }
   }
 ]

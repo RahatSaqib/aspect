@@ -303,10 +303,31 @@ function* listStatusTypes() {
   return result
 }
 
+function* listDevicesForSelectList(request) {
+  const { query, auth } = request
+
+  // get data constraints
+  const dataConstraints = yield getConstraints(auth.credentials)
+
+  const devices = yield knex('Device as d')
+    .leftOuterJoin('Geography as g', 'd.geographyId', 'g.id')
+    .modify(addConstraints, dataConstraints, { device: 'd' })
+    .modify(filterParams, query, {
+      countryId: 'g.countryId',
+      partnerId: 'd.partnerId',
+      siteId: 'd.siteId'
+    })
+    .orderBy(['d.name'], 'asc')
+    .select('d.id', 'd.name')
+
+  return { ok: true, data: devices }
+}
+
 module.exports = {
   listDevices,
   showDevice,
   updateDevice,
   listStatusTypes,
-  exportDevices
+  exportDevices,
+  listDevicesForSelectList
 }
