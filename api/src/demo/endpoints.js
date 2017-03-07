@@ -1,11 +1,8 @@
 const Joi = require('joi')
-const {
-  asyncHandler,
-  validateSortPageParams
-} = require('../routes')
+const { asyncHandler } = require('../routes')
 const {
   getDemoDevice,
-  getDemoDeviceApiKey,
+  createDemoDeviceApiKey,
   postDemoDeviceResult
 } = require('./service')
 
@@ -25,18 +22,12 @@ module.exports = [
     }
   },
   {
-    method: 'GET',
+    method: 'POST',
     path: '/demo/device/api-key',
-    handler: asyncHandler(getDemoDeviceApiKey),
+    handler: asyncHandler(createDemoDeviceApiKey),
     config: {
-      description: 'Search for API Key',
-      notes: 'Lookup API Keys by query filters',
-      validate: {
-        query: Object.assign({
-          siteExternalId: Joi.string().allow('').description('Filter for facility code'),
-        },
-        validateSortPageParams('name', 'status', 'createdOn', 'lastSeen', 'totalTests'))
-      }
+      description: 'Create New API Key',
+      notes: 'Create new API Key'
     }
   },
   {

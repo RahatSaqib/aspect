@@ -2,7 +2,6 @@ module.exports = require('../../src/db').seed(seed)
 
 const config = require('../../src/config')
 const bcrypt = require('bcrypt')
-const { randomToken } = require('../../src/deviceApi/apiKey')
 const labClinic = require('./fixtures/labClinic.json')
 
 const saltRounds = parseInt(config.passwordSaltRounds, 10)
@@ -40,6 +39,7 @@ function* seed(knex) {
   })
   const deviceTypeCategories = yield rowsAsObject(knex, 'DeviceTypeCategory')
 
+  /* TODO Add configuration schema once UI supports and we synchronize correctly
   // define configurationData object
   const rrtConfigurationDataSchema = JSON.stringify({
     requirePrinter: {
@@ -134,13 +134,14 @@ function* seed(knex) {
       }
     }
   })
+*/
 
   // RRT Device Type
   yield knex('DeviceType').insert({
     name: 'RRT',
     manufacturer: 'SystemOne',
     deviceTypeCategoryId: deviceTypeCategories.Client.id,
-    configurationDataSchema: rrtConfigurationDataSchema
+    // configurationDataSchema: rrtConfigurationDataSchema
   })
 
   const modules = yield knex('Permission')
@@ -220,16 +221,6 @@ function* seed(knex) {
     }, auditFields)
     const [siteId] = yield knex('Site').insert(siteData)
     siteData.id = siteId
-
-    // RRT Terminal
-    yield knex('DeviceApiKey').insert(Object.assign({
-      token: randomToken(),
-      revoked: 0,
-      partnerId: siteData.partnerId,
-      orgUnitId: siteData.orgUnitId,
-      geographyId: siteData.geographyId,
-      siteId: siteData.id
-    }, auditFields))
   }
 
   // Labs have m2000 and modem
@@ -244,16 +235,6 @@ function* seed(knex) {
     }, auditFields)
     const [siteId] = yield knex('Site').insert(siteData)
     siteData.id = siteId
-
-    // M2000 Device
-    yield knex('DeviceApiKey').insert(Object.assign({
-      token: randomToken(),
-      revoked: 0,
-      partnerId: siteData.partnerId,
-      orgUnitId: siteData.orgUnitId,
-      geographyId: siteData.geographyId,
-      siteId: siteData.id
-    }, auditFields))
 
     // create lab admin user with permission to view data to own lab
     const [labAdminUserId] = yield knex('User').insert({

@@ -280,6 +280,8 @@ export class TerminalDetail extends PureComponent {
       .getIn(['deviceType', 'configurationDataSchema'])
       .sortBy((value, key) => `${value.get('type') !== 'object' ? '_' : ''}${key}`)
 
+    const shortname = terminal.get('shortname')
+
     return (
       <div>
         { /* IDs and site/results */ }
@@ -292,7 +294,7 @@ export class TerminalDetail extends PureComponent {
                 format={v =>
                   <div>
                     <h1 className={styles.Name}>
-                      {v} <small>({terminal.get('shortname')})</small>
+                      {v} {shortname && <small>({shortname})</small>}
                     </h1>
                     <div className={styles.StatusText}>
                       <Link

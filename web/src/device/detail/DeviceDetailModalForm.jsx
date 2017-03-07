@@ -49,9 +49,6 @@ const enhance = compose(
       if (!values.name) {
         errors.name = 'Required'
       }
-      if (!values.shortname) {
-        errors.shortname = 'Required'
-      }
       if (!values.siteId) {
         errors.siteId = 'Required'
       }

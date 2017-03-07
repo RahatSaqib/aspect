@@ -8,7 +8,6 @@ const { deviceApiHandler } = require('./common')
 const {
   addDeviceData,
   getDeviceData,
-  getDeviceCheckpoint,
   addDeviceOperation,
   updateDeviceConfiguration } = require('./device')
 const { addResult } = require('./result')
@@ -170,16 +169,16 @@ module.exports = [
     // GET /device
     method: 'GET',
     path: '/',
-    handler: deviceApiHandler(getDeviceData, { requiredStatus: 'approved', requireDeviceLog: true }),
+    handler: deviceApiHandler(getDeviceData, { requiredStatus: 'approved', requestDeviceLog: true }),
     config: {
       description: 'Get Device Data',
       notes: 'Get device configuration, operational and result data since the specified checkpoint.'
-        + ' If checkpoint is not specified, returns all results since the last update',
+        + ' If not specified, returns assigned site and last checkpoint posted for device.',
       validate: {
         query: {
           checkpoint: Joi.string().description(
-            'The client checkpoint.  If the checkpoint is specified as a query parameter, it will be'
-            + ' used.  Otherwise will return the latest checkpoint uploaded from the authenticated device.'),
+            'The client checkpoint.  If the checkpoint is specified, will retrieve data uploaded'
+            + ' with that checkpoint.  Otherwise will return data that does not depend on checkpoint.'),
           offset: Joi.string().description(
             'The result offset from the  client checkpoint, default 0. If offset is 0, device data'
             + ' uploaded with the specified checkpoint will be retreived. A positive offset will retreive'
@@ -203,23 +202,6 @@ module.exports = [
             'Device Result Data.'),
           error: errorPayload
         })
-      }
-    }
-  },
-  {
-    // GET /device/checkpoint
-    method: 'GET',
-    path: '/checkpoint',
-    handler: deviceApiHandler(getDeviceCheckpoint, { requiredStatus: 'approved' }),
-    config: {
-      description: 'Get Device Checkpoint',
-      notes: 'Get the last checkpoint posted for this Device',
-      response: {
-        schema: {
-          checkpoint: Joi.string().allow('', null).description(
-            'The client checkpoint'),
-          error: errorPayload
-        }
       }
     }
   },

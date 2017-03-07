@@ -554,13 +554,13 @@ describe('Device Result API routes', () => {
 
       yield server.post(devicePostResultPath)
         .set('Authorization', deviceAuth)
-        .send({ data: { a: 'b' }, assay: { id: 'HivVl' } })
+        .send({ checkpoint: '3123', data: { a: 'b' }, assay: { id: 'HivVl' } })
         .then((res) => {
           assert.equal(res.status, 200)
         })
       resultIds.push(yield* getLastResultId(knex, deviceId))
 
-      yield server.get(devicePath)
+      yield server.get(`${devicePath}?checkpoint=3123`)
         .set('Authorization', deviceAuth)
         .then((res) => {
           assert.equal(res.status, 200)
@@ -585,13 +585,13 @@ describe('Device Result API routes', () => {
 
       yield server.post(devicePostResultPath)
         .set('Authorization', deviceAuth)
-        .send({ data: { a: 'c' }, error: { code: '1' }, assay: { id: 'HivVl' } })
+        .send({ checkpoint: '312', data: { a: 'c' }, error: { code: '1' }, assay: { id: 'HivVl' } })
         .then((res) => {
           assert.equal(res.status, 200)
         })
       resultIds.push(yield* getLastResultId(knex, deviceId))
 
-      yield server.get(devicePath)
+      yield server.get(`${devicePath}?checkpoint=312`)
         .set('Authorization', deviceAuth)
         .then((res) => {
           assert.equal(res.status, 200)
@@ -639,13 +639,13 @@ describe('Device Result API routes', () => {
 
       yield server.post(devicePostResultPath)
         .set('Authorization', deviceAuth)
-        .send({ data: { a: 'e' }, category: [{ id: 'Detected' }, { id: 'NotDetected' }], assay: { id: 'HivVl' } })
+        .send({ checkpoint: '31', data: { a: 'e' }, category: [{ id: 'Detected' }, { id: 'NotDetected' }], assay: { id: 'HivVl' } })
         .then((res) => {
           assert.equal(res.status, 200)
         })
       resultIds.push(yield* getLastResultId(knex, deviceId))
 
-      yield server.get(devicePath)
+      yield server.get(`${devicePath}?checkpoint=31`)
         .set('Authorization', deviceAuth)
         .then((res) => {
           assert.equal(res.status, 200)
@@ -1390,7 +1390,7 @@ describe('Device Result API routes', () => {
   })
 
   describe('RRT Lab/Clinic Tests', () => {
-    const context = createTestContext(server, { user: 'rrt_admin', site: 'CHIZ' })
+    const context = createTestContext(server, { user: 'rrt_admin', partner: 'RRT' })
 
     const runTest = context.runTest
 
@@ -1404,12 +1404,14 @@ describe('Device Result API routes', () => {
       assert.isNotOk(device1)
       yield server.post(devicePath)
         .set('Authorization', deviceAuth)
-        .send({ type: { id: 'm2000' } })
+        .send({ type: { id: 'm2000' }, site: { id: 'CHIZ' } })
         .then((res) => {
           assert.equal(res.status, 200)
         })
       const device2 = yield* getDeviceFromApiKey(knex, apiKey)
       assert.isOk(device2)
+      assert.isOk(device2.name)
+      assert.isOk(device2.shortname)
       assert.equal(device2.serial, null)
 
       yield server.post(devicePath)
@@ -1434,7 +1436,7 @@ describe('Device Result API routes', () => {
       const serial = 'OMAN-123456'
       yield server.post(devicePath)
         .set('Authorization', deviceAuth)
-        .send({ serial, type: { id: 'm2000' } })
+        .send({ serial, type: { id: 'm2000' }, site: { id: 'CHIZ' } })
         .then((res) => {
           assert.equal(res.status, 200)
         })
@@ -1456,6 +1458,7 @@ describe('Device Result API routes', () => {
         .send({
           serial,
           type: { id: 'm2000' },
+          site: { id: 'CHIZ' },
           name: 'SHINY NEW',
           operation: { data: { a: 'basd' } },
           configuration: { data: { as: 'df' } }
@@ -1485,24 +1488,13 @@ describe('Device Result API routes', () => {
 
       yield server.post(devicePath)
         .set('Authorization', deviceAuth)
-        .send({ checkpoint: 'rrt_0', type: { id: 'm2000' } })
+        .send({ checkpoint: 'rrt_0', type: { id: 'm2000' }, site: { id: 'CHIZ' } })
         .then((res) => {
           assert.equal(res.status, 200)
         })
 
-      const [device1315Key, device1723Key] = yield knex('DeviceApiKey as dak')
-        .join('Site as s', 'dak.siteId', 's.id')
-        .whereIn('s.externalId', ['1315', '1723'])
-        .where({
-          'dak.deviceId': null,
-          'dak.revoked': false
-        })
-        .orderBy('s.externalId')
-        .select('dak.token')
-      assert.isOk(device1315Key)
-      assert.isOk(device1315Key.token)
-      assert.isOk(device1723Key)
-      assert.isOk(device1723Key.token)
+      const device1315Key = yield* context.createApiKey(knex)
+      const device1723Key = yield* context.createApiKey(knex)
 
       deviceLab = yield* getDeviceFromApiKey(knex, labKey)
       let device1315 = yield* getDeviceFromApiKey(knex, device1315Key)
@@ -1527,7 +1519,7 @@ describe('Device Result API routes', () => {
 
       yield server.post(devicePath)
         .set('Authorization', device1315Auth)
-        .send({ checkpoint: 'rrt1315_0', type: { id: 'RRT' } })
+        .send({ checkpoint: 'rrt1315_0', type: { id: 'RRT' }, site: { id: '1315' } })
         .then((res) => {
           assert.equal(res.status, 200)
         })
@@ -1541,7 +1533,7 @@ describe('Device Result API routes', () => {
 
       yield server.post(devicePath)
         .set('Authorization', device1723Auth)
-        .send({ checkpoint: 'rrt1723_0', type: { id: 'RRT' } })
+        .send({ checkpoint: 'rrt1723_0', type: { id: 'RRT' }, site: { id: '1723' } })
         .then((res) => {
           assert.equal(res.status, 200)
         })
@@ -2139,7 +2131,7 @@ describe('Device Result API routes', () => {
 
       yield server.post(devicePath)
         .set('Authorization', deviceAuth)
-        .send({ checkpoint: 'rrt_0', type: { id: 'm2000' } })
+        .send({ checkpoint: 'rrt_0', type: { id: 'm2000' }, site: { id: 'CHIZ' } })
         .then((res) => {
           assert.equal(res.status, 200)
         })

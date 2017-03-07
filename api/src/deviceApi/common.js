@@ -71,7 +71,7 @@ function* createDeviceApiContext(request, handlerOptions) {
   const {
     createDevice = false,
     requiredStatus = null,
-    requireDeviceLog = false
+    requestDeviceLog = false
   } = handlerOptions
   const { auth } = request
   const now = new Date()
@@ -113,30 +113,42 @@ function* createDeviceApiContext(request, handlerOptions) {
   const context = new DeviceApiContext({
     now,
     device,
+    deviceLog: null,
     payload: request.payload,
     query: request.query
   })
 
   // Add Device Log if requested
-  if (requireDeviceLog) {
+  if (requestDeviceLog) {
+    const { checkpoint } = request.query
+    const offset = +(request.query.offset || 0)
+
     if (existingDeviceAndData == null) {
       // We will only have a device log if we already had a device
       return { error: Boom.notFound('Device does not have data.') }
     }
 
-    const { checkpoint } = request.query
-    const offset = +(request.query.offset || 0)
-    if (checkpoint == null && offset !== 0) {
-      // must specify checkpoint if using offset
-      return { error: Boom.badRequest('Must specify checkpoint if using offset') }
+    if (checkpoint == null) {
+      if (offset !== 0) {
+        // must specify checkpoint if using offset
+        return { error: Boom.badRequest('Must specify checkpoint if using offset') }
+      }
+      // Checkpoint not specified, return last one for this device
+      const lastDeviceLog = yield knex('DeviceLog')
+        .where({ deviceId: device.id })
+        .whereNotNull('checkpoint')
+        .orderBy('id', 'desc')
+        .first('id', 'checkpoint', 'createdOn')
+      context.deviceLog = lastDeviceLog || null
+      return { context }
     }
 
     // Calculate min log date configured by Partner
     const partner = yield knex('Partner as p')
       .innerJoin('Device as d', 'd.partnerId', 'd.id')
       .first('deviceLogHistoryDays')
-    if (!partner) {
-      return null
+    if (partner == null) {
+      return { error: Boom.internal('Device not assigned to partner') }
     }
     const historyCutoff = new Date(+new Date() - (partner.deviceLogHistoryDays * millisInDay))
 
@@ -148,7 +160,6 @@ function* createDeviceApiContext(request, handlerOptions) {
         ? Boom.notFound('Cannot find specified checkpoint and offset')
         : Boom.forbidden('Not authorized to view specified checkpoint and offset') }
     }
-
     context.deviceLog = deviceLog
   }
 
@@ -165,7 +176,9 @@ function createNewDevice(request, now) {
     if (deviceTypeExternalId == null) {
       return { error: Boom.badRequest('Must specify device type on first request with new key') }
     }
-    const deviceType = yield knex('DeviceType').where({ name: deviceTypeExternalId }).first('id')
+    const deviceType = yield knex('DeviceType')
+      .where({ name: deviceTypeExternalId })
+      .first('id', 'name')
     if (deviceType == null) {
       return { error: Boom.badRequest(`Cannot find DeviceType with id ${deviceTypeExternalId}`) }
     }
@@ -182,11 +195,27 @@ function createNewDevice(request, now) {
       return { error: Boom.notFound('Cannot find available API Key when creating new device') }
     }
 
+    // Use or generate device name
+    let name
+    if (payload.name) {
+      name = payload.name
+    } else if (payload.serial) {
+      name = payload.serial
+    } else {
+      const [deviceCount] = yield knex('Device')
+        .where({
+          partnerId: apiKey.partnerId,
+          deviceTypeId: deviceType.id
+        })
+        .count('id as cnt')
+      name = `${deviceType.name} #${deviceCount.cnt + 1}`
+    }
+
     // create new device based on API Key
     const device = {
       partnerId: apiKey.partnerId,
       siteId: apiKey.siteId,
-      name: payload.name || payload.serial || '',
+      name,
       serial: payload.serial,
       status: apiKey.siteId ? 'approved' : 'provisioned'
     }
@@ -259,27 +288,18 @@ function* getDeviceLog(context, checkpoint, offset, historyCutoff) {
   const { device } = context
 
   // Find device log at checkpoint or latest
-  // normally we want to get the last device log for given device and checkpoint
-  let initialDeviceLogOrder = 'desc'
   const initialDeviceLogQuery = knex('DeviceLog')
-    .where({ deviceId: device.id })
-
-  // use specified checkpoint, otherwise just select latest
-  if (checkpoint) {
-    initialDeviceLogQuery.where({ checkpoint })
-
-    if (offset > 0) {
-      // If we are querying future data, must use minimum device log for
-      // this device with same checkpoint so we don't miss data interleaving
-      // from other sources while data with checkpoint is being posted
-      initialDeviceLogOrder = 'asc'
-    }
-  }
+    .where({
+      deviceId: device.id,
+      checkpoint
+    })
+    // If we are querying future data, must use minimum device log for
+    // this device with same checkpoint so we don't miss data interleaving
+    // from other sources while data with checkpoint is being posted
+    .orderBy('id', offset > 0 ? 'asc' : 'desc')
   if (historyCutoff != null) {
     initialDeviceLogQuery.where('createdOn', '>=', historyCutoff)
   }
-  initialDeviceLogQuery.orderBy('id', initialDeviceLogOrder)
-
   const initialDeviceLog = yield initialDeviceLogQuery
     .first('id', 'checkpoint', 'deviceId', 'createdOn')
   if (!initialDeviceLog) {

@@ -2,6 +2,7 @@ const _ = require('lodash')
 const chai = require('chai')
 const { run } = require('../../src/db')
 const { getConstraints, addConstraints } = require('../../src/auth/constraints')
+const { randomToken } = require('../../src/deviceApi/apiKey')
 
 const assert = chai.assert
 
@@ -34,9 +35,10 @@ function* deleteTestDataFromCheckpoint(knex, checkpoint, deviceIds) {
 }
 
 function* deleteDeviceAndTestData(knex, apiKeys) {
+  const tokens = apiKeys.map(key => key.token)
   const deviceIds = yield knex('Device as d')
     .innerJoin('DeviceApiKey as dak', 'dak.deviceId', 'd.id')
-    .whereIn('dak.token', apiKeys.map(key => key.token))
+    .whereIn('dak.token', tokens)
     .select('d.id')
     .map(device => device.id)
 
@@ -56,6 +58,7 @@ function* deleteDeviceAndTestData(knex, apiKeys) {
   yield knex('DeviceOperation').whereIn('id', opIds).delete()
   yield knex('DeviceApiKey').whereIn('deviceId', deviceIds).update({ deviceId: null })
   yield knex('Device').whereIn('id', deviceIds).delete()
+  yield knex('DeviceApiKey').whereIn('token', tokens).delete()
 }
 
 function* getDeviceConfigurationData(knex, deviceId) {
@@ -144,9 +147,19 @@ class DeviceApiTestContext {
   runTest(test) {
     const self = this
     return run(function* (knex) {
+      self.deviceIds.splice(0)
+      self.apiKeysWithoutDevice.splice(0)
+
       // Authenticates device and user from auth setup
       const { server, auth } = self
       const { user, type, status = 'approved' } = auth
+      const now = new Date()
+      self.now = now
+      const { userId } = yield knex('User')
+        .where({ name: user })
+        .first('id as userId')
+      assert.isOk(userId, `Cannot find user ${user}`)
+      self.userId = userId
 
       const clientToken = yield server.post('/api/auth')
         .send({ name: user, password: 'test07', clientName: 'Mocha/Chai' })
@@ -174,31 +187,24 @@ class DeviceApiTestContext {
       if (device != null) {
         apiKey = { token: device.token }
       } else {
-        // if we can't find device, look for API Key
-        assert.isNotOk(auth.status)  // make sure we didn't request specific status
-        assert.isOk(auth.site) // need to specify site if we don't have key with Device
-        apiKey = yield knex('DeviceApiKey as dak')
-        .join('Site as s', 'dak.siteId', 's.id')
-        .where({
-          's.externalId': auth.site,
-          'dak.deviceId': null,
-          'dak.revoked': false
-        })
-        .orderBy('s.externalId')
-        .first('dak.token')
+        // if we can't find device, create API Key
+        assert.isNotOk(auth.status, `Cannot find device with status ${auth.status}`)
+        assert.isOk(auth.partner, 'Must specify partner')
+        const partner = yield knex('Partner')
+          .where({ name: auth.partner })
+          .first('id')
+        assert.isOk(partner, `Cannot find partner ${auth.partner}`)
+        self.partnerId = partner.id
+        apiKey = yield* self.createApiKey(knex, auth.site || null)
       }
       assert.isOk(apiKey)
-      self.deviceIds.splice(0)
-      self.apiKeysWithoutDevice.splice(0)
 
       // save device id for the following tests
       self.apiKey = apiKey
       self.clientAuth = `Bearer ${clientToken}`
       self.deviceAuth = `Bearer ${apiKey.token}`
 
-      if (!device) {
-        self.apiKeysWithoutDevice.push(apiKey)
-      } else {
+      if (device != null) {
         self.deviceId = device.id
 
         self.deviceIds.push(device.id)
@@ -221,6 +227,30 @@ class DeviceApiTestContext {
 
       return yield* test(knex)
     })
+  }
+
+  * createApiKey(knex, siteName = null) {
+    const site = siteName == null ? null : yield knex('Site')
+      .where({ externalId: siteName, partnerId: this.partnerId })
+      .first('id', 'partnerId', 'orgUnitId', 'geographyId')
+    if (siteName != null && site == null) {
+      assert.isOk(siteName, `Cannot find site ${siteName}`)
+    }
+    const apiKey = { token: randomToken() }
+    yield knex('DeviceApiKey').insert({
+      token: apiKey.token,
+      revoked: 0,
+      partnerId: this.partnerId,
+      orgUnitId: site ? site.orgUnitId : null,
+      geographyId: site ? site.geographyId : null,
+      siteId: site ? site.id : null,
+      createdOn: this.now,
+      createdBy: this.userId,
+      updatedOn: this.now,
+      updatedBy: this.userId
+    })
+    this.apiKeysWithoutDevice.push(apiKey)
+    return apiKey
   }
 
   afterEach() {
