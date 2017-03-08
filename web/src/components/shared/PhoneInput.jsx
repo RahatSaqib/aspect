@@ -5,12 +5,17 @@ import TextField from 'material-ui/TextField'
 import CountrySelect from './CountrySelect'
 import styles from './Shared.css'
 
+//* textFieldProps => object { floatingLabelText: string, bool, integer} */
 class PhoneInput extends React.PureComponent {
   static propTypes = {
     onChange: PropTypes.func.isRequired,
     input: PropTypes.object.isRequired,
     meta: PropTypes.object.isRequired,
-    textFieldProps: PropTypes.object.isRequired
+    textFieldProps: PropTypes.shape({
+      floatingLabelText: PropTypes.string.isRequired,
+      disabled: PropTypes.bool.isRequired,
+      maxLength: PropTypes.number.isRequired
+    }).isRequired
   }
 
   constructor(props) {

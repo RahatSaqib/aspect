@@ -10,6 +10,8 @@ import SelectInput from '../../components/shared/SelectInput'
 import validateEmailAddress from '../../shared/utils/validate'
 import messages from './messages'
 import styles from './PersonDetail.css'
+import { ContactDetails } from '../../person/PersonRedux'
+
 
 export function ContactDetailsForm({
   intl, handleSubmit, pristine, invalid,
@@ -83,7 +85,7 @@ ContactDetailsForm.propTypes = {
   intl: intlShape,
   pristine: PropTypes.bool.isRequired,
   invalid: PropTypes.bool.isRequired,
-  initialValues: PropTypes.object.isRequired,
+  initialValues: PropTypes.objectOf(ContactDetails).isRequired,
   userIsAdmin: PropTypes.bool
 }
 

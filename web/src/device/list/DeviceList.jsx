@@ -6,7 +6,7 @@ import {
   defineMessages,
   intlShape
 } from 'react-intl'
-import { withRouter } from 'react-router'
+import { withRouter, routerShape } from 'react-router'
 import { bindActionCreators } from 'redux'
 import { connect } from 'react-redux'
 import Helmet from 'react-helmet'
@@ -80,7 +80,7 @@ export class DeviceList extends PureComponent {
     setPageTitle: PropTypes.func.isRequired,
     table: PropTypes.objectOf(Table).isRequired,
     intl: intlShape.isRequired,
-    router: PropTypes.object.isRequired,
+    router: routerShape.isRequired,
     fetchListFilteredDevices: PropTypes.func.isRequired,
     items: PropTypes.objectOf(Items).isRequired,
     configureListFilter: PropTypes.func.isRequired,

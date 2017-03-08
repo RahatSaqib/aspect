@@ -227,7 +227,7 @@ const SelectListItems = Immutable.Record({
   items: Immutable.List([]),
   lastRefreshed: undefined
 })
-const Site = Immutable.Record({
+export const Site = Immutable.Record({
   items: new Items(),
   table: new Table(),
   selectList: new SelectListItems()
