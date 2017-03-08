@@ -22,14 +22,18 @@ describe('Device API status tests', () => {
   afterEach(context.afterEach)
 
   describe('unapproved', () => {
-    it('should not authorize unapproved device', () => runTest(function* (knex) {
+    it('should not download data for unapproved device', () => runTest(function* (knex) {
       const { deviceAuth, deviceId } = context
       assert.isOk(deviceId)
 
       yield server.get(devicePath)
         .set('Authorization', deviceAuth)
         .then((res) => {
-          assert.equal(res.status, 401)
+          assert.equal(res.status, 200)
+          assert.typeOf(res.body, 'Object')
+          assert.isNotOk(res.body.configuration)
+          assert.isNotOk(res.body.operation)
+          assert.isNotOk(res.body.result)
         })
 
       const configPre = yield* getDeviceConfigurationData(knex, deviceId)
@@ -64,6 +68,16 @@ describe('Device API status tests', () => {
         })
       const opPost2 = yield* getLastDeviceOperationData(knex, deviceId)
       assert.deepEqual({ shouldChangeThisOtherThing: 'e' }, opPost2)
+
+      yield server.get(devicePath)
+        .set('Authorization', deviceAuth)
+        .then((res) => {
+          assert.equal(res.status, 200)
+          assert.typeOf(res.body, 'Object')
+          assert.isNotOk(res.body.configuration)
+          assert.isNotOk(res.body.operation)
+          assert.isNotOk(res.body.result)
+        })
     }))
   })
 })

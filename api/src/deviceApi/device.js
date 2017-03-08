@@ -61,19 +61,21 @@ function* getDeviceData(context) {
       response.checkpoint = deviceLog.checkpoint
     }
 
-    const config = yield* getDeviceConfiguration(context, true)
-    if (config != null) {
-      response.configuration = config
-    }
+    if (device.status === 'approved') {
+      const config = yield* getDeviceConfiguration(context, true)
+      if (config != null) {
+        response.configuration = config
+      }
 
-    const op = yield* getDeviceOperation(context)
-    if (op != null) {
-      response.operation = op
-    }
+      const op = yield* getDeviceOperation(context)
+      if (op != null) {
+        response.operation = op
+      }
 
-    const result = yield* getResult(context)
-    if (result != null) {
-      response.result = result
+      const result = yield* getResult(context)
+      if (result != null) {
+        response.result = result
+      }
     }
   }
 

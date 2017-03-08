@@ -70,7 +70,6 @@ function deviceApiHandler(handler, handlerOptions) {
 function* createDeviceApiContext(request, handlerOptions) {
   const {
     createDevice = false,
-    requiredStatus = null,
     requestDeviceLog = false
   } = handlerOptions
   const { auth } = request
@@ -103,11 +102,6 @@ function* createDeviceApiContext(request, handlerOptions) {
     // Trying to retrieve data for Device that has
     // none uploaded yet, but we have authorized the token
     return { error: Boom.notFound('No device found') }
-  }
-
-  if (requiredStatus != null && requiredStatus !== device.status) {
-    // found device, but not correct status
-    return { error: Boom.unauthorized('Device not approved') }
   }
 
   const context = new DeviceApiContext({

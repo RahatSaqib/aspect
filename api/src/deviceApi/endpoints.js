@@ -169,7 +169,7 @@ module.exports = [
     // GET /device
     method: 'GET',
     path: '/',
-    handler: deviceApiHandler(getDeviceData, { requiredStatus: 'approved', requestDeviceLog: true }),
+    handler: deviceApiHandler(getDeviceData, { requestDeviceLog: true }),
     config: {
       description: 'Get Device Data',
       notes: 'Get device configuration, operational and result data since the specified checkpoint.'
