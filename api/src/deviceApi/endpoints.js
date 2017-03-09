@@ -22,6 +22,10 @@ const errorPayload = Joi.object().keys({
 const devicePayload = {
   name: Joi.string().allow('', null).description('The device name'),
   serial: Joi.string().allow('', null).description('The device serial number'),
+  status: Joi.object().keys({
+    id: Joi.string().required().description(
+      'The device status. Only approved devices will deliver results.')
+  }),
   type: Joi.object().keys({
     id: Joi.string().required().description('The Device Type. Required on first request with API Key')
   }),
@@ -169,7 +173,7 @@ module.exports = [
     // GET /device
     method: 'GET',
     path: '/',
-    handler: deviceApiHandler(getDeviceData, { requiredStatus: 'approved', requestDeviceLog: true }),
+    handler: deviceApiHandler(getDeviceData, { requestDeviceLog: true }),
     config: {
       description: 'Get Device Data',
       notes: 'Get device configuration, operational and result data since the specified checkpoint.'
