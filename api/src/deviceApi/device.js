@@ -48,6 +48,7 @@ function* getDeviceData(context) {
   const response = {
     name: device.name,
     requestedOn: now.toISOString(),
+    status: { id: device.status }
   }
 
   const site = yield* getSite(context)
