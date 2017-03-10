@@ -34,7 +34,7 @@ describe('Device API status tests', () => {
           assert.isNotOk(res.body.configuration)
           assert.isNotOk(res.body.operation)
           assert.isNotOk(res.body.result)
-          assert.equal(res.body.status, 'assigned')
+          assert.equal(res.body.status.id, 'assigned')
         })
 
       const configPre = yield* getDeviceConfigurationData(knex, deviceId)
@@ -78,7 +78,7 @@ describe('Device API status tests', () => {
           assert.isNotOk(res.body.configuration)
           assert.isNotOk(res.body.operation)
           assert.isNotOk(res.body.result)
-          assert.equal(res.body.status, 'assigned')
+          assert.equal(res.body.status.id, 'assigned')
         })
     }))
   })

@@ -39,7 +39,6 @@ describe('Device API routes', () => {
         .then((res) => {
           assert.equal(res.status, 200)
           assert.typeOf(res.body, 'Object')
-          assert.equal(res.body.status, 'approved')
         })
       const config1 = yield* getDeviceConfigurationData(knex, deviceId)
       assert.deepEqual(config1, _.assign({}, baseConfig, { a: 'b' }))
@@ -128,6 +127,7 @@ describe('Device API routes', () => {
         .then((res) => {
           assert.equal(res.status, 200)
           assert.typeOf(res.body, 'Object')
+          assert.equal(res.body.status.id, 'approved')
         })
 
       yield server.post(devicePath)
