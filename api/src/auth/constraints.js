@@ -67,55 +67,64 @@ function addConstraints(queryBuilder, constraints, aliases) {
 
   // TODO generalize constraint building
   // TODO only join queries if needed within constraints or required by unspecified aliases
-  if (!site) {
-    if (!device) {
-      throw new Error('Must provide either site or device alias or modify this to accept provided aliases')
+  // ====== device aliases begin ======
+  if (device) {
+    if (!site) {
+      site = alias('Site')
+      queryBuilder.leftOuterJoin(`Site as ${site}`, `${device}.siteId`, `${site}.id`)
     }
-    site = alias('Site')
-    queryBuilder.leftOuterJoin(`Site as ${site}`, `${device}.siteId`, `${site}.id`)
   }
+  // ====== device aliases end ======
 
-  if (!partner) {
-    partner = alias('Partner')
-    queryBuilder.leftOuterJoin(`Partner as ${partner}`, `${site}.partnerId`, `${partner}.id`)
-  }
+  // ====== site aliases begin ======
+  if (site) {
+    if (!partner) {
+      partner = alias('Partner')
+      queryBuilder.leftOuterJoin(`Partner as ${partner}`, `${site}.partnerId`, `${partner}.id`)
+    }
 
-  if (!orgUnit) {
-    orgUnit = alias('OrgUnit')
-    queryBuilder.leftOuterJoin(`OrgUnit as ${orgUnit}`, `${site}.orgUnitId`, `${orgUnit}.id`)
-  }
+    if (!orgUnit) {
+      orgUnit = alias('OrgUnit')
+      queryBuilder.leftOuterJoin(`OrgUnit as ${orgUnit}`, `${site}.orgUnitId`, `${orgUnit}.id`)
+    }
 
-  if (!geography) {
-    geography = alias('Geography')
-    queryBuilder.leftOuterJoin(`Geography as ${geography}`, `${site}.geographyId`, `${geography}.id`)
+    if (!geography) {
+      geography = alias('Geography')
+      queryBuilder.leftOuterJoin(`Geography as ${geography}`, `${site}.geographyId`, `${geography}.id`)
+    }
   }
+  // ====== site aliases end ======
 
-  if (!country) {
-    country = alias('Country')
-    queryBuilder.leftOuterJoin(`Country as ${country}`, `${geography}.countryId`, `${country}.id`)
-  }
+  // ====== geography aliases begin ======
+  if (geography) {
+    if (!country) {
+      country = alias('Country')
+      queryBuilder.leftOuterJoin(`Country as ${country}`, `${geography}.countryId`, `${country}.id`)
+    }
 
-  if (!state) {
-    state = alias('State')
-    queryBuilder.leftOuterJoin(`State as ${state}`, `${geography}.stateId`, `${state}.id`)
-  }
+    if (!state) {
+      state = alias('State')
+      queryBuilder.leftOuterJoin(`State as ${state}`, `${geography}.stateId`, `${state}.id`)
+    }
 
-  if (!lga) {
-    lga = alias('Lga')
-    queryBuilder.leftOuterJoin(`Lga as ${lga}`, `${geography}.lgaId`, `${lga}.id`)
+    if (!lga) {
+      lga = alias('Lga')
+      queryBuilder.leftOuterJoin(`Lga as ${lga}`, `${geography}.lgaId`, `${lga}.id`)
+    }
   }
+  // ====== geography aliases end ======
 
   // Partner, country, and org unit constraints are ANDed
-  if (constraints.partner) {
+  if (partner && constraints.partner) {
     queryBuilder.where(function () {
       this.whereNull(`${partner}.id`).orWhere({ [`${partner}.id`]: constraints.partner.id })
     })
   }
-  if (constraints.country) {
+  if (country && constraints.country) {
     queryBuilder.where({ [`${country}.id`]: constraints.country.id })
   }
 
-  if (constraints.orgUnit) {
+  if (orgUnit && constraints.orgUnit) {
     // find all org units below topmost granted org unit
     // TODO likely makes sense to move nested set hierarchy queries to it's own helper function
     const orgUnitSubOne = alias('OrgUnitSub1')

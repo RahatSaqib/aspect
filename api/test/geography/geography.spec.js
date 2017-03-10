@@ -85,7 +85,7 @@ describe('Geography routes', () => {
             .get('/api/geography/select-list')
             .set('Authorization', `Bearer ${shared.token}`)
             .end((err, res) => {
-              const countryWithStates = _.find(res.body.data, country => country.states.length > 0)
+              const countryWithStates = _.find(res.body.data, country => country.name === 'United States')
               server
                 .get(`${path}/${countryWithStates.id}`)
                 .set('Authorization', `Bearer ${shared.token}`)
@@ -122,7 +122,7 @@ describe('Geography routes', () => {
             .set('Authorization', `Bearer ${shared.token}`)
             .end((err, res) => {
               const countryWithStatesAndLGAs = _.find(res.body.data,
-                country => _.some(country.states, state => state.lgas.length > 0))
+                country => country.name === 'United States' && _.some(country.states, state => state.lgas.length > 0))
               const stateWithLGAs = _.find(countryWithStatesAndLGAs.states,
                 state => state.lgas.length > 0)
               server
