@@ -33,7 +33,7 @@ export class DeviceStatusSelectField extends PureComponent {
   }
 
   handleChange = (event, index, value) => {
-    this.props.onDeviceStatusChange(index === 0 ? undefined : value)
+    this.props.onDeviceStatusChange(value === 'all' ? undefined : value)
   }
 
   render() {

@@ -33,7 +33,7 @@ export class ResultWorkflowStatusSelectField extends PureComponent {
   }
 
   handleChange = (event, index, value) => {
-    this.props.onWorkflowStatusChange(index === 0 ? undefined : value)
+    this.props.onWorkflowStatusChange(value === 'all' ? undefined : value)
   }
 
   render() {
