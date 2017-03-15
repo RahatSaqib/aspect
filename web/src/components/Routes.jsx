@@ -22,6 +22,7 @@ import { MaintenanceContainer } from '../dashboard/maintenance/Maintenance'
 import { DeviceDemoContainer } from '../demo/device/DeviceDemo'
 import { DeviceListContainer } from '../device/list/DeviceList'
 import { DeviceDetailContainer } from '../device/detail/DeviceDetail'
+import { DeviceApiKeyListContainer } from '../deviceApiKey/list/DeviceApiKeyList'
 import { SiteListContainer } from '../site/list/SiteList'
 import { SiteDetailContainer } from '../site/detail/SiteDetail'
 import { PersonListContainer } from '../person/list/PersonList'
@@ -96,6 +97,10 @@ const routes =
         <Route path="device">
           <IndexRoute component={DeviceListContainer} />
           <Route path=":deviceId" component={DeviceDetailContainer} />
+        </Route>
+
+        <Route path="deviceApiKey">
+          <IndexRoute component={DeviceApiKeyListContainer} />
         </Route>
 
         <Route path="router">

@@ -32,7 +32,7 @@ export class ResultCategorySelectField extends PureComponent {
   }
 
   handleChange = (event, index, value) => {
-    this.props.onResultCategoryChange(index === 0 ? undefined : value)
+    this.props.onResultCategoryChange(value === 'all' ? undefined : value)
   }
 
   render() {

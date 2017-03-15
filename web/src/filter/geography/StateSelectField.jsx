@@ -60,7 +60,7 @@ export class StateSelectField extends PureComponent {
   }
 
   handleSelectFieldChange = (event, index, value) => {
-    this.props.onChangeState(index === 0 ? undefined : value)
+    this.props.onChangeState(value === 'all' ? undefined : value)
   }
 
   render() {

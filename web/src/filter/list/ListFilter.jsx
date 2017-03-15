@@ -25,6 +25,7 @@ import FocusBlurTextField from '../../components/shared/FocusBlurTextField'
 import CountrySelectField from '../geography/CountrySelectField'
 import StateSelectField from '../geography/StateSelectField'
 import LgaSelectField from '../geography/LgaSelectField'
+import PartnerSelectField from '../partner/PartnerSelectField'
 import AssaySelectField from '../resource/AssaySelectField'
 import ResultCategorySelectField from '../resource/ResultCategorySelectField'
 import ConsumableSelectField from '../resource/ConsumableSelectField'
@@ -69,6 +70,10 @@ const messages = defineMessages({
     id: 'shared.ListFilter.all',
     defaultMessage: 'All'
   },
+  none: {
+    id: 'shared.ListFilter.none',
+    defaultMessage: 'None'
+  },
   contactNameEmail: {
     id: 'shared.ListFilter.contactNameEmail',
     defaultMessage: 'Contact name/email'
@@ -112,6 +117,14 @@ const messages = defineMessages({
   selectConsumable: {
     id: 'shared.ListFilter.selectConsumable',
     defaultMessage: 'Select consumable...'
+  },
+  partner: {
+    id: 'shared.ListFilter.partner',
+    defaultMessage: 'Partner'
+  },
+  selectPartner: {
+    id: 'shared.ListFilter.selectPartner',
+    defaultMessage: 'Select partner...'
   },
   patientOrResearchId: {
     id: 'shared.ListFilter.patientOrResearchId',
@@ -214,6 +227,7 @@ export class ListFilter extends PureComponent {
       minDate: PropTypes.string,
       maxDate: PropTypes.string,
       deviceName: PropTypes.string,
+      partnerId: PropTypes.string,
       resultCategoryId: PropTypes.string,
       siteName: PropTypes.string,
       contactNameOrEmail: PropTypes.string,
@@ -226,7 +240,10 @@ export class ListFilter extends PureComponent {
     config: PropTypes.shape({
       assayAndResultCategory: PropTypes.bool,
       geography: PropTypes.bool, // country, state, lga
+      state: PropTypes.bool,
+      lga: PropTypes.bool,
       date: PropTypes.bool,
+      partnerId: PropTypes.bool,
       deviceName: PropTypes.bool,
       siteName: PropTypes.bool,
       contactNameOrEmail: PropTypes.bool,
@@ -364,6 +381,14 @@ export class ListFilter extends PureComponent {
     this.props.onChangeFilter(nextFilter)
   }
 
+  handlePartnerIdChange = (partnerId) => {
+    const nextFilter = {
+      ...this.props.listFilter.toJS(),
+      partnerId
+    }
+    this.props.onChangeFilter(nextFilter)
+  }
+
   handleSampleOriginSiteChange = (sampleOriginSite) => {
     const nextFilter = {
       ...this.props.listFilter.toJS(),
@@ -439,7 +464,7 @@ export class ListFilter extends PureComponent {
     const hasDataSection = (
       config.assay || config.deviceName || config.result ||
       config.siteName || config.contactNameOrEmail || config.consumable ||
-      config.patientOrResearchId ||
+      config.partnerId || config.patientOrResearchId ||
       config.sampleId || config.sampleOriginSite
     )
 
@@ -491,31 +516,35 @@ export class ListFilter extends PureComponent {
                       style={{ verticalAlign: 'bottom' }}
                     />
                   </div>
-                  <div className={styles.Section__Control}>
-                    <StateSelectField
-                      allItemText={formatMessage(messages.all)}
-                      onChangeState={this.handleChangeState}
-                      countryId={this.props.listFilter.countryId}
-                      stateId={this.props.listFilter.stateId}
-                      floatingLabelFixed
-                      hintText={formatMessage(messages.selectState)}
-                      floatingLabelText={formatMessage(messages.state)}
-                      style={{ verticalAlign: 'bottom' }}
-                    />
-                  </div>
-                  <div className={styles.Section__Control}>
-                    <LgaSelectField
-                      allItemText={formatMessage(messages.all)}
-                      onChangeLga={this.handleChangeLga}
-                      countryId={this.props.listFilter.countryId}
-                      stateId={this.props.listFilter.stateId}
-                      lgaId={this.props.listFilter.lgaId}
-                      floatingLabelFixed
-                      hintText={formatMessage(messages.selectLga)}
-                      floatingLabelText={formatMessage(messages.lga)}
-                      style={{ verticalAlign: 'bottom' }}
-                    />
-                  </div>
+                  {config.state && (
+                    <div className={styles.Section__Control}>
+                      <StateSelectField
+                        allItemText={formatMessage(messages.all)}
+                        onChangeState={this.handleChangeState}
+                        countryId={this.props.listFilter.countryId}
+                        stateId={this.props.listFilter.stateId}
+                        floatingLabelFixed
+                        hintText={formatMessage(messages.selectState)}
+                        floatingLabelText={formatMessage(messages.state)}
+                        style={{ verticalAlign: 'bottom' }}
+                      />
+                    </div>
+                  )}
+                  {config.state && config.lga && (
+                    <div className={styles.Section__Control}>
+                      <LgaSelectField
+                        allItemText={formatMessage(messages.all)}
+                        onChangeLga={this.handleChangeLga}
+                        countryId={this.props.listFilter.countryId}
+                        stateId={this.props.listFilter.stateId}
+                        lgaId={this.props.listFilter.lgaId}
+                        floatingLabelFixed
+                        hintText={formatMessage(messages.selectLga)}
+                        floatingLabelText={formatMessage(messages.lga)}
+                        style={{ verticalAlign: 'bottom' }}
+                      />
+                    </div>
+                  )}
                 </div>
               </section>
             )}
@@ -559,6 +588,21 @@ export class ListFilter extends PureComponent {
                         floatingLabelFixed
                         hintText={formatMessage(messages.selectConsumable)}
                         floatingLabelText={formatMessage(messages.consumable)}
+                        style={{ verticalAlign: 'bottom' }}
+                        autoWidth
+                      />
+                    </div>
+                  )}
+                  {config.partnerId && (
+                    <div className={styles.Section__Control}>
+                      <PartnerSelectField
+                        emptyId="-1"
+                        emptyText={formatMessage(messages.none)}
+                        partnerId={filter.partnerId}
+                        onChangePartner={this.handlePartnerIdChange}
+                        floatingLabelFixed
+                        hintText={formatMessage(messages.selectPartner)}
+                        floatingLabelText={formatMessage(messages.partner)}
                         style={{ verticalAlign: 'bottom' }}
                         autoWidth
                       />

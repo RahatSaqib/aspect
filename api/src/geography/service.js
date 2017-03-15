@@ -1,5 +1,6 @@
 const _ = require('lodash')
 const { query, knex } = require('../db')
+const { getConstraints, addConstraints } = require('../auth/constraints')
 
 function* buildGeographySelectList() {
   const countriesStatesAndLGAs = yield query('Get countries, states and LGAs for select lists')
@@ -32,12 +33,19 @@ function* buildGeographySelectList() {
 }
 
 function* countrySelectList(request) {
-  const { countryId, stateId } = request.params
+  const { params, auth } = request
+  const { countryId, stateId } = params
+  const dataConstraints = auth ? yield getConstraints(auth.credentials) : null
+  const addConstraintsLocal = auth ? addConstraints : _.identity
 
   let countries = []
   if (!countryId) {
     countries = yield query('Get countries for select list')
       .from('Country as c')
+      .leftJoin('Geography as g', 'g.countryId', 'c.id')
+      .modify(addConstraintsLocal, dataConstraints, { geography: 'g', country: 'c' })
+      .whereNull('g.stateId')
+      .whereNull('g.lgaId')
       .orderBy(['c.name'], 'asc')
       .select('c.id', 'c.name')
   } else if (!stateId) {
@@ -48,6 +56,7 @@ function* countrySelectList(request) {
         this.on('s.id', 'g.stateId')
           .on({ 'g.countryId': knex.raw(countryId) })
       })
+      .modify(addConstraintsLocal, dataConstraints, { geography: 'g', country: 'c', state: 's' })
       .orderBy(['c.name', 's.name'], 'asc')
       .distinct('c.id as countryId', 'c.name as countryName', 's.id as stateId',
         's.name as stateName')
@@ -77,6 +86,7 @@ function* countrySelectList(request) {
         this.on('l.id', 'g.lgaId')
           .on({ 'g.stateId': knex.raw(stateId) })
       })
+      .modify(addConstraintsLocal, dataConstraints, { geography: 'g', country: 'c', state: 's', lga: 'l' })
       .orderBy(['c.name', 's.name', 'l.name'], 'asc')
       .distinct('c.id as countryId', 'c.name as countryName', 's.id as stateId',
         's.name as stateName', 'l.id as lgaId', 'l.name as lgaName')

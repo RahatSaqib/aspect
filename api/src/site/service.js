@@ -122,9 +122,10 @@ function* listSitesForSelectList(request) {
   const dataConstraints = yield getConstraints(auth.credentials)
 
   const sites = yield knex('Site as s')
+    .leftOuterJoin('Geography as g', 's.geographyId', 'g.id')
     .modify(addConstraints, dataConstraints, { site: 's', state: 'st', lga: 'l' })
     .orderBy(['s.name'], 'asc')
-    .select('s.id', 's.name')
+    .select('s.id', 's.name', 's.partnerId', 'g.countryId')
 
   return { ok: true, data: sites }
 }

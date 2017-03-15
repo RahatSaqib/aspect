@@ -15,6 +15,7 @@ import Favorite from 'material-ui/svg-icons/action/favorite'
 import Cart from 'material-ui/svg-icons/action/shopping-cart'
 import Build from 'material-ui/svg-icons/action/build'
 import Scanner from 'material-ui/svg-icons/hardware/scanner'
+import VpnKey from 'material-ui/svg-icons/communication/vpn-key'
 import Location from 'material-ui/svg-icons/communication/location-on'
 import Assignment from 'material-ui/svg-icons/action/assignment'
 import People from 'material-ui/svg-icons/social/people'
@@ -170,6 +171,13 @@ export const SideNav = ({ open, handleClose, pathname, desktop }) => (
         leftIcon={<Book />}
         className={styles.Drawer__ListItem}
         primaryText="Reports"
+      />
+      <ListItem
+        containerElement={<DevicesLink to="/deviceApiKey" />}
+        value={'/deviceApiKey'}
+        leftIcon={<VpnKey />}
+        className={styles.Drawer__ListItem}
+        primaryText="Device API Keys"
       />
     </SelectableList>
   </Drawer>

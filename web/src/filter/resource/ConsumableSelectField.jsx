@@ -32,7 +32,7 @@ export class ConsumableSelectField extends PureComponent {
   }
 
   handleChange = (event, index, value) => {
-    this.props.onConsumableChange(index === 0 ? undefined : value)
+    this.props.onConsumableChange(value === 'all' ? undefined : value)
   }
 
   render() {

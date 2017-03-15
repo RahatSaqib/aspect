@@ -28,7 +28,7 @@ export class CountrySelectField extends PureComponent {
   }
 
   handleSelectFieldChange = (event, index, value) => {
-    this.props.onChangeCountry(index === 0 ? undefined : value)
+    this.props.onChangeCountry(value === 'all' ? undefined : value)
   }
 
   render() {

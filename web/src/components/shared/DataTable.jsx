@@ -5,7 +5,7 @@ import React, { PureComponent, PropTypes } from 'react'
 import { intlShape } from 'react-intl'
 
 // Material-UI
-import { Table, TableBody, TableHeader, TableHeaderColumn, TableRow, TableRowColumn as TableRowColumnWithBug, TableFooter } from 'material-ui/Table'
+import { Table, TableBody, TableHeader, TableHeaderColumn, TableRow, TableRowColumn, TableFooter } from 'material-ui/Table'
 import LinearProgress from 'material-ui/LinearProgress'
 import SortIcon from 'material-ui/svg-icons/content/sort'
 import FlatButton from 'material-ui/FlatButton'
@@ -16,24 +16,13 @@ import styles from './DataTable.css'
 
 const cssClasses = classnames.bind(styles)
 
-const TableRowColumn = props => (
-  <TableRowColumnWithBug
-    {...props}
-    style={{
-      // Fix a regression for material-ui@0.16.0. It's already fixed in this PR:
-      // https://github.com/callemall/material-ui/pull/5378
-      // Originally introduced: https://github.com/callemall/material-ui/pull/5014
-      overflow: 'hidden',
-      ...props.style
-    }}
-  />
-)
-
 export default class DataTable extends PureComponent {
 
   static propTypes = {
     selectable: PropTypes.bool,
+    multiSelectable: PropTypes.bool,
     handleItemIdSelection: PropTypes.func,
+    handleItemIdsSelection: PropTypes.func,
     handleFetch: PropTypes.func.isRequired,
     items: PropTypes.shape({
       byId: PropTypes.object.isRequired,
@@ -52,15 +41,13 @@ export default class DataTable extends PureComponent {
     messages: PropTypes.object
   }
 
-  state = {
-    height: 'inherit',
-    fixedHeader: true,
-    fixedFooter: true,
+  static defaultProps = {
+    selectable: true,
     multiSelectable: false,
-    showCheckboxes: false,
-    enableSelectAll: false,
-    showRowHover: true,
-    stripedRows: false
+    handleItemIdSelection: _.noop,
+    handleItemIdsSelection: _.noop,
+    intl: {},
+    messages: {},
   }
 
   getColumns() {
@@ -124,16 +111,25 @@ export default class DataTable extends PureComponent {
     return pagerItems
   }
 
-  handleRowSelection = this.handleRowSelection.bind(this)
-
-  handleRowSelection([selectedIndex]) {
+  handleRowSelection = (selectedRows) => {
     const {
-      handleItemIdSelection = _.noop,
+      multiSelectable,
+      handleItemIdSelection,
+      handleItemIdsSelection,
       items
     } = this.props
 
-    const selectedId = items.currentIdList.get(selectedIndex)
-    handleItemIdSelection(selectedId)
+    if (multiSelectable) {
+      const selectedIds = (
+        selectedRows === 'all' ?
+        items.currentIdList :
+        items.currentIdList.filter((id, index) => selectedRows.indexOf(index) !== -1)
+      )
+      handleItemIdsSelection(selectedIds.toJS())
+    } else {
+      const selectedId = items.currentIdList.get(selectedRows[0])
+      handleItemIdSelection(selectedId)
+    }
   }
 
   handleSort(col) {
@@ -158,6 +154,7 @@ export default class DataTable extends PureComponent {
 
   render() {
     const {
+      multiSelectable,
       items,
       table
     } = this.props
@@ -177,19 +174,19 @@ export default class DataTable extends PureComponent {
       <div>
         { loading }
         <Table
-          height={this.state.height}
-          fixedHeader={this.state.fixedHeader}
-          fixedFooter={this.state.fixedFooter}
+          height="inherit"
+          fixedHeader
+          fixedFooter
           selectable={this.props.selectable}
-          multiSelectable={this.state.multiSelectable}
+          multiSelectable={multiSelectable}
           onRowSelection={this.handleRowSelection}
         >
 
           { /* Header - Sort on click in header columns */ }
           <TableHeader
-            displaySelectAll={this.state.showCheckboxes}
-            adjustForCheckbox={this.state.showCheckboxes}
-            enableSelectAll={this.state.enableSelectAll}
+            displaySelectAll={multiSelectable}
+            adjustForCheckbox={multiSelectable}
+            enableSelectAll={multiSelectable}
           >
             <TableRow>
               {columns.map(col => (
@@ -200,13 +197,13 @@ export default class DataTable extends PureComponent {
                   tooltip={col.tooltip}
                   {...col.extraProps}
                 >
-                  <span style={{ cursor: 'pointer' }} onTouchTap={() => { this.handleSort(col.db) }}>
+                  <span style={{ cursor: 'pointer' }} onTouchTap={col.sortable !== false ? () => { this.handleSort(col.db) } : _.noop}>
                     {col.title}
                   </span>
-                  <SortIcon
+                  {col.sortable !== false && <SortIcon
                     color={table.sortCol === col.db ? 'black' : 'white'}
                     style={{ height: 18, width: 18, position: 'relative', top: '4px', left: '4px', transform: table.sortDir === 'asc' ? 'scale(1, -1)' : '' }}
-                  />
+                  />}
                 </Hidden>
               )) }
             </TableRow>
@@ -214,10 +211,9 @@ export default class DataTable extends PureComponent {
 
           { /* Body - this is where we fill the table with the data (List of items) */ }
           <TableBody
-            displayRowCheckbox={this.state.showCheckboxes}
-            deselectOnClickaway={this.state.deselectOnClickaway}
-            showRowHover={this.state.showRowHover}
-            stripedRows={this.state.stripedRows}
+            displayRowCheckbox={multiSelectable}
+            showRowHover
+            stripedRows={false}
           >
             {items.currentIdList.map(itemId => (
               <TableRow

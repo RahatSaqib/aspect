@@ -1,7 +1,10 @@
 const _ = require('lodash')
 const { query, knex } = require('../db')
+const { getConstraints, addConstraints } = require('../auth/constraints')
 
-function* getRolesForSelectList() {
+function* getRolesForSelectList(request) {
+  const { auth } = request
+  const dataConstraints = yield getConstraints(auth.credentials)
   const partnersOrganisationalUnitsAndRoles = yield query('Get partners, organisational units and roles for select lists')
     .from('Role as r')
     .rightOuterJoin('OrgUnit as ou', 'r.orgUnitId', 'ou.id')
@@ -9,6 +12,7 @@ function* getRolesForSelectList() {
       this.on('ou.partnerId', 'p.id')
         .orOn(knex.raw('r.orgUnitId IS NULL AND r.partnerId = p.id'))
     })
+    .modify(addConstraints, dataConstraints, { partner: 'p' })
     .orderBy(['p.name', 'ou.name', 'r.name'], 'asc')
     .select('p.id as partnerId', 'p.name as partnerName', 'ou.id as orgUnitId',
       'ou.name as orgUnitName', 'r.id as roleId', 'r.name as roleName')

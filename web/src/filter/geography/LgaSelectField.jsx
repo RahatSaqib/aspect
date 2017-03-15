@@ -65,7 +65,7 @@ export class LgaSelectField extends PureComponent {
   }
 
   handleSelectFieldChange = (event, index, value) => {
-    this.props.onChangeLga(index === 0 ? undefined : value)
+    this.props.onChangeLga(value === 'all' ? undefined : value)
   }
 
   render() {

@@ -30,7 +30,7 @@ export class AssaySelectField extends PureComponent {
   }
 
   handleChange = (event, index, value) => {
-    this.props.onAssayChange(index === 0 ? undefined : value)
+    this.props.onAssayChange(value === 'all' ? undefined : value)
   }
 
   render() {

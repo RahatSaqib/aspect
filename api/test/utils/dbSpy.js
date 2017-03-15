@@ -14,6 +14,7 @@ function buildKnexSpy(resolveWith) {
       sinon.spy(knexSpy, property)
     }
   }
+  knexSpy.modify = returnKnexStub
   return knexSpy
 }
 

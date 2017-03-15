@@ -1,6 +1,7 @@
 import { defineMessages } from 'react-intl'
 import Immutable from 'immutable'
 import { stringify } from 'querystring'
+import differenceInMinutes from 'date-fns/difference_in_minutes'
 
 import { aspectFetch } from '../shared/utils/fetch'
 import { nonEmptyFilterValue } from '../filter/utils'
@@ -32,6 +33,9 @@ export const types = {
 
   REQUEST_UPDATING_SINGLE_DEVICE: 'REQUEST_UPDATING_SINGLE_DEVICE',
   RECEIVE_UPDATED_SINGLE_DEVICE: 'RECEIVE_UPDATED_SINGLE_DEVICE',
+
+  REQUEST_DEVICES_FOR_SELECT_LIST: 'REQUEST_DEVICES_FOR_SELECT_LIST',
+  RECEIVE_DEVICES_FOR_SELECT_LIST: 'RECEIVE_DEVICES_FOR_SELECT_LIST'
 }
 /*
  * ---------------- Action Creators -----------------
@@ -100,6 +104,49 @@ export function fetchDevices(filters/* required */, sortCol = 'name', sortDir = 
       .then(json => dispatch(receiveDevices(json)))
   }
 }
+
+function requestDevicesForSelectList() {
+  return {
+    type: types.REQUEST_DEVICES_FOR_SELECT_LIST
+  }
+}
+
+function receiveDevicesForSelectList(devicesForSelectList) {
+  return {
+    type: types.RECEIVE_DEVICES_FOR_SELECT_LIST,
+    items: devicesForSelectList,
+    lastRefreshed: new Date()
+  }
+}
+
+export function fetchDevicesForSelectList(forceRefresh, filters) {
+  return (dispatch, getState) => {
+    const { device } = getState()
+
+    if (device.selectList.loading) {
+      return
+    }
+    const shouldFetch = forceRefresh || !device.selectList.lastRefreshed || (
+      differenceInMinutes(new Date(), device.selectList.lastRefreshed) > 5
+    )
+    if (!shouldFetch) {
+      return
+    }
+
+    dispatch(requestDevicesForSelectList())
+    return aspectFetch(`/device/select-list?${stringify(filters)}`, {
+      errorNotifications: {
+        default: errorPleaseTryAgainInAFewMinutes(defineMessages({
+          title: {
+            id: 'errorResponseMessages.fetchDevicesForSelectList.GET.default.title',
+            defaultMessage: 'Loading Devices Failed'
+          }
+        }))
+      }
+    }).then(json => dispatch(receiveDevicesForSelectList(json.data)))
+  }
+}
+
 
 function requestSingleDevice(deviceId) {
   return {
@@ -217,9 +264,15 @@ export function exportDevices(extraFilters = {}, format, sortCol, sortDir, page,
 /*
  * ---------------- Reducers -----------------
  */
+const SelectListItems = Immutable.Record({
+  loading: false,
+  items: Immutable.List([]),
+  lastRefreshed: undefined
+})
 const Device = Immutable.Record({
   items: new Items(),
-  table: new Table()
+  table: new Table(),
+  selectList: new SelectListItems()
 })
 
 const initialState = new Device()
@@ -241,6 +294,14 @@ export default function deviceReducer(state = initialState, action) {
       return state.withMutations((mutState) => {
         const immutItem = Immutable.fromJS(action.item)
         mutState.set('items', receiveItem(mutState.items, immutItem))
+      })
+    case types.REQUEST_DEVICES_FOR_SELECT_LIST:
+      return state.setIn(['selectList', 'loading'], true)
+    case types.RECEIVE_DEVICES_FOR_SELECT_LIST:
+      return state.mergeIn(['selectList'], {
+        loading: false,
+        lastRefreshed: action.lastRefreshed,
+        items: new Immutable.fromJS(action.items)
       })
     default:
       return state

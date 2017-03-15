@@ -18,6 +18,7 @@ export const FilterMessage = ({
   assay,
   consumable,
   siteItemsById,
+  partnerItems,
   workflowStatusItems,
   deviceStatusItems,
   subject,
@@ -35,6 +36,7 @@ export const FilterMessage = ({
       filterTemplateOptional,
       formatMessage,
       formatDate,
+      partnerItems,
       workflowStatusItems,
       deviceStatusItems)
     }
@@ -48,6 +50,7 @@ FilterMessage.propTypes = {
   assay: PropTypes.object.isRequired,
   consumable: PropTypes.object.isRequired,
   siteItemsById: PropTypes.object.isRequired,
+  partnerItems: PropTypes.object.isRequired,
   workflowStatusItems: PropTypes.shape({
     id: PropTypes.string,
     name: PropTypes.string
@@ -71,6 +74,7 @@ function mapStateToProps(state) {
     assay: state.assay,
     consumable: state.consumable.consumables,
     siteItemsById: state.site.items.byId,
+    partnerItems: state.roles.partnersAndRolesForSelectList.partners,
     workflowStatusItems: state.resultWorkflowStatus.items,
     deviceStatusItems: state.deviceStatus.items
   }
