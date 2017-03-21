@@ -34,7 +34,7 @@ function listDevicesBaseConfig() {
       },
       validateAllGeographyFilterParams(),
       validateDateRangeParams(),
-      validateSortPageParams('name', 'status', 'createdOn', 'lastSeen', 'totalTests')
+      validateSortPageParams('name', 'state', 'status', 'createdOn', 'lastSeen', 'lastMonth', 'thisMonth')
     ) }
   }
 }

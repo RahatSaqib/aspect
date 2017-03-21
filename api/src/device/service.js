@@ -1,13 +1,15 @@
 const Promise = require('bluebird')
 const _ = require('lodash')
+const subDays = require('date-fns/sub_days')
 const Boom = require('boom')
 
-const { knex, filterParams, filterDateRangeParams, sortPageParams } = require('../db')
+const { knex, filterParams, sortPageParams } = require('../db')
 const { getConstraints, addConstraints } = require('../auth/constraints')
 const { getCellsByValue, generateExcelFile, generateCsvFile } = require('../shared/io')
 
 const SELECT_LIST_FIELDS = [
   'd.id', 'd.name', 'd.shortname', 'd.createdOn', 'd.lastPingOn', 'd.updatedOn as lastSeen',
+  'st.name as state',
   'dt.name as type',
   'ds.name as status',
   'dc.name as category', 'dc.hasResults', 'dc.hasConnectivity'
@@ -44,6 +46,7 @@ function* getListDevices(query, auth) {
     .innerJoin('DeviceTypeCategory as dc', 'dt.deviceTypeCategoryId', 'dc.id')
     .innerJoin('Site as s', 'd.siteId', 's.id')
     .leftJoin('Geography as g', 's.geographyId', 'g.id')
+    .leftJoin('State as st', 'g.stateId', 'st.id')
     .modify((queryBuilder) => {
       if (!query.assayId) {
         return
@@ -77,34 +80,28 @@ function* getListDevices(query, auth) {
   const getCount = deviceQuery.clone()
     .count('d.id as count').first()
 
+  const last30Day = subDays(new Date(), 30)
+  const last60Day = subDays(last30Day, 30)
+
   // get rows
   const getItems = deviceQuery.clone()
     .modify(sortPageParams, query, 'name')
-    .select(SELECT_LIST_FIELDS)
+    .select([
+      ...SELECT_LIST_FIELDS,
+      knex('Result as r')
+        .whereRaw('r.deviceId = d.id')
+        .whereBetween('r.endedOn', [last60Day, last30Day])
+        .count('r.id')
+        .as('lastMonth'),
+      knex('Result as r')
+        .whereRaw('r.deviceId = d.id')
+        .where('r.endedOn', '>=', last30Day)
+        .count('r.id')
+        .as('thisMonth')
+    ])
 
   // return result when both queries are finished
-  const [{ count: total }, rawDevices] = yield Promise.all([getCount, getItems])
-
-  // get resultsCount for all rawDevices
-  const rawResultsCount = yield knex('Result as r')
-    .whereIn('r.deviceId', _.map(rawDevices, 'id'))
-    .modify(filterDateRangeParams, query, 'r.endedOn')
-    .modify(filterParams, query, {
-      assayId: 'r.assayId',
-      resultCategoryId: 'r.resultCategory1'
-    })
-    .count('r.id as count')
-    .select('r.deviceId')
-    .groupBy('r.deviceId')
-
-  const resultsCountByDeviceId = _.fromPairs(
-    _.map(rawResultsCount, ({ deviceId, count }) => [deviceId, count])
-  )
-
-  // assign device.totalTests with resultsCountByDeviceId or zero
-  const data = _.map(rawDevices, rawDevice => _.assign({}, rawDevice, {
-    totalTests: resultsCountByDeviceId[rawDevice.id] || 0
-  }))
+  const [{ count: total }, data] = yield Promise.all([getCount, getItems])
 
   const result = { ok: true, total, length: data.length, data }
 
