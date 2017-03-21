@@ -206,6 +206,7 @@ export class DeviceList extends PureComponent {
           items={this.props.items}
           table={this.props.table}
           columns={columns}
+          intl={this.props.intl}
         />
       </div>
     )
