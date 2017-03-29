@@ -8,7 +8,7 @@ const { getConstraints, addConstraints } = require('../auth/constraints')
 const { getCellsByValue, generateExcelFile, generateCsvFile } = require('../shared/io')
 
 const SELECT_LIST_FIELDS = [
-  'd.id', 'd.name', 'd.shortname', 'd.createdOn', 'd.lastPingOn', 'd.updatedOn as lastSeen',
+  'd.id', 'd.name', 'd.shortname', 'd.createdOn', 'd.lastPingOn', 'd.lastSeenOn as lastSeen',
   'st.name as state',
   'dt.name as type',
   'ds.name as status',
@@ -16,7 +16,7 @@ const SELECT_LIST_FIELDS = [
 ]
 
 const SELECT_SHOW_FIELDS = [
-  'd.id', 'd.name', 'd.shortname', 'd.createdOn', 'd.lastPingOn', 'd.updatedOn as lastSeen',
+  'd.id', 'd.name', 'd.shortname', 'd.createdOn', 'd.lastPingOn', 'd.lastSeenOn as lastSeen',
   'dt.name as type',
   'ds.name as status', 'ds.token as statusToken',
   'dc.name as category', 'dc.hasResults', 'dc.hasConnectivity',

@@ -37,14 +37,14 @@ function deviceApiHandler(handler, handlerOptions) {
       })
     }
 
+    const deviceUpdates = { lastSeenOn: now }
     if (updatePing) {
-      yield knex('Device')
-        .where({ id: device.id })
-        .update({
-          lastPingOn: now,
-          lastPingFromIp: remoteAddress
-        })
+      deviceUpdates.lastPingOn = now
+      deviceUpdates.lastPingFromIp = remoteAddress
     }
+    yield knex('Device')
+      .where({ id: device.id })
+      .update(deviceUpdates)
 
     let response = {}
     yield transact(function* (knex) {
@@ -224,6 +224,7 @@ function createNewDevice(request, now) {
       serial: device.serial,
       configurationData: '{}',
       putInService: now,
+      lastSeenOn: now,
       createdOn: now,
       updatedOn: now
     }
