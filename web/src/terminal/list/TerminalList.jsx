@@ -42,6 +42,30 @@ const messages = defineMessages({
     id: 'pages.TerminalList.lastSeen',
     defaultMessage: 'Last Seen'
   },
+  numberOfTestsLeft: {
+    id: 'pages.DeviceList.numberOfTestsLeft',
+    defaultMessage: 'Number Of'
+  },
+  numberOfTestsRight: {
+    id: 'pages.DeviceList.numberOfTestsRight',
+    defaultMessage: 'Tests Delivered'
+  },
+  deliveredLastMonth: {
+    id: 'pages.DeviceList.deliveredLastMonth',
+    defaultMessage: 'Last Month'
+  },
+  deliveredThisMonth: {
+    id: 'pages.DeviceList.deliveredThisMonth',
+    defaultMessage: 'This Month'
+  },
+  acknowledgedRatio: {
+    id: 'pages.DeviceList.acknowledgedRatio',
+    defaultMessage: '% Acknowledged'
+  },
+  flagged: {
+    id: 'pages.DeviceList.flagged',
+    defaultMessage: 'Flagged'
+  },
   filterTemplate: {
     id: 'pages.TerminalList.filterTemplate',
     defaultMessage: 'Viewing all terminals<GEOGRAPHY><NAME><DEVICESTATUS>.'
@@ -49,8 +73,8 @@ const messages = defineMessages({
 })
 
 const TERMINAL_TABLE_COLUMN_SPACING = 12
-const TERMINAL_TABLE_NAME_COLUMN_WIDTH = '30%'
-const TERMINAL_TABLE_STATUS_COLUMN_WIDTH = '15%'
+const TERMINAL_TABLE_NAME_COLUMN_WIDTH = '25%'
+const TERMINAL_TABLE_STATUS_COLUMN_WIDTH = '10%'
 
 export class TerminalList extends PureComponent {
 
@@ -126,7 +150,7 @@ export class TerminalList extends PureComponent {
 
   render() {
     const { intl } = this.props
-    const { formatMessage, formatRelative } = intl
+    const { formatMessage, formatRelative, formatNumber } = intl
     const columns = [
       { db: 'name',
         title: formatMessage(messages.terminalName),
@@ -142,7 +166,37 @@ export class TerminalList extends PureComponent {
       { db: 'lastSeen',
         title: formatMessage(messages.lastSeen),
         hideOnXs: true,
-        format: data => formatRelative(data) }
+        format: data => formatRelative(data) },
+      { db: 'deliveredLastMonth',
+        extraProps: { style: { paddingRight: 2 } },
+        title: (
+          <span>
+            <span style={{ display: 'inline-block', width: '100%', textAlign: 'right' }}>
+              {formatMessage(messages.numberOfTestsLeft)}
+            </span>
+            <br />
+            {formatMessage(messages.deliveredLastMonth)}
+          </span>
+        ),
+        format: data => formatNumber(data) },
+      { db: 'deliveredThisMonth',
+        extraProps: { style: { paddingLeft: 2 } },
+        title: (
+          <span>
+            <span style={{ display: 'inline-block', textAlign: 'left' }}>
+              {formatMessage(messages.numberOfTestsRight)}
+            </span>
+            <br />
+            {formatMessage(messages.deliveredThisMonth)}
+          </span>
+        ),
+        format: data => formatNumber(data) },
+      { db: 'acknowledgedRatio',
+        title: formatMessage(messages.acknowledgedRatio),
+        format: data => formatNumber(data, { style: 'percent' }) },
+      { db: 'totalFlagged',
+        title: formatMessage(messages.flagged),
+        format: data => formatNumber(data) }
     ]
 
     return (
