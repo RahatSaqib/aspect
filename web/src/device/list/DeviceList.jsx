@@ -32,9 +32,9 @@ const messages = defineMessages({
     id: 'pages.DeviceList.deviceName',
     defaultMessage: 'Device Name'
   },
-  shortName: { // FIXME: unused
-    id: 'pages.DeviceList.shortName',
-    defaultMessage: 'Short Name'
+  state: {
+    id: 'pages.DeviceList.state',
+    defaultMessage: 'State'
   },
   status: {
     id: 'pages.DeviceList.status',
@@ -48,9 +48,21 @@ const messages = defineMessages({
     id: 'pages.DeviceList.lastSeen',
     defaultMessage: 'Last Seen'
   },
-  totalTests: {
-    id: 'pages.DeviceList.totalTests',
-    defaultMessage: 'Total Tests'
+  numberOfTestsLeft: {
+    id: 'pages.DeviceList.numberOfTestsLeft',
+    defaultMessage: 'Number'
+  },
+  numberOfTestsRight: {
+    id: 'pages.DeviceList.numberOfTestsRight',
+    defaultMessage: 'Of Tests'
+  },
+  lastMonth: {
+    id: 'pages.DeviceList.lastMonth',
+    defaultMessage: 'Last Month'
+  },
+  thisMonth: {
+    id: 'pages.DeviceList.thisMonth',
+    defaultMessage: 'This Month'
   },
   exportExcel: {
     id: 'pages.DeviceList.exportExcel',
@@ -168,6 +180,8 @@ export class DeviceList extends PureComponent {
       { db: 'name',
         title: formatMessage(messages.deviceName),
         extraProps: { style: { width: DEVICE_TABLE_NAME_COLUMN_WIDTH } } },
+      { db: 'state',
+        title: formatMessage(messages.state) },
       { db: 'status',
         title: formatMessage(messages.status),
         hideOnXs: true,
@@ -180,9 +194,30 @@ export class DeviceList extends PureComponent {
         title: formatMessage(messages.lastSeen),
         hideOnXs: true,
         format: data => formatRelative(data) },
-      { db: 'totalTests',
-        title: formatMessage(messages.totalTests),
-        format: data => formatNumber(data) }
+      { db: 'lastMonth',
+        extraProps: { style: { paddingRight: 2 } },
+        title: (
+          <span>
+            <span style={{ display: 'inline-block', width: '100%', textAlign: 'right' }}>
+              {formatMessage(messages.numberOfTestsLeft)}
+            </span>
+            <br />
+            {formatMessage(messages.lastMonth)}
+          </span>
+        ),
+        format: data => formatNumber(data) },
+      { db: 'thisMonth',
+        extraProps: { style: { paddingLeft: 2 } },
+        title: (
+          <span>
+            <span style={{ display: 'inline-block', textAlign: 'left' }}>
+              {formatMessage(messages.numberOfTestsRight)}
+            </span>
+            <br />
+            {formatMessage(messages.thisMonth)}
+          </span>
+        ),
+        format: data => formatNumber(data) },
     ]
     const askConfirmationForExport = this.props.table.total > 1000
 
@@ -206,6 +241,7 @@ export class DeviceList extends PureComponent {
           items={this.props.items}
           table={this.props.table}
           columns={columns}
+          intl={this.props.intl}
         />
       </div>
     )
