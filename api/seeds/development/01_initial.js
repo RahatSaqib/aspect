@@ -1412,7 +1412,8 @@ function* seed(knex) {
       siteId: siteData.id,
       createdOn: new Date(+now - (3 * i * millisInHour)),
       updatedOn: new Date(+now - (i * millisInHour)),
-      lastPingOn: new Date(+now - ((i * millisInHour) / 3))
+      lastPingOn: new Date(+now - ((i * millisInHour) / 3)),
+      lastSeenOn: new Date(+now - ((i * millisInHour) / 3))
     }))
 
     routerIds.push(routerId)
@@ -1460,6 +1461,7 @@ function* seed(knex) {
       createdOn: new Date(+now - (3 * i * millisInHour)),
       updatedOn: new Date(+now - (i * millisInHour)),
       lastPingOn: new Date(+now - ((i * millisInHour) / 3)),
+      lastSeenOn: new Date(+now - ((i * millisInHour) / 3)),
       approvedOn: new Date(+now - (2 * i * millisInHour)),
       approvedBy: _.values(userIds)[_.random(_.size(userIds) - 1)],
       hostId: _.times(8, () => String.fromCharCode(65 + _.random(25) + (_.random(1) > 0 ? 32 : 0))).join(''),
@@ -1520,6 +1522,7 @@ function* seed(knex) {
       createdOn: new Date(+now - (3 * i * millisInHour)),
       updatedOn: new Date(+now - (i * millisInHour)),
       lastPingOn: new Date(+now - ((i * millisInHour) / 3)),
+      lastSeenOn: new Date(+now - ((i * millisInHour) / 3)),
       approvedOn: new Date(+now - (2 * i * millisInHour)),
       approvedBy: _.values(userIds)[_.random(_.size(userIds) - 1)],
       hostId: _.times(8, () => String.fromCharCode(65 + _.random(25) + (_.random(1) > 0 ? 32 : 0))).join(''),
