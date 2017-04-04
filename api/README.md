@@ -28,19 +28,9 @@ flush privileges;
 EOT
 
 # Create an .env file and configure settings for your environment
-# (or copy .env.example and modify with your favorite editor)
-cat > .env <<EOT
-secret=Any_Random_String
-passwordAttempts=5
-
-db.connectionLimit=100
-db.host=localhost
-db.user=aspectapi
-db.password=mypassword
-db.databaseName=aspect
-db.debug=false
-seeds.directory='./seeds/development'
-EOT
+# using .env.example as a template
+cp .env.example .env
+vim .env
 
 # Run migrations
 npm run knex migrate:latest
