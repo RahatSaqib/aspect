@@ -1260,6 +1260,12 @@ function* seed(knex) {
     token: 'processed',
     externalId: 'Processed'
   })
+  const [validated] = yield knex('ResultWorkflowStatus').insert({
+    name: 'Validated',
+    i18nkey: 'ResultWorkflowStatusValidated',
+    token: 'validated',
+    externalId: 'Validated'
+  })
   yield knex('ResultWorkflowStatus').insert({
     name: 'Delivered',
     i18nkey: 'ResultWorkflowStatusDelivered',
@@ -1921,6 +1927,8 @@ function* seed(knex) {
     resultData.log = log
     resultData.resultText = result.resultText.replace('{0}', copies).replace('{1}', log)
 
+    const resultStatus = _.random(1) < 0.5 ? acknowledged : validated
+
     const resultId = yield knex('Result').insert(Object.assign({}, auditFields, {
       externalId: `UQHIV-${i}`,
       assayId: assayHivVlId,
@@ -1929,7 +1937,7 @@ function* seed(knex) {
       geographyId: siteData.geographyId,
       siteId: siteData.id,
       deviceId: device.id,
-      resultWorkflowStatusId: acknowledged,
+      resultWorkflowStatusId: resultStatus,
       longitude: -81.581222,
       latitude: 28.419348,
       resultTypeId: resultTypePatientId,
@@ -1957,7 +1965,7 @@ function* seed(knex) {
 
     yield knex('ResultWorkflowLog').insert({
       resultId,
-      resultWorkflowStatusId: acknowledged,
+      resultWorkflowStatusId: resultStatus,
       operator: 'Marsha',
       changedOn: new Date(+now - randomTimespan - (3 * millisInHour)),
       createdOn: new Date(+now - randomTimespan - (2 * millisInHour)),
