@@ -1288,7 +1288,8 @@ function* seed(knex) {
     countries[country.abbreviation] = countryData
     countryData.states = {}
 
-    yield knex('Geography').insert({ countryId })
+    const [countryGeographyId] = yield knex('Geography').insert({ countryId })
+    countryData.geographyId = countryGeographyId
 
     for (const state of (country.states || [])) {
       const stateData = _.pick(state, ['abbreviation', 'name'])
@@ -1298,7 +1299,8 @@ function* seed(knex) {
       countryData.states[stateKey] = stateData
       stateData.lgas = {}
 
-      yield knex('Geography').insert({ countryId, stateId })
+      const [stateGeographyId] = yield knex('Geography').insert({ countryId, stateId })
+      stateData.geographyId = stateGeographyId
 
       for (const lga of (state.lgas || [])) {
         const lgaData = _.pick(lga, ['name'])
@@ -1310,6 +1312,7 @@ function* seed(knex) {
 
         const geoData = { countryId, stateId, lgaId }
         const [geographyId] = yield knex('Geography').insert(geoData)
+        lgaData.geographyId = geographyId
         geographies.push(Object.assign({ id: geographyId }, geoData))
 
         // up to 5 of sites at each LGA
@@ -2241,36 +2244,18 @@ function* seed(knex) {
     partnerId: partnerOneId
   })
 
-  /* FIXME Geographic Filters
-  const [roleIdOH] = yield knex('Role').insert({
-    name: 'Ohio Users',
-    partnerId: partnerOneId,
-    dataFilterId: dataFilterIdOH
-    id: countries.US.states.OH.id
-  })
-  const [roleIdNE] = yield knex('Role').insert({
-    name: 'Nebraska Users',
-    partnerId: partnerOneId,
-    dataFilterId: dataFilterIdNE
+  const [jobFunctionIdManager] = yield knex('JobFunction').insert({
+    name: 'Manager',
+    partnerId: partnerOneId
   })
 
-  const [roleIdOHWayne] = yield knex('Role').insert({
-    name: 'Wayne County, OH Users',
-    partnerId: partnerOneId,
-    dataFilterId: dataFilterIdOHWayne
-        id: countries.US.states.OH.lgas.Wayne.id
+  const [jobFunctionIdClinician] = yield knex('JobFunction').insert({
+    name: 'Clinician',
+    partnerId: partnerOneId
   })
-
-  const [roleIdMASuffolk] = yield knex('Role').insert({
-    name: 'Suffolk County, MA Users',
-    partnerId: partnerOneId,
-    dataFilterId: dataFilterIdMASuffolk
-        id: countries.US.states.MA.lgas.Suffolk.id
-  })
-  */
 
   const [jobFunctionIdPartnerTwo] = yield knex('JobFunction').insert({
-    name: 'Partner Two Users',
+    name: 'Lab Manager',
     partnerId: partnerTwoId
   })
 
@@ -2287,41 +2272,62 @@ function* seed(knex) {
     { jobFunctionId: jobFunctionIdAdmin, permissionId: modules.notification.admin },
     { jobFunctionId: jobFunctionIdAdmin, permissionId: modules.report.admin },
 
-    /* FIXME Geographic Filters
-    { jobFunctionId: jobFunctionIdOH, permissionId: modules.site.edit },
-    { jobFunctionId: jobFunctionIdOH, permissionId: modules.device.edit },
-    { jobFunctionId: jobFunctionIdOH, permissionId: modules.assay.edit },
-    { jobFunctionId: jobFunctionIdOH, permissionId: modules.inventory.edit },
+    { jobFunctionId: jobFunctionIdManager, permissionId: modules.site.edit },
+    { jobFunctionId: jobFunctionIdManager, permissionId: modules.device.edit },
+    { jobFunctionId: jobFunctionIdManager, permissionId: modules.assay.edit },
+    { jobFunctionId: jobFunctionIdManager, permissionId: modules.inventory.edit },
 
-    { jobFunctionId: jobFunctionIdNE, permissionId: modules.site.edit },
-    { jobFunctionId: jobFunctionIdNE, permissionId: modules.device.edit },
+    { jobFunctionId: jobFunctionIdPartnerTwo, permissionId: modules.site.edit },
+    { jobFunctionId: jobFunctionIdPartnerTwo, permissionId: modules.device.edit },
 
-
-    { jobFunctionId: jobFunctionIdOHWayne, permissionId: modules.site.view },
-    { jobFunctionId: jobFunctionIdOHWayne, permissionId: modules.device.view },
-    { jobFunctionId: jobFunctionIdOHWayne, permissionId: modules.assay.view },
-    { jobFunctionId: jobFunctionIdOHWayne, permissionId: modules.inventory.view },
-
-    { jobFunctionId: jobFunctionIdMASuffolk, permissionId: modules.device.view },
-
-    { jobFunctionId: jobFunctionIdPartnerTwo, permissionId: modules.inventory.edit }
-    */
+    { jobFunctionId: jobFunctionIdClinician, permissionId: modules.site.view },
+    { jobFunctionId: jobFunctionIdClinician, permissionId: modules.device.view },
+    { jobFunctionId: jobFunctionIdClinician, permissionId: modules.assay.view },
+    { jobFunctionId: jobFunctionIdClinician, permissionId: modules.inventory.view },
   ])
 
-  // assign jobs to users
-  yield knex('Job').insert([
-    { personId: personIds.admin, jobFunctionId: jobFunctionIdAdmin },
-    /*
-    { personId: personIds.bob, jobFunctionId: jobFunctionIdOH },
-    { personId: personIds.frank, jobFunctionId: jobFunctionIdNE },
-    { personId: personIds.fred, jobFunctionId: jobFunctionIdOHWayne },
-    */
-    { personId: personIds.sam, jobFunctionId: jobFunctionIdAdmin },
-    { personId: personIds.jason, jobFunctionId: jobFunctionIdPartnerTwo },
-    /*
-    { personId: personIds.steve, jobFunctionId: jobFunctionIdMASuffolk },
-    { personId: personIds.bill, jobFunctionId: jobFunctionIdMASuffolk },
-    { personId: personIds.bill, jobFunctionId: jobFunctionIdOH }
-    */
+  // crate jobs for users
+  const jobIdAdmin = yield knex('Job').insert({
+    personId: personIds.admin,
+    jobFunctionId: jobFunctionIdAdmin
+  })
+
+  const jobIdJason = yield knex('Job').insert({
+    personId: personIds.jason,
+    jobFunctionId: jobFunctionIdPartnerTwo
+  })
+
+  const jobIdSam = yield knex('Job').insert({
+    personId: personIds.sam,
+    jobFunctionId: jobFunctionIdAdmin
+  })
+
+  const jobIdBob = yield knex('Job').insert({
+    personId: personIds.bob,
+    jobFunctionId: jobFunctionIdManager
+  })
+  const jobIdFrank = yield knex('Job').insert({
+    personId: personIds.frank,
+    jobFunctionId: jobFunctionIdManager
+  })
+  const jobIdNed = yield knex('Job').insert({
+    personId: personIds.ned,
+    jobFunctionId: jobFunctionIdClinician
+  })
+  const jobIdFred = yield knex('Job').insert({
+    personId: personIds.fred,
+    jobFunctionId: jobFunctionIdClinician
+  })
+
+  // Constrain jobs by context
+  yield knex('JobContext').insert([
+    { jobId: jobIdAdmin, geographyId: countries.US.geographyId },
+    { jobId: jobIdJason, geographyId: countries.US.geographyId },
+    { jobId: jobIdSam, geographyId: countries.NG.geographyId },
+    { jobId: jobIdBob, geographyId: countries.US.states.OH.geographyId },
+    { jobId: jobIdFrank, geographyId: countries.US.states.NE.geographyId },
+    { jobId: jobIdNed, geographyId: countries.US.states.OH.lgas.Wayne.geographyId },
+    { jobId: jobIdFred, geographyId: countries.US.states.OH.lgas.Wayne.geographyId },
+    { jobId: jobIdFred, geographyId: countries.US.states.MA.lgas.Suffolk.geographyId },
   ])
 }

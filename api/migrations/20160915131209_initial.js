@@ -154,6 +154,17 @@ function* up(knex) {
     job.charset('utf8')
   })
 
+  yield knex.schema.createTable('JobContext', (jobContext) => {
+    jobContext.increments('id')
+    jobContext.integer('jobId').unsigned().notNullable()
+      .index().references('id').inTable('Job')
+    jobContext.integer('geographyId').unsigned()
+      .index().references('id').inTable('Geography')
+    jobContext.integer('siteId').unsigned()
+      .index().references('id').inTable('Site')
+    jobContext.charset('utf8')
+  })
+
   yield knex.schema.createTable('RefreshToken', (refreshToken) => {
     refreshToken.integer('userId').unsigned().notNullable()
       .references('id').inTable('User')
@@ -585,9 +596,10 @@ function* down(knex) {
   yield knex.schema.dropTableIfExists('DeviceRole')
   yield knex.schema.dropTableIfExists('DeviceApiKey')
   yield knex.schema.dropTableIfExists('RefreshToken')
-  yield knex.schema.dropTableIfExists('Job')
-  yield knex.schema.dropTableIfExists('JobFunction')
   yield knex.schema.dropTableIfExists('JobFunctionPermission')
+  yield knex.schema.dropTableIfExists('JobFunction')
+  yield knex.schema.dropTableIfExists('JobContext')
+  yield knex.schema.dropTableIfExists('Job')
   yield knex.schema.dropTableIfExists('UserRole')
   yield knex.schema.dropTableIfExists('RolePermission')
   yield knex.schema.dropTableIfExists('Permission')

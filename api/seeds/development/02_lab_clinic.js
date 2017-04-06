@@ -182,7 +182,7 @@ function* seed(knex) {
   }, auditFields))
 
   const [jobFunctionIdAdmin] = yield knex('JobFunction').insert({
-    name: 'Admin',
+    name: 'RRT Admin',
     partnerId
   })
 
@@ -195,8 +195,9 @@ function* seed(knex) {
     { jobFunctionId: jobFunctionIdAdmin, permissionId: modules.site.admin },
     { jobFunctionId: jobFunctionIdAdmin, permissionId: modules.assay.admin }])
 
-  yield knex('Job').insert([
+  const [jobIdAdmin] = yield knex('Job').insert([
     { personId: adminPersonId, jobFunctionId: jobFunctionIdAdmin }])
+  yield knex('JobContext').insert({ jobId: jobIdAdmin, geographyId })
 
   const statesByName = malawiStates.reduce((memo, state) => {
     memo[state.name.toLowerCase()] = state
@@ -259,7 +260,6 @@ function* seed(knex) {
 
     const [jobFunctionIdLabAdmin] = yield knex('JobFunction').insert({
       name: `${lab.shortname} Admin`,
-      // FIXME Site filter
       partnerId
     })
 
@@ -267,8 +267,9 @@ function* seed(knex) {
       { jobFunctionId: jobFunctionIdLabAdmin, permissionId: modules.device.admin },
       { jobFunctionId: jobFunctionIdLabAdmin, permissionId: modules.result.admin }])
 
-    yield knex('Job').insert([
+    const [jobIdLabAdmin] = yield knex('Job').insert([
       { personId: labAdminPersonId, jobFunctionId: jobFunctionIdLabAdmin }])
+    yield knex('JobContext').insert({ jobId: jobIdLabAdmin, siteId })
   }
 }
 

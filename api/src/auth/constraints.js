@@ -1,4 +1,5 @@
 const _ = require('lodash')
+const { knex } = require('../db')
 const { getUser } = require('./service')
 
 // A prefix for joined table aliases intended to avoid
@@ -10,7 +11,6 @@ function alias(table) {
 
 function getConstraints(credentials) {
   return getUser(credentials.name).then((user) => {
-    // TODO define constraints schema
     const constraints = {
       partner: {
         id: user.partnerId
@@ -20,13 +20,40 @@ function getConstraints(credentials) {
       }
     }
 
-    // FIXME filter by JobContext
-    const filterConstraints = []
-    if (filterConstraints.length) {
-      constraints.$or = filterConstraints
-    }
+    const jobContextsQ = knex('JobContext as jc')
+      .leftJoin('Site as s', 'jc.siteId', 's.id')
+      .leftJoin('Geography as g', 'jc.geographyId', 'g.id')
+      .innerJoin('Job as j', 'jc.jobId', 'j.id')
+      .innerJoin('JobFunction as jf', 'j.jobFunctionId', 'jf.id')
+      .innerJoin('Person as ps', 'j.personId', 'ps.id')
+      .where({
+        'ps.userId': user.id,
+        'jf.partnerId': user.partnerId
+      })
+      .select('s.id as siteId', 'g.countryId', 'g.stateId', 'g.lgaId')
 
-    return constraints
+    return jobContextsQ.then((jobContexts) => {
+      const filterConstraints = jobContexts.map((context) => {
+        const constraint = {}
+
+        // constrain to most specific site/geography
+        // works because all geographies include higher levels
+        if (context.siteId != null) {
+          constraint.site = { id: context.siteId }
+        } else if (context.lgaId != null) {
+          constraint.lga = { id: context.lgaId }
+        } else if (context.stateId != null) {
+          constraint.state = { id: context.stateId }
+        } else if (context.countryId != null) {
+          constraint.country = { id: context.countryId }
+        }
+        return constraint
+      })
+      if (filterConstraints.length) {
+        constraints.$or = filterConstraints
+      }
+      return constraints
+    })
   })
 }
 
