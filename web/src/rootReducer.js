@@ -23,7 +23,7 @@ import inventory from './inventory/InventoryRedux'
 import notification from './notification/NotificationRedux'
 import report from './report/ReportRedux'
 import idle from './idle/IdleRedux'
-import roles from './role/RoleRedux'
+import jobs from './job/JobRedux'
 import router from './router/RouterRedux'
 import resultWorkflowStatus from './resultWorkflowStatus/ResultWorkflowStatusRedux'
 import terminal from './terminal/TerminalRedux'
@@ -44,7 +44,7 @@ const appReducer = combineReducers({
   result,
   geography,
   assay,
-  roles,
+  jobs,
   consumable,
   inventory,
   idle,
@@ -73,7 +73,7 @@ const App = Immutable.Record({
   notification: undefined,
   report: undefined,
   result: undefined,
-  roles: undefined,
+  jobs: undefined,
   consumable: undefined,
   inventory: undefined,
   idle: undefined,

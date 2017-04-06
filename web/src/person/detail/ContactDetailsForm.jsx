@@ -71,7 +71,7 @@ ContactDetailsForm.propTypes = {
   partners: PropTypes.arrayOf(PropTypes.shape({
     id: PropTypes.string,
     name: PropTypes.string,
-    roles: PropTypes.arrayOf(PropTypes.shape({
+    jobFunctions: PropTypes.arrayOf(PropTypes.shape({
       id: PropTypes.string,
       name: PropTypes.string
     }))

@@ -10,7 +10,6 @@ function alias(table) {
 
 function getConstraints(credentials) {
   return getUser(credentials.name).then((user) => {
-    // FIXME only include roles that assign permissions of interest
     // TODO define constraints schema
     const constraints = {
       partner: {

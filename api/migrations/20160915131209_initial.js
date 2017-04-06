@@ -115,12 +115,12 @@ function* up(knex) {
     person.charset('utf8')
   })
 
-  yield knex.schema.createTable('Role', (role) => {
-    role.increments('id')
-    role.string('name').notNullable()
-    role.integer('partnerId').unsigned().notNullable()
+  yield knex.schema.createTable('JobFunction', (jobFunction) => {
+    jobFunction.increments('id')
+    jobFunction.string('name').notNullable()
+    jobFunction.integer('partnerId').unsigned().notNullable()
       .index().references('id').inTable('Partner')
-    role.charset('utf8')
+    jobFunction.charset('utf8')
   })
 
   yield knex.schema.createTable('Permission', (permission) => {
@@ -135,22 +135,23 @@ function* up(knex) {
     permission.charset('utf8')
   })
 
-  yield knex.schema.createTable('RolePermission', (permissionRole) => {
-    permissionRole.integer('roleId').unsigned()
-      .index().references('id').inTable('Role')
-    permissionRole.integer('permissionId').unsigned()
+  yield knex.schema.createTable('JobFunctionPermission', (jobFunctionPermission) => {
+    jobFunctionPermission.integer('jobFunctionId').unsigned()
+      .index().references('id').inTable('JobFunction')
+    jobFunctionPermission.integer('permissionId').unsigned()
       .index().references('id').inTable('Permission')
-    permissionRole.primary(['permissionId', 'roleId'])
-    permissionRole.charset('utf8')
+    jobFunctionPermission.primary(['permissionId', 'jobFunctionId'])
+    jobFunctionPermission.charset('utf8')
   })
 
-  yield knex.schema.createTable('PersonRole', (personRole) => {
-    personRole.integer('personId').unsigned()
+  yield knex.schema.createTable('Job', (job) => {
+    job.increments('id')
+    job.integer('personId').unsigned()
       .index().references('id').inTable('Person')
-    personRole.integer('roleId').unsigned()
-      .index().references('id').inTable('Role')
-    personRole.primary(['personId', 'roleId'])
-    personRole.charset('utf8')
+    job.integer('jobFunctionId').unsigned()
+      .index().references('id').inTable('JobFunction')
+    job.unique(['personId', 'jobFunctionId'])
+    job.charset('utf8')
   })
 
   yield knex.schema.createTable('RefreshToken', (refreshToken) => {
@@ -584,7 +585,9 @@ function* down(knex) {
   yield knex.schema.dropTableIfExists('DeviceRole')
   yield knex.schema.dropTableIfExists('DeviceApiKey')
   yield knex.schema.dropTableIfExists('RefreshToken')
-  yield knex.schema.dropTableIfExists('PersonRole')
+  yield knex.schema.dropTableIfExists('Job')
+  yield knex.schema.dropTableIfExists('JobFunction')
+  yield knex.schema.dropTableIfExists('JobFunctionPermission')
   yield knex.schema.dropTableIfExists('UserRole')
   yield knex.schema.dropTableIfExists('RolePermission')
   yield knex.schema.dropTableIfExists('Permission')

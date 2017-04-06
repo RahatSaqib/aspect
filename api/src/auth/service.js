@@ -186,11 +186,11 @@ function* refreshToken(request) {
 function getAccessToken({ id, name, partnerId }) {
   return query('Get permissions for user and partner')
     .from('Permission as p')
-    .innerJoin('RolePermission as rp', 'p.id', 'rp.permissionId')
-    .innerJoin('Role as r', 'rp.roleId', 'r.id')
-    .innerJoin('PersonRole as pr', 'r.id', 'pr.roleId')
-    .innerJoin('Person as ps', 'pr.personId', 'ps.id')
-    .where({ 'ps.userId': id, 'r.partnerId': partnerId })
+    .innerJoin('JobFunctionPermission as jfp', 'p.id', 'jfp.permissionId')
+    .innerJoin('JobFunction as jf', 'jfp.jobFunctionId', 'jf.id')
+    .innerJoin('Job as j', 'j.jobFunctionId', 'jf.id')
+    .innerJoin('Person as ps', 'j.personId', 'ps.id')
+    .where({ 'ps.userId': id, 'jf.partnerId': partnerId })
     .orderBy(['p.module', 'p.activity'])
     .distinct('p.module', 'p.activity')
     .then((data) => {
@@ -377,13 +377,6 @@ function* updatePasswordWithResetPasswordToken(request) {
   }
 }
 
-function getRolesForUser(userId) {
-  return query('Get roles for user').from('PersonRole as pr')
-    .innerJoin('Person as ps', 'ps.id', 'pr.personId')
-    .where({ 'ps.userId': userId })
-    .select('ps.userId', 'pr.roleId')
-}
-
 function* updateUsernameAndPasswordForPerson(request) {
   const { params, payload } = request
 
@@ -438,7 +431,6 @@ module.exports = {
   authenticate,
   checkAuthentication,
   refreshToken,
-  getRolesForUser,
   updateUsernameAndPasswordForLoggedInUser,
   updateUsernameAndPasswordForPerson,
   createResetPasswordToken,

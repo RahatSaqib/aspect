@@ -6,13 +6,13 @@ const shared = require('../utils/sharedToken')
 const server = supertest.agent('http://localhost:8080')
 const assert = chai.assert
 
-describe('Role routes', () => {
-  const path = '/api/role/select-list'
+describe('Job routes', () => {
+  const path = '/api/job-function/select-list'
 
   describe('GET', () => {
     shared.checkToken(server, path)
 
-    it('should return a tree structure of partners and roles', (done) => {
+    it('should return a tree structure of partners and job functions', (done) => {
       server
         .get(path)
         .set('Authorization', `Bearer ${shared.token}`)
@@ -24,7 +24,7 @@ describe('Role routes', () => {
           assert.isAtLeast(res.body.data.length, 1)
           assert.property(res.body.data[0], 'id')
           assert.property(res.body.data[0], 'name')
-          assert.typeOf(res.body.data[0].roles, 'array')
+          assert.typeOf(res.body.data[0].jobFunctions, 'array')
           done()
         })
     })

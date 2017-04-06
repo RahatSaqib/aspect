@@ -13,7 +13,7 @@ export default defineMessages({
   },
   systemAccessControl: {
     id: 'pages.PersonDetails.systemAccessControl',
-    defaultMessage: 'System Access & Roles'
+    defaultMessage: 'System Access & Jobs'
   },
   none: {
     id: 'pages.PersonDetails.none',

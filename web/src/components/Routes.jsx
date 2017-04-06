@@ -44,7 +44,7 @@ import { refreshStart } from '../auth/AuthRedux'
 import { hasBlankOrExpiredJWT, getRefreshToken } from '../shared/utils/localStorage'
 
 function requireAuth(nextState, replace) {
-  // TODO: check access level based on tokens/roles in jwt
+  // TODO: check access level based on tokens/permissions in jwt
   if (hasBlankOrExpiredJWT()) {
     // try to refresh if we have a refresh token
     // if not, redirect to login

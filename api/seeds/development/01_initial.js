@@ -2235,8 +2235,8 @@ function* seed(knex) {
     })
   }
 
-  // Roles
-  const [roleIdAdmin] = yield knex('Role').insert({
+  // Job Functions
+  const [jobFunctionIdAdmin] = yield knex('JobFunction').insert({
     name: 'Admin',
     partnerId: partnerOneId
   })
@@ -2269,59 +2269,59 @@ function* seed(knex) {
   })
   */
 
-  const [roleIdPartnerTwo] = yield knex('Role').insert({
+  const [jobFunctionIdPartnerTwo] = yield knex('JobFunction').insert({
     name: 'Partner Two Users',
     partnerId: partnerTwoId
   })
 
-  // assign permissions to roles
-  yield knex('RolePermission').insert([
-    { roleId: roleIdAdmin, permissionId: modules.demo.admin },
-    { roleId: roleIdAdmin, permissionId: modules.deviceApiKey.admin },
-    { roleId: roleIdAdmin, permissionId: modules.device.admin },
-    { roleId: roleIdAdmin, permissionId: modules.person.admin },
-    { roleId: roleIdAdmin, permissionId: modules.result.admin },
-    { roleId: roleIdAdmin, permissionId: modules.site.admin },
-    { roleId: roleIdAdmin, permissionId: modules.assay.admin },
-    { roleId: roleIdAdmin, permissionId: modules.inventory.admin },
-    { roleId: roleIdAdmin, permissionId: modules.notification.admin },
-    { roleId: roleIdAdmin, permissionId: modules.report.admin },
+  // assign permissions to job functions
+  yield knex('JobFunctionPermission').insert([
+    { jobFunctionId: jobFunctionIdAdmin, permissionId: modules.demo.admin },
+    { jobFunctionId: jobFunctionIdAdmin, permissionId: modules.deviceApiKey.admin },
+    { jobFunctionId: jobFunctionIdAdmin, permissionId: modules.device.admin },
+    { jobFunctionId: jobFunctionIdAdmin, permissionId: modules.person.admin },
+    { jobFunctionId: jobFunctionIdAdmin, permissionId: modules.result.admin },
+    { jobFunctionId: jobFunctionIdAdmin, permissionId: modules.site.admin },
+    { jobFunctionId: jobFunctionIdAdmin, permissionId: modules.assay.admin },
+    { jobFunctionId: jobFunctionIdAdmin, permissionId: modules.inventory.admin },
+    { jobFunctionId: jobFunctionIdAdmin, permissionId: modules.notification.admin },
+    { jobFunctionId: jobFunctionIdAdmin, permissionId: modules.report.admin },
 
     /* FIXME Geographic Filters
-    { roleId: roleIdOH, permissionId: modules.site.edit },
-    { roleId: roleIdOH, permissionId: modules.device.edit },
-    { roleId: roleIdOH, permissionId: modules.assay.edit },
-    { roleId: roleIdOH, permissionId: modules.inventory.edit },
+    { jobFunctionId: jobFunctionIdOH, permissionId: modules.site.edit },
+    { jobFunctionId: jobFunctionIdOH, permissionId: modules.device.edit },
+    { jobFunctionId: jobFunctionIdOH, permissionId: modules.assay.edit },
+    { jobFunctionId: jobFunctionIdOH, permissionId: modules.inventory.edit },
 
-    { roleId: roleIdNE, permissionId: modules.site.edit },
-    { roleId: roleIdNE, permissionId: modules.device.edit },
+    { jobFunctionId: jobFunctionIdNE, permissionId: modules.site.edit },
+    { jobFunctionId: jobFunctionIdNE, permissionId: modules.device.edit },
 
 
-    { roleId: roleIdOHWayne, permissionId: modules.site.view },
-    { roleId: roleIdOHWayne, permissionId: modules.device.view },
-    { roleId: roleIdOHWayne, permissionId: modules.assay.view },
-    { roleId: roleIdOHWayne, permissionId: modules.inventory.view },
+    { jobFunctionId: jobFunctionIdOHWayne, permissionId: modules.site.view },
+    { jobFunctionId: jobFunctionIdOHWayne, permissionId: modules.device.view },
+    { jobFunctionId: jobFunctionIdOHWayne, permissionId: modules.assay.view },
+    { jobFunctionId: jobFunctionIdOHWayne, permissionId: modules.inventory.view },
 
-    { roleId: roleIdMASuffolk, permissionId: modules.device.view },
+    { jobFunctionId: jobFunctionIdMASuffolk, permissionId: modules.device.view },
 
-    { roleId: roleIdPartnerTwo, permissionId: modules.inventory.edit }
+    { jobFunctionId: jobFunctionIdPartnerTwo, permissionId: modules.inventory.edit }
     */
   ])
 
-  // assign roles to users
-  yield knex('PersonRole').insert([
-    { personId: personIds.admin, roleId: roleIdAdmin },
+  // assign jobs to users
+  yield knex('Job').insert([
+    { personId: personIds.admin, jobFunctionId: jobFunctionIdAdmin },
     /*
-    { personId: personIds.bob, roleId: roleIdOH },
-    { personId: personIds.frank, roleId: roleIdNE },
-    { personId: personIds.fred, roleId: roleIdOHWayne },
+    { personId: personIds.bob, jobFunctionId: jobFunctionIdOH },
+    { personId: personIds.frank, jobFunctionId: jobFunctionIdNE },
+    { personId: personIds.fred, jobFunctionId: jobFunctionIdOHWayne },
     */
-    { personId: personIds.sam, roleId: roleIdAdmin },
-    { personId: personIds.jason, roleId: roleIdPartnerTwo },
+    { personId: personIds.sam, jobFunctionId: jobFunctionIdAdmin },
+    { personId: personIds.jason, jobFunctionId: jobFunctionIdPartnerTwo },
     /*
-    { personId: personIds.steve, roleId: roleIdMASuffolk },
-    { personId: personIds.bill, roleId: roleIdMASuffolk },
-    { personId: personIds.bill, roleId: roleIdOH }
+    { personId: personIds.steve, jobFunctionId: jobFunctionIdMASuffolk },
+    { personId: personIds.bill, jobFunctionId: jobFunctionIdMASuffolk },
+    { personId: personIds.bill, jobFunctionId: jobFunctionIdOH }
     */
   ])
 }

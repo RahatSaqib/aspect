@@ -31,7 +31,7 @@ const messages = defineMessages({
   },
   level: {
     id: 'pages.PersonList.level',
-    defaultMessage: 'Role'
+    defaultMessage: 'Job'
   },
   state: {
     id: 'pages.PersonList.state',

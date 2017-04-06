@@ -29,7 +29,7 @@ import {
   LoginDetails,
   UserPreferences
 } from '../PersonRedux'
-import { fetchPartnersAndRolesForSelectList } from '../../role/RoleRedux'
+import { fetchPartnersAndJobFunctionsForSelectList } from '../../job/JobRedux'
 import { showAcknowledgement } from '../../appNotification/AppNotificationRedux'
 
 import messages from './messages'
@@ -48,7 +48,7 @@ export class PersonDetail extends PureComponent {
     user: PropTypes.object.isRequired,
     editable: PropTypes.bool.isRequired,
     showAcknowledgement: PropTypes.func.isRequired,
-    partnersAndRolesForSelectList: PropTypes.object.isRequired,
+    partnersAndJobFunctionsForSelectList: PropTypes.object.isRequired,
     updateSinglePerson: PropTypes.func.isRequired,
     updateSinglePersonLoginDetails: PropTypes.func.isRequired,
     updateSinglePersonUserPreferences: PropTypes.func.isRequired
@@ -56,7 +56,7 @@ export class PersonDetail extends PureComponent {
 
   state = {
     partners: [],
-    roles: []
+    jobFunctions: []
   }
 
   componentWillMount() {
@@ -66,33 +66,33 @@ export class PersonDetail extends PureComponent {
   }
 
   componentDidMount() {
-    this.handleFetchPartnersAndRoles(this.props)
+    this.handleFetchPartnersAndJobFunctions(this.props)
     this.handleFetchPerson(this.props)
-    if (this.props.partnersAndRolesForSelectList.get('lastRefreshed')) {
-      this.setPartnersRoles(this.props, this.props.person.get('partnerId'))
+    if (this.props.partnersAndJobFunctionsForSelectList.get('lastRefreshed')) {
+      this.setPartnerAndJobFunctions(this.props, this.props.person.get('partnerId'))
     }
   }
 
   componentWillReceiveProps(nextProps) {
     if (this.props.params.personId !== nextProps.params.personId) {
       this.handleFetchPerson(nextProps)
-    } else if (nextProps.person && nextProps.partnersAndRolesForSelectList.get('lastRefreshed')) {
-      this.setPartnerAndRoles(nextProps, nextProps.person.get('partnerId'))
+    } else if (nextProps.person && nextProps.partnersAndJobFunctionsForSelectList.get('lastRefreshed')) {
+      this.setPartnerAndJobFunctions(nextProps, nextProps.person.get('partnerId'))
     }
   }
 
-  setPartnerAndRoles = (props, selectedPartnerId) => {
-    const { partnersAndRolesForSelectList, intl: { formatMessage } } = props
-    const partners = _.map(partnersAndRolesForSelectList.get('partners').toJS(), partner => ({
+  setPartnerAndJobFunctions = (props, selectedPartnerId) => {
+    const { partnersAndJobFunctionsForSelectList, intl: { formatMessage } } = props
+    const partners = _.map(partnersAndJobFunctionsForSelectList.get('partners').toJS(), partner => ({
       id: partner.id,
       name: partner.name || formatMessage(messages.none)
     }))
     const selectedPartner = _.find(partners, { id: selectedPartnerId }) ||
       _.find(partners, { id: undefined })
-    const roles = selectedPartner.roles
+    const jobFunctions = selectedPartner.jobFunctions
     this.setState({
       partners,
-      roles
+      jobFunctions
     })
   }
 
@@ -100,8 +100,8 @@ export class PersonDetail extends PureComponent {
     fetchSinglePerson(params.personId)
   }
 
-  handleFetchPartnersAndRoles = ({ fetchPartnersAndRolesForSelectList }) => {
-    fetchPartnersAndRolesForSelectList()
+  handleFetchPartnersAndJobFunctions = ({ fetchPartnersAndJobFunctionsForSelectList }) => {
+    fetchPartnersAndJobFunctionsForSelectList()
   }
 
   saveContactDetails = (formValues) => {
@@ -212,7 +212,7 @@ function mapStateToProps(state, { params }) {
     editable: isEditable(state.user, person),
     person,
     user: state.user,
-    partnersAndRolesForSelectList: state.roles.get('partnersAndRolesForSelectList')
+    partnersAndJobFunctionsForSelectList: state.jobs.get('partnersAndJobFunctionsForSelectList')
   }
 }
 
@@ -222,7 +222,7 @@ function mapDispatchToProps(dispatch) {
     updateSinglePerson,
     updateSinglePersonLoginDetails,
     updateSinglePersonUserPreferences,
-    fetchPartnersAndRolesForSelectList,
+    fetchPartnersAndJobFunctionsForSelectList,
     showAcknowledgement
   }, dispatch)
 }

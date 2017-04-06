@@ -6,7 +6,7 @@ import { compose, pure, setPropTypes, mapProps, lifecycle } from 'recompose'
 
 import MenuItem from 'material-ui/MenuItem'
 
-import { fetchPartnersAndRolesForSelectList } from '../../role/RoleRedux'
+import { fetchPartnersAndJobFunctionsForSelectList } from '../../job/JobRedux'
 import ForkedSelectField from '../../components/forkedMaterialUi/ForkedSelectField'
 
 const enhance = compose(
@@ -18,23 +18,23 @@ const enhance = compose(
     onChangePartner: PropTypes.func.isRequired
   }),
   connect(state => ({
-    partnersAndRolesForSelectList: state.roles.partnersAndRolesForSelectList
+    partnersAndJobFunctionsForSelectList: state.jobs.partnersAndJobFunctionsForSelectList
   }), dispatch => bindActionCreators({
-    fetchPartnersAndRolesForSelectList
+    fetchPartnersAndJobFunctionsForSelectList
   }, dispatch)),
   lifecycle({
     componentDidMount() {
-      this.props.fetchPartnersAndRolesForSelectList()
+      this.props.fetchPartnersAndJobFunctionsForSelectList()
     }
   }),
   mapProps(props => ({
     ..._fp.omit([
       'emptyId',
       'emptyText',
-      'partnersAndRolesForSelectList',
-      'fetchPartnersAndRolesForSelectList'
+      'partnersAndJobFunctionsForSelectList',
+      'fetchPartnersAndJobFunctionsForSelectList'
     ], props),
-    partnerList: props.partnersAndRolesForSelectList
+    partnerList: props.partnersAndJobFunctionsForSelectList
       .partners
       // Filter out empty items if props.emptyText is an empty string
       .filter(item => (props.emptyText ? true : item.get('id')))
