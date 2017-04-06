@@ -41,11 +41,11 @@ function getConstraints(credentials) {
         if (context.siteId != null) {
           constraint.site = { id: context.siteId }
         } else if (context.lgaId != null) {
-          constraint.lga = { id: context.lgaId }
+          constraint.geography = { lgaId: context.lgaId }
         } else if (context.stateId != null) {
-          constraint.state = { id: context.stateId }
+          constraint.geography = { stateId: context.stateId }
         } else if (context.countryId != null) {
-          constraint.country = { id: context.countryId }
+          constraint.geography = { countryId: context.countryId }
         }
         return constraint
       })
@@ -58,21 +58,18 @@ function getConstraints(credentials) {
 }
 
 function addConstraints(queryBuilder, constraints, aliases) {
-  let { site, partner, geography, country, state, lga } = aliases
+  let { partner, geography, site } = aliases
   const { device, sample } = aliases
 
   // TODO generalize constraint building
   // TODO only join queries if needed within constraints or required by unspecified aliases
-  // ====== device aliases begin ======
   if (device) {
     if (!site) {
       site = alias('Site')
       queryBuilder.leftOuterJoin(`Site as ${site}`, `${device}.siteId`, `${site}.id`)
     }
   }
-  // ====== device aliases end ======
 
-  // ====== site aliases begin ======
   if (site) {
     if (!partner) {
       partner = alias('Partner')
@@ -84,26 +81,6 @@ function addConstraints(queryBuilder, constraints, aliases) {
       queryBuilder.leftOuterJoin(`Geography as ${geography}`, `${site}.geographyId`, `${geography}.id`)
     }
   }
-  // ====== site aliases end ======
-
-  // ====== geography aliases begin ======
-  if (geography) {
-    if (!country) {
-      country = alias('Country')
-      queryBuilder.leftOuterJoin(`Country as ${country}`, `${geography}.countryId`, `${country}.id`)
-    }
-
-    if (!state) {
-      state = alias('State')
-      queryBuilder.leftOuterJoin(`State as ${state}`, `${geography}.stateId`, `${state}.id`)
-    }
-
-    if (!lga) {
-      lga = alias('Lga')
-      queryBuilder.leftOuterJoin(`Lga as ${lga}`, `${geography}.lgaId`, `${lga}.id`)
-    }
-  }
-  // ====== geography aliases end ======
 
   // Partner, country, and constraints are ANDed
   if (partner && constraints.partner) {
@@ -111,20 +88,16 @@ function addConstraints(queryBuilder, constraints, aliases) {
       this.whereNull(`${partner}.id`).orWhere({ [`${partner}.id`]: constraints.partner.id })
     })
   }
-  if (country && constraints.country) {
-    queryBuilder.where({ [`${country}.id`]: constraints.country.id })
+  if (geography && constraints.country) {
+    queryBuilder.where({ [`${geography}.countryId`]: constraints.country.id })
   }
 
   // data filter constraints are ORed
   if (constraints.$or && constraints.$or.length) {
     queryBuilder.where(function () {
       for (const constraint of constraints.$or) {
-        if (state && constraint.state) {
-          this.orWhere(_.mapKeys(constraint.state, (v, k) => `${state}.${k}`))
-        }
-
-        if (lga && constraint.lga) {
-          this.orWhere(_.mapKeys(constraint.lga, (v, k) => `${lga}.${k}`))
+        if (geography && constraint.geography) {
+          this.orWhere(_.mapKeys(constraint.geography, (v, k) => `${geography}.${k}`))
         }
 
         if (site && constraint.site) {

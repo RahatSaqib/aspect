@@ -43,7 +43,7 @@ function* countrySelectList(request) {
     countries = yield query('Get countries for select list')
       .from('Country as c')
       .leftJoin('Geography as g', 'g.countryId', 'c.id')
-      .modify(addConstraintsLocal, dataConstraints, { geography: 'g', country: 'c' })
+      .modify(addConstraintsLocal, dataConstraints, { geography: 'g' })
       .whereNull('g.stateId')
       .whereNull('g.lgaId')
       .orderBy(['c.name'], 'asc')
@@ -56,7 +56,7 @@ function* countrySelectList(request) {
         this.on('s.id', 'g.stateId')
           .on({ 'g.countryId': knex.raw(countryId) })
       })
-      .modify(addConstraintsLocal, dataConstraints, { geography: 'g', country: 'c', state: 's' })
+      .modify(addConstraintsLocal, dataConstraints, { geography: 'g' })
       .orderBy(['c.name', 's.name'], 'asc')
       .distinct('c.id as countryId', 'c.name as countryName', 's.id as stateId',
         's.name as stateName')
@@ -86,7 +86,7 @@ function* countrySelectList(request) {
         this.on('l.id', 'g.lgaId')
           .on({ 'g.stateId': knex.raw(stateId) })
       })
-      .modify(addConstraintsLocal, dataConstraints, { geography: 'g', country: 'c', state: 's', lga: 'l' })
+      .modify(addConstraintsLocal, dataConstraints, { geography: 'g' })
       .orderBy(['c.name', 's.name', 'l.name'], 'asc')
       .distinct('c.id as countryId', 'c.name as countryName', 's.id as stateId',
         's.name as stateName', 'l.id as lgaId', 'l.name as lgaName')

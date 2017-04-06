@@ -49,7 +49,7 @@ function* listSites(request) {
       lgaId: 'g.lgaId',
       siteName: 's.name'
     })
-    .modify(addConstraints, dataConstraints, { site: 's', geography: 'g', state: 'st', lga: 'l' })
+    .modify(addConstraints, dataConstraints, { site: 's', geography: 'g' })
 
   // get total count for paging
   const getCount = siteQuery.clone()
@@ -75,7 +75,7 @@ function getSite(siteId, dataConstraints) {
     .leftOuterJoin('Country as ct', 'g.countryId', 'ct.id')
     .leftOuterJoin('Lga as l', 'g.lgaId', 'l.id')
     .where('s.id', siteId)
-    .modify(addConstraints, dataConstraints, { site: 's', geography: 'g', state: 'st', lga: 'l' })
+    .modify(addConstraints, dataConstraints, { site: 's', geography: 'g' })
     .first(SELECT_SHOW_FIELDS)
 }
 
@@ -123,7 +123,7 @@ function* listSitesForSelectList(request) {
 
   const sites = yield knex('Site as s')
     .leftOuterJoin('Geography as g', 's.geographyId', 'g.id')
-    .modify(addConstraints, dataConstraints, { site: 's', state: 'st', lga: 'l' })
+    .modify(addConstraints, dataConstraints, { site: 's', geography: 'g' })
     .orderBy(['s.name'], 'asc')
     .select('s.id', 's.name', 's.partnerId', 'g.countryId')
 
