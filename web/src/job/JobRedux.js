@@ -26,7 +26,7 @@ function createReceivePartnersAndJobFunctionsForSelectList(partners) {
 
 export function fetchPartnersAndJobFunctionsForSelectList(forceRefresh) {
   return (dispatch, getState) => {
-    const { partnersAndJobFunctionsForSelectList } = getState().jobFunctions
+    const { partnersAndJobFunctionsForSelectList } = getState().jobs
 
     if (partnersAndJobFunctionsForSelectList.loading) {
       return

@@ -85,11 +85,14 @@ export class PersonDetail extends PureComponent {
     const { partnersAndJobFunctionsForSelectList, intl: { formatMessage } } = props
     const partners = _.map(partnersAndJobFunctionsForSelectList.get('partners').toJS(), partner => ({
       id: partner.id,
-      name: partner.name || formatMessage(messages.none)
+      name: partner.name || formatMessage(messages.none),
+      jobFunctions: _.map(partner.jobFunctions, jobFunction => ({
+        id: jobFunction.id,
+        name: jobFunction.name || formatMessage(messages.none)
+      }))
     }))
-    const selectedPartner = _.find(partners, { id: selectedPartnerId }) ||
-      _.find(partners, { id: undefined })
-    const jobFunctions = selectedPartner.jobFunctions
+    const selectedPartner = _.find(partners, { id: selectedPartnerId })
+    const jobFunctions = selectedPartner ? selectedPartner.jobFunctions : []
     this.setState({
       partners,
       jobFunctions
