@@ -56,7 +56,6 @@ export class PersonDetail extends PureComponent {
 
   state = {
     partners: [],
-    orgUnits: [],
     roles: []
   }
 
@@ -70,7 +69,7 @@ export class PersonDetail extends PureComponent {
     this.handleFetchPartnersAndRoles(this.props)
     this.handleFetchPerson(this.props)
     if (this.props.partnersAndRolesForSelectList.get('lastRefreshed')) {
-      this.setPartnersOrgUnitsAndRoles(this.props, this.props.person.get('partnerId'), this.props.person.get('orgUnitId'))
+      this.setPartnersRoles(this.props, this.props.person.get('partnerId'))
     }
   }
 
@@ -78,30 +77,21 @@ export class PersonDetail extends PureComponent {
     if (this.props.params.personId !== nextProps.params.personId) {
       this.handleFetchPerson(nextProps)
     } else if (nextProps.person && nextProps.partnersAndRolesForSelectList.get('lastRefreshed')) {
-      this.setPartnersOrgUnitsAndRoles(nextProps, nextProps.person.get('partnerId'), nextProps.person.get('orgUnitId'))
+      this.setPartnerAndRoles(nextProps, nextProps.person.get('partnerId'))
     }
   }
 
-  setPartnersOrgUnitsAndRoles = (props, selectedPartnerId, selectedOrgUnitId) => {
+  setPartnerAndRoles = (props, selectedPartnerId) => {
     const { partnersAndRolesForSelectList, intl: { formatMessage } } = props
     const partners = _.map(partnersAndRolesForSelectList.get('partners').toJS(), partner => ({
       id: partner.id,
-      name: partner.name || formatMessage(messages.none),
-      orgUnits: _.map(partner.orgUnits, orgUnit => ({
-        id: orgUnit.id,
-        name: orgUnit.name || formatMessage(messages.none),
-        roles: orgUnit.roles
-      }))
+      name: partner.name || formatMessage(messages.none)
     }))
     const selectedPartner = _.find(partners, { id: selectedPartnerId }) ||
       _.find(partners, { id: undefined })
-    const orgUnits = selectedPartner.orgUnits
-    const selectedOrgUnit = _.find(selectedPartner.orgUnits, { id: selectedOrgUnitId }) ||
-      _.find(selectedPartner.orgUnits, { id: undefined })
-    const roles = selectedOrgUnit.roles
+    const roles = selectedPartner.roles
     this.setState({
       partners,
-      orgUnits,
       roles
     })
   }

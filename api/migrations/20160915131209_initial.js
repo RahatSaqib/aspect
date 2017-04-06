@@ -16,21 +16,6 @@ function* up(knex) {
     partner.integer('deviceLogHistoryDays').notNullable().defaultTo(30)
   })
 
-  yield knex.schema.createTable('OrgUnit', (orgUnit) => {
-    orgUnit.increments('id')
-    orgUnit.string('name').notNullable()
-    orgUnit.integer('partnerId').unsigned().notNullable()
-      .index().references('id').inTable('Partner')
-
-    orgUnit.integer('leftBound').unsigned().notNullable()
-    orgUnit.integer('rightBound').unsigned().notNullable()
-    orgUnit.integer('depth').unsigned().notNullable()
-
-    // TODO Add OrgUnit parent id if is helpful
-    // orgUnit.integer('parentId').unsigned()
-    //  .index().references('id').inTable('OrgUnit')
-  })
-
   yield knex.schema.createTable('DataFilter', (dataFilter) => {
     dataFilter.increments('id')
     dataFilter.string('name').notNullable()
@@ -141,12 +126,10 @@ function* up(knex) {
   yield knex.schema.createTable('Role', (role) => {
     role.increments('id')
     role.string('name').notNullable()
-    role.integer('partnerId').unsigned()
+    role.integer('partnerId').unsigned().notNullable()
       .index().references('id').inTable('Partner')
     role.integer('dataFilterId').unsigned()
       .index().references('id').inTable('DataFilter')
-    role.integer('orgUnitId').unsigned()
-      .index().references('id').inTable('OrgUnit')
     role.charset('utf8')
   })
 
@@ -199,8 +182,6 @@ function* up(knex) {
     apiKey.boolean('revoked').notNullable().defaultTo(0)
     apiKey.integer('partnerId').unsigned()
       .index().references('id').inTable('Partner')
-    apiKey.integer('orgUnitId').unsigned()
-      .index().references('id').inTable('OrgUnit')
     apiKey.integer('geographyId').unsigned()
       .index().references('id').inTable('Geography')
     apiKey.integer('siteId').unsigned()
@@ -249,8 +230,6 @@ function* up(knex) {
     // TODO is site to partner many to many?
     site.integer('partnerId').unsigned()
       .index().references('id').inTable('Partner')
-    site.integer('orgUnitId').unsigned()
-      .index().references('id').inTable('OrgUnit')
     site.integer('geographyId').unsigned()
       .index().references('id').inTable('Geography')
     // TODO do we want to mess with a city table?
@@ -274,8 +253,6 @@ function* up(knex) {
       .index().references('id').inTable('Device')
     device.integer('partnerId').unsigned()
       .index().references('id').inTable('Partner')
-    device.integer('orgUnitId').unsigned()
-      .index().references('id').inTable('OrgUnit')
     device.integer('geographyId').unsigned()
       .index().references('id').inTable('Geography')
     device.integer('siteId').unsigned()
@@ -421,8 +398,6 @@ function* up(knex) {
       .index().references('id').inTable('Assay')
     result.integer('partnerId').unsigned()
           .index().references('id').inTable('Partner')
-    result.integer('orgUnitId').unsigned()
-          .index().references('id').inTable('OrgUnit')
     result.integer('geographyId').unsigned()
           .index().references('id').inTable('Geography')
     result.integer('siteId').unsigned()

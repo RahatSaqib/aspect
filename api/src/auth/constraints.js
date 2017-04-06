@@ -1,5 +1,5 @@
 const _ = require('lodash')
-const { query, knex } = require('../db')
+const { query } = require('../db')
 const { getUser } = require('./service')
 
 // A prefix for joined table aliases intended to avoid
@@ -24,20 +24,8 @@ function getConstraints(credentials) {
       .select('f.constraint')
       .map(f => JSON.parse(f.constraint))
 
-    const topOrgUnit = query('Get top org unit for user credentials')
-      .from('OrgUnit as o')
-      .innerJoin('Role as r', 'o.id', 'r.orgUnitId')
-      .innerJoin('PersonRole as pr', 'r.id', 'pr.roleId')
-      .innerJoin('Person as ps', 'ps.id', 'pr.personId')
-      .where({
-        'ps.userId': user.id,
-        'r.partnerId': user.partnerId
-      })
-      .orderBy('o.depth')
-      .first('o.id')
-
-    return Promise.all([dataFilters, topOrgUnit])
-      .then(([filterConstraints, orgUnit]) => {
+    return dataFilters
+      .then((filterConstraints) => {
         // TODO define constraints schema
         const constraints = {
           partner: {
@@ -45,12 +33,6 @@ function getConstraints(credentials) {
           },
           country: {
             id: user.countryId
-          }
-        }
-
-        if (orgUnit) {
-          constraints.orgUnit = {
-            id: orgUnit.id
           }
         }
 
@@ -64,7 +46,7 @@ function getConstraints(credentials) {
 }
 
 function addConstraints(queryBuilder, constraints, aliases) {
-  let { site, partner, orgUnit, geography, country, state, lga } = aliases
+  let { site, partner, geography, country, state, lga } = aliases
   const { device, sample } = aliases
 
   // TODO generalize constraint building
@@ -83,11 +65,6 @@ function addConstraints(queryBuilder, constraints, aliases) {
     if (!partner) {
       partner = alias('Partner')
       queryBuilder.leftOuterJoin(`Partner as ${partner}`, `${site}.partnerId`, `${partner}.id`)
-    }
-
-    if (!orgUnit) {
-      orgUnit = alias('OrgUnit')
-      queryBuilder.leftOuterJoin(`OrgUnit as ${orgUnit}`, `${site}.orgUnitId`, `${orgUnit}.id`)
     }
 
     if (!geography) {
@@ -116,7 +93,7 @@ function addConstraints(queryBuilder, constraints, aliases) {
   }
   // ====== geography aliases end ======
 
-  // Partner, country, and org unit constraints are ANDed
+  // Partner, country, and constraints are ANDed
   if (partner && constraints.partner) {
     queryBuilder.where(function () {
       this.whereNull(`${partner}.id`).orWhere({ [`${partner}.id`]: constraints.partner.id })
@@ -124,22 +101,6 @@ function addConstraints(queryBuilder, constraints, aliases) {
   }
   if (country && constraints.country) {
     queryBuilder.where({ [`${country}.id`]: constraints.country.id })
-  }
-
-  if (orgUnit && constraints.orgUnit) {
-    // find all org units below topmost granted org unit
-    // TODO likely makes sense to move nested set hierarchy queries to it's own helper function
-    const orgUnitSubOne = alias('OrgUnitSub1')
-    const orgUnitSubTwo = alias('OrgUnitSub2')
-    const orgUnitSubquery = query('Select OrgUnit hierachy for constraints')
-      .from(`OrgUnit as ${orgUnitSubOne}`)
-      .innerJoin(`OrgUnit as ${orgUnitSubTwo}`,
-        knex.raw(`${orgUnitSubTwo}.leftBound BETWEEN ${orgUnitSubOne}.leftBound AND ${orgUnitSubOne}.rightBound`))
-      .where({
-        [`${orgUnitSubOne}.id`]: constraints.orgUnit.id,
-        [`${orgUnitSubTwo}.partnerId`]: constraints.partner.id
-      }).select(`${orgUnitSubTwo}.id`)
-    queryBuilder.whereIn(`${orgUnit}.id`, orgUnitSubquery)
   }
 
   // data filter constraints are ORed

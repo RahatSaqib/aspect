@@ -60,11 +60,6 @@ export function fetchPartnersAndRolesForSelectList(forceRefresh) {
 const Partner = Immutable.Record({
   id: null,
   name: null,
-  orgUnits: Immutable.List()
-})
-const OrgUnit = Immutable.Record({
-  id: null,
-  name: null,
   roles: Immutable.List()
 })
 const Role = Immutable.Record({
@@ -98,13 +93,9 @@ function receivePartnersAndRolesForSelectList(state, partners) {
       partners: new Immutable.List(_.map(partners, partner => new Partner({
         id: partner.id,
         name: partner.name,
-        orgUnits: new Immutable.List(_.map(partner.orgUnits, orgUnit => new OrgUnit({
-          id: orgUnit.id,
-          name: orgUnit.name,
-          roles: new Immutable.List(_.map(orgUnit.roles, role => new Role({
-            id: role.id,
-            name: role.name
-          })))
+        roles: new Immutable.List(_.map(partner.roles, role => new Role({
+          id: role.id,
+          name: role.name
         })))
       })))
     }

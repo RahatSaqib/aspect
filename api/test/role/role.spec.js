@@ -12,7 +12,7 @@ describe('Role routes', () => {
   describe('GET', () => {
     shared.checkToken(server, path)
 
-    it('should return a tree structure of partners, organisational units and roles', (done) => {
+    it('should return a tree structure of partners and roles', (done) => {
       server
         .get(path)
         .set('Authorization', `Bearer ${shared.token}`)
@@ -21,23 +21,10 @@ describe('Role routes', () => {
           assert.typeOf(res.body, 'Object')
           assert.property(res.body, 'data')
           assert.typeOf(res.body.data, 'array')
-          assert.isAtLeast(res.body.data.length, 2)
-          assert.isUndefined(res.body.data[0].id)
-          assert.isUndefined(res.body.data[0].name)
-          assert.typeOf(res.body.data[0].orgUnits, 'array')
-          assert.equal(res.body.data[0].orgUnits.length, 1)
-          assert.isUndefined(res.body.data[0].orgUnits[0].id)
-          assert.isUndefined(res.body.data[0].orgUnits[0].name)
-          assert.typeOf(res.body.data[0].orgUnits[0].roles, 'array')
-
-          assert.property(res.body.data[1], 'id')
-          assert.property(res.body.data[1], 'name')
-          assert.typeOf(res.body.data[1].orgUnits, 'array')
-
-          assert.isAtLeast(res.body.data[1].orgUnits.length, 1)
-          assert.isUndefined(res.body.data[1].orgUnits[0].id)
-          assert.isUndefined(res.body.data[1].orgUnits[0].name)
-          assert.typeOf(res.body.data[1].orgUnits[0].roles, 'array')
+          assert.isAtLeast(res.body.data.length, 1)
+          assert.property(res.body.data[0], 'id')
+          assert.property(res.body.data[0], 'name')
+          assert.typeOf(res.body.data[0].roles, 'array')
           done()
         })
     })

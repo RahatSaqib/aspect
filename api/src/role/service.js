@@ -1,72 +1,29 @@
 const _ = require('lodash')
-const { query, knex } = require('../db')
+const { query } = require('../db')
 const { getConstraints, addConstraints } = require('../auth/constraints')
 
 function* getRolesForSelectList(request) {
   const { auth } = request
   const dataConstraints = yield getConstraints(auth.credentials)
-  const partnersOrganisationalUnitsAndRoles = yield query('Get partners, organisational units and roles for select lists')
+  const partnersAndRoles = yield query('Get partners and roles for select lists')
     .from('Role as r')
-    .rightOuterJoin('OrgUnit as ou', 'r.orgUnitId', 'ou.id')
-    .rightOuterJoin('Partner as p', function () {
-      this.on('ou.partnerId', 'p.id')
-        .orOn(knex.raw('r.orgUnitId IS NULL AND r.partnerId = p.id'))
-    })
+    .rightOuterJoin('Partner as p', 'r.partnerId', 'p.id')
     .modify(addConstraints, dataConstraints, { partner: 'p' })
-    .orderBy(['p.name', 'ou.name', 'r.name'], 'asc')
-    .select('p.id as partnerId', 'p.name as partnerName', 'ou.id as orgUnitId',
-      'ou.name as orgUnitName', 'r.id as roleId', 'r.name as roleName')
+    .orderBy(['p.name', 'r.name'], 'asc')
+    .select('p.id as partnerId', 'p.name as partnerName', 'r.id as roleId', 'r.name as roleName')
 
-  const partners = [{
-    id: undefined,
-    name: undefined,
-    orgUnits: [{
-      id: undefined,
-      name: undefined,
-      roles: _.orderBy(_.map(
-        _.uniqBy(
-          _.filter(partnersOrganisationalUnitsAndRoles,
-            { partnerId: null, orgUnitId: null }),
-          'roleId'), 'name'),
-        roleRecord => ({
-          id: roleRecord.roleId,
-          name: roleRecord.roleName
-        }))
-    }] }].concat(_.map(
-      _.uniqBy(
-        _.filter(partnersOrganisationalUnitsAndRoles,
-          partnerRecord => partnerRecord.partnerId !== null), 'partnerId'),
+  const partners = _.map(
+      _.uniqBy(partnersAndRoles, 'partnerId'),
       partnerRecord => ({
         id: partnerRecord.partnerId,
         name: partnerRecord.partnerName,
-        orgUnits: [{
-          id: undefined,
-          name: undefined,
-          roles: _.orderBy(_.map(
-              _.filter(partnersOrganisationalUnitsAndRoles,
-                roleRecord => roleRecord.partnerId === partnerRecord.partnerId &&
-                    roleRecord.roleId !== null &&
-                    roleRecord.orgUnitId === null), roleRecord => ({
-                      id: roleRecord.roleId,
-                      name: roleRecord.roleName
-                    })), 'name')
-        }].concat(_.orderBy(_.map(
-            _.filter(partnersOrganisationalUnitsAndRoles,
-              orgUnitRecord => orgUnitRecord.orgUnitId !== null &&
-                  orgUnitRecord.roleId !== null &&
-                  orgUnitRecord.partnerId === partnerRecord.partnerId),
-            orgUnitRecord => ({
-              id: orgUnitRecord.orgUnitId,
-              name: orgUnitRecord.orgUnitName,
-              roles: _.orderBy(_.map(
-                  _.filter(partnersOrganisationalUnitsAndRoles,
-                    { orgUnitId: orgUnitRecord.orgUnitId }),
-                  roleRecord => ({
-                    id: roleRecord.roleId,
-                    name: roleRecord.roleName
-                  })), 'name')
-            })), 'name'))
-      })))
+        roles: _.orderBy(_.map(
+            _.filter(partnersAndRoles, { partnerId: partnerRecord.partnerId }),
+            roleRecord => ({
+              id: roleRecord.roleId,
+              name: roleRecord.roleName
+            })), 'name')
+      }))
 
   return {
     ok: true,

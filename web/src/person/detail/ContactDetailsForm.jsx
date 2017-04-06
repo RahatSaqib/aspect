@@ -71,13 +71,9 @@ ContactDetailsForm.propTypes = {
   partners: PropTypes.arrayOf(PropTypes.shape({
     id: PropTypes.string,
     name: PropTypes.string,
-    orgUnits: PropTypes.arrayOf(PropTypes.shape({
+    roles: PropTypes.arrayOf(PropTypes.shape({
       id: PropTypes.string,
-      name: PropTypes.string,
-      roles: PropTypes.arrayOf(PropTypes.shape({
-        id: PropTypes.string,
-        name: PropTypes.string
-      }))
+      name: PropTypes.string
     }))
   })),
   showNotesField: PropTypes.bool,

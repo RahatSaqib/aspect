@@ -68,27 +68,7 @@ function* seed(knex) {
     partnerTypeId: partnerTypeImplementingId,
     deviceLogHistoryDays: 14
   })
-  const [partnerOneOrgUnitId] = yield knex('OrgUnit').insert({
-    name: 'Partner One',
-    partnerId: partnerOneId,
-    depth: 1,
-    leftBound: 1,
-    rightBound: 6
-  })
-  const [regionNortheastId] = yield knex('OrgUnit').insert({
-    name: 'Northeast',
-    partnerId: partnerOneId,
-    depth: 2,
-    leftBound: 2,
-    rightBound: 3
-  })
-  const [regionMidwestId] = yield knex('OrgUnit').insert({
-    name: 'Midwest',
-    partnerId: partnerOneId,
-    depth: 2,
-    leftBound: 4,
-    rightBound: 5
-  })
+
   // Categories of devices (lab, connectivity...)
   const [deviceTypeCategoryLab] = yield knex('DeviceTypeCategory').insert({
     name: 'Lab',
@@ -1318,11 +1298,6 @@ function* seed(knex) {
       countryData.states[stateKey] = stateData
       stateData.lgas = {}
 
-      // assign org units based on state region
-      const orgUnitId = _.includes(['OH', 'NE'], state.abbreviation) ? regionMidwestId
-        : _.includes(['MA', 'NY'], state.abbreviation) ? regionNortheastId
-        : partnerOneOrgUnitId
-
       yield knex('Geography').insert({ countryId, stateId })
 
       for (const lga of (state.lgas || [])) {
@@ -1341,7 +1316,6 @@ function* seed(knex) {
         for (const siteNumber of _.range(1, 6 - (lgaData.id % 5))) {
           const siteData = Object.assign({
             partnerId: partnerOneId,
-            orgUnitId,
             geographyId,
             externalId: `${state.name}_${siteNumber}`,
             name: `${lga.name} ${country.lgaLabel} ${state.name} #${siteNumber}`,
@@ -1409,7 +1383,6 @@ function* seed(knex) {
       deviceTypeId: deviceTypeIdRouter,
       deviceStatusId: deviceStatusApproved,
       partnerId: siteData.partnerId,
-      orgUnitId: siteData.orgUnitId,
       geographyId: siteData.geographyId,
       siteId: siteData.id,
       createdOn: new Date(+now - (3 * i * millisInHour)),
@@ -1455,7 +1428,6 @@ function* seed(knex) {
         }
       }),
       partnerId: siteData.partnerId,
-      orgUnitId: siteData.orgUnitId,
       geographyId: siteData.geographyId,
       siteId: siteData.id,
       // not all sites will have a router - we only added routers to some site
@@ -1478,7 +1450,6 @@ function* seed(knex) {
       token: randomToken(),
       revoked: 0,
       partnerId: siteData.partnerId,
-      orgUnitId: siteData.orgUnitId,
       geographyId: siteData.geographyId,
       siteId: siteData.id,
       deviceId: device.id
@@ -1516,7 +1487,6 @@ function* seed(knex) {
         firmwareUpdateRequired: 'no'
       }),
       partnerId: siteData.partnerId,
-      orgUnitId: siteData.orgUnitId,
       geographyId: siteData.geographyId,
       siteId: siteData.id,
       // not all sites will have a router - we only added routers to some site
@@ -1539,7 +1509,6 @@ function* seed(knex) {
       token: randomToken(),
       revoked: 0,
       partnerId: siteData.partnerId,
-      orgUnitId: siteData.orgUnitId,
       geographyId: siteData.geographyId,
       siteId: siteData.id,
       deviceId: device.id
@@ -1688,7 +1657,6 @@ function* seed(knex) {
       externalId: `UQTB-${i}`,
       assayId: assayMtbRifId,
       partnerId: partnerOneId,
-      orgUnitId: partnerOneOrgUnitId,
       geographyId: siteData.geographyId,
       siteId: siteData.id,
       deviceId: device.id,
@@ -1804,7 +1772,6 @@ function* seed(knex) {
       externalId: `UQEB-${i}`,
       assayId: assayEbolaId,
       partnerId: partnerOneId,
-      orgUnitId: partnerOneOrgUnitId,
       geographyId: siteData.geographyId,
       siteId: siteData.id,
       deviceId: device.id,
@@ -1927,7 +1894,6 @@ function* seed(knex) {
       externalId: `UQHIV-${i}`,
       assayId: assayHivVlId,
       partnerId: partnerOneId,
-      orgUnitId: partnerOneOrgUnitId,
       geographyId: siteData.geographyId,
       siteId: siteData.id,
       deviceId: device.id,
@@ -2024,7 +1990,6 @@ function* seed(knex) {
       externalId: `UQ-GX-HCV-${i}`,
       assayId: assayGeneXpertHcvId,
       partnerId: partnerOneId,
-      orgUnitId: partnerOneOrgUnitId,
       geographyId: siteData.geographyId,
       siteId: siteData.id,
       deviceId: device.id,
@@ -2128,7 +2093,6 @@ function* seed(knex) {
       externalId: `UQ-DAK-HIV-${i}`,
       assayId: assayDaktariHivVlId,
       partnerId: partnerOneId,
-      orgUnitId: partnerOneOrgUnitId,
       geographyId: siteData.geographyId,
       siteId: siteData.id,
       deviceId: device.id,
@@ -2232,7 +2196,6 @@ function* seed(knex) {
       externalId: `UQ-DAK-HCV-${i}`,
       assayId: assayDaktariHcvId,
       partnerId: partnerOneId,
-      orgUnitId: partnerOneOrgUnitId,
       geographyId: siteData.geographyId,
       siteId: siteData.id,
       deviceId: device.id,
@@ -2339,24 +2302,6 @@ function* seed(knex) {
     dataFilterId: dataFilterIdMASuffolk
   })
 
-  const [roleIdParentOrgUnit] = yield knex('Role').insert({
-    name: 'Partner One Users',
-    partnerId: partnerOneId,
-    orgUnitId: partnerOneOrgUnitId
-  })
-
-  const [roleIdNortheast] = yield knex('Role').insert({
-    name: 'Northeast Users',
-    partnerId: partnerOneId,
-    orgUnitId: regionNortheastId
-  })
-
-  const [roleIdMidwest] = yield knex('Role').insert({
-    name: 'Midwest Users',
-    partnerId: partnerOneId,
-    orgUnitId: regionMidwestId
-  })
-
   const [roleIdPartnerTwo] = yield knex('Role').insert({
     name: 'Partner Two Users',
     partnerId: partnerTwoId
@@ -2393,15 +2338,6 @@ function* seed(knex) {
 
     { roleId: roleIdMASuffolk, permissionId: modules.device.view },
 
-    { roleId: roleIdMidwest, permissionId: modules.site.edit },
-    { roleId: roleIdMidwest, permissionId: modules.device.edit },
-
-    { roleId: roleIdNortheast, permissionId: modules.site.edit },
-    { roleId: roleIdNortheast, permissionId: modules.device.edit },
-
-    { roleId: roleIdParentOrgUnit, permissionId: modules.site.edit },
-    { roleId: roleIdParentOrgUnit, permissionId: modules.device.edit },
-
     { roleId: roleIdPartnerTwo, permissionId: modules.inventory.edit }
   ])
 
@@ -2409,14 +2345,10 @@ function* seed(knex) {
   yield knex('PersonRole').insert([
     { personId: personIds.admin, roleId: roleIdAdmin },
     { personId: personIds.bob, roleId: roleIdOH },
-    { personId: personIds.ed, roleId: roleIdMidwest },
     { personId: personIds.frank, roleId: roleIdNE },
     { personId: personIds.fred, roleId: roleIdOHWayne },
-    { personId: personIds.jon, roleId: roleIdParentOrgUnit },
-    { personId: personIds.ned, roleId: roleIdNortheast },
     { personId: personIds.sam, roleId: roleIdAdmin },
     { personId: personIds.jason, roleId: roleIdPartnerTwo },
-    { personId: personIds.jim, roleId: roleIdParentOrgUnit },
     { personId: personIds.steve, roleId: roleIdMASuffolk },
     { personId: personIds.bill, roleId: roleIdMASuffolk },
     { personId: personIds.bill, roleId: roleIdOH }])
