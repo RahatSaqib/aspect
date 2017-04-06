@@ -16,14 +16,6 @@ function* up(knex) {
     partner.integer('deviceLogHistoryDays').notNullable().defaultTo(30)
   })
 
-  yield knex.schema.createTable('DataFilter', (dataFilter) => {
-    dataFilter.increments('id')
-    dataFilter.string('name').notNullable()
-    // knex does not yet support JSON for MySQL
-    // dataFilter.json('constraint')
-    dataFilter.specificType('constraint', 'JSON').notNullable()
-  })
-
   yield knex.schema.createTable('User', (user) => {
     user.increments('id')
     user.string('name').unique().notNullable()
@@ -128,8 +120,6 @@ function* up(knex) {
     role.string('name').notNullable()
     role.integer('partnerId').unsigned().notNullable()
       .index().references('id').inTable('Partner')
-    role.integer('dataFilterId').unsigned()
-      .index().references('id').inTable('DataFilter')
     role.charset('utf8')
   })
 

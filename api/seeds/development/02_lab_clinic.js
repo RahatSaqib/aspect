@@ -257,18 +257,9 @@ function* seed(knex) {
       timezone
     }, auditFields))
 
-    const [labAdminDataFilterId] = yield knex('DataFilter').insert({
-      name: `${siteData.name} Filter`,
-      constraint: JSON.stringify({
-        site: {
-          id: siteId
-        }
-      })
-    })
-
     const [roleIdLabAdmin] = yield knex('Role').insert({
       name: `${lab.shortname} Admin`,
-      dataFilterId: labAdminDataFilterId,
+      // FIXME Site filter
       partnerId
     })
 

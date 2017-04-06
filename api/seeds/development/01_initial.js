@@ -2235,54 +2235,18 @@ function* seed(knex) {
     })
   }
 
-  // data filters
-  const [dataFilterIdOH] = yield knex('DataFilter').insert({
-    name: 'Ohio Filter',
-    // TODO specify query constraint format (likely similar to MongoDB)
-    constraint: JSON.stringify({
-      state: {
-        id: countries.US.states.OH.id
-      }
-    })
-  })
-
-  const [dataFilterIdNE] = yield knex('DataFilter').insert({
-    name: 'Nebraska Filter',
-    constraint: JSON.stringify({
-      state: {
-        id: countries.US.states.NE.id
-      }
-    })
-  })
-
-  const [dataFilterIdOHWayne] = yield knex('DataFilter').insert({
-    name: 'Wayne County, OH Filter',
-    constraint: JSON.stringify({
-      lga: {
-        id: countries.US.states.OH.lgas.Wayne.id
-      }
-    })
-  })
-
-  const [dataFilterIdMASuffolk] = yield knex('DataFilter').insert({
-    name: 'Suffolk County, MA Filter',
-    constraint: JSON.stringify({
-      lga: {
-        id: countries.US.states.MA.lgas.Suffolk.id
-      }
-    })
-  })
-
   // Roles
   const [roleIdAdmin] = yield knex('Role').insert({
     name: 'Admin',
     partnerId: partnerOneId
   })
 
+  /* FIXME Geographic Filters
   const [roleIdOH] = yield knex('Role').insert({
     name: 'Ohio Users',
     partnerId: partnerOneId,
     dataFilterId: dataFilterIdOH
+    id: countries.US.states.OH.id
   })
   const [roleIdNE] = yield knex('Role').insert({
     name: 'Nebraska Users',
@@ -2294,13 +2258,16 @@ function* seed(knex) {
     name: 'Wayne County, OH Users',
     partnerId: partnerOneId,
     dataFilterId: dataFilterIdOHWayne
+        id: countries.US.states.OH.lgas.Wayne.id
   })
 
   const [roleIdMASuffolk] = yield knex('Role').insert({
     name: 'Suffolk County, MA Users',
     partnerId: partnerOneId,
     dataFilterId: dataFilterIdMASuffolk
+        id: countries.US.states.MA.lgas.Suffolk.id
   })
+  */
 
   const [roleIdPartnerTwo] = yield knex('Role').insert({
     name: 'Partner Two Users',
@@ -2320,8 +2287,7 @@ function* seed(knex) {
     { roleId: roleIdAdmin, permissionId: modules.notification.admin },
     { roleId: roleIdAdmin, permissionId: modules.report.admin },
 
-    // FIXME: result permission for role
-
+    /* FIXME Geographic Filters
     { roleId: roleIdOH, permissionId: modules.site.edit },
     { roleId: roleIdOH, permissionId: modules.device.edit },
     { roleId: roleIdOH, permissionId: modules.assay.edit },
@@ -2339,17 +2305,23 @@ function* seed(knex) {
     { roleId: roleIdMASuffolk, permissionId: modules.device.view },
 
     { roleId: roleIdPartnerTwo, permissionId: modules.inventory.edit }
+    */
   ])
 
   // assign roles to users
   yield knex('PersonRole').insert([
     { personId: personIds.admin, roleId: roleIdAdmin },
+    /*
     { personId: personIds.bob, roleId: roleIdOH },
     { personId: personIds.frank, roleId: roleIdNE },
     { personId: personIds.fred, roleId: roleIdOHWayne },
+    */
     { personId: personIds.sam, roleId: roleIdAdmin },
     { personId: personIds.jason, roleId: roleIdPartnerTwo },
+    /*
     { personId: personIds.steve, roleId: roleIdMASuffolk },
     { personId: personIds.bill, roleId: roleIdMASuffolk },
-    { personId: personIds.bill, roleId: roleIdOH }])
+    { personId: personIds.bill, roleId: roleIdOH }
+    */
+  ])
 }

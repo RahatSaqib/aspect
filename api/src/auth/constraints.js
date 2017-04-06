@@ -1,5 +1,4 @@
 const _ = require('lodash')
-const { query } = require('../db')
 const { getUser } = require('./service')
 
 // A prefix for joined table aliases intended to avoid
@@ -12,36 +11,23 @@ function alias(table) {
 function getConstraints(credentials) {
   return getUser(credentials.name).then((user) => {
     // FIXME only include roles that assign permissions of interest
-    const dataFilters = query('Get constraints for user credentials')
-      .from('DataFilter as f')
-      .innerJoin('Role as r', 'f.id', 'r.dataFilterId')
-      .innerJoin('PersonRole as pr', 'r.id', 'pr.roleId')
-      .innerJoin('Person as ps', 'ps.id', 'pr.personId')
-      .where({
-        'ps.userId': user.id,
-        'r.partnerId': user.partnerId
-      })
-      .select('f.constraint')
-      .map(f => JSON.parse(f.constraint))
+    // TODO define constraints schema
+    const constraints = {
+      partner: {
+        id: user.partnerId
+      },
+      country: {
+        id: user.countryId
+      }
+    }
 
-    return dataFilters
-      .then((filterConstraints) => {
-        // TODO define constraints schema
-        const constraints = {
-          partner: {
-            id: user.partnerId
-          },
-          country: {
-            id: user.countryId
-          }
-        }
+    // FIXME filter by JobContext
+    const filterConstraints = []
+    if (filterConstraints.length) {
+      constraints.$or = filterConstraints
+    }
 
-        if (filterConstraints.length) {
-          constraints.$or = filterConstraints
-        }
-
-        return constraints
-      })
+    return constraints
   })
 }
 
