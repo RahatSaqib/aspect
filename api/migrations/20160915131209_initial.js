@@ -171,14 +171,13 @@ function* up(knex) {
     permissionRole.charset('utf8')
   })
 
-  // FIXME Change UserRole to PersonRole
-  yield knex.schema.createTable('UserRole', (userRole) => {
-    userRole.integer('userId').unsigned()
-      .index().references('id').inTable('User')
-    userRole.integer('roleId').unsigned()
+  yield knex.schema.createTable('PersonRole', (personRole) => {
+    personRole.integer('personId').unsigned()
+      .index().references('id').inTable('Person')
+    personRole.integer('roleId').unsigned()
       .index().references('id').inTable('Role')
-    userRole.primary(['userId', 'roleId'])
-    userRole.charset('utf8')
+    personRole.primary(['personId', 'roleId'])
+    personRole.charset('utf8')
   })
 
   yield knex.schema.createTable('RefreshToken', (refreshToken) => {
@@ -620,6 +619,7 @@ function* down(knex) {
   yield knex.schema.dropTableIfExists('DeviceRole')
   yield knex.schema.dropTableIfExists('DeviceApiKey')
   yield knex.schema.dropTableIfExists('RefreshToken')
+  yield knex.schema.dropTableIfExists('PersonRole')
   yield knex.schema.dropTableIfExists('UserRole')
   yield knex.schema.dropTableIfExists('RolePermission')
   yield knex.schema.dropTableIfExists('Permission')

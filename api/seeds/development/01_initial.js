@@ -1360,6 +1360,7 @@ function* seed(knex) {
 
   // Users
   const userIds = {}
+  const personIds = {}
   for (const name of ['Admin', 'Bill', 'Bob', 'Frank', 'Ed', 'Fred',
     'Jason', 'Jim', 'Jon', 'Ned', 'Sam', 'Steve']) {
     let userId
@@ -1386,7 +1387,7 @@ function* seed(knex) {
     const timezone = _.includes(['Jim', 'Sam'], name) ? countries.NG.timezone : countries.US.timezone
     const culture = _.includes(['Jim', 'Sam'], name) ? countries.NG.culture : countries.US.culture
 
-    yield knex('Person').insert(Object.assign({
+    const [personId] = yield knex('Person').insert(Object.assign({
       userId,
       name,
       lastPartnerId,
@@ -1395,6 +1396,7 @@ function* seed(knex) {
       culture,
       geographyId: geographies[geographies.length % userId].id
     }, auditFields))
+    personIds[name.toLowerCase()] = personId
   }
 
   // insert some routers with sims:
@@ -2404,18 +2406,18 @@ function* seed(knex) {
   ])
 
   // assign roles to users
-  yield knex('UserRole').insert([
-    { userId: userIds.admin, roleId: roleIdAdmin },
-    { userId: userIds.bob, roleId: roleIdOH },
-    { userId: userIds.ed, roleId: roleIdMidwest },
-    { userId: userIds.frank, roleId: roleIdNE },
-    { userId: userIds.fred, roleId: roleIdOHWayne },
-    { userId: userIds.jon, roleId: roleIdParentOrgUnit },
-    { userId: userIds.ned, roleId: roleIdNortheast },
-    { userId: userIds.sam, roleId: roleIdAdmin },
-    { userId: userIds.jason, roleId: roleIdPartnerTwo },
-    { userId: userIds.jim, roleId: roleIdParentOrgUnit },
-    { userId: userIds.steve, roleId: roleIdMASuffolk },
-    { userId: userIds.bill, roleId: roleIdMASuffolk },
-    { userId: userIds.bill, roleId: roleIdOH }])
+  yield knex('PersonRole').insert([
+    { personId: personIds.admin, roleId: roleIdAdmin },
+    { personId: personIds.bob, roleId: roleIdOH },
+    { personId: personIds.ed, roleId: roleIdMidwest },
+    { personId: personIds.frank, roleId: roleIdNE },
+    { personId: personIds.fred, roleId: roleIdOHWayne },
+    { personId: personIds.jon, roleId: roleIdParentOrgUnit },
+    { personId: personIds.ned, roleId: roleIdNortheast },
+    { personId: personIds.sam, roleId: roleIdAdmin },
+    { personId: personIds.jason, roleId: roleIdPartnerTwo },
+    { personId: personIds.jim, roleId: roleIdParentOrgUnit },
+    { personId: personIds.steve, roleId: roleIdMASuffolk },
+    { personId: personIds.bill, roleId: roleIdMASuffolk },
+    { personId: personIds.bill, roleId: roleIdOH }])
 }

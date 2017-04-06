@@ -171,7 +171,7 @@ function* seed(knex) {
     .first()
 
   // Permissions for RRT Admin
-  yield knex('Person').insert(Object.assign({
+  const [adminPersonId] = yield knex('Person').insert(Object.assign({
     userId: adminId,
     name: 'RRT Admin',
     lastPartnerId: partnerId,
@@ -195,8 +195,8 @@ function* seed(knex) {
     { roleId: roleIdAdmin, permissionId: modules.site.admin },
     { roleId: roleIdAdmin, permissionId: modules.assay.admin }])
 
-  yield knex('UserRole').insert([
-    { userId: adminId, roleId: roleIdAdmin }])
+  yield knex('PersonRole').insert([
+    { personId: adminPersonId, roleId: roleIdAdmin }])
 
   const statesByName = malawiStates.reduce((memo, state) => {
     memo[state.name.toLowerCase()] = state
@@ -247,7 +247,7 @@ function* seed(knex) {
       failedPasswordAttempts: 0
     })
 
-    yield knex('Person').insert(Object.assign({
+    const [labAdminPersonId] = yield knex('Person').insert(Object.assign({
       userId: labAdminUserId,
       name: `${lab.shortname} Admin`,
       lastPartnerId: partnerId,
@@ -276,8 +276,8 @@ function* seed(knex) {
       { roleId: roleIdLabAdmin, permissionId: modules.device.admin },
       { roleId: roleIdLabAdmin, permissionId: modules.result.admin }])
 
-    yield knex('UserRole').insert([
-      { userId: labAdminUserId, roleId: roleIdLabAdmin }])
+    yield knex('PersonRole').insert([
+      { personId: labAdminPersonId, roleId: roleIdLabAdmin }])
   }
 }
 

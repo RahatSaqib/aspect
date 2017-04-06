@@ -15,9 +15,10 @@ function getConstraints(credentials) {
     const dataFilters = query('Get constraints for user credentials')
       .from('DataFilter as f')
       .innerJoin('Role as r', 'f.id', 'r.dataFilterId')
-      .innerJoin('UserRole as ur', 'r.id', 'ur.roleId')
+      .innerJoin('PersonRole as pr', 'r.id', 'pr.roleId')
+      .innerJoin('Person as ps', 'ps.id', 'pr.personId')
       .where({
-        'ur.userId': user.id,
+        'ps.userId': user.id,
         'r.partnerId': user.partnerId
       })
       .select('f.constraint')
@@ -26,9 +27,10 @@ function getConstraints(credentials) {
     const topOrgUnit = query('Get top org unit for user credentials')
       .from('OrgUnit as o')
       .innerJoin('Role as r', 'o.id', 'r.orgUnitId')
-      .innerJoin('UserRole as ur', 'r.id', 'ur.roleId')
+      .innerJoin('PersonRole as pr', 'r.id', 'pr.roleId')
+      .innerJoin('Person as ps', 'ps.id', 'pr.personId')
       .where({
-        'ur.userId': user.id,
+        'ps.userId': user.id,
         'r.partnerId': user.partnerId
       })
       .orderBy('o.depth')

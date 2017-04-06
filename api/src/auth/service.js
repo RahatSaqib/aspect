@@ -188,8 +188,9 @@ function getAccessToken({ id, name, partnerId }) {
     .from('Permission as p')
     .innerJoin('RolePermission as rp', 'p.id', 'rp.permissionId')
     .innerJoin('Role as r', 'rp.roleId', 'r.id')
-    .innerJoin('UserRole as ur', 'r.id', 'ur.roleId')
-    .where({ 'ur.userId': id, 'r.partnerId': partnerId })
+    .innerJoin('PersonRole as pr', 'r.id', 'pr.roleId')
+    .innerJoin('Person as ps', 'pr.personId', 'ps.id')
+    .where({ 'ps.userId': id, 'r.partnerId': partnerId })
     .orderBy(['p.module', 'p.activity'])
     .distinct('p.module', 'p.activity')
     .then((data) => {
@@ -377,9 +378,10 @@ function* updatePasswordWithResetPasswordToken(request) {
 }
 
 function getRolesForUser(userId) {
-  return query('Get roles for user').from('UserRole as ur')
-    .where({ 'ur.userId': userId })
-    .select('ur.userId', 'ur.roleId')
+  return query('Get roles for user').from('PersonRole as pr')
+    .innerJoin('Person as ps', 'ps.id', 'pr.personId')
+    .where({ 'ps.userId': userId })
+    .select('ps.userId', 'pr.roleId')
 }
 
 function* updateUsernameAndPasswordForPerson(request) {
