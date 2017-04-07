@@ -14,7 +14,7 @@ Quick Start for development. Everything is explained in more detail throughout t
 ```bash
 # Clone the repository
 git clone git@github.com:SystemOneId/aspect
-cd aspect
+cd aspect/api
 
 # Install dependencies
 npm install
