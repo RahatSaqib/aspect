@@ -16,29 +16,6 @@ function* up(knex) {
     partner.integer('deviceLogHistoryDays').notNullable().defaultTo(30)
   })
 
-  yield knex.schema.createTable('OrgUnit', (orgUnit) => {
-    orgUnit.increments('id')
-    orgUnit.string('name').notNullable()
-    orgUnit.integer('partnerId').unsigned().notNullable()
-      .index().references('id').inTable('Partner')
-
-    orgUnit.integer('leftBound').unsigned().notNullable()
-    orgUnit.integer('rightBound').unsigned().notNullable()
-    orgUnit.integer('depth').unsigned().notNullable()
-
-    // TODO Add OrgUnit parent id if is helpful
-    // orgUnit.integer('parentId').unsigned()
-    //  .index().references('id').inTable('OrgUnit')
-  })
-
-  yield knex.schema.createTable('DataFilter', (dataFilter) => {
-    dataFilter.increments('id')
-    dataFilter.string('name').notNullable()
-    // knex does not yet support JSON for MySQL
-    // dataFilter.json('constraint')
-    dataFilter.specificType('constraint', 'JSON').notNullable()
-  })
-
   yield knex.schema.createTable('User', (user) => {
     user.increments('id')
     user.string('name').unique().notNullable()
@@ -138,16 +115,12 @@ function* up(knex) {
     person.charset('utf8')
   })
 
-  yield knex.schema.createTable('Role', (role) => {
-    role.increments('id')
-    role.string('name').notNullable()
-    role.integer('partnerId').unsigned()
+  yield knex.schema.createTable('JobFunction', (jobFunction) => {
+    jobFunction.increments('id')
+    jobFunction.string('name').notNullable()
+    jobFunction.integer('partnerId').unsigned().notNullable()
       .index().references('id').inTable('Partner')
-    role.integer('dataFilterId').unsigned()
-      .index().references('id').inTable('DataFilter')
-    role.integer('orgUnitId').unsigned()
-      .index().references('id').inTable('OrgUnit')
-    role.charset('utf8')
+    jobFunction.charset('utf8')
   })
 
   yield knex.schema.createTable('Permission', (permission) => {
@@ -162,23 +135,34 @@ function* up(knex) {
     permission.charset('utf8')
   })
 
-  yield knex.schema.createTable('RolePermission', (permissionRole) => {
-    permissionRole.integer('roleId').unsigned()
-      .index().references('id').inTable('Role')
-    permissionRole.integer('permissionId').unsigned()
+  yield knex.schema.createTable('JobFunctionPermission', (jobFunctionPermission) => {
+    jobFunctionPermission.integer('jobFunctionId').unsigned()
+      .index().references('id').inTable('JobFunction')
+    jobFunctionPermission.integer('permissionId').unsigned()
       .index().references('id').inTable('Permission')
-    permissionRole.primary(['permissionId', 'roleId'])
-    permissionRole.charset('utf8')
+    jobFunctionPermission.primary(['permissionId', 'jobFunctionId'])
+    jobFunctionPermission.charset('utf8')
   })
 
-  // FIXME Change UserRole to PersonRole
-  yield knex.schema.createTable('UserRole', (userRole) => {
-    userRole.integer('userId').unsigned()
-      .index().references('id').inTable('User')
-    userRole.integer('roleId').unsigned()
-      .index().references('id').inTable('Role')
-    userRole.primary(['userId', 'roleId'])
-    userRole.charset('utf8')
+  yield knex.schema.createTable('Job', (job) => {
+    job.increments('id')
+    job.integer('personId').unsigned()
+      .index().references('id').inTable('Person')
+    job.integer('jobFunctionId').unsigned()
+      .index().references('id').inTable('JobFunction')
+    job.unique(['personId', 'jobFunctionId'])
+    job.charset('utf8')
+  })
+
+  yield knex.schema.createTable('JobContext', (jobContext) => {
+    jobContext.increments('id')
+    jobContext.integer('jobId').unsigned().notNullable()
+      .index().references('id').inTable('Job')
+    jobContext.integer('geographyId').unsigned()
+      .index().references('id').inTable('Geography')
+    jobContext.integer('siteId').unsigned()
+      .index().references('id').inTable('Site')
+    jobContext.charset('utf8')
   })
 
   yield knex.schema.createTable('RefreshToken', (refreshToken) => {
@@ -200,8 +184,6 @@ function* up(knex) {
     apiKey.boolean('revoked').notNullable().defaultTo(0)
     apiKey.integer('partnerId').unsigned()
       .index().references('id').inTable('Partner')
-    apiKey.integer('orgUnitId').unsigned()
-      .index().references('id').inTable('OrgUnit')
     apiKey.integer('geographyId').unsigned()
       .index().references('id').inTable('Geography')
     apiKey.integer('siteId').unsigned()
@@ -250,8 +232,6 @@ function* up(knex) {
     // TODO is site to partner many to many?
     site.integer('partnerId').unsigned()
       .index().references('id').inTable('Partner')
-    site.integer('orgUnitId').unsigned()
-      .index().references('id').inTable('OrgUnit')
     site.integer('geographyId').unsigned()
       .index().references('id').inTable('Geography')
     // TODO do we want to mess with a city table?
@@ -275,8 +255,6 @@ function* up(knex) {
       .index().references('id').inTable('Device')
     device.integer('partnerId').unsigned()
       .index().references('id').inTable('Partner')
-    device.integer('orgUnitId').unsigned()
-      .index().references('id').inTable('OrgUnit')
     device.integer('geographyId').unsigned()
       .index().references('id').inTable('Geography')
     device.integer('siteId').unsigned()
@@ -422,8 +400,6 @@ function* up(knex) {
       .index().references('id').inTable('Assay')
     result.integer('partnerId').unsigned()
           .index().references('id').inTable('Partner')
-    result.integer('orgUnitId').unsigned()
-          .index().references('id').inTable('OrgUnit')
     result.integer('geographyId').unsigned()
           .index().references('id').inTable('Geography')
     result.integer('siteId').unsigned()
@@ -620,6 +596,10 @@ function* down(knex) {
   yield knex.schema.dropTableIfExists('DeviceRole')
   yield knex.schema.dropTableIfExists('DeviceApiKey')
   yield knex.schema.dropTableIfExists('RefreshToken')
+  yield knex.schema.dropTableIfExists('JobFunctionPermission')
+  yield knex.schema.dropTableIfExists('JobFunction')
+  yield knex.schema.dropTableIfExists('JobContext')
+  yield knex.schema.dropTableIfExists('Job')
   yield knex.schema.dropTableIfExists('UserRole')
   yield knex.schema.dropTableIfExists('RolePermission')
   yield knex.schema.dropTableIfExists('Permission')

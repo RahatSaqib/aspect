@@ -70,8 +70,7 @@ describe('AccountRedux module', () => {
           confirmNewPassword: null,
           currentPassword: null,
           partnerId: null,
-          orgUnitId: null,
-          roles: []
+          jobFunctions: []
         })
         expect(initialState.getIn(['data', 'userPreferences']).toJS()).toEqual({
           id: null,
@@ -107,8 +106,7 @@ describe('AccountRedux module', () => {
             confirmNewPassword: null,
             currentPassword: null,
             partnerId: null,
-            orgUnitId: null,
-            roles: []
+            jobFunctions: []
           })
           expect(state.getIn(['data', 'userPreferences']).toJS()).toEqual(_.pick(accountDetailsData, ['id', 'timezone', 'culture']))
         })
@@ -163,8 +161,7 @@ describe('AccountRedux module', () => {
             confirmNewPassword: null,
             currentPassword: null,
             partnerId: null,
-            orgUnitId: null,
-            roles: []
+            jobFunctions: []
           })
           expect(newState.getIn(['data', 'userPreferences']).toJS()).toEqual(_.pick(accountDetailsData, ['id', 'timezone', 'culture']))
         })
@@ -194,8 +191,7 @@ describe('AccountRedux module', () => {
             confirmNewPassword: null,
             currentPassword: null,
             partnerId: null,
-            orgUnitId: null,
-            roles: []
+            jobFunctions: []
           })
           expect(newState.getIn(['data', 'userPreferences']).toJS()).toEqual(_.pick(accountDetailsData, ['id', 'timezone', 'culture']))
         })
@@ -239,8 +235,7 @@ describe('AccountRedux module', () => {
             confirmNewPassword: null,
             currentPassword: null,
             partnerId: null,
-            orgUnitId: null,
-            roles: []
+            jobFunctions: []
           })
           expect(newState.getIn(['data', 'userPreferences']).toJS()).toEqual(_.pick(newAccountDetailsData, ['id', 'timezone', 'culture']))
         })

@@ -1478,7 +1478,7 @@ describe('Device Result API routes', () => {
       assert.deepEqual(op2, { a: 'basd' })
     }))
 
-    it('should honor device role sample origin site', () => runTest(function* (knex) {
+    it('should honor device sample origin site', () => runTest(function* (knex) {
       const { deviceAuth, apiKey: labKey } = context
       const devicePath = '/device'
 

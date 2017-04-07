@@ -14,7 +14,7 @@ function* homeDashboard(request) {
     .leftOuterJoin('Geography as g', 's.geographyId', 'g.id')
     .leftOuterJoin('State as st', 'g.stateId', 'st.id')
     .leftOuterJoin('Lga as l', 'g.lgaId', 'l.id')
-    .modify(addConstraints, dataConstraints, { site: 's', geography: 'g', state: 'st', lga: 'l' })
+    .modify(addConstraints, dataConstraints, { site: 's', geography: 'g' })
 
   const devicesTotalQuery = knex('Device as d').count('d.id as cnt')
     .innerJoin('Site as s', 's.id', 'd.siteId')
@@ -24,7 +24,7 @@ function* homeDashboard(request) {
     .leftOuterJoin('State as st', 'g.stateId', 'st.id')
     .leftOuterJoin('Lga as l', 'g.lgaId', 'l.id')
     .where('dc.hasResults', 1)
-    .modify(addConstraints, dataConstraints, { site: 's', geography: 'g', state: 'st', lga: 'l' })
+    .modify(addConstraints, dataConstraints, { site: 's', geography: 'g' })
 
   const resultsTotalQuery30d = knex('Result as r').count('r.id as cnt')
     .innerJoin('Site as s', 's.id', 'r.siteId')
@@ -35,7 +35,7 @@ function* homeDashboard(request) {
     .leftOuterJoin('State as st', 'g.stateId', 'st.id')
     .leftOuterJoin('Lga as l', 'g.lgaId', 'l.id')
     .whereBetween('r.endedOn', [subDays(now, 30), now])
-    .modify(addConstraints, dataConstraints, { device: 'd', site: 's', geography: 'g', state: 'st', lga: 'l' })
+    .modify(addConstraints, dataConstraints, { device: 'd', site: 's', geography: 'g' })
 
   const resultsTotalQuery1d = knex('Result as r').count('r.id as cnt')
     .innerJoin('Site as s', 's.id', 'r.siteId')
@@ -46,7 +46,7 @@ function* homeDashboard(request) {
     .leftOuterJoin('State as st', 'g.stateId', 'st.id')
     .leftOuterJoin('Lga as l', 'g.lgaId', 'l.id')
     .whereBetween('r.endedOn', [subDays(now, 1), now])
-    .modify(addConstraints, dataConstraints, { device: 'd', site: 's', geography: 'g', state: 'st', lga: 'l' })
+    .modify(addConstraints, dataConstraints, { device: 'd', site: 's', geography: 'g' })
 
   const [sitesTotal, devicesTotal, resultsTotal30d, resultsTotal1d] = yield Promise.all([
     sitesTotalQuery, devicesTotalQuery, resultsTotalQuery30d, resultsTotalQuery1d

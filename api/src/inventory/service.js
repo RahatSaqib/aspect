@@ -47,7 +47,7 @@ const INVENTORY_ITEM_FILTER_FIELDS = {
   siteId: 'ii.siteId'
 }
 
-const INVENTORY_ITEM_DATA_CONSTRAINT_ALIASES = { country: 'co', state: 'st', lga: 'l', site: 's' }
+const INVENTORY_ITEM_DATA_CONSTRAINT_ALIASES = { geography: 'g', site: 's' }
 
 function selectInventoryItemsAtSite(siteId, knex) {
   return knex('InventoryItem')

@@ -24,17 +24,16 @@ function* listPeople(request) {
     .count('p.id as count')
     .first()
 
-  // TODO What do we do when a user has many roles? (currently delited list)
-  const getRoleNames = knex('UserRole as ur')
-    .innerJoin('Role as r', 'ur.roleId', 'r.id')
-    .where('ur.userId', '=', knex.raw('p.userId'))
-    .select(knex.raw('group_concat(r.name separator "; ")'))
+  const getJobFunctionNames = knex('Job as j')
+    .innerJoin('JobFunction as jf', 'j.jobFunctionId', 'jf.id')
+    .where('j.personId', '=', knex.raw('p.id'))
+    .select(knex.raw('group_concat(jf.name separator "; ")'))
     .as('level')
 
   // get rows
   const getItems = personQuery.clone()
     .modify(sortPageParams, query, 'p.name')
-    .select('p.id', 'p.name', getRoleNames,
+    .select('p.id', 'p.name', getJobFunctionNames,
       's.name as state', 'l.name as lga')
 
   // return result when both queries are finished
@@ -64,20 +63,20 @@ function* showPerson(request) {
   if (_.isEmpty(personDetails)) {
     return Boom.notFound()
   }
-  const rolesForUser = personDetails.userId ?
-    yield userService.getRolesForUser(personDetails.userId) : []
 
-  personDetails.roles = _.map(rolesForUser, 'roleId')
-  if (!_.isEmpty(personDetails.roles)) {
-    const partnerInfo = yield query('Get Partner ID and Organisational Unit ID for Role')
-      .from('Role as r')
-      .where({ 'r.id': personDetails.roles[0] })
-      .first('r.partnerId', 'r.orgUnitId')
-    personDetails.partnerId = partnerInfo.partnerId || undefined
-    personDetails.orgUnitId = partnerInfo.orgUnitId || undefined
+  if (personDetails.userId == null) {
+    personDetails.jobFunctions = []
   } else {
-    personDetails.partnerId = undefined
-    personDetails.orgUnitId = undefined
+    const jobFunctionsForUser = yield query('Get job functions for user')
+      .from('Job as j')
+      .innerJoin('JobFunction as jf', 'jf.id', 'j.jobFunctionId')
+      .innerJoin('Person as ps', 'ps.id', 'j.personId')
+      .where({ 'ps.userId': personDetails.userId })
+      .select('ps.userId', 'j.jobFunctionId', 'jf.partnerId')
+    personDetails.jobFunctions = _.map(jobFunctionsForUser, 'jobFunctionId')
+    if (jobFunctionsForUser.length > 0) {
+      personDetails.partnerId = jobFunctionsForUser[0].partnerId
+    }
   }
 
   return { ok: true, data: personDetails }

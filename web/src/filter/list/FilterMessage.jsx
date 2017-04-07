@@ -74,7 +74,7 @@ function mapStateToProps(state) {
     assay: state.assay,
     consumable: state.consumable.consumables,
     siteItemsById: state.site.items.byId,
-    partnerItems: state.roles.partnersAndRolesForSelectList.partners,
+    partnerItems: state.jobs.partnersAndJobFunctionsForSelectList.partners,
     workflowStatusItems: state.resultWorkflowStatus.items,
     deviceStatusItems: state.deviceStatus.items
   }

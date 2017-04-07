@@ -35,7 +35,7 @@ function* listDeviceApiKeys(request) {
     })
     .modify(addConstraints, dataConstraints, {
       partner: 'p',
-      country: 'c',
+      geography: 'g',
       site: 's',
       device: 'd'
     })

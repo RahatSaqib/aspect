@@ -29,7 +29,7 @@ import {
   LoginDetails,
   UserPreferences
 } from '../PersonRedux'
-import { fetchPartnersAndRolesForSelectList } from '../../role/RoleRedux'
+import { fetchPartnersAndJobFunctionsForSelectList } from '../../job/JobRedux'
 import { showAcknowledgement } from '../../appNotification/AppNotificationRedux'
 
 import messages from './messages'
@@ -48,7 +48,7 @@ export class PersonDetail extends PureComponent {
     user: PropTypes.object.isRequired,
     editable: PropTypes.bool.isRequired,
     showAcknowledgement: PropTypes.func.isRequired,
-    partnersAndRolesForSelectList: PropTypes.object.isRequired,
+    partnersAndJobFunctionsForSelectList: PropTypes.object.isRequired,
     updateSinglePerson: PropTypes.func.isRequired,
     updateSinglePersonLoginDetails: PropTypes.func.isRequired,
     updateSinglePersonUserPreferences: PropTypes.func.isRequired
@@ -56,8 +56,7 @@ export class PersonDetail extends PureComponent {
 
   state = {
     partners: [],
-    orgUnits: [],
-    roles: []
+    jobFunctions: []
   }
 
   componentWillMount() {
@@ -67,42 +66,36 @@ export class PersonDetail extends PureComponent {
   }
 
   componentDidMount() {
-    this.handleFetchPartnersAndRoles(this.props)
+    this.handleFetchPartnersAndJobFunctions(this.props)
     this.handleFetchPerson(this.props)
-    if (this.props.partnersAndRolesForSelectList.get('lastRefreshed')) {
-      this.setPartnersOrgUnitsAndRoles(this.props, this.props.person.get('partnerId'), this.props.person.get('orgUnitId'))
+    if (this.props.partnersAndJobFunctionsForSelectList.get('lastRefreshed')) {
+      this.setPartnerAndJobFunctions(this.props, this.props.person.get('partnerId'))
     }
   }
 
   componentWillReceiveProps(nextProps) {
     if (this.props.params.personId !== nextProps.params.personId) {
       this.handleFetchPerson(nextProps)
-    } else if (nextProps.person && nextProps.partnersAndRolesForSelectList.get('lastRefreshed')) {
-      this.setPartnersOrgUnitsAndRoles(nextProps, nextProps.person.get('partnerId'), nextProps.person.get('orgUnitId'))
+    } else if (nextProps.person && nextProps.partnersAndJobFunctionsForSelectList.get('lastRefreshed')) {
+      this.setPartnerAndJobFunctions(nextProps, nextProps.person.get('partnerId'))
     }
   }
 
-  setPartnersOrgUnitsAndRoles = (props, selectedPartnerId, selectedOrgUnitId) => {
-    const { partnersAndRolesForSelectList, intl: { formatMessage } } = props
-    const partners = _.map(partnersAndRolesForSelectList.get('partners').toJS(), partner => ({
+  setPartnerAndJobFunctions = (props, selectedPartnerId) => {
+    const { partnersAndJobFunctionsForSelectList, intl: { formatMessage } } = props
+    const partners = _.map(partnersAndJobFunctionsForSelectList.get('partners').toJS(), partner => ({
       id: partner.id,
       name: partner.name || formatMessage(messages.none),
-      orgUnits: _.map(partner.orgUnits, orgUnit => ({
-        id: orgUnit.id,
-        name: orgUnit.name || formatMessage(messages.none),
-        roles: orgUnit.roles
+      jobFunctions: _.map(partner.jobFunctions, jobFunction => ({
+        id: jobFunction.id,
+        name: jobFunction.name || formatMessage(messages.none)
       }))
     }))
-    const selectedPartner = _.find(partners, { id: selectedPartnerId }) ||
-      _.find(partners, { id: undefined })
-    const orgUnits = selectedPartner.orgUnits
-    const selectedOrgUnit = _.find(selectedPartner.orgUnits, { id: selectedOrgUnitId }) ||
-      _.find(selectedPartner.orgUnits, { id: undefined })
-    const roles = selectedOrgUnit.roles
+    const selectedPartner = _.find(partners, { id: selectedPartnerId })
+    const jobFunctions = selectedPartner ? selectedPartner.jobFunctions : []
     this.setState({
       partners,
-      orgUnits,
-      roles
+      jobFunctions
     })
   }
 
@@ -110,8 +103,8 @@ export class PersonDetail extends PureComponent {
     fetchSinglePerson(params.personId)
   }
 
-  handleFetchPartnersAndRoles = ({ fetchPartnersAndRolesForSelectList }) => {
-    fetchPartnersAndRolesForSelectList()
+  handleFetchPartnersAndJobFunctions = ({ fetchPartnersAndJobFunctionsForSelectList }) => {
+    fetchPartnersAndJobFunctionsForSelectList()
   }
 
   saveContactDetails = (formValues) => {
@@ -222,7 +215,7 @@ function mapStateToProps(state, { params }) {
     editable: isEditable(state.user, person),
     person,
     user: state.user,
-    partnersAndRolesForSelectList: state.roles.get('partnersAndRolesForSelectList')
+    partnersAndJobFunctionsForSelectList: state.jobs.get('partnersAndJobFunctionsForSelectList')
   }
 }
 
@@ -232,7 +225,7 @@ function mapDispatchToProps(dispatch) {
     updateSinglePerson,
     updateSinglePersonLoginDetails,
     updateSinglePersonUserPreferences,
-    fetchPartnersAndRolesForSelectList,
+    fetchPartnersAndJobFunctionsForSelectList,
     showAcknowledgement
   }, dispatch)
 }

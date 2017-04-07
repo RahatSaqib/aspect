@@ -184,7 +184,7 @@ function createNewDevice(request, now) {
         revoked: false,
         deviceId: null
       })
-      .first('id', 'partnerId', 'orgUnitId', 'geographyId', 'siteId')
+      .first('id', 'partnerId', 'geographyId', 'siteId')
     if (apiKey == null) {
       return { error: Boom.notFound('Cannot find available API Key when creating new device') }
     }
@@ -215,7 +215,6 @@ function createNewDevice(request, now) {
     }
     const inserts = {
       partnerId: device.partnerId,
-      orgUnitId: apiKey.orgUnitId,
       geographyId: apiKey.geographyId,
       siteId: device.siteId,
       deviceTypeId: deviceType.id,

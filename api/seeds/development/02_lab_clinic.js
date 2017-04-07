@@ -171,7 +171,7 @@ function* seed(knex) {
     .first()
 
   // Permissions for RRT Admin
-  yield knex('Person').insert(Object.assign({
+  const [adminPersonId] = yield knex('Person').insert(Object.assign({
     userId: adminId,
     name: 'RRT Admin',
     lastPartnerId: partnerId,
@@ -181,22 +181,32 @@ function* seed(knex) {
     timezone
   }, auditFields))
 
-  const [roleIdAdmin] = yield knex('Role').insert({
+  const [jobFunctionIdAdmin] = yield knex('JobFunction').insert({
     name: 'Admin',
     partnerId
   })
 
-  yield knex('RolePermission').insert([
-    { roleId: roleIdAdmin, permissionId: modules.demo.admin },
-    { roleId: roleIdAdmin, permissionId: modules.device.admin },
-    { roleId: roleIdAdmin, permissionId: modules.deviceApiKey.admin },
-    { roleId: roleIdAdmin, permissionId: modules.person.admin },
-    { roleId: roleIdAdmin, permissionId: modules.result.admin },
-    { roleId: roleIdAdmin, permissionId: modules.site.admin },
-    { roleId: roleIdAdmin, permissionId: modules.assay.admin }])
+  const [jobFunctionIdLabAdmin] = yield knex('JobFunction').insert({
+    name: 'Lab Admin',
+    partnerId
+  })
+  yield knex('JobFunctionPermission').insert([
+    { jobFunctionId: jobFunctionIdLabAdmin, permissionId: modules.device.admin },
+    { jobFunctionId: jobFunctionIdLabAdmin, permissionId: modules.result.admin }])
 
-  yield knex('UserRole').insert([
-    { userId: adminId, roleId: roleIdAdmin }])
+
+  yield knex('JobFunctionPermission').insert([
+    { jobFunctionId: jobFunctionIdAdmin, permissionId: modules.demo.admin },
+    { jobFunctionId: jobFunctionIdAdmin, permissionId: modules.device.admin },
+    { jobFunctionId: jobFunctionIdAdmin, permissionId: modules.deviceApiKey.admin },
+    { jobFunctionId: jobFunctionIdAdmin, permissionId: modules.person.admin },
+    { jobFunctionId: jobFunctionIdAdmin, permissionId: modules.result.admin },
+    { jobFunctionId: jobFunctionIdAdmin, permissionId: modules.site.admin },
+    { jobFunctionId: jobFunctionIdAdmin, permissionId: modules.assay.admin }])
+
+  const [jobIdAdmin] = yield knex('Job').insert([
+    { personId: adminPersonId, jobFunctionId: jobFunctionIdAdmin }])
+  yield knex('JobContext').insert({ jobId: jobIdAdmin, geographyId })
 
   const statesByName = malawiStates.reduce((memo, state) => {
     memo[state.name.toLowerCase()] = state
@@ -247,7 +257,7 @@ function* seed(knex) {
       failedPasswordAttempts: 0
     })
 
-    yield knex('Person').insert(Object.assign({
+    const [labAdminPersonId] = yield knex('Person').insert(Object.assign({
       userId: labAdminUserId,
       name: `${lab.shortname} Admin`,
       lastPartnerId: partnerId,
@@ -257,27 +267,9 @@ function* seed(knex) {
       timezone
     }, auditFields))
 
-    const [labAdminDataFilterId] = yield knex('DataFilter').insert({
-      name: `${siteData.name} Filter`,
-      constraint: JSON.stringify({
-        site: {
-          id: siteId
-        }
-      })
-    })
-
-    const [roleIdLabAdmin] = yield knex('Role').insert({
-      name: `${lab.shortname} Admin`,
-      dataFilterId: labAdminDataFilterId,
-      partnerId
-    })
-
-    yield knex('RolePermission').insert([
-      { roleId: roleIdLabAdmin, permissionId: modules.device.admin },
-      { roleId: roleIdLabAdmin, permissionId: modules.result.admin }])
-
-    yield knex('UserRole').insert([
-      { userId: labAdminUserId, roleId: roleIdLabAdmin }])
+    const [jobIdLabAdmin] = yield knex('Job').insert([
+      { personId: labAdminPersonId, jobFunctionId: jobFunctionIdLabAdmin }])
+    yield knex('JobContext').insert({ jobId: jobIdLabAdmin, siteId })
   }
 }
 

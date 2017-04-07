@@ -68,27 +68,7 @@ function* seed(knex) {
     partnerTypeId: partnerTypeImplementingId,
     deviceLogHistoryDays: 14
   })
-  const [partnerOneOrgUnitId] = yield knex('OrgUnit').insert({
-    name: 'Partner One',
-    partnerId: partnerOneId,
-    depth: 1,
-    leftBound: 1,
-    rightBound: 6
-  })
-  const [regionNortheastId] = yield knex('OrgUnit').insert({
-    name: 'Northeast',
-    partnerId: partnerOneId,
-    depth: 2,
-    leftBound: 2,
-    rightBound: 3
-  })
-  const [regionMidwestId] = yield knex('OrgUnit').insert({
-    name: 'Midwest',
-    partnerId: partnerOneId,
-    depth: 2,
-    leftBound: 4,
-    rightBound: 5
-  })
+
   // Categories of devices (lab, connectivity...)
   const [deviceTypeCategoryLab] = yield knex('DeviceTypeCategory').insert({
     name: 'Lab',
@@ -1314,7 +1294,8 @@ function* seed(knex) {
     countries[country.abbreviation] = countryData
     countryData.states = {}
 
-    yield knex('Geography').insert({ countryId })
+    const [countryGeographyId] = yield knex('Geography').insert({ countryId })
+    countryData.geographyId = countryGeographyId
 
     for (const state of (country.states || [])) {
       const stateData = _.pick(state, ['abbreviation', 'name'])
@@ -1324,12 +1305,8 @@ function* seed(knex) {
       countryData.states[stateKey] = stateData
       stateData.lgas = {}
 
-      // assign org units based on state region
-      const orgUnitId = _.includes(['OH', 'NE'], state.abbreviation) ? regionMidwestId
-        : _.includes(['MA', 'NY'], state.abbreviation) ? regionNortheastId
-        : partnerOneOrgUnitId
-
-      yield knex('Geography').insert({ countryId, stateId })
+      const [stateGeographyId] = yield knex('Geography').insert({ countryId, stateId })
+      stateData.geographyId = stateGeographyId
 
       for (const lga of (state.lgas || [])) {
         const lgaData = _.pick(lga, ['name'])
@@ -1341,13 +1318,13 @@ function* seed(knex) {
 
         const geoData = { countryId, stateId, lgaId }
         const [geographyId] = yield knex('Geography').insert(geoData)
+        lgaData.geographyId = geographyId
         geographies.push(Object.assign({ id: geographyId }, geoData))
 
         // up to 5 of sites at each LGA
         for (const siteNumber of _.range(1, 6 - (lgaData.id % 5))) {
           const siteData = Object.assign({
             partnerId: partnerOneId,
-            orgUnitId,
             geographyId,
             externalId: `${state.name}_${siteNumber}`,
             name: `${lga.name} ${country.lgaLabel} ${state.name} #${siteNumber}`,
@@ -1366,6 +1343,7 @@ function* seed(knex) {
 
   // Users
   const userIds = {}
+  const personIds = {}
   for (const name of ['Admin', 'Bill', 'Bob', 'Frank', 'Ed', 'Fred',
     'Jason', 'Jim', 'Jon', 'Ned', 'Sam', 'Steve']) {
     let userId
@@ -1392,7 +1370,7 @@ function* seed(knex) {
     const timezone = _.includes(['Jim', 'Sam'], name) ? countries.NG.timezone : countries.US.timezone
     const culture = _.includes(['Jim', 'Sam'], name) ? countries.NG.culture : countries.US.culture
 
-    yield knex('Person').insert(Object.assign({
+    const [personId] = yield knex('Person').insert(Object.assign({
       userId,
       name,
       lastPartnerId,
@@ -1401,6 +1379,7 @@ function* seed(knex) {
       culture,
       geographyId: geographies[geographies.length % userId].id
     }, auditFields))
+    personIds[name.toLowerCase()] = personId
   }
 
   // insert some routers with sims:
@@ -1413,7 +1392,6 @@ function* seed(knex) {
       deviceTypeId: deviceTypeIdRouter,
       deviceStatusId: deviceStatusApproved,
       partnerId: siteData.partnerId,
-      orgUnitId: siteData.orgUnitId,
       geographyId: siteData.geographyId,
       siteId: siteData.id,
       createdOn: new Date(+now - (3 * i * millisInHour)),
@@ -1459,7 +1437,6 @@ function* seed(knex) {
         }
       }),
       partnerId: siteData.partnerId,
-      orgUnitId: siteData.orgUnitId,
       geographyId: siteData.geographyId,
       siteId: siteData.id,
       // not all sites will have a router - we only added routers to some site
@@ -1482,7 +1459,6 @@ function* seed(knex) {
       token: randomToken(),
       revoked: 0,
       partnerId: siteData.partnerId,
-      orgUnitId: siteData.orgUnitId,
       geographyId: siteData.geographyId,
       siteId: siteData.id,
       deviceId: device.id
@@ -1520,7 +1496,6 @@ function* seed(knex) {
         firmwareUpdateRequired: 'no'
       }),
       partnerId: siteData.partnerId,
-      orgUnitId: siteData.orgUnitId,
       geographyId: siteData.geographyId,
       siteId: siteData.id,
       // not all sites will have a router - we only added routers to some site
@@ -1543,7 +1518,6 @@ function* seed(knex) {
       token: randomToken(),
       revoked: 0,
       partnerId: siteData.partnerId,
-      orgUnitId: siteData.orgUnitId,
       geographyId: siteData.geographyId,
       siteId: siteData.id,
       deviceId: device.id
@@ -1692,7 +1666,6 @@ function* seed(knex) {
       externalId: `UQTB-${i}`,
       assayId: assayMtbRifId,
       partnerId: partnerOneId,
-      orgUnitId: partnerOneOrgUnitId,
       geographyId: siteData.geographyId,
       siteId: siteData.id,
       deviceId: device.id,
@@ -1808,7 +1781,6 @@ function* seed(knex) {
       externalId: `UQEB-${i}`,
       assayId: assayEbolaId,
       partnerId: partnerOneId,
-      orgUnitId: partnerOneOrgUnitId,
       geographyId: siteData.geographyId,
       siteId: siteData.id,
       deviceId: device.id,
@@ -1933,7 +1905,6 @@ function* seed(knex) {
       externalId: `UQHIV-${i}`,
       assayId: assayHivVlId,
       partnerId: partnerOneId,
-      orgUnitId: partnerOneOrgUnitId,
       geographyId: siteData.geographyId,
       siteId: siteData.id,
       deviceId: device.id,
@@ -2030,7 +2001,6 @@ function* seed(knex) {
       externalId: `UQ-GX-HCV-${i}`,
       assayId: assayGeneXpertHcvId,
       partnerId: partnerOneId,
-      orgUnitId: partnerOneOrgUnitId,
       geographyId: siteData.geographyId,
       siteId: siteData.id,
       deviceId: device.id,
@@ -2134,7 +2104,6 @@ function* seed(knex) {
       externalId: `UQ-DAK-HIV-${i}`,
       assayId: assayDaktariHivVlId,
       partnerId: partnerOneId,
-      orgUnitId: partnerOneOrgUnitId,
       geographyId: siteData.geographyId,
       siteId: siteData.id,
       deviceId: device.id,
@@ -2238,7 +2207,6 @@ function* seed(knex) {
       externalId: `UQ-DAK-HCV-${i}`,
       assayId: assayDaktariHcvId,
       partnerId: partnerOneId,
-      orgUnitId: partnerOneOrgUnitId,
       geographyId: siteData.geographyId,
       siteId: siteData.id,
       deviceId: device.id,
@@ -2278,152 +2246,96 @@ function* seed(knex) {
     })
   }
 
-  // data filters
-  const [dataFilterIdOH] = yield knex('DataFilter').insert({
-    name: 'Ohio Filter',
-    // TODO specify query constraint format (likely similar to MongoDB)
-    constraint: JSON.stringify({
-      state: {
-        id: countries.US.states.OH.id
-      }
-    })
-  })
-
-  const [dataFilterIdNE] = yield knex('DataFilter').insert({
-    name: 'Nebraska Filter',
-    constraint: JSON.stringify({
-      state: {
-        id: countries.US.states.NE.id
-      }
-    })
-  })
-
-  const [dataFilterIdOHWayne] = yield knex('DataFilter').insert({
-    name: 'Wayne County, OH Filter',
-    constraint: JSON.stringify({
-      lga: {
-        id: countries.US.states.OH.lgas.Wayne.id
-      }
-    })
-  })
-
-  const [dataFilterIdMASuffolk] = yield knex('DataFilter').insert({
-    name: 'Suffolk County, MA Filter',
-    constraint: JSON.stringify({
-      lga: {
-        id: countries.US.states.MA.lgas.Suffolk.id
-      }
-    })
-  })
-
-  // Roles
-  const [roleIdAdmin] = yield knex('Role').insert({
+  // Job Functions
+  const [jobFunctionIdAdmin] = yield knex('JobFunction').insert({
     name: 'Admin',
     partnerId: partnerOneId
   })
 
-  const [roleIdOH] = yield knex('Role').insert({
-    name: 'Ohio Users',
-    partnerId: partnerOneId,
-    dataFilterId: dataFilterIdOH
-  })
-  const [roleIdNE] = yield knex('Role').insert({
-    name: 'Nebraska Users',
-    partnerId: partnerOneId,
-    dataFilterId: dataFilterIdNE
+  const [jobFunctionIdManager] = yield knex('JobFunction').insert({
+    name: 'Manager',
+    partnerId: partnerOneId
   })
 
-  const [roleIdOHWayne] = yield knex('Role').insert({
-    name: 'Wayne County, OH Users',
-    partnerId: partnerOneId,
-    dataFilterId: dataFilterIdOHWayne
+  const [jobFunctionIdClinician] = yield knex('JobFunction').insert({
+    name: 'Clinician',
+    partnerId: partnerOneId
   })
 
-  const [roleIdMASuffolk] = yield knex('Role').insert({
-    name: 'Suffolk County, MA Users',
-    partnerId: partnerOneId,
-    dataFilterId: dataFilterIdMASuffolk
-  })
-
-  const [roleIdParentOrgUnit] = yield knex('Role').insert({
-    name: 'Partner One Users',
-    partnerId: partnerOneId,
-    orgUnitId: partnerOneOrgUnitId
-  })
-
-  const [roleIdNortheast] = yield knex('Role').insert({
-    name: 'Northeast Users',
-    partnerId: partnerOneId,
-    orgUnitId: regionNortheastId
-  })
-
-  const [roleIdMidwest] = yield knex('Role').insert({
-    name: 'Midwest Users',
-    partnerId: partnerOneId,
-    orgUnitId: regionMidwestId
-  })
-
-  const [roleIdPartnerTwo] = yield knex('Role').insert({
-    name: 'Partner Two Users',
+  const [jobFunctionIdPartnerTwo] = yield knex('JobFunction').insert({
+    name: 'Lab Manager',
     partnerId: partnerTwoId
   })
 
-  // assign permissions to roles
-  yield knex('RolePermission').insert([
-    { roleId: roleIdAdmin, permissionId: modules.demo.admin },
-    { roleId: roleIdAdmin, permissionId: modules.deviceApiKey.admin },
-    { roleId: roleIdAdmin, permissionId: modules.device.admin },
-    { roleId: roleIdAdmin, permissionId: modules.person.admin },
-    { roleId: roleIdAdmin, permissionId: modules.result.admin },
-    { roleId: roleIdAdmin, permissionId: modules.site.admin },
-    { roleId: roleIdAdmin, permissionId: modules.assay.admin },
-    { roleId: roleIdAdmin, permissionId: modules.inventory.admin },
-    { roleId: roleIdAdmin, permissionId: modules.notification.admin },
-    { roleId: roleIdAdmin, permissionId: modules.report.admin },
+  // assign permissions to job functions
+  yield knex('JobFunctionPermission').insert([
+    { jobFunctionId: jobFunctionIdAdmin, permissionId: modules.demo.admin },
+    { jobFunctionId: jobFunctionIdAdmin, permissionId: modules.deviceApiKey.admin },
+    { jobFunctionId: jobFunctionIdAdmin, permissionId: modules.device.admin },
+    { jobFunctionId: jobFunctionIdAdmin, permissionId: modules.person.admin },
+    { jobFunctionId: jobFunctionIdAdmin, permissionId: modules.result.admin },
+    { jobFunctionId: jobFunctionIdAdmin, permissionId: modules.site.admin },
+    { jobFunctionId: jobFunctionIdAdmin, permissionId: modules.assay.admin },
+    { jobFunctionId: jobFunctionIdAdmin, permissionId: modules.inventory.admin },
+    { jobFunctionId: jobFunctionIdAdmin, permissionId: modules.notification.admin },
+    { jobFunctionId: jobFunctionIdAdmin, permissionId: modules.report.admin },
 
-    // FIXME: result permission for role
+    { jobFunctionId: jobFunctionIdManager, permissionId: modules.site.edit },
+    { jobFunctionId: jobFunctionIdManager, permissionId: modules.device.edit },
+    { jobFunctionId: jobFunctionIdManager, permissionId: modules.assay.edit },
+    { jobFunctionId: jobFunctionIdManager, permissionId: modules.inventory.edit },
 
-    { roleId: roleIdOH, permissionId: modules.site.edit },
-    { roleId: roleIdOH, permissionId: modules.device.edit },
-    { roleId: roleIdOH, permissionId: modules.assay.edit },
-    { roleId: roleIdOH, permissionId: modules.inventory.edit },
+    { jobFunctionId: jobFunctionIdPartnerTwo, permissionId: modules.site.edit },
+    { jobFunctionId: jobFunctionIdPartnerTwo, permissionId: modules.device.edit },
 
-    { roleId: roleIdNE, permissionId: modules.site.edit },
-    { roleId: roleIdNE, permissionId: modules.device.edit },
-
-
-    { roleId: roleIdOHWayne, permissionId: modules.site.view },
-    { roleId: roleIdOHWayne, permissionId: modules.device.view },
-    { roleId: roleIdOHWayne, permissionId: modules.assay.view },
-    { roleId: roleIdOHWayne, permissionId: modules.inventory.view },
-
-    { roleId: roleIdMASuffolk, permissionId: modules.device.view },
-
-    { roleId: roleIdMidwest, permissionId: modules.site.edit },
-    { roleId: roleIdMidwest, permissionId: modules.device.edit },
-
-    { roleId: roleIdNortheast, permissionId: modules.site.edit },
-    { roleId: roleIdNortheast, permissionId: modules.device.edit },
-
-    { roleId: roleIdParentOrgUnit, permissionId: modules.site.edit },
-    { roleId: roleIdParentOrgUnit, permissionId: modules.device.edit },
-
-    { roleId: roleIdPartnerTwo, permissionId: modules.inventory.edit }
+    { jobFunctionId: jobFunctionIdClinician, permissionId: modules.site.view },
+    { jobFunctionId: jobFunctionIdClinician, permissionId: modules.device.view },
+    { jobFunctionId: jobFunctionIdClinician, permissionId: modules.assay.view },
+    { jobFunctionId: jobFunctionIdClinician, permissionId: modules.inventory.view },
   ])
 
-  // assign roles to users
-  yield knex('UserRole').insert([
-    { userId: userIds.admin, roleId: roleIdAdmin },
-    { userId: userIds.bob, roleId: roleIdOH },
-    { userId: userIds.ed, roleId: roleIdMidwest },
-    { userId: userIds.frank, roleId: roleIdNE },
-    { userId: userIds.fred, roleId: roleIdOHWayne },
-    { userId: userIds.jon, roleId: roleIdParentOrgUnit },
-    { userId: userIds.ned, roleId: roleIdNortheast },
-    { userId: userIds.sam, roleId: roleIdAdmin },
-    { userId: userIds.jason, roleId: roleIdPartnerTwo },
-    { userId: userIds.jim, roleId: roleIdParentOrgUnit },
-    { userId: userIds.steve, roleId: roleIdMASuffolk },
-    { userId: userIds.bill, roleId: roleIdMASuffolk },
-    { userId: userIds.bill, roleId: roleIdOH }])
+  // crate jobs for users
+  const jobIdAdmin = yield knex('Job').insert({
+    personId: personIds.admin,
+    jobFunctionId: jobFunctionIdAdmin
+  })
+
+  const jobIdJason = yield knex('Job').insert({
+    personId: personIds.jason,
+    jobFunctionId: jobFunctionIdPartnerTwo
+  })
+
+  const jobIdSam = yield knex('Job').insert({
+    personId: personIds.sam,
+    jobFunctionId: jobFunctionIdAdmin
+  })
+
+  const jobIdBob = yield knex('Job').insert({
+    personId: personIds.bob,
+    jobFunctionId: jobFunctionIdManager
+  })
+  const jobIdFrank = yield knex('Job').insert({
+    personId: personIds.frank,
+    jobFunctionId: jobFunctionIdManager
+  })
+  const jobIdNed = yield knex('Job').insert({
+    personId: personIds.ned,
+    jobFunctionId: jobFunctionIdClinician
+  })
+  const jobIdFred = yield knex('Job').insert({
+    personId: personIds.fred,
+    jobFunctionId: jobFunctionIdClinician
+  })
+
+  // Constrain jobs by context
+  yield knex('JobContext').insert([
+    { jobId: jobIdAdmin, geographyId: countries.US.geographyId },
+    { jobId: jobIdJason, geographyId: countries.US.geographyId },
+    { jobId: jobIdSam, geographyId: countries.NG.geographyId },
+    { jobId: jobIdBob, geographyId: countries.US.states.OH.geographyId },
+    { jobId: jobIdFrank, geographyId: countries.US.states.NE.geographyId },
+    { jobId: jobIdNed, geographyId: countries.US.states.OH.lgas.Wayne.geographyId },
+    { jobId: jobIdFred, geographyId: countries.US.states.OH.lgas.Wayne.geographyId },
+    { jobId: jobIdFred, geographyId: countries.US.states.MA.lgas.Suffolk.geographyId },
+  ])
 }

@@ -39,7 +39,7 @@ describe('Person List Component', () => {
       expect(dataTable.props().selectable).toBe(true)
       expect(dataTable.props().columns).toEqual([
         { db: 'name', title: 'Name' },
-        { db: 'level', title: 'Role', hideOnXs: true },
+        { db: 'level', title: 'Job', hideOnXs: true },
         { db: 'state', title: 'State', hideOnXs: true },
         { db: 'lga', title: 'County', hideOnXs: true }
       ])

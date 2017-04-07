@@ -41,7 +41,7 @@ function* addResult(context) {
   const siteQ = knex('Site as s')
     .join('Device as d', 's.id', 'd.siteId')
     .where({ 'd.id': deviceId })
-    .first('s.id', 's.partnerId', 's.orgUnitId',
+    .first('s.id', 's.partnerId',
       's.geographyId', 's.latitude', 's.longitude')
 
   // Select ResultType if specified, otherwise Patient
@@ -244,7 +244,6 @@ function* addResult(context) {
       externalId: payload.id,
       deviceId,
       partnerId: site.partnerId,
-      orgUnitId: site.orgUnitId,
       geographyId: site.geographyId,
       siteId: site.id,
       createdOn: now

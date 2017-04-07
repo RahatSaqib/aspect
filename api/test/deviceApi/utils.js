@@ -232,7 +232,7 @@ class DeviceApiTestContext {
   * createApiKey(knex, siteName = null) {
     const site = siteName == null ? null : yield knex('Site')
       .where({ externalId: siteName, partnerId: this.partnerId })
-      .first('id', 'partnerId', 'orgUnitId', 'geographyId')
+      .first('id', 'partnerId', 'geographyId')
     if (siteName != null && site == null) {
       assert.isOk(siteName, `Cannot find site ${siteName}`)
     }
@@ -241,7 +241,6 @@ class DeviceApiTestContext {
       token: apiKey.token,
       revoked: 0,
       partnerId: this.partnerId,
-      orgUnitId: site ? site.orgUnitId : null,
       geographyId: site ? site.geographyId : null,
       siteId: site ? site.id : null,
       createdOn: this.now,
