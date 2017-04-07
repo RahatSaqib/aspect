@@ -182,9 +182,18 @@ function* seed(knex) {
   }, auditFields))
 
   const [jobFunctionIdAdmin] = yield knex('JobFunction').insert({
-    name: 'RRT Admin',
+    name: 'Admin',
     partnerId
   })
+
+  const [jobFunctionIdLabAdmin] = yield knex('JobFunction').insert({
+    name: 'Lab Admin',
+    partnerId
+  })
+  yield knex('JobFunctionPermission').insert([
+    { jobFunctionId: jobFunctionIdLabAdmin, permissionId: modules.device.admin },
+    { jobFunctionId: jobFunctionIdLabAdmin, permissionId: modules.result.admin }])
+
 
   yield knex('JobFunctionPermission').insert([
     { jobFunctionId: jobFunctionIdAdmin, permissionId: modules.demo.admin },
@@ -257,15 +266,6 @@ function* seed(knex) {
       culture,
       timezone
     }, auditFields))
-
-    const [jobFunctionIdLabAdmin] = yield knex('JobFunction').insert({
-      name: `${lab.shortname} Admin`,
-      partnerId
-    })
-
-    yield knex('JobFunctionPermission').insert([
-      { jobFunctionId: jobFunctionIdLabAdmin, permissionId: modules.device.admin },
-      { jobFunctionId: jobFunctionIdLabAdmin, permissionId: modules.result.admin }])
 
     const [jobIdLabAdmin] = yield knex('Job').insert([
       { personId: labAdminPersonId, jobFunctionId: jobFunctionIdLabAdmin }])
