@@ -865,6 +865,31 @@ function* seed(knex) {
     })
   })
 
+  // Result source
+  const [resultSourceDiagnosticId] = yield knex('ResultSource').insert({
+    name: 'Diagnostic Device',
+    i18nKey: 'resultSourceDiagnostic',
+    externalId: 'DiagnosticDevice'
+  })
+
+  yield knex('ResultSource').insert({
+    name: 'LIMS',
+    i18nKey: 'resultSourceLims',
+    externalId: 'LIMS'
+  })
+
+  yield knex('ResultSource').insert({
+    name: 'Other System',
+    i18nKey: 'resultSourceOtherSystem',
+    externalId: 'OtherSystem'
+  })
+
+  yield knex('ResultSource').insert({
+    name: 'Entered by Hand',
+    i18nKey: 'resultSourceEnteredByHand',
+    externalId: 'EnteredByHand'
+  })
+
   // Result types
   const [resultTypePatientId] = yield knex('ResultType').insert({
     name: 'Patient',
@@ -1699,6 +1724,7 @@ function* seed(knex) {
       resultWorkflowStatusId: ordered,
       longitude: -81.581222,
       latitude: 28.419348,
+      resultSourceId: resultSourceDiagnosticId,
       resultTypeId: resultTypePatientId,
       sampleId: sample.id,
       sampleRunNumber: `${(i % 2) + 1}`,
@@ -1815,6 +1841,7 @@ function* seed(knex) {
       resultWorkflowStatusId: processed,
       longitude: -81.581222,
       latitude: 28.419348,
+      resultSourceId: resultSourceDiagnosticId,
       resultTypeId: resultTypePatientId,
       sampleId: sample.id,
       sampleRunNumber: `${(i % 2) + 1}`,
@@ -1940,6 +1967,7 @@ function* seed(knex) {
       resultWorkflowStatusId: resultStatus,
       longitude: -81.581222,
       latitude: 28.419348,
+      resultSourceId: resultSourceDiagnosticId,
       resultTypeId: resultTypePatientId,
       sampleId: sample.id,
       sampleRunNumber: `${(i % 2) + 1}`,
@@ -2037,6 +2065,7 @@ function* seed(knex) {
       resultWorkflowStatusId: processed,
       longitude: -81.581222,
       latitude: 28.419348,
+      resultSourceId: resultSourceDiagnosticId,
       resultTypeId: resultTypePatientId,
       sampleId: sample.id,
       sampleRunNumber: `${(i % 2) + 1}`,
@@ -2141,6 +2170,7 @@ function* seed(knex) {
       resultWorkflowStatusId: acknowledged,
       longitude: -81.581222,
       latitude: 28.419348,
+      resultSourceId: resultSourceDiagnosticId,
       resultTypeId: resultTypePatientId,
       sampleId: sample.id,
       sampleRunNumber: `${(i % 2) + 1}`,
@@ -2245,6 +2275,7 @@ function* seed(knex) {
       resultWorkflowStatusId: acknowledged,
       longitude: -81.581222,
       latitude: 28.419348,
+      resultSourceId: resultSourceDiagnosticId,
       resultTypeId: resultTypePatientId,
       sampleId: sample.id,
       sampleRunNumber: `${(i % 2) + 1}`,
