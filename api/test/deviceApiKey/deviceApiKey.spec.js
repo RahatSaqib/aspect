@@ -28,6 +28,7 @@ describe('Device routes', () => {
         assert.property(res.body.data[0], 'partner')
         assert.property(res.body.data[0], 'country')
         assert.property(res.body.data[0], 'site')
+        assert.property(res.body.data[0], 'device')
         assert.property(res.body.data[0], 'revoked')
         assert.property(res.body, 'total')
         done()
