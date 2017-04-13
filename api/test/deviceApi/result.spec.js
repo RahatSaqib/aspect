@@ -269,6 +269,11 @@ describe('Device Result API routes', () => {
             address: '123 Main Street',
             phone: '856-7909'
           },
+          oemData: {
+            maker: 'XYZ',
+            model: '876A',
+            serial: '123-456-789'
+          },
           sender: {
             version: '99-1',
             operator: 'Bob O'
@@ -328,6 +333,11 @@ describe('Device Result API routes', () => {
         dateOfBirth: '1903-05-29T00:00:00.000Z',
         address: '123 Main Street',
         phone: '856-7909'
+      })
+      assert.deepEqual(JSON.parse(result2.oemData), {
+        maker: 'XYZ',
+        model: '876A',
+        serial: '123-456-789'
       })
       assert.equal(result2.senderVersion, '99-1')
       assert.equal(result2.senderOperator, 'Bob O')
@@ -786,6 +796,11 @@ describe('Device Result API routes', () => {
             address: '123 Main Street',
             phone: '856-7909'
           },
+          oemData: {
+            maker: 'ABC',
+            model: '123A',
+            serial: '123-456-789'
+          },
           sender: {
             version: '99-1',
             operator: 'Bob O'
@@ -830,6 +845,11 @@ describe('Device Result API routes', () => {
         dateOfBirth: '1903-05-29T00:00:00.000Z',
         address: '123 Main Street',
         phone: '856-7909'
+      })
+      assert.deepEqual(JSON.parse(result2.oemData), {
+        maker: 'ABC',
+        model: '123A',
+        serial: '123-456-789'
       })
       assert.equal(result2.senderVersion, '99-1')
       assert.equal(result2.senderOperator, 'Bob O')
