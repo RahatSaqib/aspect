@@ -7,7 +7,7 @@ const saltRounds = parseInt(config.passwordSaltRounds, 10)
 
 function* seed(knex) {
   // Skip this seed file if we already have an admin user
-  const existingAdminUser = yield knex('User').where({ name: 'bluesense' }).first('id')
+  const existingAdminUser = yield knex('User').where({ name: 'blusense' }).first('id')
   if (existingAdminUser) {
     return
   }
@@ -15,8 +15,8 @@ function* seed(knex) {
   // Create admin user and audit fields
   const now = new Date()
   const [adminId] = yield knex('User').insert({
-    name: 'bluesense',
-    password: bcrypt.hashSync('blue2017', saltRounds),
+    name: 'blusense',
+    password: bcrypt.hashSync('blu2017', saltRounds),
     approved: 1,
     createdOn: now,
     lockedOut: 0,
@@ -32,23 +32,23 @@ function* seed(knex) {
   // Reuse previously seeded "static" data
   const partnerTypes = yield rowsAsObject(knex, 'PartnerType')
   const [partnerId] = yield knex('Partner').insert({
-    name: 'BlueSense',
+    name: 'BluSense',
     partnerTypeId: partnerTypes.Operating.id,
     deviceLogHistoryDays: 365
   })
   const deviceTypeCategories = yield rowsAsObject(knex, 'DeviceTypeCategory')
   const assayTypes = yield rowsAsObject(knex, 'AssayType')
 
-  // Bluesense Device Type
+  // BluSense Device Type
   const [deviceTypeId] = yield knex('DeviceType').insert({
     name: 'BluBox',
-    manufacturer: 'BlueSense',
+    manufacturer: 'BluSense',
     deviceTypeCategoryId: deviceTypeCategories.Lab.id,
   })
 
   yield knex('Assay').insert({
-    name: 'BlueSense Dengue',
-    i18nKey: 'assayBluesenseDengue',
+    name: 'BluSense Dengue',
+    i18nKey: 'assayBlusenseDengue',
     externalId: 'Dengue',
     assayTypeId: assayTypes.Dengue.id,
     deviceTypeId,
@@ -62,8 +62,8 @@ function* seed(knex) {
   })
 
   yield knex('Assay').insert({
-    name: 'BlueSense Zika',
-    i18nKey: 'assayBluesenseZika',
+    name: 'BluSense Zika',
+    i18nKey: 'assayBlusenseZika',
     externalId: 'Zika',
     assayTypeId: assayTypes.Zika.id,
     deviceTypeId,
@@ -98,10 +98,10 @@ function* seed(knex) {
     .whereNull('lgaId')
     .first()
 
-  // Permissions for BlueSense Admin
+  // Permissions for BluSense Admin
   const [adminPersonId] = yield knex('Person').insert(Object.assign({
     userId: adminId,
-    name: 'BlueSense Admin',
+    name: 'BluSense Admin',
     lastPartnerId: partnerId,
     lastCountryId: countryId,
     geographyId,
@@ -118,7 +118,6 @@ function* seed(knex) {
     { jobFunctionId: jobFunctionIdAdmin, permissionId: modules.demo.admin },
     { jobFunctionId: jobFunctionIdAdmin, permissionId: modules.device.admin },
     { jobFunctionId: jobFunctionIdAdmin, permissionId: modules.deviceApiKey.admin },
-    { jobFunctionId: jobFunctionIdAdmin, permissionId: modules.person.admin },
     { jobFunctionId: jobFunctionIdAdmin, permissionId: modules.result.admin },
     { jobFunctionId: jobFunctionIdAdmin, permissionId: modules.site.admin },
     { jobFunctionId: jobFunctionIdAdmin, permissionId: modules.assay.admin }])
