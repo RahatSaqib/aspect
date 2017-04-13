@@ -51,7 +51,7 @@ import styles from './ListFilter.css'
 
 const messages = defineMessages({
   clearTooltip: {
-    id: 'shared.ListFilter.clear',
+    id: 'shared.ListFilter.clearTooltip',
     defaultMessage: 'Clear Filters'
   },
   save: {
