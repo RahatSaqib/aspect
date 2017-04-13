@@ -4,6 +4,13 @@ import webpack from 'webpack'
 import CaseSensitivePathsPlugin from 'case-sensitive-paths-webpack-plugin'
 import pxToRem from 'postcss-pxtorem'
 
+const postcssPlugins = () => ([
+  pxToRem({
+    // See available options: https://github.com/cuth/postcss-pxtorem#options
+    rootValue: 16
+  })
+])
+
 export default {
   entry: './src/index',
   output: {
@@ -12,53 +19,141 @@ export default {
     publicPath: '/assets/',
   },
   resolve: {
-    extensions: ['', '.js', '.jsx']
+    extensions: ['.json', '.js', '.jsx']
   },
   module: {
-    // preLoaders: [{
-    //   test: /\.(js|jsx)$/,
-    //   include: srcPath,
-    //   loader: 'eslint-loader'
-    // }],
-    loaders: [
+    rules: [
+      // {
+      //   test: /\.(js|jsx)$/,
+      //   enforce: 'pre',
+      //   use: 'eslint-loader'
+      // },
       {
         test: /\.(js|jsx)$/,
-        loader: 'babel-loader',
-        include: [
-          path.join(__dirname, '../../src')
-        ]
-      },
-      {
-        test: /\.json$/,
-        loader: 'json-loader'
+        use: 'babel-loader'
       },
       {
         test: /\.css$/,
-        loader: 'style-loader!css-loader?modules!postcss-loader'
+        use: [
+          'style-loader',
+          {
+            loader: 'css-loader',
+            options: {
+              modules: true,
+              importLoaders: 1
+            }
+          },
+          {
+            loader: 'postcss-loader',
+            options: {
+              plugins: postcssPlugins
+            }
+          }
+        ]
       },
       {
         test: /\.sass/,
-        loader: 'style-loader!css-loader!postcss-loader!sass-loader?outputStyle=expanded&indentedSyntax'
+        use: [
+          'style-loader',
+          {
+            loader: 'css-loader',
+            options: {
+              importLoaders: 1
+            }
+          },
+          {
+            loader: 'postcss-loader',
+            options: {
+              plugins: postcssPlugins
+            }
+          },
+          {
+            loader: 'sass-loader',
+            options: {
+              indentedSyntax: true,
+              outputStyle: 'expanded'
+            }
+          }
+        ]
       },
       {
         test: /\.scss/,
-        loader: 'style-loader!css-loader!postcss-loader!sass-loader?outputStyle=expanded'
+        use: [
+          'style-loader',
+          {
+            loader: 'css-loader',
+            options: {
+              importLoaders: 1
+            }
+          },
+          {
+            loader: 'postcss-loader',
+            options: {
+              plugins: postcssPlugins
+            }
+          },
+          {
+            loader: 'sass-loader',
+            options: {
+              outputStyle: 'expanded'
+            }
+          }
+        ]
       },
       {
         test: /\.less/,
-        loader: 'style-loader!css-loader!postcss-loader!less-loader'
+        use: [
+          'style-loader',
+          {
+            loader: 'css-loader',
+            options: {
+              importLoaders: 1
+            }
+          },
+          {
+            loader: 'postcss-loader',
+            options: {
+              plugins: postcssPlugins
+            }
+          },
+          'less-loader'
+        ]
       },
       {
         test: /\.styl/,
-        loader: 'style-loader!css-loader!postcss-loader!stylus-loader'
+        use: [
+          'style-loader',
+          {
+            loader: 'css-loader',
+            options: {
+              importLoaders: 1
+            }
+          },
+          {
+            loader: 'postcss-loader',
+            options: {
+              plugins: postcssPlugins
+            }
+          },
+          'stylus-loader'
+        ]
       },
       {
         test: /\.(png|jpg|gif|woff|woff2)$/,
-        loader: 'url-loader?limit=8192'
+        use: [
+          {
+            loader: 'url-loader',
+            options: {
+              limit: 8192
+            }
+          }
+        ]
       },
       {
         test: /\.(mp4|ogg|svg)$/,
-        loader: 'file-loader'
+        use: [
+          'file-loader'
+        ]
       }
     ]
   },
@@ -67,15 +162,6 @@ export default {
       context: path.join(__dirname, '../../src'),
       manifest: require('../../src/template/dll.vendor.manifest.json')
     }),
-    new webpack.NoErrorsPlugin(),
     new CaseSensitivePathsPlugin()
-  ],
-  postcss() {
-    return [
-      pxToRem({
-        // See available options: https://github.com/cuth/postcss-pxtorem#options
-        rootValue: 16
-      })
-    ]
-  }
+  ]
 }

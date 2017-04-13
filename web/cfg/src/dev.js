@@ -5,7 +5,6 @@ import baseConfig from './base'
 
 export default {
   ...baseConfig,
-  debug: true,
   cache: true,
   devtool: 'inline-source-map',
   devServer: {
@@ -22,11 +21,13 @@ export default {
   },
   module: {
     ...baseConfig.module,
-    loaders: [
-      ...baseConfig.module.loaders,
+    rules: [
+      ...baseConfig.module.rules,
       {
         test: /\.(ico)$/,
-        loader: 'null-loader'
+        use: [
+          'null-loader'
+        ]
       }
     ]
   },
@@ -34,6 +35,9 @@ export default {
     ...baseConfig.plugins,
     new webpack.DefinePlugin({
       'process.env.ASPECT_ENV': '"dev"'
-    })
+    }),
+    new webpack.LoaderOptionsPlugin({
+      debug: true
+    }),
   ]
 }

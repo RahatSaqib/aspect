@@ -14,11 +14,13 @@ export default {
   devtool: 'sourcemap',
   module: {
     ...baseConfig.module,
-    loaders: [
-      ...baseConfig.module.loaders,
+    rules: [
+      ...baseConfig.module.rules,
       {
         test: /\.(ico)$/,
-        loader: 'static-loader'
+        use: [
+          'static-loader'
+        ]
       }
     ]
   },
@@ -28,10 +30,12 @@ export default {
       'process.env.NODE_ENV': '"production"',
       'process.env.ASPECT_ENV': '"dist"'
     }),
-    new webpack.optimize.DedupePlugin(),
+    new webpack.LoaderOptionsPlugin({
+      minimize: true
+    }),
+    new webpack.NoEmitOnErrorsPlugin(),
     new webpack.optimize.UglifyJsPlugin(),
     new webpack.optimize.AggressiveMergingPlugin(),
-    new webpack.optimize.OccurenceOrderPlugin(),
 
     new ManifestPlugin(),
     new ChunkManifestPlugin({
