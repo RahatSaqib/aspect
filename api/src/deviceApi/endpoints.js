@@ -163,6 +163,8 @@ const resultPayload = {
     operator: Joi.string().allow('', null).description(
       'The person who completed the test')
   }),
+  oemData: Joi.object().description(
+    'Proprietary data for OEM'),
   notes: Joi.string().allow('', null).description(
     'Any additional notes associated with this result'),
   error: errorPayload
