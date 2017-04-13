@@ -167,6 +167,10 @@ function* addResult(context) {
     ? JSON.stringify(payload.patient)
     : _.get(existingResult, 'patientData')
 
+  const oemData = _.has(payload, 'oemData')
+    ? JSON.stringify(payload.oemData)
+    : _.get(existingResult, 'oemData')
+
   const result = {
     latitude: _.get(
       payload, 'location.latitude',
@@ -211,6 +215,7 @@ function* addResult(context) {
     moduleName: _.get(
       payload, 'instrument.module.name',
       _.get(existingResult, 'moduleName', null)),
+    oemData,
     researchId: _.get(
       payload, 'research.id',
       _.get(existingResult, 'researchId', null)),
@@ -299,8 +304,8 @@ function* getResult(context) {
     .where('dl.id', deviceLog.id)
     .first(
       'r.externalId as resultExternalId', 'r.resultData', 'r.patientData',
-      'r.startedOn', 'r.endedOn', 'r.updatedOn', 'r.researchId', 'r.notes',
-      'r.senderVersion', 'r.senderOperator', 'r.errorCode', 'r.errorNotes',
+      'r.oemData', 'r.startedOn', 'r.endedOn', 'r.updatedOn', 'r.researchId',
+      'r.notes', 'r.senderVersion', 'r.senderOperator', 'r.errorCode', 'r.errorNotes',
       'r.consumableSerial', 'r.consumableExpirationDate', 'r.consumableLot',
       'r.instrumentSerial', 'r.moduleName', 'r.moduleSerial', 'r.id as resultId',
       'a.externalId as assayId', 'r.assayVersion',
@@ -419,6 +424,10 @@ function* getResult(context) {
 
   if (row.patientData != null) {
     result.patient = JSON.parse(row.patientData)
+  }
+
+  if (row.oemData != null) {
+    result.oemData = JSON.parse(row.oemData)
   }
 
   const sender = { version: row.senderVersion, operator: row.senderOperator }
