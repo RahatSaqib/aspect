@@ -37,15 +37,43 @@ function* seed(knex) {
     deviceLogHistoryDays: 365
   })
   const deviceTypeCategories = yield rowsAsObject(knex, 'DeviceTypeCategory')
+  const assayTypes = yield rowsAsObject(knex, 'AssayType')
 
   // Bluesense Device Type
-  yield knex('DeviceType').insert({
+  const [deviceTypeId] = yield knex('DeviceType').insert({
     name: 'BluBox',
     manufacturer: 'BlueSense',
     deviceTypeCategoryId: deviceTypeCategories.Lab.id,
   })
 
-  // FIXME Assays
+  yield knex('Assay').insert({
+    name: 'BlueSense Dengue',
+    i18nKey: 'assayBluesenseDengue',
+    externalId: 'Dengue',
+    assayTypeId: assayTypes.Dengue.id,
+    deviceTypeId,
+    resultDataSchema: JSON.stringify({
+      resultText: {
+        title: 'Result Text',
+        type: 'string'
+      }
+    })
+
+  })
+
+  yield knex('Assay').insert({
+    name: 'BlueSense Zika',
+    i18nKey: 'assayBluesenseZika',
+    externalId: 'Zika',
+    assayTypeId: assayTypes.Zika.id,
+    deviceTypeId,
+    resultDataSchema: JSON.stringify({
+      resultText: {
+        title: 'Result Text',
+        type: 'string'
+      }
+    })
+  })
 
   const modules = yield knex('Permission')
     .reduce((memo, row) => {
