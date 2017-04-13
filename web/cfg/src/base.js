@@ -30,7 +30,26 @@ export default {
       // },
       {
         test: /\.(js|jsx)$/,
-        use: 'babel-loader'
+        use: [
+          {
+            loader: 'babel-loader',
+            options: {
+              "presets": [
+                [
+                  "env", {
+                    "modules": false,
+                    "useBuiltIns": true,
+                    "targets": {
+                      "browsers": ["last 2 versions"]
+                    }
+                  }
+                ],
+                "stage-1",
+                "react"
+              ]
+            }
+          }
+        ]
       },
       {
         test: /\.css$/,
