@@ -165,6 +165,8 @@ const resultPayload = {
   }),
   oemData: Joi.object().description(
     'Proprietary data for OEM'),
+  rawData: Joi.object().description(
+    'Field for sending raw data directly from a device'),
   notes: Joi.string().allow('', null).description(
     'Any additional notes associated with this result'),
   error: errorPayload
