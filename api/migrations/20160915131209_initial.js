@@ -435,6 +435,7 @@ function* up(knex) {
     result.string('senderOperator')
     result.string('notes', 2000)
     result.specificType('oemData', 'JSON')
+    result.specificType('rawData', 'JSON')
     result.string('errorCode')
     result.string('errorNotes', 2000)
     addCreateFieldsNullable(result)
