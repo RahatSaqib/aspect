@@ -274,6 +274,24 @@ describe('Device Result API routes', () => {
             model: '876A',
             serial: '123-456-789'
           },
+          rawData: {
+            startedOn: '2013-05-13',
+            endedOn: '2013-12-01T01:30',
+            patientData: {
+              id: 'P-333',
+              name: 'Bob',
+              surname: 'Hope',
+              gender: 'M',
+              age: 72,
+              dateOfBirth: '1903-05-29',
+              address: '123 Main Street',
+              phone: '856-7909'
+            },
+            location: {
+              longitude: -87.581222,
+              latitude: 30.419348
+            }
+          },
           sender: {
             version: '99-1',
             operator: 'Bob O'
@@ -338,6 +356,24 @@ describe('Device Result API routes', () => {
         maker: 'XYZ',
         model: '876A',
         serial: '123-456-789'
+      })
+      assert.deepEqual(JSON.parse(result2.rawData), {
+        startedOn: '2013-05-13',
+        endedOn: '2013-12-01T01:30',
+        patientData: {
+          id: 'P-333',
+          name: 'Bob',
+          surname: 'Hope',
+          gender: 'M',
+          age: 72,
+          dateOfBirth: '1903-05-29',
+          address: '123 Main Street',
+          phone: '856-7909'
+        },
+        location: {
+          longitude: -87.581222,
+          latitude: 30.419348
+        }
       })
       assert.equal(result2.senderVersion, '99-1')
       assert.equal(result2.senderOperator, 'Bob O')
@@ -433,6 +469,24 @@ describe('Device Result API routes', () => {
           maker: 'XYZ',
           model: '876A',
           serial: '123-456-789'
+        },
+        rawData: {
+          startedOn: '2013-05-13',
+          endedOn: '2013-12-01T01:30',
+          patientData: {
+            id: 'P-333',
+            name: 'Bob',
+            surname: 'Hope',
+            gender: 'M',
+            age: 72,
+            dateOfBirth: '1903-05-29',
+            address: '123 Main Street',
+            phone: '856-7909'
+          },
+          location: {
+            longitude: -87.581222,
+            latitude: 30.419348
+          }
         },
         sender: {
           version: '99-1',
@@ -538,6 +592,24 @@ describe('Device Result API routes', () => {
               maker: 'XYZ',
               model: '876A',
               serial: '123-456-789'
+            },
+            rawData: {
+              startedOn: '2013-05-13',
+              endedOn: '2013-12-01T01:30',
+              patientData: {
+                id: 'P-333',
+                name: 'Bob',
+                surname: 'Hope',
+                gender: 'M',
+                age: 72,
+                dateOfBirth: '1903-05-29',
+                address: '123 Main Street',
+                phone: '856-7909'
+              },
+              location: {
+                longitude: -87.581222,
+                latitude: 30.419348
+              }
             },
             sender: {
               version: '99-1',
@@ -811,6 +883,24 @@ describe('Device Result API routes', () => {
             model: '123A',
             serial: '123-456-789'
           },
+          rawData: {
+            startedOn: '2013-05-13',
+            endedOn: '2013-12-01T01:30',
+            patientData: {
+              id: 'P-333',
+              name: 'Bob',
+              surname: 'Hope',
+              gender: 'M',
+              age: 72,
+              dateOfBirth: '1903-05-29',
+              address: '123 Main Street',
+              phone: '856-7909'
+            },
+            location: {
+              longitude: -87.581222,
+              latitude: 30.419348
+            }
+          },
           sender: {
             version: '99-1',
             operator: 'Bob O'
@@ -860,6 +950,24 @@ describe('Device Result API routes', () => {
         maker: 'ABC',
         model: '123A',
         serial: '123-456-789'
+      })
+      assert.deepEqual(JSON.parse(result2.rawData), {
+        startedOn: '2013-05-13',
+        endedOn: '2013-12-01T01:30',
+        patientData: {
+          id: 'P-333',
+          name: 'Bob',
+          surname: 'Hope',
+          gender: 'M',
+          age: 72,
+          dateOfBirth: '1903-05-29',
+          address: '123 Main Street',
+          phone: '856-7909'
+        },
+        location: {
+          longitude: -87.581222,
+          latitude: 30.419348
+        }
       })
       assert.equal(result2.senderVersion, '99-1')
       assert.equal(result2.senderOperator, 'Bob O')
@@ -1076,7 +1184,6 @@ describe('Device Result API routes', () => {
           const inventoryItemsBefore = yield getInventoryItemsAtSite(knex, siteId)
           const firstCartridgeConsumable = _.find(inventoryItemsBefore,
             { consumableId: cartridgeId })
-
           const assayConsumables = yield knex('ConsumableAssay as ca')
             .join('Assay as a', 'ca.assayId', 'a.id')
             .where('a.externalId', resultDetails.assayExternalId)
