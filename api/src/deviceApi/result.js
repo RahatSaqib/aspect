@@ -171,6 +171,10 @@ function* addResult(context) {
     ? JSON.stringify(payload.oemData)
     : _.get(existingResult, 'oemData')
 
+  const rawData = _.has(payload, 'rawData')
+    ? JSON.stringify(payload.rawData)
+    : _.get(existingResult, 'rawData')
+
   const result = {
     latitude: _.get(
       payload, 'location.latitude',
@@ -216,6 +220,7 @@ function* addResult(context) {
       payload, 'instrument.module.name',
       _.get(existingResult, 'moduleName', null)),
     oemData,
+    rawData,
     researchId: _.get(
       payload, 'research.id',
       _.get(existingResult, 'researchId', null)),
@@ -308,7 +313,7 @@ function* getResult(context) {
       'r.notes', 'r.senderVersion', 'r.senderOperator', 'r.errorCode', 'r.errorNotes',
       'r.consumableSerial', 'r.consumableExpirationDate', 'r.consumableLot',
       'r.instrumentSerial', 'r.moduleName', 'r.moduleSerial', 'r.id as resultId',
-      'a.externalId as assayId', 'r.assayVersion',
+      'a.externalId as assayId', 'r.assayVersion', 'r.rawData',
       'r.latitude', 'r.longitude', 'rt.externalId as resultTypeId',
       'rs.externalId as resultWorkflowStatusId', 'r.sampleRunNumber',
       's.externalId as sampleId', 's.collectedOn as sampleCollectedOn',
@@ -428,6 +433,10 @@ function* getResult(context) {
 
   if (row.oemData != null) {
     result.oemData = JSON.parse(row.oemData)
+  }
+
+  if (row.rawData != null) {
+    result.rawData = JSON.parse(row.rawData)
   }
 
   const sender = { version: row.senderVersion, operator: row.senderOperator }
