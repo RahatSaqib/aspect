@@ -275,12 +275,12 @@ describe('Device Result API routes', () => {
             address: '123 Main Street',
             phone: '856-7909'
           },
-          oemData: {
+          oemData: JSON.stringify({
             maker: 'XYZ',
             model: '876A',
             serial: '123-456-789'
-          },
-          rawData: {
+          }),
+          rawData: JSON.stringify({
             startedOn: '2013-05-13',
             endedOn: '2013-12-01T01:30',
             patientData: {
@@ -297,7 +297,7 @@ describe('Device Result API routes', () => {
               longitude: -87.581222,
               latitude: 30.419348
             }
-          },
+          }),
           sender: {
             version: '99-1',
             operator: 'Bob O'
@@ -476,12 +476,12 @@ describe('Device Result API routes', () => {
           address: '123 Main Street',
           phone: '856-7909'
         },
-        oemData: {
+        oemData: JSON.stringify({
           maker: 'XYZ',
           model: '876A',
           serial: '123-456-789'
-        },
-        rawData: {
+        }),
+        rawData: JSON.stringify({
           startedOn: '2013-05-13',
           endedOn: '2013-12-01T01:30',
           patientData: {
@@ -498,7 +498,7 @@ describe('Device Result API routes', () => {
             longitude: -87.581222,
             latitude: 30.419348
           }
-        },
+        }),
         sender: {
           version: '99-1',
           operator: 'Bob O'
@@ -600,12 +600,12 @@ describe('Device Result API routes', () => {
               address: '123 Main Street',
               phone: '856-7909'
             },
-            oemData: {
+            oemData: JSON.stringify({
               maker: 'XYZ',
               model: '876A',
               serial: '123-456-789'
-            },
-            rawData: {
+            }),
+            rawData: JSON.stringify({
               startedOn: '2013-05-13',
               endedOn: '2013-12-01T01:30',
               patientData: {
@@ -622,7 +622,7 @@ describe('Device Result API routes', () => {
                 longitude: -87.581222,
                 latitude: 30.419348
               }
-            },
+            }),
             sender: {
               version: '99-1',
               operator: 'Bob O'
@@ -891,12 +891,12 @@ describe('Device Result API routes', () => {
             address: '123 Main Street',
             phone: '856-7909'
           },
-          oemData: {
+          oemData: JSON.stringify({
             maker: 'ABC',
             model: '123A',
             serial: '123-456-789'
-          },
-          rawData: {
+          }),
+          rawData: JSON.stringify({
             startedOn: '2013-05-13',
             endedOn: '2013-12-01T01:30',
             patientData: {
@@ -913,7 +913,7 @@ describe('Device Result API routes', () => {
               longitude: -87.581222,
               latitude: 30.419348
             }
-          },
+          }),
           sender: {
             version: '99-1',
             operator: 'Bob O'

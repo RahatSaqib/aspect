@@ -182,11 +182,11 @@ function* addResult(context) {
     : _.get(existingResult, 'patientData')
 
   const oemData = _.has(payload, 'oemData')
-    ? JSON.stringify(payload.oemData)
+    ? String(payload.oemData)
     : _.get(existingResult, 'oemData')
 
   const rawData = _.has(payload, 'rawData')
-    ? JSON.stringify(payload.rawData)
+    ? String(payload.rawData)
     : _.get(existingResult, 'rawData')
 
   const result = {
@@ -450,11 +450,11 @@ function* getResult(context) {
   }
 
   if (row.oemData != null) {
-    result.oemData = JSON.parse(row.oemData)
+    result.oemData = row.oemData
   }
 
   if (row.rawData != null) {
-    result.rawData = JSON.parse(row.rawData)
+    result.rawData = row.rawData
   }
 
   const sender = { version: row.senderVersion, operator: row.senderOperator }
