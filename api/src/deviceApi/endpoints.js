@@ -78,7 +78,10 @@ const resultPayload = {
       'Longitude where the test was collected. Will default to the site location')
   }),
   type: Joi.object().keys({
-    id: Joi.string().required().description('The Result Type.  Defaults to Patient.')
+    id: Joi.string().required().description('The Result Type. Defaults to Patient.')
+  }),
+  source: Joi.object().keys({
+    id: Joi.string().required().description('The Result Source. Defaults to "Diagnostic Device".')
   }),
   workflow: Joi.object().keys({
     status: Joi.object().keys({
