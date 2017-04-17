@@ -166,9 +166,9 @@ const resultPayload = {
     operator: Joi.string().allow('', null).description(
       'The person who completed the test')
   }),
-  oemData: Joi.object().description(
+  oemData: Joi.any().description(
     'Proprietary data for OEM'),
-  rawData: Joi.object().description(
+  rawData: Joi.any().description(
     'Field for sending raw data directly from a device'),
   notes: Joi.string().allow('', null).description(
     'Any additional notes associated with this result'),
