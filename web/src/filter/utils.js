@@ -57,10 +57,6 @@ const messages = defineMessages({
     id: 'shared.FormatFilters.dateTo',
     defaultMessage: 'to'
   },
-  workflowStatuses: {
-    id: 'shared.FormatFilters.workflowStatuses',
-    defaultMessage: ''
-  },
   withDeviceStatus: {
     id: 'shared.FormatFilters.withDeviceStatus',
     defaultMessage: 'with device status'
