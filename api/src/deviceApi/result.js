@@ -55,6 +55,17 @@ function* addResult(context) {
     resultTypeQ.where({ 'rt.externalId': 'Patient' })
   }
 
+  // Select ResultSource if specified, otherwise Diagnostic Device
+  const resultSourceQ = knex('ResultSource as rs')
+    .first('rs.id')
+  if (_.has(payload, 'source.id')) {
+    resultSourceQ.where({ 'rs.externalId': _.get(payload, 'source.id') })
+  } else if (existingResult) {
+    resultSourceQ.where({ 'rs.id': existingResult.resultSourceId })
+  } else {
+    resultSourceQ.where({ 'rs.externalId': 'DiagnosticDevice' })
+  }
+
   // Select Workflow Status if specified, otherwise Error or OK depending on error payload
   const resultWorkflowStatusQ = knex('ResultWorkflowStatus as rs')
     .first('rs.id')
@@ -83,10 +94,10 @@ function* addResult(context) {
     categoryQ.where({ 'rc.externalId': 'Success' })
   }
 
-  const [assays, site, resultType, resultWorkflowStatus, categories] = yield Promise.all(
-    [assayQ, siteQ, resultTypeQ, resultWorkflowStatusQ, categoryQ])
+  const [assays, site, resultType, resultSource, resultWorkflowStatus, categories] =
+    yield Promise.all([assayQ, siteQ, resultTypeQ, resultSourceQ, resultWorkflowStatusQ, categoryQ])
 
-  if (!site || !resultType || !resultWorkflowStatus ||
+  if (!site || !resultType || !resultSource || !resultWorkflowStatus ||
       categories.length === 0 || assays.length !== 1) {
     const requestErrors = []
     if (!site) {
@@ -94,6 +105,9 @@ function* addResult(context) {
     }
     if (!resultType) {
       requestErrors.push(`result type with id ${_.get(payload, 'type.id')}`)
+    }
+    if (!resultSource) {
+      requestErrors.push(`result source with id ${_.get(payload, 'source.id')}`)
     }
     if (!resultWorkflowStatus) {
       requestErrors.push(`result workflow status id ${_.get(payload, 'workflow.status.id')}`)
@@ -187,6 +201,7 @@ function* addResult(context) {
       payload, 'assay.version',
       _.get(existingResult, 'assayVersion', null)),
     resultTypeId: resultType.id,
+    resultSourceId: resultSource.id,
     resultWorkflowStatusId: resultWorkflowStatus.id,
     sampleId,
     sampleRunNumber: _.get(
@@ -304,6 +319,7 @@ function* getResult(context) {
     .leftJoin('ResultCategory as rc1', 'r.resultCategory1', 'rc1.id')
     .leftJoin('ResultCategory as rc2', 'r.resultCategory2', 'rc2.id')
     .leftJoin('ResultType as rt', 'r.resultTypeId', 'rt.id')
+    .leftJoin('ResultSource as rsc', 'r.resultSourceId', 'rsc.id')
     .leftJoin('ResultWorkflowStatus as rs', 'r.resultWorkflowStatusId', 'rs.id')
     .innerJoin('DeviceLog as dl', 'dl.resultId', 'r.id')
     .where('dl.id', deviceLog.id)
@@ -315,6 +331,7 @@ function* getResult(context) {
       'r.instrumentSerial', 'r.moduleName', 'r.moduleSerial', 'r.id as resultId',
       'a.externalId as assayId', 'r.assayVersion', 'r.rawData',
       'r.latitude', 'r.longitude', 'rt.externalId as resultTypeId',
+      'rsc.externalId as resultSourceId',
       'rs.externalId as resultWorkflowStatusId', 'r.sampleRunNumber',
       's.externalId as sampleId', 's.collectedOn as sampleCollectedOn',
       'sos.externalId as sampleOriginSiteId', 'st.externalId as sampleTypeId',
@@ -352,6 +369,7 @@ function* getResult(context) {
     result.location = location
   }
   result.type = { id: row.resultTypeId }
+  result.source = { id: row.resultSourceId }
   result.workflow = { status: { id: row.resultWorkflowStatusId } }
   if (resultWorkflowLog) {
     result.workflow.changedOn = resultWorkflowLog.changedOn
