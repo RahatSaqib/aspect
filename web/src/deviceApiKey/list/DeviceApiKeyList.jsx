@@ -243,7 +243,7 @@ export class DeviceApiKeyList extends PureComponent {
             disabled={_.isEmpty(selectableIds)}
             checked={
               !_.isEmpty(assignerValues.deviceApiKeyIds) &&
-              _.equals(selectableIds, assignerValues.deviceApiKeyIds)
+              _.isEqual(selectableIds, assignerValues.deviceApiKeyIds)
             }
             onCheck={this.handleSelectAll}
           />
@@ -291,7 +291,6 @@ export class DeviceApiKeyList extends PureComponent {
           subject={formatMessage(messages.title)}
           filterTemplate={formatMessage(messages.filterTemplate)}
           filterTemplateOptional={formatMessage(messages.filterTemplateOptional)}
-
           onClickExport={this.handleClickExport}
         />
         <div>
