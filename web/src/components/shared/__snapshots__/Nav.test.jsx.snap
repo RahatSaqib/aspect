@@ -1,3 +1,5 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
 exports[`Nav module Nav component should render correctly 1`] = `
 <div
   className={undefined}
@@ -20,7 +22,8 @@ exports[`Nav module Nav component should render correctly 1`] = `
       "width": "100%",
       "zIndex": 1100,
     }
-  }>
+  }
+>
   <button
     disabled={false}
     href={undefined}
@@ -62,13 +65,15 @@ exports[`Nav module Nav component should render correctly 1`] = `
       }
     }
     tabIndex={0}
-    type="button">
+    type="button"
+  >
     <div
       onMouseDown={[Function]}
       onMouseLeave={[Function]}
       onMouseUp={[Function]}
       onTouchEnd={[Function]}
-      onTouchStart={[Function]}>
+      onTouchStart={[Function]}
+    >
       <svg
         onMouseEnter={[Function]}
         onMouseLeave={[Function]}
@@ -84,9 +89,11 @@ exports[`Nav module Nav component should render correctly 1`] = `
             "width": 24,
           }
         }
-        viewBox="0 0 24 24">
+        viewBox="0 0 24 24"
+      >
         <path
-          d="M3 18h18v-2H3v2zm0-5h18v-2H3v2zm0-7v2h18V6H3z" />
+          d="M3 18h18v-2H3v2zm0-5h18v-2H3v2zm0-7v2h18V6H3z"
+        />
       </svg>
     </div>
   </button>
@@ -109,12 +116,14 @@ exports[`Nav module Nav component should render correctly 1`] = `
         "textOverflow": "ellipsis",
         "whiteSpace": "nowrap",
       }
-    }>
+    }
+  >
     <span>
       <a
         className="Brand"
         onClick={[Function]}
-        style={Object {}}>
+        style={Object {}}
+      >
         Aspect
       </a>
     </span>
@@ -129,7 +138,8 @@ exports[`Nav module Nav component should render correctly 1`] = `
           "padding": "24px 24px 12px 12px",
           "position": "relative",
         }
-      }>
+      }
+    >
       <button
         disabled={false}
         href={undefined}
@@ -168,13 +178,15 @@ exports[`Nav module Nav component should render correctly 1`] = `
           }
         }
         tabIndex={0}
-        type="button">
+        type="button"
+      >
         <div
           onMouseDown={[Function]}
           onMouseLeave={[Function]}
           onMouseUp={[Function]}
           onTouchEnd={[Function]}
-          onTouchStart={[Function]}>
+          onTouchStart={[Function]}
+        >
           <div
             style={
               Object {
@@ -196,7 +208,8 @@ exports[`Nav module Nav component should render correctly 1`] = `
                 "userSelect": "none",
                 "zIndex": 3000,
               }
-            }>
+            }
+          >
             <div
               style={
                 Object {
@@ -209,7 +222,8 @@ exports[`Nav module Nav component should render correctly 1`] = `
                   "transform": "translate(-50%, -50%)",
                   "transition": "width 0ms cubic-bezier(0.23, 1, 0.32, 1) 450ms, height 0ms cubic-bezier(0.23, 1, 0.32, 1) 450ms, backgroundColor 450ms cubic-bezier(0.23, 1, 0.32, 1) 0ms",
                 }
-              } />
+              }
+            />
             <span
               style={
                 Object {
@@ -217,7 +231,8 @@ exports[`Nav module Nav component should render correctly 1`] = `
                   "position": "relative",
                   "whiteSpace": "nowrap",
                 }
-              }>
+              }
+            >
               You have 7 unread notifications
             </span>
           </div>
@@ -236,9 +251,11 @@ exports[`Nav module Nav component should render correctly 1`] = `
                 "width": 24,
               }
             }
-            viewBox="0 0 24 24">
+            viewBox="0 0 24 24"
+          >
             <path
-              d="M12 22c1.1 0 2-.9 2-2h-4c0 1.1.89 2 2 2zm6-6v-5c0-3.07-1.64-5.64-4.5-6.32V4c0-.83-.67-1.5-1.5-1.5s-1.5.67-1.5 1.5v.68C7.63 5.36 6 7.92 6 11v5l-2 2v1h16v-1l-2-2z" />
+              d="M12 22c1.1 0 2-.9 2-2h-4c0 1.1.89 2 2 2zm6-6v-5c0-3.07-1.64-5.64-4.5-6.32V4c0-.83-.67-1.5-1.5-1.5s-1.5.67-1.5 1.5v.68C7.63 5.36 6 7.92 6 11v5l-2 2v1h16v-1l-2-2z"
+            />
           </svg>
         </div>
       </button>
@@ -263,7 +280,8 @@ exports[`Nav module Nav component should render correctly 1`] = `
             "top": 0,
             "width": 24,
           }
-        }>
+        }
+      >
         7
       </span>
     </div>
@@ -280,7 +298,8 @@ exports[`Nav module Nav component should render correctly 1`] = `
           "muiPrepared": true,
           "position": "relative",
         }
-      }>
+      }
+    >
       <button
         disabled={false}
         href={undefined}
@@ -319,13 +338,15 @@ exports[`Nav module Nav component should render correctly 1`] = `
           }
         }
         tabIndex={0}
-        type="button">
+        type="button"
+      >
         <div
           onMouseDown={[Function]}
           onMouseLeave={[Function]}
           onMouseUp={[Function]}
           onTouchEnd={[Function]}
-          onTouchStart={[Function]}>
+          onTouchStart={[Function]}
+        >
           <svg
             onMouseEnter={[Function]}
             onMouseLeave={[Function]}
@@ -341,9 +362,11 @@ exports[`Nav module Nav component should render correctly 1`] = `
                 "width": 24,
               }
             }
-            viewBox="0 0 24 24">
+            viewBox="0 0 24 24"
+          >
             <path
-              d="M12 8c1.1 0 2-.9 2-2s-.9-2-2-2-2 .9-2 2 .9 2 2 2zm0 2c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2zm0 6c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2z" />
+              d="M12 8c1.1 0 2-.9 2-2s-.9-2-2-2-2 .9-2 2 .9 2 2 2zm0 2c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2zm0 6c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2z"
+            />
           </svg>
         </div>
       </button>
@@ -352,7 +375,8 @@ exports[`Nav module Nav component should render correctly 1`] = `
           Object {
             "display": "none",
           }
-        } />
+        }
+      />
     </div>
   </div>
 </div>
@@ -380,7 +404,8 @@ exports[`Nav module Nav component should render pageTitle and pagePath correctly
       "width": "100%",
       "zIndex": 1100,
     }
-  }>
+  }
+>
   <button
     disabled={false}
     href={undefined}
@@ -422,13 +447,15 @@ exports[`Nav module Nav component should render pageTitle and pagePath correctly
       }
     }
     tabIndex={0}
-    type="button">
+    type="button"
+  >
     <div
       onMouseDown={[Function]}
       onMouseLeave={[Function]}
       onMouseUp={[Function]}
       onTouchEnd={[Function]}
-      onTouchStart={[Function]}>
+      onTouchStart={[Function]}
+    >
       <svg
         onMouseEnter={[Function]}
         onMouseLeave={[Function]}
@@ -444,9 +471,11 @@ exports[`Nav module Nav component should render pageTitle and pagePath correctly
             "width": 24,
           }
         }
-        viewBox="0 0 24 24">
+        viewBox="0 0 24 24"
+      >
         <path
-          d="M3 18h18v-2H3v2zm0-5h18v-2H3v2zm0-7v2h18V6H3z" />
+          d="M3 18h18v-2H3v2zm0-5h18v-2H3v2zm0-7v2h18V6H3z"
+        />
       </svg>
     </div>
   </button>
@@ -469,12 +498,14 @@ exports[`Nav module Nav component should render pageTitle and pagePath correctly
         "textOverflow": "ellipsis",
         "whiteSpace": "nowrap",
       }
-    }>
+    }
+  >
     <span>
       <a
         className="Brand"
         onClick={[Function]}
-        style={Object {}}>
+        style={Object {}}
+      >
         Aspect
       </a>
       <span>
@@ -482,7 +513,8 @@ exports[`Nav module Nav component should render pageTitle and pagePath correctly
         <a
           className="Brand"
           onClick={[Function]}
-          style={Object {}}>
+          style={Object {}}
+        >
           My Page Title
         </a>
       </span>
@@ -498,7 +530,8 @@ exports[`Nav module Nav component should render pageTitle and pagePath correctly
           "padding": "24px 24px 12px 12px",
           "position": "relative",
         }
-      }>
+      }
+    >
       <button
         disabled={false}
         href={undefined}
@@ -537,13 +570,15 @@ exports[`Nav module Nav component should render pageTitle and pagePath correctly
           }
         }
         tabIndex={0}
-        type="button">
+        type="button"
+      >
         <div
           onMouseDown={[Function]}
           onMouseLeave={[Function]}
           onMouseUp={[Function]}
           onTouchEnd={[Function]}
-          onTouchStart={[Function]}>
+          onTouchStart={[Function]}
+        >
           <div
             style={
               Object {
@@ -565,7 +600,8 @@ exports[`Nav module Nav component should render pageTitle and pagePath correctly
                 "userSelect": "none",
                 "zIndex": 3000,
               }
-            }>
+            }
+          >
             <div
               style={
                 Object {
@@ -578,7 +614,8 @@ exports[`Nav module Nav component should render pageTitle and pagePath correctly
                   "transform": "translate(-50%, -50%)",
                   "transition": "width 0ms cubic-bezier(0.23, 1, 0.32, 1) 450ms, height 0ms cubic-bezier(0.23, 1, 0.32, 1) 450ms, backgroundColor 450ms cubic-bezier(0.23, 1, 0.32, 1) 0ms",
                 }
-              } />
+              }
+            />
             <span
               style={
                 Object {
@@ -586,7 +623,8 @@ exports[`Nav module Nav component should render pageTitle and pagePath correctly
                   "position": "relative",
                   "whiteSpace": "nowrap",
                 }
-              }>
+              }
+            >
               You have 7 unread notifications
             </span>
           </div>
@@ -605,9 +643,11 @@ exports[`Nav module Nav component should render pageTitle and pagePath correctly
                 "width": 24,
               }
             }
-            viewBox="0 0 24 24">
+            viewBox="0 0 24 24"
+          >
             <path
-              d="M12 22c1.1 0 2-.9 2-2h-4c0 1.1.89 2 2 2zm6-6v-5c0-3.07-1.64-5.64-4.5-6.32V4c0-.83-.67-1.5-1.5-1.5s-1.5.67-1.5 1.5v.68C7.63 5.36 6 7.92 6 11v5l-2 2v1h16v-1l-2-2z" />
+              d="M12 22c1.1 0 2-.9 2-2h-4c0 1.1.89 2 2 2zm6-6v-5c0-3.07-1.64-5.64-4.5-6.32V4c0-.83-.67-1.5-1.5-1.5s-1.5.67-1.5 1.5v.68C7.63 5.36 6 7.92 6 11v5l-2 2v1h16v-1l-2-2z"
+            />
           </svg>
         </div>
       </button>
@@ -632,7 +672,8 @@ exports[`Nav module Nav component should render pageTitle and pagePath correctly
             "top": 0,
             "width": 24,
           }
-        }>
+        }
+      >
         7
       </span>
     </div>
@@ -649,7 +690,8 @@ exports[`Nav module Nav component should render pageTitle and pagePath correctly
           "muiPrepared": true,
           "position": "relative",
         }
-      }>
+      }
+    >
       <button
         disabled={false}
         href={undefined}
@@ -688,13 +730,15 @@ exports[`Nav module Nav component should render pageTitle and pagePath correctly
           }
         }
         tabIndex={0}
-        type="button">
+        type="button"
+      >
         <div
           onMouseDown={[Function]}
           onMouseLeave={[Function]}
           onMouseUp={[Function]}
           onTouchEnd={[Function]}
-          onTouchStart={[Function]}>
+          onTouchStart={[Function]}
+        >
           <svg
             onMouseEnter={[Function]}
             onMouseLeave={[Function]}
@@ -710,9 +754,11 @@ exports[`Nav module Nav component should render pageTitle and pagePath correctly
                 "width": 24,
               }
             }
-            viewBox="0 0 24 24">
+            viewBox="0 0 24 24"
+          >
             <path
-              d="M12 8c1.1 0 2-.9 2-2s-.9-2-2-2-2 .9-2 2 .9 2 2 2zm0 2c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2zm0 6c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2z" />
+              d="M12 8c1.1 0 2-.9 2-2s-.9-2-2-2-2 .9-2 2 .9 2 2 2zm0 2c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2zm0 6c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2z"
+            />
           </svg>
         </div>
       </button>
@@ -721,7 +767,8 @@ exports[`Nav module Nav component should render pageTitle and pagePath correctly
           Object {
             "display": "none",
           }
-        } />
+        }
+      />
     </div>
   </div>
 </div>
