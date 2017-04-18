@@ -4850,10 +4850,11 @@ pinkie@^2.0.0:
   version "2.0.4"
   resolved "https://registry.yarnpkg.com/pinkie/-/pinkie-2.0.4.tgz#72556b80cfa0d48a974e80e77248e80ed4f7f870"
 
-piwik-react-router@^0.5.0:
-  version "0.5.0"
-  resolved "https://registry.yarnpkg.com/piwik-react-router/-/piwik-react-router-0.5.0.tgz#f964b9e4ecd3831bc3afaaf713ca64efe1abcd41"
+piwik-react-router@^0.7.1:
+  version "0.7.1"
+  resolved "https://registry.yarnpkg.com/piwik-react-router/-/piwik-react-router-0.7.1.tgz#a9e75acec5e6322e9cec182d4ed3a7e1c60135b8"
   dependencies:
+    url-join "^1.1.0"
     warning "^3.0.0"
 
 pkg-dir@^1.0.0:
@@ -5690,11 +5691,9 @@ redux-idle-monitor@^0.6.2:
     redux-middleware "*"
     redux-mux "*"
 
-redux-immutable@^3.0.11:
-  version "3.0.11"
-  resolved "https://registry.yarnpkg.com/redux-immutable/-/redux-immutable-3.0.11.tgz#ba7b00361904f2034e7841741bd4a6be66eea1ac"
-  dependencies:
-    immutable "^3.8.1"
+redux-immutable@^4.0.0:
+  version "4.0.0"
+  resolved "https://registry.yarnpkg.com/redux-immutable/-/redux-immutable-4.0.0.tgz#3a1a32df66366462b63691f0e1dc35e472bbc9f3"
 
 redux-middleware@*:
   version "0.1.21"
@@ -6616,6 +6615,10 @@ unpipe@~1.0.0:
 upper-case@^1.1.1:
   version "1.1.3"
   resolved "https://registry.yarnpkg.com/upper-case/-/upper-case-1.1.3.tgz#f6b4501c2ec4cdd26ba78be7222961de77621598"
+
+url-join@^1.1.0:
+  version "1.1.0"
+  resolved "https://registry.yarnpkg.com/url-join/-/url-join-1.1.0.tgz#741c6c2f4596c4830d6718460920d0c92202dc78"
 
 url-loader@^0.5.8:
   version "0.5.8"
