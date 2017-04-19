@@ -1,8 +1,8 @@
-const { ASPECT_ENV } = process.env
-if (ASPECT_ENV === 'dev') {
-  module.exports = require('./dev')
-} else if (ASPECT_ENV === 'test') {
+const { ASPECT_TARGET } = process.env
+if (ASPECT_TARGET === 'local') {
+  module.exports = require('./local')
+} else if (ASPECT_TARGET === 'test') {
   module.exports = require('./test')
-} else if (ASPECT_ENV === 'dist') {
+} else if (ASPECT_TARGET === 'dist') {
   module.exports = require('./dist')
 }
