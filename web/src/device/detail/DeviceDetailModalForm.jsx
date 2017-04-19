@@ -1,7 +1,8 @@
 // Imports from packages
 import classnames from 'classnames/bind'
 import _fp from 'lodash/fp'
-import React, { PropTypes } from 'react'
+import PropTypes from 'prop-types'
+import React from 'react'
 import { compose, pure, setPropTypes } from 'recompose'
 import { Link } from 'react-router'
 

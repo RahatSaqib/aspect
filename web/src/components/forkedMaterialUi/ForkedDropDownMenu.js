@@ -1,3 +1,4 @@
+import PropTypes from 'prop-types'
 /* eslint-disable */
 /**
  * This component is a fork of material-ui/DropDownMenu.
@@ -12,7 +13,7 @@
  *   https://github.com/callemall/material-ui/blob/v0.16.0/src/TextField/TextField.js
  *   https://github.com/callemall/material-ui/pull/3583/files
  */
-import React, {Component, PropTypes} from 'react';
+import React, { Component } from 'react';
 import transitions from 'material-ui/styles/transitions';
 import DropDownArrow from 'material-ui/svg-icons/navigation/arrow-drop-down';
 import Menu from 'material-ui/Menu/Menu';

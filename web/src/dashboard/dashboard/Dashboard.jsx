@@ -1,6 +1,7 @@
 // Imports from packages
 import _ from 'lodash'
-import React, { PureComponent, PropTypes } from 'react'
+import PropTypes from 'prop-types'
+import React, { PureComponent } from 'react'
 import { bindActionCreators } from 'redux'
 import {
   injectIntl,

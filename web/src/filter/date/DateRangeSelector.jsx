@@ -16,7 +16,8 @@ import getQuarter from 'date-fns/get_quarter'
 import endOfYear from 'date-fns/end_of_year'
 import startOfYear from 'date-fns/start_of_year'
 import subtractYears from 'date-fns/sub_years'
-import React, { PureComponent, PropTypes } from 'react'
+import PropTypes from 'prop-types'
+import React, { PureComponent } from 'react'
 import {
   injectIntl,
   defineMessages,

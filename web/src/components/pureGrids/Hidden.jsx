@@ -1,5 +1,4 @@
-// Imports from packages
-import { PropTypes } from 'react'
+import PropTypes from 'prop-types'
 
 import {
   makeGetClassNames,
