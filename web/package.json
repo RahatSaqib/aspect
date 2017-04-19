@@ -10,7 +10,7 @@
     "prewebpack-dev-server:start": "cd src/template && fsys --task=copy --filesFolders=index.html --destination=../../dist --clobber='false' --preserveTimestamps='false' && cd ../../",
     "webpack-dev-server:start": "webpack-dev-server --config cfg/src/index.babel.js --inline --hot --open",
     "webpack:dist": "webpack --config cfg/src/index.babel.js",
-    "start": "cross-env ASPECT_TARGET=dev BABEL_ENV=dev npm-run-all webpack:dll webpack-dev-server:start",
+    "start": "cross-env ASPECT_TARGET=local BABEL_ENV=dev npm-run-all webpack:dll webpack-dev-server:start",
     "dist": "cross-env ASPECT_TARGET=dist BABEL_ENV=dev npm-run-all webpack:dll webpack:dist",
     "pretest": "fsys --task=remove --fileFolder=coverage && fsys --task=remove --fileFolder=mocha.json",
     "test": "cross-env ASPECT_TARGET=test JEST_FILE=mocha.json jest --config ./jest.json --coverage",

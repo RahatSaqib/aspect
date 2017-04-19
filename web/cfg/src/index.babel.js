@@ -1,6 +1,6 @@
 import invariant from 'invariant'
 // List of allowed environments
-const allowedEnvs = ['dev', 'dist'];
+const allowedEnvs = ['local', 'dist'];
 
 /**
  * Build the webpack configuration

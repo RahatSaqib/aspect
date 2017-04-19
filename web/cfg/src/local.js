@@ -34,7 +34,7 @@ export default {
   plugins: [
     ...baseConfig.plugins,
     new webpack.DefinePlugin({
-      'process.env.ASPECT_TARGET': '"dev"'
+      'process.env.ASPECT_TARGET': '"local"'
     }),
     new webpack.LoaderOptionsPlugin({
       debug: true
