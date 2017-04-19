@@ -28,7 +28,7 @@ export default {
     ...baseConfig.plugins,
     new webpack.DefinePlugin({
       'process.env.NODE_ENV': '"production"',
-      'process.env.ASPECT_ENV': '"dist"'
+      'process.env.ASPECT_TARGET': '"dist"'
     }),
     new webpack.LoaderOptionsPlugin({
       minimize: true
