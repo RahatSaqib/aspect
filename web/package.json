@@ -8,7 +8,7 @@
     "prewebpack:dll": "fsys --task=emptyDir --dir=dist && fsys --task=remove --fileFolder=src/template/dll.vendor.manifest.json && fsys --task=remove --fileFolder=src/template/index.html",
     "webpack:dll": "webpack --config cfg/dll.babel.js",
     "prewebpack-dev-server:src": "cd src/template && fsys --task=copy --filesFolders=index.html --destination=../../dist --clobber='false' --preserveTimestamps='false' && cd ../../",
-    "webpack-dev-server:src": "webpack-dev-server --config cfg/src.babel.js --inline --hot --open",
+    "webpack-dev-server:src": "webpack-dev-server --config cfg/src.babel.js --open",
     "webpack:src": "webpack --config cfg/src.babel.js",
     "start": "npm-run-all 'webpack:dll -- --{1}' 'webpack-dev-server:src -- --{1}' -- env.ASPECT_TARGET=local",
     "dist": "npm-run-all 'webpack:dll -- --{1}' 'webpack:src -- --{1}' -- env.ASPECT_TARGET=dist",

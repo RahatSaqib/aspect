@@ -37,7 +37,14 @@ export default (env) => {
   const isProduction = process.env.NODE_ENV === 'production'
 
   return {
-    entry: './src/index',
+    entry: [
+    ].concat(isDevelopment ? [
+      'react-hot-loader/patch',
+      'webpack-dev-server/client?http://localhost:8000',
+      'webpack/hot/only-dev-server',
+    ] : []).concat([
+      './src/index'
+    ]),
     cache: isDevelopment,
     devServer: isDevelopment ? {
       contentBase: path.join(__dirname, '../dist'),
@@ -250,6 +257,9 @@ export default (env) => {
       new webpack.optimize.AggressiveMergingPlugin(),
       new CaseSensitivePathsPlugin(),
 
-    ]: [])
+    ]: [
+      new webpack.HotModuleReplacementPlugin(),
+      new webpack.NamedModulesPlugin(),
+    ])
   }
 }
