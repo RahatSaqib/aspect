@@ -1,8 +1,7 @@
-// Imports from packages
-import _ from 'lodash'
 import classnames from 'classnames/bind'
 import PropTypes from 'prop-types'
 import React, { PureComponent } from 'react'
+import { compose, setPropTypes, pure } from 'recompose'
 import {
   injectIntl,
   defineMessages,
@@ -11,7 +10,7 @@ import {
 import { bindActionCreators } from 'redux'
 import { connect } from 'react-redux'
 import Helmet from 'react-helmet'
-import { Link } from 'react-router'
+import { Link } from 'react-router-dom'
 
 // Material-UI
 import LinearProgress from 'material-ui/LinearProgress'
@@ -23,6 +22,7 @@ import Share from 'material-ui/svg-icons/social/share'
 // Our own imports
 import { Unit } from '../../components/pureGrids'
 import JSONSchemaCard from '../../components/shared/JSONSchemaCard'
+import NavTitle from '../../globals/components/NavTitle'
 import {
   fetchSingleResult,
   updateSingleResult,
@@ -143,43 +143,49 @@ const messages = defineMessages({
   },
 })
 
-// Iterate JSON schema level 2 and reduce it with resultData into a fields list
-export const makeLevel2TupleMapper = (resultData, outerKey) => ([key, value]) => ({
-  label: value.get('title'),
-  value: resultData.getIn([outerKey, key]) || ''
-})
+const enhance = compose(
+  setPropTypes({
+    match: PropTypes.shape({
+      params: PropTypes.shape({
+        resultId: PropTypes.string.isRequired
+      }).isRequired
+    }).isRequired,
+  }),
+  pure,
+  injectIntl,
+  connect((state, props) => {
+    const result = state.result.items.byId.get(props.match.params.resultId)
 
-export class ResultDetail extends PureComponent {
-
-  static propTypes = {
-    setPageTitle: PropTypes.func.isRequired,
+    return {
+      result,
+      workflowLog: state.result.workflowLog,
+    }
+  }, dispatch => (
+    bindActionCreators({
+      fetchSingleResult,
+      updateSingleResult,
+      updateResultWorkflowStatus,
+      fetchWorkflowStatusLogs,
+    }, dispatch)
+  )),
+  setPropTypes({
+    intl: intlShape.isRequired,
+    result: PropTypes.objectOf(Result),
+    workflowLog: PropTypes.objectOf(WorkflowLogModel).isRequired,
     fetchSingleResult: PropTypes.func.isRequired,
     updateResultWorkflowStatus: PropTypes.func.isRequired,
     updateSingleResult: PropTypes.func.isRequired,
-    intl: intlShape.isRequired,
-    params: PropTypes.object.isRequired,
-    result: PropTypes.objectOf(Result),
-
     fetchWorkflowStatusLogs: PropTypes.func.isRequired,
-    workflowLog: PropTypes.objectOf(WorkflowLogModel).isRequired
-  }
+  }),
+)
 
-  static defaultProps = {
-    result: null
-  }
-
-  componentWillMount() {
-    const { setPageTitle, intl } = this.props
-    const { formatMessage } = intl
-    setPageTitle(formatMessage(messages.title))
-  }
-
+export class ResultDetail extends PureComponent {
   componentDidMount() {
     this.handleFetchResult()
   }
 
   componentWillReceiveProps(nextProps) {
-    if (this.props.params.resultId !== nextProps.params.resultId) {
+    if (this.props.match.params.resultId !== nextProps.match.params.resultId) {
       this.handleFetchResult()
     }
   }
@@ -253,14 +259,14 @@ export class ResultDetail extends PureComponent {
   }
 
   handleFetchResult = () => {
-    this.props.fetchSingleResult(this.props.params.resultId)
+    this.props.fetchSingleResult(this.props.match.params.resultId)
 
     // refresh grid 'Result Workflow Status Logs'
     this.handleFetchWorkflowStatusLogs()
   }
 
   handleFetchWorkflowStatusLogs = (...args) => {
-    this.props.fetchWorkflowStatusLogs(this.props.params.resultId, ...args)
+    this.props.fetchWorkflowStatusLogs(this.props.match.params.resultId, ...args)
   }
 
   hasResultWithAssay() {
@@ -520,6 +526,7 @@ export class ResultDetail extends PureComponent {
     return (
       <div className={cssClasses('ContentDetails')}>
         <Helmet title={formatMessage(messages.title)} titleTemplate="%s - Aspect" defaultTitle="Aspect" />
+        <NavTitle title={formatMessage(messages.title)} />
 
         {this.renderPaper()}
 
@@ -534,24 +541,4 @@ export class ResultDetail extends PureComponent {
   }
 }
 
-function mapStateToProps(state, props) {
-  const result = state.result.items.byId.get(props.params.resultId)
-  return {
-    result,
-    workflowLog: state.result.workflowLog
-  }
-}
-
-function mapDispatchToProps(dispatch) {
-  return bindActionCreators({
-    fetchSingleResult,
-    updateSingleResult,
-    updateResultWorkflowStatus,
-    fetchWorkflowStatusLogs
-  }, dispatch)
-}
-
-export const ResultDetailContainer = _.flowRight(
-  injectIntl,
-  connect(mapStateToProps, mapDispatchToProps)
-)(ResultDetail)
+export default enhance(ResultDetail)

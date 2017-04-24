@@ -3,7 +3,7 @@ import { shallow } from 'enzyme'
 import Immutable from 'immutable'
 import sinon from 'sinon'
 import RaisedButton from 'material-ui/RaisedButton'
-import { Link } from 'react-router'
+import { Link } from 'react-router-dom'
 import FlatButton from 'material-ui/FlatButton'
 import TextInput from '../../components/shared/TextInput'
 

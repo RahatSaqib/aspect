@@ -1,9 +1,9 @@
 import PropTypes from 'prop-types'
 import React, { PureComponent } from 'react'
+import { compose, setPropTypes, pure } from 'recompose'
 import { bindActionCreators } from 'redux'
 import Helmet from 'react-helmet'
 import { injectIntl, intlShape } from 'react-intl'
-import _ from 'lodash'
 import { connect } from 'react-redux'
 import LinearProgress from 'material-ui/LinearProgress'
 import Paper from 'material-ui/Paper'
@@ -13,6 +13,7 @@ import Language from 'material-ui/svg-icons/action/language'
 import Lock from 'material-ui/svg-icons/action/lock'
 
 import { Hidden, Visible } from '../../components/pureGrids'
+import NavTitle from '../../globals/components/NavTitle'
 import ContactDetailsForm from '../../person/detail/ContactDetailsForm'
 import LoginDetailsForm from '../../person/detail/LoginDetailsForm'
 import UserPreferencesForm from '../../person/detail/UserPreferencesForm'
@@ -28,11 +29,28 @@ import accountDetailsMessages from './messages'
 import personDetailsMessages from '../../person/detail/messages'
 import { ContactDetails, LoginDetails, UserPreferences } from '../../person/PersonRedux'
 
-export class AccountDetails extends PureComponent {
-  static propTypes = {
-    setPageTitle: PropTypes.func.isRequired,
+const enhance = compose(
+  setPropTypes({
+    location: PropTypes.object.isRequired,
+    history: PropTypes.object.isRequired,
+  }),
+  pure,
+  injectIntl,
+  connect(state => ({
+    loading: state.accountDetails.get('loading'),
+    saving: state.accountDetails.get('saving'),
+    accountDetails: state.accountDetails.get('data'),
+  }), dispatch => (
+    bindActionCreators({
+      showAcknowledgement,
+      fetchAccountDetails,
+      saveContactDetails,
+      saveLoginDetails,
+      saveUserPreferences,
+    }, dispatch)
+  )),
+  setPropTypes({
     intl: intlShape.isRequired,
-    fetchAccountDetails: PropTypes.func.isRequired,
     loading: PropTypes.bool.isRequired,
     saving: PropTypes.bool.isRequired,
     accountDetails: PropTypes.shape({
@@ -40,27 +58,17 @@ export class AccountDetails extends PureComponent {
       loginDetails: PropTypes.objectOf(LoginDetails),
       userPreferences: PropTypes.objectOf(UserPreferences),
     }).isRequired,
+    showAcknowledgement: PropTypes.func.isRequired,
+    fetchAccountDetails: PropTypes.func.isRequired,
     saveContactDetails: PropTypes.func.isRequired,
     saveLoginDetails: PropTypes.func.isRequired,
     saveUserPreferences: PropTypes.func.isRequired,
-    showAcknowledgement: PropTypes.func.isRequired
-  }
+  }),
+)
 
-  constructor(props) {
-    super(props)
-
-    this.state = {
-      currentPasswordInputDialogOpen: false
-    }
-
-    this.openCurrentPasswordInputDialog = this.openCurrentPasswordInputDialog.bind(this)
-    this.closeCurrentPasswordInputDialog = this.closeCurrentPasswordInputDialog.bind(this)
-  }
-
-  componentWillMount() {
-    const { setPageTitle, intl } = this.props
-    const { formatMessage } = intl
-    setPageTitle(formatMessage(accountDetailsMessages.title))
+export class AccountDetails extends PureComponent {
+  state = {
+    currentPasswordInputDialogOpen: false
   }
 
   componentDidMount() {
@@ -100,6 +108,7 @@ export class AccountDetails extends PureComponent {
     return (
       <div className={styles.Content}>
         <Helmet title={formatMessage(accountDetailsMessages.title)} titleTemplate="%s - Aspect" defaultTitle="Aspect" />
+        <NavTitle title={formatMessage(accountDetailsMessages.title)} />
         <Paper>
           <Tabs>
             <Tab
@@ -155,25 +164,4 @@ export class AccountDetails extends PureComponent {
   }
 }
 
-function mapStateToProps(state) {
-  return {
-    loading: state.accountDetails.get('loading'),
-    saving: state.accountDetails.get('saving'),
-    accountDetails: state.accountDetails.get('data')
-  }
-}
-
-function mapDispatchToProps(dispatch) {
-  return bindActionCreators({
-    fetchAccountDetails,
-    saveContactDetails,
-    saveLoginDetails,
-    saveUserPreferences,
-    showAcknowledgement
-  }, dispatch)
-}
-
-export const AccountDetailsContainer = _.flowRight(
-  injectIntl,
-  connect(mapStateToProps, mapDispatchToProps)
-)(AccountDetails)
+export default enhance(AccountDetails)

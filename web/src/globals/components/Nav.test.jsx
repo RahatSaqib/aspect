@@ -2,6 +2,7 @@ import _ from 'lodash'
 import React from 'react'
 import renderer from 'react-test-renderer'
 import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider'
+import { MemoryRouter } from 'react-router-dom'
 
 import { Nav } from './Nav'
 
@@ -19,12 +20,14 @@ describe('Nav module', () => {
     it('should render correctly', () => {
       const component = renderer.create(
         <MuiThemeProvider>
-          <Nav
-            pageTitle=""
-            pagePath=""
-            handleHamburger={_.noop}
-            handleSignOut={_.noop}
-          />
+          <MemoryRouter>
+            <Nav
+              pageTitle=""
+              pagePath=""
+              handleHamburger={_.noop}
+              handleSignOut={_.noop}
+            />
+          </MemoryRouter>
         </MuiThemeProvider>
       , { createNodeMock })
       const tree = component.toJSON()
@@ -34,12 +37,14 @@ describe('Nav module', () => {
     it('should render pageTitle and pagePath correctly', () => {
       const component = renderer.create(
         <MuiThemeProvider>
-          <Nav
-            pageTitle="My Page Title"
-            pagePath="/my-page-title"
-            handleHamburger={_.noop}
-            handleSignOut={_.noop}
-          />
+          <MemoryRouter>
+            <Nav
+              pageTitle="My Page Title"
+              pagePath="/my-page-title"
+              handleHamburger={_.noop}
+              handleSignOut={_.noop}
+            />
+          </MemoryRouter>
         </MuiThemeProvider>
       , { createNodeMock })
       const tree = component.toJSON()

@@ -22,7 +22,7 @@ const enhance = compose(
   injectIntl,
   setPropTypes({
     intl: intlShape.isRequired,
-  })
+  }),
 )
 
 export const MiniChart = ({ bgcolor, data, label, number, intl }) => {

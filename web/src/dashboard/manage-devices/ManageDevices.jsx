@@ -1,7 +1,6 @@
-// Imports from packages
-import _ from 'lodash'
 import PropTypes from 'prop-types'
 import React, { PureComponent } from 'react'
+import { compose, setPropTypes, pure } from 'recompose'
 import {
   injectIntl,
   defineMessages,
@@ -10,7 +9,7 @@ import {
 import { bindActionCreators } from 'redux'
 import { connect } from 'react-redux'
 import Helmet from 'react-helmet'
-import { Link } from 'react-router'
+import { Link } from 'react-router-dom'
 
 import Paper from 'material-ui/Paper'
 import IconButton from 'material-ui/IconButton'
@@ -21,6 +20,7 @@ import { Card, CardActions, CardHeader, CardText } from 'material-ui/Card'
 
 // Our own imports
 import { Unit } from '../../components/pureGrids'
+import NavTitle from '../../globals/components/NavTitle'
 import ListFilterContainer from '../../filter/list/ListFilter'
 import { configureListFilter } from '../../filter/FilterRedux'
 import styles from './ManageDevices.css'
@@ -36,17 +36,28 @@ const messages = defineMessages({
   }
 })
 
+const enhance = compose(
+  setPropTypes({
+    location: PropTypes.object.isRequired,
+  }),
+  pure,
+  injectIntl,
+  connect(() => ({
+  }), dispatch => (
+    bindActionCreators({
+      configureListFilter,
+    }, dispatch)
+  )),
+  setPropTypes({
+    intl: intlShape.isRequired,
+    configureListFilter: PropTypes.func.isRequired,
+  }),
+)
+
 export class ManageDevices extends PureComponent {
 
-  static propTypes = {
-    setPageTitle: PropTypes.func.isRequired,
-    configureListFilter: PropTypes.func.isRequired,
-    intl: intlShape.isRequired,
-  }
-
   componentWillMount() {
-    const { setPageTitle, configureListFilter } = this.props
-    setPageTitle('Manage Devices')
+    const { configureListFilter } = this.props
     configureListFilter({
       assayAndResultCategory: true,
       geography: true,
@@ -59,6 +70,7 @@ export class ManageDevices extends PureComponent {
     return (
       <div className={styles.Content}>
         <Helmet title="Manage Devices" titleTemplate="%s - Aspect" defaultTitle="Aspect" />
+        <NavTitle title="Manage Devices" />
         <ListFilterContainer
           subject="devices"
           filterTemplate={formatMessage(messages.filterTemplate)}
@@ -220,14 +232,4 @@ export class ManageDevices extends PureComponent {
   }
 }
 
-function mapDispatchToProps(dispatch) {
-  return bindActionCreators({
-    configureListFilter
-  }, dispatch)
-}
-
-export const ManageDevicesContainer = _.flowRight(
-  injectIntl,
-  connect(null, mapDispatchToProps)
-)(ManageDevices)
-
+export default enhance(ManageDevices)

@@ -1,19 +1,18 @@
-// Imports from packages
-import _ from 'lodash'
 import PropTypes from 'prop-types'
 import React, { PureComponent } from 'react'
+import { compose, setPropTypes, pure } from 'recompose'
 import {
   injectIntl,
   defineMessages,
   intlShape
 } from 'react-intl'
-import { withRouter, routerShape } from 'react-router'
 import { bindActionCreators } from 'redux'
 import { connect } from 'react-redux'
 import Helmet from 'react-helmet'
 
 // Our own imports
 import DataTableWithEmptyList from '../../components/shared/DataTableWithEmptyList'
+import NavTitle from '../../globals/components/NavTitle'
 import ListFilterContainer from '../../filter/list/ListFilter'
 import { configureListFilter, ListFilter } from '../../filter/FilterRedux'
 import { fetchListFilteredSites } from '../SiteRedux'
@@ -48,23 +47,36 @@ const messages = defineMessages({
   }
 })
 
-export class SiteList extends PureComponent {
-
-  static propTypes = {
-    setPageTitle: PropTypes.func.isRequired,
-    table: PropTypes.objectOf(Table).isRequired,
+const enhance = compose(
+  setPropTypes({
+    location: PropTypes.object.isRequired,
+    history: PropTypes.object.isRequired,
+  }),
+  pure,
+  injectIntl,
+  connect(state => ({
+    listFilter: state.filter.listFilter,
+    items: state.site.items,
+    table: state.site.table,
+  }), dispatch => (
+    bindActionCreators({
+      fetchListFilteredSites,
+      configureListFilter,
+    }, dispatch)
+  )),
+  setPropTypes({
     intl: intlShape.isRequired,
-    router: routerShape.isRequired,
-    fetchListFilteredSites: PropTypes.func.isRequired,
+    listFilter: PropTypes.objectOf(ListFilter).isRequired,
     items: PropTypes.objectOf(Items).isRequired,
+    table: PropTypes.objectOf(Table).isRequired,
+    fetchListFilteredSites: PropTypes.func.isRequired,
     configureListFilter: PropTypes.func.isRequired,
-    listFilter: PropTypes.objectOf(ListFilter).isRequired
-  }
+  }),
+)
 
+export class SiteList extends PureComponent {
   componentWillMount() {
-    const { setPageTitle, configureListFilter, intl } = this.props
-    const { formatMessage } = intl
-    setPageTitle(formatMessage(messages.title))
+    const { configureListFilter } = this.props
     configureListFilter({ geography: true, siteName: true })
   }
 
@@ -83,7 +95,7 @@ export class SiteList extends PureComponent {
   }
 
   handleItemIdSelection = (siteId) => {
-    this.props.router.push(`/site/${siteId}`)
+    this.props.history.push(`/site/${siteId}`)
   }
 
   render() {
@@ -99,6 +111,7 @@ export class SiteList extends PureComponent {
     return (
       <div className={styles.Content}>
         <Helmet title={formatMessage(messages.title)} titleTemplate="%s - Aspect" defaultTitle="Aspect" />
+        <NavTitle title={formatMessage(messages.title)} />
         <ListFilterContainer
           subject={formatMessage(messages.title)}
           filterTemplate={formatMessage(messages.filterTemplate)}
@@ -117,23 +130,4 @@ export class SiteList extends PureComponent {
   }
 }
 
-function mapStateToProps(state) {
-  return {
-    listFilter: state.filter.listFilter,
-    items: state.site.items,
-    table: state.site.table
-  }
-}
-
-function mapDispatchToProps(dispatch) {
-  return bindActionCreators({
-    configureListFilter,
-    fetchListFilteredSites
-  }, dispatch)
-}
-
-export const SiteListContainer = _.flowRight(
-  injectIntl,
-  withRouter,
-  connect(mapStateToProps, mapDispatchToProps)
-)(SiteList)
+export default enhance(SiteList)

@@ -2,9 +2,10 @@ import { defineMessages } from 'react-intl'
 import { stringify } from 'querystring'
 import Immutable from 'immutable'
 import jwtDecode from 'jwt-decode'
-import { browserHistory } from 'react-router'
 import { SubmissionError } from 'redux-form/immutable'
+
 import config from '../config'
+import history from '../history'
 import { getBrowserNameAndVersion } from '../shared/utils/browser'
 import { aspectFetch, getHeaders } from '../shared/utils/fetch'
 import * as localStorage from '../shared/utils/localStorage'
@@ -193,7 +194,7 @@ export function loginStart(login) {
         // Here, we update the app state with the results of the API call.
         dispatch(loginSuccess(jwt.name, json.culture, json.timezone, jwt.permissions))
 
-        browserHistory.push('/dashboard')
+        history.push('/dashboard')
       })
       .catch(err => dispatch(loginFailure(err)))
   }
@@ -208,7 +209,7 @@ export function logoutStart(reason) {
     dispatch(logoutSuccess())
 
     // now, redirect to login page
-    browserHistory.push(`/login${typeof reason === 'string' ? `?${stringify({ reason })}` : ''}`)
+    history.push(`/login${typeof reason === 'string' ? `?${stringify({ reason })}` : ''}`)
   }
 }
 

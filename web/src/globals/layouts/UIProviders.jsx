@@ -1,12 +1,8 @@
 import PropTypes from 'prop-types'
-// Imports from packages
-import React from 'react'
+import React, { Children } from 'react'
 import { compose, setPropTypes, pure } from 'recompose'
 import { connect } from 'react-redux'
-import {
-  addLocaleData,
-  IntlProvider
-} from 'react-intl'
+import { addLocaleData, IntlProvider } from 'react-intl'
 import en from 'react-intl/locale-data/en'
 import fr from 'react-intl/locale-data/fr'
 
@@ -19,32 +15,22 @@ import translation from '../../shared/i18n/translation.json'
 import theme from '../../theme'
 import { getUsersTimezone } from '../../shared/utils/timezone'
 
-require('./App.scss')
-
 addLocaleData([...en, ...fr])
 
 const DEFAULT_LOCALE = 'en-US'
 
-function mapStateToProps(state) {
-  return {
-    locale: state.getIn(['user', 'culture']) || DEFAULT_LOCALE,
-    timezone: getUsersTimezone(state.getIn(['user', 'timezone']))
-  }
-}
-
 const enhance = compose(
   setPropTypes({
-    children: PropTypes.node.isRequired
+    children: PropTypes.node.isRequired,
   }),
   pure,
-  connect(mapStateToProps),
-  setPropTypes({
-    locale: PropTypes.string.isRequired,
-    timezone: PropTypes.string
-  })
+  connect(state => ({
+    locale: state.getIn(['user', 'culture']) || DEFAULT_LOCALE,
+    timezone: getUsersTimezone(state.getIn(['user', 'timezone'])),
+  })),
 )
 
-export const App = ({ children, locale, timezone }) => {
+export const UIProviders = ({ children, locale, timezone }) => {
   const messages = translation[locale]
   const formats = {}
 
@@ -78,12 +64,10 @@ export const App = ({ children, locale, timezone }) => {
       messages={messages}
     >
       <MuiThemeProvider muiTheme={getMuiTheme(theme)}>
-        {children}
+        {Children.only(children)}
       </MuiThemeProvider>
     </IntlProvider>
   )
 }
 
-export const AppContainer = enhance(App)
-
-export default AppContainer
+export default enhance(UIProviders)

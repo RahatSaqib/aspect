@@ -13,7 +13,8 @@ import store from './store'
 import { getRefreshToken } from './shared/utils/localStorage'
 import { refreshStart, hydrateFromLocalStorage } from './auth/AuthRedux'
 import './favicon.ico?output=../favicon.ico'
-import Routes from './components/Routes'
+import './index.scss'
+import Routes from './globals/Routes'
 
 if (config.sentry) {
   // using require here since import only allowed at top-level
@@ -67,5 +68,5 @@ new Promise((resolve) => {
 }).then(render)
 
 if (module.hot) {
-  module.hot.accept('./components/Routes', render)
+  module.hot.accept('./globals/Routes', render)
 }

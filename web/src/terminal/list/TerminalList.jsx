@@ -1,13 +1,11 @@
-// Imports from packages
-import _ from 'lodash'
 import PropTypes from 'prop-types'
 import React, { PureComponent } from 'react'
+import { compose, setPropTypes, pure } from 'recompose'
 import {
   injectIntl,
   defineMessages,
   intlShape
 } from 'react-intl'
-import { withRouter, routerShape } from 'react-router'
 import { bindActionCreators } from 'redux'
 import { connect } from 'react-redux'
 import Helmet from 'react-helmet'
@@ -17,10 +15,10 @@ import { fetchListFilteredTerminals } from '../TerminalRedux'
 import ListFilterContainer from '../../filter/list/ListFilter'
 import { configureListFilter, ListFilter } from '../../filter/FilterRedux'
 import DataTableWithEmptyList from '../../components/shared/DataTableWithEmptyList'
+import NavTitle from '../../globals/components/NavTitle'
 import styles from './TerminalList.css'
 import { Items } from '../../shared/metaReducers/items'
 import { Table } from '../../shared/metaReducers/table'
-
 
 const messages = defineMessages({
   terminalsTitle: {
@@ -73,23 +71,38 @@ const messages = defineMessages({
   }
 })
 
+const enhance = compose(
+  setPropTypes({
+    location: PropTypes.object.isRequired,
+    history: PropTypes.object.isRequired,
+  }),
+  pure,
+  injectIntl,
+  connect(state => ({
+    listFilter: state.filter.listFilter,
+    items: state.terminal.items,
+    table: state.terminal.table,
+  }), dispatch => (
+    bindActionCreators({
+      fetchListFilteredTerminals,
+      configureListFilter,
+    }, dispatch)
+  )),
+  setPropTypes({
+    intl: intlShape.isRequired,
+    listFilter: PropTypes.objectOf(ListFilter).isRequired,
+    items: PropTypes.objectOf(Items).isRequired,
+    table: PropTypes.objectOf(Table).isRequired,
+    fetchListFilteredTerminals: PropTypes.func.isRequired,
+    configureListFilter: PropTypes.func.isRequired,
+  }),
+)
+
 const TERMINAL_TABLE_COLUMN_SPACING = 12
 const TERMINAL_TABLE_NAME_COLUMN_WIDTH = '25%'
 const TERMINAL_TABLE_STATUS_COLUMN_WIDTH = '10%'
 
 export class TerminalList extends PureComponent {
-
-  static propTypes = {
-    setPageTitle: PropTypes.func.isRequired,
-    table: PropTypes.objectOf(Table).isRequired,
-    intl: intlShape.isRequired,
-    router: routerShape.isRequired,
-    fetchListFilteredTerminals: PropTypes.func.isRequired,
-    items: PropTypes.objectOf(Items).isRequired,
-    configureListFilter: PropTypes.func.isRequired,
-    listFilter: PropTypes.objectOf(ListFilter).isRequired
-  }
-
   static contextTypes = {
     muiTheme: PropTypes.object.isRequired
   }
@@ -119,8 +132,7 @@ export class TerminalList extends PureComponent {
   }
 
   componentWillMount() {
-    const { setPageTitle, configureListFilter, intl: { formatMessage } } = this.props
-    setPageTitle(formatMessage(messages.terminalsTitle))
+    const { configureListFilter } = this.props
     configureListFilter({
       geography: true,
       deviceName: true,
@@ -139,7 +151,7 @@ export class TerminalList extends PureComponent {
   }
 
   handleItemIdSelection = (terminalId) => {
-    this.props.router.push(`/terminal/${terminalId}`)
+    this.props.history.push(`/terminal/${terminalId}`)
   }
 
   handleFetch = (...args) => {
@@ -203,6 +215,7 @@ export class TerminalList extends PureComponent {
     return (
       <div className={styles.Content}>
         <Helmet title={formatMessage(messages.terminalsTitle)} titleTemplate="%s - Aspect" defaultTitle="Aspect" />
+        <NavTitle title={formatMessage(messages.terminalsTitle)} />
         <ListFilterContainer
           subject={formatMessage(messages.terminalsTitle)}
           filterTemplate={formatMessage(messages.filterTemplate)}
@@ -221,23 +234,4 @@ export class TerminalList extends PureComponent {
   }
 }
 
-function mapStateToProps(state) {
-  return {
-    listFilter: state.filter.listFilter,
-    items: state.terminal.items,
-    table: state.terminal.table
-  }
-}
-
-function mapDispatchToProps(dispatch) {
-  return bindActionCreators({
-    configureListFilter,
-    fetchListFilteredTerminals
-  }, dispatch)
-}
-
-export const TerminalListContainer = _.flowRight(
-  injectIntl,
-  withRouter,
-  connect(mapStateToProps, mapDispatchToProps)
-)(TerminalList)
+export default enhance(TerminalList)
