@@ -48,8 +48,12 @@ function* homeDashboard(request) {
     .whereBetween('r.endedOn', [subDays(now, 1), now])
     .modify(addConstraints, dataConstraints, { device: 'd', site: 's', geography: 'g' })
 
-  const [sitesTotal, devicesTotal, resultsTotal30d, resultsTotal1d] = yield Promise.all([
-    sitesTotalQuery, devicesTotalQuery, resultsTotalQuery30d, resultsTotalQuery1d
+    // to do - limit users by job
+  const usersTotalQuery = knex('User as u').count('u.id as cnt')
+
+
+  const [sitesTotal, devicesTotal, resultsTotal30d, resultsTotal1d, usersTotal] = yield Promise.all([
+    sitesTotalQuery, devicesTotalQuery, resultsTotalQuery30d, resultsTotalQuery1d, usersTotalQuery
   ])
 
   const result = Object.assign({ data: {
@@ -57,7 +61,8 @@ function* homeDashboard(request) {
     devicesTotal: devicesTotal[0].cnt,
     // TODO: Remove magic numbers below when moving to "real" dashboard
     resultsTotal30d: resultsTotal30d[0].cnt,
-    resultsTotal1d: resultsTotal1d[0].cnt
+    resultsTotal1d: resultsTotal1d[0].cnt,
+    usersTotal: usersTotal[0].cnt
   } })
 
   return result
