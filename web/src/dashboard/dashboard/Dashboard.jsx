@@ -65,7 +65,9 @@ export class Dashboard extends PureComponent {
 
   componentWillReceiveProps(nextProps) {
     const { location, showAcknowledgement, userName } = nextProps
-    if (location.query.fl && nextProps.userName !== this.props.userName) {
+    const search = new URLSearchParams(location.search)
+
+    if (search.has('fl') && nextProps.userName !== this.props.userName) {
       showAcknowledgement({
         title: messages.welcome,
         messageValues: { userName }

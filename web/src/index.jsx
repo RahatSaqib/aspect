@@ -1,6 +1,7 @@
 // This is the entry point for our app
 import 'core-js/shim'
 import 'whatwg-fetch'
+import 'url-search-params-polyfill'
 import React from 'react'
 import ReactDOM from 'react-dom'
 import { Provider } from 'react-redux'

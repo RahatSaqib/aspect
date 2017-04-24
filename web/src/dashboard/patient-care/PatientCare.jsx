@@ -50,12 +50,15 @@ export class PatientCare extends PureComponent {
   }
 
   render() {
-    const { intl: { formatMessage } } = this.props
+    const { location, intl } = this.props
+    const { formatMessage } = intl
+    const search = new URLSearchParams(location.search)
+
     return (
       <div className={styles.Content}>
         <Helmet title="Patient Care" titleTemplate="%s - Aspect" defaultTitle="Aspect" />
         <ListFilterContainer
-          subject={this.props.location.query.type === 'TB' ? 'TB' : 'HCV'}
+          subject={search.get('type') === 'TB' ? 'TB' : 'HCV'}
           filterTemplate={formatMessage(messages.filterTemplate)}
         />
         <Paper>
@@ -63,7 +66,7 @@ export class PatientCare extends PureComponent {
             <img
               alt="disease graph"
               src={
-                this.props.location.query.type === 'TB' ?
+                search.get('type') === 'TB' ?
                 require('./TB.png') :
                 require('./HCV.png')
               }

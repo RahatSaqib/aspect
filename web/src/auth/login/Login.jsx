@@ -89,6 +89,7 @@ const enhance = compose(
 
 export const Login = ({ location, intl, handleSubmit, pristine, submitting, initialValues }) => {
   const { formatMessage } = intl
+  const search = new URLSearchParams(location.search)
 
   return (
     <div className={styles.Background}>
@@ -101,7 +102,7 @@ export const Login = ({ location, intl, handleSubmit, pristine, submitting, init
           <Unit sm="11-12" md="2-3" lg="1-3">
             <Paper>
               <form onSubmit={handleSubmit} className={styles.Form}>
-                { location.query.reason ? <div className={styles.Form__Info}>{formatMessage(messages[`reason${location.query.reason}`])}</div> : null }
+                { search.has('reason') ? <div className={styles.Form__Info}>{formatMessage(messages[`reason${search.get('reason')}`])}</div> : null }
                 <TextInput name="user" label="Username" fullWidth autoFocus={_.isEmpty(initialValues.get('user'))} />
                 <TextInput name="password" type="password" label="Password" fullWidth autoFocus={!_.isEmpty(initialValues.get('user'))} />
                 <div className={styles.Form__ActionRow}>
