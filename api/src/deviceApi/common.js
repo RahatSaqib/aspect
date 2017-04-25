@@ -5,6 +5,10 @@ const { asyncHandler } = require('../routes')
 
 const millisInDay = 1000 * 60 * 60 * 24
 
+const DEVICE_LOG_TYPE_OPTIONAL = 0
+const DEVICE_LOG_TYPE_REQUIRED = 1
+const DEVICE_LOG_TYPE_RESULT = 2
+
 function deviceApiHandler(handler, handlerOptions) {
   return asyncHandler(function* (request) {
     const { error, context } = yield* createDeviceApiContext(request, handlerOptions)
@@ -70,7 +74,7 @@ function deviceApiHandler(handler, handlerOptions) {
 function* createDeviceApiContext(request, handlerOptions) {
   const {
     createDevice = false,
-    requestDeviceLog = false
+    deviceLogType = DEVICE_LOG_TYPE_OPTIONAL
   } = handlerOptions
   const { auth } = request
   const now = new Date()
@@ -113,7 +117,7 @@ function* createDeviceApiContext(request, handlerOptions) {
   })
 
   // Add Device Log if requested
-  if (requestDeviceLog) {
+  if (deviceLogType !== DEVICE_LOG_TYPE_OPTIONAL) {
     const { checkpoint } = request.query
     const offset = +(request.query.offset || 0)
 
@@ -128,11 +132,15 @@ function* createDeviceApiContext(request, handlerOptions) {
         return { error: Boom.badRequest('Must specify checkpoint if using offset') }
       }
       // Checkpoint not specified, return last one for this device
-      const lastDeviceLog = yield knex('DeviceLog')
+      const lastDeviceLogQuery = knex('DeviceLog')
         .where({ deviceId: device.id })
         .whereNotNull('checkpoint')
         .orderBy('id', 'desc')
         .first('id', 'checkpoint', 'createdOn')
+      if (deviceLogType === DEVICE_LOG_TYPE_RESULT) {
+        lastDeviceLogQuery.whereNotNull('resultId')
+      }
+      const lastDeviceLog = yield lastDeviceLogQuery
       context.deviceLog = lastDeviceLog || null
       return { context }
     }
@@ -146,10 +154,11 @@ function* createDeviceApiContext(request, handlerOptions) {
     }
     const historyCutoff = new Date(+new Date() - (partner.deviceLogHistoryDays * millisInDay))
 
-    const deviceLog = yield* getDeviceLog(context, checkpoint, offset, historyCutoff)
+    const deviceLog = yield* getDeviceLog(context, checkpoint, offset, deviceLogType, historyCutoff)
     if (deviceLog == null) {
       // See if requested log is forbidden or not found
-      const deviceLogNoHistory = yield* getDeviceLog(context, checkpoint, offset, null)
+      const deviceLogNoHistory = yield* getDeviceLog(
+        context, checkpoint, offset, deviceLogType, null)
       return { error: deviceLogNoHistory == null
         ? Boom.notFound('Cannot find specified checkpoint and offset')
         : Boom.forbidden('Not authorized to view specified checkpoint and offset') }
@@ -278,7 +287,7 @@ class DeviceApiContext {
   }
 }
 
-function* getDeviceLog(context, checkpoint, offset, historyCutoff) {
+function* getDeviceLog(context, checkpoint, offset, deviceLogType, historyCutoff) {
   const { device } = context
 
   // Find device log at checkpoint or latest
@@ -291,6 +300,9 @@ function* getDeviceLog(context, checkpoint, offset, historyCutoff) {
     // this device with same checkpoint so we don't miss data interleaving
     // from other sources while data with checkpoint is being posted
     .orderBy('id', offset > 0 ? 'asc' : 'desc')
+  if (deviceLogType === DEVICE_LOG_TYPE_RESULT) {
+    initialDeviceLogQuery.whereNotNull('resultId')
+  }
   if (historyCutoff != null) {
     initialDeviceLogQuery.where('createdOn', '>=', historyCutoff)
   }
@@ -318,6 +330,10 @@ function* getDeviceLog(context, checkpoint, offset, historyCutoff) {
         .orWhere('dl.checkpoint', '<>', initialDeviceLog.checkpoint)
         .orWhereNull('dl.checkpoint')
     })
+
+  if (deviceLogType === DEVICE_LOG_TYPE_RESULT) {
+    deviceLogQuery.whereNotNull('dl.resultId')
+  }
 
   if (offset > 0) {
     // select result after specified log entry
@@ -365,6 +381,9 @@ function* getDeviceLog(context, checkpoint, offset, historyCutoff) {
         }
       })
       .as('dls')
+    if (deviceLogType === DEVICE_LOG_TYPE_RESULT) {
+      deviceLogOffsetQuery.whereNotNull('dl.resultId')
+    }
     if (historyCutoff != null) {
       deviceLogOffsetQuery.where('dl.createdOn', '>=', historyCutoff)
     }
@@ -412,5 +431,8 @@ function addResultConstraints(queryBuilder, context, aliases) {
 
 module.exports = {
   deviceApiHandler,
-  addResultConstraints
+  addResultConstraints,
+  DEVICE_LOG_TYPE_OPTIONAL,
+  DEVICE_LOG_TYPE_REQUIRED,
+  DEVICE_LOG_TYPE_RESULT
 }

@@ -4,13 +4,17 @@
 // POST /device {result: {}} is equivalent to POST /device/result if
 // only result data is posted.
 const Joi = require('joi')
-const { deviceApiHandler } = require('./common')
+const {
+  deviceApiHandler,
+  DEVICE_LOG_TYPE_REQUIRED,
+  DEVICE_LOG_TYPE_RESULT
+} = require('./common')
 const {
   addDeviceData,
   getDeviceData,
   addDeviceOperation,
   updateDeviceConfiguration } = require('./device')
-const { addResult } = require('./result')
+const { addResult, getResult } = require('./result')
 
 const errorPayload = Joi.object().keys({
   code: Joi.string().allow('', null).description(
@@ -180,7 +184,7 @@ module.exports = [
     // GET /device
     method: 'GET',
     path: '/',
-    handler: deviceApiHandler(getDeviceData, { requestDeviceLog: true }),
+    handler: deviceApiHandler(getDeviceData, { deviceLogType: DEVICE_LOG_TYPE_REQUIRED }),
     config: {
       description: 'Get Device Data',
       notes: 'Get device configuration, operational and result data since the specified checkpoint.'
@@ -284,6 +288,21 @@ module.exports = [
       response: {
         schema: {
           error: errorPayload
+        }
+      }
+    }
+  },
+  {
+    method: 'GET',
+    path: '/result',
+    handler: deviceApiHandler(getResult, { deviceLogType: DEVICE_LOG_TYPE_RESULT }),
+    config: {
+      notes: 'Get result data',
+      description: 'Get last updated result data for the authenticated device given search constraints',
+      validate: {
+        query: {
+          checkpoint: Joi.string(),
+          offset: Joi.string()
         }
       }
     }
