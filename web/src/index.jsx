@@ -1,9 +1,8 @@
 // This is the entry point for our app
-import 'react-hot-loader/patch'
 import 'core-js/shim'
 import 'whatwg-fetch'
 import React from 'react'
-import { render } from 'react-dom'
+import ReactDOM from 'react-dom'
 import { Provider } from 'react-redux'
 import { AppContainer } from 'react-hot-loader'
 import injectTapEventPlugin from 'react-tap-event-plugin'
@@ -40,6 +39,17 @@ setInterval(() => { store.dispatch(refreshStart()) }, 30 * 60 * 1000)
 
 const appDom = document.getElementById('app')
 
+const render = () => {
+  ReactDOM.render(
+    <AppContainer>
+      <Provider store={store}>
+        <Routes />
+      </Provider>
+    </AppContainer>,
+    appDom
+  )
+}
+
 // If found a access token, refresh it before initial rendering
 new Promise((resolve) => {
   // get new access token on refresh/startup
@@ -53,28 +63,8 @@ new Promise((resolve) => {
   } else {
     resolve()
   }
-}).then(() => {
-  render(
-    <AppContainer>
-      <Provider store={store}>
-        <Routes />
-      </Provider>
-    </AppContainer>,
-    appDom
-  )
-})
+}).then(render)
 
 if (module.hot) {
-  module.hot.accept('./components/Routes.jsx', () => {
-    const NextRoutes = require('./components/Routes.jsx').default
-
-    render(
-      <AppContainer>
-        <Provider store={store}>
-          <NextRoutes />
-        </Provider>
-      </AppContainer>,
-      appDom
-    )
-  })
+  module.hot.accept('./components/Routes', render)
 }

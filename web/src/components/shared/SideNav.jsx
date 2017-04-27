@@ -1,6 +1,7 @@
 // Imports from packages
 import classnames from 'classnames/bind'
-import React, { PropTypes } from 'react'
+import PropTypes from 'prop-types'
+import React from 'react'
 import { compose, setPropTypes, pure } from 'recompose'
 import { Link } from 'react-router'
 
