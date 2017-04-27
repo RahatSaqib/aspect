@@ -2,7 +2,7 @@
 import _ from 'lodash'
 import PropTypes from 'prop-types'
 import React, { PureComponent } from 'react'
-import { injectIntl } from 'react-intl'
+import { injectIntl, intlShape } from 'react-intl'
 import { bindActionCreators } from 'redux'
 import { connect } from 'react-redux'
 import Helmet from 'react-helmet'
@@ -16,7 +16,6 @@ import isEditable from '../../shared/selectors/site'
 import {
   fetchSingleSite,
   updateSingleSite,
-  intlShape,
   Site
 } from '../SiteRedux'
 import SiteForm from './SiteForm'
