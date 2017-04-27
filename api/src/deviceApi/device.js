@@ -2,6 +2,12 @@ const _ = require('lodash')
 const Boom = require('boom')
 const { addResult, getResult } = require('./result')
 
+const {
+  DEVICE_LOG_TYPE_OPTIONAL,
+  DEVICE_LOG_TYPE_REQUIRED,
+  DEVICE_LOG_TYPE_RESULT
+} = require('./common')
+
 function* addDeviceData(context) {
   const response = {}
   const { knex, now, payload, device } = context
@@ -43,17 +49,35 @@ function* addDeviceData(context) {
 }
 
 function* getDeviceData(context) {
-  const { now, device, deviceLog } = context
+  const { now, device, deviceLog, deviceLogType } = context
 
-  const response = {
-    name: device.name,
-    requestedOn: now.toISOString(),
-    status: { id: device.status }
+  // include fields based on device log type configured in endpoints
+  const includeAll = (
+    deviceLogType === DEVICE_LOG_TYPE_OPTIONAL
+    || deviceLogType === DEVICE_LOG_TYPE_REQUIRED)
+  const includeDevice = includeAll
+  const includeSite = includeAll
+
+  // only include device data if approved
+  const deviceApproved = device.status === 'approved'
+  const includeConfig = deviceApproved && includeAll
+  const includeOp = deviceApproved && includeAll
+  const includeResult = deviceApproved && (
+    includeAll
+    || deviceLogType === DEVICE_LOG_TYPE_RESULT)
+
+
+  const response = { requestedOn: now.toISOString() }
+  if (includeDevice) {
+    response.name = device.name
+    response.status = { id: device.status }
   }
 
-  const site = yield* getSite(context)
-  if (site != null) {
-    response.site = site
+  if (includeSite) {
+    const site = yield* getSite(context)
+    if (site != null) {
+      response.site = site
+    }
   }
 
   if (deviceLog != null) {
@@ -62,17 +86,21 @@ function* getDeviceData(context) {
       response.checkpoint = deviceLog.checkpoint
     }
 
-    if (device.status === 'approved') {
+    if (includeConfig) {
       const config = yield* getDeviceConfiguration(context, true)
       if (config != null) {
         response.configuration = config
       }
+    }
 
+    if (includeOp) {
       const op = yield* getDeviceOperation(context)
       if (op != null) {
         response.operation = op
       }
+    }
 
+    if (includeResult) {
       const result = yield* getResult(context)
       if (result != null) {
         response.result = result

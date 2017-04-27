@@ -14,7 +14,7 @@ const {
   getDeviceData,
   addDeviceOperation,
   updateDeviceConfiguration } = require('./device')
-const { addResult, getResult } = require('./result')
+const { addResult } = require('./result')
 
 const errorPayload = Joi.object().keys({
   code: Joi.string().allow('', null).description(
@@ -295,7 +295,7 @@ module.exports = [
   {
     method: 'GET',
     path: '/result',
-    handler: deviceApiHandler(getResult, { deviceLogType: DEVICE_LOG_TYPE_RESULT }),
+    handler: deviceApiHandler(getDeviceData, { deviceLogType: DEVICE_LOG_TYPE_RESULT }),
     config: {
       notes: 'Get result data',
       description: 'Get last updated result data for the authenticated device given search constraints',

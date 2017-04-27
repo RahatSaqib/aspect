@@ -111,9 +111,9 @@ function* createDeviceApiContext(request, handlerOptions) {
   const context = new DeviceApiContext({
     now,
     device,
-    deviceLog: null,
     payload: request.payload,
-    query: request.query
+    query: request.query,
+    deviceLogType
   })
 
   // Add Device Log if requested
@@ -300,20 +300,21 @@ function* getDeviceLog(context, checkpoint, offset, deviceLogType, historyCutoff
     // this device with same checkpoint so we don't miss data interleaving
     // from other sources while data with checkpoint is being posted
     .orderBy('id', offset > 0 ? 'asc' : 'desc')
-  if (deviceLogType === DEVICE_LOG_TYPE_RESULT) {
-    initialDeviceLogQuery.whereNotNull('resultId')
-  }
   if (historyCutoff != null) {
     initialDeviceLogQuery.where('createdOn', '>=', historyCutoff)
   }
   const initialDeviceLog = yield initialDeviceLogQuery
-    .first('id', 'checkpoint', 'deviceId', 'createdOn')
+    .first('id', 'checkpoint', 'deviceId', 'resultId', 'createdOn')
   if (!initialDeviceLog) {
     // No log found at checkpoint for this device
     return null
   } else if (offset === 0) {
     // If no offset, return log at checkpoint for this device
     // as checkpoints are unique per device
+    if (deviceLogType === DEVICE_LOG_TYPE_RESULT && initialDeviceLog.resultId == null) {
+      // if we requested a log with result but we don't have one, 404
+      return null
+    }
     return {
       id: initialDeviceLog.id,
       checkpoint: initialDeviceLog.checkpoint,
