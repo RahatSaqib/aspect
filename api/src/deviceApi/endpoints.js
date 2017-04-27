@@ -6,7 +6,8 @@
 const Joi = require('joi')
 const {
   deviceApiHandler,
-  DEVICE_LOG_TYPE_REQUIRED,
+  DEVICE_LOG_TYPE_OPTIONAL,
+  DEVICE_LOG_TYPE_OPERATION,
   DEVICE_LOG_TYPE_RESULT
 } = require('./common')
 const {
@@ -184,7 +185,7 @@ module.exports = [
     // GET /device
     method: 'GET',
     path: '/',
-    handler: deviceApiHandler(getDeviceData, { deviceLogType: DEVICE_LOG_TYPE_REQUIRED }),
+    handler: deviceApiHandler(getDeviceData, { deviceLogType: DEVICE_LOG_TYPE_OPTIONAL }),
     config: {
       description: 'Get Device Data',
       notes: 'Get device configuration, operational and result data since the specified checkpoint.'
@@ -274,6 +275,33 @@ module.exports = [
     }
   },
   {
+    method: 'GET',
+    path: '/operation',
+    handler: deviceApiHandler(getDeviceData, { deviceLogType: DEVICE_LOG_TYPE_OPERATION }),
+    config: {
+      notes: 'Get device operational data',
+      description: 'Get last updated operation data for the authenticated device given search constraints',
+      validate: {
+        query: {
+          checkpoint: Joi.string(),
+          offset: Joi.string()
+        }
+      },
+      response: {
+        options: {
+          allowUnknown: true
+        },
+        schema: Object.assign({}, devicePayload, {
+          checkpoint: Joi.string().allow('', null).description(
+            'The client checkpoint'),
+          operation: Joi.object().keys(operationPayload).description(
+            'Device Operation Data'),
+          error: errorPayload
+        })
+      }
+    }
+  },
+  {
     // POST /device/operation
     method: 'POST',
     path: '/operation',
@@ -304,6 +332,18 @@ module.exports = [
           checkpoint: Joi.string(),
           offset: Joi.string()
         }
+      },
+      response: {
+        options: {
+          allowUnknown: true
+        },
+        schema: Object.assign({}, devicePayload, {
+          checkpoint: Joi.string().allow('', null).description(
+            'The client checkpoint'),
+          result: Joi.object().keys(resultPayload).description(
+            'Device Result Data.'),
+          error: errorPayload
+        })
       }
     }
   },

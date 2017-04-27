@@ -4,7 +4,7 @@ const { addResult, getResult } = require('./result')
 
 const {
   DEVICE_LOG_TYPE_OPTIONAL,
-  DEVICE_LOG_TYPE_REQUIRED,
+  DEVICE_LOG_TYPE_OPERATION,
   DEVICE_LOG_TYPE_RESULT
 } = require('./common')
 
@@ -53,15 +53,16 @@ function* getDeviceData(context) {
 
   // include fields based on device log type configured in endpoints
   const includeAll = (
-    deviceLogType === DEVICE_LOG_TYPE_OPTIONAL
-    || deviceLogType === DEVICE_LOG_TYPE_REQUIRED)
+    deviceLogType === DEVICE_LOG_TYPE_OPTIONAL)
   const includeDevice = includeAll
   const includeSite = includeAll
 
   // only include device data if approved
   const deviceApproved = device.status === 'approved'
   const includeConfig = deviceApproved && includeAll
-  const includeOp = deviceApproved && includeAll
+  const includeOp = deviceApproved && (
+    includeAll
+    || deviceLogType === DEVICE_LOG_TYPE_OPERATION)
   const includeResult = deviceApproved && (
     includeAll
     || deviceLogType === DEVICE_LOG_TYPE_RESULT)

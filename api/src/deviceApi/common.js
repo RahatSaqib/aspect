@@ -6,7 +6,7 @@ const { asyncHandler } = require('../routes')
 const millisInDay = 1000 * 60 * 60 * 24
 
 const DEVICE_LOG_TYPE_OPTIONAL = 0
-const DEVICE_LOG_TYPE_REQUIRED = 1
+const DEVICE_LOG_TYPE_OPERATION = 1
 const DEVICE_LOG_TYPE_RESULT = 2
 
 function deviceApiHandler(handler, handlerOptions) {
@@ -139,6 +139,8 @@ function* createDeviceApiContext(request, handlerOptions) {
         .first('id', 'checkpoint', 'createdOn')
       if (deviceLogType === DEVICE_LOG_TYPE_RESULT) {
         lastDeviceLogQuery.whereNotNull('resultId')
+      } else if (deviceLogType === DEVICE_LOG_TYPE_OPERATION) {
+        lastDeviceLogQuery.whereNotNull('deviceOperationId')
       }
       const lastDeviceLog = yield lastDeviceLogQuery
       context.deviceLog = lastDeviceLog || null
@@ -304,7 +306,7 @@ function* getDeviceLog(context, checkpoint, offset, deviceLogType, historyCutoff
     initialDeviceLogQuery.where('createdOn', '>=', historyCutoff)
   }
   const initialDeviceLog = yield initialDeviceLogQuery
-    .first('id', 'checkpoint', 'deviceId', 'resultId', 'createdOn')
+    .first('id', 'checkpoint', 'deviceId', 'resultId', 'deviceOperationId', 'createdOn')
   if (!initialDeviceLog) {
     // No log found at checkpoint for this device
     return null
@@ -313,6 +315,11 @@ function* getDeviceLog(context, checkpoint, offset, deviceLogType, historyCutoff
     // as checkpoints are unique per device
     if (deviceLogType === DEVICE_LOG_TYPE_RESULT && initialDeviceLog.resultId == null) {
       // if we requested a log with result but we don't have one, 404
+      return null
+    }
+
+    if (deviceLogType === DEVICE_LOG_TYPE_OPERATION && initialDeviceLog.deviceOperationId == null) {
+      // if we requested a log with operation but we don't have one, 404
       return null
     }
     return {
@@ -334,6 +341,8 @@ function* getDeviceLog(context, checkpoint, offset, deviceLogType, historyCutoff
 
   if (deviceLogType === DEVICE_LOG_TYPE_RESULT) {
     deviceLogQuery.whereNotNull('dl.resultId')
+  } else if (deviceLogType === DEVICE_LOG_TYPE_OPERATION) {
+    deviceLogQuery.whereNotNull('dl.deviceOperationId')
   }
 
   if (offset > 0) {
@@ -384,6 +393,8 @@ function* getDeviceLog(context, checkpoint, offset, deviceLogType, historyCutoff
       .as('dls')
     if (deviceLogType === DEVICE_LOG_TYPE_RESULT) {
       deviceLogOffsetQuery.whereNotNull('dl.resultId')
+    } else if (deviceLogType === DEVICE_LOG_TYPE_OPERATION) {
+      deviceLogOffsetQuery.whereNotNull('dl.deviceOperationId')
     }
     if (historyCutoff != null) {
       deviceLogOffsetQuery.where('dl.createdOn', '>=', historyCutoff)
@@ -434,6 +445,6 @@ module.exports = {
   deviceApiHandler,
   addResultConstraints,
   DEVICE_LOG_TYPE_OPTIONAL,
-  DEVICE_LOG_TYPE_REQUIRED,
+  DEVICE_LOG_TYPE_OPERATION,
   DEVICE_LOG_TYPE_RESULT
 }
