@@ -5,9 +5,10 @@ const { asyncHandler } = require('../routes')
 
 const millisInDay = 1000 * 60 * 60 * 24
 
-const DEVICE_LOG_TYPE_OPTIONAL = 0
-const DEVICE_LOG_TYPE_OPERATION = 1
-const DEVICE_LOG_TYPE_RESULT = 2
+const DEVICE_LOG_TYPE_NONE = 0
+const DEVICE_LOG_TYPE_OPTIONAL = 1
+const DEVICE_LOG_TYPE_OPERATION = 2
+const DEVICE_LOG_TYPE_RESULT = 3
 
 function deviceApiHandler(handler, handlerOptions) {
   return asyncHandler(function* (request) {
@@ -74,7 +75,7 @@ function deviceApiHandler(handler, handlerOptions) {
 function* createDeviceApiContext(request, handlerOptions) {
   const {
     createDevice = false,
-    deviceLogType = DEVICE_LOG_TYPE_OPTIONAL
+    deviceLogType = DEVICE_LOG_TYPE_NONE
   } = handlerOptions
   const { auth } = request
   const now = new Date()
@@ -117,7 +118,7 @@ function* createDeviceApiContext(request, handlerOptions) {
   })
 
   // Add Device Log if requested
-  if (deviceLogType !== DEVICE_LOG_TYPE_OPTIONAL) {
+  if (deviceLogType !== DEVICE_LOG_TYPE_NONE) {
     const { checkpoint } = request.query
     const offset = +(request.query.offset || 0)
 
