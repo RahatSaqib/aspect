@@ -91,6 +91,7 @@ export default (env) => {
             {
               loader: 'postcss-loader',
               options: {
+                ident: 'postcss',
                 plugins: postcssPlugins
               }
             }
@@ -109,6 +110,7 @@ export default (env) => {
             {
               loader: 'postcss-loader',
               options: {
+                ident: 'postcss',
                 plugins: postcssPlugins
               }
             },
@@ -134,6 +136,7 @@ export default (env) => {
             {
               loader: 'postcss-loader',
               options: {
+                ident: 'postcss',
                 plugins: postcssPlugins
               }
             },
@@ -158,6 +161,7 @@ export default (env) => {
             {
               loader: 'postcss-loader',
               options: {
+                ident: 'postcss',
                 plugins: postcssPlugins
               }
             },
@@ -177,6 +181,7 @@ export default (env) => {
             {
               loader: 'postcss-loader',
               options: {
+                ident: 'postcss',
                 plugins: postcssPlugins
               }
             },
