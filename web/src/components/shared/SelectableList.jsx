@@ -1,5 +1,6 @@
+import PropTypes from 'prop-types'
 // Imports from packages
-import React, { Component, PropTypes } from 'react'
+import React, { Component } from 'react'
 import { List, makeSelectable } from 'material-ui/List'
 
 const SelectableListWithoutState = makeSelectable(List)

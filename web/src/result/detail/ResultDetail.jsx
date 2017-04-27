@@ -1,7 +1,8 @@
 // Imports from packages
 import _ from 'lodash'
 import classnames from 'classnames/bind'
-import React, { PureComponent, PropTypes } from 'react'
+import PropTypes from 'prop-types'
+import React, { PureComponent } from 'react'
 import {
   injectIntl,
   defineMessages,

@@ -1,5 +1,6 @@
+import PropTypes from 'prop-types'
 // Imports from packages
-import React, { PureComponent, PropTypes } from 'react'
+import React, { PureComponent } from 'react'
 import { Link } from 'react-router'
 
 // Material-UI

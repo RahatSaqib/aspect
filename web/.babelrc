@@ -1,24 +1,5 @@
 {
   "env": {
-    "development": {
-      "plugins": [
-        [
-          "react-hot-loader/babel"
-        ],
-        [
-          "babel-plugin-lodash",
-          {}
-        ]
-      ]
-    },
-    "production": {
-      "plugins": [
-        [
-          "babel-plugin-lodash",
-          {}
-        ]
-      ]
-    },
     "message": {
       "plugins": [
         [

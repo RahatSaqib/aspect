@@ -1,6 +1,7 @@
 // Imports from packages
 import _ from 'lodash'
-import React, { PureComponent, PropTypes } from 'react'
+import PropTypes from 'prop-types'
+import React, { PureComponent } from 'react'
 import {
   injectIntl,
   defineMessages,
@@ -109,6 +110,7 @@ export class PersonList extends PureComponent {
           items={this.props.items}
           table={this.props.table}
           columns={columns}
+          intl={intl}
         />
       </div>
     )
