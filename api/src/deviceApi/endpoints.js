@@ -24,6 +24,14 @@ const errorPayload = Joi.object().keys({
     'Description of the error')
 })
 
+const logPayload = {
+  source: Joi.string().allow('', null).description('The source of the log, determined by client')
+}
+const logResponse = Object.assign({}, {
+  createdOn: Joi.date().iso().description(
+    'Date the log was created, in server time.')
+}, logPayload)
+
 const devicePayload = {
   name: Joi.string().allow('', null).description('The device name'),
   serial: Joi.string().allow('', null).description('The device serial number'),
@@ -210,6 +218,8 @@ module.exports = [
         schema: Object.assign({}, devicePayload, {
           checkpoint: Joi.string().allow('', null).description(
             'The client checkpoint'),
+          log: Joi.object().keys(logResponse).description(
+            'Device Log Data'),
           configuration: Joi.object().keys(configurationPayload).description(
             'Device Configuration Data'),
           operation: Joi.object().keys(operationPayload).description(
@@ -239,6 +249,8 @@ module.exports = [
             'The device name'),
           checkpoint: Joi.string().allow('', null).description(
             'The client checkpoint'),
+          log: Joi.object().keys(logPayload).description(
+            'Device Log Data'),
           configuration: Joi.object().keys(configurationPayload).description(
             'Device Configuration Data'),
           operation: Joi.object().keys(operationPayload).description(
@@ -265,7 +277,10 @@ module.exports = [
       notes: 'Device configuration information, such as firmware revision, software versions,'
         + ' serial numbers, etc.',
       validate: {
-        payload: configurationPayload
+        payload: Object.assign({}, configurationPayload, {
+          log: Joi.object().keys(logPayload).description(
+            'Device Log Data')
+        })
       },
       response: {
         schema: {
@@ -291,13 +306,15 @@ module.exports = [
         options: {
           allowUnknown: true
         },
-        schema: Object.assign({}, devicePayload, {
+        schema: {
           checkpoint: Joi.string().allow('', null).description(
             'The client checkpoint'),
+          log: Joi.object().keys(logResponse).description(
+            'Device Log Data'),
           operation: Joi.object().keys(operationPayload).description(
             'Device Operation Data'),
           error: errorPayload
-        })
+        }
       }
     }
   },
@@ -311,7 +328,10 @@ module.exports = [
       notes: 'Devices may deliver operational information to Aspect, such as uptime, communication'
         + ' statistics, status of mechanical systems, calibration information etc. ',
       validate: {
-        payload: operationPayload
+        payload: Object.assign({}, resultPayload, {
+          log: Joi.object().keys(logPayload).description(
+            'Device Log Data')
+        })
       },
       response: {
         schema: {
@@ -337,13 +357,15 @@ module.exports = [
         options: {
           allowUnknown: true
         },
-        schema: Object.assign({}, devicePayload, {
+        schema: {
           checkpoint: Joi.string().allow('', null).description(
             'The client checkpoint'),
+          log: Joi.object().keys(logResponse).description(
+            'Device Log Data'),
           result: Joi.object().keys(resultPayload).description(
             'Device Result Data.'),
           error: errorPayload
-        })
+        }
       }
     }
   },
@@ -361,7 +383,10 @@ module.exports = [
         options: {
           allowUnknown: true
         },
-        payload: resultPayload
+        payload: Object.assign({}, resultPayload, {
+          log: Joi.object().keys(logPayload).description(
+            'Device Log Data')
+        })
       },
       response: {
         schema: {

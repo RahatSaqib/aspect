@@ -82,7 +82,11 @@ function* getDeviceData(context) {
   }
 
   if (deviceLog != null) {
-    response.loggedOn = deviceLog.createdOn
+    response.log = { createdOn: deviceLog.createdOn }
+    if (deviceLog.source != null) {
+      response.log.source = deviceLog.source
+    }
+
     if (deviceLog.checkpoint != null) {
       response.checkpoint = deviceLog.checkpoint
     }

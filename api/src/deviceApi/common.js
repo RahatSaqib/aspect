@@ -34,7 +34,7 @@ function deviceApiHandler(handler, handlerOptions) {
       ;[deviceLogId] = yield knex('DeviceLog').insert({
         deviceId,
         checkpoint,
-        source: 'DeviceAPI',
+        source: _.get(request.payload, 'log.source', ''),
         createdOn: now,
         senderIp: remoteAddress,
         // TODO DeviceLog handle non-JSON payloads
@@ -137,7 +137,7 @@ function* createDeviceApiContext(request, handlerOptions) {
         .where({ deviceId: device.id })
         .whereNotNull('checkpoint')
         .orderBy('id', 'desc')
-        .first('id', 'checkpoint', 'createdOn')
+        .first('id', 'checkpoint', 'createdOn', 'source')
       if (deviceLogType === DEVICE_LOG_TYPE_RESULT) {
         lastDeviceLogQuery.whereNotNull('resultId')
       } else if (deviceLogType === DEVICE_LOG_TYPE_OPERATION) {
@@ -307,7 +307,7 @@ function* getDeviceLog(context, checkpoint, offset, deviceLogType, historyCutoff
     initialDeviceLogQuery.where('createdOn', '>=', historyCutoff)
   }
   const initialDeviceLog = yield initialDeviceLogQuery
-    .first('id', 'checkpoint', 'deviceId', 'resultId', 'deviceOperationId', 'createdOn')
+    .first('id', 'checkpoint', 'deviceId', 'resultId', 'deviceOperationId', 'createdOn', 'source')
   if (!initialDeviceLog) {
     // No log found at checkpoint for this device
     return null
@@ -326,7 +326,8 @@ function* getDeviceLog(context, checkpoint, offset, deviceLogType, historyCutoff
     return {
       id: initialDeviceLog.id,
       checkpoint: initialDeviceLog.checkpoint,
-      createdOn: initialDeviceLog.createdOn
+      createdOn: initialDeviceLog.createdOn,
+      source: initialDeviceLog.source
     }
   }
 
@@ -409,12 +410,12 @@ function* getDeviceLog(context, checkpoint, offset, deviceLogType, historyCutoff
   }
 
   const deviceLog = yield deviceLogQuery
-    .first('dl.id', 'dl.deviceId', 'dl.checkpoint', 'dl.createdOn')
+    .first('dl.id', 'dl.deviceId', 'dl.checkpoint', 'dl.createdOn', 'dl.source')
   if (deviceLog == null) {
     return null
   }
 
-  const response = { id: deviceLog.id, createdOn: deviceLog.createdOn }
+  const response = { id: deviceLog.id, createdOn: deviceLog.createdOn, source: deviceLog.source }
   // set checkpoint if log changed during query, e.g, due to offset
   // but do not leak checkpoint from different device
   if (deviceLog.deviceId === device.id) {
