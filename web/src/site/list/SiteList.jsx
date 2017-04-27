@@ -110,6 +110,7 @@ export class SiteList extends PureComponent {
           items={this.props.items}
           table={this.props.table}
           columns={columns}
+          intl={intl}
         />
       </div>
     )

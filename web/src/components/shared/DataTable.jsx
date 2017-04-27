@@ -38,7 +38,7 @@ export default class DataTable extends PureComponent {
       total: PropTypes.number.isRequired
     }).isRequired,
     columns: PropTypes.array.isRequired,
-    intl: intlShape,
+    intl: intlShape.isRequired,
     messages: PropTypes.object
   }
 
@@ -47,7 +47,6 @@ export default class DataTable extends PureComponent {
     multiSelectable: false,
     handleItemIdSelection: _.noop,
     handleItemIdsSelection: _.noop,
-    intl: {},
     messages: {},
   }
 
