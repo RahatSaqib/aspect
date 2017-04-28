@@ -27,6 +27,7 @@ const vendor = [
   'react-google-maps',
   'react-helmet',
   'react-intl',
+  'react-loadable',
   'react-redux',
   'react-router',
   'react-router-dom',
