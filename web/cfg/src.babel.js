@@ -69,6 +69,7 @@ export default (env) => {
       pathinfo: isDevelopment,
       path: path.join(__dirname, '../dist/assets'),
       filename: '[name].js',
+      chunkFilename: '[chunkhash].chunk.js',
       publicPath: '/assets/',
     },
     resolve: {
