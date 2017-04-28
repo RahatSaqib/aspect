@@ -2,7 +2,7 @@ import PropTypes from 'prop-types'
 // Imports from packages
 import React from 'react'
 import { compose, setPropTypes, pure } from 'recompose'
-import { Link } from 'react-router'
+import { Link } from 'react-router-dom'
 
 // Our own imports
 import requirePermissions from '../../components/shared/requirePermissions'
@@ -10,12 +10,12 @@ import MiniChart from '../../components/shared/MiniChart'
 
 const enhance = compose(
   setPropTypes({
-    label: PropTypes.string.isRequired
+    label: PropTypes.string.isRequired,
   }),
   pure,
   requirePermissions({
-    permissions: ['result:admin', 'result:view']
-  })
+    permissions: ['result:admin', 'result:view'],
+  }),
 )
 
 export const DashboardTests = ({ label }) => (

@@ -1,4 +1,5 @@
 import _ from 'lodash'
+import { stringify } from 'querystring'
 import React from 'react'
 import sinon from 'sinon'
 import { mount } from 'enzyme'
@@ -7,7 +8,9 @@ import Immutable from 'immutable'
 import { Dashboard } from './Dashboard'
 
 function makeLocationObject(query) {
-  return { query }
+  return {
+    search: `?${stringify(query)}`
+  }
 }
 
 describe('Dashboard', () => {
@@ -34,7 +37,6 @@ describe('Dashboard', () => {
         const Wrapper = mount(
           <Dashboard
             fetchDashboardHome={_.noop}
-            setPageTitle={_.noop}
             showAcknowledgement={showAcknowledgement}
             location={location}
             userName=""
@@ -58,7 +60,6 @@ describe('Dashboard', () => {
         const Wrapper = mount(
           <Dashboard
             fetchDashboardHome={_.noop}
-            setPageTitle={_.noop}
             showAcknowledgement={showAcknowledgement}
             location={location}
             userName=""

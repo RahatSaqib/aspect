@@ -1,4 +1,3 @@
-// Imports from packages
 import _ from 'lodash'
 import PropTypes from 'prop-types'
 import React from 'react'
@@ -12,7 +11,7 @@ import {
   defineMessages,
   intlShape
 } from 'react-intl'
-import { Link } from 'react-router'
+import { Link } from 'react-router-dom'
 
 // Material-UI
 import Paper from 'material-ui/Paper'
@@ -42,53 +41,48 @@ const messages = defineMessages({
   }
 })
 
-function mapStateToProps({ user: { name } }) {
-  return {
-    initialValues: { user: name }
-  }
-}
-
-function mapDispatchToProps(dispatch) {
-  return bindActionCreators({
-    onSubmit: loginStart
-  }, dispatch)
-}
-
-function validate(values) {
-  const errors = {}
-  if (values) {
-    if (!values.get('user')) {
-      errors.user = 'Please enter your username'
-    }
-    if (!values.get('password')) {
-      errors.password = 'Please enter your password'
-    }
-  }
-  return errors
-}
-
 const enhance = compose(
   setPropTypes({
     location: PropTypes.object.isRequired,
   }),
   pure,
   injectIntl,
-  connect(mapStateToProps, mapDispatchToProps),
+  connect(state => ({
+    initialValues: {
+      user: state.user.name,
+    }
+  }), dispatch => (
+    bindActionCreators({
+      onSubmit: loginStart,
+    }, dispatch)
+  )),
   reduxForm({
     form: 'login',
-    validate
+    validate(values) {
+      const errors = {}
+      if (values) {
+        if (!values.get('user')) {
+          errors.user = 'Please enter your username'
+        }
+        if (!values.get('password')) {
+          errors.password = 'Please enter your password'
+        }
+      }
+      return errors
+    }
   }),
   setPropTypes({
     intl: intlShape.isRequired,
     handleSubmit: PropTypes.func.isRequired,
     pristine: PropTypes.bool.isRequired,
     submitting: PropTypes.bool.isRequired,
-    initialValues: PropTypes.object.isRequired
-  })
+    initialValues: PropTypes.object.isRequired,
+  }),
 )
 
 export const Login = ({ location, intl, handleSubmit, pristine, submitting, initialValues }) => {
   const { formatMessage } = intl
+  const search = new URLSearchParams(location.search)
 
   return (
     <div className={styles.Background}>
@@ -101,7 +95,7 @@ export const Login = ({ location, intl, handleSubmit, pristine, submitting, init
           <Unit sm="11-12" md="2-3" lg="1-3">
             <Paper>
               <form onSubmit={handleSubmit} className={styles.Form}>
-                { location.query.reason ? <div className={styles.Form__Info}>{formatMessage(messages[`reason${location.query.reason}`])}</div> : null }
+                { search.has('reason') ? <div className={styles.Form__Info}>{formatMessage(messages[`reason${search.get('reason')}`])}</div> : null }
                 <TextInput name="user" label="Username" fullWidth autoFocus={_.isEmpty(initialValues.get('user'))} />
                 <TextInput name="password" type="password" label="Password" fullWidth autoFocus={!_.isEmpty(initialValues.get('user'))} />
                 <div className={styles.Form__ActionRow}>
@@ -122,6 +116,4 @@ export const Login = ({ location, intl, handleSubmit, pristine, submitting, init
   )
 }
 
-export const LoginContainer = enhance(Login)
-
-export default LoginContainer
+export default enhance(Login)

@@ -7,7 +7,7 @@ import React from 'react'
 import { compose, setPropTypes, withHandlers, lifecycle, pure } from 'recompose'
 import { bindActionCreators } from 'redux'
 import { connect } from 'react-redux'
-import { Link } from 'react-router'
+import { Link } from 'react-router-dom'
 
 // Material-UI
 import FlatButton from 'material-ui/FlatButton'

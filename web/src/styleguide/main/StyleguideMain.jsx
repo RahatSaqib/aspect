@@ -1,14 +1,13 @@
 // Imports from packages
 import _ from 'lodash'
+import Immutable from 'immutable'
 import React, { PureComponent } from 'react'
+import { compose, setPropTypes, pure } from 'recompose'
 import {
   injectIntl,
   defineMessages,
   intlShape
 } from 'react-intl'
-import { withRouter } from 'react-router'
-import { bindActionCreators } from 'redux'
-import { connect } from 'react-redux'
 import Helmet from 'react-helmet'
 
 // Our own imports
@@ -22,18 +21,26 @@ const messages = defineMessages({
   title: {
     id: 'pages.StyleguideMain.title',
     defaultMessage: 'Styleguide'
+  },
+  filterTemplate: {
+    id: 'pages.ManageDevices.filterTemplate',
+    defaultMessage: 'Viewing all devices<GEOGRAPHY><NAME>.'
+  },
+  filterTemplateOptional: {
+    id: 'pages.ManageDevices.filterTemplateOptional',
+    defaultMessage: 'Counting only <ASSAY> assays<RESULT><DATE>.'
   }
 })
 
+const enhance = compose(
+  pure,
+  injectIntl,
+  setPropTypes({
+    intl: intlShape.isRequired,
+  }),
+)
+
 export class StyleguideMain extends PureComponent {
-  static propTypes = {
-    intl: intlShape
-  }
-
-  static defaultProps = {
-    intl: null
-  }
-
   state = {
     filter: {},
     countryId: null,
@@ -66,9 +73,12 @@ export class StyleguideMain extends PureComponent {
         <Helmet title={formatMessage(messages.title)} titleTemplate="%s - Aspect" defaultTitle="Aspect" />
         <h1>Styleguide</h1>
         <ListFilter
+          intl={intl}
           onClearFilter={_.noop}
           onChangeFilter={this.handleChangeFilter}
-          filter={this.state.filter}
+          listFilter={Immutable.fromJS(this.state.filter)}
+          filterTemplate={formatMessage(messages.filterTemplate)}
+          filterTemplateOptional={formatMessage(messages.filterTemplateOptional)}
           defaultExpanded
           config={{ assayAndResultCategory: true,
             geography: true,
@@ -97,19 +107,4 @@ export class StyleguideMain extends PureComponent {
   }
 }
 
-function mapStateToProps(state) {
-  return {
-    state
-  }
-}
-
-function mapDispatchToProps(dispatch) {
-  return bindActionCreators({
-  }, dispatch)
-}
-
-export const StyleguideMainContainer = _.flowRight(
-  injectIntl,
-  withRouter,
-  connect(mapStateToProps, mapDispatchToProps)
-)(StyleguideMain)
+export default enhance(StyleguideMain)

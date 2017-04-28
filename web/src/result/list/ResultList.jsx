@@ -1,19 +1,18 @@
-// Imports from packages
-import _ from 'lodash'
 import PropTypes from 'prop-types'
 import React, { PureComponent } from 'react'
+import { compose, setPropTypes, pure } from 'recompose'
 import {
   injectIntl,
   defineMessages,
   intlShape
 } from 'react-intl'
-import { withRouter, routerShape } from 'react-router'
 import { bindActionCreators } from 'redux'
 import { connect } from 'react-redux'
 import Helmet from 'react-helmet'
 
 // Our own imports
 import DataTableWithEmptyList from '../../components/shared/DataTableWithEmptyList'
+import NavTitle from '../../globals/components/NavTitle'
 import ListFilterContainer from '../../filter/list/ListFilter'
 import { configureListFilter, ListFilter } from '../../filter/FilterRedux'
 import { fetchListFilteredResults } from '../ResultRedux'
@@ -60,23 +59,47 @@ const messages = defineMessages({
   }
 })
 
+const enhance = compose(
+  setPropTypes({
+    location: PropTypes.object.isRequired,
+    history: PropTypes.object.isRequired,
+  }),
+  pure,
+  injectIntl,
+  connect(state => ({
+    listFilter: state.filter.listFilter,
+    items: state.result.items,
+    table: state.result.table,
+  }), dispatch => (
+    bindActionCreators({
+      fetchListFilteredResults,
+      configureListFilter,
+    }, dispatch)
+  )),
+  setPropTypes({
+    intl: intlShape.isRequired,
+    listFilter: PropTypes.objectOf(ListFilter).isRequired,
+    items: PropTypes.objectOf(Items).isRequired,
+    table: PropTypes.objectOf(Table).isRequired,
+    fetchListFilteredResults: PropTypes.func.isRequired,
+    configureListFilter: PropTypes.func.isRequired,
+  }),
+)
+
 export class ResultList extends PureComponent {
 
   static propTypes = {
-    setPageTitle: PropTypes.func.isRequired,
     table: PropTypes.objectOf(Table).isRequired,
     configureListFilter: PropTypes.func.isRequired,
     intl: intlShape.isRequired,
     listFilter: PropTypes.objectOf(ListFilter).isRequired,
     fetchListFilteredResults: PropTypes.func.isRequired,
-    router: routerShape.isRequired,
+    history: PropTypes.object.isRequired,
     items: PropTypes.objectOf(Items).isRequired
   }
 
   componentWillMount() {
-    const { setPageTitle, configureListFilter, intl } = this.props
-    const { formatMessage } = intl
-    setPageTitle(formatMessage(messages.title))
+    const { configureListFilter } = this.props
     configureListFilter({
       assayAndResultCategory: true,
       geography: true,
@@ -103,7 +126,7 @@ export class ResultList extends PureComponent {
   }
 
   handleItemIdSelection = (resultId) => {
-    this.props.router.push(`/result/${resultId}`)
+    this.props.history.push(`/result/${resultId}`)
   }
 
   render() {
@@ -120,6 +143,7 @@ export class ResultList extends PureComponent {
     return (
       <div className={styles.Content}>
         <Helmet title={formatMessage(messages.title)} titleTemplate="%s - Aspect" defaultTitle="Aspect" />
+        <NavTitle title={formatMessage(messages.title)} />
         <ListFilterContainer
           subject={formatMessage(messages.title)}
           filterTemplate={formatMessage(messages.filterTemplate)}
@@ -139,23 +163,4 @@ export class ResultList extends PureComponent {
   }
 }
 
-function mapStateToProps(state) {
-  return {
-    listFilter: state.filter.listFilter,
-    items: state.result.items,
-    table: state.result.table
-  }
-}
-
-function mapDispatchToProps(dispatch) {
-  return bindActionCreators({
-    configureListFilter,
-    fetchListFilteredResults
-  }, dispatch)
-}
-
-export const ResultListContainer = _.flowRight(
-  injectIntl,
-  withRouter,
-  connect(mapStateToProps, mapDispatchToProps)
-)(ResultList)
+export default enhance(ResultList)

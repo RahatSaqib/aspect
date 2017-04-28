@@ -1,8 +1,7 @@
-// Imports from packages
 import _ from 'lodash'
 import PropTypes from 'prop-types'
 import React, { PureComponent } from 'react'
-import { compose } from 'recompose'
+import { compose, setPropTypes, pure } from 'recompose'
 import { injectIntl, defineMessages, intlShape } from 'react-intl'
 import { bindActionCreators } from 'redux'
 import { connect } from 'react-redux'
@@ -19,6 +18,7 @@ import {
   updateSingleDeviceApiKey,
   fetchDeviceApiKeys
 } from '../DeviceApiKeyRedux'
+import NavTitle from '../../globals/components/NavTitle'
 import { ListFilterContainer } from '../../filter/list/ListFilter'
 import { ListFilter, configureListFilter } from '../../filter/FilterRedux'
 import DataTableWithEmptyList from '../../components/shared/DataTableWithEmptyList'
@@ -82,25 +82,44 @@ const messages = defineMessages({
   }
 })
 
-const DEFAULT_GENERATOR_VALUES = { count: 1 }
-const DEFAULT_ASSIGNER_VALUES = { deviceApiKeyIds: [] }
-
-export class DeviceApiKeyList extends PureComponent {
-
-  static propTypes = {
-    setPageTitle: PropTypes.func.isRequired,
-    table: PropTypes.objectOf(Table).isRequired,
+const enhance = compose(
+  setPropTypes({
+    location: PropTypes.object.isRequired,
+  }),
+  pure,
+  injectIntl,
+  connect(state => ({
+    listFilter: state.filter.listFilter,
+    items: state.deviceApiKey.items,
+    table: state.deviceApiKey.table,
+  }), dispatch => (
+    bindActionCreators({
+      fetchDeviceApiKeys,
+      exportDeviceApiKeys,
+      generateDeviceApiKeys,
+      assignDeviceApiKeys,
+      updateSingleDeviceApiKey,
+      configureListFilter,
+    }, dispatch)
+  )),
+  setPropTypes({
     intl: intlShape.isRequired,
-    fetchDeviceApiKeys: PropTypes.func.isRequired,
+    listFilter: PropTypes.objectOf(ListFilter).isRequired,
     items: PropTypes.objectOf(Items).isRequired,
-    configureListFilter: PropTypes.func.isRequired,
+    table: PropTypes.objectOf(Table).isRequired,
+    fetchDeviceApiKeys: PropTypes.func.isRequired,
     exportDeviceApiKeys: PropTypes.func.isRequired,
     generateDeviceApiKeys: PropTypes.func.isRequired,
     assignDeviceApiKeys: PropTypes.func.isRequired,
     updateSingleDeviceApiKey: PropTypes.func.isRequired,
-    listFilter: PropTypes.objectOf(ListFilter).isRequired,
-  }
+    configureListFilter: PropTypes.func.isRequired,
+  }),
+)
 
+const DEFAULT_GENERATOR_VALUES = { count: 1 }
+const DEFAULT_ASSIGNER_VALUES = { deviceApiKeyIds: [] }
+
+export class DeviceApiKeyList extends PureComponent {
   state = {
     generatorValues: DEFAULT_GENERATOR_VALUES,
     assignerValues: DEFAULT_ASSIGNER_VALUES,
@@ -109,8 +128,7 @@ export class DeviceApiKeyList extends PureComponent {
   }
 
   componentWillMount() {
-    const { setPageTitle, configureListFilter, intl: { formatMessage } } = this.props
-    setPageTitle(formatMessage(messages.title))
+    const { configureListFilter } = this.props
     configureListFilter({
       geography: true,
       state: false,
@@ -288,6 +306,7 @@ export class DeviceApiKeyList extends PureComponent {
     return (
       <div className={styles.Content}>
         <Helmet title={formatMessage(messages.title)} titleTemplate="%s - Aspect" defaultTitle="Aspect" />
+        <NavTitle title={formatMessage(messages.title)} />
         <ListFilterContainer
           subject={formatMessage(messages.title)}
           filterTemplate={formatMessage(messages.filterTemplate)}
@@ -335,28 +354,4 @@ export class DeviceApiKeyList extends PureComponent {
   }
 }
 
-function mapStateToProps(state) {
-  return {
-    listFilter: state.filter.listFilter,
-    items: state.deviceApiKey.items,
-    table: state.deviceApiKey.table,
-  }
-}
-
-function mapDispatchToProps(dispatch) {
-  return bindActionCreators({
-    fetchDeviceApiKeys,
-    exportDeviceApiKeys,
-    generateDeviceApiKeys,
-    assignDeviceApiKeys,
-    updateSingleDeviceApiKey,
-    configureListFilter
-  }, dispatch)
-}
-
-const enhance = compose(
-  injectIntl,
-  connect(mapStateToProps, mapDispatchToProps)
-)
-
-export const DeviceApiKeyListContainer = enhance(DeviceApiKeyList)
+export default enhance(DeviceApiKeyList)

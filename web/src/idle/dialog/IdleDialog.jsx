@@ -33,8 +33,8 @@ const enhance = compose(
   connect(mapStateToProps),
   setPropTypes({
     intl: intlShape.isRequired,
-    idleStatus: PropTypes.string.isRequired
-  })
+    idleStatus: PropTypes.string.isRequired,
+  }),
 )
 
 export const IdleDialog = ({ intl, idleStatus }) => {

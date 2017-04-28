@@ -1,13 +1,11 @@
-// Imports from packages
-import _ from 'lodash'
 import PropTypes from 'prop-types'
 import React, { PureComponent } from 'react'
+import { compose, setPropTypes, pure } from 'recompose'
 import {
   injectIntl,
   defineMessages,
   intlShape
 } from 'react-intl'
-import { withRouter, routerShape } from 'react-router'
 import { bindActionCreators } from 'redux'
 import { connect } from 'react-redux'
 import Helmet from 'react-helmet'
@@ -17,10 +15,10 @@ import { fetchListFilteredRouters } from '../RouterRedux'
 import ListFilterContainer from '../../filter/list/ListFilter'
 import { configureListFilter, ListFilter } from '../../filter/FilterRedux'
 import DataTableWithEmptyList from '../../components/shared/DataTableWithEmptyList'
+import NavTitle from '../../globals/components/NavTitle'
 import styles from './RouterList.css'
 import { Items } from '../../shared/metaReducers/items'
 import { Table } from '../../shared/metaReducers/table'
-
 
 const messages = defineMessages({
   routersTitle: {
@@ -49,23 +47,39 @@ const messages = defineMessages({
   }
 })
 
+const enhance = compose(
+  setPropTypes({
+    location: PropTypes.object.isRequired,
+    history: PropTypes.object.isRequired,
+  }),
+  pure,
+  injectIntl,
+  connect(state => ({
+    listFilter: state.filter.listFilter,
+    items: state.router.items,
+    table: state.router.table,
+  }), dispatch => (
+    bindActionCreators({
+      fetchListFilteredRouters,
+      configureListFilter,
+    }, dispatch)
+  )),
+  setPropTypes({
+    intl: intlShape.isRequired,
+    listFilter: PropTypes.objectOf(ListFilter).isRequired,
+    items: PropTypes.objectOf(Items).isRequired,
+    table: PropTypes.objectOf(Table).isRequired,
+    fetchListFilteredRouters: PropTypes.func.isRequired,
+    configureListFilter: PropTypes.func.isRequired,
+  }),
+)
+
+
 const ROUTER_TABLE_COLUMN_SPACING = 12
 const ROUTER_TABLE_NAME_COLUMN_WIDTH = '30%'
 const ROUTER_TABLE_STATUS_COLUMN_WIDTH = '15%'
 
 export class RouterList extends PureComponent {
-
-  static propTypes = {
-    setPageTitle: PropTypes.func.isRequired,
-    table: PropTypes.objectOf(Table).isRequired,
-    intl: intlShape.isRequired,
-    router: routerShape.isRequired,
-    fetchListFilteredRouters: PropTypes.func.isRequired,
-    items: PropTypes.objectOf(Items).isRequired,
-    configureListFilter: PropTypes.func.isRequired,
-    listFilter: PropTypes.objectOf(ListFilter).isRequired
-  }
-
   static contextTypes = {
     muiTheme: PropTypes.object.isRequired
   }
@@ -95,8 +109,7 @@ export class RouterList extends PureComponent {
   }
 
   componentWillMount() {
-    const { setPageTitle, configureListFilter, intl: { formatMessage } } = this.props
-    setPageTitle(formatMessage(messages.routersTitle))
+    const { configureListFilter } = this.props
     configureListFilter({
       geography: true,
       deviceName: true,
@@ -115,7 +128,7 @@ export class RouterList extends PureComponent {
   }
 
   handleItemIdSelection = (routerId) => {
-    this.props.router.push(`/router/${routerId}`)
+    this.props.history.push(`/router/${routerId}`)
   }
 
   handleFetch = (...args) => {
@@ -149,6 +162,7 @@ export class RouterList extends PureComponent {
     return (
       <div className={styles.Content}>
         <Helmet title={formatMessage(messages.routersTitle)} titleTemplate="%s - Aspect" defaultTitle="Aspect" />
+        <NavTitle title={formatMessage(messages.routersTitle)} />
         <ListFilterContainer
           subject={formatMessage(messages.routersTitle)}
           filterTemplate={formatMessage(messages.filterTemplate)}
@@ -167,23 +181,4 @@ export class RouterList extends PureComponent {
   }
 }
 
-function mapStateToProps(state) {
-  return {
-    listFilter: state.filter.listFilter,
-    items: state.router.items,
-    table: state.router.table
-  }
-}
-
-function mapDispatchToProps(dispatch) {
-  return bindActionCreators({
-    configureListFilter,
-    fetchListFilteredRouters
-  }, dispatch)
-}
-
-export const RouterListContainer = _.flowRight(
-  injectIntl,
-  withRouter,
-  connect(mapStateToProps, mapDispatchToProps)
-)(RouterList)
+export default enhance(RouterList)

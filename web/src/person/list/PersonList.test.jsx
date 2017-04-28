@@ -19,7 +19,6 @@ describe('Person List Component', () => {
 
     beforeEach(() => {
       props = {
-        setPageTitle: sinon.spy(),
         table: new Table(),
         intl: {
           formatMessage: message => message.defaultMessage

@@ -26,5 +26,5 @@
 }
 
 .MenuItem {
-  composes: Helper--linky from './Shared.css';
+  composes: Helper--linky from '../../components/shared/Shared.css';
 }

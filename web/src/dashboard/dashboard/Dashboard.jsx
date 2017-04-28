@@ -1,7 +1,6 @@
-// Imports from packages
-import _ from 'lodash'
 import PropTypes from 'prop-types'
 import React, { PureComponent } from 'react'
+import { compose, setPropTypes, pure } from 'recompose'
 import { bindActionCreators } from 'redux'
 import {
   injectIntl,
@@ -10,7 +9,7 @@ import {
 } from 'react-intl'
 import { connect } from 'react-redux'
 import Helmet from 'react-helmet'
-import { Link } from 'react-router'
+import { Link } from 'react-router-dom'
 
 // Material-UI
 import Paper from 'material-ui/Paper'
@@ -23,6 +22,7 @@ import { Card, CardActions, CardHeader, CardText } from 'material-ui/Card'
 
 // Our own imports
 import { Unit } from '../../components/pureGrids'
+import NavTitle from '../../globals/components/NavTitle'
 import { showAcknowledgement } from '../../appNotification/AppNotificationRedux'
 import styles from './Dashboard.css'
 import { fetchDashboardHome } from '../DashboardRedux'
@@ -38,25 +38,35 @@ const messages = defineMessages({
   }
 })
 
-export class Dashboard extends PureComponent {
-
-  static propTypes = {
-    setPageTitle: PropTypes.func.isRequired,
-    showAcknowledgement: PropTypes.func.isRequired,
-    userName: PropTypes.string,
+const enhance = compose(
+  setPropTypes({
     location: PropTypes.object.isRequired,
+  }),
+  pure,
+  injectIntl,
+  connect(state => ({
+    userName: state.getIn(['user', 'name']),
+    totals: state.getIn(['dashboard', 'home']),
+  }), dispatch => (
+    bindActionCreators({
+      showAcknowledgement,
+      fetchDashboardHome,
+    }, dispatch)
+  )),
+  setPropTypes({
     intl: intlShape.isRequired,
+    userName: PropTypes.string,
+    totals: PropTypes.object,
+    showAcknowledgement: PropTypes.func.isRequired,
     fetchDashboardHome: PropTypes.func.isRequired,
-    totals: PropTypes.object
-  }
+  }),
+)
+
+export class Dashboard extends PureComponent {
 
   static defaultProps = {
     userName: '',
     totals: null
-  }
-
-  componentWillMount() {
-    this.props.setPageTitle(null)
   }
 
   componentDidMount() {
@@ -65,7 +75,9 @@ export class Dashboard extends PureComponent {
 
   componentWillReceiveProps(nextProps) {
     const { location, showAcknowledgement, userName } = nextProps
-    if (location.query.fl && nextProps.userName !== this.props.userName) {
+    const search = new URLSearchParams(location.search)
+
+    if (search.has('fl') && nextProps.userName !== this.props.userName) {
       showAcknowledgement({
         title: messages.welcome,
         messageValues: { userName }
@@ -79,6 +91,7 @@ export class Dashboard extends PureComponent {
     return (
       <div className={styles.Content}>
         <Helmet title={formatMessage(messages.title)} titleTemplate="%s - Aspect" defaultTitle="Aspect" />
+        <NavTitle title={null} />
         <Paper>
           <Unit sm="1-2" md="2-3">
             <section style={{ height: '220px' }} className={styles.Section}>
@@ -247,21 +260,4 @@ export class Dashboard extends PureComponent {
   }
 }
 
-function mapStateToProps(state) {
-  return {
-    userName: state.getIn(['user', 'name']),
-    totals: state.getIn(['dashboard', 'home'])
-  }
-}
-
-function mapDispatchToProps(dispatch) {
-  return bindActionCreators({
-    showAcknowledgement,
-    fetchDashboardHome
-  }, dispatch)
-}
-
-export const DashboardContainer = _.flowRight(
-  injectIntl,
-  connect(mapStateToProps, mapDispatchToProps)
-)(Dashboard)
+export default enhance(Dashboard)

@@ -468,5 +468,5 @@ export default _.flowRight(
   reduxForm({
     form: 'inventoryAdjustment',
     validate
-  })
+  }),
 )(InventoryAdjustmentForm)

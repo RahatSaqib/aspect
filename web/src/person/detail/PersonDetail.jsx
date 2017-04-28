@@ -1,7 +1,7 @@
-// Imports from packages
 import _ from 'lodash'
 import PropTypes from 'prop-types'
 import React, { PureComponent } from 'react'
+import { compose, setPropTypes, pure } from 'recompose'
 import { injectIntl, intlShape } from 'react-intl'
 import { bindActionCreators } from 'redux'
 import { connect } from 'react-redux'
@@ -20,6 +20,7 @@ import UserPreferencesForm from './UserPreferencesForm'
 
 // Our own imports
 import { Hidden, Visible } from '../../components/pureGrids'
+import NavTitle from '../../globals/components/NavTitle'
 import isEditable from '../../shared/selectors/person'
 import {
   fetchSinglePerson,
@@ -36,34 +37,53 @@ import { showAcknowledgement } from '../../appNotification/AppNotificationRedux'
 import messages from './messages'
 import styles from './PersonDetail.css'
 
-/*
- * This page component renders a single site
- */
-export class PersonDetail extends PureComponent {
+const enhance = compose(
+  setPropTypes({
+    match: PropTypes.shape({
+      params: PropTypes.shape({
+        personId: PropTypes.string.isRequired
+      }).isRequired
+    }).isRequired,
+  }),
+  pure,
+  injectIntl,
+  connect((state, props) => {
+    const person = state.person.items.byId.get(props.match.params.personId)
 
-  static propTypes = {
-    setPageTitle: PropTypes.func.isRequired,
-    params: PropTypes.object.isRequired,
+    return {
+      editable: isEditable(state.user, person),
+      person,
+      user: state.user,
+      partnersAndJobFunctionsForSelectList: state.jobs.get('partnersAndJobFunctionsForSelectList'),
+    }
+  }, dispatch => (
+    bindActionCreators({
+      showAcknowledgement,
+      fetchSinglePerson,
+      updateSinglePerson,
+      updateSinglePersonLoginDetails,
+      updateSinglePersonUserPreferences,
+      fetchPartnersAndJobFunctionsForSelectList,
+    }, dispatch)
+  )),
+  setPropTypes({
     intl: intlShape.isRequired,
-    person: PropTypes.object.isRequired,
-    user: PropTypes.object.isRequired,
     editable: PropTypes.bool.isRequired,
+    user: PropTypes.object.isRequired,
+    person: PropTypes.object.isRequired,
     showAcknowledgement: PropTypes.func.isRequired,
-    partnersAndJobFunctionsForSelectList: PropTypes.object.isRequired,
+    fetchSinglePerson: PropTypes.func.isRequired,
     updateSinglePerson: PropTypes.func.isRequired,
     updateSinglePersonLoginDetails: PropTypes.func.isRequired,
-    updateSinglePersonUserPreferences: PropTypes.func.isRequired
-  }
+    updateSinglePersonUserPreferences: PropTypes.func.isRequired,
+    fetchPartnersAndJobFunctionsForSelectList: PropTypes.func.isRequired,
+  }),
+)
 
+export class PersonDetail extends PureComponent {
   state = {
     partners: [],
     jobFunctions: []
-  }
-
-  componentWillMount() {
-    const { setPageTitle, intl } = this.props
-    const { formatMessage } = intl
-    setPageTitle(formatMessage(messages.title))
   }
 
   componentDidMount() {
@@ -75,7 +95,7 @@ export class PersonDetail extends PureComponent {
   }
 
   componentWillReceiveProps(nextProps) {
-    if (this.props.params.personId !== nextProps.params.personId) {
+    if (this.props.match.params.personId !== nextProps.match.params.personId) {
       this.handleFetchPerson(nextProps)
     } else if (nextProps.person && nextProps.partnersAndJobFunctionsForSelectList.get('lastRefreshed')) {
       this.setPartnerAndJobFunctions(nextProps, nextProps.person.get('partnerId'))
@@ -100,8 +120,8 @@ export class PersonDetail extends PureComponent {
     })
   }
 
-  handleFetchPerson = ({ params, fetchSinglePerson }) => {
-    fetchSinglePerson(params.personId)
+  handleFetchPerson = ({ match, fetchSinglePerson }) => {
+    fetchSinglePerson(match.params.personId)
   }
 
   handleFetchPartnersAndJobFunctions = ({ fetchPartnersAndJobFunctionsForSelectList }) => {
@@ -158,6 +178,7 @@ export class PersonDetail extends PureComponent {
     return (
       <div className={styles.Content}>
         <Helmet title={formatMessage(messages.title)} titleTemplate="%s - Aspect" defaultTitle="Aspect" />
+        <NavTitle title={formatMessage(messages.title)} />
         <Paper>
           {editable && <Tabs>
             <Tab
@@ -209,29 +230,4 @@ export class PersonDetail extends PureComponent {
   }
 }
 
-function mapStateToProps(state, { params }) {
-  const person = state.person.items.byId.get(params.personId)
-
-  return {
-    editable: isEditable(state.user, person),
-    person,
-    user: state.user,
-    partnersAndJobFunctionsForSelectList: state.jobs.get('partnersAndJobFunctionsForSelectList')
-  }
-}
-
-function mapDispatchToProps(dispatch) {
-  return bindActionCreators({
-    fetchSinglePerson,
-    updateSinglePerson,
-    updateSinglePersonLoginDetails,
-    updateSinglePersonUserPreferences,
-    fetchPartnersAndJobFunctionsForSelectList,
-    showAcknowledgement
-  }, dispatch)
-}
-
-export const PersonDetailContainer = _.flowRight(
-  injectIntl,
-  connect(mapStateToProps, mapDispatchToProps)
-)(PersonDetail)
+export default enhance(PersonDetail)

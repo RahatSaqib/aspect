@@ -1,13 +1,11 @@
-// Imports from packages
-import _ from 'lodash'
 import PropTypes from 'prop-types'
 import React, { PureComponent } from 'react'
+import { compose, setPropTypes, pure } from 'recompose'
 import {
   injectIntl,
   defineMessages,
   intlShape
 } from 'react-intl'
-import { withRouter, routerShape } from 'react-router'
 import { bindActionCreators } from 'redux'
 import { connect } from 'react-redux'
 import Helmet from 'react-helmet'
@@ -17,6 +15,7 @@ import {
   fetchListFilteredDevices,
   exportDevices
 } from '../DeviceRedux'
+import NavTitle from '../../globals/components/NavTitle'
 import { ListFilterContainer } from '../../filter/list/ListFilter'
 import { ListFilter, configureListFilter } from '../../filter/FilterRedux'
 import DataTableWithEmptyList from '../../components/shared/DataTableWithEmptyList'
@@ -83,24 +82,40 @@ const messages = defineMessages({
   }
 })
 
+const enhance = compose(
+  setPropTypes({
+    location: PropTypes.object.isRequired,
+  }),
+  pure,
+  injectIntl,
+  connect(state => ({
+    listFilter: state.filter.listFilter,
+    items: state.device.items,
+    table: state.device.table,
+  }), dispatch => (
+    bindActionCreators({
+      configureListFilter,
+      fetchListFilteredDevices,
+
+      exportDevices,
+    }, dispatch)
+  )),
+  setPropTypes({
+    intl: intlShape.isRequired,
+    listFilter: PropTypes.objectOf(ListFilter).isRequired,
+    items: PropTypes.objectOf(Items).isRequired,
+    table: PropTypes.objectOf(Table).isRequired,
+    configureListFilter: PropTypes.func.isRequired,
+    fetchListFilteredDevices: PropTypes.func.isRequired,
+    exportDevices: PropTypes.func.isRequired,
+  }),
+)
+
 const DEVICE_TABLE_COLUMN_SPACING = 12
 const DEVICE_TABLE_NAME_COLUMN_WIDTH = '30%'
 const DEVICE_TABLE_STATUS_COLUMN_WIDTH = '15%'
 
 export class DeviceList extends PureComponent {
-
-  static propTypes = {
-    setPageTitle: PropTypes.func.isRequired,
-    table: PropTypes.objectOf(Table).isRequired,
-    intl: intlShape.isRequired,
-    router: routerShape.isRequired,
-    fetchListFilteredDevices: PropTypes.func.isRequired,
-    items: PropTypes.objectOf(Items).isRequired,
-    configureListFilter: PropTypes.func.isRequired,
-    listFilter: PropTypes.objectOf(ListFilter).isRequired,
-    exportDevices: PropTypes.func.isRequired
-  }
-
   static contextTypes = {
     muiTheme: PropTypes.object.isRequired
   }
@@ -130,8 +145,7 @@ export class DeviceList extends PureComponent {
   }
 
   componentWillMount() {
-    const { setPageTitle, configureListFilter, intl: { formatMessage } } = this.props
-    setPageTitle(formatMessage(messages.devicesTitle))
+    const { configureListFilter } = this.props
     configureListFilter({
       assayAndResultCategory: true,
       geography: true,
@@ -152,7 +166,7 @@ export class DeviceList extends PureComponent {
   }
 
   handleItemIdSelection = (deviceId) => {
-    this.props.router.push(`/device/${deviceId}`)
+    this.props.history.push(`/device/${deviceId}`)
   }
 
   handleFetch = (...args) => {
@@ -224,8 +238,8 @@ export class DeviceList extends PureComponent {
 
     return (
       <div className={styles.Content}>
-
         <Helmet title={formatMessage(messages.devicesTitle)} titleTemplate="%s - Aspect" defaultTitle="Aspect" />
+        <NavTitle title={formatMessage(messages.devicesTitle)} />
         <ListFilterContainer
           subject={formatMessage(messages.devicesTitle)}
           filterTemplate={formatMessage(messages.filterTemplate)}
@@ -249,27 +263,4 @@ export class DeviceList extends PureComponent {
   }
 }
 
-function mapStateToProps(state) {
-  return {
-    listFilter: state.filter.listFilter,
-    items: state.device.items,
-    table: state.device.table,
-
-    listCommand: state.filter.listCommand
-  }
-}
-
-function mapDispatchToProps(dispatch) {
-  return bindActionCreators({
-    configureListFilter,
-    fetchListFilteredDevices,
-
-    exportDevices,
-  }, dispatch)
-}
-
-export const DeviceListContainer = _.flowRight(
-  injectIntl,
-  withRouter,
-  connect(mapStateToProps, mapDispatchToProps)
-)(DeviceList)
+export default enhance(DeviceList)
