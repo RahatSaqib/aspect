@@ -13,7 +13,7 @@ import Index from './components/Index'
 import NotFound from '../error/notFound/NotFound'
 import Login from '../auth/login/Login'
 import ResetPassword from '../auth/resetPassword/ResetPassword'
-import Dashboard from '../dashboard/dashboard/Dashboard'
+import LoadableDashboard from '../dashboard/dashboard/LoadableDashboard'
 import PatientCare from '../dashboard/patient-care/PatientCare'
 import ManageDevices from '../dashboard/manage-devices/ManageDevices'
 import ManageSupplies from '../dashboard/manage-supplies/ManageSupplies'
@@ -46,7 +46,7 @@ const Routes = () => (
       <PlainLayout path="/login" component={Login} />
       <PlainLayout path="/reset-password" component={ResetPassword} />
 
-      <LoggedInLayout exact path="/dashboard" component={Dashboard} />
+      <LoggedInLayout exact path="/dashboard" component={LoadableDashboard} />
       <LoggedInLayout path="/dashboard/patient-care" component={PatientCare} />
       <LoggedInLayout path="/dashboard/manage-devices" component={ManageDevices} />
       <LoggedInLayout path="/dashboard/manage-supplies" component={ManageSupplies} />
