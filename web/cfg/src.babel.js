@@ -181,10 +181,6 @@ export default (env) => {
       new webpack.EnvironmentPlugin(['NODE_ENV', 'ASPECT_TARGET']),
 
       new ManifestPlugin(),
-      new ChunkManifestPlugin({
-        filename: 'chunk-manifest.json',
-        manifestVariable: 'webpackManifest'
-      }),
 
       extractSCSS,
       extractCSS,
