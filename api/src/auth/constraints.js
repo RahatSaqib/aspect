@@ -116,7 +116,28 @@ function addConstraints(queryBuilder, constraints, aliases) {
   }
 }
 
+// check for user permissions, pass in auth
+
+function canView(auth, flag) {
+  return _.some(auth.credentials.permissions, _.unary(_.partialRight(_.includes, flag)))
+}
+
+function canViewSites(auth) {
+  return canView(auth, 'site:')
+}
+
+function canViewDevices(auth) {
+  return canView(auth, 'device:')
+}
+
+function canViewResults(auth) {
+  return canView(auth, 'result:')
+}
+
 module.exports = {
   getConstraints,
-  addConstraints
+  addConstraints,
+  canViewSites,
+  canViewDevices,
+  canViewResults
 }
