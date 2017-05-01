@@ -47,6 +47,22 @@ const SitesLink = requirePermissions({
   permissions: ['site:admin', 'site:view', 'site:edit']
 })(Link)
 
+const InventoryLink = requirePermissions({
+  permissions: ['inventory:admin', 'inventory:view', 'inventory:edit']
+})(Link)
+
+const NotificationsLink = requirePermissions({
+  permissions: ['notification:admin', 'notification:view', 'notification:edit']
+})(Link)
+
+const ReportsLink = requirePermissions({
+  permissions: ['report:admin', 'report:view', 'report:edit']
+})(Link)
+
+const DeviceApiKeysLink = requirePermissions({
+  permissions: ['deviceApiKey:admin', 'deviceApiKey:view', 'deviceApiKey:edit']
+})(Link)
+
 const enhance = compose(
   setPropTypes({
     open: PropTypes.bool.isRequired,
@@ -138,42 +154,42 @@ export const SideNav = ({ open, handleClose, pathname, desktop }) => (
         primaryText="Sites"
       />
       <ListItem
-        containerElement={<Link to="/inventory" />}
+        containerElement={<InventoryLink to="/inventory" />}
         value={'/inventory'}
         leftIcon={<Cart />}
         className={styles.Drawer__ListItem}
         primaryText="Supplies"
       />
       <ListItem
-        containerElement={<Link to="/router" />}
+        containerElement={<DevicesLink to="/router" />}
         value={'/router'}
         leftIcon={<RssFeed />}
         className={styles.Drawer__ListItem}
         primaryText="Routers"
       />
       <ListItem
-        containerElement={<Link to="/terminal" />}
+        containerElement={<DevicesLink to="/terminal" />}
         value={'/terminal'}
         leftIcon={<Computer />}
         className={styles.Drawer__ListItem}
         primaryText="Terminals"
       />
       <ListItem
-        containerElement={<Link to="/notification" />}
+        containerElement={<NotificationsLink to="/notification" />}
         value={'/notification'}
         leftIcon={<Notifications />}
         className={styles.Drawer__ListItem}
         primaryText="Notifications"
       />
       <ListItem
-        containerElement={<Link to="/report" />}
+        containerElement={<ReportsLink to="/report" />}
         value={'/report'}
         leftIcon={<Book />}
         className={styles.Drawer__ListItem}
         primaryText="Reports"
       />
       <ListItem
-        containerElement={<DevicesLink to="/deviceApiKey" />}
+        containerElement={<DeviceApiKeysLink to="/deviceApiKey" />}
         value={'/deviceApiKey'}
         leftIcon={<VpnKey />}
         className={styles.Drawer__ListItem}
