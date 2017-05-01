@@ -32,19 +32,19 @@ import styles from './SideNav.css'
 const cssClasses = classnames.bind(styles)
 
 const DevicesLink = requirePermissions({
-  permissions: ['device:admin', 'device:view']
+  permissions: ['device:admin', 'device:view', 'device:edit']
 })(Link)
 
 const ResultsLink = requirePermissions({
-  permissions: ['result:admin', 'result:view']
+  permissions: ['result:admin', 'result:view', 'result:edit']
 })(Link)
 
 const ContactsLink = requirePermissions({
-  permissions: ['person:admin', 'person:view']
+  permissions: ['person:admin', 'person:view', 'person:edit']
 })(Link)
 
 const SitesLink = requirePermissions({
-  permissions: ['site:admin', 'site:view']
+  permissions: ['site:admin', 'site:view', 'site:edit']
 })(Link)
 
 const enhance = compose(
