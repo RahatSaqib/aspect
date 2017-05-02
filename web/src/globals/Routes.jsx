@@ -11,7 +11,7 @@ import LoggedInLayout from './layouts/LoggedInLayout'
 // "Pages"
 import Index from './components/Index'
 import NotFound from '../error/notFound/NotFound'
-import Login from '../auth/login/Login'
+import LoadableLogin from '../auth/login/LoadableLogin'
 import ResetPassword from '../auth/resetPassword/ResetPassword'
 import LoadableDashboard from '../dashboard/dashboard/LoadableDashboard'
 import PatientCare from '../dashboard/patient-care/PatientCare'
@@ -43,7 +43,7 @@ const Routes = () => (
     <Switch>
       <Route exact path="/" component={Index} />
 
-      <PlainLayout path="/login" component={Login} />
+      <PlainLayout path="/login" component={LoadableLogin} />
       <PlainLayout path="/reset-password" component={ResetPassword} />
 
       <LoggedInLayout exact path="/dashboard" component={LoadableDashboard} />
