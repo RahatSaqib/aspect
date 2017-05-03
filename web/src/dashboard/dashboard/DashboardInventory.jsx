@@ -14,7 +14,7 @@ const enhance = compose(
   }),
   pure,
   requirePermissions({
-    permissions: ['inventory:admin', 'inventory:view'],
+    permissions: ['inventory:admin', 'inventory:view', 'inventory:edit'],
   }),
 )
 

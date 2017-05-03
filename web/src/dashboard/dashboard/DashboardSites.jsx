@@ -14,7 +14,7 @@ const enhance = compose(
   }),
   pure,
   requirePermissions({
-    permissions: ['site:admin', 'site:view'],
+    permissions: ['site:admin', 'site:view', 'site:edit'],
   }),
 )
 
