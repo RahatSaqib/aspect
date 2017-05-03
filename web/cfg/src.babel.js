@@ -2,6 +2,7 @@ import path from 'path'
 import invariant from 'invariant'
 import webpack from 'webpack'
 import pxToRem from 'postcss-pxtorem'
+import ExtractTextPlugin from 'extract-text-webpack-plugin'
 import CaseSensitivePathsPlugin from 'case-sensitive-paths-webpack-plugin'
 import ManifestPlugin from 'webpack-manifest-plugin'
 import ChunkManifestPlugin from 'chunk-manifest-webpack-plugin'
@@ -35,6 +36,15 @@ export default (env) => {
   // build flags for webpack
   const isDevelopment = process.env.NODE_ENV === 'development'
   const isProduction = process.env.NODE_ENV === 'production'
+
+  const extractSCSS = new ExtractTextPlugin({
+    disable: isDevelopment,
+    filename: '[name]-scss-global-style.css'
+  })
+  const extractCSS = new ExtractTextPlugin({
+    disable: isDevelopment,
+    filename: '[name]-css-modules.css'
+  })
 
   return {
     entry: [
@@ -78,115 +88,53 @@ export default (env) => {
           ]
         },
         {
-          test: /\.css$/,
-          use: [
-            'style-loader',
-            {
-              loader: 'css-loader',
-              options: {
-                modules: true,
-                importLoaders: 1
-              }
-            },
-            {
-              loader: 'postcss-loader',
-              options: {
-                ident: 'postcss',
-                plugins: postcssPlugins
-              }
-            }
-          ]
-        },
-        {
-          test: /\.sass/,
-          use: [
-            'style-loader',
-            {
-              loader: 'css-loader',
-              options: {
-                importLoaders: 1
-              }
-            },
-            {
-              loader: 'postcss-loader',
-              options: {
-                ident: 'postcss',
-                plugins: postcssPlugins
-              }
-            },
-            {
-              loader: 'sass-loader',
-              options: {
-                indentedSyntax: true,
-                outputStyle: 'expanded'
-              }
-            }
-          ]
-        },
-        {
           test: /\.scss/,
-          use: [
-            'style-loader',
-            {
-              loader: 'css-loader',
-              options: {
-                importLoaders: 1
+          use: extractSCSS.extract({
+            fallback: 'style-loader',
+            use: [
+              {
+                loader: 'css-loader',
+                options: {
+                  importLoaders: 1
+                }
+              },
+              {
+                loader: 'postcss-loader',
+                options: {
+                  ident: 'postcss',
+                  plugins: postcssPlugins
+                }
+              },
+              {
+                loader: 'sass-loader',
+                options: {
+                  outputStyle: 'expanded'
+                }
               }
-            },
-            {
-              loader: 'postcss-loader',
-              options: {
-                ident: 'postcss',
-                plugins: postcssPlugins
-              }
-            },
-            {
-              loader: 'sass-loader',
-              options: {
-                outputStyle: 'expanded'
-              }
-            }
-          ]
+            ]
+          })
         },
         {
-          test: /\.less/,
-          use: [
-            'style-loader',
-            {
-              loader: 'css-loader',
-              options: {
-                importLoaders: 1
+          test: /\.css$/,
+          use: extractCSS.extract({
+            fallback: 'style-loader',
+            use: [
+              {
+                loader: 'css-loader',
+                options: {
+                  modules: true,
+                  importLoaders: 1
+                }
+              },
+              {
+                loader: 'postcss-loader',
+                options: {
+                  ident: 'postcss',
+                  plugins: postcssPlugins
+                }
               }
-            },
-            {
-              loader: 'postcss-loader',
-              options: {
-                ident: 'postcss',
-                plugins: postcssPlugins
-              }
-            },
-            'less-loader'
-          ]
-        },
-        {
-          test: /\.styl/,
-          use: [
-            'style-loader',
-            {
-              loader: 'css-loader',
-              options: {
-                importLoaders: 1
-              }
-            },
-            {
-              loader: 'postcss-loader',
-              options: {
-                ident: 'postcss',
-                plugins: postcssPlugins
-              }
-            },
-            'stylus-loader'
-          ]
+            ]
+          })
         },
         {
           test: /\.(ico)$/,
@@ -231,6 +179,8 @@ export default (env) => {
         manifestVariable: 'webpackManifest'
       }),
 
+      extractSCSS,
+      extractCSS,
       new HtmlWebpackPlugin({
         hash: true,
         template: 'src/template/index.html',
