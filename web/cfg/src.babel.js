@@ -95,6 +95,7 @@ export default (env) => {
               {
                 loader: 'css-loader',
                 options: {
+                  sourceMap: isProduction,
                   importLoaders: 1
                 }
               },
@@ -102,12 +103,14 @@ export default (env) => {
                 loader: 'postcss-loader',
                 options: {
                   ident: 'postcss',
+                  sourceMap: 'inline',
                   plugins: postcssPlugins
                 }
               },
               {
                 loader: 'sass-loader',
                 options: {
+                  sourceMap: isProduction,
                   outputStyle: 'expanded'
                 }
               }
@@ -122,6 +125,7 @@ export default (env) => {
               {
                 loader: 'css-loader',
                 options: {
+                  sourceMap: isProduction,
                   modules: true,
                   importLoaders: 1
                 }
@@ -130,6 +134,7 @@ export default (env) => {
                 loader: 'postcss-loader',
                 options: {
                   ident: 'postcss',
+                  sourceMap: 'inline',
                   plugins: postcssPlugins
                 }
               }
