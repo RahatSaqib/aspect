@@ -4,16 +4,21 @@ const { knex, filterParams, filterDateRangeParams, sortPageParams } = require('.
 const { getConstraints, addConstraints } = require('../auth/constraints')
 const { transformGeographyFromUpdates } = require('../geography/service')
 
+const totalDevicesQuery = knex('Device as d')
+.whereRaw('d.siteId = s.id')
+.count('d.siteId')
+.as('totalDevices')
+
 const SELECT_LIST_FIELDS = [
   's.id', 's.name', 's.shortname',
   'st.name as state', 'l.name as lga',
-  's.createdOn', knex.raw('s.id + 2 as totalDevices')
+  's.createdOn', totalDevicesQuery
 ]
 
 const SELECT_SHOW_FIELDS = [
   's.id', 's.name', 's.shortname', 's.externalId',
   'st.name as state', 'l.name as lga', 'ct.name as country',
-  's.createdOn', knex.raw('s.id + 2 as totalDevices'),
+  's.createdOn', totalDevicesQuery,
   'g.countryId', 'g.stateId', 'g.lgaId',
   's.timezoneId as timezone', // FIXME?
   's.city', 's.zip', 's.street1', 's.street2',
