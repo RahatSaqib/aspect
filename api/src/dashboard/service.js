@@ -1,3 +1,4 @@
+const _ = require('lodash')
 const { knex } = require('../db')
 const { getConstraints, addConstraints, canViewSites, canViewDevices, canViewResults } = require('../auth/constraints')
 const Promise = require('bluebird')
@@ -10,16 +11,15 @@ function* homeDashboard(request) {
   // get data constraints
   const dataConstraints = yield getConstraints(auth.credentials)
 
-  let queue = []
+  const queue = []
 
   if (canViewSites(auth)) {
-    
     const sitesTotalQuery = knex('Site as s').count('s.id as cnt')
       .leftOuterJoin('Geography as g', 's.geographyId', 'g.id')
       .leftOuterJoin('State as st', 'g.stateId', 'st.id')
       .leftOuterJoin('Lga as l', 'g.lgaId', 'l.id')
       .modify(addConstraints, dataConstraints, { site: 's', geography: 'g' })
-    
+
     queue.push({
       name: 'sitesTotalQuery',
       query: sitesTotalQuery
@@ -27,7 +27,6 @@ function* homeDashboard(request) {
   }
 
   if (canViewDevices(auth)) {
-    
     const devicesTotalQuery = knex('Device as d').count('d.id as cnt')
       .innerJoin('Site as s', 's.id', 'd.siteId')
       .innerJoin('DeviceType as dt', 'dt.id', 'd.deviceTypeId')
@@ -37,15 +36,14 @@ function* homeDashboard(request) {
       .leftOuterJoin('Lga as l', 'g.lgaId', 'l.id')
       .where('dc.hasResults', 1)
       .modify(addConstraints, dataConstraints, { site: 's', geography: 'g' })
-      
-      queue.push({
-        name: 'devicesTotalQuery',
-        query: devicesTotalQuery
-      })
+
+    queue.push({
+      name: 'devicesTotalQuery',
+      query: devicesTotalQuery
+    })
   }
 
   if (canViewResults(auth)) {
-    
     const resultsTotalQuery30d = knex('Result as r').count('r.id as cnt')
       .innerJoin('Site as s', 's.id', 'r.siteId')
       .innerJoin('Device as d', 'd.id', 'r.deviceId')
@@ -77,7 +75,6 @@ function* homeDashboard(request) {
       name: 'resultsTotalQuery1d',
       query: resultsTotalQuery1d
     })
-
   }
 
   // to do - limit users by job
@@ -87,21 +84,18 @@ function* homeDashboard(request) {
     query: usersTotalQuery
   })
 
-  let queries = []
-  for (i in queue) {
-    queries.push(queue[i].query)
-  }
+  const queries = []
+
+  _.forEach(queue, (o) => { queries.push(o.query) })
 
   const queryResults = yield Promise.all(queries)
 
   function findResult(queryName) {
-    for (j in queue) {
-      if (queue[j].name === queryName)
-        return queryResults[j][0]
-    }
+    const i = _.findIndex(queue, ['name', queryName])
+    return queryResults[i][0]
   }
 
-  let resultData = {}
+  const resultData = {}
 
   if (canViewSites(auth)) {
     resultData.sitesTotal = findResult('sitesTotalQuery').cnt
@@ -119,8 +113,8 @@ function* homeDashboard(request) {
   resultData.usersTotal = findResult('usersTotalQuery').cnt
 
   // TODO: Remove magic numbers below when moving to "real" dashboard
-  
-  const result = Object.assign({ data: resultData})  
+
+  const result = Object.assign({ data: resultData })
 
   return result
 }
