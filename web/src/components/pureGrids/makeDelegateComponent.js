@@ -1,6 +1,7 @@
 // Imports from packages
 import _ from 'lodash'
-import React, { PureComponent, PropTypes } from 'react'
+import PropTypes from 'prop-types'
+import React, { PureComponent } from 'react'
 
 export const makeGetClassNames = _.curry((pureGridPropTypes, keyToClassNameMappings, props) => {
   const initial = _.isString(props.className) ? [props.className] : []

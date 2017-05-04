@@ -62,6 +62,7 @@ exports[`Nav module Nav component should render correctly 1`] = `
         "transition": "all 450ms cubic-bezier(0.23, 1, 0.32, 1) 0ms",
         "verticalAlign": null,
         "width": 48,
+        "zIndex": 1,
       }
     }
     tabIndex={0}
@@ -121,11 +122,12 @@ exports[`Nav module Nav component should render correctly 1`] = `
     <span>
       <a
         className="Brand"
+        href="/dashboard"
         onClick={[Function]}
-        style={Object {}}
       >
         Aspect
       </a>
+      
     </span>
   </div>
   <div>
@@ -175,6 +177,7 @@ exports[`Nav module Nav component should render correctly 1`] = `
             "transition": "all 450ms cubic-bezier(0.23, 1, 0.32, 1) 0ms",
             "verticalAlign": null,
             "width": 48,
+            "zIndex": 1,
           }
         }
         tabIndex={0}
@@ -335,6 +338,7 @@ exports[`Nav module Nav component should render correctly 1`] = `
             "transition": "all 450ms cubic-bezier(0.23, 1, 0.32, 1) 0ms",
             "verticalAlign": null,
             "width": 48,
+            "zIndex": 1,
           }
         }
         tabIndex={0}
@@ -444,6 +448,7 @@ exports[`Nav module Nav component should render pageTitle and pagePath correctly
         "transition": "all 450ms cubic-bezier(0.23, 1, 0.32, 1) 0ms",
         "verticalAlign": null,
         "width": 48,
+        "zIndex": 1,
       }
     }
     tabIndex={0}
@@ -503,8 +508,8 @@ exports[`Nav module Nav component should render pageTitle and pagePath correctly
     <span>
       <a
         className="Brand"
+        href="/dashboard"
         onClick={[Function]}
-        style={Object {}}
       >
         Aspect
       </a>
@@ -512,8 +517,8 @@ exports[`Nav module Nav component should render pageTitle and pagePath correctly
          - 
         <a
           className="Brand"
+          href="/my-page-title"
           onClick={[Function]}
-          style={Object {}}
         >
           My Page Title
         </a>
@@ -567,6 +572,7 @@ exports[`Nav module Nav component should render pageTitle and pagePath correctly
             "transition": "all 450ms cubic-bezier(0.23, 1, 0.32, 1) 0ms",
             "verticalAlign": null,
             "width": 48,
+            "zIndex": 1,
           }
         }
         tabIndex={0}
@@ -727,6 +733,7 @@ exports[`Nav module Nav component should render pageTitle and pagePath correctly
             "transition": "all 450ms cubic-bezier(0.23, 1, 0.32, 1) 0ms",
             "verticalAlign": null,
             "width": 48,
+            "zIndex": 1,
           }
         }
         tabIndex={0}

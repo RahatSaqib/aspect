@@ -1,9 +1,8 @@
-// Imports from packages
-import _ from 'lodash'
-import React, { PureComponent, PropTypes } from 'react'
+import PropTypes from 'prop-types'
+import React, { PureComponent } from 'react'
+import { compose, setPropTypes, pure } from 'recompose'
 import { bindActionCreators } from 'redux'
 import { connect } from 'react-redux'
-
 import Helmet from 'react-helmet'
 
 // Material-UI
@@ -23,19 +22,27 @@ import { Unit } from '../../components/pureGrids'
 import ReadOnlyFields from '../../components/shared/ReadOnlyFields'
 import styles from './DeviceDemo.css'
 
-
-export class DeviceDemo extends PureComponent {
-  static propTypes = {
-    params: PropTypes.object.isRequired,
+const enhance = compose(
+  setPropTypes({
+    match: PropTypes.object.isRequired,
+  }),
+  pure,
+  connect((state, props) => ({
+    device: state.demo.deviceItems.byId.get(props.match.params.deviceId),
+  }), dispatch => (
+    bindActionCreators({
+      fetchDemoDevice,
+      postDemoDeviceResult,
+    }, dispatch)
+  )),
+  setPropTypes({
+    device: PropTypes.object,
     fetchDemoDevice: PropTypes.func.isRequired,
     postDemoDeviceResult: PropTypes.func.isRequired,
-    device: PropTypes.object
-  }
+  }),
+)
 
-  static defaultProps = {
-    device: null
-  }
-
+export class DeviceDemo extends PureComponent {
   state = {
     assayId: null,
     resultId: null,
@@ -47,7 +54,7 @@ export class DeviceDemo extends PureComponent {
   }
 
   componentWillReceiveProps(nextProps) {
-    if (this.props.params.deviceId !== nextProps.params.deviceId) {
+    if (this.props.match.params.deviceId !== nextProps.match.params.deviceId) {
       this.handleFetchDevice()
     }
   }
@@ -57,7 +64,7 @@ export class DeviceDemo extends PureComponent {
   }
 
   handleFetchDevice = () => {
-    this.props.fetchDemoDevice(this.props.params.deviceId)
+    this.props.fetchDemoDevice(this.props.match.params.deviceId)
   }
 
   handleSelectFieldChange = field => (event, index, value) => {
@@ -67,7 +74,7 @@ export class DeviceDemo extends PureComponent {
   handlePostResult = () => {
     this.setPosting(true)
     const { resultId } = this.state
-    this.props.postDemoDeviceResult(this.props.params.deviceId, { resultId })
+    this.props.postDemoDeviceResult(this.props.match.params.deviceId, { resultId })
       .then(() => this.setPosting(false))
       .catch(() => this.setPosting(false))
   }
@@ -192,19 +199,4 @@ export class DeviceDemo extends PureComponent {
   }
 }
 
-function mapStateToProps(state, props) {
-  const device = state.demo.deviceItems.byId.get(props.params.deviceId)
-
-  return { device }
-}
-
-function mapDispatchToProps(dispatch) {
-  return bindActionCreators({
-    fetchDemoDevice,
-    postDemoDeviceResult
-  }, dispatch)
-}
-
-export const DeviceDemoContainer = _.flowRight(
-  connect(mapStateToProps, mapDispatchToProps)
-)(DeviceDemo)
+export default enhance(DeviceDemo)

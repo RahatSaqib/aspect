@@ -1,6 +1,6 @@
-// Imports from packages
-import _ from 'lodash'
-import React, { PureComponent, PropTypes } from 'react'
+import PropTypes from 'prop-types'
+import React, { PureComponent } from 'react'
+import { compose, setPropTypes, pure } from 'recompose'
 import {
   injectIntl,
   defineMessages,
@@ -9,11 +9,12 @@ import {
 import { bindActionCreators } from 'redux'
 import { connect } from 'react-redux'
 import Helmet from 'react-helmet'
-import { Link } from 'react-router'
+import { Link } from 'react-router-dom'
 
 import Paper from 'material-ui/Paper'
 
 // Our own imports
+import NavTitle from '../../globals/components/NavTitle'
 import ListFilterContainer from '../../filter/list/ListFilter'
 import { configureListFilter } from '../../filter/FilterRedux'
 import styles from './PatientCare.css'
@@ -25,22 +26,28 @@ const messages = defineMessages({
   }
 })
 
+const enhance = compose(
+  setPropTypes({
+    location: PropTypes.object.isRequired,
+  }),
+  pure,
+  injectIntl,
+  connect(() => ({
+  }), dispatch => (
+    bindActionCreators({
+      configureListFilter,
+    }, dispatch)
+  )),
+  setPropTypes({
+    intl: intlShape.isRequired,
+    configureListFilter: PropTypes.func.isRequired,
+  }),
+)
+
 export class PatientCare extends PureComponent {
 
-  static propTypes = {
-    location: PropTypes.shape({
-      query: PropTypes.shape({
-        type: PropTypes.string
-      })
-    }).isRequired,
-    intl: intlShape.isRequired,
-    setPageTitle: PropTypes.func.isRequired,
-    configureListFilter: PropTypes.func.isRequired
-  }
-
   componentWillMount() {
-    const { setPageTitle, configureListFilter } = this.props
-    setPageTitle('Patient Care')
+    const { configureListFilter } = this.props
     configureListFilter({
       assayAndResultCategory: true,
       geography: true,
@@ -49,12 +56,16 @@ export class PatientCare extends PureComponent {
   }
 
   render() {
-    const { intl: { formatMessage } } = this.props
+    const { location, intl } = this.props
+    const { formatMessage } = intl
+    const search = new URLSearchParams(location.search)
+
     return (
       <div className={styles.Content}>
         <Helmet title="Patient Care" titleTemplate="%s - Aspect" defaultTitle="Aspect" />
+        <NavTitle title="Patient Care" />
         <ListFilterContainer
-          subject={this.props.location.query.type === 'TB' ? 'TB' : 'HCV'}
+          subject={search.get('type') === 'TB' ? 'TB' : 'HCV'}
           filterTemplate={formatMessage(messages.filterTemplate)}
         />
         <Paper>
@@ -62,7 +73,7 @@ export class PatientCare extends PureComponent {
             <img
               alt="disease graph"
               src={
-                this.props.location.query.type === 'TB' ?
+                search.get('type') === 'TB' ?
                 require('./TB.png') :
                 require('./HCV.png')
               }
@@ -75,14 +86,4 @@ export class PatientCare extends PureComponent {
   }
 }
 
-function mapDispatchToProps(dispatch) {
-  return bindActionCreators({
-    configureListFilter
-  }, dispatch)
-}
-
-export const PatientCareContainer = _.flowRight(
-  injectIntl,
-  connect(null, mapDispatchToProps)
-)(PatientCare)
-
+export default enhance(PatientCare)

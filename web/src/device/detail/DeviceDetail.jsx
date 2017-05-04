@@ -1,6 +1,6 @@
-// Imports from packages
-import _ from 'lodash'
-import React, { PureComponent, PropTypes } from 'react'
+import PropTypes from 'prop-types'
+import React, { PureComponent } from 'react'
+import { compose, setPropTypes, pure } from 'recompose'
 import {
   injectIntl,
   defineMessages,
@@ -8,7 +8,7 @@ import {
 } from 'react-intl'
 import { bindActionCreators } from 'redux'
 import { connect } from 'react-redux'
-import { Link } from 'react-router'
+import { Link } from 'react-router-dom'
 import Helmet from 'react-helmet'
 
 // Material-UI
@@ -29,6 +29,7 @@ import {
 } from '../DeviceRedux'
 import { ReadOnlyField } from '../../components/shared/ReadOnlyFields'
 import JSONSchemaCard from '../../components/shared/JSONSchemaCard'
+import NavTitle from '../../globals/components/NavTitle'
 import DeviceDetailModalForm from './DeviceDetailModalForm'
 import DeviceDemoLink from '../DeviceDemoLink'
 import styles from './DeviceDetail.css'
@@ -116,15 +117,32 @@ const messages = defineMessages({
   }
 })
 
-export class DeviceDetail extends PureComponent {
-
-  static propTypes = {
-    setPageTitle: PropTypes.func.isRequired,
-    fetchSingleDevice: PropTypes.func.isRequired,
-    params: PropTypes.shape({
-      // see /api/src/device/endPoint.js, path: '/device/{deviceId}'
-      deviceId: PropTypes.string.isRequired
+const enhance = compose(
+  setPropTypes({
+    match: PropTypes.shape({
+      params: PropTypes.shape({
+        deviceId: PropTypes.string.isRequired
+      }).isRequired
     }).isRequired,
+  }),
+  pure,
+  injectIntl,
+  connect((state, props) => {
+    const device = state.device.items.byId.get(props.match.params.deviceId)
+
+    return {
+      editable: isEditable(state.user, device),
+      device,
+    }
+  }, dispatch => (
+    bindActionCreators({
+      fetchSingleDevice,
+      updateSingleDevice,
+    }, dispatch)
+  )),
+  setPropTypes({
+    intl: intlShape.isRequired,
+    editable: PropTypes.bool.isRequired,
     device: PropTypes.shape({
       has: PropTypes.func.isRequired,
       // see /api/src/device/endPoint.js, path: '/device'
@@ -145,17 +163,14 @@ export class DeviceDetail extends PureComponent {
       approvedOn: PropTypes.string,
       approvedBy: PropTypes.string,
       notes: PropTypes.string,
-      serial: PropTypes.string
+      serial: PropTypes.string,
     }),
-    intl: intlShape.isRequired,
-    editable: PropTypes.bool.isRequired,
-    updateSingleDevice: PropTypes.func.isRequired
-  }
+    fetchSingleDevice: PropTypes.func.isRequired,
+    updateSingleDevice: PropTypes.func.isRequired,
+  }),
+)
 
-  static defaultProps = {
-    device: null
-  }
-
+export class DeviceDetail extends PureComponent {
   state = {
     isEditDialogOpen: false,
     isDemoDialogOpen: false,
@@ -167,18 +182,12 @@ export class DeviceDetail extends PureComponent {
     }
   }
 
-  componentWillMount() {
-    const { setPageTitle, intl } = this.props
-    const { formatMessage } = intl
-    setPageTitle(formatMessage(messages.title))
-  }
-
   componentDidMount() {
     this.handleFetchDevice()
   }
 
   componentWillReceiveProps(nextProps) {
-    if (this.props.params.deviceId !== nextProps.params.deviceId) {
+    if (this.props.match.params.deviceId !== nextProps.match.params.deviceId) {
       this.handleFetchDevice()
     }
   }
@@ -192,7 +201,7 @@ export class DeviceDetail extends PureComponent {
   }
 
   handleFetchDevice = () => {
-    this.props.fetchSingleDevice(this.props.params.deviceId)
+    this.props.fetchSingleDevice(this.props.match.params.deviceId)
       .then(() => {
         const { device } = this.props
 
@@ -474,7 +483,7 @@ export class DeviceDetail extends PureComponent {
   renderDemoButton() {
     return (
       <DeviceDemoLink
-        to={`/demo/device/${this.props.params.deviceId}`}
+        to={`/demo/device/${this.props.match.params.deviceId}`}
         className={styles.DemoLink}
         target="_blank"
       >
@@ -502,6 +511,7 @@ export class DeviceDetail extends PureComponent {
     return (
       <div className={styles.ContentDetails}>
         <Helmet title={formatMessage(messages.title)} titleTemplate="%s - Aspect" defaultTitle="Aspect" />
+        <NavTitle title={formatMessage(messages.title)} />
         {this.renderPaper()}
         <br />
         {this.renderDemoButton()}
@@ -510,23 +520,4 @@ export class DeviceDetail extends PureComponent {
   }
 }
 
-function mapStateToProps(state, props) {
-  const device = state.device.items.byId.get(props.params.deviceId)
-
-  return {
-    editable: isEditable(state.user, device),
-    device
-  }
-}
-
-function mapDispatchToProps(dispatch) {
-  return bindActionCreators({
-    fetchSingleDevice,
-    updateSingleDevice
-  }, dispatch)
-}
-
-export const DeviceDetailContainer = _.flowRight(
-  injectIntl,
-  connect(mapStateToProps, mapDispatchToProps)
-)(DeviceDetail)
+export default enhance(DeviceDetail)

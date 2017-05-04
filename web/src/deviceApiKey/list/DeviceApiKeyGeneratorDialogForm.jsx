@@ -1,6 +1,7 @@
 // Imports from packages
 import _fp from 'lodash/fp'
-import React, { PropTypes } from 'react'
+import PropTypes from 'prop-types'
+import React from 'react'
 import { compose, pure, setPropTypes } from 'recompose'
 import { defineMessages, intlShape } from 'react-intl'
 

@@ -1,6 +1,7 @@
 // Imports from packages
 import _fp from 'lodash/fp'
-import React, { PropTypes } from 'react'
+import PropTypes from 'prop-types'
+import React from 'react'
 import { compose, pure, setPropTypes, mapProps, lifecycle, withHandlers } from 'recompose'
 import { bindActionCreators } from 'redux'
 import { connect } from 'react-redux'

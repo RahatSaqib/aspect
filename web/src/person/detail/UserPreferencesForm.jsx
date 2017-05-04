@@ -1,4 +1,5 @@
-import React, { PropTypes } from 'react'
+import PropTypes from 'prop-types'
+import React from 'react'
 import { reduxForm, Field } from 'redux-form/immutable'
 import RaisedButton from 'material-ui/RaisedButton'
 import _ from 'lodash'

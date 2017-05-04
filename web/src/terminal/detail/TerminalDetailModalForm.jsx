@@ -2,11 +2,12 @@
 import classnames from 'classnames/bind'
 import _ from 'lodash'
 import _fp from 'lodash/fp'
-import React, { PropTypes } from 'react'
+import PropTypes from 'prop-types'
+import React from 'react'
 import { compose, setPropTypes, withHandlers, lifecycle, pure } from 'recompose'
 import { bindActionCreators } from 'redux'
 import { connect } from 'react-redux'
-import { Link } from 'react-router'
+import { Link } from 'react-router-dom'
 
 // Material-UI
 import FlatButton from 'material-ui/FlatButton'

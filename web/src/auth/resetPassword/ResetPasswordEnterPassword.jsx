@@ -3,7 +3,7 @@ import _ from 'lodash'
 import React from 'react'
 import { reduxForm } from 'redux-form/immutable'
 import { injectIntl } from 'react-intl'
-import { Link } from 'react-router'
+import { Link } from 'react-router-dom'
 
 // Material-UI
 import RaisedButton from 'material-ui/RaisedButton'

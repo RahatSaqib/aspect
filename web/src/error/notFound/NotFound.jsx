@@ -1,9 +1,6 @@
-// Imports from packages
-import React, { PureComponent, PropTypes } from 'react'
-import {
-  withRouter,
-  Link
-} from 'react-router'
+import PropTypes from 'prop-types'
+import React, { PureComponent } from 'react'
+import { Link } from 'react-router-dom'
 import {
   FormattedMessage
 } from 'react-intl'
@@ -20,7 +17,7 @@ import styles from './NotFound.css'
 export class NotFound extends PureComponent {
 
   static defaultProps = {
-    router: PropTypes.object.isRequired
+    history: PropTypes.object.isRequired
   }
 
   render() {
@@ -41,7 +38,7 @@ export class NotFound extends PureComponent {
         </h2>
         <IconButton
           className={styles.Content__Button}
-          onTouchTap={this.props.router.goBack}
+          onTouchTap={this.props.history.goBack}
         >
           <ActionBack />
         </IconButton>
@@ -51,4 +48,4 @@ export class NotFound extends PureComponent {
   }
 }
 
-export const NotFoundContainer = withRouter(NotFound)
+export default NotFound

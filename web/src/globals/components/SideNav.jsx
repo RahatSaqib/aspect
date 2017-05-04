@@ -1,8 +1,8 @@
-// Imports from packages
 import classnames from 'classnames/bind'
-import React, { PropTypes } from 'react'
+import PropTypes from 'prop-types'
+import React from 'react'
 import { compose, setPropTypes, pure } from 'recompose'
-import { Link } from 'react-router'
+import { Link } from 'react-router-dom'
 
 // Material-UI
 import Drawer from 'material-ui/Drawer'
@@ -25,8 +25,8 @@ import RssFeed from 'material-ui/svg-icons/communication/rss-feed'
 import Computer from 'material-ui/svg-icons/hardware/computer'
 
 // Our own imports
-import requirePermissions from './requirePermissions'
-import SelectableList from './SelectableList'
+import requirePermissions from '../../components/shared/requirePermissions'
+import SelectableList from '../../components/shared/SelectableList'
 import styles from './SideNav.css'
 
 const cssClasses = classnames.bind(styles)

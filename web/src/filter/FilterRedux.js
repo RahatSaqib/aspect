@@ -208,8 +208,6 @@ export default function filterReducer(state = initialState, action) {
 
     case types.EXPORT_RESPONSE_RECEIVED:
       if (action.response.ok === true) {
-        // import { browserHistory } from 'react-router'
-        // browserHistory.push(action.response.url)
         const a = document.getElementById('anchorExportProxy')
         a.href = action.response.url
         a.click()
