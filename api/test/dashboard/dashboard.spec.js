@@ -12,7 +12,7 @@ describe('Dashboard routes', () => {
   describe('GET', () => {
     shared.checkToken(server, path)
 
-    it('should return an object with site, device, and result counts', (done) => {
+    it('should return an object with site, device, result and user counts', (done) => {
       server
       .get(path)
       .set('Authorization', `Bearer ${shared.token}`)
@@ -25,6 +25,7 @@ describe('Dashboard routes', () => {
         assert.property(res.body.data, 'devicesTotal')
         assert.property(res.body.data, 'resultsTotal30d')
         assert.property(res.body.data, 'resultsTotal1d')
+        assert.property(res.body.data, 'usersTotal')
         done()
       })
     })
