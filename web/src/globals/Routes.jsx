@@ -1,6 +1,6 @@
 import React from 'react'
 import { Router } from 'react-router'
-import { Switch, Route, Redirect } from 'react-router-dom'
+import { Switch, Route } from 'react-router-dom'
 
 import history from '../history'
 
@@ -9,6 +9,7 @@ import PlainLayout from './layouts/PlainLayout'
 import LoggedInLayout from './layouts/LoggedInLayout'
 
 // "Pages"
+import Index from './components/Index'
 import NotFound from '../error/notFound/NotFound'
 import Login from '../auth/login/Login'
 import ResetPassword from '../auth/resetPassword/ResetPassword'
@@ -40,7 +41,7 @@ import TerminalDetail from '../terminal/detail/TerminalDetail'
 const Routes = () => (
   <Router history={history}>
     <Switch>
-      <Route exact path="/" render={() => <Redirect from="/" to="/dashboard" />} />
+      <Route exact path="/" component={Index} />
 
       <PlainLayout path="/login" component={Login} />
       <PlainLayout path="/reset-password" component={ResetPassword} />
