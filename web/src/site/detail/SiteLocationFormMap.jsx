@@ -1,7 +1,8 @@
 /* global google */
 // Imports from packages
 import _ from 'lodash'
-import React, { PureComponent, PropTypes } from 'react'
+import PropTypes from 'prop-types'
+import React, { PureComponent } from 'react'
 import { reduxForm, formValueSelector } from 'redux-form/immutable'
 import { connect } from 'react-redux'
 import CircularProgress from 'material-ui/CircularProgress'

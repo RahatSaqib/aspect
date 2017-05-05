@@ -1,11 +1,11 @@
-// Imports from packages
-import _ from 'lodash'
+import PropTypes from 'prop-types'
 import React, { PureComponent } from 'react'
+import { compose, setPropTypes, pure } from 'recompose'
 import { bindActionCreators } from 'redux'
 import { connect } from 'react-redux'
 import Helmet from 'react-helmet'
 import { injectIntl, FormattedHTMLMessage } from 'react-intl'
-import { Link } from 'react-router'
+import { Link } from 'react-router-dom'
 
 // Material-UI
 import Paper from 'material-ui/Paper'
@@ -33,6 +33,23 @@ import ResetPasswordEnterEmail from './ResetPasswordEnterEmail'
 import ResetPasswordEnterPassword from './ResetPasswordEnterPassword'
 import AppNotificationSnackBar from '../../appNotification/AppNotificationSnackBar'
 import AppNotificationDialog from '../../appNotification/AppNotificationDialog'
+
+const enhance = compose(
+  setPropTypes({
+    location: PropTypes.object.isRequired,
+  }),
+  pure,
+  injectIntl,
+  connect(() => ({
+  }), dispatch => (
+    bindActionCreators({
+      resetPasswordEnterEmailAddress,
+      resetPasswordEnterPassword,
+      showError,
+      showAcknowledgement,
+    }, dispatch)
+  )),
+)
 
 export class ResetPassword extends PureComponent {
   state = {
@@ -301,20 +318,4 @@ export class ResetPassword extends PureComponent {
   }
 }
 
-function mapStateToProps() {
-  return {}
-}
-
-function mapDispatchToProps(dispatch) {
-  return bindActionCreators({
-    resetPasswordEnterEmailAddress,
-    resetPasswordEnterPassword,
-    showError,
-    showAcknowledgement
-  }, dispatch)
-}
-
-export const ResetPasswordContainer = _.flowRight(
-  injectIntl,
-  connect(mapStateToProps, mapDispatchToProps)
-)(ResetPassword)
+export default enhance(ResetPassword)

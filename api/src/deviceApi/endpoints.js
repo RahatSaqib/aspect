@@ -78,7 +78,10 @@ const resultPayload = {
       'Longitude where the test was collected. Will default to the site location')
   }),
   type: Joi.object().keys({
-    id: Joi.string().required().description('The Result Type.  Defaults to Patient.')
+    id: Joi.string().required().description('The Result Type. Defaults to Patient.')
+  }),
+  source: Joi.object().keys({
+    id: Joi.string().required().description('The Result Source. Defaults to "Diagnostic Device".')
   }),
   workflow: Joi.object().keys({
     status: Joi.object().keys({
@@ -163,6 +166,10 @@ const resultPayload = {
     operator: Joi.string().allow('', null).description(
       'The person who completed the test')
   }),
+  oemData: Joi.any().description(
+    'Proprietary data for OEM'),
+  rawData: Joi.any().description(
+    'Field for sending raw data directly from a device'),
   notes: Joi.string().allow('', null).description(
     'Any additional notes associated with this result'),
   error: errorPayload

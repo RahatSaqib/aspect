@@ -123,6 +123,10 @@ describe('Device Result API routes', () => {
         .where({ id: result1.resultTypeId }).first('externalId')
       assert.equal(result1Type.externalId, 'Patient')
 
+      const result1Source = yield knex('ResultSource as rs')
+        .where({ id: result1.resultSourceId }).first('externalId')
+      assert.equal(result1Source.externalId, 'DiagnosticDevice')
+
       const result1Status = yield knex('ResultWorkflowStatus as rs')
         .where({ id: result1.resultWorkflowStatusId }).first('externalId')
       assert.equal(result1Status.externalId, 'OK')
@@ -201,7 +205,8 @@ describe('Device Result API routes', () => {
             data: { a: 'b' },
             assay: { id: 'HivVl' },
             category: [{ id: 'Success' }],
-            type: { id: 'Patient' }
+            type: { id: 'Patient' },
+            source: { id: 'DiagnosticDevice' }
           })
         })
 
@@ -216,6 +221,7 @@ describe('Device Result API routes', () => {
           checkpoint: 'ck2',
           data: { a: 'b', c: 2, d: false, e: { f: 'g' } },
           type: { id: 'Study' },
+          source: { id: 'EnteredByHand' },
           workflow: {
             status: { id: 'Acknowledged' },
             operator: 'Goody Two Shoes',
@@ -269,6 +275,29 @@ describe('Device Result API routes', () => {
             address: '123 Main Street',
             phone: '856-7909'
           },
+          oemData: JSON.stringify({
+            maker: 'XYZ',
+            model: '876A',
+            serial: '123-456-789'
+          }),
+          rawData: JSON.stringify({
+            startedOn: '2013-05-13',
+            endedOn: '2013-12-01T01:30',
+            patientData: {
+              id: 'P-333',
+              name: 'Bob',
+              surname: 'Hope',
+              gender: 'M',
+              age: 72,
+              dateOfBirth: '1903-05-29',
+              address: '123 Main Street',
+              phone: '856-7909'
+            },
+            location: {
+              longitude: -87.581222,
+              latitude: 30.419348
+            }
+          }),
           sender: {
             version: '99-1',
             operator: 'Bob O'
@@ -329,6 +358,29 @@ describe('Device Result API routes', () => {
         address: '123 Main Street',
         phone: '856-7909'
       })
+      assert.deepEqual(JSON.parse(result2.oemData), {
+        maker: 'XYZ',
+        model: '876A',
+        serial: '123-456-789'
+      })
+      assert.deepEqual(JSON.parse(result2.rawData), {
+        startedOn: '2013-05-13',
+        endedOn: '2013-12-01T01:30',
+        patientData: {
+          id: 'P-333',
+          name: 'Bob',
+          surname: 'Hope',
+          gender: 'M',
+          age: 72,
+          dateOfBirth: '1903-05-29',
+          address: '123 Main Street',
+          phone: '856-7909'
+        },
+        location: {
+          longitude: -87.581222,
+          latitude: 30.419348
+        }
+      })
       assert.equal(result2.senderVersion, '99-1')
       assert.equal(result2.senderOperator, 'Bob O')
       assert.equal(result2.notes, 'My Awesome notes about this Awesome result!')
@@ -338,6 +390,10 @@ describe('Device Result API routes', () => {
       const result2Type = yield knex('ResultType as rt')
         .where({ id: result2.resultTypeId }).first('externalId')
       assert.equal(result2Type.externalId, 'Study')
+
+      const result2Source = yield knex('ResultSource as rs')
+        .where({ id: result2.resultSourceId }).first('externalId')
+      assert.equal(result2Source.externalId, 'EnteredByHand')
 
       const result2Status = yield knex('ResultWorkflowStatus as rs')
         .where({ id: result2.resultWorkflowStatusId }).first('externalId')
@@ -366,6 +422,7 @@ describe('Device Result API routes', () => {
         checkpoint: 'ck2',
         data: { a: 'b', c: 2, d: false, e: { f: 'g' } },
         type: { id: 'Study' },
+        source: { id: 'EnteredByHand' },
         workflow: {
           status: { id: 'Acknowledged' },
           operator: 'Goody Two Shoes',
@@ -419,6 +476,29 @@ describe('Device Result API routes', () => {
           address: '123 Main Street',
           phone: '856-7909'
         },
+        oemData: JSON.stringify({
+          maker: 'XYZ',
+          model: '876A',
+          serial: '123-456-789'
+        }),
+        rawData: JSON.stringify({
+          startedOn: '2013-05-13',
+          endedOn: '2013-12-01T01:30',
+          patientData: {
+            id: 'P-333',
+            name: 'Bob',
+            surname: 'Hope',
+            gender: 'M',
+            age: 72,
+            dateOfBirth: '1903-05-29',
+            address: '123 Main Street',
+            phone: '856-7909'
+          },
+          location: {
+            longitude: -87.581222,
+            latitude: 30.419348
+          }
+        }),
         sender: {
           version: '99-1',
           operator: 'Bob O'
@@ -474,6 +554,7 @@ describe('Device Result API routes', () => {
               version: '1a.c1'
             },
             type: { id: 'Study' },
+            source: { id: 'EnteredByHand' },
             workflow: {
               status: { id: 'Acknowledged' },
               operator: 'Goody Two Shoes',
@@ -519,6 +600,29 @@ describe('Device Result API routes', () => {
               address: '123 Main Street',
               phone: '856-7909'
             },
+            oemData: JSON.stringify({
+              maker: 'XYZ',
+              model: '876A',
+              serial: '123-456-789'
+            }),
+            rawData: JSON.stringify({
+              startedOn: '2013-05-13',
+              endedOn: '2013-12-01T01:30',
+              patientData: {
+                id: 'P-333',
+                name: 'Bob',
+                surname: 'Hope',
+                gender: 'M',
+                age: 72,
+                dateOfBirth: '1903-05-29',
+                address: '123 Main Street',
+                phone: '856-7909'
+              },
+              location: {
+                longitude: -87.581222,
+                latitude: 30.419348
+              }
+            }),
             sender: {
               version: '99-1',
               operator: 'Bob O'
@@ -739,6 +843,7 @@ describe('Device Result API routes', () => {
           id: resultExternalIds[1],
           data: { a: 'b', c: 2, d: false, e: { f: 'g' } },
           type: { id: 'Study' },
+          source: { id: 'EnteredByHand' },
           workflow: { status: { id: 'Acknowledged' } },
           category: [
             { id: 'Detected' },
@@ -786,6 +891,29 @@ describe('Device Result API routes', () => {
             address: '123 Main Street',
             phone: '856-7909'
           },
+          oemData: JSON.stringify({
+            maker: 'ABC',
+            model: '123A',
+            serial: '123-456-789'
+          }),
+          rawData: JSON.stringify({
+            startedOn: '2013-05-13',
+            endedOn: '2013-12-01T01:30',
+            patientData: {
+              id: 'P-333',
+              name: 'Bob',
+              surname: 'Hope',
+              gender: 'M',
+              age: 72,
+              dateOfBirth: '1903-05-29',
+              address: '123 Main Street',
+              phone: '856-7909'
+            },
+            location: {
+              longitude: -87.581222,
+              latitude: 30.419348
+            }
+          }),
           sender: {
             version: '99-1',
             operator: 'Bob O'
@@ -831,6 +959,29 @@ describe('Device Result API routes', () => {
         address: '123 Main Street',
         phone: '856-7909'
       })
+      assert.deepEqual(JSON.parse(result2.oemData), {
+        maker: 'ABC',
+        model: '123A',
+        serial: '123-456-789'
+      })
+      assert.deepEqual(JSON.parse(result2.rawData), {
+        startedOn: '2013-05-13',
+        endedOn: '2013-12-01T01:30',
+        patientData: {
+          id: 'P-333',
+          name: 'Bob',
+          surname: 'Hope',
+          gender: 'M',
+          age: 72,
+          dateOfBirth: '1903-05-29',
+          address: '123 Main Street',
+          phone: '856-7909'
+        },
+        location: {
+          longitude: -87.581222,
+          latitude: 30.419348
+        }
+      })
       assert.equal(result2.senderVersion, '99-1')
       assert.equal(result2.senderOperator, 'Bob O')
       assert.equal(result2.notes, 'My Awesome notes about this Awesome result!')
@@ -840,6 +991,10 @@ describe('Device Result API routes', () => {
       const result2Type = yield knex('ResultType as rt')
         .where({ id: result2.resultTypeId }).first('externalId')
       assert.equal(result2Type.externalId, 'Study')
+
+      const result2Source = yield knex('ResultSource as rs')
+        .where({ id: result2.resultSourceId }).first('externalId')
+      assert.equal(result2Source.externalId, 'EnteredByHand')
 
       const result2Status = yield knex('ResultWorkflowStatus as rs')
         .where({ id: result2.resultWorkflowStatusId }).first('externalId')
@@ -1046,7 +1201,6 @@ describe('Device Result API routes', () => {
           const inventoryItemsBefore = yield getInventoryItemsAtSite(knex, siteId)
           const firstCartridgeConsumable = _.find(inventoryItemsBefore,
             { consumableId: cartridgeId })
-
           const assayConsumables = yield knex('ConsumableAssay as ca')
             .join('Assay as a', 'ca.assayId', 'a.id')
             .where('a.externalId', resultDetails.assayExternalId)
@@ -1594,6 +1748,7 @@ describe('Device Result API routes', () => {
             assay: { id: 'HivVl' },
             category: [{ id: 'Success' }],
             type: { id: 'Patient' },
+            source: { id: 'DiagnosticDevice' },
             notes: '454,112 Copies / mL'
           })
         })
@@ -1619,6 +1774,7 @@ describe('Device Result API routes', () => {
             assay: { id: 'HivVl' },
             category: [{ id: 'Success' }],
             type: { id: 'Patient' },
+            source: { id: 'DiagnosticDevice' },
             notes: '454,112 Copies / mL'
           })
         })
@@ -1645,6 +1801,7 @@ describe('Device Result API routes', () => {
             assay: { id: 'HivVl' },
             category: [{ id: 'Success' }],
             type: { id: 'Patient' },
+            source: { id: 'DiagnosticDevice' },
             notes: '454,112 Copies / mL'
           })
         })
@@ -1698,6 +1855,7 @@ describe('Device Result API routes', () => {
             assay: { id: 'HivVl' },
             category: [{ id: 'Success' }],
             type: { id: 'Patient' },
+            source: { id: 'DiagnosticDevice' },
             notes: '154,112 Copies / mL'
           })
         })
@@ -1723,6 +1881,7 @@ describe('Device Result API routes', () => {
             assay: { id: 'HivVl' },
             category: [{ id: 'Success' }],
             type: { id: 'Patient' },
+            source: { id: 'DiagnosticDevice' },
             notes: '154,112 Copies / mL'
           })
         })
@@ -1748,6 +1907,7 @@ describe('Device Result API routes', () => {
             assay: { id: 'HivVl' },
             category: [{ id: 'Success' }],
             type: { id: 'Patient' },
+            source: { id: 'DiagnosticDevice' },
             notes: '154,112 Copies / mL'
           })
         })
@@ -1773,6 +1933,7 @@ describe('Device Result API routes', () => {
             assay: { id: 'HivVl' },
             category: [{ id: 'Success' }],
             type: { id: 'Patient' },
+            source: { id: 'DiagnosticDevice' },
             notes: '454,112 Copies / mL'
           })
         })
@@ -1799,6 +1960,7 @@ describe('Device Result API routes', () => {
             assay: { id: 'HivVl' },
             category: [{ id: 'Success' }],
             type: { id: 'Patient' },
+            source: { id: 'DiagnosticDevice' },
             notes: '154,112 Copies / mL'
           })
         })
@@ -1830,6 +1992,7 @@ describe('Device Result API routes', () => {
             assay: { id: 'HivVl' },
             category: [{ id: 'Success' }],
             type: { id: 'Patient' },
+            source: { id: 'DiagnosticDevice' },
             notes: '454,112 Copies / mL'
           })
         })
@@ -1887,6 +2050,7 @@ describe('Device Result API routes', () => {
             assay: { id: 'HivVl' },
             category: [{ id: 'Success' }],
             type: { id: 'Patient' },
+            source: { id: 'DiagnosticDevice' },
             notes: '154,112 Copies / mL'
           })
         })
@@ -1913,6 +2077,7 @@ describe('Device Result API routes', () => {
             assay: { id: 'HivVl' },
             category: [{ id: 'Success' }],
             type: { id: 'Patient' },
+            source: { id: 'DiagnosticDevice' },
             notes: '154,112 Copies / mL'
           })
         })
@@ -1939,6 +2104,7 @@ describe('Device Result API routes', () => {
             assay: { id: 'HivVl' },
             category: [{ id: 'Success' }],
             type: { id: 'Patient' },
+            source: { id: 'DiagnosticDevice' },
             notes: '154,112 Copies / mL'
           })
         })
@@ -1994,6 +2160,7 @@ describe('Device Result API routes', () => {
             assay: { id: 'HivVl' },
             category: [{ id: 'Success' }],
             type: { id: 'Patient' },
+            source: { id: 'DiagnosticDevice' },
             notes: '154,112 Copies / mL'
           })
         })
@@ -2018,6 +2185,7 @@ describe('Device Result API routes', () => {
             assay: { id: 'HivVl' },
             category: [{ id: 'Success' }],
             type: { id: 'Patient' },
+            source: { id: 'DiagnosticDevice' },
             notes: '155,115 Copies / mL'
           })
         })
@@ -2044,6 +2212,7 @@ describe('Device Result API routes', () => {
             assay: { id: 'HivVl' },
             category: [{ id: 'Success' }],
             type: { id: 'Patient' },
+            source: { id: 'DiagnosticDevice' },
             notes: '154,112 Copies / mL'
           })
         })
@@ -2069,6 +2238,7 @@ describe('Device Result API routes', () => {
             assay: { id: 'HivVl' },
             category: [{ id: 'Success' }],
             type: { id: 'Patient' },
+            source: { id: 'DiagnosticDevice' },
             notes: '154,112 Copies / mL'
           })
         })
@@ -2093,6 +2263,7 @@ describe('Device Result API routes', () => {
             assay: { id: 'HivVl' },
             category: [{ id: 'Success' }],
             type: { id: 'Patient' },
+            source: { id: 'DiagnosticDevice' },
             notes: '454,112 Copies / mL'
           })
         })
@@ -2117,6 +2288,7 @@ describe('Device Result API routes', () => {
             assay: { id: 'HivVl' },
             category: [{ id: 'Success' }],
             type: { id: 'Patient' },
+            source: { id: 'DiagnosticDevice' },
             notes: '454,112 Copies / mL'
           })
         })

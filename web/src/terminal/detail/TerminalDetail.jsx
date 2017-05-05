@@ -1,6 +1,6 @@
-// Imports from packages
-import _ from 'lodash'
-import React, { PureComponent, PropTypes } from 'react'
+import PropTypes from 'prop-types'
+import React, { PureComponent } from 'react'
+import { compose, setPropTypes, pure } from 'recompose'
 import {
   injectIntl,
   defineMessages,
@@ -8,7 +8,7 @@ import {
 } from 'react-intl'
 import { bindActionCreators } from 'redux'
 import { connect } from 'react-redux'
-import { Link } from 'react-router'
+import { Link } from 'react-router-dom'
 import Helmet from 'react-helmet'
 
 // Material-UI
@@ -27,6 +27,7 @@ import {
 } from '../TerminalRedux'
 import { ReadOnlyField } from '../../components/shared/ReadOnlyFields'
 import JSONSchemaCard from '../../components/shared/JSONSchemaCard'
+import NavTitle from '../../globals/components/NavTitle'
 import TerminalDetailModalForm from './TerminalDetailModalForm'
 import DeviceDemoLink from '../../device/DeviceDemoLink'
 import styles from './TerminalDetail.css'
@@ -110,15 +111,32 @@ const messages = defineMessages({
   }
 })
 
-export class TerminalDetail extends PureComponent {
-
-  static propTypes = {
-    setPageTitle: PropTypes.func.isRequired,
-    fetchSingleTerminal: PropTypes.func.isRequired,
-    params: PropTypes.shape({
-      // see /api/src/device/endPoint.js, path: '/device/{terminalId}'
-      terminalId: PropTypes.string.isRequired
+const enhance = compose(
+  setPropTypes({
+    match: PropTypes.shape({
+      params: PropTypes.shape({
+        terminalId: PropTypes.string.isRequired
+      }).isRequired
     }).isRequired,
+  }),
+  pure,
+  injectIntl,
+  connect((state, props) => {
+    const terminal = state.terminal.items.byId.get(props.match.params.terminalId)
+
+    return {
+      editable: isEditable(state.user, terminal),
+      terminal,
+    }
+  }, dispatch => (
+    bindActionCreators({
+      fetchSingleTerminal,
+      updateSingleTerminal,
+    }, dispatch)
+  )),
+  setPropTypes({
+    intl: intlShape.isRequired,
+    editable: PropTypes.bool.isRequired,
     terminal: PropTypes.shape({
       has: PropTypes.func.isRequired,
       // see /api/src/device/endPoint.js, path: '/device'
@@ -141,15 +159,12 @@ export class TerminalDetail extends PureComponent {
       notes: PropTypes.string,
       serial: PropTypes.string
     }),
-    intl: intlShape.isRequired,
-    editable: PropTypes.bool.isRequired,
-    updateSingleTerminal: PropTypes.func.isRequired
-  }
+    fetchSingleTerminal: PropTypes.func.isRequired,
+    updateSingleTerminal: PropTypes.func.isRequired,
+  }),
+)
 
-  static defaultProps = {
-    terminal: null
-  }
-
+export class TerminalDetail extends PureComponent {
   state = {
     isEditDialogOpen: false,
     isDemoDialogOpen: false,
@@ -161,18 +176,12 @@ export class TerminalDetail extends PureComponent {
     }
   }
 
-  componentWillMount() {
-    const { setPageTitle, intl } = this.props
-    const { formatMessage } = intl
-    setPageTitle(formatMessage(messages.title))
-  }
-
   componentDidMount() {
     this.handleFetchTerminal()
   }
 
   componentWillReceiveProps(nextProps) {
-    if (this.props.params.terminalId !== nextProps.params.terminalId) {
+    if (this.props.match.params.terminalId !== nextProps.match.params.terminalId) {
       this.handleFetchTerminal()
     }
   }
@@ -186,7 +195,7 @@ export class TerminalDetail extends PureComponent {
   }
 
   handleFetchTerminal = () => {
-    this.props.fetchSingleTerminal(this.props.params.terminalId)
+    this.props.fetchSingleTerminal(this.props.match.params.terminalId)
       .then(() => {
         const { terminal } = this.props
 
@@ -407,7 +416,7 @@ export class TerminalDetail extends PureComponent {
   renderDemoButton() {
     return (
       <DeviceDemoLink
-        to={`/demo/device/${this.props.params.terminalId}`}
+        to={`/demo/device/${this.props.match.params.terminalId}`}
         className={styles.DemoLink}
         target="_blank"
       >
@@ -435,6 +444,7 @@ export class TerminalDetail extends PureComponent {
     return (
       <div className={styles.Content}>
         <Helmet title={formatMessage(messages.title)} titleTemplate="%s - Aspect" defaultTitle="Aspect" />
+        <NavTitle title={formatMessage(messages.title)} />
         {this.renderPaper()}
         {this.renderDemoButton()}
       </div>
@@ -442,23 +452,4 @@ export class TerminalDetail extends PureComponent {
   }
 }
 
-function mapStateToProps(state, props) {
-  const terminal = state.terminal.items.byId.get(props.params.terminalId)
-
-  return {
-    editable: isEditable(state.user, terminal),
-    terminal
-  }
-}
-
-function mapDispatchToProps(dispatch) {
-  return bindActionCreators({
-    fetchSingleTerminal,
-    updateSingleTerminal
-  }, dispatch)
-}
-
-export const TerminalDetailContainer = _.flowRight(
-  injectIntl,
-  connect(mapStateToProps, mapDispatchToProps)
-)(TerminalDetail)
+export default enhance(TerminalDetail)

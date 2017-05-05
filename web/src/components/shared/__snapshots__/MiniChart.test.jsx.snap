@@ -1,3 +1,5 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
 exports[`MiniChart module MiniChart component should render correctly 1`] = `
 <div
   className="col-margin"
@@ -5,7 +7,7 @@ exports[`MiniChart module MiniChart component should render correctly 1`] = `
     Object {
       "WebkitTapHighlightColor": "rgba(0,0,0,0)",
       "backgroundColor": "#FBC02D",
-      "borderRadius": "2px",
+      "borderRadius": 2,
       "boxShadow": "0 1px 6px rgba(0, 0, 0, 0.12),
              0 1px 4px rgba(0, 0, 0, 0.12)",
       "boxSizing": "border-box",
@@ -14,13 +16,16 @@ exports[`MiniChart module MiniChart component should render correctly 1`] = `
       "muiPrepared": true,
       "transition": "all 450ms cubic-bezier(0.23, 1, 0.32, 1) 0ms",
     }
-  }>
+  }
+>
   <div
-    className="minichart-chart">
+    className="minichart-chart"
+  >
     <svg
       preserveAspectRatio="none"
       style={undefined}
-      viewBox="0 0 100 80">
+      viewBox="0 0 100 80"
+    >
       <g>
         <polyline
           points="15 60.37037037037037 25 65 35 55.74074074074074 45 41.85185185185185 55 32.592592592592595 65 27.962962962962962 75 23.333333333333332 85 15 85 65 15 65 15 60.37037037037037"
@@ -31,7 +36,8 @@ exports[`MiniChart module MiniChart component should render correctly 1`] = `
               "stroke": "none",
               "strokeWidth": "0",
             }
-          } />
+          }
+        />
         <polyline
           points="15 60.37037037037037 25 65 35 55.74074074074074 45 41.85185185185185 55 32.592592592592595 65 27.962962962962962 75 23.333333333333332 85 15"
           style={
@@ -42,7 +48,8 @@ exports[`MiniChart module MiniChart component should render correctly 1`] = `
               "strokeLinejoin": "round",
               "strokeWidth": "1",
             }
-          } />
+          }
+        />
       </g>
       <g>
         <circle
@@ -53,7 +60,8 @@ exports[`MiniChart module MiniChart component should render correctly 1`] = `
             Object {
               "fill": "#fff",
             }
-          } />
+          }
+        />
         <circle
           cx={85}
           cy={15}
@@ -62,18 +70,21 @@ exports[`MiniChart module MiniChart component should render correctly 1`] = `
             Object {
               "fill": "#fff",
             }
-          } />
+          }
+        />
       </g>
     </svg>
   </div>
   <div
-    className="minichart-count">
+    className="minichart-count"
+  >
     <small>
       SomeLabel
     </small>
     12
   </div>
   <div
-    className="clear-fix" />
+    className="clear-fix"
+  />
 </div>
 `;

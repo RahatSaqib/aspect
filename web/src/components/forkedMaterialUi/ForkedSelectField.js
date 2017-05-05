@@ -18,8 +18,9 @@ import _ from 'lodash';
 import raf from 'dom-helpers/util/requestAnimationFrame';
 import {findDOMNode} from 'react-dom';
 import keycode from 'keycode';
+import PropTypes from 'prop-types';
 // Original
-import React, {Component, PropTypes} from 'react';
+import React, { Component } from 'react';
 import TextField from 'material-ui/TextField';
 import DropDownMenu from './ForkedDropDownMenu';
 

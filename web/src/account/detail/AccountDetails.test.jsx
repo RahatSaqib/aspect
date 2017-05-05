@@ -28,7 +28,6 @@ describe('AccountDetails module', () => {
       props = {
         showAcknowledgement: () => {},
         fetchAccountDetails: () => {},
-        setPageTitle: () => {},
         loading: false,
         saving: false,
         accountDetails: new AccountDetailsData(),
@@ -71,9 +70,9 @@ describe('AccountDetails module', () => {
       })
 
       it('Should show a paper container with three tabs', () => {
-        expect(AccountDetailsWrapper.node.props.children.length).toEqual(2)
+        expect(AccountDetailsWrapper.node.props.children.length).toEqual(3)
         expect(AccountDetailsWrapper.node.props.children[0].type).toEqual(Helmet)
-        expect(AccountDetailsWrapper.node.props.children[1].type).toEqual(Paper)
+        expect(AccountDetailsWrapper.node.props.children[2].type).toEqual(Paper)
         const paperContainer = AccountDetailsWrapper.find(Paper)
         expect(paperContainer.length).toEqual(1)
         const tabsContainer = paperContainer.find(Tabs)

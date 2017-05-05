@@ -1,6 +1,6 @@
-// Imports from packages
-import _ from 'lodash'
-import React, { PureComponent, PropTypes } from 'react'
+import PropTypes from 'prop-types'
+import React, { PureComponent } from 'react'
+import { compose, setPropTypes, pure } from 'recompose'
 import {
   injectIntl,
   defineMessages,
@@ -8,7 +8,7 @@ import {
 } from 'react-intl'
 import { bindActionCreators } from 'redux'
 import { connect } from 'react-redux'
-import { Link } from 'react-router'
+import { Link } from 'react-router-dom'
 import Helmet from 'react-helmet'
 
 // Material-UI
@@ -27,6 +27,7 @@ import {
 } from '../RouterRedux'
 import { ReadOnlyField } from '../../components/shared/ReadOnlyFields'
 import JSONSchemaCard from '../../components/shared/JSONSchemaCard'
+import NavTitle from '../../globals/components/NavTitle'
 import RouterDetailModalForm from './RouterDetailModalForm'
 import DeviceDemoLink from '../../device/DeviceDemoLink'
 import styles from './RouterDetail.css'
@@ -110,15 +111,32 @@ const messages = defineMessages({
   }
 })
 
-export class RouterDetail extends PureComponent {
-
-  static propTypes = {
-    setPageTitle: PropTypes.func.isRequired,
-    fetchSingleRouter: PropTypes.func.isRequired,
-    params: PropTypes.shape({
-      // see /api/src/device/endPoint.js, path: '/device/{routerId}'
-      routerId: PropTypes.string.isRequired
+const enhance = compose(
+  setPropTypes({
+    match: PropTypes.shape({
+      params: PropTypes.shape({
+        routerId: PropTypes.string.isRequired
+      }).isRequired
     }).isRequired,
+  }),
+  pure,
+  injectIntl,
+  connect((state, props) => {
+    const router = state.router.items.byId.get(props.match.params.routerId)
+
+    return {
+      editable: isEditable(state.user, router),
+      router,
+    }
+  }, dispatch => (
+    bindActionCreators({
+      fetchSingleRouter,
+      updateSingleRouter,
+    }, dispatch)
+  )),
+  setPropTypes({
+    intl: intlShape.isRequired,
+    editable: PropTypes.bool.isRequired,
     router: PropTypes.shape({
       has: PropTypes.func.isRequired,
       // see /api/src/device/endPoint.js, path: '/device'
@@ -141,15 +159,12 @@ export class RouterDetail extends PureComponent {
       notes: PropTypes.string,
       serial: PropTypes.string
     }),
-    intl: intlShape.isRequired,
-    editable: PropTypes.bool.isRequired,
-    updateSingleRouter: PropTypes.func.isRequired
-  }
+    fetchSingleRouter: PropTypes.func.isRequired,
+    updateSingleRouter: PropTypes.func.isRequired,
+  }),
+)
 
-  static defaultProps = {
-    router: null
-  }
-
+export class RouterDetail extends PureComponent {
   state = {
     isEditDialogOpen: false,
     isDemoDialogOpen: false,
@@ -161,18 +176,12 @@ export class RouterDetail extends PureComponent {
     }
   }
 
-  componentWillMount() {
-    const { setPageTitle, intl } = this.props
-    const { formatMessage } = intl
-    setPageTitle(formatMessage(messages.title))
-  }
-
   componentDidMount() {
     this.handleFetchRouter()
   }
 
   componentWillReceiveProps(nextProps) {
-    if (this.props.params.routerId !== nextProps.params.routerId) {
+    if (this.props.match.params.routerId !== nextProps.match.params.routerId) {
       this.handleFetchRouter()
     }
   }
@@ -186,7 +195,7 @@ export class RouterDetail extends PureComponent {
   }
 
   handleFetchRouter = () => {
-    this.props.fetchSingleRouter(this.props.params.routerId)
+    this.props.fetchSingleRouter(this.props.match.params.routerId)
       .then(() => {
         const { router } = this.props
 
@@ -422,7 +431,7 @@ export class RouterDetail extends PureComponent {
   renderDemoButton() {
     return (
       <DeviceDemoLink
-        to={`/demo/device/${this.props.params.routerId}`}
+        to={`/demo/device/${this.props.match.params.routerId}`}
         className={styles.DemoLink}
         target="_blank"
       >
@@ -450,6 +459,7 @@ export class RouterDetail extends PureComponent {
     return (
       <div className={styles.ContentDetails}>
         <Helmet title={formatMessage(messages.title)} titleTemplate="%s - Aspect" defaultTitle="Aspect" />
+        <NavTitle title={formatMessage(messages.title)} />
         {this.renderPaper()}
         {this.renderDemoButton()}
       </div>
@@ -457,23 +467,4 @@ export class RouterDetail extends PureComponent {
   }
 }
 
-function mapStateToProps(state, props) {
-  const router = state.router.items.byId.get(props.params.routerId)
-
-  return {
-    editable: isEditable(state.user, router),
-    router
-  }
-}
-
-function mapDispatchToProps(dispatch) {
-  return bindActionCreators({
-    fetchSingleRouter,
-    updateSingleRouter
-  }, dispatch)
-}
-
-export const RouterDetailContainer = _.flowRight(
-  injectIntl,
-  connect(mapStateToProps, mapDispatchToProps)
-)(RouterDetail)
+export default enhance(RouterDetail)

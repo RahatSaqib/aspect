@@ -1,9 +1,10 @@
 // Imports from packages
 import classnames from 'classnames/bind'
 import _fp from 'lodash/fp'
-import React, { PropTypes } from 'react'
+import PropTypes from 'prop-types'
+import React from 'react'
 import { compose, pure, setPropTypes } from 'recompose'
-import { Link } from 'react-router'
+import { Link } from 'react-router-dom'
 
 // Material-UI
 import FlatButton from 'material-ui/FlatButton'
@@ -28,7 +29,7 @@ const enhance = compose(
     formatNestedSubtitle: PropTypes.func.isRequired,
     configurationDataSchema: PropTypes.object.isRequired,
     isDialogOpen: PropTypes.bool.isRequired,
-    values: PropTypes.object.isRequired
+    values: PropTypes.object.isRequired,
   }),
   recomposeForm({
     fields: ['name', 'shortname', 'notes', {
@@ -38,10 +39,10 @@ const enhance = compose(
       },
     }, {
       fieldName: 'siteId',
-      valueFromChangeEvent: _fp.identity
+      valueFromChangeEvent: _fp.identity,
     }, {
       fieldName: 'configurationData',
-      valueFromChangeEvent: _fp.identity
+      valueFromChangeEvent: _fp.identity,
     }],
     validate(values) {
       const errors = {}
@@ -53,8 +54,8 @@ const enhance = compose(
         errors.siteId = 'Required'
       }
       return errors
-    }
-  })
+    },
+  }),
 )
 
 export const DeviceDetailModalForm = (props) => {

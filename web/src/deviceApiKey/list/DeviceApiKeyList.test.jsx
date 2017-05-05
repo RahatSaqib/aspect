@@ -1,17 +1,26 @@
 import React from 'react'
+<<<<<<< HEAD
 import { shallow } from 'enzyme'
 import sinon from 'sinon'
 import Helmet from 'react-helmet'
 import _ from 'lodash'
 import renderer from 'react-test-renderer'
+=======
+import sinon from 'sinon'
+import renderer from 'react-test-renderer'
+import ReactShallowRenderer from 'react-test-renderer/shallow'
+>>>>>>> refactor/jeremy-asp-345-add-test-device-api
 import { Provider } from 'react-redux'
 import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider'
 import { IntlProvider } from 'react-intl'
 import store from '../../store'
 import { Items } from '../../shared/metaReducers/items'
 import { Table } from '../../shared/metaReducers/table'
+<<<<<<< HEAD
 import DataTableWithEmptyList from '../../components/shared/DataTableWithEmptyList'
 import ListFilterContainer from '../../filter/list/ListFilter'
+=======
+>>>>>>> refactor/jeremy-asp-345-add-test-device-api
 import { DeviceApiKeyList } from './DeviceApiKeyList'
 
 jest.mock('material-ui/Checkbox', () => 'StubCheckbox')
@@ -19,6 +28,7 @@ jest.mock('material-ui/Checkbox', () => 'StubCheckbox')
 describe('Device Api Key List Component', () => {
   describe('DeviceApiKeyList', () => {
     let props
+<<<<<<< HEAD
     let DeviceApiKeyListWrapper
     const now = new Date()
 
@@ -26,6 +36,10 @@ describe('Device Api Key List Component', () => {
       DeviceApiKeyListWrapper = shallow(<DeviceApiKeyList {...props} />)
     }
 
+=======
+    const now = new Date()
+
+>>>>>>> refactor/jeremy-asp-345-add-test-device-api
     beforeEach(() => {
       props = {
         setPageTitle: sinon.spy(),
@@ -49,6 +63,7 @@ describe('Device Api Key List Component', () => {
         updateSingleDeviceApiKey: () => {},
         listFilter: {},
       }
+<<<<<<< HEAD
 
       shallowRenderDeviceApiKeyList()
     })
@@ -153,6 +168,19 @@ describe('Device Api Key List Component', () => {
     })
 
     it('should render correctly', () => {
+=======
+    })
+
+    it('should shallow render correctly', () => {
+      const renderer = new ReactShallowRenderer()
+      renderer.render(<DeviceApiKeyList {...props} />)
+
+      const result = renderer.getRenderOutput()
+      expect(result).toMatchSnapshot()
+    })
+
+    it('should render DOM correctly', () => {
+>>>>>>> refactor/jeremy-asp-345-add-test-device-api
       const component = renderer.create(<Provider store={store}>
         <MuiThemeProvider>
           <IntlProvider locale="en">
@@ -163,6 +191,7 @@ describe('Device Api Key List Component', () => {
       const tree = component.toJSON()
       expect(tree).toMatchSnapshot()
     })
+<<<<<<< HEAD
 
     it('should contain a list filter', () => {
       const listFilter = DeviceApiKeyListWrapper.find(ListFilterContainer)
@@ -173,5 +202,7 @@ describe('Device Api Key List Component', () => {
       const helmet = DeviceApiKeyListWrapper.find(Helmet)
       expect(helmet.props().title).toEqual('Device API Keys')
     })
+=======
+>>>>>>> refactor/jeremy-asp-345-add-test-device-api
   })
 })

@@ -1,6 +1,6 @@
-// Imports from packages
-import _ from 'lodash'
-import React, { PureComponent, PropTypes } from 'react'
+import PropTypes from 'prop-types'
+import React, { PureComponent } from 'react'
+import { compose, setPropTypes, pure } from 'recompose'
 import {
   injectIntl,
   defineMessages,
@@ -12,13 +12,13 @@ import Helmet from 'react-helmet'
 
 // Our own imports
 import DataTableWithEmptyList from '../../components/shared/DataTableWithEmptyList'
+import NavTitle from '../../globals/components/NavTitle'
 import ListFilterContainer from '../../filter/list/ListFilter'
 import { configureListFilter, ListFilter } from '../../filter/FilterRedux'
 import { fetchListFilteredReports } from '../ReportRedux'
 import styles from './ReportList.css'
 import { Items } from '../../shared/metaReducers/items'
 import { Table } from '../../shared/metaReducers/table'
-
 
 const messages = defineMessages({
   title: {
@@ -55,22 +55,36 @@ const messages = defineMessages({
   }
 })
 
-export class ReportList extends PureComponent {
-
-  static propTypes = {
-    setPageTitle: PropTypes.func.isRequired,
+const enhance = compose(
+  setPropTypes({
+    location: PropTypes.object.isRequired,
+    history: PropTypes.object.isRequired,
+  }),
+  pure,
+  injectIntl,
+  connect(state => ({
+    listFilter: state.filter.listFilter,
+    items: state.report.items,
+    table: state.report.table,
+  }), dispatch => (
+    bindActionCreators({
+      fetchListFilteredReports,
+      configureListFilter,
+    }, dispatch)
+  )),
+  setPropTypes({
+    intl: intlShape.isRequired,
+    listFilter: PropTypes.objectOf(ListFilter).isRequired,
+    items: PropTypes.objectOf(Items).isRequired,
     table: PropTypes.objectOf(Table).isRequired,
     fetchListFilteredReports: PropTypes.func.isRequired,
     configureListFilter: PropTypes.func.isRequired,
-    intl: intlShape.isRequired,
-    listFilter: PropTypes.objectOf(ListFilter).isRequired,
-    items: PropTypes.objectOf(Items).isRequired
-  }
+  }),
+)
 
+export class ReportList extends PureComponent {
   componentWillMount() {
-    const { setPageTitle, configureListFilter, intl } = this.props
-    const { formatMessage } = intl
-    setPageTitle(formatMessage(messages.title))
+    const { configureListFilter } = this.props
     configureListFilter({ contactNameOrEmail: true })
   }
 
@@ -103,6 +117,7 @@ export class ReportList extends PureComponent {
     return (
       <div className={styles.Content}>
         <Helmet title={formatMessage(messages.title)} titleTemplate="%s - Aspect" defaultTitle="Aspect" />
+        <NavTitle title={formatMessage(messages.title)} />
         <ListFilterContainer
           subject={formatMessage(messages.title)}
           filterTemplate={formatMessage(messages.filterTemplate)}
@@ -112,28 +127,11 @@ export class ReportList extends PureComponent {
           items={this.props.items}
           table={this.props.table}
           columns={columns}
+          intl={intl}
         />
       </div>
     )
   }
 }
 
-function mapStateToProps(state) {
-  return {
-    listFilter: state.filter.listFilter,
-    items: state.report.items,
-    table: state.report.table
-  }
-}
-
-function mapDispatchToProps(dispatch) {
-  return bindActionCreators({
-    configureListFilter,
-    fetchListFilteredReports
-  }, dispatch)
-}
-
-export const ReportListContainer = _.flowRight(
-  injectIntl,
-  connect(mapStateToProps, mapDispatchToProps)
-)(ReportList)
+export default enhance(ReportList)

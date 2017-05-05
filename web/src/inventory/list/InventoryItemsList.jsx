@@ -1,6 +1,6 @@
-// Imports from packages
-import _ from 'lodash'
-import React, { PureComponent, PropTypes } from 'react'
+import PropTypes from 'prop-types'
+import React, { PureComponent } from 'react'
+import { compose, setPropTypes, pure } from 'recompose'
 import {
   injectIntl,
   defineMessages,
@@ -29,6 +29,7 @@ import MoreVertIcon from 'material-ui/svg-icons/navigation/more-vert'
 // Our own imports
 import EmptyList from '../../components/shared/EmptyList'
 import GroupedDataTable from '../../components/shared/GroupedDataTable'
+import NavTitle from '../../globals/components/NavTitle'
 import ListFilterContainer from '../../filter/list/ListFilter'
 import { configureListFilter, ListFilter } from '../../filter/FilterRedux'
 import {
@@ -145,37 +146,60 @@ const messages = defineMessages({
   }
 })
 
-export class InventoryItemsList extends PureComponent {
-
-  static propTypes = {
-    setPageTitle: PropTypes.func.isRequired,
-    table: PropTypes.objectOf(Table).isRequired,
-    configureListFilter: PropTypes.func.isRequired,
+const enhance = compose(
+  setPropTypes({
+    location: PropTypes.object.isRequired,
+    history: PropTypes.object.isRequired,
+  }),
+  pure,
+  injectIntl,
+  connect(state => ({
+    consumableReasons: state.consumable.get('consumableReasons'),
+    listFilter: state.filter.listFilter,
+    items: state.inventory.items,
+    table: state.inventory.table,
+    inventoryAdjustment: state.inventory.inventoryAdjustment
+  }), dispatch => (
+    bindActionCreators({
+      configureListFilter,
+      fetchListFilteredInventoryItems,
+      toggleGroupBySite,
+      adjustInventoryLevels,
+      addInventoryItem,
+      finishAdjustingInventoryLevels,
+      addInventory,
+      removeInventory,
+      transferInventory,
+      receiveInventory,
+      submit,
+      showAcknowledgement,
+    }, dispatch)
+  )),
+  setPropTypes({
     intl: intlShape.isRequired,
+    consumableReasons: PropTypes.object.isRequired,
     listFilter: PropTypes.objectOf(ListFilter).isRequired,
+    items: PropTypes.objectOf(Items).isRequired,
+    table: PropTypes.objectOf(Table).isRequired,
+    inventoryAdjustment: PropTypes.object,
+    configureListFilter: PropTypes.func.isRequired,
     fetchListFilteredInventoryItems: PropTypes.func.isRequired,
     toggleGroupBySite: PropTypes.func.isRequired,
     adjustInventoryLevels: PropTypes.func.isRequired,
     addInventoryItem: PropTypes.func.isRequired,
     finishAdjustingInventoryLevels: PropTypes.func.isRequired,
-    consumableReasons: PropTypes.object.isRequired,
-    items: PropTypes.objectOf(Items).isRequired,
-    inventoryAdjustment: PropTypes.object,
     addInventory: PropTypes.func.isRequired,
     removeInventory: PropTypes.func.isRequired,
     transferInventory: PropTypes.func.isRequired,
     receiveInventory: PropTypes.func.isRequired,
     submit: PropTypes.func.isRequired,
-    showAcknowledgement: PropTypes.func.isRequired
-  }
+    showAcknowledgement: PropTypes.func.isRequired,
+  }),
+)
 
-  static defaultProps = {
-    inventoryAdjustment: null
-  }
-
+export class InventoryItemsList extends PureComponent {
   componentWillMount() {
-    const { setPageTitle, configureListFilter, intl: { formatMessage } } = this.props
-    setPageTitle(formatMessage(messages.title))
+    const { configureListFilter } = this.props
     configureListFilter({
       consumable: true,
       geography: true,
@@ -395,6 +419,7 @@ export class InventoryItemsList extends PureComponent {
     return (
       <div className={styles.Content}>
         <Helmet title={formatMessage(messages.title)} titleTemplate="%s - Aspect" defaultTitle="Aspect" />
+        <NavTitle title={formatMessage(messages.title)} />
         <ListFilterContainer
           subject={formatMessage(messages.title)}
           dateFilterLabel={formatMessage(messages.expiresOn)}
@@ -445,34 +470,4 @@ export class InventoryItemsList extends PureComponent {
   }
 }
 
-function mapStateToProps(state) {
-  return {
-    consumableReasons: state.consumable.get('consumableReasons'),
-    listFilter: state.filter.listFilter,
-    items: state.inventory.items,
-    table: state.inventory.table,
-    inventoryAdjustment: state.inventory.inventoryAdjustment
-  }
-}
-
-function mapDispatchToProps(dispatch) {
-  return bindActionCreators({
-    configureListFilter,
-    fetchListFilteredInventoryItems,
-    toggleGroupBySite,
-    adjustInventoryLevels,
-    addInventoryItem,
-    finishAdjustingInventoryLevels,
-    addInventory,
-    removeInventory,
-    transferInventory,
-    receiveInventory,
-    submit,
-    showAcknowledgement
-  }, dispatch)
-}
-
-export const InventoryItemsListContainer = _.flowRight(
-  injectIntl,
-  connect(mapStateToProps, mapDispatchToProps)
-)(InventoryItemsList)
+export default enhance(InventoryItemsList)

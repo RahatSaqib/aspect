@@ -1,7 +1,8 @@
 // Imports from packages
 import _ from 'lodash'
 import classnames from 'classnames/bind'
-import React, { PureComponent, PropTypes } from 'react'
+import PropTypes from 'prop-types'
+import React, { PureComponent } from 'react'
 import { intlShape } from 'react-intl'
 
 // Material-UI
@@ -37,7 +38,7 @@ export default class DataTable extends PureComponent {
       total: PropTypes.number.isRequired
     }).isRequired,
     columns: PropTypes.array.isRequired,
-    intl: intlShape,
+    intl: intlShape.isRequired,
     messages: PropTypes.object
   }
 
@@ -46,7 +47,6 @@ export default class DataTable extends PureComponent {
     multiSelectable: false,
     handleItemIdSelection: _.noop,
     handleItemIdsSelection: _.noop,
-    intl: {},
     messages: {},
   }
 

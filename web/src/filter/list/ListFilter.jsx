@@ -1,7 +1,8 @@
 // Imports from packages
 import _ from 'lodash'
 import Immutable from 'immutable'
-import React, { PureComponent, PropTypes } from 'react'
+import PropTypes from 'prop-types'
+import React, { PureComponent } from 'react'
 import { bindActionCreators } from 'redux'
 import { connect } from 'react-redux'
 import {
@@ -51,7 +52,7 @@ import styles from './ListFilter.css'
 
 const messages = defineMessages({
   clearTooltip: {
-    id: 'shared.ListFilter.clear',
+    id: 'shared.ListFilter.clearTooltip',
     defaultMessage: 'Clear Filters'
   },
   save: {

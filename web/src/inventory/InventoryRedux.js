@@ -254,13 +254,15 @@ export function addInventory(inventoryItemId, data) {
         method: 'PUT',
         body: JSON.stringify(data),
         errorNotifications: {
-          default: errorPleaseTryAgainInAFewMinutes(defineMessages({
-            title: {
-              id: 'errorResponseMessages.addInventory.PUT.default.title',
-              defaultMessage: 'Adding Inventory Failed'
-            },
+          default: errorPleaseTryAgainInAFewMinutes({
+            ...defineMessages({
+              title: {
+                id: 'errorResponseMessages.addInventory.PUT.default.title',
+                defaultMessage: 'Adding Inventory Failed'
+              }
+            }),
             onClose: () => dispatch(adjustInventoryLevels(addOperation, inventoryItem))
-          }))
+          })
         }
       }).then(() => dispatch(finishAdjustingInventoryLevels()))
         .catch((err) => {
@@ -272,13 +274,15 @@ export function addInventory(inventoryItemId, data) {
       method: 'POST',
       body: JSON.stringify(data),
       errorNotifications: {
-        default: errorPleaseTryAgainInAFewMinutes(defineMessages({
-          title: {
-            id: 'errorResponseMessages.addInventory.POST.default.title',
-            defaultMessage: 'Adding Inventory Failed'
-          },
+        default: errorPleaseTryAgainInAFewMinutes({
+          ...defineMessages({
+            title: {
+              id: 'errorResponseMessages.addInventory.POST.default.title',
+              defaultMessage: 'Adding Inventory Failed'
+            },
+          }),
           onClose: () => dispatch(addInventoryItem())
-        }))
+        })
       }
     }).then(() => dispatch(finishAdjustingInventoryLevels()))
       .catch((err) => {
@@ -297,13 +301,15 @@ export function removeInventory(inventoryItemId, data) {
       method: 'PUT',
       body: JSON.stringify(data),
       errorNotifications: {
-        default: errorPleaseTryAgainInAFewMinutes(defineMessages({
-          title: {
-            id: 'errorResponseMessages.removeInventory.PUT.default.title',
-            defaultMessage: 'Removing Inventory Failed'
-          },
+        default: errorPleaseTryAgainInAFewMinutes({
+          ...defineMessages({
+            title: {
+              id: 'errorResponseMessages.removeInventory.PUT.default.title',
+              defaultMessage: 'Removing Inventory Failed'
+            },
+          }),
           onClose: () => dispatch(adjustInventoryLevels(removeOperation, inventoryItem))
-        }))
+        })
       }
     }).then(() => dispatch(finishAdjustingInventoryLevels()))
       .catch((err) => {
@@ -322,13 +328,15 @@ export function transferInventory(inventoryItemId, data) {
       method: 'PUT',
       body: JSON.stringify(data),
       errorNotifications: {
-        default: errorPleaseTryAgainInAFewMinutes(defineMessages({
-          title: {
-            id: 'errorResponseMessages.transferInventory.PUT.default.title',
-            defaultMessage: 'Transferring Inventory Failed'
-          },
+        default: errorPleaseTryAgainInAFewMinutes({
+          ...defineMessages({
+            title: {
+              id: 'errorResponseMessages.transferInventory.PUT.default.title',
+              defaultMessage: 'Transferring Inventory Failed'
+            },
+          }),
           onClose: () => dispatch(adjustInventoryLevels(transferOperation, inventoryItem))
-        }))
+        })
       }
     }).then(() => dispatch(finishAdjustingInventoryLevels()))
       .catch((err) => {
@@ -347,13 +355,15 @@ export function receiveInventory(inventoryItemId, data) {
       method: 'PUT',
       body: JSON.stringify(data),
       errorNotifications: {
-        default: errorPleaseTryAgainInAFewMinutes(defineMessages({
-          title: {
-            id: 'errorResponseMessages.receiveInventory.PUT.default.title',
-            defaultMessage: 'Receiving Inventory Failed'
-          },
+        default: errorPleaseTryAgainInAFewMinutes({
+          ...defineMessages({
+            title: {
+              id: 'errorResponseMessages.receiveInventory.PUT.default.title',
+              defaultMessage: 'Receiving Inventory Failed'
+            },
+          }),
           onClose: () => dispatch(adjustInventoryLevels(receiveOperation, inventoryItem))
-        }))
+        })
       }
     }).then(() => dispatch(finishAdjustingInventoryLevels()))
       .catch((err) => {

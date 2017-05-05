@@ -347,6 +347,14 @@ function* up(knex) {
     assay.charset('utf8')
   })
 
+  yield knex.schema.createTable('ResultSource', (resultType) => {
+    resultType.increments('id')
+    resultType.string('name').notNullable()
+    resultType.string('i18nKey')
+    resultType.string('externalId').notNullable()
+    resultType.charset('utf8')
+  })
+
   yield knex.schema.createTable('ResultType', (resultType) => {
     resultType.increments('id')
     resultType.string('name').notNullable()
@@ -410,6 +418,8 @@ function* up(knex) {
           .index().references('id').inTable('ResultWorkflowStatus')
     result.float('longitude', 10, 6)
     result.float('latitude', 10, 6)
+    result.integer('resultSourceId').unsigned().notNullable()
+      .index().references('id').inTable('ResultSource')
     result.integer('resultTypeId').unsigned().notNullable()
       .index().references('id').inTable('ResultType')
     result.integer('sampleId').unsigned().notNullable()
@@ -434,6 +444,8 @@ function* up(knex) {
     result.string('senderVersion')
     result.string('senderOperator')
     result.string('notes', 2000)
+    result.text('oemData')
+    result.text('rawData')
     result.string('errorCode')
     result.string('errorNotes', 2000)
     addCreateFieldsNullable(result)
@@ -575,6 +587,7 @@ function* down(knex) {
   yield knex.schema.dropTableIfExists('Unit')
   yield knex.schema.dropTableIfExists('Consumable')
   yield knex.schema.dropTableIfExists('ResultCategoryAssay')
+  yield knex.schema.dropTableIfExists('ResultSource')
   yield knex.schema.dropTableIfExists('ResultType')
   yield knex.schema.dropTableIfExists('ResultCategory')
   yield knex.schema.dropTableIfExists('ResultLog')

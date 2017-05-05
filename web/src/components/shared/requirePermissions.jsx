@@ -1,5 +1,6 @@
 import _ from 'lodash'
-import React, { PureComponent, PropTypes } from 'react'
+import PropTypes from 'prop-types'
+import React, { PureComponent } from 'react'
 import getDisplayName from 'react-display-name'
 
 // Get a permissions list from the combination of permissionsInConfig (from HOC)

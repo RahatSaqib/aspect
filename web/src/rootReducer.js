@@ -2,6 +2,7 @@ import Immutable from 'immutable'
 import { reducer as formReducer } from 'redux-form/immutable'
 import { combineReducers } from 'redux-immutable'
 
+import globals from './globals/GlobalsRedux'
 import appNotification from './appNotification/AppNotificationRedux'
 import filter from './filter/FilterRedux'
 import user, {
@@ -30,6 +31,7 @@ import terminal from './terminal/TerminalRedux'
 
 const appReducer = combineReducers({
   form: formReducer,
+  globals,
   appNotification,
   filter,
   user,
@@ -57,6 +59,7 @@ const appReducer = combineReducers({
 
 const App = Immutable.Record({
   form: undefined,
+  globals: undefined,
   appNotification: undefined,
   filter: undefined,
   user: undefined,
