@@ -1203,7 +1203,7 @@ describe('Device Result API routes', () => {
             { consumableId: cartridgeId })
           if (!firstCartridgeConsumable) {
             // No cartridge in this site.
-            continue
+            continue // eslint-disable-line no-continue
           }
           const assayConsumables = yield knex('ConsumableAssay as ca')
             .join('Assay as a', 'ca.assayId', 'a.id')
