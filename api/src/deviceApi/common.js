@@ -5,6 +5,11 @@ const { asyncHandler } = require('../routes')
 
 const millisInDay = 1000 * 60 * 60 * 24
 
+const DEVICE_LOG_TYPE_NONE = 0
+const DEVICE_LOG_TYPE_OPTIONAL = 1
+const DEVICE_LOG_TYPE_OPERATION = 2
+const DEVICE_LOG_TYPE_RESULT = 3
+
 function deviceApiHandler(handler, handlerOptions) {
   return asyncHandler(function* (request) {
     const { error, context } = yield* createDeviceApiContext(request, handlerOptions)
@@ -29,7 +34,7 @@ function deviceApiHandler(handler, handlerOptions) {
       ;[deviceLogId] = yield knex('DeviceLog').insert({
         deviceId,
         checkpoint,
-        source: 'DeviceAPI',
+        source: _.get(request.payload, 'log.source', ''),
         createdOn: now,
         senderIp: remoteAddress,
         // TODO DeviceLog handle non-JSON payloads
@@ -70,7 +75,7 @@ function deviceApiHandler(handler, handlerOptions) {
 function* createDeviceApiContext(request, handlerOptions) {
   const {
     createDevice = false,
-    requestDeviceLog = false
+    deviceLogType = DEVICE_LOG_TYPE_NONE
   } = handlerOptions
   const { auth } = request
   const now = new Date()
@@ -107,13 +112,13 @@ function* createDeviceApiContext(request, handlerOptions) {
   const context = new DeviceApiContext({
     now,
     device,
-    deviceLog: null,
     payload: request.payload,
-    query: request.query
+    query: request.query,
+    deviceLogType
   })
 
   // Add Device Log if requested
-  if (requestDeviceLog) {
+  if (deviceLogType !== DEVICE_LOG_TYPE_NONE) {
     const { checkpoint } = request.query
     const offset = +(request.query.offset || 0)
 
@@ -128,11 +133,17 @@ function* createDeviceApiContext(request, handlerOptions) {
         return { error: Boom.badRequest('Must specify checkpoint if using offset') }
       }
       // Checkpoint not specified, return last one for this device
-      const lastDeviceLog = yield knex('DeviceLog')
+      const lastDeviceLogQuery = knex('DeviceLog')
         .where({ deviceId: device.id })
         .whereNotNull('checkpoint')
         .orderBy('id', 'desc')
-        .first('id', 'checkpoint', 'createdOn')
+        .first('id', 'checkpoint', 'createdOn', 'source')
+      if (deviceLogType === DEVICE_LOG_TYPE_RESULT) {
+        lastDeviceLogQuery.whereNotNull('resultId')
+      } else if (deviceLogType === DEVICE_LOG_TYPE_OPERATION) {
+        lastDeviceLogQuery.whereNotNull('deviceOperationId')
+      }
+      const lastDeviceLog = yield lastDeviceLogQuery
       context.deviceLog = lastDeviceLog || null
       return { context }
     }
@@ -146,10 +157,11 @@ function* createDeviceApiContext(request, handlerOptions) {
     }
     const historyCutoff = new Date(+new Date() - (partner.deviceLogHistoryDays * millisInDay))
 
-    const deviceLog = yield* getDeviceLog(context, checkpoint, offset, historyCutoff)
+    const deviceLog = yield* getDeviceLog(context, checkpoint, offset, deviceLogType, historyCutoff)
     if (deviceLog == null) {
       // See if requested log is forbidden or not found
-      const deviceLogNoHistory = yield* getDeviceLog(context, checkpoint, offset, null)
+      const deviceLogNoHistory = yield* getDeviceLog(
+        context, checkpoint, offset, deviceLogType, null)
       return { error: deviceLogNoHistory == null
         ? Boom.notFound('Cannot find specified checkpoint and offset')
         : Boom.forbidden('Not authorized to view specified checkpoint and offset') }
@@ -278,7 +290,7 @@ class DeviceApiContext {
   }
 }
 
-function* getDeviceLog(context, checkpoint, offset, historyCutoff) {
+function* getDeviceLog(context, checkpoint, offset, deviceLogType, historyCutoff) {
   const { device } = context
 
   // Find device log at checkpoint or latest
@@ -295,17 +307,27 @@ function* getDeviceLog(context, checkpoint, offset, historyCutoff) {
     initialDeviceLogQuery.where('createdOn', '>=', historyCutoff)
   }
   const initialDeviceLog = yield initialDeviceLogQuery
-    .first('id', 'checkpoint', 'deviceId', 'createdOn')
+    .first('id', 'checkpoint', 'deviceId', 'resultId', 'deviceOperationId', 'createdOn', 'source')
   if (!initialDeviceLog) {
     // No log found at checkpoint for this device
     return null
   } else if (offset === 0) {
     // If no offset, return log at checkpoint for this device
     // as checkpoints are unique per device
+    if (deviceLogType === DEVICE_LOG_TYPE_RESULT && initialDeviceLog.resultId == null) {
+      // if we requested a log with result but we don't have one, 404
+      return null
+    }
+
+    if (deviceLogType === DEVICE_LOG_TYPE_OPERATION && initialDeviceLog.deviceOperationId == null) {
+      // if we requested a log with operation but we don't have one, 404
+      return null
+    }
     return {
       id: initialDeviceLog.id,
       checkpoint: initialDeviceLog.checkpoint,
-      createdOn: initialDeviceLog.createdOn
+      createdOn: initialDeviceLog.createdOn,
+      source: initialDeviceLog.source
     }
   }
 
@@ -318,6 +340,12 @@ function* getDeviceLog(context, checkpoint, offset, historyCutoff) {
         .orWhere('dl.checkpoint', '<>', initialDeviceLog.checkpoint)
         .orWhereNull('dl.checkpoint')
     })
+
+  if (deviceLogType === DEVICE_LOG_TYPE_RESULT) {
+    deviceLogQuery.whereNotNull('dl.resultId')
+  } else if (deviceLogType === DEVICE_LOG_TYPE_OPERATION) {
+    deviceLogQuery.whereNotNull('dl.deviceOperationId')
+  }
 
   if (offset > 0) {
     // select result after specified log entry
@@ -365,6 +393,11 @@ function* getDeviceLog(context, checkpoint, offset, historyCutoff) {
         }
       })
       .as('dls')
+    if (deviceLogType === DEVICE_LOG_TYPE_RESULT) {
+      deviceLogOffsetQuery.whereNotNull('dl.resultId')
+    } else if (deviceLogType === DEVICE_LOG_TYPE_OPERATION) {
+      deviceLogOffsetQuery.whereNotNull('dl.deviceOperationId')
+    }
     if (historyCutoff != null) {
       deviceLogOffsetQuery.where('dl.createdOn', '>=', historyCutoff)
     }
@@ -377,12 +410,12 @@ function* getDeviceLog(context, checkpoint, offset, historyCutoff) {
   }
 
   const deviceLog = yield deviceLogQuery
-    .first('dl.id', 'dl.deviceId', 'dl.checkpoint', 'dl.createdOn')
+    .first('dl.id', 'dl.deviceId', 'dl.checkpoint', 'dl.createdOn', 'dl.source')
   if (deviceLog == null) {
     return null
   }
 
-  const response = { id: deviceLog.id, createdOn: deviceLog.createdOn }
+  const response = { id: deviceLog.id, createdOn: deviceLog.createdOn, source: deviceLog.source }
   // set checkpoint if log changed during query, e.g, due to offset
   // but do not leak checkpoint from different device
   if (deviceLog.deviceId === device.id) {
@@ -412,5 +445,8 @@ function addResultConstraints(queryBuilder, context, aliases) {
 
 module.exports = {
   deviceApiHandler,
-  addResultConstraints
+  addResultConstraints,
+  DEVICE_LOG_TYPE_OPTIONAL,
+  DEVICE_LOG_TYPE_OPERATION,
+  DEVICE_LOG_TYPE_RESULT
 }

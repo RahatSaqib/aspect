@@ -4,7 +4,12 @@
 // POST /device {result: {}} is equivalent to POST /device/result if
 // only result data is posted.
 const Joi = require('joi')
-const { deviceApiHandler } = require('./common')
+const {
+  deviceApiHandler,
+  DEVICE_LOG_TYPE_OPTIONAL,
+  DEVICE_LOG_TYPE_OPERATION,
+  DEVICE_LOG_TYPE_RESULT
+} = require('./common')
 const {
   addDeviceData,
   getDeviceData,
@@ -18,6 +23,14 @@ const errorPayload = Joi.object().keys({
   notes: Joi.string().allow('', null).description(
     'Description of the error')
 })
+
+const logPayload = {
+  source: Joi.string().allow('', null).description('The source of the log, determined by client')
+}
+const logResponse = Object.assign({}, {
+  createdOn: Joi.date().iso().description(
+    'Date the log was created, in server time.')
+}, logPayload)
 
 const devicePayload = {
   name: Joi.string().allow('', null).description('The device name'),
@@ -180,7 +193,7 @@ module.exports = [
     // GET /device
     method: 'GET',
     path: '/',
-    handler: deviceApiHandler(getDeviceData, { requestDeviceLog: true }),
+    handler: deviceApiHandler(getDeviceData, { deviceLogType: DEVICE_LOG_TYPE_OPTIONAL }),
     config: {
       description: 'Get Device Data',
       notes: 'Get device configuration, operational and result data since the specified checkpoint.'
@@ -205,6 +218,8 @@ module.exports = [
         schema: Object.assign({}, devicePayload, {
           checkpoint: Joi.string().allow('', null).description(
             'The client checkpoint'),
+          log: Joi.object().keys(logResponse).description(
+            'Device Log Data'),
           configuration: Joi.object().keys(configurationPayload).description(
             'Device Configuration Data'),
           operation: Joi.object().keys(operationPayload).description(
@@ -234,6 +249,8 @@ module.exports = [
             'The device name'),
           checkpoint: Joi.string().allow('', null).description(
             'The client checkpoint'),
+          log: Joi.object().keys(logPayload).description(
+            'Device Log Data'),
           configuration: Joi.object().keys(configurationPayload).description(
             'Device Configuration Data'),
           operation: Joi.object().keys(operationPayload).description(
@@ -260,10 +277,42 @@ module.exports = [
       notes: 'Device configuration information, such as firmware revision, software versions,'
         + ' serial numbers, etc.',
       validate: {
-        payload: configurationPayload
+        payload: Object.assign({}, configurationPayload, {
+          log: Joi.object().keys(logPayload).description(
+            'Device Log Data')
+        })
       },
       response: {
         schema: {
+          error: errorPayload
+        }
+      }
+    }
+  },
+  {
+    method: 'GET',
+    path: '/operation',
+    handler: deviceApiHandler(getDeviceData, { deviceLogType: DEVICE_LOG_TYPE_OPERATION }),
+    config: {
+      notes: 'Get device operational data',
+      description: 'Get last updated operation data for the authenticated device given search constraints',
+      validate: {
+        query: {
+          checkpoint: Joi.string(),
+          offset: Joi.string()
+        }
+      },
+      response: {
+        options: {
+          allowUnknown: true
+        },
+        schema: {
+          checkpoint: Joi.string().allow('', null).description(
+            'The client checkpoint'),
+          log: Joi.object().keys(logResponse).description(
+            'Device Log Data'),
+          operation: Joi.object().keys(operationPayload).description(
+            'Device Operation Data'),
           error: errorPayload
         }
       }
@@ -279,10 +328,42 @@ module.exports = [
       notes: 'Devices may deliver operational information to Aspect, such as uptime, communication'
         + ' statistics, status of mechanical systems, calibration information etc. ',
       validate: {
-        payload: operationPayload
+        payload: Object.assign({}, resultPayload, {
+          log: Joi.object().keys(logPayload).description(
+            'Device Log Data')
+        })
       },
       response: {
         schema: {
+          error: errorPayload
+        }
+      }
+    }
+  },
+  {
+    method: 'GET',
+    path: '/result',
+    handler: deviceApiHandler(getDeviceData, { deviceLogType: DEVICE_LOG_TYPE_RESULT }),
+    config: {
+      notes: 'Get result data',
+      description: 'Get last updated result data for the authenticated device given search constraints',
+      validate: {
+        query: {
+          checkpoint: Joi.string(),
+          offset: Joi.string()
+        }
+      },
+      response: {
+        options: {
+          allowUnknown: true
+        },
+        schema: {
+          checkpoint: Joi.string().allow('', null).description(
+            'The client checkpoint'),
+          log: Joi.object().keys(logResponse).description(
+            'Device Log Data'),
+          result: Joi.object().keys(resultPayload).description(
+            'Device Result Data.'),
           error: errorPayload
         }
       }
@@ -302,7 +383,10 @@ module.exports = [
         options: {
           allowUnknown: true
         },
-        payload: resultPayload
+        payload: Object.assign({}, resultPayload, {
+          log: Joi.object().keys(logPayload).description(
+            'Device Log Data')
+        })
       },
       response: {
         schema: {
