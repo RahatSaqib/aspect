@@ -7,6 +7,8 @@ const endpointUtils = require('../utils/endpointUtils')
 const validPassword = 'test07'
 const validHashedPassword = '$2a$10$blGsMw08vX52YoZUnI18cOTluN170WvPJq1XApyif8Y2PuZThzK5K' // = test07
 
+const { canViewSites, canViewDevices, canViewResults } = require('../../src/auth/constraints')
+
 describe('auth endpoints', () => {
   let dbSpy
   let jwt
@@ -18,6 +20,12 @@ describe('auth endpoints', () => {
   const clock = sinon.useFakeTimers(now.getTime())
   const generatedEmail = { html: '<html><body><h1>Howdy!</h1></body></html>', text: 'Howdy!', subject: 'Hi There' }
   const inlineImageAttachments = [{ value: 'This is an inline image to be inserted into the email' }]
+
+  const mockAuthObj = {
+    credentials: {
+      permissions: ['site:admin', 'device:admin', 'result:admin']
+    }
+  }
 
   function setupAuthRoutes(method, path) {
     dbSpy = require('../utils/dbSpy')
@@ -98,6 +106,12 @@ describe('auth endpoints', () => {
           password: validHashedPassword
         })
         dbSpy.query.for('Get permissions for user and partner').resolvesWith(permissions)
+      })
+
+      it('Should be approved to view total sites, devices and result data', () => {
+        assert.isTrue(canViewSites(mockAuthObj))
+        assert.isTrue(canViewDevices(mockAuthObj))
+        assert.isTrue(canViewResults(mockAuthObj))
       })
 
       it('Should respond with a signed JSON web token, a refresh token id and the client id passed to it', (done) => {
