@@ -1,6 +1,6 @@
 import React from 'react'
 import { Router } from 'react-router'
-import { Switch, Route, Redirect } from 'react-router-dom'
+import { Switch, Route } from 'react-router-dom'
 
 import history from '../history'
 
@@ -9,10 +9,11 @@ import PlainLayout from './layouts/PlainLayout'
 import LoggedInLayout from './layouts/LoggedInLayout'
 
 // "Pages"
+import Index from './components/Index'
 import NotFound from '../error/notFound/NotFound'
-import Login from '../auth/login/Login'
+import LoadableLogin from '../auth/login/LoadableLogin'
 import ResetPassword from '../auth/resetPassword/ResetPassword'
-import Dashboard from '../dashboard/dashboard/Dashboard'
+import LoadableDashboard from '../dashboard/dashboard/LoadableDashboard'
 import PatientCare from '../dashboard/patient-care/PatientCare'
 import ManageDevices from '../dashboard/manage-devices/ManageDevices'
 import ManageSupplies from '../dashboard/manage-supplies/ManageSupplies'
@@ -40,12 +41,12 @@ import TerminalDetail from '../terminal/detail/TerminalDetail'
 const Routes = () => (
   <Router history={history}>
     <Switch>
-      <Route exact path="/" render={() => <Redirect from="/" to="/dashboard" />} />
+      <Route exact path="/" component={Index} />
 
-      <PlainLayout path="/login" component={Login} />
+      <PlainLayout path="/login" component={LoadableLogin} />
       <PlainLayout path="/reset-password" component={ResetPassword} />
 
-      <LoggedInLayout exact path="/dashboard" component={Dashboard} />
+      <LoggedInLayout exact path="/dashboard" component={LoadableDashboard} />
       <LoggedInLayout path="/dashboard/patient-care" component={PatientCare} />
       <LoggedInLayout path="/dashboard/manage-devices" component={ManageDevices} />
       <LoggedInLayout path="/dashboard/manage-supplies" component={ManageSupplies} />

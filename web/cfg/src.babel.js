@@ -69,6 +69,7 @@ export default (env) => {
       pathinfo: isDevelopment,
       path: path.join(__dirname, '../dist/assets'),
       filename: '[name].js',
+      chunkFilename: '[chunkhash].chunk.js',
       publicPath: '/assets/',
     },
     resolve: {
@@ -83,6 +84,7 @@ export default (env) => {
         // },
         {
           test: /\.(js|jsx)$/,
+          exclude: /node_modules/,
           use: [
             'babel-loader'
           ]
@@ -179,10 +181,6 @@ export default (env) => {
       new webpack.EnvironmentPlugin(['NODE_ENV', 'ASPECT_TARGET']),
 
       new ManifestPlugin(),
-      new ChunkManifestPlugin({
-        filename: 'chunk-manifest.json',
-        manifestVariable: 'webpackManifest'
-      }),
 
       extractSCSS,
       extractCSS,

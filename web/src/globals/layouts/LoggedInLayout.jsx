@@ -44,7 +44,6 @@ const LoggedInLayout = ({
         <EnsureAuthorized
           refreshStart={refreshStart}
           location={props.location}
-          history={props.history}
         >
           <ScrollToTopOnUpdate
             location={props.location}
