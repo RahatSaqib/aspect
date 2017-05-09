@@ -1201,6 +1201,10 @@ describe('Device Result API routes', () => {
           const inventoryItemsBefore = yield getInventoryItemsAtSite(knex, siteId)
           const firstCartridgeConsumable = _.find(inventoryItemsBefore,
             { consumableId: cartridgeId })
+          if (!firstCartridgeConsumable) {
+            // No cartridge in this site.
+            continue // eslint-disable-line no-continue
+          }
           const assayConsumables = yield knex('ConsumableAssay as ca')
             .join('Assay as a', 'ca.assayId', 'a.id')
             .where('a.externalId', resultDetails.assayExternalId)
