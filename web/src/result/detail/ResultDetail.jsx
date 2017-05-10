@@ -401,11 +401,11 @@ export class ResultDetail extends PureComponent {
           <CardText>
             { result.get('resultCategory1Name') &&
               <Unit sm="1-2" md="1-2" lg="1-4">
-                <ReadOnlyField label={assay.get('resultCategory1Label')} value={result.get('resultCategory1Name')} />
+                <ReadOnlyField label={assay.get('resultCategory1Label') || ''} value={result.get('resultCategory1Name')} />
               </Unit> }
             { result.get('resultCategory2Name') &&
               <Unit sm="1-2" md="1-3" lg="1-4">
-                <ReadOnlyField label={assay.get('resultCategory2Label')} value={result.get('resultCategory2Name')} />
+                <ReadOnlyField label={assay.get('resultCategory2Label') || ''} value={result.get('resultCategory2Name')} />
               </Unit> }
             {
               this.getAssayFields()
