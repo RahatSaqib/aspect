@@ -45,6 +45,7 @@
     "babel-register": "^6.24.1",
     "case-sensitive-paths-webpack-plugin": "^2.0.0",
     "chunk-manifest-webpack-plugin": "^1.0.0",
+    "compression-webpack-plugin": "^0.4.0",
     "core-js": "^2.4.0",
     "cross-env": "^4.0.0",
     "css-loader": "^0.28.0",

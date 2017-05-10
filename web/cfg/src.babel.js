@@ -8,6 +8,7 @@ import ManifestPlugin from 'webpack-manifest-plugin'
 import ChunkManifestPlugin from 'chunk-manifest-webpack-plugin'
 import HtmlWebpackPlugin from 'html-webpack-plugin'
 import HtmlWebpackPluginRemove from 'html-webpack-plugin-remove'
+import CompressionPlugin from 'compression-webpack-plugin'
 
 const postcssPlugins = () => ([
   pxToRem({
@@ -189,7 +190,12 @@ export default (env) => {
         template: 'src/template/index.html',
         filename: '../index.html'
       }),
-      new HtmlWebpackPluginRemove(/<script type="text\/javascript" src="\/assets\/\S+\.js"><\/script>/g)
+      new HtmlWebpackPluginRemove(/<script type="text\/javascript" src="\/assets\/\S+\.js"><\/script>/g),
+      new CompressionPlugin({
+        asset: '[path].gz[query]',
+        test: /\.(js|css)(\.map)?$/,
+        threshold: 10240,
+      }),
     ].concat(isProduction ? [
       new webpack.NoEmitOnErrorsPlugin(),
       new webpack.optimize.UglifyJsPlugin({

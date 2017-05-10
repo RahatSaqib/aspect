@@ -3,6 +3,7 @@ import invariant from 'invariant'
 import webpack from 'webpack'
 
 import HtmlWebpackPlugin from 'html-webpack-plugin'
+import CompressionPlugin from 'compression-webpack-plugin'
 
 // vendor packages so we can create a separate bundle
 const vendor = [
@@ -89,7 +90,12 @@ export default (env) => {
         inject: false,
         template: 'src/template/index.ejs',
         filename: path.resolve(__dirname, '../src/template/index.html')
-      })
+      }),
+      new CompressionPlugin({
+        asset: '[path].gz[query]',
+        test: /\.(js|css)(\.map)?$/,
+        threshold: 10240,
+      }),
     ].concat(isProduction ? [
       new webpack.NoEmitOnErrorsPlugin(),
       new webpack.optimize.UglifyJsPlugin({
