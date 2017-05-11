@@ -91,15 +91,15 @@ export default (env) => {
         template: 'src/template/index.ejs',
         filename: path.resolve(__dirname, '../src/template/index.html')
       }),
-      new CompressionPlugin({
-        asset: '[path].gz[query]',
-        test: /\.(js|css)(\.map)?$/,
-        threshold: 10240,
-      }),
     ].concat(isProduction ? [
       new webpack.NoEmitOnErrorsPlugin(),
       new webpack.optimize.UglifyJsPlugin({
         sourceMap: true
+      }),
+      new CompressionPlugin({
+        asset: '[path].gz[query]',
+        test: /\.(js|css)(\.map)?$/,
+        threshold: 10240,
       }),
     ]: [])
   }
