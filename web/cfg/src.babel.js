@@ -191,11 +191,6 @@ export default (env) => {
         filename: '../index.html'
       }),
       new HtmlWebpackPluginRemove(/<script type="text\/javascript" src="\/assets\/\S+\.js"><\/script>/g),
-      new CompressionPlugin({
-        asset: '[path].gz[query]',
-        test: /\.(js|css)(\.map)?$/,
-        threshold: 10240,
-      }),
     ].concat(isProduction ? [
       new webpack.NoEmitOnErrorsPlugin(),
       new webpack.optimize.UglifyJsPlugin({
@@ -203,7 +198,11 @@ export default (env) => {
       }),
       new webpack.optimize.AggressiveMergingPlugin(),
       new CaseSensitivePathsPlugin(),
-
+      new CompressionPlugin({
+        asset: '[path].gz[query]',
+        test: /\.(js|css)(\.map)?$/,
+        threshold: 10240,
+      }),
     ]: [
       new webpack.HotModuleReplacementPlugin(),
       new webpack.NamedModulesPlugin(),
