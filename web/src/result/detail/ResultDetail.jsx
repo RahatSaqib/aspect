@@ -411,7 +411,10 @@ export class ResultDetail extends PureComponent {
               this.getAssayFields()
             }
             <Unit sm="1-1" md="1-2" lg="1-4">
-              {this.renderCheckbox()}
+              <ReadOnlyField
+                label="Workflow Status"
+                value={result.get('resultWorkflowStatus')}
+              />
             </Unit>
             { result.get('errorCode') ?
               <Unit sm="1-2" md="1-2" lg="1-4">
