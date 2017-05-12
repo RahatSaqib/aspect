@@ -1,3 +1,4 @@
+import Immutable from 'immutable'
 import classnames from 'classnames/bind'
 import PropTypes from 'prop-types'
 import React, { PureComponent } from 'react'
@@ -39,6 +40,8 @@ import { ReadOnlyField } from '../../components/shared/ReadOnlyFields'
 import styles from './ResultDetail.css'
 
 const cssClasses = classnames.bind(styles)
+
+const EMPTY_MAP = Immutable.Map()
 
 const messages = defineMessages({
   title: {
@@ -196,7 +199,7 @@ export class ResultDetail extends PureComponent {
     }
 
     const { result } = this.props
-    const resultDataSchema = result.getIn(['assay', 'resultDataSchema'])
+    const resultDataSchema = result.getIn(['assay', 'resultDataSchema']) || EMPTY_MAP
     const resultData = result.get('resultData')
 
     return this.getSchemaFields(resultDataSchema, resultData)
@@ -208,7 +211,7 @@ export class ResultDetail extends PureComponent {
     }
 
     const { result } = this.props
-    const patientDataSchema = result.getIn(['assay', 'patientDataSchema'])
+    const patientDataSchema = result.getIn(['assay', 'patientDataSchema']) || EMPTY_MAP
     const patientData = result.get('patientData')
 
     return this.getSchemaFields(patientDataSchema, patientData)
@@ -398,11 +401,11 @@ export class ResultDetail extends PureComponent {
           <CardText>
             { result.get('resultCategory1Name') &&
               <Unit sm="1-2" md="1-2" lg="1-4">
-                <ReadOnlyField label={assay.get('resultCategory1Label')} value={result.get('resultCategory1Name')} />
+                <ReadOnlyField label={assay.get('resultCategory1Label') || ''} value={result.get('resultCategory1Name')} />
               </Unit> }
             { result.get('resultCategory2Name') &&
               <Unit sm="1-2" md="1-3" lg="1-4">
-                <ReadOnlyField label={assay.get('resultCategory2Label')} value={result.get('resultCategory2Name')} />
+                <ReadOnlyField label={assay.get('resultCategory2Label') || ''} value={result.get('resultCategory2Name')} />
               </Unit> }
             {
               this.getAssayFields()
