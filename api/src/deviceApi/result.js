@@ -206,9 +206,6 @@ function* addResult(context) {
     resultSourceId: resultSource.id,
     resultWorkflowStatusId: resultWorkflowStatus.id,
     sampleId,
-    sampleGroup: _.get(
-      payload, 'sample.group',
-      _.get(existingResult, 'group', null)),
     sampleRunNumber: _.get(
       payload, 'sample.runNumber',
       _.get(existingResult, 'sampleRunNumber', null)),
@@ -388,8 +385,8 @@ function* getResult(context) {
   if (row.sampleId != null) {
     sample.id = row.sampleId
   }
-  if (row.group != null) {
-    sample.group = row.group
+  if (row.sampleGroup != null) {
+    sample.group = row.sampleGroup
   }
   if (row.sampleCollectedOn != null) {
     sample.collectedOn = row.sampleCollectedOn
