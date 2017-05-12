@@ -1882,6 +1882,7 @@ function* seed(knex) {
     const siteData = siteDatas[i % siteDatas.length]
     const sample = Object.assign({}, {
       externalId: `SMP-HIV-${i}`,
+      group: `GRP-HIV-${i % 5}`,
       collectedOn: new Date(+now - (120 * millisInHour)),
       sampleTypeId: sampleTypeDBSId,
       originSiteId: siteData.id
