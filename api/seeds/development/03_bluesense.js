@@ -52,13 +52,27 @@ function* seed(knex) {
     externalId: 'Dengue',
     assayTypeId: assayTypes.Dengue.id,
     deviceTypeId,
+    resultCategory1Label: 'Status',
     resultDataSchema: JSON.stringify({
       resultText: {
         title: 'Result Text',
         type: 'string'
       }
+    }),
+    patientDataSchema: JSON.stringify({
+      name: {
+        type: 'string',
+        order: 1,
+        title: 'Client Name' },
+      surname: {
+        type: 'string',
+        order: 2,
+        title: 'Client Surname' },
+      gender: {
+        type: 'string',
+        order: 3,
+        title: 'Gender' }
     })
-
   })
 
   yield knex('Assay').insert({
@@ -67,11 +81,26 @@ function* seed(knex) {
     externalId: 'Zika',
     assayTypeId: assayTypes.Zika.id,
     deviceTypeId,
+    resultCategory1Label: 'Status',
     resultDataSchema: JSON.stringify({
       resultText: {
         title: 'Result Text',
         type: 'string'
       }
+    }),
+    patientDataSchema: JSON.stringify({
+      name: {
+        type: 'string',
+        order: 1,
+        title: 'Client Name' },
+      surname: {
+        type: 'string',
+        order: 2,
+        title: 'Client Surname' },
+      gender: {
+        type: 'string',
+        order: 3,
+        title: 'Gender' }
     })
   })
 
