@@ -78,6 +78,10 @@ const messages = defineMessages({
     id: 'pages.ResultDetail.fieldSampleId',
     defaultMessage: 'Sample ID'
   },
+  fieldResultId: {
+    id: 'pages.ResultDetail.fieldResultId',
+    defaultMessage: 'Result ID'
+  },
   fieldResultDataResultText: {
     id: 'pages.ResultDetail.fieldResultDataResultText',
     defaultMessage: 'Result Text'
@@ -453,11 +457,17 @@ export class ResultDetail extends PureComponent {
                 format={v => `${formatDate(v)} ${formatTime(v)}`}
               />
             </Unit>
-            <Unit sm="1-1" md="1-2" lg="2-3">
+            <Unit sm="1-1" md="1-2" lg="1-3">
               <ReadOnlyField
                 label={formatMessage(messages.fieldUpdatedOn)}
                 value={result.get('updatedOn')}
                 format={v => `${formatDate(v)} ${formatTime(v)}`}
+              />
+            </Unit>
+            <Unit sm="1-1" md="1-2" lg="1-3">
+              <ReadOnlyField
+                label={formatMessage(messages.fieldResultId)}
+                value={result.get('externalId')}
               />
             </Unit>
             <Unit sm="1-1" md="1-2" lg="1-3">
