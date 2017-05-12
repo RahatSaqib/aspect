@@ -110,6 +110,7 @@ export class ResultList extends PureComponent {
       date: true,
       patientOrResearchId: true,
       sampleId: true,
+      sampleGroup: true,
       siteName: true,
       sampleOriginSite: true,
       workflowStatus: true })

@@ -143,6 +143,14 @@ const messages = defineMessages({
     id: 'shared.ListFilter.enterSampleId',
     defaultMessage: 'Enter sample ID...'
   },
+  sampleGroup: {
+    id: 'shared.ListFilter.sampleGroup',
+    defaultMessage: 'Sample Group'
+  },
+  enterSampleGroup: {
+    id: 'shared.ListFilter.enterSampleGroup',
+    defaultMessage: 'Enter sample group...'
+  },
   result: {
     id: 'shared.ListFilter.result',
     defaultMessage: 'Result'
@@ -466,7 +474,7 @@ export class ListFilter extends PureComponent {
       config.assay || config.deviceName || config.result ||
       config.siteName || config.contactNameOrEmail || config.consumable ||
       config.partnerId || config.patientOrResearchId ||
-      config.sampleId || config.sampleOriginSite
+      config.sampleId || config.sampleGroup || config.sampleOriginSite
     )
 
     const hasDataSection2 = (
@@ -630,6 +638,18 @@ export class ListFilter extends PureComponent {
                         floatingLabelFixed
                         hintText={formatMessage(messages.enterSampleId)}
                         floatingLabelText={formatMessage(messages.sampleId)}
+                      />
+                    </div>
+                  )}
+                  {config.sampleGroup && (
+                    <div className={styles.Section__Control}>
+                      <FocusBlurTextField
+                        name="sampleGroup"
+                        value={filter.sampleGroup || ''}
+                        onCommitValue={this.handleTextFieldCommitValue}
+                        floatingLabelFixed
+                        hintText={formatMessage(messages.enterSampleGroup)}
+                        floatingLabelText={formatMessage(messages.sampleGroup)}
                       />
                     </div>
                   )}
