@@ -144,6 +144,7 @@ function* addResult(context) {
   if (!existingResult) {
     [sampleId] = yield knex('Sample').insert({
       externalId: _.get(payload, 'sample.id', null),
+      group: _.get(payload, 'sample.group', null),
       collectedOn: _.get(
         payload, 'sample.collectedOn', null),
       sampleTypeId,
@@ -159,6 +160,7 @@ function* addResult(context) {
         .where({ id: sampleId })
         .update({
           externalId: _.get(payload, 'sample.id', existingSample.externalId),
+          group: _.get(payload, 'sample.group', existingSample.group),
           collectedOn: _.get(
             payload, 'sample.collectedOn',
             _.get(existingSample, 'collectedOn', null)),
@@ -204,6 +206,9 @@ function* addResult(context) {
     resultSourceId: resultSource.id,
     resultWorkflowStatusId: resultWorkflowStatus.id,
     sampleId,
+    sampleGroup: _.get(
+      payload, 'sample.group',
+      _.get(existingResult, 'group', null)),
     sampleRunNumber: _.get(
       payload, 'sample.runNumber',
       _.get(existingResult, 'sampleRunNumber', null)),
@@ -334,6 +339,7 @@ function* getResult(context) {
       'rsc.externalId as resultSourceId',
       'rs.externalId as resultWorkflowStatusId', 'r.sampleRunNumber',
       's.externalId as sampleId', 's.collectedOn as sampleCollectedOn',
+      's.group as sampleGroup',
       'sos.externalId as sampleOriginSiteId', 'st.externalId as sampleTypeId',
       'rc1.externalId as category1Id', 'rc2.externalId as category2Id')
 
@@ -381,6 +387,9 @@ function* getResult(context) {
   const sample = {}
   if (row.sampleId != null) {
     sample.id = row.sampleId
+  }
+  if (row.group != null) {
+    sample.group = row.group
   }
   if (row.sampleCollectedOn != null) {
     sample.collectedOn = row.sampleCollectedOn
