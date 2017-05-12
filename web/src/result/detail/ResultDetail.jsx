@@ -16,7 +16,6 @@ import { Link } from 'react-router-dom'
 // Material-UI
 import LinearProgress from 'material-ui/LinearProgress'
 import { Card, CardHeader, CardText } from 'material-ui/Card'
-import Checkbox from 'material-ui/Checkbox'
 import IconButton from 'material-ui/IconButton'
 import Share from 'material-ui/svg-icons/social/share'
 
@@ -27,7 +26,6 @@ import NavTitle from '../../globals/components/NavTitle'
 import {
   fetchSingleResult,
   updateSingleResult,
-  updateResultWorkflowStatus,
 
   WorkflowLogModel,
   fetchWorkflowStatusLogs,
@@ -167,7 +165,6 @@ const enhance = compose(
     bindActionCreators({
       fetchSingleResult,
       updateSingleResult,
-      updateResultWorkflowStatus,
       fetchWorkflowStatusLogs,
     }, dispatch)
   )),
@@ -176,7 +173,6 @@ const enhance = compose(
     result: PropTypes.objectOf(Result),
     workflowLog: PropTypes.objectOf(WorkflowLogModel).isRequired,
     fetchSingleResult: PropTypes.func.isRequired,
-    updateResultWorkflowStatus: PropTypes.func.isRequired,
     updateSingleResult: PropTypes.func.isRequired,
     fetchWorkflowStatusLogs: PropTypes.func.isRequired,
   }),
@@ -255,12 +251,6 @@ export class ResultDetail extends PureComponent {
     return `${hours}h ${minutes}m ${seconds}s`
   }
 
-  handleCheck = () => {
-    const { result } = this.props
-
-    this.props.updateResultWorkflowStatus(result.get('id'))
-  }
-
   handleFetchResult = () => {
     this.props.fetchSingleResult(this.props.match.params.resultId)
 
@@ -291,24 +281,6 @@ export class ResultDetail extends PureComponent {
   renderProgress() {
     return (
       <LinearProgress />
-    )
-  }
-
-  renderCheckbox() {
-    if (!this.hasResultWithAssay()) {
-      return
-    }
-    const { result } = this.props
-    const checked = result.get('resultWorkflowStatus') === 'Acknowledged'
-    return (
-      <Checkbox
-        disabled={checked}
-        label="Acknowledged"
-        labelStyle={{ marginLeft: -12 }}
-        style={{ marginTop: 23 }}
-        checked={checked}
-        onCheck={this.handleCheck}
-      />
     )
   }
 
@@ -411,7 +383,10 @@ export class ResultDetail extends PureComponent {
               this.getAssayFields()
             }
             <Unit sm="1-1" md="1-2" lg="1-4">
-              {this.renderCheckbox()}
+              <ReadOnlyField
+                label="Workflow Status"
+                value={result.get('resultWorkflowStatus')}
+              />
             </Unit>
             { result.get('errorCode') ?
               <Unit sm="1-2" md="1-2" lg="1-4">
