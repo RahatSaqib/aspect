@@ -7,9 +7,10 @@ const { getConstraints, addConstraints } = require('../auth/constraints')
 const SELECT_LIST_FIELDS = [
   'r.id', 'r.externalId', 'r.endedOn', 'd.name as deviceName',
   'c.name as countryName', 'st.name as stateName', 'lg.name as lgaName',
-  'rc1.name as resultCategory1Name', 'rc2.name as resultCategory2Name', 'rs.name as resultWorkflowStatus',
-  'so.name as sampleOriginSiteName',
-  'sp.externalId as sampleId', 'a.name as assayName', 'a.id as assayId',
+  'rc1.name as resultCategory1Name', 'rc2.name as resultCategory2Name',
+  'rs.name as resultWorkflowStatus', 'so.name as sampleOriginSiteName',
+  'sp.externalId as sampleId', 'sp.group as sampleGroup',
+  'a.name as assayName', 'a.id as assayId',
   knex.raw('JSON_UNQUOTE(JSON_EXTRACT(r.patientData, "$.id")) as patientId')
 ]
 
@@ -21,12 +22,13 @@ const SELECT_SHOW_FIELDS = [
   'r.consumableSerial', 'r.consumableLot', 'r.consumableExpirationDate', 'r.instrumentSerial',
   'r.moduleName', 'r.moduleSerial', 'r.researchId', 'r.senderVersion', 'r.senderOperator',
   'r.notes', 'r.errorCode', 'r.errorNotes', 'r.createdOn', 'r.updatedOn', 'r.assayId',
-  'sp.externalId as sampleId', 'sp.originSiteId as sampleOriginSiteId', 'so.name as sampleOriginSiteName',
+  'sp.externalId as sampleId', 'sp.group as sampleGroup',
+  'sp.originSiteId as sampleOriginSiteId', 'so.name as sampleOriginSiteName',
   knex.raw('JSON_UNQUOTE(JSON_EXTRACT(r.patientData, "$.id")) as patientId'), 'r.patientData'
 ]
 
 const SORT_FIELDS = [
-  'endedOn', 'deviceName', 'sampleOriginSiteName', 'stateName', 'lgaName', 'sampleId', 'patientId', 'resultCategory1Name', 'resultCategory2Name'
+  'endedOn', 'deviceName', 'sampleOriginSiteName', 'stateName', 'lgaName', 'sampleId', 'patientId', 'resultCategory1Name', 'resultCategory2Name', 'sampleGroup'
 ]
 
 function* listResults(request) {
@@ -107,6 +109,7 @@ function* listResults(request) {
       siteName: 'sr.name',
       sampleId: 'sp.externalId',
       sampleOriginSite: 'so.name',
+      sampleGroup: 'sp.group',
       workflowStatusId: 'r.resultWorkflowStatusId'
     })
     .modify((queryBuilder, params) => {
