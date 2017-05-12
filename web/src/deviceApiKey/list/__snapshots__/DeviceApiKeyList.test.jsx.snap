@@ -409,7 +409,7 @@ exports[`Device Api Key List Component DeviceApiKeyList should shallow render co
     title="Device API Keys"
     titleTemplate="%s - Aspect"
   />
-  <Connect(lifecycle(NavTitle))
+  <Connect(lifecycle(Component))
     title="Device API Keys"
   />
   <InjectIntl(Connect(ListFilter))
