@@ -97,6 +97,7 @@ const ListConfig = Immutable.Record({
   partnerId: false,
   patientOrResearchId: false,
   sampleId: false,
+  sampleGroup: false,
   deviceName: false,
   siteName: false,
   sampleOriginSite: false,
@@ -116,6 +117,7 @@ export const ListFilter = Immutable.Record({
   partnerId: undefined,
   patientOrResearchId: undefined,
   sampleId: undefined,
+  sampleGroup: undefined,
   deviceName: undefined,
   resultCategoryId: undefined,
   siteName: undefined,
@@ -169,6 +171,7 @@ export default function filterReducer(state = initialState, action) {
               case 'patientOrResearchId':
               case 'partnerId':
               case 'sampleId':
+              case 'sampleGroup':
               case 'deviceName':
               case 'siteName':
               case 'sampleOriginSite':

@@ -33,6 +33,7 @@ describe('Result routes', () => {
         assert.property(res.body.data[0], 'stateName')
         assert.property(res.body.data[0], 'lgaName')
         assert.property(res.body.data[0], 'sampleId')
+        assert.property(res.body.data[0], 'sampleGroup')
         assert.property(res.body.data[0], 'patientId')
         assert.property(res.body.data[0], 'assayName')
         assert.property(res.body, 'total')
@@ -62,6 +63,7 @@ describe('Result routes', () => {
         assert.property(res.body.data[0], 'stateName')
         assert.property(res.body.data[0], 'lgaName')
         assert.property(res.body.data[0], 'sampleId')
+        assert.property(res.body.data[0], 'sampleGroup')
         assert.property(res.body.data[0], 'patientId')
         assert.property(res.body.data[0], 'assayName')
         assert.property(res.body.data[0], 'resultCategory1Name')
@@ -92,6 +94,7 @@ describe('Result routes', () => {
         assert.property(res.body.data, 'resultData')
         assert.typeOf(res.body.data.resultData, 'Object')
         assert.property(res.body.data, 'sampleId')
+        assert.property(res.body.data, 'sampleGroup')
         assert.property(res.body.data, 'patientId')
         assert.property(res.body.data, 'siteName')
         assert.property(res.body.data, 'assayVersion')
@@ -153,7 +156,7 @@ describe('Result routes', () => {
           assert.typeOf(res.body.data.resultData, 'Object')
           const resultFieldNames = ['id', 'endedOn', 'deviceName', 'countryName',
             'stateName', 'lgaName', 'resultCategory1Name', 'resultCategory2Name',
-            'resultData', 'sampleId', 'patientId', 'siteName', 'assayVersion',
+            'resultData', 'sampleId', 'sampleGroup', 'patientId', 'siteName', 'assayVersion',
             'consumableSerial', 'consumableLot', 'consumableExpirationDate',
             'instrumentSerial', 'moduleName', 'moduleSerial', 'researchId',
             'senderVersion', 'senderOperator', 'notes', 'errorCode', 'errorNotes',
@@ -180,7 +183,7 @@ describe('Result routes', () => {
               assert.typeOf(res.body.data.resultData, 'Object')
               const resultFieldNames = ['id', 'endedOn', 'deviceName', 'countryName',
                 'stateName', 'lgaName', 'resultCategory1Name', 'resultCategory2Name',
-                'resultData', 'sampleId', 'patientId', 'siteName', 'assayVersion',
+                'resultData', 'sampleId', 'sampleGroup', 'patientId', 'siteName', 'assayVersion',
                 'consumableSerial', 'consumableLot', 'consumableExpirationDate',
                 'instrumentSerial', 'moduleName', 'moduleSerial', 'researchId',
                 'senderVersion', 'senderOperator', 'notes', 'errorCode', 'errorNotes',
