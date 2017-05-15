@@ -155,7 +155,7 @@ function* addResult(context) {
     if (_.has(payload, 'sample')) {
       const existingSample = yield knex('Sample')
         .where({ id: sampleId })
-        .first('externalId', 'collectedOn', 'sampleTypeId', 'originSiteId')
+        .first('externalId', 'collectedOn', 'sampleTypeId', 'originSiteId', 'group')
       yield knex('Sample')
         .where({ id: sampleId })
         .update({
