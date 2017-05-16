@@ -13,11 +13,12 @@ import ActionBack from 'material-ui/svg-icons/hardware/keyboard-arrow-left'
 
 // Our own imports
 import styles from './NotFound.css'
+import history from '../../history'
 
 export class NotFound extends PureComponent {
 
   static defaultProps = {
-    history: PropTypes.object.isRequired
+    history: PropTypes.objectOf(history).isRequired
   }
 
   render() {

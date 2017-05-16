@@ -19,6 +19,8 @@ import { fetchListFilteredResults } from '../ResultRedux'
 import styles from './ResultList.css'
 import { Items } from '../../shared/metaReducers/items'
 import { Table } from '../../shared/metaReducers/table'
+import history from '../../history'
+
 
 const messages = defineMessages({
   title: {
@@ -94,7 +96,7 @@ export class ResultList extends PureComponent {
     intl: intlShape.isRequired,
     listFilter: PropTypes.objectOf(ListFilter).isRequired,
     fetchListFilteredResults: PropTypes.func.isRequired,
-    history: PropTypes.object.isRequired,
+    history: PropTypes.objectOf(history).isRequired,
     items: PropTypes.objectOf(Items).isRequired
   }
 

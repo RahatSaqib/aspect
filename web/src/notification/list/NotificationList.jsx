@@ -19,6 +19,7 @@ import { fetchListFilteredNotifications } from '../NotificationRedux'
 import styles from './NotificationList.css'
 import { Items } from '../../shared/metaReducers/items'
 import { Table } from '../../shared/metaReducers/table'
+import history from '../../history'
 
 const messages = defineMessages({
   title: {
@@ -46,7 +47,7 @@ const messages = defineMessages({
 const enhance = compose(
   setPropTypes({
     location: PropTypes.object.isRequired,
-    history: PropTypes.object.isRequired,
+    history: PropTypes.objectOf(history).isRequired,
   }),
   pure,
   injectIntl,

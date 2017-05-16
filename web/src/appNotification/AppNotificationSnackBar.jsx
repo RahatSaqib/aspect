@@ -12,7 +12,8 @@ import Snackbar from 'material-ui/Snackbar'
 // Our own imports
 import {
   showMoreDetails,
-  hideAppNotification
+  hideAppNotification,
+  Error
 } from './AppNotificationRedux'
 
 const genericMessages = defineMessages({
@@ -30,7 +31,7 @@ class AppNotificationSnackBar extends PureComponent {
 
   static propTypes = {
     intl: intlShape.isRequired,
-    appNotification: PropTypes.object,
+    appNotification: PropTypes.objectOf(Error),
     showMoreDetails: PropTypes.func.isRequired,
     hideAppNotification: PropTypes.func.isRequired
   }

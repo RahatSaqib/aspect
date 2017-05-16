@@ -28,11 +28,13 @@ import styles from './AccountDetails.css'
 import accountDetailsMessages from './messages'
 import personDetailsMessages from '../../person/detail/messages'
 import { ContactDetails, LoginDetails, UserPreferences } from '../../person/PersonRedux'
+import history from '../../history'
+
 
 const enhance = compose(
   setPropTypes({
     location: PropTypes.object.isRequired,
-    history: PropTypes.object.isRequired,
+    history: PropTypes.objectOf(history).isRequired,
   }),
   pure,
   injectIntl,

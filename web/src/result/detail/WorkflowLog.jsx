@@ -2,7 +2,8 @@ import PropTypes from 'prop-types'
 // Imports from packages
 import React, { PureComponent } from 'react'
 import {
-  defineMessages
+  defineMessages,
+  intlShape
 } from 'react-intl'
 
 // Material-UI
@@ -36,7 +37,7 @@ const messages = defineMessages({
 export default class ResultWorkflowStatusLog extends PureComponent {
 
   static propTypes = {
-    intl: PropTypes.object.isRequired,
+    intl: intlShape.isRequired,
     handleFetch: PropTypes.func.isRequired,
     workflowLog: PropTypes.objectOf(WorkflowLogModel).isRequired
   }

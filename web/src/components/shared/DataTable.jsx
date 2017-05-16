@@ -37,9 +37,18 @@ export default class DataTable extends PureComponent {
       pageSize: PropTypes.number.isRequired,
       total: PropTypes.number.isRequired
     }).isRequired,
-    columns: PropTypes.array.isRequired,
+    columns: PropTypes.arrayOf(PropTypes.shape({
+      db: PropTypes.string.isRequired,
+      title: PropTypes.string.isRequired,
+      extraProps: PropTypes.objectOf(PropTypes.any)
+    })).isRequired,
     intl: intlShape.isRequired,
-    messages: PropTypes.object
+    messages: PropTypes.objectOf(
+      PropTypes.shape({
+        id: PropTypes.string.isRequired,
+        defaultMessage: PropTypes.string.isRequired
+      })
+    )
   }
 
   static defaultProps = {

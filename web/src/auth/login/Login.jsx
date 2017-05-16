@@ -25,6 +25,8 @@ import { loginStart } from '../AuthRedux'
 import styles from './Login.css'
 import AppNotificationSnackBar from '../../appNotification/AppNotificationSnackBar'
 import AppNotificationDialog from '../../appNotification/AppNotificationDialog'
+import { ContactDetails } from '../../person/PersonRedux'
+
 
 const messages = defineMessages({
   title: {
@@ -76,7 +78,7 @@ const enhance = compose(
     handleSubmit: PropTypes.func.isRequired,
     pristine: PropTypes.bool.isRequired,
     submitting: PropTypes.bool.isRequired,
-    initialValues: PropTypes.object.isRequired,
+    initialValues: PropTypes.objectOf(ContactDetails).isRequired,
   }),
 )
 

@@ -45,7 +45,7 @@ export function hideAppNotification() {
 /*
  * ---------------- Reducers -----------------
  */
-const Error = Immutable.Record({
+export const Error = Immutable.Record({
   hasNotification: false,
   notificationType: null,
   messageValues: {},

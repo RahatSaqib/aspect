@@ -6,6 +6,7 @@ import React, { PureComponent } from 'react'
 import ReadOnlyFields from '../../components/shared/ReadOnlyFields'
 import { EditableFieldsFormContainer } from './EditableFieldsForm'
 import messages from './messages'
+import { Site } from '../../site/SiteRedux'
 
 // If editable, it renders all editable fields in a form for a single site.
 // Otherwise, it renders read only fields
@@ -15,7 +16,7 @@ export default class SiteForm extends PureComponent {
     formatMessage: PropTypes.func.isRequired,
     onSubmit: PropTypes.func.isRequired,
     editable: PropTypes.bool.isRequired,
-    site: PropTypes.object
+    site: PropTypes.objectOf(Site)
   }
 
   static defaultProps = {
