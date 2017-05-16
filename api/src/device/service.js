@@ -182,9 +182,21 @@ function* getDeviceByDeviceId(request, fields = SELECT_SHOW_FIELDS) {
         data: JSON.parse(deviceOperation.data) || {}
       }))
 
-    const [{ count: totalTests }] = yield knex('Result as r')
-      .where('r.deviceId', device.id)
+    const totalTestQuery = knex('Result as r')
       .count('r.id as count')
+      .leftJoin('Sample as s', 's.id', 'r.sampleId')
+
+    if (device.siteId == null || device.category !== 'Client') {
+      totalTestQuery.where('r.deviceId', device.id)
+    } else {
+      // TODO: This query would fail if there we had more than one terminal in one site
+      totalTestQuery.where(function () {
+        this.where('r.deviceId', device.id)
+        this.orWhere('s.originSiteId', device.siteId)
+      })
+    }
+
+    const [{ count: totalTests }] = yield totalTestQuery
 
     device.totalTests = totalTests
 
