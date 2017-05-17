@@ -10,8 +10,8 @@ import styles from './Shared.css'
 class PhoneInput extends React.PureComponent {
   static propTypes = {
     onChange: PropTypes.func.isRequired,
-    input: PropTypes.object.isRequired,
-    meta: PropTypes.object.isRequired,
+    input: PropTypes.instanceOf(Object).isRequired,
+    meta: PropTypes.instanceOf(Object).isRequired,
     textFieldProps: PropTypes.shape({
       floatingLabelText: PropTypes.string.isRequired,
       disabled: PropTypes.bool.isRequired,

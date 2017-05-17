@@ -44,10 +44,10 @@ const messages = defineMessages({
 
 class StrongPasswordInput extends React.PureComponent {
   static propTypes = {
-    input: PropTypes.object.isRequired,
-    meta: PropTypes.object.isRequired,
-    textFieldProps: PropTypes.object.isRequired,
-    popOverProps: PropTypes.object.isRequired,
+    input: PropTypes.instanceOf(Object).isRequired,
+    meta: PropTypes.instanceOf(Object).isRequired,
+    textFieldProps: PropTypes.instanceOf(Object).isRequired,
+    popOverProps: PropTypes.instanceOf(Object).isRequired,
     intl: intlShape.isRequired
   }
 
