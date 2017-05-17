@@ -307,6 +307,16 @@ function* seed(knex) {
     i18nKey: 'assayTypeDengue'
   })
 
+  yield knex('AssayType').insert({
+    name: 'TB AST',
+    i18nKey: 'assayTypeTbAst'
+  })
+
+  yield knex('AssayType').insert({
+    name: 'TB G&D',
+    i18nKey: 'assayTypeTbGnd'
+  })
+
   // define resultData object
   const geneXpertResultDataSchema = JSON.stringify({
     resultText: {
