@@ -350,7 +350,7 @@ export class ResultDetail extends PureComponent {
               <ReadOnlyField label={formatMessage(messages.fieldPatientId)} value={result.get('patientId')} />
             </Unit>
             <Unit sm="1-2" md="1-2" lg="1-6">
-              {date !== null && <ReadOnlyField label={formatMessage(messages.fieldDate)} value={result.get('endedOn')} format={formatDate} />}
+              <ReadOnlyField label={formatMessage(messages.fieldDate)} value={date !== null ? date : 'N/A'} format={date !== null ? formatDate : null} />
             </Unit>
             <ReadOnlyField
               label={formatMessage(messages.fieldDevice)}

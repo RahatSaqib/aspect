@@ -133,7 +133,14 @@ export class ResultList extends PureComponent {
     const { intl } = this.props
     const { formatMessage, formatDate } = intl
     const columns = [
-      { db: 'endedOn', title: formatMessage(messages.endedOn), format: data => formatDate(data) },
+      {
+        db: 'endedOn',
+        title: formatMessage(messages.endedOn),
+        format: (data) => {
+          const str = data !== null ? formatDate(data) : 'N/A'
+          return str
+        }
+      },
       { db: 'deviceName', title: formatMessage(messages.deviceName) },
       { db: 'sampleOriginSiteName', title: formatMessage(messages.sampleOriginSiteName) },
       { db: 'sampleId', title: formatMessage(messages.sampleId) },
