@@ -15,7 +15,7 @@ class PhoneInput extends React.PureComponent {
     textFieldProps: PropTypes.shape({
       floatingLabelText: PropTypes.string.isRequired,
       disabled: PropTypes.bool.isRequired,
-      maxLength: PropTypes.number.isRequired
+      maxLength: PropTypes.string.isRequired
     }).isRequired
   }
 

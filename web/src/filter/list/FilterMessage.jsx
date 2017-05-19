@@ -53,20 +53,20 @@ FilterMessage.propTypes = {
   intl: intlShape.isRequired,
   listFilter: PropTypes.objectOf(ListFilter).isRequired,
   countries: PropTypes.shape({
-    laoding: PropTypes.bool.isRequired,
-    items: PropTypes.array.isRequired
+    laoding: PropTypes.bool,
+    items: PropTypes.instanceOf(Object).isRequired
   }).isRequired,
   assay: PropTypes.objectOf(Assay).isRequired,
   consumable: PropTypes.objectOf(Consumable).isRequired,
   siteItemsById: PropTypes.objectOf(SelectListItems).isRequired,
-  partnerItems: PropTypes.arrayOf(PropTypes.shape({
+  partnerItems: PropTypes.shape({
     id: PropTypes.string,
     name: PropTypes.string,
     jobFunctions: PropTypes.arrayOf(PropTypes.shape({
       id: PropTypes.string,
       name: PropTypes.string
     }))
-  })).isRequired,
+  }).isRequired,
   workflowStatusItems: PropTypes.shape({
     id: PropTypes.string,
     name: PropTypes.string
