@@ -238,6 +238,7 @@ describe('Device Result API routes', () => {
           sample: {
             id: `Sample${now}`,
             runNumber: '10z',
+            group: 'Sample Group X-1',
             collectedOn: '2013-11-25',
             type: {
               id: 'DBS'
@@ -439,6 +440,7 @@ describe('Device Result API routes', () => {
         sample: {
           id: `Sample${now}`,
           runNumber: '10z',
+          group: 'Sample Group X-1',
           collectedOn: '2013-11-25',
           type: {
             id: 'DBS'
@@ -567,6 +569,7 @@ describe('Device Result API routes', () => {
             sample: {
               id: `Sample${now}`,
               runNumber: '10z',
+              group: 'Sample Group X-1',
               collectedOn: '2013-11-25T00:00:00.000Z',
               type: {
                 id: 'DBS'

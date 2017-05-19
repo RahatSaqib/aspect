@@ -41,6 +41,10 @@ const messages = defineMessages({
     id: 'pages.ResultList.sampleId',
     defaultMessage: 'Sample ID'
   },
+  sampleGroup: {
+    id: 'pages.ResultList.sampleGroup',
+    defaultMessage: 'Sample Group'
+  },
   assayId: {
     id: 'pages.ResultList.assayId',
     defaultMessage: 'Assay'
@@ -106,6 +110,7 @@ export class ResultList extends PureComponent {
       date: true,
       patientOrResearchId: true,
       sampleId: true,
+      sampleGroup: true,
       siteName: true,
       sampleOriginSite: true,
       workflowStatus: true })
@@ -135,6 +140,7 @@ export class ResultList extends PureComponent {
     const columns = [
       {
         db: 'endedOn',
+        extraProps: { style: { width: '80px' } },
         title: formatMessage(messages.endedOn),
         format: (data) => {
           const str = data !== null ? formatDate(data) : 'N/A'
@@ -144,6 +150,7 @@ export class ResultList extends PureComponent {
       { db: 'deviceName', title: formatMessage(messages.deviceName) },
       { db: 'sampleOriginSiteName', title: formatMessage(messages.sampleOriginSiteName) },
       { db: 'sampleId', title: formatMessage(messages.sampleId) },
+      { db: 'sampleGroup', extraProps: { style: { width: '80px' } }, title: formatMessage(messages.sampleGroup) },
       { db: 'patientId', title: formatMessage(messages.patiendId) }
     ]
 

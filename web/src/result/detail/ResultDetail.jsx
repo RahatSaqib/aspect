@@ -54,6 +54,10 @@ const messages = defineMessages({
     id: 'pages.ResultDetail.fieldSampleOriginSite',
     defaultMessage: 'Sample Origin Site'
   },
+  fieldSampleGroup: {
+    id: 'pages.ResultDetail.fieldSampleGroup',
+    defaultMessage: 'Sample Group'
+  },
   fieldEndedOn: {
     id: 'pages.ResultDetail.fieldEndedOn',
     defaultMessage: 'Ended Date'
@@ -343,10 +347,16 @@ export class ResultDetail extends PureComponent {
             <Unit sm="1-6" md="1-12">
               {this.renderShareButton()}
             </Unit>
-            <Unit sm="1-2" md="1-2" lg="5-12">
+            <Unit sm="1-2" md="1-2" lg="1-4">
               <ReadOnlyField label={formatMessage(messages.fieldSampleId)} value={result.get('sampleId')} />
             </Unit>
-            <Unit sm="1-2" md="1-2" lg="5-12">
+            <Unit sm="1-2" md="1-4" lg="1-4">
+              <ReadOnlyField
+                label={formatMessage(messages.fieldSampleGroup)}
+                value={result.get('sampleGroup')}
+              />
+            </Unit>
+            <Unit sm="1-2" md="1-2" lg="1-3">
               <ReadOnlyField label={formatMessage(messages.fieldPatientId)} value={result.get('patientId')} />
             </Unit>
             <Unit sm="1-2" md="1-2" lg="1-6">

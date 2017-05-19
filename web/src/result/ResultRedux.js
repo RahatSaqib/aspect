@@ -283,7 +283,7 @@ export const Result = Immutable.Record({
     sortCol: 'endedOn',
     sortDir: 'desc',
     pageSize: 10,
-    filters: Immutable.fromJS({ sampleId: '', assayId: null }),
+    filters: Immutable.fromJS({ sampleId: '', sampleGroup: '', assayId: null }),
     extraColumns: new Immutable.List()
   }),
   workflowLog: new WorkflowLogModel()
