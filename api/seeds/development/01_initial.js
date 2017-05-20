@@ -761,10 +761,10 @@ function* seed(knex) {
     resultCategory1Label: 'HIV',
     resultCategory1i18nKey: 'resultCategoryHivVl',
     resultDataSchema: JSON.stringify({
-      copies: {
+      resultText: {
         list: true,
-        title: 'VL Count',
-        type: 'number'
+        title: 'Result',
+        type: 'string'
       }
     }),
     patientDataSchema: JSON.stringify({
