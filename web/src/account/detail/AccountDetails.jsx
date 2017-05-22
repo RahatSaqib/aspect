@@ -33,7 +33,7 @@ import { ContactDetails, LoginDetails, UserPreferences } from '../../person/Pers
 const enhance = compose(
   setPropTypes({
     location: PropTypes.object.isRequired,
-    history: PropTypes.instanceOf(Object).isRequired,
+    history: PropTypes.object.isRequired, // eslint-disable-line
   }),
   pure,
   injectIntl,

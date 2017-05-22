@@ -17,7 +17,7 @@ import styles from './NotFound.css'
 export class NotFound extends PureComponent {
 
   static defaultProps = {
-    history: PropTypes.instanceOf(Object).isRequired
+    history: PropTypes.object.isRequired, // eslint-disable-line
   }
 
   render() {

@@ -5,7 +5,7 @@ export class ScrollToTopOnUpdate extends PureComponent {
 
   static propTypes = {
     children: PropTypes.node.isRequired,
-    location: PropTypes.instanceOf(Object).isRequired
+    location: PropTypes.object.isRequired, // eslint-disable-line
   }
 
   componentDidUpdate(prevProps) {

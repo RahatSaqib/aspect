@@ -54,7 +54,7 @@ FilterMessage.propTypes = {
   listFilter: PropTypes.objectOf(ListFilter).isRequired,
   countries: PropTypes.shape({
     laoding: PropTypes.bool,
-    items: PropTypes.instanceOf(Object).isRequired
+    items: PropTypes.object.isRequired, // eslint-disable-line
   }).isRequired,
   assay: PropTypes.objectOf(Assay).isRequired,
   consumable: PropTypes.objectOf(Consumable).isRequired,

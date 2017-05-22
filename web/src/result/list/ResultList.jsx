@@ -95,7 +95,7 @@ export class ResultList extends PureComponent {
     intl: intlShape.isRequired,
     listFilter: PropTypes.objectOf(ListFilter).isRequired,
     fetchListFilteredResults: PropTypes.func.isRequired,
-    history: PropTypes.instanceOf(Object).isRequired,
+    history: PropTypes.object.isRequired, // eslint-disable-line
     items: PropTypes.objectOf(Items).isRequired
   }
 

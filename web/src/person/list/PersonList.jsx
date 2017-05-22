@@ -50,7 +50,7 @@ const messages = defineMessages({
 const enhance = compose(
   setPropTypes({
     location: PropTypes.object.isRequired,
-    history: PropTypes.instanceOf(Object).isRequired,
+    history: PropTypes.object.isRequired, // eslint-disable-line
   }),
   pure,
   injectIntl,
