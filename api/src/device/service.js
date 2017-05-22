@@ -115,8 +115,9 @@ function* getListDevices(query, auth) {
         .count('r.id')
         .as('deliveredThisMonth'),
       knex('Result as r')
+        .innerJoin('Sample as s', 'r.sampleId', 's.id')
         .innerJoin('ResultWorkflowStatus as rw', 'r.resultWorkflowStatusId', 'rw.id')
-        .whereRaw('r.deviceId = d.id')
+        .whereRaw('s.originSiteId = d.siteId')
         .select((() => {
           const acknowledgedCount = 'sum(case when rw.externalId = \'Acknowledged\' then 1 else 0 end)'
           const totalCount = 'count(r.id)'
@@ -125,8 +126,9 @@ function* getListDevices(query, auth) {
         })())
         .as('acknowledgedRatio'),
       knex('Result as r')
+        .innerJoin('Sample as s', 'r.sampleId', 's.id')
         .innerJoin('ResultWorkflowStatus as rw', 'r.resultWorkflowStatusId', 'rw.id')
-        .whereRaw('r.deviceId = d.id')
+        .whereRaw('s.originSiteId = d.siteId')
         .where('rw.externalId', '=', 'Flagged')
         .count('r.id')
         .as('totalFlagged')
