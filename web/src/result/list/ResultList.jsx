@@ -142,10 +142,7 @@ export class ResultList extends PureComponent {
         db: 'endedOn',
         extraProps: { style: { width: '80px' } },
         title: formatMessage(messages.endedOn),
-        format: (data) => {
-          const str = data !== null ? formatDate(data) : 'N/A'
-          return str
-        }
+        format: data => (data ? formatDate(data) : 'N/A')
       },
       { db: 'deviceName', title: formatMessage(messages.deviceName) },
       { db: 'sampleOriginSiteName', title: formatMessage(messages.sampleOriginSiteName) },
