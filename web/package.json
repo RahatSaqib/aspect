@@ -26,7 +26,21 @@
     "clean": "fsys --task=emptyDir --dir=dist",
     "release:major": "npm version major && npm publish && git push --follow-tags",
     "release:minor": "npm version minor && npm publish && git push --follow-tags",
-    "release:patch": "npm version patch && npm publish && git push --follow-tags"
+    "release:patch": "npm version patch && npm publish && git push --follow-tags",
+    "precommit": "lint-staged"
+  },
+  "lint-staged": {
+    "gitDir": "../",
+    "linters": {
+      "web/src/**/*.js": [
+        "eslint --fix",
+        "git add"
+      ],
+      "web/src/**/*.jsx": [
+        "eslint --fix",
+        "git add"
+      ]
+    }
   },
   "repository": "",
   "keywords": [],
