@@ -13,15 +13,22 @@ const enhanceField = compose(
     label: PropTypes.string.isRequired,
     value: PropTypes.any,
     lg: PropTypes.bool,
-    format: PropTypes.func
+    format: PropTypes.func,
+    nullText: PropTypes.string
   }),
   pure
 )
 
-export const ReadOnlyField = enhanceField(({ label, value, lg, format }) => (
+export const ReadOnlyField = enhanceField(({ label, value, lg, format, nullText }) => (
   <div className={cssClasses('FieldContainer', { 'FieldContainer--large': lg })}>
     <label htmlFor={label.replace(' ', '_')} className={cssClasses('FieldContainer__Label')}>{label}</label>
-    <div id={label.replace(' ', '_')} className={cssClasses('FieldContainer__Value')}>{format && value ? format(value) : value || '-'}</div>
+    <div id={label.replace(' ', '_')} className={cssClasses('FieldContainer__Value')}>
+      {
+        !value && nullText ?
+          nullText
+        :
+        format && value ? format(value) : value || '-'
+      }</div>
   </div>
 ))
 
