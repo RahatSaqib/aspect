@@ -3,8 +3,9 @@ const _ = require('lodash')
 const { consumeInventoryForResult } = require('../inventory/service')
 const { addResultConstraints } = require('./common')
 
-const DONOT_LOG_DELIVERED = ['Delivered', 'Acknowledged', 'Flagged', 'Error']
+const DONOT_LOG_DELIVERED = ['Delivered', 'Auto-Acknowledged', 'Acknowledged', 'Flagged', 'Error']
 const DELIVERED_EXTERNALID = 'Delivered'
+const AUTO_ACKNOWLEDGED_EXTERNALID = 'Auto-Acknowledged'
 
 function* addResult(context) {
   const { knex, payload, now } = context
