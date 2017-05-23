@@ -22,8 +22,7 @@ const enhanceField = compose(
 export const ReadOnlyField = enhanceField(({ label, value, lg, format, nullText }) => (
   <div className={cssClasses('FieldContainer', { 'FieldContainer--large': lg })}>
     <label htmlFor={label.replace(' ', '_')} className={cssClasses('FieldContainer__Label')}>{label}</label>
-    <div id={label.replace(' ', '_')} className={cssClasses('FieldContainer__Value')}>
-      {
+    <div id={label.replace(' ', '_')} className={cssClasses('FieldContainer__Value')}>{
         !value && nullText ?
           nullText
         :
