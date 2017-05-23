@@ -14,6 +14,8 @@ function* up(knex) {
       .index().references('id').inTable('PartnerType')
     partner.string('name').notNullable()
     partner.integer('deviceLogHistoryDays').notNullable().defaultTo(30)
+    partner.integer('autoAcknowledgeOlderThanDays')
+    partner.integer('numberToLeaveUnacknowledged')
   })
 
   yield knex.schema.createTable('User', (user) => {

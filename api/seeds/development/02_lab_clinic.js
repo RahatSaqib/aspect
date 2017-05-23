@@ -35,7 +35,9 @@ function* seed(knex) {
   const [partnerId] = yield knex('Partner').insert({
     name: 'RRT',
     partnerTypeId: partnerTypes.Operating.id,
-    deviceLogHistoryDays: 14
+    deviceLogHistoryDays: 365,
+    autoAcknowledgeOlderThanDays: 28,
+    numberToLeaveUnacknowledged: 15
   })
   const deviceTypeCategories = yield rowsAsObject(knex, 'DeviceTypeCategory')
 
