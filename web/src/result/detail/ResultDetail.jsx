@@ -146,6 +146,10 @@ const messages = defineMessages({
     id: 'pages.ResultDetail.nestedDataSubtitle',
     defaultMessage: '{count} fields'
   },
+  externalID: {
+    id: 'pages.ResultDetail.externalID',
+    defaultMessage: 'External Result ID'
+  },
 })
 
 const enhance = compose(
@@ -453,12 +457,15 @@ export class ResultDetail extends PureComponent {
                 format={v => `${formatDate(v)} ${formatTime(v)}`}
               />
             </Unit>
-            <Unit sm="1-1" md="1-2" lg="2-3">
+            <Unit sm="1-1" md="1-2" lg="1-3">
               <ReadOnlyField
                 label={formatMessage(messages.fieldUpdatedOn)}
                 value={result.get('updatedOn')}
                 format={v => `${formatDate(v)} ${formatTime(v)}`}
               />
+            </Unit>
+            <Unit sm="1-1" md="1-2" lg="1-3">
+              <ReadOnlyField label={formatMessage(messages.externalID)} value={result.get('externalId')} />
             </Unit>
             <Unit sm="1-1" md="1-2" lg="1-3">
               <ReadOnlyField label={formatMessage(messages.fieldReagentLotID)} value={result.get('consumableLot')} />
