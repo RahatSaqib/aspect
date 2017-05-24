@@ -9,7 +9,7 @@ const AUTO_ACKNOWLEDGED_EXTERNALID = 'Auto-Acknowledged'
 
 function* addResult(context) {
   const { knex, payload, now } = context
-  // TODO seperate permissions for device add vs update result?
+  // TODO separate permissions for device add vs update result?
   // Look up existing result matching external id if specified
   let existingResult = null
   if (payload.id) {
@@ -311,7 +311,7 @@ function* addResult(context) {
 }
 
 function* getResult(context) {
-  const { knex, deviceLog } = context
+  const { knex, deviceLog, deviceLogMetaData } = context
 
   const resultQuery = knex('Result as r')
     .innerJoin('Device as d', 'r.deviceId', 'd.id')
@@ -351,6 +351,12 @@ function* getResult(context) {
   if (_.indexOf(DONOT_LOG_DELIVERED, row.resultWorkflowStatusId) === -1) {
     yield* updateResultWorkflowStatus(context, row.resultId, DELIVERED_EXTERNALID)
     row.resultWorkflowStatusId = DELIVERED_EXTERNALID
+
+    // If deviceLog is flagged to be auto-acknowledged, update the result workflow status
+    if (deviceLogMetaData && deviceLogMetaData.autoAcknowledge) {
+      yield* updateResultWorkflowStatus(context, row.resultId, AUTO_ACKNOWLEDGED_EXTERNALID)
+      row.resultWorkflowStatusId = AUTO_ACKNOWLEDGED_EXTERNALID
+    }
   }
 
   const resultWorkflowLog = yield* getLatestResultWorkflowLog(knex, row.resultId)

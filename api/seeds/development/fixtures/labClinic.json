@@ -4307,7 +4307,14 @@
         {
             "externalId": "PIH",
             "name": "Partners In Hope",
-            "shortname": "PIH"
+            "shortname": "PIH",
+            "devices": [{
+                "partnerName": "RRT",
+                "deviceTypeName": "m2000",
+                "deviceStatusToken": "approved",
+                "name": "PIH M2000",
+                "approvedOn": "2017-05-22 13:45:07"
+            }]
         },
         {
             "externalId": "QUEENS",
