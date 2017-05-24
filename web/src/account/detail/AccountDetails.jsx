@@ -32,7 +32,7 @@ import { ContactDetails, LoginDetails, UserPreferences } from '../../person/Pers
 
 const enhance = compose(
   setPropTypes({
-    location: PropTypes.object.isRequired,
+    location: PropTypes.object.isRequired, // eslint-disable-line
     history: PropTypes.object.isRequired, // eslint-disable-line
   }),
   pure,
