@@ -276,6 +276,30 @@ function* updateWorkflowStatus(request) {
   return yield* showResult(request)
 }
 
+function* updateDeliverToTerminal(request) {
+  const { auth, params, payload } = request
+  const now = new Date()
+  const { resultId } = params
+  const { id: currentUserId } = auth.credentials
+
+  // get the result so we can check access
+  const result = yield* getResultByResultId(request)
+  if (!result.ok) {
+    Boom.notFound()
+  }
+
+  // update the result deliver to terminal flag
+  yield knex('Result')
+    .where('id', resultId)
+    .update({
+      deliverToTerminal: payload.deliverToTerminal,
+      updatedBy: currentUserId,
+      updatedOn: now
+    })
+
+  return yield* showResult(request)
+}
+
 function* listWorkflowStatusTypes() {
   const resultQuery = knex('ResultWorkflowStatus as rs')
 
@@ -343,6 +367,7 @@ module.exports = {
   showResult,
   listResultTypes,
   updateWorkflowStatus,
+  updateDeliverToTerminal,
   listWorkflowStatusTypes,
   listWorkflowStatusLog
 }

@@ -9,6 +9,7 @@ const {
   showResult,
   listResultTypes,
   updateWorkflowStatus,
+  updateDeliverToTerminal,
   listWorkflowStatusTypes,
   listWorkflowStatusLog
 } = require('./service')
@@ -87,6 +88,24 @@ module.exports = [
         payload: {
           resultWorkflowStatusId: Joi.number().integer().allow(null),
           externalId: Joi.string().allow('', null)
+        }
+      }
+    }
+  },
+  {
+    method: 'PUT',
+    path: '/result/deliver-to-terminal/{resultId}',
+    handler: asyncHandler(updateDeliverToTerminal),
+    config: {
+      description: 'Update Deliver to Terminal Flag',
+      notes: 'Update the deliver to terminal flag of a result',
+      auth: { scope: ['result:edit'] },
+      validate: {
+        params: {
+          resultId: Joi.number().integer().positive().description('Result Id')
+        },
+        payload: {
+          deliverToTerminal: Joi.boolean()
         }
       }
     }

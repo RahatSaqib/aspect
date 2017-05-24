@@ -209,6 +209,34 @@ export function updateResultWorkflowStatus(resultId) {
   }
 }
 
+// update a single result's deliver to terminal flag
+function updateSingleResultDeliverToTerminal(resultId, deliverToTerminal) {
+  return {
+    type: types.REQUEST_SINGLE_RESULT,
+    resultId,
+    deliverToTerminal
+  }
+}
+
+export function updateResultDeliverToTerminal(resultId, deliverToTerminal) {
+  return (dispatch) => {
+    dispatch(updateSingleResultDeliverToTerminal(resultId, deliverToTerminal))
+
+    return aspectFetch(`/result/deliver-to-terminal/${resultId}`, {
+      method: 'PUT',
+      body: JSON.stringify({ deliverToTerminal }),
+      errorNotifications: {
+        default: errorPleaseTryAgainInAFewMinutes(defineMessages({
+          title: {
+            id: 'errorResponseMessages.updateResultDeliverToTerminal.PUT.default.title',
+            defaultMessage: 'An Error Occurred When Trying to update the "Deliver to Terminal" flag.'
+          }
+        }))
+      }
+    }).then(json => dispatch(receiveUpdatedSingleResult(json.data)))
+  }
+}
+
 /*
  * ---------------- Result Workflow Status Logs -----------------
  */
