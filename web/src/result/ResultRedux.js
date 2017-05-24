@@ -177,26 +177,26 @@ export function updateSingleResult(resultId, data) {
   }
 }
 
-// update a single result with given workflow status token
-function updateSingleResultWorkflowStatus(resultId, token) {
+// update a single result with given workflow status externalId
+function updateSingleResultWorkflowStatus(resultId, externalId) {
   return {
     type: types.REQUEST_SINGLE_RESULT,
     resultId,
-    token
+    externalId
   }
 }
 
-const RESULT_WORKFLOW_STATUS_TOKEN_ACKNOWLEDGED = 'acknowledged'
+const RESULT_WORKFLOW_STATUS_EXTERNALID_ACKNOWLEDGED = 'Acknowledged'
 
 export function updateResultWorkflowStatus(resultId) {
   return (dispatch) => {
-    const token = RESULT_WORKFLOW_STATUS_TOKEN_ACKNOWLEDGED
+    const externalId = RESULT_WORKFLOW_STATUS_EXTERNALID_ACKNOWLEDGED
 
-    dispatch(updateSingleResultWorkflowStatus(resultId, token))
+    dispatch(updateSingleResultWorkflowStatus(resultId, externalId))
 
     return aspectFetch(`/result/workflow-status/${resultId}`, {
       method: 'PUT',
-      body: JSON.stringify({ token }),
+      body: JSON.stringify({ externalId }),
       errorNotifications: {
         default: errorPleaseTryAgainInAFewMinutes(defineMessages({
           title: {

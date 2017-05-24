@@ -449,6 +449,7 @@ function* up(knex) {
     result.text('rawData')
     result.string('errorCode')
     result.string('errorNotes', 2000)
+    result.boolean('deliverToTerminal').notNullable().defaultTo(0)
     addCreateFieldsNullable(result)
     addUpdateFieldsNullable(result)
     result.charset('utf8')
@@ -514,7 +515,6 @@ function* up(knex) {
     resultWorkflowStatus.string('name').notNullable()
     resultWorkflowStatus.string('externalId').notNullable()
     resultWorkflowStatus.string('i18nKey')
-    resultWorkflowStatus.string('token')
   })
 
   yield knex.schema.createTable('ResultWorkflowLog', (resultWorkflowLog) => {

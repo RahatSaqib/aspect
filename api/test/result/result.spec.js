@@ -110,6 +110,7 @@ describe('Result routes', () => {
         assert.property(res.body.data, 'notes')
         assert.property(res.body.data, 'errorCode')
         assert.property(res.body.data, 'errorNotes')
+        assert.property(res.body.data, 'deliverToTerminal')
         assert.property(res.body.data, 'createdOn')
         assert.property(res.body.data, 'updatedOn')
         assert.property(res.body.data, 'assayId')
@@ -131,20 +132,20 @@ describe('Result routes', () => {
     })
   })
   describe('PUT', () => {
-    it('Should update result status given a resultId', (done) => {
-      const updateWithToken = {
+    it('Should update result status given a resultId and set deliverToTerminal accordingly', (done) => {
+      const updateWithExternalId = {
         resultWorkflowStatusId: null,
-        token: 'processed'
+        externalId: 'Validated'
       }
       const updateWithId = {
         resultWorkflowStatusId: 1,
-        token: null
+        externalId: null
       }
 
-      // update with token
+      // update with external ID
       server
         .put(`${path}/workflow-status/${resultId}`)
-        .send(updateWithToken)
+        .send(updateWithExternalId)
         .set('Authorization', `Bearer${shared.token}`)
         .end((err, res) => {
           assert.equal(res.status, 200)
@@ -166,7 +167,8 @@ describe('Result routes', () => {
           })
 
           // check the updated fieldName
-          assert.equal(res.body.data.resultWorkflowStatus, 'Processed')
+          assert.equal(res.body.data.deliverToTerminal, 1)
+          assert.equal(res.body.data.resultWorkflowStatus, 'Validated')
 
           // update with resultWorkflowStatusId
           server
@@ -205,7 +207,7 @@ describe('Result routes', () => {
                   // Clean Up: Update resultWorkflowStatus with original status
                   server
                     .put(`${path}/workflow-status/${resultId}`)
-                    .send({ resultWorkflowStatusId: null, token: initialResultWorkflowStatus })
+                    .send({ resultWorkflowStatusId: null, externalId: initialResultWorkflowStatus })
                     .set('Authorization', `Bearer${shared.token}`)
                     .end((err, res) => {
                       assert.equal(res.body.data.resultWorkflowStatus, initialResultWorkflowStatus)

@@ -86,7 +86,7 @@ module.exports = [
         },
         payload: {
           resultWorkflowStatusId: Joi.number().integer().allow(null),
-          token: Joi.string().allow('', null)
+          externalId: Joi.string().allow('', null)
         }
       }
     }

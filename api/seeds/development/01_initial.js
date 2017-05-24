@@ -1258,56 +1258,47 @@ function* seed(knex) {
   yield knex('ResultWorkflowStatus').insert({
     name: 'OK',
     i18nkey: 'ResultWorkflowStatusOK',
-    token: 'ok',
     externalId: 'OK'
   })
   yield knex('ResultWorkflowStatus').insert({
     name: 'Error',
     i18nkey: 'ResultWorkflowStatusError',
-    token: 'error',
     externalId: 'Error'
   })
   const [ordered] = yield knex('ResultWorkflowStatus').insert({
     name: 'Ordered',
     i18nkey: 'ResultWorkflowStatusOrdered',
-    token: 'ordered',
     externalId: 'Ordered'
   })
   yield knex('ResultWorkflowStatus').insert({
     name: 'In Progress',
     i18nkey: 'ResultWorkflowStatusInProgress',
-    token: 'in-progress',
     externalId: 'InProgress'
   })
   const [processed] = yield knex('ResultWorkflowStatus').insert({
     name: 'Processed',
     i18nkey: 'ResultWorkflowStatusProcessed',
-    token: 'processed',
     externalId: 'Processed'
   })
   const [validated] = yield knex('ResultWorkflowStatus').insert({
     name: 'Validated',
     i18nkey: 'ResultWorkflowStatusValidated',
-    token: 'validated',
     externalId: 'Validated'
   })
   yield knex('ResultWorkflowStatus').insert({
     name: 'Delivered',
     i18nkey: 'ResultWorkflowStatusDelivered',
-    token: 'delivered',
     externalId: 'Delivered'
   })
   const [acknowledged] = yield knex('ResultWorkflowStatus').insert({
     name: 'Acknowledged',
     i18nkey: 'ResultWorkflowStatusAcknowledged',
-    token: 'acknowledged',
     externalId: 'Acknowledged'
   })
 
   yield knex('ResultWorkflowStatus').insert({
     name: 'Flagged',
     i18nkey: 'ResultWorkflowStatusFlagged',
-    token: 'flagged',
     externalId: 'Flagged'
   })
 
