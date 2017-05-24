@@ -158,8 +158,8 @@ function* createDeviceApiContext(request, handlerOptions) {
       return { error: Boom.internal('Device not assigned to partner') }
     }
     const historyCutoff = new Date(+new Date() - (partner.deviceLogHistoryDays * millisInDay))
-    const autoAcknowledgeCutoff = new Date(+new Date() -
-      (partner.autoAcknowledgeOlderThanDays * millisInDay))
+    const autoAcknowledgeCutoff = partner.autoAcknowledgeOlderThanDays ? new Date(+new Date() -
+      (partner.autoAcknowledgeOlderThanDays * millisInDay)) : null
     const deviceLogWithMetaData = yield* getDeviceLogWithMetaData(context, checkpoint, offset,
       deviceLogType, historyCutoff, autoAcknowledgeCutoff, partner.numberToLeaveUnacknowledged)
     if (deviceLogWithMetaData == null) {
