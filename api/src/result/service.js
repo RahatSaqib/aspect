@@ -3,6 +3,8 @@ const Boom = require('boom')
 const _ = require('lodash')
 const { knex, filterParams, filterDateRangeParams, sortPageParams } = require('../db')
 const { getConstraints, addConstraints } = require('../auth/constraints')
+const { getCellsByValue, generateExcelFile, generateCsvFile } = require('../shared/io')
+
 
 const SELECT_LIST_FIELDS = [
   'r.id', 'r.externalId', 'r.endedOn', 'd.name as deviceName',
@@ -214,6 +216,74 @@ function* listResultTypes(request) {
   return result
 }
 
+// ---------------------------------
+// exporting Results data
+// ---------------------------------
+function* exportResults(request) {
+  const { query, auth } = request
+
+  // ---------------
+  // change query page/size values to get whole dataset (not only currently paged items)
+  query.page = 0
+  // do not export more than 100.000 records
+  query.size = 1e5
+
+  // get whole dataset - based on current query params (sorting, filtering) and auth constraints
+  const results = yield* listResults(query, auth)
+
+  let result = null
+
+  if (query.format === 'excel') {
+    // fill in data into given workbook
+    const populateData = (workbook) => {
+      // get 1st sheet (1-based)
+      const worksheet = workbook.getWorksheet(1)
+
+      // locate cell(s) with needed value
+      const cells = getCellsByValue(worksheet, '<ResultListRows>') // TODO: change DeviceListRows
+      if (cells.length > 0) {
+        // empty such cells
+        cells.forEach((cell) => { cell.value = '' })
+
+        // use 1st cell only (actually, should not be more than one)
+        const patternRowNumber = cells[0].row + 2
+
+        // fill in array 'rows'
+        const rows = []
+        results.data.forEach((r) => {
+          // ------
+          // --->>> order of array elements should match columns order in template file
+          // ------
+          rows.push([
+            r.endedOn,
+            r.deviceName,
+            r.sampleOriginSite,
+            r.sampleId,
+            r.sampleGroup,
+            r.patientId
+          ])
+        })
+
+        // insert rows from patternRowNumber, and remove row number 'patternRowNumber'
+        worksheet.spliceRows(patternRowNumber, 1, ...rows)
+      }
+    }
+
+    result = yield* generateExcelFile({
+      templateFileName: 'Results.xlsx',
+      outputFileName: 'results.xlsx',
+      populateData
+    })
+  } else if (query.format === 'csv') {
+    const items = results.data
+    const columnNames = ['Test Date', 'Device', 'Sample Origin Site', 'Sample ID', 'Sample Group', 'Patient ID']
+    const fieldNames = ['endedOn', 'deviceName', 'sampleOriginSiteName', 'sampleId', 'sampleGroup', 'patientId']
+    result = yield* generateCsvFile('results.csv', items, columnNames, fieldNames)
+  }
+
+  return result
+}
+
 function* updateWorkflowStatus(request) {
   const { auth, params, payload } = request
   const now = new Date()
@@ -323,5 +393,6 @@ module.exports = {
   listResultTypes,
   updateWorkflowStatus,
   listWorkflowStatusTypes,
-  listWorkflowStatusLog
+  listWorkflowStatusLog,
+  exportResults
 }
