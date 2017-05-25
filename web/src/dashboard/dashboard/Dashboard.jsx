@@ -20,6 +20,8 @@ import { Card, CardActions, CardHeader, CardText } from 'material-ui/Card'
 import { Unit } from '../../components/pureGrids'
 import NavTitle from '../../globals/components/NavTitle'
 import { showAcknowledgement } from '../../appNotification/AppNotificationRedux'
+import DashboardTB from './DashboardTB'
+import DashboardHCV from './DashboardHCV'
 import styles from './Dashboard.css'
 import { fetchDashboardHome } from '../DashboardRedux'
 
@@ -152,6 +154,11 @@ export class Dashboard extends PureComponent {
                   </h3>
                   <div>
                     <Link to="/dashboard/patient-care?type=TB">
+                      <DashboardTB
+                        width={180}
+                        height={180}
+                        margin={{ top: 0, right: 0, bottom: 30, left: 30 }}
+                      />
                       <img alt="tb" src={require('./TB.png')} />
                     </Link>
                   </div>
@@ -162,6 +169,11 @@ export class Dashboard extends PureComponent {
                   </h3>
                   <div>
                     <Link to="/dashboard/patient-care?type=HCV">
+                      <DashboardHCV
+                        width={180}
+                        height={180}
+                        margin={{ top: 0, right: 0, bottom: 30, left: 30 }}
+                      />
                       <img alt="hcv" src={require('./HCV.png')} />
                     </Link>
                   </div>
