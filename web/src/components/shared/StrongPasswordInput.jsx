@@ -45,9 +45,9 @@ const messages = defineMessages({
 class StrongPasswordInput extends React.PureComponent {
   static propTypes = {
     input: PropTypes.object.isRequired, // eslint-disable-line
-    meta: PropTypesobject.isRequired, // eslint-disable-line
-    textFieldProps: PropTypesobject.isRequired, // eslint-disable-line
-    popOverProps: PropTypesobject.isRequired, // eslint-disable-line
+    meta: PropTypes.object.isRequired, // eslint-disable-line
+    textFieldProps: PropTypes.object.isRequired, // eslint-disable-line
+    popOverProps: PropTypes.object.isRequired, // eslint-disable-line
     intl: intlShape.isRequired
   }
 
