@@ -103,7 +103,13 @@
     "webpack-manifest-plugin": "^1.0.1"
   },
   "dependencies": {
+    "@vx/axis": "^0.0.114",
+    "@vx/gradient": "^0.0.112",
+    "@vx/group": "^0.0.114",
+    "@vx/scale": "^0.0.114",
+    "@vx/shape": "^0.0.114",
     "classnames": "^2.2.5",
+    "d3-array": "^1.2.0",
     "date-fns": "^1.28.3",
     "dom-helpers": "^3.2.1",
     "email-validator": "^1.0.7",
