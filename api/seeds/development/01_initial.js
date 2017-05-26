@@ -307,6 +307,16 @@ function* seed(knex) {
     i18nKey: 'assayTypeDengue'
   })
 
+  yield knex('AssayType').insert({
+    name: 'TB AST',
+    i18nKey: 'assayTypeTbAst'
+  })
+
+  yield knex('AssayType').insert({
+    name: 'TB G&D',
+    i18nKey: 'assayTypeTbGnd'
+  })
+
   // define resultData object
   const geneXpertResultDataSchema = JSON.stringify({
     resultText: {
@@ -761,10 +771,10 @@ function* seed(knex) {
     resultCategory1Label: 'HIV',
     resultCategory1i18nKey: 'resultCategoryHivVl',
     resultDataSchema: JSON.stringify({
-      copies: {
+      resultText: {
         list: true,
-        title: 'VL Count',
-        type: 'number'
+        title: 'Result',
+        type: 'string'
       }
     }),
     patientDataSchema: JSON.stringify({
