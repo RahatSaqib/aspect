@@ -1,3 +1,4 @@
+import _ from 'lodash'
 import PropTypes from 'prop-types'
 // Imports from packages
 import React from 'react'
@@ -19,15 +20,12 @@ const enhanceField = compose(
   pure
 )
 
-export const ReadOnlyField = enhanceField(({ label, value, lg, format, nullText }) => (
+export const ReadOnlyField = enhanceField(({ label, value, lg, format = _.identity, nullText = '-' }) => (
   <div className={cssClasses('FieldContainer', { 'FieldContainer--large': lg })}>
     <label htmlFor={label.replace(' ', '_')} className={cssClasses('FieldContainer__Label')}>{label}</label>
-    <div id={label.replace(' ', '_')} className={cssClasses('FieldContainer__Value')}>{
-        !value && nullText ?
-          nullText
-        :
-        format && value ? format(value) : value || '-'
-      }</div>
+    <div id={label.replace(' ', '_')} className={cssClasses('FieldContainer__Value')}>
+      { !value ? nullText : (format ? format(value) : value)}
+    </div>
   </div>
 ))
 
