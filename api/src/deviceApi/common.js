@@ -1,5 +1,6 @@
 const Boom = require('boom')
 const _ = require('lodash')
+const { format } = require('date-fns')
 const { knex, transact } = require('../db')
 const { asyncHandler } = require('../routes')
 
@@ -445,11 +446,16 @@ function* getDeviceLogWithMetaData(context, checkpoint, offset, deviceLogType, h
     autoAcknowledgeCutoff) {
     const result = yield knex('DeviceLog as dl')
       .innerJoin('Result as r', 'r.id', 'dl.resultId')
+      .innerJoin('Partner as p', 'p.id', 'r.partnerId')
       .where({ 'dl.id': deviceLog.id })
-      .first('r.endedOn')
-    if (result.endedOn < autoAcknowledgeCutoff &&
+      .first('r.endedOn', 'p.name as partner')
+    if (result.endedOn &&
+      result.endedOn < autoAcknowledgeCutoff &&
       -offset > numberToLeaveUnacknowledged) {
       response.metaData.autoAcknowledge = true
+      const dateFormat = 'DD MMM YYYY'
+      response.metaData.autoAcknowledgeReason =
+        `Automatically acknowledged due to rules setup for partner (${result.partner}). Result ended on (${format(result.endedOn, dateFormat)}) before ${format(autoAcknowledgeCutoff, dateFormat)} and result is number ${-offset} on the list.`
     }
   }
   return response

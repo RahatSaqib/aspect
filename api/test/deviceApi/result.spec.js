@@ -2356,7 +2356,7 @@ describe('Device Result API routes', () => {
 
     describe('when auto acknowledge rules are setup for partner', () => {
       describe('and a large number of historical results are being downloaded', () => {
-        it('should auto acknowledge results based on where they are down the list and date ended on', () => runTest(function* (knex) {
+        it('should automatically acknowledge results based on where they are down the list and date ended on', () => runTest(function* (knex) {
           const { deviceAuth, auth: { partner: partnerName } } = context
 
           // Make sure the device is found on aspect
@@ -2455,7 +2455,7 @@ describe('Device Result API routes', () => {
               .first('rs.externalId')
 
             if (numberOfTestsToRun - i > partner.numberToLeaveUnacknowledged) {
-              assert.equal(resultWorkflowStatus.externalId, 'Auto-Acknowledged')
+              assert.equal(resultWorkflowStatus.externalId, 'Acknowledged')
             } else {
               assert.equal(resultWorkflowStatus.externalId, 'Delivered')
             }
@@ -2464,7 +2464,7 @@ describe('Device Result API routes', () => {
       })
 
       describe('and a small number of historical results are being downloaded', () => {
-        it('should NOT auto acknowledge results so that there are always results visible on the terminal after initial sync', () => runTest(function* (knex) {
+        it('should NOT automatically acknowledge results so that there are always results visible on the terminal after initial sync', () => runTest(function* (knex) {
           const { deviceAuth, auth: { partner: partnerName } } = context
 
           // Make sure the device is found on aspect
@@ -2570,7 +2570,7 @@ describe('Device Result API routes', () => {
       })
 
       describe('and the results being downloaded are current', () => {
-        it('should NOT auto acknowledge results so that there are always results visible on the terminal after initial sync', () => runTest(function* (knex) {
+        it('should NOT automatically acknowledge results so that there are always results visible on the terminal after initial sync', () => runTest(function* (knex) {
           const { deviceAuth, auth: { partner: partnerName } } = context
 
           // Make sure the device is found on aspect

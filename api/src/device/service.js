@@ -103,7 +103,7 @@ function* getListDevices(query, auth) {
         .innerJoin('ResultWorkflowStatus as rw', 'r.resultWorkflowStatusId', 'rw.id')
         .whereRaw('s.originSiteId = d.siteId')
         .whereBetween('r.endedOn', [last60Day, last30Day])
-        .whereIn('rw.externalId', ['Delivered', 'Acknowledged', 'Auto-Acknowledged', 'Flagged'])
+        .whereIn('rw.externalId', ['Delivered', 'Acknowledged', 'Flagged'])
         .count('r.id')
         .as('deliveredLastMonth'),
       knex('Result as r')
@@ -111,7 +111,7 @@ function* getListDevices(query, auth) {
         .innerJoin('ResultWorkflowStatus as rw', 'r.resultWorkflowStatusId', 'rw.id')
         .whereRaw('s.originSiteId = d.siteId')
         .where('r.endedOn', '>=', last30Day)
-        .whereIn('rw.externalId', ['Delivered', 'Auto-Acknowledged', 'Acknowledged', 'Flagged'])
+        .whereIn('rw.externalId', ['Delivered', 'Acknowledged', 'Flagged'])
         .count('r.id')
         .as('deliveredThisMonth'),
       knex('Result as r')
@@ -119,7 +119,7 @@ function* getListDevices(query, auth) {
         .innerJoin('ResultWorkflowStatus as rw', 'r.resultWorkflowStatusId', 'rw.id')
         .whereRaw('s.originSiteId = d.siteId')
         .select((() => {
-          const acknowledgedCount = 'sum(case when rw.externalId = \'Acknowledged\' or rw.externalId = \'Auto-Acknowledged\' then 1 else 0 end)'
+          const acknowledgedCount = 'sum(case when rw.externalId = \'Acknowledged\' then 1 else 0 end)'
           const totalCount = 'count(r.id)'
 
           return knex.raw(`case when count(r.id) = 0 then 0 else ${acknowledgedCount} / ${totalCount} end`)

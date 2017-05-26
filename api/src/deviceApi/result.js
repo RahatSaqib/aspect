@@ -3,9 +3,9 @@ const _ = require('lodash')
 const { consumeInventoryForResult } = require('../inventory/service')
 const { addResultConstraints } = require('./common')
 
-const DONOT_LOG_DELIVERED = ['Delivered', 'Auto-Acknowledged', 'Acknowledged', 'Flagged', 'Error']
+const DONOT_LOG_DELIVERED = ['Delivered', 'Acknowledged', 'Flagged', 'Error']
 const DELIVERED_EXTERNALID = 'Delivered'
-const AUTO_ACKNOWLEDGED_EXTERNALID = 'Auto-Acknowledged'
+const ACKNOWLEDGED_EXTERNALID = 'Acknowledged'
 
 function* addResult(context) {
   const { knex, payload, now } = context
@@ -354,8 +354,9 @@ function* getResult(context) {
 
     // If deviceLog is flagged to be auto-acknowledged, update the result workflow status
     if (deviceLogMetaData && deviceLogMetaData.autoAcknowledge) {
-      yield* updateResultWorkflowStatus(context, row.resultId, AUTO_ACKNOWLEDGED_EXTERNALID)
-      row.resultWorkflowStatusId = AUTO_ACKNOWLEDGED_EXTERNALID
+      yield* updateResultWorkflowStatus(context, row.resultId, ACKNOWLEDGED_EXTERNALID,
+        deviceLogMetaData.autoAcknowledgeReason)
+      row.resultWorkflowStatusId = ACKNOWLEDGED_EXTERNALID
     }
   }
 
@@ -487,11 +488,13 @@ function* getResult(context) {
 }
 
 function* updateResultWorkflowStatus(
-  context, resultId, workflowStatusExternalId, operator, userId) {
+  context, resultId, workflowStatusExternalId, reason) {
   const { knex, now } = context
 
   // get internal workflow status id based on the external id we got
-  const workflowStatusRow = yield knex('ResultWorkflowStatus').where('externalId', workflowStatusExternalId).select('id').first()
+  const workflowStatusRow = yield knex('ResultWorkflowStatus')
+    .where('externalId', workflowStatusExternalId)
+    .select('id').first()
   if (workflowStatusRow === null) {
     throw new Error(`Workflow status with external ID "${workflowStatusExternalId}" not found`)
   }
@@ -507,10 +510,9 @@ function* updateResultWorkflowStatus(
     yield knex('ResultWorkflowLog').insert({
       resultId,
       resultWorkflowStatusId: workflowStatusRow.id,
-      operator,
+      reason,
       changedOn: now,
-      createdOn: now,
-      createdBy: userId
+      createdOn: now
     })
   }
 
