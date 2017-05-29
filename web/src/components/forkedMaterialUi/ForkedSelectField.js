@@ -253,7 +253,7 @@ class SelectField extends Component {
       onChange,
       value,
       tabIndex, // Forked
-      ...other,
+      ...other
     } = this.props;
 
     const styles = getStyles(this.props, this.context);

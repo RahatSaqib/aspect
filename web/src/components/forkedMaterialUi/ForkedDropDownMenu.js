@@ -279,7 +279,7 @@ class DropDownMenu extends Component {
       underlineStyle,
       value,
       onCloseFromEsc, // Forked
-      ...other,
+      ...other
     } = this.props;
 
     const {

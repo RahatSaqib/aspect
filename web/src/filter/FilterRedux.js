@@ -186,6 +186,7 @@ export default function filterReducer(state = initialState, action) {
               default:
                 invariant(false, 'Unreachable')
             }
+            return acc
           }, state.listFilter)
 
         mutState.set('listFilter', nextListFilter)
