@@ -49,6 +49,7 @@
       "trailingComma": "es5"
     }],
     "react/no-multi-comp": "off",
+    "react/no-unescaped-entities": "off",
     "react/prop-types": ["error", { "skipUndeclared": true }],
     "react/forbid-prop-types": "warn",
     "require-yield": "off"
