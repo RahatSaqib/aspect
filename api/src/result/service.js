@@ -33,8 +33,7 @@ const SORT_FIELDS = [
   'endedOn', 'deviceName', 'sampleOriginSiteName', 'stateName', 'lgaName', 'sampleId', 'patientId', 'resultCategory1Name', 'resultCategory2Name', 'sampleGroup'
 ]
 
-function* listResults(request) {
-  const { query, auth } = request
+function* getListResults(query, auth) {
   const selectFields = _.clone(SELECT_LIST_FIELDS)
   const sortableFields = _.clone(SORT_FIELDS)
 
@@ -150,6 +149,11 @@ function* listResults(request) {
 
   return result
 }
+function* listResults(request) {
+  const { query, auth } = request
+  const result = yield* getListResults(query, auth)
+  return result
+}
 
 function* showResult(request) {
   const result = yield* getResultByResultId(request)
@@ -229,7 +233,7 @@ function* exportResults(request) {
   query.size = 1e5
 
   // get whole dataset - based on current query params (sorting, filtering) and auth constraints
-  const results = yield* listResults(query, auth)
+  const results = yield* getListResults(query, auth)
 
   let result = null
 

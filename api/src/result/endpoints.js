@@ -30,7 +30,9 @@ function listResultsBaseConfig() {
         sampleGroup: Joi.string().allow('').description('Filter for sample group'),
         sampleOriginSite: Joi.string().allow('').description('Filter for sample origin site ID'),
         workflowStatusId: Joi.number().allow('').description('Filter for Result Workflow Status ID'),
-        jsonFields: Joi.array().max(10).items(Joi.string().max(50)).single().description('Specify which fields to select from the resultDataJSON')
+        jsonFields: Joi.array().max(10).items(Joi.string().max(50)).single().description('Specify which fields to select from the resultDataJSON'),
+        // query param 'format' is applicable only for handler 'exportDevices'
+        format: Joi.string().allow('').description('File format for exporting data')
       }, validateAllGeographyFilterParams(),
         validateDateRangeParams(),
         validateSortPageParams())
