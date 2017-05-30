@@ -78,6 +78,10 @@ const messages = defineMessages({
     id: 'pages.ResultDetail.fieldSampleId',
     defaultMessage: 'Sample ID'
   },
+  fieldResultId: {
+    id: 'pages.ResultDetail.fieldResultId',
+    defaultMessage: 'Result ID'
+  },
   fieldResultDataResultText: {
     id: 'pages.ResultDetail.fieldResultDataResultText',
     defaultMessage: 'Result Text'
