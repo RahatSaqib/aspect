@@ -18,7 +18,7 @@ export default class PageableSelectField extends PureComponent {
     loadMoreText: PropTypes.string.isRequired,
     loadingMoreText: PropTypes.string.isRequired,
     onChange: PropTypes.func.isRequired,
-    children: PropTypes.object.isRequired
+    children: PropTypes.node.isRequired
   }
 
   handleChange = (event, index, value) => {

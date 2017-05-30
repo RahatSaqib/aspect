@@ -4,6 +4,8 @@ import PropTypes from 'prop-types'
 import React, { PureComponent } from 'react'
 import { bindActionCreators } from 'redux'
 import { connect } from 'react-redux'
+import Immutable from 'immutable'
+
 
 // Material-UI
 import SelectField from 'material-ui/SelectField'
@@ -16,7 +18,7 @@ export class ResultCategorySelectField extends PureComponent {
   static propTypes = {
     allItemText: PropTypes.string,
     fetchAssays: PropTypes.func.isRequired,
-    assayItems: PropTypes.object.isRequired,
+    assayItems: PropTypes.instanceOf(Immutable).isRequired,
     assayId: PropTypes.string,
     onResultCategoryChange: PropTypes.func.isRequired,
     value: PropTypes.string

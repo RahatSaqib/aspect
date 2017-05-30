@@ -20,6 +20,7 @@ import styles from './ResultList.css'
 import { Items } from '../../shared/metaReducers/items'
 import { Table } from '../../shared/metaReducers/table'
 
+
 const messages = defineMessages({
   title: {
     id: 'pages.ResultList.title',
@@ -98,7 +99,7 @@ export class ResultList extends PureComponent {
     intl: intlShape.isRequired,
     listFilter: PropTypes.objectOf(ListFilter).isRequired,
     fetchListFilteredResults: PropTypes.func.isRequired,
-    history: PropTypes.object.isRequired,
+    history: PropTypes.object.isRequired, // eslint-disable-line
     items: PropTypes.objectOf(Items).isRequired
   }
 

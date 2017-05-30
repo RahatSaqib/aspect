@@ -111,12 +111,12 @@ export function fetchConsumableReasons(forceRefresh) {
 /*
  * ---------------- Reducers -----------------
  */
-const ConsumableItems = Immutable.Record({
+export const ConsumableItems = Immutable.Record({
   loading: false,
   items: Immutable.List([]),
   lastRefreshed: undefined
 })
-const Consumable = Immutable.Record({
+export const Consumable = Immutable.Record({
   consumables: new ConsumableItems(),
   consumableReasons: new ConsumableItems()
 })

@@ -20,7 +20,7 @@ import InfoIcon from 'material-ui/svg-icons/action/info-outline'
 import { lightBlue600, orange500, red800 } from 'material-ui/styles/colors'
 
 // Our own imports
-import { hideAppNotification } from './AppNotificationRedux'
+import { hideAppNotification, Error } from './AppNotificationRedux'
 import styles from './AppNotificationDialog.css'
 
 const genericMessages = defineMessages({
@@ -46,7 +46,7 @@ class AppNotificationDialog extends PureComponent {
 
   static propTypes = {
     intl: intlShape.isRequired,
-    appNotification: PropTypes.object,
+    appNotification: PropTypes.objectOf(Error),
     hideAppNotification: PropTypes.func.isRequired
   }
 

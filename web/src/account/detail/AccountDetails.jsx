@@ -29,10 +29,11 @@ import accountDetailsMessages from './messages'
 import personDetailsMessages from '../../person/detail/messages'
 import { ContactDetails, LoginDetails, UserPreferences } from '../../person/PersonRedux'
 
+
 const enhance = compose(
   setPropTypes({
-    location: PropTypes.object.isRequired,
-    history: PropTypes.object.isRequired,
+    location: PropTypes.object.isRequired, // eslint-disable-line
+    history: PropTypes.object.isRequired, // eslint-disable-line
   }),
   pure,
   injectIntl,
