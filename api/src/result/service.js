@@ -244,7 +244,7 @@ function* exportResults(request) {
       const worksheet = workbook.getWorksheet(1)
 
       // locate cell(s) with needed value
-      const cells = getCellsByValue(worksheet, '<ResultListRows>') // TODO: change DeviceListRows
+      const cells = getCellsByValue(worksheet, '<ResultListRows>')
       if (cells.length > 0) {
         // empty such cells
         cells.forEach((cell) => { cell.value = '' })
@@ -261,7 +261,7 @@ function* exportResults(request) {
           rows.push([
             r.endedOn,
             r.deviceName,
-            r.sampleOriginSite,
+            r.sampleOriginSiteName,
             r.sampleId,
             r.sampleGroup,
             r.patientId
