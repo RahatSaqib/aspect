@@ -61,7 +61,7 @@ const messages = defineMessages({
     id: 'pages.ResultList.filterTemplate',
     defaultMessage: 'Viewing <PATIENT_OR_RESEARCH_ID><SAMPLE_ORIGIN_SITE_ID><SAMPLE_ID><ASSAY> results <DATE><RESULT> from all sites<GEOGRAPHY><NAME> <WORKFLOWSTATUS>'
   },
-   nullText: {
+  nullText: {
     id: 'pages.ResultDetail.nullText',
     defaultMessage: 'N/A'
   }
