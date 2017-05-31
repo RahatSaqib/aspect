@@ -376,7 +376,7 @@ export function receiveInventory(inventoryItemId, data) {
 /*
  * ---------------- Reducers -----------------
  */
-const AdjustmentDetails = Immutable.Record({
+export const AdjustmentDetails = Immutable.Record({
   inventoryItemId: null,
   consumableId: null,
   expiresOn: null,

@@ -222,7 +222,7 @@ export function updateSingleSite(siteId, data) {
 /*
  * ---------------- Reducers -----------------
  */
-const SelectListItems = Immutable.Record({
+export const SelectListItems = Immutable.Record({
   loading: false,
   items: Immutable.List([]),
   lastRefreshed: undefined

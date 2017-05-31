@@ -234,6 +234,13 @@ function* updateSite(context) {
       deviceStatusId: knex('DeviceStatus').where({ token: status }).select('id')
     })
 
+  // Update DeviceApiKey site with the new siteId
+  yield knex('DeviceApiKey')
+    .where({ deviceId: device.id })
+    .update({
+      siteId: site.id
+    })
+
   yield knex('DeviceSiteHistory')
     .insert({
       deviceId: device.id,

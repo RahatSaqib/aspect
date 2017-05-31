@@ -9,14 +9,15 @@ import { connect } from 'react-redux'
 import SelectField from 'material-ui/SelectField'
 import MenuItem from 'material-ui/MenuItem'
 
-import { fetchConsumables } from '../../consumable/ConsumableRedux'
+// Our imports
+import { fetchConsumables, ConsumableItems } from '../../consumable/ConsumableRedux'
 
 export class ConsumableSelectField extends PureComponent {
 
   static propTypes = {
     allItemText: PropTypes.string,
     fetchConsumables: PropTypes.func.isRequired,
-    consumableItems: PropTypes.object,
+    consumableItems: PropTypes.objectOf(ConsumableItems),
     onConsumableChange: PropTypes.func.isRequired,
     value: PropTypes.string
   }

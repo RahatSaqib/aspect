@@ -6,13 +6,13 @@ import { connect } from 'react-redux'
 
 import MenuItem from 'material-ui/MenuItem'
 
-import { fetchCountriesForLocationSelector } from '../../geography/GeographyRedux'
+import { fetchCountriesForLocationSelector, LazyLoadItems } from '../../geography/GeographyRedux'
 import ForkedSelectField from '../../components/forkedMaterialUi/ForkedSelectField'
 
 export class CountrySelectField extends PureComponent {
   static propTypes = {
     allItemText: PropTypes.string,
-    countries: PropTypes.object.isRequired,
+    countries: PropTypes.objectOf(LazyLoadItems).isRequired,
     fetchCountriesForLocationSelector: PropTypes.func.isRequired,
     onChangeCountry: PropTypes.func.isRequired,
     countryId: PropTypes.string

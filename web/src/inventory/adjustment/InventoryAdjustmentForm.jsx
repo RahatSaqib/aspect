@@ -16,14 +16,15 @@ import { reduxForm, change as changeFieldValue } from 'redux-form/immutable'
 import TextInput from '../../components/shared/TextInput'
 import DateInput from '../../components/shared/DateInput'
 import SelectInput from '../../components/shared/SelectInput'
-import { fetchSitesForSelectList } from '../../site/SiteRedux'
-import { fetchConsumables, fetchConsumableReasons } from '../../consumable/ConsumableRedux'
+import { fetchSitesForSelectList, SelectListItems } from '../../site/SiteRedux'
+import { fetchConsumables, fetchConsumableReasons, ConsumableItems } from '../../consumable/ConsumableRedux'
 import {
   addOperation,
   removeOperation,
   transferOperation,
   receiveOperation,
-  changeAdjustmentConsumable
+  changeAdjustmentConsumable,
+  AdjustmentDetails
 } from '../InventoryRedux'
 
 const messages = defineMessages({
@@ -167,14 +168,14 @@ class InventoryAdjustmentForm extends PureComponent {
     updating: PropTypes.bool.isRequired,
     handleSubmit: PropTypes.func.isRequired,
     changeFieldValue: PropTypes.func.isRequired,
-    initialValues: PropTypes.object.isRequired,
+    initialValues: PropTypes.objectOf(AdjustmentDetails).isRequired,
     fetchSitesForSelectList: PropTypes.func.isRequired,
     fetchConsumables: PropTypes.func.isRequired,
     fetchConsumableReasons: PropTypes.func.isRequired,
     changeAdjustmentConsumable: PropTypes.func.isRequired,
-    consumables: PropTypes.object.isRequired,
-    consumableReasons: PropTypes.object.isRequired,
-    sitesSelectList: PropTypes.object.isRequired
+    consumables: PropTypes.objectOf(ConsumableItems).isRequired,
+    consumableReasons: PropTypes.objectOf(ConsumableItems).isRequired,
+    sitesSelectList: PropTypes.objectOf(SelectListItems).isRequired
   }
 
   static defaultProps = {

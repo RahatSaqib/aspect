@@ -47,7 +47,14 @@ export class SiteLocationFormMap extends PureComponent {
 
   static propTypes = {
     change: PropTypes.func.isRequired, // redux-form
-    fullAddressInForm: PropTypes.object.isRequired, // connect
+    fullAddressInForm: PropTypes.shape({
+      country: PropTypes.string.isRequired,
+      state: PropTypes.string.isRequired,
+      lga: PropTypes.string,
+      city: PropTypes.string,
+      address: PropTypes.string.isRequired,
+      address2: PropTypes.string
+    }).isRequired, // connect
     editable: PropTypes.bool.isRequired
   }
 
