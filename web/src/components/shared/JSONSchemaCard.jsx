@@ -19,15 +19,15 @@ export const PropertiesSchemaCard = compose(
     formatSubtitle: PropTypes.func.isRequired,
     renderField: PropTypes.func.isRequired,
     dataSchema: PropTypes.object.isRequired,
-    data: PropTypes.object.isRequired
+    data: PropTypes.object.isRequired,
   }),
   withState('isExpanded', 'setIsExpanded', props => !!props.initiallyExpanded),
   withHandlers({
-    handleExpanding: props => (event) => {
+    handleExpanding: props => event => {
       event.preventDefault()
       event.stopPropagation()
       props.setIsExpanded(!props.isExpanded)
-    }
+    },
   })
 )(props => (
   <Paper>
@@ -41,26 +41,24 @@ export const PropertiesSchemaCard = compose(
         onExpanding={props.handleExpanding}
       />
     </CardHeader>
-    {props.isExpanded && (
+    {props.isExpanded &&
       <CardText>
         {props.dataSchema
           .keySeq()
           .map(key => ({
             key,
             path: [...props.path, key],
-            label: props.dataSchema.getIn([key, 'title']), /* Todo: i18n */
+            label: props.dataSchema.getIn([key, 'title']) /* Todo: i18n */,
             type: props.dataSchema.getIn([key, 'type']),
-            value: props.data.get(key)
+            value: props.data.get(key),
           }))
           .sortBy(({ label }) => label)
-          .map(field =>
+          .map(field => (
             <Unit key={field.key} sm="1-2" md="1-3" lg="1-3">
               {props.renderField(field)}
             </Unit>
-          )
-        }
-      </CardText>
-    )}
+          ))}
+      </CardText>}
   </Paper>
 ))
 
@@ -72,12 +70,17 @@ const enhance = compose(
     renderField: PropTypes.func.isRequired,
     formatNestedSubtitle: PropTypes.func.isRequired,
     dataSchema: PropTypes.object.isRequired,
-    data: PropTypes.object.isRequired
+    data: PropTypes.object.isRequired,
   })
 )
 
 export const JSONSchemaCard = ({
-  initiallyExpanded, title, renderField, formatNestedSubtitle, dataSchema, data
+  initiallyExpanded,
+  title,
+  renderField,
+  formatNestedSubtitle,
+  dataSchema,
+  data,
 }) => (
   <Card initiallyExpanded={initiallyExpanded}>
     <CardHeader title={title} actAsExpander showExpandableButton />
@@ -87,11 +90,11 @@ export const JSONSchemaCard = ({
         .map(key => ({
           key,
           path: [key],
-          label: dataSchema.getIn([key, 'title']), /* Todo: i18n */
+          label: dataSchema.getIn([key, 'title']) /* Todo: i18n */,
           type: dataSchema.getIn([key, 'type']),
-          value: data.get(key)
+          value: data.get(key),
         }))
-        .map((field) => {
+        .map(field => {
           if (field.type === 'object') {
             return (
               <PropertiesSchemaCard
@@ -110,8 +113,7 @@ export const JSONSchemaCard = ({
               {renderField(field)}
             </Unit>
           )
-        })
-      }
+        })}
     </CardText>
   </Card>
 )

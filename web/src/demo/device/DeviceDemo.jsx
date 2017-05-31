@@ -13,10 +13,7 @@ import RaisedButton from 'material-ui/RaisedButton'
 import SelectField from 'material-ui/SelectField'
 
 // Our own imports
-import {
-  fetchDemoDevice,
-  postDemoDeviceResult
-} from '../DemoRedux'
+import { fetchDemoDevice, postDemoDeviceResult } from '../DemoRedux'
 
 import { Unit } from '../../components/pureGrids'
 import ReadOnlyFields from '../../components/shared/ReadOnlyFields'
@@ -27,26 +24,31 @@ const enhance = compose(
     match: PropTypes.object.isRequired,
   }),
   pure,
-  connect((state, props) => ({
-    device: state.demo.deviceItems.byId.get(props.match.params.deviceId),
-  }), dispatch => (
-    bindActionCreators({
-      fetchDemoDevice,
-      postDemoDeviceResult,
-    }, dispatch)
-  )),
+  connect(
+    (state, props) => ({
+      device: state.demo.deviceItems.byId.get(props.match.params.deviceId),
+    }),
+    dispatch =>
+      bindActionCreators(
+        {
+          fetchDemoDevice,
+          postDemoDeviceResult,
+        },
+        dispatch
+      )
+  ),
   setPropTypes({
     device: PropTypes.object,
     fetchDemoDevice: PropTypes.func.isRequired,
     postDemoDeviceResult: PropTypes.func.isRequired,
-  }),
+  })
 )
 
 export class DeviceDemo extends PureComponent {
   state = {
     assayId: null,
     resultId: null,
-    posting: false
+    posting: false,
   }
 
   componentDidMount() {
@@ -59,7 +61,7 @@ export class DeviceDemo extends PureComponent {
     }
   }
 
-  setPosting = (posting) => {
+  setPosting = posting => {
     this.setState(Object.assign({}, this.state, { posting }))
   }
 
@@ -74,7 +76,8 @@ export class DeviceDemo extends PureComponent {
   handlePostResult = () => {
     this.setPosting(true)
     const { resultId } = this.state
-    this.props.postDemoDeviceResult(this.props.match.params.deviceId, { resultId })
+    this.props
+      .postDemoDeviceResult(this.props.match.params.deviceId, { resultId })
       .then(() => this.setPosting(false))
       .catch(() => this.setPosting(false))
   }
@@ -148,22 +151,19 @@ export class DeviceDemo extends PureComponent {
     )
   }
 
-
   renderReadOnlyFields() {
     const { device } = this.props
     const fields = [
       {
         label: 'Name',
-        value: device.get('name')
+        value: device.get('name'),
       },
       {
         label: 'API Key',
-        value: device.get('access')
-      }
+        value: device.get('access'),
+      },
     ]
-    return (
-      <ReadOnlyFields fields={fields} />
-    )
+    return <ReadOnlyFields fields={fields} />
   }
 
   renderContent() {
@@ -189,7 +189,11 @@ export class DeviceDemo extends PureComponent {
   render() {
     return (
       <div className={styles.Content}>
-        <Helmet title="Demo Device" titleTemplate="%s - Aspect" defaultTitle="Aspect" />
+        <Helmet
+          title="Demo Device"
+          titleTemplate="%s - Aspect"
+          defaultTitle="Aspect"
+        />
         <Paper>
           {this.renderProgress()}
           {this.renderContent()}

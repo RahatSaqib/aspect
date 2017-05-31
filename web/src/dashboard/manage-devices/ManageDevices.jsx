@@ -1,11 +1,7 @@
 import PropTypes from 'prop-types'
 import React, { PureComponent } from 'react'
 import { compose, setPropTypes, pure } from 'recompose'
-import {
-  injectIntl,
-  defineMessages,
-  intlShape
-} from 'react-intl'
+import { injectIntl, defineMessages, intlShape } from 'react-intl'
 import { bindActionCreators } from 'redux'
 import { connect } from 'react-redux'
 import Helmet from 'react-helmet'
@@ -28,12 +24,12 @@ import styles from './ManageDevices.css'
 const messages = defineMessages({
   filterTemplate: {
     id: 'pages.ManageDevices.filterTemplate',
-    defaultMessage: 'Viewing all devices<GEOGRAPHY><NAME>.'
+    defaultMessage: 'Viewing all devices<GEOGRAPHY><NAME>.',
   },
   filterTemplateOptional: {
     id: 'pages.ManageDevices.filterTemplateOptional',
-    defaultMessage: 'Counting only <ASSAY> assays<RESULT><DATE>.'
-  }
+    defaultMessage: 'Counting only <ASSAY> assays<RESULT><DATE>.',
+  },
 })
 
 const enhance = compose(
@@ -42,39 +38,49 @@ const enhance = compose(
   }),
   pure,
   injectIntl,
-  connect(() => ({
-  }), dispatch => (
-    bindActionCreators({
-      configureListFilter,
-    }, dispatch)
-  )),
+  connect(
+    () => ({}),
+    dispatch =>
+      bindActionCreators(
+        {
+          configureListFilter,
+        },
+        dispatch
+      )
+  ),
   setPropTypes({
     intl: intlShape.isRequired,
     configureListFilter: PropTypes.func.isRequired,
-  }),
+  })
 )
 
 export class ManageDevices extends PureComponent {
-
   componentWillMount() {
     const { configureListFilter } = this.props
     configureListFilter({
       assayAndResultCategory: true,
       geography: true,
       date: true,
-      deviceName: true })
+      deviceName: true,
+    })
   }
 
   render() {
     const { intl: { formatMessage } } = this.props
     return (
       <div className={styles.Content}>
-        <Helmet title="Manage Devices" titleTemplate="%s - Aspect" defaultTitle="Aspect" />
+        <Helmet
+          title="Manage Devices"
+          titleTemplate="%s - Aspect"
+          defaultTitle="Aspect"
+        />
         <NavTitle title="Manage Devices" />
         <ListFilterContainer
           subject="devices"
           filterTemplate={formatMessage(messages.filterTemplate)}
-          filterTemplateOptional={formatMessage(messages.filterTemplateOptional)}
+          filterTemplateOptional={formatMessage(
+            messages.filterTemplateOptional
+          )}
         />
         <Paper>
           <Unit sm="1-2" md="2-3">
@@ -155,16 +161,25 @@ export class ManageDevices extends PureComponent {
                 <Card>
                   <CardHeader title="GeneXpert Franklin" />
                   <CardText>
-                    This device hasn&#39;t reported in <b>8</b> days.
+                    This device hasn't reported in <b>8</b> days.
                   </CardText>
                   <CardActions style={{ textAlign: 'right' }}>
-                    <IconButton tooltip="Fix this" iconStyle={{ color: 'gray' }} >
+                    <IconButton
+                      tooltip="Fix this"
+                      iconStyle={{ color: 'gray' }}
+                    >
                       <Build />
                     </IconButton>
-                    <IconButton tooltip="Escalate" iconStyle={{ color: '#f57c00' }} >
+                    <IconButton
+                      tooltip="Escalate"
+                      iconStyle={{ color: '#f57c00' }}
+                    >
                       <PrioHigh />
                     </IconButton>
-                    <IconButton tooltip="Hide this notification" iconStyle={{ color: '#63a021' }} >
+                    <IconButton
+                      tooltip="Hide this notification"
+                      iconStyle={{ color: '#63a021' }}
+                    >
                       <NavigationCheck />
                     </IconButton>
                   </CardActions>
@@ -173,16 +188,29 @@ export class ManageDevices extends PureComponent {
                   <CardHeader title="Daktari Omaha" />
                   <CardText>
                     This device is low on inventory (<b>54 cartridges</b>).
-                    It will run out in <b>9 days</b> given the curent utilization rate.
+                    It will run out in
+                    {' '}
+                    <b>9 days</b>
+                    {' '}
+                    given the curent utilization rate.
                   </CardText>
                   <CardActions style={{ textAlign: 'right' }}>
-                    <IconButton tooltip="Fix this" iconStyle={{ color: 'gray' }} >
+                    <IconButton
+                      tooltip="Fix this"
+                      iconStyle={{ color: 'gray' }}
+                    >
                       <Build />
                     </IconButton>
-                    <IconButton tooltip="Escalate" iconStyle={{ color: '#f57c00' }} >
+                    <IconButton
+                      tooltip="Escalate"
+                      iconStyle={{ color: '#f57c00' }}
+                    >
                       <PrioHigh />
                     </IconButton>
-                    <IconButton tooltip="Hide this notification" iconStyle={{ color: '#63a021' }} >
+                    <IconButton
+                      tooltip="Hide this notification"
+                      iconStyle={{ color: '#63a021' }}
+                    >
                       <NavigationCheck />
                     </IconButton>
                   </CardActions>
@@ -194,13 +222,22 @@ export class ManageDevices extends PureComponent {
                     The average error rate for Daktari devices is <b>5%</b>.
                   </CardText>
                   <CardActions style={{ textAlign: 'right' }}>
-                    <IconButton tooltip="Fix this" iconStyle={{ color: 'gray' }} >
+                    <IconButton
+                      tooltip="Fix this"
+                      iconStyle={{ color: 'gray' }}
+                    >
                       <Build />
                     </IconButton>
-                    <IconButton tooltip="Escalate" iconStyle={{ color: '#f57c00' }} >
+                    <IconButton
+                      tooltip="Escalate"
+                      iconStyle={{ color: '#f57c00' }}
+                    >
                       <PrioHigh />
                     </IconButton>
-                    <IconButton tooltip="Hide this notification" iconStyle={{ color: '#63a021' }} >
+                    <IconButton
+                      tooltip="Hide this notification"
+                      iconStyle={{ color: '#63a021' }}
+                    >
                       <NavigationCheck />
                     </IconButton>
                   </CardActions>
@@ -208,17 +245,28 @@ export class ManageDevices extends PureComponent {
                 <Card style={{ marginTop: '15px' }}>
                   <CardHeader title="GeneXpert Boston" />
                   <CardText>
-                    This device was expected to come back online <b>yesterday </b>
+                    This device was expected to come back online
+                    {' '}
+                    <b>yesterday </b>
                     after being serviced but has not connected yet.
                   </CardText>
                   <CardActions style={{ textAlign: 'right' }}>
-                    <IconButton tooltip="Fix this" iconStyle={{ color: 'gray' }} >
+                    <IconButton
+                      tooltip="Fix this"
+                      iconStyle={{ color: 'gray' }}
+                    >
                       <Build />
                     </IconButton>
-                    <IconButton tooltip="Escalate" iconStyle={{ color: '#f57c00' }} >
+                    <IconButton
+                      tooltip="Escalate"
+                      iconStyle={{ color: '#f57c00' }}
+                    >
                       <PrioHigh />
                     </IconButton>
-                    <IconButton tooltip="Hide this notification" iconStyle={{ color: '#63a021' }} >
+                    <IconButton
+                      tooltip="Hide this notification"
+                      iconStyle={{ color: '#63a021' }}
+                    >
                       <NavigationCheck />
                     </IconButton>
                   </CardActions>

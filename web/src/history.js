@@ -9,7 +9,7 @@ if (config.piwik) {
   // set up analytics
   history = piwikReactRouter({
     url: config.piwik.url,
-    siteId: config.piwik.siteId
+    siteId: config.piwik.siteId,
   }).connectToHistory(history)
 }
 

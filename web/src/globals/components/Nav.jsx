@@ -22,7 +22,7 @@ const enhance = compose(
     handleHamburger: PropTypes.func.isRequired,
     handleSignOut: PropTypes.func.isRequired,
   }),
-  pure,
+  pure
 )
 
 export const Nav = ({
@@ -33,15 +33,16 @@ export const Nav = ({
 }) => (
   <AppBar
     onLeftIconButtonTouchTap={handleHamburger}
-    title={(<span>
-      <Link className={styles.Brand} to="/dashboard" >Aspect</Link>
-      {pageTitle && (
-        <span>
-          {' - '}
-          <Link className={styles.Brand} to={pagePath}>{pageTitle}</Link>
-        </span>
-      )}
-    </span>)}
+    title={
+      <span>
+        <Link className={styles.Brand} to="/dashboard">Aspect</Link>
+        {pageTitle &&
+          <span>
+            {' - '}
+            <Link className={styles.Brand} to={pagePath}>{pageTitle}</Link>
+          </span>}
+      </span>
+    }
   >
     <div>
       <Badge secondary badgeContent={7} className={styles.Badge}>
@@ -53,16 +54,17 @@ export const Nav = ({
         iconButtonElement={
           <IconButton>
             <MoreVertIcon color={'#fff'} />
-          </IconButton>}
+          </IconButton>
+        }
       >
         <MenuItem primaryText="Help" href="https://admin.gxalert.com" />
         <MenuItem
           primaryText="Account Details"
-          containerElement={
-            <Link to="/account-details/current" />}
+          containerElement={<Link to="/account-details/current" />}
         />
         <MenuItem
-          primaryText="Sign out" className={styles.MenuItem}
+          primaryText="Sign out"
+          className={styles.MenuItem}
           onTouchTap={handleSignOut}
         />
       </IconMenu>

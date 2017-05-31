@@ -7,18 +7,14 @@ import { nonEmptyFilterValue } from '../filter/utils'
 import {
   filterFieldsRejectedError,
   errorNotFound,
-  errorPleaseTryAgainInAFewMinutes
+  errorPleaseTryAgainInAFewMinutes,
 } from '../error/CommonErrorNotifications'
 
-import {
-  receiveList,
-  receiveItem,
-  Items
-} from '../shared/metaReducers/items'
+import { receiveList, receiveItem, Items } from '../shared/metaReducers/items'
 import {
   requestTable,
   receiveTableItems,
-  Table
+  Table,
 } from '../shared/metaReducers/table'
 
 export const types = {
@@ -29,7 +25,7 @@ export const types = {
   RECEIVE_SINGLE_TERMINAL: 'RECEIVE_SINGLE_TERMINAL',
 
   REQUEST_UPDATING_SINGLE_TERMINAL: 'REQUEST_UPDATING_SINGLE_TERMINAL',
-  RECEIVE_UPDATED_SINGLE_TERMINAL: 'RECEIVE_UPDATED_SINGLE_TERMINAL'
+  RECEIVE_UPDATED_SINGLE_TERMINAL: 'RECEIVE_UPDATED_SINGLE_TERMINAL',
 }
 /*
  * ---------------- Action Creators -----------------
@@ -41,7 +37,7 @@ function requestTerminals(sortCol, sortDir, page, size, filters) {
     sortDir,
     page,
     size,
-    filters
+    filters,
   }
 }
 
@@ -49,16 +45,14 @@ function receiveTerminals(json) {
   return {
     type: types.RECEIVE_TERMINALS,
     items: json.data,
-    total: json.total
+    total: json.total,
   }
 }
 
 // With state.filter.listFilter & extraFilters
 export function fetchListFilteredTerminals(extraFilters = {}, ...args) {
   return (dispatch, getState) => {
-    const filters = getState()
-      .filter
-      .listFilter
+    const filters = getState().filter.listFilter
       .toMap()
       .merge(extraFilters)
       .filter(nonEmptyFilterValue)
@@ -68,68 +62,85 @@ export function fetchListFilteredTerminals(extraFilters = {}, ...args) {
   }
 }
 
-export function fetchTerminals(filters/* required */, sortCol = 'name', sortDir = 'asc', page = 0, pageSize = 10) {
-  return (dispatch) => {
+export function fetchTerminals(
+  filters /* required */,
+  sortCol = 'name',
+  sortDir = 'asc',
+  page = 0,
+  pageSize = 10
+) {
+  return dispatch => {
     dispatch(requestTerminals(sortCol, sortDir, page, pageSize, filters))
 
-    return aspectFetch(`/device?${stringify({
-      sortCol,
-      sortDir,
-      page,
-      size: pageSize,
-      ...filters
-    })}`, {
-      errorNotifications: {
-        400: filterFieldsRejectedError(defineMessages({
-          title: {
-            id: 'errorResponseMessages.fetchTerminals.GET.400.title',
-            defaultMessage: 'Searching Terminals Failed'
-          }
-        })),
-        default: errorPleaseTryAgainInAFewMinutes(defineMessages({
-          title: {
-            id: 'errorResponseMessages.fetchTerminals.GET.default.title',
-            defaultMessage: 'Loading Terminals Failed'
-          }
-        }))
+    return aspectFetch(
+      `/device?${stringify({
+        sortCol,
+        sortDir,
+        page,
+        size: pageSize,
+        ...filters,
+      })}`,
+      {
+        errorNotifications: {
+          400: filterFieldsRejectedError(
+            defineMessages({
+              title: {
+                id: 'errorResponseMessages.fetchTerminals.GET.400.title',
+                defaultMessage: 'Searching Terminals Failed',
+              },
+            })
+          ),
+          default: errorPleaseTryAgainInAFewMinutes(
+            defineMessages({
+              title: {
+                id: 'errorResponseMessages.fetchTerminals.GET.default.title',
+                defaultMessage: 'Loading Terminals Failed',
+              },
+            })
+          ),
+        },
       }
-    }).then(json => dispatch(receiveTerminals(json)))
+    ).then(json => dispatch(receiveTerminals(json)))
   }
 }
 
 function requestSingleTerminal(terminalId) {
   return {
     type: types.REQUEST_SINGLE_TERMINAL,
-    terminalId
+    terminalId,
   }
 }
 
 function receiveSingleTerminal(item) {
   return {
     type: types.RECEIVE_SINGLE_TERMINAL,
-    item
+    item,
   }
 }
 
 export function fetchSingleTerminal(terminalId) {
-  return (dispatch) => {
+  return dispatch => {
     dispatch(requestSingleTerminal(terminalId))
 
     return aspectFetch(`/device/${terminalId}`, {
       errorNotifications: {
-        404: errorNotFound(defineMessages({
-          title: {
-            id: 'errorResponseMessages.fetchSingleTerminal.GET.404.title',
-            defaultMessage: 'Could Not Find Terminal Details'
-          }
-        })),
-        default: errorPleaseTryAgainInAFewMinutes(defineMessages({
-          title: {
-            id: 'errorResponseMessages.fetchSingleTerminal.GET.default.title',
-            defaultMessage: 'Error Loading Terminal Details'
-          }
-        }))
-      }
+        404: errorNotFound(
+          defineMessages({
+            title: {
+              id: 'errorResponseMessages.fetchSingleTerminal.GET.404.title',
+              defaultMessage: 'Could Not Find Terminal Details',
+            },
+          })
+        ),
+        default: errorPleaseTryAgainInAFewMinutes(
+          defineMessages({
+            title: {
+              id: 'errorResponseMessages.fetchSingleTerminal.GET.default.title',
+              defaultMessage: 'Error Loading Terminal Details',
+            },
+          })
+        ),
+      },
     }).then(json => dispatch(receiveSingleTerminal(json.data)))
   }
 }
@@ -138,32 +149,34 @@ function requestUpdatingSingleTerminal(terminalId, data) {
   return {
     type: types.REQUEST_UPDATING_SINGLE_TERMINAL,
     terminalId,
-    data
+    data,
   }
 }
 
 function receiveUpdatedSingleTerminal(item) {
   return {
     type: types.RECEIVE_UPDATED_SINGLE_TERMINAL,
-    item
+    item,
   }
 }
 
 export function updateSingleTerminal(terminalId, data) {
-  return (dispatch) => {
+  return dispatch => {
     dispatch(requestUpdatingSingleTerminal(terminalId, data))
 
     return aspectFetch(`/device/${terminalId}`, {
       method: 'PUT',
       body: JSON.stringify(data),
       errorNotifications: {
-        default: errorPleaseTryAgainInAFewMinutes(defineMessages({
-          title: {
-            id: 'errorResponseMessages.updateSingleTerminal.PUT.default.title',
-            defaultMessage: 'An Error Occurred When Trying to Save the Terminal'
-          }
-        }))
-      }
+        default: errorPleaseTryAgainInAFewMinutes(
+          defineMessages({
+            title: {
+              id: 'errorResponseMessages.updateSingleTerminal.PUT.default.title',
+              defaultMessage: 'An Error Occurred When Trying to Save the Terminal',
+            },
+          })
+        ),
+      },
     }).then(json => dispatch(receiveUpdatedSingleTerminal(json.data)))
   }
 }
@@ -172,7 +185,7 @@ export function updateSingleTerminal(terminalId, data) {
  */
 const Terminal = Immutable.Record({
   items: new Items(),
-  table: new Table()
+  table: new Table(),
 })
 
 const initialState = new Terminal()
@@ -180,18 +193,16 @@ const initialState = new Terminal()
 export default function terminalReducer(state = initialState, action) {
   switch (action.type) {
     case types.REQUEST_TERMINALS:
-      return state
-      .set('table', requestTable(state.table, action))
+      return state.set('table', requestTable(state.table, action))
     case types.RECEIVE_TERMINALS:
-      return state
-      .withMutations((mutState) => {
+      return state.withMutations(mutState => {
         const immutList = Immutable.fromJS(action.items)
         mutState.set('items', receiveList(mutState.items, immutList))
         mutState.set('table', receiveTableItems(mutState.table, action.total))
       })
     case types.RECEIVE_SINGLE_TERMINAL:
     case types.RECEIVE_UPDATED_SINGLE_TERMINAL:
-      return state.withMutations((mutState) => {
+      return state.withMutations(mutState => {
         const immutItem = Immutable.fromJS(action.item)
         mutState.set('items', receiveItem(mutState.items, immutItem))
       })

@@ -11,7 +11,7 @@ export function requestTable(table, action) {
     sortDir: action.sortDir,
     page: action.page,
     pageSize: action.size,
-    groupBy: action.groupBy
+    groupBy: action.groupBy,
   })
 }
 
@@ -19,7 +19,7 @@ export function receiveTableItems(table, total, extraColumns) {
   return table.merge({
     loading: false,
     total,
-    extraColumns
+    extraColumns,
   })
 }
 
@@ -31,5 +31,5 @@ export const Table = Immutable.Record({
   pageSize: 10, // Renamed from 'size' since 'size' will conflict with Immutable internal property
   total: 0,
   groupBy: new Immutable.List(),
-  extraColumns: new Immutable.List()
+  extraColumns: new Immutable.List(),
 })

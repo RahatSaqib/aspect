@@ -3,7 +3,7 @@ import Immutable from 'immutable'
 export const types = {
   SHOW_APP_NOTIFICATION: 'SHOW_APP_NOTIFICATION',
   SHOW_MORE_DETAILS: 'SHOW_MORE_DETAILS',
-  HIDE_APP_NOTIFICATION: 'HIDE_APP_NOTIFICATION'
+  HIDE_APP_NOTIFICATION: 'HIDE_APP_NOTIFICATION',
 }
 /*
  * ---------------- Action Creators -----------------
@@ -16,9 +16,9 @@ function showNotification(options, messageValues, notificationType) {
       showAs: notificationType === 'acknowledgement' ? 'inline' : 'interrupt',
       showClose: true,
       showProceed: false,
-      ...options
+      ...options,
     },
-    messageValues: { ...(messageValues || {}), ...options.messageValues }
+    messageValues: { ...(messageValues || {}), ...options.messageValues },
   }
 }
 
@@ -32,13 +32,13 @@ export function showAcknowledgement(options, messageValues) {
 
 export function showMoreDetails() {
   return {
-    type: types.SHOW_MORE_DETAILS
+    type: types.SHOW_MORE_DETAILS,
   }
 }
 
 export function hideAppNotification() {
   return {
-    type: types.HIDE_APP_NOTIFICATION
+    type: types.HIDE_APP_NOTIFICATION,
   }
 }
 
@@ -50,7 +50,7 @@ export const Error = Immutable.Record({
   notificationType: null,
   messageValues: {},
   showDetails: false,
-  notificationOptions: null
+  notificationOptions: null,
 })
 
 const initialState = new Error()
@@ -63,7 +63,7 @@ export default function appNotificationReducer(state = initialState, action) {
         notificationType: action.notificationType,
         notificationOptions: action.notificationOptions,
         messageValues: action.messageValues || {},
-        showDetails: action.notificationOptions.showAs === 'interrupt'
+        showDetails: action.notificationOptions.showAs === 'interrupt',
       })
     case types.SHOW_MORE_DETAILS:
       return state.set('showDetails', true)
@@ -73,7 +73,7 @@ export default function appNotificationReducer(state = initialState, action) {
         notificationType: null,
         showDetails: false,
         notificationOptions: null,
-        messageValues: {}
+        messageValues: {},
       })
     default:
       return state

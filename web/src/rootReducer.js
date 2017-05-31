@@ -5,9 +5,7 @@ import { combineReducers } from 'redux-immutable'
 import globals from './globals/GlobalsRedux'
 import appNotification from './appNotification/AppNotificationRedux'
 import filter from './filter/FilterRedux'
-import user, {
-  types as authTypes
-} from './auth/AuthRedux'
+import user, { types as authTypes } from './auth/AuthRedux'
 import dashboard from './dashboard/DashboardRedux'
 import demo from './demo/DemoRedux'
 import device from './device/DeviceRedux'
@@ -26,7 +24,8 @@ import report from './report/ReportRedux'
 import idle from './idle/IdleRedux'
 import jobs from './job/JobRedux'
 import router from './router/RouterRedux'
-import resultWorkflowStatus from './resultWorkflowStatus/ResultWorkflowStatusRedux'
+import resultWorkflowStatus
+  from './resultWorkflowStatus/ResultWorkflowStatusRedux'
 import terminal from './terminal/TerminalRedux'
 
 const appReducer = combineReducers({
@@ -54,7 +53,7 @@ const appReducer = combineReducers({
   report,
   router,
   resultWorkflowStatus,
-  terminal
+  terminal,
 })
 
 const App = Immutable.Record({
@@ -82,7 +81,7 @@ const App = Immutable.Record({
   idle: undefined,
   router: undefined,
   resultWorkflowStatus: undefined,
-  terminal: undefined
+  terminal: undefined,
 })
 
 const initialState = new App()

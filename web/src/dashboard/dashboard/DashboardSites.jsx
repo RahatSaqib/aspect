@@ -15,7 +15,7 @@ const enhance = compose(
   pure,
   requirePermissions({
     permissions: ['site:admin', 'site:view', 'site:edit'],
-  }),
+  })
 )
 
 export const DashboardSites = ({ label }) => (

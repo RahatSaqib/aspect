@@ -1,7 +1,11 @@
 import Immutable from 'immutable'
 import React from 'react'
 import { shallow } from 'enzyme'
-import { groupByPermissionTypes, isPermittedUser, requirePermissions } from './requirePermissions'
+import {
+  groupByPermissionTypes,
+  isPermittedUser,
+  requirePermissions,
+} from './requirePermissions'
 
 describe('requirePermissions', () => {
   describe('groupByPermissionTypes', () => {
@@ -12,7 +16,7 @@ describe('requirePermissions', () => {
         expect(permissionsByTypes).toEqual({
           required: [],
           forbidden: [],
-          optional: ['person:admin']
+          optional: ['person:admin'],
         })
       })
     })
@@ -24,7 +28,7 @@ describe('requirePermissions', () => {
         const isPermitted = isPermittedUser(Immutable.Set(['person:admin']), {
           required: ['person:admin'],
           forbidden: [],
-          optional: []
+          optional: [],
         })
 
         expect(isPermitted).toBe(true)
@@ -36,7 +40,7 @@ describe('requirePermissions', () => {
         const isPermitted = isPermittedUser(Immutable.Set(['person:admin']), {
           required: [],
           forbidden: ['person:admin'],
-          optional: []
+          optional: [],
         })
 
         expect(isPermitted).toBe(false)
@@ -48,7 +52,7 @@ describe('requirePermissions', () => {
         const isPermitted = isPermittedUser(Immutable.Set(['person:admin']), {
           required: [],
           forbidden: [],
-          optional: ['person:admin', 'site:admin']
+          optional: ['person:admin', 'site:admin'],
         })
 
         expect(isPermitted).toBe(true)
@@ -60,7 +64,7 @@ describe('requirePermissions', () => {
         const isPermitted = isPermittedUser(Immutable.Set(['person:admin']), {
           required: ['person:admin'],
           forbidden: ['site:view'],
-          optional: []
+          optional: [],
         })
 
         expect(isPermitted).toBe(true)
@@ -70,7 +74,7 @@ describe('requirePermissions', () => {
         const isPermitted = isPermittedUser(Immutable.Set(['person:admin']), {
           required: ['site:view'],
           forbidden: ['person:admin'],
-          optional: []
+          optional: [],
         })
 
         expect(isPermitted).toBe(false)
@@ -79,11 +83,14 @@ describe('requirePermissions', () => {
 
     describe('required, forbidden and optional', () => {
       it('should be valid for admin user', () => {
-        const isPermitted = isPermittedUser(Immutable.Set(['person:admin', 'device:view']), {
-          required: ['person:admin'],
-          forbidden: ['site:view'],
-          optional: ['device:view']
-        })
+        const isPermitted = isPermittedUser(
+          Immutable.Set(['person:admin', 'device:view']),
+          {
+            required: ['person:admin'],
+            forbidden: ['site:view'],
+            optional: ['device:view'],
+          }
+        )
 
         expect(isPermitted).toBe(true)
       })
@@ -92,7 +99,7 @@ describe('requirePermissions', () => {
         const isPermitted = isPermittedUser(Immutable.Set(['person:admin']), {
           required: ['site:view'],
           forbidden: ['person:admin'],
-          optional: ['device:view']
+          optional: ['device:view'],
         })
 
         expect(isPermitted).toBe(false)
@@ -109,38 +116,34 @@ describe('requirePermissions', () => {
         subscribe() {},
         getState() {
           return {
-            getIn() { return Immutable.Set(userPermissions) }
+            getIn() {
+              return Immutable.Set(userPermissions)
+            },
           }
-        }
-      }
+        },
+      },
     }
   }
 
   describe('given right user permissions', () => {
     const DecoratedComponent = requirePermissions({
       permissions: ['person:admin'],
-      ForbiddenComponent
+      ForbiddenComponent,
     })(WrappedComponent)
 
     it('should render WrappedComponent', () => {
-      const ComponentWrapper = shallow(
-        <DecoratedComponent />,
-        {
-          context: makeContext(['person:admin'])
-        }
-      )
+      const ComponentWrapper = shallow(<DecoratedComponent />, {
+        context: makeContext(['person:admin']),
+      })
 
       expect(ComponentWrapper.find(WrappedComponent).length).toEqual(1)
       expect(ComponentWrapper.find(ForbiddenComponent).length).toEqual(0)
     })
 
     it('should render WrappedComponent', () => {
-      const ComponentWrapper = shallow(
-        <DecoratedComponent />,
-        {
-          context: makeContext(['person:admin', 'device:view'])
-        }
-      )
+      const ComponentWrapper = shallow(<DecoratedComponent />, {
+        context: makeContext(['person:admin', 'device:view']),
+      })
 
       expect(ComponentWrapper.find(WrappedComponent).length).toEqual(1)
       expect(ComponentWrapper.find(ForbiddenComponent).length).toEqual(0)
@@ -150,28 +153,22 @@ describe('requirePermissions', () => {
   describe('given wrong user permissions', () => {
     const DecoratedComponent = requirePermissions({
       permissions: ['person:admin'],
-      ForbiddenComponent
+      ForbiddenComponent,
     })(WrappedComponent)
 
     it('should render ForbiddenComponent', () => {
-      const ComponentWrapper = shallow(
-        <DecoratedComponent />,
-        {
-          context: makeContext(['device:view'])
-        }
-      )
+      const ComponentWrapper = shallow(<DecoratedComponent />, {
+        context: makeContext(['device:view']),
+      })
 
       expect(ComponentWrapper.find(WrappedComponent).length).toEqual(0)
       expect(ComponentWrapper.find(ForbiddenComponent).length).toEqual(1)
     })
 
     it('should render ForbiddenComponent', () => {
-      const ComponentWrapper = shallow(
-        <DecoratedComponent />,
-        {
-          context: makeContext(['person:view', 'device:view'])
-        }
-      )
+      const ComponentWrapper = shallow(<DecoratedComponent />, {
+        context: makeContext(['person:view', 'device:view']),
+      })
 
       expect(ComponentWrapper.find(WrappedComponent).length).toEqual(0)
       expect(ComponentWrapper.find(ForbiddenComponent).length).toEqual(1)

@@ -15,7 +15,7 @@ const enhance = compose(
   pure,
   requirePermissions({
     permissions: ['inventory:admin', 'inventory:view', 'inventory:edit'],
-  }),
+  })
 )
 
 export const DashboardInventory = ({ label }) => (

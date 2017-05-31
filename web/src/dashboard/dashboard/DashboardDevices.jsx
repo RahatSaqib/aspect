@@ -15,7 +15,7 @@ const enhance = compose(
   pure,
   requirePermissions({
     permissions: ['device:admin', 'device:view', 'device:edit'],
-  }),
+  })
 )
 
 export const DashboardDevices = ({ label }) => (

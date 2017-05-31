@@ -4,7 +4,7 @@ import differenceInMinutes from 'date-fns/difference_in_minutes'
 import { aspectFetch } from '../shared/utils/fetch'
 import {
   filterFieldsRejectedError,
-  errorPleaseTryAgainInAFewMinutes
+  errorPleaseTryAgainInAFewMinutes,
 } from '../error/CommonErrorNotifications'
 
 export const types = {
@@ -12,7 +12,7 @@ export const types = {
   RECEIVE_CONSUMABLES: 'RECEIVE_CONSUMABLES',
 
   REQUEST_CONSUMABLE_REASONS: 'REQUEST_CONSUMABLE_REASONS',
-  RECEIVE_CONSUMABLE_REASONS: 'RECEIVE_CONSUMABLE_REASONS'
+  RECEIVE_CONSUMABLE_REASONS: 'RECEIVE_CONSUMABLE_REASONS',
 }
 
 /*
@@ -26,7 +26,7 @@ function createReceiveConsumables(consumables) {
   return {
     type: types.RECEIVE_CONSUMABLES,
     items: consumables,
-    lastRefreshed: new Date()
+    lastRefreshed: new Date(),
   }
 }
 
@@ -37,32 +37,38 @@ export function fetchConsumables(forceRefresh) {
     if (consumable.getIn(['consumables', 'loading'])) {
       return
     }
-    const shouldFetch = forceRefresh || !consumable.getIn(['consumables', 'lastRefreshed']) || (
-      differenceInMinutes(new Date(), consumable.getIn(['consumables', 'lastRefreshed'])) > 5 // five minutes
-    )
+    const shouldFetch =
+      forceRefresh ||
+      !consumable.getIn(['consumables', 'lastRefreshed']) ||
+      differenceInMinutes(
+        new Date(),
+        consumable.getIn(['consumables', 'lastRefreshed'])
+      ) > 5 // five minutes
     if (!shouldFetch) {
       return
     }
 
     dispatch(createRequestConsumables())
-    return aspectFetch('/inventory/consumable-types',
-      {
-        errorNotifications: {
-          400: filterFieldsRejectedError(defineMessages({
+    return aspectFetch('/inventory/consumable-types', {
+      errorNotifications: {
+        400: filterFieldsRejectedError(
+          defineMessages({
             title: {
               id: 'errorResponseMessages.fetchConsumables.GET.400.title',
-              defaultMessage: 'Searching Consumables Failed'
-            }
-          })),
-          default: errorPleaseTryAgainInAFewMinutes(defineMessages({
+              defaultMessage: 'Searching Consumables Failed',
+            },
+          })
+        ),
+        default: errorPleaseTryAgainInAFewMinutes(
+          defineMessages({
             title: {
               id: 'errorResponseMessages.fetchConsumables.GET.default.title',
-              defaultMessage: 'Loading Consumables Failed'
-            }
-          }))
-        }
-      })
-      .then(json => dispatch(createReceiveConsumables(json.data)))
+              defaultMessage: 'Loading Consumables Failed',
+            },
+          })
+        ),
+      },
+    }).then(json => dispatch(createReceiveConsumables(json.data)))
   }
 }
 
@@ -74,7 +80,7 @@ function createReceiveConsumableReasons(consumableReasons) {
   return {
     type: types.RECEIVE_CONSUMABLE_REASONS,
     items: consumableReasons,
-    lastRefreshed: new Date()
+    lastRefreshed: new Date(),
   }
 }
 
@@ -85,26 +91,30 @@ export function fetchConsumableReasons(forceRefresh) {
     if (consumable.getIn(['consumableReasons', 'loading'])) {
       return
     }
-    const shouldFetch = forceRefresh || !consumable.getIn(['consumableReasons', 'lastRefreshed']) || (
-        differenceInMinutes(new Date(), consumable.getIn(['consumableReasons', 'lastRefreshed'])) > 5 // five minutes
-      )
+    const shouldFetch =
+      forceRefresh ||
+      !consumable.getIn(['consumableReasons', 'lastRefreshed']) ||
+      differenceInMinutes(
+        new Date(),
+        consumable.getIn(['consumableReasons', 'lastRefreshed'])
+      ) > 5 // five minutes
     if (!shouldFetch) {
       return
     }
 
     dispatch(createRequestConsumableReasons())
-    return aspectFetch('/inventory/consumable-reason',
-      {
-        errorNotifications: {
-          default: errorPleaseTryAgainInAFewMinutes(defineMessages({
+    return aspectFetch('/inventory/consumable-reason', {
+      errorNotifications: {
+        default: errorPleaseTryAgainInAFewMinutes(
+          defineMessages({
             title: {
               id: 'errorResponseMessages.fetchConsumableReasons.GET.default.title',
-              defaultMessage: 'Loading Consumable Reasons Failed'
-            }
-          }))
-        }
-      })
-      .then(json => dispatch(createReceiveConsumableReasons(json.data)))
+              defaultMessage: 'Loading Consumable Reasons Failed',
+            },
+          })
+        ),
+      },
+    }).then(json => dispatch(createReceiveConsumableReasons(json.data)))
   }
 }
 
@@ -114,11 +124,11 @@ export function fetchConsumableReasons(forceRefresh) {
 export const ConsumableItems = Immutable.Record({
   loading: false,
   items: Immutable.List([]),
-  lastRefreshed: undefined
+  lastRefreshed: undefined,
 })
 export const Consumable = Immutable.Record({
   consumables: new ConsumableItems(),
-  consumableReasons: new ConsumableItems()
+  consumableReasons: new ConsumableItems(),
 })
 const initialState = new Consumable()
 
@@ -130,7 +140,7 @@ export default function consumableReducer(state = initialState, action) {
       return state.mergeIn(['consumables'], {
         loading: false,
         lastRefreshed: action.lastRefreshed,
-        items: new Immutable.fromJS(action.items)
+        items: new Immutable.fromJS(action.items),
       })
     case types.REQUEST_CONSUMABLE_REASONS:
       return state.setIn(['consumableReasons', 'loading'], true)
@@ -138,7 +148,7 @@ export default function consumableReducer(state = initialState, action) {
       return state.mergeIn(['consumableReasons'], {
         loading: false,
         lastRefreshed: action.lastRefreshed,
-        items: new Immutable.fromJS(action.items)
+        items: new Immutable.fromJS(action.items),
       })
     default:
       return state

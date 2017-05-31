@@ -16,12 +16,13 @@ import {
   generateDeviceApiKeys,
   assignDeviceApiKeys,
   updateSingleDeviceApiKey,
-  fetchDeviceApiKeys
+  fetchDeviceApiKeys,
 } from '../DeviceApiKeyRedux'
 import NavTitle from '../../globals/components/NavTitle'
 import { ListFilterContainer } from '../../filter/list/ListFilter'
 import { ListFilter, configureListFilter } from '../../filter/FilterRedux'
-import DataTableWithEmptyList from '../../components/shared/DataTableWithEmptyList'
+import DataTableWithEmptyList
+  from '../../components/shared/DataTableWithEmptyList'
 import styles from './DeviceApiKeyList.css'
 import { Items } from '../../shared/metaReducers/items'
 import { Table } from '../../shared/metaReducers/table'
@@ -31,55 +32,55 @@ import DeviceApiKeyAssignerDialogForm from './DeviceApiKeyAssignerDialogForm'
 const messages = defineMessages({
   title: {
     id: 'pages.DeviceApiKeyList.title',
-    defaultMessage: 'Device API Keys'
+    defaultMessage: 'Device API Keys',
   },
   /* ---------------- Filter ----------------- */
   filterTemplate: {
     id: 'pages.DeviceApiKeyList.filterTemplate',
-    defaultMessage: 'Viewing all device api keys<GEOGRAPHY><NAME>.'
+    defaultMessage: 'Viewing all device api keys<GEOGRAPHY><NAME>.',
   },
   filterTemplateOptional: {
     id: 'pages.DeviceApiKeyList.filterTemplateOptional',
-    defaultMessage: 'Counting only <PARTNER_ID>.'
+    defaultMessage: 'Counting only <PARTNER_ID>.',
   },
   /* ---------------- Dialog ----------------- */
   generate: {
     id: 'pages.DeviceApiKeyList.generate',
-    defaultMessage: 'Generate'
+    defaultMessage: 'Generate',
   },
   assign: {
     id: 'pages.DeviceApiKeyList.assign',
-    defaultMessage: 'Assign'
+    defaultMessage: 'Assign',
   },
   /* ---------------- Table ----------------- */
   createdOn: {
     id: 'pages.DeviceApiKeyList.createdOn',
-    defaultMessage: 'Created On'
+    defaultMessage: 'Created On',
   },
   token: {
     id: 'pages.DeviceApiKeyList.token',
-    defaultMessage: 'Key'
+    defaultMessage: 'Key',
   },
   partner: {
     id: 'pages.DeviceApiKeyList.partner',
-    defaultMessage: 'Partner'
+    defaultMessage: 'Partner',
   },
   country: {
     id: 'pages.DeviceApiKeyList.country',
-    defaultMessage: 'Country'
+    defaultMessage: 'Country',
   },
   site: {
     id: 'pages.DeviceApiKeyList.site',
-    defaultMessage: 'Site'
+    defaultMessage: 'Site',
   },
   device: {
     id: 'pages.DeviceApiKeyList.device',
-    defaultMessage: 'Device'
+    defaultMessage: 'Device',
   },
   revoked: {
     id: 'pages.DeviceApiKeyList.revoked',
-    defaultMessage: 'Revoked'
-  }
+    defaultMessage: 'Revoked',
+  },
 })
 
 const enhance = compose(
@@ -88,20 +89,25 @@ const enhance = compose(
   }),
   pure,
   injectIntl,
-  connect(state => ({
-    listFilter: state.filter.listFilter,
-    items: state.deviceApiKey.items,
-    table: state.deviceApiKey.table,
-  }), dispatch => (
-    bindActionCreators({
-      fetchDeviceApiKeys,
-      exportDeviceApiKeys,
-      generateDeviceApiKeys,
-      assignDeviceApiKeys,
-      updateSingleDeviceApiKey,
-      configureListFilter,
-    }, dispatch)
-  )),
+  connect(
+    state => ({
+      listFilter: state.filter.listFilter,
+      items: state.deviceApiKey.items,
+      table: state.deviceApiKey.table,
+    }),
+    dispatch =>
+      bindActionCreators(
+        {
+          fetchDeviceApiKeys,
+          exportDeviceApiKeys,
+          generateDeviceApiKeys,
+          assignDeviceApiKeys,
+          updateSingleDeviceApiKey,
+          configureListFilter,
+        },
+        dispatch
+      )
+  ),
   setPropTypes({
     intl: intlShape.isRequired,
     listFilter: PropTypes.objectOf(ListFilter).isRequired,
@@ -113,7 +119,7 @@ const enhance = compose(
     assignDeviceApiKeys: PropTypes.func.isRequired,
     updateSingleDeviceApiKey: PropTypes.func.isRequired,
     configureListFilter: PropTypes.func.isRequired,
-  }),
+  })
 )
 
 const DEFAULT_GENERATOR_VALUES = { count: 1 }
@@ -124,7 +130,7 @@ export class DeviceApiKeyList extends PureComponent {
     generatorValues: DEFAULT_GENERATOR_VALUES,
     assignerValues: DEFAULT_ASSIGNER_VALUES,
     isGeneratorDialogOpen: false,
-    isAssignerDialogOpen: false
+    isAssignerDialogOpen: false,
   }
 
   componentWillMount() {
@@ -155,7 +161,7 @@ export class DeviceApiKeyList extends PureComponent {
       .toJS()
   }
 
-  handleClickExport = (formatType) => {
+  handleClickExport = formatType => {
     this.props.exportDeviceApiKeys(
       formatType,
       this.props.table.sortCol,
@@ -181,26 +187,25 @@ export class DeviceApiKeyList extends PureComponent {
     this.setState({ isAssignerDialogOpen: false })
   }
 
-  handleGeneratorFormChange = generatorValues => this.setState({ generatorValues })
+  handleGeneratorFormChange = generatorValues =>
+    this.setState({ generatorValues })
 
-  handleGenerate = (generatorValues) => {
-    this.props.generateDeviceApiKeys(generatorValues)
-      .then(() => {
-        this.handleCloseGeneratorDialog()
-        this.handleGeneratorFormChange(DEFAULT_GENERATOR_VALUES)
-        this.handleFetch()
-      })
+  handleGenerate = generatorValues => {
+    this.props.generateDeviceApiKeys(generatorValues).then(() => {
+      this.handleCloseGeneratorDialog()
+      this.handleGeneratorFormChange(DEFAULT_GENERATOR_VALUES)
+      this.handleFetch()
+    })
   }
 
   handleAssigerFormChange = assignerValues => this.setState({ assignerValues })
 
-  handleAssign = (assignerValues) => {
-    this.props.assignDeviceApiKeys(assignerValues)
-      .then(() => {
-        this.handleCloseAssignerDialog()
-        this.handleAssigerFormChange(DEFAULT_ASSIGNER_VALUES)
-        this.handleFetch()
-      })
+  handleAssign = assignerValues => {
+    this.props.assignDeviceApiKeys(assignerValues).then(() => {
+      this.handleCloseAssignerDialog()
+      this.handleAssigerFormChange(DEFAULT_ASSIGNER_VALUES)
+      this.handleFetch()
+    })
   }
 
   handleFetch = (...args) => {
@@ -209,32 +214,28 @@ export class DeviceApiKeyList extends PureComponent {
 
   handleSelectAll = (event, isInputChecked) => {
     const selectableIds = this.getSelectableIds()
-    const nextDeviceApiKeyIds = (
-      isInputChecked ?
-      selectableIds :
-      []
-    )
+    const nextDeviceApiKeyIds = isInputChecked ? selectableIds : []
     this.setState({
       assignerValues: {
         ...this.state.assignerValues,
-        deviceApiKeyIds: nextDeviceApiKeyIds
-      }
+        deviceApiKeyIds: nextDeviceApiKeyIds,
+      },
     })
   }
 
-  handleSelect = (event) => {
+  handleSelect = event => {
     const { assignerValues } = this.state
     const { deviceApiKeyId } = event.target.dataset
-    const nextDeviceApiKeyIds = (
-      assignerValues.deviceApiKeyIds.indexOf(deviceApiKeyId) !== -1 ?
-      assignerValues.deviceApiKeyIds.filter(id => id !== deviceApiKeyId) :
-      [...assignerValues.deviceApiKeyIds, deviceApiKeyId]
-    )
+    const nextDeviceApiKeyIds = assignerValues.deviceApiKeyIds.indexOf(
+      deviceApiKeyId
+    ) !== -1
+      ? assignerValues.deviceApiKeyIds.filter(id => id !== deviceApiKeyId)
+      : [...assignerValues.deviceApiKeyIds, deviceApiKeyId]
     this.setState({
       assignerValues: {
         ...this.state.assignerValues,
-        deviceApiKeyIds: nextDeviceApiKeyIds
-      }
+        deviceApiKeyIds: nextDeviceApiKeyIds,
+      },
     })
   }
 
@@ -242,7 +243,7 @@ export class DeviceApiKeyList extends PureComponent {
     const { deviceApiKeyId } = event.target.dataset
 
     this.props.updateSingleDeviceApiKey(deviceApiKeyId, {
-      revoked
+      revoked,
     })
   }
 
@@ -254,7 +255,8 @@ export class DeviceApiKeyList extends PureComponent {
     const { formatMessage, formatDate } = intl
     const selectableIds = this.getSelectableIds()
     const columns = [
-      { db: 'id',
+      {
+        db: 'id',
         sortable: false,
         title: (
           <Checkbox
@@ -262,55 +264,80 @@ export class DeviceApiKeyList extends PureComponent {
             disabled={_.isEmpty(selectableIds)}
             checked={
               !_.isEmpty(assignerValues.deviceApiKeyIds) &&
-              _.isEqual(selectableIds, assignerValues.deviceApiKeyIds)
+                _.isEqual(selectableIds, assignerValues.deviceApiKeyIds)
             }
             onCheck={this.handleSelectAll}
           />
         ),
         extraProps: { style: { width: '5%' } },
-        format: (data, row) =>
+        format: (data, row) => (
           <Checkbox
             name="selected"
             data-device-Api-Key-Id={row.get('id')}
             disabled={!this.itemSelectable(row)}
-            checked={assignerValues.deviceApiKeyIds.indexOf(row.get('id')) !== -1}
+            checked={
+              assignerValues.deviceApiKeyIds.indexOf(row.get('id')) !== -1
+            }
             onCheck={this.handleSelect}
-          /> },
-      { db: 'createdOn',
+          />
+        ),
+      },
+      {
+        db: 'createdOn',
         title: formatMessage(messages.createdOn),
         extraProps: { style: { width: '10%' } },
-        format: data => formatDate(data) },
-      { db: 'token',
+        format: data => formatDate(data),
+      },
+      {
+        db: 'token',
         title: formatMessage(messages.token),
-        extraProps: { style: { width: '25%' } } },
-      { db: 'partner',
-        title: formatMessage(messages.partner) },
-      { db: 'country',
-        title: formatMessage(messages.country) },
-      { db: 'site',
-        title: formatMessage(messages.site) },
-      { db: 'device',
-        title: formatMessage(messages.device) },
-      { db: 'revoked',
+        extraProps: { style: { width: '25%' } },
+      },
+      {
+        db: 'partner',
+        title: formatMessage(messages.partner),
+      },
+      {
+        db: 'country',
+        title: formatMessage(messages.country),
+      },
+      {
+        db: 'site',
+        title: formatMessage(messages.site),
+      },
+      {
+        db: 'device',
+        title: formatMessage(messages.device),
+      },
+      {
+        db: 'revoked',
         title: formatMessage(messages.revoked),
-        format: (data, row) =>
+        format: (data, row) => (
           <Checkbox
             name="revoked"
             style={{ textAlign: 'center' }}
             data-device-Api-Key-Id={row.get('id')}
             checked={data > 0}
             onCheck={this.handleRevoke}
-          /> },
+          />
+        ),
+      },
     ]
 
     return (
       <div className={styles.Content}>
-        <Helmet title={formatMessage(messages.title)} titleTemplate="%s - Aspect" defaultTitle="Aspect" />
+        <Helmet
+          title={formatMessage(messages.title)}
+          titleTemplate="%s - Aspect"
+          defaultTitle="Aspect"
+        />
         <NavTitle title={formatMessage(messages.title)} />
         <ListFilterContainer
           subject={formatMessage(messages.title)}
           filterTemplate={formatMessage(messages.filterTemplate)}
-          filterTemplateOptional={formatMessage(messages.filterTemplateOptional)}
+          filterTemplateOptional={formatMessage(
+            messages.filterTemplateOptional
+          )}
           onClickExport={this.handleClickExport}
         />
         <div>

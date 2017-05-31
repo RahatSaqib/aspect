@@ -7,7 +7,9 @@ describe('FlagIcon', () => {
   it('should render an i tag with the correct flag class names', () => {
     const FlagIconWrapper = shallow(<FlagIcon countryIsoAlpha2Code="ZA" />)
 
-    expect(FlagIconWrapper.find('i').props().className).toEqual('flag-icon flag-za')
+    expect(FlagIconWrapper.find('i').props().className).toEqual(
+      'flag-icon flag-za'
+    )
   })
 
   describe('When no country code is specified', () => {
@@ -22,7 +24,9 @@ describe('FlagIcon', () => {
 
   describe('When styles are specified', () => {
     it('should pass them onto i tag', () => {
-      const FlagIconWrapper = shallow(<FlagIcon style={{ color: 'red' }} countryIsoAlpha2Code="ZA" />)
+      const FlagIconWrapper = shallow(
+        <FlagIcon style={{ color: 'red' }} countryIsoAlpha2Code="ZA" />
+      )
       expect(FlagIconWrapper.find('i').props().style.color).toEqual('red')
     })
   })

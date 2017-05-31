@@ -23,11 +23,13 @@ function getBrowserInfo() {
   try {
     const ua = navigator.userAgent
     let tem
-    let M = ua.match(/(opera|chrome|safari|firefox|msie|trident(?=\/))\/?\s*(\d+)/i) || []
+    let M = ua.match(
+      /(opera|chrome|safari|firefox|msie|trident(?=\/))\/?\s*(\d+)/i
+    ) || []
 
     if (/trident/i.test(M[1])) {
       tem = /\brv[ :]+(\d+)/g.exec(ua) || []
-      return { name: 'IE ', version: (tem[1] || '') }
+      return { name: 'IE ', version: tem[1] || '' }
     }
 
     if (M[1] === 'Chrome') {
@@ -41,10 +43,12 @@ function getBrowserInfo() {
 
     tem = ua.match(/version\/(\d+)/i)
 
-    if (tem != null) { M.splice(1, 1, tem[1]) }
+    if (tem != null) {
+      M.splice(1, 1, tem[1])
+    }
     return {
       name: M[0],
-      version: M[1]
+      version: M[1],
     }
   } catch (e) {
     return null

@@ -19,31 +19,31 @@ import SiteSelectField from '../../filter/resource/SiteSelectField'
 const messages = defineMessages({
   cancel: {
     id: 'pages.DeviceApiKeyList.cancel',
-    defaultMessage: 'Cancel'
+    defaultMessage: 'Cancel',
   },
   generate: {
     id: 'pages.DeviceApiKeyList.generate',
-    defaultMessage: 'Generate'
+    defaultMessage: 'Generate',
   },
   generatorDialogTitle: {
     id: 'pages.DeviceApiKeyList.generatorDialogTitle',
-    defaultMessage: 'Device API Keys Generator'
+    defaultMessage: 'Device API Keys Generator',
   },
   count: {
     id: 'pages.DeviceApiKeyList.count',
-    defaultMessage: 'Count (1-100)'
+    defaultMessage: 'Count (1-100)',
   },
   countryId: {
     id: 'pages.DeviceApiKeyList.countryId',
-    defaultMessage: 'Country'
+    defaultMessage: 'Country',
   },
   partnerId: {
     id: 'pages.DeviceApiKeyList.partnerId',
-    defaultMessage: 'Partner'
+    defaultMessage: 'Partner',
   },
   siteId: {
     id: 'pages.DeviceApiKeyList.siteId',
-    defaultMessage: 'Site'
+    defaultMessage: 'Site',
   },
 })
 
@@ -53,30 +53,35 @@ const enhance = compose(
     onCancel: PropTypes.func,
     isDialogOpen: PropTypes.bool.isRequired,
     values: PropTypes.object.isRequired,
-    intl: intlShape.isRequired
+    intl: intlShape.isRequired,
   }),
   recomposeForm({
-    fields: [{
-      fieldName: 'count',
-      valueFromChangeEvent(event) {
-        const count = event.target.value
-        return _fp.min([_fp.max([1, count]), 100])
-      }
-    }, {
-      fieldName: 'countryId',
-      valueFromChangeEvent: _fp.identity
-    }, {
-      fieldName: 'partnerId',
-      valueFromChangeEvent: _fp.identity
-    }, {
-      fieldName: 'siteId',
-      valueFromChangeEvent: _fp.identity
-    }],
+    fields: [
+      {
+        fieldName: 'count',
+        valueFromChangeEvent(event) {
+          const count = event.target.value
+          return _fp.min([_fp.max([1, count]), 100])
+        },
+      },
+      {
+        fieldName: 'countryId',
+        valueFromChangeEvent: _fp.identity,
+      },
+      {
+        fieldName: 'partnerId',
+        valueFromChangeEvent: _fp.identity,
+      },
+      {
+        fieldName: 'siteId',
+        valueFromChangeEvent: _fp.identity,
+      },
+    ],
     validate() {
       const errors = {}
       return errors
-    }
-  }),
+    },
+  })
 )
 
 export function DeviceApiKeyGeneratorDialogForm({
@@ -87,7 +92,10 @@ export function DeviceApiKeyGeneratorDialogForm({
   onChangePartnerId,
   onChangeSiteId,
   handleSubmit,
-  form, meta, values, intl
+  form,
+  meta,
+  values,
+  intl,
 }) {
   const { formatMessage } = intl
 
@@ -104,7 +112,7 @@ export function DeviceApiKeyGeneratorDialogForm({
       type="button"
       label={formatMessage(messages.generate)}
       primary
-    />
+    />,
   ]
   return (
     <Dialog
@@ -130,10 +138,15 @@ export function DeviceApiKeyGeneratorDialogForm({
           allItemText=""
           countryId={values.countryId}
           onChangeCountry={onChangeCountryId}
-          errorStyle={{ float: 'left', whiteSpace: 'nowrap', textOverflow: 'visible' }}
+          errorStyle={{
+            float: 'left',
+            whiteSpace: 'nowrap',
+            textOverflow: 'visible',
+          }}
           errorText={meta.countryId.touched && meta.countryId.error}
           fullWidth
-          tabIndex="0" aria-haspopup
+          tabIndex="0"
+          aria-haspopup
         />
         <PartnerSelectField
           name="partnerId"
@@ -142,10 +155,15 @@ export function DeviceApiKeyGeneratorDialogForm({
           emptyText=""
           partnerId={values.partnerId}
           onChangePartner={onChangePartnerId}
-          errorStyle={{ float: 'left', whiteSpace: 'nowrap', textOverflow: 'visible' }}
+          errorStyle={{
+            float: 'left',
+            whiteSpace: 'nowrap',
+            textOverflow: 'visible',
+          }}
           errorText={meta.partnerId.touched && meta.partnerId.error}
           fullWidth
-          tabIndex="0" aria-haspopup
+          tabIndex="0"
+          aria-haspopup
         />
         <SiteSelectField
           name="siteId"
@@ -154,10 +172,15 @@ export function DeviceApiKeyGeneratorDialogForm({
           partnerId={values.partnerId}
           value={values.siteId}
           onSiteChange={onChangeSiteId}
-          errorStyle={{ float: 'left', whiteSpace: 'nowrap', textOverflow: 'visible' }}
+          errorStyle={{
+            float: 'left',
+            whiteSpace: 'nowrap',
+            textOverflow: 'visible',
+          }}
           errorText={meta.siteId.touched && meta.siteId.error}
           fullWidth
-          tabIndex="0" aria-haspopup
+          tabIndex="0"
+          aria-haspopup
         />
       </form>
     </Dialog>

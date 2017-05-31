@@ -14,15 +14,15 @@
  *   https://github.com/callemall/material-ui/pull/3583/files
  */
 // Forked
-import _ from 'lodash';
-import raf from 'dom-helpers/util/requestAnimationFrame';
-import {findDOMNode} from 'react-dom';
-import keycode from 'keycode';
-import PropTypes from 'prop-types';
+import _ from 'lodash'
+import raf from 'dom-helpers/util/requestAnimationFrame'
+import { findDOMNode } from 'react-dom'
+import keycode from 'keycode'
+import PropTypes from 'prop-types'
 // Original
-import React, { Component } from 'react';
-import TextField from 'material-ui/TextField';
-import DropDownMenu from './ForkedDropDownMenu';
+import React, { Component } from 'react'
+import TextField from 'material-ui/TextField'
+import DropDownMenu from './ForkedDropDownMenu'
 
 function getStyles(props) {
   return {
@@ -40,7 +40,7 @@ function getStyles(props) {
     dropDownMenu: {
       display: 'block',
     },
-  };
+  }
 }
 
 class SelectField extends Component {
@@ -148,61 +148,63 @@ class SelectField extends Component {
      * The value that is currently selected.
      */
     value: PropTypes.any,
-  };
+  }
 
   static defaultProps = {
     autoWidth: false,
     disabled: false,
     fullWidth: false,
-  };
+  }
 
   static contextTypes = {
     muiTheme: PropTypes.object.isRequired,
-  };
+  }
 
-  handleTextFieldMount = (textField) => {// Forked
-    this._textField = textField;
-  };
+  handleTextFieldMount = textField => {
+    // Forked
+    this._textField = textField
+  }
 
-  handleKeyUp = (event) => {// Forked
+  handleKeyUp = event => {
+    // Forked
     // When we got focused by a tab event and tabIndex is set,
     // we trigger focus method on the textField, causing dropDownMenu to open.
     if (!this.props.tabIndex || this.props.tabIndex < 0) {
-      return;
+      return
     }
     switch (keycode(event)) {
       case 'tab':
         if (!event.shiftKey) {
-          this._textField.focus(); // trigger event handler setup by DropDownMenu
+          this._textField.focus() // trigger event handler setup by DropDownMenu
         }
-        break;
+        break
       case 'enter':
         // When menu is closed and delayedTriggerFocusOnRootNode is called,
         // the root element should have focus state.
         // This is the only time we open up the menu again.
-        const root = findDOMNode(this._textField);
+        const root = findDOMNode(this._textField)
         if (root.contains(document.activeElement)) {
-          this._textField.focus();
+          this._textField.focus()
         }
-        break;
+        break
     }
-  };
+  }
 
   handleChange = (...args) => {
-    const { onChange = _.noop } = this.props;
-    onChange(...args);
-    this.delayedTriggerFocusOnRootNode();
-  };
+    const { onChange = _.noop } = this.props
+    onChange(...args)
+    this.delayedTriggerFocusOnRootNode()
+  }
 
   handleCloseFromEsc = () => {
-    this.delayedTriggerFocusOnRootNode();
-  };
+    this.delayedTriggerFocusOnRootNode()
+  }
 
   delayedTriggerFocusOnRootNode() {
     // When we got focused by a tab event and tabIndex is set,
     // we trigger focus method on the textField, causing dropDownMenu to open.
     if (!this.props.tabIndex || this.props.tabIndex < 0) {
-      return;
+      return
     }
     // this._textField.handleInputFocus();
     // Trigger focus on the root node in tick until the activeElement is dropDownRootNode
@@ -210,20 +212,20 @@ class SelectField extends Component {
     // It keeps the focus state (active underline style) below the SelectField element
     // but without the menu open.
     // Now user can use tab or tab+shift to navigate to/away the next/previous element.
-    const endedAt = Date.now() + 5000;
+    const endedAt = Date.now() + 5000
     const tick = () => {
-      const dropDownMenu = this._textField.input; // Private variable
-      const dropDownRootNode = findDOMNode(dropDownMenu);
+      const dropDownMenu = this._textField.input // Private variable
+      const dropDownRootNode = findDOMNode(dropDownMenu)
       // Don't call dropDownRootNode.focus() directly, it'll open the menu.
       // We just want DOM to focus on this element
-      HTMLDivElement.prototype.focus.call(dropDownRootNode);
+      HTMLDivElement.prototype.focus.call(dropDownRootNode)
       if (Date.now() < endedAt && document.activeElement !== dropDownRootNode) {
-        raf(tick);
+        raf(tick)
       }
       // We need to use raf to call tick is because DOM rendering is asynchronous,
       // and we have no idea when will it settled.
-    };
-    raf(tick);
+    }
+    raf(tick)
   }
 
   render() {
@@ -254,9 +256,9 @@ class SelectField extends Component {
       value,
       tabIndex, // Forked
       ...other
-    } = this.props;
+    } = this.props
 
-    const styles = getStyles(this.props, this.context);
+    const styles = getStyles(this.props, this.context)
 
     return (
       <TextField
@@ -264,14 +266,14 @@ class SelectField extends Component {
         style={{
           ...style,
           // Forked
-          outline: 'none'
+          outline: 'none',
         }}
         disabled={disabled}
         floatingLabelFixed={floatingLabelFixed}
         floatingLabelText={floatingLabelText}
         floatingLabelStyle={floatingLabelStyle}
         hintStyle={hintStyle}
-        hintText={(!hintText && !floatingLabelText) ? ' ' : hintText}
+        hintText={!hintText && !floatingLabelText ? ' ' : hintText}
         fullWidth={fullWidth}
         errorText={errorText}
         underlineStyle={underlineStyle}
@@ -303,8 +305,8 @@ class SelectField extends Component {
           {children}
         </DropDownMenu>
       </TextField>
-    );
+    )
   }
 }
 
-export default SelectField;
+export default SelectField

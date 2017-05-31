@@ -5,18 +5,15 @@ import startOfToday from 'date-fns/start_of_today'
 
 import { aspectFetch } from '../shared/utils/fetch'
 import { nonEmptyFilterValue } from '../filter/utils'
-import {
-  receiveList,
-  Items
-} from '../shared/metaReducers/groupedItems'
+import { receiveList, Items } from '../shared/metaReducers/groupedItems'
 import {
   requestTable,
   receiveTableItems,
-  Table
+  Table,
 } from '../shared/metaReducers/groupedTable'
 import {
   filterFieldsRejectedError,
-  errorPleaseTryAgainInAFewMinutes
+  errorPleaseTryAgainInAFewMinutes,
 } from '../error/CommonErrorNotifications'
 
 export const types = {
@@ -30,7 +27,7 @@ export const types = {
   REMOVE_INVENTORY: 'REMOVE_INVENTORY',
   TRANSFER_INVENTORY: 'TRANSFER_INVENTORY',
   RECEIVE_INVENTORY: 'RECEIVE_INVENTORY',
-  CHANGE_ADJUSTMENT_CONSUMABLE: 'CHANGE_ADJUSTMENT_CONSUMABLE'
+  CHANGE_ADJUSTMENT_CONSUMABLE: 'CHANGE_ADJUSTMENT_CONSUMABLE',
 }
 
 export const addOperation = 'add'
@@ -41,8 +38,7 @@ export const receiveOperation = 'receive'
 /*
  * ---------------- Action Creators -----------------
  */
-function requestInventoryItems(
-  sortCol, sortDir, page, size, filters, groupBy) {
+function requestInventoryItems(sortCol, sortDir, page, size, filters, groupBy) {
   return {
     type: types.REQUEST_INVENTORY_ITEMS,
     sortCol,
@@ -50,7 +46,7 @@ function requestInventoryItems(
     page,
     size,
     filters,
-    groupBy
+    groupBy,
   }
 }
 
@@ -59,12 +55,16 @@ function receiveInventoryItems(json, childrenPropertyPath) {
     type: types.RECEIVE_INVENTORY_ITEMS,
     items: json.data,
     total: json.total,
-    childrenPropertyPath
+    childrenPropertyPath,
   }
 }
 
 function getFilters(state, extraFilters) {
-  return state.filter.listFilter.toMap().merge(extraFilters).filter(nonEmptyFilterValue).toJS()
+  return state.filter.listFilter
+    .toMap()
+    .merge(extraFilters)
+    .filter(nonEmptyFilterValue)
+    .toJS()
 }
 
 function getGroupBy(state) {
@@ -72,7 +72,7 @@ function getGroupBy(state) {
 }
 
 export function toggleGroupBySite(toggleOn) {
-  return (dispatch) => {
+  return dispatch => {
     dispatch({ type: types.TOGGLE_GROUP_BY_SITE, toggleOn })
     return dispatch(fetchListFilteredInventoryItems())
   }
@@ -86,62 +86,81 @@ export function fetchListFilteredInventoryItems(extraFilters = {}, ...args) {
   }
 }
 
-export function fetchInventoryItems(groupBy, filters /* required */, sortCol = 'siteName', sortDir = 'asc', page = 0, pageSize = 10) {
+export function fetchInventoryItems(
+  groupBy,
+  filters /* required */,
+  sortCol = 'siteName',
+  sortDir = 'asc',
+  page = 0,
+  pageSize = 10
+) {
   const groupBySite = groupBy.includes('siteId')
   const path = groupBySite ? '/inventory/group-by-site' : '/inventory'
-  return (dispatch) => {
-    dispatch(requestInventoryItems(
-      sortCol, sortDir, page, pageSize, filters, groupBy))
-    return aspectFetch(`${path}?${stringify({
-      sortCol,
-      sortDir,
-      page,
-      size: pageSize,
-      ...filters
-    })}`, {
-      errorNotifications: {
-        400: filterFieldsRejectedError(defineMessages({
-          title: {
-            id: 'errorResponseMessages.fetchInventoryItems.GET.400.title',
-            defaultMessage: 'Searching Inventory Items Failed'
-          }
-        })),
-        default: errorPleaseTryAgainInAFewMinutes(defineMessages({
-          title: {
-            id: 'errorResponseMessages.fetchInventoryItems.GET.default.title',
-            defaultMessage: 'Loading Inventory Items Failed'
-          }
-        }))
+  return dispatch => {
+    dispatch(
+      requestInventoryItems(sortCol, sortDir, page, pageSize, filters, groupBy)
+    )
+    return aspectFetch(
+      `${path}?${stringify({
+        sortCol,
+        sortDir,
+        page,
+        size: pageSize,
+        ...filters,
+      })}`,
+      {
+        errorNotifications: {
+          400: filterFieldsRejectedError(
+            defineMessages({
+              title: {
+                id: 'errorResponseMessages.fetchInventoryItems.GET.400.title',
+                defaultMessage: 'Searching Inventory Items Failed',
+              },
+            })
+          ),
+          default: errorPleaseTryAgainInAFewMinutes(
+            defineMessages({
+              title: {
+                id: 'errorResponseMessages.fetchInventoryItems.GET.default.title',
+                defaultMessage: 'Loading Inventory Items Failed',
+              },
+            })
+          ),
+        },
       }
-    }).then(json => dispatch(receiveInventoryItems(json, groupBySite ? ['inventoryItems'] : [])))
+    ).then(json =>
+      dispatch(
+        receiveInventoryItems(json, groupBySite ? ['inventoryItems'] : [])
+      )
+    )
   }
 }
 
 function startAddingInventory(details) {
   return {
     type: types.ADD_INVENTORY,
-    details
+    details,
   }
 }
 
 function startRemovingInventory(details) {
   return {
     type: types.REMOVE_INVENTORY,
-    details
+    details,
   }
 }
 
 function startTransferringInventory(details) {
   return {
     type: types.TRANSFER_INVENTORY,
-    details
+    details,
   }
 }
 
 function startReceivingInventory(details) {
   return {
     type: types.RECEIVE_INVENTORY,
-    details
+    details,
   }
 }
 
@@ -163,54 +182,58 @@ export function adjustInventoryLevels(operation, inventoryItem) {
     dateAdjustedTo: startOfToday(),
     toSiteId: -1,
     fromSiteId: -1,
-    reasonId: -1
+    reasonId: -1,
   }
   let operationAdjustmentDetails = {}
   if (operation === addOperation) {
     operationAdjustmentDetails = {
-      toSiteId: inventoryItem.get('siteId')
+      toSiteId: inventoryItem.get('siteId'),
     }
   }
   if (operation === removeOperation) {
     operationAdjustmentDetails = {
-      fromSiteId: inventoryItem.get('siteId')
+      fromSiteId: inventoryItem.get('siteId'),
     }
   }
   if (operation === transferOperation) {
     operationAdjustmentDetails = {
-      fromSiteId: inventoryItem.get('siteId')
+      fromSiteId: inventoryItem.get('siteId'),
     }
   }
   if (operation === receiveOperation) {
     operationAdjustmentDetails = {
       fromSiteId: inventoryItem.get('inTransitFromSiteId'),
       toSiteId: inventoryItem.get('siteId'),
-      quantity: inventoryItem.get('quantityOnHand')
+      quantity: inventoryItem.get('quantityOnHand'),
     }
   }
-  return dispatch => dispatch({
-    type: types.ADJUST_INVENTORY_LEVELS,
-    adjustmentDetails: {
-      ...adjustmentDetails,
-      ...operationAdjustmentDetails
-    },
-    operation
-  })
+  return dispatch =>
+    dispatch({
+      type: types.ADJUST_INVENTORY_LEVELS,
+      adjustmentDetails: {
+        ...adjustmentDetails,
+        ...operationAdjustmentDetails,
+      },
+      operation,
+    })
 }
 
 export function changeAdjustmentConsumable(consumable) {
   const expiresOn = startOfToday()
   const adjustmentConsumableDetails = {
     consumableId: consumable.get('id'),
-    expiresOn: consumable.get('canExpire') === 1 ? new Date(expiresOn) : undefined,
+    expiresOn: consumable.get('canExpire') === 1
+      ? new Date(expiresOn)
+      : undefined,
     canExpire: consumable.get('canExpire') === 1,
     consumableName: consumable.get('name'),
-    unitShortName: consumable.get('unitShortName')
+    unitShortName: consumable.get('unitShortName'),
   }
-  return dispatch => dispatch({
-    type: types.CHANGE_ADJUSTMENT_CONSUMABLE,
-    adjustmentConsumableDetails
-  })
+  return dispatch =>
+    dispatch({
+      type: types.CHANGE_ADJUSTMENT_CONSUMABLE,
+      adjustmentConsumableDetails,
+    })
 }
 
 export function addInventoryItem() {
@@ -230,18 +253,20 @@ export function addInventoryItem() {
     dateAdjustedTo: startOfToday(),
     toSiteId: -1,
     fromSiteId: -1,
-    reasonId: -1
+    reasonId: -1,
   }
-  return dispatch => dispatch({
-    type: types.ADD_INVENTORY_ITEM,
-    adjustmentDetails
-  })
+  return dispatch =>
+    dispatch({
+      type: types.ADD_INVENTORY_ITEM,
+      adjustmentDetails,
+    })
 }
 
 export function finishAdjustingInventoryLevels() {
-  return dispatch => dispatch({
-    type: types.FINISH_ADJUSTING_INVENTORY_LEVELS
-  })
+  return dispatch =>
+    dispatch({
+      type: types.FINISH_ADJUSTING_INVENTORY_LEVELS,
+    })
 }
 
 export function addInventory(inventoryItemId, data) {
@@ -258,14 +283,16 @@ export function addInventory(inventoryItemId, data) {
             ...defineMessages({
               title: {
                 id: 'errorResponseMessages.addInventory.PUT.default.title',
-                defaultMessage: 'Adding Inventory Failed'
-              }
+                defaultMessage: 'Adding Inventory Failed',
+              },
             }),
-            onClose: () => dispatch(adjustInventoryLevels(addOperation, inventoryItem))
-          })
-        }
-      }).then(() => dispatch(finishAdjustingInventoryLevels()))
-        .catch((err) => {
+            onClose: () =>
+              dispatch(adjustInventoryLevels(addOperation, inventoryItem)),
+          }),
+        },
+      })
+        .then(() => dispatch(finishAdjustingInventoryLevels()))
+        .catch(err => {
           dispatch(finishAdjustingInventoryLevels())
           throw err
         })
@@ -278,14 +305,15 @@ export function addInventory(inventoryItemId, data) {
           ...defineMessages({
             title: {
               id: 'errorResponseMessages.addInventory.POST.default.title',
-              defaultMessage: 'Adding Inventory Failed'
+              defaultMessage: 'Adding Inventory Failed',
             },
           }),
-          onClose: () => dispatch(addInventoryItem())
-        })
-      }
-    }).then(() => dispatch(finishAdjustingInventoryLevels()))
-      .catch((err) => {
+          onClose: () => dispatch(addInventoryItem()),
+        }),
+      },
+    })
+      .then(() => dispatch(finishAdjustingInventoryLevels()))
+      .catch(err => {
         dispatch(finishAdjustingInventoryLevels())
         throw err
       })
@@ -305,14 +333,16 @@ export function removeInventory(inventoryItemId, data) {
           ...defineMessages({
             title: {
               id: 'errorResponseMessages.removeInventory.PUT.default.title',
-              defaultMessage: 'Removing Inventory Failed'
+              defaultMessage: 'Removing Inventory Failed',
             },
           }),
-          onClose: () => dispatch(adjustInventoryLevels(removeOperation, inventoryItem))
-        })
-      }
-    }).then(() => dispatch(finishAdjustingInventoryLevels()))
-      .catch((err) => {
+          onClose: () =>
+            dispatch(adjustInventoryLevels(removeOperation, inventoryItem)),
+        }),
+      },
+    })
+      .then(() => dispatch(finishAdjustingInventoryLevels()))
+      .catch(err => {
         dispatch(finishAdjustingInventoryLevels())
         throw err
       })
@@ -332,14 +362,16 @@ export function transferInventory(inventoryItemId, data) {
           ...defineMessages({
             title: {
               id: 'errorResponseMessages.transferInventory.PUT.default.title',
-              defaultMessage: 'Transferring Inventory Failed'
+              defaultMessage: 'Transferring Inventory Failed',
             },
           }),
-          onClose: () => dispatch(adjustInventoryLevels(transferOperation, inventoryItem))
-        })
-      }
-    }).then(() => dispatch(finishAdjustingInventoryLevels()))
-      .catch((err) => {
+          onClose: () =>
+            dispatch(adjustInventoryLevels(transferOperation, inventoryItem)),
+        }),
+      },
+    })
+      .then(() => dispatch(finishAdjustingInventoryLevels()))
+      .catch(err => {
         dispatch(finishAdjustingInventoryLevels())
         throw err
       })
@@ -359,14 +391,16 @@ export function receiveInventory(inventoryItemId, data) {
           ...defineMessages({
             title: {
               id: 'errorResponseMessages.receiveInventory.PUT.default.title',
-              defaultMessage: 'Receiving Inventory Failed'
+              defaultMessage: 'Receiving Inventory Failed',
             },
           }),
-          onClose: () => dispatch(adjustInventoryLevels(receiveOperation, inventoryItem))
-        })
-      }
-    }).then(() => dispatch(finishAdjustingInventoryLevels()))
-      .catch((err) => {
+          onClose: () =>
+            dispatch(adjustInventoryLevels(receiveOperation, inventoryItem)),
+        }),
+      },
+    })
+      .then(() => dispatch(finishAdjustingInventoryLevels()))
+      .catch(err => {
         dispatch(finishAdjustingInventoryLevels())
         throw err
       })
@@ -392,12 +426,12 @@ export const AdjustmentDetails = Immutable.Record({
   dateAdjustedTo: startOfToday(),
   toSiteId: -1,
   fromSiteId: -1,
-  reasonId: -1
+  reasonId: -1,
 })
 const InventoryAdjustment = Immutable.Record({
   updating: false,
   operation: null,
-  adjustmentDetails: new AdjustmentDetails()
+  adjustmentDetails: new AdjustmentDetails(),
 })
 const Inventory = Immutable.Record({
   inventoryAdjustment: new InventoryAdjustment(),
@@ -408,8 +442,8 @@ const Inventory = Immutable.Record({
     pageSize: 10,
     filters: Immutable.fromJS({ siteName: '', consumableId: null }),
     extraColumns: new Immutable.List(),
-    groupBy: new Immutable.List(['siteId'])
-  })
+    groupBy: new Immutable.List(['siteId']),
+  }),
 })
 
 const initialState = new Inventory()
@@ -417,32 +451,40 @@ const initialState = new Inventory()
 export default function inventoryItemsReducer(state = initialState, action) {
   switch (action.type) {
     case types.REQUEST_INVENTORY_ITEMS:
-      return state
-        .set('table', requestTable(state.table, action))
+      return state.set('table', requestTable(state.table, action))
     case types.RECEIVE_INVENTORY_ITEMS:
-      return state.withMutations((mutState) => {
-        mutState.set('items', receiveList(mutState.items, action.childrenPropertyPath, action.items))
-        mutState.set('table', receiveTableItems(mutState.table, action.total, action.extraColumns))
+      return state.withMutations(mutState => {
+        mutState.set(
+          'items',
+          receiveList(mutState.items, action.childrenPropertyPath, action.items)
+        )
+        mutState.set(
+          'table',
+          receiveTableItems(mutState.table, action.total, action.extraColumns)
+        )
       })
     case types.TOGGLE_GROUP_BY_SITE:
-      return state
-        .setIn(['table', 'groupBy'],
-          action.toggleOn ? new Immutable.List(['siteId']) : new Immutable.List([]))
+      return state.setIn(
+        ['table', 'groupBy'],
+        action.toggleOn
+          ? new Immutable.List(['siteId'])
+          : new Immutable.List([])
+      )
     case types.ADJUST_INVENTORY_LEVELS:
       return state.mergeDeepIn(['inventoryAdjustment'], {
         operation: action.operation,
-        adjustmentDetails: new AdjustmentDetails(action.adjustmentDetails)
+        adjustmentDetails: new AdjustmentDetails(action.adjustmentDetails),
       })
     case types.ADD_INVENTORY_ITEM:
       return state.mergeDeepIn(['inventoryAdjustment'], {
         operation: addOperation,
-        adjustmentDetails: new AdjustmentDetails(action.adjustmentDetails)
+        adjustmentDetails: new AdjustmentDetails(action.adjustmentDetails),
       })
     case types.FINISH_ADJUSTING_INVENTORY_LEVELS:
       return state.mergeDeepIn(['inventoryAdjustment'], {
         updating: false,
         operation: null,
-        adjustmentDetails: new AdjustmentDetails()
+        adjustmentDetails: new AdjustmentDetails(),
       })
     case types.ADD_INVENTORY:
     case types.REMOVE_INVENTORY:
@@ -450,7 +492,10 @@ export default function inventoryItemsReducer(state = initialState, action) {
     case types.RECEIVE_INVENTORY:
       return state.setIn(['inventoryAdjustment', 'updating'], true)
     case types.CHANGE_ADJUSTMENT_CONSUMABLE:
-      return state.mergeIn(['inventoryAdjustment', 'adjustmentDetails'], action.adjustmentConsumableDetails)
+      return state.mergeIn(
+        ['inventoryAdjustment', 'adjustmentDetails'],
+        action.adjustmentConsumableDetails
+      )
     default:
       return state
   }

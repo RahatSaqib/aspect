@@ -1,11 +1,7 @@
 import PropTypes from 'prop-types'
 import React, { PureComponent } from 'react'
 import { compose, setPropTypes, pure } from 'recompose'
-import {
-  injectIntl,
-  defineMessages,
-  intlShape
-} from 'react-intl'
+import { injectIntl, defineMessages, intlShape } from 'react-intl'
 import { bindActionCreators } from 'redux'
 import { connect } from 'react-redux'
 import { Link } from 'react-router-dom'
@@ -14,7 +10,14 @@ import Helmet from 'react-helmet'
 // Material-UI
 import Dialog from 'material-ui/Dialog'
 import LinearProgress from 'material-ui/LinearProgress'
-import { Table, TableBody, TableHeader, TableHeaderColumn, TableRow, TableRowColumn } from 'material-ui/Table'
+import {
+  Table,
+  TableBody,
+  TableHeader,
+  TableHeaderColumn,
+  TableRow,
+  TableRowColumn,
+} from 'material-ui/Table'
 import { Card, CardHeader, CardText } from 'material-ui/Card'
 import IconButton from 'material-ui/IconButton'
 import ModeEdit from 'material-ui/svg-icons/editor/mode-edit'
@@ -23,10 +26,7 @@ import ModeEdit from 'material-ui/svg-icons/editor/mode-edit'
 import { Unit } from '../../components/pureGrids'
 import { longNumericFormat } from '../../shared/utils/dateFormat'
 import isEditable from '../../shared/selectors/device'
-import {
-  fetchSingleDevice,
-  updateSingleDevice
-} from '../DeviceRedux'
+import { fetchSingleDevice, updateSingleDevice } from '../DeviceRedux'
 import { ReadOnlyField } from '../../components/shared/ReadOnlyFields'
 import JSONSchemaCard from '../../components/shared/JSONSchemaCard'
 import NavTitle from '../../globals/components/NavTitle'
@@ -37,109 +37,114 @@ import styles from './DeviceDetail.css'
 const messages = defineMessages({
   title: {
     id: 'pages.DeviceDetail.title',
-    defaultMessage: 'Device Detail'
+    defaultMessage: 'Device Detail',
   },
   editTooltip: {
     id: 'pages.DeviceDetail.editTooltip',
-    defaultMessage: 'Edit'
+    defaultMessage: 'Edit',
   },
   cancel: {
     id: 'pages.DeviceDetail.cancel',
-    defaultMessage: 'Cancel'
+    defaultMessage: 'Cancel',
   },
   update: {
     id: 'pages.DeviceDetail.update',
-    defaultMessage: 'Update'
+    defaultMessage: 'Update',
   },
   approved: {
     id: 'pages.DeviceDetail.approved',
-    defaultMessage: 'Approved'
+    defaultMessage: 'Approved',
   },
   fieldName: {
     id: 'pages.DeviceDetail.fieldName',
-    defaultMessage: 'Name'
+    defaultMessage: 'Name',
   },
   fieldShortname: {
     id: 'pages.DeviceDetail.fieldShortname',
-    defaultMessage: 'Shortname'
+    defaultMessage: 'Shortname',
   },
   fieldNotes: {
     id: 'pages.DeviceDetail.fieldNotes',
-    defaultMessage: 'Notes'
+    defaultMessage: 'Notes',
   },
   fieldSiteId: {
     id: 'pages.DeviceDetail.fieldSiteId',
-    defaultMessage: 'Site'
+    defaultMessage: 'Site',
   },
   fieldConfiguration: {
     id: 'pages.DeviceDetail.fieldConfiguration',
-    defaultMessage: 'Configuration'
+    defaultMessage: 'Configuration',
   },
   fieldOperationalData: {
     id: 'pages.DeviceDetail.fieldOperationalData',
-    defaultMessage: 'Operational Data'
+    defaultMessage: 'Operational Data',
   },
   fieldFirstApprovedOn: {
     id: 'pages.DeviceDetail.fieldFirstApprovedOn',
-    defaultMessage: 'First Approved On'
+    defaultMessage: 'First Approved On',
   },
   fieldFirstApprovedBy: {
     id: 'pages.DeviceDetail.fieldFirstApprovedBy',
-    defaultMessage: 'First Approved By'
+    defaultMessage: 'First Approved By',
   },
   fieldHostId: {
     id: 'pages.DeviceDetail.fieldHostId',
-    defaultMessage: 'Host Id'
+    defaultMessage: 'Host Id',
   },
   fieldSerial: {
     id: 'pages.DeviceDetail.fieldSerial',
-    defaultMessage: 'Serial'
+    defaultMessage: 'Serial',
   },
   fieldLastSeen: {
     id: 'pages.DeviceDetail.fieldLastSeen',
-    defaultMessage: 'Last Seen'
+    defaultMessage: 'Last Seen',
   },
   fieldFirstConnected: {
     id: 'pages.DeviceDetail.fieldFirstConnected',
-    defaultMessage: 'Connected'
+    defaultMessage: 'Connected',
   },
   fieldStatus: {
     id: 'pages.DeviceDetail.fieldStatus',
-    defaultMessage: 'Status'
+    defaultMessage: 'Status',
   },
   fieldTotalNumberOfTests: {
     id: 'pages.DeviceDetail.fieldTotalNumberOfTests',
-    defaultMessage: 'Tests'
+    defaultMessage: 'Tests',
   },
   nestedDataSubtitle: {
     id: 'pages.DeviceDetail.nestedDataSubtitle',
-    defaultMessage: '{count} fields'
-  }
+    defaultMessage: '{count} fields',
+  },
 })
 
 const enhance = compose(
   setPropTypes({
     match: PropTypes.shape({
       params: PropTypes.shape({
-        deviceId: PropTypes.string.isRequired
-      }).isRequired
+        deviceId: PropTypes.string.isRequired,
+      }).isRequired,
     }).isRequired,
   }),
   pure,
   injectIntl,
-  connect((state, props) => {
-    const device = state.device.items.byId.get(props.match.params.deviceId)
+  connect(
+    (state, props) => {
+      const device = state.device.items.byId.get(props.match.params.deviceId)
 
-    return {
-      editable: isEditable(state.user, device),
-      device,
-    }
-  }, dispatch => (
-    bindActionCreators({
-      fetchSingleDevice,
-      updateSingleDevice,
-    }, dispatch)
-  )),
+      return {
+        editable: isEditable(state.user, device),
+        device,
+      }
+    },
+    dispatch =>
+      bindActionCreators(
+        {
+          fetchSingleDevice,
+          updateSingleDevice,
+        },
+        dispatch
+      )
+  ),
   setPropTypes({
     intl: intlShape.isRequired,
     editable: PropTypes.bool.isRequired,
@@ -167,7 +172,7 @@ const enhance = compose(
     }),
     fetchSingleDevice: PropTypes.func.isRequired,
     updateSingleDevice: PropTypes.func.isRequired,
-  }),
+  })
 )
 
 export class DeviceDetail extends PureComponent {
@@ -178,8 +183,8 @@ export class DeviceDetail extends PureComponent {
       name: '',
       shortname: '',
       notes: '',
-      siteId: ''
-    }
+      siteId: '',
+    },
   }
 
   componentDidMount() {
@@ -201,41 +206,40 @@ export class DeviceDetail extends PureComponent {
   }
 
   handleFetchDevice = () => {
-    this.props.fetchSingleDevice(this.props.match.params.deviceId)
-      .then(() => {
-        const { device } = this.props
+    this.props.fetchSingleDevice(this.props.match.params.deviceId).then(() => {
+      const { device } = this.props
 
-        this.handleFormChange({
-          name: device.get('name') || '',
-          shortname: device.get('shortname') || '',
-          notes: device.get('notes') || '',
-          statusToken: device.get('statusToken') || '',
-          siteId: device.get('siteId'),
-          configurationData: device.get('configurationData')
-        })
+      this.handleFormChange({
+        name: device.get('name') || '',
+        shortname: device.get('shortname') || '',
+        notes: device.get('notes') || '',
+        statusToken: device.get('statusToken') || '',
+        siteId: device.get('siteId'),
+        configurationData: device.get('configurationData'),
       })
+    })
   }
 
-  handleFormatNestedSubtitle = data => (
-    this.props.intl.formatMessage(messages.nestedDataSubtitle, { count: data.size })
-  )
+  handleFormatNestedSubtitle = data =>
+    this.props.intl.formatMessage(messages.nestedDataSubtitle, {
+      count: data.size,
+    })
 
   handleFormChange = values => this.setState({ values })
 
-  handleSubmit = (data) => {
+  handleSubmit = data => {
     const { device } = this.props
 
-    return this.props.updateSingleDevice(device.get('id'), {
-      ...data,
-      configurationData: data.configurationData.toJS()
-    })
+    return this.props
+      .updateSingleDevice(device.get('id'), {
+        ...data,
+        configurationData: data.configurationData.toJS(),
+      })
       .then(this.handleToggleEditDialog)
   }
 
   renderProgress() {
-    return (
-      <LinearProgress />
-    )
+    return <LinearProgress />
   }
 
   renderEditButtonWithDialog() {
@@ -253,10 +257,9 @@ export class DeviceDetail extends PureComponent {
       statusToken: formatMessage(messages.approved),
       configuration: formatMessage(messages.fieldConfiguration),
       cancel: formatMessage(messages.cancel),
-      update: formatMessage(messages.update)
+      update: formatMessage(messages.update),
     }
-    const dataSchema = device
-      .getIn(['deviceType', 'configurationDataSchema'])
+    const dataSchema = device.getIn(['deviceType', 'configurationDataSchema'])
 
     return (
       <div>
@@ -289,39 +292,46 @@ export class DeviceDetail extends PureComponent {
     }
 
     // get date for current locale, 'date' - is a Date object or string value in DateTime format
-    const getFormattedDate = date => (date !== null && date !== '' && isFinite(new Date(date)) ? formatDate(date) : date)
+    const getFormattedDate = date =>
+      date !== null && date !== '' && isFinite(new Date(date))
+        ? formatDate(date)
+        : date
 
     const configurationDataSchema = device
       .getIn(['deviceType', 'configurationDataSchema'])
-      .sortBy((value, key) => `${value.get('type') !== 'object' ? '_' : ''}${key}`)
+      .sortBy(
+        (value, key) => `${value.get('type') !== 'object' ? '_' : ''}${key}`
+      )
 
-    const formatDeviceOperationStartedOn = startedOn => (
+    const formatDeviceOperationStartedOn = startedOn =>
       formatDate(startedOn, longNumericFormat)
-    )
     const formatDeviceOperationValue = (properties, value) => {
       switch (properties.get('type')) {
-        case 'number': return `${value.toFixed(properties.get('decimals'))}`
-        default: return value
+        case 'number':
+          return `${value.toFixed(properties.get('decimals'))}`
+        default:
+          return value
       }
     }
-    const formatDeviceOperationData = (properties, value) => ([
-      properties.get('prefix'),
-      formatDeviceOperationValue(properties, value),
-      properties.get('suffix')
-    ].join(''))
+    const formatDeviceOperationData = (properties, value) =>
+      [
+        properties.get('prefix'),
+        formatDeviceOperationValue(properties, value),
+        properties.get('suffix'),
+      ].join('')
 
     const shortname = device.get('shortname')
 
     return (
       <div>
-        { /* IDs and site/results */ }
+        {/* IDs and site/results */}
         <Card>
           <CardText>
             <Unit sm="5-6" md="11-12">
               <ReadOnlyField
                 label=""
                 value={device.get('name')}
-                format={v =>
+                format={v => (
                   <div>
                     <h1 className={styles.Name}>
                       {v} {shortname && <small>({shortname})</small>}
@@ -335,28 +345,37 @@ export class DeviceDetail extends PureComponent {
                       </Link>
                     </div>
                     <div className={styles.StatusText}>
-                      {formatMessage(messages.fieldLastSeen)} {formatRelative(device.get('lastSeen'))}
+                      {formatMessage(messages.fieldLastSeen)}
+                      {' '}
+                      {formatRelative(device.get('lastSeen'))}
                       &nbsp;•&nbsp;
-                      {formatMessage(messages.fieldFirstConnected)} {formatRelative(device.get('createdOn'))}
+                      {formatMessage(messages.fieldFirstConnected)}
+                      {' '}
+                      {formatRelative(device.get('createdOn'))}
                     </div>
                     <div className={styles.StatusText}>
-                      {formatMessage(messages.fieldStatus)}: {device.get('status')}
+                      {formatMessage(messages.fieldStatus)}
+                      :
+                      {' '}
+                      {device.get('status')}
                       &nbsp;•&nbsp;
                       <Link to="/result">
-                        {device.get('totalTests')} {formatMessage(messages.fieldTotalNumberOfTests)}
+                        {device.get('totalTests')}
+                        {' '}
+                        {formatMessage(messages.fieldTotalNumberOfTests)}
                       </Link>
                     </div>
                   </div>
-                }
+                )}
               />
             </Unit>
             <Unit sm="1-6" md="1-12">
-              { /* Dialog for DeviceDetailModalForm */ }
+              {/* Dialog for DeviceDetailModalForm */}
               {this.renderEditButtonWithDialog()}
             </Unit>
           </CardText>
         </Card>
-        { /* Graphs */ }
+        {/* Graphs */}
         <Card expanded>
           <CardText style={{ paddingTop: 10 }} className={styles.CardText}>
             <Unit sm="1-1" md="1-2">
@@ -364,9 +383,13 @@ export class DeviceDetail extends PureComponent {
               <ReadOnlyField
                 label=""
                 value
-                format={() =>
-                  <img alt="utilization rate" src={require('./utilization_rate.png')} style={{ width: '100%' }} />
-                }
+                format={() => (
+                  <img
+                    alt="utilization rate"
+                    src={require('./utilization_rate.png')}
+                    style={{ width: '100%' }}
+                  />
+                )}
               />
             </Unit>
             <Unit sm="1-1" md="1-2">
@@ -374,14 +397,18 @@ export class DeviceDetail extends PureComponent {
               <ReadOnlyField
                 label=""
                 value
-                format={() =>
-                  <img alt="error rate" src={require('./error_rates.png')} style={{ width: '100%' }} />
-                }
+                format={() => (
+                  <img
+                    alt="error rate"
+                    src={require('./error_rates.png')}
+                    style={{ width: '100%' }}
+                  />
+                )}
               />
             </Unit>
           </CardText>
         </Card>
-        { /* Dialog for demo purpose */ }
+        {/* Dialog for demo purpose */}
         <Dialog
           modal={false}
           open={this.state.isDemoDialogOpen}
@@ -389,7 +416,7 @@ export class DeviceDetail extends PureComponent {
         >
           Not yet implemented
         </Dialog>
-        { /* Contacts */ }
+        {/* Contacts */}
         <Card initiallyExpanded>
           <CardHeader title="Contacts" actAsExpander showExpandableButton />
           <CardText actAsExpander expandable style={{ paddingTop: 10 }}>
@@ -404,39 +431,60 @@ export class DeviceDetail extends PureComponent {
             ))}
           </CardText>
         </Card>
-        { /* Calibration */ }
+        {/* Calibration */}
         <Card onClick={this.handleToggleDialog} expanded>
           <CardHeader title="Calibration" actAsExpander showExpandableButton />
           <CardText style={{ paddingTop: 10 }}>
             Last calibrated 12/1/2016
           </CardText>
         </Card>
-        { /* Warranty */ }
+        {/* Warranty */}
         <Card onClick={this.handleToggleDialog} expanded>
           <CardHeader title="Warranty" actAsExpander showExpandableButton />
           <CardText style={{ paddingTop: 10 }}>
             Expires 12/31/2018
           </CardText>
         </Card>
-        { /* Technical information */ }
+        {/* Technical information */}
         <Card initiallyExpanded>
-          <CardHeader title="Technical information" actAsExpander showExpandableButton />
-          <CardText actAsExpander expandable style={{ paddingTop: 10 }} className={styles.CardText}>
+          <CardHeader
+            title="Technical information"
+            actAsExpander
+            showExpandableButton
+          />
+          <CardText
+            actAsExpander
+            expandable
+            style={{ paddingTop: 10 }}
+            className={styles.CardText}
+          >
             <Unit sm="1-2" md="1-3" lg="1-4">
-              <ReadOnlyField label={formatMessage(messages.fieldFirstApprovedOn)} value={getFormattedDate(device.get('approvedOn'))} />
+              <ReadOnlyField
+                label={formatMessage(messages.fieldFirstApprovedOn)}
+                value={getFormattedDate(device.get('approvedOn'))}
+              />
             </Unit>
             <Unit sm="1-2" md="1-3" lg="1-4">
-              <ReadOnlyField label={formatMessage(messages.fieldFirstApprovedBy)} value={device.get('approvedBy')} />
+              <ReadOnlyField
+                label={formatMessage(messages.fieldFirstApprovedBy)}
+                value={device.get('approvedBy')}
+              />
             </Unit>
             <Unit sm="1-2" md="1-3" lg="1-4">
-              <ReadOnlyField label={formatMessage(messages.fieldHostId)} value={device.get('hostId')} />
+              <ReadOnlyField
+                label={formatMessage(messages.fieldHostId)}
+                value={device.get('hostId')}
+              />
             </Unit>
             <Unit sm="1-2" md="1-3" lg="1-4">
-              <ReadOnlyField label={formatMessage(messages.fieldSerial)} value={device.get('serial')} />
+              <ReadOnlyField
+                label={formatMessage(messages.fieldSerial)}
+                value={device.get('serial')}
+              />
             </Unit>
           </CardText>
         </Card>
-        { /* Configuration */ }
+        {/* Configuration */}
         <JSONSchemaCard
           title={formatMessage(messages.fieldConfiguration)}
           renderField={field => <ReadOnlyField {...field} />}
@@ -444,32 +492,57 @@ export class DeviceDetail extends PureComponent {
           dataSchema={configurationDataSchema}
           data={device.get('configurationData')}
         />
-        { /* Operational Data */ }
+        {/* Operational Data */}
         <Card>
-          <CardHeader title="Device Operation Data" actAsExpander showExpandableButton />
+          <CardHeader
+            title="Device Operation Data"
+            actAsExpander
+            showExpandableButton
+          />
           <CardText actAsExpander expandable style={{ paddingTop: 10 }}>
             <Table selectable={false}>
               <TableHeader adjustForCheckbox={false} displaySelectAll={false}>
                 <TableRow>
-                  <TableHeaderColumn style={{ width: '10%' }}>ID</TableHeaderColumn>
+                  <TableHeaderColumn style={{ width: '10%' }}>
+                    ID
+                  </TableHeaderColumn>
                   <TableHeaderColumn>Started On</TableHeaderColumn>
-                  {device.getIn(['deviceType', 'deviceOperationSchema']).map(properties => (
-                    <TableHeaderColumn key={`dos${properties.get('title')}`}>{properties.get('title')}</TableHeaderColumn>
-                  )).valueSeq()}
+                  {device
+                    .getIn(['deviceType', 'deviceOperationSchema'])
+                    .map(properties => (
+                      <TableHeaderColumn key={`dos${properties.get('title')}`}>
+                        {properties.get('title')}
+                      </TableHeaderColumn>
+                    ))
+                    .valueSeq()}
                 </TableRow>
               </TableHeader>
               <TableBody displayRowCheckbox={false}>
                 {device.get('deviceOperations').map(deviceOperation => (
                   <TableRow key={deviceOperation.get('id')}>
-                    <TableRowColumn style={{ width: '10%' }}>{deviceOperation.get('id')}</TableRowColumn>
-                    <TableRowColumn>
-                      {formatDeviceOperationStartedOn(deviceOperation.get('startedOn'))}
+                    <TableRowColumn style={{ width: '10%' }}>
+                      {deviceOperation.get('id')}
                     </TableRowColumn>
-                    {device.getIn(['deviceType', 'deviceOperationSchema']).map((properties, key) => (
-                      <TableRowColumn key={`${deviceOperation.get('id')}${deviceOperation.getIn(['data', key])}`}>
-                        {formatDeviceOperationData(properties, deviceOperation.getIn(['data', key]))}
-                      </TableRowColumn>
-                    )).valueSeq()}
+                    <TableRowColumn>
+                      {formatDeviceOperationStartedOn(
+                        deviceOperation.get('startedOn')
+                      )}
+                    </TableRowColumn>
+                    {device
+                      .getIn(['deviceType', 'deviceOperationSchema'])
+                      .map((properties, key) => (
+                        <TableRowColumn
+                          key={`${deviceOperation.get('id')}${deviceOperation.getIn(
+                            ['data', key]
+                          )}`}
+                        >
+                          {formatDeviceOperationData(
+                            properties,
+                            deviceOperation.getIn(['data', key])
+                          )}
+                        </TableRowColumn>
+                      ))
+                      .valueSeq()}
                   </TableRow>
                 ))}
               </TableBody>
@@ -495,11 +568,9 @@ export class DeviceDetail extends PureComponent {
   renderPaper() {
     return (
       <div>
-        {
-          this.props.device && this.props.device.has('contacts') ?
-          this.renderContent() :
-          this.renderProgress()
-        }
+        {this.props.device && this.props.device.has('contacts')
+          ? this.renderContent()
+          : this.renderProgress()}
       </div>
     )
   }
@@ -510,7 +581,11 @@ export class DeviceDetail extends PureComponent {
 
     return (
       <div className={styles.ContentDetails}>
-        <Helmet title={formatMessage(messages.title)} titleTemplate="%s - Aspect" defaultTitle="Aspect" />
+        <Helmet
+          title={formatMessage(messages.title)}
+          titleTemplate="%s - Aspect"
+          defaultTitle="Aspect"
+        />
         <NavTitle title={formatMessage(messages.title)} />
         {this.renderPaper()}
         <br />

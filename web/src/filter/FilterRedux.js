@@ -15,7 +15,7 @@ export const types = {
 
 export const exportFormatTypes = {
   EXCEL: 'excel',
-  CSV: 'csv'
+  CSV: 'csv',
 }
 
 /*
@@ -24,39 +24,38 @@ export const exportFormatTypes = {
 export function configureListFilter(listConfig) {
   return {
     type: types.CONFIGURE_LIST_FILTER,
-    listConfig
+    listConfig,
   }
 }
 
 export function clearListFilter() {
   return {
-    type: types.CLEAR_LIST_FILTER
+    type: types.CLEAR_LIST_FILTER,
   }
 }
 
 export function changeListFilter(listFilter) {
   return {
     type: types.CHANGE_LIST_FILTER,
-    listFilter
+    listFilter,
   }
 }
-
 
 // -------------------------------
 export function askExportConfirmation(currentFormatType) {
   return {
     type: types.EXPORT_CONFIRMATION_ASK,
-    currentFormatType
+    currentFormatType,
   }
 }
 export function closeExportConfirmation() {
   return {
-    type: types.EXPORT_NOT_CONFIRMED
+    type: types.EXPORT_NOT_CONFIRMED,
   }
 }
 export function beginListExportProcessing(currentFormatType) {
   const args = {
-    currentFormatType
+    currentFormatType,
   }
   if (currentFormatType === exportFormatTypes.EXCEL) {
     args.processingExportExcel = true
@@ -66,7 +65,7 @@ export function beginListExportProcessing(currentFormatType) {
 
   return {
     type: types.EXPORT_BEGIN_PROCESSING,
-    args
+    args,
   }
 }
 
@@ -81,7 +80,7 @@ export function receivedExportResponse(currentFormatType, response) {
   return {
     type: types.EXPORT_RESPONSE_RECEIVED,
     args,
-    response
+    response,
   }
 }
 
@@ -104,7 +103,7 @@ const ListConfig = Immutable.Record({
   contactNameOrEmail: false,
   consumable: false,
   workflowStatus: false,
-  deviceStatus: false
+  deviceStatus: false,
 })
 
 export const ListFilter = Immutable.Record({
@@ -125,7 +124,7 @@ export const ListFilter = Immutable.Record({
   contactNameOrEmail: undefined,
   consumableId: undefined,
   workflowStatusId: undefined,
-  deviceStatusId: undefined
+  deviceStatusId: undefined,
 })
 
 const ListExport = Immutable.Record({
@@ -146,66 +145,71 @@ const initialState = new Filter()
 export default function filterReducer(state = initialState, action) {
   switch (action.type) {
     case types.CONFIGURE_LIST_FILTER:
-      return state
-      .withMutations((mutState) => {
+      return state.withMutations(mutState => {
         const nextListConfig = new ListConfig(action.listConfig)
         mutState.set('listConfig', nextListConfig)
 
         const deleteFromMap = (a, k) => a.delete(k)
 
-        const nextListFilter = nextListConfig
-          .reduce((acc, value, key) => { // eslint-disable-line array-callback-return
-            if (value) {
-              return acc
-            }
-            switch (key) {
-              case 'assayAndResultCategory':
-                return ['assayId', 'resultCategoryId'].reduce(deleteFromMap, acc)
-              case 'geography':
-                return ['countryId', 'stateId', 'lgaId'].reduce(deleteFromMap, acc)
-              case 'state':
-              case 'lga':
-                return acc
-              case 'date':
-                return ['minDate', 'maxDate'].reduce(deleteFromMap, acc)
-              case 'patientOrResearchId':
-              case 'partnerId':
-              case 'sampleId':
-              case 'sampleGroup':
-              case 'deviceName':
-              case 'siteName':
-              case 'sampleOriginSite':
-              case 'contactNameOrEmail':
-                return acc.delete(key)
-              case 'consumable':
-                return acc.delete('consumableId')
-              case 'workflowStatus':
-                return acc.delete('workflowStatusId')
-              case 'deviceStatus':
-                return acc.delete('deviceStatusId')
-              default:
-                invariant(false, 'Unreachable')
-            }
+        const nextListFilter = nextListConfig.reduce((acc, value, key) => {
+          // eslint-disable-line array-callback-return
+          if (value) {
             return acc
-          }, state.listFilter)
+          }
+          switch (key) {
+            case 'assayAndResultCategory':
+              return ['assayId', 'resultCategoryId'].reduce(deleteFromMap, acc)
+            case 'geography':
+              return ['countryId', 'stateId', 'lgaId'].reduce(
+                deleteFromMap,
+                acc
+              )
+            case 'state':
+            case 'lga':
+              return acc
+            case 'date':
+              return ['minDate', 'maxDate'].reduce(deleteFromMap, acc)
+            case 'patientOrResearchId':
+            case 'partnerId':
+            case 'sampleId':
+            case 'sampleGroup':
+            case 'deviceName':
+            case 'siteName':
+            case 'sampleOriginSite':
+            case 'contactNameOrEmail':
+              return acc.delete(key)
+            case 'consumable':
+              return acc.delete('consumableId')
+            case 'workflowStatus':
+              return acc.delete('workflowStatusId')
+            case 'deviceStatus':
+              return acc.delete('deviceStatusId')
+            default:
+              invariant(false, 'Unreachable')
+          }
+          return acc
+        }, state.listFilter)
 
         mutState.set('listFilter', nextListFilter)
       })
     case types.CLEAR_LIST_FILTER:
-      return state
-      .set('listFilter', initialState.listFilter)
+      return state.set('listFilter', initialState.listFilter)
     case types.CHANGE_LIST_FILTER:
-      return state
-      .mergeIn(['listFilter'], action.listFilter)
-
+      return state.mergeIn(['listFilter'], action.listFilter)
     // -----------
     // List Export actions
     // -----------
     case types.EXPORT_CONFIRMATION_ASK:
-      return state.mergeIn(['listExport'], { askingConfirmation: true, currentFormatType: action.currentFormatType })
+      return state.mergeIn(['listExport'], {
+        askingConfirmation: true,
+        currentFormatType: action.currentFormatType,
+      })
 
     case types.EXPORT_NOT_CONFIRMED:
-      return state.mergeIn(['listExport'], { askingConfirmation: false, currentFormatType: undefined })
+      return state.mergeIn(['listExport'], {
+        askingConfirmation: false,
+        currentFormatType: undefined,
+      })
 
     case types.EXPORT_BEGIN_PROCESSING:
       return state.mergeIn(['listExport'], action.args)

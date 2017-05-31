@@ -1,6 +1,5 @@
-export function isEditable(user/* TODO: add me back, site */) {
-  const notEditable = user
-    .permissions
+export function isEditable(user /* TODO: add me back, site */) {
+  const notEditable = user.permissions
     .intersect(['site:admin', 'site:edit'])
     .isEmpty()
 
@@ -10,7 +9,7 @@ export function isEditable(user/* TODO: add me back, site */) {
 export function latLng(site) {
   return {
     lat: site.get('latitude'),
-    lng: site.get('longitude')
+    lng: site.get('longitude'),
   }
 }
 
@@ -21,7 +20,7 @@ export function address(site) {
     lga: site.get('lga'),
     city: site.get('city'),
     address: site.get('street1'),
-    address2: site.get('street2')
+    address2: site.get('street2'),
   }
 }
 

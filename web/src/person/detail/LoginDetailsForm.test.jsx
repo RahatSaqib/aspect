@@ -6,16 +6,13 @@ import TextInput from '../../components/shared/TextInput'
 import StrongPasswordInput from '../../components/shared/StrongPasswordInput'
 
 describe('LoginDetailsForm module', () => {
-  const {
-    validate,
-    LoginDetailsForm
-  } = require('./LoginDetailsForm')
+  const { validate, LoginDetailsForm } = require('./LoginDetailsForm')
 
   describe('LoginDetailsForm component', () => {
     let props
     let LoginDetailsFormWrapper
 
-    const shallowRenderForm = (props) => {
+    const shallowRenderForm = props => {
       LoginDetailsFormWrapper = shallow(<LoginDetailsForm {...props} />)
     }
 
@@ -24,18 +21,20 @@ describe('LoginDetailsForm module', () => {
         pristine: true,
         invalid: true,
         loading: false,
-        initialValues: { },
+        initialValues: {},
         handleSubmit: () => {},
         intl: {
-          formatMessage: message => message.defaultMessage
-        }
+          formatMessage: message => message.defaultMessage,
+        },
       }
       shallowRenderForm(props)
     })
 
     it('Should be a form', () => {
       expect(LoginDetailsFormWrapper.node.type).toEqual('form')
-      expect(LoginDetailsFormWrapper.find('form').props().onSubmit).toEqual(props.handleSubmit)
+      expect(LoginDetailsFormWrapper.find('form').props().onSubmit).toEqual(
+        props.handleSubmit
+      )
     })
 
     it('Should contain fields for username and password', () => {
@@ -43,38 +42,44 @@ describe('LoginDetailsForm module', () => {
         name: 'username',
         label: 'Username',
         disabled: props.loading,
-        maxLength: '255'
+        maxLength: '255',
       })
-      expect(LoginDetailsFormWrapper.find(StrongPasswordInput).props()).toEqual({
+      expect(
+        LoginDetailsFormWrapper.find(StrongPasswordInput).props()
+      ).toEqual({
         name: 'newPassword',
         label: 'New Password',
         disabled: props.loading,
         maxLength: '100',
         anchorOrigin: { horizontal: 'right', vertical: 'top' },
-        targetOrigin: { horizontal: 'left', vertical: 'center' }
+        targetOrigin: { horizontal: 'left', vertical: 'center' },
       })
       expect(LoginDetailsFormWrapper.find(TextInput).at(1).props()).toEqual({
         name: 'confirmNewPassword',
         label: 'Confirm New Password',
         disabled: props.loading,
         maxLength: '100',
-        type: 'password'
+        type: 'password',
       })
     })
 
     it('Should disable all fields when form is loading', () => {
-      LoginDetailsFormWrapper.find(TextInput).forEach((textInput) => {
+      LoginDetailsFormWrapper.find(TextInput).forEach(textInput => {
         expect(textInput.props().disabled).toBe(false)
       })
-      LoginDetailsFormWrapper.find(StrongPasswordInput).forEach((strongPasswordInput) => {
+      LoginDetailsFormWrapper.find(
+        StrongPasswordInput
+      ).forEach(strongPasswordInput => {
         expect(strongPasswordInput.props().disabled).toBe(false)
       })
       props.loading = true
       shallowRenderForm(props)
-      LoginDetailsFormWrapper.find(TextInput).forEach((textInput) => {
+      LoginDetailsFormWrapper.find(TextInput).forEach(textInput => {
         expect(textInput.props().disabled).toBe(true)
       })
-      LoginDetailsFormWrapper.find(StrongPasswordInput).forEach((strongPasswordInput) => {
+      LoginDetailsFormWrapper.find(
+        StrongPasswordInput
+      ).forEach(strongPasswordInput => {
         expect(strongPasswordInput.props().disabled).toBe(true)
       })
     })
@@ -86,7 +91,7 @@ describe('LoginDetailsForm module', () => {
         ...submitButton.props(),
         label: 'Save',
         secondary: true,
-        disabled: props.loading || props.invalid || props.pristine
+        disabled: props.loading || props.invalid || props.pristine,
       })
     })
 
@@ -114,8 +119,8 @@ describe('LoginDetailsForm module', () => {
   describe('validate function', () => {
     const props = {
       intl: {
-        formatMessage: message => message.defaultMessage
-      }
+        formatMessage: message => message.defaultMessage,
+      },
     }
     let initialLoginDetails
 
@@ -123,18 +128,18 @@ describe('LoginDetailsForm module', () => {
       initialLoginDetails = Immutable.Map({
         username: 'admin',
         newPassword: null,
-        confirmNewPassword: null
+        confirmNewPassword: null,
       })
     })
 
     it('should validate that a username has been entered', () => {
       expect(validate(initialLoginDetails, props)).toEqual({
-        currentPassword: 'Please enter your current password to update your login details'
+        currentPassword: 'Please enter your current password to update your login details',
       })
       const loginDetails = initialLoginDetails.set('username', '')
       expect(validate(loginDetails, props)).toEqual({
         currentPassword: 'Please enter your current password to update your login details',
-        username: 'A username is required'
+        username: 'A username is required',
       })
     })
 
@@ -143,27 +148,27 @@ describe('LoginDetailsForm module', () => {
       expect(validate(loginDetails, props)).toEqual({
         currentPassword: 'Please enter your current password to update your login details',
         newPassword: 'The password needs to be at least 8 characters long',
-        confirmNewPassword: 'These passwords don\'t match'
+        confirmNewPassword: "These passwords don't match",
       })
 
       loginDetails = initialLoginDetails.merge({
         newPassword: 'lessInvalid',
-        confirmNewPassword: 'lessInvalid'
+        confirmNewPassword: 'lessInvalid',
       })
       expect(validate(loginDetails, props)).toEqual({
         currentPassword: 'Please enter your current password to update your login details',
-        newPassword: 'The password needs to contain at least one number or special character (%!$*...)'
+        newPassword: 'The password needs to contain at least one number or special character (%!$*...)',
       })
 
       loginDetails = initialLoginDetails.set('newPassword', 'valid123')
       expect(validate(loginDetails, props)).toEqual({
         currentPassword: 'Please enter your current password to update your login details',
-        confirmNewPassword: 'These passwords don\'t match'
+        confirmNewPassword: "These passwords don't match",
       })
 
       loginDetails = initialLoginDetails.set('confirmNewPassword', 'valid123')
       expect(validate(loginDetails, props)).toEqual({
-        currentPassword: 'Please enter your current password to update your login details'
+        currentPassword: 'Please enter your current password to update your login details',
       })
     })
 

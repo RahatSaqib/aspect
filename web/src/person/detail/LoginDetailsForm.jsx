@@ -12,12 +12,17 @@ import messages from './messages'
 import styles from './PersonDetail.css'
 
 export function LoginDetailsForm({
-  intl, handleSubmit, pristine, invalid, loading,
-  currentPasswordInputDialogOpen, openCurrentPasswordInputDialog,
-  closeCurrentPasswordInputDialog
+  intl,
+  handleSubmit,
+  pristine,
+  invalid,
+  loading,
+  currentPasswordInputDialogOpen,
+  openCurrentPasswordInputDialog,
+  closeCurrentPasswordInputDialog,
 }) {
   const { formatMessage } = intl
-  const onCurrentPasswordKeyPress = (event) => {
+  const onCurrentPasswordKeyPress = event => {
     if (event.key === 'Enter') {
       return handleSubmit()
     }
@@ -30,48 +35,71 @@ export function LoginDetailsForm({
   }
   const currentPasswordInputDialogActions = [
     <FlatButton
-      label={formatMessage(messages.cancelCurrentPassword)} secondary
-      disabled={loading} onTouchTap={closeCurrentPasswordInputDialog}
+      label={formatMessage(messages.cancelCurrentPassword)}
+      secondary
+      disabled={loading}
+      onTouchTap={closeCurrentPasswordInputDialog}
     />,
     <FlatButton
-      label={formatMessage(messages.submitCurrentPassword)} primary
-      disabled={pristine || invalid || loading} onTouchTap={handleSubmit}
-    />]
+      label={formatMessage(messages.submitCurrentPassword)}
+      primary
+      disabled={pristine || invalid || loading}
+      onTouchTap={handleSubmit}
+    />,
+  ]
   return (
     <form onSubmit={handleSubmit} className={styles.Form}>
       <div className={styles.Form__Content}>
         <section>
-          <TextInput name="username" label={formatMessage(messages.username)} disabled={loading} maxLength="255" />
+          <TextInput
+            name="username"
+            label={formatMessage(messages.username)}
+            disabled={loading}
+            maxLength="255"
+          />
           <br />
           <StrongPasswordInput
-            name="newPassword" label={formatMessage(messages.newPassword)}
-            disabled={loading} maxLength="100"
+            name="newPassword"
+            label={formatMessage(messages.newPassword)}
+            disabled={loading}
+            maxLength="100"
             anchorOrigin={{ horizontal: 'right', vertical: 'top' }}
             targetOrigin={{ horizontal: 'left', vertical: 'center' }}
           />
           <TextInput
-            name="confirmNewPassword" label={formatMessage(messages.confirmNewPassword)}
-            disabled={loading} maxLength="100" type="password"
+            name="confirmNewPassword"
+            label={formatMessage(messages.confirmNewPassword)}
+            disabled={loading}
+            maxLength="100"
+            type="password"
           />
         </section>
       </div>
       <div className={styles.Form__ActionRow}>
         <RaisedButton
-          disabled={pristine || invalid || loading} label={formatMessage(messages.save)}
-          secondary onTouchTap={handleSaveButtonClicked}
+          disabled={pristine || invalid || loading}
+          label={formatMessage(messages.save)}
+          secondary
+          onTouchTap={handleSaveButtonClicked}
         />
       </div>
       <Dialog
         title={formatMessage(messages.currentPasswordDialogHeader)}
-        actions={currentPasswordInputDialogActions} modal={false}
+        actions={currentPasswordInputDialogActions}
+        modal={false}
         open={currentPasswordInputDialogOpen || false}
         onRequestClose={closeCurrentPasswordInputDialog}
       >
         {formatMessage(messages.currentPasswordDialogMessage)}
         <TextInput
-          name="currentPassword" autoFocus fullWidth disabled={loading}
-          maxLength="100" style={{ marginRight: '0' }}
-          onKeyPress={onCurrentPasswordKeyPress} type="password"
+          name="currentPassword"
+          autoFocus
+          fullWidth
+          disabled={loading}
+          maxLength="100"
+          style={{ marginRight: '0' }}
+          onKeyPress={onCurrentPasswordKeyPress}
+          type="password"
         />
       </Dialog>
     </form>
@@ -86,14 +114,14 @@ LoginDetailsForm.propTypes = {
   intl: intlShape.isRequired,
   handleSubmit: PropTypes.func.isRequired,
   pristine: PropTypes.bool.isRequired,
-  invalid: PropTypes.bool.isRequired
+  invalid: PropTypes.bool.isRequired,
 }
 
 LoginDetailsForm.defaultProps = {
   loading: true,
   currentPasswordInputDialogOpen: false,
   openCurrentPasswordInputDialog: undefined,
-  closeCurrentPasswordInputDialog: undefined
+  closeCurrentPasswordInputDialog: undefined,
 }
 
 export function validate(loginDetails, props) {
@@ -109,11 +137,20 @@ export function validate(loginDetails, props) {
     if (loginDetails.get('newPassword')) {
       if (loginDetails.get('newPassword').trim().length < 8) {
         errors.newPassword = formatMessage(messages.newPasswordTooShort)
-      } else if (!/\d/.test(loginDetails.get('newPassword')) &&
-        !/(?=.*?[`~!@#$%^&*()\-=_+\\[\]{}/?,.<>])/.test(loginDetails.get('newPassword'))) {
-        errors.newPassword = formatMessage(messages.newPasswordMustContainANumberOrSpecialCharacter)
+      } else if (
+        !/\d/.test(loginDetails.get('newPassword')) &&
+        !/(?=.*?[`~!@#$%^&*()\-=_+\\[\]{}/?,.<>])/.test(
+          loginDetails.get('newPassword')
+        )
+      ) {
+        errors.newPassword = formatMessage(
+          messages.newPasswordMustContainANumberOrSpecialCharacter
+        )
       }
-      if (loginDetails.get('newPassword') !== loginDetails.get('confirmNewPassword')) {
+      if (
+        loginDetails.get('newPassword') !==
+        loginDetails.get('confirmNewPassword')
+      ) {
         errors.confirmNewPassword = formatMessage(messages.passwordsDoNotMatch)
       }
     }
@@ -126,5 +163,6 @@ export default _.flowRight(
   reduxForm({
     form: 'loginDetails',
     enableReinitialize: true,
-    validate
-  }))(LoginDetailsForm)
+    validate,
+  })
+)(LoginDetailsForm)
