@@ -150,6 +150,10 @@ const messages = defineMessages({
     id: 'pages.ResultDetail.nestedDataSubtitle',
     defaultMessage: '{count} fields'
   },
+  nullText: {
+    id: 'pages.ResultDetail.nullText',
+    defaultMessage: 'N/A'
+  },
   externalID: {
     id: 'pages.ResultDetail.externalID',
     defaultMessage: 'External Result ID'
@@ -332,6 +336,7 @@ export class ResultDetail extends PureComponent {
   renderContent() {
     const { result, intl: { formatMessage, formatDate, formatTime } } = this.props
     const assay = result.get('assay')
+    const date = result.get('endedOn')
 
     return (
       <div>
@@ -367,7 +372,12 @@ export class ResultDetail extends PureComponent {
               <ReadOnlyField label={formatMessage(messages.fieldPatientId)} value={result.get('patientId')} />
             </Unit>
             <Unit sm="1-2" md="1-2" lg="1-6">
-              <ReadOnlyField label={formatMessage(messages.fieldDate)} value={result.get('endedOn')} format={formatDate} />
+              <ReadOnlyField
+                label={formatMessage(messages.fieldDate)}
+                nullText={formatMessage(messages.nullText)}
+                value={date}
+                format={formatDate}
+              />
             </Unit>
             <ReadOnlyField
               label={formatMessage(messages.fieldDevice)}

@@ -61,6 +61,10 @@ const messages = defineMessages({
   filterTemplate: {
     id: 'pages.ResultList.filterTemplate',
     defaultMessage: 'Viewing <PATIENT_OR_RESEARCH_ID><SAMPLE_ORIGIN_SITE_ID><SAMPLE_ID><ASSAY> results <DATE><RESULT> from all sites<GEOGRAPHY><NAME> <WORKFLOWSTATUS>'
+  },
+  nullText: {
+    id: 'pages.ResultDetail.nullText',
+    defaultMessage: 'N/A'
   }
 })
 
@@ -139,7 +143,12 @@ export class ResultList extends PureComponent {
     const { intl } = this.props
     const { formatMessage, formatDate } = intl
     const columns = [
-      { db: 'endedOn', extraProps: { style: { width: '80px' } }, title: formatMessage(messages.endedOn), format: data => formatDate(data) },
+      {
+        db: 'endedOn',
+        extraProps: { style: { width: '80px' } },
+        title: formatMessage(messages.endedOn),
+        format: data => (data ? formatDate(data) : formatMessage(messages.nullText))
+      },
       { db: 'deviceName', title: formatMessage(messages.deviceName) },
       { db: 'sampleOriginSiteName', title: formatMessage(messages.sampleOriginSiteName) },
       { db: 'sampleId', title: formatMessage(messages.sampleId) },
