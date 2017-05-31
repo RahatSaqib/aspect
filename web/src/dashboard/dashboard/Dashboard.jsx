@@ -22,6 +22,9 @@ import NavTitle from '../../globals/components/NavTitle'
 import { showAcknowledgement } from '../../appNotification/AppNotificationRedux'
 import DashboardTB from './DashboardTB'
 import DashboardHCV from './DashboardHCV'
+import DashboardDevicesErrorRates from './DashboardDevicesErrorRates'
+import DashboardSuppliesRunningLow from './DashboardSuppliesRunningLow'
+import DashboardSuppliesExpiringSoon from './DashboardSuppliesExpiringSoon'
 import styles from './Dashboard.css'
 import { fetchDashboardHome } from '../DashboardRedux'
 
@@ -196,7 +199,13 @@ export class Dashboard extends PureComponent {
                       </small>
                     </h3>}
                   <div>
+                    <h4>Error Rates</h4>
                     <Link to="/dashboard/manage-devices">
+                      <DashboardDevicesErrorRates
+                        width={180}
+                        height={280}
+                        margin={{ top: 0, right: 0, bottom: 0, left: 0 }}
+                      />
                       <img alt="devices" src={require('./devices.png')} />
                     </Link>
                   </div>
@@ -206,6 +215,26 @@ export class Dashboard extends PureComponent {
                     Supplies<small> (2 disposable types at 24 sites)</small>
                   </h3>
                   <div>
+                    <Unit sm="1-2">
+                      <h4>Running Low</h4>
+                      <Link to="/dashboard/manage-supplies">
+                        <DashboardSuppliesRunningLow
+                          width={100}
+                          height={280}
+                          margin={{ top: 0, right: 0, bottom: 0, left: 0 }}
+                        />
+                      </Link>
+                    </Unit>
+                    <Unit sm="1-2">
+                      <h4>Expiring Soon</h4>
+                      <Link to="/dashboard/manage-supplies">
+                        <DashboardSuppliesExpiringSoon
+                          width={100}
+                          height={280}
+                          margin={{ top: 0, right: 0, bottom: 0, left: 0 }}
+                        />
+                      </Link>
+                    </Unit>
                     <Link to="/dashboard/manage-supplies">
                       <img alt="supplies" src={require('./supplies.png')} />
                     </Link>
