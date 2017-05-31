@@ -162,7 +162,6 @@ export class Dashboard extends PureComponent {
                         height={180}
                         margin={{ top: 0, right: 0, bottom: 30, left: 30 }}
                       />
-                      <img alt="tb" src={require('./TB.png')} />
                     </Link>
                   </div>
                 </Unit>
@@ -177,7 +176,6 @@ export class Dashboard extends PureComponent {
                         height={180}
                         margin={{ top: 0, right: 0, bottom: 30, left: 30 }}
                       />
-                      <img alt="hcv" src={require('./HCV.png')} />
                     </Link>
                   </div>
                 </Unit>
@@ -206,7 +204,6 @@ export class Dashboard extends PureComponent {
                         height={280}
                         margin={{ top: 0, right: 0, bottom: 0, left: 0 }}
                       />
-                      <img alt="devices" src={require('./devices.png')} />
                     </Link>
                   </div>
                 </Unit>
@@ -235,9 +232,6 @@ export class Dashboard extends PureComponent {
                         />
                       </Link>
                     </Unit>
-                    <Link to="/dashboard/manage-supplies">
-                      <img alt="supplies" src={require('./supplies.png')} />
-                    </Link>
                   </div>
                 </Unit>
               </div>
