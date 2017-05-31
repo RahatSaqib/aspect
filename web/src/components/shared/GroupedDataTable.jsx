@@ -55,8 +55,8 @@ export default class GroupedDataTable extends PureComponent {
       total: PropTypes.number.isRequired
     }).isRequired,
     columns: PropTypes.arrayOf(PropTypes.shape({
-      db: PropTypes.string.isRequired,
-      title: PropTypes.string.isRequired,
+      db: PropTypes.string,
+      title: PropTypes.string,
       extraProps: PropTypes.objectOf(PropTypes.any)
     })).isRequired,
     intl: intlShape.isRequired,

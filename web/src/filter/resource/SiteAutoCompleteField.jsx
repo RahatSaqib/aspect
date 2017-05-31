@@ -16,9 +16,9 @@ const filter = AutoComplete.caseInsensitiveFilter
 const enhance = compose(
   pure,
   setPropTypes({
-    onChangeSite: PropTypes.func.isRequired,
+    onChangeSite: PropTypes.func,
     itemTextGetter: PropTypes.func.isRequired,
-    value: PropTypes.string
+    value: PropTypes.string,
   }),
   connect(state => ({
     siteItemsById: state.site.items.byId
@@ -101,9 +101,11 @@ export function SiteAutoCompleteField({
   onSiteAutoCompleteKeyUp,
   ...restProps
 }) {
+  const finalProps = Object.assign({}, restProps)
+  delete finalProps.onChangeSiteId
   return (
     <AutoComplete
-      {...restProps}
+      {...finalProps}
       dataSource={siteList}
       filter={filter}
       searchText={value}
