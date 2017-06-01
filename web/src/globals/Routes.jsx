@@ -48,8 +48,14 @@ const Routes = () => (
 
       <LoggedInLayout exact path="/dashboard" component={LoadableDashboard} />
       <LoggedInLayout path="/dashboard/patient-care" component={PatientCare} />
-      <LoggedInLayout path="/dashboard/manage-devices" component={ManageDevices} />
-      <LoggedInLayout path="/dashboard/manage-supplies" component={ManageSupplies} />
+      <LoggedInLayout
+        path="/dashboard/manage-devices"
+        component={ManageDevices}
+      />
+      <LoggedInLayout
+        path="/dashboard/manage-supplies"
+        component={ManageSupplies}
+      />
       <LoggedInLayout path="/dashboard/maintenance" component={Maintenance} />
 
       <LoggedInLayout path="/demo/device/:deviceId" component={DeviceDemo} />
@@ -74,7 +80,10 @@ const Routes = () => (
       <LoggedInLayout exact path="/person" component={PersonList} />
       <LoggedInLayout path="/person/:personId" component={PersonDetail} />
 
-      <LoggedInLayout path="/account-details/current" component={AccountDetails} />
+      <LoggedInLayout
+        path="/account-details/current"
+        component={AccountDetails}
+      />
 
       <LoggedInLayout exact path="/inventory" component={InventoryItemsList} />
 
@@ -82,9 +91,8 @@ const Routes = () => (
 
       <LoggedInLayout exact path="/report" component={ReportList} />
 
-      {process.env.NODE_ENV !== 'production' && (
-        <PlainLayout path="/styleguide" component={StyleguideMain} />
-      )}
+      {process.env.NODE_ENV !== 'production' &&
+        <PlainLayout path="/styleguide" component={StyleguideMain} />}
 
       <PlainLayout component={NotFound} />
     </Switch>

@@ -9,13 +9,13 @@ describe('recomposeForm module', () => {
     const validate = () => ({})
     const mockEvent = {
       preventDefault() {},
-      stopPropagation() {}
+      stopPropagation() {},
     }
 
     it('should render WrappedComponent', () => {
       const DecoratedComponent = recomposeForm({
         fields: ['name', 'email'],
-        validate
+        validate,
       })(() => <div />)
       const ComponentWrapper = shallow(
         <DecoratedComponent values={initialValues} />
@@ -28,8 +28,8 @@ describe('recomposeForm module', () => {
       let innerProps
       const DecoratedComponent = recomposeForm({
         fields: ['name', 'email'],
-        validate
-      })((props) => {
+        validate,
+      })(props => {
         innerProps = props
         return <div />
       })
@@ -42,7 +42,7 @@ describe('recomposeForm module', () => {
         pristine: true,
         valid: true,
         submitting: false,
-        submitSucceed: false
+        submitSucceed: false,
       })
     })
 
@@ -50,8 +50,8 @@ describe('recomposeForm module', () => {
       let innerProps
       const DecoratedComponent = recomposeForm({
         fields: ['name', 'email'],
-        validate
-      })((props) => {
+        validate,
+      })(props => {
         innerProps = props
         return <div />
       })
@@ -62,11 +62,11 @@ describe('recomposeForm module', () => {
       expect(ComponentWrapper.find('div').length).toEqual(1)
       expect(innerProps.meta.name).toEqual({
         touched: false,
-        error: null
+        error: null,
       })
       expect(innerProps.meta.email).toEqual({
         touched: false,
-        error: null
+        error: null,
       })
     })
 
@@ -74,8 +74,8 @@ describe('recomposeForm module', () => {
       let innerProps
       const DecoratedComponent = recomposeForm({
         fields: ['name', 'email'],
-        validate
-      })((props) => {
+        validate,
+      })(props => {
         innerProps = props
         return <div />
       })
@@ -92,8 +92,8 @@ describe('recomposeForm module', () => {
         let innerProps
         const DecoratedComponent = recomposeForm({
           fields: ['name', 'email'],
-          validate
-        })((props) => {
+          validate,
+        })(props => {
           innerProps = props
           return <div />
         })
@@ -109,7 +109,7 @@ describe('recomposeForm module', () => {
           pristine: true,
           valid: true,
           submitting: false,
-          submitSucceed: false
+          submitSucceed: false,
         })
         expect(typeof innerProps.handleSubmit).toBe('function')
         innerProps.handleSubmit(mockEvent)
@@ -118,18 +118,17 @@ describe('recomposeForm module', () => {
           pristine: false,
           valid: true,
           submitting: true,
-          submitSucceed: false
+          submitSucceed: false,
         })
 
-        return new Promise(resolve => setTimeout(resolve, 50))
-          .then(() => {
-            expect(innerProps.form).toEqual({
-              pristine: true,
-              valid: true,
-              submitting: false,
-              submitSucceed: true
-            })
+        return new Promise(resolve => setTimeout(resolve, 50)).then(() => {
+          expect(innerProps.form).toEqual({
+            pristine: true,
+            valid: true,
+            submitting: false,
+            submitSucceed: true,
           })
+        })
       })
     })
 
@@ -138,8 +137,8 @@ describe('recomposeForm module', () => {
         let innerProps
         const DecoratedComponent = recomposeForm({
           fields: ['name', 'email'],
-          validate
-        })((props) => {
+          validate,
+        })(props => {
           innerProps = props
           return <div />
         })
@@ -155,7 +154,7 @@ describe('recomposeForm module', () => {
           pristine: true,
           valid: true,
           submitting: false,
-          submitSucceed: false
+          submitSucceed: false,
         })
         expect(typeof innerProps.handleSubmit).toBe('function')
         innerProps.handleSubmit(mockEvent)
@@ -164,18 +163,17 @@ describe('recomposeForm module', () => {
           pristine: false,
           valid: true,
           submitting: true,
-          submitSucceed: false
+          submitSucceed: false,
         })
 
-        return new Promise(resolve => setTimeout(resolve, 50))
-          .then(() => {
-            expect(innerProps.form).toEqual({
-              pristine: false,
-              valid: false,
-              submitting: false,
-              submitSucceed: false
-            })
+        return new Promise(resolve => setTimeout(resolve, 50)).then(() => {
+          expect(innerProps.form).toEqual({
+            pristine: false,
+            valid: false,
+            submitting: false,
+            submitSucceed: false,
           })
+        })
       })
     })
 
@@ -183,8 +181,8 @@ describe('recomposeForm module', () => {
       let innerProps
       const DecoratedComponent = recomposeForm({
         fields: ['name', 'email'],
-        validate
-      })((props) => {
+        validate,
+      })(props => {
         innerProps = props
         return <div />
       })
@@ -202,16 +200,13 @@ describe('recomposeForm module', () => {
       const handleChange = sinon.spy()
       const DecoratedComponent = recomposeForm({
         fields: ['name', 'email'],
-        validate
-      })((props) => {
+        validate,
+      })(props => {
         innerProps = props
         return <div />
       })
       const ComponentWrapper = shallow(
-        <DecoratedComponent
-          values={initialValues}
-          onChange={handleChange}
-        />
+        <DecoratedComponent values={initialValues} onChange={handleChange} />
       )
 
       expect(ComponentWrapper.find('div').length).toEqual(1)
@@ -219,7 +214,7 @@ describe('recomposeForm module', () => {
       expect(handleChange.called).toBe(false)
 
       innerProps.onChangeName({
-        target: { value: 'Jeremy' }
+        target: { value: 'Jeremy' },
       })
       expect(handleChange.called).toBe(true)
     })
@@ -236,31 +231,28 @@ describe('recomposeForm module', () => {
               errors.name = 'Required'
             }
             return errors
-          }
-        })((props) => {
+          },
+        })(props => {
           innerProps = props
           return <div />
         })
         const ComponentWrapper = shallow(
-          <DecoratedComponent
-            values={initialValues}
-            onChange={handleChange}
-          />
+          <DecoratedComponent values={initialValues} onChange={handleChange} />
         )
 
         expect(ComponentWrapper.find('div').length).toEqual(1)
         expect(innerProps.meta.name).toEqual({
           touched: false,
-          error: null
+          error: null,
         })
         expect(typeof innerProps.onChangeName).toBe('function')
 
         innerProps.onChangeName({
-          target: { value: 'Jeremy' }
+          target: { value: 'Jeremy' },
         })
         expect(innerProps.meta.name).toEqual({
           touched: true,
-          error: null
+          error: null,
         })
       })
     })
@@ -277,31 +269,28 @@ describe('recomposeForm module', () => {
               errors.name = 'Required'
             }
             return errors
-          }
-        })((props) => {
+          },
+        })(props => {
           innerProps = props
           return <div />
         })
         const ComponentWrapper = shallow(
-          <DecoratedComponent
-            values={initialValues}
-            onChange={handleChange}
-          />
+          <DecoratedComponent values={initialValues} onChange={handleChange} />
         )
 
         expect(ComponentWrapper.find('div').length).toEqual(1)
         expect(innerProps.meta.name).toEqual({
           touched: false,
-          error: null
+          error: null,
         })
         expect(typeof innerProps.onChangeName).toBe('function')
 
         innerProps.onChangeName({
-          target: { value: '' }
+          target: { value: '' },
         })
         expect(innerProps.meta.name).toEqual({
           touched: true,
-          error: 'Required'
+          error: 'Required',
         })
       })
     })

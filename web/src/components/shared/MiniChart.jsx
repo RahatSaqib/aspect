@@ -2,10 +2,7 @@ import PropTypes from 'prop-types'
 // Imports from packages
 import React from 'react'
 import { compose, setPropTypes, pure } from 'recompose'
-import {
-  injectIntl,
-  intlShape
-} from 'react-intl'
+import { injectIntl, intlShape } from 'react-intl'
 import { Sparklines, SparklinesLine, SparklinesSpots } from 'react-sparklines'
 import Paper from 'material-ui/Paper'
 
@@ -16,13 +13,13 @@ const enhance = compose(
     bgcolor: PropTypes.string.isRequired,
     data: PropTypes.array.isRequired,
     label: PropTypes.string.isRequired,
-    number: PropTypes.any.isRequired
+    number: PropTypes.any.isRequired,
   }),
   pure,
   injectIntl,
   setPropTypes({
     intl: intlShape.isRequired,
-  }),
+  })
 )
 
 export const MiniChart = ({ bgcolor, data, label, number, intl }) => {
@@ -31,7 +28,7 @@ export const MiniChart = ({ bgcolor, data, label, number, intl }) => {
   return (
     <Paper className="col-margin" style={{ backgroundColor: bgcolor }}>
       <div className="minichart-chart">
-        <Sparklines data={data} width={100} height={80} margin={15} >
+        <Sparklines data={data} width={100} height={80} margin={15}>
           <SparklinesLine color={'#fff'} style={{ fill: 'none' }} />
           <SparklinesSpots style={{ fill: '#fff' }} />
         </Sparklines>

@@ -9,14 +9,18 @@ import { Dashboard } from './Dashboard'
 
 function makeLocationObject(query) {
   return {
-    search: `?${stringify(query)}`
+    search: `?${stringify(query)}`,
   }
 }
 
 describe('Dashboard', () => {
-  const user = new Immutable.Map({ name: 'Stefan Baumgartner', culture: 'en-US', timezone: null })
+  const user = new Immutable.Map({
+    name: 'Stefan Baumgartner',
+    culture: 'en-US',
+    timezone: null,
+  })
   const intl = {
-    formatMessage: message => message.defaultMessage
+    formatMessage: message => message.defaultMessage,
   }
 
   describe('React lifecycles', () => {
@@ -46,7 +50,7 @@ describe('Dashboard', () => {
         expect(showAcknowledgement.notCalled).toBe(true)
 
         Wrapper.setProps({
-          userName: user.get('name')
+          userName: user.get('name'),
         })
         expect(showAcknowledgement.called).toBe(true)
       })
@@ -70,7 +74,7 @@ describe('Dashboard', () => {
         expect(showAcknowledgement.notCalled).toBe(true)
 
         Wrapper.setProps({
-          userName: user.get('name')
+          userName: user.get('name'),
         })
         expect(showAcknowledgement.notCalled).toBe(true)
       })

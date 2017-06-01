@@ -7,12 +7,11 @@ import React, { PureComponent } from 'react'
 import TextField from 'material-ui/TextField'
 
 export class FocusBlurTextField extends PureComponent {
-
   static defaultProps = {
     onBlur: _.noop,
     onFocus: _.noop,
     onKeyUp: _.noop,
-    value: ''
+    value: '',
   }
 
   static propTypes = {
@@ -20,12 +19,12 @@ export class FocusBlurTextField extends PureComponent {
     onFocus: PropTypes.func,
     onKeyUp: PropTypes.func,
     onCommitValue: PropTypes.func.isRequired,
-    value: PropTypes.string
+    value: PropTypes.string,
   }
 
   state = {
     isFocused: false,
-    pendingValue: this.props.value
+    pendingValue: this.props.value,
   }
 
   componentWillReceiveProps(nextProps) {
@@ -34,26 +33,26 @@ export class FocusBlurTextField extends PureComponent {
     }
   }
 
-  handleBlur = (event) => {
+  handleBlur = event => {
     this.setState({ isFocused: false })
     this.props.onBlur(event)
 
     this.props.onCommitValue(event)
   }
 
-  handleKeyUp = (event) => {
+  handleKeyUp = event => {
     this.props.onKeyUp(event)
     if (event.key === 'Enter') {
       this.props.onCommitValue(event)
     }
   }
 
-  handleChange = (event) => {
+  handleChange = event => {
     const { value } = event.target
     this.setState({ pendingValue: value })
   }
 
-  handleFocus = (event) => {
+  handleFocus = event => {
     this.setState({ isFocused: true })
     this.props.onFocus(event)
   }

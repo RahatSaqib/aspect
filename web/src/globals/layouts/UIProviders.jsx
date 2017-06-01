@@ -27,7 +27,7 @@ const enhance = compose(
   connect(state => ({
     locale: state.getIn(['user', 'culture']) || DEFAULT_LOCALE,
     timezone: getUsersTimezone(state.getIn(['user', 'timezone'])),
-  })),
+  }))
 )
 
 export const UIProviders = ({ children, locale, timezone }) => {
@@ -37,7 +37,7 @@ export const UIProviders = ({ children, locale, timezone }) => {
   if (timezone) {
     formats.date = {
       'user-timezone': {
-        timeZone: timezone
+        timeZone: timezone,
       },
       '2-digit-date-time': {
         // https://github.com/yahoo/react-intl/wiki/Components#date-formatting-components
@@ -46,19 +46,19 @@ export const UIProviders = ({ children, locale, timezone }) => {
         day: '2-digit',
         hour: '2-digit',
         minute: '2-digit',
-        second: '2-digit'
-      }
+        second: '2-digit',
+      },
     }
     formats.time = {
       'user-timezone': {
-        timeZone: timezone
-      }
+        timeZone: timezone,
+      },
     }
   }
 
   return (
     <IntlProvider
-      key={/* https://git.io/viGEA */locale}
+      key={/* https://git.io/viGEA */ locale}
       locale={locale === 'en-US' ? 'en' : locale}
       formats={formats}
       messages={messages}

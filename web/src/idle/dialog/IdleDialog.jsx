@@ -4,26 +4,22 @@ import React from 'react'
 import { compose, setPropTypes, pure } from 'recompose'
 import { connect } from 'react-redux'
 import Dialog from 'material-ui/Dialog'
-import {
-  injectIntl,
-  defineMessages,
-  intlShape
-} from 'react-intl'
+import { injectIntl, defineMessages, intlShape } from 'react-intl'
 
 const messages = defineMessages({
   title: {
     id: 'pages.IdleDialog.title',
-    defaultMessage: 'Automatic Logout'
+    defaultMessage: 'Automatic Logout',
   },
   help: {
     id: 'shared.IdleDialog.help',
-    defaultMessage: 'You will be logged out automatically in one minute due to inactivity. To stay logged in, hit any button or move your mouse.'
-  }
+    defaultMessage: 'You will be logged out automatically in one minute due to inactivity. To stay logged in, hit any button or move your mouse.',
+  },
 })
 
 function mapStateToProps(state) {
   return {
-    idleStatus: state.idle.idleStatus
+    idleStatus: state.idle.idleStatus,
   }
 }
 
@@ -34,7 +30,7 @@ const enhance = compose(
   setPropTypes({
     intl: intlShape.isRequired,
     idleStatus: PropTypes.string.isRequired,
-  }),
+  })
 )
 
 export const IdleDialog = ({ intl, idleStatus }) => {
@@ -47,7 +43,7 @@ export const IdleDialog = ({ intl, idleStatus }) => {
       open={idleStatus === 'IDLESTATUS_INACTIVE'}
     >
       <span>
-        { formatMessage(messages.help) }
+        {formatMessage(messages.help)}
       </span>
     </Dialog>
   )

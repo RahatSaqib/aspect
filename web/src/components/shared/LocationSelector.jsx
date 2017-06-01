@@ -8,40 +8,40 @@ import { Field, change as changeFieldValue } from 'redux-form/immutable'
 
 import CountrySelectField from '../../filter/geography/CountrySelectField'
 import StateSelectField, {
-  getSelectedCountry
+  getSelectedCountry,
 } from '../../filter/geography/StateSelectField'
 import LgaSelectField, {
-  getSelectedState
+  getSelectedState,
 } from '../../filter/geography/LgaSelectField'
 
 const messages = defineMessages({
   country: {
     id: 'pages.LocationSelector.country',
-    defaultMessage: 'Country'
+    defaultMessage: 'Country',
   },
   state: {
     id: 'pages.LocationSelector.state',
-    defaultMessage: 'State'
+    defaultMessage: 'State',
   },
   lga: {
     id: 'pages.LocationSelector.lga',
-    defaultMessage: 'Area'
-  }
+    defaultMessage: 'Area',
+  },
 })
 
 const styles = {
   fieldContainer: {
     display: 'inline-block',
-    position: 'relative'
+    position: 'relative',
   },
   field: {
-    verticalAlign: 'bottom'
+    verticalAlign: 'bottom',
   },
   loadingProgress: {
     position: 'absolute',
     bottom: '0.5em',
-    width: '85%'
-  }
+    width: '85%',
+  },
 }
 
 const renderCountrySelectField = ({ input, meta, ...restProps }) => (
@@ -49,9 +49,14 @@ const renderCountrySelectField = ({ input, meta, ...restProps }) => (
     {...restProps}
     onChangeCountry={input.onChange}
     countryId={input.value}
-    errorStyle={{ float: 'left', whiteSpace: 'nowrap', textOverflow: 'visible' }}
+    errorStyle={{
+      float: 'left',
+      whiteSpace: 'nowrap',
+      textOverflow: 'visible',
+    }}
     errorText={meta.touched && meta.error}
-    tabIndex="0" aria-haspopup
+    tabIndex="0"
+    aria-haspopup
   />
 )
 
@@ -60,9 +65,14 @@ const renderStateSelectField = ({ input, meta, ...restProps }) => (
     {...restProps}
     onChangeState={input.onChange}
     stateId={input.value}
-    errorStyle={{ float: 'left', whiteSpace: 'nowrap', textOverflow: 'visible' }}
+    errorStyle={{
+      float: 'left',
+      whiteSpace: 'nowrap',
+      textOverflow: 'visible',
+    }}
     errorText={meta.touched && meta.error}
-    tabIndex="0" aria-haspopup
+    tabIndex="0"
+    aria-haspopup
   />
 )
 
@@ -71,45 +81,73 @@ const renderLgaSelectField = ({ input, meta, ...restProps }) => (
     {...restProps}
     onChangeLga={input.onChange}
     lgaId={input.value}
-    errorStyle={{ float: 'left', whiteSpace: 'nowrap', textOverflow: 'visible' }}
+    errorStyle={{
+      float: 'left',
+      whiteSpace: 'nowrap',
+      textOverflow: 'visible',
+    }}
     errorText={meta.touched && meta.error}
-    tabIndex="0" aria-haspopup
+    tabIndex="0"
+    aria-haspopup
   />
 )
 
 export class LocationSelector extends PureComponent {
   componentWillReceiveProps(nextProps) {
     const { selectedCountryId, selectedStateId } = this.props
-    const { changeFieldValue, formName, stateIdFieldName, lgaIdFieldName } = nextProps
-    if (!_.isEmpty(selectedCountryId) && selectedCountryId !== nextProps.selectedCountryId) {
+    const {
+      changeFieldValue,
+      formName,
+      stateIdFieldName,
+      lgaIdFieldName,
+    } = nextProps
+    if (
+      !_.isEmpty(selectedCountryId) &&
+      selectedCountryId !== nextProps.selectedCountryId
+    ) {
       changeFieldValue(formName, stateIdFieldName, null)
       changeFieldValue(formName, lgaIdFieldName, null)
-    } else if (!_.isEmpty(selectedStateId) && selectedStateId !== nextProps.selectedStateId) {
+    } else if (
+      !_.isEmpty(selectedStateId) &&
+      selectedStateId !== nextProps.selectedStateId
+    ) {
       changeFieldValue(formName, lgaIdFieldName, null)
     }
   }
 
   render() {
-    const { intl: { formatMessage }, loading, countries,
-      countryIdFieldName, stateIdFieldName, lgaIdFieldName,
-      selectedCountryId, selectedStateId } = this.props
+    const {
+      intl: { formatMessage },
+      loading,
+      countries,
+      countryIdFieldName,
+      stateIdFieldName,
+      lgaIdFieldName,
+      selectedCountryId,
+      selectedStateId,
+    } = this.props
 
     const countriesLoading = loading || countries.loading
     const countriesDisabled = countriesLoading || countries.items.isEmpty()
 
-    const selectedCountry = getSelectedCountry({ countries, countryId: selectedCountryId })
+    const selectedCountry = getSelectedCountry({
+      countries,
+      countryId: selectedCountryId,
+    })
     const statesLoading = !!selectedCountry && selectedCountry.children.loading
-    const statesDisabled = (!selectedCountry || statesLoading ||
+    const statesDisabled =
+      !selectedCountry ||
+      statesLoading ||
       selectedCountry.children.items.isEmpty()
-    )
 
     const selectedState = getSelectedState({
       countries,
       countryId: selectedCountryId,
-      stateId: selectedStateId
+      stateId: selectedStateId,
     })
     const lgasLoading = !!selectedState && selectedState.children.loading
-    const lgasDisabled = !selectedState || lgasLoading || selectedState.children.items.isEmpty()
+    const lgasDisabled =
+      !selectedState || lgasLoading || selectedState.children.items.isEmpty()
 
     return (
       <div>
@@ -122,7 +160,8 @@ export class LocationSelector extends PureComponent {
             style={styles.field}
             disabled={countriesDisabled}
           />
-          {countriesLoading && <LinearProgress style={styles.loadingProgress} />}
+          {countriesLoading &&
+            <LinearProgress style={styles.loadingProgress} />}
         </div>
         <div style={styles.fieldContainer}>
           <Field
@@ -155,22 +194,45 @@ export class LocationSelector extends PureComponent {
 }
 
 function mapStateToProps(state, ownProps) {
-  const { formName, countryIdFieldName, stateIdFieldName, lgaIdFieldName } = ownProps
-  const selectedCountryId = state.getIn(['form', formName, 'values', countryIdFieldName])
-  const selectedStateId = state.getIn(['form', formName, 'values', stateIdFieldName])
-  const selectedLgaId = state.getIn(['form', formName, 'values', lgaIdFieldName])
+  const {
+    formName,
+    countryIdFieldName,
+    stateIdFieldName,
+    lgaIdFieldName,
+  } = ownProps
+  const selectedCountryId = state.getIn([
+    'form',
+    formName,
+    'values',
+    countryIdFieldName,
+  ])
+  const selectedStateId = state.getIn([
+    'form',
+    formName,
+    'values',
+    stateIdFieldName,
+  ])
+  const selectedLgaId = state.getIn([
+    'form',
+    formName,
+    'values',
+    lgaIdFieldName,
+  ])
   return {
     countries: state.getIn(['geography', 'countriesForLocationSelector']),
     selectedCountryId,
     selectedStateId,
-    selectedLgaId
+    selectedLgaId,
   }
 }
 
 function mapDispatchToProps(dispatch) {
-  return bindActionCreators({
-    changeFieldValue
-  }, dispatch)
+  return bindActionCreators(
+    {
+      changeFieldValue,
+    },
+    dispatch
+  )
 }
 
 export default _.flowRight(

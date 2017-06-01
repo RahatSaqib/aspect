@@ -15,18 +15,18 @@ describe('AssayRedux module', () => {
       resultDataSchema: {
         copies: {
           type: 'number',
-          title: 'copies/mL'
+          title: 'copies/mL',
         },
         resultText: {
           type: 'string',
-          title: 'Result Text'
-        }
+          title: 'Result Text',
+        },
       },
       resultCategory1Label: null,
       resultCategory1i18nKey: null,
       resultCategory2Label: null,
       resultCategory2i18nKey: null,
-      hasResults: false
+      hasResults: false,
     },
     {
       id: 4,
@@ -38,37 +38,38 @@ describe('AssayRedux module', () => {
       resultDataSchema: {
         log: {
           type: 'number',
-          title: 'log'
+          title: 'log',
         },
         copies: {
           list: true,
           type: 'number',
-          title: 'copies/mL'
-        }
+          title: 'copies/mL',
+        },
       },
       resultCategory1Label: null,
       resultCategory1i18nKey: null,
       resultCategory2Label: null,
       resultCategory2i18nKey: null,
-      hasResults: false
-    }
+      hasResults: false,
+    },
   ]
 
   describe('fetchAssays action', () => {
     let dispatchStub
 
     beforeAll(() => {
-      jest
-        .resetModules()
-        .mock('../shared/utils/fetch', () => {
-          const expectedResponseFromServer = Promise.resolve({ ok: true, data: assaysData })
-
-          fetchStub = {
-            aspectFetch: jest.fn(() => expectedResponseFromServer)
-          }
-
-          return fetchStub
+      jest.resetModules().mock('../shared/utils/fetch', () => {
+        const expectedResponseFromServer = Promise.resolve({
+          ok: true,
+          data: assaysData,
         })
+
+        fetchStub = {
+          aspectFetch: jest.fn(() => expectedResponseFromServer),
+        }
+
+        return fetchStub
+      })
 
       AssayRedux = require('./AssayRedux')
 
@@ -81,8 +82,8 @@ describe('AssayRedux module', () => {
 
         thunk(dispatchStub, () => ({
           assay: {
-            loading: false
-          }
+            loading: false,
+          },
         }))
       })
 
@@ -92,7 +93,9 @@ describe('AssayRedux module', () => {
       })
 
       it('should dispatch a REQUEST_ASSAYS action', () => {
-        expect(dispatchStub).toHaveBeenCalledWith({ type: AssayRedux.types.REQUEST_ASSAYS })
+        expect(dispatchStub).toHaveBeenCalledWith({
+          type: AssayRedux.types.REQUEST_ASSAYS,
+        })
       })
 
       it('should request the account details from the server', () => {
@@ -107,8 +110,8 @@ describe('AssayRedux module', () => {
         thunk(dispatchStub, () => ({
           assay: {
             loading: false,
-            lastRefreshed: subMinutes(new Date(), 3)
-          }
+            lastRefreshed: subMinutes(new Date(), 3),
+          },
         }))
       })
 
@@ -133,8 +136,8 @@ describe('AssayRedux module', () => {
         thunk(dispatchStub, () => ({
           assay: {
             loading: false,
-            lastRefreshed: subMinutes(new Date(), 7)
-          }
+            lastRefreshed: subMinutes(new Date(), 7),
+          },
         }))
       })
 
@@ -144,7 +147,9 @@ describe('AssayRedux module', () => {
       })
 
       it('should dispatch a REQUEST_ASSAYS action', () => {
-        expect(dispatchStub).toHaveBeenCalledWith({ type: AssayRedux.types.REQUEST_ASSAYS })
+        expect(dispatchStub).toHaveBeenCalledWith({
+          type: AssayRedux.types.REQUEST_ASSAYS,
+        })
       })
 
       it('should request the account details from the server', () => {

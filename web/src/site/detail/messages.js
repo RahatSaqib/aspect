@@ -5,50 +5,50 @@ import { defineMessages } from 'react-intl'
 export default defineMessages({
   title: {
     id: 'pages.SiteDetail.title',
-    defaultMessage: 'Site Detail'
+    defaultMessage: 'Site Detail',
   },
   fieldName: {
     id: 'pages.SiteDetail.fieldName',
-    defaultMessage: 'Name'
+    defaultMessage: 'Name',
   },
   fieldShortname: {
     id: 'pages.SiteDetail.fieldShortname',
-    defaultMessage: 'Shortname'
+    defaultMessage: 'Shortname',
   },
   fieldExternalId: {
     id: 'pages.SiteDetail.fieldExternalId',
-    defaultMessage: 'Facility Code'
+    defaultMessage: 'Facility Code',
   },
   fieldTimeZone: {
     id: 'pages.SiteDetail.fieldTimeZone',
-    defaultMessage: 'Time Zone'
+    defaultMessage: 'Time Zone',
   },
   fieldState: {
     id: 'pages.SiteDetail.fieldState',
-    defaultMessage: 'State'
+    defaultMessage: 'State',
   },
   fieldCountry: {
     id: 'pages.SiteDetail.fieldCountry',
-    defaultMessage: 'Country'
+    defaultMessage: 'Country',
   },
   fieldLGA: {
     id: 'pages.SiteDetail.fieldLGA',
-    defaultMessage: 'LGA'
+    defaultMessage: 'LGA',
   },
   fieldAddress: {
     id: 'pages.SiteDetail.fieldAddress',
-    defaultMessage: 'Address'
+    defaultMessage: 'Address',
   },
   fieldAddress2: {
     id: 'pages.SiteDetail.fieldAddress2',
-    defaultMessage: 'Address 2'
+    defaultMessage: 'Address 2',
   },
   fieldCity: {
     id: 'pages.SiteDetail.fieldCity',
-    defaultMessage: 'City'
+    defaultMessage: 'City',
   },
   fieldZip: {
     id: 'pages.SiteDetail.fieldZip',
-    defaultMessage: 'Zip'
-  }
+    defaultMessage: 'Zip',
+  },
 })

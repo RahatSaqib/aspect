@@ -5,15 +5,13 @@ import RaisedButton from 'material-ui/RaisedButton'
 import TimezoneSelect from '../../components/shared/TimezoneSelect'
 
 describe('UserPreferencesForm module', () => {
-  const {
-    UserPreferencesForm
-  } = require('./UserPreferencesForm')
+  const { UserPreferencesForm } = require('./UserPreferencesForm')
 
   describe('UserPreferencesForm component', () => {
     let props
     let UserPreferencesFormWrapper
 
-    const shallowRenderForm = (props) => {
+    const shallowRenderForm = props => {
       UserPreferencesFormWrapper = shallow(<UserPreferencesForm {...props} />)
     }
 
@@ -23,18 +21,20 @@ describe('UserPreferencesForm module', () => {
         invalid: true,
         loading: false,
         saving: false,
-        initialValues: { },
+        initialValues: {},
         handleSubmit: () => {},
         intl: {
-          formatMessage: message => message.defaultMessage
-        }
+          formatMessage: message => message.defaultMessage,
+        },
       }
       shallowRenderForm(props)
     })
 
     it('Should be a form', () => {
       expect(UserPreferencesFormWrapper.node.type).toEqual('form')
-      expect(UserPreferencesFormWrapper.find('form').props().onSubmit).toEqual(props.handleSubmit)
+      expect(UserPreferencesFormWrapper.find('form').props().onSubmit).toEqual(
+        props.handleSubmit
+      )
     })
 
     it('Should contain fields for time zone and language', () => {
@@ -42,26 +42,36 @@ describe('UserPreferencesForm module', () => {
         name: 'timezone',
         label: 'Time Zone',
         disabled: props.loading || props.saving,
-        autoWidth: true
+        autoWidth: true,
       })
       const languageSelector = UserPreferencesFormWrapper.find(Field)
       expect(languageSelector.props().name).toEqual('culture')
       expect(languageSelector.props().selectFieldProps).toEqual({
         floatingLabelText: 'Language',
         disabled: props.loading || props.saving,
-        autoWidth: true
+        autoWidth: true,
       })
-      expect(languageSelector.props().disabled).toEqual(props.loading || props.saving)
+      expect(languageSelector.props().disabled).toEqual(
+        props.loading || props.saving
+      )
     })
 
     it('Should disable all fields when form is loading', () => {
-      expect(UserPreferencesFormWrapper.find(TimezoneSelect).props().disabled).toBe(false)
-      expect(UserPreferencesFormWrapper.find(Field).props().selectFieldProps.disabled).toBe(false)
+      expect(
+        UserPreferencesFormWrapper.find(TimezoneSelect).props().disabled
+      ).toBe(false)
+      expect(
+        UserPreferencesFormWrapper.find(Field).props().selectFieldProps.disabled
+      ).toBe(false)
 
       props.loading = true
       shallowRenderForm(props)
-      expect(UserPreferencesFormWrapper.find(TimezoneSelect).props().disabled).toBe(true)
-      expect(UserPreferencesFormWrapper.find(Field).props().selectFieldProps.disabled).toBe(true)
+      expect(
+        UserPreferencesFormWrapper.find(TimezoneSelect).props().disabled
+      ).toBe(true)
+      expect(
+        UserPreferencesFormWrapper.find(Field).props().selectFieldProps.disabled
+      ).toBe(true)
     })
 
     it('Should contain a submit button', () => {
@@ -72,7 +82,7 @@ describe('UserPreferencesForm module', () => {
         label: 'Save',
         secondary: true,
         type: 'submit',
-        disabled: props.loading || props.invalid || props.pristine
+        disabled: props.loading || props.invalid || props.pristine,
       })
     })
 

@@ -1,7 +1,7 @@
 import Immutable from 'immutable'
 
 export const types = {
-  GLOBALS_SET_NAV_TITLE: 'GLOBALS_SET_NAV_TITLE'
+  GLOBALS_SET_NAV_TITLE: 'GLOBALS_SET_NAV_TITLE',
 }
 
 /*
@@ -11,7 +11,7 @@ export const types = {
 export function setNavTitle(title) {
   return {
     type: types.GLOBALS_SET_NAV_TITLE,
-    title
+    title,
   }
 }
 
@@ -19,7 +19,7 @@ export function setNavTitle(title) {
  * ---------------- Reducers -----------------
  */
 const Globals = Immutable.Record({
-  title: undefined
+  title: undefined,
 })
 
 const initialState = new Globals()

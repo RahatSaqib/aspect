@@ -10,7 +10,7 @@ import TextInput from '../../components/shared/TextInput'
 describe('ResetPasswordEnterEmail module', () => {
   const {
     ResetPasswordEnterEmail,
-    validate
+    validate,
   } = require('./ResetPasswordEnterEmail')
 
   describe('ResetPasswordEnterEmail component', () => {
@@ -18,7 +18,9 @@ describe('ResetPasswordEnterEmail module', () => {
     let ResetPasswordEnterEmailWrapper
 
     const shallowRenderResetPasswordEnterEmail = () => {
-      ResetPasswordEnterEmailWrapper = shallow(<ResetPasswordEnterEmail {...props} />)
+      ResetPasswordEnterEmailWrapper = shallow(
+        <ResetPasswordEnterEmail {...props} />
+      )
     }
 
     beforeEach(() => {
@@ -26,24 +28,28 @@ describe('ResetPasswordEnterEmail module', () => {
         pristine: true,
         invalid: true,
         initialValues: {
-          emailAddress: null
+          emailAddress: null,
         },
-        handleSubmit: () => { },
+        handleSubmit: () => {},
         intl: {
-          formatMessage: message => message.defaultMessage
+          formatMessage: message => message.defaultMessage,
         },
-        showAdminHelpDialog: sinon.spy()
+        showAdminHelpDialog: sinon.spy(),
       }
       shallowRenderResetPasswordEnterEmail(props)
     })
 
     it('Should be a form', () => {
       expect(ResetPasswordEnterEmailWrapper.node.type).toEqual('form')
-      expect(ResetPasswordEnterEmailWrapper.find('form').props().onSubmit).toEqual(props.handleSubmit)
+      expect(
+        ResetPasswordEnterEmailWrapper.find('form').props().onSubmit
+      ).toEqual(props.handleSubmit)
     })
 
     it('Should render a message', () => {
-      expect(ResetPasswordEnterEmailWrapper.find('p').text()).toEqual('Please enter the email address that you are registered with')
+      expect(ResetPasswordEnterEmailWrapper.find('p').text()).toEqual(
+        'Please enter the email address that you are registered with'
+      )
     })
 
     it('Should contain a field to enter an email address', () => {
@@ -52,16 +58,16 @@ describe('ResetPasswordEnterEmail module', () => {
         name: 'emailAddress',
         label: 'Email Address',
         maxLength: '500',
-        fullWidth: true
+        fullWidth: true,
       })
     })
 
     it('Should contain a link that calls the showAdminHelpDialog function when clicked', () => {
       const anchorTag = ResetPasswordEnterEmailWrapper.find('a')
       expect(anchorTag.props()).toEqual({
-        children: 'I don\'t know what email address I am registered with',
+        children: "I don't know what email address I am registered with",
         href: '#showAdminHelp',
-        onClick: props.showAdminHelpDialog
+        onClick: props.showAdminHelpDialog,
       })
       expect(props.showAdminHelpDialog.notCalled).toBe(true)
       anchorTag.simulate('click')
@@ -69,14 +75,16 @@ describe('ResetPasswordEnterEmail module', () => {
     })
 
     it('Should contain a submit button', () => {
-      expect(ResetPasswordEnterEmailWrapper.find(RaisedButton).props()).toEqual({
+      expect(
+        ResetPasswordEnterEmailWrapper.find(RaisedButton).props()
+      ).toEqual({
         disabled: true,
         label: 'Next',
         primary: true,
         type: 'submit',
         fullWidth: false,
         labelPosition: 'after',
-        secondary: false
+        secondary: false,
       })
     })
 
@@ -89,7 +97,7 @@ describe('ResetPasswordEnterEmail module', () => {
         ...cancelButton.props,
         disabled: false,
         label: 'Cancel',
-        secondary: true
+        secondary: true,
       })
     })
 
@@ -117,36 +125,36 @@ describe('ResetPasswordEnterEmail module', () => {
   describe('validate function', () => {
     const props = {
       intl: {
-        formatMessage: message => message.defaultMessage
-      }
+        formatMessage: message => message.defaultMessage,
+      },
     }
     let initialEmailField
 
     beforeEach(() => {
       initialEmailField = Immutable.Map({
-        emailAddress: ''
+        emailAddress: '',
       })
     })
 
     it('Should validate required email address', () => {
       expect(validate(initialEmailField, props)).toEqual({
-        emailAddress: 'Please enter a valid email address'
+        emailAddress: 'Please enter a valid email address',
       })
     })
 
     it('Should validate that the email address is valid', () => {
       let emailField = initialEmailField.set('emailAddress', 'test')
       expect(validate(emailField, props)).toEqual({
-        emailAddress: 'Please enter a valid email address'
+        emailAddress: 'Please enter a valid email address',
       })
 
       emailField = initialEmailField.set('emailAddress', 'test@example')
       expect(validate(emailField, props)).toEqual({
-        emailAddress: 'Please enter a valid email address'
+        emailAddress: 'Please enter a valid email address',
       })
 
       emailField = initialEmailField.set('emailAddress', 'test@example.com')
-      expect(validate(emailField, props)).toEqual({ })
+      expect(validate(emailField, props)).toEqual({})
     })
   })
 })

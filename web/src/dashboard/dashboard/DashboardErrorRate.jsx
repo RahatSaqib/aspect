@@ -15,7 +15,7 @@ const enhance = compose(
   pure,
   requirePermissions({
     permissions: ['result:admin', 'result:view', 'result:edit'],
-  }),
+  })
 )
 
 export const DashboardErrorRate = ({ label }) => (

@@ -1,11 +1,7 @@
 import PropTypes from 'prop-types'
 import React, { PureComponent } from 'react'
 import { compose, setPropTypes, pure } from 'recompose'
-import {
-  injectIntl,
-  defineMessages,
-  intlShape
-} from 'react-intl'
+import { injectIntl, defineMessages, intlShape } from 'react-intl'
 import { bindActionCreators } from 'redux'
 import { connect } from 'react-redux'
 import Helmet from 'react-helmet'
@@ -22,8 +18,8 @@ import styles from './PatientCare.css'
 const messages = defineMessages({
   filterTemplate: {
     id: 'pages.PatientCare.filterTemplate',
-    defaultMessage: 'Viewing <ASSAY> results <DATE><RESULT> from all sites<GEOGRAPHY><NAME>'
-  }
+    defaultMessage: 'Viewing <ASSAY> results <DATE><RESULT> from all sites<GEOGRAPHY><NAME>',
+  },
 })
 
 const enhance = compose(
@@ -32,27 +28,31 @@ const enhance = compose(
   }),
   pure,
   injectIntl,
-  connect(() => ({
-  }), dispatch => (
-    bindActionCreators({
-      configureListFilter,
-    }, dispatch)
-  )),
+  connect(
+    () => ({}),
+    dispatch =>
+      bindActionCreators(
+        {
+          configureListFilter,
+        },
+        dispatch
+      )
+  ),
   setPropTypes({
     intl: intlShape.isRequired,
     configureListFilter: PropTypes.func.isRequired,
-  }),
+  })
 )
 
 export class PatientCare extends PureComponent {
-
   componentWillMount() {
     const { configureListFilter } = this.props
     configureListFilter({
       assayAndResultCategory: true,
       geography: true,
       date: true,
-      siteName: true })
+      siteName: true,
+    })
   }
 
   render() {
@@ -62,7 +62,11 @@ export class PatientCare extends PureComponent {
 
     return (
       <div className={styles.Content}>
-        <Helmet title="Patient Care" titleTemplate="%s - Aspect" defaultTitle="Aspect" />
+        <Helmet
+          title="Patient Care"
+          titleTemplate="%s - Aspect"
+          defaultTitle="Aspect"
+        />
         <NavTitle title="Patient Care" />
         <ListFilterContainer
           subject={search.get('type') === 'TB' ? 'TB' : 'HCV'}
@@ -73,9 +77,9 @@ export class PatientCare extends PureComponent {
             <img
               alt="disease graph"
               src={
-                search.get('type') === 'TB' ?
-                require('./TB.png') :
-                require('./HCV.png')
+                search.get('type') === 'TB'
+                  ? require('./TB.png')
+                  : require('./HCV.png')
               }
               style={{ display: 'block', width: '100%' }}
             />

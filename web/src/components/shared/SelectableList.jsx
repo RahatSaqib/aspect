@@ -11,8 +11,8 @@ function wrapState(ComposedComponent) {
       children: PropTypes.node.isRequired,
       pathname: PropTypes.string.isRequired,
       desktop: PropTypes.bool.isRequired,
-      handleClose: PropTypes.func.isRequired
-    };
+      handleClose: PropTypes.func.isRequired,
+    }
 
     handleRequestChange = () => {
       // if we're not on the desktop and
@@ -24,7 +24,10 @@ function wrapState(ComposedComponent) {
 
     render() {
       return (
-        <ComposedComponent value={this.props.pathname} onChange={this.handleRequestChange}>
+        <ComposedComponent
+          value={this.props.pathname}
+          onChange={this.handleRequestChange}
+        >
           {this.props.children}
         </ComposedComponent>
       )

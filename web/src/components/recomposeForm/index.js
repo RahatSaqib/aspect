@@ -6,73 +6,89 @@ import createEagerFactory from 'recompose/createEagerFactory'
 
 export const normalChangeEventReader = event => event.target.value
 
-const mapFieldNames = _fp.map(fieldNameLike => (
-  _fp.isObject(fieldNameLike) ? fieldNameLike : {
-    fieldName: fieldNameLike,
-    valueFromChangeEvent: normalChangeEventReader
-  })
+const mapFieldNames = _fp.map(
+  fieldNameLike =>
+    _fp.isObject(fieldNameLike)
+      ? fieldNameLike
+      : {
+          fieldName: fieldNameLike,
+          valueFromChangeEvent: normalChangeEventReader,
+        }
 )
 
-const createFieldListHandlers = _fp.reduce((acc, { fieldName, valueFromChangeEvent }) => {
-  const fieldNameUpperFirst = _fp.upperFirst(fieldName)
+const createFieldListHandlers = _fp.reduce(
+  (acc, { fieldName, valueFromChangeEvent }) => {
+    const fieldNameUpperFirst = _fp.upperFirst(fieldName)
 
-  return _fp.mergeAll([acc, {
-    state: {
-      meta: {
-        [fieldName]: {
-          touched: false,
-          error: null
-        }
-      }
-    },
-    handlers: {
-      [`onChange${fieldNameUpperFirst}`](...args) {
-        const value = valueFromChangeEvent(...args)
-        const nextValues = {
-          ...this.props.values,
-          [fieldName]: value
-        }
-
-        this.props.onChange(nextValues)
-        const nextState = this.validateFields(nextValues)
-        this.setState(state => _fp.mergeAll([state, nextState, {
+    return _fp.mergeAll([
+      acc,
+      {
+        state: {
           meta: {
             [fieldName]: {
-              touched: true
+              touched: false,
+              error: null,
+            },
+          },
+        },
+        handlers: {
+          [`onChange${fieldNameUpperFirst}`](...args) {
+            const value = valueFromChangeEvent(...args)
+            const nextValues = {
+              ...this.props.values,
+              [fieldName]: value,
             }
-          }
-        }]))
-      }
-    }
-  }, {}])
-}, {
-  state: {
-    form: {
-      pristine: true,
-      valid: true,
-      submitting: false,
-      submitSucceed: false
-    }
-  },
-  handlers: {
-    handleSubmit(event) {
-      event.preventDefault()
-      event.stopPropagation()
 
-      const nextState = this.validateFields()
-      this.setState(state => _fp.mergeAll([state, nextState]))
-      if (!nextState.form.valid) {
-        return
-      }
-      const result = this.props.onSubmit(this.props.values)
-      if (!isPromise(result)) {
-        return
-      }
-      this.handleSubmitting()
-      result.then(this.handleSubmitSucceed, this.handleSubmitFailed)
-    }
+            this.props.onChange(nextValues)
+            const nextState = this.validateFields(nextValues)
+            this.setState(state =>
+              _fp.mergeAll([
+                state,
+                nextState,
+                {
+                  meta: {
+                    [fieldName]: {
+                      touched: true,
+                    },
+                  },
+                },
+              ])
+            )
+          },
+        },
+      },
+      {},
+    ])
+  },
+  {
+    state: {
+      form: {
+        pristine: true,
+        valid: true,
+        submitting: false,
+        submitSucceed: false,
+      },
+    },
+    handlers: {
+      handleSubmit(event) {
+        event.preventDefault()
+        event.stopPropagation()
+
+        const nextState = this.validateFields()
+        this.setState(state => _fp.mergeAll([state, nextState]))
+        if (!nextState.form.valid) {
+          return
+        }
+        const result = this.props.onSubmit(this.props.values)
+        if (!isPromise(result)) {
+          return
+        }
+        this.handleSubmitting()
+        result.then(this.handleSubmitSucceed, this.handleSubmitFailed)
+      },
+    },
   }
-})
+)
 
 /*
  * An HOC that provides various form handlers/props to BaseComponent.
@@ -109,13 +125,12 @@ const createFieldListHandlers = _fp.reduce((acc, { fieldName, valueFromChangeEve
  */
 const recomposeForm = ({
   fields: fieldNameLikeList,
-  validate
-}) => (BaseComponent) => {
+  validate,
+}) => BaseComponent => {
   const fieldNameList = mapFieldNames(fieldNameLikeList)
   const factory = createEagerFactory(BaseComponent)
 
   return class extends PureComponent {
-
     constructor(...args) {
       super(...args)
 
@@ -127,40 +142,43 @@ const recomposeForm = ({
     validateFields = (values = this.props.values) => {
       const errors = validate(values)
 
-      const meta = _fp.reduce((acc, { fieldName }) => {
-        const error = errors[fieldName]
-        if (error) {
+      const meta = _fp.reduce(
+        (acc, { fieldName }) => {
+          const error = errors[fieldName]
+          if (error) {
+            return {
+              ...acc,
+              [fieldName]: {
+                error,
+              },
+            }
+          }
           return {
             ...acc,
             [fieldName]: {
-              error
-            }
+              error: null,
+            },
           }
-        }
-        return {
-          ...acc,
-          [fieldName]: {
-            error: null
-          }
-        }
-      }, {}, fieldNameList)
+        },
+        {},
+        fieldNameList
+      )
 
       return {
         meta,
         form: {
           pristine: false,
-          valid: _fp.isEmpty(errors)
-        }
+          valid: _fp.isEmpty(errors),
+        },
       }
     }
 
-    handleFormStateChange = form => (
-        this.setState(state => _fp.mergeAll([state, { form }]))
-    )
+    handleFormStateChange = form =>
+      this.setState(state => _fp.mergeAll([state, { form }]))
 
     handleSubmitting = () => {
       this.handleFormStateChange({
-        submitting: true
+        submitting: true,
       })
     }
 
@@ -168,7 +186,7 @@ const recomposeForm = ({
       this.handleFormStateChange({
         pristine: true,
         submitting: false,
-        submitSucceed: true
+        submitSucceed: true,
       })
     }
 
@@ -176,7 +194,7 @@ const recomposeForm = ({
       this.handleFormStateChange({
         valid: false,
         submitting: false,
-        submitSucceed: false
+        submitSucceed: false,
       })
     }
 
@@ -184,7 +202,7 @@ const recomposeForm = ({
       return factory({
         ...this.props,
         ...this.state,
-        ...this.handlers
+        ...this.handlers,
       })
     }
   }

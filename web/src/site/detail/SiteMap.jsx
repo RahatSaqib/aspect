@@ -10,23 +10,21 @@ const SiteMap = withGoogleMap(props => (
     center={props.position}
     options={{ scrollwheel: false }}
   >
-    <Marker
-      position={props.position}
-    />
+    <Marker position={props.position} />
   </GoogleMap>
 ))
 
 SiteMap.defaultProps = {
   // properties required by react-google-maps
   containerElement: <div style={{ height: '100%' }} />,
-  mapElement: <div style={{ height: '100%' }} />
+  mapElement: <div style={{ height: '100%' }} />,
 }
 
 SiteMap.propTypes = {
   position: PropTypes.shape({
     lat: PropTypes.number.isRequired,
-    lng: PropTypes.number.isRequired
-  }).isRequired
+    lng: PropTypes.number.isRequired,
+  }).isRequired,
 }
 
 export default SiteMap

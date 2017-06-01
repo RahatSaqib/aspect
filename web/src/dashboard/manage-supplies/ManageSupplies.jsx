@@ -13,12 +13,16 @@ const enhance = compose(
   setPropTypes({
     location: PropTypes.object.isRequired,
   }),
-  pure,
+  pure
 )
 
 export const ManageSupplies = () => (
   <div className={styles.Content}>
-    <Helmet title="Manage Supplies" titleTemplate="%s - Aspect" defaultTitle="Aspect" />
+    <Helmet
+      title="Manage Supplies"
+      titleTemplate="%s - Aspect"
+      defaultTitle="Aspect"
+    />
     <NavTitle title="Manage Supplies" />
     <div>
       <Unit sm="1-2" md="1-3" lg="1-4">

@@ -21,11 +21,26 @@
     "updatemessages:start": "rip json2pot \"./i18n/src/**/*.json\" -o ./src/shared/i18n/diff.pot",
     "updatemessages:end": "rip po2json \"./src/shared/i18n/web.*.po\" -m \"./i18n/src/**/*.json\" -o ./src/shared/i18n/translation.json",
     "postupdatemessages:end": "fsys --task=remove --fileFolder=i18n && fsys --task=remove --fileFolder=src/shared/i18n/diff.pot",
+    "prettier": "prettier --no-semi --single-quote --trailing-comma=es5",
     "lint": "eslint ./src --ext .js --ext .jsx",
     "clean": "fsys --task=emptyDir --dir=dist",
     "release:major": "npm version major && npm publish && git push --follow-tags",
     "release:minor": "npm version minor && npm publish && git push --follow-tags",
-    "release:patch": "npm version patch && npm publish && git push --follow-tags"
+    "release:patch": "npm version patch && npm publish && git push --follow-tags",
+    "precommit": "lint-staged"
+  },
+  "lint-staged": {
+    "gitDir": "../",
+    "linters": {
+      "web/src/**/*.js": [
+        "eslint --fix",
+        "git add"
+      ],
+      "web/src/**/*.jsx": [
+        "eslint --fix",
+        "git add"
+      ]
+    }
   },
   "repository": "",
   "keywords": [],
@@ -51,26 +66,31 @@
     "css-loader": "^0.28.0",
     "enzyme": "^2.8.2",
     "eslint": "^3.19.0",
-    "eslint-config-airbnb": "^14.1.0",
+    "eslint-config-airbnb": "^15.0.1",
+    "eslint-config-prettier": "^2.1.1",
     "eslint-loader": "^1.7.1",
-    "eslint-plugin-import": "^2.2.0",
-    "eslint-plugin-jsx-a11y": "^4.0.0",
-    "eslint-plugin-react": "^6.10.3",
+    "eslint-plugin-import": "^2.3.0",
+    "eslint-plugin-jsx-a11y": "^5.0.3",
+    "eslint-plugin-prettier": "^2.1.1",
+    "eslint-plugin-react": "^7.0.1",
     "extract-text-webpack-plugin": "^2.1.0",
     "file-loader": "^0.11.1",
     "fs-extra-cli": "0.0.4",
     "glob": "^7.0.5",
     "html-webpack-plugin": "^2.28.0",
     "html-webpack-plugin-remove": "^0.0.3",
+    "husky": "^0.13.4",
     "identity-obj-proxy": "^3.0.0",
     "jest": "^19.0.2",
     "jest-bamboo-formatter": "^1.0.1",
+    "lint-staged": "^3.5.1",
     "node-sass": "^4.5.2",
     "npm-run-all": "^4.0.2",
     "null-loader": "^0.1.1",
     "postcss": "^5.2.17",
     "postcss-loader": "^1.3.3",
     "postcss-pxtorem": "^4.0.0",
+    "prettier": "^1.3.1",
     "react-intl-po": "^2.0.2",
     "react-test-renderer": "^15.5.4",
     "sass-loader": "^6.0.3",

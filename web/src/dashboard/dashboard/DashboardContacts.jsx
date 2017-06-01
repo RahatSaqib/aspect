@@ -15,7 +15,7 @@ const enhance = compose(
   pure,
   requirePermissions({
     permissions: ['person:admin', 'person:view', 'person:edit'],
-  }),
+  })
 )
 
 export const DashboardContacts = ({ label }) => (

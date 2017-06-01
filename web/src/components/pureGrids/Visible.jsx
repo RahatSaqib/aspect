@@ -2,7 +2,7 @@ import PropTypes from 'prop-types'
 
 import {
   makeGetClassNames,
-  makeDelegateComponent
+  makeDelegateComponent,
 } from './makeDelegateComponent'
 import styles from './pure-grids-responsive-min.css'
 
@@ -11,7 +11,7 @@ const pureGridPropTypes = {
   sm: PropTypes.bool,
   md: PropTypes.bool,
   lg: PropTypes.bool,
-  xl: PropTypes.bool
+  xl: PropTypes.bool,
 }
 
 const keyToClassNameMappings = {
@@ -19,11 +19,18 @@ const keyToClassNameMappings = {
   sm: styles['pure-visible-sm'],
   md: styles['pure-visible-md'],
   lg: styles['pure-visible-lg'],
-  xl: styles['pure-visible-xl']
+  xl: styles['pure-visible-xl'],
 }
 
-export const getClassNames = makeGetClassNames(pureGridPropTypes, keyToClassNameMappings)
+export const getClassNames = makeGetClassNames(
+  pureGridPropTypes,
+  keyToClassNameMappings
+)
 
-export const Visible = makeDelegateComponent('Visible', pureGridPropTypes, keyToClassNameMappings)
+export const Visible = makeDelegateComponent(
+  'Visible',
+  pureGridPropTypes,
+  keyToClassNameMappings
+)
 
 export default Visible

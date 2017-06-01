@@ -4,12 +4,12 @@ import differenceInMinutes from 'date-fns/difference_in_minutes'
 import { aspectFetch } from '../shared/utils/fetch'
 import {
   filterFieldsRejectedError,
-  errorPleaseTryAgainInAFewMinutes
+  errorPleaseTryAgainInAFewMinutes,
 } from '../error/CommonErrorNotifications'
 
 export const types = {
   REQUEST_ASSAYS: 'REQUEST_ASSAYS',
-  RECEIVE_ASSAYS: 'RECEIVE_ASSAYS'
+  RECEIVE_ASSAYS: 'RECEIVE_ASSAYS',
 }
 
 /*
@@ -23,7 +23,7 @@ function createReceiveAssays(assays) {
   return {
     type: types.RECEIVE_ASSAYS,
     items: assays,
-    lastRefreshed: new Date()
+    lastRefreshed: new Date(),
   }
 }
 
@@ -34,33 +34,36 @@ export function fetchAssays(forceRefresh) {
     if (assay.loading) {
       return
     }
-    const shouldFetch = forceRefresh || !assay.lastRefreshed || (
+    const shouldFetch =
+      forceRefresh ||
+      !assay.lastRefreshed ||
       differenceInMinutes(new Date(), assay.lastRefreshed) > 5 // five minutes
-    )
     if (!shouldFetch) {
       return
     }
 
     dispatch(createRequestAssays())
     const path = '/assay'
-    return aspectFetch(path,
-      {
-        errorNotifications: {
-          400: filterFieldsRejectedError(defineMessages({
+    return aspectFetch(path, {
+      errorNotifications: {
+        400: filterFieldsRejectedError(
+          defineMessages({
             title: {
               id: 'errorResponseMessages.fetchAssays.GET.400.title',
-              defaultMessage: 'Searching Assays Failed'
-            }
-          })),
-          default: errorPleaseTryAgainInAFewMinutes(defineMessages({
+              defaultMessage: 'Searching Assays Failed',
+            },
+          })
+        ),
+        default: errorPleaseTryAgainInAFewMinutes(
+          defineMessages({
             title: {
               id: 'errorResponseMessages.fetchAssays.GET.default.title',
-              defaultMessage: 'Loading Assays Failed'
-            }
-          }))
-        }
-      })
-      .then(json => dispatch(createReceiveAssays(json.data)))
+              defaultMessage: 'Loading Assays Failed',
+            },
+          })
+        ),
+      },
+    }).then(json => dispatch(createReceiveAssays(json.data)))
   }
 }
 
@@ -70,7 +73,7 @@ export function fetchAssays(forceRefresh) {
 export const Assay = Immutable.Record({
   loading: false,
   items: Immutable.List([]),
-  lastRefreshed: undefined
+  lastRefreshed: undefined,
 })
 
 const initialState = new Assay()
@@ -83,7 +86,7 @@ function receiveAssays(state, assays, lastRefreshed) {
   return state.merge({
     loading: false,
     lastRefreshed,
-    items: new Immutable.fromJS(assays)
+    items: new Immutable.fromJS(assays),
   })
 }
 

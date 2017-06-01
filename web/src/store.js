@@ -3,14 +3,17 @@ import { createStore, compose, applyMiddleware } from 'redux'
 
 import rootReducer from './rootReducer'
 
-import { middleware as idleMiddleware, actions as idleActions } from './idle/IdleRedux'
+import {
+  middleware as idleMiddleware,
+  actions as idleActions,
+} from './idle/IdleRedux'
 
 const middleware = [thunk, idleMiddleware]
 
 // our redux store with dev tools
 const createStoreWithDevTools = compose(
   applyMiddleware(...middleware),
-  window.devToolsExtension ? window.devToolsExtension() : f => f,
+  window.devToolsExtension ? window.devToolsExtension() : f => f
 )(createStore)
 
 const store = createStoreWithDevTools(rootReducer)
@@ -34,7 +37,9 @@ store.subscribe(() => {
 
   // if user logged in, watch for idleness
   if (currentIsAuthorized !== previousIsAuthorized) {
-    store.dispatch((currentIsAuthorized ? idleActions.start : idleActions.stop)())
+    store.dispatch(
+      (currentIsAuthorized ? idleActions.start : idleActions.stop)()
+    )
   }
 })
 

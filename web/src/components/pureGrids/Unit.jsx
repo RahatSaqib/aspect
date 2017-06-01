@@ -11,7 +11,7 @@ const pureGridPropTypes = {
   sm: PropTypes.string,
   md: PropTypes.string,
   lg: PropTypes.string,
-  xl: PropTypes.string
+  xl: PropTypes.string,
 }
 
 const keyToPrefixMappings = {
@@ -19,19 +19,23 @@ const keyToPrefixMappings = {
   sm: 'pure-u-sm',
   md: 'pure-u-md',
   lg: 'pure-u-lg',
-  xl: 'pure-u-xl'
+  xl: 'pure-u-xl',
 }
 
 export function getClassNames(props) {
   const initial = _.isString(props.className) ? [props.className] : []
 
-  return _.reduce(pureGridPropTypes, (acc, unused, key) => {
-    const value = props[key]
-    if (_.isString(value)) {
-      acc.push(styles[`${keyToPrefixMappings[key]}-${value}`])
-    }
-    return acc
-  }, initial)
+  return _.reduce(
+    pureGridPropTypes,
+    (acc, unused, key) => {
+      const value = props[key]
+      if (_.isString(value)) {
+        acc.push(styles[`${keyToPrefixMappings[key]}-${value}`])
+      }
+      return acc
+    },
+    initial
+  )
 }
 
 const enhance = compose(

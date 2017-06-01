@@ -6,11 +6,11 @@ const config = {
   sentry: false, // {dsn: 'https://<key>@sentry.io/<app>'}
   piwik: {
     url: '//analytics.aspect.id',
-    siteId: 1
+    siteId: 1,
   },
   userInactiveMinutes: 15, // time in minutes after user is considered inactive
   supportTelephone: '+1 555-123-4567',
-  supportEmail: 'support@gxalert.com'
+  supportEmail: 'support@gxalert.com',
 }
 
 export default Object.freeze(Object.assign({}, baseConfig, config))
