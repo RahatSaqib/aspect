@@ -44,15 +44,13 @@ export default class DataTable extends PureComponent {
       pageSize: PropTypes.number.isRequired,
       total: PropTypes.number.isRequired,
     }).isRequired,
-    columns: PropTypes.arrayOf(PropTypes.shape({
-      db: PropTypes.string.isRequired,
-      title: PropTypes.oneOfType([
-        PropTypes.string,
-        PropTypes.shape({
-          title: PropTypes.string })
-      ]),
-      extraProps: PropTypes.objectOf(PropTypes.any)
-    })).isRequired,
+    columns: PropTypes.arrayOf(
+      PropTypes.shape({
+        db: PropTypes.string.isRequired,
+        title: PropTypes.node.isRequired,
+        extraProps: PropTypes.objectOf(PropTypes.any),
+      })
+    ).isRequired,
     intl: intlShape.isRequired,
     messages: PropTypes.objectOf(
       PropTypes.shape({
