@@ -111,11 +111,9 @@ export function SiteAutoCompleteField({
   onSiteAutoCompleteKeyUp,
   ...restProps
 }) {
-  const finalProps = Object.assign({}, restProps)
-  delete finalProps.onChangeSiteId
   return (
     <AutoComplete
-      {...finalProps}
+      {...restProps}
       dataSource={siteList}
       filter={filter}
       searchText={value}
