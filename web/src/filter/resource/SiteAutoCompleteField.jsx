@@ -23,7 +23,7 @@ const filter = AutoComplete.caseInsensitiveFilter
 const enhance = compose(
   pure,
   setPropTypes({
-    onChangeSite: PropTypes.func,
+    onChangeSite: PropTypes.func.isRequired,
     itemTextGetter: PropTypes.func.isRequired,
     value: PropTypes.string,
   }),
