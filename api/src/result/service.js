@@ -270,6 +270,16 @@ function* updateWorkflowStatus(request) {
         updatedBy: currentUserId,
         updatedOn: now
       })
+
+      // add device log entry so result is redelivered
+      yield knex('DeviceLog').insert({
+        deviceId: result.deviceId,
+        resultId,
+        source: 'ClientAPI',
+        createdOn: now,
+        senderIp: '',
+        rawMessage: JSON.stringify({ deliverToTerminal: 1 })
+      })
     }
   }
 
