@@ -8,7 +8,7 @@ import {
   TableHeader,
   TableHeaderColumn,
   TableRow,
-  TableFooter
+  TableFooter,
 } from 'material-ui/Table'
 import GroupedDataTable from './GroupedDataTable'
 import { Items } from '../../shared/metaReducers/groupedItems'
@@ -34,9 +34,9 @@ describe('Grouped Data Table', () => {
             rowSpans: {
               stringColumn: 2,
               numberColumn: 2,
-              dateColumn: 1
+              dateColumn: 1,
             },
-            visibleProperties: ['stringColumn', 'numberColumn', 'dateColumn']
+            visibleProperties: ['stringColumn', 'numberColumn', 'dateColumn'],
           },
           2: {
             id: '2',
@@ -46,9 +46,9 @@ describe('Grouped Data Table', () => {
             rowSpans: {
               stringColumn: 2,
               numberColumn: 2,
-              dateColumn: 1
+              dateColumn: 1,
             },
-            visibleProperties: ['dateColumn']
+            visibleProperties: ['dateColumn'],
           },
           3: {
             id: '3',
@@ -58,9 +58,9 @@ describe('Grouped Data Table', () => {
             rowSpans: {
               stringColumn: 3,
               numberColumn: 1,
-              dateColumn: 1
+              dateColumn: 1,
             },
-            visibleProperties: ['stringColumn', 'numberColumn', 'dateColumn']
+            visibleProperties: ['stringColumn', 'numberColumn', 'dateColumn'],
           },
           4: {
             id: '4',
@@ -70,9 +70,9 @@ describe('Grouped Data Table', () => {
             rowSpans: {
               stringColumn: 3,
               numberColumn: 1,
-              dateColumn: 1
+              dateColumn: 1,
             },
-            visibleProperties: ['numberColumn', 'dateColumn']
+            visibleProperties: ['numberColumn', 'dateColumn'],
           },
           5: {
             id: '5',
@@ -82,9 +82,9 @@ describe('Grouped Data Table', () => {
             rowSpans: {
               stringColumn: 3,
               numberColumn: 1,
-              dateColumn: 1
+              dateColumn: 1,
             },
-            visibleProperties: ['numberColumn', 'dateColumn']
+            visibleProperties: ['numberColumn', 'dateColumn'],
           },
           6: {
             id: '6',
@@ -94,9 +94,9 @@ describe('Grouped Data Table', () => {
             rowSpans: {
               stringColumn: 5,
               numberColumn: 2,
-              dateColumn: 1
+              dateColumn: 1,
             },
-            visibleProperties: ['stringColumn', 'numberColumn', 'dateColumn']
+            visibleProperties: ['stringColumn', 'numberColumn', 'dateColumn'],
           },
           7: {
             id: '7',
@@ -106,9 +106,9 @@ describe('Grouped Data Table', () => {
             rowSpans: {
               stringColumn: 5,
               numberColumn: 2,
-              dateColumn: 1
+              dateColumn: 1,
             },
-            visibleProperties: ['dateColumn']
+            visibleProperties: ['dateColumn'],
           },
           8: {
             id: '8',
@@ -118,9 +118,9 @@ describe('Grouped Data Table', () => {
             rowSpans: {
               stringColumn: 5,
               numberColumn: 3,
-              dateColumn: 1
+              dateColumn: 1,
             },
-            visibleProperties: ['numberColumn', 'dateColumn']
+            visibleProperties: ['numberColumn', 'dateColumn'],
           },
           9: {
             id: '9',
@@ -130,9 +130,9 @@ describe('Grouped Data Table', () => {
             rowSpans: {
               stringColumn: 5,
               numberColumn: 3,
-              dateColumn: 1
+              dateColumn: 1,
             },
-            visibleProperties: ['dateColumn']
+            visibleProperties: ['dateColumn'],
           },
           10: {
             id: '10',
@@ -142,9 +142,9 @@ describe('Grouped Data Table', () => {
             rowSpans: {
               stringColumn: 5,
               numberColumn: 3,
-              dateColumn: 1
+              dateColumn: 1,
             },
-            visibleProperties: ['dateColumn']
+            visibleProperties: ['dateColumn'],
           },
           11: {
             id: '11',
@@ -154,12 +154,24 @@ describe('Grouped Data Table', () => {
             rowSpans: {
               stringColumn: 1,
               numberColumn: 1,
-              dateColumn: 1
+              dateColumn: 1,
             },
-            visibleProperties: ['stringColumn', 'numberColumn', 'dateColumn']
-          }
+            visibleProperties: ['stringColumn', 'numberColumn', 'dateColumn'],
+          },
         }),
-        currentIdList: new Immutable.List(['1', '2', '3', '4', '5', '6', '7', '8', '9', '10', '11'])
+        currentIdList: new Immutable.List([
+          '1',
+          '2',
+          '3',
+          '4',
+          '5',
+          '6',
+          '7',
+          '8',
+          '9',
+          '10',
+          '11',
+        ]),
       }),
       table: new GroupedTable({
         loading: false,
@@ -167,25 +179,29 @@ describe('Grouped Data Table', () => {
         sortDir: 'asc',
         page: 0,
         pageSize: 11,
-        total: 20
+        total: 20,
       }),
-      columns: [{
-        fieldName: 'stringColumn',
-        headerText: 'String Values'
-      }, {
-        fieldName: 'numberColumn',
-        headerText: 'A Number Property',
-        format: data => data * 2
-      }, {
-        fieldName: 'dateColumn',
-        headerText: 'Date Assigned',
-        format: data => data.toLocaleDateString()
-      }],
+      columns: [
+        {
+          fieldName: 'stringColumn',
+          headerText: 'String Values',
+        },
+        {
+          fieldName: 'numberColumn',
+          headerText: 'A Number Property',
+          format: data => data * 2,
+        },
+        {
+          fieldName: 'dateColumn',
+          headerText: 'Date Assigned',
+          format: data => data.toLocaleDateString(),
+        },
+      ],
       intl: {
         formatNumber: sinon.spy(),
-        formatMessage: sinon.spy()
+        formatMessage: sinon.spy(),
       },
-      messages: {}
+      messages: {},
     }
     GroupedDataTableWrapper = shallow(<GroupedDataTable {...props} />)
   })
@@ -198,20 +214,22 @@ describe('Grouped Data Table', () => {
   })
 
   it('should render columns in the table header', () => {
-    const tableHeaderColumns = GroupedDataTableWrapper
-      .find(Table)
+    const tableHeaderColumns = GroupedDataTableWrapper.find(Table)
       .find(TableHeader)
       .find(TableRow)
       .find(TableHeaderColumn)
     expect(tableHeaderColumns.length).toEqual(
-      props.columns.length + (props.table.get('extraColumns') ? props.table.get('extraColumns').size : 0)
+      props.columns.length +
+        (props.table.get('extraColumns')
+          ? props.table.get('extraColumns').size
+          : 0)
     )
     for (let i = 0; i < props.columns.length; i++) {
       expect(tableHeaderColumns.at(i).props()).toEqual({
         ...tableHeaderColumns.at(i).props(),
         tooltip: props.columns[i].tooltip,
         className: props.columns[i].hideOnXs ? 'pure-hidden-xs' : '',
-        ...props.columns[i].extraProps
+        ...props.columns[i].extraProps,
       })
       const headerText = tableHeaderColumns.at(i).find('span').text()
       expect(headerText).toEqual(props.columns[i].headerText)
@@ -219,21 +237,25 @@ describe('Grouped Data Table', () => {
     if (props.table.get('extraColumns')) {
       for (let i = 0; i < props.table.get('extraColumns').size; i++) {
         const extraColumn = props.table.getIn(['extraColumns', i])
-        expect(tableHeaderColumns.at(props.columns.length + i).props()).toEqual({
+        expect(
+          tableHeaderColumns.at(props.columns.length + i).props()
+        ).toEqual({
           ...tableHeaderColumns.at(i).props(),
           tooltip: extraColumn.get('tooltip'),
           className: extraColumn.get('hideOnXs') ? 'pure-hidden-xs' : '',
-          ...extraColumn.get('extraProps').toJS()
+          ...extraColumn.get('extraProps').toJS(),
         })
-        const headerText = tableHeaderColumns.at(props.columns.length + i).find('span').text()
+        const headerText = tableHeaderColumns
+          .at(props.columns.length + i)
+          .find('span')
+          .text()
         expect(headerText).toEqual(extraColumn.get('title'))
       }
     }
   })
 
   it('should render rows for each of the IDs in the current ID list', () => {
-    const tableRows = GroupedDataTableWrapper
-      .find(Table)
+    const tableRows = GroupedDataTableWrapper.find(Table)
       .find(TableBody)
       .find(TableRow)
 
@@ -241,8 +263,7 @@ describe('Grouped Data Table', () => {
   })
 
   it('should render cells in each row for each of the visible properties in the item', () => {
-    const tableRows = GroupedDataTableWrapper
-      .find(Table)
+    const tableRows = GroupedDataTableWrapper.find(Table)
       .find(TableBody)
       .find(TableRow)
 
@@ -251,13 +272,14 @@ describe('Grouped Data Table', () => {
       const tableRow = tableRows.at(i)
       const id = props.items.getIn(['currentIdList', i])
       const record = props.items.getIn(['byId', id])
-      expect(tableRow.children().length).toEqual(record.get('visibleProperties').size + extraColumns.size)
+      expect(tableRow.children().length).toEqual(
+        record.get('visibleProperties').size + extraColumns.size
+      )
     }
   })
 
   it('should set rowSpans on data cells to display data in groups', () => {
-    const tableRows = GroupedDataTableWrapper
-      .find(Table)
+    const tableRows = GroupedDataTableWrapper.find(Table)
       .find(TableBody)
       .find(TableRow)
 
@@ -265,10 +287,12 @@ describe('Grouped Data Table', () => {
       const tableRow = tableRows.at(i)
       const id = props.items.getIn(['currentIdList', i])
       const recordRowSpans = props.items.getIn(['byId', id, 'rowSpans'])
-      tableRow.children().forEach((tableRowColumn) => {
+      tableRow.children().forEach(tableRowColumn => {
         const fieldName = tableRowColumn.node.key
         if (recordRowSpans.has(fieldName)) {
-          expect(tableRowColumn.props().rowSpan).toEqual(recordRowSpans.get(fieldName))
+          expect(tableRowColumn.props().rowSpan).toEqual(
+            recordRowSpans.get(fieldName)
+          )
         } else {
           expect(tableRowColumn.props().rowSpan).toEqual(1)
         }

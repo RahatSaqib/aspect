@@ -11,7 +11,7 @@ describe('TextInput', () => {
       disabled: false,
       fullWidth: true,
       maxLength: 50,
-      inputStyle: {}
+      inputStyle: {},
     }
     const TextInputWrapper = shallow(<TextInput {...props} />)
     const textInputProps = TextInputWrapper.find(Field).props()
@@ -27,7 +27,7 @@ describe('TextInput', () => {
       type: 'text',
       autoFocus: undefined,
       style: undefined,
-      inputStyle: props.inputStyle
+      inputStyle: props.inputStyle,
     })
   })
 
@@ -38,7 +38,7 @@ describe('TextInput', () => {
       disabled: false,
       fullWidth: true,
       maxLength: 50,
-      type: 'password'
+      type: 'password',
     }
     const TextInputWrapper = shallow(<TextInput {...props} />)
     const textInputProps = TextInputWrapper.find(Field).props()
@@ -54,7 +54,7 @@ describe('TextInput', () => {
       type: 'password',
       autoFocus: undefined,
       style: undefined,
-      inputStyle: undefined
+      inputStyle: undefined,
     })
   })
 })

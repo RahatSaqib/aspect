@@ -11,19 +11,18 @@ import { Site } from '../../site/SiteRedux'
 // If editable, it renders all editable fields in a form for a single site.
 // Otherwise, it renders read only fields
 export default class SiteForm extends PureComponent {
-
   static propTypes = {
     formatMessage: PropTypes.func.isRequired,
     onSubmit: PropTypes.func.isRequired,
     editable: PropTypes.bool.isRequired,
-    site: PropTypes.objectOf(Site)
+    site: PropTypes.objectOf(Site),
   }
 
   static defaultProps = {
-    site: null
+    site: null,
   }
 
-  handleSubmit = (data) => {
+  handleSubmit = data => {
     const { site } = this.props
 
     this.props.onSubmit(site.get('id'), {
@@ -40,7 +39,7 @@ export default class SiteForm extends PureComponent {
       city: data.get('city'),
       zip: data.get('zip'),
       longitude: data.get('lng'),
-      latitude: data.get('lat')
+      latitude: data.get('lat'),
     })
   }
 
@@ -51,7 +50,7 @@ export default class SiteForm extends PureComponent {
       // SiteLocationFormMap reads the values from redux-form to construct names for Geocoder
       country: site.get('country'),
       state: site.get('state'),
-      lga: site.get('lga')
+      lga: site.get('lga'),
     }
     const initialValues = {
       ...extraValuesForMap,
@@ -66,7 +65,7 @@ export default class SiteForm extends PureComponent {
       address: site.get('street1'),
       address2: site.get('street2') || /* FIXME */ '',
       city: site.get('city'),
-      zip: site.get('zip')
+      zip: site.get('zip'),
     }
     const labels = {
       name: formatMessage(messages.fieldName),
@@ -76,7 +75,7 @@ export default class SiteForm extends PureComponent {
       address: formatMessage(messages.fieldAddress),
       address2: formatMessage(messages.fieldAddress2),
       city: formatMessage(messages.fieldCity),
-      zip: formatMessage(messages.fieldZip)
+      zip: formatMessage(messages.fieldZip),
     }
     return (
       <EditableFieldsFormContainer
@@ -94,62 +93,58 @@ export default class SiteForm extends PureComponent {
     const fields = [
       {
         label: formatMessage(messages.fieldName),
-        value: site.get('name')
+        value: site.get('name'),
       },
       {
         label: formatMessage(messages.fieldShortname),
-        value: site.get('shortname')
+        value: site.get('shortname'),
       },
       {
         label: formatMessage(messages.fieldExternalId),
-        value: site.get('externalId')
+        value: site.get('externalId'),
       },
       {
         label: formatMessage(messages.fieldTimeZone),
-        value: site.get('timezone')
+        value: site.get('timezone'),
       },
       {
         label: formatMessage(messages.fieldCountry),
-        value: site.get('country')
+        value: site.get('country'),
       },
       {
         label: formatMessage(messages.fieldState),
-        value: site.get('state')
+        value: site.get('state'),
       },
       {
         label: formatMessage(messages.fieldLGA),
-        value: site.get('lga')
+        value: site.get('lga'),
       },
       {
         label: formatMessage(messages.fieldAddress),
-        value: site.get('street1')
+        value: site.get('street1'),
       },
       {
         label: formatMessage(messages.fieldAddress2),
-        value: site.get('street2')
+        value: site.get('street2'),
       },
       {
         label: formatMessage(messages.fieldCity),
-        value: site.get('city')
+        value: site.get('city'),
       },
       {
         label: formatMessage(messages.fieldZip),
-        value: site.get('zip')
-      }
+        value: site.get('zip'),
+      },
     ]
-    return (
-      <ReadOnlyFields fields={fields} />
-    )
+    return <ReadOnlyFields fields={fields} />
   }
 
   render() {
     const { site, editable } = this.props
     if (site) {
-      return (
-        editable ?
-        this.renderEditableFieldsFormContainer() :
-        this.renderReadOnlyFields()
-      )
+      return editable
+        ? this.renderEditableFieldsFormContainer()
+        : this.renderReadOnlyFields()
     }
 
     return false

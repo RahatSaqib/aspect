@@ -15,25 +15,36 @@ const enhanceField = compose(
     value: PropTypes.any,
     lg: PropTypes.bool,
     format: PropTypes.func,
-    nullText: PropTypes.string
+    nullText: PropTypes.string,
   }),
   pure
 )
 
-export const ReadOnlyField = enhanceField(({ label, value, lg, format = _.identity, nullText = '-' }) => (
-  <div className={cssClasses('FieldContainer', { 'FieldContainer--large': lg })}>
-    <label htmlFor={label.replace(' ', '_')} className={cssClasses('FieldContainer__Label')}>{label}</label>
-    <div id={label.replace(' ', '_')} className={cssClasses('FieldContainer__Value')}>
-      { !value ? nullText : (format ? format(value) : value)}
+export const ReadOnlyField = enhanceField(
+  ({ label, value, lg, format = _.identity, nullText = '-' }) => (
+    <div
+      className={cssClasses('FieldContainer', { 'FieldContainer--large': lg })}
+    >
+      <label
+        htmlFor={label.replace(' ', '_')}
+        className={cssClasses('FieldContainer__Label')}
+      >
+        {label}
+      </label>
+      <div
+        id={label.replace(' ', '_')}
+        className={cssClasses('FieldContainer__Value')}
+      >
+        {!value ? nullText : format ? format(value) : value}
+      </div>
     </div>
-  </div>
-))
+  )
+)
 
 const enhanceFields = compose(
   setPropTypes({
-    fields: PropTypes.arrayOf(
-      PropTypes.shape(ReadOnlyField.propTypes)
-    ).isRequired
+    fields: PropTypes.arrayOf(PropTypes.shape(ReadOnlyField.propTypes))
+      .isRequired,
   }),
   pure
 )
@@ -41,11 +52,7 @@ const enhanceFields = compose(
 export const ReadOnlyFields = enhanceFields(({ fields, ...restProps }) => (
   <div {...restProps}>
     {fields.map(({ label, value }) => (
-      <ReadOnlyField
-        key={label}
-        label={label}
-        value={value}
-      />
+      <ReadOnlyField key={label} label={label} value={value} />
     ))}
   </div>
 ))

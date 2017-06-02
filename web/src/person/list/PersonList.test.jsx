@@ -4,7 +4,8 @@ import sinon from 'sinon'
 import Helmet from 'react-helmet'
 import { Items } from '../../shared/metaReducers/items'
 import { Table } from '../../shared/metaReducers/table'
-import DataTableWithEmptyList from '../../components/shared/DataTableWithEmptyList'
+import DataTableWithEmptyList
+  from '../../components/shared/DataTableWithEmptyList'
 import ListFilterContainer from '../../filter/list/ListFilter'
 import { PersonList } from './PersonList'
 
@@ -21,13 +22,13 @@ describe('Person List Component', () => {
       props = {
         table: new Table(),
         intl: {
-          formatMessage: message => message.defaultMessage
+          formatMessage: message => message.defaultMessage,
         },
         items: new Items(),
         configureListFilter: () => {},
         listFilter: {},
         router: {},
-        fetchListFilteredPersons: sinon.spy()
+        fetchListFilteredPersons: sinon.spy(),
       }
       shallowRenderPersonList()
     })
@@ -40,7 +41,7 @@ describe('Person List Component', () => {
         { db: 'name', title: 'Name' },
         { db: 'level', title: 'Job', hideOnXs: true },
         { db: 'state', title: 'State', hideOnXs: true },
-        { db: 'lga', title: 'County', hideOnXs: true }
+        { db: 'lga', title: 'County', hideOnXs: true },
       ])
     })
 

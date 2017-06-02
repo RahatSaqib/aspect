@@ -19,18 +19,14 @@ function isValidFullAddress({ country, state, lga, city, address, address2 }) {
   return _.some([country, state, lga, city, address, address2], _.isString)
 }
 
-function formatFullAddressToAddressQuery({ country, state, lga, city, address }) {
-  return `${
-    address
-  }, ${
-    city
-  }, ${
-    lga
-  }, ${
-    state
-  }, ${
-    country
-  }`
+function formatFullAddressToAddressQuery({
+  country,
+  state,
+  lga,
+  city,
+  address,
+}) {
+  return `${address}, ${city}, ${lga}, ${state}, ${country}`
 }
 
 /*
@@ -44,7 +40,6 @@ function formatFullAddressToAddressQuery({ country, state, lga, city, address })
  * into a latLng pair.
  */
 export class SiteLocationFormMap extends PureComponent {
-
   static propTypes = {
     change: PropTypes.func.isRequired, // redux-form
     fullAddressInForm: PropTypes.shape({
@@ -53,9 +48,9 @@ export class SiteLocationFormMap extends PureComponent {
       lga: PropTypes.string,
       city: PropTypes.string,
       address: PropTypes.string.isRequired,
-      address2: PropTypes.string
+      address2: PropTypes.string,
     }).isRequired, // connect
-    editable: PropTypes.bool.isRequired
+    editable: PropTypes.bool.isRequired,
   }
 
   componentWillMount() {
@@ -68,8 +63,10 @@ export class SiteLocationFormMap extends PureComponent {
   // the use just changed some field of address part in the form
   componentWillReceiveProps(nextProps) {
     const noValidLatLng = !this.getValidLatLng(nextProps)
-    const isAddressInFormJustChanged = !_.isEqual(this.props.fullAddressInForm,
-      nextProps.fullAddressInForm)
+    const isAddressInFormJustChanged = !_.isEqual(
+      this.props.fullAddressInForm,
+      nextProps.fullAddressInForm
+    )
 
     if (noValidLatLng || isAddressInFormJustChanged) {
       this.handleQueryAddress(nextProps)
@@ -100,21 +97,25 @@ export class SiteLocationFormMap extends PureComponent {
   }
 
   handleQueryAddress({ fullAddressInForm, fullAddressInSite }) {
-    const fullAddress = isValidFullAddress(fullAddressInForm) ?
-      fullAddressInForm : fullAddressInSite
+    const fullAddress = isValidFullAddress(fullAddressInForm)
+      ? fullAddressInForm
+      : fullAddressInSite
     const addressQuery = formatFullAddressToAddressQuery(fullAddress)
 
-    this.geocoder.geocode({
-      address: addressQuery
-    }, (results, status) => {
-      if (this.isUnmounted) {
-        return
+    this.geocoder.geocode(
+      {
+        address: addressQuery,
+      },
+      (results, status) => {
+        if (this.isUnmounted) {
+          return
+        }
+        if (status !== google.maps.GeocoderStatus.OK) {
+          return
+        }
+        this.handlePositionFound(results[0])
       }
-      if (status !== google.maps.GeocoderStatus.OK) {
-        return
-      }
-      this.handlePositionFound(results[0])
-    })
+    )
   }
 
   geocoder = new google.maps.Geocoder()
@@ -126,16 +127,12 @@ export class SiteLocationFormMap extends PureComponent {
 
     return (
       <div className={styles.Container}>
-        {latLng ? (
-          <SiteMap
-            position={latLng}
-          />
-        ) : (
-          <div>
-            <p>Finding location</p>
-            <CircularProgress size={2} />
-          </div>
-        )}
+        {latLng
+          ? <SiteMap position={latLng} />
+          : <div>
+              <p>Finding location</p>
+              <CircularProgress size={2} />
+            </div>}
       </div>
     )
   }
@@ -151,21 +148,29 @@ const selector = formValueSelector('siteDetail')
 function mapStateToProps(state, props) {
   const latLngInForm = selector(state, 'lat', 'lng')
   const latLngInSite = latLng(props.site)
-  const fullAddressInForm = selector(state, 'country', 'state', 'lga', 'city', 'address', 'address2')
+  const fullAddressInForm = selector(
+    state,
+    'country',
+    'state',
+    'lga',
+    'city',
+    'address',
+    'address2'
+  )
   const fullAddressInSite = address(props.site)
 
   return {
     latLngInForm,
     latLngInSite,
     fullAddressInSite,
-    fullAddressInForm
+    fullAddressInForm,
   }
 }
 
 export const SiteLocationFormMapContainer = _.flowRight(
   reduxForm({
     form: 'siteDetail',
-    validate
+    validate,
   }),
   connect(mapStateToProps)
 )(SiteLocationFormMap)

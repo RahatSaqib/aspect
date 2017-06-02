@@ -9,11 +9,14 @@ const enhance = compose(
   setPropTypes({
     title: PropTypes.string,
   }),
-  connect(null, dispatch => (
-    bindActionCreators({
-      setNavTitle,
-    }, dispatch)
-  )),
+  connect(null, dispatch =>
+    bindActionCreators(
+      {
+        setNavTitle,
+      },
+      dispatch
+    )
+  ),
   lifecycle({
     componentWillMount() {
       this.props.setNavTitle(this.props.title)
@@ -24,7 +27,7 @@ const enhance = compose(
         this.props.setNavTitle(nextProps.title)
       }
     },
-  }),
+  })
 )
 
 const NavTitle = () => false

@@ -5,24 +5,26 @@ import sinon from 'sinon'
 import { shallow, mount } from 'enzyme'
 import getMuiTheme from 'material-ui/styles/getMuiTheme'
 
-import { LazyLoadItems, LazyLoadParent, LazyLoadChild } from '../../geography/GeographyRedux'
-import ForkedSelectField from '../../components/forkedMaterialUi/ForkedSelectField'
+import {
+  LazyLoadItems,
+  LazyLoadParent,
+  LazyLoadChild,
+} from '../../geography/GeographyRedux'
+import ForkedSelectField
+  from '../../components/forkedMaterialUi/ForkedSelectField'
 
 describe('StateSelectField module', () => {
-  const {
-    StateSelectField
-  } = require('./StateSelectField')
+  const { StateSelectField } = require('./StateSelectField')
 
-  const mountWithMuiTheme = node => (
+  const mountWithMuiTheme = node =>
     mount(node, {
       context: {
-        muiTheme: getMuiTheme()
+        muiTheme: getMuiTheme(),
       },
       childContextTypes: {
-        muiTheme: PropTypes.object.isRequired
-      }
+        muiTheme: PropTypes.object.isRequired,
+      },
     })
-  )
 
   const now = new Date()
   const countriesForLocationSelector = new LazyLoadItems({
@@ -45,18 +47,18 @@ describe('StateSelectField module', () => {
                 items: Immutable.List([
                   new LazyLoadChild({
                     id: '1',
-                    name: 'Apapa'
+                    name: 'Apapa',
                   }),
                   new LazyLoadChild({
                     id: '2',
-                    name: 'Mushin'
+                    name: 'Mushin',
                   }),
                   new LazyLoadChild({
                     id: '3',
-                    name: 'Ojo'
-                  })
-                ])
-              })
+                    name: 'Ojo',
+                  }),
+                ]),
+              }),
             }),
             new LazyLoadParent({
               id: '2',
@@ -64,11 +66,11 @@ describe('StateSelectField module', () => {
               children: new LazyLoadItems({
                 loading: false,
                 lastRefreshed: undefined,
-                items: Immutable.List([])
-              })
-            })
-          ])
-        })
+                items: Immutable.List([]),
+              }),
+            }),
+          ]),
+        }),
       }),
       new LazyLoadParent({
         id: '2',
@@ -76,10 +78,10 @@ describe('StateSelectField module', () => {
         children: new LazyLoadItems({
           loading: false,
           lastRefreshed: undefined,
-          items: Immutable.List([])
-        })
-      })
-    ])
+          items: Immutable.List([]),
+        }),
+      }),
+    ]),
   })
 
   describe('StateSelectField component', () => {
@@ -88,7 +90,7 @@ describe('StateSelectField module', () => {
         countries: countriesForLocationSelector,
         fetchStatesForLocationSelector: sinon.spy(),
         onChangeState: sinon.spy(),
-        countryId: '1'
+        countryId: '1',
       }
       mountWithMuiTheme(<StateSelectField {...props} />)
 
@@ -100,9 +102,11 @@ describe('StateSelectField module', () => {
         countries: countriesForLocationSelector,
         fetchStatesForLocationSelector: sinon.spy(),
         onChangeState: sinon.spy(),
-        countryId: '2'
+        countryId: '2',
       }
-      const StateSelectFieldWrapper = mountWithMuiTheme(<StateSelectField {...props} />)
+      const StateSelectFieldWrapper = mountWithMuiTheme(
+        <StateSelectField {...props} />
+      )
       expect(props.fetchStatesForLocationSelector.calledOnce).toBe(true)
 
       StateSelectFieldWrapper.setProps({ countryId: '1' })
@@ -114,16 +118,23 @@ describe('StateSelectField module', () => {
         countries: countriesForLocationSelector,
         fetchStatesForLocationSelector: sinon.spy(),
         onChangeState: sinon.spy(),
-        countryId: '2'
+        countryId: '2',
       }
       const StateSelectFieldWrapper = shallow(<StateSelectField {...props} />)
-      const ForkedSelectFieldWrapper = StateSelectFieldWrapper.find(ForkedSelectField)
+      const ForkedSelectFieldWrapper = StateSelectFieldWrapper.find(
+        ForkedSelectField
+      )
 
       ForkedSelectFieldWrapper.simulate('change', undefined, undefined, '2')
       expect(props.onChangeState.calledOnce).toBe(true)
       expect(props.onChangeState.calledWith('2')).toBe(true)
 
-      ForkedSelectFieldWrapper.simulate('change', undefined, undefined, undefined)
+      ForkedSelectFieldWrapper.simulate(
+        'change',
+        undefined,
+        undefined,
+        undefined
+      )
       expect(props.onChangeState.calledTwice).toBe(true)
       expect(props.onChangeState.calledWith(undefined)).toBe(true)
     })

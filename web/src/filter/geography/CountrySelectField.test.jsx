@@ -5,24 +5,26 @@ import sinon from 'sinon'
 import { shallow, mount } from 'enzyme'
 import getMuiTheme from 'material-ui/styles/getMuiTheme'
 
-import { LazyLoadItems, LazyLoadParent, LazyLoadChild } from '../../geography/GeographyRedux'
-import ForkedSelectField from '../../components/forkedMaterialUi/ForkedSelectField'
+import {
+  LazyLoadItems,
+  LazyLoadParent,
+  LazyLoadChild,
+} from '../../geography/GeographyRedux'
+import ForkedSelectField
+  from '../../components/forkedMaterialUi/ForkedSelectField'
 
 describe('CountrySelectField module', () => {
-  const {
-    CountrySelectField
-  } = require('./CountrySelectField')
+  const { CountrySelectField } = require('./CountrySelectField')
 
-  const mountWithMuiTheme = node => (
+  const mountWithMuiTheme = node =>
     mount(node, {
       context: {
-        muiTheme: getMuiTheme()
+        muiTheme: getMuiTheme(),
       },
       childContextTypes: {
-        muiTheme: PropTypes.object.isRequired
-      }
+        muiTheme: PropTypes.object.isRequired,
+      },
     })
-  )
 
   const now = new Date()
   const countriesForLocationSelector = new LazyLoadItems({
@@ -45,18 +47,18 @@ describe('CountrySelectField module', () => {
                 items: Immutable.List([
                   new LazyLoadChild({
                     id: '1',
-                    name: 'Apapa'
+                    name: 'Apapa',
                   }),
                   new LazyLoadChild({
                     id: '2',
-                    name: 'Mushin'
+                    name: 'Mushin',
                   }),
                   new LazyLoadChild({
                     id: '3',
-                    name: 'Ojo'
-                  })
-                ])
-              })
+                    name: 'Ojo',
+                  }),
+                ]),
+              }),
             }),
             new LazyLoadParent({
               id: '2',
@@ -64,11 +66,11 @@ describe('CountrySelectField module', () => {
               children: new LazyLoadItems({
                 loading: false,
                 lastRefreshed: undefined,
-                items: Immutable.List([])
-              })
-            })
-          ])
-        })
+                items: Immutable.List([]),
+              }),
+            }),
+          ]),
+        }),
       }),
       new LazyLoadParent({
         id: '2',
@@ -76,10 +78,10 @@ describe('CountrySelectField module', () => {
         children: new LazyLoadItems({
           loading: false,
           lastRefreshed: undefined,
-          items: Immutable.List([])
-        })
-      })
-    ])
+          items: Immutable.List([]),
+        }),
+      }),
+    ]),
   })
 
   describe('CountrySelectField component', () => {
@@ -88,7 +90,7 @@ describe('CountrySelectField module', () => {
         countries: countriesForLocationSelector,
         fetchCountriesForLocationSelector: sinon.spy(),
         onChangeCountry: sinon.spy(),
-        countryId: '1'
+        countryId: '1',
       }
       mountWithMuiTheme(<CountrySelectField {...props} />)
 
@@ -100,16 +102,25 @@ describe('CountrySelectField module', () => {
         countries: countriesForLocationSelector,
         fetchCountriesForLocationSelector: sinon.spy(),
         onChangeCountry: sinon.spy(),
-        countryId: '2'
+        countryId: '2',
       }
-      const CountrySelectFieldWrapper = shallow(<CountrySelectField {...props} />)
-      const ForkedSelectFieldWrapper = CountrySelectFieldWrapper.find(ForkedSelectField)
+      const CountrySelectFieldWrapper = shallow(
+        <CountrySelectField {...props} />
+      )
+      const ForkedSelectFieldWrapper = CountrySelectFieldWrapper.find(
+        ForkedSelectField
+      )
 
       ForkedSelectFieldWrapper.simulate('change', undefined, undefined, '2')
       expect(props.onChangeCountry.calledOnce).toBe(true)
       expect(props.onChangeCountry.calledWith('2')).toBe(true)
 
-      ForkedSelectFieldWrapper.simulate('change', undefined, undefined, undefined)
+      ForkedSelectFieldWrapper.simulate(
+        'change',
+        undefined,
+        undefined,
+        undefined
+      )
       expect(props.onChangeCountry.calledTwice).toBe(true)
       expect(props.onChangeCountry.calledWith(undefined)).toBe(true)
     })

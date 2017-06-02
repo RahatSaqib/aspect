@@ -37,7 +37,9 @@ if (!window.Intl) {
 // Refresh the access token every 30 minutes.
 // this could probably be done more elegantly in a component
 // but it works for now
-setInterval(() => { store.dispatch(refreshStart()) }, 30 * 60 * 1000)
+setInterval(() => {
+  store.dispatch(refreshStart())
+}, 30 * 60 * 1000)
 
 const appDom = document.getElementById('app')
 
@@ -53,15 +55,14 @@ const render = () => {
 }
 
 // If found a access token, refresh it before initial rendering
-new Promise((resolve) => {
+new Promise(resolve => {
   // get new access token on refresh/startup
   if (getRefreshToken()) {
     // let's see if we can get culture from local storage
     store.dispatch(hydrateFromLocalStorage())
 
     // get new access token
-    store.dispatch(refreshStart())
-      .then(resolve, resolve)
+    store.dispatch(refreshStart()).then(resolve, resolve)
   } else {
     resolve()
   }

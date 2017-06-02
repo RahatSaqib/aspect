@@ -10,7 +10,7 @@ import StrongPasswordInput from '../../components/shared/StrongPasswordInput'
 describe('ResetPasswordEnterPassword module', () => {
   const {
     ResetPasswordEnterPassword,
-    validate
+    validate,
   } = require('./ResetPasswordEnterPassword')
 
   describe('ResetPasswordEnterPassword component', () => {
@@ -18,7 +18,9 @@ describe('ResetPasswordEnterPassword module', () => {
     let ResetPasswordEnterPasswordWrapper
 
     const shallowRenderResetPasswordEnterPassword = () => {
-      ResetPasswordEnterPasswordWrapper = shallow(<ResetPasswordEnterPassword {...props} />)
+      ResetPasswordEnterPasswordWrapper = shallow(
+        <ResetPasswordEnterPassword {...props} />
+      )
     }
 
     beforeEach(() => {
@@ -27,51 +29,61 @@ describe('ResetPasswordEnterPassword module', () => {
         invalid: true,
         initialValues: {
           newPassword: null,
-          confirmNewPassword: null
+          confirmNewPassword: null,
         },
-        handleSubmit: () => { },
+        handleSubmit: () => {},
         intl: {
-          formatMessage: message => message.defaultMessage
-        }
+          formatMessage: message => message.defaultMessage,
+        },
       }
       shallowRenderResetPasswordEnterPassword(props)
     })
 
     it('Should be a form', () => {
       expect(ResetPasswordEnterPasswordWrapper.node.type).toEqual('form')
-      expect(ResetPasswordEnterPasswordWrapper.find('form').props().onSubmit).toEqual(props.handleSubmit)
+      expect(
+        ResetPasswordEnterPasswordWrapper.find('form').props().onSubmit
+      ).toEqual(props.handleSubmit)
     })
 
     it('Should render a message', () => {
-      expect(ResetPasswordEnterPasswordWrapper.find('p').text()).toEqual('Please enter your new password?')
+      expect(ResetPasswordEnterPasswordWrapper.find('p').text()).toEqual(
+        'Please enter your new password?'
+      )
     })
 
     it('Should contain fields to enter and confirm a password', () => {
-      expect(ResetPasswordEnterPasswordWrapper.find(StrongPasswordInput).props()).toEqual({
+      expect(
+        ResetPasswordEnterPasswordWrapper.find(StrongPasswordInput).props()
+      ).toEqual({
         name: 'newPassword',
         label: 'New Password',
         maxLength: '100',
         autoFocus: true,
-        fullWidth: true
+        fullWidth: true,
       })
-      expect(ResetPasswordEnterPasswordWrapper.find(TextInput).props()).toEqual({
+      expect(
+        ResetPasswordEnterPasswordWrapper.find(TextInput).props()
+      ).toEqual({
         name: 'confirmNewPassword',
         label: 'Confirm New Password',
         maxLength: '100',
         type: 'password',
-        fullWidth: true
+        fullWidth: true,
       })
     })
 
     it('Should contain a submit button', () => {
-      expect(ResetPasswordEnterPasswordWrapper.find(RaisedButton).props()).toEqual({
+      expect(
+        ResetPasswordEnterPasswordWrapper.find(RaisedButton).props()
+      ).toEqual({
         disabled: true,
         label: 'Next',
         primary: true,
         type: 'submit',
         fullWidth: false,
         labelPosition: 'after',
-        secondary: false
+        secondary: false,
       })
     })
 
@@ -84,7 +96,7 @@ describe('ResetPasswordEnterPassword module', () => {
         ...cancelButton.props,
         disabled: false,
         label: 'Cancel',
-        secondary: true
+        secondary: true,
       })
     })
 
@@ -112,21 +124,21 @@ describe('ResetPasswordEnterPassword module', () => {
   describe('validate function', () => {
     const props = {
       intl: {
-        formatMessage: message => message.defaultMessage
-      }
+        formatMessage: message => message.defaultMessage,
+      },
     }
     let initialPasswordFields
 
     beforeEach(() => {
       initialPasswordFields = Immutable.Map({
         newPassword: '',
-        confirmNewPassword: ''
+        confirmNewPassword: '',
       })
     })
 
     it('Should validate required password', () => {
       expect(validate(initialPasswordFields, props)).toEqual({
-        newPassword: 'Please enter a new password'
+        newPassword: 'Please enter a new password',
       })
     })
 
@@ -134,29 +146,29 @@ describe('ResetPasswordEnterPassword module', () => {
       let passwordFields = initialPasswordFields.set('newPassword', 'test')
       expect(validate(passwordFields, props)).toEqual({
         newPassword: 'Your password needs to be at least 8 characters long',
-        confirmNewPassword: 'These passwords don\'t match'
+        confirmNewPassword: "These passwords don't match",
       })
 
       passwordFields = initialPasswordFields.set('newPassword', 'testabcd')
       expect(validate(passwordFields, props)).toEqual({
         newPassword: 'Your password needs to contain at least one number or special character (%!$*...)',
-        confirmNewPassword: 'These passwords don\'t match'
+        confirmNewPassword: "These passwords don't match",
       })
 
       passwordFields = initialPasswordFields.set('newPassword', 'testabc1')
       expect(validate(passwordFields, props)).toEqual({
-        confirmNewPassword: 'These passwords don\'t match'
+        confirmNewPassword: "These passwords don't match",
       })
     })
 
     it('Should validate confirm password is equal to password', () => {
       let passwordFields = initialPasswordFields.set('newPassword', 'testab1$')
       expect(validate(passwordFields, props)).toEqual({
-        confirmNewPassword: 'These passwords don\'t match'
+        confirmNewPassword: "These passwords don't match",
       })
 
       passwordFields = passwordFields.set('confirmNewPassword', 'testab1$')
-      expect(validate(passwordFields, props)).toEqual({ })
+      expect(validate(passwordFields, props)).toEqual({})
     })
   })
 })

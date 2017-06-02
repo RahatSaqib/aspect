@@ -16,7 +16,11 @@ import validateEmailAddress from '../../shared/utils/validate'
 import TextInput from '../../components/shared/TextInput'
 
 export function ResetPasswordEnterEmail({
-  intl, handleSubmit, pristine, invalid, showAdminHelpDialog
+  intl,
+  handleSubmit,
+  pristine,
+  invalid,
+  showAdminHelpDialog,
 }) {
   const { formatMessage } = intl
   return (
@@ -26,10 +30,21 @@ export function ResetPasswordEnterEmail({
         <a href="#showAdminHelp" onClick={showAdminHelpDialog}>
           {formatMessage(messages.iDontHaveAnEmailAddress)}
         </a>
-        <TextInput name="emailAddress" label={formatMessage(messages.emailAddress)} autoFocus maxLength="500" fullWidth />
+        <TextInput
+          name="emailAddress"
+          label={formatMessage(messages.emailAddress)}
+          autoFocus
+          maxLength="500"
+          fullWidth
+        />
       </div>
       <div className={styles.Form__ActionRow}>
-        <RaisedButton disabled={pristine || invalid} label={formatMessage(messages.next)} primary type="submit" />
+        <RaisedButton
+          disabled={pristine || invalid}
+          label={formatMessage(messages.next)}
+          primary
+          type="submit"
+        />
         <Link to="login">
           <FlatButton secondary label={formatMessage(messages.cancel)} />
         </Link>
@@ -51,5 +66,6 @@ export default _.flowRight(
   injectIntl,
   reduxForm({
     form: 'resetPasswordEnterEmail',
-    validate
-  }))(ResetPasswordEnterEmail)
+    validate,
+  })
+)(ResetPasswordEnterEmail)

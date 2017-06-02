@@ -3,37 +3,35 @@ import React from 'react'
 import { compose, pure } from 'recompose'
 import { bindActionCreators } from 'redux'
 import { connect } from 'react-redux'
-import {
-  injectIntl,
-  defineMessages
-} from 'react-intl'
+import { injectIntl, defineMessages } from 'react-intl'
 
 // Material-UI
 import Paper from 'material-ui/Paper'
 import FlatButton from 'material-ui/FlatButton'
 
 // Our own imports
-import {
-  clearListFilter
-} from '../../filter/FilterRedux'
+import { clearListFilter } from '../../filter/FilterRedux'
 
 const messages = defineMessages({
   noResultsTitle: {
     id: 'shared.EmptyList.noResultsTitle',
-    defaultMessage: 'No results match your selected filters'
+    defaultMessage: 'No results match your selected filters',
   },
   clearFilters: {
     id: 'shared.EmptyList.clearFilters',
-    defaultMessage: 'Clear filters'
-  }
+    defaultMessage: 'Clear filters',
+  },
 })
 
 const enhance = compose(
   pure,
   injectIntl,
-  connect(false, bindActionCreators.bind(null, {
-    clearListFilter
-  }))
+  connect(
+    false,
+    bindActionCreators.bind(null, {
+      clearListFilter,
+    })
+  )
 )
 
 export const EmptyList = ({ intl, clearListFilter }) => (

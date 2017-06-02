@@ -2,14 +2,22 @@
 import _fp from 'lodash/fp'
 import PropTypes from 'prop-types'
 import React from 'react'
-import { compose, pure, setPropTypes, mapProps, lifecycle, withHandlers } from 'recompose'
+import {
+  compose,
+  pure,
+  setPropTypes,
+  mapProps,
+  lifecycle,
+  withHandlers,
+} from 'recompose'
 import { bindActionCreators } from 'redux'
 import { connect } from 'react-redux'
 
 // Material-UI
 import MenuItem from 'material-ui/MenuItem'
 
-import ForkedSelectField from '../../components/forkedMaterialUi/ForkedSelectField'
+import ForkedSelectField
+  from '../../components/forkedMaterialUi/ForkedSelectField'
 import { fetchSitesForSelectList } from '../../site/SiteRedux'
 
 const enhance = compose(
@@ -18,31 +26,39 @@ const enhance = compose(
     countryId: PropTypes.string,
     partnerId: PropTypes.string,
     onSiteChange: PropTypes.func.isRequired,
-    value: PropTypes.string
+    value: PropTypes.string,
   }),
-  connect(state => ({
-    sitesSelectList: state.site.selectList
-  }), bindActionCreators.bind(null, {
-    fetchSitesForSelectList
-  })),
+  connect(
+    state => ({
+      sitesSelectList: state.site.selectList,
+    }),
+    bindActionCreators.bind(null, {
+      fetchSitesForSelectList,
+    })
+  ),
   lifecycle({
     componentDidMount() {
       this.props.fetchSitesForSelectList()
-    }
+    },
   }),
   withHandlers({
     onChange: props => (event, index, value) => {
       props.onSiteChange(value)
-    }
+    },
   }),
   mapProps(props => ({
-    ..._fp.omit([
-      'countryId', 'partnerId', 'onSiteChange',
-      'fetchSitesForSelectList', 'siteSelectList'
-    ], props),
-    sitesSelectList: props.sitesSelectList
-      .items
-      .filter((item) => {
+    ..._fp.omit(
+      [
+        'countryId',
+        'partnerId',
+        'onSiteChange',
+        'fetchSitesForSelectList',
+        'siteSelectList',
+      ],
+      props
+    ),
+    sitesSelectList: props.sitesSelectList.items
+      .filter(item => {
         if (props.countryId && props.countryId !== item.get('countryId')) {
           return false
         }
@@ -53,16 +69,13 @@ const enhance = compose(
       })
       .map(item => ({
         value: item.get('id'),
-        text: item.get('name')
+        text: item.get('name'),
       }))
-      .toJS()
-  })),
+      .toJS(),
+  }))
 )
 
-export function SiteSelectField({
-  sitesSelectList,
-  ...restProps
-}) {
+export function SiteSelectField({ sitesSelectList, ...restProps }) {
   return (
     <ForkedSelectField {...restProps}>
       {sitesSelectList.map(s => (
