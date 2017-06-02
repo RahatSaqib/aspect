@@ -2,11 +2,7 @@ import PropTypes from 'prop-types'
 import React, { PureComponent } from 'react'
 import { compose, setPropTypes, pure } from 'recompose'
 import { bindActionCreators } from 'redux'
-import {
-  injectIntl,
-  defineMessages,
-  intlShape
-} from 'react-intl'
+import { injectIntl, defineMessages, intlShape } from 'react-intl'
 import { connect } from 'react-redux'
 import Helmet from 'react-helmet'
 import { Link } from 'react-router-dom'
@@ -24,18 +20,23 @@ import { Card, CardActions, CardHeader, CardText } from 'material-ui/Card'
 import { Unit } from '../../components/pureGrids'
 import NavTitle from '../../globals/components/NavTitle'
 import { showAcknowledgement } from '../../appNotification/AppNotificationRedux'
+import DashboardTB from './DashboardTB'
+import DashboardHCV from './DashboardHCV'
+import DashboardDevicesErrorRates from './DashboardDevicesErrorRates'
+import DashboardSuppliesRunningLow from './DashboardSuppliesRunningLow'
+import DashboardSuppliesExpiringSoon from './DashboardSuppliesExpiringSoon'
 import styles from './Dashboard.css'
 import { fetchDashboardHome } from '../DashboardRedux'
 
 const messages = defineMessages({
   title: {
     id: 'pages.Dashboard.title',
-    defaultMessage: 'Dashboard'
+    defaultMessage: 'Dashboard',
   },
   welcome: {
     id: 'pages.Dashboard.welcome',
-    defaultMessage: 'Welcome {userName}'
-  }
+    defaultMessage: 'Welcome {userName}',
+  },
 })
 
 const enhance = compose(
@@ -44,29 +45,33 @@ const enhance = compose(
   }),
   pure,
   injectIntl,
-  connect(state => ({
-    userName: state.getIn(['user', 'name']),
-    totals: state.getIn(['dashboard', 'home']),
-  }), dispatch => (
-    bindActionCreators({
-      showAcknowledgement,
-      fetchDashboardHome,
-    }, dispatch)
-  )),
+  connect(
+    state => ({
+      userName: state.getIn(['user', 'name']),
+      totals: state.getIn(['dashboard', 'home']),
+    }),
+    dispatch =>
+      bindActionCreators(
+        {
+          showAcknowledgement,
+          fetchDashboardHome,
+        },
+        dispatch
+      )
+  ),
   setPropTypes({
     intl: intlShape.isRequired,
     userName: PropTypes.string,
     totals: PropTypes.object,
     showAcknowledgement: PropTypes.func.isRequired,
     fetchDashboardHome: PropTypes.func.isRequired,
-  }),
+  })
 )
 
 export class Dashboard extends PureComponent {
-
   static defaultProps = {
     userName: '',
-    totals: null
+    totals: null,
   }
 
   componentDidMount() {
@@ -80,7 +85,7 @@ export class Dashboard extends PureComponent {
     if (search.has('fl') && nextProps.userName !== this.props.userName) {
       showAcknowledgement({
         title: messages.welcome,
-        messageValues: { userName }
+        messageValues: { userName },
       })
     }
   }
@@ -90,7 +95,11 @@ export class Dashboard extends PureComponent {
 
     return (
       <div className={styles.Content}>
-        <Helmet title={formatMessage(messages.title)} titleTemplate="%s - Aspect" defaultTitle="Aspect" />
+        <Helmet
+          title={formatMessage(messages.title)}
+          titleTemplate="%s - Aspect"
+          defaultTitle="Aspect"
+        />
         <NavTitle title={null} />
         <Paper>
           <Unit sm="1-2" md="2-3">
@@ -99,24 +108,47 @@ export class Dashboard extends PureComponent {
                 <h2>Right Now</h2>
               </header>
               {!totals && <LinearProgress />}
-              {totals && totals.get !== undefined &&
+              {totals &&
+                totals.get !== undefined &&
                 <div>
                   <p>
-                    <span className={styles.Count__Emphasis}>{formatNumber(totals.get('devicesTotal'))}</span> Devices at {formatNumber(totals.get('sitesTotal'))} Sites Managed
+                    <span className={styles.Count__Emphasis}>
+                      {formatNumber(totals.get('devicesTotal'))}
+                    </span>
+                    {' '}
+                    Devices at
+                    {' '}
+                    {formatNumber(totals.get('sitesTotal'))}
+                    {' '}
+                    Sites Managed
                   </p>
                   <p>
-                    <span className={styles.Count__Emphasis}>{formatNumber(totals.get('resultsTotal30d'))}</span> Results in the last 30 days (<span className={styles.Count__Positive}>+{formatNumber(totals.get('resultsTotal1d'))} today</span>)
+                    <span className={styles.Count__Emphasis}>
+                      {formatNumber(totals.get('resultsTotal30d'))}
+                    </span>
+                    {' '}
+                    Results in the last 30 days (
+                    <span className={styles.Count__Positive}>
+                      +{formatNumber(totals.get('resultsTotal1d'))} today
+                    </span>
+                    )
                   </p>
-                </div>
-              }
+                </div>}
             </section>
             <section className={styles.Section}>
               <header className={styles.Section__Header}>
-                {totals && totals.get !== undefined &&
-                <h2>
-                  Patient Care<small> ({formatNumber(totals.get('resultsTotal30d'))} results in last 30 days)</small>
-                </h2>
-              }
+                {totals &&
+                  totals.get !== undefined &&
+                  <h2>
+                    Patient Care
+                    <small>
+                      {' '}
+                      (
+                      {formatNumber(totals.get('resultsTotal30d'))}
+                      {' '}
+                      results in last 30 days)
+                    </small>
+                  </h2>}
               </header>
               <div>
                 <Unit sm="1-2">
@@ -125,7 +157,11 @@ export class Dashboard extends PureComponent {
                   </h3>
                   <div>
                     <Link to="/dashboard/patient-care?type=TB">
-                      <img alt="tb" src={require('./TB.png')} />
+                      <DashboardTB
+                        width={180}
+                        height={180}
+                        margin={{ top: 0, right: 0, bottom: 30, left: 30 }}
+                      />
                     </Link>
                   </div>
                 </Unit>
@@ -135,19 +171,39 @@ export class Dashboard extends PureComponent {
                   </h3>
                   <div>
                     <Link to="/dashboard/patient-care?type=HCV">
-                      <img alt="hcv" src={require('./HCV.png')} />
+                      <DashboardHCV
+                        width={180}
+                        height={180}
+                        margin={{ top: 0, right: 0, bottom: 30, left: 30 }}
+                      />
                     </Link>
                   </div>
                 </Unit>
                 <Unit sm="1-2">
-                  {totals && totals.get !== undefined &&
-                  <h3>
-                    Devices<small> ({totals.get('devicesTotal')} at {totals.get('sitesTotal')} sites)</small>
-                  </h3>
-                  }
+                  {totals &&
+                    totals.get !== undefined &&
+                    <h3>
+                      Devices
+                      <small>
+                        {' '}
+                        (
+                        {totals.get('devicesTotal')}
+                        {' '}
+                        at
+                        {' '}
+                        {totals.get('sitesTotal')}
+                        {' '}
+                        sites)
+                      </small>
+                    </h3>}
                   <div>
+                    <h4>Error Rates</h4>
                     <Link to="/dashboard/manage-devices">
-                      <img alt="devices" src={require('./devices.png')} />
+                      <DashboardDevicesErrorRates
+                        width={180}
+                        height={280}
+                        margin={{ top: 0, right: 0, bottom: 0, left: 0 }}
+                      />
                     </Link>
                   </div>
                 </Unit>
@@ -156,9 +212,26 @@ export class Dashboard extends PureComponent {
                     Supplies<small> (2 disposable types at 24 sites)</small>
                   </h3>
                   <div>
-                    <Link to="/dashboard/manage-supplies">
-                      <img alt="supplies" src={require('./supplies.png')} />
-                    </Link>
+                    <Unit sm="1-2">
+                      <h4>Running Low</h4>
+                      <Link to="/dashboard/manage-supplies">
+                        <DashboardSuppliesRunningLow
+                          width={100}
+                          height={280}
+                          margin={{ top: 0, right: 0, bottom: 0, left: 0 }}
+                        />
+                      </Link>
+                    </Unit>
+                    <Unit sm="1-2">
+                      <h4>Expiring Soon</h4>
+                      <Link to="/dashboard/manage-supplies">
+                        <DashboardSuppliesExpiringSoon
+                          width={100}
+                          height={280}
+                          margin={{ top: 0, right: 0, bottom: 0, left: 0 }}
+                        />
+                      </Link>
+                    </Unit>
                   </div>
                 </Unit>
               </div>
@@ -170,9 +243,21 @@ export class Dashboard extends PureComponent {
                 <h2>To Do</h2>
               </header>
               <div style={{ width: '180px' }}>
-                <p>Result Alerts <span className={styles.Alert__Positive}>0</span></p>
-                <p>Device Alerts <span className={styles.Alert__Negative}>4</span></p>
-                <p>Inventory Alerts <span className={styles.Alert__Negative}>3</span></p>
+                <p>
+                  Result Alerts
+                  {' '}
+                  <span className={styles.Alert__Positive}>0</span>
+                </p>
+                <p>
+                  Device Alerts
+                  {' '}
+                  <span className={styles.Alert__Negative}>4</span>
+                </p>
+                <p>
+                  Inventory Alerts
+                  {' '}
+                  <span className={styles.Alert__Negative}>3</span>
+                </p>
               </div>
             </section>
             <section className={styles.Section}>
@@ -183,16 +268,25 @@ export class Dashboard extends PureComponent {
                 <Card>
                   <CardHeader title="GeneXpert Franklin" />
                   <CardText>
-                    This device hasn&#39;t reported in <b>8</b> days.
+                    This device hasn't reported in <b>8</b> days.
                   </CardText>
                   <CardActions style={{ textAlign: 'right' }}>
-                    <IconButton tooltip="Fix this" iconStyle={{ color: 'gray' }} >
+                    <IconButton
+                      tooltip="Fix this"
+                      iconStyle={{ color: 'gray' }}
+                    >
                       <Build />
                     </IconButton>
-                    <IconButton tooltip="Escalate" iconStyle={{ color: '#f57c00' }} >
+                    <IconButton
+                      tooltip="Escalate"
+                      iconStyle={{ color: '#f57c00' }}
+                    >
                       <PrioHigh />
                     </IconButton>
-                    <IconButton tooltip="Hide this notification" iconStyle={{ color: '#63a021' }} >
+                    <IconButton
+                      tooltip="Hide this notification"
+                      iconStyle={{ color: '#63a021' }}
+                    >
                       <NavigationCheck />
                     </IconButton>
                   </CardActions>
@@ -201,16 +295,29 @@ export class Dashboard extends PureComponent {
                   <CardHeader title="Daktari Omaha" />
                   <CardText>
                     This device is low on inventory (<b>54 cartridges</b>).
-                    It will run out in <b>9 days</b> given the curent utilization rate.
+                    It will run out in
+                    {' '}
+                    <b>9 days</b>
+                    {' '}
+                    given the curent utilization rate.
                   </CardText>
                   <CardActions style={{ textAlign: 'right' }}>
-                    <IconButton tooltip="Fix this" iconStyle={{ color: 'gray' }} >
+                    <IconButton
+                      tooltip="Fix this"
+                      iconStyle={{ color: 'gray' }}
+                    >
                       <Build />
                     </IconButton>
-                    <IconButton tooltip="Escalate" iconStyle={{ color: '#f57c00' }} >
+                    <IconButton
+                      tooltip="Escalate"
+                      iconStyle={{ color: '#f57c00' }}
+                    >
                       <PrioHigh />
                     </IconButton>
-                    <IconButton tooltip="Hide this notification" iconStyle={{ color: '#63a021' }} >
+                    <IconButton
+                      tooltip="Hide this notification"
+                      iconStyle={{ color: '#63a021' }}
+                    >
                       <NavigationCheck />
                     </IconButton>
                   </CardActions>
@@ -222,13 +329,22 @@ export class Dashboard extends PureComponent {
                     The average error rate for Daktari devices is <b>5%</b>.
                   </CardText>
                   <CardActions style={{ textAlign: 'right' }}>
-                    <IconButton tooltip="Fix this" iconStyle={{ color: 'gray' }} >
+                    <IconButton
+                      tooltip="Fix this"
+                      iconStyle={{ color: 'gray' }}
+                    >
                       <Build />
                     </IconButton>
-                    <IconButton tooltip="Escalate" iconStyle={{ color: '#f57c00' }} >
+                    <IconButton
+                      tooltip="Escalate"
+                      iconStyle={{ color: '#f57c00' }}
+                    >
                       <PrioHigh />
                     </IconButton>
-                    <IconButton tooltip="Hide this notification" iconStyle={{ color: '#63a021' }} >
+                    <IconButton
+                      tooltip="Hide this notification"
+                      iconStyle={{ color: '#63a021' }}
+                    >
                       <NavigationCheck />
                     </IconButton>
                   </CardActions>
@@ -236,17 +352,28 @@ export class Dashboard extends PureComponent {
                 <Card style={{ marginTop: '15px' }}>
                   <CardHeader title="GeneXpert Boston" />
                   <CardText>
-                    This device was expected to come back online <b>yesterday </b>
+                    This device was expected to come back online
+                    {' '}
+                    <b>yesterday </b>
                     after being serviced but has not connected yet.
                   </CardText>
                   <CardActions style={{ textAlign: 'right' }}>
-                    <IconButton tooltip="Fix this" iconStyle={{ color: 'gray' }} >
+                    <IconButton
+                      tooltip="Fix this"
+                      iconStyle={{ color: 'gray' }}
+                    >
                       <Build />
                     </IconButton>
-                    <IconButton tooltip="Escalate" iconStyle={{ color: '#f57c00' }} >
+                    <IconButton
+                      tooltip="Escalate"
+                      iconStyle={{ color: '#f57c00' }}
+                    >
                       <PrioHigh />
                     </IconButton>
-                    <IconButton tooltip="Hide this notification" iconStyle={{ color: '#63a021' }} >
+                    <IconButton
+                      tooltip="Hide this notification"
+                      iconStyle={{ color: '#63a021' }}
+                    >
                       <NavigationCheck />
                     </IconButton>
                   </CardActions>

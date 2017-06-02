@@ -1,24 +1,18 @@
 import PropTypes from 'prop-types'
 import React, { PureComponent } from 'react'
 import { compose, setPropTypes, pure } from 'recompose'
-import {
-  injectIntl,
-  defineMessages,
-  intlShape
-} from 'react-intl'
+import { injectIntl, defineMessages, intlShape } from 'react-intl'
 import { bindActionCreators } from 'redux'
 import { connect } from 'react-redux'
 import Helmet from 'react-helmet'
 
 // Our own imports
-import {
-  fetchListFilteredDevices,
-  exportDevices
-} from '../DeviceRedux'
+import { fetchListFilteredDevices, exportDevices } from '../DeviceRedux'
 import NavTitle from '../../globals/components/NavTitle'
 import { ListFilterContainer } from '../../filter/list/ListFilter'
 import { ListFilter, configureListFilter } from '../../filter/FilterRedux'
-import DataTableWithEmptyList from '../../components/shared/DataTableWithEmptyList'
+import DataTableWithEmptyList
+  from '../../components/shared/DataTableWithEmptyList'
 import styles from './DeviceList.css'
 import { Items } from '../../shared/metaReducers/items'
 import { Table } from '../../shared/metaReducers/table'
@@ -26,60 +20,60 @@ import { Table } from '../../shared/metaReducers/table'
 const messages = defineMessages({
   devicesTitle: {
     id: 'pages.DeviceList.devicesTitle',
-    defaultMessage: 'Devices'
+    defaultMessage: 'Devices',
   },
   deviceName: {
     id: 'pages.DeviceList.deviceName',
-    defaultMessage: 'Device Name'
+    defaultMessage: 'Device Name',
   },
   state: {
     id: 'pages.DeviceList.state',
-    defaultMessage: 'State'
+    defaultMessage: 'State',
   },
   status: {
     id: 'pages.DeviceList.status',
-    defaultMessage: 'Status'
+    defaultMessage: 'Status',
   },
   reportingFor: {
     id: 'pages.DeviceList.reportingFor',
-    defaultMessage: 'Reporting For'
+    defaultMessage: 'Reporting For',
   },
   lastSeen: {
     id: 'pages.DeviceList.lastSeen',
-    defaultMessage: 'Last Seen'
+    defaultMessage: 'Last Seen',
   },
   numberOfTestsLeft: {
     id: 'pages.DeviceList.numberOfTestsLeft',
-    defaultMessage: 'Number'
+    defaultMessage: 'Number',
   },
   numberOfTestsRight: {
     id: 'pages.DeviceList.numberOfTestsRight',
-    defaultMessage: 'Of Tests'
+    defaultMessage: 'Of Tests',
   },
   lastMonth: {
     id: 'pages.DeviceList.lastMonth',
-    defaultMessage: 'Last Month'
+    defaultMessage: 'Last Month',
   },
   thisMonth: {
     id: 'pages.DeviceList.thisMonth',
-    defaultMessage: 'This Month'
+    defaultMessage: 'This Month',
   },
   exportExcel: {
     id: 'pages.DeviceList.exportExcel',
-    defaultMessage: 'Excel'
+    defaultMessage: 'Excel',
   },
   exportCsv: {
     id: 'pages.DeviceList.exportCsv',
-    defaultMessage: 'CSV'
+    defaultMessage: 'CSV',
   },
   filterTemplate: {
     id: 'pages.DeviceList.filterTemplate',
-    defaultMessage: 'Viewing all devices<GEOGRAPHY><NAME><DEVICESTATUS>.'
+    defaultMessage: 'Viewing all devices<GEOGRAPHY><NAME><DEVICESTATUS>.',
   },
   filterTemplateOptional: {
     id: 'pages.DeviceList.filterTemplateOptional',
-    defaultMessage: 'Counting only <ASSAY> assays<RESULT><DATE>.'
-  }
+    defaultMessage: 'Counting only <ASSAY> assays<RESULT><DATE>.',
+  },
 })
 
 const enhance = compose(
@@ -88,18 +82,23 @@ const enhance = compose(
   }),
   pure,
   injectIntl,
-  connect(state => ({
-    listFilter: state.filter.listFilter,
-    items: state.device.items,
-    table: state.device.table,
-  }), dispatch => (
-    bindActionCreators({
-      configureListFilter,
-      fetchListFilteredDevices,
+  connect(
+    state => ({
+      listFilter: state.filter.listFilter,
+      items: state.device.items,
+      table: state.device.table,
+    }),
+    dispatch =>
+      bindActionCreators(
+        {
+          configureListFilter,
+          fetchListFilteredDevices,
 
-      exportDevices,
-    }, dispatch)
-  )),
+          exportDevices,
+        },
+        dispatch
+      )
+  ),
   setPropTypes({
     intl: intlShape.isRequired,
     listFilter: PropTypes.objectOf(ListFilter).isRequired,
@@ -108,7 +107,7 @@ const enhance = compose(
     configureListFilter: PropTypes.func.isRequired,
     fetchListFilteredDevices: PropTypes.func.isRequired,
     exportDevices: PropTypes.func.isRequired,
-  }),
+  })
 )
 
 const DEVICE_TABLE_COLUMN_SPACING = 12
@@ -117,11 +116,11 @@ const DEVICE_TABLE_STATUS_COLUMN_WIDTH = '15%'
 
 export class DeviceList extends PureComponent {
   static contextTypes = {
-    muiTheme: PropTypes.object.isRequired
+    muiTheme: PropTypes.object.isRequired,
   }
 
   static childContextTypes = {
-    muiTheme: PropTypes.object.isRequired
+    muiTheme: PropTypes.object.isRequired,
   }
 
   getChildContext() {
@@ -133,14 +132,14 @@ export class DeviceList extends PureComponent {
         tableHeaderColumn: {
           // Overrides the style used by <material-ui/Table/TableHeaderColumn /> in <DataTable />
           ...muiTheme.tableHeaderColumn,
-          spacing: DEVICE_TABLE_COLUMN_SPACING
+          spacing: DEVICE_TABLE_COLUMN_SPACING,
         },
         tableRowColumn: {
           // Overrides the style used by <material-ui/Table/TableRowColumn /> in <DataTable />
           ...muiTheme.tableRowColumn,
-          spacing: DEVICE_TABLE_COLUMN_SPACING
-        }
-      }
+          spacing: DEVICE_TABLE_COLUMN_SPACING,
+        },
+      },
     }
   }
 
@@ -151,7 +150,7 @@ export class DeviceList extends PureComponent {
       geography: true,
       date: true,
       deviceName: true,
-      deviceStatus: true
+      deviceStatus: true,
     })
   }
 
@@ -165,15 +164,12 @@ export class DeviceList extends PureComponent {
     }
   }
 
-  handleItemIdSelection = (deviceId) => {
+  handleItemIdSelection = deviceId => {
     this.props.history.push(`/device/${deviceId}`)
   }
 
   handleFetch = (...args) => {
-    this.props.fetchListFilteredDevices(
-      { hasResults: 1 },
-      ...args
-    )
+    this.props.fetchListFilteredDevices({ hasResults: 1 }, ...args)
   }
 
   clickDeviceListExport = (formatType, receivedExportResponse) => {
@@ -192,36 +188,55 @@ export class DeviceList extends PureComponent {
     const { intl } = this.props
     const { formatMessage, formatRelative, formatNumber } = intl
     const columns = [
-      { db: 'name',
+      {
+        db: 'name',
         title: formatMessage(messages.deviceName),
-        extraProps: { style: { width: DEVICE_TABLE_NAME_COLUMN_WIDTH } } },
-      { db: 'state',
-        title: formatMessage(messages.state) },
-      { db: 'status',
+        extraProps: { style: { width: DEVICE_TABLE_NAME_COLUMN_WIDTH } },
+      },
+      {
+        db: 'state',
+        title: formatMessage(messages.state),
+      },
+      {
+        db: 'status',
         title: formatMessage(messages.status),
         hideOnXs: true,
-        extraProps: { style: { width: DEVICE_TABLE_STATUS_COLUMN_WIDTH } } },
-      { db: 'createdOn',
+        extraProps: { style: { width: DEVICE_TABLE_STATUS_COLUMN_WIDTH } },
+      },
+      {
+        db: 'createdOn',
         title: formatMessage(messages.reportingFor),
         hideOnXs: true,
-        format: data => formatRelative(data) },
-      { db: 'lastSeen',
+        format: data => formatRelative(data),
+      },
+      {
+        db: 'lastSeen',
         title: formatMessage(messages.lastSeen),
         hideOnXs: true,
-        format: data => formatRelative(data) },
-      { db: 'lastMonth',
+        format: data => formatRelative(data),
+      },
+      {
+        db: 'lastMonth',
         extraProps: { style: { paddingRight: 2 } },
         title: (
           <span>
-            <span style={{ display: 'inline-block', width: '100%', textAlign: 'right' }}>
+            <span
+              style={{
+                display: 'inline-block',
+                width: '100%',
+                textAlign: 'right',
+              }}
+            >
               {formatMessage(messages.numberOfTestsLeft)}
             </span>
             <br />
             {formatMessage(messages.lastMonth)}
           </span>
         ),
-        format: data => formatNumber(data) },
-      { db: 'thisMonth',
+        format: data => formatNumber(data),
+      },
+      {
+        db: 'thisMonth',
         extraProps: { style: { paddingLeft: 2 } },
         title: (
           <span>
@@ -232,19 +247,25 @@ export class DeviceList extends PureComponent {
             {formatMessage(messages.thisMonth)}
           </span>
         ),
-        format: data => formatNumber(data) },
+        format: data => formatNumber(data),
+      },
     ]
     const askConfirmationForExport = this.props.table.total > 1000
 
     return (
       <div className={styles.Content}>
-        <Helmet title={formatMessage(messages.devicesTitle)} titleTemplate="%s - Aspect" defaultTitle="Aspect" />
+        <Helmet
+          title={formatMessage(messages.devicesTitle)}
+          titleTemplate="%s - Aspect"
+          defaultTitle="Aspect"
+        />
         <NavTitle title={formatMessage(messages.devicesTitle)} />
         <ListFilterContainer
           subject={formatMessage(messages.devicesTitle)}
           filterTemplate={formatMessage(messages.filterTemplate)}
-          filterTemplateOptional={formatMessage(messages.filterTemplateOptional)}
-
+          filterTemplateOptional={formatMessage(
+            messages.filterTemplateOptional
+          )}
           onClickExport={this.clickDeviceListExport}
           askConfirmationForExport={askConfirmationForExport}
         />

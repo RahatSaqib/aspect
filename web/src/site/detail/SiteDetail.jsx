@@ -13,11 +13,7 @@ import LinearProgress from 'material-ui/LinearProgress'
 // Our own imports
 import NavTitle from '../../globals/components/NavTitle'
 import isEditable from '../../shared/selectors/site'
-import {
-  fetchSingleSite,
-  updateSingleSite,
-  Site
-} from '../SiteRedux'
+import { fetchSingleSite, updateSingleSite, Site } from '../SiteRedux'
 import SiteForm from './SiteForm'
 import SiteLocationFormMap from './SiteLocationFormMap'
 import messages from './messages'
@@ -27,32 +23,37 @@ const enhance = compose(
   setPropTypes({
     match: PropTypes.shape({
       params: PropTypes.shape({
-        siteId: PropTypes.string.isRequired
-      }).isRequired
+        siteId: PropTypes.string.isRequired,
+      }).isRequired,
     }).isRequired,
   }),
   pure,
   injectIntl,
-  connect((state, props) => {
-    const site = state.site.items.byId.get(props.match.params.siteId)
+  connect(
+    (state, props) => {
+      const site = state.site.items.byId.get(props.match.params.siteId)
 
-    return {
-      editable: isEditable(state.user, site),
-      site,
-    }
-  }, dispatch => (
-    bindActionCreators({
-      fetchSingleSite,
-      updateSingleSite,
-    }, dispatch)
-  )),
+      return {
+        editable: isEditable(state.user, site),
+        site,
+      }
+    },
+    dispatch =>
+      bindActionCreators(
+        {
+          fetchSingleSite,
+          updateSingleSite,
+        },
+        dispatch
+      )
+  ),
   setPropTypes({
     intl: intlShape.isRequired,
     editable: PropTypes.bool.isRequired,
     site: PropTypes.objectOf(Site),
     fetchSingleSite: PropTypes.func.isRequired,
     updateSingleSite: PropTypes.func.isRequired,
-  }),
+  })
 )
 
 export class SiteDetail extends PureComponent {
@@ -79,16 +80,21 @@ export class SiteDetail extends PureComponent {
     const {
       intl: { formatMessage },
       updateSingleSite,
-      site, editable
+      site,
+      editable,
     } = this.props
 
     return (
       <div className={styles.Content}>
-        <Helmet title={formatMessage(messages.title)} titleTemplate="%s - Aspect" defaultTitle="Aspect" />
+        <Helmet
+          title={formatMessage(messages.title)}
+          titleTemplate="%s - Aspect"
+          defaultTitle="Aspect"
+        />
         <NavTitle title={formatMessage(messages.title)} />
         <Paper>
           {!this.hasSiteWithLocation() && <LinearProgress />}
-          {this.hasSiteWithLocation() && (
+          {this.hasSiteWithLocation() &&
             <div className={styles.FieldsContainer}>
               <SiteForm
                 formatMessage={formatMessage}
@@ -96,14 +102,9 @@ export class SiteDetail extends PureComponent {
                 editable={editable}
                 site={site}
               />
-            </div>
-          )}
-          {this.hasSiteWithLocation() && (
-            <SiteLocationFormMap
-              editable={editable}
-              site={site}
-            />
-          )}
+            </div>}
+          {this.hasSiteWithLocation() &&
+            <SiteLocationFormMap editable={editable} site={site} />}
         </Paper>
       </div>
     )

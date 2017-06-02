@@ -16,7 +16,10 @@ import TextInput from '../../components/shared/TextInput'
 import StrongPasswordInput from '../../components/shared/StrongPasswordInput'
 
 export function ResetPasswordEnterPassword({
-  intl, handleSubmit, pristine, invalid
+  intl,
+  handleSubmit,
+  pristine,
+  invalid,
 }) {
   const { formatMessage } = intl
   return (
@@ -24,16 +27,27 @@ export function ResetPasswordEnterPassword({
       <div className={styles.Form__Content}>
         <p>{formatMessage(messages.enterNewPasswordContent)}</p>
         <StrongPasswordInput
-          name="newPassword" label={formatMessage(messages.newPassword)}
-          maxLength="100" autoFocus fullWidth
+          name="newPassword"
+          label={formatMessage(messages.newPassword)}
+          maxLength="100"
+          autoFocus
+          fullWidth
         />
         <TextInput
-          name="confirmNewPassword" label={formatMessage(messages.confirmNewPassword)}
-          maxLength="100" type="password" fullWidth
+          name="confirmNewPassword"
+          label={formatMessage(messages.confirmNewPassword)}
+          maxLength="100"
+          type="password"
+          fullWidth
         />
       </div>
       <div className={styles.Form__ActionRow}>
-        <RaisedButton disabled={pristine || invalid} label={formatMessage(messages.next)} primary type="submit" />
+        <RaisedButton
+          disabled={pristine || invalid}
+          label={formatMessage(messages.next)}
+          primary
+          type="submit"
+        />
         <Link to="login">
           <FlatButton secondary label={formatMessage(messages.cancel)} />
         </Link>
@@ -48,11 +62,20 @@ export function validate(passwordInput, props) {
   if (passwordInput.get('newPassword')) {
     if (passwordInput.get('newPassword').trim().length < 8) {
       errors.newPassword = formatMessage(messages.newPasswordTooShort)
-    } else if (!/\d/.test(passwordInput.get('newPassword')) &&
-      !/(?=.*?[`~!@#$%^&*()\-=_+\\[\]{}/?,.<>])/.test(passwordInput.get('newPassword'))) {
-      errors.newPassword = formatMessage(messages.newPasswordMustContainANumberOrSpecialCharacter)
+    } else if (
+      !/\d/.test(passwordInput.get('newPassword')) &&
+      !/(?=.*?[`~!@#$%^&*()\-=_+\\[\]{}/?,.<>])/.test(
+        passwordInput.get('newPassword')
+      )
+    ) {
+      errors.newPassword = formatMessage(
+        messages.newPasswordMustContainANumberOrSpecialCharacter
+      )
     }
-    if (passwordInput.get('newPassword') !== passwordInput.get('confirmNewPassword')) {
+    if (
+      passwordInput.get('newPassword') !==
+      passwordInput.get('confirmNewPassword')
+    ) {
       errors.confirmNewPassword = formatMessage(messages.passwordsDoNotMatch)
     }
   } else {
@@ -65,5 +88,6 @@ export default _.flowRight(
   injectIntl,
   reduxForm({
     form: 'resetPasswordEnterNewPassword',
-    validate
-  }))(ResetPasswordEnterPassword)
+    validate,
+  })
+)(ResetPasswordEnterPassword)

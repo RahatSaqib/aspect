@@ -2,7 +2,14 @@
 import _fp from 'lodash/fp'
 import PropTypes from 'prop-types'
 import React from 'react'
-import { compose, pure, setPropTypes, mapProps, lifecycle, withHandlers } from 'recompose'
+import {
+  compose,
+  pure,
+  setPropTypes,
+  mapProps,
+  lifecycle,
+  withHandlers,
+} from 'recompose'
 import { bindActionCreators } from 'redux'
 import { connect } from 'react-redux'
 
@@ -20,25 +27,28 @@ const enhance = compose(
     itemTextGetter: PropTypes.func.isRequired,
     value: PropTypes.string,
   }),
-  connect(state => ({
-    siteItemsById: state.site.items.byId
-  }), bindActionCreators.bind(null, {
-    fetchSites
-  })),
+  connect(
+    state => ({
+      siteItemsById: state.site.items.byId,
+    }),
+    bindActionCreators.bind(null, {
+      fetchSites,
+    })
+  ),
   mapProps(props => ({
     ..._fp.omit(['siteItemsById', 'itemTextGetter'], props),
     siteList: props.siteItemsById
       .valueSeq()
       .map(item => ({
         value: item.get('name'),
-        text: props.itemTextGetter(item)
+        text: props.itemTextGetter(item),
       }))
-      .toJS()
+      .toJS(),
   })),
   lifecycle({
     componentDidMount() {
       this.props.fetchSites({}, undefined, undefined, 0, 99999)
-    }
+    },
   }),
   withHandlers({
     onSiteAutoCompleteNewRequest: props => (chosenRequest, index) => {
@@ -57,11 +67,11 @@ const enhance = compose(
     // on bluring - check if actual visual site name is correct (exists in datasource)
     // and is equal to value stored in props
     // --------------------------
-    onSiteAutoCompleteBlur: props => (event) => {
+    onSiteAutoCompleteBlur: props => event => {
       const newValue = event.target.value.trim()
       props.onChangeSite(newValue)
     },
-    onSiteAutoCompleteKeyUp: props => (event) => {
+    onSiteAutoCompleteKeyUp: props => event => {
       if (event.key === 'Enter') {
         // --------------------------
         // FYI: NewRequest event is triggered only if input control has value (even spaces)

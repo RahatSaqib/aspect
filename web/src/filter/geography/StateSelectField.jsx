@@ -8,7 +8,8 @@ import { connect } from 'react-redux'
 import MenuItem from 'material-ui/MenuItem'
 
 import { fetchStatesForLocationSelector } from '../../geography/GeographyRedux'
-import ForkedSelectField from '../../components/forkedMaterialUi/ForkedSelectField'
+import ForkedSelectField
+  from '../../components/forkedMaterialUi/ForkedSelectField'
 
 export function getSelectedCountry({ countries, countryId }) {
   if (countries.loading) {
@@ -34,13 +35,13 @@ export class StateSelectField extends PureComponent {
     fetchStatesForLocationSelector: PropTypes.func.isRequired,
     onChangeState: PropTypes.func.isRequired,
     countryId: PropTypes.string, // eslint-disable-line react/no-unused-prop-types
-    stateId: PropTypes.string
+    stateId: PropTypes.string,
   }
 
   static defaultProps = {
     allItemText: 'All',
     countryId: '',
-    stateId: ''
+    stateId: '',
   }
 
   componentDidMount() {
@@ -53,9 +54,11 @@ export class StateSelectField extends PureComponent {
   componentDidUpdate(prevProps) {
     const prevSelectedCountry = getSelectedCountry(prevProps)
     const selectedCountry = getSelectedCountry(this.props)
-    if (selectedCountry && (
-      !prevSelectedCountry || prevSelectedCountry.get('id') !== selectedCountry.get('id')
-    )) {
+    if (
+      selectedCountry &&
+      (!prevSelectedCountry ||
+        prevSelectedCountry.get('id') !== selectedCountry.get('id'))
+    ) {
       this.props.fetchStatesForLocationSelector(false, selectedCountry)
     }
   }
@@ -67,7 +70,12 @@ export class StateSelectField extends PureComponent {
   render() {
     const { allItemText, stateId } = this.props
     const restProps = _.omit(this.props, [
-      'allItemText', 'countries', 'onChangeState', 'countryId', 'stateId', 'fetchStatesForLocationSelector'
+      'allItemText',
+      'countries',
+      'onChangeState',
+      'countryId',
+      'stateId',
+      'fetchStatesForLocationSelector',
     ])
 
     return (
@@ -76,18 +84,9 @@ export class StateSelectField extends PureComponent {
         value={stateId}
         onChange={this.handleSelectFieldChange}
       >
-        {allItemText && (
-          <MenuItem
-            value="all"
-            primaryText={allItemText}
-          />
-        )}
+        {allItemText && <MenuItem value="all" primaryText={allItemText} />}
         {getSelectedCountryStates(this.props).map(s => (
-          <MenuItem
-            key={s.id}
-            value={s.id}
-            primaryText={s.name}
-          />
+          <MenuItem key={s.id} value={s.id} primaryText={s.name} />
         ))}
       </ForkedSelectField>
     )
@@ -96,16 +95,19 @@ export class StateSelectField extends PureComponent {
 
 function mapStateToProps(state) {
   return {
-    countries: state.geography.countriesForLocationSelector
+    countries: state.geography.countriesForLocationSelector,
   }
 }
 
 function mapDispatchToProps(dispatch) {
-  return bindActionCreators({
-    fetchStatesForLocationSelector
-  }, dispatch)
+  return bindActionCreators(
+    {
+      fetchStatesForLocationSelector,
+    },
+    dispatch
+  )
 }
 
-export default _.flowRight(
-  connect(mapStateToProps, mapDispatchToProps)
-)(StateSelectField)
+export default _.flowRight(connect(mapStateToProps, mapDispatchToProps))(
+  StateSelectField
+)

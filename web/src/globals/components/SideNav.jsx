@@ -9,7 +9,13 @@ import Drawer from 'material-ui/Drawer'
 import { ListItem } from 'material-ui/List'
 import Divider from 'material-ui/Divider'
 import Subheader from 'material-ui/Subheader'
-import { green500, red400, blue800, orange500, indigo600 } from 'material-ui/styles/colors'
+import {
+  green500,
+  red400,
+  blue800,
+  orange500,
+  indigo600,
+} from 'material-ui/styles/colors'
 import Home from 'material-ui/svg-icons/action/home'
 import Favorite from 'material-ui/svg-icons/action/favorite'
 import Cart from 'material-ui/svg-icons/action/shopping-cart'
@@ -32,35 +38,35 @@ import styles from './SideNav.css'
 const cssClasses = classnames.bind(styles)
 
 const DevicesLink = requirePermissions({
-  permissions: ['device:admin', 'device:view', 'device:edit']
+  permissions: ['device:admin', 'device:view', 'device:edit'],
 })(Link)
 
 const ResultsLink = requirePermissions({
-  permissions: ['result:admin', 'result:view', 'result:edit']
+  permissions: ['result:admin', 'result:view', 'result:edit'],
 })(Link)
 
 const ContactsLink = requirePermissions({
-  permissions: ['person:admin', 'person:view', 'person:edit']
+  permissions: ['person:admin', 'person:view', 'person:edit'],
 })(Link)
 
 const SitesLink = requirePermissions({
-  permissions: ['site:admin', 'site:view', 'site:edit']
+  permissions: ['site:admin', 'site:view', 'site:edit'],
 })(Link)
 
 const InventoryLink = requirePermissions({
-  permissions: ['inventory:admin', 'inventory:view', 'inventory:edit']
+  permissions: ['inventory:admin', 'inventory:view', 'inventory:edit'],
 })(Link)
 
 const NotificationsLink = requirePermissions({
-  permissions: ['notification:admin', 'notification:view', 'notification:edit']
+  permissions: ['notification:admin', 'notification:view', 'notification:edit'],
 })(Link)
 
 const ReportsLink = requirePermissions({
-  permissions: ['report:admin', 'report:view', 'report:edit']
+  permissions: ['report:admin', 'report:view', 'report:edit'],
 })(Link)
 
 const DeviceApiKeysLink = requirePermissions({
-  permissions: ['deviceApiKey:admin', 'deviceApiKey:view', 'deviceApiKey:edit']
+  permissions: ['deviceApiKey:admin', 'deviceApiKey:view', 'deviceApiKey:edit'],
 })(Link)
 
 const enhance = compose(
@@ -68,7 +74,7 @@ const enhance = compose(
     open: PropTypes.bool.isRequired,
     handleClose: PropTypes.func.isRequired,
     pathname: PropTypes.string.isRequired,
-    desktop: PropTypes.bool.isRequired
+    desktop: PropTypes.bool.isRequired,
   }),
   pure
 )
@@ -77,7 +83,7 @@ export const SideNav = ({ open, handleClose, pathname, desktop }) => (
   <Drawer
     docked={desktop}
     containerClassName={cssClasses({
-      'Drawer--desktop': desktop
+      'Drawer--desktop': desktop,
     })}
     open={open}
     onRequestChange={handleClose}

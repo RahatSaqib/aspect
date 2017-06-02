@@ -29,7 +29,7 @@ describe('Device Api Key List Component', () => {
           formatNumber: value => JSON.stringify(value),
           formatPlural: value => JSON.stringify(value),
           formatHTMLMessage: value => JSON.stringify(value),
-          now: () => now
+          now: () => now,
         },
         fetchDeviceApiKeys: () => {},
         items: new Items(),
@@ -51,13 +51,15 @@ describe('Device Api Key List Component', () => {
     })
 
     it('should render DOM correctly', () => {
-      const component = renderer.create(<Provider store={store}>
-        <MuiThemeProvider>
-          <IntlProvider locale="en">
-            <DeviceApiKeyList {...props} />
-          </IntlProvider>
-        </MuiThemeProvider>
-      </Provider>)
+      const component = renderer.create(
+        <Provider store={store}>
+          <MuiThemeProvider>
+            <IntlProvider locale="en">
+              <DeviceApiKeyList {...props} />
+            </IntlProvider>
+          </MuiThemeProvider>
+        </Provider>
+      )
       const tree = component.toJSON()
       expect(tree).toMatchSnapshot()
     })

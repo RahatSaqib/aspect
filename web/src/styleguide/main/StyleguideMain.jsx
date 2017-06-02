@@ -3,11 +3,7 @@ import _ from 'lodash'
 import Immutable from 'immutable'
 import React, { PureComponent } from 'react'
 import { compose, setPropTypes, pure } from 'recompose'
-import {
-  injectIntl,
-  defineMessages,
-  intlShape
-} from 'react-intl'
+import { injectIntl, defineMessages, intlShape } from 'react-intl'
 import Helmet from 'react-helmet'
 
 // Our own imports
@@ -20,16 +16,16 @@ import styles from './StyleguideMain.css'
 const messages = defineMessages({
   title: {
     id: 'pages.StyleguideMain.title',
-    defaultMessage: 'Styleguide'
+    defaultMessage: 'Styleguide',
   },
   filterTemplate: {
     id: 'pages.ManageDevices.filterTemplate',
-    defaultMessage: 'Viewing all devices<GEOGRAPHY><NAME>.'
+    defaultMessage: 'Viewing all devices<GEOGRAPHY><NAME>.',
   },
   filterTemplateOptional: {
     id: 'pages.ManageDevices.filterTemplateOptional',
-    defaultMessage: 'Counting only <ASSAY> assays<RESULT><DATE>.'
-  }
+    defaultMessage: 'Counting only <ASSAY> assays<RESULT><DATE>.',
+  },
 })
 
 const enhance = compose(
@@ -37,7 +33,7 @@ const enhance = compose(
   injectIntl,
   setPropTypes({
     intl: intlShape.isRequired,
-  }),
+  })
 )
 
 export class StyleguideMain extends PureComponent {
@@ -45,22 +41,22 @@ export class StyleguideMain extends PureComponent {
     filter: {},
     countryId: null,
     stateId: null,
-    lgaId: null
+    lgaId: null,
   }
 
-  handleChangeFilter = (filter) => {
+  handleChangeFilter = filter => {
     this.setState({ filter })
   }
 
-  handleChangeCountry = (countryId) => {
+  handleChangeCountry = countryId => {
     this.setState({ countryId })
   }
 
-  handleChangeState = (stateId) => {
+  handleChangeState = stateId => {
     this.setState({ stateId })
   }
 
-  handleChangeLga = (lgaId) => {
+  handleChangeLga = lgaId => {
     this.setState({ lgaId })
   }
 
@@ -70,7 +66,11 @@ export class StyleguideMain extends PureComponent {
 
     return (
       <div className={styles.Content}>
-        <Helmet title={formatMessage(messages.title)} titleTemplate="%s - Aspect" defaultTitle="Aspect" />
+        <Helmet
+          title={formatMessage(messages.title)}
+          titleTemplate="%s - Aspect"
+          defaultTitle="Aspect"
+        />
         <h1>Styleguide</h1>
         <ListFilter
           intl={intl}
@@ -78,14 +78,18 @@ export class StyleguideMain extends PureComponent {
           onChangeFilter={this.handleChangeFilter}
           listFilter={Immutable.fromJS(this.state.filter)}
           filterTemplate={formatMessage(messages.filterTemplate)}
-          filterTemplateOptional={formatMessage(messages.filterTemplateOptional)}
+          filterTemplateOptional={formatMessage(
+            messages.filterTemplateOptional
+          )}
           defaultExpanded
-          config={{ assayAndResultCategory: true,
+          config={{
+            assayAndResultCategory: true,
             geography: true,
             date: true,
             deviceName: true,
             siteName: true,
-            contactNameOrEmail: true }}
+            contactNameOrEmail: true,
+          }}
         />
         <CountrySelectField
           onChangeCountry={this.handleChangeCountry}

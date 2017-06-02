@@ -18,11 +18,7 @@ import startOfYear from 'date-fns/start_of_year'
 import subtractYears from 'date-fns/sub_years'
 import PropTypes from 'prop-types'
 import React, { PureComponent } from 'react'
-import {
-  injectIntl,
-  defineMessages,
-  intlShape
-} from 'react-intl'
+import { injectIntl, defineMessages, intlShape } from 'react-intl'
 
 // Material-UI
 import DatePicker from 'material-ui/DatePicker'
@@ -30,129 +26,129 @@ import MenuItem from 'material-ui/MenuItem'
 import Divider from 'material-ui/Divider'
 
 // Our own imports
-import ForkedSelectField from '../../components/forkedMaterialUi/ForkedSelectField'
+import ForkedSelectField
+  from '../../components/forkedMaterialUi/ForkedSelectField'
 import styles from './DateRangeSelector.css'
 
 const messages = defineMessages({
   any: {
     id: 'pages.dateRangeSelector.any',
-    defaultMessage: 'Any'
+    defaultMessage: 'Any',
   },
   day: {
     id: 'pages.dateRangeSelector.day',
-    defaultMessage: 'Day'
+    defaultMessage: 'Day',
   },
   week: {
     id: 'pages.dateRangeSelector.week',
-    defaultMessage: 'Week'
+    defaultMessage: 'Week',
   },
   month: {
     id: 'pages.dateRangeSelector.month',
-    defaultMessage: 'Month'
+    defaultMessage: 'Month',
   },
   quarter: {
     id: 'pages.dateRangeSelector.quarter',
-    defaultMessage: 'Quarter'
+    defaultMessage: 'Quarter',
   },
   year: {
     id: 'pages.dateRangeSelector.year',
-    defaultMessage: 'Year'
+    defaultMessage: 'Year',
   },
   selectDay: {
     id: 'pages.dateRangeSelector.selectDay',
-    defaultMessage: 'Select Day...'
+    defaultMessage: 'Select Day...',
   },
   selectWeek: {
     id: 'pages.dateRangeSelector.selectWeek',
-    defaultMessage: 'Select Week...'
+    defaultMessage: 'Select Week...',
   },
   selectMonth: {
     id: 'pages.dateRangeSelector.selectMonth',
-    defaultMessage: 'Select Month...'
+    defaultMessage: 'Select Month...',
   },
   selectQuarter: {
     id: 'pages.dateRangeSelector.selectQuarter',
-    defaultMessage: 'Select Quarter...'
+    defaultMessage: 'Select Quarter...',
   },
   selectYear: {
     id: 'pages.dateRangeSelector.selectYear',
-    defaultMessage: 'Select Year...'
+    defaultMessage: 'Select Year...',
   },
   fromDate: {
     id: 'pages.dateRangeSelector.fromDate',
-    defaultMessage: 'From...'
+    defaultMessage: 'From...',
   },
   toDate: {
     id: 'pages.dateRangeSelector.toDate',
-    defaultMessage: 'To...'
+    defaultMessage: 'To...',
   },
   custom: {
     id: 'pages.dateRangeSelector.custom',
-    defaultMessage: 'Custom'
+    defaultMessage: 'Custom',
   },
   today: {
     id: 'pages.dateRangeSelector.today',
-    defaultMessage: 'Today'
+    defaultMessage: 'Today',
   },
   yesterday: {
     id: 'pages.dateRangeSelector.yesterday',
-    defaultMessage: 'Yesterday'
+    defaultMessage: 'Yesterday',
   },
   last30Days: {
     id: 'pages.dateRangeSelector.last30Days',
-    defaultMessage: 'Last 30 Days'
+    defaultMessage: 'Last 30 Days',
   },
   thisMonth: {
     id: 'pages.dateRangeSelector.thisMonth',
-    defaultMessage: 'This Month'
+    defaultMessage: 'This Month',
   },
   lastMonth: {
     id: 'pages.dateRangeSelector.lastMonth',
-    defaultMessage: 'Last Month'
+    defaultMessage: 'Last Month',
   },
   last7Days: {
     id: 'pages.dateRangeSelector.last7Days',
-    defaultMessage: 'Last 7 Days'
+    defaultMessage: 'Last 7 Days',
   },
   thisWeek: {
     id: 'pages.dateRangeSelector.thisWeek',
-    defaultMessage: 'This Week'
+    defaultMessage: 'This Week',
   },
   lastWeek: {
     id: 'pages.dateRangeSelector.lastWeek',
-    defaultMessage: 'Last Week'
+    defaultMessage: 'Last Week',
   },
   thisQuarter: {
     id: 'pages.dateRangeSelector.thisQuarter',
-    defaultMessage: 'This Quarter'
+    defaultMessage: 'This Quarter',
   },
   thisYear: {
     id: 'pages.dateRangeSelector.thisYear',
-    defaultMessage: 'This Year'
+    defaultMessage: 'This Year',
   },
   lastYear: {
     id: 'pages.dateRangeSelector.lastYear',
-    defaultMessage: 'Last Year'
-  }
+    defaultMessage: 'Last Year',
+  },
 })
 
 export class DateRangeSelector extends PureComponent {
-
   static propTypes = {
     intl: intlShape.isRequired,
     onChangeDate: PropTypes.func.isRequired,
     floatingLabelText: PropTypes.string.isRequired,
     minDate: PropTypes.string,
-    maxDate: PropTypes.string
+    maxDate: PropTypes.string,
   }
 
   static defaultProps = {
     minDate: null,
-    maxDate: null
+    maxDate: null,
   }
 
   state = {
-    rangeMode: 'any'
+    rangeMode: 'any',
   }
 
   getDaysSelectList = () => {
@@ -163,22 +159,36 @@ export class DateRangeSelector extends PureComponent {
     for (let i = 2; i < 8; i++) {
       daysBeforeYesterday.push(subtractDays(now, i))
     }
-    return [{
-      label: `${formatMessage(messages.today)} (${formatDate(now, { day: '2-digit', month: '2-digit' })})`,
-      minDate: startOfDay(now),
-      maxDate: endOfDay(now)
-    }, {
-      label: `${formatMessage(messages.yesterday)} (${formatDate(yesterday, { day: '2-digit', month: '2-digit' })})`,
-      minDate: startOfDay(yesterday),
-      maxDate: endOfDay(yesterday)
-    }, ..._.map(daysBeforeYesterday, (day) => {
-      const selectItem = {
-        label: formatDate(day, { weekday: 'long', day: '2-digit', month: '2-digit' }),
-        minDate: startOfDay(day),
-        maxDate: endOfDay(day)
-      }
-      return selectItem
-    })]
+    return [
+      {
+        label: `${formatMessage(messages.today)} (${formatDate(now, {
+          day: '2-digit',
+          month: '2-digit',
+        })})`,
+        minDate: startOfDay(now),
+        maxDate: endOfDay(now),
+      },
+      {
+        label: `${formatMessage(messages.yesterday)} (${formatDate(yesterday, {
+          day: '2-digit',
+          month: '2-digit',
+        })})`,
+        minDate: startOfDay(yesterday),
+        maxDate: endOfDay(yesterday),
+      },
+      ..._.map(daysBeforeYesterday, day => {
+        const selectItem = {
+          label: formatDate(day, {
+            weekday: 'long',
+            day: '2-digit',
+            month: '2-digit',
+          }),
+          minDate: startOfDay(day),
+          maxDate: endOfDay(day),
+        }
+        return selectItem
+      }),
+    ]
   }
 
   getWeeksSelectList = () => {
@@ -194,27 +204,46 @@ export class DateRangeSelector extends PureComponent {
     for (let i = 2; i < 8; i++) {
       weeksBeforeLast.push(subtractWeeks(now, i))
     }
-    return [{
-      label: `${formatMessage(messages.last7Days)}`,
-      minDate: startOfDay(last7DaysStart),
-      maxDate: endOfDay(now)
-    }, {
-      label: `${formatMessage(messages.thisWeek)} (${formatDate(thisWeekStart, { day: '2-digit', month: '2-digit' })} - ${formatDate(thisWeekEnd, { day: '2-digit', month: '2-digit' })})`,
-      minDate: thisWeekStart,
-      maxDate: thisWeekEnd
-    }, {
-      label: `${formatMessage(messages.lastWeek)} (${formatDate(lastWeekStart, { day: '2-digit', month: '2-digit' })} - ${formatDate(lastWeekEnd, { day: '2-digit', month: '2-digit' })})`,
-      minDate: lastWeekStart,
-      maxDate: lastWeekEnd
-    }, ..._.map(weeksBeforeLast, (dayInWeek) => {
-      const weekStart = startOfWeek(dayInWeek)
-      const weekEnd = endOfWeek(dayInWeek)
-      return {
-        label: `${formatDate(weekStart, { weekday: 'long', day: '2-digit', month: '2-digit' })} - ${formatDate(weekEnd, { weekday: 'long', day: '2-digit', month: '2-digit' })}`,
-        minDate: startOfDay(weekStart),
-        maxDate: endOfDay(weekEnd)
-      }
-    })]
+    return [
+      {
+        label: `${formatMessage(messages.last7Days)}`,
+        minDate: startOfDay(last7DaysStart),
+        maxDate: endOfDay(now),
+      },
+      {
+        label: `${formatMessage(messages.thisWeek)} (${formatDate(
+          thisWeekStart,
+          { day: '2-digit', month: '2-digit' }
+        )} - ${formatDate(thisWeekEnd, { day: '2-digit', month: '2-digit' })})`,
+        minDate: thisWeekStart,
+        maxDate: thisWeekEnd,
+      },
+      {
+        label: `${formatMessage(messages.lastWeek)} (${formatDate(
+          lastWeekStart,
+          { day: '2-digit', month: '2-digit' }
+        )} - ${formatDate(lastWeekEnd, { day: '2-digit', month: '2-digit' })})`,
+        minDate: lastWeekStart,
+        maxDate: lastWeekEnd,
+      },
+      ..._.map(weeksBeforeLast, dayInWeek => {
+        const weekStart = startOfWeek(dayInWeek)
+        const weekEnd = endOfWeek(dayInWeek)
+        return {
+          label: `${formatDate(weekStart, {
+            weekday: 'long',
+            day: '2-digit',
+            month: '2-digit',
+          })} - ${formatDate(weekEnd, {
+            weekday: 'long',
+            day: '2-digit',
+            month: '2-digit',
+          })}`,
+          minDate: startOfDay(weekStart),
+          maxDate: endOfDay(weekEnd),
+        }
+      }),
+    ]
   }
 
   getMonthsSelectList = () => {
@@ -230,27 +259,44 @@ export class DateRangeSelector extends PureComponent {
     for (let i = 2; i < 12; i++) {
       monthsBeforeLast.push(subtractMonths(now, i))
     }
-    return [{
-      label: `${formatMessage(messages.last30Days)}`,
-      minDate: startOfDay(last30DaysStart),
-      maxDate: endOfDay(now)
-    }, {
-      label: `${formatMessage(messages.thisMonth)} (${formatDate(thisMonthStart, { day: '2-digit', month: '2-digit' })} - ${formatDate(thisMonthEnd, { day: '2-digit', month: '2-digit' })})`,
-      minDate: thisMonthStart,
-      maxDate: thisMonthEnd
-    }, {
-      label: `${formatMessage(messages.lastMonth)} (${formatDate(lastMonthStart, { day: '2-digit', month: '2-digit' })} - ${formatDate(lastMonthEnd, { day: '2-digit', month: '2-digit' })})`,
-      minDate: lastMonthStart,
-      maxDate: lastMonthEnd
-    }, ..._.map(monthsBeforeLast, (dayInMonth) => {
-      const monthStart = startOfMonth(dayInMonth)
-      const monthEnd = endOfMonth(dayInMonth)
-      return {
-        label: formatDate(monthStart, { month: 'long', year: 'numeric' }),
-        minDate: startOfDay(monthStart),
-        maxDate: endOfDay(monthEnd)
-      }
-    })]
+    return [
+      {
+        label: `${formatMessage(messages.last30Days)}`,
+        minDate: startOfDay(last30DaysStart),
+        maxDate: endOfDay(now),
+      },
+      {
+        label: `${formatMessage(messages.thisMonth)} (${formatDate(
+          thisMonthStart,
+          { day: '2-digit', month: '2-digit' }
+        )} - ${formatDate(thisMonthEnd, {
+          day: '2-digit',
+          month: '2-digit',
+        })})`,
+        minDate: thisMonthStart,
+        maxDate: thisMonthEnd,
+      },
+      {
+        label: `${formatMessage(messages.lastMonth)} (${formatDate(
+          lastMonthStart,
+          { day: '2-digit', month: '2-digit' }
+        )} - ${formatDate(lastMonthEnd, {
+          day: '2-digit',
+          month: '2-digit',
+        })})`,
+        minDate: lastMonthStart,
+        maxDate: lastMonthEnd,
+      },
+      ..._.map(monthsBeforeLast, dayInMonth => {
+        const monthStart = startOfMonth(dayInMonth)
+        const monthEnd = endOfMonth(dayInMonth)
+        return {
+          label: formatDate(monthStart, { month: 'long', year: 'numeric' }),
+          minDate: startOfDay(monthStart),
+          maxDate: endOfDay(monthEnd),
+        }
+      }),
+    ]
   }
 
   getQuartersSelectList = () => {
@@ -262,19 +308,25 @@ export class DateRangeSelector extends PureComponent {
     for (let i = 1; i < 12; i++) {
       previousQuarters.push(subtractQuarters(now, i))
     }
-    return [{
-      label: `${formatMessage(messages.thisQuarter)}`,
-      minDate: startOfDay(thisQuarterStart),
-      maxDate: endOfDay(thisQuarterEnd)
-    }, ..._.map(previousQuarters, (dayInQuarter) => {
-      const quarterStart = startOfQuarter(dayInQuarter)
-      const quarterEnd = endOfQuarter(dayInQuarter)
-      return {
-        label: `${formatMessage(messages.quarter)} ${getQuarter(dayInQuarter)} ${formatDate(dayInQuarter, { year: 'numeric' })}`,
-        minDate: startOfDay(quarterStart),
-        maxDate: endOfDay(quarterEnd)
-      }
-    })]
+    return [
+      {
+        label: `${formatMessage(messages.thisQuarter)}`,
+        minDate: startOfDay(thisQuarterStart),
+        maxDate: endOfDay(thisQuarterEnd),
+      },
+      ..._.map(previousQuarters, dayInQuarter => {
+        const quarterStart = startOfQuarter(dayInQuarter)
+        const quarterEnd = endOfQuarter(dayInQuarter)
+        return {
+          label: `${formatMessage(messages.quarter)} ${getQuarter(dayInQuarter)} ${formatDate(
+            dayInQuarter,
+            { year: 'numeric' }
+          )}`,
+          minDate: startOfDay(quarterStart),
+          maxDate: endOfDay(quarterEnd),
+        }
+      }),
+    ]
   }
 
   getYearsSelectList = () => {
@@ -289,23 +341,33 @@ export class DateRangeSelector extends PureComponent {
     for (let i = 2; i < 7; i++) {
       yearsBeforeLast.push(subtractYears(now, i))
     }
-    return [{
-      label: `${formatMessage(messages.thisYear)} (${formatDate(thisYearStart, { year: 'numeric' })})`,
-      minDate: thisYearStart,
-      maxDate: thisYearEnd
-    }, {
-      label: `${formatMessage(messages.lastYear)} (${formatDate(lastYearStart, { year: 'numeric' })})`,
-      minDate: lastYearStart,
-      maxDate: lastYearEnd
-    }, ..._.map(yearsBeforeLast, (dayInYear) => {
-      const yearStart = startOfYear(dayInYear)
-      const yearEnd = endOfYear(dayInYear)
-      return {
-        label: formatDate(yearStart, { year: 'numeric' }),
-        minDate: startOfDay(yearStart),
-        maxDate: endOfDay(yearEnd)
-      }
-    })]
+    return [
+      {
+        label: `${formatMessage(messages.thisYear)} (${formatDate(
+          thisYearStart,
+          { year: 'numeric' }
+        )})`,
+        minDate: thisYearStart,
+        maxDate: thisYearEnd,
+      },
+      {
+        label: `${formatMessage(messages.lastYear)} (${formatDate(
+          lastYearStart,
+          { year: 'numeric' }
+        )})`,
+        minDate: lastYearStart,
+        maxDate: lastYearEnd,
+      },
+      ..._.map(yearsBeforeLast, dayInYear => {
+        const yearStart = startOfYear(dayInYear)
+        const yearEnd = endOfYear(dayInYear)
+        return {
+          label: formatDate(yearStart, { year: 'numeric' }),
+          minDate: startOfDay(yearStart),
+          maxDate: endOfDay(yearEnd),
+        }
+      }),
+    ]
   }
 
   getMinDate() {
@@ -327,14 +389,16 @@ export class DateRangeSelector extends PureComponent {
   }
 
   handleDateRangeChange = (event, index, value) => {
-    this.props.onChangeDate(value ?
-    { minDate: value.minDate.toJSON(), maxDate: value.maxDate.toJSON() } :
-    { minDate: null, maxDate: null })
+    this.props.onChangeDate(
+      value
+        ? { minDate: value.minDate.toJSON(), maxDate: value.maxDate.toJSON() }
+        : { minDate: null, maxDate: null }
+    )
   }
 
   handleRangeModeChange = (event, index, value) => {
     this.setState({
-      rangeMode: value
+      rangeMode: value,
     })
     this.props.onChangeDate({ minDate: null, maxDate: null })
   }
@@ -349,7 +413,7 @@ export class DateRangeSelector extends PureComponent {
       month: this.getMonthsSelectList(),
       quarter: this.getQuartersSelectList(),
       year: this.getYearsSelectList(),
-      custom: []
+      custom: [],
     }[this.state.rangeMode]
 
     const dropDownListHintText = {
@@ -359,14 +423,21 @@ export class DateRangeSelector extends PureComponent {
       month: formatMessage(messages.selectMonth),
       quarter: formatMessage(messages.selectQuarter),
       year: formatMessage(messages.selectYear),
-      custom: ''
+      custom: '',
     }[this.state.rangeMode]
 
-    const selectedValue = _.find(dropDownSelectItems,
-      { minDate: this.getMinDate(), maxDate: this.getMaxDate() })
+    const selectedValue = _.find(dropDownSelectItems, {
+      minDate: this.getMinDate(),
+      maxDate: this.getMaxDate(),
+    })
 
     const restProps = _.omit(this.props, [
-      'floatingLabelText', 'clearButtonTooltip', 'onChangeDate', 'minDate', 'maxDate', 'intl'
+      'floatingLabelText',
+      'clearButtonTooltip',
+      'onChangeDate',
+      'minDate',
+      'maxDate',
+      'intl',
     ])
     return (
       <div className={styles.DateRangeSelector}>
@@ -384,59 +455,68 @@ export class DateRangeSelector extends PureComponent {
           <MenuItem value="day" primaryText={formatMessage(messages.day)} />
           <MenuItem value="week" primaryText={formatMessage(messages.week)} />
           <MenuItem value="month" primaryText={formatMessage(messages.month)} />
-          <MenuItem value="quarter" primaryText={formatMessage(messages.quarter)} />
+          <MenuItem
+            value="quarter"
+            primaryText={formatMessage(messages.quarter)}
+          />
           <MenuItem value="year" primaryText={formatMessage(messages.year)} />
           <Divider />
-          <MenuItem value="custom" primaryText={formatMessage(messages.custom)} />
+          <MenuItem
+            value="custom"
+            primaryText={formatMessage(messages.custom)}
+          />
         </ForkedSelectField>
         {(() => {
           switch (this.state.rangeMode) {
-            case 'any': return false
-            case 'custom': return (
-              <div className={styles.DateRangeSelector__DatePickerContainer}>
-                <DatePicker
-                  {...restProps}
+            case 'any':
+              return false
+            case 'custom':
+              return (
+                <div className={styles.DateRangeSelector__DatePickerContainer}>
+                  <DatePicker
+                    {...restProps}
+                    floatingLabelText=" "
+                    floatingLabelFixed
+                    className={styles.DateRangeSelector__DatePicker}
+                    value={this.getMinDate()}
+                    onChange={this.handleMinDateChange}
+                    hintText={formatMessage(messages.fromDate)}
+                    container="inline"
+                    mode="landscape"
+                  />
+                  <DatePicker
+                    {..._.omit(restProps, 'floatingLabelText')}
+                    floatingLabelText=" "
+                    floatingLabelFixed
+                    className={styles.DateRangeSelector__DatePicker}
+                    value={this.getMaxDate()}
+                    onChange={this.handleMaxDateChange}
+                    hintText={formatMessage(messages.toDate)}
+                    container="inline"
+                    mode="landscape"
+                  />
+                </div>
+              )
+            default:
+              return (
+                <ForkedSelectField
+                  className={styles.DateRangeSelector__DropDownList}
                   floatingLabelText=" "
                   floatingLabelFixed
-                  className={styles.DateRangeSelector__DatePicker}
-                  value={this.getMinDate()}
-                  onChange={this.handleMinDateChange}
-                  hintText={formatMessage(messages.fromDate)}
-                  container="inline"
-                  mode="landscape"
-                />
-                <DatePicker
-                  {..._.omit(restProps, 'floatingLabelText')}
-                  floatingLabelText=" "
-                  floatingLabelFixed
-                  className={styles.DateRangeSelector__DatePicker}
-                  value={this.getMaxDate()}
-                  onChange={this.handleMaxDateChange}
-                  hintText={formatMessage(messages.toDate)}
-                  container="inline"
-                  mode="landscape"
-                />
-              </div>
-            )
-            default: return (
-              <ForkedSelectField
-                className={styles.DateRangeSelector__DropDownList}
-                floatingLabelText=" "
-                floatingLabelFixed
-                hintText={dropDownListHintText}
-                value={selectedValue}
-                autoWidth
-                onChange={this.handleDateRangeChange}
-              >
-                {
-                  dropDownSelectItems.map(dropDownSelectItem =>
+                  hintText={dropDownListHintText}
+                  value={selectedValue}
+                  autoWidth
+                  onChange={this.handleDateRangeChange}
+                >
+                  {dropDownSelectItems.map(dropDownSelectItem => (
                     <MenuItem
-                      key={dropDownSelectItem.minDate} value={dropDownSelectItem}
+                      key={dropDownSelectItem.minDate}
+                      value={dropDownSelectItem}
                       primaryText={dropDownSelectItem.label}
-                    />)
-                }
-              </ForkedSelectField>
-            )
+                    />
+                  ))}
+                </ForkedSelectField>
+              )
           }
         })()}
       </div>

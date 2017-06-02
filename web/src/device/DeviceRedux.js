@@ -8,21 +8,16 @@ import { nonEmptyFilterValue } from '../filter/utils'
 import {
   filterFieldsRejectedError,
   errorNotFound,
-  errorPleaseTryAgainInAFewMinutes
+  errorPleaseTryAgainInAFewMinutes,
 } from '../error/CommonErrorNotifications'
 
-import {
-  receiveList,
-  receiveItem,
-  Items
-} from '../shared/metaReducers/items'
+import { receiveList, receiveItem, Items } from '../shared/metaReducers/items'
 import {
   requestTable,
   receiveTableItems,
-  Table
+  Table,
 } from '../shared/metaReducers/table'
 import { receivedExportResponse } from '../filter/FilterRedux'
-
 
 export const types = {
   REQUEST_DEVICES: 'REQUEST_DEVICES',
@@ -35,7 +30,7 @@ export const types = {
   RECEIVE_UPDATED_SINGLE_DEVICE: 'RECEIVE_UPDATED_SINGLE_DEVICE',
 
   REQUEST_DEVICES_FOR_SELECT_LIST: 'REQUEST_DEVICES_FOR_SELECT_LIST',
-  RECEIVE_DEVICES_FOR_SELECT_LIST: 'RECEIVE_DEVICES_FOR_SELECT_LIST'
+  RECEIVE_DEVICES_FOR_SELECT_LIST: 'RECEIVE_DEVICES_FOR_SELECT_LIST',
 }
 /*
  * ---------------- Action Creators -----------------
@@ -47,7 +42,7 @@ function requestDevices(sortCol, sortDir, page, size, filters) {
     sortDir,
     page,
     size,
-    filters
+    filters,
   }
 }
 
@@ -55,16 +50,14 @@ function receiveDevices(json) {
   return {
     type: types.RECEIVE_DEVICES,
     items: json.data,
-    total: json.total
+    total: json.total,
   }
 }
 
 // With state.filter.listFilter & extraFilters
 export function fetchListFilteredDevices(extraFilters = {}, ...args) {
   return (dispatch, getState) => {
-    const filters = getState()
-      .filter
-      .listFilter
+    const filters = getState().filter.listFilter
       .toMap()
       .merge(extraFilters)
       .filter(nonEmptyFilterValue)
@@ -74,40 +67,51 @@ export function fetchListFilteredDevices(extraFilters = {}, ...args) {
   }
 }
 
-export function fetchDevices(filters/* required */, sortCol = 'name', sortDir = 'asc', page = 0, pageSize = 10) {
-  return (dispatch) => {
+export function fetchDevices(
+  filters /* required */,
+  sortCol = 'name',
+  sortDir = 'asc',
+  page = 0,
+  pageSize = 10
+) {
+  return dispatch => {
     dispatch(requestDevices(sortCol, sortDir, page, pageSize, filters))
 
-    return aspectFetch(`/device?${stringify({
-      sortCol,
-      sortDir,
-      page,
-      size: pageSize,
-      ...filters
-    })}`,
+    return aspectFetch(
+      `/device?${stringify({
+        sortCol,
+        sortDir,
+        page,
+        size: pageSize,
+        ...filters,
+      })}`,
       {
         errorNotifications: {
-          400: filterFieldsRejectedError(defineMessages({
-            title: {
-              id: 'errorResponseMessages.fetchDevices.GET.400.title',
-              defaultMessage: 'Searching Devices Failed'
-            }
-          })),
-          default: errorPleaseTryAgainInAFewMinutes(defineMessages({
-            title: {
-              id: 'errorResponseMessages.fetchDevices.GET.default.title',
-              defaultMessage: 'Loading Devices Failed'
-            }
-          }))
-        }
-      })
-      .then(json => dispatch(receiveDevices(json)))
+          400: filterFieldsRejectedError(
+            defineMessages({
+              title: {
+                id: 'errorResponseMessages.fetchDevices.GET.400.title',
+                defaultMessage: 'Searching Devices Failed',
+              },
+            })
+          ),
+          default: errorPleaseTryAgainInAFewMinutes(
+            defineMessages({
+              title: {
+                id: 'errorResponseMessages.fetchDevices.GET.default.title',
+                defaultMessage: 'Loading Devices Failed',
+              },
+            })
+          ),
+        },
+      }
+    ).then(json => dispatch(receiveDevices(json)))
   }
 }
 
 function requestDevicesForSelectList() {
   return {
-    type: types.REQUEST_DEVICES_FOR_SELECT_LIST
+    type: types.REQUEST_DEVICES_FOR_SELECT_LIST,
   }
 }
 
@@ -115,7 +119,7 @@ function receiveDevicesForSelectList(devicesForSelectList) {
   return {
     type: types.RECEIVE_DEVICES_FOR_SELECT_LIST,
     items: devicesForSelectList,
-    lastRefreshed: new Date()
+    lastRefreshed: new Date(),
   }
 }
 
@@ -126,9 +130,10 @@ export function fetchDevicesForSelectList(forceRefresh, filters) {
     if (device.selectList.loading) {
       return
     }
-    const shouldFetch = forceRefresh || !device.selectList.lastRefreshed || (
+    const shouldFetch =
+      forceRefresh ||
+      !device.selectList.lastRefreshed ||
       differenceInMinutes(new Date(), device.selectList.lastRefreshed) > 5
-    )
     if (!shouldFetch) {
       return
     }
@@ -136,54 +141,57 @@ export function fetchDevicesForSelectList(forceRefresh, filters) {
     dispatch(requestDevicesForSelectList())
     return aspectFetch(`/device/select-list?${stringify(filters)}`, {
       errorNotifications: {
-        default: errorPleaseTryAgainInAFewMinutes(defineMessages({
-          title: {
-            id: 'errorResponseMessages.fetchDevicesForSelectList.GET.default.title',
-            defaultMessage: 'Loading Devices Failed'
-          }
-        }))
-      }
+        default: errorPleaseTryAgainInAFewMinutes(
+          defineMessages({
+            title: {
+              id: 'errorResponseMessages.fetchDevicesForSelectList.GET.default.title',
+              defaultMessage: 'Loading Devices Failed',
+            },
+          })
+        ),
+      },
     }).then(json => dispatch(receiveDevicesForSelectList(json.data)))
   }
 }
 
-
 function requestSingleDevice(deviceId) {
   return {
     type: types.REQUEST_SINGLE_DEVICE,
-    deviceId
+    deviceId,
   }
 }
 
 function receiveSingleDevice(item) {
   return {
     type: types.RECEIVE_SINGLE_DEVICE,
-    item
+    item,
   }
 }
 
 export function fetchSingleDevice(deviceId) {
-  return (dispatch) => {
+  return dispatch => {
     dispatch(requestSingleDevice(deviceId))
 
-    return aspectFetch(`/device/${deviceId}`,
-      {
-        errorNotifications: {
-          404: errorNotFound(defineMessages({
+    return aspectFetch(`/device/${deviceId}`, {
+      errorNotifications: {
+        404: errorNotFound(
+          defineMessages({
             title: {
               id: 'errorResponseMessages.fetchSingleDevice.GET.404.title',
-              defaultMessage: 'Could Not Find Device Details'
-            }
-          })),
-          default: errorPleaseTryAgainInAFewMinutes(defineMessages({
+              defaultMessage: 'Could Not Find Device Details',
+            },
+          })
+        ),
+        default: errorPleaseTryAgainInAFewMinutes(
+          defineMessages({
             title: {
               id: 'errorResponseMessages.fetchSingleDevice.GET.default.title',
-              defaultMessage: 'Error Loading Device Details'
-            }
-          }))
-        }
-      })
-      .then(json => dispatch(receiveSingleDevice(json.data)))
+              defaultMessage: 'Error Loading Device Details',
+            },
+          })
+        ),
+      },
+    }).then(json => dispatch(receiveSingleDevice(json.data)))
   }
 }
 
@@ -191,73 +199,85 @@ function requestUpdatingSingleDevice(deviceId, data) {
   return {
     type: types.REQUEST_UPDATING_SINGLE_DEVICE,
     deviceId,
-    data
+    data,
   }
 }
 
 function receiveUpdatedSingleDevice(item) {
   return {
     type: types.RECEIVE_UPDATED_SINGLE_DEVICE,
-    item
+    item,
   }
 }
 
 export function updateSingleDevice(deviceId, data) {
-  return (dispatch) => {
+  return dispatch => {
     dispatch(requestUpdatingSingleDevice(deviceId, data))
 
     return aspectFetch(`/device/${deviceId}`, {
       method: 'PUT',
       body: JSON.stringify(data),
       errorNotifications: {
-        default: errorPleaseTryAgainInAFewMinutes(defineMessages({
-          title: {
-            id: 'errorResponseMessages.updateSingleDevice.PUT.default.title',
-            defaultMessage: 'An Error Occurred When Trying to Save the Device'
-          }
-        }))
-      }
+        default: errorPleaseTryAgainInAFewMinutes(
+          defineMessages({
+            title: {
+              id: 'errorResponseMessages.updateSingleDevice.PUT.default.title',
+              defaultMessage: 'An Error Occurred When Trying to Save the Device',
+            },
+          })
+        ),
+      },
     }).then(json => dispatch(receiveUpdatedSingleDevice(json.data)))
   }
 }
 
-export function exportDevices(extraFilters = {}, format, sortCol, sortDir, page, pageSize) {
+export function exportDevices(
+  extraFilters = {},
+  format,
+  sortCol,
+  sortDir,
+  page,
+  pageSize
+) {
   return (dispatch, getState) => {
-    const filters = getState()
-      .filter
-      .listFilter
+    const filters = getState().filter.listFilter
       .toMap()
       .merge(extraFilters)
       .filter(nonEmptyFilterValue)
       .toJS()
 
-    return aspectFetch(`/device/export?${stringify({
-      sortCol,
-      sortDir,
-      page,
-      size: pageSize,
-      format,
-      ...filters
-    })}`,
+    return aspectFetch(
+      `/device/export?${stringify({
+        sortCol,
+        sortDir,
+        page,
+        size: pageSize,
+        format,
+        ...filters,
+      })}`,
       {
         errorNotifications: {
-          400: filterFieldsRejectedError(defineMessages({
-            title: {
-              id: 'errorResponseMessages.exportDevices.GET.400.title',
-              defaultMessage: 'Exporting Devices Failed'
-            }
-          })),
-          default: errorPleaseTryAgainInAFewMinutes(defineMessages({
-            title: {
-              id: 'errorResponseMessages.exportDevices.GET.default.title',
-              defaultMessage: 'Exporting Devices Failed'
-            }
-          }))
-        }
-      })
-      .then((json) => {
-        dispatch(receivedExportResponse(format, json))
-      })
+          400: filterFieldsRejectedError(
+            defineMessages({
+              title: {
+                id: 'errorResponseMessages.exportDevices.GET.400.title',
+                defaultMessage: 'Exporting Devices Failed',
+              },
+            })
+          ),
+          default: errorPleaseTryAgainInAFewMinutes(
+            defineMessages({
+              title: {
+                id: 'errorResponseMessages.exportDevices.GET.default.title',
+                defaultMessage: 'Exporting Devices Failed',
+              },
+            })
+          ),
+        },
+      }
+    ).then(json => {
+      dispatch(receivedExportResponse(format, json))
+    })
   }
 }
 
@@ -267,12 +287,12 @@ export function exportDevices(extraFilters = {}, format, sortCol, sortDir, page,
 const SelectListItems = Immutable.Record({
   loading: false,
   items: Immutable.List([]),
-  lastRefreshed: undefined
+  lastRefreshed: undefined,
 })
 const Device = Immutable.Record({
   items: new Items(),
   table: new Table(),
-  selectList: new SelectListItems()
+  selectList: new SelectListItems(),
 })
 
 const initialState = new Device()
@@ -280,18 +300,16 @@ const initialState = new Device()
 export default function deviceReducer(state = initialState, action) {
   switch (action.type) {
     case types.REQUEST_DEVICES:
-      return state
-      .set('table', requestTable(state.table, action))
+      return state.set('table', requestTable(state.table, action))
     case types.RECEIVE_DEVICES:
-      return state
-      .withMutations((mutState) => {
+      return state.withMutations(mutState => {
         const immutList = Immutable.fromJS(action.items)
         mutState.set('items', receiveList(mutState.items, immutList))
         mutState.set('table', receiveTableItems(mutState.table, action.total))
       })
     case types.RECEIVE_SINGLE_DEVICE:
     case types.RECEIVE_UPDATED_SINGLE_DEVICE:
-      return state.withMutations((mutState) => {
+      return state.withMutations(mutState => {
         const immutItem = Immutable.fromJS(action.item)
         mutState.set('items', receiveItem(mutState.items, immutItem))
       })
@@ -301,7 +319,7 @@ export default function deviceReducer(state = initialState, action) {
       return state.mergeIn(['selectList'], {
         loading: false,
         lastRefreshed: action.lastRefreshed,
-        items: new Immutable.fromJS(action.items)
+        items: new Immutable.fromJS(action.items),
       })
     default:
       return state
