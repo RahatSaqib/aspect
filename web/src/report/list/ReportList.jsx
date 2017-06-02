@@ -1,17 +1,14 @@
 import PropTypes from 'prop-types'
 import React, { PureComponent } from 'react'
 import { compose, setPropTypes, pure } from 'recompose'
-import {
-  injectIntl,
-  defineMessages,
-  intlShape
-} from 'react-intl'
+import { injectIntl, defineMessages, intlShape } from 'react-intl'
 import { bindActionCreators } from 'redux'
 import { connect } from 'react-redux'
 import Helmet from 'react-helmet'
 
 // Our own imports
-import DataTableWithEmptyList from '../../components/shared/DataTableWithEmptyList'
+import DataTableWithEmptyList
+  from '../../components/shared/DataTableWithEmptyList'
 import NavTitle from '../../globals/components/NavTitle'
 import ListFilterContainer from '../../filter/list/ListFilter'
 import { configureListFilter, ListFilter } from '../../filter/FilterRedux'
@@ -23,36 +20,36 @@ import { Table } from '../../shared/metaReducers/table'
 const messages = defineMessages({
   title: {
     id: 'pages.ReportList.title',
-    defaultMessage: 'Reports'
+    defaultMessage: 'Reports',
   },
   deploymentName: {
     id: 'pages.ReportList.deploymentName',
-    defaultMessage: 'Deployment Name'
+    defaultMessage: 'Deployment Name',
   },
   moduleSerial: {
     id: 'pages.ReportList.moduleSerial',
-    defaultMessage: 'Module Serial'
+    defaultMessage: 'Module Serial',
   },
   dateOfError: {
     id: 'pages.ReportList.dateOfError',
-    defaultMessage: 'Date of Error'
+    defaultMessage: 'Date of Error',
   },
   error: {
     id: 'pages.ReportList.error',
-    defaultMessage: 'Error'
+    defaultMessage: 'Error',
   },
   totalTestsRun: {
     id: 'pages.ReportList.totalTestsRun',
-    defaultMessage: 'Total Tests Run'
+    defaultMessage: 'Total Tests Run',
   },
   totalErrors: {
     id: 'pages.ReportList.totalErrors',
-    defaultMessage: 'Total Errors'
+    defaultMessage: 'Total Errors',
   },
   filterTemplate: {
     id: 'pages.ReportList.filterTemplate',
-    defaultMessage: 'Viewing all reports<NAME>.'
-  }
+    defaultMessage: 'Viewing all reports<NAME>.',
+  },
 })
 
 const enhance = compose(
@@ -62,16 +59,21 @@ const enhance = compose(
   }),
   pure,
   injectIntl,
-  connect(state => ({
-    listFilter: state.filter.listFilter,
-    items: state.report.items,
-    table: state.report.table,
-  }), dispatch => (
-    bindActionCreators({
-      fetchListFilteredReports,
-      configureListFilter,
-    }, dispatch)
-  )),
+  connect(
+    state => ({
+      listFilter: state.filter.listFilter,
+      items: state.report.items,
+      table: state.report.table,
+    }),
+    dispatch =>
+      bindActionCreators(
+        {
+          fetchListFilteredReports,
+          configureListFilter,
+        },
+        dispatch
+      )
+  ),
   setPropTypes({
     intl: intlShape.isRequired,
     listFilter: PropTypes.objectOf(ListFilter).isRequired,
@@ -79,7 +81,7 @@ const enhance = compose(
     table: PropTypes.objectOf(Table).isRequired,
     fetchListFilteredReports: PropTypes.func.isRequired,
     configureListFilter: PropTypes.func.isRequired,
-  }),
+  })
 )
 
 export class ReportList extends PureComponent {
@@ -111,12 +113,16 @@ export class ReportList extends PureComponent {
       { db: 'dateOfError', title: formatMessage(messages.dateOfError) },
       { db: 'error', title: formatMessage(messages.error) },
       { db: 'totalTestsRun', title: formatMessage(messages.totalTestsRun) },
-      { db: 'totalErrors', title: formatMessage(messages.totalErrors) }
+      { db: 'totalErrors', title: formatMessage(messages.totalErrors) },
     ]
 
     return (
       <div className={styles.Content}>
-        <Helmet title={formatMessage(messages.title)} titleTemplate="%s - Aspect" defaultTitle="Aspect" />
+        <Helmet
+          title={formatMessage(messages.title)}
+          titleTemplate="%s - Aspect"
+          defaultTitle="Aspect"
+        />
         <NavTitle title={formatMessage(messages.title)} />
         <ListFilterContainer
           subject={formatMessage(messages.title)}

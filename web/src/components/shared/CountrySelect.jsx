@@ -4,69 +4,106 @@ import MenuItem from 'material-ui/MenuItem'
 import FlagIcon from './flagIcon/FlagIcon'
 import ForkedSelectField from '../forkedMaterialUi/ForkedSelectField'
 
-export const MenuItemLabel = (props) => {
+export const MenuItemLabel = props => {
   const { country, selectedItemStyle } = props
-  return (<div style={{ display: 'inline-block', whiteSpace: 'nowrap', overflow: 'hidden' }}>
-    <FlagIcon countryIsoAlpha2Code={country.iso_alpha2_code} />
-    <div style={{ ...{ display: 'inline-block', marginLeft: '0.5em' }, ...selectedItemStyle }}>
-      {country.selectedItemText}
+  return (
+    <div
+      style={{
+        display: 'inline-block',
+        whiteSpace: 'nowrap',
+        overflow: 'hidden',
+      }}
+    >
+      <FlagIcon countryIsoAlpha2Code={country.iso_alpha2_code} />
+      <div
+        style={{
+          ...{ display: 'inline-block', marginLeft: '0.5em' },
+          ...selectedItemStyle,
+        }}
+      >
+        {country.selectedItemText}
+      </div>
     </div>
-  </div>)
+  )
 }
 
-export default (props) => {
+export default props => {
   const {
     value,
     selectFieldStyle,
     selectedItemStyle,
     underlineStyle,
     onChange,
-    selectFieldProps
+    selectFieldProps,
   } = props
   const dataSource = props.dataSource || countries
   const dataSourceConfig = props.dataSourceConfig || {}
   const countriesJoinOn = dataSourceConfig.countriesJoinOn || 'iso_alpha2_code'
-  const dataSourceJoinOn = dataSourceConfig.dataSourceJoinOn || 'iso_alpha2_code'
-  const menuItemTextPredicate = dataSourceConfig.menuItemTextPredicate || (country => country.name)
-  const selectedItemTextPredicate = dataSourceConfig.selectedItemTextPredicate ||
-    (country => country.name)
-  const valuePredicate = dataSourceConfig.valuePredicate || (country => country.iso_alpha2_code)
+  const dataSourceJoinOn =
+    dataSourceConfig.dataSourceJoinOn || 'iso_alpha2_code'
+  const menuItemTextPredicate =
+    dataSourceConfig.menuItemTextPredicate || (country => country.name)
+  const selectedItemTextPredicate =
+    dataSourceConfig.selectedItemTextPredicate || (country => country.name)
+  const valuePredicate =
+    dataSourceConfig.valuePredicate || (country => country.iso_alpha2_code)
   const validDataSourceCountries = _.filter(dataSource, dataSourceCountry =>
-      _.some(countries, country =>
-        country[countriesJoinOn] === dataSourceCountry[dataSourceJoinOn]))
-  const countriesData = _.map(validDataSourceCountries,
-      (dataSourceCountry) => {
-        const matchingCountry = _.find(countries, country =>
-          country[countriesJoinOn] === dataSourceCountry[dataSourceJoinOn])
-        const mergedCountry = { ...matchingCountry, ...dataSourceCountry }
-        return {
-          iso_alpha2_code: mergedCountry.iso_alpha2_code,
-          name: mergedCountry.name,
-          value: valuePredicate(mergedCountry),
-          menuItemText: menuItemTextPredicate(mergedCountry),
-          selectedItemText: selectedItemTextPredicate(mergedCountry)
-        }
-      })
-
-  return (<ForkedSelectField
-    value={value} style={selectFieldStyle} underlineStyle={underlineStyle}
-    autoWidth onChange={onChange} {...selectFieldProps}
-  >
-    {
-      countriesData.map(country =>
-        <MenuItem
-          key={country.value} value={country.value}
-          primaryText={country.menuItemText} leftIcon={<FlagIcon
-            style={{ margin: '0.3em 0' }}
-            countryIsoAlpha2Code={country.iso_alpha2_code}
-          />}
-          label={<MenuItemLabel country={country} selectedItemStyle={selectedItemStyle} />}
-        />)
+    _.some(
+      countries,
+      country =>
+        country[countriesJoinOn] === dataSourceCountry[dataSourceJoinOn]
+    )
+  )
+  const countriesData = _.map(validDataSourceCountries, dataSourceCountry => {
+    const matchingCountry = _.find(
+      countries,
+      country =>
+        country[countriesJoinOn] === dataSourceCountry[dataSourceJoinOn]
+    )
+    const mergedCountry = { ...matchingCountry, ...dataSourceCountry }
+    return {
+      iso_alpha2_code: mergedCountry.iso_alpha2_code,
+      name: mergedCountry.name,
+      value: valuePredicate(mergedCountry),
+      menuItemText: menuItemTextPredicate(mergedCountry),
+      selectedItemText: selectedItemTextPredicate(mergedCountry),
     }
-  </ForkedSelectField>)
+  })
+
+  return (
+    <ForkedSelectField
+      value={value}
+      style={selectFieldStyle}
+      underlineStyle={underlineStyle}
+      autoWidth
+      onChange={onChange}
+      {...selectFieldProps}
+    >
+      {countriesData.map(country => (
+        <MenuItem
+          key={country.value}
+          value={country.value}
+          primaryText={country.menuItemText}
+          leftIcon={
+            <FlagIcon
+              style={{ margin: '0.3em 0' }}
+              countryIsoAlpha2Code={country.iso_alpha2_code}
+            />
+          }
+          label={
+            <MenuItemLabel
+              country={country}
+              selectedItemStyle={selectedItemStyle}
+            />
+          }
+        />
+      ))}
+    </ForkedSelectField>
+  )
 }
 
-const countries = [{ name: 'Afghanistan', iso_alpha2_code: 'AF' },
+const countries = [
+  { name: 'Afghanistan', iso_alpha2_code: 'AF' },
   { name: 'Aland Islands', iso_alpha2_code: 'AX' },
   { name: 'Albania', iso_alpha2_code: 'AL' },
   { name: 'Algeria', iso_alpha2_code: 'DZ' },
@@ -115,10 +152,13 @@ const countries = [{ name: 'Afghanistan', iso_alpha2_code: 'AF' },
   { name: 'Colombia', iso_alpha2_code: 'CO' },
   { name: 'Comoros', iso_alpha2_code: 'KM' },
   { name: 'Congo', iso_alpha2_code: 'CG' },
-  { name: 'Congo, The Democratic Republic of the Congo', iso_alpha2_code: 'CD' },
+  {
+    name: 'Congo, The Democratic Republic of the Congo',
+    iso_alpha2_code: 'CD',
+  },
   { name: 'Cook Islands', iso_alpha2_code: 'CK' },
   { name: 'Costa Rica', iso_alpha2_code: 'CR' },
-  { name: 'Cote d\'Ivoire', iso_alpha2_code: 'CI' },
+  { name: "Cote d'Ivoire", iso_alpha2_code: 'CI' },
   { name: 'Croatia', iso_alpha2_code: 'HR' },
   { name: 'Cuba', iso_alpha2_code: 'CU' },
   { name: 'Cyprus', iso_alpha2_code: 'CY' },
@@ -178,7 +218,10 @@ const countries = [{ name: 'Afghanistan', iso_alpha2_code: 'AF' },
   { name: 'Kazakhstan', iso_alpha2_code: 'KZ' },
   { name: 'Kenya', iso_alpha2_code: 'KE' },
   { name: 'Kiribati', iso_alpha2_code: 'KI' },
-  { name: 'Korea, Democratic People\'s Republic of Korea', iso_alpha2_code: 'KP' },
+  {
+    name: "Korea, Democratic People's Republic of Korea",
+    iso_alpha2_code: 'KP',
+  },
   { name: 'Korea, Republic of South Korea', iso_alpha2_code: 'KR' },
   { name: 'Kuwait', iso_alpha2_code: 'KW' },
   { name: 'Kyrgyzstan', iso_alpha2_code: 'KG' },
@@ -247,7 +290,10 @@ const countries = [{ name: 'Afghanistan', iso_alpha2_code: 'AF' },
   { name: 'Rwanda', iso_alpha2_code: 'RW' },
   { name: 'Reunion', iso_alpha2_code: 'RE' },
   { name: 'Saint Barthelemy', iso_alpha2_code: 'BL' },
-  { name: 'Saint Helena, Ascension and Tristan Da Cunha', iso_alpha2_code: 'SH' },
+  {
+    name: 'Saint Helena, Ascension and Tristan Da Cunha',
+    iso_alpha2_code: 'SH',
+  },
   { name: 'Saint Kitts and Nevis', iso_alpha2_code: 'KN' },
   { name: 'Saint Lucia', iso_alpha2_code: 'LC' },
   { name: 'Saint Martin', iso_alpha2_code: 'MF' },
@@ -268,7 +314,10 @@ const countries = [{ name: 'Afghanistan', iso_alpha2_code: 'AF' },
   { name: 'Somalia', iso_alpha2_code: 'SO' },
   { name: 'South Africa', iso_alpha2_code: 'ZA' },
   { name: 'South Sudan', iso_alpha2_code: 'SS' },
-  { name: 'South Georgia and the South Sandwich Islands', iso_alpha2_code: 'GS' },
+  {
+    name: 'South Georgia and the South Sandwich Islands',
+    iso_alpha2_code: 'GS',
+  },
   { name: 'Spain', iso_alpha2_code: 'ES' },
   { name: 'Sri Lanka', iso_alpha2_code: 'LK' },
   { name: 'Sudan', iso_alpha2_code: 'SD' },
@@ -300,11 +349,15 @@ const countries = [{ name: 'Afghanistan', iso_alpha2_code: 'AF' },
   { name: 'Uruguay', iso_alpha2_code: 'UY' },
   { name: 'Uzbekistan', iso_alpha2_code: 'UZ' },
   { name: 'Vanuatu', iso_alpha2_code: 'VU' },
-  { name: 'Venezuela, Bolivarian Republic of Venezuela', iso_alpha2_code: 'VE' },
+  {
+    name: 'Venezuela, Bolivarian Republic of Venezuela',
+    iso_alpha2_code: 'VE',
+  },
   { name: 'Vietnam', iso_alpha2_code: 'VN' },
   { name: 'Virgin Islands, British', iso_alpha2_code: 'VG' },
   { name: 'Virgin Islands, U.S.', iso_alpha2_code: 'VI' },
   { name: 'Wallis and Futuna', iso_alpha2_code: 'WF' },
   { name: 'Yemen', iso_alpha2_code: 'YE' },
   { name: 'Zambia', iso_alpha2_code: 'ZM' },
-  { name: 'Zimbabwe', iso_alpha2_code: 'ZW' }]
+  { name: 'Zimbabwe', iso_alpha2_code: 'ZW' },
+]

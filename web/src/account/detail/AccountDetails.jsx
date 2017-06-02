@@ -21,14 +21,17 @@ import {
   fetchAccountDetails,
   saveContactDetails,
   saveLoginDetails,
-  saveUserPreferences
+  saveUserPreferences,
 } from '../AccountRedux'
 import { showAcknowledgement } from '../../appNotification/AppNotificationRedux'
 import styles from './AccountDetails.css'
 import accountDetailsMessages from './messages'
 import personDetailsMessages from '../../person/detail/messages'
-import { ContactDetails, LoginDetails, UserPreferences } from '../../person/PersonRedux'
-
+import {
+  ContactDetails,
+  LoginDetails,
+  UserPreferences,
+} from '../../person/PersonRedux'
 
 const enhance = compose(
   setPropTypes({
@@ -37,19 +40,24 @@ const enhance = compose(
   }),
   pure,
   injectIntl,
-  connect(state => ({
-    loading: state.accountDetails.get('loading'),
-    saving: state.accountDetails.get('saving'),
-    accountDetails: state.accountDetails.get('data'),
-  }), dispatch => (
-    bindActionCreators({
-      showAcknowledgement,
-      fetchAccountDetails,
-      saveContactDetails,
-      saveLoginDetails,
-      saveUserPreferences,
-    }, dispatch)
-  )),
+  connect(
+    state => ({
+      loading: state.accountDetails.get('loading'),
+      saving: state.accountDetails.get('saving'),
+      accountDetails: state.accountDetails.get('data'),
+    }),
+    dispatch =>
+      bindActionCreators(
+        {
+          showAcknowledgement,
+          fetchAccountDetails,
+          saveContactDetails,
+          saveLoginDetails,
+          saveUserPreferences,
+        },
+        dispatch
+      )
+  ),
   setPropTypes({
     intl: intlShape.isRequired,
     loading: PropTypes.bool.isRequired,
@@ -64,12 +72,12 @@ const enhance = compose(
     saveContactDetails: PropTypes.func.isRequired,
     saveLoginDetails: PropTypes.func.isRequired,
     saveUserPreferences: PropTypes.func.isRequired,
-  }),
+  })
 )
 
 export class AccountDetails extends PureComponent {
   state = {
-    currentPasswordInputDialogOpen: false
+    currentPasswordInputDialogOpen: false,
   }
 
   componentDidMount() {
@@ -78,7 +86,13 @@ export class AccountDetails extends PureComponent {
   }
 
   componentWillReceiveProps(newProps) {
-    if (newProps.accountDetails && newProps.accountDetails.getIn(['loginDetails', 'incorrectCurrentPasswordEntered'])) {
+    if (
+      newProps.accountDetails &&
+      newProps.accountDetails.getIn([
+        'loginDetails',
+        'incorrectCurrentPasswordEntered',
+      ])
+    ) {
       this.openCurrentPasswordInputDialog()
     }
   }
@@ -92,9 +106,17 @@ export class AccountDetails extends PureComponent {
   }
 
   render() {
-    const { intl: { formatMessage }, loading, saving, accountDetails, saveContactDetails,
-        saveUserPreferences, saveLoginDetails, showAcknowledgement } = this.props
-    const saveLoginDetailsFailed = (errors) => {
+    const {
+      intl: { formatMessage },
+      loading,
+      saving,
+      accountDetails,
+      saveContactDetails,
+      saveUserPreferences,
+      saveLoginDetails,
+      showAcknowledgement,
+    } = this.props
+    const saveLoginDetailsFailed = errors => {
       if (!errors.currentPassword) {
         this.closeCurrentPasswordInputDialog()
       }
@@ -103,18 +125,26 @@ export class AccountDetails extends PureComponent {
       this.closeCurrentPasswordInputDialog()
       showAcknowledgement({
         title: personDetailsMessages.detailsUpdatedSuccessfully,
-        message: personDetailsMessages.loginDetailsUpdatedMessage
+        message: personDetailsMessages.loginDetailsUpdatedMessage,
       })
     }
     return (
       <div className={styles.Content}>
-        <Helmet title={formatMessage(accountDetailsMessages.title)} titleTemplate="%s - Aspect" defaultTitle="Aspect" />
+        <Helmet
+          title={formatMessage(accountDetailsMessages.title)}
+          titleTemplate="%s - Aspect"
+          defaultTitle="Aspect"
+        />
         <NavTitle title={formatMessage(accountDetailsMessages.title)} />
         <Paper>
           <Tabs>
             <Tab
               icon={<MapsPersonPin />}
-              label={<Hidden xs component="span">{formatMessage(personDetailsMessages.contactDetails)}</Hidden>}
+              label={
+                <Hidden xs component="span">
+                  {formatMessage(personDetailsMessages.contactDetails)}
+                </Hidden>
+              }
             >
               {(loading || saving) && <LinearProgress />}
               <Visible xs component="h2" className={styles.Form__Header}>
@@ -128,7 +158,11 @@ export class AccountDetails extends PureComponent {
             </Tab>
             <Tab
               icon={<Lock />}
-              label={<Hidden xs component="span">{formatMessage(accountDetailsMessages.usernameAndPassword)}</Hidden>}
+              label={
+                <Hidden xs component="span">
+                  {formatMessage(accountDetailsMessages.usernameAndPassword)}
+                </Hidden>
+              }
             >
               {(loading || saving) && <LinearProgress />}
               <Visible xs component="h2" className={styles.Form__Header}>
@@ -137,16 +171,27 @@ export class AccountDetails extends PureComponent {
               <LoginDetailsForm
                 loading={loading || saving}
                 initialValues={accountDetails.get('loginDetails')}
-                currentPasswordInputDialogOpen={this.state.currentPasswordInputDialogOpen}
-                openCurrentPasswordInputDialog={this.openCurrentPasswordInputDialog}
-                closeCurrentPasswordInputDialog={this.closeCurrentPasswordInputDialog}
-                onSubmit={saveLoginDetails} onSubmitFail={saveLoginDetailsFailed}
+                currentPasswordInputDialogOpen={
+                  this.state.currentPasswordInputDialogOpen
+                }
+                openCurrentPasswordInputDialog={
+                  this.openCurrentPasswordInputDialog
+                }
+                closeCurrentPasswordInputDialog={
+                  this.closeCurrentPasswordInputDialog
+                }
+                onSubmit={saveLoginDetails}
+                onSubmitFail={saveLoginDetailsFailed}
                 onSubmitSuccess={saveLoginDetailsSucceeded}
               />
             </Tab>
             <Tab
               icon={<Language />}
-              label={<Hidden xs component="span">{formatMessage(personDetailsMessages.languageAndTimezone)}</Hidden>}
+              label={
+                <Hidden xs component="span">
+                  {formatMessage(personDetailsMessages.languageAndTimezone)}
+                </Hidden>
+              }
             >
               {(loading || saving) && <LinearProgress />}
               <Visible xs component="h2" className={styles.Form__Header}>

@@ -6,11 +6,7 @@ import { bindActionCreators } from 'redux'
 import { connect } from 'react-redux'
 import { reduxForm } from 'redux-form/immutable'
 import Helmet from 'react-helmet'
-import {
-  injectIntl,
-  defineMessages,
-  intlShape
-} from 'react-intl'
+import { injectIntl, defineMessages, intlShape } from 'react-intl'
 import { Link } from 'react-router-dom'
 
 // Material-UI
@@ -23,24 +19,24 @@ import { Unit } from '../../components/pureGrids'
 import TextInput from '../../components/shared/TextInput'
 import { loginStart } from '../AuthRedux'
 import styles from './Login.css'
-import AppNotificationSnackBar from '../../appNotification/AppNotificationSnackBar'
+import AppNotificationSnackBar
+  from '../../appNotification/AppNotificationSnackBar'
 import AppNotificationDialog from '../../appNotification/AppNotificationDialog'
 import { ContactDetails } from '../../person/PersonRedux'
-
 
 const messages = defineMessages({
   title: {
     id: 'pages.Login.title',
-    defaultMessage: 'Login'
+    defaultMessage: 'Login',
   },
   reasonidle: {
     id: 'shared.Login.reasonIdle',
-    defaultMessage: 'You were logged out due to inactivity'
+    defaultMessage: 'You were logged out due to inactivity',
   },
   resetPasswordLink: {
     id: 'shared.Login.resetPasswordButton',
-    defaultMessage: 'Forgot Password?'
-  }
+    defaultMessage: 'Forgot Password?',
+  },
 })
 
 const enhance = compose(
@@ -49,15 +45,20 @@ const enhance = compose(
   }),
   pure,
   injectIntl,
-  connect(state => ({
-    initialValues: {
-      user: state.user.name,
-    }
-  }), dispatch => (
-    bindActionCreators({
-      onSubmit: loginStart,
-    }, dispatch)
-  )),
+  connect(
+    state => ({
+      initialValues: {
+        user: state.user.name,
+      },
+    }),
+    dispatch =>
+      bindActionCreators(
+        {
+          onSubmit: loginStart,
+        },
+        dispatch
+      )
+  ),
   reduxForm({
     form: 'login',
     validate(values) {
@@ -71,7 +72,7 @@ const enhance = compose(
         }
       }
       return errors
-    }
+    },
   }),
   setPropTypes({
     intl: intlShape.isRequired,
@@ -79,10 +80,17 @@ const enhance = compose(
     pristine: PropTypes.bool.isRequired,
     submitting: PropTypes.bool.isRequired,
     initialValues: PropTypes.objectOf(ContactDetails).isRequired,
-  }),
+  })
 )
 
-export const Login = ({ location, intl, handleSubmit, pristine, submitting, initialValues }) => {
+export const Login = ({
+  location,
+  intl,
+  handleSubmit,
+  pristine,
+  submitting,
+  initialValues,
+}) => {
   const { formatMessage } = intl
   const search = new URLSearchParams(location.search)
 
@@ -91,20 +99,38 @@ export const Login = ({ location, intl, handleSubmit, pristine, submitting, init
       <Helmet title="Login" titleTemplate="%s - Aspect" defaultTitle="Aspect" />
       <div className={styles.Content}>
         <div>
-          <Unit sm="1-24" md="1-6" lg="1-3">
-            &nbsp;
-          </Unit>
+          <Unit sm="1-24" md="1-6" lg="1-3" />
           <Unit sm="11-12" md="2-3" lg="1-3">
             <Paper>
               <form onSubmit={handleSubmit} className={styles.Form}>
-                { search.has('reason') ? <div className={styles.Form__Info}>{formatMessage(messages[`reason${search.get('reason')}`])}</div> : null }
-                <TextInput name="user" label="Username" fullWidth autoFocus={_.isEmpty(initialValues.get('user'))} />
-                <TextInput name="password" type="password" label="Password" fullWidth autoFocus={!_.isEmpty(initialValues.get('user'))} />
+                {search.has('reason')
+                  ? <div className={styles.Form__Info}>
+                      {formatMessage(messages[`reason${search.get('reason')}`])}
+                    </div>
+                  : null}
+                <TextInput
+                  name="user"
+                  label="Username"
+                  fullWidth
+                  autoFocus={_.isEmpty(initialValues.get('user'))}
+                />
+                <TextInput
+                  name="password"
+                  type="password"
+                  label="Password"
+                  fullWidth
+                  autoFocus={!_.isEmpty(initialValues.get('user'))}
+                />
                 <div className={styles.Form__ActionRow}>
                   <Link className={styles.Left_Align} to="reset-password">
                     {formatMessage(messages.resetPasswordLink)}
                   </Link>
-                  <RaisedButton disabled={pristine || submitting} label="Log In" secondary type="submit" />
+                  <RaisedButton
+                    disabled={pristine || submitting}
+                    label="Log In"
+                    secondary
+                    type="submit"
+                  />
                 </div>
               </form>
               {submitting && <LinearProgress />}

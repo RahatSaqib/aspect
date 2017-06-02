@@ -5,166 +5,166 @@ import { defineMessages } from 'react-intl'
 export default defineMessages({
   title: {
     id: 'pages.PersonDetail.title',
-    defaultMessage: 'Person Detail'
+    defaultMessage: 'Person Detail',
   },
   contactDetails: {
     id: 'pages.PersonDetails.contactDetails',
-    defaultMessage: 'Contact Details'
+    defaultMessage: 'Contact Details',
   },
   systemAccessControl: {
     id: 'pages.PersonDetails.systemAccessControl',
-    defaultMessage: 'System Access & Jobs'
+    defaultMessage: 'System Access & Jobs',
   },
   none: {
     id: 'pages.PersonDetails.none',
-    defaultMessage: 'None'
+    defaultMessage: 'None',
   },
   languageAndTimezone: {
     id: 'pages.PersonDetails.languageAndTimezone',
-    defaultMessage: 'Language & Timezone'
+    defaultMessage: 'Language & Timezone',
   },
   detailsUpdatedSuccessfully: {
     id: 'pages.PersonDetails.detailsUpdatedSuccessfully',
-    defaultMessage: 'Details Changed Successfully'
+    defaultMessage: 'Details Changed Successfully',
   },
   contactDetailsUpdatedMessage: {
     id: 'pages.PersonDetails.contactDetailsUpdatedMessage',
-    defaultMessage: 'Contact details changed successfully'
+    defaultMessage: 'Contact details changed successfully',
   },
   loginDetailsUpdatedMessage: {
     id: 'pages.PersonDetails.loginDetailsUpdatedMessage',
-    defaultMessage: 'You can now login with these new details'
+    defaultMessage: 'You can now login with these new details',
   },
   userPreferencesUpdatedMessage: {
     id: 'pages.PersonDetails.userPreferencesUpdatedMessage',
-    defaultMessage: 'User preferences changed successfully'
+    defaultMessage: 'User preferences changed successfully',
   },
   fullName: {
     id: 'pages.ContactDetails.name',
-    defaultMessage: 'Full Name'
+    defaultMessage: 'Full Name',
   },
   jobTitle: {
     id: 'pages.ContactDetails.title',
-    defaultMessage: 'Job Title'
+    defaultMessage: 'Job Title',
   },
   emailHeader: {
     id: 'pages.ContactDetails.emailHeader',
-    defaultMessage: 'Email'
+    defaultMessage: 'Email',
   },
   primaryEmail: {
     id: 'pages.ContactDetails.email',
-    defaultMessage: 'Primary'
+    defaultMessage: 'Primary',
   },
   secondaryEmail: {
     id: 'pages.ContactDetails.email2',
-    defaultMessage: 'Alternate'
+    defaultMessage: 'Alternate',
   },
   phone: {
     id: 'pages.ContactDetails.phoneHeader',
-    defaultMessage: 'Phone'
+    defaultMessage: 'Phone',
   },
   telephone: {
     id: 'pages.ContactDetails.phone',
-    defaultMessage: 'Telephone'
+    defaultMessage: 'Telephone',
   },
   mobile: {
     id: 'pages.AccountDetails.cell',
-    defaultMessage: 'Mobile'
+    defaultMessage: 'Mobile',
   },
   partner: {
     id: 'pages.AccountDetails.partner',
-    defaultMessage: 'Partner'
+    defaultMessage: 'Partner',
   },
   location: {
     id: 'pages.ContactDetails.locationHeader',
-    defaultMessage: 'Location'
+    defaultMessage: 'Location',
   },
   zip: {
     id: 'pages.ContactDetails.zip',
-    defaultMessage: 'Zip Code'
+    defaultMessage: 'Zip Code',
   },
   notes: {
     id: 'pages.ContactDetails.notes',
-    defaultMessage: 'Notes'
+    defaultMessage: 'Notes',
   },
   save: {
     id: 'pages.PersonDetails.save',
-    defaultMessage: 'Save'
+    defaultMessage: 'Save',
   },
   nameRequired: {
     id: 'pages.ContactDetails.nameRequired',
-    defaultMessage: 'Please enter your Full name'
+    defaultMessage: 'Please enter your Full name',
   },
   invalidEmailAddress: {
     id: 'pages.ContactDetails.invalidEmailAddress',
-    defaultMessage: 'Please enter a valid email address'
+    defaultMessage: 'Please enter a valid email address',
   },
   username: {
     id: 'pages.UpdateLoginDetails.username',
-    defaultMessage: 'Username'
+    defaultMessage: 'Username',
   },
   newPassword: {
     id: 'pages.UpdateLoginDetails.newPassword',
-    defaultMessage: 'New Password'
+    defaultMessage: 'New Password',
   },
   confirmNewPassword: {
     id: 'pages.UpdateLoginDetails.confirmNewPassword',
-    defaultMessage: 'Confirm New Password'
+    defaultMessage: 'Confirm New Password',
   },
   currentPassword: {
     id: 'pages.UpdateLoginDetails.currentPassword',
-    defaultMessage: 'Current Password'
+    defaultMessage: 'Current Password',
   },
   usernameRequired: {
     id: 'pages.UpdateLoginDetails.usernameRequired',
-    defaultMessage: 'A username is required'
+    defaultMessage: 'A username is required',
   },
   currentPasswordRequired: {
     id: 'pages.UpdateLoginDetails.currentPasswordRequired',
-    defaultMessage: 'Please enter your current password to update your login details'
+    defaultMessage: 'Please enter your current password to update your login details',
   },
   newPasswordTooShort: {
     id: 'pages.UpdateLoginDetails.newPasswordTooShort',
-    defaultMessage: 'The password needs to be at least 8 characters long'
+    defaultMessage: 'The password needs to be at least 8 characters long',
   },
   newPasswordMustContainANumberOrSpecialCharacter: {
     id: 'pages.UpdateLoginDetails.newPasswordMustContainANumberOrSpecialCharacter',
-    defaultMessage: 'The password needs to contain at least one number or special character (%!$*...)'
+    defaultMessage: 'The password needs to contain at least one number or special character (%!$*...)',
   },
   passwordsDoNotMatch: {
     id: 'pages.UpdateLoginDetails.passwordsDoNotMatch',
-    defaultMessage: 'These passwords don\'t match'
+    defaultMessage: "These passwords don't match",
   },
   currentPasswordDialogHeader: {
     id: 'pages.UpdateLoginDetails.currentPasswordDialogHeader',
-    defaultMessage: 'Enter Current Password'
+    defaultMessage: 'Enter Current Password',
   },
   currentPasswordDialogMessage: {
     id: 'pages.UpdateLoginDetails.currentPasswordDialogMessage',
-    defaultMessage: 'To update your login details, please enter your current password'
+    defaultMessage: 'To update your login details, please enter your current password',
   },
   submitCurrentPassword: {
     id: 'pages.UpdateLoginDetails.submitCurrentPassword',
-    defaultMessage: 'Submit'
+    defaultMessage: 'Submit',
   },
   cancelCurrentPassword: {
     id: 'pages.UpdateLoginDetails.cancelCurrentPassword',
-    defaultMessage: 'Cancel'
+    defaultMessage: 'Cancel',
   },
   usernameUnavailable: {
     id: 'pages.UpdateLoginDetails.usernameUnavailable',
-    defaultMessage: 'This username is unavailable'
+    defaultMessage: 'This username is unavailable',
   },
   invalidPassword: {
     id: 'pages.UpdateLoginDetails.invalidPassword',
-    defaultMessage: 'The password that you entered is not valid'
+    defaultMessage: 'The password that you entered is not valid',
   },
   timezone: {
     id: 'pages.UserPreferences.timezone',
-    defaultMessage: 'Time Zone'
+    defaultMessage: 'Time Zone',
   },
   language: {
     id: 'pages.UserPreferences.language',
-    defaultMessage: 'Language'
-  }
+    defaultMessage: 'Language',
+  },
 })

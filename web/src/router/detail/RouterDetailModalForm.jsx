@@ -33,21 +33,28 @@ const enhance = compose(
     formatNestedSubtitle: PropTypes.func.isRequired,
     configurationDataSchema: PropTypes.object.isRequired,
     isDialogOpen: PropTypes.bool.isRequired,
-    values: PropTypes.object.isRequired
+    values: PropTypes.object.isRequired,
   }),
   recomposeForm({
-    fields: ['name', 'shortname', 'notes', {
-      fieldName: 'statusToken',
-      valueFromChangeEvent(e, isInputChecked) {
-        return isInputChecked ? tokens.APPROVED : tokens.ASSIGNED
+    fields: [
+      'name',
+      'shortname',
+      'notes',
+      {
+        fieldName: 'statusToken',
+        valueFromChangeEvent(e, isInputChecked) {
+          return isInputChecked ? tokens.APPROVED : tokens.ASSIGNED
+        },
       },
-    }, {
-      fieldName: 'siteId',
-      valueFromChangeEvent: _fp.identity
-    }, {
-      fieldName: 'configurationData',
-      valueFromChangeEvent: _fp.identity
-    }],
+      {
+        fieldName: 'siteId',
+        valueFromChangeEvent: _fp.identity,
+      },
+      {
+        fieldName: 'configurationData',
+        valueFromChangeEvent: _fp.identity,
+      },
+    ],
     validate(values) {
       const errors = {}
       //
@@ -58,21 +65,27 @@ const enhance = compose(
         errors.siteId = 'Required'
       }
       return errors
-    }
+    },
   }),
-  connect((state) => {
-    const siteList = state.site.items.byId.valueSeq().map(item => ({ value: item.get('id'), text: item.get('name') })).toJS()
+  connect(
+    state => {
+      const siteList = state.site.items.byId
+        .valueSeq()
+        .map(item => ({ value: item.get('id'), text: item.get('name') }))
+        .toJS()
 
-    return {
-      siteList
-    }
-  }, bindActionCreators.bind(null, {
-    fetchSites
-  })),
+      return {
+        siteList,
+      }
+    },
+    bindActionCreators.bind(null, {
+      fetchSites,
+    })
+  ),
   lifecycle({
     componentDidMount() {
       this.props.fetchSites({}, undefined, undefined, 0, 99999)
-    }
+    },
   }),
   withHandlers({
     onSiteAutoCompleteNewRequest: props => (chosenRequest, index) => {
@@ -80,7 +93,10 @@ const enhance = compose(
         // if user typed text and pressed Enter, then index=-1 - and
         // chosenRequest is string value (see API doc - http://www.material-ui.com/#/components/auto-complete)
         const textLo = chosenRequest.toLowerCase().trim()
-        const nextSite = _.find(props.siteList, s => s.text.toLowerCase() === textLo)
+        const nextSite = _.find(
+          props.siteList,
+          s => s.text.toLowerCase() === textLo
+        )
         if (nextSite) {
           props.onChangeSiteId(nextSite.value)
         }
@@ -94,9 +110,12 @@ const enhance = compose(
     // on bluring - check if actual visual site name is correct (exists in datasource)
     // and is equal siteId value stored in props
     // --------------------------
-    onSiteAutoCompleteBlur: props => (event) => {
+    onSiteAutoCompleteBlur: props => event => {
       const textLo = event.target.value.toLowerCase().trim()
-      const nextSite = _.find(props.siteList, s => s.text.toLowerCase() === textLo)
+      const nextSite = _.find(
+        props.siteList,
+        s => s.text.toLowerCase() === textLo
+      )
 
       if (nextSite) {
         // site with this name exists
@@ -108,32 +127,31 @@ const enhance = compose(
         // if no site found with this name - empty field
         props.onChangeSiteId(null)
       }
-    }
+    },
   })
 )
 
-export const RouterDetailModalForm = (props) => {
+export const RouterDetailModalForm = props => {
   const { form, meta, values, labels } = props
 
   const site = _.find(props.siteList, s => s.value === values.siteId)
 
   const actions = [
-    props.onCancel && (
+    props.onCancel &&
       <FlatButton
         onClick={props.onCancel}
         type="button"
         label={labels.cancel}
         primary
         style={{ marginRight: 10 }}
-      />
-    ),
+      />,
     <FlatButton
       disabled={form.pristine || !form.valid || form.submitting}
       onClick={props.handleSubmit}
       type="button"
       label={labels.update}
       secondary
-    />
+    />,
   ]
 
   return (
@@ -208,11 +226,10 @@ export const RouterDetailModalForm = (props) => {
               floatingLabelText={field.label}
               value={field.value}
               onTouchTap={stopEventPropagation}
-              onChange={event => (
+              onChange={event =>
                 props.onChangeConfigurationData(
                   values.configurationData.setIn(field.path, event.target.value)
-                )
-              )}
+                )}
               fullWidth
             />
           )}

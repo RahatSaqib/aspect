@@ -1,11 +1,5 @@
 import _ from 'lodash'
-import {
-  createFetch,
-  base,
-  header,
-  accept,
-  recv
-} from 'http-client'
+import { createFetch, base, header, accept, recv } from 'http-client'
 import { defineMessages } from 'react-intl'
 import { showError } from '../../appNotification/AppNotificationRedux'
 
@@ -27,11 +21,12 @@ export function aspectFetch(path, options) {
 function addAuthHeaderMiddleware(fetch, input, options = {}) {
   const token = getJWT()
   if (token) {
-    (options.headers || (options.headers = {})).Authorization = `Bearer ${token}`
+    ;(options.headers ||
+      (options.headers = {})).Authorization = `Bearer ${token}`
   }
   return fetch(input, options).catch(() => {
     Promise.reject({
-      statusCode: 0
+      statusCode: 0,
     })
   })
 }
@@ -54,18 +49,21 @@ export function getHeaders(json) {
 
 // using this in a fetch (ajax request) to check if request was successful
 export function handleFetchResponse(options) {
-  return (resp) => {
-    const json = resp ? resp.json() : Promise.resolve({
-      statusCode: 0
-    })
+  return resp => {
+    const json = resp
+      ? resp.json()
+      : Promise.resolve({
+          statusCode: 0,
+        })
     if (resp && resp.ok) {
-      return json.then((prevJson) => {
+      return json.then(prevJson => {
         const nextJson = changeAllIdsToString(prevJson)
         return nextJson
       })
     }
-    return json.then((err) => {
-      let errorNotification = _.get(options, `errorNotifications.${err.statusCode}`) ||
+    return json.then(err => {
+      let errorNotification =
+        _.get(options, `errorNotifications.${err.statusCode}`) ||
         _.get(options, 'errorNotifications.default')
       if (errorNotification) {
         if (errorNotification[err.message]) {
@@ -79,10 +77,10 @@ export function handleFetchResponse(options) {
             ...defineMessages({
               message: {
                 id: 'errorResponseMessages.disconnected.default.message',
-                defaultMessage: 'Either your computer has been disconnected from the internet or our server has failed to respond.'
-              }
+                defaultMessage: 'Either your computer has been disconnected from the internet or our server has failed to respond.',
+              },
             }),
-            ...errorNotification
+            ...errorNotification,
           }
         }
         store.dispatch(showError(errorNotification, err))
@@ -104,9 +102,15 @@ function changeAllIdsToString(data) {
   if (_.isArray(data)) {
     return data.map(changeAllIdsToString)
   } else if (_.isObject(data)) {
-    return _.mapValues(data, (value, key) => (isIdLike(key) ?
-      (value === null || value === undefined || _.isObject(value) ? value : String(value)) :
-      changeAllIdsToString(value)))
+    return _.mapValues(
+      data,
+      (value, key) =>
+        isIdLike(key)
+          ? value === null || value === undefined || _.isObject(value)
+              ? value
+              : String(value)
+          : changeAllIdsToString(value)
+    )
   }
   return data
 }

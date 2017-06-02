@@ -3,11 +3,13 @@ import _ from 'lodash'
 import Immutable from 'immutable'
 import differenceInMinutes from 'date-fns/difference_in_minutes'
 import { aspectFetch } from '../shared/utils/fetch'
-import { errorPleaseTryAgainInAFewMinutes } from '../error/CommonErrorNotifications'
+import {
+  errorPleaseTryAgainInAFewMinutes,
+} from '../error/CommonErrorNotifications'
 
 export const types = {
   REQUEST_PARTNERS_AND_JOB_FUNCTIONS_FOR_SELECT_LIST: 'REQUEST_PARTNERS_AND_JOB_FUNCTIONS_FOR_SELECT_LIST',
-  RECEIVE_PARTNERS_AND_JOB_FUNCTIONS_FOR_SELECT_LIST: 'RECEIVE_PARTNERS_AND_JOB_FUNCTIONS_FOR_SELECT_LIST'
+  RECEIVE_PARTNERS_AND_JOB_FUNCTIONS_FOR_SELECT_LIST: 'RECEIVE_PARTNERS_AND_JOB_FUNCTIONS_FOR_SELECT_LIST',
 }
 
 /*
@@ -20,7 +22,7 @@ function createRequestPartnersAndJobFunctionsForSelectList() {
 function createReceivePartnersAndJobFunctionsForSelectList(partners) {
   return {
     type: types.RECEIVE_PARTNERS_AND_JOB_FUNCTIONS_FOR_SELECT_LIST,
-    partners
+    partners,
   }
 }
 
@@ -32,9 +34,10 @@ export function fetchPartnersAndJobFunctionsForSelectList(forceRefresh) {
       return
     }
     const { lastRefreshed } = partnersAndJobFunctionsForSelectList
-    const shouldFetch = forceRefresh || !lastRefreshed || (
+    const shouldFetch =
+      forceRefresh ||
+      !lastRefreshed ||
       differenceInMinutes(new Date(), lastRefreshed) > 5 // five minutes
-    )
     if (!shouldFetch) {
       return
     }
@@ -42,15 +45,18 @@ export function fetchPartnersAndJobFunctionsForSelectList(forceRefresh) {
     dispatch(createRequestPartnersAndJobFunctionsForSelectList())
     return aspectFetch('/job-function/select-list', {
       errorNotifications: {
-        default: errorPleaseTryAgainInAFewMinutes(defineMessages({
-          title: {
-            id: 'errorResponseMessages.fetchPartnersAndJobFunctionsForSelectList.GET.default.title',
-            defaultMessage: 'Error Loading Partners And Job Functions'
-          }
-        }))
-      }
+        default: errorPleaseTryAgainInAFewMinutes(
+          defineMessages({
+            title: {
+              id: 'errorResponseMessages.fetchPartnersAndJobFunctionsForSelectList.GET.default.title',
+              defaultMessage: 'Error Loading Partners And Job Functions',
+            },
+          })
+        ),
+      },
     }).then(json =>
-      dispatch(createReceivePartnersAndJobFunctionsForSelectList(json.data)))
+      dispatch(createReceivePartnersAndJobFunctionsForSelectList(json.data))
+    )
   }
 }
 
@@ -60,19 +66,19 @@ export function fetchPartnersAndJobFunctionsForSelectList(forceRefresh) {
 const Partner = Immutable.Record({
   id: null,
   name: null,
-  jobFunctions: Immutable.List()
+  jobFunctions: Immutable.List(),
 })
 const JobFunction = Immutable.Record({
   id: null,
-  name: null
+  name: null,
 })
 const LazyLoadPartnersAndJobFunctions = Immutable.Record({
   loading: false,
   lastRefreshed: undefined,
-  partners: Immutable.List()
+  partners: Immutable.List(),
 })
 const Jobs = Immutable.Record({
-  partnersAndJobFunctionsForSelectList: new LazyLoadPartnersAndJobFunctions()
+  partnersAndJobFunctionsForSelectList: new LazyLoadPartnersAndJobFunctions(),
 })
 
 const initialState = new Jobs()
@@ -80,8 +86,8 @@ const initialState = new Jobs()
 function requestPartnersAndJobFunctionsForSelectList(state) {
   return state.mergeDeep({
     partnersAndJobFunctionsForSelectList: {
-      loading: true
-    }
+      loading: true,
+    },
   })
 }
 
@@ -90,16 +96,27 @@ function receivePartnersAndJobFunctionsForSelectList(state, partners) {
     partnersAndJobFunctionsForSelectList: {
       loading: false,
       lastRefreshed: new Date(),
-      partners: new Immutable.List(_.map(partners, partner => new Partner({
-        id: partner.id,
-        name: partner.name,
-        jobFunctions: new Immutable.List(
-          _.map(partner.jobFunctions, jobFunction => new JobFunction({
-            id: jobFunction.id,
-            name: jobFunction.name
-          })))
-      })))
-    }
+      partners: new Immutable.List(
+        _.map(
+          partners,
+          partner =>
+            new Partner({
+              id: partner.id,
+              name: partner.name,
+              jobFunctions: new Immutable.List(
+                _.map(
+                  partner.jobFunctions,
+                  jobFunction =>
+                    new JobFunction({
+                      id: jobFunction.id,
+                      name: jobFunction.name,
+                    })
+                )
+              ),
+            })
+        )
+      ),
+    },
   })
 }
 

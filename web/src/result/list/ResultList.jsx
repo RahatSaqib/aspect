@@ -1,17 +1,14 @@
 import PropTypes from 'prop-types'
 import React, { PureComponent } from 'react'
 import { compose, setPropTypes, pure } from 'recompose'
-import {
-  injectIntl,
-  defineMessages,
-  intlShape
-} from 'react-intl'
+import { injectIntl, defineMessages, intlShape } from 'react-intl'
 import { bindActionCreators } from 'redux'
 import { connect } from 'react-redux'
 import Helmet from 'react-helmet'
 
 // Our own imports
-import DataTableWithEmptyList from '../../components/shared/DataTableWithEmptyList'
+import DataTableWithEmptyList
+  from '../../components/shared/DataTableWithEmptyList'
 import NavTitle from '../../globals/components/NavTitle'
 import ListFilterContainer from '../../filter/list/ListFilter'
 import { configureListFilter, ListFilter } from '../../filter/FilterRedux'
@@ -20,52 +17,51 @@ import styles from './ResultList.css'
 import { Items } from '../../shared/metaReducers/items'
 import { Table } from '../../shared/metaReducers/table'
 
-
 const messages = defineMessages({
   title: {
     id: 'pages.ResultList.title',
-    defaultMessage: 'Results'
+    defaultMessage: 'Results',
   },
   endedOn: {
     id: 'pages.ResultList.EndedOn',
-    defaultMessage: 'Test Date'
+    defaultMessage: 'Test Date',
   },
   deviceName: {
     id: 'pages.ResultList.deviceName',
-    defaultMessage: 'Device'
+    defaultMessage: 'Device',
   },
   sampleOriginSiteName: {
     id: 'pages.ResultList.sampleOriginSiteName',
-    defaultMessage: 'Sample Origin Site'
+    defaultMessage: 'Sample Origin Site',
   },
   sampleId: {
     id: 'pages.ResultList.sampleId',
-    defaultMessage: 'Sample ID'
+    defaultMessage: 'Sample ID',
   },
   sampleGroup: {
     id: 'pages.ResultList.sampleGroup',
-    defaultMessage: 'Sample Group'
+    defaultMessage: 'Sample Group',
   },
   assayId: {
     id: 'pages.ResultList.assayId',
-    defaultMessage: 'Assay'
+    defaultMessage: 'Assay',
   },
   patiendId: {
     id: 'pages.ResultList.patiendId',
-    defaultMessage: 'Patient ID'
+    defaultMessage: 'Patient ID',
   },
   resultCategoryCopiesMl: {
     id: 'pages.ResultList.resultCategoryHiv',
-    defaultMessage: 'HIV'
+    defaultMessage: 'HIV',
   },
   filterTemplate: {
     id: 'pages.ResultList.filterTemplate',
-    defaultMessage: 'Viewing <PATIENT_OR_RESEARCH_ID><SAMPLE_ORIGIN_SITE_ID><SAMPLE_ID><ASSAY> results <DATE><RESULT> from all sites<GEOGRAPHY><NAME> <WORKFLOWSTATUS>'
+    defaultMessage: 'Viewing <PATIENT_OR_RESEARCH_ID><SAMPLE_ORIGIN_SITE_ID><SAMPLE_ID><ASSAY> results <DATE><RESULT> from all sites<GEOGRAPHY><NAME> <WORKFLOWSTATUS>',
   },
   nullText: {
     id: 'pages.ResultDetail.nullText',
-    defaultMessage: 'N/A'
-  }
+    defaultMessage: 'N/A',
+  },
 })
 
 const enhance = compose(
@@ -75,17 +71,22 @@ const enhance = compose(
   }),
   pure,
   injectIntl,
-  connect(state => ({
-    listFilter: state.filter.listFilter,
-    items: state.result.items,
-    table: state.result.table,
-  }), dispatch => (
-    bindActionCreators({
-      fetchListFilteredResults,
-      configureListFilter,
-      exportResults
-    }, dispatch)
-  )),
+  connect(
+    state => ({
+      listFilter: state.filter.listFilter,
+      items: state.result.items,
+      table: state.result.table,
+    }),
+    dispatch =>
+      bindActionCreators(
+        {
+          fetchListFilteredResults,
+          configureListFilter,
+          exportResults
+        },
+        dispatch
+      )
+  ),
   setPropTypes({
     intl: intlShape.isRequired,
     listFilter: PropTypes.objectOf(ListFilter).isRequired,
@@ -94,11 +95,10 @@ const enhance = compose(
     fetchListFilteredResults: PropTypes.func.isRequired,
     configureListFilter: PropTypes.func.isRequired,
     exportResults: PropTypes.func.isRequired
-  }),
+  })
 )
 
 export class ResultList extends PureComponent {
-
   static propTypes = {
     table: PropTypes.objectOf(Table).isRequired,
     configureListFilter: PropTypes.func.isRequired,
@@ -121,7 +121,8 @@ export class ResultList extends PureComponent {
       sampleGroup: true,
       siteName: true,
       sampleOriginSite: true,
-      workflowStatus: true })
+      workflowStatus: true,
+    })
   }
 
   componentDidMount() {
@@ -138,7 +139,7 @@ export class ResultList extends PureComponent {
     this.props.fetchListFilteredResults({}, ...args)
   }
 
-  handleItemIdSelection = (resultId) => {
+  handleItemIdSelection = resultId => {
     this.props.history.push(`/result/${resultId}`)
   }
   clickResultListExport = (formatType, receivedExportResponse) => {
@@ -160,19 +161,31 @@ export class ResultList extends PureComponent {
         db: 'endedOn',
         extraProps: { style: { width: '80px' } },
         title: formatMessage(messages.endedOn),
-        format: data => (data ? formatDate(data) : formatMessage(messages.nullText))
+        format: data =>
+          data ? formatDate(data) : formatMessage(messages.nullText),
       },
       { db: 'deviceName', title: formatMessage(messages.deviceName) },
-      { db: 'sampleOriginSiteName', title: formatMessage(messages.sampleOriginSiteName) },
+      {
+        db: 'sampleOriginSiteName',
+        title: formatMessage(messages.sampleOriginSiteName),
+      },
       { db: 'sampleId', title: formatMessage(messages.sampleId) },
-      { db: 'sampleGroup', extraProps: { style: { width: '80px' } }, title: formatMessage(messages.sampleGroup) },
-      { db: 'patientId', title: formatMessage(messages.patiendId) }
+      {
+        db: 'sampleGroup',
+        extraProps: { style: { width: '80px' } },
+        title: formatMessage(messages.sampleGroup),
+      },
+      { db: 'patientId', title: formatMessage(messages.patiendId) },
     ]
     const askConfirmationForExport = this.props.table.total > 1000
 
     return (
       <div className={styles.Content}>
-        <Helmet title={formatMessage(messages.title)} titleTemplate="%s - Aspect" defaultTitle="Aspect" />
+        <Helmet
+          title={formatMessage(messages.title)}
+          titleTemplate="%s - Aspect"
+          defaultTitle="Aspect"
+        />
         <NavTitle title={formatMessage(messages.title)} />
         <ListFilterContainer
           subject={formatMessage(messages.title)}

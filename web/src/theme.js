@@ -10,39 +10,39 @@ import {
   grey700,
   grey500,
   grey400,
-  grey100
+  grey100,
 } from 'material-ui/styles/colors'
 
 export default {
   appBar: {
-    height: 56
+    height: 56,
   },
   drawer: {
-    width: 220
+    width: 220,
   },
   menu: {
     textColor: grey700,
-    color: lightGreen300
+    color: lightGreen300,
   },
   spacing: {
-    iconSize: 24
+    iconSize: 24,
   },
   tableHeaderColumn: {
     textColor: grey700,
     height: 24,
-    spacing: 12
+    spacing: 12,
   },
   tableRow: {
-    hoverColor: grey100
+    hoverColor: grey100,
   },
   tableRowColumn: {
     height: 24,
-    spacing: 12
+    spacing: 12,
   },
   textField: {
     floatingLabelColor: grey500,
     // disabledTextColor: palette.disabledColor,
-    borderColor: grey400
+    borderColor: grey400,
   },
   fontFamily: 'Roboto, sans-serif',
   palette: {
@@ -51,6 +51,6 @@ export default {
     primary3Color: lightGreen300,
     accent1Color: orange700,
     accent2Color: lightGreen300,
-    accent3Color: orange700
-  }
+    accent3Color: orange700,
+  },
 }

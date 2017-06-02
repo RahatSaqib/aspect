@@ -6,7 +6,15 @@ import React, { PureComponent } from 'react'
 import { intlShape } from 'react-intl'
 
 // Material-UI
-import { Table, TableBody, TableHeader, TableHeaderColumn, TableRow, TableRowColumn, TableFooter } from 'material-ui/Table'
+import {
+  Table,
+  TableBody,
+  TableHeader,
+  TableHeaderColumn,
+  TableRow,
+  TableRowColumn,
+  TableFooter,
+} from 'material-ui/Table'
 import LinearProgress from 'material-ui/LinearProgress'
 import SortIcon from 'material-ui/svg-icons/content/sort'
 import FlatButton from 'material-ui/FlatButton'
@@ -18,7 +26,6 @@ import styles from './DataTable.css'
 const cssClasses = classnames.bind(styles)
 
 export default class DataTable extends PureComponent {
-
   static propTypes = {
     selectable: PropTypes.bool,
     multiSelectable: PropTypes.bool,
@@ -27,7 +34,7 @@ export default class DataTable extends PureComponent {
     handleFetch: PropTypes.func.isRequired,
     items: PropTypes.shape({
       byId: PropTypes.object.isRequired,
-      currentIdList: PropTypes.object.isRequired
+      currentIdList: PropTypes.object.isRequired,
     }).isRequired,
     table: PropTypes.shape({
       loading: PropTypes.bool.isRequired,
@@ -35,20 +42,22 @@ export default class DataTable extends PureComponent {
       sortDir: PropTypes.string.isRequired,
       page: PropTypes.number.isRequired,
       pageSize: PropTypes.number.isRequired,
-      total: PropTypes.number.isRequired
+      total: PropTypes.number.isRequired,
     }).isRequired,
-    columns: PropTypes.arrayOf(PropTypes.shape({
-      db: PropTypes.string.isRequired,
-      title: PropTypes.string.isRequired,
-      extraProps: PropTypes.objectOf(PropTypes.any)
-    })).isRequired,
+    columns: PropTypes.arrayOf(
+      PropTypes.shape({
+        db: PropTypes.string.isRequired,
+        title: PropTypes.string.isRequired,
+        extraProps: PropTypes.objectOf(PropTypes.any),
+      })
+    ).isRequired,
     intl: intlShape.isRequired,
     messages: PropTypes.objectOf(
       PropTypes.shape({
         id: PropTypes.string.isRequired,
-        defaultMessage: PropTypes.string.isRequired
+        defaultMessage: PropTypes.string.isRequired,
       })
-    )
+    ),
   }
 
   static defaultProps = {
@@ -60,17 +69,19 @@ export default class DataTable extends PureComponent {
   }
 
   getColumns() {
-    const {
-      table,
-      intl,
-      messages
-    } = this.props
+    const { table, intl, messages } = this.props
 
     if (table.extraColumns) {
-      const formattedExtraColumns = table.extraColumns.map(column => column.merge({
-        format: column.get('type') === 'number' ? (n => (_.isNumber(n) ? intl.formatNumber(n) : null)) : _.identity,
-        title: column.get('i18nKey') && messages[column.get('i18nKey')] ? intl.formatMessage[column.get('i18nKey')] : column.get('title')
-      }))
+      const formattedExtraColumns = table.extraColumns.map(column =>
+        column.merge({
+          format: column.get('type') === 'number'
+            ? n => (_.isNumber(n) ? intl.formatNumber(n) : null)
+            : _.identity,
+          title: column.get('i18nKey') && messages[column.get('i18nKey')]
+            ? intl.formatMessage[column.get('i18nKey')]
+            : column.get('title'),
+        })
+      )
 
       // concat the extra columns in table.extraColumns with the columns specified in table.columns
       return this.props.columns.concat(formattedExtraColumns.toJS())
@@ -92,27 +103,36 @@ export default class DataTable extends PureComponent {
 
     for (let i = 0; i < totalPages; i++) {
       // if total pages over 12, show first two, last two, and 2 before and after current
-      if (totalPages <= maxPagingButtons ||
-          (i < 2) || (i >= totalPages - 2) ||
-          ((i > page - 3 || i > totalPages - 8) && (i < page + 3 || i < 7))
+      if (
+        totalPages <= maxPagingButtons ||
+        i < 2 ||
+        i >= totalPages - 2 ||
+        ((i > page - 3 || i > totalPages - 8) && (i < page + 3 || i < 7))
       ) {
         pagerItems.push(
           <FlatButton
             key={key}
             className={cssClasses('Pager__Button', 'Pager__Button--number', {
-              'Pager__Button--current': page === i
+              'Pager__Button--current': page === i,
             })}
-            label={(i + 1)}
-            onTouchTap={() => { this.handlePage(i) }}
+            label={i + 1}
+            onTouchTap={() => {
+              this.handlePage(i)
+            }}
           />
         )
         key += 1
 
         // show ellipsis if 2nd item AND page > 5 (maxPagingButtons/2) OR
         // if 2nd to last item AND page < totalPages - 5 (maxPagingButtons/2)
-        if ((key === 2 && page > maxPagingButtons / 2) ||
-            (key === maxPagingButtons - 2 && page < totalPages - 1 - (maxPagingButtons / 2))) {
-          pagerItems.push(<span key={`ellipsis-${key}`} style={{ margin: '0 5px' }}>&#8230;</span>)
+        if (
+          (key === 2 && page > maxPagingButtons / 2) ||
+          (key === maxPagingButtons - 2 &&
+            page < totalPages - 1 - maxPagingButtons / 2)
+        ) {
+          pagerItems.push(
+            <span key={`ellipsis-${key}`} style={{ margin: '0 5px' }}>…</span>
+          )
         }
       }
     }
@@ -120,20 +140,20 @@ export default class DataTable extends PureComponent {
     return pagerItems
   }
 
-  handleRowSelection = (selectedRows) => {
+  handleRowSelection = selectedRows => {
     const {
       multiSelectable,
       handleItemIdSelection,
       handleItemIdsSelection,
-      items
+      items,
     } = this.props
 
     if (multiSelectable) {
-      const selectedIds = (
-        selectedRows === 'all' ?
-        items.currentIdList :
-        items.currentIdList.filter((id, index) => selectedRows.indexOf(index) !== -1)
-      )
+      const selectedIds = selectedRows === 'all'
+        ? items.currentIdList
+        : items.currentIdList.filter(
+            (id, index) => selectedRows.indexOf(index) !== -1
+          )
       handleItemIdsSelection(selectedIds.toJS())
     } else {
       const selectedId = items.currentIdList.get(selectedRows[0])
@@ -145,7 +165,9 @@ export default class DataTable extends PureComponent {
     const table = this.props.table
 
     // only change sort direction if column that we're currently sorting on is clicked
-    const newSort = table.sortCol === col ? (table.sortDir === 'asc' ? 'desc' : 'asc') : table.sortDir
+    const newSort = table.sortCol === col
+      ? table.sortDir === 'asc' ? 'desc' : 'asc'
+      : table.sortDir
 
     this.fetchData(col, newSort)
   }
@@ -157,21 +179,21 @@ export default class DataTable extends PureComponent {
   fetchData(col, newSort, page) {
     const table = this.props.table
 
-    this.props.handleFetch(col || table.sortCol, newSort || table.sortDir, page == null ?
-      table.page : page, table.pageSize)
+    this.props.handleFetch(
+      col || table.sortCol,
+      newSort || table.sortDir,
+      page == null ? table.page : page,
+      table.pageSize
+    )
   }
 
   render() {
-    const {
-      multiSelectable,
-      items,
-      table
-    } = this.props
+    const { multiSelectable, items, table } = this.props
 
     // show loading indicator?
-    const loading = table.loading ?
-      <LinearProgress /> :
-      <div style={{ margin: 0, padding: 0, height: 4 }}>&nbsp; </div>
+    const loading = table.loading
+      ? <LinearProgress />
+      : <div style={{ margin: 0, padding: 0, height: 4 }}>&nbsp; </div>
 
     // generate paging for footer
     const page = table.page
@@ -181,7 +203,7 @@ export default class DataTable extends PureComponent {
 
     return (
       <div>
-        { loading }
+        {loading}
         <Table
           height="inherit"
           fixedHeader
@@ -191,7 +213,7 @@ export default class DataTable extends PureComponent {
           onRowSelection={this.handleRowSelection}
         >
 
-          { /* Header - Sort on click in header columns */ }
+          {/* Header - Sort on click in header columns */}
           <TableHeader
             displaySelectAll={multiSelectable}
             adjustForCheckbox={multiSelectable}
@@ -206,19 +228,38 @@ export default class DataTable extends PureComponent {
                   tooltip={col.tooltip}
                   {...col.extraProps}
                 >
-                  <span style={{ cursor: 'pointer' }} onTouchTap={col.sortable !== false ? () => { this.handleSort(col.db) } : _.noop}>
+                  <span
+                    style={{ cursor: 'pointer' }}
+                    onTouchTap={
+                      col.sortable !== false
+                        ? () => {
+                            this.handleSort(col.db)
+                          }
+                        : _.noop
+                    }
+                  >
                     {col.title}
                   </span>
-                  {col.sortable !== false && <SortIcon
-                    color={table.sortCol === col.db ? 'black' : 'white'}
-                    style={{ height: 18, width: 18, position: 'relative', top: '4px', left: '4px', transform: table.sortDir === 'asc' ? 'scale(1, -1)' : '' }}
-                  />}
+                  {col.sortable !== false &&
+                    <SortIcon
+                      color={table.sortCol === col.db ? 'black' : 'white'}
+                      style={{
+                        height: 18,
+                        width: 18,
+                        position: 'relative',
+                        top: '4px',
+                        left: '4px',
+                        transform: table.sortDir === 'asc'
+                          ? 'scale(1, -1)'
+                          : '',
+                      }}
+                    />}
                 </Hidden>
-              )) }
+              ))}
             </TableRow>
           </TableHeader>
 
-          { /* Body - this is where we fill the table with the data (List of items) */ }
+          {/* Body - this is where we fill the table with the data (List of items) */}
           <TableBody
             displayRowCheckbox={multiSelectable}
             showRowHover
@@ -226,11 +267,12 @@ export default class DataTable extends PureComponent {
           >
             {items.currentIdList.map(itemId => (
               <TableRow
-                key={itemId} className={cssClasses({
-                  'TableRow--selectable': this.props.selectable
+                key={itemId}
+                className={cssClasses({
+                  'TableRow--selectable': this.props.selectable,
                 })}
               >
-                {columns.map((col) => {
+                {columns.map(col => {
                   const row = items.getIn(['byId', itemId])
                   const data = row.get(col.db)
                   return (
@@ -245,16 +287,33 @@ export default class DataTable extends PureComponent {
                   )
                 })}
               </TableRow>
-            )) }
+            ))}
           </TableBody>
 
-          { /* Footer - contains pager */ }
+          {/* Footer - contains pager */}
           <TableFooter adjustForCheckbox>
             <TableRow>
-              <TableRowColumn colSpan={columns.length - 1} style={{ textAlign: 'right', padding: '10px 20px 20px 0' }} >
-                <FlatButton className={styles.Pager__Button} label="< Prev" onTouchTap={() => { this.handlePage(page - 1) }} disabled={page === 0} />
-                { pagerItems }
-                <FlatButton className={styles.Pager__Button} label="Next >" onTouchTap={() => { this.handlePage(page + 1) }} disabled={page + 1 >= totalPages} />
+              <TableRowColumn
+                colSpan={columns.length - 1}
+                style={{ textAlign: 'right', padding: '10px 20px 20px 0' }}
+              >
+                <FlatButton
+                  className={styles.Pager__Button}
+                  label="< Prev"
+                  onTouchTap={() => {
+                    this.handlePage(page - 1)
+                  }}
+                  disabled={page === 0}
+                />
+                {pagerItems}
+                <FlatButton
+                  className={styles.Pager__Button}
+                  label="Next >"
+                  onTouchTap={() => {
+                    this.handlePage(page + 1)
+                  }}
+                  disabled={page + 1 >= totalPages}
+                />
               </TableRowColumn>
             </TableRow>
           </TableFooter>

@@ -1,11 +1,7 @@
 import PropTypes from 'prop-types'
 import React, { PureComponent } from 'react'
 import { compose, setPropTypes, pure } from 'recompose'
-import {
-  injectIntl,
-  defineMessages,
-  intlShape
-} from 'react-intl'
+import { injectIntl, defineMessages, intlShape } from 'react-intl'
 import { bindActionCreators } from 'redux'
 import { connect } from 'react-redux'
 import Helmet from 'react-helmet'
@@ -45,10 +41,10 @@ import {
   addInventory,
   removeInventory,
   transferInventory,
-  receiveInventory
+  receiveInventory,
 } from '../InventoryRedux'
 import InventoryAdjustmentForm, {
-  testConductedReasonI18nKey
+  testConductedReasonI18nKey,
 } from '../adjustment/InventoryAdjustmentForm'
 import styles from './InventoryItemsList.css'
 import { showAcknowledgement } from '../../appNotification/AppNotificationRedux'
@@ -58,92 +54,92 @@ import { Table } from '../../shared/metaReducers/table'
 const messages = defineMessages({
   title: {
     id: 'pages.InventoryItemsList.title',
-    defaultMessage: 'Inventory on Hand'
+    defaultMessage: 'Inventory on Hand',
   },
   groupBySite: {
     id: 'pages.InventoryItemsList.groupBySite',
-    defaultMessage: 'Group by Site'
+    defaultMessage: 'Group by Site',
   },
   siteName: {
     id: 'pages.InventoryItemsList.siteName',
-    defaultMessage: 'Site Name'
+    defaultMessage: 'Site Name',
   },
   consumableName: {
     id: 'pages.InventoryItemsList.consumableName',
-    defaultMessage: 'Consumable'
+    defaultMessage: 'Consumable',
   },
   quantityOnHand: {
     id: 'pages.InventoryItemsList.quantityOnHand',
-    defaultMessage: 'Quantity on Hand'
+    defaultMessage: 'Quantity on Hand',
   },
   inTransitFromSiteName: {
     id: 'pages.InventoryItemsList.inTransitFromSiteName',
-    defaultMessage: '* in transit from {inTransitFromSiteName}'
+    defaultMessage: '* in transit from {inTransitFromSiteName}',
   },
   expiresOn: {
     id: 'pages.InventoryItemsList.expiresOn',
-    defaultMessage: 'Expires On'
+    defaultMessage: 'Expires On',
   },
   expiresIn: {
     id: 'pages.InventoryItemsList.expiresIn',
-    defaultMessage: 'Expires'
+    defaultMessage: 'Expires',
   },
   adjust: {
     id: 'pages.InventoryItemsList.adjust',
-    defaultMessage: 'Adjust'
+    defaultMessage: 'Adjust',
   },
   addInventory: {
     id: 'pages.InventoryItemsList.addInventory',
-    defaultMessage: 'Add Inventory'
+    defaultMessage: 'Add Inventory',
   },
   transferInventory: {
     id: 'pages.InventoryItemsList.transferInventory',
-    defaultMessage: 'Transfer Inventory'
+    defaultMessage: 'Transfer Inventory',
   },
   receiveInventory: {
     id: 'pages.InventoryItemsList.receiveInventory',
-    defaultMessage: 'Receive Inventory in Transit'
+    defaultMessage: 'Receive Inventory in Transit',
   },
   removeInventory: {
     id: 'pages.InventoryItemsList.removeInventory',
-    defaultMessage: 'Remove Inventory'
+    defaultMessage: 'Remove Inventory',
   },
   addTitle: {
     id: 'pages.InventoryItemsList.addTitle',
-    defaultMessage: 'Add {consumableName}'
+    defaultMessage: 'Add {consumableName}',
   },
   removeTitle: {
     id: 'pages.InventoryItemsList.removeTitle',
-    defaultMessage: 'Remove {consumableName}'
+    defaultMessage: 'Remove {consumableName}',
   },
   transferTitle: {
     id: 'pages.InventoryItemsList.transferTitle',
-    defaultMessage: 'Transfer {consumableName}'
+    defaultMessage: 'Transfer {consumableName}',
   },
   receiveTitle: {
     id: 'pages.InventoryItemsList.receiveTitle',
-    defaultMessage: 'Receive {consumableName}'
+    defaultMessage: 'Receive {consumableName}',
   },
   submit: {
     id: 'pages.InventoryItemsList.submit',
-    defaultMessage: 'Submit'
+    defaultMessage: 'Submit',
   },
   cancel: {
     id: 'pages.InventoryItemsList.cancel',
-    defaultMessage: 'Cancel'
+    defaultMessage: 'Cancel',
   },
   inventoryAdjustedSuccessfully: {
     id: 'pages.InventoryItemsList.inventoryAdjustedSuccessfully',
-    defaultMessage: 'Inventory levels have been adjusted successfully'
+    defaultMessage: 'Inventory levels have been adjusted successfully',
   },
   filterTemplate: {
     id: 'pages.InventoryItemsList.filterTemplate',
-    defaultMessage: 'Viewing <CONSUMABLE> <GEOGRAPHY> at all sites<NAME>.'
+    defaultMessage: 'Viewing <CONSUMABLE> <GEOGRAPHY> at all sites<NAME>.',
   },
   filterTemplateOptional: {
     id: 'pages.InventoryItemsList.filterTemplateOptional',
-    defaultMessage: 'Expiring<DATE>.'
-  }
+    defaultMessage: 'Expiring<DATE>.',
+  },
 })
 
 const enhance = compose(
@@ -153,28 +149,33 @@ const enhance = compose(
   }),
   pure,
   injectIntl,
-  connect(state => ({
-    consumableReasons: state.consumable.get('consumableReasons'),
-    listFilter: state.filter.listFilter,
-    items: state.inventory.items,
-    table: state.inventory.table,
-    inventoryAdjustment: state.inventory.inventoryAdjustment
-  }), dispatch => (
-    bindActionCreators({
-      configureListFilter,
-      fetchListFilteredInventoryItems,
-      toggleGroupBySite,
-      adjustInventoryLevels,
-      addInventoryItem,
-      finishAdjustingInventoryLevels,
-      addInventory,
-      removeInventory,
-      transferInventory,
-      receiveInventory,
-      submit,
-      showAcknowledgement,
-    }, dispatch)
-  )),
+  connect(
+    state => ({
+      consumableReasons: state.consumable.get('consumableReasons'),
+      listFilter: state.filter.listFilter,
+      items: state.inventory.items,
+      table: state.inventory.table,
+      inventoryAdjustment: state.inventory.inventoryAdjustment,
+    }),
+    dispatch =>
+      bindActionCreators(
+        {
+          configureListFilter,
+          fetchListFilteredInventoryItems,
+          toggleGroupBySite,
+          adjustInventoryLevels,
+          addInventoryItem,
+          finishAdjustingInventoryLevels,
+          addInventory,
+          removeInventory,
+          transferInventory,
+          receiveInventory,
+          submit,
+          showAcknowledgement,
+        },
+        dispatch
+      )
+  ),
   setPropTypes({
     intl: intlShape.isRequired,
     consumableReasons: PropTypes.object.isRequired,
@@ -194,7 +195,7 @@ const enhance = compose(
     receiveInventory: PropTypes.func.isRequired,
     submit: PropTypes.func.isRequired,
     showAcknowledgement: PropTypes.func.isRequired,
-  }),
+  })
 )
 
 export class InventoryItemsList extends PureComponent {
@@ -204,7 +205,8 @@ export class InventoryItemsList extends PureComponent {
       consumable: true,
       geography: true,
       date: true,
-      siteName: true })
+      siteName: true,
+    })
   }
 
   componentDidMount() {
@@ -227,7 +229,7 @@ export class InventoryItemsList extends PureComponent {
     adjustInventoryLevels(operation, inventoryItem)
   }
 
-  inventoryLevelAdjustmentIconButtons = (itemId) => {
+  inventoryLevelAdjustmentIconButtons = itemId => {
     const { intl: { formatMessage }, items } = this.props
     const item = items.getIn(['byId', itemId])
     const onItemTouchTap = (event, child) => {
@@ -239,96 +241,112 @@ export class InventoryItemsList extends PureComponent {
           <IconButton>
             <MoreVertIcon />
           </IconButton>
-        } anchorOrigin={{ horizontal: 'right', vertical: 'top' }}
+        }
+        anchorOrigin={{ horizontal: 'right', vertical: 'top' }}
         targetOrigin={{ horizontal: 'right', vertical: 'top' }}
-        useLayerForClickAway onItemTouchTap={onItemTouchTap}
+        useLayerForClickAway
+        onItemTouchTap={onItemTouchTap}
       >
-        {
-          item.get('inTransitFromSiteId') &&
+        {item.get('inTransitFromSiteId') &&
           <MenuItem
             primaryText={formatMessage(messages.receiveInventory)}
-            leftIcon={<DoneIcon />} value={receiveOperation}
-          />
-        }
-        {
-          !item.get('inTransitFromSiteId') &&
+            leftIcon={<DoneIcon />}
+            value={receiveOperation}
+          />}
+        {!item.get('inTransitFromSiteId') &&
           <MenuItem
             primaryText={formatMessage(messages.addInventory)}
-            leftIcon={<AddIcon />} value={addOperation}
-          />
-        }
-        {
-          !item.get('inTransitFromSiteId') &&
+            leftIcon={<AddIcon />}
+            value={addOperation}
+          />}
+        {!item.get('inTransitFromSiteId') &&
           <MenuItem
             primaryText={formatMessage(messages.transferInventory)}
-            leftIcon={<TransferIcon />} value={transferOperation}
-          />
-        }
-        {
-          !item.get('inTransitFromSiteId') &&
+            leftIcon={<TransferIcon />}
+            value={transferOperation}
+          />}
+        {!item.get('inTransitFromSiteId') &&
           <MenuItem
             primaryText={formatMessage(messages.removeInventory)}
-            leftIcon={<RemoveIcon />} value={removeOperation}
-          />
-        }
+            leftIcon={<RemoveIcon />}
+            value={removeOperation}
+          />}
       </IconMenu>
     )
   }
 
-  handleInventoryAdjustmentSubmit = (formValues) => {
+  handleInventoryAdjustmentSubmit = formValues => {
     const {
       inventoryAdjustment,
       addInventory,
       removeInventory,
       transferInventory,
       receiveInventory,
-      consumableReasons
+      consumableReasons,
     } = this.props
     const commonFormValues = {
-      consumableId: formValues.get('consumableId') || inventoryAdjustment.getIn(['adjustmentDetails', 'consumableId']),
+      consumableId: formValues.get('consumableId') ||
+        inventoryAdjustment.getIn(['adjustmentDetails', 'consumableId']),
       lotNumber: formValues.get('lotNumber'),
       expiresOn: formValues.get('expiresOn'),
       quantity: formValues.get('quantity'),
-      notes: formValues.get('notes')
+      notes: formValues.get('notes'),
     }
     switch (inventoryAdjustment.get('operation')) {
       case addOperation:
-        return addInventory(inventoryAdjustment.getIn(['adjustmentDetails', 'inventoryItemId']), {
-          ...commonFormValues,
-          toSiteId: formValues.get('toSiteId'),
-          dateAdjusted: formValues.get('dateAdjusted')
-        })
+        return addInventory(
+          inventoryAdjustment.getIn(['adjustmentDetails', 'inventoryItemId']),
+          {
+            ...commonFormValues,
+            toSiteId: formValues.get('toSiteId'),
+            dateAdjusted: formValues.get('dateAdjusted'),
+          }
+        )
       case removeOperation: {
-        const selectedAdjustmentReason =
-          consumableReasons.items.find(reason => reason.get('id') === formValues.get('reasonId'))
-        const dateValues = selectedAdjustmentReason.get('i18nKey') === testConductedReasonI18nKey ? {
-          dateAdjustedFrom: formValues.get('dateAdjustedFrom'),
-          dateAdjustedTo: formValues.get('dateAdjustedTo')
-        } : { dateAdjusted: formValues.get('dateAdjusted') }
-        return removeInventory(inventoryAdjustment.getIn(['adjustmentDetails', 'inventoryItemId']),
+        const selectedAdjustmentReason = consumableReasons.items.find(
+          reason => reason.get('id') === formValues.get('reasonId')
+        )
+        const dateValues = selectedAdjustmentReason.get('i18nKey') ===
+          testConductedReasonI18nKey
+          ? {
+              dateAdjustedFrom: formValues.get('dateAdjustedFrom'),
+              dateAdjustedTo: formValues.get('dateAdjustedTo'),
+            }
+          : { dateAdjusted: formValues.get('dateAdjusted') }
+        return removeInventory(
+          inventoryAdjustment.getIn(['adjustmentDetails', 'inventoryItemId']),
           {
             ...dateValues,
             ...commonFormValues,
             fromSiteId: formValues.get('fromSiteId'),
-            reasonId: formValues.get('reasonId')
-          })
+            reasonId: formValues.get('reasonId'),
+          }
+        )
       }
       case transferOperation:
-        return transferInventory(inventoryAdjustment.getIn(['adjustmentDetails', 'inventoryItemId']), {
-          ...commonFormValues,
-          fromSiteId: formValues.get('fromSiteId'),
-          toSiteId: formValues.get('toSiteId'),
-          dateAdjusted: formValues.get('dateAdjusted')
-        })
+        return transferInventory(
+          inventoryAdjustment.getIn(['adjustmentDetails', 'inventoryItemId']),
+          {
+            ...commonFormValues,
+            fromSiteId: formValues.get('fromSiteId'),
+            toSiteId: formValues.get('toSiteId'),
+            dateAdjusted: formValues.get('dateAdjusted'),
+          }
+        )
       case receiveOperation:
-        return receiveInventory(inventoryAdjustment.getIn(['adjustmentDetails', 'inventoryItemId']), {
-          ...commonFormValues,
-          fromSiteId: formValues.get('fromSiteId'),
-          toSiteId: formValues.get('toSiteId'),
-          dateAdjusted: formValues.get('dateAdjusted')
-        })
+        return receiveInventory(
+          inventoryAdjustment.getIn(['adjustmentDetails', 'inventoryItemId']),
+          {
+            ...commonFormValues,
+            fromSiteId: formValues.get('fromSiteId'),
+            toSiteId: formValues.get('toSiteId'),
+            dateAdjusted: formValues.get('dateAdjusted'),
+          }
+        )
       default:
-        throw new SubmissionError({ _error: `Invalid operation ${inventoryAdjustment.get('operation')} for inventory adjustment form` })
+        throw new SubmissionError({
+          _error: `Invalid operation ${inventoryAdjustment.get('operation')} for inventory adjustment form`,
+        })
     }
   }
 
@@ -343,88 +361,115 @@ export class InventoryItemsList extends PureComponent {
   adjustInventorySucceeded = () => {
     const { showAcknowledgement, table } = this.props
     showAcknowledgement({
-      title: messages.inventoryAdjustedSuccessfully
+      title: messages.inventoryAdjustedSuccessfully,
     })
-    this.handleFetch(table.get('sortCol') || 'siteName',
-      table.get('sortDir') || 'asc', table.get('page') || 0,
-      table.get('pageSize') || 10)
+    this.handleFetch(
+      table.get('sortCol') || 'siteName',
+      table.get('sortDir') || 'asc',
+      table.get('page') || 0,
+      table.get('pageSize') || 10
+    )
   }
 
   render() {
-    const { intl, items, table, addInventoryItem, inventoryAdjustment, submit } = this.props
+    const {
+      intl,
+      items,
+      table,
+      addInventoryItem,
+      inventoryAdjustment,
+      submit,
+    } = this.props
     const { formatMessage, formatDate, formatRelative, formatNumber } = intl
     const isSettledAndEmpty = !table.loading && items.currentIdList.isEmpty()
 
-    const columns = [{
-      fieldName: 'siteName',
-      headerText: formatMessage(messages.siteName)
-    }, {
-      fieldName: 'consumableName',
-      headerText: formatMessage(messages.consumableName)
-    }, {
-      fieldName: 'quantityOnHand',
-      headerText: formatMessage(messages.quantityOnHand),
-      format: (data, item) => {
-        if (item.get('inTransitFromSiteName')) {
-          return (<span>
-            { formatNumber(data) }
-            &nbsp;
-            <small>
-              {
-                formatMessage(messages.inTransitFromSiteName, {
-                  inTransitFromSiteName: item.get('inTransitFromSiteName')
-                })
-              }
-            </small>
-          </span>)
-        }
-        return formatNumber(data)
-      }
-    }, {
-      fieldName: 'expiresOn',
-      headerText: formatMessage(messages.expiresOn),
-      format: data => (data ? formatDate(data, { format: 'user-timezone' }) : 'N/A')
-    }, {
-      fieldName: 'expiresOn',
-      headerText: formatMessage(messages.expiresIn),
-      format: data => (data ? formatRelative(data) : 'Never')
-    }]
+    const columns = [
+      {
+        fieldName: 'siteName',
+        headerText: formatMessage(messages.siteName),
+      },
+      {
+        fieldName: 'consumableName',
+        headerText: formatMessage(messages.consumableName),
+      },
+      {
+        fieldName: 'quantityOnHand',
+        headerText: formatMessage(messages.quantityOnHand),
+        format: (data, item) => {
+          if (item.get('inTransitFromSiteName')) {
+            return (
+              <span>
+                {formatNumber(data)}
+                &nbsp;
+                <small>
+                  {formatMessage(messages.inTransitFromSiteName, {
+                    inTransitFromSiteName: item.get('inTransitFromSiteName'),
+                  })}
+                </small>
+              </span>
+            )
+          }
+          return formatNumber(data)
+        },
+      },
+      {
+        fieldName: 'expiresOn',
+        headerText: formatMessage(messages.expiresOn),
+        format: data =>
+          data ? formatDate(data, { format: 'user-timezone' }) : 'N/A',
+      },
+      {
+        fieldName: 'expiresOn',
+        headerText: formatMessage(messages.expiresIn),
+        format: data => (data ? formatRelative(data) : 'Never'),
+      },
+    ]
 
     const adjustingInventoryItem = inventoryAdjustment.get('adjustmentDetails')
     const formHeaderValues = {
-      consumableName: adjustingInventoryItem ?
-        adjustingInventoryItem.get('consumableName') || 'Inventory Item' : null
+      consumableName: adjustingInventoryItem
+        ? adjustingInventoryItem.get('consumableName') || 'Inventory Item'
+        : null,
     }
-    const formHeader = inventoryAdjustment.get('operation') === addOperation ?
-      formatMessage(messages.addTitle, formHeaderValues) :
-      (inventoryAdjustment.get('operation') === removeOperation ?
-        formatMessage(messages.removeTitle, formHeaderValues) :
-        (inventoryAdjustment.get('operation') === transferOperation ?
-          formatMessage(messages.transferTitle, formHeaderValues) :
-          (inventoryAdjustment.get('operation') === receiveOperation ?
-            formatMessage(messages.receiveTitle, formHeaderValues) : null)))
+    const formHeader = inventoryAdjustment.get('operation') === addOperation
+      ? formatMessage(messages.addTitle, formHeaderValues)
+      : inventoryAdjustment.get('operation') === removeOperation
+          ? formatMessage(messages.removeTitle, formHeaderValues)
+          : inventoryAdjustment.get('operation') === transferOperation
+              ? formatMessage(messages.transferTitle, formHeaderValues)
+              : inventoryAdjustment.get('operation') === receiveOperation
+                  ? formatMessage(messages.receiveTitle, formHeaderValues)
+                  : null
 
     const inventoryAdjustmentActions = [
       <FlatButton
         disabled={inventoryAdjustment.get('updating')}
         onTouchTap={this.handleInventoryAdjustmentCancel}
-        secondary label={formatMessage(messages.cancel)}
+        secondary
+        label={formatMessage(messages.cancel)}
       />,
       <RaisedButton
         disabled={inventoryAdjustment.get('updating')}
         onTouchTap={() => submit('inventoryAdjustment')}
-        label={formatMessage(messages.submit)} primary
-      />
+        label={formatMessage(messages.submit)}
+        primary
+      />,
     ]
     return (
       <div className={styles.Content}>
-        <Helmet title={formatMessage(messages.title)} titleTemplate="%s - Aspect" defaultTitle="Aspect" />
+        <Helmet
+          title={formatMessage(messages.title)}
+          titleTemplate="%s - Aspect"
+          defaultTitle="Aspect"
+        />
         <NavTitle title={formatMessage(messages.title)} />
         <ListFilterContainer
           subject={formatMessage(messages.title)}
           dateFilterLabel={formatMessage(messages.expiresOn)}
           filterTemplate={formatMessage(messages.filterTemplate)}
-          filterTemplateOptional={formatMessage(messages.filterTemplateOptional)}
+          filterTemplateOptional={formatMessage(
+            messages.filterTemplateOptional
+          )}
         />
         <Card>
           <Checkbox
@@ -443,7 +488,7 @@ export class InventoryItemsList extends PureComponent {
           </IconButton>
         </Card>
         {isSettledAndEmpty && <EmptyList />}
-        {!isSettledAndEmpty && (
+        {!isSettledAndEmpty &&
           <GroupedDataTable
             handleFetch={this.handleFetch}
             items={items}
@@ -452,12 +497,16 @@ export class InventoryItemsList extends PureComponent {
             intl={intl}
             messages={messages}
             actionComponent={this.inventoryLevelAdjustmentIconButtons}
-          />
-        )}
+          />}
         <Dialog
-          title={formHeader} actions={inventoryAdjustmentActions}
-          open={inventoryAdjustment.get('operation') !== null && adjustingInventoryItem != null}
-          autoScrollBodyContent onRequestClose={this.handleInventoryAdjustmentCancel}
+          title={formHeader}
+          actions={inventoryAdjustmentActions}
+          open={
+            inventoryAdjustment.get('operation') !== null &&
+              adjustingInventoryItem != null
+          }
+          autoScrollBodyContent
+          onRequestClose={this.handleInventoryAdjustmentCancel}
         >
           <InventoryAdjustmentForm
             initialValues={adjustingInventoryItem}

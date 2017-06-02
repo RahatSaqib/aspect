@@ -1,9 +1,7 @@
 import PropTypes from 'prop-types'
 import React, { PureComponent } from 'react'
 import { Link } from 'react-router-dom'
-import {
-  FormattedMessage
-} from 'react-intl'
+import { FormattedMessage } from 'react-intl'
 import Helmet from 'react-helmet'
 
 // Material-UI
@@ -15,7 +13,6 @@ import ActionBack from 'material-ui/svg-icons/hardware/keyboard-arrow-left'
 import styles from './NotFound.css'
 
 export class NotFound extends PureComponent {
-
   static defaultProps = {
     history: PropTypes.object.isRequired, // eslint-disable-line
   }
@@ -23,7 +20,11 @@ export class NotFound extends PureComponent {
   render() {
     return (
       <div className={styles.Content}>
-        <Helmet title="Not Found" titleTemplate="%s - Aspect" defaultTitle="Aspect" />
+        <Helmet
+          title="Not Found"
+          titleTemplate="%s - Aspect"
+          defaultTitle="Aspect"
+        />
         <h1 className={styles.Content__Title}>
           <FormattedMessage
             id="pages.NotFound.title"
@@ -42,7 +43,11 @@ export class NotFound extends PureComponent {
         >
           <ActionBack />
         </IconButton>
-        <Link to="/" ><IconButton className={styles.Content__Button}><ActionHome /></IconButton></Link>
+        <Link to="/">
+          <IconButton className={styles.Content__Button}>
+            <ActionHome />
+          </IconButton>
+        </Link>
       </div>
     )
   }

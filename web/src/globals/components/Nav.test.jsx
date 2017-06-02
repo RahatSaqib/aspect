@@ -10,8 +10,8 @@ function createNodeMock() {
   return {
     offsetWidth: 0,
     style: {
-      width: 0
-    }
+      width: 0,
+    },
   }
 }
 
@@ -28,8 +28,9 @@ describe('Nav module', () => {
               handleSignOut={_.noop}
             />
           </MemoryRouter>
-        </MuiThemeProvider>
-      , { createNodeMock })
+        </MuiThemeProvider>,
+        { createNodeMock }
+      )
       const tree = component.toJSON()
       expect(tree).toMatchSnapshot()
     })
@@ -45,8 +46,9 @@ describe('Nav module', () => {
               handleSignOut={_.noop}
             />
           </MemoryRouter>
-        </MuiThemeProvider>
-      , { createNodeMock })
+        </MuiThemeProvider>,
+        { createNodeMock }
+      )
       const tree = component.toJSON()
       expect(tree).toMatchSnapshot()
     })

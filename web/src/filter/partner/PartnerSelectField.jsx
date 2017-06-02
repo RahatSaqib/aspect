@@ -8,7 +8,8 @@ import { compose, pure, setPropTypes, mapProps, lifecycle } from 'recompose'
 import MenuItem from 'material-ui/MenuItem'
 
 import { fetchPartnersAndJobFunctionsForSelectList } from '../../job/JobRedux'
-import ForkedSelectField from '../../components/forkedMaterialUi/ForkedSelectField'
+import ForkedSelectField
+  from '../../components/forkedMaterialUi/ForkedSelectField'
 
 const enhance = compose(
   pure,
@@ -16,27 +17,37 @@ const enhance = compose(
     partnerId: PropTypes.string,
     emptyId: PropTypes.string.isRequired,
     emptyText: PropTypes.string.isRequired,
-    onChangePartner: PropTypes.func.isRequired
+    onChangePartner: PropTypes.func.isRequired,
   }),
-  connect(state => ({
-    partnersAndJobFunctionsForSelectList: state.jobs.partnersAndJobFunctionsForSelectList
-  }), dispatch => bindActionCreators({
-    fetchPartnersAndJobFunctionsForSelectList
-  }, dispatch)),
+  connect(
+    state => ({
+      partnersAndJobFunctionsForSelectList: state.jobs
+        .partnersAndJobFunctionsForSelectList,
+    }),
+    dispatch =>
+      bindActionCreators(
+        {
+          fetchPartnersAndJobFunctionsForSelectList,
+        },
+        dispatch
+      )
+  ),
   lifecycle({
     componentDidMount() {
       this.props.fetchPartnersAndJobFunctionsForSelectList()
-    }
+    },
   }),
   mapProps(props => ({
-    ..._fp.omit([
-      'emptyId',
-      'emptyText',
-      'partnersAndJobFunctionsForSelectList',
-      'fetchPartnersAndJobFunctionsForSelectList'
-    ], props),
-    partnerList: props.partnersAndJobFunctionsForSelectList
-      .partners
+    ..._fp.omit(
+      [
+        'emptyId',
+        'emptyText',
+        'partnersAndJobFunctionsForSelectList',
+        'fetchPartnersAndJobFunctionsForSelectList',
+      ],
+      props
+    ),
+    partnerList: props.partnersAndJobFunctionsForSelectList.partners
       // Filter out empty items if props.emptyText is an empty string
       .filter(item => (props.emptyText ? true : item.get('id')))
       .map(item => ({
@@ -47,7 +58,7 @@ const enhance = compose(
     onChangePartner(event, index, value) {
       props.onChangePartner(value)
     },
-  })),
+  }))
 )
 
 export function PartnerSelectField({
@@ -63,11 +74,7 @@ export function PartnerSelectField({
       onChange={onChangePartner}
     >
       {partnerList.map(p => (
-        <MenuItem
-          key={p.value}
-          value={p.value}
-          primaryText={p.text}
-        />
+        <MenuItem key={p.value} value={p.value} primaryText={p.text} />
       ))}
     </ForkedSelectField>
   )

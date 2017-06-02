@@ -11,12 +11,14 @@ describe('SelectInput', () => {
     label: 'Field Label',
     autoWidth: false,
     disabled: false,
-    dataSource: [{ personId: '123', fullName: 'Jim Jefferson' },
+    dataSource: [
+      { personId: '123', fullName: 'Jim Jefferson' },
       { personId: '124', fullName: 'Billy Idol' },
-      { personId: '125', fullName: 'Eddy Grant' }],
+      { personId: '125', fullName: 'Eddy Grant' },
+    ],
     dataSourceConfig: { value: 'personId', text: 'fullName' },
     fullWidth: true,
-    style: {}
+    style: {},
   }
   let SelectInputWrapper
 
@@ -33,7 +35,7 @@ describe('SelectInput', () => {
       fullWidth: props.fullWidth,
       disabled: props.disabled,
       autoWidth: false,
-      style: props.style
+      style: props.style,
     })
   })
 
@@ -45,33 +47,40 @@ describe('SelectInput', () => {
       selectFieldProps: {
         floatingLabelText: props.label,
         fullWidth: props.fullWidth,
-        disabled: props.disabled
+        disabled: props.disabled,
       },
-      children: []
+      children: [],
     })
 
     expect(selectField.type.name).toEqual('SelectField')
-    expect(selectField.props).toEqual({ ...selectField.props,
+    expect(selectField.props).toEqual({
+      ...selectField.props,
       errorStyle: {
         float: 'left',
         whiteSpace: 'nowrap',
-        textOverflow: 'visible'
+        textOverflow: 'visible',
       },
       style: {
-        verticalAlign: 'bottom'
+        verticalAlign: 'bottom',
       },
       floatingLabelText: props.label,
       fullWidth: props.fullWidth,
-      disabled: props.disabled
+      disabled: props.disabled,
     })
   })
 
   it('Should create menu items from the datasource and datasource config passed to it', () => {
-    expect(SelectInputWrapper.find(MenuItem).length).toEqual(props.dataSource.length)
-    _.each(props.dataSource, (item) => {
-      expect(SelectInputWrapper.findWhere(
-        element => element.type() === MenuItem && element.props().value === item.personId)
-        .props().primaryText).toEqual(item.fullName)
+    expect(SelectInputWrapper.find(MenuItem).length).toEqual(
+      props.dataSource.length
+    )
+    _.each(props.dataSource, item => {
+      expect(
+        SelectInputWrapper.findWhere(
+          element =>
+            element.type() === MenuItem &&
+            element.props().value === item.personId
+        ).props().primaryText
+      ).toEqual(item.fullName)
     })
   })
 })

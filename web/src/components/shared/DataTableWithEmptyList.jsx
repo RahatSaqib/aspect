@@ -6,17 +6,11 @@ import { compose, setPropTypes, pure } from 'recompose'
 import DataTable from './DataTable'
 import EmptyList from './EmptyList'
 
-const enhance = compose(
-  setPropTypes(DataTable.propTypes),
-  pure
-)
+const enhance = compose(setPropTypes(DataTable.propTypes), pure)
 
-export const DataTableWithEmptyList = props => (
-  !props.table.loading && props.items.currentIdList.isEmpty() ? (
-    <EmptyList />
-  ) : (
-    <DataTable {...props} />
-  )
-)
+export const DataTableWithEmptyList = props =>
+  !props.table.loading && props.items.currentIdList.isEmpty()
+    ? <EmptyList />
+    : <DataTable {...props} />
 
 export default enhance(DataTableWithEmptyList)

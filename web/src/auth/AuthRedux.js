@@ -11,7 +11,7 @@ import { aspectFetch, getHeaders } from '../shared/utils/fetch'
 import * as localStorage from '../shared/utils/localStorage'
 import {
   errorPleaseTryAgainInAFewMinutes,
-  inlineErrorPleaseTryAgainInAFewMinutes
+  inlineErrorPleaseTryAgainInAFewMinutes,
 } from '../error/CommonErrorNotifications'
 
 export const types = {
@@ -23,14 +23,14 @@ export const types = {
   CHANGE_CULTURE: 'CHANGE_CULTURE',
   TOGGLE_DRAWER: 'TOGGLE_DRAWER',
   CHANGE_TIMEZONE: 'CHANGE_TIMEZONE',
-  RESET_PASSWORD_ENTER_PASSWORD_SUCCESS: 'RESET_PASSWORD_ENTER_PASSWORD_SUCCESS'
+  RESET_PASSWORD_ENTER_PASSWORD_SUCCESS: 'RESET_PASSWORD_ENTER_PASSWORD_SUCCESS',
 }
 /*
  * ---------------- Action Creators -----------------
  */
 export function loginRequest() {
   return {
-    type: types.LOGIN_REQUEST
+    type: types.LOGIN_REQUEST,
   }
 }
 
@@ -41,7 +41,7 @@ export function loginSuccess(name, culture, timezone, permissions) {
     culture,
     timezone,
     permissions,
-    drawerOpen: localStorage.isDrawerOpen()
+    drawerOpen: localStorage.isDrawerOpen(),
   }
 }
 
@@ -52,7 +52,7 @@ export function refreshSuccess(name, culture, timezone, permissions) {
     culture,
     timezone,
     permissions,
-    drawerOpen: localStorage.isDrawerOpen()
+    drawerOpen: localStorage.isDrawerOpen(),
   }
 }
 
@@ -61,20 +61,20 @@ export function hydrateFromLocalStorage() {
     type: types.HYDRATE_FROM_LOCAL_STORAGE,
     culture: localStorage.getCulture(),
     timezone: localStorage.getTimezone(),
-    drawerOpen: localStorage.isDrawerOpen()
+    drawerOpen: localStorage.isDrawerOpen(),
   }
 }
 
 export function loginFailure(err) {
   return {
     type: types.LOGIN_FAILURE,
-    err
+    err,
   }
 }
 
 export function logoutSuccess() {
   return {
-    type: types.LOGOUT_SUCCESS
+    type: types.LOGOUT_SUCCESS,
   }
 }
 
@@ -82,7 +82,7 @@ export function changeCulture(culture) {
   localStorage.updateCulture(culture)
   return {
     type: types.CHANGE_CULTURE,
-    culture
+    culture,
   }
 }
 
@@ -90,7 +90,7 @@ export function changeTimezone(timezone) {
   localStorage.updateTimezone(timezone)
   return {
     type: types.CHANGE_TIMEZONE,
-    timezone
+    timezone,
   }
 }
 
@@ -99,7 +99,7 @@ export function toggleDrawer() {
 
   return {
     type: types.TOGGLE_DRAWER,
-    drawerOpen: localStorage.isDrawerOpen()
+    drawerOpen: localStorage.isDrawerOpen(),
   }
 }
 
@@ -108,7 +108,7 @@ export function closeDrawer() {
 
   return {
     type: types.TOGGLE_DRAWER,
-    drawerOpen: false
+    drawerOpen: false,
   }
 }
 
@@ -116,7 +116,7 @@ export function loginStart(login) {
   const user = login.get('user')
   const password = login.get('password')
 
-  return function (dispatch) {
+  return function(dispatch) {
     // First dispatch: the app state is updated to inform
     // that the API call is starting.
     dispatch(loginRequest())
@@ -128,71 +128,74 @@ export function loginStart(login) {
     // This is not required by thunk middleware, but it is convenient for us.
     const clientName = `${getBrowserNameAndVersion()} on ${window.navigator.platform}`
 
-    return aspectFetch('/auth',
-      {
-        method: 'POST',
-        headers: getHeaders(),
-        body: JSON.stringify({
-          name: user,
-          password,
-          clientId: localStorage.getClientId(),
-          clientName
-        }),
-        errorNotifications: {
-          401: {
-            'Your account is locked.': {
-              severity: 'warn',
-              ...defineMessages({
-                title: {
-                  id: 'errorResponseMessages.loginStart.POST.401.accountLocked.title',
-                  defaultMessage: 'Login Failed'
-                },
-                message: {
-                  id: 'errorResponseMessages.loginStart.POST.401.accountLocked.message',
-                  defaultMessage: 'Your user account has been locked'
-                },
-                resolution: {
-                  id: 'errorResponseMessages.loginStart.POST.401.accountLocked.resolution',
-                  defaultMessage: 'You can contact us to unlock your account for you, either by email ({supportEmail}) or by telephone ({supportTelephone})'
-                }
-              }),
-              messageValues: {
-                supportTelephone: config.supportTelephone,
-                supportEmail: config.supportEmail
-              }
+    return aspectFetch('/auth', {
+      method: 'POST',
+      headers: getHeaders(),
+      body: JSON.stringify({
+        name: user,
+        password,
+        clientId: localStorage.getClientId(),
+        clientName,
+      }),
+      errorNotifications: {
+        401: {
+          'Your account is locked.': {
+            severity: 'warn',
+            ...defineMessages({
+              title: {
+                id: 'errorResponseMessages.loginStart.POST.401.accountLocked.title',
+                defaultMessage: 'Login Failed',
+              },
+              message: {
+                id: 'errorResponseMessages.loginStart.POST.401.accountLocked.message',
+                defaultMessage: 'Your user account has been locked',
+              },
+              resolution: {
+                id: 'errorResponseMessages.loginStart.POST.401.accountLocked.resolution',
+                defaultMessage: 'You can contact us to unlock your account for you, either by email ({supportEmail}) or by telephone ({supportTelephone})',
+              },
+            }),
+            messageValues: {
+              supportTelephone: config.supportTelephone,
+              supportEmail: config.supportEmail,
             },
-            default: {
-              severity: 'warn',
-              ...defineMessages({
-                title: {
-                  id: 'errorResponseMessages.loginStart.POST.default.default.title',
-                  defaultMessage: 'Login Failed'
-                },
-                message: {
-                  id: 'errorResponseMessages.loginStart.POST.default.default.message',
-                  defaultMessage: 'The details that you have entered are incorrect'
-                },
-                resolution: {
-                  id: 'errorResponseMessages.loginStart.POST.default.resolution',
-                  defaultMessage: 'Please re-enter your login details and try again?'
-                }
-              })
-            }
           },
-          default: errorPleaseTryAgainInAFewMinutes(defineMessages({
+          default: {
+            severity: 'warn',
+            ...defineMessages({
+              title: {
+                id: 'errorResponseMessages.loginStart.POST.default.default.title',
+                defaultMessage: 'Login Failed',
+              },
+              message: {
+                id: 'errorResponseMessages.loginStart.POST.default.default.message',
+                defaultMessage: 'The details that you have entered are incorrect',
+              },
+              resolution: {
+                id: 'errorResponseMessages.loginStart.POST.default.resolution',
+                defaultMessage: 'Please re-enter your login details and try again?',
+              },
+            }),
+          },
+        },
+        default: errorPleaseTryAgainInAFewMinutes(
+          defineMessages({
             title: {
               id: 'errorResponseMessages.loginStart.POST.default.title',
-              defaultMessage: 'Login Error'
-            }
-          }))
-        }
-      })
-      .then((json) => {
+              defaultMessage: 'Login Error',
+            },
+          })
+        ),
+      },
+    })
+      .then(json => {
         const jwt = storeAccess(json)
 
         // We can dispatch many times!
         // Here, we update the app state with the results of the API call.
-        dispatch(loginSuccess(jwt.name, json.culture, json.timezone, jwt.permissions))
+        dispatch(
+          loginSuccess(jwt.name, json.culture, json.timezone, jwt.permissions)
+        )
 
         history.push('/dashboard')
       })
@@ -201,7 +204,7 @@ export function loginStart(login) {
 }
 
 export function logoutStart(reason) {
-  return function (dispatch) {
+  return function(dispatch) {
     // remove access and refresh tokens
     localStorage.clear()
 
@@ -209,30 +212,33 @@ export function logoutStart(reason) {
     dispatch(logoutSuccess())
 
     // now, redirect to login page
-    history.push(`/login${typeof reason === 'string' ? `?${stringify({ reason })}` : ''}`)
+    history.push(
+      `/login${typeof reason === 'string' ? `?${stringify({ reason })}` : ''}`
+    )
   }
 }
 
 export function refreshStart() {
-  return function (dispatch, getState) {
+  return function(dispatch, getState) {
     if (!localStorage.getRefreshToken()) {
       return
     }
 
     // try to get a new access token:
-    return aspectFetch('/auth/refresh',
-      {
-        method: 'POST',
-        headers: getHeaders(),
-        body: JSON.stringify({
-          token: localStorage.getRefreshToken(),
-          clientId: localStorage.getClientId()
-        })
-      })
-      .then((json) => {
+    return aspectFetch('/auth/refresh', {
+      method: 'POST',
+      headers: getHeaders(),
+      body: JSON.stringify({
+        token: localStorage.getRefreshToken(),
+        clientId: localStorage.getClientId(),
+      }),
+    })
+      .then(json => {
         const jwt = storeAccess(json)
         const user = getState().user
-        dispatch(refreshSuccess(jwt.name, user.culture, user.timezone, jwt.permissions))
+        dispatch(
+          refreshSuccess(jwt.name, user.culture, user.timezone, jwt.permissions)
+        )
       })
       .catch(() => {
         dispatch(logoutStart())
@@ -258,61 +264,62 @@ function storeAccess(json) {
 function createResetPasswordEnterPasswordSuccess(username) {
   return {
     type: types.RESET_PASSWORD_ENTER_PASSWORD_SUCCESS,
-    username
+    username,
   }
 }
 
 export function resetPasswordEnterEmailAddress(emailAddress) {
-  return function () {
+  return function() {
     const clientName = `${getBrowserNameAndVersion()} on ${window.navigator.platform}`
-    return aspectFetch(`/auth/send-reset-password-token/${emailAddress}`,
-      {
-        method: 'POST',
-        headers: getHeaders(),
-        body: JSON.stringify({
-          clientId: localStorage.getClientId(),
-          clientName
-        }),
-        errorNotifications: {
-          default: inlineErrorPleaseTryAgainInAFewMinutes(defineMessages({
+    return aspectFetch(`/auth/send-reset-password-token/${emailAddress}`, {
+      method: 'POST',
+      headers: getHeaders(),
+      body: JSON.stringify({
+        clientId: localStorage.getClientId(),
+        clientName,
+      }),
+      errorNotifications: {
+        default: inlineErrorPleaseTryAgainInAFewMinutes(
+          defineMessages({
             title: {
               id: 'errorResponseMessages.resetPasswordEnterEmailAddress.POST.default.title',
-              defaultMessage: 'Error Sending Reset Password Email'
-            }
-          }))
-        }
-      })
-      .catch((err) => {
-        throw new SubmissionError({ _error: err.message })
-      })
+              defaultMessage: 'Error Sending Reset Password Email',
+            },
+          })
+        ),
+      },
+    }).catch(err => {
+      throw new SubmissionError({ _error: err.message })
+    })
   }
 }
 
 export function resetPasswordEnterPassword(resetPasswordToken, newPassword) {
-  return function (dispatch) {
+  return function(dispatch) {
     const clientName = `${getBrowserNameAndVersion()} on ${window.navigator.platform}`
-    return aspectFetch(`/auth/update-password/${resetPasswordToken}`,
-      {
-        method: 'PUT',
-        headers: getHeaders(),
-        body: JSON.stringify({
-          newPassword,
-          clientId: localStorage.getClientId(),
-          clientName
-        }),
-        errorNotifications: {
-          default: inlineErrorPleaseTryAgainInAFewMinutes(defineMessages({
+    return aspectFetch(`/auth/update-password/${resetPasswordToken}`, {
+      method: 'PUT',
+      headers: getHeaders(),
+      body: JSON.stringify({
+        newPassword,
+        clientId: localStorage.getClientId(),
+        clientName,
+      }),
+      errorNotifications: {
+        default: inlineErrorPleaseTryAgainInAFewMinutes(
+          defineMessages({
             title: {
               id: 'errorResponseMessages.resetPasswordEnterPassword.POST.default.title',
-              defaultMessage: 'Error Saving New Password'
-            }
-          }))
-        }
-      })
-      .then((json) => {
+              defaultMessage: 'Error Saving New Password',
+            },
+          })
+        ),
+      },
+    })
+      .then(json => {
         dispatch(createResetPasswordEnterPasswordSuccess(json.username))
       })
-      .catch((err) => {
+      .catch(err => {
         throw new SubmissionError({ _error: err.message })
       })
   }
@@ -327,7 +334,7 @@ const User = Immutable.Record({
   timezone: 'Eastern Standard Time',
   permissions: Immutable.Set(),
   drawerOpen: true,
-  loggedIn: false
+  loggedIn: false,
 })
 
 const initialState = new User()
@@ -338,7 +345,7 @@ export default function authReducer(state = initialState, action) {
       return state.merge({
         culture: action.culture,
         timezone: action.timezone,
-        loggedIn: true
+        loggedIn: true,
       })
     case types.LOGIN_REQUEST:
       return state.merge({ loggedIn: false })
@@ -349,7 +356,7 @@ export default function authReducer(state = initialState, action) {
         timezone: action.timezone,
         permissions: action.permissions,
         loggedIn: true,
-        drawerOpen: action.drawerOpen
+        drawerOpen: action.drawerOpen,
       })
     case types.LOGIN_FAILURE:
       return state.merge({ name: '', loggedIn: false })
@@ -357,19 +364,19 @@ export default function authReducer(state = initialState, action) {
       return state.merge({ name: '', loggedIn: false })
     case types.CHANGE_CULTURE:
       return state.merge({
-        culture: action.culture
+        culture: action.culture,
       })
     case types.CHANGE_TIMEZONE:
       return state.merge({
-        timezone: action.timezone
+        timezone: action.timezone,
       })
     case types.TOGGLE_DRAWER:
       return state.merge({
-        drawerOpen: action.drawerOpen
+        drawerOpen: action.drawerOpen,
       })
     case types.RESET_PASSWORD_ENTER_PASSWORD_SUCCESS:
       return state.merge({
-        name: action.username
+        name: action.username,
       })
     default:
       return state

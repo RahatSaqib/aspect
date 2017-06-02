@@ -18,7 +18,11 @@ const renderTextField = ({ input, meta, ...restProps }) => (
     {...restProps}
     {...input}
     fullWidth
-    errorStyle={{ float: 'left', whiteSpace: 'nowrap', textOverflow: 'visible' }}
+    errorStyle={{
+      float: 'left',
+      whiteSpace: 'nowrap',
+      textOverflow: 'visible',
+    }}
     errorText={meta.touched && meta.error}
   />
 )
@@ -39,30 +43,52 @@ function validate(values) {
 const enhance = compose(
   setPropTypes({
     labels: PropTypes.object.isRequired,
-    loading: PropTypes.bool
+    loading: PropTypes.bool,
   }),
   pure,
   reduxForm({
     form: 'siteDetail',
-    validate
+    validate,
   }),
   setPropTypes({
     initialValues: PropTypes.object.isRequired,
     handleSubmit: PropTypes.func.isRequired,
     pristine: PropTypes.bool.isRequired,
-    submitting: PropTypes.bool.isRequired
+    submitting: PropTypes.bool.isRequired,
   })
 )
 
 // Renders underlying form and inputs components
 export const EditableFieldsForm = ({
-  labels, loading, initialValues, handleSubmit, pristine, submitting
+  labels,
+  loading,
+  initialValues,
+  handleSubmit,
+  pristine,
+  submitting,
 }) => (
   <form onSubmit={handleSubmit}>
-    <Field name="name" floatingLabelText={labels.name} component={renderTextField} />
-    <Field name="shortName" floatingLabelText={labels.shortName} component={renderTextField} />
-    <Field name="externalId" floatingLabelText={labels.externalId} component={renderTextField} />
-    <TimezoneSelect name="timezone" label={labels.timezone} disabled={loading || submitting} fullWidth />
+    <Field
+      name="name"
+      floatingLabelText={labels.name}
+      component={renderTextField}
+    />
+    <Field
+      name="shortName"
+      floatingLabelText={labels.shortName}
+      component={renderTextField}
+    />
+    <Field
+      name="externalId"
+      floatingLabelText={labels.externalId}
+      component={renderTextField}
+    />
+    <TimezoneSelect
+      name="timezone"
+      label={labels.timezone}
+      disabled={loading || submitting}
+      fullWidth
+    />
     <LocationSelector
       loading={loading}
       initialValues={initialValues}
@@ -71,11 +97,32 @@ export const EditableFieldsForm = ({
       stateIdFieldName="stateId"
       lgaIdFieldName="lgaId"
     />
-    <Field name="address" floatingLabelText={labels.address} component={renderTextField} />
-    <Field name="address2" floatingLabelText={labels.address2} component={renderTextField} />
-    <Field name="city" floatingLabelText={labels.city} component={renderTextField} />
-    <Field name="zip" floatingLabelText={labels.zip} component={renderTextField} />
-    <RaisedButton disabled={pristine || submitting} type="submit" label="Update" secondary />
+    <Field
+      name="address"
+      floatingLabelText={labels.address}
+      component={renderTextField}
+    />
+    <Field
+      name="address2"
+      floatingLabelText={labels.address2}
+      component={renderTextField}
+    />
+    <Field
+      name="city"
+      floatingLabelText={labels.city}
+      component={renderTextField}
+    />
+    <Field
+      name="zip"
+      floatingLabelText={labels.zip}
+      component={renderTextField}
+    />
+    <RaisedButton
+      disabled={pristine || submitting}
+      type="submit"
+      label="Update"
+      secondary
+    />
     {submitting && <LinearProgress />}
   </form>
 )

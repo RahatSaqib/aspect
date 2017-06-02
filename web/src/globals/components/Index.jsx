@@ -8,25 +8,24 @@ import { refreshStart } from '../../auth/AuthRedux'
 import EnsureAuthorized from '../layouts/EnsureAuthorized'
 
 const enhance = compose(
-  connect(() => ({
-  }), dispatch => (
-    bindActionCreators({
-      refreshStart,
-    }, dispatch)
-  )),
+  connect(
+    () => ({}),
+    dispatch =>
+      bindActionCreators(
+        {
+          refreshStart,
+        },
+        dispatch
+      )
+  )
 )
 
-export const Index = ({
-  location,
-}) => (
-  <EnsureAuthorized
-    refreshStart={refreshStart}
-    location={location}
-  >
+export const Index = ({ location }) => (
+  <EnsureAuthorized refreshStart={refreshStart} location={location}>
     <Redirect
       to={{
         pathname: '/dashboard',
-        state: { referrer: location }
+        state: { referrer: location },
       }}
     />
   </EnsureAuthorized>
