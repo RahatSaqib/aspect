@@ -15,6 +15,7 @@ import {
   receiveTableItems,
   Table,
 } from '../shared/metaReducers/table'
+import { receivedExportResponse } from '../filter/FilterRedux'
 
 export const types = {
   REQUEST_RESULTS: 'REQUEST_RESULTS',
@@ -288,6 +289,44 @@ export function fetchWorkflowStatusLogs(
         },
       }
     ).then(json => dispatch(receiveWorkflowStatusLogsAction(json)))
+  }
+}
+
+export function exportResults(format, sortCol, sortDir, page, pageSize) {
+  return (dispatch, getState) => {
+    const filters = getState()
+      .filter
+      .listFilter
+      .toMap()
+      .filter(nonEmptyFilterValue)
+      .toJS()
+    return aspectFetch(`/result/export?${stringify({
+      sortCol,
+      sortDir,
+      page,
+      size: pageSize,
+      format,
+      ...filters
+    })}`,
+      {
+        errorNotifications: {
+          400: filterFieldsRejectedError(defineMessages({
+            title: {
+              id: 'errorResponseMessages.exportResults.GET.400.title',
+              defaultMessage: 'Exporting Results Failed'
+            }
+          })),
+          default: errorPleaseTryAgainInAFewMinutes(defineMessages({
+            title: {
+              id: 'errorResponseMessages.exportResults.GET.default.title',
+              defaultMessage: 'Exporting Results Failed'
+            }
+          }))
+        }
+      })
+      .then((json) => {
+        dispatch(receivedExportResponse(format, json))
+      })
   }
 }
 

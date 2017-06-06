@@ -12,7 +12,7 @@ import DataTableWithEmptyList
 import NavTitle from '../../globals/components/NavTitle'
 import ListFilterContainer from '../../filter/list/ListFilter'
 import { configureListFilter, ListFilter } from '../../filter/FilterRedux'
-import { fetchListFilteredResults } from '../ResultRedux'
+import { fetchListFilteredResults, exportResults } from '../ResultRedux'
 import styles from './ResultList.css'
 import { Items } from '../../shared/metaReducers/items'
 import { Table } from '../../shared/metaReducers/table'
@@ -82,6 +82,7 @@ const enhance = compose(
         {
           fetchListFilteredResults,
           configureListFilter,
+          exportResults
         },
         dispatch
       )
@@ -93,6 +94,7 @@ const enhance = compose(
     table: PropTypes.objectOf(Table).isRequired,
     fetchListFilteredResults: PropTypes.func.isRequired,
     configureListFilter: PropTypes.func.isRequired,
+    exportResults: PropTypes.func.isRequired
   })
 )
 
@@ -105,6 +107,7 @@ export class ResultList extends PureComponent {
     fetchListFilteredResults: PropTypes.func.isRequired,
     history: PropTypes.object.isRequired, // eslint-disable-line
     items: PropTypes.objectOf(Items).isRequired,
+    exportResults: PropTypes.func.isRequired
   }
 
   componentWillMount() {
@@ -139,6 +142,16 @@ export class ResultList extends PureComponent {
   handleItemIdSelection = resultId => {
     this.props.history.push(`/result/${resultId}`)
   }
+  clickResultListExport = (formatType, receivedExportResponse) => {
+    this.props.exportResults(
+      formatType,
+      this.props.table.sortCol,
+      this.props.table.sortDir,
+      this.props.table.page,
+      this.props.table.pageSize,
+      receivedExportResponse
+    )
+  }
 
   render() {
     const { intl } = this.props
@@ -164,6 +177,7 @@ export class ResultList extends PureComponent {
       },
       { db: 'patientId', title: formatMessage(messages.patiendId) },
     ]
+    const askConfirmationForExport = this.props.table.total > 1000
 
     return (
       <div className={styles.Content}>
@@ -176,6 +190,9 @@ export class ResultList extends PureComponent {
         <ListFilterContainer
           subject={formatMessage(messages.title)}
           filterTemplate={formatMessage(messages.filterTemplate)}
+
+          onClickExport={this.clickResultListExport}
+          askConfirmationForExport={askConfirmationForExport}
         />
         <DataTableWithEmptyList
           selectable
