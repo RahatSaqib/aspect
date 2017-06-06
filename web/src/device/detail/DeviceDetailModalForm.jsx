@@ -133,7 +133,7 @@ export const DeviceDetailModalForm = props => {
               name="SiteId"
               floatingLabelText={labels.siteId}
               value={values.siteId}
-              onChangeSiteId={props.onChangeSiteId}
+              onChangeSite={props.onChangeSiteId}
               itemTextGetter={site => site.get('name')}
               hintText="Enter site name"
               fullWidth

@@ -47,7 +47,7 @@ export default class DataTable extends PureComponent {
     columns: PropTypes.arrayOf(
       PropTypes.shape({
         db: PropTypes.string.isRequired,
-        title: PropTypes.string.isRequired,
+        title: PropTypes.node.isRequired,
         extraProps: PropTypes.objectOf(PropTypes.any),
       })
     ).isRequired,
