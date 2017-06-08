@@ -166,7 +166,7 @@ export class DeviceList extends PureComponent {
   }
 
   handleItemIdSelection = deviceId => {
-    this.props.history.push(`/device/${deviceId}`)
+    this.props.history.push(`/browse/device/${deviceId}`)
   }
 
   handleFetch = (...args) => {

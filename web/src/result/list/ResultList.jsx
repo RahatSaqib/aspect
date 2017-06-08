@@ -140,8 +140,9 @@ export class ResultList extends PureComponent {
   }
 
   handleItemIdSelection = resultId => {
-    this.props.history.push(`/result/${resultId}`)
+    this.props.history.push(`/browse/result/${resultId}`)
   }
+
   clickResultListExport = (formatType, receivedExportResponse) => {
     this.props.exportResults(
       formatType,

@@ -69,6 +69,7 @@ const enhance = compose(
 
 const LoggedInLayout = ({
   component: Component,
+  render,
   pageTitle,
   drawerOpen,
   refreshStart,
@@ -83,6 +84,7 @@ const LoggedInLayout = ({
   <Route
     {...restProps}
     render={props => {
+      const makeLink = (href, label, restProps) =>
         <Link
           {...restProps}
           key={href}
@@ -177,7 +179,7 @@ const LoggedInLayout = ({
                   </AppBar>
                   <Helmet title="Aspect" defaultTitle="Aspect" />
                   <div className={cssClasses('Content')}>
-                    <Component {...props} />
+                    {render ? render(props) : <Component {...props} />}
                   </div>
                   <IdleDialogContainer />
                   <AppNotificationDialog />

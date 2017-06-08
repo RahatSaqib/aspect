@@ -1,6 +1,6 @@
 import React from 'react'
 import { Router } from 'react-router'
-import { Switch, Route } from 'react-router-dom'
+import { Switch, Route, Redirect } from 'react-router-dom'
 import Paper from 'material-ui/Paper'
 
 import history from '../history'
@@ -8,6 +8,7 @@ import history from '../history'
 // "Layouts"
 import PlainLayout from './layouts/PlainLayout'
 import LoggedInLayout from './layouts/LoggedInLayout'
+import BrowseLayout from './layouts/BrowseLayout'
 
 // "Pages"
 import Index from './components/Index'
@@ -66,6 +67,11 @@ const Routes = () =>
       />
       <LoggedInLayout path="/dashboard/maintenance" component={Maintenance} />
 
+      <LoggedInLayout
+        path="/account-details/current"
+        component={AccountDetails}
+      />
+
       <LoggedInLayout path="/demo/device/:deviceId" component={DeviceDemo} />
 
       {/* TODO: real components */}
@@ -91,36 +97,60 @@ const Routes = () =>
       />
       {/* END-TODO: real components */}
 
-      <LoggedInLayout exact path="/device" component={DeviceList} />
-      <LoggedInLayout path="/device/:deviceId" component={DeviceDetail} />
+      <Redirect exact path="/browse" to="/browse/device" />
 
-      <LoggedInLayout exact path="/deviceApiKey" component={DeviceApiKeyList} />
-
-      <LoggedInLayout exact path="/router" component={RouterList} />
-      <LoggedInLayout path="/router/:routerId" component={RouterDetail} />
-
-      <LoggedInLayout exact path="/terminal" component={TerminalList} />
-      <LoggedInLayout path="/terminal/:terminalId" component={TerminalDetail} />
-
-      <LoggedInLayout exact path="/result" component={ResultList} />
-      <LoggedInLayout path="/result/:resultId" component={ResultDetail} />
-
-      <LoggedInLayout exact path="/site" component={SiteList} />
-      <LoggedInLayout path="/site/:siteId" component={SiteDetail} />
-
-      <LoggedInLayout exact path="/person" component={PersonList} />
-      <LoggedInLayout path="/person/:personId" component={PersonDetail} />
-
+      <BrowseLayout exact path="/browse/device" component={DeviceList} />
       <LoggedInLayout
-        path="/account-details/current"
-        component={AccountDetails}
+        path="/browse/device/:deviceId"
+        component={DeviceDetail}
       />
 
-      <LoggedInLayout exact path="/inventory" component={InventoryItemsList} />
+      <BrowseLayout
+        exact
+        path="/browse/deviceApiKey"
+        component={DeviceApiKeyList}
+      />
 
-      <LoggedInLayout exact path="/notification" component={NotificationList} />
+      <BrowseLayout exact path="/browse/router" component={RouterList} />
+      <LoggedInLayout
+        path="/browse/router/:routerId"
+        component={RouterDetail}
+      />
 
-      <LoggedInLayout exact path="/report" component={ReportList} />
+      <BrowseLayout exact path="/browse/terminal" component={TerminalList} />
+      <LoggedInLayout
+        path="/browse/terminal/:terminalId"
+        component={TerminalDetail}
+      />
+
+      <BrowseLayout exact path="/browse/result" component={ResultList} />
+      <LoggedInLayout
+        path="/browse/result/:resultId"
+        component={ResultDetail}
+      />
+
+      <BrowseLayout exact path="/browse/site" component={SiteList} />
+      <LoggedInLayout path="/browse/site/:siteId" component={SiteDetail} />
+
+      <BrowseLayout exact path="/browse/person" component={PersonList} />
+      <LoggedInLayout
+        path="/browse/person/:personId"
+        component={PersonDetail}
+      />
+
+      <BrowseLayout
+        exact
+        path="/browse/inventory"
+        component={InventoryItemsList}
+      />
+
+      <BrowseLayout
+        exact
+        path="/browse/notification"
+        component={NotificationList}
+      />
+
+      <BrowseLayout exact path="/browse/report" component={ReportList} />
 
       {process.env.NODE_ENV !== 'production' &&
         <PlainLayout path="/styleguide" component={StyleguideMain} />}

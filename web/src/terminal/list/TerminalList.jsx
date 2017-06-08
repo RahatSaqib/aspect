@@ -163,7 +163,7 @@ export class TerminalList extends PureComponent {
   }
 
   handleItemIdSelection = terminalId => {
-    this.props.history.push(`/terminal/${terminalId}`)
+    this.props.history.push(`/browse/terminal/${terminalId}`)
   }
 
   handleFetch = (...args) => {
