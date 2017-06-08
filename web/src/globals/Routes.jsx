@@ -1,6 +1,7 @@
 import React from 'react'
 import { Router } from 'react-router'
 import { Switch, Route } from 'react-router-dom'
+import Paper from 'material-ui/Paper'
 
 import history from '../history'
 
@@ -38,7 +39,14 @@ import RouterDetail from '../router/detail/RouterDetail'
 import TerminalList from '../terminal/list/TerminalList'
 import TerminalDetail from '../terminal/detail/TerminalDetail'
 
-const Routes = () => (
+import styles from '../components/shared/Shared.css'
+
+const makeNotImplementedComponent = name => () =>
+  <div className={styles.Content}>
+    <Paper className={styles.Content}>{name} is not implemented yet</Paper>
+  </div>
+
+const Routes = () =>
   <Router history={history}>
     <Switch>
       <Route exact path="/" component={Index} />
@@ -59,6 +67,29 @@ const Routes = () => (
       <LoggedInLayout path="/dashboard/maintenance" component={Maintenance} />
 
       <LoggedInLayout path="/demo/device/:deviceId" component={DeviceDemo} />
+
+      {/* TODO: real components */}
+      <LoggedInLayout
+        path="/task-list"
+        component={makeNotImplementedComponent('Task List')}
+      />
+      <LoggedInLayout
+        path="/operational-data"
+        component={makeNotImplementedComponent('Operational Data')}
+      />
+      <LoggedInLayout
+        path="/clinical-indicators"
+        component={makeNotImplementedComponent('Clinical Indicators')}
+      />
+      <LoggedInLayout
+        path="/reports"
+        component={makeNotImplementedComponent('Reports')}
+      />
+      <LoggedInLayout
+        path="/manage"
+        component={makeNotImplementedComponent('Manage')}
+      />
+      {/* END-TODO: real components */}
 
       <LoggedInLayout exact path="/device" component={DeviceList} />
       <LoggedInLayout path="/device/:deviceId" component={DeviceDetail} />
@@ -97,6 +128,5 @@ const Routes = () => (
       <PlainLayout component={NotFound} />
     </Switch>
   </Router>
-)
 
 export default Routes
