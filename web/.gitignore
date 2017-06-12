@@ -14,7 +14,8 @@ coverage
 mocha.json
 
 # distribution bundle
-dist
+dist/index.html
+dist/assets
 
 # Grunt intermediate storage (http://gruntjs.com/creating-plugins#storing-task-files)
 .grunt

@@ -5,7 +5,7 @@
   "description": "The web client for the aspect API",
   "main": "",
   "scripts": {
-    "prewebpack:dll": "fsys --task=emptyDir --dir=dist && fsys --task=remove --fileFolder=src/template/dll.vendor.manifest.json && fsys --task=remove --fileFolder=src/template/index.html",
+    "prewebpack:dll": "npm run clean",
     "webpack:dll": "webpack --config cfg/dll.babel.js",
     "prewebpack-dev-server:src": "cd src/template && fsys --task=copy --filesFolders=index.html --destination=../../dist --clobber=\"false\" --preserveTimestamps=\"false\" && cd ../../",
     "webpack-dev-server:src": "webpack-dev-server --config cfg/src.babel.js --open",
@@ -23,7 +23,7 @@
     "postupdatemessages:end": "fsys --task=remove --fileFolder=i18n && fsys --task=remove --fileFolder=src/shared/i18n/diff.pot",
     "prettier": "prettier --no-semi --single-quote --trailing-comma=es5",
     "lint": "eslint ./src --ext .js --ext .jsx",
-    "clean": "fsys --task=emptyDir --dir=dist",
+    "clean": "fsys --task=remove --fileFolder=dist/index.html && fsys --task=emptyDir --dir=dist/assets && fsys --task=remove --fileFolder=src/template/dll.vendor.manifest.json && fsys --task=remove --fileFolder=src/template/index.html",
     "release:major": "npm version major && npm publish && git push --follow-tags",
     "release:minor": "npm version minor && npm publish && git push --follow-tags",
     "release:patch": "npm version patch && npm publish && git push --follow-tags",
