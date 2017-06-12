@@ -1,9 +1,9 @@
 /* global styles */
 body {
-    font-family: Roboto, sans-serif;
-    padding: 0;
-    margin: 0;
-    background-color: #f2f2f2;
+  font-family: Lato, sans-serif;
+  padding: 0;
+  margin: 0;
+  background-color: #f2f2f2;
 }
 
 a {
@@ -17,15 +17,15 @@ a:hover {
 
 /*Get rid of ugly yellow background on Chrome login autocomplete*/
 input:-webkit-autofill {
-    box-shadow: 0 0 0 300px white inset !important;
-    -webkit-box-shadow: 0 0 0 300px white inset !important;
+  box-shadow: 0 0 0 300px white inset !important;
+  -webkit-box-shadow: 0 0 0 300px white inset !important;
 }
 
 /*styles for the grid system*/
 .col-margin {
-    margin: 0 10px 20px 10px;
+  margin: 0 10px 20px 10px;
 }
 
 .clear-fix {
-    clear: both;
+  clear: both;
 }
