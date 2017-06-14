@@ -214,6 +214,14 @@ const messages = defineMessages({
     id: 'shared.ListFilter.selectDeviceStatus',
     defaultMessage: 'Select status...',
   },
+  externalId: {
+    id: 'shared.ListFilter.externalId',
+    defaultMessage: 'Facility Code',
+  },
+  enterExternalId: {
+    id: 'shared.ListFilter.enterExternalId',
+    defaultMessage: 'Enter facility code...',
+  },
 })
 
 export class ListFilter extends PureComponent {
@@ -236,6 +244,7 @@ export class ListFilter extends PureComponent {
       consumableId: PropTypes.string,
       workflowStatusId: PropTypes.string,
       deviceStatusId: PropTypes.string,
+      externalId: PropTypes.string,
     }).isRequired, // connect
     intl: intlShape.isRequired,
     defaultExpanded: PropTypes.bool,
@@ -252,6 +261,7 @@ export class ListFilter extends PureComponent {
       consumable: PropTypes.bool,
       workflowStatus: PropTypes.bool,
       deviceStatus: PropTypes.bool,
+      externalId: PropTypes.bool,
     }).isRequired,
     subject: PropTypes.string,
     dateFilterLabel: PropTypes.string,
@@ -484,7 +494,8 @@ export class ListFilter extends PureComponent {
       config.patientOrResearchId ||
       config.sampleId ||
       config.sampleGroup ||
-      config.sampleOriginSite
+      config.sampleOriginSite ||
+      config.externalId
 
     const hasDataSection2 =
       config.date || config.workflowStatus || config.deviceStatus
@@ -717,6 +728,17 @@ export class ListFilter extends PureComponent {
                         floatingLabelText={formatMessage(
                           messages.contactNameEmail
                         )}
+                      />
+                    </div>}
+                  {config.externalId &&
+                    <div className={styles.Section__Control}>
+                      <FocusBlurTextField
+                        name="externalId"
+                        value={filter.externalId || ''}
+                        onCommitValue={this.handleTextFieldCommitValue}
+                        floatingLabelFixed
+                        hintText={formatMessage(messages.enterExternalId)}
+                        floatingLabelText={formatMessage(messages.externalId)}
                       />
                     </div>}
                 </div>

@@ -42,6 +42,10 @@ const messages = defineMessages({
     id: 'pages.SiteList.filterTemplate',
     defaultMessage: 'Viewing all sites<GEOGRAPHY><NAME>.',
   },
+  externalId: {
+    id: 'pages.SiteList.externalId',
+    defaultMessage: 'Facility Code',
+  },
 })
 
 const enhance = compose(
@@ -79,7 +83,7 @@ const enhance = compose(
 export class SiteList extends PureComponent {
   componentWillMount() {
     const { configureListFilter } = this.props
-    configureListFilter({ geography: true, siteName: true })
+    configureListFilter({ geography: true, siteName: true, externalId: true })
   }
 
   componentDidMount() {
@@ -108,6 +112,7 @@ export class SiteList extends PureComponent {
       { db: 'state', title: formatMessage(messages.state) },
       { db: 'lga', title: formatMessage(messages.lga) },
       { db: 'totalDevices', title: formatMessage(messages.totalDevices) },
+      { db: 'externalId', title: formatMessage(messages.externalId) },
     ]
 
     return (
