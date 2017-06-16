@@ -207,9 +207,9 @@ module.exports = [
             + ' with that checkpoint.  Otherwise will return data that does not depend on checkpoint.'),
           offset: Joi.string().description(
             'The result offset from the  client checkpoint, default 0. If offset is 0, device data'
-            + ' uploaded with the specified checkpoint will be retreived. A positive offset will retreive'
+            + ' uploaded with the specified checkpoint will be retrieved. A positive offset will retrieve'
             + ' the data uploaded after the checkpoint, e.g. to download data updated after the last'
-            + ' Device Checkin from an outside source. A negative offset will retreive data uploaded'
+            + ' Device Checkin from an outside source. A negative offset will retrieve data uploaded'
             + ' before the checkpoint, e.g. to download historical data')
         }
       },
