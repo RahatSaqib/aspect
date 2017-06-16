@@ -100,20 +100,22 @@ function* getListDevices(query, auth) {
         .as('thisMonth'),
       knex('Result as r')
         .innerJoin('Sample as s', 'r.sampleId', 's.id')
-        .innerJoin('ResultWorkflowStatus as rw', 'r.resultWorkflowStatusId', 'rw.id')
-        .innerJoin('ResultWorkflowLog as rl', 'r.resultWorkflowStatusId', 'rl.resultId')
+        .innerJoin('ResultWorkflowLog as rl', 'r.id', 'rl.resultId')
+        .innerJoin('ResultWorkflowStatus as rw', 'rl.resultWorkflowStatusId', 'rw.id')
         .whereRaw('s.originSiteId = d.siteId')
         .whereBetween('rl.changedOn', [last60Day, last30Day])
         .where('rw.externalId', '=', 'Delivered')
         .count('r.id')
         .as('deliveredLastMonth'),
+
+      // TODO: Fix this/last month queries so they work for other (non-terminal) devices
       knex('Result as r')
         .innerJoin('Sample as s', 'r.sampleId', 's.id')
-        .innerJoin('ResultWorkflowStatus as rw', 'r.resultWorkflowStatusId', 'rw.id')
-        .innerJoin('ResultWorkflowLog as rl', 'r.resultWorkflowStatusId', 'rl.resultId')
+        .innerJoin('ResultWorkflowLog as rl', 'r.id', 'rl.resultId')
+        .innerJoin('ResultWorkflowStatus as rw', 'rl.resultWorkflowStatusId', 'rw.id')
         .whereRaw('s.originSiteId = d.siteId')
         .where('rl.changedOn', '>=', last30Day)
-        .whereIn('rw.externalId', '=', 'Delivered')
+        .where('rw.externalId', '=', 'Delivered')
         .count('r.id')
         .as('deliveredThisMonth'),
       knex('Result as r')
