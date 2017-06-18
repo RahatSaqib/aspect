@@ -26,6 +26,14 @@ const messages = defineMessages({
     id: 'pages.TerminalList.terminalName',
     defaultMessage: 'Terminal Name',
   },
+  terminalShortName: {
+    id: 'pages.TerminalList.terminalShortName',
+    defaultMessage: 'Terminal',
+  },
+  terminalSite: {
+    id: 'pages.TerminalList.siteName',
+    defaultMessage: 'Site',
+  },
   status: {
     id: 'pages.TerminalList.status',
     defaultMessage: 'Status',
@@ -101,7 +109,8 @@ const enhance = compose(
 )
 
 const TERMINAL_TABLE_COLUMN_SPACING = 12
-const TERMINAL_TABLE_NAME_COLUMN_WIDTH = '25%'
+const TERMINAL_TABLE_SITE_COLUMN_WIDTH = '21%'
+const TERMINAL_TABLE_SHORTNAME_COLUMN_WIDTH = '12%'
 const TERMINAL_TABLE_STATUS_COLUMN_WIDTH = '10%'
 
 export class TerminalList extends PureComponent {
@@ -168,9 +177,14 @@ export class TerminalList extends PureComponent {
     const { formatMessage, formatRelative, formatNumber } = intl
     const columns = [
       {
-        db: 'name',
-        title: formatMessage(messages.terminalName),
-        extraProps: { style: { width: TERMINAL_TABLE_NAME_COLUMN_WIDTH } },
+        db: 'siteName',
+        title: formatMessage(messages.terminalSite),
+        extraProps: { style: { width: TERMINAL_TABLE_SITE_COLUMN_WIDTH } },
+      },
+      {
+        db: 'shortname',
+        title: formatMessage(messages.terminalShortName),
+        extraProps: { style: { width: TERMINAL_TABLE_SHORTNAME_COLUMN_WIDTH } },
       },
       {
         db: 'status',
