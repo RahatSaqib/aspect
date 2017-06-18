@@ -12,7 +12,8 @@ const totalDevicesQuery = knex('Device as d')
 const SELECT_LIST_FIELDS = [
   's.id', 's.name', 's.shortname',
   'st.name as state', 'l.name as lga',
-  's.createdOn', totalDevicesQuery
+  's.createdOn', totalDevicesQuery,
+  's.externalId'
 ]
 
 const SELECT_SHOW_FIELDS = [
@@ -52,7 +53,8 @@ function* listSites(request) {
       countryId: 'g.countryId',
       stateId: 'g.stateId',
       lgaId: 'g.lgaId',
-      siteName: 's.name'
+      siteName: 's.name',
+      externalId: 's.externalId'
     })
     .modify(addConstraints, dataConstraints, { site: 's', geography: 'g' })
 

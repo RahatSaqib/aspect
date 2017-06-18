@@ -24,10 +24,11 @@ module.exports = [
       validate: {
         query: Object.assign({
           deviceName: Joi.string().allow('').description('Filter for device name'),
-          siteName: Joi.string().allow('').description('Filter for site name')
+          siteName: Joi.string().allow('').description('Filter for site name'),
+          externalId: Joi.string().allow('').description('Filter for facility code')
         }, validateAllGeographyFilterParams(),
           validateDateRangeParams(),
-          validateSortPageParams('name', 'shortname', 'state', 'lga', 'createdOn', 'totalDevices'))
+          validateSortPageParams('name', 'shortname', 'state', 'lga', 'createdOn', 'totalDevices', 'externalId'))
       }
     }
   },

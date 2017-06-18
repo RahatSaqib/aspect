@@ -106,7 +106,7 @@ export function getFilterMessage(
   }
 
   // name-filter
-  const name = `${filter.contactNameOrEmail || ''}${filter.deviceName || ''}${filter.siteName || ''}`
+  const name = `${filter.contactNameOrEmail || ''}${filter.deviceName || ''}${filter.siteName || ''}${filter.externalId || ''}`
   const nameString = name
     ? `${SPACE}${formatMessage(messages.whoseNameIncludes)}${SPACE}"${name}"`
     : ''
