@@ -28,6 +28,7 @@ function listDevicesBaseConfig() {
         category: Joi.string().description('Filter for device type category'),
         type: Joi.string().description('Filter for device type'),
         name: Joi.string().allow('').description('Filter for device name'),
+        siteName: Joi.string().allow('').description('Filter for site name'),
         siteExternalId: Joi.string().allow('').description('Filter for facility code'),
         // query param 'format' is applicable only for handler 'exportDevices'
         format: Joi.string().allow('').description('File format for exporting data')

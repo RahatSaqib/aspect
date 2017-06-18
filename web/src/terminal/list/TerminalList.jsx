@@ -146,6 +146,7 @@ export class TerminalList extends PureComponent {
     const { configureListFilter } = this.props
     configureListFilter({
       geography: true,
+      siteName: true,
       deviceName: true,
       deviceStatus: true,
     })

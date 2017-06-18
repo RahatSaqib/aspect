@@ -71,6 +71,7 @@ function* getListDevices(query, auth) {
       category: 'dc.name',
       type: 'dt.name',
       siteExternalId: 's.externalId',
+      siteName: 's.name',
     })
     .modify(addConstraints, dataConstraints, { device: 'd' })
 
