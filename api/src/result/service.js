@@ -10,7 +10,7 @@ const SELECT_LIST_FIELDS = [
   'rc1.name as resultCategory1Name', 'rc2.name as resultCategory2Name',
   'rs.name as resultWorkflowStatus', 'so.name as sampleOriginSiteName',
   'sp.externalId as sampleId', 'sp.group as sampleGroup',
-  'a.name as assayName', 'a.id as assayId',
+  'a.name as assayName', 'a.id as assayId', 'r.deviceId',
   knex.raw('JSON_UNQUOTE(JSON_EXTRACT(r.patientData, "$.id")) as patientId')
 ]
 
@@ -243,7 +243,7 @@ function* updateWorkflowStatus(request) {
   }
 
   // update the resultWorkflowStatusId.
-  if (resultWorkflowStatusId !== result.resultWorkflowStatusId) {
+  if (resultWorkflowStatusId !== result.data.resultWorkflowStatusId) {
     yield knex('Result')
       .where('id', resultId)
       .update({
@@ -272,14 +272,7 @@ function* updateWorkflowStatus(request) {
       })
 
       // add device log entry so result is redelivered
-      yield knex('DeviceLog').insert({
-        deviceId: result.deviceId,
-        resultId,
-        source: 'ClientAPI',
-        createdOn: now,
-        senderIp: '',
-        rawMessage: JSON.stringify({ deliverToTerminal: 1 })
-      })
+      yield* deliverResultToTerminal(result.data.deviceId, resultId, now)
     }
   }
 
@@ -307,7 +300,22 @@ function* updateDeliverToTerminal(request) {
       updatedOn: now
     })
 
+  // add device log entry so result is redelivered
+  yield* deliverResultToTerminal(result.data.deviceId, resultId, now)
+
   return yield* showResult(request)
+}
+
+function* deliverResultToTerminal(deviceId, resultId, createdOn) {
+  yield knex('DeviceLog').insert({
+    deviceId,
+    resultId,
+    source: 'ClientAPI',
+    checkpoint: createdOn.getTime() / 100,
+    createdOn,
+    senderIp: '',
+    rawMessage: JSON.stringify({ deliverToTerminal: 1 })
+  })
 }
 
 function* listWorkflowStatusTypes() {
