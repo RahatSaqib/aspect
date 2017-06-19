@@ -311,7 +311,6 @@ function* deliverResultToTerminal(deviceId, resultId, createdOn) {
     deviceId,
     resultId,
     source: 'ClientAPI',
-    checkpoint: createdOn.getTime() / 100,
     createdOn,
     senderIp: '',
     rawMessage: JSON.stringify({ deliverToTerminal: 1 })
