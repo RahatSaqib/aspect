@@ -148,6 +148,7 @@ export class DeviceList extends PureComponent {
     configureListFilter({
       assayAndResultCategory: true,
       geography: true,
+      siteName: true,
       date: true,
       deviceName: true,
       deviceStatus: true,

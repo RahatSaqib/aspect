@@ -9,9 +9,7 @@ const { getCellsByValue, generateExcelFile, generateCsvFile } = require('../shar
 
 const SELECT_LIST_FIELDS = [
   'd.id', 'd.name', 'd.shortname', 'd.createdOn', 'd.lastPingOn', 'd.lastSeenOn as lastSeen',
-  'st.name as state',
-  'dt.name as type',
-  'ds.name as status',
+  'st.name as state', 'dt.name as type', 's.name as siteName', 'ds.name as status',
   'dc.name as category', 'dc.hasResults', 'dc.hasConnectivity'
 ]
 
@@ -73,6 +71,7 @@ function* getListDevices(query, auth) {
       category: 'dc.name',
       type: 'dt.name',
       siteExternalId: 's.externalId',
+      siteName: 's.name',
     })
     .modify(addConstraints, dataConstraints, { device: 'd' })
 
