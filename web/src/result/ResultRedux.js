@@ -294,39 +294,42 @@ export function fetchWorkflowStatusLogs(
 
 export function exportResults(format, sortCol, sortDir, page, pageSize) {
   return (dispatch, getState) => {
-    const filters = getState()
-      .filter
-      .listFilter
+    const filters = getState().filter.listFilter
       .toMap()
       .filter(nonEmptyFilterValue)
       .toJS()
-    return aspectFetch(`/result/export?${stringify({
-      sortCol,
-      sortDir,
-      page,
-      size: pageSize,
-      format,
-      ...filters
-    })}`,
+    return aspectFetch(
+      `/result/export?${stringify({
+        sortCol,
+        sortDir,
+        page,
+        size: pageSize,
+        format,
+        ...filters,
+      })}`,
       {
         errorNotifications: {
-          400: filterFieldsRejectedError(defineMessages({
-            title: {
-              id: 'errorResponseMessages.exportResults.GET.400.title',
-              defaultMessage: 'Exporting Results Failed'
-            }
-          })),
-          default: errorPleaseTryAgainInAFewMinutes(defineMessages({
-            title: {
-              id: 'errorResponseMessages.exportResults.GET.default.title',
-              defaultMessage: 'Exporting Results Failed'
-            }
-          }))
-        }
-      })
-      .then((json) => {
-        dispatch(receivedExportResponse(format, json))
-      })
+          400: filterFieldsRejectedError(
+            defineMessages({
+              title: {
+                id: 'errorResponseMessages.exportResults.GET.400.title',
+                defaultMessage: 'Exporting Results Failed',
+              },
+            })
+          ),
+          default: errorPleaseTryAgainInAFewMinutes(
+            defineMessages({
+              title: {
+                id: 'errorResponseMessages.exportResults.GET.default.title',
+                defaultMessage: 'Exporting Results Failed',
+              },
+            })
+          ),
+        },
+      }
+    ).then(json => {
+      dispatch(receivedExportResponse(format, json))
+    })
   }
 }
 

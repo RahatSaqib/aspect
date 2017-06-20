@@ -82,7 +82,7 @@ const enhance = compose(
         {
           fetchListFilteredResults,
           configureListFilter,
-          exportResults
+          exportResults,
         },
         dispatch
       )
@@ -94,7 +94,7 @@ const enhance = compose(
     table: PropTypes.objectOf(Table).isRequired,
     fetchListFilteredResults: PropTypes.func.isRequired,
     configureListFilter: PropTypes.func.isRequired,
-    exportResults: PropTypes.func.isRequired
+    exportResults: PropTypes.func.isRequired,
   })
 )
 
@@ -107,7 +107,7 @@ export class ResultList extends PureComponent {
     fetchListFilteredResults: PropTypes.func.isRequired,
     history: PropTypes.object.isRequired, // eslint-disable-line
     items: PropTypes.objectOf(Items).isRequired,
-    exportResults: PropTypes.func.isRequired
+    exportResults: PropTypes.func.isRequired,
   }
 
   componentWillMount() {
@@ -190,7 +190,6 @@ export class ResultList extends PureComponent {
         <ListFilterContainer
           subject={formatMessage(messages.title)}
           filterTemplate={formatMessage(messages.filterTemplate)}
-
           onClickExport={this.clickResultListExport}
           askConfirmationForExport={askConfirmationForExport}
         />
