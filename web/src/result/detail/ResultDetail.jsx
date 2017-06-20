@@ -14,6 +14,7 @@ import LinearProgress from 'material-ui/LinearProgress'
 import { Card, CardHeader, CardText } from 'material-ui/Card'
 import IconButton from 'material-ui/IconButton'
 import Share from 'material-ui/svg-icons/social/share'
+import Checkbox from 'material-ui/Checkbox'
 
 // Our own imports
 import { Unit } from '../../components/pureGrids'
@@ -22,6 +23,7 @@ import NavTitle from '../../globals/components/NavTitle'
 import {
   fetchSingleResult,
   updateSingleResult,
+  updateResultDeliverToTerminal,
   WorkflowLogModel,
   fetchWorkflowStatusLogs,
   Result,
@@ -153,6 +155,10 @@ const messages = defineMessages({
     id: 'pages.ResultDetail.externalID',
     defaultMessage: 'External Result ID',
   },
+  deliverToTerminal: {
+    id: 'pages.ResultDetail.deliverToTerminal',
+    defaultMessage: 'Deliver to Terminal',
+  },
 })
 
 const enhance = compose(
@@ -179,6 +185,7 @@ const enhance = compose(
         {
           fetchSingleResult,
           updateSingleResult,
+          updateResultDeliverToTerminal,
           fetchWorkflowStatusLogs,
         },
         dispatch
@@ -190,6 +197,7 @@ const enhance = compose(
     workflowLog: PropTypes.objectOf(WorkflowLogModel).isRequired,
     fetchSingleResult: PropTypes.func.isRequired,
     updateSingleResult: PropTypes.func.isRequired,
+    updateResultDeliverToTerminal: PropTypes.func.isRequired,
     fetchWorkflowStatusLogs: PropTypes.func.isRequired,
   })
 )
@@ -203,6 +211,15 @@ export class ResultDetail extends PureComponent {
     if (this.props.match.params.resultId !== nextProps.match.params.resultId) {
       this.handleFetchResult()
     }
+  }
+
+  onChangeDeliverToTerminal = event => {
+    const { result } = this.props
+
+    this.props.updateResultDeliverToTerminal(
+      result.get('id'),
+      event.target.checked
+    )
   }
 
   getAssayFields() {
@@ -427,10 +444,10 @@ export class ResultDetail extends PureComponent {
                 />
               </Unit>}
             {this.getAssayFields()}
-            <Unit sm="1-1" md="1-2" lg="1-4">
+            <Unit sm="1-2" md="1-2" lg="1-2">
               <ReadOnlyField
-                label="Workflow Status"
-                value={result.get('resultWorkflowStatus')}
+                label={formatMessage(messages.fieldResultDataResultText)}
+                value={result.getIn(['resultData', 'resultText'])}
               />
             </Unit>
             {result.get('errorCode')
@@ -449,16 +466,26 @@ export class ResultDetail extends PureComponent {
                   />
                 </Unit>
               : null}
-            <Unit sm="1-1" md="1-1" lg="1-2">
+            <Unit sm="1-1" md="1-2" lg="1-4">
               <ReadOnlyField
-                label={formatMessage(messages.fieldResultDataResultText)}
-                value={result.getIn(['resultData', 'resultText'])}
+                label="Workflow Status"
+                value={result.get('resultWorkflowStatus')}
               />
             </Unit>
-            <Unit sm="1-1" md="1-1" lg="1-2">
+            <Unit sm="1-2" md="1-2" lg="1-4">
               <ReadOnlyField
                 label={formatMessage(messages.fieldNotes)}
                 value={result.get('notes')}
+              />
+            </Unit>
+            <Unit sm="1-2" md="1-2" lg="1-4">
+              <Checkbox
+                name="Status"
+                label={formatMessage(messages.deliverToTerminal)}
+                labelStyle={{ marginLeft: -12 }}
+                style={{ marginTop: 23 }}
+                checked={result.get('deliverToTerminal') === 1}
+                onCheck={this.onChangeDeliverToTerminal}
               />
             </Unit>
           </CardText>

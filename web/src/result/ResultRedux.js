@@ -191,32 +191,62 @@ export function updateSingleResult(resultId, data) {
   }
 }
 
-// update a single result with given workflow status token
-function updateSingleResultWorkflowStatus(resultId, token) {
+// update a single result with given workflow status externalId
+function updateSingleResultWorkflowStatus(resultId, externalId) {
   return {
     type: types.REQUEST_SINGLE_RESULT,
     resultId,
-    token,
+    externalId,
   }
 }
 
-const RESULT_WORKFLOW_STATUS_TOKEN_ACKNOWLEDGED = 'acknowledged'
+const RESULT_WORKFLOW_STATUS_EXTERNALID_ACKNOWLEDGED = 'Acknowledged'
 
 export function updateResultWorkflowStatus(resultId) {
   return dispatch => {
-    const token = RESULT_WORKFLOW_STATUS_TOKEN_ACKNOWLEDGED
+    const externalId = RESULT_WORKFLOW_STATUS_EXTERNALID_ACKNOWLEDGED
 
-    dispatch(updateSingleResultWorkflowStatus(resultId, token))
+    dispatch(updateSingleResultWorkflowStatus(resultId, externalId))
 
     return aspectFetch(`/result/workflow-status/${resultId}`, {
       method: 'PUT',
-      body: JSON.stringify({ token }),
+      body: JSON.stringify({ externalId }),
       errorNotifications: {
         default: errorPleaseTryAgainInAFewMinutes(
           defineMessages({
             title: {
               id: 'errorResponseMessages.updateResultWorkflowStatus.PUT.default.title',
               defaultMessage: 'An Error Occurred When Trying to Save the Workflow Status',
+            },
+          })
+        ),
+      },
+    }).then(json => dispatch(receiveUpdatedSingleResult(json.data)))
+  }
+}
+
+// update a single result's deliver to terminal flag
+function updateSingleResultDeliverToTerminal(resultId, deliverToTerminal) {
+  return {
+    type: types.REQUEST_SINGLE_RESULT,
+    resultId,
+    deliverToTerminal,
+  }
+}
+
+export function updateResultDeliverToTerminal(resultId, deliverToTerminal) {
+  return dispatch => {
+    dispatch(updateSingleResultDeliverToTerminal(resultId, deliverToTerminal))
+
+    return aspectFetch(`/result/deliver-to-terminal/${resultId}`, {
+      method: 'PUT',
+      body: JSON.stringify({ deliverToTerminal }),
+      errorNotifications: {
+        default: errorPleaseTryAgainInAFewMinutes(
+          defineMessages({
+            title: {
+              id: 'errorResponseMessages.updateResultDeliverToTerminal.PUT.default.title',
+              defaultMessage: 'An Error Occurred When Trying to update the "Deliver to Terminal" flag.',
             },
           })
         ),
@@ -294,39 +324,42 @@ export function fetchWorkflowStatusLogs(
 
 export function exportResults(format, sortCol, sortDir, page, pageSize) {
   return (dispatch, getState) => {
-    const filters = getState()
-      .filter
-      .listFilter
+    const filters = getState().filter.listFilter
       .toMap()
       .filter(nonEmptyFilterValue)
       .toJS()
-    return aspectFetch(`/result/export?${stringify({
-      sortCol,
-      sortDir,
-      page,
-      size: pageSize,
-      format,
-      ...filters
-    })}`,
+    return aspectFetch(
+      `/result/export?${stringify({
+        sortCol,
+        sortDir,
+        page,
+        size: pageSize,
+        format,
+        ...filters,
+      })}`,
       {
         errorNotifications: {
-          400: filterFieldsRejectedError(defineMessages({
-            title: {
-              id: 'errorResponseMessages.exportResults.GET.400.title',
-              defaultMessage: 'Exporting Results Failed'
-            }
-          })),
-          default: errorPleaseTryAgainInAFewMinutes(defineMessages({
-            title: {
-              id: 'errorResponseMessages.exportResults.GET.default.title',
-              defaultMessage: 'Exporting Results Failed'
-            }
-          }))
-        }
-      })
-      .then((json) => {
-        dispatch(receivedExportResponse(format, json))
-      })
+          400: filterFieldsRejectedError(
+            defineMessages({
+              title: {
+                id: 'errorResponseMessages.exportResults.GET.400.title',
+                defaultMessage: 'Exporting Results Failed',
+              },
+            })
+          ),
+          default: errorPleaseTryAgainInAFewMinutes(
+            defineMessages({
+              title: {
+                id: 'errorResponseMessages.exportResults.GET.default.title',
+                defaultMessage: 'Exporting Results Failed',
+              },
+            })
+          ),
+        },
+      }
+    ).then(json => {
+      dispatch(receivedExportResponse(format, json))
+    })
   }
 }
 

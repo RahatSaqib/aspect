@@ -110,6 +110,7 @@ describe('Result routes', () => {
         assert.property(res.body.data, 'notes')
         assert.property(res.body.data, 'errorCode')
         assert.property(res.body.data, 'errorNotes')
+        assert.property(res.body.data, 'deliverToTerminal')
         assert.property(res.body.data, 'createdOn')
         assert.property(res.body.data, 'updatedOn')
         assert.property(res.body.data, 'assayId')
@@ -131,20 +132,20 @@ describe('Result routes', () => {
     })
   })
   describe('PUT', () => {
-    it('Should update result status given a resultId', (done) => {
-      const updateWithToken = {
+    it('Should update result status given a resultId and set deliverToTerminal accordingly', (done) => {
+      const updateWithExternalId = {
         resultWorkflowStatusId: null,
-        token: 'processed'
+        externalId: 'Validated'
       }
       const updateWithId = {
         resultWorkflowStatusId: 1,
-        token: null
+        externalId: null
       }
 
-      // update with token
+      // update with external ID
       server
         .put(`${path}/workflow-status/${resultId}`)
-        .send(updateWithToken)
+        .send(updateWithExternalId)
         .set('Authorization', `Bearer${shared.token}`)
         .end((err, res) => {
           assert.equal(res.status, 200)
@@ -166,7 +167,8 @@ describe('Result routes', () => {
           })
 
           // check the updated fieldName
-          assert.equal(res.body.data.resultWorkflowStatus, 'Processed')
+          assert.equal(res.body.data.deliverToTerminal, 1)
+          assert.equal(res.body.data.resultWorkflowStatus, 'Validated')
 
           // update with resultWorkflowStatusId
           server
@@ -205,7 +207,7 @@ describe('Result routes', () => {
                   // Clean Up: Update resultWorkflowStatus with original status
                   server
                     .put(`${path}/workflow-status/${resultId}`)
-                    .send({ resultWorkflowStatusId: null, token: initialResultWorkflowStatus })
+                    .send({ resultWorkflowStatusId: null, externalId: initialResultWorkflowStatus })
                     .set('Authorization', `Bearer${shared.token}`)
                     .end((err, res) => {
                       assert.equal(res.body.data.resultWorkflowStatus, initialResultWorkflowStatus)
@@ -215,9 +217,67 @@ describe('Result routes', () => {
             })
         })
     })
+    it('Should update "deliver to terminal" given a resultId and boolean', (done) => {
+      // set to true
+      server
+        .put(`${path}/deliver-to-terminal/${resultId}`)
+        .send({ deliverToTerminal: true })
+        .set('Authorization', `Bearer${shared.token}`)
+        .end((err, res) => {
+          assert.equal(res.status, 200)
+          assert.typeOf(res.body, 'Object')
+          assert.property(res.body, 'data')
+          assert.typeOf(res.body.data, 'Object')
+          assert.typeOf(res.body.data.assay, 'Object')
+          assert.typeOf(res.body.data.assay.resultDataSchema, 'Object')
+          assert.typeOf(res.body.data.resultData, 'Object')
+          const resultFieldNames = ['id', 'endedOn', 'deviceName', 'countryName',
+            'stateName', 'lgaName', 'resultCategory1Name', 'resultCategory2Name',
+            'resultData', 'sampleId', 'sampleGroup', 'patientId', 'siteName', 'assayVersion',
+            'consumableSerial', 'consumableLot', 'consumableExpirationDate',
+            'instrumentSerial', 'moduleName', 'moduleSerial', 'researchId',
+            'senderVersion', 'senderOperator', 'notes', 'errorCode', 'errorNotes',
+            'createdOn', 'updatedOn', 'assayId', 'assay']
+          _.each(resultFieldNames, (fieldName) => {
+            assert.property(res.body.data, fieldName)
+          })
+
+          // check that flag was set to true
+          assert.equal(res.body.data.deliverToTerminal, 1)
+
+          // ...and back to false
+          server
+            .put(`${path}/deliver-to-terminal/${resultId}`)
+            .send({ deliverToTerminal: false })
+            .set('Authorization', `Bearer${shared.token}`)
+            .end((err, res) => {
+              assert.equal(res.status, 200)
+              assert.typeOf(res.body, 'Object')
+              assert.property(res.body, 'data')
+              assert.typeOf(res.body.data, 'Object')
+              assert.typeOf(res.body.data.assay, 'Object')
+              assert.typeOf(res.body.data.assay.resultDataSchema, 'Object')
+              assert.typeOf(res.body.data.resultData, 'Object')
+              const resultFieldNames = ['id', 'endedOn', 'deviceName', 'countryName',
+                'stateName', 'lgaName', 'resultCategory1Name', 'resultCategory2Name',
+                'resultData', 'sampleId', 'sampleGroup', 'patientId', 'siteName', 'assayVersion',
+                'consumableSerial', 'consumableLot', 'consumableExpirationDate',
+                'instrumentSerial', 'moduleName', 'moduleSerial', 'researchId',
+                'senderVersion', 'senderOperator', 'notes', 'errorCode', 'errorNotes',
+                'createdOn', 'updatedOn', 'assayId', 'assay']
+              _.each(resultFieldNames, (fieldName) => {
+                assert.property(res.body.data, fieldName)
+              })
+
+              // check that flag was set to false
+              assert.equal(res.body.data.deliverToTerminal, 0)
+
+              done()
+            })
+        })
+    })
   })
 })
-
 
 describe('Result type routes', () => {
   const path = '/api/result/result-types'

@@ -326,6 +326,7 @@ function* getResult(context) {
     .leftJoin('ResultWorkflowStatus as rs', 'r.resultWorkflowStatusId', 'rs.id')
     .innerJoin('DeviceLog as dl', 'dl.resultId', 'r.id')
     .where('dl.id', deviceLog.id)
+    .where('r.deliverToTerminal', 1)
     .first(
       'r.externalId as resultExternalId', 'r.resultData', 'r.patientData',
       'r.oemData', 'r.startedOn', 'r.endedOn', 'r.updatedOn', 'r.researchId',

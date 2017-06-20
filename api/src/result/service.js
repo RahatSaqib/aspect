@@ -12,21 +12,23 @@ const SELECT_LIST_FIELDS = [
   'rc1.name as resultCategory1Name', 'rc2.name as resultCategory2Name',
   'rs.name as resultWorkflowStatus', 'so.name as sampleOriginSiteName',
   'sp.externalId as sampleId', 'sp.group as sampleGroup',
-  'a.name as assayName', 'a.id as assayId',
+  'a.name as assayName', 'a.id as assayId', 'r.deviceId',
   knex.raw('JSON_UNQUOTE(JSON_EXTRACT(r.patientData, "$.id")) as patientId')
 ]
 
 const SELECT_SHOW_FIELDS = [
   'r.id', 'r.externalId', 'r.startedOn', 'r.endedOn', 'r.deviceId', 'd.name as deviceName',
   'c.name as countryName', 'st.name as stateName', 'lg.name as lgaName',
-  'rc1.name as resultCategory1Name', 'rc2.name as resultCategory2Name', 'rs.name as resultWorkflowStatus',
+  'rc1.name as resultCategory1Name', 'rc2.name as resultCategory2Name',
+  'r.resultWorkflowStatusId', 'rs.name as resultWorkflowStatus',
   'r.resultData', 'r.siteId', 'si.name as siteName', 'r.assayVersion',
   'r.consumableSerial', 'r.consumableLot', 'r.consumableExpirationDate', 'r.instrumentSerial',
   'r.moduleName', 'r.moduleSerial', 'r.researchId', 'r.senderVersion', 'r.senderOperator',
   'r.notes', 'r.errorCode', 'r.errorNotes', 'r.createdOn', 'r.updatedOn', 'r.assayId',
   'sp.externalId as sampleId', 'sp.group as sampleGroup',
   'sp.originSiteId as sampleOriginSiteId', 'so.name as sampleOriginSiteName',
-  knex.raw('JSON_UNQUOTE(JSON_EXTRACT(r.patientData, "$.id")) as patientId'), 'r.patientData'
+  knex.raw('JSON_UNQUOTE(JSON_EXTRACT(r.patientData, "$.id")) as patientId'), 'r.patientData',
+  'r.deliverToTerminal'
 ]
 
 const SORT_FIELDS = [
@@ -294,24 +296,29 @@ function* updateWorkflowStatus(request) {
   const { resultId } = params
   const { id: currentUserId } = auth.credentials
 
-  // TODO: check permission
+  // get the result so we can check access and if status changed
+  const result = yield* getResultByResultId(request)
+  if (!result.ok) {
+    Boom.notFound()
+  }
 
   let resultWorkflowStatusId = payload.resultWorkflowStatusId
-  // check if a token is provided
-  if (payload.token) {
+  // check if a externalId is provided
+  if (payload.externalId) {
     [resultWorkflowStatusId] = yield knex('ResultWorkflowStatus as rs')
-      .where('rs.token', payload.token)
+      .where('rs.externalId', payload.externalId)
       .select('rs.id')
       .limit(1)
       .map(row => row.id)
 
     if (!resultWorkflowStatusId) {
-      return Boom.badRequest('Invalid ResultWorkflowStatus token')
+      return Boom.badRequest('Invalid ResultWorkflowStatus ID')
     }
   }
 
-  // update the resultWorkflowStatusId
-  yield knex('Result')
+  // update the resultWorkflowStatusId.
+  if (resultWorkflowStatusId !== result.data.resultWorkflowStatusId) {
+    yield knex('Result')
       .where('id', resultId)
       .update({
         resultWorkflowStatusId,
@@ -319,14 +326,69 @@ function* updateWorkflowStatus(request) {
         updatedOn: now
       })
 
-  yield knex('ResultWorkflowLog').insert({
-    resultId,
-    resultWorkflowStatusId,
-    createdBy: currentUserId,
-    changedOn: now,
-    createdOn: now
-  })
+    yield knex('ResultWorkflowLog').insert({
+      resultId,
+      resultWorkflowStatusId,
+      createdBy: currentUserId,
+      changedOn: now,
+      createdOn: now
+    })
+
+    // if set to "validated", set "deliverToTerminal"
+    // TODO: Add to MQ for processing
+    if (payload.externalId === 'Validated') {
+      yield knex('Result')
+      .where('id', resultId)
+      .update({
+        deliverToTerminal: 1,
+        updatedBy: currentUserId,
+        updatedOn: now
+      })
+
+      // add device log entry so result is redelivered
+      yield* deliverResultToTerminal(result.data.deviceId, resultId, now)
+    }
+  }
+
   return yield* showResult(request)
+}
+
+function* updateDeliverToTerminal(request) {
+  const { auth, params, payload } = request
+  const now = new Date()
+  const { resultId } = params
+  const { id: currentUserId } = auth.credentials
+
+  // get the result so we can check access
+  const result = yield* getResultByResultId(request)
+  if (!result.ok) {
+    Boom.notFound()
+  }
+
+  // update the result deliver to terminal flag
+  yield knex('Result')
+    .where('id', resultId)
+    .update({
+      deliverToTerminal: payload.deliverToTerminal,
+      updatedBy: currentUserId,
+      updatedOn: now
+    })
+
+  // add device log entry so result is redelivered
+  yield* deliverResultToTerminal(result.data.deviceId, resultId, now)
+
+  return yield* showResult(request)
+}
+
+function* deliverResultToTerminal(deviceId, resultId, createdOn) {
+  yield knex('DeviceLog').insert({
+    deviceId,
+    resultId,
+    source: 'ClientAPI',
+    createdOn,
+    senderIp: '',
+    rawMessage: JSON.stringify({ deliverToTerminal: 1 })
+  })
 }
 
 function* listWorkflowStatusTypes() {
@@ -359,7 +421,7 @@ function* getWorkflowStatusLogByResultId(request) {
 
   const selectFields = [
     'log.id', 'log.operator', 'log.changedOn', 'log.createdOn', 'log.createdBy',
-    'rs.name as statusName', 'rs.i18nKey', 'rs.token'
+    'rs.name as statusName', 'rs.i18nKey', 'rs.externalId'
   ]
   const sortableFields = [
     'operator', 'changedOn', 'statusName'
@@ -396,6 +458,7 @@ module.exports = {
   showResult,
   listResultTypes,
   updateWorkflowStatus,
+  updateDeliverToTerminal,
   listWorkflowStatusTypes,
   listWorkflowStatusLog,
   exportResults
