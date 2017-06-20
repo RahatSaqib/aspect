@@ -1,11 +1,7 @@
 import PropTypes from 'prop-types'
 import React, { PureComponent } from 'react'
 import { compose, setPropTypes, pure } from 'recompose'
-import {
-  injectIntl,
-  defineMessages,
-  intlShape
-} from 'react-intl'
+import { injectIntl, defineMessages, intlShape } from 'react-intl'
 import { bindActionCreators } from 'redux'
 import { connect } from 'react-redux'
 import { Link } from 'react-router-dom'
@@ -21,10 +17,7 @@ import ModeEdit from 'material-ui/svg-icons/editor/mode-edit'
 // Our own imports
 import { Unit } from '../../components/pureGrids'
 import isEditable from '../../shared/selectors/device'
-import {
-  fetchSingleRouter,
-  updateSingleRouter
-} from '../RouterRedux'
+import { fetchSingleRouter, updateSingleRouter } from '../RouterRedux'
 import { ReadOnlyField } from '../../components/shared/ReadOnlyFields'
 import JSONSchemaCard from '../../components/shared/JSONSchemaCard'
 import NavTitle from '../../globals/components/NavTitle'
@@ -35,105 +28,110 @@ import styles from './RouterDetail.css'
 const messages = defineMessages({
   title: {
     id: 'pages.RouterDetail.title',
-    defaultMessage: 'Router Detail'
+    defaultMessage: 'Router Detail',
   },
   editTooltip: {
     id: 'pages.RouterDetail.editTooltip',
-    defaultMessage: 'Edit'
+    defaultMessage: 'Edit',
   },
   cancel: {
     id: 'pages.RouterDetail.cancel',
-    defaultMessage: 'Cancel'
+    defaultMessage: 'Cancel',
   },
   update: {
     id: 'pages.RouterDetail.update',
-    defaultMessage: 'Update'
+    defaultMessage: 'Update',
   },
   approved: {
     id: 'pages.RouterDetail.approved',
-    defaultMessage: 'Approved'
+    defaultMessage: 'Approved',
   },
   fieldName: {
     id: 'pages.RouterDetail.fieldName',
-    defaultMessage: 'Name'
+    defaultMessage: 'Name',
   },
   fieldShortname: {
     id: 'pages.RouterDetail.fieldShortname',
-    defaultMessage: 'Shortname'
+    defaultMessage: 'Shortname',
   },
   fieldNotes: {
     id: 'pages.RouterDetail.fieldNotes',
-    defaultMessage: 'Notes'
+    defaultMessage: 'Notes',
   },
   fieldSiteId: {
     id: 'pages.RouterDetail.fieldSiteId',
-    defaultMessage: 'Site'
+    defaultMessage: 'Site',
   },
   fieldConfiguration: {
     id: 'pages.RouterDetail.fieldConfiguration',
-    defaultMessage: 'Configuration'
+    defaultMessage: 'Configuration',
   },
   fieldFirstApprovedOn: {
     id: 'pages.RouterDetail.fieldFirstApprovedOn',
-    defaultMessage: 'First Approved On'
+    defaultMessage: 'First Approved On',
   },
   fieldFirstApprovedBy: {
     id: 'pages.RouterDetail.fieldFirstApprovedBy',
-    defaultMessage: 'First Approved By'
+    defaultMessage: 'First Approved By',
   },
   fieldHostId: {
     id: 'pages.RouterDetail.fieldHostId',
-    defaultMessage: 'Host Id'
+    defaultMessage: 'Host Id',
   },
   fieldSerial: {
     id: 'pages.RouterDetail.fieldSerial',
-    defaultMessage: 'Serial'
+    defaultMessage: 'Serial',
   },
   fieldLastSeen: {
     id: 'pages.RouterDetail.fieldLastSeen',
-    defaultMessage: 'Last Seen'
+    defaultMessage: 'Last Seen',
   },
   fieldFirstConnected: {
     id: 'pages.RouterDetail.fieldFirstConnected',
-    defaultMessage: 'Connected'
+    defaultMessage: 'Connected',
   },
   fieldStatus: {
     id: 'pages.RouterDetail.fieldStatus',
-    defaultMessage: 'Status'
+    defaultMessage: 'Status',
   },
   fieldTotalNumberOfTests: {
     id: 'pages.RouterDetail.fieldTotalNumberOfTests',
-    defaultMessage: 'Tests'
+    defaultMessage: 'Tests',
   },
   nestedDataSubtitle: {
     id: 'pages.RouterDetail.nestedDataSubtitle',
-    defaultMessage: '{count} fields'
-  }
+    defaultMessage: '{count} fields',
+  },
 })
 
 const enhance = compose(
   setPropTypes({
     match: PropTypes.shape({
       params: PropTypes.shape({
-        routerId: PropTypes.string.isRequired
-      }).isRequired
+        routerId: PropTypes.string.isRequired,
+      }).isRequired,
     }).isRequired,
   }),
   pure,
   injectIntl,
-  connect((state, props) => {
-    const router = state.router.items.byId.get(props.match.params.routerId)
+  connect(
+    (state, props) => {
+      const router = state.router.items.byId.get(props.match.params.routerId)
 
-    return {
-      editable: isEditable(state.user, router),
-      router,
-    }
-  }, dispatch => (
-    bindActionCreators({
-      fetchSingleRouter,
-      updateSingleRouter,
-    }, dispatch)
-  )),
+      return {
+        editable: isEditable(state.user, router),
+        router,
+      }
+    },
+    dispatch =>
+      bindActionCreators(
+        {
+          fetchSingleRouter,
+          updateSingleRouter,
+        },
+        dispatch
+      )
+  ),
   setPropTypes({
     intl: intlShape.isRequired,
     editable: PropTypes.bool.isRequired,
@@ -157,11 +155,11 @@ const enhance = compose(
       approvedOn: PropTypes.string,
       approvedBy: PropTypes.string,
       notes: PropTypes.string,
-      serial: PropTypes.string
+      serial: PropTypes.string,
     }),
     fetchSingleRouter: PropTypes.func.isRequired,
     updateSingleRouter: PropTypes.func.isRequired,
-  }),
+  })
 )
 
 export class RouterDetail extends PureComponent {
@@ -172,8 +170,8 @@ export class RouterDetail extends PureComponent {
       name: '',
       shortname: '',
       notes: '',
-      siteId: ''
-    }
+      siteId: '',
+    },
   }
 
   componentDidMount() {
@@ -195,42 +193,40 @@ export class RouterDetail extends PureComponent {
   }
 
   handleFetchRouter = () => {
-    this.props.fetchSingleRouter(this.props.match.params.routerId)
-      .then(() => {
-        const { router } = this.props
+    this.props.fetchSingleRouter(this.props.match.params.routerId).then(() => {
+      const { router } = this.props
 
-        this.handleFormChange({
-          name: router.get('name') || '',
-          shortname: router.get('shortname') || '',
-          notes: router.get('notes') || '',
-          statusToken: router.get('statusToken') || '',
-          siteId: router.get('siteId'),
-          configurationData: router.get('configurationData')
-        })
+      this.handleFormChange({
+        name: router.get('name') || '',
+        shortname: router.get('shortname') || '',
+        notes: router.get('notes') || '',
+        statusToken: router.get('statusToken') || '',
+        siteId: router.get('siteId'),
+        configurationData: router.get('configurationData'),
       })
+    })
   }
 
-  handleFormatNestedSubtitle = data => (
-    this.props.intl.formatMessage(messages.nestedDataSubtitle, { count: data.size })
-  )
+  handleFormatNestedSubtitle = data =>
+    this.props.intl.formatMessage(messages.nestedDataSubtitle, {
+      count: data.size,
+    })
 
   handleFormChange = values => this.setState({ values })
 
-  handleSubmit = (data) => {
+  handleSubmit = data => {
     const { router } = this.props
 
-    return this.props.updateSingleRouter(router.get('id'), {
-      ...data,
-      configurationData: data.configurationData.toJS()
-    })
+    return this.props
+      .updateSingleRouter(router.get('id'), {
+        ...data,
+        configurationData: data.configurationData.toJS(),
+      })
       .then(this.handleToggleEditDialog)
   }
 
-
   renderProgress() {
-    return (
-      <LinearProgress />
-    )
+    return <LinearProgress />
   }
 
   renderEditButtonWithDialog() {
@@ -248,10 +244,9 @@ export class RouterDetail extends PureComponent {
       siteId: formatMessage(messages.fieldSiteId),
       configuration: formatMessage(messages.fieldConfiguration),
       cancel: formatMessage(messages.cancel),
-      update: formatMessage(messages.update)
+      update: formatMessage(messages.update),
     }
-    const dataSchema = router
-      .getIn(['deviceType', 'configurationDataSchema'])
+    const dataSchema = router.getIn(['deviceType', 'configurationDataSchema'])
 
     return (
       <div>
@@ -283,24 +278,29 @@ export class RouterDetail extends PureComponent {
     }
 
     // get date for current locale, 'date' - is a Date object or string value in DateTime format
-    const getFormattedDate = date => (date !== null && date !== '' && isFinite(new Date(date)) ? formatDate(date) : date)
+    const getFormattedDate = date =>
+      date !== null && date !== '' && isFinite(new Date(date))
+        ? formatDate(date)
+        : date
 
     const configurationDataSchema = router
       .getIn(['deviceType', 'configurationDataSchema'])
-      .sortBy((value, key) => `${value.get('type') !== 'object' ? '_' : ''}${key}`)
+      .sortBy(
+        (value, key) => `${value.get('type') !== 'object' ? '_' : ''}${key}`
+      )
 
     const shortname = router.get('shortname')
 
     return (
       <div>
-        { /* IDs and site/results */ }
+        {/* IDs and site/results */}
         <Card>
           <CardText>
             <Unit sm="5-6" md="11-12">
               <ReadOnlyField
                 label=""
                 value={router.get('name')}
-                format={v =>
+                format={v => (
                   <div>
                     <h1 className={styles.Name}>
                       {v} {shortname && <small>({shortname})</small>}
@@ -314,28 +314,37 @@ export class RouterDetail extends PureComponent {
                       </Link>
                     </div>
                     <div className={styles.StatusText}>
-                      {formatMessage(messages.fieldLastSeen)} {formatRelative(router.get('lastSeen'))}
+                      {formatMessage(messages.fieldLastSeen)}
+                      {' '}
+                      {formatRelative(router.get('lastSeen'))}
                       &nbsp;&nbsp;
-                      {formatMessage(messages.fieldFirstConnected)} {formatRelative(router.get('createdOn'))}
+                      {formatMessage(messages.fieldFirstConnected)}
+                      {' '}
+                      {formatRelative(router.get('createdOn'))}
                     </div>
                     <div className={styles.StatusText}>
-                      {formatMessage(messages.fieldStatus)}: {router.get('status')}
+                      {formatMessage(messages.fieldStatus)}
+                      :
+                      {' '}
+                      {router.get('status')}
                       &nbsp;•&nbsp;
                       <Link to="/result">
-                        {router.get('totalTests')} {formatMessage(messages.fieldTotalNumberOfTests)}
+                        {router.get('totalTests')}
+                        {' '}
+                        {formatMessage(messages.fieldTotalNumberOfTests)}
                       </Link>
                     </div>
                   </div>
-                }
+                )}
               />
             </Unit>
             <Unit sm="1-6" md="1-12">
-              { /* Dialog for DeviceDetailModalForm */ }
+              {/* Dialog for DeviceDetailModalForm */}
               {this.renderEditButtonWithDialog()}
             </Unit>
           </CardText>
         </Card>
-        { /* Graphs */ }
+        {/* Graphs */}
         <Card expanded>
           <CardText style={{ paddingTop: 10 }} className={styles.CardText}>
             <Unit sm="1-1" md="1-2">
@@ -343,9 +352,13 @@ export class RouterDetail extends PureComponent {
               <ReadOnlyField
                 label=""
                 value
-                format={() =>
-                  <img alt="utilization rate" src={require('../../device/detail/utilization_rate.png')} style={{ width: '100%' }} />
-                }
+                format={() => (
+                  <img
+                    alt="utilization rate"
+                    src={require('../../device/detail/utilization_rate.png')}
+                    style={{ width: '100%' }}
+                  />
+                )}
               />
             </Unit>
             <Unit sm="1-1" md="1-2">
@@ -353,14 +366,18 @@ export class RouterDetail extends PureComponent {
               <ReadOnlyField
                 label=""
                 value
-                format={() =>
-                  <img alt="error rates" src={require('../../device/detail/error_rates.png')} style={{ width: '100%' }} />
-                }
+                format={() => (
+                  <img
+                    alt="error rates"
+                    src={require('../../device/detail/error_rates.png')}
+                    style={{ width: '100%' }}
+                  />
+                )}
               />
             </Unit>
           </CardText>
         </Card>
-        { /* Dialog for demo purpose */ }
+        {/* Dialog for demo purpose */}
         <Dialog
           modal={false}
           open={this.state.isDemoDialogOpen}
@@ -368,7 +385,7 @@ export class RouterDetail extends PureComponent {
         >
           Not yet implemented
         </Dialog>
-        { /* Contacts */ }
+        {/* Contacts */}
         <Card initiallyExpanded>
           <CardHeader title="Contacts" actAsExpander showExpandableButton />
           <CardText actAsExpander expandable style={{ paddingTop: 10 }}>
@@ -383,21 +400,21 @@ export class RouterDetail extends PureComponent {
             ))}
           </CardText>
         </Card>
-        { /* Calibration */ }
+        {/* Calibration */}
         <Card onClick={this.handleToggleDialog} expanded>
           <CardHeader title="Calibration" actAsExpander showExpandableButton />
           <CardText style={{ paddingTop: 10 }}>
             Last calibrated 12/1/2016
           </CardText>
         </Card>
-        { /* Warranty */ }
+        {/* Warranty */}
         <Card onClick={this.handleToggleDialog} expanded>
           <CardHeader title="Warranty" actAsExpander showExpandableButton />
           <CardText style={{ paddingTop: 10 }}>
             Expires 12/31/2018
           </CardText>
         </Card>
-        { /* Configuration */ }
+        {/* Configuration */}
         <JSONSchemaCard
           title={formatMessage(messages.fieldConfiguration)}
           initiallyExpanded
@@ -406,21 +423,42 @@ export class RouterDetail extends PureComponent {
           dataSchema={configurationDataSchema}
           data={router.get('configurationData')}
         />
-        { /* Technical information */ }
+        {/* Technical information */}
         <Card initiallyExpanded>
-          <CardHeader title="Technical information" actAsExpander showExpandableButton />
-          <CardText actAsExpander expandable style={{ paddingTop: 10 }} className={styles.CardText}>
+          <CardHeader
+            title="Technical information"
+            actAsExpander
+            showExpandableButton
+          />
+          <CardText
+            actAsExpander
+            expandable
+            style={{ paddingTop: 10 }}
+            className={styles.CardText}
+          >
             <Unit sm="1-2" md="1-3" lg="1-4">
-              <ReadOnlyField label={formatMessage(messages.fieldFirstApprovedOn)} value={getFormattedDate(router.get('approvedOn'))} />
+              <ReadOnlyField
+                label={formatMessage(messages.fieldFirstApprovedOn)}
+                value={getFormattedDate(router.get('approvedOn'))}
+              />
             </Unit>
             <Unit sm="1-2" md="1-3" lg="1-4">
-              <ReadOnlyField label={formatMessage(messages.fieldFirstApprovedBy)} value={router.get('approvedBy')} />
+              <ReadOnlyField
+                label={formatMessage(messages.fieldFirstApprovedBy)}
+                value={router.get('approvedBy')}
+              />
             </Unit>
             <Unit sm="1-2" md="1-3" lg="1-4">
-              <ReadOnlyField label={formatMessage(messages.fieldHostId)} value={router.get('hostId')} />
+              <ReadOnlyField
+                label={formatMessage(messages.fieldHostId)}
+                value={router.get('hostId')}
+              />
             </Unit>
             <Unit sm="1-2" md="1-3" lg="1-4">
-              <ReadOnlyField label={formatMessage(messages.fieldSerial)} value={router.get('serial')} />
+              <ReadOnlyField
+                label={formatMessage(messages.fieldSerial)}
+                value={router.get('serial')}
+              />
             </Unit>
           </CardText>
         </Card>
@@ -443,11 +481,9 @@ export class RouterDetail extends PureComponent {
   renderPaper() {
     return (
       <div>
-        {
-          this.props.router && this.props.router.has('deviceType') ?
-          this.renderContent() :
-          this.renderProgress()
-        }
+        {this.props.router && this.props.router.has('deviceType')
+          ? this.renderContent()
+          : this.renderProgress()}
       </div>
     )
   }
@@ -458,7 +494,11 @@ export class RouterDetail extends PureComponent {
 
     return (
       <div className={styles.ContentDetails}>
-        <Helmet title={formatMessage(messages.title)} titleTemplate="%s - Aspect" defaultTitle="Aspect" />
+        <Helmet
+          title={formatMessage(messages.title)}
+          titleTemplate="%s - Aspect"
+          defaultTitle="Aspect"
+        />
         <NavTitle title={formatMessage(messages.title)} />
         {this.renderPaper()}
         {this.renderDemoButton()}

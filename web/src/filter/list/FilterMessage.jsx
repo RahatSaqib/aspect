@@ -2,15 +2,14 @@
 import _ from 'lodash'
 import PropTypes from 'prop-types'
 import React from 'react'
-import {
-  injectIntl,
-  intlShape
-} from 'react-intl'
+import { injectIntl, intlShape } from 'react-intl'
 import { connect } from 'react-redux'
 
-import {
-  getFilterMessage
-} from '../utils'
+import { getFilterMessage } from '../utils'
+import { ListFilter } from '../../filter/FilterRedux'
+import { Assay } from '../../assay/AssayRedux'
+import { Consumable } from '../../consumable/ConsumableRedux'
+import { SelectListItems } from '../../site/SiteRedux'
 
 export const FilterMessage = ({
   intl: { formatMessage, formatDate },
@@ -24,10 +23,11 @@ export const FilterMessage = ({
   deviceStatusItems,
   subject,
   filterTemplate,
-  filterTemplateOptional
+  filterTemplateOptional,
 }) => (
-  <span>{
-    getFilterMessage(listFilter.toJS(),
+  <span>
+    {getFilterMessage(
+      listFilter.toJS(),
       countries,
       assay,
       consumable,
@@ -39,24 +39,39 @@ export const FilterMessage = ({
       formatDate,
       partnerItems,
       workflowStatusItems,
-      deviceStatusItems)
-    }
+      deviceStatusItems
+    )}
   </span>
 )
 
 FilterMessage.propTypes = {
   intl: intlShape.isRequired,
-  listFilter: PropTypes.object.isRequired,
-  countries: PropTypes.object.isRequired,
-  assay: PropTypes.object.isRequired,
-  consumable: PropTypes.object.isRequired,
-  siteItemsById: PropTypes.object.isRequired,
-  partnerItems: PropTypes.object.isRequired,
+  listFilter: PropTypes.objectOf(ListFilter).isRequired,
+  countries: PropTypes.shape({
+    laoding: PropTypes.bool,
+    items: PropTypes.object.isRequired, // eslint-disable-line
+  }).isRequired,
+  assay: PropTypes.objectOf(Assay).isRequired,
+  consumable: PropTypes.objectOf(Consumable).isRequired,
+  siteItemsById: PropTypes.objectOf(SelectListItems).isRequired,
+  partnerItems: PropTypes.shape({
+    id: PropTypes.string,
+    name: PropTypes.string,
+    jobFunctions: PropTypes.arrayOf(
+      PropTypes.shape({
+        id: PropTypes.string,
+        name: PropTypes.string,
+      })
+    ),
+  }).isRequired,
   workflowStatusItems: PropTypes.shape({
     id: PropTypes.string,
-    name: PropTypes.string
+    name: PropTypes.string,
   }),
-  deviceStatusItems: PropTypes.object.isRequired,
+  deviceStatusItems: PropTypes.shape({
+    id: PropTypes.string,
+    name: PropTypes.string,
+  }).isRequired,
   subject: PropTypes.string,
   filterTemplate: PropTypes.string.isRequired,
   filterTemplateOptional: PropTypes.string,
@@ -65,7 +80,7 @@ FilterMessage.propTypes = {
 FilterMessage.defaultProps = {
   workflowStatusItems: null,
   subject: '',
-  filterTemplateOptional: ''
+  filterTemplateOptional: '',
 }
 
 function mapStateToProps(state) {
@@ -77,11 +92,10 @@ function mapStateToProps(state) {
     siteItemsById: state.site.items.byId,
     partnerItems: state.jobs.partnersAndJobFunctionsForSelectList.partners,
     workflowStatusItems: state.resultWorkflowStatus.items,
-    deviceStatusItems: state.deviceStatus.items
+    deviceStatusItems: state.deviceStatus.items,
   }
 }
 
-export default _.flowRight(
-  injectIntl,
-  connect(mapStateToProps, null)
-)(FilterMessage)
+export default _.flowRight(injectIntl, connect(mapStateToProps, null))(
+  FilterMessage
+)

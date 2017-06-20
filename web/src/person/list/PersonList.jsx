@@ -1,17 +1,14 @@
 import PropTypes from 'prop-types'
 import React, { PureComponent } from 'react'
 import { compose, setPropTypes, pure } from 'recompose'
-import {
-  injectIntl,
-  defineMessages,
-  intlShape
-} from 'react-intl'
+import { injectIntl, defineMessages, intlShape } from 'react-intl'
 import { bindActionCreators } from 'redux'
 import { connect } from 'react-redux'
 import Helmet from 'react-helmet'
 
 // Our own imports
-import DataTableWithEmptyList from '../../components/shared/DataTableWithEmptyList'
+import DataTableWithEmptyList
+  from '../../components/shared/DataTableWithEmptyList'
 import NavTitle from '../../globals/components/NavTitle'
 import ListFilterContainer from '../../filter/list/ListFilter'
 import { configureListFilter, ListFilter } from '../../filter/FilterRedux'
@@ -23,47 +20,52 @@ import { Table } from '../../shared/metaReducers/table'
 const messages = defineMessages({
   title: {
     id: 'pages.PersonList.title',
-    defaultMessage: 'Contacts'
+    defaultMessage: 'Contacts',
   },
   personName: {
     id: 'pages.PersonList.personName',
-    defaultMessage: 'Name'
+    defaultMessage: 'Name',
   },
   level: {
     id: 'pages.PersonList.level',
-    defaultMessage: 'Job'
+    defaultMessage: 'Job',
   },
   state: {
     id: 'pages.PersonList.state',
-    defaultMessage: 'State'
+    defaultMessage: 'State',
   },
   lga: {
     id: 'pages.PersonList.lga',
-    defaultMessage: 'County'
+    defaultMessage: 'County',
   },
   filterTemplate: {
     id: 'pages.ResultList.filterTemplate',
-    defaultMessage: 'Viewing contacts <GEOGRAPHY><NAME>'
-  }
+    defaultMessage: 'Viewing contacts <GEOGRAPHY><NAME>',
+  },
 })
 
 const enhance = compose(
   setPropTypes({
     location: PropTypes.object.isRequired,
-    history: PropTypes.object.isRequired,
+    history: PropTypes.object.isRequired, // eslint-disable-line
   }),
   pure,
   injectIntl,
-  connect(state => ({
-    listFilter: state.filter.listFilter,
-    items: state.person.items,
-    table: state.person.table,
-  }), dispatch => (
-    bindActionCreators({
-      fetchListFilteredPersons,
-      configureListFilter,
-    }, dispatch)
-  )),
+  connect(
+    state => ({
+      listFilter: state.filter.listFilter,
+      items: state.person.items,
+      table: state.person.table,
+    }),
+    dispatch =>
+      bindActionCreators(
+        {
+          fetchListFilteredPersons,
+          configureListFilter,
+        },
+        dispatch
+      )
+  ),
   setPropTypes({
     intl: intlShape.isRequired,
     listFilter: PropTypes.objectOf(ListFilter).isRequired,
@@ -71,7 +73,7 @@ const enhance = compose(
     table: PropTypes.objectOf(Table).isRequired,
     fetchListFilteredPersons: PropTypes.func.isRequired,
     configureListFilter: PropTypes.func.isRequired,
-  }),
+  })
 )
 
 export class PersonList extends PureComponent {
@@ -90,7 +92,7 @@ export class PersonList extends PureComponent {
     }
   }
 
-  handleItemIdSelection = (personId) => {
+  handleItemIdSelection = personId => {
     this.props.history.push(`/person/${personId}`)
   }
 
@@ -105,12 +107,16 @@ export class PersonList extends PureComponent {
       { db: 'name', title: formatMessage(messages.personName) },
       { db: 'level', title: formatMessage(messages.level), hideOnXs: true },
       { db: 'state', title: formatMessage(messages.state), hideOnXs: true },
-      { db: 'lga', title: formatMessage(messages.lga), hideOnXs: true }
+      { db: 'lga', title: formatMessage(messages.lga), hideOnXs: true },
     ]
 
     return (
       <div className={styles.Content}>
-        <Helmet title={formatMessage(messages.title)} titleTemplate="%s - Aspect" defaultTitle="Aspect" />
+        <Helmet
+          title={formatMessage(messages.title)}
+          titleTemplate="%s - Aspect"
+          defaultTitle="Aspect"
+        />
         <NavTitle title={formatMessage(messages.title)} />
         <ListFilterContainer
           subject={formatMessage(messages.title)}

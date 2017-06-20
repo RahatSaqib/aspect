@@ -32,18 +32,25 @@ const enhance = compose(
     values: PropTypes.object.isRequired,
   }),
   recomposeForm({
-    fields: ['name', 'shortname', 'notes', {
-      fieldName: 'statusToken',
-      valueFromChangeEvent(e, isInputChecked) {
-        return isInputChecked ? tokens.APPROVED : tokens.ASSIGNED
+    fields: [
+      'name',
+      'shortname',
+      'notes',
+      {
+        fieldName: 'statusToken',
+        valueFromChangeEvent(e, isInputChecked) {
+          return isInputChecked ? tokens.APPROVED : tokens.ASSIGNED
+        },
       },
-    }, {
-      fieldName: 'siteId',
-      valueFromChangeEvent: _fp.identity,
-    }, {
-      fieldName: 'configurationData',
-      valueFromChangeEvent: _fp.identity,
-    }],
+      {
+        fieldName: 'siteId',
+        valueFromChangeEvent: _fp.identity,
+      },
+      {
+        fieldName: 'configurationData',
+        valueFromChangeEvent: _fp.identity,
+      },
+    ],
     validate(values) {
       const errors = {}
       //
@@ -55,29 +62,28 @@ const enhance = compose(
       }
       return errors
     },
-  }),
+  })
 )
 
-export const DeviceDetailModalForm = (props) => {
+export const DeviceDetailModalForm = props => {
   const { form, meta, values, labels } = props
 
   const actions = [
-    props.onCancel && (
+    props.onCancel &&
       <FlatButton
         onClick={props.onCancel}
         type="button"
         label={labels.cancel}
         primary
         style={{ marginRight: 10 }}
-      />
-    ),
+      />,
     <FlatButton
       disabled={form.pristine || !form.valid || form.submitting}
       onClick={props.handleSubmit}
       type="button"
       label={labels.update}
       secondary
-    />
+    />,
   ]
 
   return (
@@ -127,7 +133,7 @@ export const DeviceDetailModalForm = (props) => {
               name="SiteId"
               floatingLabelText={labels.siteId}
               value={values.siteId}
-              onChangeSiteId={props.onChangeSiteId}
+              onChangeSite={props.onChangeSiteId}
               itemTextGetter={site => site.get('name')}
               hintText="Enter site name"
               fullWidth
@@ -150,11 +156,10 @@ export const DeviceDetailModalForm = (props) => {
               floatingLabelText={field.label}
               value={field.value}
               onTouchTap={stopEventPropagation}
-              onChange={event => (
+              onChange={event =>
                 props.onChangeConfigurationData(
                   values.configurationData.setIn(field.path, event.target.value)
-                )
-              )}
+                )}
               fullWidth
             />
           )}

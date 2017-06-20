@@ -7,7 +7,7 @@ import { logoutStart } from '../auth/AuthRedux'
 const types = {
   IDLESTATUS_AWAY: 'IDLESTATUS_AWAY',
   IDLESTATUS_INACTIVE: 'IDLESTATUS_INACTIVE',
-  IDLESTATUS_EXPIRED: 'IDLESTATUS_EXPIRED'
+  IDLESTATUS_EXPIRED: 'IDLESTATUS_EXPIRED',
 }
 
 // actions
@@ -26,7 +26,7 @@ const idleStatusDelay = idleStatus => () => {
 
 const activeStatusAction = () => {}
 
-const idleStatusAction = idleStatus => (dispatch) => {
+const idleStatusAction = idleStatus => dispatch => {
   if (idleStatus === types.IDLESTATUS_EXPIRED) {
     dispatch(logoutStart('idle'))
   }
@@ -38,7 +38,7 @@ const opts = {
   IDLE_STATUSES: _.values(types),
   idleStatusDelay,
   activeStatusAction,
-  idleStatusAction
+  idleStatusAction,
 }
 
 const { middleware, reducer, actions } = configure(opts)

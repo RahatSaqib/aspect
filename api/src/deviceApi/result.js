@@ -5,10 +5,11 @@ const { addResultConstraints } = require('./common')
 
 const DONOT_LOG_DELIVERED = ['Delivered', 'Acknowledged', 'Flagged', 'Error']
 const DELIVERED_EXTERNALID = 'Delivered'
+const ACKNOWLEDGED_EXTERNALID = 'Acknowledged'
 
 function* addResult(context) {
   const { knex, payload, now } = context
-  // TODO seperate permissions for device add vs update result?
+  // TODO separate permissions for device add vs update result?
   // Look up existing result matching external id if specified
   let existingResult = null
   if (payload.id) {
@@ -310,7 +311,7 @@ function* addResult(context) {
 }
 
 function* getResult(context) {
-  const { knex, deviceLog } = context
+  const { knex, deviceLog, deviceLogMetaData } = context
 
   const resultQuery = knex('Result as r')
     .innerJoin('Device as d', 'r.deviceId', 'd.id')
@@ -351,6 +352,13 @@ function* getResult(context) {
   if (_.indexOf(DONOT_LOG_DELIVERED, row.resultWorkflowStatusId) === -1) {
     yield* updateResultWorkflowStatus(context, row.resultId, DELIVERED_EXTERNALID)
     row.resultWorkflowStatusId = DELIVERED_EXTERNALID
+
+    // If deviceLog is flagged to be auto-acknowledged, update the result workflow status
+    if (deviceLogMetaData && deviceLogMetaData.autoAcknowledge) {
+      yield* updateResultWorkflowStatus(context, row.resultId, ACKNOWLEDGED_EXTERNALID,
+        deviceLogMetaData.autoAcknowledgeReason)
+      row.resultWorkflowStatusId = ACKNOWLEDGED_EXTERNALID
+    }
   }
 
   const resultWorkflowLog = yield* getLatestResultWorkflowLog(knex, row.resultId)
@@ -481,11 +489,13 @@ function* getResult(context) {
 }
 
 function* updateResultWorkflowStatus(
-  context, resultId, workflowStatusExternalId, operator, userId) {
+  context, resultId, workflowStatusExternalId, reason) {
   const { knex, now } = context
 
   // get internal workflow status id based on the external id we got
-  const workflowStatusRow = yield knex('ResultWorkflowStatus').where('externalId', workflowStatusExternalId).select('id').first()
+  const workflowStatusRow = yield knex('ResultWorkflowStatus')
+    .where('externalId', workflowStatusExternalId)
+    .select('id').first()
   if (workflowStatusRow === null) {
     throw new Error(`Workflow status with external ID "${workflowStatusExternalId}" not found`)
   }
@@ -501,10 +511,9 @@ function* updateResultWorkflowStatus(
     yield knex('ResultWorkflowLog').insert({
       resultId,
       resultWorkflowStatusId: workflowStatusRow.id,
-      operator,
+      reason,
       changedOn: now,
-      createdOn: now,
-      createdBy: userId
+      createdOn: now
     })
   }
 

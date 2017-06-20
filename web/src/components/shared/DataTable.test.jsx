@@ -9,9 +9,8 @@ import { Table } from '../../shared/metaReducers/table'
 import DataTable from './DataTable'
 
 describe('DataTable module', () => {
-  const mountWithProvider = node => (
+  const mountWithProvider = node =>
     mount(<MuiThemeProvider>{node}</MuiThemeProvider>).find(node.type)
-  )
 
   describe('DataTable component', () => {
     const defaultProps = {
@@ -25,19 +24,19 @@ describe('DataTable module', () => {
         sortDir: '',
         page: 1,
         pageSize: 10,
-        total: 10
+        total: 10,
       }),
       columns: [],
       intl: {
-        formatMessages: _.noop
+        formatMessages: _.noop,
       },
-      messages: {}
+      messages: {},
     }
 
     describe('table.loading is true', () => {
       it('should render progress', () => {
         const props = _.merge({}, defaultProps, {
-          table: defaultProps.table.set('loading', true)
+          table: defaultProps.table.set('loading', true),
         })
         const ComponentWrapper = shallow(<DataTable {...props} />)
 
@@ -49,8 +48,8 @@ describe('DataTable module', () => {
       it('should not render progress', () => {
         const props = _.merge({}, defaultProps, {
           table: {
-            loading: false
-          }
+            loading: false,
+          },
         })
         const ComponentWrapper = shallow(<DataTable {...props} />)
 
@@ -64,9 +63,9 @@ describe('DataTable module', () => {
           columns: [
             {
               db: 'name',
-              title: 'Name'
-            }
-          ]
+              title: 'Name',
+            },
+          ],
         })
         const ComponentWrapper = shallow(<DataTable {...props} />)
 
@@ -84,26 +83,26 @@ describe('DataTable module', () => {
           columns: [
             {
               db: 'name',
-              title: 'Name'
-            }
+              title: 'Name',
+            },
           ],
           items: defaultProps.items.mergeDeep({
             byId: Immutable.fromJS({
               2: {
-                name: 'Aspect'
+                name: 'Aspect',
               },
               3: {
-                name: 'Web'
+                name: 'Web',
               },
               5: {
-                name: 'Api'
+                name: 'Api',
               },
               7: {
-                name: 'Node'
-              }
+                name: 'Node',
+              },
             }),
-            currentIdList: Immutable.fromJS(['2', '3', '5', '7'])
-          })
+            currentIdList: Immutable.fromJS(['2', '3', '5', '7']),
+          }),
         })
         const ComponentWrapper = shallow(<DataTable {...props} />)
 
@@ -127,8 +126,8 @@ describe('DataTable module', () => {
           table: defaultProps.table.merge({
             page: 0,
             total: 100,
-            pageSize: 10
-          })
+            pageSize: 10,
+          }),
         })
         const ComponentWrapper = shallow(<DataTable {...props} />)
 
@@ -161,8 +160,8 @@ describe('DataTable module', () => {
           table: defaultProps.table.merge({
             page: 5,
             total: 120,
-            pageSize: 10
-          })
+            pageSize: 10,
+          }),
         })
         const ComponentWrapper = shallow(<DataTable {...props} />)
 
@@ -196,8 +195,8 @@ describe('DataTable module', () => {
           table: defaultProps.table.merge({
             page: 11,
             total: 120,
-            pageSize: 10
-          })
+            pageSize: 10,
+          }),
         })
         const ComponentWrapper = shallow(<DataTable {...props} />)
 
@@ -232,14 +231,14 @@ describe('DataTable module', () => {
           columns: [
             {
               db: 'name',
-              title: 'Name'
-            }
+              title: 'Name',
+            },
           ],
           table: defaultProps.table.merge({
             sortCol: 'name',
-            sortDir: 'asc'
+            sortDir: 'asc',
           }),
-          handleFetch: sinon.spy()
+          handleFetch: sinon.spy(),
         })
         const ComponentWrapper = mountWithProvider(<DataTable {...props} />)
         const HiddenWrapper = ComponentWrapper.find('Hidden')
@@ -256,20 +255,22 @@ describe('DataTable module', () => {
           columns: [
             {
               db: 'name',
-              title: 'Name'
-            }
+              title: 'Name',
+            },
           ],
           table: defaultProps.table.merge({
             sortCol: 'name',
             sortDir: 'asc',
             page: 0,
             total: 100,
-            pageSize: 10
+            pageSize: 10,
           }),
-          handleFetch: sinon.spy()
+          handleFetch: sinon.spy(),
         })
         const ComponentWrapper = mountWithProvider(<DataTable {...props} />)
-        const ThirdPageWrapper = ComponentWrapper.find('span').find({ children: 3 })
+        const ThirdPageWrapper = ComponentWrapper.find('span').find({
+          children: 3,
+        })
 
         ThirdPageWrapper.simulate('touchTap')
         expect(props.handleFetch.lastCall.args).toEqual(['name', 'asc', 2, 10])

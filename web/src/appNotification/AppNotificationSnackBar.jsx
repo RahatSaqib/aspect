@@ -12,31 +12,31 @@ import Snackbar from 'material-ui/Snackbar'
 // Our own imports
 import {
   showMoreDetails,
-  hideAppNotification
+  hideAppNotification,
+  Error,
 } from './AppNotificationRedux'
 
 const genericMessages = defineMessages({
   title: {
     id: 'errorResponseMessages.generic.title',
-    defaultMessage: 'Aspect has Encountered a Problem.'
+    defaultMessage: 'Aspect has Encountered a Problem.',
   },
   moreDetails: {
     id: 'errorResponseMessages.inline.moreDetails',
-    defaultMessage: 'Details...'
-  }
+    defaultMessage: 'Details...',
+  },
 })
 
 class AppNotificationSnackBar extends PureComponent {
-
   static propTypes = {
     intl: intlShape.isRequired,
-    appNotification: PropTypes.object,
+    appNotification: PropTypes.objectOf(Error),
     showMoreDetails: PropTypes.func.isRequired,
-    hideAppNotification: PropTypes.func.isRequired
+    hideAppNotification: PropTypes.func.isRequired,
   }
 
   static defaultProps = {
-    appNotification: null
+    appNotification: null,
   }
 
   handleShowDetails = () => {
@@ -44,7 +44,10 @@ class AppNotificationSnackBar extends PureComponent {
   }
 
   handleClose = () => {
-    const onClose = this.props.appNotification.getIn(['notificationOptions', 'onClose'])
+    const onClose = this.props.appNotification.getIn([
+      'notificationOptions',
+      'onClose',
+    ])
     if (onClose) {
       onClose()
     }
@@ -57,26 +60,43 @@ class AppNotificationSnackBar extends PureComponent {
     const { appNotification, intl: { formatMessage } } = this.props
 
     const appNotificationMessageOrDefault = (messageKey, fallbackMessage) => {
-      const messageDescriptor = appNotification.getIn(['notificationOptions', messageKey])
+      const messageDescriptor = appNotification.getIn([
+        'notificationOptions',
+        messageKey,
+      ])
       if (messageDescriptor) {
         return messageDescriptor.toJS()
       }
       return fallbackMessage
     }
 
-    const notificationOptions = appNotification.get('notificationOptions') ?
-      appNotification.get('notificationOptions').toJS() : {}
+    const notificationOptions = appNotification.get('notificationOptions')
+      ? appNotification.get('notificationOptions').toJS()
+      : {}
     const messageValues = appNotification.get('messageValues')
 
-    const isError = appNotification.getIn(['notificationOptions', 'notificationType']) === 'error'
-    const title = appNotificationMessageOrDefault('title', isError ? genericMessages.title : undefined)
+    const isError =
+      appNotification.getIn(['notificationOptions', 'notificationType']) ===
+      'error'
+    const title = appNotificationMessageOrDefault(
+      'title',
+      isError ? genericMessages.title : undefined
+    )
     const showProceed = notificationOptions.showProceed
-    const message = appNotificationMessageOrDefault('message', isError ? genericMessages.message : undefined)
-    const resolution = appNotificationMessageOrDefault('resolution', isError ? genericMessages.resolution : undefined)
-    const actionText = showProceed || message || resolution ?
-      formatMessage(genericMessages.moreDetails) : undefined
-    const actionTouchTap = showProceed || message || resolution ?
-      this.handleShowDetails : undefined
+    const message = appNotificationMessageOrDefault(
+      'message',
+      isError ? genericMessages.message : undefined
+    )
+    const resolution = appNotificationMessageOrDefault(
+      'resolution',
+      isError ? genericMessages.resolution : undefined
+    )
+    const actionText = showProceed || message || resolution
+      ? formatMessage(genericMessages.moreDetails)
+      : undefined
+    const actionTouchTap = showProceed || message || resolution
+      ? this.handleShowDetails
+      : undefined
 
     const hasNotification = appNotification.get('hasNotification')
     const showDetails = appNotification.get('showDetails')
@@ -95,15 +115,18 @@ class AppNotificationSnackBar extends PureComponent {
 
 function mapStateToProps(state) {
   return {
-    appNotification: state.get('appNotification')
+    appNotification: state.get('appNotification'),
   }
 }
 
 function mapDispatchToProps(dispatch) {
-  return bindActionCreators({
-    showMoreDetails,
-    hideAppNotification
-  }, dispatch)
+  return bindActionCreators(
+    {
+      showMoreDetails,
+      hideAppNotification,
+    },
+    dispatch
+  )
 }
 
 export default _.flowRight(

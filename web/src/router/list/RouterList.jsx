@@ -1,11 +1,7 @@
 import PropTypes from 'prop-types'
 import React, { PureComponent } from 'react'
 import { compose, setPropTypes, pure } from 'recompose'
-import {
-  injectIntl,
-  defineMessages,
-  intlShape
-} from 'react-intl'
+import { injectIntl, defineMessages, intlShape } from 'react-intl'
 import { bindActionCreators } from 'redux'
 import { connect } from 'react-redux'
 import Helmet from 'react-helmet'
@@ -14,7 +10,8 @@ import Helmet from 'react-helmet'
 import { fetchListFilteredRouters } from '../RouterRedux'
 import ListFilterContainer from '../../filter/list/ListFilter'
 import { configureListFilter, ListFilter } from '../../filter/FilterRedux'
-import DataTableWithEmptyList from '../../components/shared/DataTableWithEmptyList'
+import DataTableWithEmptyList
+  from '../../components/shared/DataTableWithEmptyList'
 import NavTitle from '../../globals/components/NavTitle'
 import styles from './RouterList.css'
 import { Items } from '../../shared/metaReducers/items'
@@ -23,28 +20,28 @@ import { Table } from '../../shared/metaReducers/table'
 const messages = defineMessages({
   routersTitle: {
     id: 'pages.RouterList.routersTitle',
-    defaultMessage: 'Routers'
+    defaultMessage: 'Routers',
   },
   routerName: {
     id: 'pages.RouterList.routerName',
-    defaultMessage: 'Router Name'
+    defaultMessage: 'Router Name',
   },
   status: {
     id: 'pages.RouterList.status',
-    defaultMessage: 'Status'
+    defaultMessage: 'Status',
   },
   reportingFor: {
     id: 'pages.RouterList.reportingFor',
-    defaultMessage: 'Reporting For'
+    defaultMessage: 'Reporting For',
   },
   lastSeen: {
     id: 'pages.RouterList.lastSeen',
-    defaultMessage: 'Last Seen'
+    defaultMessage: 'Last Seen',
   },
   filterTemplate: {
     id: 'pages.RouterList.filterTemplate',
-    defaultMessage: 'Viewing all routers<GEOGRAPHY><NAME><DEVICESTATUS>.'
-  }
+    defaultMessage: 'Viewing all routers<GEOGRAPHY><NAME><DEVICESTATUS>.',
+  },
 })
 
 const enhance = compose(
@@ -54,16 +51,21 @@ const enhance = compose(
   }),
   pure,
   injectIntl,
-  connect(state => ({
-    listFilter: state.filter.listFilter,
-    items: state.router.items,
-    table: state.router.table,
-  }), dispatch => (
-    bindActionCreators({
-      fetchListFilteredRouters,
-      configureListFilter,
-    }, dispatch)
-  )),
+  connect(
+    state => ({
+      listFilter: state.filter.listFilter,
+      items: state.router.items,
+      table: state.router.table,
+    }),
+    dispatch =>
+      bindActionCreators(
+        {
+          fetchListFilteredRouters,
+          configureListFilter,
+        },
+        dispatch
+      )
+  ),
   setPropTypes({
     intl: intlShape.isRequired,
     listFilter: PropTypes.objectOf(ListFilter).isRequired,
@@ -71,9 +73,8 @@ const enhance = compose(
     table: PropTypes.objectOf(Table).isRequired,
     fetchListFilteredRouters: PropTypes.func.isRequired,
     configureListFilter: PropTypes.func.isRequired,
-  }),
+  })
 )
-
 
 const ROUTER_TABLE_COLUMN_SPACING = 12
 const ROUTER_TABLE_NAME_COLUMN_WIDTH = '30%'
@@ -81,11 +82,11 @@ const ROUTER_TABLE_STATUS_COLUMN_WIDTH = '15%'
 
 export class RouterList extends PureComponent {
   static contextTypes = {
-    muiTheme: PropTypes.object.isRequired
+    muiTheme: PropTypes.object.isRequired,
   }
 
   static childContextTypes = {
-    muiTheme: PropTypes.object.isRequired
+    muiTheme: PropTypes.object.isRequired,
   }
 
   getChildContext() {
@@ -97,14 +98,14 @@ export class RouterList extends PureComponent {
         tableHeaderColumn: {
           // Overrides the style used by <material-ui/Table/TableHeaderColumn /> in <DataTable />
           ...muiTheme.tableHeaderColumn,
-          spacing: ROUTER_TABLE_COLUMN_SPACING
+          spacing: ROUTER_TABLE_COLUMN_SPACING,
         },
         tableRowColumn: {
           // Overrides the style used by <material-ui/Table/TableRowColumn /> in <DataTable />
           ...muiTheme.tableRowColumn,
-          spacing: ROUTER_TABLE_COLUMN_SPACING
-        }
-      }
+          spacing: ROUTER_TABLE_COLUMN_SPACING,
+        },
+      },
     }
   }
 
@@ -113,7 +114,7 @@ export class RouterList extends PureComponent {
     configureListFilter({
       geography: true,
       deviceName: true,
-      deviceStatus: true
+      deviceStatus: true,
     })
   }
 
@@ -127,7 +128,7 @@ export class RouterList extends PureComponent {
     }
   }
 
-  handleItemIdSelection = (routerId) => {
+  handleItemIdSelection = routerId => {
     this.props.history.push(`/router/${routerId}`)
   }
 
@@ -142,26 +143,38 @@ export class RouterList extends PureComponent {
     const { intl } = this.props
     const { formatMessage, formatRelative } = intl
     const columns = [
-      { db: 'name',
+      {
+        db: 'name',
         title: formatMessage(messages.routerName),
-        extraProps: { style: { width: ROUTER_TABLE_NAME_COLUMN_WIDTH } } },
-      { db: 'status',
+        extraProps: { style: { width: ROUTER_TABLE_NAME_COLUMN_WIDTH } },
+      },
+      {
+        db: 'status',
         title: formatMessage(messages.status),
         hideOnXs: true,
-        extraProps: { style: { width: ROUTER_TABLE_STATUS_COLUMN_WIDTH } } },
-      { db: 'createdOn',
+        extraProps: { style: { width: ROUTER_TABLE_STATUS_COLUMN_WIDTH } },
+      },
+      {
+        db: 'createdOn',
         title: formatMessage(messages.reportingFor),
         hideOnXs: true,
-        format: data => formatRelative(data) },
-      { db: 'lastSeen',
+        format: data => formatRelative(data),
+      },
+      {
+        db: 'lastSeen',
         title: formatMessage(messages.lastSeen),
         hideOnXs: true,
-        format: data => formatRelative(data) }
+        format: data => formatRelative(data),
+      },
     ]
 
     return (
       <div className={styles.Content}>
-        <Helmet title={formatMessage(messages.routersTitle)} titleTemplate="%s - Aspect" defaultTitle="Aspect" />
+        <Helmet
+          title={formatMessage(messages.routersTitle)}
+          titleTemplate="%s - Aspect"
+          defaultTitle="Aspect"
+        />
         <NavTitle title={formatMessage(messages.routersTitle)} />
         <ListFilterContainer
           subject={formatMessage(messages.routersTitle)}

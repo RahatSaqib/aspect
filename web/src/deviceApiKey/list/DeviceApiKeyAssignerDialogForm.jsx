@@ -19,32 +19,32 @@ import DeviceSelectField from '../../filter/resource/DeviceSelectField'
 const messages = defineMessages({
   cancel: {
     id: 'pages.DeviceApiKeyList.cancel',
-    defaultMessage: 'Cancel'
+    defaultMessage: 'Cancel',
   },
   assign: {
     id: 'pages.DeviceApiKeyList.assign',
-    defaultMessage: 'Assign'
+    defaultMessage: 'Assign',
   },
   assignerDialogTitle: {
     id: 'pages.DeviceApiKeyList.assignerDialogTitle',
-    defaultMessage: 'Assign {count} Keys'
+    defaultMessage: 'Assign {count} Keys',
   },
   countryId: {
     id: 'pages.DeviceApiKeyList.countryId',
-    defaultMessage: 'Country'
+    defaultMessage: 'Country',
   },
   partnerId: {
     id: 'pages.DeviceApiKeyList.partnerId',
-    defaultMessage: 'Partner'
+    defaultMessage: 'Partner',
   },
   siteId: {
     id: 'pages.DeviceApiKeyList.siteId',
-    defaultMessage: 'Site'
+    defaultMessage: 'Site',
   },
   deviceId: {
     id: 'pages.DeviceApiKeyList.deviceId',
-    defaultMessage: 'Device'
-  }
+    defaultMessage: 'Device',
+  },
 })
 
 const enhance = compose(
@@ -54,27 +54,32 @@ const enhance = compose(
     count: PropTypes.number.isRequired,
     onCancel: PropTypes.func,
     values: PropTypes.object.isRequired,
-    intl: intlShape.isRequired
+    intl: intlShape.isRequired,
   }),
   recomposeForm({
-    fields: [{
-      fieldName: 'countryId',
-      valueFromChangeEvent: _fp.identity
-    }, {
-      fieldName: 'partnerId',
-      valueFromChangeEvent: _fp.identity
-    }, {
-      fieldName: 'siteId',
-      valueFromChangeEvent: _fp.identity
-    }, {
-      fieldName: 'deviceId',
-      valueFromChangeEvent: _fp.identity
-    }],
+    fields: [
+      {
+        fieldName: 'countryId',
+        valueFromChangeEvent: _fp.identity,
+      },
+      {
+        fieldName: 'partnerId',
+        valueFromChangeEvent: _fp.identity,
+      },
+      {
+        fieldName: 'siteId',
+        valueFromChangeEvent: _fp.identity,
+      },
+      {
+        fieldName: 'deviceId',
+        valueFromChangeEvent: _fp.identity,
+      },
+    ],
     validate() {
       const errors = {}
       return errors
-    }
-  }),
+    },
+  })
 )
 
 export function DeviceApiKeyAssignerDialogForm({
@@ -86,7 +91,10 @@ export function DeviceApiKeyAssignerDialogForm({
   onChangeSiteId,
   onChangeDeviceId,
   handleSubmit,
-  form, meta, values, intl
+  form,
+  meta,
+  values,
+  intl,
 }) {
   const { formatMessage } = intl
 
@@ -103,7 +111,7 @@ export function DeviceApiKeyAssignerDialogForm({
       type="button"
       label={formatMessage(messages.assign)}
       primary
-    />
+    />,
   ]
   return (
     <Dialog
@@ -120,10 +128,15 @@ export function DeviceApiKeyAssignerDialogForm({
           allItemText=""
           countryId={values.countryId}
           onChangeCountry={onChangeCountryId}
-          errorStyle={{ float: 'left', whiteSpace: 'nowrap', textOverflow: 'visible' }}
+          errorStyle={{
+            float: 'left',
+            whiteSpace: 'nowrap',
+            textOverflow: 'visible',
+          }}
           errorText={meta.countryId.touched && meta.countryId.error}
           fullWidth
-          tabIndex="0" aria-haspopup
+          tabIndex="0"
+          aria-haspopup
         />
         <PartnerSelectField
           name="partnerId"
@@ -132,10 +145,15 @@ export function DeviceApiKeyAssignerDialogForm({
           emptyText=""
           partnerId={values.partnerId}
           onChangePartner={onChangePartnerId}
-          errorStyle={{ float: 'left', whiteSpace: 'nowrap', textOverflow: 'visible' }}
+          errorStyle={{
+            float: 'left',
+            whiteSpace: 'nowrap',
+            textOverflow: 'visible',
+          }}
           errorText={meta.partnerId.touched && meta.partnerId.error}
           fullWidth
-          tabIndex="0" aria-haspopup
+          tabIndex="0"
+          aria-haspopup
         />
         <SiteSelectField
           name="siteId"
@@ -144,10 +162,15 @@ export function DeviceApiKeyAssignerDialogForm({
           partnerId={values.partnerId}
           value={values.siteId}
           onSiteChange={onChangeSiteId}
-          errorStyle={{ float: 'left', whiteSpace: 'nowrap', textOverflow: 'visible' }}
+          errorStyle={{
+            float: 'left',
+            whiteSpace: 'nowrap',
+            textOverflow: 'visible',
+          }}
           errorText={meta.siteId.touched && meta.siteId.error}
           fullWidth
-          tabIndex="0" aria-haspopup
+          tabIndex="0"
+          aria-haspopup
         />
         <DeviceSelectField
           name="deviceId"
@@ -157,10 +180,15 @@ export function DeviceApiKeyAssignerDialogForm({
           siteId={values.siteId}
           value={values.deviceId}
           onDeviceChange={onChangeDeviceId}
-          errorStyle={{ float: 'left', whiteSpace: 'nowrap', textOverflow: 'visible' }}
+          errorStyle={{
+            float: 'left',
+            whiteSpace: 'nowrap',
+            textOverflow: 'visible',
+          }}
           errorText={meta.deviceId.touched && meta.deviceId.error}
           fullWidth
-          tabIndex="0" aria-haspopup
+          tabIndex="0"
+          aria-haspopup
         />
       </form>
     </Dialog>

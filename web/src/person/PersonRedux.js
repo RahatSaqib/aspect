@@ -9,17 +9,13 @@ import {
   filterFieldsRejectedError,
   inlineWarning,
   errorNotFound,
-  errorPleaseTryAgainInAFewMinutes
+  errorPleaseTryAgainInAFewMinutes,
 } from '../error/CommonErrorNotifications'
-import {
-  receiveList,
-  receiveItem,
-  Items
-} from '../shared/metaReducers/items'
+import { receiveList, receiveItem, Items } from '../shared/metaReducers/items'
 import {
   requestTable,
   receiveTableItems,
-  Table
+  Table,
 } from '../shared/metaReducers/table'
 
 export const types = {
@@ -31,7 +27,7 @@ export const types = {
 
   REQUEST_UPDATING_SINGLE_PERSON: 'REQUEST_UPDATING_SINGLE_PERSON',
   RECEIVE_UPDATED_SINGLE_PERSON: 'RECEIVE_UPDATED_SINGLE_PERSON',
-  RECEIVE_UPDATED_SINGLE_PERSON_LOGIN_DETAILS: 'RECEIVE_UPDATED_SINGLE_PERSON_LOGIN_DETAILS'
+  RECEIVE_UPDATED_SINGLE_PERSON_LOGIN_DETAILS: 'RECEIVE_UPDATED_SINGLE_PERSON_LOGIN_DETAILS',
 }
 /*
  * ---------------- Action Creators -----------------
@@ -43,7 +39,7 @@ function requestPersons(sortCol, sortDir, page, size, filters) {
     sortDir,
     page,
     size,
-    filters
+    filters,
   }
 }
 
@@ -51,16 +47,14 @@ function receivePersons(json) {
   return {
     type: types.RECEIVE_PERSONS,
     items: json.data,
-    total: json.total
+    total: json.total,
   }
 }
 
 // With state.filter.listFilter & extraFilters
 export function fetchListFilteredPersons(extraFilters = {}, ...args) {
   return (dispatch, getState) => {
-    const filters = getState()
-      .filter
-      .listFilter
+    const filters = getState().filter.listFilter
       .toMap()
       .merge(extraFilters)
       .filter(nonEmptyFilterValue)
@@ -70,32 +64,45 @@ export function fetchListFilteredPersons(extraFilters = {}, ...args) {
   }
 }
 
-export function fetchPersons(filters/* required */, sortCol = 'name', sortDir = 'asc', page = 0, pageSize = 10) {
-  return (dispatch) => {
+export function fetchPersons(
+  filters /* required */,
+  sortCol = 'name',
+  sortDir = 'asc',
+  page = 0,
+  pageSize = 10
+) {
+  return dispatch => {
     dispatch(requestPersons(sortCol, sortDir, page, pageSize, filters))
 
-    return aspectFetch(`/person?${stringify({
-      sortCol,
-      sortDir,
-      page,
-      size: pageSize,
-      ...filters
-    })}`, {
-      errorNotifications: {
-        400: filterFieldsRejectedError(defineMessages({
-          title: {
-            id: 'errorResponseMessages.fetchPersons.GET.400.title',
-            defaultMessage: 'Searching Contacts Failed'
-          }
-        })),
-        default: errorPleaseTryAgainInAFewMinutes(defineMessages({
-          title: {
-            id: 'errorResponseMessages.fetchPersons.GET.default.title',
-            defaultMessage: 'Loading Contacts Failed'
-          }
-        }))
+    return aspectFetch(
+      `/person?${stringify({
+        sortCol,
+        sortDir,
+        page,
+        size: pageSize,
+        ...filters,
+      })}`,
+      {
+        errorNotifications: {
+          400: filterFieldsRejectedError(
+            defineMessages({
+              title: {
+                id: 'errorResponseMessages.fetchPersons.GET.400.title',
+                defaultMessage: 'Searching Contacts Failed',
+              },
+            })
+          ),
+          default: errorPleaseTryAgainInAFewMinutes(
+            defineMessages({
+              title: {
+                id: 'errorResponseMessages.fetchPersons.GET.default.title',
+                defaultMessage: 'Loading Contacts Failed',
+              },
+            })
+          ),
+        },
       }
-    }).then(json => dispatch(receivePersons(json)))
+    ).then(json => dispatch(receivePersons(json)))
   }
 }
 
@@ -103,7 +110,7 @@ export function fetchPersons(filters/* required */, sortCol = 'name', sortDir = 
 function requestSinglePerson(personId) {
   return {
     type: types.REQUEST_SINGLE_PERSON,
-    personId
+    personId,
   }
 }
 
@@ -111,30 +118,34 @@ function requestSinglePerson(personId) {
 function receiveSinglePerson(item) {
   return {
     type: types.RECEIVE_SINGLE_PERSON,
-    item
+    item,
   }
 }
 
 // load a single person with given personId
 export function fetchSinglePerson(personId) {
-  return (dispatch) => {
+  return dispatch => {
     dispatch(requestSinglePerson(personId))
 
     return aspectFetch(`/person/${personId}`, {
       errorNotifications: {
-        404: errorNotFound(defineMessages({
-          title: {
-            id: 'errorResponseMessages.fetchSinglePerson.GET.404.title',
-            defaultMessage: 'Could Not Find Contact\'s Details'
-          }
-        })),
-        default: errorPleaseTryAgainInAFewMinutes(defineMessages({
-          title: {
-            id: 'errorResponseMessages.fetchSinglePerson.GET.default.title',
-            defaultMessage: 'Error Loading Contact\'s Details'
-          }
-        }))
-      }
+        404: errorNotFound(
+          defineMessages({
+            title: {
+              id: 'errorResponseMessages.fetchSinglePerson.GET.404.title',
+              defaultMessage: "Could Not Find Contact's Details",
+            },
+          })
+        ),
+        default: errorPleaseTryAgainInAFewMinutes(
+          defineMessages({
+            title: {
+              id: 'errorResponseMessages.fetchSinglePerson.GET.default.title',
+              defaultMessage: "Error Loading Contact's Details",
+            },
+          })
+        ),
+      },
     }).then(json => dispatch(receiveSinglePerson(json.data)))
   }
 }
@@ -144,7 +155,7 @@ function requestUpdatingSinglePerson(personId, data) {
   return {
     type: types.REQUEST_UPDATING_SINGLE_PERSON,
     personId,
-    data
+    data,
   }
 }
 
@@ -152,7 +163,7 @@ function requestUpdatingSinglePerson(personId, data) {
 function receiveUpdatedSinglePerson(item) {
   return {
     type: types.RECEIVE_UPDATED_SINGLE_PERSON,
-    item
+    item,
   }
 }
 
@@ -160,13 +171,13 @@ function receiveUpdatedSinglePersonLoadinDetails(updatedInformation) {
   return {
     type: types.RECEIVE_UPDATED_SINGLE_PERSON_LOGIN_DETAILS,
     personId: updatedInformation.personId,
-    username: updatedInformation.username
+    username: updatedInformation.username,
   }
 }
 
 // update a single person with given personId and data
 function updatePerson(path, personId, data, fields) {
-  return (dispatch) => {
+  return dispatch => {
     dispatch(requestUpdatingSinglePerson(personId, data))
 
     const personJson = data.toJS ? data.toJS() : data
@@ -174,77 +185,106 @@ function updatePerson(path, personId, data, fields) {
       method: 'PUT',
       body: JSON.stringify(_.pick(personJson, fields)),
       errorNotifications: {
-        404: errorNotFound(defineMessages({
-          title: {
-            id: 'errorResponseMessages.updatePerson.PUT.404.title',
-            defaultMessage: 'Could Not Find Contact\'s Details'
-          }
-        })),
-        default: errorPleaseTryAgainInAFewMinutes(defineMessages({
-          title: {
-            id: 'errorResponseMessages.updatePerson.PUT.default.title',
-            defaultMessage: 'An Error Occurred When Trying to Save the Contact'
-          }
-        }))
-      }
+        404: errorNotFound(
+          defineMessages({
+            title: {
+              id: 'errorResponseMessages.updatePerson.PUT.404.title',
+              defaultMessage: "Could Not Find Contact's Details",
+            },
+          })
+        ),
+        default: errorPleaseTryAgainInAFewMinutes(
+          defineMessages({
+            title: {
+              id: 'errorResponseMessages.updatePerson.PUT.default.title',
+              defaultMessage: 'An Error Occurred When Trying to Save the Contact',
+            },
+          })
+        ),
+      },
     }).then(json => dispatch(receiveUpdatedSinglePerson(json.data)))
   }
 }
 
 export function updateSinglePerson(personId, data) {
-  return updatePerson(`/person/${personId}`, personId, data, ['name', 'title', 'email', 'email2', 'phone',
-    'cell', 'countryId', 'stateId', 'lgaId', 'zip', 'notes', 'lastPartnerId'])
+  return updatePerson(`/person/${personId}`, personId, data, [
+    'name',
+    'title',
+    'email',
+    'email2',
+    'phone',
+    'cell',
+    'countryId',
+    'stateId',
+    'lgaId',
+    'zip',
+    'notes',
+    'lastPartnerId',
+  ])
 }
 
 export function updateSinglePersonLoginDetails(personId, data) {
-  return (dispatch) => {
+  return dispatch => {
     dispatch(requestUpdatingSinglePerson(personId, data))
 
     const loginDetailsJson = data.toJS ? data.toJS() : data
     return aspectFetch(`/auth/update-person-login-details/${personId}`, {
       method: 'PUT',
-      body: JSON.stringify(_.pick(loginDetailsJson, ['newUsername', 'newPassword'])),
+      body: JSON.stringify(
+        _.pick(loginDetailsJson, ['newUsername', 'newPassword'])
+      ),
       errorNotifications: {
-        409: inlineWarning(defineMessages({
-          title: {
-            id: 'errorResponseMessages.updateSinglePersonLoginDetails.PUT.409.title',
-            defaultMessage: 'This Username is Unavailable'
-          },
-          message: {
-            id: 'errorResponseMessages.updateSinglePersonLoginDetails.PUT.409.message',
-            defaultMessage: 'The username that you have entered is already in use by another user on the system'
-          },
-          resolution: {
-            id: 'errorResponseMessages.updateSinglePersonLoginDetails.PUT.409.resolution',
-            defaultMessage: 'Please try another username'
-          }
-        })),
-        404: errorNotFound(defineMessages({
-          title: {
-            id: 'errorResponseMessages.updateSinglePersonLoginDetails.PUT.404.title',
-            defaultMessage: 'Could Not Find User\'s Details'
-          }
-        })),
-        default: errorPleaseTryAgainInAFewMinutes(defineMessages({
-          title: {
-            id: 'errorResponseMessages.updateSinglePersonLoginDetails.PUT.default.title',
-            defaultMessage: 'Saving Login Details Failed'
-          }
-        }))
-      }
-    }).then(json => dispatch(receiveUpdatedSinglePersonLoadinDetails(json.data)))
+        409: inlineWarning(
+          defineMessages({
+            title: {
+              id: 'errorResponseMessages.updateSinglePersonLoginDetails.PUT.409.title',
+              defaultMessage: 'This Username is Unavailable',
+            },
+            message: {
+              id: 'errorResponseMessages.updateSinglePersonLoginDetails.PUT.409.message',
+              defaultMessage: 'The username that you have entered is already in use by another user on the system',
+            },
+            resolution: {
+              id: 'errorResponseMessages.updateSinglePersonLoginDetails.PUT.409.resolution',
+              defaultMessage: 'Please try another username',
+            },
+          })
+        ),
+        404: errorNotFound(
+          defineMessages({
+            title: {
+              id: 'errorResponseMessages.updateSinglePersonLoginDetails.PUT.404.title',
+              defaultMessage: "Could Not Find User's Details",
+            },
+          })
+        ),
+        default: errorPleaseTryAgainInAFewMinutes(
+          defineMessages({
+            title: {
+              id: 'errorResponseMessages.updateSinglePersonLoginDetails.PUT.default.title',
+              defaultMessage: 'Saving Login Details Failed',
+            },
+          })
+        ),
+      },
+    }).then(json =>
+      dispatch(receiveUpdatedSinglePersonLoadinDetails(json.data))
+    )
   }
 }
 
 export function updateSinglePersonUserPreferences(personId, data) {
-  return updatePerson(`/person/preferences/${personId}`, personId, data, ['timezone', 'culture'])
+  return updatePerson(`/person/preferences/${personId}`, personId, data, [
+    'timezone',
+    'culture',
+  ])
 }
 /*
  * ---------------- Reducers -----------------
  */
 const Person = Immutable.Record({
   items: new Items(),
-  table: new Table()
+  table: new Table(),
 })
 export const ContactDetails = Immutable.Record({
   id: null,
@@ -259,7 +299,7 @@ export const ContactDetails = Immutable.Record({
   lgaId: null,
   zip: null,
   notes: null,
-  lastPartnerId: null
+  lastPartnerId: null,
 })
 export const LoginDetails = Immutable.Record({
   id: null,
@@ -268,12 +308,12 @@ export const LoginDetails = Immutable.Record({
   confirmNewPassword: null,
   currentPassword: null,
   partnerId: null,
-  jobFunctions: new Immutable.List([])
+  jobFunctions: new Immutable.List([]),
 })
 export const UserPreferences = Immutable.Record({
   id: null,
   timezone: null,
-  culture: null
+  culture: null,
 })
 
 const initialState = new Person()
@@ -281,29 +321,32 @@ const initialState = new Person()
 export default function personReducer(state = initialState, action) {
   switch (action.type) {
     case types.REQUEST_PERSONS:
-      return state
-      .set('table', requestTable(state.table, action))
+      return state.set('table', requestTable(state.table, action))
     case types.RECEIVE_PERSONS:
-      return state.withMutations((mutState) => {
+      return state.withMutations(mutState => {
         const immutList = Immutable.fromJS(action.items)
         mutState.set('items', receiveList(mutState.items, immutList))
         mutState.set('table', receiveTableItems(mutState.table, action.total))
       })
     case types.RECEIVE_SINGLE_PERSON:
     case types.RECEIVE_UPDATED_SINGLE_PERSON:
-      return state.withMutations((mutState) => {
+      return state.withMutations(mutState => {
         const immutItem = Immutable.fromJS({ ...action.item, loaded: true })
         mutState.set('items', receiveItem(mutState.items, immutItem))
       })
     case types.RECEIVE_UPDATED_SINGLE_PERSON_LOGIN_DETAILS:
-      return state.withMutations((mutState) => {
+      return state.withMutations(mutState => {
         const person = state.items.byId.get(action.personId).merge({
-          loaded: true, username: action.username })
+          loaded: true,
+          username: action.username,
+        })
         mutState.set('items', receiveItem(mutState.items, person))
       })
     case types.REQUEST_UPDATING_SINGLE_PERSON:
-      return state.withMutations((mutState) => {
-        const person = state.items.byId.get(action.personId).set('loaded', false)
+      return state.withMutations(mutState => {
+        const person = state.items.byId
+          .get(action.personId)
+          .set('loaded', false)
         mutState.set('items', receiveItem(mutState.items, person))
       })
     default:

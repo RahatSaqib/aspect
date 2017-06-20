@@ -2,13 +2,21 @@
 import _fp from 'lodash/fp'
 import PropTypes from 'prop-types'
 import React from 'react'
-import { compose, pure, setPropTypes, mapProps, lifecycle, withHandlers } from 'recompose'
+import {
+  compose,
+  pure,
+  setPropTypes,
+  mapProps,
+  lifecycle,
+  withHandlers,
+} from 'recompose'
 import { connect } from 'react-redux'
 
 // Material-UI
 import MenuItem from 'material-ui/MenuItem'
 
-import ForkedSelectField from '../../components/forkedMaterialUi/ForkedSelectField'
+import ForkedSelectField
+  from '../../components/forkedMaterialUi/ForkedSelectField'
 import { fetchDevicesForSelectList } from '../../device/DeviceRedux'
 
 const enhance = compose(
@@ -18,56 +26,65 @@ const enhance = compose(
     partnerId: PropTypes.string,
     siteId: PropTypes.string,
     onDeviceChange: PropTypes.func.isRequired,
-    value: PropTypes.string
+    value: PropTypes.string,
   }),
-  connect(state => ({
-    devicesSelectList: state.device.selectList
-  }), (dispatch, props) => ({
-    fetchDevicesWithFiltersForSelectList() {
-      dispatch(fetchDevicesForSelectList(true, {
-        countryId: props.countryId,
-        partnerId: props.partnerId,
-        siteId: props.siteId
-      }))
-    }
-  })),
+  connect(
+    state => ({
+      devicesSelectList: state.device.selectList,
+    }),
+    (dispatch, props) => ({
+      fetchDevicesWithFiltersForSelectList() {
+        dispatch(
+          fetchDevicesForSelectList(true, {
+            countryId: props.countryId,
+            partnerId: props.partnerId,
+            siteId: props.siteId,
+          })
+        )
+      },
+    })
+  ),
   lifecycle({
     componentDidMount() {
       this.props.fetchDevicesWithFiltersForSelectList()
     },
     componentDidUpdate(prevProps) {
-      const filtersChanged = _fp.any(name => (
-        this.props[name] !== prevProps[name]
-      ), ['countryId', 'partnerId', 'siteId'])
+      const filtersChanged = _fp.any(
+        name => this.props[name] !== prevProps[name],
+        ['countryId', 'partnerId', 'siteId']
+      )
       if (filtersChanged) {
         this.props.fetchDevicesWithFiltersForSelectList()
       }
-    }
+    },
   }),
   withHandlers({
     onChange: props => (event, index, value) => {
       props.onDeviceChange(value)
-    }
+    },
   }),
   mapProps(props => ({
-    ..._fp.omit([
-      'countryId', 'partnerId', 'siteId', 'onDeviceChange',
-      'fetchDevicesWithFiltersForSelectList', 'devicesSelectList'
-    ], props),
-    devicesSelectList: props.devicesSelectList
-      .items
+    ..._fp.omit(
+      [
+        'countryId',
+        'partnerId',
+        'siteId',
+        'onDeviceChange',
+        'fetchDevicesWithFiltersForSelectList',
+        'devicesSelectList',
+      ],
+      props
+    ),
+    devicesSelectList: props.devicesSelectList.items
       .map(item => ({
         value: item.get('id'),
-        text: item.get('name')
+        text: item.get('name'),
       }))
-      .toJS()
-  })),
+      .toJS(),
+  }))
 )
 
-export function DeviceSelectField({
-  devicesSelectList,
-  ...restProps
-}) {
+export function DeviceSelectField({ devicesSelectList, ...restProps }) {
   return (
     <ForkedSelectField {...restProps}>
       {devicesSelectList.map(s => (

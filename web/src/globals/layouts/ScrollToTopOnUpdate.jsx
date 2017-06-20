@@ -2,10 +2,9 @@ import PropTypes from 'prop-types'
 import { PureComponent, Children } from 'react'
 
 export class ScrollToTopOnUpdate extends PureComponent {
-
   static propTypes = {
     children: PropTypes.node.isRequired,
-    location: PropTypes.object.isRequired
+    location: PropTypes.object.isRequired, // eslint-disable-line
   }
 
   componentDidUpdate(prevProps) {
@@ -20,4 +19,3 @@ export class ScrollToTopOnUpdate extends PureComponent {
 }
 
 export default ScrollToTopOnUpdate
-

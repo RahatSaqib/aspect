@@ -27,7 +27,7 @@ describe('JSONSchemaCard module', () => {
 
       tree.children[0].props.onTouchTap({
         preventDefault: _.noop,
-        stopPropagation: _.noop
+        stopPropagation: _.noop,
       })
       tree = component.toJSON()
       expect(tree).toMatchSnapshot()
@@ -57,72 +57,72 @@ const dataSchema = Immutable.fromJS({
   copies: {
     list: true,
     title: 'Copies/mL',
-    type: 'number'
+    type: 'number',
   },
   log: {
     title: 'log',
-    type: 'number'
+    type: 'number',
   },
   probes: {
     i18nKey: 'probes',
     properties: {
       cicCt: {
         title: 'CIC Ct',
-        type: 'number'
+        type: 'number',
       },
       cicEndPt: {
         title: 'CIC EndPt',
-        type: 'number'
+        type: 'number',
       },
       gpCt: {
         title: 'GP Ct',
-        type: 'number'
+        type: 'number',
       },
       gpEndPt: {
         title: 'GP Endpt',
-        type: 'number'
+        type: 'number',
       },
       npCt: {
         title: 'NP Ct',
-        type: 'number'
+        type: 'number',
       },
       npEndPt: {
         title: 'NP EndPt',
-        type: 'number'
+        type: 'number',
       },
       qc1Ct: {
         title: 'QC1 Ct',
-        type: 'number'
+        type: 'number',
       },
       qc1Endpt: {
         title: 'QC1 EndPt',
-        type: 'number'
+        type: 'number',
       },
       qc2Ct: {
         title: 'QC2 Ct',
-        type: 'number'
+        type: 'number',
       },
       qc2Endpt: {
         title: 'Qc2Endpt',
-        type: 'number'
+        type: 'number',
       },
       sacCt: {
         title: 'SAC Ct',
-        type: 'number'
+        type: 'number',
       },
       sacEndPt: {
         title: 'SAC EndPt',
-        type: 'number'
-      }
+        type: 'number',
+      },
     },
     title: 'Probes',
-    type: 'object'
+    type: 'object',
   },
   resultText: {
     i18nKey: 'resultText',
     title: 'Result Text',
-    type: 'string'
-  }
+    type: 'string',
+  },
 })
 
 const data = Immutable.fromJS({
@@ -140,7 +140,7 @@ const data = Immutable.fromJS({
     qc2Ct: 11.4,
     qc2Endpt: 0.5,
     sacCt: 33.8,
-    sacEndPt: 650
+    sacEndPt: 650,
   },
-  resultText: 'HIV-1 DÉTECTÉ 60173 copies/mL (log 1.64)'
+  resultText: 'HIV-1 DÉTECTÉ 60173 copies/mL (log 1.64)',
 })

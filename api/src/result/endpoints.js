@@ -11,37 +11,45 @@ const {
   updateWorkflowStatus,
   updateDeliverToTerminal,
   listWorkflowStatusTypes,
-  listWorkflowStatusLog
+  listWorkflowStatusLog,
+  exportResults
 } = require('./service')
 const { validateAllGeographyFilterParams } = require('../geography/requestValidation')
+
+function listResultsBaseConfig() {
+  return {
+    auth: { scope: ['result:view', 'result:edit'] },
+    validate: {
+      query: Object.assign({
+        deviceId: Joi.number().allow('').description('Filter for device ID'),
+        assayId: Joi.number().allow('').description('Filter for assay ID'),
+        resultCategoryId: Joi.number().allow('').description('Result Category ID'),
+        deviceName: Joi.string().allow('').description('Filter for device name'),
+        siteName: Joi.string().allow('').description('Filter for site name'),
+        patientOrResearchId: Joi.string().allow('').description('Filter for patient/research ID'),
+        sampleId: Joi.string().allow('').description('Filter for sample ID'),
+        sampleGroup: Joi.string().allow('').description('Filter for sample group'),
+        sampleOriginSite: Joi.string().allow('').description('Filter for sample origin site ID'),
+        workflowStatusId: Joi.number().allow('').description('Filter for Result Workflow Status ID'),
+        jsonFields: Joi.array().max(10).items(Joi.string().max(50)).single().description('Specify which fields to select from the resultDataJSON'),
+        // query param 'format' is applicable only for handler 'exportDevices'
+        format: Joi.string().allow('').description('File format for exporting data')
+      }, validateAllGeographyFilterParams(),
+        validateDateRangeParams(),
+        validateSortPageParams())
+    }
+  }
+}
 
 module.exports = [
   {
     method: 'GET',
     path: '/result',
     handler: asyncHandler(listResults),
-    config: {
+    config: Object.assign({
       description: 'Result List',
-      notes: 'Pageable and sortable list of results',
-      auth: { scope: ['result:view', 'result:edit'] },
-      validate: {
-        query: Object.assign({
-          deviceId: Joi.number().allow('').description('Filter for device ID'),
-          assayId: Joi.number().allow('').description('Filter for assay ID'),
-          resultCategoryId: Joi.number().allow('').description('Result Category ID'),
-          deviceName: Joi.string().allow('').description('Filter for device name'),
-          siteName: Joi.string().allow('').description('Filter for site name'),
-          patientOrResearchId: Joi.string().allow('').description('Filter for patient/research ID'),
-          sampleId: Joi.string().allow('').description('Filter for sample ID'),
-          sampleGroup: Joi.string().allow('').description('Filter for sample group'),
-          sampleOriginSite: Joi.string().allow('').description('Filter for sample origin site ID'),
-          workflowStatusId: Joi.number().allow('').description('Filter for Result Workflow Status ID'),
-          jsonFields: Joi.array().max(10).items(Joi.string().max(50)).single().description('Specify which fields to select from the resultDataJSON')
-        }, validateAllGeographyFilterParams(),
-          validateDateRangeParams(),
-          validateSortPageParams())
-      }
-    }
+      notes: 'Pageable and sortable list of results'
+    }, listResultsBaseConfig())
   },
   {
     method: 'GET',
@@ -135,5 +143,15 @@ module.exports = [
         }
       }
     }
+  },
+  {
+    method: 'GET',
+    path: '/result/export',
+    handler: asyncHandler(exportResults),
+    config: Object.assign({
+      description: 'Export Result List into Excel or CSV',
+      notes: 'Filtered and sorted list of devices'
+    }, listResultsBaseConfig())
   }
+
 ]

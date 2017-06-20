@@ -3,7 +3,7 @@ import _ from 'lodash'
 
 import {
   errorPleaseTryAgainInAFewMinutes,
-  inlineWarning
+  inlineWarning,
 } from '../error/CommonErrorNotifications'
 
 jest.mock('../shared/utils/browser')
@@ -29,7 +29,7 @@ describe('AccountRedux module', () => {
     timezone: 'Pacific Standard Time',
     culture: 'fr-FR',
     notes: null,
-    lastPartnerId: null
+    lastPartnerId: null,
   }
 
   describe('reducer', () => {
@@ -41,11 +41,17 @@ describe('AccountRedux module', () => {
     })
 
     describe('initial state', () => {
-      it('should contain an empty AccountDetails object that isn\'t loading or saving', () => {
+      it("should contain an empty AccountDetails object that isn't loading or saving", () => {
         expect(initialState.get('data')).toBeInstanceOf(Immutable.Record)
-        expect(initialState.getIn(['data', 'contactDetails'])).toBeInstanceOf(Immutable.Record)
-        expect(initialState.getIn(['data', 'loginDetails'])).toBeInstanceOf(Immutable.Record)
-        expect(initialState.getIn(['data', 'userPreferences'])).toBeInstanceOf(Immutable.Record)
+        expect(initialState.getIn(['data', 'contactDetails'])).toBeInstanceOf(
+          Immutable.Record
+        )
+        expect(initialState.getIn(['data', 'loginDetails'])).toBeInstanceOf(
+          Immutable.Record
+        )
+        expect(initialState.getIn(['data', 'userPreferences'])).toBeInstanceOf(
+          Immutable.Record
+        )
         expect(initialState.get('loading')).toBe(false)
         expect(initialState.get('saving')).toBe(false)
         expect(initialState.getIn(['data', 'contactDetails']).toJS()).toEqual({
@@ -61,7 +67,7 @@ describe('AccountRedux module', () => {
           stateId: null,
           lgaId: null,
           zip: null,
-          notes: null
+          notes: null,
         })
         expect(initialState.getIn(['data', 'loginDetails']).toJS()).toEqual({
           id: null,
@@ -70,12 +76,12 @@ describe('AccountRedux module', () => {
           confirmNewPassword: null,
           currentPassword: null,
           partnerId: null,
-          jobFunctions: []
+          jobFunctions: [],
         })
         expect(initialState.getIn(['data', 'userPreferences']).toJS()).toEqual({
           id: null,
           timezone: null,
-          culture: null
+          culture: null,
         })
       })
     })
@@ -84,7 +90,7 @@ describe('AccountRedux module', () => {
       describe('REQUEST_ACCOUNT_DETAILS', () => {
         it('should show that account details are busy loading', () => {
           const state = AccountRedux.default(initialState, {
-            type: AccountRedux.types.REQUEST_ACCOUNT_DETAILS
+            type: AccountRedux.types.REQUEST_ACCOUNT_DETAILS,
           })
           expect(state.get('loading')).toBe(true)
         })
@@ -94,11 +100,17 @@ describe('AccountRedux module', () => {
         it('should show that account details are not loading anymore and populate contactDetails, loginDetails and userPreferences', () => {
           const state = AccountRedux.default(initialState, {
             type: AccountRedux.types.RECEIVE_ACCOUNT_DETAILS,
-            accountDetails: accountDetailsData
+            accountDetails: accountDetailsData,
           })
           expect(state.get('loading')).toBe(false)
-          expect(state.getIn(['data', 'contactDetails']).toJS()).toEqual(_.omit(accountDetailsData,
-            ['username', 'userId', 'timezone', 'culture']))
+          expect(state.getIn(['data', 'contactDetails']).toJS()).toEqual(
+            _.omit(accountDetailsData, [
+              'username',
+              'userId',
+              'timezone',
+              'culture',
+            ])
+          )
           expect(state.getIn(['data', 'loginDetails']).toJS()).toEqual({
             id: accountDetailsData.userId,
             username: accountDetailsData.username,
@@ -106,16 +118,18 @@ describe('AccountRedux module', () => {
             confirmNewPassword: null,
             currentPassword: null,
             partnerId: null,
-            jobFunctions: []
+            jobFunctions: [],
           })
-          expect(state.getIn(['data', 'userPreferences']).toJS()).toEqual(_.pick(accountDetailsData, ['id', 'timezone', 'culture']))
+          expect(state.getIn(['data', 'userPreferences']).toJS()).toEqual(
+            _.pick(accountDetailsData, ['id', 'timezone', 'culture'])
+          )
         })
       })
 
       describe('SAVE_ACCOUNT_DETAILS_START', () => {
         it('should show that account details are busy saving', () => {
           const state = AccountRedux.default(initialState, {
-            type: AccountRedux.types.SAVE_ACCOUNT_DETAILS_START
+            type: AccountRedux.types.SAVE_ACCOUNT_DETAILS_START,
           })
           expect(state.get('saving')).toBe(true)
         })
@@ -140,20 +154,26 @@ describe('AccountRedux module', () => {
             zip: '123 ZIP',
             timezone: 'Eastern Standard Time',
             culture: 'en-GB',
-            notes: null
+            notes: null,
           }
           const state = AccountRedux.default(initialState, {
             type: AccountRedux.types.RECEIVE_ACCOUNT_DETAILS,
-            accountDetails: accountDetailsData
+            accountDetails: accountDetailsData,
           })
           const newState = AccountRedux.default(state, {
             type: AccountRedux.types.RECEIVE_UPDATED_CONTACT_DETAILS,
-            accountDetails: newAccountDetailsData
+            accountDetails: newAccountDetailsData,
           })
 
           expect(newState.get('loading')).toBe(false)
-          expect(newState.getIn(['data', 'contactDetails']).toJS()).toEqual(_.omit(newAccountDetailsData,
-            ['username', 'userId', 'timezone', 'culture']))
+          expect(newState.getIn(['data', 'contactDetails']).toJS()).toEqual(
+            _.omit(newAccountDetailsData, [
+              'username',
+              'userId',
+              'timezone',
+              'culture',
+            ])
+          )
           expect(newState.getIn(['data', 'loginDetails']).toJS()).toEqual({
             id: accountDetailsData.userId,
             username: accountDetailsData.username,
@@ -161,29 +181,37 @@ describe('AccountRedux module', () => {
             confirmNewPassword: null,
             currentPassword: null,
             partnerId: null,
-            jobFunctions: []
+            jobFunctions: [],
           })
-          expect(newState.getIn(['data', 'userPreferences']).toJS()).toEqual(_.pick(accountDetailsData, ['id', 'timezone', 'culture']))
+          expect(newState.getIn(['data', 'userPreferences']).toJS()).toEqual(
+            _.pick(accountDetailsData, ['id', 'timezone', 'culture'])
+          )
         })
       })
 
       describe('RECEIVE_UPDATED_LOGIN_DETAILS', () => {
         it('should show that account details are not loading anymore and populate loginDetails only', () => {
           const updateDetailsData = {
-            username: 'this username was updated'
+            username: 'this username was updated',
           }
           const state = AccountRedux.default(initialState, {
             type: AccountRedux.types.RECEIVE_ACCOUNT_DETAILS,
-            accountDetails: accountDetailsData
+            accountDetails: accountDetailsData,
           })
           const newState = AccountRedux.default(state, {
             type: AccountRedux.types.RECEIVE_UPDATED_LOGIN_DETAILS,
-            updateDetails: updateDetailsData
+            updateDetails: updateDetailsData,
           })
 
           expect(newState.get('loading')).toBe(false)
-          expect(newState.getIn(['data', 'contactDetails']).toJS()).toEqual(_.omit(accountDetailsData,
-            ['username', 'userId', 'timezone', 'culture']))
+          expect(newState.getIn(['data', 'contactDetails']).toJS()).toEqual(
+            _.omit(accountDetailsData, [
+              'username',
+              'userId',
+              'timezone',
+              'culture',
+            ])
+          )
           expect(newState.getIn(['data', 'loginDetails']).toJS()).toEqual({
             id: accountDetailsData.userId,
             username: updateDetailsData.username,
@@ -191,9 +219,11 @@ describe('AccountRedux module', () => {
             confirmNewPassword: null,
             currentPassword: null,
             partnerId: null,
-            jobFunctions: []
+            jobFunctions: [],
           })
-          expect(newState.getIn(['data', 'userPreferences']).toJS()).toEqual(_.pick(accountDetailsData, ['id', 'timezone', 'culture']))
+          expect(newState.getIn(['data', 'userPreferences']).toJS()).toEqual(
+            _.pick(accountDetailsData, ['id', 'timezone', 'culture'])
+          )
         })
       })
 
@@ -214,20 +244,26 @@ describe('AccountRedux module', () => {
             lgaId: 1,
             zip: '123 ZIP',
             timezone: 'Eastern Standard Time',
-            culture: 'en-GB'
+            culture: 'en-GB',
           }
           const state = AccountRedux.default(initialState, {
             type: AccountRedux.types.RECEIVE_ACCOUNT_DETAILS,
-            accountDetails: accountDetailsData
+            accountDetails: accountDetailsData,
           })
           const newState = AccountRedux.default(state, {
             type: AccountRedux.types.RECEIVE_UPDATED_USER_PREFERENCES,
-            accountDetails: newAccountDetailsData
+            accountDetails: newAccountDetailsData,
           })
 
           expect(newState.get('loading')).toBe(false)
-          expect(newState.getIn(['data', 'contactDetails']).toJS()).toEqual(_.omit(accountDetailsData,
-            ['username', 'userId', 'timezone', 'culture']))
+          expect(newState.getIn(['data', 'contactDetails']).toJS()).toEqual(
+            _.omit(accountDetailsData, [
+              'username',
+              'userId',
+              'timezone',
+              'culture',
+            ])
+          )
           expect(newState.getIn(['data', 'loginDetails']).toJS()).toEqual({
             id: accountDetailsData.userId,
             username: accountDetailsData.username,
@@ -235,9 +271,11 @@ describe('AccountRedux module', () => {
             confirmNewPassword: null,
             currentPassword: null,
             partnerId: null,
-            jobFunctions: []
+            jobFunctions: [],
           })
-          expect(newState.getIn(['data', 'userPreferences']).toJS()).toEqual(_.pick(newAccountDetailsData, ['id', 'timezone', 'culture']))
+          expect(newState.getIn(['data', 'userPreferences']).toJS()).toEqual(
+            _.pick(newAccountDetailsData, ['id', 'timezone', 'culture'])
+          )
         })
       })
     })
@@ -251,20 +289,18 @@ describe('AccountRedux module', () => {
     describe('fetchAccountDetails', () => {
       describe('when the server responds successfully', () => {
         beforeAll(() => {
-          jest
-            .resetModules()
-            .mock('../shared/utils/fetch', () => {
-              const expectedResponseFromServer = Promise.resolve({
-                ok: true,
-                data: accountDetailsData
-              })
-
-              fetchStub = {
-                aspectFetch: jest.fn(() => expectedResponseFromServer)
-              }
-
-              return fetchStub
+          jest.resetModules().mock('../shared/utils/fetch', () => {
+            const expectedResponseFromServer = Promise.resolve({
+              ok: true,
+              data: accountDetailsData,
             })
+
+            fetchStub = {
+              aspectFetch: jest.fn(() => expectedResponseFromServer),
+            }
+
+            return fetchStub
+          })
 
           AccountRedux = require('./AccountRedux')
 
@@ -282,28 +318,33 @@ describe('AccountRedux module', () => {
 
         it('should dispatch a REQUEST_ACCOUNT_DETAILS action', () => {
           expect(dispatchStub).toHaveBeenCalledWith({
-            type: AccountRedux.types.REQUEST_ACCOUNT_DETAILS
+            type: AccountRedux.types.REQUEST_ACCOUNT_DETAILS,
           })
         })
 
         it('should request the account details from the server', () => {
-          expect(fetchStub.aspectFetch).toHaveBeenCalledWith('/account-details/current', {
+          expect(
+            fetchStub.aspectFetch
+          ).toHaveBeenCalledWith('/account-details/current', {
             errorNotifications: {
-              default: errorPleaseTryAgainInAFewMinutes({ title: {
-                id: 'errorResponseMessages.fetchAccountDetails.GET.default.title',
-                defaultMessage: 'Loading Account Details Failed'
-              } })
-            }
+              default: errorPleaseTryAgainInAFewMinutes({
+                title: {
+                  id: 'errorResponseMessages.fetchAccountDetails.GET.default.title',
+                  defaultMessage: 'Loading Account Details Failed',
+                },
+              }),
+            },
           })
         })
 
         describe('when a response is received from the server', () => {
-          it('Should dispatch a RECEIVE_ACCOUNT_DETAILS action with the account details received', () => result.then(() => {
-            expect(dispatchStub).toHaveBeenCalledWith({
-              type: AccountRedux.types.RECEIVE_ACCOUNT_DETAILS,
-              accountDetails: accountDetailsData
-            })
-          }))
+          it('Should dispatch a RECEIVE_ACCOUNT_DETAILS action with the account details received', () =>
+            result.then(() => {
+              expect(dispatchStub).toHaveBeenCalledWith({
+                type: AccountRedux.types.RECEIVE_ACCOUNT_DETAILS,
+                accountDetails: accountDetailsData,
+              })
+            }))
         })
       })
     })
@@ -312,25 +353,31 @@ describe('AccountRedux module', () => {
       let contactDetailsData
 
       beforeAll(() => {
-        contactDetailsData = _.omit(accountDetailsData, ['username', 'userId', 'timezone', 'culture', 'notes', 'lastPartnerId'])
+        contactDetailsData = _.omit(accountDetailsData, [
+          'username',
+          'userId',
+          'timezone',
+          'culture',
+          'notes',
+          'lastPartnerId',
+        ])
       })
 
       describe('when the server responds successfully', () => {
         beforeAll(() => {
-          jest
-            .resetModules()
-            .mock('../shared/utils/fetch', () => {
-              const expectedResponseFromServer = Promise.resolve({
-                ok: true, data: accountDetailsData
-              })
-
-              fetchStub = {
-                getHeaders: jest.fn(() => stubHeaders),
-                aspectFetch: jest.fn(() => expectedResponseFromServer)
-              }
-
-              return fetchStub
+          jest.resetModules().mock('../shared/utils/fetch', () => {
+            const expectedResponseFromServer = Promise.resolve({
+              ok: true,
+              data: accountDetailsData,
             })
+
+            fetchStub = {
+              getHeaders: jest.fn(() => stubHeaders),
+              aspectFetch: jest.fn(() => expectedResponseFromServer),
+            }
+
+            return fetchStub
+          })
 
           AccountRedux = require('./AccountRedux')
 
@@ -348,70 +395,74 @@ describe('AccountRedux module', () => {
 
         it('should dispatch a SAVE_ACCOUNT_DETAILS_START action', () => {
           expect(dispatchStub).toHaveBeenCalledWith({
-            type: AccountRedux.types.SAVE_ACCOUNT_DETAILS_START
+            type: AccountRedux.types.SAVE_ACCOUNT_DETAILS_START,
           })
         })
 
         it('should send a PUT request to the server with the correct headers and the account details passed to it', () => {
-          expect(fetchStub.aspectFetch).toHaveBeenCalledWith('/account-details/current-contact', {
+          expect(
+            fetchStub.aspectFetch
+          ).toHaveBeenCalledWith('/account-details/current-contact', {
             method: 'PUT',
             headers: stubHeaders,
             body: JSON.stringify(contactDetailsData),
             errorNotifications: {
-              default: errorPleaseTryAgainInAFewMinutes({ title: {
-                id: 'errorResponseMessages.saveContactDetails.PUT.default.title',
-                defaultMessage: 'Saving Contact Details Failed'
-              } })
-            }
+              default: errorPleaseTryAgainInAFewMinutes({
+                title: {
+                  id: 'errorResponseMessages.saveContactDetails.PUT.default.title',
+                  defaultMessage: 'Saving Contact Details Failed',
+                },
+              }),
+            },
           })
         })
 
         describe('when a response is received from the server', () => {
-          it('Should dispatch a RECEIVE_UPDATED_CONTACT_DETAILS action with the account details received', () => result.then(() => {
-            expect(dispatchStub).toHaveBeenCalledWith({
-              type: AccountRedux.types.RECEIVE_UPDATED_CONTACT_DETAILS,
-              accountDetails: accountDetailsData
-            })
-          }))
+          it('Should dispatch a RECEIVE_UPDATED_CONTACT_DETAILS action with the account details received', () =>
+            result.then(() => {
+              expect(dispatchStub).toHaveBeenCalledWith({
+                type: AccountRedux.types.RECEIVE_UPDATED_CONTACT_DETAILS,
+                accountDetails: accountDetailsData,
+              })
+            }))
         })
       })
     })
 
     describe('saveLoginDetails', () => {
       const updateDetails = {
-        value: 'login details updated'
+        value: 'login details updated',
       }
       const loginDetailsData = {
         id: accountDetailsData.userId,
         username: accountDetailsData.username,
         newPassword: null,
         confirmNewPassword: null,
-        currentPassword: 'current-password'
+        currentPassword: 'current-password',
       }
       const requestData = {
         currentPassword: loginDetailsData.currentPassword,
         newUsername: loginDetailsData.username,
         newPassword: loginDetailsData.newPassword,
         clientId: 'Mocha/Chai',
-        clientName: `Mocha/Chai on ${window.navigator.platform}`
+        clientName: `Mocha/Chai on ${window.navigator.platform}`,
       }
 
       describe('when the server responds successfully', () => {
         beforeAll(() => {
-          jest
-            .resetModules()
-            .mock('../shared/utils/fetch', () => {
-              const expectedResponseFromServer = Promise.resolve({
-                ok: true, data: updateDetails
-              })
-
-              fetchStub = {
-                getHeaders: jest.fn(() => stubHeaders),
-                aspectFetch: jest.fn(() => expectedResponseFromServer)
-              }
-
-              return fetchStub
+          jest.resetModules().mock('../shared/utils/fetch', () => {
+            const expectedResponseFromServer = Promise.resolve({
+              ok: true,
+              data: updateDetails,
             })
+
+            fetchStub = {
+              getHeaders: jest.fn(() => stubHeaders),
+              aspectFetch: jest.fn(() => expectedResponseFromServer),
+            }
+
+            return fetchStub
+          })
 
           AccountRedux = require('./AccountRedux')
 
@@ -429,12 +480,14 @@ describe('AccountRedux module', () => {
 
         it('should dispatch a SAVE_ACCOUNT_DETAILS_START action', () => {
           expect(dispatchStub).toHaveBeenCalledWith({
-            type: AccountRedux.types.SAVE_ACCOUNT_DETAILS_START
+            type: AccountRedux.types.SAVE_ACCOUNT_DETAILS_START,
           })
         })
 
         it('should send a PUT request to the server with the correct headers and the account details passed to it', () => {
-          expect(fetchStub.aspectFetch).toHaveBeenCalledWith('/auth/update-login-details', {
+          expect(
+            fetchStub.aspectFetch
+          ).toHaveBeenCalledWith('/auth/update-login-details', {
             method: 'PUT',
             headers: stubHeaders,
             body: JSON.stringify(requestData),
@@ -442,55 +495,63 @@ describe('AccountRedux module', () => {
               409: inlineWarning({
                 title: {
                   id: 'errorResponseMessages.saveLoginDetails.PUT.409.title',
-                  defaultMessage: 'This Username is Unavailable'
+                  defaultMessage: 'This Username is Unavailable',
                 },
                 message: {
                   id: 'errorResponseMessages.saveLoginDetails.PUT.409.message',
-                  defaultMessage: 'The username that you have entered is already in use by another user on the system'
+                  defaultMessage: 'The username that you have entered is already in use by another user on the system',
                 },
                 resolution: {
                   id: 'errorResponseMessages.saveLoginDetails.PUT.409.resolution',
-                  defaultMessage: 'Please try another username'
-                }
+                  defaultMessage: 'Please try another username',
+                },
               }),
               403: inlineWarning({
                 title: {
                   id: 'errorResponseMessages.saveLoginDetails.PUT.403.title',
-                  defaultMessage: 'Invalid Password'
+                  defaultMessage: 'Invalid Password',
                 },
                 message: {
                   id: 'errorResponseMessages.saveLoginDetails.PUT.403.message',
-                  defaultMessage: 'The current password that you have entered is incorrect.'
+                  defaultMessage: 'The current password that you have entered is incorrect.',
                 },
                 resolution: {
                   id: 'errorResponseMessages.saveLoginDetails.PUT.403.resolution',
-                  defaultMessage: 'Please try re-entering your password or contact us to reset your login details'
-                }
+                  defaultMessage: 'Please try re-entering your password or contact us to reset your login details',
+                },
               }),
               default: errorPleaseTryAgainInAFewMinutes({
                 title: {
                   id: 'errorResponseMessages.saveLoginDetails.PUT.default.title',
-                  defaultMessage: 'Saving Login Details Failed'
-                }
-              })
-            }
+                  defaultMessage: 'Saving Login Details Failed',
+                },
+              }),
+            },
           })
         })
 
         describe('when a response is received from the server', () => {
           // FIXME: provide proper response for expectedResponseFromServer
-          it.skip('Should dispatch a RECEIVE_UPDATED_LOGIN_DETAILS action with the account details received', () => result.then(() => {
-            expect(dispatchStub).toHaveBeenLastCalledWith({
-              type: AccountRedux.types.RECEIVE_UPDATED_LOGIN_DETAILS,
-              updateDetails
-            })
-          }))
+          it.skip(
+            'Should dispatch a RECEIVE_UPDATED_LOGIN_DETAILS action with the account details received',
+            () =>
+              result.then(() => {
+                expect(dispatchStub).toHaveBeenLastCalledWith({
+                  type: AccountRedux.types.RECEIVE_UPDATED_LOGIN_DETAILS,
+                  updateDetails,
+                })
+              })
+          )
         })
       })
     })
 
     describe('saveUserPreferences', () => {
-      const userPreferencesData = _.pick(accountDetailsData, ['id', 'timezone', 'culture'])
+      const userPreferencesData = _.pick(accountDetailsData, [
+        'id',
+        'timezone',
+        'culture',
+      ])
 
       describe('when the server responds successfully', () => {
         beforeAll(() => {
@@ -498,12 +559,13 @@ describe('AccountRedux module', () => {
             .resetModules()
             .mock('../shared/utils/fetch', () => {
               const expectedResponseFromServer = Promise.resolve({
-                ok: true, data: accountDetailsData
+                ok: true,
+                data: accountDetailsData,
               })
 
               fetchStub = {
                 getHeaders: jest.fn(() => stubHeaders),
-                aspectFetch: jest.fn(() => expectedResponseFromServer)
+                aspectFetch: jest.fn(() => expectedResponseFromServer),
               }
 
               return fetchStub
@@ -511,7 +573,7 @@ describe('AccountRedux module', () => {
             .mock('../auth/AuthRedux', () => ({
               loginSuccess: () => {},
               changeCulture: () => {},
-              changeTimezone: () => {}
+              changeTimezone: () => {},
             }))
 
           AccountRedux = require('./AccountRedux')
@@ -530,31 +592,36 @@ describe('AccountRedux module', () => {
 
         it('should dispatch a SAVE_ACCOUNT_DETAILS_START action', () => {
           expect(dispatchStub).toHaveBeenCalledWith({
-            type: AccountRedux.types.SAVE_ACCOUNT_DETAILS_START
+            type: AccountRedux.types.SAVE_ACCOUNT_DETAILS_START,
           })
         })
 
         it('should send a PUT request to the server with the correct headers and the account details passed to it', () => {
-          expect(fetchStub.aspectFetch).toHaveBeenCalledWith('/account-details/current-preferences', {
+          expect(
+            fetchStub.aspectFetch
+          ).toHaveBeenCalledWith('/account-details/current-preferences', {
             method: 'PUT',
             headers: stubHeaders,
             body: JSON.stringify(userPreferencesData),
             errorNotifications: {
-              default: errorPleaseTryAgainInAFewMinutes({ title: {
-                id: 'errorResponseMessages.saveUserPreferences.PUT.default.title',
-                defaultMessage: 'Saving User Preferences Failed'
-              } })
-            }
+              default: errorPleaseTryAgainInAFewMinutes({
+                title: {
+                  id: 'errorResponseMessages.saveUserPreferences.PUT.default.title',
+                  defaultMessage: 'Saving User Preferences Failed',
+                },
+              }),
+            },
           })
         })
 
         describe('when a response is received from the server', () => {
-          it('Should dispatch a RECEIVE_UPDATED_USER_PREFERENCES action with the account details received', () => result.then(() => {
-            expect(dispatchStub).toHaveBeenCalledWith({
-              type: AccountRedux.types.RECEIVE_UPDATED_USER_PREFERENCES,
-              accountDetails: accountDetailsData
-            })
-          }))
+          it('Should dispatch a RECEIVE_UPDATED_USER_PREFERENCES action with the account details received', () =>
+            result.then(() => {
+              expect(dispatchStub).toHaveBeenCalledWith({
+                type: AccountRedux.types.RECEIVE_UPDATED_USER_PREFERENCES,
+                accountDetails: accountDetailsData,
+              })
+            }))
         })
       })
     })

@@ -2,6 +2,7 @@ module.exports = require('../../src/db').seed(seed)
 
 const config = require('../../src/config')
 const bcrypt = require('bcrypt')
+const { randomToken } = require('../../src/deviceApi/apiKey')
 const labClinic = require('./fixtures/labClinic.json')
 
 const saltRounds = parseInt(config.passwordSaltRounds, 10)
@@ -35,7 +36,9 @@ function* seed(knex) {
   const [partnerId] = yield knex('Partner').insert({
     name: 'RRT',
     partnerTypeId: partnerTypes.Operating.id,
-    deviceLogHistoryDays: 14
+    deviceLogHistoryDays: 365,
+    autoAcknowledgeOlderThanDays: 28,
+    numberToLeaveUnacknowledged: 15
   })
   const deviceTypeCategories = yield rowsAsObject(knex, 'DeviceTypeCategory')
 
@@ -270,6 +273,54 @@ function* seed(knex) {
     const [jobIdLabAdmin] = yield knex('Job').insert([
       { personId: labAdminPersonId, jobFunctionId: jobFunctionIdLabAdmin }])
     yield knex('JobContext').insert({ jobId: jobIdLabAdmin, siteId })
+
+    if (lab.devices) {
+      for (const device of lab.devices) {
+        const { id: partnerId } = yield knex('Partner')
+          .where({ name: device.partnerName })
+          .first()
+        const { id: deviceTypeId } = yield knex('DeviceType')
+          .where({ name: device.deviceTypeName })
+          .first()
+        const { id: deviceStatusId } = yield knex('DeviceStatus')
+          .where({ token: device.deviceStatusToken })
+          .first()
+
+        const [deviceId] = yield knex('Device').insert(Object.assign({
+          partnerId,
+          geographyId,
+          siteId,
+          deviceTypeId,
+          deviceStatusId,
+          deviceId: device.deviceId,
+          name: device.name,
+          shortName: device.shortName,
+          macAddress: device.macAddress,
+          serial: device.serial,
+          hostId: device.hostId,
+          culture: device.culture,
+          timeZone: device.timeZone,
+          notes: device.notes,
+          lastSeenOn: device.lastSeenOn || new Date(),
+          lastPingOn: device.lastPingOn,
+          lastPingFromIp: device.lastPingFromIp,
+          putInService: device.putInService,
+          putInServiceSource: device.putInServiceSource,
+          approvedOn: device.approvedOn,
+          approvedBy: labAdminPersonId,
+          configurationData: device.configurationData
+        }, auditFields))
+
+        yield knex('DeviceApiKey').insert(Object.assign({
+          token: randomToken(),
+          revoked: 0,
+          partnerId,
+          geographyId,
+          siteId,
+          deviceId
+        }, auditFields))
+      }
+    }
   }
 }
 

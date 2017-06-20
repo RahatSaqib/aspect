@@ -7,16 +7,13 @@ import PhoneInput from '../../components/shared/PhoneInput'
 import LocationSelector from '../../components/shared/LocationSelector'
 
 describe('ContactDetailsForm module', () => {
-  const {
-    validate,
-    ContactDetailsForm
-  } = require('./ContactDetailsForm')
+  const { validate, ContactDetailsForm } = require('./ContactDetailsForm')
 
   describe('ContactDetailsForm component', () => {
     let props
     let ContactDetailsFormWrapper
 
-    const shallowRenderForm = (props) => {
+    const shallowRenderForm = props => {
       ContactDetailsFormWrapper = shallow(<ContactDetailsForm {...props} />)
     }
 
@@ -27,19 +24,21 @@ describe('ContactDetailsForm module', () => {
         loading: false,
         initialValues: {
           countryId: null,
-          stateId: null
+          stateId: null,
         },
         handleSubmit: () => {},
         intl: {
-          formatMessage: message => message.defaultMessage
-        }
+          formatMessage: message => message.defaultMessage,
+        },
       }
       shallowRenderForm(props)
     })
 
     it('Should be a form', () => {
       expect(ContactDetailsFormWrapper.node.type).toEqual('form')
-      expect(ContactDetailsFormWrapper.find('form').props().onSubmit).toEqual(props.handleSubmit)
+      expect(ContactDetailsFormWrapper.find('form').props().onSubmit).toEqual(
+        props.handleSubmit
+      )
     })
 
     it('Should contain fields for all contact details', () => {
@@ -48,31 +47,37 @@ describe('ContactDetailsForm module', () => {
         title: 'Job Title',
         email: 'Primary',
         email2: 'Alternate',
-        zip: 'Zip Code'
+        zip: 'Zip Code',
       }
       const expectedPhoneFieldLabels = {
         phone: 'Telephone',
-        cell: 'Mobile'
+        cell: 'Mobile',
       }
       const textInputs = ContactDetailsFormWrapper.find(TextInput)
       const phoneInputs = ContactDetailsFormWrapper.find(PhoneInput)
 
-      expect(textInputs.length).toEqual(Object.keys(expectedTextFieldLabels).length)
-      textInputs.forEach((textInput) => {
-        expect(textInput.props().label).toEqual(expectedTextFieldLabels[textInput.props().name])
+      expect(textInputs.length).toEqual(
+        Object.keys(expectedTextFieldLabels).length
+      )
+      textInputs.forEach(textInput => {
+        expect(textInput.props().label).toEqual(
+          expectedTextFieldLabels[textInput.props().name]
+        )
       })
-      phoneInputs.forEach((phoneInput) => {
-        expect(phoneInput.props().label).toEqual(expectedPhoneFieldLabels[phoneInput.props().name])
+      phoneInputs.forEach(phoneInput => {
+        expect(phoneInput.props().label).toEqual(
+          expectedPhoneFieldLabels[phoneInput.props().name]
+        )
       })
     })
 
     it('Should disable all fields when form is loading', () => {
-      ContactDetailsFormWrapper.find(TextInput).forEach((textInput) => {
+      ContactDetailsFormWrapper.find(TextInput).forEach(textInput => {
         expect(textInput.props().disabled).toBe(false)
       })
       props.loading = true
       shallowRenderForm(props)
-      ContactDetailsFormWrapper.find(TextInput).forEach((textInput) => {
+      ContactDetailsFormWrapper.find(TextInput).forEach(textInput => {
         expect(textInput.props().disabled).toBe(true)
       })
     })
@@ -86,7 +91,7 @@ describe('ContactDetailsForm module', () => {
         countryIdFieldName: 'countryId',
         stateIdFieldName: 'stateId',
         lgaIdFieldName: 'lgaId',
-        loading: props.loading
+        loading: props.loading,
       })
     })
 
@@ -98,7 +103,7 @@ describe('ContactDetailsForm module', () => {
         label: 'Save',
         secondary: true,
         type: 'submit',
-        disabled: props.loading || props.invalid || props.pristine
+        disabled: props.loading || props.invalid || props.pristine,
       })
     })
 
@@ -123,13 +128,12 @@ describe('ContactDetailsForm module', () => {
     })
   })
 
-
   describe('validate function', () => {
     const props = {
       handleSubmit: () => {},
       intl: {
-        formatMessage: message => message.defaultMessage
-      }
+        formatMessage: message => message.defaultMessage,
+      },
     }
     let initialContactDetails
 
@@ -137,7 +141,7 @@ describe('ContactDetailsForm module', () => {
       initialContactDetails = Immutable.Map({
         name: 'John Smith',
         email: null,
-        email2: null
+        email2: null,
       })
     })
 
@@ -145,19 +149,19 @@ describe('ContactDetailsForm module', () => {
       expect(validate(initialContactDetails, props)).toEqual({})
       const contactDetails = initialContactDetails.set('name', '')
       expect(validate(contactDetails, props)).toEqual({
-        name: 'Please enter your Full name'
+        name: 'Please enter your Full name',
       })
     })
 
     it('should validate email addresses if they have been entered', () => {
       let contactDetails = initialContactDetails.set('email', 'invalid email')
       expect(validate(contactDetails, props)).toEqual({
-        email: 'Please enter a valid email address'
+        email: 'Please enter a valid email address',
       })
 
       contactDetails = initialContactDetails.set('email2', 'invalid email')
       expect(validate(contactDetails, props)).toEqual({
-        email2: 'Please enter a valid email address'
+        email2: 'Please enter a valid email address',
       })
     })
 
@@ -165,26 +169,29 @@ describe('ContactDetailsForm module', () => {
       let contactDetails = initialContactDetails.merge({
         name: '',
         email: 'Invalid Email',
-        email2: 'Another Invalid Email'
+        email2: 'Another Invalid Email',
       })
       expect(validate(contactDetails, props)).toEqual({
         email: 'Please enter a valid email address',
         email2: 'Please enter a valid email address',
-        name: 'Please enter your Full name'
+        name: 'Please enter your Full name',
       })
 
       contactDetails = contactDetails.set('name', 'Abu Jenkins')
       expect(validate(contactDetails, props)).toEqual({
         email: 'Please enter a valid email address',
-        email2: 'Please enter a valid email address'
+        email2: 'Please enter a valid email address',
       })
 
       contactDetails = contactDetails.set('email2', 'valid@email.address')
       expect(validate(contactDetails, props)).toEqual({
-        email: 'Please enter a valid email address'
+        email: 'Please enter a valid email address',
       })
 
-      contactDetails = contactDetails.set('email', 'another.valid@email.address')
+      contactDetails = contactDetails.set(
+        'email',
+        'another.valid@email.address'
+      )
       expect(validate(contactDetails, props)).toEqual({})
     })
 

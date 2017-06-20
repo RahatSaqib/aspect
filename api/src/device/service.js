@@ -9,9 +9,7 @@ const { getCellsByValue, generateExcelFile, generateCsvFile } = require('../shar
 
 const SELECT_LIST_FIELDS = [
   'd.id', 'd.name', 'd.shortname', 'd.createdOn', 'd.lastPingOn', 'd.lastSeenOn as lastSeen',
-  'st.name as state',
-  'dt.name as type',
-  'ds.name as status',
+  'st.name as state', 'dt.name as type', 's.name as siteName', 'ds.name as status',
   'dc.name as category', 'dc.hasResults', 'dc.hasConnectivity'
 ]
 
@@ -73,6 +71,7 @@ function* getListDevices(query, auth) {
       category: 'dc.name',
       type: 'dt.name',
       siteExternalId: 's.externalId',
+      siteName: 's.name',
     })
     .modify(addConstraints, dataConstraints, { device: 'd' })
 
@@ -100,18 +99,22 @@ function* getListDevices(query, auth) {
         .as('thisMonth'),
       knex('Result as r')
         .innerJoin('Sample as s', 'r.sampleId', 's.id')
-        .innerJoin('ResultWorkflowStatus as rw', 'r.resultWorkflowStatusId', 'rw.id')
+        .innerJoin('ResultWorkflowLog as rl', 'r.id', 'rl.resultId')
+        .innerJoin('ResultWorkflowStatus as rw', 'rl.resultWorkflowStatusId', 'rw.id')
         .whereRaw('s.originSiteId = d.siteId')
-        .whereBetween('r.endedOn', [last60Day, last30Day])
-        .whereIn('rw.externalId', ['Delivered', 'Acknowledged', 'Flagged'])
+        .whereBetween('rl.changedOn', [last60Day, last30Day])
+        .where('rw.externalId', '=', 'Delivered')
         .count('r.id')
         .as('deliveredLastMonth'),
+
+      // TODO: Fix this/last month queries so they work for other (non-terminal) devices
       knex('Result as r')
         .innerJoin('Sample as s', 'r.sampleId', 's.id')
-        .innerJoin('ResultWorkflowStatus as rw', 'r.resultWorkflowStatusId', 'rw.id')
+        .innerJoin('ResultWorkflowLog as rl', 'r.id', 'rl.resultId')
+        .innerJoin('ResultWorkflowStatus as rw', 'rl.resultWorkflowStatusId', 'rw.id')
         .whereRaw('s.originSiteId = d.siteId')
-        .where('r.endedOn', '>=', last30Day)
-        .whereIn('rw.externalId', ['Delivered', 'Acknowledged', 'Flagged'])
+        .where('rl.changedOn', '>=', last30Day)
+        .where('rw.externalId', '=', 'Delivered')
         .count('r.id')
         .as('deliveredThisMonth'),
       knex('Result as r')
@@ -184,10 +187,12 @@ function* getDeviceByDeviceId(request, fields = SELECT_SHOW_FIELDS) {
         data: JSON.parse(deviceOperation.data) || {}
       }))
 
+    // Query for total number of results per device
     const totalTestQuery = knex('Result as r')
       .count('r.id as count')
       .leftJoin('Sample as s', 's.id', 'r.sampleId')
 
+    // If the device is not a terminal
     if (device.siteId == null || device.category !== 'Client') {
       totalTestQuery.where('r.deviceId', device.id)
     } else {

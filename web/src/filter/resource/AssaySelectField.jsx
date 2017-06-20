@@ -4,6 +4,7 @@ import PropTypes from 'prop-types'
 import React, { PureComponent } from 'react'
 import { bindActionCreators } from 'redux'
 import { connect } from 'react-redux'
+import Immutable from 'immutable'
 
 // Material-UI
 import SelectField from 'material-ui/SelectField'
@@ -12,18 +13,17 @@ import MenuItem from 'material-ui/MenuItem'
 import { fetchAssays } from '../../assay/AssayRedux'
 
 export class AssaySelectField extends PureComponent {
-
   static propTypes = {
     allItemText: PropTypes.string,
     fetchAssays: PropTypes.func.isRequired,
-    assayItems: PropTypes.object.isRequired,
+    assayItems: PropTypes.instanceOf(Immutable.List).isRequired,
     onAssayChange: PropTypes.func.isRequired,
-    value: PropTypes.string
+    value: PropTypes.string,
   }
 
   static defaultProps = {
     allItemText: 'All',
-    value: ''
+    value: '',
   }
 
   componentDidMount() {
@@ -37,24 +37,23 @@ export class AssaySelectField extends PureComponent {
   render() {
     const { allItemText, assayItems, value } = this.props
     const restProps = _.omit(this.props, [
-      'allItemText', 'fetchAssays', 'assayItems', 'onAssayChange', 'value'
+      'allItemText',
+      'fetchAssays',
+      'assayItems',
+      'onAssayChange',
+      'value',
     ])
     const validAssays = assayItems.filter(a => a.get('hasResults'))
 
     return (
-      <SelectField
-        {...restProps}
-        value={value}
-        onChange={this.handleChange}
-      >
-        {allItemText && (
-          <MenuItem
-            value="all"
-            primaryText={allItemText}
-          />
-        )}
+      <SelectField {...restProps} value={value} onChange={this.handleChange}>
+        {allItemText && <MenuItem value="all" primaryText={allItemText} />}
         {validAssays.map(a => (
-          <MenuItem key={a.get('id')} value={a.get('id')} primaryText={a.get('name')} />
+          <MenuItem
+            key={a.get('id')}
+            value={a.get('id')}
+            primaryText={a.get('name')}
+          />
         ))}
       </SelectField>
     )
@@ -63,16 +62,19 @@ export class AssaySelectField extends PureComponent {
 
 function mapStateToProps(state) {
   return {
-    assayItems: state.assay.items
+    assayItems: state.assay.items,
   }
 }
 
 function mapDispatchToProps(dispatch) {
-  return bindActionCreators({
-    fetchAssays
-  }, dispatch)
+  return bindActionCreators(
+    {
+      fetchAssays,
+    },
+    dispatch
+  )
 }
 
-export default _.flowRight(
-  connect(mapStateToProps, mapDispatchToProps)
-)(AssaySelectField)
+export default _.flowRight(connect(mapStateToProps, mapDispatchToProps))(
+  AssaySelectField
+)

@@ -9,22 +9,25 @@ import { connect } from 'react-redux'
 import SelectField from 'material-ui/SelectField'
 import MenuItem from 'material-ui/MenuItem'
 
-import { fetchConsumables } from '../../consumable/ConsumableRedux'
+// Our imports
+import {
+  fetchConsumables,
+  ConsumableItems,
+} from '../../consumable/ConsumableRedux'
 
 export class ConsumableSelectField extends PureComponent {
-
   static propTypes = {
     allItemText: PropTypes.string,
     fetchConsumables: PropTypes.func.isRequired,
-    consumableItems: PropTypes.object,
+    consumableItems: PropTypes.objectOf(ConsumableItems),
     onConsumableChange: PropTypes.func.isRequired,
-    value: PropTypes.string
+    value: PropTypes.string,
   }
 
   static defaultProps = {
     allItemText: 'All',
     consumableItems: null,
-    value: ''
+    value: '',
   }
 
   componentDidMount() {
@@ -39,23 +42,22 @@ export class ConsumableSelectField extends PureComponent {
   render() {
     const { allItemText, consumableItems, value } = this.props
     const restProps = _.omit(this.props, [
-      'allItemText', 'fetchConsumables', 'consumableItems', 'onConsumableChange', 'value'
+      'allItemText',
+      'fetchConsumables',
+      'consumableItems',
+      'onConsumableChange',
+      'value',
     ])
 
     return (
-      <SelectField
-        {...restProps}
-        value={value}
-        onChange={this.handleChange}
-      >
-        {allItemText && (
-          <MenuItem
-            value="all"
-            primaryText={allItemText}
-          />
-        )}
+      <SelectField {...restProps} value={value} onChange={this.handleChange}>
+        {allItemText && <MenuItem value="all" primaryText={allItemText} />}
         {consumableItems.map(c => (
-          <MenuItem key={c.get('id')} value={c.get('id')} primaryText={c.get('name')} />
+          <MenuItem
+            key={c.get('id')}
+            value={c.get('id')}
+            primaryText={c.get('name')}
+          />
         ))}
       </SelectField>
     )
@@ -64,16 +66,19 @@ export class ConsumableSelectField extends PureComponent {
 
 function mapStateToProps(state) {
   return {
-    consumableItems: state.consumable.consumables.items
+    consumableItems: state.consumable.consumables.items,
   }
 }
 
 function mapDispatchToProps(dispatch) {
-  return bindActionCreators({
-    fetchConsumables
-  }, dispatch)
+  return bindActionCreators(
+    {
+      fetchConsumables,
+    },
+    dispatch
+  )
 }
 
-export default _.flowRight(
-  connect(mapStateToProps, mapDispatchToProps)
-)(ConsumableSelectField)
+export default _.flowRight(connect(mapStateToProps, mapDispatchToProps))(
+  ConsumableSelectField
+)

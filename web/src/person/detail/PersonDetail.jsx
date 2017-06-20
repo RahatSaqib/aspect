@@ -29,7 +29,7 @@ import {
   updateSinglePersonUserPreferences,
   ContactDetails,
   LoginDetails,
-  UserPreferences
+  UserPreferences,
 } from '../PersonRedux'
 import { fetchPartnersAndJobFunctionsForSelectList } from '../../job/JobRedux'
 import { showAcknowledgement } from '../../appNotification/AppNotificationRedux'
@@ -41,31 +41,38 @@ const enhance = compose(
   setPropTypes({
     match: PropTypes.shape({
       params: PropTypes.shape({
-        personId: PropTypes.string.isRequired
-      }).isRequired
+        personId: PropTypes.string.isRequired,
+      }).isRequired,
     }).isRequired,
   }),
   pure,
   injectIntl,
-  connect((state, props) => {
-    const person = state.person.items.byId.get(props.match.params.personId)
+  connect(
+    (state, props) => {
+      const person = state.person.items.byId.get(props.match.params.personId)
 
-    return {
-      editable: isEditable(state.user, person),
-      person,
-      user: state.user,
-      partnersAndJobFunctionsForSelectList: state.jobs.get('partnersAndJobFunctionsForSelectList'),
-    }
-  }, dispatch => (
-    bindActionCreators({
-      showAcknowledgement,
-      fetchSinglePerson,
-      updateSinglePerson,
-      updateSinglePersonLoginDetails,
-      updateSinglePersonUserPreferences,
-      fetchPartnersAndJobFunctionsForSelectList,
-    }, dispatch)
-  )),
+      return {
+        editable: isEditable(state.user, person),
+        person,
+        user: state.user,
+        partnersAndJobFunctionsForSelectList: state.jobs.get(
+          'partnersAndJobFunctionsForSelectList'
+        ),
+      }
+    },
+    dispatch =>
+      bindActionCreators(
+        {
+          showAcknowledgement,
+          fetchSinglePerson,
+          updateSinglePerson,
+          updateSinglePersonLoginDetails,
+          updateSinglePersonUserPreferences,
+          fetchPartnersAndJobFunctionsForSelectList,
+        },
+        dispatch
+      )
+  ),
   setPropTypes({
     intl: intlShape.isRequired,
     editable: PropTypes.bool.isRequired,
@@ -77,46 +84,61 @@ const enhance = compose(
     updateSinglePersonLoginDetails: PropTypes.func.isRequired,
     updateSinglePersonUserPreferences: PropTypes.func.isRequired,
     fetchPartnersAndJobFunctionsForSelectList: PropTypes.func.isRequired,
-  }),
+  })
 )
 
 export class PersonDetail extends PureComponent {
   state = {
     partners: [],
-    jobFunctions: []
+    jobFunctions: [],
   }
 
   componentDidMount() {
     this.handleFetchPartnersAndJobFunctions(this.props)
     this.handleFetchPerson(this.props)
     if (this.props.partnersAndJobFunctionsForSelectList.get('lastRefreshed')) {
-      this.setPartnerAndJobFunctions(this.props, this.props.person.get('partnerId'))
+      this.setPartnerAndJobFunctions(
+        this.props,
+        this.props.person.get('partnerId')
+      )
     }
   }
 
   componentWillReceiveProps(nextProps) {
     if (this.props.match.params.personId !== nextProps.match.params.personId) {
       this.handleFetchPerson(nextProps)
-    } else if (nextProps.person && nextProps.partnersAndJobFunctionsForSelectList.get('lastRefreshed')) {
-      this.setPartnerAndJobFunctions(nextProps, nextProps.person.get('partnerId'))
+    } else if (
+      nextProps.person &&
+      nextProps.partnersAndJobFunctionsForSelectList.get('lastRefreshed')
+    ) {
+      this.setPartnerAndJobFunctions(
+        nextProps,
+        nextProps.person.get('partnerId')
+      )
     }
   }
 
   setPartnerAndJobFunctions = (props, selectedPartnerId) => {
-    const { partnersAndJobFunctionsForSelectList, intl: { formatMessage } } = props
-    const partners = _.map(partnersAndJobFunctionsForSelectList.get('partners').toJS(), partner => ({
-      id: partner.id,
-      name: partner.name || formatMessage(messages.none),
-      jobFunctions: _.map(partner.jobFunctions, jobFunction => ({
-        id: jobFunction.id,
-        name: jobFunction.name || formatMessage(messages.none)
-      }))
-    }))
+    const {
+      partnersAndJobFunctionsForSelectList,
+      intl: { formatMessage },
+    } = props
+    const partners = _.map(
+      partnersAndJobFunctionsForSelectList.get('partners').toJS(),
+      partner => ({
+        id: partner.id,
+        name: partner.name || formatMessage(messages.none),
+        jobFunctions: _.map(partner.jobFunctions, jobFunction => ({
+          id: jobFunction.id,
+          name: jobFunction.name || formatMessage(messages.none),
+        })),
+      })
+    )
     const selectedPartner = _.find(partners, { id: selectedPartnerId })
     const jobFunctions = selectedPartner ? selectedPartner.jobFunctions : []
     this.setState({
       partners,
-      jobFunctions
+      jobFunctions,
     })
   }
 
@@ -124,33 +146,38 @@ export class PersonDetail extends PureComponent {
     fetchSinglePerson(match.params.personId)
   }
 
-  handleFetchPartnersAndJobFunctions = ({ fetchPartnersAndJobFunctionsForSelectList }) => {
+  handleFetchPartnersAndJobFunctions = ({
+    fetchPartnersAndJobFunctionsForSelectList,
+  }) => {
     fetchPartnersAndJobFunctionsForSelectList()
   }
 
-  saveContactDetails = (formValues) => {
+  saveContactDetails = formValues => {
     const { updateSinglePerson } = this.props
     return updateSinglePerson(formValues.get('id'), formValues)
   }
 
-  saveLoginDetails = (formValues) => {
+  saveLoginDetails = formValues => {
     const { updateSinglePersonLoginDetails } = this.props
     return updateSinglePersonLoginDetails(formValues.get('id'), {
       newUsername: formValues.get('username'),
-      newPassword: formValues.get('newPassword')
+      newPassword: formValues.get('newPassword'),
     })
   }
 
-  saveUserPreferences = (formValues) => {
+  saveUserPreferences = formValues => {
     const { updateSinglePersonUserPreferences } = this.props
     return updateSinglePersonUserPreferences(formValues.get('id'), formValues)
   }
 
   render() {
     const {
-        intl: { formatMessage },
-        person, user, editable, showAcknowledgement
-      } = this.props
+      intl: { formatMessage },
+      person,
+      user,
+      editable,
+      showAcknowledgement,
+    } = this.props
     const contactDetails = new ContactDetails(person)
     const loginDetails = new LoginDetails(person)
     const userPreferences = new UserPreferences(person)
@@ -159,71 +186,96 @@ export class PersonDetail extends PureComponent {
     const saveContactDetailsSucceeded = () => {
       showAcknowledgement({
         title: messages.detailsUpdatedSuccessfully,
-        message: messages.contactDetailsUpdatedMessage
+        message: messages.contactDetailsUpdatedMessage,
       })
     }
     const saveLoginDetailsSucceeded = () => {
       showAcknowledgement({
         title: messages.detailsUpdatedSuccessfully,
-        message: messages.loginDetailsUpdatedMessage
+        message: messages.loginDetailsUpdatedMessage,
       })
     }
     const saveUserPreferencesSucceeded = () => {
       showAcknowledgement({
         title: messages.detailsUpdatedSuccessfully,
-        message: messages.userPreferencesUpdatedMessage
+        message: messages.userPreferencesUpdatedMessage,
       })
     }
 
     return (
       <div className={styles.Content}>
-        <Helmet title={formatMessage(messages.title)} titleTemplate="%s - Aspect" defaultTitle="Aspect" />
+        <Helmet
+          title={formatMessage(messages.title)}
+          titleTemplate="%s - Aspect"
+          defaultTitle="Aspect"
+        />
         <NavTitle title={formatMessage(messages.title)} />
         <Paper>
-          {editable && <Tabs>
-            <Tab
-              icon={<MapsPersonPin />}
-              label={<Hidden xs component="span">{formatMessage(messages.contactDetails)}</Hidden>}
-            >
-              {(!person) && <LinearProgress />}
-              {loading && <LinearProgress />}
-              <Visible xs component="h2" className={styles.Form__Header}>
-                {formatMessage(messages.contactDetails)}
-              </Visible>
-              <ContactDetailsForm
-                loading={loading} initialValues={contactDetails} partners={this.state.partners}
-                showNotesField userIsAdmin onSubmit={this.saveContactDetails}
-                onSubmitSuccess={saveContactDetailsSucceeded}
-              />
-            </Tab>
-            {userIsAdmin && <Tab
-              icon={<Lock />}
-              label={<Hidden xs component="span">{formatMessage(messages.systemAccessControl)}</Hidden>}
-            >
-              {loading && <LinearProgress />}
-              <Visible xs component="h2" className={styles.Form__Header}>
-                {formatMessage(messages.systemAccessControl)}
-              </Visible>
-              <LoginDetailsForm
-                loading={loading} initialValues={loginDetails} onSubmit={this.saveLoginDetails}
-                onSubmitSuccess={saveLoginDetailsSucceeded}
-              />
-            </Tab>}
-            <Tab
-              icon={<Language />}
-              label={<Hidden xs component="span">{formatMessage(messages.languageAndTimezone)}</Hidden>}
-            >
-              {loading && <LinearProgress />}
-              <Visible xs component="h2" className={styles.Form__Header}>
-                {formatMessage(messages.languageAndTimezone)}
-              </Visible>
-              <UserPreferencesForm
-                loading={loading} initialValues={userPreferences}
-                onSubmit={this.saveUserPreferences}
-                onSubmitSuccess={saveUserPreferencesSucceeded}
-              />
-            </Tab>
-          </Tabs>}
+          {editable &&
+            <Tabs>
+              <Tab
+                icon={<MapsPersonPin />}
+                label={
+                  <Hidden xs component="span">
+                    {formatMessage(messages.contactDetails)}
+                  </Hidden>
+                }
+              >
+                {!person && <LinearProgress />}
+                {loading && <LinearProgress />}
+                <Visible xs component="h2" className={styles.Form__Header}>
+                  {formatMessage(messages.contactDetails)}
+                </Visible>
+                <ContactDetailsForm
+                  loading={loading}
+                  initialValues={contactDetails}
+                  partners={this.state.partners}
+                  showNotesField
+                  userIsAdmin
+                  onSubmit={this.saveContactDetails}
+                  onSubmitSuccess={saveContactDetailsSucceeded}
+                />
+              </Tab>
+              {userIsAdmin &&
+                <Tab
+                  icon={<Lock />}
+                  label={
+                    <Hidden xs component="span">
+                      {formatMessage(messages.systemAccessControl)}
+                    </Hidden>
+                  }
+                >
+                  {loading && <LinearProgress />}
+                  <Visible xs component="h2" className={styles.Form__Header}>
+                    {formatMessage(messages.systemAccessControl)}
+                  </Visible>
+                  <LoginDetailsForm
+                    loading={loading}
+                    initialValues={loginDetails}
+                    onSubmit={this.saveLoginDetails}
+                    onSubmitSuccess={saveLoginDetailsSucceeded}
+                  />
+                </Tab>}
+              <Tab
+                icon={<Language />}
+                label={
+                  <Hidden xs component="span">
+                    {formatMessage(messages.languageAndTimezone)}
+                  </Hidden>
+                }
+              >
+                {loading && <LinearProgress />}
+                <Visible xs component="h2" className={styles.Form__Header}>
+                  {formatMessage(messages.languageAndTimezone)}
+                </Visible>
+                <UserPreferencesForm
+                  loading={loading}
+                  initialValues={userPreferences}
+                  onSubmit={this.saveUserPreferences}
+                  onSubmitSuccess={saveUserPreferencesSucceeded}
+                />
+              </Tab>
+            </Tabs>}
         </Paper>
       </div>
     )

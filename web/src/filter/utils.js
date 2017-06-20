@@ -1,8 +1,6 @@
 // Import packages
 import _ from 'lodash'
-import {
-  defineMessages
-} from 'react-intl'
+import { defineMessages } from 'react-intl'
 
 export function nonEmptyFilterValue(x) {
   return !_.isNull(x) && !_.isUndefined(x)
@@ -11,56 +9,56 @@ export function nonEmptyFilterValue(x) {
 const messages = defineMessages({
   noFilters: {
     id: 'shared.FormatFilters.noFilters',
-    defaultMessage: 'No filters set - showing all'
+    defaultMessage: 'No filters set - showing all',
   },
   geographyIn: {
     id: 'shared.FormatFilters.geographyIn',
-    defaultMessage: 'in'
+    defaultMessage: 'in',
   },
   whoseNameIncludes: {
     id: 'shared.FormatFilters.whoseNameIncludes',
-    defaultMessage: 'whose name includes'
+    defaultMessage: 'whose name includes',
   },
   assays: {
     id: 'shared.FormatFilters.assays',
-    defaultMessage: 'assays'
+    defaultMessage: 'assays',
   },
   consumables: {
     id: 'shared.FormatFilters.consumables',
-    defaultMessage: 'consumables'
+    defaultMessage: 'consumables',
   },
   patientOrResearchId: {
     id: 'shared.FormatFilters.patientOrResearchId',
-    defaultMessage: 'patient/study ID'
+    defaultMessage: 'patient/study ID',
   },
   sampleOriginSiteId: {
     id: 'shared.FormatFilters.sampleOriginSiteId',
-    defaultMessage: 'sample origin site'
+    defaultMessage: 'sample origin site',
   },
   sampleId: {
     id: 'shared.FormatFilters.sampleId',
-    defaultMessage: 'sample'
+    defaultMessage: 'sample',
   },
   partnerId: {
     id: 'shared.FormatFilters.partnerId',
-    defaultMessage: 'partner'
+    defaultMessage: 'partner',
   },
   withResult: {
     id: 'shared.FormatFilters.withResult',
-    defaultMessage: 'with result'
+    defaultMessage: 'with result',
   },
   dateFrom: {
     id: 'shared.FormatFilters.dateFrom',
-    defaultMessage: 'from'
+    defaultMessage: 'from',
   },
   dateTo: {
     id: 'shared.FormatFilters.dateTo',
-    defaultMessage: 'to'
+    defaultMessage: 'to',
   },
   withDeviceStatus: {
     id: 'shared.FormatFilters.withDeviceStatus',
-    defaultMessage: 'with device status'
-  }
+    defaultMessage: 'with device status',
+  },
 })
 
 // takes template message and filter settings and translates it into
@@ -78,7 +76,8 @@ export function getFilterMessage(
   formatDate,
   partners,
   workflowStatuses,
-  deviceStatuses) {
+  deviceStatuses
+) {
   // return empty message if no filters set
   if (_.every(filter, f => !f)) {
     return `${formatMessage(messages.noFilters)} ${subject ? subject.toLowerCase() : ''}`
@@ -89,9 +88,15 @@ export function getFilterMessage(
 
   // location-related strings
   let geography = ''
-  const country = filter.countryId ? countries.get('items').find(c => c.id === filter.countryId) : null
-  const state = country && filter.stateId ? country.getIn(['children', 'items']).find(s => s.id === filter.stateId) : null
-  const lga = state && filter.lgaId ? state.getIn(['children', 'items']).find(s => s.id === filter.lgaId) : null
+  const country = filter.countryId
+    ? countries.get('items').find(c => c.id === filter.countryId)
+    : null
+  const state = country && filter.stateId
+    ? country.getIn(['children', 'items']).find(s => s.id === filter.stateId)
+    : null
+  const lga = state && filter.lgaId
+    ? state.getIn(['children', 'items']).find(s => s.id === filter.lgaId)
+    : null
 
   if (country || state || lga) {
     geography = ` ${formatMessage(messages.geographyIn)}${SPACE}
@@ -101,82 +106,126 @@ export function getFilterMessage(
   }
 
   // name-filter
-  const name = `${filter.contactNameOrEmail || ''}${filter.deviceName || ''}${filter.siteName || ''}`
-  const nameString = name ? `${SPACE}${formatMessage(messages.whoseNameIncludes)}${SPACE}"${name}"` : ''
+  const name = `${filter.contactNameOrEmail || ''}${filter.deviceName || ''}${filter.siteName || ''}${filter.externalId || ''}`
+  const nameString = name
+    ? `${SPACE}${formatMessage(messages.whoseNameIncludes)}${SPACE}"${name}"`
+    : ''
 
   // patient id
   const patientOrResearchId = filter.patientOrResearchId
-  const patientOrResearchIdString = patientOrResearchId ? `${formatMessage(messages.patientOrResearchId)}${SPACE}(${patientOrResearchId}),${SPACE}` : ''
+  const patientOrResearchIdString = patientOrResearchId
+    ? `${formatMessage(messages.patientOrResearchId)}${SPACE}(${patientOrResearchId}),${SPACE}`
+    : ''
 
   // sample origin site id
-  const sampleOriginSite = filter.sampleOriginSiteId ? siteItemsById.valueSeq().find(s => s.get('id') === filter.sampleOriginSiteId) : null
-  const sampleOriignSiteIdString = sampleOriginSite ? `${formatMessage(messages.sampleOriginSiteId)}${SPACE}(${sampleOriginSite.get('name')}),${SPACE}` : ''
+  const sampleOriginSite = filter.sampleOriginSiteId
+    ? siteItemsById
+        .valueSeq()
+        .find(s => s.get('id') === filter.sampleOriginSiteId)
+    : null
+  const sampleOriignSiteIdString = sampleOriginSite
+    ? `${formatMessage(messages.sampleOriginSiteId)}${SPACE}(${sampleOriginSite.get('name')}),${SPACE}`
+    : ''
 
   // sample id
   const sampleId = filter.sampleId
-  const sampleIdString = sampleId ? `${formatMessage(messages.sampleId)}${SPACE}(${sampleId}),${SPACE}` : ''
+  const sampleIdString = sampleId
+    ? `${formatMessage(messages.sampleId)}${SPACE}(${sampleId}),${SPACE}`
+    : ''
 
   // partner id
   const partnerId = filter.partnerId
-  const partner = partnerId ? partners.find(p => p.get('id') === partnerId) : null
-  const partnerString = partner ? `${formatMessage(messages.partnerId)}${SPACE}(${partner.get('name')})` : ''
+  const partner = partnerId
+    ? partners.find(p => p.get('id') === partnerId)
+    : null
+  const partnerString = partner
+    ? `${formatMessage(messages.partnerId)}${SPACE}(${partner.get('name')})`
+    : ''
 
   // assay/result
-  const assay = filter.assayId ? assays.get('items').find(a => a.get('id') === filter.assayId) : null
-  const result = assay && filter.resultCategoryId ?
-    assay.get('resultCategories').find(r => r.get('id') === String(filter.resultCategoryId)) : null
+  const assay = filter.assayId
+    ? assays.get('items').find(a => a.get('id') === filter.assayId)
+    : null
+  const result = assay && filter.resultCategoryId
+    ? assay
+        .get('resultCategories')
+        .find(r => r.get('id') === String(filter.resultCategoryId))
+    : null
   const assayString = assay ? assay.get('name') : ''
-  const resultString = result ? `${SPACE}${formatMessage(messages.withResult)}${SPACE}"${result.get('name')}"` : ''
+  const resultString = result
+    ? `${SPACE}${formatMessage(messages.withResult)}${SPACE}"${result.get('name')}"`
+    : ''
 
   // date
-  const dateFrom = filter.minDate ? `${formatMessage(messages.dateFrom)}${SPACE}${formatDate(filter.minDate)}` : ''
-  const dateTo = filter.maxDate ? `${formatMessage(messages.dateTo)}${SPACE}${formatDate(filter.maxDate)}` : ''
+  const dateFrom = filter.minDate
+    ? `${formatMessage(messages.dateFrom)}${SPACE}${formatDate(filter.minDate)}`
+    : ''
+  const dateTo = filter.maxDate
+    ? `${formatMessage(messages.dateTo)}${SPACE}${formatDate(filter.maxDate)}`
+    : ''
 
   // TODO: This could be a little nicer and use the date type from the filter.
   // Could say "the year 2015" or "the month of August"
   const dateString = `${dateFrom ? `${SPACE}${dateFrom}` : ''}${dateTo && dateFrom ? `${SPACE}${dateTo}` : dateTo}`
 
   // inventory item
-  const consumable = filter.consumableId ? consumables.get('items').find(a => a.get('id') === filter.consumableId) : null
-  const consumableString = consumable ? consumable.get('name') : formatMessage(messages.consumables)
+  const consumable = filter.consumableId
+    ? consumables.get('items').find(a => a.get('id') === filter.consumableId)
+    : null
+  const consumableString = consumable
+    ? consumable.get('name')
+    : formatMessage(messages.consumables)
 
   // result workflow status
-  const workflowStatus = filter.workflowStatusId ? workflowStatuses.find(a => a.get('id') === filter.workflowStatusId) : null
+  const workflowStatus = filter.workflowStatusId
+    ? workflowStatuses.find(a => a.get('id') === filter.workflowStatusId)
+    : null
   const noWorkflowStatus = ''
-  const workflowStatusString = workflowStatus ? `with workflow status ${workflowStatus.get('name')}` : noWorkflowStatus
+  const workflowStatusString = workflowStatus
+    ? `with workflow status ${workflowStatus.get('name')}`
+    : noWorkflowStatus
 
   // device status
-  const deviceStatus = filter.deviceStatusId ? deviceStatuses.find(s => s.get('id') === filter.deviceStatusId) : null
+  const deviceStatus = filter.deviceStatusId
+    ? deviceStatuses.find(s => s.get('id') === filter.deviceStatusId)
+    : null
   const noDeviceStatus = ''
-  const deviceStatusString = deviceStatus ? `${SPACE}${formatMessage(messages.withDeviceStatus)}${SPACE}"${deviceStatus.get('name')}"` : noDeviceStatus
+  const deviceStatusString = deviceStatus
+    ? `${SPACE}${formatMessage(messages.withDeviceStatus)}${SPACE}"${deviceStatus.get('name')}"`
+    : noDeviceStatus
 
   // The optional template lets us specify a message that only shows up if
   // assay, result, or date is set. For example, if we want to show a message that explains
   // the number of results on a device
   let optionalMessage = ''
-  if (optionalTemplate && (
-    assayString || resultString || dateString || consumableString || partnerString)
+  if (
+    optionalTemplate &&
+    (assayString ||
+      resultString ||
+      dateString ||
+      consumableString ||
+      partnerString)
   ) {
     optionalMessage = optionalTemplate
-                        .replace('<ASSAY>', assayString)
-                        .replace('<RESULT>', resultString)
-                        .replace('<DATE>', dateString)
-                        .replace('<CONSUMABLE>', consumableString)
-                        .replace('<PARTNER_ID>', partnerString)
+      .replace('<ASSAY>', assayString)
+      .replace('<RESULT>', resultString)
+      .replace('<DATE>', dateString)
+      .replace('<CONSUMABLE>', consumableString)
+      .replace('<PARTNER_ID>', partnerString)
   }
 
   const message = `${template
-                        .replace('<GEOGRAPHY>', geography)
-                        .replace('<NAME>', nameString)
-                        .replace('<PATIENT_OR_RESEARCH_ID>', patientOrResearchIdString)
-                        .replace('<SAMPLE_ORIGIN_SITE_ID>', sampleOriignSiteIdString)
-                        .replace('<SAMPLE_ID>', sampleIdString)
-                        .replace('<ASSAY>', assayString)
-                        .replace('<RESULT>', resultString)
-                        .replace('<DATE>', dateString)} ${optionalMessage}`
-                        .replace('<CONSUMABLE>', consumableString)
-                        .replace('<WORKFLOWSTATUS>', workflowStatusString)
-                        .replace('<DEVICESTATUS>', deviceStatusString)
+    .replace('<GEOGRAPHY>', geography)
+    .replace('<NAME>', nameString)
+    .replace('<PATIENT_OR_RESEARCH_ID>', patientOrResearchIdString)
+    .replace('<SAMPLE_ORIGIN_SITE_ID>', sampleOriignSiteIdString)
+    .replace('<SAMPLE_ID>', sampleIdString)
+    .replace('<ASSAY>', assayString)
+    .replace('<RESULT>', resultString)
+    .replace('<DATE>', dateString)} ${optionalMessage}`
+    .replace('<CONSUMABLE>', consumableString)
+    .replace('<WORKFLOWSTATUS>', workflowStatusString)
+    .replace('<DEVICESTATUS>', deviceStatusString)
 
   return message
 }

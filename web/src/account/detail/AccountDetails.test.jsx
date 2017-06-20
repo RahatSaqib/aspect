@@ -12,9 +12,7 @@ import UserPreferencesForm from '../../person/detail/UserPreferencesForm'
 import { AccountDetailsData } from '../AccountRedux'
 
 describe('AccountDetails module', () => {
-  const {
-    AccountDetails
-  } = require('./AccountDetails')
+  const { AccountDetails } = require('./AccountDetails')
 
   describe('AccountDetails component', () => {
     let props
@@ -35,8 +33,8 @@ describe('AccountDetails module', () => {
         saveLoginDetails: () => {},
         saveUserPreferences: () => {},
         intl: {
-          formatMessage: message => message.defaultMessage
-        }
+          formatMessage: message => message.defaultMessage,
+        },
       }
       shallowRenderAccountDetails()
     })
@@ -64,14 +62,19 @@ describe('AccountDetails module', () => {
     describe('When loading is false', () => {
       it('Should not show a loading message and a progress bar', () => {
         expect(
-          AccountDetailsWrapper.findWhere(element => element.type() === 'span' && element.text() === 'Loading...').length
+          AccountDetailsWrapper.findWhere(
+            element =>
+              element.type() === 'span' && element.text() === 'Loading...'
+          ).length
         ).toEqual(0)
         expect(AccountDetailsWrapper.find(LinearProgress).length).toEqual(0)
       })
 
       it('Should show a paper container with three tabs', () => {
         expect(AccountDetailsWrapper.node.props.children.length).toEqual(3)
-        expect(AccountDetailsWrapper.node.props.children[0].type).toEqual(Helmet)
+        expect(AccountDetailsWrapper.node.props.children[0].type).toEqual(
+          Helmet
+        )
         expect(AccountDetailsWrapper.node.props.children[2].type).toEqual(Paper)
         const paperContainer = AccountDetailsWrapper.find(Paper)
         expect(paperContainer.length).toEqual(1)
@@ -82,31 +85,53 @@ describe('AccountDetails module', () => {
       it('Should show a Contact Details tab containing a contact details form', () => {
         const firstTab = AccountDetailsWrapper.find(Tab).first()
         expect(firstTab.props().label.props.children).toEqual('Contact Details')
-        expect(firstTab.find(Visible).children().text()).toEqual('Contact Details')
+        expect(firstTab.find(Visible).children().text()).toEqual(
+          'Contact Details'
+        )
 
         const contactDetailsForm = firstTab.find(ContactDetailsForm)
-        expect(contactDetailsForm.props().initialValues).toEqual(props.accountDetails.get('contactDetails'))
-        expect(contactDetailsForm.props().onSubmit).toEqual(props.saveContactDetails)
+        expect(contactDetailsForm.props().initialValues).toEqual(
+          props.accountDetails.get('contactDetails')
+        )
+        expect(contactDetailsForm.props().onSubmit).toEqual(
+          props.saveContactDetails
+        )
       })
 
       it('Should show a Login Details tab', () => {
         const secondTab = AccountDetailsWrapper.find(Tab).at(1)
-        expect(secondTab.props().label.props.children).toEqual('Username & Password')
-        expect(secondTab.find(Visible).children().text()).toEqual('Username & Password')
+        expect(secondTab.props().label.props.children).toEqual(
+          'Username & Password'
+        )
+        expect(secondTab.find(Visible).children().text()).toEqual(
+          'Username & Password'
+        )
 
         const loginDetailsForm = secondTab.find(LoginDetailsForm)
-        expect(loginDetailsForm.props().initialValues).toEqual(props.accountDetails.get('loginDetails'))
-        expect(loginDetailsForm.props().onSubmit).toEqual(props.saveLoginDetails)
+        expect(loginDetailsForm.props().initialValues).toEqual(
+          props.accountDetails.get('loginDetails')
+        )
+        expect(loginDetailsForm.props().onSubmit).toEqual(
+          props.saveLoginDetails
+        )
       })
 
       it('Should show a User Preferences tab', () => {
         const thirdTab = AccountDetailsWrapper.find(Tab).at(2)
-        expect(thirdTab.props().label.props.children).toEqual('Language & Timezone')
-        expect(thirdTab.find(Visible).children().text()).toEqual('Language & Timezone')
+        expect(thirdTab.props().label.props.children).toEqual(
+          'Language & Timezone'
+        )
+        expect(thirdTab.find(Visible).children().text()).toEqual(
+          'Language & Timezone'
+        )
 
         const userPreferencesForm = thirdTab.find(UserPreferencesForm)
-        expect(userPreferencesForm.props().initialValues).toEqual(props.accountDetails.get('userPreferences'))
-        expect(userPreferencesForm.props().onSubmit).toEqual(props.saveUserPreferences)
+        expect(userPreferencesForm.props().initialValues).toEqual(
+          props.accountDetails.get('userPreferences')
+        )
+        expect(userPreferencesForm.props().onSubmit).toEqual(
+          props.saveUserPreferences
+        )
       })
     })
   })

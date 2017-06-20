@@ -1,6 +1,7 @@
 const supertest = require('supertest')
 const chai = require('chai')
 const _ = require('lodash')
+const { format, subDays } = require('date-fns')
 const {
   createTestContext,
   getDeviceConfigurationData,
@@ -1641,7 +1642,6 @@ describe('Device Result API routes', () => {
 
     it('should honor device sample origin site', () => runTest(function* (knex) {
       const { deviceAuth, apiKey: labKey } = context
-      const devicePath = '/device'
 
       let deviceLab = yield* getDeviceFromApiKey(knex, labKey)
       assert.isNotOk(deviceLab)
@@ -2303,7 +2303,6 @@ describe('Device Result API routes', () => {
 
     it('should set the status of a result to delivered when it is sent to a terminal', () => runTest(function* (knex) {
       const { deviceAuth } = context
-      const devicePath = '/device'
 
       const externalId = `1315-${new Date()}`
 
@@ -2354,6 +2353,327 @@ describe('Device Result API routes', () => {
         .where({ id: result.resultWorkflowStatusId }).first('externalId')
       assert.equal(resultWorkflowStatus.externalId, 'Delivered')
     }))
+
+    describe('when auto acknowledge rules are setup for partner', () => {
+      describe('and a large number of historical results are being downloaded', () => {
+        it('should automatically acknowledge results based on where they are down the list and date ended on', () => runTest(function* (knex) {
+          const { deviceAuth, auth: { partner: partnerName } } = context
+
+          // Make sure the device is found on aspect
+          yield server.post(devicePath)
+            .set('Authorization', deviceAuth)
+            .send({
+              checkpoint: 'rrt_0',
+              type: { id: 'm2000' },
+              site: { id: 'PIH' }
+            })
+            .then((res) => {
+              assert.equal(res.status, 200)
+            })
+
+          const partner = yield knex('Partner as p')
+            .where({ name: partnerName }).first()
+
+          // Ensure the partner we are dealing with has
+          // valid auto-acknowledge settings
+          assert.isAbove(partner.deviceLogHistoryDays, partner.autoAcknowledgeOlderThanDays)
+          assert.isOk(partner.autoAcknowledgeOlderThanDays)
+          assert.isOk(partner.numberToLeaveUnacknowledged)
+
+          // We need to upload tests that ended a while ago
+          const testEndedOn = subDays(new Date(), (partner.autoAcknowledgeOlderThanDays + 1))
+          const numberOfTestsToRun = partner.numberToLeaveUnacknowledged + 10
+          const externalIdStart = `1515-${format(testEndedOn, 'YYYYMMDD')}`
+
+          let latestCheckpoint
+          for (let i = 0; i < numberOfTestsToRun; i++) {
+            // Increment the checkpoint and
+            // upload a historical test
+            latestCheckpoint = `rrt_${i + 1}`
+            yield server.post(devicePostResultPath)
+              .set('Authorization', deviceAuth)
+              .send({
+                id: `${externalIdStart}-${i}`,
+                checkpoint: latestCheckpoint,
+                data: {
+                  resultText: '454112',
+                  endedOn: testEndedOn,
+                  copies: 454112
+                },
+                sample: {
+                  originSite: {
+                    id: '1315'
+                  }
+                },
+                endedOn: testEndedOn,
+                assay: { id: 'HivVl' },
+                notes: '454,112 Copies / mL'
+              })
+              .then((res) => {
+                assert.equal(res.status, 200)
+              })
+          }
+
+          // Start a sync operation with a new check point
+          latestCheckpoint = `rrt_${numberOfTestsToRun + 1}`
+          yield server.post(devicePath)
+            .set('Authorization', deviceAuth)
+            .send({
+              checkpoint: latestCheckpoint,
+              operation: {
+                data: {
+                  message: 'In Progress',
+                  type: 'deviceSync',
+                  statusId: 'InProgress'
+                }
+              }
+            })
+            .then((res) => {
+              assert.equal(res.status, 200)
+            })
+
+          for (let i = 0; i < numberOfTestsToRun; i++) {
+            // Download a historical result from the
+            // checkpoint created when we started the
+            // sync operation
+            const offset = -(i + 1)
+            yield server.get(`${devicePostResultPath}?checkpoint=${latestCheckpoint}&offset=${offset}`)
+              .set('Authorization', deviceAuth)
+              .then((res) => {
+                assert.equal(res.status, 200)
+
+                const lastResult = res.body.result
+                assert.typeOf(lastResult, 'Object')
+              })
+          }
+
+          // Verify that results have been auto acknowledged correctly
+          for (let i = 0; i < numberOfTestsToRun; i++) {
+            const resultWorkflowStatus = yield knex('Result as r')
+              .innerJoin('ResultWorkflowStatus as rs', 'r.resultWorkflowStatusId', 'rs.id')
+              .where({ 'r.externalId': `${externalIdStart}-${i}` })
+              .first('rs.externalId')
+
+            if (numberOfTestsToRun - i > partner.numberToLeaveUnacknowledged) {
+              assert.equal(resultWorkflowStatus.externalId, 'Acknowledged')
+            } else {
+              assert.equal(resultWorkflowStatus.externalId, 'Delivered')
+            }
+          }
+        }))
+      })
+
+      describe('and a small number of historical results are being downloaded', () => {
+        it('should NOT automatically acknowledge results so that there are always results visible on the terminal after initial sync', () => runTest(function* (knex) {
+          const { deviceAuth, auth: { partner: partnerName } } = context
+
+          // Make sure the device is found on aspect
+          yield server.post(devicePath)
+            .set('Authorization', deviceAuth)
+            .send({
+              checkpoint: 'rrt_0',
+              type: { id: 'm2000' },
+              site: { id: 'PIH' }
+            })
+            .then((res) => {
+              assert.equal(res.status, 200)
+            })
+
+          const partner = yield knex('Partner as p')
+            .where({ name: partnerName }).first()
+
+          // Ensure the partner we are dealing with has
+          // valid auto-acknowledge settings
+          assert.isAbove(partner.deviceLogHistoryDays, partner.autoAcknowledgeOlderThanDays)
+          assert.isOk(partner.autoAcknowledgeOlderThanDays)
+          // Ensure that we will always leave a few result unacknowledged
+          assert.isAbove(partner.numberToLeaveUnacknowledged, 1)
+
+          // We need to upload tests that ended a while ago
+          const testEndedOn = subDays(new Date(), (partner.autoAcknowledgeOlderThanDays + 1))
+          // Only upload enough results so that they all remain unacknowledged
+          const numberOfTestsToRun = partner.numberToLeaveUnacknowledged - 1
+          const externalIdStart = `1615-${format(testEndedOn, 'YYYYMMDD')}`
+
+          let latestCheckpoint
+          for (let i = 0; i < numberOfTestsToRun; i++) {
+            // Increment the checkpoint and
+            // upload a historical test
+            latestCheckpoint = `rrt_${i + 1}`
+            yield server.post(devicePostResultPath)
+              .set('Authorization', deviceAuth)
+              .send({
+                id: `${externalIdStart}-${i}`,
+                checkpoint: latestCheckpoint,
+                data: {
+                  resultText: '454112',
+                  endedOn: testEndedOn,
+                  copies: 454112
+                },
+                sample: {
+                  originSite: {
+                    id: '1315'
+                  }
+                },
+                endedOn: testEndedOn,
+                assay: { id: 'HivVl' },
+                notes: '454,112 Copies / mL'
+              })
+              .then((res) => {
+                assert.equal(res.status, 200)
+              })
+          }
+
+          // Start a sync operation with a new check point
+          latestCheckpoint = `rrt_${numberOfTestsToRun + 1}`
+          yield server.post(devicePath)
+            .set('Authorization', deviceAuth)
+            .send({
+              checkpoint: latestCheckpoint,
+              operation: {
+                data: {
+                  message: 'In Progress',
+                  type: 'deviceSync',
+                  statusId: 'InProgress'
+                }
+              }
+            })
+            .then((res) => {
+              assert.equal(res.status, 200)
+            })
+
+          for (let i = 0; i < numberOfTestsToRun; i++) {
+            // Download a historical result from the
+            // checkpoint created when we started the
+            // sync operation
+            const offset = -(i + 1)
+            yield server.get(`${devicePostResultPath}?checkpoint=${latestCheckpoint}&offset=${offset}`)
+              .set('Authorization', deviceAuth)
+              .then((res) => {
+                assert.equal(res.status, 200)
+
+                const lastResult = res.body.result
+                assert.typeOf(lastResult, 'Object')
+              })
+          }
+
+          // Verify that results have been not been auto acknowledged
+          for (let i = 0; i < numberOfTestsToRun; i++) {
+            const resultWorkflowStatus = yield knex('Result as r')
+              .innerJoin('ResultWorkflowStatus as rs', 'r.resultWorkflowStatusId', 'rs.id')
+              .where({ 'r.externalId': `${externalIdStart}-${i}` })
+              .first('rs.externalId')
+
+            assert.equal(resultWorkflowStatus.externalId, 'Delivered')
+          }
+        }))
+      })
+
+      describe('and the results being downloaded are current', () => {
+        it('should NOT automatically acknowledge results so that there are always results visible on the terminal after initial sync', () => runTest(function* (knex) {
+          const { deviceAuth, auth: { partner: partnerName } } = context
+
+          // Make sure the device is found on aspect
+          yield server.post(devicePath)
+            .set('Authorization', deviceAuth)
+            .send({
+              checkpoint: 'rrt_0',
+              type: { id: 'm2000' },
+              site: { id: 'PIH' }
+            })
+            .then((res) => {
+              assert.equal(res.status, 200)
+            })
+
+          const partner = yield knex('Partner as p')
+            .where({ name: partnerName }).first()
+
+          // Ensure the partner we are dealing with has
+          // valid auto-acknowledge settings
+          assert.isAbove(partner.deviceLogHistoryDays, partner.autoAcknowledgeOlderThanDays)
+          assert.isOk(partner.autoAcknowledgeOlderThanDays)
+          assert.isOk(partner.numberToLeaveUnacknowledged)
+
+          // We need to upload tests that ended recently (not historical results)
+          const testEndedOn = subDays(new Date(), (partner.autoAcknowledgeOlderThanDays - 1))
+          // Upload lots of new results
+          const numberOfTestsToRun = partner.numberToLeaveUnacknowledged * 2
+          const externalIdStart = `1715-${format(testEndedOn, 'YYYYMMDD')}`
+
+          let latestCheckpoint
+          for (let i = 0; i < numberOfTestsToRun; i++) {
+            // Increment the checkpoint and
+            // upload a test result
+            latestCheckpoint = `rrt_${i + 1}`
+            yield server.post(devicePostResultPath)
+              .set('Authorization', deviceAuth)
+              .send({
+                id: `${externalIdStart}-${i}`,
+                checkpoint: latestCheckpoint,
+                data: {
+                  resultText: '454112',
+                  endedOn: testEndedOn,
+                  copies: 454112
+                },
+                sample: {
+                  originSite: {
+                    id: '1315'
+                  }
+                },
+                endedOn: testEndedOn,
+                assay: { id: 'HivVl' },
+                notes: '454,112 Copies / mL'
+              })
+              .then((res) => {
+                assert.equal(res.status, 200)
+              })
+          }
+
+          // Start a sync operation with a new check point
+          latestCheckpoint = `rrt_${numberOfTestsToRun + 1}`
+          yield server.post(devicePath)
+            .set('Authorization', deviceAuth)
+            .send({
+              checkpoint: latestCheckpoint,
+              operation: {
+                data: {
+                  message: 'In Progress',
+                  type: 'deviceSync',
+                  statusId: 'InProgress'
+                }
+              }
+            })
+            .then((res) => {
+              assert.equal(res.status, 200)
+            })
+
+          for (let i = 0; i < numberOfTestsToRun; i++) {
+            // Download a result from the
+            // checkpoint created when we started the
+            // sync operation
+            const offset = -(i + 1)
+            yield server.get(`${devicePostResultPath}?checkpoint=${latestCheckpoint}&offset=${offset}`)
+              .set('Authorization', deviceAuth)
+              .then((res) => {
+                assert.equal(res.status, 200)
+
+                const lastResult = res.body.result
+                assert.typeOf(lastResult, 'Object')
+              })
+          }
+
+          // Verify that results have been not been auto acknowledged
+          for (let i = 0; i < numberOfTestsToRun; i++) {
+            const resultWorkflowStatus = yield knex('Result as r')
+              .innerJoin('ResultWorkflowStatus as rs', 'r.resultWorkflowStatusId', 'rs.id')
+              .where({ 'r.externalId': `${externalIdStart}-${i}` })
+              .first('rs.externalId')
+
+            assert.equal(resultWorkflowStatus.externalId, 'Delivered')
+          }
+        }))
+      })
+    })
 
     it('should change site', () => runTest(function* (knex) {
       const { apiKey, deviceAuth } = context

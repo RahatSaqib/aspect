@@ -10,13 +10,13 @@ import styles from './Shared.css'
 class PhoneInput extends React.PureComponent {
   static propTypes = {
     onChange: PropTypes.func.isRequired,
-    input: PropTypes.object.isRequired,
-    meta: PropTypes.object.isRequired,
+    input: PropTypes.object.isRequired, // eslint-disable-line
+    meta: PropTypes.object.isRequired, // eslint-disable-line
     textFieldProps: PropTypes.shape({
       floatingLabelText: PropTypes.string.isRequired,
       disabled: PropTypes.bool.isRequired,
-      maxLength: PropTypes.number.isRequired
-    }).isRequired
+      maxLength: PropTypes.string.isRequired,
+    }).isRequired,
   }
 
   constructor(props) {
@@ -24,7 +24,7 @@ class PhoneInput extends React.PureComponent {
 
     this.state = {
       selectedIsoAlpha2Code: 'US',
-      number: ''
+      number: '',
     }
 
     this.onCountryChanged = this.onCountryChanged.bind(this)
@@ -47,7 +47,9 @@ class PhoneInput extends React.PureComponent {
 
   onNumberChanged(event) {
     this.changeNumber(event.target.value)
-    this.props.onChange(this.getPhoneNumber(this.state.selectedIsoAlpha2Code, event.target.value))
+    this.props.onChange(
+      this.getPhoneNumber(this.state.selectedIsoAlpha2Code, event.target.value)
+    )
   }
 
   getPhoneNumber(isoAlpha2Code, number) {
@@ -69,15 +71,21 @@ class PhoneInput extends React.PureComponent {
       // Get the trimmed first portion of the number
       // (up until the first char which isn't '+' or [0-9]
       const firstPortionDividerMatch = /\s|\(|\)|-/.exec(trimmedNumber)
-      const firstIndexOfSectionDivider = firstPortionDividerMatch ?
-        firstPortionDividerMatch.index : -1
-      const firstPortionOfNumber = firstIndexOfSectionDivider > -1 ?
-        trimmedNumber.substr(0, firstIndexOfSectionDivider) : trimmedNumber
-      const matchingDialingCodes = _.filter(dialingCodes, { dial_code: firstPortionOfNumber })
+      const firstIndexOfSectionDivider = firstPortionDividerMatch
+        ? firstPortionDividerMatch.index
+        : -1
+      const firstPortionOfNumber = firstIndexOfSectionDivider > -1
+        ? trimmedNumber.substr(0, firstIndexOfSectionDivider)
+        : trimmedNumber
+      const matchingDialingCodes = _.filter(dialingCodes, {
+        dial_code: firstPortionOfNumber,
+      })
 
       if (matchingDialingCodes.length === 1) {
         this.selectCountry(matchingDialingCodes[0].iso_alpha2_code)
-        trimmedNumber = trimmedNumber.substr(matchingDialingCodes[0].dial_code.length)
+        trimmedNumber = trimmedNumber.substr(
+          matchingDialingCodes[0].dial_code.length
+        )
       }
       if (!/^[\s()+-]*([0-9][\s()+-]*){0,17}$/.test(trimmedNumber)) {
         return
@@ -85,13 +93,13 @@ class PhoneInput extends React.PureComponent {
       trimmedNumber = trimmedNumber.replace(/^\s+/, '')
     }
     this.setState({
-      number: trimmedNumber
+      number: trimmedNumber,
     })
   }
 
   selectCountry(isoAlpha2Code) {
     this.setState({
-      selectedIsoAlpha2Code: isoAlpha2Code
+      selectedIsoAlpha2Code: isoAlpha2Code,
     })
   }
 
@@ -104,23 +112,44 @@ class PhoneInput extends React.PureComponent {
       <div style={{ display: 'inline-block', position: 'relative' }}>
         <div style={{ position: 'absolute', left: '0', bottom: '0' }}>
           <CountrySelect
-            value={selectedIsoAlpha2Code} dataSource={dialingCodes}
+            value={selectedIsoAlpha2Code}
+            dataSource={dialingCodes}
             dataSourceConfig={{
               selectedItemTextPredicate: country => country.dial_code,
-              menuItemTextPredicate: country => `${country.name} (${country.dial_code})`
+              menuItemTextPredicate: country =>
+                `${country.name} (${country.dial_code})`,
             }}
             selectFieldStyle={{ verticalAlign: 'bottom', width: '5.5em' }}
-            onChange={this.onCountryChanged} selectedItemStyle={{ position: 'absolute', left: '1em', right: '1.4em', top: '0.15em', textAlign: 'right', whiteSpace: 'nowrap', overflow: 'hidden', width: '2.8em', display: 'block' }}
+            onChange={this.onCountryChanged}
+            selectedItemStyle={{
+              position: 'absolute',
+              left: '1em',
+              right: '1.4em',
+              top: '0.15em',
+              textAlign: 'right',
+              whiteSpace: 'nowrap',
+              overflow: 'hidden',
+              width: '2.8em',
+              display: 'block',
+            }}
             underlineStyle={{ display: 'none' }}
           />
         </div>
         <div style={{ float: 'left' }}>
           <TextField
-            errorStyle={{ float: 'left', whiteSpace: 'nowrap', textOverflow: 'visible' }} errorText={touched && error}
-            {...textFieldProps} style={{ marginLeft: '5.5em', width: '10.5em' }}
+            errorStyle={{
+              float: 'left',
+              whiteSpace: 'nowrap',
+              textOverflow: 'visible',
+            }}
+            errorText={touched && error}
+            {...textFieldProps}
+            style={{ marginLeft: '5.5em', width: '10.5em' }}
             floatingLabelFocusStyle={{ marginLeft: '-5.5em' }}
-            underlineStyle={{ marginLeft: '-5.5em', width: '16em' }} onChange={this.onNumberChanged}
-            value={number} className={styles.Form__Field}
+            underlineStyle={{ marginLeft: '-5.5em', width: '16em' }}
+            onChange={this.onNumberChanged}
+            value={number}
+            className={styles.Form__Field}
           />
         </div>
       </div>
@@ -128,23 +157,32 @@ class PhoneInput extends React.PureComponent {
   }
 }
 
-const renderPhoneField = props =>
-  <PhoneInput {...props} onChange={phoneNumber => props.input.onChange(phoneNumber)} />
+const renderPhoneField = props => (
+  <PhoneInput
+    {...props}
+    onChange={phoneNumber => props.input.onChange(phoneNumber)}
+  />
+)
 
-const renderFormField = (props) => {
+const renderFormField = props => {
   const { name, label, disabled, maxLength } = props
-  return (<Field
-    name={name} textFieldProps={{
-      floatingLabelText: label,
-      disabled,
-      maxLength
-    }} component={renderPhoneField}
-  />)
+  return (
+    <Field
+      name={name}
+      textFieldProps={{
+        floatingLabelText: label,
+        disabled,
+        maxLength,
+      }}
+      component={renderPhoneField}
+    />
+  )
 }
 
 export default renderFormField
 
-const dialingCodes = [{ dial_code: '+93', iso_alpha2_code: 'AF' },
+const dialingCodes = [
+  { dial_code: '+93', iso_alpha2_code: 'AF' },
   { dial_code: '+355', iso_alpha2_code: 'AL' },
   { dial_code: '+213', iso_alpha2_code: 'DZ' },
   { dial_code: '+1684', iso_alpha2_code: 'AS' },
@@ -371,5 +409,5 @@ const dialingCodes = [{ dial_code: '+93', iso_alpha2_code: 'AF' },
   { dial_code: '+681', iso_alpha2_code: 'WF' },
   { dial_code: '+967', iso_alpha2_code: 'YE' },
   { dial_code: '+260', iso_alpha2_code: 'ZM' },
-  { dial_code: '+263', iso_alpha2_code: 'ZW' }]
-
+  { dial_code: '+263', iso_alpha2_code: 'ZW' },
+]

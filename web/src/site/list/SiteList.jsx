@@ -1,17 +1,14 @@
 import PropTypes from 'prop-types'
 import React, { PureComponent } from 'react'
 import { compose, setPropTypes, pure } from 'recompose'
-import {
-  injectIntl,
-  defineMessages,
-  intlShape
-} from 'react-intl'
+import { injectIntl, defineMessages, intlShape } from 'react-intl'
 import { bindActionCreators } from 'redux'
 import { connect } from 'react-redux'
 import Helmet from 'react-helmet'
 
 // Our own imports
-import DataTableWithEmptyList from '../../components/shared/DataTableWithEmptyList'
+import DataTableWithEmptyList
+  from '../../components/shared/DataTableWithEmptyList'
 import NavTitle from '../../globals/components/NavTitle'
 import ListFilterContainer from '../../filter/list/ListFilter'
 import { configureListFilter, ListFilter } from '../../filter/FilterRedux'
@@ -23,28 +20,32 @@ import { Table } from '../../shared/metaReducers/table'
 const messages = defineMessages({
   title: {
     id: 'pages.SiteList.title',
-    defaultMessage: 'Sites'
+    defaultMessage: 'Sites',
   },
   siteName: {
     id: 'pages.SiteList.siteName',
-    defaultMessage: 'Name'
+    defaultMessage: 'Name',
   },
   state: {
     id: 'pages.SiteList.state',
-    defaultMessage: 'State'
+    defaultMessage: 'State',
   },
   lga: {
     id: 'pages.SiteList.lga',
-    defaultMessage: 'County'
+    defaultMessage: 'County',
   },
   totalDevices: {
     id: 'pages.SiteList.totalDevices',
-    defaultMessage: 'Number of Devices'
+    defaultMessage: 'Number of Devices',
   },
   filterTemplate: {
     id: 'pages.SiteList.filterTemplate',
-    defaultMessage: 'Viewing all sites<GEOGRAPHY><NAME>.'
-  }
+    defaultMessage: 'Viewing all sites<GEOGRAPHY><NAME>.',
+  },
+  externalId: {
+    id: 'pages.SiteList.externalId',
+    defaultMessage: 'Facility Code',
+  },
 })
 
 const enhance = compose(
@@ -54,16 +55,21 @@ const enhance = compose(
   }),
   pure,
   injectIntl,
-  connect(state => ({
-    listFilter: state.filter.listFilter,
-    items: state.site.items,
-    table: state.site.table,
-  }), dispatch => (
-    bindActionCreators({
-      fetchListFilteredSites,
-      configureListFilter,
-    }, dispatch)
-  )),
+  connect(
+    state => ({
+      listFilter: state.filter.listFilter,
+      items: state.site.items,
+      table: state.site.table,
+    }),
+    dispatch =>
+      bindActionCreators(
+        {
+          fetchListFilteredSites,
+          configureListFilter,
+        },
+        dispatch
+      )
+  ),
   setPropTypes({
     intl: intlShape.isRequired,
     listFilter: PropTypes.objectOf(ListFilter).isRequired,
@@ -71,13 +77,13 @@ const enhance = compose(
     table: PropTypes.objectOf(Table).isRequired,
     fetchListFilteredSites: PropTypes.func.isRequired,
     configureListFilter: PropTypes.func.isRequired,
-  }),
+  })
 )
 
 export class SiteList extends PureComponent {
   componentWillMount() {
     const { configureListFilter } = this.props
-    configureListFilter({ geography: true, siteName: true })
+    configureListFilter({ geography: true, siteName: true, externalId: true })
   }
 
   componentDidMount() {
@@ -94,7 +100,7 @@ export class SiteList extends PureComponent {
     this.props.fetchListFilteredSites({}, ...args)
   }
 
-  handleItemIdSelection = (siteId) => {
+  handleItemIdSelection = siteId => {
     this.props.history.push(`/site/${siteId}`)
   }
 
@@ -105,12 +111,17 @@ export class SiteList extends PureComponent {
       { db: 'name', title: formatMessage(messages.siteName) },
       { db: 'state', title: formatMessage(messages.state) },
       { db: 'lga', title: formatMessage(messages.lga) },
-      { db: 'totalDevices', title: formatMessage(messages.totalDevices) }
+      { db: 'totalDevices', title: formatMessage(messages.totalDevices) },
+      { db: 'externalId', title: formatMessage(messages.externalId) },
     ]
 
     return (
       <div className={styles.Content}>
-        <Helmet title={formatMessage(messages.title)} titleTemplate="%s - Aspect" defaultTitle="Aspect" />
+        <Helmet
+          title={formatMessage(messages.title)}
+          titleTemplate="%s - Aspect"
+          defaultTitle="Aspect"
+        />
         <NavTitle title={formatMessage(messages.title)} />
         <ListFilterContainer
           subject={formatMessage(messages.title)}
