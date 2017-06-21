@@ -1,21 +1,21 @@
 // Imports from packages
 import _ from 'lodash'
-import endOfDay from 'date-fns/end_of_day'
-import startOfDay from 'date-fns/start_of_day'
-import subtractDays from 'date-fns/sub_days'
-import endOfWeek from 'date-fns/end_of_week'
-import startOfWeek from 'date-fns/start_of_week'
-import subtractWeeks from 'date-fns/sub_weeks'
-import endOfMonth from 'date-fns/end_of_month'
-import startOfMonth from 'date-fns/start_of_month'
-import subtractMonths from 'date-fns/sub_months'
-import endOfQuarter from 'date-fns/end_of_quarter'
-import startOfQuarter from 'date-fns/start_of_quarter'
-import subtractQuarters from 'date-fns/sub_quarters'
-import getQuarter from 'date-fns/get_quarter'
-import endOfYear from 'date-fns/end_of_year'
-import startOfYear from 'date-fns/start_of_year'
-import subtractYears from 'date-fns/sub_years'
+import endOfDay from 'date-fns/endOfDay'
+import startOfDay from 'date-fns/startOfDay'
+import subtractDays from 'date-fns/subDays'
+import endOfWeek from 'date-fns/endOfWeek'
+import startOfWeek from 'date-fns/startOfWeek'
+import subtractWeeks from 'date-fns/subWeeks'
+import endOfMonth from 'date-fns/endOfMonth'
+import startOfMonth from 'date-fns/startOfMonth'
+import subtractMonths from 'date-fns/subMonths'
+import endOfQuarter from 'date-fns/endOfQuarter'
+import startOfQuarter from 'date-fns/startOfQuarter'
+import subtractQuarters from 'date-fns/subQuarters'
+import getQuarter from 'date-fns/getQuarter'
+import endOfYear from 'date-fns/endOfYear'
+import startOfYear from 'date-fns/startOfYear'
+import subtractYears from 'date-fns/subYears'
 import PropTypes from 'prop-types'
 import React, { PureComponent } from 'react'
 import { injectIntl, defineMessages, intlShape } from 'react-intl'
@@ -26,8 +26,7 @@ import MenuItem from 'material-ui/MenuItem'
 import Divider from 'material-ui/Divider'
 
 // Our own imports
-import ForkedSelectField
-  from '../../components/forkedMaterialUi/ForkedSelectField'
+import ForkedSelectField from '../../components/forkedMaterialUi/ForkedSelectField'
 import styles from './DateRangeSelector.css'
 
 const messages = defineMessages({
@@ -211,18 +210,28 @@ export class DateRangeSelector extends PureComponent {
         maxDate: endOfDay(now),
       },
       {
-        label: `${formatMessage(messages.thisWeek)} (${formatDate(
-          thisWeekStart,
-          { day: '2-digit', month: '2-digit' }
-        )} - ${formatDate(thisWeekEnd, { day: '2-digit', month: '2-digit' })})`,
+        label: `${formatMessage(
+          messages.thisWeek
+        )} (${formatDate(thisWeekStart, {
+          day: '2-digit',
+          month: '2-digit',
+        })} - ${formatDate(thisWeekEnd, {
+          day: '2-digit',
+          month: '2-digit',
+        })})`,
         minDate: thisWeekStart,
         maxDate: thisWeekEnd,
       },
       {
-        label: `${formatMessage(messages.lastWeek)} (${formatDate(
-          lastWeekStart,
-          { day: '2-digit', month: '2-digit' }
-        )} - ${formatDate(lastWeekEnd, { day: '2-digit', month: '2-digit' })})`,
+        label: `${formatMessage(
+          messages.lastWeek
+        )} (${formatDate(lastWeekStart, {
+          day: '2-digit',
+          month: '2-digit',
+        })} - ${formatDate(lastWeekEnd, {
+          day: '2-digit',
+          month: '2-digit',
+        })})`,
         minDate: lastWeekStart,
         maxDate: lastWeekEnd,
       },
@@ -266,10 +275,12 @@ export class DateRangeSelector extends PureComponent {
         maxDate: endOfDay(now),
       },
       {
-        label: `${formatMessage(messages.thisMonth)} (${formatDate(
-          thisMonthStart,
-          { day: '2-digit', month: '2-digit' }
-        )} - ${formatDate(thisMonthEnd, {
+        label: `${formatMessage(
+          messages.thisMonth
+        )} (${formatDate(thisMonthStart, {
+          day: '2-digit',
+          month: '2-digit',
+        })} - ${formatDate(thisMonthEnd, {
           day: '2-digit',
           month: '2-digit',
         })})`,
@@ -277,10 +288,12 @@ export class DateRangeSelector extends PureComponent {
         maxDate: thisMonthEnd,
       },
       {
-        label: `${formatMessage(messages.lastMonth)} (${formatDate(
-          lastMonthStart,
-          { day: '2-digit', month: '2-digit' }
-        )} - ${formatDate(lastMonthEnd, {
+        label: `${formatMessage(
+          messages.lastMonth
+        )} (${formatDate(lastMonthStart, {
+          day: '2-digit',
+          month: '2-digit',
+        })} - ${formatDate(lastMonthEnd, {
           day: '2-digit',
           month: '2-digit',
         })})`,
@@ -318,10 +331,9 @@ export class DateRangeSelector extends PureComponent {
         const quarterStart = startOfQuarter(dayInQuarter)
         const quarterEnd = endOfQuarter(dayInQuarter)
         return {
-          label: `${formatMessage(messages.quarter)} ${getQuarter(dayInQuarter)} ${formatDate(
-            dayInQuarter,
-            { year: 'numeric' }
-          )}`,
+          label: `${formatMessage(messages.quarter)} ${getQuarter(
+            dayInQuarter
+          )} ${formatDate(dayInQuarter, { year: 'numeric' })}`,
           minDate: startOfDay(quarterStart),
           maxDate: endOfDay(quarterEnd),
         }
@@ -343,18 +355,16 @@ export class DateRangeSelector extends PureComponent {
     }
     return [
       {
-        label: `${formatMessage(messages.thisYear)} (${formatDate(
-          thisYearStart,
-          { year: 'numeric' }
-        )})`,
+        label: `${formatMessage(
+          messages.thisYear
+        )} (${formatDate(thisYearStart, { year: 'numeric' })})`,
         minDate: thisYearStart,
         maxDate: thisYearEnd,
       },
       {
-        label: `${formatMessage(messages.lastYear)} (${formatDate(
-          lastYearStart,
-          { year: 'numeric' }
-        )})`,
+        label: `${formatMessage(
+          messages.lastYear
+        )} (${formatDate(lastYearStart, { year: 'numeric' })})`,
         minDate: lastYearStart,
         maxDate: lastYearEnd,
       },
@@ -508,13 +518,13 @@ export class DateRangeSelector extends PureComponent {
                   autoWidth
                   onChange={this.handleDateRangeChange}
                 >
-                  {dropDownSelectItems.map(dropDownSelectItem => (
+                  {dropDownSelectItems.map(dropDownSelectItem =>
                     <MenuItem
                       key={dropDownSelectItem.minDate}
                       value={dropDownSelectItem}
                       primaryText={dropDownSelectItem.label}
                     />
-                  ))}
+                  )}
                 </ForkedSelectField>
               )
           }

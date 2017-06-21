@@ -1,6 +1,6 @@
 import { defineMessages } from 'react-intl'
 import Immutable from 'immutable'
-import differenceInMinutes from 'date-fns/difference_in_minutes'
+import differenceInMinutes from 'date-fns/differenceInMinutes'
 import { aspectFetch } from '../shared/utils/fetch'
 import {
   filterFieldsRejectedError,
@@ -108,7 +108,8 @@ export function fetchConsumableReasons(forceRefresh) {
         default: errorPleaseTryAgainInAFewMinutes(
           defineMessages({
             title: {
-              id: 'errorResponseMessages.fetchConsumableReasons.GET.default.title',
+              id:
+                'errorResponseMessages.fetchConsumableReasons.GET.default.title',
               defaultMessage: 'Loading Consumable Reasons Failed',
             },
           })

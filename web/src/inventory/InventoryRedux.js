@@ -1,7 +1,7 @@
 import { defineMessages } from 'react-intl'
 import { stringify } from 'querystring'
 import Immutable from 'immutable'
-import startOfToday from 'date-fns/start_of_today'
+import startOfToday from 'date-fns/startOfToday'
 
 import { aspectFetch } from '../shared/utils/fetch'
 import { nonEmptyFilterValue } from '../filter/utils'
@@ -121,7 +121,8 @@ export function fetchInventoryItems(
           default: errorPleaseTryAgainInAFewMinutes(
             defineMessages({
               title: {
-                id: 'errorResponseMessages.fetchInventoryItems.GET.default.title',
+                id:
+                  'errorResponseMessages.fetchInventoryItems.GET.default.title',
                 defaultMessage: 'Loading Inventory Items Failed',
               },
             })

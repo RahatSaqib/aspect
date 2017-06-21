@@ -1,7 +1,7 @@
 import { defineMessages } from 'react-intl'
 import Immutable from 'immutable'
 import { stringify } from 'querystring'
-import differenceInMinutes from 'date-fns/difference_in_minutes'
+import differenceInMinutes from 'date-fns/differenceInMinutes'
 
 import { aspectFetch } from '../shared/utils/fetch'
 import { nonEmptyFilterValue } from '../filter/utils'
@@ -144,7 +144,8 @@ export function fetchDevicesForSelectList(forceRefresh, filters) {
         default: errorPleaseTryAgainInAFewMinutes(
           defineMessages({
             title: {
-              id: 'errorResponseMessages.fetchDevicesForSelectList.GET.default.title',
+              id:
+                'errorResponseMessages.fetchDevicesForSelectList.GET.default.title',
               defaultMessage: 'Loading Devices Failed',
             },
           })
@@ -222,7 +223,8 @@ export function updateSingleDevice(deviceId, data) {
           defineMessages({
             title: {
               id: 'errorResponseMessages.updateSingleDevice.PUT.default.title',
-              defaultMessage: 'An Error Occurred When Trying to Save the Device',
+              defaultMessage:
+                'An Error Occurred When Trying to Save the Device',
             },
           })
         ),
