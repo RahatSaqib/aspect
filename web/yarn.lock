@@ -2,13 +2,13 @@
 # yarn lockfile v1
 
 
-"@vx/axis@^0.0.114":
-  version "0.0.114"
-  resolved "https://registry.yarnpkg.com/@vx/axis/-/axis-0.0.114.tgz#f8d710244bf215d7f6242bddf95e45ed3150257d"
+"@vx/axis@^0.0.119":
+  version "0.0.119"
+  resolved "https://registry.yarnpkg.com/@vx/axis/-/axis-0.0.119.tgz#21f681b42c52a8fa743c22dae9da798c9f15a9c0"
   dependencies:
     "@vx/group" "0.0.114"
     "@vx/point" "0.0.112"
-    "@vx/shape" "0.0.114"
+    "@vx/shape" "0.0.119"
     classnames "^2.2.5"
     react "^15.4.2"
 
@@ -36,21 +36,21 @@
   version "0.0.112"
   resolved "https://registry.yarnpkg.com/@vx/point/-/point-0.0.112.tgz#cd5b0740268bb432550902ad5e00261bad641cef"
 
-"@vx/scale@^0.0.114":
-  version "0.0.114"
-  resolved "https://registry.yarnpkg.com/@vx/scale/-/scale-0.0.114.tgz#6488672d9c5ea10e4f95fc2ecd3456ffdc1afe5e"
+"@vx/scale@^0.0.117":
+  version "0.0.117"
+  resolved "https://registry.yarnpkg.com/@vx/scale/-/scale-0.0.117.tgz#f0b1fe2cdb3d4292cfead57e110807f375b48b6d"
   dependencies:
     d3-scale "^1.0.5"
 
-"@vx/shape@0.0.114", "@vx/shape@^0.0.114":
-  version "0.0.114"
-  resolved "https://registry.yarnpkg.com/@vx/shape/-/shape-0.0.114.tgz#47adf9b897c3ecbe346e504ab02cfbe401538ce2"
+"@vx/shape@0.0.119", "@vx/shape@^0.0.119":
+  version "0.0.119"
+  resolved "https://registry.yarnpkg.com/@vx/shape/-/shape-0.0.119.tgz#6e74b5844de570ca79e37864de5538c43cfd851f"
   dependencies:
     "@vx/curve" "0.0.112"
     "@vx/group" "0.0.114"
     "@vx/point" "0.0.112"
     classnames "^2.2.5"
-    d3-shape "^1.0.6"
+    d3-shape "^1.2.0"
     prop-types "^15.5.10"
     react "^15.4.2"
 
@@ -1991,7 +1991,7 @@ d3-scale@^1.0.5:
     d3-time "1"
     d3-time-format "2"
 
-d3-shape@^1.0.6:
+d3-shape@^1.0.6, d3-shape@^1.2.0:
   version "1.2.0"
   resolved "https://registry.yarnpkg.com/d3-shape/-/d3-shape-1.2.0.tgz#45d01538f064bafd05ea3d6d2cb748fd8c41f777"
   dependencies:
@@ -2023,9 +2023,13 @@ dashdash@^1.12.0:
   dependencies:
     assert-plus "^1.0.0"
 
-date-fns@^1.27.2, date-fns@^1.28.3:
+date-fns@^1.27.2:
   version "1.28.5"
   resolved "https://registry.yarnpkg.com/date-fns/-/date-fns-1.28.5.tgz#257cfc45d322df45ef5658665967ee841cd73faf"
+
+date-fns@^2.0.0-alpha.1:
+  version "2.0.0-alpha.1"
+  resolved "https://registry.yarnpkg.com/date-fns/-/date-fns-2.0.0-alpha.1.tgz#f45e477cf3414269d97fb1aae899035f3b308474"
 
 date-now@^0.1.4:
   version "0.1.4"
@@ -3465,6 +3469,10 @@ immutable@^3.8.1:
   version "3.8.1"
   resolved "https://registry.yarnpkg.com/immutable/-/immutable-3.8.1.tgz#200807f11ab0f72710ea485542de088075f68cd2"
 
+import-inspector@^2.0.0:
+  version "2.0.0"
+  resolved "https://registry.yarnpkg.com/import-inspector/-/import-inspector-2.0.0.tgz#ce75fdb6a277d2800effe097e2295bc8690b2923"
+
 imurmurhash@^0.1.4:
   version "0.1.4"
   resolved "https://registry.yarnpkg.com/imurmurhash/-/imurmurhash-0.1.4.tgz#9218b9b2b928a238b13dc4fb6b6d576f231453ea"
@@ -3783,6 +3791,10 @@ is-typedarray@~1.0.0:
 is-utf8@^0.2.0:
   version "0.2.1"
   resolved "https://registry.yarnpkg.com/is-utf8/-/is-utf8-0.2.1.tgz#4b0da1442104d1b336340e80797e865cf39f7d72"
+
+is-webpack-bundle@^1.0.0:
+  version "1.0.0"
+  resolved "https://registry.yarnpkg.com/is-webpack-bundle/-/is-webpack-bundle-1.0.0.tgz#576a50bb7c53d1d6a5c1647939c93ae2cbb90eea"
 
 is-windows@^1.0.0:
   version "1.0.1"
@@ -4596,9 +4608,9 @@ marker-clusterer-plus@^2.1.4:
   version "2.1.4"
   resolved "https://registry.yarnpkg.com/marker-clusterer-plus/-/marker-clusterer-plus-2.1.4.tgz#f8eff74d599dab3b7d0e3fed5264ea0e704f5d67"
 
-material-ui@^0.17.4:
-  version "0.17.4"
-  resolved "https://registry.yarnpkg.com/material-ui/-/material-ui-0.17.4.tgz#193999ecb49c3ec15ae0abb4e90fdf9a7bd343e0"
+material-ui@^0.18.3:
+  version "0.18.3"
+  resolved "https://registry.yarnpkg.com/material-ui/-/material-ui-0.18.3.tgz#db1cf7190b322b304867e7ffb96b17ef79443bc9"
   dependencies:
     babel-runtime "^6.23.0"
     inline-style-prefixer "^3.0.2"
@@ -4606,10 +4618,9 @@ material-ui@^0.17.4:
     lodash.merge "^4.6.0"
     lodash.throttle "^4.1.1"
     prop-types "^15.5.7"
-    react-addons-create-fragment "^15.4.0"
-    react-addons-transition-group "^15.4.0"
     react-event-listener "^0.4.5"
-    recompose "^0.23.0"
+    react-transition-group "^1.1.2"
+    recompose "0.23.4"
     simple-assign "^0.1.0"
     warning "^3.0.0"
 
@@ -5328,9 +5339,9 @@ pinkie@^2.0.0:
   version "2.0.4"
   resolved "https://registry.yarnpkg.com/pinkie/-/pinkie-2.0.4.tgz#72556b80cfa0d48a974e80e77248e80ed4f7f870"
 
-piwik-react-router@^0.7.1:
-  version "0.7.1"
-  resolved "https://registry.yarnpkg.com/piwik-react-router/-/piwik-react-router-0.7.1.tgz#a9e75acec5e6322e9cec182d4ed3a7e1c60135b8"
+piwik-react-router@^0.8.2:
+  version "0.8.2"
+  resolved "https://registry.yarnpkg.com/piwik-react-router/-/piwik-react-router-0.8.2.tgz#0147abf74a9b885c81d22397faad37002beca453"
   dependencies:
     url-join "^1.1.0"
     warning "^3.0.0"
@@ -5833,26 +5844,12 @@ rc@^1.1.7:
     minimist "^1.2.0"
     strip-json-comments "~2.0.1"
 
-react-addons-create-fragment@^15.4.0:
-  version "15.6.0"
-  resolved "https://registry.yarnpkg.com/react-addons-create-fragment/-/react-addons-create-fragment-15.6.0.tgz#af91a22b1fb095dd01f1afba43bfd0ef589d8b20"
-  dependencies:
-    fbjs "^0.8.4"
-    loose-envify "^1.3.1"
-    object-assign "^4.1.0"
-
 react-addons-shallow-compare@^15.0.2:
   version "15.6.0"
   resolved "https://registry.yarnpkg.com/react-addons-shallow-compare/-/react-addons-shallow-compare-15.6.0.tgz#b7a4e5ff9f2704c20cf686dd8a05dd08b26de252"
   dependencies:
     fbjs "^0.8.4"
     object-assign "^4.1.0"
-
-react-addons-transition-group@^15.4.0:
-  version "15.6.0"
-  resolved "https://registry.yarnpkg.com/react-addons-transition-group/-/react-addons-transition-group-15.6.0.tgz#0f220b9f9597db3a80a88dbd6fe805fc644ce21c"
-  dependencies:
-    react-transition-group "^1.2.0"
 
 react-cookie@1.0.4:
   version "1.0.4"
@@ -5945,11 +5942,13 @@ react-intl@^2.2.3:
     intl-relativeformat "^1.3.0"
     invariant "^2.1.1"
 
-react-loadable@^3.3.1:
-  version "3.3.1"
-  resolved "https://registry.yarnpkg.com/react-loadable/-/react-loadable-3.3.1.tgz#91310f1c2adcc73ce944380ee9529f5d33e100d3"
+react-loadable@^4.0.3:
+  version "4.0.3"
+  resolved "https://registry.yarnpkg.com/react-loadable/-/react-loadable-4.0.3.tgz#296c5cdfba3d402d66d2120d52fc08c2ca1f3088"
   dependencies:
-    babel-plugin-syntax-dynamic-import "^6.18.0"
+    import-inspector "^2.0.0"
+    is-webpack-bundle "^1.0.0"
+    webpack-require-weak "^1.0.0"
 
 react-prop-types-element-of-type@^2.2.0:
   version "2.2.0"
@@ -6020,7 +6019,7 @@ react-test-renderer@^15.5.4:
     fbjs "^0.8.9"
     object-assign "^4.1.0"
 
-react-transition-group@^1.2.0:
+react-transition-group@^1.1.2:
   version "1.2.0"
   resolved "https://registry.yarnpkg.com/react-transition-group/-/react-transition-group-1.2.0.tgz#b51fc921b0c3835a7ef7c571c79fc82c73e9204f"
   dependencies:
@@ -6128,7 +6127,16 @@ rechoir@^0.6.2:
   dependencies:
     resolve "^1.1.6"
 
-recompose@^0.23.0, recompose@^0.23.1:
+recompose@0.23.4:
+  version "0.23.4"
+  resolved "https://registry.yarnpkg.com/recompose/-/recompose-0.23.4.tgz#af09e4e08424effa449c9b793037166f7b30644a"
+  dependencies:
+    change-emitter "^0.1.2"
+    fbjs "^0.8.1"
+    hoist-non-react-statics "^1.0.0"
+    symbol-observable "^1.0.4"
+
+recompose@^0.23.1:
   version "0.23.5"
   resolved "https://registry.yarnpkg.com/recompose/-/recompose-0.23.5.tgz#72ac8261246bec378235d187467d02a721e8b1de"
   dependencies:
@@ -7401,6 +7409,12 @@ webpack-manifest-plugin@^1.0.1:
   dependencies:
     fs-extra "^0.30.0"
     lodash ">=3.5 <5"
+
+webpack-require-weak@^1.0.0:
+  version "1.0.1"
+  resolved "https://registry.yarnpkg.com/webpack-require-weak/-/webpack-require-weak-1.0.1.tgz#a6a8e60871bebbe5b085a915ab0af633a412433f"
+  dependencies:
+    is-webpack-bundle "^1.0.0"
 
 webpack-sources@^0.1.0:
   version "0.1.5"
