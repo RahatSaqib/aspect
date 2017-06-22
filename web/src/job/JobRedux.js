@@ -1,15 +1,15 @@
 import { defineMessages } from 'react-intl'
 import _ from 'lodash'
 import Immutable from 'immutable'
-import differenceInMinutes from 'date-fns/difference_in_minutes'
+import differenceInMinutes from 'date-fns/differenceInMinutes'
 import { aspectFetch } from '../shared/utils/fetch'
-import {
-  errorPleaseTryAgainInAFewMinutes,
-} from '../error/CommonErrorNotifications'
+import { errorPleaseTryAgainInAFewMinutes } from '../error/CommonErrorNotifications'
 
 export const types = {
-  REQUEST_PARTNERS_AND_JOB_FUNCTIONS_FOR_SELECT_LIST: 'REQUEST_PARTNERS_AND_JOB_FUNCTIONS_FOR_SELECT_LIST',
-  RECEIVE_PARTNERS_AND_JOB_FUNCTIONS_FOR_SELECT_LIST: 'RECEIVE_PARTNERS_AND_JOB_FUNCTIONS_FOR_SELECT_LIST',
+  REQUEST_PARTNERS_AND_JOB_FUNCTIONS_FOR_SELECT_LIST:
+    'REQUEST_PARTNERS_AND_JOB_FUNCTIONS_FOR_SELECT_LIST',
+  RECEIVE_PARTNERS_AND_JOB_FUNCTIONS_FOR_SELECT_LIST:
+    'RECEIVE_PARTNERS_AND_JOB_FUNCTIONS_FOR_SELECT_LIST',
 }
 
 /*
@@ -48,7 +48,8 @@ export function fetchPartnersAndJobFunctionsForSelectList(forceRefresh) {
         default: errorPleaseTryAgainInAFewMinutes(
           defineMessages({
             title: {
-              id: 'errorResponseMessages.fetchPartnersAndJobFunctionsForSelectList.GET.default.title',
+              id:
+                'errorResponseMessages.fetchPartnersAndJobFunctionsForSelectList.GET.default.title',
               defaultMessage: 'Error Loading Partners And Job Functions',
             },
           })

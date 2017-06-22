@@ -1,8 +1,8 @@
 import isPromise from 'is-promise'
 import _fp from 'lodash/fp'
 import { PureComponent } from 'react'
-import createHelper from 'recompose/createHelper'
 import createEagerFactory from 'recompose/createEagerFactory'
+import wrapDisplayName from 'recompose/wrapDisplayName'
 
 export const normalChangeEventReader = event => event.target.value
 
@@ -131,6 +131,8 @@ const recomposeForm = ({
   const factory = createEagerFactory(BaseComponent)
 
   return class extends PureComponent {
+    static displayName = wrapDisplayName(BaseComponent, 'recomposeForm')
+
     constructor(...args) {
       super(...args)
 
@@ -208,4 +210,4 @@ const recomposeForm = ({
   }
 }
 
-export default createHelper(recomposeForm, 'recomposeForm')
+export default recomposeForm

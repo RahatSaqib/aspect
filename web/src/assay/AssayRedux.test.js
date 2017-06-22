@@ -1,4 +1,4 @@
-import subMinutes from 'date-fns/sub_minutes'
+import subMinutes from 'date-fns/subMinutes'
 
 describe('AssayRedux module', () => {
   let fetchStub

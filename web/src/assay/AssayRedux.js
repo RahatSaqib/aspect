@@ -1,6 +1,6 @@
 import { defineMessages } from 'react-intl'
 import Immutable from 'immutable'
-import differenceInMinutes from 'date-fns/difference_in_minutes'
+import differenceInMinutes from 'date-fns/differenceInMinutes'
 import { aspectFetch } from '../shared/utils/fetch'
 import {
   filterFieldsRejectedError,

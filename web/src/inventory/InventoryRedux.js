@@ -1,7 +1,7 @@
 import { defineMessages } from 'react-intl'
 import { stringify } from 'querystring'
 import Immutable from 'immutable'
-import startOfToday from 'date-fns/start_of_today'
+import startOfDay from 'date-fns/startOfDay'
 
 import { aspectFetch } from '../shared/utils/fetch'
 import { nonEmptyFilterValue } from '../filter/utils'
@@ -121,7 +121,8 @@ export function fetchInventoryItems(
           default: errorPleaseTryAgainInAFewMinutes(
             defineMessages({
               title: {
-                id: 'errorResponseMessages.fetchInventoryItems.GET.default.title',
+                id:
+                  'errorResponseMessages.fetchInventoryItems.GET.default.title',
                 defaultMessage: 'Loading Inventory Items Failed',
               },
             })
@@ -165,6 +166,7 @@ function startReceivingInventory(details) {
 }
 
 export function adjustInventoryLevels(operation, inventoryItem) {
+  const today = startOfDay(new Date())
   const expiresOn = inventoryItem.get('expiresOn')
   const adjustmentDetails = {
     inventoryItemId: inventoryItem.get('id'),
@@ -177,9 +179,9 @@ export function adjustInventoryLevels(operation, inventoryItem) {
     quantityOnHand: inventoryItem.get('quantityOnHand'),
     unitShortName: inventoryItem.get('unitShortName'),
     notes: '',
-    dateAdjusted: startOfToday(),
-    dateAdjustedFrom: startOfToday(),
-    dateAdjustedTo: startOfToday(),
+    dateAdjusted: today,
+    dateAdjustedFrom: today,
+    dateAdjustedTo: today,
     toSiteId: -1,
     fromSiteId: -1,
     reasonId: -1,
@@ -219,7 +221,8 @@ export function adjustInventoryLevels(operation, inventoryItem) {
 }
 
 export function changeAdjustmentConsumable(consumable) {
-  const expiresOn = startOfToday()
+  const today = startOfDay(new Date())
+  const expiresOn = today
   const adjustmentConsumableDetails = {
     consumableId: consumable.get('id'),
     expiresOn: consumable.get('canExpire') === 1
@@ -237,10 +240,11 @@ export function changeAdjustmentConsumable(consumable) {
 }
 
 export function addInventoryItem() {
+  const today = startOfDay(new Date())
   const adjustmentDetails = {
     inventoryItemId: -1,
     consumableId: -1,
-    expiresOn: startOfToday(),
+    expiresOn: today,
     canExpire: true,
     lotNumber: undefined,
     consumableName: undefined,
@@ -248,9 +252,9 @@ export function addInventoryItem() {
     quantityOnHand: 0,
     unitShortName: 'pc',
     notes: '',
-    dateAdjusted: startOfToday(),
-    dateAdjustedFrom: startOfToday(),
-    dateAdjustedTo: startOfToday(),
+    dateAdjusted: today,
+    dateAdjustedFrom: today,
+    dateAdjustedTo: today,
     toSiteId: -1,
     fromSiteId: -1,
     reasonId: -1,
@@ -410,6 +414,7 @@ export function receiveInventory(inventoryItemId, data) {
 /*
  * ---------------- Reducers -----------------
  */
+const today = startOfDay(new Date())
 export const AdjustmentDetails = Immutable.Record({
   inventoryItemId: null,
   consumableId: null,
@@ -421,9 +426,9 @@ export const AdjustmentDetails = Immutable.Record({
   quantityOnHand: 0,
   unitShortName: 0,
   notes: '',
-  dateAdjusted: startOfToday(),
-  dateAdjustedFrom: startOfToday(),
-  dateAdjustedTo: startOfToday(),
+  dateAdjusted: today,
+  dateAdjustedFrom: today,
+  dateAdjustedTo: today,
   toSiteId: -1,
   fromSiteId: -1,
   reasonId: -1,
