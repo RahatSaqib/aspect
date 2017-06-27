@@ -1,5 +1,4 @@
 import { defineMessages } from 'react-intl'
-import { stringify } from 'querystring'
 import Immutable from 'immutable'
 import jwtDecode from 'jwt-decode'
 import { SubmissionError } from 'redux-form/immutable'
@@ -23,7 +22,8 @@ export const types = {
   CHANGE_CULTURE: 'CHANGE_CULTURE',
   TOGGLE_DRAWER: 'TOGGLE_DRAWER',
   CHANGE_TIMEZONE: 'CHANGE_TIMEZONE',
-  RESET_PASSWORD_ENTER_PASSWORD_SUCCESS: 'RESET_PASSWORD_ENTER_PASSWORD_SUCCESS',
+  RESET_PASSWORD_ENTER_PASSWORD_SUCCESS:
+    'RESET_PASSWORD_ENTER_PASSWORD_SUCCESS',
 }
 /*
  * ---------------- Action Creators -----------------
@@ -126,7 +126,8 @@ export function loginStart(login) {
 
     // In this case, we return a promise to wait for.
     // This is not required by thunk middleware, but it is convenient for us.
-    const clientName = `${getBrowserNameAndVersion()} on ${window.navigator.platform}`
+    const clientName = `${getBrowserNameAndVersion()} on ${window.navigator
+      .platform}`
 
     return aspectFetch('/auth', {
       method: 'POST',
@@ -143,16 +144,20 @@ export function loginStart(login) {
             severity: 'warn',
             ...defineMessages({
               title: {
-                id: 'errorResponseMessages.loginStart.POST.401.accountLocked.title',
+                id:
+                  'errorResponseMessages.loginStart.POST.401.accountLocked.title',
                 defaultMessage: 'Login Failed',
               },
               message: {
-                id: 'errorResponseMessages.loginStart.POST.401.accountLocked.message',
+                id:
+                  'errorResponseMessages.loginStart.POST.401.accountLocked.message',
                 defaultMessage: 'Your user account has been locked',
               },
               resolution: {
-                id: 'errorResponseMessages.loginStart.POST.401.accountLocked.resolution',
-                defaultMessage: 'You can contact us to unlock your account for you, either by email ({supportEmail}) or by telephone ({supportTelephone})',
+                id:
+                  'errorResponseMessages.loginStart.POST.401.accountLocked.resolution',
+                defaultMessage:
+                  'You can contact us to unlock your account for you, either by email ({supportEmail}) or by telephone ({supportTelephone})',
               },
             }),
             messageValues: {
@@ -164,16 +169,20 @@ export function loginStart(login) {
             severity: 'warn',
             ...defineMessages({
               title: {
-                id: 'errorResponseMessages.loginStart.POST.default.default.title',
+                id:
+                  'errorResponseMessages.loginStart.POST.default.default.title',
                 defaultMessage: 'Login Failed',
               },
               message: {
-                id: 'errorResponseMessages.loginStart.POST.default.default.message',
-                defaultMessage: 'The details that you have entered are incorrect',
+                id:
+                  'errorResponseMessages.loginStart.POST.default.default.message',
+                defaultMessage:
+                  'The details that you have entered are incorrect',
               },
               resolution: {
                 id: 'errorResponseMessages.loginStart.POST.default.resolution',
-                defaultMessage: 'Please re-enter your login details and try again?',
+                defaultMessage:
+                  'Please re-enter your login details and try again?',
               },
             }),
           },
@@ -203,6 +212,24 @@ export function loginStart(login) {
   }
 }
 
+export function navigateRoot() {
+  return function() {
+    history.push('/')
+  }
+}
+
+export function goToExternalHelp() {
+  return function() {
+    window.location.href = 'https://admin.gxalert.com'
+  }
+}
+
+export function navigateCurrentAccountDetails() {
+  return function() {
+    history.push('/account-details/current')
+  }
+}
+
 export function logoutStart(reason) {
   return function(dispatch) {
     // remove access and refresh tokens
@@ -212,9 +239,14 @@ export function logoutStart(reason) {
     dispatch(logoutSuccess())
 
     // now, redirect to login page
-    history.push(
-      `/login${typeof reason === 'string' ? `?${stringify({ reason })}` : ''}`
-    )
+    const query = {}
+    if (typeof reason === 'string') {
+      query.reason = reason
+    }
+    history.push({
+      pathname: '/login',
+      query,
+    })
   }
 }
 
@@ -270,7 +302,8 @@ function createResetPasswordEnterPasswordSuccess(username) {
 
 export function resetPasswordEnterEmailAddress(emailAddress) {
   return function() {
-    const clientName = `${getBrowserNameAndVersion()} on ${window.navigator.platform}`
+    const clientName = `${getBrowserNameAndVersion()} on ${window.navigator
+      .platform}`
     return aspectFetch(`/auth/send-reset-password-token/${emailAddress}`, {
       method: 'POST',
       headers: getHeaders(),
@@ -282,7 +315,8 @@ export function resetPasswordEnterEmailAddress(emailAddress) {
         default: inlineErrorPleaseTryAgainInAFewMinutes(
           defineMessages({
             title: {
-              id: 'errorResponseMessages.resetPasswordEnterEmailAddress.POST.default.title',
+              id:
+                'errorResponseMessages.resetPasswordEnterEmailAddress.POST.default.title',
               defaultMessage: 'Error Sending Reset Password Email',
             },
           })
@@ -296,7 +330,8 @@ export function resetPasswordEnterEmailAddress(emailAddress) {
 
 export function resetPasswordEnterPassword(resetPasswordToken, newPassword) {
   return function(dispatch) {
-    const clientName = `${getBrowserNameAndVersion()} on ${window.navigator.platform}`
+    const clientName = `${getBrowserNameAndVersion()} on ${window.navigator
+      .platform}`
     return aspectFetch(`/auth/update-password/${resetPasswordToken}`, {
       method: 'PUT',
       headers: getHeaders(),
@@ -309,7 +344,8 @@ export function resetPasswordEnterPassword(resetPasswordToken, newPassword) {
         default: inlineErrorPleaseTryAgainInAFewMinutes(
           defineMessages({
             title: {
-              id: 'errorResponseMessages.resetPasswordEnterPassword.POST.default.title',
+              id:
+                'errorResponseMessages.resetPasswordEnterPassword.POST.default.title',
               defaultMessage: 'Error Saving New Password',
             },
           })

@@ -101,7 +101,7 @@ export class SiteList extends PureComponent {
   }
 
   handleItemIdSelection = siteId => {
-    this.props.history.push(`/site/${siteId}`)
+    this.props.history.push(`/browse/site/${siteId}`)
   }
 
   render() {

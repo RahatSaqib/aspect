@@ -129,7 +129,7 @@ export class RouterList extends PureComponent {
   }
 
   handleItemIdSelection = routerId => {
-    this.props.history.push(`/router/${routerId}`)
+    this.props.history.push(`/browse/router/${routerId}`)
   }
 
   handleFetch = (...args) => {

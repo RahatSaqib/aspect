@@ -1,0 +1,33 @@
+@import '../variables.css';
+
+.NavigationGroup--xs {
+  composes: pure-visible-xs from '../../components/pureGrids/pure-grids-responsive-min.css';
+
+}
+
+.NavigationGroup--sm {
+  composes: pure-hidden-xs from '../../components/pureGrids/pure-grids-responsive-min.css';
+  /* TODO: extract horizontal padding out for all BrowseLayout content */
+  padding: 20px 10px;
+}
+
+.Button--raised {
+  font-weight: var(--lato-font-weight-bold);
+  margin: 0 5px;
+}
+
+.NavigationGroup--sm > .Button--raised:first-child {
+  margin-left: 0;
+}
+
+.NavigationGroup--sm > .Button--raised:last-child {
+  margin-right: 0;
+}
+
+.Button--neutral:not([disabled]).Button--raised {
+  color: var(--aspect-color-chill-blue-1);
+}
+
+.Button--primary:not([disabled]).Button--raised {
+  background-color: var(--aspect-color-chill-blue-1);
+}

@@ -93,7 +93,7 @@ export class PersonList extends PureComponent {
   }
 
   handleItemIdSelection = personId => {
-    this.props.history.push(`/person/${personId}`)
+    this.props.history.push(`/browse/person/${personId}`)
   }
 
   handleFetch = (...args) => {

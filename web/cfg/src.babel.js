@@ -2,6 +2,8 @@ import path from 'path'
 import invariant from 'invariant'
 import webpack from 'webpack'
 import pxToRem from 'postcss-pxtorem'
+import cssImport from 'postcss-import'
+import cssNext from 'postcss-cssnext'
 import ExtractTextPlugin from 'extract-text-webpack-plugin'
 import CaseSensitivePathsPlugin from 'case-sensitive-paths-webpack-plugin'
 import ManifestPlugin from 'webpack-manifest-plugin'
@@ -14,7 +16,11 @@ const postcssPlugins = () => ([
   pxToRem({
     // See available options: https://github.com/cuth/postcss-pxtorem#options
     rootValue: 16
-  })
+  }),
+  cssImport(),
+  cssNext({
+    browsers: ['> 1%', 'last 2 versions'],
+  }),
 ])
 
 export default (env) => {
@@ -130,6 +136,7 @@ export default (env) => {
                 options: {
                   sourceMap: isProduction,
                   modules: true,
+                  localIdentName: '[name]--[local]--[hash:base64:8]',
                   importLoaders: 1
                 }
               },

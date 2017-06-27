@@ -44,7 +44,7 @@ export default {
     // disabledTextColor: palette.disabledColor,
     borderColor: grey400,
   },
-  fontFamily: 'Roboto, sans-serif',
+  fontFamily: 'Lato, sans-serif',
   palette: {
     primary1Color: lightGreen600,
     primary2Color: lightGreen700,
