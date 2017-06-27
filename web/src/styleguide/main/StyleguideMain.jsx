@@ -7,6 +7,7 @@ import { injectIntl, defineMessages, intlShape } from 'react-intl'
 import Helmet from 'react-helmet'
 
 // Our own imports
+import FallbackUntilDone from '../../components/shared/FallbackUntilDone'
 import CountrySelectField from '../../filter/geography/CountrySelectField'
 import StateSelectField from '../../filter/geography/StateSelectField'
 import LgaSelectField from '../../filter/geography/LgaSelectField'
@@ -72,8 +73,22 @@ export class StyleguideMain extends PureComponent {
           defaultTitle="Aspect"
         />
         <h1>Styleguide</h1>
+        <FallbackUntilDone
+          fallbacks={[
+            { style: { width: '100px' } },
+            { style: { width: '200px' } },
+            { style: { width: '300px' } },
+          ]}
+          isDone={node => node.getBoundingClientRect().width >= 400}
+        >
+          <div>
+            98tyfchgvjbknl
+          </div>
+        </FallbackUntilDone>
         <ListFilter
           intl={intl}
+          askExportConfirmation={_.noop}
+          closeExportConfirmation={_.noop}
           onClearFilter={_.noop}
           onChangeFilter={this.handleChangeFilter}
           listFilter={Immutable.fromJS(this.state.filter)}
