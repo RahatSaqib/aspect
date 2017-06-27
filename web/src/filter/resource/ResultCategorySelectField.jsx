@@ -16,7 +16,7 @@ export class ResultCategorySelectField extends PureComponent {
   static propTypes = {
     allItemText: PropTypes.string,
     fetchAssays: PropTypes.func.isRequired,
-    assayItems: PropTypes.instanceOf(Immutable).isRequired,
+    assayItems: PropTypes.instanceOf(Immutable.List).isRequired,
     assayId: PropTypes.string,
     onResultCategoryChange: PropTypes.func.isRequired,
     value: PropTypes.string,
