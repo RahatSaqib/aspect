@@ -138,6 +138,7 @@ export class DateRangeSelector extends PureComponent {
     onChangeDate: PropTypes.func.isRequired,
     floatingLabelText: PropTypes.string.isRequired,
     datePickerContainer: PropTypes.oneOf(['dialog', 'inline']).isRequired,
+    controlClassName: PropTypes.string.isRequired,
     minDate: PropTypes.string,
     maxDate: PropTypes.string,
   }
@@ -419,6 +420,7 @@ export class DateRangeSelector extends PureComponent {
       intl: { formatMessage },
       floatingLabelText,
       datePickerContainer,
+      controlClassName,
     } = this.props
 
     const dropDownSelectItems = {
@@ -449,6 +451,7 @@ export class DateRangeSelector extends PureComponent {
     const restProps = _.omit(this.props, [
       'floatingLabelText',
       'datePickerContainer',
+      'controlClassName',
       'clearButtonTooltip',
       'onChangeDate',
       'minDate',
@@ -457,31 +460,36 @@ export class DateRangeSelector extends PureComponent {
     ])
     return (
       <div className={styles.DateRangeSelector}>
-        <ForkedSelectField
-          className={styles.DateRangeSelector__RangeModeSelector}
-          floatingLabelText={floatingLabelText}
-          floatingLabelFixed
-          hintText={dropDownListHintText}
-          value={this.state.rangeMode}
-          onChange={this.handleRangeModeChange}
-          menuStyle={{ minWidth: '7em' }}
-        >
-          <MenuItem value="any" primaryText={formatMessage(messages.any)} />
-          <Divider />
-          <MenuItem value="day" primaryText={formatMessage(messages.day)} />
-          <MenuItem value="week" primaryText={formatMessage(messages.week)} />
-          <MenuItem value="month" primaryText={formatMessage(messages.month)} />
-          <MenuItem
-            value="quarter"
-            primaryText={formatMessage(messages.quarter)}
-          />
-          <MenuItem value="year" primaryText={formatMessage(messages.year)} />
-          <Divider />
-          <MenuItem
-            value="custom"
-            primaryText={formatMessage(messages.custom)}
-          />
-        </ForkedSelectField>
+        <div className={controlClassName}>
+          <ForkedSelectField
+            className={styles.DateRangeSelector__RangeModeSelector}
+            floatingLabelText={floatingLabelText}
+            floatingLabelFixed
+            hintText={dropDownListHintText}
+            value={this.state.rangeMode}
+            onChange={this.handleRangeModeChange}
+            menuStyle={{ minWidth: '7em' }}
+          >
+            <MenuItem value="any" primaryText={formatMessage(messages.any)} />
+            <Divider />
+            <MenuItem value="day" primaryText={formatMessage(messages.day)} />
+            <MenuItem value="week" primaryText={formatMessage(messages.week)} />
+            <MenuItem
+              value="month"
+              primaryText={formatMessage(messages.month)}
+            />
+            <MenuItem
+              value="quarter"
+              primaryText={formatMessage(messages.quarter)}
+            />
+            <MenuItem value="year" primaryText={formatMessage(messages.year)} />
+            <Divider />
+            <MenuItem
+              value="custom"
+              primaryText={formatMessage(messages.custom)}
+            />
+          </ForkedSelectField>
+        </div>
         {(() => {
           switch (this.state.rangeMode) {
             case 'any':
@@ -493,7 +501,7 @@ export class DateRangeSelector extends PureComponent {
                     {...restProps}
                     floatingLabelText=" "
                     floatingLabelFixed
-                    className={styles.DateRangeSelector__DatePicker}
+                    className={controlClassName}
                     value={this.getMinDate()}
                     onChange={this.handleMinDateChange}
                     hintText={formatMessage(messages.fromDate)}
@@ -504,7 +512,7 @@ export class DateRangeSelector extends PureComponent {
                     {..._.omit(restProps, 'floatingLabelText')}
                     floatingLabelText=" "
                     floatingLabelFixed
-                    className={styles.DateRangeSelector__DatePicker}
+                    className={controlClassName}
                     value={this.getMaxDate()}
                     onChange={this.handleMaxDateChange}
                     hintText={formatMessage(messages.toDate)}
@@ -515,23 +523,25 @@ export class DateRangeSelector extends PureComponent {
               )
             default:
               return (
-                <ForkedSelectField
-                  className={styles.DateRangeSelector__DropDownList}
-                  floatingLabelText=" "
-                  floatingLabelFixed
-                  hintText={dropDownListHintText}
-                  value={selectedValue}
-                  autoWidth
-                  onChange={this.handleDateRangeChange}
-                >
-                  {dropDownSelectItems.map(dropDownSelectItem =>
-                    <MenuItem
-                      key={dropDownSelectItem.minDate}
-                      value={dropDownSelectItem}
-                      primaryText={dropDownSelectItem.label}
-                    />
-                  )}
-                </ForkedSelectField>
+                <div className={controlClassName}>
+                  <ForkedSelectField
+                    className={styles.DateRangeSelector__DropDownList}
+                    floatingLabelText=" "
+                    floatingLabelFixed
+                    hintText={dropDownListHintText}
+                    value={selectedValue}
+                    autoWidth
+                    onChange={this.handleDateRangeChange}
+                  >
+                    {dropDownSelectItems.map(dropDownSelectItem =>
+                      <MenuItem
+                        key={dropDownSelectItem.minDate}
+                        value={dropDownSelectItem}
+                        primaryText={dropDownSelectItem.label}
+                      />
+                    )}
+                  </ForkedSelectField>
+                </div>
               )
           }
         })()}

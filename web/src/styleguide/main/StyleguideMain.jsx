@@ -12,6 +12,7 @@ import CountrySelectField from '../../filter/geography/CountrySelectField'
 import StateSelectField from '../../filter/geography/StateSelectField'
 import LgaSelectField from '../../filter/geography/LgaSelectField'
 import { ListFilter } from '../../filter/list/ListFilter'
+import FiltersPanel from '../../filter/popover/FiltersPanel'
 import styles from './StyleguideMain.css'
 
 const messages = defineMessages({
@@ -46,7 +47,12 @@ export class StyleguideMain extends PureComponent {
   }
 
   handleChangeFilter = filter => {
-    this.setState({ filter })
+    this.setState(state => ({
+      filter: {
+        ...state.filter,
+        ...filter,
+      },
+    }))
   }
 
   handleChangeCountry = countryId => {
@@ -106,6 +112,38 @@ export class StyleguideMain extends PureComponent {
             contactNameOrEmail: true,
           }}
         />
+        <div style={{ display: 'flex', justifyContent: 'flex-end' }}>
+          <FiltersPanel
+            intl={intl}
+            onClearFilter={_.noop}
+            onChangeFilter={this.handleChangeFilter}
+            filters={this.state.filter}
+            config={{
+              assayAndResultCategory: true,
+              geography: true,
+              state: true, // under geography, optional
+              lga: true, // under geography, optional
+              date: true,
+              partnerId: true,
+              patientOrResearchId: true,
+              sampleId: true,
+              sampleGroup: true,
+              deviceName: true,
+              siteName: true,
+              sampleOriginSite: true,
+              contactNameOrEmail: true,
+              consumable: true,
+              workflowStatus: true,
+              deviceStatus: true,
+              externalId: true,
+            }}
+            contentClassName={styles.FiltersPanel__Content}
+            filterTemplate={formatMessage(messages.filterTemplate)}
+            filterTemplateOptional={formatMessage(
+              messages.filterTemplateOptional
+            )}
+          />
+        </div>
         <CountrySelectField
           onChangeCountry={this.handleChangeCountry}
           countryId={this.state.countryId}
