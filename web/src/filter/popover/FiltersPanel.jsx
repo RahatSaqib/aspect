@@ -305,6 +305,7 @@ const messages = defineMessages({
 
 export const FiltersPanel = ({
   intl: { formatMessage },
+  className,
   contentClassName,
 
   filters,
@@ -327,7 +328,7 @@ export const FiltersPanel = ({
   onWorkflowStatusIdChange,
   onDeviceStatusIdChange,
 }) =>
-  <div className={cssClasses('Container')}>
+  <div className={cssClasses('Container', className)}>
     <Button
       primary
       onClick={onToggleShown}
