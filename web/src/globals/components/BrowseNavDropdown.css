@@ -1,0 +1,17 @@
+@import '../../globals/variables.css';
+
+.input__input {
+  padding: 0;
+}
+
+.input__input::after {
+  border-top-color: #ffffff;
+}
+
+.input__inputElement {
+  padding: 8px 12px;
+  font-weight: var(--lato-font-weight-bold);
+  color: #ffffff;
+  background-color: var(--aspect-color-chill-blue-1);
+  border-radius: 4px;
+}

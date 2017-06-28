@@ -8,7 +8,6 @@ import history from '../history'
 // "Layouts"
 import PlainLayout from './layouts/PlainLayout'
 import LoggedInLayout from './layouts/LoggedInLayout'
-import BrowseLayout from './layouts/BrowseLayout'
 
 // "Pages"
 import Index from './components/Index'
@@ -101,58 +100,58 @@ const Routes = () =>
 
       <Redirect exact path="/browse" to="/browse/device" />
 
-      <BrowseLayout exact path="/browse/device" component={DeviceList} />
+      <LoggedInLayout exact path="/browse/device" component={DeviceList} />
       <LoggedInLayout
         path="/browse/device/:deviceId"
         component={DeviceDetail}
       />
 
-      <BrowseLayout
+      <LoggedInLayout
         exact
         path="/browse/deviceApiKey"
         component={DeviceApiKeyList}
       />
 
-      <BrowseLayout exact path="/browse/router" component={RouterList} />
+      <LoggedInLayout exact path="/browse/router" component={RouterList} />
       <LoggedInLayout
         path="/browse/router/:routerId"
         component={RouterDetail}
       />
 
-      <BrowseLayout exact path="/browse/terminal" component={TerminalList} />
+      <LoggedInLayout exact path="/browse/terminal" component={TerminalList} />
       <LoggedInLayout
         path="/browse/terminal/:terminalId"
         component={TerminalDetail}
       />
 
-      <BrowseLayout exact path="/browse/result" component={ResultList} />
+      <LoggedInLayout exact path="/browse/result" component={ResultList} />
       <LoggedInLayout
         path="/browse/result/:resultId"
         component={ResultDetail}
       />
 
-      <BrowseLayout exact path="/browse/site" component={SiteList} />
+      <LoggedInLayout exact path="/browse/site" component={SiteList} />
       <LoggedInLayout path="/browse/site/:siteId" component={SiteDetail} />
 
-      <BrowseLayout exact path="/browse/person" component={PersonList} />
+      <LoggedInLayout exact path="/browse/person" component={PersonList} />
       <LoggedInLayout
         path="/browse/person/:personId"
         component={PersonDetail}
       />
 
-      <BrowseLayout
+      <LoggedInLayout
         exact
         path="/browse/inventory"
         component={InventoryItemsList}
       />
 
-      <BrowseLayout
+      <LoggedInLayout
         exact
         path="/browse/notification"
         component={NotificationList}
       />
 
-      <BrowseLayout exact path="/browse/report" component={ReportList} />
+      <LoggedInLayout exact path="/browse/report" component={ReportList} />
 
       {process.env.NODE_ENV !== 'production' &&
         <PlainLayout path="/styleguide" component={StyleguideMain} />}
