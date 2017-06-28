@@ -1,8 +1,9 @@
 /*pre-login background */
+@import '../../globals/variables.css';
 .PreLogin__Background {
   height: 100%;
   /*This makes the top half of the screen green and bottom half in gray*/
-  background: linear-gradient(180deg, #7cb342 10%, transparent 80%);
+  background: var(--aspect-color-grey-7);
   padding-top: 15%;
 }
 

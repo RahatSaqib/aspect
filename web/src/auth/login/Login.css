@@ -1,6 +1,19 @@
 /*Login page styles*/
+
+@import '../../globals/variables.css';
 .Background {
   composes: PreLogin__Background from '../../components/shared/Shared.css';
+}
+.Button__raised {
+  font-weight: var(--lato-font-weight-bold);
+  margin: 0 5px;
+}
+.Button__neutral:not([disabled]).Button__raised {
+  color: var(--aspect-color-chill-blue-1);
+}
+
+.Button__primary:not([disabled]).Button__raised {
+  background-color: var(--aspect-color-chill-blue-1);
 }
 
 .Content {

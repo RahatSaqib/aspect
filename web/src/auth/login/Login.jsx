@@ -9,18 +9,21 @@ import Helmet from 'react-helmet'
 import { injectIntl, defineMessages, intlShape } from 'react-intl'
 import { Link } from 'react-router-dom'
 
+// React Toolbox
+import { Button } from 'react-toolbox/lib/button'
+import { Card } from 'react-toolbox/lib/card'
+import { ProgressBar } from 'react-toolbox/lib/progress_bar'
+
 // Material-UI
-import Paper from 'material-ui/Paper'
-import LinearProgress from 'material-ui/LinearProgress'
-import RaisedButton from 'material-ui/RaisedButton'
+// import LinearProgress from 'material-ui/LinearProgress'
+// import RaisedButton from 'material-ui/RaisedButton'
 
 // Our own imports
 import { Unit } from '../../components/pureGrids'
 import TextInput from '../../components/shared/TextInput'
 import { loginStart } from '../AuthRedux'
 import styles from './Login.css'
-import AppNotificationSnackBar
-  from '../../appNotification/AppNotificationSnackBar'
+import AppNotificationSnackBar from '../../appNotification/AppNotificationSnackBar'
 import AppNotificationDialog from '../../appNotification/AppNotificationDialog'
 import { ContactDetails } from '../../person/PersonRedux'
 
@@ -39,6 +42,7 @@ const messages = defineMessages({
   },
 })
 
+const LinearProgress = <ProgressBar type="linear" />
 const enhance = compose(
   setPropTypes({
     location: PropTypes.object.isRequired,
@@ -101,7 +105,7 @@ export const Login = ({
         <div>
           <Unit sm="1-24" md="1-6" lg="1-3" />
           <Unit sm="11-12" md="2-3" lg="1-3">
-            <Paper>
+            <Card>
               <form onSubmit={handleSubmit} className={styles.Form}>
                 {search.has('reason')
                   ? <div className={styles.Form__Info}>
@@ -125,16 +129,21 @@ export const Login = ({
                   <Link className={styles.Left_Align} to="reset-password">
                     {formatMessage(messages.resetPasswordLink)}
                   </Link>
-                  <RaisedButton
-                    disabled={pristine || submitting}
+                  <Button
                     label="Log In"
-                    secondary
                     type="submit"
+                    raised
+                    primary={!pristine}
+                    theme={{
+                      neutral: styles.Button__neutral,
+                      primary: styles.Button__primary,
+                      raised: styles.Button__raised,
+                    }}
                   />
                 </div>
               </form>
               {submitting && <LinearProgress />}
-            </Paper>
+            </Card>
           </Unit>
         </div>
       </div>
