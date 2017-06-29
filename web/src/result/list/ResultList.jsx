@@ -1,4 +1,5 @@
 import PropTypes from 'prop-types'
+import classnames from 'classnames/bind'
 import React, { PureComponent } from 'react'
 import { compose, setPropTypes, pure } from 'recompose'
 import { injectIntl, defineMessages, intlShape } from 'react-intl'
@@ -7,14 +8,15 @@ import { connect } from 'react-redux'
 import Helmet from 'react-helmet'
 
 // Our own imports
-import DataTableWithEmptyList from '../../components/shared/DataTableWithEmptyList'
 import NavTitle from '../../globals/components/NavTitle'
-import ListFilterContainer from '../../filter/list/ListFilter'
-import { configureListFilter, ListFilter } from '../../filter/FilterRedux'
-import { fetchListFilteredResults, exportResults } from '../ResultRedux'
-import styles from './ResultList.css'
+import BrowseFilters from '../../globals/components/BrowseFilters'
 import { Items } from '../../shared/metaReducers/items'
 import { Table } from '../../shared/metaReducers/table'
+import DataTableWithEmptyList from '../../components/shared/DataTableWithEmptyList'
+import { configureListFilter, ListFilter } from '../../filter/FilterRedux'
+import { fetchListFilteredResults, exportResults } from '../ResultRedux'
+
+const cssClasses = classnames.bind(require('./ResultList.css'))
 
 const messages = defineMessages({
   title: {
@@ -53,11 +55,6 @@ const messages = defineMessages({
     id: 'pages.ResultList.resultCategoryHiv',
     defaultMessage: 'HIV',
   },
-  filterTemplate: {
-    id: 'pages.ResultList.filterTemplate',
-    defaultMessage:
-      'Viewing <PATIENT_OR_RESEARCH_ID><SAMPLE_ORIGIN_SITE_ID><SAMPLE_ID><ASSAY> results <DATE><RESULT> from all sites<GEOGRAPHY><NAME> <WORKFLOWSTATUS>',
-  },
   nullText: {
     id: 'pages.ResultDetail.nullText',
     defaultMessage: 'N/A',
@@ -77,15 +74,11 @@ const enhance = compose(
       items: state.result.items,
       table: state.result.table,
     }),
-    dispatch =>
-      bindActionCreators(
-        {
-          fetchListFilteredResults,
-          configureListFilter,
-          exportResults,
-        },
-        dispatch
-      )
+    bindActionCreators.bind(null, {
+      fetchListFilteredResults,
+      configureListFilter,
+      exportResults,
+    })
   ),
   setPropTypes({
     intl: intlShape.isRequired,
@@ -99,17 +92,6 @@ const enhance = compose(
 )
 
 export class ResultList extends PureComponent {
-  static propTypes = {
-    table: PropTypes.objectOf(Table).isRequired,
-    configureListFilter: PropTypes.func.isRequired,
-    intl: intlShape.isRequired,
-    listFilter: PropTypes.objectOf(ListFilter).isRequired,
-    fetchListFilteredResults: PropTypes.func.isRequired,
-    history: PropTypes.object.isRequired, // eslint-disable-line
-    items: PropTypes.objectOf(Items).isRequired,
-    exportResults: PropTypes.func.isRequired,
-  }
-
   componentWillMount() {
     const { configureListFilter } = this.props
     configureListFilter({
@@ -181,17 +163,18 @@ export class ResultList extends PureComponent {
     const askConfirmationForExport = this.props.table.total > 1000
 
     return (
-      <div className={styles.Content}>
+      <div className={cssClasses('Content')}>
         <Helmet
           title={formatMessage(messages.title)}
           titleTemplate="%s - Aspect"
           defaultTitle="Aspect"
         />
         <NavTitle title={formatMessage(messages.title)} />
-        <ListFilterContainer
-          subject={formatMessage(messages.title)}
-          filterTemplate={formatMessage(messages.filterTemplate)}
-          onClickExport={this.clickResultListExport}
+        <BrowseFilters
+          history={this.props.history}
+          location={this.props.location}
+          intl={intl}
+          onClickExport={this.clickDeviceListExport}
           askConfirmationForExport={askConfirmationForExport}
         />
         <DataTableWithEmptyList
