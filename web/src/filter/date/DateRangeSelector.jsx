@@ -137,6 +137,7 @@ export class DateRangeSelector extends PureComponent {
     intl: intlShape.isRequired,
     onChangeDate: PropTypes.func.isRequired,
     floatingLabelText: PropTypes.string.isRequired,
+    datePickerContainer: PropTypes.oneOf(['dialog', 'inline']).isRequired,
     minDate: PropTypes.string,
     maxDate: PropTypes.string,
   }
@@ -414,7 +415,11 @@ export class DateRangeSelector extends PureComponent {
   }
 
   render() {
-    const { intl: { formatMessage }, floatingLabelText } = this.props
+    const {
+      intl: { formatMessage },
+      floatingLabelText,
+      datePickerContainer,
+    } = this.props
 
     const dropDownSelectItems = {
       any: [],
@@ -443,6 +448,7 @@ export class DateRangeSelector extends PureComponent {
 
     const restProps = _.omit(this.props, [
       'floatingLabelText',
+      'datePickerContainer',
       'clearButtonTooltip',
       'onChangeDate',
       'minDate',
@@ -491,7 +497,7 @@ export class DateRangeSelector extends PureComponent {
                     value={this.getMinDate()}
                     onChange={this.handleMinDateChange}
                     hintText={formatMessage(messages.fromDate)}
-                    container="inline"
+                    container={datePickerContainer}
                     mode="landscape"
                   />
                   <DatePicker
@@ -502,7 +508,7 @@ export class DateRangeSelector extends PureComponent {
                     value={this.getMaxDate()}
                     onChange={this.handleMaxDateChange}
                     hintText={formatMessage(messages.toDate)}
-                    container="inline"
+                    container={datePickerContainer}
                     mode="landscape"
                   />
                 </div>
