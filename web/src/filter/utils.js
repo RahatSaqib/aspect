@@ -3,7 +3,7 @@ import _ from 'lodash'
 import { defineMessages } from 'react-intl'
 
 export function nonEmptyFilterValue(x) {
-  return !_.isNull(x) && !_.isUndefined(x)
+  return !_.isNull(x) && !_.isUndefined(x) && x !== ''
 }
 
 const messages = defineMessages({
@@ -179,7 +179,7 @@ export function getFilterMessage(
   // TODO: This could be a little nicer and use the date type from the filter.
   // Could say "the year 2015" or "the month of August"
   const dateString = `${dateFrom ? `${SPACE}${dateFrom}` : ''}${dateTo &&
-  dateFrom
+    dateFrom
     ? `${SPACE}${dateTo}`
     : dateTo}`
 
