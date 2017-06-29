@@ -1,4 +1,5 @@
 import PropTypes from 'prop-types'
+import classnames from 'classnames/bind'
 import React, { PureComponent } from 'react'
 import { compose, setPropTypes, pure } from 'recompose'
 import { injectIntl, defineMessages, intlShape } from 'react-intl'
@@ -23,10 +24,13 @@ import MenuItem from 'material-ui/MenuItem'
 import MoreVertIcon from 'material-ui/svg-icons/navigation/more-vert'
 
 // Our own imports
+import NavTitle from '../../globals/components/NavTitle'
+import BrowseFilters from '../../globals/components/BrowseFilters'
+import { Items } from '../../shared/metaReducers/items'
+import { Table } from '../../shared/metaReducers/table'
 import EmptyList from '../../components/shared/EmptyList'
 import GroupedDataTable from '../../components/shared/GroupedDataTable'
-import NavTitle from '../../globals/components/NavTitle'
-import ListFilterContainer from '../../filter/list/ListFilter'
+import { showAcknowledgement } from '../../appNotification/AppNotificationRedux'
 import { configureListFilter, ListFilter } from '../../filter/FilterRedux'
 import {
   fetchListFilteredInventoryItems,
@@ -43,13 +47,9 @@ import {
   transferInventory,
   receiveInventory,
 } from '../InventoryRedux'
-import InventoryAdjustmentForm, {
-  testConductedReasonI18nKey,
-} from '../adjustment/InventoryAdjustmentForm'
-import styles from './InventoryItemsList.css'
-import { showAcknowledgement } from '../../appNotification/AppNotificationRedux'
-import { Items } from '../../shared/metaReducers/items'
-import { Table } from '../../shared/metaReducers/table'
+import InventoryAdjustmentForm, { testConductedReasonI18nKey } from '../adjustment/InventoryAdjustmentForm'
+
+const cssClasses = classnames.bind(require('./InventoryItemsList.css'))
 
 const messages = defineMessages({
   title: {
@@ -132,14 +132,6 @@ const messages = defineMessages({
     id: 'pages.InventoryItemsList.inventoryAdjustedSuccessfully',
     defaultMessage: 'Inventory levels have been adjusted successfully',
   },
-  filterTemplate: {
-    id: 'pages.InventoryItemsList.filterTemplate',
-    defaultMessage: 'Viewing <CONSUMABLE> <GEOGRAPHY> at all sites<NAME>.',
-  },
-  filterTemplateOptional: {
-    id: 'pages.InventoryItemsList.filterTemplateOptional',
-    defaultMessage: 'Expiring<DATE>.',
-  },
 })
 
 const enhance = compose(
@@ -157,24 +149,20 @@ const enhance = compose(
       table: state.inventory.table,
       inventoryAdjustment: state.inventory.inventoryAdjustment,
     }),
-    dispatch =>
-      bindActionCreators(
-        {
-          configureListFilter,
-          fetchListFilteredInventoryItems,
-          toggleGroupBySite,
-          adjustInventoryLevels,
-          addInventoryItem,
-          finishAdjustingInventoryLevels,
-          addInventory,
-          removeInventory,
-          transferInventory,
-          receiveInventory,
-          submit,
-          showAcknowledgement,
-        },
-        dispatch
-      )
+    bindActionCreators.bind(null, {
+      configureListFilter,
+      fetchListFilteredInventoryItems,
+      toggleGroupBySite,
+      adjustInventoryLevels,
+      addInventoryItem,
+      finishAdjustingInventoryLevels,
+      addInventory,
+      removeInventory,
+      transferInventory,
+      receiveInventory,
+      submit,
+      showAcknowledgement,
+    })
   ),
   setPropTypes({
     intl: intlShape.isRequired,
@@ -460,20 +448,18 @@ export class InventoryItemsList extends PureComponent {
       />,
     ]
     return (
-      <div className={styles.Content}>
+      <div className={cssClasses('Content')}>
         <Helmet
           title={formatMessage(messages.title)}
           titleTemplate="%s - Aspect"
           defaultTitle="Aspect"
         />
         <NavTitle title={formatMessage(messages.title)} />
-        <ListFilterContainer
-          subject={formatMessage(messages.title)}
+        <BrowseFilters
+          history={this.props.history}
+          location={this.props.location}
+          intl={intl}
           dateFilterLabel={formatMessage(messages.expiresOn)}
-          filterTemplate={formatMessage(messages.filterTemplate)}
-          filterTemplateOptional={formatMessage(
-            messages.filterTemplateOptional
-          )}
         />
         <Card>
           <Checkbox
