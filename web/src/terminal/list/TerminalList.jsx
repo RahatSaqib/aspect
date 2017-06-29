@@ -1,4 +1,5 @@
 import PropTypes from 'prop-types'
+import classnames from 'classnames/bind'
 import React, { PureComponent } from 'react'
 import { compose, setPropTypes, pure } from 'recompose'
 import { injectIntl, defineMessages, intlShape } from 'react-intl'
@@ -7,14 +8,15 @@ import { connect } from 'react-redux'
 import Helmet from 'react-helmet'
 
 // Our own imports
-import { fetchListFilteredTerminals } from '../TerminalRedux'
-import ListFilterContainer from '../../filter/list/ListFilter'
-import { configureListFilter, ListFilter } from '../../filter/FilterRedux'
-import DataTableWithEmptyList from '../../components/shared/DataTableWithEmptyList'
 import NavTitle from '../../globals/components/NavTitle'
-import styles from './TerminalList.css'
+import BrowseFilters from '../../globals/components/BrowseFilters'
 import { Items } from '../../shared/metaReducers/items'
 import { Table } from '../../shared/metaReducers/table'
+import { configureListFilter, ListFilter } from '../../filter/FilterRedux'
+import DataTableWithEmptyList from '../../components/shared/DataTableWithEmptyList'
+import { fetchListFilteredTerminals } from '../TerminalRedux'
+
+const cssClasses = classnames.bind(require('./TerminalList.css'))
 
 const messages = defineMessages({
   terminalsTitle: {
@@ -69,10 +71,6 @@ const messages = defineMessages({
     id: 'pages.DeviceList.flagged',
     defaultMessage: 'Flagged',
   },
-  filterTemplate: {
-    id: 'pages.TerminalList.filterTemplate',
-    defaultMessage: 'Viewing all terminals<GEOGRAPHY><NAME><DEVICESTATUS>.',
-  },
 })
 
 const enhance = compose(
@@ -88,14 +86,10 @@ const enhance = compose(
       items: state.terminal.items,
       table: state.terminal.table,
     }),
-    dispatch =>
-      bindActionCreators(
-        {
-          fetchListFilteredTerminals,
-          configureListFilter,
-        },
-        dispatch
-      )
+    bindActionCreators.bind(null, {
+      fetchListFilteredTerminals,
+      configureListFilter,
+    })
   ),
   setPropTypes({
     intl: intlShape.isRequired,
@@ -251,16 +245,17 @@ export class TerminalList extends PureComponent {
     ]
 
     return (
-      <div className={styles.Content}>
+      <div className={cssClasses('Content')}>
         <Helmet
           title={formatMessage(messages.terminalsTitle)}
           titleTemplate="%s - Aspect"
           defaultTitle="Aspect"
         />
         <NavTitle title={formatMessage(messages.terminalsTitle)} />
-        <ListFilterContainer
-          subject={formatMessage(messages.terminalsTitle)}
-          filterTemplate={formatMessage(messages.filterTemplate)}
+        <BrowseFilters
+          history={this.props.history}
+          location={this.props.location}
+          intl={intl}
         />
         <DataTableWithEmptyList
           selectable
