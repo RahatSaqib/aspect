@@ -1,6 +1,4 @@
-// Imports from packages
 import _ from 'lodash'
-import Immutable from 'immutable'
 import React, { PureComponent } from 'react'
 import { compose, setPropTypes, pure } from 'recompose'
 import { injectIntl, defineMessages, intlShape } from 'react-intl'
@@ -11,7 +9,6 @@ import FallbackUntilDone from '../../components/shared/FallbackUntilDone'
 import CountrySelectField from '../../filter/geography/CountrySelectField'
 import StateSelectField from '../../filter/geography/StateSelectField'
 import LgaSelectField from '../../filter/geography/LgaSelectField'
-import { ListFilter } from '../../filter/list/ListFilter'
 import FiltersPanel from '../../filter/popover/FiltersPanel'
 import styles from './StyleguideMain.css'
 
@@ -91,27 +88,6 @@ export class StyleguideMain extends PureComponent {
             98tyfchgvjbknl
           </div>
         </FallbackUntilDone>
-        <ListFilter
-          intl={intl}
-          askExportConfirmation={_.noop}
-          closeExportConfirmation={_.noop}
-          onClearFilter={_.noop}
-          onChangeFilter={this.handleChangeFilter}
-          listFilter={Immutable.fromJS(this.state.filter)}
-          filterTemplate={formatMessage(messages.filterTemplate)}
-          filterTemplateOptional={formatMessage(
-            messages.filterTemplateOptional
-          )}
-          defaultExpanded
-          config={{
-            assayAndResultCategory: true,
-            geography: true,
-            date: true,
-            deviceName: true,
-            siteName: true,
-            contactNameOrEmail: true,
-          }}
-        />
         <div style={{ display: 'flex', justifyContent: 'flex-end' }}>
           <FiltersPanel
             intl={intl}
