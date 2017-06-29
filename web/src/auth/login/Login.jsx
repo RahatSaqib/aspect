@@ -43,6 +43,13 @@ const messages = defineMessages({
 })
 
 const LinearProgress = <ProgressBar type="linear" />
+const AspectLogo = () =>
+  <img
+    className={styles.Logo__Image}
+    src={require('./AspectLogo.png')}
+    alt="Aspect"
+  />
+
 const enhance = compose(
   setPropTypes({
     location: PropTypes.object.isRequired,
@@ -91,7 +98,6 @@ export const Login = ({
   location,
   intl,
   handleSubmit,
-  pristine,
   submitting,
   initialValues,
 }) => {
@@ -106,6 +112,9 @@ export const Login = ({
           <Unit sm="1-24" md="1-6" lg="1-3" />
           <Unit sm="11-12" md="2-3" lg="1-3">
             <Card>
+              <div className={styles.Logo__Container}>
+                <AspectLogo />
+              </div>
               <form onSubmit={handleSubmit} className={styles.Form}>
                 {search.has('reason')
                   ? <div className={styles.Form__Info}>
@@ -126,20 +135,21 @@ export const Login = ({
                   autoFocus={!_.isEmpty(initialValues.get('user'))}
                 />
                 <div className={styles.Form__ActionRow}>
+                  <div className={styles.Button__Container}>
+                    <Button
+                      label="LogIn"
+                      type="submit"
+                      raised
+                      primary
+                      theme={{
+                        primary: styles.Button__primary,
+                        raised: styles.Button__raised,
+                      }}
+                    />
+                  </div>
                   <Link className={styles.Left_Align} to="reset-password">
                     {formatMessage(messages.resetPasswordLink)}
                   </Link>
-                  <Button
-                    label="Log In"
-                    type="submit"
-                    raised
-                    primary={!pristine}
-                    theme={{
-                      neutral: styles.Button__neutral,
-                      primary: styles.Button__primary,
-                      raised: styles.Button__raised,
-                    }}
-                  />
                 </div>
               </form>
               {submitting && <LinearProgress />}
