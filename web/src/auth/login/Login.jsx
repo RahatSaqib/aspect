@@ -8,15 +8,12 @@ import { reduxForm } from 'redux-form/immutable'
 import Helmet from 'react-helmet'
 import { injectIntl, defineMessages, intlShape } from 'react-intl'
 import { Link } from 'react-router-dom'
+import classnames from 'classnames/bind'
 
 // React Toolbox
 import { Button } from 'react-toolbox/lib/button'
 import { Card } from 'react-toolbox/lib/card'
 import { ProgressBar } from 'react-toolbox/lib/progress_bar'
-
-// Material-UI
-// import LinearProgress from 'material-ui/LinearProgress'
-// import RaisedButton from 'material-ui/RaisedButton'
 
 // Our own imports
 import { Unit } from '../../components/pureGrids'
@@ -42,11 +39,13 @@ const messages = defineMessages({
   },
 })
 
+const cssClasses = classnames.bind(require('./Login.css'))
+
 const LinearProgress = <ProgressBar type="linear" />
 const AspectLogo = () =>
   <img
     className={styles.Logo__Image}
-    src={require('./AspectLogo.png')}
+    src={require('../../globals/layouts/logo-aspect.png')}
     alt="Aspect"
   />
 
@@ -122,12 +121,18 @@ export const Login = ({
                     </div>
                   : null}
                 <TextInput
+                  theme={{
+                    label: cssClasses('Form--input'),
+                  }}
                   name="user"
                   label="Username"
                   fullWidth
                   autoFocus={_.isEmpty(initialValues.get('user'))}
                 />
                 <TextInput
+                  theme={{
+                    label: cssClasses('Form--input'),
+                  }}
                   name="password"
                   type="password"
                   label="Password"
@@ -135,19 +140,17 @@ export const Login = ({
                   autoFocus={!_.isEmpty(initialValues.get('user'))}
                 />
                 <div className={styles.Form__ActionRow}>
-                  <div className={styles.Button__Container}>
-                    <Button
-                      label="LogIn"
-                      type="submit"
-                      raised
-                      primary
-                      theme={{
-                        primary: styles.Button__primary,
-                        raised: styles.Button__raised,
-                      }}
-                    />
-                  </div>
-                  <Link className={styles.Left_Align} to="reset-password">
+                  <Button
+                    label="LogIn"
+                    type="submit"
+                    raised
+                    primary
+                    theme={{
+                      primary: styles.Button__primary,
+                      raised: styles.Button__raised,
+                    }}
+                  />
+                  <Link className={styles.Right_Align} to="reset-password">
                     {formatMessage(messages.resetPasswordLink)}
                   </Link>
                 </div>

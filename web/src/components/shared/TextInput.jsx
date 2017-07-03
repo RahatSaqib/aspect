@@ -1,24 +1,17 @@
 import React from 'react'
 import { Field } from 'redux-form/immutable'
 import Input from 'react-toolbox/lib/input'
-import styles from './Shared.css'
 
 const renderTextField = props => {
   const { input, meta, textFieldProps } = props
   const { touched, error } = meta
+  const { theme } = textFieldProps
   return (
     <Input
       {...input}
-      errorStyle={{
-        float: 'left',
-        whiteSpace: 'nowrap',
-        textOverflow: 'visible',
-      }}
       error={touched && error}
       {...textFieldProps}
-      theme={{
-        input: styles.Form__Field,
-      }}
+      theme={theme}
     />
   )
 }
@@ -27,29 +20,27 @@ const renderFormField = props => {
   const {
     name,
     label,
-    fullWidth,
     autoFocus,
     style,
-    inputStyle,
     disabled,
     maxLength,
-    multiLine,
+    multiline,
     rows,
     type,
     onChange,
     onKeyPress,
+    theme,
   } = props
   const textFieldProps = {
     label,
-    fullWidth,
     autoFocus,
     style,
-    inputStyle,
     disabled,
     maxLength,
-    multiLine,
+    multiline,
     rows,
     type: type || 'text',
+    theme,
   }
   if (onChange) {
     textFieldProps.onChange = onChange

@@ -5,13 +5,11 @@
 .Background {
   composes: PreLogin__Background from '../../components/shared/Shared.css';
 }
-.Button__Container {
-  padding: 0 0 0 30px;
-}
+
 .Button__raised {
-  font-weight: var(--lato-font-weight-bold);
-  width: 90%;
+  width: 100%;
 }
+
 .Button__primary:not([disabled]).Button__raised {
   background-color: var(--aspect-color-chill-blue-1);
 }
@@ -21,32 +19,34 @@
 }
 
 .Form {
-  padding: 30px 20px 20px 20px;
+  padding: 20px;
 }
 
-/*in forms, show buttons on bottom right*/
 .Form__ActionRow {
-  width: 100%;
   padding: 20px 0 0 0;
 }
 
-.Form__ActionRow .Left_Align {
-  float: left;
-  line-height: 3em;
-  padding: 20px 0 0 0;
+.Form__ActionRow .Right_Align {
+  float: right;
+  padding: 28px 0 0 0;
 }
 
 .Form__Info{
   text-align: center;
   padding: 10px 0 0 0;
-  color: #333;
 }
+
+.Form--input{
+  color: #828282;
+}
+
 .Logo__Container {
   margin: auto;
   height: 85px;
   width: 300px;
-  padding: 5px 0 0 0;
+  padding: 20px 0 20px 0;
 }
+
 .Logo__Image {
   height: 85px;
   width: 300px;
