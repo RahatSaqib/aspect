@@ -66,7 +66,9 @@ export const requirePermissions = ({
   ForbiddenComponent = _.constant(false),
 }) => WrappedComponent =>
   class RequirePermissions extends PureComponent {
-    static displayName = `requirePermissions(${getDisplayName(WrappedComponent)})`
+    static displayName = `requirePermissions(${getDisplayName(
+      WrappedComponent
+    )})`
 
     static propTypes = {
       overriddenPermissions: PropTypes.arrayOf(PropTypes.string),

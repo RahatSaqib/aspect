@@ -19,8 +19,7 @@ import DropDownArrow from 'material-ui/svg-icons/navigation/arrow-drop-down'
 import Menu from 'material-ui/Menu/Menu'
 import ClearFix from 'material-ui/internal/ClearFix'
 import Popover from 'material-ui/Popover/Popover'
-import PopoverAnimationVertical
-  from 'material-ui/Popover/PopoverAnimationVertical'
+import PopoverAnimationVertical from 'material-ui/Popover/PopoverAnimationVertical'
 
 const anchorOrigin = {
   vertical: 'top',
@@ -51,7 +50,8 @@ function getStyles(props, context) {
       opacity: 1,
       position: 'relative',
       paddingLeft: spacing.desktopGutter,
-      paddingRight: spacing.iconSize +
+      paddingRight:
+        spacing.iconSize +
         spacing.desktopGutterLess +
         spacing.desktopGutterMini,
       top: 0,

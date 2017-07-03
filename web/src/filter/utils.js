@@ -80,7 +80,9 @@ export function getFilterMessage(
 ) {
   // return empty message if no filters set
   if (_.every(filter, f => !f)) {
-    return `${formatMessage(messages.noFilters)} ${subject ? subject.toLowerCase() : ''}`
+    return `${formatMessage(messages.noFilters)} ${subject
+      ? subject.toLowerCase()
+      : ''}`
   }
 
   // using a constant for space for better readability
@@ -91,12 +93,14 @@ export function getFilterMessage(
   const country = filter.countryId
     ? countries.get('items').find(c => c.id === filter.countryId)
     : null
-  const state = country && filter.stateId
-    ? country.getIn(['children', 'items']).find(s => s.id === filter.stateId)
-    : null
-  const lga = state && filter.lgaId
-    ? state.getIn(['children', 'items']).find(s => s.id === filter.lgaId)
-    : null
+  const state =
+    country && filter.stateId
+      ? country.getIn(['children', 'items']).find(s => s.id === filter.stateId)
+      : null
+  const lga =
+    state && filter.lgaId
+      ? state.getIn(['children', 'items']).find(s => s.id === filter.lgaId)
+      : null
 
   if (country || state || lga) {
     geography = ` ${formatMessage(messages.geographyIn)}${SPACE}
@@ -106,7 +110,8 @@ export function getFilterMessage(
   }
 
   // name-filter
-  const name = `${filter.contactNameOrEmail || ''}${filter.deviceName || ''}${filter.siteName || ''}${filter.externalId || ''}`
+  const name = `${filter.contactNameOrEmail || ''}${filter.deviceName ||
+    ''}${filter.siteName || ''}${filter.externalId || ''}`
   const nameString = name
     ? `${SPACE}${formatMessage(messages.whoseNameIncludes)}${SPACE}"${name}"`
     : ''
@@ -114,7 +119,9 @@ export function getFilterMessage(
   // patient id
   const patientOrResearchId = filter.patientOrResearchId
   const patientOrResearchIdString = patientOrResearchId
-    ? `${formatMessage(messages.patientOrResearchId)}${SPACE}(${patientOrResearchId}),${SPACE}`
+    ? `${formatMessage(
+        messages.patientOrResearchId
+      )}${SPACE}(${patientOrResearchId}),${SPACE}`
     : ''
 
   // sample origin site id
@@ -124,7 +131,9 @@ export function getFilterMessage(
         .find(s => s.get('id') === filter.sampleOriginSiteId)
     : null
   const sampleOriignSiteIdString = sampleOriginSite
-    ? `${formatMessage(messages.sampleOriginSiteId)}${SPACE}(${sampleOriginSite.get('name')}),${SPACE}`
+    ? `${formatMessage(
+        messages.sampleOriginSiteId
+      )}${SPACE}(${sampleOriginSite.get('name')}),${SPACE}`
     : ''
 
   // sample id
@@ -146,14 +155,17 @@ export function getFilterMessage(
   const assay = filter.assayId
     ? assays.get('items').find(a => a.get('id') === filter.assayId)
     : null
-  const result = assay && filter.resultCategoryId
-    ? assay
-        .get('resultCategories')
-        .find(r => r.get('id') === String(filter.resultCategoryId))
-    : null
+  const result =
+    assay && filter.resultCategoryId
+      ? assay
+          .get('resultCategories')
+          .find(r => r.get('id') === String(filter.resultCategoryId))
+      : null
   const assayString = assay ? assay.get('name') : ''
   const resultString = result
-    ? `${SPACE}${formatMessage(messages.withResult)}${SPACE}"${result.get('name')}"`
+    ? `${SPACE}${formatMessage(messages.withResult)}${SPACE}"${result.get(
+        'name'
+      )}"`
     : ''
 
   // date
@@ -166,7 +178,10 @@ export function getFilterMessage(
 
   // TODO: This could be a little nicer and use the date type from the filter.
   // Could say "the year 2015" or "the month of August"
-  const dateString = `${dateFrom ? `${SPACE}${dateFrom}` : ''}${dateTo && dateFrom ? `${SPACE}${dateTo}` : dateTo}`
+  const dateString = `${dateFrom ? `${SPACE}${dateFrom}` : ''}${dateTo &&
+  dateFrom
+    ? `${SPACE}${dateTo}`
+    : dateTo}`
 
   // inventory item
   const consumable = filter.consumableId
@@ -191,7 +206,9 @@ export function getFilterMessage(
     : null
   const noDeviceStatus = ''
   const deviceStatusString = deviceStatus
-    ? `${SPACE}${formatMessage(messages.withDeviceStatus)}${SPACE}"${deviceStatus.get('name')}"`
+    ? `${SPACE}${formatMessage(
+        messages.withDeviceStatus
+      )}${SPACE}"${deviceStatus.get('name')}"`
     : noDeviceStatus
 
   // The optional template lets us specify a message that only shows up if

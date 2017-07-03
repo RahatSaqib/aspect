@@ -262,7 +262,7 @@ export class ResultDetail extends PureComponent {
       )
       .sortBy(value => value.get('order'))
       .entrySeq()
-      .map(([key, value]) => (
+      .map(([key, value]) =>
         <Unit sm="1-2" md="1-2" lg="1-4" key={key}>
           {/* Todo: i18n */}
           <ReadOnlyField
@@ -271,7 +271,7 @@ export class ResultDetail extends PureComponent {
             format={value.get('type') === 'number' ? formatNumber : null}
           />
         </Unit>
-      ))
+      )
   }
 
   getDuration(startedOn, endedOn) {
@@ -371,13 +371,12 @@ export class ResultDetail extends PureComponent {
               <ReadOnlyField
                 label={formatMessage(messages.fieldSampleOriginSite)}
                 value={result.get('sampleOriginSiteName')}
-                format={v => (
+                format={v =>
                   <div>
                     <Link to={`/site/${result.get('sampleOriginSiteId')}`}>
                       {v}
                     </Link>
-                  </div>
-                )}
+                  </div>}
               />
             </Unit>
             <Unit sm="1-6" md="1-12">
@@ -412,17 +411,14 @@ export class ResultDetail extends PureComponent {
             <ReadOnlyField
               label={formatMessage(messages.fieldDevice)}
               value={result.get('deviceName')}
-              format={v => (
+              format={v =>
                 <div>
-                  <Link to={`/device/${result.get('deviceId')}`}>
-                    {v}
-                  </Link>
+                  <Link to={`/device/${result.get('deviceId')}`}>{v}</Link>
                   &nbsp;at&nbsp;
                   <Link to={`/site/${result.get('siteId')}`}>
                     {result.get('siteName')}
                   </Link>
-                </div>
-              )}
+                </div>}
             />
           </CardText>
         </Card>
@@ -645,7 +641,6 @@ export class ResultDetail extends PureComponent {
           workflowLog={workflowLog}
           handleFetch={this.handleFetchWorkflowStatusLogs}
         />
-
       </div>
     )
   }

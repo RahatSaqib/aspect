@@ -307,10 +307,14 @@ export class TerminalDetail extends PureComponent {
               <ReadOnlyField
                 label=""
                 value={terminal.get('name')}
-                format={v => (
+                format={v =>
                   <div>
                     <h1 className={styles.Name}>
-                      {v} {shortname && <small>({shortname})</small>}
+                      {v}{' '}
+                      {shortname &&
+                        <small>
+                          ({shortname})
+                        </small>}
                     </h1>
                     <div className={styles.StatusText}>
                       <Link
@@ -321,28 +325,22 @@ export class TerminalDetail extends PureComponent {
                       </Link>
                     </div>
                     <div className={styles.StatusText}>
-                      {formatMessage(messages.fieldLastSeen)}
-                      {' '}
+                      {formatMessage(messages.fieldLastSeen)}{' '}
                       {formatRelative(terminal.get('lastSeen'))}
                       &nbsp;&nbsp;
-                      {formatMessage(messages.fieldFirstConnected)}
-                      {' '}
+                      {formatMessage(messages.fieldFirstConnected)}{' '}
                       {formatRelative(terminal.get('createdOn'))}
                     </div>
                     <div className={styles.StatusText}>
                       {formatMessage(messages.fieldStatus)}
-                      :
-                      {' '}
-                      {terminal.get('status')}
+                      : {terminal.get('status')}
                       &nbsp;•&nbsp;
                       <Link to="/result">
-                        {terminal.get('totalTests')}
-                        {' '}
+                        {terminal.get('totalTests')}{' '}
                         {formatMessage(messages.fieldTotalNumberOfTests)}
                       </Link>
                     </div>
-                  </div>
-                )}
+                  </div>}
               />
             </Unit>
             <Unit sm="1-6" md="1-12">
@@ -359,13 +357,12 @@ export class TerminalDetail extends PureComponent {
               <ReadOnlyField
                 label=""
                 value
-                format={() => (
+                format={() =>
                   <img
                     alt="utilization rate"
                     src={require('../../device/detail/utilization_rate.png')}
                     style={{ width: '100%' }}
-                  />
-                )}
+                  />}
               />
             </Unit>
             <Unit sm="1-1" md="1-2">
@@ -373,13 +370,12 @@ export class TerminalDetail extends PureComponent {
               <ReadOnlyField
                 label=""
                 value
-                format={() => (
+                format={() =>
                   <img
                     alt="error rate"
                     src={require('../../device/detail/error_rates.png')}
                     style={{ width: '100%' }}
-                  />
-                )}
+                  />}
               />
             </Unit>
           </CardText>
@@ -402,9 +398,7 @@ export class TerminalDetail extends PureComponent {
         {/* Warranty */}
         <Card onClick={this.handleToggleDialog} expanded>
           <CardHeader title="Warranty" actAsExpander showExpandableButton />
-          <CardText style={{ paddingTop: 10 }}>
-            Expires 12/31/2018
-          </CardText>
+          <CardText style={{ paddingTop: 10 }}>Expires 12/31/2018</CardText>
         </Card>
         {/* Configuration */}
         <JSONSchemaCard

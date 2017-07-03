@@ -74,12 +74,14 @@ export default class DataTable extends PureComponent {
     if (table.extraColumns) {
       const formattedExtraColumns = table.extraColumns.map(column =>
         column.merge({
-          format: column.get('type') === 'number'
-            ? n => (_.isNumber(n) ? intl.formatNumber(n) : null)
-            : _.identity,
-          title: column.get('i18nKey') && messages[column.get('i18nKey')]
-            ? intl.formatMessage[column.get('i18nKey')]
-            : column.get('title'),
+          format:
+            column.get('type') === 'number'
+              ? n => (_.isNumber(n) ? intl.formatNumber(n) : null)
+              : _.identity,
+          title:
+            column.get('i18nKey') && messages[column.get('i18nKey')]
+              ? intl.formatMessage[column.get('i18nKey')]
+              : column.get('title'),
         })
       )
 
@@ -131,7 +133,9 @@ export default class DataTable extends PureComponent {
             page < totalPages - 1 - maxPagingButtons / 2)
         ) {
           pagerItems.push(
-            <span key={`ellipsis-${key}`} style={{ margin: '0 5px' }}>…</span>
+            <span key={`ellipsis-${key}`} style={{ margin: '0 5px' }}>
+              …
+            </span>
           )
         }
       }
@@ -149,11 +153,12 @@ export default class DataTable extends PureComponent {
     } = this.props
 
     if (multiSelectable) {
-      const selectedIds = selectedRows === 'all'
-        ? items.currentIdList
-        : items.currentIdList.filter(
-            (id, index) => selectedRows.indexOf(index) !== -1
-          )
+      const selectedIds =
+        selectedRows === 'all'
+          ? items.currentIdList
+          : items.currentIdList.filter(
+              (id, index) => selectedRows.indexOf(index) !== -1
+            )
       handleItemIdsSelection(selectedIds.toJS())
     } else {
       const selectedId = items.currentIdList.get(selectedRows[0])
@@ -165,9 +170,10 @@ export default class DataTable extends PureComponent {
     const table = this.props.table
 
     // only change sort direction if column that we're currently sorting on is clicked
-    const newSort = table.sortCol === col
-      ? table.sortDir === 'asc' ? 'desc' : 'asc'
-      : table.sortDir
+    const newSort =
+      table.sortCol === col
+        ? table.sortDir === 'asc' ? 'desc' : 'asc'
+        : table.sortDir
 
     this.fetchData(col, newSort)
   }
@@ -212,7 +218,6 @@ export default class DataTable extends PureComponent {
           multiSelectable={multiSelectable}
           onRowSelection={this.handleRowSelection}
         >
-
           {/* Header - Sort on click in header columns */}
           <TableHeader
             displaySelectAll={multiSelectable}
@@ -220,7 +225,7 @@ export default class DataTable extends PureComponent {
             enableSelectAll={multiSelectable}
           >
             <TableRow>
-              {columns.map(col => (
+              {columns.map(col =>
                 <Hidden
                   key={col.db}
                   xs={col.hideOnXs}
@@ -249,13 +254,12 @@ export default class DataTable extends PureComponent {
                         position: 'relative',
                         top: '4px',
                         left: '4px',
-                        transform: table.sortDir === 'asc'
-                          ? 'scale(1, -1)'
-                          : '',
+                        transform:
+                          table.sortDir === 'asc' ? 'scale(1, -1)' : '',
                       }}
                     />}
                 </Hidden>
-              ))}
+              )}
             </TableRow>
           </TableHeader>
 
@@ -265,7 +269,7 @@ export default class DataTable extends PureComponent {
             showRowHover
             stripedRows={false}
           >
-            {items.currentIdList.map(itemId => (
+            {items.currentIdList.map(itemId =>
               <TableRow
                 key={itemId}
                 className={cssClasses({
@@ -287,7 +291,7 @@ export default class DataTable extends PureComponent {
                   )
                 })}
               </TableRow>
-            ))}
+            )}
           </TableBody>
 
           {/* Footer - contains pager */}

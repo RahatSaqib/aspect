@@ -151,7 +151,8 @@ describe('ResetPasswordEnterPassword module', () => {
 
       passwordFields = initialPasswordFields.set('newPassword', 'testabcd')
       expect(validate(passwordFields, props)).toEqual({
-        newPassword: 'Your password needs to contain at least one number or special character (%!$*...)',
+        newPassword:
+          'Your password needs to contain at least one number or special character (%!$*...)',
         confirmNewPassword: "These passwords don't match",
       })
 

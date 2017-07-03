@@ -54,7 +54,8 @@ const messages = defineMessages({
   },
   newQuantityOnHand: {
     id: 'pages.InventoryAdjustmentForm.newQuantityOnHand',
-    defaultMessage: '(New quantity on hand: {newQuantityOnHand} {unitShortName})',
+    defaultMessage:
+      '(New quantity on hand: {newQuantityOnHand} {unitShortName})',
   },
   quantityTransferred: {
     id: 'pages.InventoryAdjustmentForm.quantityTransferred',
@@ -266,26 +267,28 @@ class InventoryAdjustmentForm extends PureComponent {
 
     const consumablesLoading = consumables.loading
     const consumablesList = consumables.items.toJS()
-    const quantityLabel = operation === addOperation
-      ? formatMessage(messages.addQuantity)
-      : operation === removeOperation
+    const quantityLabel =
+      operation === addOperation
+        ? formatMessage(messages.addQuantity)
+        : operation === removeOperation
           ? formatMessage(messages.removeQuantity)
           : operation === transferOperation
-              ? formatMessage(messages.transferQuantity)
-              : formatMessage(messages.receiveQuantity)
+            ? formatMessage(messages.transferQuantity)
+            : formatMessage(messages.receiveQuantity)
     const newQuantityOnHand = [addOperation, receiveOperation].includes(
       operation
     )
       ? (initialValues.get('quantityOnHand') || 0) +
-          (this.state.adjustmentQuantity || 0)
+        (this.state.adjustmentQuantity || 0)
       : initialValues.get('quantityOnHand') - this.state.adjustmentQuantity
-    const dateAdjustedLabel = operation === addOperation
-      ? formatMessage(messages.addDateLabel)
-      : operation === removeOperation
+    const dateAdjustedLabel =
+      operation === addOperation
+        ? formatMessage(messages.addDateLabel)
+        : operation === removeOperation
           ? formatMessage(messages.removeDateLabel)
           : operation === transferOperation
-              ? formatMessage(messages.transferDateLabel)
-              : formatMessage(messages.receivedDateLabel)
+            ? formatMessage(messages.transferDateLabel)
+            : formatMessage(messages.receivedDateLabel)
     const consumableReasonsLoading = consumableReasons.loading
     const consumableReasonsForDropDownList = _.map(
       consumableReasons.items.toJS(),
@@ -395,8 +398,8 @@ class InventoryAdjustmentForm extends PureComponent {
               label={formatMessage(messages.reason)}
               disabled={
                 updating ||
-                  consumableReasonsLoading ||
-                  _.isEmpty(consumableReasonsForDropDownList)
+                consumableReasonsLoading ||
+                _.isEmpty(consumableReasonsForDropDownList)
               }
               autoWidth
               dataSource={consumableReasonsForDropDownList}

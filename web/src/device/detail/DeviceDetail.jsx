@@ -331,10 +331,14 @@ export class DeviceDetail extends PureComponent {
               <ReadOnlyField
                 label=""
                 value={device.get('name')}
-                format={v => (
+                format={v =>
                   <div>
                     <h1 className={styles.Name}>
-                      {v} {shortname && <small>({shortname})</small>}
+                      {v}{' '}
+                      {shortname &&
+                        <small>
+                          ({shortname})
+                        </small>}
                     </h1>
                     <div className={styles.StatusText}>
                       <Link
@@ -345,28 +349,22 @@ export class DeviceDetail extends PureComponent {
                       </Link>
                     </div>
                     <div className={styles.StatusText}>
-                      {formatMessage(messages.fieldLastSeen)}
-                      {' '}
+                      {formatMessage(messages.fieldLastSeen)}{' '}
                       {formatRelative(device.get('lastSeen'))}
                       &nbsp;•&nbsp;
-                      {formatMessage(messages.fieldFirstConnected)}
-                      {' '}
+                      {formatMessage(messages.fieldFirstConnected)}{' '}
                       {formatRelative(device.get('createdOn'))}
                     </div>
                     <div className={styles.StatusText}>
                       {formatMessage(messages.fieldStatus)}
-                      :
-                      {' '}
-                      {device.get('status')}
+                      : {device.get('status')}
                       &nbsp;•&nbsp;
                       <Link to="/result">
-                        {device.get('totalTests')}
-                        {' '}
+                        {device.get('totalTests')}{' '}
                         {formatMessage(messages.fieldTotalNumberOfTests)}
                       </Link>
                     </div>
-                  </div>
-                )}
+                  </div>}
               />
             </Unit>
             <Unit sm="1-6" md="1-12">
@@ -383,13 +381,12 @@ export class DeviceDetail extends PureComponent {
               <ReadOnlyField
                 label=""
                 value
-                format={() => (
+                format={() =>
                   <img
                     alt="utilization rate"
                     src={require('./utilization_rate.png')}
                     style={{ width: '100%' }}
-                  />
-                )}
+                  />}
               />
             </Unit>
             <Unit sm="1-1" md="1-2">
@@ -397,13 +394,12 @@ export class DeviceDetail extends PureComponent {
               <ReadOnlyField
                 label=""
                 value
-                format={() => (
+                format={() =>
                   <img
                     alt="error rate"
                     src={require('./error_rates.png')}
                     style={{ width: '100%' }}
-                  />
-                )}
+                  />}
               />
             </Unit>
           </CardText>
@@ -420,7 +416,7 @@ export class DeviceDetail extends PureComponent {
         <Card initiallyExpanded>
           <CardHeader title="Contacts" actAsExpander showExpandableButton />
           <CardText actAsExpander expandable style={{ paddingTop: 10 }}>
-            {device.get('contacts').map(c => (
+            {device.get('contacts').map(c =>
               <Link
                 key={c.get('id')}
                 to={`/person/${c.get('id')}`}
@@ -428,7 +424,7 @@ export class DeviceDetail extends PureComponent {
               >
                 {c.get('name')}
               </Link>
-            ))}
+            )}
           </CardText>
         </Card>
         {/* Calibration */}
@@ -441,9 +437,7 @@ export class DeviceDetail extends PureComponent {
         {/* Warranty */}
         <Card onClick={this.handleToggleDialog} expanded>
           <CardHeader title="Warranty" actAsExpander showExpandableButton />
-          <CardText style={{ paddingTop: 10 }}>
-            Expires 12/31/2018
-          </CardText>
+          <CardText style={{ paddingTop: 10 }}>Expires 12/31/2018</CardText>
         </Card>
         {/* Technical information */}
         <Card initiallyExpanded>
@@ -509,16 +503,16 @@ export class DeviceDetail extends PureComponent {
                   <TableHeaderColumn>Started On</TableHeaderColumn>
                   {device
                     .getIn(['deviceType', 'deviceOperationSchema'])
-                    .map(properties => (
+                    .map(properties =>
                       <TableHeaderColumn key={`dos${properties.get('title')}`}>
                         {properties.get('title')}
                       </TableHeaderColumn>
-                    ))
+                    )
                     .valueSeq()}
                 </TableRow>
               </TableHeader>
               <TableBody displayRowCheckbox={false}>
-                {device.get('deviceOperations').map(deviceOperation => (
+                {device.get('deviceOperations').map(deviceOperation =>
                   <TableRow key={deviceOperation.get('id')}>
                     <TableRowColumn style={{ width: '10%' }}>
                       {deviceOperation.get('id')}
@@ -530,21 +524,21 @@ export class DeviceDetail extends PureComponent {
                     </TableRowColumn>
                     {device
                       .getIn(['deviceType', 'deviceOperationSchema'])
-                      .map((properties, key) => (
+                      .map((properties, key) =>
                         <TableRowColumn
-                          key={`${deviceOperation.get('id')}${deviceOperation.getIn(
-                            ['data', key]
-                          )}`}
+                          key={`${deviceOperation.get(
+                            'id'
+                          )}${deviceOperation.getIn(['data', key])}`}
                         >
                           {formatDeviceOperationData(
                             properties,
                             deviceOperation.getIn(['data', key])
                           )}
                         </TableRowColumn>
-                      ))
+                      )
                       .valueSeq()}
                   </TableRow>
-                ))}
+                )}
               </TableBody>
             </Table>
           </CardText>

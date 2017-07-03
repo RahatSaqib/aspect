@@ -18,7 +18,8 @@ import styles from './PatientCare.css'
 const messages = defineMessages({
   filterTemplate: {
     id: 'pages.PatientCare.filterTemplate',
-    defaultMessage: 'Viewing <ASSAY> results <DATE><RESULT> from all sites<GEOGRAPHY><NAME>',
+    defaultMessage:
+      'Viewing <ASSAY> results <DATE><RESULT> from all sites<GEOGRAPHY><NAME>',
   },
 })
 

@@ -187,12 +187,9 @@ export class ManageDevices extends PureComponent {
                 <Card style={{ marginTop: '15px' }}>
                   <CardHeader title="Daktari Omaha" />
                   <CardText>
-                    This device is low on inventory (<b>54 cartridges</b>).
-                    It will run out in
-                    {' '}
-                    <b>9 days</b>
-                    {' '}
-                    given the curent utilization rate.
+                    This device is low on inventory (<b>54 cartridges</b>). It
+                    will run out in <b>9 days</b> given the curent utilization
+                    rate.
                   </CardText>
                   <CardActions style={{ textAlign: 'right' }}>
                     <IconButton
@@ -218,8 +215,8 @@ export class ManageDevices extends PureComponent {
                 <Card style={{ marginTop: '15px' }}>
                   <CardHeader title="Daktari Dayton" />
                   <CardText>
-                    Has a high error rate (<b>11%</b>).
-                    The average error rate for Daktari devices is <b>5%</b>.
+                    Has a high error rate (<b>11%</b>). The average error rate
+                    for Daktari devices is <b>5%</b>.
                   </CardText>
                   <CardActions style={{ textAlign: 'right' }}>
                     <IconButton
@@ -245,8 +242,7 @@ export class ManageDevices extends PureComponent {
                 <Card style={{ marginTop: '15px' }}>
                   <CardHeader title="GeneXpert Boston" />
                   <CardText>
-                    This device was expected to come back online
-                    {' '}
+                    This device was expected to come back online{' '}
                     <b>yesterday </b>
                     after being serviced but has not connected yet.
                   </CardText>

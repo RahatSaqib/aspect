@@ -91,12 +91,12 @@ class AppNotificationSnackBar extends PureComponent {
       'resolution',
       isError ? genericMessages.resolution : undefined
     )
-    const actionText = showProceed || message || resolution
-      ? formatMessage(genericMessages.moreDetails)
-      : undefined
-    const actionTouchTap = showProceed || message || resolution
-      ? this.handleShowDetails
-      : undefined
+    const actionText =
+      showProceed || message || resolution
+        ? formatMessage(genericMessages.moreDetails)
+        : undefined
+    const actionTouchTap =
+      showProceed || message || resolution ? this.handleShowDetails : undefined
 
     const hasNotification = appNotification.get('hasNotification')
     const showDetails = appNotification.get('showDetails')

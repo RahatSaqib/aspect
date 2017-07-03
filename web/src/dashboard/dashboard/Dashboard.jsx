@@ -114,19 +114,14 @@ export class Dashboard extends PureComponent {
                   <p>
                     <span className={styles.Count__Emphasis}>
                       {formatNumber(totals.get('devicesTotal'))}
-                    </span>
-                    {' '}
-                    Devices at
-                    {' '}
-                    {formatNumber(totals.get('sitesTotal'))}
-                    {' '}
-                    Sites Managed
+                    </span>{' '}
+                    Devices at {formatNumber(totals.get('sitesTotal'))} Sites
+                    Managed
                   </p>
                   <p>
                     <span className={styles.Count__Emphasis}>
                       {formatNumber(totals.get('resultsTotal30d'))}
-                    </span>
-                    {' '}
+                    </span>{' '}
                     Results in the last 30 days (
                     <span className={styles.Count__Positive}>
                       +{formatNumber(totals.get('resultsTotal1d'))} today
@@ -142,11 +137,9 @@ export class Dashboard extends PureComponent {
                   <h2>
                     Patient Care
                     <small>
-                      {' '}
-                      (
-                      {formatNumber(totals.get('resultsTotal30d'))}
-                      {' '}
-                      results in last 30 days)
+                      {' '}(
+                      {formatNumber(totals.get('resultsTotal30d'))} results in
+                      last 30 days)
                     </small>
                   </h2>}
               </header>
@@ -185,15 +178,9 @@ export class Dashboard extends PureComponent {
                     <h3>
                       Devices
                       <small>
-                        {' '}
-                        (
-                        {totals.get('devicesTotal')}
-                        {' '}
-                        at
-                        {' '}
-                        {totals.get('sitesTotal')}
-                        {' '}
-                        sites)
+                        {' '}(
+                        {totals.get('devicesTotal')} at{' '}
+                        {totals.get('sitesTotal')} sites)
                       </small>
                     </h3>}
                   <div>
@@ -244,18 +231,15 @@ export class Dashboard extends PureComponent {
               </header>
               <div style={{ width: '180px' }}>
                 <p>
-                  Result Alerts
-                  {' '}
+                  Result Alerts{' '}
                   <span className={styles.Alert__Positive}>0</span>
                 </p>
                 <p>
-                  Device Alerts
-                  {' '}
+                  Device Alerts{' '}
                   <span className={styles.Alert__Negative}>4</span>
                 </p>
                 <p>
-                  Inventory Alerts
-                  {' '}
+                  Inventory Alerts{' '}
                   <span className={styles.Alert__Negative}>3</span>
                 </p>
               </div>
@@ -294,12 +278,9 @@ export class Dashboard extends PureComponent {
                 <Card style={{ marginTop: '15px' }}>
                   <CardHeader title="Daktari Omaha" />
                   <CardText>
-                    This device is low on inventory (<b>54 cartridges</b>).
-                    It will run out in
-                    {' '}
-                    <b>9 days</b>
-                    {' '}
-                    given the curent utilization rate.
+                    This device is low on inventory (<b>54 cartridges</b>). It
+                    will run out in <b>9 days</b> given the curent utilization
+                    rate.
                   </CardText>
                   <CardActions style={{ textAlign: 'right' }}>
                     <IconButton
@@ -325,8 +306,8 @@ export class Dashboard extends PureComponent {
                 <Card style={{ marginTop: '15px' }}>
                   <CardHeader title="Daktari Dayton" />
                   <CardText>
-                    Has a high error rate (<b>11%</b>).
-                    The average error rate for Daktari devices is <b>5%</b>.
+                    Has a high error rate (<b>11%</b>). The average error rate
+                    for Daktari devices is <b>5%</b>.
                   </CardText>
                   <CardActions style={{ textAlign: 'right' }}>
                     <IconButton
@@ -352,8 +333,7 @@ export class Dashboard extends PureComponent {
                 <Card style={{ marginTop: '15px' }}>
                   <CardHeader title="GeneXpert Boston" />
                   <CardText>
-                    This device was expected to come back online
-                    {' '}
+                    This device was expected to come back online{' '}
                     <b>yesterday </b>
                     after being serviced but has not connected yet.
                   </CardText>

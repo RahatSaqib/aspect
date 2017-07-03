@@ -7,8 +7,7 @@ import { connect } from 'react-redux'
 import Helmet from 'react-helmet'
 
 // Our own imports
-import DataTableWithEmptyList
-  from '../../components/shared/DataTableWithEmptyList'
+import DataTableWithEmptyList from '../../components/shared/DataTableWithEmptyList'
 import NavTitle from '../../globals/components/NavTitle'
 import ListFilterContainer from '../../filter/list/ListFilter'
 import { configureListFilter, ListFilter } from '../../filter/FilterRedux'
@@ -56,7 +55,8 @@ const messages = defineMessages({
   },
   filterTemplate: {
     id: 'pages.ResultList.filterTemplate',
-    defaultMessage: 'Viewing <PATIENT_OR_RESEARCH_ID><SAMPLE_ORIGIN_SITE_ID><SAMPLE_ID><ASSAY> results <DATE><RESULT> from all sites<GEOGRAPHY><NAME> <WORKFLOWSTATUS>',
+    defaultMessage:
+      'Viewing <PATIENT_OR_RESEARCH_ID><SAMPLE_ORIGIN_SITE_ID><SAMPLE_ID><ASSAY> results <DATE><RESULT> from all sites<GEOGRAPHY><NAME> <WORKFLOWSTATUS>',
   },
   nullText: {
     id: 'pages.ResultDetail.nullText',

@@ -9,7 +9,7 @@
   color: #7cb342 !important;
 }
 
-@media screen and (min-width:48em) {
+@media screen and (min-width: 48em) {
   .DateRangeSelector {
     overflow: visible;
     white-space: nowrap;
@@ -29,7 +29,7 @@
 
   .DateRangeSelector__RangeModeSelector div div svg {
     position: absolute;
-    left: 4.1em
+    left: 4.1em;
   }
 
   .DateRangeSelector__DatePickerContainer {

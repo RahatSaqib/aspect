@@ -87,7 +87,8 @@ export function fetchNotifications(
           default: errorPleaseTryAgainInAFewMinutes(
             defineMessages({
               title: {
-                id: 'errorResponseMessages.fetchNotifications.GET.default.title',
+                id:
+                  'errorResponseMessages.fetchNotifications.GET.default.title',
                 defaultMessage: 'Loading Notifications Failed',
               },
             })

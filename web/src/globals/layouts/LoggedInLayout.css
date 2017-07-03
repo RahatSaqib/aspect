@@ -15,11 +15,11 @@
 }
 
 .AppBar__appBar {
-  background-color: #FFFFFF;
+  background-color: #ffffff;
 }
 
 .AppBar__leftIcon:not([disabled]).AppBar__leftIcon:not([disabled]) {
-  color: #6D6F7D;
+  color: #6d6f7d;
 }
 
 .AppBar__appBar--xs {
@@ -47,12 +47,14 @@
   margin: 0 15px;
 }
 
-.IconMenu__icon:not([disabled]).IconMenu__icon:not([disabled]) { /* specificity++ */
+.IconMenu__icon:not([disabled]).IconMenu__icon:not([disabled]) {
+  /* specificity++ */
   color: var(--aspect-color-mountain);
 }
 
-.Link__link.Link__link {/* specificity++ */
-  opacity: 1;/* Reset */
+.Link__link.Link__link {
+  /* specificity++ */
+  opacity: 1; /* Reset */
 }
 
 .Link__link:hover {
@@ -80,7 +82,8 @@
   margin-bottom: -1px;
 }
 
-.Link__active.Link__active {/* specificity++ */
+.Link__active.Link__active {
+  /* specificity++ */
   color: var(--aspect-color-grey-2);
   font-weight: var(--lato-font-weight-bold);
 }
@@ -89,7 +92,8 @@
   position: relative;
 }
 
-.Link__active > abbr::after, .Link__link:hover > abbr::after {
+.Link__active > abbr::after,
+.Link__link:hover > abbr::after {
   content: "";
   position: absolute;
   border-bottom: 1px solid var(--aspect-color-cyan);

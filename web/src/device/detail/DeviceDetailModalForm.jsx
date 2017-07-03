@@ -150,7 +150,7 @@ export const DeviceDetailModalForm = props => {
         </div>
         <JSONSchemaCard
           title={labels.configuration}
-          renderField={field => (
+          renderField={field =>
             <TextField
               name={field.key}
               floatingLabelText={field.label}
@@ -161,8 +161,7 @@ export const DeviceDetailModalForm = props => {
                   values.configurationData.setIn(field.path, event.target.value)
                 )}
               fullWidth
-            />
-          )}
+            />}
           formatNestedSubtitle={props.formatNestedSubtitle}
           dataSchema={props.configurationDataSchema}
           data={values.configurationData}

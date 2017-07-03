@@ -29,8 +29,7 @@ import styles from './ResetPassword.css'
 import messages from './messages'
 import ResetPasswordEnterEmail from './ResetPasswordEnterEmail'
 import ResetPasswordEnterPassword from './ResetPasswordEnterPassword'
-import AppNotificationSnackBar
-  from '../../appNotification/AppNotificationSnackBar'
+import AppNotificationSnackBar from '../../appNotification/AppNotificationSnackBar'
 import AppNotificationDialog from '../../appNotification/AppNotificationDialog'
 
 const enhance = compose(
@@ -215,7 +214,9 @@ export class ResetPassword extends PureComponent {
                       </StepLabel>
                     </Step>
                     <Step>
-                      <StepLabel>{formatMessage(messages.finish)}</StepLabel>
+                      <StepLabel>
+                        {formatMessage(messages.finish)}
+                      </StepLabel>
                     </Step>
                   </Stepper>
                   {resettingPassword && <LinearProgress />}
@@ -314,7 +315,9 @@ export class ResetPassword extends PureComponent {
                       </StepContent>
                     </Step>
                     <Step>
-                      <StepLabel>{formatMessage(messages.finish)}</StepLabel>
+                      <StepLabel>
+                        {formatMessage(messages.finish)}
+                      </StepLabel>
                       <StepContent>
                         <div className={styles.Form}>
                           <FormattedHTMLMessage {...messages.finishContent} />

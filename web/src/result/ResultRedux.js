@@ -182,7 +182,8 @@ export function updateSingleResult(resultId, data) {
           defineMessages({
             title: {
               id: 'errorResponseMessages.updateSingleResult.PUT.default.title',
-              defaultMessage: 'An Error Occurred When Trying to Save the Result',
+              defaultMessage:
+                'An Error Occurred When Trying to Save the Result',
             },
           })
         ),
@@ -215,8 +216,10 @@ export function updateResultWorkflowStatus(resultId) {
         default: errorPleaseTryAgainInAFewMinutes(
           defineMessages({
             title: {
-              id: 'errorResponseMessages.updateResultWorkflowStatus.PUT.default.title',
-              defaultMessage: 'An Error Occurred When Trying to Save the Workflow Status',
+              id:
+                'errorResponseMessages.updateResultWorkflowStatus.PUT.default.title',
+              defaultMessage:
+                'An Error Occurred When Trying to Save the Workflow Status',
             },
           })
         ),
@@ -245,8 +248,10 @@ export function updateResultDeliverToTerminal(resultId, deliverToTerminal) {
         default: errorPleaseTryAgainInAFewMinutes(
           defineMessages({
             title: {
-              id: 'errorResponseMessages.updateResultDeliverToTerminal.PUT.default.title',
-              defaultMessage: 'An Error Occurred When Trying to update the "Deliver to Terminal" flag.',
+              id:
+                'errorResponseMessages.updateResultDeliverToTerminal.PUT.default.title',
+              defaultMessage:
+                'An Error Occurred When Trying to update the "Deliver to Terminal" flag.',
             },
           })
         ),

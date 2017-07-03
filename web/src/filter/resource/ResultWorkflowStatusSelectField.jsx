@@ -9,9 +9,7 @@ import { connect } from 'react-redux'
 import SelectField from 'material-ui/SelectField'
 import MenuItem from 'material-ui/MenuItem'
 
-import {
-  fetchWorkflowStatuses,
-} from '../../resultWorkflowStatus/ResultWorkflowStatusRedux'
+import { fetchWorkflowStatuses } from '../../resultWorkflowStatus/ResultWorkflowStatusRedux'
 
 export class ResultWorkflowStatusSelectField extends PureComponent {
   static propTypes = {
@@ -51,13 +49,13 @@ export class ResultWorkflowStatusSelectField extends PureComponent {
     return (
       <SelectField {...restProps} value={value} onChange={this.handleChange}>
         {allItemText && <MenuItem value="all" primaryText={allItemText} />}
-        {workflowStatusItems.map(c => (
+        {workflowStatusItems.map(c =>
           <MenuItem
             key={c.get('id')}
             value={c.get('id')}
             primaryText={c.get('name')}
           />
-        ))}
+        )}
       </SelectField>
     )
   }

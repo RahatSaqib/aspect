@@ -172,7 +172,8 @@ export function updateSingleRouter(routerId, data) {
           defineMessages({
             title: {
               id: 'errorResponseMessages.updateSingleRouter.PUT.default.title',
-              defaultMessage: 'An Error Occurred When Trying to Save the Router',
+              defaultMessage:
+                'An Error Occurred When Trying to Save the Router',
             },
           })
         ),

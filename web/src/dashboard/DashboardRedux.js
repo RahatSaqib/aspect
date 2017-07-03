@@ -2,9 +2,7 @@ import { defineMessages } from 'react-intl'
 import Immutable from 'immutable'
 
 import { aspectFetch } from '../shared/utils/fetch'
-import {
-  errorPleaseTryAgainInAFewMinutes,
-} from '../error/CommonErrorNotifications'
+import { errorPleaseTryAgainInAFewMinutes } from '../error/CommonErrorNotifications'
 
 export const types = {
   REQUEST_DASHBOARD_HOME: 'REQUEST_DASHBOARD_HOME',

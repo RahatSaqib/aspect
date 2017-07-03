@@ -285,7 +285,8 @@ export class InventoryItemsList extends PureComponent {
       consumableReasons,
     } = this.props
     const commonFormValues = {
-      consumableId: formValues.get('consumableId') ||
+      consumableId:
+        formValues.get('consumableId') ||
         inventoryAdjustment.getIn(['adjustmentDetails', 'consumableId']),
       lotNumber: formValues.get('lotNumber'),
       expiresOn: formValues.get('expiresOn'),
@@ -306,13 +307,13 @@ export class InventoryItemsList extends PureComponent {
         const selectedAdjustmentReason = consumableReasons.items.find(
           reason => reason.get('id') === formValues.get('reasonId')
         )
-        const dateValues = selectedAdjustmentReason.get('i18nKey') ===
-          testConductedReasonI18nKey
-          ? {
-              dateAdjustedFrom: formValues.get('dateAdjustedFrom'),
-              dateAdjustedTo: formValues.get('dateAdjustedTo'),
-            }
-          : { dateAdjusted: formValues.get('dateAdjusted') }
+        const dateValues =
+          selectedAdjustmentReason.get('i18nKey') === testConductedReasonI18nKey
+            ? {
+                dateAdjustedFrom: formValues.get('dateAdjustedFrom'),
+                dateAdjustedTo: formValues.get('dateAdjustedTo'),
+              }
+            : { dateAdjusted: formValues.get('dateAdjusted') }
         return removeInventory(
           inventoryAdjustment.getIn(['adjustmentDetails', 'inventoryItemId']),
           {
@@ -345,7 +346,9 @@ export class InventoryItemsList extends PureComponent {
         )
       default:
         throw new SubmissionError({
-          _error: `Invalid operation ${inventoryAdjustment.get('operation')} for inventory adjustment form`,
+          _error: `Invalid operation ${inventoryAdjustment.get(
+            'operation'
+          )} for inventory adjustment form`,
         })
     }
   }
@@ -431,15 +434,16 @@ export class InventoryItemsList extends PureComponent {
         ? adjustingInventoryItem.get('consumableName') || 'Inventory Item'
         : null,
     }
-    const formHeader = inventoryAdjustment.get('operation') === addOperation
-      ? formatMessage(messages.addTitle, formHeaderValues)
-      : inventoryAdjustment.get('operation') === removeOperation
+    const formHeader =
+      inventoryAdjustment.get('operation') === addOperation
+        ? formatMessage(messages.addTitle, formHeaderValues)
+        : inventoryAdjustment.get('operation') === removeOperation
           ? formatMessage(messages.removeTitle, formHeaderValues)
           : inventoryAdjustment.get('operation') === transferOperation
-              ? formatMessage(messages.transferTitle, formHeaderValues)
-              : inventoryAdjustment.get('operation') === receiveOperation
-                  ? formatMessage(messages.receiveTitle, formHeaderValues)
-                  : null
+            ? formatMessage(messages.transferTitle, formHeaderValues)
+            : inventoryAdjustment.get('operation') === receiveOperation
+              ? formatMessage(messages.receiveTitle, formHeaderValues)
+              : null
 
     const inventoryAdjustmentActions = [
       <FlatButton
@@ -503,7 +507,7 @@ export class InventoryItemsList extends PureComponent {
           actions={inventoryAdjustmentActions}
           open={
             inventoryAdjustment.get('operation') !== null &&
-              adjustingInventoryItem != null
+            adjustingInventoryItem != null
           }
           autoScrollBodyContent
           onRequestClose={this.handleInventoryAdjustmentCancel}

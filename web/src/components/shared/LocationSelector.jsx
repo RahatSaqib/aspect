@@ -44,7 +44,7 @@ const styles = {
   },
 }
 
-const renderCountrySelectField = ({ input, meta, ...restProps }) => (
+const renderCountrySelectField = ({ input, meta, ...restProps }) =>
   <CountrySelectField
     {...restProps}
     onChangeCountry={input.onChange}
@@ -58,9 +58,8 @@ const renderCountrySelectField = ({ input, meta, ...restProps }) => (
     tabIndex="0"
     aria-haspopup
   />
-)
 
-const renderStateSelectField = ({ input, meta, ...restProps }) => (
+const renderStateSelectField = ({ input, meta, ...restProps }) =>
   <StateSelectField
     {...restProps}
     onChangeState={input.onChange}
@@ -74,9 +73,8 @@ const renderStateSelectField = ({ input, meta, ...restProps }) => (
     tabIndex="0"
     aria-haspopup
   />
-)
 
-const renderLgaSelectField = ({ input, meta, ...restProps }) => (
+const renderLgaSelectField = ({ input, meta, ...restProps }) =>
   <LgaSelectField
     {...restProps}
     onChangeLga={input.onChange}
@@ -90,7 +88,6 @@ const renderLgaSelectField = ({ input, meta, ...restProps }) => (
     tabIndex="0"
     aria-haspopup
   />
-)
 
 export class LocationSelector extends PureComponent {
   componentWillReceiveProps(nextProps) {

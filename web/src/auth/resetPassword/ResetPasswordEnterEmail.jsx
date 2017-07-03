@@ -26,7 +26,9 @@ export function ResetPasswordEnterEmail({
   return (
     <form onSubmit={handleSubmit} className={styles.Form}>
       <div className={styles.Form__Content}>
-        <p>{formatMessage(messages.enterEmailAddressContent)}</p>
+        <p>
+          {formatMessage(messages.enterEmailAddressContent)}
+        </p>
         <a href="#showAdminHelp" onClick={showAdminHelpDialog}>
           {formatMessage(messages.iDontHaveAnEmailAddress)}
         </a>

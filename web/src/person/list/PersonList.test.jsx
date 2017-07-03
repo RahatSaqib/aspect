@@ -4,8 +4,7 @@ import sinon from 'sinon'
 import Helmet from 'react-helmet'
 import { Items } from '../../shared/metaReducers/items'
 import { Table } from '../../shared/metaReducers/table'
-import DataTableWithEmptyList
-  from '../../components/shared/DataTableWithEmptyList'
+import DataTableWithEmptyList from '../../components/shared/DataTableWithEmptyList'
 import ListFilterContainer from '../../filter/list/ListFilter'
 import { PersonList } from './PersonList'
 

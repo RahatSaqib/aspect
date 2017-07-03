@@ -21,8 +21,10 @@ export const types = {
   REQUEST_DEVICE_API_KEYS: 'REQUEST_DEVICE_API_KEYS',
   RECEIVE_DEVICE_API_KEYS: 'RECEIVE_DEVICE_API_KEYS',
 
-  REQUEST_UPDATING_SINGLE_DEVICE_API_KEY: 'REQUEST_UPDATING_SINGLE_DEVICE_API_KEY',
-  RECEIVE_UPDATED_SINGLE_DEVICE_API_KEY: 'RECEIVE_UPDATED_SINGLE_DEVICE_API_KEY',
+  REQUEST_UPDATING_SINGLE_DEVICE_API_KEY:
+    'REQUEST_UPDATING_SINGLE_DEVICE_API_KEY',
+  RECEIVE_UPDATED_SINGLE_DEVICE_API_KEY:
+    'RECEIVE_UPDATED_SINGLE_DEVICE_API_KEY',
 }
 /*
  * ---------------- Action Creators -----------------
@@ -81,7 +83,8 @@ export function fetchDeviceApiKeys(
           default: errorPleaseTryAgainInAFewMinutes(
             defineMessages({
               title: {
-                id: 'errorResponseMessages.fetchDeviceApiKeys.GET.default.title',
+                id:
+                  'errorResponseMessages.fetchDeviceApiKeys.GET.default.title',
                 defaultMessage: 'Loading DeviceApiKeys Failed',
               },
             })
@@ -121,7 +124,8 @@ export function exportDeviceApiKeys(format, sortCol, sortDir, page, pageSize) {
           default: errorPleaseTryAgainInAFewMinutes(
             defineMessages({
               title: {
-                id: 'errorResponseMessages.exportDeviceApiKeys.GET.default.title',
+                id:
+                  'errorResponseMessages.exportDeviceApiKeys.GET.default.title',
                 defaultMessage: 'Exporting DeviceApiKeys Failed',
               },
             })
@@ -151,7 +155,8 @@ export function generateDeviceApiKeys(data) {
         default: errorPleaseTryAgainInAFewMinutes(
           defineMessages({
             title: {
-              id: 'errorResponseMessages.generateDeviceApiKeys.POST.default.title',
+              id:
+                'errorResponseMessages.generateDeviceApiKeys.POST.default.title',
               defaultMessage: 'Generate DeviceApiKeys Failed',
             },
           })
@@ -177,7 +182,8 @@ export function assignDeviceApiKeys(data) {
         default: errorPleaseTryAgainInAFewMinutes(
           defineMessages({
             title: {
-              id: 'errorResponseMessages.assignDeviceApiKeys.POST.default.title',
+              id:
+                'errorResponseMessages.assignDeviceApiKeys.POST.default.title',
               defaultMessage: 'Assign DeviceApiKeys Failed',
             },
           })
@@ -212,8 +218,10 @@ export function updateSingleDeviceApiKey(deviceApiKeyId, data) {
         default: errorPleaseTryAgainInAFewMinutes(
           defineMessages({
             title: {
-              id: 'errorResponseMessages.updateSingleDeviceApiKey.PUT.default.title',
-              defaultMessage: 'An Error Occurred When Trying to Save the DeviceApiKey',
+              id:
+                'errorResponseMessages.updateSingleDeviceApiKey.PUT.default.title',
+              defaultMessage:
+                'An Error Occurred When Trying to Save the DeviceApiKey',
             },
           })
         ),

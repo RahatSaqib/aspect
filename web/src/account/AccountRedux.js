@@ -24,7 +24,8 @@ export const types = {
   RECEIVE_UPDATED_CONTACT_DETAILS: 'RECEIVE_UPDATED_CONTACT_DETAILS',
   RECEIVE_UPDATED_LOGIN_DETAILS: 'RECEIVE_UPDATED_LOGIN_DETAILS',
   RECEIVE_UPDATED_USER_PREFERENCES: 'RECEIVE_UPDATED_USER_PREFERENCES',
-  RECEIVE_UPDATED_LOGIN_DETAILS_EXPECTED_ERROR: 'RECEIVE_UPDATED_LOGIN_DETAILS_EXPECTED_ERROR',
+  RECEIVE_UPDATED_LOGIN_DETAILS_EXPECTED_ERROR:
+    'RECEIVE_UPDATED_LOGIN_DETAILS_EXPECTED_ERROR',
 }
 
 /*
@@ -142,7 +143,8 @@ export function saveLoginDetails(loginDetails) {
         newUsername: loginDetails.username,
         newPassword: loginDetails.newPassword,
         clientId: localStorage.getClientId(),
-        clientName: `${getBrowserNameAndVersion()} on ${window.navigator.platform}`,
+        clientName: `${getBrowserNameAndVersion()} on ${window.navigator
+          .platform}`,
       }),
       errorNotifications: {
         409: inlineWarning(
@@ -153,7 +155,8 @@ export function saveLoginDetails(loginDetails) {
             },
             message: {
               id: 'errorResponseMessages.saveLoginDetails.PUT.409.message',
-              defaultMessage: 'The username that you have entered is already in use by another user on the system',
+              defaultMessage:
+                'The username that you have entered is already in use by another user on the system',
             },
             resolution: {
               id: 'errorResponseMessages.saveLoginDetails.PUT.409.resolution',
@@ -169,11 +172,13 @@ export function saveLoginDetails(loginDetails) {
             },
             message: {
               id: 'errorResponseMessages.saveLoginDetails.PUT.403.message',
-              defaultMessage: 'The current password that you have entered is incorrect.',
+              defaultMessage:
+                'The current password that you have entered is incorrect.',
             },
             resolution: {
               id: 'errorResponseMessages.saveLoginDetails.PUT.403.resolution',
-              defaultMessage: 'Please try re-entering your password or contact us to reset your login details',
+              defaultMessage:
+                'Please try re-entering your password or contact us to reset your login details',
             },
           })
         ),

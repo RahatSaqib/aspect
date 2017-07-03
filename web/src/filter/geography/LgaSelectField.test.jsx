@@ -10,8 +10,7 @@ import {
   LazyLoadParent,
   LazyLoadChild,
 } from '../../geography/GeographyRedux'
-import ForkedSelectField
-  from '../../components/forkedMaterialUi/ForkedSelectField'
+import ForkedSelectField from '../../components/forkedMaterialUi/ForkedSelectField'
 
 describe('LgaSelectField module', () => {
   const { LgaSelectField } = require('./LgaSelectField')

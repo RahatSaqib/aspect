@@ -77,7 +77,8 @@ export function handleFetchResponse(options) {
             ...defineMessages({
               message: {
                 id: 'errorResponseMessages.disconnected.default.message',
-                defaultMessage: 'Either your computer has been disconnected from the internet or our server has failed to respond.',
+                defaultMessage:
+                  'Either your computer has been disconnected from the internet or our server has failed to respond.',
               },
             }),
             ...errorNotification,
@@ -107,8 +108,8 @@ function changeAllIdsToString(data) {
       (value, key) =>
         isIdLike(key)
           ? value === null || value === undefined || _.isObject(value)
-              ? value
-              : String(value)
+            ? value
+            : String(value)
           : changeAllIdsToString(value)
     )
   }

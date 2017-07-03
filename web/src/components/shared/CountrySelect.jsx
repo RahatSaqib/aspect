@@ -79,7 +79,7 @@ export default props => {
       onChange={onChange}
       {...selectFieldProps}
     >
-      {countriesData.map(country => (
+      {countriesData.map(country =>
         <MenuItem
           key={country.value}
           value={country.value}
@@ -97,7 +97,7 @@ export default props => {
             />
           }
         />
-      ))}
+      )}
     </ForkedSelectField>
   )
 }

@@ -21,8 +21,7 @@ import {
 import NavTitle from '../../globals/components/NavTitle'
 import { ListFilterContainer } from '../../filter/list/ListFilter'
 import { ListFilter, configureListFilter } from '../../filter/FilterRedux'
-import DataTableWithEmptyList
-  from '../../components/shared/DataTableWithEmptyList'
+import DataTableWithEmptyList from '../../components/shared/DataTableWithEmptyList'
 import styles from './DeviceApiKeyList.css'
 import { Items } from '../../shared/metaReducers/items'
 import { Table } from '../../shared/metaReducers/table'
@@ -226,11 +225,10 @@ export class DeviceApiKeyList extends PureComponent {
   handleSelect = event => {
     const { assignerValues } = this.state
     const { deviceApiKeyId } = event.target.dataset
-    const nextDeviceApiKeyIds = assignerValues.deviceApiKeyIds.indexOf(
-      deviceApiKeyId
-    ) !== -1
-      ? assignerValues.deviceApiKeyIds.filter(id => id !== deviceApiKeyId)
-      : [...assignerValues.deviceApiKeyIds, deviceApiKeyId]
+    const nextDeviceApiKeyIds =
+      assignerValues.deviceApiKeyIds.indexOf(deviceApiKeyId) !== -1
+        ? assignerValues.deviceApiKeyIds.filter(id => id !== deviceApiKeyId)
+        : [...assignerValues.deviceApiKeyIds, deviceApiKeyId]
     this.setState({
       assignerValues: {
         ...this.state.assignerValues,
@@ -264,13 +262,13 @@ export class DeviceApiKeyList extends PureComponent {
             disabled={_.isEmpty(selectableIds)}
             checked={
               !_.isEmpty(assignerValues.deviceApiKeyIds) &&
-                _.isEqual(selectableIds, assignerValues.deviceApiKeyIds)
+              _.isEqual(selectableIds, assignerValues.deviceApiKeyIds)
             }
             onCheck={this.handleSelectAll}
           />
         ),
         extraProps: { style: { width: '5%' } },
-        format: (data, row) => (
+        format: (data, row) =>
           <Checkbox
             name="selected"
             data-device-Api-Key-Id={row.get('id')}
@@ -279,8 +277,7 @@ export class DeviceApiKeyList extends PureComponent {
               assignerValues.deviceApiKeyIds.indexOf(row.get('id')) !== -1
             }
             onCheck={this.handleSelect}
-          />
-        ),
+          />,
       },
       {
         db: 'createdOn',
@@ -312,15 +309,14 @@ export class DeviceApiKeyList extends PureComponent {
       {
         db: 'revoked',
         title: formatMessage(messages.revoked),
-        format: (data, row) => (
+        format: (data, row) =>
           <Checkbox
             name="revoked"
             style={{ textAlign: 'center' }}
             data-device-Api-Key-Id={row.get('id')}
             checked={data > 0}
             onCheck={this.handleRevoke}
-          />
-        ),
+          />,
       },
     ]
 

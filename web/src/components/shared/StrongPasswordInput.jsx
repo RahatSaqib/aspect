@@ -37,7 +37,8 @@ const messages = defineMessages({
     defaultMessage: 'Has a mix of UPPER and lower case characters',
   },
   passwordStrengthMeterContainsSpecialCharacter: {
-    id: 'pages.StrongPasswordInput.passwordStrengthMeterContainsSpecialCharacter',
+    id:
+      'pages.StrongPasswordInput.passwordStrengthMeterContainsSpecialCharacter',
     defaultMessage: 'Has a special character (%!$*...)',
   },
 })
@@ -90,13 +91,16 @@ class StrongPasswordInput extends React.PureComponent {
       ),
     }
     const passwordStrengthResults = {
-      isWeak: !passwordStrengthRules.minLength ||
+      isWeak:
+        !passwordStrengthRules.minLength ||
         (!passwordStrengthRules.containsNumber &&
           !passwordStrengthRules.containSpecialCharacter),
-      isOkay: passwordStrengthRules.minLength &&
+      isOkay:
+        passwordStrengthRules.minLength &&
         (passwordStrengthRules.containsNumber ||
           passwordStrengthRules.containSpecialCharacter),
-      isStrong: passwordStrengthRules.minLength &&
+      isStrong:
+        passwordStrengthRules.minLength &&
         passwordStrengthRules.containsNumber &&
         passwordStrengthRules.mixUpperAndLowerCase &&
         passwordStrengthRules.containSpecialCharacter,
@@ -134,8 +138,8 @@ class StrongPasswordInput extends React.PureComponent {
     const strengthMessage = passwordStrengthResults.isStrong
       ? formatMessage(messages.passwordStrengthMeterStrong)
       : passwordStrengthResults.isWeak
-          ? formatMessage(messages.passwordStrengthMeterWeak)
-          : formatMessage(messages.passwordStrengthMeterOkay)
+        ? formatMessage(messages.passwordStrengthMeterWeak)
+        : formatMessage(messages.passwordStrengthMeterOkay)
 
     const strengthMessageStyle = passwordStrengthResults.isStrong
       ? strongStyle
@@ -163,7 +167,9 @@ class StrongPasswordInput extends React.PureComponent {
           useLayerForClickAway={false}
           {...popOverProps}
         >
-          <span style={strengthMessageStyle}>{strengthMessage}</span>
+          <span style={strengthMessageStyle}>
+            {strengthMessage}
+          </span>
           <LinearProgress
             mode="determinate"
             value={passwordStrengthScore}

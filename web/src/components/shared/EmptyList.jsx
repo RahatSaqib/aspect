@@ -34,14 +34,15 @@ const enhance = compose(
   )
 )
 
-export const EmptyList = ({ intl, clearListFilter }) => (
+export const EmptyList = ({ intl, clearListFilter }) =>
   <Paper style={{ textAlign: 'center', padding: 10 }}>
-    <p>{intl.formatMessage(messages.noResultsTitle)}</p>
+    <p>
+      {intl.formatMessage(messages.noResultsTitle)}
+    </p>
     <FlatButton
       label={intl.formatMessage(messages.clearFilters)}
       onTouchTap={clearListFilter}
     />
   </Paper>
-)
 
 export default enhance(EmptyList)

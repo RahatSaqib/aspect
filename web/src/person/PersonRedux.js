@@ -27,7 +27,8 @@ export const types = {
 
   REQUEST_UPDATING_SINGLE_PERSON: 'REQUEST_UPDATING_SINGLE_PERSON',
   RECEIVE_UPDATED_SINGLE_PERSON: 'RECEIVE_UPDATED_SINGLE_PERSON',
-  RECEIVE_UPDATED_SINGLE_PERSON_LOGIN_DETAILS: 'RECEIVE_UPDATED_SINGLE_PERSON_LOGIN_DETAILS',
+  RECEIVE_UPDATED_SINGLE_PERSON_LOGIN_DETAILS:
+    'RECEIVE_UPDATED_SINGLE_PERSON_LOGIN_DETAILS',
 }
 /*
  * ---------------- Action Creators -----------------
@@ -197,7 +198,8 @@ function updatePerson(path, personId, data, fields) {
           defineMessages({
             title: {
               id: 'errorResponseMessages.updatePerson.PUT.default.title',
-              defaultMessage: 'An Error Occurred When Trying to Save the Contact',
+              defaultMessage:
+                'An Error Occurred When Trying to Save the Contact',
             },
           })
         ),
@@ -237,15 +239,19 @@ export function updateSinglePersonLoginDetails(personId, data) {
         409: inlineWarning(
           defineMessages({
             title: {
-              id: 'errorResponseMessages.updateSinglePersonLoginDetails.PUT.409.title',
+              id:
+                'errorResponseMessages.updateSinglePersonLoginDetails.PUT.409.title',
               defaultMessage: 'This Username is Unavailable',
             },
             message: {
-              id: 'errorResponseMessages.updateSinglePersonLoginDetails.PUT.409.message',
-              defaultMessage: 'The username that you have entered is already in use by another user on the system',
+              id:
+                'errorResponseMessages.updateSinglePersonLoginDetails.PUT.409.message',
+              defaultMessage:
+                'The username that you have entered is already in use by another user on the system',
             },
             resolution: {
-              id: 'errorResponseMessages.updateSinglePersonLoginDetails.PUT.409.resolution',
+              id:
+                'errorResponseMessages.updateSinglePersonLoginDetails.PUT.409.resolution',
               defaultMessage: 'Please try another username',
             },
           })
@@ -253,7 +259,8 @@ export function updateSinglePersonLoginDetails(personId, data) {
         404: errorNotFound(
           defineMessages({
             title: {
-              id: 'errorResponseMessages.updateSinglePersonLoginDetails.PUT.404.title',
+              id:
+                'errorResponseMessages.updateSinglePersonLoginDetails.PUT.404.title',
               defaultMessage: "Could Not Find User's Details",
             },
           })
@@ -261,7 +268,8 @@ export function updateSinglePersonLoginDetails(personId, data) {
         default: errorPleaseTryAgainInAFewMinutes(
           defineMessages({
             title: {
-              id: 'errorResponseMessages.updateSinglePersonLoginDetails.PUT.default.title',
+              id:
+                'errorResponseMessages.updateSinglePersonLoginDetails.PUT.default.title',
               defaultMessage: 'Saving Login Details Failed',
             },
           })

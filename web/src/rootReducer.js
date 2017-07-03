@@ -24,8 +24,7 @@ import report from './report/ReportRedux'
 import idle from './idle/IdleRedux'
 import jobs from './job/JobRedux'
 import router from './router/RouterRedux'
-import resultWorkflowStatus
-  from './resultWorkflowStatus/ResultWorkflowStatusRedux'
+import resultWorkflowStatus from './resultWorkflowStatus/ResultWorkflowStatusRedux'
 import terminal from './terminal/TerminalRedux'
 
 const appReducer = combineReducers({

@@ -44,7 +44,9 @@ import styles from '../components/shared/Shared.css'
 
 const makeNotImplementedComponent = name => () =>
   <div className={styles.Content}>
-    <Paper className={styles.Content}>{name} is not implemented yet</Paper>
+    <Paper className={styles.Content}>
+      {name} is not implemented yet
+    </Paper>
   </div>
 
 const Routes = () =>

@@ -19,8 +19,7 @@ import { Unit } from '../../components/pureGrids'
 import TextInput from '../../components/shared/TextInput'
 import { loginStart } from '../AuthRedux'
 import styles from './Login.css'
-import AppNotificationSnackBar
-  from '../../appNotification/AppNotificationSnackBar'
+import AppNotificationSnackBar from '../../appNotification/AppNotificationSnackBar'
 import AppNotificationDialog from '../../appNotification/AppNotificationDialog'
 import { ContactDetails } from '../../person/PersonRedux'
 

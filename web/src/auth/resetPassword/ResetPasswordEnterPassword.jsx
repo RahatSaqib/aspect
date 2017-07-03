@@ -25,7 +25,9 @@ export function ResetPasswordEnterPassword({
   return (
     <form onSubmit={handleSubmit} className={styles.Form}>
       <div className={styles.Form__Content}>
-        <p>{formatMessage(messages.enterNewPasswordContent)}</p>
+        <p>
+          {formatMessage(messages.enterNewPasswordContent)}
+        </p>
         <StrongPasswordInput
           name="newPassword"
           label={formatMessage(messages.newPassword)}
