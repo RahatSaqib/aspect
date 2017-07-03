@@ -174,13 +174,9 @@ ColumnGraph.propTypes = {
   data: PropTypes.isRequired,
   hideLabel: PropTypes.boolean.isRequired,
   rightLabel: PropTypes.boolean.isRequired,
-  color: PropTypes,
+  color: PropTypes.isRequired,
   showAxes: PropTypes.boolean.isRequired,
   hideTicks: PropTypes.boolean.isRequired,
-}
-
-ColumnGraph.defaultProps = {
-  color: ['#3cc0cd', '#7d97bc', '#9874b2', '#f36283'],
 }
 
 export default ColumnGraph
