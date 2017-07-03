@@ -22,6 +22,7 @@
     "updatemessages:end": "rip po2json \"./src/shared/i18n/web.*.po\" -m \"./i18n/src/**/*.json\" -o ./src/shared/i18n/translation.json",
     "postupdatemessages:end": "fsys --task=remove --fileFolder=i18n && fsys --task=remove --fileFolder=src/shared/i18n/diff.pot",
     "prettier": "prettier --no-semi --single-quote --trailing-comma=es5",
+    "prettier:write": "npm run prettier -- --write \"./src/**/*.{js,jsx,css}\"",
     "lint": "eslint ./src --ext .js --ext .jsx",
     "clean": "fsys --task=remove --fileFolder=dist/index.html && fsys --task=emptyDir --dir=dist/assets && fsys --task=remove --fileFolder=src/template/dll.vendor.manifest.json && fsys --task=remove --fileFolder=src/template/index.html",
     "release:major": "npm version major && npm publish && git push --follow-tags",
