@@ -5,6 +5,7 @@
   "description": "The web client for the aspect API",
   "main": "",
   "scripts": {
+    "styleguide": "styleguidist server",
     "prewebpack:dll": "npm run clean",
     "webpack:dll": "webpack --config cfg/dll.babel.js",
     "prewebpack-dev-server:src": "cd src/template && fsys --task=copy --filesFolders=index.html --destination=../../dist --clobber=\"false\" --preserveTimestamps=\"false\" && cd ../../",
