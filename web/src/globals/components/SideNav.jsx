@@ -79,7 +79,7 @@ const enhance = compose(
   pure
 )
 
-export const SideNav = ({ open, handleClose, pathname, desktop }) => (
+export const SideNav = ({ open, handleClose, pathname, desktop }) =>
   <Drawer
     docked={desktop}
     containerClassName={cssClasses({
@@ -203,6 +203,5 @@ export const SideNav = ({ open, handleClose, pathname, desktop }) => (
       />
     </SelectableList>
   </Drawer>
-)
 
 export default enhance(SideNav)

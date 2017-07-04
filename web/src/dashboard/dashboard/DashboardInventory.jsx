@@ -18,7 +18,7 @@ const enhance = compose(
   })
 )
 
-export const DashboardInventory = ({ label }) => (
+export const DashboardInventory = ({ label }) =>
   <Link to="/inventory">
     <MiniChart
       data={[1000, 1200, 700, 500, 400, 500, 600, 780, 1200, 1456]}
@@ -27,6 +27,5 @@ export const DashboardInventory = ({ label }) => (
       bgcolor="#607d8b"
     />
   </Link>
-)
 
 export default enhance(DashboardInventory)

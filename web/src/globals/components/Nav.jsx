@@ -25,21 +25,20 @@ const enhance = compose(
   pure
 )
 
-export const Nav = ({
-  pageTitle,
-  pagePath,
-  handleHamburger,
-  handleSignOut,
-}) => (
+export const Nav = ({ pageTitle, pagePath, handleHamburger, handleSignOut }) =>
   <AppBar
     onLeftIconButtonTouchTap={handleHamburger}
     title={
       <span>
-        <Link className={styles.Brand} to="/dashboard">Aspect</Link>
+        <Link className={styles.Brand} to="/dashboard">
+          Aspect
+        </Link>
         {pageTitle &&
           <span>
             {' - '}
-            <Link className={styles.Brand} to={pagePath}>{pageTitle}</Link>
+            <Link className={styles.Brand} to={pagePath}>
+              {pageTitle}
+            </Link>
           </span>}
       </span>
     }
@@ -70,6 +69,5 @@ export const Nav = ({
       </IconMenu>
     </div>
   </AppBar>
-)
 
 export default enhance(Nav)

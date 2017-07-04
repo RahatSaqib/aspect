@@ -74,9 +74,10 @@ class PhoneInput extends React.PureComponent {
       const firstIndexOfSectionDivider = firstPortionDividerMatch
         ? firstPortionDividerMatch.index
         : -1
-      const firstPortionOfNumber = firstIndexOfSectionDivider > -1
-        ? trimmedNumber.substr(0, firstIndexOfSectionDivider)
-        : trimmedNumber
+      const firstPortionOfNumber =
+        firstIndexOfSectionDivider > -1
+          ? trimmedNumber.substr(0, firstIndexOfSectionDivider)
+          : trimmedNumber
       const matchingDialingCodes = _.filter(dialingCodes, {
         dial_code: firstPortionOfNumber,
       })
@@ -157,12 +158,11 @@ class PhoneInput extends React.PureComponent {
   }
 }
 
-const renderPhoneField = props => (
+const renderPhoneField = props =>
   <PhoneInput
     {...props}
     onChange={phoneNumber => props.input.onChange(phoneNumber)}
   />
-)
 
 const renderFormField = props => {
   const { name, label, disabled, maxLength } = props

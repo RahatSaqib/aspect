@@ -8,7 +8,7 @@
   display: block;
 }
 
-@media screen and (min-width:35.5em) {
+@media screen and (min-width: 35.5em) {
   .AppNotificationDialogDialog__SeverityIconContainer {
     display: inline-block;
     width: auto;

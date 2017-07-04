@@ -24,7 +24,7 @@ export const FilterMessage = ({
   subject,
   filterTemplate,
   filterTemplateOptional,
-}) => (
+}) =>
   <span>
     {getFilterMessage(
       listFilter.toJS(),
@@ -42,7 +42,6 @@ export const FilterMessage = ({
       deviceStatusItems
     )}
   </span>
-)
 
 FilterMessage.propTypes = {
   intl: intlShape.isRequired,

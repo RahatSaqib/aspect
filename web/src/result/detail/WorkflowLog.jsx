@@ -66,7 +66,9 @@ export default class ResultWorkflowStatusLog extends PureComponent {
           <CardText expandable style={{ paddingTop: 0 }}>
             {!table.loading && items.currentIdList.isEmpty()
               ? <Paper style={{ textAlign: 'center', padding: 10 }}>
-                  <p>{intl.formatMessage(messages.noWorkflowStatusLog)}</p>
+                  <p>
+                    {intl.formatMessage(messages.noWorkflowStatusLog)}
+                  </p>
                 </Paper>
               : <DataTable
                   items={items}

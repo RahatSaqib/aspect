@@ -8,8 +8,7 @@ import { connect } from 'react-redux'
 import MenuItem from 'material-ui/MenuItem'
 
 import { fetchLgasForLocationSelector } from '../../geography/GeographyRedux'
-import ForkedSelectField
-  from '../../components/forkedMaterialUi/ForkedSelectField'
+import ForkedSelectField from '../../components/forkedMaterialUi/ForkedSelectField'
 import {
   getSelectedCountry,
   getSelectedCountryStates,
@@ -101,9 +100,9 @@ export class LgaSelectField extends PureComponent {
         onChange={this.handleSelectFieldChange}
       >
         {allItemText && <MenuItem value="all" primaryText={allItemText} />}
-        {lgas.items.map(l => (
+        {lgas.items.map(l =>
           <MenuItem key={l.id} value={l.id} primaryText={l.name} />
-        ))}
+        )}
       </ForkedSelectField>
     )
   }

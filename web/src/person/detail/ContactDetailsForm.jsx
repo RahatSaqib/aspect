@@ -43,7 +43,9 @@ export function ContactDetailsForm({
           />
         </section>
         <section>
-          <h1>{formatMessage(messages.emailHeader)}</h1>
+          <h1>
+            {formatMessage(messages.emailHeader)}
+          </h1>
           <TextInput
             name="email"
             label={formatMessage(messages.primaryEmail)}
@@ -58,7 +60,9 @@ export function ContactDetailsForm({
           />
         </section>
         <section>
-          <h1>{formatMessage(messages.phone)}</h1>
+          <h1>
+            {formatMessage(messages.phone)}
+          </h1>
           <PhoneInput
             name="phone"
             label={formatMessage(messages.telephone)}
@@ -74,7 +78,9 @@ export function ContactDetailsForm({
         </section>
         {userIsAdmin &&
           <section>
-            <h1>{formatMessage(messages.partner)}</h1>
+            <h1>
+              {formatMessage(messages.partner)}
+            </h1>
             <SelectInput
               name="lastPartnerId"
               label={formatMessage(messages.partner)}
@@ -85,7 +91,9 @@ export function ContactDetailsForm({
             />
           </section>}
         <section>
-          <h1>{formatMessage(messages.location)}</h1>
+          <h1>
+            {formatMessage(messages.location)}
+          </h1>
           <LocationSelector
             loading={loading}
             initialValues={initialValues}

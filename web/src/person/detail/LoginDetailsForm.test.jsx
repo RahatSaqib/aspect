@@ -134,11 +134,13 @@ describe('LoginDetailsForm module', () => {
 
     it('should validate that a username has been entered', () => {
       expect(validate(initialLoginDetails, props)).toEqual({
-        currentPassword: 'Please enter your current password to update your login details',
+        currentPassword:
+          'Please enter your current password to update your login details',
       })
       const loginDetails = initialLoginDetails.set('username', '')
       expect(validate(loginDetails, props)).toEqual({
-        currentPassword: 'Please enter your current password to update your login details',
+        currentPassword:
+          'Please enter your current password to update your login details',
         username: 'A username is required',
       })
     })
@@ -146,7 +148,8 @@ describe('LoginDetailsForm module', () => {
     it('should validate password if it has been entered', () => {
       let loginDetails = initialLoginDetails.set('newPassword', 'invalid')
       expect(validate(loginDetails, props)).toEqual({
-        currentPassword: 'Please enter your current password to update your login details',
+        currentPassword:
+          'Please enter your current password to update your login details',
         newPassword: 'The password needs to be at least 8 characters long',
         confirmNewPassword: "These passwords don't match",
       })
@@ -156,19 +159,23 @@ describe('LoginDetailsForm module', () => {
         confirmNewPassword: 'lessInvalid',
       })
       expect(validate(loginDetails, props)).toEqual({
-        currentPassword: 'Please enter your current password to update your login details',
-        newPassword: 'The password needs to contain at least one number or special character (%!$*...)',
+        currentPassword:
+          'Please enter your current password to update your login details',
+        newPassword:
+          'The password needs to contain at least one number or special character (%!$*...)',
       })
 
       loginDetails = initialLoginDetails.set('newPassword', 'valid123')
       expect(validate(loginDetails, props)).toEqual({
-        currentPassword: 'Please enter your current password to update your login details',
+        currentPassword:
+          'Please enter your current password to update your login details',
         confirmNewPassword: "These passwords don't match",
       })
 
       loginDetails = initialLoginDetails.set('confirmNewPassword', 'valid123')
       expect(validate(loginDetails, props)).toEqual({
-        currentPassword: 'Please enter your current password to update your login details',
+        currentPassword:
+          'Please enter your current password to update your login details',
       })
     })
 

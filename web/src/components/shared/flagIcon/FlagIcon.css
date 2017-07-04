@@ -3,7 +3,7 @@
   box-sizing: border-box;
   -moz-box-sizing: border-box;
   width: 16px !important;
-  height: 11px !important;;
+  height: 11px !important;
   background: url("./flagSprites.png");
 }
 .flag-icon.flag-ad {
@@ -204,7 +204,9 @@
 .flag-icon.flag-fo {
   background-position: -32px -44px;
 }
-.flag-icon.flag-fr, .bl, .mf {
+.flag-icon.flag-fr,
+.bl,
+.mf {
   background-position: -48px -44px;
 }
 .flag-icon.flag-ga {
@@ -460,7 +462,8 @@
 .flag-icon.flag-ni {
   background-position: -112px -99px;
 }
-.flag-icon.flag-nl, .bq {
+.flag-icon.flag-nl,
+.bq {
   background-position: -128px -99px;
 }
 .flag-icon.flag-no {
@@ -697,5 +700,3 @@
 .flag-icon.flag-zw {
   background-position: -96px -154px;
 }
-
-

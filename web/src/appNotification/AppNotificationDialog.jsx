@@ -30,7 +30,8 @@ const genericMessages = defineMessages({
   },
   message: {
     id: 'errorResponseMessages.generic.message',
-    defaultMessage: 'Our technical team has been notified of the problem and will attend to it as soon as possible.',
+    defaultMessage:
+      'Our technical team has been notified of the problem and will attend to it as soon as possible.',
   },
   closeText: {
     id: 'errorResponseMessages.generic.closeText',

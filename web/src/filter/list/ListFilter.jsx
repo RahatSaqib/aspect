@@ -28,8 +28,7 @@ import ResultCategorySelectField from '../resource/ResultCategorySelectField'
 import ConsumableSelectField from '../resource/ConsumableSelectField'
 import SiteAutoCompleteField from '../resource/SiteAutoCompleteField'
 import DateRangeSelector from '../date/DateRangeSelector'
-import ResultWorkflowStatusSelectField
-  from '../resource/ResultWorkflowStatusSelectField'
+import ResultWorkflowStatusSelectField from '../resource/ResultWorkflowStatusSelectField'
 import DeviceStatusSelectField from '../resource/DeviceStatusSelectField'
 import FilterMessage from './FilterMessage'
 import {
@@ -845,16 +844,12 @@ export class ListFilter extends PureComponent {
               modal={isModal}
               open={listExport.askingConfirmation}
             >
-              You are exporting a large number of items to
-              {' '}
+              You are exporting a large number of items to{' '}
               <strong>
                 {(listExport.currentFormatType || '').toUpperCase()}
-              </strong>
-              {' '}
-              file.
-              This may take a while. Continue?
+              </strong>{' '}
+              file. This may take a while. Continue?
             </Dialog>
-
           </CardActions>
         </Card>
       </div>

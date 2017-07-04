@@ -225,9 +225,8 @@ export function changeAdjustmentConsumable(consumable) {
   const expiresOn = today
   const adjustmentConsumableDetails = {
     consumableId: consumable.get('id'),
-    expiresOn: consumable.get('canExpire') === 1
-      ? new Date(expiresOn)
-      : undefined,
+    expiresOn:
+      consumable.get('canExpire') === 1 ? new Date(expiresOn) : undefined,
     canExpire: consumable.get('canExpire') === 1,
     consumableName: consumable.get('name'),
     unitShortName: consumable.get('unitShortName'),

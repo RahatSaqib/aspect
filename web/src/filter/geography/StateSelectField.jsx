@@ -8,8 +8,7 @@ import { connect } from 'react-redux'
 import MenuItem from 'material-ui/MenuItem'
 
 import { fetchStatesForLocationSelector } from '../../geography/GeographyRedux'
-import ForkedSelectField
-  from '../../components/forkedMaterialUi/ForkedSelectField'
+import ForkedSelectField from '../../components/forkedMaterialUi/ForkedSelectField'
 
 export function getSelectedCountry({ countries, countryId }) {
   if (countries.loading) {
@@ -85,9 +84,9 @@ export class StateSelectField extends PureComponent {
         onChange={this.handleSelectFieldChange}
       >
         {allItemText && <MenuItem value="all" primaryText={allItemText} />}
-        {getSelectedCountryStates(this.props).map(s => (
+        {getSelectedCountryStates(this.props).map(s =>
           <MenuItem key={s.id} value={s.id} primaryText={s.name} />
-        ))}
+        )}
       </ForkedSelectField>
     )
   }

@@ -121,15 +121,18 @@ export default defineMessages({
   },
   currentPasswordRequired: {
     id: 'pages.UpdateLoginDetails.currentPasswordRequired',
-    defaultMessage: 'Please enter your current password to update your login details',
+    defaultMessage:
+      'Please enter your current password to update your login details',
   },
   newPasswordTooShort: {
     id: 'pages.UpdateLoginDetails.newPasswordTooShort',
     defaultMessage: 'The password needs to be at least 8 characters long',
   },
   newPasswordMustContainANumberOrSpecialCharacter: {
-    id: 'pages.UpdateLoginDetails.newPasswordMustContainANumberOrSpecialCharacter',
-    defaultMessage: 'The password needs to contain at least one number or special character (%!$*...)',
+    id:
+      'pages.UpdateLoginDetails.newPasswordMustContainANumberOrSpecialCharacter',
+    defaultMessage:
+      'The password needs to contain at least one number or special character (%!$*...)',
   },
   passwordsDoNotMatch: {
     id: 'pages.UpdateLoginDetails.passwordsDoNotMatch',
@@ -141,7 +144,8 @@ export default defineMessages({
   },
   currentPasswordDialogMessage: {
     id: 'pages.UpdateLoginDetails.currentPasswordDialogMessage',
-    defaultMessage: 'To update your login details, please enter your current password',
+    defaultMessage:
+      'To update your login details, please enter your current password',
   },
   submitCurrentPassword: {
     id: 'pages.UpdateLoginDetails.submitCurrentPassword',

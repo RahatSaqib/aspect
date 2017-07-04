@@ -16,7 +16,7 @@ const enhance = compose(
   pure
 )
 
-export const ManageSupplies = () => (
+export const ManageSupplies = () =>
   <div className={styles.Content}>
     <Helmet
       title="Manage Supplies"
@@ -30,6 +30,5 @@ export const ManageSupplies = () => (
       </Unit>
     </div>
   </div>
-)
 
 export default enhance(ManageSupplies)

@@ -10,6 +10,7 @@
 .Drawer__ListItem {
   font-size: 14px !important;
 }
-.Drawer__ListItem >div>div {/* FIXME: use classname */
+.Drawer__ListItem > div > div {
+  /* FIXME: use classname */
   padding-left: 56px !important;
 }

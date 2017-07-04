@@ -3,8 +3,7 @@ import { shallow } from 'enzyme'
 import sinon from 'sinon'
 import DatePicker from 'material-ui/DatePicker'
 import MenuItem from 'material-ui/MenuItem'
-import ForkedSelectField
-  from '../../components/forkedMaterialUi/ForkedSelectField'
+import ForkedSelectField from '../../components/forkedMaterialUi/ForkedSelectField'
 import { DateRangeSelector } from './DateRangeSelector'
 
 describe('DateRangeSelector Component', () => {

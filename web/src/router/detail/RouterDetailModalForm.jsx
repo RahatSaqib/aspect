@@ -220,7 +220,7 @@ export const RouterDetailModalForm = props => {
         <JSONSchemaCard
           initiallyExpanded
           title={labels.configuration}
-          renderField={field => (
+          renderField={field =>
             <TextField
               name={field.key}
               floatingLabelText={field.label}
@@ -231,8 +231,7 @@ export const RouterDetailModalForm = props => {
                   values.configurationData.setIn(field.path, event.target.value)
                 )}
               fullWidth
-            />
-          )}
+            />}
           formatNestedSubtitle={props.formatNestedSubtitle}
           dataSchema={props.configurationDataSchema}
           data={values.configurationData}

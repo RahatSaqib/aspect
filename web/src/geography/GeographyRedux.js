@@ -2,13 +2,13 @@ import { defineMessages } from 'react-intl'
 import _ from 'lodash'
 import Immutable from 'immutable'
 import { aspectFetch } from '../shared/utils/fetch'
-import {
-  errorPleaseTryAgainInAFewMinutes,
-} from '../error/CommonErrorNotifications'
+import { errorPleaseTryAgainInAFewMinutes } from '../error/CommonErrorNotifications'
 
 export const types = {
-  REQUEST_COUNTRIES_FOR_LOCATION_SELECTOR: 'REQUEST_COUNTRIES_FOR_LOCATION_SELECTOR',
-  RECEIVE_COUNTRIES_FOR_LOCATION_SELECTOR: 'RECEIVE_COUNTRIES_FOR_LOCATION_SELECTOR',
+  REQUEST_COUNTRIES_FOR_LOCATION_SELECTOR:
+    'REQUEST_COUNTRIES_FOR_LOCATION_SELECTOR',
+  RECEIVE_COUNTRIES_FOR_LOCATION_SELECTOR:
+    'RECEIVE_COUNTRIES_FOR_LOCATION_SELECTOR',
   REQUEST_STATES_FOR_LOCATION_SELECTOR: 'REQUEST_STATES_FOR_LOCATION_SELECTOR',
   RECEIVE_STATES_FOR_LOCATION_SELECTOR: 'RECEIVE_STATES_FOR_LOCATION_SELECTOR',
   REQUEST_LGAS_FOR_LOCATION_SELECTOR: 'REQUEST_LGAS_FOR_LOCATION_SELECTOR',
@@ -108,7 +108,8 @@ export const fetchCountriesForLocationSelector = function(
             default: errorPleaseTryAgainInAFewMinutes(
               defineMessages({
                 title: {
-                  id: 'errorResponseMessages.fetchCountriesForLocationSelector.GET.default.title',
+                  id:
+                    'errorResponseMessages.fetchCountriesForLocationSelector.GET.default.title',
                   defaultMessage: 'Error Loading Countries',
                 },
               })
@@ -169,7 +170,8 @@ export const fetchStatesForLocationSelector = function(
             default: errorPleaseTryAgainInAFewMinutes(
               defineMessages({
                 title: {
-                  id: 'errorResponseMessages.fetchStatesForLocationSelector.GET.default.title',
+                  id:
+                    'errorResponseMessages.fetchStatesForLocationSelector.GET.default.title',
                   defaultMessage: 'Error Loading States for {countryName}',
                 },
               }),
@@ -224,7 +226,8 @@ export const fetchLgasForLocationSelector = function(
           default: errorPleaseTryAgainInAFewMinutes(
             defineMessages({
               title: {
-                id: 'errorResponseMessages.fetchLgasForLocationSelector.GET.default.title',
+                id:
+                  'errorResponseMessages.fetchLgasForLocationSelector.GET.default.title',
                 defaultMessage: 'Error Loading Areas for {stateName}',
               },
             }),

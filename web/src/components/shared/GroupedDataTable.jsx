@@ -24,7 +24,7 @@ import styles from './DataTable.css'
 
 const cssClasses = classnames.bind(styles)
 
-const TableRowColumn = props => (
+const TableRowColumn = props =>
   <TableRowColumnWithBug
     {...props}
     style={{
@@ -35,7 +35,6 @@ const TableRowColumn = props => (
       ...props.style,
     }}
   />
-)
 
 export default class GroupedDataTable extends PureComponent {
   static propTypes = {
@@ -93,13 +92,14 @@ export default class GroupedDataTable extends PureComponent {
             _.assign(column, {
               isExtraColumn: true,
               fieldName: column.get('fieldName'),
-              format: column.get('type') === 'number'
-                ? n => (_.isNumber(n) ? intl.formatNumber(n) : null)
-                : _.identity,
-              headerText: column.get('i18nKey') &&
-                messages[column.get('i18nKey')]
-                ? intl.formatMessage[column.get('i18nKey')]
-                : column.get('title'),
+              format:
+                column.get('type') === 'number'
+                  ? n => (_.isNumber(n) ? intl.formatNumber(n) : null)
+                  : _.identity,
+              headerText:
+                column.get('i18nKey') && messages[column.get('i18nKey')]
+                  ? intl.formatMessage[column.get('i18nKey')]
+                  : column.get('title'),
             })
           )
           .toJS()
@@ -144,7 +144,9 @@ export default class GroupedDataTable extends PureComponent {
             page < totalPages - 1 - maxPagingButtons / 2)
         ) {
           pagerItems.push(
-            <span key={`ellipsis-${key}`} style={{ margin: '0 5px' }}>…</span>
+            <span key={`ellipsis-${key}`} style={{ margin: '0 5px' }}>
+              …
+            </span>
           )
         }
       }
@@ -161,9 +163,10 @@ export default class GroupedDataTable extends PureComponent {
 
   handleSort(col) {
     const table = this.props.table
-    const newSort = table.sortCol === col.fieldName
-      ? table.sortDir === 'asc' ? 'desc' : 'asc'
-      : table.sortDir
+    const newSort =
+      table.sortCol === col.fieldName
+        ? table.sortDir === 'asc' ? 'desc' : 'asc'
+        : table.sortDir
     this.fetchData(col.fieldName, newSort)
   }
 
@@ -211,7 +214,7 @@ export default class GroupedDataTable extends PureComponent {
             enableSelectAll={this.state.enableSelectAll}
           >
             <TableRow>
-              {columns.map(col => (
+              {columns.map(col =>
                 <TableHeaderColumn
                   key={col.fieldName}
                   tooltip={col.tooltip}
@@ -238,7 +241,7 @@ export default class GroupedDataTable extends PureComponent {
                     }}
                   />
                 </TableHeaderColumn>
-              ))}
+              )}
             </TableRow>
           </TableHeader>
           <TableBody
@@ -247,7 +250,7 @@ export default class GroupedDataTable extends PureComponent {
             showRowHover={this.state.showRowHover}
             stripedRows={this.state.stripedRows}
           >
-            {items.currentIdList.map(itemId => (
+            {items.currentIdList.map(itemId =>
               <TableRow
                 key={itemId}
                 className={cssClasses({
@@ -281,7 +284,7 @@ export default class GroupedDataTable extends PureComponent {
                     {actionComponent(itemId)}
                   </TableRowColumn>}
               </TableRow>
-            ))}
+            )}
           </TableBody>
           <TableFooter adjustForCheckbox>
             <TableRow>

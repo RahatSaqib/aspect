@@ -16,11 +16,11 @@
 }
 
 .Count__Positive {
-  color: #7CB342;
+  color: #7cb342;
 }
 
 .Alert__Positive {
-  background-color:#7CB342;
+  background-color: #7cb342;
   color: #fff;
   padding: 1px 6px;
   margin-left: 5px;
@@ -28,7 +28,7 @@
 }
 
 .Alert__Negative {
-  background-color:#f85358;
+  background-color: #f85358;
   color: #fff;
   padding: 1px 6px;
   margin-left: 5px;

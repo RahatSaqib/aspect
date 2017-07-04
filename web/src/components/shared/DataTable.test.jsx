@@ -10,7 +10,11 @@ import DataTable from './DataTable'
 
 describe('DataTable module', () => {
   const mountWithProvider = node =>
-    mount(<MuiThemeProvider>{node}</MuiThemeProvider>).find(node.type)
+    mount(
+      <MuiThemeProvider>
+        {node}
+      </MuiThemeProvider>
+    ).find(node.type)
 
   describe('DataTable component', () => {
     const defaultProps = {

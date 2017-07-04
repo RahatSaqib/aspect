@@ -8,7 +8,7 @@
 }
 
 .Form__Content {
-  composes: Form__Content from '../../components/shared/Shared.css'
+  composes: Form__Content from '../../components/shared/Shared.css';
 }
 
 .Form__Content section h1 {

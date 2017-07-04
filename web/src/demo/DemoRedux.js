@@ -88,7 +88,8 @@ export function postDemoDeviceResult(deviceId, data) {
           defineMessages({
             title: {
               id: 'errorResponseMessages.updateSingleDevice.PUT.default.title',
-              defaultMessage: 'An Error Occurred When Trying to Save the Device',
+              defaultMessage:
+                'An Error Occurred When Trying to Save the Device',
             },
           })
         ),

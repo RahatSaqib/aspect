@@ -21,7 +21,7 @@ const enhanceField = compose(
 )
 
 export const ReadOnlyField = enhanceField(
-  ({ label, value, lg, format = _.identity, nullText = '-' }) => (
+  ({ label, value, lg, format = _.identity, nullText = '-' }) =>
     <div
       className={cssClasses('FieldContainer', { 'FieldContainer--large': lg })}
     >
@@ -38,7 +38,6 @@ export const ReadOnlyField = enhanceField(
         {!value ? nullText : format ? format(value) : value}
       </div>
     </div>
-  )
 )
 
 const enhanceFields = compose(
@@ -49,12 +48,12 @@ const enhanceFields = compose(
   pure
 )
 
-export const ReadOnlyFields = enhanceFields(({ fields, ...restProps }) => (
+export const ReadOnlyFields = enhanceFields(({ fields, ...restProps }) =>
   <div {...restProps}>
-    {fields.map(({ label, value }) => (
+    {fields.map(({ label, value }) =>
       <ReadOnlyField key={label} label={label} value={value} />
-    ))}
+    )}
   </div>
-))
+)
 
 export default ReadOnlyFields

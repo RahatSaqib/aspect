@@ -20,7 +20,7 @@ const enhance = compose(
   )
 )
 
-export const Index = ({ location }) => (
+export const Index = ({ location }) =>
   <EnsureAuthorized refreshStart={refreshStart} location={location}>
     <Redirect
       to={{
@@ -29,6 +29,5 @@ export const Index = ({ location }) => (
       }}
     />
   </EnsureAuthorized>
-)
 
 export default enhance(Index)

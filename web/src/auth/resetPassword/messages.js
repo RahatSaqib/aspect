@@ -11,7 +11,8 @@ export default defineMessages({
   },
   enterEmailAddressContent: {
     id: 'pages.ResetPassword.enterEmailAddressContent',
-    defaultMessage: 'Please enter the email address that you are registered with',
+    defaultMessage:
+      'Please enter the email address that you are registered with',
   },
   emailAddress: {
     id: 'pages.ResetPassword.emailAddress',
@@ -31,7 +32,8 @@ export default defineMessages({
   },
   generateTokenFailedResolution: {
     id: 'pages.ResetPassword.generateTokenFailedResolution',
-    defaultMessage: 'You can request further help by sending an email to {supportEmail} or calling us on {supportTelephone}',
+    defaultMessage:
+      'You can request further help by sending an email to {supportEmail} or calling us on {supportTelephone}',
   },
   iDontHaveAnEmailAddress: {
     id: 'pages.ResetPassword.iDontHaveAnEmailAddress',
@@ -55,7 +57,8 @@ export default defineMessages({
   },
   checkEmailContent: {
     id: 'pages.ResetPassword.checkEmailContent',
-    defaultMessage: 'We have sent an email to {emailAddress} that contains a link which will allow you to reset your password. Please check your inbox',
+    defaultMessage:
+      'We have sent an email to {emailAddress} that contains a link which will allow you to reset your password. Please check your inbox',
   },
   iDidntReceiveAnEmail: {
     id: 'pages.ResetPassword.iDidntReceiveAnEmail',
@@ -71,7 +74,8 @@ export default defineMessages({
   },
   adminHelpContent: {
     id: 'pages.ResetPassword.adminHelpContent',
-    defaultMessage: 'If you you need help to recover you login details, please contact us so that we may assist you. You can request our help by sending an email to {supportEmail} or calling us on {supportTelephone}',
+    defaultMessage:
+      'If you you need help to recover you login details, please contact us so that we may assist you. You can request our help by sending an email to {supportEmail} or calling us on {supportTelephone}',
   },
   adminHelpClose: {
     id: 'pages.ResetPassword.adminHelpClose',
@@ -99,7 +103,8 @@ export default defineMessages({
   },
   newPasswordMustContainANumberOrSpecialCharacter: {
     id: 'pages.ResetPassword.newPasswordMustContainANumber',
-    defaultMessage: 'Your password needs to contain at least one number or special character (%!$*...)',
+    defaultMessage:
+      'Your password needs to contain at least one number or special character (%!$*...)',
   },
   confirmNewPassword: {
     id: 'pages.ResetPassword.confirmNewPassword',
@@ -127,7 +132,8 @@ export default defineMessages({
   },
   passwordUpdateFailedResolution: {
     id: 'pages.ResetPassword.passwordUpdateFailedResolution',
-    defaultMessage: 'You can request further help by sending an email to {supportEmail} or calling us on {supportTelephone}',
+    defaultMessage:
+      'You can request further help by sending an email to {supportEmail} or calling us on {supportTelephone}',
   },
   finish: {
     id: 'pages.ResetPassword.finish',
@@ -135,7 +141,8 @@ export default defineMessages({
   },
   finishContent: {
     id: 'pages.ResetPassword.finishContent',
-    defaultMessage: 'Your password has been changed successfully. You can now login with your new details',
+    defaultMessage:
+      'Your password has been changed successfully. You can now login with your new details',
   },
   loginWithMyNewPassword: {
     id: 'pages.ResetPassword.loginWithMyNewPassword',

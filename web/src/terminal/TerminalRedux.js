@@ -171,8 +171,10 @@ export function updateSingleTerminal(terminalId, data) {
         default: errorPleaseTryAgainInAFewMinutes(
           defineMessages({
             title: {
-              id: 'errorResponseMessages.updateSingleTerminal.PUT.default.title',
-              defaultMessage: 'An Error Occurred When Trying to Save the Terminal',
+              id:
+                'errorResponseMessages.updateSingleTerminal.PUT.default.title',
+              defaultMessage:
+                'An Error Occurred When Trying to Save the Terminal',
             },
           })
         ),

@@ -2,7 +2,6 @@
 
 .NavigationGroup--xs {
   composes: pure-visible-xs from '../../components/pureGrids/pure-grids-responsive-min.css';
-
 }
 
 .NavigationGroup--sm {

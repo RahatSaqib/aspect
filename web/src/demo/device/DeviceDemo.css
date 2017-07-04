@@ -2,10 +2,10 @@
   composes: Content from '../../components/shared/Shared.css';
 }
 
-.RowContainer{
+.RowContainer {
   padding: 10px;
 }
 
-.RowContainer > div > div{
+.RowContainer > div > div {
   margin: 10px;
 }

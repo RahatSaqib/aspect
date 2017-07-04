@@ -34,7 +34,9 @@ export const MiniChart = ({ bgcolor, data, label, number, intl }) => {
         </Sparklines>
       </div>
       <div className="minichart-count">
-        <small>{label}</small>
+        <small>
+          {label}
+        </small>
         {formatNumber(number)}
       </div>
       <div className="clear-fix" />

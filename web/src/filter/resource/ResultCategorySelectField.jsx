@@ -54,13 +54,13 @@ export class ResultCategorySelectField extends PureComponent {
     return (
       <SelectField {...restProps} value={value} onChange={this.handleChange}>
         {allItemText && <MenuItem value="all" primaryText={allItemText} />}
-        {resultCategories.map(rc => (
+        {resultCategories.map(rc =>
           <MenuItem
             key={rc.get('id')}
             value={rc.get('id')}
             primaryText={rc.get('name')}
           />
-        ))}
+        )}
       </SelectField>
     )
   }

@@ -8,8 +8,7 @@ import { compose, pure, setPropTypes, mapProps, lifecycle } from 'recompose'
 import MenuItem from 'material-ui/MenuItem'
 
 import { fetchPartnersAndJobFunctionsForSelectList } from '../../job/JobRedux'
-import ForkedSelectField
-  from '../../components/forkedMaterialUi/ForkedSelectField'
+import ForkedSelectField from '../../components/forkedMaterialUi/ForkedSelectField'
 
 const enhance = compose(
   pure,
@@ -21,8 +20,8 @@ const enhance = compose(
   }),
   connect(
     state => ({
-      partnersAndJobFunctionsForSelectList: state.jobs
-        .partnersAndJobFunctionsForSelectList,
+      partnersAndJobFunctionsForSelectList:
+        state.jobs.partnersAndJobFunctionsForSelectList,
     }),
     dispatch =>
       bindActionCreators(
@@ -73,9 +72,9 @@ export function PartnerSelectField({
       value={partnerId}
       onChange={onChangePartner}
     >
-      {partnerList.map(p => (
+      {partnerList.map(p =>
         <MenuItem key={p.value} value={p.value} primaryText={p.text} />
-      ))}
+      )}
     </ForkedSelectField>
   )
 }

@@ -4,17 +4,15 @@ import { Route } from 'react-router'
 import UIProviders from './UIProviders'
 import ScrollToTopOnUpdate from './ScrollToTopOnUpdate'
 
-const PlainLayout = ({ component: Component, ...restProps }) => (
+const PlainLayout = ({ component: Component, ...restProps }) =>
   <Route
     {...restProps}
-    render={props => (
+    render={props =>
       <UIProviders>
         <ScrollToTopOnUpdate location={props.location}>
           <Component {...props} />
         </ScrollToTopOnUpdate>
-      </UIProviders>
-    )}
+      </UIProviders>}
   />
-)
 
 export default PlainLayout
