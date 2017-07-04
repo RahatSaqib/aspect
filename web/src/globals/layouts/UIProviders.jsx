@@ -6,14 +6,10 @@ import { addLocaleData, IntlProvider } from 'react-intl'
 import en from 'react-intl/locale-data/en'
 import fr from 'react-intl/locale-data/fr'
 
-// Material-UI
-import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider'
-import getMuiTheme from 'material-ui/styles/getMuiTheme'
-
 // Our own imports
 import translation from '../../shared/i18n/translation.json'
-import theme from '../../theme'
 import { getUsersTimezone } from '../../shared/utils/timezone'
+import UIThemeProviders from './UIThemeProviders'
 
 addLocaleData([...en, ...fr])
 
@@ -63,9 +59,9 @@ export const UIProviders = ({ children, locale, timezone }) => {
       formats={formats}
       messages={messages}
     >
-      <MuiThemeProvider muiTheme={getMuiTheme(theme)}>
+      <UIThemeProviders>
         {Children.only(children)}
-      </MuiThemeProvider>
+      </UIThemeProviders>
     </IntlProvider>
   )
 }
