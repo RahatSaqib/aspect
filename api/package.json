@@ -71,6 +71,7 @@
     "mocha-multi": "^0.10.0",
     "nodemon": "^1.11.0",
     "npm-run-all": "^4.0.1",
+    "prettier": "^1.5.2",
     "proxyquire": "^1.7.11",
     "shx": "^0.2.2",
     "sinon": "^1.17.7",
