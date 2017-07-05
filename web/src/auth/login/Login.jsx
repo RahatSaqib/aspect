@@ -108,8 +108,8 @@ export const Login = ({
       <Helmet title="Login" titleTemplate="%s - Aspect" defaultTitle="Aspect" />
       <div className={styles.Content}>
         <div>
-          <Unit sm="1-24" md="1-6" lg="1-3" />
-          <Unit sm="11-12" md="2-3" lg="1-3">
+          <Unit sm="1-24" md="1-6" lg="1-3" xl="9-24" />
+          <Unit sm="11-12" md="2-3" lg="1-3" xl="6-24">
             <Card>
               <div className={styles.Logo__Container}>
                 <AspectLogo />
@@ -122,7 +122,7 @@ export const Login = ({
                   : null}
                 <TextInput
                   theme={{
-                    label: cssClasses('Form--input'),
+                    label: cssClasses('Form__Input'),
                   }}
                   name="user"
                   label="Username"

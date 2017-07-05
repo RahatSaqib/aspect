@@ -19,7 +19,7 @@
 }
 
 .Form {
-  padding: 20px;
+  padding: 40px 20px 20px 20px;
 }
 
 .Form__ActionRow {
@@ -31,12 +31,12 @@
   padding: 28px 0 0 0;
 }
 
-.Form__Info{
+.Form__Info {
   text-align: center;
   padding: 10px 0 0 0;
 }
 
-.Form--input{
+.Form__Input {
   color: #828282;
 }
 
@@ -44,10 +44,11 @@
   margin: auto;
   height: 85px;
   width: 300px;
-  padding: 20px 0 20px 0;
+  padding: 20px 0 0 0;
 }
 
 .Logo__Image {
   height: 85px;
   width: 300px;
+  padding: 0 0 0 0;
 }
