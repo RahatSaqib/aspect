@@ -17,7 +17,11 @@ function* addResult(context) {
       .where({ 'r.externalId': payload.id })
       .innerJoin('Device as d', 'r.deviceId', 'd.id')
       .leftJoin('Sample as s', 'r.sampleId', 's.id')
-      .modify(addResultConstraints, context, { device: 'd', result: 'r', sample: 's' })
+      .modify(addResultConstraints, context, {
+        device: 'd',
+        result: 'r',
+        sample: 's',
+      })
       .distinct('r.*')
       .limit(2)
     if (existingResults.length > 1) {
@@ -42,12 +46,10 @@ function* addResult(context) {
   const siteQ = knex('Site as s')
     .join('Device as d', 's.id', 'd.siteId')
     .where({ 'd.id': deviceId })
-    .first('s.id', 's.partnerId',
-      's.geographyId', 's.latitude', 's.longitude')
+    .first('s.id', 's.partnerId', 's.geographyId', 's.latitude', 's.longitude')
 
   // Select ResultType if specified, otherwise Patient
-  const resultTypeQ = knex('ResultType as rt')
-    .first('rt.id')
+  const resultTypeQ = knex('ResultType as rt').first('rt.id')
   if (_.has(payload, 'type.id')) {
     resultTypeQ.where({ 'rt.externalId': _.get(payload, 'type.id') })
   } else if (existingResult) {
@@ -57,8 +59,7 @@ function* addResult(context) {
   }
 
   // Select ResultSource if specified, otherwise Diagnostic Device
-  const resultSourceQ = knex('ResultSource as rs')
-    .first('rs.id')
+  const resultSourceQ = knex('ResultSource as rs').first('rs.id')
   if (_.has(payload, 'source.id')) {
     resultSourceQ.where({ 'rs.externalId': _.get(payload, 'source.id') })
   } else if (existingResult) {
@@ -68,38 +69,66 @@ function* addResult(context) {
   }
 
   // Select Workflow Status if specified, otherwise Error or OK depending on error payload
-  const resultWorkflowStatusQ = knex('ResultWorkflowStatus as rs')
-    .first('rs.id')
+  const resultWorkflowStatusQ = knex('ResultWorkflowStatus as rs').first(
+    'rs.id'
+  )
   if (_.has(payload, 'workflow.status.id')) {
-    resultWorkflowStatusQ.where({ 'rs.externalId': _.get(payload, 'workflow.status.id') })
+    resultWorkflowStatusQ.where({
+      'rs.externalId': _.get(payload, 'workflow.status.id'),
+    })
   } else if (payload.error) {
     resultWorkflowStatusQ.where({ 'rs.externalId': 'Error' })
   } else if (existingResult) {
-    resultWorkflowStatusQ.where({ 'rs.id': existingResult.resultWorkflowStatusId })
+    resultWorkflowStatusQ.where({
+      'rs.id': existingResult.resultWorkflowStatusId,
+    })
   } else {
     resultWorkflowStatusQ.where({ 'rs.externalId': 'OK' })
   }
 
   // Categories if specified, otherwise Error or Success depending on error payload
-  const categoryQ = knex('ResultCategory as rc')
-    .select('rc.id')
+  const categoryQ = knex('ResultCategory as rc').select('rc.id')
   const categoryIds = _.compact(_.map(payload.category, 'id'))
   if (categoryIds.length > 0) {
     categoryQ.whereIn('rc.externalId', categoryIds)
   } else if (payload.error) {
     categoryQ.where({ 'rc.externalId': 'Error' })
   } else if (existingResult) {
-    categoryQ.whereIn('rc.id', _.compact(
-      [existingResult.resultCategory1, existingResult.resultCategory2]))
+    categoryQ.whereIn(
+      'rc.id',
+      _.compact([
+        existingResult.resultCategory1,
+        existingResult.resultCategory2,
+      ])
+    )
   } else {
     categoryQ.where({ 'rc.externalId': 'Success' })
   }
 
-  const [assays, site, resultType, resultSource, resultWorkflowStatus, categories] =
-    yield Promise.all([assayQ, siteQ, resultTypeQ, resultSourceQ, resultWorkflowStatusQ, categoryQ])
+  const [
+    assays,
+    site,
+    resultType,
+    resultSource,
+    resultWorkflowStatus,
+    categories,
+  ] = yield Promise.all([
+    assayQ,
+    siteQ,
+    resultTypeQ,
+    resultSourceQ,
+    resultWorkflowStatusQ,
+    categoryQ,
+  ])
 
-  if (!site || !resultType || !resultSource || !resultWorkflowStatus ||
-      categories.length === 0 || assays.length !== 1) {
+  if (
+    !site ||
+    !resultType ||
+    !resultSource ||
+    !resultWorkflowStatus ||
+    categories.length === 0 ||
+    assays.length !== 1
+  ) {
     const requestErrors = []
     if (!site) {
       requestErrors.push('assigned site for device')
@@ -111,7 +140,9 @@ function* addResult(context) {
       requestErrors.push(`result source with id ${_.get(payload, 'source.id')}`)
     }
     if (!resultWorkflowStatus) {
-      requestErrors.push(`result workflow status id ${_.get(payload, 'workflow.status.id')}`)
+      requestErrors.push(
+        `result workflow status id ${_.get(payload, 'workflow.status.id')}`
+      )
     }
     if (categories.length === 0) {
       requestErrors.push(`result categories with ids ${categoryIds.join(' ')}`)
@@ -143,35 +174,40 @@ function* addResult(context) {
 
   let sampleId
   if (!existingResult) {
-    [sampleId] = yield knex('Sample').insert({
+    ;[sampleId] = yield knex('Sample').insert({
       externalId: _.get(payload, 'sample.id', null),
       group: _.get(payload, 'sample.group', null),
-      collectedOn: _.get(
-        payload, 'sample.collectedOn', null),
+      collectedOn: _.get(payload, 'sample.collectedOn', null),
       sampleTypeId,
-      originSiteId: sampleOriginSiteId
+      originSiteId: sampleOriginSiteId,
     })
   } else {
     sampleId = existingResult.sampleId
     if (_.has(payload, 'sample')) {
       const existingSample = yield knex('Sample')
         .where({ id: sampleId })
-        .first('externalId', 'collectedOn', 'sampleTypeId', 'originSiteId', 'group')
-      yield knex('Sample')
-        .where({ id: sampleId })
-        .update({
-          externalId: _.get(payload, 'sample.id', existingSample.externalId),
-          group: _.get(payload, 'sample.group', existingSample.group),
-          collectedOn: _.get(
-            payload, 'sample.collectedOn',
-            _.get(existingSample, 'collectedOn', null)),
-          sampleTypeId: payloadSampleTypeId
-            ? sampleTypeId
-            : existingSample.sampleTypeId,
-          originSiteId: payloadOriginSiteId
-            ? sampleOriginSiteId
-            : existingSample.originSiteId
-        })
+        .first(
+          'externalId',
+          'collectedOn',
+          'sampleTypeId',
+          'originSiteId',
+          'group'
+        )
+      yield knex('Sample').where({ id: sampleId }).update({
+        externalId: _.get(payload, 'sample.id', existingSample.externalId),
+        group: _.get(payload, 'sample.group', existingSample.group),
+        collectedOn: _.get(
+          payload,
+          'sample.collectedOn',
+          _.get(existingSample, 'collectedOn', null)
+        ),
+        sampleTypeId: payloadSampleTypeId
+          ? sampleTypeId
+          : existingSample.sampleTypeId,
+        originSiteId: payloadOriginSiteId
+          ? sampleOriginSiteId
+          : existingSample.originSiteId,
+      })
     }
   }
 
@@ -194,101 +230,142 @@ function* addResult(context) {
 
   const result = {
     latitude: _.get(
-      payload, 'location.latitude',
-      _.get(existingResult, 'latitude', site.latitude)),
+      payload,
+      'location.latitude',
+      _.get(existingResult, 'latitude', site.latitude)
+    ),
     longitude: _.get(
-      payload, 'location.longitude',
-      _.get(existingResult, 'longitude', site.longitude)),
+      payload,
+      'location.longitude',
+      _.get(existingResult, 'longitude', site.longitude)
+    ),
     assayId: assay.id,
     assayVersion: _.get(
-      payload, 'assay.version',
-      _.get(existingResult, 'assayVersion', null)),
+      payload,
+      'assay.version',
+      _.get(existingResult, 'assayVersion', null)
+    ),
     resultTypeId: resultType.id,
     resultSourceId: resultSource.id,
     resultWorkflowStatusId: resultWorkflowStatus.id,
     sampleId,
     sampleRunNumber: _.get(
-      payload, 'sample.runNumber',
-      _.get(existingResult, 'sampleRunNumber', null)),
+      payload,
+      'sample.runNumber',
+      _.get(existingResult, 'sampleRunNumber', null)
+    ),
     resultCategory1: _.get(categories, '[0].id', null),
     resultCategory2: _.get(categories, '[1].id', null),
     resultData,
     startedOn: _.get(
-      payload, 'startedOn',
-      _.get(existingResult, 'startedOn', null)),
-    endedOn: _.get(
-      payload, 'endedOn',
-      _.get(existingResult, 'endedOn', null)),
+      payload,
+      'startedOn',
+      _.get(existingResult, 'startedOn', null)
+    ),
+    endedOn: _.get(payload, 'endedOn', _.get(existingResult, 'endedOn', null)),
     consumableSerial: _.get(
-      payload, 'consumable[0].serial',
-      _.get(existingResult, 'consumableSerial', null)),
+      payload,
+      'consumable[0].serial',
+      _.get(existingResult, 'consumableSerial', null)
+    ),
     consumableExpirationDate: _.get(
-      payload, 'consumable[0].expirationDate',
-      _.get(existingResult, 'consumableExpirationDate', null)),
+      payload,
+      'consumable[0].expirationDate',
+      _.get(existingResult, 'consumableExpirationDate', null)
+    ),
     consumableLot: _.get(
-      payload, 'consumable[0].lot',
-      _.get(existingResult, 'consumableLot', null)),
+      payload,
+      'consumable[0].lot',
+      _.get(existingResult, 'consumableLot', null)
+    ),
     instrumentSerial: _.get(
-      payload, 'instrument.serial',
-      _.get(existingResult, 'instrumentSerial', null)),
+      payload,
+      'instrument.serial',
+      _.get(existingResult, 'instrumentSerial', null)
+    ),
     moduleSerial: _.get(
-      payload, 'instrument.module.serial',
-      _.get(existingResult, 'moduleSerial', null)),
+      payload,
+      'instrument.module.serial',
+      _.get(existingResult, 'moduleSerial', null)
+    ),
     moduleName: _.get(
-      payload, 'instrument.module.name',
-      _.get(existingResult, 'moduleName', null)),
+      payload,
+      'instrument.module.name',
+      _.get(existingResult, 'moduleName', null)
+    ),
     oemData,
     rawData,
     researchId: _.get(
-      payload, 'research.id',
-      _.get(existingResult, 'researchId', null)),
+      payload,
+      'research.id',
+      _.get(existingResult, 'researchId', null)
+    ),
     patientData,
     senderVersion: _.get(
-      payload, 'sender.version',
-      _.get(existingResult, 'senderVersion', null)),
+      payload,
+      'sender.version',
+      _.get(existingResult, 'senderVersion', null)
+    ),
     senderOperator: _.get(
-      payload, 'sender.operator',
-      _.get(existingResult, 'senderOperator', null)),
-    notes: _.get(
-      payload, 'notes',
-      _.get(existingResult, 'notes', null)),
+      payload,
+      'sender.operator',
+      _.get(existingResult, 'senderOperator', null)
+    ),
+    notes: _.get(payload, 'notes', _.get(existingResult, 'notes', null)),
     errorCode: _.get(
-      payload, 'error.code',
-      _.get(existingResult, 'errorCode', null)),
+      payload,
+      'error.code',
+      _.get(existingResult, 'errorCode', null)
+    ),
     errorNotes: _.get(
-      payload, 'error.notes',
-      _.get(existingResult, 'errorNotes', null)),
-    updatedOn: now
+      payload,
+      'error.notes',
+      _.get(existingResult, 'errorNotes', null)
+    ),
+    updatedOn: now,
   }
 
   let resultId
   if (existingResult) {
     resultId = existingResult.id
-    yield knex('Result')
-      .where({ id: resultId })
-      .update(result)
+    yield knex('Result').where({ id: resultId }).update(result)
   } else {
-    [resultId] = yield knex('Result').insert(Object.assign({
-      externalId: payload.id,
-      deviceId,
-      partnerId: site.partnerId,
-      geographyId: site.geographyId,
-      siteId: site.id,
-      createdOn: now
-    }, result))
+    ;[resultId] = yield knex('Result').insert(
+      Object.assign(
+        {
+          externalId: payload.id,
+          deviceId,
+          partnerId: site.partnerId,
+          geographyId: site.geographyId,
+          siteId: site.id,
+          createdOn: now,
+        },
+        result
+      )
+    )
   }
   context.addResultId(resultId)
 
   // Log Result Workflow Update if any field changed
-  let resultWorkflowChanged = !existingResult ||
+  let resultWorkflowChanged =
+    !existingResult ||
     existingResult.resultWorkflowStatusId !== result.resultWorkflowStatusId
-  if (!resultWorkflowChanged && (_.has(payload, 'workflow.operator')
-      || _.has(payload, 'workflow.changedOn'))) {
+  if (
+    !resultWorkflowChanged &&
+    (_.has(payload, 'workflow.operator') ||
+      _.has(payload, 'workflow.changedOn'))
+  ) {
     // check to see if operator or changedOn is different from latest log
-    const resultWorkflowLog = yield* getLatestResultWorkflowLog(knex, existingResult.id)
-    resultWorkflowChanged = !resultWorkflowLog ||
-      _.get(payload, 'workflow.operator', null) !== resultWorkflowLog.operator ||
-      +_.get(payload, 'workflow.changedOn', NaN) !== +resultWorkflowLog.changedOn
+    const resultWorkflowLog = yield* getLatestResultWorkflowLog(
+      knex,
+      existingResult.id
+    )
+    resultWorkflowChanged =
+      !resultWorkflowLog ||
+      _.get(payload, 'workflow.operator', null) !==
+        resultWorkflowLog.operator ||
+      +_.get(payload, 'workflow.changedOn', NaN) !==
+        +resultWorkflowLog.changedOn
   }
 
   if (resultWorkflowChanged) {
@@ -297,15 +374,24 @@ function* addResult(context) {
       resultWorkflowStatusId: result.resultWorkflowStatusId,
       operator: _.get(payload, 'workflow.operator', null),
       changedOn: _.get(payload, 'workflow.changedOn', now),
-      createdOn: now
+      createdOn: now,
     })
   }
 
   // Update Inventory Levels at Site
-  const consumablesInResultData = _.isEmpty(payload.consumable) ? [] : payload.consumable
+  const consumablesInResultData = _.isEmpty(payload.consumable)
+    ? []
+    : payload.consumable
   yield* consumeInventoryForResult(
-    resultId, assay.id, site.id, consumablesInResultData, site.partnerId,
-    result.startedOn, result.endedOn, knex)
+    resultId,
+    assay.id,
+    site.id,
+    consumablesInResultData,
+    site.partnerId,
+    result.startedOn,
+    result.endedOn,
+    knex
+  )
 
   return {}
 }
@@ -328,19 +414,43 @@ function* getResult(context) {
     .where('dl.id', deviceLog.id)
     .where('r.deliverToTerminal', 1)
     .first(
-      'r.externalId as resultExternalId', 'r.resultData', 'r.patientData',
-      'r.oemData', 'r.startedOn', 'r.endedOn', 'r.updatedOn', 'r.researchId',
-      'r.notes', 'r.senderVersion', 'r.senderOperator', 'r.errorCode', 'r.errorNotes',
-      'r.consumableSerial', 'r.consumableExpirationDate', 'r.consumableLot',
-      'r.instrumentSerial', 'r.moduleName', 'r.moduleSerial', 'r.id as resultId',
-      'a.externalId as assayId', 'r.assayVersion', 'r.rawData',
-      'r.latitude', 'r.longitude', 'rt.externalId as resultTypeId',
+      'r.externalId as resultExternalId',
+      'r.resultData',
+      'r.patientData',
+      'r.oemData',
+      'r.startedOn',
+      'r.endedOn',
+      'r.updatedOn',
+      'r.researchId',
+      'r.notes',
+      'r.senderVersion',
+      'r.senderOperator',
+      'r.errorCode',
+      'r.errorNotes',
+      'r.consumableSerial',
+      'r.consumableExpirationDate',
+      'r.consumableLot',
+      'r.instrumentSerial',
+      'r.moduleName',
+      'r.moduleSerial',
+      'r.id as resultId',
+      'a.externalId as assayId',
+      'r.assayVersion',
+      'r.rawData',
+      'r.latitude',
+      'r.longitude',
+      'rt.externalId as resultTypeId',
       'rsc.externalId as resultSourceId',
-      'rs.externalId as resultWorkflowStatusId', 'r.sampleRunNumber',
-      's.externalId as sampleId', 's.collectedOn as sampleCollectedOn',
+      'rs.externalId as resultWorkflowStatusId',
+      'r.sampleRunNumber',
+      's.externalId as sampleId',
+      's.collectedOn as sampleCollectedOn',
       's.group as sampleGroup',
-      'sos.externalId as sampleOriginSiteId', 'st.externalId as sampleTypeId',
-      'rc1.externalId as category1Id', 'rc2.externalId as category2Id')
+      'sos.externalId as sampleOriginSiteId',
+      'st.externalId as sampleTypeId',
+      'rc1.externalId as category1Id',
+      'rc2.externalId as category2Id'
+    )
 
   const row = yield resultQuery
   if (row == null) {
@@ -350,18 +460,29 @@ function* getResult(context) {
   // only set to delivered the first time and
   // only if not acknowledged or flagged already
   if (_.indexOf(DONOT_LOG_DELIVERED, row.resultWorkflowStatusId) === -1) {
-    yield* updateResultWorkflowStatus(context, row.resultId, DELIVERED_EXTERNALID)
+    yield* updateResultWorkflowStatus(
+      context,
+      row.resultId,
+      DELIVERED_EXTERNALID
+    )
     row.resultWorkflowStatusId = DELIVERED_EXTERNALID
 
     // If deviceLog is flagged to be auto-acknowledged, update the result workflow status
     if (deviceLogMetaData && deviceLogMetaData.autoAcknowledge) {
-      yield* updateResultWorkflowStatus(context, row.resultId, ACKNOWLEDGED_EXTERNALID,
-        deviceLogMetaData.autoAcknowledgeReason)
+      yield* updateResultWorkflowStatus(
+        context,
+        row.resultId,
+        ACKNOWLEDGED_EXTERNALID,
+        deviceLogMetaData.autoAcknowledgeReason
+      )
       row.resultWorkflowStatusId = ACKNOWLEDGED_EXTERNALID
     }
   }
 
-  const resultWorkflowLog = yield* getLatestResultWorkflowLog(knex, row.resultId)
+  const resultWorkflowLog = yield* getLatestResultWorkflowLog(
+    knex,
+    row.resultId
+  )
 
   // TODO allow filtering on fields of interest, similar to client device API
   // but JSON paths from result data in same format as POST
@@ -437,11 +558,13 @@ function* getResult(context) {
   const consumable = {
     serial: row.consumableSerial,
     lot: row.consumableLot,
-    expirationDate: row.consumableExpirationDate
+    expirationDate: row.consumableExpirationDate,
   }
-  if (consumable.serial != null
-      || consumable.lot != null
-      || consumable.expirationDate != null) {
+  if (
+    consumable.serial != null ||
+    consumable.lot != null ||
+    consumable.expirationDate != null
+  ) {
     result.consumable = [consumable]
   }
 
@@ -489,21 +612,28 @@ function* getResult(context) {
 }
 
 function* updateResultWorkflowStatus(
-  context, resultId, workflowStatusExternalId, reason) {
+  context,
+  resultId,
+  workflowStatusExternalId,
+  reason
+) {
   const { knex, now } = context
 
   // get internal workflow status id based on the external id we got
   const workflowStatusRow = yield knex('ResultWorkflowStatus')
     .where('externalId', workflowStatusExternalId)
-    .select('id').first()
+    .select('id')
+    .first()
   if (workflowStatusRow === null) {
-    throw new Error(`Workflow status with external ID "${workflowStatusExternalId}" not found`)
+    throw new Error(
+      `Workflow status with external ID "${workflowStatusExternalId}" not found`
+    )
   }
 
   // update result
   const rows = yield knex('Result as r')
-                .where('r.id', resultId)
-                .update('resultWorkflowStatusId', workflowStatusRow.id)
+    .where('r.id', resultId)
+    .update('resultWorkflowStatusId', workflowStatusRow.id)
 
   // keep log if update was successful. don't need to check permission again because
   // rows would be 0 if no permission in query above
@@ -513,7 +643,7 @@ function* updateResultWorkflowStatus(
       resultWorkflowStatusId: workflowStatusRow.id,
       reason,
       changedOn: now,
-      createdOn: now
+      createdOn: now,
     })
   }
 
@@ -530,5 +660,5 @@ function* getLatestResultWorkflowLog(knex, resultId) {
 
 module.exports = {
   addResult,
-  getResult
+  getResult,
 }

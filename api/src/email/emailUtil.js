@@ -4,16 +4,25 @@ const helper = require('sendgrid').mail
 function* sendEmail(to, subject, htmlContent, textContent, attachments) {
   const fromEmail = new helper.Email(process.env['email.fromAddress'], 'Aspect')
   const toEmail = new helper.Email(to)
-  const htmlBody = htmlContent ? new helper.Content('text/html', htmlContent) : undefined
-  const textBody = textContent ? new helper.Content('text/plain', textContent) : undefined
-  const emailMessage = new helper.Mail(fromEmail, subject.trim(), toEmail, textBody || htmlBody)
+  const htmlBody = htmlContent
+    ? new helper.Content('text/html', htmlContent)
+    : undefined
+  const textBody = textContent
+    ? new helper.Content('text/plain', textContent)
+    : undefined
+  const emailMessage = new helper.Mail(
+    fromEmail,
+    subject.trim(),
+    toEmail,
+    textBody || htmlBody
+  )
 
   if (textBody && htmlBody) {
     emailMessage.addContent(htmlBody)
   }
 
   if (_.isArray(attachments) && attachments.length) {
-    attachments.forEach((att) => {
+    attachments.forEach(att => {
       const attachment = new helper.Attachment()
       attachment.setContent(att.content)
       attachment.setType(att.mimeType)
@@ -29,12 +38,12 @@ function* sendEmail(to, subject, htmlContent, textContent, attachments) {
   const request = sendGrid.emptyRequest({
     method: 'POST',
     path: '/v3/mail/send',
-    body: emailMessage.toJSON()
+    body: emailMessage.toJSON(),
   })
 
   return sendGrid.API(request)
 }
 
 module.exports = {
-  sendEmail
+  sendEmail,
 }

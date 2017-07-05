@@ -1,38 +1,92 @@
 const Promise = require('bluebird')
 const Boom = require('boom')
 const _ = require('lodash')
-const { knex, filterParams, filterDateRangeParams, sortPageParams } = require('../db')
+const {
+  knex,
+  filterParams,
+  filterDateRangeParams,
+  sortPageParams,
+} = require('../db')
 const { getConstraints, addConstraints } = require('../auth/constraints')
-const { getCellsByValue, generateExcelFile, generateCsvFile } = require('../shared/io')
-
+const {
+  getCellsByValue,
+  generateExcelFile,
+  generateCsvFile,
+} = require('../shared/io')
 
 const SELECT_LIST_FIELDS = [
-  'r.id', 'r.externalId', 'r.endedOn', 'd.name as deviceName',
-  'c.name as countryName', 'st.name as stateName', 'lg.name as lgaName',
-  'rc1.name as resultCategory1Name', 'rc2.name as resultCategory2Name',
-  'rs.name as resultWorkflowStatus', 'so.name as sampleOriginSiteName',
-  'sp.externalId as sampleId', 'sp.group as sampleGroup',
-  'a.name as assayName', 'a.id as assayId', 'r.deviceId',
-  knex.raw('JSON_UNQUOTE(JSON_EXTRACT(r.patientData, "$.id")) as patientId')
+  'r.id',
+  'r.externalId',
+  'r.endedOn',
+  'd.name as deviceName',
+  'c.name as countryName',
+  'st.name as stateName',
+  'lg.name as lgaName',
+  'rc1.name as resultCategory1Name',
+  'rc2.name as resultCategory2Name',
+  'rs.name as resultWorkflowStatus',
+  'so.name as sampleOriginSiteName',
+  'sp.externalId as sampleId',
+  'sp.group as sampleGroup',
+  'a.name as assayName',
+  'a.id as assayId',
+  'r.deviceId',
+  knex.raw('JSON_UNQUOTE(JSON_EXTRACT(r.patientData, "$.id")) as patientId'),
 ]
 
 const SELECT_SHOW_FIELDS = [
-  'r.id', 'r.externalId', 'r.startedOn', 'r.endedOn', 'r.deviceId', 'd.name as deviceName',
-  'c.name as countryName', 'st.name as stateName', 'lg.name as lgaName',
-  'rc1.name as resultCategory1Name', 'rc2.name as resultCategory2Name',
-  'r.resultWorkflowStatusId', 'rs.name as resultWorkflowStatus',
-  'r.resultData', 'r.siteId', 'si.name as siteName', 'r.assayVersion',
-  'r.consumableSerial', 'r.consumableLot', 'r.consumableExpirationDate', 'r.instrumentSerial',
-  'r.moduleName', 'r.moduleSerial', 'r.researchId', 'r.senderVersion', 'r.senderOperator',
-  'r.notes', 'r.errorCode', 'r.errorNotes', 'r.createdOn', 'r.updatedOn', 'r.assayId',
-  'sp.externalId as sampleId', 'sp.group as sampleGroup',
-  'sp.originSiteId as sampleOriginSiteId', 'so.name as sampleOriginSiteName',
-  knex.raw('JSON_UNQUOTE(JSON_EXTRACT(r.patientData, "$.id")) as patientId'), 'r.patientData',
-  'r.deliverToTerminal'
+  'r.id',
+  'r.externalId',
+  'r.startedOn',
+  'r.endedOn',
+  'r.deviceId',
+  'd.name as deviceName',
+  'c.name as countryName',
+  'st.name as stateName',
+  'lg.name as lgaName',
+  'rc1.name as resultCategory1Name',
+  'rc2.name as resultCategory2Name',
+  'r.resultWorkflowStatusId',
+  'rs.name as resultWorkflowStatus',
+  'r.resultData',
+  'r.siteId',
+  'si.name as siteName',
+  'r.assayVersion',
+  'r.consumableSerial',
+  'r.consumableLot',
+  'r.consumableExpirationDate',
+  'r.instrumentSerial',
+  'r.moduleName',
+  'r.moduleSerial',
+  'r.researchId',
+  'r.senderVersion',
+  'r.senderOperator',
+  'r.notes',
+  'r.errorCode',
+  'r.errorNotes',
+  'r.createdOn',
+  'r.updatedOn',
+  'r.assayId',
+  'sp.externalId as sampleId',
+  'sp.group as sampleGroup',
+  'sp.originSiteId as sampleOriginSiteId',
+  'so.name as sampleOriginSiteName',
+  knex.raw('JSON_UNQUOTE(JSON_EXTRACT(r.patientData, "$.id")) as patientId'),
+  'r.patientData',
+  'r.deliverToTerminal',
 ]
 
 const SORT_FIELDS = [
-  'endedOn', 'deviceName', 'sampleOriginSiteName', 'stateName', 'lgaName', 'sampleId', 'patientId', 'resultCategory1Name', 'resultCategory2Name', 'sampleGroup'
+  'endedOn',
+  'deviceName',
+  'sampleOriginSiteName',
+  'stateName',
+  'lgaName',
+  'sampleId',
+  'patientId',
+  'resultCategory1Name',
+  'resultCategory2Name',
+  'sampleGroup',
 ]
 
 function* getListResults(query, auth) {
@@ -50,7 +104,8 @@ function* getListResults(query, auth) {
         db: 'resultCategory1Name',
         type: 'string',
         title: assay.resultCategory1Label,
-        i18nKey: assay.resultCategory1i18nKey })
+        i18nKey: assay.resultCategory1i18nKey,
+      })
     }
 
     if (assay.resultCategory2Label) {
@@ -60,13 +115,19 @@ function* getListResults(query, auth) {
         db: 'resultCategory2Name',
         type: 'string',
         title: assay.resultCategory2Label,
-        i18nKey: assay.resultCategory2i18nKey })
+        i18nKey: assay.resultCategory2i18nKey,
+      })
     }
 
     const resultDataSchema = JSON.parse(assay.resultDataSchema)
     _.each(resultDataSchema, (value, key) => {
       if (value.list) {
-        selectFields.push(knex.raw('JSON_EXTRACT(resultData, ?) as ?', [`$.${key}`, key.replace('.', '_')]))
+        selectFields.push(
+          knex.raw('JSON_EXTRACT(resultData, ?) as ?', [
+            `$.${key}`,
+            key.replace('.', '_'),
+          ])
+        )
 
         sortableFields.push(key.replace('.', '_'))
 
@@ -74,7 +135,8 @@ function* getListResults(query, auth) {
           db: key.replace('.', '_'),
           type: value.type,
           title: value.title,
-          i18nKey: value.i18nKey })
+          i18nKey: value.i18nKey,
+        })
       }
     })
   }
@@ -113,22 +175,25 @@ function* getListResults(query, auth) {
       sampleId: 'sp.externalId',
       sampleOriginSite: 'so.name',
       sampleGroup: 'sp.group',
-      workflowStatusId: 'r.resultWorkflowStatusId'
+      workflowStatusId: 'r.resultWorkflowStatusId',
     })
     .modify((queryBuilder, params) => {
       if (params.patientOrResearchId) {
-        queryBuilder.whereRaw('JSON_EXTRACT(r.patientData, "$.id") like ?', [`%${params.patientOrResearchId}%`])
+        queryBuilder
+          .whereRaw('JSON_EXTRACT(r.patientData, "$.id") like ?', [
+            `%${params.patientOrResearchId}%`,
+          ])
           .orWhere('r.researchId', 'like', `%${params.patientOrResearchId}%`)
       }
     }, query)
     .modify(addConstraints, dataConstraints, { device: 'd', sample: 's' })
 
   // get total count for paging
-  const getCount = resultQuery.clone()
-    .count('r.id as count').first()
+  const getCount = resultQuery.clone().count('r.id as count').first()
 
   // get rows
-  const getItems = resultQuery.clone()
+  const getItems = resultQuery
+    .clone()
     .modify(sortPageParams, query, 'endedOn')
     .select(selectFields)
 
@@ -137,8 +202,8 @@ function* getListResults(query, auth) {
 
   // if assay specified columns from the resultData field, parse them to valid JSON
   if (assayColumns) {
-    _.each(data, (d) => {
-      _.each(assayColumns, (c) => {
+    _.each(data, d => {
+      _.each(assayColumns, c => {
         if (c && c.db.indexOf('resultCategory') === -1) {
           const path = c.db.replace('.', '_')
           _.set(d, path, JSON.parse(d[path]))
@@ -147,7 +212,13 @@ function* getListResults(query, auth) {
     })
   }
 
-  const result = { ok: true, total, length: data.length, data, extraColumns: assayColumns }
+  const result = {
+    ok: true,
+    total,
+    length: data.length,
+    data,
+    extraColumns: assayColumns,
+  }
 
   return result
 }
@@ -202,15 +273,16 @@ function* getResultByResultId(request, fields = SELECT_SHOW_FIELDS) {
 function* listResultTypes(request) {
   const { query } = request
 
-  const resultTypeQuery = knex('ResultType as rt')
-    .modify(filterParams, query, { name: 'rt.name' })
+  const resultTypeQuery = knex('ResultType as rt').modify(filterParams, query, {
+    name: 'rt.name',
+  })
 
   // get total count for paging
-  const getCount = resultTypeQuery.clone()
-    .count('rt.id as count').first()
+  const getCount = resultTypeQuery.clone().count('rt.id as count').first()
 
   // get rows
-  const getItems = resultTypeQuery.clone()
+  const getItems = resultTypeQuery
+    .clone()
     .modify(sortPageParams, query, 'name')
     .select('id', 'name')
 
@@ -241,7 +313,7 @@ function* exportResults(request) {
 
   if (query.format === 'excel') {
     // fill in data into given workbook
-    const populateData = (workbook) => {
+    const populateData = workbook => {
       // get 1st sheet (1-based)
       const worksheet = workbook.getWorksheet(1)
 
@@ -249,14 +321,16 @@ function* exportResults(request) {
       const cells = getCellsByValue(worksheet, '<ResultListRows>')
       if (cells.length > 0) {
         // empty such cells
-        cells.forEach((cell) => { cell.value = '' })
+        cells.forEach(cell => {
+          cell.value = ''
+        })
 
         // use 1st cell only (actually, should not be more than one)
         const patternRowNumber = cells[0].row + 2
 
         // fill in array 'rows'
         const rows = []
-        results.data.forEach((r) => {
+        results.data.forEach(r => {
           // ------
           // --->>> order of array elements should match columns order in template file
           // ------
@@ -266,7 +340,7 @@ function* exportResults(request) {
             r.sampleOriginSiteName,
             r.sampleId,
             r.sampleGroup,
-            r.patientId
+            r.patientId,
           ])
         })
 
@@ -278,13 +352,32 @@ function* exportResults(request) {
     result = yield* generateExcelFile({
       templateFileName: 'Results.xlsx',
       outputFileName: 'results.xlsx',
-      populateData
+      populateData,
     })
   } else if (query.format === 'csv') {
     const items = results.data
-    const columnNames = ['Test Date', 'Device', 'Sample Origin Site', 'Sample ID', 'Sample Group', 'Patient ID']
-    const fieldNames = ['endedOn', 'deviceName', 'sampleOriginSiteName', 'sampleId', 'sampleGroup', 'patientId']
-    result = yield* generateCsvFile('results.csv', items, columnNames, fieldNames)
+    const columnNames = [
+      'Test Date',
+      'Device',
+      'Sample Origin Site',
+      'Sample ID',
+      'Sample Group',
+      'Patient ID',
+    ]
+    const fieldNames = [
+      'endedOn',
+      'deviceName',
+      'sampleOriginSiteName',
+      'sampleId',
+      'sampleGroup',
+      'patientId',
+    ]
+    result = yield* generateCsvFile(
+      'results.csv',
+      items,
+      columnNames,
+      fieldNames
+    )
   }
 
   return result
@@ -305,7 +398,7 @@ function* updateWorkflowStatus(request) {
   let resultWorkflowStatusId = payload.resultWorkflowStatusId
   // check if a externalId is provided
   if (payload.externalId) {
-    [resultWorkflowStatusId] = yield knex('ResultWorkflowStatus as rs')
+    ;[resultWorkflowStatusId] = yield knex('ResultWorkflowStatus as rs')
       .where('rs.externalId', payload.externalId)
       .select('rs.id')
       .limit(1)
@@ -318,31 +411,27 @@ function* updateWorkflowStatus(request) {
 
   // update the resultWorkflowStatusId.
   if (resultWorkflowStatusId !== result.data.resultWorkflowStatusId) {
-    yield knex('Result')
-      .where('id', resultId)
-      .update({
-        resultWorkflowStatusId,
-        updatedBy: currentUserId,
-        updatedOn: now
-      })
+    yield knex('Result').where('id', resultId).update({
+      resultWorkflowStatusId,
+      updatedBy: currentUserId,
+      updatedOn: now,
+    })
 
     yield knex('ResultWorkflowLog').insert({
       resultId,
       resultWorkflowStatusId,
       createdBy: currentUserId,
       changedOn: now,
-      createdOn: now
+      createdOn: now,
     })
 
     // if set to "validated", set "deliverToTerminal"
     // TODO: Add to MQ for processing
     if (payload.externalId === 'Validated') {
-      yield knex('Result')
-      .where('id', resultId)
-      .update({
+      yield knex('Result').where('id', resultId).update({
         deliverToTerminal: 1,
         updatedBy: currentUserId,
-        updatedOn: now
+        updatedOn: now,
       })
 
       // add device log entry so result is redelivered
@@ -366,13 +455,11 @@ function* updateDeliverToTerminal(request) {
   }
 
   // update the result deliver to terminal flag
-  yield knex('Result')
-    .where('id', resultId)
-    .update({
-      deliverToTerminal: payload.deliverToTerminal,
-      updatedBy: currentUserId,
-      updatedOn: now
-    })
+  yield knex('Result').where('id', resultId).update({
+    deliverToTerminal: payload.deliverToTerminal,
+    updatedBy: currentUserId,
+    updatedOn: now,
+  })
 
   // add device log entry so result is redelivered
   yield* deliverResultToTerminal(result.data.deviceId, resultId, now)
@@ -387,7 +474,7 @@ function* deliverResultToTerminal(deviceId, resultId, createdOn) {
     source: 'ClientAPI',
     createdOn,
     senderIp: '',
-    rawMessage: JSON.stringify({ deliverToTerminal: 1 })
+    rawMessage: JSON.stringify({ deliverToTerminal: 1 }),
   })
 }
 
@@ -395,13 +482,10 @@ function* listWorkflowStatusTypes() {
   const resultQuery = knex('ResultWorkflowStatus as rs')
 
   // get total count for paging
-  const getCount = resultQuery.clone()
-    .count('rs.id as count').first()
+  const getCount = resultQuery.clone().count('rs.id as count').first()
 
   // get rows
-  const getItems = resultQuery.clone()
-    .orderBy('id', 'asc')
-    .select('id', 'name')
+  const getItems = resultQuery.clone().orderBy('id', 'asc').select('id', 'name')
 
   // return result when both queries are finished
   const [{ count: total }, data] = yield Promise.all([getCount, getItems])
@@ -420,12 +504,16 @@ function* getWorkflowStatusLogByResultId(request) {
   const { query, params } = request
 
   const selectFields = [
-    'log.id', 'log.operator', 'log.changedOn', 'log.createdOn', 'log.createdBy',
-    'rs.name as statusName', 'rs.i18nKey', 'rs.externalId'
+    'log.id',
+    'log.operator',
+    'log.changedOn',
+    'log.createdOn',
+    'log.createdBy',
+    'rs.name as statusName',
+    'rs.i18nKey',
+    'rs.externalId',
   ]
-  const sortableFields = [
-    'operator', 'changedOn', 'statusName'
-  ]
+  const sortableFields = ['operator', 'changedOn', 'statusName']
 
   // now we know if the sort that was passed is valid:
   if (query.sortCol && !sortableFields.includes(query.sortCol)) {
@@ -433,15 +521,19 @@ function* getWorkflowStatusLogByResultId(request) {
   }
 
   const resultQuery = knex('ResultWorkflowLog as log')
-      .innerJoin('ResultWorkflowStatus as rs', 'log.resultWorkflowStatusId', 'rs.id')
-      .where('log.resultId', +params.resultId)
+    .innerJoin(
+      'ResultWorkflowStatus as rs',
+      'log.resultWorkflowStatusId',
+      'rs.id'
+    )
+    .where('log.resultId', +params.resultId)
 
   // get total count for paging
-  const getCount = resultQuery.clone()
-    .count('log.id as count').first()
+  const getCount = resultQuery.clone().count('log.id as count').first()
 
   // get rows
-  const getItems = resultQuery.clone()
+  const getItems = resultQuery
+    .clone()
     .modify(sortPageParams, query, 'changedOn')
     .select(selectFields)
 
@@ -461,5 +553,5 @@ module.exports = {
   updateDeliverToTerminal,
   listWorkflowStatusTypes,
   listWorkflowStatusLog,
-  exportResults
+  exportResults,
 }

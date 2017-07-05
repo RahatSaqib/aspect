@@ -10,9 +10,8 @@ function register(plugin, options, next) {
 
 register.attributes = {
   name: 'deviceApiKeyAuth',
-  version
+  version,
 }
-
 
 function authenticate(request, reply) {
   const { query, headers } = request
@@ -50,5 +49,5 @@ function authenticate(request, reply) {
 }
 
 module.exports = {
-  register
+  register,
 }

@@ -9,7 +9,7 @@ module.exports = [
     config: {
       description: 'Dashboard Home',
       notes: 'The top level dashboard',
-      auth: { scope: ['site', 'device'] }
-    }
-  }
+      auth: { scope: ['site', 'device'] },
+    },
+  },
 ]

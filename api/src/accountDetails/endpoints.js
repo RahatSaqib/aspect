@@ -3,7 +3,7 @@ const { asyncHandler } = require('../routes')
 const {
   getAccountDetailsForLoggedInUser,
   saveContactDetailsForLoggedInUser,
-  saveUserPreferencesForLoggedInUser
+  saveUserPreferencesForLoggedInUser,
 } = require('./service')
 
 module.exports = [
@@ -12,16 +12,20 @@ module.exports = [
     path: '/account-details/current',
     handler: asyncHandler(getAccountDetailsForLoggedInUser),
     config: {
-      description: 'Get The Person Object Linked to the Logged In User\'s Profile',
-      notes: 'Returns a person object'
-    }
-  }, {
+      description:
+        "Get The Person Object Linked to the Logged In User's Profile",
+      notes: 'Returns a person object',
+    },
+  },
+  {
     method: 'PUT',
     path: '/account-details/current-contact',
     handler: asyncHandler(saveContactDetailsForLoggedInUser),
     config: {
-      description: 'Save the General and Contact Details of the Person Object Linked to the Logged In User\'s Profile',
-      notes: 'Returns a person object, prevents a user from trying to edit a person object not linked to their own profile',
+      description:
+        "Save the General and Contact Details of the Person Object Linked to the Logged In User's Profile",
+      notes:
+        'Returns a person object, prevents a user from trying to edit a person object not linked to their own profile',
       validate: {
         payload: {
           id: Joi.number().integer().required(),
@@ -34,24 +38,27 @@ module.exports = [
           countryId: Joi.number().integer().positive().allow('', null),
           stateId: Joi.number().integer().positive().allow('', null),
           lgaId: Joi.number().integer().positive().allow('', null),
-          zip: Joi.string().max(45).allow('', null)
-        }
-      }
-    }
-  }, {
+          zip: Joi.string().max(45).allow('', null),
+        },
+      },
+    },
+  },
+  {
     method: 'PUT',
     path: '/account-details/current-preferences',
     handler: asyncHandler(saveUserPreferencesForLoggedInUser),
     config: {
-      description: 'Save Time Zone and Culture of the person Object Linked for the Logged In User',
-      notes: 'Returns a person object, prevents a user from trying to edit a person object not linked to their own profile',
+      description:
+        'Save Time Zone and Culture of the person Object Linked for the Logged In User',
+      notes:
+        'Returns a person object, prevents a user from trying to edit a person object not linked to their own profile',
       validate: {
         payload: {
           id: Joi.number().integer().required(),
           timezone: Joi.string().max(255).required(),
-          culture: Joi.string().max(45).required()
-        }
-      }
-    }
-  }
+          culture: Joi.string().max(45).required(),
+        },
+      },
+    },
+  },
 ]

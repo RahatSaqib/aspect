@@ -12,8 +12,11 @@ const DEVICE_LOG_TYPE_OPERATION = 2
 const DEVICE_LOG_TYPE_RESULT = 3
 
 function deviceApiHandler(handler, handlerOptions) {
-  return asyncHandler(function* (request) {
-    const { error, context } = yield* createDeviceApiContext(request, handlerOptions)
+  return asyncHandler(function*(request) {
+    const { error, context } = yield* createDeviceApiContext(
+      request,
+      handlerOptions
+    )
     const { updatePing = false, updateDeviceLog = false } = handlerOptions
     if (error) {
       // unauthorized or other error record nothing
@@ -39,7 +42,7 @@ function deviceApiHandler(handler, handlerOptions) {
         createdOn: now,
         senderIp: remoteAddress,
         // TODO DeviceLog handle non-JSON payloads
-        rawMessage: JSON.stringify(request.plugins.rawPayload)
+        rawMessage: JSON.stringify(request.plugins.rawPayload),
       })
     }
 
@@ -48,12 +51,10 @@ function deviceApiHandler(handler, handlerOptions) {
       deviceUpdates.lastPingOn = now
       deviceUpdates.lastPingFromIp = remoteAddress
     }
-    yield knex('Device')
-      .where({ id: device.id })
-      .update(deviceUpdates)
+    yield knex('Device').where({ id: device.id }).update(deviceUpdates)
 
     let response = {}
-    yield transact(function* (knex) {
+    yield transact(function*(knex) {
       context.knex = knex
 
       response = yield* handler(context)
@@ -76,7 +77,7 @@ function deviceApiHandler(handler, handlerOptions) {
 function* createDeviceApiContext(request, handlerOptions) {
   const {
     createDevice = false,
-    deviceLogType = DEVICE_LOG_TYPE_NONE
+    deviceLogType = DEVICE_LOG_TYPE_NONE,
   } = handlerOptions
   const { auth } = request
   const now = new Date()
@@ -87,11 +88,17 @@ function* createDeviceApiContext(request, handlerOptions) {
     .innerJoin('DeviceTypeCategory as dtc', 'dtc.id', 'dt.deviceTypeCategoryId')
     .where({
       'dak.token': auth.credentials.token,
-      'dak.revoked': false
+      'dak.revoked': false,
     })
     .first(
-      'd.id', 'd.name', 'd.serial', 'd.partnerId', 'd.siteId',
-      'ds.token as status', 'dtc.name as deviceTypeCategory')
+      'd.id',
+      'd.name',
+      'd.serial',
+      'd.partnerId',
+      'd.siteId',
+      'ds.token as status',
+      'dtc.name as deviceTypeCategory'
+    )
 
   let device = null
   if (existingDeviceAndData != null) {
@@ -115,7 +122,7 @@ function* createDeviceApiContext(request, handlerOptions) {
     device,
     payload: request.payload,
     query: request.query,
-    deviceLogType
+    deviceLogType,
   })
 
   // Add Device Log if requested
@@ -131,7 +138,9 @@ function* createDeviceApiContext(request, handlerOptions) {
     if (checkpoint == null) {
       if (offset !== 0) {
         // must specify checkpoint if using offset
-        return { error: Boom.badRequest('Must specify checkpoint if using offset') }
+        return {
+          error: Boom.badRequest('Must specify checkpoint if using offset'),
+        }
       }
       // Checkpoint not specified, return last one for this device
       const lastDeviceLogQuery = knex('DeviceLog')
@@ -153,24 +162,47 @@ function* createDeviceApiContext(request, handlerOptions) {
     const partner = yield knex('Partner as p')
       .innerJoin('Device as d', 'd.partnerId', 'p.id')
       .where({ 'd.id': device.id })
-      .first('p.deviceLogHistoryDays', 'p.autoAcknowledgeOlderThanDays',
-        'p.numberToLeaveUnacknowledged')
+      .first(
+        'p.deviceLogHistoryDays',
+        'p.autoAcknowledgeOlderThanDays',
+        'p.numberToLeaveUnacknowledged'
+      )
     if (partner == null) {
       return { error: Boom.internal('Device not assigned to partner') }
     }
-    const historyCutoff = new Date(+new Date() - (partner.deviceLogHistoryDays * millisInDay))
-    const autoAcknowledgeCutoff = partner.autoAcknowledgeOlderThanDays ? new Date(+new Date() -
-      (partner.autoAcknowledgeOlderThanDays * millisInDay)) : null
-    const deviceLogWithMetaData = yield* getDeviceLogWithMetaData(context, checkpoint, offset,
-      deviceLogType, historyCutoff, autoAcknowledgeCutoff, partner.numberToLeaveUnacknowledged)
+    const historyCutoff = new Date(
+      +new Date() - partner.deviceLogHistoryDays * millisInDay
+    )
+    const autoAcknowledgeCutoff = partner.autoAcknowledgeOlderThanDays
+      ? new Date(
+          +new Date() - partner.autoAcknowledgeOlderThanDays * millisInDay
+        )
+      : null
+    const deviceLogWithMetaData = yield* getDeviceLogWithMetaData(
+      context,
+      checkpoint,
+      offset,
+      deviceLogType,
+      historyCutoff,
+      autoAcknowledgeCutoff,
+      partner.numberToLeaveUnacknowledged
+    )
     if (deviceLogWithMetaData == null) {
       // See if requested log is forbidden or not found
       const deviceLogWithMetaDataNoHistory = yield* getDeviceLogWithMetaData(
-        context, checkpoint, offset, deviceLogType, null)
+        context,
+        checkpoint,
+        offset,
+        deviceLogType,
+        null
+      )
       return {
-        error: deviceLogWithMetaDataNoHistory == null
-          ? Boom.notFound('Cannot find specified checkpoint and offset')
-          : Boom.forbidden('Not authorized to view specified checkpoint and offset')
+        error:
+          deviceLogWithMetaDataNoHistory == null
+            ? Boom.notFound('Cannot find specified checkpoint and offset')
+            : Boom.forbidden(
+                'Not authorized to view specified checkpoint and offset'
+              ),
       }
     }
     context.deviceLog = deviceLogWithMetaData.deviceLog
@@ -182,19 +214,27 @@ function* createDeviceApiContext(request, handlerOptions) {
 }
 
 function createNewDevice(request, now) {
-  return transact(function* (knex) {
+  return transact(function*(knex) {
     const { auth, payload } = request
 
     // Require Device Type when creating device
     const deviceTypeExternalId = _.get(payload, 'type.id', null)
     if (deviceTypeExternalId == null) {
-      return { error: Boom.badRequest('Must specify device type on first request with new key') }
+      return {
+        error: Boom.badRequest(
+          'Must specify device type on first request with new key'
+        ),
+      }
     }
     const deviceType = yield knex('DeviceType')
       .where({ name: deviceTypeExternalId })
       .first('id', 'name')
     if (deviceType == null) {
-      return { error: Boom.badRequest(`Cannot find DeviceType with id ${deviceTypeExternalId}`) }
+      return {
+        error: Boom.badRequest(
+          `Cannot find DeviceType with id ${deviceTypeExternalId}`
+        ),
+      }
     }
 
     // Find API Key to use as template for new device
@@ -202,11 +242,15 @@ function createNewDevice(request, now) {
       .where({
         token: auth.credentials.token,
         revoked: false,
-        deviceId: null
+        deviceId: null,
       })
       .first('id', 'partnerId', 'geographyId', 'siteId')
     if (apiKey == null) {
-      return { error: Boom.notFound('Cannot find available API Key when creating new device') }
+      return {
+        error: Boom.notFound(
+          'Cannot find available API Key when creating new device'
+        ),
+      }
     }
 
     // Use or generate device name
@@ -219,7 +263,7 @@ function createNewDevice(request, now) {
       const [deviceCount] = yield knex('Device')
         .where({
           partnerId: apiKey.partnerId,
-          deviceTypeId: deviceType.id
+          deviceTypeId: deviceType.id,
         })
         .count('id as cnt')
       name = `${deviceType.name} #${deviceCount.cnt + 1}`
@@ -231,21 +275,23 @@ function createNewDevice(request, now) {
       siteId: apiKey.siteId,
       name,
       serial: payload.serial,
-      status: apiKey.siteId ? 'approved' : 'provisioned'
+      status: apiKey.siteId ? 'approved' : 'provisioned',
     }
     const inserts = {
       partnerId: device.partnerId,
       geographyId: apiKey.geographyId,
       siteId: device.siteId,
       deviceTypeId: deviceType.id,
-      deviceStatusId: knex('DeviceStatus').where({ token: device.status }).select('id'),
+      deviceStatusId: knex('DeviceStatus')
+        .where({ token: device.status })
+        .select('id'),
       name: device.name,
       serial: device.serial,
       configurationData: '{}',
       putInService: now,
       lastSeenOn: now,
       createdOn: now,
-      updatedOn: now
+      updatedOn: now,
     }
     if (device.status === 'approved') {
       // TODO DeviceStatusLog ASP-340
@@ -269,7 +315,9 @@ class DeviceApiContext {
   }
 
   withPayload(payload) {
-    return new DeviceApiContext(Object.assign({}, this, { payload, parent: this }))
+    return new DeviceApiContext(
+      Object.assign({}, this, { payload, parent: this })
+    )
   }
 
   markDeviceConfigurationUpdated() {
@@ -298,15 +346,22 @@ class DeviceApiContext {
   }
 }
 
-function* getDeviceLogWithMetaData(context, checkpoint, offset, deviceLogType, historyCutoff,
-  autoAcknowledgeCutoff, numberToLeaveUnacknowledged) {
+function* getDeviceLogWithMetaData(
+  context,
+  checkpoint,
+  offset,
+  deviceLogType,
+  historyCutoff,
+  autoAcknowledgeCutoff,
+  numberToLeaveUnacknowledged
+) {
   const { device } = context
 
   // Find device log at checkpoint or latest
   const initialDeviceLogQuery = knex('DeviceLog')
     .where({
       deviceId: device.id,
-      checkpoint
+      checkpoint,
     })
     // If we are querying future data, must use minimum device log for
     // this device with same checkpoint so we don't miss data interleaving
@@ -315,20 +370,33 @@ function* getDeviceLogWithMetaData(context, checkpoint, offset, deviceLogType, h
   if (historyCutoff != null) {
     initialDeviceLogQuery.where('createdOn', '>=', historyCutoff)
   }
-  const initialDeviceLog = yield initialDeviceLogQuery
-    .first('id', 'checkpoint', 'deviceId', 'resultId', 'deviceOperationId', 'createdOn', 'source')
+  const initialDeviceLog = yield initialDeviceLogQuery.first(
+    'id',
+    'checkpoint',
+    'deviceId',
+    'resultId',
+    'deviceOperationId',
+    'createdOn',
+    'source'
+  )
   if (!initialDeviceLog) {
     // No log found at checkpoint for this device
     return null
   } else if (offset === 0) {
     // If no offset, return log at checkpoint for this device
     // as checkpoints are unique per device
-    if (deviceLogType === DEVICE_LOG_TYPE_RESULT && initialDeviceLog.resultId == null) {
+    if (
+      deviceLogType === DEVICE_LOG_TYPE_RESULT &&
+      initialDeviceLog.resultId == null
+    ) {
       // if we requested a log with result but we don't have one, 404
       return null
     }
 
-    if (deviceLogType === DEVICE_LOG_TYPE_OPERATION && initialDeviceLog.deviceOperationId == null) {
+    if (
+      deviceLogType === DEVICE_LOG_TYPE_OPERATION &&
+      initialDeviceLog.deviceOperationId == null
+    ) {
       // if we requested a log with operation but we don't have one, 404
       return null
     }
@@ -337,21 +405,20 @@ function* getDeviceLogWithMetaData(context, checkpoint, offset, deviceLogType, h
         id: initialDeviceLog.id,
         checkpoint: initialDeviceLog.checkpoint,
         createdOn: initialDeviceLog.createdOn,
-        source: initialDeviceLog.source
+        source: initialDeviceLog.source,
       },
-      metaData: {}
+      metaData: {},
     }
   }
 
   // Find log at specified offset from checkpoint
-  const deviceLogQuery = knex('DeviceLog as dl')
-    .where(function () {
-      // do not include logs with same checkpoint for same device
-      // since we are retrieving logs with offset from checkpoint
-      this.where('dl.deviceId', '<>', initialDeviceLog.deviceId)
-        .orWhere('dl.checkpoint', '<>', initialDeviceLog.checkpoint)
-        .orWhereNull('dl.checkpoint')
-    })
+  const deviceLogQuery = knex('DeviceLog as dl').where(function() {
+    // do not include logs with same checkpoint for same device
+    // since we are retrieving logs with offset from checkpoint
+    this.where('dl.deviceId', '<>', initialDeviceLog.deviceId)
+      .orWhere('dl.checkpoint', '<>', initialDeviceLog.checkpoint)
+      .orWhereNull('dl.checkpoint')
+  })
 
   if (deviceLogType === DEVICE_LOG_TYPE_RESULT) {
     deviceLogQuery.whereNotNull('dl.resultId')
@@ -393,12 +460,16 @@ function* getDeviceLogWithMetaData(context, checkpoint, offset, deviceLogType, h
       .innerJoin('DeviceLog as dl', 'dl.deviceId', 'd.id')
       .where({ 'd.id': device.id })
       .select('dl.id')
-      .union(function () {
+      .union(function() {
         this.from('Result as r')
           .innerJoin('Device as d', 'r.deviceId', 'd.id')
           .innerJoin('DeviceLog as dl', 'dl.resultId', 'r.id')
           .leftJoin('Sample as s', 'r.sampleId', 's.id')
-          .modify(addResultConstraints, context, { device: 'd', result: 'r', sample: 's' })
+          .modify(addResultConstraints, context, {
+            device: 'd',
+            result: 'r',
+            sample: 's',
+          })
           .select('dl.id')
         if (historyCutoff != null) {
           this.where('dl.createdOn', '>=', historyCutoff)
@@ -421,8 +492,13 @@ function* getDeviceLogWithMetaData(context, checkpoint, offset, deviceLogType, h
     deviceLogQuery.where('dl.createdOn', '>=', historyCutoff)
   }
 
-  const deviceLog = yield deviceLogQuery
-    .first('dl.id', 'dl.deviceId', 'dl.checkpoint', 'dl.createdOn', 'dl.source')
+  const deviceLog = yield deviceLogQuery.first(
+    'dl.id',
+    'dl.deviceId',
+    'dl.checkpoint',
+    'dl.createdOn',
+    'dl.source'
+  )
   if (deviceLog == null) {
     return null
   }
@@ -431,9 +507,9 @@ function* getDeviceLogWithMetaData(context, checkpoint, offset, deviceLogType, h
     deviceLog: {
       id: deviceLog.id,
       createdOn: deviceLog.createdOn,
-      source: deviceLog.source
+      source: deviceLog.source,
     },
-    metaData: {}
+    metaData: {},
   }
   // set checkpoint if log changed during query, e.g, due to offset
   // but do not leak checkpoint from different device
@@ -442,20 +518,26 @@ function* getDeviceLogWithMetaData(context, checkpoint, offset, deviceLogType, h
   }
   // When initial sync, Auto acknowledge results that are
   // old and not on the first page displayed to the user
-  if (deviceLogType === DEVICE_LOG_TYPE_RESULT &&
-    autoAcknowledgeCutoff) {
+  if (deviceLogType === DEVICE_LOG_TYPE_RESULT && autoAcknowledgeCutoff) {
     const result = yield knex('DeviceLog as dl')
       .innerJoin('Result as r', 'r.id', 'dl.resultId')
       .innerJoin('Partner as p', 'p.id', 'r.partnerId')
       .where({ 'dl.id': deviceLog.id })
       .first('r.endedOn', 'p.name as partner')
-    if (result.endedOn &&
+    if (
+      result.endedOn &&
       result.endedOn < autoAcknowledgeCutoff &&
-      -offset > numberToLeaveUnacknowledged) {
+      -offset > numberToLeaveUnacknowledged
+    ) {
       response.metaData.autoAcknowledge = true
       const dateFormat = 'DD MMM YYYY'
-      response.metaData.autoAcknowledgeReason =
-        `Automatically acknowledged due to rules setup for partner (${result.partner}). Result ended on (${format(result.endedOn, dateFormat)}) before ${format(autoAcknowledgeCutoff, dateFormat)} and result is number ${-offset} on the list.`
+      response.metaData.autoAcknowledgeReason = `Automatically acknowledged due to rules setup for partner (${result.partner}). Result ended on (${format(
+        result.endedOn,
+        dateFormat
+      )}) before ${format(
+        autoAcknowledgeCutoff,
+        dateFormat
+      )} and result is number ${-offset} on the list.`
     }
   }
   return response
@@ -473,7 +555,7 @@ function addResultConstraints(queryBuilder, context, aliases) {
     // Two steps are required because results might be allowed from a
     // different sample origin site (lab/clinic) but device configuration
     // and operation updates are currently always constrained by device
-    queryBuilder.where(function () {
+    queryBuilder.where(function() {
       this.where(`${aliases.device}.id`, device.id)
       this.orWhere(`${aliases.sample}.originSiteId`, device.siteId)
     })
@@ -485,5 +567,5 @@ module.exports = {
   addResultConstraints,
   DEVICE_LOG_TYPE_OPTIONAL,
   DEVICE_LOG_TYPE_OPERATION,
-  DEVICE_LOG_TYPE_RESULT
+  DEVICE_LOG_TYPE_RESULT,
 }

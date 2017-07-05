@@ -3,13 +3,20 @@ const _ = require('lodash')
 const Boom = require('boom')
 
 const { knex, filterParams, sortPageParams } = require('../db')
-const { getCellsByValue, generateExcelFile, generateCsvFile } = require('../shared/io')
+const {
+  getCellsByValue,
+  generateExcelFile,
+  generateCsvFile,
+} = require('../shared/io')
 const { randomToken, groupToken } = require('../deviceApi/apiKey')
 const { getConstraints, addConstraints } = require('../auth/constraints')
 const { getUser } = require('../auth/service')
 
 const SELECT_LIST_FIELDS = [
-  'dak.id', 'dak.createdOn', 'dak.token', 'dak.revoked',
+  'dak.id',
+  'dak.createdOn',
+  'dak.token',
+  'dak.revoked',
   'p.name as partner',
   'c.name as country',
   's.name as site',
@@ -31,28 +38,29 @@ function* listDeviceApiKeys(request) {
       countryId: 'g.countryId',
       partnerId: 'dak.partnerId',
       siteName: 's.name',
-      deviceName: 'd.name'
+      deviceName: 'd.name',
     })
     .modify(addConstraints, dataConstraints, {
       partner: 'p',
       geography: 'g',
       site: 's',
-      device: 'd'
+      device: 'd',
     })
 
   // get total count for paging
-  const getCount = dakQuery.clone()
-    .count('dak.id as count')
-    .first()
+  const getCount = dakQuery.clone().count('dak.id as count').first()
 
   // get rows
-  const getItems = dakQuery.clone()
+  const getItems = dakQuery
+    .clone()
     .modify(sortPageParams, query, 'createdOn')
     .orderBy('dak.id', 'desc') // second sort param to make the query deterministic
     .select(SELECT_LIST_FIELDS)
-    .map(dak => _.assign({}, dak, {
-      token: groupToken(dak.token)
-    }))
+    .map(dak =>
+      _.assign({}, dak, {
+        token: groupToken(dak.token),
+      })
+    )
 
   // return result when both queries are finished
   const [{ count: total }, data] = yield Promise.all([getCount, getItems])
@@ -78,7 +86,7 @@ function* exportDeviceApiKeys(request) {
 
   if (query.format === 'excel') {
     // fill in data into given workbook
-    const populateData = (workbook) => {
+    const populateData = workbook => {
       // get 1st sheet (1-based)
       const worksheet = workbook.getWorksheet(1)
 
@@ -86,13 +94,15 @@ function* exportDeviceApiKeys(request) {
       const cells = getCellsByValue(worksheet, '<DeviceApiKeyListRows>')
       if (cells.length > 0) {
         // empty such cells
-        cells.forEach((cell) => { cell.value = '' })
+        cells.forEach(cell => {
+          cell.value = ''
+        })
 
         // use 1st cell only (actually, should not be more than one)
         const patternRowNumber = cells[0].row + 2
 
         // fill in array 'rows'
-        const rows = devices.data.map(dak => ([
+        const rows = devices.data.map(dak => [
           // ------
           // --->>> order of array elements should match columns order in template file
           // ------
@@ -102,8 +112,8 @@ function* exportDeviceApiKeys(request) {
           dak.country,
           dak.site,
           dak.device,
-          dak.revoked
-        ]))
+          dak.revoked,
+        ])
 
         // insert rows from patternRowNumber, and remove row number 'patternRowNumber'
         worksheet.spliceRows(patternRowNumber, 1, ...rows)
@@ -113,13 +123,34 @@ function* exportDeviceApiKeys(request) {
     result = yield* generateExcelFile({
       templateFileName: 'DeviceApiKeys.xlsx',
       outputFileName: 'deviceApiKeys.xlsx',
-      populateData
+      populateData,
     })
   } else if (query.format === 'csv') {
     const items = devices.data
-    const columnNames = ['Created On', 'Key', 'Partner', 'Country', 'Site', 'Device', 'Revoked']
-    const fieldNames = ['createdOn', 'token', 'partner', 'country', 'site', 'device', 'revoked']
-    result = yield* generateCsvFile('deviceApiKeys.csv', items, columnNames, fieldNames)
+    const columnNames = [
+      'Created On',
+      'Key',
+      'Partner',
+      'Country',
+      'Site',
+      'Device',
+      'Revoked',
+    ]
+    const fieldNames = [
+      'createdOn',
+      'token',
+      'partner',
+      'country',
+      'site',
+      'device',
+      'revoked',
+    ]
+    result = yield* generateCsvFile(
+      'deviceApiKeys.csv',
+      items,
+      columnNames,
+      fieldNames
+    )
   }
 
   return result
@@ -130,11 +161,11 @@ function* generateDeviceApiKeys(request) {
 
   let geographyId
   if (payload.countryId) {
-    ({ id: geographyId } = yield knex('Geography as g')
+    ;({ id: geographyId } = yield knex('Geography as g')
       .where({
         'g.countryId': payload.countryId,
         'g.stateId': null,
-        'g.lgaId': null
+        'g.lgaId': null,
       })
       .first('id'))
   }
@@ -151,7 +182,7 @@ function* generateDeviceApiKeys(request) {
     createdOn: now,
     createdBy: currentlyLoggedInUser.id,
     updatedOn: now,
-    updatedBy: currentlyLoggedInUser.id
+    updatedBy: currentlyLoggedInUser.id,
   }))
 
   yield knex('DeviceApiKey').insert(deviceApiKeys)
@@ -166,11 +197,11 @@ function* assignDeviceApiKeys(request) {
 
   let geographyId
   if (payload.countryId) {
-    ({ id: geographyId } = yield knex('Geography as g')
+    ;({ id: geographyId } = yield knex('Geography as g')
       .where({
         'g.countryId': payload.countryId,
         'g.stateId': null,
-        'g.lgaId': null
+        'g.lgaId': null,
       })
       .first('id'))
   }
@@ -187,7 +218,7 @@ function* assignDeviceApiKeys(request) {
       partnerId: payload.partnerId,
       deviceId: payload.deviceId,
       updatedOn: now,
-      updatedBy: currentlyLoggedInUser.id
+      updatedBy: currentlyLoggedInUser.id,
     })
 
   const result = { ok: true }
@@ -201,7 +232,7 @@ function* revokeDeviceApiKey(request) {
   const updatedCount = yield knex('DeviceApiKey')
     .where('id', params.deviceApiKeyId)
     .update({
-      revoked: payload.revoked
+      revoked: payload.revoked,
     })
 
   if (updatedCount !== 1) {
@@ -212,8 +243,8 @@ function* revokeDeviceApiKey(request) {
     ok: true,
     data: {
       id: params.deviceApiKeyId,
-      revoked: payload.revoked
-    }
+      revoked: payload.revoked,
+    },
   }
 }
 
@@ -222,5 +253,5 @@ module.exports = {
   exportDeviceApiKeys,
   generateDeviceApiKeys,
   assignDeviceApiKeys,
-  revokeDeviceApiKey
+  revokeDeviceApiKey,
 }

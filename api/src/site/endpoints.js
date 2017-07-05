@@ -1,15 +1,17 @@
 const Joi = require('joi')
-const { validateAllGeographyFilterParams } = require('../geography/requestValidation')
+const {
+  validateAllGeographyFilterParams,
+} = require('../geography/requestValidation')
 const {
   asyncHandler,
   validateDateRangeParams,
-  validateSortPageParams
+  validateSortPageParams,
 } = require('../routes')
 const {
   listSites,
   showSite,
   updateSite,
-  listSitesForSelectList
+  listSitesForSelectList,
 } = require('./service')
 
 module.exports = [
@@ -22,15 +24,32 @@ module.exports = [
       notes: 'Pageable and sortable list of sites',
       auth: { scope: ['site:view', 'site:edit'] },
       validate: {
-        query: Object.assign({
-          deviceName: Joi.string().allow('').description('Filter for device name'),
-          siteName: Joi.string().allow('').description('Filter for site name'),
-          externalId: Joi.string().allow('').description('Filter for facility code')
-        }, validateAllGeographyFilterParams(),
+        query: Object.assign(
+          {
+            deviceName: Joi.string()
+              .allow('')
+              .description('Filter for device name'),
+            siteName: Joi.string()
+              .allow('')
+              .description('Filter for site name'),
+            externalId: Joi.string()
+              .allow('')
+              .description('Filter for facility code'),
+          },
+          validateAllGeographyFilterParams(),
           validateDateRangeParams(),
-          validateSortPageParams('name', 'shortname', 'state', 'lga', 'createdOn', 'totalDevices', 'externalId'))
-      }
-    }
+          validateSortPageParams(
+            'name',
+            'shortname',
+            'state',
+            'lga',
+            'createdOn',
+            'totalDevices',
+            'externalId'
+          )
+        ),
+      },
+    },
   },
   {
     method: 'GET',
@@ -42,10 +61,10 @@ module.exports = [
       auth: { scope: ['site:view', 'site:edit'] },
       validate: {
         params: {
-          siteId: Joi.string().description('Site id').required()
-        }
-      }
-    }
+          siteId: Joi.string().description('Site id').required(),
+        },
+      },
+    },
   },
   {
     method: 'PUT',
@@ -57,7 +76,11 @@ module.exports = [
       auth: { scope: ['site:edit'] },
       validate: {
         params: {
-          siteId: Joi.number().integer().positive().description('Site id').required()
+          siteId: Joi.number()
+            .integer()
+            .positive()
+            .description('Site id')
+            .required(),
         },
         payload: {
           name: Joi.string().required(),
@@ -72,10 +95,10 @@ module.exports = [
           city: Joi.string().required(),
           zip: Joi.string().max(45).allow('', null),
           longitude: Joi.number().allow('', null),
-          latitude: Joi.number().allow('', null)
-        }
-      }
-    }
+          latitude: Joi.number().allow('', null),
+        },
+      },
+    },
   },
   {
     method: 'GET',
@@ -83,7 +106,7 @@ module.exports = [
     handler: asyncHandler(listSitesForSelectList),
     config: {
       description: 'Sites for Select List',
-      notes: 'List of site ID\'s and names'
-    }
-  }
+      notes: "List of site ID's and names",
+    },
+  },
 ]

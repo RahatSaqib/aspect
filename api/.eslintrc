@@ -15,7 +15,8 @@
     "prettier/flowtype"
   ],
   "plugins": [
-    "prettier"
+    "prettier",
+    "jsx-a11y"
   ],
   "rules": {
     "semi": [

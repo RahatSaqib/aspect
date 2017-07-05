@@ -4,14 +4,24 @@ const { knex, filterParams, sortPageParams } = require('../db')
 const { getConstraints, addConstraints } = require('../auth/constraints')
 
 const SELECT_LIST_FIELDS = [
-  'a.id', 'at.id as assayTypeId', 'a.name', 'at.name as assayTypeName',
-  'dt.id as deviceTypeId', 'dt.name as deviceTypeName', 'a.resultDataSchema',
-  'a.resultCategory1Label', 'a.resultCategory1i18nKey',
-  'a.resultCategory2Label', 'a.resultCategory2i18nKey'
+  'a.id',
+  'at.id as assayTypeId',
+  'a.name',
+  'at.name as assayTypeName',
+  'dt.id as deviceTypeId',
+  'dt.name as deviceTypeName',
+  'a.resultDataSchema',
+  'a.resultCategory1Label',
+  'a.resultCategory1i18nKey',
+  'a.resultCategory2Label',
+  'a.resultCategory2i18nKey',
 ]
 
 const SELECT_LIST_RESULT_CATEGORY_FIELDS = [
-  'rc.id', 'rc.name', 'rc.i18nKey', 'rca.assayId'
+  'rc.id',
+  'rc.name',
+  'rc.i18nKey',
+  'rca.assayId',
 ]
 
 function* listAssays(request) {
@@ -32,11 +42,11 @@ function* listAssays(request) {
     .modify(filterParams, query, { name: 'a.name' })
 
   // get total count for paging
-  const getCount = assayQuery.clone()
-    .count('a.id as count').first()
+  const getCount = assayQuery.clone().count('a.id as count').first()
 
   // get rows
-  const getItems = assayQuery.clone()
+  const getItems = assayQuery
+    .clone()
     .modify(sortPageParams, query, 'name')
     .select(SELECT_LIST_FIELDS)
 
@@ -52,11 +62,13 @@ function* listAssays(request) {
   const resultCategoriesByAssayId = _.groupBy(rawResultCategories, 'assayId')
 
   // map rawAssays with extra values
-  const assays = _.map(rawAssays, d => _.assign({}, d, {
-    hasResults: usedAssayIds.includes(d.id),
-    resultDataSchema: JSON.parse(d.resultDataSchema),
-    resultCategories: resultCategoriesByAssayId[d.id]
-  }))
+  const assays = _.map(rawAssays, d =>
+    _.assign({}, d, {
+      hasResults: usedAssayIds.includes(d.id),
+      resultDataSchema: JSON.parse(d.resultDataSchema),
+      resultCategories: resultCategoriesByAssayId[d.id],
+    })
+  )
 
   const result = { ok: true, total, length: assays.length, data: assays }
 
@@ -64,5 +76,5 @@ function* listAssays(request) {
 }
 
 module.exports = {
-  listAssays
+  listAssays,
 }
