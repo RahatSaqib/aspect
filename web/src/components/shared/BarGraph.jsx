@@ -87,6 +87,7 @@ class BarGraph extends Component {
           for (let j = 0; j < maxLength; j++) {
             bars.push(
               <Bar
+                key={`bar-${j}`}
                 x={margin.left + xPoint(d)}
                 y={yMax - barDisplacement(j, barHeight)}
                 height={barHeight[j]}
@@ -97,7 +98,7 @@ class BarGraph extends Component {
           }
 
           return (
-            <Group className="barGraph">
+            <Group className="barGraph" key={d.name}>
               {bars}
               {this.props.showAxes &&
                 <AxisLeft
@@ -142,11 +143,11 @@ class BarGraph extends Component {
 }
 
 BarGraph.propTypes = {
-  data: PropTypes.isRequired,
-  hideLabel: PropTypes.boolean.isRequired,
-  color: PropTypes.isRequired,
-  showAxes: PropTypes.boolean.isRequired,
-  hideTicks: PropTypes.boolean.isRequired,
+  data: PropTypes.arrayOf(PropTypes.object).isRequired,
+  hideLabel: PropTypes.bool.isRequired,
+  color: PropTypes.arrayOf(PropTypes.string).isRequired,
+  showAxes: PropTypes.bool.isRequired,
+  hideTicks: PropTypes.bool.isRequired,
 }
 
 export default BarGraph

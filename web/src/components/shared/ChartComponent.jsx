@@ -53,16 +53,16 @@ class ChartComponent extends Component {
 }
 
 ChartComponent.propTypes = {
-  data: PropTypes.isRequired,
-  color: PropTypes,
+  data: PropTypes.arrayOf(PropTypes.object).isRequired,
+  color: PropTypes.arrayOf(PropTypes.string),
   type: PropTypes.string.isRequired,
   title: PropTypes.string,
   alert: PropTypes.string,
   alertMsg: PropTypes.string,
-  hideLabel: PropTypes.boolean,
-  hideTicks: PropTypes.boolean,
-  showAxes: PropTypes.boolean,
-  rightLabel: PropTypes.boolean,
+  hideLabel: PropTypes.bool,
+  hideTicks: PropTypes.bool,
+  showAxes: PropTypes.bool,
+  rightLabel: PropTypes.bool,
 }
 
 ChartComponent.defaultProps = {
@@ -75,5 +75,21 @@ ChartComponent.defaultProps = {
   alertMsg: '',
   alert: '',
 }
+
+/* const enhance = compose(
+  setPropTypes({
+    data: PropTypes.isRequired,
+    color: PropTypes,
+    type: PropTypes.string.isRequired,
+    title: PropTypes.string,
+    alert: PropTypes.string,
+    alertMsg: PropTypes.string,
+    hideLabel: PropTypes.boolean,
+    hideTicks: PropTypes.boolean,
+    showAxes: PropTypes.boolean,
+    rightLabel: PropTypes.boolean,
+  }),
+  pure
+)*/
 
 export default ChartComponent

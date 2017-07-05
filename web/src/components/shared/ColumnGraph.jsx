@@ -96,6 +96,7 @@ class ColumnGraph extends Component {
           for (let j = 0; j < maxLength; j++) {
             bars.push(
               <Bar
+                key={`bar-${j}`}
                 x={margin.left + barDisplacement(j, barLength)}
                 y={yPoint(d)}
                 height={yScale.bandwidth()}
@@ -106,7 +107,7 @@ class ColumnGraph extends Component {
           }
 
           return (
-            <Group className="barGraph">
+            <Group className="barGraph" key={d.name}>
               {bars}
               {!this.props.rightLabel &&
                 <AxisLeft
@@ -159,7 +160,7 @@ class ColumnGraph extends Component {
                   numTicks={3}
                   hideZero
                   tickLabelComponent={
-                    <text textAnchor="middle" fontSize={18} fill="black" />
+                    <text textAnchor="middle" fontSize={20} fill="black" />
                   }
                 />}
             </Group>
@@ -171,12 +172,12 @@ class ColumnGraph extends Component {
 }
 
 ColumnGraph.propTypes = {
-  data: PropTypes.isRequired,
-  hideLabel: PropTypes.boolean.isRequired,
-  rightLabel: PropTypes.boolean.isRequired,
-  color: PropTypes.isRequired,
-  showAxes: PropTypes.boolean.isRequired,
-  hideTicks: PropTypes.boolean.isRequired,
+  data: PropTypes.arrayOf(PropTypes.object).isRequired,
+  hideLabel: PropTypes.bool.isRequired,
+  rightLabel: PropTypes.bool.isRequired,
+  color: PropTypes.arrayOf(PropTypes.string).isRequired,
+  showAxes: PropTypes.bool.isRequired,
+  hideTicks: PropTypes.bool.isRequired,
 }
 
 export default ColumnGraph

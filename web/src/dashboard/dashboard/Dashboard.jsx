@@ -27,6 +27,18 @@ import DashboardSuppliesRunningLow from './DashboardSuppliesRunningLow'
 import DashboardSuppliesExpiringSoon from './DashboardSuppliesExpiringSoon'
 import styles from './Dashboard.css'
 import { fetchDashboardHome } from '../DashboardRedux'
+import ChartComponent from '../../components/shared/ChartComponent'
+
+const exData1 = [
+  { name: 'Site name 1', data: [3, 4, 8] },
+  { name: 'Site name 2', data: [1, 4, 7] },
+  { name: 'Site name 3', data: [2, 5, 9] },
+  { name: 'Site name 4', data: [4, 3, 10] },
+  { name: 'Site name 5', data: [3, 4, 6] },
+  { name: 'Site name 6', data: [1, 4, 10] },
+  { name: 'Site name 7', data: [2, 5, 9] },
+  { name: 'Site name 8', data: [4, 3, 8] },
+]
 
 const messages = defineMessages({
   title: {
@@ -233,6 +245,15 @@ export class Dashboard extends PureComponent {
                       </Link>
                     </Unit>
                   </div>
+                </Unit>
+                <Unit sm="1-2">
+                  <h3>Chart Component</h3>
+                  <ChartComponent
+                    data={exData1}
+                    color={['#e85164', '#fcb124', '#73d449']}
+                    type="column"
+                    title="High Performing"
+                  />
                 </Unit>
               </div>
             </section>
