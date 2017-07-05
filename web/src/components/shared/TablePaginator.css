@@ -1,0 +1,77 @@
+@import '../../globals/variables.css';
+
+:root {
+  --button-height: 36px;
+  --bordered-button-line-height: 34px;
+}
+
+.Container {
+  display: flex;
+  padding: 20px 0;
+}
+
+.Container__Content {
+  width: 0;
+  flex-grow: 1;
+  display: flex;
+}
+
+.Left {
+  composes: Container__Content;
+}
+
+.Left__Status {
+  line-height: var(--button-height);
+  padding: 0 20px;
+}
+
+.Left__Button--next > svg {
+  margin-left: 5px;
+  margin-right: 0;
+}
+
+.Right {
+  composes: Container__Content;
+  justify-content: flex-end;
+}
+
+.Right__Button {
+  margin: 0 10px;
+  min-width: 40px;
+  font-weight: var(--lato-font-weight-bold);
+  text-transform: capitalize;
+  box-shadow: none;
+}
+
+.Right__Button:last-child {
+  margin-right: 0;
+}
+
+.Button--raised[disabled] {
+  box-shadow: none;
+}
+
+/* -- customize -- */
+
+.Button--primary:not([disabled]).Button--flat {
+  text-transform: capitalize;
+  background-color: #ffffff;
+  color: var(--aspect-color-chill-blue-1);
+  border-radius: 4px;
+  border: 1px solid var(--aspect-color-chill-blue-1);
+  line-height: var(--bordered-button-line-height);
+}
+
+.Button--primary[disabled].Button--flat {
+  text-transform: capitalize;
+}
+
+.Button--neutral:not([disabled]).Button--raised {
+  background-color: var(--aspect-color-grey-4);
+  color: #ffffff;
+}
+
+.Button--primary:not([disabled]).Button--raised {
+  background-color: var(--aspect-color-chill-blue-1);
+  color: #ffffff;
+}
