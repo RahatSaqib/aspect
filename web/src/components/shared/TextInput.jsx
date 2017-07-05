@@ -1,23 +1,17 @@
 import React from 'react'
 import { Field } from 'redux-form/immutable'
-import TextField from 'material-ui/TextField'
-import classNames from 'classnames'
-import styles from './Shared.css'
+import Input from 'react-toolbox/lib/input'
 
 const renderTextField = props => {
   const { input, meta, textFieldProps } = props
   const { touched, error } = meta
+  const { theme } = textFieldProps
   return (
-    <TextField
+    <Input
       {...input}
-      errorStyle={{
-        float: 'left',
-        whiteSpace: 'nowrap',
-        textOverflow: 'visible',
-      }}
-      errorText={touched && error}
+      error={touched && error}
       {...textFieldProps}
-      className={classNames({ [styles.Form__Field]: textFieldProps.fullWidth })}
+      theme={theme}
     />
   )
 }
@@ -26,29 +20,27 @@ const renderFormField = props => {
   const {
     name,
     label,
-    fullWidth,
     autoFocus,
     style,
-    inputStyle,
     disabled,
     maxLength,
-    multiLine,
+    multiline,
     rows,
     type,
     onChange,
     onKeyPress,
+    theme,
   } = props
   const textFieldProps = {
-    floatingLabelText: label,
-    fullWidth,
+    label,
     autoFocus,
     style,
-    inputStyle,
     disabled,
     maxLength,
-    multiLine,
+    multiline,
     rows,
     type: type || 'text',
+    theme,
   }
   if (onChange) {
     textFieldProps.onChange = onChange

@@ -1,9 +1,10 @@
 /*pre-login background */
+@import '../../globals/variables.css';
 .PreLogin__Background {
   height: 100%;
   /*This makes the top half of the screen green and bottom half in gray*/
-  background: linear-gradient(180deg, #7cb342 10%, transparent 80%);
-  padding-top: 15%;
+  background: var(--aspect-color-grey-7);
+  padding-top: 14%;
 }
 
 /*content area */
@@ -37,9 +38,6 @@
   padding: 30px 0 0 0;
 }
 
-.Form__Field {
-  margin-right: 3em;
-}
 /* xs */
 @media screen and (max-width: 35.438em) {
   .Form__Field {

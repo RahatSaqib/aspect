@@ -8,11 +8,12 @@ import { reduxForm } from 'redux-form/immutable'
 import Helmet from 'react-helmet'
 import { injectIntl, defineMessages, intlShape } from 'react-intl'
 import { Link } from 'react-router-dom'
+import classnames from 'classnames/bind'
 
-// Material-UI
-import Paper from 'material-ui/Paper'
-import LinearProgress from 'material-ui/LinearProgress'
-import RaisedButton from 'material-ui/RaisedButton'
+// React Toolbox
+import { Button } from 'react-toolbox/lib/button'
+import { Card } from 'react-toolbox/lib/card'
+import { ProgressBar } from 'react-toolbox/lib/progress_bar'
 
 // Our own imports
 import { Unit } from '../../components/pureGrids'
@@ -37,6 +38,16 @@ const messages = defineMessages({
     defaultMessage: 'Forgot Password?',
   },
 })
+
+const cssClasses = classnames.bind(require('./Login.css'))
+
+const LinearProgress = <ProgressBar type="linear" />
+const AspectLogo = () =>
+  <img
+    className={styles.Logo__Image}
+    src={require('../../globals/layouts/logo-aspect.png')}
+    alt="Aspect"
+  />
 
 const enhance = compose(
   setPropTypes({
@@ -86,7 +97,6 @@ export const Login = ({
   location,
   intl,
   handleSubmit,
-  pristine,
   submitting,
   initialValues,
 }) => {
@@ -98,9 +108,12 @@ export const Login = ({
       <Helmet title="Login" titleTemplate="%s - Aspect" defaultTitle="Aspect" />
       <div className={styles.Content}>
         <div>
-          <Unit sm="1-24" md="1-6" lg="1-3" />
-          <Unit sm="11-12" md="2-3" lg="1-3">
-            <Paper>
+          <Unit sm="1-24" md="1-6" lg="1-3" xl="9-24" />
+          <Unit sm="11-12" md="2-3" lg="1-3" xl="6-24">
+            <Card>
+              <div className={styles.Logo__Container}>
+                <AspectLogo />
+              </div>
               <form onSubmit={handleSubmit} className={styles.Form}>
                 {search.has('reason')
                   ? <div className={styles.Form__Info}>
@@ -108,12 +121,18 @@ export const Login = ({
                     </div>
                   : null}
                 <TextInput
+                  theme={{
+                    label: cssClasses('Form__Input'),
+                  }}
                   name="user"
                   label="Username"
                   fullWidth
                   autoFocus={_.isEmpty(initialValues.get('user'))}
                 />
                 <TextInput
+                  theme={{
+                    label: cssClasses('Form--input'),
+                  }}
                   name="password"
                   type="password"
                   label="Password"
@@ -121,19 +140,23 @@ export const Login = ({
                   autoFocus={!_.isEmpty(initialValues.get('user'))}
                 />
                 <div className={styles.Form__ActionRow}>
-                  <Link className={styles.Left_Align} to="reset-password">
+                  <Button
+                    label="LogIn"
+                    type="submit"
+                    raised
+                    primary
+                    theme={{
+                      primary: styles.Button__primary,
+                      raised: styles.Button__raised,
+                    }}
+                  />
+                  <Link className={styles.Right_Align} to="reset-password">
                     {formatMessage(messages.resetPasswordLink)}
                   </Link>
-                  <RaisedButton
-                    disabled={pristine || submitting}
-                    label="Log In"
-                    secondary
-                    type="submit"
-                  />
                 </div>
               </form>
               {submitting && <LinearProgress />}
-            </Paper>
+            </Card>
           </Unit>
         </div>
       </div>
