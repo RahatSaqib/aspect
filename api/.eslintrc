@@ -1,6 +1,6 @@
 {
   "parserOptions": {
-    "ecmaVersion": 6,
+    "ecmaVersion": 2016,
     "sourceType": "module"
   },
   "env": {
@@ -9,7 +9,14 @@
     "node": true,
     "mocha": true
   },
-  "extends": "airbnb",
+  "extends": [
+    "airbnb",
+    "prettier",
+    "prettier/flowtype"
+  ],
+  "plugins": [
+    "prettier"
+  ],
   "rules": {
     "semi": [
       "warn",
@@ -18,6 +25,7 @@
     "comma-dangle": "off",
     "func-names": "off",
     "global-require": "off",
+    "linebreak-style": "off",
     "newline-per-chained-call": "off",
     "no-confusing-arrow": ["error", {"allowParens": true}],
     "no-iterator": "off",
@@ -27,7 +35,11 @@
     "no-restricted-syntax": "off",
     "no-shadow": "off",
     "no-use-before-define": "off",
-    "require-yield": "off",
-    "linebreak-style": "off"
+    "prettier/prettier": ["error", {
+      "semi": false,
+      "singleQuote": true,
+      "trailingComma": "es5"
+    }],
+    "require-yield": "off"
   }
 }
