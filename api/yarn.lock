@@ -1252,6 +1252,13 @@ eslint-plugin-jsx-a11y@^4.0.0:
     jsx-ast-utils "^1.0.0"
     object-assign "^4.0.1"
 
+eslint-plugin-prettier@^2.1.2:
+  version "2.1.2"
+  resolved "https://registry.yarnpkg.com/eslint-plugin-prettier/-/eslint-plugin-prettier-2.1.2.tgz#4b90f4ee7f92bfbe2e926017e1ca40eb628965ea"
+  dependencies:
+    fast-diff "^1.1.1"
+    jest-docblock "^20.0.1"
+
 eslint-plugin-react@^6.9.0:
   version "6.9.0"
   resolved "https://registry.yarnpkg.com/eslint-plugin-react/-/eslint-plugin-react-6.9.0.tgz#54c2e9906b76f9d10142030bdc34e9d6840a0bb2"
@@ -1434,6 +1441,10 @@ fast-csv@0.5.7:
     is-extended "0.0.10"
     object-extended "0.0.7"
     string-extended "0.0.8"
+
+fast-diff@^1.1.1:
+  version "1.1.1"
+  resolved "https://registry.yarnpkg.com/fast-diff/-/fast-diff-1.1.1.tgz#0aea0e4e605b6a2189f0e936d4b7fbaf1b7cfd9b"
 
 fast-levenshtein@~2.0.4:
   version "2.0.5"
@@ -2333,6 +2344,10 @@ istanbul@^0.4.5:
 items@2.x.x:
   version "2.1.1"
   resolved "https://registry.yarnpkg.com/items/-/items-2.1.1.tgz#8bd16d9c83b19529de5aea321acaada78364a198"
+
+jest-docblock@^20.0.1:
+  version "20.0.3"
+  resolved "https://registry.yarnpkg.com/jest-docblock/-/jest-docblock-20.0.3.tgz#17bea984342cc33d83c50fbe1545ea0efaa44712"
 
 jodid25519@^1.0.0:
   version "1.0.2"
