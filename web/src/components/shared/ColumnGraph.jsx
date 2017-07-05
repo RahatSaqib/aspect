@@ -60,7 +60,7 @@ class ColumnGraph extends Component {
     const yScale = scaleBand({
       rangeRound: [0, yMax],
       domain: this.props.data.map(y),
-      padding: 0.2,
+      padding: this.props.spacing,
     })
     const xScale = scaleLinear({
       rangeRound: [0, xMax],
@@ -178,6 +178,7 @@ ColumnGraph.propTypes = {
   color: PropTypes.arrayOf(PropTypes.string).isRequired,
   showAxes: PropTypes.bool.isRequired,
   hideTicks: PropTypes.bool.isRequired,
+  spacing: PropTypes.number.isRequired,
 }
 
 export default ColumnGraph

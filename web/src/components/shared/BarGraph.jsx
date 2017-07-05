@@ -52,7 +52,7 @@ class BarGraph extends Component {
     const xScale = scaleBand({
       rangeRound: [0, xMax],
       domain: this.props.data.map(x),
-      padding: 0.2,
+      padding: this.props.spacing,
     })
     const yScale = scaleLinear({
       rangeRound: [yMax, 0],
@@ -148,6 +148,7 @@ BarGraph.propTypes = {
   color: PropTypes.arrayOf(PropTypes.string).isRequired,
   showAxes: PropTypes.bool.isRequired,
   hideTicks: PropTypes.bool.isRequired,
+  spacing: PropTypes.number.isRequired,
 }
 
 export default BarGraph

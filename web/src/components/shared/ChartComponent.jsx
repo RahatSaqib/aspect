@@ -17,6 +17,7 @@ class ChartComponent extends Component {
             hideLabel={this.props.hideLabel}
             showAxes={this.props.showAxes}
             rightLabel={this.props.rightLabel}
+            spacing={this.props.spacing}
           />
         )
       case 'bar':
@@ -28,6 +29,7 @@ class ChartComponent extends Component {
             hideTicks={this.props.hideTicks}
             hideLabel={this.props.hideLabel}
             showAxes={this.props.showAxes}
+            spacing={this.props.spacing}
           />
         )
     }
@@ -63,6 +65,7 @@ ChartComponent.propTypes = {
   hideTicks: PropTypes.bool,
   showAxes: PropTypes.bool,
   rightLabel: PropTypes.bool,
+  spacing: PropTypes.number,
 }
 
 ChartComponent.defaultProps = {
@@ -74,6 +77,7 @@ ChartComponent.defaultProps = {
   title: '',
   alertMsg: '',
   alert: '',
+  spacing: 0.4,
 }
 
 /* const enhance = compose(
