@@ -40,6 +40,25 @@ const exData1 = [
   { name: 'Site name 8', data: [4, 3, 8] },
 ]
 
+const exData2 = [
+  { name: 'Site1', data: [8, 1.5] },
+  { name: 'Site2', data: [7, 0.5] },
+  { name: 'Site3', data: [3, 2] },
+  { name: 'Site4', data: [4, 1] },
+  { name: 'Site5', data: [6, 2] },
+  { name: 'Site6', data: [8, 1] },
+  { name: 'Site7', data: [9, 2] },
+  { name: 'newSite8', data: [6, 2] },
+  { name: 'newSite1', data: [4, 1] },
+  { name: 'newSite2', data: [7, 0.6] },
+  { name: 'newSite3', data: [9, 2] },
+  { name: 'newSite4', data: [7, 1] },
+  { name: 'newSite5', data: [6, 1.5] },
+  { name: 'newSite6', data: [4, 1] },
+  { name: 'newSite7', data: [9, 1] },
+  { name: 'newSite8', data: [8, 2] },
+]
+
 const messages = defineMessages({
   title: {
     id: 'pages.Dashboard.title',
@@ -259,7 +278,18 @@ export class Dashboard extends PureComponent {
                     hideLabel={false}
                   />
                 </Unit>
+
               </div>
+              <Unit sm="1-2">
+                <h3>Chart Component</h3>
+                <ChartComponent
+                  data={exData2}
+                  color={['#27c4e0', '#e85065']}
+                  type="bar"
+                  title="HIV"
+                  spacing={0.3}
+                />
+              </Unit>
             </section>
           </Unit>
           <Unit sm="1-2" md="1-3">

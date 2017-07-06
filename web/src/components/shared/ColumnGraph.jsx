@@ -39,8 +39,8 @@ class ColumnGraph extends Component {
     }
 
     // Define the graph dimensions and margins
-    const width = 700
-    const height = 500
+    const width = 600
+    const height = 400
     const margin = { top: 10, bottom: 20, left: lMargin, right: rMargin }
 
     // Create bounds for graph
