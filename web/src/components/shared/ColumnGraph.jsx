@@ -126,7 +126,7 @@ class ColumnGraph extends Component {
                   numTicks={4}
                   hideTicks
                   hideZero
-                  hideAxisLine={!this.props.showAxes}
+                  hideAxisLine={!this.props.hideAxes}
                   tickLabelComponent={
                     <text
                       textAnchor="end"
@@ -147,7 +147,7 @@ class ColumnGraph extends Component {
                   numTicks={4}
                   hideTicks
                   hideZero
-                  hideAxisLine={!this.props.showAxes}
+                  hideAxisLine={!this.props.hideAxes}
                   tickLabelComponent={
                     <text
                       textAnchor="start"
@@ -158,7 +158,7 @@ class ColumnGraph extends Component {
                     />
                   }
                 />}
-              {this.props.showAxes &&
+              {!this.props.hideAxes &&
                 <AxisBottom
                   scale={xScale}
                   top={yMax}
@@ -187,7 +187,7 @@ ColumnGraph.propTypes = {
   hideLabel: PropTypes.bool.isRequired,
   rightLabel: PropTypes.bool.isRequired,
   color: PropTypes.arrayOf(PropTypes.string).isRequired,
-  showAxes: PropTypes.bool.isRequired,
+  hideAxes: PropTypes.bool.isRequired,
   hideTicks: PropTypes.bool.isRequired,
   spacing: PropTypes.number.isRequired,
   numLabelSize: PropTypes.number.isRequired,

@@ -15,7 +15,7 @@ class ChartComponent extends Component {
             color={this.props.color}
             hideTicks={this.props.hideTicks}
             hideLabel={this.props.hideLabel}
-            showAxes={this.props.showAxes}
+            hideAxes={this.props.hideAxes}
             rightLabel={this.props.rightLabel}
             spacing={this.props.spacing}
             numLabelSize={this.props.numLabelSize}
@@ -30,7 +30,7 @@ class ChartComponent extends Component {
             color={this.props.color}
             hideTicks={this.props.hideTicks}
             hideLabel={this.props.hideLabel}
-            showAxes={this.props.showAxes}
+            hideAxes={this.props.hideAxes}
             spacing={this.props.spacing}
             numLabelSize={this.props.numLabelSize}
             styleWide={this.props.styleWide}
@@ -67,7 +67,7 @@ ChartComponent.propTypes = {
   alertMsg: PropTypes.string,
   hideLabel: PropTypes.bool,
   hideTicks: PropTypes.bool,
-  showAxes: PropTypes.bool,
+  hideAxes: PropTypes.bool,
   rightLabel: PropTypes.bool,
   spacing: PropTypes.number,
   numLabelSize: PropTypes.number,
@@ -77,7 +77,7 @@ ChartComponent.propTypes = {
 ChartComponent.defaultProps = {
   hideLabel: true,
   hideTicks: true,
-  showAxes: true,
+  hideAxes: false,
   rightLabel: false,
   color: [],
   title: '',

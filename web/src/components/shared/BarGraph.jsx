@@ -100,7 +100,7 @@ class BarGraph extends Component {
           return (
             <Group className="barGraph" key={d.name}>
               {bars}
-              {this.props.showAxes &&
+              {!this.props.hideAxes &&
                 <AxisLeft
                   scale={yScale}
                   top={0}
@@ -120,7 +120,7 @@ class BarGraph extends Component {
                     />
                   }
                 />}
-              {this.props.showAxes &&
+              {!this.props.hideAxes &&
                 <AxisBottom
                   scale={xScale}
                   top={yMax}
@@ -146,7 +146,7 @@ BarGraph.propTypes = {
   data: PropTypes.arrayOf(PropTypes.object).isRequired,
   hideLabel: PropTypes.bool.isRequired,
   color: PropTypes.arrayOf(PropTypes.string).isRequired,
-  showAxes: PropTypes.bool.isRequired,
+  hideAxes: PropTypes.bool.isRequired,
   hideTicks: PropTypes.bool.isRequired,
   spacing: PropTypes.number.isRequired,
   numLabelSize: PropTypes.number.isRequired,

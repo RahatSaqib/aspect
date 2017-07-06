@@ -314,6 +314,7 @@ export class Dashboard extends PureComponent {
                     spacing={0.3}
                     numLabelSize={30}
                     styleWide
+                    showAxes={false}
                   />
                 </Unit>
               </div>
