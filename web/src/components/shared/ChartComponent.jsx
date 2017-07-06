@@ -34,6 +34,7 @@ class ChartComponent extends Component {
             spacing={this.props.spacing}
             numLabelSize={this.props.numLabelSize}
             styleWide={this.props.styleWide}
+            xOnly={this.props.xOnly}
           />
         )
     }
@@ -72,6 +73,7 @@ ChartComponent.propTypes = {
   spacing: PropTypes.number,
   numLabelSize: PropTypes.number,
   styleWide: PropTypes.number,
+  xOnly: PropTypes.bool,
 }
 
 ChartComponent.defaultProps = {
@@ -86,6 +88,7 @@ ChartComponent.defaultProps = {
   spacing: 0.4,
   numLabelSize: 18,
   styleWide: false,
+  xOnly: false,
 }
 
 export default ChartComponent

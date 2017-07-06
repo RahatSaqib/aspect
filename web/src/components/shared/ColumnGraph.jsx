@@ -126,7 +126,7 @@ class ColumnGraph extends Component {
                   numTicks={4}
                   hideTicks
                   hideZero
-                  hideAxisLine={!this.props.hideAxes}
+                  hideAxisLine={this.props.hideAxes}
                   tickLabelComponent={
                     <text
                       textAnchor="end"
@@ -147,7 +147,7 @@ class ColumnGraph extends Component {
                   numTicks={4}
                   hideTicks
                   hideZero
-                  hideAxisLine={!this.props.hideAxes}
+                  hideAxisLine={this.props.hideAxes}
                   tickLabelComponent={
                     <text
                       textAnchor="start"

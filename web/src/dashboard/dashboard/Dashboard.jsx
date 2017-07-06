@@ -288,7 +288,7 @@ export class Dashboard extends PureComponent {
                     type="column"
                     title="High Performing"
                     spacing={0.4}
-                    showAxes={false}
+                    hideAxes
                     rightLabel
                     hideLabel={false}
                   />
@@ -314,7 +314,8 @@ export class Dashboard extends PureComponent {
                     spacing={0.3}
                     numLabelSize={30}
                     styleWide
-                    showAxes={false}
+                    hideAxes
+                    xOnly
                   />
                 </Unit>
               </div>

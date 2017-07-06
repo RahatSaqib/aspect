@@ -23,10 +23,16 @@ class BarGraph extends Component {
     // Set default colors in an array
     const c = ['#3cc0cd', '#7d97bc', '#9874b2', '#f36283']
 
+    // Adjusts margin if labels are hidden
+    let lMargin = 40
+    if (this.props.hideAxes) {
+      lMargin = 5
+    }
+
     // Define the graph dimensions and margins
     const width = 600 + this.props.styleWide * 300
     const height = 400
-    const margin = { top: 30, bottom: 0, left: 40, right: 20 }
+    const margin = { top: 30, bottom: 0, left: lMargin, right: 20 }
 
     // Create bounds
     const xMax = width - margin.left - margin.right
@@ -120,7 +126,7 @@ class BarGraph extends Component {
                     />
                   }
                 />}
-              {!this.props.hideAxes &&
+              {(!this.props.hideAxes || this.props.xOnly) &&
                 <AxisBottom
                   scale={xScale}
                   top={yMax}
@@ -151,6 +157,7 @@ BarGraph.propTypes = {
   spacing: PropTypes.number.isRequired,
   numLabelSize: PropTypes.number.isRequired,
   styleWide: PropTypes.bool.isRequired,
+  xOnly: PropTypes.bool.isRequired,
 }
 
 export default BarGraph
