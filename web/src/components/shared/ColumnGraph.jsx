@@ -39,7 +39,7 @@ class ColumnGraph extends Component {
     }
 
     // Define the graph dimensions and margins
-    const width = 600
+    const width = 600 + this.props.styleWide * 300
     const height = 400
     const margin = { top: 10, bottom: 20, left: lMargin, right: rMargin }
 
@@ -191,6 +191,7 @@ ColumnGraph.propTypes = {
   hideTicks: PropTypes.bool.isRequired,
   spacing: PropTypes.number.isRequired,
   numLabelSize: PropTypes.number.isRequired,
+  styleWide: PropTypes.bool.isRequired,
 }
 
 export default ColumnGraph

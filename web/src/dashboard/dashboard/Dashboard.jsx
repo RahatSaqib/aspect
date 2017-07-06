@@ -62,21 +62,16 @@ const exData2 = [
 
 const exData3 = [
   { name: 'Site1', data: [2, 3, 4, 1.5] },
-  { name: 'Site2', data: [5, 2, 3, 0.5] },
-  { name: 'Site3', data: [3, 3, 2, 2] },
-  { name: 'Site4', data: [4, 1, 5, 1] },
-  { name: 'Site5', data: [6, 1, 1, 2] },
-  { name: 'Site6', data: [2, 2, 3, 1] },
-  { name: 'Site7', data: [9, 2] },
-  { name: 'newSite8', data: [6, 2] },
-  { name: 'newSite1', data: [4, 1] },
-  { name: 'newSite2', data: [7, 0.6] },
-  { name: 'newSite3', data: [9, 2] },
-  { name: 'newSite4', data: [7, 1] },
-  { name: 'newSite5', data: [6, 1.5] },
-  { name: 'newSite6', data: [4, 1] },
-  { name: 'newSite7', data: [9, 1] },
-  { name: 'newSite8', data: [8, 2] },
+  { name: 'Site2', data: [1, 2, 1, 3] },
+  { name: 'Site3', data: [2, 2, 1, 2] },
+  { name: 'Site4', data: [4, 1, 5, 3] },
+  { name: 'Site5', data: [2, 2, 1, 2] },
+  { name: 'Site6', data: [1, 1, 1.5, 1] },
+  { name: 'Site7', data: [3, 2, 1, 2] },
+  { name: 'newSite8', data: [1, 4, 3, 2] },
+  { name: 'newSite3', data: [2, 1, 1, 1] },
+  { name: 'newSite4', data: [2, 2, 1, 2] },
+  { name: 'newSite5', data: [2, 3, 4, 3] },
 ]
 
 const messages = defineMessages({
@@ -286,7 +281,7 @@ export class Dashboard extends PureComponent {
                   </div>
                 </Unit>
                 <Unit sm="1-2">
-                  <h3>Chart Component</h3>
+                  <h3>Chart Components</h3>
                   <ChartComponent
                     data={exData1}
                     color={['#e85164', '#fcb124', '#73d449']}
@@ -298,7 +293,6 @@ export class Dashboard extends PureComponent {
                     hideLabel={false}
                   />
                 </Unit>
-
               </div>
               <Unit sm="1-2">
                 <ChartComponent
@@ -310,14 +304,19 @@ export class Dashboard extends PureComponent {
                   numLabelSize={30}
                 />
               </Unit>
-              <Unit sm="1-2">
-                <ChartComponent
-                  data={exData3}
-                  type="bar"
-                  spacing={0.3}
-                  numLabelSize={30}
-                />
-              </Unit>
+              <div style={{ width: '1500px' }}>
+                <Unit sm="1-2">
+                  <ChartComponent
+                    data={exData3}
+                    color={['#e85163', '#fcb026', '#73d449', '#25c5e0']}
+                    title="Test Failures Last 30 Days"
+                    type="bar"
+                    spacing={0.3}
+                    numLabelSize={30}
+                    styleWide
+                  />
+                </Unit>
+              </div>
             </section>
           </Unit>
           <Unit sm="1-2" md="1-3">
