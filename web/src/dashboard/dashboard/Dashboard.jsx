@@ -29,6 +29,7 @@ import styles from './Dashboard.css'
 import { fetchDashboardHome } from '../DashboardRedux'
 import ChartComponent from '../../components/shared/ChartComponent'
 
+// data to be used in graphs
 const exData1 = [
   { name: 'Site name 1', data: [3, 4, 8] },
   { name: 'Site name 2', data: [1, 4, 7] },
@@ -47,6 +48,25 @@ const exData2 = [
   { name: 'Site4', data: [4, 1] },
   { name: 'Site5', data: [6, 2] },
   { name: 'Site6', data: [8, 1] },
+  { name: 'Site7', data: [9, 2] },
+  { name: 'newSite8', data: [6, 2] },
+  { name: 'newSite1', data: [4, 1] },
+  { name: 'newSite2', data: [7, 0.6] },
+  { name: 'newSite3', data: [9, 2] },
+  { name: 'newSite4', data: [7, 1] },
+  { name: 'newSite5', data: [6, 1.5] },
+  { name: 'newSite6', data: [4, 1] },
+  { name: 'newSite7', data: [9, 1] },
+  { name: 'newSite8', data: [8, 2] },
+]
+
+const exData3 = [
+  { name: 'Site1', data: [2, 3, 4, 1.5] },
+  { name: 'Site2', data: [5, 2, 3, 0.5] },
+  { name: 'Site3', data: [3, 3, 2, 2] },
+  { name: 'Site4', data: [4, 1, 5, 1] },
+  { name: 'Site5', data: [6, 1, 1, 2] },
+  { name: 'Site6', data: [2, 2, 3, 1] },
   { name: 'Site7', data: [9, 2] },
   { name: 'newSite8', data: [6, 2] },
   { name: 'newSite1', data: [4, 1] },
@@ -281,13 +301,21 @@ export class Dashboard extends PureComponent {
 
               </div>
               <Unit sm="1-2">
-                <h3>Chart Component</h3>
                 <ChartComponent
                   data={exData2}
                   color={['#27c4e0', '#e85065']}
                   type="bar"
                   title="HIV"
                   spacing={0.3}
+                  numLabelSize={30}
+                />
+              </Unit>
+              <Unit sm="1-2">
+                <ChartComponent
+                  data={exData3}
+                  type="bar"
+                  spacing={0.3}
+                  numLabelSize={30}
                 />
               </Unit>
             </section>

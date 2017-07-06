@@ -28,14 +28,14 @@ class ColumnGraph extends Component {
     const maxLabel = Math.max(...this.props.data.map(labelLength))
 
     // Adjust margins based on label to improve visual
-    let lMargin = maxLabel * 13
+    let lMargin = maxLabel * 13 // 13 is a multiplier to properly scale margin by label
     let rMargin = 0
     if (this.props.hideLabel || this.props.rightLabel) {
       lMargin = 10
     }
 
     if (this.props.rightLabel) {
-      rMargin = maxLabel * 12
+      rMargin = maxLabel * 12 // 12 is a multiplier to properly scale margin by label on right side
     }
 
     // Define the graph dimensions and margins
@@ -167,7 +167,11 @@ class ColumnGraph extends Component {
                   numTicks={3}
                   hideZero
                   tickLabelComponent={
-                    <text textAnchor="middle" fontSize={20} fill="black" />
+                    <text
+                      textAnchor="middle"
+                      fontSize={this.props.numLabelSize}
+                      fill="black"
+                    />
                   }
                 />}
             </Group>
@@ -186,6 +190,7 @@ ColumnGraph.propTypes = {
   showAxes: PropTypes.bool.isRequired,
   hideTicks: PropTypes.bool.isRequired,
   spacing: PropTypes.number.isRequired,
+  numLabelSize: PropTypes.number.isRequired,
 }
 
 export default ColumnGraph

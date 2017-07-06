@@ -26,7 +26,7 @@ class BarGraph extends Component {
     // Define the graph dimensions and margins
     const width = 600
     const height = 400
-    const margin = { top: 30, bottom: 0, left: 30, right: 20 }
+    const margin = { top: 30, bottom: 0, left: 40, right: 20 }
 
     // Create bounds
     const xMax = width - margin.left - margin.right
@@ -113,7 +113,7 @@ class BarGraph extends Component {
                   tickLabelComponent={
                     <text
                       textAnchor="end"
-                      fontSize={18}
+                      fontSize={this.props.numLabelSize}
                       fill="black"
                       dy="0.25em"
                       fontFamily="arial"
@@ -149,6 +149,7 @@ BarGraph.propTypes = {
   showAxes: PropTypes.bool.isRequired,
   hideTicks: PropTypes.bool.isRequired,
   spacing: PropTypes.number.isRequired,
+  numLabelSize: PropTypes.number.isRequired,
 }
 
 export default BarGraph
