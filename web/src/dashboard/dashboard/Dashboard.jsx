@@ -253,6 +253,10 @@ export class Dashboard extends PureComponent {
                     color={['#e85164', '#fcb124', '#73d449']}
                     type="column"
                     title="High Performing"
+                    spacing={0.4}
+                    showAxes={false}
+                    rightLabel
+                    hideLabel={false}
                   />
                 </Unit>
               </div>

@@ -23,18 +23,25 @@ class ColumnGraph extends Component {
     // Default colors for graph
     const c = ['#3cc0cd', '#7d97bc', '#9874b2', '#f36283']
 
-    // Adjust left margin based on label to improve visual
-    let lMargin
+    // Figure out label size
+    const labelLength = d => d.name.length
+    const maxLabel = Math.max(...this.props.data.map(labelLength))
+
+    // Adjust margins based on label to improve visual
+    let lMargin = maxLabel * 13
+    let rMargin = 0
     if (this.props.hideLabel || this.props.rightLabel) {
       lMargin = 10
-    } else {
-      lMargin = 60
+    }
+
+    if (this.props.rightLabel) {
+      rMargin = maxLabel * 12
     }
 
     // Define the graph dimensions and margins
-    const width = 600
-    const height = 400
-    const margin = { top: 10, bottom: 20, left: lMargin, right: 60 }
+    const width = 700
+    const height = 500
+    const margin = { top: 10, bottom: 20, left: lMargin, right: rMargin }
 
     // Create bounds for graph
     const xMax = width - margin.left - margin.right
@@ -78,7 +85,7 @@ class ColumnGraph extends Component {
     }
 
     // determine labelling based on props
-    let labelSize = 18
+    let labelSize = 25
     if (this.props.hideLabel) {
       labelSize = 0
     }
@@ -126,7 +133,7 @@ class ColumnGraph extends Component {
                       fontSize={labelSize}
                       fill="black"
                       dy="0.25em"
-                      fontFamily="arial"
+                      fontFamily="lato"
                     />
                   }
                 />}
@@ -134,7 +141,7 @@ class ColumnGraph extends Component {
                 <AxisRight
                   scale={yScale}
                   top={0}
-                  left={width - margin.right}
+                  left={xMax}
                   stroke={'#1b1a1e'}
                   tickTextFill={'#1b1a1e'}
                   numTicks={4}
@@ -147,7 +154,7 @@ class ColumnGraph extends Component {
                       fontSize={labelSize}
                       fill="black"
                       dy="0.25em"
-                      fontFamily="arial"
+                      fontFamily="lato"
                     />
                   }
                 />}
