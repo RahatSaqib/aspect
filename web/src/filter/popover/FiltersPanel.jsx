@@ -353,7 +353,6 @@ export const FiltersPanel = ({
       />
     </Button>
     <Overlay
-      className={cssClasses('Overlay')}
       active={isShown}
       onClick={onToggleShown}
       onEscKeyDown={onToggleShown}

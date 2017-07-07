@@ -48,10 +48,6 @@
   transform: rotate(180deg);
 }
 
-.Overlay {
-  z-index: var(--z-index-overlay);
-}
-
 .Popover {
   will-change: transform;
   position: absolute;
