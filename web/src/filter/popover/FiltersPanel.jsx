@@ -329,14 +329,7 @@ export const FiltersPanel = ({
   onDeviceStatusIdChange,
 }) =>
   <div className={cssClasses('Container', className)}>
-    <Button
-      primary
-      onClick={onToggleShown}
-      theme={{
-        flat: cssClasses('Button--flat'),
-        primary: cssClasses('Button--primary'),
-      }}
-    >
+    <Button className={cssClasses('Button')} primary onClick={onToggleShown}>
       <span className={cssClasses('Button__label')}>
         <span
           className={cssClasses('Button__label__close', {

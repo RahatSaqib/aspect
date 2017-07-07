@@ -9,18 +9,13 @@
   position: relative;
 }
 
-.Button--flat {
+.Button {
   width: 100%;
-}
-
-.Button--primary:not([disabled]).Button--flat {
+  border: 1px solid var(--aspect-color-chill-blue-1);
+  border-radius: 4px;
+  line-height: 34px;
   font-weight: var(--lato-font-weight-bold);
   text-transform: capitalize;
-  background-color: #ffffff;
-  color: var(--aspect-color-chill-blue-1);
-  border-radius: 4px;
-  border: 1px solid var(--aspect-color-chill-blue-1);
-  line-height: 34px;
 }
 
 .Button__label {
@@ -41,7 +36,7 @@
   opacity: 1;
 }
 
-.Button--flat > .Button__icon {
+.Button > .Button__icon {
   margin-left: 5px;
   margin-right: 0;
   transition-duration: 0.28s;
