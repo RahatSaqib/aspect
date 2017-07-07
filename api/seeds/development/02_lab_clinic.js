@@ -9,7 +9,9 @@ const saltRounds = parseInt(config.passwordSaltRounds, 10)
 
 function* seed(knex) {
   // Skip this seed file if we already have an admin user
-  const existingAdminUser = yield knex('User').where({ name: 'rrt_admin' }).first('id')
+  const existingAdminUser = yield knex('User')
+    .where({ name: 'rrt_admin' })
+    .first('id')
   if (existingAdminUser) {
     return
   }
@@ -22,13 +24,13 @@ function* seed(knex) {
     approved: 1,
     createdOn: now,
     lockedOut: 0,
-    failedPasswordAttempts: 0
+    failedPasswordAttempts: 0,
   })
   const auditFields = {
     createdOn: now,
     createdBy: adminId,
     updatedOn: now,
-    updatedBy: adminId
+    updatedBy: adminId,
   }
 
   // Reuse previously seeded "static" data
@@ -38,7 +40,7 @@ function* seed(knex) {
     partnerTypeId: partnerTypes.Operating.id,
     deviceLogHistoryDays: 365,
     autoAcknowledgeOlderThanDays: 28,
-    numberToLeaveUnacknowledged: 15
+    numberToLeaveUnacknowledged: 15,
   })
   const deviceTypeCategories = yield rowsAsObject(knex, 'DeviceTypeCategory')
 
@@ -147,15 +149,13 @@ function* seed(knex) {
     // configurationDataSchema: rrtConfigurationDataSchema
   })
 
-  const modules = yield knex('Permission')
-    .reduce((memo, row) => {
-      if (!memo[row.module]) {
-        memo[row.module] = {}
-      }
-      memo[row.module][row.activity] = row.id
-      return memo
-    }, {})
-
+  const modules = yield knex('Permission').reduce((memo, row) => {
+    if (!memo[row.module]) {
+      memo[row.module] = {}
+    }
+    memo[row.module][row.activity] = row.id
+    return memo
+  }, {})
 
   // Create clinics for every state in Malawi
   const [malawiCountry] = yield knex('Country as c')
@@ -174,41 +174,57 @@ function* seed(knex) {
     .first()
 
   // Permissions for RRT Admin
-  const [adminPersonId] = yield knex('Person').insert(Object.assign({
-    userId: adminId,
-    name: 'RRT Admin',
-    lastPartnerId: partnerId,
-    lastCountryId: countryId,
-    geographyId,
-    culture,
-    timezone
-  }, auditFields))
+  const [adminPersonId] = yield knex('Person').insert(
+    Object.assign(
+      {
+        userId: adminId,
+        name: 'RRT Admin',
+        lastPartnerId: partnerId,
+        lastCountryId: countryId,
+        geographyId,
+        culture,
+        timezone,
+      },
+      auditFields
+    )
+  )
 
   const [jobFunctionIdAdmin] = yield knex('JobFunction').insert({
     name: 'Admin',
-    partnerId
+    partnerId,
   })
 
   const [jobFunctionIdLabAdmin] = yield knex('JobFunction').insert({
     name: 'Lab Admin',
-    partnerId
+    partnerId,
   })
   yield knex('JobFunctionPermission').insert([
-    { jobFunctionId: jobFunctionIdLabAdmin, permissionId: modules.device.admin },
-    { jobFunctionId: jobFunctionIdLabAdmin, permissionId: modules.result.admin }])
-
+    {
+      jobFunctionId: jobFunctionIdLabAdmin,
+      permissionId: modules.device.admin,
+    },
+    {
+      jobFunctionId: jobFunctionIdLabAdmin,
+      permissionId: modules.result.admin,
+    },
+  ])
 
   yield knex('JobFunctionPermission').insert([
     { jobFunctionId: jobFunctionIdAdmin, permissionId: modules.demo.admin },
     { jobFunctionId: jobFunctionIdAdmin, permissionId: modules.device.admin },
-    { jobFunctionId: jobFunctionIdAdmin, permissionId: modules.deviceApiKey.admin },
+    {
+      jobFunctionId: jobFunctionIdAdmin,
+      permissionId: modules.deviceApiKey.admin,
+    },
     { jobFunctionId: jobFunctionIdAdmin, permissionId: modules.person.admin },
     { jobFunctionId: jobFunctionIdAdmin, permissionId: modules.result.admin },
     { jobFunctionId: jobFunctionIdAdmin, permissionId: modules.site.admin },
-    { jobFunctionId: jobFunctionIdAdmin, permissionId: modules.assay.admin }])
+    { jobFunctionId: jobFunctionIdAdmin, permissionId: modules.assay.admin },
+  ])
 
   const [jobIdAdmin] = yield knex('Job').insert([
-    { personId: adminPersonId, jobFunctionId: jobFunctionIdAdmin }])
+    { personId: adminPersonId, jobFunctionId: jobFunctionIdAdmin },
+  ])
   yield knex('JobContext').insert({ jobId: jobIdAdmin, geographyId })
 
   const statesByName = malawiStates.reduce((memo, state) => {
@@ -221,18 +237,22 @@ function* seed(knex) {
     const { id: clinicGeographyId } = yield knex('Geography')
       .where({
         countryId,
-        stateId: (statesByName[clinic.stateName.toLowerCase()] || { id: null }).id
+        stateId: (statesByName[clinic.stateName.toLowerCase()] || { id: null })
+          .id,
       })
       .first()
 
     // sites
-    const siteData = Object.assign({
-      partnerId,
-      geographyId: clinicGeographyId,
-      name: clinic.name,
-      shortname: clinic.shortname,
-      externalId: clinic.externalId
-    }, auditFields)
+    const siteData = Object.assign(
+      {
+        partnerId,
+        geographyId: clinicGeographyId,
+        name: clinic.name,
+        shortname: clinic.shortname,
+        externalId: clinic.externalId,
+      },
+      auditFields
+    )
     const [siteId] = yield knex('Site').insert(siteData)
     siteData.id = siteId
   }
@@ -240,13 +260,16 @@ function* seed(knex) {
   // Labs have m2000 and modem
   for (const lab of labClinic.labs) {
     // every clinic has a site, RRT device and a user assigned to it
-    const siteData = Object.assign({
-      partnerId,
-      geographyId,
-      name: lab.name,
-      shortname: lab.shortname,
-      externalId: lab.externalId
-    }, auditFields)
+    const siteData = Object.assign(
+      {
+        partnerId,
+        geographyId,
+        name: lab.name,
+        shortname: lab.shortname,
+        externalId: lab.externalId,
+      },
+      auditFields
+    )
     const [siteId] = yield knex('Site').insert(siteData)
     siteData.id = siteId
 
@@ -257,21 +280,27 @@ function* seed(knex) {
       approved: 1,
       createdOn: now,
       lockedOut: 0,
-      failedPasswordAttempts: 0
+      failedPasswordAttempts: 0,
     })
 
-    const [labAdminPersonId] = yield knex('Person').insert(Object.assign({
-      userId: labAdminUserId,
-      name: `${lab.shortname} Admin`,
-      lastPartnerId: partnerId,
-      lastCountryId: countryId,
-      geographyId,
-      culture,
-      timezone
-    }, auditFields))
+    const [labAdminPersonId] = yield knex('Person').insert(
+      Object.assign(
+        {
+          userId: labAdminUserId,
+          name: `${lab.shortname} Admin`,
+          lastPartnerId: partnerId,
+          lastCountryId: countryId,
+          geographyId,
+          culture,
+          timezone,
+        },
+        auditFields
+      )
+    )
 
     const [jobIdLabAdmin] = yield knex('Job').insert([
-      { personId: labAdminPersonId, jobFunctionId: jobFunctionIdLabAdmin }])
+      { personId: labAdminPersonId, jobFunctionId: jobFunctionIdLabAdmin },
+    ])
     yield knex('JobContext').insert({ jobId: jobIdLabAdmin, siteId })
 
     if (lab.devices) {
@@ -286,48 +315,57 @@ function* seed(knex) {
           .where({ token: device.deviceStatusToken })
           .first()
 
-        const [deviceId] = yield knex('Device').insert(Object.assign({
-          partnerId,
-          geographyId,
-          siteId,
-          deviceTypeId,
-          deviceStatusId,
-          deviceId: device.deviceId,
-          name: device.name,
-          shortName: device.shortName,
-          macAddress: device.macAddress,
-          serial: device.serial,
-          hostId: device.hostId,
-          culture: device.culture,
-          timeZone: device.timeZone,
-          notes: device.notes,
-          lastSeenOn: device.lastSeenOn || new Date(),
-          lastPingOn: device.lastPingOn,
-          lastPingFromIp: device.lastPingFromIp,
-          putInService: device.putInService,
-          putInServiceSource: device.putInServiceSource,
-          approvedOn: device.approvedOn,
-          approvedBy: labAdminPersonId,
-          configurationData: device.configurationData
-        }, auditFields))
+        const [deviceId] = yield knex('Device').insert(
+          Object.assign(
+            {
+              partnerId,
+              geographyId,
+              siteId,
+              deviceTypeId,
+              deviceStatusId,
+              deviceId: device.deviceId,
+              name: device.name,
+              shortName: device.shortName,
+              macAddress: device.macAddress,
+              serial: device.serial,
+              hostId: device.hostId,
+              culture: device.culture,
+              timeZone: device.timeZone,
+              notes: device.notes,
+              lastSeenOn: device.lastSeenOn || new Date(),
+              lastPingOn: device.lastPingOn,
+              lastPingFromIp: device.lastPingFromIp,
+              putInService: device.putInService,
+              putInServiceSource: device.putInServiceSource,
+              approvedOn: device.approvedOn,
+              approvedBy: labAdminPersonId,
+              configurationData: device.configurationData,
+            },
+            auditFields
+          )
+        )
 
-        yield knex('DeviceApiKey').insert(Object.assign({
-          token: randomToken(),
-          revoked: 0,
-          partnerId,
-          geographyId,
-          siteId,
-          deviceId
-        }, auditFields))
+        yield knex('DeviceApiKey').insert(
+          Object.assign(
+            {
+              token: randomToken(),
+              revoked: 0,
+              partnerId,
+              geographyId,
+              siteId,
+              deviceId,
+            },
+            auditFields
+          )
+        )
       }
     }
   }
 }
 
 function rowsAsObject(knex, table, column = 'name') {
-  return knex(table)
-    .reduce((memo, row) => {
-      memo[row[column]] = row
-      return memo
-    }, {})
+  return knex(table).reduce((memo, row) => {
+    memo[row[column]] = row
+    return memo
+  }, {})
 }
