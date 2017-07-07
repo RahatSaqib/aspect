@@ -3,22 +3,27 @@ module.exports = require('../src/db').migration(up, down)
 function* up(knex) {
   yield knex.raw('SET foreign_key_checks = 0')
 
-  yield knex.schema.createTable('PartnerType', (pt) => {
+  yield knex.schema.createTable('PartnerType', pt => {
     pt.increments('id')
     pt.string('name').notNullable()
   })
 
-  yield knex.schema.createTable('Partner', (partner) => {
+  yield knex.schema.createTable('Partner', partner => {
     partner.increments('id')
-    partner.integer('partnerTypeId').unsigned().notNullable()
-      .index().references('id').inTable('PartnerType')
+    partner
+      .integer('partnerTypeId')
+      .unsigned()
+      .notNullable()
+      .index()
+      .references('id')
+      .inTable('PartnerType')
     partner.string('name').notNullable()
     partner.integer('deviceLogHistoryDays').notNullable().defaultTo(30)
     partner.integer('autoAcknowledgeOlderThanDays')
     partner.integer('numberToLeaveUnacknowledged')
   })
 
-  yield knex.schema.createTable('User', (user) => {
+  yield knex.schema.createTable('User', user => {
     user.increments('id')
     user.string('name').unique().notNullable()
     user.string('password', 128).notNullable()
@@ -35,7 +40,7 @@ function* up(knex) {
     user.charset('utf8')
   })
 
-  yield knex.schema.createTable('Country', (country) => {
+  yield knex.schema.createTable('Country', country => {
     country.increments('id')
     country.string('name').notNullable()
     country.string('abbreviation', 10).notNullable()
@@ -62,36 +67,51 @@ function* up(knex) {
     country.charset('utf8')
   })
 
-  yield knex.schema.createTable('State', (state) => {
+  yield knex.schema.createTable('State', state => {
     state.increments('id')
     state.string('name').notNullable()
     state.string('abbreviation', 10)
     state.charset('utf8')
   })
 
-  yield knex.schema.createTable('Lga', (lga) => {
+  yield knex.schema.createTable('Lga', lga => {
     lga.increments('id')
     lga.string('name').notNullable()
     lga.charset('utf8')
   })
 
-  yield knex.schema.createTable('Geography', (geography) => {
+  yield knex.schema.createTable('Geography', geography => {
     geography.increments('id')
-    geography.integer('countryId').unsigned()
-      .index().references('id').inTable('Country')
-    geography.integer('stateId').unsigned()
-      .index().references('id').inTable('State')
-    geography.integer('lgaId').unsigned()
-      .index().references('id').inTable('Lga')
+    geography
+      .integer('countryId')
+      .unsigned()
+      .index()
+      .references('id')
+      .inTable('Country')
+    geography
+      .integer('stateId')
+      .unsigned()
+      .index()
+      .references('id')
+      .inTable('State')
+    geography
+      .integer('lgaId')
+      .unsigned()
+      .index()
+      .references('id')
+      .inTable('Lga')
     geography.charset('utf8')
   })
 
-  yield knex.schema.createTable('Person', (person) => {
+  yield knex.schema.createTable('Person', person => {
     person.increments('id')
-    person.integer('userId').unsigned()
-      .index().references('id').inTable('User')
-    person.integer('geographyId').unsigned()
-      .index().references('id').inTable('Geography')
+    person.integer('userId').unsigned().index().references('id').inTable('User')
+    person
+      .integer('geographyId')
+      .unsigned()
+      .index()
+      .references('id')
+      .inTable('Geography')
     person.string('name', 500).notNullable()
     person.string('title')
     person.string('email', 500)
@@ -100,10 +120,18 @@ function* up(knex) {
     person.string('cell', 45)
     person.string('zip', 45)
     person.string('notes', 2000)
-    person.integer('lastPartnerId').unsigned()
-      .index().references('id').inTable('Partner')
-    person.integer('lastCountryId').unsigned()
-      .index().references('id').inTable('Country')
+    person
+      .integer('lastPartnerId')
+      .unsigned()
+      .index()
+      .references('id')
+      .inTable('Partner')
+    person
+      .integer('lastCountryId')
+      .unsigned()
+      .index()
+      .references('id')
+      .inTable('Country')
     // TODO timezone table? < Bryan: I don't think this is required. Timezones are static
     person.string('timezone').notNullable()
     // TODO should user preferences be stored in separate table?
@@ -117,15 +145,20 @@ function* up(knex) {
     person.charset('utf8')
   })
 
-  yield knex.schema.createTable('JobFunction', (jobFunction) => {
+  yield knex.schema.createTable('JobFunction', jobFunction => {
     jobFunction.increments('id')
     jobFunction.string('name').notNullable()
-    jobFunction.integer('partnerId').unsigned().notNullable()
-      .index().references('id').inTable('Partner')
+    jobFunction
+      .integer('partnerId')
+      .unsigned()
+      .notNullable()
+      .index()
+      .references('id')
+      .inTable('Partner')
     jobFunction.charset('utf8')
   })
 
-  yield knex.schema.createTable('Permission', (permission) => {
+  yield knex.schema.createTable('Permission', permission => {
     permission.increments('id')
 
     // e.g. clinical, inventory, operational, device, etc.
@@ -137,39 +170,75 @@ function* up(knex) {
     permission.charset('utf8')
   })
 
-  yield knex.schema.createTable('JobFunctionPermission', (jobFunctionPermission) => {
-    jobFunctionPermission.integer('jobFunctionId').unsigned()
-      .index().references('id').inTable('JobFunction')
-    jobFunctionPermission.integer('permissionId').unsigned()
-      .index().references('id').inTable('Permission')
-    jobFunctionPermission.primary(['permissionId', 'jobFunctionId'])
-    jobFunctionPermission.charset('utf8')
-  })
+  yield knex.schema.createTable(
+    'JobFunctionPermission',
+    jobFunctionPermission => {
+      jobFunctionPermission
+        .integer('jobFunctionId')
+        .unsigned()
+        .index()
+        .references('id')
+        .inTable('JobFunction')
+      jobFunctionPermission
+        .integer('permissionId')
+        .unsigned()
+        .index()
+        .references('id')
+        .inTable('Permission')
+      jobFunctionPermission.primary(['permissionId', 'jobFunctionId'])
+      jobFunctionPermission.charset('utf8')
+    }
+  )
 
-  yield knex.schema.createTable('Job', (job) => {
+  yield knex.schema.createTable('Job', job => {
     job.increments('id')
-    job.integer('personId').unsigned()
-      .index().references('id').inTable('Person')
-    job.integer('jobFunctionId').unsigned()
-      .index().references('id').inTable('JobFunction')
+    job
+      .integer('personId')
+      .unsigned()
+      .index()
+      .references('id')
+      .inTable('Person')
+    job
+      .integer('jobFunctionId')
+      .unsigned()
+      .index()
+      .references('id')
+      .inTable('JobFunction')
     job.unique(['personId', 'jobFunctionId'])
     job.charset('utf8')
   })
 
-  yield knex.schema.createTable('JobContext', (jobContext) => {
+  yield knex.schema.createTable('JobContext', jobContext => {
     jobContext.increments('id')
-    jobContext.integer('jobId').unsigned().notNullable()
-      .index().references('id').inTable('Job')
-    jobContext.integer('geographyId').unsigned()
-      .index().references('id').inTable('Geography')
-    jobContext.integer('siteId').unsigned()
-      .index().references('id').inTable('Site')
+    jobContext
+      .integer('jobId')
+      .unsigned()
+      .notNullable()
+      .index()
+      .references('id')
+      .inTable('Job')
+    jobContext
+      .integer('geographyId')
+      .unsigned()
+      .index()
+      .references('id')
+      .inTable('Geography')
+    jobContext
+      .integer('siteId')
+      .unsigned()
+      .index()
+      .references('id')
+      .inTable('Site')
     jobContext.charset('utf8')
   })
 
-  yield knex.schema.createTable('RefreshToken', (refreshToken) => {
-    refreshToken.integer('userId').unsigned().notNullable()
-      .references('id').inTable('User')
+  yield knex.schema.createTable('RefreshToken', refreshToken => {
+    refreshToken
+      .integer('userId')
+      .unsigned()
+      .notNullable()
+      .references('id')
+      .inTable('User')
     refreshToken.string('clientId', 128).notNullable()
     refreshToken.string('clientName').notNullable()
     refreshToken.string('token').notNullable()
@@ -180,24 +249,35 @@ function* up(knex) {
     refreshToken.charset('utf8')
   })
 
-  yield knex.schema.createTable('DeviceApiKey', (apiKey) => {
+  yield knex.schema.createTable('DeviceApiKey', apiKey => {
     apiKey.increments('id')
     apiKey.string('token').notNullable().unique().index()
     apiKey.boolean('revoked').notNullable().defaultTo(0)
-    apiKey.integer('partnerId').unsigned()
-      .index().references('id').inTable('Partner')
-    apiKey.integer('geographyId').unsigned()
-      .index().references('id').inTable('Geography')
-    apiKey.integer('siteId').unsigned()
-      .index().references('id').inTable('Site')
-    apiKey.integer('deviceId').unsigned()
-      .index().references('id').inTable('Device')
+    apiKey
+      .integer('partnerId')
+      .unsigned()
+      .index()
+      .references('id')
+      .inTable('Partner')
+    apiKey
+      .integer('geographyId')
+      .unsigned()
+      .index()
+      .references('id')
+      .inTable('Geography')
+    apiKey.integer('siteId').unsigned().index().references('id').inTable('Site')
+    apiKey
+      .integer('deviceId')
+      .unsigned()
+      .index()
+      .references('id')
+      .inTable('Device')
     addCreateFields(apiKey)
     addUpdateFields(apiKey)
     apiKey.charset('utf8')
   })
 
-  yield knex.schema.createTable('DeviceTypeCategory', (deviceTypeFeature) => {
+  yield knex.schema.createTable('DeviceTypeCategory', deviceTypeFeature => {
     deviceTypeFeature.increments('id')
     deviceTypeFeature.string('name').notNullable()
     deviceTypeFeature.boolean('hasConnectivity').notNullable().defaultTo(0)
@@ -205,10 +285,14 @@ function* up(knex) {
     deviceTypeFeature.charset('utf8')
   })
 
-  yield knex.schema.createTable('DeviceType', (deviceType) => {
+  yield knex.schema.createTable('DeviceType', deviceType => {
     deviceType.increments('id')
-    deviceType.integer('deviceTypeCategoryId').unsigned().notNullable()
-      .references('id').inTable('DeviceTypeCategory')
+    deviceType
+      .integer('deviceTypeCategoryId')
+      .unsigned()
+      .notNullable()
+      .references('id')
+      .inTable('DeviceTypeCategory')
     deviceType.string('name').notNullable()
     deviceType.string('manufacturer').notNullable()
     deviceType.specificType('configurationDataSchema', 'JSON')
@@ -218,24 +302,32 @@ function* up(knex) {
     // used to uniquely identify devices and still to be discussed
   })
 
-  yield knex.schema.createTable('DeviceStatus', (deviceStatus) => {
+  yield knex.schema.createTable('DeviceStatus', deviceStatus => {
     deviceStatus.increments('id')
     deviceStatus.string('name').notNullable()
     deviceStatus.string('i18nKey')
     deviceStatus.string('token')
   })
 
-  yield knex.schema.createTable('Site', (site) => {
+  yield knex.schema.createTable('Site', site => {
     site.increments('id')
     site.string('name').notNullable()
     site.string('shortname', 45)
     site.string('externalId').notNullable()
     site.string('notes', 2000)
     // TODO is site to partner many to many?
-    site.integer('partnerId').unsigned()
-      .index().references('id').inTable('Partner')
-    site.integer('geographyId').unsigned()
-      .index().references('id').inTable('Geography')
+    site
+      .integer('partnerId')
+      .unsigned()
+      .index()
+      .references('id')
+      .inTable('Partner')
+    site
+      .integer('geographyId')
+      .unsigned()
+      .index()
+      .references('id')
+      .inTable('Geography')
     // TODO do we want to mess with a city table?
     site.string('city')
     site.string('street1')
@@ -251,20 +343,41 @@ function* up(knex) {
     site.charset('utf8')
   })
 
-  yield knex.schema.createTable('Device', (device) => {
+  yield knex.schema.createTable('Device', device => {
     device.increments('id')
-    device.integer('deviceId').unsigned()
-      .index().references('id').inTable('Device')
-    device.integer('partnerId').unsigned()
-      .index().references('id').inTable('Partner')
-    device.integer('geographyId').unsigned()
-      .index().references('id').inTable('Geography')
-    device.integer('siteId').unsigned()
-      .index().references('id').inTable('Site')
-    device.integer('deviceTypeId').unsigned().notNullable()
-      .index().references('id').inTable('DeviceType')
-    device.integer('deviceStatusId').unsigned().notNullable()
-      .index().references('id').inTable('DeviceStatus')
+    device
+      .integer('deviceId')
+      .unsigned()
+      .index()
+      .references('id')
+      .inTable('Device')
+    device
+      .integer('partnerId')
+      .unsigned()
+      .index()
+      .references('id')
+      .inTable('Partner')
+    device
+      .integer('geographyId')
+      .unsigned()
+      .index()
+      .references('id')
+      .inTable('Geography')
+    device.integer('siteId').unsigned().index().references('id').inTable('Site')
+    device
+      .integer('deviceTypeId')
+      .unsigned()
+      .notNullable()
+      .index()
+      .references('id')
+      .inTable('DeviceType')
+    device
+      .integer('deviceStatusId')
+      .unsigned()
+      .notNullable()
+      .index()
+      .references('id')
+      .inTable('DeviceStatus')
 
     // TODO Add device id1 - id4 or equivalent
     // used to uniquely identify provisioned devices, still to be discussed
@@ -282,18 +395,27 @@ function* up(knex) {
     device.dateTime('putInService')
     device.string('putInServiceSource')
     device.dateTime('approvedOn')
-    device.integer('approvedBy').unsigned()
-      .index().references('id').inTable('User')
+    device
+      .integer('approvedBy')
+      .unsigned()
+      .index()
+      .references('id')
+      .inTable('User')
     device.specificType('configurationData', 'JSON')
     addCreateFieldsNullable(device)
     addUpdateFieldsNullable(device)
     device.charset('utf8')
   })
 
-  yield knex.schema.createTable('DeviceSim', (sim) => {
+  yield knex.schema.createTable('DeviceSim', sim => {
     sim.increments('id')
-    sim.integer('deviceId').unsigned().notNullable()
-      .index().references('id').inTable('Device')
+    sim
+      .integer('deviceId')
+      .unsigned()
+      .notNullable()
+      .index()
+      .references('id')
+      .inTable('Device')
     sim.string('provider')
     sim.string('serial')
     sim.string('number')
@@ -302,20 +424,35 @@ function* up(knex) {
     sim.charset('utf8')
   })
 
-  yield knex.schema.createTable('DeviceSiteHistory', (history) => {
+  yield knex.schema.createTable('DeviceSiteHistory', history => {
     history.increments('id')
-    history.integer('deviceId').unsigned().notNullable()
-      .index().references('id').inTable('Device')
-    history.integer('siteId').unsigned().notNullable()
-      .index().references('id').inTable('Site')
+    history
+      .integer('deviceId')
+      .unsigned()
+      .notNullable()
+      .index()
+      .references('id')
+      .inTable('Device')
+    history
+      .integer('siteId')
+      .unsigned()
+      .notNullable()
+      .index()
+      .references('id')
+      .inTable('Site')
     addCreateFieldsNullable(history)
     history.charset('utf8')
   })
 
-  yield knex.schema.createTable('DeviceOperation', (op) => {
+  yield knex.schema.createTable('DeviceOperation', op => {
     op.increments('id')
-    op.integer('deviceId').unsigned().notNullable()
-      .index().references('id').inTable('Device')
+    op
+      .integer('deviceId')
+      .unsigned()
+      .notNullable()
+      .index()
+      .references('id')
+      .inTable('Device')
     op.string('externalId')
     op.dateTime('startedOn')
     op.dateTime('endedOn')
@@ -324,22 +461,32 @@ function* up(knex) {
     op.charset('utf8')
   })
 
-  yield knex.schema.createTable('AssayType', (assayType) => {
+  yield knex.schema.createTable('AssayType', assayType => {
     assayType.increments('id')
     assayType.string('name').notNullable()
     assayType.string('i18nKey')
     assayType.charset('utf8')
   })
 
-  yield knex.schema.createTable('Assay', (assay) => {
+  yield knex.schema.createTable('Assay', assay => {
     assay.increments('id')
     assay.string('name').notNullable()
     assay.string('i18nKey')
     assay.string('externalId').notNullable()
-    assay.integer('assayTypeId').unsigned().notNullable()
-      .index().references('id').inTable('AssayType')
-    assay.integer('deviceTypeId').unsigned().notNullable()
-      .index().references('id').inTable('DeviceType')
+    assay
+      .integer('assayTypeId')
+      .unsigned()
+      .notNullable()
+      .index()
+      .references('id')
+      .inTable('AssayType')
+    assay
+      .integer('deviceTypeId')
+      .unsigned()
+      .notNullable()
+      .index()
+      .references('id')
+      .inTable('DeviceType')
     assay.string('resultCategory1Label')
     assay.string('resultCategory1i18nKey')
     assay.string('resultCategory2Label')
@@ -349,7 +496,7 @@ function* up(knex) {
     assay.charset('utf8')
   })
 
-  yield knex.schema.createTable('ResultSource', (resultType) => {
+  yield knex.schema.createTable('ResultSource', resultType => {
     resultType.increments('id')
     resultType.string('name').notNullable()
     resultType.string('i18nKey')
@@ -357,7 +504,7 @@ function* up(knex) {
     resultType.charset('utf8')
   })
 
-  yield knex.schema.createTable('ResultType', (resultType) => {
+  yield knex.schema.createTable('ResultType', resultType => {
     resultType.increments('id')
     resultType.string('name').notNullable()
     resultType.string('i18nKey')
@@ -366,7 +513,7 @@ function* up(knex) {
   })
 
   // holds general categories such as "Detected"/"Invalid"
-  yield knex.schema.createTable('ResultCategory', (resultCategory) => {
+  yield knex.schema.createTable('ResultCategory', resultCategory => {
     resultCategory.increments('id')
     resultCategory.string('name').notNullable()
     resultCategory.string('i18nKey')
@@ -375,15 +522,28 @@ function* up(knex) {
   })
 
   // which result categories apply to which assays?
-  yield knex.schema.createTable('ResultCategoryAssay', (resultTypeCategoryAssay) => {
-    resultTypeCategoryAssay.integer('resultCategoryId').unsigned().notNullable()
-      .index().references('id').inTable('ResultCategory')
-    resultTypeCategoryAssay.integer('assayId').unsigned().notNullable()
-      .index().references('id').inTable('Assay')
-    resultTypeCategoryAssay.unique(['resultCategoryId', 'assayId'])
-  })
+  yield knex.schema.createTable(
+    'ResultCategoryAssay',
+    resultTypeCategoryAssay => {
+      resultTypeCategoryAssay
+        .integer('resultCategoryId')
+        .unsigned()
+        .notNullable()
+        .index()
+        .references('id')
+        .inTable('ResultCategory')
+      resultTypeCategoryAssay
+        .integer('assayId')
+        .unsigned()
+        .notNullable()
+        .index()
+        .references('id')
+        .inTable('Assay')
+      resultTypeCategoryAssay.unique(['resultCategoryId', 'assayId'])
+    }
+  )
 
-  yield knex.schema.createTable('SampleType', (sampleType) => {
+  yield knex.schema.createTable('SampleType', sampleType => {
     sampleType.increments('id')
     sampleType.string('name').notNullable()
     sampleType.string('i18nKey').notNullable()
@@ -392,46 +552,99 @@ function* up(knex) {
   })
 
   // the sample that the result is based on (multiple results can refer to the same sample)
-  yield knex.schema.createTable('Sample', (sample) => {
+  yield knex.schema.createTable('Sample', sample => {
     sample.increments('id')
     sample.string('externalId')
     sample.string('group')
     sample.dateTime('collectedOn')
-    sample.integer('sampleTypeId').unsigned()
-          .index().references('id').inTable('SampleType')
-    sample.integer('originSiteId').unsigned()
-          .index().references('id').inTable('Site')
+    sample
+      .integer('sampleTypeId')
+      .unsigned()
+      .index()
+      .references('id')
+      .inTable('SampleType')
+    sample
+      .integer('originSiteId')
+      .unsigned()
+      .index()
+      .references('id')
+      .inTable('Site')
     sample.charset('utf8')
   })
 
-  yield knex.schema.createTable('Result', (result) => {
+  yield knex.schema.createTable('Result', result => {
     result.increments('id')
     result.string('externalId')
-    result.integer('assayId').unsigned().notNullable()
-      .index().references('id').inTable('Assay')
-    result.integer('partnerId').unsigned()
-          .index().references('id').inTable('Partner')
-    result.integer('geographyId').unsigned()
-          .index().references('id').inTable('Geography')
-    result.integer('siteId').unsigned()
-          .index().references('id').inTable('Site')
-    result.integer('deviceId').unsigned().notNullable()
-          .index().references('id').inTable('Device')
-    result.integer('resultWorkflowStatusId').unsigned().notNullable()
-          .index().references('id').inTable('ResultWorkflowStatus')
+    result
+      .integer('assayId')
+      .unsigned()
+      .notNullable()
+      .index()
+      .references('id')
+      .inTable('Assay')
+    result
+      .integer('partnerId')
+      .unsigned()
+      .index()
+      .references('id')
+      .inTable('Partner')
+    result
+      .integer('geographyId')
+      .unsigned()
+      .index()
+      .references('id')
+      .inTable('Geography')
+    result.integer('siteId').unsigned().index().references('id').inTable('Site')
+    result
+      .integer('deviceId')
+      .unsigned()
+      .notNullable()
+      .index()
+      .references('id')
+      .inTable('Device')
+    result
+      .integer('resultWorkflowStatusId')
+      .unsigned()
+      .notNullable()
+      .index()
+      .references('id')
+      .inTable('ResultWorkflowStatus')
     result.float('longitude', 10, 6)
     result.float('latitude', 10, 6)
-    result.integer('resultSourceId').unsigned().notNullable()
-      .index().references('id').inTable('ResultSource')
-    result.integer('resultTypeId').unsigned().notNullable()
-      .index().references('id').inTable('ResultType')
-    result.integer('sampleId').unsigned().notNullable()
-      .index().references('id').inTable('Sample')
+    result
+      .integer('resultSourceId')
+      .unsigned()
+      .notNullable()
+      .index()
+      .references('id')
+      .inTable('ResultSource')
+    result
+      .integer('resultTypeId')
+      .unsigned()
+      .notNullable()
+      .index()
+      .references('id')
+      .inTable('ResultType')
+    result
+      .integer('sampleId')
+      .unsigned()
+      .notNullable()
+      .index()
+      .references('id')
+      .inTable('Sample')
     result.string('sampleRunNumber')
-    result.integer('resultCategory1').unsigned()
-      .index().references('id').inTable('ResultCategory')
-    result.integer('resultCategory2').unsigned()
-      .index().references('id').inTable('ResultCategory')
+    result
+      .integer('resultCategory1')
+      .unsigned()
+      .index()
+      .references('id')
+      .inTable('ResultCategory')
+    result
+      .integer('resultCategory2')
+      .unsigned()
+      .index()
+      .references('id')
+      .inTable('ResultCategory')
     result.specificType('resultData', 'JSON')
     result.string('assayVersion')
     result.dateTime('startedOn')
@@ -457,44 +670,65 @@ function* up(knex) {
     result.charset('utf8')
   })
 
-  yield knex.schema.createTable('DeviceLog', (deviceLog) => {
+  yield knex.schema.createTable('DeviceLog', deviceLog => {
     deviceLog.bigincrements('id')
-    deviceLog.integer('deviceId').unsigned().notNullable()
-          .index().references('id').inTable('Device')
+    deviceLog
+      .integer('deviceId')
+      .unsigned()
+      .notNullable()
+      .index()
+      .references('id')
+      .inTable('Device')
     deviceLog.string('source').notNullable() // LIS listener, API...
     deviceLog.dateTime('createdOn').notNullable().index()
     deviceLog.string('senderIp').notNullable()
     deviceLog.string('checkpoint').index()
     deviceLog.text('rawMessage')
     deviceLog.boolean('deviceConfigurationUpdated').notNullable().defaultTo(0)
-    deviceLog.integer('resultId').unsigned()
-          .index().references('id').inTable('Result')
-    deviceLog.integer('deviceOperationId').unsigned()
-          .index().references('id').inTable('DeviceOperation')
+    deviceLog
+      .integer('resultId')
+      .unsigned()
+      .index()
+      .references('id')
+      .inTable('Result')
+    deviceLog
+      .integer('deviceOperationId')
+      .unsigned()
+      .index()
+      .references('id')
+      .inTable('DeviceOperation')
     deviceLog.charset('utf8')
   })
 
-  yield knex.schema.createTable('Unit', (unit) => {
+  yield knex.schema.createTable('Unit', unit => {
     unit.increments('id')
     unit.string('name').notNullable()
     unit.string('shortname')
     unit.charset('utf8')
   })
 
-  yield knex.schema.createTable('Consumable', (consumable) => {
+  yield knex.schema.createTable('Consumable', consumable => {
     consumable.increments('id')
     consumable.string('name').notNullable()
-    consumable.integer('partnerId').unsigned()
-      .index().references('id').inTable('Partner')
-    consumable.integer('unit').unsigned().notNullable()
-      .references('id').inTable('Unit')
+    consumable
+      .integer('partnerId')
+      .unsigned()
+      .index()
+      .references('id')
+      .inTable('Partner')
+    consumable
+      .integer('unit')
+      .unsigned()
+      .notNullable()
+      .references('id')
+      .inTable('Unit')
     consumable.boolean('canExpire').notNullable().defaultTo(0)
     consumable.text('manufacturer')
     consumable.boolean('autoInclude').notNullable().defaultTo(0)
     consumable.charset('utf8')
   })
 
-  yield knex.schema.createTable('ConsumableReason', (consumableReason) => {
+  yield knex.schema.createTable('ConsumableReason', consumableReason => {
     consumableReason.increments('id')
     consumableReason.string('name').notNullable()
     consumableReason.string('i18nKey')
@@ -502,66 +736,122 @@ function* up(knex) {
     consumableReason.charset('utf8')
   })
 
-  yield knex.schema.createTable('ConsumableAssay', (consumableAssay) => {
-    consumableAssay.integer('consumableId').unsigned().notNullable()
-      .index().references('id').inTable('Consumable')
-    consumableAssay.integer('assayId').unsigned().notNullable()
-      .index().references('id').inTable('Assay')
+  yield knex.schema.createTable('ConsumableAssay', consumableAssay => {
+    consumableAssay
+      .integer('consumableId')
+      .unsigned()
+      .notNullable()
+      .index()
+      .references('id')
+      .inTable('Consumable')
+    consumableAssay
+      .integer('assayId')
+      .unsigned()
+      .notNullable()
+      .index()
+      .references('id')
+      .inTable('Assay')
     consumableAssay.float('quantity').notNullable()
     consumableAssay.unique(['consumableId', 'assayId'])
   })
 
   // Result status table
-  yield knex.schema.createTable('ResultWorkflowStatus', (resultWorkflowStatus) => {
-    resultWorkflowStatus.increments('id')
-    resultWorkflowStatus.string('name').notNullable()
-    resultWorkflowStatus.string('externalId').notNullable()
-    resultWorkflowStatus.string('i18nKey')
-  })
+  yield knex.schema.createTable(
+    'ResultWorkflowStatus',
+    resultWorkflowStatus => {
+      resultWorkflowStatus.increments('id')
+      resultWorkflowStatus.string('name').notNullable()
+      resultWorkflowStatus.string('externalId').notNullable()
+      resultWorkflowStatus.string('i18nKey')
+    }
+  )
 
-  yield knex.schema.createTable('ResultWorkflowLog', (resultWorkflowLog) => {
+  yield knex.schema.createTable('ResultWorkflowLog', resultWorkflowLog => {
     resultWorkflowLog.increments('id')
-    resultWorkflowLog.integer('resultId').unsigned()
-      .references('id').inTable('Result')
-    resultWorkflowLog.integer('resultWorkflowStatusId').unsigned().notNullable()
-          .index().references('id').inTable('ResultWorkflowStatus')
+    resultWorkflowLog
+      .integer('resultId')
+      .unsigned()
+      .references('id')
+      .inTable('Result')
+    resultWorkflowLog
+      .integer('resultWorkflowStatusId')
+      .unsigned()
+      .notNullable()
+      .index()
+      .references('id')
+      .inTable('ResultWorkflowStatus')
     resultWorkflowLog.string('reason')
     resultWorkflowLog.string('operator')
     resultWorkflowLog.dateTime('changedOn').notNullable()
     addCreateFieldsNullable(resultWorkflowLog)
   })
 
-  yield knex.schema.createTable('InventoryItem', (inventoryItem) => {
+  yield knex.schema.createTable('InventoryItem', inventoryItem => {
     inventoryItem.increments('id')
-    inventoryItem.integer('consumableId').unsigned().notNullable()
-      .references('id').inTable('Consumable')
-    inventoryItem.integer('siteId').unsigned().notNullable()
-      .references('id').inTable('Site')
+    inventoryItem
+      .integer('consumableId')
+      .unsigned()
+      .notNullable()
+      .references('id')
+      .inTable('Consumable')
+    inventoryItem
+      .integer('siteId')
+      .unsigned()
+      .notNullable()
+      .references('id')
+      .inTable('Site')
     inventoryItem.integer('inTransitFromSiteId').unsigned()
     inventoryItem.string('lotNumber')
     inventoryItem.dateTime('expiresOn')
     inventoryItem.float('quantityOnHand')
     inventoryItem.dateTime('createdOn').notNullable()
-    inventoryItem.integer('createdBy').unsigned().notNullable()
-      .index().references('id').inTable('User')
+    inventoryItem
+      .integer('createdBy')
+      .unsigned()
+      .notNullable()
+      .index()
+      .references('id')
+      .inTable('User')
     inventoryItem.dateTime('updatedOn').notNullable()
-    inventoryItem.integer('updatedBy').unsigned()
-      .index().references('id').inTable('User')
+    inventoryItem
+      .integer('updatedBy')
+      .unsigned()
+      .index()
+      .references('id')
+      .inTable('User')
     inventoryItem.charset('utf8')
   })
 
-  yield knex.schema.createTable('InventoryLog', (inventoryLog) => {
+  yield knex.schema.createTable('InventoryLog', inventoryLog => {
     inventoryLog.increments('id')
-    inventoryLog.integer('inventoryItemId').unsigned()
-      .references('id').inTable('InventoryItem').onDelete('SET NULL')
-    inventoryLog.integer('consumableId').unsigned().notNullable()
-      .references('id').inTable('Consumable')
-    inventoryLog.integer('siteId').unsigned().notNullable()
-      .references('id').inTable('Site')
-    inventoryLog.integer('consumableReasonId').unsigned()
-      .references('id').inTable('ConsumableReason')
-    inventoryLog.integer('resultId').unsigned()
-      .references('id').inTable('Result')
+    inventoryLog
+      .integer('inventoryItemId')
+      .unsigned()
+      .references('id')
+      .inTable('InventoryItem')
+      .onDelete('SET NULL')
+    inventoryLog
+      .integer('consumableId')
+      .unsigned()
+      .notNullable()
+      .references('id')
+      .inTable('Consumable')
+    inventoryLog
+      .integer('siteId')
+      .unsigned()
+      .notNullable()
+      .references('id')
+      .inTable('Site')
+    inventoryLog
+      .integer('consumableReasonId')
+      .unsigned()
+      .references('id')
+      .inTable('ConsumableReason')
+    inventoryLog
+      .integer('resultId')
+      .unsigned()
+      .references('id')
+      .inTable('Result')
     inventoryLog.string('operation', 50)
     inventoryLog.string('lotNumber')
     inventoryLog.dateTime('expiresOn')
@@ -570,8 +860,12 @@ function* up(knex) {
     inventoryLog.dateTime('adjustedFrom')
     inventoryLog.dateTime('adjustedTo')
     inventoryLog.dateTime('createdOn').notNullable()
-    inventoryLog.integer('createdBy').unsigned()
-      .index().references('id').inTable('User')
+    inventoryLog
+      .integer('createdBy')
+      .unsigned()
+      .index()
+      .references('id')
+      .inTable('User')
     inventoryLog.charset('utf8')
   })
 
@@ -636,30 +930,37 @@ function* down(knex) {
   yield knex.raw('SET foreign_key_checks = 1')
 }
 
-
 // Adds createdOn, createdBy
 function addCreateFields(table) {
   table.dateTime('createdOn').notNullable()
-  table.integer('createdBy').unsigned().notNullable()
-    .index().references('id').inTable('User')
+  table
+    .integer('createdBy')
+    .unsigned()
+    .notNullable()
+    .index()
+    .references('id')
+    .inTable('User')
 }
 
 // Adds updatedOn, updatedBy
 function addUpdateFields(table) {
   table.dateTime('updatedOn').notNullable()
-  table.integer('updatedBy').unsigned().notNullable()
-    .index().references('id').inTable('User')
+  table
+    .integer('updatedBy')
+    .unsigned()
+    .notNullable()
+    .index()
+    .references('id')
+    .inTable('User')
 }
 
 function addCreateFieldsNullable(table) {
   table.dateTime('createdOn')
-  table.integer('createdBy').unsigned()
-    .index().references('id').inTable('User')
+  table.integer('createdBy').unsigned().index().references('id').inTable('User')
 }
 
 // Adds updatedOn, updatedBy
 function addUpdateFieldsNullable(table) {
   table.dateTime('updatedOn')
-  table.integer('updatedBy').unsigned()
-    .index().references('id').inTable('User')
+  table.integer('updatedBy').unsigned().index().references('id').inTable('User')
 }
