@@ -1,4 +1,5 @@
 import PropTypes from 'prop-types'
+import classnames from 'classnames/bind'
 import React, { PureComponent } from 'react'
 import { compose, setPropTypes, pure } from 'recompose'
 import { injectIntl, defineMessages, intlShape } from 'react-intl'
@@ -7,14 +8,15 @@ import { connect } from 'react-redux'
 import Helmet from 'react-helmet'
 
 // Our own imports
-import { fetchListFilteredDevices, exportDevices } from '../DeviceRedux'
 import NavTitle from '../../globals/components/NavTitle'
-import { ListFilterContainer } from '../../filter/list/ListFilter'
-import { ListFilter, configureListFilter } from '../../filter/FilterRedux'
-import DataTableWithEmptyList from '../../components/shared/DataTableWithEmptyList'
-import styles from './DeviceList.css'
+import BrowseFilters from '../../globals/components/BrowseFilters'
 import { Items } from '../../shared/metaReducers/items'
 import { Table } from '../../shared/metaReducers/table'
+import DataTableWithEmptyList from '../../components/shared/DataTableWithEmptyList'
+import { ListFilter, configureListFilter } from '../../filter/FilterRedux'
+import { fetchListFilteredDevices, exportDevices } from '../DeviceRedux'
+
+const cssClasses = classnames.bind(require('./DeviceList.css'))
 
 const messages = defineMessages({
   devicesTitle: {
@@ -57,22 +59,6 @@ const messages = defineMessages({
     id: 'pages.DeviceList.thisMonth',
     defaultMessage: 'This Month',
   },
-  exportExcel: {
-    id: 'pages.DeviceList.exportExcel',
-    defaultMessage: 'Excel',
-  },
-  exportCsv: {
-    id: 'pages.DeviceList.exportCsv',
-    defaultMessage: 'CSV',
-  },
-  filterTemplate: {
-    id: 'pages.DeviceList.filterTemplate',
-    defaultMessage: 'Viewing all devices<GEOGRAPHY><NAME><DEVICESTATUS>.',
-  },
-  filterTemplateOptional: {
-    id: 'pages.DeviceList.filterTemplateOptional',
-    defaultMessage: 'Counting only <ASSAY> assays<RESULT><DATE>.',
-  },
 })
 
 const enhance = compose(
@@ -87,16 +73,12 @@ const enhance = compose(
       items: state.device.items,
       table: state.device.table,
     }),
-    dispatch =>
-      bindActionCreators(
-        {
-          configureListFilter,
-          fetchListFilteredDevices,
+    bindActionCreators.bind(null, {
+      configureListFilter,
+      fetchListFilteredDevices,
 
-          exportDevices,
-        },
-        dispatch
-      )
+      exportDevices,
+    })
   ),
   setPropTypes({
     intl: intlShape.isRequired,
@@ -253,23 +235,20 @@ export class DeviceList extends PureComponent {
     const askConfirmationForExport = this.props.table.total > 1000
 
     return (
-      <div className={styles.Content}>
+      <div className={cssClasses('Content')}>
         <Helmet
           title={formatMessage(messages.devicesTitle)}
           titleTemplate="%s - Aspect"
           defaultTitle="Aspect"
         />
         <NavTitle title={formatMessage(messages.devicesTitle)} />
-        <ListFilterContainer
-          subject={formatMessage(messages.devicesTitle)}
-          filterTemplate={formatMessage(messages.filterTemplate)}
-          filterTemplateOptional={formatMessage(
-            messages.filterTemplateOptional
-          )}
+        <BrowseFilters
+          history={this.props.history}
+          location={this.props.location}
+          intl={intl}
           onClickExport={this.clickDeviceListExport}
           askConfirmationForExport={askConfirmationForExport}
         />
-
         <DataTableWithEmptyList
           selectable
           handleItemIdSelection={this.handleItemIdSelection}

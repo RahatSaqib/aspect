@@ -1,5 +1,6 @@
 import _ from 'lodash'
 import PropTypes from 'prop-types'
+import classnames from 'classnames/bind'
 import React, { PureComponent } from 'react'
 import { compose, setPropTypes, pure } from 'recompose'
 import { injectIntl, defineMessages, intlShape } from 'react-intl'
@@ -11,6 +12,12 @@ import FlatButton from 'material-ui/FlatButton'
 import Checkbox from 'material-ui/Checkbox'
 
 // Our own imports
+import NavTitle from '../../globals/components/NavTitle'
+import BrowseFilters from '../../globals/components/BrowseFilters'
+import { Items } from '../../shared/metaReducers/items'
+import { Table } from '../../shared/metaReducers/table'
+import DataTableWithEmptyList from '../../components/shared/DataTableWithEmptyList'
+import { ListFilter, configureListFilter } from '../../filter/FilterRedux'
 import {
   exportDeviceApiKeys,
   generateDeviceApiKeys,
@@ -18,15 +25,10 @@ import {
   updateSingleDeviceApiKey,
   fetchDeviceApiKeys,
 } from '../DeviceApiKeyRedux'
-import NavTitle from '../../globals/components/NavTitle'
-import { ListFilterContainer } from '../../filter/list/ListFilter'
-import { ListFilter, configureListFilter } from '../../filter/FilterRedux'
-import DataTableWithEmptyList from '../../components/shared/DataTableWithEmptyList'
-import styles from './DeviceApiKeyList.css'
-import { Items } from '../../shared/metaReducers/items'
-import { Table } from '../../shared/metaReducers/table'
 import DeviceApiKeyGeneratorDialogForm from './DeviceApiKeyGeneratorDialogForm'
 import DeviceApiKeyAssignerDialogForm from './DeviceApiKeyAssignerDialogForm'
+
+const cssClasses = classnames.bind(require('./DeviceApiKeyList.css'))
 
 const messages = defineMessages({
   title: {
@@ -94,18 +96,14 @@ const enhance = compose(
       items: state.deviceApiKey.items,
       table: state.deviceApiKey.table,
     }),
-    dispatch =>
-      bindActionCreators(
-        {
-          fetchDeviceApiKeys,
-          exportDeviceApiKeys,
-          generateDeviceApiKeys,
-          assignDeviceApiKeys,
-          updateSingleDeviceApiKey,
-          configureListFilter,
-        },
-        dispatch
-      )
+    bindActionCreators.bind(null, {
+      fetchDeviceApiKeys,
+      exportDeviceApiKeys,
+      generateDeviceApiKeys,
+      assignDeviceApiKeys,
+      updateSingleDeviceApiKey,
+      configureListFilter,
+    })
   ),
   setPropTypes({
     intl: intlShape.isRequired,
@@ -321,19 +319,17 @@ export class DeviceApiKeyList extends PureComponent {
     ]
 
     return (
-      <div className={styles.Content}>
+      <div className={cssClasses('Content')}>
         <Helmet
           title={formatMessage(messages.title)}
           titleTemplate="%s - Aspect"
           defaultTitle="Aspect"
         />
         <NavTitle title={formatMessage(messages.title)} />
-        <ListFilterContainer
-          subject={formatMessage(messages.title)}
-          filterTemplate={formatMessage(messages.filterTemplate)}
-          filterTemplateOptional={formatMessage(
-            messages.filterTemplateOptional
-          )}
+        <BrowseFilters
+          history={this.props.history}
+          location={this.props.location}
+          intl={intl}
           onClickExport={this.handleClickExport}
         />
         <div>

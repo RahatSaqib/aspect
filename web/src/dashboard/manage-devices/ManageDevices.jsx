@@ -1,7 +1,7 @@
 import PropTypes from 'prop-types'
 import React, { PureComponent } from 'react'
 import { compose, setPropTypes, pure } from 'recompose'
-import { injectIntl, defineMessages, intlShape } from 'react-intl'
+import { injectIntl, intlShape } from 'react-intl'
 import { bindActionCreators } from 'redux'
 import { connect } from 'react-redux'
 import Helmet from 'react-helmet'
@@ -17,20 +17,8 @@ import { Card, CardActions, CardHeader, CardText } from 'material-ui/Card'
 // Our own imports
 import { Unit } from '../../components/pureGrids'
 import NavTitle from '../../globals/components/NavTitle'
-import ListFilterContainer from '../../filter/list/ListFilter'
 import { configureListFilter } from '../../filter/FilterRedux'
 import styles from './ManageDevices.css'
-
-const messages = defineMessages({
-  filterTemplate: {
-    id: 'pages.ManageDevices.filterTemplate',
-    defaultMessage: 'Viewing all devices<GEOGRAPHY><NAME>.',
-  },
-  filterTemplateOptional: {
-    id: 'pages.ManageDevices.filterTemplateOptional',
-    defaultMessage: 'Counting only <ASSAY> assays<RESULT><DATE>.',
-  },
-})
 
 const enhance = compose(
   setPropTypes({
@@ -39,14 +27,10 @@ const enhance = compose(
   pure,
   injectIntl,
   connect(
-    () => ({}),
-    dispatch =>
-      bindActionCreators(
-        {
-          configureListFilter,
-        },
-        dispatch
-      )
+    null,
+    bindActionCreators.bind(null, {
+      configureListFilter,
+    })
   ),
   setPropTypes({
     intl: intlShape.isRequired,
@@ -66,7 +50,6 @@ export class ManageDevices extends PureComponent {
   }
 
   render() {
-    const { intl: { formatMessage } } = this.props
     return (
       <div className={styles.Content}>
         <Helmet
@@ -75,13 +58,6 @@ export class ManageDevices extends PureComponent {
           defaultTitle="Aspect"
         />
         <NavTitle title="Manage Devices" />
-        <ListFilterContainer
-          subject="devices"
-          filterTemplate={formatMessage(messages.filterTemplate)}
-          filterTemplateOptional={formatMessage(
-            messages.filterTemplateOptional
-          )}
-        />
         <Paper>
           <Unit sm="1-2" md="2-3">
             <div>

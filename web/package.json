@@ -115,6 +115,7 @@
     "d3-array": "^1.2.0",
     "date-fns": "^2.0.0-alpha.1",
     "dom-helpers": "^3.2.1",
+    "element-resize-detector": "^1.1.12",
     "email-validator": "^1.0.7",
     "global": "^4.3.2",
     "history": "^4.6.1",

@@ -1,4 +1,5 @@
 import PropTypes from 'prop-types'
+import classnames from 'classnames/bind'
 import React, { PureComponent } from 'react'
 import { compose, setPropTypes, pure } from 'recompose'
 import { injectIntl, defineMessages, intlShape } from 'react-intl'
@@ -7,14 +8,15 @@ import { connect } from 'react-redux'
 import Helmet from 'react-helmet'
 
 // Our own imports
-import DataTableWithEmptyList from '../../components/shared/DataTableWithEmptyList'
 import NavTitle from '../../globals/components/NavTitle'
-import ListFilterContainer from '../../filter/list/ListFilter'
-import { configureListFilter, ListFilter } from '../../filter/FilterRedux'
-import { fetchListFilteredSites } from '../SiteRedux'
-import styles from './SiteList.css'
+import BrowseFilters from '../../globals/components/BrowseFilters'
 import { Items } from '../../shared/metaReducers/items'
 import { Table } from '../../shared/metaReducers/table'
+import DataTableWithEmptyList from '../../components/shared/DataTableWithEmptyList'
+import { configureListFilter, ListFilter } from '../../filter/FilterRedux'
+import { fetchListFilteredSites } from '../SiteRedux'
+
+const cssClasses = classnames.bind(require('./SiteList.css'))
 
 const messages = defineMessages({
   title: {
@@ -37,10 +39,6 @@ const messages = defineMessages({
     id: 'pages.SiteList.totalDevices',
     defaultMessage: 'Number of Devices',
   },
-  filterTemplate: {
-    id: 'pages.SiteList.filterTemplate',
-    defaultMessage: 'Viewing all sites<GEOGRAPHY><NAME>.',
-  },
   externalId: {
     id: 'pages.SiteList.externalId',
     defaultMessage: 'Facility Code',
@@ -60,14 +58,10 @@ const enhance = compose(
       items: state.site.items,
       table: state.site.table,
     }),
-    dispatch =>
-      bindActionCreators(
-        {
-          fetchListFilteredSites,
-          configureListFilter,
-        },
-        dispatch
-      )
+    bindActionCreators.bind(null, {
+      fetchListFilteredSites,
+      configureListFilter,
+    })
   ),
   setPropTypes({
     intl: intlShape.isRequired,
@@ -115,16 +109,17 @@ export class SiteList extends PureComponent {
     ]
 
     return (
-      <div className={styles.Content}>
+      <div className={cssClasses('Content')}>
         <Helmet
           title={formatMessage(messages.title)}
           titleTemplate="%s - Aspect"
           defaultTitle="Aspect"
         />
         <NavTitle title={formatMessage(messages.title)} />
-        <ListFilterContainer
-          subject={formatMessage(messages.title)}
-          filterTemplate={formatMessage(messages.filterTemplate)}
+        <BrowseFilters
+          history={this.props.history}
+          location={this.props.location}
+          intl={intl}
         />
         <DataTableWithEmptyList
           selectable

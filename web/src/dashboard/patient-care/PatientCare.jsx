@@ -1,27 +1,19 @@
 import PropTypes from 'prop-types'
 import React, { PureComponent } from 'react'
 import { compose, setPropTypes, pure } from 'recompose'
-import { injectIntl, defineMessages, intlShape } from 'react-intl'
+import { injectIntl, intlShape } from 'react-intl'
 import { bindActionCreators } from 'redux'
 import { connect } from 'react-redux'
 import Helmet from 'react-helmet'
 import { Link } from 'react-router-dom'
 
 import Paper from 'material-ui/Paper'
+import { Card, CardHeader } from 'material-ui/Card'
 
 // Our own imports
 import NavTitle from '../../globals/components/NavTitle'
-import ListFilterContainer from '../../filter/list/ListFilter'
 import { configureListFilter } from '../../filter/FilterRedux'
 import styles from './PatientCare.css'
-
-const messages = defineMessages({
-  filterTemplate: {
-    id: 'pages.PatientCare.filterTemplate',
-    defaultMessage:
-      'Viewing <ASSAY> results <DATE><RESULT> from all sites<GEOGRAPHY><NAME>',
-  },
-})
 
 const enhance = compose(
   setPropTypes({
@@ -30,14 +22,10 @@ const enhance = compose(
   pure,
   injectIntl,
   connect(
-    () => ({}),
-    dispatch =>
-      bindActionCreators(
-        {
-          configureListFilter,
-        },
-        dispatch
-      )
+    null,
+    bindActionCreators.bind(null, {
+      configureListFilter,
+    })
   ),
   setPropTypes({
     intl: intlShape.isRequired,
@@ -57,8 +45,7 @@ export class PatientCare extends PureComponent {
   }
 
   render() {
-    const { location, intl } = this.props
-    const { formatMessage } = intl
+    const { location } = this.props
     const search = new URLSearchParams(location.search)
 
     return (
@@ -69,10 +56,14 @@ export class PatientCare extends PureComponent {
           defaultTitle="Aspect"
         />
         <NavTitle title="Patient Care" />
-        <ListFilterContainer
-          subject={search.get('type') === 'TB' ? 'TB' : 'HCV'}
-          filterTemplate={formatMessage(messages.filterTemplate)}
-        />
+        <Card>
+          <CardHeader
+            subtitle={`No filters set - showing all ${search.get('type') ===
+              'TB'
+              ? 'TB'
+              : 'HCV'}`}
+          />
+        </Card>
         <Paper>
           <Link to="/result">
             <img

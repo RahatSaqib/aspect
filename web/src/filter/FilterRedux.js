@@ -6,6 +6,7 @@ export const types = {
 
   CLEAR_LIST_FILTER: 'CLEAR_LIST_FILTER',
   CHANGE_LIST_FILTER: 'CHANGE_LIST_FILTER',
+  REMOVE_LIST_FILTER_ITEM: 'REMOVE_LIST_FILTER_ITEM',
 
   EXPORT_CONFIRMATION_ASK: 'EXPORT_CONFIRMATION_ASK',
   EXPORT_NOT_CONFIRMED: 'EXPORT_NOT_CONFIRMED',
@@ -41,6 +42,12 @@ export function changeListFilter(listFilter) {
   }
 }
 
+export function removeListFilterItem(filterKey) {
+  return {
+    type: types.REMOVE_LIST_FILTER_ITEM,
+    filterKey,
+  }
+}
 // -------------------------------
 export function askExportConfirmation(currentFormatType) {
   return {
@@ -199,6 +206,25 @@ export default function filterReducer(state = initialState, action) {
       return state.set('listFilter', initialState.listFilter)
     case types.CHANGE_LIST_FILTER:
       return state.mergeIn(['listFilter'], action.listFilter)
+    case types.REMOVE_LIST_FILTER_ITEM:
+      return state.withMutations(mutState => {
+        switch (action.filterKey) {
+          default:
+            break
+          case 'countryId':
+            mutState
+              .deleteIn(['listFilter', 'stateId'])
+              .deleteIn(['listFilter', 'lgaId'])
+            break
+          case 'stateId':
+            mutState.deleteIn(['listFilter', 'lgaId'])
+            break
+          case 'assayId':
+            mutState.deleteIn(['listFilter', 'resultCategoryId'])
+            break
+        }
+        mutState.deleteIn(['listFilter', action.filterKey])
+      })
     // -----------
     // List Export actions
     // -----------
