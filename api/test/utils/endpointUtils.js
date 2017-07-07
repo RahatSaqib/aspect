@@ -23,18 +23,20 @@ class CallHandlerOn {
   }
 
   execute() {
-    this.endpoint.handler(this.requestData, (result) => {
-      Promise.resolve(result).then((responseData) => {
-        this.handleResponseWithCallback(responseData)
-        this.thenCallback()
-      }).catch((error) => {
-        this.thenCallback(error)
-      })
+    this.endpoint.handler(this.requestData, result => {
+      Promise.resolve(result)
+        .then(responseData => {
+          this.handleResponseWithCallback(responseData)
+          this.thenCallback()
+        })
+        .catch(error => {
+          this.thenCallback(error)
+        })
     })
     return this
   }
 }
 
 module.exports = {
-  callHandlerOn
+  callHandlerOn,
 }

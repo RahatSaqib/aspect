@@ -10,20 +10,38 @@ describe('email/templateProcessor', () => {
         const tokenValues = {
           name: 'Bryan Richards',
           aspectUrl: 'https://aspect.id',
-          resetPasswordToken: 'reset-token-12345'
+          resetPasswordToken: 'reset-token-12345',
         }
-        return run(templateProcessor.process, ['resetPassword', tokenValues])((result) => {
+        return run(templateProcessor.process, [
+          'resetPassword',
+          tokenValues,
+        ])(result => {
           assert.include(result.subject, 'Aspect Password Reset')
           assert.include(result.html, `Dear ${tokenValues.name},`)
           assert.include(result.html, 'Click here to reset your password')
-          assert.include(result.html, `${tokenValues.aspectUrl}/reset-password?token=${tokenValues.resetPasswordToken}`)
+          assert.include(
+            result.html,
+            `${tokenValues.aspectUrl}/reset-password?token=${tokenValues.resetPasswordToken}`
+          )
           assert.include(result.html, 'Copyable link: ')
-          assert.include(result.html, 'This link is valid for the next hour and can only be used once.')
+          assert.include(
+            result.html,
+            'This link is valid for the next hour and can only be used once.'
+          )
 
           assert.include(result.text, `Dear ${tokenValues.name},`)
-          assert.include(result.text, 'you can reset your password by opening the following URL in your browser')
-          assert.include(result.text, `${tokenValues.aspectUrl}/reset-password?token=${tokenValues.resetPasswordToken}`)
-          assert.include(result.text, 'This link is valid for the next hour and can only be used once.')
+          assert.include(
+            result.text,
+            'you can reset your password by opening the following URL in your browser'
+          )
+          assert.include(
+            result.text,
+            `${tokenValues.aspectUrl}/reset-password?token=${tokenValues.resetPasswordToken}`
+          )
+          assert.include(
+            result.text,
+            'This link is valid for the next hour and can only be used once.'
+          )
         })
       })
 
@@ -32,20 +50,45 @@ describe('email/templateProcessor', () => {
           const tokenValues = {
             name: 'Jean-Luc Picard',
             aspectUrl: 'https://aspect.id',
-            resetPasswordToken: 'reset-token-12345'
+            resetPasswordToken: 'reset-token-12345',
           }
-          return run(templateProcessor.process, ['resetPassword', tokenValues, 'fr-FR'])((result) => {
-            assert.include(result.subject, 'Réinitialisation du mot de passe Aspect')
+          return run(templateProcessor.process, [
+            'resetPassword',
+            tokenValues,
+            'fr-FR',
+          ])(result => {
+            assert.include(
+              result.subject,
+              'Réinitialisation du mot de passe Aspect'
+            )
             assert.include(result.html, `Cher ${tokenValues.name},`)
-            assert.include(result.html, 'Cliquez ici pour réinitialiser votre mot de passe')
-            assert.include(result.html, `${tokenValues.aspectUrl}/reset-password?token=${tokenValues.resetPasswordToken}`)
+            assert.include(
+              result.html,
+              'Cliquez ici pour réinitialiser votre mot de passe'
+            )
+            assert.include(
+              result.html,
+              `${tokenValues.aspectUrl}/reset-password?token=${tokenValues.resetPasswordToken}`
+            )
             assert.include(result.html, 'Lien éditable: ')
-            assert.include(result.html, 'Ce lien est valable pour l\'heure suivante et ne peut être utilisé qu\'une seule fois')
+            assert.include(
+              result.html,
+              "Ce lien est valable pour l'heure suivante et ne peut être utilisé qu'une seule fois"
+            )
 
             assert.include(result.text, `Cher ${tokenValues.name},`)
-            assert.include(result.text, 'vous pouvez réinitialiser votre mot de passe en ouvrant l\'URL suivante dans votre navigateur')
-            assert.include(result.text, `${tokenValues.aspectUrl}/reset-password?token=${tokenValues.resetPasswordToken}`)
-            assert.include(result.text, 'Ce lien est valable pour l\'heure suivante et ne peut être utilisé qu\'une seule fois')
+            assert.include(
+              result.text,
+              "vous pouvez réinitialiser votre mot de passe en ouvrant l'URL suivante dans votre navigateur"
+            )
+            assert.include(
+              result.text,
+              `${tokenValues.aspectUrl}/reset-password?token=${tokenValues.resetPasswordToken}`
+            )
+            assert.include(
+              result.text,
+              "Ce lien est valable pour l'heure suivante et ne peut être utilisé qu'une seule fois"
+            )
           })
         })
       })
@@ -55,8 +98,15 @@ describe('email/templateProcessor', () => {
   describe('generateAttachment', () => {
     describe('api/src/email/templates/systemone.jpg', () => {
       it('should generate an attachment object with base 64 encoded string for the file', () => {
-        const filePath = path.join(__dirname, '../../src/email/templates/systemone.jpg')
-        return run(templateProcessor.generateAttachment, [filePath, 'image/jpeg', 'inline'])((attachment) => {
+        const filePath = path.join(
+          __dirname,
+          '../../src/email/templates/systemone.jpg'
+        )
+        return run(templateProcessor.generateAttachment, [
+          filePath,
+          'image/jpeg',
+          'inline',
+        ])(attachment => {
           assert.isOk(attachment.content)
           assert.equal(attachment.mimeType, 'image/jpeg')
           assert.equal(attachment.disposition, 'inline')
@@ -67,12 +117,15 @@ describe('email/templateProcessor', () => {
   })
 
   describe('getInlineImageAttachments', () => {
-    it('should generate an array of image attachments referenced in the content', () => run(templateProcessor.getInlineImageAttachments, ['<html><body><img src="cid:systemone.jpg" /></body></html>'])((inlineAttachments) => {
-      assert.equal(inlineAttachments.length, 1)
-      assert.isOk(inlineAttachments[0].content)
-      assert.equal(inlineAttachments[0].mimeType, 'image/jpeg')
-      assert.equal(inlineAttachments[0].disposition, 'inline')
-      assert.equal(inlineAttachments[0].fileName, 'systemone.jpg')
-    }))
+    it('should generate an array of image attachments referenced in the content', () =>
+      run(templateProcessor.getInlineImageAttachments, [
+        '<html><body><img src="cid:systemone.jpg" /></body></html>',
+      ])(inlineAttachments => {
+        assert.equal(inlineAttachments.length, 1)
+        assert.isOk(inlineAttachments[0].content)
+        assert.equal(inlineAttachments[0].mimeType, 'image/jpeg')
+        assert.equal(inlineAttachments[0].disposition, 'inline')
+        assert.equal(inlineAttachments[0].fileName, 'systemone.jpg')
+      }))
   })
 })

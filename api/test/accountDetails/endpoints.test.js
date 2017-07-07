@@ -6,7 +6,7 @@ const endpointUtils = require('../utils/endpointUtils')
 describe('account details endpoints', () => {
   function setupRoute(method, path, serviceStub) {
     const endpoints = proxyquire('../../src/accountDetails/endpoints', {
-      './service': serviceStub
+      './service': serviceStub,
     })
     return _.find(endpoints, { method, path })
   }
@@ -18,13 +18,16 @@ describe('account details endpoints', () => {
 
       beforeEach(() => {
         endpoint = setupRoute('GET', '/account-details/current', {
-          * getAccountDetailsForLoggedInUser() { return expectedResponse }
+          *getAccountDetailsForLoggedInUser() {
+            return expectedResponse
+          },
         })
       })
 
-      it('Should respond with a the data returned from the service', (done) => {
-        endpointUtils.callHandlerOn(endpoint)
-          .handleResponseWith((response) => {
+      it('Should respond with a the data returned from the service', done => {
+        endpointUtils
+          .callHandlerOn(endpoint)
+          .handleResponseWith(response => {
             assert.deepEqual(response, expectedResponse)
           })
           .thenCall(done)
@@ -38,13 +41,16 @@ describe('account details endpoints', () => {
 
       beforeEach(() => {
         endpoint = setupRoute('PUT', '/account-details/current-contact', {
-          * saveContactDetailsForLoggedInUser() { return expectedResponse }
+          *saveContactDetailsForLoggedInUser() {
+            return expectedResponse
+          },
         })
       })
 
-      it('Should respond with a the data returned from the service', (done) => {
-        endpointUtils.callHandlerOn(endpoint)
-          .handleResponseWith((response) => {
+      it('Should respond with a the data returned from the service', done => {
+        endpointUtils
+          .callHandlerOn(endpoint)
+          .handleResponseWith(response => {
             assert.deepEqual(response, expectedResponse)
           })
           .thenCall(done)

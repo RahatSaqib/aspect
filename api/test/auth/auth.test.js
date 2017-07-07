@@ -5,9 +5,14 @@ const sinon = require('sinon')
 const endpointUtils = require('../utils/endpointUtils')
 
 const validPassword = 'test07'
-const validHashedPassword = '$2a$10$blGsMw08vX52YoZUnI18cOTluN170WvPJq1XApyif8Y2PuZThzK5K' // = test07
+const validHashedPassword =
+  '$2a$10$blGsMw08vX52YoZUnI18cOTluN170WvPJq1XApyif8Y2PuZThzK5K' // = test07
 
-const { canViewSites, canViewDevices, canViewResults } = require('../../src/auth/constraints')
+const {
+  canViewSites,
+  canViewDevices,
+  canViewResults,
+} = require('../../src/auth/constraints')
 
 describe('auth endpoints', () => {
   let dbSpy
@@ -15,16 +20,25 @@ describe('auth endpoints', () => {
   let endpoint
   let templateProcessorFake
   let emailUtilFake
-  const fakeConfig = { secret: '8rU7FITwHV30jhkcXvjOjoSvy2Tv2bZT', passwordAttempts: 5 }
+  const fakeConfig = {
+    secret: '8rU7FITwHV30jhkcXvjOjoSvy2Tv2bZT',
+    passwordAttempts: 5,
+  }
   const now = new Date()
   const clock = sinon.useFakeTimers(now.getTime())
-  const generatedEmail = { html: '<html><body><h1>Howdy!</h1></body></html>', text: 'Howdy!', subject: 'Hi There' }
-  const inlineImageAttachments = [{ value: 'This is an inline image to be inserted into the email' }]
+  const generatedEmail = {
+    html: '<html><body><h1>Howdy!</h1></body></html>',
+    text: 'Howdy!',
+    subject: 'Hi There',
+  }
+  const inlineImageAttachments = [
+    { value: 'This is an inline image to be inserted into the email' },
+  ]
 
   const mockAuthObj = {
     credentials: {
-      permissions: ['site:admin', 'device:admin', 'result:admin']
-    }
+      permissions: ['site:admin', 'device:admin', 'result:admin'],
+    },
   }
 
   function setupAuthRoutes(method, path) {
@@ -33,19 +47,19 @@ describe('auth endpoints', () => {
     jwt = require('jsonwebtoken')
     sinon.spy(jwt, 'sign')
     templateProcessorFake = {
-      * process() {
+      *process() {
         return yield Promise.resolve(generatedEmail)
       },
-      * getInlineImageAttachments() {
+      *getInlineImageAttachments() {
         return yield Promise.resolve(inlineImageAttachments)
-      }
+      },
     }
     sinon.spy(templateProcessorFake, 'process')
     sinon.spy(templateProcessorFake, 'getInlineImageAttachments')
     emailUtilFake = {
-      * sendEmail() {
+      *sendEmail() {
         return yield Promise.resolve()
-      }
+      },
     }
     sinon.spy(emailUtilFake, 'sendEmail')
     const service = proxyquire.noCallThru().load('../../src/auth/service', {
@@ -53,10 +67,10 @@ describe('auth endpoints', () => {
       '../db': dbSpy,
       '../config': fakeConfig,
       '../email/emailUtil': emailUtilFake,
-      '../email/templateProcessor': templateProcessorFake
+      '../email/templateProcessor': templateProcessorFake,
     })
     const endpoints = proxyquire.noCallThru().load('../../src/auth/endpoints', {
-      './service': service
+      './service': service,
     })
     endpoint = _.find(endpoints, { method, path })
   }
@@ -75,9 +89,10 @@ describe('auth endpoints', () => {
       setupAuthRoutes('GET', '/auth')
     })
 
-    it('Should respond with a welcome message for the API', (done) => {
-      endpointUtils.callHandlerOn(endpoint)
-        .handleResponseWith((responseData) => {
+    it('Should respond with a welcome message for the API', done => {
+      endpointUtils
+        .callHandlerOn(endpoint)
+        .handleResponseWith(responseData => {
           assert.equal(responseData.message, 'Welcome to the API!')
         })
         .thenCall(done)
@@ -94,7 +109,7 @@ describe('auth endpoints', () => {
       const permissions = [
         { module: 'device', activity: 'view' },
         { module: 'person', activity: 'view' },
-        { module: 'site', activity: 'view' }
+        { module: 'site', activity: 'view' },
       ]
       beforeEach(() => {
         dbSpy.query.for('Get basic user details').resolvesWith({
@@ -103,9 +118,11 @@ describe('auth endpoints', () => {
           id: 123,
           name: 'admin',
           culture: 'en-US',
-          password: validHashedPassword
+          password: validHashedPassword,
         })
-        dbSpy.query.for('Get permissions for user and partner').resolvesWith(permissions)
+        dbSpy.query
+          .for('Get permissions for user and partner')
+          .resolvesWith(permissions)
       })
 
       it('Should be approved to view total sites, devices and result data', () => {
@@ -114,17 +131,18 @@ describe('auth endpoints', () => {
         assert.isTrue(canViewResults(mockAuthObj))
       })
 
-      it('Should respond with a signed JSON web token, a refresh token id and the client id passed to it', (done) => {
+      it('Should respond with a signed JSON web token, a refresh token id and the client id passed to it', done => {
         const requestData = {
           payload: {
             name: 'admin',
             password: validPassword,
-            clientId: 'request client id'
-          }
+            clientId: 'request client id',
+          },
         }
-        endpointUtils.callHandlerOn(endpoint)
+        endpointUtils
+          .callHandlerOn(endpoint)
           .with(requestData)
-          .handleResponseWith((responseData) => {
+          .handleResponseWith(responseData => {
             assert.isOk(responseData.access)
             assert.isOk(responseData.refresh)
             assert.equal(responseData.clientId, requestData.payload.clientId)
@@ -133,17 +151,18 @@ describe('auth endpoints', () => {
           .execute()
       })
 
-      it('Should create a client id if none is provided', (done) => {
+      it('Should create a client id if none is provided', done => {
         const requestData = {
           payload: {
             name: 'admin',
             password: validPassword,
-            clientId: ''
-          }
+            clientId: '',
+          },
         }
-        endpointUtils.callHandlerOn(endpoint)
+        endpointUtils
+          .callHandlerOn(endpoint)
           .with(requestData)
-          .handleResponseWith((responseData) => {
+          .handleResponseWith(responseData => {
             assert.isOk(responseData.clientId)
           })
           .thenCall(done)
@@ -151,7 +170,7 @@ describe('auth endpoints', () => {
       })
 
       describe('getToken', () => {
-        it('Should sign a token with the user\'s details', (done) => {
+        it("Should sign a token with the user's details", done => {
           const britishUser = {
             lockedOut: 0,
             failedPasswordAttempts: 0,
@@ -161,23 +180,24 @@ describe('auth endpoints', () => {
             culture: 'en-GB',
             timezone: 'GMT Standard Time',
             partnerId: 2,
-            countryId: 3
+            countryId: 3,
           }
           dbSpy.query.for('Get basic user details').resolvesWith(britishUser)
           const requestData = {
             payload: {
               name: 'admin',
               password: validPassword,
-              clientId: 'request client id'
-            }
+              clientId: 'request client id',
+            },
           }
-          endpointUtils.callHandlerOn(endpoint)
+          endpointUtils
+            .callHandlerOn(endpoint)
             .with(requestData)
             .handleResponseWith(() => {
               const unsignedToken = jwt.sign.lastCall.args[0]
               assert.deepEqual(unsignedToken, {
                 name: britishUser.name,
-                permissions: permissions.map(p => `${p.module}:${p.activity}`)
+                permissions: permissions.map(p => `${p.module}:${p.activity}`),
               })
             })
             .thenCall(done)
@@ -191,17 +211,18 @@ describe('auth endpoints', () => {
         dbSpy.query.for('Get basic user details').resolvesWith()
       })
 
-      it('Should respond with 401', (done) => {
+      it('Should respond with 401', done => {
         const requestData = {
           payload: {
             name: 'nonexistant',
             password: 'whatevs',
-            clientId: 'request client id'
-          }
+            clientId: 'request client id',
+          },
         }
-        endpointUtils.callHandlerOn(endpoint)
+        endpointUtils
+          .callHandlerOn(endpoint)
           .with(requestData)
-          .handleResponseWith((responseData) => {
+          .handleResponseWith(responseData => {
             assert.equal(responseData.output.statusCode, 401)
           })
           .thenCall(done)
@@ -217,23 +238,27 @@ describe('auth endpoints', () => {
           id: 123,
           name: 'lockedaccount',
           password: 'whatevs',
-          culture: 'en-US'
+          culture: 'en-US',
         })
       })
 
-      it('Should respond with 401 and "Your account is locked."', (done) => {
+      it('Should respond with 401 and "Your account is locked."', done => {
         const requestData = {
           payload: {
             name: 'lockedaccount',
             password: validPassword,
-            clientId: 'request client id'
-          }
+            clientId: 'request client id',
+          },
         }
-        endpointUtils.callHandlerOn(endpoint)
+        endpointUtils
+          .callHandlerOn(endpoint)
           .with(requestData)
-          .handleResponseWith((responseData) => {
+          .handleResponseWith(responseData => {
             assert.equal(responseData.output.statusCode, 401)
-            assert.equal(responseData.output.payload.message, 'Your account is locked.')
+            assert.equal(
+              responseData.output.payload.message,
+              'Your account is locked.'
+            )
           })
           .thenCall(done)
           .execute()
@@ -245,8 +270,8 @@ describe('auth endpoints', () => {
         payload: {
           name: 'admin',
           password: 'wrongpassword',
-          clientId: 'request client id'
-        }
+          clientId: 'request client id',
+        },
       }
       const basicUserDetails = {
         lockedOut: 0,
@@ -254,37 +279,52 @@ describe('auth endpoints', () => {
         id: 123,
         password: validHashedPassword,
         name: 'admin',
-        culture: 'en-US'
+        culture: 'en-US',
       }
       beforeEach(() => {
         dbSpy.query.for('Get basic user details').resolvesWith(basicUserDetails)
       })
 
-      it('Should increment the number of failed password attempts and respond with 401 and "Authentication failed. Wrong password."', (done) => {
-        endpointUtils.callHandlerOn(endpoint)
+      it('Should increment the number of failed password attempts and respond with 401 and "Authentication failed. Wrong password."', done => {
+        endpointUtils
+          .callHandlerOn(endpoint)
           .with(requestData)
-          .handleResponseWith((responseData) => {
+          .handleResponseWith(responseData => {
             assert.equal(responseData.output.statusCode, 401)
-            assert.equal(responseData.output.payload.message, 'Authentication failed. Wrong password.')
-            const updateFieldsOnUser = dbSpy.query.withArgs('Update failed password attempts and set locked out status on user').lastCall.returnValue.update.lastCall.args[0]
+            assert.equal(
+              responseData.output.payload.message,
+              'Authentication failed. Wrong password.'
+            )
+            const updateFieldsOnUser = dbSpy.query.withArgs(
+              'Update failed password attempts and set locked out status on user'
+            ).lastCall.returnValue.update.lastCall.args[0]
             assert.equal(
               updateFieldsOnUser.failedPasswordAttempts,
-              basicUserDetails.failedPasswordAttempts + 1)
+              basicUserDetails.failedPasswordAttempts + 1
+            )
           })
           .thenCall(done)
           .execute()
       })
 
-      it('Should increment the number of failed password attempts and lock the user out after the maximum password attempts have been tried', (done) => {
+      it('Should increment the number of failed password attempts and lock the user out after the maximum password attempts have been tried', done => {
         basicUserDetails.failedPasswordAttempts = 5
-        endpointUtils.callHandlerOn(endpoint)
+        endpointUtils
+          .callHandlerOn(endpoint)
           .with(requestData)
           .handleResponseWith(() => {
-            assert.isOk(dbSpy.query.calledWith('Update failed password attempts and set locked out status on user'))
-            const updateFieldsOnUser = dbSpy.query.withArgs('Update failed password attempts and set locked out status on user').lastCall.returnValue.update.lastCall.args[0]
+            assert.isOk(
+              dbSpy.query.calledWith(
+                'Update failed password attempts and set locked out status on user'
+              )
+            )
+            const updateFieldsOnUser = dbSpy.query.withArgs(
+              'Update failed password attempts and set locked out status on user'
+            ).lastCall.returnValue.update.lastCall.args[0]
             assert.equal(
               updateFieldsOnUser.failedPasswordAttempts,
-              basicUserDetails.failedPasswordAttempts + 1)
+              basicUserDetails.failedPasswordAttempts + 1
+            )
             assert.equal(updateFieldsOnUser.lockedOut, 1)
           })
           .thenCall(done)
@@ -302,22 +342,24 @@ describe('auth endpoints', () => {
       beforeEach(() => {
         dbSpy.query.for('Find existing token for client ID').resolvesWith({
           userId: 123,
-          expires: new Date(new Date().getTime() + (7 * 86400000)),
+          expires: new Date(new Date().getTime() + 7 * 86400000),
           name: 'admin',
-          culture: 'en-US'
+          culture: 'en-US',
         })
       })
 
-      it('Should respond with a signed JSON web token, a refresh token id and the client id passed to it', (done) => {
+      it('Should respond with a signed JSON web token, a refresh token id and the client id passed to it', done => {
         const requestData = {
           payload: {
             clientId: 'request client id',
-            token: 'A+nmAmjiD0BqrZvfhrIRlnAoufJW0mhigNWa1Fnz/gl8JWsec4ochW9K5iaz3XcR'
-          }
+            token:
+              'A+nmAmjiD0BqrZvfhrIRlnAoufJW0mhigNWa1Fnz/gl8JWsec4ochW9K5iaz3XcR',
+          },
         }
-        endpointUtils.callHandlerOn(endpoint)
+        endpointUtils
+          .callHandlerOn(endpoint)
           .with(requestData)
-          .handleResponseWith((responseData) => {
+          .handleResponseWith(responseData => {
             assert.isOk(responseData.access)
             assert.isOk(responseData.refresh)
             assert.equal(responseData.clientId, requestData.payload.clientId)
@@ -332,18 +374,23 @@ describe('auth endpoints', () => {
         dbSpy.query.for('Find existing token for client ID').resolvesWith()
       })
 
-      it('Should respond with 400 and "Unable to find token or token revoked"', (done) => {
+      it('Should respond with 400 and "Unable to find token or token revoked"', done => {
         const requestData = {
           payload: {
             clientId: 'request client id',
-            token: 'A+nmAmjiD0BqrZvfhrIRlnAoufJW0mhigNWa1Fnz/gl8JWsec4ochW9K5iaz3XcR'
-          }
+            token:
+              'A+nmAmjiD0BqrZvfhrIRlnAoufJW0mhigNWa1Fnz/gl8JWsec4ochW9K5iaz3XcR',
+          },
         }
-        endpointUtils.callHandlerOn(endpoint)
+        endpointUtils
+          .callHandlerOn(endpoint)
           .with(requestData)
-          .handleResponseWith((responseData) => {
+          .handleResponseWith(responseData => {
             assert.equal(responseData.output.statusCode, 400)
-            assert.equal(responseData.output.payload.message, 'Unable to find token or token revoked')
+            assert.equal(
+              responseData.output.payload.message,
+              'Unable to find token or token revoked'
+            )
           })
           .thenCall(done)
           .execute()
@@ -356,20 +403,22 @@ describe('auth endpoints', () => {
           userId: 123,
           expires: new Date(new Date().getTime() - 1),
           name: 'admin',
-          culture: 'en-US'
+          culture: 'en-US',
         })
       })
 
-      it('Should respond with 400 and "Token expired"', (done) => {
+      it('Should respond with 400 and "Token expired"', done => {
         const requestData = {
           payload: {
             clientId: 'request client id',
-            token: 'A+nmAmjiD0BqrZvfhrIRlnAoufJW0mhigNWa1Fnz/gl8JWsec4ochW9K5iaz3XcR'
-          }
+            token:
+              'A+nmAmjiD0BqrZvfhrIRlnAoufJW0mhigNWa1Fnz/gl8JWsec4ochW9K5iaz3XcR',
+          },
         }
-        endpointUtils.callHandlerOn(endpoint)
+        endpointUtils
+          .callHandlerOn(endpoint)
           .with(requestData)
-          .handleResponseWith((responseData) => {
+          .handleResponseWith(responseData => {
             assert.equal(responseData.output.statusCode, 400)
             assert.equal(responseData.output.payload.message, 'Token expired')
           })
@@ -389,7 +438,7 @@ describe('auth endpoints', () => {
       name: 'logged-in-user',
       culture: null,
       partnerId: 1,
-      countryId: 1
+      countryId: 1,
     }
     let requestData
 
@@ -398,15 +447,15 @@ describe('auth endpoints', () => {
       requestData = {
         auth: {
           credentials: {
-            name: 'logged-in-user'
-          }
+            name: 'logged-in-user',
+          },
         },
         payload: {
           newUsername: 'new-username',
           currentPassword: validPassword,
           newPassword: 'new-password',
-          clientId: 'request client id'
-        }
+          clientId: 'request client id',
+        },
       }
       dbSpy.query.for('Get permissions for user and partner').resolvesWith([])
     })
@@ -416,10 +465,11 @@ describe('auth endpoints', () => {
         dbSpy.query.for('Get basic user details').resolvesWith(validUserRecord)
       })
 
-      it('should respond with a the list of fields that were updated', (done) => {
-        endpointUtils.callHandlerOn(endpoint)
+      it('should respond with a the list of fields that were updated', done => {
+        endpointUtils
+          .callHandlerOn(endpoint)
           .with(requestData)
-          .handleResponseWith((response) => {
+          .handleResponseWith(response => {
             assert.isOk(response.ok)
             assert.include(response.data.changedFields, 'name')
             assert.include(response.data.changedFields, 'password')
@@ -430,16 +480,22 @@ describe('auth endpoints', () => {
           .execute()
       })
 
-      it('should save the user\'s details', (done) => {
-        endpointUtils.callHandlerOn(endpoint)
+      it("should save the user's details", done => {
+        endpointUtils
+          .callHandlerOn(endpoint)
           .with(requestData)
           .handleResponseWith(() => {
-            const updateUserDetails = dbSpy.query.withArgs('Update user details').lastCall.returnValue.update.lastCall.args[0]
+            const updateUserDetails = dbSpy.query.withArgs(
+              'Update user details'
+            ).lastCall.returnValue.update.lastCall.args[0]
             assert.isOk(updateUserDetails.password)
-            assert.deepEqual(updateUserDetails, Object.assign(updateUserDetails, {
-              lastPasswordChange: now,
-              name: requestData.payload.newUsername
-            }))
+            assert.deepEqual(
+              updateUserDetails,
+              Object.assign(updateUserDetails, {
+                lastPasswordChange: now,
+                name: requestData.payload.newUsername,
+              })
+            )
           })
           .thenCall(done)
           .execute()
@@ -452,10 +508,11 @@ describe('auth endpoints', () => {
         dbSpy.query.for('Get basic user details').resolvesWith(validUserRecord)
       })
 
-      it('should respond with a the list of fields that were updated', (done) => {
-        endpointUtils.callHandlerOn(endpoint)
+      it('should respond with a the list of fields that were updated', done => {
+        endpointUtils
+          .callHandlerOn(endpoint)
           .with(requestData)
-          .handleResponseWith((response) => {
+          .handleResponseWith(response => {
             assert.isOk(response.ok)
             assert.include(response.data.changedFields, 'name')
             assert.notInclude(response.data.changedFields, 'password')
@@ -464,14 +521,17 @@ describe('auth endpoints', () => {
           .execute()
       })
 
-      it('should save the user\'s username', (done) => {
-        endpointUtils.callHandlerOn(endpoint)
+      it("should save the user's username", done => {
+        endpointUtils
+          .callHandlerOn(endpoint)
           .with(requestData)
           .handleResponseWith(() => {
-            const updateUserDetails = dbSpy.query.withArgs('Update user details').lastCall.returnValue.update.lastCall.args[0]
+            const updateUserDetails = dbSpy.query.withArgs(
+              'Update user details'
+            ).lastCall.returnValue.update.lastCall.args[0]
             assert.notProperty(updateUserDetails, 'password')
             assert.deepEqual(updateUserDetails, {
-              name: requestData.payload.newUsername
+              name: requestData.payload.newUsername,
             })
           })
           .thenCall(done)
@@ -485,10 +545,11 @@ describe('auth endpoints', () => {
         dbSpy.query.for('Get basic user details').resolvesWith(validUserRecord)
       })
 
-      it('should respond with a the list of fields that were updated', (done) => {
-        endpointUtils.callHandlerOn(endpoint)
+      it('should respond with a the list of fields that were updated', done => {
+        endpointUtils
+          .callHandlerOn(endpoint)
           .with(requestData)
-          .handleResponseWith((response) => {
+          .handleResponseWith(response => {
             assert.isOk(response.ok)
             assert.notInclude(response.data.changedFields, 'name')
             assert.include(response.data.changedFields, 'password')
@@ -497,16 +558,22 @@ describe('auth endpoints', () => {
           .execute()
       })
 
-      it('should save the user\'s password', (done) => {
-        endpointUtils.callHandlerOn(endpoint)
+      it("should save the user's password", done => {
+        endpointUtils
+          .callHandlerOn(endpoint)
           .with(requestData)
           .handleResponseWith(() => {
-            const updateUserDetails = dbSpy.query.withArgs('Update user details').lastCall.returnValue.update.lastCall.args[0]
+            const updateUserDetails = dbSpy.query.withArgs(
+              'Update user details'
+            ).lastCall.returnValue.update.lastCall.args[0]
             assert.notProperty(updateUserDetails, 'username')
             assert.isOk(updateUserDetails.password)
-            assert.deepEqual(updateUserDetails, Object.assign(updateUserDetails, {
-              lastPasswordChange: now
-            }))
+            assert.deepEqual(
+              updateUserDetails,
+              Object.assign(updateUserDetails, {
+                lastPasswordChange: now,
+              })
+            )
           })
           .thenCall(done)
           .execute()
@@ -519,15 +586,16 @@ describe('auth endpoints', () => {
         dbSpy.query.for('Get basic user details').resolvesWith(validUserRecord)
       })
 
-      it('should respond 403 forbidden', (done) => {
-        endpointUtils.callHandlerOn(endpoint)
+      it('should respond 403 forbidden', done => {
+        endpointUtils
+          .callHandlerOn(endpoint)
           .with(requestData)
-          .handleResponseWith((response) => {
+          .handleResponseWith(response => {
             assert.equal(response.output.statusCode, 403)
             assert.deepEqual(response.output.payload, {
               statusCode: 403,
               error: 'Forbidden',
-              message: 'Incorrect password.'
+              message: 'Incorrect password.',
             })
           })
           .thenCall(done)
@@ -540,15 +608,16 @@ describe('auth endpoints', () => {
         dbSpy.query.for('Get basic user details').resolvesWith(undefined)
       })
 
-      it('should respond 404 not found', (done) => {
-        endpointUtils.callHandlerOn(endpoint)
+      it('should respond 404 not found', done => {
+        endpointUtils
+          .callHandlerOn(endpoint)
           .with(requestData)
-          .handleResponseWith((response) => {
+          .handleResponseWith(response => {
             assert.equal(response.output.statusCode, 404)
             assert.deepEqual(response.output.payload, {
               statusCode: 404,
               error: 'Not Found',
-              message: 'User not Found'
+              message: 'User not Found',
             })
           })
           .thenCall(done)
@@ -556,46 +625,55 @@ describe('auth endpoints', () => {
       })
     })
 
-    describe('When the username hasn\'t changed', () => {
+    describe("When the username hasn't changed", () => {
       beforeEach(() => {
         requestData.payload.newUsername = 'logged-in-user'
         dbSpy.query.for('Get basic user details').resolvesWith(validUserRecord)
       })
 
-      it('should not update username', (done) => {
-        endpointUtils.callHandlerOn(endpoint)
+      it('should not update username', done => {
+        endpointUtils
+          .callHandlerOn(endpoint)
           .with(requestData)
           .handleResponseWith(() => {
-            const updateUserDetails = dbSpy.query.withArgs('Update user details').lastCall.returnValue.update.lastCall.args[0]
+            const updateUserDetails = dbSpy.query.withArgs(
+              'Update user details'
+            ).lastCall.returnValue.update.lastCall.args[0]
             assert.isOk(updateUserDetails.password)
             assert.notOk(updateUserDetails.name)
-            assert.deepEqual(updateUserDetails, Object.assign(updateUserDetails, {
-              updatedOn: now,
-              updatedBy: 123
-            }))
+            assert.deepEqual(
+              updateUserDetails,
+              Object.assign(updateUserDetails, {
+                updatedOn: now,
+                updatedBy: 123,
+              })
+            )
           })
           .thenCall(done)
           .execute()
       })
     })
 
-    describe('When the password hasn\'t changed', () => {
+    describe("When the password hasn't changed", () => {
       beforeEach(() => {
         requestData.payload.newPassword = validPassword
         dbSpy.query.for('Get basic user details').resolvesWith(validUserRecord)
       })
 
-      it('should not update password', (done) => {
-        endpointUtils.callHandlerOn(endpoint)
+      it('should not update password', done => {
+        endpointUtils
+          .callHandlerOn(endpoint)
           .with(requestData)
           .handleResponseWith(() => {
-            const updateUserDetails = dbSpy.query.withArgs('Update user details').lastCall.returnValue.update.lastCall.args[0]
+            const updateUserDetails = dbSpy.query.withArgs(
+              'Update user details'
+            ).lastCall.returnValue.update.lastCall.args[0]
             assert.notOk(updateUserDetails.password)
             assert.isOk(updateUserDetails.name)
             assert.deepEqual(updateUserDetails, updateUserDetails, {
               updatedOn: now,
               updatedBy: 123,
-              name: requestData.payload.newUsername
+              name: requestData.payload.newUsername,
             })
           })
           .thenCall(done)
@@ -607,19 +685,20 @@ describe('auth endpoints', () => {
       beforeEach(() => {
         dbSpy.query.for('Get basic user details').resolvesWith(validUserRecord)
         dbSpy.query.for('Get user ID for username').resolvesWith({
-          id: 321
+          id: 321,
         })
       })
 
-      it('should response with 409 Conflict', (done) => {
-        endpointUtils.callHandlerOn(endpoint)
+      it('should response with 409 Conflict', done => {
+        endpointUtils
+          .callHandlerOn(endpoint)
           .with(requestData)
-          .handleResponseWith((response) => {
+          .handleResponseWith(response => {
             assert.equal(response.output.statusCode, 409)
             assert.deepEqual(response.output.payload, {
               statusCode: 409,
               error: 'Conflict',
-              message: 'Username already in use'
+              message: 'Username already in use',
             })
           })
           .thenCall(done)
@@ -631,21 +710,24 @@ describe('auth endpoints', () => {
       const permissions = [
         { module: 'device', activity: 'view' },
         { module: 'person', activity: 'view' },
-        { module: 'site', activity: 'view' }
+        { module: 'site', activity: 'view' },
       ]
 
       beforeEach(() => {
         dbSpy.query.for('Get user ID for username').resolvesWith({
-          id: 123
+          id: 123,
         })
         dbSpy.query.for('Get basic user details').resolvesWith(validUserRecord)
-        dbSpy.query.for('Get permissions for user and partner').resolvesWith(permissions)
+        dbSpy.query
+          .for('Get permissions for user and partner')
+          .resolvesWith(permissions)
       })
 
-      it('Should respond with a signed JSON web token, a refresh token id and the client id passed to it', (done) => {
-        endpointUtils.callHandlerOn(endpoint)
+      it('Should respond with a signed JSON web token, a refresh token id and the client id passed to it', done => {
+        endpointUtils
+          .callHandlerOn(endpoint)
           .with(requestData)
-          .handleResponseWith((response) => {
+          .handleResponseWith(response => {
             assert.isOk(response.access)
             assert.isOk(response.refresh)
             assert.equal(response.clientId, requestData.payload.clientId)
@@ -654,11 +736,12 @@ describe('auth endpoints', () => {
           .execute()
       })
 
-      it('Should create a client id if none is provided', (done) => {
+      it('Should create a client id if none is provided', done => {
         requestData.payload.clientId = ''
-        endpointUtils.callHandlerOn(endpoint)
+        endpointUtils
+          .callHandlerOn(endpoint)
           .with(requestData)
-          .handleResponseWith((responseData) => {
+          .handleResponseWith(responseData => {
             assert.isOk(responseData.clientId)
           })
           .thenCall(done)
@@ -666,7 +749,7 @@ describe('auth endpoints', () => {
       })
 
       describe('getToken', () => {
-        it('Should sign a token with the user\'s details', (done) => {
+        it("Should sign a token with the user's details", done => {
           const southAfricanUser = {
             lockedOut: 0,
             failedPasswordAttempts: 0,
@@ -676,16 +759,19 @@ describe('auth endpoints', () => {
             culture: 'en-ZA',
             timezone: 'South Africa Standard Time',
             partnerId: 2,
-            countryId: 3
+            countryId: 3,
           }
-          dbSpy.query.for('Get basic user details').resolvesWith(southAfricanUser)
-          endpointUtils.callHandlerOn(endpoint)
+          dbSpy.query
+            .for('Get basic user details')
+            .resolvesWith(southAfricanUser)
+          endpointUtils
+            .callHandlerOn(endpoint)
             .with(requestData)
             .handleResponseWith(() => {
               const unsignedToken = jwt.sign.lastCall.args[0]
               assert.deepEqual(unsignedToken, {
                 name: southAfricanUser.name,
-                permissions: permissions.map(p => `${p.module}:${p.activity}`)
+                permissions: permissions.map(p => `${p.module}:${p.activity}`),
               })
             })
             .thenCall(done)
@@ -698,8 +784,8 @@ describe('auth endpoints', () => {
   describe('/auth/send-reset-password-token POST', () => {
     const requestData = {
       params: {
-        email: 'email@example.com'
-      }
+        email: 'email@example.com',
+      },
     }
 
     beforeEach(() => {
@@ -710,50 +796,70 @@ describe('auth endpoints', () => {
       const user = { id: 3, name: 'user-name', culture: 'fr-FR' }
 
       beforeEach(() => {
-        dbSpy.query.for('Get user details from email address').resolvesWith([user])
+        dbSpy.query
+          .for('Get user details from email address')
+          .resolvesWith([user])
       })
 
-      it('should respond with ok', (done) => {
-        endpointUtils.callHandlerOn(endpoint)
+      it('should respond with ok', done => {
+        endpointUtils
+          .callHandlerOn(endpoint)
           .with(requestData)
-          .handleResponseWith((response) => {
+          .handleResponseWith(response => {
             assert.isOk(response.ok)
           })
           .thenCall(done)
           .execute()
       })
 
-      it('should save a reset password token', (done) => {
-        endpointUtils.callHandlerOn(endpoint)
+      it('should save a reset password token', done => {
+        endpointUtils
+          .callHandlerOn(endpoint)
           .with(requestData)
           .handleResponseWith(() => {
-            const updateUserDetails = dbSpy.query.withArgs('Save reset password token').lastCall.returnValue.update.lastCall.args[0]
+            const updateUserDetails = dbSpy.query.withArgs(
+              'Save reset password token'
+            ).lastCall.returnValue.update.lastCall.args[0]
             assert.isOk(updateUserDetails.resetPasswordToken)
             assert.equal(
               updateUserDetails.resetPasswordTokenExpires.toString(),
-              (new Date(now.getTime() + 3600000)).toString())
+              new Date(now.getTime() + 3600000).toString()
+            )
           })
           .thenCall(done)
           .execute()
       })
 
-      it('should send an email with the user to the user', (done) => {
-        endpointUtils.callHandlerOn(endpoint)
+      it('should send an email with the user to the user', done => {
+        endpointUtils
+          .callHandlerOn(endpoint)
           .with(requestData)
           .handleResponseWith(() => {
-            assert.equal(templateProcessorFake.process.lastCall.args[0], 'resetPassword')
-            assert.equal(templateProcessorFake.process.lastCall.args[1].name, user.name)
-            assert.isOk(templateProcessorFake.process.lastCall.args[1].resetPasswordToken)
-            assert.equal(templateProcessorFake.process.lastCall.args[2], user.culture)
+            assert.equal(
+              templateProcessorFake.process.lastCall.args[0],
+              'resetPassword'
+            )
+            assert.equal(
+              templateProcessorFake.process.lastCall.args[1].name,
+              user.name
+            )
+            assert.isOk(
+              templateProcessorFake.process.lastCall.args[1].resetPasswordToken
+            )
+            assert.equal(
+              templateProcessorFake.process.lastCall.args[2],
+              user.culture
+            )
             assert.deepEqual(
               templateProcessorFake.getInlineImageAttachments.lastCall.args,
-              [generatedEmail.html])
+              [generatedEmail.html]
+            )
             assert.deepEqual(emailUtilFake.sendEmail.lastCall.args, [
               requestData.params.email,
               generatedEmail.subject,
               generatedEmail.html,
               generatedEmail.text,
-              inlineImageAttachments
+              inlineImageAttachments,
             ])
           })
           .thenCall(done)
@@ -762,21 +868,28 @@ describe('auth endpoints', () => {
     })
 
     describe('when multiple users exist with the email address provided', () => {
-      const users = [{ id: 3, name: 'user-name', culture: 'fr-FR' }, { id: 4, name: 'another-user-name', culture: 'en-US' }]
+      const users = [
+        { id: 3, name: 'user-name', culture: 'fr-FR' },
+        { id: 4, name: 'another-user-name', culture: 'en-US' },
+      ]
 
       beforeEach(() => {
-        dbSpy.query.for('Get user details from email address').resolvesWith(users)
+        dbSpy.query
+          .for('Get user details from email address')
+          .resolvesWith(users)
       })
 
-      it('should respond with a conflict response', (done) => {
-        endpointUtils.callHandlerOn(endpoint)
+      it('should respond with a conflict response', done => {
+        endpointUtils
+          .callHandlerOn(endpoint)
           .with(requestData)
-          .handleResponseWith((response) => {
+          .handleResponseWith(response => {
             assert.equal(response.output.statusCode, 409)
             assert.deepEqual(response.output.payload, {
               statusCode: 409,
               error: 'Conflict',
-              message: 'Could not pinpoint the user from the email address provided'
+              message:
+                'Could not pinpoint the user from the email address provided',
             })
           })
           .thenCall(done)
@@ -789,10 +902,11 @@ describe('auth endpoints', () => {
         dbSpy.query.for('Get user details from email address').resolvesWith([])
       })
 
-      it('should respond with ok so that intruders can\'t use this endpoint to determine user details', (done) => {
-        endpointUtils.callHandlerOn(endpoint)
+      it("should respond with ok so that intruders can't use this endpoint to determine user details", done => {
+        endpointUtils
+          .callHandlerOn(endpoint)
           .with(requestData)
-          .handleResponseWith((response) => {
+          .handleResponseWith(response => {
             assert.isOk(response.ok)
           })
           .thenCall(done)
@@ -804,33 +918,36 @@ describe('auth endpoints', () => {
   describe('/auth/update-password PUT', () => {
     const requestData = {
       params: {
-        resetPasswordToken: 'this doesn\'t exist'
+        resetPasswordToken: "this doesn't exist",
       },
       payload: {
         newPassword: 'New Password',
         clientName: 'Mocha/Chai',
-        clientId: 'Client ID'
-      }
+        clientId: 'Client ID',
+      },
     }
 
     beforeEach(() => {
       setupAuthRoutes('PUT', '/auth/update-password/{resetPasswordToken}')
     })
 
-    describe('when reset password token doesn\'t exist', () => {
+    describe("when reset password token doesn't exist", () => {
       beforeEach(() => {
-        dbSpy.query.for('Get user with reset password token').resolvesWith(undefined)
+        dbSpy.query
+          .for('Get user with reset password token')
+          .resolvesWith(undefined)
       })
 
-      it('should respond with a 404 response', (done) => {
-        endpointUtils.callHandlerOn(endpoint)
+      it('should respond with a 404 response', done => {
+        endpointUtils
+          .callHandlerOn(endpoint)
           .with(requestData)
-          .handleResponseWith((response) => {
+          .handleResponseWith(response => {
             assert.equal(response.output.statusCode, 404)
             assert.deepEqual(response.output.payload, {
               statusCode: 404,
               error: 'Not Found',
-              message: 'The reset password token was not found'
+              message: 'The reset password token was not found',
             })
           })
           .thenCall(done)
@@ -841,19 +958,23 @@ describe('auth endpoints', () => {
     describe('when reset password token has expired', () => {
       beforeEach(() => {
         const now = new Date()
-        dbSpy.query.for('Get user with reset password token').resolvesWith(
-          { resetPasswordTokenExpires: new Date(now.getTime() - 1), id: 1, username: 'a-username' })
+        dbSpy.query.for('Get user with reset password token').resolvesWith({
+          resetPasswordTokenExpires: new Date(now.getTime() - 1),
+          id: 1,
+          username: 'a-username',
+        })
       })
 
-      it('should respond with a 410 (Resource Gone) response', (done) => {
-        endpointUtils.callHandlerOn(endpoint)
+      it('should respond with a 410 (Resource Gone) response', done => {
+        endpointUtils
+          .callHandlerOn(endpoint)
           .with(requestData)
-          .handleResponseWith((response) => {
+          .handleResponseWith(response => {
             assert.equal(response.output.statusCode, 410)
             assert.deepEqual(response.output.payload, {
               statusCode: 410,
               error: 'Gone',
-              message: 'The reset password token is no longer valid'
+              message: 'The reset password token is no longer valid',
             })
           })
           .thenCall(done)
@@ -862,35 +983,48 @@ describe('auth endpoints', () => {
     })
 
     describe('when reset password token is valid', () => {
-      const userDetails = { resetPasswordTokenExpires: new Date(now.getTime() + 60000), id: 1, username: 'valid-username' }
+      const userDetails = {
+        resetPasswordTokenExpires: new Date(now.getTime() + 60000),
+        id: 1,
+        username: 'valid-username',
+      }
 
       beforeEach(() => {
-        dbSpy.query.for('Get user with reset password token').resolvesWith(userDetails)
+        dbSpy.query
+          .for('Get user with reset password token')
+          .resolvesWith(userDetails)
       })
 
-      it('should respond with ok and the username', (done) => {
-        endpointUtils.callHandlerOn(endpoint)
+      it('should respond with ok and the username', done => {
+        endpointUtils
+          .callHandlerOn(endpoint)
           .with(requestData)
-          .handleResponseWith((response) => {
+          .handleResponseWith(response => {
             assert.deepEqual(response, {
               ok: true,
-              username: userDetails.username
+              username: userDetails.username,
             })
           })
           .thenCall(done)
           .execute()
       })
 
-      it('should save the password details for the user', (done) => {
-        endpointUtils.callHandlerOn(endpoint)
+      it('should save the password details for the user', done => {
+        endpointUtils
+          .callHandlerOn(endpoint)
           .with(requestData)
           .handleResponseWith(() => {
-            const updateUserDetails = dbSpy.query.withArgs('Save password for user').lastCall.returnValue.update.lastCall.args[0]
+            const updateUserDetails = dbSpy.query.withArgs(
+              'Save password for user'
+            ).lastCall.returnValue.update.lastCall.args[0]
             assert.equal(updateUserDetails.lockedOut, 0)
             assert.equal(updateUserDetails.failedPasswordAttempts, 0)
             assert.equal(updateUserDetails.legacyPassword, 0)
             assert.isOk(updateUserDetails.password)
-            assert.equal(updateUserDetails.lastPasswordChange.toString(), now.toString())
+            assert.equal(
+              updateUserDetails.lastPasswordChange.toString(),
+              now.toString()
+            )
             assert.isNull(updateUserDetails.resetPasswordToken)
             assert.isNull(updateUserDetails.resetPasswordTokenExpires)
           })

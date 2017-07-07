@@ -19,7 +19,7 @@ describe('account details service', () => {
     countryId: 1,
     stateId: null,
     lgaId: null,
-    zip: '1234'
+    zip: '1234',
   }
 
   beforeEach(() => {
@@ -28,7 +28,7 @@ describe('account details service', () => {
     service = proxyquire.noCallThru().load('../../src/accountDetails/service', {
       '../db': dbSpy,
       '../geography/service': {
-        * transformGeographyFromUpdates(updates) {
+        *transformGeographyFromUpdates(updates) {
           const geoFieldNames = ['countryId', 'stateId', 'lgaId']
           const geoFields = _.pick(updates, geoFieldNames)
           if (!_.isEmpty(geoFields)) {
@@ -37,8 +37,8 @@ describe('account details service', () => {
             return transformed
           }
           return updates
-        }
-      }
+        },
+      },
     })
   })
 
@@ -50,37 +50,49 @@ describe('account details service', () => {
     const requestData = {
       auth: {
         credentials: {
-          name: 'logged-in-user'
-        }
-      }
+          name: 'logged-in-user',
+        },
+      },
     }
 
     beforeEach(() => {
-      dbSpy.query.for('Get account details for currently logged in user').resolvesWith(accountDetails)
+      dbSpy.query
+        .for('Get account details for currently logged in user')
+        .resolvesWith(accountDetails)
     })
 
-    it('Should lookup the account details for the currently logged in user', () => run(service.getAccountDetailsForLoggedInUser, [requestData])((response) => {
-      assert.isTrue(response.ok)
-      assert.deepEqual(response.data, accountDetails)
+    it('Should lookup the account details for the currently logged in user', () =>
+      run(service.getAccountDetailsForLoggedInUser, [requestData])(response => {
+        assert.isTrue(response.ok)
+        assert.deepEqual(response.data, accountDetails)
 
-      const getPersonQuery = dbSpy.query.withArgs('Get account details for currently logged in user').lastCall.returnValue
-      assert.equal(getPersonQuery.from.lastCall.args[0], 'User as u')
-      assert.deepEqual(getPersonQuery.leftJoin.lastCall.args, ['Person as p', 'u.id', 'p.userId'])
-      assert.deepEqual(getPersonQuery.where.lastCall.args[0], { 'u.name': requestData.auth.credentials.name })
-    }))
+        const getPersonQuery = dbSpy.query.withArgs(
+          'Get account details for currently logged in user'
+        ).lastCall.returnValue
+        assert.equal(getPersonQuery.from.lastCall.args[0], 'User as u')
+        assert.deepEqual(getPersonQuery.leftJoin.lastCall.args, [
+          'Person as p',
+          'u.id',
+          'p.userId',
+        ])
+        assert.deepEqual(getPersonQuery.where.lastCall.args[0], {
+          'u.name': requestData.auth.credentials.name,
+        })
+      }))
 
-    it('Should respond with an account details object for the currently logged in user', () => run(service.getAccountDetailsForLoggedInUser, [requestData])((response) => {
-      assert.deepEqual(response.data, accountDetails)
-    }))
+    it('Should respond with an account details object for the currently logged in user', () =>
+      run(service.getAccountDetailsForLoggedInUser, [requestData])(response => {
+        assert.deepEqual(response.data, accountDetails)
+      }))
   })
 
   describe('saveContactDetailsForLoggedInUser', () => {
     const requestData = {
       auth: {
         credentials: {
-          name: 'logged-in-user'
-        }
-      }
+          name: 'logged-in-user',
+        },
+      },
     }
     const contactDetails = {
       id: 111,
@@ -93,71 +105,100 @@ describe('account details service', () => {
       countryId: 1,
       stateId: null,
       lgaId: null,
-      zip: '1234'
+      zip: '1234',
     }
     const acountDetails = Object.assign(contactDetails, {
       username: 'logged-in-user',
       userId: 123,
       timezone: 'Pacific Standard Time',
-      culture: 'fr-FR'
+      culture: 'fr-FR',
     })
 
     beforeEach(() => {
-      dbSpy.query.for('Get account details for currently logged in user').resolvesWith(acountDetails)
+      dbSpy.query
+        .for('Get account details for currently logged in user')
+        .resolvesWith(acountDetails)
     })
 
-    it('Should save the user\'s account details which have changed and update updatedOn and updatedBy', () => {
+    it("Should save the user's account details which have changed and update updatedOn and updatedBy", () => {
       const changedRequestProperties = {
         title: 'Job Title has Changed',
         email2: 'secondary@email.com',
-        countryId: 5
+        countryId: 5,
       }
 
       const now = new Date()
       const clock = sinon.useFakeTimers(now.getTime())
 
-      return run(service.saveContactDetailsForLoggedInUser, [{
-        auth: requestData.auth,
-        payload: Object.assign({}, contactDetails, changedRequestProperties)
-      }])(() => {
-        const savePersonQuery = dbSpy.query.withArgs('Save account details for currently logged in user').lastCall.returnValue
+      return run(service.saveContactDetailsForLoggedInUser, [
+        {
+          auth: requestData.auth,
+          payload: Object.assign({}, contactDetails, changedRequestProperties),
+        },
+      ])(() => {
+        const savePersonQuery = dbSpy.query.withArgs(
+          'Save account details for currently logged in user'
+        ).lastCall.returnValue
         assert.equal(savePersonQuery.from.lastCall.args[0], 'Person as p')
-        assert.deepEqual(savePersonQuery.where.lastCall.args[0], { 'p.id': contactDetails.id })
-        assert.deepEqual(savePersonQuery.update.lastCall.args[0],
-          Object.assign({ geographyId }, _.omit(changedRequestProperties, ['countryId']), {
-            updatedOn: now,
-            updatedBy: contactDetails.userId
-          }))
+        assert.deepEqual(savePersonQuery.where.lastCall.args[0], {
+          'p.id': contactDetails.id,
+        })
+        assert.deepEqual(
+          savePersonQuery.update.lastCall.args[0],
+          Object.assign(
+            { geographyId },
+            _.omit(changedRequestProperties, ['countryId']),
+            {
+              updatedOn: now,
+              updatedBy: contactDetails.userId,
+            }
+          )
+        )
         clock.restore()
       })
     })
 
-    it('Should not save anything when no details have changed', () => run(service.saveContactDetailsForLoggedInUser, [{
-      auth: requestData.auth,
-      payload: contactDetails
-    }])(() => {
-      assert.isFalse(dbSpy.query.withArgs('Save account details for currently logged in user').called)
-    }))
+    it('Should not save anything when no details have changed', () =>
+      run(service.saveContactDetailsForLoggedInUser, [
+        {
+          auth: requestData.auth,
+          payload: contactDetails,
+        },
+      ])(() => {
+        assert.isFalse(
+          dbSpy.query.withArgs(
+            'Save account details for currently logged in user'
+          ).called
+        )
+      }))
 
-    it('Should respond with an account details object for the currently logged in user', () => run(service.saveContactDetailsForLoggedInUser, [{
-      auth: requestData.auth,
-      payload: contactDetails
-    }])((response) => {
-      assert.deepEqual(response.data, contactDetails)
-    }))
+    it('Should respond with an account details object for the currently logged in user', () =>
+      run(service.saveContactDetailsForLoggedInUser, [
+        {
+          auth: requestData.auth,
+          payload: contactDetails,
+        },
+      ])(response => {
+        assert.deepEqual(response.data, contactDetails)
+      }))
 
     it('Should return an forbidden response if the account details are not the details of the currently logged in user', () => {
-      dbSpy.query.for('Get account details for currently logged in user').resolvesWith(
-        Object.assign({}, contactDetails, { id: contactDetails.id + 5 }))
+      dbSpy.query
+        .for('Get account details for currently logged in user')
+        .resolvesWith(
+          Object.assign({}, contactDetails, { id: contactDetails.id + 5 })
+        )
 
-      return run(service.saveContactDetailsForLoggedInUser, [{
-        auth: Object.assign({}, requestData.auth, {
-          credentials: {
-            name: 'another-user'
-          }
-        }),
-        payload: contactDetails
-      }])((response) => {
+      return run(service.saveContactDetailsForLoggedInUser, [
+        {
+          auth: Object.assign({}, requestData.auth, {
+            credentials: {
+              name: 'another-user',
+            },
+          }),
+          payload: contactDetails,
+        },
+      ])(response => {
         assert.equal(response.output.statusCode, 403)
         assert.equal(response.output.payload.message, 'Incorrect user details')
       })
@@ -168,14 +209,14 @@ describe('account details service', () => {
     const requestData = {
       auth: {
         credentials: {
-          name: 'logged-in-user'
-        }
-      }
+          name: 'logged-in-user',
+        },
+      },
     }
     const userPreferences = {
       id: 111,
       timezone: 'Eastern Standard Time',
-      culture: 'en-GB'
+      culture: 'en-GB',
     }
     const accountDetails = Object.assign(userPreferences, {
       username: 'logged-in-user',
@@ -189,68 +230,97 @@ describe('account details service', () => {
       countryId: 1,
       stateId: null,
       lgaId: null,
-      zip: '1234'
+      zip: '1234',
     })
 
     beforeEach(() => {
-      dbSpy.query.for('Get account details for currently logged in user').resolvesWith(accountDetails)
+      dbSpy.query
+        .for('Get account details for currently logged in user')
+        .resolvesWith(accountDetails)
     })
 
-    it('Should save the user\'s preferences which have changed and update updatedOn and updatedBy', () => {
+    it("Should save the user's preferences which have changed and update updatedOn and updatedBy", () => {
       const changedRequestProperties = {
         timezone: 'Pacific Standard Time',
-        culture: 'fr-FR'
+        culture: 'fr-FR',
       }
-      const changedDatabaseProperties = _.reduce(changedRequestProperties, (result, value, key) => {
-        result[key] = value
-        return result
-      }, {})
+      const changedDatabaseProperties = _.reduce(
+        changedRequestProperties,
+        (result, value, key) => {
+          result[key] = value
+          return result
+        },
+        {}
+      )
 
       const now = new Date()
       const clock = sinon.useFakeTimers(now.getTime())
 
-      return run(service.saveUserPreferencesForLoggedInUser, [{
-        auth: requestData.auth,
-        payload: Object.assign({}, userPreferences, changedRequestProperties)
-      }])(() => {
-        const savePersonQuery = dbSpy.query.withArgs('Save account details for currently logged in user').lastCall.returnValue
+      return run(service.saveUserPreferencesForLoggedInUser, [
+        {
+          auth: requestData.auth,
+          payload: Object.assign({}, userPreferences, changedRequestProperties),
+        },
+      ])(() => {
+        const savePersonQuery = dbSpy.query.withArgs(
+          'Save account details for currently logged in user'
+        ).lastCall.returnValue
         assert.equal(savePersonQuery.from.lastCall.args[0], 'Person as p')
-        assert.deepEqual(savePersonQuery.where.lastCall.args[0], { 'p.id': userPreferences.id })
-        assert.deepEqual(savePersonQuery.update.lastCall.args[0],
+        assert.deepEqual(savePersonQuery.where.lastCall.args[0], {
+          'p.id': userPreferences.id,
+        })
+        assert.deepEqual(
+          savePersonQuery.update.lastCall.args[0],
           Object.assign({}, changedDatabaseProperties, {
             updatedOn: now,
-            updatedBy: userPreferences.userId
-          }))
+            updatedBy: userPreferences.userId,
+          })
+        )
         clock.restore()
       })
     })
 
-    it('Should not save anything when no details have changed', () => run(service.saveUserPreferencesForLoggedInUser, [{
-      auth: requestData.auth,
-      payload: userPreferences
-    }])(() => {
-      assert.isFalse(dbSpy.query.withArgs('Save account details for currently logged in user').called)
-    }))
+    it('Should not save anything when no details have changed', () =>
+      run(service.saveUserPreferencesForLoggedInUser, [
+        {
+          auth: requestData.auth,
+          payload: userPreferences,
+        },
+      ])(() => {
+        assert.isFalse(
+          dbSpy.query.withArgs(
+            'Save account details for currently logged in user'
+          ).called
+        )
+      }))
 
-    it('Should respond with an account details object for the currently logged in user', () => run(service.saveUserPreferencesForLoggedInUser, [{
-      auth: requestData.auth,
-      payload: userPreferences
-    }])((response) => {
-      assert.deepEqual(response.data, userPreferences)
-    }))
+    it('Should respond with an account details object for the currently logged in user', () =>
+      run(service.saveUserPreferencesForLoggedInUser, [
+        {
+          auth: requestData.auth,
+          payload: userPreferences,
+        },
+      ])(response => {
+        assert.deepEqual(response.data, userPreferences)
+      }))
 
     it('Should return an bad request response if the account details are not the details of the currently logged in user', () => {
-      dbSpy.query.for('Get account details for currently logged in user').resolvesWith(
-        Object.assign({}, userPreferences, { id: userPreferences.id + 5 }))
+      dbSpy.query
+        .for('Get account details for currently logged in user')
+        .resolvesWith(
+          Object.assign({}, userPreferences, { id: userPreferences.id + 5 })
+        )
 
-      return run(service.saveUserPreferencesForLoggedInUser, [{
-        auth: Object.assign({}, requestData.auth, {
-          credentials: {
-            name: 'another-user'
-          }
-        }),
-        payload: userPreferences
-      }])((response) => {
+      return run(service.saveUserPreferencesForLoggedInUser, [
+        {
+          auth: Object.assign({}, requestData.auth, {
+            credentials: {
+              name: 'another-user',
+            },
+          }),
+          payload: userPreferences,
+        },
+      ])(response => {
         assert.equal(response.output.statusCode, 403)
         assert.equal(response.output.payload.message, 'Incorrect user details')
       })
