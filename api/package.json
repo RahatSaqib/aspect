@@ -16,7 +16,7 @@
     "prestart:background": "fsys --task=remove --fileFolder=out.log && fsys --task=remove --fileFolder=err.log",
     "precommit": "lint-staged",
     "prettier": "prettier --no-semi --single-quote --trailing-comma=es5",
-    "prettier:write": "npm run prettier -- --write \"./src/**/*.js\"",
+    "prettier:write": "npm run prettier -- --write \"{migrations,seeds,src,test}/**/*.js\"",
     "start": "node src/server.js",
     "start:background": "forever start -o out.log -e err.log src/server.js",
     "stop:background": "forever stop src/server.js",
