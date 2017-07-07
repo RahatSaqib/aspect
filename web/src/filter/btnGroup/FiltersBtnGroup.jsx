@@ -116,13 +116,9 @@ const filtersOrdering = {
 const makeButton = labelFn => (props, filterKey) =>
   <Button
     key={filterKey}
-    className={cssClasses('FiltersBtnGroup__Child')}
+    className={cssClasses('Button')}
     raised
     onClick={() => props.removeListFilterItem(filterKey)}
-    theme={{
-      neutral: cssClasses('Button--neutral'),
-      raised: cssClasses('Button--raised'),
-    }}
   >
     {labelFn(props, props.filters[filterKey])}
     <MdClose className={cssClasses('Button__icon')} />
