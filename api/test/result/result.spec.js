@@ -220,63 +220,82 @@ describe('Result routes', () => {
             })
         })
     })
-    it('Should update "deliver to terminal" given a resultId and boolean', (done) => {
-      // set to true
+    it('Updating "deliver to terminal" should fail if not in status "Validated"', (done) => {
+      // try settings
       server
         .put(`${path}/deliver-to-terminal/${resultId}`)
         .send({ deliverToTerminal: true })
         .set('Authorization', `Bearer${shared.token}`)
         .end((err, res) => {
-          assert.equal(res.status, 200)
-          assert.typeOf(res.body, 'Object')
-          assert.property(res.body, 'data')
-          assert.typeOf(res.body.data, 'Object')
-          assert.typeOf(res.body.data.assay, 'Object')
-          assert.typeOf(res.body.data.assay.resultDataSchema, 'Object')
-          assert.typeOf(res.body.data.resultData, 'Object')
-          const resultFieldNames = ['id', 'endedOn', 'deviceName', 'countryName',
-            'stateName', 'lgaName', 'resultCategory1Name', 'resultCategory2Name',
-            'resultData', 'sampleId', 'sampleGroup', 'patientId', 'siteName', 'assayVersion',
-            'consumableSerial', 'consumableLot', 'consumableExpirationDate',
-            'instrumentSerial', 'moduleName', 'moduleSerial', 'researchId',
-            'senderVersion', 'senderOperator', 'notes', 'errorCode', 'errorNotes',
-            'createdOn', 'updatedOn', 'assayId', 'assay']
-          _.each(resultFieldNames, (fieldName) => {
-            assert.property(res.body.data, fieldName)
-          })
+          assert.equal(res.status, 400)
+          done()
+        })
+    })
+    it('Should update "deliver to terminal" given a resultId and boolean if in status "Validated"', (done) => {
+      // get first result in status "Validated"
+      server
+        .get(`${path}?workflowStatusId=6`)
+        .set('Authorization', `Bearer ${shared.token}`)
+        .end((err, res) => {
+          resultId = res.body.data[0].id
 
-          // check that flag was set to true
-          assert.equal(res.body.data.deliverToTerminal, 1)
-
-          // ...and back to false
+          // set to true
           server
-            .put(`${path}/deliver-to-terminal/${resultId}`)
-            .send({ deliverToTerminal: false })
-            .set('Authorization', `Bearer${shared.token}`)
-            .end((err, res) => {
-              assert.equal(res.status, 200)
-              assert.typeOf(res.body, 'Object')
-              assert.property(res.body, 'data')
-              assert.typeOf(res.body.data, 'Object')
-              assert.typeOf(res.body.data.assay, 'Object')
-              assert.typeOf(res.body.data.assay.resultDataSchema, 'Object')
-              assert.typeOf(res.body.data.resultData, 'Object')
-              const resultFieldNames = ['id', 'endedOn', 'deviceName', 'countryName',
-                'stateName', 'lgaName', 'resultCategory1Name', 'resultCategory2Name',
-                'resultData', 'sampleId', 'sampleGroup', 'patientId', 'siteName', 'assayVersion',
-                'consumableSerial', 'consumableLot', 'consumableExpirationDate',
-                'instrumentSerial', 'moduleName', 'moduleSerial', 'researchId',
-                'senderVersion', 'senderOperator', 'notes', 'errorCode', 'errorNotes',
-                'createdOn', 'updatedOn', 'assayId', 'assay']
-              _.each(resultFieldNames, (fieldName) => {
-                assert.property(res.body.data, fieldName)
-              })
-
-              // check that flag was set to false
-              assert.equal(res.body.data.deliverToTerminal, 0)
-
-              done()
+          .put(`${path}/deliver-to-terminal/${resultId}`)
+          .send({ deliverToTerminal: true })
+          .set('Authorization', `Bearer${shared.token}`)
+          .end((err, res) => {
+            assert.equal(res.status, 200)
+            assert.typeOf(res.body, 'Object')
+            assert.property(res.body, 'data')
+            assert.typeOf(res.body.data, 'Object')
+            assert.typeOf(res.body.data.assay, 'Object')
+            assert.typeOf(res.body.data.assay.resultDataSchema, 'Object')
+            assert.typeOf(res.body.data.resultData, 'Object')
+            const resultFieldNames = ['id', 'endedOn', 'deviceName', 'countryName',
+              'stateName', 'lgaName', 'resultCategory1Name', 'resultCategory2Name',
+              'resultData', 'sampleId', 'sampleGroup', 'patientId', 'siteName', 'assayVersion',
+              'consumableSerial', 'consumableLot', 'consumableExpirationDate',
+              'instrumentSerial', 'moduleName', 'moduleSerial', 'researchId',
+              'senderVersion', 'senderOperator', 'notes', 'errorCode', 'errorNotes',
+              'createdOn', 'updatedOn', 'assayId', 'assay']
+            _.each(resultFieldNames, (fieldName) => {
+              assert.property(res.body.data, fieldName)
             })
+
+            // check that flag was set to true
+            assert.equal(res.body.data.deliverToTerminal, 1)
+
+            // ...and back to false
+            server
+              .put(`${path}/deliver-to-terminal/${resultId}`)
+              .send({ deliverToTerminal: false })
+              .set('Authorization', `Bearer${shared.token}`)
+              .end((err, res) => {
+                assert.equal(res.status, 200)
+                assert.typeOf(res.body, 'Object')
+                assert.property(res.body, 'data')
+                assert.typeOf(res.body.data, 'Object')
+                assert.typeOf(res.body.data.assay, 'Object')
+                assert.typeOf(res.body.data.assay.resultDataSchema, 'Object')
+                assert.typeOf(res.body.data.resultData, 'Object')
+                const resultFieldNames = ['id', 'endedOn', 'deviceName', 'countryName',
+                  'stateName', 'lgaName', 'resultCategory1Name', 'resultCategory2Name',
+                  'resultData', 'sampleId', 'sampleGroup', 'patientId', 'siteName', 'assayVersion',
+                  'consumableSerial', 'consumableLot', 'consumableExpirationDate',
+                  'instrumentSerial', 'moduleName', 'moduleSerial', 'researchId',
+                  'senderVersion', 'senderOperator', 'notes', 'errorCode', 'errorNotes',
+                  'createdOn', 'updatedOn', 'assayId', 'assay']
+                _.each(resultFieldNames, (fieldName) => {
+                  assert.property(res.body.data, fieldName)
+                })
+
+                // check that flag was set to false
+                assert.equal(res.body.data.deliverToTerminal, 0)
+
+                done()
+              })
+          })
         })
     })
   })
