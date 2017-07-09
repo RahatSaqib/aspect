@@ -21,6 +21,7 @@ const SELECT_SHOW_FIELDS = [
   'c.name as countryName', 'st.name as stateName', 'lg.name as lgaName',
   'rc1.name as resultCategory1Name', 'rc2.name as resultCategory2Name',
   'r.resultWorkflowStatusId', 'rs.name as resultWorkflowStatus',
+  'rs.externalId as resultWorkflowStatusExternalId',
   'r.resultData', 'r.siteId', 'si.name as siteName', 'r.assayVersion',
   'r.consumableSerial', 'r.consumableLot', 'r.consumableExpirationDate', 'r.instrumentSerial',
   'r.moduleName', 'r.moduleSerial', 'r.researchId', 'r.senderVersion', 'r.senderOperator',
