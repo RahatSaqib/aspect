@@ -32,7 +32,7 @@ const createFieldListHandlers = _fp.reduce(
           },
         },
         handlers: {
-          [`onChange${fieldNameUpperFirst}`](...args) {
+          [`on${fieldNameUpperFirst}Change`](...args) {
             const value = valueFromChangeEvent(...args)
             const nextValues = {
               ...this.props.values,
