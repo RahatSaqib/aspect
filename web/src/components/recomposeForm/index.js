@@ -141,6 +141,10 @@ const recomposeForm = ({
       this.handlers = _fp.mapValues(_fp.bind(_fp.placeholder, this), handlers)
     }
 
+    componentWillUnmount() {
+      this.handleFormStateChange = _fp.noop
+    }
+
     validateFields = (values = this.props.values) => {
       const errors = validate(values)
 
