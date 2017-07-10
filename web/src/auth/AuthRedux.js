@@ -112,10 +112,7 @@ export function closeDrawer() {
   }
 }
 
-export function loginStart(login) {
-  const user = login.get('user')
-  const password = login.get('password')
-
+export function loginStart({ user, password }) {
   return function(dispatch) {
     // First dispatch: the app state is updated to inform
     // that the API call is starting.

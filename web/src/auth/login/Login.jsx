@@ -1,25 +1,25 @@
 import _ from 'lodash'
 import classnames from 'classnames/bind'
-import PropTypes from 'prop-types'
 import React from 'react'
-import { compose, setPropTypes, withProps, pure } from 'recompose'
+import { compose, withProps, withState, pure } from 'recompose'
 import { bindActionCreators } from 'redux'
 import { connect } from 'react-redux'
-import { reduxForm } from 'redux-form/immutable'
 import Helmet from 'react-helmet'
-import { injectIntl, defineMessages, intlShape } from 'react-intl'
+import { injectIntl, defineMessages } from 'react-intl'
 import { Link } from 'react-router-dom'
 import { Button } from 'react-toolbox/lib/button'
 import { Card } from 'react-toolbox/lib/card'
 import { ProgressBar } from 'react-toolbox/lib/progress_bar'
+import { Input } from 'react-toolbox/lib/input'
 
 // Our own imports
 import { Unit } from '../../components/pureGrids'
-import TextInput from '../../components/shared/TextInput'
+import recomposeForm from '../../components/recomposeForm'
 import AppNotificationSnackBar from '../../appNotification/AppNotificationSnackBar'
 import AppNotificationDialog from '../../appNotification/AppNotificationDialog'
-import { ContactDetails } from '../../person/PersonRedux'
 import { loginStart } from '../AuthRedux'
+
+const cssClasses = classnames.bind(require('./Login.css'))
 
 const messages = defineMessages({
   title: {
@@ -27,18 +27,69 @@ const messages = defineMessages({
     defaultMessage: 'Login',
   },
   reasonIdle: {
-    id: 'shared.Login.reasonIdle',
+    id: 'pages.Login.reasonIdle',
     defaultMessage: 'You were logged out due to inactivity',
   },
+  user: {
+    id: 'pages.Login.user',
+    defaultMessage: 'Username',
+  },
+  password: {
+    id: 'pages.Login.password',
+    defaultMessage: 'Password',
+  },
+  login: {
+    id: 'pages.Login.login',
+    defaultMessage: 'Login',
+  },
   resetPasswordLink: {
-    id: 'shared.Login.resetPasswordButton',
+    id: 'pages.Login.resetPasswordLink',
     defaultMessage: 'Forgot Password?',
   },
 })
 
-const cssClasses = classnames.bind(require('./Login.css'))
+const enhance = compose(
+  pure,
+  injectIntl,
+  withProps(({ location }) => ({
+    searchParams: new URLSearchParams(location.search),
+  })),
+  connect(
+    null,
+    bindActionCreators.bind(null, {
+      onSubmit: loginStart,
+    })
+  ),
+  withState('values', 'onChange', {
+    user: '',
+    password: '',
+  }),
+  recomposeForm({
+    fields: [
+      {
+        fieldName: 'user',
+        valueFromChangeEvent: _.identity,
+      },
+      {
+        fieldName: 'password',
+        valueFromChangeEvent: _.identity,
+      },
+    ],
+    validate(values) {
+      const errors = {}
+      if (values) {
+        if (!values.user) {
+          errors.user = 'Please enter your username'
+        }
+        if (!values.password) {
+          errors.password = 'Please enter your password'
+        }
+      }
+      return errors
+    },
+  })
+)
 
-const LinearProgress = <ProgressBar type="linear" />
 const AspectLogo = () =>
   <img
     className={cssClasses('Logo__Image')}
@@ -46,59 +97,15 @@ const AspectLogo = () =>
     alt="Aspect"
   />
 
-const enhance = compose(
-  setPropTypes({
-    location: PropTypes.object.isRequired,
-  }),
-  pure,
-  injectIntl,
-  withProps(({ location }) => ({
-    searchParams: new URLSearchParams(location.search),
-  })),
-  connect(
-    state => ({
-      initialValues: {
-        user: state.user.name,
-      },
-    }),
-    dispatch =>
-      bindActionCreators(
-        {
-          onSubmit: loginStart,
-        },
-        dispatch
-      )
-  ),
-  reduxForm({
-    form: 'login',
-    validate(values) {
-      const errors = {}
-      if (values) {
-        if (!values.get('user')) {
-          errors.user = 'Please enter your username'
-        }
-        if (!values.get('password')) {
-          errors.password = 'Please enter your password'
-        }
-      }
-      return errors
-    },
-  }),
-  setPropTypes({
-    intl: intlShape.isRequired,
-    handleSubmit: PropTypes.func.isRequired,
-    pristine: PropTypes.bool.isRequired,
-    submitting: PropTypes.bool.isRequired,
-    initialValues: PropTypes.objectOf(ContactDetails).isRequired,
-  })
-)
-
 export const Login = ({
   intl,
   searchParams,
+  form,
+  meta,
+  values,
+  onUserChange,
+  onPasswordChange,
   handleSubmit,
-  submitting,
-  initialValues,
 }) =>
   <div className={cssClasses('Background')}>
     <Helmet title="Login" titleTemplate="%s - Aspect" defaultTitle="Aspect" />
@@ -119,30 +126,34 @@ export const Login = ({
                   )}
                 </div>
               : null}
-            <TextInput
+            <Input
+              type="text"
+              name="user"
+              label={intl.formatMessage(messages.user)}
+              value={values.user}
+              onChange={onUserChange}
+              error={meta.user.touched && meta.user.error}
               theme={{
                 label: cssClasses('Form__Input'),
               }}
-              name="user"
-              label="Username"
-              fullWidth
-              autoFocus={_.isEmpty(initialValues.get('user'))}
             />
-            <TextInput
-              theme={{
-                label: cssClasses('Form--input'),
-              }}
-              name="password"
+            <Input
               type="password"
-              label="Password"
-              fullWidth
-              autoFocus={!_.isEmpty(initialValues.get('user'))}
+              name="password"
+              label={intl.formatMessage(messages.password)}
+              value={values.password}
+              onChange={onPasswordChange}
+              error={meta.password.touched && meta.password.error}
+              theme={{
+                label: cssClasses('Form__Input'),
+              }}
             />
             <div className={cssClasses('Form__ActionRow')}>
               <Button
-                className={cssClasses('Button')}
-                label="LogIn"
                 type="submit"
+                className={cssClasses('Button')}
+                label={intl.formatMessage(messages.login)}
+                disabled={!form.valid}
                 raised
                 primary
               />
@@ -151,7 +162,7 @@ export const Login = ({
               </Link>
             </div>
           </form>
-          {submitting && <LinearProgress />}
+          {form.submitting && <ProgressBar type="linear" />}
         </Card>
       </Unit>
     </div>
