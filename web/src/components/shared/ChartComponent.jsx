@@ -1,7 +1,7 @@
 import React, { Component } from 'react'
 import PropTypes from 'prop-types'
-import BarGraph from './BarGraph'
-import ColumnGraph from './ColumnGraph'
+import BarChart from './BarChart'
+import ColumnChart from './ColumnChart'
 import Alert from './Alert'
 import './ChartComponent.css'
 
@@ -10,7 +10,7 @@ class ChartComponent extends Component {
     switch (this.props.type) {
       case 'column':
         return (
-          <ColumnGraph
+          <ColumnChart
             data={this.props.data}
             color={this.props.color}
             hideTicks={this.props.hideTicks}
@@ -25,7 +25,7 @@ class ChartComponent extends Component {
       case 'bar':
       default:
         return (
-          <BarGraph
+          <BarChart
             data={this.props.data}
             color={this.props.color}
             hideTicks={this.props.hideTicks}

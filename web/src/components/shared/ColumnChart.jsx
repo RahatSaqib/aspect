@@ -6,7 +6,7 @@ import { Bar } from '@vx/shape'
 import { AxisLeft, AxisBottom, AxisRight } from '@vx/axis'
 import { ScaleSVG } from '@vx/responsive'
 
-class ColumnGraph extends Component {
+class ColumnChart extends Component {
   render() {
     function add(a, b) {
       return a + b
@@ -182,7 +182,7 @@ class ColumnGraph extends Component {
   }
 }
 
-ColumnGraph.propTypes = {
+ColumnChart.propTypes = {
   data: PropTypes.arrayOf(PropTypes.object).isRequired,
   hideLabel: PropTypes.bool.isRequired,
   rightLabel: PropTypes.bool.isRequired,
@@ -194,4 +194,4 @@ ColumnGraph.propTypes = {
   styleWide: PropTypes.bool.isRequired,
 }
 
-export default ColumnGraph
+export default ColumnChart
