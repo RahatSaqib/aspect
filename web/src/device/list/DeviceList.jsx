@@ -13,13 +13,13 @@ import NavTitle from '../../globals/components/NavTitle'
 import BrowseFilters from '../../globals/components/BrowseFilters'
 import EmptyList from '../../components/shared/EmptyList'
 import TablePaginator from '../../components/shared/TablePaginator'
+import { configureListFilter } from '../../filter/FilterRedux'
+import { fetchListFilteredDevices, exportDevices } from '../DeviceRedux'
 import {
   DeviceDataTable,
   DeviceDataTableHead,
   DeviceDataTableRow,
-} from '../../device/list/DeviceDataTable'
-import { configureListFilter } from '../../filter/FilterRedux'
-import { fetchListFilteredDevices, exportDevices } from '../DeviceRedux'
+} from './DeviceDataTable'
 
 const cssClasses = classnames.bind(require('./DeviceList.css'))
 
@@ -256,36 +256,17 @@ export const DeviceList = ({
               },
             ]}
           />
-          {items.currentIdList.map(id => items.byId.get(id)).map(device =>
-            <DeviceDataTableRow
-              key={device.get('id')}
-              onClick={onRowClick}
-              data-device-Id={device.get('id')}
-              columns={[
-                {
-                  column: device.get('name'),
-                },
-                {
-                  column: device.get('state'),
-                },
-                {
-                  column: device.get('status'),
-                },
-                {
-                  column: intl.formatRelative(device.get('createdOn')),
-                },
-                {
-                  column: intl.formatRelative(device.get('lastSeen')),
-                },
-                {
-                  column: intl.formatNumber(device.get('lastMonth')),
-                },
-                {
-                  column: intl.formatNumber(device.get('thisMonth')),
-                },
-              ]}
-            />
-          )}
+          {items.currentIdList
+            .map(id => items.byId.get(id))
+            .map(device =>
+              <DeviceDataTableRow
+                key={device.get('id')}
+                intl={intl}
+                device={device}
+                onClick={onRowClick}
+                data-device-Id={device.get('id')}
+              />
+            )}
         </DeviceDataTable>
         <TablePaginator
           className={cssClasses('TablePaginator')}

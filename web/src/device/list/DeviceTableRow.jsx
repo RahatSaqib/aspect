@@ -9,20 +9,32 @@ const cssClasses = classnames.bind(
 
 const enhance = _.identity
 
-const DeviceTableRow = ({ columns, ...restProps }) =>
+const DeviceTableRow = ({ intl, device, ...restProps }) =>
   <TableRow
     {...restProps}
     className={cssClasses(restProps.className, 'TableRow')}
   >
-    {columns.map(({ key = index, column, hoverLabel }, index) =>
-      <TableCell key={key} className={cssClasses('TableCell')}>
-        {column}
-        {hoverLabel &&
-          <small className={cssClasses('TableCell__small')}>
-            {hoverLabel}
-          </small>}
-      </TableCell>
-    )}
+    <TableCell className={cssClasses('TableCell')}>
+      {device.get('name')}
+    </TableCell>
+    <TableCell className={cssClasses('TableCell')}>
+      {device.get('state')}
+    </TableCell>
+    <TableCell className={cssClasses('TableCell')}>
+      {device.get('status')}
+    </TableCell>
+    <TableCell className={cssClasses('TableCell')}>
+      {intl.formatRelative(device.get('createdOn'))}
+    </TableCell>
+    <TableCell className={cssClasses('TableCell')}>
+      {intl.formatRelative(device.get('lastSeen'))}
+    </TableCell>
+    <TableCell className={cssClasses('TableCell')}>
+      {intl.formatNumber(device.get('lastMonth'))}
+    </TableCell>
+    <TableCell className={cssClasses('TableCell')}>
+      {intl.formatNumber(device.get('thisMonth'))}
+    </TableCell>
   </TableRow>
 
 export default enhance(DeviceTableRow)
