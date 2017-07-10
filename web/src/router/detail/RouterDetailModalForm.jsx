@@ -48,6 +48,7 @@ const enhance = compose(
       },
       {
         fieldName: 'siteId',
+        // FIXME: search functionality is broken
         valueFromChangeEvent: _fp.identity,
       },
       {
