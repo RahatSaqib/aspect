@@ -10,7 +10,10 @@
 
   --aspect-color-grey-2: #444853;
   --aspect-color-grey-4: #91949d;
+  --aspect-color-grey-5: #b7b7be;
+  --aspect-color-grey-6: #dadbdf;
   --aspect-color-grey-7: #eef1f8;
+  --aspect-color-grey-8: #f6f7fb;
 
   --z-index-overlay: 900;
   --z-index-popover: 1000;

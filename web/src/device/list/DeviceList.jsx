@@ -1,19 +1,24 @@
-import PropTypes from 'prop-types'
 import classnames from 'classnames/bind'
-import React, { PureComponent } from 'react'
-import { compose, setPropTypes, pure } from 'recompose'
-import { injectIntl, defineMessages, intlShape } from 'react-intl'
+import React from 'react'
+import { compose, withHandlers, lifecycle, pure } from 'recompose'
+import { injectIntl, defineMessages } from 'react-intl'
 import { bindActionCreators } from 'redux'
 import { connect } from 'react-redux'
 import Helmet from 'react-helmet'
+import { Card } from 'react-toolbox/lib/card'
+import { ProgressBar } from 'react-toolbox/lib/progress_bar'
 
 // Our own imports
 import NavTitle from '../../globals/components/NavTitle'
 import BrowseFilters from '../../globals/components/BrowseFilters'
-import { Items } from '../../shared/metaReducers/items'
-import { Table } from '../../shared/metaReducers/table'
-import DataTableWithEmptyList from '../../components/shared/DataTableWithEmptyList'
-import { ListFilter, configureListFilter } from '../../filter/FilterRedux'
+import EmptyList from '../../components/shared/EmptyList'
+import TablePaginator from '../../components/shared/TablePaginator'
+import {
+  DeviceDataTable,
+  DeviceDataTableHead,
+  DeviceDataTableRow,
+} from '../../device/list/DeviceDataTable'
+import { configureListFilter } from '../../filter/FilterRedux'
 import { fetchListFilteredDevices, exportDevices } from '../DeviceRedux'
 
 const cssClasses = classnames.bind(require('./DeviceList.css'))
@@ -59,12 +64,16 @@ const messages = defineMessages({
     id: 'pages.DeviceList.thisMonth',
     defaultMessage: 'This Month',
   },
+  paginatorStatus: {
+    id: 'pages.DeviceList.paginatorStatus',
+    defaultMessage: `Showing {firstItemIndex}-{lastItemIndex} of {itemCount, plural,
+      one {# device}
+      other {# devices}
+    }`,
+  },
 })
 
 const enhance = compose(
-  setPropTypes({
-    location: PropTypes.object.isRequired,
-  }),
   pure,
   injectIntl,
   connect(
@@ -80,187 +89,215 @@ const enhance = compose(
       exportDevices,
     })
   ),
-  setPropTypes({
-    intl: intlShape.isRequired,
-    listFilter: PropTypes.objectOf(ListFilter).isRequired,
-    items: PropTypes.objectOf(Items).isRequired,
-    table: PropTypes.objectOf(Table).isRequired,
-    configureListFilter: PropTypes.func.isRequired,
-    fetchListFilteredDevices: PropTypes.func.isRequired,
-    exportDevices: PropTypes.func.isRequired,
+  withHandlers({
+    onExportClick: ({ exportDevices, table }) => (
+      formatType,
+      receivedExportResponse
+    ) =>
+      exportDevices(
+        { hasResults: 1 },
+        formatType,
+        table.sortCol,
+        table.sortDir,
+        table.page,
+        table.pageSize,
+        receivedExportResponse
+      ),
+    onHeadColumnClick: ({ fetchListFilteredDevices, table }) => ({
+      currentTarget: { dataset: { column: nextSortCol } },
+    }) =>
+      fetchListFilteredDevices(
+        { hasResults: 1 },
+        nextSortCol,
+        table.sortCol === nextSortCol
+          ? table.sortDir === 'asc' ? 'desc' : 'asc'
+          : table.sortDir,
+        table.page,
+        table.pageSize
+      ),
+    onRowClick: ({ history }) => ({
+      currentTarget: { dataset: { deviceId } },
+    }) => history.push(`/browse/device/${deviceId}`),
+    onPageChange: ({ fetchListFilteredDevices, table }) => nextPage =>
+      fetchListFilteredDevices(
+        { hasResults: 1 },
+        table.sortCol,
+        table.sortDir,
+        nextPage,
+        table.pageSize
+      ),
+    onPageSizeChange: ({ fetchListFilteredDevices, table }) => nextPageSize =>
+      fetchListFilteredDevices(
+        { hasResults: 1 },
+        table.sortCol,
+        table.sortDir,
+        0,
+        nextPageSize
+      ),
+  }),
+  lifecycle({
+    componentWillMount() {
+      this.props.configureListFilter({
+        assayAndResultCategory: true,
+        geography: true,
+        siteName: true,
+        date: true,
+        deviceName: true,
+        deviceStatus: true,
+      })
+    },
+
+    componentDidMount() {
+      this.props.onPageChange(0)
+    },
+
+    componentWillReceiveProps(nextProps) {
+      if (this.props.listFilter !== nextProps.listFilter) {
+        this.props.onPageChange(0)
+      }
+    },
   })
 )
 
-const DEVICE_TABLE_COLUMN_SPACING = 12
-const DEVICE_TABLE_NAME_COLUMN_WIDTH = '30%'
-const DEVICE_TABLE_STATUS_COLUMN_WIDTH = '15%'
-
-export class DeviceList extends PureComponent {
-  static contextTypes = {
-    muiTheme: PropTypes.object.isRequired,
-  }
-
-  static childContextTypes = {
-    muiTheme: PropTypes.object.isRequired,
-  }
-
-  getChildContext() {
-    const { muiTheme } = this.context
-
-    return {
-      muiTheme: {
-        ...muiTheme,
-        tableHeaderColumn: {
-          // Overrides the style used by <material-ui/Table/TableHeaderColumn /> in <DataTable />
-          ...muiTheme.tableHeaderColumn,
-          spacing: DEVICE_TABLE_COLUMN_SPACING,
-        },
-        tableRowColumn: {
-          // Overrides the style used by <material-ui/Table/TableRowColumn /> in <DataTable />
-          ...muiTheme.tableRowColumn,
-          spacing: DEVICE_TABLE_COLUMN_SPACING,
-        },
-      },
-    }
-  }
-
-  componentWillMount() {
-    const { configureListFilter } = this.props
-    configureListFilter({
-      assayAndResultCategory: true,
-      geography: true,
-      siteName: true,
-      date: true,
-      deviceName: true,
-      deviceStatus: true,
-    })
-  }
-
-  componentDidMount() {
-    this.handleFetch()
-  }
-
-  componentWillReceiveProps(nextProps) {
-    if (this.props.listFilter !== nextProps.listFilter) {
-      this.handleFetch()
-    }
-  }
-
-  handleItemIdSelection = deviceId => {
-    this.props.history.push(`/browse/device/${deviceId}`)
-  }
-
-  handleFetch = (...args) => {
-    this.props.fetchListFilteredDevices({ hasResults: 1 }, ...args)
-  }
-
-  clickDeviceListExport = (formatType, receivedExportResponse) => {
-    this.props.exportDevices(
-      { hasResults: 1 },
-      formatType,
-      this.props.table.sortCol,
-      this.props.table.sortDir,
-      this.props.table.page,
-      this.props.table.pageSize,
-      receivedExportResponse
-    )
-  }
-
-  render() {
-    const { intl } = this.props
-    const { formatMessage, formatRelative, formatNumber } = intl
-    const columns = [
-      {
-        db: 'name',
-        title: formatMessage(messages.deviceName),
-        extraProps: { style: { width: DEVICE_TABLE_NAME_COLUMN_WIDTH } },
-      },
-      {
-        db: 'state',
-        title: formatMessage(messages.state),
-      },
-      {
-        db: 'status',
-        title: formatMessage(messages.status),
-        hideOnXs: true,
-        extraProps: { style: { width: DEVICE_TABLE_STATUS_COLUMN_WIDTH } },
-      },
-      {
-        db: 'createdOn',
-        title: formatMessage(messages.reportingFor),
-        hideOnXs: true,
-        format: data => formatRelative(data),
-      },
-      {
-        db: 'lastSeen',
-        title: formatMessage(messages.lastSeen),
-        hideOnXs: true,
-        format: data => formatRelative(data),
-      },
-      {
-        db: 'lastMonth',
-        extraProps: { style: { paddingRight: 2 } },
-        title: (
-          <span>
-            <span
-              style={{
-                display: 'inline-block',
-                width: '100%',
-                textAlign: 'right',
-              }}
-            >
-              {formatMessage(messages.numberOfTestsLeft)}
-            </span>
-            <br />
-            {formatMessage(messages.lastMonth)}
-          </span>
-        ),
-        format: data => formatNumber(data),
-      },
-      {
-        db: 'thisMonth',
-        extraProps: { style: { paddingLeft: 2 } },
-        title: (
-          <span>
-            <span style={{ display: 'inline-block', textAlign: 'left' }}>
-              {formatMessage(messages.numberOfTestsRight)}
-            </span>
-            <br />
-            {formatMessage(messages.thisMonth)}
-          </span>
-        ),
-        format: data => formatNumber(data),
-      },
-    ]
-    const askConfirmationForExport = this.props.table.total > 1000
-
-    return (
-      <div className={cssClasses('Content')}>
-        <Helmet
-          title={formatMessage(messages.devicesTitle)}
-          titleTemplate="%s - Aspect"
-          defaultTitle="Aspect"
+export const DeviceList = ({
+  intl,
+  history,
+  location,
+  table,
+  items,
+  //
+  onExportClick,
+  onHeadColumnClick,
+  onRowClick,
+  onPageChange,
+  onPageSizeChange,
+}) =>
+  <div className={cssClasses('Container')}>
+    <Helmet
+      title={intl.formatMessage(messages.devicesTitle)}
+      titleTemplate="%s - Aspect"
+      defaultTitle="Aspect"
+    />
+    <NavTitle title={intl.formatMessage(messages.devicesTitle)} />
+    <BrowseFilters
+      history={history}
+      location={location}
+      intl={intl}
+      onClickExport={onExportClick}
+      askConfirmationForExport={table.total > 1000}
+    />
+    {items.currentIdList.isEmpty() && <EmptyList />}
+    {!items.currentIdList.isEmpty() &&
+      <Card className={cssClasses('Card')}>
+        <ProgressBar
+          mode={table.loading ? 'indeterminate' : 'determinate'}
+          disabled={!table.loading}
+          className={cssClasses('ProgressBar')}
+          theme={{
+            indeterminate: cssClasses('ProgressBar--indeterminate'),
+          }}
         />
-        <NavTitle title={formatMessage(messages.devicesTitle)} />
-        <BrowseFilters
-          history={this.props.history}
-          location={this.props.location}
+        <DeviceDataTable
+          selectable={false}
+          className={cssClasses('DeviceDataTable')}
+        >
+          <DeviceDataTableHead
+            sortColumnKey={table.sortCol}
+            sortColumnDir={table.sortDir}
+            columns={[
+              {
+                key: 'name',
+                label: intl.formatMessage(messages.deviceName),
+                onClick: onHeadColumnClick,
+              },
+              {
+                key: 'state',
+                label: intl.formatMessage(messages.state),
+                onClick: onHeadColumnClick,
+              },
+              {
+                key: 'status',
+                label: intl.formatMessage(messages.status),
+                onClick: onHeadColumnClick,
+              },
+              {
+                key: 'createdOn',
+                label: intl.formatMessage(messages.reportingFor),
+                onClick: onHeadColumnClick,
+              },
+              {
+                key: 'lastSeen',
+                label: intl.formatMessage(messages.lastSeen),
+                onClick: onHeadColumnClick,
+              },
+              {
+                key: 'lastMonth',
+                className: cssClasses('DeviceDataTableHead__Tests--left'),
+                onClick: onHeadColumnClick,
+                label: (
+                  <span>
+                    {intl.formatMessage(messages.numberOfTestsLeft)}
+                    <br />
+                    {intl.formatMessage(messages.lastMonth)}
+                  </span>
+                ),
+              },
+              {
+                key: 'thisMonth',
+                className: cssClasses('DeviceDataTableHead__Tests--right'),
+                onClick: onHeadColumnClick,
+                label: (
+                  <span>
+                    {intl.formatMessage(messages.numberOfTestsRight)}
+                    <br />
+                    {intl.formatMessage(messages.thisMonth)}
+                  </span>
+                ),
+              },
+            ]}
+          />
+          {items.currentIdList.map(id => items.byId.get(id)).map(device =>
+            <DeviceDataTableRow
+              key={device.get('id')}
+              onClick={onRowClick}
+              data-device-Id={device.get('id')}
+              columns={[
+                {
+                  column: device.get('name'),
+                },
+                {
+                  column: device.get('state'),
+                },
+                {
+                  column: device.get('status'),
+                },
+                {
+                  column: intl.formatRelative(device.get('createdOn')),
+                },
+                {
+                  column: intl.formatRelative(device.get('lastSeen')),
+                },
+                {
+                  column: intl.formatNumber(device.get('lastMonth')),
+                },
+                {
+                  column: intl.formatNumber(device.get('thisMonth')),
+                },
+              ]}
+            />
+          )}
+        </DeviceDataTable>
+        <TablePaginator
+          className={cssClasses('TablePaginator')}
           intl={intl}
-          onClickExport={this.clickDeviceListExport}
-          askConfirmationForExport={askConfirmationForExport}
+          paginatorStatus={messages.paginatorStatus}
+          page={table.page}
+          pageSize={table.pageSize}
+          total={table.total}
+          onPageChange={onPageChange}
+          onPageSizeChange={onPageSizeChange}
         />
-        <DataTableWithEmptyList
-          selectable
-          handleItemIdSelection={this.handleItemIdSelection}
-          handleFetch={this.handleFetch}
-          items={this.props.items}
-          table={this.props.table}
-          columns={columns}
-          intl={this.props.intl}
-        />
-      </div>
-    )
-  }
-}
+      </Card>}
+  </div>
 
 export default enhance(DeviceList)

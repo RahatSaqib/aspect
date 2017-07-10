@@ -1,0 +1,14 @@
+@import '../../globals/variables.css';
+
+.TableCell {
+  border-bottom: 2px solid var(--aspect-color-grey-6);
+  cursor: pointer;
+}
+
+.TableHead > .TableCell {
+  font-weight: var(--lato-font-weight-bold);
+}
+
+.TableCell > .TableCell__SortIcon {
+  font-size: 24px;
+}
