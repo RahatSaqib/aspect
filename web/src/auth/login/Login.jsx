@@ -1,16 +1,14 @@
 import _ from 'lodash'
+import classnames from 'classnames/bind'
 import PropTypes from 'prop-types'
 import React from 'react'
-import { compose, setPropTypes, pure } from 'recompose'
+import { compose, setPropTypes, withProps, pure } from 'recompose'
 import { bindActionCreators } from 'redux'
 import { connect } from 'react-redux'
 import { reduxForm } from 'redux-form/immutable'
 import Helmet from 'react-helmet'
 import { injectIntl, defineMessages, intlShape } from 'react-intl'
 import { Link } from 'react-router-dom'
-import classnames from 'classnames/bind'
-
-// React Toolbox
 import { Button } from 'react-toolbox/lib/button'
 import { Card } from 'react-toolbox/lib/card'
 import { ProgressBar } from 'react-toolbox/lib/progress_bar'
@@ -18,18 +16,17 @@ import { ProgressBar } from 'react-toolbox/lib/progress_bar'
 // Our own imports
 import { Unit } from '../../components/pureGrids'
 import TextInput from '../../components/shared/TextInput'
-import { loginStart } from '../AuthRedux'
-import styles from './Login.css'
 import AppNotificationSnackBar from '../../appNotification/AppNotificationSnackBar'
 import AppNotificationDialog from '../../appNotification/AppNotificationDialog'
 import { ContactDetails } from '../../person/PersonRedux'
+import { loginStart } from '../AuthRedux'
 
 const messages = defineMessages({
   title: {
     id: 'pages.Login.title',
     defaultMessage: 'Login',
   },
-  reasonidle: {
+  reasonIdle: {
     id: 'shared.Login.reasonIdle',
     defaultMessage: 'You were logged out due to inactivity',
   },
@@ -44,7 +41,7 @@ const cssClasses = classnames.bind(require('./Login.css'))
 const LinearProgress = <ProgressBar type="linear" />
 const AspectLogo = () =>
   <img
-    className={styles.Logo__Image}
+    className={cssClasses('Logo__Image')}
     src={require('../../globals/layouts/logo-aspect.png')}
     alt="Aspect"
   />
@@ -55,6 +52,9 @@ const enhance = compose(
   }),
   pure,
   injectIntl,
+  withProps(({ location }) => ({
+    searchParams: new URLSearchParams(location.search),
+  })),
   connect(
     state => ({
       initialValues: {
@@ -94,76 +94,69 @@ const enhance = compose(
 )
 
 export const Login = ({
-  location,
   intl,
+  searchParams,
   handleSubmit,
   submitting,
   initialValues,
-}) => {
-  const { formatMessage } = intl
-  const search = new URLSearchParams(location.search)
-
-  return (
-    <div className={styles.Background}>
-      <Helmet title="Login" titleTemplate="%s - Aspect" defaultTitle="Aspect" />
-      <div className={styles.Content}>
-        <div>
-          <Unit sm="1-24" md="1-6" lg="1-3" xl="1-3" />
-          <Unit sm="11-12" md="2-3" lg="1-3" xl="1-3">
-            <Card>
-              <div className={styles.Logo__Container}>
-                <AspectLogo />
-              </div>
-              <form onSubmit={handleSubmit} className={styles.Form}>
-                {search.has('reason')
-                  ? <div className={styles.Form__Info}>
-                      {formatMessage(messages[`reason${search.get('reason')}`])}
-                    </div>
-                  : null}
-                <TextInput
-                  theme={{
-                    label: cssClasses('Form__Input'),
-                  }}
-                  name="user"
-                  label="Username"
-                  fullWidth
-                  autoFocus={_.isEmpty(initialValues.get('user'))}
-                />
-                <TextInput
-                  theme={{
-                    label: cssClasses('Form--input'),
-                  }}
-                  name="password"
-                  type="password"
-                  label="Password"
-                  fullWidth
-                  autoFocus={!_.isEmpty(initialValues.get('user'))}
-                />
-                <div className={styles.Form__ActionRow}>
-                  <Button
-                    label="LogIn"
-                    type="submit"
-                    raised
-                    primary
-                    theme={{
-                      primary: styles.Button__primary,
-                      raised: styles.Button__raised,
-                    }}
-                  />
-                  <Link className={styles.Right_Align} to="reset-password">
-                    {formatMessage(messages.resetPasswordLink)}
-                  </Link>
+}) =>
+  <div className={cssClasses('Background')}>
+    <Helmet title="Login" titleTemplate="%s - Aspect" defaultTitle="Aspect" />
+    <div>
+      <Unit sm="1-24" md="1-6" lg="1-3" xl="1-3" />
+      <Unit sm="11-12" md="2-3" lg="1-3" xl="1-3">
+        <Card>
+          <div className={cssClasses('Logo__Container')}>
+            <AspectLogo />
+          </div>
+          <form onSubmit={handleSubmit} className={cssClasses('Form')}>
+            {searchParams.has('reason')
+              ? <div className={cssClasses('Form__Info')}>
+                  {intl.formatMessage(
+                    messages[
+                      `reason${_.capitalize(searchParams.get('reason'))}`
+                    ]
+                  )}
                 </div>
-              </form>
-              {submitting && <LinearProgress />}
-            </Card>
-          </Unit>
-        </div>
-      </div>
-      <AppNotificationDialog />
-      <AppNotificationSnackBar />
+              : null}
+            <TextInput
+              theme={{
+                label: cssClasses('Form__Input'),
+              }}
+              name="user"
+              label="Username"
+              fullWidth
+              autoFocus={_.isEmpty(initialValues.get('user'))}
+            />
+            <TextInput
+              theme={{
+                label: cssClasses('Form--input'),
+              }}
+              name="password"
+              type="password"
+              label="Password"
+              fullWidth
+              autoFocus={!_.isEmpty(initialValues.get('user'))}
+            />
+            <div className={cssClasses('Form__ActionRow')}>
+              <Button
+                className={cssClasses('Button')}
+                label="LogIn"
+                type="submit"
+                raised
+                primary
+              />
+              <Link className={cssClasses('Right_Align')} to="reset-password">
+                {intl.formatMessage(messages.resetPasswordLink)}
+              </Link>
+            </div>
+          </form>
+          {submitting && <LinearProgress />}
+        </Card>
+      </Unit>
     </div>
-  )
-}
+    <AppNotificationDialog />
+    <AppNotificationSnackBar />
+  </div>
 
 export default enhance(Login)
