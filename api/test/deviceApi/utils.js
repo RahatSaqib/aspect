@@ -20,8 +20,7 @@ function* deleteTestDataFromCheckpoint(knex, checkpoint, deviceIds) {
   const deviceUpdates = yield knex('DeviceLog as dl')
     .where('dl.id', '>=', minDeviceLog.id)
     .whereIn('dl.deviceId', deviceIds)
-    .select(
-      'dl.id', 'dl.resultId', 'dl.deviceOperationId')
+    .select('dl.id', 'dl.resultId', 'dl.deviceOperationId')
 
   const deviceLogIds = _.uniq(_.map(deviceUpdates, 'id'))
   const resultIds = _.uniq(_.map(deviceUpdates, 'resultId'))
@@ -56,7 +55,9 @@ function* deleteDeviceAndTestData(knex, apiKeys) {
   yield knex('ResultWorkflowLog').whereIn('resultId', resultIds).delete()
   yield knex('Result').whereIn('id', resultIds).delete()
   yield knex('DeviceOperation').whereIn('id', opIds).delete()
-  yield knex('DeviceApiKey').whereIn('deviceId', deviceIds).update({ deviceId: null })
+  yield knex('DeviceApiKey')
+    .whereIn('deviceId', deviceIds)
+    .update({ deviceId: null })
   yield knex('Device').whereIn('id', deviceIds).delete()
   yield knex('DeviceApiKey').whereIn('token', tokens).delete()
 }
@@ -131,7 +132,7 @@ class DeviceApiTestContext {
 
   beforeEach() {
     const self = this
-    return run(function* () {
+    return run(function*() {
       self.checkpoint = null
       self.deviceIds.splice(0)
       self.initialConfigurationData = {}
@@ -146,7 +147,7 @@ class DeviceApiTestContext {
   // on run order of tests
   runTest(test) {
     const self = this
-    return run(function* (knex) {
+    return run(function*(knex) {
       self.deviceIds.splice(0)
       self.apiKeysWithoutDevice.splice(0)
 
@@ -161,9 +162,10 @@ class DeviceApiTestContext {
       assert.isOk(userId, `Cannot find user ${user}`)
       self.userId = userId
 
-      const clientToken = yield server.post('/api/auth')
+      const clientToken = yield server
+        .post('/api/auth')
         .send({ name: user, password: 'test07', clientName: 'Mocha/Chai' })
-        .then((res) => {
+        .then(res => {
           assert.equal(res.status, 200)
           assert.isAbove(res.body.access.length, 100)
           assert.isAbove(res.body.refresh.length, 50)
@@ -177,10 +179,15 @@ class DeviceApiTestContext {
         .innerJoin('DeviceType as dt', 'dt.id', 'd.deviceTypeId')
         .innerJoin('DeviceStatus as ds', 'ds.id', 'd.deviceStatusId')
         .modify(addConstraints, dataConstraints, { device: 'd' })
-        .where(Object.assign({
-          'ds.token': status,
-          'dak.revoked': 0
-        }, type ? { 'dt.name': type } : {}))
+        .where(
+          Object.assign(
+            {
+              'ds.token': status,
+              'dak.revoked': 0,
+            },
+            type ? { 'dt.name': type } : {}
+          )
+        )
         .orderBy('d.name')
         .first('dak.token', 'd.id')
       let apiKey = null
@@ -188,7 +195,10 @@ class DeviceApiTestContext {
         apiKey = { token: device.token }
       } else {
         // if we can't find device, create API Key
-        assert.isNotOk(auth.status, `Cannot find device with status ${auth.status}`)
+        assert.isNotOk(
+          auth.status,
+          `Cannot find device with status ${auth.status}`
+        )
         assert.isOk(auth.partner, 'Must specify partner')
         const partner = yield knex('Partner')
           .where({ name: auth.partner })
@@ -213,13 +223,16 @@ class DeviceApiTestContext {
           .first('configurationData')
 
         self.initialConfigurationData[device.id] = configurationData || null
-        self.deviceConfigurationData = JSON.parse(self.initialConfigurationData[device.id])
+        self.deviceConfigurationData = JSON.parse(
+          self.initialConfigurationData[device.id]
+        )
 
         self.checkpoint = `Device API Device Tests ${new Date()}`
-        yield self.server.post(devicePath)
+        yield self.server
+          .post(devicePath)
           .set('Authorization', self.deviceAuth)
           .send({ checkpoint: self.checkpoint })
-          .then((res) => {
+          .then(res => {
             assert.equal(res.status, 200)
             assert.typeOf(res.body, 'Object')
           })
@@ -229,10 +242,13 @@ class DeviceApiTestContext {
     })
   }
 
-  * createApiKey(knex, siteName = null) {
-    const site = siteName == null ? null : yield knex('Site')
-      .where({ externalId: siteName, partnerId: this.partnerId })
-      .first('id', 'partnerId', 'geographyId')
+  *createApiKey(knex, siteName = null) {
+    const site =
+      siteName == null
+        ? null
+        : yield knex('Site')
+            .where({ externalId: siteName, partnerId: this.partnerId })
+            .first('id', 'partnerId', 'geographyId')
     if (siteName != null && site == null) {
       assert.isOk(siteName, `Cannot find site ${siteName}`)
     }
@@ -246,7 +262,7 @@ class DeviceApiTestContext {
       createdOn: this.now,
       createdBy: this.userId,
       updatedOn: this.now,
-      updatedBy: this.userId
+      updatedBy: this.userId,
     })
     this.apiKeysWithoutDevice.push(apiKey)
     return apiKey
@@ -254,17 +270,22 @@ class DeviceApiTestContext {
 
   afterEach() {
     const self = this
-    return run(function* (knex) {
+    return run(function*(knex) {
       // Reset to previous device configuration
       for (const deviceId of self.deviceIds) {
-        const configurationData = self.initialConfigurationData[deviceId] || null
+        const configurationData =
+          self.initialConfigurationData[deviceId] || null
         yield knex('Device')
           .where({ id: deviceId })
           .update({ configurationData })
       }
 
       if (self.checkpoint) {
-        yield* deleteTestDataFromCheckpoint(knex, self.checkpoint, self.deviceIds)
+        yield* deleteTestDataFromCheckpoint(
+          knex,
+          self.checkpoint,
+          self.deviceIds
+        )
       }
 
       if (self.apiKeysWithoutDevice.length > 0) {
@@ -281,5 +302,5 @@ module.exports = {
   getLastDeviceOperation,
   getLastDeviceOperationData,
   getLastDeviceOperationId,
-  getLastResultId
+  getLastResultId,
 }

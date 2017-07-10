@@ -12,7 +12,7 @@ describe('Job routes', () => {
   describe('GET', () => {
     shared.checkToken(server, path)
 
-    it('should return a tree structure of partners and job functions', (done) => {
+    it('should return a tree structure of partners and job functions', done => {
       server
         .get(path)
         .set('Authorization', `Bearer ${shared.token}`)

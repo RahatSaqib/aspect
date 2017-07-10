@@ -15,8 +15,8 @@ const deviceApiPath = '/device'
 server.connection({
   port,
   routes: {
-    cors: true
-  }
+    cors: true,
+  },
 })
 
 const plugins = [
@@ -38,21 +38,21 @@ const plugins = [
     options: {
       info: {
         title: 'Aspect API',
-        version
-      }
-    }
+        version,
+      },
+    },
   },
 
   // log responses to console using good
   {
     register: require('good'),
     options: {
-      reporters: loadGoodReporter()
-    }
+      reporters: loadGoodReporter(),
+    },
   },
 
   // Set payload prior to validation transformation
-  rawPayloadPlugin
+  rawPayloadPlugin,
 ]
 
 addRavenPlugin(plugins)
@@ -69,14 +69,14 @@ function loadGoodReporter() {
           // Only show response log, and request.log events
           module: 'good-squeeze',
           name: 'Squeeze',
-          args: [{ response: '*' }]
+          args: [{ response: '*' }],
         },
         // send to logstash
         {
           module: 'good-logstash',
-          args: [logstash.endpoint]
-        }
-      ]
+          args: [logstash.endpoint],
+        },
+      ],
     }
   }
 
@@ -87,13 +87,13 @@ function loadGoodReporter() {
         // Only show response log, and request.log events
         module: 'good-squeeze',
         name: 'Squeeze',
-        args: [{ log: '*', response: '*', request: '*' }]
+        args: [{ log: '*', response: '*', request: '*' }],
       },
       // format as string for console
       { module: 'good-console' },
       // write to std out
-      'stdout'
-    ]
+      'stdout',
+    ],
   }
 }
 
@@ -103,11 +103,10 @@ function addRavenPlugin(plugins) {
   if (raven) {
     plugins.push({
       register: require('hapi-raven'),
-      options: { dsn: raven.dsn }
+      options: { dsn: raven.dsn },
     })
   }
 }
-
 
 // Plugin to set payload prior to validation transformation
 function rawPayloadPlugin(server, options, next) {
@@ -120,11 +119,12 @@ function rawPayloadPlugin(server, options, next) {
 
 rawPayloadPlugin.attributes = {
   name: 'rawPayload',
-  version
+  version,
 }
 
-
-server.register(plugins, (err) => { if (err) throw err })
+server.register(plugins, err => {
+  if (err) throw err
+})
 
 // ================================================
 // Authentication strategy and Authorization Scopes
@@ -148,16 +148,20 @@ server.auth.strategy('clientApi', 'jwt', {
     // ["+device", "site:view", "site:edit"] will authorize anyone with device (required)
     //   and either "site:view" or "site:edit" permissions
 
-    const modules = decoded.permissions ? _.uniq(
-      _.map(
-        _.filter(decoded.permissions,
-          permission => permission.indexOf(':') > 0),
-        permission => permission.substr(0, permission.indexOf(':')))) :
-      []
-    const scope = ['clientApi']
-      .concat(modules, decoded.permissions || [])
+    const modules = decoded.permissions
+      ? _.uniq(
+          _.map(
+            _.filter(
+              decoded.permissions,
+              permission => permission.indexOf(':') > 0
+            ),
+            permission => permission.substr(0, permission.indexOf(':'))
+          )
+        )
+      : []
+    const scope = ['clientApi'].concat(modules, decoded.permissions || [])
     callback(null, valid, Object.assign({ scope }, decoded))
-  }
+  },
   // TODO JWT verfication algorithm verifyOptions: { algorithms: [ 'HS256' ] }
 })
 
@@ -170,8 +174,8 @@ server.route({
   path: '/',
   handler: (request, reply) => reply('Hello! The API is at /api.'),
   config: {
-    auth: false
-  }
+    auth: false,
+  },
 })
 
 // use plugin to mount all API routes at /api
@@ -181,13 +185,19 @@ function clientApiPlugin(server, options, next) {
 }
 clientApiPlugin.attributes = {
   name: 'clientApi',
-  version
+  version,
 }
-server.register({ register: clientApiPlugin }, {
-  routes: {
-    prefix: clientApiPath
+server.register(
+  { register: clientApiPlugin },
+  {
+    routes: {
+      prefix: clientApiPath,
+    },
+  },
+  err => {
+    if (err) throw err
   }
-}, (err) => { if (err) throw err })
+)
 
 // All device API routes mounted under /device
 function deviceApiPlugin(server, options, next) {
@@ -196,18 +206,24 @@ function deviceApiPlugin(server, options, next) {
 }
 deviceApiPlugin.attributes = {
   name: 'deviceApi',
-  version
+  version,
 }
-server.register({ register: deviceApiPlugin }, {
-  routes: {
-    prefix: deviceApiPath
+server.register(
+  { register: deviceApiPlugin },
+  {
+    routes: {
+      prefix: deviceApiPath,
+    },
+  },
+  err => {
+    if (err) throw err
   }
-}, (err) => { if (err) throw err })
+)
 
 // =======================
 // start the server ======
 // =======================
-server.start((err) => {
+server.start(err => {
   if (err) {
     throw err
   }

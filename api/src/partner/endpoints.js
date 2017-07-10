@@ -12,11 +12,14 @@ module.exports = [
       notes: 'Pageable and sortable list of partners',
       auth: { scope: ['device', 'site', 'partner'] },
       validate: {
-        query: Object.assign({
-          name: Joi.string().allow('').description('Filter for partner name')
-        }, validateSortPageParams('name', 'partnerTypeName'))
-      }
-    }
+        query: Object.assign(
+          {
+            name: Joi.string().allow('').description('Filter for partner name'),
+          },
+          validateSortPageParams('name', 'partnerTypeName')
+        ),
+      },
+    },
   },
   {
     method: 'GET',
@@ -28,9 +31,9 @@ module.exports = [
       auth: { scope: ['device', 'site', 'partner'] },
       validate: {
         params: {
-          partnerId: Joi.string().description('Partner ID').required()
-        }
-      }
-    }
-  }
+          partnerId: Joi.string().description('Partner ID').required(),
+        },
+      },
+    },
+  },
 ]

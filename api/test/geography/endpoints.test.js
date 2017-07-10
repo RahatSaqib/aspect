@@ -6,7 +6,7 @@ const endpointUtils = require('../utils/endpointUtils')
 describe('geography endpoints', () => {
   function setupRoute(method, path, serviceStub) {
     const endpoints = proxyquire('../../src/geography/endpoints', {
-      './service': serviceStub
+      './service': serviceStub,
     })
     return _.find(endpoints, { method, path })
   }
@@ -18,13 +18,16 @@ describe('geography endpoints', () => {
 
       beforeEach(() => {
         endpoint = setupRoute('GET', '/geography/select-list', {
-          * buildGeographySelectList() { return expectedResponse }
+          *buildGeographySelectList() {
+            return expectedResponse
+          },
         })
       })
 
-      it('Should respond with a the data returned from the service', (done) => {
-        endpointUtils.callHandlerOn(endpoint)
-          .handleResponseWith((response) => {
+      it('Should respond with a the data returned from the service', done => {
+        endpointUtils
+          .callHandlerOn(endpoint)
+          .handleResponseWith(response => {
             assert.deepEqual(response, expectedResponse)
           })
           .thenCall(done)
@@ -40,14 +43,17 @@ describe('geography endpoints', () => {
 
       beforeEach(() => {
         endpoint = setupRoute('GET', '/geography/country-select-list', {
-          * countrySelectList() { return expectedResponse }
+          *countrySelectList() {
+            return expectedResponse
+          },
         })
       })
 
-      it('Should respond with a the data returned from the service', (done) => {
-        endpointUtils.callHandlerOn(endpoint)
+      it('Should respond with a the data returned from the service', done => {
+        endpointUtils
+          .callHandlerOn(endpoint)
           .with({ params: {} })
-          .handleResponseWith((response) => {
+          .handleResponseWith(response => {
             assert.deepEqual(response, expectedResponse)
           })
           .thenCall(done)
@@ -62,15 +68,22 @@ describe('geography endpoints', () => {
       const expectedResponse = ['List of Countries']
 
       beforeEach(() => {
-        endpoint = setupRoute('GET', '/geography/country-select-list/{countryId}', {
-          * countrySelectList() { return expectedResponse }
-        })
+        endpoint = setupRoute(
+          'GET',
+          '/geography/country-select-list/{countryId}',
+          {
+            *countrySelectList() {
+              return expectedResponse
+            },
+          }
+        )
       })
 
-      it('Should respond with a the data returned from the service', (done) => {
-        endpointUtils.callHandlerOn(endpoint)
+      it('Should respond with a the data returned from the service', done => {
+        endpointUtils
+          .callHandlerOn(endpoint)
           .with({ params: {} })
-          .handleResponseWith((response) => {
+          .handleResponseWith(response => {
             assert.deepEqual(response, expectedResponse)
           })
           .thenCall(done)
@@ -85,15 +98,22 @@ describe('geography endpoints', () => {
       const expectedResponse = ['List of Countries']
 
       beforeEach(() => {
-        endpoint = setupRoute('GET', '/geography/country-select-list/{countryId}/{stateId}', {
-          * countrySelectList() { return expectedResponse }
-        })
+        endpoint = setupRoute(
+          'GET',
+          '/geography/country-select-list/{countryId}/{stateId}',
+          {
+            *countrySelectList() {
+              return expectedResponse
+            },
+          }
+        )
       })
 
-      it('Should respond with a the data returned from the service', (done) => {
-        endpointUtils.callHandlerOn(endpoint)
+      it('Should respond with a the data returned from the service', done => {
+        endpointUtils
+          .callHandlerOn(endpoint)
           .with({ params: {} })
-          .handleResponseWith((response) => {
+          .handleResponseWith(response => {
             assert.deepEqual(response, expectedResponse)
           })
           .thenCall(done)
@@ -108,14 +128,21 @@ describe('geography endpoints', () => {
       const expectedResponse = ['List of States']
 
       beforeEach(() => {
-        endpoint = setupRoute('GET', '/geography/state-select-list/{countryId}', {
-          * stateSelectList() { return expectedResponse }
-        })
+        endpoint = setupRoute(
+          'GET',
+          '/geography/state-select-list/{countryId}',
+          {
+            *stateSelectList() {
+              return expectedResponse
+            },
+          }
+        )
       })
 
-      it('Should respond with a the data returned from the service', (done) => {
-        endpointUtils.callHandlerOn(endpoint)
-          .handleResponseWith((response) => {
+      it('Should respond with a the data returned from the service', done => {
+        endpointUtils
+          .callHandlerOn(endpoint)
+          .handleResponseWith(response => {
             assert.deepEqual(response, expectedResponse)
           })
           .thenCall(done)
@@ -131,13 +158,16 @@ describe('geography endpoints', () => {
 
       beforeEach(() => {
         endpoint = setupRoute('GET', '/geography/lga-select-list/{stateId}', {
-          * lgaSelectList() { return expectedResponse }
+          *lgaSelectList() {
+            return expectedResponse
+          },
         })
       })
 
-      it('Should respond with a the data returned from the service', (done) => {
-        endpointUtils.callHandlerOn(endpoint)
-          .handleResponseWith((response) => {
+      it('Should respond with a the data returned from the service', done => {
+        endpointUtils
+          .callHandlerOn(endpoint)
+          .handleResponseWith(response => {
             assert.deepEqual(response, expectedResponse)
           })
           .thenCall(done)

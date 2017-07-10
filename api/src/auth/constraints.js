@@ -10,14 +10,14 @@ function alias(table) {
 }
 
 function getConstraints(credentials) {
-  return getUser(credentials.name).then((user) => {
+  return getUser(credentials.name).then(user => {
     const constraints = {
       partner: {
-        id: user.partnerId
+        id: user.partnerId,
       },
       country: {
-        id: user.countryId
-      }
+        id: user.countryId,
+      },
     }
 
     const jobContextsQ = knex('JobContext as jc')
@@ -28,12 +28,12 @@ function getConstraints(credentials) {
       .innerJoin('Person as ps', 'j.personId', 'ps.id')
       .where({
         'ps.userId': user.id,
-        'jf.partnerId': user.partnerId
+        'jf.partnerId': user.partnerId,
       })
       .select('s.id as siteId', 'g.countryId', 'g.stateId', 'g.lgaId')
 
-    return jobContextsQ.then((jobContexts) => {
-      const filterConstraints = jobContexts.map((context) => {
+    return jobContextsQ.then(jobContexts => {
+      const filterConstraints = jobContexts.map(context => {
         const constraint = {}
 
         // constrain to most specific site/geography
@@ -66,26 +66,40 @@ function addConstraints(queryBuilder, constraints, aliases) {
   if (device) {
     if (!site) {
       site = alias('Site')
-      queryBuilder.leftOuterJoin(`Site as ${site}`, `${device}.siteId`, `${site}.id`)
+      queryBuilder.leftOuterJoin(
+        `Site as ${site}`,
+        `${device}.siteId`,
+        `${site}.id`
+      )
     }
   }
 
   if (site) {
     if (!partner) {
       partner = alias('Partner')
-      queryBuilder.leftOuterJoin(`Partner as ${partner}`, `${site}.partnerId`, `${partner}.id`)
+      queryBuilder.leftOuterJoin(
+        `Partner as ${partner}`,
+        `${site}.partnerId`,
+        `${partner}.id`
+      )
     }
 
     if (!geography) {
       geography = alias('Geography')
-      queryBuilder.leftOuterJoin(`Geography as ${geography}`, `${site}.geographyId`, `${geography}.id`)
+      queryBuilder.leftOuterJoin(
+        `Geography as ${geography}`,
+        `${site}.geographyId`,
+        `${geography}.id`
+      )
     }
   }
 
   // Partner, country, and constraints are ANDed
   if (partner && constraints.partner) {
-    queryBuilder.where(function () {
-      this.whereNull(`${partner}.id`).orWhere({ [`${partner}.id`]: constraints.partner.id })
+    queryBuilder.where(function() {
+      this.whereNull(`${partner}.id`).orWhere({
+        [`${partner}.id`]: constraints.partner.id,
+      })
     })
   }
   if (geography && constraints.country) {
@@ -94,10 +108,12 @@ function addConstraints(queryBuilder, constraints, aliases) {
 
   // data filter constraints are ORed
   if (constraints.$or && constraints.$or.length) {
-    queryBuilder.where(function () {
+    queryBuilder.where(function() {
       for (const constraint of constraints.$or) {
         if (geography && constraint.geography) {
-          this.orWhere(_.mapKeys(constraint.geography, (v, k) => `${geography}.${k}`))
+          this.orWhere(
+            _.mapKeys(constraint.geography, (v, k) => `${geography}.${k}`)
+          )
         }
 
         if (site && constraint.site) {
@@ -119,7 +135,10 @@ function addConstraints(queryBuilder, constraints, aliases) {
 // check for user permissions, pass in auth
 
 function canView(auth, flag) {
-  return _.some(auth.credentials.permissions, _.unary(_.partialRight(_.includes, flag)))
+  return _.some(
+    auth.credentials.permissions,
+    _.unary(_.partialRight(_.includes, flag))
+  )
 }
 
 function canViewSites(auth) {
@@ -139,5 +158,5 @@ module.exports = {
   addConstraints,
   canViewSites,
   canViewDevices,
-  canViewResults
+  canViewResults,
 }

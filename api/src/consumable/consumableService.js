@@ -1,15 +1,15 @@
 const Promise = require('bluebird')
-const {
-  knex,
-  filterParams,
-  sortPageParams
-} = require('../db')
-const {
-  getConstraints
-} = require('../auth/constraints')
+const { knex, filterParams, sortPageParams } = require('../db')
+const { getConstraints } = require('../auth/constraints')
 
 const SELECT_LIST_FIELDS = [
-  'c.id', 'c.name', 'u.name as unit', 'u.shortName as unitShortName', 'c.canExpire', 'c.manufacturer', 'c.autoInclude'
+  'c.id',
+  'c.name',
+  'u.name as unit',
+  'u.shortName as unitShortName',
+  'c.canExpire',
+  'c.manufacturer',
+  'c.autoInclude',
 ]
 function* listConsumableTypes(request) {
   const { query, auth } = request
@@ -19,15 +19,16 @@ function* listConsumableTypes(request) {
   const consumableQuery = knex('Consumable as c')
     .leftJoin('Unit as u', 'c.unit', 'u.id')
     .leftJoin('Partner as p', 'c.partnerId', 'p.id')
-    .whereNull('c.partnerId').orWhere({ 'p.id': dataConstraints.partner.id })
+    .whereNull('c.partnerId')
+    .orWhere({ 'p.id': dataConstraints.partner.id })
     .modify(filterParams, query, { name: 'c.name' })
 
   // get total count for paging
-  const getCount = consumableQuery.clone()
-    .count('c.id as count').first()
+  const getCount = consumableQuery.clone().count('c.id as count').first()
 
   // get rows
-  const getItems = consumableQuery.clone()
+  const getItems = consumableQuery
+    .clone()
     .modify(sortPageParams, query, 'name')
     .select(SELECT_LIST_FIELDS)
 
@@ -43,15 +44,16 @@ function* listConsumableReasons(request) {
   const { query } = request
 
   // TODO: use dataContraints
-  const consumableReasonQuery = knex('ConsumableReason as cr')
-    .modify(filterParams, query, { name: 'cr.name' })
+  const consumableReasonQuery = knex(
+    'ConsumableReason as cr'
+  ).modify(filterParams, query, { name: 'cr.name' })
 
   // get total count for paging
-  const getCount = consumableReasonQuery.clone()
-    .count('cr.id as count').first()
+  const getCount = consumableReasonQuery.clone().count('cr.id as count').first()
 
   // get rows
-  const getItems = consumableReasonQuery.clone()
+  const getItems = consumableReasonQuery
+    .clone()
     .modify(sortPageParams, query, 'name')
     .select(['id', 'name', 'i18nKey', 'decrease'])
 
@@ -64,5 +66,5 @@ function* listConsumableReasons(request) {
 
 module.exports = {
   listConsumableTypes,
-  listConsumableReasons
+  listConsumableReasons,
 }

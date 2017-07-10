@@ -9,7 +9,7 @@ module.exports = [
     config: {
       description: 'Job Functions for Select List',
       notes: 'Tree structure of Partners and Job Functons',
-      auth: { scope: ['person'] }
-    }
-  }
+      auth: { scope: ['person'] },
+    },
+  },
 ]

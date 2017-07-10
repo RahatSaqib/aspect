@@ -1,9 +1,11 @@
 const Joi = require('joi')
-const { validateAllGeographyFilterParams } = require('../geography/requestValidation')
+const {
+  validateAllGeographyFilterParams,
+} = require('../geography/requestValidation')
 const {
   asyncHandler,
   validateDateRangeParams,
-  validateSortPageParams
+  validateSortPageParams,
 } = require('../routes')
 const {
   listInventoryItems,
@@ -11,20 +13,20 @@ const {
   addInventory,
   removeInventory,
   transferInventory,
-  receiveInventory
+  receiveInventory,
 } = require('./service')
 
 const inventoryFilters = {
   consumableId: Joi.number().integer().positive().allow('', null),
-  siteName: Joi.string().allow('', null)
+  siteName: Joi.string().allow('', null),
 }
 
 const addRemoveInventoryCommonParams = {
-  inventoryItemId: Joi.number().integer().positive().allow('', null)
+  inventoryItemId: Joi.number().integer().positive().allow('', null),
 }
 
 const transferReceiveInventoryCommonParams = {
-  inventoryItemId: Joi.number().integer().positive().required()
+  inventoryItemId: Joi.number().integer().positive().required(),
 }
 
 const adjustInventoryCommonPayloadFields = {
@@ -32,14 +34,17 @@ const adjustInventoryCommonPayloadFields = {
   lotNumber: Joi.string().max(255).allow('', null),
   expiresOn: Joi.date().iso().allow(null),
   quantity: Joi.number().positive().required(),
-  notes: Joi.string().max(2000).allow('', null)
+  notes: Joi.string().max(2000).allow('', null),
 }
 
-const removeInventoryCommonPayloadFields = Object.assign({},
-  adjustInventoryCommonPayloadFields, {
+const removeInventoryCommonPayloadFields = Object.assign(
+  {},
+  adjustInventoryCommonPayloadFields,
+  {
     fromSiteId: Joi.number().integer().positive().required(),
-    reasonId: Joi.number().integer().positive().required()
-  })
+    reasonId: Joi.number().integer().positive().required(),
+  }
+)
 
 module.exports = [
   {
@@ -51,13 +56,26 @@ module.exports = [
       notes: 'Pageable and sortable list of inventory items',
       auth: { scope: ['inventory:view', 'inventory:edit'] },
       validate: {
-        query: Object.assign({}, inventoryFilters,
+        query: Object.assign(
+          {},
+          inventoryFilters,
           validateAllGeographyFilterParams(),
           validateDateRangeParams(),
-          validateSortPageParams('consumableName', 'manufacturer', 'siteName', 'countryName', 'stateName', 'lgaName', 'quantityOnHand', 'expiresOn'))
-      }
-    }
-  }, {
+          validateSortPageParams(
+            'consumableName',
+            'manufacturer',
+            'siteName',
+            'countryName',
+            'stateName',
+            'lgaName',
+            'quantityOnHand',
+            'expiresOn'
+          )
+        ),
+      },
+    },
+  },
+  {
     method: 'GET',
     path: '/inventory/group-by-site',
     handler: asyncHandler(listInventoryItemsGroupedBySite),
@@ -66,13 +84,26 @@ module.exports = [
       notes: 'Pageable and sortable list of inventory items grouped by site',
       auth: { scope: ['inventory:view', 'inventory:edit'] },
       validate: {
-        query: Object.assign({}, inventoryFilters,
+        query: Object.assign(
+          {},
+          inventoryFilters,
           validateAllGeographyFilterParams(),
           validateDateRangeParams(),
-          validateSortPageParams('consumableName', 'manufacturer', 'siteName', 'countryName', 'stateName', 'lgaName', 'quantityOnHand', 'expiresOn'))
-      }
-    }
-  }, {
+          validateSortPageParams(
+            'consumableName',
+            'manufacturer',
+            'siteName',
+            'countryName',
+            'stateName',
+            'lgaName',
+            'quantityOnHand',
+            'expiresOn'
+          )
+        ),
+      },
+    },
+  },
+  {
     method: 'POST',
     path: '/inventory/add',
     handler: asyncHandler(addInventory),
@@ -81,14 +112,14 @@ module.exports = [
       notes: 'Adds an inventory item at a site',
       auth: { scope: ['inventory:edit'] },
       validate: {
-        payload: Object.assign({},
-          adjustInventoryCommonPayloadFields, {
-            toSiteId: Joi.number().integer().positive().required(),
-            dateAdjusted: Joi.date().iso().required()
-          })
-      }
-    }
-  }, {
+        payload: Object.assign({}, adjustInventoryCommonPayloadFields, {
+          toSiteId: Joi.number().integer().positive().required(),
+          dateAdjusted: Joi.date().iso().required(),
+        }),
+      },
+    },
+  },
+  {
     method: 'PUT',
     path: '/inventory/add/{inventoryItemId}',
     handler: asyncHandler(addInventory),
@@ -98,14 +129,14 @@ module.exports = [
       auth: { scope: ['inventory:edit'] },
       validate: {
         params: addRemoveInventoryCommonParams,
-        payload: Object.assign({},
-          adjustInventoryCommonPayloadFields, {
-            toSiteId: Joi.number().integer().positive().required(),
-            dateAdjusted: Joi.date().iso().required()
-          })
-      }
-    }
-  }, {
+        payload: Object.assign({}, adjustInventoryCommonPayloadFields, {
+          toSiteId: Joi.number().integer().positive().required(),
+          dateAdjusted: Joi.date().iso().required(),
+        }),
+      },
+    },
+  },
+  {
     method: 'PUT',
     path: '/inventory/remove/{inventoryItemId}',
     handler: asyncHandler(removeInventory),
@@ -116,18 +147,20 @@ module.exports = [
       validate: {
         params: addRemoveInventoryCommonParams,
         payload: Joi.alternatives().try(
-          Joi.object().keys(Object.assign({},
-            removeInventoryCommonPayloadFields, {
-              dateAdjusted: Joi.date().iso().required()
-            })),
-          Object.assign({},
-            removeInventoryCommonPayloadFields, {
-              dateAdjustedFrom: Joi.date().iso().required(),
-              dateAdjustedTo: Joi.date().iso().required()
-            }))
-      }
-    }
-  }, {
+          Joi.object().keys(
+            Object.assign({}, removeInventoryCommonPayloadFields, {
+              dateAdjusted: Joi.date().iso().required(),
+            })
+          ),
+          Object.assign({}, removeInventoryCommonPayloadFields, {
+            dateAdjustedFrom: Joi.date().iso().required(),
+            dateAdjustedTo: Joi.date().iso().required(),
+          })
+        ),
+      },
+    },
+  },
+  {
     method: 'PUT',
     path: '/inventory/transfer/{inventoryItemId}',
     handler: asyncHandler(transferInventory),
@@ -137,15 +170,15 @@ module.exports = [
       auth: { scope: ['inventory:edit'] },
       validate: {
         params: transferReceiveInventoryCommonParams,
-        payload: Object.assign({},
-          adjustInventoryCommonPayloadFields, {
-            fromSiteId: Joi.number().integer().positive().required(),
-            toSiteId: Joi.number().integer().positive().required(),
-            dateAdjusted: Joi.date().iso().required()
-          })
-      }
-    }
-  }, {
+        payload: Object.assign({}, adjustInventoryCommonPayloadFields, {
+          fromSiteId: Joi.number().integer().positive().required(),
+          toSiteId: Joi.number().integer().positive().required(),
+          dateAdjusted: Joi.date().iso().required(),
+        }),
+      },
+    },
+  },
+  {
     method: 'PUT',
     path: '/inventory/receive/{inventoryItemId}',
     handler: asyncHandler(receiveInventory),
@@ -155,13 +188,12 @@ module.exports = [
       auth: { scope: ['inventory:edit'] },
       validate: {
         params: transferReceiveInventoryCommonParams,
-        payload: Object.assign({},
-          adjustInventoryCommonPayloadFields, {
-            fromSiteId: Joi.number().integer().positive().required(),
-            toSiteId: Joi.number().integer().positive().required(),
-            dateAdjusted: Joi.date().iso().required()
-          })
-      }
-    }
-  }
+        payload: Object.assign({}, adjustInventoryCommonPayloadFields, {
+          fromSiteId: Joi.number().integer().positive().required(),
+          toSiteId: Joi.number().integer().positive().required(),
+          dateAdjusted: Joi.date().iso().required(),
+        }),
+      },
+    },
+  },
 ]
