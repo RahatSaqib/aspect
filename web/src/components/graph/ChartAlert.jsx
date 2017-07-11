@@ -1,6 +1,9 @@
 import React from 'react'
 import PropTypes from 'prop-types'
-import './Alert.css'
+import classnames from 'classnames/bind'
+import styles from './ChartAlert.css'
+
+const cssClasses = classnames.bind(styles)
 
 const Alert = ({ status, statusString }) => {
   // sets red as default alert status if incorrectly entered
@@ -10,8 +13,8 @@ const Alert = ({ status, statusString }) => {
 
   return (
     <div>
-      <p className={status} />
-      <p className="textAlert">{statusString}</p>
+      <p className={cssClasses(status)} />
+      <p className={cssClasses('textAlert')}>{statusString}</p>
     </div>
   )
 }

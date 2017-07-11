@@ -1,9 +1,12 @@
 import React, { Component } from 'react'
 import PropTypes from 'prop-types'
+import classnames from 'classnames/bind'
 import BarChart from './BarChart'
 import ColumnChart from './ColumnChart'
-import Alert from './Alert'
-import './ChartComponent.css'
+import Alert from './ChartAlert'
+import styles from './ChartComponent.css'
+
+const cssClasses = classnames.bind(styles)
 
 class ChartComponent extends Component {
   chooseGraph() {
@@ -41,8 +44,8 @@ class ChartComponent extends Component {
   }
   render() {
     return (
-      <div className="graph">
-        <h1 className="title">
+      <div className={cssClasses('graph')}>
+        <h1 className={cssClasses('title')}>
           {this.props.title}
         </h1>
         <div>
@@ -50,7 +53,6 @@ class ChartComponent extends Component {
         </div>
         {this.props.alertMsg &&
           <Alert
-            className="alert"
             status={this.props.alert}
             statusString={this.props.alertMsg}
           />}

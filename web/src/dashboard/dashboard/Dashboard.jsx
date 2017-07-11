@@ -27,7 +27,7 @@ import DashboardSuppliesRunningLow from './DashboardSuppliesRunningLow'
 import DashboardSuppliesExpiringSoon from './DashboardSuppliesExpiringSoon'
 import styles from './Dashboard.css'
 import { fetchDashboardHome } from '../DashboardRedux'
-import ChartComponent from '../../components/shared/ChartComponent'
+import ChartComponent from '../../components/graph/ChartComponent'
 
 // data to be used in graphs
 const exData1 = [
