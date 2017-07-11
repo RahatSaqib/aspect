@@ -94,7 +94,7 @@ const enhance = compose(
       receivedExportResponse
     ) =>
       exportResults(
-        { hasResults: 1 },
+        {},
         formatType,
         table.sortCol,
         table.sortDir,
@@ -106,7 +106,7 @@ const enhance = compose(
       currentTarget: { dataset: { column: nextSortCol } },
     }) =>
       fetchListFilteredResults(
-        { hasResults: 1 },
+        {},
         nextSortCol,
         table.sortCol === nextSortCol
           ? table.sortDir === 'asc' ? 'desc' : 'asc'
@@ -119,7 +119,7 @@ const enhance = compose(
     }) => history.push(`/browse/device/${resultId}`),
     onPageChange: ({ fetchListFilteredResults, table }) => nextPage =>
       fetchListFilteredResults(
-        { hasResults: 1 },
+        {},
         table.sortCol,
         table.sortDir,
         nextPage,
@@ -127,7 +127,7 @@ const enhance = compose(
       ),
     onPageSizeChange: ({ fetchListFilteredResults, table }) => nextPageSize =>
       fetchListFilteredResults(
-        { hasResults: 1 },
+        {},
         table.sortCol,
         table.sortDir,
         0,
@@ -243,22 +243,22 @@ export const ResultList = ({
               data-result-Id={result.get('id')}
               columns={[
                 {
-                  column: 'endedOn',
+                  column: intl.formatDate(result.get('endedOn')),
                 },
                 {
-                  column: 'deviceName',
+                  column: result.get('deviceName'),
                 },
                 {
-                  column: 'sampleOriginSiteName',
+                  column: result.get('sampleOriginSiteName'),
                 },
                 {
-                  column: 'sampleId',
+                  column: result.get('sampleId'),
                 },
                 {
-                  column: 'sampleGroup',
+                  column: result.get('sampleGroup'),
                 },
                 {
-                  column: 'patientId',
+                  column: result.get('patientId'),
                 },
               ]}
             />
