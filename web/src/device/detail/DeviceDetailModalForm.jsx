@@ -44,6 +44,7 @@ const enhance = compose(
       },
       {
         fieldName: 'siteId',
+        // FIXME: <SiteAutoCompleteField> now onChangeSite returns a string
         valueFromChangeEvent: _fp.identity,
       },
       {
@@ -99,7 +100,7 @@ export const DeviceDetailModalForm = props => {
           name="Name"
           floatingLabelText={labels.name}
           value={values.name}
-          onChange={props.onChangeName}
+          onChange={props.onNameChange}
           fullWidth
           errorText={meta.name.touched && meta.name.error}
         />
@@ -107,7 +108,7 @@ export const DeviceDetailModalForm = props => {
           name="Shortname"
           floatingLabelText={labels.shortname}
           value={values.shortname}
-          onChange={props.onChangeShortname}
+          onChange={props.onShortnameChange}
           fullWidth
           errorText={meta.shortname.touched && meta.shortname.error}
         />
@@ -115,7 +116,7 @@ export const DeviceDetailModalForm = props => {
           name="Notes"
           floatingLabelText={labels.notes}
           value={values.notes}
-          onChange={props.onChangeNotes}
+          onChange={props.onNotesChange}
           fullWidth
           errorText={meta.notes.touched && meta.notes.error}
         />
@@ -124,7 +125,7 @@ export const DeviceDetailModalForm = props => {
           label={labels.statusToken}
           style={{ padding: '10px 0' }}
           checked={values.statusToken === tokens.APPROVED}
-          onCheck={props.onChangeStatusToken}
+          onCheck={props.onStatusTokenChange}
         />
         <div className={cssClasses('AutoCompleteField')}>
           <div className={cssClasses('AutoCompleteField__Inner')}>
@@ -133,7 +134,7 @@ export const DeviceDetailModalForm = props => {
               name="SiteId"
               floatingLabelText={labels.siteId}
               value={values.siteId}
-              onChangeSite={props.onChangeSiteId}
+              onChangeSite={props.onSiteIdChange}
               itemTextGetter={site => site.get('name')}
               hintText="Enter site name"
               fullWidth
@@ -157,7 +158,7 @@ export const DeviceDetailModalForm = props => {
               value={field.value}
               onTouchTap={stopEventPropagation}
               onChange={event =>
-                props.onChangeConfigurationData(
+                props.onConfigurationDataChange(
                   values.configurationData.setIn(field.path, event.target.value)
                 )}
               fullWidth

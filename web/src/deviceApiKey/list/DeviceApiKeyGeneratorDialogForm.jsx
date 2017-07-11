@@ -87,10 +87,10 @@ const enhance = compose(
 export function DeviceApiKeyGeneratorDialogForm({
   isDialogOpen,
   onCancel,
-  onChangeCount,
-  onChangeCountryId,
-  onChangePartnerId,
-  onChangeSiteId,
+  onCountChange,
+  onCountryIdChange,
+  onPartnerIdChange,
+  onSiteIdChange,
   handleSubmit,
   form,
   meta,
@@ -128,7 +128,7 @@ export function DeviceApiKeyGeneratorDialogForm({
           type="number"
           floatingLabelText={formatMessage(messages.count)}
           value={values.count}
-          onChange={onChangeCount}
+          onChange={onCountChange}
           errorText={meta.count.touched && meta.count.error}
           fullWidth
         />
@@ -137,7 +137,7 @@ export function DeviceApiKeyGeneratorDialogForm({
           floatingLabelText={formatMessage(messages.countryId)}
           allItemText=""
           countryId={values.countryId}
-          onChangeCountry={onChangeCountryId}
+          onChangeCountry={onCountryIdChange}
           errorStyle={{
             float: 'left',
             whiteSpace: 'nowrap',
@@ -154,7 +154,7 @@ export function DeviceApiKeyGeneratorDialogForm({
           emptyId="-1"
           emptyText=""
           partnerId={values.partnerId}
-          onChangePartner={onChangePartnerId}
+          onChangePartner={onPartnerIdChange}
           errorStyle={{
             float: 'left',
             whiteSpace: 'nowrap',
@@ -171,7 +171,7 @@ export function DeviceApiKeyGeneratorDialogForm({
           countryId={values.countryId}
           partnerId={values.partnerId}
           value={values.siteId}
-          onSiteChange={onChangeSiteId}
+          onSiteChange={onSiteIdChange}
           errorStyle={{
             float: 'left',
             whiteSpace: 'nowrap',

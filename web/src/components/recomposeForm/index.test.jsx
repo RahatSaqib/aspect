@@ -191,8 +191,8 @@ describe('recomposeForm module', () => {
       )
 
       expect(ComponentWrapper.find('div').length).toEqual(1)
-      expect(typeof innerProps.onChangeName).toBe('function')
-      expect(typeof innerProps.onChangeEmail).toBe('function')
+      expect(typeof innerProps.onNameChange).toBe('function')
+      expect(typeof innerProps.onEmailChange).toBe('function')
     })
 
     it('should call onChange when fields are changed', () => {
@@ -210,16 +210,16 @@ describe('recomposeForm module', () => {
       )
 
       expect(ComponentWrapper.find('div').length).toEqual(1)
-      expect(typeof innerProps.onChangeName).toBe('function')
+      expect(typeof innerProps.onNameChange).toBe('function')
       expect(handleChange.called).toBe(false)
 
-      innerProps.onChangeName({
+      innerProps.onNameChange({
         target: { value: 'Jeremy' },
       })
       expect(handleChange.called).toBe(true)
     })
 
-    describe('calling onChangeName with valid value', () => {
+    describe('calling onNameChange with valid value', () => {
       it('should update field states from props', () => {
         let innerProps
         const handleChange = values => ComponentWrapper.setProps({ values })
@@ -245,9 +245,9 @@ describe('recomposeForm module', () => {
           touched: false,
           error: null,
         })
-        expect(typeof innerProps.onChangeName).toBe('function')
+        expect(typeof innerProps.onNameChange).toBe('function')
 
-        innerProps.onChangeName({
+        innerProps.onNameChange({
           target: { value: 'Jeremy' },
         })
         expect(innerProps.meta.name).toEqual({
@@ -257,7 +257,7 @@ describe('recomposeForm module', () => {
       })
     })
 
-    describe('calling onChangeName with invalid value', () => {
+    describe('calling onNameChange with invalid value', () => {
       it('should update field states from props', () => {
         let innerProps
         const handleChange = values => ComponentWrapper.setProps({ values })
@@ -283,9 +283,9 @@ describe('recomposeForm module', () => {
           touched: false,
           error: null,
         })
-        expect(typeof innerProps.onChangeName).toBe('function')
+        expect(typeof innerProps.onNameChange).toBe('function')
 
-        innerProps.onChangeName({
+        innerProps.onNameChange({
           target: { value: '' },
         })
         expect(innerProps.meta.name).toEqual({
