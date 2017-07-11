@@ -3,26 +3,35 @@ import classnames from 'classnames/bind'
 import React from 'react'
 import { TableRow, TableCell } from 'react-toolbox/lib/table'
 
-const csssClasses = classnames.bind(
+const cssClasses = classnames.bind(
   require('../../components/shared/DataTableRow.css')
 )
 
 const enhance = _.identity
 
-const ResultTableRow = ({ columns, ...restProps }) =>
+const ResultTableRow = ({ intl, result, ...restProps }) =>
   <TableRow
     {...restProps}
-    className={csssClasses(restProps.className, 'TableRow')}
+    className={cssClasses(restProps.className, 'TableRow')}
   >
-    {columns.map(({ key = index, column, hoverLabel }, index) =>
-      <TableCell key={key} className={csssClasses('TableCell')}>
-        {column}
-        {hoverLabel &&
-          <small className={csssClasses('TableCell_small')}>
-            {hoverLabel}
-          </small>}
-      </TableCell>
-    )}
+    <TableCell className={cssClasses('TableCell')}>
+      {intl.formatDate(result.get('endedOn'))}
+    </TableCell>
+    <TableCell className={cssClasses('TableCell')}>
+      {result.get('deviceName')}
+    </TableCell>
+    <TableCell className={cssClasses('TableCell')}>
+      {result.get('sampleOriginSiteName')}
+    </TableCell>
+    <TableCell className={cssClasses('TableCell')}>
+      {result.get('sampleId')}
+    </TableCell>
+    <TableCell className={cssClasses('TableCell')}>
+      {result.get('sampleGroup')}
+    </TableCell>
+    <TableCell className={cssClasses('TableCell')}>
+      {result.get('patientId')}
+    </TableCell>
   </TableRow>
 
 export default enhance(ResultTableRow)

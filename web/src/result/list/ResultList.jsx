@@ -236,33 +236,17 @@ export const ResultList = ({
               },
             ]}
           />
-          {items.currentIdList.map(id => items.byId.get(id)).map(result =>
-            <ResultDataTableRow
-              key={result.get('id')}
-              onClick={onRowClick}
-              data-result-Id={result.get('id')}
-              columns={[
-                {
-                  column: intl.formatDate(result.get('endedOn')),
-                },
-                {
-                  column: result.get('deviceName'),
-                },
-                {
-                  column: result.get('sampleOriginSiteName'),
-                },
-                {
-                  column: result.get('sampleId'),
-                },
-                {
-                  column: result.get('sampleGroup'),
-                },
-                {
-                  column: result.get('patientId'),
-                },
-              ]}
-            />
-          )}
+          {items.currentIdList
+            .map(id => items.byId.get(id))
+            .map(result =>
+              <ResultDataTableRow
+                key={result.get('id')}
+                intl={intl}
+                result={result}
+                onClick={onRowClick}
+                data-result-Id={result.get('id')}
+              />
+            )}
         </ResultDataTable>
         <TablePaginator
           className={cssClasses('TablePaginator')}
