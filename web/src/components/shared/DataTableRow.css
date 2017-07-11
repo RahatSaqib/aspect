@@ -17,6 +17,7 @@
 }
 
 .TableCell__small {
+  padding-left: 10px;
   opacity: 0;
   transition-duration: 0.28s;
   transition-property: opacity;
