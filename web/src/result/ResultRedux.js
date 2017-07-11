@@ -75,7 +75,6 @@ export function fetchResults(
 ) {
   return dispatch => {
     dispatch(requestResults(sortCol, sortDir, page, pageSize, filters))
-    debugger
     return aspectFetch(
       `/result?${stringify({
         sortCol,

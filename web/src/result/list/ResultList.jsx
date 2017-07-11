@@ -116,7 +116,7 @@ const enhance = compose(
       ),
     onRowClick: ({ history }) => ({
       currentTarget: { dataset: { resultId } },
-    }) => history.push(`/browse/device/${resultId}`),
+    }) => history.push(`/browse/result/${resultId}`),
     onPageChange: ({ fetchListFilteredResults, table }) => nextPage =>
       fetchListFilteredResults(
         {},
@@ -269,6 +269,7 @@ export const ResultList = ({
           intl={intl}
           paginatorStatus={messages.paginatorStatus}
           page={table.page}
+          pageSize={table.pageSize}
           total={table.total}
           onPageChange={onPageChange}
           onPageSizeChange={onPageSizeChange}
