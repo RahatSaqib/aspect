@@ -1,2 +1,31 @@
-.Content {
+.Card {
+  padding: 20px;
+}
+
+.ProgressBar {
+  opacity: 0;
+}
+
+.ProgressBar--indeterminate {
+  opacity: 1;
+}
+
+.PersonDataTable {
+  width: 100%;
+  border-spacing: 0;
+  font-size: 14px;
+}
+
+/*
+TODO: Remove dead code/ change accordingly
+.DeviceDataTableHead__Tests--left {
+  text-align: right;
+}
+
+.DeviceDataTableHead__Tests--right {
+  text-align: left;
+}*/
+
+.TablePaginator {
+  padding-bottom: 0;
 }
