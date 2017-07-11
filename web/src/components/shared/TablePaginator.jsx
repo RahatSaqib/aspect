@@ -32,16 +32,16 @@ const enhance = compose(
       onPageChange(page + 1)
     },
 
+    onPageSizeChange10: ({ onPageSizeChange }) => () => {
+      onPageSizeChange(10)
+    },
+
     onPageSizeChange25: ({ onPageSizeChange }) => () => {
       onPageSizeChange(25)
     },
 
     onPageSizeChange50: ({ onPageSizeChange }) => () => {
       onPageSizeChange(50)
-    },
-
-    onPageSizeChange75: ({ onPageSizeChange }) => () => {
-      onPageSizeChange(75)
     },
 
     onPageSizeChange100: ({ onPageSizeChange }) => () => {
@@ -57,7 +57,7 @@ const enhance = compose(
 
 const ALL_KEY = 'All'
 
-const pageSizeButtonKeys = [25, 50, 75, 100, ALL_KEY]
+const pageSizeButtonKeys = [10, 25, 50, 100, ALL_KEY]
 
 const TablePaginator = ({
   intl,
