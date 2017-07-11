@@ -1,5 +1,6 @@
 import React, { Component } from 'react'
 import PropTypes from 'prop-types'
+import _ from 'lodash'
 import { scaleLinear, scaleBand } from '@vx/scale'
 import { Group } from '@vx/group'
 import { Bar } from '@vx/shape'
@@ -67,12 +68,11 @@ class BarChart extends Component {
     })
 
     // Compose together the scale and accessor functions to get point functions
-    const compose = (scale, accessor) => data => scale(accessor(data))
-    const xPoint = compose(xScale, x)
+    const xPoint = _.flowRight(xScale, x)
 
     const yPoint = []
     for (let i = 0; i < maxLength; i++) {
-      yPoint[i] = compose(yScale, y[i])
+      yPoint[i] = _.flowRight(yScale, y[i])
     }
 
     // determine labelling based on props
