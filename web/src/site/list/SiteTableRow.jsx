@@ -21,7 +21,10 @@ const SiteTableRow = ({ intl, site, ...restProps }) =>
       {site.get('state')}
     </TableCell>
     <TableCell className={cssClasses('TableCell')}>
-      {site.get('status')}
+      {site.get('lga')}
+    </TableCell>
+    <TableCell className={cssClasses('TableCell')}>
+      {site.get('totalDevices')}
     </TableCell>
   </TableRow>
 

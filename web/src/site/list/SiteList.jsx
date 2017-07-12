@@ -187,11 +187,6 @@ export const SiteList = ({
                 label: intl.formatMessage(messages.totalDevices),
                 onClick: onHeadColumnClick,
               },
-              {
-                key: 'externalId',
-                label: intl.formatMessage(messages.externalId),
-                onClick: onHeadColumnClick,
-              },
             ]}
           />
           {items.currentIdList
