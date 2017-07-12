@@ -43,7 +43,7 @@ const messages = defineMessages({
   },
 })
 
-class StrongPasswordInput extends React.PureComponent {
+export class StrongPasswordInput extends React.PureComponent {
   static propTypes = {
     input: PropTypes.object.isRequired, // eslint-disable-line
     meta: PropTypes.object.isRequired, // eslint-disable-line

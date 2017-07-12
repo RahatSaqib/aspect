@@ -1,95 +1,111 @@
-// Imports from packages
 import _ from 'lodash'
+import classnames from 'classnames/bind'
 import React from 'react'
-import { reduxForm } from 'redux-form/immutable'
-import { injectIntl } from 'react-intl'
-import { Link } from 'react-router-dom'
+import { compose, withState, pure } from 'recompose'
+import { Button } from 'react-toolbox/lib/button'
+import { Input } from 'react-toolbox/lib/input'
 
-// Material-UI
-import RaisedButton from 'material-ui/RaisedButton'
-import FlatButton from 'material-ui/FlatButton'
-
-// Our own imports
-import styles from './ResetPassword.css'
+import { StrongPasswordInput } from '../../components/shared/StrongPasswordInput'
+import recomposeForm from '../../components/recomposeForm'
 import messages from './messages'
-import TextInput from '../../components/shared/TextInput'
-import StrongPasswordInput from '../../components/shared/StrongPasswordInput'
 
-export function ResetPasswordEnterPassword({
-  intl,
-  handleSubmit,
-  pristine,
-  invalid,
-}) {
-  const { formatMessage } = intl
-  return (
-    <form onSubmit={handleSubmit} className={styles.Form}>
-      <div className={styles.Form__Content}>
-        <p>
-          {formatMessage(messages.enterNewPasswordContent)}
-        </p>
-        <StrongPasswordInput
-          name="newPassword"
-          label={formatMessage(messages.newPassword)}
-          maxLength="100"
-          autoFocus
-          fullWidth
-        />
-        <TextInput
-          name="confirmNewPassword"
-          label={formatMessage(messages.confirmNewPassword)}
-          maxLength="100"
-          type="password"
-          fullWidth
-        />
-      </div>
-      <div className={styles.Form__ActionRow}>
-        <RaisedButton
-          disabled={pristine || invalid}
-          label={formatMessage(messages.next)}
-          primary
-          type="submit"
-        />
-        <Link to="login">
-          <FlatButton secondary label={formatMessage(messages.cancel)} />
-        </Link>
-      </div>
-    </form>
-  )
-}
+const cssClasses = classnames.bind(require('./ResetPassword.css'))
 
-export function validate(passwordInput, props) {
-  const { formatMessage } = props.intl
+export function validate({ newPassword, confirmNewPassword }, { intl }) {
   const errors = {}
-  if (passwordInput.get('newPassword')) {
-    if (passwordInput.get('newPassword').trim().length < 8) {
-      errors.newPassword = formatMessage(messages.newPasswordTooShort)
+  if (newPassword) {
+    if (newPassword.trim().length < 8) {
+      errors.newPassword = intl.formatMessage(messages.newPasswordTooShort)
     } else if (
-      !/\d/.test(passwordInput.get('newPassword')) &&
-      !/(?=.*?[`~!@#$%^&*()\-=_+\\[\]{}/?,.<>])/.test(
-        passwordInput.get('newPassword')
-      )
+      !/\d/.test(newPassword) &&
+      !/(?=.*?[`~!@#$%^&*()\-=_+\\[\]{}/?,.<>])/.test(newPassword)
     ) {
-      errors.newPassword = formatMessage(
+      errors.newPassword = intl.formatMessage(
         messages.newPasswordMustContainANumberOrSpecialCharacter
       )
     }
-    if (
-      passwordInput.get('newPassword') !==
-      passwordInput.get('confirmNewPassword')
-    ) {
-      errors.confirmNewPassword = formatMessage(messages.passwordsDoNotMatch)
+    if (newPassword !== confirmNewPassword) {
+      errors.confirmNewPassword = intl.formatMessage(
+        messages.passwordsDoNotMatch
+      )
     }
   } else {
-    errors.newPassword = formatMessage(messages.newPasswordRequired)
+    errors.newPassword = intl.formatMessage(messages.newPasswordRequired)
   }
   return errors
 }
 
-export default _.flowRight(
-  injectIntl,
-  reduxForm({
-    form: 'resetPasswordEnterNewPassword',
+const enhance = compose(
+  pure,
+  withState('values', 'onChange', {
+    newPassword: '',
+    confirmNewPassword: '',
+  }),
+  recomposeForm({
+    fields: [
+      'newPassword',
+      {
+        fieldName: 'confirmNewPassword',
+        valueFromChangeEvent: _.identity,
+      },
+    ],
     validate,
   })
-)(ResetPasswordEnterPassword)
+)
+
+export const ResetPasswordEnterPassword = ({
+  intl,
+  action,
+  form,
+  values,
+  meta,
+  onNewPasswordChange,
+  onConfirmNewPasswordChange,
+  handleSubmit,
+}) =>
+  <form onSubmit={handleSubmit} className={cssClasses('Form')}>
+    <div className={cssClasses('Form__Content')}>
+      <p>
+        {intl.formatMessage(messages.enterNewPasswordContent)}
+      </p>
+      <StrongPasswordInput
+        // TODO: refactor StrongPasswordInput into react-toolbox or HOC
+        intl={intl}
+        input={{
+          value: values.newPassword,
+          onChange: onNewPasswordChange,
+        }}
+        meta={meta.newPassword}
+        textFieldProps={{
+          floatingLabelText: intl.formatMessage(messages.newPassword),
+          type: 'password',
+          name: 'newPassword',
+          maxLength: 100,
+          autoFocus: true,
+          fullWidth: true,
+        }}
+        popOverProps={{}}
+      />
+      <Input
+        type="password"
+        name="confirmNewPassword"
+        label={intl.formatMessage(messages.confirmNewPassword)}
+        value={values.confirmNewPassword}
+        onChange={onConfirmNewPasswordChange}
+        error={meta.confirmNewPassword.touched && meta.confirmNewPassword.error}
+        maxLength={500}
+      />
+    </div>
+    <div className={cssClasses('Form__ActionRow')}>
+      <Button
+        type="submit"
+        primary
+        raised
+        disabled={form.pristine || !form.valid || form.submitting}
+        label={intl.formatMessage(messages.next)}
+      />
+      {action}
+    </div>
+  </form>
+
+export default enhance(ResetPasswordEnterPassword)
