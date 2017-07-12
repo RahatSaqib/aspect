@@ -60,7 +60,7 @@ export class StyleguideMain extends PureComponent {
     this.setState({ stateId })
   }
 
-  handleChangeLga = lgaId => {
+  handleLgaIdChange = lgaId => {
     this.setState({ lgaId })
   }
 
@@ -128,7 +128,7 @@ export class StyleguideMain extends PureComponent {
           stateId={this.state.stateId}
         />
         <LgaSelectField
-          onChangeLga={this.handleChangeLga}
+          onLgaIdChange={this.handleLgaIdChange}
           countryId={this.state.countryId}
           stateId={this.state.stateId}
           lgaId={this.state.lgaId}

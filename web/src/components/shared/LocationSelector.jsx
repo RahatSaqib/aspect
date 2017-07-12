@@ -77,7 +77,7 @@ const renderStateSelectField = ({ input, meta, ...restProps }) =>
 const renderLgaSelectField = ({ input, meta, ...restProps }) =>
   <LgaSelectField
     {...restProps}
-    onChangeLga={input.onChange}
+    onLgaIdChange={input.onChange}
     lgaId={input.value}
     errorStyle={{
       float: 'left',

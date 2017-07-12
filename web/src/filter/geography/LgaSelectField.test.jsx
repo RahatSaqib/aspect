@@ -88,7 +88,7 @@ describe('LgaSelectField module', () => {
       const props = {
         countries: countriesForLocationSelector,
         fetchLgasForLocationSelector: sinon.spy(),
-        onChangeLga: sinon.spy(),
+        onLgaIdChange: sinon.spy(),
         countryId: '1',
         stateId: '2',
       }
@@ -101,7 +101,7 @@ describe('LgaSelectField module', () => {
       const props = {
         countries: countriesForLocationSelector,
         fetchLgasForLocationSelector: sinon.spy(),
-        onChangeLga: sinon.spy(),
+        onLgaIdChange: sinon.spy(),
         countryId: '1',
         stateId: '2',
       }
@@ -114,11 +114,11 @@ describe('LgaSelectField module', () => {
       expect(props.fetchLgasForLocationSelector.calledTwice).toBe(true)
     })
 
-    it('should trigger onChangeLga when value has been selected', () => {
+    it('should trigger onLgaIdChange when value has been selected', () => {
       const props = {
         countries: countriesForLocationSelector,
         fetchLgasForLocationSelector: sinon.spy(),
-        onChangeLga: sinon.spy(),
+        onLgaIdChange: sinon.spy(),
         countryId: '2',
       }
       const LgaSelectFieldWrapper = shallow(<LgaSelectField {...props} />)
@@ -127,8 +127,8 @@ describe('LgaSelectField module', () => {
       )
 
       ForkedSelectFieldWrapper.simulate('change', undefined, undefined, '2')
-      expect(props.onChangeLga.calledOnce).toBe(true)
-      expect(props.onChangeLga.calledWith('2')).toBe(true)
+      expect(props.onLgaIdChange.calledOnce).toBe(true)
+      expect(props.onLgaIdChange.calledWith('2')).toBe(true)
 
       ForkedSelectFieldWrapper.simulate(
         'change',
@@ -136,8 +136,8 @@ describe('LgaSelectField module', () => {
         undefined,
         undefined
       )
-      expect(props.onChangeLga.calledTwice).toBe(true)
-      expect(props.onChangeLga.calledWith(undefined)).toBe(true)
+      expect(props.onLgaIdChange.calledTwice).toBe(true)
+      expect(props.onLgaIdChange.calledWith(undefined)).toBe(true)
     })
   })
 })

@@ -48,7 +48,7 @@ const enhance = compose(
         lgaId: undefined,
       }),
 
-    onLgaChange: ({ onChangeFilter }) => lgaId =>
+    onLgaIdChange: ({ onChangeFilter }) => lgaId =>
       onChangeFilter({
         lgaId,
       }),
@@ -316,7 +316,7 @@ export const FiltersPanel = ({
   isShown,
   onCountryIdChange,
   onStateIdChange,
-  onLgaChange,
+  onLgaIdChange,
   onAssayChange,
   onResultCategoryChange,
   onConsumableIdChange,
@@ -417,7 +417,7 @@ export const FiltersPanel = ({
           <div className={cssClasses('Control')}>
             <LgaSelectField
               allItemText={formatMessage(messages.all)}
-              onChangeLga={onLgaChange}
+              onLgaIdChange={onLgaIdChange}
               countryId={filters.countryId}
               stateId={filters.stateId}
               lgaId={filters.lgaId}
