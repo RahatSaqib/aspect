@@ -47,7 +47,7 @@ const styles = {
 const renderCountrySelectField = ({ input, meta, ...restProps }) =>
   <CountrySelectField
     {...restProps}
-    onChangeCountry={input.onChange}
+    onCountryIdChange={input.onChange}
     countryId={input.value}
     errorStyle={{
       float: 'left',

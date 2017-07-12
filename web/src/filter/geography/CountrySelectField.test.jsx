@@ -88,7 +88,7 @@ describe('CountrySelectField module', () => {
       const props = {
         countries: countriesForLocationSelector,
         fetchCountriesForLocationSelector: sinon.spy(),
-        onChangeCountry: sinon.spy(),
+        onCountryIdChange: sinon.spy(),
         countryId: '1',
       }
       mountWithMuiTheme(<CountrySelectField {...props} />)
@@ -96,11 +96,11 @@ describe('CountrySelectField module', () => {
       expect(props.fetchCountriesForLocationSelector.calledOnce).toBe(true)
     })
 
-    it('should trigger onChangeCountry when value has been selected', () => {
+    it('should trigger onCountryIdChange when value has been selected', () => {
       const props = {
         countries: countriesForLocationSelector,
         fetchCountriesForLocationSelector: sinon.spy(),
-        onChangeCountry: sinon.spy(),
+        onCountryIdChange: sinon.spy(),
         countryId: '2',
       }
       const CountrySelectFieldWrapper = shallow(
@@ -111,8 +111,8 @@ describe('CountrySelectField module', () => {
       )
 
       ForkedSelectFieldWrapper.simulate('change', undefined, undefined, '2')
-      expect(props.onChangeCountry.calledOnce).toBe(true)
-      expect(props.onChangeCountry.calledWith('2')).toBe(true)
+      expect(props.onCountryIdChange.calledOnce).toBe(true)
+      expect(props.onCountryIdChange.calledWith('2')).toBe(true)
 
       ForkedSelectFieldWrapper.simulate(
         'change',
@@ -120,8 +120,8 @@ describe('CountrySelectField module', () => {
         undefined,
         undefined
       )
-      expect(props.onChangeCountry.calledTwice).toBe(true)
-      expect(props.onChangeCountry.calledWith(undefined)).toBe(true)
+      expect(props.onCountryIdChange.calledTwice).toBe(true)
+      expect(props.onCountryIdChange.calledWith(undefined)).toBe(true)
     })
   })
 })

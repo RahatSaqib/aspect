@@ -52,7 +52,7 @@ export class StyleguideMain extends PureComponent {
     }))
   }
 
-  handleChangeCountry = countryId => {
+  handleCountryIdChange = countryId => {
     this.setState({ countryId })
   }
 
@@ -84,9 +84,7 @@ export class StyleguideMain extends PureComponent {
           ]}
           isDone={node => node.getBoundingClientRect().width >= 400}
         >
-          <div>
-            98tyfchgvjbknl
-          </div>
+          <div>98tyfchgvjbknl</div>
         </FallbackUntilDone>
         <div style={{ display: 'flex', justifyContent: 'flex-end' }}>
           <FiltersPanel
@@ -121,7 +119,7 @@ export class StyleguideMain extends PureComponent {
           />
         </div>
         <CountrySelectField
-          onChangeCountry={this.handleChangeCountry}
+          onCountryIdChange={this.handleCountryIdChange}
           countryId={this.state.countryId}
         />
         <StateSelectField

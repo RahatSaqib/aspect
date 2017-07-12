@@ -35,7 +35,7 @@ const enhance = compose(
     onDateChange: ({ onChangeFilter }) => dateValues =>
       onChangeFilter(dateValues),
 
-    onCountryChange: ({ onChangeFilter }) => countryId =>
+    onCountryIdChange: ({ onChangeFilter }) => countryId =>
       onChangeFilter({
         countryId,
         stateId: undefined,
@@ -314,7 +314,7 @@ export const FiltersPanel = ({
   // --- injected by recompose ---
   onToggleShown,
   isShown,
-  onCountryChange,
+  onCountryIdChange,
   onStateChange,
   onLgaChange,
   onAssayChange,
@@ -389,7 +389,7 @@ export const FiltersPanel = ({
           <div className={cssClasses('Control')}>
             <CountrySelectField
               allItemText={formatMessage(messages.all)}
-              onChangeCountry={onCountryChange}
+              onCountryIdChange={onCountryIdChange}
               countryId={filters.countryId}
               floatingLabelFixed
               hintText={formatMessage(messages.selectCountry)}

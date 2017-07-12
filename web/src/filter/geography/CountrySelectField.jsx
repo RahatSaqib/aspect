@@ -17,7 +17,7 @@ export class CountrySelectField extends PureComponent {
     allItemText: PropTypes.string,
     countries: PropTypes.objectOf(LazyLoadItems).isRequired,
     fetchCountriesForLocationSelector: PropTypes.func.isRequired,
-    onChangeCountry: PropTypes.func.isRequired,
+    onCountryIdChange: PropTypes.func.isRequired,
     countryId: PropTypes.string,
   }
 
@@ -37,7 +37,7 @@ export class CountrySelectField extends PureComponent {
   }
 
   handleSelectFieldChange = (event, index, value) => {
-    this.props.onChangeCountry(value === 'all' ? undefined : value)
+    this.props.onCountryIdChange(value === 'all' ? undefined : value)
   }
 
   render() {
@@ -45,7 +45,7 @@ export class CountrySelectField extends PureComponent {
     const restProps = _.omit(this.props, [
       'allItemText',
       'countries',
-      'onChangeCountry',
+      'onCountryIdChange',
       'countryId',
       'fetchCountriesForLocationSelector',
     ])
