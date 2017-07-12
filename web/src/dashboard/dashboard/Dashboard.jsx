@@ -28,6 +28,8 @@ import DashboardSuppliesExpiringSoon from './DashboardSuppliesExpiringSoon'
 import styles from './Dashboard.css'
 import { fetchDashboardHome } from '../DashboardRedux'
 import ChartComponent from '../../components/graph/ChartComponent'
+import BarChart from '../../components/graph/BarChart'
+import ColumnChart from '../../components/graph/ColumnChart'
 
 // data to be used in graphs
 const exData1 = [
@@ -282,41 +284,41 @@ export class Dashboard extends PureComponent {
                 </Unit>
                 <Unit sm="1-2">
                   <h3>Chart Components</h3>
-                  <ChartComponent
-                    data={exData1}
-                    color={['#e85164', '#fcb124', '#73d449']}
-                    type="column"
-                    title="High Performing"
-                    spacing={0.4}
-                    hideAxes
-                    rightLabel
-                    hideLabel={false}
-                  />
+                  <ChartComponent title="High Performing">
+                    <ColumnChart
+                      data={exData1}
+                      color={['#e85164', '#fcb124', '#73d449']}
+                      spacing={0.4}
+                      hideAxes
+                      rightLabel
+                      hideLabel={false}
+                    />
+                  </ChartComponent>
                 </Unit>
               </div>
               <Unit sm="1-2">
-                <ChartComponent
-                  data={exData2}
-                  color={['#27c4e0', '#e85065']}
-                  type="bar"
-                  title="HIV"
-                  spacing={0.3}
-                  numLabelSize={30}
-                />
+                <ChartComponent title="HIV">
+                  <BarChart
+                    data={exData2}
+                    color={['#27c4e0', '#e85065']}
+                    spacing={0.3}
+                    numLabelSize={30}
+                  />
+                </ChartComponent>
               </Unit>
               <div style={{ width: '1500px' }}>
                 <Unit sm="1-2">
-                  <ChartComponent
-                    data={exData3}
-                    color={['#e85163', '#fcb026', '#73d449', '#25c5e0']}
-                    title="Test Failures Last 30 Days"
-                    type="bar"
-                    spacing={0.3}
-                    numLabelSize={30}
-                    styleWide
-                    hideAxes
-                    xOnly
-                  />
+                  <ChartComponent title="Test Failures Last 30 Days">
+                    <BarChart
+                      data={exData3}
+                      color={['#e85163', '#fcb026', '#73d449', '#25c5e0']}
+                      spacing={0.3}
+                      numLabelSize={30}
+                      styleWide
+                      hideAxes
+                      xOnly
+                    />
+                  </ChartComponent>
                 </Unit>
               </div>
             </section>

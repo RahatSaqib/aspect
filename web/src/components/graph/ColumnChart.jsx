@@ -184,14 +184,25 @@ class ColumnChart extends Component {
 
 ColumnChart.propTypes = {
   data: PropTypes.arrayOf(PropTypes.object).isRequired,
-  hideLabel: PropTypes.bool.isRequired,
-  rightLabel: PropTypes.bool.isRequired,
-  color: PropTypes.arrayOf(PropTypes.string).isRequired,
-  hideAxes: PropTypes.bool.isRequired,
-  hideTicks: PropTypes.bool.isRequired,
-  spacing: PropTypes.number.isRequired,
-  numLabelSize: PropTypes.number.isRequired,
-  styleWide: PropTypes.bool.isRequired,
+  hideLabel: PropTypes.bool,
+  rightLabel: PropTypes.bool,
+  color: PropTypes.arrayOf(PropTypes.string),
+  hideAxes: PropTypes.bool,
+  hideTicks: PropTypes.bool,
+  spacing: PropTypes.number,
+  numLabelSize: PropTypes.number,
+  styleWide: PropTypes.bool,
+}
+
+ColumnChart.defaultProps = {
+  hideLabel: true,
+  hideTicks: true,
+  hideAxes: false,
+  rightLabel: false,
+  color: [],
+  spacing: 0.4,
+  numLabelSize: 18,
+  styleWide: false,
 }
 
 export default ColumnChart

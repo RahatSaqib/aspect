@@ -150,14 +150,25 @@ class BarChart extends Component {
 
 BarChart.propTypes = {
   data: PropTypes.arrayOf(PropTypes.object).isRequired,
-  hideLabel: PropTypes.bool.isRequired,
-  color: PropTypes.arrayOf(PropTypes.string).isRequired,
-  hideAxes: PropTypes.bool.isRequired,
-  hideTicks: PropTypes.bool.isRequired,
-  spacing: PropTypes.number.isRequired,
-  numLabelSize: PropTypes.number.isRequired,
-  styleWide: PropTypes.bool.isRequired,
-  xOnly: PropTypes.bool.isRequired,
+  hideLabel: PropTypes.bool,
+  color: PropTypes.arrayOf(PropTypes.string),
+  hideAxes: PropTypes.bool,
+  hideTicks: PropTypes.bool,
+  spacing: PropTypes.number,
+  numLabelSize: PropTypes.number,
+  styleWide: PropTypes.bool,
+  xOnly: PropTypes.bool,
+}
+
+BarChart.defaultProps = {
+  hideLabel: true,
+  hideTicks: true,
+  hideAxes: false,
+  color: [],
+  spacing: 0.4,
+  numLabelSize: 18,
+  styleWide: false,
+  xOnly: false,
 }
 
 export default BarChart
