@@ -42,7 +42,7 @@ const enhance = compose(
         lgaId: undefined,
       }),
 
-    onStateChange: ({ onChangeFilter }) => stateId =>
+    onStateIdChange: ({ onChangeFilter }) => stateId =>
       onChangeFilter({
         stateId,
         lgaId: undefined,
@@ -315,7 +315,7 @@ export const FiltersPanel = ({
   onToggleShown,
   isShown,
   onCountryIdChange,
-  onStateChange,
+  onStateIdChange,
   onLgaChange,
   onAssayChange,
   onResultCategoryChange,
@@ -402,7 +402,7 @@ export const FiltersPanel = ({
           <div className={cssClasses('Control')}>
             <StateSelectField
               allItemText={formatMessage(messages.all)}
-              onChangeState={onStateChange}
+              onStateIdChange={onStateIdChange}
               countryId={filters.countryId}
               stateId={filters.stateId}
               floatingLabelFixed

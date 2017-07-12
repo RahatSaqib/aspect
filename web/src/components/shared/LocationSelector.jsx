@@ -62,7 +62,7 @@ const renderCountrySelectField = ({ input, meta, ...restProps }) =>
 const renderStateSelectField = ({ input, meta, ...restProps }) =>
   <StateSelectField
     {...restProps}
-    onChangeState={input.onChange}
+    onStateIdChange={input.onChange}
     stateId={input.value}
     errorStyle={{
       float: 'left',

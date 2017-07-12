@@ -56,7 +56,7 @@ export class StyleguideMain extends PureComponent {
     this.setState({ countryId })
   }
 
-  handleChangeState = stateId => {
+  handleStateIdChange = stateId => {
     this.setState({ stateId })
   }
 
@@ -123,7 +123,7 @@ export class StyleguideMain extends PureComponent {
           countryId={this.state.countryId}
         />
         <StateSelectField
-          onChangeState={this.handleChangeState}
+          onStateIdChange={this.handleStateIdChange}
           countryId={this.state.countryId}
           stateId={this.state.stateId}
         />

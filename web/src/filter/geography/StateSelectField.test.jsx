@@ -88,7 +88,7 @@ describe('StateSelectField module', () => {
       const props = {
         countries: countriesForLocationSelector,
         fetchStatesForLocationSelector: sinon.spy(),
-        onChangeState: sinon.spy(),
+        onStateIdChange: sinon.spy(),
         countryId: '1',
       }
       mountWithMuiTheme(<StateSelectField {...props} />)
@@ -100,7 +100,7 @@ describe('StateSelectField module', () => {
       const props = {
         countries: countriesForLocationSelector,
         fetchStatesForLocationSelector: sinon.spy(),
-        onChangeState: sinon.spy(),
+        onStateIdChange: sinon.spy(),
         countryId: '2',
       }
       const StateSelectFieldWrapper = mountWithMuiTheme(
@@ -112,11 +112,11 @@ describe('StateSelectField module', () => {
       expect(props.fetchStatesForLocationSelector.calledTwice).toBe(true)
     })
 
-    it('should trigger onChangeState when value has been selected', () => {
+    it('should trigger onStateIdChange when value has been selected', () => {
       const props = {
         countries: countriesForLocationSelector,
         fetchStatesForLocationSelector: sinon.spy(),
-        onChangeState: sinon.spy(),
+        onStateIdChange: sinon.spy(),
         countryId: '2',
       }
       const StateSelectFieldWrapper = shallow(<StateSelectField {...props} />)
@@ -125,8 +125,8 @@ describe('StateSelectField module', () => {
       )
 
       ForkedSelectFieldWrapper.simulate('change', undefined, undefined, '2')
-      expect(props.onChangeState.calledOnce).toBe(true)
-      expect(props.onChangeState.calledWith('2')).toBe(true)
+      expect(props.onStateIdChange.calledOnce).toBe(true)
+      expect(props.onStateIdChange.calledWith('2')).toBe(true)
 
       ForkedSelectFieldWrapper.simulate(
         'change',
@@ -134,8 +134,8 @@ describe('StateSelectField module', () => {
         undefined,
         undefined
       )
-      expect(props.onChangeState.calledTwice).toBe(true)
-      expect(props.onChangeState.calledWith(undefined)).toBe(true)
+      expect(props.onStateIdChange.calledTwice).toBe(true)
+      expect(props.onStateIdChange.calledWith(undefined)).toBe(true)
     })
   })
 })
