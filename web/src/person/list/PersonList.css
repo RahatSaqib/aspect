@@ -16,16 +16,6 @@
   font-size: 14px;
 }
 
-/*
-TODO: Remove dead code/ change accordingly
-.DeviceDataTableHead__Tests--left {
-  text-align: right;
-}
-
-.DeviceDataTableHead__Tests--right {
-  text-align: left;
-}*/
-
 .TablePaginator {
   padding-bottom: 0;
 }
