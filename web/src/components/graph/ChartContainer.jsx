@@ -2,30 +2,32 @@ import React from 'react'
 import PropTypes from 'prop-types'
 import classnames from 'classnames/bind'
 import Alert from './ChartAlert'
-import styles from './ChartComponent.css'
+import styles from './ChartContainer.css'
 
 const cssClasses = classnames.bind(styles)
 
-const ChartComponent = ({ alert, alertMsg, title }) => (
+const ChartContainer = props => (
   <div className={cssClasses('graph')}>
     <h1 className={cssClasses('title')}>
-      {title}
+      {props.title}
     </h1>
-    {this.props.children}
-    {alertMsg && <Alert status={alert} statusString={alertMsg} />}
+    {props.children}
+    {props.alertMsg &&
+      <Alert status={props.alert} statusString={props.alertMsg} />}
   </div>
 )
 
-ChartComponent.propTypes = {
+ChartContainer.propTypes = {
   title: PropTypes.string,
   alert: PropTypes.string,
   alertMsg: PropTypes.string,
+  children: PropTypes.element.isRequired,
 }
 
-ChartComponent.defaultProps = {
+ChartContainer.defaultProps = {
   title: '',
   alertMsg: '',
   alert: '',
 }
 
-export default ChartComponent
+export default ChartContainer

@@ -27,7 +27,7 @@ import DashboardSuppliesRunningLow from './DashboardSuppliesRunningLow'
 import DashboardSuppliesExpiringSoon from './DashboardSuppliesExpiringSoon'
 import styles from './Dashboard.css'
 import { fetchDashboardHome } from '../DashboardRedux'
-import ChartComponent from '../../components/graph/ChartComponent'
+import ChartContainer from '../../components/graph/ChartContainer'
 import BarChart from '../../components/graph/BarChart'
 import ColumnChart from '../../components/graph/ColumnChart'
 
@@ -284,7 +284,7 @@ export class Dashboard extends PureComponent {
                 </Unit>
                 <Unit sm="1-2">
                   <h3>Chart Components</h3>
-                  <ChartComponent title="High Performing">
+                  <ChartContainer title="High Performing">
                     <ColumnChart
                       data={exData1}
                       color={['#e85164', '#fcb124', '#73d449']}
@@ -293,22 +293,22 @@ export class Dashboard extends PureComponent {
                       rightLabel
                       hideLabel={false}
                     />
-                  </ChartComponent>
+                  </ChartContainer>
                 </Unit>
               </div>
               <Unit sm="1-2">
-                <ChartComponent title="HIV">
+                <ChartContainer title="HIV">
                   <BarChart
                     data={exData2}
                     color={['#27c4e0', '#e85065']}
                     spacing={0.3}
                     numLabelSize={30}
                   />
-                </ChartComponent>
+                </ChartContainer>
               </Unit>
               <div style={{ width: '1500px' }}>
                 <Unit sm="1-2">
-                  <ChartComponent title="Test Failures Last 30 Days">
+                  <ChartContainer title="Test Failures Last 30 Days">
                     <BarChart
                       data={exData3}
                       color={['#e85163', '#fcb026', '#73d449', '#25c5e0']}
@@ -318,7 +318,7 @@ export class Dashboard extends PureComponent {
                       hideAxes
                       xOnly
                     />
-                  </ChartComponent>
+                  </ChartContainer>
                 </Unit>
               </div>
             </section>
