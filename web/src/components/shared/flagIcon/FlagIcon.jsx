@@ -1,12 +1,16 @@
+import classnames from 'classnames/bind'
 import React from 'react'
-import styles from './FlagIcon.css'
+
+const cssClasses = classnames.bind(require('./FlagIcon.css'))
 
 export default props =>
   props.countryIsoAlpha2Code
     ? <i
         style={props.style}
-        className={`${styles['flag-icon']} ${styles[
+        className={cssClasses(
+          props.className,
+          'flag-icon',
           `flag-${props.countryIsoAlpha2Code.toLowerCase()}`
-        ]}`}
+        )}
       />
     : null
