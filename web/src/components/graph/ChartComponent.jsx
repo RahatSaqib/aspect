@@ -74,7 +74,7 @@ ChartComponent.propTypes = {
   rightLabel: PropTypes.bool,
   spacing: PropTypes.number,
   numLabelSize: PropTypes.number,
-  styleWide: PropTypes.number,
+  styleWide: PropTypes.bool,
   xOnly: PropTypes.bool,
 }
 
