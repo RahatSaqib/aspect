@@ -48,6 +48,7 @@ const SELECT_SHOW_FIELDS = [
   'rc2.name as resultCategory2Name',
   'r.resultWorkflowStatusId',
   'rs.name as resultWorkflowStatus',
+  'rs.externalId as resultWorkflowStatusExternalId',
   'r.resultData',
   'r.siteId',
   'si.name as siteName',
