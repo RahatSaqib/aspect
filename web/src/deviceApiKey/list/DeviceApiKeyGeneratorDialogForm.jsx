@@ -137,7 +137,7 @@ export function DeviceApiKeyGeneratorDialogForm({
           floatingLabelText={formatMessage(messages.countryId)}
           allItemText=""
           countryId={values.countryId}
-          onChangeCountry={onCountryIdChange}
+          onCountryIdChange={onCountryIdChange}
           errorStyle={{
             float: 'left',
             whiteSpace: 'nowrap',

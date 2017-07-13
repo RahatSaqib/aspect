@@ -52,15 +52,15 @@ export class StyleguideMain extends PureComponent {
     }))
   }
 
-  handleChangeCountry = countryId => {
+  handleCountryIdChange = countryId => {
     this.setState({ countryId })
   }
 
-  handleChangeState = stateId => {
+  handleStateIdChange = stateId => {
     this.setState({ stateId })
   }
 
-  handleChangeLga = lgaId => {
+  handleLgaIdChange = lgaId => {
     this.setState({ lgaId })
   }
 
@@ -84,9 +84,7 @@ export class StyleguideMain extends PureComponent {
           ]}
           isDone={node => node.getBoundingClientRect().width >= 400}
         >
-          <div>
-            98tyfchgvjbknl
-          </div>
+          <div>98tyfchgvjbknl</div>
         </FallbackUntilDone>
         <div style={{ display: 'flex', justifyContent: 'flex-end' }}>
           <FiltersPanel
@@ -121,16 +119,16 @@ export class StyleguideMain extends PureComponent {
           />
         </div>
         <CountrySelectField
-          onChangeCountry={this.handleChangeCountry}
+          onCountryIdChange={this.handleCountryIdChange}
           countryId={this.state.countryId}
         />
         <StateSelectField
-          onChangeState={this.handleChangeState}
+          onStateIdChange={this.handleStateIdChange}
           countryId={this.state.countryId}
           stateId={this.state.stateId}
         />
         <LgaSelectField
-          onChangeLga={this.handleChangeLga}
+          onLgaIdChange={this.handleLgaIdChange}
           countryId={this.state.countryId}
           stateId={this.state.stateId}
           lgaId={this.state.lgaId}

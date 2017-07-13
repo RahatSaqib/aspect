@@ -47,7 +47,7 @@ const styles = {
 const renderCountrySelectField = ({ input, meta, ...restProps }) =>
   <CountrySelectField
     {...restProps}
-    onChangeCountry={input.onChange}
+    onCountryIdChange={input.onChange}
     countryId={input.value}
     errorStyle={{
       float: 'left',
@@ -62,7 +62,7 @@ const renderCountrySelectField = ({ input, meta, ...restProps }) =>
 const renderStateSelectField = ({ input, meta, ...restProps }) =>
   <StateSelectField
     {...restProps}
-    onChangeState={input.onChange}
+    onStateIdChange={input.onChange}
     stateId={input.value}
     errorStyle={{
       float: 'left',
@@ -77,7 +77,7 @@ const renderStateSelectField = ({ input, meta, ...restProps }) =>
 const renderLgaSelectField = ({ input, meta, ...restProps }) =>
   <LgaSelectField
     {...restProps}
-    onChangeLga={input.onChange}
+    onLgaIdChange={input.onChange}
     lgaId={input.value}
     errorStyle={{
       float: 'left',

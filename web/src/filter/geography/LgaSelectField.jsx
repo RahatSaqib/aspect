@@ -33,7 +33,7 @@ export function getSelectedStateLgas(props) {
 export class LgaSelectField extends PureComponent {
   static propTypes = {
     allItemText: PropTypes.string,
-    onChangeLga: PropTypes.func.isRequired,
+    onLgaIdChange: PropTypes.func.isRequired,
     stateId: PropTypes.string, // eslint-disable-line react/no-unused-prop-types
     lgaId: PropTypes.string,
     fetchLgasForLocationSelector: PropTypes.func,
@@ -76,7 +76,7 @@ export class LgaSelectField extends PureComponent {
   }
 
   handleSelectFieldChange = (event, index, value) => {
-    this.props.onChangeLga(value === 'all' ? undefined : value)
+    this.props.onLgaIdChange(value === 'all' ? undefined : value)
   }
 
   render() {
@@ -84,7 +84,7 @@ export class LgaSelectField extends PureComponent {
     const restProps = _.omit(this.props, [
       'allItemText',
       'countries',
-      'onChangeLga',
+      'onLgaIdChange',
       'countryId',
       'stateId',
       'lgaId',

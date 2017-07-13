@@ -32,7 +32,7 @@ export class StateSelectField extends PureComponent {
   static propTypes = {
     allItemText: PropTypes.string,
     fetchStatesForLocationSelector: PropTypes.func.isRequired,
-    onChangeState: PropTypes.func.isRequired,
+    onStateIdChange: PropTypes.func.isRequired,
     countryId: PropTypes.string, // eslint-disable-line react/no-unused-prop-types
     stateId: PropTypes.string,
   }
@@ -63,7 +63,7 @@ export class StateSelectField extends PureComponent {
   }
 
   handleSelectFieldChange = (event, index, value) => {
-    this.props.onChangeState(value === 'all' ? undefined : value)
+    this.props.onStateIdChange(value === 'all' ? undefined : value)
   }
 
   render() {
@@ -71,7 +71,7 @@ export class StateSelectField extends PureComponent {
     const restProps = _.omit(this.props, [
       'allItemText',
       'countries',
-      'onChangeState',
+      'onStateIdChange',
       'countryId',
       'stateId',
       'fetchStatesForLocationSelector',

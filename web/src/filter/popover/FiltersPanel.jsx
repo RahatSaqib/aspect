@@ -35,20 +35,20 @@ const enhance = compose(
     onDateChange: ({ onChangeFilter }) => dateValues =>
       onChangeFilter(dateValues),
 
-    onCountryChange: ({ onChangeFilter }) => countryId =>
+    onCountryIdChange: ({ onChangeFilter }) => countryId =>
       onChangeFilter({
         countryId,
         stateId: undefined,
         lgaId: undefined,
       }),
 
-    onStateChange: ({ onChangeFilter }) => stateId =>
+    onStateIdChange: ({ onChangeFilter }) => stateId =>
       onChangeFilter({
         stateId,
         lgaId: undefined,
       }),
 
-    onLgaChange: ({ onChangeFilter }) => lgaId =>
+    onLgaIdChange: ({ onChangeFilter }) => lgaId =>
       onChangeFilter({
         lgaId,
       }),
@@ -314,9 +314,9 @@ export const FiltersPanel = ({
   // --- injected by recompose ---
   onToggleShown,
   isShown,
-  onCountryChange,
-  onStateChange,
-  onLgaChange,
+  onCountryIdChange,
+  onStateIdChange,
+  onLgaIdChange,
   onAssayChange,
   onResultCategoryChange,
   onConsumableIdChange,
@@ -389,7 +389,7 @@ export const FiltersPanel = ({
           <div className={cssClasses('Control')}>
             <CountrySelectField
               allItemText={formatMessage(messages.all)}
-              onChangeCountry={onCountryChange}
+              onCountryIdChange={onCountryIdChange}
               countryId={filters.countryId}
               floatingLabelFixed
               hintText={formatMessage(messages.selectCountry)}
@@ -402,7 +402,7 @@ export const FiltersPanel = ({
           <div className={cssClasses('Control')}>
             <StateSelectField
               allItemText={formatMessage(messages.all)}
-              onChangeState={onStateChange}
+              onStateIdChange={onStateIdChange}
               countryId={filters.countryId}
               stateId={filters.stateId}
               floatingLabelFixed
@@ -417,7 +417,7 @@ export const FiltersPanel = ({
           <div className={cssClasses('Control')}>
             <LgaSelectField
               allItemText={formatMessage(messages.all)}
-              onChangeLga={onLgaChange}
+              onLgaIdChange={onLgaIdChange}
               countryId={filters.countryId}
               stateId={filters.stateId}
               lgaId={filters.lgaId}

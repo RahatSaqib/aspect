@@ -86,10 +86,10 @@ export function DeviceApiKeyAssignerDialogForm({
   isDialogOpen,
   count,
   onCancel,
-  onChangeCountryId,
-  onChangePartnerId,
-  onChangeSiteId,
-  onChangeDeviceId,
+  onCountryIdChange,
+  onPartnerIdChange,
+  onSiteIdChange,
+  onDeviceIdChange,
   handleSubmit,
   form,
   meta,
@@ -127,7 +127,7 @@ export function DeviceApiKeyAssignerDialogForm({
           floatingLabelText={formatMessage(messages.countryId)}
           allItemText=""
           countryId={values.countryId}
-          onChangeCountry={onChangeCountryId}
+          onCountryIdChange={onCountryIdChange}
           errorStyle={{
             float: 'left',
             whiteSpace: 'nowrap',
@@ -144,7 +144,7 @@ export function DeviceApiKeyAssignerDialogForm({
           emptyId="-1"
           emptyText=""
           partnerId={values.partnerId}
-          onChangePartner={onChangePartnerId}
+          onChangePartner={onPartnerIdChange}
           errorStyle={{
             float: 'left',
             whiteSpace: 'nowrap',
@@ -161,7 +161,7 @@ export function DeviceApiKeyAssignerDialogForm({
           countryId={values.countryId}
           partnerId={values.partnerId}
           value={values.siteId}
-          onSiteChange={onChangeSiteId}
+          onSiteChange={onSiteIdChange}
           errorStyle={{
             float: 'left',
             whiteSpace: 'nowrap',
@@ -179,7 +179,7 @@ export function DeviceApiKeyAssignerDialogForm({
           partnerId={values.partnerId}
           siteId={values.siteId}
           value={values.deviceId}
-          onDeviceChange={onChangeDeviceId}
+          onDeviceChange={onDeviceIdChange}
           errorStyle={{
             float: 'left',
             whiteSpace: 'nowrap',
