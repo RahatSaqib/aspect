@@ -104,7 +104,7 @@ class ColumnChart extends Component {
             bars.push(
               <Bar
                 key={`bar-${j}`}
-                x={margin.left + barDisplacement(j, barLength)}
+                x={barDisplacement(j, barLength)}
                 y={yPoint(d)}
                 height={yScale.bandwidth()}
                 width={barLength[j]}
@@ -114,13 +114,13 @@ class ColumnChart extends Component {
           }
 
           return (
-            <Group className="barGraph" key={d.name}>
+            <Group left={margin.left} key={d.name}>
               {bars}
               {!this.props.rightLabel &&
                 <AxisLeft
                   scale={yScale}
                   top={0}
-                  left={margin.left}
+                  left={0}
                   stroke={'#1b1a1e'}
                   tickTextFill={'#1b1a1e'}
                   numTicks={4}
@@ -162,7 +162,7 @@ class ColumnChart extends Component {
                 <AxisBottom
                   scale={xScale}
                   top={yMax}
-                  left={margin.left}
+                  left={0}
                   hideTicks={this.props.hideTicks}
                   numTicks={3}
                   hideZero
