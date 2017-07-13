@@ -109,8 +109,6 @@ class BarChart extends Component {
               {!this.props.hideAxes &&
                 <AxisLeft
                   scale={yScale}
-                  top={0}
-                  left={0}
                   stroke={'#1b1a1e'}
                   tickTextFill={'#1b1a1e'}
                   numTicks={4}
@@ -130,7 +128,6 @@ class BarChart extends Component {
                 <AxisBottom
                   scale={xScale}
                   top={yMax}
-                  left={0}
                   hideTicks
                   tickLabelComponent={
                     <text

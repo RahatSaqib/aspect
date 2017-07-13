@@ -119,8 +119,6 @@ class ColumnChart extends Component {
               {!this.props.rightLabel &&
                 <AxisLeft
                   scale={yScale}
-                  top={0}
-                  left={0}
                   stroke={'#1b1a1e'}
                   tickTextFill={'#1b1a1e'}
                   numTicks={4}
@@ -140,7 +138,6 @@ class ColumnChart extends Component {
               {this.props.rightLabel &&
                 <AxisRight
                   scale={yScale}
-                  top={0}
                   left={xMax}
                   stroke={'#1b1a1e'}
                   tickTextFill={'#1b1a1e'}
@@ -162,7 +159,6 @@ class ColumnChart extends Component {
                 <AxisBottom
                   scale={xScale}
                   top={yMax}
-                  left={0}
                   hideTicks={this.props.hideTicks}
                   numTicks={3}
                   hideZero
