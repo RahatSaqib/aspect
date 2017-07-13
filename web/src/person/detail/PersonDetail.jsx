@@ -171,13 +171,8 @@ export class PersonDetail extends PureComponent {
   }
 
   render() {
-    const {
-      intl: { formatMessage },
-      person,
-      user,
-      editable,
-      showAcknowledgement,
-    } = this.props
+    const { intl, person, user, editable, showAcknowledgement } = this.props
+    const { formatMessage } = intl
     const contactDetails = new ContactDetails(person)
     const loginDetails = new LoginDetails(person)
     const userPreferences = new UserPreferences(person)
@@ -269,6 +264,7 @@ export class PersonDetail extends PureComponent {
                   {formatMessage(messages.languageAndTimezone)}
                 </Visible>
                 <UserPreferencesForm
+                  intl={intl}
                   loading={loading}
                   initialValues={userPreferences}
                   onSubmit={this.saveUserPreferences}

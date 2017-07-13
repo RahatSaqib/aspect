@@ -1,97 +1,118 @@
-import PropTypes from 'prop-types'
-import React from 'react'
-import { reduxForm, Field } from 'redux-form/immutable'
-import RaisedButton from 'material-ui/RaisedButton'
 import _ from 'lodash'
-import { injectIntl, intlShape } from 'react-intl'
-import TimezoneSelect from '../../components/shared/TimezoneSelect'
-import CountrySelect from '../../components/shared/CountrySelect'
+import classnames from 'classnames/bind'
+import React from 'react'
+import { compose, lifecycle, pure } from 'recompose'
+import { Dropdown } from 'react-toolbox/lib/dropdown'
+import { Button } from 'react-toolbox/lib/button'
+
+import recomposeForm from '../../components/recomposeForm'
+import FlagIcon from '../../components/shared/flagIcon/FlagIcon'
+import { timezones } from '../../shared/utils/timezone'
 import messages from './messages'
-import styles from './PersonDetail.css'
 
-const renderLanguageField = props => {
-  const { onSelectionChanged, input, selectFieldProps } = props
-  const onChange = (event, index, value) => {
-    if (onSelectionChanged) {
-      onSelectionChanged(event, index, value)
-    }
-    input.onChange(value)
-  }
-  return (
-    <CountrySelect
-      name={input.name}
-      value={input.value}
-      dataSource={languages}
-      dataSourceConfig={{
-        selectedItemTextPredicate: language => language.language_name,
-        menuItemTextPredicate: language => language.language_name,
-        valuePredicate: language => language.culture,
-      }}
-      selectFieldProps={selectFieldProps}
-      onChange={onChange}
-    />
-  )
-}
+const cssClasses = classnames.bind(require('./PersonDetail.css'))
 
-export function UserPreferencesForm({
-  intl,
-  handleSubmit,
-  pristine,
-  invalid,
-  loading,
-  saving,
-}) {
-  const { formatMessage } = intl
+const enhance = compose(
+  pure,
+  lifecycle({
+    componentWillMount() {
+      const { initialValues } = this.props
 
-  return (
-    <form onSubmit={handleSubmit} className={styles.Form}>
-      <div className={styles.Form__Content}>
-        <TimezoneSelect
-          name="timezone"
-          label={formatMessage(messages.timezone)}
-          disabled={loading || saving}
-          autoWidth
-        />
-        <br />
-        <Field
-          name="culture"
-          selectFieldProps={{
-            floatingLabelText: formatMessage(messages.language),
-            disabled: loading || saving,
-            autoWidth: true,
-          }}
-          disabled={loading || saving}
-          component={renderLanguageField}
-        />
-      </div>
-      <div className={styles.Form__ActionRow}>
-        <RaisedButton
-          disabled={pristine || invalid || loading}
-          label={formatMessage(messages.save)}
-          secondary
-          type="submit"
-        />
-      </div>
-    </form>
-  )
-}
-
-UserPreferencesForm.propTypes = {
-  loading: PropTypes.bool,
-  saving: PropTypes.bool,
-  handleSubmit: PropTypes.func.isRequired,
-  pristine: PropTypes.bool.isRequired,
-  invalid: PropTypes.bool.isRequired,
-  intl: intlShape.isRequired,
-}
-
-export default _.flowRight(
-  injectIntl,
-  reduxForm({
-    enableReinitialize: true,
-    form: 'userPreferences',
+      this.setState({
+        // this.state will be injected to render props of InnerComponent
+        values: {
+          timezone: initialValues.get('timezone'),
+          culture: initialValues.get('culture'),
+        },
+        onChange: nextValues => {
+          this.setState(() => ({ values: nextValues }))
+        },
+      })
+    },
+    // TODO: extract state out to outer components
+    componentWillReceiveProps(nextProps) {
+      if (this.props.initialValues !== nextProps.initialValues) {
+        // Re-initialize
+        const { initialValues } = nextProps
+        this.state.onChange({
+          timezone: initialValues.get('timezone'),
+          culture: initialValues.get('culture'),
+        })
+      }
+    },
+  }),
+  recomposeForm({
+    fields: [
+      {
+        fieldName: 'timezone',
+        valueFromChangeEvent: _.identity,
+      },
+      {
+        fieldName: 'culture',
+        valueFromChangeEvent: _.identity,
+      },
+    ],
+    validate() {
+      const errors = {}
+      return errors
+    },
   })
-)(UserPreferencesForm)
+)
+
+export const UserPreferencesForm = ({
+  intl,
+  loading,
+  form,
+  values,
+  onTimezoneChange,
+  onCultureChange,
+  handleSubmit,
+}) =>
+  <form onSubmit={handleSubmit} className={cssClasses('Form')}>
+    <div className={cssClasses('Form__Content')}>
+      <Dropdown
+        name="timezone"
+        label={intl.formatMessage(messages.timezone)}
+        disabled={loading || form.submitting}
+        onChange={onTimezoneChange}
+        labelKey="name"
+        valueKey="id"
+        source={timezones}
+        value={values.timezone}
+      />
+      <Dropdown
+        name="culture"
+        label={intl.formatMessage(messages.language)}
+        disabled={loading || form.submitting}
+        onChange={onCultureChange}
+        template={({
+          language_name: name,
+          iso_alpha2_code: countryIsoAlpha2Code,
+        }) =>
+          <span>
+            <FlagIcon
+              className={cssClasses('FlagIcon')}
+              countryIsoAlpha2Code={countryIsoAlpha2Code}
+            />
+            {name}
+          </span>}
+        valueKey="culture"
+        source={languages}
+        value={values.culture}
+      />
+    </div>
+    <div className={cssClasses('Form__ActionRow')}>
+      <Button
+        type="submit"
+        label={intl.formatMessage(messages.save)}
+        disabled={form.pristine || !form.valid || form.loading}
+        raised
+        neutral
+      />
+    </div>
+  </form>
+
+export default enhance(UserPreferencesForm)
 
 const languages = [
   { culture: 'fr-FR', language_name: 'French (FR)', iso_alpha2_code: 'FR' },

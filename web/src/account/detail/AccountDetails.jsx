@@ -107,7 +107,7 @@ export class AccountDetails extends PureComponent {
 
   render() {
     const {
-      intl: { formatMessage },
+      intl,
       loading,
       saving,
       accountDetails,
@@ -116,6 +116,7 @@ export class AccountDetails extends PureComponent {
       saveLoginDetails,
       showAcknowledgement,
     } = this.props
+    const { formatMessage } = intl
     const saveLoginDetailsFailed = errors => {
       if (!errors.currentPassword) {
         this.closeCurrentPasswordInputDialog()
@@ -198,6 +199,7 @@ export class AccountDetails extends PureComponent {
                 {formatMessage(personDetailsMessages.languageAndTimezone)}
               </Visible>
               <UserPreferencesForm
+                intl={intl}
                 loading={loading || saving}
                 initialValues={accountDetails.get('userPreferences')}
                 onSubmit={saveUserPreferences}
