@@ -32,7 +32,7 @@ const createFieldListHandlers = _fp.reduce(
           },
         },
         handlers: {
-          [`onChange${fieldNameUpperFirst}`](...args) {
+          [`on${fieldNameUpperFirst}Change`](...args) {
             const value = valueFromChangeEvent(...args)
             const nextValues = {
               ...this.props.values,
@@ -139,6 +139,10 @@ const recomposeForm = ({
       const { state, handlers } = createFieldListHandlers(fieldNameList)
       this.state = state
       this.handlers = _fp.mapValues(_fp.bind(_fp.placeholder, this), handlers)
+    }
+
+    componentWillUnmount() {
+      this.handleFormStateChange = _fp.noop
     }
 
     validateFields = (values = this.props.values) => {

@@ -16,15 +16,14 @@ function attemptToConnectAndLogin(done) {
     done()
   }
   setTimeout(() => {
-    server.get('/')
-      .end((err, res) => {
-        if (err || !res || res.status !== 200) {
-          attemptsToConnect += 1
-          attemptToConnectAndLogin(done)
-        } else {
-          tryLogin(done)
-        }
-      })
+    server.get('/').end((err, res) => {
+      if (err || !res || res.status !== 200) {
+        attemptsToConnect += 1
+        attemptToConnectAndLogin(done)
+      } else {
+        tryLogin(done)
+      }
+    })
   }, 1000)
 }
 
@@ -72,7 +71,7 @@ function tryRefreshToken(refreshToken, clientId, done) {
     })
 }
 
-before((done) => {
+before(done => {
   // Wait until server is up and running
   attemptToConnectAndLogin(done)
 })

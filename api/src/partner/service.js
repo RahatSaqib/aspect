@@ -2,27 +2,34 @@ const Promise = require('bluebird')
 const { knex, filterParams, sortPageParams } = require('../db')
 
 const SELECT_LIST_FIELDS = [
-  'p.id', 'p.name', 'p.partnerTypeId', 'pt.name as partnerTypeName'
+  'p.id',
+  'p.name',
+  'p.partnerTypeId',
+  'pt.name as partnerTypeName',
 ]
 
 const SELECT_SHOW_FIELDS = [
-  'p.id', 'p.name', 'p.partnerTypeId', 'pt.name as partnerTypeName'
+  'p.id',
+  'p.name',
+  'p.partnerTypeId',
+  'pt.name as partnerTypeName',
 ]
 
 function* listPartners(request) {
   const { query } = request
 
-  const partnerQuery = knex('Partner as p')
-    .modify(filterParams, query, { name: 'p.name' })
-    // TODO: modify addConstraints to not require site or device
-    // .modify(addConstraints, dataConstraints, {Partner: 'p'})
+  const partnerQuery = knex('Partner as p').modify(filterParams, query, {
+    name: 'p.name',
+  })
+  // TODO: modify addConstraints to not require site or device
+  // .modify(addConstraints, dataConstraints, {Partner: 'p'})
 
   // get total count for paging
-  const getCount = partnerQuery.clone()
-    .count('p.id as count').first()
+  const getCount = partnerQuery.clone().count('p.id as count').first()
 
   // get rows
-  const getItems = partnerQuery.clone()
+  const getItems = partnerQuery
+    .clone()
     .modify(sortPageParams, query, 'name')
     .innerJoin('PartnerType as pt', 'pt.id', 'p.partnerTypeId')
     .select(SELECT_LIST_FIELDS)
@@ -53,5 +60,5 @@ function* showPartner(request) {
 
 module.exports = {
   listPartners,
-  showPartner
+  showPartner,
 }

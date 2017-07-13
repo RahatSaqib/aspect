@@ -1,10 +1,6 @@
 const Promise = require('bluebird')
 const _ = require('lodash')
-const {
-  getSortPageParams,
-  getSortParams,
-  getPageParams
-} = require('./routes')
+const { getSortPageParams, getSortParams, getPageParams } = require('./routes')
 
 let knex = null // see load
 
@@ -15,7 +11,11 @@ function query() {
 // extracts the parameters related to sorting and paging from the candidate
 // params and modifies the query builder with the sort & paging modifications
 function sortPageParams(queryBuilder, params, defaultSort, sortColumnMapping) {
-  const sortingAndPagingValues = getSortPageParams(params, sortColumnMapping, defaultSort)
+  const sortingAndPagingValues = getSortPageParams(
+    params,
+    sortColumnMapping,
+    defaultSort
+  )
   queryBuilder
     .orderBy(sortingAndPagingValues.sortCol, sortingAndPagingValues.sortDir)
     .limit(sortingAndPagingValues.size)
@@ -53,9 +53,9 @@ function filterParams(queryBuilder, params, filters) {
       return
     }
     if (_.isArray(columnNameOrArray)) {
-      queryBuilder.where(function () {
+      queryBuilder.where(function() {
         // http://knexjs.org/#Builder-where
-        columnNameOrArray.forEach((columnName) => {
+        columnNameOrArray.forEach(columnName => {
           if (_.isArray(params[paramName])) {
             this.orWhereIn(...getWhereArgs(columnName, params[paramName]))
           } else {
@@ -64,7 +64,9 @@ function filterParams(queryBuilder, params, filters) {
         })
       })
     } else if (_.isArray(params[paramName])) {
-      queryBuilder.whereIn(...getWhereArgs(columnNameOrArray, params[paramName]))
+      queryBuilder.whereIn(
+        ...getWhereArgs(columnNameOrArray, params[paramName])
+      )
     } else {
       queryBuilder.where(...getWhereArgs(columnNameOrArray, params[paramName]))
     }
@@ -83,7 +85,7 @@ function filterDateRangeParams(queryBuilder, params, dateColumnName) {
 }
 
 // helper function for run, transact and migration
-const runBlock = Promise.coroutine(function* (block, blockArg) {
+const runBlock = Promise.coroutine(function*(block, blockArg) {
   try {
     return yield* block(blockArg)
   } catch (err) {
@@ -120,7 +122,7 @@ function migration(up, down) {
 
     down(knex) {
       return runBlock(down, knex)
-    }
+    },
   }
 }
 
@@ -129,7 +131,7 @@ function seed(seed) {
   return {
     seed(knex) {
       return knex.transaction(trx => runBlock(seed, trx))
-    }
+    },
   }
 }
 
@@ -140,7 +142,7 @@ function load() {
     const config = require('./config')
     knex = require('knex')({
       client: 'mysql',
-      connection: config.db
+      connection: config.db,
     })
   }
   return knex
@@ -156,7 +158,7 @@ module.exports = {
   migration,
   run,
   seed,
-  transact
+  transact,
 }
 
 Object.defineProperty(module.exports, 'knex', { get: load })

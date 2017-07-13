@@ -1,0 +1,20 @@
+@import '../../globals/variables.css';
+
+.button {
+  composes: button from 'react-toolbox/lib/button/theme.css';
+}
+
+.primary:not([disabled]).flat {
+  background-color: #ffffff;
+  color: var(--aspect-color-chill-blue-1);
+}
+
+.primary:not([disabled]).raised {
+  background-color: var(--aspect-color-chill-blue-1);
+}
+
+.neutral:not([disabled]).raised {
+  background-color: #084482;
+  color: #ffffff;
+}
+

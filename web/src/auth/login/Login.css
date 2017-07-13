@@ -6,16 +6,11 @@
   composes: PreLogin__Background from '../../components/shared/Shared.css';
 }
 
-.Button__raised {
+.Button {
   width: 100%;
 }
 
-.Button__primary:not([disabled]).Button__raised {
-  background-color: var(--aspect-color-chill-blue-1);
-}
-
 .Content {
-  composes: Content from '../../components/shared/Shared.css';
 }
 
 .Form {

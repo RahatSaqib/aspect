@@ -4,7 +4,14 @@ const { knex } = require('../db')
 const { getConstraints, addConstraints } = require('../auth/constraints')
 const { groupToken, randomToken } = require('../deviceApi/apiKey')
 
-const { createFetch, base, accept, header, method, body } = require('http-client')
+const {
+  createFetch,
+  base,
+  accept,
+  header,
+  method,
+  body,
+} = require('http-client')
 
 function* getDemoDevice(request) {
   const { auth, params } = request
@@ -36,10 +43,17 @@ function* getDemoDevice(request) {
   for (const assay of assays) {
     const results = yield knex('Result as r')
       .where('r.assayId', assay.id)
-      .distinct('id', knex.raw('JSON_UNQUOTE(JSON_EXTRACT(resultData, "$.resultText")) as name'))
+      .distinct(
+        'id',
+        knex.raw(
+          'JSON_UNQUOTE(JSON_EXTRACT(resultData, "$.resultText")) as name'
+        )
+      )
       .orderBy('name')
       .limit(1000)
-    result.assays.push(Object.assign({ results: _.sortedUniqBy(results, 'name') }, assay))
+    result.assays.push(
+      Object.assign({ results: _.sortedUniqBy(results, 'name') }, assay)
+    )
   }
 
   return result
@@ -65,7 +79,7 @@ function* createDemoDeviceApiKey(request) {
     createdOn: now,
     createdBy: user.id,
     updatedOn: now,
-    updatedBy: user.id
+    updatedBy: user.id,
   })
   return apiKey
 }
@@ -78,7 +92,6 @@ function* getApiKey(deviceId, userConstraints) {
     .first('dak.token')
   return apiKey == null ? '' : groupToken(apiKey.token)
 }
-
 
 function* postDemoDeviceResult(request) {
   const { auth, params, payload } = request
@@ -102,15 +115,30 @@ function* postDemoDeviceResult(request) {
     .leftJoin('ResultWorkflowStatus as rs', 'r.resultWorkflowStatusId', 'rs.id')
     .where({ 'r.id': resultId })
     .first(
-      'r.resultData', 'r.patientData', 'r.researchId', 'r.notes',
-      'r.senderVersion', 'r.senderOperator', 'r.errorCode', 'r.errorNotes',
-      'r.consumableSerial', 'r.consumableExpirationDate', 'r.consumableLot',
-      'r.instrumentSerial', 'r.moduleName', 'r.moduleSerial',
-      'a.externalId as assayId', 'r.assayVersion',
-      'r.latitude', 'r.longitude', 'rt.externalId as resultTypeId',
+      'r.resultData',
+      'r.patientData',
+      'r.researchId',
+      'r.notes',
+      'r.senderVersion',
+      'r.senderOperator',
+      'r.errorCode',
+      'r.errorNotes',
+      'r.consumableSerial',
+      'r.consumableExpirationDate',
+      'r.consumableLot',
+      'r.instrumentSerial',
+      'r.moduleName',
+      'r.moduleSerial',
+      'a.externalId as assayId',
+      'r.assayVersion',
+      'r.latitude',
+      'r.longitude',
+      'rt.externalId as resultTypeId',
       'rs.externalId as resultWorkflowStatusId',
-      's.externalId as sampleId', 'sos.externalId as sampleOriginSiteId',
-      'rc1.externalId as category1Id', 'rc2.externalId as category2Id'
+      's.externalId as sampleId',
+      'sos.externalId as sampleOriginSiteId',
+      'rc1.externalId as category1Id',
+      'rc2.externalId as category2Id'
     )
 
   if (!resultTemplate) {
@@ -127,7 +155,7 @@ function* postDemoDeviceResult(request) {
 
   const location = {
     latitude: resultTemplate.latitude,
-    longitude: resultTemplate.longitude
+    longitude: resultTemplate.longitude,
   }
   if (location.latitude != null || location.longitude != null) {
     result.location = location
@@ -137,7 +165,7 @@ function* postDemoDeviceResult(request) {
 
   result.sample = {
     id: resultTemplate.sampleId,
-    originSite: { id: resultTemplate.sampleOriginSiteId }
+    originSite: { id: resultTemplate.sampleOriginSiteId },
   }
 
   const categories = []
@@ -157,18 +185,20 @@ function* postDemoDeviceResult(request) {
   const consumable = {
     serial: resultTemplate.consumableSerial,
     lot: resultTemplate.consumableLot,
-    expirationDate: resultTemplate.consumableExpirationDate
+    expirationDate: resultTemplate.consumableExpirationDate,
   }
-  if (consumable.serial != null
-      || consumable.lot != null
-      || consumable.expirationDate != null) {
+  if (
+    consumable.serial != null ||
+    consumable.lot != null ||
+    consumable.expirationDate != null
+  ) {
     result.consumable = [consumable]
   }
 
   const instrument = { serial: resultTemplate.instrumentSerial }
   const module = {
     name: resultTemplate.moduleName,
-    serial: resultTemplate.moduleSerial
+    serial: resultTemplate.moduleSerial,
   }
   if (module.name != null || module.serial != null) {
     instrument.module = module
@@ -189,7 +219,7 @@ function* postDemoDeviceResult(request) {
 
   const sender = {
     version: resultTemplate.senderVersion,
-    operator: resultTemplate.senderOperator
+    operator: resultTemplate.senderOperator,
   }
   if (sender.version != null || sender.operator != null) {
     result.sender = sender
@@ -200,7 +230,7 @@ function* postDemoDeviceResult(request) {
 
   const error = {
     code: resultTemplate.errorCode,
-    notes: resultTemplate.errorNotes
+    notes: resultTemplate.errorNotes,
   }
   if (error.code != null || error.notes != null) {
     result.error = error
@@ -217,11 +247,13 @@ function* postDemoDeviceResult(request) {
 
   const resp = yield deviceApiFetch('/device')
   const respJson = yield resp.json()
-  return resp.ok ? respJson : Boom.create((+resp.status || 500), JSON.stringify(respJson))
+  return resp.ok
+    ? respJson
+    : Boom.create(+resp.status || 500, JSON.stringify(respJson))
 }
 
 module.exports = {
   getDemoDevice,
   createDemoDeviceApiKey,
-  postDemoDeviceResult
+  postDemoDeviceResult,
 }

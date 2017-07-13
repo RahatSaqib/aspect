@@ -12,8 +12,8 @@ module.exports = {
     port: process.env['db.port'] || 3306,
     password: process.env['db.password'],
     database: process.env['db.databaseName'],
-    debug: process.env['db.debug'] === 'true'
-  }
+    debug: process.env['db.debug'] === 'true',
+  },
 }
 
 configureOptional(module.exports)

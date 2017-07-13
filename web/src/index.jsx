@@ -4,6 +4,7 @@ import 'whatwg-fetch'
 import 'url-search-params-polyfill'
 import React from 'react'
 import ReactDOM from 'react-dom'
+import { overrideComponentTypeChecker } from 'react-toolbox/lib/utils/is-component-of-type'
 import { Provider } from 'react-redux'
 import { AppContainer } from 'react-hot-loader'
 import injectTapEventPlugin from 'react-tap-event-plugin'
@@ -40,6 +41,11 @@ if (!window.Intl) {
 setInterval(() => {
   store.dispatch(refreshStart())
 }, 30 * 60 * 1000)
+
+overrideComponentTypeChecker(
+  (classType, reactElement) =>
+    React.createElement(classType).type === reactElement.type
+)
 
 const appDom = document.getElementById('app')
 

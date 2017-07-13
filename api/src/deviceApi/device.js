@@ -5,7 +5,7 @@ const { addResult, getResult } = require('./result')
 const {
   DEVICE_LOG_TYPE_OPTIONAL,
   DEVICE_LOG_TYPE_OPERATION,
-  DEVICE_LOG_TYPE_RESULT
+  DEVICE_LOG_TYPE_RESULT,
 } = require('./common')
 
 function* addDeviceData(context) {
@@ -20,26 +20,22 @@ function* addDeviceData(context) {
   }
 
   if (site) {
-    const siteResponse = yield* updateSite(
-      context.withPayload(site))
+    const siteResponse = yield* updateSite(context.withPayload(site))
     if (siteResponse instanceof Error) {
       return siteResponse
     }
   }
 
   if (configuration) {
-    yield* updateDeviceConfiguration(
-      context.withPayload(configuration))
+    yield* updateDeviceConfiguration(context.withPayload(configuration))
   }
 
   if (operation) {
-    yield* addDeviceOperation(
-      context.withPayload(operation))
+    yield* addDeviceOperation(context.withPayload(operation))
   }
 
   if (result) {
-    const resultResponse = yield* addResult(
-      context.withPayload(result))
+    const resultResponse = yield* addResult(context.withPayload(result))
     if (resultResponse instanceof Error) {
       return resultResponse
     }
@@ -52,21 +48,18 @@ function* getDeviceData(context) {
   const { now, device, deviceLog, deviceLogType } = context
 
   // include fields based on device log type configured in endpoints
-  const includeAll = (
-    deviceLogType === DEVICE_LOG_TYPE_OPTIONAL)
+  const includeAll = deviceLogType === DEVICE_LOG_TYPE_OPTIONAL
   const includeDevice = includeAll
   const includeSite = includeAll
 
   // only include device data if approved
   const deviceApproved = device.status === 'approved'
   const includeConfig = deviceApproved && includeAll
-  const includeOp = deviceApproved && (
-    includeAll
-    || deviceLogType === DEVICE_LOG_TYPE_OPERATION)
-  const includeResult = deviceApproved && (
-    includeAll
-    || deviceLogType === DEVICE_LOG_TYPE_RESULT)
-
+  const includeOp =
+    deviceApproved &&
+    (includeAll || deviceLogType === DEVICE_LOG_TYPE_OPERATION)
+  const includeResult =
+    deviceApproved && (includeAll || deviceLogType === DEVICE_LOG_TYPE_RESULT)
 
   const response = { requestedOn: now.toISOString() }
   if (includeDevice) {
@@ -120,8 +113,10 @@ function* updateDeviceConfiguration(context) {
   const { knex, payload, device: { id: deviceId } } = context
 
   const previousConfig = yield* getDeviceConfiguration(context)
-  const configurationData = previousConfig == null ? payload.data :
-    _.merge(previousConfig.data, payload.data)
+  const configurationData =
+    previousConfig == null
+      ? payload.data
+      : _.merge(previousConfig.data, payload.data)
 
   yield knex('Device')
     .where({ id: deviceId })
@@ -133,18 +128,14 @@ function* updateDeviceConfiguration(context) {
 
 function* getDeviceConfiguration(context, requireUpdated = false) {
   const { knex, device: { id: deviceId } } = context
-  const deviceQuery = knex('Device as d')
-    .first('d.configurationData')
+  const deviceQuery = knex('Device as d').first('d.configurationData')
   if (requireUpdated) {
-    deviceQuery
-      .innerJoin('DeviceLog as dl', 'dl.deviceId', 'd.id')
-      .where({
-        'dl.id': context.deviceLog.id,
-        'dl.deviceConfigurationUpdated': true
-      })
+    deviceQuery.innerJoin('DeviceLog as dl', 'dl.deviceId', 'd.id').where({
+      'dl.id': context.deviceLog.id,
+      'dl.deviceConfigurationUpdated': true,
+    })
   } else {
-    deviceQuery
-      .where({ id: deviceId })
+    deviceQuery.where({ id: deviceId })
   }
 
   const device = yield deviceQuery
@@ -157,15 +148,14 @@ function* getDeviceConfiguration(context, requireUpdated = false) {
 function* addDeviceOperation(context) {
   const { knex, payload, device: { id: deviceId }, now } = context
 
-  const [deviceOperationId] = yield knex('DeviceOperation')
-    .insert({
-      deviceId,
-      externalId: payload.id,
-      data: JSON.stringify(payload.data),
-      startedOn: payload.startedOn,
-      endedOn: payload.endedOn,
-      createdOn: now
-    })
+  const [deviceOperationId] = yield knex('DeviceOperation').insert({
+    deviceId,
+    externalId: payload.id,
+    data: JSON.stringify(payload.data),
+    startedOn: payload.startedOn,
+    endedOn: payload.endedOn,
+    createdOn: now,
+  })
   context.addDeviceOperationId(deviceOperationId)
 
   return {}
@@ -176,7 +166,7 @@ function* getDeviceOperation(context) {
   const op = yield knex('DeviceOperation as do')
     .innerJoin('DeviceLog as dl', 'dl.deviceOperationId', 'do.id')
     .where({
-      'dl.id': deviceLogId
+      'dl.id': deviceLogId,
     })
     .first('externalId as id', 'data', 'startedOn', 'endedOn')
   if (op == null) {
@@ -211,7 +201,7 @@ function* updateSite(context) {
   const sites = yield knex('Site as s')
     .where({
       partnerId: device.partnerId,
-      externalId: siteExternalId
+      externalId: siteExternalId,
     })
     .select('id')
     .limit(2)
@@ -227,26 +217,21 @@ function* updateSite(context) {
 
   const status = device.siteId == null ? 'approved' : 'assigned'
 
-  yield knex('Device')
-    .where({ id: device.id })
-    .update({
-      siteId: site.id,
-      deviceStatusId: knex('DeviceStatus').where({ token: status }).select('id')
-    })
+  yield knex('Device').where({ id: device.id }).update({
+    siteId: site.id,
+    deviceStatusId: knex('DeviceStatus').where({ token: status }).select('id'),
+  })
 
   // Update DeviceApiKey site with the new siteId
-  yield knex('DeviceApiKey')
-    .where({ deviceId: device.id })
-    .update({
-      siteId: site.id
-    })
+  yield knex('DeviceApiKey').where({ deviceId: device.id }).update({
+    siteId: site.id,
+  })
 
-  yield knex('DeviceSiteHistory')
-    .insert({
-      deviceId: device.id,
-      siteId: site.id,
-      createdOn: now
-    })
+  yield knex('DeviceSiteHistory').insert({
+    deviceId: device.id,
+    siteId: site.id,
+    createdOn: now,
+  })
 
   return result
 }
@@ -264,5 +249,5 @@ module.exports = {
   addDeviceData,
   getDeviceData,
   updateDeviceConfiguration,
-  addDeviceOperation
+  addDeviceOperation,
 }

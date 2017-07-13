@@ -48,6 +48,7 @@ const enhance = compose(
       },
       {
         fieldName: 'siteId',
+        // FIXME: search functionality is broken
         valueFromChangeEvent: _fp.identity,
       },
       {
@@ -98,12 +99,12 @@ const enhance = compose(
           s => s.text.toLowerCase() === textLo
         )
         if (nextSite) {
-          props.onChangeSiteId(nextSite.value)
+          props.onSiteIdChange(nextSite.value)
         }
       } else {
         // if user selected item from the list then index>=0 and
         // chosenRequest is object literal of default format {text:'', value:''}
-        props.onChangeSiteId(chosenRequest.value)
+        props.onSiteIdChange(chosenRequest.value)
       }
     },
     // --------------------------
@@ -121,11 +122,11 @@ const enhance = compose(
         // site with this name exists
         if (nextSite.value !== props.values.siteId) {
           // if visual site name differs from currently stored in props - change it
-          props.onChangeSiteId(nextSite.value)
+          props.onSiteIdChange(nextSite.value)
         }
       } else {
         // if no site found with this name - empty field
-        props.onChangeSiteId(null)
+        props.onSiteIdChange(null)
       }
     },
   })
@@ -166,7 +167,7 @@ export const RouterDetailModalForm = props => {
           name="Name"
           floatingLabelText={labels.name}
           value={values.name}
-          onChange={props.onChangeName}
+          onChange={props.onNameChange}
           fullWidth
           errorText={meta.name.touched && meta.name.error}
         />
@@ -174,7 +175,7 @@ export const RouterDetailModalForm = props => {
           name="Shortname"
           floatingLabelText={labels.shortname}
           value={values.shortname}
-          onChange={props.onChangeShortname}
+          onChange={props.onShortnameChange}
           fullWidth
           errorText={meta.shortname.touched && meta.shortname.error}
         />
@@ -182,7 +183,7 @@ export const RouterDetailModalForm = props => {
           name="Notes"
           floatingLabelText={labels.notes}
           value={values.notes}
-          onChange={props.onChangeNotes}
+          onChange={props.onNotesChange}
           fullWidth
           errorText={meta.notes.touched && meta.notes.error}
         />
@@ -191,7 +192,7 @@ export const RouterDetailModalForm = props => {
           label={labels.statusToken}
           style={{ padding: '10px 0' }}
           checked={values.statusToken === tokens.APPROVED}
-          onCheck={props.onChangeStatusToken}
+          onCheck={props.onStatusTokenChange}
         />
         <div className={cssClasses('AutoCompleteField')}>
           <div className={cssClasses('AutoCompleteField__Inner')}>
@@ -227,7 +228,7 @@ export const RouterDetailModalForm = props => {
               value={field.value}
               onTouchTap={stopEventPropagation}
               onChange={event =>
-                props.onChangeConfigurationData(
+                props.onConfigurationDataChange(
                   values.configurationData.setIn(field.path, event.target.value)
                 )}
               fullWidth

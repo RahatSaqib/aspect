@@ -12,22 +12,22 @@ describe('Dashboard routes', () => {
   describe('GET', () => {
     shared.checkToken(server, path)
 
-    it('should return an object with site, device, result and user counts', (done) => {
+    it('should return an object with site, device, result and user counts', done => {
       server
-      .get(path)
-      .set('Authorization', `Bearer ${shared.token}`)
-      .end((err, res) => {
-        assert.equal(res.status, 200)
-        assert.typeOf(res.body, 'Object')
-        assert.property(res.body, 'data')
-        assert.typeOf(res.body.data, 'Object')
-        assert.property(res.body.data, 'sitesTotal')
-        assert.property(res.body.data, 'devicesTotal')
-        assert.property(res.body.data, 'resultsTotal30d')
-        assert.property(res.body.data, 'resultsTotal1d')
-        assert.property(res.body.data, 'usersTotal')
-        done()
-      })
+        .get(path)
+        .set('Authorization', `Bearer ${shared.token}`)
+        .end((err, res) => {
+          assert.equal(res.status, 200)
+          assert.typeOf(res.body, 'Object')
+          assert.property(res.body, 'data')
+          assert.typeOf(res.body.data, 'Object')
+          assert.property(res.body.data, 'sitesTotal')
+          assert.property(res.body.data, 'devicesTotal')
+          assert.property(res.body.data, 'resultsTotal30d')
+          assert.property(res.body.data, 'resultsTotal1d')
+          assert.property(res.body.data, 'usersTotal')
+          done()
+        })
     })
   })
 })

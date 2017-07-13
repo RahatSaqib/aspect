@@ -16,13 +16,11 @@ function* listPeople(request) {
       countryId: 'g.countryId',
       stateId: 'g.stateId',
       lgaId: 'g.lgaId',
-      contactNameOrEmail: ['p.name', 'p.email', 'p.email2']
+      contactNameOrEmail: ['p.name', 'p.email', 'p.email2'],
     })
 
   // get total count for paging
-  const getCount = personQuery.clone()
-    .count('p.id as count')
-    .first()
+  const getCount = personQuery.clone().count('p.id as count').first()
 
   const getJobFunctionNames = knex('Job as j')
     .innerJoin('JobFunction as jf', 'j.jobFunctionId', 'jf.id')
@@ -31,10 +29,16 @@ function* listPeople(request) {
     .as('level')
 
   // get rows
-  const getItems = personQuery.clone()
+  const getItems = personQuery
+    .clone()
     .modify(sortPageParams, query, 'p.name')
-    .select('p.id', 'p.name', getJobFunctionNames,
-      's.name as state', 'l.name as lga')
+    .select(
+      'p.id',
+      'p.name',
+      getJobFunctionNames,
+      's.name as state',
+      'l.name as lga'
+    )
 
   // return result when both queries are finished
   const [{ count: total }, data] = yield Promise.all([getCount, getItems])
@@ -43,17 +47,39 @@ function* listPeople(request) {
 }
 
 function getPersonDetails(personId) {
-  return query('Get person details').from('Person as p')
+  return query('Get person details')
+    .from('Person as p')
     .leftJoin('Geography as g', 'p.geographyId', 'g.id')
     .leftJoin('User as u', 'p.userId', 'u.id')
     .leftOuterJoin('State as s', 'g.stateId', 's.id')
     .leftOuterJoin('Country as c', 'g.countryId', 'c.id')
     .leftOuterJoin('Lga as l', 'g.lgaId', 'l.id')
     .where({ 'p.id': personId })
-    .first('p.id', 'p.userId', 'u.name as username', 'p.name', 'p.title', 'p.email', 'p.email2',
-      'p.phone', 'p.cell', 'g.countryId', 'g.stateId', 'g.lgaId', 'p.zip', 'p.timezone', 'p.culture',
-      'p.notes', 'p.lastPartnerId', 'p.hidePatientId', 'p.hideSampleId', 'p.hideNotes',
-      'c.name as country', 's.name as stateName', 'l.name as lgaName')
+    .first(
+      'p.id',
+      'p.userId',
+      'u.name as username',
+      'p.name',
+      'p.title',
+      'p.email',
+      'p.email2',
+      'p.phone',
+      'p.cell',
+      'g.countryId',
+      'g.stateId',
+      'g.lgaId',
+      'p.zip',
+      'p.timezone',
+      'p.culture',
+      'p.notes',
+      'p.lastPartnerId',
+      'p.hidePatientId',
+      'p.hideSampleId',
+      'p.hideNotes',
+      'c.name as country',
+      's.name as stateName',
+      'l.name as lgaName'
+    )
 }
 
 function* showPerson(request) {
@@ -86,31 +112,46 @@ function* savePerson(request, updatablePersonFields) {
   const { params, payload } = request
 
   // TODO: check access level permissions
-  const currentlyLoggedInUser = yield userService.getUser(request.auth.credentials.name)
+  const currentlyLoggedInUser = yield userService.getUser(
+    request.auth.credentials.name
+  )
 
   const personDetails = yield getPersonDetails(params.personId)
   if (_.isEmpty(personDetails)) {
     return Boom.notFound()
   }
-  const changedFields = _.reduce(payload, (result, value, key) => {
-    if (_.includes(updatablePersonFields, key) && key in personDetails &&
-        personDetails[key] !== value) {
-      result[key] = value
-    }
-    return result
-  }, {})
+  const changedFields = _.reduce(
+    payload,
+    (result, value, key) => {
+      if (
+        _.includes(updatablePersonFields, key) &&
+        key in personDetails &&
+        personDetails[key] !== value
+      ) {
+        result[key] = value
+      }
+      return result
+    },
+    {}
+  )
 
   // Update record if any values have changed
-  const changedPersonFields = yield* transformGeographyFromUpdates(changedFields)
+  const changedPersonFields = yield* transformGeographyFromUpdates(
+    changedFields
+  )
   if (!_.isEmpty(changedPersonFields)) {
-    if (changedFields.countryId && personDetails.lastCountryId !== changedFields.countryId) {
+    if (
+      changedFields.countryId &&
+      personDetails.lastCountryId !== changedFields.countryId
+    ) {
       changedPersonFields.lastCountryId = changedFields.countryId
     }
 
     changedFields.updatedOn = new Date()
     changedFields.updatedBy = currentlyLoggedInUser.id
 
-    yield query('Save person details').from('Person as p')
+    yield query('Save person details')
+      .from('Person as p')
       .where({ 'p.id': personDetails.id })
       .update(changedPersonFields)
   }
@@ -119,8 +160,20 @@ function* savePerson(request, updatablePersonFields) {
 }
 
 function* updatePerson(request) {
-  return yield* savePerson(request, ['name', 'title', 'email', 'email2', 'phone', 'cell', 'countryId',
-    'stateId', 'lgaId', 'zip', 'notes', 'lastPartnerId'])
+  return yield* savePerson(request, [
+    'name',
+    'title',
+    'email',
+    'email2',
+    'phone',
+    'cell',
+    'countryId',
+    'stateId',
+    'lgaId',
+    'zip',
+    'notes',
+    'lastPartnerId',
+  ])
 }
 
 function* updatePersonUserPreferences(request) {
@@ -131,5 +184,5 @@ module.exports = {
   listPeople,
   showPerson,
   updatePerson,
-  updatePersonUserPreferences
+  updatePersonUserPreferences,
 }

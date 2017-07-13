@@ -9,7 +9,9 @@ function addClientRoutes(server) {
   server.route(require('./assay/endpoints').map(decorateClientAPI('assay')))
   server.route(require('./demo/endpoints').map(decorateClientAPI('demo')))
   server.route(require('./device/endpoints').map(decorateClientAPI('device')))
-  server.route(require('./deviceApiKey/endpoints').map(decorateClientAPI('deviceApiKey')))
+  server.route(
+    require('./deviceApiKey/endpoints').map(decorateClientAPI('deviceApiKey'))
+  )
   server.route(require('./geography/endpoints').map(decorateClientAPI()))
   server.route(require('./person/endpoints').map(decorateClientAPI('person')))
   server.route(require('./site/endpoints').map(decorateClientAPI('site')))
@@ -17,14 +19,24 @@ function addClientRoutes(server) {
   server.route(require('./report/endpoints').map(decorateClientAPI('report')))
   server.route(require('./partner/endpoints').map(decorateClientAPI('partner')))
   server.route(require('./job/endpoints').map(decorateClientAPI('person')))
-  server.route(require('./consumable/endpoints').map(decorateClientAPI('inventory')))
-  server.route(require('./notification/endpoints').map(decorateClientAPI('notification')))
-  server.route(require('./inventory/endpoints').map(decorateClientAPI('inventory')))
-  server.route(require('./dashboard/endpoints').map(decorateClientAPI('dashboard')))
+  server.route(
+    require('./consumable/endpoints').map(decorateClientAPI('inventory'))
+  )
+  server.route(
+    require('./notification/endpoints').map(decorateClientAPI('notification'))
+  )
+  server.route(
+    require('./inventory/endpoints').map(decorateClientAPI('inventory'))
+  )
+  server.route(
+    require('./dashboard/endpoints').map(decorateClientAPI('dashboard'))
+  )
 }
 
 function addDeviceRoutes(server) {
-  server.route(require('./deviceApi/endpoints').map(decorateDeviceAPI('device')))
+  server.route(
+    require('./deviceApi/endpoints').map(decorateDeviceAPI('device'))
+  )
 }
 
 // Decorates an API route with common configuration so
@@ -50,7 +62,7 @@ function decorateDeviceAPI() {
 }
 
 function decorateAPI({ scope, strategies }) {
-  return (route) => {
+  return route => {
     // add ['api'] tag by default so available in Hapi-Swagger
     let { config } = route
     if (!config) {
@@ -66,7 +78,8 @@ function decorateAPI({ scope, strategies }) {
       // Require module scope to all routes
       if (module) {
         let { auth } = config
-        if (!auth) { // could be undefined instead of explicitly false
+        if (!auth) {
+          // could be undefined instead of explicitly false
           auth = {}
           config.auth = auth
         }
@@ -95,7 +108,6 @@ function decorateAPI({ scope, strategies }) {
   }
 }
 
-
 /**
  * Creates a coroutine based handler using the provided
  * handler generator that can be used in the style of
@@ -106,7 +118,7 @@ function decorateAPI({ scope, strategies }) {
  * a Boom error for custom error reporting
  */
 function asyncHandler(handler) {
-  return Promise.coroutine(function* (request, reply) {
+  return Promise.coroutine(function*(request, reply) {
     try {
       const result = yield* handler(request)
       reply(result)
@@ -119,12 +131,14 @@ function asyncHandler(handler) {
   })
 }
 
-
 // extracts and sanitizes the parameters related to sorting and paging
 // from the candidate params and returns them as an object
 function getSortPageParams(params, sortColumnMapping, defaultSort) {
-  return Object.assign({}, getSortParams(params, sortColumnMapping, defaultSort),
-    getPageParams(params))
+  return Object.assign(
+    {},
+    getSortParams(params, sortColumnMapping, defaultSort),
+    getPageParams(params)
+  )
 }
 
 // extracts and sanitizes the parameters related to sorting from the
@@ -132,10 +146,10 @@ function getSortPageParams(params, sortColumnMapping, defaultSort) {
 function getSortParams(params, sortColumnMapping, defaultSort) {
   const result = {}
 
-  result.sortCol = sortColumnMapping &&
-  params.sortCol &&
-  sortColumnMapping[params.sortCol] ? sortColumnMapping[params.sortCol] :
-    (params.sortCol ? params.sortCol : defaultSort)
+  result.sortCol =
+    sortColumnMapping && params.sortCol && sortColumnMapping[params.sortCol]
+      ? sortColumnMapping[params.sortCol]
+      : params.sortCol ? params.sortCol : defaultSort
   result.sortDir = params.sortDir === 'desc' ? 'desc' : 'asc'
 
   return result
@@ -155,10 +169,18 @@ function getPageParams(params) {
 
 function validateSortPageParams(...sortColumns) {
   return {
-    sortCol: sortColumns.length > 0 ? Joi.string().valid(sortColumns).description('Sort on named column') : Joi.string().description('Sort on named column'),
-    sortDir: Joi.string().valid('asc', 'desc').description('Sort order ascending or descending'),
-    page: Joi.number().integer().min(0).description('Page index with 0 as first page'),
-    size: Joi.number().integer().positive().description('Page size')
+    sortCol:
+      sortColumns.length > 0
+        ? Joi.string().valid(sortColumns).description('Sort on named column')
+        : Joi.string().description('Sort on named column'),
+    sortDir: Joi.string()
+      .valid('asc', 'desc')
+      .description('Sort order ascending or descending'),
+    page: Joi.number()
+      .integer()
+      .min(0)
+      .description('Page index with 0 as first page'),
+    size: Joi.number().integer().positive().description('Page size'),
   }
 }
 
@@ -177,5 +199,5 @@ module.exports = {
   getPageParams,
   getSortPageParams,
   validateSortPageParams,
-  validateDateRangeParams
+  validateDateRangeParams,
 }

@@ -9,5 +9,5 @@ function validateAllGeographyFilterParams() {
 }
 
 module.exports = {
-  validateAllGeographyFilterParams
+  validateAllGeographyFilterParams,
 }

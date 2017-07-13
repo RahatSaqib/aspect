@@ -1,19 +1,23 @@
-import PropTypes from 'prop-types'
 import classnames from 'classnames/bind'
-import React, { PureComponent } from 'react'
-import { compose, setPropTypes, pure } from 'recompose'
-import { injectIntl, defineMessages, intlShape } from 'react-intl'
+import React from 'react'
+import { compose, withHandlers, lifecycle, pure } from 'recompose'
+import { injectIntl, defineMessages } from 'react-intl'
 import { bindActionCreators } from 'redux'
 import { connect } from 'react-redux'
 import Helmet from 'react-helmet'
+import { Card } from 'react-toolbox/lib/card'
+import { ProgressBar } from 'react-toolbox/lib/progress_bar'
 
-// Our own imports
 import NavTitle from '../../globals/components/NavTitle'
 import BrowseFilters from '../../globals/components/BrowseFilters'
-import { Items } from '../../shared/metaReducers/items'
-import { Table } from '../../shared/metaReducers/table'
-import DataTableWithEmptyList from '../../components/shared/DataTableWithEmptyList'
-import { configureListFilter, ListFilter } from '../../filter/FilterRedux'
+import EmptyList from '../../components/shared/EmptyList'
+import TablePaginator from '../../components/shared/TablePaginator'
+import {
+  RouterDataTable,
+  RouterDataTableHead,
+  RouterDataTableRow,
+} from './RouterDataTable'
+import { configureListFilter } from '../../filter/FilterRedux'
 import { fetchListFilteredRouters } from '../RouterRedux'
 
 const cssClasses = classnames.bind(require('./RouterList.css'))
@@ -39,13 +43,16 @@ const messages = defineMessages({
     id: 'pages.RouterList.lastSeen',
     defaultMessage: 'Last Seen',
   },
+  paginatorStatus: {
+    id: 'pages.RouterList.paginatorStatus',
+    defaultMessage: `Showing {firstItemIndex}-{lastItemIndex} of {itemCount, plural,
+      one {# router}
+      other {# routers}
+    }`,
+  },
 })
 
 const enhance = compose(
-  setPropTypes({
-    location: PropTypes.object.isRequired,
-    history: PropTypes.object.isRequired,
-  }),
   pure,
   injectIntl,
   connect(
@@ -59,133 +66,144 @@ const enhance = compose(
       configureListFilter,
     })
   ),
-  setPropTypes({
-    intl: intlShape.isRequired,
-    listFilter: PropTypes.objectOf(ListFilter).isRequired,
-    items: PropTypes.objectOf(Items).isRequired,
-    table: PropTypes.objectOf(Table).isRequired,
-    fetchListFilteredRouters: PropTypes.func.isRequired,
-    configureListFilter: PropTypes.func.isRequired,
+  withHandlers({
+    onHeadColumnClick: ({ fetchListFilteredRouters, table }) => ({
+      currentTarget: { dataset: { column: nextSortCol } },
+    }) =>
+      fetchListFilteredRouters(
+        { hasResults: 0, hasConnectivity: 1 },
+        nextSortCol,
+        table.sortCol === nextSortCol
+          ? table.sortDir === 'asc' ? 'desc' : 'asc'
+          : table.sortDir,
+        table.page,
+        table.pageSize
+      ),
+    onRowClick: ({ history }) => ({
+      currentTarget: { dataset: { routerId } },
+    }) => history.push(`/browse/router/${routerId}`),
+    onPageChange: ({ fetchListFilteredRouters, table }) => nextPage =>
+      fetchListFilteredRouters(
+        { hasResults: 0, hasConnectivity: 1 },
+        table.sortCol,
+        table.sortDir,
+        nextPage,
+        table.pageSize
+      ),
+    onPageSizeChange: ({ fetchListFilteredRouters, table }) => nextPageSize =>
+      fetchListFilteredRouters(
+        { hasResults: 0, hasConnectivity: 1 },
+        table.sortCol,
+        table.sortDir,
+        0,
+        nextPageSize
+      ),
+  }),
+  lifecycle({
+    componentWillMount() {
+      this.props.configureListFilter({
+        geography: true,
+        deviceName: true,
+        deviceStatus: true,
+      })
+    },
+
+    componentDidMount() {
+      this.props.onPageChange(0)
+    },
+
+    componentWillReceiveProps(nextProps) {
+      if (this.props.listFilter !== nextProps.listFilter) {
+        this.props.onPageChange(0)
+      }
+    },
   })
 )
 
-const ROUTER_TABLE_COLUMN_SPACING = 12
-const ROUTER_TABLE_NAME_COLUMN_WIDTH = '30%'
-const ROUTER_TABLE_STATUS_COLUMN_WIDTH = '15%'
-
-export class RouterList extends PureComponent {
-  static contextTypes = {
-    muiTheme: PropTypes.object.isRequired,
-  }
-
-  static childContextTypes = {
-    muiTheme: PropTypes.object.isRequired,
-  }
-
-  getChildContext() {
-    const { muiTheme } = this.context
-
-    return {
-      muiTheme: {
-        ...muiTheme,
-        tableHeaderColumn: {
-          // Overrides the style used by <material-ui/Table/TableHeaderColumn /> in <DataTable />
-          ...muiTheme.tableHeaderColumn,
-          spacing: ROUTER_TABLE_COLUMN_SPACING,
-        },
-        tableRowColumn: {
-          // Overrides the style used by <material-ui/Table/TableRowColumn /> in <DataTable />
-          ...muiTheme.tableRowColumn,
-          spacing: ROUTER_TABLE_COLUMN_SPACING,
-        },
-      },
-    }
-  }
-
-  componentWillMount() {
-    const { configureListFilter } = this.props
-    configureListFilter({
-      geography: true,
-      deviceName: true,
-      deviceStatus: true,
-    })
-  }
-
-  componentDidMount() {
-    this.handleFetch()
-  }
-
-  componentWillReceiveProps(nextProps) {
-    if (this.props.listFilter !== nextProps.listFilter) {
-      this.handleFetch()
-    }
-  }
-
-  handleItemIdSelection = routerId => {
-    this.props.history.push(`/browse/router/${routerId}`)
-  }
-
-  handleFetch = (...args) => {
-    this.props.fetchListFilteredRouters(
-      { hasResults: 0, hasConnectivity: 1 },
-      ...args
-    )
-  }
-
-  render() {
-    const { intl } = this.props
-    const { formatMessage, formatRelative } = intl
-    const columns = [
-      {
-        db: 'name',
-        title: formatMessage(messages.routerName),
-        extraProps: { style: { width: ROUTER_TABLE_NAME_COLUMN_WIDTH } },
-      },
-      {
-        db: 'status',
-        title: formatMessage(messages.status),
-        hideOnXs: true,
-        extraProps: { style: { width: ROUTER_TABLE_STATUS_COLUMN_WIDTH } },
-      },
-      {
-        db: 'createdOn',
-        title: formatMessage(messages.reportingFor),
-        hideOnXs: true,
-        format: data => formatRelative(data),
-      },
-      {
-        db: 'lastSeen',
-        title: formatMessage(messages.lastSeen),
-        hideOnXs: true,
-        format: data => formatRelative(data),
-      },
-    ]
-
-    return (
-      <div className={cssClasses('Content')}>
-        <Helmet
-          title={formatMessage(messages.routersTitle)}
-          titleTemplate="%s - Aspect"
-          defaultTitle="Aspect"
+export const RouterList = ({
+  intl,
+  history,
+  location,
+  table,
+  items,
+  //
+  onHeadColumnClick,
+  onRowClick,
+  onPageChange,
+  onPageSizeChange,
+}) =>
+  <div className={cssClasses('Container')}>
+    <Helmet
+      title={intl.formatMessage(messages.routersTitle)}
+      titleTemplate="%s - Aspect"
+      defaultTitle="Aspect"
+    />
+    <NavTitle title={intl.formatMessage(messages.routersTitle)} />
+    <BrowseFilters history={history} location={location} intl={intl} />
+    {items.currentIdList.isEmpty() && <EmptyList />}
+    {!items.currentIdList.isEmpty() &&
+      <Card className={cssClasses('Card')}>
+        <ProgressBar
+          mode={table.loading ? 'indeterminate' : 'determinate'}
+          disabled={!table.loading}
+          className={cssClasses('ProgressBar')}
+          theme={{
+            indeterminate: cssClasses('ProgressBar--indeterminate'),
+          }}
         />
-        <NavTitle title={formatMessage(messages.routersTitle)} />
-        <BrowseFilters
-          history={this.props.history}
-          location={this.props.location}
+        <RouterDataTable
+          selectable={false}
+          className={cssClasses('RouterDataTable')}
+        >
+          <RouterDataTableHead
+            sortColumnKey={table.sortCol}
+            sortColumnDir={table.sortDir}
+            columns={[
+              {
+                key: 'name',
+                label: intl.formatMessage(messages.routerName),
+                onClick: onHeadColumnClick,
+              },
+              {
+                key: 'status',
+                label: intl.formatMessage(messages.status),
+                onClick: onHeadColumnClick,
+              },
+              {
+                key: 'createdOn',
+                label: intl.formatMessage(messages.reportingFor),
+                onClick: onHeadColumnClick,
+              },
+              {
+                key: 'lastSeen',
+                label: intl.formatMessage(messages.lastSeen),
+                onClick: onHeadColumnClick,
+              },
+            ]}
+          />
+          {items.currentIdList
+            .map(id => items.byId.get(id))
+            .map(router =>
+              <RouterDataTableRow
+                key={router.get('id')}
+                intl={intl}
+                router={router}
+                onClick={onRowClick}
+                data-router-Id={router.get('id')}
+              />
+            )}
+        </RouterDataTable>
+        <TablePaginator
+          className={cssClasses('TablePaginator')}
           intl={intl}
+          paginatorStatus={messages.paginatorStatus}
+          page={table.page}
+          pageSize={table.pageSize}
+          total={table.total}
+          onPageChange={onPageChange}
+          onPageSizeChange={onPageSizeChange}
         />
-        <DataTableWithEmptyList
-          selectable
-          handleItemIdSelection={this.handleItemIdSelection}
-          handleFetch={this.handleFetch}
-          items={this.props.items}
-          table={this.props.table}
-          columns={columns}
-          intl={intl}
-        />
-      </div>
-    )
-  }
-}
+      </Card>}
+  </div>
 
 export default enhance(RouterList)

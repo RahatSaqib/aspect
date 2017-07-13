@@ -5,19 +5,41 @@ const Boom = require('boom')
 
 const { knex, filterParams, sortPageParams } = require('../db')
 const { getConstraints, addConstraints } = require('../auth/constraints')
-const { getCellsByValue, generateExcelFile, generateCsvFile } = require('../shared/io')
+const {
+  getCellsByValue,
+  generateExcelFile,
+  generateCsvFile,
+} = require('../shared/io')
 
 const SELECT_LIST_FIELDS = [
-  'd.id', 'd.name', 'd.shortname', 'd.createdOn', 'd.lastPingOn', 'd.lastSeenOn as lastSeen',
-  'st.name as state', 'dt.name as type', 's.name as siteName', 'ds.name as status',
-  'dc.name as category', 'dc.hasResults', 'dc.hasConnectivity'
+  'd.id',
+  'd.name',
+  'd.shortname',
+  'd.createdOn',
+  'd.lastPingOn',
+  'd.lastSeenOn as lastSeen',
+  'st.name as state',
+  'dt.name as type',
+  's.name as siteName',
+  'ds.name as status',
+  'dc.name as category',
+  'dc.hasResults',
+  'dc.hasConnectivity',
 ]
 
 const SELECT_SHOW_FIELDS = [
-  'd.id', 'd.name', 'd.shortname', 'd.createdOn', 'd.lastPingOn', 'd.lastSeenOn as lastSeen',
+  'd.id',
+  'd.name',
+  'd.shortname',
+  'd.createdOn',
+  'd.lastPingOn',
+  'd.lastSeenOn as lastSeen',
   'dt.name as type',
-  'ds.name as status', 'ds.token as statusToken',
-  'dc.name as category', 'dc.hasResults', 'dc.hasConnectivity',
+  'ds.name as status',
+  'ds.token as statusToken',
+  'dc.name as category',
+  'dc.hasResults',
+  'dc.hasConnectivity',
   'd.siteId',
   's.name as siteName',
   'd.hostId',
@@ -28,7 +50,7 @@ const SELECT_SHOW_FIELDS = [
   'd.deviceStatusId',
   'd.configurationData',
   'd.notes',
-  'd.serial'
+  'd.serial',
 ]
 
 // ---------------------------------
@@ -45,7 +67,7 @@ function* getListDevices(query, auth) {
     .innerJoin('Site as s', 'd.siteId', 's.id')
     .leftJoin('Geography as g', 's.geographyId', 'g.id')
     .leftJoin('State as st', 'g.stateId', 'st.id')
-    .modify((queryBuilder) => {
+    .modify(queryBuilder => {
       if (!query.assayId) {
         return
       }
@@ -76,14 +98,14 @@ function* getListDevices(query, auth) {
     .modify(addConstraints, dataConstraints, { device: 'd' })
 
   // get total count for paging
-  const getCount = deviceQuery.clone()
-    .count('d.id as count').first()
+  const getCount = deviceQuery.clone().count('d.id as count').first()
 
   const last30Day = subDays(new Date(), 30)
   const last60Day = subDays(last30Day, 30)
 
   // get rows
-  const getItems = deviceQuery.clone()
+  const getItems = deviceQuery
+    .clone()
     .modify(sortPageParams, query, 'name')
     .select([
       ...SELECT_LIST_FIELDS,
@@ -100,7 +122,11 @@ function* getListDevices(query, auth) {
       knex('Result as r')
         .innerJoin('Sample as s', 'r.sampleId', 's.id')
         .innerJoin('ResultWorkflowLog as rl', 'r.id', 'rl.resultId')
-        .innerJoin('ResultWorkflowStatus as rw', 'rl.resultWorkflowStatusId', 'rw.id')
+        .innerJoin(
+          'ResultWorkflowStatus as rw',
+          'rl.resultWorkflowStatusId',
+          'rw.id'
+        )
         .whereRaw('s.originSiteId = d.siteId')
         .whereBetween('rl.changedOn', [last60Day, last30Day])
         .where('rw.externalId', '=', 'Delivered')
@@ -111,7 +137,11 @@ function* getListDevices(query, auth) {
       knex('Result as r')
         .innerJoin('Sample as s', 'r.sampleId', 's.id')
         .innerJoin('ResultWorkflowLog as rl', 'r.id', 'rl.resultId')
-        .innerJoin('ResultWorkflowStatus as rw', 'rl.resultWorkflowStatusId', 'rw.id')
+        .innerJoin(
+          'ResultWorkflowStatus as rw',
+          'rl.resultWorkflowStatusId',
+          'rw.id'
+        )
         .whereRaw('s.originSiteId = d.siteId')
         .where('rl.changedOn', '>=', last30Day)
         .where('rw.externalId', '=', 'Delivered')
@@ -119,22 +149,35 @@ function* getListDevices(query, auth) {
         .as('deliveredThisMonth'),
       knex('Result as r')
         .innerJoin('Sample as s', 'r.sampleId', 's.id')
-        .innerJoin('ResultWorkflowStatus as rw', 'r.resultWorkflowStatusId', 'rw.id')
+        .innerJoin(
+          'ResultWorkflowStatus as rw',
+          'r.resultWorkflowStatusId',
+          'rw.id'
+        )
         .whereRaw('s.originSiteId = d.siteId')
-        .select((() => {
-          const acknowledgedCount = 'sum(case when rw.externalId = \'Acknowledged\' then 1 else 0 end)'
-          const totalCount = 'count(r.id)'
+        .select(
+          (() => {
+            const acknowledgedCount =
+              "sum(case when rw.externalId = 'Acknowledged' then 1 else 0 end)"
+            const totalCount = 'count(r.id)'
 
-          return knex.raw(`case when count(r.id) = 0 then 0 else ${acknowledgedCount} / ${totalCount} end`)
-        })())
+            return knex.raw(
+              `case when count(r.id) = 0 then 0 else ${acknowledgedCount} / ${totalCount} end`
+            )
+          })()
+        )
         .as('acknowledgedRatio'),
       knex('Result as r')
         .innerJoin('Sample as s', 'r.sampleId', 's.id')
-        .innerJoin('ResultWorkflowStatus as rw', 'r.resultWorkflowStatusId', 'rw.id')
+        .innerJoin(
+          'ResultWorkflowStatus as rw',
+          'r.resultWorkflowStatusId',
+          'rw.id'
+        )
         .whereRaw('s.originSiteId = d.siteId')
         .where('rw.externalId', '=', 'Flagged')
         .count('r.id')
-        .as('totalFlagged')
+        .as('totalFlagged'),
     ])
 
   // return result when both queries are finished
@@ -173,9 +216,13 @@ function* getDeviceByDeviceId(request, fields = SELECT_SHOW_FIELDS) {
 
   if (devices.length === 1) {
     const device = devices[0]
-    const deviceType = yield knex('DeviceType as dt').where('dt.id', device.deviceTypeId).first()
-    deviceType.configurationDataSchema = JSON.parse(deviceType.configurationDataSchema) || {}
-    deviceType.deviceOperationSchema = JSON.parse(deviceType.deviceOperationSchema) || {}
+    const deviceType = yield knex('DeviceType as dt')
+      .where('dt.id', device.deviceTypeId)
+      .first()
+    deviceType.configurationDataSchema =
+      JSON.parse(deviceType.configurationDataSchema) || {}
+    deviceType.deviceOperationSchema =
+      JSON.parse(deviceType.deviceOperationSchema) || {}
 
     device.configurationData = JSON.parse(device.configurationData) || {}
     device.deviceType = deviceType
@@ -183,9 +230,11 @@ function* getDeviceByDeviceId(request, fields = SELECT_SHOW_FIELDS) {
       .where('do.deviceId', device.id)
       .limit(10)
       .orderBy('do.startedOn', 'desc')
-      .map(deviceOperation => _.assign(deviceOperation, {
-        data: JSON.parse(deviceOperation.data) || {}
-      }))
+      .map(deviceOperation =>
+        _.assign(deviceOperation, {
+          data: JSON.parse(deviceOperation.data) || {},
+        })
+      )
 
     // Query for total number of results per device
     const totalTestQuery = knex('Result as r')
@@ -197,7 +246,7 @@ function* getDeviceByDeviceId(request, fields = SELECT_SHOW_FIELDS) {
       totalTestQuery.where('r.deviceId', device.id)
     } else {
       // TODO: This query would fail if there we had more than one terminal in one site
-      totalTestQuery.where(function () {
+      totalTestQuery.where(function() {
         this.where('r.deviceId', device.id)
         this.orWhere('s.originSiteId', device.siteId)
       })
@@ -211,15 +260,18 @@ function* getDeviceByDeviceId(request, fields = SELECT_SHOW_FIELDS) {
       .select('p.id', 'p.name')
       .limit(50)
 
-    device.contacts = _.times(3, () => contacts.splice(_.random(0, contacts.length - 1), 1)[0])
+    device.contacts = _.times(
+      3,
+      () => contacts.splice(_.random(0, contacts.length - 1), 1)[0]
+    )
 
     return {
       ok: true,
-      data: device
+      data: device,
     }
   }
   return {
-    ok: false
+    ok: false,
   }
 }
 
@@ -235,12 +287,16 @@ function* updateDevice(request) {
 
   const device = yield* showDevice(request)
 
-  const configurationData = _.assign({}, device.configurationData, payload.configurationData)
+  const configurationData = _.assign(
+    {},
+    device.configurationData,
+    payload.configurationData
+  )
 
   let { deviceStatusId } = device
   // check if a statusToken is provided
   if (device.statusToken !== payload.statusToken) {
-    ({ id: deviceStatusId } = yield knex('DeviceStatus as ds')
+    ;({ id: deviceStatusId } = yield knex('DeviceStatus as ds')
       .where('ds.token', payload.statusToken)
       .first('ds.id'))
   }
@@ -254,7 +310,7 @@ function* updateDevice(request) {
       notes: payload.notes,
       siteId: payload.siteId,
       deviceStatusId,
-      configurationData: JSON.stringify(configurationData)
+      configurationData: JSON.stringify(configurationData),
     })
 
   if (updatedCount !== 1) {
@@ -283,7 +339,7 @@ function* exportDevices(request) {
 
   if (query.format === 'excel') {
     // fill in data into given workbook
-    const populateData = (workbook) => {
+    const populateData = workbook => {
       // get 1st sheet (1-based)
       const worksheet = workbook.getWorksheet(1)
 
@@ -291,24 +347,20 @@ function* exportDevices(request) {
       const cells = getCellsByValue(worksheet, '<DeviceListRows>')
       if (cells.length > 0) {
         // empty such cells
-        cells.forEach((cell) => { cell.value = '' })
+        cells.forEach(cell => {
+          cell.value = ''
+        })
 
         // use 1st cell only (actually, should not be more than one)
         const patternRowNumber = cells[0].row + 2
 
         // fill in array 'rows'
         const rows = []
-        devices.data.forEach((d) => {
+        devices.data.forEach(d => {
           // ------
           // --->>> order of array elements should match columns order in template file
           // ------
-          rows.push([
-            d.name,
-            d.status,
-            d.createdOn,
-            d.lastSeen,
-            d.totalTests
-          ])
+          rows.push([d.name, d.status, d.createdOn, d.lastSeen, d.totalTests])
         })
 
         // insert rows from patternRowNumber, and remove row number 'patternRowNumber'
@@ -319,13 +371,38 @@ function* exportDevices(request) {
     result = yield* generateExcelFile({
       templateFileName: 'Devices.xlsx',
       outputFileName: 'devices.xlsx',
-      populateData
+      populateData,
     })
   } else if (query.format === 'csv') {
     const items = devices.data
-    const columnNames = ['Device Name', 'Short Name', 'Status', 'Created On', 'Last Seen', 'Type', 'Category', 'Connected', 'Total Tests']
-    const fieldNames = ['name', 'shortName', 'status', 'createdOn', 'lastSeen', 'type', 'category', 'hasConnectivity', 'totalTests']
-    result = yield* generateCsvFile('devices.csv', items, columnNames, fieldNames)
+    const columnNames = [
+      'Device Name',
+      'Short Name',
+      'Status',
+      'Created On',
+      'Last Seen',
+      'Type',
+      'Category',
+      'Connected',
+      'Total Tests',
+    ]
+    const fieldNames = [
+      'name',
+      'shortName',
+      'status',
+      'createdOn',
+      'lastSeen',
+      'type',
+      'category',
+      'hasConnectivity',
+      'totalTests',
+    ]
+    result = yield* generateCsvFile(
+      'devices.csv',
+      items,
+      columnNames,
+      fieldNames
+    )
   }
 
   return result
@@ -335,13 +412,10 @@ function* listStatusTypes() {
   const resultQuery = knex('DeviceStatus as ds')
 
   // get total count for paging
-  const getCount = resultQuery.clone()
-    .count('ds.id as count').first()
+  const getCount = resultQuery.clone().count('ds.id as count').first()
 
   // get rows
-  const getItems = resultQuery.clone()
-    .orderBy('id', 'asc')
-    .select('id', 'name')
+  const getItems = resultQuery.clone().orderBy('id', 'asc').select('id', 'name')
 
   // return result when both queries are finished
   const [{ count: total }, data] = yield Promise.all([getCount, getItems])
@@ -363,7 +437,7 @@ function* listDevicesForSelectList(request) {
     .modify(filterParams, query, {
       countryId: 'g.countryId',
       partnerId: 'd.partnerId',
-      siteId: 'd.siteId'
+      siteId: 'd.siteId',
     })
     .orderBy(['d.name'], 'asc')
     .select('d.id', 'd.name')
@@ -377,5 +451,5 @@ module.exports = {
   updateDevice,
   listStatusTypes,
   exportDevices,
-  listDevicesForSelectList
+  listDevicesForSelectList,
 }

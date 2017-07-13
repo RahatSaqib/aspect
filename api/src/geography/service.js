@@ -3,30 +3,57 @@ const { query, knex } = require('../db')
 const { getConstraints, addConstraints } = require('../auth/constraints')
 
 function* buildGeographySelectList() {
-  const countriesStatesAndLGAs = yield query('Get countries, states and LGAs for select lists')
+  const countriesStatesAndLGAs = yield query(
+    'Get countries, states and LGAs for select lists'
+  )
     .from('Country as c')
     .innerJoin('Geography as g', 'g.countryId', 'c.id')
     .leftJoin('State as s', 's.id', 'g.stateId')
     .leftJoin('Lga as l', 'l.id', 'g.lgaId')
     .orderBy(['c.name', 's.name', 'l.name'], 'asc')
-    .select('c.id as countryId', 'c.name as countryName', 's.id as stateId',
-      's.name as stateName', 'l.id as lgaId', 'l.name as lgaName')
+    .select(
+      'c.id as countryId',
+      'c.name as countryName',
+      's.id as stateId',
+      's.name as stateName',
+      'l.id as lgaId',
+      'l.name as lgaName'
+    )
 
   const result = {
     ok: true,
-    data: _.map(_.uniqBy(countriesStatesAndLGAs, 'countryId'), countryRecord => ({
-      id: countryRecord.countryId,
-      name: countryRecord.countryName,
-      states: _.map(_.filter(_.uniqBy(countriesStatesAndLGAs, 'stateId'), stateRecord => stateRecord.stateId && stateRecord.countryId === countryRecord.countryId), stateRecord => ({
-        id: stateRecord.stateId,
-        name: stateRecord.stateName,
-        lgas: _.map(_.filter(_.uniqBy(countriesStatesAndLGAs, 'lgaId'), lgaRecord => lgaRecord.lgaId && lgaRecord.countryId === countryRecord.countryId &&
-          lgaRecord.stateId === stateRecord.stateId), lgaRecord => ({
-            id: lgaRecord.lgaId,
-            name: lgaRecord.lgaName
-          }))
-      }))
-    }))
+    data: _.map(
+      _.uniqBy(countriesStatesAndLGAs, 'countryId'),
+      countryRecord => ({
+        id: countryRecord.countryId,
+        name: countryRecord.countryName,
+        states: _.map(
+          _.filter(
+            _.uniqBy(countriesStatesAndLGAs, 'stateId'),
+            stateRecord =>
+              stateRecord.stateId &&
+              stateRecord.countryId === countryRecord.countryId
+          ),
+          stateRecord => ({
+            id: stateRecord.stateId,
+            name: stateRecord.stateName,
+            lgas: _.map(
+              _.filter(
+                _.uniqBy(countriesStatesAndLGAs, 'lgaId'),
+                lgaRecord =>
+                  lgaRecord.lgaId &&
+                  lgaRecord.countryId === countryRecord.countryId &&
+                  lgaRecord.stateId === stateRecord.stateId
+              ),
+              lgaRecord => ({
+                id: lgaRecord.lgaId,
+                name: lgaRecord.lgaName,
+              })
+            ),
+          })
+        ),
+      })
+    ),
   }
 
   return result
@@ -49,66 +76,96 @@ function* countrySelectList(request) {
       .orderBy(['c.name'], 'asc')
       .select('c.id', 'c.name')
   } else if (!stateId) {
-    const countriesAndStates = yield query('Get countries and country states for select lists')
+    const countriesAndStates = yield query(
+      'Get countries and country states for select lists'
+    )
       .from('Country as c')
       .innerJoin('Geography as g', 'g.countryId', 'c.id')
-      .leftJoin('State as s', function () {
-        this.on('s.id', 'g.stateId')
-          .on({ 'g.countryId': knex.raw(countryId) })
+      .leftJoin('State as s', function() {
+        this.on('s.id', 'g.stateId').on({ 'g.countryId': knex.raw(countryId) })
       })
       .modify(addConstraintsLocal, dataConstraints, { geography: 'g' })
       .orderBy(['c.name', 's.name'], 'asc')
-      .distinct('c.id as countryId', 'c.name as countryName', 's.id as stateId',
-        's.name as stateName')
-    countries = _.map(_.uniqBy(countriesAndStates, 'countryId'), countryRecord => ({
-      id: countryRecord.countryId,
-      name: countryRecord.countryName
-    }))
+      .distinct(
+        'c.id as countryId',
+        'c.name as countryName',
+        's.id as stateId',
+        's.name as stateName'
+      )
+    countries = _.map(
+      _.uniqBy(countriesAndStates, 'countryId'),
+      countryRecord => ({
+        id: countryRecord.countryId,
+        name: countryRecord.countryName,
+      })
+    )
 
     const selectedCountry = _.find(countries, { id: countryId })
 
-    const selectedCountryStates = _.map(_.filter(countriesAndStates, stateRecord =>
-      stateRecord.stateId != null), stateRecord => ({
+    const selectedCountryStates = _.map(
+      _.filter(countriesAndStates, stateRecord => stateRecord.stateId != null),
+      stateRecord => ({
         id: stateRecord.stateId,
-        name: stateRecord.stateName
-      }))
+        name: stateRecord.stateName,
+      })
+    )
 
     selectedCountry.states = _.sortBy(selectedCountryStates, 'name')
   } else {
-    const countriesStatesAndLgas = yield query('Get countries, country states and state LGAs for select lists')
+    const countriesStatesAndLgas = yield query(
+      'Get countries, country states and state LGAs for select lists'
+    )
       .from('Country as c')
       .innerJoin('Geography as g', 'g.countryId', 'c.id')
-      .leftJoin('State as s', function () {
-        this.on('s.id', 'g.stateId')
-          .on({ 'g.countryId': knex.raw(countryId) })
+      .leftJoin('State as s', function() {
+        this.on('s.id', 'g.stateId').on({ 'g.countryId': knex.raw(countryId) })
       })
-      .leftJoin('Lga as l', function () {
-        this.on('l.id', 'g.lgaId')
-          .on({ 'g.stateId': knex.raw(stateId) })
+      .leftJoin('Lga as l', function() {
+        this.on('l.id', 'g.lgaId').on({ 'g.stateId': knex.raw(stateId) })
       })
       .modify(addConstraintsLocal, dataConstraints, { geography: 'g' })
       .orderBy(['c.name', 's.name', 'l.name'], 'asc')
-      .distinct('c.id as countryId', 'c.name as countryName', 's.id as stateId',
-        's.name as stateName', 'l.id as lgaId', 'l.name as lgaName')
-    countries = _.map(_.uniqBy(countriesStatesAndLgas, 'countryId'), countryRecord => ({
-      id: countryRecord.countryId,
-      name: countryRecord.countryName
-    }))
+      .distinct(
+        'c.id as countryId',
+        'c.name as countryName',
+        's.id as stateId',
+        's.name as stateName',
+        'l.id as lgaId',
+        'l.name as lgaName'
+      )
+    countries = _.map(
+      _.uniqBy(countriesStatesAndLgas, 'countryId'),
+      countryRecord => ({
+        id: countryRecord.countryId,
+        name: countryRecord.countryName,
+      })
+    )
 
     const selectedCountry = _.find(countries, { id: countryId })
 
-    const selectedCountryStates = _.map(_.uniqBy(_.filter(countriesStatesAndLgas, stateRecord => stateRecord.stateId != null), 'stateId'), stateRecord => ({
-      id: stateRecord.stateId,
-      name: stateRecord.stateName
-    }))
+    const selectedCountryStates = _.map(
+      _.uniqBy(
+        _.filter(
+          countriesStatesAndLgas,
+          stateRecord => stateRecord.stateId != null
+        ),
+        'stateId'
+      ),
+      stateRecord => ({
+        id: stateRecord.stateId,
+        name: stateRecord.stateName,
+      })
+    )
     selectedCountry.states = _.sortBy(selectedCountryStates, 'name')
 
     const selectedState = _.find(selectedCountry.states, { id: stateId })
-    const selectedStateLgas = _.map(_.filter(countriesStatesAndLgas, lgaRecord =>
-      lgaRecord.lgaId != null), lgaRecord => ({
+    const selectedStateLgas = _.map(
+      _.filter(countriesStatesAndLgas, lgaRecord => lgaRecord.lgaId != null),
+      lgaRecord => ({
         id: lgaRecord.lgaId,
-        name: lgaRecord.lgaName
-      }))
+        name: lgaRecord.lgaName,
+      })
+    )
 
     selectedState.lgas = _.sortBy(selectedStateLgas, 'name')
   }
@@ -128,27 +185,34 @@ function* stateSelectList(request) {
       .orderBy(['s.name'], 'asc')
       .distinct('s.id', 's.name')
   } else {
-    const statesAndLgas = yield query('Get states and state LGAs for select lists')
+    const statesAndLgas = yield query(
+      'Get states and state LGAs for select lists'
+    )
       .from('State as s')
       .innerJoin('Geography as g', 'g.stateId', 's.id')
       .where('g.countryId', countryId)
-      .leftJoin('Lga as l', function () {
-        this.on('l.id', 'g.lgaId')
-          .on({ 'g.stateId': knex.raw(stateId) })
+      .leftJoin('Lga as l', function() {
+        this.on('l.id', 'g.lgaId').on({ 'g.stateId': knex.raw(stateId) })
       })
       .orderBy(['s.name', 'l.name'], 'asc')
-      .distinct('s.id as stateId', 's.name as stateName', 'l.id as lgaId', 'l.name as lgaName')
+      .distinct(
+        's.id as stateId',
+        's.name as stateName',
+        'l.id as lgaId',
+        'l.name as lgaName'
+      )
     states = _.map(_.uniqBy(statesAndLgas, 'stateId'), stateRecord => ({
       id: stateRecord.stateId,
-      name: stateRecord.stateName
+      name: stateRecord.stateName,
     }))
     const selectedState = _.find(states, { id: stateId })
-    const selectedStateLgas = _.map(_.filter(statesAndLgas, lgaRecord => lgaRecord.lgaId != null),
+    const selectedStateLgas = _.map(
+      _.filter(statesAndLgas, lgaRecord => lgaRecord.lgaId != null),
       lgaRecord => ({
         id: lgaRecord.lgaId,
-        name: lgaRecord.lgaName
-      }
-    ))
+        name: lgaRecord.lgaName,
+      })
+    )
 
     selectedState.lgas = _.sortBy(selectedStateLgas, 'name')
   }
@@ -174,9 +238,7 @@ function* transformGeographyFromUpdates(updates) {
   const transformedFields = _.omit(updates, geoFieldNames)
 
   if (!_.isEmpty(geoFields)) {
-    const geography = yield knex('Geography')
-      .where(geoFields)
-      .first('id')
+    const geography = yield knex('Geography').where(geoFields).first('id')
     transformedFields.geographyId = geography ? geography.id : null
   }
   return transformedFields
@@ -187,5 +249,5 @@ module.exports = {
   countrySelectList,
   stateSelectList,
   lgaSelectList,
-  transformGeographyFromUpdates
+  transformGeographyFromUpdates,
 }

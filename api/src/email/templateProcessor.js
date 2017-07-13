@@ -30,12 +30,16 @@ function* process(templateName, tokenValues, locale) {
   })
 }
 
-function* generateAttachment(pathToFile, mimeType = 'application/octet-stream', disposition = 'attachment') {
+function* generateAttachment(
+  pathToFile,
+  mimeType = 'application/octet-stream',
+  disposition = 'attachment'
+) {
   return {
     content: yield encode(pathToFile, { string: true, local: true }),
     mimeType,
     fileName: path.basename(pathToFile),
-    disposition
+    disposition,
   }
 }
 
@@ -44,7 +48,7 @@ function* getInlineImageAttachments(htmlContent) {
   const extensionMimeTypeMappings = {
     '.jpg': 'image/jpeg',
     '.png': 'image/png',
-    '.bmp': 'image/bmp'
+    '.bmp': 'image/bmp',
   }
   const directoryItems = yield readdir(templateDir)
   const attachments = []
@@ -55,7 +59,13 @@ function* getInlineImageAttachments(htmlContent) {
       const mimeType = extensionMimeTypeMappings[fileExtension]
 
       if (mimeType) {
-        attachments.push(yield* generateAttachment(path.join(__dirname, 'templates', directoryItems[i]), mimeType, 'inline'))
+        attachments.push(
+          yield* generateAttachment(
+            path.join(__dirname, 'templates', directoryItems[i]),
+            mimeType,
+            'inline'
+          )
+        )
       }
     }
   }
@@ -65,5 +75,5 @@ function* getInlineImageAttachments(htmlContent) {
 module.exports = {
   process,
   generateAttachment,
-  getInlineImageAttachments
+  getInlineImageAttachments,
 }

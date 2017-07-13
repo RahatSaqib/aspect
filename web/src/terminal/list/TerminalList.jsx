@@ -1,20 +1,25 @@
-import PropTypes from 'prop-types'
 import classnames from 'classnames/bind'
-import React, { PureComponent } from 'react'
-import { compose, setPropTypes, pure } from 'recompose'
-import { injectIntl, defineMessages, intlShape } from 'react-intl'
+import React from 'react'
+import { compose, withHandlers, lifecycle, pure } from 'recompose'
+import { injectIntl, defineMessages } from 'react-intl'
 import { bindActionCreators } from 'redux'
 import { connect } from 'react-redux'
 import Helmet from 'react-helmet'
+import { Card } from 'react-toolbox/lib/card'
+import { ProgressBar } from 'react-toolbox/lib/progress_bar'
 
 // Our own imports
 import NavTitle from '../../globals/components/NavTitle'
 import BrowseFilters from '../../globals/components/BrowseFilters'
-import { Items } from '../../shared/metaReducers/items'
-import { Table } from '../../shared/metaReducers/table'
-import { configureListFilter, ListFilter } from '../../filter/FilterRedux'
-import DataTableWithEmptyList from '../../components/shared/DataTableWithEmptyList'
+import EmptyList from '../../components/shared/EmptyList'
+import TablePaginator from '../../components/shared/TablePaginator'
+import { configureListFilter } from '../../filter/FilterRedux'
 import { fetchListFilteredTerminals } from '../TerminalRedux'
+import {
+  TerminalDataTable,
+  TerminalDataTableHead,
+  TerminalDataTableRow,
+} from './TerminalDataTable'
 
 const cssClasses = classnames.bind(require('./TerminalList.css'))
 
@@ -48,36 +53,39 @@ const messages = defineMessages({
     defaultMessage: 'Last Seen',
   },
   numberOfTestsLeft: {
-    id: 'pages.DeviceList.numberOfTestsLeft',
+    id: 'pages.TerminalList.numberOfTestsLeft',
     defaultMessage: 'Number Of',
   },
   numberOfTestsRight: {
-    id: 'pages.DeviceList.numberOfTestsRight',
+    id: 'pages.TerminalList.numberOfTestsRight',
     defaultMessage: 'Tests Delivered',
   },
   deliveredLastMonth: {
-    id: 'pages.DeviceList.deliveredLastMonth',
+    id: 'pages.TerminalList.deliveredLastMonth',
     defaultMessage: 'Last Month',
   },
   deliveredThisMonth: {
-    id: 'pages.DeviceList.deliveredThisMonth',
+    id: 'pages.TerminalList.deliveredThisMonth',
     defaultMessage: 'This Month',
   },
   acknowledgedRatio: {
-    id: 'pages.DeviceList.acknowledgedRatio',
+    id: 'pages.TerminalList.acknowledgedRatio',
     defaultMessage: '% Acknowledged',
   },
   flagged: {
-    id: 'pages.DeviceList.flagged',
+    id: 'pages.TerminalList.flagged',
     defaultMessage: 'Flagged',
+  },
+  paginatorStatus: {
+    id: 'pages.TerminalList.paginatorStatus',
+    defaultMessage: `Showing {firstItemIndex}-{lastItemIndex} of {itemCount, plural,
+      one {# terminal}
+      other {# terminals}
+    }`,
   },
 })
 
 const enhance = compose(
-  setPropTypes({
-    location: PropTypes.object.isRequired,
-    history: PropTypes.object.isRequired,
-  }),
   pure,
   injectIntl,
   connect(
@@ -91,184 +99,184 @@ const enhance = compose(
       configureListFilter,
     })
   ),
-  setPropTypes({
-    intl: intlShape.isRequired,
-    listFilter: PropTypes.objectOf(ListFilter).isRequired,
-    items: PropTypes.objectOf(Items).isRequired,
-    table: PropTypes.objectOf(Table).isRequired,
-    fetchListFilteredTerminals: PropTypes.func.isRequired,
-    configureListFilter: PropTypes.func.isRequired,
+  withHandlers({
+    onHeadColumnClick: ({ fetchListFilteredTerminals, table }) => ({
+      currentTarget: { dataset: { column: nextSortCol } },
+    }) =>
+      fetchListFilteredTerminals(
+        { hasResults: 0, hasConnectivity: 0 },
+        nextSortCol,
+        table.sortCol === nextSortCol
+          ? table.sortDir === 'asc' ? 'desc' : 'asc'
+          : table.sortDir,
+        table.page,
+        table.pageSize
+      ),
+    onRowClick: ({ history }) => ({
+      currentTarget: { dataset: { terminalId } },
+    }) => history.push(`/browse/terminal/${terminalId}`),
+    onPageChange: ({ fetchListFilteredTerminals, table }) => nextPage =>
+      fetchListFilteredTerminals(
+        { hasResults: 0, hasConnectivity: 0 },
+        table.sortCol,
+        table.sortDir,
+        nextPage,
+        table.pageSize
+      ),
+    onPageSizeChange: ({ fetchListFilteredTerminals, table }) => nextPageSize =>
+      fetchListFilteredTerminals(
+        { hasResults: 0, hasConnectivity: 0 },
+        table.sortCol,
+        table.sortDir,
+        0,
+        nextPageSize
+      ),
+  }),
+  lifecycle({
+    componentWillMount() {
+      this.props.configureListFilter({
+        geography: true,
+        siteName: true,
+        deviceName: true,
+        deviceStatus: true,
+      })
+    },
+
+    componentDidMount() {
+      this.props.onPageChange(0)
+    },
+
+    componentWillReceiveProps(nextProps) {
+      if (this.props.listFilter !== nextProps.listFilter) {
+        this.props.onPageChange(0)
+      }
+    },
   })
 )
 
-const TERMINAL_TABLE_COLUMN_SPACING = 12
-const TERMINAL_TABLE_SITE_COLUMN_WIDTH = '21%'
-const TERMINAL_TABLE_SHORTNAME_COLUMN_WIDTH = '12%'
-const TERMINAL_TABLE_STATUS_COLUMN_WIDTH = '10%'
-
-export class TerminalList extends PureComponent {
-  static contextTypes = {
-    muiTheme: PropTypes.object.isRequired,
-  }
-
-  static childContextTypes = {
-    muiTheme: PropTypes.object.isRequired,
-  }
-
-  getChildContext() {
-    const { muiTheme } = this.context
-
-    return {
-      muiTheme: {
-        ...muiTheme,
-        tableHeaderColumn: {
-          // Overrides the style used by <material-ui/Table/TableHeaderColumn /> in <DataTable />
-          ...muiTheme.tableHeaderColumn,
-          spacing: TERMINAL_TABLE_COLUMN_SPACING,
-        },
-        tableRowColumn: {
-          // Overrides the style used by <material-ui/Table/TableRowColumn /> in <DataTable />
-          ...muiTheme.tableRowColumn,
-          spacing: TERMINAL_TABLE_COLUMN_SPACING,
-        },
-      },
-    }
-  }
-
-  componentWillMount() {
-    const { configureListFilter } = this.props
-    configureListFilter({
-      geography: true,
-      siteName: true,
-      deviceName: true,
-      deviceStatus: true,
-    })
-  }
-
-  componentDidMount() {
-    this.handleFetch()
-  }
-
-  componentWillReceiveProps(nextProps) {
-    if (this.props.listFilter !== nextProps.listFilter) {
-      this.handleFetch()
-    }
-  }
-
-  handleItemIdSelection = terminalId => {
-    this.props.history.push(`/browse/terminal/${terminalId}`)
-  }
-
-  handleFetch = (...args) => {
-    this.props.fetchListFilteredTerminals(
-      { hasResults: 0, hasConnectivity: 0 },
-      ...args
-    )
-  }
-
-  render() {
-    const { intl } = this.props
-    const { formatMessage, formatRelative, formatNumber } = intl
-    const columns = [
-      {
-        db: 'siteName',
-        title: formatMessage(messages.terminalSite),
-        extraProps: { style: { width: TERMINAL_TABLE_SITE_COLUMN_WIDTH } },
-      },
-      {
-        db: 'shortname',
-        title: formatMessage(messages.terminalShortName),
-        extraProps: { style: { width: TERMINAL_TABLE_SHORTNAME_COLUMN_WIDTH } },
-      },
-      {
-        db: 'status',
-        title: formatMessage(messages.status),
-        hideOnXs: true,
-        extraProps: { style: { width: TERMINAL_TABLE_STATUS_COLUMN_WIDTH } },
-      },
-      {
-        db: 'createdOn',
-        title: formatMessage(messages.connectedSince),
-        hideOnXs: true,
-        format: data => formatRelative(data),
-      },
-      {
-        db: 'lastSeen',
-        title: formatMessage(messages.lastSeen),
-        hideOnXs: true,
-        format: data => formatRelative(data),
-      },
-      {
-        db: 'deliveredLastMonth',
-        extraProps: { style: { paddingRight: 2 } },
-        title: (
-          <span>
-            <span
-              style={{
-                display: 'inline-block',
-                width: '100%',
-                textAlign: 'right',
-              }}
-            >
-              {formatMessage(messages.numberOfTestsLeft)}
-            </span>
-            <br />
-            {formatMessage(messages.deliveredLastMonth)}
-          </span>
-        ),
-        format: data => formatNumber(data),
-      },
-      {
-        db: 'deliveredThisMonth',
-        extraProps: { style: { paddingLeft: 2 } },
-        title: (
-          <span>
-            <span style={{ display: 'inline-block', textAlign: 'left' }}>
-              {formatMessage(messages.numberOfTestsRight)}
-            </span>
-            <br />
-            {formatMessage(messages.deliveredThisMonth)}
-          </span>
-        ),
-        format: data => formatNumber(data),
-      },
-      {
-        db: 'acknowledgedRatio',
-        title: formatMessage(messages.acknowledgedRatio),
-        format: data => formatNumber(data, { style: 'percent' }),
-      },
-      {
-        db: 'totalFlagged',
-        title: formatMessage(messages.flagged),
-        format: data => formatNumber(data),
-      },
-    ]
-
-    return (
-      <div className={cssClasses('Content')}>
-        <Helmet
-          title={formatMessage(messages.terminalsTitle)}
-          titleTemplate="%s - Aspect"
-          defaultTitle="Aspect"
+export const TerminalList = ({
+  intl,
+  history,
+  location,
+  table,
+  items,
+  //
+  onHeadColumnClick,
+  onRowClick,
+  onPageChange,
+  onPageSizeChange,
+}) =>
+  <div className={cssClasses('Container')}>
+    <Helmet
+      title={intl.formatMessage(messages.terminalsTitle)}
+      titleTemplate="%s - Aspect"
+      defaultTitle="Aspect"
+    />
+    <NavTitle title={intl.formatMessage(messages.terminalsTitle)} />
+    <BrowseFilters history={history} location={location} intl={intl} />
+    {items.currentIdList.isEmpty() && <EmptyList />}
+    {!items.currentIdList.isEmpty() &&
+      <Card className={cssClasses('Card')}>
+        <ProgressBar
+          mode={table.loading ? 'indeterminate' : 'determinate'}
+          disabled={!table.loading}
+          className={cssClasses('ProgressBar')}
+          theme={{
+            indeterminate: cssClasses('ProgressBar--indeterminate'),
+          }}
         />
-        <NavTitle title={formatMessage(messages.terminalsTitle)} />
-        <BrowseFilters
-          history={this.props.history}
-          location={this.props.location}
+        <TerminalDataTable
+          selectable={false}
+          className={cssClasses('TerminalDataTable')}
+        >
+          <TerminalDataTableHead
+            sortColumnKey={table.sortCol}
+            sortColumnDir={table.sortDir}
+            columns={[
+              {
+                key: 'siteName',
+                label: intl.formatMessage(messages.terminalSite),
+                onClick: onHeadColumnClick,
+              },
+              {
+                key: 'shortname',
+                label: intl.formatMessage(messages.terminalShortName),
+                onClick: onHeadColumnClick,
+              },
+              {
+                key: 'status',
+                label: intl.formatMessage(messages.status),
+                onClick: onHeadColumnClick,
+              },
+              {
+                key: 'createdOn',
+                label: intl.formatMessage(messages.connectedSince),
+                onClick: onHeadColumnClick,
+              },
+              {
+                key: 'lastSeen',
+                label: intl.formatMessage(messages.lastSeen),
+                onClick: onHeadColumnClick,
+              },
+              {
+                key: 'deliveredLastMonth',
+                className: cssClasses('DeviceDataTableHead__Tests--left'),
+                onClick: onHeadColumnClick,
+                label: (
+                  <span>
+                    {intl.formatMessage(messages.numberOfTestsLeft)}
+                    <br />
+                    {intl.formatMessage(messages.deliveredLastMonth)}
+                  </span>
+                ),
+              },
+              {
+                key: 'deliveredThisMonth',
+                className: cssClasses('DeviceDataTableHead__Tests--right'),
+                onClick: onHeadColumnClick,
+                label: (
+                  <span>
+                    {intl.formatMessage(messages.numberOfTestsRight)}
+                    <br />
+                    {intl.formatMessage(messages.deliveredThisMonth)}
+                  </span>
+                ),
+              },
+              {
+                key: 'acknowledgedRatio',
+                label: intl.formatMessage(messages.acknowledgedRatio),
+                onClick: onHeadColumnClick,
+              },
+              {
+                key: 'totalFlagged',
+                label: intl.formatMessage(messages.flagged),
+                onClick: onHeadColumnClick,
+              },
+            ]}
+          />
+          {items.currentIdList
+            .map(id => items.byId.get(id))
+            .map(terminal =>
+              <TerminalDataTableRow
+                key={terminal.get('id')}
+                intl={intl}
+                terminal={terminal}
+                onClick={onRowClick}
+                data-terminal-Id={terminal.get('id')}
+              />
+            )}
+        </TerminalDataTable>
+        <TablePaginator
+          className={cssClasses('TablePaginator')}
           intl={intl}
+          paginatorStatus={messages.paginatorStatus}
+          page={table.page}
+          pageSize={table.pageSize}
+          total={table.total}
+          onPageChange={onPageChange}
+          onPageSizeChange={onPageSizeChange}
         />
-        <DataTableWithEmptyList
-          selectable
-          handleItemIdSelection={this.handleItemIdSelection}
-          handleFetch={this.handleFetch}
-          items={this.props.items}
-          table={this.props.table}
-          columns={columns}
-          intl={intl}
-        />
-      </div>
-    )
-  }
-}
+      </Card>}
+  </div>
 
 export default enhance(TerminalList)
