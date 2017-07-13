@@ -159,6 +159,11 @@ const messages = defineMessages({
     id: 'pages.ResultDetail.deliverToTerminal',
     defaultMessage: 'Deliver to Terminal',
   },
+  deliverToTerminalDisabledHelp: {
+    id: 'pages.ResultDetail.deliverToTerminalDisabledHelp',
+    defaultMessage:
+      '"Deliver to Terminal" is only enabled if the result is validated and hasn\'t been sent to the terminal yet',
+  },
 })
 
 const enhance = compose(
@@ -482,6 +487,14 @@ export class ResultDetail extends PureComponent {
                 style={{ marginTop: 23 }}
                 checked={result.get('deliverToTerminal') === 1}
                 onCheck={this.onChangeDeliverToTerminal}
+                disabled={
+                  result.get('resultWorkflowStatusExternalId') !== 'Validated'
+                }
+                title={
+                  result.get('resultWorkflowStatusExternalId') !== 'Validated'
+                    ? formatMessage(messages.deliverToTerminalDisabledHelp)
+                    : ''
+                }
               />
             </Unit>
           </CardText>

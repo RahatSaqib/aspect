@@ -48,6 +48,7 @@ const SELECT_SHOW_FIELDS = [
   'rc2.name as resultCategory2Name',
   'r.resultWorkflowStatusId',
   'rs.name as resultWorkflowStatus',
+  'rs.externalId as resultWorkflowStatusExternalId',
   'r.resultData',
   'r.siteId',
   'si.name as siteName',
@@ -448,10 +449,16 @@ function* updateDeliverToTerminal(request) {
   const { resultId } = params
   const { id: currentUserId } = auth.credentials
 
-  // get the result so we can check access
+  // get the result so we can check access and workflow status
   const result = yield* getResultByResultId(request)
   if (!result.ok) {
-    Boom.notFound()
+    return Boom.notFound()
+  }
+
+  if (result.data.resultWorkflowStatusExternalId !== 'Validated') {
+    return Boom.badRequest(
+      '"Deliver to Terminal" can only be set for results that are in the workflow status "Validated".'
+    )
   }
 
   // update the result deliver to terminal flag
