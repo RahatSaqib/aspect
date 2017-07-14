@@ -9,7 +9,15 @@ const cssClasses = classnames.bind(
 
 const enhance = _.identity
 
-const ResultTableRow = ({ intl, result, ...restProps }) =>
+const formatterByType = _.partial(
+  (formatterBy, type) => formatterBy[type] || formatterBy.default,
+  {
+    number: (n, intl) => (_.isNumber(n) ? intl.formatNumber(n) : false),
+    default: _.identity,
+  }
+)
+
+const ResultTableRow = ({ intl, extraColumns, result, ...restProps }) =>
   <TableRow
     {...restProps}
     className={cssClasses(restProps.className, 'TableRow')}
@@ -32,6 +40,14 @@ const ResultTableRow = ({ intl, result, ...restProps }) =>
     <TableCell className={cssClasses('TableCell')}>
       {result.get('patientId')}
     </TableCell>
+    {extraColumns.map(column =>
+      <TableCell key={column.get('db')} className={cssClasses('TableCell')}>
+        {formatterByType(column.get('type'))(
+          result.get(column.get('db')),
+          intl
+        )}
+      </TableCell>
+    )}
   </TableRow>
 
 export default enhance(ResultTableRow)

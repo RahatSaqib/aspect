@@ -1,3 +1,5 @@
+import _ from 'lodash'
+import Immutable from 'immutable'
 import classnames from 'classnames/bind'
 import React from 'react'
 import { compose, withHandlers, lifecycle, pure } from 'recompose'
@@ -59,10 +61,6 @@ const messages = defineMessages({
   resultCategoryCopiesMl: {
     id: 'pages.ResultList.resultCategoryHiv',
     defaultMessage: 'HIV',
-  },
-  nullText: {
-    id: 'pages.ResultDetail.nullText',
-    defaultMessage: 'N/A',
   },
   paginatorStatus: {
     id: 'pages.ResultList.paginatorStatus',
@@ -159,6 +157,16 @@ const enhance = compose(
   })
 )
 
+const messageByI18nKey = _.partial(
+  // Explicit declare messageBy[i18nKey] so that the keys are searchable.
+  (messageBy, i18nKey) => messageBy[i18nKey] || messageBy.default,
+  {
+    resultCategoryCopiesMl: (title, intl) =>
+      intl.formatMessage(messages.resultCategoryCopiesMl),
+    default: _.identity,
+  }
+)
+
 export const ResultList = ({
   intl,
   history,
@@ -203,7 +211,7 @@ export const ResultList = ({
           <ResultDataTableHead
             sortColumnKey={table.sortCol}
             sortColumnDir={table.sortDir}
-            columns={[
+            columns={Immutable.List([
               {
                 key: 'endedOn',
                 label: intl.formatMessage(messages.endedOn),
@@ -234,7 +242,15 @@ export const ResultList = ({
                 label: intl.formatMessage(messages.patiendId),
                 onClick: onHeadColumnClick,
               },
-            ]}
+            ]).concat(
+              table.extraColumns.map(column => ({
+                key: column.get('db'),
+                label: messageByI18nKey(column.get('i18nKey'))(
+                  column.get('title'),
+                  intl
+                ),
+              }))
+            )}
           />
           {items.currentIdList
             .map(id => items.byId.get(id))
@@ -242,6 +258,7 @@ export const ResultList = ({
               <ResultDataTableRow
                 key={result.get('id')}
                 intl={intl}
+                extraColumns={table.extraColumns}
                 result={result}
                 onClick={onRowClick}
                 data-result-Id={result.get('id')}
