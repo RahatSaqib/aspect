@@ -197,7 +197,7 @@ export const ResultList = ({
     {!items.currentIdList.isEmpty() &&
       <Card className={cssClasses('Card')}>
         <ProgressBar
-          mode={table.loadig ? 'indeterminate' : 'determinate'}
+          mode={table.loading ? 'indeterminate' : 'determinate'}
           disabled={!table.loading}
           className={cssClasses('ProgressBar')}
           theme={{
