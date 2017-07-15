@@ -94,3 +94,13 @@ npm update --save
 ```
 
 Also update vendorPackages in dist.js to make sure that vendor packages are bundled separately from our code
+
+## Styleguide
+
+To view styleguides, visit http://localhost:6060/.
+
+```bash
+# Run styleguide
+npm run styleguide
+```
+
