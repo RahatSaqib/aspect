@@ -5,7 +5,7 @@ import styles from './ChartAlert.css'
 
 const cssClasses = classnames.bind(styles)
 
-const Alert = ({ status, statusString }) => (
+const Alert = ({ status, statusString }) =>
   <div>
     <p
       className={cssClasses({
@@ -14,9 +14,10 @@ const Alert = ({ status, statusString }) => (
         red: status !== 'green' && status !== 'amber', // if incorrectly entered
       })}
     />
-    <p className={cssClasses('textAlert')}>{statusString}</p>
+    <p className={cssClasses('textAlert')}>
+      {statusString}
+    </p>
   </div>
-)
 
 Alert.propTypes = {
   status: PropTypes.string,
