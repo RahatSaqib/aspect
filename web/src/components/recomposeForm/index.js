@@ -146,7 +146,7 @@ const recomposeForm = ({
     }
 
     validateFields = (values = this.props.values) => {
-      const errors = validate(values)
+      const errors = validate(values, this.props)
 
       const meta = _fp.reduce(
         (acc, { fieldName }) => {
