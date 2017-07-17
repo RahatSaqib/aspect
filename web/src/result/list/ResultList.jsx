@@ -1,25 +1,32 @@
-import PropTypes from 'prop-types'
+import _ from 'lodash'
+import Immutable from 'immutable'
 import classnames from 'classnames/bind'
-import React, { PureComponent } from 'react'
-import { compose, setPropTypes, pure } from 'recompose'
-import { injectIntl, defineMessages, intlShape } from 'react-intl'
+import React from 'react'
+import { compose, withHandlers, lifecycle, pure } from 'recompose'
+import { injectIntl, defineMessages } from 'react-intl'
 import { bindActionCreators } from 'redux'
 import { connect } from 'react-redux'
 import Helmet from 'react-helmet'
+import { Card } from 'react-toolbox/lib/card'
+import { ProgressBar } from 'react-toolbox/lib/progress_bar'
 
 // Our own imports
 import NavTitle from '../../globals/components/NavTitle'
 import BrowseFilters from '../../globals/components/BrowseFilters'
-import { Items } from '../../shared/metaReducers/items'
-import { Table } from '../../shared/metaReducers/table'
-import DataTableWithEmptyList from '../../components/shared/DataTableWithEmptyList'
-import { configureListFilter, ListFilter } from '../../filter/FilterRedux'
+import EmptyList from '../../components/shared/EmptyList'
+import TablePaginator from '../../components/shared/TablePaginator'
+import {
+  ResultDataTable,
+  ResultDataTableHead,
+  ResultDataTableRow,
+} from '../../result/list/ResultDataTable'
+import { configureListFilter } from '../../filter/FilterRedux'
 import { fetchListFilteredResults, exportResults } from '../ResultRedux'
 
 const cssClasses = classnames.bind(require('./ResultList.css'))
 
 const messages = defineMessages({
-  title: {
+  resultsTitle: {
     id: 'pages.ResultList.title',
     defaultMessage: 'Results',
   },
@@ -55,17 +62,16 @@ const messages = defineMessages({
     id: 'pages.ResultList.resultCategoryHiv',
     defaultMessage: 'HIV',
   },
-  nullText: {
-    id: 'pages.ResultDetail.nullText',
-    defaultMessage: 'N/A',
+  paginatorStatus: {
+    id: 'pages.ResultList.paginatorStatus',
+    defaultMessage: `Showing {firstItemIndex}-{lastItemIndex} of {itemCount, plural,
+      one {# result}
+      other {# results}
+    }`,
   },
 })
 
 const enhance = compose(
-  setPropTypes({
-    location: PropTypes.object.isRequired,
-    history: PropTypes.object.isRequired,
-  }),
   pure,
   injectIntl,
   connect(
@@ -80,116 +86,196 @@ const enhance = compose(
       exportResults,
     })
   ),
-  setPropTypes({
-    intl: intlShape.isRequired,
-    listFilter: PropTypes.objectOf(ListFilter).isRequired,
-    items: PropTypes.objectOf(Items).isRequired,
-    table: PropTypes.objectOf(Table).isRequired,
-    fetchListFilteredResults: PropTypes.func.isRequired,
-    configureListFilter: PropTypes.func.isRequired,
-    exportResults: PropTypes.func.isRequired,
+  withHandlers({
+    onExportClick: ({ exportResults, table }) => (
+      formatType,
+      receivedExportResponse
+    ) =>
+      exportResults(
+        {},
+        formatType,
+        table.sortCol,
+        table.sortDir,
+        table.page,
+        table.pageSize,
+        receivedExportResponse
+      ),
+    onHeadColumnClick: ({ fetchListFilteredResults, table }) => ({
+      currentTarget: { dataset: { column: nextSortCol } },
+    }) =>
+      fetchListFilteredResults(
+        {},
+        nextSortCol,
+        table.sortCol === nextSortCol
+          ? table.sortDir === 'asc' ? 'desc' : 'asc'
+          : table.sortDir,
+        table.page,
+        table.pageSize
+      ),
+    onRowClick: ({ history }) => ({
+      currentTarget: { dataset: { resultId } },
+    }) => history.push(`/browse/result/${resultId}`),
+    onPageChange: ({ fetchListFilteredResults, table }) => nextPage =>
+      fetchListFilteredResults(
+        {},
+        table.sortCol,
+        table.sortDir,
+        nextPage,
+        table.pageSize
+      ),
+    onPageSizeChange: ({ fetchListFilteredResults, table }) => nextPageSize =>
+      fetchListFilteredResults(
+        {},
+        table.sortCol,
+        table.sortDir,
+        0,
+        nextPageSize
+      ),
+  }),
+  lifecycle({
+    componentWillMount() {
+      this.props.configureListFilter({
+        assayAndResultCategory: true,
+        geography: true,
+        date: true,
+        patientOrResearchId: true,
+        sampleId: true,
+        sampleGroup: true,
+        siteName: true,
+        sampleOriginSite: true,
+        workflowStatus: true,
+      })
+    },
+    componentDidMount() {
+      this.props.onPageChange(0)
+    },
+    componentWillReceiveProps(nextProps) {
+      if (this.props.listFilter !== nextProps.listFilter) {
+        this.props.onPageChange(0)
+      }
+    },
   })
 )
 
-export class ResultList extends PureComponent {
-  componentWillMount() {
-    const { configureListFilter } = this.props
-    configureListFilter({
-      assayAndResultCategory: true,
-      geography: true,
-      date: true,
-      patientOrResearchId: true,
-      sampleId: true,
-      sampleGroup: true,
-      siteName: true,
-      sampleOriginSite: true,
-      workflowStatus: true,
-    })
+const messageByI18nKey = _.partial(
+  // Explicit declare messageBy[i18nKey] so that the keys are searchable.
+  (messageBy, i18nKey) => messageBy[i18nKey] || messageBy.default,
+  {
+    resultCategoryCopiesMl: (title, intl) =>
+      intl.formatMessage(messages.resultCategoryCopiesMl),
+    default: _.identity,
   }
+)
 
-  componentDidMount() {
-    this.handleFetch()
-  }
-
-  componentWillReceiveProps(nextProps) {
-    if (this.props.listFilter !== nextProps.listFilter) {
-      this.handleFetch()
-    }
-  }
-
-  handleFetch = (...args) => {
-    this.props.fetchListFilteredResults({}, ...args)
-  }
-
-  handleItemIdSelection = resultId => {
-    this.props.history.push(`/browse/result/${resultId}`)
-  }
-
-  clickResultListExport = (formatType, receivedExportResponse) => {
-    this.props.exportResults(
-      formatType,
-      this.props.table.sortCol,
-      this.props.table.sortDir,
-      this.props.table.page,
-      this.props.table.pageSize,
-      receivedExportResponse
-    )
-  }
-
-  render() {
-    const { intl } = this.props
-    const { formatMessage, formatDate } = intl
-    const columns = [
-      {
-        db: 'endedOn',
-        extraProps: { style: { width: '80px' } },
-        title: formatMessage(messages.endedOn),
-        format: data =>
-          data ? formatDate(data) : formatMessage(messages.nullText),
-      },
-      { db: 'deviceName', title: formatMessage(messages.deviceName) },
-      {
-        db: 'sampleOriginSiteName',
-        title: formatMessage(messages.sampleOriginSiteName),
-      },
-      { db: 'sampleId', title: formatMessage(messages.sampleId) },
-      {
-        db: 'sampleGroup',
-        extraProps: { style: { width: '80px' } },
-        title: formatMessage(messages.sampleGroup),
-      },
-      { db: 'patientId', title: formatMessage(messages.patiendId) },
-    ]
-    const askConfirmationForExport = this.props.table.total > 1000
-
-    return (
-      <div className={cssClasses('Content')}>
-        <Helmet
-          title={formatMessage(messages.title)}
-          titleTemplate="%s - Aspect"
-          defaultTitle="Aspect"
+export const ResultList = ({
+  intl,
+  history,
+  location,
+  table,
+  items,
+  onExportClick,
+  onHeadColumnClick,
+  onRowClick,
+  onPageChange,
+  onPageSizeChange,
+}) =>
+  <div className={cssClasses('Content')}>
+    <Helmet
+      title={intl.formatMessage(messages.resultsTitle)}
+      titleTemplate="%s - Aspect"
+      defaultTitle="Aspect"
+    />
+    <NavTitle title={intl.formatMessage(messages.resultsTitle)} />
+    <BrowseFilters
+      history={history}
+      location={location}
+      intl={intl}
+      onClickExport={onExportClick}
+      askConfirmationForExport={table.total > 1000}
+    />
+    {items.currentIdList.isEmpty() && <EmptyList />}
+    {!items.currentIdList.isEmpty() &&
+      <Card className={cssClasses('Card')}>
+        <ProgressBar
+          mode={table.loading ? 'indeterminate' : 'determinate'}
+          disabled={!table.loading}
+          className={cssClasses('ProgressBar')}
+          theme={{
+            indeterminate: cssClasses('ProgressBar--indeterminate'),
+          }}
         />
-        <NavTitle title={formatMessage(messages.title)} />
-        <BrowseFilters
-          history={this.props.history}
-          location={this.props.location}
+        <ResultDataTable
+          selectable={false}
+          className={cssClasses('ResultDataTable')}
+        >
+          <ResultDataTableHead
+            sortColumnKey={table.sortCol}
+            sortColumnDir={table.sortDir}
+            columns={Immutable.List([
+              {
+                key: 'endedOn',
+                label: intl.formatMessage(messages.endedOn),
+                onClick: onHeadColumnClick,
+              },
+              {
+                key: 'deviceName',
+                label: intl.formatMessage(messages.deviceName),
+                onClick: onHeadColumnClick,
+              },
+              {
+                key: 'sampleOriginSiteName',
+                label: intl.formatMessage(messages.sampleOriginSiteName),
+                onClick: onHeadColumnClick,
+              },
+              {
+                key: 'sampleId',
+                label: intl.formatMessage(messages.sampleId),
+                onClick: onHeadColumnClick,
+              },
+              {
+                key: 'sampleGroup',
+                label: intl.formatMessage(messages.sampleGroup),
+                onClick: onHeadColumnClick,
+              },
+              {
+                key: 'patientId',
+                label: intl.formatMessage(messages.patiendId),
+                onClick: onHeadColumnClick,
+              },
+            ]).concat(
+              table.extraColumns.map(column => ({
+                key: column.get('db'),
+                label: messageByI18nKey(column.get('i18nKey'))(
+                  column.get('title'),
+                  intl
+                ),
+              }))
+            )}
+          />
+          {items.currentIdList
+            .map(id => items.byId.get(id))
+            .map(result =>
+              <ResultDataTableRow
+                key={result.get('id')}
+                intl={intl}
+                extraColumns={table.extraColumns}
+                result={result}
+                onClick={onRowClick}
+                data-result-Id={result.get('id')}
+              />
+            )}
+        </ResultDataTable>
+        <TablePaginator
+          className={cssClasses('TablePaginator')}
           intl={intl}
-          onClickExport={this.clickDeviceListExport}
-          askConfirmationForExport={askConfirmationForExport}
+          paginatorStatus={messages.paginatorStatus}
+          page={table.page}
+          pageSize={table.pageSize}
+          total={table.total}
+          onPageChange={onPageChange}
+          onPageSizeChange={onPageSizeChange}
         />
-        <DataTableWithEmptyList
-          selectable
-          handleItemIdSelection={this.handleItemIdSelection}
-          handleFetch={this.handleFetch}
-          items={this.props.items}
-          table={this.props.table}
-          columns={columns}
-          intl={intl}
-          messages={messages}
-        />
-      </div>
-    )
-  }
-}
+      </Card>}
+  </div>
 
 export default enhance(ResultList)

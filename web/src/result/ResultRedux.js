@@ -75,7 +75,6 @@ export function fetchResults(
 ) {
   return dispatch => {
     dispatch(requestResults(sortCol, sortDir, page, pageSize, filters))
-
     return aspectFetch(
       `/result?${stringify({
         sortCol,
