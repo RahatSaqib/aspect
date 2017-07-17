@@ -36,7 +36,7 @@ class ColumnChart extends Component {
     }
 
     if (this.props.rightLabel) {
-      rMargin = maxLabel * 12 // 12 is a multiplier to properly scale margin by label on right side
+      rMargin = maxLabel * 13 // 13 is a multiplier to properly scale margin by label on right side
     }
 
     // Define the graph dimensions and margins

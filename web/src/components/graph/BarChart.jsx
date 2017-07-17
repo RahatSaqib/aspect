@@ -33,7 +33,7 @@ class BarChart extends Component {
     // Define the graph dimensions and margins
     const width = 600 + this.props.styleWide * 300
     const height = 400
-    const margin = { top: 30, bottom: 0, left: lMargin, right: 20 }
+    const margin = { top: 0, bottom: 0, left: lMargin, right: 20 }
 
     // Create bounds
     const xMax = width - margin.left - margin.right
@@ -111,7 +111,7 @@ class BarChart extends Component {
                   scale={yScale}
                   stroke={'#1b1a1e'}
                   tickTextFill={'#1b1a1e'}
-                  numTicks={4}
+                  numTicks={this.props.numYTicks}
                   hideTicks={this.props.hideTicks}
                   hideZero
                   tickLabelComponent={
@@ -123,6 +123,7 @@ class BarChart extends Component {
                       fontFamily="arial"
                     />
                   }
+                  tickTransform={'vertical'}
                 />}
               {(!this.props.hideAxes || this.props.xOnly) &&
                 <AxisBottom
@@ -155,6 +156,7 @@ BarChart.propTypes = {
   numLabelSize: PropTypes.number,
   styleWide: PropTypes.bool,
   xOnly: PropTypes.bool,
+  numYTicks: PropTypes.number,
 }
 
 BarChart.defaultProps = {
@@ -166,6 +168,7 @@ BarChart.defaultProps = {
   numLabelSize: 18,
   styleWide: false,
   xOnly: false,
+  numYTicks: 4,
 }
 
 export default BarChart

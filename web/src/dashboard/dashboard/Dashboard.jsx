@@ -96,25 +96,6 @@ const exData4 = [
   { name: 'newSite8', data: [0, 0, 9.75] },
 ]
 
-const exData5 = [
-  { name: 'Site1', data: [8] },
-  { name: 'Site2', data: [7] },
-  { name: 'Site3', data: [3] },
-  { name: 'Site4', data: [4] },
-  { name: 'Site5', data: [6] },
-  { name: 'Site6', data: [8] },
-  { name: 'Site7', data: [9] },
-  { name: 'newSite8', data: [0, 8] },
-  { name: 'newSite1', data: [4] },
-  { name: 'newSite2', data: [0, 5] },
-  { name: 'newSite3', data: [9] },
-  { name: 'newSite4', data: [7] },
-  { name: 'newSite5', data: [6.5] },
-  { name: 'newSite6', data: [4] },
-  { name: 'newSite7', data: [6] },
-  { name: 'newSite8', data: [3] },
-]
-
 const lineData2 = [
   { date: 'Site 1', value: [1, 2, 8] },
   { date: 'Site 2', value: [2, 4, 9] },
@@ -338,16 +319,6 @@ export class Dashboard extends PureComponent {
                   <BarChart
                     data={exData2}
                     color={['#27c4e0', '#e85065']}
-                    spacing={0.3}
-                    numLabelSize={30}
-                  />
-                </ChartContainer>
-              </Unit>
-              <Unit sm="1-2">
-                <ChartContainer title="Stock Outs">
-                  <BarChart
-                    data={exData5}
-                    color={['#4ddcd7', '#e65265']}
                     spacing={0.3}
                     numLabelSize={30}
                   />
