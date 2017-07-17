@@ -145,11 +145,7 @@ export const ReportList = ({
       defaultTitle="Aspect"
     />
     <NavTitle title={intl.formatMessage(messages.reportsTitle)} />
-    <BrowseFilters
-      history={history}
-      location={location}
-      intl={intl}
-    />
+    <BrowseFilters history={history} location={location} intl={intl} />
     {items.currentIdList.isEmpty() && <EmptyList />}
     {!items.currentIdList.isEmpty() &&
       <Card className={cssClasses('Card')}>
