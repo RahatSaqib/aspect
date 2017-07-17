@@ -30,6 +30,7 @@ import { fetchDashboardHome } from '../DashboardRedux'
 import ChartContainer from '../../components/graph/ChartContainer'
 import BarChart from '../../components/graph/BarChart'
 import ColumnChart from '../../components/graph/ColumnChart'
+import LineChart from '../../components/graph/LineChart'
 
 // data to be used in graphs
 const exData1 = [
@@ -74,6 +75,55 @@ const exData3 = [
   { name: 'newSite3', data: [2, 1, 1, 1] },
   { name: 'newSite4', data: [2, 2, 1, 2] },
   { name: 'newSite5', data: [2, 3, 4, 3] },
+]
+
+const exData4 = [
+  { name: 'Site1', data: [1] },
+  { name: 'Site2', data: [1.5] },
+  { name: 'Site3', data: [2] },
+  { name: 'Site4', data: [2] },
+  { name: 'Site5', data: [0, 3] },
+  { name: 'Site6', data: [0, 3.5] },
+  { name: 'Site7', data: [0, 3.75] },
+  { name: 'newSite8', data: [0, 5] },
+  { name: 'newSite1', data: [0, 6] },
+  { name: 'newSite2', data: [0, 6] },
+  { name: 'newSite3', data: [0, 7] },
+  { name: 'newSite4', data: [0, 0, 7.5] },
+  { name: 'newSite5', data: [0, 0, 7.5] },
+  { name: 'newSite6', data: [0, 0, 8] },
+  { name: 'newSite7', data: [0, 0, 9] },
+  { name: 'newSite8', data: [0, 0, 9.75] },
+]
+
+const exData5 = [
+  { name: 'Site1', data: [8] },
+  { name: 'Site2', data: [7] },
+  { name: 'Site3', data: [3] },
+  { name: 'Site4', data: [4] },
+  { name: 'Site5', data: [6] },
+  { name: 'Site6', data: [8] },
+  { name: 'Site7', data: [9] },
+  { name: 'newSite8', data: [0, 8] },
+  { name: 'newSite1', data: [4] },
+  { name: 'newSite2', data: [0, 5] },
+  { name: 'newSite3', data: [9] },
+  { name: 'newSite4', data: [7] },
+  { name: 'newSite5', data: [6.5] },
+  { name: 'newSite6', data: [4] },
+  { name: 'newSite7', data: [6] },
+  { name: 'newSite8', data: [3] },
+]
+
+const lineData2 = [
+  { date: 'Site 1', value: [1, 2, 8] },
+  { date: 'Site 2', value: [2, 4, 9] },
+  { date: 'Site 3', value: [3, 4, 8] },
+  { date: 'Site 4', value: [1, 4, 7] },
+  { date: 'Site 5', value: [2, 1, 2] },
+  { date: 'Site 6', value: [3, 4, 3] },
+  { date: 'Site 7', value: [1, 1, 5] },
+  { date: 'Site 8', value: [2, 3, 8] },
 ]
 
 const messages = defineMessages({
@@ -162,19 +212,14 @@ export class Dashboard extends PureComponent {
                   <p>
                     <span className={styles.Count__Emphasis}>
                       {formatNumber(totals.get('devicesTotal'))}
-                    </span>
-                    {' '}
-                    Devices at
-                    {' '}
-                    {formatNumber(totals.get('sitesTotal'))}
-                    {' '}
-                    Sites Managed
+                    </span>{' '}
+                    Devices at {formatNumber(totals.get('sitesTotal'))} Sites
+                    Managed
                   </p>
                   <p>
                     <span className={styles.Count__Emphasis}>
                       {formatNumber(totals.get('resultsTotal30d'))}
-                    </span>
-                    {' '}
+                    </span>{' '}
                     Results in the last 30 days (
                     <span className={styles.Count__Positive}>
                       +{formatNumber(totals.get('resultsTotal1d'))} today
@@ -190,11 +235,9 @@ export class Dashboard extends PureComponent {
                   <h2>
                     Patient Care
                     <small>
-                      {' '}
-                      (
-                      {formatNumber(totals.get('resultsTotal30d'))}
-                      {' '}
-                      results in last 30 days)
+                      {' '}(
+                      {formatNumber(totals.get('resultsTotal30d'))} results in
+                      last 30 days)
                     </small>
                   </h2>}
               </header>
@@ -233,15 +276,9 @@ export class Dashboard extends PureComponent {
                     <h3>
                       Devices
                       <small>
-                        {' '}
-                        (
-                        {totals.get('devicesTotal')}
-                        {' '}
-                        at
-                        {' '}
-                        {totals.get('sitesTotal')}
-                        {' '}
-                        sites)
+                        {' '}(
+                        {totals.get('devicesTotal')} at{' '}
+                        {totals.get('sitesTotal')} sites)
                       </small>
                     </h3>}
                   <div>
@@ -306,12 +343,42 @@ export class Dashboard extends PureComponent {
                   />
                 </ChartContainer>
               </Unit>
+              <Unit sm="1-2">
+                <ChartContainer title="Stock Outs">
+                  <BarChart
+                    data={exData5}
+                    color={['#4ddcd7', '#e65265']}
+                    spacing={0.3}
+                    numLabelSize={30}
+                  />
+                </ChartContainer>
+              </Unit>
+              <Unit sm="1-2">
+                <ChartContainer title="Title">
+                  <LineChart data={lineData2} hideLabel={false} />
+                </ChartContainer>
+              </Unit>
               <div style={{ width: '1500px' }}>
                 <Unit sm="1-2">
                   <ChartContainer title="Test Failures Last 30 Days">
                     <BarChart
                       data={exData3}
                       color={['#e85163', '#fcb026', '#73d449', '#25c5e0']}
+                      spacing={0.3}
+                      numLabelSize={30}
+                      styleWide
+                      hideAxes
+                      xOnly
+                    />
+                  </ChartContainer>
+                </Unit>
+              </div>
+              <div style={{ width: '1500px' }}>
+                <Unit sm="1-2">
+                  <ChartContainer title="Best and Worst Performing Sites">
+                    <BarChart
+                      data={exData4}
+                      color={['#e85163', '#a8e6f2', '#73d449']}
                       spacing={0.3}
                       numLabelSize={30}
                       styleWide
@@ -330,18 +397,15 @@ export class Dashboard extends PureComponent {
               </header>
               <div style={{ width: '180px' }}>
                 <p>
-                  Result Alerts
-                  {' '}
+                  Result Alerts{' '}
                   <span className={styles.Alert__Positive}>0</span>
                 </p>
                 <p>
-                  Device Alerts
-                  {' '}
+                  Device Alerts{' '}
                   <span className={styles.Alert__Negative}>4</span>
                 </p>
                 <p>
-                  Inventory Alerts
-                  {' '}
+                  Inventory Alerts{' '}
                   <span className={styles.Alert__Negative}>3</span>
                 </p>
               </div>
@@ -380,12 +444,9 @@ export class Dashboard extends PureComponent {
                 <Card style={{ marginTop: '15px' }}>
                   <CardHeader title="Daktari Omaha" />
                   <CardText>
-                    This device is low on inventory (<b>54 cartridges</b>).
-                    It will run out in
-                    {' '}
-                    <b>9 days</b>
-                    {' '}
-                    given the curent utilization rate.
+                    This device is low on inventory (<b>54 cartridges</b>). It
+                    will run out in <b>9 days</b> given the curent utilization
+                    rate.
                   </CardText>
                   <CardActions style={{ textAlign: 'right' }}>
                     <IconButton
@@ -411,8 +472,8 @@ export class Dashboard extends PureComponent {
                 <Card style={{ marginTop: '15px' }}>
                   <CardHeader title="Daktari Dayton" />
                   <CardText>
-                    Has a high error rate (<b>11%</b>).
-                    The average error rate for Daktari devices is <b>5%</b>.
+                    Has a high error rate (<b>11%</b>). The average error rate
+                    for Daktari devices is <b>5%</b>.
                   </CardText>
                   <CardActions style={{ textAlign: 'right' }}>
                     <IconButton
@@ -438,8 +499,7 @@ export class Dashboard extends PureComponent {
                 <Card style={{ marginTop: '15px' }}>
                   <CardHeader title="GeneXpert Boston" />
                   <CardText>
-                    This device was expected to come back online
-                    {' '}
+                    This device was expected to come back online{' '}
                     <b>yesterday </b>
                     after being serviced but has not connected yet.
                   </CardText>

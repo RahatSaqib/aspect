@@ -86,52 +86,52 @@ const LineChart = props => {
         stroke={props.color[i] ? props.color[i] : c[i % 4]}
       />
     )
-
-    return (
-      <ScaleSVG width={width} height={height}>
-        <Group left={margin.left}>
-          {props.gridLines &&
-            <Grid
-              xScale={xScale}
-              yScale={yScale}
-              width={xMax}
-              height={yMax}
-              numTicksRows={3}
-            />}
-          {lines}
-          <AxisLeft
-            scale={yScale}
-            stroke={'#1b1a1e'}
-            tickTextFill={'#1b1a1e'}
-            numTicks={props.numYTicks}
-            hideTicks
-            hideZero
-            hideAxisLine={props.hideAxes}
-            tickLabelComponent={
-              <text
-                textAnchor="end"
-                fontSize={18}
-                fill="black"
-                dy="0.25em"
-                fontFamily="arial"
-              />
-            }
-          />
-          <AxisBottom
-            scale={xScale}
-            top={yMax}
-            left={-shift}
-            hideTicks={props.hideTicks}
-            hideAxisLine={props.hideAxes}
-            tickTextFill={'#1b1a1e'}
-            tickLabelComponent={
-              <text textAnchor="middle" fontSize={labelSize} fill="black" />
-            }
-          />
-        </Group>
-      </ScaleSVG>
-    )
   }
+
+  return (
+    <ScaleSVG width={width} height={height}>
+      <Group left={margin.left}>
+        {props.gridLines &&
+          <Grid
+            xScale={xScale}
+            yScale={yScale}
+            width={xMax}
+            height={yMax}
+            numTicksRows={3}
+          />}
+        {lines}
+        <AxisLeft
+          scale={yScale}
+          stroke={'#1b1a1e'}
+          tickTextFill={'#1b1a1e'}
+          numTicks={props.numYTicks}
+          hideTicks
+          hideZero
+          hideAxisLine={props.hideAxes}
+          tickLabelComponent={
+            <text
+              textAnchor="end"
+              fontSize={18}
+              fill="black"
+              dy="0.25em"
+              fontFamily="arial"
+            />
+          }
+        />
+        <AxisBottom
+          scale={xScale}
+          top={yMax}
+          left={-shift}
+          hideTicks={props.hideTicks}
+          hideAxisLine={props.hideAxes}
+          tickTextFill={'#1b1a1e'}
+          tickLabelComponent={
+            <text textAnchor="middle" fontSize={labelSize} fill="black" />
+          }
+        />
+      </Group>
+    </ScaleSVG>
+  )
 }
 
 LineChart.propTypes = {
