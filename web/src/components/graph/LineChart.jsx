@@ -10,7 +10,7 @@ import { Grid } from '@vx/grid'
 
 const LineChart = props => {
   // programmed colors
-  const c = ['#3cc0cd', '#7d97bc', '#9874b2', '#f36283']
+  const c = ['#7d97bc', '#9874b2', '#3cc0cd', '#f36283']
 
   // set graph dimensions
   const width = 600 + props.styleWide * 300
