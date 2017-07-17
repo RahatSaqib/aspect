@@ -1,23 +1,31 @@
 import _ from 'lodash'
-import PropTypes from 'prop-types'
+import Immutable from 'immutable'
 import classnames from 'classnames/bind'
-import React, { PureComponent } from 'react'
-import { compose, setPropTypes, pure } from 'recompose'
-import { injectIntl, defineMessages, intlShape } from 'react-intl'
+import React from 'react'
+import {
+  compose,
+  withProps,
+  withState,
+  withHandlers,
+  lifecycle,
+  pure,
+} from 'recompose'
+import { injectIntl, defineMessages } from 'react-intl'
 import { bindActionCreators } from 'redux'
 import { connect } from 'react-redux'
 import Helmet from 'react-helmet'
+import { Card } from 'react-toolbox/lib/card'
+import { ProgressBar } from 'react-toolbox/lib/progress_bar'
+import { Checkbox } from 'react-toolbox/lib/checkbox'
 
 import FlatButton from 'material-ui/FlatButton'
-import Checkbox from 'material-ui/Checkbox'
 
 // Our own imports
 import NavTitle from '../../globals/components/NavTitle'
 import BrowseFilters from '../../globals/components/BrowseFilters'
-import { Items } from '../../shared/metaReducers/items'
-import { Table } from '../../shared/metaReducers/table'
-import DataTableWithEmptyList from '../../components/shared/DataTableWithEmptyList'
-import { ListFilter, configureListFilter } from '../../filter/FilterRedux'
+import EmptyList from '../../components/shared/EmptyList'
+import TablePaginator from '../../components/shared/TablePaginator'
+import { configureListFilter } from '../../filter/FilterRedux'
 import {
   exportDeviceApiKeys,
   generateDeviceApiKeys,
@@ -27,6 +35,11 @@ import {
 } from '../DeviceApiKeyRedux'
 import DeviceApiKeyGeneratorDialogForm from './DeviceApiKeyGeneratorDialogForm'
 import DeviceApiKeyAssignerDialogForm from './DeviceApiKeyAssignerDialogForm'
+import {
+  DeviceApiKeyDataTable,
+  DeviceApiKeyDataTableHead,
+  DeviceApiKeyDataTableRow,
+} from './DeviceApiKeyDataTable'
 
 const cssClasses = classnames.bind(require('./DeviceApiKeyList.css'))
 
@@ -82,12 +95,19 @@ const messages = defineMessages({
     id: 'pages.DeviceApiKeyList.revoked',
     defaultMessage: 'Revoked',
   },
+  paginatorStatus: {
+    id: 'pages.DeviceApiKeyList.paginatorStatus',
+    defaultMessage: `Showing {firstItemIndex}-{lastItemIndex} of {itemCount, plural,
+      one {# device API key}
+      other {# device API keys}
+    }`,
+  },
 })
 
+const DEFAULT_GENERATOR_VALUES = { count: 1 }
+const DEFAULT_ASSIGNER_VALUES = { deviceApiKeyIds: [] }
+
 const enhance = compose(
-  setPropTypes({
-    location: PropTypes.object.isRequired,
-  }),
   pure,
   injectIntl,
   connect(
@@ -105,271 +125,333 @@ const enhance = compose(
       configureListFilter,
     })
   ),
-  setPropTypes({
-    intl: intlShape.isRequired,
-    listFilter: PropTypes.objectOf(ListFilter).isRequired,
-    items: PropTypes.objectOf(Items).isRequired,
-    table: PropTypes.objectOf(Table).isRequired,
-    fetchDeviceApiKeys: PropTypes.func.isRequired,
-    exportDeviceApiKeys: PropTypes.func.isRequired,
-    generateDeviceApiKeys: PropTypes.func.isRequired,
-    assignDeviceApiKeys: PropTypes.func.isRequired,
-    updateSingleDeviceApiKey: PropTypes.func.isRequired,
-    configureListFilter: PropTypes.func.isRequired,
-  })
-)
+  withHandlers({
+    onExportClick: ({ exportDeviceApiKeys, table }) => formatType =>
+      exportDeviceApiKeys(
+        formatType,
+        table.sortCol,
+        table.sortDir,
+        table.page,
+        table.pageSize
+      ),
+    onHeadColumnClick: ({ fetchDeviceApiKeys, table }) => ({
+      currentTarget: { dataset: { column: nextSortCol } },
+    }) =>
+      fetchDeviceApiKeys(
+        nextSortCol,
+        table.sortCol === nextSortCol
+          ? table.sortDir === 'asc' ? 'desc' : 'asc'
+          : table.sortDir,
+        table.page,
+        table.pageSize
+      ),
+    onPageChange: ({ fetchDeviceApiKeys, table }) => nextPage =>
+      fetchDeviceApiKeys(
+        table.sortCol,
+        table.sortDir,
+        nextPage,
+        table.pageSize
+      ),
+    onPageSizeChange: ({ fetchDeviceApiKeys, table }) => nextPageSize =>
+      fetchDeviceApiKeys(table.sortCol, table.sortDir, 0, nextPageSize),
+  }),
+  lifecycle({
+    componentWillMount() {
+      this.props.configureListFilter({
+        geography: true,
+        state: false,
+        partnerId: true,
+        deviceName: true,
+        siteName: true,
+      })
+    },
 
-const DEFAULT_GENERATOR_VALUES = { count: 1 }
-const DEFAULT_ASSIGNER_VALUES = { deviceApiKeyIds: [] }
+    componentDidMount() {
+      this.props.onPageChange(0)
+    },
 
-export class DeviceApiKeyList extends PureComponent {
-  state = {
+    componentWillReceiveProps(nextProps) {
+      if (this.props.listFilter !== nextProps.listFilter) {
+        this.props.onPageChange(0)
+      }
+    },
+  }),
+  withState('dialogState', 'onChangeDialogState', {
     generatorValues: DEFAULT_GENERATOR_VALUES,
     assignerValues: DEFAULT_ASSIGNER_VALUES,
     isGeneratorDialogOpen: false,
     isAssignerDialogOpen: false,
-  }
+  }),
+  withProps(({ items }) => ({
+    selectableIds: items.currentIdList
+      .filter(id => !items.byId.getIn([id, 'device']))
+      .sort(),
+  })),
+  withHandlers({
+    onOpenGeneratorDialog: ({ dialogState, onChangeDialogState }) => () =>
+      onChangeDialogState({ ...dialogState, isGeneratorDialogOpen: true }),
+    onCloseGeneratorDialog: ({ dialogState, onChangeDialogState }) => () =>
+      onChangeDialogState({ ...dialogState, isGeneratorDialogOpen: false }),
+    onOpenAssignerDialog: ({ dialogState, onChangeDialogState }) => () =>
+      onChangeDialogState({ ...dialogState, isAssignerDialogOpen: true }),
+    onCloseAssignerDialog: ({ dialogState, onChangeDialogState }) => () =>
+      onChangeDialogState({ ...dialogState, isAssignerDialogOpen: false }),
+    onGeneratorFormChange: ({
+      dialogState,
+      onChangeDialogState,
+    }) => generatorValues =>
+      onChangeDialogState({ ...dialogState, generatorValues }),
+    onGenerate: ({
+      table,
+      generateDeviceApiKeys,
+      onPageChange,
+      dialogState,
+      onChangeDialogState,
+    }) => generatorValues => {
+      generateDeviceApiKeys(generatorValues).then(() => {
+        onChangeDialogState({
+          ...dialogState,
+          isGeneratorDialogOpen: false,
+          generatorValues: DEFAULT_GENERATOR_VALUES,
+        })
+        onPageChange(table.page)
+      })
+    },
+    onAssignerFormChange: ({
+      dialogState,
+      onChangeDialogState,
+    }) => assignerValues =>
+      onChangeDialogState({ ...dialogState, assignerValues }),
+    onAssign: ({
+      table,
+      assignDeviceApiKeys,
+      onPageChange,
+      dialogState,
+      onChangeDialogState,
+    }) => assignerValues => {
+      assignDeviceApiKeys(assignerValues).then(() => {
+        onChangeDialogState({
+          ...dialogState,
+          isAssignerDialogOpen: false,
+          assignerValues: DEFAULT_ASSIGNER_VALUES,
+        })
+        onPageChange(table.page)
+      })
+    },
+    onSelectAllChange: ({
+      selectableIds,
+      dialogState,
+      onChangeDialogState,
+    }) => isInputChecked => {
+      const nextDeviceApiKeyIds = isInputChecked ? selectableIds.toJS() : []
 
-  componentWillMount() {
-    const { configureListFilter } = this.props
-    configureListFilter({
-      geography: true,
-      state: false,
-      partnerId: true,
-      deviceName: true,
-      siteName: true,
-    })
-  }
+      onChangeDialogState({
+        ...dialogState,
+        assignerValues: {
+          ...dialogState.assignerValues,
+          deviceApiKeyIds: nextDeviceApiKeyIds,
+        },
+      })
+    },
 
-  componentDidMount() {
-    this.handleFetch()
-  }
+    onSelectedChange: ({ dialogState, onChangeDialogState }) => (
+      isInputChecked,
+      { target: { dataset: { deviceApiKeyId } } }
+    ) => {
+      const { assignerValues } = dialogState
+      const nextDeviceApiKeyIds = isInputChecked
+        ? [...assignerValues.deviceApiKeyIds, deviceApiKeyId]
+        : assignerValues.deviceApiKeyIds.filter(id => id !== deviceApiKeyId)
 
-  componentWillReceiveProps(nextProps) {
-    if (this.props.listFilter !== nextProps.listFilter) {
-      this.handleFetch()
-    }
-  }
+      onChangeDialogState({
+        ...dialogState,
+        assignerValues: {
+          ...dialogState.assignerValues,
+          deviceApiKeyIds: nextDeviceApiKeyIds,
+        },
+      })
+    },
 
-  getSelectableIds() {
-    const { items } = this.props
-    return items.currentIdList
-      .filter(id => this.itemSelectable(items.byId.get(id)))
-      .toJS()
-  }
-
-  handleClickExport = formatType => {
-    this.props.exportDeviceApiKeys(
-      formatType,
-      this.props.table.sortCol,
-      this.props.table.sortDir,
-      this.props.table.page,
-      this.props.table.pageSize
-    )
-  }
-
-  handleOpenGeneratorDialog = () => {
-    this.setState({ isGeneratorDialogOpen: true })
-  }
-
-  handleCloseGeneratorDialog = () => {
-    this.setState({ isGeneratorDialogOpen: false })
-  }
-
-  handleOpenAssignerDialog = () => {
-    this.setState({ isAssignerDialogOpen: true })
-  }
-
-  handleCloseAssignerDialog = () => {
-    this.setState({ isAssignerDialogOpen: false })
-  }
-
-  handleGeneratorFormChange = generatorValues =>
-    this.setState({ generatorValues })
-
-  handleGenerate = generatorValues => {
-    this.props.generateDeviceApiKeys(generatorValues).then(() => {
-      this.handleCloseGeneratorDialog()
-      this.handleGeneratorFormChange(DEFAULT_GENERATOR_VALUES)
-      this.handleFetch()
-    })
-  }
-
-  handleAssigerFormChange = assignerValues => this.setState({ assignerValues })
-
-  handleAssign = assignerValues => {
-    this.props.assignDeviceApiKeys(assignerValues).then(() => {
-      this.handleCloseAssignerDialog()
-      this.handleAssigerFormChange(DEFAULT_ASSIGNER_VALUES)
-      this.handleFetch()
-    })
-  }
-
-  handleFetch = (...args) => {
-    this.props.fetchDeviceApiKeys(...args)
-  }
-
-  handleSelectAll = (event, isInputChecked) => {
-    const selectableIds = this.getSelectableIds()
-    const nextDeviceApiKeyIds = isInputChecked ? selectableIds : []
-    this.setState({
-      assignerValues: {
-        ...this.state.assignerValues,
-        deviceApiKeyIds: nextDeviceApiKeyIds,
-      },
-    })
-  }
-
-  handleSelect = event => {
-    const { assignerValues } = this.state
-    const { deviceApiKeyId } = event.target.dataset
-    const nextDeviceApiKeyIds =
-      assignerValues.deviceApiKeyIds.indexOf(deviceApiKeyId) !== -1
-        ? assignerValues.deviceApiKeyIds.filter(id => id !== deviceApiKeyId)
-        : [...assignerValues.deviceApiKeyIds, deviceApiKeyId]
-    this.setState({
-      assignerValues: {
-        ...this.state.assignerValues,
-        deviceApiKeyIds: nextDeviceApiKeyIds,
-      },
-    })
-  }
-
-  handleRevoke = (event, revoked) => {
-    const { deviceApiKeyId } = event.target.dataset
-
-    this.props.updateSingleDeviceApiKey(deviceApiKeyId, {
+    onRevokedChange: ({ updateSingleDeviceApiKey }) => (
       revoked,
-    })
-  }
+      { target: { dataset: { deviceApiKeyId } } }
+    ) => {
+      updateSingleDeviceApiKey(deviceApiKeyId, {
+        revoked,
+      })
+    },
+  })
+)
 
-  itemSelectable = item => !item.get('device')
-
-  render() {
-    const { intl } = this.props
-    const { assignerValues } = this.state
-    const { formatMessage, formatDate } = intl
-    const selectableIds = this.getSelectableIds()
-    const columns = [
-      {
-        db: 'id',
-        sortable: false,
-        title: (
-          <Checkbox
-            name="selectAll"
-            disabled={_.isEmpty(selectableIds)}
-            checked={
-              !_.isEmpty(assignerValues.deviceApiKeyIds) &&
-              _.isEqual(selectableIds, assignerValues.deviceApiKeyIds)
-            }
-            onCheck={this.handleSelectAll}
-          />
-        ),
-        extraProps: { style: { width: '5%' } },
-        format: (data, row) =>
-          <Checkbox
-            name="selected"
-            data-device-Api-Key-Id={row.get('id')}
-            disabled={!this.itemSelectable(row)}
-            checked={
-              assignerValues.deviceApiKeyIds.indexOf(row.get('id')) !== -1
-            }
-            onCheck={this.handleSelect}
-          />,
-      },
-      {
-        db: 'createdOn',
-        title: formatMessage(messages.createdOn),
-        extraProps: { style: { width: '10%' } },
-        format: data => formatDate(data),
-      },
-      {
-        db: 'token',
-        title: formatMessage(messages.token),
-        extraProps: { style: { width: '25%' } },
-      },
-      {
-        db: 'partner',
-        title: formatMessage(messages.partner),
-      },
-      {
-        db: 'country',
-        title: formatMessage(messages.country),
-      },
-      {
-        db: 'site',
-        title: formatMessage(messages.site),
-      },
-      {
-        db: 'device',
-        title: formatMessage(messages.device),
-      },
-      {
-        db: 'revoked',
-        title: formatMessage(messages.revoked),
-        format: (data, row) =>
-          <Checkbox
-            name="revoked"
-            style={{ textAlign: 'center' }}
-            data-device-Api-Key-Id={row.get('id')}
-            checked={data > 0}
-            onCheck={this.handleRevoke}
-          />,
-      },
-    ]
-
-    return (
-      <div className={cssClasses('Content')}>
-        <Helmet
-          title={formatMessage(messages.title)}
-          titleTemplate="%s - Aspect"
-          defaultTitle="Aspect"
+export const DeviceApiKeyList = ({
+  intl,
+  history,
+  location,
+  table,
+  items,
+  // --- injected by recompose ---
+  onExportClick,
+  onHeadColumnClick,
+  onPageChange,
+  onPageSizeChange,
+  selectableIds,
+  dialogState: {
+    generatorValues,
+    assignerValues,
+    isGeneratorDialogOpen,
+    isAssignerDialogOpen,
+  },
+  onOpenGeneratorDialog,
+  onCloseGeneratorDialog,
+  onOpenAssignerDialog,
+  onCloseAssignerDialog,
+  onGeneratorFormChange,
+  onGenerate,
+  onAssignerFormChange,
+  onAssign,
+  onSelectAllChange,
+  onSelectedChange,
+  onRevokedChange,
+}) =>
+  <div className={cssClasses('Container')}>
+    <Helmet
+      title={intl.formatMessage(messages.title)}
+      titleTemplate="%s - Aspect"
+      defaultTitle="Aspect"
+    />
+    <NavTitle title={intl.formatMessage(messages.title)} />
+    <BrowseFilters
+      history={history}
+      location={location}
+      intl={intl}
+      onClickExport={onExportClick}
+    />
+    <div>
+      <FlatButton
+        label={intl.formatMessage(messages.generate)}
+        onTouchTap={onOpenGeneratorDialog}
+      />
+      <FlatButton
+        label={intl.formatMessage(messages.assign)}
+        onTouchTap={onOpenAssignerDialog}
+        disabled={_.isEmpty(assignerValues.deviceApiKeyIds)}
+      />
+      <DeviceApiKeyGeneratorDialogForm
+        isDialogOpen={isGeneratorDialogOpen}
+        onChange={onGeneratorFormChange}
+        onCancel={onCloseGeneratorDialog}
+        onSubmit={onGenerate}
+        values={generatorValues}
+        intl={intl}
+      />
+      <DeviceApiKeyAssignerDialogForm
+        count={assignerValues.deviceApiKeyIds.length}
+        isDialogOpen={isAssignerDialogOpen}
+        onChange={onAssignerFormChange}
+        onCancel={onCloseAssignerDialog}
+        onSubmit={onAssign}
+        values={assignerValues}
+        intl={intl}
+      />
+    </div>
+    {items.currentIdList.isEmpty() && <EmptyList />}
+    {!items.currentIdList.isEmpty() &&
+      <Card className={cssClasses('Card')}>
+        <ProgressBar
+          mode={table.loading ? 'indeterminate' : 'determinate'}
+          disabled={!table.loading}
+          className={cssClasses('ProgressBar')}
+          theme={{
+            indeterminate: cssClasses('ProgressBar--indeterminate'),
+          }}
         />
-        <NavTitle title={formatMessage(messages.title)} />
-        <BrowseFilters
-          history={this.props.history}
-          location={this.props.location}
+        <DeviceApiKeyDataTable
+          selectable={false}
+          className={cssClasses('DeviceApiKeyDataTable')}
+        >
+          <DeviceApiKeyDataTableHead
+            sortColumnKey={table.sortCol}
+            sortColumnDir={table.sortDir}
+            columns={[
+              {
+                key: 'id',
+                label: (
+                  <Checkbox
+                    name="selectAll"
+                    disabled={selectableIds.isEmpty()}
+                    checked={selectableIds.equals(
+                      Immutable.List(assignerValues.deviceApiKeyIds).sort()
+                    )}
+                    onChange={onSelectAllChange}
+                  />
+                ),
+              },
+              {
+                key: 'createdOn',
+                label: intl.formatMessage(messages.createdOn),
+                onClick: onHeadColumnClick,
+              },
+              {
+                key: 'token',
+                label: intl.formatMessage(messages.token),
+                onClick: onHeadColumnClick,
+              },
+              {
+                key: 'partner',
+                label: intl.formatMessage(messages.partner),
+                onClick: onHeadColumnClick,
+              },
+              {
+                key: 'country',
+                label: intl.formatMessage(messages.country),
+                onClick: onHeadColumnClick,
+              },
+              {
+                key: 'site',
+                label: intl.formatMessage(messages.site),
+                onClick: onHeadColumnClick,
+              },
+              {
+                key: 'device',
+                label: intl.formatMessage(messages.device),
+                onClick: onHeadColumnClick,
+              },
+              {
+                key: 'revoked',
+                label: intl.formatMessage(messages.revoked),
+                onClick: onHeadColumnClick,
+              },
+            ]}
+          />
+          {items.currentIdList
+            .map(id => items.byId.get(id))
+            .map(deviceApiKey =>
+              <DeviceApiKeyDataTableRow
+                key={deviceApiKey.get('id')}
+                intl={intl}
+                deviceApiKey={deviceApiKey}
+                disabled={!selectableIds.includes(deviceApiKey.get('id'))}
+                checked={
+                  assignerValues.deviceApiKeyIds.indexOf(
+                    deviceApiKey.get('id')
+                  ) !== -1
+                }
+                onSelectedChange={onSelectedChange}
+                onRevokedChange={onRevokedChange}
+              />
+            )}
+        </DeviceApiKeyDataTable>
+        <TablePaginator
+          className={cssClasses('TablePaginator')}
           intl={intl}
-          onClickExport={this.handleClickExport}
+          paginatorStatus={messages.paginatorStatus}
+          page={table.page}
+          pageSize={table.pageSize}
+          total={table.total}
+          onPageChange={onPageChange}
+          onPageSizeChange={onPageSizeChange}
         />
-        <div>
-          <FlatButton
-            label={formatMessage(messages.generate)}
-            onTouchTap={this.handleOpenGeneratorDialog}
-          />
-          <FlatButton
-            label={formatMessage(messages.assign)}
-            onTouchTap={this.handleOpenAssignerDialog}
-            disabled={_.isEmpty(assignerValues.deviceApiKeyIds)}
-          />
-          <DeviceApiKeyGeneratorDialogForm
-            isDialogOpen={this.state.isGeneratorDialogOpen}
-            onChange={this.handleGeneratorFormChange}
-            onCancel={this.handleCloseGeneratorDialog}
-            onSubmit={this.handleGenerate}
-            values={this.state.generatorValues}
-            intl={intl}
-          />
-          <DeviceApiKeyAssignerDialogForm
-            count={assignerValues.deviceApiKeyIds.length}
-            isDialogOpen={this.state.isAssignerDialogOpen}
-            onChange={this.handleAssigerFormChange}
-            onCancel={this.handleCloseAssignerDialog}
-            onSubmit={this.handleAssign}
-            values={assignerValues}
-            intl={intl}
-          />
-        </div>
-        <DataTableWithEmptyList
-          handleFetch={this.handleFetch}
-          items={this.props.items}
-          table={this.props.table}
-          columns={columns}
-          intl={intl}
-        />
-      </div>
-    )
-  }
-}
+      </Card>}
+  </div>
 
 export default enhance(DeviceApiKeyList)

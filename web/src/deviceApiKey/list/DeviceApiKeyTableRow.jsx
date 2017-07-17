@@ -2,11 +2,9 @@ import _ from 'lodash'
 import classnames from 'classnames/bind'
 import React from 'react'
 import { TableRow, TableCell } from 'react-toolbox/lib/table'
-import Checkbox from 'material-ui/Checkbox'
+import { Checkbox } from 'react-toolbox/lib/checkbox'
 
-const cssClasses = classnames.bind(
-  require('../../components/shared/DataTableRow.css')
-)
+const cssClasses = classnames.bind(require('./DeviceApiKeyTableRow.css'))
 
 const enhance = _.identity
 
@@ -15,8 +13,8 @@ const DeviceApiKeyTableRow = ({
   deviceApiKey,
   disabled,
   checked,
-  onCheck,
-  onRevoke,
+  onSelectedChange,
+  onRevokedChange,
   ...restProps
 }) =>
   <TableRow
@@ -29,7 +27,8 @@ const DeviceApiKeyTableRow = ({
         data-device-Api-Key-Id={deviceApiKey.get('id')}
         disabled={disabled}
         checked={checked}
-        onCheck={onCheck}
+        onChange={onSelectedChange}
+        theme={{ field: cssClasses('Checkbox__field') }}
       />
     </TableCell>
     <TableCell className={cssClasses('TableCell')}>
@@ -55,7 +54,7 @@ const DeviceApiKeyTableRow = ({
         name="revoked"
         data-device-Api-Key-Id={deviceApiKey.get('id')}
         checked={deviceApiKey.get('revoked') > 0}
-        onCheck={onRevoke}
+        onChange={onRevokedChange}
       />
     </TableCell>
   </TableRow>

@@ -234,7 +234,10 @@ export function updateSingleDeviceApiKey(deviceApiKeyId, data) {
  */
 const DeviceApiKey = Immutable.Record({
   items: new Items(),
-  table: new Table(),
+  table: new Table({
+    sortCol: 'createdOn',
+    sortDir: 'desc',
+  }),
 })
 
 const initialState = new DeviceApiKey()
