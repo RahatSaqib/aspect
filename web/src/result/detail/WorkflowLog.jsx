@@ -1,17 +1,31 @@
-import PropTypes from 'prop-types'
-// Imports from packages
-import React, { PureComponent } from 'react'
-import { defineMessages, intlShape } from 'react-intl'
+import classnames from 'classnames/bind'
+import React from 'react'
+import { compose, withHandlers, lifecycle, pure } from 'recompose'
+import { defineMessages } from 'react-intl'
+import { Card, CardTitle, CardText } from 'react-toolbox/lib/card'
+import { ProgressBar } from 'react-toolbox/lib/progress_bar'
 
-// Material-UI
-import Paper from 'material-ui/Paper'
-import { Card, CardHeader, CardText } from 'material-ui/Card'
+import TablePaginator from '../../components/shared/TablePaginator'
+import {
+  WorkflowLogDataTable,
+  WorkflowLogDataTableHead,
+  WorkflowLogDataTableRow,
+} from './WorkflowLogDataTable'
 
-// Our own imports
-import DataTable from '../../components/shared/DataTable'
-import { WorkflowLogModel } from '../ResultRedux'
+const cssClasses = classnames.bind(require('./WorkflowLog.css'))
 
 const messages = defineMessages({
+  totalWorkflowStatusLog: {
+    id: 'pages.ResultWorkflowStatusLog.totalWorkflowStatusLog',
+    defaultMessage: `Result Workflow Status Log {itemCount, plural,
+      =0 {}
+      other {({itemCount})}
+    }`,
+  },
+  noWorkflowStatusLog: {
+    id: 'pages.ResultWorkflowStatusLog.noWorkflowStatusLog',
+    defaultMessage: 'No logs for this result.',
+  },
   logChangedOn: {
     id: 'pages.ResultWorkflowStatusLog.logChangedOn',
     defaultMessage: 'Changed On',
@@ -24,63 +38,116 @@ const messages = defineMessages({
     id: 'pages.ResultWorkflowStatusLog.logOperator',
     defaultMessage: 'Operator',
   },
-  noWorkflowStatusLog: {
-    id: 'pages.ResultWorkflowStatusLog.noWorkflowStatusLog',
-    defaultMessage: 'No logs for this result.',
+  logPaginatorStatus: {
+    id: 'pages.ResultWorkflowStatusLog.paginatorStatus',
+    defaultMessage: `Showing {firstItemIndex}-{lastItemIndex} of {itemCount, plural,
+      one {# log}
+      other {# logs}
+    }`,
   },
 })
 
-export default class ResultWorkflowStatusLog extends PureComponent {
-  static propTypes = {
-    intl: intlShape.isRequired,
-    handleFetch: PropTypes.func.isRequired,
-    workflowLog: PropTypes.objectOf(WorkflowLogModel).isRequired,
-  }
+const enhance = compose(
+  pure,
+  withHandlers({
+    onHeadColumnClick: ({ onFetch, table }) => ({
+      currentTarget: { dataset: { column: nextSortCol } },
+    }) =>
+      onFetch(
+        nextSortCol,
+        table.sortCol === nextSortCol
+          ? table.sortDir === 'asc' ? 'desc' : 'asc'
+          : table.sortDir,
+        table.page,
+        table.pageSize
+      ),
+    onPageChange: ({ onFetch, table }) => nextPage =>
+      onFetch(table.sortCol, table.sortDir, nextPage, table.pageSize),
+    onPageSizeChange: ({ onFetch, table }) => nextPageSize =>
+      onFetch(table.sortCol, table.sortDir, 0, nextPageSize),
+  }),
+  lifecycle({
+    componentDidMount() {
+      this.props.onPageChange(0)
+    },
+  })
+)
 
-  handleFetch = (...args) => {
-    this.props.handleFetch(...args)
-  }
+export const ResultWorkflowStatusLog = ({
+  intl,
+  table,
+  items,
+  //
+  onHeadColumnClick,
+  onPageChange,
+  onPageSizeChange,
+}) =>
+  <Card>
+    <CardTitle
+      title={intl.formatMessage(messages.totalWorkflowStatusLog, {
+        itemCount: table.total,
+      })}
+    />
+    {items.currentIdList.isEmpty() &&
+      <CardText className={cssClasses('CardText')}>
+        {intl.formatMessage(messages.noWorkflowStatusLog)}
+      </CardText>}
+    {!items.currentIdList.isEmpty() &&
+      <CardText>
+        <ProgressBar
+          mode={table.loading ? 'indeterminate' : 'determinate'}
+          disabled={!table.loading}
+          className={cssClasses('ProgressBar')}
+          theme={{
+            indeterminate: cssClasses('ProgressBar--indeterminate'),
+          }}
+        />
+        <WorkflowLogDataTable
+          selectable={false}
+          className={cssClasses('WorkflowLogDataTable')}
+        >
+          <WorkflowLogDataTableHead
+            sortColumnKey={table.sortCol}
+            sortColumnDir={table.sortDir}
+            columns={[
+              {
+                key: 'changedOn',
+                label: intl.formatMessage(messages.logChangedOn),
+                onClick: onHeadColumnClick,
+              },
+              {
+                key: 'statusName',
+                label: intl.formatMessage(messages.logStatus),
+                onClick: onHeadColumnClick,
+              },
+              {
+                key: 'operator',
+                label: intl.formatMessage(messages.logOperator),
+                onClick: onHeadColumnClick,
+              },
+            ]}
+          />
+          {items.currentIdList
+            .map(id => items.byId.get(id))
+            .map(workflowLog =>
+              <WorkflowLogDataTableRow
+                key={workflowLog.get('id')}
+                intl={intl}
+                workflowLog={workflowLog}
+              />
+            )}
+        </WorkflowLogDataTable>
+        <TablePaginator
+          className={cssClasses('TablePaginator')}
+          intl={intl}
+          paginatorStatus={messages.logPaginatorStatus}
+          page={table.page}
+          pageSize={table.pageSize}
+          total={table.total}
+          onPageChange={onPageChange}
+          onPageSizeChange={onPageSizeChange}
+        />
+      </CardText>}
+  </Card>
 
-  render() {
-    const { workflowLog, intl } = this.props
-    const { formatMessage, formatDate } = intl
-    const columns = [
-      {
-        db: 'changedOn',
-        title: formatMessage(messages.logChangedOn),
-        format: data => formatDate(data),
-      },
-      { db: 'statusName', title: formatMessage(messages.logStatus) },
-      { db: 'operator', title: formatMessage(messages.logOperator) },
-    ]
-    const items = workflowLog.items
-    const table = workflowLog.table
-
-    const totals = table.total > 0 ? `(${table.total})` : ''
-    const title = `Result Workflow Status Log ${totals}`
-
-    return (
-      <div>
-        <Card>
-          <CardHeader title={title} actAsExpander showExpandableButton />
-          <CardText expandable style={{ paddingTop: 0 }}>
-            {!table.loading && items.currentIdList.isEmpty()
-              ? <Paper style={{ textAlign: 'center', padding: 10 }}>
-                  <p>
-                    {intl.formatMessage(messages.noWorkflowStatusLog)}
-                  </p>
-                </Paper>
-              : <DataTable
-                  items={items}
-                  table={table}
-                  columns={columns}
-                  intl={intl}
-                  messages={messages}
-                  handleFetch={this.handleFetch}
-                />}
-          </CardText>
-        </Card>
-      </div>
-    )
-  }
-}
+export default enhance(ResultWorkflowStatusLog)

@@ -1,0 +1,25 @@
+.CardText {
+  text-align: center;
+}
+
+.CardText > p {
+  padding: 10px;
+}
+
+.ProgressBar {
+  opacity: 0;
+}
+
+.ProgressBar--indeterminate {
+  opacity: 1;
+}
+
+.WorkflowLogDataTable {
+  width: 100%;
+  border-spacing: 0;
+  font-size: 14px;
+}
+
+.TablePaginator {
+  padding-bottom: 0;
+}
