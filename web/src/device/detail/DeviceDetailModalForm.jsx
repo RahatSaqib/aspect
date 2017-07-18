@@ -18,9 +18,8 @@ import recomposeForm from '../../components/recomposeForm'
 import JSONSchemaCard from '../../components/shared/JSONSchemaCard'
 import SiteAutoCompleteField from '../../filter/resource/SiteAutoCompleteField'
 import { tokens } from '../../deviceStatus/DeviceStatusRedux'
-import styles from './DeviceDetailModalForm.css'
 
-const cssClasses = classnames.bind(styles)
+const cssClasses = classnames.bind(require('./DeviceDetailModalForm.css'))
 
 const enhance = compose(
   pure,
@@ -44,7 +43,6 @@ const enhance = compose(
       },
       {
         fieldName: 'siteId',
-        // FIXME: <SiteAutoCompleteField> now onChangeSite returns a string
         valueFromChangeEvent: _fp.identity,
       },
       {
@@ -134,8 +132,7 @@ export const DeviceDetailModalForm = props => {
               name="SiteId"
               floatingLabelText={labels.siteId}
               value={values.siteId}
-              onChangeSite={props.onSiteIdChange}
-              itemTextGetter={site => site.get('name')}
+              onSiteIdChange={props.onSiteIdChange}
               hintText="Enter site name"
               fullWidth
               errorText={meta.siteId.touched && meta.siteId.error}

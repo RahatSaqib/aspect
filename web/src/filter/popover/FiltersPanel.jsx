@@ -531,10 +531,8 @@ export const FiltersPanel = ({
             <SiteAutoCompleteField
               name="siteName"
               value={filters.siteName || ''}
-              onChangeSite={onSiteNameChange}
+              onSiteNameChange={onSiteNameChange}
               floatingLabelFixed
-              itemTextGetter={site =>
-                `${site.get('name')} (${site.get('state')})`}
               hintText={intl.formatMessage(messages.enterSiteName)}
               floatingLabelText={intl.formatMessage(messages.site)}
             />
@@ -544,10 +542,8 @@ export const FiltersPanel = ({
             <SiteAutoCompleteField
               name="sampleOriginSite"
               value={filters.sampleOriginSite || ''}
-              onChangeSite={onSampleOriginSiteChange}
+              onSiteNameChange={onSampleOriginSiteChange}
               floatingLabelFixed
-              itemTextGetter={site =>
-                `${site.get('name')} (${site.get('state')})`}
               hintText={intl.formatMessage(messages.enterSampleOriginSite)}
               floatingLabelText={intl.formatMessage(messages.sampleOriginSite)}
             />
