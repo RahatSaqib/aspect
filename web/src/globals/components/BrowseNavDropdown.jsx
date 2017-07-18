@@ -23,7 +23,11 @@ const navigations = [
 const BrowseNavDropdown = ({ history, location, ...restProps }) =>
   <Dropdown
     {...restProps}
-    onChange={value => history.push(value)}
+    onChange={value =>
+      history.push({
+        pathname: value,
+        search: location.search,
+      })}
     source={navigations}
     value={location.pathname}
     theme={{
