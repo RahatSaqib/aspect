@@ -1,4 +1,3 @@
-import _ from 'lodash'
 import Immutable from 'immutable'
 import classnames from 'classnames/bind'
 import React, { Children } from 'react'
@@ -36,6 +35,10 @@ const messages = defineMessages({
   sampleId: {
     id: 'filter.btnGroup.sampleId',
     defaultMessage: 'sample {sampleId}',
+  },
+  sampleGroup: {
+    id: 'filter.btnGroup.sampleGroup',
+    defaultMessage: 'sample group {sampleGroup}',
   },
   whereDeviceNameIncludes: {
     id: 'filter.btnGroup.whereDeviceNameIncludes',
@@ -166,7 +169,9 @@ const buttonBy = {
   sampleId: makeButton(({ intl }, sampleId) =>
     intl.formatMessage(messages.sampleId, { sampleId })
   ),
-  sampleGroup: _.noop, // TODO: unused filterKey
+  sampleGroup: makeButton(({ intl }, sampleGroup) =>
+    intl.formatMessage(messages.sampleGroup, { sampleGroup })
+  ),
   deviceName: makeButton(({ intl }, deviceName) =>
     intl.formatMessage(messages.whereDeviceNameIncludes, {
       deviceName,
