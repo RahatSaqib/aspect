@@ -1,20 +1,25 @@
+import _ from 'lodash'
 import classnames from 'classnames/bind'
 import React from 'react'
-import { compose, withHandlers, lifecycle, pure } from 'recompose'
+import { compose, withProps, withHandlers, lifecycle, pure } from 'recompose'
 import { injectIntl, defineMessages } from 'react-intl'
 import { bindActionCreators } from 'redux'
 import { connect } from 'react-redux'
 import Helmet from 'react-helmet'
 
-// Our own imports
+import {
+  makeSortPageSelector,
+  makeSearchParamsSanitizer,
+  composeSanitizer,
+} from '../../shared/selectors/searchParams'
+import { sanitizeFiltersStringBy } from '../../filter/utils'
 import NavTitle from '../../globals/components/NavTitle'
 import BrowseFilters from '../../globals/components/BrowseFilters'
-import DataTableProgressBar from '../../components/shared/DataTableProgressBar'
-import EmptyList from '../../components/shared/EmptyList'
-import TablePaginator from '../../components/shared/TablePaginator'
+import BrowseEmptyList from '../../globals/components/BrowseEmptyList'
+import BrowseTablePaginator from '../../globals/components/BrowseTablePaginator'
 import DataTableCard from '../../components/shared/DataTableCard'
-import { configureListFilter } from '../../filter/FilterRedux'
-import { fetchListFilteredSites } from '../SiteRedux'
+import DataTableProgressBar from '../../components/shared/DataTableProgressBar'
+import { fetchSites } from '../SiteRedux'
 import {
   SiteDataTable,
   SiteDataTableHead,
@@ -57,62 +62,101 @@ const messages = defineMessages({
   },
 })
 
+const FILTERS_CONFIG = {
+  geography: true,
+  state: true,
+  lga: true,
+  siteName: true,
+  externalId: true,
+}
+
+const searchSanitizer = makeSearchParamsSanitizer({
+  availableSortCol: ['name', 'state', 'lga', 'totalDevices'],
+})
+const filtersSanitizer = sanitizeFiltersStringBy(FILTERS_CONFIG)
+const filtersFromLocation = composeSanitizer(
+  _.flowRight(filtersSanitizer, searchParams => searchParams.get('filters')),
+  searchSanitizer
+)
+
 const enhance = compose(
   pure,
   injectIntl,
   connect(
     state => ({
-      listFilter: state.filter.listFilter,
       items: state.site.items,
       table: state.site.table,
     }),
     bindActionCreators.bind(null, {
-      fetchListFilteredSites,
-      configureListFilter,
+      fetchSites,
+    })
+  ),
+  withProps(
+    makeSortPageSelector({
+      sortCol: 'name',
     })
   ),
   withHandlers({
-    onHeadColumnClick: ({ fetchListFilteredSites, table }) => ({
+    onInitialLoad: ({
+      location,
+      fetchSites,
+      sortCol,
+      sortDir,
+      pageAt,
+      pageSize,
+    }) => () => {
+      const { sanitized, value: filtersParams } = filtersFromLocation(location)
+      if (!sanitized) {
+        fetchSites(filtersParams, sortCol, sortDir, pageAt, pageSize)
+      }
+    },
+
+    onHeadColumnClick: ({ history, location, sortCol, sortDir }) => ({
       currentTarget: { dataset: { column: nextSortCol } },
-    }) =>
-      fetchListFilteredSites(
-        {},
-        nextSortCol,
-        table.sortCol === nextSortCol
-          ? table.sortDir === 'asc' ? 'desc' : 'asc'
-          : table.sortDir,
-        table.page,
-        table.pageSize
-      ),
-    onRowClick: ({ history }) => ({ currentTarget: { dataset: { siteId } } }) =>
-      history.push(`/browse/site/${siteId}`),
-    onPageChange: ({ fetchListFilteredSites, table }) => nextPage =>
-      fetchListFilteredSites(
-        {},
-        table.sortCol,
-        table.sortDir,
-        nextPage,
-        table.pageSize
-      ),
-    onPageSizeChange: ({ fetchListFilteredSites, table }) => nextPageSize =>
-      fetchListFilteredSites({}, table.sortCol, table.sortDir, 0, nextPageSize),
-  }),
-  lifecycle({
-    componentWillMount() {
-      this.props.configureListFilter({
-        geography: true,
-        siteName: true,
-        externalId: true,
+    }) => {
+      const searchParams = new URLSearchParams(location.search)
+
+      if (sortCol !== nextSortCol) {
+        searchParams.set('sortCol', nextSortCol)
+      } else {
+        searchParams.set('sortDir', sortDir !== 'asc' ? 'asc' : 'desc')
+      }
+
+      history.replace({
+        ...location,
+        search: searchParams.toString(),
       })
     },
 
+    onRowClick: ({ history }) => ({ currentTarget: { dataset: { siteId } } }) =>
+      history.push(`/browse/site/${siteId}`),
+  }),
+  lifecycle({
+    componentWillMount() {
+      const { sanitized, value: searchParams } = searchSanitizer(
+        this.props.location
+      )
+      const {
+        sanitized: filtersSanitized,
+        value: filtersParams,
+      } = filtersSanitizer(searchParams.get('filters'))
+      if (sanitized || filtersSanitized) {
+        searchParams.set('filters', filtersParams)
+
+        this.props.history.replace({
+          ...this.props.location,
+          search: searchParams.toString(),
+        })
+      }
+    },
+
     componentDidMount() {
-      this.props.onPageChange(0)
+      this.props.onInitialLoad()
     },
 
     componentWillReceiveProps(nextProps) {
-      if (this.props.listFilter !== nextProps.listFilter) {
-        this.props.onPageChange(0)
+      if (this.props.location.search !== nextProps.location.search) {
+        this.props.onInitialLoad()
       }
     },
   })
@@ -124,10 +168,13 @@ export const SiteList = ({
   location,
   table,
   items,
+  // --- injected by recompose ---
+  sortCol,
+  sortDir,
+  pageAt,
+  pageSize,
   onHeadColumnClick,
   onRowClick,
-  onPageChange,
-  onPageSizeChange,
 }) =>
   <div className={cssClasses('Container')}>
     <Helmet
@@ -136,21 +183,24 @@ export const SiteList = ({
       defaultTitle="Aspect"
     />
     <NavTitle title={intl.formatMessage(messages.sitesTitle)} />
-    <BrowseFilters history={history} location={location} intl={intl} />
-    {items.currentIdList.isEmpty() && <EmptyList />}
+    <BrowseFilters
+      history={history}
+      location={location}
+      intl={intl}
+      config={FILTERS_CONFIG}
+    />
+    {items.currentIdList.isEmpty() &&
+      <BrowseEmptyList history={history} location={location} intl={intl} />}
     {!items.currentIdList.isEmpty() &&
       <DataTableCard>
-        <DataTableProgressBar
-          mode={table.loading ? 'indeterminate' : 'determinate'}
-          disabled={!table.loading}
-        />
+        <DataTableProgressBar disabled={!table.loading} />
         <SiteDataTable
           selectable={false}
           className={cssClasses('SiteDataTable')}
         >
           <SiteDataTableHead
-            sortColumnKey={table.sortCol}
-            sortColumnDir={table.sortDir}
+            sortColumnKey={sortCol}
+            sortColumnDir={sortDir}
             columns={[
               {
                 key: 'name',
@@ -186,14 +236,14 @@ export const SiteList = ({
               />
             )}
         </SiteDataTable>
-        <TablePaginator
+        <BrowseTablePaginator
+          history={history}
+          location={location}
           intl={intl}
           paginatorStatus={messages.paginatorStatus}
-          page={table.page}
-          pageSize={table.pageSize}
           total={table.total}
-          onPageChange={onPageChange}
-          onPageSizeChange={onPageSizeChange}
+          pageAt={pageAt}
+          pageSize={pageSize}
         />
       </DataTableCard>}
   </div>
