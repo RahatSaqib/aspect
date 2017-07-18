@@ -1,5 +1,3 @@
-@import '../../components/shared/DataTable.css';
-
 .ReportDataTable {
-  composes: ComponentDataTable;
+  composes: ComponentDataTable from '../../components/shared/DataTable.css';
 }
