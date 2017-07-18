@@ -1,20 +1,25 @@
+import _ from 'lodash'
 import classnames from 'classnames/bind'
 import React from 'react'
-import { compose, withHandlers, lifecycle, pure } from 'recompose'
+import { compose, withProps, withHandlers, lifecycle, pure } from 'recompose'
 import { injectIntl, defineMessages } from 'react-intl'
 import { bindActionCreators } from 'redux'
 import { connect } from 'react-redux'
 import Helmet from 'react-helmet'
-import { Card } from 'react-toolbox/lib/card'
-import { ProgressBar } from 'react-toolbox/lib/progress_bar'
 
-// Our own imports
+import {
+  makeSortPageSelector,
+  makeSearchParamsSanitizer,
+  composeSanitizer,
+} from '../../shared/selectors/searchParams'
+import { sanitizeFiltersStringBy } from '../../filter/utils'
 import NavTitle from '../../globals/components/NavTitle'
 import BrowseFilters from '../../globals/components/BrowseFilters'
-import EmptyList from '../../components/shared/EmptyList'
-import TablePaginator from '../../components/shared/TablePaginator'
-import { configureListFilter } from '../../filter/FilterRedux'
-import { fetchListFilteredTerminals } from '../TerminalRedux'
+import BrowseEmptyList from '../../globals/components/BrowseEmptyList'
+import BrowseTablePaginator from '../../globals/components/BrowseTablePaginator'
+import DataTableCard from '../../components/shared/DataTableCard'
+import DataTableProgressBar from '../../components/shared/DataTableProgressBar'
+import { fetchTerminals } from '../TerminalRedux'
 import {
   TerminalDataTable,
   TerminalDataTableHead,
@@ -85,70 +90,120 @@ const messages = defineMessages({
   },
 })
 
+const FILTERS_CONFIG = {
+  geography: true,
+  state: true,
+  lga: true,
+  siteName: true,
+  deviceName: true,
+  deviceStatus: true,
+}
+
+const searchSanitizer = makeSearchParamsSanitizer({
+  availableSortCol: [
+    'siteName',
+    'shortname',
+    'status',
+    'createdOn',
+    'lastSeen',
+    'deliveredLastMonth',
+    'deliveredThisMonth',
+    'acknowledgedRatio',
+    'totalFlagged',
+  ],
+})
+const filtersSanitizer = sanitizeFiltersStringBy(FILTERS_CONFIG)
+const filtersFromLocation = composeSanitizer(
+  _.flowRight(filtersSanitizer, searchParams => searchParams.get('filters')),
+  searchSanitizer
+)
+
 const enhance = compose(
   pure,
   injectIntl,
   connect(
     state => ({
-      listFilter: state.filter.listFilter,
       items: state.terminal.items,
       table: state.terminal.table,
     }),
     bindActionCreators.bind(null, {
-      fetchListFilteredTerminals,
-      configureListFilter,
+      fetchTerminals,
+    })
+  ),
+  withProps(
+    makeSortPageSelector({
+      sortCol: 'name',
     })
   ),
   withHandlers({
-    onHeadColumnClick: ({ fetchListFilteredTerminals, table }) => ({
+    onInitialLoad: ({
+      location,
+      fetchTerminals,
+      sortCol,
+      sortDir,
+      pageAt,
+      pageSize,
+    }) => () => {
+      const { sanitized, value: filtersParams } = filtersFromLocation(location)
+      if (!sanitized) {
+        fetchTerminals(
+          filtersParams,
+          { hasResults: 0, hasConnectivity: 0 },
+          sortCol,
+          sortDir,
+          pageAt,
+          pageSize
+        )
+      }
+    },
+
+    onHeadColumnClick: ({ history, location, sortCol, sortDir }) => ({
       currentTarget: { dataset: { column: nextSortCol } },
-    }) =>
-      fetchListFilteredTerminals(
-        { hasResults: 0, hasConnectivity: 0 },
-        nextSortCol,
-        table.sortCol === nextSortCol
-          ? table.sortDir === 'asc' ? 'desc' : 'asc'
-          : table.sortDir,
-        table.page,
-        table.pageSize
-      ),
-    onRowClick: ({ history }) => ({
-      currentTarget: { dataset: { terminalId } },
-    }) => history.push(`/browse/terminal/${terminalId}`),
-    onPageChange: ({ fetchListFilteredTerminals, table }) => nextPage =>
-      fetchListFilteredTerminals(
-        { hasResults: 0, hasConnectivity: 0 },
-        table.sortCol,
-        table.sortDir,
-        nextPage,
-        table.pageSize
-      ),
-    onPageSizeChange: ({ fetchListFilteredTerminals, table }) => nextPageSize =>
-      fetchListFilteredTerminals(
-        { hasResults: 0, hasConnectivity: 0 },
-        table.sortCol,
-        table.sortDir,
-        0,
-        nextPageSize
-      ),
-  }),
-  lifecycle({
-    componentWillMount() {
-      this.props.configureListFilter({
-        geography: true,
-        siteName: true,
-        deviceName: true,
-        deviceStatus: true,
+    }) => {
+      const searchParams = new URLSearchParams(location.search)
+
+      if (sortCol !== nextSortCol) {
+        searchParams.set('sortCol', nextSortCol)
+      } else {
+        searchParams.set('sortDir', sortDir !== 'asc' ? 'asc' : 'desc')
+      }
+
+      history.replace({
+        ...location,
+        search: searchParams.toString(),
       })
     },
 
+    onRowClick: ({ history }) => ({
+      currentTarget: { dataset: { terminalId } },
+    }) => history.push(`/browse/terminal/${terminalId}`),
+  }),
+  lifecycle({
+    componentWillMount() {
+      const { sanitized, value: searchParams } = searchSanitizer(
+        this.props.location
+      )
+      const {
+        sanitized: filtersSanitized,
+        value: filtersParams,
+      } = filtersSanitizer(searchParams.get('filters'))
+      if (sanitized || filtersSanitized) {
+        searchParams.set('filters', filtersParams)
+
+        this.props.history.replace({
+          ...this.props.location,
+          search: searchParams.toString(),
+        })
+      }
+    },
+
     componentDidMount() {
-      this.props.onPageChange(0)
+      this.props.onInitialLoad()
     },
 
     componentWillReceiveProps(nextProps) {
-      if (this.props.listFilter !== nextProps.listFilter) {
-        this.props.onPageChange(0)
+      if (this.props.location.search !== nextProps.location.search) {
+        this.props.onInitialLoad()
       }
     },
   })
@@ -160,11 +215,13 @@ export const TerminalList = ({
   location,
   table,
   items,
-  //
+  // --- injected by recompose ---
+  sortCol,
+  sortDir,
+  pageAt,
+  pageSize,
   onHeadColumnClick,
   onRowClick,
-  onPageChange,
-  onPageSizeChange,
 }) =>
   <div className={cssClasses('Container')}>
     <Helmet
@@ -173,25 +230,24 @@ export const TerminalList = ({
       defaultTitle="Aspect"
     />
     <NavTitle title={intl.formatMessage(messages.terminalsTitle)} />
-    <BrowseFilters history={history} location={location} intl={intl} />
-    {items.currentIdList.isEmpty() && <EmptyList />}
+    <BrowseFilters
+      history={history}
+      location={location}
+      intl={intl}
+      config={FILTERS_CONFIG}
+    />
+    {items.currentIdList.isEmpty() &&
+      <BrowseEmptyList history={history} location={location} intl={intl} />}
     {!items.currentIdList.isEmpty() &&
-      <Card className={cssClasses('Card')}>
-        <ProgressBar
-          mode={table.loading ? 'indeterminate' : 'determinate'}
-          disabled={!table.loading}
-          className={cssClasses('ProgressBar')}
-          theme={{
-            indeterminate: cssClasses('ProgressBar--indeterminate'),
-          }}
-        />
+      <DataTableCard>
+        <DataTableProgressBar disabled={!table.loading} />
         <TerminalDataTable
           selectable={false}
           className={cssClasses('TerminalDataTable')}
         >
           <TerminalDataTableHead
-            sortColumnKey={table.sortCol}
-            sortColumnDir={table.sortDir}
+            sortColumnKey={sortCol}
+            sortColumnDir={sortDir}
             columns={[
               {
                 key: 'siteName',
@@ -220,7 +276,7 @@ export const TerminalList = ({
               },
               {
                 key: 'deliveredLastMonth',
-                className: cssClasses('DeviceDataTableHead__Tests--left'),
+                className: cssClasses('TerminalDataTableHead__Tests--left'),
                 onClick: onHeadColumnClick,
                 label: (
                   <span>
@@ -232,7 +288,7 @@ export const TerminalList = ({
               },
               {
                 key: 'deliveredThisMonth',
-                className: cssClasses('DeviceDataTableHead__Tests--right'),
+                className: cssClasses('TerminalDataTableHead__Tests--right'),
                 onClick: onHeadColumnClick,
                 label: (
                   <span>
@@ -266,17 +322,17 @@ export const TerminalList = ({
               />
             )}
         </TerminalDataTable>
-        <TablePaginator
-          className={cssClasses('TablePaginator')}
+        <BrowseTablePaginator
+          history={history}
+          location={location}
           intl={intl}
+          className={cssClasses('BrowseTablePaginator')}
           paginatorStatus={messages.paginatorStatus}
-          page={table.page}
-          pageSize={table.pageSize}
           total={table.total}
-          onPageChange={onPageChange}
-          onPageSizeChange={onPageSizeChange}
+          pageAt={pageAt}
+          pageSize={pageSize}
         />
-      </Card>}
+      </DataTableCard>}
   </div>
 
 export default enhance(TerminalList)
