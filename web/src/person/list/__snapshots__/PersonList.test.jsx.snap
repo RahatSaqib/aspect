@@ -1,0 +1,33 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Person List module PersonList component should shallow render correctly 1`] = `
+<div
+  className="Container"
+>
+  <HelmetWrapper
+    defaultTitle="Aspect"
+    encodeSpecialCharacters={true}
+    title="Contacts"
+    titleTemplate="%s - Aspect"
+  />
+  <Connect(lifecycle(Component))
+    title="Contacts"
+  />
+  <Unknown
+    history={undefined}
+    intl={
+      Object {
+        "formatDate": [Function],
+        "formatHTMLMessage": [Function],
+        "formatMessage": [Function],
+        "formatNumber": [Function],
+        "formatPlural": [Function],
+        "formatRelative": [Function],
+        "formatTime": [Function],
+      }
+    }
+    location={undefined}
+  />
+  <pure(InjectIntl(Connect(Component))) />
+</div>
+`;

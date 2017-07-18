@@ -1,57 +1,36 @@
 import React from 'react'
-import { shallow } from 'enzyme'
-import sinon from 'sinon'
-import Helmet from 'react-helmet'
+import ReactShallowRenderer from 'react-test-renderer/shallow'
 import { Items } from '../../shared/metaReducers/items'
 import { Table } from '../../shared/metaReducers/table'
-import DataTableWithEmptyList from '../../components/shared/DataTableWithEmptyList'
-import ListFilterContainer from '../../filter/list/ListFilter'
-import { PersonList } from './PersonList'
 
-describe('Person List Component', () => {
-  describe('PersonList', () => {
+describe('Person List module', () => {
+  const { PersonList } = require('./PersonList')
+
+  describe('PersonList component', () => {
+    const renderer = new ReactShallowRenderer()
     let props
-    let PersonListWrapper
-
-    const shallowRenderPersonList = () => {
-      PersonListWrapper = shallow(<PersonList {...props} />)
-    }
 
     beforeEach(() => {
       props = {
         table: new Table(),
         intl: {
           formatMessage: message => message.defaultMessage,
+          formatDate: date => JSON.stringify(date),
+          formatTime: time => JSON.stringify(time),
+          formatRelative: value => JSON.stringify(value),
+          formatNumber: value => JSON.stringify(value),
+          formatPlural: value => JSON.stringify(value),
+          formatHTMLMessage: value => JSON.stringify(value),
         },
+        fetchListFilteredPersons: () => {},
         items: new Items(),
-        configureListFilter: () => {},
-        listFilter: {},
-        router: {},
-        fetchListFilteredPersons: sinon.spy(),
       }
-      shallowRenderPersonList()
     })
 
-    it('should contain a selectable DataTableWithEmptyList with columns for person records', () => {
-      const dataTable = PersonListWrapper.find(DataTableWithEmptyList)
-      expect(dataTable.length).toEqual(1)
-      expect(dataTable.props().selectable).toBe(true)
-      expect(dataTable.props().columns).toEqual([
-        { db: 'name', title: 'Name' },
-        { db: 'level', title: 'Job', hideOnXs: true },
-        { db: 'state', title: 'State', hideOnXs: true },
-        { db: 'lga', title: 'County', hideOnXs: true },
-      ])
-    })
+    it('should shallow render correctly', () => {
+      const element = renderer.render(<PersonList {...props} />)
 
-    it('should contain a list filter', () => {
-      const listFilter = PersonListWrapper.find(ListFilterContainer)
-      expect(listFilter.length).toEqual(1)
-    })
-
-    it('should set the page title', () => {
-      const helmet = PersonListWrapper.find(Helmet)
-      expect(helmet.props().title).toEqual('Contacts')
+      expect(element).toMatchSnapshot()
     })
   })
 })
