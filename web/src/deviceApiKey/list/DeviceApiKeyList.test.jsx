@@ -1,25 +1,20 @@
 import React from 'react'
-import sinon from 'sinon'
-import renderer from 'react-test-renderer'
 import ReactShallowRenderer from 'react-test-renderer/shallow'
-import { Provider } from 'react-redux'
-import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider'
-import { IntlProvider } from 'react-intl'
-import store from '../../store'
 import { Items } from '../../shared/metaReducers/items'
 import { Table } from '../../shared/metaReducers/table'
-import { DeviceApiKeyList } from './DeviceApiKeyList'
 
 jest.mock('material-ui/Checkbox', () => 'StubCheckbox')
 
-describe('Device Api Key List Component', () => {
-  describe('DeviceApiKeyList', () => {
+describe('Device Api Key List module', () => {
+  const { DeviceApiKeyList } = require('./DeviceApiKeyList')
+
+  describe('DeviceApiKeyList component', () => {
+    const renderer = new ReactShallowRenderer()
     let props
     const now = new Date()
 
     beforeEach(() => {
       props = {
-        setPageTitle: sinon.spy(),
         table: new Table(),
         intl: {
           formatMessage: message => message.defaultMessage,
@@ -38,30 +33,13 @@ describe('Device Api Key List Component', () => {
         generateDeviceApiKeys: () => {},
         assignDeviceApiKeys: () => {},
         updateSingleDeviceApiKey: () => {},
-        listFilter: {},
       }
     })
 
     it('should shallow render correctly', () => {
-      const renderer = new ReactShallowRenderer()
-      renderer.render(<DeviceApiKeyList {...props} />)
+      const element = renderer.render(<DeviceApiKeyList {...props} />)
 
-      const result = renderer.getRenderOutput()
-      expect(result).toMatchSnapshot()
-    })
-
-    it('should render DOM correctly', () => {
-      const component = renderer.create(
-        <Provider store={store}>
-          <MuiThemeProvider>
-            <IntlProvider locale="en">
-              <DeviceApiKeyList {...props} />
-            </IntlProvider>
-          </MuiThemeProvider>
-        </Provider>
-      )
-      const tree = component.toJSON()
-      expect(tree).toMatchSnapshot()
+      expect(element).toMatchSnapshot()
     })
   })
 })
