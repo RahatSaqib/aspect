@@ -16,5 +16,6 @@
   --aspect-color-grey-8: #f6f7fb;
 
   --z-index-overlay: 900;
+  --z-index-dialog: 950;
   --z-index-popover: 1000;
 }
