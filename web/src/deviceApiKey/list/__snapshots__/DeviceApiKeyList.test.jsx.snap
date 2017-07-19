@@ -325,7 +325,7 @@ exports[`Device Api Key List module DeviceApiKeyList component should shallow re
           deviceApiKey={
             Immutable.Map {
               id: "1",
-              createdOn: 1500344110505,
+              createdOn: 2017-07-14T02:40:00.000Z,
               token: "token",
               partner: "partner",
               country: "country",

@@ -80,7 +80,7 @@ describe('Device Api Key List module', () => {
             byId: {
               1: {
                 id: '1',
-                createdOn: now,
+                createdOn: new Date(now),
                 token: 'token',
                 partner: 'partner',
                 country: 'country',
