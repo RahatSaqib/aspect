@@ -1,5 +1,9 @@
 @import '../../globals/variables.css';
 
+.check {
+  composes: /* dependency */check from 'react-toolbox/lib/checkbox/theme.css';
+}
+
 .check.checked {
   background-color: var(--aspect-color-chill-blue-1);
   border-color: var(--aspect-color-chill-blue-1);
