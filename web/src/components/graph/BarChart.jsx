@@ -30,10 +30,15 @@ class BarChart extends Component {
       lMargin = 5
     }
 
+    let bMargin = 40
+    if (this.props.hideLabel) {
+      bMargin = 0
+    }
+
     // Define the graph dimensions and margins
     const width = 600 + this.props.styleWide * 300
     const height = 400
-    const margin = { top: 0, bottom: 0, left: lMargin, right: 20 }
+    const margin = { top: 0, bottom: bMargin, left: lMargin, right: 20 }
 
     // Create bounds
     const xMax = width - margin.left - margin.right
@@ -123,7 +128,6 @@ class BarChart extends Component {
                       fontFamily="arial"
                     />
                   }
-                  tickTransform={'vertical'}
                 />}
               {(!this.props.hideAxes || this.props.xOnly) &&
                 <AxisBottom
