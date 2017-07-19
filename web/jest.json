@@ -1,6 +1,7 @@
 {
   "setupFiles": [
     "<rootDir>/__setup__/polyfills.js",
+    "<rootDir>/__setup__/mockDate.js",
     "<rootDir>/__setup__/injectTapEventPlugin.js"
   ],
   "moduleNameMapper": {
