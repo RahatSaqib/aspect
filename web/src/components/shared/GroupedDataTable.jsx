@@ -20,7 +20,7 @@ import SortIcon from 'material-ui/svg-icons/content/sort'
 import FlatButton from 'material-ui/FlatButton'
 
 // Our own imports
-import styles from './DataTable.css'
+import styles from './GroupedDataTable.css'
 
 const cssClasses = classnames.bind(styles)
 

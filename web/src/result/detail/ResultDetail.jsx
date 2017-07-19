@@ -651,8 +651,9 @@ export class ResultDetail extends PureComponent {
 
         <ResultWorkflowStatusLog
           intl={intl}
-          workflowLog={workflowLog}
-          handleFetch={this.handleFetchWorkflowStatusLogs}
+          table={workflowLog.table}
+          items={workflowLog.items}
+          onFetch={this.handleFetchWorkflowStatusLogs}
         />
       </div>
     )

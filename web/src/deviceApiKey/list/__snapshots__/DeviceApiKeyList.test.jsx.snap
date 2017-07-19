@@ -2,7 +2,7 @@
 
 exports[`Device Api Key List module DeviceApiKeyList component should shallow render correctly 1`] = `
 <div
-  className="Content"
+  className="Container"
 >
   <HelmetWrapper
     defaultTitle="Aspect"
@@ -14,7 +14,11 @@ exports[`Device Api Key List module DeviceApiKeyList component should shallow re
     title="Device API Keys"
   />
   <Unknown
-    history={undefined}
+    history={
+      Object {
+        "push": [Function],
+      }
+    }
     intl={
       Object {
         "formatDate": [Function],
@@ -27,7 +31,11 @@ exports[`Device Api Key List module DeviceApiKeyList component should shallow re
         "now": [Function],
       }
     }
-    location={undefined}
+    location={
+      Object {
+        "search": "",
+      }
+    }
     onClickExport={[Function]}
   />
   <div>
@@ -107,68 +115,29 @@ exports[`Device Api Key List module DeviceApiKeyList component should shallow re
       }
     />
   </div>
-  <pure(Component)
-    columns={
-      Array [
-        Object {
-          "db": "id",
-          "extraProps": Object {
-            "style": Object {
-              "width": "5%",
-            },
-          },
-          "format": [Function],
-          "sortable": false,
-          "title": <StubCheckbox
-            checked={false}
-            disabled={true}
-            name="selectAll"
-            onCheck={[Function]}
-      />,
-        },
-        Object {
-          "db": "createdOn",
-          "extraProps": Object {
-            "style": Object {
-              "width": "10%",
-            },
-          },
-          "format": [Function],
-          "title": "Created On",
-        },
-        Object {
-          "db": "token",
-          "extraProps": Object {
-            "style": Object {
-              "width": "25%",
-            },
-          },
-          "title": "Key",
-        },
-        Object {
-          "db": "partner",
-          "title": "Partner",
-        },
-        Object {
-          "db": "country",
-          "title": "Country",
-        },
-        Object {
-          "db": "site",
-          "title": "Site",
-        },
-        Object {
-          "db": "device",
-          "title": "Device",
-        },
-        Object {
-          "db": "revoked",
-          "format": [Function],
-          "title": "Revoked",
-        },
-      ]
+  <pure(InjectIntl(Connect(Component))) />
+</div>
+`;
+
+exports[`Device Api Key List module DeviceApiKeyList component should shallow render with items correctly 1`] = `
+<div
+  className="Container"
+>
+  <HelmetWrapper
+    defaultTitle="Aspect"
+    encodeSpecialCharacters={true}
+    title="Device API Keys"
+    titleTemplate="%s - Aspect"
+  />
+  <Connect(lifecycle(Component))
+    title="Device API Keys"
+  />
+  <Unknown
+    history={
+      Object {
+        "push": [Function],
+      }
     }
-    handleFetch={[Function]}
     intl={
       Object {
         "formatDate": [Function],
@@ -181,23 +150,237 @@ exports[`Device Api Key List module DeviceApiKeyList component should shallow re
         "now": [Function],
       }
     }
-    items={
+    location={
       Object {
-        "byId": Object {},
-        "currentIdList": Array [],
+        "search": "",
       }
     }
-    table={
-      Object {
-        "extraColumns": Array [],
-        "loading": false,
-        "page": 0,
-        "pageSize": 10,
-        "sortCol": "name",
-        "sortDir": "asc",
-        "total": 0,
-      }
-    }
+    onClickExport={[Function]}
   />
+  <div>
+    <FlatButton
+      disabled={false}
+      fullWidth={false}
+      label="Generate"
+      labelPosition="after"
+      labelStyle={Object {}}
+      onKeyboardFocus={[Function]}
+      onMouseEnter={[Function]}
+      onMouseLeave={[Function]}
+      onTouchStart={[Function]}
+      onTouchTap={[Function]}
+      primary={false}
+      secondary={false}
+    />
+    <FlatButton
+      disabled={true}
+      fullWidth={false}
+      label="Assign"
+      labelPosition="after"
+      labelStyle={Object {}}
+      onKeyboardFocus={[Function]}
+      onMouseEnter={[Function]}
+      onMouseLeave={[Function]}
+      onTouchStart={[Function]}
+      onTouchTap={[Function]}
+      primary={false}
+      secondary={false}
+    />
+    <pure(recomposeForm(DeviceApiKeyGeneratorDialogForm))
+      intl={
+        Object {
+          "formatDate": [Function],
+          "formatHTMLMessage": [Function],
+          "formatMessage": [Function],
+          "formatNumber": [Function],
+          "formatPlural": [Function],
+          "formatRelative": [Function],
+          "formatTime": [Function],
+          "now": [Function],
+        }
+      }
+      isDialogOpen={false}
+      onCancel={[Function]}
+      onChange={[Function]}
+      onSubmit={[Function]}
+      values={
+        Object {
+          "count": 1,
+        }
+      }
+    />
+    <pure(recomposeForm(DeviceApiKeyAssignerDialogForm))
+      count={0}
+      intl={
+        Object {
+          "formatDate": [Function],
+          "formatHTMLMessage": [Function],
+          "formatMessage": [Function],
+          "formatNumber": [Function],
+          "formatPlural": [Function],
+          "formatRelative": [Function],
+          "formatTime": [Function],
+          "now": [Function],
+        }
+      }
+      isDialogOpen={false}
+      onCancel={[Function]}
+      onChange={[Function]}
+      onSubmit={[Function]}
+      values={
+        Object {
+          "deviceApiKeyIds": Array [],
+        }
+      }
+    />
+  </div>
+  <ThemedCard
+    className="Card"
+    composeTheme="deeply"
+    mapThemrProps={[Function]}
+  >
+    <ThemedProgressBar
+      buffer={0}
+      className="ProgressBar"
+      composeTheme="deeply"
+      disabled={true}
+      mapThemrProps={[Function]}
+      max={100}
+      min={0}
+      mode="determinate"
+      multicolor={false}
+      theme={
+        Object {
+          "indeterminate": "ProgressBar--indeterminate",
+        }
+      }
+      type="linear"
+      value={0}
+    />
+    <ThemedTable
+      className="DeviceApiKeyDataTable"
+      composeTheme="deeply"
+      mapThemrProps={[Function]}
+      multiSelectable={false}
+      selectable={false}
+    >
+      <DataTableHead
+        columns={
+          Array [
+            Object {
+              "key": "id",
+              "label": <ThemedCheckbox
+                checked={true}
+                className=""
+                composeTheme="deeply"
+                disabled={true}
+                mapThemrProps={[Function]}
+                name="selectAll"
+                onChange={[Function]}
+          />,
+            },
+            Object {
+              "key": "createdOn",
+              "label": "Created On",
+              "onClick": [Function],
+            },
+            Object {
+              "key": "token",
+              "label": "Key",
+              "onClick": [Function],
+            },
+            Object {
+              "key": "partner",
+              "label": "Partner",
+              "onClick": [Function],
+            },
+            Object {
+              "key": "country",
+              "label": "Country",
+              "onClick": [Function],
+            },
+            Object {
+              "key": "site",
+              "label": "Site",
+              "onClick": [Function],
+            },
+            Object {
+              "key": "device",
+              "label": "Device",
+              "onClick": [Function],
+            },
+            Object {
+              "key": "revoked",
+              "label": "Revoked",
+              "onClick": [Function],
+            },
+          ]
+        }
+        sortColumnDir="asc"
+        sortColumnKey="name"
+      />
+      Immutable.List [
+        <DeviceApiKeyTableRow
+          checked={false}
+          deviceApiKey={
+            Immutable.Map {
+              id: "1",
+              createdOn: 2017-07-14T02:40:00.000Z,
+              token: "token",
+              partner: "partner",
+              country: "country",
+              site: "site",
+              device: "device",
+              revoked: false,
+            }
+          }
+          disabled={true}
+          intl={
+            Object {
+              "formatDate": [Function],
+              "formatHTMLMessage": [Function],
+              "formatMessage": [Function],
+              "formatNumber": [Function],
+              "formatPlural": [Function],
+              "formatRelative": [Function],
+              "formatTime": [Function],
+              "now": [Function],
+            }
+          }
+          onRevokedChange={[Function]}
+          onSelectedChange={[Function]}
+        />,
+      ]
+    </ThemedTable>
+    <withProps(withHandlers(pure(TablePaginator)))
+      className="TablePaginator"
+      intl={
+        Object {
+          "formatDate": [Function],
+          "formatHTMLMessage": [Function],
+          "formatMessage": [Function],
+          "formatNumber": [Function],
+          "formatPlural": [Function],
+          "formatRelative": [Function],
+          "formatTime": [Function],
+          "now": [Function],
+        }
+      }
+      onPageChange={[Function]}
+      onPageSizeChange={[Function]}
+      page={0}
+      pageSize={10}
+      paginatorStatus={
+        Object {
+          "defaultMessage": "Showing {firstItemIndex}-{lastItemIndex} of {itemCount, plural,
+              one {# device API key}
+              other {# device API keys}
+            }",
+          "id": "pages.DeviceApiKeyList.paginatorStatus",
+        }
+      }
+      total={1}
+    />
+  </ThemedCard>
 </div>
 `;
