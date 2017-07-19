@@ -13,7 +13,16 @@ exports[`Device Api Key List module DeviceApiKeyList component should shallow re
   <Connect(lifecycle(Component))
     title="Device API Keys"
   />
-  <Unknown
+  <pure(withProps(withHandlers(Connect(BrowseFilters))))
+    config={
+      Object {
+        "deviceName": true,
+        "geography": true,
+        "partnerId": true,
+        "siteName": true,
+        "state": false,
+      }
+    }
     history={
       Object {
         "push": [Function],
@@ -115,7 +124,30 @@ exports[`Device Api Key List module DeviceApiKeyList component should shallow re
       }
     />
   </div>
-  <pure(InjectIntl(Connect(Component))) />
+  <pure(withHandlers(Component))
+    history={
+      Object {
+        "push": [Function],
+      }
+    }
+    intl={
+      Object {
+        "formatDate": [Function],
+        "formatHTMLMessage": [Function],
+        "formatMessage": [Function],
+        "formatNumber": [Function],
+        "formatPlural": [Function],
+        "formatRelative": [Function],
+        "formatTime": [Function],
+        "now": [Function],
+      }
+    }
+    location={
+      Object {
+        "search": "",
+      }
+    }
+  />
 </div>
 `;
 
@@ -132,7 +164,16 @@ exports[`Device Api Key List module DeviceApiKeyList component should shallow re
   <Connect(lifecycle(Component))
     title="Device API Keys"
   />
-  <Unknown
+  <pure(withProps(withHandlers(Connect(BrowseFilters))))
+    config={
+      Object {
+        "deviceName": true,
+        "geography": true,
+        "partnerId": true,
+        "siteName": true,
+        "state": false,
+      }
+    }
     history={
       Object {
         "push": [Function],
@@ -234,28 +275,9 @@ exports[`Device Api Key List module DeviceApiKeyList component should shallow re
       }
     />
   </div>
-  <ThemedCard
-    className="Card"
-    composeTheme="deeply"
-    mapThemrProps={[Function]}
-  >
-    <ThemedProgressBar
-      buffer={0}
-      className="ProgressBar"
-      composeTheme="deeply"
+  <DataTableCard>
+    <DataTableProgressBar
       disabled={true}
-      mapThemrProps={[Function]}
-      max={100}
-      min={0}
-      mode="determinate"
-      multicolor={false}
-      theme={
-        Object {
-          "indeterminate": "ProgressBar--indeterminate",
-        }
-      }
-      type="linear"
-      value={0}
     />
     <ThemedTable
       className="DeviceApiKeyDataTable"
@@ -317,7 +339,7 @@ exports[`Device Api Key List module DeviceApiKeyList component should shallow re
           ]
         }
         sortColumnDir="asc"
-        sortColumnKey="name"
+        sortColumnKey="createdOn"
       />
       Immutable.List [
         <DeviceApiKeyTableRow
@@ -352,8 +374,12 @@ exports[`Device Api Key List module DeviceApiKeyList component should shallow re
         />,
       ]
     </ThemedTable>
-    <withProps(withHandlers(pure(TablePaginator)))
-      className="TablePaginator"
+    <pure(withHandlers(withProps(withHandlers(pure(TablePaginator)))))
+      history={
+        Object {
+          "push": [Function],
+        }
+      }
       intl={
         Object {
           "formatDate": [Function],
@@ -366,9 +392,12 @@ exports[`Device Api Key List module DeviceApiKeyList component should shallow re
           "now": [Function],
         }
       }
-      onPageChange={[Function]}
-      onPageSizeChange={[Function]}
-      page={0}
+      location={
+        Object {
+          "search": "",
+        }
+      }
+      pageAt={0}
       pageSize={10}
       paginatorStatus={
         Object {
@@ -381,6 +410,6 @@ exports[`Device Api Key List module DeviceApiKeyList component should shallow re
       }
       total={1}
     />
-  </ThemedCard>
+  </DataTableCard>
 </div>
 `;
