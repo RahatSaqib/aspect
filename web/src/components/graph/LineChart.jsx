@@ -54,7 +54,7 @@ const LineChart = props => {
   } else {
     // scale evenly using labels
     xScale = scaleBand({
-      rangeRound: [shift, xMax + shift], // number 20 aligns the line with the labels properly
+      rangeRound: [shift, xMax + shift],
       domain: props.data.map(x),
     })
   }
@@ -144,7 +144,7 @@ LineChart.propTypes = {
   hideTicks: PropTypes.bool,
   hideAxes: PropTypes.bool,
   timeStyle: PropTypes.bool,
-  gridLines: PropTypes.number,
+  gridLines: PropTypes.bool,
 }
 
 LineChart.defaultProps = {
