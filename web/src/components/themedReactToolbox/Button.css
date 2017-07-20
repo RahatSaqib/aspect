@@ -1,7 +1,7 @@
 @import '../../globals/variables.css';
 
 .button {
-  composes: /* dependency */button from 'react-toolbox/lib/button/theme.css';
+  composes: button from 'react-toolbox/lib/button/theme.css';
 }
 
 .primary:not([disabled]).flat {
@@ -17,4 +17,3 @@
   background-color: #084482;
   color: #ffffff;
 }
-

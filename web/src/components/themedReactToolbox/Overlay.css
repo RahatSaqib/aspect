@@ -1,6 +1,6 @@
 @import '../../globals/variables.css';
 
 .overlay {
-  composes: /* dependency */overlay from 'react-toolbox/lib/overlay/theme.css';
+  composes: overlay from 'react-toolbox/lib/overlay/theme.css';
   z-index: var(--z-index-overlay);
 }

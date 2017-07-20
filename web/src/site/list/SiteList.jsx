@@ -84,9 +84,8 @@ const enhance = compose(
         table.page,
         table.pageSize
       ),
-    onRowClick: ({ history }) => ({
-      currentTarget: { dataset: { siteId } },
-    }) => history.push(`/browse/site/${siteId}`),
+    onRowClick: ({ history }) => ({ currentTarget: { dataset: { siteId } } }) =>
+      history.push(`/browse/site/${siteId}`),
     onPageChange: ({ fetchListFilteredSites, table }) => nextPage =>
       fetchListFilteredSites(
         {},
@@ -96,13 +95,7 @@ const enhance = compose(
         table.pageSize
       ),
     onPageSizeChange: ({ fetchListFilteredSites, table }) => nextPageSize =>
-      fetchListFilteredSites(
-        {},
-        table.sortCol,
-        table.sortDir,
-        0,
-        nextPageSize
-      ),
+      fetchListFilteredSites({}, table.sortCol, table.sortDir, 0, nextPageSize),
   }),
   lifecycle({
     componentWillMount() {
@@ -143,11 +136,7 @@ export const SiteList = ({
       defaultTitle="Aspect"
     />
     <NavTitle title={intl.formatMessage(messages.sitesTitle)} />
-    <BrowseFilters
-      history={history}
-      location={location}
-      intl={intl}
-    />
+    <BrowseFilters history={history} location={location} intl={intl} />
     {items.currentIdList.isEmpty() && <EmptyList />}
     {!items.currentIdList.isEmpty() &&
       <Card className={cssClasses('Card')}>

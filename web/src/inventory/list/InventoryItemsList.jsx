@@ -47,7 +47,9 @@ import {
   transferInventory,
   receiveInventory,
 } from '../InventoryRedux'
-import InventoryAdjustmentForm, { testConductedReasonI18nKey } from '../adjustment/InventoryAdjustmentForm'
+import InventoryAdjustmentForm, {
+  testConductedReasonI18nKey,
+} from '../adjustment/InventoryAdjustmentForm'
 
 const cssClasses = classnames.bind(require('./InventoryItemsList.css'))
 
