@@ -22,8 +22,7 @@
   position: relative;
 }
 
-.Button__label__close,
-.Button__label__more {
+.Button__label__close, .Button__label__more {
   opacity: 0;
 }
 

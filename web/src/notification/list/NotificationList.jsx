@@ -87,10 +87,7 @@ const enhance = compose(
         nextPage,
         table.pageSize
       ),
-    onPageSizeChange: ({
-      fetchListFilteredNotifications,
-      table,
-    }) => nextPageSize =>
+    onPageSizeChange: ({ fetchListFilteredNotifications, table }) => nextPageSize =>
       fetchListFilteredNotifications(
         {},
         table.sortCol,
@@ -135,7 +132,11 @@ export const NotificationList = ({
       defaultTitle="Aspect"
     />
     <NavTitle title={intl.formatMessage(messages.notificationsTitle)} />
-    <BrowseFilters history={history} location={location} intl={intl} />
+    <BrowseFilters
+      history={history}
+      location={location}
+      intl={intl}
+    />
     {items.currentIdList.isEmpty() && <EmptyList />}
     {!items.currentIdList.isEmpty() &&
       <Card className={cssClasses('Card')}>

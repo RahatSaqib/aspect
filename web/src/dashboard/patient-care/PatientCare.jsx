@@ -59,7 +59,7 @@ export class PatientCare extends PureComponent {
         <Card>
           <CardHeader
             subtitle={`No filters set - showing all ${search.get('type') ===
-            'TB'
+              'TB'
               ? 'TB'
               : 'HCV'}`}
           />

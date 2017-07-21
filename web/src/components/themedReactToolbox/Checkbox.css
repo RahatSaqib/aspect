@@ -1,7 +1,7 @@
 @import '../../globals/variables.css';
 
 .check {
-  composes: check from 'react-toolbox/lib/checkbox/theme.css';
+  composes: /* dependency */check from 'react-toolbox/lib/checkbox/theme.css';
 }
 
 .check.checked {

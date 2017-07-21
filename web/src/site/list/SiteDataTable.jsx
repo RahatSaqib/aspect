@@ -8,4 +8,7 @@ import SiteTableRow from './SiteTableRow'
 const RawTable = tableFactory(DataTableHead, SiteTableRow)
 export const SiteDataTable = themr(TABLE)(RawTable)
 
-export { DataTableHead as SiteDataTableHead, SiteTableRow as SiteDataTableRow }
+export {
+  DataTableHead as SiteDataTableHead,
+  SiteTableRow as SiteDataTableRow,
+}
