@@ -2,7 +2,7 @@
 
 :root {
   --margin: 5px;
-};
+}
 
 .FiltersBtnGroup {
   margin: -var(--margin);
