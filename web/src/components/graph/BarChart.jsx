@@ -82,10 +82,11 @@ class BarChart extends Component {
 
     // determine labelling based on props
     let labelSize = 18
-    const barHeight = []
     if (this.props.hideLabel) {
       labelSize = 0
     }
+
+    const barHeight = []
 
     return (
       <ScaleSVG width={width} height={height}>
@@ -100,7 +101,7 @@ class BarChart extends Component {
               <Bar
                 key={`bar-${j}`}
                 x={xPoint(d)}
-                y={yMax - barDisplacement(j, barHeight)}
+                y={400 - barDisplacement(j, barHeight)}
                 height={barHeight[j]}
                 width={xScale.bandwidth()}
                 fill={this.props.color[j] ? this.props.color[j] : c[j % 4]}
