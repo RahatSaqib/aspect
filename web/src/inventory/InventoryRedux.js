@@ -53,12 +53,8 @@ function receiveInventoryItems(json, childrenPropertyPath) {
   }
 }
 
-function getFilters(state, extraFilters) {
-  return state.filter.listFilter
-    .toMap()
-    .merge(extraFilters)
-    .filter(nonEmptyFilterValue)
-    .toJS()
+function getFilters(state) {
+  return state.filter.listFilter.toMap().filter(nonEmptyFilterValue).toJS()
 }
 
 function getGroupBy(state) {
@@ -72,10 +68,10 @@ export function toggleGroupBySite(toggleOn) {
   }
 }
 
-export function fetchListFilteredInventoryItems(extraFilters = {}, ...args) {
+export function fetchListFilteredInventoryItems(...args) {
   return (dispatch, getState) => {
     const groupBy = getGroupBy(getState())
-    const filters = getFilters(getState(), extraFilters)
+    const filters = getFilters(getState())
     return dispatch(fetchInventoryItems(groupBy, filters, ...args))
   }
 }
