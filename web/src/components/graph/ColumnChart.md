@@ -46,7 +46,7 @@ Primary 3-Stack Column Chart
 </ChartContainer>
 ```
 
-### Overrides
+### Props
 
 A ColumnChart can be designed in nearly any style, by changing the value of any of the following props:
 

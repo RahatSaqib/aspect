@@ -47,7 +47,7 @@ Primary 2-Line Error Chart (with Average)
 ```
 ```
 
-### Overrides
+### Props
 
 A LineChart can be designed in nearly any style, by changing the value of any of the following props (default value in parentheses):
 

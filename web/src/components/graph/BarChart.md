@@ -144,7 +144,7 @@ Primary 3-Color Bar Chart
 </ChartContainer>
 ```
 
-### Overrides
+### Props
 
 A BarChart can be designed in nearly any style, by changing the value of any of the following props:
 
