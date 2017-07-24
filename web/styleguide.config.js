@@ -18,6 +18,9 @@ module.exports = {
     ...glob.sync(
       'src/components/shared/@(FallbackUntilDone|FocusBlurTextField).{js,jsx}'
     ),
+    ...glob.sync(
+      'src/components/graph/@(BarChart|ColumnChart|LineChart).{js,jsx}'
+    ),
   ],
   styleguideComponents: {
     Wrapper: path.join(__dirname, './src/globals/layouts/UIThemeProviders.jsx'),
