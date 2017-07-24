@@ -54,7 +54,7 @@ class BarChart extends Component {
     // Array y holds each color bar based on data values
     const y = []
     for (let i = 0; i < maxLength; i++) {
-      y[i] = d => (d.data.length ? d.data[i] : 0)
+      y[i] = d => _.get(d, ['data', i], 0)
     }
 
     // Creates dynamic y axis
@@ -86,11 +86,10 @@ class BarChart extends Component {
       labelSize = 0
     }
 
-    const barHeight = []
-
     return (
       <ScaleSVG width={width} height={height}>
         {this.props.data.map(d => {
+          const barHeight = []
           for (let j = 0; j < maxLength; j++) {
             barHeight[j] = yMax - yPoint[j](d)
           }
