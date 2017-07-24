@@ -27,6 +27,85 @@ import DashboardSuppliesRunningLow from './DashboardSuppliesRunningLow'
 import DashboardSuppliesExpiringSoon from './DashboardSuppliesExpiringSoon'
 import styles from './Dashboard.css'
 import { fetchDashboardHome } from '../DashboardRedux'
+import ChartContainer from '../../components/graph/ChartContainer'
+import BarChart from '../../components/graph/BarChart'
+import ColumnChart from '../../components/graph/ColumnChart'
+import LineChart from '../../components/graph/LineChart'
+
+// data to be used in graphs
+const exData1 = [
+  { name: 'Site name 1', data: [3, 4, 8] },
+  { name: 'Site name 2', data: [1, 4, 7] },
+  { name: 'Site name 3', data: [2, 5, 9] },
+  { name: 'Site name 4', data: [4, 3, 10] },
+  { name: 'Site name 5', data: [3, 4, 6] },
+  { name: 'Site name 6', data: [1, 4, 10] },
+  { name: 'Site name 7', data: [2, 5, 9] },
+  { name: 'Site name 8', data: [4, 3, 8] },
+]
+
+const exData2 = [
+  { name: 'Site1', data: [8, 1.5] },
+  { name: 'Site2', data: [7, 0.5] },
+  { name: 'Site3', data: [3, 2] },
+  { name: 'Site4', data: [4, 1] },
+  { name: 'Site5', data: [6, 2] },
+  { name: 'Site6', data: [8, 1] },
+  { name: 'Site7', data: [9, 2] },
+  { name: 'Site8', data: [6, 2] },
+  { name: 'newSite1', data: [4, 1] },
+  { name: 'newSite2', data: [7, 0.6] },
+  { name: 'newSite3', data: [9, 2] },
+  { name: 'newSite4', data: [7, 1] },
+  { name: 'newSite5', data: [6, 1.5] },
+  { name: 'newSite6', data: [4, 1] },
+  { name: 'newSite7', data: [9, 1] },
+  { name: 'newSite8', data: [8, 2] },
+]
+
+const exData3 = [
+  { name: 'Site1', data: [2, 3, 4, 1.5] },
+  { name: 'Site2', data: [1, 2, 1, 3] },
+  { name: 'Site3', data: [2, 2, 1, 2] },
+  { name: 'Site4', data: [4, 1, 5, 3] },
+  { name: 'Site5', data: [2, 2, 1, 2] },
+  { name: 'Site6', data: [1, 1, 1.5, 1] },
+  { name: 'Site7', data: [3, 2, 1, 2] },
+  { name: 'newSite8', data: [1, 4, 3, 2] },
+  { name: 'newSite3', data: [2, 1, 1, 1] },
+  { name: 'newSite4', data: [2, 2, 1, 2] },
+  { name: 'newSite5', data: [2, 3, 4, 3] },
+]
+
+const exData4 = [
+  { name: 'Site1', data: [1] },
+  { name: 'Site2', data: [1.5] },
+  { name: 'Site3', data: [2] },
+  { name: 'Site4', data: [2] },
+  { name: 'Site5', data: [0, 3] },
+  { name: 'Site6', data: [0, 3.5] },
+  { name: 'Site7', data: [0, 3.75] },
+  { name: 'newSite8', data: [0, 5] },
+  { name: 'newSite1', data: [0, 6] },
+  { name: 'newSite2', data: [0, 6] },
+  { name: 'newSite3', data: [0, 7] },
+  { name: 'newSite4', data: [0, 0, 7.5] },
+  { name: 'newSite5', data: [0, 0, 7.5] },
+  { name: 'newSite6', data: [0, 0, 8] },
+  { name: 'newSite7', data: [0, 0, 9] },
+  { name: 'newSite9', data: [0, 0, 9.75] },
+]
+
+const lineData2 = [
+  { date: 'Site 1', value: [1, 2, 8] },
+  { date: 'Site 2', value: [2, 4, 9] },
+  { date: 'Site 3', value: [3, 9, 8] },
+  { date: 'Site 4', value: [1, 4, 7] },
+  { date: 'Site 5', value: [2, 1, 6] },
+  { date: 'Site 6', value: [3, 4, 5] },
+  { date: 'Site 7', value: [1, 1, 5] },
+  { date: 'Site 8', value: [2, 3, 8] },
+]
 
 const messages = defineMessages({
   title: {
@@ -220,6 +299,64 @@ export class Dashboard extends PureComponent {
                       </Link>
                     </Unit>
                   </div>
+                </Unit>
+                <Unit sm="1-2">
+                  <h3>Chart Components</h3>
+                  <ChartContainer title="High Performing">
+                    <ColumnChart
+                      data={exData1}
+                      color={['#e85164', '#fcb124', '#73d449']}
+                      spacing={0.4}
+                      hideAxes
+                      rightLabel
+                      hideLabel={false}
+                    />
+                  </ChartContainer>
+                </Unit>
+              </div>
+              <Unit sm="1-2">
+                <ChartContainer title="HIV">
+                  <BarChart
+                    data={exData2}
+                    color={['#27c4e0', '#e85065']}
+                    spacing={0.3}
+                    numLabelSize={30}
+                  />
+                </ChartContainer>
+              </Unit>
+              <Unit sm="1-2">
+                <ChartContainer title="Title">
+                  <LineChart data={lineData2} hideLabel={false} />
+                </ChartContainer>
+              </Unit>
+              <div style={{ width: '1500px' }}>
+                <Unit sm="1-2">
+                  <ChartContainer title="Test Failures Last 30 Days">
+                    <BarChart
+                      data={exData3}
+                      color={['#e85163', '#fcb026', '#73d449', '#25c5e0']}
+                      spacing={0.3}
+                      numLabelSize={30}
+                      styleWide
+                      hideAxes
+                      xOnly
+                    />
+                  </ChartContainer>
+                </Unit>
+              </div>
+              <div style={{ width: '1500px' }}>
+                <Unit sm="1-2">
+                  <ChartContainer title="Best and Worst Performing Sites">
+                    <BarChart
+                      data={exData4}
+                      color={['#e85163', '#a8e6f2', '#73d449']}
+                      spacing={0.3}
+                      numLabelSize={30}
+                      styleWide
+                      hideAxes
+                      xOnly
+                    />
+                  </ChartContainer>
                 </Unit>
               </div>
             </section>
