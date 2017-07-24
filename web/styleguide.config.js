@@ -19,7 +19,7 @@ module.exports = {
       'src/components/shared/@(FallbackUntilDone|FocusBlurTextField).{js,jsx}'
     ),
     ...glob.sync(
-      'src/components/graph/@(BarChart|ColumnChart|LineChart).{js,jsx}'
+      'src/components/graph/@(BarChart|ColumnChart|LineChart|ChartContainer).{js,jsx}'
     ),
   ],
   styleguideComponents: {

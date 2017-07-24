@@ -50,12 +50,12 @@ Primary 3-Stack Column Chart
 
 A ColumnChart can be designed in nearly any style, by changing the value of any of the following props:
 
-data
-color (['#3cc0cd', '#7d97bc', '#9874b2', '#f36283'])
-hideLabel (true)
-hideTicks (true)
-hideAxes (false)
-rightLabel (false)
-spacing (0.4)
-numLabelSize (18)
-styleWide (false)
+data  
+color (['#3cc0cd', '#7d97bc', '#9874b2', '#f36283'])  
+hideLabel (true)  
+hideTicks (true)  
+hideAxes (false)  
+rightLabel (false)  
+spacing (0.4)  
+numLabelSize (18)  
+styleWide (false)  

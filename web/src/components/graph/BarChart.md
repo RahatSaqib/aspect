@@ -27,7 +27,19 @@ Primary 4-Stack Bar Chart
 ```
 <ChartContainer title="Test Failures Last 30 Days">
     <BarChart
-        data={exData3}
+        data={[
+            { name: 'Site1', data: [2, 3, 4, 1.5] },
+            { name: 'Site2', data: [1, 2, 1, 3] },
+            { name: 'Site3', data: [2, 2, 1, 2] },
+            { name: 'Site4', data: [4, 1, 5, 3] },
+            { name: 'Site5', data: [2, 2, 1, 2] },
+            { name: 'Site6', data: [1, 1, 1.5, 1] },
+            { name: 'Site7', data: [3, 2, 1, 2] },
+            { name: 'newSite8', data: [1, 4, 3, 2] },
+            { name: 'newSite3', data: [2, 1, 1, 1] },
+            { name: 'newSite4', data: [2, 2, 1, 2] },
+            { name: 'newSite5', data: [2, 3, 4, 3] },
+        ]}
         color={['#e85163', '#fcb026', '#73d449', '#25c5e0']}
         spacing={0.3}
         numLabelSize={30}
@@ -104,7 +116,24 @@ Primary 3-Color Bar Chart
 ```
 <ChartContainer title="Best and Worst Performing Sites">
     <BarChart
-      data={exData4}
+      data={[
+            { name: 'Site1', data: [1] },
+            { name: 'Site2', data: [1.5] },
+            { name: 'Site3', data: [2] },
+            { name: 'Site4', data: [2] },
+            { name: 'Site5', data: [0, 3] },
+            { name: 'Site6', data: [0, 3.5] },
+            { name: 'Site7', data: [0, 3.75] },
+            { name: 'newSite8', data: [0, 5] },
+            { name: 'newSite1', data: [0, 6] },
+            { name: 'newSite2', data: [0, 6] },
+            { name: 'newSite3', data: [0, 7] },
+            { name: 'newSite4', data: [0, 0, 7.5] },
+            { name: 'newSite5', data: [0, 0, 7.5] },
+            { name: 'newSite6', data: [0, 0, 8] },
+            { name: 'newSite7', data: [0, 0, 9] },
+            { name: 'newSite9', data: [0, 0, 9.75] },
+        ]}
       color={['#e85163', '#a8e6f2', '#73d449']}
       spacing={0.3}
       numLabelSize={30}
@@ -120,12 +149,12 @@ Primary 3-Color Bar Chart
 A BarChart can be designed in nearly any style, by changing the value of any of the following props:
 
 
-data
-color (['#3cc0cd', '#7d97bc', '#9874b2', '#f36283'])
-hideLabel (true)
-hideTicks (true)
-hideAxes (false)
-spacing (0.4)
-numLabelSize (18)
-styleWide (false)
-xOnly (false)
+data  
+color (['#3cc0cd', '#7d97bc', '#9874b2', '#f36283'])  
+hideLabel (true)  
+hideTicks (true)  
+hideAxes (false)  
+spacing (0.4)  
+numLabelSize (18)  
+styleWide (false)  
+xOnly (false)  
