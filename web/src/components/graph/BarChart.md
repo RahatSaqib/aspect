@@ -144,17 +144,8 @@ Primary 3-Color Bar Chart
 </ChartContainer>
 ```
 
-### Props
+### Customization
 
-A BarChart can be designed in nearly any style, by changing the value of any of the following props:
+A BarChart can be designed in nearly any style, by changing the value of any of its props. If color is not specified, it is based off of the following array: ['#3cc0cd', '#7d97bc', '#9874b2', '#f36283'] 
+ 
 
-
-data  
-color (['#3cc0cd', '#7d97bc', '#9874b2', '#f36283'])  
-hideLabel (true)  
-hideTicks (true)  
-hideAxes (false)  
-spacing (0.4)  
-numLabelSize (18)  
-styleWide (false)  
-xOnly (false)  

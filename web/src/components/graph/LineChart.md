@@ -47,17 +47,6 @@ Primary 2-Line Error Chart (with Average)
 ```
 ```
 
-### Props
+### Customization
 
-A LineChart can be designed in nearly any style, by changing the value of any of the following props (default value in parentheses):
-
-data  
-color (['#7d97bc', '#9874b2', '#3cc0cd', '#f36283'])  
-hideLabel (true)  
-hideTicks (true)  
-hideAxes (true)  
-timeStyle (false)  
-lineSize (5)  
-gridLines (true)  
-numYTicks (3)  
-styleWide (false)  
+A LineChart can be designed in nearly any style, by changing the value of any of its props. If color is not specified, it is based off of the following array: ['#7d97bc', '#9874b2', '#3cc0cd', '#f36283'] 
