@@ -9,17 +9,15 @@ describe('TextInput', () => {
       name: 'fieldName',
       label: 'Field Label',
       disabled: false,
-      fullWidth: true,
       maxLength: 50,
-      inputStyle: {},
+      theme: {},
     }
     const TextInputWrapper = shallow(<TextInput {...props} />)
     const textInputProps = TextInputWrapper.find(Field).props()
 
     expect(textInputProps.name).toEqual(props.name)
     expect(textInputProps.textFieldProps).toEqual({
-      floatingLabelText: props.label,
-      fullWidth: props.fullWidth,
+      label: props.label,
       disabled: props.disabled,
       maxLength: props.maxLength,
       multiLine: props.multiLine,
@@ -27,7 +25,7 @@ describe('TextInput', () => {
       type: 'text',
       autoFocus: undefined,
       style: undefined,
-      inputStyle: props.inputStyle,
+      theme: props.theme,
     })
   })
 
@@ -36,7 +34,6 @@ describe('TextInput', () => {
       name: 'fieldName',
       label: 'Field Label',
       disabled: false,
-      fullWidth: true,
       maxLength: 50,
       type: 'password',
     }
@@ -45,8 +42,7 @@ describe('TextInput', () => {
 
     expect(textInputProps.name).toEqual(props.name)
     expect(textInputProps.textFieldProps).toEqual({
-      floatingLabelText: props.label,
-      fullWidth: props.fullWidth,
+      label: props.label,
       disabled: props.disabled,
       maxLength: props.maxLength,
       multiLine: props.multiLine,
@@ -54,7 +50,7 @@ describe('TextInput', () => {
       type: 'password',
       autoFocus: undefined,
       style: undefined,
-      inputStyle: undefined,
+      theme: undefined,
     })
   })
 })
