@@ -154,7 +154,7 @@
     "react-sparklines": "^1.5.2",
     "react-tap-event-plugin": "^2.0.1",
     "react-toolbox": "^2.0.0-beta.12",
-    "recompose": "^0.23.1",
+    "recompose": "^0.24.0",
     "redux": "^3.5.2",
     "redux-form": "^6.6.3",
     "redux-idle-monitor": "^0.6.2",
