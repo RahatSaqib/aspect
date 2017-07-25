@@ -160,7 +160,7 @@
     "redux-idle-monitor": "^0.6.2",
     "redux-immutable": "^4.0.0",
     "redux-thunk": "^2.2.0",
-    "url-search-params-polyfill": "^1.2.0",
+    "url-search-params-polyfill": "^2.0.0",
     "whatwg-fetch": "^2.0.3"
   }
 }
