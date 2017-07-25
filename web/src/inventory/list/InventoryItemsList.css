@@ -1,2 +1,41 @@
-.Content {
+.Card {
+  padding: 20px;
+  overflow: visible; /* For IconMenu at last row to be visible */
+}
+
+.Card--action {
+  margin-bottom: 2px;
+  display: flex;
+  flex-flow: row;
+  justify-content: space-between;
+}
+
+.Checkbox {
+  margin: 9px 0;
+}
+
+.TooltipIconButton__tooltip {
+  min-width: 120px;
+}
+
+.TooltipIconButton__toggle > svg {
+  vertical-align: middle;
+}
+
+.ProgressBar {
+  opacity: 0;
+}
+
+.ProgressBar--indeterminate {
+  opacity: 1;
+}
+
+.InventoryDataTable {
+  width: 100%;
+  border-spacing: 0;
+  font-size: 14px;
+}
+
+.TablePaginator {
+  padding-bottom: 0;
 }

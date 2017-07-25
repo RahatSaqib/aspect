@@ -14,8 +14,8 @@ const DataTableHead = ({ sortColumnKey, sortColumnDir, columns }) =>
     {columns.map(({ key = index, label, ...restProps }, index) =>
       <TableCell
         key={key}
-        {...restProps}
         data-column={key}
+        {...restProps}
         className={cssClasses(restProps.className, 'TableCell')}
       >
         {label}

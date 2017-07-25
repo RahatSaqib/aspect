@@ -1,7 +1,7 @@
 @import '../../globals/variables.css';
 
 .TableCell {
-  border: none;
+  border-top: none;
 }
 
 .TableRow {
