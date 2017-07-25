@@ -17,7 +17,7 @@ Large Container
 <ReadOnlyField label='label' value='value' lg={true}/>
 ```
 
-### Props
+### Customization
 
 Further customization of this component can be achieved by altering any of the following props: 
 
