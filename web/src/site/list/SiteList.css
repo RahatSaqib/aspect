@@ -1,21 +1,6 @@
-.Card {
-  padding: 20px;
-}
-
-.ProgressBar {
-  opacity: 0;
-}
-
-.ProgressBar--indeterminate {
-  opacity: 1;
-}
+@import '../../components/shared/BrowseList.css';
 
 .SiteDataTable {
-  width: 100%;
-  border-spacing: 0;
-  font-size: 14px;
+  composes: ComponentDataTable;
 }
 
-.TablePaginator {
-  padding-bottom: 0;
-}

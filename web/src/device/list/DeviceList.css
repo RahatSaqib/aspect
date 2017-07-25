@@ -1,19 +1,7 @@
-.Card {
-  padding: 20px;
-}
-
-.ProgressBar {
-  opacity: 0;
-}
-
-.ProgressBar--indeterminate {
-  opacity: 1;
-}
+@import '../../components/shared/BrowseList.css';
 
 .DeviceDataTable {
-  width: 100%;
-  border-spacing: 0;
-  font-size: 14px;
+  composes: ComponentDataTable;
 }
 
 .DeviceDataTableHead__Tests--left {
@@ -22,8 +10,4 @@
 
 .DeviceDataTableHead__Tests--right {
   text-align: left;
-}
-
-.TablePaginator {
-  padding-bottom: 0;
 }
