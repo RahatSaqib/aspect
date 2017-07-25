@@ -1,6 +1,5 @@
 import React from 'react'
-import { Router } from 'react-router'
-import { Switch, Route, Redirect } from 'react-router-dom'
+import { Router, Switch, Route, Redirect } from 'react-router-dom'
 import Paper from 'material-ui/Paper'
 
 import history from '../history'

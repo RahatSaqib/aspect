@@ -1,6 +1,6 @@
 import classnames from 'classnames/bind'
 import React from 'react'
-import { Route } from 'react-router'
+import { Route } from 'react-router-dom'
 import Helmet from 'react-helmet'
 import { bindActionCreators } from 'redux'
 import { connect } from 'react-redux'
