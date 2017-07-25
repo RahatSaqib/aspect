@@ -2,86 +2,66 @@
 # yarn lockfile v1
 
 
-"@vx/axis@^0.0.119":
-  version "0.0.119"
-  resolved "https://registry.yarnpkg.com/@vx/axis/-/axis-0.0.119.tgz#21f681b42c52a8fa743c22dae9da798c9f15a9c0"
+"@vx/axis@^0.0.131":
+  version "0.0.131"
+  resolved "https://registry.yarnpkg.com/@vx/axis/-/axis-0.0.131.tgz#cf90bb1e5a0b0d19619e60cdb91be90774db5df2"
   dependencies:
-    "@vx/group" "0.0.114"
-    "@vx/point" "0.0.112"
-    "@vx/shape" "0.0.119"
+    "@vx/group" "0.0.127"
+    "@vx/point" "0.0.127"
+    "@vx/shape" "0.0.131"
     classnames "^2.2.5"
-    react "^15.4.2"
 
-"@vx/curve@0.0.112":
-  version "0.0.112"
-  resolved "https://registry.yarnpkg.com/@vx/curve/-/curve-0.0.112.tgz#8e4880a7ae8902bbd5b337ad1b0719bdfb28df3d"
+"@vx/curve@0.0.127":
+  version "0.0.127"
+  resolved "https://registry.yarnpkg.com/@vx/curve/-/curve-0.0.127.tgz#f05ea9871a97e1e1d59129b847f216751ffb31c3"
   dependencies:
     d3-shape "^1.0.6"
 
-"@vx/gradient@^0.0.112":
-  version "0.0.112"
-  resolved "https://registry.yarnpkg.com/@vx/gradient/-/gradient-0.0.112.tgz#9a4bb18a734137b51e86d8c89d52a4c4216ada7c"
+"@vx/gradient@^0.0.129":
+  version "0.0.129"
+  resolved "https://registry.yarnpkg.com/@vx/gradient/-/gradient-0.0.129.tgz#2c6f6a41085533166ba6e1c9cdbb3e52d4dd7e85"
   dependencies:
     classnames "^2.2.5"
-    react "^15.4.2"
+    prop-types "^15.5.7"
 
-"@vx/grid@^0.0.120":
-  version "0.0.120"
-  resolved "https://registry.yarnpkg.com/@vx/grid/-/grid-0.0.120.tgz#3471d5cc8a4bef32082ff476ef73fc04db29335e"
+"@vx/grid@^0.0.131":
+  version "0.0.131"
+  resolved "https://registry.yarnpkg.com/@vx/grid/-/grid-0.0.131.tgz#572885166f0a3e05769903f1a4002ef1ade9a252"
   dependencies:
-    "@vx/group" "0.0.120"
-    "@vx/point" "0.0.112"
-    "@vx/shape" "0.0.120"
+    "@vx/group" "0.0.127"
+    "@vx/point" "0.0.127"
+    "@vx/shape" "0.0.131"
     classnames "^2.2.5"
 
-"@vx/group@0.0.114", "@vx/group@^0.0.114":
-  version "0.0.114"
-  resolved "https://registry.yarnpkg.com/@vx/group/-/group-0.0.114.tgz#3256d6c26e005dc662a6b8be42dc8ec9ce2f47da"
-  dependencies:
-    classnames "^2.2.5"
-    react "15.4.2"
-
-"@vx/group@0.0.120":
-  version "0.0.120"
-  resolved "https://registry.yarnpkg.com/@vx/group/-/group-0.0.120.tgz#0cc8bc8f40e371585c8c523d98c41cc62684aab9"
+"@vx/group@0.0.127", "@vx/group@^0.0.127":
+  version "0.0.127"
+  resolved "https://registry.yarnpkg.com/@vx/group/-/group-0.0.127.tgz#d607c957119cdb787aa709818532f40e7e04eb8f"
   dependencies:
     classnames "^2.2.5"
 
-"@vx/point@0.0.112":
-  version "0.0.112"
-  resolved "https://registry.yarnpkg.com/@vx/point/-/point-0.0.112.tgz#cd5b0740268bb432550902ad5e00261bad641cef"
+"@vx/point@0.0.127":
+  version "0.0.127"
+  resolved "https://registry.yarnpkg.com/@vx/point/-/point-0.0.127.tgz#51ef7f648488feed758a6ec1cc8c71319602e3e7"
 
-"@vx/responsive@^0.0.120":
-  version "0.0.120"
-  resolved "https://registry.yarnpkg.com/@vx/responsive/-/responsive-0.0.120.tgz#31c021f213796570787cdd2d2ddb90c4c9444e39"
+"@vx/responsive@^0.0.127":
+  version "0.0.127"
+  resolved "https://registry.yarnpkg.com/@vx/responsive/-/responsive-0.0.127.tgz#f0061c90e7945b587db5d97b79d6cfd4b37120a7"
   dependencies:
     lodash "^4.0.8"
 
-"@vx/scale@^0.0.117":
-  version "0.0.117"
-  resolved "https://registry.yarnpkg.com/@vx/scale/-/scale-0.0.117.tgz#f0b1fe2cdb3d4292cfead57e110807f375b48b6d"
+"@vx/scale@^0.0.127":
+  version "0.0.127"
+  resolved "https://registry.yarnpkg.com/@vx/scale/-/scale-0.0.127.tgz#2f81530c89b1ad837be387aaccebedd507f16549"
   dependencies:
     d3-scale "^1.0.5"
 
-"@vx/shape@0.0.119", "@vx/shape@^0.0.119":
-  version "0.0.119"
-  resolved "https://registry.yarnpkg.com/@vx/shape/-/shape-0.0.119.tgz#6e74b5844de570ca79e37864de5538c43cfd851f"
+"@vx/shape@0.0.131", "@vx/shape@^0.0.131":
+  version "0.0.131"
+  resolved "https://registry.yarnpkg.com/@vx/shape/-/shape-0.0.131.tgz#38585e93319c9f958d317485b0b6520ff295f179"
   dependencies:
-    "@vx/curve" "0.0.112"
-    "@vx/group" "0.0.114"
-    "@vx/point" "0.0.112"
-    classnames "^2.2.5"
-    d3-shape "^1.2.0"
-    prop-types "^15.5.10"
-    react "^15.4.2"
-
-"@vx/shape@0.0.120":
-  version "0.0.120"
-  resolved "https://registry.yarnpkg.com/@vx/shape/-/shape-0.0.120.tgz#53d5457ec58e298bed507baff015fed2507ac741"
-  dependencies:
-    "@vx/curve" "0.0.112"
-    "@vx/group" "0.0.120"
-    "@vx/point" "0.0.112"
+    "@vx/curve" "0.0.127"
+    "@vx/group" "0.0.127"
+    "@vx/point" "0.0.127"
     classnames "^2.2.5"
     d3-shape "^1.2.0"
     prop-types "^15.5.10"
@@ -6913,15 +6893,7 @@ react-transition-group@^1.1.2, react-transition-group@^1.1.3:
     prop-types "^15.5.6"
     warning "^3.0.0"
 
-react@15.4.2:
-  version "15.4.2"
-  resolved "https://registry.yarnpkg.com/react/-/react-15.4.2.tgz#41f7991b26185392ba9bae96c8889e7e018397ef"
-  dependencies:
-    fbjs "^0.8.4"
-    loose-envify "^1.1.0"
-    object-assign "^4.1.0"
-
-react@^15.4.2, react@^15.5.4:
+react@^15.5.4:
   version "15.6.1"
   resolved "https://registry.yarnpkg.com/react/-/react-15.6.1.tgz#baa8434ec6780bde997cdc380b79cd33b96393df"
   dependencies:
