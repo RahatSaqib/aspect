@@ -136,7 +136,7 @@
     "keycode": "^2.1.8",
     "lodash": "^4.17.4",
     "material-ui": "^0.18.3",
-    "piwik-react-router": "^0.8.2",
+    "piwik-react-router": "^0.9.0",
     "prop-types": "^15.5.8",
     "raven-js": "^3.14.2",
     "react": "^15.5.4",
