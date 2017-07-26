@@ -7,7 +7,7 @@ import { Button } from 'react-toolbox/lib/button'
 
 import recomposeForm from '../../components/recomposeForm'
 import FlagIcon from '../../components/shared/flagIcon/FlagIcon'
-import { timezones } from '../../filter/hardcoded'
+import { timezones, languages } from '../../filter/hardcoded'
 import messages from './messages'
 
 const cssClasses = classnames.bind(require('./PersonDetail.css'))
@@ -113,8 +113,3 @@ export const UserPreferencesForm = ({
   </form>
 
 export default enhance(UserPreferencesForm)
-
-const languages = [
-  { culture: 'fr-FR', language_name: 'French (FR)', iso_alpha2_code: 'FR' },
-  { culture: 'en-US', language_name: 'English (US)', iso_alpha2_code: 'US' },
-]
