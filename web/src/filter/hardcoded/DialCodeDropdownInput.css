@@ -1,0 +1,11 @@
+.Container {
+  display: flex;
+}
+
+.DialCodeDropdown__dropdown {
+  min-width: 200px;
+}
+
+.Input {
+  flex-grow: 1;
+}
