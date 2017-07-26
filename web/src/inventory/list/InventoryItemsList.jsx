@@ -11,7 +11,6 @@ import { Card } from 'react-toolbox/lib/card'
 import { Checkbox } from 'react-toolbox/lib/checkbox'
 import { IconButton } from 'react-toolbox/lib/button'
 import withTooltip from 'react-toolbox/lib/tooltip'
-import { ProgressBar } from 'react-toolbox/lib/progress_bar'
 import { IconMenu, MenuItem } from 'react-toolbox/lib/menu'
 import MdAdd from 'react-icons/lib/md/add'
 import MdTransfer from 'react-icons/lib/md/swap-horiz'
@@ -21,6 +20,7 @@ import MdMoreVert from 'react-icons/lib/md/more-vert'
 
 import NavTitle from '../../globals/components/NavTitle'
 import BrowseFilters from '../../globals/components/BrowseFilters'
+import DataTableProgressBar from '../../globals/components/DataTableProgressBar'
 import EmptyList from '../../components/shared/EmptyList'
 import TablePaginator from '../../components/shared/TablePaginator'
 import { showAcknowledgement } from '../../appNotification/AppNotificationRedux'
@@ -326,13 +326,9 @@ export const InventoryItemsList = ({
     {items.currentIdList.isEmpty() && <EmptyList />}
     {!items.currentIdList.isEmpty() &&
       <Card className={cssClasses('Card')}>
-        <ProgressBar
+        <DataTableProgressBar
           mode={table.loading ? 'indeterminate' : 'determinate'}
           disabled={!table.loading}
-          className={cssClasses('ProgressBar')}
-          theme={{
-            indeterminate: cssClasses('ProgressBar--indeterminate'),
-          }}
         />
         <InventoryDataTable
           selectable={false}
@@ -418,7 +414,6 @@ export const InventoryItemsList = ({
             )}
         </InventoryDataTable>
         <TablePaginator
-          className={cssClasses('TablePaginator')}
           intl={intl}
           paginatorStatus={messages.paginatorStatus}
           page={table.page}
