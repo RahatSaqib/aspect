@@ -105,6 +105,21 @@ export class AccountDetails extends PureComponent {
     this.setState({ currentPasswordInputDialogOpen: false })
   }
 
+  handleSaveContactDetails = values =>
+    this.props.saveContactDetails({
+      id: this.props.accountDetails.getIn(['contactDetails', 'id']),
+      name: values.name,
+      title: values.title,
+      email: values.email,
+      email2: values.email2,
+      phone: values.phone,
+      cell: values.cell,
+      countryId: values.countryId,
+      stateId: values.stateId,
+      lgaId: values.lgaId,
+      zip: values.zip,
+    })
+
   handleSaveLoginDetails = values => {
     this.props.saveLoginDetails(values).then(
       () => {
@@ -128,7 +143,6 @@ export class AccountDetails extends PureComponent {
       loading,
       saving,
       accountDetails,
-      saveContactDetails,
       saveUserPreferences,
     } = this.props
     const { formatMessage } = intl
@@ -156,9 +170,10 @@ export class AccountDetails extends PureComponent {
                 {formatMessage(personDetailsMessages.contactDetails)}
               </Visible>
               <ContactDetailsForm
+                intl={intl}
                 loading={loading || saving}
-                initialValues={accountDetails.get('contactDetails')}
-                onSubmit={saveContactDetails}
+                contactDetails={accountDetails.get('contactDetails')}
+                onSubmit={this.handleSaveContactDetails}
               />
             </Tab>
             <Tab

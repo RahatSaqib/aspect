@@ -19,6 +19,15 @@
   margin: 2em 0 -1em;
 }
 
+.GeographyDropdownGroup {
+  display: flex;
+}
+
+.GeographyDropdown {
+  flex-grow: 1;
+  vertical-align: bottom;
+}
+
 .Form__ActionRow {
   composes: Form__ActionRow from '../../components/shared/Shared.css';
 }

@@ -152,9 +152,15 @@ export class PersonDetail extends PureComponent {
     fetchPartnersAndJobFunctionsForSelectList()
   }
 
-  saveContactDetails = formValues => {
-    const { updateSinglePerson } = this.props
-    return updateSinglePerson(formValues.get('id'), formValues)
+  saveContactDetails = values => {
+    const { person, updateSinglePerson } = this.props
+    const contactDetails = new ContactDetails(person)
+    return updateSinglePerson(contactDetails.get('id'), values).then(() => {
+      this.props.showAcknowledgement({
+        title: messages.detailsUpdatedSuccessfully,
+        message: messages.contactDetailsUpdatedMessage,
+      })
+    })
   }
 
   saveLoginDetails = ({ username, newPassword }) => {
@@ -184,12 +190,7 @@ export class PersonDetail extends PureComponent {
     const userPreferences = new UserPreferences(person)
     const userIsAdmin = user.get('permissions').includes('person:admin')
     const loading = !person || person.get('loaded') !== true
-    const saveContactDetailsSucceeded = () => {
-      showAcknowledgement({
-        title: messages.detailsUpdatedSuccessfully,
-        message: messages.contactDetailsUpdatedMessage,
-      })
-    }
+
     const saveUserPreferencesSucceeded = () => {
       showAcknowledgement({
         title: messages.detailsUpdatedSuccessfully,
@@ -222,13 +223,12 @@ export class PersonDetail extends PureComponent {
                   {formatMessage(messages.contactDetails)}
                 </Visible>
                 <ContactDetailsForm
+                  intl={intl}
                   loading={loading}
-                  initialValues={contactDetails}
-                  partners={this.state.partners}
+                  contactDetails={contactDetails}
                   showNotesField
                   userIsAdmin
                   onSubmit={this.saveContactDetails}
-                  onSubmitSuccess={saveContactDetailsSucceeded}
                 />
               </Tab>
               {userIsAdmin &&
