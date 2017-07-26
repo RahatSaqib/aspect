@@ -7,7 +7,7 @@ import { Button } from 'react-toolbox/lib/button'
 
 import recomposeForm from '../../components/recomposeForm'
 import FlagIcon from '../../components/shared/flagIcon/FlagIcon'
-import { timezones } from '../../shared/utils/timezone'
+import { timezones } from '../../filter/hardcoded'
 import messages from './messages'
 
 const cssClasses = classnames.bind(require('./PersonDetail.css'))

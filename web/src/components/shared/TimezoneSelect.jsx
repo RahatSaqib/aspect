@@ -1,6 +1,6 @@
 import React from 'react'
 import SelectInput from './SelectInput'
-import { timezones } from '../../shared/utils/timezone'
+import { timezones } from '../../filter/hardcoded'
 
 const renderFormField = props => {
   const { name, label, disabled, fullWidth, defaultTimezoneText } = props
