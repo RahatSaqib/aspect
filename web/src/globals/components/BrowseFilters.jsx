@@ -49,7 +49,21 @@ const enhance = compose(
       const searchParams = new URLSearchParams(location.search)
       const filtersParams = new URLSearchParams(searchParams.get('filters'))
 
-      filtersParams.delete(filterKey)
+      switch (filterKey) {
+        case 'countryId':
+          filtersParams.delete(filterKey)
+          filtersParams.delete('stateId')
+          filtersParams.delete('lgaId')
+          break
+        case 'stateId':
+          filtersParams.delete(filterKey)
+          filtersParams.delete('lgaId')
+          break
+        default:
+          filtersParams.delete(filterKey)
+          break
+      }
+
       searchParams.set('filters', filtersParams)
 
       history.replace({
