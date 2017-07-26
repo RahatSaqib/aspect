@@ -1,6 +1,8 @@
 ### Usage
-
+```js
+import { LocationSelector } from 'src/components/shared/LocationSelector'
+```
 ### Variations
 ```
-<LocationSelector />
+<LocationSelector intl={Canada}/>
 ```

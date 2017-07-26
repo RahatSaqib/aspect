@@ -9,12 +9,12 @@ The ReadOnlyFields component creates a read-only style field container, which in
 ### Variations
 Standard Container
 ```
-<ReadOnlyField label='label' value='value' />
+<ReadOnlyField label='label' value={20} />
 ```
 
 Large Container
 ```
-<ReadOnlyField label='label' value='value' lg={true}/>
+<ReadOnlyField label='label' value={20} lg={true}/>
 ```
 
 ### Customization
