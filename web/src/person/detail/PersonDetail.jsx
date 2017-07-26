@@ -157,11 +157,17 @@ export class PersonDetail extends PureComponent {
     return updateSinglePerson(formValues.get('id'), formValues)
   }
 
-  saveLoginDetails = formValues => {
-    const { updateSinglePersonLoginDetails } = this.props
-    return updateSinglePersonLoginDetails(formValues.get('id'), {
-      newUsername: formValues.get('username'),
-      newPassword: formValues.get('newPassword'),
+  saveLoginDetails = ({ username, newPassword }) => {
+    const { person, updateSinglePersonLoginDetails } = this.props
+    const loginDetails = new LoginDetails(person)
+    return updateSinglePersonLoginDetails(loginDetails.get('id'), {
+      newUsername: username,
+      newPassword,
+    }).then(() => {
+      this.props.showAcknowledgement({
+        title: messages.detailsUpdatedSuccessfully,
+        message: messages.loginDetailsUpdatedMessage,
+      })
     })
   }
 
@@ -182,12 +188,6 @@ export class PersonDetail extends PureComponent {
       showAcknowledgement({
         title: messages.detailsUpdatedSuccessfully,
         message: messages.contactDetailsUpdatedMessage,
-      })
-    }
-    const saveLoginDetailsSucceeded = () => {
-      showAcknowledgement({
-        title: messages.detailsUpdatedSuccessfully,
-        message: messages.loginDetailsUpdatedMessage,
       })
     }
     const saveUserPreferencesSucceeded = () => {
@@ -245,10 +245,10 @@ export class PersonDetail extends PureComponent {
                     {formatMessage(messages.systemAccessControl)}
                   </Visible>
                   <LoginDetailsForm
+                    intl={intl}
                     loading={loading}
-                    initialValues={loginDetails}
+                    loginDetails={loginDetails}
                     onSubmit={this.saveLoginDetails}
-                    onSubmitSuccess={saveLoginDetailsSucceeded}
                   />
                 </Tab>}
               <Tab
