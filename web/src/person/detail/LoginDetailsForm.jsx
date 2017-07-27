@@ -6,7 +6,7 @@ import { Button } from 'react-toolbox/lib/button'
 import { Input } from 'react-toolbox/lib/input'
 import { Dialog } from 'react-toolbox/lib/dialog'
 
-import { StrongPasswordInput } from '../../components/shared/StrongPasswordInput'
+import StrongPasswordInput from '../../components/shared/StrongPasswordInput'
 import recomposeForm from '../../components/recomposeForm'
 import messages from './messages'
 
