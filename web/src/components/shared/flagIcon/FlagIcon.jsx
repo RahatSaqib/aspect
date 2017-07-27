@@ -10,7 +10,10 @@ export default props =>
         className={cssClasses(
           props.className,
           'flag-icon',
-          `flag-${props.countryIsoAlpha2Code.toLowerCase()}`
+          `flag-${props.countryIsoAlpha2Code.toLowerCase()}`,
+          {
+            'flag-icon--with-right-margin': props.withRightMargin,
+          }
         )}
       />
-    : null
+    : false

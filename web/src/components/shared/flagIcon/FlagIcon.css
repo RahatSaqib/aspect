@@ -6,6 +6,10 @@
   height: 11px !important;
   background: url("./flagSprites.png");
 }
+.flag-icon--with-right-margin {
+  margin-right: 1em;
+}
+
 .flag-icon.flag-ad {
   background-position: -16px 0;
 }
