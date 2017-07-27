@@ -137,14 +137,14 @@ export class AccountDetails extends PureComponent {
     )
   }
 
+  handleSaveUserPreferences = values =>
+    this.props.saveUserPreferences({
+      id: this.props.accountDetails.getIn(['userPreferences', 'id']),
+      ...values,
+    })
+
   render() {
-    const {
-      intl,
-      loading,
-      saving,
-      accountDetails,
-      saveUserPreferences,
-    } = this.props
+    const { intl, loading, saving, accountDetails } = this.props
     const { formatMessage } = intl
 
     return (
@@ -219,8 +219,8 @@ export class AccountDetails extends PureComponent {
               <UserPreferencesForm
                 intl={intl}
                 loading={loading || saving}
-                initialValues={accountDetails.get('userPreferences')}
-                onSubmit={saveUserPreferences}
+                userPreferences={accountDetails.get('userPreferences')}
+                onSubmit={this.handleSaveUserPreferences}
               />
             </Tab>
           </Tabs>

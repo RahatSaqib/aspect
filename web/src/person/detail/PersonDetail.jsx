@@ -177,26 +177,28 @@ export class PersonDetail extends PureComponent {
     })
   }
 
-  saveUserPreferences = formValues => {
-    const { updateSinglePersonUserPreferences } = this.props
-    return updateSinglePersonUserPreferences(formValues.get('id'), formValues)
+  saveUserPreferences = values => {
+    const { person, updateSinglePersonUserPreferences } = this.props
+    const userPreferences = new UserPreferences(person)
+    return updateSinglePersonUserPreferences(
+      userPreferences.get('id'),
+      values
+    ).then(() => {
+      this.props.showAcknowledgement({
+        title: messages.detailsUpdatedSuccessfully,
+        message: messages.userPreferencesUpdatedMessage,
+      })
+    })
   }
 
   render() {
-    const { intl, person, user, editable, showAcknowledgement } = this.props
+    const { intl, person, user, editable } = this.props
     const { formatMessage } = intl
     const contactDetails = new ContactDetails(person)
     const loginDetails = new LoginDetails(person)
     const userPreferences = new UserPreferences(person)
     const userIsAdmin = user.get('permissions').includes('person:admin')
     const loading = !person || person.get('loaded') !== true
-
-    const saveUserPreferencesSucceeded = () => {
-      showAcknowledgement({
-        title: messages.detailsUpdatedSuccessfully,
-        message: messages.userPreferencesUpdatedMessage,
-      })
-    }
 
     return (
       <div className={styles.Content}>
@@ -266,9 +268,8 @@ export class PersonDetail extends PureComponent {
                 <UserPreferencesForm
                   intl={intl}
                   loading={loading}
-                  initialValues={userPreferences}
+                  userPreferences={userPreferences}
                   onSubmit={this.saveUserPreferences}
-                  onSubmitSuccess={saveUserPreferencesSucceeded}
                 />
               </Tab>
             </Tabs>}
