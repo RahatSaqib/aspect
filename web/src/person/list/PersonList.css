@@ -1,6 +1,5 @@
-@import '../../components/shared/BrowseList.css';
+@import '../../components/shared/DataTable.css';
 
 .PersonDataTable {
   composes: ComponentDataTable;
 }
-

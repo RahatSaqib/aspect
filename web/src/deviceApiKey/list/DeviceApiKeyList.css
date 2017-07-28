@@ -1,4 +1,4 @@
-@import '../../components/shared/BrowseList.css';
+@import '../../components/shared/DataTable.css';
 
 .DeviceApiKeyDataTable {
   composes: ComponentDataTable;
