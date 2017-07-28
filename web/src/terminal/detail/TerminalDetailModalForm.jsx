@@ -1,6 +1,6 @@
 // Imports from packages
+import _ from 'lodash'
 import classnames from 'classnames/bind'
-import _fp from 'lodash/fp'
 import PropTypes from 'prop-types'
 import React from 'react'
 import { compose, setPropTypes, pure } from 'recompose'
@@ -43,11 +43,11 @@ const enhance = compose(
       },
       {
         fieldName: 'siteId',
-        valueFromChangeEvent: _fp.identity,
+        valueFromChangeEvent: _.identity,
       },
       {
         fieldName: 'configurationData',
-        valueFromChangeEvent: _fp.identity,
+        valueFromChangeEvent: _.identity,
       },
     ],
     validate(values) {
@@ -173,6 +173,4 @@ function stopEventPropagation(event) {
   event.stopPropagation()
 }
 
-export const TerminalDetailModalFormContainer = enhance(TerminalDetailModalForm)
-
-export default TerminalDetailModalFormContainer
+export default enhance(TerminalDetailModalForm)
