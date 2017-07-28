@@ -140,7 +140,7 @@ export const DeviceDetailModalForm = props => {
             <Link
               className={cssClasses('AutoCompleteField__Inner__Link')}
               title="Go to site"
-              to={`/site/${values.siteId}`}
+              to={`/browse/site/${values.siteId}`}
             >
               <ExitToApp />
             </Link>
