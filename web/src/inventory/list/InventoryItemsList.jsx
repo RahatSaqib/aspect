@@ -7,7 +7,6 @@ import { injectIntl, defineMessages } from 'react-intl'
 import { bindActionCreators } from 'redux'
 import { connect } from 'react-redux'
 import Helmet from 'react-helmet'
-import { Card } from 'react-toolbox/lib/card'
 import { Checkbox } from 'react-toolbox/lib/checkbox'
 import { IconButton } from 'react-toolbox/lib/button'
 import withTooltip from 'react-toolbox/lib/tooltip'
@@ -23,6 +22,7 @@ import BrowseFilters from '../../globals/components/BrowseFilters'
 import DataTableProgressBar from '../../globals/components/DataTableProgressBar'
 import EmptyList from '../../components/shared/EmptyList'
 import TablePaginator from '../../components/shared/TablePaginator'
+import BrowseCard from '../../components/shared/BrowseCard'
 import { showAcknowledgement } from '../../appNotification/AppNotificationRedux'
 import { configureListFilter } from '../../filter/FilterRedux'
 import { testConductedReasonI18nKey } from '../adjustment/InventoryAdjustmentDialogForm'
@@ -305,7 +305,7 @@ export const InventoryItemsList = ({
       intl={intl}
       dateFilterLabel={intl.formatMessage(messages.expiresOn)}
     />
-    <Card className={cssClasses('Card', 'Card--action')}>
+    <BrowseCard>
       <Checkbox
         className={cssClasses('Checkbox')}
         name="groupBySite"
@@ -322,10 +322,10 @@ export const InventoryItemsList = ({
         tooltip={intl.formatMessage(messages.addInventory)}
         onClick={showNewInventoryDialog}
       />
-    </Card>
+    </BrowseCard>
     {items.currentIdList.isEmpty() && <EmptyList />}
     {!items.currentIdList.isEmpty() &&
-      <Card className={cssClasses('Card')}>
+      <BrowseCard>
         <DataTableProgressBar
           mode={table.loading ? 'indeterminate' : 'determinate'}
           disabled={!table.loading}
@@ -422,7 +422,7 @@ export const InventoryItemsList = ({
           onPageChange={onPageChange}
           onPageSizeChange={onPageSizeChange}
         />
-      </Card>}
+      </BrowseCard>}
     <NewInventoryDialogForm
       intl={intl}
       isDialogActive={

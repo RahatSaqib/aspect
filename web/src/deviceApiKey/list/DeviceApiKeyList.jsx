@@ -14,7 +14,6 @@ import { injectIntl, defineMessages } from 'react-intl'
 import { bindActionCreators } from 'redux'
 import { connect } from 'react-redux'
 import Helmet from 'react-helmet'
-import { Card } from 'react-toolbox/lib/card'
 import { Checkbox } from 'react-toolbox/lib/checkbox'
 
 import FlatButton from 'material-ui/FlatButton'
@@ -25,6 +24,7 @@ import BrowseFilters from '../../globals/components/BrowseFilters'
 import DataTableProgressBar from '../../globals/components/DataTableProgressBar'
 import EmptyList from '../../components/shared/EmptyList'
 import TablePaginator from '../../components/shared/TablePaginator'
+import BrowseCard from '../../components/shared/BrowseCard'
 import { configureListFilter } from '../../filter/FilterRedux'
 import {
   exportDeviceApiKeys,
@@ -356,7 +356,7 @@ export const DeviceApiKeyList = ({
     </div>
     {items.currentIdList.isEmpty() && <EmptyList />}
     {!items.currentIdList.isEmpty() &&
-      <Card className={cssClasses('Card')}>
+      <BrowseCard>
         <DataTableProgressBar
           mode={table.loading ? 'indeterminate' : 'determinate'}
           disabled={!table.loading}
@@ -446,7 +446,7 @@ export const DeviceApiKeyList = ({
           onPageChange={onPageChange}
           onPageSizeChange={onPageSizeChange}
         />
-      </Card>}
+      </BrowseCard>}
   </div>
 
 export default enhance(DeviceApiKeyList)

@@ -7,13 +7,13 @@ import { injectIntl, defineMessages } from 'react-intl'
 import { bindActionCreators } from 'redux'
 import { connect } from 'react-redux'
 import Helmet from 'react-helmet'
-import { Card } from 'react-toolbox/lib/card'
 
 // Our own imports
 import NavTitle from '../../globals/components/NavTitle'
 import BrowseFilters from '../../globals/components/BrowseFilters'
 import DataTableProgressBar from '../../globals/components/DataTableProgressBar'
 import EmptyList from '../../components/shared/EmptyList'
+import BrowseCard from '../../components/shared/BrowseCard'
 import TablePaginator from '../../components/shared/TablePaginator'
 import {
   ResultDataTable,
@@ -195,7 +195,7 @@ export const ResultList = ({
     />
     {items.currentIdList.isEmpty() && <EmptyList />}
     {!items.currentIdList.isEmpty() &&
-      <Card className={cssClasses('Card')}>
+      <BrowseCard>
         <DataTableProgressBar
           mode={table.loading ? 'indeterminate' : 'determinate'}
           disabled={!table.loading}
@@ -270,7 +270,7 @@ export const ResultList = ({
           onPageChange={onPageChange}
           onPageSizeChange={onPageSizeChange}
         />
-      </Card>}
+      </BrowseCard>}
   </div>
 
 export default enhance(ResultList)
