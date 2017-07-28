@@ -11,7 +11,7 @@ import Helmet from 'react-helmet'
 // Our own imports
 import NavTitle from '../../globals/components/NavTitle'
 import BrowseFilters from '../../globals/components/BrowseFilters'
-import DataTableProgressBar from '../../globals/components/DataTableProgressBar'
+import DataTableProgressBar from '../../components/shared/DataTableProgressBar'
 import EmptyList from '../../components/shared/EmptyList'
 import BrowseCard from '../../components/shared/BrowseCard'
 import TablePaginator from '../../components/shared/TablePaginator'

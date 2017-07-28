@@ -21,7 +21,7 @@ import FlatButton from 'material-ui/FlatButton'
 // Our own imports
 import NavTitle from '../../globals/components/NavTitle'
 import BrowseFilters from '../../globals/components/BrowseFilters'
-import DataTableProgressBar from '../../globals/components/DataTableProgressBar'
+import DataTableProgressBar from '../../components/shared/DataTableProgressBar'
 import EmptyList from '../../components/shared/EmptyList'
 import TablePaginator from '../../components/shared/TablePaginator'
 import BrowseCard from '../../components/shared/BrowseCard'
