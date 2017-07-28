@@ -50,6 +50,14 @@ const messages = defineMessages({
     id: 'pages.ResultList.sampleGroup',
     defaultMessage: 'Sample Group',
   },
+  resultText: {
+    id: 'pages.ResultList.resultText',
+    defaultMessage: 'Result Text',
+  },
+  resultWorkflowStatus: {
+    id: 'pages.ResultList.resultWorkflowStatus',
+    defaultMessage: 'Result Workflow Status',
+  },
   assayId: {
     id: 'pages.ResultList.assayId',
     defaultMessage: 'Assay',
@@ -235,6 +243,16 @@ export const ResultList = ({
               {
                 key: 'sampleGroup',
                 label: intl.formatMessage(messages.sampleGroup),
+                onClick: onHeadColumnClick,
+              },
+              {
+                key: 'resultText',
+                label: intl.formatMessage(messages.resultText),
+                onClick: onHeadColumnClick,
+              },
+              {
+                key: 'resultWorkflowStatus',
+                label: intl.formatMessage(messages.resultWorkflowStatus),
                 onClick: onHeadColumnClick,
               },
               {
