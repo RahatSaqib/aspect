@@ -22,7 +22,7 @@ import BrowseFilters from '../../globals/components/BrowseFilters'
 import DataTableProgressBar from '../../components/shared/DataTableProgressBar'
 import EmptyList from '../../components/shared/EmptyList'
 import TablePaginator from '../../components/shared/TablePaginator'
-import BrowseCard from '../../components/shared/BrowseCard'
+import DataTableCard from '../../components/shared/DataTableCard'
 import { showAcknowledgement } from '../../appNotification/AppNotificationRedux'
 import { configureListFilter } from '../../filter/FilterRedux'
 import { testConductedReasonI18nKey } from '../adjustment/InventoryAdjustmentDialogForm'
@@ -305,7 +305,7 @@ export const InventoryItemsList = ({
       intl={intl}
       dateFilterLabel={intl.formatMessage(messages.expiresOn)}
     />
-    <BrowseCard>
+    <DataTableCard>
       <Checkbox
         className={cssClasses('Checkbox')}
         name="groupBySite"
@@ -322,10 +322,10 @@ export const InventoryItemsList = ({
         tooltip={intl.formatMessage(messages.addInventory)}
         onClick={showNewInventoryDialog}
       />
-    </BrowseCard>
+    </DataTableCard>
     {items.currentIdList.isEmpty() && <EmptyList />}
     {!items.currentIdList.isEmpty() &&
-      <BrowseCard>
+      <DataTableCard>
         <DataTableProgressBar
           mode={table.loading ? 'indeterminate' : 'determinate'}
           disabled={!table.loading}
@@ -422,7 +422,7 @@ export const InventoryItemsList = ({
           onPageChange={onPageChange}
           onPageSizeChange={onPageSizeChange}
         />
-      </BrowseCard>}
+      </DataTableCard>}
     <NewInventoryDialogForm
       intl={intl}
       isDialogActive={

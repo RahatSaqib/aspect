@@ -12,7 +12,7 @@ import BrowseFilters from '../../globals/components/BrowseFilters'
 import DataTableProgressBar from '../../components/shared/DataTableProgressBar'
 import EmptyList from '../../components/shared/EmptyList'
 import TablePaginator from '../../components/shared/TablePaginator'
-import BrowseCard from '../../components/shared/BrowseCard'
+import DataTableCard from '../../components/shared/DataTableCard'
 import { configureListFilter } from '../../filter/FilterRedux'
 import { fetchListFilteredDevices, exportDevices } from '../DeviceRedux'
 import {
@@ -188,7 +188,7 @@ export const DeviceList = ({
     />
     {items.currentIdList.isEmpty() && <EmptyList />}
     {!items.currentIdList.isEmpty() &&
-      <BrowseCard>
+      <DataTableCard>
         <DataTableProgressBar
           mode={table.loading ? 'indeterminate' : 'determinate'}
           disabled={!table.loading}
@@ -273,7 +273,7 @@ export const DeviceList = ({
           onPageChange={onPageChange}
           onPageSizeChange={onPageSizeChange}
         />
-      </BrowseCard>}
+      </DataTableCard>}
   </div>
 
 export default enhance(DeviceList)

@@ -12,7 +12,7 @@ import BrowseFilters from '../../globals/components/BrowseFilters'
 import DataTableProgressBar from '../../components/shared/DataTableProgressBar'
 import EmptyList from '../../components/shared/EmptyList'
 import TablePaginator from '../../components/shared/TablePaginator'
-import BrowseCard from '../../components/shared/BrowseCard'
+import DataTableCard from '../../components/shared/DataTableCard'
 import { configureListFilter } from '../../filter/FilterRedux'
 import { fetchListFilteredNotifications } from '../NotificationRedux'
 import {
@@ -138,7 +138,7 @@ export const NotificationList = ({
     <BrowseFilters history={history} location={location} intl={intl} />
     {items.currentIdList.isEmpty() && <EmptyList />}
     {!items.currentIdList.isEmpty() &&
-      <BrowseCard>
+      <DataTableCard>
         <DataTableProgressBar
           mode={table.loading ? 'indeterminate' : 'determinate'}
           disabled={!table.loading}
@@ -189,7 +189,7 @@ export const NotificationList = ({
           onPageChange={onPageChange}
           onPageSizeChange={onPageSizeChange}
         />
-      </BrowseCard>}
+      </DataTableCard>}
   </div>
 
 export default enhance(NotificationList)

@@ -13,7 +13,7 @@ import NavTitle from '../../globals/components/NavTitle'
 import BrowseFilters from '../../globals/components/BrowseFilters'
 import DataTableProgressBar from '../../components/shared/DataTableProgressBar'
 import EmptyList from '../../components/shared/EmptyList'
-import BrowseCard from '../../components/shared/BrowseCard'
+import DataTableCard from '../../components/shared/DataTableCard'
 import TablePaginator from '../../components/shared/TablePaginator'
 import {
   ResultDataTable,
@@ -195,7 +195,7 @@ export const ResultList = ({
     />
     {items.currentIdList.isEmpty() && <EmptyList />}
     {!items.currentIdList.isEmpty() &&
-      <BrowseCard>
+      <DataTableCard>
         <DataTableProgressBar
           mode={table.loading ? 'indeterminate' : 'determinate'}
           disabled={!table.loading}
@@ -270,7 +270,7 @@ export const ResultList = ({
           onPageChange={onPageChange}
           onPageSizeChange={onPageSizeChange}
         />
-      </BrowseCard>}
+      </DataTableCard>}
   </div>
 
 export default enhance(ResultList)
