@@ -3,7 +3,6 @@
   --lato-font-weight-bold: 700;
   --lato-font-weight-black: 900;
 
-  --aspect-color-mountain: #9874b2;
   --aspect-color-cyan: #3cc0cd;
 
   --aspect-color-chill-blue-1: #34717c;
@@ -14,6 +13,14 @@
   --aspect-color-grey-6: #dadbdf;
   --aspect-color-grey-7: #eef1f8;
   --aspect-color-grey-8: #f6f7fb;
+
+  --aspect-color-mantis: #73d449;
+  --aspect-color-mandy: #e75164;
+
+  --aspect-color-ship-cove: #7d96bb;
+  --aspect-color-shakespeare: #41aeda;
+  --aspect-color-mountain: #9874b2;
+  --aspect-color-brink: #f36283;
 
   --z-index-overlay: 900;
   --z-index-dialog: 950;
