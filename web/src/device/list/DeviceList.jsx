@@ -5,14 +5,14 @@ import { injectIntl, defineMessages } from 'react-intl'
 import { bindActionCreators } from 'redux'
 import { connect } from 'react-redux'
 import Helmet from 'react-helmet'
-import { Card } from 'react-toolbox/lib/card'
-import { ProgressBar } from 'react-toolbox/lib/progress_bar'
 
 // Our own imports
 import NavTitle from '../../globals/components/NavTitle'
 import BrowseFilters from '../../globals/components/BrowseFilters'
+import DataTableProgressBar from '../../components/shared/DataTableProgressBar'
 import EmptyList from '../../components/shared/EmptyList'
 import TablePaginator from '../../components/shared/TablePaginator'
+import DataTableCard from '../../components/shared/DataTableCard'
 import { configureListFilter } from '../../filter/FilterRedux'
 import { fetchListFilteredDevices, exportDevices } from '../DeviceRedux'
 import {
@@ -188,14 +188,10 @@ export const DeviceList = ({
     />
     {items.currentIdList.isEmpty() && <EmptyList />}
     {!items.currentIdList.isEmpty() &&
-      <Card className={cssClasses('Card')}>
-        <ProgressBar
+      <DataTableCard>
+        <DataTableProgressBar
           mode={table.loading ? 'indeterminate' : 'determinate'}
           disabled={!table.loading}
-          className={cssClasses('ProgressBar')}
-          theme={{
-            indeterminate: cssClasses('ProgressBar--indeterminate'),
-          }}
         />
         <DeviceDataTable
           selectable={false}
@@ -269,7 +265,6 @@ export const DeviceList = ({
             )}
         </DeviceDataTable>
         <TablePaginator
-          className={cssClasses('TablePaginator')}
           intl={intl}
           paginatorStatus={messages.paginatorStatus}
           page={table.page}
@@ -278,7 +273,7 @@ export const DeviceList = ({
           onPageChange={onPageChange}
           onPageSizeChange={onPageSizeChange}
         />
-      </Card>}
+      </DataTableCard>}
   </div>
 
 export default enhance(DeviceList)

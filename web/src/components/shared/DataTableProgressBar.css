@@ -1,0 +1,7 @@
+.ProgressBar {
+  opacity: 0;
+}
+
+.ProgressBar--indeterminate {
+  opacity: 1;
+}

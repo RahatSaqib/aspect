@@ -7,11 +7,9 @@ import { injectIntl, defineMessages } from 'react-intl'
 import { bindActionCreators } from 'redux'
 import { connect } from 'react-redux'
 import Helmet from 'react-helmet'
-import { Card } from 'react-toolbox/lib/card'
 import { Checkbox } from 'react-toolbox/lib/checkbox'
 import { IconButton } from 'react-toolbox/lib/button'
 import withTooltip from 'react-toolbox/lib/tooltip'
-import { ProgressBar } from 'react-toolbox/lib/progress_bar'
 import { IconMenu, MenuItem } from 'react-toolbox/lib/menu'
 import MdAdd from 'react-icons/lib/md/add'
 import MdTransfer from 'react-icons/lib/md/swap-horiz'
@@ -21,8 +19,10 @@ import MdMoreVert from 'react-icons/lib/md/more-vert'
 
 import NavTitle from '../../globals/components/NavTitle'
 import BrowseFilters from '../../globals/components/BrowseFilters'
+import DataTableProgressBar from '../../components/shared/DataTableProgressBar'
 import EmptyList from '../../components/shared/EmptyList'
 import TablePaginator from '../../components/shared/TablePaginator'
+import DataTableCard from '../../components/shared/DataTableCard'
 import { showAcknowledgement } from '../../appNotification/AppNotificationRedux'
 import { configureListFilter } from '../../filter/FilterRedux'
 import { testConductedReasonI18nKey } from '../adjustment/InventoryAdjustmentDialogForm'
@@ -305,7 +305,7 @@ export const InventoryItemsList = ({
       intl={intl}
       dateFilterLabel={intl.formatMessage(messages.expiresOn)}
     />
-    <Card className={cssClasses('Card', 'Card--action')}>
+    <DataTableCard>
       <Checkbox
         className={cssClasses('Checkbox')}
         name="groupBySite"
@@ -322,17 +322,13 @@ export const InventoryItemsList = ({
         tooltip={intl.formatMessage(messages.addInventory)}
         onClick={showNewInventoryDialog}
       />
-    </Card>
+    </DataTableCard>
     {items.currentIdList.isEmpty() && <EmptyList />}
     {!items.currentIdList.isEmpty() &&
-      <Card className={cssClasses('Card')}>
-        <ProgressBar
+      <DataTableCard>
+        <DataTableProgressBar
           mode={table.loading ? 'indeterminate' : 'determinate'}
           disabled={!table.loading}
-          className={cssClasses('ProgressBar')}
-          theme={{
-            indeterminate: cssClasses('ProgressBar--indeterminate'),
-          }}
         />
         <InventoryDataTable
           selectable={false}
@@ -418,7 +414,6 @@ export const InventoryItemsList = ({
             )}
         </InventoryDataTable>
         <TablePaginator
-          className={cssClasses('TablePaginator')}
           intl={intl}
           paginatorStatus={messages.paginatorStatus}
           page={table.page}
@@ -427,7 +422,7 @@ export const InventoryItemsList = ({
           onPageChange={onPageChange}
           onPageSizeChange={onPageSizeChange}
         />
-      </Card>}
+      </DataTableCard>}
     <NewInventoryDialogForm
       intl={intl}
       isDialogActive={
