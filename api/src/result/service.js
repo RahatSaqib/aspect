@@ -31,6 +31,9 @@ const SELECT_LIST_FIELDS = [
   'a.name as assayName',
   'a.id as assayId',
   'r.deviceId',
+  knex.raw(
+    'JSON_UNQUOTE(JSON_EXTRACT(r.resultData, "$.resultText")) as resultText'
+  ),
   knex.raw('JSON_UNQUOTE(JSON_EXTRACT(r.patientData, "$.id")) as patientId'),
 ]
 
@@ -84,10 +87,12 @@ const SORT_FIELDS = [
   'stateName',
   'lgaName',
   'sampleId',
-  'patientId',
+  'sampleGroup',
+  'resultText',
+  'resultWorkflowStatus',
   'resultCategory1Name',
   'resultCategory2Name',
-  'sampleGroup',
+  'patientId',
 ]
 
 function* getListResults(query, auth) {
