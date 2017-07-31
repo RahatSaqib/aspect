@@ -87,10 +87,12 @@ const SORT_FIELDS = [
   'stateName',
   'lgaName',
   'sampleId',
-  'patientId',
+  'sampleGroup',
+  'resultText',
+  'resultWorkflowStatus',
   'resultCategory1Name',
   'resultCategory2Name',
-  'sampleGroup',
+  'patientId',
 ]
 
 function* getListResults(query, auth) {
