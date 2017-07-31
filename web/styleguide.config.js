@@ -16,7 +16,7 @@ module.exports = {
   components: () => [
     ...glob.sync('src/components/themedReactToolbox/!(index).{js,jsx}'),
     ...glob.sync(
-      'src/components/shared/@(ReadOnlyFields|FallbackUntilDone|FocusBlurTextField|requirePermissions|LocationSelector|FallbackUntilDone).{js,jsx}'
+      'src/components/shared/@(ReadOnlyFields|FallbackUntilDone|FocusBlurTextField|FallbackUntilDone).{js,jsx}'
     ),
     ...glob.sync(
       'src/components/graph/@(BarChart|ColumnChart|LineChart|ChartContainer|ChartAlert).{js,jsx}'
