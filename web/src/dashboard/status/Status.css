@@ -1,0 +1,148 @@
+@import '../../globals/variables.css';
+
+.Section {
+  padding: 10px 0;
+}
+
+.Section__Content {
+  padding: 20px;
+}
+
+.Summary {
+  padding: 0 10px;
+  display: block;
+  color: inherit;
+}
+
+.Summary:hover {
+  text-decoration: inherit;
+}
+
+.Summary__Card {
+  padding: 5px 15px;
+  line-height: 48px;
+}
+
+.Summary__Card__Title {
+  text-transform: capitalize;
+}
+
+.Summary__Card__Title__Icon {
+  font-size: 36px;
+}
+
+.Summary__Card__Title__Sub {
+  margin-left: .5em;
+  color: var(--aspect-color-grey-4);
+}
+
+.Summary__Card__Count {
+  font-size: 40px;
+}
+
+.Title {
+  display: flex;
+  text-transform: capitalize;
+  font-size: 24px;
+  color: var(--aspect-color-grey-2);
+}
+
+.Title__Color {
+  width: 24px;
+  height: 24px;
+  margin-right: 1em;
+  border-radius: 3px;
+}
+
+.Title__Color--result {
+  background-color: var(--aspect-color-ship-cove);
+}
+
+.Title__Color--inventory {
+  background-color: var(--aspect-color-mountain);
+}
+
+.Title__Color--device {
+  background-color: var(--aspect-color-shakespeare);
+}
+
+.Title__Color--site {
+  background-color: var(--aspect-color-brink);
+}
+
+.ChartContainer {
+  padding: 20px;
+}
+
+.Shared__Block {
+  margin: 10px;
+  background-color: var(--aspect-color-grey-8);
+}
+
+.SummaryItemsBlock {
+  composes: Shared__Block;
+  padding: 20px;
+}
+
+.SummaryItemsBlock__Title {
+  font-weight: var(--lato-font-weight-bold);
+}
+
+.SummaryItemsBlock__Title::first-letter {
+  text-transform: capitalize;
+}
+
+.SummaryItemsBlock__Items {
+  margin: -10px 0;
+  padding: 20px 0 0 0;
+}
+
+.SummaryItemsBlock__Item {
+  padding: 10px 0;
+  display: flex;
+  flex-flow: row wrap;
+}
+
+.SummaryItemsBlock__Item__Count {
+  padding-right: 10px;
+  line-height: 40px;
+  font-size: 40px;
+}
+
+.SummaryItemsBlock__Item__Messages {
+  line-height: 20px;
+  font-size: 16px;
+  color: var(--aspect-color-grey-4);
+}
+
+.SummaryItemsBlock__Item__Messages--sub {
+  font-weight: var(--lato-font-weight-black);
+}
+
+.SummaryItemsBlock__Item__Messages--sub::first-letter {
+  text-transform: capitalize;
+}
+
+.ButtonsBlock {
+  composes: Shared__Block;
+  padding: 10px;
+  display: flex;
+  flex-flow: column;
+}
+
+.Button--raised {
+  margin: 8px 5px;
+  text-transform: capitalize;
+}
+
+.Button--receive:not([disabled]).Button--raised {
+  background-color: var(--aspect-color-mantis);
+}
+
+.Button--discard:not([disabled]).Button--raised {
+  background-color: var(--aspect-color-mandy);
+}
+
+.Button--manage:not([disabled]).Button--raised {
+  background-color: var(--aspect-color-grey-4);
+}
