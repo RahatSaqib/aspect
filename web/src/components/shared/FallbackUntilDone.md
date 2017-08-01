@@ -59,6 +59,3 @@ Fallback with text fields
 </div>
 </FallbackUntilDone>
 ```
-
-### Customization
-All fallbacks and isDone functions are customizable props, allowing for a significant variety of functionality within this component.
