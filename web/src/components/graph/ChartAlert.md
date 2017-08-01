@@ -9,15 +9,15 @@ This component renders an alert, which has a colored image (needs to be created 
 ### Variations
 Red Alert (default)
 ```
-<Alert status='red' statusString='This is a red alert' />
+<Alert status="red" statusString="This is a red alert" />
 ```
 
 Amber Alert
 ```
-<Alert status='amber' statusString='This is an amber alert' />
+<Alert status="amber" statusString="This is an amber alert" />
 ```
 
 Green Alert
 ```
-<Alert status='green' statusString='This is a green alert' />
+<Alert status="green" statusString="This is a green alert" />
 ```
