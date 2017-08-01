@@ -15,5 +15,5 @@ Standard ReadOnlyFields Container
 
 Standard ReadOnlyField Container
 ```
-<ReadOnlyField label={'Name'} value={'hello'}/>
+<ReadOnlyField fields={[{label: 'Name', value: 'hello'}]} />
 ```
