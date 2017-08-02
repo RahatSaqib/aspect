@@ -22,7 +22,8 @@
   --aspect-color-mountain: #9874b2;
   --aspect-color-brink: #f36283;
 
-  --z-index-overlay: 900;
-  --z-index-dialog: 950;
-  --z-index-popover: 1000;
+  --z-index-overlay: 80;
+  --z-index-dialog: 85;
+  --z-index-popover: 90;
+  /* Upper limit: 100; Because react-toolbox/NavDrawer has a 100 z-index */
 }
