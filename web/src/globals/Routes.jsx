@@ -14,10 +14,6 @@ import NotFound from '../error/notFound/NotFound'
 import LoadableLogin from '../auth/login/LoadableLogin'
 import ResetPassword from '../auth/resetPassword/ResetPassword'
 import LoadableStatus from '../dashboard/status/LoadableStatus'
-import PatientCare from '../dashboard/patient-care/PatientCare'
-import ManageDevices from '../dashboard/manage-devices/ManageDevices'
-import ManageSupplies from '../dashboard/manage-supplies/ManageSupplies'
-import Maintenance from '../dashboard/maintenance/Maintenance'
 import DeviceDemo from '../demo/device/DeviceDemo'
 import DeviceList from '../device/list/DeviceList'
 import DeviceDetail from '../device/detail/DeviceDetail'
@@ -56,16 +52,6 @@ const Routes = () =>
       <PlainLayout path="/reset-password" component={ResetPassword} />
 
       <LoggedInLayout exact path="/dashboard" component={LoadableStatus} />
-      <LoggedInLayout path="/dashboard/patient-care" component={PatientCare} />
-      <LoggedInLayout
-        path="/dashboard/manage-devices"
-        component={ManageDevices}
-      />
-      <LoggedInLayout
-        path="/dashboard/manage-supplies"
-        component={ManageSupplies}
-      />
-      <LoggedInLayout path="/dashboard/maintenance" component={Maintenance} />
 
       <LoggedInLayout
         path="/account-details/current"
