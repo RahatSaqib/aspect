@@ -9,7 +9,138 @@ const {
 const Promise = require('bluebird')
 const subDays = require('date-fns/sub_days')
 
-function* homeDashboard(request) {
+const i18nKeys = {
+  sitesTitle: 'sitesTitle',
+  devicesTitle: 'devicesTitle',
+  runningLowStatus: 'runningLowStatus',
+  expiringStockStatus: 'expiringStockStatus',
+  fullyOperationalStatus: 'fullyOperationalStatus',
+  withQCIssuesStatus: 'withQCIssuesStatus',
+  needServicingStatus: 'needServicingStatus',
+  notReportingStatus: 'notReportingStatus',
+  needCalibrationStatus: 'needCalibrationStatus',
+  highFailuresRatesStatus: 'highFailuresRatesStatus',
+  reportingStatus: 'reportingStatus',
+  withStockIssues: 'withStockIssues',
+  withDeviceIssues: 'withDeviceIssues',
+  withQualityIssues: 'withQualityIssues',
+  countOfTotalDevicesTitle: 'countOfTotalDevicesTitle',
+  countOfTotalSitesTitle: 'countOfTotalSitesTitle',
+}
+
+const mockData = {
+  resultSummary: [
+    { name: 'Site1', data: [8, 1.5] },
+    { name: 'Site2', data: [7, 0.5] },
+    { name: 'Site3', data: [3, 2] },
+    { name: 'Site4', data: [4, 1] },
+    { name: 'Site5', data: [6, 2] },
+    { name: 'Site6', data: [8, 1] },
+    { name: 'Site7', data: [9, 2] },
+    { name: 'Site8', data: [6, 2] },
+    { name: 'newSite1', data: [4, 1] },
+    { name: 'newSite2', data: [7, 0.6] },
+    { name: 'newSite3', data: [9, 2] },
+    { name: 'newSite4', data: [7, 1] },
+    { name: 'newSite5', data: [6, 1.5] },
+    { name: 'newSite6', data: [4, 1] },
+    { name: 'newSite7', data: [9, 1] },
+    { name: 'newSite8', data: [8, 2] },
+  ],
+  inventorySummary: {
+    TB: [
+      {
+        key: 0,
+        count: 4,
+        titleI18nKey: i18nKeys.sitesTitle,
+        subI18nKey: i18nKeys.runningLowStatus,
+      },
+      {
+        key: 1,
+        count: 2,
+        titleI18nKey: i18nKeys.sitesTitle,
+        subI18nKey: i18nKeys.expiringStockStatus,
+      },
+    ],
+    HIV: [
+      {
+        key: 2,
+        count: 3,
+        titleI18nKey: i18nKeys.sitesTitle,
+        subI18nKey: i18nKeys.runningLowStatus,
+      },
+      {
+        key: 3,
+        count: 0,
+        titleI18nKey: i18nKeys.sitesTitle,
+        subI18nKey: i18nKeys.expiringStockStatus,
+      },
+    ],
+  },
+  deviceSummary: {
+    operational: {
+      count: 67,
+      total: 83,
+      titleI18nKey: i18nKeys.countOfTotalDevicesTitle,
+      subI18nKey: i18nKeys.fullyOperationalStatus,
+    },
+    qualityControl: {
+      count: 7,
+      titleI18nKey: i18nKeys.devicesTitle,
+      subI18nKey: i18nKeys.withQCIssuesStatus,
+    },
+    servicing: {
+      count: 4,
+      titleI18nKey: i18nKeys.devicesTitle,
+      subI18nKey: i18nKeys.needServicingStatus,
+    },
+    uploadingData: {
+      count: 12,
+      titleI18nKey: i18nKeys.devicesTitle,
+      subI18nKey: i18nKeys.notReportingStatus,
+    },
+    calibration: {
+      count: 3,
+      titleI18nKey: i18nKeys.devicesTitle,
+      subI18nKey: i18nKeys.needCalibrationStatus,
+    },
+    testFailures: {
+      count: 4,
+      titleI18nKey: i18nKeys.devicesTitle,
+      subI18nKey: i18nKeys.highFailuresRatesStatus,
+    },
+  },
+  siteSummary: {
+    onlineNow: {
+      count: 23,
+      total: 27,
+      titleI18nKey: i18nKeys.countOfTotalSitesTitle,
+      subI18nKey: i18nKeys.reportingStatus,
+    },
+    stockManagement: {
+      count: 2,
+      titleI18nKey: i18nKeys.sitesTitle,
+      subI18nKey: i18nKeys.withStockIssues,
+    },
+    servicing: {
+      count: 1,
+      titleI18nKey: i18nKeys.sitesTitle,
+      subI18nKey: i18nKeys.withDeviceIssues,
+    },
+    uploadingData: {
+      count: 3,
+      titleI18nKey: i18nKeys.sitesTitle,
+      subI18nKey: i18nKeys.notReporting,
+    },
+    testQuality: {
+      count: 7,
+      titleI18nKey: i18nKeys.sitesTitle,
+      subI18nKey: i18nKeys.withQualityIssues,
+    },
+  },
+}
+
+function* statusDashboard(request) {
   const { auth } = request
   const now = new Date()
 
@@ -83,20 +214,23 @@ function* homeDashboard(request) {
     usersTotalQuery,
   ])
 
-  const result = Object.assign({
-    data: {
-      sitesTotal: sitesTotal ? sitesTotal[0].cnt : null,
-      devicesTotal: devicesTotal ? devicesTotal[0].cnt : null,
-      // TODO: Remove magic numbers below when moving to "real" dashboard
-      resultsTotal30d: resultsTotal30d ? resultsTotal30d[0].cnt : null,
-      resultsTotal1d: resultsTotal1d ? resultsTotal1d[0].cnt : null,
-      usersTotal: usersTotal[0].cnt,
-    },
-  })
+  const result = {
+    data: Object.assign(
+      {
+        sitesTotal: sitesTotal ? sitesTotal[0].cnt : null,
+        devicesTotal: devicesTotal ? devicesTotal[0].cnt : null,
+        // TODO: Remove magic numbers below when moving to "real" dashboard
+        resultsTotal30d: resultsTotal30d ? resultsTotal30d[0].cnt : null,
+        resultsTotal1d: resultsTotal1d ? resultsTotal1d[0].cnt : null,
+        usersTotal: usersTotal[0].cnt,
+      },
+      mockData
+    ),
+  }
 
   return result
 }
 
 module.exports = {
-  homeDashboard,
+  statusDashboard,
 }
