@@ -11,8 +11,8 @@ describe('account details endpoints', () => {
     return _.find(endpoints, { method, path })
   }
 
-  describe('/account-details/current', () => {
-    describe('GET', () => {
+  describe('GET', () => {
+    describe('account-details/current', () => {
       let endpoint
       const expectedResponse = { value: 'Expected account details' }
 
@@ -34,8 +34,10 @@ describe('account details endpoints', () => {
           .execute()
       })
     })
+  })
 
-    describe('PUT', () => {
+  describe('PUT', () => {
+    describe('account-details/current-contact', () => {
       let endpoint
       const expectedResponse = { value: 'Expected account details' }
 
@@ -48,6 +50,29 @@ describe('account details endpoints', () => {
       })
 
       it('Should respond with a the data returned from the service', done => {
+        endpointUtils
+          .callHandlerOn(endpoint)
+          .handleResponseWith(response => {
+            assert.deepEqual(response, expectedResponse)
+          })
+          .thenCall(done)
+          .execute()
+      })
+    })
+
+    describe('account-details/current-preferences', () => {
+      let endpoint
+      const expectedResponse = { value: 'Expected account details ' }
+
+      beforeEach(() => {
+        endpoint = setupRoute('PUT', '/account-details/current-preferences', {
+          *saveUserPreferencesForLoggedInUser() {
+            return expectedResponse
+          },
+        })
+      })
+
+      it('Should respond with the data returned from service', done => {
         endpointUtils
           .callHandlerOn(endpoint)
           .handleResponseWith(response => {
