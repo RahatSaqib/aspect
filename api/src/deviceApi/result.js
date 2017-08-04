@@ -393,7 +393,6 @@ function* addResult(context) {
     // and it is now in the status "Validated"
     if (
       resultWorkflowExternalId !== DELIVERABLE_EXTERNALID &&
-      !_.includes(DONOT_LOG_DELIVERED, resultWorkflowExternalId) &&
       resultWorkflowExternalId === VALIDATED_EXTERNALID
     ) {
       const resultWorkflowDeliverableId = (yield knex('ResultWorkflowStatus')
@@ -404,7 +403,7 @@ function* addResult(context) {
         .where('id', resultId)
         .update('resultWorkflowStatusId', resultWorkflowDeliverableId)
 
-      const logEntryNow = new Date(now.getTime() + 1000)
+      const logEntryNow = new Date(now.getTime() + 1000) // add a second so this entry shows up after the workflow status log entry that was added as part of the original update
       yield knex('ResultWorkflowLog').insert({
         resultId,
         resultWorkflowStatusId: resultWorkflowDeliverableId,
@@ -691,6 +690,7 @@ function* updateResultWorkflowStatus(
 function patientDataIsComplete(patientData) {
   if (
     patientData.name &&
+    patientData.surname &&
     patientData.age &&
     patientData.gender &&
     (patientData.artNumber || patientData.hccNumber)
