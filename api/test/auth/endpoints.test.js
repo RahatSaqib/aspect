@@ -36,28 +36,6 @@ describe('auth endpoints', () => {
   })
 
   describe('PUT', () => {
-    describe('/auth', () => {
-      let endpoint
-      const expectedResponse = { value: 'Expected auth token' }
-
-      beforeEach(() => {
-        endpoint = setupRoute('GET', '/auth', {
-          *checkAuthentication() {
-            return expectedResponse
-          },
-        })
-      })
-      it('Should respond with the data returned from the service', done => {
-        endpointUtils
-          .callHandlerOn(endpoint)
-          .handleResponseWith(response => {
-            assert.deepEqual(response, expectedResponse)
-          })
-          .thenCall(done)
-          .execute()
-      })
-    })
-
     describe('/auth/update-login-details', () => {
       let endpoint
       const expectedResponse = { value: 'Expected auth token' }
