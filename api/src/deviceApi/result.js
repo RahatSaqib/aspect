@@ -383,7 +383,7 @@ function* addResult(context) {
   // Now's a good time to see if the result is in the
   // status "Validated" and can be promoted to "Deliverable" base on patient data
   // TODO: Base the logic for promoting a result on a rules engine
-  if (patientDataIsComplete(JSON.parse(patientData))) {
+  if (patientData && patientDataIsComplete(JSON.parse(patientData))) {
     const resultWorkflowExternalId = (yield knex('Result as r')
       .where('r.id', resultId)
       .join('ResultWorkflowStatus as rw', 'r.resultWorkflowStatusId', 'rw.id')
