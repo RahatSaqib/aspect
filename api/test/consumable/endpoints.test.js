@@ -108,7 +108,7 @@ describe('consumable endpoints', () => {
 
       beforeEach(() => {
         endpoint = setupRoute(
-          'GET',
+          'PUT',
           '/assay-consumable/{assayId}/{consumableId}',
           {
             *updateAssayConsumableQuantity() {
