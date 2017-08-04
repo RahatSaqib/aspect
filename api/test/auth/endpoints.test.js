@@ -134,6 +134,28 @@ describe('auth endpoints', () => {
   })
 
   describe('POST', () => {
+    describe('/auth', () => {
+      let endpoint
+      const expectedResponse = { value: 'Expected auth token' }
+
+      beforeEach(() => {
+        endpoint = setupRoute('POST', '/auth', {
+          *authenticate() {
+            return expectedResponse
+          },
+        })
+      })
+      it('Should respond with the data returned from the service', done => {
+        endpointUtils
+          .callHandlerOn(endpoint)
+          .handleResponseWith(response => {
+            assert.deepEqual(response, expectedResponse)
+          })
+          .thenCall(done)
+          .execute()
+      })
+    })
+
     describe('/auth/refresh', () => {
       let endpoint
       const expectedResponse = { value: 'Expected auth token' }
@@ -144,6 +166,32 @@ describe('auth endpoints', () => {
             return expectedResponse
           },
         })
+      })
+      it('Should respond with the data returned from the service', done => {
+        endpointUtils
+          .callHandlerOn(endpoint)
+          .handleResponseWith(response => {
+            assert.deepEqual(response, expectedResponse)
+          })
+          .thenCall(done)
+          .execute()
+      })
+    })
+
+    describe('/auth/send-reset-password-token/{email}', () => {
+      let endpoint
+      const expectedResponse = { value: 'Expected auth token' }
+
+      beforeEach(() => {
+        endpoint = setupRoute(
+          'POST',
+          '/auth/send-reset-password-token/{email}',
+          {
+            *createResetPasswordToken() {
+              return expectedResponse
+            },
+          }
+        )
       })
       it('Should respond with the data returned from the service', done => {
         endpointUtils
