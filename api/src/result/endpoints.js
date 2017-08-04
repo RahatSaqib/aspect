@@ -9,7 +9,7 @@ const {
   showResult,
   listResultTypes,
   updateWorkflowStatus,
-  updateDeliverToTerminal,
+  updateQcCheck,
   listWorkflowStatusTypes,
   listWorkflowStatusLog,
   exportResults,
@@ -135,18 +135,18 @@ module.exports = [
   },
   {
     method: 'PUT',
-    path: '/result/deliver-to-terminal/{resultId}',
-    handler: asyncHandler(updateDeliverToTerminal),
+    path: '/result/qc-check/{resultId}',
+    handler: asyncHandler(updateQcCheck),
     config: {
-      description: 'Update Deliver to Terminal Flag',
-      notes: 'Update the deliver to terminal flag of a result',
+      description: 'Update QC Check Flag',
+      notes: 'Update the QC Check flag of a result',
       auth: { scope: ['result:edit'] },
       validate: {
         params: {
           resultId: Joi.number().integer().positive().description('Result Id'),
         },
         payload: {
-          deliverToTerminal: Joi.boolean(),
+          qcCheck: Joi.boolean(),
         },
       },
     },

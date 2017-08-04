@@ -227,30 +227,29 @@ export function updateResultWorkflowStatus(resultId) {
   }
 }
 
-// update a single result's deliver to terminal flag
-function updateSingleResultDeliverToTerminal(resultId, deliverToTerminal) {
+// update a single result's QC Check flag
+function updateSingleResultQcCheck(resultId, qcCheck) {
   return {
     type: types.REQUEST_SINGLE_RESULT,
     resultId,
-    deliverToTerminal,
+    qcCheck,
   }
 }
 
-export function updateResultDeliverToTerminal(resultId, deliverToTerminal) {
+export function updateResultQcCheck(resultId, qcCheck) {
   return dispatch => {
-    dispatch(updateSingleResultDeliverToTerminal(resultId, deliverToTerminal))
+    dispatch(updateSingleResultQcCheck(resultId, qcCheck))
 
-    return aspectFetch(`/result/deliver-to-terminal/${resultId}`, {
+    return aspectFetch(`/result/qc-check/${resultId}`, {
       method: 'PUT',
-      body: JSON.stringify({ deliverToTerminal }),
+      body: JSON.stringify({ qcCheck }),
       errorNotifications: {
         default: errorPleaseTryAgainInAFewMinutes(
           defineMessages({
             title: {
-              id:
-                'errorResponseMessages.updateResultDeliverToTerminal.PUT.default.title',
+              id: 'errorResponseMessages.updateResultQcCheck.PUT.default.title',
               defaultMessage:
-                'An Error Occurred When Trying to update the "Deliver to Terminal" flag.',
+                'An Error Occurred When Trying to update the "QC Check" flag.',
             },
           })
         ),
