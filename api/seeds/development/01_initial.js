@@ -1288,6 +1288,11 @@ function* seed(knex) {
     i18nkey: 'ResultWorkflowStatusValidated',
     externalId: 'Validated',
   })
+  const [deliverable] = yield knex('ResultWorkflowStatus').insert({
+    name: 'Ready for delivery',
+    i18nkey: 'ResultWorkflowStatusDeliverable',
+    externalId: 'Deliverable',
+  })
   yield knex('ResultWorkflowStatus').insert({
     name: 'Delivered',
     i18nkey: 'ResultWorkflowStatusDelivered',
@@ -2103,7 +2108,10 @@ function* seed(knex) {
       .replace('{0}', copies)
       .replace('{1}', log)
 
-    const resultStatus = _.random(1) < 0.5 ? acknowledged : validated
+    const resultStatus =
+      _.random(1) < 0.3
+        ? acknowledged
+        : _.random(1) < 0.5 ? validated : deliverable
 
     const resultId = yield knex('Result').insert(
       Object.assign({}, auditFields, {
