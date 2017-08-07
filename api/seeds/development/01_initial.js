@@ -234,6 +234,14 @@ function* seed(knex) {
     deviceOperationSchema,
   })
 
+  const [deviceTypeChaiId] = yield knex('DeviceType').insert({
+    name: 'CHAI',
+    manufacturer: 'CHAI',
+    deviceTypeCategoryId: deviceTypeCategoryLab,
+    configurationDataSchema: '{}',
+    deviceOperationSchema: '{}',
+  })
+
   const [deviceTypeDaktariId] = yield knex('DeviceType').insert({
     name: 'Daktari',
     manufacturer: 'Daktari',
@@ -865,6 +873,92 @@ function* seed(knex) {
         title: 'Gender',
         type: 'string',
         order: 6,
+      },
+    }),
+  })
+
+  yield knex('Assay').insert({
+    name: 'CHAI HIV VL',
+    i18nKey: 'AssayChaiHivVl',
+    externalId: 'HivVl',
+    assayTypeId: assayTypeHivVlId,
+    deviceTypeId: deviceTypeChaiId,
+    resultCategory1Label: 'HIV',
+    resultCategory1i18nKey: 'resultCategoryHivVl',
+    resultDataSchema: JSON.stringify({
+      resultText: {
+        list: true,
+        title: 'Result',
+        type: 'string',
+      },
+      interpretation: {
+        title: 'Interpretation',
+        type: 'string',
+      },
+    }),
+    patientDataSchema: JSON.stringify({
+      name: {
+        title: 'Client Name',
+        type: 'string',
+        order: 1,
+      },
+      surname: {
+        title: 'Client Surname',
+        type: 'string',
+        order: 2,
+      },
+      artNumber: {
+        title: 'ART #',
+        type: 'string',
+        order: 4,
+      },
+      gender: {
+        title: 'Gender',
+        type: 'string',
+        order: 5,
+      },
+    }),
+  })
+
+  yield knex('Assay').insert({
+    name: 'CHAI EID',
+    i18nKey: 'AssayChaiEid',
+    externalId: 'EID',
+    assayTypeId: assayTypeEid,
+    deviceTypeId: deviceTypeChaiId,
+    resultCategory1Label: 'EID',
+    resultCategory1i18nKey: 'resultCategoryEid',
+    resultDataSchema: JSON.stringify({
+      resultText: {
+        list: true,
+        title: 'Result',
+        type: 'string',
+      },
+      interpretation: {
+        title: 'Interpretation',
+        type: 'string',
+      },
+    }),
+    patientDataSchema: JSON.stringify({
+      name: {
+        title: 'Client Name',
+        type: 'string',
+        order: 1,
+      },
+      surname: {
+        title: 'Client Surname',
+        type: 'string',
+        order: 2,
+      },
+      artNumber: {
+        title: 'ART #',
+        type: 'string',
+        order: 4,
+      },
+      gender: {
+        title: 'Gender',
+        type: 'string',
+        order: 5,
       },
     }),
   })
