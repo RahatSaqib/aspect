@@ -912,10 +912,30 @@ function* seed(knex) {
         type: 'string',
         order: 4,
       },
+      age: {
+        title: 'Age (months)',
+        type: 'string',
+        order: 3,
+      },
+      dateOfBirth: {
+        title: 'Date of Birth',
+        type: 'string',
+        order: 4,
+      },
       gender: {
         title: 'Gender',
         type: 'string',
         order: 5,
+      },
+      provider: {
+        title: 'Provider',
+        type: 'string',
+        order: 7,
+      },
+      phone: {
+        title: 'Phone #',
+        type: 'string',
+        order: 8,
       },
     }),
   })
@@ -950,8 +970,13 @@ function* seed(knex) {
         type: 'string',
         order: 2,
       },
-      artNumber: {
-        title: 'ART #',
+      age: {
+        title: 'Age (months)',
+        type: 'string',
+        order: 3,
+      },
+      dateOfBirth: {
+        title: 'Date of Birth',
         type: 'string',
         order: 4,
       },
@@ -959,6 +984,26 @@ function* seed(knex) {
         title: 'Gender',
         type: 'string',
         order: 5,
+      },
+      hccNumber: {
+        title: 'HCC #',
+        type: 'string',
+        order: 6,
+      },
+      motherName: {
+        title: 'Mother Name',
+        type: 'string',
+        order: 7,
+      },
+      motherSurname: {
+        title: 'Mother Surname',
+        type: 'string',
+        order: 8,
+      },
+      phone: {
+        title: 'Phone #',
+        type: 'string',
+        order: 9,
       },
     }),
   })
