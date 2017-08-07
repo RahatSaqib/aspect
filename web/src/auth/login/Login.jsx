@@ -12,11 +12,8 @@ import { Card } from 'react-toolbox/lib/card'
 import { ProgressBar } from 'react-toolbox/lib/progress_bar'
 import { Input } from 'react-toolbox/lib/input'
 
-// Our own imports
 import { Unit } from '../../components/pureGrids'
 import recomposeForm from '../../components/recomposeForm'
-import AppNotificationSnackBar from '../../appNotification/AppNotificationSnackBar'
-import AppNotificationDialog from '../../appNotification/AppNotificationDialog'
 import { loginStart } from '../AuthRedux'
 
 const cssClasses = classnames.bind(require('./Login.css'))
@@ -93,7 +90,7 @@ const enhance = compose(
 const AspectLogo = () =>
   <img
     className={cssClasses('Logo__Image')}
-    src={require('../../globals/layouts/logo-aspect.png')}
+    src={require('./logo_aspect.png')}
     alt="Aspect"
   />
 
@@ -166,8 +163,6 @@ export const Login = ({
         </Card>
       </Unit>
     </div>
-    <AppNotificationDialog />
-    <AppNotificationSnackBar />
   </div>
 
 export default enhance(Login)

@@ -1,4 +1,4 @@
-import React, { Children } from 'react'
+import React from 'react'
 import { Redirect } from 'react-router-dom'
 
 import {
@@ -6,7 +6,10 @@ import {
   getRefreshToken,
 } from '../../shared/utils/localStorage'
 
-export const EnsureAuthorized = ({ children, location, refreshStart }) => {
+export const ensureAuthorizedFactory = render => ({
+  refreshStart,
+  ...props
+}) => {
   // TODO: check access level based on tokens/permissions in jwt
   if (hasBlankOrExpiredJWT()) {
     // try to refresh if we have a refresh token
@@ -18,13 +21,13 @@ export const EnsureAuthorized = ({ children, location, refreshStart }) => {
         <Redirect
           to={{
             pathname: '/login',
-            state: { referrer: location },
+            state: { referrer: props.location },
           }}
         />
       )
     }
   }
-  return Children.only(children)
+  return render(props)
 }
 
-export default EnsureAuthorized
+export default ensureAuthorizedFactory

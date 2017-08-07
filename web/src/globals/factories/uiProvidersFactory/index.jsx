@@ -1,19 +1,16 @@
-import _ from 'lodash'
-import React, { Children } from 'react'
+import React from 'react'
 import { ThemeProvider } from 'react-css-themr'
 import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider'
 import getMuiTheme from 'material-ui/styles/getMuiTheme'
 
-import themedReactToolbox from '../../components/themedReactToolbox'
-import theme from '../../theme'
+import theme from '../../../theme'
+import themedReactToolbox from '../../../components/themedReactToolbox'
 
-const enhance = _.identity
-
-export const UIThemeProviders = ({ children }) =>
+export const uiProvidersFactory = render => props =>
   <MuiThemeProvider muiTheme={getMuiTheme(theme)}>
     <ThemeProvider theme={themedReactToolbox}>
-      {Children.only(children)}
+      {render(props)}
     </ThemeProvider>
   </MuiThemeProvider>
 
-export default enhance(UIThemeProviders)
+export default uiProvidersFactory

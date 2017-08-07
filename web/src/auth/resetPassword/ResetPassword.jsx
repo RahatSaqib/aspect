@@ -29,8 +29,6 @@ import styles from './ResetPassword.css'
 import messages from './messages'
 import ResetPasswordEnterEmail from './ResetPasswordEnterEmail'
 import ResetPasswordEnterPassword from './ResetPasswordEnterPassword'
-import AppNotificationSnackBar from '../../appNotification/AppNotificationSnackBar'
-import AppNotificationDialog from '../../appNotification/AppNotificationDialog'
 
 const enhance = compose(
   pure,
@@ -373,8 +371,6 @@ export class ResetPassword extends PureComponent {
             </Unit>
           </div>
         </div>
-        <AppNotificationDialog />
-        <AppNotificationSnackBar />
         <Dialog
           title={formatMessage(messages.adminHelpHeader)}
           actions={adminHelpDialogActions}

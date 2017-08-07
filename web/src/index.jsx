@@ -2,11 +2,10 @@
 import 'core-js/shim'
 import 'whatwg-fetch'
 import 'url-search-params-polyfill'
+import _ from 'lodash'
 import React from 'react'
-import ReactDOM from 'react-dom'
+import { render } from 'react-dom'
 import { overrideComponentTypeChecker } from 'react-toolbox/lib/utils/is-component-of-type'
-import { Provider } from 'react-redux'
-import { AppContainer } from 'react-hot-loader'
 import injectTapEventPlugin from 'react-tap-event-plugin'
 
 import config from './config'
@@ -15,7 +14,7 @@ import { getRefreshToken } from './shared/utils/localStorage'
 import { refreshStart, hydrateFromLocalStorage } from './auth/AuthRedux'
 import './favicon.ico?output=../favicon.ico'
 import './index.scss'
-import Routes from './globals/Routes'
+import appFactory from './globals/factories/appFactory'
 
 if (config.sentry) {
   // using require here since import only allowed at top-level
@@ -49,16 +48,7 @@ overrideComponentTypeChecker(
 
 const appDom = document.getElementById('app')
 
-const render = () => {
-  ReactDOM.render(
-    <AppContainer>
-      <Provider store={store}>
-        <Routes />
-      </Provider>
-    </AppContainer>,
-    appDom
-  )
-}
+const renderApp = () => render(appFactory(_.noop)({ store }), appDom)
 
 // If found a access token, refresh it before initial rendering
 new Promise(resolve => {
@@ -72,8 +62,8 @@ new Promise(resolve => {
   } else {
     resolve()
   }
-}).then(render)
+}).then(renderApp)
 
 if (module.hot) {
-  module.hot.accept('./globals/Routes', render)
+  module.hot.accept('./globals/factories/appFactory', renderApp)
 }
