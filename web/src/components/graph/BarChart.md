@@ -63,7 +63,7 @@ Primary 2-Stack Bar Chart
             { name: 'Site5', data: [6, 2] },
             { name: 'Site6', data: [8, 1] },
             { name: 'Site7', data: [9, 2] },
-            { name: 'newSite8', data: [6, 2] },
+            { name: 'newSite9', data: [6, 2] },
             { name: 'newSite1', data: [4, 1] },
             { name: 'newSite2', data: [7, 0.6] },
             { name: 'newSite3', data: [9, 2] },
@@ -101,7 +101,7 @@ Primary 2-Color Bar Chart
             { name: 'newSite5', data: [6.5] },
             { name: 'newSite6', data: [4] },
             { name: 'newSite7', data: [6] },
-            { name: 'newSite8', data: [3] },
+            { name: 'newSite9', data: [3] },
         ]}
         color={['#4ddcd7', '#e65265']}
         spacing={0.3}
