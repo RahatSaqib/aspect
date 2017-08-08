@@ -41,21 +41,47 @@ Fallback with text fields
 <div className={'Control'}>
   <FocusBlurTextField
     name="patientOrResearchId"
-    value={20}
+    value={''}
+    onCommitValue={({ onChangeFilter }) => ({
+      target: { name, value },
+    }) =>
+      onChangeFilter({
+        [name]: value,
+      })}
     floatingLabelFixed
-  />
+    hintText={'Enter first patient/study ID...'}
+    floatingLabelText={'Patient/Study ID 1'}
+/>
 </div>
 <div className={'Control'}>
   <FocusBlurTextField
-    name="sampleId"
-    value={30}
-  />
+    name="patientOrResearchId"
+    value={''}
+    onCommitValue={({ onChangeFilter }) => ({
+      target: { name, value },
+    }) =>
+      onChangeFilter({
+        [name]: value,
+      })}
+    floatingLabelFixed
+    hintText={'Enter second patient/study ID...'}
+    floatingLabelText={'Patient/Study ID 2'}
+/>
 </div>
 <div className={'Control'}>
   <FocusBlurTextField
-    name="sampleGroup"
-    value={40}
-  />
+    name="patientOrResearchId"
+    value={''}
+    onCommitValue={({ onChangeFilter }) => ({
+      target: { name, value },
+    }) =>
+      onChangeFilter({
+        [name]: value,
+      })}
+    floatingLabelFixed
+    hintText={'Enter third patient/study ID...'}
+    floatingLabelText={'Patient/Study ID 3'}
+/>
 </div>
 </FallbackUntilDone>
 ```
