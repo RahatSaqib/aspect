@@ -187,6 +187,13 @@ export default env => {
       }),
       new WebappManifestPlugin({
         icons: FAVICON_PLUGIN,
+        name: 'Aspect',
+        short_name: 'Aspect',
+        start_url: '/login',
+        display: 'standalone',
+        background_color: '#eceff6',
+        description:
+          'Aspect is a data management platform that handles diagnostic data produced by medical devices in the field.',
       }),
       new HtmlWebpackPlugin({
         inject: true,
