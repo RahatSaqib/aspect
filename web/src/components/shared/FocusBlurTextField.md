@@ -7,11 +7,6 @@ import { FocusBlurTextField } from 'src/components/shared/FocusBlurTextField'
 Thie FocusBlurTextField component is a TextField component that includes event handler functions. These functions include onBlur, onFocus, onKeyUp, and onCommitValue.
 
 ### Variations
-Blank Text Field
-```
-<FocusBlurTextField />
-```
-
 Text Field with Prompt
 ```
 <FocusBlurTextField
