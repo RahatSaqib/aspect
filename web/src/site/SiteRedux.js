@@ -1,10 +1,10 @@
-import { defineMessages } from 'react-intl'
 import { stringify } from 'querystring'
+import _ from 'lodash'
 import Immutable from 'immutable'
+import { defineMessages } from 'react-intl'
 import differenceInMinutes from 'date-fns/differenceInMinutes'
 
 import { aspectFetch } from '../shared/utils/fetch'
-import { nonEmptyFilterValue } from '../filter/utils'
 import {
   filterFieldsRejectedError,
   errorNotFound,
@@ -53,27 +53,9 @@ function receiveSites(json) {
   }
 }
 
-// With state.filter.listFilter & extraFilters
-export function fetchListFilteredSites(extraFilters = {}, ...args) {
-  return (dispatch, getState) => {
-    const filters = getState().filter.listFilter
-      .toMap()
-      .merge(extraFilters)
-      .filter(nonEmptyFilterValue)
-      .toJS()
-
-    return dispatch(fetchSites(filters, ...args))
-  }
-}
-
-export function fetchSites(
-  filters /* required */,
-  sortCol = 'name',
-  sortDir = 'asc',
-  page = 0,
-  pageSize = 10
-) {
+export function fetchSites(filtersParams, sortCol, sortDir, page, pageSize) {
   return dispatch => {
+    const filters = _.fromPairs([...filtersParams.entries()])
     dispatch(requestSites(sortCol, sortDir, page, pageSize, filters))
 
     return aspectFetch(

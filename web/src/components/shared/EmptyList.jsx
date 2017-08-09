@@ -1,16 +1,9 @@
-// Imports from packages
+import _ from 'lodash'
 import React from 'react'
-import { compose, pure } from 'recompose'
-import { bindActionCreators } from 'redux'
-import { connect } from 'react-redux'
-import { injectIntl, defineMessages } from 'react-intl'
+import { defineMessages } from 'react-intl'
 
-// Material-UI
 import Paper from 'material-ui/Paper'
 import FlatButton from 'material-ui/FlatButton'
-
-// Our own imports
-import { clearListFilter } from '../../filter/FilterRedux'
 
 const messages = defineMessages({
   noResultsTitle: {
@@ -23,25 +16,16 @@ const messages = defineMessages({
   },
 })
 
-const enhance = compose(
-  pure,
-  injectIntl,
-  connect(
-    false,
-    bindActionCreators.bind(null, {
-      clearListFilter,
-    })
-  )
-)
+const enhance = _.identity
 
-export const EmptyList = ({ intl, clearListFilter }) =>
+export const EmptyList = ({ intl, onClearFilters }) =>
   <Paper style={{ textAlign: 'center', padding: 10 }}>
     <p>
       {intl.formatMessage(messages.noResultsTitle)}
     </p>
     <FlatButton
       label={intl.formatMessage(messages.clearFilters)}
-      onTouchTap={clearListFilter}
+      onTouchTap={onClearFilters}
     />
   </Paper>
 

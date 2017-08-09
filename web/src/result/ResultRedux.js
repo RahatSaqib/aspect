@@ -1,9 +1,9 @@
-import { defineMessages } from 'react-intl'
 import { stringify } from 'querystring'
+import _ from 'lodash'
 import Immutable from 'immutable'
+import { defineMessages } from 'react-intl'
 
 import { aspectFetch } from '../shared/utils/fetch'
-import { nonEmptyFilterValue } from '../filter/utils'
 import {
   errorNotFound,
   filterFieldsRejectedError,
@@ -53,28 +53,11 @@ function receiveResults(json) {
   }
 }
 
-// With state.filter.listFilter & extraFilters
-export function fetchListFilteredResults(extraFilters = {}, ...args) {
-  return (dispatch, getState) => {
-    const filters = getState().filter.listFilter
-      .toMap()
-      .merge(extraFilters)
-      .filter(nonEmptyFilterValue)
-      .toJS()
-
-    return dispatch(fetchResults(filters, ...args))
-  }
-}
-
-export function fetchResults(
-  filters /* required */,
-  sortCol = 'endedOn',
-  sortDir = 'desc',
-  page = 0,
-  pageSize = 10
-) {
+export function fetchResults(filtersParams, sortCol, sortDir, page, pageSize) {
   return dispatch => {
+    const filters = _.fromPairs([...filtersParams.entries()])
     dispatch(requestResults(sortCol, sortDir, page, pageSize, filters))
+
     return aspectFetch(
       `/result?${stringify({
         sortCol,
@@ -325,12 +308,16 @@ export function fetchWorkflowStatusLogs(
   }
 }
 
-export function exportResults(format, sortCol, sortDir, page, pageSize) {
-  return (dispatch, getState) => {
-    const filters = getState().filter.listFilter
-      .toMap()
-      .filter(nonEmptyFilterValue)
-      .toJS()
+export function exportResults(
+  filtersParams,
+  format,
+  sortCol,
+  sortDir,
+  page,
+  pageSize
+) {
+  return dispatch => {
+    const filters = _.fromPairs([...filtersParams.entries()])
     return aspectFetch(
       `/result/export?${stringify({
         sortCol,

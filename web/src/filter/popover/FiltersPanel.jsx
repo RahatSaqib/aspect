@@ -29,69 +29,69 @@ const enhance = compose(
   withHandlers({
     onToggleShown: ({ setIsShown }) => () => setIsShown(isShown => !isShown),
 
-    onAssayChange: ({ onChangeFilter }) => assayId =>
-      onChangeFilter({ assayId }),
+    onAssayChange: ({ onChangeFilters }) => assayId =>
+      onChangeFilters({ assayId }),
 
-    onDateChange: ({ onChangeFilter }) => dateValues =>
-      onChangeFilter(dateValues),
+    onDateChange: ({ onChangeFilters }) => dateValues =>
+      onChangeFilters(dateValues),
 
-    onCountryIdChange: ({ onChangeFilter }) => countryId =>
-      onChangeFilter({
+    onCountryIdChange: ({ onChangeFilters }) => countryId =>
+      onChangeFilters({
         countryId,
         stateId: undefined,
         lgaId: undefined,
       }),
 
-    onStateIdChange: ({ onChangeFilter }) => stateId =>
-      onChangeFilter({
+    onStateIdChange: ({ onChangeFilters }) => stateId =>
+      onChangeFilters({
         stateId,
         lgaId: undefined,
       }),
 
-    onLgaIdChange: ({ onChangeFilter }) => lgaId =>
-      onChangeFilter({
+    onLgaIdChange: ({ onChangeFilters }) => lgaId =>
+      onChangeFilters({
         lgaId,
       }),
 
-    onResultCategoryChange: ({ onChangeFilter }) => resultCategoryId =>
-      onChangeFilter({
+    onResultCategoryChange: ({ onChangeFilters }) => resultCategoryId =>
+      onChangeFilters({
         resultCategoryId,
       }),
 
-    onTextFieldCommitValue: ({ onChangeFilter }) => ({
+    onTextFieldCommitValue: ({ onChangeFilters }) => ({
       target: { name, value },
     }) =>
-      onChangeFilter({
+      onChangeFilters({
         [name]: value,
       }),
 
-    onConsumableIdChange: ({ onChangeFilter }) => consumableId =>
-      onChangeFilter({
+    onConsumableIdChange: ({ onChangeFilters }) => consumableId =>
+      onChangeFilters({
         consumableId,
       }),
 
-    onPartnerIdChange: ({ onChangeFilter }) => partnerId =>
-      onChangeFilter({
+    onPartnerIdChange: ({ onChangeFilters }) => partnerId =>
+      onChangeFilters({
         partnerId,
       }),
 
-    onSampleOriginSiteChange: ({ onChangeFilter }) => sampleOriginSite =>
-      onChangeFilter({
+    onSampleOriginSiteChange: ({ onChangeFilters }) => sampleOriginSite =>
+      onChangeFilters({
         sampleOriginSite,
       }),
 
-    onSiteNameChange: ({ onChangeFilter }) => siteName =>
-      onChangeFilter({
+    onSiteNameChange: ({ onChangeFilters }) => siteName =>
+      onChangeFilters({
         siteName,
       }),
 
-    onWorkflowStatusIdChange: ({ onChangeFilter }) => workflowStatusId =>
-      onChangeFilter({
+    onWorkflowStatusIdChange: ({ onChangeFilters }) => workflowStatusId =>
+      onChangeFilters({
         workflowStatusId,
       }),
 
-    onDeviceStatusIdChange: ({ onChangeFilter }) => deviceStatusId =>
-      onChangeFilter({
+    onDeviceStatusIdChange: ({ onChangeFilters }) => deviceStatusId =>
+      onChangeFilters({
         deviceStatusId,
       }),
 

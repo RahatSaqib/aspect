@@ -1,9 +1,10 @@
-import { defineMessages } from 'react-intl'
-import Immutable from 'immutable'
 import { stringify } from 'querystring'
+import _ from 'lodash'
+import Immutable from 'immutable'
+import { defineMessages } from 'react-intl'
 
 import { aspectFetch } from '../shared/utils/fetch'
-import { nonEmptyFilterValue } from '../filter/utils'
+import { mergeToFiltersParams } from '../filter/utils'
 import {
   filterFieldsRejectedError,
   errorNotFound,
@@ -49,27 +50,17 @@ function receiveRouters(json) {
   }
 }
 
-// With state.filter.listFilter & extraFilters
-export function fetchListFilteredRouters(extraFilters = {}, ...args) {
-  return (dispatch, getState) => {
-    const filters = getState().filter.listFilter
-      .toMap()
-      .merge(extraFilters)
-      .filter(nonEmptyFilterValue)
-      .toJS()
-
-    return dispatch(fetchRouters(filters, ...args))
-  }
-}
-
 export function fetchRouters(
-  filters /* required */,
-  sortCol = 'name',
-  sortDir = 'asc',
-  page = 0,
-  pageSize = 10
+  rawFiltersParams,
+  extraFilters = {},
+  sortCol,
+  sortDir,
+  page,
+  pageSize
 ) {
   return dispatch => {
+    const filtersParams = mergeToFiltersParams(extraFilters, rawFiltersParams)
+    const filters = _.fromPairs([...filtersParams.entries()])
     dispatch(requestRouters(sortCol, sortDir, page, pageSize, filters))
 
     return aspectFetch(

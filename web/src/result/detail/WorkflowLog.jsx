@@ -3,9 +3,9 @@ import React from 'react'
 import { compose, withHandlers, lifecycle, pure } from 'recompose'
 import { defineMessages } from 'react-intl'
 import { Card, CardTitle, CardText } from 'react-toolbox/lib/card'
-import { ProgressBar } from 'react-toolbox/lib/progress_bar'
 
 import TablePaginator from '../../components/shared/TablePaginator'
+import DataTableProgressBar from '../../components/shared/DataTableProgressBar'
 import {
   WorkflowLogDataTable,
   WorkflowLogDataTableHead,
@@ -94,14 +94,7 @@ export const ResultWorkflowStatusLog = ({
       </CardText>}
     {!items.currentIdList.isEmpty() &&
       <CardText>
-        <ProgressBar
-          mode={table.loading ? 'indeterminate' : 'determinate'}
-          disabled={!table.loading}
-          className={cssClasses('ProgressBar')}
-          theme={{
-            indeterminate: cssClasses('ProgressBar--indeterminate'),
-          }}
-        />
+        <DataTableProgressBar disabled={!table.loading} />
         <WorkflowLogDataTable
           selectable={false}
           className={cssClasses('WorkflowLogDataTable')}

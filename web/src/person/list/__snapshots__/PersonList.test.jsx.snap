@@ -13,8 +13,20 @@ exports[`Person List module PersonList component should shallow render correctly
   <Connect(lifecycle(Component))
     title="Contacts"
   />
-  <Unknown
-    history={undefined}
+  <pure(withProps(withHandlers(Connect(BrowseFilters))))
+    config={
+      Object {
+        "contactNameOrEmail": true,
+        "geography": true,
+        "lga": true,
+        "state": true,
+      }
+    }
+    history={
+      Object {
+        "push": [Function],
+      }
+    }
     intl={
       Object {
         "formatDate": [Function],
@@ -26,8 +38,34 @@ exports[`Person List module PersonList component should shallow render correctly
         "formatTime": [Function],
       }
     }
-    location={undefined}
+    location={
+      Object {
+        "search": "",
+      }
+    }
   />
-  <pure(InjectIntl(Connect(Component))) />
+  <pure(withHandlers(Component))
+    history={
+      Object {
+        "push": [Function],
+      }
+    }
+    intl={
+      Object {
+        "formatDate": [Function],
+        "formatHTMLMessage": [Function],
+        "formatMessage": [Function],
+        "formatNumber": [Function],
+        "formatPlural": [Function],
+        "formatRelative": [Function],
+        "formatTime": [Function],
+      }
+    }
+    location={
+      Object {
+        "search": "",
+      }
+    }
+  />
 </div>
 `;

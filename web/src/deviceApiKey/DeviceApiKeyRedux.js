@@ -1,9 +1,9 @@
-import { defineMessages } from 'react-intl'
-import Immutable from 'immutable'
 import { stringify } from 'querystring'
+import _ from 'lodash'
+import Immutable from 'immutable'
+import { defineMessages } from 'react-intl'
 
 import { aspectFetch } from '../shared/utils/fetch'
-import { nonEmptyFilterValue } from '../filter/utils'
 import {
   filterFieldsRejectedError,
   errorPleaseTryAgainInAFewMinutes,
@@ -49,18 +49,15 @@ function receiveDeviceApiKeys(json) {
 }
 
 export function fetchDeviceApiKeys(
-  sortCol = 'createdOn',
-  sortDir = 'desc',
-  page = 0,
-  pageSize = 10
+  filtersParams,
+  sortCol,
+  sortDir,
+  page,
+  pageSize
 ) {
-  return (dispatch, getState) => {
+  return dispatch => {
+    const filters = _.fromPairs([...filtersParams.entries()])
     dispatch(requestDeviceApiKeys(sortCol, sortDir, page, pageSize, filters))
-
-    const filters = getState().filter.listFilter
-      .toMap()
-      .filter(nonEmptyFilterValue)
-      .toJS()
 
     return aspectFetch(
       `/deviceApiKey?${stringify({
@@ -95,12 +92,16 @@ export function fetchDeviceApiKeys(
   }
 }
 
-export function exportDeviceApiKeys(format, sortCol, sortDir, page, pageSize) {
-  return (dispatch, getState) => {
-    const filters = getState().filter.listFilter
-      .toMap()
-      .filter(nonEmptyFilterValue)
-      .toJS()
+export function exportDeviceApiKeys(
+  filtersParams,
+  format,
+  sortCol,
+  sortDir,
+  page,
+  pageSize
+) {
+  return dispatch => {
+    const filters = _.fromPairs([...filtersParams.entries()])
 
     return aspectFetch(
       `/deviceApiKey/export?${stringify({

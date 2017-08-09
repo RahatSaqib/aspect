@@ -4,7 +4,6 @@ import { stringify } from 'querystring'
 import Immutable from 'immutable'
 
 import { aspectFetch } from '../shared/utils/fetch'
-import { nonEmptyFilterValue } from '../filter/utils'
 import { receiveList, Items } from '../shared/metaReducers/groupedItems'
 import {
   requestTable,
@@ -53,43 +52,31 @@ function receiveInventoryItems(json, childrenPropertyPath) {
   }
 }
 
-function getFilters(state) {
-  return state.filter.listFilter.toMap().filter(nonEmptyFilterValue).toJS()
-}
-
 function getGroupBy(state) {
   return state.inventory.getIn(['table', 'groupBy'])
 }
 
 export function toggleGroupBySite(toggleOn) {
-  return dispatch => {
-    dispatch({ type: types.TOGGLE_GROUP_BY_SITE, toggleOn })
-    return dispatch(fetchListFilteredInventoryItems())
-  }
-}
-
-export function fetchListFilteredInventoryItems(...args) {
-  return (dispatch, getState) => {
-    const groupBy = getGroupBy(getState())
-    const filters = getFilters(getState())
-    return dispatch(fetchInventoryItems(groupBy, filters, ...args))
-  }
+  return { type: types.TOGGLE_GROUP_BY_SITE, toggleOn }
 }
 
 export function fetchInventoryItems(
-  groupBy,
-  filters /* required */,
-  sortCol = 'siteName',
-  sortDir = 'asc',
-  page = 0,
-  pageSize = 10
+  filtersParams,
+  sortCol,
+  sortDir,
+  page,
+  pageSize
 ) {
-  const groupBySite = groupBy.includes('siteId')
-  const path = groupBySite ? '/inventory/group-by-site' : '/inventory'
-  return dispatch => {
+  return (dispatch, getState) => {
+    const filters = _.fromPairs([...filtersParams.entries()])
+    const groupBy = getGroupBy(getState())
+    const groupBySite = groupBy.includes('siteId')
+
     dispatch(
       requestInventoryItems(sortCol, sortDir, page, pageSize, filters, groupBy)
     )
+    const path = groupBySite ? '/inventory/group-by-site' : '/inventory'
+
     return aspectFetch(
       `${path}?${stringify({
         sortCol,

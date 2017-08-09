@@ -1,29 +1,11 @@
-.Card {
-  padding: 20px;
+.TerminalDataTable {
+  composes: ComponentDataTable from '../../components/shared/DataTable.css';
 }
 
-.ProgressBar {
-  opacity: 0;
-}
-
-.ProgressBar--indeterminate {
-  opacity: 1;
-}
-
-.DeviceDataTable {
-  width: 100%;
-  border-spacing: 0;
-  font-size: 14px;
-}
-
-.DeviceDataTableHead__Tests--left {
+.TerminalDataTableHead__Tests--left {
   text-align: right;
 }
 
-.DeviceDataTableHead__Tests--right {
+.TerminalDataTableHead__Tests--right {
   text-align: left;
-}
-
-.TablePaginator {
-  padding-bottom: 0;
 }

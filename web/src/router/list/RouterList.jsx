@@ -1,24 +1,30 @@
+import _ from 'lodash'
 import classnames from 'classnames/bind'
 import React from 'react'
-import { compose, withHandlers, lifecycle, pure } from 'recompose'
+import { compose, withProps, withHandlers, lifecycle, pure } from 'recompose'
 import { injectIntl, defineMessages } from 'react-intl'
 import { bindActionCreators } from 'redux'
 import { connect } from 'react-redux'
 import Helmet from 'react-helmet'
-import { Card } from 'react-toolbox/lib/card'
-import { ProgressBar } from 'react-toolbox/lib/progress_bar'
 
+import {
+  makeSortPageSelector,
+  makeSearchParamsSanitizer,
+  composeSanitizer,
+} from '../../shared/selectors/searchParams'
+import { sanitizeFiltersStringBy } from '../../filter/utils'
 import NavTitle from '../../globals/components/NavTitle'
 import BrowseFilters from '../../globals/components/BrowseFilters'
-import EmptyList from '../../components/shared/EmptyList'
-import TablePaginator from '../../components/shared/TablePaginator'
+import BrowseEmptyList from '../../globals/components/BrowseEmptyList'
+import BrowseTablePaginator from '../../globals/components/BrowseTablePaginator'
+import DataTableCard from '../../components/shared/DataTableCard'
+import DataTableProgressBar from '../../components/shared/DataTableProgressBar'
+import { fetchRouters } from '../RouterRedux'
 import {
   RouterDataTable,
   RouterDataTableHead,
   RouterDataTableRow,
 } from './RouterDataTable'
-import { configureListFilter } from '../../filter/FilterRedux'
-import { fetchListFilteredRouters } from '../RouterRedux'
 
 const cssClasses = classnames.bind(require('./RouterList.css'))
 
@@ -52,69 +58,109 @@ const messages = defineMessages({
   },
 })
 
+const FILTERS_CONFIG = {
+  geography: true,
+  state: true,
+  lga: true,
+  deviceName: true,
+  deviceStatus: true,
+}
+
+const searchSanitizer = makeSearchParamsSanitizer({
+  availableSortCol: ['name', 'status', 'createdOn', 'lastSeen'],
+})
+const filtersSanitizer = sanitizeFiltersStringBy(FILTERS_CONFIG)
+const filtersFromLocation = composeSanitizer(
+  _.flowRight(filtersSanitizer, searchParams => searchParams.get('filters')),
+  searchSanitizer
+)
+
 const enhance = compose(
   pure,
   injectIntl,
   connect(
     state => ({
-      listFilter: state.filter.listFilter,
       items: state.router.items,
       table: state.router.table,
     }),
     bindActionCreators.bind(null, {
-      fetchListFilteredRouters,
-      configureListFilter,
+      fetchRouters,
+    })
+  ),
+  withProps(
+    makeSortPageSelector({
+      sortCol: 'name',
     })
   ),
   withHandlers({
-    onHeadColumnClick: ({ fetchListFilteredRouters, table }) => ({
+    onInitialLoad: ({
+      location,
+      fetchRouters,
+      sortCol,
+      sortDir,
+      pageAt,
+      pageSize,
+    }) => () => {
+      const { sanitized, value: filtersParams } = filtersFromLocation(location)
+      if (!sanitized) {
+        fetchRouters(
+          filtersParams,
+          { hasResults: 0, hasConnectivity: 1 },
+          sortCol,
+          sortDir,
+          pageAt,
+          pageSize
+        )
+      }
+    },
+
+    onHeadColumnClick: ({ history, location, sortCol, sortDir }) => ({
       currentTarget: { dataset: { column: nextSortCol } },
-    }) =>
-      fetchListFilteredRouters(
-        { hasResults: 0, hasConnectivity: 1 },
-        nextSortCol,
-        table.sortCol === nextSortCol
-          ? table.sortDir === 'asc' ? 'desc' : 'asc'
-          : table.sortDir,
-        table.page,
-        table.pageSize
-      ),
-    onRowClick: ({ history }) => ({
-      currentTarget: { dataset: { routerId } },
-    }) => history.push(`/browse/router/${routerId}`),
-    onPageChange: ({ fetchListFilteredRouters, table }) => nextPage =>
-      fetchListFilteredRouters(
-        { hasResults: 0, hasConnectivity: 1 },
-        table.sortCol,
-        table.sortDir,
-        nextPage,
-        table.pageSize
-      ),
-    onPageSizeChange: ({ fetchListFilteredRouters, table }) => nextPageSize =>
-      fetchListFilteredRouters(
-        { hasResults: 0, hasConnectivity: 1 },
-        table.sortCol,
-        table.sortDir,
-        0,
-        nextPageSize
-      ),
-  }),
-  lifecycle({
-    componentWillMount() {
-      this.props.configureListFilter({
-        geography: true,
-        deviceName: true,
-        deviceStatus: true,
+    }) => {
+      const searchParams = new URLSearchParams(location.search)
+
+      if (sortCol !== nextSortCol) {
+        searchParams.set('sortCol', nextSortCol)
+      } else {
+        searchParams.set('sortDir', sortDir !== 'asc' ? 'asc' : 'desc')
+      }
+
+      history.replace({
+        ...location,
+        search: searchParams.toString(),
       })
     },
 
+    onRowClick: ({ history }) => ({
+      currentTarget: { dataset: { routerId } },
+    }) => history.push(`/browse/router/${routerId}`),
+  }),
+  lifecycle({
+    componentWillMount() {
+      const { sanitized, value: searchParams } = searchSanitizer(
+        this.props.location
+      )
+      const {
+        sanitized: filtersSanitized,
+        value: filtersParams,
+      } = filtersSanitizer(searchParams.get('filters'))
+      if (sanitized || filtersSanitized) {
+        searchParams.set('filters', filtersParams)
+
+        this.props.history.replace({
+          ...this.props.location,
+          search: searchParams.toString(),
+        })
+      }
+    },
+
     componentDidMount() {
-      this.props.onPageChange(0)
+      this.props.onInitialLoad()
     },
 
     componentWillReceiveProps(nextProps) {
-      if (this.props.listFilter !== nextProps.listFilter) {
-        this.props.onPageChange(0)
+      if (this.props.location.search !== nextProps.location.search) {
+        this.props.onInitialLoad()
       }
     },
   })
@@ -126,11 +172,13 @@ export const RouterList = ({
   location,
   table,
   items,
-  //
+  // --- injected by recompose ---
+  sortCol,
+  sortDir,
+  pageAt,
+  pageSize,
   onHeadColumnClick,
   onRowClick,
-  onPageChange,
-  onPageSizeChange,
 }) =>
   <div className={cssClasses('Container')}>
     <Helmet
@@ -139,25 +187,24 @@ export const RouterList = ({
       defaultTitle="Aspect"
     />
     <NavTitle title={intl.formatMessage(messages.routersTitle)} />
-    <BrowseFilters history={history} location={location} intl={intl} />
-    {items.currentIdList.isEmpty() && <EmptyList />}
+    <BrowseFilters
+      history={history}
+      location={location}
+      intl={intl}
+      config={FILTERS_CONFIG}
+    />
+    {items.currentIdList.isEmpty() &&
+      <BrowseEmptyList history={history} location={location} intl={intl} />}
     {!items.currentIdList.isEmpty() &&
-      <Card className={cssClasses('Card')}>
-        <ProgressBar
-          mode={table.loading ? 'indeterminate' : 'determinate'}
-          disabled={!table.loading}
-          className={cssClasses('ProgressBar')}
-          theme={{
-            indeterminate: cssClasses('ProgressBar--indeterminate'),
-          }}
-        />
+      <DataTableCard>
+        <DataTableProgressBar disabled={!table.loading} />
         <RouterDataTable
           selectable={false}
           className={cssClasses('RouterDataTable')}
         >
           <RouterDataTableHead
-            sortColumnKey={table.sortCol}
-            sortColumnDir={table.sortDir}
+            sortColumnKey={sortCol}
+            sortColumnDir={sortDir}
             columns={[
               {
                 key: 'name',
@@ -193,17 +240,17 @@ export const RouterList = ({
               />
             )}
         </RouterDataTable>
-        <TablePaginator
-          className={cssClasses('TablePaginator')}
+        <BrowseTablePaginator
+          history={history}
+          location={location}
           intl={intl}
+          className={cssClasses('BrowseTablePaginator')}
           paginatorStatus={messages.paginatorStatus}
-          page={table.page}
-          pageSize={table.pageSize}
           total={table.total}
-          onPageChange={onPageChange}
-          onPageSizeChange={onPageSizeChange}
+          pageAt={pageAt}
+          pageSize={pageSize}
         />
-      </Card>}
+      </DataTableCard>}
   </div>
 
 export default enhance(RouterList)

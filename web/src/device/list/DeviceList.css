@@ -1,7 +1,5 @@
-@import '../../components/shared/DataTable.css';
-
 .DeviceDataTable {
-  composes: ComponentDataTable;
+  composes: ComponentDataTable from '../../components/shared/DataTable.css';
 }
 
 .DeviceDataTableHead__Tests--left {

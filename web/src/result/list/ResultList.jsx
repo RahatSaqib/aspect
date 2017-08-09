@@ -1,27 +1,31 @@
+import classnames from 'classnames/bind'
 import _ from 'lodash'
 import Immutable from 'immutable'
-import classnames from 'classnames/bind'
 import React from 'react'
-import { compose, withHandlers, lifecycle, pure } from 'recompose'
+import { compose, withProps, withHandlers, lifecycle, pure } from 'recompose'
 import { injectIntl, defineMessages } from 'react-intl'
 import { bindActionCreators } from 'redux'
 import { connect } from 'react-redux'
 import Helmet from 'react-helmet'
 
-// Our own imports
+import {
+  makeSortPageSelector,
+  makeSearchParamsSanitizer,
+  composeSanitizer,
+} from '../../shared/selectors/searchParams'
+import { sanitizeFiltersStringBy } from '../../filter/utils'
 import NavTitle from '../../globals/components/NavTitle'
 import BrowseFilters from '../../globals/components/BrowseFilters'
-import DataTableProgressBar from '../../components/shared/DataTableProgressBar'
-import EmptyList from '../../components/shared/EmptyList'
+import BrowseEmptyList from '../../globals/components/BrowseEmptyList'
+import BrowseTablePaginator from '../../globals/components/BrowseTablePaginator'
 import DataTableCard from '../../components/shared/DataTableCard'
-import TablePaginator from '../../components/shared/TablePaginator'
+import DataTableProgressBar from '../../components/shared/DataTableProgressBar'
+import { fetchResults, exportResults } from '../ResultRedux'
 import {
   ResultDataTable,
   ResultDataTableHead,
   ResultDataTableRow,
-} from '../../result/list/ResultDataTable'
-import { configureListFilter } from '../../filter/FilterRedux'
-import { fetchListFilteredResults, exportResults } from '../ResultRedux'
+} from './ResultDataTable'
 
 const cssClasses = classnames.bind(require('./ResultList.css'))
 
@@ -79,87 +83,143 @@ const messages = defineMessages({
   },
 })
 
+const FILTERS_CONFIG = {
+  assayAndResultCategory: true,
+  geography: true,
+  state: true,
+  lga: true,
+  date: true,
+  patientOrResearchId: true,
+  sampleId: true,
+  sampleGroup: true,
+  siteName: true,
+  sampleOriginSite: true,
+  workflowStatus: true,
+}
+
+const searchSanitizer = makeSearchParamsSanitizer({
+  availableSortCol: [
+    'endedOn',
+    'deviceName',
+    'sampleOriginSiteName',
+    'sampleId',
+    'sampleGroup',
+    'patientId',
+    /* --- table.extraColumns BEGIN --- */
+    'resultCategory1Name',
+    'resultCategory2Name',
+    'count',
+    'copies',
+    /* --- table.extraColumns END --- */
+  ],
+})
+const filtersSanitizer = sanitizeFiltersStringBy(FILTERS_CONFIG)
+const filtersFromLocation = composeSanitizer(
+  _.flowRight(filtersSanitizer, searchParams => searchParams.get('filters')),
+  searchSanitizer
+)
+
 const enhance = compose(
   pure,
   injectIntl,
   connect(
     state => ({
-      listFilter: state.filter.listFilter,
       items: state.result.items,
       table: state.result.table,
     }),
     bindActionCreators.bind(null, {
-      fetchListFilteredResults,
-      configureListFilter,
+      fetchResults,
       exportResults,
     })
   ),
+  withProps(
+    makeSortPageSelector({
+      sortCol: 'endedOn',
+    })
+  ),
   withHandlers({
-    onExportClick: ({ exportResults, table }) => (
-      formatType,
-      receivedExportResponse
-    ) =>
-      exportResults(
-        {},
-        formatType,
-        table.sortCol,
-        table.sortDir,
-        table.page,
-        table.pageSize,
-        receivedExportResponse
-      ),
-    onHeadColumnClick: ({ fetchListFilteredResults, table }) => ({
+    onInitialLoad: ({
+      location,
+      fetchResults,
+      sortCol,
+      sortDir,
+      pageAt,
+      pageSize,
+    }) => () => {
+      const { sanitized, value: filtersParams } = filtersFromLocation(location)
+      if (!sanitized) {
+        fetchResults(filtersParams, sortCol, sortDir, pageAt, pageSize)
+      }
+    },
+
+    onExportClick: ({
+      location,
+      exportResults,
+      sortCol,
+      sortDir,
+      pageAt,
+      pageSize,
+    }) => formatType => {
+      const { sanitized, value: filtersParams } = filtersFromLocation(location)
+      if (!sanitized) {
+        exportResults(
+          filtersParams,
+          formatType,
+          sortCol,
+          sortDir,
+          pageAt,
+          pageSize
+        )
+      }
+    },
+
+    onHeadColumnClick: ({ history, location, sortCol, sortDir }) => ({
       currentTarget: { dataset: { column: nextSortCol } },
-    }) =>
-      fetchListFilteredResults(
-        {},
-        nextSortCol,
-        table.sortCol === nextSortCol
-          ? table.sortDir === 'asc' ? 'desc' : 'asc'
-          : table.sortDir,
-        table.page,
-        table.pageSize
-      ),
+    }) => {
+      const searchParams = new URLSearchParams(location.search)
+
+      if (sortCol !== nextSortCol) {
+        searchParams.set('sortCol', nextSortCol)
+      } else {
+        searchParams.set('sortDir', sortDir !== 'asc' ? 'asc' : 'desc')
+      }
+
+      history.replace({
+        ...location,
+        search: searchParams.toString(),
+      })
+    },
+
     onRowClick: ({ history }) => ({
       currentTarget: { dataset: { resultId } },
     }) => history.push(`/browse/result/${resultId}`),
-    onPageChange: ({ fetchListFilteredResults, table }) => nextPage =>
-      fetchListFilteredResults(
-        {},
-        table.sortCol,
-        table.sortDir,
-        nextPage,
-        table.pageSize
-      ),
-    onPageSizeChange: ({ fetchListFilteredResults, table }) => nextPageSize =>
-      fetchListFilteredResults(
-        {},
-        table.sortCol,
-        table.sortDir,
-        0,
-        nextPageSize
-      ),
   }),
   lifecycle({
     componentWillMount() {
-      this.props.configureListFilter({
-        assayAndResultCategory: true,
-        geography: true,
-        date: true,
-        patientOrResearchId: true,
-        sampleId: true,
-        sampleGroup: true,
-        siteName: true,
-        sampleOriginSite: true,
-        workflowStatus: true,
-      })
+      const { sanitized, value: searchParams } = searchSanitizer(
+        this.props.location
+      )
+      const {
+        sanitized: filtersSanitized,
+        value: filtersParams,
+      } = filtersSanitizer(searchParams.get('filters'))
+      if (sanitized || filtersSanitized) {
+        searchParams.set('filters', filtersParams)
+
+        this.props.history.replace({
+          ...this.props.location,
+          search: searchParams.toString(),
+        })
+      }
     },
+
     componentDidMount() {
-      this.props.onPageChange(0)
+      this.props.onInitialLoad()
     },
+
     componentWillReceiveProps(nextProps) {
-      if (this.props.listFilter !== nextProps.listFilter) {
-        this.props.onPageChange(0)
+      if (this.props.location.search !== nextProps.location.search) {
+        this.props.onInitialLoad()
       }
     },
   })
@@ -181,11 +241,14 @@ export const ResultList = ({
   location,
   table,
   items,
+  // --- injected by recompose ---
+  sortCol,
+  sortDir,
+  pageAt,
+  pageSize,
   onExportClick,
   onHeadColumnClick,
   onRowClick,
-  onPageChange,
-  onPageSizeChange,
 }) =>
   <div className={cssClasses('Content')}>
     <Helmet
@@ -198,23 +261,22 @@ export const ResultList = ({
       history={history}
       location={location}
       intl={intl}
+      config={FILTERS_CONFIG}
       onClickExport={onExportClick}
       askConfirmationForExport={table.total > 1000}
     />
-    {items.currentIdList.isEmpty() && <EmptyList />}
+    {items.currentIdList.isEmpty() &&
+      <BrowseEmptyList history={history} location={location} intl={intl} />}
     {!items.currentIdList.isEmpty() &&
       <DataTableCard>
-        <DataTableProgressBar
-          mode={table.loading ? 'indeterminate' : 'determinate'}
-          disabled={!table.loading}
-        />
+        <DataTableProgressBar disabled={!table.loading} />
         <ResultDataTable
           selectable={false}
           className={cssClasses('ResultDataTable')}
         >
           <ResultDataTableHead
-            sortColumnKey={table.sortCol}
-            sortColumnDir={table.sortDir}
+            sortColumnKey={sortCol}
+            sortColumnDir={sortDir}
             columns={Immutable.List([
               {
                 key: 'endedOn',
@@ -263,6 +325,7 @@ export const ResultList = ({
                   column.get('title'),
                   intl
                 ),
+                onClick: onHeadColumnClick,
               }))
             )}
           />
@@ -279,14 +342,14 @@ export const ResultList = ({
               />
             )}
         </ResultDataTable>
-        <TablePaginator
+        <BrowseTablePaginator
+          history={history}
+          location={location}
           intl={intl}
           paginatorStatus={messages.paginatorStatus}
-          page={table.page}
-          pageSize={table.pageSize}
           total={table.total}
-          onPageChange={onPageChange}
-          onPageSizeChange={onPageSizeChange}
+          pageAt={pageAt}
+          pageSize={pageSize}
         />
       </DataTableCard>}
   </div>

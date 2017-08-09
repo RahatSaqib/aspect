@@ -35,10 +35,12 @@ describe('Device Api Key List module', () => {
         table: makeTable(),
         items: makeItems(),
         // --- injected by recompose ---
+        sortCol: 'createdOn',
+        sortDir: 'asc',
+        pageAt: 0,
+        pageSize: 10,
         onExportClick: () => {},
         onHeadColumnClick: () => {},
-        onPageChange: () => {},
-        onPageSizeChange: () => {},
         selectableIds: Immutable.List(),
         dialogState: {
           generatorValues: {

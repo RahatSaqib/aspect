@@ -2,7 +2,7 @@ import _ from 'lodash'
 import Immutable from 'immutable'
 import classnames from 'classnames/bind'
 import React from 'react'
-import { compose, withHandlers, lifecycle, pure } from 'recompose'
+import { compose, withProps, withHandlers, lifecycle, pure } from 'recompose'
 import { injectIntl, defineMessages } from 'react-intl'
 import { bindActionCreators } from 'redux'
 import { connect } from 'react-redux'
@@ -17,14 +17,19 @@ import MdRemove from 'react-icons/lib/md/remove'
 import MdDone from 'react-icons/lib/md/done'
 import MdMoreVert from 'react-icons/lib/md/more-vert'
 
+import {
+  makeSortPageSelector,
+  makeSearchParamsSanitizer,
+  composeSanitizer,
+} from '../../shared/selectors/searchParams'
+import { sanitizeFiltersStringBy } from '../../filter/utils'
 import NavTitle from '../../globals/components/NavTitle'
 import BrowseFilters from '../../globals/components/BrowseFilters'
-import DataTableProgressBar from '../../components/shared/DataTableProgressBar'
-import EmptyList from '../../components/shared/EmptyList'
-import TablePaginator from '../../components/shared/TablePaginator'
+import BrowseEmptyList from '../../globals/components/BrowseEmptyList'
+import BrowseTablePaginator from '../../globals/components/BrowseTablePaginator'
 import DataTableCard from '../../components/shared/DataTableCard'
+import DataTableProgressBar from '../../components/shared/DataTableProgressBar'
 import { showAcknowledgement } from '../../appNotification/AppNotificationRedux'
-import { configureListFilter } from '../../filter/FilterRedux'
 import { testConductedReasonI18nKey } from '../adjustment/InventoryAdjustmentDialogForm'
 import NewInventoryDialogForm from '../adjustment/NewInventoryDialogForm'
 import AddInventoryDialogForm from '../adjustment/AddInventoryDialogForm'
@@ -33,7 +38,7 @@ import RemoveInventoryDialogForm from '../adjustment/RemoveInventoryDialogForm'
 import TransferInventoryDialogForm from '../adjustment/TransferInventoryDialogForm'
 import {
   types,
-  fetchListFilteredInventoryItems,
+  fetchInventoryItems,
   toggleGroupBySite,
   showNewInventoryDialog,
   showAddInventoryDialog,
@@ -121,13 +126,35 @@ const messages = defineMessages({
   },
 })
 
+const FILTERS_CONFIG = {
+  consumable: true,
+  geography: true,
+  state: true,
+  lga: true,
+  siteName: true,
+  date: true,
+}
+
+const searchSanitizer = makeSearchParamsSanitizer({
+  availableSortCol: [
+    'siteName',
+    'consumableName',
+    'quantityOnHand',
+    'expiresOn',
+  ],
+})
+const filtersSanitizer = sanitizeFiltersStringBy(FILTERS_CONFIG)
+const filtersFromLocation = composeSanitizer(
+  _.flowRight(filtersSanitizer, searchParams => searchParams.get('filters')),
+  searchSanitizer
+)
+
 const enhance = compose(
   pure,
   injectIntl,
   connect(
     state => ({
       consumableReasons: state.consumable.consumableReasons,
-      listFilter: state.filter.listFilter,
       items: state.inventory.items,
       table: state.inventory.table,
       inventoryAdjustment: state.inventory.inventoryAdjustment,
@@ -135,8 +162,7 @@ const enhance = compose(
     bindActionCreators.bind(null, {
       showAcknowledgement,
 
-      configureListFilter,
-      fetchListFilteredInventoryItems,
+      fetchInventoryItems,
       toggleGroupBySite,
 
       showNewInventoryDialog,
@@ -152,53 +178,68 @@ const enhance = compose(
       receiveInventory,
     })
   ),
+  withProps(
+    makeSortPageSelector({
+      sortCol: 'siteName',
+    })
+  ),
   withHandlers({
-    onHeadColumnClick: ({ fetchListFilteredInventoryItems, table }) => ({
+    onInitialLoad: ({
+      location,
+      fetchInventoryItems,
+      sortCol,
+      sortDir,
+      pageAt,
+      pageSize,
+    }) => () => {
+      const { sanitized, value: filtersParams } = filtersFromLocation(location)
+      if (!sanitized) {
+        fetchInventoryItems(filtersParams, sortCol, sortDir, pageAt, pageSize)
+      }
+    },
+    onHeadColumnClick: ({ history, location, sortCol, sortDir }) => ({
       currentTarget: { dataset: { column: nextSortCol } },
-    }) =>
-      fetchListFilteredInventoryItems(
-        nextSortCol,
-        table.sortCol === nextSortCol
-          ? table.sortDir === 'asc' ? 'desc' : 'asc'
-          : table.sortDir,
-        table.page,
-        table.pageSize
-      ),
-    onPageChange: ({ fetchListFilteredInventoryItems, table }) => nextPage =>
-      fetchListFilteredInventoryItems(
-        table.sortCol,
-        table.sortDir,
-        nextPage,
-        table.pageSize
-      ),
-    onPageSizeChange: ({
-      fetchListFilteredInventoryItems,
-      table,
-    }) => nextPageSize =>
-      fetchListFilteredInventoryItems(
-        table.sortCol,
-        table.sortDir,
-        0,
-        nextPageSize
-      ),
+    }) => {
+      const searchParams = new URLSearchParams(location.search)
+
+      if (sortCol !== nextSortCol) {
+        searchParams.set('sortCol', nextSortCol)
+      } else {
+        searchParams.set('sortDir', sortDir !== 'asc' ? 'asc' : 'desc')
+      }
+
+      history.replace({
+        ...location,
+        search: searchParams.toString(),
+      })
+    },
   }),
   lifecycle({
     componentWillMount() {
-      this.props.configureListFilter({
-        consumable: true,
-        geography: true,
-        siteName: true,
-        date: true,
-      })
+      const { sanitized, value: searchParams } = searchSanitizer(
+        this.props.location
+      )
+      const {
+        sanitized: filtersSanitized,
+        value: filtersParams,
+      } = filtersSanitizer(searchParams.get('filters'))
+      if (sanitized || filtersSanitized) {
+        searchParams.set('filters', filtersParams)
+
+        this.props.history.replace({
+          ...this.props.location,
+          search: searchParams.toString(),
+        })
+      }
     },
 
     componentDidMount() {
-      this.props.onPageChange(0)
+      this.props.onInitialLoad()
     },
 
     componentWillReceiveProps(nextProps) {
-      if (this.props.listFilter !== nextProps.listFilter) {
-        this.props.onPageChange(0)
+      if (this.props.location.search !== nextProps.location.search) {
+        this.props.onInitialLoad()
       }
     },
   }),
@@ -215,8 +256,12 @@ const enhance = compose(
     },
   }),
   withHandlers({
-    onGroupBySiteChange: ({ toggleGroupBySite }) => isInputChecked => {
+    onGroupBySiteChange: ({
+      toggleGroupBySite,
+      onInitialLoad,
+    }) => isInputChecked => {
       toggleGroupBySite(isInputChecked)
+      onInitialLoad()
     },
 
     onAddInventorySubmit: ({
@@ -275,17 +320,18 @@ export const InventoryItemsList = ({
   table,
   items,
   inventoryAdjustment,
+  // --- injected by recompose ---
+  sortCol,
+  sortDir,
+  pageAt,
+  pageSize,
+  onHeadColumnClick,
   showNewInventoryDialog,
   showReceiveInventoryDialog,
   showAddInventoryDialog,
   showTransferInventoryDialog,
   showRemoveInventoryDialog,
   hideAdjustInventoryDialog,
-  //
-  onHeadColumnClick,
-  onPageChange,
-  onPageSizeChange,
-  // -- extra --
   onGroupBySiteChange,
   onAddInventorySubmit,
   onRemoveInventorySubmit,
@@ -303,9 +349,10 @@ export const InventoryItemsList = ({
       history={history}
       location={location}
       intl={intl}
+      config={FILTERS_CONFIG}
       dateFilterLabel={intl.formatMessage(messages.expiresOn)}
     />
-    <DataTableCard>
+    <DataTableCard className={cssClasses('DataTableCard--action')}>
       <Checkbox
         className={cssClasses('Checkbox')}
         name="groupBySite"
@@ -323,20 +370,18 @@ export const InventoryItemsList = ({
         onClick={showNewInventoryDialog}
       />
     </DataTableCard>
-    {items.currentIdList.isEmpty() && <EmptyList />}
+    {items.currentIdList.isEmpty() &&
+      <BrowseEmptyList history={history} location={location} intl={intl} />}
     {!items.currentIdList.isEmpty() &&
-      <DataTableCard>
-        <DataTableProgressBar
-          mode={table.loading ? 'indeterminate' : 'determinate'}
-          disabled={!table.loading}
-        />
+      <DataTableCard className={cssClasses('DataTableCard--table')}>
+        <DataTableProgressBar disabled={!table.loading} />
         <InventoryDataTable
           selectable={false}
           className={cssClasses('InventoryDataTable')}
         >
           <InventoryDataTableHead
-            sortColumnKey={table.sortCol}
-            sortColumnDir={table.sortDir}
+            sortColumnKey={sortCol}
+            sortColumnDir={sortDir}
             columns={[
               {
                 key: 'siteName',
@@ -413,14 +458,14 @@ export const InventoryItemsList = ({
               </InventoryDataTableRow>
             )}
         </InventoryDataTable>
-        <TablePaginator
+        <BrowseTablePaginator
+          history={history}
+          location={location}
           intl={intl}
           paginatorStatus={messages.paginatorStatus}
-          page={table.page}
-          pageSize={table.pageSize}
           total={table.total}
-          onPageChange={onPageChange}
-          onPageSizeChange={onPageSizeChange}
+          pageAt={pageAt}
+          pageSize={pageSize}
         />
       </DataTableCard>}
     <NewInventoryDialogForm
