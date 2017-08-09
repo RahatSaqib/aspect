@@ -46,7 +46,7 @@ export class StateSelectField extends PureComponent {
   componentDidMount() {
     const selectedCountry = getSelectedCountry(this.props)
     if (selectedCountry) {
-      this.props.fetchStatesForLocationSelector(false, selectedCountry)
+      this.props.fetchStatesForLocationSelector(selectedCountry)
     }
   }
 
@@ -58,7 +58,7 @@ export class StateSelectField extends PureComponent {
       (!prevSelectedCountry ||
         prevSelectedCountry.get('id') !== selectedCountry.get('id'))
     ) {
-      this.props.fetchStatesForLocationSelector(false, selectedCountry)
+      this.props.fetchStatesForLocationSelector(selectedCountry)
     }
   }
 
