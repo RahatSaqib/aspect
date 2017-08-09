@@ -236,11 +236,11 @@ export const TerminalList = ({
       intl={intl}
       config={FILTERS_CONFIG}
     />
-    {items.currentIdList.isEmpty() &&
-      <BrowseEmptyList history={history} location={location} intl={intl} />}
-    {!items.currentIdList.isEmpty() &&
-      <DataTableCard>
-        <DataTableProgressBar disabled={!table.loading} />
+    <DataTableCard>
+      <DataTableProgressBar disabled={!table.loading} />
+      {items.currentIdList.isEmpty() &&
+        <BrowseEmptyList history={history} location={location} intl={intl} />}
+      {!items.currentIdList.isEmpty() &&
         <TerminalDataTable
           selectable={false}
           className={cssClasses('TerminalDataTable')}
@@ -321,7 +321,8 @@ export const TerminalList = ({
                 data-terminal-Id={terminal.get('id')}
               />
             )}
-        </TerminalDataTable>
+        </TerminalDataTable>}
+      {!items.currentIdList.isEmpty() &&
         <BrowseTablePaginator
           history={history}
           location={location}
@@ -331,8 +332,8 @@ export const TerminalList = ({
           total={table.total}
           pageAt={pageAt}
           pageSize={pageSize}
-        />
-      </DataTableCard>}
+        />}
+    </DataTableCard>
   </div>
 
 export default enhance(TerminalList)

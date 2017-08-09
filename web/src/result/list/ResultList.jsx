@@ -265,11 +265,11 @@ export const ResultList = ({
       onClickExport={onExportClick}
       askConfirmationForExport={table.total > 1000}
     />
-    {items.currentIdList.isEmpty() &&
-      <BrowseEmptyList history={history} location={location} intl={intl} />}
-    {!items.currentIdList.isEmpty() &&
-      <DataTableCard>
-        <DataTableProgressBar disabled={!table.loading} />
+    <DataTableCard>
+      <DataTableProgressBar disabled={!table.loading} />
+      {items.currentIdList.isEmpty() &&
+        <BrowseEmptyList history={history} location={location} intl={intl} />}
+      {!items.currentIdList.isEmpty() &&
         <ResultDataTable
           selectable={false}
           className={cssClasses('ResultDataTable')}
@@ -341,7 +341,8 @@ export const ResultList = ({
                 data-result-Id={result.get('id')}
               />
             )}
-        </ResultDataTable>
+        </ResultDataTable>}
+      {!items.currentIdList.isEmpty() &&
         <BrowseTablePaginator
           history={history}
           location={location}
@@ -350,8 +351,8 @@ export const ResultList = ({
           total={table.total}
           pageAt={pageAt}
           pageSize={pageSize}
-        />
-      </DataTableCard>}
+        />}
+    </DataTableCard>
   </div>
 
 export default enhance(ResultList)

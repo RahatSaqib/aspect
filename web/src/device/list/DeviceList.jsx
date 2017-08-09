@@ -247,12 +247,11 @@ export const DeviceList = ({
       onClickExport={onExportClick}
       askConfirmationForExport={table.total > 1000}
     />
-    {!table.loading &&
-      items.currentIdList.isEmpty() &&
-      <BrowseEmptyList history={history} location={location} intl={intl} />}
-    {(table.loading || !items.currentIdList.isEmpty()) &&
-      <DataTableCard>
-        <DataTableProgressBar disabled={!table.loading} />
+    <DataTableCard>
+      <DataTableProgressBar disabled={!table.loading} />
+      {items.currentIdList.isEmpty() &&
+        <BrowseEmptyList history={history} location={location} intl={intl} />}
+      {!items.currentIdList.isEmpty() &&
         <DeviceDataTable
           selectable={false}
           className={cssClasses('DeviceDataTable')}
@@ -323,8 +322,8 @@ export const DeviceList = ({
                 data-device-Id={device.get('id')}
               />
             )}
-        </DeviceDataTable>
-
+        </DeviceDataTable>}
+      {!items.currentIdList.isEmpty() &&
         <BrowseTablePaginator
           history={history}
           location={location}
@@ -333,8 +332,8 @@ export const DeviceList = ({
           total={table.total}
           pageAt={pageAt}
           pageSize={pageSize}
-        />
-      </DataTableCard>}
+        />}
+    </DataTableCard>
   </div>
 
 export default enhance(DeviceList)
