@@ -28,6 +28,7 @@ const logPayload = {
     .allow('', null)
     .description('The source of the log, determined by client'),
 }
+
 const logResponse = Object.assign(
   {},
   {
