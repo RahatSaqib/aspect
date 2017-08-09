@@ -391,12 +391,10 @@ function* addResult(context) {
       .join('ResultWorkflowStatus as rw', 'r.resultWorkflowStatusId', 'rw.id')
       .first('rw.externalId')).externalId
 
-    // only auto update if not already in deliverable status, it hasn't been delivered yet,
+    // only auto update if not already in deliverable
+    // status, it hasn't been delivered yet,
     // and it is now in the status "Validated"
-    if (
-      resultWorkflowExternalId !== DELIVERABLE_EXTERNALID &&
-      resultWorkflowExternalId === VALIDATED_EXTERNALID
-    ) {
+    if (resultWorkflowExternalId === VALIDATED_EXTERNALID) {
       const resultWorkflowDeliverableId = (yield knex('ResultWorkflowStatus')
         .where('externalId', DELIVERABLE_EXTERNALID)
         .first('id')).id
