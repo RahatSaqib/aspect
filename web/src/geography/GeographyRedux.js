@@ -140,55 +140,44 @@ export const fetchStatesForLocationSelector = selectedCountry => dispatch => {
   )
 }
 
-export const fetchLgasForLocationSelector = function(
-  forceRefresh,
+export const fetchLgasForLocationSelector = (
   selectedCountry,
   selectedState
-) {
-  const now = new Date()
+) => dispatch => {
   if (
-    selectedState &&
-    !selectedState.getIn(['children', 'loading']) &&
-    (forceRefresh ||
-      !selectedState.getIn(['children', 'lastRefreshed']) ||
-      Math.abs(
-        now.getTime() -
-          selectedState.getIn(['children', 'lastRefreshed']).getTime()
-      ) > cacheExpiryTime)
+    selectedState.getIn(['children', 'loading']) ||
+    !isExpired(selectedState.getIn(['children', 'lastRefreshed']))
   ) {
-    return dispatch => {
-      dispatch(
-        createRequestLgasForLocationSelector(
-          selectedCountry.get('id'),
-          selectedState.get('id')
-        )
-      )
-      const path = `/geography/lga-select-list/${selectedState.get('id')}`
-      return aspectFetch(path, {
-        errorNotifications: {
-          default: errorPleaseTryAgainInAFewMinutes(
-            defineMessages({
-              title: {
-                id:
-                  'errorResponseMessages.fetchLgasForLocationSelector.GET.default.title',
-                defaultMessage: 'Error Loading Areas for {stateName}',
-              },
-            }),
-            { stateName: selectedCountry.get('selectedState') }
-          ),
-        },
-      }).then(json =>
-        dispatch(
-          createReceiveLgasForLocationSelector(
-            json.data,
-            selectedCountry.get('id'),
-            selectedState.get('id')
-          )
-        )
-      )
-    }
+    return
   }
-  return () => {}
+  dispatch(
+    createRequestLgasForLocationSelector(
+      selectedCountry.get('id'),
+      selectedState.get('id')
+    )
+  )
+  return aspectFetch(`/geography/lga-select-list/${selectedState.get('id')}`, {
+    errorNotifications: {
+      default: errorPleaseTryAgainInAFewMinutes(
+        defineMessages({
+          title: {
+            id:
+              'errorResponseMessages.fetchLgasForLocationSelector.GET.default.title',
+            defaultMessage: 'Error Loading Areas for {stateName}',
+          },
+        }),
+        { stateName: selectedCountry.get('selectedState') }
+      ),
+    },
+  }).then(json =>
+    dispatch(
+      createReceiveLgasForLocationSelector(
+        json.data,
+        selectedCountry.get('id'),
+        selectedState.get('id')
+      )
+    )
+  )
 }
 
 /*
