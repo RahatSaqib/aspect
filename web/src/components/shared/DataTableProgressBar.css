@@ -1,7 +1,3 @@
-.ProgressBar {
+.DelayShowingProgressBar--indeterminate[disabled] {
   opacity: 0;
-}
-
-.ProgressBar--indeterminate {
-  opacity: 1;
 }

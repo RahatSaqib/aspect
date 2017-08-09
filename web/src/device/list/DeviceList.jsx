@@ -186,8 +186,8 @@ export const DeviceList = ({
       onClickExport={onExportClick}
       askConfirmationForExport={table.total > 1000}
     />
-    {items.currentIdList.isEmpty() && <EmptyList />}
-    {!items.currentIdList.isEmpty() &&
+    {!table.loading && items.currentIdList.isEmpty() && <EmptyList />}
+    {(table.loading || !items.currentIdList.isEmpty()) &&
       <DataTableCard>
         <DataTableProgressBar
           mode={table.loading ? 'indeterminate' : 'determinate'}
