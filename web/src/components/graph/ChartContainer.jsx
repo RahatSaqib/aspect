@@ -7,7 +7,7 @@ import styles from './ChartContainer.css'
 const cssClasses = classnames.bind(styles)
 
 const ChartContainer = props =>
-  <div className={cssClasses('graph')}>
+  <div className={cssClasses(props.className, 'graph')}>
     {!props.bottomTitle &&
       <h1 className={cssClasses('title')}>
         {props.title}
@@ -22,6 +22,7 @@ const ChartContainer = props =>
   </div>
 
 ChartContainer.propTypes = {
+  className: PropTypes.string,
   title: PropTypes.string,
   bottomTitle: PropTypes.bool,
   alert: PropTypes.string,
@@ -30,6 +31,7 @@ ChartContainer.propTypes = {
 }
 
 ChartContainer.defaultProps = {
+  className: '',
   title: '',
   bottomTitle: false,
   alertMsg: '',
