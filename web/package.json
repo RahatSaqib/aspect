@@ -112,7 +112,7 @@
     "webpack-manifest-plugin": "^1.0.1"
   },
   "dependencies": {
-    "@vx/axis": "^0.0.131",
+    "@vx/axis": "^0.0.134",
     "@vx/gradient": "^0.0.129",
     "@vx/grid": "^0.0.131",
     "@vx/group": "^0.0.127",
@@ -156,7 +156,7 @@
     "react-toolbox": "^2.0.0-beta.12",
     "recompose": "^0.24.0",
     "redux": "^3.5.2",
-    "redux-form": "^6.6.3",
+    "redux-form": "^7.0.3",
     "redux-idle-monitor": "^0.6.2",
     "redux-immutable": "^4.0.0",
     "redux-thunk": "^2.2.0",

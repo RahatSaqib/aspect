@@ -2,9 +2,9 @@
 # yarn lockfile v1
 
 
-"@vx/axis@^0.0.131":
-  version "0.0.131"
-  resolved "https://registry.yarnpkg.com/@vx/axis/-/axis-0.0.131.tgz#cf90bb1e5a0b0d19619e60cdb91be90774db5df2"
+"@vx/axis@^0.0.134":
+  version "0.0.134"
+  resolved "https://registry.yarnpkg.com/@vx/axis/-/axis-0.0.134.tgz#b6abd0f4b2f8cb80f3c7f1d95eb3a22e84d84219"
   dependencies:
     "@vx/group" "0.0.127"
     "@vx/point" "0.0.127"
@@ -7327,13 +7327,13 @@ redux-blueprint@*:
     chai "^3.5.0"
     redux-actions "^0.9.1"
 
-redux-form@^6.6.3:
-  version "6.8.0"
-  resolved "https://registry.yarnpkg.com/redux-form/-/redux-form-6.8.0.tgz#ff1b590b59f987d7e3ff080d752f7120bfe42af3"
+redux-form@^7.0.3:
+  version "7.0.3"
+  resolved "https://registry.yarnpkg.com/redux-form/-/redux-form-7.0.3.tgz#80157d01df7de6c8eb2297ad1fbbb092bafa34f5"
   dependencies:
     deep-equal "^1.0.1"
     es6-error "^4.0.0"
-    hoist-non-react-statics "^1.2.0"
+    hoist-non-react-statics "^2.2.1"
     invariant "^2.2.2"
     is-promise "^2.1.0"
     lodash "^4.17.3"
