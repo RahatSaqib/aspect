@@ -318,7 +318,7 @@ export class TerminalDetail extends PureComponent {
                     </h1>
                     <div className={styles.StatusText}>
                       <Link
-                        to={`/site/${terminal.get('siteId')}`}
+                        to={`/browse/site/${terminal.get('siteId')}`}
                         className={styles.Site}
                       >
                         {terminal.get('siteName')}
@@ -335,7 +335,7 @@ export class TerminalDetail extends PureComponent {
                       {formatMessage(messages.fieldStatus)}
                       : {terminal.get('status')}
                       &nbsp;•&nbsp;
-                      <Link to="/result">
+                      <Link to="/browse/result">
                         {terminal.get('totalTests')}{' '}
                         {formatMessage(messages.fieldTotalNumberOfTests)}
                       </Link>
