@@ -375,7 +375,9 @@ export class ResultDetail extends PureComponent {
                 value={result.get('sampleOriginSiteName')}
                 format={v =>
                   <div>
-                    <Link to={`/site/${result.get('sampleOriginSiteId')}`}>
+                    <Link
+                      to={`/browse/site/${result.get('sampleOriginSiteId')}`}
+                    >
                       {v}
                     </Link>
                   </div>}
@@ -415,9 +417,11 @@ export class ResultDetail extends PureComponent {
               value={result.get('deviceName')}
               format={v =>
                 <div>
-                  <Link to={`/device/${result.get('deviceId')}`}>{v}</Link>
+                  <Link to={`/browse/device/${result.get('deviceId')}`}>
+                    {v}
+                  </Link>
                   &nbsp;at&nbsp;
-                  <Link to={`/site/${result.get('siteId')}`}>
+                  <Link to={`/browse/site/${result.get('siteId')}`}>
                     {result.get('siteName')}
                   </Link>
                 </div>}
