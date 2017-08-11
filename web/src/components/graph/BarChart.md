@@ -26,27 +26,27 @@ Primary 4-Stack Bar Chart
 
 ```
 <ChartContainer title="Test Failures Last 30 Days">
-    <BarChart
-        data={[
-            { name: 'Site1', data: [2, 3, 4, 1.5] },
-            { name: 'Site2', data: [1, 2, 1, 3] },
-            { name: 'Site3', data: [2, 2, 1, 2] },
-            { name: 'Site4', data: [4, 1, 5, 3] },
-            { name: 'Site5', data: [2, 2, 1, 2] },
-            { name: 'Site6', data: [1, 1, 1.5, 1] },
-            { name: 'Site7', data: [3, 2, 1, 2] },
-            { name: 'newSite8', data: [1, 4, 3, 2] },
-            { name: 'newSite3', data: [2, 1, 1, 1] },
-            { name: 'newSite4', data: [2, 2, 1, 2] },
-            { name: 'newSite5', data: [2, 3, 4, 3] },
-        ]}
-        color={['#e85163', '#fcb026', '#73d449', '#25c5e0']}
-        spacing={0.3}
-        numLabelSize={30}
-        styleWide
-        hideAxes
-        xOnly
-    />
+  <BarChart
+    data={[
+      { name: 'Site1', data: [2, 3, 4, 1.5] },
+      { name: 'Site2', data: [1, 2, 1, 3] },
+      { name: 'Site3', data: [2, 2, 1, 2] },
+      { name: 'Site4', data: [4, 1, 5, 3] },
+      { name: 'Site5', data: [2, 2, 1, 2] },
+      { name: 'Site6', data: [1, 1, 1.5, 1] },
+      { name: 'Site7', data: [3, 2, 1, 2] },
+      { name: 'newSite8', data: [1, 4, 3, 2] },
+      { name: 'newSite3', data: [2, 1, 1, 1] },
+      { name: 'newSite4', data: [2, 2, 1, 2] },
+      { name: 'newSite5', data: [2, 3, 4, 3] },
+    ]}
+    color={['#e85163', '#fcb026', '#73d449', '#25c5e0']}
+    spacing={0.3}
+    numLabelSize={30}
+    styleWide
+    hideAxes
+    xOnly
+  />
 </ChartContainer>
 ```
 
@@ -54,29 +54,29 @@ Primary 2-Stack Bar Chart
 
 ```
 <ChartContainer title="HIV">
-    <BarChart
-        data={[
-            { name: 'Site1', data: [8, 1.5] },
-            { name: 'Site2', data: [7, 0.5] },
-            { name: 'Site3', data: [3, 2] },
-            { name: 'Site4', data: [4, 1] },
-            { name: 'Site5', data: [6, 2] },
-            { name: 'Site6', data: [8, 1] },
-            { name: 'Site7', data: [9, 2] },
-            { name: 'newSite9', data: [6, 2] },
-            { name: 'newSite1', data: [4, 1] },
-            { name: 'newSite2', data: [7, 0.6] },
-            { name: 'newSite3', data: [9, 2] },
-            { name: 'newSite4', data: [7, 1] },
-            { name: 'newSite5', data: [6, 1.5] },
-            { name: 'newSite6', data: [4, 1] },
-            { name: 'newSite7', data: [9, 1] },
-            { name: 'newSite8', data: [8, 2] },
-        ]}
-        color={['#27c4e0', '#e85065']}
-        spacing={0.3}
-        numLabelSize={30}
-    />
+  <BarChart
+    data={[
+      { name: 'Site1', data: [8, 1.5] },
+      { name: 'Site2', data: [7, 0.5] },
+      { name: 'Site3', data: [3, 2] },
+      { name: 'Site4', data: [4, 1] },
+      { name: 'Site5', data: [6, 2] },
+      { name: 'Site6', data: [8, 1] },
+      { name: 'Site7', data: [9, 2] },
+      { name: 'newSite9', data: [6, 2] },
+      { name: 'newSite1', data: [4, 1] },
+      { name: 'newSite2', data: [7, 0.6] },
+      { name: 'newSite3', data: [9, 2] },
+      { name: 'newSite4', data: [7, 1] },
+      { name: 'newSite5', data: [6, 1.5] },
+      { name: 'newSite6', data: [4, 1] },
+      { name: 'newSite7', data: [9, 1] },
+      { name: 'newSite8', data: [8, 2] },
+    ]}
+    color={['#27c4e0', '#e85065']}
+    spacing={0.3}
+    numLabelSize={30}
+  />
 </ChartContainer>
 ```
 
@@ -84,30 +84,30 @@ Primary 2-Color Bar Chart
 
 ```
 <ChartContainer title="Stock Outs" bottomTitle>
-    <BarChart
-        data={[
-            { name: 'Site1', data: [8] },
-            { name: 'Site2', data: [7] },
-            { name: 'Site3', data: [3] },
-            { name: 'Site4', data: [4] },
-            { name: 'Site5', data: [6] },
-            { name: 'Site6', data: [8] },
-            { name: 'Site7', data: [9] },
-            { name: 'newSite8', data: [0, 8] },
-            { name: 'newSite1', data: [4] },
-            { name: 'newSite2', data: [0, 5] },
-            { name: 'newSite3', data: [9] },
-            { name: 'newSite4', data: [7] },
-            { name: 'newSite5', data: [6.5] },
-            { name: 'newSite6', data: [4] },
-            { name: 'newSite7', data: [6] },
-            { name: 'newSite9', data: [3] },
-        ]}
-        color={['#4ddcd7', '#e65265']}
-        spacing={0.3}
-        numLabelSize={30}
-        numYTicks={2}
-    />
+  <BarChart
+    data={[
+      { name: 'Site1', data: [8] },
+      { name: 'Site2', data: [7] },
+      { name: 'Site3', data: [3] },
+      { name: 'Site4', data: [4] },
+      { name: 'Site5', data: [6] },
+      { name: 'Site6', data: [8] },
+      { name: 'Site7', data: [9] },
+      { name: 'newSite8', data: [0, 8] },
+      { name: 'newSite1', data: [4] },
+      { name: 'newSite2', data: [0, 5] },
+      { name: 'newSite3', data: [9] },
+      { name: 'newSite4', data: [7] },
+      { name: 'newSite5', data: [6.5] },
+      { name: 'newSite6', data: [4] },
+      { name: 'newSite7', data: [6] },
+      { name: 'newSite9', data: [3] },
+    ]}
+    color={['#4ddcd7', '#e65265']}
+    spacing={0.3}
+    numLabelSize={30}
+    numYTicks={2}
+  />
 </ChartContainer>
 ```
 
@@ -115,32 +115,32 @@ Primary 3-Color Bar Chart
 
 ```
 <ChartContainer title="Best and Worst Performing Sites">
-    <BarChart
-      data={[
-            { name: 'Site1', data: [1] },
-            { name: 'Site2', data: [1.5] },
-            { name: 'Site3', data: [2] },
-            { name: 'Site4', data: [2] },
-            { name: 'Site5', data: [0, 3] },
-            { name: 'Site6', data: [0, 3.5] },
-            { name: 'Site7', data: [0, 3.75] },
-            { name: 'newSite8', data: [0, 5] },
-            { name: 'newSite1', data: [0, 6] },
-            { name: 'newSite2', data: [0, 6] },
-            { name: 'newSite3', data: [0, 7] },
-            { name: 'newSite4', data: [0, 0, 7.5] },
-            { name: 'newSite5', data: [0, 0, 7.5] },
-            { name: 'newSite6', data: [0, 0, 8] },
-            { name: 'newSite7', data: [0, 0, 9] },
-            { name: 'newSite9', data: [0, 0, 9.75] },
-        ]}
-      color={['#e85163', '#a8e6f2', '#73d449']}
-      spacing={0.3}
-      numLabelSize={30}
-      styleWide
-      hideAxes
-      xOnly
-    />
+  <BarChart
+    data={[
+      { name: 'Site1', data: [1] },
+      { name: 'Site2', data: [1.5] },
+      { name: 'Site3', data: [2] },
+      { name: 'Site4', data: [2] },
+      { name: 'Site5', data: [0, 3] },
+      { name: 'Site6', data: [0, 3.5] },
+      { name: 'Site7', data: [0, 3.75] },
+      { name: 'newSite8', data: [0, 5] },
+      { name: 'newSite1', data: [0, 6] },
+      { name: 'newSite2', data: [0, 6] },
+      { name: 'newSite3', data: [0, 7] },
+      { name: 'newSite4', data: [0, 0, 7.5] },
+      { name: 'newSite5', data: [0, 0, 7.5] },
+      { name: 'newSite6', data: [0, 0, 8] },
+      { name: 'newSite7', data: [0, 0, 9] },
+      { name: 'newSite9', data: [0, 0, 9.75] },
+    ]}
+    color={['#e85163', '#a8e6f2', '#73d449']}
+    spacing={0.3}
+    numLabelSize={30}
+    styleWide
+    hideAxes
+    xOnly
+  />
 </ChartContainer>
 ```
 
