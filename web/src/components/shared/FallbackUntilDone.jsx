@@ -37,6 +37,7 @@ class FallbackUntilDone extends PureComponent {
   }
 
   componentWillUnmount() {
+    this.setState = _.noop
     this.erd.uninstall(ReactDOM.findDOMNode(this.node))
     window.removeEventListener('resize', this.handleResize)
   }
