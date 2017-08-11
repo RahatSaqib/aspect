@@ -1,6 +1,5 @@
-// Imports from packages
+import _ from 'lodash'
 import classnames from 'classnames/bind'
-import _fp from 'lodash/fp'
 import PropTypes from 'prop-types'
 import React from 'react'
 import { compose, setPropTypes, pure } from 'recompose'
@@ -43,11 +42,11 @@ const enhance = compose(
       },
       {
         fieldName: 'siteId',
-        valueFromChangeEvent: _fp.identity,
+        valueFromChangeEvent: _.identity,
       },
       {
         fieldName: 'configurationData',
-        valueFromChangeEvent: _fp.identity,
+        valueFromChangeEvent: _.identity,
       },
     ],
     validate(values) {
@@ -139,7 +138,7 @@ export const RouterDetailModalForm = props => {
             <Link
               className={cssClasses('AutoCompleteField__Inner__Link')}
               title="Go to site"
-              to={`/site/${values.siteId}`}
+              to={`/browse/site/${values.siteId}`}
             >
               <ExitToApp />
             </Link>
@@ -173,6 +172,4 @@ function stopEventPropagation(event) {
   event.stopPropagation()
 }
 
-export const RouterDetailModalFormContainer = enhance(RouterDetailModalForm)
-
-export default RouterDetailModalFormContainer
+export default enhance(RouterDetailModalForm)

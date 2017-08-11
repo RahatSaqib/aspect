@@ -1,6 +1,5 @@
 import React from 'react'
-import { Router } from 'react-router'
-import { Switch, Route, Redirect } from 'react-router-dom'
+import { Router, Switch, Route, Redirect } from 'react-router-dom'
 import Paper from 'material-ui/Paper'
 
 import history from '../history'
@@ -14,11 +13,7 @@ import Index from './components/Index'
 import NotFound from '../error/notFound/NotFound'
 import LoadableLogin from '../auth/login/LoadableLogin'
 import ResetPassword from '../auth/resetPassword/ResetPassword'
-import LoadableDashboard from '../dashboard/dashboard/LoadableDashboard'
-import PatientCare from '../dashboard/patient-care/PatientCare'
-import ManageDevices from '../dashboard/manage-devices/ManageDevices'
-import ManageSupplies from '../dashboard/manage-supplies/ManageSupplies'
-import Maintenance from '../dashboard/maintenance/Maintenance'
+import LoadableStatus from '../dashboard/status/LoadableStatus'
 import DeviceDemo from '../demo/device/DeviceDemo'
 import DeviceList from '../device/list/DeviceList'
 import DeviceDetail from '../device/detail/DeviceDetail'
@@ -56,17 +51,7 @@ const Routes = () =>
       <PlainLayout path="/login" component={LoadableLogin} />
       <PlainLayout path="/reset-password" component={ResetPassword} />
 
-      <LoggedInLayout exact path="/dashboard" component={LoadableDashboard} />
-      <LoggedInLayout path="/dashboard/patient-care" component={PatientCare} />
-      <LoggedInLayout
-        path="/dashboard/manage-devices"
-        component={ManageDevices}
-      />
-      <LoggedInLayout
-        path="/dashboard/manage-supplies"
-        component={ManageSupplies}
-      />
-      <LoggedInLayout path="/dashboard/maintenance" component={Maintenance} />
+      <LoggedInLayout exact path="/dashboard" component={LoadableStatus} />
 
       <LoggedInLayout
         path="/account-details/current"

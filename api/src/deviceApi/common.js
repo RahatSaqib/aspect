@@ -1,6 +1,5 @@
 const Boom = require('boom')
 const _ = require('lodash')
-const { format } = require('date-fns')
 const { knex, transact } = require('../db')
 const { asyncHandler } = require('../routes')
 
@@ -162,34 +161,23 @@ function* createDeviceApiContext(request, handlerOptions) {
     const partner = yield knex('Partner as p')
       .innerJoin('Device as d', 'd.partnerId', 'p.id')
       .where({ 'd.id': device.id })
-      .first(
-        'p.deviceLogHistoryDays',
-        'p.autoAcknowledgeOlderThanDays',
-        'p.numberToLeaveUnacknowledged'
-      )
+      .first('p.deviceLogHistoryDays')
     if (partner == null) {
       return { error: Boom.internal('Device not assigned to partner') }
     }
     const historyCutoff = new Date(
       +new Date() - partner.deviceLogHistoryDays * millisInDay
     )
-    const autoAcknowledgeCutoff = partner.autoAcknowledgeOlderThanDays
-      ? new Date(
-          +new Date() - partner.autoAcknowledgeOlderThanDays * millisInDay
-        )
-      : null
-    const deviceLogWithMetaData = yield* getDeviceLogWithMetaData(
+    const deviceLog = yield* getDeviceLog(
       context,
       checkpoint,
       offset,
       deviceLogType,
-      historyCutoff,
-      autoAcknowledgeCutoff,
-      partner.numberToLeaveUnacknowledged
+      historyCutoff
     )
-    if (deviceLogWithMetaData == null) {
+    if (deviceLog == null) {
       // See if requested log is forbidden or not found
-      const deviceLogWithMetaDataNoHistory = yield* getDeviceLogWithMetaData(
+      const deviceLogNoHistory = yield* getDeviceLog(
         context,
         checkpoint,
         offset,
@@ -198,15 +186,14 @@ function* createDeviceApiContext(request, handlerOptions) {
       )
       return {
         error:
-          deviceLogWithMetaDataNoHistory == null
+          deviceLogNoHistory == null
             ? Boom.notFound('Cannot find specified checkpoint and offset')
             : Boom.forbidden(
                 'Not authorized to view specified checkpoint and offset'
               ),
       }
     }
-    context.deviceLog = deviceLogWithMetaData.deviceLog
-    context.deviceLogMetaData = deviceLogWithMetaData.metaData
+    context.deviceLog = deviceLog.deviceLog
   }
 
   // finally, all is well
@@ -346,14 +333,12 @@ class DeviceApiContext {
   }
 }
 
-function* getDeviceLogWithMetaData(
+function* getDeviceLog(
   context,
   checkpoint,
   offset,
   deviceLogType,
-  historyCutoff,
-  autoAcknowledgeCutoff,
-  numberToLeaveUnacknowledged
+  historyCutoff
 ) {
   const { device } = context
 
@@ -407,7 +392,6 @@ function* getDeviceLogWithMetaData(
         createdOn: initialDeviceLog.createdOn,
         source: initialDeviceLog.source,
       },
-      metaData: {},
     }
   }
 
@@ -509,36 +493,11 @@ function* getDeviceLogWithMetaData(
       createdOn: deviceLog.createdOn,
       source: deviceLog.source,
     },
-    metaData: {},
   }
   // set checkpoint if log changed during query, e.g, due to offset
   // but do not leak checkpoint from different device
   if (deviceLog.deviceId === device.id) {
     response.deviceLog.checkpoint = deviceLog.checkpoint
-  }
-  // When initial sync, Auto acknowledge results that are
-  // old and not on the first page displayed to the user
-  if (deviceLogType === DEVICE_LOG_TYPE_RESULT && autoAcknowledgeCutoff) {
-    const result = yield knex('DeviceLog as dl')
-      .innerJoin('Result as r', 'r.id', 'dl.resultId')
-      .innerJoin('Partner as p', 'p.id', 'r.partnerId')
-      .where({ 'dl.id': deviceLog.id })
-      .first('r.endedOn', 'p.name as partner')
-    if (
-      result.endedOn &&
-      result.endedOn < autoAcknowledgeCutoff &&
-      -offset > numberToLeaveUnacknowledged
-    ) {
-      response.metaData.autoAcknowledge = true
-      const dateFormat = 'DD MMM YYYY'
-      response.metaData.autoAcknowledgeReason = `Automatically acknowledged due to rules setup for partner (${result.partner}). Result ended on (${format(
-        result.endedOn,
-        dateFormat
-      )}) before ${format(
-        autoAcknowledgeCutoff,
-        dateFormat
-      )} and result is number ${-offset} on the list.`
-    }
   }
   return response
 }

@@ -1,20 +1,25 @@
+import _ from 'lodash'
 import classnames from 'classnames/bind'
 import React from 'react'
-import { compose, withHandlers, lifecycle, pure } from 'recompose'
+import { compose, withProps, withHandlers, lifecycle, pure } from 'recompose'
 import { injectIntl, defineMessages } from 'react-intl'
 import { bindActionCreators } from 'redux'
 import { connect } from 'react-redux'
 import Helmet from 'react-helmet'
-import { Card } from 'react-toolbox/lib/card'
-import { ProgressBar } from 'react-toolbox/lib/progress_bar'
 
-// Our own imports
+import {
+  makeSortPageSelector,
+  makeSearchParamsSanitizer,
+  composeSanitizer,
+} from '../../shared/selectors/searchParams'
+import { sanitizeFiltersStringBy } from '../../filter/utils'
 import NavTitle from '../../globals/components/NavTitle'
 import BrowseFilters from '../../globals/components/BrowseFilters'
-import EmptyList from '../../components/shared/EmptyList'
-import TablePaginator from '../../components/shared/TablePaginator'
-import { configureListFilter } from '../../filter/FilterRedux'
-import { fetchListFilteredPersons } from '../PersonRedux'
+import BrowseEmptyList from '../../globals/components/BrowseEmptyList'
+import BrowseTablePaginator from '../../globals/components/BrowseTablePaginator'
+import DataTableCard from '../../components/shared/DataTableCard'
+import DataTableProgressBar from '../../components/shared/DataTableProgressBar'
+import { fetchPersons } from '../PersonRedux'
 import {
   PersonDataTable,
   PersonDataTableHead,
@@ -53,68 +58,101 @@ const messages = defineMessages({
   },
 })
 
+const FILTERS_CONFIG = {
+  geography: true,
+  state: true,
+  lga: true,
+  contactNameOrEmail: true,
+}
+
+const searchSanitizer = makeSearchParamsSanitizer({
+  availableSortCol: ['name', 'level', 'state', 'lga'],
+})
+const filtersSanitizer = sanitizeFiltersStringBy(FILTERS_CONFIG)
+const filtersFromLocation = composeSanitizer(
+  _.flowRight(filtersSanitizer, searchParams => searchParams.get('filters')),
+  searchSanitizer
+)
+
 const enhance = compose(
   pure,
   injectIntl,
   connect(
     state => ({
-      listFilter: state.filter.listFilter,
       items: state.person.items,
       table: state.person.table,
     }),
     bindActionCreators.bind(null, {
-      fetchListFilteredPersons,
-      configureListFilter,
+      fetchPersons,
+    })
+  ),
+  withProps(
+    makeSortPageSelector({
+      sortCol: 'name',
     })
   ),
   withHandlers({
-    onHeadColumnClick: ({ fetchListFilteredPersons, table }) => ({
+    onInitialLoad: ({
+      location,
+      fetchPersons,
+      sortCol,
+      sortDir,
+      pageAt,
+      pageSize,
+    }) => () => {
+      const { sanitized, value: filtersParams } = filtersFromLocation(location)
+      if (!sanitized) {
+        fetchPersons(filtersParams, sortCol, sortDir, pageAt, pageSize)
+      }
+    },
+
+    onHeadColumnClick: ({ history, location, sortCol, sortDir }) => ({
       currentTarget: { dataset: { column: nextSortCol } },
-    }) =>
-      fetchListFilteredPersons(
-        {},
-        nextSortCol,
-        table.sortCol === nextSortCol
-          ? table.sortDir === 'asc' ? 'desc' : 'asc'
-          : table.sortDir,
-        table.page,
-        table.pageSize
-      ),
-    onRowClick: ({ history }) => ({
-      currentTarget: { dataset: { personId } },
-    }) => history.push(`/browse/person/${personId}`),
-    onPageChange: ({ fetchListFilteredPersons, table }) => nextPage =>
-      fetchListFilteredPersons(
-        {},
-        table.sortCol,
-        table.sortDir,
-        nextPage,
-        table.pageSize
-      ),
-    onPageSizeChange: ({ fetchListFilteredPersons, table }) => nextPageSize =>
-      fetchListFilteredPersons(
-        {},
-        table.sortCol,
-        table.sortDir,
-        0,
-        nextPageSize
-      ),
-  }),
-  lifecycle({
-    componentWillMount() {
-      this.props.configureListFilter({
-        geography: true,
-        contactNameOrEmail: true,
+    }) => {
+      const searchParams = new URLSearchParams(location.search)
+
+      if (sortCol !== nextSortCol) {
+        searchParams.set('sortCol', nextSortCol)
+      } else {
+        searchParams.set('sortDir', sortDir !== 'asc' ? 'asc' : 'desc')
+      }
+
+      history.replace({
+        ...location,
+        search: searchParams.toString(),
       })
     },
 
+    onRowClick: ({ history }) => ({
+      currentTarget: { dataset: { personId } },
+    }) => history.push(`/browse/person/${personId}`),
+  }),
+  lifecycle({
+    componentWillMount() {
+      const { sanitized, value: searchParams } = searchSanitizer(
+        this.props.location
+      )
+      const {
+        sanitized: filtersSanitized,
+        value: filtersParams,
+      } = filtersSanitizer(searchParams.get('filters'))
+      if (sanitized || filtersSanitized) {
+        searchParams.set('filters', filtersParams)
+
+        this.props.history.replace({
+          ...this.props.location,
+          search: searchParams.toString(),
+        })
+      }
+    },
+
     componentDidMount() {
-      this.props.onPageChange(0)
+      this.props.onInitialLoad()
     },
 
     componentWillReceiveProps(nextProps) {
-      if (this.props.listFilter !== nextProps.listFilter) {
-        this.props.onPageChange(0)
+      if (this.props.location.search !== nextProps.location.search) {
+        this.props.onInitialLoad()
       }
     },
   })
@@ -126,10 +164,13 @@ export const PersonList = ({
   location,
   table,
   items,
+  // --- injected by recompose ---
+  sortCol,
+  sortDir,
+  pageAt,
+  pageSize,
   onHeadColumnClick,
   onRowClick,
-  onPageChange,
-  onPageSizeChange,
 }) =>
   <div className={cssClasses('Container')}>
     <Helmet
@@ -138,25 +179,24 @@ export const PersonList = ({
       defaultTitle="Aspect"
     />
     <NavTitle title={intl.formatMessage(messages.contactsTitle)} />
-    <BrowseFilters history={history} location={location} intl={intl} />
-    {items.currentIdList.isEmpty() && <EmptyList />}
-    {!items.currentIdList.isEmpty() &&
-      <Card className={cssClasses('Card')}>
-        <ProgressBar
-          mode={table.loading ? 'indeterminate' : 'determinate'}
-          disabled={!table.loading}
-          className={cssClasses('ProgressBar')}
-          theme={{
-            indeterminate: cssClasses('ProgressBar--indeterminate'),
-          }}
-        />
+    <BrowseFilters
+      history={history}
+      location={location}
+      intl={intl}
+      config={FILTERS_CONFIG}
+    />
+    <DataTableCard>
+      <DataTableProgressBar disabled={!table.loading} />
+      {items.currentIdList.isEmpty() &&
+        <BrowseEmptyList history={history} location={location} intl={intl} />}
+      {!items.currentIdList.isEmpty() &&
         <PersonDataTable
           selectable={false}
           className={cssClasses('PersonDataTable')}
         >
           <PersonDataTableHead
-            sortColumnKey={table.sortCol}
-            sortColumnDir={table.sortDir}
+            sortColumnKey={sortCol}
+            sortColumnDir={sortDir}
             columns={[
               {
                 key: 'name',
@@ -191,18 +231,18 @@ export const PersonList = ({
                 data-person-Id={person.get('id')}
               />
             )}
-        </PersonDataTable>
-        <TablePaginator
-          className={cssClasses('TablePaginator')}
+        </PersonDataTable>}
+      {!items.currentIdList.isEmpty() &&
+        <BrowseTablePaginator
+          history={history}
+          location={location}
           intl={intl}
           paginatorStatus={messages.paginatorStatus}
-          page={table.page}
-          pageSize={table.pageSize}
           total={table.total}
-          onPageChange={onPageChange}
-          onPageSizeChange={onPageSizeChange}
-        />
-      </Card>}
+          pageAt={pageAt}
+          pageSize={pageSize}
+        />}
+    </DataTableCard>
   </div>
 
 export default enhance(PersonList)

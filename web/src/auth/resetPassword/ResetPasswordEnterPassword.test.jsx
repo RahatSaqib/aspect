@@ -2,12 +2,11 @@ import _ from 'lodash'
 import React from 'react'
 import ReactShallowRenderer from 'react-test-renderer/shallow'
 
-import {
-  validate,
-  ResetPasswordEnterPassword,
-} from './ResetPasswordEnterPassword'
-
 describe('ResetPasswordEnterPassword module', () => {
+  const {
+    validate,
+    ResetPasswordEnterPassword,
+  } = require('./ResetPasswordEnterPassword')
   const renderer = ReactShallowRenderer.createRenderer()
   const props = {
     intl: { formatMessage: message => message.defaultMessage },
@@ -29,11 +28,11 @@ describe('ResetPasswordEnterPassword module', () => {
       expect(element).toMatchSnapshot()
     })
 
-    it('should disnable the submit button when the form is pristine, invalid or submitting', () => {
+    it('should disable the submit button when the form is pristine, invalid or submitting', () => {
       let element = renderer.render(
         <ResetPasswordEnterPassword
           {...props}
-          form={{ pristine: true, valide: false, submitting: false }}
+          form={{ pristine: true, valid: false, submitting: false }}
         />
       )
       expect(element).toMatchSnapshot()
@@ -41,7 +40,7 @@ describe('ResetPasswordEnterPassword module', () => {
       element = renderer.render(
         <ResetPasswordEnterPassword
           {...props}
-          form={{ pristine: false, valide: false, submitting: false }}
+          form={{ pristine: false, valid: false, submitting: false }}
         />
       )
       expect(element).toMatchSnapshot()
@@ -49,7 +48,7 @@ describe('ResetPasswordEnterPassword module', () => {
       element = renderer.render(
         <ResetPasswordEnterPassword
           {...props}
-          form={{ pristine: false, valide: true, submitting: true }}
+          form={{ pristine: false, valid: true, submitting: true }}
         />
       )
       expect(element).toMatchSnapshot()
@@ -59,7 +58,7 @@ describe('ResetPasswordEnterPassword module', () => {
       const element = renderer.render(
         <ResetPasswordEnterPassword
           {...props}
-          form={{ pristine: false, valide: true, submitting: false }}
+          form={{ pristine: false, valid: true, submitting: false }}
         />
       )
       expect(element).toMatchSnapshot()

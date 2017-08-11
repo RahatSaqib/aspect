@@ -38,6 +38,12 @@ const ResultTableRow = ({ intl, extraColumns, result, ...restProps }) =>
       {result.get('sampleGroup')}
     </TableCell>
     <TableCell className={cssClasses('TableCell')}>
+      {result.get('resultText')}
+    </TableCell>
+    <TableCell className={cssClasses('TableCell')}>
+      {result.get('resultWorkflowStatus')}
+    </TableCell>
+    <TableCell className={cssClasses('TableCell')}>
       {result.get('patientId')}
     </TableCell>
     {extraColumns.map(column =>

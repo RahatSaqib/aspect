@@ -17,19 +17,19 @@ const messages = defineMessages({
 })
 
 const enhance = compose(
-  withProps(({ page, pageSize, total }) => ({
-    hasPreviousPage: page > 0,
-    firstItemIndex: 1 + pageSize * page,
-    lastItemIndex: _.min([total, pageSize * (1 + page)]),
-    hasNextPage: total > pageSize * (1 + page),
+  withProps(({ pageAt, pageSize, total }) => ({
+    hasPreviousPage: pageAt > 0,
+    firstItemIndex: 1 + pageSize * pageAt,
+    lastItemIndex: _.min([total, pageSize * (1 + pageAt)]),
+    hasNextPage: total > pageSize * (1 + pageAt),
   })),
   withHandlers({
-    onPreviousClick: ({ page, onPageChange }) => () => {
-      onPageChange(page - 1)
+    onPreviousClick: ({ pageAt, onPageChange }) => () => {
+      onPageChange(pageAt - 1)
     },
 
-    onNextClick: ({ page, onPageChange }) => () => {
-      onPageChange(page + 1)
+    onNextClick: ({ pageAt, onPageChange }) => () => {
+      onPageChange(pageAt + 1)
     },
 
     onPageSizeChange10: ({ onPageSizeChange }) => () => {

@@ -64,6 +64,7 @@ export function PartnerSelectField({
   onChangePartner,
   partnerId,
   partnerList,
+  disabled,
   ...restProps
 }) {
   return (
@@ -71,6 +72,7 @@ export function PartnerSelectField({
       {...restProps}
       value={partnerId}
       onChange={onChangePartner}
+      disabled={disabled || _fp.isEmpty(partnerList)}
     >
       {partnerList.map(p =>
         <MenuItem key={p.value} value={p.value} primaryText={p.text} />

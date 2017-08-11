@@ -12,7 +12,6 @@ describe('Person List module', () => {
 
     beforeEach(() => {
       props = {
-        table: new Table(),
         intl: {
           formatMessage: message => message.defaultMessage,
           formatDate: date => JSON.stringify(date),
@@ -22,8 +21,20 @@ describe('Person List module', () => {
           formatPlural: value => JSON.stringify(value),
           formatHTMLMessage: value => JSON.stringify(value),
         },
-        fetchListFilteredPersons: () => {},
+        history: {
+          push: () => {},
+        },
+        location: {
+          search: '',
+        },
+        table: new Table(),
         items: new Items(),
+        sortCol: 'id',
+        sortDir: 'desc',
+        pageAt: 0,
+        pageSize: 10,
+        onHeadColumnClick: () => {},
+        onRowClick: () => {},
       }
     })
 

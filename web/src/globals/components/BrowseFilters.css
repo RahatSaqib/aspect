@@ -20,7 +20,7 @@
     align-items: baseline;
   }
 
-  .ListFiltersPanel {
+  .FiltersPanel {
     flex-grow: 0;
   }
 }

@@ -342,7 +342,7 @@ export class DeviceDetail extends PureComponent {
                     </h1>
                     <div className={styles.StatusText}>
                       <Link
-                        to={`/site/${device.get('siteId')}`}
+                        to={`/browse/site/${device.get('siteId')}`}
                         className={styles.Site}
                       >
                         {device.get('siteName')}
@@ -359,7 +359,7 @@ export class DeviceDetail extends PureComponent {
                       {formatMessage(messages.fieldStatus)}
                       : {device.get('status')}
                       &nbsp;•&nbsp;
-                      <Link to="/result">
+                      <Link to="/browse/result">
                         {device.get('totalTests')}{' '}
                         {formatMessage(messages.fieldTotalNumberOfTests)}
                       </Link>
@@ -419,7 +419,7 @@ export class DeviceDetail extends PureComponent {
             {device.get('contacts').map(c =>
               <Link
                 key={c.get('id')}
-                to={`/person/${c.get('id')}`}
+                to={`/browse/person/${c.get('id')}`}
                 className={styles.Contact}
               >
                 {c.get('name')}

@@ -1,0 +1,325 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`AccountDetails module AccountDetails component should shallow render correctly 1`] = `
+<div
+  className="Content"
+>
+  <HelmetWrapper
+    defaultTitle="Aspect"
+    encodeSpecialCharacters={true}
+    title="Account Details"
+    titleTemplate="%s - Aspect"
+  />
+  <Connect(lifecycle(Component))
+    title="Account Details"
+  />
+  <Paper
+    circle={false}
+    rounded={true}
+    transitionEnabled={true}
+    zDepth={1}
+  >
+    <Tabs
+      initialSelectedIndex={0}
+      onChange={[Function]}
+    >
+      <Tab
+        icon={<MapsPersonPin />}
+        label={
+          <Hidden
+            className={null}
+            component="span"
+            xs={true}
+          >
+            Contact Details
+          </Hidden>
+        }
+      >
+        <Visible
+          className="Form__Header"
+          component="h2"
+          xs={true}
+        >
+          Contact Details
+        </Visible>
+        <pure(lifecycle(recomposeForm(withHandlers(Component))))
+          contactDetails={
+            Object {
+              "cell": null,
+              "countryId": null,
+              "email": null,
+              "email2": null,
+              "id": null,
+              "lastPartnerId": null,
+              "lgaId": null,
+              "name": null,
+              "notes": null,
+              "phone": null,
+              "stateId": null,
+              "title": null,
+              "zip": null,
+            }
+          }
+          intl={
+            Object {
+              "formatMessage": [Function],
+            }
+          }
+          loading={false}
+          onSubmit={[Function]}
+        />
+      </Tab>
+      <Tab
+        icon={<ActionLock />}
+        label={
+          <Hidden
+            className={null}
+            component="span"
+            xs={true}
+          >
+            Username & Password
+          </Hidden>
+        }
+      >
+        <Visible
+          className="Form__Header"
+          component="h2"
+          xs={true}
+        >
+          Username & Password
+        </Visible>
+        <pure(lifecycle(recomposeForm(withHandlers(Component))))
+          closeCurrentPasswordInputDialog={[Function]}
+          currentPasswordInputDialogOpen={false}
+          intl={
+            Object {
+              "formatMessage": [Function],
+            }
+          }
+          loading={false}
+          loginDetails={
+            Object {
+              "confirmNewPassword": null,
+              "currentPassword": null,
+              "id": null,
+              "jobFunctions": Array [],
+              "newPassword": null,
+              "partnerId": null,
+              "username": null,
+            }
+          }
+          onSubmit={[Function]}
+          openCurrentPasswordInputDialog={[Function]}
+        />
+      </Tab>
+      <Tab
+        icon={<ActionLanguage />}
+        label={
+          <Hidden
+            className={null}
+            component="span"
+            xs={true}
+          >
+            Language & Timezone
+          </Hidden>
+        }
+      >
+        <Visible
+          className="Form__Header"
+          component="h2"
+          xs={true}
+        >
+          Language & Timezone
+        </Visible>
+        <pure(lifecycle(recomposeForm(Component)))
+          intl={
+            Object {
+              "formatMessage": [Function],
+            }
+          }
+          loading={false}
+          onSubmit={[Function]}
+          userPreferences={
+            Object {
+              "culture": null,
+              "id": null,
+              "timezone": null,
+            }
+          }
+        />
+      </Tab>
+    </Tabs>
+  </Paper>
+</div>
+`;
+
+exports[`AccountDetails module AccountDetails component when loading is true should show a progress bar in each tab 1`] = `
+<div
+  className="Content"
+>
+  <HelmetWrapper
+    defaultTitle="Aspect"
+    encodeSpecialCharacters={true}
+    title="Account Details"
+    titleTemplate="%s - Aspect"
+  />
+  <Connect(lifecycle(Component))
+    title="Account Details"
+  />
+  <Paper
+    circle={false}
+    rounded={true}
+    transitionEnabled={true}
+    zDepth={1}
+  >
+    <Tabs
+      initialSelectedIndex={0}
+      onChange={[Function]}
+    >
+      <Tab
+        icon={<MapsPersonPin />}
+        label={
+          <Hidden
+            className={null}
+            component="span"
+            xs={true}
+          >
+            Contact Details
+          </Hidden>
+        }
+      >
+        <LinearProgress
+          max={100}
+          min={0}
+          mode="indeterminate"
+          value={0}
+        />
+        <Visible
+          className="Form__Header"
+          component="h2"
+          xs={true}
+        >
+          Contact Details
+        </Visible>
+        <pure(lifecycle(recomposeForm(withHandlers(Component))))
+          contactDetails={
+            Object {
+              "cell": null,
+              "countryId": null,
+              "email": null,
+              "email2": null,
+              "id": null,
+              "lastPartnerId": null,
+              "lgaId": null,
+              "name": null,
+              "notes": null,
+              "phone": null,
+              "stateId": null,
+              "title": null,
+              "zip": null,
+            }
+          }
+          intl={
+            Object {
+              "formatMessage": [Function],
+            }
+          }
+          loading={true}
+          onSubmit={[Function]}
+        />
+      </Tab>
+      <Tab
+        icon={<ActionLock />}
+        label={
+          <Hidden
+            className={null}
+            component="span"
+            xs={true}
+          >
+            Username & Password
+          </Hidden>
+        }
+      >
+        <LinearProgress
+          max={100}
+          min={0}
+          mode="indeterminate"
+          value={0}
+        />
+        <Visible
+          className="Form__Header"
+          component="h2"
+          xs={true}
+        >
+          Username & Password
+        </Visible>
+        <pure(lifecycle(recomposeForm(withHandlers(Component))))
+          closeCurrentPasswordInputDialog={[Function]}
+          currentPasswordInputDialogOpen={false}
+          intl={
+            Object {
+              "formatMessage": [Function],
+            }
+          }
+          loading={true}
+          loginDetails={
+            Object {
+              "confirmNewPassword": null,
+              "currentPassword": null,
+              "id": null,
+              "jobFunctions": Array [],
+              "newPassword": null,
+              "partnerId": null,
+              "username": null,
+            }
+          }
+          onSubmit={[Function]}
+          openCurrentPasswordInputDialog={[Function]}
+        />
+      </Tab>
+      <Tab
+        icon={<ActionLanguage />}
+        label={
+          <Hidden
+            className={null}
+            component="span"
+            xs={true}
+          >
+            Language & Timezone
+          </Hidden>
+        }
+      >
+        <LinearProgress
+          max={100}
+          min={0}
+          mode="indeterminate"
+          value={0}
+        />
+        <Visible
+          className="Form__Header"
+          component="h2"
+          xs={true}
+        >
+          Language & Timezone
+        </Visible>
+        <pure(lifecycle(recomposeForm(Component)))
+          intl={
+            Object {
+              "formatMessage": [Function],
+            }
+          }
+          loading={true}
+          onSubmit={[Function]}
+          userPreferences={
+            Object {
+              "culture": null,
+              "id": null,
+              "timezone": null,
+            }
+          }
+        />
+      </Tab>
+    </Tabs>
+  </Paper>
+</div>
+`;

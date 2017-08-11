@@ -249,6 +249,7 @@ class DeviceApiTestContext {
         : yield knex('Site')
             .where({ externalId: siteName, partnerId: this.partnerId })
             .first('id', 'partnerId', 'geographyId')
+
     if (siteName != null && site == null) {
       assert.isOk(siteName, `Cannot find site ${siteName}`)
     }

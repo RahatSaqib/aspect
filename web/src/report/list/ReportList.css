@@ -1,21 +1,3 @@
-.Card {
-  padding: 20px;
-}
-
-.ProgressBar {
-  opacity: 0;
-}
-
-.ProgressBar--indeterminate {
-  opacity: 1;
-}
-
 .ReportDataTable {
-  width: 100%;
-  border-spacing: 0;
-  font-size: 14px;
-}
-
-.TablePaginator {
-  padding-bottom: 0;
+  composes: ComponentDataTable from '../../components/shared/DataTable.css';
 }

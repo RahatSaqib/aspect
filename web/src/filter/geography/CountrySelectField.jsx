@@ -27,13 +27,8 @@ export class CountrySelectField extends PureComponent {
   }
 
   componentDidMount() {
-    const { countries, countryId } = this.props
-    this.props.fetchCountriesForLocationSelector(
-      false,
-      countries,
-      countryId,
-      null
-    )
+    const { countries } = this.props
+    this.props.fetchCountriesForLocationSelector(countries)
   }
 
   handleSelectFieldChange = (event, index, value) => {

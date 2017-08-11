@@ -23,7 +23,7 @@ import NavTitle from '../../globals/components/NavTitle'
 import {
   fetchSingleResult,
   updateSingleResult,
-  updateResultDeliverToTerminal,
+  updateResultQcCheck,
   WorkflowLogModel,
   fetchWorkflowStatusLogs,
   Result,
@@ -155,14 +155,14 @@ const messages = defineMessages({
     id: 'pages.ResultDetail.externalID',
     defaultMessage: 'External Result ID',
   },
-  deliverToTerminal: {
-    id: 'pages.ResultDetail.deliverToTerminal',
-    defaultMessage: 'Deliver to Terminal',
+  qcCheck: {
+    id: 'pages.ResultDetail.qcCheck',
+    defaultMessage: 'QC Check',
   },
-  deliverToTerminalDisabledHelp: {
-    id: 'pages.ResultDetail.deliverToTerminalDisabledHelp',
+  qcCheckDisabledHelp: {
+    id: 'pages.ResultDetail.qcCheckDisabledHelp',
     defaultMessage:
-      '"Deliver to Terminal" is only enabled if the result is validated and hasn\'t been sent to the terminal yet',
+      '"QC Check" is only enabled if the result is in the status "Ready for Delivery" and hasn\'t been sent to the terminal yet',
   },
 })
 
@@ -190,7 +190,7 @@ const enhance = compose(
         {
           fetchSingleResult,
           updateSingleResult,
-          updateResultDeliverToTerminal,
+          updateResultQcCheck,
           fetchWorkflowStatusLogs,
         },
         dispatch
@@ -202,7 +202,7 @@ const enhance = compose(
     workflowLog: PropTypes.objectOf(WorkflowLogModel).isRequired,
     fetchSingleResult: PropTypes.func.isRequired,
     updateSingleResult: PropTypes.func.isRequired,
-    updateResultDeliverToTerminal: PropTypes.func.isRequired,
+    updateResultQcCheck: PropTypes.func.isRequired,
     fetchWorkflowStatusLogs: PropTypes.func.isRequired,
   })
 )
@@ -218,13 +218,10 @@ export class ResultDetail extends PureComponent {
     }
   }
 
-  onChangeDeliverToTerminal = event => {
+  onChangeQcCheck = event => {
     const { result } = this.props
 
-    this.props.updateResultDeliverToTerminal(
-      result.get('id'),
-      event.target.checked
-    )
+    this.props.updateResultQcCheck(result.get('id'), event.target.checked)
   }
 
   getAssayFields() {
@@ -378,7 +375,9 @@ export class ResultDetail extends PureComponent {
                 value={result.get('sampleOriginSiteName')}
                 format={v =>
                   <div>
-                    <Link to={`/site/${result.get('sampleOriginSiteId')}`}>
+                    <Link
+                      to={`/browse/site/${result.get('sampleOriginSiteId')}`}
+                    >
                       {v}
                     </Link>
                   </div>}
@@ -418,9 +417,11 @@ export class ResultDetail extends PureComponent {
               value={result.get('deviceName')}
               format={v =>
                 <div>
-                  <Link to={`/device/${result.get('deviceId')}`}>{v}</Link>
+                  <Link to={`/browse/device/${result.get('deviceId')}`}>
+                    {v}
+                  </Link>
                   &nbsp;at&nbsp;
-                  <Link to={`/site/${result.get('siteId')}`}>
+                  <Link to={`/browse/site/${result.get('siteId')}`}>
                     {result.get('siteName')}
                   </Link>
                 </div>}
@@ -482,17 +483,17 @@ export class ResultDetail extends PureComponent {
             <Unit sm="1-2" md="1-2" lg="1-4">
               <Checkbox
                 name="Status"
-                label={formatMessage(messages.deliverToTerminal)}
+                label={formatMessage(messages.qcCheck)}
                 labelStyle={{ marginLeft: -12 }}
                 style={{ marginTop: 23 }}
-                checked={result.get('deliverToTerminal') === 1}
-                onCheck={this.onChangeDeliverToTerminal}
+                checked={result.get('qcCheck') === 1}
+                onCheck={this.onChangeQcCheck}
                 disabled={
-                  result.get('resultWorkflowStatusExternalId') !== 'Validated'
+                  result.get('resultWorkflowStatusExternalId') !== 'Deliverable'
                 }
                 title={
-                  result.get('resultWorkflowStatusExternalId') !== 'Validated'
-                    ? formatMessage(messages.deliverToTerminalDisabledHelp)
+                  result.get('resultWorkflowStatusExternalId') !== 'Deliverable'
+                    ? formatMessage(messages.qcCheckDisabledHelp)
                     : ''
                 }
               />

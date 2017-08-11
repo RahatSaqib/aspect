@@ -23,7 +23,18 @@ const navigations = [
 const BrowseNavDropdown = ({ history, location, ...restProps }) =>
   <Dropdown
     {...restProps}
-    onChange={value => history.push(value)}
+    onChange={value => {
+      const searchParams = new URLSearchParams()
+      searchParams.set(
+        'filters',
+        new URLSearchParams(location.search).get('filters')
+      )
+
+      history.push({
+        pathname: value,
+        search: searchParams.toString(),
+      })
+    }}
     source={navigations}
     value={location.pathname}
     theme={{

@@ -14,18 +14,22 @@ import { injectIntl, defineMessages } from 'react-intl'
 import { bindActionCreators } from 'redux'
 import { connect } from 'react-redux'
 import Helmet from 'react-helmet'
-import { Card } from 'react-toolbox/lib/card'
-import { ProgressBar } from 'react-toolbox/lib/progress_bar'
 import { Checkbox } from 'react-toolbox/lib/checkbox'
 
 import FlatButton from 'material-ui/FlatButton'
 
-// Our own imports
+import {
+  makeSortPageSelector,
+  makeSearchParamsSanitizer,
+  composeSanitizer,
+} from '../../shared/selectors/searchParams'
+import { sanitizeFiltersStringBy } from '../../filter/utils'
 import NavTitle from '../../globals/components/NavTitle'
 import BrowseFilters from '../../globals/components/BrowseFilters'
-import EmptyList from '../../components/shared/EmptyList'
-import TablePaginator from '../../components/shared/TablePaginator'
-import { configureListFilter } from '../../filter/FilterRedux'
+import BrowseEmptyList from '../../globals/components/BrowseEmptyList'
+import BrowseTablePaginator from '../../globals/components/BrowseTablePaginator'
+import DataTableCard from '../../components/shared/DataTableCard'
+import DataTableProgressBar from '../../components/shared/DataTableProgressBar'
 import {
   exportDeviceApiKeys,
   generateDeviceApiKeys,
@@ -104,15 +108,39 @@ const messages = defineMessages({
   },
 })
 
+const FILTERS_CONFIG = {
+  geography: true,
+  state: false,
+  partnerId: true,
+  deviceName: true,
+  siteName: true,
+}
 const DEFAULT_GENERATOR_VALUES = { count: 1 }
 const DEFAULT_ASSIGNER_VALUES = { deviceApiKeyIds: [] }
+
+const searchSanitizer = makeSearchParamsSanitizer({
+  availableSortCol: [
+    'id',
+    'createdOn',
+    'token',
+    'partner',
+    'country',
+    'site',
+    'device',
+    'revoked',
+  ],
+})
+const filtersSanitizer = sanitizeFiltersStringBy(FILTERS_CONFIG)
+const filtersFromLocation = composeSanitizer(
+  _.flowRight(filtersSanitizer, searchParams => searchParams.get('filters')),
+  searchSanitizer
+)
 
 const enhance = compose(
   pure,
   injectIntl,
   connect(
     state => ({
-      listFilter: state.filter.listFilter,
       items: state.deviceApiKey.items,
       table: state.deviceApiKey.table,
     }),
@@ -122,57 +150,93 @@ const enhance = compose(
       generateDeviceApiKeys,
       assignDeviceApiKeys,
       updateSingleDeviceApiKey,
-      configureListFilter,
+    })
+  ),
+  withProps(
+    makeSortPageSelector({
+      sortCol: 'createdOn',
+      sortDir: 'desc',
     })
   ),
   withHandlers({
-    onExportClick: ({ exportDeviceApiKeys, table }) => formatType =>
-      exportDeviceApiKeys(
-        formatType,
-        table.sortCol,
-        table.sortDir,
-        table.page,
-        table.pageSize
-      ),
-    onHeadColumnClick: ({ fetchDeviceApiKeys, table }) => ({
+    onInitialLoad: ({
+      location,
+      fetchDeviceApiKeys,
+      sortCol,
+      sortDir,
+      pageAt,
+      pageSize,
+    }) => () => {
+      const { sanitized, value: filtersParams } = filtersFromLocation(location)
+      if (!sanitized) {
+        fetchDeviceApiKeys(filtersParams, sortCol, sortDir, pageAt, pageSize)
+      }
+    },
+
+    onExportClick: ({
+      location,
+      exportDeviceApiKeys,
+      sortCol,
+      sortDir,
+      pageAt,
+      pageSize,
+    }) => formatType => {
+      const { sanitized, value: filtersParams } = filtersFromLocation(location)
+      if (!sanitized) {
+        exportDeviceApiKeys(
+          filtersParams,
+          formatType,
+          sortCol,
+          sortDir,
+          pageAt,
+          pageSize
+        )
+      }
+    },
+
+    onHeadColumnClick: ({ history, location, sortCol, sortDir }) => ({
       currentTarget: { dataset: { column: nextSortCol } },
-    }) =>
-      fetchDeviceApiKeys(
-        nextSortCol,
-        table.sortCol === nextSortCol
-          ? table.sortDir === 'asc' ? 'desc' : 'asc'
-          : table.sortDir,
-        table.page,
-        table.pageSize
-      ),
-    onPageChange: ({ fetchDeviceApiKeys, table }) => nextPage =>
-      fetchDeviceApiKeys(
-        table.sortCol,
-        table.sortDir,
-        nextPage,
-        table.pageSize
-      ),
-    onPageSizeChange: ({ fetchDeviceApiKeys, table }) => nextPageSize =>
-      fetchDeviceApiKeys(table.sortCol, table.sortDir, 0, nextPageSize),
+    }) => {
+      const searchParams = new URLSearchParams(location.search)
+
+      if (sortCol !== nextSortCol) {
+        searchParams.set('sortCol', nextSortCol)
+      } else {
+        searchParams.set('sortDir', sortDir !== 'asc' ? 'asc' : 'desc')
+      }
+
+      history.replace({
+        ...location,
+        search: searchParams.toString(),
+      })
+    },
   }),
   lifecycle({
     componentWillMount() {
-      this.props.configureListFilter({
-        geography: true,
-        state: false,
-        partnerId: true,
-        deviceName: true,
-        siteName: true,
-      })
+      const { sanitized, value: searchParams } = searchSanitizer(
+        this.props.location
+      )
+      const {
+        sanitized: filtersSanitized,
+        value: filtersParams,
+      } = filtersSanitizer(searchParams.get('filters'))
+      if (sanitized || filtersSanitized) {
+        searchParams.set('filters', filtersParams)
+
+        this.props.history.replace({
+          ...this.props.location,
+          search: searchParams.toString(),
+        })
+      }
     },
 
     componentDidMount() {
-      this.props.onPageChange(0)
+      this.props.onInitialLoad()
     },
 
     componentWillReceiveProps(nextProps) {
-      if (this.props.listFilter !== nextProps.listFilter) {
-        this.props.onPageChange(0)
+      if (this.props.location.search !== nextProps.location.search) {
+        this.props.onInitialLoad()
       }
     },
   }),
@@ -202,9 +266,8 @@ const enhance = compose(
     }) => generatorValues =>
       onChangeDialogState({ ...dialogState, generatorValues }),
     onGenerate: ({
-      table,
       generateDeviceApiKeys,
-      onPageChange,
+      onInitialLoad,
       dialogState,
       onChangeDialogState,
     }) => generatorValues => {
@@ -214,7 +277,7 @@ const enhance = compose(
           isGeneratorDialogOpen: false,
           generatorValues: DEFAULT_GENERATOR_VALUES,
         })
-        onPageChange(table.page)
+        onInitialLoad()
       })
     },
     onAssignerFormChange: ({
@@ -223,9 +286,8 @@ const enhance = compose(
     }) => assignerValues =>
       onChangeDialogState({ ...dialogState, assignerValues }),
     onAssign: ({
-      table,
       assignDeviceApiKeys,
-      onPageChange,
+      onInitialLoad,
       dialogState,
       onChangeDialogState,
     }) => assignerValues => {
@@ -235,7 +297,7 @@ const enhance = compose(
           isAssignerDialogOpen: false,
           assignerValues: DEFAULT_ASSIGNER_VALUES,
         })
-        onPageChange(table.page)
+        onInitialLoad()
       })
     },
     onSelectAllChange: ({
@@ -290,10 +352,12 @@ export const DeviceApiKeyList = ({
   table,
   items,
   // --- injected by recompose ---
+  sortCol,
+  sortDir,
+  pageAt,
+  pageSize,
   onExportClick,
   onHeadColumnClick,
-  onPageChange,
-  onPageSizeChange,
   selectableIds,
   dialogState: {
     generatorValues,
@@ -324,6 +388,7 @@ export const DeviceApiKeyList = ({
       history={history}
       location={location}
       intl={intl}
+      config={FILTERS_CONFIG}
       onClickExport={onExportClick}
     />
     <div>
@@ -354,24 +419,18 @@ export const DeviceApiKeyList = ({
         intl={intl}
       />
     </div>
-    {items.currentIdList.isEmpty() && <EmptyList />}
-    {!items.currentIdList.isEmpty() &&
-      <Card className={cssClasses('Card')}>
-        <ProgressBar
-          mode={table.loading ? 'indeterminate' : 'determinate'}
-          disabled={!table.loading}
-          className={cssClasses('ProgressBar')}
-          theme={{
-            indeterminate: cssClasses('ProgressBar--indeterminate'),
-          }}
-        />
+    <DataTableCard>
+      <DataTableProgressBar disabled={!table.loading} />
+      {items.currentIdList.isEmpty() &&
+        <BrowseEmptyList history={history} location={location} intl={intl} />}
+      {!items.currentIdList.isEmpty() &&
         <DeviceApiKeyDataTable
           selectable={false}
           className={cssClasses('DeviceApiKeyDataTable')}
         >
           <DeviceApiKeyDataTableHead
-            sortColumnKey={table.sortCol}
-            sortColumnDir={table.sortDir}
+            sortColumnKey={sortCol}
+            sortColumnDir={sortDir}
             columns={[
               {
                 key: 'id',
@@ -440,18 +499,18 @@ export const DeviceApiKeyList = ({
                 onRevokedChange={onRevokedChange}
               />
             )}
-        </DeviceApiKeyDataTable>
-        <TablePaginator
-          className={cssClasses('TablePaginator')}
+        </DeviceApiKeyDataTable>}
+      {!items.currentIdList.isEmpty() &&
+        <BrowseTablePaginator
+          history={history}
+          location={location}
           intl={intl}
           paginatorStatus={messages.paginatorStatus}
-          page={table.page}
-          pageSize={table.pageSize}
           total={table.total}
-          onPageChange={onPageChange}
-          onPageSizeChange={onPageSizeChange}
-        />
-      </Card>}
+          pageAt={pageAt}
+          pageSize={pageSize}
+        />}
+    </DataTableCard>
   </div>
 
 export default enhance(DeviceApiKeyList)

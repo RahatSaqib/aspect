@@ -90,7 +90,7 @@ export class StyleguideMain extends PureComponent {
           <FiltersPanel
             intl={intl}
             onClearFilter={_.noop}
-            onChangeFilter={this.handleChangeFilter}
+            onChangeFilters={this.handleChangeFilter}
             filters={this.state.filter}
             config={{
               assayAndResultCategory: true,

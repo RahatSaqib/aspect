@@ -1,19 +1,15 @@
-import _ from 'lodash'
 import Immutable from 'immutable'
 import classnames from 'classnames/bind'
 import React, { Children } from 'react'
 import { compose, pure } from 'recompose'
 import { defineMessages } from 'react-intl'
-import { bindActionCreators } from 'redux'
 import { connect } from 'react-redux'
 import { Button } from 'react-toolbox/lib/button'
 import MdClose from 'react-icons/lib/md/close'
 
-import { nonEmptyFilterValue } from '../utils'
-import { removeListFilterItem } from '../FilterRedux'
-
 const cssClasses = classnames.bind(require('./FiltersBtnGroup.css'))
 
+const EMPTY_CONTEXT = null
 const EMPTY_MAP = Immutable.Map()
 
 const messages = defineMessages({
@@ -36,6 +32,10 @@ const messages = defineMessages({
   sampleId: {
     id: 'filter.btnGroup.sampleId',
     defaultMessage: 'sample {sampleId}',
+  },
+  sampleGroup: {
+    id: 'filter.btnGroup.sampleGroup',
+    defaultMessage: 'sample group {sampleGroup}',
   },
   whereDeviceNameIncludes: {
     id: 'filter.btnGroup.whereDeviceNameIncludes',
@@ -75,7 +75,6 @@ const enhance = compose(
   pure,
   connect(
     state => ({
-      filters: state.filter.listFilter,
       siteItemsById: state.site.items.byId,
       countryItems: state.geography.countriesForLocationSelector.items,
       consumableItems: state.consumable.consumables.items,
@@ -84,9 +83,7 @@ const enhance = compose(
       workflowStatusItems: state.resultWorkflowStatus.items,
       deviceStatusItems: state.deviceStatus.items,
     }),
-    bindActionCreators.bind(null, {
-      removeListFilterItem,
-    })
+    null
   )
 )
 
@@ -118,7 +115,7 @@ const makeButton = labelFn => (props, filterKey) =>
     key={filterKey}
     className={cssClasses('Button')}
     raised
-    onClick={() => props.removeListFilterItem(filterKey)}
+    onClick={() => props.onRemoveFilterItem(filterKey)}
   >
     {labelFn(props, props.filters[filterKey])}
     <MdClose className={cssClasses('Button__icon')} />
@@ -126,25 +123,29 @@ const makeButton = labelFn => (props, filterKey) =>
 
 const buttonBy = {
   assayId: makeButton(({ assayItems }, assayId) =>
-    assayItems.find(it => it.get('id') === assayId, null, EMPTY_MAP).get('name')
+    assayItems
+      .find(it => it.get('id') === assayId, EMPTY_CONTEXT, EMPTY_MAP)
+      .get('name')
   ),
   countryId: makeButton(({ countryItems }, countryId) =>
-    countryItems.find(it => it.id === countryId, null, EMPTY_MAP).get('name')
+    countryItems
+      .find(it => it.id === countryId, EMPTY_CONTEXT, EMPTY_MAP)
+      .get('name')
   ),
   stateId: makeButton(({ countryItems, filters }, stateId) =>
     countryItems
-      .find(it => it.id === filters.countryId, null, EMPTY_MAP)
-      .getIn(['children', 'items'], null, EMPTY_MAP)
-      .find(it => it.id === stateId, null, EMPTY_MAP)
+      .find(it => it.id === filters.countryId, EMPTY_CONTEXT, EMPTY_MAP)
+      .getIn(['children', 'items'], EMPTY_MAP)
+      .find(it => it.id === stateId, EMPTY_CONTEXT, EMPTY_MAP)
       .get('name')
   ),
   lgaId: makeButton(({ countryItems, filters }, lgaId) =>
     countryItems
-      .find(it => it.id === filters.countryId, null, EMPTY_MAP)
-      .getIn(['children', 'items'], null, EMPTY_MAP)
-      .find(it => it.id === filters.stateId, null, EMPTY_MAP)
-      .getIn(['children', 'items'], null, EMPTY_MAP)
-      .find(it => it.id === lgaId, null, EMPTY_MAP)
+      .find(it => it.id === filters.countryId, EMPTY_CONTEXT, EMPTY_MAP)
+      .getIn(['children', 'items'], EMPTY_MAP)
+      .find(it => it.id === filters.stateId, EMPTY_CONTEXT, EMPTY_MAP)
+      .getIn(['children', 'items'], EMPTY_MAP)
+      .find(it => it.id === lgaId, EMPTY_CONTEXT, EMPTY_MAP)
       .get('name')
   ),
   minDate: makeButton(({ intl }, date) =>
@@ -156,7 +157,7 @@ const buttonBy = {
   partnerId: makeButton(({ intl, partnerItems }, partnerId) =>
     intl.formatMessage(messages.partnerId, {
       partnerName: partnerItems
-        .find(it => it.get('id') === partnerId, null, EMPTY_MAP)
+        .find(it => it.get('id') === partnerId, EMPTY_CONTEXT, EMPTY_MAP)
         .get('name'),
     })
   ),
@@ -166,7 +167,9 @@ const buttonBy = {
   sampleId: makeButton(({ intl }, sampleId) =>
     intl.formatMessage(messages.sampleId, { sampleId })
   ),
-  sampleGroup: _.noop, // TODO: unused filterKey
+  sampleGroup: makeButton(({ intl }, sampleGroup) =>
+    intl.formatMessage(messages.sampleGroup, { sampleGroup })
+  ),
   deviceName: makeButton(({ intl }, deviceName) =>
     intl.formatMessage(messages.whereDeviceNameIncludes, {
       deviceName,
@@ -176,9 +179,17 @@ const buttonBy = {
     ({ intl, filters, assayItems }, resultCategoryId) =>
       intl.formatMessage(messages.withResultCategory, {
         resultCategoryName: assayItems
-          .find(it => it.get('id') === filters.assayId, null, EMPTY_MAP)
-          .get('resultCategories')
-          .find(it => it.get('id') === resultCategoryId, null, EMPTY_MAP)
+          .find(
+            it => it.get('id') === filters.assayId,
+            EMPTY_CONTEXT,
+            EMPTY_MAP
+          )
+          .get('resultCategories', EMPTY_MAP)
+          .find(
+            it => it.get('id') === resultCategoryId,
+            EMPTY_CONTEXT,
+            EMPTY_MAP
+          )
           .get('name', ''),
       })
   ),
@@ -191,7 +202,11 @@ const buttonBy = {
     intl.formatMessage(messages.sampleOriginSite, {
       sampleOriginSiteName: siteItemsById
         .valueSeq()
-        .find(it => it.get('id') === sampleOriginSiteId, null, EMPTY_MAP)
+        .find(
+          it => it.get('id') === sampleOriginSiteId,
+          EMPTY_CONTEXT,
+          EMPTY_MAP
+        )
         .get('name'),
     })
   ),
@@ -202,21 +217,25 @@ const buttonBy = {
   ),
   consumableId: makeButton(({ consumableItems }, consumableId) =>
     consumableItems
-      .find(it => it.id === consumableId, null, EMPTY_MAP)
+      .find(it => it.id === consumableId, EMPTY_CONTEXT, EMPTY_MAP)
       .get('name')
   ),
   workflowStatusId: makeButton(
     ({ intl, workflowStatusItems }, workflowStatusId) =>
       intl.formatMessage(messages.withWorkflowStatus, {
         workflowStatusName: workflowStatusItems
-          .find(it => it.get('id') === workflowStatusId, null, EMPTY_MAP)
+          .find(
+            it => it.get('id') === workflowStatusId,
+            EMPTY_CONTEXT,
+            EMPTY_MAP
+          )
           .get('name'),
       })
   ),
   deviceStatusId: makeButton(({ intl, deviceStatusItems }, deviceStatusId) =>
     intl.formatMessage(messages.withDeviceStatus, {
       deviceStatusName: deviceStatusItems
-        .find(it => it.get('id') === deviceStatusId, null, EMPTY_MAP)
+        .find(it => it.get('id') === deviceStatusId, EMPTY_CONTEXT, EMPTY_MAP)
         .get('name'),
     })
   ),
@@ -234,9 +253,7 @@ const FiltersBtnGroup = ({ className, children, ...restProps }) =>
         className: cssClasses('FiltersBtnGroup__Child'),
       })
     )}
-    {restProps.filters
-      .toMap()
-      .filter(nonEmptyFilterValue)
+    {Immutable.Map(restProps.filters)
       .keySeq()
       .sortBy(filterKey => filtersOrdering[filterKey])
       .map(filterKey => buttonBy[filterKey](restProps, filterKey))}

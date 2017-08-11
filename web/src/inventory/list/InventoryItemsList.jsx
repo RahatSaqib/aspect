@@ -1,61 +1,71 @@
-import PropTypes from 'prop-types'
+import _ from 'lodash'
+import Immutable from 'immutable'
 import classnames from 'classnames/bind'
-import React, { PureComponent } from 'react'
-import { compose, setPropTypes, pure } from 'recompose'
-import { injectIntl, defineMessages, intlShape } from 'react-intl'
+import React from 'react'
+import { compose, withProps, withHandlers, lifecycle, pure } from 'recompose'
+import { injectIntl, defineMessages } from 'react-intl'
 import { bindActionCreators } from 'redux'
 import { connect } from 'react-redux'
 import Helmet from 'react-helmet'
-import { SubmissionError, submit } from 'redux-form/immutable'
+import { Checkbox } from 'react-toolbox/lib/checkbox'
+import { IconButton } from 'react-toolbox/lib/button'
+import withTooltip from 'react-toolbox/lib/tooltip'
+import { IconMenu, MenuItem } from 'react-toolbox/lib/menu'
+import MdAdd from 'react-icons/lib/md/add'
+import MdTransfer from 'react-icons/lib/md/swap-horiz'
+import MdRemove from 'react-icons/lib/md/remove'
+import MdDone from 'react-icons/lib/md/done'
+import MdMoreVert from 'react-icons/lib/md/more-vert'
 
-// Material-UI
-import { Card } from 'material-ui/Card'
-import Checkbox from 'material-ui/Checkbox'
-import AddIcon from 'material-ui/svg-icons/content/add'
-import TransferIcon from 'material-ui/svg-icons/action/swap-horiz'
-import RemoveIcon from 'material-ui/svg-icons/content/remove'
-import DoneIcon from 'material-ui/svg-icons/action/done'
-import Dialog from 'material-ui/Dialog'
-import RaisedButton from 'material-ui/RaisedButton'
-import FlatButton from 'material-ui/FlatButton'
-import IconButton from 'material-ui/IconButton'
-import IconMenu from 'material-ui/IconMenu'
-import MenuItem from 'material-ui/MenuItem'
-import MoreVertIcon from 'material-ui/svg-icons/navigation/more-vert'
-
-// Our own imports
+import {
+  makeSortPageSelector,
+  makeSearchParamsSanitizer,
+  composeSanitizer,
+} from '../../shared/selectors/searchParams'
+import { sanitizeFiltersStringBy } from '../../filter/utils'
 import NavTitle from '../../globals/components/NavTitle'
 import BrowseFilters from '../../globals/components/BrowseFilters'
-import { Items } from '../../shared/metaReducers/items'
-import { Table } from '../../shared/metaReducers/table'
-import EmptyList from '../../components/shared/EmptyList'
-import GroupedDataTable from '../../components/shared/GroupedDataTable'
+import BrowseEmptyList from '../../globals/components/BrowseEmptyList'
+import BrowseTablePaginator from '../../globals/components/BrowseTablePaginator'
+import DataTableCard from '../../components/shared/DataTableCard'
+import DataTableProgressBar from '../../components/shared/DataTableProgressBar'
 import { showAcknowledgement } from '../../appNotification/AppNotificationRedux'
-import { configureListFilter, ListFilter } from '../../filter/FilterRedux'
+import { testConductedReasonI18nKey } from '../adjustment/InventoryAdjustmentDialogForm'
+import NewInventoryDialogForm from '../adjustment/NewInventoryDialogForm'
+import AddInventoryDialogForm from '../adjustment/AddInventoryDialogForm'
+import ReceiveInventoryDialogForm from '../adjustment/ReceiveInventoryDialogForm'
+import RemoveInventoryDialogForm from '../adjustment/RemoveInventoryDialogForm'
+import TransferInventoryDialogForm from '../adjustment/TransferInventoryDialogForm'
 import {
-  fetchListFilteredInventoryItems,
+  types,
+  fetchInventoryItems,
   toggleGroupBySite,
-  addOperation,
-  removeOperation,
-  transferOperation,
-  receiveOperation,
-  adjustInventoryLevels,
-  addInventoryItem,
-  finishAdjustingInventoryLevels,
+  showNewInventoryDialog,
+  showAddInventoryDialog,
+  showRemoveInventoryDialog,
+  showTransferInventoryDialog,
+  showReceiveInventoryDialog,
+  hideAdjustInventoryDialog,
   addInventory,
   removeInventory,
   transferInventory,
   receiveInventory,
 } from '../InventoryRedux'
-import InventoryAdjustmentForm, {
-  testConductedReasonI18nKey,
-} from '../adjustment/InventoryAdjustmentForm'
+import {
+  InventoryDataTable,
+  InventoryDataTableHead,
+  InventoryDataTableRow,
+} from './InventoryDataTable'
 
 const cssClasses = classnames.bind(require('./InventoryItemsList.css'))
 
+const TooltipIconButton = withTooltip(IconButton)
+
+const EMPTY_MAP = Immutable.Map()
+
 const messages = defineMessages({
-  title: {
-    id: 'pages.InventoryItemsList.title',
+  inventoryItemsTitle: {
+    id: 'pages.InventoryItemsList.inventoryItemsTitle',
     defaultMessage: 'Inventory on Hand',
   },
   groupBySite: {
@@ -73,10 +83,6 @@ const messages = defineMessages({
   quantityOnHand: {
     id: 'pages.InventoryItemsList.quantityOnHand',
     defaultMessage: 'Quantity on Hand',
-  },
-  inTransitFromSiteName: {
-    id: 'pages.InventoryItemsList.inTransitFromSiteName',
-    defaultMessage: '* in transit from {inTransitFromSiteName}',
   },
   expiresOn: {
     id: 'pages.InventoryItemsList.expiresOn',
@@ -106,409 +112,424 @@ const messages = defineMessages({
     id: 'pages.InventoryItemsList.removeInventory',
     defaultMessage: 'Remove Inventory',
   },
-  addTitle: {
-    id: 'pages.InventoryItemsList.addTitle',
-    defaultMessage: 'Add {consumableName}',
+  paginatorStatus: {
+    id: 'pages.InventoryItemsList.paginatorStatus',
+    defaultMessage: `Showing {firstItemIndex}-{lastItemIndex} of {itemCount, plural,
+      one {# supply}
+      other {# supplies}
+    }`,
   },
-  removeTitle: {
-    id: 'pages.InventoryItemsList.removeTitle',
-    defaultMessage: 'Remove {consumableName}',
-  },
-  transferTitle: {
-    id: 'pages.InventoryItemsList.transferTitle',
-    defaultMessage: 'Transfer {consumableName}',
-  },
-  receiveTitle: {
-    id: 'pages.InventoryItemsList.receiveTitle',
-    defaultMessage: 'Receive {consumableName}',
-  },
-  submit: {
-    id: 'pages.InventoryItemsList.submit',
-    defaultMessage: 'Submit',
-  },
-  cancel: {
-    id: 'pages.InventoryItemsList.cancel',
-    defaultMessage: 'Cancel',
-  },
+
   inventoryAdjustedSuccessfully: {
     id: 'pages.InventoryItemsList.inventoryAdjustedSuccessfully',
     defaultMessage: 'Inventory levels have been adjusted successfully',
   },
 })
 
+const FILTERS_CONFIG = {
+  consumable: true,
+  geography: true,
+  state: true,
+  lga: true,
+  siteName: true,
+  date: true,
+}
+
+const searchSanitizer = makeSearchParamsSanitizer({
+  availableSortCol: [
+    'siteName',
+    'consumableName',
+    'quantityOnHand',
+    'expiresOn',
+  ],
+})
+const filtersSanitizer = sanitizeFiltersStringBy(FILTERS_CONFIG)
+const filtersFromLocation = composeSanitizer(
+  _.flowRight(filtersSanitizer, searchParams => searchParams.get('filters')),
+  searchSanitizer
+)
+
 const enhance = compose(
-  setPropTypes({
-    location: PropTypes.object.isRequired,
-    history: PropTypes.object.isRequired, // eslint-disable-line
-  }),
   pure,
   injectIntl,
   connect(
     state => ({
-      consumableReasons: state.consumable.get('consumableReasons'),
-      listFilter: state.filter.listFilter,
+      consumableReasons: state.consumable.consumableReasons,
       items: state.inventory.items,
       table: state.inventory.table,
       inventoryAdjustment: state.inventory.inventoryAdjustment,
     }),
     bindActionCreators.bind(null, {
-      configureListFilter,
-      fetchListFilteredInventoryItems,
+      showAcknowledgement,
+
+      fetchInventoryItems,
       toggleGroupBySite,
-      adjustInventoryLevels,
-      addInventoryItem,
-      finishAdjustingInventoryLevels,
+
+      showNewInventoryDialog,
+      showAddInventoryDialog,
+      showRemoveInventoryDialog,
+      showTransferInventoryDialog,
+      showReceiveInventoryDialog,
+      hideAdjustInventoryDialog,
+
       addInventory,
       removeInventory,
       transferInventory,
       receiveInventory,
-      submit,
-      showAcknowledgement,
     })
   ),
-  setPropTypes({
-    intl: intlShape.isRequired,
-    consumableReasons: PropTypes.object.isRequired,
-    listFilter: PropTypes.objectOf(ListFilter).isRequired,
-    items: PropTypes.objectOf(Items).isRequired,
-    table: PropTypes.objectOf(Table).isRequired,
-    inventoryAdjustment: PropTypes.object,
-    configureListFilter: PropTypes.func.isRequired,
-    fetchListFilteredInventoryItems: PropTypes.func.isRequired,
-    toggleGroupBySite: PropTypes.func.isRequired,
-    adjustInventoryLevels: PropTypes.func.isRequired,
-    addInventoryItem: PropTypes.func.isRequired,
-    finishAdjustingInventoryLevels: PropTypes.func.isRequired,
-    addInventory: PropTypes.func.isRequired,
-    removeInventory: PropTypes.func.isRequired,
-    transferInventory: PropTypes.func.isRequired,
-    receiveInventory: PropTypes.func.isRequired,
-    submit: PropTypes.func.isRequired,
-    showAcknowledgement: PropTypes.func.isRequired,
+  withProps(
+    makeSortPageSelector({
+      sortCol: 'siteName',
+    })
+  ),
+  withHandlers({
+    onInitialLoad: ({
+      location,
+      fetchInventoryItems,
+      sortCol,
+      sortDir,
+      pageAt,
+      pageSize,
+    }) => () => {
+      const { sanitized, value: filtersParams } = filtersFromLocation(location)
+      if (!sanitized) {
+        fetchInventoryItems(filtersParams, sortCol, sortDir, pageAt, pageSize)
+      }
+    },
+    onHeadColumnClick: ({ history, location, sortCol, sortDir }) => ({
+      currentTarget: { dataset: { column: nextSortCol } },
+    }) => {
+      const searchParams = new URLSearchParams(location.search)
+
+      if (sortCol !== nextSortCol) {
+        searchParams.set('sortCol', nextSortCol)
+      } else {
+        searchParams.set('sortDir', sortDir !== 'asc' ? 'asc' : 'desc')
+      }
+
+      history.replace({
+        ...location,
+        search: searchParams.toString(),
+      })
+    },
+  }),
+  lifecycle({
+    componentWillMount() {
+      const { sanitized, value: searchParams } = searchSanitizer(
+        this.props.location
+      )
+      const {
+        sanitized: filtersSanitized,
+        value: filtersParams,
+      } = filtersSanitizer(searchParams.get('filters'))
+      if (sanitized || filtersSanitized) {
+        searchParams.set('filters', filtersParams)
+
+        this.props.history.replace({
+          ...this.props.location,
+          search: searchParams.toString(),
+        })
+      }
+    },
+
+    componentDidMount() {
+      this.props.onInitialLoad()
+    },
+
+    componentWillReceiveProps(nextProps) {
+      if (this.props.location.search !== nextProps.location.search) {
+        this.props.onInitialLoad()
+      }
+    },
+  }),
+  withHandlers({
+    onAdjustInventorySucceeded: ({
+      table,
+      showAcknowledgement,
+      onPageChange,
+    }) => () => {
+      showAcknowledgement({
+        title: messages.inventoryAdjustedSuccessfully,
+      })
+      onPageChange(table.page)
+    },
+  }),
+  withHandlers({
+    onGroupBySiteChange: ({
+      toggleGroupBySite,
+      onInitialLoad,
+    }) => isInputChecked => {
+      toggleGroupBySite(isInputChecked)
+      onInitialLoad()
+    },
+
+    onAddInventorySubmit: ({
+      addInventory,
+      onAdjustInventorySucceeded,
+    }) => values =>
+      addInventory(_.omit(values, ['canExpire'])).then(
+        onAdjustInventorySucceeded
+      ),
+
+    onRemoveInventorySubmit: ({
+      consumableReasons,
+      removeInventory,
+      onAdjustInventorySucceeded,
+    }) => values => {
+      const selectedAdjustmentReason = consumableReasons.items.find(
+        reason => reason.get('id') === values.reasonId
+      )
+      if (
+        selectedAdjustmentReason.get('i18nKey') === testConductedReasonI18nKey
+      ) {
+        return removeInventory(
+          _.omit(values, ['canExpire', 'dateAdjusted'])
+        ).then(onAdjustInventorySucceeded)
+      }
+      return removeInventory(
+        _.omit(values, ['canExpire', 'dateAdjustedFrom', 'dateAdjustedTo'])
+      ).then(onAdjustInventorySucceeded)
+    },
+
+    onTransferInventorySubmit: ({
+      transferInventory,
+      onAdjustInventorySucceeded,
+    }) => values =>
+      transferInventory(_.omit(values, ['canExpire'])).then(
+        onAdjustInventorySucceeded
+      ),
+
+    onReceiveInventorySubmit: ({
+      receiveInventory,
+      onAdjustInventorySucceeded,
+    }) => values =>
+      receiveInventory(_.omit(values, ['canExpire'])).then(
+        onAdjustInventorySucceeded
+      ),
   })
 )
 
-export class InventoryItemsList extends PureComponent {
-  componentWillMount() {
-    const { configureListFilter } = this.props
-    configureListFilter({
-      consumable: true,
-      geography: true,
-      date: true,
-      siteName: true,
-    })
-  }
+const makeOnInventoryItemActionSelect = inventoryItemId => showDialogFn =>
+  showDialogFn(inventoryItemId)
 
-  componentDidMount() {
-    this.handleFetch()
-  }
-
-  componentWillReceiveProps(nextProps) {
-    if (this.props.listFilter !== nextProps.listFilter) {
-      this.handleFetch()
-    }
-  }
-
-  groupBySiteChecked = (event, isChecked) => {
-    this.props.toggleGroupBySite(isChecked)
-  }
-
-  adjustInventoryLevels = (operation, inventoryItemId) => {
-    const { adjustInventoryLevels, items } = this.props
-    const inventoryItem = items.getIn(['byId', inventoryItemId])
-    adjustInventoryLevels(operation, inventoryItem)
-  }
-
-  inventoryLevelAdjustmentIconButtons = itemId => {
-    const { intl: { formatMessage }, items } = this.props
-    const item = items.getIn(['byId', itemId])
-    const onItemTouchTap = (event, child) => {
-      this.adjustInventoryLevels(child.props.value, itemId)
-    }
-    return (
-      <IconMenu
-        iconButtonElement={
-          <IconButton>
-            <MoreVertIcon />
-          </IconButton>
-        }
-        anchorOrigin={{ horizontal: 'right', vertical: 'top' }}
-        targetOrigin={{ horizontal: 'right', vertical: 'top' }}
-        useLayerForClickAway
-        onItemTouchTap={onItemTouchTap}
-      >
-        {item.get('inTransitFromSiteId') &&
-          <MenuItem
-            primaryText={formatMessage(messages.receiveInventory)}
-            leftIcon={<DoneIcon />}
-            value={receiveOperation}
-          />}
-        {!item.get('inTransitFromSiteId') &&
-          <MenuItem
-            primaryText={formatMessage(messages.addInventory)}
-            leftIcon={<AddIcon />}
-            value={addOperation}
-          />}
-        {!item.get('inTransitFromSiteId') &&
-          <MenuItem
-            primaryText={formatMessage(messages.transferInventory)}
-            leftIcon={<TransferIcon />}
-            value={transferOperation}
-          />}
-        {!item.get('inTransitFromSiteId') &&
-          <MenuItem
-            primaryText={formatMessage(messages.removeInventory)}
-            leftIcon={<RemoveIcon />}
-            value={removeOperation}
-          />}
-      </IconMenu>
-    )
-  }
-
-  handleInventoryAdjustmentSubmit = formValues => {
-    const {
-      inventoryAdjustment,
-      addInventory,
-      removeInventory,
-      transferInventory,
-      receiveInventory,
-      consumableReasons,
-    } = this.props
-    const commonFormValues = {
-      consumableId:
-        formValues.get('consumableId') ||
-        inventoryAdjustment.getIn(['adjustmentDetails', 'consumableId']),
-      lotNumber: formValues.get('lotNumber'),
-      expiresOn: formValues.get('expiresOn'),
-      quantity: formValues.get('quantity'),
-      notes: formValues.get('notes'),
-    }
-    switch (inventoryAdjustment.get('operation')) {
-      case addOperation:
-        return addInventory(
-          inventoryAdjustment.getIn(['adjustmentDetails', 'inventoryItemId']),
-          {
-            ...commonFormValues,
-            toSiteId: formValues.get('toSiteId'),
-            dateAdjusted: formValues.get('dateAdjusted'),
-          }
-        )
-      case removeOperation: {
-        const selectedAdjustmentReason = consumableReasons.items.find(
-          reason => reason.get('id') === formValues.get('reasonId')
-        )
-        const dateValues =
-          selectedAdjustmentReason.get('i18nKey') === testConductedReasonI18nKey
-            ? {
-                dateAdjustedFrom: formValues.get('dateAdjustedFrom'),
-                dateAdjustedTo: formValues.get('dateAdjustedTo'),
-              }
-            : { dateAdjusted: formValues.get('dateAdjusted') }
-        return removeInventory(
-          inventoryAdjustment.getIn(['adjustmentDetails', 'inventoryItemId']),
-          {
-            ...dateValues,
-            ...commonFormValues,
-            fromSiteId: formValues.get('fromSiteId'),
-            reasonId: formValues.get('reasonId'),
-          }
-        )
-      }
-      case transferOperation:
-        return transferInventory(
-          inventoryAdjustment.getIn(['adjustmentDetails', 'inventoryItemId']),
-          {
-            ...commonFormValues,
-            fromSiteId: formValues.get('fromSiteId'),
-            toSiteId: formValues.get('toSiteId'),
-            dateAdjusted: formValues.get('dateAdjusted'),
-          }
-        )
-      case receiveOperation:
-        return receiveInventory(
-          inventoryAdjustment.getIn(['adjustmentDetails', 'inventoryItemId']),
-          {
-            ...commonFormValues,
-            fromSiteId: formValues.get('fromSiteId'),
-            toSiteId: formValues.get('toSiteId'),
-            dateAdjusted: formValues.get('dateAdjusted'),
-          }
-        )
-      default:
-        throw new SubmissionError({
-          _error: `Invalid operation ${inventoryAdjustment.get(
-            'operation'
-          )} for inventory adjustment form`,
-        })
-    }
-  }
-
-  handleFetch = (...args) => {
-    this.props.fetchListFilteredInventoryItems({}, ...args)
-  }
-
-  handleInventoryAdjustmentCancel = () => {
-    this.props.finishAdjustingInventoryLevels()
-  }
-
-  adjustInventorySucceeded = () => {
-    const { showAcknowledgement, table } = this.props
-    showAcknowledgement({
-      title: messages.inventoryAdjustedSuccessfully,
-    })
-    this.handleFetch(
-      table.get('sortCol') || 'siteName',
-      table.get('sortDir') || 'asc',
-      table.get('page') || 0,
-      table.get('pageSize') || 10
-    )
-  }
-
-  render() {
-    const {
-      intl,
-      items,
-      table,
-      addInventoryItem,
-      inventoryAdjustment,
-      submit,
-    } = this.props
-    const { formatMessage, formatDate, formatRelative, formatNumber } = intl
-    const isSettledAndEmpty = !table.loading && items.currentIdList.isEmpty()
-
-    const columns = [
-      {
-        fieldName: 'siteName',
-        headerText: formatMessage(messages.siteName),
-      },
-      {
-        fieldName: 'consumableName',
-        headerText: formatMessage(messages.consumableName),
-      },
-      {
-        fieldName: 'quantityOnHand',
-        headerText: formatMessage(messages.quantityOnHand),
-        format: (data, item) => {
-          if (item.get('inTransitFromSiteName')) {
-            return (
-              <span>
-                {formatNumber(data)}
-                &nbsp;
-                <small>
-                  {formatMessage(messages.inTransitFromSiteName, {
-                    inTransitFromSiteName: item.get('inTransitFromSiteName'),
-                  })}
-                </small>
-              </span>
-            )
-          }
-          return formatNumber(data)
-        },
-      },
-      {
-        fieldName: 'expiresOn',
-        headerText: formatMessage(messages.expiresOn),
-        format: data =>
-          data ? formatDate(data, { format: 'user-timezone' }) : 'N/A',
-      },
-      {
-        fieldName: 'expiresOn',
-        headerText: formatMessage(messages.expiresIn),
-        format: data => (data ? formatRelative(data) : 'Never'),
-      },
-    ]
-
-    const adjustingInventoryItem = inventoryAdjustment.get('adjustmentDetails')
-    const formHeaderValues = {
-      consumableName: adjustingInventoryItem
-        ? adjustingInventoryItem.get('consumableName') || 'Inventory Item'
-        : null,
-    }
-    const formHeader =
-      inventoryAdjustment.get('operation') === addOperation
-        ? formatMessage(messages.addTitle, formHeaderValues)
-        : inventoryAdjustment.get('operation') === removeOperation
-          ? formatMessage(messages.removeTitle, formHeaderValues)
-          : inventoryAdjustment.get('operation') === transferOperation
-            ? formatMessage(messages.transferTitle, formHeaderValues)
-            : inventoryAdjustment.get('operation') === receiveOperation
-              ? formatMessage(messages.receiveTitle, formHeaderValues)
-              : null
-
-    const inventoryAdjustmentActions = [
-      <FlatButton
-        disabled={inventoryAdjustment.get('updating')}
-        onTouchTap={this.handleInventoryAdjustmentCancel}
-        secondary
-        label={formatMessage(messages.cancel)}
-      />,
-      <RaisedButton
-        disabled={inventoryAdjustment.get('updating')}
-        onTouchTap={() => submit('inventoryAdjustment')}
-        label={formatMessage(messages.submit)}
-        primary
-      />,
-    ]
-    return (
-      <div className={cssClasses('Content')}>
-        <Helmet
-          title={formatMessage(messages.title)}
-          titleTemplate="%s - Aspect"
-          defaultTitle="Aspect"
-        />
-        <NavTitle title={formatMessage(messages.title)} />
-        <BrowseFilters
-          history={this.props.history}
-          location={this.props.location}
-          intl={intl}
-          dateFilterLabel={formatMessage(messages.expiresOn)}
-        />
-        <Card>
-          <Checkbox
-            checked={table.get('groupBy').includes('siteId')}
-            onCheck={this.groupBySiteChecked}
-            label={formatMessage(messages.groupBySite)}
-            labelPosition="right"
-            style={{ padding: '1em', width: '10em', display: 'inline-block' }}
-          />
-          <IconButton
-            onTouchTap={addInventoryItem}
-            tooltip={formatMessage(messages.addInventory)}
-            style={{ float: 'right', margin: '0.3em 0 0', fontSize: 'auto' }}
-          >
-            <AddIcon />
-          </IconButton>
-        </Card>
-        {isSettledAndEmpty && <EmptyList />}
-        {!isSettledAndEmpty &&
-          <GroupedDataTable
-            handleFetch={this.handleFetch}
-            items={items}
-            table={table}
-            columns={columns}
-            intl={intl}
-            messages={messages}
-            actionComponent={this.inventoryLevelAdjustmentIconButtons}
-          />}
-        <Dialog
-          title={formHeader}
-          actions={inventoryAdjustmentActions}
-          open={
-            inventoryAdjustment.get('operation') !== null &&
-            adjustingInventoryItem != null
-          }
-          autoScrollBodyContent
-          onRequestClose={this.handleInventoryAdjustmentCancel}
+export const InventoryItemsList = ({
+  intl,
+  history,
+  location,
+  table,
+  items,
+  inventoryAdjustment,
+  // --- injected by recompose ---
+  sortCol,
+  sortDir,
+  pageAt,
+  pageSize,
+  onHeadColumnClick,
+  showNewInventoryDialog,
+  showReceiveInventoryDialog,
+  showAddInventoryDialog,
+  showTransferInventoryDialog,
+  showRemoveInventoryDialog,
+  hideAdjustInventoryDialog,
+  onGroupBySiteChange,
+  onAddInventorySubmit,
+  onRemoveInventorySubmit,
+  onTransferInventorySubmit,
+  onReceiveInventorySubmit,
+}) =>
+  <div className={cssClasses('Container')}>
+    <Helmet
+      title={intl.formatMessage(messages.inventoryItemsTitle)}
+      titleTemplate="%s - Aspect"
+      defaultTitle="Aspect"
+    />
+    <NavTitle title={intl.formatMessage(messages.inventoryItemsTitle)} />
+    <BrowseFilters
+      history={history}
+      location={location}
+      intl={intl}
+      config={FILTERS_CONFIG}
+      dateFilterLabel={intl.formatMessage(messages.expiresOn)}
+    />
+    <DataTableCard className={cssClasses('DataTableCard--action')}>
+      <Checkbox
+        className={cssClasses('Checkbox')}
+        name="groupBySite"
+        checked={table.get('groupBy').includes('siteId')}
+        onChange={onGroupBySiteChange}
+        label={intl.formatMessage(messages.groupBySite)}
+      />
+      <TooltipIconButton
+        theme={{
+          tooltip: cssClasses('TooltipIconButton__tooltip'),
+          toggle: cssClasses('TooltipIconButton__toggle'),
+        }}
+        icon={<MdAdd />}
+        tooltip={intl.formatMessage(messages.addInventory)}
+        onClick={showNewInventoryDialog}
+      />
+    </DataTableCard>
+    <DataTableCard className={cssClasses('DataTableCard--table')}>
+      <DataTableProgressBar disabled={!table.loading} />
+      {items.currentIdList.isEmpty() &&
+        <BrowseEmptyList history={history} location={location} intl={intl} />}
+      {!items.currentIdList.isEmpty() &&
+        <InventoryDataTable
+          selectable={false}
+          className={cssClasses('InventoryDataTable')}
         >
-          <InventoryAdjustmentForm
-            initialValues={adjustingInventoryItem}
-            onSubmit={this.handleInventoryAdjustmentSubmit}
-            onSubmitSuccess={this.adjustInventorySucceeded}
+          <InventoryDataTableHead
+            sortColumnKey={sortCol}
+            sortColumnDir={sortDir}
+            columns={[
+              {
+                key: 'siteName',
+                label: intl.formatMessage(messages.siteName),
+                onClick: onHeadColumnClick,
+              },
+              {
+                key: 'consumableName',
+                label: intl.formatMessage(messages.consumableName),
+                onClick: onHeadColumnClick,
+              },
+              {
+                key: 'quantityOnHand',
+                label: intl.formatMessage(messages.quantityOnHand),
+                onClick: onHeadColumnClick,
+              },
+              {
+                key: 'expiresOn',
+                label: intl.formatMessage(messages.expiresOn),
+                onClick: onHeadColumnClick,
+              },
+              {
+                key: 'expiresIn',
+                label: intl.formatMessage(messages.expiresIn),
+                'data-column': 'expiresOn',
+                onClick: onHeadColumnClick,
+              },
+              {
+                key: 'action',
+              },
+            ]}
           />
-        </Dialog>
-      </div>
-    )
-  }
-}
+          {items.currentIdList
+            .map(id => items.byId.get(id))
+            .map(inventoryItem =>
+              <InventoryDataTableRow
+                key={inventoryItem.get('id')}
+                intl={intl}
+                inventoryItem={inventoryItem}
+              >
+                <IconMenu
+                  icon={<MdMoreVert />}
+                  position="topRight"
+                  onSelect={makeOnInventoryItemActionSelect(
+                    inventoryItem.get('id')
+                  )}
+                >
+                  {inventoryItem.get('inTransitFromSiteId') &&
+                    <MenuItem
+                      value={showReceiveInventoryDialog}
+                      icon={<MdDone />}
+                      caption={intl.formatMessage(messages.receiveInventory)}
+                    />}
+                  {!inventoryItem.get('inTransitFromSiteId') &&
+                    <MenuItem
+                      value={showAddInventoryDialog}
+                      icon={<MdAdd />}
+                      caption={intl.formatMessage(messages.addInventory)}
+                    />}
+
+                  {!inventoryItem.get('inTransitFromSiteId') &&
+                    <MenuItem
+                      value={showTransferInventoryDialog}
+                      icon={<MdTransfer />}
+                      caption={intl.formatMessage(messages.transferInventory)}
+                    />}
+                  {!inventoryItem.get('inTransitFromSiteId') &&
+                    <MenuItem
+                      value={showRemoveInventoryDialog}
+                      icon={<MdRemove />}
+                      caption={intl.formatMessage(messages.removeInventory)}
+                    />}
+                </IconMenu>
+              </InventoryDataTableRow>
+            )}
+        </InventoryDataTable>}
+      {!items.currentIdList.isEmpty() &&
+        <BrowseTablePaginator
+          history={history}
+          location={location}
+          intl={intl}
+          paginatorStatus={messages.paginatorStatus}
+          total={table.total}
+          pageAt={pageAt}
+          pageSize={pageSize}
+        />}
+    </DataTableCard>
+    <NewInventoryDialogForm
+      intl={intl}
+      isDialogActive={
+        inventoryAdjustment.get('actionType') ===
+        types.SHOW_NEW_INVENTORY_DIALOG
+      }
+      onCancel={hideAdjustInventoryDialog}
+      onSubmit={onAddInventorySubmit}
+    />
+    <AddInventoryDialogForm
+      intl={intl}
+      inventoryItem={items.getIn(
+        ['byId', inventoryAdjustment.get('inventoryItemId')],
+        EMPTY_MAP
+      )}
+      isDialogActive={
+        inventoryAdjustment.get('actionType') ===
+        types.SHOW_ADD_INVENTORY_DIALOG
+      }
+      onCancel={hideAdjustInventoryDialog}
+      onSubmit={onAddInventorySubmit}
+    />
+    <RemoveInventoryDialogForm
+      intl={intl}
+      inventoryItem={items.getIn(
+        ['byId', inventoryAdjustment.get('inventoryItemId')],
+        EMPTY_MAP
+      )}
+      isDialogActive={
+        inventoryAdjustment.get('actionType') ===
+        types.SHOW_REMOVE_INVENTORY_DIALOG
+      }
+      onCancel={hideAdjustInventoryDialog}
+      onSubmit={onRemoveInventorySubmit}
+    />
+    <TransferInventoryDialogForm
+      intl={intl}
+      inventoryItem={items.getIn(
+        ['byId', inventoryAdjustment.get('inventoryItemId')],
+        EMPTY_MAP
+      )}
+      isDialogActive={
+        inventoryAdjustment.get('actionType') ===
+        types.SHOW_TRANSFER_INVENTORY_DIALOG
+      }
+      onCancel={hideAdjustInventoryDialog}
+      onSubmit={onTransferInventorySubmit}
+    />
+    <ReceiveInventoryDialogForm
+      intl={intl}
+      inventoryItem={items.getIn(
+        ['byId', inventoryAdjustment.get('inventoryItemId')],
+        EMPTY_MAP
+      )}
+      isDialogActive={
+        inventoryAdjustment.get('actionType') ===
+        types.SHOW_RECEIVE_INVENTORY_DIALOG
+      }
+      onCancel={hideAdjustInventoryDialog}
+      onSubmit={onReceiveInventorySubmit}
+    />
+  </div>
 
 export default enhance(InventoryItemsList)

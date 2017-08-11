@@ -31,6 +31,9 @@ const SELECT_LIST_FIELDS = [
   'a.name as assayName',
   'a.id as assayId',
   'r.deviceId',
+  knex.raw(
+    'JSON_UNQUOTE(JSON_EXTRACT(r.resultData, "$.resultText")) as resultText'
+  ),
   knex.raw('JSON_UNQUOTE(JSON_EXTRACT(r.patientData, "$.id")) as patientId'),
 ]
 
@@ -74,7 +77,7 @@ const SELECT_SHOW_FIELDS = [
   'so.name as sampleOriginSiteName',
   knex.raw('JSON_UNQUOTE(JSON_EXTRACT(r.patientData, "$.id")) as patientId'),
   'r.patientData',
-  'r.deliverToTerminal',
+  'r.qcCheck',
 ]
 
 const SORT_FIELDS = [
@@ -84,10 +87,12 @@ const SORT_FIELDS = [
   'stateName',
   'lgaName',
   'sampleId',
-  'patientId',
+  'sampleGroup',
+  'resultText',
+  'resultWorkflowStatus',
   'resultCategory1Name',
   'resultCategory2Name',
-  'sampleGroup',
+  'patientId',
 ]
 
 function* getListResults(query, auth) {
@@ -425,25 +430,12 @@ function* updateWorkflowStatus(request) {
       changedOn: now,
       createdOn: now,
     })
-
-    // if set to "validated", set "deliverToTerminal"
-    // TODO: Add to MQ for processing
-    if (payload.externalId === 'Validated') {
-      yield knex('Result').where('id', resultId).update({
-        deliverToTerminal: 1,
-        updatedBy: currentUserId,
-        updatedOn: now,
-      })
-
-      // add device log entry so result is redelivered
-      yield* deliverResultToTerminal(result.data.deviceId, resultId, now)
-    }
   }
 
   return yield* showResult(request)
 }
 
-function* updateDeliverToTerminal(request) {
+function* updateQcCheck(request) {
   const { auth, params, payload } = request
   const now = new Date()
   const { resultId } = params
@@ -455,15 +447,15 @@ function* updateDeliverToTerminal(request) {
     return Boom.notFound()
   }
 
-  if (result.data.resultWorkflowStatusExternalId !== 'Validated') {
+  if (result.data.resultWorkflowStatusExternalId !== 'Deliverable') {
     return Boom.badRequest(
-      '"Deliver to Terminal" can only be set for results that are in the workflow status "Validated".'
+      '"QC Check" can only be set for results that are in the workflow status "Ready for Delivery".'
     )
   }
 
-  // update the result deliver to terminal flag
+  // update the result QC Check flag
   yield knex('Result').where('id', resultId).update({
-    deliverToTerminal: payload.deliverToTerminal,
+    qcCheck: payload.qcCheck,
     updatedBy: currentUserId,
     updatedOn: now,
   })
@@ -481,7 +473,7 @@ function* deliverResultToTerminal(deviceId, resultId, createdOn) {
     source: 'ClientAPI',
     createdOn,
     senderIp: '',
-    rawMessage: JSON.stringify({ deliverToTerminal: 1 }),
+    rawMessage: JSON.stringify({ qcCheck: 1 }),
   })
 }
 
@@ -557,7 +549,7 @@ module.exports = {
   showResult,
   listResultTypes,
   updateWorkflowStatus,
-  updateDeliverToTerminal,
+  updateQcCheck,
   listWorkflowStatusTypes,
   listWorkflowStatusLog,
   exportResults,

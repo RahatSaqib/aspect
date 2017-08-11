@@ -1,10 +1,11 @@
-import { defineMessages } from 'react-intl'
-import Immutable from 'immutable'
 import { stringify } from 'querystring'
+import _ from 'lodash'
+import Immutable from 'immutable'
+import { defineMessages } from 'react-intl'
 import differenceInMinutes from 'date-fns/differenceInMinutes'
 
 import { aspectFetch } from '../shared/utils/fetch'
-import { nonEmptyFilterValue } from '../filter/utils'
+import { mergeToFiltersParams } from '../filter/utils'
 import {
   filterFieldsRejectedError,
   errorNotFound,
@@ -54,27 +55,17 @@ function receiveDevices(json) {
   }
 }
 
-// With state.filter.listFilter & extraFilters
-export function fetchListFilteredDevices(extraFilters = {}, ...args) {
-  return (dispatch, getState) => {
-    const filters = getState().filter.listFilter
-      .toMap()
-      .merge(extraFilters)
-      .filter(nonEmptyFilterValue)
-      .toJS()
-
-    return dispatch(fetchDevices(filters, ...args))
-  }
-}
-
 export function fetchDevices(
-  filters /* required */,
-  sortCol = 'name',
-  sortDir = 'asc',
-  page = 0,
-  pageSize = 10
+  rawFiltersParams,
+  extraFilters = {},
+  sortCol,
+  sortDir,
+  page,
+  pageSize
 ) {
   return dispatch => {
+    const filtersParams = mergeToFiltersParams(extraFilters, rawFiltersParams)
+    const filters = _.fromPairs([...filtersParams.entries()])
     dispatch(requestDevices(sortCol, sortDir, page, pageSize, filters))
 
     return aspectFetch(
@@ -234,6 +225,7 @@ export function updateSingleDevice(deviceId, data) {
 }
 
 export function exportDevices(
+  rawFiltersParams,
   extraFilters = {},
   format,
   sortCol,
@@ -241,12 +233,9 @@ export function exportDevices(
   page,
   pageSize
 ) {
-  return (dispatch, getState) => {
-    const filters = getState().filter.listFilter
-      .toMap()
-      .merge(extraFilters)
-      .filter(nonEmptyFilterValue)
-      .toJS()
+  return dispatch => {
+    const filtersParams = mergeToFiltersParams(extraFilters, rawFiltersParams)
+    const filters = _.fromPairs([...filtersParams.entries()])
 
     return aspectFetch(
       `/device/export?${stringify({

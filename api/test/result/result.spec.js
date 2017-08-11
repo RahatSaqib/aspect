@@ -34,6 +34,8 @@ describe('Result routes', () => {
           assert.property(res.body.data[0], 'lgaName')
           assert.property(res.body.data[0], 'sampleId')
           assert.property(res.body.data[0], 'sampleGroup')
+          assert.property(res.body.data[0], 'resultText')
+          assert.property(res.body.data[0], 'resultWorkflowStatus')
           assert.property(res.body.data[0], 'patientId')
           assert.property(res.body.data[0], 'assayName')
           assert.property(res.body, 'total')
@@ -68,6 +70,8 @@ describe('Result routes', () => {
           assert.property(res.body.data[0], 'assayName')
           assert.property(res.body.data[0], 'resultCategory1Name')
           assert.property(res.body.data[0], 'resultCategory2Name')
+          assert.property(res.body.data[0], 'resultText')
+          assert.property(res.body.data[0], 'resultWorkflowStatus')
           assert.property(res.body, 'total')
           assert.typeOf(res.body.extraColumns, 'array')
           done()
@@ -113,7 +117,7 @@ describe('Result routes', () => {
           assert.property(res.body.data, 'notes')
           assert.property(res.body.data, 'errorCode')
           assert.property(res.body.data, 'errorNotes')
-          assert.property(res.body.data, 'deliverToTerminal')
+          assert.property(res.body.data, 'qcCheck')
           assert.property(res.body.data, 'createdOn')
           assert.property(res.body.data, 'updatedOn')
           assert.property(res.body.data, 'assayId')
@@ -134,8 +138,9 @@ describe('Result routes', () => {
         })
     })
   })
+
   describe('PUT', () => {
-    it('Should update result status given a resultId and set deliverToTerminal accordingly', done => {
+    it('Should update result status given a resultId', done => {
       const updateWithExternalId = {
         resultWorkflowStatusId: null,
         externalId: 'Validated',
@@ -195,7 +200,6 @@ describe('Result routes', () => {
           })
 
           // check the updated fieldName
-          assert.equal(res.body.data.deliverToTerminal, 1)
           assert.equal(res.body.data.resultWorkflowStatus, 'Validated')
 
           // update with resultWorkflowStatusId
@@ -276,29 +280,31 @@ describe('Result routes', () => {
             })
         })
     })
-    it('Updating "deliver to terminal" should fail if not in status "Validated"', done => {
+
+    it('Updating "QC Check" should fail if not in status "Deliverable"', done => {
       // try settings
       server
-        .put(`${path}/deliver-to-terminal/${resultId}`)
-        .send({ deliverToTerminal: true })
+        .put(`${path}/qc-check/${resultId}`)
+        .send({ qcCheck: true })
         .set('Authorization', `Bearer${shared.token}`)
         .end((err, res) => {
           assert.equal(res.status, 400)
           done()
         })
     })
-    it('Should update "deliver to terminal" given a resultId and boolean if in status "Validated"', done => {
-      // get first result in status "Validated"
+
+    it('Should update "QC Check" given a resultId and boolean if in status "Deliverable"', done => {
+      // get first result in status "Deliverable"
       server
-        .get(`${path}?workflowStatusId=6`)
+        .get(`${path}?workflowStatusId=7`)
         .set('Authorization', `Bearer ${shared.token}`)
         .end((err, res) => {
           resultId = res.body.data[0].id
 
           // set to true
           server
-            .put(`${path}/deliver-to-terminal/${resultId}`)
-            .send({ deliverToTerminal: true })
+            .put(`${path}/qc-check/${resultId}`)
+            .send({ qcCheck: true })
             .set('Authorization', `Bearer${shared.token}`)
             .end((err, res) => {
               assert.equal(res.status, 200)
@@ -345,12 +351,12 @@ describe('Result routes', () => {
               })
 
               // check that flag was set to true
-              assert.equal(res.body.data.deliverToTerminal, 1)
+              assert.equal(res.body.data.qcCheck, 1)
 
               // ...and back to false
               server
-                .put(`${path}/deliver-to-terminal/${resultId}`)
-                .send({ deliverToTerminal: false })
+                .put(`${path}/qc-check/${resultId}`)
+                .send({ qcCheck: false })
                 .set('Authorization', `Bearer${shared.token}`)
                 .end((err, res) => {
                   assert.equal(res.status, 200)
@@ -397,7 +403,7 @@ describe('Result routes', () => {
                   })
 
                   // check that flag was set to false
-                  assert.equal(res.body.data.deliverToTerminal, 0)
+                  assert.equal(res.body.data.qcCheck, 0)
 
                   done()
                 })

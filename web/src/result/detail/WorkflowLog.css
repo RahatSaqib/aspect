@@ -6,18 +6,8 @@
   padding: 10px;
 }
 
-.ProgressBar {
-  opacity: 0;
-}
-
-.ProgressBar--indeterminate {
-  opacity: 1;
-}
-
 .WorkflowLogDataTable {
-  width: 100%;
-  border-spacing: 0;
-  font-size: 14px;
+  composes: ComponentDataTable from '../../components/shared/DataTable.css';
 }
 
 .TablePaginator {

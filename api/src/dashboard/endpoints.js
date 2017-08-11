@@ -1,11 +1,11 @@
 const { asyncHandler } = require('../routes')
-const { homeDashboard } = require('./service')
+const { statusDashboard } = require('./service')
 
 module.exports = [
   {
     method: 'GET',
     path: '/dashboard',
-    handler: asyncHandler(homeDashboard),
+    handler: asyncHandler(statusDashboard),
     config: {
       description: 'Dashboard Home',
       notes: 'The top level dashboard',

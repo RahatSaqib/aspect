@@ -1,8 +1,7 @@
 import PropTypes from 'prop-types'
 import React from 'react'
 import _ from 'lodash'
-import { injectIntl, defineMessages, intlShape } from 'react-intl'
-import { Field } from 'redux-form/immutable'
+import { defineMessages, intlShape } from 'react-intl'
 import TextField from 'material-ui/TextField'
 import Popover from 'material-ui/Popover'
 import LinearProgress from 'material-ui/LinearProgress'
@@ -222,47 +221,4 @@ export class StrongPasswordInput extends React.PureComponent {
   }
 }
 
-const intlStrongPasswordInput = injectIntl(StrongPasswordInput)
-
-const renderFormField = props => {
-  const {
-    name,
-    label,
-    fullWidth,
-    disabled,
-    maxLength,
-    autoFocus,
-    anchorOrigin,
-    targetOrigin,
-    minLength,
-    requiresNumber,
-    requiresMixUpperAndLowerCase,
-    requiresSpecialCharacter,
-  } = props
-  return (
-    <Field
-      name={name}
-      component={intlStrongPasswordInput}
-      textFieldProps={{
-        floatingLabelText: label,
-        fullWidth,
-        autoFocus,
-        disabled,
-        maxLength,
-        type: 'password',
-      }}
-      popOverProps={{
-        anchorOrigin,
-        targetOrigin,
-      }}
-      validationProps={{
-        minLength,
-        requiresNumber,
-        requiresMixUpperAndLowerCase,
-        requiresSpecialCharacter,
-      }}
-    />
-  )
-}
-
-export default renderFormField
+export default StrongPasswordInput
