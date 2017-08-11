@@ -1,0 +1,34 @@
+@import '../../globals/variables.css';
+
+:root {
+  --back-icon-size: 60px;
+}
+
+.Container {
+  display: flex;
+  line-height: var(--back-icon-size);
+  background-color: #ffffff;
+}
+
+.Container__Title {
+  flex-grow: 1;
+  font-size: 36px;
+  font-weight: var(--lato-font-weight-bold);
+  color: var(--aspect-color-grey-2);
+}
+
+.Container__BtnGroup {
+}
+
+.Container__Button--back {
+  height: var(--back-icon-size);
+  font-size: var(--back-icon-size);
+}
+
+.Container__Button--back > svg {
+  height: var(--back-icon-size);
+}
+
+.Button--primary:not([disabled]).Button--flat {
+  color: var(--aspect-color-grey-2);
+}

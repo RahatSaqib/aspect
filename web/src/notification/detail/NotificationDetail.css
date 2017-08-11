@@ -1,0 +1,76 @@
+@import '../../globals/variables.css';
+
+.Section {
+  padding: 10px 20px;
+}
+
+.Section--first {
+  padding-top: 20px;
+}
+
+.Section--last {
+  padding-bottom: 20px;
+}
+
+.Card {
+  padding: 30px;
+}
+
+.Card__Title {
+  margin-top: 0;
+  display: flex;
+  justify-content: space-between;
+}
+
+.Card__Button {
+  font-weight: var(--lato-font-weight-bold);
+}
+
+.Card__Button--inline {
+  margin: 0 10px;
+}
+
+.Card__Button--inline:first-child {
+  margin-left: 0;
+}
+
+.Card__Button--inline:last-child {
+  margin-right: 0;
+}
+
+.Card__Button--block {
+  margin: 10px 0;
+  display: block;
+  width: 100%;
+}
+
+.Input__inputElement {
+  border: 1px solid rgba(0, 0, 0, 0.12);
+  border-radius: 4px;
+  padding: 8px 12px;
+}
+
+.Input--inline {
+  display: inline-block;
+  width: 50px;
+}
+
+.Button--primary:not([disabled]).Button--raised.Button--inverse {
+  background-color: var(--aspect-color-grey-7);
+}
+
+.Button--square {
+  min-width: 36px;
+}
+
+.Button--square > svg {
+  margin-right: 0;
+}
+
+.Recipients__Right {
+  padding: 0 20px;
+}
+
+.NotificationDeliveryDataTable {
+  composes: ComponentDataTable from '../../components/shared/DataTable.css';
+}
