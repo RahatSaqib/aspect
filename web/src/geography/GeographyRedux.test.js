@@ -799,7 +799,6 @@ describe('geography action creators', () => {
 
         it('Should return a dispatch function that dispatches nothing', () => {
           const dispatchFunction = geographyRedux.fetchCountriesForLocationSelector(
-            false,
             countriesState
           )
           dispatchFunction(dispatch)
@@ -826,7 +825,6 @@ describe('geography action creators', () => {
           createGeographyReduxWithStubs(fetchStub)
           countriesState = setLastRefreshedTimeOnCountries(expiredCacheTime)
           const dispatchFunction = geographyRedux.fetchCountriesForLocationSelector(
-            false,
             countriesState
           )
           dispatchFunction(dispatch)
@@ -883,7 +881,6 @@ describe('geography action creators', () => {
           createGeographyReduxWithStubs(fetchStub)
           countriesState = setLastRefreshedTimeOnCountries(undefined)
           const dispatchFunction = geographyRedux.fetchCountriesForLocationSelector(
-            false,
             countriesState
           )
           dispatchFunction(dispatch)
@@ -898,298 +895,6 @@ describe('geography action creators', () => {
         it('Should request a new list of countries from the server', () => {
           expect(
             fetchStub.aspectFetch.calledWith('/geography/country-select-list')
-          ).toBeTruthy()
-        })
-
-        describe('and a response is received from the server', () => {
-          it('Should dispatch a RECEIVE_COUNTRIES_FOR_LOCATION_SELECTOR action with the countries received and the current date', () =>
-            expectedResponseFromServer.then(response => {
-              expect(response).toEqual({
-                ok: true,
-                data: expectedCountriesToDispatch,
-              })
-              expect(dispatch.secondCall.args).toEqual([
-                {
-                  type: types.RECEIVE_COUNTRIES_FOR_LOCATION_SELECTOR,
-                  countries: expectedCountriesToDispatch,
-                  lastRefreshed: now,
-                },
-              ])
-            }))
-        })
-      })
-    })
-
-    describe('when force refresh is true', () => {
-      describe('and the countries cache is still fresh', () => {
-        const expectedCountriesToDispatch = ['List of countries']
-        const expectedResponseFromServer = Promise.resolve({
-          ok: true,
-          data: expectedCountriesToDispatch,
-        })
-        let fetchStub
-
-        beforeEach(() => {
-          fetchStub = {
-            aspectFetch: sinon.stub(),
-          }
-          fetchStub.aspectFetch
-            .withArgs('/geography/country-select-list')
-            .returns(expectedResponseFromServer)
-          dispatch = sinon.spy()
-          createGeographyReduxWithStubs(fetchStub)
-          countriesState = setLastRefreshedTimeOnCountries(freshCacheTime)
-          const dispatchFunction = geographyRedux.fetchCountriesForLocationSelector(
-            true,
-            countriesState
-          )
-          dispatchFunction(dispatch)
-        })
-
-        it('Should dispatch a REQUEST_COUNTRIES_FOR_LOCATION_SELECTOR action', () => {
-          expect(dispatch.firstCall.args).toEqual([
-            { type: types.REQUEST_COUNTRIES_FOR_LOCATION_SELECTOR },
-          ])
-        })
-
-        it('Should request a new list of countries from the server', () => {
-          expect(
-            fetchStub.aspectFetch.calledWith('/geography/country-select-list')
-          ).toBeTruthy()
-        })
-
-        describe('and a response is received from the server', () => {
-          it('Should dispatch a RECEIVE_COUNTRIES_FOR_LOCATION_SELECTOR action with the countries received and the current date', () =>
-            expectedResponseFromServer.then(response => {
-              expect(response).toEqual({
-                ok: true,
-                data: expectedCountriesToDispatch,
-              })
-              expect(dispatch.secondCall.args).toEqual([
-                {
-                  type: types.RECEIVE_COUNTRIES_FOR_LOCATION_SELECTOR,
-                  countries: expectedCountriesToDispatch,
-                  lastRefreshed: now,
-                },
-              ])
-            }))
-        })
-      })
-
-      describe('and the countries cache has expired', () => {
-        const expectedCountriesToDispatch = ['List of countries']
-        const expectedResponseFromServer = Promise.resolve({
-          ok: true,
-          data: expectedCountriesToDispatch,
-        })
-        let fetchStub
-
-        beforeEach(() => {
-          fetchStub = {
-            aspectFetch: sinon.stub(),
-          }
-          fetchStub.aspectFetch
-            .withArgs('/geography/country-select-list')
-            .returns(expectedResponseFromServer)
-          dispatch = sinon.spy()
-          createGeographyReduxWithStubs(fetchStub)
-          countriesState = setLastRefreshedTimeOnCountries(expiredCacheTime)
-          const dispatchFunction = geographyRedux.fetchCountriesForLocationSelector(
-            true,
-            countriesState
-          )
-          dispatchFunction(dispatch)
-        })
-
-        it('Should dispatch a REQUEST_COUNTRIES_FOR_LOCATION_SELECTOR action', () => {
-          expect(dispatch.firstCall.args).toEqual([
-            { type: types.REQUEST_COUNTRIES_FOR_LOCATION_SELECTOR },
-          ])
-        })
-
-        it('Should request a new list of countries from the server', () => {
-          expect(
-            fetchStub.aspectFetch.calledWith('/geography/country-select-list')
-          ).toBeTruthy()
-        })
-
-        describe('and a response is received from the server', () => {
-          it('Should dispatch a RECEIVE_COUNTRIES_FOR_LOCATION_SELECTOR action with the countries received and the current date', () =>
-            expectedResponseFromServer.then(response => {
-              expect(response).toEqual({
-                ok: true,
-                data: expectedCountriesToDispatch,
-              })
-              expect(dispatch.secondCall.args).toEqual([
-                {
-                  type: types.RECEIVE_COUNTRIES_FOR_LOCATION_SELECTOR,
-                  countries: expectedCountriesToDispatch,
-                  lastRefreshed: now,
-                },
-              ])
-            }))
-        })
-      })
-
-      describe('and the countries cache has not been loaded yet', () => {
-        const expectedCountriesToDispatch = ['List of countries']
-        const expectedResponseFromServer = Promise.resolve({
-          ok: true,
-          data: expectedCountriesToDispatch,
-        })
-        let fetchStub
-
-        beforeEach(() => {
-          fetchStub = {
-            aspectFetch: sinon.stub(),
-          }
-          fetchStub.aspectFetch
-            .withArgs('/geography/country-select-list')
-            .returns(expectedResponseFromServer)
-          dispatch = sinon.spy()
-          createGeographyReduxWithStubs(fetchStub)
-          countriesState = setLastRefreshedTimeOnCountries(undefined)
-          const dispatchFunction = geographyRedux.fetchCountriesForLocationSelector(
-            true,
-            countriesState
-          )
-          dispatchFunction(dispatch)
-        })
-
-        it('Should dispatch a REQUEST_COUNTRIES_FOR_LOCATION_SELECTOR action', () => {
-          expect(dispatch.firstCall.args).toEqual([
-            { type: types.REQUEST_COUNTRIES_FOR_LOCATION_SELECTOR },
-          ])
-        })
-
-        it('Should request a new list of countries from the server', () => {
-          expect(
-            fetchStub.aspectFetch.calledWith('/geography/country-select-list')
-          ).toBeTruthy()
-        })
-
-        describe('and a response is received from the server', () => {
-          it('Should dispatch a RECEIVE_COUNTRIES_FOR_LOCATION_SELECTOR action with the countries received and the current date', () =>
-            expectedResponseFromServer.then(response => {
-              expect(response).toEqual({
-                ok: true,
-                data: expectedCountriesToDispatch,
-              })
-              expect(dispatch.secondCall.args).toEqual([
-                {
-                  type: types.RECEIVE_COUNTRIES_FOR_LOCATION_SELECTOR,
-                  countries: expectedCountriesToDispatch,
-                  lastRefreshed: now,
-                },
-              ])
-            }))
-        })
-      })
-    })
-
-    describe('when selected country is specified', () => {
-      describe('and the countries cache has not been loaded yet', () => {
-        const expectedCountriesToDispatch = ['List of countries']
-        const expectedResponseFromServer = Promise.resolve({
-          ok: true,
-          data: expectedCountriesToDispatch,
-        })
-        const selectedCountryId = 2
-        let fetchStub
-
-        beforeEach(() => {
-          fetchStub = {
-            aspectFetch: sinon.stub(),
-          }
-          fetchStub.aspectFetch
-            .withArgs(`/geography/country-select-list/${selectedCountryId}`)
-            .returns(expectedResponseFromServer)
-          dispatch = sinon.spy()
-          createGeographyReduxWithStubs(fetchStub)
-          const dispatchFunction = geographyRedux.fetchCountriesForLocationSelector(
-            false,
-            countriesState,
-            selectedCountryId
-          )
-          dispatchFunction(dispatch)
-        })
-
-        it('Should dispatch a REQUEST_COUNTRIES_FOR_LOCATION_SELECTOR action', () => {
-          expect(dispatch.firstCall.args).toEqual([
-            { type: types.REQUEST_COUNTRIES_FOR_LOCATION_SELECTOR },
-          ])
-        })
-
-        it('Should request a new list of countries from the server', () => {
-          expect(
-            fetchStub.aspectFetch.calledWith(
-              `/geography/country-select-list/${selectedCountryId}`
-            )
-          ).toBeTruthy()
-        })
-
-        describe('and a response is received from the server', () => {
-          it('Should dispatch a RECEIVE_COUNTRIES_FOR_LOCATION_SELECTOR action with the countries received and the current date', () =>
-            expectedResponseFromServer.then(response => {
-              expect(response).toEqual({
-                ok: true,
-                data: expectedCountriesToDispatch,
-              })
-              expect(dispatch.secondCall.args).toEqual([
-                {
-                  type: types.RECEIVE_COUNTRIES_FOR_LOCATION_SELECTOR,
-                  countries: expectedCountriesToDispatch,
-                  lastRefreshed: now,
-                },
-              ])
-            }))
-        })
-      })
-    })
-
-    describe('when selected country and state are specified', () => {
-      describe('and the countries cache has not been loaded yet', () => {
-        const expectedCountriesToDispatch = ['List of countries']
-        const expectedResponseFromServer = Promise.resolve({
-          ok: true,
-          data: expectedCountriesToDispatch,
-        })
-        const selectedCountryId = 1
-        const selectedStateId = 2
-        let fetchStub
-
-        beforeEach(() => {
-          fetchStub = {
-            aspectFetch: sinon.stub(),
-          }
-          fetchStub.aspectFetch
-            .withArgs(
-              `/geography/country-select-list/${selectedCountryId}/${selectedStateId}`
-            )
-            .returns(expectedResponseFromServer)
-          dispatch = sinon.spy()
-          createGeographyReduxWithStubs(fetchStub)
-          const dispatchFunction = geographyRedux.fetchCountriesForLocationSelector(
-            false,
-            countriesState,
-            selectedCountryId,
-            selectedStateId
-          )
-
-          dispatchFunction(dispatch)
-        })
-
-        it('Should dispatch a REQUEST_COUNTRIES_FOR_LOCATION_SELECTOR action', () => {
-          expect(dispatch.firstCall.args).toEqual([
-            { type: types.REQUEST_COUNTRIES_FOR_LOCATION_SELECTOR },
-          ])
-        })
-
-        it('Should request a new list of countries from the server', () => {
-          expect(
-            fetchStub.aspectFetch.calledWith(
-              `/geography/country-select-list/${selectedCountryId}/${selectedStateId}`
-            )
           ).toBeTruthy()
         })
 
@@ -1221,26 +926,20 @@ describe('geography action creators', () => {
       )
     })
 
-    describe('when force refresh is false', () => {
-      describe('and the states cache for the selected country is still fresh', () => {
-        beforeEach(() => {
-          dispatch = sinon.spy()
-          geographyRedux = require('./GeographyRedux')
-          countriesState = setLastRefreshedTimeOnCountryStates(
-            0,
-            freshCacheTime
-          )
-        })
+    describe('and the states cache for the selected country is still fresh', () => {
+      beforeEach(() => {
+        dispatch = sinon.spy()
+        geographyRedux = require('./GeographyRedux')
+        countriesState = setLastRefreshedTimeOnCountryStates(0, freshCacheTime)
+      })
 
-        it('Should return a dispatch function that dispatches nothing', () => {
-          const selectedCountry = getCountryAt(0)
-          const dispatchFunction = geographyRedux.fetchStatesForLocationSelector(
-            false,
-            selectedCountry
-          )
-          dispatchFunction(dispatch)
-          expect(dispatch.notCalled).toBe(true)
-        })
+      it('Should return a dispatch function that dispatches nothing', () => {
+        const selectedCountry = getCountryAt(0)
+        const dispatchFunction = geographyRedux.fetchStatesForLocationSelector(
+          selectedCountry
+        )
+        dispatchFunction(dispatch)
+        expect(dispatch.notCalled).toBe(true)
       })
 
       describe('and the states cache for the selected country has expired', () => {
@@ -1266,7 +965,6 @@ describe('geography action creators', () => {
           )
           const selectedCountry = getCountryAt(0)
           const dispatchFunction = geographyRedux.fetchStatesForLocationSelector(
-            false,
             selectedCountry
           )
           dispatchFunction(dispatch)
@@ -1326,195 +1024,6 @@ describe('geography action creators', () => {
           countriesState = setLastRefreshedTimeOnCountryStates(0, undefined)
           const selectedCountry = getCountryAt(0)
           const dispatchFunction = geographyRedux.fetchStatesForLocationSelector(
-            false,
-            selectedCountry
-          )
-          dispatchFunction(dispatch)
-        })
-
-        it('Should dispatch a REQUEST_STATES_FOR_LOCATION_SELECTOR action', () => {
-          expect(dispatch.firstCall.args).toEqual([
-            {
-              type: types.REQUEST_STATES_FOR_LOCATION_SELECTOR,
-              selectedCountryId: 1,
-            },
-          ])
-        })
-
-        it('Should request a new list of states from the server', () => {
-          expect(
-            fetchStub.aspectFetch.calledWith('/geography/state-select-list/1')
-          ).toBeTruthy()
-        })
-
-        describe('and a response is received from the server', () => {
-          it('Should dispatch a RECEIVE_STATES_FOR_LOCATION_SELECTOR action with the states received and the current date', () =>
-            expectedResponseFromServer.then(response => {
-              expect(response).toEqual({
-                ok: true,
-                data: expectedStatesToDispatch,
-              })
-              expect(dispatch.secondCall.args).toEqual([
-                {
-                  type: types.RECEIVE_STATES_FOR_LOCATION_SELECTOR,
-                  states: expectedStatesToDispatch,
-                  selectedCountryId: 1,
-                  lastRefreshed: now,
-                },
-              ])
-            }))
-        })
-      })
-    })
-
-    describe('when force refresh is true', () => {
-      describe('and the states cache for the selected country is still fresh', () => {
-        const expectedStatesToDispatch = ['List of states']
-        const expectedResponseFromServer = Promise.resolve({
-          ok: true,
-          data: expectedStatesToDispatch,
-        })
-        let fetchStub
-
-        beforeEach(() => {
-          fetchStub = {
-            aspectFetch: sinon.stub(),
-          }
-          fetchStub.aspectFetch
-            .withArgs('/geography/state-select-list/1')
-            .returns(expectedResponseFromServer)
-          dispatch = sinon.spy()
-          createGeographyReduxWithStubs(fetchStub)
-          countriesState = setLastRefreshedTimeOnCountryStates(
-            0,
-            freshCacheTime
-          )
-          const selectedCountry = getCountryAt(0)
-          const dispatchFunction = geographyRedux.fetchStatesForLocationSelector(
-            true,
-            selectedCountry
-          )
-          dispatchFunction(dispatch)
-        })
-
-        it('Should dispatch a REQUEST_STATES_FOR_LOCATION_SELECTOR action', () => {
-          expect(dispatch.firstCall.args).toEqual([
-            {
-              type: types.REQUEST_STATES_FOR_LOCATION_SELECTOR,
-              selectedCountryId: 1,
-            },
-          ])
-        })
-
-        it('Should request a new list of states from the server', () => {
-          expect(
-            fetchStub.aspectFetch.calledWith('/geography/state-select-list/1')
-          ).toBeTruthy()
-        })
-
-        describe('and a response is received from the server', () => {
-          it('Should dispatch a RECEIVE_STATES_FOR_LOCATION_SELECTOR action with the states received and the current date', () =>
-            expectedResponseFromServer.then(response => {
-              expect(response).toEqual({
-                ok: true,
-                data: expectedStatesToDispatch,
-              })
-              expect(dispatch.secondCall.args).toEqual([
-                {
-                  type: types.RECEIVE_STATES_FOR_LOCATION_SELECTOR,
-                  states: expectedStatesToDispatch,
-                  selectedCountryId: 1,
-                  lastRefreshed: now,
-                },
-              ])
-            }))
-        })
-      })
-
-      describe('and the states cache for the selected country has expired', () => {
-        const expectedStatesToDispatch = ['List of states']
-        const expectedResponseFromServer = Promise.resolve({
-          ok: true,
-          data: expectedStatesToDispatch,
-        })
-        let fetchStub
-
-        beforeEach(() => {
-          fetchStub = {
-            aspectFetch: sinon.stub(),
-          }
-          fetchStub.aspectFetch
-            .withArgs('/geography/state-select-list/1')
-            .returns(expectedResponseFromServer)
-          dispatch = sinon.spy()
-          createGeographyReduxWithStubs(fetchStub)
-          countriesState = setLastRefreshedTimeOnCountryStates(
-            0,
-            expiredCacheTime
-          )
-          const selectedCountry = getCountryAt(0)
-          const dispatchFunction = geographyRedux.fetchStatesForLocationSelector(
-            true,
-            selectedCountry
-          )
-          dispatchFunction(dispatch)
-        })
-
-        it('Should dispatch a REQUEST_STATES_FOR_LOCATION_SELECTOR action', () => {
-          expect(dispatch.firstCall.args).toEqual([
-            {
-              type: types.REQUEST_STATES_FOR_LOCATION_SELECTOR,
-              selectedCountryId: 1,
-            },
-          ])
-        })
-
-        it('Should request a new list of states from the server', () => {
-          expect(
-            fetchStub.aspectFetch.calledWith('/geography/state-select-list/1')
-          ).toBeTruthy()
-        })
-
-        describe('and a response is received from the server', () => {
-          it('Should dispatch a RECEIVE_STATES_FOR_LOCATION_SELECTOR action with the states received and the current date', () =>
-            expectedResponseFromServer.then(response => {
-              expect(response).toEqual({
-                ok: true,
-                data: expectedStatesToDispatch,
-              })
-              expect(dispatch.secondCall.args).toEqual([
-                {
-                  type: types.RECEIVE_STATES_FOR_LOCATION_SELECTOR,
-                  states: expectedStatesToDispatch,
-                  selectedCountryId: 1,
-                  lastRefreshed: now,
-                },
-              ])
-            }))
-        })
-      })
-
-      describe('and the states cache for the selected country cache has not been loaded yet', () => {
-        const expectedStatesToDispatch = ['List of states']
-        const expectedResponseFromServer = Promise.resolve({
-          ok: true,
-          data: expectedStatesToDispatch,
-        })
-        let fetchStub
-
-        beforeEach(() => {
-          fetchStub = {
-            aspectFetch: sinon.stub(),
-          }
-          fetchStub.aspectFetch
-            .withArgs('/geography/state-select-list/1')
-            .returns(expectedResponseFromServer)
-          dispatch = sinon.spy()
-          createGeographyReduxWithStubs(fetchStub)
-          countriesState = setLastRefreshedTimeOnCountryStates(0, undefined)
-          const selectedCountry = getCountryAt(0)
-          const dispatchFunction = geographyRedux.fetchStatesForLocationSelector(
-            true,
             selectedCountry
           )
           dispatchFunction(dispatch)
@@ -1574,25 +1083,22 @@ describe('geography action creators', () => {
       )
     })
 
-    describe('when force refresh is false', () => {
-      describe('and the LGAs cache for the selected state is still fresh', () => {
-        beforeEach(() => {
-          dispatch = sinon.spy()
-          geographyRedux = require('./GeographyRedux')
-          countriesState = setLastRefreshedTimeOnStateLGAs(0, 0, freshCacheTime)
-        })
+    describe('and the LGAs cache for the selected state is still fresh', () => {
+      beforeEach(() => {
+        dispatch = sinon.spy()
+        geographyRedux = require('./GeographyRedux')
+        countriesState = setLastRefreshedTimeOnStateLGAs(0, 0, freshCacheTime)
+      })
 
-        it('Should return a dispatch function that dispatches nothing', () => {
-          const selectedCountry = getCountryAt(0)
-          const selectedState = getStateAt(0, 0)
-          const dispatchFunction = geographyRedux.fetchLgasForLocationSelector(
-            false,
-            selectedCountry,
-            selectedState
-          )
-          dispatchFunction(dispatch)
-          expect(dispatch.notCalled).toBe(true)
-        })
+      it('Should return a dispatch function that dispatches nothing', () => {
+        const selectedCountry = getCountryAt(0)
+        const selectedState = getStateAt(0, 0)
+        const dispatchFunction = geographyRedux.fetchLgasForLocationSelector(
+          selectedCountry,
+          selectedState
+        )
+        dispatchFunction(dispatch)
+        expect(dispatch.notCalled).toBe(true)
       })
 
       describe('and the LGAs cache for the selected state has expired', () => {
@@ -1620,7 +1126,6 @@ describe('geography action creators', () => {
           const selectedCountry = getCountryAt(0)
           const selectedState = getStateAt(0, 0)
           const dispatchFunction = geographyRedux.fetchLgasForLocationSelector(
-            false,
             selectedCountry,
             selectedState
           )
@@ -1684,7 +1189,6 @@ describe('geography action creators', () => {
           const selectedCountry = getCountryAt(0)
           const selectedState = getStateAt(0, 0)
           const dispatchFunction = geographyRedux.fetchLgasForLocationSelector(
-            false,
             selectedCountry,
             selectedState
           )
@@ -1718,204 +1222,6 @@ describe('geography action creators', () => {
                 {
                   type: types.RECEIVE_LGAS_FOR_LOCATION_SELECTOR,
                   lgas: expectedLGAsToDispatch,
-                  selectedCountryId: 1,
-                  selectedStateId: 1,
-                  lastRefreshed: now,
-                },
-              ])
-            }))
-        })
-      })
-    })
-
-    describe('when force refresh is true', () => {
-      describe('and the LGAs cache for the selected state is still fresh', () => {
-        const expectedLgasToDispatch = ['List of LGAs']
-        const expectedResponseFromServer = Promise.resolve({
-          ok: true,
-          data: expectedLgasToDispatch,
-        })
-        let fetchStub
-
-        beforeEach(() => {
-          fetchStub = {
-            aspectFetch: sinon.stub(),
-          }
-          fetchStub.aspectFetch
-            .withArgs('/geography/lga-select-list/1')
-            .returns(expectedResponseFromServer)
-          dispatch = sinon.spy()
-          createGeographyReduxWithStubs(fetchStub)
-          countriesState = setLastRefreshedTimeOnStateLGAs(0, 0, freshCacheTime)
-          const selectedCountry = getCountryAt(0)
-          const selectedState = getStateAt(0, 0)
-          const dispatchFunction = geographyRedux.fetchLgasForLocationSelector(
-            true,
-            selectedCountry,
-            selectedState
-          )
-          dispatchFunction(dispatch)
-        })
-
-        it('Should dispatch a REQUEST_LGAS_FOR_LOCATION_SELECTOR action', () => {
-          expect(dispatch.firstCall.args).toEqual([
-            {
-              type: types.REQUEST_LGAS_FOR_LOCATION_SELECTOR,
-              selectedCountryId: 1,
-              selectedStateId: 1,
-            },
-          ])
-        })
-
-        it('Should request a new list of LGAs from the server', () => {
-          expect(
-            fetchStub.aspectFetch.calledWith('/geography/lga-select-list/1')
-          ).toBeTruthy()
-        })
-
-        describe('and a response is received from the server', () => {
-          it('Should dispatch a RECEIVE_LGAS_FOR_LOCATION_SELECTOR action with the LGAs received and the current date', () =>
-            expectedResponseFromServer.then(response => {
-              expect(response).toEqual({
-                ok: true,
-                data: expectedLgasToDispatch,
-              })
-              expect(dispatch.secondCall.args).toEqual([
-                {
-                  type: types.RECEIVE_LGAS_FOR_LOCATION_SELECTOR,
-                  lgas: expectedLgasToDispatch,
-                  selectedCountryId: 1,
-                  selectedStateId: 1,
-                  lastRefreshed: now,
-                },
-              ])
-            }))
-        })
-      })
-
-      describe('and the LGAs cache for the selected state has expired', () => {
-        const expectedLgasToDispatch = ['List of LGAs']
-        const expectedResponseFromServer = Promise.resolve({
-          ok: true,
-          data: expectedLgasToDispatch,
-        })
-        let fetchStub
-
-        beforeEach(() => {
-          fetchStub = {
-            aspectFetch: sinon.stub(),
-          }
-          fetchStub.aspectFetch
-            .withArgs('/geography/lga-select-list/1')
-            .returns(expectedResponseFromServer)
-          dispatch = sinon.spy()
-          createGeographyReduxWithStubs(fetchStub)
-          countriesState = setLastRefreshedTimeOnStateLGAs(
-            0,
-            0,
-            expiredCacheTime
-          )
-          const selectedCountry = getCountryAt(0)
-          const selectedState = getStateAt(0, 0)
-          const dispatchFunction = geographyRedux.fetchLgasForLocationSelector(
-            true,
-            selectedCountry,
-            selectedState
-          )
-          dispatchFunction(dispatch)
-        })
-
-        it('Should dispatch a REQUEST_LGAS_FOR_LOCATION_SELECTOR action', () => {
-          expect(dispatch.firstCall.args).toEqual([
-            {
-              type: types.REQUEST_LGAS_FOR_LOCATION_SELECTOR,
-              selectedCountryId: 1,
-              selectedStateId: 1,
-            },
-          ])
-        })
-
-        it('Should request a new list of LGAs from the server', () => {
-          expect(
-            fetchStub.aspectFetch.calledWith('/geography/lga-select-list/1')
-          ).toBeTruthy()
-        })
-
-        describe('and a response is received from the server', () => {
-          it('Should dispatch a RECEIVE_LGAS_FOR_LOCATION_SELECTOR action with the LGAs received and the current date', () =>
-            expectedResponseFromServer.then(response => {
-              expect(response).toEqual({
-                ok: true,
-                data: expectedLgasToDispatch,
-              })
-              expect(dispatch.secondCall.args).toEqual([
-                {
-                  type: types.RECEIVE_LGAS_FOR_LOCATION_SELECTOR,
-                  lgas: expectedLgasToDispatch,
-                  selectedCountryId: 1,
-                  selectedStateId: 1,
-                  lastRefreshed: now,
-                },
-              ])
-            }))
-        })
-      })
-
-      describe('and the LGAs cache for the selected state cache has not been loaded yet', () => {
-        const expectedLgasToDispatch = ['List of LGAs']
-        const expectedResponseFromServer = Promise.resolve({
-          ok: true,
-          data: expectedLgasToDispatch,
-        })
-        let fetchStub
-
-        beforeEach(() => {
-          fetchStub = {
-            aspectFetch: sinon.stub(),
-          }
-          fetchStub.aspectFetch
-            .withArgs('/geography/lga-select-list/1')
-            .returns(expectedResponseFromServer)
-          dispatch = sinon.spy()
-          createGeographyReduxWithStubs(fetchStub)
-          countriesState = setLastRefreshedTimeOnStateLGAs(0, 0, undefined)
-          const selectedCountry = getCountryAt(0)
-          const selectedState = getStateAt(0, 0)
-          const dispatchFunction = geographyRedux.fetchLgasForLocationSelector(
-            true,
-            selectedCountry,
-            selectedState
-          )
-          dispatchFunction(dispatch)
-        })
-
-        it('Should dispatch a REQUEST_LGAS_FOR_LOCATION_SELECTOR action', () => {
-          expect(dispatch.firstCall.args).toEqual([
-            {
-              type: types.REQUEST_LGAS_FOR_LOCATION_SELECTOR,
-              selectedCountryId: 1,
-              selectedStateId: 1,
-            },
-          ])
-        })
-
-        it('Should request a new list of LGAs from the server', () => {
-          expect(
-            fetchStub.aspectFetch.calledWith('/geography/lga-select-list/1')
-          ).toBeTruthy()
-        })
-
-        describe('and a response is received from the server', () => {
-          it('Should dispatch a RECEIVE_LGAS_FOR_LOCATION_SELECTOR action with the LGAs received and the current date', () =>
-            expectedResponseFromServer.then(response => {
-              expect(response).toEqual({
-                ok: true,
-                data: expectedLgasToDispatch,
-              })
-              expect(dispatch.secondCall.args).toEqual([
-                {
-                  type: types.RECEIVE_LGAS_FOR_LOCATION_SELECTOR,
-                  lgas: expectedLgasToDispatch,
                   selectedCountryId: 1,
                   selectedStateId: 1,
                   lastRefreshed: now,
