@@ -1,5 +1,5 @@
 import React, { PureComponent } from 'react'
-import { compose, withProps, pure } from 'recompose'
+import { compose, withProps } from 'recompose'
 import { bindActionCreators } from 'redux'
 import { connect } from 'react-redux'
 import Helmet from 'react-helmet'
@@ -31,7 +31,6 @@ import ResetPasswordEnterEmail from './ResetPasswordEnterEmail'
 import ResetPasswordEnterPassword from './ResetPasswordEnterPassword'
 
 const enhance = compose(
-  pure,
   withProps(({ location }) => ({
     searchParams: new URLSearchParams(location.search),
   })),

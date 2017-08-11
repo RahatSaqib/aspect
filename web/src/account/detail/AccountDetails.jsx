@@ -1,6 +1,6 @@
 import PropTypes from 'prop-types'
 import React, { PureComponent } from 'react'
-import { compose, setPropTypes, pure } from 'recompose'
+import { compose, setPropTypes } from 'recompose'
 import { bindActionCreators } from 'redux'
 import Helmet from 'react-helmet'
 import { connect } from 'react-redux'
@@ -37,7 +37,6 @@ const enhance = compose(
     location: PropTypes.object.isRequired, // eslint-disable-line
     history: PropTypes.object.isRequired, // eslint-disable-line
   }),
-  pure,
   connect(
     state => ({
       loading: state.accountDetails.get('loading'),

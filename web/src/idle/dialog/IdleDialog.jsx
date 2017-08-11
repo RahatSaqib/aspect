@@ -1,7 +1,7 @@
 import PropTypes from 'prop-types'
 // Imports from packages
 import React from 'react'
-import { compose, setPropTypes, pure } from 'recompose'
+import { compose, setPropTypes } from 'recompose'
 import { connect } from 'react-redux'
 import Dialog from 'material-ui/Dialog'
 import { defineMessages } from 'react-intl'
@@ -25,7 +25,6 @@ function mapStateToProps(state) {
 }
 
 const enhance = compose(
-  pure,
   connect(mapStateToProps),
   setPropTypes({
     idleStatus: PropTypes.string.isRequired,

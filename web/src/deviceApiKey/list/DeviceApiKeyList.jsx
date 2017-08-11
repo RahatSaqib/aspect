@@ -8,7 +8,6 @@ import {
   withState,
   withHandlers,
   lifecycle,
-  pure,
 } from 'recompose'
 import { defineMessages } from 'react-intl'
 import { bindActionCreators } from 'redux'
@@ -137,7 +136,12 @@ const filtersFromLocation = composeSanitizer(
 )
 
 const enhance = compose(
-  pure,
+  withProps(
+    makeSortPageSelector({
+      sortCol: 'createdOn',
+      sortDir: 'desc',
+    })
+  ),
   connect(
     state => ({
       items: state.deviceApiKey.items,
@@ -149,12 +153,6 @@ const enhance = compose(
       generateDeviceApiKeys,
       assignDeviceApiKeys,
       updateSingleDeviceApiKey,
-    })
-  ),
-  withProps(
-    makeSortPageSelector({
-      sortCol: 'createdOn',
-      sortDir: 'desc',
     })
   ),
   withHandlers({

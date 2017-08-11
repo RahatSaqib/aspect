@@ -1,6 +1,6 @@
 import PropTypes from 'prop-types'
 import React, { PureComponent } from 'react'
-import { compose, setPropTypes, pure } from 'recompose'
+import { compose, setPropTypes } from 'recompose'
 import { bindActionCreators } from 'redux'
 import { connect } from 'react-redux'
 import Helmet from 'react-helmet'
@@ -23,7 +23,6 @@ const enhance = compose(
   setPropTypes({
     match: PropTypes.object.isRequired,
   }),
-  pure,
   connect(
     (state, props) => ({
       device: state.demo.deviceItems.byId.get(props.match.params.deviceId),

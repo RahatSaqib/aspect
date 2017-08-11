@@ -1,6 +1,6 @@
 import PropTypes from 'prop-types'
 import React, { PureComponent } from 'react'
-import { compose, setPropTypes, pure } from 'recompose'
+import { compose, setPropTypes } from 'recompose'
 import { bindActionCreators } from 'redux'
 import { connect } from 'react-redux'
 import Helmet from 'react-helmet'
@@ -26,7 +26,6 @@ const enhance = compose(
       }).isRequired,
     }).isRequired,
   }),
-  pure,
   connect(
     (state, props) => {
       const site = state.site.items.byId.get(props.match.params.siteId)

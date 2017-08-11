@@ -2,7 +2,7 @@ import _ from 'lodash'
 import Immutable from 'immutable'
 import classnames from 'classnames/bind'
 import React from 'react'
-import { compose, withProps, withHandlers, lifecycle, pure } from 'recompose'
+import { compose, withProps, withHandlers, lifecycle } from 'recompose'
 import { defineMessages } from 'react-intl'
 import { bindActionCreators } from 'redux'
 import { connect } from 'react-redux'
@@ -150,7 +150,11 @@ const filtersFromLocation = composeSanitizer(
 )
 
 const enhance = compose(
-  pure,
+  withProps(
+    makeSortPageSelector({
+      sortCol: 'siteName',
+    })
+  ),
   connect(
     state => ({
       consumableReasons: state.consumable.consumableReasons,
@@ -175,11 +179,6 @@ const enhance = compose(
       removeInventory,
       transferInventory,
       receiveInventory,
-    })
-  ),
-  withProps(
-    makeSortPageSelector({
-      sortCol: 'siteName',
     })
   ),
   withHandlers({

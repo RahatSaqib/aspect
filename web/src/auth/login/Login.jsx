@@ -1,7 +1,7 @@
 import _ from 'lodash'
 import classnames from 'classnames/bind'
 import React from 'react'
-import { compose, withProps, withState, pure } from 'recompose'
+import { compose, withProps, withState } from 'recompose'
 import { bindActionCreators } from 'redux'
 import { connect } from 'react-redux'
 import Helmet from 'react-helmet'
@@ -46,7 +46,6 @@ const messages = defineMessages({
 })
 
 const enhance = compose(
-  pure,
   withProps(({ location }) => ({
     searchParams: new URLSearchParams(location.search),
   })),

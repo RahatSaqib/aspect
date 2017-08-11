@@ -1,6 +1,6 @@
 import PropTypes from 'prop-types'
 import React, { PureComponent } from 'react'
-import { compose, setPropTypes, pure } from 'recompose'
+import { compose, setPropTypes } from 'recompose'
 import { defineMessages } from 'react-intl'
 import { bindActionCreators } from 'redux'
 import { connect } from 'react-redux'
@@ -112,7 +112,6 @@ const enhance = compose(
       }).isRequired,
     }).isRequired,
   }),
-  pure,
   connect(
     (state, props) => {
       const router = state.router.items.byId.get(props.match.params.routerId)

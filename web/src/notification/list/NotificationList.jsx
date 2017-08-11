@@ -1,7 +1,7 @@
 import _ from 'lodash'
 import classnames from 'classnames/bind'
 import React from 'react'
-import { compose, withProps, withHandlers, lifecycle, pure } from 'recompose'
+import { compose, withProps, withHandlers, lifecycle } from 'recompose'
 import { defineMessages } from 'react-intl'
 import { bindActionCreators } from 'redux'
 import { connect } from 'react-redux'
@@ -68,7 +68,11 @@ const filtersFromLocation = composeSanitizer(
 )
 
 const enhance = compose(
-  pure,
+  withProps(
+    makeSortPageSelector({
+      sortCol: 'name',
+    })
+  ),
   connect(
     state => ({
       items: state.notification.items,
@@ -76,11 +80,6 @@ const enhance = compose(
     }),
     bindActionCreators.bind(null, {
       fetchNotifications,
-    })
-  ),
-  withProps(
-    makeSortPageSelector({
-      sortCol: 'name',
     })
   ),
   withHandlers({
