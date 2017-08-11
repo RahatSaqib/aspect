@@ -1,0 +1,845 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`LoginDetailsForm module LoginDetailsForm component should disable all fields when form is loading 1`] = `
+<form
+  className="Form"
+  onSubmit={[Function]}
+>
+  <div
+    className="Form__Content"
+  >
+    <ThemedInput
+      className=""
+      composeTheme="deeply"
+      disabled={true}
+      error={undefined}
+      floating={true}
+      hint=""
+      label="Username"
+      mapThemrProps={[Function]}
+      maxLength={255}
+      multiline={false}
+      name="username"
+      onChange={[Function]}
+      required={false}
+      type="text"
+      value={undefined}
+    />
+    <br />
+    <StrongPasswordInput
+      disabled={true}
+      input={
+        Object {
+          "onChange": [Function],
+          "value": "",
+        }
+      }
+      intl={
+        Object {
+          "formatMessage": [Function],
+        }
+      }
+      meta={Object {}}
+      popOverProps={Object {}}
+      textFieldProps={
+        Object {
+          "autoFocus": true,
+          "floatingLabelText": "New Password",
+          "fullWidth": true,
+          "maxLength": 100,
+          "name": "newPassword",
+          "type": "password",
+        }
+      }
+    />
+    <ThemedInput
+      className=""
+      composeTheme="deeply"
+      disabled={true}
+      error={undefined}
+      floating={true}
+      hint=""
+      label="Confirm New Password"
+      mapThemrProps={[Function]}
+      maxLength={100}
+      multiline={false}
+      name="confirmNewPassword"
+      onChange={[Function]}
+      required={false}
+      type="password"
+      value={undefined}
+    />
+  </div>
+  <div
+    className="Form__ActionRow"
+  >
+    <ThemedThemed
+      composeTheme="deeply"
+      disabled={true}
+      label="Save"
+      mapThemrProps={[Function]}
+      primary={true}
+      raised={true}
+      ripple={true}
+      rippleCentered={false}
+      rippleClassName=""
+      rippleMultiple={true}
+      rippleSpread={2}
+      type="submit"
+    />
+  </div>
+  <ThemedActivableRenderer
+    actions={
+      Array [
+        Object {
+          "disabled": true,
+          "label": "Cancel",
+          "onClick": undefined,
+        },
+        Object {
+          "disabled": true,
+          "label": "Submit",
+          "onClick": [Function],
+        },
+      ]
+    }
+    active={false}
+    composeTheme="deeply"
+    delay={500}
+    mapThemrProps={[Function]}
+    onEscKeyDown={undefined}
+    onOverlayClick={undefined}
+    title="Enter Current Password"
+  >
+    <p>
+      To update your login details, please enter your current password
+    </p>
+    <ThemedInput
+      className=""
+      composeTheme="deeply"
+      disabled={true}
+      error={undefined}
+      floating={true}
+      hint=""
+      mapThemrProps={[Function]}
+      maxLength={100}
+      multiline={false}
+      name="currentPassword"
+      onChange={[Function]}
+      onKeyPress={[Function]}
+      required={false}
+      type="password"
+      value={undefined}
+    />
+  </ThemedActivableRenderer>
+</form>
+`;
+
+exports[`LoginDetailsForm module LoginDetailsForm component should disable the submit button when the form is pristine, invalid or submitting 1`] = `
+<form
+  className="Form"
+  onSubmit={[Function]}
+>
+  <div
+    className="Form__Content"
+  >
+    <ThemedInput
+      className=""
+      composeTheme="deeply"
+      disabled={false}
+      error={undefined}
+      floating={true}
+      hint=""
+      label="Username"
+      mapThemrProps={[Function]}
+      maxLength={255}
+      multiline={false}
+      name="username"
+      onChange={[Function]}
+      required={false}
+      type="text"
+      value={undefined}
+    />
+    <br />
+    <StrongPasswordInput
+      disabled={false}
+      input={
+        Object {
+          "onChange": [Function],
+          "value": "",
+        }
+      }
+      intl={
+        Object {
+          "formatMessage": [Function],
+        }
+      }
+      meta={Object {}}
+      popOverProps={Object {}}
+      textFieldProps={
+        Object {
+          "autoFocus": true,
+          "floatingLabelText": "New Password",
+          "fullWidth": true,
+          "maxLength": 100,
+          "name": "newPassword",
+          "type": "password",
+        }
+      }
+    />
+    <ThemedInput
+      className=""
+      composeTheme="deeply"
+      disabled={false}
+      error={undefined}
+      floating={true}
+      hint=""
+      label="Confirm New Password"
+      mapThemrProps={[Function]}
+      maxLength={100}
+      multiline={false}
+      name="confirmNewPassword"
+      onChange={[Function]}
+      required={false}
+      type="password"
+      value={undefined}
+    />
+  </div>
+  <div
+    className="Form__ActionRow"
+  >
+    <ThemedThemed
+      composeTheme="deeply"
+      disabled={true}
+      label="Save"
+      mapThemrProps={[Function]}
+      primary={true}
+      raised={true}
+      ripple={true}
+      rippleCentered={false}
+      rippleClassName=""
+      rippleMultiple={true}
+      rippleSpread={2}
+      type="submit"
+    />
+  </div>
+  <ThemedActivableRenderer
+    actions={
+      Array [
+        Object {
+          "disabled": false,
+          "label": "Cancel",
+          "onClick": undefined,
+        },
+        Object {
+          "disabled": true,
+          "label": "Submit",
+          "onClick": [Function],
+        },
+      ]
+    }
+    active={false}
+    composeTheme="deeply"
+    delay={500}
+    mapThemrProps={[Function]}
+    onEscKeyDown={undefined}
+    onOverlayClick={undefined}
+    title="Enter Current Password"
+  >
+    <p>
+      To update your login details, please enter your current password
+    </p>
+    <ThemedInput
+      className=""
+      composeTheme="deeply"
+      disabled={false}
+      error={undefined}
+      floating={true}
+      hint=""
+      mapThemrProps={[Function]}
+      maxLength={100}
+      multiline={false}
+      name="currentPassword"
+      onChange={[Function]}
+      onKeyPress={[Function]}
+      required={false}
+      type="password"
+      value={undefined}
+    />
+  </ThemedActivableRenderer>
+</form>
+`;
+
+exports[`LoginDetailsForm module LoginDetailsForm component should disable the submit button when the form is pristine, invalid or submitting 2`] = `
+<form
+  className="Form"
+  onSubmit={[Function]}
+>
+  <div
+    className="Form__Content"
+  >
+    <ThemedInput
+      className=""
+      composeTheme="deeply"
+      disabled={false}
+      error={undefined}
+      floating={true}
+      hint=""
+      label="Username"
+      mapThemrProps={[Function]}
+      maxLength={255}
+      multiline={false}
+      name="username"
+      onChange={[Function]}
+      required={false}
+      type="text"
+      value={undefined}
+    />
+    <br />
+    <StrongPasswordInput
+      disabled={false}
+      input={
+        Object {
+          "onChange": [Function],
+          "value": "",
+        }
+      }
+      intl={
+        Object {
+          "formatMessage": [Function],
+        }
+      }
+      meta={Object {}}
+      popOverProps={Object {}}
+      textFieldProps={
+        Object {
+          "autoFocus": true,
+          "floatingLabelText": "New Password",
+          "fullWidth": true,
+          "maxLength": 100,
+          "name": "newPassword",
+          "type": "password",
+        }
+      }
+    />
+    <ThemedInput
+      className=""
+      composeTheme="deeply"
+      disabled={false}
+      error={undefined}
+      floating={true}
+      hint=""
+      label="Confirm New Password"
+      mapThemrProps={[Function]}
+      maxLength={100}
+      multiline={false}
+      name="confirmNewPassword"
+      onChange={[Function]}
+      required={false}
+      type="password"
+      value={undefined}
+    />
+  </div>
+  <div
+    className="Form__ActionRow"
+  >
+    <ThemedThemed
+      composeTheme="deeply"
+      disabled={true}
+      label="Save"
+      mapThemrProps={[Function]}
+      primary={true}
+      raised={true}
+      ripple={true}
+      rippleCentered={false}
+      rippleClassName=""
+      rippleMultiple={true}
+      rippleSpread={2}
+      type="submit"
+    />
+  </div>
+  <ThemedActivableRenderer
+    actions={
+      Array [
+        Object {
+          "disabled": false,
+          "label": "Cancel",
+          "onClick": undefined,
+        },
+        Object {
+          "disabled": true,
+          "label": "Submit",
+          "onClick": [Function],
+        },
+      ]
+    }
+    active={false}
+    composeTheme="deeply"
+    delay={500}
+    mapThemrProps={[Function]}
+    onEscKeyDown={undefined}
+    onOverlayClick={undefined}
+    title="Enter Current Password"
+  >
+    <p>
+      To update your login details, please enter your current password
+    </p>
+    <ThemedInput
+      className=""
+      composeTheme="deeply"
+      disabled={false}
+      error={undefined}
+      floating={true}
+      hint=""
+      mapThemrProps={[Function]}
+      maxLength={100}
+      multiline={false}
+      name="currentPassword"
+      onChange={[Function]}
+      onKeyPress={[Function]}
+      required={false}
+      type="password"
+      value={undefined}
+    />
+  </ThemedActivableRenderer>
+</form>
+`;
+
+exports[`LoginDetailsForm module LoginDetailsForm component should disable the submit button when the form is pristine, invalid or submitting 3`] = `
+<form
+  className="Form"
+  onSubmit={[Function]}
+>
+  <div
+    className="Form__Content"
+  >
+    <ThemedInput
+      className=""
+      composeTheme="deeply"
+      disabled={false}
+      error={undefined}
+      floating={true}
+      hint=""
+      label="Username"
+      mapThemrProps={[Function]}
+      maxLength={255}
+      multiline={false}
+      name="username"
+      onChange={[Function]}
+      required={false}
+      type="text"
+      value={undefined}
+    />
+    <br />
+    <StrongPasswordInput
+      disabled={false}
+      input={
+        Object {
+          "onChange": [Function],
+          "value": "",
+        }
+      }
+      intl={
+        Object {
+          "formatMessage": [Function],
+        }
+      }
+      meta={Object {}}
+      popOverProps={Object {}}
+      textFieldProps={
+        Object {
+          "autoFocus": true,
+          "floatingLabelText": "New Password",
+          "fullWidth": true,
+          "maxLength": 100,
+          "name": "newPassword",
+          "type": "password",
+        }
+      }
+    />
+    <ThemedInput
+      className=""
+      composeTheme="deeply"
+      disabled={false}
+      error={undefined}
+      floating={true}
+      hint=""
+      label="Confirm New Password"
+      mapThemrProps={[Function]}
+      maxLength={100}
+      multiline={false}
+      name="confirmNewPassword"
+      onChange={[Function]}
+      required={false}
+      type="password"
+      value={undefined}
+    />
+  </div>
+  <div
+    className="Form__ActionRow"
+  >
+    <ThemedThemed
+      composeTheme="deeply"
+      disabled={true}
+      label="Save"
+      mapThemrProps={[Function]}
+      primary={true}
+      raised={true}
+      ripple={true}
+      rippleCentered={false}
+      rippleClassName=""
+      rippleMultiple={true}
+      rippleSpread={2}
+      type="submit"
+    />
+  </div>
+  <ThemedActivableRenderer
+    actions={
+      Array [
+        Object {
+          "disabled": false,
+          "label": "Cancel",
+          "onClick": undefined,
+        },
+        Object {
+          "disabled": true,
+          "label": "Submit",
+          "onClick": [Function],
+        },
+      ]
+    }
+    active={false}
+    composeTheme="deeply"
+    delay={500}
+    mapThemrProps={[Function]}
+    onEscKeyDown={undefined}
+    onOverlayClick={undefined}
+    title="Enter Current Password"
+  >
+    <p>
+      To update your login details, please enter your current password
+    </p>
+    <ThemedInput
+      className=""
+      composeTheme="deeply"
+      disabled={false}
+      error={undefined}
+      floating={true}
+      hint=""
+      mapThemrProps={[Function]}
+      maxLength={100}
+      multiline={false}
+      name="currentPassword"
+      onChange={[Function]}
+      onKeyPress={[Function]}
+      required={false}
+      type="password"
+      value={undefined}
+    />
+  </ThemedActivableRenderer>
+</form>
+`;
+
+exports[`LoginDetailsForm module LoginDetailsForm component should enable the submit button when the form is dirty, valid and not submitting 1`] = `
+<form
+  className="Form"
+  onSubmit={[Function]}
+>
+  <div
+    className="Form__Content"
+  >
+    <ThemedInput
+      className=""
+      composeTheme="deeply"
+      disabled={false}
+      error={undefined}
+      floating={true}
+      hint=""
+      label="Username"
+      mapThemrProps={[Function]}
+      maxLength={255}
+      multiline={false}
+      name="username"
+      onChange={[Function]}
+      required={false}
+      type="text"
+      value={undefined}
+    />
+    <br />
+    <StrongPasswordInput
+      disabled={false}
+      input={
+        Object {
+          "onChange": [Function],
+          "value": "",
+        }
+      }
+      intl={
+        Object {
+          "formatMessage": [Function],
+        }
+      }
+      meta={Object {}}
+      popOverProps={Object {}}
+      textFieldProps={
+        Object {
+          "autoFocus": true,
+          "floatingLabelText": "New Password",
+          "fullWidth": true,
+          "maxLength": 100,
+          "name": "newPassword",
+          "type": "password",
+        }
+      }
+    />
+    <ThemedInput
+      className=""
+      composeTheme="deeply"
+      disabled={false}
+      error={undefined}
+      floating={true}
+      hint=""
+      label="Confirm New Password"
+      mapThemrProps={[Function]}
+      maxLength={100}
+      multiline={false}
+      name="confirmNewPassword"
+      onChange={[Function]}
+      required={false}
+      type="password"
+      value={undefined}
+    />
+  </div>
+  <div
+    className="Form__ActionRow"
+  >
+    <ThemedThemed
+      composeTheme="deeply"
+      disabled={false}
+      label="Save"
+      mapThemrProps={[Function]}
+      primary={true}
+      raised={true}
+      ripple={true}
+      rippleCentered={false}
+      rippleClassName=""
+      rippleMultiple={true}
+      rippleSpread={2}
+      type="submit"
+    />
+  </div>
+  <ThemedActivableRenderer
+    actions={
+      Array [
+        Object {
+          "disabled": false,
+          "label": "Cancel",
+          "onClick": undefined,
+        },
+        Object {
+          "disabled": false,
+          "label": "Submit",
+          "onClick": [Function],
+        },
+      ]
+    }
+    active={false}
+    composeTheme="deeply"
+    delay={500}
+    mapThemrProps={[Function]}
+    onEscKeyDown={undefined}
+    onOverlayClick={undefined}
+    title="Enter Current Password"
+  >
+    <p>
+      To update your login details, please enter your current password
+    </p>
+    <ThemedInput
+      className=""
+      composeTheme="deeply"
+      disabled={false}
+      error={undefined}
+      floating={true}
+      hint=""
+      mapThemrProps={[Function]}
+      maxLength={100}
+      multiline={false}
+      name="currentPassword"
+      onChange={[Function]}
+      onKeyPress={[Function]}
+      required={false}
+      type="password"
+      value={undefined}
+    />
+  </ThemedActivableRenderer>
+</form>
+`;
+
+exports[`LoginDetailsForm module LoginDetailsForm component should render correctly 1`] = `
+<form
+  className="Form"
+  onSubmit={[Function]}
+>
+  <div
+    className="Form__Content"
+  >
+    <ThemedInput
+      className=""
+      composeTheme="deeply"
+      disabled={false}
+      error={undefined}
+      floating={true}
+      hint=""
+      label="Username"
+      mapThemrProps={[Function]}
+      maxLength={255}
+      multiline={false}
+      name="username"
+      onChange={[Function]}
+      required={false}
+      type="text"
+      value={undefined}
+    />
+    <br />
+    <StrongPasswordInput
+      disabled={false}
+      input={
+        Object {
+          "onChange": [Function],
+          "value": "",
+        }
+      }
+      intl={
+        Object {
+          "formatMessage": [Function],
+        }
+      }
+      meta={Object {}}
+      popOverProps={Object {}}
+      textFieldProps={
+        Object {
+          "autoFocus": true,
+          "floatingLabelText": "New Password",
+          "fullWidth": true,
+          "maxLength": 100,
+          "name": "newPassword",
+          "type": "password",
+        }
+      }
+    />
+    <ThemedInput
+      className=""
+      composeTheme="deeply"
+      disabled={false}
+      error={undefined}
+      floating={true}
+      hint=""
+      label="Confirm New Password"
+      mapThemrProps={[Function]}
+      maxLength={100}
+      multiline={false}
+      name="confirmNewPassword"
+      onChange={[Function]}
+      required={false}
+      type="password"
+      value={undefined}
+    />
+  </div>
+  <div
+    className="Form__ActionRow"
+  >
+    <ThemedThemed
+      composeTheme="deeply"
+      disabled={true}
+      label="Save"
+      mapThemrProps={[Function]}
+      primary={true}
+      raised={true}
+      ripple={true}
+      rippleCentered={false}
+      rippleClassName=""
+      rippleMultiple={true}
+      rippleSpread={2}
+      type="submit"
+    />
+  </div>
+  <ThemedActivableRenderer
+    actions={
+      Array [
+        Object {
+          "disabled": false,
+          "label": "Cancel",
+          "onClick": undefined,
+        },
+        Object {
+          "disabled": true,
+          "label": "Submit",
+          "onClick": [Function],
+        },
+      ]
+    }
+    active={false}
+    composeTheme="deeply"
+    delay={500}
+    mapThemrProps={[Function]}
+    onEscKeyDown={undefined}
+    onOverlayClick={undefined}
+    title="Enter Current Password"
+  >
+    <p>
+      To update your login details, please enter your current password
+    </p>
+    <ThemedInput
+      className=""
+      composeTheme="deeply"
+      disabled={false}
+      error={undefined}
+      floating={true}
+      hint=""
+      mapThemrProps={[Function]}
+      maxLength={100}
+      multiline={false}
+      name="currentPassword"
+      onChange={[Function]}
+      onKeyPress={[Function]}
+      required={false}
+      type="password"
+      value={undefined}
+    />
+  </ThemedActivableRenderer>
+</form>
+`;
+
+exports[`LoginDetailsForm module validate function should validate password if it has been entered 1`] = `
+Object {
+  "confirmNewPassword": "These passwords don't match",
+  "newPassword": "The password needs to be at least 8 characters long",
+  "username": "A username is required",
+}
+`;
+
+exports[`LoginDetailsForm module validate function should validate password if it has been entered 2`] = `
+Object {
+  "newPassword": "The password needs to contain at least one number or special character (%!$*...)",
+  "username": "A username is required",
+}
+`;
+
+exports[`LoginDetailsForm module validate function should validate password if it has been entered 3`] = `
+Object {
+  "confirmNewPassword": "These passwords don't match",
+  "username": "A username is required",
+}
+`;
+
+exports[`LoginDetailsForm module validate function should validate password if it has been entered 4`] = `
+Object {
+  "username": "A username is required",
+}
+`;
+
+exports[`LoginDetailsForm module validate function should validate that a username has been entered 1`] = `
+Object {
+  "username": "A username is required",
+}
+`;

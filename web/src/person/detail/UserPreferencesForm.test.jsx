@@ -1,30 +1,27 @@
+import _ from 'lodash'
 import React from 'react'
 import ReactShallowRenderer from 'react-test-renderer/shallow'
 
 describe('UserPreferencesForm module', () => {
   const { UserPreferencesForm } = require('./UserPreferencesForm')
+  const props = {
+    intl: {
+      formatMessage: message => message.defaultMessage,
+    },
+    loading: false,
+    form: {
+      pristine: true,
+      valid: false,
+      submitting: false,
+    },
+    values: {},
+    onTimezoneChange: _.noop,
+    onCultureChange: _.noop,
+    handleSubmit: _.noop,
+  }
 
   describe('UserPreferencesForm component', () => {
     const renderer = new ReactShallowRenderer()
-    let props
-
-    beforeEach(() => {
-      props = {
-        intl: {
-          formatMessage: message => message.defaultMessage,
-        },
-        loading: false,
-        form: {
-          pristine: true,
-          valid: false,
-          submitting: false,
-        },
-        values: {},
-        onTimezoneChange: () => {},
-        onCultureChange: () => {},
-        handleSubmit: () => {},
-      }
-    })
 
     it('should shallow render correctly', () => {
       const element = renderer.render(<UserPreferencesForm {...props} />)

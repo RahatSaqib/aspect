@@ -7,37 +7,33 @@ import { Button } from 'react-toolbox/lib/button'
 
 import recomposeForm from '../../components/recomposeForm'
 import FlagIcon from '../../components/shared/flagIcon/FlagIcon'
-import { timezones } from '../../shared/utils/timezone'
+import { timezones, languages } from '../../filter/hardcoded'
 import messages from './messages'
 
 const cssClasses = classnames.bind(require('./PersonDetail.css'))
+
+const getInitialValues = userPreferences => ({
+  timezone: userPreferences.get('timezone'),
+  culture: userPreferences.get('culture'),
+})
 
 const enhance = compose(
   pure,
   lifecycle({
     componentWillMount() {
-      const { initialValues } = this.props
+      const onChange = values => this.setState({ values })
 
       this.setState({
-        // this.state will be injected to render props of InnerComponent
-        values: {
-          timezone: initialValues.get('timezone'),
-          culture: initialValues.get('culture'),
-        },
-        onChange: nextValues => {
-          this.setState(() => ({ values: nextValues }))
-        },
+        onChange,
+        values: getInitialValues(this.props.userPreferences),
       })
     },
     // TODO: extract state out to outer components
     componentWillReceiveProps(nextProps) {
-      if (this.props.initialValues !== nextProps.initialValues) {
+      const { userPreferences } = nextProps
+      if (this.props.userPreferences !== userPreferences) {
         // Re-initialize
-        const { initialValues } = nextProps
-        this.state.onChange({
-          timezone: initialValues.get('timezone'),
-          culture: initialValues.get('culture'),
-        })
+        this.state.onChange(getInitialValues(userPreferences))
       }
     },
   }),
@@ -91,7 +87,7 @@ export const UserPreferencesForm = ({
         }) =>
           <span>
             <FlagIcon
-              className={cssClasses('FlagIcon')}
+              withRightMargin
               countryIsoAlpha2Code={countryIsoAlpha2Code}
             />
             {name}
@@ -113,8 +109,3 @@ export const UserPreferencesForm = ({
   </form>
 
 export default enhance(UserPreferencesForm)
-
-const languages = [
-  { culture: 'fr-FR', language_name: 'French (FR)', iso_alpha2_code: 'FR' },
-  { culture: 'en-US', language_name: 'English (US)', iso_alpha2_code: 'US' },
-]

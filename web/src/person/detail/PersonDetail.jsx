@@ -152,50 +152,53 @@ export class PersonDetail extends PureComponent {
     fetchPartnersAndJobFunctionsForSelectList()
   }
 
-  saveContactDetails = formValues => {
-    const { updateSinglePerson } = this.props
-    return updateSinglePerson(formValues.get('id'), formValues)
-  }
-
-  saveLoginDetails = formValues => {
-    const { updateSinglePersonLoginDetails } = this.props
-    return updateSinglePersonLoginDetails(formValues.get('id'), {
-      newUsername: formValues.get('username'),
-      newPassword: formValues.get('newPassword'),
+  saveContactDetails = values => {
+    const { person, updateSinglePerson } = this.props
+    const contactDetails = new ContactDetails(person)
+    return updateSinglePerson(contactDetails.get('id'), values).then(() => {
+      this.props.showAcknowledgement({
+        title: messages.detailsUpdatedSuccessfully,
+        message: messages.contactDetailsUpdatedMessage,
+      })
     })
   }
 
-  saveUserPreferences = formValues => {
-    const { updateSinglePersonUserPreferences } = this.props
-    return updateSinglePersonUserPreferences(formValues.get('id'), formValues)
+  saveLoginDetails = ({ username, newPassword }) => {
+    const { person, updateSinglePersonLoginDetails } = this.props
+    const loginDetails = new LoginDetails(person)
+    return updateSinglePersonLoginDetails(loginDetails.get('id'), {
+      newUsername: username,
+      newPassword,
+    }).then(() => {
+      this.props.showAcknowledgement({
+        title: messages.detailsUpdatedSuccessfully,
+        message: messages.loginDetailsUpdatedMessage,
+      })
+    })
+  }
+
+  saveUserPreferences = values => {
+    const { person, updateSinglePersonUserPreferences } = this.props
+    const userPreferences = new UserPreferences(person)
+    return updateSinglePersonUserPreferences(
+      userPreferences.get('id'),
+      values
+    ).then(() => {
+      this.props.showAcknowledgement({
+        title: messages.detailsUpdatedSuccessfully,
+        message: messages.userPreferencesUpdatedMessage,
+      })
+    })
   }
 
   render() {
-    const { intl, person, user, editable, showAcknowledgement } = this.props
+    const { intl, person, user, editable } = this.props
     const { formatMessage } = intl
     const contactDetails = new ContactDetails(person)
     const loginDetails = new LoginDetails(person)
     const userPreferences = new UserPreferences(person)
     const userIsAdmin = user.get('permissions').includes('person:admin')
     const loading = !person || person.get('loaded') !== true
-    const saveContactDetailsSucceeded = () => {
-      showAcknowledgement({
-        title: messages.detailsUpdatedSuccessfully,
-        message: messages.contactDetailsUpdatedMessage,
-      })
-    }
-    const saveLoginDetailsSucceeded = () => {
-      showAcknowledgement({
-        title: messages.detailsUpdatedSuccessfully,
-        message: messages.loginDetailsUpdatedMessage,
-      })
-    }
-    const saveUserPreferencesSucceeded = () => {
-      showAcknowledgement({
-        title: messages.detailsUpdatedSuccessfully,
-        message: messages.userPreferencesUpdatedMessage,
-      })
-    }
 
     return (
       <div className={styles.Content}>
@@ -222,13 +225,12 @@ export class PersonDetail extends PureComponent {
                   {formatMessage(messages.contactDetails)}
                 </Visible>
                 <ContactDetailsForm
+                  intl={intl}
                   loading={loading}
-                  initialValues={contactDetails}
-                  partners={this.state.partners}
+                  contactDetails={contactDetails}
                   showNotesField
                   userIsAdmin
                   onSubmit={this.saveContactDetails}
-                  onSubmitSuccess={saveContactDetailsSucceeded}
                 />
               </Tab>
               {userIsAdmin &&
@@ -245,10 +247,10 @@ export class PersonDetail extends PureComponent {
                     {formatMessage(messages.systemAccessControl)}
                   </Visible>
                   <LoginDetailsForm
+                    intl={intl}
                     loading={loading}
-                    initialValues={loginDetails}
+                    loginDetails={loginDetails}
                     onSubmit={this.saveLoginDetails}
-                    onSubmitSuccess={saveLoginDetailsSucceeded}
                   />
                 </Tab>}
               <Tab
@@ -266,9 +268,8 @@ export class PersonDetail extends PureComponent {
                 <UserPreferencesForm
                   intl={intl}
                   loading={loading}
-                  initialValues={userPreferences}
+                  userPreferences={userPreferences}
                   onSubmit={this.saveUserPreferences}
-                  onSubmitSuccess={saveUserPreferencesSucceeded}
                 />
               </Tab>
             </Tabs>}

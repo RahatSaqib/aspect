@@ -79,6 +79,22 @@ export default defineMessages({
     id: 'pages.ContactDetails.locationHeader',
     defaultMessage: 'Location',
   },
+  all: {
+    id: 'pages.PersonDetails.all',
+    defaultMessage: 'All',
+  },
+  country: {
+    id: 'pages.PersonDetails.country',
+    defaultMessage: 'Country',
+  },
+  state: {
+    id: 'pages.PersonDetails.state',
+    defaultMessage: 'State',
+  },
+  lga: {
+    id: 'pages.PersonDetails.lga',
+    defaultMessage: 'Area',
+  },
   zip: {
     id: 'pages.ContactDetails.zip',
     defaultMessage: 'Zip Code',

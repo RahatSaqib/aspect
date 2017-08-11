@@ -19,6 +19,15 @@
   margin: 2em 0 -1em;
 }
 
+.GeographyDropdownGroup {
+  display: flex;
+}
+
+.GeographyDropdown {
+  flex-grow: 1;
+  vertical-align: bottom;
+}
+
 .Form__ActionRow {
   composes: Form__ActionRow from '../../components/shared/Shared.css';
 }
@@ -26,8 +35,4 @@
 h2.Form__Header {
   padding: 1em 0 0 1.5em;
   margin: 0 0 -0.5em;
-}
-
-.FlagIcon {
-  margin-right: 1em;
 }

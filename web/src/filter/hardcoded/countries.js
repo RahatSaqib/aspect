@@ -1,108 +1,4 @@
-import React from 'react'
-import _ from 'lodash'
-import MenuItem from 'material-ui/MenuItem'
-import FlagIcon from './flagIcon/FlagIcon'
-import ForkedSelectField from '../forkedMaterialUi/ForkedSelectField'
-
-export const MenuItemLabel = props => {
-  const { country, selectedItemStyle } = props
-  return (
-    <div
-      style={{
-        display: 'inline-block',
-        whiteSpace: 'nowrap',
-        overflow: 'hidden',
-      }}
-    >
-      <FlagIcon countryIsoAlpha2Code={country.iso_alpha2_code} />
-      <div
-        style={{
-          ...{ display: 'inline-block', marginLeft: '0.5em' },
-          ...selectedItemStyle,
-        }}
-      >
-        {country.selectedItemText}
-      </div>
-    </div>
-  )
-}
-
-export default props => {
-  const {
-    value,
-    selectFieldStyle,
-    selectedItemStyle,
-    underlineStyle,
-    onChange,
-    selectFieldProps,
-  } = props
-  const dataSource = props.dataSource || countries
-  const dataSourceConfig = props.dataSourceConfig || {}
-  const countriesJoinOn = dataSourceConfig.countriesJoinOn || 'iso_alpha2_code'
-  const dataSourceJoinOn =
-    dataSourceConfig.dataSourceJoinOn || 'iso_alpha2_code'
-  const menuItemTextPredicate =
-    dataSourceConfig.menuItemTextPredicate || (country => country.name)
-  const selectedItemTextPredicate =
-    dataSourceConfig.selectedItemTextPredicate || (country => country.name)
-  const valuePredicate =
-    dataSourceConfig.valuePredicate || (country => country.iso_alpha2_code)
-  const validDataSourceCountries = _.filter(dataSource, dataSourceCountry =>
-    _.some(
-      countries,
-      country =>
-        country[countriesJoinOn] === dataSourceCountry[dataSourceJoinOn]
-    )
-  )
-  const countriesData = _.map(validDataSourceCountries, dataSourceCountry => {
-    const matchingCountry = _.find(
-      countries,
-      country =>
-        country[countriesJoinOn] === dataSourceCountry[dataSourceJoinOn]
-    )
-    const mergedCountry = { ...matchingCountry, ...dataSourceCountry }
-    return {
-      iso_alpha2_code: mergedCountry.iso_alpha2_code,
-      name: mergedCountry.name,
-      value: valuePredicate(mergedCountry),
-      menuItemText: menuItemTextPredicate(mergedCountry),
-      selectedItemText: selectedItemTextPredicate(mergedCountry),
-    }
-  })
-
-  return (
-    <ForkedSelectField
-      value={value}
-      style={selectFieldStyle}
-      underlineStyle={underlineStyle}
-      autoWidth
-      onChange={onChange}
-      {...selectFieldProps}
-    >
-      {countriesData.map(country =>
-        <MenuItem
-          key={country.value}
-          value={country.value}
-          primaryText={country.menuItemText}
-          leftIcon={
-            <FlagIcon
-              style={{ margin: '0.3em 0' }}
-              countryIsoAlpha2Code={country.iso_alpha2_code}
-            />
-          }
-          label={
-            <MenuItemLabel
-              country={country}
-              selectedItemStyle={selectedItemStyle}
-            />
-          }
-        />
-      )}
-    </ForkedSelectField>
-  )
-}
-
-const countries = [
+export default [
   { name: 'Afghanistan', iso_alpha2_code: 'AF' },
   { name: 'Aland Islands', iso_alpha2_code: 'AX' },
   { name: 'Albania', iso_alpha2_code: 'AL' },
@@ -142,7 +38,7 @@ const countries = [
   { name: 'Cameroon', iso_alpha2_code: 'CM' },
   { name: 'Canada', iso_alpha2_code: 'CA' },
   { name: 'Cape Verde', iso_alpha2_code: 'CV' },
-  { name: 'Cayman Islands', dial_code: '+ 345', iso_alpha2_code: 'KY' },
+  { name: 'Cayman Islands', iso_alpha2_code: 'KY' },
   { name: 'Central African Republic', iso_alpha2_code: 'CF' },
   { name: 'Chad', iso_alpha2_code: 'TD' },
   { name: 'Chile', iso_alpha2_code: 'CL' },

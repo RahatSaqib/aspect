@@ -105,30 +105,48 @@ export class AccountDetails extends PureComponent {
     this.setState({ currentPasswordInputDialogOpen: false })
   }
 
-  render() {
-    const {
-      intl,
-      loading,
-      saving,
-      accountDetails,
-      saveContactDetails,
-      saveUserPreferences,
-      saveLoginDetails,
-      showAcknowledgement,
-    } = this.props
-    const { formatMessage } = intl
-    const saveLoginDetailsFailed = errors => {
-      if (!errors.currentPassword) {
+  handleSaveContactDetails = values =>
+    this.props.saveContactDetails({
+      id: this.props.accountDetails.getIn(['contactDetails', 'id']),
+      name: values.name,
+      title: values.title,
+      email: values.email,
+      email2: values.email2,
+      phone: values.phone,
+      cell: values.cell,
+      countryId: values.countryId,
+      stateId: values.stateId,
+      lgaId: values.lgaId,
+      zip: values.zip,
+    })
+
+  handleSaveLoginDetails = values => {
+    this.props.saveLoginDetails(values).then(
+      () => {
         this.closeCurrentPasswordInputDialog()
+        this.props.showAcknowledgement({
+          title: personDetailsMessages.detailsUpdatedSuccessfully,
+          message: personDetailsMessages.loginDetailsUpdatedMessage,
+        })
+      },
+      errors => {
+        if (!errors.currentPassword) {
+          this.closeCurrentPasswordInputDialog()
+        }
       }
-    }
-    const saveLoginDetailsSucceeded = () => {
-      this.closeCurrentPasswordInputDialog()
-      showAcknowledgement({
-        title: personDetailsMessages.detailsUpdatedSuccessfully,
-        message: personDetailsMessages.loginDetailsUpdatedMessage,
-      })
-    }
+    )
+  }
+
+  handleSaveUserPreferences = values =>
+    this.props.saveUserPreferences({
+      id: this.props.accountDetails.getIn(['userPreferences', 'id']),
+      ...values,
+    })
+
+  render() {
+    const { intl, loading, saving, accountDetails } = this.props
+    const { formatMessage } = intl
+
     return (
       <div className={styles.Content}>
         <Helmet
@@ -152,9 +170,10 @@ export class AccountDetails extends PureComponent {
                 {formatMessage(personDetailsMessages.contactDetails)}
               </Visible>
               <ContactDetailsForm
+                intl={intl}
                 loading={loading || saving}
-                initialValues={accountDetails.get('contactDetails')}
-                onSubmit={saveContactDetails}
+                contactDetails={accountDetails.get('contactDetails')}
+                onSubmit={this.handleSaveContactDetails}
               />
             </Tab>
             <Tab
@@ -170,8 +189,9 @@ export class AccountDetails extends PureComponent {
                 {formatMessage(accountDetailsMessages.usernameAndPassword)}
               </Visible>
               <LoginDetailsForm
+                intl={intl}
                 loading={loading || saving}
-                initialValues={accountDetails.get('loginDetails')}
+                loginDetails={accountDetails.get('loginDetails')}
                 currentPasswordInputDialogOpen={
                   this.state.currentPasswordInputDialogOpen
                 }
@@ -181,9 +201,7 @@ export class AccountDetails extends PureComponent {
                 closeCurrentPasswordInputDialog={
                   this.closeCurrentPasswordInputDialog
                 }
-                onSubmit={saveLoginDetails}
-                onSubmitFail={saveLoginDetailsFailed}
-                onSubmitSuccess={saveLoginDetailsSucceeded}
+                onSubmit={this.handleSaveLoginDetails}
               />
             </Tab>
             <Tab
@@ -201,8 +219,8 @@ export class AccountDetails extends PureComponent {
               <UserPreferencesForm
                 intl={intl}
                 loading={loading || saving}
-                initialValues={accountDetails.get('userPreferences')}
-                onSubmit={saveUserPreferences}
+                userPreferences={accountDetails.get('userPreferences')}
+                onSubmit={this.handleSaveUserPreferences}
               />
             </Tab>
           </Tabs>
