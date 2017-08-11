@@ -3,7 +3,7 @@ import Immutable from 'immutable'
 import classnames from 'classnames/bind'
 import React from 'react'
 import { compose, withProps, withHandlers, lifecycle, pure } from 'recompose'
-import { injectIntl, defineMessages } from 'react-intl'
+import { defineMessages } from 'react-intl'
 import { bindActionCreators } from 'redux'
 import { connect } from 'react-redux'
 import Helmet from 'react-helmet'
@@ -151,7 +151,6 @@ const filtersFromLocation = composeSanitizer(
 
 const enhance = compose(
   pure,
-  injectIntl,
   connect(
     state => ({
       consumableReasons: state.consumable.consumableReasons,

@@ -3,7 +3,6 @@ import React, { PureComponent } from 'react'
 import { compose, setPropTypes, pure } from 'recompose'
 import { bindActionCreators } from 'redux'
 import Helmet from 'react-helmet'
-import { injectIntl, intlShape } from 'react-intl'
 import { connect } from 'react-redux'
 import LinearProgress from 'material-ui/LinearProgress'
 import Paper from 'material-ui/Paper'
@@ -39,7 +38,6 @@ const enhance = compose(
     history: PropTypes.object.isRequired, // eslint-disable-line
   }),
   pure,
-  injectIntl,
   connect(
     state => ({
       loading: state.accountDetails.get('loading'),
@@ -59,7 +57,6 @@ const enhance = compose(
       )
   ),
   setPropTypes({
-    intl: intlShape.isRequired,
     loading: PropTypes.bool.isRequired,
     saving: PropTypes.bool.isRequired,
     accountDetails: PropTypes.shape({

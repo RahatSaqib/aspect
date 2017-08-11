@@ -3,7 +3,7 @@ import { compose, withProps, pure } from 'recompose'
 import { bindActionCreators } from 'redux'
 import { connect } from 'react-redux'
 import Helmet from 'react-helmet'
-import { injectIntl, FormattedHTMLMessage } from 'react-intl'
+import { FormattedHTMLMessage } from 'react-intl'
 import { Button } from 'react-toolbox/lib/button'
 import { Link } from 'react-router-dom'
 
@@ -32,7 +32,6 @@ import ResetPasswordEnterPassword from './ResetPasswordEnterPassword'
 
 const enhance = compose(
   pure,
-  injectIntl,
   withProps(({ location }) => ({
     searchParams: new URLSearchParams(location.search),
   })),

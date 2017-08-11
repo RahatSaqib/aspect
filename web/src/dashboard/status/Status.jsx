@@ -2,7 +2,6 @@ import classnames from 'classnames/bind'
 import React from 'react'
 import { compose, lifecycle, pure } from 'recompose'
 import { bindActionCreators } from 'redux'
-import { injectIntl } from 'react-intl'
 import { connect } from 'react-redux'
 import Helmet from 'react-helmet'
 import { Link } from 'react-router-dom'
@@ -25,7 +24,6 @@ const cssClasses = classnames.bind(require('./Status.css'))
 
 const enhance = compose(
   pure,
-  injectIntl,
   connect(
     state => ({
       userName: state.getIn(['user', 'name']),

@@ -1,7 +1,7 @@
 import PropTypes from 'prop-types'
 import React, { PureComponent } from 'react'
 import { compose, setPropTypes, pure } from 'recompose'
-import { injectIntl, defineMessages, intlShape } from 'react-intl'
+import { defineMessages, intlShape } from 'react-intl'
 import { bindActionCreators } from 'redux'
 import { connect } from 'react-redux'
 import { Link } from 'react-router-dom'
@@ -113,7 +113,6 @@ const enhance = compose(
     }).isRequired,
   }),
   pure,
-  injectIntl,
   connect(
     (state, props) => {
       const reporter = state.reporter.items.byId.get(

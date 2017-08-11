@@ -5,7 +5,7 @@ import { compose, withProps, withState, pure } from 'recompose'
 import { bindActionCreators } from 'redux'
 import { connect } from 'react-redux'
 import Helmet from 'react-helmet'
-import { injectIntl, defineMessages } from 'react-intl'
+import { defineMessages } from 'react-intl'
 import { Link } from 'react-router-dom'
 import { Button } from 'react-toolbox/lib/button'
 import { Card } from 'react-toolbox/lib/card'
@@ -47,7 +47,6 @@ const messages = defineMessages({
 
 const enhance = compose(
   pure,
-  injectIntl,
   withProps(({ location }) => ({
     searchParams: new URLSearchParams(location.search),
   })),

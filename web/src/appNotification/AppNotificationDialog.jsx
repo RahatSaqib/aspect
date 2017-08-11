@@ -4,12 +4,7 @@ import React, { PureComponent } from 'react'
 import { bindActionCreators } from 'redux'
 import { connect } from 'react-redux'
 import _ from 'lodash'
-import {
-  injectIntl,
-  defineMessages,
-  FormattedMessage,
-  intlShape,
-} from 'react-intl'
+import { defineMessages, intlShape, FormattedMessage } from 'react-intl'
 
 // Material-UI
 import Dialog from 'material-ui/Dialog'
@@ -42,6 +37,8 @@ const genericMessages = defineMessages({
     defaultMessage: 'Proceed',
   },
 })
+
+const enhance = _.flowRight(connect(mapStateToProps, mapDispatchToProps))
 
 class AppNotificationDialog extends PureComponent {
   static propTypes = {
@@ -205,7 +202,4 @@ function mapDispatchToProps(dispatch) {
   )
 }
 
-export default _.flowRight(
-  injectIntl,
-  connect(mapStateToProps, mapDispatchToProps)
-)(AppNotificationDialog)
+export default enhance(AppNotificationDialog)
