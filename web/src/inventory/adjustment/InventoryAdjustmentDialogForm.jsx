@@ -194,7 +194,6 @@ export const InventoryAdjustmentDialogForm = ({
       {
         label: intl.formatMessage(messages.submit),
         onClick: handleSubmit,
-
         disabled: form.pristine || !form.valid || form.submitting,
       },
     ]}
