@@ -1,5 +1,5 @@
-.Content {
-  composes: Content from '../../components/shared/Shared.css';
+.Container {
+  padding: 10px;
 }
 
 h2.Form__Header {

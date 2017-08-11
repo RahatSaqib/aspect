@@ -201,7 +201,7 @@ export class PersonDetail extends PureComponent {
     const loading = !person || person.get('loaded') !== true
 
     return (
-      <div className={styles.Content}>
+      <div className={styles.Container}>
         <Helmet title={formatMessage(messages.title)} />
         <NavTitle title={formatMessage(messages.title)} />
         <Paper>

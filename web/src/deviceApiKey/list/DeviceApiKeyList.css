@@ -1,3 +1,7 @@
+.Container {
+  padding: 10px;
+}
+
 .DeviceApiKeyDataTable {
   composes: ComponentDataTable from '../../components/shared/DataTable.css';
 }

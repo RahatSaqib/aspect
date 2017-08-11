@@ -479,7 +479,7 @@ export class ReporterDetail extends PureComponent {
     const { formatMessage } = intl
 
     return (
-      <div className={styles.Content}>
+      <div className={styles.Container}>
         <Helmet title={formatMessage(messages.title)} />
         <NavTitle title={formatMessage(messages.title)} />
         {this.renderPaper()}

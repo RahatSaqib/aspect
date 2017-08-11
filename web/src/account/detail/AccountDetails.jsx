@@ -148,7 +148,7 @@ export class AccountDetails extends PureComponent {
     const { formatMessage } = intl
 
     return (
-      <div className={styles.Content}>
+      <div className={styles.Container}>
         <Helmet title={formatMessage(accountDetailsMessages.title)} />
         <NavTitle title={formatMessage(accountDetailsMessages.title)} />
         <Paper>

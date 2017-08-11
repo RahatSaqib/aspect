@@ -640,7 +640,7 @@ export class ResultDetail extends PureComponent {
     const { formatMessage } = intl
 
     return (
-      <div className={cssClasses('ContentDetails')}>
+      <div className={cssClasses('Container')}>
         <Helmet title={formatMessage(messages.title)} />
         <NavTitle title={formatMessage(messages.title)} />
 

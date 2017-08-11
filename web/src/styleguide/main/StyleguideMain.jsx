@@ -69,7 +69,7 @@ export class StyleguideMain extends PureComponent {
     const { formatMessage } = intl
 
     return (
-      <div className={styles.Content}>
+      <div className={styles.Container}>
         <Helmet title={formatMessage(messages.title)} />
         <h1>Styleguide</h1>
         <FallbackUntilDone

@@ -85,7 +85,7 @@ export class SiteDetail extends PureComponent {
     } = this.props
 
     return (
-      <div className={styles.Content}>
+      <div className={styles.Container}>
         <Helmet title={formatMessage(messages.title)} />
         <NavTitle title={formatMessage(messages.title)} />
         <Paper>

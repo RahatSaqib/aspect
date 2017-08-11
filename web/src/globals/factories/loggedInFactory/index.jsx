@@ -25,9 +25,7 @@ export const loggedInFactory = compose(
         <VerticalAppBar history={props.history} location={props.location} />
         <HorizontalAppBar history={props.history} location={props.location} />
         <Helmet titleTemplate="%s - Aspect" defaultTitle="Aspect" />
-        <div className={cssClasses('Content')}>
-          {render(props)}
-        </div>
+        {render(props)}
         <IdleDialogContainer intl={props.intl} />
         <AppNotificationDialog intl={props.intl} />
         <AppNotificationSnackBar intl={props.intl} />

@@ -34,11 +34,9 @@ import ReporterList from '../../reporter/list/ReporterList'
 import ReporterDetail from '../../reporter/detail/ReporterDetail'
 import NotFound from '../../error/notFound/NotFound'
 
-import styles from '../../components/shared/Shared.css'
-
 const notImplementedLoggedInFactory = compose(loggedInFactory, name => () =>
-  <div className={styles.Content}>
-    <Paper className={styles.Content}>
+  <div style={{ padding: 10 }}>
+    <Paper style={{ padding: 10 }}>
       {name} is not implemented yet
     </Paper>
   </div>

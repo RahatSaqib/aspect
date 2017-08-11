@@ -7,15 +7,6 @@
   padding-top: 14%;
 }
 
-/*content area */
-.Content {
-}
-
-/*container for details*/
-.ContentDetails {
-  composes: Content;
-}
-
 /* --- Helper classes --- */
 
 /*Make items with touch event behave like links*/

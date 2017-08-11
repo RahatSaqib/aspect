@@ -250,7 +250,7 @@ export const ResultList = ({
   onHeadColumnClick,
   onRowClick,
 }) =>
-  <div className={cssClasses('Content')}>
+  <div className={cssClasses('Container')}>
     <Helmet title={intl.formatMessage(messages.resultsTitle)} />
     <NavTitle title={intl.formatMessage(messages.resultsTitle)} />
     <BrowseFilters

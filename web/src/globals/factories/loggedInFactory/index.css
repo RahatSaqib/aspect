@@ -10,10 +10,6 @@
   background-color: var(--aspect-color-grey-7);
 }
 
-.Content {
-  padding: 10px;
-}
-
 .AppBar__appBar {
   background-color: #ffffff;
 }

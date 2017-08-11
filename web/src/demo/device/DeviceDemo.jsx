@@ -188,7 +188,7 @@ export class DeviceDemo extends PureComponent {
 
   render() {
     return (
-      <div className={styles.Content}>
+      <div className={styles.Container}>
         <Helmet title="Demo Device" />
         <Paper>
           {this.renderProgress()}

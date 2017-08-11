@@ -574,7 +574,7 @@ export class DeviceDetail extends PureComponent {
     const { formatMessage } = intl
 
     return (
-      <div className={styles.ContentDetails}>
+      <div className={styles.Container}>
         <Helmet title={formatMessage(messages.title)} />
         <NavTitle title={formatMessage(messages.title)} />
         {this.renderPaper()}
