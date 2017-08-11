@@ -9,6 +9,8 @@ const ACKNOWLEDGED_EXTERNALID = 'Acknowledged'
 const VALIDATED_EXTERNALID = 'Validated'
 const DELIVERABLE_EXTERNALID = 'Deliverable'
 
+const millisInDay = 1000 * 60 * 60 * 24
+
 function* addResult(context) {
   const { knex, payload, now } = context
   // TODO separate permissions for device add vs update result?
@@ -389,12 +391,10 @@ function* addResult(context) {
       .join('ResultWorkflowStatus as rw', 'r.resultWorkflowStatusId', 'rw.id')
       .first('rw.externalId')).externalId
 
-    // only auto update if not already in deliverable status, it hasn't been delivered yet,
+    // only auto update if not already in deliverable
+    // status, it hasn't been delivered yet,
     // and it is now in the status "Validated"
-    if (
-      resultWorkflowExternalId !== DELIVERABLE_EXTERNALID &&
-      resultWorkflowExternalId === VALIDATED_EXTERNALID
-    ) {
+    if (resultWorkflowExternalId === VALIDATED_EXTERNALID) {
       const resultWorkflowDeliverableId = (yield knex('ResultWorkflowStatus')
         .where('externalId', DELIVERABLE_EXTERNALID)
         .first('id')).id
@@ -434,11 +434,12 @@ function* addResult(context) {
 }
 
 function* getResult(context) {
-  const { knex, deviceLog, deviceLogMetaData } = context
+  const { knex, deviceLog } = context
 
   const resultQuery = knex('Result as r')
-    .innerJoin('Device as d', 'r.deviceId', 'd.id')
     .innerJoin('Assay as a', 'r.assayId', 'a.id')
+    .innerJoin('DeviceLog as dl', 'dl.resultId', 'r.id')
+    .innerJoin('Device as d', 'r.deviceId', 'd.id')
     .leftJoin('Sample as s', 'r.sampleId', 's.id')
     .leftJoin('SampleType as st', 's.sampleTypeId', 'st.id')
     .leftJoin('Site as sos', 's.originSiteId', 'sos.id')
@@ -447,7 +448,7 @@ function* getResult(context) {
     .leftJoin('ResultType as rt', 'r.resultTypeId', 'rt.id')
     .leftJoin('ResultSource as rsc', 'r.resultSourceId', 'rsc.id')
     .leftJoin('ResultWorkflowStatus as rs', 'r.resultWorkflowStatusId', 'rs.id')
-    .innerJoin('DeviceLog as dl', 'dl.resultId', 'r.id')
+    .leftJoin('Partner as p', 'd.partnerId', 'p.id')
     .where('dl.id', deviceLog.id)
     .where('r.qcCheck', 1)
     .first(
@@ -486,7 +487,9 @@ function* getResult(context) {
       'sos.externalId as sampleOriginSiteId',
       'st.externalId as sampleTypeId',
       'rc1.externalId as category1Id',
-      'rc2.externalId as category2Id'
+      'rc2.externalId as category2Id',
+      'p.autoAcknowledgeOlderThanDays',
+      'p.numberToLeaveUnacknowledged'
     )
 
   const row = yield resultQuery
@@ -495,7 +498,7 @@ function* getResult(context) {
   }
 
   // only set to delivered the first time and
-  // only if not acknowledged or flagged already
+  // only if NOT acknowledged or flagged already
   if (_.indexOf(DONOT_LOG_DELIVERED, row.resultWorkflowStatusId) === -1) {
     yield* updateResultWorkflowStatus(
       context,
@@ -504,16 +507,11 @@ function* getResult(context) {
     )
     row.resultWorkflowStatusId = DELIVERED_EXTERNALID
 
-    // If deviceLog is flagged to be auto-acknowledged, update the result workflow status
-    if (deviceLogMetaData && deviceLogMetaData.autoAcknowledge) {
-      yield* updateResultWorkflowStatus(
-        context,
-        row.resultId,
-        ACKNOWLEDGED_EXTERNALID,
-        deviceLogMetaData.autoAcknowledgeReason
-      )
-      row.resultWorkflowStatusId = ACKNOWLEDGED_EXTERNALID
-    }
+    row.resultWorkflowStatusId = yield* autoAcknowledgeResultBasedOnPartnerRules(
+      context,
+      row,
+      row
+    )
   }
 
   const resultWorkflowLog = yield* getLatestResultWorkflowLog(
@@ -646,6 +644,85 @@ function* getResult(context) {
   }
 
   return result
+}
+
+function* autoAcknowledgeResultBasedOnPartnerRules(
+  context,
+  resultDetails,
+  partnerAutoAcknowledgeRules
+) {
+  const { knex, query } = context
+  const {
+    resultId,
+    endedOn: testEndedOn,
+    sampleOriginSiteId: sampleOriginSiteExternalId,
+    resultWorkflowStatusId: currentResultWorkflowStatusId,
+  } = resultDetails
+  const {
+    autoAcknowledgeOlderThanDays,
+    numberToLeaveUnacknowledged,
+  } = partnerAutoAcknowledgeRules
+
+  let workflowStatus = currentResultWorkflowStatusId
+
+  // Is this a historical sync and
+  // do we have an end date for the test?
+  // are auto acknowledge rules setup for partner?
+  const offset = Number(query.offset)
+  if (
+    offset < 0 &&
+    testEndedOn &&
+    (autoAcknowledgeOlderThanDays || numberToLeaveUnacknowledged)
+  ) {
+    // At what age should a result be auto acknowledged?
+    const autoAcknowledgeOlderThan = autoAcknowledgeOlderThanDays
+      ? new Date(+new Date() - autoAcknowledgeOlderThanDays * millisInDay)
+      : null
+    if (testEndedOn < autoAcknowledgeOlderThan) {
+      // Are there NO results that are more recent
+      // than the auto acknowledgement cutoff date?
+      const allResultsBeingSynced = yield knex('Result as r')
+        .innerJoin('Sample as s', 'r.sampleId', 's.id')
+        .innerJoin('Site as sos', 's.originSiteId', 'sos.id')
+        .innerJoin(
+          'ResultWorkflowStatus as rs',
+          'r.resultWorkflowStatusId',
+          'rs.id'
+        )
+        .where('sos.externalId', sampleOriginSiteExternalId)
+        .where('r.qcCheck', 1)
+        .orderBy('r.endedOn', 'desc') // TODO: What if results have already been acknowledged?
+        .select('r.id', 'r.endedOn')
+      if (
+        !_.some(
+          allResultsBeingSynced,
+          result => result.endedOn > autoAcknowledgeOlderThan
+        )
+      ) {
+        // Is this NOT one of the top results on the list
+        // that should be left unacknowledged so that
+        // the results list on the reporter isn't empty?
+        const resultsToLeaveUnacknowledged = _.take(
+          allResultsBeingSynced,
+          numberToLeaveUnacknowledged
+        )
+        if (
+          !_.some(
+            resultsToLeaveUnacknowledged,
+            result => result.id === resultId
+          )
+        ) {
+          yield* updateResultWorkflowStatus(
+            context,
+            resultId,
+            ACKNOWLEDGED_EXTERNALID
+          )
+          workflowStatus = ACKNOWLEDGED_EXTERNALID
+        }
+      }
+    }
+  }
+  return yield new Promise(resolve => resolve(workflowStatus))
 }
 
 function* updateResultWorkflowStatus(

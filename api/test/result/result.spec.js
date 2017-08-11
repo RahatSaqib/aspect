@@ -138,6 +138,7 @@ describe('Result routes', () => {
         })
     })
   })
+
   describe('PUT', () => {
     it('Should update result status given a resultId', done => {
       const updateWithExternalId = {
@@ -279,6 +280,7 @@ describe('Result routes', () => {
             })
         })
     })
+
     it('Updating "QC Check" should fail if not in status "Deliverable"', done => {
       // try settings
       server
@@ -290,6 +292,7 @@ describe('Result routes', () => {
           done()
         })
     })
+
     it('Should update "QC Check" given a resultId and boolean if in status "Deliverable"', done => {
       // get first result in status "Deliverable"
       server
