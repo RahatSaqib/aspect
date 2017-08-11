@@ -86,7 +86,7 @@ export const requirePermissions = ({
 
     state = this.createState()
 
-    unsubscribe = _.noop
+    unsubscribe = _.noop // eslint-disable-line react/sort-comp
 
     handleStoreChange = () => {
       this.setState(this.createState())
