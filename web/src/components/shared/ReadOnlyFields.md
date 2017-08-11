@@ -1,19 +1,21 @@
 ### Usage
 
 ```js
-import { ReadOnlyField } from 'src/components/shared/ReadOnlyFields'
+import ReadOnlyFields from 'src/components/shared/ReadOnlyFields'
 ```
 
-The ReadOnlyField component creates a read-only style field container, which includes both a label and a value.
+The ReadOnlyField component creates a list of read-only style fields container, which includes both a label and a value in a field.
 
 ### Variations
 
-Standard Multi-field Container
+Standard Multi-fields Container
+
 ```
-<ReadOnlyField fields={[{label: 'Name', value: 'hello'}, {label: 'API Key', value: 'goodbye'}]} />
+<ReadOnlyFields fields={[{label: 'Name', value: 'hello'}, {label: 'API Key', value: 'goodbye'}]} />
 ```
 
-Standard Single-field Container
+Large Multi-fields Container
+
 ```
-<ReadOnlyField fields={[{label: 'Name', value: 'hello'}]} />
+<ReadOnlyFields fields={[{lg: true, label: 'Name', value: 'hello'}, {lg: true, label: 'API Key', value: 'goodbye'}]} />
 ```
