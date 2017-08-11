@@ -11,7 +11,7 @@ Text Field with Prompt
 ```
 <FocusBlurTextField
     name="patientOrResearchId"
-    value={''}
+    value=""
     onCommitValue={({ onChangeFilter }) => ({
       target: { name, value },
     }) =>
@@ -19,7 +19,7 @@ Text Field with Prompt
         [name]: value,
       })}
     floatingLabelFixed
-    hintText={'Enter patient/study ID...'}
-    floatingLabelText={'Patient/Study ID'}
+    hintText="Enter patient/study ID..."
+    floatingLabelText="Patient/Study ID"
 />
 ```
