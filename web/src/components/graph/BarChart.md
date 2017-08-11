@@ -1,8 +1,8 @@
 ### Usage
 
 ```js
-import { ChartContainer } from 'src/components/graph/ChartContainer'
-import { BarChart } from 'src/components/graph/BarChart'
+import ChartContainer from 'src/components/graph/ChartContainer'
+import BarChart from 'src/components/graph/BarChart'
 ```
 
 It's themed according to default settings, requiring only data to render. Data should be defined as follows, with each value of the data array representing a single color on the stacked bar:

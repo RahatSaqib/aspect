@@ -1,7 +1,7 @@
 ### Usage
 
 ```js
-import { FallbackUntilDone } from 'src/components/shared/FallbackUntilDone'
+import FallbackUntilDone from 'src/components/shared/FallbackUntilDone'
 ```
 
 The FallbackUntilDone component uses fallbacks to render its child components. Each fallback is iterated through until its isDone function returns a true result, at which point the component is rendered according to the corresponding fallback.

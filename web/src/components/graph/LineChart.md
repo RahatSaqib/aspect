@@ -1,8 +1,8 @@
 ### Usage
 
 ```js
-import { ChartContainer } from 'src/components/graph/ChartContainer'
-import { LineChart } from 'src/components/graph/LineChart'
+import ChartContainer from 'src/components/graph/ChartContainer'
+import LineChart from 'src/components/graph/LineChart'
 ```
 
 It's themed according to default settings, requiring only data to render. Data should be defined as follows, with each value of the data array representing a line (all value[0] data are points on one line, all value[1] data are points on another line):
