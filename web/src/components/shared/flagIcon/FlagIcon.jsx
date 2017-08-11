@@ -3,30 +3,20 @@ import React from 'react'
 
 const cssClasses = classnames.bind(require('./FlagIcon.css'))
 
-// add this export option for styleguide
-export function FlagIcon(props) {
-  if (props.countryIsoAlpha2Code) {
+export const FlagIcon = ({ className, style, countryIsoAlpha2Code }) => {
+  if (countryIsoAlpha2Code) {
     return (
       <i
-        style={props.style}
+        style={style}
         className={cssClasses(
-          props.className,
+          className,
           'flag-icon',
-          `flag-${props.countryIsoAlpha2Code.toLowerCase()}`
+          `flag-${countryIsoAlpha2Code.toLowerCase()}`
         )}
       />
     )
   }
+  return null
 }
 
-export default props =>
-  props.countryIsoAlpha2Code
-    ? <i
-        style={props.style}
-        className={cssClasses(
-          props.className,
-          'flag-icon',
-          `flag-${props.countryIsoAlpha2Code.toLowerCase()}`
-        )}
-      />
-    : null
+export default FlagIcon
