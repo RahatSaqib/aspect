@@ -193,11 +193,11 @@ export const RouterList = ({
       intl={intl}
       config={FILTERS_CONFIG}
     />
-    {items.currentIdList.isEmpty() &&
-      <BrowseEmptyList history={history} location={location} intl={intl} />}
-    {!items.currentIdList.isEmpty() &&
-      <DataTableCard>
-        <DataTableProgressBar disabled={!table.loading} />
+    <DataTableCard>
+      <DataTableProgressBar disabled={!table.loading} />
+      {items.currentIdList.isEmpty() &&
+        <BrowseEmptyList history={history} location={location} intl={intl} />}
+      {!items.currentIdList.isEmpty() &&
         <RouterDataTable
           selectable={false}
           className={cssClasses('RouterDataTable')}
@@ -239,7 +239,8 @@ export const RouterList = ({
                 data-router-Id={router.get('id')}
               />
             )}
-        </RouterDataTable>
+        </RouterDataTable>}
+      {!items.currentIdList.isEmpty() &&
         <BrowseTablePaginator
           history={history}
           location={location}
@@ -249,8 +250,8 @@ export const RouterList = ({
           total={table.total}
           pageAt={pageAt}
           pageSize={pageSize}
-        />
-      </DataTableCard>}
+        />}
+    </DataTableCard>
   </div>
 
 export default enhance(RouterList)

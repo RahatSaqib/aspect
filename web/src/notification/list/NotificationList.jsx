@@ -173,11 +173,11 @@ export const NotificationList = ({
       intl={intl}
       config={FILTERS_CONFIG}
     />
-    {items.currentIdList.isEmpty() &&
-      <BrowseEmptyList history={history} location={location} intl={intl} />}
-    {!items.currentIdList.isEmpty() &&
-      <DataTableCard>
-        <DataTableProgressBar disabled={!table.loading} />
+    <DataTableCard>
+      <DataTableProgressBar disabled={!table.loading} />
+      {items.currentIdList.isEmpty() &&
+        <BrowseEmptyList history={history} location={location} intl={intl} />}
+      {!items.currentIdList.isEmpty() &&
         <NotificationDataTable
           selectable={false}
           className={cssClasses('NotificationDataTable')}
@@ -212,7 +212,8 @@ export const NotificationList = ({
                 notification={notification}
               />
             )}
-        </NotificationDataTable>
+        </NotificationDataTable>}
+      {!items.currentIdList.isEmpty() &&
         <BrowseTablePaginator
           history={history}
           location={location}
@@ -221,8 +222,8 @@ export const NotificationList = ({
           total={table.total}
           pageAt={pageAt}
           pageSize={pageSize}
-        />
-      </DataTableCard>}
+        />}
+    </DataTableCard>
   </div>
 
 export default enhance(NotificationList)

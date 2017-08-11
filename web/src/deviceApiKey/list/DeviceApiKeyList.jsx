@@ -419,11 +419,11 @@ export const DeviceApiKeyList = ({
         intl={intl}
       />
     </div>
-    {items.currentIdList.isEmpty() &&
-      <BrowseEmptyList history={history} location={location} intl={intl} />}
-    {!items.currentIdList.isEmpty() &&
-      <DataTableCard>
-        <DataTableProgressBar disabled={!table.loading} />
+    <DataTableCard>
+      <DataTableProgressBar disabled={!table.loading} />
+      {items.currentIdList.isEmpty() &&
+        <BrowseEmptyList history={history} location={location} intl={intl} />}
+      {!items.currentIdList.isEmpty() &&
         <DeviceApiKeyDataTable
           selectable={false}
           className={cssClasses('DeviceApiKeyDataTable')}
@@ -499,7 +499,8 @@ export const DeviceApiKeyList = ({
                 onRevokedChange={onRevokedChange}
               />
             )}
-        </DeviceApiKeyDataTable>
+        </DeviceApiKeyDataTable>}
+      {!items.currentIdList.isEmpty() &&
         <BrowseTablePaginator
           history={history}
           location={location}
@@ -508,8 +509,8 @@ export const DeviceApiKeyList = ({
           total={table.total}
           pageAt={pageAt}
           pageSize={pageSize}
-        />
-      </DataTableCard>}
+        />}
+    </DataTableCard>
   </div>
 
 export default enhance(DeviceApiKeyList)

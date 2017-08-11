@@ -189,11 +189,11 @@ export const SiteList = ({
       intl={intl}
       config={FILTERS_CONFIG}
     />
-    {items.currentIdList.isEmpty() &&
-      <BrowseEmptyList history={history} location={location} intl={intl} />}
-    {!items.currentIdList.isEmpty() &&
-      <DataTableCard>
-        <DataTableProgressBar disabled={!table.loading} />
+    <DataTableCard>
+      <DataTableProgressBar disabled={!table.loading} />
+      {items.currentIdList.isEmpty() &&
+        <BrowseEmptyList history={history} location={location} intl={intl} />}
+      {!items.currentIdList.isEmpty() &&
         <SiteDataTable
           selectable={false}
           className={cssClasses('SiteDataTable')}
@@ -235,7 +235,8 @@ export const SiteList = ({
                 data-site-Id={site.get('id')}
               />
             )}
-        </SiteDataTable>
+        </SiteDataTable>}
+      {!items.currentIdList.isEmpty() &&
         <BrowseTablePaginator
           history={history}
           location={location}
@@ -244,8 +245,8 @@ export const SiteList = ({
           total={table.total}
           pageAt={pageAt}
           pageSize={pageSize}
-        />
-      </DataTableCard>}
+        />}
+    </DataTableCard>
   </div>
 
 export default enhance(SiteList)

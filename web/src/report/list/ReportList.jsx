@@ -192,11 +192,11 @@ export const ReportList = ({
       intl={intl}
       config={FILTERS_CONFIG}
     />
-    {items.currentIdList.isEmpty() &&
-      <BrowseEmptyList history={history} location={location} intl={intl} />}
-    {!items.currentIdList.isEmpty() &&
-      <DataTableCard>
-        <DataTableProgressBar disabled={!table.loading} />
+    <DataTableCard>
+      <DataTableProgressBar disabled={!table.loading} />
+      {items.currentIdList.isEmpty() &&
+        <BrowseEmptyList history={history} location={location} intl={intl} />}
+      {!items.currentIdList.isEmpty() &&
         <ReportDataTable
           selectable={false}
           className={cssClasses('ReportDataTable')}
@@ -246,7 +246,8 @@ export const ReportList = ({
                 report={report}
               />
             )}
-        </ReportDataTable>
+        </ReportDataTable>}
+      {!items.currentIdList.isEmpty() &&
         <BrowseTablePaginator
           history={history}
           location={location}
@@ -255,8 +256,8 @@ export const ReportList = ({
           total={table.total}
           pageAt={pageAt}
           pageSize={pageSize}
-        />
-      </DataTableCard>}
+        />}
+    </DataTableCard>
   </div>
 
 export default enhance(ReportList)

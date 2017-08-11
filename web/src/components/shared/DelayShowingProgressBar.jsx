@@ -30,6 +30,10 @@ const enhance = compose(
       }
     },
 
+    componentWillUnmount() {
+      this.clearFutureShowing()
+    },
+
     clearFutureShowing() {
       if (this.timeoutId) {
         clearTimeout(this.timeoutId)

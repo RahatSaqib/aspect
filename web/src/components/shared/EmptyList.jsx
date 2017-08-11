@@ -1,9 +1,7 @@
 import _ from 'lodash'
 import React from 'react'
+import { Button } from 'react-toolbox/lib/button'
 import { defineMessages } from 'react-intl'
-
-import Paper from 'material-ui/Paper'
-import FlatButton from 'material-ui/FlatButton'
 
 const messages = defineMessages({
   noResultsTitle: {
@@ -19,14 +17,15 @@ const messages = defineMessages({
 const enhance = _.identity
 
 export const EmptyList = ({ intl, onClearFilters }) =>
-  <Paper style={{ textAlign: 'center', padding: 10 }}>
+  <div style={{ textAlign: 'center' }}>
     <p>
       {intl.formatMessage(messages.noResultsTitle)}
     </p>
-    <FlatButton
+    <Button
+      flat
       label={intl.formatMessage(messages.clearFilters)}
-      onTouchTap={onClearFilters}
+      onClick={onClearFilters}
     />
-  </Paper>
+  </div>
 
 export default enhance(EmptyList)

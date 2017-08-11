@@ -370,11 +370,11 @@ export const InventoryItemsList = ({
         onClick={showNewInventoryDialog}
       />
     </DataTableCard>
-    {items.currentIdList.isEmpty() &&
-      <BrowseEmptyList history={history} location={location} intl={intl} />}
-    {!items.currentIdList.isEmpty() &&
-      <DataTableCard className={cssClasses('DataTableCard--table')}>
-        <DataTableProgressBar disabled={!table.loading} />
+    <DataTableCard className={cssClasses('DataTableCard--table')}>
+      <DataTableProgressBar disabled={!table.loading} />
+      {items.currentIdList.isEmpty() &&
+        <BrowseEmptyList history={history} location={location} intl={intl} />}
+      {!items.currentIdList.isEmpty() &&
         <InventoryDataTable
           selectable={false}
           className={cssClasses('InventoryDataTable')}
@@ -457,7 +457,8 @@ export const InventoryItemsList = ({
                 </IconMenu>
               </InventoryDataTableRow>
             )}
-        </InventoryDataTable>
+        </InventoryDataTable>}
+      {!items.currentIdList.isEmpty() &&
         <BrowseTablePaginator
           history={history}
           location={location}
@@ -466,8 +467,8 @@ export const InventoryItemsList = ({
           total={table.total}
           pageAt={pageAt}
           pageSize={pageSize}
-        />
-      </DataTableCard>}
+        />}
+    </DataTableCard>
     <NewInventoryDialogForm
       intl={intl}
       isDialogActive={

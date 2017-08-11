@@ -184,7 +184,7 @@ const buttonBy = {
             EMPTY_CONTEXT,
             EMPTY_MAP
           )
-          .get('resultCategories')
+          .get('resultCategories', EMPTY_MAP)
           .find(
             it => it.get('id') === resultCategoryId,
             EMPTY_CONTEXT,
