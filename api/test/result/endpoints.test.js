@@ -171,27 +171,5 @@ describe('result endpoints', () => {
           .execute()
       })
     })
-
-    describe('/result/deliver-to-terminal/{resultId}', () => {
-      let endpoint
-      const expectedResponse = { value: 'Expected result' }
-
-      beforeEach(() => {
-        endpoint = setupRoute('PUT', '/result/deliver-to-terminal/{resultId}', {
-          *updateDeliverToTerminal() {
-            return expectedResponse
-          },
-        })
-      })
-      it('Should respond with the data returned from the service', done => {
-        endpointUtils
-          .callHandlerOn(endpoint)
-          .handleResponseWith(response => {
-            assert.deepEqual(response, expectedResponse)
-          })
-          .thenCall(done)
-          .execute()
-      })
-    })
   })
 })

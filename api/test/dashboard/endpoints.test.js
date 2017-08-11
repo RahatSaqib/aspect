@@ -17,7 +17,7 @@ describe('dashboard endpoint', () => {
 
     beforeEach(() => {
       endpoint = setupRoute('GET', '/dashboard', {
-        *homeDashboard() {
+        *statusDashboard() {
           return expectedResponse
         },
       })
