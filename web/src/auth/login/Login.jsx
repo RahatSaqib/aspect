@@ -105,7 +105,7 @@ export const Login = ({
   handleSubmit,
 }) =>
   <div className={cssClasses('Background')}>
-    <Helmet title="Login" titleTemplate="%s - Aspect" defaultTitle="Aspect" />
+    <Helmet title="Login" />
     <div>
       <Unit sm="1-24" md="1-6" lg="1-3" xl="1-3" />
       <Unit sm="11-12" md="2-3" lg="1-3" xl="1-3">

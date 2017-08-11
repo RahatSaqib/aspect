@@ -233,11 +233,7 @@ export const DeviceList = ({
   onRowClick,
 }) =>
   <div className={cssClasses('Container')}>
-    <Helmet
-      title={intl.formatMessage(messages.devicesTitle)}
-      titleTemplate="%s - Aspect"
-      defaultTitle="Aspect"
-    />
+    <Helmet title={intl.formatMessage(messages.devicesTitle)} />
     <NavTitle title={intl.formatMessage(messages.devicesTitle)} />
     <BrowseFilters
       history={history}

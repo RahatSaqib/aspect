@@ -185,11 +185,7 @@ export class ResetPassword extends PureComponent {
 
     return (
       <div className={styles.Background}>
-        <Helmet
-          title={formatMessage(messages.title)}
-          titleTemplate="%s - Aspect"
-          defaultTitle="Aspect"
-        />
+        <Helmet title={formatMessage(messages.title)} />
         <div className={styles.Content}>
           <div>
             <Unit xs="1-24" md="1-12" xl="1-4" />

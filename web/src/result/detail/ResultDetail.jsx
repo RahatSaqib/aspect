@@ -641,11 +641,7 @@ export class ResultDetail extends PureComponent {
 
     return (
       <div className={cssClasses('ContentDetails')}>
-        <Helmet
-          title={formatMessage(messages.title)}
-          titleTemplate="%s - Aspect"
-          defaultTitle="Aspect"
-        />
+        <Helmet title={formatMessage(messages.title)} />
         <NavTitle title={formatMessage(messages.title)} />
 
         {this.renderPaper()}

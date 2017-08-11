@@ -5,10 +5,8 @@ exports[`AccountDetails module AccountDetails component should shallow render co
   className="Content"
 >
   <HelmetWrapper
-    defaultTitle="Aspect"
     encodeSpecialCharacters={true}
     title="Account Details"
-    titleTemplate="%s - Aspect"
   />
   <Connect(lifecycle(Component))
     title="Account Details"
@@ -158,10 +156,8 @@ exports[`AccountDetails module AccountDetails component when loading is true sho
   className="Content"
 >
   <HelmetWrapper
-    defaultTitle="Aspect"
     encodeSpecialCharacters={true}
     title="Account Details"
-    titleTemplate="%s - Aspect"
   />
   <Connect(lifecycle(Component))
     title="Account Details"

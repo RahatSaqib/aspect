@@ -339,11 +339,7 @@ export const InventoryItemsList = ({
   onReceiveInventorySubmit,
 }) =>
   <div className={cssClasses('Container')}>
-    <Helmet
-      title={intl.formatMessage(messages.inventoryItemsTitle)}
-      titleTemplate="%s - Aspect"
-      defaultTitle="Aspect"
-    />
+    <Helmet title={intl.formatMessage(messages.inventoryItemsTitle)} />
     <NavTitle title={intl.formatMessage(messages.inventoryItemsTitle)} />
     <BrowseFilters
       history={history}

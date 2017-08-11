@@ -149,11 +149,7 @@ export class AccountDetails extends PureComponent {
 
     return (
       <div className={styles.Content}>
-        <Helmet
-          title={formatMessage(accountDetailsMessages.title)}
-          titleTemplate="%s - Aspect"
-          defaultTitle="Aspect"
-        />
+        <Helmet title={formatMessage(accountDetailsMessages.title)} />
         <NavTitle title={formatMessage(accountDetailsMessages.title)} />
         <Paper>
           <Tabs>

@@ -378,11 +378,7 @@ export const DeviceApiKeyList = ({
   onRevokedChange,
 }) =>
   <div className={cssClasses('Container')}>
-    <Helmet
-      title={intl.formatMessage(messages.title)}
-      titleTemplate="%s - Aspect"
-      defaultTitle="Aspect"
-    />
+    <Helmet title={intl.formatMessage(messages.title)} />
     <NavTitle title={intl.formatMessage(messages.title)} />
     <BrowseFilters
       history={history}

@@ -20,11 +20,7 @@ export class NotFound extends PureComponent {
   render() {
     return (
       <div className={cssClasses('Container')}>
-        <Helmet
-          title="Not Found"
-          titleTemplate="%s - Aspect"
-          defaultTitle="Aspect"
-        />
+        <Helmet title="Not Found" />
         <h1 className={cssClasses('Container__Title')}>
           <FormattedMessage
             id="pages.NotFound.title"

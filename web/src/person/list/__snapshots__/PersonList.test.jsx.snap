@@ -5,10 +5,8 @@ exports[`Person List module PersonList component should shallow render correctly
   className="Container"
 >
   <HelmetWrapper
-    defaultTitle="Aspect"
     encodeSpecialCharacters={true}
     title="Contacts"
-    titleTemplate="%s - Aspect"
   />
   <Connect(lifecycle(Component))
     title="Contacts"
@@ -44,28 +42,33 @@ exports[`Person List module PersonList component should shallow render correctly
       }
     }
   />
-  <pure(withHandlers(Component))
-    history={
-      Object {
-        "push": [Function],
+  <DataTableCard>
+    <DataTableProgressBar
+      disabled={true}
+    />
+    <pure(withHandlers(Component))
+      history={
+        Object {
+          "push": [Function],
+        }
       }
-    }
-    intl={
-      Object {
-        "formatDate": [Function],
-        "formatHTMLMessage": [Function],
-        "formatMessage": [Function],
-        "formatNumber": [Function],
-        "formatPlural": [Function],
-        "formatRelative": [Function],
-        "formatTime": [Function],
+      intl={
+        Object {
+          "formatDate": [Function],
+          "formatHTMLMessage": [Function],
+          "formatMessage": [Function],
+          "formatNumber": [Function],
+          "formatPlural": [Function],
+          "formatRelative": [Function],
+          "formatTime": [Function],
+        }
       }
-    }
-    location={
-      Object {
-        "search": "",
+      location={
+        Object {
+          "search": "",
+        }
       }
-    }
-  />
+    />
+  </DataTableCard>
 </div>
 `;

@@ -251,11 +251,7 @@ export const ResultList = ({
   onRowClick,
 }) =>
   <div className={cssClasses('Content')}>
-    <Helmet
-      title={intl.formatMessage(messages.resultsTitle)}
-      titleTemplate="%s - Aspect"
-      defaultTitle="Aspect"
-    />
+    <Helmet title={intl.formatMessage(messages.resultsTitle)} />
     <NavTitle title={intl.formatMessage(messages.resultsTitle)} />
     <BrowseFilters
       history={history}

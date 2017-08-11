@@ -224,11 +224,7 @@ export const ReporterList = ({
   onRowClick,
 }) =>
   <div className={cssClasses('Container')}>
-    <Helmet
-      title={intl.formatMessage(messages.reportersTitle)}
-      titleTemplate="%s - Aspect"
-      defaultTitle="Aspect"
-    />
+    <Helmet title={intl.formatMessage(messages.reportersTitle)} />
     <NavTitle title={intl.formatMessage(messages.reportersTitle)} />
     <BrowseFilters
       history={history}

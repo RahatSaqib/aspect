@@ -62,7 +62,7 @@ export const Status = ({
   status,
 }) =>
   <div className={cssClasses('Container')}>
-    <Helmet title="Status" titleTemplate="%s - Aspect" defaultTitle="Aspect" />
+    <Helmet title="Status" />
     <div className={cssClasses('Section')}>
       <Unit sm="1-2" lg="1-4">
         <Link to="/browse/site" className={cssClasses('Summary')}>

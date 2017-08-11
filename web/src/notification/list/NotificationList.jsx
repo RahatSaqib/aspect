@@ -161,11 +161,7 @@ export const NotificationList = ({
   onHeadColumnClick,
 }) =>
   <div className={cssClasses('Container')}>
-    <Helmet
-      title={intl.formatMessage(messages.notificationsTitle)}
-      titleTemplate="%s - Aspect"
-      defaultTitle="Aspect"
-    />
+    <Helmet title={intl.formatMessage(messages.notificationsTitle)} />
     <NavTitle title={intl.formatMessage(messages.notificationsTitle)} />
     <BrowseFilters
       history={history}

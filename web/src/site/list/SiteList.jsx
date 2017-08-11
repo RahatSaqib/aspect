@@ -177,11 +177,7 @@ export const SiteList = ({
   onRowClick,
 }) =>
   <div className={cssClasses('Container')}>
-    <Helmet
-      title={intl.formatMessage(messages.sitesTitle)}
-      titleTemplate="%s - Aspect"
-      defaultTitle="Aspect"
-    />
+    <Helmet title={intl.formatMessage(messages.sitesTitle)} />
     <NavTitle title={intl.formatMessage(messages.sitesTitle)} />
     <BrowseFilters
       history={history}

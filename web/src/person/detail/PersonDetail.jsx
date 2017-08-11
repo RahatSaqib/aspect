@@ -202,11 +202,7 @@ export class PersonDetail extends PureComponent {
 
     return (
       <div className={styles.Content}>
-        <Helmet
-          title={formatMessage(messages.title)}
-          titleTemplate="%s - Aspect"
-          defaultTitle="Aspect"
-        />
+        <Helmet title={formatMessage(messages.title)} />
         <NavTitle title={formatMessage(messages.title)} />
         <Paper>
           {editable &&

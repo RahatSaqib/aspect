@@ -180,11 +180,7 @@ export const ReportList = ({
   onHeadColumnClick,
 }) =>
   <div className={cssClasses('Container')}>
-    <Helmet
-      title={intl.formatMessage(messages.reportsTitle)}
-      titleTemplate="%s - Aspect"
-      defaultTitle="Aspect"
-    />
+    <Helmet title={intl.formatMessage(messages.reportsTitle)} />
     <NavTitle title={intl.formatMessage(messages.reportsTitle)} />
     <BrowseFilters
       history={history}
