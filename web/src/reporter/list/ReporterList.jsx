@@ -19,7 +19,7 @@ import BrowseEmptyList from '../../globals/components/BrowseEmptyList'
 import BrowseTablePaginator from '../../globals/components/BrowseTablePaginator'
 import DataTableCard from '../../components/shared/DataTableCard'
 import DataTableProgressBar from '../../components/shared/DataTableProgressBar'
-import { fetchTerminals } from '../TerminalRedux'
+import { fetchTerminals } from '../ReporterRedux'
 import {
   TerminalDataTable,
   TerminalDataTableHead,

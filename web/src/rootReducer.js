@@ -25,7 +25,7 @@ import idle from './idle/IdleRedux'
 import jobs from './job/JobRedux'
 import router from './router/RouterRedux'
 import resultWorkflowStatus from './resultWorkflowStatus/ResultWorkflowStatusRedux'
-import terminal from './terminal/TerminalRedux'
+import reporter from './reporter/ReporterRedux'
 
 const appReducer = combineReducers({
   form: formReducer,
@@ -52,7 +52,7 @@ const appReducer = combineReducers({
   report,
   router,
   resultWorkflowStatus,
-  terminal,
+  reporter,
 })
 
 const App = Immutable.Record({
@@ -80,7 +80,7 @@ const App = Immutable.Record({
   idle: undefined,
   router: undefined,
   resultWorkflowStatus: undefined,
-  terminal: undefined,
+  reporter: undefined,
 })
 
 const initialState = new App()

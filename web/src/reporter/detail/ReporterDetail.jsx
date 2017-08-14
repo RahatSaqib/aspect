@@ -17,7 +17,7 @@ import ModeEdit from 'material-ui/svg-icons/editor/mode-edit'
 // Our own imports
 import { Unit } from '../../components/pureGrids'
 import isEditable from '../../shared/selectors/device'
-import { fetchSingleTerminal, updateSingleTerminal } from '../TerminalRedux'
+import { fetchSingleTerminal, updateSingleTerminal } from '../ReporterRedux'
 import { ReadOnlyField } from '../../components/shared/ReadOnlyFields'
 import JSONSchemaCard from '../../components/shared/JSONSchemaCard'
 import NavTitle from '../../globals/components/NavTitle'
