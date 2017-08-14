@@ -103,9 +103,9 @@ const Routes = () =>
         component={RouterDetail}
       />
 
-      <LoggedInLayout exact path="/browse/terminal" component={TerminalList} />
+      <LoggedInLayout exact path="/browse/reporter" component={TerminalList} />
       <LoggedInLayout
-        path="/browse/terminal/:terminalId"
+        path="/browse/reporter/:reporterId"
         component={TerminalDetail}
       />
 
