@@ -19,21 +19,21 @@ import {
 } from '../shared/metaReducers/table'
 
 export const types = {
-  REQUEST_TERMINALS: 'REQUEST_TERMINALS',
-  RECEIVE_TERMINALS: 'RECEIVE_TERMINALS',
+  REQUEST_REPORTERS: 'REQUEST_REPORTERS',
+  RECEIVE_REPORTERS: 'RECEIVE_REPORTERS',
 
-  REQUEST_SINGLE_TERMINAL: 'REQUEST_SINGLE_TERMINAL',
-  RECEIVE_SINGLE_TERMINAL: 'RECEIVE_SINGLE_TERMINAL',
+  REQUEST_SINGLE_REPORTER: 'REQUEST_SINGLE_REPORTER',
+  RECEIVE_SINGLE_REPORTER: 'RECEIVE_SINGLE_REPORTER',
 
-  REQUEST_UPDATING_SINGLE_TERMINAL: 'REQUEST_UPDATING_SINGLE_TERMINAL',
-  RECEIVE_UPDATED_SINGLE_TERMINAL: 'RECEIVE_UPDATED_SINGLE_TERMINAL',
+  REQUEST_UPDATING_SINGLE_REPORTER: 'REQUEST_UPDATING_SINGLE_REPORTER',
+  RECEIVE_UPDATED_SINGLE_REPORTER: 'RECEIVE_UPDATED_SINGLE_REPORTER',
 }
 /*
  * ---------------- Action Creators -----------------
  */
-function requestTerminals(sortCol, sortDir, page, size, filters) {
+function requestReporters(sortCol, sortDir, page, size, filters) {
   return {
-    type: types.REQUEST_TERMINALS,
+    type: types.REQUEST_REPORTERS,
     sortCol,
     sortDir,
     page,
@@ -42,15 +42,15 @@ function requestTerminals(sortCol, sortDir, page, size, filters) {
   }
 }
 
-function receiveTerminals(json) {
+function receiveReporters(json) {
   return {
-    type: types.RECEIVE_TERMINALS,
+    type: types.RECEIVE_REPORTERS,
     items: json.data,
     total: json.total,
   }
 }
 
-export function fetchTerminals(
+export function fetchReporters(
   rawFiltersParams,
   extraFilters = {},
   sortCol,
@@ -61,7 +61,7 @@ export function fetchTerminals(
   return dispatch => {
     const filtersParams = mergeToFiltersParams(extraFilters, rawFiltersParams)
     const filters = _.fromPairs([...filtersParams.entries()])
-    dispatch(requestTerminals(sortCol, sortDir, page, pageSize, filters))
+    dispatch(requestReporters(sortCol, sortDir, page, pageSize, filters))
 
     return aspectFetch(
       `/device?${stringify({
@@ -76,86 +76,86 @@ export function fetchTerminals(
           400: filterFieldsRejectedError(
             defineMessages({
               title: {
-                id: 'errorResponseMessages.fetchTerminals.GET.400.title',
-                defaultMessage: 'Searching Terminals Failed',
+                id: 'errorResponseMessages.fetchReporters.GET.400.title',
+                defaultMessage: 'Searching Reporters Failed',
               },
             })
           ),
           default: errorPleaseTryAgainInAFewMinutes(
             defineMessages({
               title: {
-                id: 'errorResponseMessages.fetchTerminals.GET.default.title',
-                defaultMessage: 'Loading Terminals Failed',
+                id: 'errorResponseMessages.fetchReporters.GET.default.title',
+                defaultMessage: 'Loading Reporters Failed',
               },
             })
           ),
         },
       }
-    ).then(json => dispatch(receiveTerminals(json)))
+    ).then(json => dispatch(receiveReporters(json)))
   }
 }
 
-function requestSingleTerminal(terminalId) {
+function requestSingleReporter(reporterId) {
   return {
-    type: types.REQUEST_SINGLE_TERMINAL,
-    terminalId,
+    type: types.REQUEST_SINGLE_REPORTER,
+    reporterId,
   }
 }
 
-function receiveSingleTerminal(item) {
+function receiveSingleReporter(item) {
   return {
-    type: types.RECEIVE_SINGLE_TERMINAL,
+    type: types.RECEIVE_SINGLE_REPORTER,
     item,
   }
 }
 
-export function fetchSingleTerminal(terminalId) {
+export function fetchSingleReporter(reporterId) {
   return dispatch => {
-    dispatch(requestSingleTerminal(terminalId))
+    dispatch(requestSingleReporter(reporterId))
 
-    return aspectFetch(`/device/${terminalId}`, {
+    return aspectFetch(`/device/${reporterId}`, {
       errorNotifications: {
         404: errorNotFound(
           defineMessages({
             title: {
-              id: 'errorResponseMessages.fetchSingleTerminal.GET.404.title',
-              defaultMessage: 'Could Not Find Terminal Details',
+              id: 'errorResponseMessages.fetchSingleReporter.GET.404.title',
+              defaultMessage: 'Could Not Find Reporter Details',
             },
           })
         ),
         default: errorPleaseTryAgainInAFewMinutes(
           defineMessages({
             title: {
-              id: 'errorResponseMessages.fetchSingleTerminal.GET.default.title',
-              defaultMessage: 'Error Loading Terminal Details',
+              id: 'errorResponseMessages.fetchSingleReporter.GET.default.title',
+              defaultMessage: 'Error Loading Reoirter Details',
             },
           })
         ),
       },
-    }).then(json => dispatch(receiveSingleTerminal(json.data)))
+    }).then(json => dispatch(receiveSingleReporter(json.data)))
   }
 }
 
-function requestUpdatingSingleTerminal(terminalId, data) {
+function requestUpdatingSingleReporter(reporterId, data) {
   return {
-    type: types.REQUEST_UPDATING_SINGLE_TERMINAL,
-    terminalId,
+    type: types.REQUEST_UPDATING_SINGLE_REPORTER,
+    reporterId,
     data,
   }
 }
 
-function receiveUpdatedSingleTerminal(item) {
+function receiveUpdatedSingleReporter(item) {
   return {
-    type: types.RECEIVE_UPDATED_SINGLE_TERMINAL,
+    type: types.RECEIVE_UPDATED_SINGLE_REPORTER,
     item,
   }
 }
 
-export function updateSingleTerminal(terminalId, data) {
+export function updateSingleReporter(reporterId, data) {
   return dispatch => {
-    dispatch(requestUpdatingSingleTerminal(terminalId, data))
+    dispatch(requestUpdatingSingleReporter(reporterId, data))
 
-    return aspectFetch(`/device/${terminalId}`, {
+    return aspectFetch(`/device/${reporterId}`, {
       method: 'PUT',
       body: JSON.stringify(data),
       errorNotifications: {
@@ -163,38 +163,38 @@ export function updateSingleTerminal(terminalId, data) {
           defineMessages({
             title: {
               id:
-                'errorResponseMessages.updateSingleTerminal.PUT.default.title',
+                'errorResponseMessages.updateSingleReporter.PUT.default.title',
               defaultMessage:
-                'An Error Occurred When Trying to Save the Terminal',
+                'An Error Occurred When Trying to Save the Reporter',
             },
           })
         ),
       },
-    }).then(json => dispatch(receiveUpdatedSingleTerminal(json.data)))
+    }).then(json => dispatch(receiveUpdatedSingleReporter(json.data)))
   }
 }
 /*
  * ---------------- Reducers -----------------
  */
-const Terminal = Immutable.Record({
+const Reporter = Immutable.Record({
   items: new Items(),
   table: new Table(),
 })
 
-const initialState = new Terminal()
+const initialState = new Reporter()
 
-export default function terminalReducer(state = initialState, action) {
+export default function reporterReducer(state = initialState, action) {
   switch (action.type) {
-    case types.REQUEST_TERMINALS:
+    case types.REQUEST_REPORTERS:
       return state.set('table', requestTable(state.table, action))
-    case types.RECEIVE_TERMINALS:
+    case types.RECEIVE_REPORTERS:
       return state.withMutations(mutState => {
         const immutList = Immutable.fromJS(action.items)
         mutState.set('items', receiveList(mutState.items, immutList))
         mutState.set('table', receiveTableItems(mutState.table, action.total))
       })
-    case types.RECEIVE_SINGLE_TERMINAL:
-    case types.RECEIVE_UPDATED_SINGLE_TERMINAL:
+    case types.RECEIVE_SINGLE_REPORTER:
+    case types.RECEIVE_UPDATED_SINGLE_REPORTER:
       return state.withMutations(mutState => {
         const immutItem = Immutable.fromJS(action.item)
         mutState.set('items', receiveItem(mutState.items, immutItem))
