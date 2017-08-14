@@ -28,7 +28,7 @@ import styles from './TerminalDetail.css'
 const messages = defineMessages({
   title: {
     id: 'pages.TerminalDetail.title',
-    defaultMessage: 'Terminal Detail',
+    defaultMessage: 'Reporter Detail',
   },
   editTooltip: {
     id: 'pages.TerminalDetail.editTooltip',

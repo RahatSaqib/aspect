@@ -162,7 +162,7 @@ const messages = defineMessages({
   qcCheckDisabledHelp: {
     id: 'pages.ResultDetail.qcCheckDisabledHelp',
     defaultMessage:
-      '"QC Check" is only enabled if the result is in the status "Ready for Delivery" and hasn\'t been sent to the terminal yet',
+      '"QC Check" is only enabled if the result is in the status "Ready for Delivery" and hasn\'t been sent to the reporter yet',
   },
 })
 
