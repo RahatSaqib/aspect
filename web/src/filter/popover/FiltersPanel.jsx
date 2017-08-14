@@ -306,6 +306,7 @@ const messages = defineMessages({
 export const FiltersPanel = ({
   intl,
   className,
+  disabled,
   contentClassName,
 
   filters,
@@ -333,6 +334,7 @@ export const FiltersPanel = ({
       className={cssClasses('Button')}
       primary
       inverse
+      disabled={disabled}
       onClick={onToggleShown}
     >
       <span className={cssClasses('Button__label')}>
