@@ -2687,6 +2687,7 @@ function* seed(knex) {
       jobFunctionId: jobFunctionIdAdmin,
       permissionId: modules.notification.admin,
     },
+    { jobFunctionId: jobFunctionIdAdmin, permissionId: modules.task.admin },
     { jobFunctionId: jobFunctionIdAdmin, permissionId: modules.report.admin },
 
     { jobFunctionId: jobFunctionIdManager, permissionId: modules.site.edit },

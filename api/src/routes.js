@@ -25,6 +25,7 @@ function addClientRoutes(server) {
   server.route(
     require('./notification/endpoints').map(decorateClientAPI('notification'))
   )
+  server.route(require('./task/endpoints').map(decorateClientAPI('task')))
   server.route(
     require('./inventory/endpoints').map(decorateClientAPI('inventory'))
   )

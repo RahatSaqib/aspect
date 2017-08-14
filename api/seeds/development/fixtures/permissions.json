@@ -37,6 +37,10 @@
       "activities": ["view", "edit", "admin"]
     },
     {
+      "name": "task",
+      "activities": ["view", "edit", "admin"]
+    },
+    {
       "name": "report",
       "activities": ["view", "edit", "admin"]
     }
