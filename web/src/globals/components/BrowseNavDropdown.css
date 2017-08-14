@@ -13,5 +13,5 @@
   font-weight: var(--lato-font-weight-bold);
   color: #ffffff;
   background-color: var(--aspect-color-chill-blue-1);
-  border-radius: 4px;
+  border-radius: var(--toolbox-button-border-radius);
 }

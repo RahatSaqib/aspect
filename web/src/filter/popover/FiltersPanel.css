@@ -10,12 +10,7 @@
 }
 
 .Button {
-  width: 100%;
-  border: 1px solid var(--aspect-color-chill-blue-1);
-  border-radius: 4px;
-  line-height: 34px;
   font-weight: var(--lato-font-weight-bold);
-  text-transform: capitalize;
 }
 
 .Button__label {

@@ -76,13 +76,10 @@ const TablePaginator = ({
   <div className={cssClasses(className, 'Container')}>
     <div className={cssClasses('Left')}>
       <Button
-        onClick={onPreviousClick}
         disabled={!hasPreviousPage}
         primary
-        theme={{
-          flat: cssClasses('Button--flat'),
-          primary: cssClasses('Button--primary'),
-        }}
+        inverse
+        onClick={onPreviousClick}
       >
         <KeyboardArrowLeft />
         Previous
@@ -97,12 +94,9 @@ const TablePaginator = ({
       <Button
         className={cssClasses('Left__Button--next')}
         disabled={!hasNextPage}
-        onClick={onNextClick}
         primary
-        theme={{
-          flat: cssClasses('Button--flat'),
-          primary: cssClasses('Button--primary'),
-        }}
+        inverse
+        onClick={onNextClick}
       >
         Next
         <KeyboardArrowRight />
@@ -115,13 +109,8 @@ const TablePaginator = ({
           className={cssClasses('Right__Button')}
           onClick={restProps[`onPageSizeChange${key}`]}
           label={key !== ALL_KEY ? `${key}` : intl.formatMessage(messages.all)}
-          raised
-          primary={key !== ALL_KEY ? key === pageSize : pageSize === total}
-          theme={{
-            raised: cssClasses('Button--raised'),
-            neutral: cssClasses('Button--neutral'),
-            primary: cssClasses('Button--primary'),
-          }}
+          primary
+          raised={key !== ALL_KEY ? key === pageSize : pageSize === total}
         />
       )}
     </div>

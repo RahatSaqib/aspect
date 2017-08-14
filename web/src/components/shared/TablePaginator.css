@@ -38,40 +38,11 @@
 .Right__Button {
   margin: 0 10px;
   min-width: 40px;
+  background-color: var(--aspect-color-grey-7);
   font-weight: var(--lato-font-weight-bold);
   text-transform: capitalize;
-  box-shadow: none;
 }
 
 .Right__Button:last-child {
   margin-right: 0;
-}
-
-.Button--raised[disabled] {
-  box-shadow: none;
-}
-
-/* -- customize -- */
-
-.Button--primary:not([disabled]).Button--flat {
-  text-transform: capitalize;
-  background-color: #ffffff;
-  color: var(--aspect-color-chill-blue-1);
-  border-radius: 4px;
-  border: 1px solid var(--aspect-color-chill-blue-1);
-  line-height: var(--bordered-button-line-height);
-}
-
-.Button--primary[disabled].Button--flat {
-  text-transform: capitalize;
-}
-
-.Button--neutral:not([disabled]).Button--raised {
-  background-color: var(--aspect-color-grey-4);
-  color: #ffffff;
-}
-
-.Button--primary:not([disabled]).Button--raised {
-  background-color: var(--aspect-color-chill-blue-1);
-  color: #ffffff;
 }

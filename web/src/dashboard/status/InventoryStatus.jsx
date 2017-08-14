@@ -62,6 +62,7 @@ export const InventoryStatus = ({
       <Unit sm="1-2" lg="1-4">
         <div className={cssClasses('ButtonsBlock')}>
           <Button
+            className={cssClasses('Button')}
             label={intl.formatMessage(messages.receiveConsumablesLabel)}
             onClick={onInventoryClick}
             raised
@@ -71,6 +72,7 @@ export const InventoryStatus = ({
             }}
           />
           <Button
+            className={cssClasses('Button')}
             label={intl.formatMessage(messages.discardConsumablesLabel)}
             onClick={onInventoryClick}
             raised
@@ -80,13 +82,10 @@ export const InventoryStatus = ({
             }}
           />
           <Button
+            className={cssClasses('Button')}
             label={intl.formatMessage(messages.manageConsumablesLabel)}
             onClick={onInventoryClick}
             raised
-            theme={{
-              neutral: cssClasses('Button--manage'),
-              raised: cssClasses('Button--raised'),
-            }}
           />
         </div>
       </Unit>

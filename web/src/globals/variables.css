@@ -26,4 +26,6 @@
   --z-index-dialog: 85;
   --z-index-popover: 90;
   /* Upper limit: 100; Because react-toolbox/NavDrawer has a 100 z-index */
+
+  --toolbox-button-border-radius: 3px;
 }

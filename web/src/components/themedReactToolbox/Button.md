@@ -1,6 +1,6 @@
 ### Usage
 
-```js
+```js static
 import { Button } from 'react-toolbox/lib/button'
 ```
 
@@ -17,17 +17,52 @@ It's already themed by `context`, where you can think it's defined like this:
 
 ### Variations
 
-Primary Flat Button
+* primary/accent(/neutral)
+* raised(/flat)
+
+#### Neutral
+
+Neutral Flat
 
 ```
 <Button
-  primary
-  flat
   label="Button Label"
 />
 ```
 
-Primary Raised Button
+Neutral Raised
+
+```
+<Button
+  raised
+  label="Button Label"
+/>
+```
+
+#### Primary
+
+Primary Flat
+
+```
+<div style={{backgroundColor: '#ddd', margin: -16, padding: 16}}>
+  <Button
+    primary
+    label="Button Label"
+  />
+</div>
+```
+
+Primary Flat Inverse
+
+```
+<Button
+  primary
+  inverse
+  label="Button Label"
+/>
+```
+
+Primary Raised
 
 ```
 <Button
@@ -37,15 +72,40 @@ Primary Raised Button
 />
 ```
 
-Neutral Raised Button
+Primary Raised Inverse
+
+```
+<div style={{backgroundColor: '#ddd', margin: -16, padding: 16}}>
+  <Button
+    primary
+    raised
+    inverse
+    label="Button Label"
+  />
+</div>
+```
+
+#### Accent
+
+Accent Flat
 
 ```
 <Button
-  neutral
+  accent
+  label="Button Label"
+/>
+```
+
+Accent Raised
+
+```
+<Button
+  accent
   raised
   label="Button Label"
 />
 ```
+
 
 ### Overrides
 

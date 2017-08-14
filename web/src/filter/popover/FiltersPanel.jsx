@@ -134,7 +134,7 @@ const clickExport = (
 const messages = defineMessages({
   moreFilters: {
     id: 'filter.popover.moreFilters',
-    defaultMessage: 'More Filters',
+    defaultMessage: 'More filters',
   },
   close: {
     id: 'filter.popover.close',
@@ -329,7 +329,12 @@ export const FiltersPanel = ({
   onDeviceStatusIdChange,
 }) =>
   <div className={cssClasses('Container', className)}>
-    <Button className={cssClasses('Button')} primary onClick={onToggleShown}>
+    <Button
+      className={cssClasses('Button')}
+      primary
+      inverse
+      onClick={onToggleShown}
+    >
       <span className={cssClasses('Button__label')}>
         <span
           className={cssClasses('Button__label__close', {

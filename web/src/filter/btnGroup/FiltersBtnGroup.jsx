@@ -115,6 +115,7 @@ const makeButton = labelFn => (props, filterKey) =>
     key={filterKey}
     className={cssClasses('Button')}
     raised
+    accent
     onClick={() => props.onRemoveFilterItem(filterKey)}
   >
     {labelFn(props, props.filters[filterKey])}

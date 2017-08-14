@@ -192,6 +192,8 @@ export const InventoryAdjustmentDialogForm = ({
     actions={[
       { label: intl.formatMessage(messages.cancel), onClick: onCancel },
       {
+        accent: true,
+        raised: true,
         label: intl.formatMessage(messages.submit),
         onClick: handleSubmit,
         disabled: form.pristine || !form.valid || form.submitting,

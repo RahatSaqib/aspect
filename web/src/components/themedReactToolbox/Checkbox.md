@@ -1,6 +1,6 @@
 ### Usage
 
-```js
+```js static
 import { Checkbox } from 'react-toolbox/lib/checkbox'
 ```
 
