@@ -31,8 +31,8 @@ import StyleguideMain from '../styleguide/main/StyleguideMain'
 import InventoryItemsList from '../inventory/list/InventoryItemsList'
 import RouterList from '../router/list/RouterList'
 import RouterDetail from '../router/detail/RouterDetail'
-import TerminalList from '../terminal/list/TerminalList'
-import TerminalDetail from '../terminal/detail/TerminalDetail'
+import ReporterList from '../reporter/list/ReporterList'
+import ReporterDetail from '../reporter/detail/ReporterDetail'
 
 import styles from '../components/shared/Shared.css'
 
@@ -103,10 +103,10 @@ const Routes = () =>
         component={RouterDetail}
       />
 
-      <LoggedInLayout exact path="/browse/reporter" component={TerminalList} />
+      <LoggedInLayout exact path="/browse/reporter" component={ReporterList} />
       <LoggedInLayout
         path="/browse/reporter/:reporterId"
-        component={TerminalDetail}
+        component={ReporterDetail}
       />
 
       <LoggedInLayout exact path="/browse/result" component={ResultList} />

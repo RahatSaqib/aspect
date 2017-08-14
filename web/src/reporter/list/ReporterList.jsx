@@ -209,7 +209,7 @@ const enhance = compose(
   })
 )
 
-export const TerminalList = ({
+export const ReporterList = ({
   intl,
   history,
   location,
@@ -336,4 +336,4 @@ export const TerminalList = ({
     </DataTableCard>
   </div>
 
-export default enhance(TerminalList)
+export default enhance(ReporterList)

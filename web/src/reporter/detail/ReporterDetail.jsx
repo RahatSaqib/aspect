@@ -164,7 +164,7 @@ const enhance = compose(
   })
 )
 
-export class TerminalDetail extends PureComponent {
+export class ReporterDetail extends PureComponent {
   state = {
     isEditDialogOpen: false,
     isDemoDialogOpen: false,
@@ -493,4 +493,4 @@ export class TerminalDetail extends PureComponent {
   }
 }
 
-export default enhance(TerminalDetail)
+export default enhance(ReporterDetail)
