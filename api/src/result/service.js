@@ -461,12 +461,12 @@ function* updateQcCheck(request) {
   })
 
   // add device log entry so result is redelivered
-  yield* deliverResultToTerminal(result.data.deviceId, resultId, now)
+  yield* deliverResultToReporter(result.data.deviceId, resultId, now)
 
   return yield* showResult(request)
 }
 
-function* deliverResultToTerminal(deviceId, resultId, createdOn) {
+function* deliverResultToReporter(deviceId, resultId, createdOn) {
   yield knex('DeviceLog').insert({
     deviceId,
     resultId,
