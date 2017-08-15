@@ -133,7 +133,7 @@ function* getListDevices(query, auth) {
         .count('r.id')
         .as('deliveredLastMonth'),
 
-      // TODO: Fix this/last month queries so they work for other (non-terminal) devices
+      // TODO: Fix this/last month queries so they work for other (non-reporter) devices
       knex('Result as r')
         .innerJoin('Sample as s', 'r.sampleId', 's.id')
         .innerJoin('ResultWorkflowLog as rl', 'r.id', 'rl.resultId')
@@ -241,11 +241,11 @@ function* getDeviceByDeviceId(request, fields = SELECT_SHOW_FIELDS) {
       .count('r.id as count')
       .leftJoin('Sample as s', 's.id', 'r.sampleId')
 
-    // If the device is not a terminal
+    // If the device is not a reporter
     if (device.siteId == null || device.category !== 'Client') {
       totalTestQuery.where('r.deviceId', device.id)
     } else {
-      // TODO: This query would fail if there we had more than one terminal in one site
+      // TODO: This query would fail if there we had more than one reporter in one site
       totalTestQuery.where(function() {
         this.where('r.deviceId', device.id)
         this.orWhere('s.originSiteId', device.siteId)
