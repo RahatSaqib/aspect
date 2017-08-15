@@ -1,5 +1,9 @@
 @import '../../globals/variables.css';
 
+.input__disabled > .input__inputElement {
+  border: none;
+}
+
 .input__input {
   padding: 0;
 }
@@ -9,7 +13,9 @@
 }
 
 .input__inputElement {
+  border: none;
   padding: 8px 12px;
+  line-height: 20px;
   font-weight: var(--lato-font-weight-bold);
   color: #ffffff;
   background-color: var(--aspect-color-chill-blue-1);

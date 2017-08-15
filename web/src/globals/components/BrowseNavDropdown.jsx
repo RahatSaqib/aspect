@@ -1,11 +1,6 @@
-import _ from 'lodash'
-import classnames from 'classnames/bind'
-import React from 'react'
-import Dropdown from 'react-toolbox/lib/dropdown'
+import { compose, mapProps } from 'recompose'
 
-const cssClasses = classnames.bind(require('./BrowseNavDropdown.css'))
-
-const enhance = _.identity
+import NavDropdown from '../../components/shared/NavDropdown'
 
 const navigations = [
   { value: '/browse/device', label: 'Devices' },
@@ -20,10 +15,10 @@ const navigations = [
   { value: '/browse/deviceApiKey', label: 'Device API Keys' },
 ]
 
-const BrowseNavDropdown = ({ history, location, ...restProps }) =>
-  <Dropdown
-    {...restProps}
-    onChange={value => {
+const enhance = compose(
+  mapProps(({ history, location, ...restProps }) => ({
+    ...restProps,
+    onChange: value => {
       const searchParams = new URLSearchParams()
       searchParams.set(
         'filters',
@@ -34,13 +29,10 @@ const BrowseNavDropdown = ({ history, location, ...restProps }) =>
         pathname: value,
         search: searchParams.toString(),
       })
-    }}
-    source={navigations}
-    value={location.pathname}
-    theme={{
-      inputInput: cssClasses('input__input'),
-      inputInputElement: cssClasses('input__inputElement'),
-    }}
-  />
+    },
+    source: navigations,
+    value: location.pathname,
+  }))
+)
 
-export default enhance(BrowseNavDropdown)
+export default enhance(NavDropdown)
