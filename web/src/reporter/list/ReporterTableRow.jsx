@@ -9,40 +9,40 @@ const cssClasses = classnames.bind(
 
 const enhance = _.identity
 
-const TerminalTableRow = ({ intl, terminal, ...restProps }) =>
+const ReporterTableRow = ({ intl, reporter, ...restProps }) =>
   <TableRow
     {...restProps}
     className={cssClasses(restProps.className, 'TableRow')}
   >
     <TableCell className={cssClasses('TableCell')}>
-      {terminal.get('siteName')}
+      {reporter.get('siteName')}
     </TableCell>
     <TableCell className={cssClasses('TableCell')}>
-      {terminal.get('shortname')}
+      {reporter.get('shortname')}
     </TableCell>
     <TableCell className={cssClasses('TableCell')}>
-      {terminal.get('status')}
+      {reporter.get('status')}
     </TableCell>
     <TableCell className={cssClasses('TableCell')}>
-      {intl.formatRelative(terminal.get('createdOn'))}
+      {intl.formatRelative(reporter.get('createdOn'))}
     </TableCell>
     <TableCell className={cssClasses('TableCell')}>
-      {intl.formatRelative(terminal.get('lastSeen'))}
+      {intl.formatRelative(reporter.get('lastSeen'))}
     </TableCell>
     <TableCell className={cssClasses('TableCell')}>
-      {intl.formatNumber(terminal.get('deliveredLastMonth'))}
+      {intl.formatNumber(reporter.get('deliveredLastMonth'))}
     </TableCell>
     <TableCell className={cssClasses('TableCell')}>
-      {intl.formatNumber(terminal.get('deliveredThisMonth'))}
+      {intl.formatNumber(reporter.get('deliveredThisMonth'))}
     </TableCell>
     <TableCell className={cssClasses('TableCell')}>
-      {intl.formatNumber(terminal.get('acknowledgedRatio'), {
+      {intl.formatNumber(reporter.get('acknowledgedRatio'), {
         style: 'percent',
       })}
     </TableCell>
     <TableCell className={cssClasses('TableCell')}>
-      {intl.formatNumber(terminal.get('totalFlagged'))}
+      {intl.formatNumber(reporter.get('totalFlagged'))}
     </TableCell>
   </TableRow>
 
-export default enhance(TerminalTableRow)
+export default enhance(ReporterTableRow)

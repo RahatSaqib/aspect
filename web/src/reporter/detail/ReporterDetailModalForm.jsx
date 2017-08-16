@@ -19,7 +19,7 @@ import JSONSchemaCard from '../../components/shared/JSONSchemaCard'
 import SiteAutoCompleteField from '../../filter/resource/SiteAutoCompleteField'
 import { tokens } from '../../deviceStatus/DeviceStatusRedux'
 
-const cssClasses = classnames.bind(require('./TerminalDetailModalForm.css'))
+const cssClasses = classnames.bind(require('./ReporterDetailModalForm.css'))
 
 const enhance = compose(
   pure,
@@ -64,7 +64,7 @@ const enhance = compose(
   })
 )
 
-export const TerminalDetailModalForm = props => {
+export const ReporterDetailModalForm = props => {
   const { form, meta, values, labels } = props
 
   const actions = [
@@ -173,4 +173,4 @@ function stopEventPropagation(event) {
   event.stopPropagation()
 }
 
-export default enhance(TerminalDetailModalForm)
+export default enhance(ReporterDetailModalForm)

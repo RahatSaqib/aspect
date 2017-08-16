@@ -1,11 +1,11 @@
-.TerminalDataTable {
+.ReporterDataTable {
   composes: ComponentDataTable from '../../components/shared/DataTable.css';
 }
 
-.TerminalDataTableHead__Tests--left {
+.ReporterDataTableHead__Tests--left {
   text-align: right;
 }
 
-.TerminalDataTableHead__Tests--right {
+.ReporterDataTableHead__Tests--right {
   text-align: left;
 }

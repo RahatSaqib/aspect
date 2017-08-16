@@ -19,73 +19,73 @@ import BrowseEmptyList from '../../globals/components/BrowseEmptyList'
 import BrowseTablePaginator from '../../globals/components/BrowseTablePaginator'
 import DataTableCard from '../../components/shared/DataTableCard'
 import DataTableProgressBar from '../../components/shared/DataTableProgressBar'
-import { fetchTerminals } from '../TerminalRedux'
+import { fetchReporters } from '../ReporterRedux'
 import {
-  TerminalDataTable,
-  TerminalDataTableHead,
-  TerminalDataTableRow,
-} from './TerminalDataTable'
+  ReporterDataTable,
+  ReporterDataTableHead,
+  ReporterDataTableRow,
+} from './ReporterDataTable'
 
-const cssClasses = classnames.bind(require('./TerminalList.css'))
+const cssClasses = classnames.bind(require('./ReporterList.css'))
 
 const messages = defineMessages({
-  terminalsTitle: {
-    id: 'pages.TerminalList.terminalsTitle',
-    defaultMessage: 'Terminals',
+  reportersTitle: {
+    id: 'pages.ReporterList.reportersTitle',
+    defaultMessage: 'Reporters',
   },
-  terminalName: {
-    id: 'pages.TerminalList.terminalName',
-    defaultMessage: 'Terminal Name',
+  reporterName: {
+    id: 'pages.ReporterList.reporterName',
+    defaultMessage: 'Reporter Name',
   },
-  terminalShortName: {
-    id: 'pages.TerminalList.terminalShortName',
-    defaultMessage: 'Terminal',
+  reporterShortName: {
+    id: 'pages.ReporterList.reporterShortName',
+    defaultMessage: 'Reporter',
   },
-  terminalSite: {
-    id: 'pages.TerminalList.siteName',
+  reporterSite: {
+    id: 'pages.ReporterList.siteName',
     defaultMessage: 'Site',
   },
   status: {
-    id: 'pages.TerminalList.status',
+    id: 'pages.ReporterList.status',
     defaultMessage: 'Status',
   },
   connectedSince: {
-    id: 'pages.TerminalList.connectedSince',
+    id: 'pages.ReporterList.connectedSince',
     defaultMessage: 'Connected Since',
   },
   lastSeen: {
-    id: 'pages.TerminalList.lastSeen',
+    id: 'pages.ReporterList.lastSeen',
     defaultMessage: 'Last Seen',
   },
   numberOfTestsLeft: {
-    id: 'pages.TerminalList.numberOfTestsLeft',
+    id: 'pages.ReporterList.numberOfTestsLeft',
     defaultMessage: 'Number Of',
   },
   numberOfTestsRight: {
-    id: 'pages.TerminalList.numberOfTestsRight',
+    id: 'pages.ReporterList.numberOfTestsRight',
     defaultMessage: 'Tests Delivered',
   },
   deliveredLastMonth: {
-    id: 'pages.TerminalList.deliveredLastMonth',
+    id: 'pages.ReporterList.deliveredLastMonth',
     defaultMessage: 'Last Month',
   },
   deliveredThisMonth: {
-    id: 'pages.TerminalList.deliveredThisMonth',
+    id: 'pages.ReporterList.deliveredThisMonth',
     defaultMessage: 'This Month',
   },
   acknowledgedRatio: {
-    id: 'pages.TerminalList.acknowledgedRatio',
+    id: 'pages.ReporterList.acknowledgedRatio',
     defaultMessage: '% Acknowledged',
   },
   flagged: {
-    id: 'pages.TerminalList.flagged',
+    id: 'pages.ReporterList.flagged',
     defaultMessage: 'Flagged',
   },
   paginatorStatus: {
-    id: 'pages.TerminalList.paginatorStatus',
+    id: 'pages.ReporterList.paginatorStatus',
     defaultMessage: `Showing {firstItemIndex}-{lastItemIndex} of {itemCount, plural,
-      one {# terminal}
-      other {# terminals}
+      one {# reporter}
+      other {# reporters}
     }`,
   },
 })
@@ -123,11 +123,11 @@ const enhance = compose(
   injectIntl,
   connect(
     state => ({
-      items: state.terminal.items,
-      table: state.terminal.table,
+      items: state.reporter.items,
+      table: state.reporter.table,
     }),
     bindActionCreators.bind(null, {
-      fetchTerminals,
+      fetchReporters,
     })
   ),
   withProps(
@@ -138,7 +138,7 @@ const enhance = compose(
   withHandlers({
     onInitialLoad: ({
       location,
-      fetchTerminals,
+      fetchReporters,
       sortCol,
       sortDir,
       pageAt,
@@ -146,7 +146,7 @@ const enhance = compose(
     }) => () => {
       const { sanitized, value: filtersParams } = filtersFromLocation(location)
       if (!sanitized) {
-        fetchTerminals(
+        fetchReporters(
           filtersParams,
           { hasResults: 0, hasConnectivity: 0 },
           sortCol,
@@ -175,8 +175,8 @@ const enhance = compose(
     },
 
     onRowClick: ({ history }) => ({
-      currentTarget: { dataset: { terminalId } },
-    }) => history.push(`/browse/terminal/${terminalId}`),
+      currentTarget: { dataset: { reporterId } },
+    }) => history.push(`/browse/reporter/${reporterId}`),
   }),
   lifecycle({
     componentWillMount() {
@@ -209,7 +209,7 @@ const enhance = compose(
   })
 )
 
-export const TerminalList = ({
+export const ReporterList = ({
   intl,
   history,
   location,
@@ -225,11 +225,11 @@ export const TerminalList = ({
 }) =>
   <div className={cssClasses('Container')}>
     <Helmet
-      title={intl.formatMessage(messages.terminalsTitle)}
+      title={intl.formatMessage(messages.reportersTitle)}
       titleTemplate="%s - Aspect"
       defaultTitle="Aspect"
     />
-    <NavTitle title={intl.formatMessage(messages.terminalsTitle)} />
+    <NavTitle title={intl.formatMessage(messages.reportersTitle)} />
     <BrowseFilters
       history={history}
       location={location}
@@ -241,22 +241,22 @@ export const TerminalList = ({
       {items.currentIdList.isEmpty() &&
         <BrowseEmptyList history={history} location={location} intl={intl} />}
       {!items.currentIdList.isEmpty() &&
-        <TerminalDataTable
+        <ReporterDataTable
           selectable={false}
-          className={cssClasses('TerminalDataTable')}
+          className={cssClasses('ReporterDataTable')}
         >
-          <TerminalDataTableHead
+          <ReporterDataTableHead
             sortColumnKey={sortCol}
             sortColumnDir={sortDir}
             columns={[
               {
                 key: 'siteName',
-                label: intl.formatMessage(messages.terminalSite),
+                label: intl.formatMessage(messages.reporterSite),
                 onClick: onHeadColumnClick,
               },
               {
                 key: 'shortname',
-                label: intl.formatMessage(messages.terminalShortName),
+                label: intl.formatMessage(messages.reporterShortName),
                 onClick: onHeadColumnClick,
               },
               {
@@ -276,7 +276,7 @@ export const TerminalList = ({
               },
               {
                 key: 'deliveredLastMonth',
-                className: cssClasses('TerminalDataTableHead__Tests--left'),
+                className: cssClasses('ReporterDataTableHead__Tests--left'),
                 onClick: onHeadColumnClick,
                 label: (
                   <span>
@@ -288,7 +288,7 @@ export const TerminalList = ({
               },
               {
                 key: 'deliveredThisMonth',
-                className: cssClasses('TerminalDataTableHead__Tests--right'),
+                className: cssClasses('ReporterDataTableHead__Tests--right'),
                 onClick: onHeadColumnClick,
                 label: (
                   <span>
@@ -312,16 +312,16 @@ export const TerminalList = ({
           />
           {items.currentIdList
             .map(id => items.byId.get(id))
-            .map(terminal =>
-              <TerminalDataTableRow
-                key={terminal.get('id')}
+            .map(reporter =>
+              <ReporterDataTableRow
+                key={reporter.get('id')}
                 intl={intl}
-                terminal={terminal}
+                reporter={reporter}
                 onClick={onRowClick}
-                data-terminal-Id={terminal.get('id')}
+                data-reporter-Id={reporter.get('id')}
               />
             )}
-        </TerminalDataTable>}
+        </ReporterDataTable>}
       {!items.currentIdList.isEmpty() &&
         <BrowseTablePaginator
           history={history}
@@ -336,4 +336,4 @@ export const TerminalList = ({
     </DataTableCard>
   </div>
 
-export default enhance(TerminalList)
+export default enhance(ReporterList)
