@@ -34,6 +34,10 @@
   "lint-staged": {
     "gitDir": "../",
     "linters": {
+      "web/cfg/**/*.js": [
+        "eslint --fix",
+        "git add"
+      ],
       "web/src/**/*.css": [
         "prettier --write",
         "git add"
