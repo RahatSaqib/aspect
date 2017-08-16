@@ -1,13 +1,10 @@
 const Boom = require('boom')
 const _ = require('lodash')
-const { consumeInventoryForResult } = require('../inventory/service')
 const { addResultConstraints } = require('./common')
 
 const DONOT_LOG_DELIVERED = ['Delivered', 'Acknowledged', 'Flagged', 'Error']
 const DELIVERED_EXTERNALID = 'Delivered'
 const ACKNOWLEDGED_EXTERNALID = 'Acknowledged'
-const VALIDATED_EXTERNALID = 'Validated'
-const DELIVERABLE_EXTERNALID = 'Deliverable'
 
 const millisInDay = 1000 * 60 * 60 * 24
 
@@ -328,26 +325,29 @@ function* addResult(context) {
     updatedOn: now,
   }
 
+  // Processed result contains result with additional fields
+  // we want to insert but never update and will be passed to
+  // plugins for further processing. It should contain all columns
+  // from the Result table
+  const processedResult = Object.assign(
+    {
+      externalId: payload.id,
+      deviceId,
+      partnerId: site.partnerId,
+      geographyId: site.geographyId,
+      siteId: site.id,
+      createdOn: now,
+    },
+    result
+  )
   let resultId
   if (existingResult) {
     resultId = existingResult.id
     yield knex('Result').where({ id: resultId }).update(result)
   } else {
-    ;[resultId] = yield knex('Result').insert(
-      Object.assign(
-        {
-          externalId: payload.id,
-          deviceId,
-          partnerId: site.partnerId,
-          geographyId: site.geographyId,
-          siteId: site.id,
-          createdOn: now,
-        },
-        result
-      )
-    )
+    ;[resultId] = yield knex('Result').insert(processedResult)
   }
-  context.addResultId(resultId)
+  processedResult.id = resultId
 
   // Log Result Workflow Update if any field changed
   let resultWorkflowChanged =
@@ -381,53 +381,7 @@ function* addResult(context) {
     })
   }
 
-  // Now's a good time to see if the result is in the
-  // status "Validated" and can be promoted to "Deliverable" base on patient data
-  // TODO: Base the logic for promoting a result on a rules engine
-  if (patientData && patientDataIsComplete(JSON.parse(patientData))) {
-    const resultWorkflowExternalId = (yield knex('Result as r')
-      .where('r.id', resultId)
-      .join('ResultWorkflowStatus as rw', 'r.resultWorkflowStatusId', 'rw.id')
-      .first('rw.externalId')).externalId
-
-    // only auto update if not already in deliverable
-    // status, it hasn't been delivered yet,
-    // and it is now in the status "Validated"
-    if (resultWorkflowExternalId === VALIDATED_EXTERNALID) {
-      const resultWorkflowDeliverableId = (yield knex('ResultWorkflowStatus')
-        .where('externalId', DELIVERABLE_EXTERNALID)
-        .first('id')).id
-
-      yield knex('Result')
-        .where('id', resultId)
-        .update('resultWorkflowStatusId', resultWorkflowDeliverableId)
-
-      const logEntryNow = new Date(now.getTime() + 1000) // add a second so this entry shows up after the workflow status log entry that was added as part of the original update
-      yield knex('ResultWorkflowLog').insert({
-        resultId,
-        resultWorkflowStatusId: resultWorkflowDeliverableId,
-        operator: null,
-        changedOn: logEntryNow,
-        createdOn: logEntryNow,
-        reason: 'Validated & Complete Patient Data',
-      })
-    }
-  }
-
-  // Update Inventory Levels at Site
-  const consumablesInResultData = _.isEmpty(payload.consumable)
-    ? []
-    : payload.consumable
-  yield* consumeInventoryForResult(
-    resultId,
-    assay.id,
-    site.id,
-    consumablesInResultData,
-    site.partnerId,
-    result.startedOn,
-    result.endedOn,
-    knex
-  )
+  yield* context.postProcessResult(processedResult)
 
   return {}
 }
@@ -759,19 +713,6 @@ function* updateResultWorkflowStatus(
   }
 
   return {}
-}
-
-function patientDataIsComplete(patientData) {
-  if (
-    patientData.name &&
-    patientData.surname &&
-    patientData.age &&
-    patientData.gender &&
-    (patientData.artNumber || patientData.hccNumber)
-  ) {
-    return true
-  }
-  return false
 }
 
 function* getLatestResultWorkflowLog(knex, resultId) {

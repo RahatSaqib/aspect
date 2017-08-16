@@ -3,7 +3,7 @@ const _ = require('lodash')
 const { knex, transact } = require('../db')
 const { asyncHandler } = require('../routes')
 
-const { loadPlugin } = require('./plugin/common')
+const { loadPlugin } = require('./plugin/registration')
 
 const millisInDay = 1000 * 60 * 60 * 24
 
@@ -122,7 +122,7 @@ function* createDeviceApiContext(request, handlerOptions) {
   const partner = yield knex('Partner as p')
     .innerJoin('Device as d', 'd.partnerId', 'p.id')
     .where({ 'd.id': device.id })
-    .first('p.deviceLogHistoryDays', 'p.plugin')
+    .first('p.id', 'p.deviceLogHistoryDays', 'p.plugin')
   if (partner == null) {
     return { error: Boom.internal('Device not assigned to partner') }
   }
@@ -133,6 +133,7 @@ function* createDeviceApiContext(request, handlerOptions) {
     payload: request.payload,
     query: request.query,
     deviceLogType,
+    partnerId: partner.id,
     pluginName: partner.plugin,
   })
 
@@ -321,10 +322,6 @@ class DeviceApiContext {
     this.addDeviceLogUpdate('deviceOperationId', id)
   }
 
-  addResultId(id) {
-    this.addDeviceLogUpdate('resultId', id)
-  }
-
   addDeviceLogUpdate(prop, value) {
     let update = this.deviceLogUpdate
     if (update == null) {
@@ -344,6 +341,15 @@ class DeviceApiContext {
       'transformResultPayload'
     )
     return yield* transformResultPayload(this)
+  }
+
+  *postProcessResult(result) {
+    this.addDeviceLogUpdate('resultId', result.id)
+    const postProcessResult = yield* loadPlugin(
+      this.pluginName,
+      'postProcessResult'
+    )
+    return yield* postProcessResult(this, result)
   }
 }
 

@@ -1,29 +1,27 @@
-// TODO allow dynamic loading plugins, or is mapping a matter of provisioning?
-const { get } = require('lodash')
-
-const plugins = {
-  default: require('./default'),
-  malawi: require('./malawi'),
-}
+const { isEmpty } = require('lodash')
+const inventory = require('../../inventory/service')
 
 /**
- * Loads a plugin by name and action
- *
- * Falls back to default plugin if action
- * with name not registered
- *
- * actions include:
- *
- * transformResultPayload(context) => newPayload
- * A new result is received, transform result payload to new payload
- * to process in format expected by Device API.
- *
+ * Consumes inventory for the new result
  */
-function* loadPlugin(pluginName, actionName) {
-  const action = get(plugins, [pluginName, actionName])
-  return action != null ? action : plugins.default[actionName]
+function* consumeInventoryForResult(context, result) {
+  const { knex, payload } = context
+  // Update Inventory Levels at Site
+  const consumablesInResultData = isEmpty(payload.consumable)
+    ? []
+    : payload.consumable
+  yield* inventory.consumeInventoryForResult(
+    result.id,
+    result.assayId,
+    result.siteId,
+    consumablesInResultData,
+    result.partnerId,
+    result.startedOn,
+    result.endedOn,
+    knex
+  )
 }
 
 module.exports = {
-  loadPlugin,
+  consumeInventoryForResult,
 }
