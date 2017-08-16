@@ -16,8 +16,12 @@ module.exports = {
   components: () => [
     ...glob.sync('src/components/themedReactToolbox/!(index).{js,jsx}'),
     ...glob.sync(
-      'src/components/shared/@(FallbackUntilDone|FocusBlurTextField).{js,jsx}'
+      'src/components/shared/@(ReadOnlyField|ReadOnlyFields|FallbackUntilDone|FocusBlurTextField).{js,jsx}'
     ),
+    ...glob.sync(
+      'src/components/graph/@(BarChart|ColumnChart|LineChart|ChartContainer|ChartAlert).{js,jsx}'
+    ),
+    ...glob.sync('src/components/shared/flagIcon/@(FlagIcon).{js,jsx}'),
   ],
   styleguideComponents: {
     Wrapper: path.join(__dirname, './src/globals/layouts/UIThemeProviders.jsx'),
