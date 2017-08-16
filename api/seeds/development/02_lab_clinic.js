@@ -144,6 +144,7 @@ function* seed(knex) {
 
   // RRT Device Type
   yield knex('DeviceType').insert({
+    externalId: 'RRT',
     name: 'RRT',
     manufacturer: 'SystemOne',
     deviceTypeCategoryId: deviceTypeCategories.Client.id,
@@ -310,7 +311,7 @@ function* seed(knex) {
           .where({ name: device.partnerName })
           .first()
         const { id: deviceTypeId } = yield knex('DeviceType')
-          .where({ name: device.deviceTypeName })
+          .where({ externalId: device.deviceTypeName })
           .first()
         const { id: deviceStatusId } = yield knex('DeviceStatus')
           .where({ token: device.deviceStatusToken })

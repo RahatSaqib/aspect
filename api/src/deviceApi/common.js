@@ -218,7 +218,7 @@ function createNewDevice(request, now) {
       }
     }
     const deviceType = yield knex('DeviceType')
-      .where({ name: deviceTypeExternalId })
+      .where({ externalId: deviceTypeExternalId })
       .first('id', 'name')
     if (deviceType == null) {
       return {

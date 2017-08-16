@@ -207,6 +207,7 @@ function* seed(knex) {
 
   // Device Types
   const [deviceTypeGeneXpertId] = yield knex('DeviceType').insert({
+    externalId: 'GeneXpert',
     name: 'GeneXpert',
     manufacturer: 'Cepheid',
     deviceTypeCategoryId: deviceTypeCategoryLab,
@@ -215,18 +216,21 @@ function* seed(knex) {
   })
 
   const [deviceTypeAfinionId] = yield knex('DeviceType').insert({
+    externalId: 'Afinion',
     name: 'Afinion',
     manufacturer: 'Alere',
     deviceTypeCategoryId: deviceTypeCategoryLab,
   })
 
   const [deviceTypeQId] = yield knex('DeviceType').insert({
+    externalId: 'Q',
     name: 'Q',
     manufacturer: 'Alere',
     deviceTypeCategoryId: deviceTypeCategoryLab,
   })
 
   const [deviceTypeM2000Id] = yield knex('DeviceType').insert({
+    externalId: 'm2000',
     name: 'm2000',
     manufacturer: 'Abbott',
     deviceTypeCategoryId: deviceTypeCategoryLab,
@@ -243,6 +247,7 @@ function* seed(knex) {
   })
 
   const [deviceTypeDaktariId] = yield knex('DeviceType').insert({
+    externalId: 'Daktari',
     name: 'Daktari',
     manufacturer: 'Daktari',
     deviceTypeCategoryId: deviceTypeCategoryLab,
@@ -251,6 +256,7 @@ function* seed(knex) {
   })
 
   const [deviceTypeIdRouter] = yield knex('DeviceType').insert({
+    externalId: 'MetacomRouter',
     name: 'Metacom Router',
     manufacturer: 'Metacom',
     deviceTypeCategoryId: deviceTypeCategoryConnectivity,

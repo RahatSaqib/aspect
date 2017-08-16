@@ -295,6 +295,7 @@ function* up(knex) {
       .notNullable()
       .references('id')
       .inTable('DeviceTypeCategory')
+    deviceType.string('externalId').notNullable()
     deviceType.string('name').notNullable()
     deviceType.string('manufacturer').notNullable()
     deviceType.specificType('configurationDataSchema', 'JSON')
