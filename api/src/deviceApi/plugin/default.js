@@ -1,5 +1,5 @@
-function* transformResultPayload(payload) {
-  return payload
+function* transformResultPayload(context) {
+  return context.payload
 }
 
 module.exports = {

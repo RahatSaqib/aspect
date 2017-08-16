@@ -14,7 +14,7 @@ const plugins = {
  *
  * actions include:
  *
- * transformResultPayload(payload) => newPayload
+ * transformResultPayload(context) => newPayload
  * A new result is received, transform result payload to new payload
  * to process in format expected by Device API.
  *

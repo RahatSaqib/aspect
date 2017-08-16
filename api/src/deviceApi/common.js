@@ -98,6 +98,7 @@ function* createDeviceApiContext(request, handlerOptions) {
       'd.partnerId',
       'd.siteId',
       'ds.token as status',
+      'dt.externalId as deviceType',
       'dtc.name as deviceTypeCategory'
     )
 
@@ -267,6 +268,7 @@ function createNewDevice(request, now) {
       name,
       serial: payload.serial,
       status: apiKey.siteId ? 'approved' : 'provisioned',
+      deviceType: deviceTypeExternalId,
     }
     const inserts = {
       partnerId: device.partnerId,
@@ -341,7 +343,7 @@ class DeviceApiContext {
       this.pluginName,
       'transformResultPayload'
     )
-    return yield* transformResultPayload(this.payload)
+    return yield* transformResultPayload(this)
   }
 }
 
