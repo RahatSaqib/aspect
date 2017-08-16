@@ -28,9 +28,11 @@ const SELECT_LIST_FIELDS = [
   'so.name as sampleOriginSiteName',
   'sp.externalId as sampleId',
   'sp.group as sampleGroup',
+  'sp.collectedOn as sampleCollectedOn',
   'a.name as assayName',
   'a.id as assayId',
   'r.deviceId',
+  'stp.name as sampleTypeName',
   knex.raw(
     'JSON_UNQUOTE(JSON_EXTRACT(r.resultData, "$.resultText")) as resultText'
   ),
@@ -74,7 +76,9 @@ const SELECT_SHOW_FIELDS = [
   'sp.externalId as sampleId',
   'sp.group as sampleGroup',
   'sp.originSiteId as sampleOriginSiteId',
+  'sp.collectedOn as sampleCollectedOn',
   'so.name as sampleOriginSiteName',
+  'stp.name as sampleTypeName',
   knex.raw('JSON_UNQUOTE(JSON_EXTRACT(r.patientData, "$.id")) as patientId'),
   'r.patientData',
   'r.qcCheck',
@@ -165,6 +169,7 @@ function* getListResults(query, auth) {
     .leftJoin('ResultCategory as rc1', 'r.resultCategory1', 'rc1.id')
     .leftJoin('ResultCategory as rc2', 'r.resultCategory2', 'rc2.id')
     .leftJoin('Sample as sp', 'r.sampleId', 'sp.id')
+    .leftJoin('SampleType as stp', 'sp.sampleTypeId', 'stp.id')
     .leftJoin('Site as so', 'sp.originSiteId', 'so.id')
     .leftJoin('ResultWorkflowStatus as rs', 'r.resultWorkflowStatusId', 'rs.id')
     .leftJoin('Site as sr', 'r.siteId', 'sr.id')
@@ -254,6 +259,7 @@ function* getResultByResultId(request, fields = SELECT_SHOW_FIELDS) {
     .leftJoin('ResultCategory as rc1', 'r.resultCategory1', 'rc1.id')
     .leftJoin('ResultCategory as rc2', 'r.resultCategory2', 'rc2.id')
     .leftJoin('Sample as sp', 'r.sampleId', 'sp.id')
+    .leftJoin('SampleType as stp', 'sp.sampleTypeId', 'stp.id')
     .leftJoin('Site as so', 'sp.originSiteId', 'so.id')
     .leftJoin('ResultWorkflowStatus as rs', 'r.resultWorkflowStatusId', 'rs.id')
     .where('r.id', +params.resultId)
