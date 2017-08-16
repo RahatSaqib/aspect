@@ -537,7 +537,10 @@ function addResultConstraints(queryBuilder, context, aliases) {
     // and operation updates are currently always constrained by device
     queryBuilder.where(function() {
       this.where(`${aliases.device}.id`, device.id)
-      this.orWhere(`${aliases.sample}.originSiteId`, device.siteId)
+      this.orWhere(function() {
+        this.where(`${aliases.sample}.originSiteId`, device.siteId)
+        this.where(`${aliases.result}.qcCheck`, 1)
+      })
     })
   }
 }

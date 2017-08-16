@@ -369,7 +369,6 @@ function* getResult(context) {
     .leftJoin('ResultWorkflowStatus as rs', 'r.resultWorkflowStatusId', 'rs.id')
     .leftJoin('Partner as p', 'd.partnerId', 'p.id')
     .where('dl.id', deviceLog.id)
-    .where('r.qcCheck', 1)
     .first(
       'r.externalId as resultExternalId',
       'r.resultData',
@@ -597,15 +596,18 @@ function* autoAcknowledgeResultBasedOnPartnerRules(
       // Are there NO results that are more recent
       // than the auto acknowledgement cutoff date?
       const allResultsBeingSynced = yield knex('Result as r')
+        .innerJoin('Device as d', 'r.deviceId', 'd.id')
         .innerJoin('Sample as s', 'r.sampleId', 's.id')
-        .innerJoin('Site as sos', 's.originSiteId', 'sos.id')
         .innerJoin(
           'ResultWorkflowStatus as rs',
           'r.resultWorkflowStatusId',
           'rs.id'
         )
-        .where('sos.externalId', sampleOriginSiteExternalId)
-        .where('r.qcCheck', 1)
+        .modify(addResultConstraints, context, {
+          device: 'd',
+          result: 'r',
+          sample: 's',
+        })
         .orderBy('r.endedOn', 'desc') // TODO: What if results have already been acknowledged?
         .select('r.id', 'r.endedOn')
       if (
