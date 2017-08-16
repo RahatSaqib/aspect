@@ -25,7 +25,7 @@
     "prettier": "prettier --no-semi --single-quote --trailing-comma=es5",
     "prettier:write": "npm run prettier -- --write \"./src/**/*.{js,jsx,css}\"",
     "lint": "eslint ./src --ext .js --ext .jsx",
-    "clean": "fsys --task=remove --fileFolder=dist/index.html && fsys --task=emptyDir --dir=dist/assets && fsys --task=remove --fileFolder=src/template/dll.vendor.manifest.json && fsys --task=remove --fileFolder=src/template/index.html",
+    "clean": "fsys --task=remove --fileFolder=dist/index.html && fsys --task=emptyDir --dir=dist/assets && fsys --task=remove --fileFolder=src/template/dll.vendor.manifest.json",
     "release:major": "npm version major && npm publish && git push --follow-tags",
     "release:minor": "npm version minor && npm publish && git push --follow-tags",
     "release:patch": "npm version patch && npm publish && git push --follow-tags",
