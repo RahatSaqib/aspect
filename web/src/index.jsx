@@ -13,7 +13,7 @@ import store from './store'
 import { getRefreshToken } from './shared/utils/localStorage'
 import { refreshStart, hydrateFromLocalStorage } from './auth/AuthRedux'
 import './favicon.ico?output=../favicon.ico'
-import './index.scss'
+import './index.css'
 import appFactory from './globals/factories/appFactory'
 
 if (config.sentry) {
