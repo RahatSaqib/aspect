@@ -16,7 +16,7 @@ const {
   addDeviceOperation,
   updateDeviceConfiguration,
 } = require('./device')
-const { addResult } = require('./result')
+const { mergeResult } = require('./result')
 
 const errorPayload = Joi.object().keys({
   code: Joi.string().allow('', null).description('Error code'),
@@ -477,7 +477,7 @@ module.exports = [
     // POST /device/result
     method: 'POST',
     path: '/result',
-    handler: deviceApiHandler(addResult, {
+    handler: deviceApiHandler(mergeResult, {
       updatePing: true,
       updateDeviceLog: true,
     }),

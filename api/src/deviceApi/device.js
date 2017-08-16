@@ -1,6 +1,6 @@
 const _ = require('lodash')
 const Boom = require('boom')
-const { addResult, getResult } = require('./result')
+const { mergeResult, getResult } = require('./result')
 
 const {
   DEVICE_LOG_TYPE_OPTIONAL,
@@ -35,7 +35,7 @@ function* addDeviceData(context) {
   }
 
   if (result) {
-    const resultResponse = yield* addResult(context.withPayload(result))
+    const resultResponse = yield* mergeResult(context.withPayload(result))
     if (resultResponse instanceof Error) {
       return resultResponse
     }

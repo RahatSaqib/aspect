@@ -335,22 +335,44 @@ class DeviceApiContext {
     }
   }
 
-  *withTransformedResultPayload() {
-    const transformResultPayload = yield* loadPlugin(
+  *preProcessGetResult() {
+    const preProcessGetResult = yield* loadPlugin(
       this.pluginName,
-      'transformResultPayload'
+      'preProcessGetResult'
     )
-    const transformedPayload = yield* transformResultPayload(this)
+    yield* preProcessGetResult(this)
+    return this
+  }
+
+  *postProcessGetResult(result) {
+    const postProcessGetResult = yield* loadPlugin(
+      this.pluginName,
+      'postProcessGetResult'
+    )
+    return yield* postProcessGetResult(this, result)
+  }
+
+  *preProcessMergeResult() {
+    const preProcessMergeResult = yield* loadPlugin(
+      this.pluginName,
+      'preProcessMergeResult'
+    )
+    const transformMergeResultPayload = yield* loadPlugin(
+      this.pluginName,
+      'transformMergeResultPayload'
+    )
+    yield* preProcessMergeResult(this)
+    const transformedPayload = yield* transformMergeResultPayload(this)
     return this.withPayload(transformedPayload)
   }
 
-  *postProcessResult(result, previousResult) {
+  *postProcessMergeResult(result, previousResult) {
     this.addDeviceLogUpdate('resultId', result.id)
-    const postProcessResult = yield* loadPlugin(
+    const postProcessMergeResult = yield* loadPlugin(
       this.pluginName,
-      'postProcessResult'
+      'postProcessMergeResult'
     )
-    return yield* postProcessResult(this, result, previousResult)
+    return yield* postProcessMergeResult(this, result, previousResult)
   }
 }
 

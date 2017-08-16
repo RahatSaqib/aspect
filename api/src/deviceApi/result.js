@@ -8,8 +8,8 @@ const ACKNOWLEDGED_EXTERNALID = 'Acknowledged'
 
 const millisInDay = 1000 * 60 * 60 * 24
 
-function* addResult(initialContext) {
-  const context = yield* initialContext.withTransformedResultPayload()
+function* mergeResult(initialContext) {
+  const context = yield* initialContext.preProcessMergeResult()
   const { knex, now, payload } = context
 
   // Look up existing result matching external id if specified
@@ -347,12 +347,11 @@ function* addResult(initialContext) {
   }
   processedResult.id = resultId
 
-  yield* context.postProcessResult(processedResult, existingResult)
-
-  return {}
+  return yield* context.postProcessMergeResult(processedResult, existingResult)
 }
 
-function* getResult(context) {
+function* getResult(initialContext) {
+  const context = yield* initialContext.preProcessGetResult()
   const { knex, deviceLog } = context
 
   const resultQuery = knex('Result as r')
@@ -557,7 +556,7 @@ function* getResult(context) {
     result.error = error
   }
 
-  return result
+  return yield* context.postProcessGetResult(result)
 }
 
 function* autoAcknowledgeResultBasedOnPartnerRules(
@@ -569,7 +568,6 @@ function* autoAcknowledgeResultBasedOnPartnerRules(
   const {
     resultId,
     endedOn: testEndedOn,
-    sampleOriginSiteId: sampleOriginSiteExternalId,
     resultWorkflowStatusId: currentResultWorkflowStatusId,
   } = resultDetails
   const {
@@ -639,7 +637,7 @@ function* autoAcknowledgeResultBasedOnPartnerRules(
       }
     }
   }
-  return yield new Promise(resolve => resolve(workflowStatus))
+  return workflowStatus
 }
 
 function* updateResultWorkflowStatus(
@@ -690,6 +688,6 @@ function* getLatestResultWorkflowLog(knex, resultId) {
 }
 
 module.exports = {
-  addResult,
+  mergeResult,
   getResult,
 }

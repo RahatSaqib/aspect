@@ -3,7 +3,7 @@ const { addResultWorkflowLogIfChanged } = require('./common')
 const VALIDATED_EXTERNALID = 'Validated'
 const DELIVERABLE_EXTERNALID = 'Deliverable'
 
-function* transformResultPayload(context) {
+function* transformMergeResultPayload(context) {
   const { device: { deviceType } } = context
   // FIXME this should be CHAI once merge PR#343
   if (deviceType === 'm2000') {
@@ -12,11 +12,12 @@ function* transformResultPayload(context) {
   return context.payload
 }
 
-function* postProcessResult(context, result, previousResult) {
+function* postProcessMergeResult(context, result, previousResult) {
   yield* addResultWorkflowLogIfChanged(context, result, previousResult)
   // TODO do we want to consume in inventory in malawi plugin? (we don't use it)
   // yield* consumeInventoryForResult(context, result)
   yield* checkResultDeliverable(context, result)
+  return {}
 }
 
 function* handleChaiResult(context) {
@@ -76,6 +77,6 @@ function patientDataIsComplete(patientData) {
 }
 
 module.exports = {
-  transformResultPayload,
-  postProcessResult,
+  transformMergeResultPayload,
+  postProcessMergeResult,
 }
