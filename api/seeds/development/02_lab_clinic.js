@@ -38,6 +38,7 @@ function* seed(knex) {
   const [partnerId] = yield knex('Partner').insert({
     name: 'RRT',
     partnerTypeId: partnerTypes.Operating.id,
+    plugin: 'malawi',
     deviceLogHistoryDays: 365,
     autoAcknowledgeOlderThanDays: 28,
     numberToLeaveUnacknowledged: 15,

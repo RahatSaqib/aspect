@@ -12,7 +12,9 @@ const DELIVERABLE_EXTERNALID = 'Deliverable'
 const millisInDay = 1000 * 60 * 60 * 24
 
 function* addResult(context) {
-  const { knex, payload, now } = context
+  const { knex, now } = context
+  const payload = yield* context.loadResultPayload()
+
   // TODO separate permissions for device add vs update result?
   // Look up existing result matching external id if specified
   let existingResult = null

@@ -3,6 +3,8 @@ const _ = require('lodash')
 const { knex, transact } = require('../db')
 const { asyncHandler } = require('../routes')
 
+const { loadPlugin } = require('./plugin/common')
+
 const millisInDay = 1000 * 60 * 60 * 24
 
 const DEVICE_LOG_TYPE_NONE = 0
@@ -116,12 +118,21 @@ function* createDeviceApiContext(request, handlerOptions) {
     return { error: Boom.notFound('No device found') }
   }
 
+  const partner = yield knex('Partner as p')
+    .innerJoin('Device as d', 'd.partnerId', 'p.id')
+    .where({ 'd.id': device.id })
+    .first('p.deviceLogHistoryDays', 'p.plugin')
+  if (partner == null) {
+    return { error: Boom.internal('Device not assigned to partner') }
+  }
+
   const context = new DeviceApiContext({
     now,
     device,
     payload: request.payload,
     query: request.query,
     deviceLogType,
+    pluginName: partner.plugin,
   })
 
   // Add Device Log if requested
@@ -158,13 +169,6 @@ function* createDeviceApiContext(request, handlerOptions) {
     }
 
     // Calculate min log date configured by Partner
-    const partner = yield knex('Partner as p')
-      .innerJoin('Device as d', 'd.partnerId', 'p.id')
-      .where({ 'd.id': device.id })
-      .first('p.deviceLogHistoryDays')
-    if (partner == null) {
-      return { error: Boom.internal('Device not assigned to partner') }
-    }
     const historyCutoff = new Date(
       +new Date() - partner.deviceLogHistoryDays * millisInDay
     )
@@ -330,6 +334,14 @@ class DeviceApiContext {
     if (this.parent) {
       this.parent.addDeviceLogUpdate(prop, value)
     }
+  }
+
+  *loadResultPayload() {
+    const transformResultPayload = yield* loadPlugin(
+      this.pluginName,
+      'transformResultPayload'
+    )
+    return yield* transformResultPayload(this.payload)
   }
 }
 
