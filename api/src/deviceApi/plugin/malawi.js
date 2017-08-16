@@ -1,4 +1,4 @@
-const { consumeInventoryForResult } = require('./common')
+const { addResultWorkflowLogIfChanged } = require('./common')
 
 const VALIDATED_EXTERNALID = 'Validated'
 const DELIVERABLE_EXTERNALID = 'Deliverable'
@@ -12,8 +12,10 @@ function* transformResultPayload(context) {
   return context.payload
 }
 
-function* postProcessResult(context, result) {
-  yield* consumeInventoryForResult(context, result)
+function* postProcessResult(context, result, previousResult) {
+  yield* addResultWorkflowLogIfChanged(context, result, previousResult)
+  // TODO do we want to consume in inventory in malawi plugin? (we don't use it)
+  // yield* consumeInventoryForResult(context, result)
   yield* checkResultDeliverable(context, result)
 }
 

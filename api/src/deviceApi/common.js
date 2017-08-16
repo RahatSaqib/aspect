@@ -335,21 +335,22 @@ class DeviceApiContext {
     }
   }
 
-  *loadResultPayload() {
+  *withTransformedResultPayload() {
     const transformResultPayload = yield* loadPlugin(
       this.pluginName,
       'transformResultPayload'
     )
-    return yield* transformResultPayload(this)
+    const transformedPayload = yield* transformResultPayload(this)
+    return this.withPayload(transformedPayload)
   }
 
-  *postProcessResult(result) {
+  *postProcessResult(result, previousResult) {
     this.addDeviceLogUpdate('resultId', result.id)
     const postProcessResult = yield* loadPlugin(
       this.pluginName,
       'postProcessResult'
     )
-    return yield* postProcessResult(this, result)
+    return yield* postProcessResult(this, result, previousResult)
   }
 }
 

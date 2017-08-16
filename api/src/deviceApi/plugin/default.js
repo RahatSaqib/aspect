@@ -1,4 +1,4 @@
-const { consumeInventoryForResult } = require('./common')
+const { addResultWorkflowLogIfChanged, consumeInventoryForResult } = require('./common')
 
 /**
  * A new result is received, transform result payload to new payload
@@ -14,7 +14,8 @@ function* transformResultPayload(context) {
  * any post processing of the result.
  * Default process consumable in inventory
  */
-function* postProcessResult(context, result) {
+function* postProcessResult(context, result, previousResult) {
+  yield* addResultWorkflowLogIfChanged(context, result, previousResult)
   yield* consumeInventoryForResult(context, result)
 }
 

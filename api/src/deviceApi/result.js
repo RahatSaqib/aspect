@@ -8,11 +8,10 @@ const ACKNOWLEDGED_EXTERNALID = 'Acknowledged'
 
 const millisInDay = 1000 * 60 * 60 * 24
 
-function* addResult(context) {
-  const { knex, now } = context
-  const payload = yield* context.loadResultPayload()
+function* addResult(initialContext) {
+  const context = yield* initialContext.withTransformedResultPayload()
+  const { knex, now, payload } = context
 
-  // TODO separate permissions for device add vs update result?
   // Look up existing result matching external id if specified
   let existingResult = null
   if (payload.id) {
@@ -169,7 +168,6 @@ function* addResult(context) {
   let sampleOriginSiteId = site.id
   const payloadOriginSiteId = _.get(payload, 'sample.originSite.id', false)
   if (payloadOriginSiteId) {
-    // TODO Do we need to authorize this Device can link to Sample origin site?
     sampleOriginSiteId = (yield knex('Site')
       .where({ partnerId: site.partnerId, externalId: payloadOriginSiteId })
       .first('id')).id
@@ -349,39 +347,7 @@ function* addResult(context) {
   }
   processedResult.id = resultId
 
-  // Log Result Workflow Update if any field changed
-  let resultWorkflowChanged =
-    !existingResult ||
-    existingResult.resultWorkflowStatusId !== result.resultWorkflowStatusId
-  if (
-    !resultWorkflowChanged &&
-    (_.has(payload, 'workflow.operator') ||
-      _.has(payload, 'workflow.changedOn'))
-  ) {
-    // check to see if operator or changedOn is different from latest log
-    const resultWorkflowLog = yield* getLatestResultWorkflowLog(
-      knex,
-      existingResult.id
-    )
-    resultWorkflowChanged =
-      !resultWorkflowLog ||
-      _.get(payload, 'workflow.operator', null) !==
-        resultWorkflowLog.operator ||
-      +_.get(payload, 'workflow.changedOn', NaN) !==
-        +resultWorkflowLog.changedOn
-  }
-
-  if (resultWorkflowChanged) {
-    yield knex('ResultWorkflowLog').insert({
-      resultId,
-      resultWorkflowStatusId: result.resultWorkflowStatusId,
-      operator: _.get(payload, 'workflow.operator', null),
-      changedOn: _.get(payload, 'workflow.changedOn', now),
-      createdOn: now,
-    })
-  }
-
-  yield* context.postProcessResult(processedResult)
+  yield* context.postProcessResult(processedResult, existingResult)
 
   return {}
 }
@@ -472,8 +438,6 @@ function* getResult(context) {
     row.resultId
   )
 
-  // TODO allow filtering on fields of interest, similar to client device API
-  // but JSON paths from result data in same format as POST
   const result = {}
 
   if (row.resultExternalId != null) {
