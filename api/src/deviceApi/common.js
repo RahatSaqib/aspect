@@ -4,6 +4,7 @@ const { knex, transact } = require('../db')
 const { asyncHandler } = require('../routes')
 
 const { loadPlugin } = require('./plugin/registration')
+const { addResultConstraints } = require('./plugin/common')
 
 const millisInDay = 1000 * 60 * 60 * 24
 
@@ -543,28 +544,6 @@ function* getDeviceLog(
     response.deviceLog.checkpoint = deviceLog.checkpoint
   }
   return response
-}
-
-function addResultConstraints(queryBuilder, context, aliases) {
-  const { device } = context
-  if (device.siteId == null || device.deviceTypeCategory !== 'Client') {
-    // If the device is not assigned to site or if it's not a client
-    // device, we only need to ensure log originates from device
-    queryBuilder.where(`${aliases.device}.id`, device.id)
-  } else {
-    // We need to consider DeviceLogs with and without
-    // the result constraints and return the first entry (minimum log id)
-    // Two steps are required because results might be allowed from a
-    // different sample origin site (lab/clinic) but device configuration
-    // and operation updates are currently always constrained by device
-    queryBuilder.where(function() {
-      this.where(`${aliases.device}.id`, device.id)
-      this.orWhere(function() {
-        this.where(`${aliases.sample}.originSiteId`, device.siteId)
-        this.where(`${aliases.result}.qcCheck`, 1)
-      })
-    })
-  }
 }
 
 module.exports = {

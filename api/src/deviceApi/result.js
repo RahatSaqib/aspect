@@ -2,12 +2,6 @@ const Boom = require('boom')
 const _ = require('lodash')
 const { addResultConstraints } = require('./common')
 
-const DONOT_LOG_DELIVERED = ['Delivered', 'Acknowledged', 'Flagged', 'Error']
-const DELIVERED_EXTERNALID = 'Delivered'
-const ACKNOWLEDGED_EXTERNALID = 'Acknowledged'
-
-const millisInDay = 1000 * 60 * 60 * 24
-
 function* mergeResult(initialContext) {
   const context = yield* initialContext.preProcessMergeResult()
   const { knex, now, payload } = context
@@ -354,7 +348,7 @@ function* getResult(initialContext) {
   const context = yield* initialContext.preProcessGetResult()
   const { knex, deviceLog } = context
 
-  const resultQuery = knex('Result as r')
+  const row = yield knex('Result as r')
     .innerJoin('Assay as a', 'r.assayId', 'a.id')
     .innerJoin('DeviceLog as dl', 'dl.resultId', 'r.id')
     .innerJoin('Device as d', 'r.deviceId', 'd.id')
@@ -366,7 +360,6 @@ function* getResult(initialContext) {
     .leftJoin('ResultType as rt', 'r.resultTypeId', 'rt.id')
     .leftJoin('ResultSource as rsc', 'r.resultSourceId', 'rsc.id')
     .leftJoin('ResultWorkflowStatus as rs', 'r.resultWorkflowStatusId', 'rs.id')
-    .leftJoin('Partner as p', 'd.partnerId', 'p.id')
     .where('dl.id', deviceLog.id)
     .first(
       'r.externalId as resultExternalId',
@@ -404,37 +397,19 @@ function* getResult(initialContext) {
       'sos.externalId as sampleOriginSiteId',
       'st.externalId as sampleTypeId',
       'rc1.externalId as category1Id',
-      'rc2.externalId as category2Id',
-      'p.autoAcknowledgeOlderThanDays',
-      'p.numberToLeaveUnacknowledged'
+      'rc2.externalId as category2Id'
     )
 
-  const row = yield resultQuery
   if (row == null) {
-    return null
+    // TODO when is this null??
+    return yield* context.postProcessGetResult(null)
   }
 
-  // only set to delivered the first time and
-  // only if NOT acknowledged or flagged already
-  if (_.indexOf(DONOT_LOG_DELIVERED, row.resultWorkflowStatusId) === -1) {
-    yield* updateResultWorkflowStatus(
-      context,
-      row.resultId,
-      DELIVERED_EXTERNALID
-    )
-    row.resultWorkflowStatusId = DELIVERED_EXTERNALID
-
-    row.resultWorkflowStatusId = yield* autoAcknowledgeResultBasedOnPartnerRules(
-      context,
-      row,
-      row
-    )
-  }
-
-  const resultWorkflowLog = yield* getLatestResultWorkflowLog(
-    knex,
-    row.resultId
-  )
+  const resultWorkflowLog = yield knex('ResultWorkflowLog')
+    .where({ resultId: row.resultId })
+    .orderBy('createdOn', 'desc')
+    .orderBy('id', 'desc')
+    .first('operator', 'changedOn')
 
   const result = {}
 
@@ -557,134 +532,6 @@ function* getResult(initialContext) {
   }
 
   return yield* context.postProcessGetResult(result)
-}
-
-function* autoAcknowledgeResultBasedOnPartnerRules(
-  context,
-  resultDetails,
-  partnerAutoAcknowledgeRules
-) {
-  const { knex, query } = context
-  const {
-    resultId,
-    endedOn: testEndedOn,
-    resultWorkflowStatusId: currentResultWorkflowStatusId,
-  } = resultDetails
-  const {
-    autoAcknowledgeOlderThanDays,
-    numberToLeaveUnacknowledged,
-  } = partnerAutoAcknowledgeRules
-
-  let workflowStatus = currentResultWorkflowStatusId
-
-  // Is this a historical sync and
-  // do we have an end date for the test?
-  // are auto acknowledge rules setup for partner?
-  const offset = Number(query.offset)
-  if (
-    offset < 0 &&
-    testEndedOn &&
-    (autoAcknowledgeOlderThanDays || numberToLeaveUnacknowledged)
-  ) {
-    // At what age should a result be auto acknowledged?
-    const autoAcknowledgeOlderThan = autoAcknowledgeOlderThanDays
-      ? new Date(+new Date() - autoAcknowledgeOlderThanDays * millisInDay)
-      : null
-    if (testEndedOn < autoAcknowledgeOlderThan) {
-      // Are there NO results that are more recent
-      // than the auto acknowledgement cutoff date?
-      const allResultsBeingSynced = yield knex('Result as r')
-        .innerJoin('Device as d', 'r.deviceId', 'd.id')
-        .innerJoin('Sample as s', 'r.sampleId', 's.id')
-        .innerJoin(
-          'ResultWorkflowStatus as rs',
-          'r.resultWorkflowStatusId',
-          'rs.id'
-        )
-        .modify(addResultConstraints, context, {
-          device: 'd',
-          result: 'r',
-          sample: 's',
-        })
-        .orderBy('r.endedOn', 'desc') // TODO: What if results have already been acknowledged?
-        .select('r.id', 'r.endedOn')
-      if (
-        !_.some(
-          allResultsBeingSynced,
-          result => result.endedOn > autoAcknowledgeOlderThan
-        )
-      ) {
-        // Is this NOT one of the top results on the list
-        // that should be left unacknowledged so that
-        // the results list on the reporter isn't empty?
-        const resultsToLeaveUnacknowledged = _.take(
-          allResultsBeingSynced,
-          numberToLeaveUnacknowledged
-        )
-        if (
-          !_.some(
-            resultsToLeaveUnacknowledged,
-            result => result.id === resultId
-          )
-        ) {
-          yield* updateResultWorkflowStatus(
-            context,
-            resultId,
-            ACKNOWLEDGED_EXTERNALID
-          )
-          workflowStatus = ACKNOWLEDGED_EXTERNALID
-        }
-      }
-    }
-  }
-  return workflowStatus
-}
-
-function* updateResultWorkflowStatus(
-  context,
-  resultId,
-  workflowStatusExternalId,
-  reason
-) {
-  const { knex, now } = context
-
-  // get internal workflow status id based on the external id we got
-  const workflowStatusRow = yield knex('ResultWorkflowStatus')
-    .where('externalId', workflowStatusExternalId)
-    .select('id')
-    .first()
-  if (workflowStatusRow === null) {
-    throw new Error(
-      `Workflow status with external ID "${workflowStatusExternalId}" not found`
-    )
-  }
-
-  // update result
-  const rows = yield knex('Result as r')
-    .where('r.id', resultId)
-    .update('resultWorkflowStatusId', workflowStatusRow.id)
-
-  // keep log if update was successful. don't need to check permission again because
-  // rows would be 0 if no permission in query above
-  if (rows) {
-    yield knex('ResultWorkflowLog').insert({
-      resultId,
-      resultWorkflowStatusId: workflowStatusRow.id,
-      reason,
-      changedOn: now,
-      createdOn: now,
-    })
-  }
-
-  return {}
-}
-
-function* getLatestResultWorkflowLog(knex, resultId) {
-  return yield knex('ResultWorkflowLog')
-    .where({ resultId })
-    .orderBy('createdOn', 'desc')
-    .orderBy('id', 'desc')
-    .first('operator', 'changedOn')
 }
 
 module.exports = {

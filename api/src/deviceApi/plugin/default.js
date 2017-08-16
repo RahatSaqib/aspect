@@ -1,14 +1,15 @@
 const {
   addResultWorkflowLogIfChanged,
   consumeInventoryForResult,
+  updateResultWorkflowStatusOnGetResult,
 } = require('./common')
 
 /**
  * A result is queried with a given DeviceLog,
  * called prior to any processing of result.
  */
-function* preProcessGetResult(/* context */) {
-  // nothing to do by default
+function* preProcessGetResult(context) {
+  yield* updateResultWorkflowStatusOnGetResult(context)
 }
 
 /**
