@@ -10,6 +10,14 @@ const {
   types: { RESULT_UPDATED, RESULT_LOGGED },
 } = require('../messages')
 
+const {
+  updateDeviceConfiguration,
+  getDeviceConfigurationFromDeviceLog,
+  getDeviceOperation,
+  addDeviceOperation,
+  getSite,
+} = require('./device')
+const { mergeResult, getResult } = require('./result')
 const { loadPlugin } = require('./plugin/registration')
 
 const millisInDay = 1000 * 60 * 60 * 24
@@ -98,6 +106,199 @@ function deviceApiHandler(handler, handlerOptions) {
 
     return response
   })
+}
+
+function* addDeviceDataHandler(context) {
+  const response = {}
+  const { knex, now, payload, device } = context
+  const { name, site, result, configuration, operation } = payload
+
+  if (name) {
+    yield knex('Device')
+      .where({ id: device.id })
+      .update({ name, updatedOn: now })
+  }
+
+  if (site) {
+    const siteResponse = yield* updateSiteHandler(context.withPayload(site))
+    if (siteResponse instanceof Error) {
+      return siteResponse
+    }
+  }
+
+  if (configuration) {
+    yield* updateDeviceConfigurationHandler(context.withPayload(configuration))
+  }
+
+  if (operation) {
+    yield* addDeviceOperationHandler(context.withPayload(operation))
+  }
+
+  if (result) {
+    const resultResponse = yield* mergeResultHandler(
+      context.withPayload(result)
+    )
+    if (resultResponse instanceof Error) {
+      return resultResponse
+    }
+  }
+
+  return response
+}
+
+function* getDeviceDataHandler(context) {
+  const { knex, now, device, deviceLog, deviceLogType } = context
+
+  // include fields based on device log type configured in endpoints
+  const includeAll = deviceLogType === DEVICE_LOG_TYPE_OPTIONAL
+  const includeDevice = includeAll
+  const includeSite = includeAll
+
+  // only include device data if approved
+  const deviceApproved = device.status === 'approved'
+  const includeConfig = deviceApproved && includeAll
+  const includeOp =
+    deviceApproved &&
+    (includeAll || deviceLogType === DEVICE_LOG_TYPE_OPERATION)
+  const includeResult =
+    deviceApproved && (includeAll || deviceLogType === DEVICE_LOG_TYPE_RESULT)
+
+  const response = { requestedOn: now.toISOString() }
+  if (includeDevice) {
+    response.name = device.name
+    response.status = { id: device.status }
+  }
+
+  if (includeSite) {
+    const site = yield* getSite(knex, context.device.id)
+    if (site != null) {
+      response.site = site
+    }
+  }
+
+  if (deviceLog != null) {
+    response.log = { createdOn: deviceLog.createdOn }
+    if (deviceLog.source != null) {
+      response.log.source = deviceLog.source
+    }
+
+    if (deviceLog.checkpoint != null) {
+      response.checkpoint = deviceLog.checkpoint
+    }
+
+    if (includeConfig) {
+      const config = yield* getDeviceConfigurationFromDeviceLog(
+        knex,
+        deviceLog.id
+      )
+      if (config != null) {
+        response.configuration = config
+      }
+    }
+
+    if (includeOp) {
+      const op = yield* getDeviceOperationHandler(context)
+      if (op != null) {
+        response.operation = op
+      }
+    }
+
+    if (includeResult) {
+      const result = yield* getResultHandler(context)
+      if (result != null) {
+        response.result = result
+      }
+    }
+  }
+
+  return response
+}
+
+function* addDeviceOperationHandler(context) {
+  const { knex, payload, device: { id: deviceId }, now } = context
+  const op = yield* addDeviceOperation(knex, deviceId, payload, now)
+  context.addDeviceOperationId(op.id)
+  return {}
+}
+
+function* updateDeviceConfigurationHandler(context) {
+  const { knex, payload, device: { id: deviceId } } = context
+  const config = yield* updateDeviceConfiguration(knex, deviceId, payload)
+  context.markDeviceConfigurationUpdated()
+  return config
+}
+
+function* getDeviceOperationHandler(context) {
+  const { knex, deviceLog: { id: deviceLogId } } = context
+  const op = yield* getDeviceOperation(knex, deviceLogId)
+  return op
+}
+
+function* updateSiteHandler(context) {
+  const { knex, payload, device, now } = context
+  const result = {}
+  const siteExternalId = payload.id || null
+  if (siteExternalId == null) {
+    return Boom.badRequest('Must specify site id to update Site')
+  }
+
+  // Find unique site with specified external ID for same partner as device
+  const sites = yield knex('Site as s')
+    .where({
+      partnerId: device.partnerId,
+      externalId: siteExternalId,
+    })
+    .select('id')
+    .limit(2)
+  if (sites.length !== 1) {
+    return Boom.badRequest(`Cannot find unique site with id ${siteExternalId}`)
+  }
+  const site = sites[0]
+
+  if (device.siteId === site.id) {
+    // Device is already assigned to requested site, nothing to do
+    return result
+  }
+
+  const status = device.siteId == null ? 'approved' : 'assigned'
+
+  yield knex('Device').where({ id: device.id }).update({
+    siteId: site.id,
+    deviceStatusId: knex('DeviceStatus').where({ token: status }).select('id'),
+  })
+
+  // Update DeviceApiKey site with the new siteId
+  yield knex('DeviceApiKey').where({ deviceId: device.id }).update({
+    siteId: site.id,
+  })
+
+  yield knex('DeviceSiteHistory').insert({
+    deviceId: device.id,
+    siteId: site.id,
+    createdOn: now,
+  })
+
+  return result
+}
+
+function* mergeResultHandler(initialContext) {
+  const context = yield* initialContext.preProcessMergeResult()
+  const { knex, now, payload, device: { id: deviceId } } = context
+  const { processedResult, existingResult } = yield* mergeResult(
+    knex,
+    deviceId,
+    payload,
+    now,
+    knex
+  )
+  return yield* context.postProcessMergeResult(processedResult, existingResult)
+}
+
+function* getResultHandler(initialContext) {
+  const context = yield* initialContext.preProcessGetResult()
+  const { knex, deviceLog } = context
+  const result = yield* getResult(knex, deviceLog.id)
+  return yield* context.postProcessGetResult(result)
 }
 
 function* createDeviceApiContext(request, handlerOptions) {
@@ -583,6 +784,11 @@ addListener(RESULT_LOGGED, onResultLogged)
 
 module.exports = {
   deviceApiHandler,
+  addDeviceDataHandler,
+  getDeviceDataHandler,
+  updateDeviceConfigurationHandler,
+  addDeviceOperationHandler,
+  mergeResultHandler,
   DEVICE_LOG_TYPE_OPTIONAL,
   DEVICE_LOG_TYPE_OPERATION,
   DEVICE_LOG_TYPE_RESULT,

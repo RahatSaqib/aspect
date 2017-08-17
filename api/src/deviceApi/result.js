@@ -1,11 +1,7 @@
 const Boom = require('boom')
 const _ = require('lodash')
 
-function* mergeResult(knex, deviceId, payload, now) {
-  if (now == null) {
-    now = new Date()
-  }
-
+function* mergeResult(knex, deviceId, payload, now = new Date()) {
   // Look up existing result matching external id if specified
   let existingResult = null
   if (payload.id) {

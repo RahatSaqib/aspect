@@ -9,14 +9,12 @@ const {
   DEVICE_LOG_TYPE_OPTIONAL,
   DEVICE_LOG_TYPE_OPERATION,
   DEVICE_LOG_TYPE_RESULT,
-} = require('./common')
-const {
-  addDeviceData,
-  getDeviceData,
-  addDeviceOperation,
-  updateDeviceConfiguration,
+  addDeviceDataHandler,
+  getDeviceDataHandler,
+  addDeviceOperationHandler,
+  updateDeviceConfigurationHandler,
   mergeResultHandler,
-} = require('./device')
+} = require('./common')
 
 const errorPayload = Joi.object().keys({
   code: Joi.string().allow('', null).description('Error code'),
@@ -268,7 +266,7 @@ module.exports = [
     // GET /device
     method: 'GET',
     path: '/',
-    handler: deviceApiHandler(getDeviceData, {
+    handler: deviceApiHandler(getDeviceDataHandler, {
       deviceLogType: DEVICE_LOG_TYPE_OPTIONAL,
     }),
     config: {
@@ -318,7 +316,7 @@ module.exports = [
     // POST /device { checkpoint, configuration, operation, result }
     method: 'POST',
     path: '/',
-    handler: deviceApiHandler(addDeviceData, {
+    handler: deviceApiHandler(addDeviceDataHandler, {
       createDevice: true,
       updatePing: true,
       updateDeviceLog: true,
@@ -361,7 +359,7 @@ module.exports = [
     // POST /device/configuration
     method: 'POST',
     path: '/configuration',
-    handler: deviceApiHandler(updateDeviceConfiguration, {
+    handler: deviceApiHandler(updateDeviceConfigurationHandler, {
       updatePing: true,
       updateDeviceLog: true,
     }),
@@ -385,7 +383,7 @@ module.exports = [
   {
     method: 'GET',
     path: '/operation',
-    handler: deviceApiHandler(getDeviceData, {
+    handler: deviceApiHandler(getDeviceDataHandler, {
       deviceLogType: DEVICE_LOG_TYPE_OPERATION,
     }),
     config: {
@@ -419,7 +417,7 @@ module.exports = [
     // POST /device/operation
     method: 'POST',
     path: '/operation',
-    handler: deviceApiHandler(addDeviceOperation, {
+    handler: deviceApiHandler(addDeviceOperationHandler, {
       updatePing: true,
       updateDeviceLog: true,
     }),
@@ -443,7 +441,7 @@ module.exports = [
   {
     method: 'GET',
     path: '/result',
-    handler: deviceApiHandler(getDeviceData, {
+    handler: deviceApiHandler(getDeviceDataHandler, {
       deviceLogType: DEVICE_LOG_TYPE_RESULT,
     }),
     config: {

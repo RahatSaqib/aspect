@@ -25,6 +25,7 @@ function* onResultLogged(context, result) {
 }
 
 function* handleChaiResult(context) {
+  // TODO Translate rawData, set result category, etc.
   return context.payload
 }
 
