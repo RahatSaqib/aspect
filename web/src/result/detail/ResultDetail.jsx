@@ -415,16 +415,16 @@ export class ResultDetail extends PureComponent {
             </Unit>
             <Unit sm="1-2" md="1-2" lg="1-4">
               <ReadOnlyField
-                label={formatMessage(messages.fieldPatientId)}
-                value={result.get('patientId')}
-              />
-            </Unit>
-            <Unit sm="1-2" md="1-2" lg="1-4">
-              <ReadOnlyField
                 label={formatMessage(messages.fieldCollectedOn)}
                 nullText={formatMessage(messages.nullText)}
                 value={result.get('sampleCollectedOn')}
                 format={formatDate}
+              />
+            </Unit>
+            <Unit sm="1-2" md="1-2" lg="1-4">
+              <ReadOnlyField
+                label={formatMessage(messages.fieldPatientId)}
+                value={result.get('patientId')}
               />
             </Unit>
             <Unit sm="1-2" md="1-2" lg="1-4">
