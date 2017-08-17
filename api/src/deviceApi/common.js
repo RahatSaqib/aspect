@@ -22,14 +22,53 @@ const { loadPlugin } = require('./plugin/registration')
 
 const millisInDay = 1000 * 60 * 60 * 24
 
+// Source for messages so we can skip logs that we handled ourselves
+// Note that this is a bit of a hack and is not stored in the DB
+const DEVICE_LOG_COMMON_SOURCE = 'DeviceApiCommon'
+
 const DEVICE_LOG_TYPE_NONE = 0
 const DEVICE_LOG_TYPE_OPTIONAL = 1
 const DEVICE_LOG_TYPE_OPERATION = 2
 const DEVICE_LOG_TYPE_RESULT = 3
 
-// Source for messages so we can skip logs that we handled ourselves
-// Note that this is a bit of a hack and is not stored in the DB
-const DEVICE_LOG_COMMON_SOURCE = 'DeviceApiCommon'
+const getDeviceDataHandler = deviceApiHandler(getDeviceDataWithContext, {
+  deviceLogType: DEVICE_LOG_TYPE_OPTIONAL,
+})
+
+const getDeviceOperationHandler = deviceApiHandler(getDeviceDataWithContext, {
+  deviceLogType: DEVICE_LOG_TYPE_OPERATION,
+})
+
+const getResultHandler = deviceApiHandler(getDeviceDataWithContext, {
+  deviceLogType: DEVICE_LOG_TYPE_RESULT,
+})
+
+const addDeviceDataHandler = deviceApiHandler(addDeviceDataWithContext, {
+  createDevice: true,
+  updatePing: true,
+  updateDeviceLog: true,
+})
+
+const updateDeviceConfigurationHandler = deviceApiHandler(
+  updateDeviceConfigurationWithContext,
+  {
+    updatePing: true,
+    updateDeviceLog: true,
+  }
+)
+
+const addDeviceOperationHandler = deviceApiHandler(
+  addDeviceOperationWithContext,
+  {
+    updatePing: true,
+    updateDeviceLog: true,
+  }
+)
+
+const mergeResultHandler = deviceApiHandler(mergeResultWithContext, {
+  updatePing: true,
+  updateDeviceLog: true,
+})
 
 function deviceApiHandler(handler, handlerOptions) {
   return asyncHandler(function*(request) {
@@ -108,7 +147,7 @@ function deviceApiHandler(handler, handlerOptions) {
   })
 }
 
-function* addDeviceDataHandler(context) {
+function* addDeviceDataWithContext(context) {
   const response = {}
   const { knex, now, payload, device } = context
   const { name, site, result, configuration, operation } = payload
@@ -120,22 +159,24 @@ function* addDeviceDataHandler(context) {
   }
 
   if (site) {
-    const siteResponse = yield* updateSiteHandler(context.withPayload(site))
+    const siteResponse = yield* updateSiteWithContext(context.withPayload(site))
     if (siteResponse instanceof Error) {
       return siteResponse
     }
   }
 
   if (configuration) {
-    yield* updateDeviceConfigurationHandler(context.withPayload(configuration))
+    yield* updateDeviceConfigurationWithContext(
+      context.withPayload(configuration)
+    )
   }
 
   if (operation) {
-    yield* addDeviceOperationHandler(context.withPayload(operation))
+    yield* addDeviceOperationWithContext(context.withPayload(operation))
   }
 
   if (result) {
-    const resultResponse = yield* mergeResultHandler(
+    const resultResponse = yield* mergeResultWithContext(
       context.withPayload(result)
     )
     if (resultResponse instanceof Error) {
@@ -146,7 +187,7 @@ function* addDeviceDataHandler(context) {
   return response
 }
 
-function* getDeviceDataHandler(context) {
+function* getDeviceDataWithContext(context) {
   const { knex, now, device, deviceLog, deviceLogType } = context
 
   // include fields based on device log type configured in endpoints
@@ -197,14 +238,14 @@ function* getDeviceDataHandler(context) {
     }
 
     if (includeOp) {
-      const op = yield* getDeviceOperationHandler(context)
+      const op = yield* getDeviceOperationWithContext(context)
       if (op != null) {
         response.operation = op
       }
     }
 
     if (includeResult) {
-      const result = yield* getResultHandler(context)
+      const result = yield* getResultWithContext(context)
       if (result != null) {
         response.result = result
       }
@@ -214,27 +255,27 @@ function* getDeviceDataHandler(context) {
   return response
 }
 
-function* addDeviceOperationHandler(context) {
+function* addDeviceOperationWithContext(context) {
   const { knex, payload, device: { id: deviceId }, now } = context
   const op = yield* addDeviceOperation(knex, deviceId, payload, now)
   context.addDeviceOperationId(op.id)
   return {}
 }
 
-function* updateDeviceConfigurationHandler(context) {
+function* updateDeviceConfigurationWithContext(context) {
   const { knex, payload, device: { id: deviceId } } = context
   const config = yield* updateDeviceConfiguration(knex, deviceId, payload)
   context.markDeviceConfigurationUpdated()
   return config
 }
 
-function* getDeviceOperationHandler(context) {
+function* getDeviceOperationWithContext(context) {
   const { knex, deviceLog: { id: deviceLogId } } = context
   const op = yield* getDeviceOperation(knex, deviceLogId)
   return op
 }
 
-function* updateSiteHandler(context) {
+function* updateSiteWithContext(context) {
   const { knex, payload, device, now } = context
   const result = {}
   const siteExternalId = payload.id || null
@@ -281,7 +322,7 @@ function* updateSiteHandler(context) {
   return result
 }
 
-function* mergeResultHandler(initialContext) {
+function* mergeResultWithContext(initialContext) {
   const context = yield* initialContext.preProcessMergeResult()
   const { knex, now, payload, device: { id: deviceId } } = context
   const { processedResult, existingResult } = yield* mergeResult(
@@ -294,7 +335,7 @@ function* mergeResultHandler(initialContext) {
   return yield* context.postProcessMergeResult(processedResult, existingResult)
 }
 
-function* getResultHandler(initialContext) {
+function* getResultWithContext(initialContext) {
   const context = yield* initialContext.preProcessGetResult()
   const { knex, deviceLog } = context
   const result = yield* getResult(knex, deviceLog.id)
@@ -783,13 +824,11 @@ addListener(RESULT_UPDATED, onResultUpdated)
 addListener(RESULT_LOGGED, onResultLogged)
 
 module.exports = {
-  deviceApiHandler,
-  addDeviceDataHandler,
   getDeviceDataHandler,
+  getDeviceOperationHandler,
+  getResultHandler,
+  addDeviceDataHandler,
   updateDeviceConfigurationHandler,
   addDeviceOperationHandler,
   mergeResultHandler,
-  DEVICE_LOG_TYPE_OPTIONAL,
-  DEVICE_LOG_TYPE_OPERATION,
-  DEVICE_LOG_TYPE_RESULT,
 }

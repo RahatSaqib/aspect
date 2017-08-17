@@ -5,12 +5,10 @@
 // only result data is posted.
 const Joi = require('joi')
 const {
-  deviceApiHandler,
-  DEVICE_LOG_TYPE_OPTIONAL,
-  DEVICE_LOG_TYPE_OPERATION,
-  DEVICE_LOG_TYPE_RESULT,
-  addDeviceDataHandler,
   getDeviceDataHandler,
+  getDeviceOperationHandler,
+  getResultHandler,
+  addDeviceDataHandler,
   addDeviceOperationHandler,
   updateDeviceConfigurationHandler,
   mergeResultHandler,
@@ -266,9 +264,7 @@ module.exports = [
     // GET /device
     method: 'GET',
     path: '/',
-    handler: deviceApiHandler(getDeviceDataHandler, {
-      deviceLogType: DEVICE_LOG_TYPE_OPTIONAL,
-    }),
+    handler: getDeviceDataHandler,
     config: {
       description: 'Get Device Data',
       notes:
@@ -316,11 +312,7 @@ module.exports = [
     // POST /device { checkpoint, configuration, operation, result }
     method: 'POST',
     path: '/',
-    handler: deviceApiHandler(addDeviceDataHandler, {
-      createDevice: true,
-      updatePing: true,
-      updateDeviceLog: true,
-    }),
+    handler: addDeviceDataHandler,
     config: {
       description: 'Update Device Data',
       notes:
@@ -359,10 +351,7 @@ module.exports = [
     // POST /device/configuration
     method: 'POST',
     path: '/configuration',
-    handler: deviceApiHandler(updateDeviceConfigurationHandler, {
-      updatePing: true,
-      updateDeviceLog: true,
-    }),
+    handler: updateDeviceConfigurationHandler,
     config: {
       description: 'Update Device Configuration',
       notes:
@@ -383,9 +372,7 @@ module.exports = [
   {
     method: 'GET',
     path: '/operation',
-    handler: deviceApiHandler(getDeviceDataHandler, {
-      deviceLogType: DEVICE_LOG_TYPE_OPERATION,
-    }),
+    handler: getDeviceOperationHandler,
     config: {
       notes: 'Get device operational data',
       description:
@@ -417,10 +404,7 @@ module.exports = [
     // POST /device/operation
     method: 'POST',
     path: '/operation',
-    handler: deviceApiHandler(addDeviceOperationHandler, {
-      updatePing: true,
-      updateDeviceLog: true,
-    }),
+    handler: addDeviceOperationHandler,
     config: {
       description: 'Update Device Operation',
       notes:
@@ -441,9 +425,7 @@ module.exports = [
   {
     method: 'GET',
     path: '/result',
-    handler: deviceApiHandler(getDeviceDataHandler, {
-      deviceLogType: DEVICE_LOG_TYPE_RESULT,
-    }),
+    handler: getResultHandler,
     config: {
       notes: 'Get result data',
       description:
@@ -475,10 +457,7 @@ module.exports = [
     // POST /device/result
     method: 'POST',
     path: '/result',
-    handler: deviceApiHandler(mergeResultHandler, {
-      updatePing: true,
-      updateDeviceLog: true,
-    }),
+    handler: mergeResultHandler,
     config: {
       description: 'Update Result',
       notes:
