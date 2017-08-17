@@ -12,7 +12,7 @@ const {
   addDeviceOperationHandler,
   updateDeviceConfigurationHandler,
   mergeResultHandler,
-} = require('./common')
+} = require('./service')
 
 const errorPayload = Joi.object().keys({
   code: Joi.string().allow('', null).description('Error code'),
