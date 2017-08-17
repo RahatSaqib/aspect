@@ -137,11 +137,19 @@ const messages = defineMessages({
   },
   fieldDate: {
     id: 'pages.ResultDetail.fieldDate',
-    defaultMessage: 'Date',
+    defaultMessage: 'Ended On',
   },
   fieldDuration: {
     id: 'pages.ResultDetail.fieldDuration',
     defaultMessage: 'Duration',
+  },
+  fieldCollectedOn: {
+    id: 'pages.ResultDetail.fieldCollectedOn',
+    defaultMessage: 'Collected On',
+  },
+  fieldSampleType: {
+    id: 'pages.ResultDetail.fieldSampleType',
+    defaultMessage: 'Sample Type',
   },
   nestedDataSubtitle: {
     id: 'pages.ResultDetail.nestedDataSubtitle',
@@ -389,19 +397,34 @@ export class ResultDetail extends PureComponent {
                 value={result.get('sampleId')}
               />
             </Unit>
-            <Unit sm="1-2" md="1-4" lg="1-4">
+            <Unit sm="1-2" md="1-2" lg="1-4">
               <ReadOnlyField
                 label={formatMessage(messages.fieldSampleGroup)}
                 value={result.get('sampleGroup')}
               />
             </Unit>
-            <Unit sm="1-2" md="1-2" lg="1-3">
+            <Unit sm="1-2" md="1-2" lg="1-4">
+              <ReadOnlyField
+                label={formatMessage(messages.fieldSampleType)}
+                nullText={formatMessage(messages.nullText)}
+                value={result.get('sampleTypeName')}
+              />
+            </Unit>
+            <Unit sm="1-2" md="1-2" lg="1-4">
+              <ReadOnlyField
+                label={formatMessage(messages.fieldCollectedOn)}
+                nullText={formatMessage(messages.nullText)}
+                value={result.get('sampleCollectedOn')}
+                format={formatDate}
+              />
+            </Unit>
+            <Unit sm="1-2" md="1-2" lg="1-4">
               <ReadOnlyField
                 label={formatMessage(messages.fieldPatientId)}
                 value={result.get('patientId')}
               />
             </Unit>
-            <Unit sm="1-2" md="1-2" lg="1-6">
+            <Unit sm="1-2" md="1-2" lg="1-4">
               <ReadOnlyField
                 label={formatMessage(messages.fieldDate)}
                 nullText={formatMessage(messages.nullText)}
@@ -409,20 +432,22 @@ export class ResultDetail extends PureComponent {
                 format={formatDate}
               />
             </Unit>
-            <ReadOnlyField
-              label={formatMessage(messages.fieldDevice)}
-              value={result.get('deviceName')}
-              format={v =>
-                <div>
-                  <Link to={`/browse/device/${result.get('deviceId')}`}>
-                    {v}
-                  </Link>
-                  &nbsp;at&nbsp;
-                  <Link to={`/browse/site/${result.get('siteId')}`}>
-                    {result.get('siteName')}
-                  </Link>
-                </div>}
-            />
+            <Unit sm="1-2" md="1-2" lg="1-2">
+              <ReadOnlyField
+                label={formatMessage(messages.fieldDevice)}
+                value={result.get('deviceName')}
+                format={v =>
+                  <div>
+                    <Link to={`/browse/device/${result.get('deviceId')}`}>
+                      {v}
+                    </Link>
+                    &nbsp;at&nbsp;
+                    <Link to={`/browse/site/${result.get('siteId')}`}>
+                      {result.get('siteName')}
+                    </Link>
+                  </div>}
+              />
+            </Unit>
           </CardText>
         </Card>
         {/* Result-related data (categories, resultText, probes...) */}
