@@ -2924,9 +2924,11 @@ describe('Device Result API routes', () => {
                 assert.equal(res.status, 200)
               })
 
-            let offset = -1
-            while (true) {
-              const historicalSyncComplete = yield server
+            let offset = 0
+            let historicalSyncComplete = false
+            while (!historicalSyncComplete) {
+              offset -= 1
+              historicalSyncComplete = yield server
                 .get(
                   `${devicePostResultPath}?checkpoint=${latestCheckpoint}&offset=${offset}`
                 )
@@ -2941,10 +2943,6 @@ describe('Device Result API routes', () => {
                   assert.typeOf(lastResult, 'Object')
                   return false
                 })
-              if (historicalSyncComplete) {
-                break
-              }
-              offset -= 1
             }
 
             // Verify that results have been auto acknowledged correctly
@@ -3065,9 +3063,11 @@ describe('Device Result API routes', () => {
                 assert.equal(res.status, 200)
               })
 
-            let offset = -1
-            while (true) {
-              const historicalSyncComplete = yield server
+            let offset = 0
+            let historicalSyncComplete = false
+            while (!historicalSyncComplete) {
+              offset -= 1
+              historicalSyncComplete = yield server
                 .get(
                   `${devicePostResultPath}?checkpoint=${latestCheckpoint}&offset=${offset}`
                 )
@@ -3082,10 +3082,6 @@ describe('Device Result API routes', () => {
                   assert.typeOf(lastResult, 'Object')
                   return false
                 })
-              if (historicalSyncComplete) {
-                break
-              }
-              offset -= 1
             }
 
             for (let i = 0; i < numberOfTestsToRun; i++) {
@@ -3219,9 +3215,11 @@ describe('Device Result API routes', () => {
                 assert.equal(res.status, 200)
               })
 
-            let offset = -1
-            while (true) {
-              const historicalSyncComplete = yield server
+            let offset = 0
+            let historicalSyncComplete = false
+            while (!historicalSyncComplete) {
+              offset -= 1
+              historicalSyncComplete = yield server
                 .get(
                   `${devicePostResultPath}?checkpoint=${latestCheckpoint}&offset=${offset}`
                 )
@@ -3236,10 +3234,6 @@ describe('Device Result API routes', () => {
                   assert.typeOf(lastResult, 'Object')
                   return false
                 })
-              if (historicalSyncComplete) {
-                break
-              }
-              offset -= 1
             }
 
             // Verify that results have been not been auto acknowledged
