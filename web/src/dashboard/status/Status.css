@@ -130,7 +130,7 @@
   flex-flow: column;
 }
 
-.Button--raised {
+.Button {
   margin: 8px 5px;
   text-transform: capitalize;
 }
@@ -141,8 +141,4 @@
 
 .Button--discard:not([disabled]).Button--raised {
   background-color: var(--aspect-color-mandy);
-}
-
-.Button--manage:not([disabled]).Button--raised {
-  background-color: var(--aspect-color-grey-4);
 }

@@ -1,6 +1,6 @@
 ### Usage
 
-```js
+```js static
 import { Overlay } from 'react-toolbox/lib/overlay'
 ```
 

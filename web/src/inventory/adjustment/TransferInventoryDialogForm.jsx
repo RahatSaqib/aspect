@@ -44,16 +44,7 @@ const messages = defineMessages({
 })
 
 export function validate(
-  {
-    lotNumber,
-    canExpire,
-    expiresOn,
-    fromSiteId,
-    toSiteId,
-    quantity,
-    dateAdjusted,
-    notes,
-  },
+  { canExpire, expiresOn, fromSiteId, toSiteId, quantity, dateAdjusted },
   { intl, inventoryItem }
 ) {
   const errors = {}

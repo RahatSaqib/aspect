@@ -48,13 +48,11 @@ export function validate(
     reasonId,
     dateAdjustedFrom,
     dateAdjustedTo,
-    lotNumber,
     canExpire,
     expiresOn,
     fromSiteId,
     quantity,
     dateAdjusted,
-    notes,
   },
   { intl, inventoryItem, consumableReason }
 ) {
