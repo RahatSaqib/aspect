@@ -10,8 +10,7 @@ const millisInDay = 1000 * 60 * 60 * 24
 /**
  * Consumes inventory for the new result
  */
-function* consumeInventoryForResult(context, result) {
-  const { knex, payload } = context
+function* consumeInventoryForResult(knex, payload, result) {
   // Update Inventory Levels at Site
   const consumablesInResultData = _.isEmpty(payload.consumable)
     ? []
@@ -28,9 +27,13 @@ function* consumeInventoryForResult(context, result) {
   )
 }
 
-function* addResultWorkflowLogIfChanged(context, result, previousResult) {
-  const { knex, payload, now } = context
-
+function* addResultWorkflowLogIfChanged(
+  knex,
+  payload,
+  result,
+  previousResult,
+  now = new Date()
+) {
   // Log Result Workflow Update if any field changed
   let resultWorkflowChanged =
     !previousResult ||
@@ -61,16 +64,21 @@ function* addResultWorkflowLogIfChanged(context, result, previousResult) {
   }
 }
 
-function* updateResultWorkflowStatusOnGetResult(context) {
-  const { knex, deviceLog } = context
+function* updateResultWorkflowStatusOnGetResult(
+  knex,
+  deviceLogId,
+  offset,
+  now = new Date()
+) {
   const row = yield knex('Result as r')
     .innerJoin('DeviceLog as dl', 'dl.resultId', 'r.id')
     .leftJoin('ResultWorkflowStatus as rs', 'r.resultWorkflowStatusId', 'rs.id')
     .leftJoin('Partner as p', 'r.partnerId', 'p.id')
-    .where('dl.id', deviceLog.id)
+    .where('dl.id', deviceLogId)
     .first(
       'r.startedOn',
       'r.endedOn',
+      'r.deviceId',
       'r.id as resultId',
       'rs.externalId as resultWorkflowStatusId',
       'p.autoAcknowledgeOlderThanDays',
@@ -83,23 +91,25 @@ function* updateResultWorkflowStatusOnGetResult(context) {
     _.indexOf(DONOT_LOG_DELIVERED, row.resultWorkflowStatusId) === -1
   ) {
     yield* updateResultWorkflowStatus(
-      context,
+      knex,
       row.resultId,
-      DELIVERED_EXTERNALID
+      DELIVERED_EXTERNALID,
+      now
     )
-
-    yield* autoAcknowledgeResultBasedOnPartnerRules(context, row, row)
+    yield* autoAcknowledgeResultBasedOnPartnerRules(knex, row, row, offset, now)
   }
 }
 
 function* autoAcknowledgeResultBasedOnPartnerRules(
-  context,
+  knex,
   resultDetails,
-  partnerAutoAcknowledgeRules
+  partnerAutoAcknowledgeRules,
+  offset,
+  now
 ) {
-  const { knex, query, device: { id: deviceId } } = context
   const {
     resultId,
+    deviceId,
     endedOn: testEndedOn,
     resultWorkflowStatusId: currentResultWorkflowStatusId,
   } = resultDetails
@@ -113,7 +123,6 @@ function* autoAcknowledgeResultBasedOnPartnerRules(
   // Is this a historical sync and
   // do we have an end date for the test?
   // are auto acknowledge rules setup for partner?
-  const offset = Number(query.offset)
   if (
     offset < 0 &&
     testEndedOn &&
@@ -156,9 +165,10 @@ function* autoAcknowledgeResultBasedOnPartnerRules(
           )
         ) {
           yield* updateResultWorkflowStatus(
-            context,
+            knex,
             resultId,
-            ACKNOWLEDGED_EXTERNALID
+            ACKNOWLEDGED_EXTERNALID,
+            now
           )
           workflowStatus = ACKNOWLEDGED_EXTERNALID
         }
@@ -169,13 +179,12 @@ function* autoAcknowledgeResultBasedOnPartnerRules(
 }
 
 function* updateResultWorkflowStatus(
-  context,
+  knex,
   resultId,
   workflowStatusExternalId,
-  reason
+  reason,
+  now = new Date()
 ) {
-  const { knex, now } = context
-
   // get internal workflow status id based on the external id we got
   const workflowStatusRow = yield knex('ResultWorkflowStatus')
     .where('externalId', workflowStatusExternalId)

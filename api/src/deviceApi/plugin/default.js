@@ -8,8 +8,9 @@ const {
  * A result is queried with a given DeviceLog,
  * called prior to any processing of result.
  */
-function* preProcessGetResult(context) {
-  yield* updateResultWorkflowStatusOnGetResult(context)
+function* preProcessGetResult({ knex, deviceLogId, query, now }) {
+  const offset = Number(query.offset)
+  yield* updateResultWorkflowStatusOnGetResult(knex, deviceLogId, offset, now)
 }
 
 /**
@@ -45,10 +46,17 @@ function* transformMergeResultPayload(context) {
  * Return the response to send back to client
  */
 function* postProcessMergeResult(context, result, previousResult) {
-  yield* addResultWorkflowLogIfChanged(context, result, previousResult)
+  const { knex, payload, now } = context
+  yield* addResultWorkflowLogIfChanged(
+    knex,
+    payload,
+    result,
+    previousResult,
+    now
+  )
   // TODO can we consume inventory using a message listener instead
   // of within plugin/same transaction?
-  yield* consumeInventoryForResult(context, result)
+  yield* consumeInventoryForResult(knex, payload, result)
   return {}
 }
 

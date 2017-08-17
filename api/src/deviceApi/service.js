@@ -607,7 +607,8 @@ class DeviceApiContext {
       this.pluginName,
       'preProcessGetResult'
     )
-    yield* preProcessGetResult(this)
+    const { knex, deviceLog: { id: deviceLogId }, query, now } = this
+    yield* preProcessGetResult({ knex, deviceLogId, query, now })
     return this
   }
 
@@ -616,10 +617,15 @@ class DeviceApiContext {
       this.pluginName,
       'postProcessGetResult'
     )
-    return yield* postProcessGetResult(this, result)
+    const { knex, deviceLog: { id: deviceLogId }, query, now } = this
+    return yield* postProcessGetResult(
+      { knex, deviceLogId, query, now },
+      result
+    )
   }
 
   *preProcessMergeResult() {
+    const { knex, device: { deviceType }, payload, now } = this
     const preProcessMergeResult = yield* loadPlugin(
       this.pluginName,
       'preProcessMergeResult'
@@ -628,8 +634,14 @@ class DeviceApiContext {
       this.pluginName,
       'transformMergeResultPayload'
     )
-    yield* preProcessMergeResult(this)
-    const transformedPayload = yield* transformMergeResultPayload(this)
+    const context = {
+      knex,
+      deviceType,
+      payload,
+      now,
+    }
+    yield* preProcessMergeResult(context)
+    const transformedPayload = yield* transformMergeResultPayload(context)
     return this.withPayload(transformedPayload)
   }
 
@@ -639,7 +651,12 @@ class DeviceApiContext {
       this.pluginName,
       'postProcessMergeResult'
     )
-    return yield* postProcessMergeResult(this, result, previousResult)
+    const { knex, payload, now } = this
+    return yield* postProcessMergeResult(
+      { knex, payload, now },
+      result,
+      previousResult
+    )
   }
 }
 

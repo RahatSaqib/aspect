@@ -3,30 +3,35 @@ const { addResultWorkflowLogIfChanged } = require('./common')
 const VALIDATED_EXTERNALID = 'Validated'
 const DELIVERABLE_EXTERNALID = 'Deliverable'
 
-function* transformMergeResultPayload(context) {
-  const { device: { deviceType } } = context
+function* transformMergeResultPayload({ deviceType, payload }) {
   if (deviceType === 'CHAI') {
-    return yield* handleChaiResult(context)
+    return yield* handleChaiResult(payload)
   }
-  return context.payload
+  return payload
 }
 
 function* postProcessMergeResult(context, result, previousResult) {
-  yield* addResultWorkflowLogIfChanged(context, result, previousResult)
+  const { knex, payload, now } = context
+  yield* addResultWorkflowLogIfChanged(
+    knex,
+    payload,
+    result,
+    previousResult,
+    now
+  )
   // TODO do we want to consume in inventory in malawi plugin? (we don't use it)
-  // yield* consumeInventoryForResult(context, result)
+  // yield* consumeInventoryForResult(knex, payload, result)
   yield* checkResultDeliverable(context, result)
   return {}
 }
 
-function* onResultLogged(context, result) {
-  const { knex, now } = context
-  const { id: resultId } = result
+function* onResultLogged() {
+  // TODO generate result
 }
 
-function* handleChaiResult(context) {
+function* handleChaiResult(payload) {
   // TODO Translate rawData, set result category, etc.
-  return context.payload
+  return payload
 }
 
 function* checkResultDeliverable(context, result) {
