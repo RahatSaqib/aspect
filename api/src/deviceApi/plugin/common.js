@@ -97,7 +97,7 @@ function* autoAcknowledgeResultBasedOnPartnerRules(
   resultDetails,
   partnerAutoAcknowledgeRules
 ) {
-  const { knex, query } = context
+  const { knex, query, device: { id: deviceId } } = context
   const {
     resultId,
     endedOn: testEndedOn,
@@ -126,19 +126,14 @@ function* autoAcknowledgeResultBasedOnPartnerRules(
     if (testEndedOn < autoAcknowledgeOlderThan) {
       // Are there NO results that are more recent
       // than the auto acknowledgement cutoff date?
+      // FIXME Fix All results query. We should be able to limit this without loading all
       const allResultsBeingSynced = yield knex('Result as r')
-        .innerJoin('Device as d', 'r.deviceId', 'd.id')
-        .innerJoin('Sample as s', 'r.sampleId', 's.id')
         .innerJoin(
           'ResultWorkflowStatus as rs',
           'r.resultWorkflowStatusId',
           'rs.id'
         )
-        .modify(addResultConstraints, context, {
-          device: 'd',
-          result: 'r',
-          sample: 's',
-        })
+        .where('r.deviceId', deviceId)
         .orderBy('r.endedOn', 'desc') // TODO: What if results have already been acknowledged?
         .select('r.id', 'r.endedOn')
       if (
@@ -220,31 +215,7 @@ function* getLatestResultWorkflowLog(knex, resultId) {
     .first('operator', 'changedOn')
 }
 
-// FIXME remove addResultConstraints once we seperate generated results
-function addResultConstraints(queryBuilder, context, aliases) {
-  const { device } = context
-  if (device.siteId == null || device.deviceTypeCategory !== 'Client') {
-    // If the device is not assigned to site or if it's not a client
-    // device, we only need to ensure log originates from device
-    queryBuilder.where(`${aliases.device}.id`, device.id)
-  } else {
-    // We need to consider DeviceLogs with and without
-    // the result constraints and return the first entry (minimum log id)
-    // Two steps are required because results might be allowed from a
-    // different sample origin site (lab/clinic) but device configuration
-    // and operation updates are currently always constrained by device
-    queryBuilder.where(function() {
-      this.where(`${aliases.device}.id`, device.id)
-      this.orWhere(function() {
-        this.where(`${aliases.sample}.originSiteId`, device.siteId)
-        this.where(`${aliases.result}.qcCheck`, 1)
-      })
-    })
-  }
-}
-
 module.exports = {
-  addResultConstraints,
   addResultWorkflowLogIfChanged,
   consumeInventoryForResult,
   updateResultWorkflowStatusOnGetResult,

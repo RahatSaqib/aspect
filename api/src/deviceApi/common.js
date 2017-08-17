@@ -4,7 +4,6 @@ const { knex, transact } = require('../db')
 const { asyncHandler } = require('../routes')
 
 const { loadPlugin } = require('./plugin/registration')
-const { addResultConstraints } = require('./plugin/common')
 
 const millisInDay = 1000 * 60 * 60 * 24
 
@@ -474,48 +473,7 @@ function* getDeviceLog(
     }
   }
 
-  if (device.siteId == null || device.deviceTypeCategory !== 'Client') {
-    // If the device is not assigned to site or if it's not a client
-    // device, we only need to ensure log originates from device
-    deviceLogQuery.where({ 'dl.deviceId': device.id })
-  } else {
-    // We need to consider DeviceLogs with and without
-    // the result constraints and return the first entry (minimum log id)
-    // Two steps are required because results might be allowed from a
-    // different sample origin site (lab/clinic) but device configuration
-    // and operation updates are currently always constrained by device
-    const deviceLogOffsetQuery = knex('Device as d')
-      .innerJoin('DeviceLog as dl', 'dl.deviceId', 'd.id')
-      .where({ 'd.id': device.id })
-      .select('dl.id')
-      .union(function() {
-        this.from('Result as r')
-          .innerJoin('Device as d', 'r.deviceId', 'd.id')
-          .innerJoin('DeviceLog as dl', 'dl.resultId', 'r.id')
-          .leftJoin('Sample as s', 'r.sampleId', 's.id')
-          .modify(addResultConstraints, context, {
-            device: 'd',
-            result: 'r',
-            sample: 's',
-          })
-          .select('dl.id')
-        if (historyCutoff != null) {
-          this.where('dl.createdOn', '>=', historyCutoff)
-        }
-      })
-      .as('dls')
-    if (deviceLogType === DEVICE_LOG_TYPE_RESULT) {
-      deviceLogOffsetQuery.whereNotNull('dl.resultId')
-    } else if (deviceLogType === DEVICE_LOG_TYPE_OPERATION) {
-      deviceLogOffsetQuery.whereNotNull('dl.deviceOperationId')
-    }
-    if (historyCutoff != null) {
-      deviceLogOffsetQuery.where('dl.createdOn', '>=', historyCutoff)
-    }
-
-    deviceLogQuery.innerJoin(deviceLogOffsetQuery, 'dl.id', 'dls.id')
-  }
-
+  deviceLogQuery.where({ 'dl.deviceId': device.id })
   if (historyCutoff != null) {
     deviceLogQuery.where('dl.createdOn', '>=', historyCutoff)
   }
@@ -548,7 +506,6 @@ function* getDeviceLog(
 
 module.exports = {
   deviceApiHandler,
-  addResultConstraints,
   DEVICE_LOG_TYPE_OPTIONAL,
   DEVICE_LOG_TYPE_OPERATION,
   DEVICE_LOG_TYPE_RESULT,

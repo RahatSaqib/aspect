@@ -1,6 +1,5 @@
 const Boom = require('boom')
 const _ = require('lodash')
-const { addResultConstraints } = require('./common')
 
 function* mergeResult(initialContext) {
   const context = yield* initialContext.preProcessMergeResult()
@@ -10,13 +9,9 @@ function* mergeResult(initialContext) {
   let existingResult = null
   if (payload.id) {
     const existingResults = yield knex('Result as r')
-      .where({ 'r.externalId': payload.id })
-      .innerJoin('Device as d', 'r.deviceId', 'd.id')
-      .leftJoin('Sample as s', 'r.sampleId', 's.id')
-      .modify(addResultConstraints, context, {
-        device: 'd',
-        result: 'r',
-        sample: 's',
+      .where({
+        'r.externalId': payload.id,
+        'r.deviceId': context.device.id,
       })
       .distinct('r.*')
       .limit(2)
