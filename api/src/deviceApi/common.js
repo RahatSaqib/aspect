@@ -7,7 +7,7 @@ const {
   dispatch,
   notifyResultUpdated,
   notifyResultLogged,
-  types: { RESULT_UPDATED },
+  types: { RESULT_UPDATED, RESULT_LOGGED },
 } = require('../messages')
 
 const { loadPlugin } = require('./plugin/registration')
@@ -90,7 +90,7 @@ function deviceApiHandler(handler, handlerOptions) {
       dispatch(
         notifyResultUpdated(
           deviceLogUpdate.resultId,
-          deviceLogRawMessage,
+          { deviceLogId },
           DEVICE_LOG_COMMON_SOURCE
         )
       )
@@ -532,7 +532,7 @@ function* getDeviceLog(
 function onResultUpdated({ resultId, message, source }) {
   if (source === DEVICE_LOG_COMMON_SOURCE) {
     // we've already created device logs originating here, so ignore
-    dispatch(notifyResultLogged(resultId))
+    dispatch(notifyResultLogged(resultId, message.deviceLogId))
   } else {
     // TODO dispatch from client API using plugin so
     // senderIp, createdOn, source, etc are available
@@ -553,11 +553,33 @@ function onResultUpdated({ resultId, message, source }) {
       .where({ id: resultId })
       .first('deviceId')
       .then(updateDeviceLog)
-      .then(() => dispatch(notifyResultLogged(resultId)))
+      .then(([deviceLogId]) =>
+        dispatch(notifyResultLogged(resultId, deviceLogId))
+      )
   }
 }
 
+function onResultLogged({ resultId, deviceLogId }) {
+  transact(function*(knex) {
+    const { plugin } = yield knex('Result as r')
+      .join('Partner as p', 'r.partnerId', 'p.id')
+      .where({ 'r.id': resultId })
+      .first('p.plugin')
+    const onResultLogged = yield* loadPlugin(plugin, 'onResultLogged')
+    const now = new Date()
+    // TODO include full context and result?
+    const context = {
+      knex,
+      now,
+      deviceLog: { id: deviceLogId },
+    }
+    const result = { id: resultId }
+    yield* onResultLogged(context, result)
+  })
+}
+
 addListener(RESULT_UPDATED, onResultUpdated)
+addListener(RESULT_LOGGED, onResultLogged)
 
 module.exports = {
   deviceApiHandler,

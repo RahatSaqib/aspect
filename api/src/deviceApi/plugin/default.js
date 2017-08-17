@@ -52,10 +52,19 @@ function* postProcessMergeResult(context, result, previousResult) {
   return {}
 }
 
+/**
+ * RESULT_LOGGED action has been dispatched referencing
+ * a result handled by this plugin
+ */
+function* onResultLogged(/* context, result */) {
+  // do nothing by default
+}
+
 module.exports = {
   preProcessGetResult,
   postProcessGetResult,
   preProcessMergeResult,
   transformMergeResultPayload,
   postProcessMergeResult,
+  onResultLogged,
 }

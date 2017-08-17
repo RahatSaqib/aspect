@@ -65,15 +65,18 @@ function notifyResultUpdated(resultId, message, source = 'ClientAPI') {
  * Creates an action to notify the result with given id
  * has been logged in the DeviceLog.
  *
- * The resultId is required.
+ * The resultId is required and deviceLogId are required.
  */
-function notifyResultLogged(resultId) {
-  if (resultId == null) {
-    throw new Error('Must specify resultId for notifyResultLogged')
+function notifyResultLogged(resultId, deviceLogId) {
+  if (resultId == null || deviceLogId == null) {
+    throw new Error(
+      'Must specify resultId and deviceLogId for notifyResultLogged'
+    )
   }
   return {
     type: types.RESULT_LOGGED,
     resultId,
+    deviceLogId,
   }
 }
 

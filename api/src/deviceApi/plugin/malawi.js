@@ -19,6 +19,11 @@ function* postProcessMergeResult(context, result, previousResult) {
   return {}
 }
 
+function* onResultLogged(context, result) {
+  const { knex, now } = context
+  const { id: resultId } = result
+}
+
 function* handleChaiResult(context) {
   return context.payload
 }
@@ -78,4 +83,5 @@ function patientDataIsComplete(patientData) {
 module.exports = {
   transformMergeResultPayload,
   postProcessMergeResult,
+  onResultLogged,
 }
