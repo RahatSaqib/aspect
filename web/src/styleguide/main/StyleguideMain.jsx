@@ -69,12 +69,8 @@ export class StyleguideMain extends PureComponent {
     const { formatMessage } = intl
 
     return (
-      <div className={styles.Content}>
-        <Helmet
-          title={formatMessage(messages.title)}
-          titleTemplate="%s - Aspect"
-          defaultTitle="Aspect"
-        />
+      <div className={styles.Container}>
+        <Helmet title={formatMessage(messages.title)} />
         <h1>Styleguide</h1>
         <FallbackUntilDone
           fallbacks={[

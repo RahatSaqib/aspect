@@ -1,8 +1,8 @@
 import _ from 'lodash'
 import classnames from 'classnames/bind'
 import React from 'react'
-import { compose, withProps, withHandlers, lifecycle, pure } from 'recompose'
-import { injectIntl, defineMessages } from 'react-intl'
+import { compose, withProps, withHandlers, lifecycle } from 'recompose'
+import { defineMessages } from 'react-intl'
 import { bindActionCreators } from 'redux'
 import { connect } from 'react-redux'
 import Helmet from 'react-helmet'
@@ -87,8 +87,11 @@ const filtersFromLocation = composeSanitizer(
 )
 
 const enhance = compose(
-  pure,
-  injectIntl,
+  withProps(
+    makeSortPageSelector({
+      sortCol: 'name',
+    })
+  ),
   connect(
     state => ({
       items: state.report.items,
@@ -96,11 +99,6 @@ const enhance = compose(
     }),
     bindActionCreators.bind(null, {
       fetchReports,
-    })
-  ),
-  withProps(
-    makeSortPageSelector({
-      sortCol: 'name',
     })
   ),
   withHandlers({
@@ -180,11 +178,7 @@ export const ReportList = ({
   onHeadColumnClick,
 }) =>
   <div className={cssClasses('Container')}>
-    <Helmet
-      title={intl.formatMessage(messages.reportsTitle)}
-      titleTemplate="%s - Aspect"
-      defaultTitle="Aspect"
-    />
+    <Helmet title={intl.formatMessage(messages.reportsTitle)} />
     <NavTitle title={intl.formatMessage(messages.reportsTitle)} />
     <BrowseFilters
       history={history}

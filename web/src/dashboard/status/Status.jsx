@@ -1,8 +1,7 @@
 import classnames from 'classnames/bind'
 import React from 'react'
-import { compose, lifecycle, pure } from 'recompose'
+import { compose, lifecycle } from 'recompose'
 import { bindActionCreators } from 'redux'
-import { injectIntl } from 'react-intl'
 import { connect } from 'react-redux'
 import Helmet from 'react-helmet'
 import { Link } from 'react-router-dom'
@@ -24,8 +23,6 @@ import SiteStatus from './SiteStatus'
 const cssClasses = classnames.bind(require('./Status.css'))
 
 const enhance = compose(
-  pure,
-  injectIntl,
   connect(
     state => ({
       userName: state.getIn(['user', 'name']),
@@ -62,7 +59,7 @@ export const Status = ({
   status,
 }) =>
   <div className={cssClasses('Container')}>
-    <Helmet title="Status" titleTemplate="%s - Aspect" defaultTitle="Aspect" />
+    <Helmet title="Status" />
     <div className={cssClasses('Section')}>
       <Unit sm="1-2" lg="1-4">
         <Link to="/browse/site" className={cssClasses('Summary')}>

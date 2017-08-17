@@ -2,8 +2,8 @@ import classnames from 'classnames/bind'
 import _ from 'lodash'
 import Immutable from 'immutable'
 import React from 'react'
-import { compose, withProps, withHandlers, lifecycle, pure } from 'recompose'
-import { injectIntl, defineMessages } from 'react-intl'
+import { compose, withProps, withHandlers, lifecycle } from 'recompose'
+import { defineMessages } from 'react-intl'
 import { bindActionCreators } from 'redux'
 import { connect } from 'react-redux'
 import Helmet from 'react-helmet'
@@ -120,8 +120,11 @@ const filtersFromLocation = composeSanitizer(
 )
 
 const enhance = compose(
-  pure,
-  injectIntl,
+  withProps(
+    makeSortPageSelector({
+      sortCol: 'endedOn',
+    })
+  ),
   connect(
     state => ({
       items: state.result.items,
@@ -130,11 +133,6 @@ const enhance = compose(
     bindActionCreators.bind(null, {
       fetchResults,
       exportResults,
-    })
-  ),
-  withProps(
-    makeSortPageSelector({
-      sortCol: 'endedOn',
     })
   ),
   withHandlers({
@@ -250,12 +248,8 @@ export const ResultList = ({
   onHeadColumnClick,
   onRowClick,
 }) =>
-  <div className={cssClasses('Content')}>
-    <Helmet
-      title={intl.formatMessage(messages.resultsTitle)}
-      titleTemplate="%s - Aspect"
-      defaultTitle="Aspect"
-    />
+  <div className={cssClasses('Container')}>
+    <Helmet title={intl.formatMessage(messages.resultsTitle)} />
     <NavTitle title={intl.formatMessage(messages.resultsTitle)} />
     <BrowseFilters
       history={history}

@@ -1,9 +1,9 @@
 import React, { PureComponent } from 'react'
-import { compose, withProps, pure } from 'recompose'
+import { compose, withProps } from 'recompose'
 import { bindActionCreators } from 'redux'
 import { connect } from 'react-redux'
 import Helmet from 'react-helmet'
-import { injectIntl, FormattedHTMLMessage } from 'react-intl'
+import { FormattedHTMLMessage } from 'react-intl'
 import { Button } from 'react-toolbox/lib/button'
 import { Link } from 'react-router-dom'
 
@@ -29,12 +29,8 @@ import styles from './ResetPassword.css'
 import messages from './messages'
 import ResetPasswordEnterEmail from './ResetPasswordEnterEmail'
 import ResetPasswordEnterPassword from './ResetPasswordEnterPassword'
-import AppNotificationSnackBar from '../../appNotification/AppNotificationSnackBar'
-import AppNotificationDialog from '../../appNotification/AppNotificationDialog'
 
 const enhance = compose(
-  pure,
-  injectIntl,
   withProps(({ location }) => ({
     searchParams: new URLSearchParams(location.search),
   })),
@@ -187,11 +183,7 @@ export class ResetPassword extends PureComponent {
 
     return (
       <div className={styles.Background}>
-        <Helmet
-          title={formatMessage(messages.title)}
-          titleTemplate="%s - Aspect"
-          defaultTitle="Aspect"
-        />
+        <Helmet title={formatMessage(messages.title)} />
         <div className={styles.Content}>
           <div>
             <Unit xs="1-24" md="1-12" xl="1-4" />
@@ -373,8 +365,6 @@ export class ResetPassword extends PureComponent {
             </Unit>
           </div>
         </div>
-        <AppNotificationDialog />
-        <AppNotificationSnackBar />
         <Dialog
           title={formatMessage(messages.adminHelpHeader)}
           actions={adminHelpDialogActions}

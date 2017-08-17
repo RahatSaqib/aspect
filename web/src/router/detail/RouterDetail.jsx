@@ -1,7 +1,7 @@
 import PropTypes from 'prop-types'
 import React, { PureComponent } from 'react'
-import { compose, setPropTypes, pure } from 'recompose'
-import { injectIntl, defineMessages, intlShape } from 'react-intl'
+import { compose, setPropTypes } from 'recompose'
+import { defineMessages } from 'react-intl'
 import { bindActionCreators } from 'redux'
 import { connect } from 'react-redux'
 import { Link } from 'react-router-dom'
@@ -112,8 +112,6 @@ const enhance = compose(
       }).isRequired,
     }).isRequired,
   }),
-  pure,
-  injectIntl,
   connect(
     (state, props) => {
       const router = state.router.items.byId.get(props.match.params.routerId)
@@ -133,7 +131,6 @@ const enhance = compose(
       )
   ),
   setPropTypes({
-    intl: intlShape.isRequired,
     editable: PropTypes.bool.isRequired,
     router: PropTypes.shape({
       has: PropTypes.func.isRequired,
@@ -487,12 +484,8 @@ export class RouterDetail extends PureComponent {
     const { formatMessage } = intl
 
     return (
-      <div className={styles.ContentDetails}>
-        <Helmet
-          title={formatMessage(messages.title)}
-          titleTemplate="%s - Aspect"
-          defaultTitle="Aspect"
-        />
+      <div className={styles.Container}>
+        <Helmet title={formatMessage(messages.title)} />
         <NavTitle title={formatMessage(messages.title)} />
         {this.renderPaper()}
         {this.renderDemoButton()}

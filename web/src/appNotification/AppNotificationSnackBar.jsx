@@ -4,7 +4,7 @@ import React, { PureComponent } from 'react'
 import { bindActionCreators } from 'redux'
 import { connect } from 'react-redux'
 import _ from 'lodash'
-import { injectIntl, defineMessages, intlShape } from 'react-intl'
+import { defineMessages, intlShape } from 'react-intl'
 
 // Material-UI
 import Snackbar from 'material-ui/Snackbar'
@@ -26,6 +26,8 @@ const genericMessages = defineMessages({
     defaultMessage: 'Details...',
   },
 })
+
+const enhance = _.flowRight(connect(mapStateToProps, mapDispatchToProps))
 
 class AppNotificationSnackBar extends PureComponent {
   static propTypes = {
@@ -129,7 +131,4 @@ function mapDispatchToProps(dispatch) {
   )
 }
 
-export default _.flowRight(
-  injectIntl,
-  connect(mapStateToProps, mapDispatchToProps)
-)(AppNotificationSnackBar)
+export default enhance(AppNotificationSnackBar)

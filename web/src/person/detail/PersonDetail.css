@@ -1,6 +1,5 @@
-.Content {
-  composes: Content from '../../components/shared/Shared.css';
-  padding-bottom: 20px;
+.Container {
+  padding: 10px 10px 20px 10px;
 }
 
 .Form {

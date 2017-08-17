@@ -2,13 +2,11 @@
 
 exports[`AccountDetails module AccountDetails component should shallow render correctly 1`] = `
 <div
-  className="Content"
+  className="Container"
 >
   <HelmetWrapper
-    defaultTitle="Aspect"
     encodeSpecialCharacters={true}
     title="Account Details"
-    titleTemplate="%s - Aspect"
   />
   <Connect(lifecycle(Component))
     title="Account Details"
@@ -155,13 +153,11 @@ exports[`AccountDetails module AccountDetails component should shallow render co
 
 exports[`AccountDetails module AccountDetails component when loading is true should show a progress bar in each tab 1`] = `
 <div
-  className="Content"
+  className="Container"
 >
   <HelmetWrapper
-    defaultTitle="Aspect"
     encodeSpecialCharacters={true}
     title="Account Details"
-    titleTemplate="%s - Aspect"
   />
   <Connect(lifecycle(Component))
     title="Account Details"

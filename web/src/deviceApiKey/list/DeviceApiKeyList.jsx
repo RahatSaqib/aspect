@@ -8,9 +8,8 @@ import {
   withState,
   withHandlers,
   lifecycle,
-  pure,
 } from 'recompose'
-import { injectIntl, defineMessages } from 'react-intl'
+import { defineMessages } from 'react-intl'
 import { bindActionCreators } from 'redux'
 import { connect } from 'react-redux'
 import Helmet from 'react-helmet'
@@ -137,8 +136,12 @@ const filtersFromLocation = composeSanitizer(
 )
 
 const enhance = compose(
-  pure,
-  injectIntl,
+  withProps(
+    makeSortPageSelector({
+      sortCol: 'createdOn',
+      sortDir: 'desc',
+    })
+  ),
   connect(
     state => ({
       items: state.deviceApiKey.items,
@@ -150,12 +153,6 @@ const enhance = compose(
       generateDeviceApiKeys,
       assignDeviceApiKeys,
       updateSingleDeviceApiKey,
-    })
-  ),
-  withProps(
-    makeSortPageSelector({
-      sortCol: 'createdOn',
-      sortDir: 'desc',
     })
   ),
   withHandlers({
@@ -378,11 +375,7 @@ export const DeviceApiKeyList = ({
   onRevokedChange,
 }) =>
   <div className={cssClasses('Container')}>
-    <Helmet
-      title={intl.formatMessage(messages.title)}
-      titleTemplate="%s - Aspect"
-      defaultTitle="Aspect"
-    />
+    <Helmet title={intl.formatMessage(messages.title)} />
     <NavTitle title={intl.formatMessage(messages.title)} />
     <BrowseFilters
       history={history}

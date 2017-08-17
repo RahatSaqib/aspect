@@ -1,7 +1,7 @@
 import PropTypes from 'prop-types'
 import React, { PureComponent } from 'react'
-import { compose, setPropTypes, pure } from 'recompose'
-import { injectIntl, defineMessages, intlShape } from 'react-intl'
+import { compose, setPropTypes } from 'recompose'
+import { defineMessages, intlShape } from 'react-intl'
 import { bindActionCreators } from 'redux'
 import { connect } from 'react-redux'
 import { Link } from 'react-router-dom'
@@ -112,8 +112,6 @@ const enhance = compose(
       }).isRequired,
     }).isRequired,
   }),
-  pure,
-  injectIntl,
   connect(
     (state, props) => {
       const reporter = state.reporter.items.byId.get(
@@ -479,12 +477,8 @@ export class ReporterDetail extends PureComponent {
     const { formatMessage } = intl
 
     return (
-      <div className={styles.Content}>
-        <Helmet
-          title={formatMessage(messages.title)}
-          titleTemplate="%s - Aspect"
-          defaultTitle="Aspect"
-        />
+      <div className={styles.Container}>
+        <Helmet title={formatMessage(messages.title)} />
         <NavTitle title={formatMessage(messages.title)} />
         {this.renderPaper()}
         {this.renderDemoButton()}

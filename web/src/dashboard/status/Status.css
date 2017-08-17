@@ -1,5 +1,9 @@
 @import '../../globals/variables.css';
 
+.Container {
+  padding: 10px;
+}
+
 .Section {
   padding: 10px 0;
 }

@@ -1,8 +1,8 @@
 import _ from 'lodash'
 import PropTypes from 'prop-types'
 import React, { PureComponent } from 'react'
-import { compose, setPropTypes, pure } from 'recompose'
-import { injectIntl, intlShape } from 'react-intl'
+import { compose, setPropTypes } from 'recompose'
+import { intlShape } from 'react-intl'
 import { bindActionCreators } from 'redux'
 import { connect } from 'react-redux'
 import Helmet from 'react-helmet'
@@ -45,8 +45,6 @@ const enhance = compose(
       }).isRequired,
     }).isRequired,
   }),
-  pure,
-  injectIntl,
   connect(
     (state, props) => {
       const person = state.person.items.byId.get(props.match.params.personId)
@@ -201,12 +199,8 @@ export class PersonDetail extends PureComponent {
     const loading = !person || person.get('loaded') !== true
 
     return (
-      <div className={styles.Content}>
-        <Helmet
-          title={formatMessage(messages.title)}
-          titleTemplate="%s - Aspect"
-          defaultTitle="Aspect"
-        />
+      <div className={styles.Container}>
+        <Helmet title={formatMessage(messages.title)} />
         <NavTitle title={formatMessage(messages.title)} />
         <Paper>
           {editable &&

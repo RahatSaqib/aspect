@@ -1,8 +1,8 @@
 import _ from 'lodash'
 import classnames from 'classnames/bind'
 import React from 'react'
-import { compose, withProps, withHandlers, lifecycle, pure } from 'recompose'
-import { injectIntl, defineMessages } from 'react-intl'
+import { compose, withProps, withHandlers, lifecycle } from 'recompose'
+import { defineMessages } from 'react-intl'
 import { bindActionCreators } from 'redux'
 import { connect } from 'react-redux'
 import Helmet from 'react-helmet'
@@ -75,8 +75,11 @@ const filtersFromLocation = composeSanitizer(
 )
 
 const enhance = compose(
-  pure,
-  injectIntl,
+  withProps(
+    makeSortPageSelector({
+      sortCol: 'name',
+    })
+  ),
   connect(
     state => ({
       items: state.person.items,
@@ -84,11 +87,6 @@ const enhance = compose(
     }),
     bindActionCreators.bind(null, {
       fetchPersons,
-    })
-  ),
-  withProps(
-    makeSortPageSelector({
-      sortCol: 'name',
     })
   ),
   withHandlers({
@@ -173,11 +171,7 @@ export const PersonList = ({
   onRowClick,
 }) =>
   <div className={cssClasses('Container')}>
-    <Helmet
-      title={intl.formatMessage(messages.contactsTitle)}
-      titleTemplate="%s - Aspect"
-      defaultTitle="Aspect"
-    />
+    <Helmet title={intl.formatMessage(messages.contactsTitle)} />
     <NavTitle title={intl.formatMessage(messages.contactsTitle)} />
     <BrowseFilters
       history={history}

@@ -1,4 +1,4 @@
-@import '../variables.css';
+@import '../../variables.css';
 
 /* Shared */
 .icon {
@@ -10,10 +10,6 @@
   background-color: var(--aspect-color-grey-7);
 }
 
-.Content {
-  padding: 10px;
-}
-
 .AppBar__appBar {
   background-color: #ffffff;
 }
@@ -23,11 +19,11 @@
 }
 
 .AppBar__appBar--xs {
-  composes: pure-visible-xs from '../../components/pureGrids/pure-grids-responsive-min.css';
+  composes: pure-visible-xs from '../../../components/pureGrids/pure-grids-responsive-min.css';
 }
 
 .AppBar__appBar--sm {
-  composes: pure-hidden-xs from '../../components/pureGrids/pure-grids-responsive-min.css';
+  composes: pure-hidden-xs from '../../../components/pureGrids/pure-grids-responsive-min.css';
 }
 
 .ConfluenceIcon {

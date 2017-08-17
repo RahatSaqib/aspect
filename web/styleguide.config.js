@@ -24,7 +24,10 @@ module.exports = {
     ...glob.sync('src/components/shared/flagIcon/@(FlagIcon).{js,jsx}'),
   ],
   styleguideComponents: {
-    Wrapper: path.join(__dirname, './src/globals/layouts/UIThemeProviders.jsx'),
+    Wrapper: path.join(
+      __dirname,
+      './src/globals/factories/uiProvidersFactory/StyleguidistWrapper.jsx'
+    ),
   },
   webpackConfig: partialConfig,
 }

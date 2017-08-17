@@ -1,22 +1,19 @@
 import _ from 'lodash'
 import classnames from 'classnames/bind'
 import React from 'react'
-import { compose, withProps, withState, pure } from 'recompose'
+import { compose, withProps, withState } from 'recompose'
 import { bindActionCreators } from 'redux'
 import { connect } from 'react-redux'
 import Helmet from 'react-helmet'
-import { injectIntl, defineMessages } from 'react-intl'
+import { defineMessages } from 'react-intl'
 import { Link } from 'react-router-dom'
 import { Button } from 'react-toolbox/lib/button'
 import { Card } from 'react-toolbox/lib/card'
 import { ProgressBar } from 'react-toolbox/lib/progress_bar'
 import { Input } from 'react-toolbox/lib/input'
 
-// Our own imports
 import { Unit } from '../../components/pureGrids'
 import recomposeForm from '../../components/recomposeForm'
-import AppNotificationSnackBar from '../../appNotification/AppNotificationSnackBar'
-import AppNotificationDialog from '../../appNotification/AppNotificationDialog'
 import { loginStart } from '../AuthRedux'
 
 const cssClasses = classnames.bind(require('./Login.css'))
@@ -49,8 +46,6 @@ const messages = defineMessages({
 })
 
 const enhance = compose(
-  pure,
-  injectIntl,
   withProps(({ location }) => ({
     searchParams: new URLSearchParams(location.search),
   })),
@@ -93,7 +88,7 @@ const enhance = compose(
 const AspectLogo = () =>
   <img
     className={cssClasses('Logo__Image')}
-    src={require('../../globals/layouts/logo-aspect.png')}
+    src={require('./logo_aspect.png')}
     alt="Aspect"
   />
 
@@ -108,7 +103,7 @@ export const Login = ({
   handleSubmit,
 }) =>
   <div className={cssClasses('Background')}>
-    <Helmet title="Login" titleTemplate="%s - Aspect" defaultTitle="Aspect" />
+    <Helmet title="Login" />
     <div>
       <Unit sm="1-24" md="1-6" lg="1-3" xl="1-3" />
       <Unit sm="11-12" md="2-3" lg="1-3" xl="1-3">
@@ -166,8 +161,6 @@ export const Login = ({
         </Card>
       </Unit>
     </div>
-    <AppNotificationDialog />
-    <AppNotificationSnackBar />
   </div>
 
 export default enhance(Login)

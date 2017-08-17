@@ -2,8 +2,8 @@ import Immutable from 'immutable'
 import classnames from 'classnames/bind'
 import PropTypes from 'prop-types'
 import React, { PureComponent } from 'react'
-import { compose, setPropTypes, pure } from 'recompose'
-import { injectIntl, defineMessages, intlShape } from 'react-intl'
+import { compose, setPropTypes } from 'recompose'
+import { defineMessages } from 'react-intl'
 import { bindActionCreators } from 'redux'
 import { connect } from 'react-redux'
 import Helmet from 'react-helmet'
@@ -174,8 +174,6 @@ const enhance = compose(
       }).isRequired,
     }).isRequired,
   }),
-  pure,
-  injectIntl,
   connect(
     (state, props) => {
       const result = state.result.items.byId.get(props.match.params.resultId)
@@ -197,7 +195,6 @@ const enhance = compose(
       )
   ),
   setPropTypes({
-    intl: intlShape.isRequired,
     result: PropTypes.objectOf(Result),
     workflowLog: PropTypes.objectOf(WorkflowLogModel).isRequired,
     fetchSingleResult: PropTypes.func.isRequired,
@@ -640,12 +637,8 @@ export class ResultDetail extends PureComponent {
     const { formatMessage } = intl
 
     return (
-      <div className={cssClasses('ContentDetails')}>
-        <Helmet
-          title={formatMessage(messages.title)}
-          titleTemplate="%s - Aspect"
-          defaultTitle="Aspect"
-        />
+      <div className={cssClasses('Container')}>
+        <Helmet title={formatMessage(messages.title)} />
         <NavTitle title={formatMessage(messages.title)} />
 
         {this.renderPaper()}

@@ -1,9 +1,8 @@
 import PropTypes from 'prop-types'
 import React, { PureComponent } from 'react'
-import { compose, setPropTypes, pure } from 'recompose'
+import { compose, setPropTypes } from 'recompose'
 import { bindActionCreators } from 'redux'
 import Helmet from 'react-helmet'
-import { injectIntl, intlShape } from 'react-intl'
 import { connect } from 'react-redux'
 import LinearProgress from 'material-ui/LinearProgress'
 import Paper from 'material-ui/Paper'
@@ -38,8 +37,6 @@ const enhance = compose(
     location: PropTypes.object.isRequired, // eslint-disable-line
     history: PropTypes.object.isRequired, // eslint-disable-line
   }),
-  pure,
-  injectIntl,
   connect(
     state => ({
       loading: state.accountDetails.get('loading'),
@@ -59,7 +56,6 @@ const enhance = compose(
       )
   ),
   setPropTypes({
-    intl: intlShape.isRequired,
     loading: PropTypes.bool.isRequired,
     saving: PropTypes.bool.isRequired,
     accountDetails: PropTypes.shape({
@@ -148,12 +144,8 @@ export class AccountDetails extends PureComponent {
     const { formatMessage } = intl
 
     return (
-      <div className={styles.Content}>
-        <Helmet
-          title={formatMessage(accountDetailsMessages.title)}
-          titleTemplate="%s - Aspect"
-          defaultTitle="Aspect"
-        />
+      <div className={styles.Container}>
+        <Helmet title={formatMessage(accountDetailsMessages.title)} />
         <NavTitle title={formatMessage(accountDetailsMessages.title)} />
         <Paper>
           <Tabs>

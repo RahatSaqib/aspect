@@ -1,6 +1,6 @@
 import PropTypes from 'prop-types'
 import React, { PureComponent } from 'react'
-import { compose, setPropTypes, pure } from 'recompose'
+import { compose, setPropTypes } from 'recompose'
 import { bindActionCreators } from 'redux'
 import { connect } from 'react-redux'
 import Helmet from 'react-helmet'
@@ -23,7 +23,6 @@ const enhance = compose(
   setPropTypes({
     match: PropTypes.object.isRequired,
   }),
-  pure,
   connect(
     (state, props) => ({
       device: state.demo.deviceItems.byId.get(props.match.params.deviceId),
@@ -188,12 +187,8 @@ export class DeviceDemo extends PureComponent {
 
   render() {
     return (
-      <div className={styles.Content}>
-        <Helmet
-          title="Demo Device"
-          titleTemplate="%s - Aspect"
-          defaultTitle="Aspect"
-        />
+      <div className={styles.Container}>
+        <Helmet title="Demo Device" />
         <Paper>
           {this.renderProgress()}
           {this.renderContent()}
