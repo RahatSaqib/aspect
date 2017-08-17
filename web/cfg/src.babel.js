@@ -44,10 +44,6 @@ export default (env) => {
   const isDevelopment = process.env.NODE_ENV === 'development'
   const isProduction = process.env.NODE_ENV === 'production'
 
-  const extractSCSS = new ExtractTextPlugin({
-    disable: isDevelopment,
-    filename: '[name]-scss-global-style.css'
-  })
   const extractCSS = new ExtractTextPlugin({
     disable: isDevelopment,
     filename: '[name]-css-modules.css'
@@ -95,36 +91,6 @@ export default (env) => {
           use: [
             'babel-loader'
           ]
-        },
-        {
-          test: /\.scss/,
-          use: extractSCSS.extract({
-            fallback: 'style-loader',
-            use: [
-              {
-                loader: 'css-loader',
-                options: {
-                  sourceMap: isProduction,
-                  importLoaders: 1
-                }
-              },
-              {
-                loader: 'postcss-loader',
-                options: {
-                  ident: 'postcss',
-                  sourceMap: 'inline',
-                  plugins: postcssPlugins
-                }
-              },
-              {
-                loader: 'sass-loader',
-                options: {
-                  sourceMap: isProduction,
-                  outputStyle: 'expanded'
-                }
-              }
-            ]
-          })
         },
         {
           test: /\.css$/,
@@ -190,7 +156,6 @@ export default (env) => {
 
       new ManifestPlugin(),
 
-      extractSCSS,
       extractCSS,
       new HtmlWebpackPlugin({
         hash: true,
