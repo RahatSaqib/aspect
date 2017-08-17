@@ -239,6 +239,7 @@ function* seed(knex) {
   })
 
   const [deviceTypeChaiId] = yield knex('DeviceType').insert({
+    externalId: 'CHAI',
     name: 'CHAI',
     manufacturer: 'CHAI',
     deviceTypeCategoryId: deviceTypeCategoryLab,

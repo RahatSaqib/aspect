@@ -5,8 +5,7 @@ const DELIVERABLE_EXTERNALID = 'Deliverable'
 
 function* transformMergeResultPayload(context) {
   const { device: { deviceType } } = context
-  // FIXME this should be CHAI once merge PR#343
-  if (deviceType === 'm2000') {
+  if (deviceType === 'CHAI') {
     return yield* handleChaiResult(context)
   }
   return context.payload
