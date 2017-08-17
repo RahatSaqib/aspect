@@ -1,9 +1,10 @@
 const Boom = require('boom')
 const _ = require('lodash')
 
-function* mergeResult(initialContext) {
-  const context = yield* initialContext.preProcessMergeResult()
-  const { knex, now, payload } = context
+function* mergeResult(knex, deviceId, payload, now) {
+  if (now == null) {
+    now = new Date()
+  }
 
   // Look up existing result matching external id if specified
   let existingResult = null
@@ -11,7 +12,7 @@ function* mergeResult(initialContext) {
     const existingResults = yield knex('Result as r')
       .where({
         'r.externalId': payload.id,
-        'r.deviceId': context.device.id,
+        'r.deviceId': deviceId,
       })
       .distinct('r.*')
       .limit(2)
@@ -20,7 +21,6 @@ function* mergeResult(initialContext) {
     }
     existingResult = existingResults[0]
   }
-  const deviceId = existingResult ? existingResult.deviceId : context.device.id
 
   const assayQ = knex('Assay as a')
     .join('Device as d', 'a.deviceTypeId', 'd.deviceTypeId')
@@ -335,14 +335,10 @@ function* mergeResult(initialContext) {
     ;[resultId] = yield knex('Result').insert(processedResult)
   }
   processedResult.id = resultId
-
-  return yield* context.postProcessMergeResult(processedResult, existingResult)
+  return { processedResult, existingResult }
 }
 
-function* getResult(initialContext) {
-  const context = yield* initialContext.preProcessGetResult()
-  const { knex, deviceLog } = context
-
+function* getResult(knex, deviceLogId) {
   const row = yield knex('Result as r')
     .innerJoin('Assay as a', 'r.assayId', 'a.id')
     .innerJoin('DeviceLog as dl', 'dl.resultId', 'r.id')
@@ -355,7 +351,7 @@ function* getResult(initialContext) {
     .leftJoin('ResultType as rt', 'r.resultTypeId', 'rt.id')
     .leftJoin('ResultSource as rsc', 'r.resultSourceId', 'rsc.id')
     .leftJoin('ResultWorkflowStatus as rs', 'r.resultWorkflowStatusId', 'rs.id')
-    .where('dl.id', deviceLog.id)
+    .where('dl.id', deviceLogId)
     .first(
       'r.externalId as resultExternalId',
       'r.resultData',
@@ -397,7 +393,7 @@ function* getResult(initialContext) {
 
   if (row == null) {
     // TODO when is this null??
-    return yield* context.postProcessGetResult(null)
+    return null
   }
 
   const resultWorkflowLog = yield knex('ResultWorkflowLog')
@@ -526,7 +522,7 @@ function* getResult(initialContext) {
     result.error = error
   }
 
-  return yield* context.postProcessGetResult(result)
+  return result
 }
 
 module.exports = {

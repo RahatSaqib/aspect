@@ -8,6 +8,26 @@ const {
   DEVICE_LOG_TYPE_RESULT,
 } = require('./common')
 
+function* mergeResultHandler(initialContext) {
+  const context = yield* initialContext.preProcessMergeResult()
+  const { knex, now, payload, device: { id: deviceId } } = context
+  const { processedResult, existingResult } = yield* mergeResult(
+    knex,
+    deviceId,
+    payload,
+    now,
+    knex
+  )
+  return yield* context.postProcessMergeResult(processedResult, existingResult)
+}
+
+function* getResultHandler(initialContext) {
+  const context = yield* initialContext.preProcessGetResult()
+  const { knex, deviceLog } = context
+  const result = yield* getResult(knex, deviceLog.id)
+  return yield* context.postProcessGetResult(result)
+}
+
 function* addDeviceData(context) {
   const response = {}
   const { knex, now, payload, device } = context
@@ -35,7 +55,9 @@ function* addDeviceData(context) {
   }
 
   if (result) {
-    const resultResponse = yield* mergeResult(context.withPayload(result))
+    const resultResponse = yield* mergeResultHandler(
+      context.withPayload(result)
+    )
     if (resultResponse instanceof Error) {
       return resultResponse
     }
@@ -99,7 +121,7 @@ function* getDeviceData(context) {
     }
 
     if (includeResult) {
-      const result = yield* getResult(context)
+      const result = yield* getResultHandler(context)
       if (result != null) {
         response.result = result
       }
@@ -250,4 +272,5 @@ module.exports = {
   getDeviceData,
   updateDeviceConfiguration,
   addDeviceOperation,
+  mergeResultHandler,
 }
