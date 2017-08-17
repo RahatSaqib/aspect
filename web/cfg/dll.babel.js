@@ -1,8 +1,6 @@
 import path from 'path'
 import invariant from 'invariant'
 import webpack from 'webpack'
-
-import HtmlWebpackPlugin from 'html-webpack-plugin'
 import CompressionPlugin from 'compression-webpack-plugin'
 
 // vendor packages so we can create a separate bundle
@@ -40,10 +38,10 @@ const vendor = [
   'redux-idle-monitor',
   'redux-immutable',
   'redux-thunk',
-  'whatwg-fetch'
+  'whatwg-fetch',
 ]
 
-export default (env) => {
+export default env => {
   switch (env.ASPECT_TARGET) {
     case 'local': {
       process.env.ASPECT_TARGET = 'local'
@@ -66,41 +64,41 @@ export default (env) => {
 
   return {
     entry: {
-      vendor
+      vendor,
     },
     devtool: isProduction ? 'source-map' : 'inline-source-map',
     output: {
       pathinfo: isDevelopment,
       path: path.join(__dirname, '../dist/assets'),
       filename: 'dll.[name].js',
-      library: '[name]'
+      library: '[name]',
     },
     plugins: [
       new webpack.DllPlugin({
-        path: path.join(__dirname, '../src/template', 'dll.[name].manifest.json'),
+        path: path.join(
+          __dirname,
+          '../src/template',
+          'dll.[name].manifest.json'
+        ),
         name: '[name]',
-        context: path.resolve(__dirname, '../src')
+        context: path.resolve(__dirname, '../src'),
       }),
 
       new webpack.EnvironmentPlugin(['NODE_ENV', 'ASPECT_TARGET']),
-
-      new HtmlWebpackPlugin({
-        // We use HtmlWebpackPlugin here to compile `index.ejs` into `index.html`
-        // with webpack.hash injected for DLL asset URL.
-        inject: false,
-        template: 'src/template/index.ejs',
-        filename: path.resolve(__dirname, '../src/template/index.html')
-      }),
-    ].concat(isProduction ? [
-      new webpack.NoEmitOnErrorsPlugin(),
-      new webpack.optimize.UglifyJsPlugin({
-        sourceMap: true
-      }),
-      new CompressionPlugin({
-        asset: '[path].gz[query]',
-        test: /\.(js|css)(\.map)?$/,
-        threshold: 10240,
-      }),
-    ]: [])
+    ].concat(
+      isProduction
+        ? [
+            new webpack.NoEmitOnErrorsPlugin(),
+            new webpack.optimize.UglifyJsPlugin({
+              sourceMap: true,
+            }),
+            new CompressionPlugin({
+              asset: '[path].gz[query]',
+              test: /\.(js|css)(\.map)?$/,
+              threshold: 10240,
+            }),
+          ]
+        : []
+    ),
   }
 }
