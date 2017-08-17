@@ -2,6 +2,13 @@ const Boom = require('boom')
 const _ = require('lodash')
 const { knex, transact } = require('../db')
 const { asyncHandler } = require('../routes')
+const {
+  addListener,
+  dispatch,
+  notifyResultUpdated,
+  notifyResultLogged,
+  types: { RESULT_UPDATED },
+} = require('../messages')
 
 const { loadPlugin } = require('./plugin/registration')
 
@@ -11,6 +18,10 @@ const DEVICE_LOG_TYPE_NONE = 0
 const DEVICE_LOG_TYPE_OPTIONAL = 1
 const DEVICE_LOG_TYPE_OPERATION = 2
 const DEVICE_LOG_TYPE_RESULT = 3
+
+// Source for messages so we can skip logs that we handled ourselves
+// Note that this is a bit of a hack and is not stored in the DB
+const DEVICE_LOG_COMMON_SOURCE = 'DeviceApiCommon'
 
 function deviceApiHandler(handler, handlerOptions) {
   return asyncHandler(function*(request) {
@@ -32,8 +43,12 @@ function deviceApiHandler(handler, handlerOptions) {
     // Insert Device Log and Update Ping prior to calling handler and
     // in separate transaction so it is recorded even if handler fails
     let deviceLogId = null
+    let deviceLogRawMessage = null
     if (updateDeviceLog) {
       const checkpoint = request.payload && request.payload.checkpoint
+
+      // TODO DeviceLog handle non-JSON payloads
+      deviceLogRawMessage = JSON.stringify(request.plugins.rawPayload)
 
       // need to ensure DeviceLog is inserted even if failure below
       ;[deviceLogId] = yield knex('DeviceLog').insert({
@@ -42,8 +57,7 @@ function deviceApiHandler(handler, handlerOptions) {
         source: _.get(request.payload, 'log.source', ''),
         createdOn: now,
         senderIp: remoteAddress,
-        // TODO DeviceLog handle non-JSON payloads
-        rawMessage: JSON.stringify(request.plugins.rawPayload),
+        rawMessage: deviceLogRawMessage,
       })
     }
 
@@ -55,14 +69,14 @@ function deviceApiHandler(handler, handlerOptions) {
     yield knex('Device').where({ id: device.id }).update(deviceUpdates)
 
     let response = {}
+    let deviceLogUpdate = null
     yield transact(function*(knex) {
       context.knex = knex
-
       response = yield* handler(context)
 
       // Update DeviceLog with changes added to context when calling handler
       if (deviceLogId !== null) {
-        const { deviceLogUpdate } = context
+        deviceLogUpdate = context.deviceLogUpdate
         if (deviceLogUpdate != null) {
           yield knex('DeviceLog')
             .where({ id: deviceLogId })
@@ -70,6 +84,17 @@ function deviceApiHandler(handler, handlerOptions) {
         }
       }
     })
+
+    // Dispatch actions outside of transaction
+    if (deviceLogUpdate != null && deviceLogUpdate.resultId != null) {
+      dispatch(
+        notifyResultUpdated(
+          deviceLogUpdate.resultId,
+          deviceLogRawMessage,
+          DEVICE_LOG_COMMON_SOURCE
+        )
+      )
+    }
 
     return response
   })
@@ -503,6 +528,36 @@ function* getDeviceLog(
   }
   return response
 }
+
+function onResultUpdated({ resultId, message, source }) {
+  if (source === DEVICE_LOG_COMMON_SOURCE) {
+    // we've already created device logs originating here, so ignore
+    dispatch(notifyResultLogged(resultId))
+  } else {
+    // TODO dispatch from client API using plugin so
+    // senderIp, createdOn, source, etc are available
+    // Everything else, we should add a device log entry so that
+    // the updates will be downloaded
+    const createdOn = new Date()
+    const updateDeviceLog = ({ deviceId }) =>
+      knex('DeviceLog').insert({
+        deviceId,
+        resultId,
+        source,
+        createdOn,
+        senderIp: '',
+        rawMessage: JSON.stringify(message),
+      })
+
+    knex('Result')
+      .where({ id: resultId })
+      .first('deviceId')
+      .then(updateDeviceLog)
+      .then(() => dispatch(notifyResultLogged(resultId)))
+  }
+}
+
+addListener(RESULT_UPDATED, onResultUpdated)
 
 module.exports = {
   deviceApiHandler,

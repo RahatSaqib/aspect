@@ -7,6 +7,7 @@ const {
   filterDateRangeParams,
   sortPageParams,
 } = require('../db')
+const { dispatch, notifyResultUpdated } = require('../messages')
 const { getConstraints, addConstraints } = require('../auth/constraints')
 const { getUser } = require('../auth/service')
 const {
@@ -475,21 +476,10 @@ function* updateQcCheck(request) {
     createdOn: now,
   })
 
-  // add device log entry so result is redelivered
-  yield* deliverResultToReporter(result.data.deviceId, resultId, now)
+  // notify result updated so result is redelivered
+  dispatch(notifyResultUpdated(resultId, { qcCheck: 1 }))
 
   return yield* showResult(request)
-}
-
-function* deliverResultToReporter(deviceId, resultId, createdOn) {
-  yield knex('DeviceLog').insert({
-    deviceId,
-    resultId,
-    source: 'ClientAPI',
-    createdOn,
-    senderIp: '',
-    rawMessage: JSON.stringify({ qcCheck: 1 }),
-  })
 }
 
 function* listWorkflowStatusTypes() {

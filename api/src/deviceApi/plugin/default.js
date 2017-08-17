@@ -46,6 +46,8 @@ function* transformMergeResultPayload(context) {
  */
 function* postProcessMergeResult(context, result, previousResult) {
   yield* addResultWorkflowLogIfChanged(context, result, previousResult)
+  // TODO can we consume inventory using a message listener instead
+  // of within plugin/same transaction?
   yield* consumeInventoryForResult(context, result)
   return {}
 }
