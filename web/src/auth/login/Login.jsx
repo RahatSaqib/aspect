@@ -1,7 +1,7 @@
 import _ from 'lodash'
 import classnames from 'classnames/bind'
 import React from 'react'
-import { compose, withProps, withState } from 'recompose'
+import { compose, withProps, withHandlers, withState } from 'recompose'
 import { bindActionCreators } from 'redux'
 import { connect } from 'react-redux'
 import Helmet from 'react-helmet'
@@ -52,9 +52,19 @@ const enhance = compose(
   connect(
     null,
     bindActionCreators.bind(null, {
-      onSubmit: loginStart,
+      loginStart,
     })
   ),
+  withHandlers({
+    onSubmit: ({ history, location, loginStart }) => data => {
+      loginStart(data).then(() => {
+        const referrer = _.get(location, 'state.referrer', {
+          pathname: '/dashboard',
+        })
+        history.push(referrer)
+      })
+    },
+  }),
   withState('values', 'onChange', {
     user: '',
     password: '',
