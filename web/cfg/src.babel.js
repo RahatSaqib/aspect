@@ -7,6 +7,7 @@ import cssNext from 'postcss-cssnext'
 import ExtractTextPlugin from 'extract-text-webpack-plugin'
 import CaseSensitivePathsPlugin from 'case-sensitive-paths-webpack-plugin'
 import ManifestPlugin from 'webpack-manifest-plugin'
+import FaviconsWebpackPlugin from 'favicons-webpack-plugin'
 import HtmlWebpackPlugin from 'html-webpack-plugin'
 import HtmlWebpackIncludeAssetsPlugin from 'html-webpack-include-assets-plugin'
 import HtmlWebpackHarddiskPlugin from 'html-webpack-harddisk-plugin'
@@ -121,10 +122,6 @@ export default env => {
           }),
         },
         {
-          test: /\.(ico)$/,
-          use: [isProduction ? 'static-loader' : 'null-loader'],
-        },
-        {
           test: /\.(png|jpg|gif|woff|woff2)$/,
           use: [
             {
@@ -170,6 +167,26 @@ export default env => {
       new ManifestPlugin(),
 
       extractCSS,
+      new FaviconsWebpackPlugin({
+        logo: path.join(__dirname, '../src/template/favicon.png'),
+        prefix: 'icons-[hash]-',
+        persistentCache: true,
+        inject: true,
+        background: '#fff',
+        // which icons should be generated (see https://github.com/haydenbleasel/favicons#usage)
+        icons: {
+          android: true,
+          appleIcon: true,
+          appleStartup: false,
+          coast: false,
+          favicons: true,
+          firefox: true,
+          opengraph: false,
+          twitter: false,
+          yandex: false,
+          windows: false,
+        },
+      }),
       new HtmlWebpackPlugin({
         inject: true,
         hash: isProduction,
