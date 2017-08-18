@@ -872,6 +872,18 @@ function* up(knex) {
   yield knex.raw('SET foreign_key_checks = 1')
 }
 
+// this table logs any change of QC-Check checkbox on 'Result Details' page
+yield knex.schema.createTable('ResultQualityControlLog', x => {
+  x.increments('id')
+  x.integer('resultId')
+    .unsigned()
+    .references('id')
+    .inTable('Result')
+  x.boolean('qcCheck').notNullable().defaultTo(0)
+  addCreateFieldsNullable(x)
+  x.charset('utf8')
+})
+
 function* down(knex) {
   yield knex.raw('SET foreign_key_checks = 0')
 
@@ -926,6 +938,7 @@ function* down(knex) {
   yield knex.schema.dropTableIfExists('Partner')
   yield knex.schema.dropTableIfExists('PartnerType')
   yield knex.schema.dropTableIfExists('DeviceSim')
+  yield knex.schema.dropTableIfExists('ResultQualityControlLog')
 
   yield knex.raw('SET foreign_key_checks = 1')
 }
