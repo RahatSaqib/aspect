@@ -139,6 +139,20 @@ export default env => {
           test: /\.(mp4|ogg|svg)$/,
           use: ['file-loader'],
         },
+        {
+          test: /\.html$/,
+          use: [
+            {
+              loader: 'html-loader',
+              options: {
+                interpolate: true,
+                minimize: false,
+                removeComments: false,
+                collapseWhitespace: false,
+              },
+            },
+          ],
+        },
       ],
     },
     plugins: [
