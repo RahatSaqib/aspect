@@ -7,6 +7,7 @@ import cssNext from 'postcss-cssnext'
 import ExtractTextPlugin from 'extract-text-webpack-plugin'
 import CaseSensitivePathsPlugin from 'case-sensitive-paths-webpack-plugin'
 import FaviconsWebpackPlugin from 'favicons-webpack-plugin'
+import WebappManifestPlugin, { FAVICON_PLUGIN } from 'webapp-manifest-plugin'
 import HtmlWebpackPlugin from 'html-webpack-plugin'
 import HtmlWebpackIncludeAssetsPlugin from 'html-webpack-include-assets-plugin'
 import HtmlWebpackHarddiskPlugin from 'html-webpack-harddisk-plugin'
@@ -183,6 +184,9 @@ export default env => {
           yandex: false,
           windows: false,
         },
+      }),
+      new WebappManifestPlugin({
+        icons: FAVICON_PLUGIN,
       }),
       new HtmlWebpackPlugin({
         inject: true,
