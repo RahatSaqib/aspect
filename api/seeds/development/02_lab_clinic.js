@@ -142,13 +142,146 @@ function* seed(knex) {
   })
 */
 
+  const assayTypes = yield rowsAsObject(knex, 'AssayType')
   // RRT Device Type
-  yield knex('DeviceType').insert({
+  // TODO change RRT device type to Reporter? (also need to change sync script)
+  const [deviceTypeReporterId] = yield knex('DeviceType').insert({
     externalId: 'RRT',
     name: 'RRT',
     manufacturer: 'SystemOne',
     deviceTypeCategoryId: deviceTypeCategories.Client.id,
     // configurationDataSchema: rrtConfigurationDataSchema
+  })
+
+  yield knex('Assay').insert({
+    name: 'Reporter HIV VL',
+    i18nKey: 'AssayReporterHivVl',
+    externalId: 'HivVl',
+    assayTypeId: assayTypes['HIV VL'].id,
+    deviceTypeId: deviceTypeReporterId,
+    resultCategory1Label: 'HIV',
+    resultCategory1i18nKey: 'resultCategoryHivVl',
+    resultDataSchema: JSON.stringify({
+      resultText: {
+        list: true,
+        title: 'Result',
+        type: 'string',
+      },
+      interpretation: {
+        title: 'Interpretation',
+        type: 'string',
+      },
+    }),
+    patientDataSchema: JSON.stringify({
+      name: {
+        title: 'Client Name',
+        type: 'string',
+        order: 1,
+      },
+      surname: {
+        title: 'Client Surname',
+        type: 'string',
+        order: 2,
+      },
+      artNumber: {
+        title: 'ART #',
+        type: 'string',
+        order: 4,
+      },
+      age: {
+        title: 'Age (months)',
+        type: 'string',
+        order: 3,
+      },
+      dateOfBirth: {
+        title: 'Date of Birth',
+        type: 'string',
+        order: 4,
+      },
+      gender: {
+        title: 'Gender',
+        type: 'string',
+        order: 5,
+      },
+      provider: {
+        title: 'Provider',
+        type: 'string',
+        order: 7,
+      },
+      phone: {
+        title: 'Phone #',
+        type: 'string',
+        order: 8,
+      },
+    }),
+  })
+
+  yield knex('Assay').insert({
+    name: 'Reporter EID',
+    i18nKey: 'AssayReporterEid',
+    externalId: 'EID',
+    assayTypeId: assayTypes.EID.id,
+    deviceTypeId: deviceTypeReporterId,
+    resultCategory1Label: 'EID',
+    resultCategory1i18nKey: 'resultCategoryEid',
+    resultDataSchema: JSON.stringify({
+      resultText: {
+        list: true,
+        title: 'Result',
+        type: 'string',
+      },
+      interpretation: {
+        title: 'Interpretation',
+        type: 'string',
+      },
+    }),
+    patientDataSchema: JSON.stringify({
+      name: {
+        title: 'Client Name',
+        type: 'string',
+        order: 1,
+      },
+      surname: {
+        title: 'Client Surname',
+        type: 'string',
+        order: 2,
+      },
+      age: {
+        title: 'Age (months)',
+        type: 'string',
+        order: 3,
+      },
+      dateOfBirth: {
+        title: 'Date of Birth',
+        type: 'string',
+        order: 4,
+      },
+      gender: {
+        title: 'Gender',
+        type: 'string',
+        order: 5,
+      },
+      hccNumber: {
+        title: 'HCC #',
+        type: 'string',
+        order: 6,
+      },
+      motherName: {
+        title: 'Mother Name',
+        type: 'string',
+        order: 7,
+      },
+      motherSurname: {
+        title: 'Mother Surname',
+        type: 'string',
+        order: 8,
+      },
+      phone: {
+        title: 'Phone #',
+        type: 'string',
+        order: 9,
+      },
+    }),
   })
 
   const modules = yield knex('Permission').reduce((memo, row) => {

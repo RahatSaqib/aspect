@@ -159,10 +159,7 @@ function* addDeviceDataWithContext(context) {
   }
 
   if (site) {
-    const siteResponse = yield* updateSiteWithContext(context.withPayload(site))
-    if (siteResponse instanceof Error) {
-      return siteResponse
-    }
+    yield* updateSiteWithContext(context.withPayload(site))
   }
 
   if (configuration) {
@@ -176,12 +173,7 @@ function* addDeviceDataWithContext(context) {
   }
 
   if (result) {
-    const resultResponse = yield* mergeResultWithContext(
-      context.withPayload(result)
-    )
-    if (resultResponse instanceof Error) {
-      return resultResponse
-    }
+    yield* mergeResultWithContext(context.withPayload(result))
   }
 
   return response
@@ -280,7 +272,7 @@ function* updateSiteWithContext(context) {
   const result = {}
   const siteExternalId = payload.id || null
   if (siteExternalId == null) {
-    return Boom.badRequest('Must specify site id to update Site')
+    throw Boom.badRequest('Must specify site id to update Site')
   }
 
   // Find unique site with specified external ID for same partner as device
@@ -292,7 +284,7 @@ function* updateSiteWithContext(context) {
     .select('id')
     .limit(2)
   if (sites.length !== 1) {
-    return Boom.badRequest(`Cannot find unique site with id ${siteExternalId}`)
+    throw Boom.badRequest(`Cannot find unique site with id ${siteExternalId}`)
   }
   const site = sites[0]
 
@@ -798,14 +790,13 @@ function onResultLogged({ resultId, deviceLogId }) {
       .first('p.plugin')
     const onResultLogged = yield* loadPlugin(plugin, 'onResultLogged')
     const now = new Date()
-    // TODO include full context and result?
     const context = {
       knex,
       now,
-      deviceLog: { id: deviceLogId },
+      resultId,
+      deviceLogId,
     }
-    const result = { id: resultId }
-    yield* onResultLogged(context, result)
+    yield* onResultLogged(context)
   })
 }
 

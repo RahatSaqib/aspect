@@ -64,7 +64,7 @@ function* postProcessMergeResult(context, result, previousResult) {
  * RESULT_LOGGED action has been dispatched referencing
  * a result handled by this plugin
  */
-function* onResultLogged(/* context, result */) {
+function* onResultLogged(/* context */) {
   // do nothing by default
 }
 

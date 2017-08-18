@@ -13,7 +13,7 @@ function* mergeResult(knex, deviceId, payload, now = new Date()) {
       .distinct('r.*')
       .limit(2)
     if (existingResults.length > 1) {
-      return Boom.badRequest(`Cannot find unique result with id ${payload.id}`)
+      throw Boom.badRequest(`Cannot find unique result with id ${payload.id}`)
     }
     existingResult = existingResults[0]
   }
@@ -137,7 +137,7 @@ function* mergeResult(knex, deviceId, payload, now = new Date()) {
     if (assays.length !== 1) {
       requestErrors.push(`assay with id ${_.get(payload, 'assay.id')}`)
     }
-    return Boom.badRequest(`Cannot find ${requestErrors.join(', ')}`)
+    throw Boom.badRequest(`Cannot find ${requestErrors.join(', ')}`)
   }
 
   const assay = assays[0]

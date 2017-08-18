@@ -1,4 +1,6 @@
 const { addResultWorkflowLogIfChanged } = require('./common')
+const { dispatch, notifyResultUpdated } = require('../../messages')
+const { mergeResult, getResult } = require('../result')
 
 const VALIDATED_EXTERNALID = 'Validated'
 const DELIVERABLE_EXTERNALID = 'Deliverable'
@@ -25,8 +27,71 @@ function* postProcessMergeResult(context, result, previousResult) {
   return {}
 }
 
-function* onResultLogged() {
-  // TODO generate result
+function* onResultLogged({ knex, resultId, deviceLogId, now }) {
+  // see if it is a qcChecked deliverable CHAI result
+  const checkChaiResult = yield knex('Result as r')
+    .join('ResultWorkflowStatus as rws', 'r.resultWorkflowStatusId', 'rws.id')
+    .join('Device as d', 'r.deviceId', 'd.id')
+    .join('DeviceType as dt', 'd.deviceTypeId', 'dt.id')
+    .join('Sample as sm', 'r.sampleId', 'sm.id')
+    .where({
+      'r.id': resultId,
+      'rws.externalId': 'Deliverable',
+      'r.qcCheck': 1,
+      'dt.externalId': 'CHAI',
+    })
+    .first('sm.originSiteId as sampleSiteId')
+  if (checkChaiResult == null) {
+    return
+  }
+  const { sampleSiteId } = checkChaiResult
+
+  // Get CHAI result in Device API format
+  const chaiResult = yield* getResult(knex, deviceLogId)
+
+  // Find all Reporter devices assigned to sample origin site
+  // And merge result for that device with same external id
+  const reporterDevices = yield knex('Device as d')
+    .join('DeviceType as dt', 'd.deviceTypeId', 'dt.id')
+    .where({
+      'd.siteId': sampleSiteId,
+      'dt.externalId': 'RRT',
+    })
+    .select('d.id as deviceId')
+
+  for (const { deviceId } of reporterDevices) {
+    const payload = {
+      id: chaiResult.id,
+      workflow: { status: { id: 'Deliverable' } },
+      assay: { id: chaiResult.assay.id },
+      sample: chaiResult.sample,
+      data: chaiResult.data,
+      patient: chaiResult.patient,
+      endedOn: chaiResult.endedOn,
+    }
+
+    // auto QC Check new result
+    const { processedResult, existingResult } = yield* mergeResult(
+      knex,
+      deviceId,
+      payload,
+      now
+    )
+    if (!existingResult) {
+      yield knex('Result')
+        .where({ id: processedResult.id })
+        .update({ qcCheck: 1 })
+
+      yield* addResultWorkflowLogIfChanged(
+        knex,
+        payload,
+        processedResult,
+        existingResult,
+        now
+      )
+    }
+    dispatch(notifyResultUpdated(processedResult.id, payload, 'MalawiPlugin'))
+  }
 }
 
 function* handleChaiResult(payload) {
