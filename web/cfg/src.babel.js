@@ -6,8 +6,8 @@ import cssImport from 'postcss-import'
 import cssNext from 'postcss-cssnext'
 import ExtractTextPlugin from 'extract-text-webpack-plugin'
 import CaseSensitivePathsPlugin from 'case-sensitive-paths-webpack-plugin'
-import ManifestPlugin from 'webpack-manifest-plugin'
 import FaviconsWebpackPlugin from 'favicons-webpack-plugin'
+import WebappManifestPlugin, { FAVICON_PLUGIN } from 'webapp-manifest-plugin'
 import HtmlWebpackPlugin from 'html-webpack-plugin'
 import HtmlWebpackIncludeAssetsPlugin from 'html-webpack-include-assets-plugin'
 import HtmlWebpackHarddiskPlugin from 'html-webpack-harddisk-plugin'
@@ -164,8 +164,6 @@ export default env => {
       }),
       new webpack.EnvironmentPlugin(['NODE_ENV', 'ASPECT_TARGET']),
 
-      new ManifestPlugin(),
-
       extractCSS,
       new FaviconsWebpackPlugin({
         logo: path.join(__dirname, '../src/template/favicon.png'),
@@ -186,6 +184,16 @@ export default env => {
           yandex: false,
           windows: false,
         },
+      }),
+      new WebappManifestPlugin({
+        icons: FAVICON_PLUGIN,
+        name: 'Aspect',
+        short_name: 'Aspect',
+        start_url: '/login',
+        display: 'standalone',
+        background_color: '#eceff6',
+        description:
+          'Aspect is a data management platform that handles diagnostic data produced by medical devices in the field.',
       }),
       new HtmlWebpackPlugin({
         inject: true,
