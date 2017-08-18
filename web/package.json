@@ -8,7 +8,6 @@
     "styleguide": "styleguidist server",
     "prewebpack:dll": "npm run clean",
     "webpack:dll": "webpack --config cfg/dll.babel.js",
-    "prewebpack-dev-server:src": "cd src/template && fsys --task=copy --filesFolders=index.html --destination=../../dist --clobber=\"false\" --preserveTimestamps=\"false\" && cd ../../",
     "webpack-dev-server:src": "webpack-dev-server --config cfg/src.babel.js --open",
     "webpack:src": "webpack --config cfg/src.babel.js",
     "start": "npm-run-all \"webpack:dll -- --{1}\" \"webpack-dev-server:src -- --{1}\" -- env.ASPECT_TARGET=local",
@@ -25,7 +24,7 @@
     "prettier": "prettier --no-semi --single-quote --trailing-comma=es5",
     "prettier:write": "npm run prettier -- --write \"./src/**/*.{js,jsx,css}\"",
     "lint": "eslint ./src --ext .js --ext .jsx",
-    "clean": "fsys --task=remove --fileFolder=dist/index.html && fsys --task=emptyDir --dir=dist/assets && fsys --task=remove --fileFolder=src/template/dll.vendor.manifest.json && fsys --task=remove --fileFolder=src/template/index.html",
+    "clean": "fsys --task=remove --fileFolder=dist/index.html && fsys --task=emptyDir --dir=dist/assets && fsys --task=remove --fileFolder=src/template/dll.vendor.manifest.json",
     "release:major": "npm version major && npm publish && git push --follow-tags",
     "release:minor": "npm version minor && npm publish && git push --follow-tags",
     "release:patch": "npm version patch && npm publish && git push --follow-tags",
@@ -34,6 +33,10 @@
   "lint-staged": {
     "gitDir": "../",
     "linters": {
+      "web/cfg/**/*.js": [
+        "eslint --fix",
+        "git add"
+      ],
       "web/src/**/*.css": [
         "prettier --write",
         "git add"
@@ -52,6 +55,7 @@
   "keywords": [],
   "author": "SystemOne",
   "devDependencies": {
+    "add-asset-html-webpack-plugin": "^2.1.0",
     "babel-cli": "^6.24.1",
     "babel-core": "^6.24.1",
     "babel-eslint": "^7.2.2",
@@ -83,8 +87,8 @@
     "file-loader": "^0.11.1",
     "fs-extra-cli": "0.0.4",
     "glob": "^7.1.2",
+    "html-webpack-harddisk-plugin": "^0.1.0",
     "html-webpack-plugin": "^2.28.0",
-    "html-webpack-plugin-remove": "^0.0.3",
     "husky": "^0.14.0",
     "identity-obj-proxy": "^3.0.0",
     "jest": "^20.0.4",
