@@ -5545,7 +5545,7 @@ miller-rabin@^4.0.0:
   version "1.29.0"
   resolved "https://registry.yarnpkg.com/mime-db/-/mime-db-1.29.0.tgz#48d26d235589651704ac5916ca06001914266878"
 
-mime-types@^2.1.12, mime-types@~2.1.11, mime-types@~2.1.15, mime-types@~2.1.7:
+mime-types@^2.1.12, mime-types@^2.1.15, mime-types@~2.1.11, mime-types@~2.1.15, mime-types@~2.1.7:
   version "2.1.16"
   resolved "https://registry.yarnpkg.com/mime-types/-/mime-types-2.1.16.tgz#2b858a52e5ecd516db897ac2be87487830698e23"
   dependencies:
@@ -9137,6 +9137,12 @@ wbuf@^1.1.0, wbuf@^1.7.2:
   resolved "https://registry.yarnpkg.com/wbuf/-/wbuf-1.7.2.tgz#d697b99f1f59512df2751be42769c1580b5801fe"
   dependencies:
     minimalistic-assert "^1.0.0"
+
+webapp-manifest-plugin@^0.0.4:
+  version "0.0.4"
+  resolved "https://registry.yarnpkg.com/webapp-manifest-plugin/-/webapp-manifest-plugin-0.0.4.tgz#98aecbff138d8591e5023aedd081ee3e3a24a676"
+  dependencies:
+    mime-types "^2.1.15"
 
 webidl-conversions@^3.0.0:
   version "3.0.1"
