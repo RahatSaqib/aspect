@@ -10,7 +10,7 @@ Clone the repository, then:
 
 ```bash
 # Install dependencies
-npm install
+yarn
 ```
 
 
@@ -18,26 +18,23 @@ npm install
 
 By default, the site is served at http://localhost:8000/webpack-dev-server/ this gives you compilation/error messages in the browser window. To browse just the "bare" site, go to http://localhost:8000.
 
+**Notice** when running `yarn start`, you'll immediately see `Cannot GET /` in the browser. Wait a little bit for the first compilation to be done, then refresh your browser.
+
 ```bash
 # Start for development
-npm start # or
-npm run serve
-
+yarn start
 
 # Build the dist version and copy static files
-npm run dist
+yarn dist
 
 # Run unit tests
-npm test
+yarn test
 
 # Lint all files in src (also automatically done AFTER tests are run)
-npm run lint
+yarn lint
 
 # Clean up the dist directory
-npm run clean
-
-# Just copy the static assets
-npm run copy
+yarn clean
 ```
 
 
@@ -84,13 +81,13 @@ aws s3 cp dist s3://aspect-web-dev --recursive
 To check which dependencies have newer versions available:
 
 ```bash
-npm outdated
+yarn outdated
 ```
 
 To update all to the latest version (this is not the same as the "Wanted" version):
 
 ```bash
-npm update --save
+yarn update
 ```
 
 Also update vendorPackages in dist.js to make sure that vendor packages are bundled separately from our code
@@ -101,6 +98,6 @@ To view styleguides, visit http://localhost:6060/.
 
 ```bash
 # Run styleguide
-npm run styleguide
+yarn styleguide
 ```
 
