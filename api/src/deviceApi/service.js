@@ -258,14 +258,14 @@ function* getDeviceDataWithContext(context) {
 function* addDeviceOperationWithContext(context) {
   const { knex, payload, device: { id: deviceId }, now } = context
   const op = yield* addDeviceOperation(knex, deviceId, payload, now)
-  context.addDeviceOperationId(op.id)
+  context.addDeviceLogUpdate('deviceOperationId', op.id)
   return {}
 }
 
 function* updateDeviceConfigurationWithContext(context) {
   const { knex, payload, device: { id: deviceId } } = context
   const config = yield* updateDeviceConfiguration(knex, deviceId, payload)
-  context.markDeviceConfigurationUpdated()
+  context.addDeviceLogUpdate('deviceConfigurationUpdated', true)
   return config
 }
 
@@ -322,24 +322,61 @@ function* updateSiteWithContext(context) {
   return result
 }
 
-function* mergeResultWithContext(initialContext) {
-  const context = yield* initialContext.preProcessMergeResult()
-  const { knex, now, payload, device: { id: deviceId } } = context
-  const { processedResult, existingResult } = yield* mergeResult(
+function* mergeResultWithContext(context) {
+  const {
     knex,
-    deviceId,
+    device: { id: deviceId, deviceType },
+    pluginName: plugin,
     payload,
     now,
-    knex
+  } = context
+
+  const pluginContext = {
+    knex,
+    deviceType,
+    payload,
+    now,
+  }
+
+  const preProcess = yield* loadPlugin(plugin, 'preProcessMergeResult')
+  yield* preProcess(pluginContext)
+
+  const transformPayload = yield* loadPlugin(
+    plugin,
+    'transformMergeResultPayload'
   )
-  return yield* context.postProcessMergeResult(processedResult, existingResult)
+  const transformedPayload = yield* transformPayload(pluginContext)
+
+  const {
+    processedResult: result,
+    existingResult: previousResult,
+  } = yield* mergeResult(knex, deviceId, transformedPayload, now, knex)
+
+  context.addDeviceLogUpdate('resultId', result.id)
+
+  const postProcess = yield* loadPlugin(plugin, 'postProcessMergeResult')
+  return yield* postProcess(pluginContext, result, previousResult)
 }
 
-function* getResultWithContext(initialContext) {
-  const context = yield* initialContext.preProcessGetResult()
-  const { knex, deviceLog } = context
-  const result = yield* getResult(knex, deviceLog.id)
-  return yield* context.postProcessGetResult(result)
+function* getResultWithContext(context) {
+  const {
+    knex,
+    deviceLog: { id: deviceLogId },
+    pluginName: plugin,
+    query,
+    now,
+  } = context
+
+  const pluginContext = { knex, deviceLogId, query, now }
+
+  const preProcess = yield* loadPlugin(plugin, 'preProcessGetResult')
+  yield* preProcess(pluginContext)
+
+  const result = yield* getResult(knex, deviceLogId)
+
+  const postProcess = yield* loadPlugin(plugin, 'postProcessGetResult')
+
+  return yield* postProcess(pluginContext, result)
 }
 
 function* createDeviceApiContext(request, handlerOptions) {
@@ -581,14 +618,6 @@ class DeviceApiContext {
     )
   }
 
-  markDeviceConfigurationUpdated() {
-    this.addDeviceLogUpdate('deviceConfigurationUpdated', true)
-  }
-
-  addDeviceOperationId(id) {
-    this.addDeviceLogUpdate('deviceOperationId', id)
-  }
-
   addDeviceLogUpdate(prop, value) {
     let update = this.deviceLogUpdate
     if (update == null) {
@@ -600,63 +629,6 @@ class DeviceApiContext {
     if (this.parent) {
       this.parent.addDeviceLogUpdate(prop, value)
     }
-  }
-
-  *preProcessGetResult() {
-    const preProcessGetResult = yield* loadPlugin(
-      this.pluginName,
-      'preProcessGetResult'
-    )
-    const { knex, deviceLog: { id: deviceLogId }, query, now } = this
-    yield* preProcessGetResult({ knex, deviceLogId, query, now })
-    return this
-  }
-
-  *postProcessGetResult(result) {
-    const postProcessGetResult = yield* loadPlugin(
-      this.pluginName,
-      'postProcessGetResult'
-    )
-    const { knex, deviceLog: { id: deviceLogId }, query, now } = this
-    return yield* postProcessGetResult(
-      { knex, deviceLogId, query, now },
-      result
-    )
-  }
-
-  *preProcessMergeResult() {
-    const { knex, device: { deviceType }, payload, now } = this
-    const preProcessMergeResult = yield* loadPlugin(
-      this.pluginName,
-      'preProcessMergeResult'
-    )
-    const transformMergeResultPayload = yield* loadPlugin(
-      this.pluginName,
-      'transformMergeResultPayload'
-    )
-    const context = {
-      knex,
-      deviceType,
-      payload,
-      now,
-    }
-    yield* preProcessMergeResult(context)
-    const transformedPayload = yield* transformMergeResultPayload(context)
-    return this.withPayload(transformedPayload)
-  }
-
-  *postProcessMergeResult(result, previousResult) {
-    this.addDeviceLogUpdate('resultId', result.id)
-    const postProcessMergeResult = yield* loadPlugin(
-      this.pluginName,
-      'postProcessMergeResult'
-    )
-    const { knex, payload, now } = this
-    return yield* postProcessMergeResult(
-      { knex, payload, now },
-      result,
-      previousResult
-    )
   }
 }
 
