@@ -66,15 +66,14 @@ function* addResultWorkflowLogIfChanged(
 
 function* updateResultWorkflowStatusOnGetResult(
   knex,
-  deviceLogId,
+  resultId,
   offset,
   now = new Date()
 ) {
   const row = yield knex('Result as r')
-    .innerJoin('DeviceLog as dl', 'dl.resultId', 'r.id')
     .leftJoin('ResultWorkflowStatus as rs', 'r.resultWorkflowStatusId', 'rs.id')
     .leftJoin('Partner as p', 'r.partnerId', 'p.id')
-    .where('dl.id', deviceLogId)
+    .where('r.id', resultId)
     .first(
       'r.startedOn',
       'r.endedOn',

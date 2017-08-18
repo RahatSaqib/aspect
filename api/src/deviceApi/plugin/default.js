@@ -5,16 +5,16 @@ const {
 } = require('./common')
 
 /**
- * A result is queried with a given DeviceLog,
+ * A result is queried
  * called prior to any processing of result.
  */
-function* preProcessGetResult({ knex, deviceLogId, query, now }) {
+function* preProcessGetResult({ knex, resultId, query, now }) {
   const offset = Number(query.offset)
-  yield* updateResultWorkflowStatusOnGetResult(knex, deviceLogId, offset, now)
+  yield* updateResultWorkflowStatusOnGetResult(knex, resultId, offset, now)
 }
 
 /**
- * A result is queried with a given DeviceLog,
+ * A result is queried
  * called after all processing of result.
  *
  * Return result to return to client

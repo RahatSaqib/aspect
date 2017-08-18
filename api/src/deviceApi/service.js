@@ -353,18 +353,18 @@ function* mergeResultWithContext(context) {
 function* getResultWithContext(context) {
   const {
     knex,
-    deviceLog: { id: deviceLogId },
+    deviceLog: { resultId },
     pluginName: plugin,
     query,
     now,
   } = context
 
-  const pluginContext = { knex, deviceLogId, query, now }
+  const pluginContext = { knex, resultId, query, now }
 
   const preProcess = yield* loadPlugin(plugin, 'preProcessGetResult')
   yield* preProcess(pluginContext)
 
-  const result = yield* getResult(knex, deviceLogId)
+  const result = yield* getResult(knex, resultId)
 
   const postProcess = yield* loadPlugin(plugin, 'postProcessGetResult')
 
@@ -455,7 +455,7 @@ function* createDeviceApiContext(request, handlerOptions) {
         .where({ deviceId: device.id })
         .whereNotNull('checkpoint')
         .orderBy('id', 'desc')
-        .first('id', 'checkpoint', 'createdOn', 'source')
+        .first('id', 'resultId', 'checkpoint', 'createdOn', 'source')
       if (deviceLogType === DEVICE_LOG_TYPE_RESULT) {
         lastDeviceLogQuery.whereNotNull('resultId')
       } else if (deviceLogType === DEVICE_LOG_TYPE_OPERATION) {
@@ -676,14 +676,7 @@ function* getDeviceLog(
       // if we requested a log with operation but we don't have one, 404
       return null
     }
-    return {
-      deviceLog: {
-        id: initialDeviceLog.id,
-        checkpoint: initialDeviceLog.checkpoint,
-        createdOn: initialDeviceLog.createdOn,
-        source: initialDeviceLog.source,
-      },
-    }
+    return { deviceLog: initialDeviceLog }
   }
 
   // Find log at specified offset from checkpoint
@@ -729,6 +722,7 @@ function* getDeviceLog(
   const deviceLog = yield deviceLogQuery.first(
     'dl.id',
     'dl.deviceId',
+    'dl.resultId',
     'dl.checkpoint',
     'dl.createdOn',
     'dl.source'
@@ -737,13 +731,7 @@ function* getDeviceLog(
     return null
   }
 
-  const response = {
-    deviceLog: {
-      id: deviceLog.id,
-      createdOn: deviceLog.createdOn,
-      source: deviceLog.source,
-    },
-  }
+  const response = { deviceLog }
   // set checkpoint if log changed during query, e.g, due to offset
   // but do not leak checkpoint from different device
   if (deviceLog.deviceId === device.id) {
@@ -782,7 +770,7 @@ function onResultUpdated({ resultId, message, source }) {
   }
 }
 
-function onResultLogged({ resultId, deviceLogId }) {
+function onResultLogged({ resultId }) {
   transact(function*(knex) {
     const { plugin } = yield knex('Result as r')
       .join('Partner as p', 'r.partnerId', 'p.id')
@@ -794,7 +782,6 @@ function onResultLogged({ resultId, deviceLogId }) {
       knex,
       now,
       resultId,
-      deviceLogId,
     }
     yield* onResultLogged(context)
   })

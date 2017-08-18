@@ -334,11 +334,9 @@ function* mergeResult(knex, deviceId, payload, now = new Date()) {
   return { processedResult, existingResult }
 }
 
-function* getResult(knex, deviceLogId) {
+function* getResult(knex, resultId) {
   const row = yield knex('Result as r')
     .innerJoin('Assay as a', 'r.assayId', 'a.id')
-    .innerJoin('DeviceLog as dl', 'dl.resultId', 'r.id')
-    .innerJoin('Device as d', 'r.deviceId', 'd.id')
     .leftJoin('Sample as s', 'r.sampleId', 's.id')
     .leftJoin('SampleType as st', 's.sampleTypeId', 'st.id')
     .leftJoin('Site as sos', 's.originSiteId', 'sos.id')
@@ -347,7 +345,7 @@ function* getResult(knex, deviceLogId) {
     .leftJoin('ResultType as rt', 'r.resultTypeId', 'rt.id')
     .leftJoin('ResultSource as rsc', 'r.resultSourceId', 'rsc.id')
     .leftJoin('ResultWorkflowStatus as rs', 'r.resultWorkflowStatusId', 'rs.id')
-    .where('dl.id', deviceLogId)
+    .where('r.id', resultId)
     .first(
       'r.externalId as resultExternalId',
       'r.resultData',

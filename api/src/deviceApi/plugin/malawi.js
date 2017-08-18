@@ -27,7 +27,7 @@ function* postProcessMergeResult(context, result, previousResult) {
   return {}
 }
 
-function* onResultLogged({ knex, resultId, deviceLogId, now }) {
+function* onResultLogged({ knex, resultId, now }) {
   // see if it is a qcChecked deliverable CHAI result
   const checkChaiResult = yield knex('Result as r')
     .join('ResultWorkflowStatus as rws', 'r.resultWorkflowStatusId', 'rws.id')
@@ -47,7 +47,7 @@ function* onResultLogged({ knex, resultId, deviceLogId, now }) {
   const { sampleSiteId } = checkChaiResult
 
   // Get CHAI result in Device API format
-  const chaiResult = yield* getResult(knex, deviceLogId)
+  const chaiResult = yield* getResult(knex, resultId)
 
   // Find all Reporter devices assigned to sample origin site
   // And merge result for that device with same external id
