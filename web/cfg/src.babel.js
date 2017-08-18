@@ -6,7 +6,6 @@ import cssImport from 'postcss-import'
 import cssNext from 'postcss-cssnext'
 import ExtractTextPlugin from 'extract-text-webpack-plugin'
 import CaseSensitivePathsPlugin from 'case-sensitive-paths-webpack-plugin'
-import ManifestPlugin from 'webpack-manifest-plugin'
 import FaviconsWebpackPlugin from 'favicons-webpack-plugin'
 import HtmlWebpackPlugin from 'html-webpack-plugin'
 import HtmlWebpackIncludeAssetsPlugin from 'html-webpack-include-assets-plugin'
@@ -163,8 +162,6 @@ export default env => {
         minimize: isProduction,
       }),
       new webpack.EnvironmentPlugin(['NODE_ENV', 'ASPECT_TARGET']),
-
-      new ManifestPlugin(),
 
       extractCSS,
       new FaviconsWebpackPlugin({
