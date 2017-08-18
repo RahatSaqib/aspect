@@ -8,7 +8,7 @@ import ExtractTextPlugin from 'extract-text-webpack-plugin'
 import CaseSensitivePathsPlugin from 'case-sensitive-paths-webpack-plugin'
 import ManifestPlugin from 'webpack-manifest-plugin'
 import HtmlWebpackPlugin from 'html-webpack-plugin'
-import AddAssetHtmlWebpackPlugin from 'add-asset-html-webpack-plugin'
+import HtmlWebpackIncludeAssetsPlugin from 'html-webpack-include-assets-plugin'
 import HtmlWebpackHarddiskPlugin from 'html-webpack-harddisk-plugin'
 import CompressionPlugin from 'compression-webpack-plugin'
 
@@ -163,10 +163,10 @@ export default env => {
         template: 'src/template/index.html',
         filename: 'index.html',
       }),
-      new AddAssetHtmlWebpackPlugin({
+      new HtmlWebpackIncludeAssetsPlugin({
         hash: isProduction,
-        includeSourcemap: false,
-        filepath: path.resolve(__dirname, '../dist/assets/dll.vendor.js'),
+        append: false,
+        assets: ['dll.vendor.js'],
       }),
       new HtmlWebpackHarddiskPlugin({
         outputPath: path.join(__dirname, '../dist'),
