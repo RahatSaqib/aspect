@@ -466,6 +466,14 @@ function* updateQcCheck(request) {
     updatedOn: now,
   })
 
+  // log QC-Check change in separate table
+  yield knex('ResultQualityControlLog').insert({
+    resultId,
+    qcCheck: payload.qcCheck,
+    createdBy: currentUserId,
+    createdOn: now,
+  })
+
   // add device log entry so result is redelivered
   yield* deliverResultToReporter(result.data.deviceId, resultId, now)
 
