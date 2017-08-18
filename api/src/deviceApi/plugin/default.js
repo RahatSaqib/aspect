@@ -52,6 +52,7 @@ function* postProcessMergeResult(context, result, previousResult) {
     payload,
     result,
     previousResult,
+    'Device API Update',
     now
   )
   // TODO can we consume inventory using a message listener instead

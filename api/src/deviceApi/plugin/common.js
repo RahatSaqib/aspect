@@ -1,4 +1,5 @@
 const _ = require('lodash')
+const { dispatch, notifyResultUpdated } = require('../../messages')
 const inventory = require('../../inventory/service')
 
 const DONOT_LOG_DELIVERED = ['Delivered', 'Acknowledged', 'Flagged', 'Error']
@@ -32,6 +33,7 @@ function* addResultWorkflowLogIfChanged(
   payload,
   result,
   previousResult,
+  reason,
   now = new Date()
 ) {
   // Log Result Workflow Update if any field changed
@@ -57,11 +59,13 @@ function* addResultWorkflowLogIfChanged(
     yield knex('ResultWorkflowLog').insert({
       resultId: result.id,
       resultWorkflowStatusId: result.resultWorkflowStatusId,
+      reason,
       operator: _.get(payload, 'workflow.operator', null),
       changedOn: _.get(payload, 'workflow.changedOn', now),
       createdOn: now,
     })
   }
+  return resultWorkflowChanged
 }
 
 function* updateResultWorkflowStatusOnGetResult(
@@ -95,6 +99,11 @@ function* updateResultWorkflowStatusOnGetResult(
       DELIVERED_EXTERNALID,
       now
     )
+    dispatch(notifyResultUpdated(
+      row.resultId,
+      { resultWorkflowStatus: DELIVERED_EXTERNALID },
+      'GetResult'
+    ))
     yield* autoAcknowledgeResultBasedOnPartnerRules(knex, row, row, offset, now)
   }
 }
