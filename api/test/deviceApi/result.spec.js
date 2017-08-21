@@ -690,90 +690,88 @@ describe('Device Result API routes', () => {
               -87.581222,
               0.000001
             )
-            assert.equal(lastResult.workflow.status.id, 'Delivered')
-            assert.deepEqual(
-              _.omit(lastResult, 'id', 'location', 'workflow', 'location'),
-              {
-                data: { a: 'b', c: 2, d: false, e: { f: 'g' } },
-                assay: {
-                  id: 'MtbRif',
-                  version: '1a.c1',
+            assert.equal(lastResult.workflow.status.id, 'Deliverable')
+            assert.deepEqual(_.omit(lastResult, 'id', 'location', 'workflow'), {
+              data: { a: 'b', c: 2, d: false, e: { f: 'g' } },
+              assay: {
+                id: 'MtbRif',
+                version: '1a.c1',
+              },
+              type: { id: 'Study' },
+              source: { id: 'EnteredByHand' },
+              category: [{ id: 'Detected' }, { id: 'Indeterminate' }],
+              sample: {
+                id: `Sample${now}`,
+                runNumber: '10z',
+                group: 'Sample Group X-1',
+                collectedOn: '2013-11-25T00:00:00.000Z',
+                type: {
+                  id: 'DBS',
                 },
-                type: { id: 'Study' },
-                source: { id: 'EnteredByHand' },
-                category: [{ id: 'Detected' }, { id: 'Indeterminate' }],
-                sample: {
-                  id: `Sample${now}`,
-                  runNumber: '10z',
-                  collectedOn: '2013-11-25T00:00:00.000Z',
-                  type: {
-                    id: 'DBS',
-                  },
-                  originSite: {
-                    id: result2SampleSite.externalId,
-                  },
+                originSite: {
+                  id: result2SampleSite.externalId,
                 },
-                startedOn: '2013-12-01T00:00:00.000Z',
-                endedOn: '2013-12-01T01:30:00.000Z',
-                consumable: [
-                  {
-                    serial: '132-44-222',
-                    expirationDate: '2014-03-01T00:00:00.000Z',
-                    lot: '331-1',
-                  },
-                ],
-                instrument: {
-                  serial: '444-3',
-                  module: {
-                    name: 'ModA',
-                    serial: '555-8',
-                  },
+              },
+              startedOn: '2013-12-01T00:00:00.000Z',
+              endedOn: '2013-12-01T01:30:00.000Z',
+              consumable: [
+                {
+                  serial: '132-44-222',
+                  expirationDate: '2014-03-01T00:00:00.000Z',
+                  lot: '331-1',
                 },
-                research: { id: 'R123' },
-                patient: {
+              ],
+              instrument: {
+                serial: '444-3',
+                module: {
+                  name: 'ModA',
+                  serial: '555-8',
+                },
+              },
+              research: { id: 'R123' },
+              patient: {
+                id: 'P-333',
+                name: 'Bob',
+                surname: 'Hope',
+                gender: 'M',
+                age: 72,
+                dateOfBirth: '1903-05-29T00:00:00.000Z',
+                address: '123 Main Street',
+                phone: '856-7909',
+              },
+              oemData: JSON.stringify({
+                maker: 'XYZ',
+                model: '876A',
+                serial: '123-456-789',
+              }),
+              rawData: JSON.stringify({
+                startedOn: '2013-05-13',
+                endedOn: '2013-12-01T01:30',
+                patientData: {
                   id: 'P-333',
                   name: 'Bob',
                   surname: 'Hope',
                   gender: 'M',
                   age: 72,
-                  dateOfBirth: '1903-05-29T00:00:00.000Z',
+                  dateOfBirth: '1903-05-29',
                   address: '123 Main Street',
                   phone: '856-7909',
                 },
-                oemData: JSON.stringify({
-                  maker: 'XYZ',
-                  model: '876A',
-                  serial: '123-456-789',
-                }),
-                rawData: JSON.stringify({
-                  startedOn: '2013-05-13',
-                  endedOn: '2013-12-01T01:30',
-                  patientData: {
-                    id: 'P-333',
-                    name: 'Bob',
-                    surname: 'Hope',
-                    gender: 'M',
-                    age: 72,
-                    dateOfBirth: '1903-05-29',
-                    address: '123 Main Street',
-                    phone: '856-7909',
-                  },
-                  location: {
-                    longitude: -87.581222,
-                    latitude: 30.419348,
-                  },
-                }),
-                sender: {
-                  version: '99-1',
-                  operator: 'Bob O',
+                location: {
+                  longitude: -87.581222,
+                  latitude: 30.419348,
                 },
-                notes: 'My Awesome notes about this Awesome result!',
-                error: {
-                  code: '123',
-                  notes: 'Oh NOZE!',
-                },
-              }
-            )
+              }),
+              sender: {
+                version: '99-1',
+                operator: 'Bob O',
+              },
+              notes: 'My Awesome notes about this Awesome result!',
+              error: {
+                code: '123',
+                notes: 'Oh NOZE!',
+              },
+            })
           })
 
         yield server
@@ -837,7 +835,7 @@ describe('Device Result API routes', () => {
           .where({ id: result1.resultWorkflowStatusId })
           .first('externalId')
 
-        assert.equal(result1Status.externalId, 'Delivered')
+        assert.equal(result1Status.externalId, 'Deliverable')
 
         const [result1Category1, result1Category2] = yield knex(
           'ResultCategory as rt'
@@ -885,7 +883,7 @@ describe('Device Result API routes', () => {
           .where({ id: result2.resultWorkflowStatusId })
           .first('externalId')
 
-        assert.equal(result2Status.externalId, 'Delivered')
+        assert.equal(result2Status.externalId, 'Deliverable')
 
         const [result2Category1, result2Category2] = yield knex(
           'ResultCategory as rt'
@@ -967,7 +965,7 @@ describe('Device Result API routes', () => {
         const result4Status = yield knex('ResultWorkflowStatus as rs')
           .where({ id: result4.resultWorkflowStatusId })
           .first('externalId')
-        assert.equal(result4Status.externalId, 'Delivered')
+        assert.equal(result4Status.externalId, 'Deliverable')
 
         const [result4Category1, result4Category2] = yield knex(
           'ResultCategory as rt'

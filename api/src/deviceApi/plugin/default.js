@@ -1,16 +1,14 @@
 const {
   addResultWorkflowLogIfChanged,
   consumeInventoryForResult,
-  updateResultWorkflowStatusOnGetResult,
 } = require('./common')
 
 /**
  * A result is queried
  * called prior to any processing of result.
  */
-function* preProcessGetResult({ knex, resultId, query, now }) {
-  const offset = Number(query.offset)
-  yield* updateResultWorkflowStatusOnGetResult(knex, resultId, offset, now)
+function* preProcessGetResult(/* context */) {
+  // nothing to do by default
 }
 
 /**
@@ -55,8 +53,8 @@ function* postProcessMergeResult(context, result, previousResult) {
     'Device API Update',
     now
   )
-  // TODO can we consume inventory using a message listener instead
-  // of within plugin/same transaction?
+  // TODO ASP-355 consume inventory using a message listener instead
+  // of within plugin/same transaction
   yield* consumeInventoryForResult(knex, payload, result)
   return {}
 }

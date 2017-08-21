@@ -1,17 +1,11 @@
 const _ = require('lodash')
-const { dispatch, notifyResultUpdated } = require('../../messages')
 const inventory = require('../../inventory/service')
-
-const DONOT_LOG_DELIVERED = ['Delivered', 'Acknowledged', 'Flagged', 'Error']
-const DELIVERED_EXTERNALID = 'Delivered'
-const ACKNOWLEDGED_EXTERNALID = 'Acknowledged'
-
-const millisInDay = 1000 * 60 * 60 * 24
 
 /**
  * Consumes inventory for the new result
  */
 function* consumeInventoryForResult(knex, payload, result) {
+  // TODO ASP-355 Move consumeInventory for Result to listener
   // Update Inventory Levels at Site
   const consumablesInResultData = _.isEmpty(payload.consumable)
     ? []
@@ -68,124 +62,6 @@ function* addResultWorkflowLogIfChanged(
   return resultWorkflowChanged
 }
 
-function* updateResultWorkflowStatusOnGetResult(
-  knex,
-  resultId,
-  offset,
-  now = new Date()
-) {
-  const row = yield knex('Result as r')
-    .leftJoin('ResultWorkflowStatus as rs', 'r.resultWorkflowStatusId', 'rs.id')
-    .leftJoin('Partner as p', 'r.partnerId', 'p.id')
-    .where('r.id', resultId)
-    .first(
-      'r.startedOn',
-      'r.endedOn',
-      'r.deviceId',
-      'r.id as resultId',
-      'rs.externalId as resultWorkflowStatusId',
-      'p.autoAcknowledgeOlderThanDays',
-      'p.numberToLeaveUnacknowledged'
-    )
-  // only set to delivered the first time and
-  // only if NOT acknowledged or flagged already
-  if (
-    row != null &&
-    _.indexOf(DONOT_LOG_DELIVERED, row.resultWorkflowStatusId) === -1
-  ) {
-    yield* updateResultWorkflowStatus(
-      knex,
-      row.resultId,
-      DELIVERED_EXTERNALID,
-      now
-    )
-    dispatch(notifyResultUpdated(
-      row.resultId,
-      { resultWorkflowStatus: DELIVERED_EXTERNALID },
-      'GetResult'
-    ))
-    yield* autoAcknowledgeResultBasedOnPartnerRules(knex, row, row, offset, now)
-  }
-}
-
-function* autoAcknowledgeResultBasedOnPartnerRules(
-  knex,
-  resultDetails,
-  partnerAutoAcknowledgeRules,
-  offset,
-  now
-) {
-  const {
-    resultId,
-    deviceId,
-    endedOn: testEndedOn,
-    resultWorkflowStatusId: currentResultWorkflowStatusId,
-  } = resultDetails
-  const {
-    autoAcknowledgeOlderThanDays,
-    numberToLeaveUnacknowledged,
-  } = partnerAutoAcknowledgeRules
-
-  let workflowStatus = currentResultWorkflowStatusId
-
-  // Is this a historical sync and
-  // do we have an end date for the test?
-  // are auto acknowledge rules setup for partner?
-  if (
-    offset < 0 &&
-    testEndedOn &&
-    (autoAcknowledgeOlderThanDays || numberToLeaveUnacknowledged)
-  ) {
-    // At what age should a result be auto acknowledged?
-    const autoAcknowledgeOlderThan = autoAcknowledgeOlderThanDays
-      ? new Date(+new Date() - autoAcknowledgeOlderThanDays * millisInDay)
-      : null
-    if (testEndedOn < autoAcknowledgeOlderThan) {
-      // Are there NO results that are more recent
-      // than the auto acknowledgement cutoff date?
-      // FIXME Fix All results query. We should be able to limit this without loading all
-      const allResultsBeingSynced = yield knex('Result as r')
-        .innerJoin(
-          'ResultWorkflowStatus as rs',
-          'r.resultWorkflowStatusId',
-          'rs.id'
-        )
-        .where('r.deviceId', deviceId)
-        .orderBy('r.endedOn', 'desc') // TODO: What if results have already been acknowledged?
-        .select('r.id', 'r.endedOn')
-      if (
-        !_.some(
-          allResultsBeingSynced,
-          result => result.endedOn > autoAcknowledgeOlderThan
-        )
-      ) {
-        // Is this NOT one of the top results on the list
-        // that should be left unacknowledged so that
-        // the results list on the reporter isn't empty?
-        const resultsToLeaveUnacknowledged = _.take(
-          allResultsBeingSynced,
-          numberToLeaveUnacknowledged
-        )
-        if (
-          !_.some(
-            resultsToLeaveUnacknowledged,
-            result => result.id === resultId
-          )
-        ) {
-          yield* updateResultWorkflowStatus(
-            knex,
-            resultId,
-            ACKNOWLEDGED_EXTERNALID,
-            now
-          )
-          workflowStatus = ACKNOWLEDGED_EXTERNALID
-        }
-      }
-    }
-  }
-  return workflowStatus
-}
-
 function* updateResultWorkflowStatus(
   knex,
   resultId,
@@ -235,5 +111,5 @@ function* getLatestResultWorkflowLog(knex, resultId) {
 module.exports = {
   addResultWorkflowLogIfChanged,
   consumeInventoryForResult,
-  updateResultWorkflowStatusOnGetResult,
+  updateResultWorkflowStatus,
 }
