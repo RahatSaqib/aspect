@@ -4,6 +4,22 @@ const {
 } = require('./common')
 
 /**
+ * A site is being updated, called before any processing
+ * or querying of site.
+ */
+function* preProcessUpdateSite(/* context */) {
+  // nothing to do by default
+}
+
+/**
+ * A site has been updated, called after any processing
+ * or querying of site.
+ */
+function* postProcessUpdateSite(/* context, site, previousSite */) {
+  // nothing to do by deafult
+}
+
+/**
  * A result is queried
  * called prior to any processing of result.
  */
@@ -68,6 +84,8 @@ function* onResultLogged(/* context */) {
 }
 
 module.exports = {
+  preProcessUpdateSite,
+  postProcessUpdateSite,
   preProcessGetResult,
   postProcessGetResult,
   preProcessMergeResult,

@@ -268,8 +268,19 @@ function* getDeviceOperationWithContext(context) {
 }
 
 function* updateSiteWithContext(context) {
-  const { knex, payload, device, now } = context
-  const result = {}
+  const { knex, device, payload, now, pluginName: plugin } = context
+
+  const pluginContext = {
+    knex,
+    payload,
+    now,
+    deviceType: device.deviceType,
+    deviceId: device.deviceId,
+  }
+
+  const preProcessUpdateSite = yield* loadPlugin(plugin, 'preProcessUpdateSite')
+  yield* preProcessUpdateSite(pluginContext)
+
   const siteExternalId = payload.id || null
   if (siteExternalId == null) {
     throw Boom.badRequest('Must specify site id to update Site')
@@ -288,30 +299,37 @@ function* updateSiteWithContext(context) {
   }
   const site = sites[0]
 
-  if (device.siteId === site.id) {
-    // Device is already assigned to requested site, nothing to do
-    return result
+  if (device.siteId !== site.id) {
+    const status = device.siteId == null ? 'approved' : 'assigned'
+
+    yield knex('Device').where({ id: device.id }).update({
+      siteId: site.id,
+      deviceStatusId: knex('DeviceStatus')
+        .where({ token: status })
+        .select('id'),
+    })
+
+    // Update DeviceApiKey site with the new siteId
+    yield knex('DeviceApiKey').where({ deviceId: device.id }).update({
+      siteId: site.id,
+    })
+
+    yield knex('DeviceSiteHistory').insert({
+      deviceId: device.id,
+      siteId: site.id,
+      createdOn: now,
+    })
   }
 
-  const status = device.siteId == null ? 'approved' : 'assigned'
-
-  yield knex('Device').where({ id: device.id }).update({
-    siteId: site.id,
-    deviceStatusId: knex('DeviceStatus').where({ token: status }).select('id'),
-  })
-
-  // Update DeviceApiKey site with the new siteId
-  yield knex('DeviceApiKey').where({ deviceId: device.id }).update({
-    siteId: site.id,
-  })
-
-  yield knex('DeviceSiteHistory').insert({
-    deviceId: device.id,
-    siteId: site.id,
-    createdOn: now,
-  })
-
-  return result
+  const postProcessUpdateSite = yield* loadPlugin(
+    plugin,
+    'postProcessUpdateSite'
+  )
+  yield* postProcessUpdateSite(
+    pluginContext,
+    { id: site.id, externalId: siteExternalId },
+    { id: device.siteId }
+  )
 }
 
 function* mergeResultWithContext(context) {
