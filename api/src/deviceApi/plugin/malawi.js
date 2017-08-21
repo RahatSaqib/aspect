@@ -3,8 +3,13 @@ const {
   addResultWorkflowLogIfChanged,
   updateResultWorkflowStatus,
 } = require('./common')
-const { dispatch, notifyResultUpdated } = require('../../messages')
+const { notifyResultUpdated } = require('../../messages')
 const { mergeResult, getResult } = require('../result')
+
+const DEVICE_TYPE_CHAI = 'CHAI'
+// TODO do we want to change Reporter external ID to Reporter?
+// Will also require update to sync scripts on Reporters...
+const DEVICE_TYPE_REPORTER = 'RRT'
 
 const VALIDATED_EXTERNALID = 'Validated'
 const DELIVERABLE_EXTERNALID = 'Deliverable'
@@ -36,9 +41,15 @@ const MERGEABLE_REPORTABLE_IDS = [
 
 const millisInDay = 1000 * 60 * 60 * 24
 
-function* preProcessGetResult({ knex, resultId, query, now }) {
+function* preProcessGetResult({ knex, dispatch, resultId, query, now }) {
   const offset = Number(query.offset)
-  yield* updateResultWorkflowStatusOnGetResult(knex, resultId, offset, now)
+  yield* updateResultWorkflowStatusOnGetResult(
+    knex,
+    dispatch,
+    resultId,
+    offset,
+    now
+  )
 }
 
 function* postProcessMergeResult(context, result, previousResult) {
@@ -57,7 +68,15 @@ function* postProcessMergeResult(context, result, previousResult) {
   return {}
 }
 
-function* onResultLogged({ knex, resultId, now }) {
+function* postProcessUpdateSite(context, site, previousSite) {
+  const { knex, dispatch, deviceId, deviceType, now } = context
+  if (deviceType === DEVICE_TYPE_REPORTER && site.id !== previousSite.id) {
+    yield* purgePreviousResults(knex, deviceId)
+    yield* generateHistoricalResults(knex, dispatch, deviceId, site.id, now)
+  }
+}
+
+function* onResultLogged({ knex, dispatch, resultId, now }) {
   const qcResult = yield knex('Result as r')
     .join('ResultWorkflowStatus as rws', 'r.resultWorkflowStatusId', 'rws.id')
     .join('Device as d', 'r.deviceId', 'd.id')
@@ -78,24 +97,26 @@ function* onResultLogged({ knex, resultId, now }) {
     const { sampleSiteId, workflowStatus, deviceType, deviceName } = qcResult
 
     if (
-      deviceType === 'CHAI' &&
+      deviceType === DEVICE_TYPE_CHAI &&
       _.indexOf(MERGEABLE_CHAI_IDS, workflowStatus) !== -1
     ) {
       // it is a qcChecked CHAI result, merge into Reporter results
       yield* mergeChaiResultToReporters(
         knex,
+        dispatch,
         resultId,
         sampleSiteId,
         deviceName,
         now
       )
     } else if (
-      deviceType === 'RRT' &&
+      deviceType === DEVICE_TYPE_REPORTER &&
       _.indexOf(MERGEABLE_REPORTABLE_IDS, workflowStatus) !== -1
     ) {
       // it is a qcChecked Reportable result, merge into CHAI results
       yield* mergeReporterToChaiResult(
         knex,
+        dispatch,
         resultId,
         sampleSiteId,
         deviceName,
@@ -105,33 +126,94 @@ function* onResultLogged({ knex, resultId, now }) {
   }
 }
 
+function* purgePreviousResults(knex, deviceId) {
+  // FIXME purge previous results for device ID
+}
+
+function* generateHistoricalResults(
+  knex,
+  dispatch,
+  deviceId,
+  siteId,
+  now = new Date()
+) {
+  const partner = yield knex('Site as s')
+    .join('Partner as p', 's.partnerId', 'p.id')
+    .where({
+      's.id': siteId,
+    })
+    .first('p.deviceLogHistoryDays')
+  if (partner.deviceLogHistoryDays == null) {
+    return
+  }
+  const historyCutoff = new Date(
+    +new Date() - partner.deviceLogHistoryDays * millisInDay
+  )
+
+  const sourceResults = yield knex('DeviceLog as dl')
+    .join('Result as r', 'dl.resultId', 'r.id')
+    .join('ResultWorkflowStatus as rws', 'r.resultWorkflowStatusId', 'rws.id')
+    .join('Device as d', 'dl.deviceId', 'd.id')
+    .join('DeviceType as dt', 'd.deviceTypeId', 'dt.id')
+    .join('Sample as sm', 'r.sampleId', 'sm.id')
+    .where({
+      'r.qcCheck': 1,
+      'dt.externalId': DEVICE_TYPE_CHAI,
+      'sm.originSiteId': siteId,
+    })
+    .where('dl.createdOn', '>=', historyCutoff)
+    .whereIn('rws.externalId', MERGEABLE_CHAI_IDS)
+    .orderBy('dl.id', 'asc')
+    .select('r.id as resultId', 'd.name as deviceName')
+
+  for (const { resultId, deviceName } of sourceResults) {
+    const sourceResult = yield* getResult(knex, resultId)
+    const payload = reporterResultFromChaiResult(sourceResult)
+    payload.workflow = { status: { id: DELIVERABLE_EXTERNALID } }
+
+    const { processedResult, existingResult } = yield* mergeResult(
+      knex,
+      deviceId,
+      payload,
+      now
+    )
+    yield* addResultWorkflowLogIfChanged(
+      knex,
+      payload,
+      processedResult,
+      existingResult,
+      `Historical Result from ${deviceName}`,
+      now
+    )
+    yield knex('Result')
+      .where({ id: processedResult.id })
+      .update({ qcCheck: 1 })
+    processedResult.qcCheck = 1
+    dispatch(notifyResultUpdated(processedResult.id, payload, 'MalawiPlugin'))
+  }
+}
+
 function* mergeChaiResultToReporters(
   knex,
+  dispatch,
   resultId,
   sampleSiteId,
   deviceName,
   now
 ) {
-  // Get CHAI result in Device API format
-  const chaiResult = yield* getResult(knex, resultId)
-  const payload = {
-    id: chaiResult.id,
-    assay: { id: chaiResult.assay.id },
-    sample: chaiResult.sample,
-    data: chaiResult.data,
-    patient: chaiResult.patient,
-    endedOn: chaiResult.endedOn,
-  }
-
   // Find all Reporter devices assigned to sample origin site
   // And merge result for that device with same external id
   const reporterDevices = yield knex('Device as d')
     .join('DeviceType as dt', 'd.deviceTypeId', 'dt.id')
     .where({
       'd.siteId': sampleSiteId,
-      'dt.externalId': 'RRT',
+      'dt.externalId': DEVICE_TYPE_REPORTER,
     })
     .select('d.id as deviceId')
+
+  // Get CHAI result in Device API format
+  const chaiResult = yield* getResult(knex, resultId)
+  const payload = reporterResultFromChaiResult(chaiResult)
 
   for (const { deviceId } of reporterDevices) {
     const { processedResult, existingResult } = yield* mergeResult(
@@ -168,6 +250,7 @@ function* mergeChaiResultToReporters(
 
 function* mergeReporterToChaiResult(
   knex,
+  dispatch,
   resultId,
   sampleSiteId,
   deviceName,
@@ -191,7 +274,7 @@ function* mergeReporterToChaiResult(
     .innerJoin('Sample as sm', 'r.sampleId', 'sm.id')
     .where({
       'sm.originSiteId': sampleSiteId,
-      'dt.externalId': 'CHAI',
+      'dt.externalId': DEVICE_TYPE_CHAI,
     })
     .distinct('d.id as deviceId')
 
@@ -218,8 +301,19 @@ function* mergeReporterToChaiResult(
   }
 }
 
+function reporterResultFromChaiResult(chaiResult) {
+  return {
+    id: chaiResult.id,
+    assay: { id: chaiResult.assay.id },
+    sample: chaiResult.sample,
+    data: chaiResult.data,
+    patient: chaiResult.patient,
+    endedOn: chaiResult.endedOn,
+  }
+}
+
 function* checkResultDeliverable(context, result) {
-  const { knex, now } = context
+  const { knex, dispatch, now } = context
   const { id: resultId, patientData } = result
 
   // Now's a good time to see if the result is in the
@@ -280,6 +374,7 @@ function patientDataIsComplete(patientData) {
 
 function* updateResultWorkflowStatusOnGetResult(
   knex,
+  dispatch,
   resultId,
   offset,
   now = new Date()
@@ -401,5 +496,6 @@ function* autoAcknowledgeResultBasedOnPartnerRules(
 module.exports = {
   preProcessGetResult,
   postProcessMergeResult,
+  postProcessUpdateSite,
   onResultLogged,
 }

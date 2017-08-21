@@ -142,6 +142,7 @@ function deviceApiHandler(handler, handlerOptions) {
         )
       )
     }
+    context.commit()
 
     return response
   })
@@ -268,14 +269,15 @@ function* getDeviceOperationWithContext(context) {
 }
 
 function* updateSiteWithContext(context) {
-  const { knex, device, payload, now, pluginName: plugin } = context
+  const { knex, dispatch, device, payload, now, pluginName: plugin } = context
 
   const pluginContext = {
     knex,
+    dispatch,
     payload,
     now,
     deviceType: device.deviceType,
-    deviceId: device.deviceId,
+    deviceId: device.id,
   }
 
   const preProcessUpdateSite = yield* loadPlugin(plugin, 'preProcessUpdateSite')
@@ -335,6 +337,7 @@ function* updateSiteWithContext(context) {
 function* mergeResultWithContext(context) {
   const {
     knex,
+    dispatch,
     device: { id: deviceId, deviceType },
     pluginName: plugin,
     payload,
@@ -343,6 +346,7 @@ function* mergeResultWithContext(context) {
 
   const pluginContext = {
     knex,
+    dispatch,
     deviceType,
     payload,
     now,
@@ -371,13 +375,14 @@ function* mergeResultWithContext(context) {
 function* getResultWithContext(context) {
   const {
     knex,
+    dispatch,
     deviceLog: { resultId },
     pluginName: plugin,
     query,
     now,
   } = context
 
-  const pluginContext = { knex, resultId, query, now }
+  const pluginContext = { knex, dispatch, resultId, query, now }
 
   const preProcess = yield* loadPlugin(plugin, 'preProcessGetResult')
   yield* preProcess(pluginContext)
@@ -620,6 +625,16 @@ function createNewDevice(request, now) {
 class DeviceApiContext {
   constructor(props) {
     Object.assign(this, props)
+    this.actions = this.parent ? this.parent.actions : []
+    this.dispatch = action => this.actions.push(action)
+  }
+
+  commit() {
+    if (this.parent) {
+      this.parent.commit()
+    } else {
+      this.actions.forEach(action => dispatch(action))
+    }
   }
 
   withPayload(payload) {
@@ -789,6 +804,7 @@ function onResultUpdated({ resultId, message, source }) {
 }
 
 function onResultLogged({ resultId }) {
+  const context = new DeviceApiContext({})
   transact(function*(knex) {
     const { plugin } = yield knex('Result as r')
       .join('Partner as p', 'r.partnerId', 'p.id')
@@ -796,13 +812,16 @@ function onResultLogged({ resultId }) {
       .first('p.plugin')
     const onResultLogged = yield* loadPlugin(plugin, 'onResultLogged')
     const now = new Date()
-    const context = {
+
+    const pluginContext = {
       knex,
+      dispatch: context.dispatch,
       now,
       resultId,
     }
-    yield* onResultLogged(context)
+    yield* onResultLogged(pluginContext)
   })
+  context.commit()
 }
 
 addListener(RESULT_UPDATED, onResultUpdated)
