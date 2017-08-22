@@ -69,7 +69,9 @@ describe('Device Result API routes', () => {
           200,
           res && res.body && res.body.message ? res.body.message : ''
         )
-        return res
+        // FIXME when do we know generated result is available? Does it matter?
+        // We should get these on the next sync... but it stinks for testing
+        return new Promise(resolve => setTimeout(() => resolve(res), 220))
       })
   }
 
@@ -2162,9 +2164,6 @@ describe('Device Result API routes', () => {
 
         let lastResultId = yield* getLastResultId(knex, deviceLab.id)
         yield approveResult(context, lastResultId)
-        // FIXME when do we know generated result is available? Does it matter?
-        // We should get these on the next sync... but it stinks for testing
-        yield new Promise(resolve => setTimeout(resolve, 100))
 
         yield server
           .get(`${devicePath}?checkpoint=rrt_0`)
@@ -2324,10 +2323,6 @@ describe('Device Result API routes', () => {
 
         lastResultId = yield* getLastResultId(knex, deviceLab.id)
         yield approveResult(context, lastResultId)
-
-        // FIXME when do we know generated result is available? Does it matter?
-        // We should get these on the next sync... but it stinks for testing
-        yield new Promise(resolve => setTimeout(resolve, 100))
 
         yield server
           .get(`${devicePath}?checkpoint=rrt1723_0&offset=1`)
@@ -2748,10 +2743,6 @@ describe('Device Result API routes', () => {
 
         lastResultId = yield* getLastResultId(knex, deviceLab.id)
         yield approveResult(context, lastResultId)
-
-        // FIXME when do we know generated result is available? Does it matter?
-        // We should get these on the next sync... but it stinks for testing
-        yield new Promise(resolve => setTimeout(resolve, 220))
 
         yield server
           .get(`${devicePath}?checkpoint=rrt_0&offset=5`)

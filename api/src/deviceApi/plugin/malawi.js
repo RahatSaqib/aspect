@@ -139,15 +139,24 @@ function* generateHistoricalResults(
 ) {
   const partner = yield knex('Site as s')
     .join('Partner as p', 's.partnerId', 'p.id')
-    .where({
-      's.id': siteId,
-    })
-    .first('p.deviceLogHistoryDays')
-  if (partner.deviceLogHistoryDays == null) {
+    .where({ 's.id': siteId })
+    .first(
+      'p.deviceLogHistoryDays',
+      'p.autoAcknowledgeOlderThanDays',
+      'p.numberToLeaveUnacknowledged'
+    )
+  const {
+    deviceLogHistoryDays,
+    autoAcknowledgeOlderThanDays,
+    numberToLeaveUnacknowledged,
+  } = partner
+
+  if (deviceLogHistoryDays == null) {
     return
   }
+
   const historyCutoff = new Date(
-    +new Date() - partner.deviceLogHistoryDays * millisInDay
+    +new Date() - deviceLogHistoryDays * millisInDay
   )
 
   const sourceResults = yield knex('DeviceLog as dl')
@@ -163,10 +172,27 @@ function* generateHistoricalResults(
     })
     .where('dl.createdOn', '>=', historyCutoff)
     .whereIn('rws.externalId', MERGEABLE_CHAI_IDS)
-    .orderBy('dl.id', 'asc')
-    .select('r.id as resultId', 'd.name as deviceName')
+    .orderBy('r.endedOn', 'asc')
+    .distinct(
+      'r.id as resultId',
+      'r.endedOn as resultEndedOn',
+      'd.name as deviceName'
+    )
 
-  for (const { resultId, deviceName } of sourceResults) {
+  const autoAcknowledgeOlderThan = autoAcknowledgeOlderThanDays
+    ? new Date(+new Date() - autoAcknowledgeOlderThanDays * millisInDay)
+    : null
+  const autoAcknowledgeMaxIndex =
+    sourceResults.length - numberToLeaveUnacknowledged
+
+  const { id: acknowledgedStatusId } = yield knex('ResultWorkflowStatus')
+    .where({ externalId: ACKNOWLEDGED_EXTERNALID })
+    .first('id')
+
+  let index = -1
+  for (const { resultId, resultEndedOn, deviceName } of sourceResults) {
+    index += 1
+
     const sourceResult = yield* getResult(knex, resultId)
     const payload = reporterResultFromChaiResult(sourceResult)
     payload.workflow = { status: { id: DELIVERABLE_EXTERNALID } }
@@ -185,10 +211,30 @@ function* generateHistoricalResults(
       `Historical Result from ${deviceName}`,
       now
     )
-    yield knex('Result')
-      .where({ id: processedResult.id })
-      .update({ qcCheck: 1 })
-    processedResult.qcCheck = 1
+
+    const autoAcknowledge =
+      index < autoAcknowledgeMaxIndex &&
+      (resultEndedOn != null &&
+        autoAcknowledgeOlderThan != null &&
+        +resultEndedOn < +autoAcknowledgeOlderThan)
+
+    const resultUpdates = { qcCheck: 1 }
+    if (autoAcknowledge) {
+      processedResult.resultWorkflowStatusId = acknowledgedStatusId
+      yield* addResultWorkflowLogIfChanged(
+        knex,
+        payload,
+        processedResult,
+        existingResult,
+        `Auto acknowledged from ${deviceName}`,
+        new Date(+now + 1000) // in future to maintain order in UI
+      )
+      resultUpdates.resultWorkflowStatusId = acknowledgedStatusId
+    }
+
+    Object.assign(processedResult, resultUpdates)
+    yield knex('Result').where({ id: processedResult.id }).update(resultUpdates)
+
     dispatch(notifyResultUpdated(processedResult.id, payload, 'MalawiPlugin'))
   }
 }
@@ -408,86 +454,7 @@ function* updateResultWorkflowStatusOnGetResult(
         'GetResult'
       )
     )
-    yield* autoAcknowledgeResultBasedOnPartnerRules(knex, row, row, offset, now)
   }
-}
-
-function* autoAcknowledgeResultBasedOnPartnerRules(
-  knex,
-  resultDetails,
-  partnerAutoAcknowledgeRules,
-  offset,
-  now
-) {
-  const {
-    resultId,
-    deviceId,
-    endedOn: testEndedOn,
-    resultWorkflowStatusId: currentResultWorkflowStatusId,
-  } = resultDetails
-  const {
-    autoAcknowledgeOlderThanDays,
-    numberToLeaveUnacknowledged,
-  } = partnerAutoAcknowledgeRules
-
-  let workflowStatus = currentResultWorkflowStatusId
-
-  // Is this a historical sync and
-  // do we have an end date for the test?
-  // are auto acknowledge rules setup for partner?
-  if (
-    offset < 0 &&
-    testEndedOn &&
-    (autoAcknowledgeOlderThanDays || numberToLeaveUnacknowledged)
-  ) {
-    // At what age should a result be auto acknowledged?
-    const autoAcknowledgeOlderThan = autoAcknowledgeOlderThanDays
-      ? new Date(+new Date() - autoAcknowledgeOlderThanDays * millisInDay)
-      : null
-    if (testEndedOn < autoAcknowledgeOlderThan) {
-      // Are there NO results that are more recent
-      // than the auto acknowledgement cutoff date?
-      // FIXME Fix All results query. We should be able to limit this without loading all
-      const allResultsBeingSynced = yield knex('Result as r')
-        .innerJoin(
-          'ResultWorkflowStatus as rs',
-          'r.resultWorkflowStatusId',
-          'rs.id'
-        )
-        .where('r.deviceId', deviceId)
-        .orderBy('r.endedOn', 'desc') // TODO: What if results have already been acknowledged?
-        .select('r.id', 'r.endedOn')
-      if (
-        !_.some(
-          allResultsBeingSynced,
-          result => result.endedOn > autoAcknowledgeOlderThan
-        )
-      ) {
-        // Is this NOT one of the top results on the list
-        // that should be left unacknowledged so that
-        // the results list on the reporter isn't empty?
-        const resultsToLeaveUnacknowledged = _.take(
-          allResultsBeingSynced,
-          numberToLeaveUnacknowledged
-        )
-        if (
-          !_.some(
-            resultsToLeaveUnacknowledged,
-            result => result.id === resultId
-          )
-        ) {
-          yield* updateResultWorkflowStatus(
-            knex,
-            resultId,
-            ACKNOWLEDGED_EXTERNALID,
-            now
-          )
-          workflowStatus = ACKNOWLEDGED_EXTERNALID
-        }
-      }
-    }
-  }
-  return workflowStatus
 }
 
 module.exports = {
