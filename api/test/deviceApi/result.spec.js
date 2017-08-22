@@ -3074,6 +3074,7 @@ describe('Device Result API routes', () => {
             )
             assert.isOk(partner.autoAcknowledgeOlderThanDays)
             assert.isOk(partner.numberToLeaveUnacknowledged)
+            assert.equal(partner.plugin, 'malawi')
 
             // We need to upload tests that ended a while ago
             const testEndedOn = subDays(
@@ -3116,33 +3117,35 @@ describe('Device Result API routes', () => {
             }
 
             // Start a sync operation with a new check point
+            const device1315Key = yield* context.createApiKey(knex)
+            context.apiKeysWithoutDevice.push(device1315Key)
+            const device1315Auth = `Bearer ${device1315Key.token}`
             const latestCheckpoint = `rrt_${numberOfTestsToRun + 1}`
             yield server
               .post(devicePath)
-              .set('Authorization', deviceAuth)
+              .set('Authorization', device1315Auth)
               .send({
                 checkpoint: latestCheckpoint,
-                operation: {
-                  data: {
-                    message: 'In Progress',
-                    type: 'deviceSync',
-                    statusId: 'InProgress',
-                  },
-                },
+                type: { id: 'RRT' },
+                site: { id: '1315' },
               })
               .then(res => {
                 assert.equal(res.status, 200)
               })
 
+            // FIXME when do we know generated result is available? Does it matter?
+            // We should get these on the next sync... but it stinks for testing
+            yield new Promise(resolve => setTimeout(resolve, 220))
+
             let offset = 0
             let historicalSyncComplete = false
             while (!historicalSyncComplete) {
-              offset -= 1
+              offset += 1
               historicalSyncComplete = yield server
                 .get(
                   `${devicePostResultPath}?checkpoint=${latestCheckpoint}&offset=${offset}`
                 )
-                .set('Authorization', deviceAuth)
+                .set('Authorization', device1315Auth)
                 .then(res => {
                   if (res.status === 404) {
                     return true
@@ -3239,7 +3242,7 @@ describe('Device Result API routes', () => {
                   },
                   sample: {
                     originSite: {
-                      id: '1615',
+                      id: '1315',
                     },
                   },
                   endedOn: subMinutes(testEndedOn, i),
@@ -3254,34 +3257,36 @@ describe('Device Result API routes', () => {
               yield setResultAsDeliverableAndApprove(context, lastResultId)
             }
 
-            // Start a sync operation with the latest check point
+            // Start a sync operation with a new check point
+            const device1315Key = yield* context.createApiKey(knex)
+            context.apiKeysWithoutDevice.push(device1315Key)
+            const device1315Auth = `Bearer ${device1315Key.token}`
             const latestCheckpoint = `rrt_${numberOfTestsToRun + 1}`
             yield server
               .post(devicePath)
-              .set('Authorization', deviceAuth)
+              .set('Authorization', device1315Auth)
               .send({
                 checkpoint: latestCheckpoint,
-                operation: {
-                  data: {
-                    message: 'In Progress',
-                    type: 'deviceSync',
-                    statusId: 'InProgress',
-                  },
-                },
+                type: { id: 'RRT' },
+                site: { id: '1315' },
               })
               .then(res => {
                 assert.equal(res.status, 200)
               })
 
+            // FIXME when do we know generated result is available? Does it matter?
+            // We should get these on the next sync... but it stinks for testing
+            yield new Promise(resolve => setTimeout(resolve, 220))
+
             let offset = 0
             let historicalSyncComplete = false
             while (!historicalSyncComplete) {
-              offset -= 1
+              offset += 1
               historicalSyncComplete = yield server
                 .get(
                   `${devicePostResultPath}?checkpoint=${latestCheckpoint}&offset=${offset}`
                 )
-                .set('Authorization', deviceAuth)
+                .set('Authorization', device1315Auth)
                 .then(res => {
                   if (res.status === 404) {
                     return true
@@ -3298,10 +3303,10 @@ describe('Device Result API routes', () => {
               // Download a historical result from the
               // checkpoint created when we started the
               // sync operation
-              const offset = -(i + 1)
+              const offset = i + 1
               yield server
                 .get(
-                  `${devicePostResultPath}?checkpoint=${latestCheckpoint}&offset=${offset}`
+                  `${devicePostResultPath}?checkpoint=rrt_0&offset=${offset}`
                 )
                 .set('Authorization', deviceAuth)
                 .then(res => {
@@ -3364,6 +3369,7 @@ describe('Device Result API routes', () => {
             )
             assert.isOk(partner.autoAcknowledgeOlderThanDays)
             assert.isOk(partner.numberToLeaveUnacknowledged)
+            assert.equal(partner.plugin, 'malawi')
 
             // We need to upload tests that ended recently (not historical results)
             const testEndedOn = subDays(
@@ -3407,33 +3413,35 @@ describe('Device Result API routes', () => {
             }
 
             // Start a sync operation with a new check point
+            const device1315Key = yield* context.createApiKey(knex)
+            context.apiKeysWithoutDevice.push(device1315Key)
+            const device1315Auth = `Bearer ${device1315Key.token}`
             const latestCheckpoint = `rrt_${numberOfTestsToRun + 1}`
             yield server
               .post(devicePath)
-              .set('Authorization', deviceAuth)
+              .set('Authorization', device1315Auth)
               .send({
                 checkpoint: latestCheckpoint,
-                operation: {
-                  data: {
-                    message: 'In Progress',
-                    type: 'deviceSync',
-                    statusId: 'InProgress',
-                  },
-                },
+                type: { id: 'RRT' },
+                site: { id: '1315' },
               })
               .then(res => {
                 assert.equal(res.status, 200)
               })
 
+            // FIXME when do we know generated result is available? Does it matter?
+            // We should get these on the next sync... but it stinks for testing
+            yield new Promise(resolve => setTimeout(resolve, 220))
+
             let offset = 0
             let historicalSyncComplete = false
             while (!historicalSyncComplete) {
-              offset -= 1
+              offset += 1
               historicalSyncComplete = yield server
                 .get(
                   `${devicePostResultPath}?checkpoint=${latestCheckpoint}&offset=${offset}`
                 )
-                .set('Authorization', deviceAuth)
+                .set('Authorization', device1315Auth)
                 .then(res => {
                   if (res.status === 404) {
                     return true
