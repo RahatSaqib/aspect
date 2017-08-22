@@ -1,0 +1,46 @@
+@import '../../globals/variables.css';
+
+.Container {
+  padding: 10px;
+}
+
+.FiltersGroup {
+  padding: 20px;
+  text-align: center;
+}
+
+.FiltersGroup__Child {
+  vertical-align: middle;
+  display: inline-block;
+  margin: 0 5px;
+}
+
+.FiltersGroup__Child--dropdown {
+  text-align: left;
+}
+
+.BtnGroup {
+  composes: FiltersGroup__Child;
+}
+
+.BtnGroup > .Button {
+  vertical-align: middle;
+}
+
+.BtnGroup > .Button:first-child {
+  border-radius: var(--toolbox-button-border-radius) 0 0
+    var(--toolbox-button-border-radius);
+}
+
+.BtnGroup > .Button:last-child {
+  border-radius: 0 var(--toolbox-button-border-radius)
+    var(--toolbox-button-border-radius) 0;
+}
+
+.Button--mini {
+  min-width: 40px;
+}
+
+.TaskDataTable {
+  composes: ComponentDataTable from '../../components/shared/DataTable.css';
+}

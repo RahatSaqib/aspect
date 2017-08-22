@@ -202,8 +202,6 @@ export function loginStart({ user, password }) {
         dispatch(
           loginSuccess(jwt.name, json.culture, json.timezone, jwt.permissions)
         )
-
-        history.push('/dashboard')
       })
       .catch(err => dispatch(loginFailure(err)))
   }

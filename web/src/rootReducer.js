@@ -20,6 +20,7 @@ import assay from './assay/AssayRedux'
 import consumable from './consumable/ConsumableRedux'
 import inventory from './inventory/InventoryRedux'
 import notification from './notification/NotificationRedux'
+import task from './task/TaskRedux'
 import report from './report/ReportRedux'
 import idle from './idle/IdleRedux'
 import jobs from './job/JobRedux'
@@ -49,6 +50,7 @@ const appReducer = combineReducers({
   inventory,
   idle,
   notification,
+  task,
   report,
   router,
   resultWorkflowStatus,
@@ -72,6 +74,7 @@ const App = Immutable.Record({
   geography: undefined,
   assay: undefined,
   notification: undefined,
+  task: undefined,
   report: undefined,
   result: undefined,
   jobs: undefined,
