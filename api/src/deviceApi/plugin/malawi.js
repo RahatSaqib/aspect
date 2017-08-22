@@ -245,6 +245,10 @@ function* generateHistoricalResults(
 
     Object.assign(processedResult, resultUpdates)
     yield knex('Result').where({ id: processedResult.id }).update(resultUpdates)
+    yield knex('ResultGeneratedResult').insert({
+      sourceResultId: resultId,
+      generatedResultId: processedResult.id,
+    })
 
     dispatch(notifyResultUpdated(processedResult.id, payload, 'MalawiPlugin'))
   }
@@ -300,6 +304,10 @@ function* mergeChaiResultToReporters(
         `Update from ${deviceName}`,
         now
       )
+      yield knex('ResultGeneratedResult').insert({
+        sourceResultId: resultId,
+        generatedResultId: processedResult.id,
+      })
     }
     dispatch(notifyResultUpdated(processedResult.id, payload, 'MalawiPlugin'))
   }

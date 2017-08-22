@@ -507,6 +507,23 @@ function* up(knex) {
     resultType.charset('utf8')
   })
 
+  yield knex.schema.createTable('ResultGeneratedResult', table => {
+    table
+      .integer('sourceResultId')
+      .unsigned()
+      .index()
+      .references('id')
+      .inTable('Result')
+    table
+      .integer('generatedResultId')
+      .unsigned()
+      .index()
+      .references('id')
+      .inTable('Result')
+    table.primary(['sourceResultId', 'generatedResultId'])
+    table.charset('utf8')
+  })
+
   yield knex.schema.createTable('ResultType', resultType => {
     resultType.increments('id')
     resultType.string('name').notNullable()
@@ -905,6 +922,7 @@ function* down(knex) {
   yield knex.schema.dropTableIfExists('Consumable')
   yield knex.schema.dropTableIfExists('ResultCategoryAssay')
   yield knex.schema.dropTableIfExists('ResultSource')
+  yield knex.schema.dropTableIfExists('ResultGeneratedResult')
   yield knex.schema.dropTableIfExists('ResultType')
   yield knex.schema.dropTableIfExists('ResultCategory')
   yield knex.schema.dropTableIfExists('ResultLog')
