@@ -14,7 +14,7 @@
     "dist": "npm-run-all \"webpack:dll -- --{1}\" \"webpack:src -- --{1}\" -- env.ASPECT_TARGET=dist",
     "pretest": "fsys --task=remove --fileFolder=coverage && fsys --task=remove --fileFolder=mocha.json",
     "test": "cross-env ASPECT_TARGET=test BABEL_ENV=test JEST_FILE=mocha.json jest --config ./jest.json --coverage",
-    "test:snapshot": "cross-env ASPECT_TARGET=test BABEL_ENV=test JEST_FILE=mocha.json jest --config ./jest.json -u",
+    "test:snapshot": "npm run test -- -u",
     "test:watch": "npm run test -- --watch",
     "posttest": "npm run lint",
     "preupdatemessages:start": "cross-env BABEL_ENV=message babel --quiet --out-dir ./i18n/dist ./src",
