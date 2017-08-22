@@ -820,8 +820,7 @@ function onResultLogged({ resultId }) {
       resultId,
     }
     yield* onResultLogged(pluginContext)
-  })
-  context.commit()
+  }).then(() => context.commit())
 }
 
 addListener(RESULT_UPDATED, onResultUpdated)

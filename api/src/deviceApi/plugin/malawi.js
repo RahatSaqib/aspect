@@ -126,7 +126,7 @@ function* onResultLogged({ knex, dispatch, resultId, now }) {
   }
 }
 
-function* purgePreviousResults(knex, deviceId) {
+function* purgePreviousResults(/* knex, deviceId */) {
   // FIXME purge previous results for device ID
 }
 
@@ -360,16 +360,13 @@ function* checkResultDeliverable(context, result) {
 }
 
 function patientDataIsComplete(patientData) {
-  if (
+  return (
     patientData.name &&
     patientData.surname &&
     patientData.age &&
     patientData.gender &&
     (patientData.artNumber || patientData.hccNumber)
-  ) {
-    return true
-  }
-  return false
+  )
 }
 
 function* updateResultWorkflowStatusOnGetResult(

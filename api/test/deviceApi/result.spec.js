@@ -2140,12 +2140,20 @@ describe('Device Result API routes', () => {
               resultText: '454112',
               copies: 454112,
             },
+            patient: {
+              name: 'Bob',
+              surname: 'Hope',
+              age: 312,
+              gender: 'M',
+              artNumber: '1341kjkj',
+            },
             sample: {
               originSite: {
                 id: '1315',
               },
             },
             assay: { id: 'HivVl' },
+            workflow: { status: { id: 'Validated' } },
             notes: '454,112 Copies / mL',
           })
           .then(res => {
@@ -2153,7 +2161,10 @@ describe('Device Result API routes', () => {
           })
 
         let lastResultId = yield* getLastResultId(knex, deviceLab.id)
-        yield setResultAsDeliverableAndApprove(context, lastResultId)
+        yield approveResult(context, lastResultId)
+        // FIXME when do we know generated result is available? Does it matter?
+        // We should get these on the next sync... but it stinks for testing
+        yield new Promise(resolve => setTimeout(resolve, 100))
 
         yield server
           .get(`${devicePath}?checkpoint=rrt_0`)
@@ -2176,6 +2187,7 @@ describe('Device Result API routes', () => {
             assert.property(lastResult.sample.originSite, 'id')
             assert.equal(lastResult.sample.originSite.id, '1315')
             assert.property(lastResult.workflow, 'changedOn')
+            assert.equal(lastResult.workflow.status.id, 'Delivered')
 
             assert.deepEqual(
               _.omit(lastResult, 'sample', 'workflow', 'location'),
@@ -2184,6 +2196,13 @@ describe('Device Result API routes', () => {
                 data: {
                   resultText: '454112',
                   copies: 454112,
+                },
+                patient: {
+                  name: 'Bob',
+                  surname: 'Hope',
+                  age: 312,
+                  gender: 'M',
+                  artNumber: '1341kjkj',
                 },
                 assay: { id: 'HivVl' },
                 category: [{ id: 'Success' }],
@@ -2206,22 +2225,27 @@ describe('Device Result API routes', () => {
             assert.property(lastResult.sample.originSite, 'id')
             assert.equal(lastResult.sample.originSite.id, '1315')
             assert.property(lastResult.workflow, 'changedOn')
+            assert.equal(lastResult.workflow.status.id, 'Delivered')
 
-            assert.deepEqual(
-              _.omit(lastResult, 'sample', 'workflow', 'location'),
-              {
-                id: device1315ExternalId,
-                data: {
-                  resultText: '454112',
-                  copies: 454112,
-                },
-                assay: { id: 'HivVl' },
-                category: [{ id: 'Success' }],
-                type: { id: 'Patient' },
-                source: { id: 'DiagnosticDevice' },
-                notes: '454,112 Copies / mL',
-              }
-            )
+            assert.deepEqual(_.omit(lastResult, 'sample', 'workflow'), {
+              id: device1315ExternalId,
+              data: {
+                resultText: '454112',
+                copies: 454112,
+              },
+              patient: {
+                name: 'Bob',
+                surname: 'Hope',
+                age: 312,
+                gender: 'M',
+                artNumber: '1341kjkj',
+              },
+              assay: { id: 'HivVl' },
+              category: [{ id: 'Success' }],
+              type: { id: 'Patient' },
+              source: { id: 'DiagnosticDevice' },
+              notes: '454,112 Copies / mL',
+            })
           })
 
         yield server
@@ -2245,11 +2269,17 @@ describe('Device Result API routes', () => {
                   resultText: '454112',
                   copies: 454112,
                 },
+                patient: {
+                  name: 'Bob',
+                  surname: 'Hope',
+                  age: 312,
+                  gender: 'M',
+                  artNumber: '1341kjkj',
+                },
                 assay: { id: 'HivVl' },
                 category: [{ id: 'Success' }],
                 type: { id: 'Patient' },
                 source: { id: 'DiagnosticDevice' },
-                notes: '454,112 Copies / mL',
               }
             )
           })
@@ -2272,12 +2302,20 @@ describe('Device Result API routes', () => {
               resultText: '154112',
               copies: 154112,
             },
+            patient: {
+              name: 'Fran',
+              surname: 'Love',
+              age: 231,
+              gender: 'F',
+              artNumber: '2341sfkj',
+            },
             sample: {
               originSite: {
                 id: '1723',
               },
             },
             assay: { id: 'HivVl' },
+            workflow: { status: { id: 'Validated' } },
             notes: '154,112 Copies / mL',
           })
           .then(res => {
@@ -2285,10 +2323,95 @@ describe('Device Result API routes', () => {
           })
 
         lastResultId = yield* getLastResultId(knex, deviceLab.id)
-        yield setResultAsDeliverableAndApprove(context, lastResultId)
+        yield approveResult(context, lastResultId)
+
+        // FIXME when do we know generated result is available? Does it matter?
+        // We should get these on the next sync... but it stinks for testing
+        yield new Promise(resolve => setTimeout(resolve, 100))
 
         yield server
-          .get(`${devicePath}?checkpoint=rrt_0&offset=3`)
+          .get(`${devicePath}?checkpoint=rrt1723_0&offset=1`)
+          .set('Authorization', device1723Auth)
+          .then(res => {
+            assert.equal(res.status, 200)
+            assert.typeOf(res.body.checkpoint, 'undefined')
+
+            const lastResult = res.body.result
+            assert.typeOf(lastResult, 'Object')
+            assert.property(lastResult.sample.originSite, 'id')
+            assert.equal(lastResult.sample.originSite.id, '1723')
+            assert.property(lastResult.workflow, 'changedOn')
+
+            assert.deepEqual(
+              _.omit(lastResult, 'sample', 'workflow', 'location'),
+              {
+                id: device1723ExternalId,
+                data: {
+                  resultText: '154112',
+                  copies: 154112,
+                },
+                patient: {
+                  name: 'Fran',
+                  surname: 'Love',
+                  age: 231,
+                  gender: 'F',
+                  artNumber: '2341sfkj',
+                },
+                assay: { id: 'HivVl' },
+                category: [{ id: 'Success' }],
+                type: { id: 'Patient' },
+                source: { id: 'DiagnosticDevice' },
+              }
+            )
+          })
+
+        yield server
+          .get(`${devicePath}?checkpoint=rrt1723_0&offset=5`)
+          .set('Authorization', device1723Auth)
+          .then(res => {
+            assert.equal(res.status, 404)
+          })
+
+        yield server
+          .get(`${devicePath}?checkpoint=rrt_0&offset=5`)
+          .set('Authorization', deviceAuth)
+          .then(res => {
+            assert.equal(res.status, 200)
+            assert.equal(res.body.checkpoint, 'rrt_2')
+
+            const lastResult = res.body.result
+            assert.typeOf(lastResult, 'Object')
+            assert.property(lastResult.sample.originSite, 'id')
+            assert.equal(lastResult.sample.originSite.id, '1723')
+            assert.property(lastResult.workflow, 'changedOn')
+            assert.equal(lastResult.workflow.status.id, 'Delivered')
+
+            assert.deepEqual(
+              _.omit(lastResult, 'sample', 'workflow', 'location'),
+              {
+                id: device1723ExternalId,
+                data: {
+                  resultText: '154112',
+                  copies: 154112,
+                },
+                patient: {
+                  name: 'Fran',
+                  surname: 'Love',
+                  age: 231,
+                  gender: 'F',
+                  artNumber: '2341sfkj',
+                },
+                assay: { id: 'HivVl' },
+                category: [{ id: 'Success' }],
+                type: { id: 'Patient' },
+                source: { id: 'DiagnosticDevice' },
+                notes: '154,112 Copies / mL',
+              }
+            )
+          })
+
+        yield server
+          .get(`${devicePath}?checkpoint=rrt_1&offset=4`)
           .set('Authorization', deviceAuth)
           .then(res => {
             assert.equal(res.status, 200)
@@ -2308,35 +2431,12 @@ describe('Device Result API routes', () => {
                   resultText: '154112',
                   copies: 154112,
                 },
-                assay: { id: 'HivVl' },
-                category: [{ id: 'Success' }],
-                type: { id: 'Patient' },
-                source: { id: 'DiagnosticDevice' },
-                notes: '154,112 Copies / mL',
-              }
-            )
-          })
-
-        yield server
-          .get(`${devicePath}?checkpoint=rrt_1&offset=2`)
-          .set('Authorization', deviceAuth)
-          .then(res => {
-            assert.equal(res.status, 200)
-            assert.equal(res.body.checkpoint, 'rrt_2')
-
-            const lastResult = res.body.result
-            assert.typeOf(lastResult, 'Object')
-            assert.property(lastResult.sample.originSite, 'id')
-            assert.equal(lastResult.sample.originSite.id, '1723')
-            assert.property(lastResult.workflow, 'changedOn')
-
-            assert.deepEqual(
-              _.omit(lastResult, 'sample', 'workflow', 'location'),
-              {
-                id: device1723ExternalId,
-                data: {
-                  resultText: '154112',
-                  copies: 154112,
+                patient: {
+                  name: 'Fran',
+                  surname: 'Love',
+                  age: 231,
+                  gender: 'F',
+                  artNumber: '2341sfkj',
                 },
                 assay: { id: 'HivVl' },
                 category: [{ id: 'Success' }],
@@ -2368,6 +2468,13 @@ describe('Device Result API routes', () => {
                   resultText: '154112',
                   copies: 154112,
                 },
+                patient: {
+                  name: 'Fran',
+                  surname: 'Love',
+                  age: 231,
+                  gender: 'F',
+                  artNumber: '2341sfkj',
+                },
                 assay: { id: 'HivVl' },
                 category: [{ id: 'Success' }],
                 type: { id: 'Patient' },
@@ -2378,7 +2485,7 @@ describe('Device Result API routes', () => {
           })
 
         yield server
-          .get(`${devicePath}?checkpoint=rrt_2&offset=-2`)
+          .get(`${devicePath}?checkpoint=rrt_2&offset=-4`)
           .set('Authorization', deviceAuth)
           .then(res => {
             assert.equal(res.status, 200)
@@ -2398,6 +2505,13 @@ describe('Device Result API routes', () => {
                   resultText: '454112',
                   copies: 454112,
                 },
+                patient: {
+                  name: 'Bob',
+                  surname: 'Hope',
+                  age: 312,
+                  gender: 'M',
+                  artNumber: '1341kjkj',
+                },
                 assay: { id: 'HivVl' },
                 category: [{ id: 'Success' }],
                 type: { id: 'Patient' },
@@ -2405,43 +2519,6 @@ describe('Device Result API routes', () => {
                 notes: '454,112 Copies / mL',
               }
             )
-          })
-
-        yield server
-          .get(`${devicePath}?checkpoint=rrt1723_0&offset=1`)
-          .set('Authorization', device1723Auth)
-          .then(res => {
-            assert.equal(res.status, 200)
-            assert.typeOf(res.body.checkpoint, 'undefined')
-
-            const lastResult = res.body.result
-            assert.typeOf(lastResult, 'Object')
-            assert.property(lastResult.sample.originSite, 'id')
-            assert.equal(lastResult.sample.originSite.id, '1723')
-            assert.property(lastResult.workflow, 'changedOn')
-
-            assert.deepEqual(
-              _.omit(lastResult, 'sample', 'workflow', 'location'),
-              {
-                id: device1723ExternalId,
-                data: {
-                  resultText: '154112',
-                  copies: 154112,
-                },
-                assay: { id: 'HivVl' },
-                category: [{ id: 'Success' }],
-                type: { id: 'Patient' },
-                source: { id: 'DiagnosticDevice' },
-                notes: '154,112 Copies / mL',
-              }
-            )
-          })
-
-        yield server
-          .get(`${devicePath}?checkpoint=rrt1723_0&offset=3`)
-          .set('Authorization', device1723Auth)
-          .then(res => {
-            assert.equal(res.status, 404)
           })
 
         yield server
@@ -2465,17 +2542,23 @@ describe('Device Result API routes', () => {
                   resultText: '454112',
                   copies: 454112,
                 },
+                patient: {
+                  name: 'Bob',
+                  surname: 'Hope',
+                  age: 312,
+                  gender: 'M',
+                  artNumber: '1341kjkj',
+                },
                 assay: { id: 'HivVl' },
                 category: [{ id: 'Success' }],
                 type: { id: 'Patient' },
                 source: { id: 'DiagnosticDevice' },
-                notes: '454,112 Copies / mL',
               }
             )
           })
 
         yield server
-          .get(`${devicePath}?checkpoint=rrt1315_0&offset=3`)
+          .get(`${devicePath}?checkpoint=rrt1315_0&offset=5`)
           .set('Authorization', device1315Auth)
           .then(res => {
             assert.equal(res.status, 404)
@@ -2506,6 +2589,10 @@ describe('Device Result API routes', () => {
             assert.equal(res.status, 200)
           })
 
+        // FIXME when do we know generated result is available? Does it matter?
+        // We should get these on the next sync... but it stinks for testing
+        yield new Promise(resolve => setTimeout(resolve, 100))
+
         yield server
           .get(devicePath)
           .set('Authorization', deviceAuth)
@@ -2528,6 +2615,13 @@ describe('Device Result API routes', () => {
                 data: {
                   resultText: '154112',
                   copies: 154112,
+                },
+                patient: {
+                  name: 'Fran',
+                  surname: 'Love',
+                  age: 231,
+                  gender: 'F',
+                  artNumber: '2341sfkj',
                 },
                 assay: { id: 'HivVl' },
                 category: [{ id: 'Success' }],
@@ -2560,11 +2654,17 @@ describe('Device Result API routes', () => {
                   resultText: '154112',
                   copies: 154112,
                 },
+                patient: {
+                  name: 'Fran',
+                  surname: 'Love',
+                  age: 231,
+                  gender: 'F',
+                  artNumber: '2341sfkj',
+                },
                 assay: { id: 'HivVl' },
                 category: [{ id: 'Success' }],
                 type: { id: 'Patient' },
                 source: { id: 'DiagnosticDevice' },
-                notes: '154,112 Copies / mL',
               }
             )
           })
@@ -2591,11 +2691,17 @@ describe('Device Result API routes', () => {
                   resultText: '154112',
                   copies: 154112,
                 },
+                patient: {
+                  name: 'Fran',
+                  surname: 'Love',
+                  age: 231,
+                  gender: 'F',
+                  artNumber: '2341sfkj',
+                },
                 assay: { id: 'HivVl' },
                 category: [{ id: 'Success' }],
                 type: { id: 'Patient' },
                 source: { id: 'DiagnosticDevice' },
-                notes: '154,112 Copies / mL',
               }
             )
           })
@@ -2621,6 +2727,14 @@ describe('Device Result API routes', () => {
               copies: 155115,
             },
             assay: { id: 'HivVl' },
+            patient: {
+              name: 'Frank',
+              surname: 'Nice',
+              age: 931,
+              gender: 'M',
+              artNumber: '320113j',
+            },
+            workflow: { status: { id: 'Validated' } },
             sample: {
               originSite: {
                 id: '1723',
@@ -2633,10 +2747,14 @@ describe('Device Result API routes', () => {
           })
 
         lastResultId = yield* getLastResultId(knex, deviceLab.id)
-        yield setResultAsDeliverableAndApprove(context, lastResultId)
+        yield approveResult(context, lastResultId)
+
+        // FIXME when do we know generated result is available? Does it matter?
+        // We should get these on the next sync... but it stinks for testing
+        yield new Promise(resolve => setTimeout(resolve, 220))
 
         yield server
-          .get(`${devicePath}?checkpoint=rrt_0&offset=3`)
+          .get(`${devicePath}?checkpoint=rrt_0&offset=5`)
           .set('Authorization', deviceAuth)
           .then(res => {
             assert.equal(res.status, 200)
@@ -2656,6 +2774,13 @@ describe('Device Result API routes', () => {
                   resultText: '154112',
                   copies: 154112,
                 },
+                patient: {
+                  name: 'Fran',
+                  surname: 'Love',
+                  age: 231,
+                  gender: 'F',
+                  artNumber: '2341sfkj',
+                },
                 assay: { id: 'HivVl' },
                 category: [{ id: 'Success' }],
                 type: { id: 'Patient' },
@@ -2666,7 +2791,7 @@ describe('Device Result API routes', () => {
           })
 
         yield server
-          .get(`${devicePath}?checkpoint=rrt_0&offset=5`)
+          .get(`${devicePath}?checkpoint=rrt_0&offset=10`)
           .set('Authorization', deviceAuth)
           .then(res => {
             assert.equal(res.status, 200)
@@ -2685,6 +2810,13 @@ describe('Device Result API routes', () => {
                   resultText: '155115',
                   copies: 155115,
                 },
+                patient: {
+                  name: 'Frank',
+                  surname: 'Nice',
+                  age: 931,
+                  gender: 'M',
+                  artNumber: '320113j',
+                },
                 assay: { id: 'HivVl' },
                 category: [{ id: 'Success' }],
                 type: { id: 'Patient' },
@@ -2695,7 +2827,7 @@ describe('Device Result API routes', () => {
           })
 
         yield server
-          .get(`${devicePath}?checkpoint=rrt_1&offset=2`)
+          .get(`${devicePath}?checkpoint=rrt_1&offset=4`)
           .set('Authorization', deviceAuth)
           .then(res => {
             assert.equal(res.status, 200)
@@ -2714,6 +2846,13 @@ describe('Device Result API routes', () => {
                 data: {
                   resultText: '154112',
                   copies: 154112,
+                },
+                patient: {
+                  name: 'Fran',
+                  surname: 'Love',
+                  age: 231,
+                  gender: 'F',
+                  artNumber: '2341sfkj',
                 },
                 assay: { id: 'HivVl' },
                 category: [{ id: 'Success' }],
@@ -2745,6 +2884,13 @@ describe('Device Result API routes', () => {
                   resultText: '154112',
                   copies: 154112,
                 },
+                patient: {
+                  name: 'Fran',
+                  surname: 'Love',
+                  age: 231,
+                  gender: 'F',
+                  artNumber: '2341sfkj',
+                },
                 assay: { id: 'HivVl' },
                 category: [{ id: 'Success' }],
                 type: { id: 'Patient' },
@@ -2774,6 +2920,13 @@ describe('Device Result API routes', () => {
                   resultText: '454112',
                   copies: 454112,
                 },
+                patient: {
+                  name: 'Bob',
+                  surname: 'Hope',
+                  age: 312,
+                  gender: 'M',
+                  artNumber: '1341kjkj',
+                },
                 assay: { id: 'HivVl' },
                 category: [{ id: 'Success' }],
                 type: { id: 'Patient' },
@@ -2784,7 +2937,7 @@ describe('Device Result API routes', () => {
           })
 
         yield server
-          .get(`${devicePath}?checkpoint=rrt_3&offset=-3`)
+          .get(`${devicePath}?checkpoint=rrt_3&offset=-6`)
           .set('Authorization', deviceAuth)
           .then(res => {
             assert.equal(res.status, 200)
@@ -2803,6 +2956,13 @@ describe('Device Result API routes', () => {
                   resultText: '454112',
                   copies: 454112,
                 },
+                patient: {
+                  name: 'Bob',
+                  surname: 'Hope',
+                  age: 312,
+                  gender: 'M',
+                  artNumber: '1341kjkj',
+                },
                 assay: { id: 'HivVl' },
                 category: [{ id: 'Success' }],
                 type: { id: 'Patient' },
@@ -2811,6 +2971,10 @@ describe('Device Result API routes', () => {
               }
             )
           })
+
+        // FIXME when do we know generated result is available? Does it matter?
+        // We should get these on the next sync... but it stinks for testing
+        yield new Promise(resolve => setTimeout(resolve, 100))
       }))
 
     it('should set the status of a result to delivered when it is sent to a terminal', () =>
