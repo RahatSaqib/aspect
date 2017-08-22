@@ -1,9 +1,11 @@
+@import './globals/variables.css';
+
 /* global styles */
 body {
   font-family: Lato, sans-serif;
   padding: 0;
   margin: 0;
-  background-color: #eef1f8;
+  background-color: var(--aspect-color-grey-7);
 }
 
 a {
