@@ -7,9 +7,11 @@ const { notifyResultUpdated } = require('../../messages')
 const { mergeResult, getResult } = require('../result')
 
 const DEVICE_TYPE_CHAI = 'CHAI'
+const RESULT_SOURCE_CHAI = 'LIMS'
 // TODO do we want to change Reporter external ID to Reporter?
 // Will also require update to sync scripts on Reporters...
 const DEVICE_TYPE_REPORTER = 'RRT'
+const RESULT_SOURCE_REPORTER = 'Generated'
 
 const VALIDATED_EXTERNALID = 'Validated'
 const DELIVERABLE_EXTERNALID = 'Deliverable'
@@ -66,6 +68,15 @@ function* postProcessMergeResult(context, result, previousResult) {
   // yield* consumeInventoryForResult(knex, payload, result)
   yield* checkResultDeliverable(context, result)
   return {}
+}
+
+function* transformMergeResultPayload({ payload, deviceType }) {
+  if (deviceType === DEVICE_TYPE_CHAI) {
+    payload.source = { id: RESULT_SOURCE_CHAI }
+  } else if (deviceType === DEVICE_TYPE_REPORTER) {
+    payload.source = { id: RESULT_SOURCE_REPORTER }
+  }
+  return payload
 }
 
 function* postProcessUpdateSite(context, site, previousSite) {
@@ -351,6 +362,7 @@ function reporterResultFromChaiResult(chaiResult) {
   return {
     id: chaiResult.id,
     assay: { id: chaiResult.assay.id },
+    source: { id: RESULT_SOURCE_REPORTER },
     sample: chaiResult.sample,
     data: chaiResult.data,
     patient: chaiResult.patient,
@@ -462,4 +474,5 @@ module.exports = {
   postProcessMergeResult,
   postProcessUpdateSite,
   onResultLogged,
+  transformMergeResultPayload,
 }

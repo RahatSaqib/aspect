@@ -1040,6 +1040,12 @@ function* seed(knex) {
     externalId: 'EnteredByHand',
   })
 
+  yield knex('ResultSource').insert({
+    name: 'Generated',
+    i18nKey: 'resultSourceGenerated',
+    externalId: 'Generated',
+  })
+
   // Result types
   const [resultTypePatientId] = yield knex('ResultType').insert({
     name: 'Patient',

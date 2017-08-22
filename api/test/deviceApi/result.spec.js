@@ -2206,7 +2206,7 @@ describe('Device Result API routes', () => {
                 assay: { id: 'HivVl' },
                 category: [{ id: 'Success' }],
                 type: { id: 'Patient' },
-                source: { id: 'DiagnosticDevice' },
+                source: { id: 'LIMS' },
                 notes: '454,112 Copies / mL',
               }
             )
@@ -2242,7 +2242,7 @@ describe('Device Result API routes', () => {
               assay: { id: 'HivVl' },
               category: [{ id: 'Success' }],
               type: { id: 'Patient' },
-              source: { id: 'DiagnosticDevice' },
+              source: { id: 'LIMS' },
               notes: '454,112 Copies / mL',
             })
           })
@@ -2278,7 +2278,7 @@ describe('Device Result API routes', () => {
                 assay: { id: 'HivVl' },
                 category: [{ id: 'Success' }],
                 type: { id: 'Patient' },
-                source: { id: 'DiagnosticDevice' },
+                source: { id: 'Generated' },
               }
             )
           })
@@ -2355,7 +2355,7 @@ describe('Device Result API routes', () => {
                 assay: { id: 'HivVl' },
                 category: [{ id: 'Success' }],
                 type: { id: 'Patient' },
-                source: { id: 'DiagnosticDevice' },
+                source: { id: 'Generated' },
               }
             )
           })
@@ -2399,7 +2399,7 @@ describe('Device Result API routes', () => {
                 assay: { id: 'HivVl' },
                 category: [{ id: 'Success' }],
                 type: { id: 'Patient' },
-                source: { id: 'DiagnosticDevice' },
+                source: { id: 'LIMS' },
                 notes: '154,112 Copies / mL',
               }
             )
@@ -2436,7 +2436,7 @@ describe('Device Result API routes', () => {
                 assay: { id: 'HivVl' },
                 category: [{ id: 'Success' }],
                 type: { id: 'Patient' },
-                source: { id: 'DiagnosticDevice' },
+                source: { id: 'LIMS' },
                 notes: '154,112 Copies / mL',
               }
             )
@@ -2473,7 +2473,7 @@ describe('Device Result API routes', () => {
                 assay: { id: 'HivVl' },
                 category: [{ id: 'Success' }],
                 type: { id: 'Patient' },
-                source: { id: 'DiagnosticDevice' },
+                source: { id: 'LIMS' },
                 notes: '154,112 Copies / mL',
               }
             )
@@ -2510,7 +2510,7 @@ describe('Device Result API routes', () => {
                 assay: { id: 'HivVl' },
                 category: [{ id: 'Success' }],
                 type: { id: 'Patient' },
-                source: { id: 'DiagnosticDevice' },
+                source: { id: 'LIMS' },
                 notes: '454,112 Copies / mL',
               }
             )
@@ -2547,7 +2547,7 @@ describe('Device Result API routes', () => {
                 assay: { id: 'HivVl' },
                 category: [{ id: 'Success' }],
                 type: { id: 'Patient' },
-                source: { id: 'DiagnosticDevice' },
+                source: { id: 'Generated' },
               }
             )
           })
@@ -2621,7 +2621,7 @@ describe('Device Result API routes', () => {
                 assay: { id: 'HivVl' },
                 category: [{ id: 'Success' }],
                 type: { id: 'Patient' },
-                source: { id: 'DiagnosticDevice' },
+                source: { id: 'LIMS' },
                 notes: '154,112 Copies / mL',
               }
             )
@@ -2659,7 +2659,7 @@ describe('Device Result API routes', () => {
                 assay: { id: 'HivVl' },
                 category: [{ id: 'Success' }],
                 type: { id: 'Patient' },
-                source: { id: 'DiagnosticDevice' },
+                source: { id: 'Generated' },
               }
             )
           })
@@ -2696,7 +2696,7 @@ describe('Device Result API routes', () => {
                 assay: { id: 'HivVl' },
                 category: [{ id: 'Success' }],
                 type: { id: 'Patient' },
-                source: { id: 'DiagnosticDevice' },
+                source: { id: 'Generated' },
               }
             )
           })
@@ -2775,7 +2775,7 @@ describe('Device Result API routes', () => {
                 assay: { id: 'HivVl' },
                 category: [{ id: 'Success' }],
                 type: { id: 'Patient' },
-                source: { id: 'DiagnosticDevice' },
+                source: { id: 'LIMS' },
                 notes: '154,112 Copies / mL',
               }
             )
@@ -2811,7 +2811,7 @@ describe('Device Result API routes', () => {
                 assay: { id: 'HivVl' },
                 category: [{ id: 'Success' }],
                 type: { id: 'Patient' },
-                source: { id: 'DiagnosticDevice' },
+                source: { id: 'LIMS' },
                 notes: '155,115 Copies / mL',
               }
             )
@@ -2848,7 +2848,7 @@ describe('Device Result API routes', () => {
                 assay: { id: 'HivVl' },
                 category: [{ id: 'Success' }],
                 type: { id: 'Patient' },
-                source: { id: 'DiagnosticDevice' },
+                source: { id: 'LIMS' },
                 notes: '154,112 Copies / mL',
               }
             )
@@ -2885,7 +2885,7 @@ describe('Device Result API routes', () => {
                 assay: { id: 'HivVl' },
                 category: [{ id: 'Success' }],
                 type: { id: 'Patient' },
-                source: { id: 'DiagnosticDevice' },
+                source: { id: 'LIMS' },
                 notes: '154,112 Copies / mL',
               }
             )
@@ -2921,7 +2921,7 @@ describe('Device Result API routes', () => {
                 assay: { id: 'HivVl' },
                 category: [{ id: 'Success' }],
                 type: { id: 'Patient' },
-                source: { id: 'DiagnosticDevice' },
+                source: { id: 'LIMS' },
                 notes: '454,112 Copies / mL',
               }
             )
@@ -2957,7 +2957,7 @@ describe('Device Result API routes', () => {
                 assay: { id: 'HivVl' },
                 category: [{ id: 'Success' }],
                 type: { id: 'Patient' },
-                source: { id: 'DiagnosticDevice' },
+                source: { id: 'LIMS' },
                 notes: '454,112 Copies / mL',
               }
             )
