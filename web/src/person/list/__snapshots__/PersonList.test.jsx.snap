@@ -11,7 +11,7 @@ exports[`Person List module PersonList component should shallow render correctly
   <Connect(lifecycle(Component))
     title="Contacts"
   />
-  <pure(withProps(withHandlers(Connect(BrowseFilters))))
+  <pure(withProps(withHandlers(Connect(Component))))
     config={
       Object {
         "contactNameOrEmail": true,
