@@ -6,9 +6,10 @@ const cssClasses = classnames.bind(require('./Status.css'))
 
 const enhance = _.identity
 
-export const Title = ({ colorClassName, title }) =>
-  <div className={cssClasses('Title')}>
-    <div className={cssClasses('Title__Color', colorClassName)} />
+export const Title = ({ className, colorClassName, title }) =>
+  <div className={cssClasses('Title', className)}>
+    {colorClassName &&
+      <div className={cssClasses('Title__Color', colorClassName)} />}
     {title}
   </div>
 

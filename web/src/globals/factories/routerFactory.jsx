@@ -14,6 +14,7 @@ import LoadableLogin from '../../auth/login/LoadableLogin'
 import ResetPassword from '../../auth/resetPassword/ResetPassword'
 import LoadableStatus from '../../dashboard/status/LoadableStatus'
 import TaskList from '../../task/list/TaskList'
+import OperationalData from '../../dashboard/operational/OperationalData'
 import DeviceDemo from '../../demo/device/DeviceDemo'
 import DeviceList from '../../device/list/DeviceList'
 import DeviceDetail from '../../device/detail/DeviceDetail'
@@ -48,10 +49,10 @@ const renderLoadableLogin = signedOutFactory(LoadableLogin)
 const renderResetPassword = signedOutFactory(ResetPassword)
 const renderLoadableStatus = loggedInFactory(LoadableStatus)
 const renderTaskList = loggedInFactory(TaskList)
+const renderOperationalData = loggedInFactory(OperationalData)
 const renderAccountDetails = loggedInFactory(AccountDetails)
 const renderDeviceDemo = loggedInFactory(DeviceDemo)
 /* TODO: real components */
-const renderOperationalData = notImplementedLoggedInFactory('Operational Data')
 const renderClinicalIndicators = notImplementedLoggedInFactory(
   'Clinical Indicators'
 )
@@ -86,12 +87,12 @@ export const routerFactory = () => () =>
 
       <Route exact path="/dashboard" render={renderLoadableStatus} />
       <Route path="/task-list" render={renderTaskList} />
+      <Route path="/operational-data" render={renderOperationalData} />
 
       <Route path="/account-details/current" render={renderAccountDetails} />
 
       <Route path="/demo/device/:deviceId" render={renderDeviceDemo} />
 
-      <Route path="/operational-data" render={renderOperationalData} />
       <Route path="/clinical-indicators" render={renderClinicalIndicators} />
       <Route path="/reports" render={renderReports} />
       <Route path="/manage" render={renderManage} />
