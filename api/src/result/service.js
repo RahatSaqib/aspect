@@ -174,7 +174,10 @@ function* getListResults(query, auth) {
     .leftJoin('SampleType as stp', 'sp.sampleTypeId', 'stp.id')
     .leftJoin('Site as so', 'sp.originSiteId', 'so.id')
     .leftJoin('ResultWorkflowStatus as rs', 'r.resultWorkflowStatusId', 'rs.id')
+    .leftJoin('ResultSource as rsrc', 'r.resultSourceId', 'rsrc.id')
     .leftJoin('Site as sr', 'r.siteId', 'sr.id')
+    // Filter Generated results for now until we come up with appropriate UI
+    .where('rsrc.externalId', '<>', 'Generated')
     .modify(filterDateRangeParams, query, 'r.endedOn')
     .modify(filterParams, query, {
       deviceId: 'd.id',
