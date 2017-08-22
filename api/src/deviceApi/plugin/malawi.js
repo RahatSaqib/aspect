@@ -19,6 +19,7 @@ const DELIVERED_EXTERNALID = 'Delivered'
 const ACKNOWLEDGED_EXTERNALID = 'Acknowledged'
 const FLAGGED_EXTERNALID = 'Flagged'
 const ERROR_EXTERNALID = 'Error'
+const PURGED_EXTERNALID = 'Purged'
 
 const DONOT_LOG_DELIVERED = [
   DELIVERED_EXTERNALID,
@@ -82,7 +83,7 @@ function* transformMergeResultPayload({ payload, deviceType }) {
 function* postProcessUpdateSite(context, site, previousSite) {
   const { knex, dispatch, deviceId, deviceType, now } = context
   if (deviceType === DEVICE_TYPE_REPORTER && site.id !== previousSite.id) {
-    yield* purgePreviousResults(knex, deviceId)
+    yield* purgePreviousResults(knex, dispatch, deviceId, now)
     yield* generateHistoricalResults(knex, dispatch, deviceId, site.id, now)
   }
 }
@@ -137,8 +138,32 @@ function* onResultLogged({ knex, dispatch, resultId, now }) {
   }
 }
 
-function* purgePreviousResults(/* knex, deviceId */) {
-  // FIXME purge previous results for device ID
+function* purgePreviousResults(knex, dispatch, deviceId, now) {
+  const { id: purgedStatusId } = yield knex('ResultWorkflowStatus')
+    .where({ externalId: PURGED_EXTERNALID })
+    .first('id')
+  yield knex('Result')
+    .where({ deviceId })
+    .update({ resultWorkflowStatusId: purgedStatusId })
+  const resultIds = yield knex('Result as r')
+    .join('Device as d', 'r.deviceId', 'd.id')
+    .where({
+      'd.id': deviceId,
+      'r.resultWorkflowStatusId': purgedStatusId,
+    })
+    .select('r.id as resultId', 'd.name as deviceName')
+  const payload = { resultWorkflowStatus: PURGED_EXTERNALID }
+  for (const { resultId, deviceName } of resultIds) {
+    yield knex('ResultWorkflowLog').insert({
+      resultId,
+      resultWorkflowStatusId: purgedStatusId,
+      operator: '',
+      reason: `Purge Result from ${deviceName} on change of site`,
+      createdOn: now,
+      changedOn: now,
+    })
+    dispatch(notifyResultUpdated(resultId, payload, 'MalawiPlugin'))
+  }
 }
 
 function* generateHistoricalResults(
