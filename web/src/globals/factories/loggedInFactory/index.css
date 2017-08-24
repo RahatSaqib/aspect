@@ -45,7 +45,7 @@
 
 .IconMenu__icon:not([disabled]).IconMenu__icon:not([disabled]) {
   /* specificity++ */
-  color: var(--aspect-color-mountain);
+  color: var(--aspect-color-grey-4);
 }
 
 .Link__link.Link__link {
@@ -101,7 +101,7 @@
 .Link__icon {
   composes: icon;
   fill: currentColor;
-  color: var(--aspect-color-mountain);
+  color: var(--aspect-color-grey-4);
 }
 
 .MenuItem__caption {

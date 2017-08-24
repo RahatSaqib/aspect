@@ -3,9 +3,9 @@ import { compose } from 'recompose'
 import { bindActionCreators } from 'redux'
 import { connect } from 'react-redux'
 import { NavDrawer } from 'react-toolbox/lib/layout'
+import FaUser from 'react-icons/lib/fa/user'
 
 import LinkNavigation, { makeThemedLink } from './LinkNavigation'
-import UserIcon from './UserIcon'
 import { toggleDrawer, closeDrawer } from '../../../auth/AuthRedux'
 
 const enhance = compose(
@@ -40,7 +40,7 @@ const ConnectedNavDrawer = ({
         location,
         href: '/account-details/current',
         label: '',
-        icon: <UserIcon />,
+        icon: <FaUser />,
       })}
     </LinkNavigation>
   </NavDrawer>
