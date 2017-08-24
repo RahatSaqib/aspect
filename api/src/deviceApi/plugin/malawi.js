@@ -211,6 +211,7 @@ function* generateHistoricalResults(
     .orderBy('r.endedOn', 'asc')
     .distinct(
       'r.id as resultId',
+      'sm.id as sampleId',
       'r.endedOn as resultEndedOn',
       'd.name as deviceName'
     )
@@ -226,19 +227,22 @@ function* generateHistoricalResults(
     .first('id')
 
   let index = -1
-  for (const { resultId, resultEndedOn, deviceName } of sourceResults) {
+  for (const {
+    resultId,
+    resultEndedOn,
+    deviceName,
+    sampleId,
+  } of sourceResults) {
     index += 1
 
     const sourceResult = yield* getResult(knex, resultId)
     const payload = reporterResultFromChaiResult(sourceResult)
     payload.workflow = { status: { id: DELIVERABLE_EXTERNALID } }
 
-    const { processedResult, existingResult } = yield* mergeResult(
-      knex,
-      deviceId,
-      payload,
-      now
-    )
+    const {
+      processedResult,
+      existingResult,
+    } = yield* mergeResult(knex, deviceId, payload, { sampleId, now })
     yield* addResultWorkflowLogIfChanged(
       knex,
       payload,
@@ -297,17 +301,20 @@ function* mergeChaiResultToReporters(
     })
     .select('d.id as deviceId')
 
+  const { sampleId } = yield knex('Sample as sm')
+    .join('Result as r', 'r.sampleId', 'sm.id')
+    .where('r.id', resultId)
+    .first('r.sampleId')
+
   // Get CHAI result in Device API format
   const chaiResult = yield* getResult(knex, resultId)
   const payload = reporterResultFromChaiResult(chaiResult)
 
   for (const { deviceId } of reporterDevices) {
-    const { processedResult, existingResult } = yield* mergeResult(
-      knex,
-      deviceId,
-      payload,
-      now
-    )
+    const {
+      processedResult,
+      existingResult,
+    } = yield* mergeResult(knex, deviceId, payload, { sampleId, now })
     if (!existingResult) {
       // auto QC Check new result and mark as deliverable, but do
       // not change workflow status otherwise

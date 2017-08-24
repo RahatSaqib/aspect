@@ -364,7 +364,7 @@ function* mergeResultWithContext(context) {
   const {
     processedResult: result,
     existingResult: previousResult,
-  } = yield* mergeResult(knex, deviceId, transformedPayload, now, knex)
+  } = yield* mergeResult(knex, deviceId, transformedPayload, { now })
 
   context.addDeviceLogUpdate('resultId', result.id)
 
@@ -478,11 +478,17 @@ function* createDeviceApiContext(request, handlerOptions) {
         .where({ deviceId: device.id })
         .whereNotNull('dl.checkpoint')
         .orderBy('dl.id', 'desc')
-        .first('dl.id', 'dl.resultId', 'dl.checkpoint', 'dl.createdOn', 'dl.source')
+        .first(
+          'dl.id',
+          'dl.resultId',
+          'dl.checkpoint',
+          'dl.createdOn',
+          'dl.source'
+        )
       if (deviceLogType === DEVICE_LOG_TYPE_RESULT) {
         lastDeviceLogQuery.modify(addDeviceLogResultConstraints)
       } else if (deviceLogType === DEVICE_LOG_TYPE_OPERATION) {
-        lastDeviceLogQuery.whereNotNull('deviceOperationId')
+        lastDeviceLogQuery.whereNotNull('dl.deviceOperationId')
       }
       const lastDeviceLog = yield lastDeviceLogQuery
       context.deviceLog = lastDeviceLog || null

@@ -1,7 +1,12 @@
 const Boom = require('boom')
 const _ = require('lodash')
 
-function* mergeResult(knex, deviceId, payload, now = new Date()) {
+function* mergeResult(
+  knex,
+  deviceId,
+  payload,
+  { now = new Date(), sampleId = null } = {}
+) {
   // Look up existing result matching external id if specified
   let existingResult = null
   if (payload.id) {
@@ -158,8 +163,7 @@ function* mergeResult(knex, deviceId, payload, now = new Date()) {
       .first('id')).id
   }
 
-  let sampleId
-  if (!existingResult) {
+  if (sampleId == null && existingResult == null) {
     ;[sampleId] = yield knex('Sample').insert({
       externalId: _.get(payload, 'sample.id', null),
       collectedOn: _.get(payload, 'sample.collectedOn', null),
@@ -167,7 +171,9 @@ function* mergeResult(knex, deviceId, payload, now = new Date()) {
       originSiteId: sampleOriginSiteId,
     })
   } else {
-    sampleId = existingResult.sampleId
+    if (sampleId == null) {
+      sampleId = existingResult.sampleId
+    }
     if (_.has(payload, 'sample')) {
       const existingSample = yield knex('Sample')
         .where({ id: sampleId })
