@@ -73,6 +73,12 @@ const enhance = compose(
       },
 
       onChange: () => nextValues => ({ values: nextValues }),
+
+      onUsernameMount: () => ref => {
+        if (ref) {
+          ref.focus()
+        }
+      },
     }
   ),
   recomposeForm({
@@ -111,6 +117,7 @@ const AspectLogo = () =>
 export const Login = ({
   intl,
   searchParams,
+  onUsernameMount,
   form,
   meta,
   values,
@@ -138,6 +145,7 @@ export const Login = ({
                 </div>
               : null}
             <Input
+              innerRef={onUsernameMount}
               type="text"
               name="user"
               label={intl.formatMessage(messages.user)}
