@@ -474,13 +474,13 @@ function* createDeviceApiContext(request, handlerOptions) {
         }
       }
       // Checkpoint not specified, return last one for this device
-      const lastDeviceLogQuery = knex('DeviceLog')
+      const lastDeviceLogQuery = knex('DeviceLog as dl')
         .where({ deviceId: device.id })
-        .whereNotNull('checkpoint')
-        .orderBy('id', 'desc')
-        .first('id', 'resultId', 'checkpoint', 'createdOn', 'source')
+        .whereNotNull('dl.checkpoint')
+        .orderBy('dl.id', 'desc')
+        .first('dl.id', 'dl.resultId', 'dl.checkpoint', 'dl.createdOn', 'dl.source')
       if (deviceLogType === DEVICE_LOG_TYPE_RESULT) {
-        lastDeviceLogQuery.whereNotNull('resultId')
+        lastDeviceLogQuery.modify(addDeviceLogResultConstraints)
       } else if (deviceLogType === DEVICE_LOG_TYPE_OPERATION) {
         lastDeviceLogQuery.whereNotNull('deviceOperationId')
       }
@@ -722,7 +722,7 @@ function* getDeviceLog(
   })
 
   if (deviceLogType === DEVICE_LOG_TYPE_RESULT) {
-    deviceLogQuery.whereNotNull('dl.resultId')
+    deviceLogQuery.modify(addDeviceLogResultConstraints)
   } else if (deviceLogType === DEVICE_LOG_TYPE_OPERATION) {
     deviceLogQuery.whereNotNull('dl.deviceOperationId')
   }
@@ -771,6 +771,14 @@ function* getDeviceLog(
     response.deviceLog.checkpoint = deviceLog.checkpoint
   }
   return response
+}
+
+function addDeviceLogResultConstraints(queryBuilder) {
+  queryBuilder
+    .join('Result as r', 'dl.resultId', 'r.id')
+    .join('ResultWorkflowStatus as rws', 'r.resultWorkflowStatusId', 'rws.id')
+    .where('r.qcCheck', 1)
+    .where('rws.externalId', '<>', 'Purged')
 }
 
 function onResultUpdated({ resultId, message, source }) {
