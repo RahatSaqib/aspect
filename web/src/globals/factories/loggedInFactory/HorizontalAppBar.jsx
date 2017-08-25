@@ -5,10 +5,10 @@ import { bindActionCreators } from 'redux'
 import { connect } from 'react-redux'
 import AppBar from 'react-toolbox/lib/app_bar'
 import { IconMenu, MenuItem, MenuDivider } from 'react-toolbox/lib/menu'
+import FaUser from 'react-icons/lib/fa/user'
 
 import ConfluenceIcon from './ConfluenceIcon'
 import LinkNavigation from './LinkNavigation'
-import UserIcon from './UserIcon'
 import {
   navigateRoot,
   closeDrawer,
@@ -57,7 +57,7 @@ const HorizontalAppBar = ({
       onClick={closeDrawer}
     />
     <IconMenu
-      icon={<UserIcon />}
+      icon={<FaUser />}
       theme={{ icon: cssClasses('IconMenu__icon') }}
       position="topRight"
       menuRipple
