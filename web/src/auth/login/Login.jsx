@@ -1,7 +1,7 @@
 import _ from 'lodash'
 import classnames from 'classnames/bind'
 import React from 'react'
-import { compose, withProps, withHandlers, withState } from 'recompose'
+import { compose, withProps, withStateHandlers } from 'recompose'
 import { bindActionCreators } from 'redux'
 import { connect } from 'react-redux'
 import Helmet from 'react-helmet'
@@ -55,20 +55,32 @@ const enhance = compose(
       loginStart,
     })
   ),
-  withHandlers({
-    onSubmit: ({ history, location, loginStart }) => data => {
-      loginStart(data).then(() => {
-        const referrer = _.get(location, 'state.referrer', {
-          pathname: '/dashboard',
-        })
-        history.push(referrer)
-      })
+  withStateHandlers(
+    {
+      values: {
+        user: '',
+        password: '',
+      },
     },
-  }),
-  withState('values', 'onChange', {
-    user: '',
-    password: '',
-  }),
+    {
+      onSubmit: (state, { history, location, loginStart }) => data => {
+        loginStart(data).then(() => {
+          const referrer = _.get(location, 'state.referrer', {
+            pathname: '/dashboard',
+          })
+          history.push(referrer)
+        })
+      },
+
+      onChange: () => nextValues => ({ values: nextValues }),
+
+      onUsernameMount: () => ref => {
+        if (ref) {
+          ref.focus()
+        }
+      },
+    }
+  ),
   recomposeForm({
     fields: [
       {
@@ -105,6 +117,7 @@ const AspectLogo = () =>
 export const Login = ({
   intl,
   searchParams,
+  onUsernameMount,
   form,
   meta,
   values,
@@ -132,6 +145,7 @@ export const Login = ({
                 </div>
               : null}
             <Input
+              innerRef={onUsernameMount}
               type="text"
               name="user"
               label={intl.formatMessage(messages.user)}
