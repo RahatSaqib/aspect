@@ -16,22 +16,25 @@ export const types = {
 /*
  * ---------------- Action Creators -----------------
  */
-function requestDashboardStatus() {
+function requestDashboardStatus(requestedAt) {
   return {
     type: types.REQUEST_DASHBOARD_STATUS,
+    requestedAt,
   }
 }
 
-function receiveDashboardStatus(data) {
+function receiveDashboardStatus(requestedAt, data) {
   return {
     type: types.RECEIVE_DASHBOARD_STATUS,
+    requestedAt,
     data,
   }
 }
 
 export function fetchDashboardStatus() {
   return dispatch => {
-    dispatch(requestDashboardStatus())
+    const requestedAt = Date.now()
+    dispatch(requestDashboardStatus(requestedAt))
 
     return aspectFetch('/dashboard', {
       errorNotifications: {
@@ -45,19 +48,21 @@ export function fetchDashboardStatus() {
           })
         ),
       },
-    }).then(json => dispatch(receiveDashboardStatus(json.data)))
+    }).then(json => dispatch(receiveDashboardStatus(requestedAt, json.data)))
   }
 }
 
-function requestOperationalStatus() {
+function requestOperationalStatus(requestedAt) {
   return {
     type: types.REQUEST_OPERATIONAL_STATUS,
+    requestedAt,
   }
 }
 
-function receiveOperationalStatus(data) {
+function receiveOperationalStatus(requestedAt, data) {
   return {
     type: types.RECEIVE_OPERATIONAL_STATUS,
+    requestedAt,
     data,
   }
 }
@@ -65,7 +70,8 @@ function receiveOperationalStatus(data) {
 export function fetchOperationalStatus(filtersParams) {
   return dispatch => {
     const filters = _.fromPairs([...filtersParams.entries()])
-    dispatch(requestOperationalStatus())
+    const requestedAt = Date.now()
+    dispatch(requestOperationalStatus(requestedAt))
 
     return aspectFetch(
       `/dashboard/operational?${stringify({
@@ -84,7 +90,7 @@ export function fetchOperationalStatus(filtersParams) {
           ),
         },
       }
-    ).then(json => dispatch(receiveOperationalStatus(json.data)))
+    ).then(json => dispatch(receiveOperationalStatus(requestedAt, json.data)))
   }
 }
 
@@ -92,6 +98,7 @@ export function fetchOperationalStatus(filtersParams) {
  * ---------------- Reducers -----------------
  */
 const Dashboard = Immutable.Record({
+  requestedAt: undefined,
   status: Immutable.Map(),
   operational: Immutable.Map(),
 })
@@ -101,13 +108,23 @@ const initialState = new Dashboard()
 export default function dashboardReducer(state = initialState, action) {
   switch (action.type) {
     case types.REQUEST_DASHBOARD_STATUS:
-      return state.remove('status')
+      return state.set('requestedAt', action.requestedAt)
     case types.RECEIVE_DASHBOARD_STATUS:
-      return state.mergeIn(['status'], action.data)
+      return state.requestedAt === action.requestedAt
+        ? state.merge({
+            requestedAt: undefined,
+            status: action.data,
+          })
+        : state
     case types.REQUEST_OPERATIONAL_STATUS:
-      return state.remove('operational')
+      return state.set('requestedAt', action.requestedAt)
     case types.RECEIVE_OPERATIONAL_STATUS:
-      return state.mergeIn(['operational'], action.data)
+      return state.requestedAt === action.requestedAt
+        ? state.merge({
+            requestedAt: undefined,
+            operational: action.data,
+          })
+        : state
     default:
       return state
   }
