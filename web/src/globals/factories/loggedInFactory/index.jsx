@@ -4,10 +4,9 @@ import { createEagerFactory, compose, pure } from 'recompose'
 import Helmet from 'react-helmet'
 import { Layout, Panel } from 'react-toolbox/lib/layout'
 
-import { IdleDialogContainer } from '../../../idle/dialog/IdleDialog'
+import IdleDialog from '../../../idle/components/IdleDialog'
 import AppNotificationSnackBar from '../../../appNotification/AppNotificationSnackBar'
 import AppNotificationDialog from '../../../appNotification/AppNotificationDialog'
-import ensureAuthorizedFactory from '../ensureAuthorizedFactory'
 import intlScrollToTopOnUpdateFactory from '../intlScrollToTopOnUpdateFactory'
 import ConnectedNavDrawer from './ConnectedNavDrawer'
 import VerticalAppBar from './VerticalAppBar'
@@ -16,7 +15,6 @@ import HorizontalAppBar from './HorizontalAppBar'
 const cssClasses = classnames.bind(require('./index.css'))
 
 export const loggedInFactory = compose(
-  ensureAuthorizedFactory,
   intlScrollToTopOnUpdateFactory,
   render => props =>
     <Layout>
@@ -26,7 +24,7 @@ export const loggedInFactory = compose(
         <HorizontalAppBar history={props.history} location={props.location} />
         <Helmet titleTemplate="%s - Aspect" defaultTitle="Aspect" />
         {render(props)}
-        <IdleDialogContainer intl={props.intl} />
+        <IdleDialog intl={props.intl} />
         <AppNotificationDialog intl={props.intl} />
         <AppNotificationSnackBar intl={props.intl} />
       </Panel>
