@@ -207,24 +207,6 @@ export function loginStart({ user, password }) {
   }
 }
 
-export function navigateRoot() {
-  return function() {
-    history.push('/')
-  }
-}
-
-export function goToExternalHelp() {
-  return function() {
-    window.location.href = 'https://admin.gxalert.com'
-  }
-}
-
-export function navigateCurrentAccountDetails() {
-  return function() {
-    history.push('/account-details/current')
-  }
-}
-
 export function logoutStart(reason) {
   return function(dispatch) {
     // remove access and refresh tokens
