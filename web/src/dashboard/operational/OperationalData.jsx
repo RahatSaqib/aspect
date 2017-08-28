@@ -11,6 +11,7 @@ import FaCircle from 'react-icons/lib/fa/circle'
 
 import { Unit } from '../../components/pureGrids'
 import ColumnChart from '../../components/graph/ColumnChart'
+import DelayShowingProgressBar from '../../components/shared/DelayShowingProgressBar'
 // import FiltersPanel from '../../filter/popover/FiltersPanel'
 import Title from '../status/Title'
 import { fetchOperationalStatus } from '../DashboardRedux'
@@ -22,6 +23,7 @@ const enhance = compose(
   connect(
     state => ({
       userName: state.getIn(['user', 'name']),
+      loading: !!state.getIn(['dashboard', 'requestedAt']),
       operational: state.getIn(['dashboard', 'operational']),
     }),
     bindActionCreators.bind(null, {
@@ -148,6 +150,7 @@ const SectionAbnormalCollection = ({
 
 export const OperationalData = ({
   // --- injected by recompose ---
+  loading,
   operational,
   assayType,
   dateRange,
@@ -235,61 +238,71 @@ export const OperationalData = ({
         />
       </div> */}
     </div>
-    <SectionAbnormalCollection
-      title="Consumables"
-      colorClassName={cssClasses('Title__Color--inventory')}
-      collection={operational.get('inventory', [])}
-      onDataReportClick={onDataReportClick}
-    />
-    <SectionAbnormalCollection
-      title="Devices"
-      colorClassName={cssClasses('Title__Color--device')}
-      collection={operational.get('device', [])}
-      onDataReportClick={onDataReportClick}
-    />
-    <div className={cssClasses('Section')}>
-      <Card className={cssClasses('Section__Content')}>
-        <div className={cssClasses('TitleContainer')}>
-          <Title
-            className={cssClasses('TitleContainer__Title')}
-            colorClassName={cssClasses('Title__Color--site')}
-            title="Sites"
-          />
-          <Button
-            className={cssClasses('Button')}
-            raised
-            label="Data and reports"
-            onClick={onDataReportClick}
-          />
-        </div>
-        <div>
-          {operational.get('site', []).map(c =>
-            <Unit
-              sm="1-2"
-              lg="1-4"
-              className={cssClasses('Graph')}
-              key={c.get('key')}
-            >
-              <div className={cssClasses('Graph__Title')}>
-                {c.get('title')}
-              </div>
-              <ColumnChart
-                data={c.get('data').toJS()}
-                color={['#e85164', '#fcb124', '#73d449']}
-                spacing={0.4}
-                hideAxes
-                rightLabel
-                hideLabel={false}
-              />
-            </Unit>
-          )}
-        </div>
-      </Card>
+    <div className={cssClasses({ 'Content--loading': loading })}>
+      <SectionAbnormalCollection
+        title="Consumables"
+        colorClassName={cssClasses('Title__Color--inventory')}
+        collection={operational.get('inventory', [])}
+        onDataReportClick={onDataReportClick}
+      />
+      <SectionAbnormalCollection
+        title="Devices"
+        colorClassName={cssClasses('Title__Color--device')}
+        collection={operational.get('device', [])}
+        onDataReportClick={onDataReportClick}
+      />
+      <div className={cssClasses('Section')}>
+        <Card className={cssClasses('Section__Content')}>
+          <div className={cssClasses('TitleContainer')}>
+            <Title
+              className={cssClasses('TitleContainer__Title')}
+              colorClassName={cssClasses('Title__Color--site')}
+              title="Sites"
+            />
+            <Button
+              className={cssClasses('Button')}
+              raised
+              label="Data and reports"
+              onClick={onDataReportClick}
+            />
+          </div>
+          <div>
+            {operational.get('site', []).map(c =>
+              <Unit
+                sm="1-2"
+                lg="1-4"
+                className={cssClasses('Graph')}
+                key={c.get('key')}
+              >
+                <div className={cssClasses('Graph__Title')}>
+                  {c.get('title')}
+                </div>
+                <ColumnChart
+                  data={c.get('data').toJS()}
+                  color={['#e85164', '#fcb124', '#73d449']}
+                  spacing={0.4}
+                  hideAxes
+                  rightLabel
+                  hideLabel={false}
+                />
+              </Unit>
+            )}
+          </div>
+        </Card>
+      </div>
+      <SectionAbnormalCollection
+        title="Staff"
+        collection={operational.get('staff', [])}
+        onDataReportClick={onDataReportClick}
+      />
     </div>
-    <SectionAbnormalCollection
-      title="Staff"
-      collection={operational.get('staff', [])}
-      onDataReportClick={onDataReportClick}
+    <DelayShowingProgressBar
+      disabled={!loading}
+      type="circular"
+      mode="indeterminate"
+      theme={{
+        indeterminate: cssClasses('DelayShowingProgressBar--indeterminate'),
+      }}
     />
   </div>
 
