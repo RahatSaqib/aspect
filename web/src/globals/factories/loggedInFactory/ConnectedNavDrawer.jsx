@@ -11,7 +11,7 @@ import { toggleDrawer, closeDrawer } from '../../../auth/AuthRedux'
 const enhance = compose(
   connect(
     state => ({
-      drawerOpen: state.getIn(['user', 'drawerOpen']),
+      drawerOpen: state.user.drawerOpen,
     }),
     bindActionCreators.bind(null, {
       toggleDrawer,

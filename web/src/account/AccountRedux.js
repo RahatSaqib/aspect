@@ -1,17 +1,14 @@
 import { defineMessages } from 'react-intl'
 import Immutable from 'immutable'
 import _ from 'lodash'
-import jwtDecode from 'jwt-decode'
 import { SubmissionError } from 'redux-form/immutable'
-import { getBrowserNameAndVersion } from '../shared/utils/browser'
+import { getClientName } from '../shared/utils/browser'
 import { aspectFetch, getHeaders } from '../shared/utils/fetch'
-import * as localStorage from '../shared/utils/localStorage'
 import {
   ContactDetails,
   LoginDetails,
   UserPreferences,
 } from '../person/PersonRedux'
-import { loginSuccess, changeCulture, changeTimezone } from '../auth/AuthRedux'
 import {
   errorPleaseTryAgainInAFewMinutes,
   inlineWarning,
@@ -20,7 +17,9 @@ import {
 export const types = {
   REQUEST_ACCOUNT_DETAILS: 'REQUEST_ACCOUNT_DETAILS',
   RECEIVE_ACCOUNT_DETAILS: 'RECEIVE_ACCOUNT_DETAILS',
+
   SAVE_ACCOUNT_DETAILS_START: 'SAVE_ACCOUNT_DETAILS_START',
+
   RECEIVE_UPDATED_CONTACT_DETAILS: 'RECEIVE_UPDATED_CONTACT_DETAILS',
   RECEIVE_UPDATED_LOGIN_DETAILS: 'RECEIVE_UPDATED_LOGIN_DETAILS',
   RECEIVE_UPDATED_USER_PREFERENCES: 'RECEIVE_UPDATED_USER_PREFERENCES',
@@ -97,9 +96,10 @@ export function saveContactDetails(contactDetails) {
   }
 }
 
-function createReceiveUpdatedLoginDetails(updateDetails) {
+function createReceiveUpdatedLoginDetails(updateDetails, data) {
   return {
     type: types.RECEIVE_UPDATED_LOGIN_DETAILS,
+    data,
     updateDetails,
   }
 }
@@ -110,15 +110,12 @@ function createReceiveUpdatedLoginDetailsExpectedError() {
   }
 }
 
-function storeAccess(access, refresh, clientId) {
-  const jwt = jwtDecode(access)
-  localStorage.store(access, jwt.exp, refresh, clientId)
-  return jwt
-}
-
 export function saveLoginDetails(loginDetails) {
   return (dispatch, getState) => {
     dispatch(createSaveAccountDetailsStart())
+    const state = getState()
+    const clientId = state.user.clientId
+
     return aspectFetch('/auth/update-login-details', {
       method: 'PUT',
       headers: getHeaders(true),
@@ -126,9 +123,8 @@ export function saveLoginDetails(loginDetails) {
         currentPassword: loginDetails.currentPassword,
         newUsername: loginDetails.username,
         newPassword: loginDetails.newPassword,
-        clientId: localStorage.getClientId(),
-        clientName: `${getBrowserNameAndVersion()} on ${window.navigator
-          .platform}`,
+        clientId,
+        clientName: getClientName(),
       }),
       errorNotifications: {
         409: inlineWarning(
@@ -177,12 +173,13 @@ export function saveLoginDetails(loginDetails) {
       },
     })
       .then(json => {
-        const jwt = storeAccess(json.access, json.refresh, json.clientId)
-        const user = getState().user
         dispatch(
-          loginSuccess(jwt.name, user.culture, user.timezone, jwt.permissions)
+          createReceiveUpdatedLoginDetails(json.data, {
+            access: json.access,
+            refresh: json.refresh,
+            clientId: json.clientId,
+          })
         )
-        dispatch(createReceiveUpdatedLoginDetails(json.data))
       })
       .catch(err => {
         if (
@@ -229,12 +226,6 @@ export function saveUserPreferences(userPreferences) {
         ),
       },
     }).then(({ data }) => {
-      if (_.isString(data.culture)) {
-        dispatch(changeCulture(data.culture))
-      }
-      if (_.isString(data.timezone)) {
-        dispatch(changeTimezone(data.timezone))
-      }
       dispatch(createReceiveUpdatedUserPreferences(data))
     })
   }

@@ -116,8 +116,10 @@ describe('requirePermissions', () => {
         subscribe() {},
         getState() {
           return {
-            getIn() {
-              return Immutable.Set(userPermissions)
+            user: {
+              jwt: {
+                permissions: Immutable.Set(userPermissions),
+              },
             },
           }
         },

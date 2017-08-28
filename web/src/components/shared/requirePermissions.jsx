@@ -98,7 +98,7 @@ export const requirePermissions = ({
     createState() {
       const { store } = this.context
       return {
-        userPermissions: store.getState().getIn(['user', 'permissions']),
+        userPermissions: store.getState().user.jwt.permissions,
       }
     }
 

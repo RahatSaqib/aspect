@@ -1,3 +1,4 @@
+import _ from 'lodash'
 import React from 'react'
 import { Router, Switch, Route, Redirect } from 'react-router-dom'
 import Paper from 'material-ui/Paper'
@@ -7,10 +8,8 @@ import history from '../../history'
 import signedOutFactory from './signedOutFactory'
 import loggedInFactory from './loggedInFactory'
 import loggedInDetailFactory from './loggedInFactory/detailFactory'
-import ensureAuthorizedFactory from './ensureAuthorizedFactory'
 
 // "Pages"
-import Index from '../components/Index'
 import LoadableLogin from '../../auth/login/LoadableLogin'
 import ResetPassword from '../../auth/resetPassword/ResetPassword'
 import LoadableStatus from '../../dashboard/status/LoadableStatus'
@@ -46,7 +45,28 @@ const notImplementedLoggedInFactory = compose(loggedInFactory, name => () =>
   </div>
 )
 
-const renderIndex = ensureAuthorizedFactory(Index)
+const makeRenderRedirectToLoginWithReason = _.memoize(
+  reason => ({ location }) =>
+    <Redirect
+      to={{
+        pathname: '/login',
+        state: { referrer: location, reason },
+      }}
+    />
+)
+
+const renderRedirectToLoginOr = props =>
+  props.isLoggedOut &&
+  makeRenderRedirectToLoginWithReason(props.loggedOutReason)
+
+const renderRedirectToDashboard = ({ location }) =>
+  <Redirect
+    to={{
+      pathname: '/dashboard',
+      state: { referrer: location },
+    }}
+  />
+
 const renderLoadableLogin = signedOutFactory(LoadableLogin)
 const renderResetPassword = signedOutFactory(ResetPassword)
 const renderLoadableStatus = loggedInFactory(LoadableStatus)
@@ -80,69 +100,145 @@ const renderNotificationDetail = loggedInDetailFactory(NotificationDetail)
 const renderReportList = loggedInFactory(ReportList)
 const renderNotFound = signedOutFactory(NotFound)
 
-export const routerFactory = () => () =>
+export const routerFactory = () => props =>
   <Router history={history}>
     <Switch>
-      <Route exact path="/" render={renderIndex} />
+      <Route
+        exact
+        path="/"
+        render={renderRedirectToLoginOr(props) || renderRedirectToDashboard}
+      />
 
       <Route path="/login" render={renderLoadableLogin} />
       <Route path="/reset-password" render={renderResetPassword} />
 
-      <Route exact path="/dashboard" render={renderLoadableStatus} />
-      <Route path="/task-list" render={renderTaskList} />
-      <Route path="/operational-data" render={renderOperationalData} />
+      <Route
+        exact
+        path="/dashboard"
+        render={renderRedirectToLoginOr(props) || renderLoadableStatus}
+      />
+      <Route
+        path="/task-list"
+        render={renderRedirectToLoginOr(props) || renderTaskList}
+      />
+      <Route
+        path="/operational-data"
+        render={renderRedirectToLoginOr(props) || renderOperationalData}
+      />
 
-      <Route path="/account-details/current" render={renderAccountDetails} />
+      <Route
+        path="/account-details/current"
+        render={renderRedirectToLoginOr(props) || renderAccountDetails}
+      />
 
-      <Route path="/demo/device/:deviceId" render={renderDeviceDemo} />
+      <Route
+        path="/demo/device/:deviceId"
+        render={renderRedirectToLoginOr(props) || renderDeviceDemo}
+      />
 
-      <Route path="/clinical-indicators" render={renderClinicalIndicators} />
-      <Route path="/reports" render={renderReports} />
-      <Route path="/manage" render={renderManage} />
+      <Route
+        path="/clinical-indicators"
+        render={renderRedirectToLoginOr(props) || renderClinicalIndicators}
+      />
+      <Route
+        path="/reports"
+        render={renderRedirectToLoginOr(props) || renderReports}
+      />
+      <Route
+        path="/manage"
+        render={renderRedirectToLoginOr(props) || renderManage}
+      />
 
       <Redirect exact path="/browse" to="/browse/device" />
 
-      <Route exact path="/browse/device" render={renderDeviceList} />
-      <Route path="/browse/device/:deviceId" render={renderDeviceDetail} />
+      <Route
+        exact
+        path="/browse/device"
+        render={renderRedirectToLoginOr(props) || renderDeviceList}
+      />
+      <Route
+        path="/browse/device/:deviceId"
+        render={renderRedirectToLoginOr(props) || renderDeviceDetail}
+      />
 
       <Route
         exact
         path="/browse/deviceApiKey"
-        render={renderDeviceApiKeyList}
+        render={renderRedirectToLoginOr(props) || renderDeviceApiKeyList}
       />
 
-      <Route exact path="/browse/router" render={renderRouterList} />
-      <Route path="/browse/router/:routerId" render={renderRouterDetail} />
+      <Route
+        exact
+        path="/browse/router"
+        render={renderRedirectToLoginOr(props) || renderRouterList}
+      />
+      <Route
+        path="/browse/router/:routerId"
+        render={renderRedirectToLoginOr(props) || renderRouterDetail}
+      />
 
-      <Route exact path="/browse/reporter" render={renderReporterList} />
+      <Route
+        exact
+        path="/browse/reporter"
+        render={renderRedirectToLoginOr(props) || renderReporterList}
+      />
       <Route
         path="/browse/reporter/:terminalId"
-        render={renderReporterDetail}
+        render={renderRedirectToLoginOr(props) || renderReporterDetail}
       />
 
-      <Route exact path="/browse/result" render={renderResultList} />
-      <Route path="/browse/result/:resultId" render={renderResultDetail} />
+      <Route
+        exact
+        path="/browse/result"
+        render={renderRedirectToLoginOr(props) || renderResultList}
+      />
+      <Route
+        path="/browse/result/:resultId"
+        render={renderRedirectToLoginOr(props) || renderResultDetail}
+      />
 
-      <Route exact path="/browse/site" render={renderSiteList} />
-      <Route path="/browse/site/:siteId" render={renderSiteDetail} />
+      <Route
+        exact
+        path="/browse/site"
+        render={renderRedirectToLoginOr(props) || renderSiteList}
+      />
+      <Route
+        path="/browse/site/:siteId"
+        render={renderRedirectToLoginOr(props) || renderSiteDetail}
+      />
 
-      <Route exact path="/browse/person" render={renderPersonList} />
-      <Route path="/browse/person/:personId" render={renderPersonDetail} />
+      <Route
+        exact
+        path="/browse/person"
+        render={renderRedirectToLoginOr(props) || renderPersonList}
+      />
+      <Route
+        path="/browse/person/:personId"
+        render={renderRedirectToLoginOr(props) || renderPersonDetail}
+      />
 
-      <Route exact path="/browse/inventory" render={renderInventoryItemsList} />
+      <Route
+        exact
+        path="/browse/inventory"
+        render={renderRedirectToLoginOr(props) || renderInventoryItemsList}
+      />
 
       <Route
         exact
         path="/browse/notification"
-        render={renderNotificationList}
+        render={renderRedirectToLoginOr(props) || renderNotificationList}
       />
 
       <Route
         path="/browse/notification/:notificationId"
-        render={renderNotificationDetail}
+        render={renderRedirectToLoginOr(props) || renderNotificationDetail}
       />
 
-      <Route exact path="/browse/report" render={renderReportList} />
+      <Route
+        exact
+        path="/browse/report"
+        render={renderRedirectToLoginOr(props) || renderReportList}
+      />
 
       {process.env.NODE_ENV !== 'production' &&
         <Route path="/styleguide" component={StyleguideMain} />}

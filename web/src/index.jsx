@@ -10,9 +10,9 @@ import injectTapEventPlugin from 'react-tap-event-plugin'
 
 import config from './config'
 import store from './store'
-import { getRefreshToken } from './shared/utils/localStorage'
-import { refreshStart, hydrateFromLocalStorage } from './auth/AuthRedux'
+import { hydrateFromLocalStorage, refreshStart } from './auth/AuthRedux'
 import './index.css'
+import { getAspectHydrateData } from './globals/sideEffects/LocalStorage'
 import appFactory from './globals/factories/appFactory'
 
 if (config.sentry) {
@@ -56,13 +56,6 @@ if (process.env.NODE_ENV === 'development' && false) {
   })
 }
 
-// Refresh the access token every 30 minutes.
-// this could probably be done more elegantly in a component
-// but it works for now
-setInterval(() => {
-  store.dispatch(refreshStart())
-}, 30 * 60 * 1000)
-
 overrideComponentTypeChecker(
   (classType, reactElement) =>
     React.createElement(classType).type === reactElement.type
@@ -72,19 +65,11 @@ const appDom = document.getElementById('app')
 
 const renderApp = () => render(appFactory(_.noop)({ store }), appDom)
 
-// If found a access token, refresh it before initial rendering
-new Promise(resolve => {
-  // get new access token on refresh/startup
-  if (getRefreshToken()) {
-    // let's see if we can get culture from local storage
-    store.dispatch(hydrateFromLocalStorage())
+// let's see if we can get culture from local storage
+store.dispatch(hydrateFromLocalStorage(getAspectHydrateData()))
 
-    // get new access token
-    store.dispatch(refreshStart()).then(resolve, resolve)
-  } else {
-    resolve()
-  }
-}).then(renderApp)
+// get new access token
+store.dispatch(refreshStart()).finally(renderApp)
 
 if (module.hot) {
   module.hot.accept('./globals/factories/appFactory', renderApp)

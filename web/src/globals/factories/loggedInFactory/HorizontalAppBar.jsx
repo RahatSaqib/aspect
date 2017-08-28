@@ -10,7 +10,7 @@ import FaUser from 'react-icons/lib/fa/user'
 
 import ConfluenceIcon from './ConfluenceIcon'
 import LinkNavigation from './LinkNavigation'
-import { closeDrawer, logoutStart } from '../../../auth/AuthRedux'
+import { closeDrawer, userRequestedLogout } from '../../../auth/AuthRedux'
 
 const cssClasses = classnames.bind(require('./index.css'))
 
@@ -29,7 +29,7 @@ const enhance = compose(
     null,
     bindActionCreators.bind(null, {
       closeDrawer,
-      logoutStart,
+      userRequestedLogout,
     })
   )
 )
@@ -50,7 +50,7 @@ const HorizontalAppBar = ({
   closeDrawer,
   goToExternalHelp,
   navigateCurrentAccountDetails,
-  logoutStart,
+  userRequestedLogout,
 }) =>
   <AppBar
     leftIcon={<ConfluenceIcon />}
@@ -75,7 +75,7 @@ const HorizontalAppBar = ({
         onClick={navigateCurrentAccountDetails}
       />
       <MenuDivider />
-      <MenuItem caption="Sign out" onClick={logoutStart} />
+      <MenuItem caption="Sign out" onClick={userRequestedLogout} />
     </IconMenu>
   </AppBar>
 

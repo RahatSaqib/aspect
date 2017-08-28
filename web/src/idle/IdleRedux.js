@@ -1,7 +1,7 @@
 import configure from 'redux-idle-monitor'
 
 import config from '../config'
-import { logoutStart } from '../auth/AuthRedux'
+import { idleLogout } from '../auth/AuthRedux'
 
 const IDLESTATUS_AWAY = 'AWAY'
 const IDLESTATUS_INACTIVE = 'INACTIVE'
@@ -25,7 +25,7 @@ const activeStatusAction = () => {}
 
 const idleStatusAction = idleStatus => dispatch => {
   if (idleStatus === IDLESTATUS_EXPIRED) {
-    return dispatch(logoutStart('idle'))
+    return dispatch(idleLogout())
   }
 }
 
