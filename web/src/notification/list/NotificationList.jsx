@@ -113,6 +113,10 @@ const enhance = compose(
         search: searchParams.toString(),
       })
     },
+
+    onRowClick: ({ history }) => ({
+      currentTarget: { dataset: { notificationId } },
+    }) => history.push(`/browse/notification/${notificationId}`),
   }),
   lifecycle({
     componentWillMount() {
@@ -157,6 +161,7 @@ export const NotificationList = ({
   pageAt,
   pageSize,
   onHeadColumnClick,
+  onRowClick,
 }) =>
   <div className={cssClasses('Container')}>
     <Helmet title={intl.formatMessage(messages.notificationsTitle)} />
@@ -204,6 +209,8 @@ export const NotificationList = ({
                 key={notification.get('id')}
                 intl={intl}
                 notification={notification}
+                onClick={onRowClick}
+                data-notification-Id="detail"
               />
             )}
         </NotificationDataTable>}

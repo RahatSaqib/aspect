@@ -6,6 +6,7 @@ import { compose } from 'recompose'
 import history from '../../history'
 import signedOutFactory from './signedOutFactory'
 import loggedInFactory from './loggedInFactory'
+import loggedInDetailFactory from './loggedInFactory/detailFactory'
 import ensureAuthorizedFactory from './ensureAuthorizedFactory'
 
 // "Pages"
@@ -26,6 +27,7 @@ import PersonDetail from '../../person/detail/PersonDetail'
 import ResultList from '../../result/list/ResultList'
 import ResultDetail from '../../result/detail/ResultDetail'
 import NotificationList from '../../notification/list/NotificationList'
+import NotificationDetail from '../../notification/detail/NotificationDetail'
 import ReportList from '../../report/list/ReportList'
 import AccountDetails from '../../account/detail/AccountDetails'
 import StyleguideMain from '../../styleguide/main/StyleguideMain'
@@ -74,6 +76,7 @@ const renderPersonList = loggedInFactory(PersonList)
 const renderPersonDetail = loggedInFactory(PersonDetail)
 const renderInventoryItemsList = loggedInFactory(InventoryItemsList)
 const renderNotificationList = loggedInFactory(NotificationList)
+const renderNotificationDetail = loggedInDetailFactory(NotificationDetail)
 const renderReportList = loggedInFactory(ReportList)
 const renderNotFound = signedOutFactory(NotFound)
 
@@ -132,6 +135,11 @@ export const routerFactory = () => () =>
         exact
         path="/browse/notification"
         render={renderNotificationList}
+      />
+
+      <Route
+        path="/browse/notification/:notificationId"
+        render={renderNotificationDetail}
       />
 
       <Route exact path="/browse/report" render={renderReportList} />
