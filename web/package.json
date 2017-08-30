@@ -113,7 +113,8 @@
     "url-loader": "^0.5.8",
     "webapp-manifest-plugin": "^0.0.4",
     "webpack": "^3.3.0",
-    "webpack-dev-server": "^2.4.2"
+    "webpack-dev-server": "^2.4.2",
+    "why-did-you-update": "^0.0.8"
   },
   "dependencies": {
     "@vx/axis": "^0.0.134",
