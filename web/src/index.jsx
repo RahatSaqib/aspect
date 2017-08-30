@@ -33,6 +33,28 @@ if (!window.Intl) {
   require('intl/locale-data/jsonp/en.js')
 }
 
+if (process.env.NODE_ENV === 'development') {
+  // TODO: workaround: https://github.com/garbles/why-did-you-update/issues/45
+  // eslint-disable-next-line no-unused-vars
+  let createClass = React.createClass
+  Object.defineProperty(React, 'createClass', {
+    set: nextCreateClass => {
+      createClass = nextCreateClass
+    },
+  })
+  const { whyDidYouUpdate } = require('why-did-you-update')
+  whyDidYouUpdate(React, {
+    exclude: new RegExp(
+      `^(${[
+        'Themed|Button|MenuItem|Overlay|ProgressBar|Layout|AppBar|Dialog',
+        'AutoLockScrolling|IconMenu|Router|Route|IconButton|ActivableRenderer',
+        'BeforeAfterWrapper|TextField|EnhancedButton|NavigationArrowDropDown',
+        'SvgIcon|TouchRipple|DropDownMenu|SelectField|AutoComplete|Card|Paper',
+      ].join('|')})`
+    ),
+  })
+}
+
 // Refresh the access token every 30 minutes.
 // this could probably be done more elegantly in a component
 // but it works for now
