@@ -1,6 +1,6 @@
 ### Usage
 
-```js
+```js static
 import ChartContainer from 'src/components/graph/ChartContainer'
 ```
 

@@ -1,6 +1,6 @@
 ### Usage
 
-```js
+```js static
 import FlagIcon from 'src/components/shared/flagIcon/FlagIcon'
 ```
 
