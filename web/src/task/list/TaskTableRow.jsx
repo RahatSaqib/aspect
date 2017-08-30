@@ -13,6 +13,13 @@ const cssClasses = classnames.bind(require('./TaskTableRow.css'))
 
 const enhance = _.identity
 
+const themes = {
+  Button: {
+    neutral: cssClasses('Button--neutral'),
+    raised: cssClasses('Button--raised'),
+  },
+}
+
 const TaskTableRow = ({ intl, messages, task, ...restProps }) =>
   <TableRow
     {...restProps}
@@ -40,10 +47,7 @@ const TaskTableRow = ({ intl, messages, task, ...restProps }) =>
           neutral
           raised
           label={task.get('topic')}
-          theme={{
-            neutral: cssClasses('Button--neutral'),
-            raised: cssClasses('Button--raised'),
-          }}
+          theme={themes.Button}
         />
         <span className={cssClasses('Message__Subject')}>
           {task.get('title')}

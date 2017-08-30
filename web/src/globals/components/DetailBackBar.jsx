@@ -30,16 +30,20 @@ const enhance = compose(
   })
 )
 
+const themes = {
+  Button: {
+    flat: cssClasses('Button--flat'),
+    primary: cssClasses('Button--primary'),
+  },
+}
+
 export const DetailBackBar = ({ onBackClick, onViewClick, onHistoryClick }) =>
   <div className={cssClasses('Container')}>
     <Button
       className={cssClasses('Container__Button--back')}
       onClick={onBackClick}
       primary
-      theme={{
-        flat: cssClasses('Button--flat'),
-        primary: cssClasses('Button--primary'),
-      }}
+      theme={themes.Button}
     >
       <KeyboardArrowLeft />
     </Button>

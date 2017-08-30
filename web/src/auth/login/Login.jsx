@@ -107,6 +107,12 @@ const enhance = compose(
   })
 )
 
+const themes = {
+  Input: {
+    label: cssClasses('Form__Input'),
+  },
+}
+
 const AspectLogo = () =>
   <img
     className={cssClasses('Logo__Image')}
@@ -152,9 +158,7 @@ export const Login = ({
               value={values.user}
               onChange={onUserChange}
               error={meta.user.touched && meta.user.error}
-              theme={{
-                label: cssClasses('Form__Input'),
-              }}
+              theme={themes.Input}
             />
             <Input
               type="password"
@@ -163,9 +167,7 @@ export const Login = ({
               value={values.password}
               onChange={onPasswordChange}
               error={meta.password.touched && meta.password.error}
-              theme={{
-                label: cssClasses('Form__Input'),
-              }}
+              theme={themes.Input}
             />
             <div className={cssClasses('Form__ActionRow')}>
               <Button

@@ -90,6 +90,12 @@ const enhance = compose(
   })
 )
 
+const themes = {
+  DelayShowingProgressBar: {
+    indeterminate: cssClasses('DelayShowingProgressBar--indeterminate'),
+  },
+}
+
 const SectionAbnormalCollection = ({
   title,
   colorClassName,
@@ -300,9 +306,7 @@ export const OperationalData = ({
       disabled={!loading}
       type="circular"
       mode="indeterminate"
-      theme={{
-        indeterminate: cssClasses('DelayShowingProgressBar--indeterminate'),
-      }}
+      theme={themes.DelayShowingProgressBar}
     />
   </div>
 
