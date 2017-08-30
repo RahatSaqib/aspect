@@ -33,7 +33,8 @@ if (!window.Intl) {
   require('intl/locale-data/jsonp/en.js')
 }
 
-if (process.env.NODE_ENV === 'development') {
+// eslint-disable-next-line no-constant-condition
+if (process.env.NODE_ENV === 'development' && false) {
   // TODO: workaround: https://github.com/garbles/why-did-you-update/issues/45
   // eslint-disable-next-line no-unused-vars
   let createClass = React.createClass
