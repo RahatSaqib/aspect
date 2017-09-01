@@ -7,6 +7,7 @@ import { Button } from 'react-toolbox/lib/button'
 import { Unit } from '../../components/pureGrids'
 import requirePermissions from '../../components/shared/requirePermissions'
 import Title from './Title'
+import CountryWithPoints from './CountryWithPoints'
 import SummaryItemsBlock from './SummaryItemsBlock'
 import messages from './messages'
 
@@ -46,11 +47,7 @@ export const InventoryStatus = ({
     />
     <div>
       <Unit sm="1-2" lg="1-4">
-        <img
-          src={require('./placeholder-map.png')}
-          alt="placeholder"
-          style={{ width: '100%' }}
-        />
+        <CountryWithPoints countryIsoAlpha2Code="TZ" />
       </Unit>
       <Unit sm="1-2" lg="1-4">
         <SummaryItemsBlock
