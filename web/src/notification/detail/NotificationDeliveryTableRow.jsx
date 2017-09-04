@@ -11,6 +11,13 @@ const cssClasses = classnames.bind(
 
 const enhance = _.identity
 
+const themes = {
+  Button: {
+    neutral: cssClasses('Button--neutral'),
+    raised: cssClasses('Button--raised'),
+  },
+}
+
 const NotificationDeliveryTableRow = ({ intl, delivery, ...restProps }) =>
   <TableRow
     {...restProps}
@@ -27,10 +34,7 @@ const NotificationDeliveryTableRow = ({ intl, delivery, ...restProps }) =>
         neutral
         raised
         label={delivery.topic}
-        theme={{
-          neutral: cssClasses('Button--neutral'),
-          raised: cssClasses('Button--raised'),
-        }}
+        theme={themes.Button}
       />
     </TableCell>
     <TableCell className={cssClasses('TableCell')}>

@@ -21,16 +21,20 @@ const enhance = compose(
   )
 )
 
+const themes = {
+  AppBar: {
+    appBar: cssClasses('AppBar__appBar', 'AppBar__appBar--xs'),
+    leftIcon: cssClasses('AppBar__leftIcon'),
+  },
+}
+
 const VerticalAppBar = ({ toggleDrawer, navigateRoot }) =>
   <AppBar
     leftIcon={<MdMenuIcon />}
     onLeftIconClick={toggleDrawer}
     rightIcon={<ConfluenceIcon />}
     onRightIconClick={navigateRoot}
-    theme={{
-      appBar: cssClasses('AppBar__appBar', 'AppBar__appBar--xs'),
-      leftIcon: cssClasses('AppBar__leftIcon'),
-    }}
+    theme={themes.AppBar}
   />
 
 export default enhance(VerticalAppBar)

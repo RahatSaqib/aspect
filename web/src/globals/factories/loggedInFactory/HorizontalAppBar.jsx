@@ -32,6 +32,14 @@ const enhance = compose(
   )
 )
 
+const themes = {
+  AppBar: {
+    appBar: cssClasses('AppBar__appBar', 'AppBar__appBar--sm'),
+    leftIcon: cssClasses('AppBar__leftIcon'),
+  },
+  IconMenu: { icon: cssClasses('IconMenu__icon') },
+}
+
 const HorizontalAppBar = ({
   history,
   location,
@@ -45,10 +53,7 @@ const HorizontalAppBar = ({
   <AppBar
     leftIcon={<ConfluenceIcon />}
     onLeftIconClick={navigateRoot}
-    theme={{
-      appBar: cssClasses('AppBar__appBar', 'AppBar__appBar--sm'),
-      leftIcon: cssClasses('AppBar__leftIcon'),
-    }}
+    theme={themes.AppBar}
   >
     <LinkNavigation
       history={history}
@@ -58,7 +63,7 @@ const HorizontalAppBar = ({
     />
     <IconMenu
       icon={<FaUser />}
-      theme={{ icon: cssClasses('IconMenu__icon') }}
+      theme={themes.IconMenu}
       position="topRight"
       menuRipple
     >

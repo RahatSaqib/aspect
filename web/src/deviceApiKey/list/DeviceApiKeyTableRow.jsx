@@ -8,6 +8,10 @@ const cssClasses = classnames.bind(require('./DeviceApiKeyTableRow.css'))
 
 const enhance = _.identity
 
+const themes = {
+  Checkbox: { field: cssClasses('Checkbox__field') },
+}
+
 const DeviceApiKeyTableRow = ({
   intl,
   deviceApiKey,
@@ -28,7 +32,7 @@ const DeviceApiKeyTableRow = ({
         disabled={disabled}
         checked={checked}
         onChange={onSelectedChange}
-        theme={{ field: cssClasses('Checkbox__field') }}
+        theme={themes.Checkbox}
       />
     </TableCell>
     <TableCell className={cssClasses('TableCell')}>

@@ -311,6 +311,13 @@ const enhance = compose(
 const makeOnInventoryItemActionSelect = inventoryItemId => showDialogFn =>
   showDialogFn(inventoryItemId)
 
+const themes = {
+  TooltipIconButton: {
+    tooltip: cssClasses('TooltipIconButton__tooltip'),
+    toggle: cssClasses('TooltipIconButton__toggle'),
+  },
+}
+
 export const InventoryItemsList = ({
   intl,
   history,
@@ -355,10 +362,7 @@ export const InventoryItemsList = ({
         label={intl.formatMessage(messages.groupBySite)}
       />
       <TooltipIconButton
-        theme={{
-          tooltip: cssClasses('TooltipIconButton__tooltip'),
-          toggle: cssClasses('TooltipIconButton__toggle'),
-        }}
+        theme={themes.TooltipIconButton}
         icon={<MdAdd />}
         tooltip={intl.formatMessage(messages.addInventory)}
         onClick={showNewInventoryDialog}

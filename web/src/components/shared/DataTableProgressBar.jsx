@@ -8,13 +8,17 @@ const cssClasses = classnames.bind(require('./DataTableProgressBar.css'))
 
 const enhance = _.identity
 
+const themes = {
+  DelayShowingProgressBar: {
+    indeterminate: cssClasses('DelayShowingProgressBar--indeterminate'),
+  },
+}
+
 const DataTableProgressBar = ({ disabled }) =>
   <DelayShowingProgressBar
     disabled={disabled}
     mode="indeterminate"
-    theme={{
-      indeterminate: cssClasses('DelayShowingProgressBar--indeterminate'),
-    }}
+    theme={themes.DelayShowingProgressBar}
   />
 
 export default enhance(DataTableProgressBar)
