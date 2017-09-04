@@ -877,7 +877,10 @@ function* up(knex) {
       .references('id')
       .inTable('Result')
     x.boolean('qcCheck').notNullable().defaultTo(0)
-    addCreateFieldsNullable(x)
+    
+    x.dateTime('createdOn').notNullable()
+    x.integer('createdBy').notNullable().unsigned().index().references('id').inTable('User')
+
     x.charset('utf8')
   })
 

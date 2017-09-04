@@ -399,7 +399,7 @@ function* updateWorkflowStatus(request) {
   const { auth, params, payload } = request
   const now = new Date()
   const { resultId } = params
-  const { id: currentUserId } = auth.credentials
+  const { id: currentUserId } = yield getUser(auth.credentials.name)
 
   // get the result so we can check access and if status changed
   const result = yield* getResultByResultId(request)
@@ -445,7 +445,7 @@ function* updateQcCheck(request) {
   const { auth, params, payload } = request
   const now = new Date()
   const { resultId } = params
-  const { id: currentUserId } = auth.credentials
+  const { id: currentUserId } = yield getUser(auth.credentials.name)
 
   // get the result so we can check access and workflow status
   const result = yield* getResultByResultId(request)
