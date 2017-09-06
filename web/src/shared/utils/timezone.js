@@ -1,6 +1,7 @@
 import _ from 'lodash'
-import * as localStorage from './localStorage'
 import { timezones } from '../../filter/hardcoded'
+
+export { timezones }
 
 export const getTimezoneById = timeZoneId => {
   const timezone = _.find(timezones, { id: timeZoneId })
@@ -12,6 +13,3 @@ export const getTimezoneById = timeZoneId => {
 
   return ''
 }
-
-export const getUsersTimezone = timezone =>
-  getTimezoneById(timezone || localStorage.getTimezone())

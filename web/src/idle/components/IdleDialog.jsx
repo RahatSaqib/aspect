@@ -47,6 +47,4 @@ export const IdleDialog = ({ intl, idleStatus }) => {
   )
 }
 
-export const IdleDialogContainer = enhance(IdleDialog)
-
-export default IdleDialogContainer
+export default enhance(IdleDialog)

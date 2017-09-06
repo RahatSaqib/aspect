@@ -1,5 +1,5 @@
 export function isEditable(user /* TODO: add me back, site */) {
-  const notEditable = user.permissions
+  const notEditable = user.jwt.permissions
     .intersect(['site:admin', 'site:edit'])
     .isEmpty()
 

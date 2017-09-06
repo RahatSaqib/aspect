@@ -22,7 +22,6 @@ const cssClasses = classnames.bind(require('./OperationalData.css'))
 const enhance = compose(
   connect(
     state => ({
-      userName: state.getIn(['user', 'name']),
       loading: !!state.getIn(['dashboard', 'requestedAt']),
       operational: state.getIn(['dashboard', 'operational']),
     }),

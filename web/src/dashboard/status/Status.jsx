@@ -25,7 +25,7 @@ const cssClasses = classnames.bind(require('./Status.css'))
 const enhance = compose(
   connect(
     state => ({
-      userName: state.getIn(['user', 'name']),
+      userName: state.user.jwt.name,
       status: state.getIn(['dashboard', 'status']),
     }),
     bindActionCreators.bind(null, {

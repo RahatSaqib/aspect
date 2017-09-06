@@ -1,6 +1,7 @@
+import window from 'global/window'
 import classnames from 'classnames/bind'
 import React from 'react'
-import { compose } from 'recompose'
+import { compose, withHandlers } from 'recompose'
 import { bindActionCreators } from 'redux'
 import { connect } from 'react-redux'
 import AppBar from 'react-toolbox/lib/app_bar'
@@ -9,25 +10,26 @@ import FaUser from 'react-icons/lib/fa/user'
 
 import ConfluenceIcon from './ConfluenceIcon'
 import LinkNavigation from './LinkNavigation'
-import {
-  navigateRoot,
-  closeDrawer,
-  goToExternalHelp,
-  navigateCurrentAccountDetails,
-  logoutStart,
-} from '../../../auth/AuthRedux'
+import { closeDrawer, userRequestedLogout } from '../../../auth/AuthRedux'
 
 const cssClasses = classnames.bind(require('./index.css'))
 
 const enhance = compose(
+  withHandlers({
+    navigateRoot: ({ history }) => () => history.push('/'),
+
+    goToExternalHelp: () => () => {
+      window.location.href = 'https://admin.gxalert.com'
+    },
+
+    navigateCurrentAccountDetails: ({ history }) => () =>
+      history.push('/account-details/current'),
+  }),
   connect(
     null,
     bindActionCreators.bind(null, {
-      navigateRoot,
       closeDrawer,
-      goToExternalHelp,
-      navigateCurrentAccountDetails,
-      logoutStart,
+      userRequestedLogout,
     })
   )
 )
@@ -48,7 +50,7 @@ const HorizontalAppBar = ({
   closeDrawer,
   goToExternalHelp,
   navigateCurrentAccountDetails,
-  logoutStart,
+  userRequestedLogout,
 }) =>
   <AppBar
     leftIcon={<ConfluenceIcon />}
@@ -73,7 +75,7 @@ const HorizontalAppBar = ({
         onClick={navigateCurrentAccountDetails}
       />
       <MenuDivider />
-      <MenuItem caption="Sign out" onClick={logoutStart} />
+      <MenuItem caption="Sign out" onClick={userRequestedLogout} />
     </IconMenu>
   </AppBar>
 

@@ -4,8 +4,8 @@ export function isEditable(
 ) {
   // TODO: Check if the user has the necessary permissions to edit THIS PARTICULAR person?
   return (
-    user.permissions.includes('person:admin') ||
-    user.permissions.includes('person:edit')
+    user.jwt.permissions.includes('person:admin') ||
+    user.jwt.permissions.includes('person:edit')
   )
 }
 

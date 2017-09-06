@@ -1,7 +1,7 @@
 import _ from 'lodash'
 import classnames from 'classnames/bind'
 import React from 'react'
-import { compose, withProps, withStateHandlers } from 'recompose'
+import { compose, withStateHandlers } from 'recompose'
 import { bindActionCreators } from 'redux'
 import { connect } from 'react-redux'
 import Helmet from 'react-helmet'
@@ -15,6 +15,7 @@ import { Input } from 'react-toolbox/lib/input'
 import { Unit } from '../../components/pureGrids'
 import recomposeForm from '../../components/recomposeForm'
 import { loginStart } from '../AuthRedux'
+import Reason from './Reason'
 
 const cssClasses = classnames.bind(require('./Login.css'))
 
@@ -22,10 +23,6 @@ const messages = defineMessages({
   title: {
     id: 'pages.Login.title',
     defaultMessage: 'Login',
-  },
-  reasonIdle: {
-    id: 'pages.Login.reasonIdle',
-    defaultMessage: 'You were logged out due to inactivity',
   },
   user: {
     id: 'pages.Login.user',
@@ -46,9 +43,6 @@ const messages = defineMessages({
 })
 
 const enhance = compose(
-  withProps(({ location }) => ({
-    searchParams: new URLSearchParams(location.search),
-  })),
   connect(
     null,
     bindActionCreators.bind(null, {
@@ -122,7 +116,7 @@ const AspectLogo = () =>
 
 export const Login = ({
   intl,
-  searchParams,
+  location,
   onUsernameMount,
   form,
   meta,
@@ -141,15 +135,11 @@ export const Login = ({
             <AspectLogo />
           </div>
           <form onSubmit={handleSubmit} className={cssClasses('Form')}>
-            {searchParams.has('reason')
-              ? <div className={cssClasses('Form__Info')}>
-                  {intl.formatMessage(
-                    messages[
-                      `reason${_.capitalize(searchParams.get('reason'))}`
-                    ]
-                  )}
-                </div>
-              : null}
+            <Reason
+              intl={intl}
+              location={location}
+              className={cssClasses('Form__Info')}
+            />
             <Input
               innerRef={onUsernameMount}
               type="text"

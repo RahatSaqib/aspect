@@ -1,22 +1,24 @@
 import classnames from 'classnames/bind'
 import React from 'react'
-import { compose } from 'recompose'
+import { compose, withHandlers } from 'recompose'
 import { bindActionCreators } from 'redux'
 import { connect } from 'react-redux'
 import AppBar from 'react-toolbox/lib/app_bar'
 import MdMenuIcon from 'react-icons/lib/md/menu'
 
 import ConfluenceIcon from './ConfluenceIcon'
-import { toggleDrawer, navigateRoot } from '../../../auth/AuthRedux'
+import { toggleDrawer } from '../../../auth/AuthRedux'
 
 const cssClasses = classnames.bind(require('./index.css'))
 
 const enhance = compose(
+  withHandlers({
+    navigateRoot: ({ history }) => () => history.push('/'),
+  }),
   connect(
     null,
     bindActionCreators.bind(null, {
       toggleDrawer,
-      navigateRoot,
     })
   )
 )
