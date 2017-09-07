@@ -21,10 +21,29 @@ const bcryptCompare = Promise.promisify(bcrypt.compare)
 const bcryptHash = Promise.promisify(bcrypt.hash)
 
 const config = require('../config')
-const { query, getUser } = require('../db')
+const { query } = require('../db')
 
 function* checkAuthentication() {
   return { message: 'Welcome to the API!' }
+}
+
+function getUser(username) {
+    return query('Get basic user details')
+      .from('User as u')
+      .innerJoin('Person as p', 'u.id', 'p.userId')
+      .where({ 'u.name': username })
+      .first(
+        'u.lockedOut',
+        'u.failedPasswordAttempts',
+        'u.password',
+        'u.legacyPassword',
+        'u.id',
+        'u.name',
+        'p.culture',
+        'p.timezone',
+        'p.lastPartnerId as partnerId',
+        'p.lastCountryId as countryId'
+      )
 }
 
 function getUserByPersonId(personId) {
