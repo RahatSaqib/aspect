@@ -148,6 +148,25 @@ function load() {
   return knex
 }
 
+function getUser(username) {
+  return query('Get basic user details')
+    .from('User as u')
+    .innerJoin('Person as p', 'u.id', 'p.userId')
+    .where({ 'u.name': username })
+    .first(
+      'u.lockedOut',
+      'u.failedPasswordAttempts',
+      'u.password',
+      'u.legacyPassword',
+      'u.id',
+      'u.name',
+      'p.culture',
+      'p.timezone',
+      'p.lastPartnerId as partnerId',
+      'p.lastCountryId as countryId'
+    )
+}
+
 module.exports = {
   query,
   filterParams,
@@ -159,6 +178,7 @@ module.exports = {
   run,
   seed,
   transact,
+  getUser,
 }
 
 Object.defineProperty(module.exports, 'knex', { get: load })
