@@ -7,6 +7,7 @@ import { Card } from 'react-toolbox/lib/card'
 import { Unit } from '../../components/pureGrids'
 import requirePermissions from '../../components/shared/requirePermissions'
 import Title from './Title'
+import CountryWithPoints from './CountryWithPoints'
 import SummaryItemsBlock from './SummaryItemsBlock'
 import messages from './messages'
 
@@ -27,11 +28,7 @@ export const SiteStatus = ({ intl, className, title, data }) =>
     <Title colorClassName={cssClasses('Title__Color--site')} title={title} />
     <div>
       <Unit sm="1-2" lg="1-4">
-        <img
-          src={require('./placeholder-map.png')}
-          alt="placeholder"
-          style={{ width: '100%' }}
-        />
+        <CountryWithPoints countryIsoAlpha2Code="NG" />
       </Unit>
       <Unit sm="1-2" lg="1-4">
         <SummaryItemsBlock

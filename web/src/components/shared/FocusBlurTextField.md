@@ -1,6 +1,6 @@
 ### Usage
 
-```js
+```js static
 import FocusBlurTextField from 'src/components/shared/FocusBlurTextField'
 ```
 

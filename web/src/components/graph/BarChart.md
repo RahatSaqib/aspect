@@ -1,13 +1,13 @@
 ### Usage
 
-```js
+```js static
 import ChartContainer from 'src/components/graph/ChartContainer'
 import BarChart from 'src/components/graph/BarChart'
 ```
 
 It's themed according to default settings, requiring only data to render. Data should be defined as follows, with each value of the data array representing a single color on the stacked bar:
 
-```js
+```js static
 const exData1 = [
   { name: 'Site name 1', data: [3, 4, 8] },
   { name: 'Site name 2', data: [1, 4, 7] },
