@@ -27,7 +27,7 @@ const SELECT_LIST_FIELDS = [
   'rs.name as resultWorkflowStatus',
   'so.name as sampleOriginSiteName',
   'sp.externalId as sampleId',
-  'sp.group as sampleGroup',
+  'r.group as sampleGroup',
   'sp.collectedOn as sampleCollectedOn',
   'a.name as assayName',
   'a.id as assayId',
@@ -74,7 +74,7 @@ const SELECT_SHOW_FIELDS = [
   'r.updatedOn',
   'r.assayId',
   'sp.externalId as sampleId',
-  'sp.group as sampleGroup',
+  'r.group as sampleGroup',
   'sp.originSiteId as sampleOriginSiteId',
   'sp.collectedOn as sampleCollectedOn',
   'so.name as sampleOriginSiteName',
@@ -185,7 +185,7 @@ function* getListResults(query, auth) {
       siteName: 'sr.name',
       sampleId: 'sp.externalId',
       sampleOriginSite: 'so.name',
-      sampleGroup: 'sp.group',
+      sampleGroup: 'r.group',
       workflowStatusId: 'r.resultWorkflowStatusId',
     })
     .modify((queryBuilder, params) => {
