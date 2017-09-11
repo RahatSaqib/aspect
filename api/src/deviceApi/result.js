@@ -250,7 +250,11 @@ function* addResult(context) {
       'sample.runNumber',
       _.get(existingResult, 'sampleRunNumber', null)
     ),
-    group: _.get(payload, 'group', _.get(existingResult, 'group', null)),
+    sampleGroup: _.get(
+      payload,
+      'sampleGroup',
+      _.get(existingResult, 'sampleGroup', null)
+    ),
     resultCategory1: _.get(categories, '[0].id', null),
     resultCategory2: _.get(categories, '[1].id', null),
     resultData,
@@ -465,7 +469,7 @@ function* getResult(context) {
       'r.moduleName',
       'r.moduleSerial',
       'r.id as resultId',
-      'r.group as sampleGroup',
+      'r.sampleGroup',
       'a.externalId as assayId',
       'r.assayVersion',
       'r.rawData',
@@ -543,9 +547,7 @@ function* getResult(context) {
   if (row.sampleId != null) {
     sample.id = row.sampleId
   }
-  if (row.sampleGroup != null) {
-    sample.group = row.sampleGroup
-  }
+
   if (row.sampleCollectedOn != null) {
     sample.collectedOn = row.sampleCollectedOn
   }

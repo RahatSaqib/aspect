@@ -632,7 +632,7 @@ function* up(knex) {
       .references('id')
       .inTable('Sample')
     result.string('sampleRunNumber')
-    result.string('group')
+    result.string('sampleGroup')
     result
       .integer('resultCategory1')
       .unsigned()
