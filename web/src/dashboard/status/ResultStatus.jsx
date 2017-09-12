@@ -125,7 +125,7 @@ const enhance = compose(
           if (it.id === pointId) {
             return {
               ...it,
-              size: 200, // onHover, scale it up
+              size: 12, // onHover, scale it up
             }
           }
           return it
@@ -136,7 +136,7 @@ const enhance = compose(
           if (it.id === pointId) {
             return {
               ...it,
-              size: 4 * it.count, // onBlur, scale it back to normal
+              size: Math.max(4, Math.round(it.count / 2.5)), // onBlur, scale it back to normal
             }
           }
           return it

@@ -22,13 +22,13 @@ const CountryWithPoints = ({
     rawMargin
   )
 
-  const onMouseEnter = _.constant(({ target: { dataset: { pointId } } }) => {
+  const onMouseEnter = ({ target: { dataset: { pointId } } }) => {
     onMouseEnterPoint(pointId)
-  })
+  }
 
-  const onMouseLeave = _.constant(({ target: { dataset: { pointId } } }) => {
+  const onMouseLeave = ({ target: { dataset: { pointId } } }) => {
     onMouseLeavePoint(pointId)
-  })
+  }
 
   return (
     <ScaleSVG width={clientWidth} height={clientHeight}>
