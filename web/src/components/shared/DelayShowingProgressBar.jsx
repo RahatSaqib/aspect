@@ -1,10 +1,10 @@
-import { compose, lifecycle, pure } from 'recompose'
+import _ from 'lodash'
+import { compose, lifecycle } from 'recompose'
 import { ProgressBar } from 'react-toolbox/lib/progress_bar'
 
 const DELAY = 500
 
 const enhance = compose(
-  pure,
   lifecycle({
     componentWillMount() {
       this.setState({
@@ -28,6 +28,12 @@ const enhance = compose(
       } else if (this.state.disabled) {
         this.scheduleFutureShowing()
       }
+    },
+
+    shouldComponentUpdate(nextProps, nextState) {
+      return (
+        !_.isEqual(this.props, nextProps) || !_.isEqual(this.state, nextState)
+      )
     },
 
     componentWillUnmount() {

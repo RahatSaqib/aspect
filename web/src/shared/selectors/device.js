@@ -1,5 +1,5 @@
 export function isEditable(user /* TODO: add me back, device */) {
-  const notEditable = user.permissions
+  const notEditable = user.jwt.permissions
     .intersect(['device:admin', 'device:edit'])
     .isEmpty()
 

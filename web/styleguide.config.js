@@ -13,13 +13,14 @@ partialConfig.plugins = partialConfig.plugins.filter(
 )
 
 module.exports = {
+  showUsage: true,
   components: () => [
     ...glob.sync('src/components/themedReactToolbox/!(index).{js,jsx}'),
     ...glob.sync(
       'src/components/shared/@(ReadOnlyField|ReadOnlyFields|FallbackUntilDone|FocusBlurTextField).{js,jsx}'
     ),
     ...glob.sync(
-      'src/components/graph/@(BarChart|ColumnChart|LineChart|ChartContainer|ChartAlert).{js,jsx}'
+      'src/components/graph/@(BarChart|ColumnChart|LineChart|ChartContainer|ChartAlert|CountryMap).{js,jsx}'
     ),
     ...glob.sync('src/components/shared/flagIcon/@(FlagIcon).{js,jsx}'),
   ],

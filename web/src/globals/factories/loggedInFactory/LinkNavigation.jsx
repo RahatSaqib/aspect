@@ -7,17 +7,16 @@ import Link from '../../../components/shared/Link'
 
 const cssClasses = classnames.bind(require('./index.css'))
 
+const themes = {
+  Link: {
+    link: cssClasses('Link__link'),
+    active: cssClasses('Link__active'),
+    icon: cssClasses('Link__icon'),
+  },
+}
+
 export const makeThemedLink = props =>
-  <Link
-    {...props}
-    key={props.href}
-    title={props.label}
-    theme={{
-      link: cssClasses('Link__link'),
-      active: cssClasses('Link__active'),
-      icon: cssClasses('Link__icon'),
-    }}
-  />
+  <Link {...props} key={props.href} title={props.label} theme={themes.Link} />
 
 const enhance = _.identity
 

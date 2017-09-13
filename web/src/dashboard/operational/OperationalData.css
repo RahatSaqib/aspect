@@ -1,0 +1,90 @@
+@import '../../globals/variables.css';
+
+.Container {
+  padding: 10px;
+}
+
+.Content--loading {
+  opacity: 0.3;
+}
+
+.FiltersGroup {
+  padding: 10px 0;
+  display: flex;
+  justify-content: center;
+}
+
+.FiltersGroup__Child {
+  margin: 0 10px;
+}
+
+.Button {
+  margin: 0 5px;
+}
+
+.Section {
+  composes: Section from '../status/Status.css';
+}
+
+.Section__Content {
+  composes: Section__Content from '../status/Status.css';
+}
+
+.TitleContainer {
+  display: flex;
+}
+
+.TitleContainer__Title {
+  flex-grow: 1;
+}
+
+.Title__Color--inventory {
+  composes: Title__Color--inventory from '../status/Status.css';
+}
+
+.Title__Color--device {
+  composes: Title__Color--device from '../status/Status.css';
+}
+
+.Title__Color--site {
+  composes: Title__Color--site from '../status/Status.css';
+}
+
+.Graph {
+  padding: 10px;
+  color: var(--aspect-color-grey-2);
+}
+
+.Graph__Title {
+  line-height: 30px;
+  font-size: 18px;
+  font-weight: var(--lato-font-weight-black);
+  text-transform: capitalize;
+}
+
+.Graph__Message {
+  display: flex;
+}
+
+.Graph__Message__Icon--abnormal {
+  color: var(--aspect-color-brink);
+}
+
+.Graph__Message__Icon--normal {
+  color: var(--aspect-color-mantis);
+}
+
+.Graph__Message__Text {
+  flex-grow: 1;
+  padding-left: 10px;
+}
+
+.DelayShowingProgressBar--indeterminate[disabled] {
+  display: none;
+}
+
+.DelayShowingProgressBar--indeterminate:not([disabled]) {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+}

@@ -89,13 +89,16 @@ export const requirePermissions = ({
     unsubscribe = _.noop // eslint-disable-line react/sort-comp
 
     handleStoreChange = () => {
+      if (this.unsubscribe === _.noop) {
+        return
+      }
       this.setState(this.createState())
     }
 
     createState() {
       const { store } = this.context
       return {
-        userPermissions: store.getState().getIn(['user', 'permissions']),
+        userPermissions: store.getState().user.jwt.permissions,
       }
     }
 

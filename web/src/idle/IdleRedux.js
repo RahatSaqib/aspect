@@ -1,41 +1,38 @@
-import _ from 'lodash'
 import configure from 'redux-idle-monitor'
 
 import config from '../config'
-import { logoutStart } from '../auth/AuthRedux'
+import { idleLogout } from '../auth/AuthRedux'
 
-const types = {
-  IDLESTATUS_AWAY: 'IDLESTATUS_AWAY',
-  IDLESTATUS_INACTIVE: 'IDLESTATUS_INACTIVE',
-  IDLESTATUS_EXPIRED: 'IDLESTATUS_EXPIRED',
-}
+const IDLESTATUS_AWAY = 'AWAY'
+const IDLESTATUS_INACTIVE = 'INACTIVE'
+const IDLESTATUS_EXPIRED = 'EXPIRED'
 
 // actions
 const idleStatusDelay = idleStatus => () => {
-  if (idleStatus === types.IDLESTATUS_AWAY) {
-    return 20000
+  if (idleStatus === IDLESTATUS_AWAY) {
+    return 20 * 1000
   } // User becomes away after 20 seconds inactivity
-  if (idleStatus === types.IDLESTATUS_INACTIVE) {
+  if (idleStatus === IDLESTATUS_INACTIVE) {
     return config.userInactiveMinutes * 60 * 1000
   } // inactive after X minutes
-  if (idleStatus === types.IDLESTATUS_EXPIRED) {
-    return 60000
+  if (idleStatus === IDLESTATUS_EXPIRED) {
+    return 60 * 1000
   }
-  return 20000
+  return 20 * 1000
 }
 
 const activeStatusAction = () => {}
 
 const idleStatusAction = idleStatus => dispatch => {
-  if (idleStatus === types.IDLESTATUS_EXPIRED) {
-    dispatch(logoutStart('idle'))
+  if (idleStatus === IDLESTATUS_EXPIRED) {
+    return dispatch(idleLogout())
   }
 }
 
 // configure idle monitor
 const opts = {
   appName: 'aspect',
-  IDLE_STATUSES: _.values(types),
+  IDLE_STATUSES: [IDLESTATUS_AWAY, IDLESTATUS_INACTIVE, IDLESTATUS_EXPIRED],
   idleStatusDelay,
   activeStatusAction,
   idleStatusAction,

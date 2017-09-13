@@ -1,13 +1,13 @@
 ### Usage
 
-```js
+```js static
 import ChartContainer from 'src/components/graph/ChartContainer'
 import LineChart from 'src/components/graph/LineChart'
 ```
 
 It's themed according to default settings, requiring only data to render. Data should be defined as follows, with each value of the data array representing a line (all value[0] data are points on one line, all value[1] data are points on another line):
 
-```js
+```js static
 const lineData2 = [
   { date: "Site 1", value: [1, 2, 8]},
   { date: "Site 2", value: [2, 4, 9]},

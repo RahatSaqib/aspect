@@ -1,6 +1,6 @@
 ### Usage
 
-```js
+```js static
 import ReadOnlyField from 'src/components/shared/ReadOnlyField'
 ```
 

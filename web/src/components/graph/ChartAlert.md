@@ -1,6 +1,6 @@
 ### Usage
 
-```js
+```js static
 import ChartAlert from 'src/components/graph/ChartAlert'
 ```
 

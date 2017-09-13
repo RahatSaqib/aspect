@@ -7,7 +7,6 @@ import {
 } from '../error/CommonErrorNotifications'
 
 jest.mock('../shared/utils/browser')
-jest.mock('../shared/utils/localStorage')
 
 describe('AccountRedux module', () => {
   let AccountRedux
@@ -432,6 +431,8 @@ describe('AccountRedux module', () => {
     })
 
     describe('saveLoginDetails', () => {
+      let getStateStub
+
       const updateDetails = {
         value: 'login details updated',
       }
@@ -452,27 +453,35 @@ describe('AccountRedux module', () => {
 
       describe('when the server responds successfully', () => {
         beforeAll(() => {
-          jest.resetModules().mock('../shared/utils/fetch', () => {
-            const expectedResponseFromServer = Promise.resolve({
-              ok: true,
-              data: updateDetails,
+          jest
+            .resetModules()
+            .mock('../shared/utils/browser', () => ({
+              getClientName: () => `Mocha/Chai on ${window.navigator.platform}`,
+            }))
+            .mock('../shared/utils/fetch', () => {
+              const expectedResponseFromServer = Promise.resolve({
+                ok: true,
+                data: updateDetails,
+              })
+
+              fetchStub = {
+                getHeaders: jest.fn(() => stubHeaders),
+                aspectFetch: jest.fn(() => expectedResponseFromServer),
+              }
+
+              return fetchStub
             })
-
-            fetchStub = {
-              getHeaders: jest.fn(() => stubHeaders),
-              aspectFetch: jest.fn(() => expectedResponseFromServer),
-            }
-
-            return fetchStub
-          })
 
           AccountRedux = require('./AccountRedux')
 
           dispatchStub = jest.fn()
+          getStateStub = jest
+            .fn()
+            .mockReturnValue({ user: { clientId: 'Mocha/Chai' } })
 
           const thunk = AccountRedux.saveLoginDetails(loginDetailsData)
 
-          result = thunk(dispatchStub)
+          result = thunk(dispatchStub, getStateStub)
         })
 
         afterAll(() => {
@@ -563,26 +572,19 @@ describe('AccountRedux module', () => {
 
       describe('when the server responds successfully', () => {
         beforeAll(() => {
-          jest
-            .resetModules()
-            .mock('../shared/utils/fetch', () => {
-              const expectedResponseFromServer = Promise.resolve({
-                ok: true,
-                data: accountDetailsData,
-              })
-
-              fetchStub = {
-                getHeaders: jest.fn(() => stubHeaders),
-                aspectFetch: jest.fn(() => expectedResponseFromServer),
-              }
-
-              return fetchStub
+          jest.resetModules().mock('../shared/utils/fetch', () => {
+            const expectedResponseFromServer = Promise.resolve({
+              ok: true,
+              data: accountDetailsData,
             })
-            .mock('../auth/AuthRedux', () => ({
-              loginSuccess: () => {},
-              changeCulture: () => {},
-              changeTimezone: () => {},
-            }))
+
+            fetchStub = {
+              getHeaders: jest.fn(() => stubHeaders),
+              aspectFetch: jest.fn(() => expectedResponseFromServer),
+            }
+
+            return fetchStub
+          })
 
           AccountRedux = require('./AccountRedux')
 

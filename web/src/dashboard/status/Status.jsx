@@ -25,7 +25,7 @@ const cssClasses = classnames.bind(require('./Status.css'))
 const enhance = compose(
   connect(
     state => ({
-      userName: state.getIn(['user', 'name']),
+      userName: state.user.jwt.name,
       status: state.getIn(['dashboard', 'status']),
     }),
     bindActionCreators.bind(null, {
@@ -123,43 +123,47 @@ export const Status = ({
         </Link>
       </Unit>
     </div>
-    <div className={cssClasses('Section')}>
-      {status.get('resultSummary') &&
+
+    {status.get('resultSummary') &&
+      <div className={cssClasses('Section')}>
         <ResultStatus
           intl={intl}
           className={cssClasses('Section__Content')}
           title={intl.formatMessage(messages.healthTitle)}
           data={status.get('resultSummary')}
-        />}
-    </div>
-    <div className={cssClasses('Section')}>
-      {status.get('inventorySummary') &&
+        />
+      </div>}
+
+    {status.get('inventorySummary') &&
+      <div className={cssClasses('Section')}>
         <InventoryStatus
           history={history}
           intl={intl}
           className={cssClasses('Section__Content')}
           title={intl.formatMessage(messages.consumableTitle)}
           data={status.get('inventorySummary')}
-        />}
-    </div>
-    <div className={cssClasses('Section')}>
-      {status.get('deviceSummary') &&
+        />
+      </div>}
+
+    {status.get('deviceSummary') &&
+      <div className={cssClasses('Section')}>
         <DeviceStatus
           intl={intl}
           className={cssClasses('Section__Content')}
           title={intl.formatMessage(messages.devicesTitle)}
           data={status.get('deviceSummary')}
-        />}
-    </div>
-    <div className={cssClasses('Section')}>
-      {status.get('siteSummary') &&
+        />
+      </div>}
+
+    {status.get('siteSummary') &&
+      <div className={cssClasses('Section')}>
         <SiteStatus
           intl={intl}
           className={cssClasses('Section__Content')}
           title={intl.formatMessage(messages.sitesTitle)}
           data={status.get('siteSummary')}
-        />}
-    </div>
+        />
+      </div>}
   </div>
 
 export default enhance(Status)

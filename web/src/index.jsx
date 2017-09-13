@@ -10,9 +10,9 @@ import injectTapEventPlugin from 'react-tap-event-plugin'
 
 import config from './config'
 import store from './store'
-import { getRefreshToken } from './shared/utils/localStorage'
-import { refreshStart, hydrateFromLocalStorage } from './auth/AuthRedux'
+import { hydrateFromLocalStorage, refreshStart } from './auth/AuthRedux'
 import './index.css'
+import { getAspectHydrateData } from './globals/sideEffects/LocalStorage'
 import appFactory from './globals/factories/appFactory'
 
 if (config.sentry) {
@@ -33,12 +33,28 @@ if (!window.Intl) {
   require('intl/locale-data/jsonp/en.js')
 }
 
-// Refresh the access token every 30 minutes.
-// this could probably be done more elegantly in a component
-// but it works for now
-setInterval(() => {
-  store.dispatch(refreshStart())
-}, 30 * 60 * 1000)
+// eslint-disable-next-line no-constant-condition
+if (process.env.NODE_ENV === 'development' && false) {
+  // TODO: workaround: https://github.com/garbles/why-did-you-update/issues/45
+  // eslint-disable-next-line no-unused-vars
+  let createClass = React.createClass
+  Object.defineProperty(React, 'createClass', {
+    set: nextCreateClass => {
+      createClass = nextCreateClass
+    },
+  })
+  const { whyDidYouUpdate } = require('why-did-you-update')
+  whyDidYouUpdate(React, {
+    exclude: new RegExp(
+      `^(${[
+        'Themed|Button|MenuItem|Overlay|ProgressBar|Layout|AppBar|Dialog',
+        'AutoLockScrolling|IconMenu|Router|Route|IconButton|ActivableRenderer',
+        'BeforeAfterWrapper|TextField|EnhancedButton|NavigationArrowDropDown',
+        'SvgIcon|TouchRipple|DropDownMenu|SelectField|AutoComplete|Card|Paper',
+      ].join('|')})`
+    ),
+  })
+}
 
 overrideComponentTypeChecker(
   (classType, reactElement) =>
@@ -49,19 +65,11 @@ const appDom = document.getElementById('app')
 
 const renderApp = () => render(appFactory(_.noop)({ store }), appDom)
 
-// If found a access token, refresh it before initial rendering
-new Promise(resolve => {
-  // get new access token on refresh/startup
-  if (getRefreshToken()) {
-    // let's see if we can get culture from local storage
-    store.dispatch(hydrateFromLocalStorage())
+// let's see if we can get culture from local storage
+store.dispatch(hydrateFromLocalStorage(getAspectHydrateData()))
 
-    // get new access token
-    store.dispatch(refreshStart()).then(resolve, resolve)
-  } else {
-    resolve()
-  }
-}).then(renderApp)
+// get new access token
+store.dispatch(refreshStart()).finally(renderApp)
 
 if (module.hot) {
   module.hot.accept('./globals/factories/appFactory', renderApp)

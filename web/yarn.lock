@@ -17,6 +17,23 @@
   dependencies:
     d3-shape "^1.0.6"
 
+"@vx/geo@^0.0.136":
+  version "0.0.136"
+  resolved "https://registry.yarnpkg.com/@vx/geo/-/geo-0.0.136.tgz#ea807f1c4ac747b0728d6665b5c837b3fb15c315"
+  dependencies:
+    "@vx/group" "0.0.136"
+    classnames "^2.2.5"
+    d3-geo "^1.6.4"
+    prop-types "^15.5.10"
+
+"@vx/glyph@^0.0.136":
+  version "0.0.136"
+  resolved "https://registry.yarnpkg.com/@vx/glyph/-/glyph-0.0.136.tgz#55a0fae323ad7fb4ae7c51fbbfb69ebabcbb3c31"
+  dependencies:
+    "@vx/group" "0.0.136"
+    classnames "^2.2.5"
+    d3-shape "^1.2.0"
+
 "@vx/gradient@^0.0.129":
   version "0.0.129"
   resolved "https://registry.yarnpkg.com/@vx/gradient/-/gradient-0.0.129.tgz#2c6f6a41085533166ba6e1c9cdbb3e52d4dd7e85"
@@ -36,6 +53,12 @@
 "@vx/group@0.0.127", "@vx/group@^0.0.127":
   version "0.0.127"
   resolved "https://registry.yarnpkg.com/@vx/group/-/group-0.0.127.tgz#d607c957119cdb787aa709818532f40e7e04eb8f"
+  dependencies:
+    classnames "^2.2.5"
+
+"@vx/group@0.0.136":
+  version "0.0.136"
+  resolved "https://registry.yarnpkg.com/@vx/group/-/group-0.0.136.tgz#595211c7b04b7ba52824c07f9204f0c1b7e1da36"
   dependencies:
     classnames "^2.2.5"
 
@@ -1874,7 +1897,7 @@ combined-stream@^1.0.5, combined-stream@~1.0.5:
   dependencies:
     delayed-stream "~1.0.0"
 
-commander@2.11.x, commander@^2.11.0, commander@^2.8.1, commander@^2.9.0, commander@~2.11.0:
+commander@2, commander@2.11.x, commander@^2.11.0, commander@^2.8.1, commander@^2.9.0, commander@~2.11.0:
   version "2.11.0"
   resolved "https://registry.yarnpkg.com/commander/-/commander-2.11.0.tgz#157152fd1e7a6c8d98a5b715cf376df928004563"
 
@@ -2275,7 +2298,7 @@ cyclist@~0.2.2:
   version "0.2.2"
   resolved "https://registry.yarnpkg.com/cyclist/-/cyclist-0.2.2.tgz#1b33792e11e914a2fd6d6ed6447464444e5fa640"
 
-d3-array@^1.2.0:
+d3-array@1, d3-array@^1.2.0:
   version "1.2.0"
   resolved "https://registry.yarnpkg.com/d3-array/-/d3-array-1.2.0.tgz#147d269720e174c4057a7f42be8b0f3f2ba53108"
 
@@ -2290,6 +2313,12 @@ d3-color@1:
 d3-format@1:
   version "1.2.0"
   resolved "https://registry.yarnpkg.com/d3-format/-/d3-format-1.2.0.tgz#6b480baa886885d4651dc248a8f4ac9da16db07a"
+
+d3-geo@^1.6.4:
+  version "1.6.4"
+  resolved "https://registry.yarnpkg.com/d3-geo/-/d3-geo-1.6.4.tgz#f20e1e461cb1845f5a8be55ab6f876542a7e3199"
+  dependencies:
+    d3-array "1"
 
 d3-interpolate@1:
   version "1.1.5"
@@ -5307,6 +5336,10 @@ lodash.throttle@^4.1.1:
 lodash.uniq@^4.5.0:
   version "4.5.0"
   resolved "https://registry.yarnpkg.com/lodash.uniq/-/lodash.uniq-4.5.0.tgz#d0225373aeb652adc1bc82e4945339a842754773"
+
+lodash@4.12.0:
+  version "4.12.0"
+  resolved "https://registry.yarnpkg.com/lodash/-/lodash-4.12.0.tgz#2bd6dc46a040f59e686c972ed21d93dc59053258"
 
 lodash@^3.2.0:
   version "3.10.1"
@@ -8713,6 +8746,12 @@ to-ico@^1.1.2:
     parse-png "^1.0.0"
     resize-img "^1.1.0"
 
+topojson-client@^3.0.0:
+  version "3.0.0"
+  resolved "https://registry.yarnpkg.com/topojson-client/-/topojson-client-3.0.0.tgz#1f99293a77ef42a448d032a81aa982b73f360d2f"
+  dependencies:
+    commander "2"
+
 toposort@^1.0.0:
   version "1.0.3"
   resolved "https://registry.yarnpkg.com/toposort/-/toposort-1.0.3.tgz#f02cd8a74bd8be2fc0e98611c3bacb95a171869c"
@@ -9323,6 +9362,12 @@ which@~1.2.10:
   resolved "https://registry.yarnpkg.com/which/-/which-1.2.14.tgz#9a87c4378f03e827cecaf1acdf56c736c01c14e5"
   dependencies:
     isexe "^2.0.0"
+
+why-did-you-update@^0.0.8:
+  version "0.0.8"
+  resolved "https://registry.yarnpkg.com/why-did-you-update/-/why-did-you-update-0.0.8.tgz#389d97dd6c147e1edbc9f5d5470d44d985c8ae38"
+  dependencies:
+    lodash "4.12.0"
 
 wide-align@^1.1.0:
   version "1.1.2"

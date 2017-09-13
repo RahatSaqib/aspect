@@ -68,6 +68,12 @@ const enhance = compose(
   })
 )
 
+const themes = {
+  DialCodeDropdown: {
+    dropdown: cssClasses('DialCodeDropdown__dropdown'),
+  },
+}
+
 const DialCodeDropdownInput = ({
   dialCode,
   numberPart,
@@ -79,9 +85,7 @@ const DialCodeDropdownInput = ({
     <DialCodeDropdown
       value={dialCode}
       onChange={onDialCodeChange}
-      theme={{
-        dropdown: cssClasses('DialCodeDropdown__dropdown'),
-      }}
+      theme={themes.DialCodeDropdown}
     />
     <Input
       type="text"

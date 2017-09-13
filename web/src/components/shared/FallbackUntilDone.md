@@ -1,6 +1,6 @@
 ### Usage
 
-```js
+```js static
 import FallbackUntilDone from 'src/components/shared/FallbackUntilDone'
 ```
 

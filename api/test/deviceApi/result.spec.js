@@ -344,7 +344,7 @@ describe('Device Result API routes', () => {
               latitude: 30.419348,
             },
             startedOn: '2013-12-01',
-            endedOn: '2013-12-01T01:30',
+            endedOn: '2013-12-01T01:30:00.000Z',
             consumable: {
               serial: '132-44-222',
               expirationDate: '2014-03-01',
@@ -446,7 +446,7 @@ describe('Device Result API routes', () => {
         assert.approximately(result2.latitude, 30.419348, 0.000001)
         assert.approximately(result2.longitude, -87.581222, 0.000001)
         assert.deepEqual(result2.startedOn, new Date('2013-12-01'))
-        assert.deepEqual(result2.endedOn, new Date('2013-12-01T01:30'))
+        assert.deepEqual(result2.endedOn, new Date('2013-12-01T01:30:00.000Z'))
         assert.equal(result2.consumableSerial, '132-44-222')
         assert.deepEqual(
           result2.consumableExpirationDate,
@@ -574,7 +574,7 @@ describe('Device Result API routes', () => {
             latitude: 30.419348,
           },
           startedOn: '2013-12-01',
-          endedOn: '2013-12-01T01:30',
+          endedOn: '2013-12-01T01:30:00.000Z',
           consumable: {
             serial: '132-44-222',
             expirationDate: '2014-03-01',

@@ -4,7 +4,7 @@ import { defineMessages } from 'react-intl'
 import { showError } from '../../appNotification/AppNotificationRedux'
 
 import config from '../../config'
-import { getJWT } from './localStorage'
+import { getAspectAccess } from '../../globals/sideEffects/LocalStorage'
 
 // fetch with auth and other headers we need
 export function aspectFetch(path, options) {
@@ -19,7 +19,7 @@ export function aspectFetch(path, options) {
 }
 
 function addAuthHeaderMiddleware(fetch, input, options = {}) {
-  const token = getJWT()
+  const token = getAspectAccess()
   if (token) {
     ;(options.headers ||
       (options.headers = {})).Authorization = `Bearer ${token}`
@@ -35,7 +35,7 @@ function addAuthHeaderMiddleware(fetch, input, options = {}) {
 export function getHeaders(json) {
   const headers = new Headers()
 
-  const token = getJWT()
+  const token = getAspectAccess()
   if (token) {
     headers.append('Authorization', `Bearer ${token}`)
   }

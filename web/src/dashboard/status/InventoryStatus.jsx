@@ -7,6 +7,7 @@ import { Button } from 'react-toolbox/lib/button'
 import { Unit } from '../../components/pureGrids'
 import requirePermissions from '../../components/shared/requirePermissions'
 import Title from './Title'
+import CountryWithPoints from './CountryWithPoints'
 import SummaryItemsBlock from './SummaryItemsBlock'
 import messages from './messages'
 
@@ -25,6 +26,13 @@ const enhance = compose(
   })
 )
 
+const themes = {
+  Button: {
+    neutral: cssClasses('Button--receive'),
+    raised: cssClasses('Button--raised'),
+  },
+}
+
 export const InventoryStatus = ({
   intl,
   className,
@@ -39,11 +47,7 @@ export const InventoryStatus = ({
     />
     <div>
       <Unit sm="1-2" lg="1-4">
-        <img
-          src={require('./placeholder-map.png')}
-          alt="placeholder"
-          style={{ width: '100%' }}
-        />
+        <CountryWithPoints countryIsoAlpha2Code="TZ" />
       </Unit>
       <Unit sm="1-2" lg="1-4">
         <SummaryItemsBlock
@@ -66,20 +70,14 @@ export const InventoryStatus = ({
             label={intl.formatMessage(messages.receiveConsumablesLabel)}
             onClick={onInventoryClick}
             raised
-            theme={{
-              neutral: cssClasses('Button--receive'),
-              raised: cssClasses('Button--raised'),
-            }}
+            theme={themes.Button}
           />
           <Button
             className={cssClasses('Button')}
             label={intl.formatMessage(messages.discardConsumablesLabel)}
             onClick={onInventoryClick}
             raised
-            theme={{
-              neutral: cssClasses('Button--discard'),
-              raised: cssClasses('Button--raised'),
-            }}
+            theme={themes.Button}
           />
           <Button
             className={cssClasses('Button')}

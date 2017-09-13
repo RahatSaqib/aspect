@@ -14,7 +14,7 @@
     "dist": "npm-run-all \"webpack:dll -- --{1}\" \"webpack:src -- --{1}\" -- env.ASPECT_TARGET=dist",
     "pretest": "fsys --task=remove --fileFolder=coverage && fsys --task=remove --fileFolder=mocha.json",
     "test": "cross-env ASPECT_TARGET=test BABEL_ENV=test JEST_FILE=mocha.json jest --config ./jest.json --coverage",
-    "test:snapshot": "cross-env ASPECT_TARGET=test BABEL_ENV=test JEST_FILE=mocha.json jest --config ./jest.json -u",
+    "test:snapshot": "npm run test -- -u",
     "test:watch": "npm run test -- --watch",
     "posttest": "npm run lint",
     "preupdatemessages:start": "cross-env BABEL_ENV=message babel --quiet --out-dir ./i18n/dist ./src",
@@ -113,10 +113,13 @@
     "url-loader": "^0.5.8",
     "webapp-manifest-plugin": "^0.0.4",
     "webpack": "^3.3.0",
-    "webpack-dev-server": "^2.4.2"
+    "webpack-dev-server": "^2.4.2",
+    "why-did-you-update": "^0.0.8"
   },
   "dependencies": {
     "@vx/axis": "^0.0.134",
+    "@vx/geo": "^0.0.136",
+    "@vx/glyph": "^0.0.136",
     "@vx/gradient": "^0.0.129",
     "@vx/grid": "^0.0.131",
     "@vx/group": "^0.0.127",
@@ -164,7 +167,9 @@
     "redux-idle-monitor": "^0.6.2",
     "redux-immutable": "^4.0.0",
     "redux-thunk": "^2.2.0",
+    "topojson-client": "^3.0.0",
     "url-search-params-polyfill": "^2.0.0",
+    "warning": "^3.0.0",
     "whatwg-fetch": "^2.0.3"
   }
 }

@@ -1,36 +1,46 @@
+import window from 'global/window'
 import classnames from 'classnames/bind'
 import React from 'react'
-import { compose } from 'recompose'
+import { compose, withHandlers } from 'recompose'
 import { bindActionCreators } from 'redux'
 import { connect } from 'react-redux'
 import AppBar from 'react-toolbox/lib/app_bar'
 import { IconMenu, MenuItem, MenuDivider } from 'react-toolbox/lib/menu'
+import FaUser from 'react-icons/lib/fa/user'
 
 import ConfluenceIcon from './ConfluenceIcon'
 import LinkNavigation from './LinkNavigation'
-import UserIcon from './UserIcon'
-import {
-  navigateRoot,
-  closeDrawer,
-  goToExternalHelp,
-  navigateCurrentAccountDetails,
-  logoutStart,
-} from '../../../auth/AuthRedux'
+import { closeDrawer, userRequestedLogout } from '../../../auth/AuthRedux'
 
 const cssClasses = classnames.bind(require('./index.css'))
 
 const enhance = compose(
+  withHandlers({
+    navigateRoot: ({ history }) => () => history.push('/'),
+
+    goToExternalHelp: () => () => {
+      window.location.href = 'https://admin.gxalert.com'
+    },
+
+    navigateCurrentAccountDetails: ({ history }) => () =>
+      history.push('/account-details/current'),
+  }),
   connect(
     null,
     bindActionCreators.bind(null, {
-      navigateRoot,
       closeDrawer,
-      goToExternalHelp,
-      navigateCurrentAccountDetails,
-      logoutStart,
+      userRequestedLogout,
     })
   )
 )
+
+const themes = {
+  AppBar: {
+    appBar: cssClasses('AppBar__appBar', 'AppBar__appBar--sm'),
+    leftIcon: cssClasses('AppBar__leftIcon'),
+  },
+  IconMenu: { icon: cssClasses('IconMenu__icon') },
+}
 
 const HorizontalAppBar = ({
   history,
@@ -40,15 +50,12 @@ const HorizontalAppBar = ({
   closeDrawer,
   goToExternalHelp,
   navigateCurrentAccountDetails,
-  logoutStart,
+  userRequestedLogout,
 }) =>
   <AppBar
     leftIcon={<ConfluenceIcon />}
     onLeftIconClick={navigateRoot}
-    theme={{
-      appBar: cssClasses('AppBar__appBar', 'AppBar__appBar--sm'),
-      leftIcon: cssClasses('AppBar__leftIcon'),
-    }}
+    theme={themes.AppBar}
   >
     <LinkNavigation
       history={history}
@@ -57,8 +64,8 @@ const HorizontalAppBar = ({
       onClick={closeDrawer}
     />
     <IconMenu
-      icon={<UserIcon />}
-      theme={{ icon: cssClasses('IconMenu__icon') }}
+      icon={<FaUser />}
+      theme={themes.IconMenu}
       position="topRight"
       menuRipple
     >
@@ -68,7 +75,7 @@ const HorizontalAppBar = ({
         onClick={navigateCurrentAccountDetails}
       />
       <MenuDivider />
-      <MenuItem caption="Sign out" onClick={logoutStart} />
+      <MenuItem caption="Sign out" onClick={userRequestedLogout} />
     </IconMenu>
   </AppBar>
 
