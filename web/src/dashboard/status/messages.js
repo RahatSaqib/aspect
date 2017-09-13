@@ -25,9 +25,9 @@ export const messages = defineMessages({
     id: 'pages.Status.usersTitle',
     defaultMessage: 'users',
   },
-  healthTitle: {
-    id: 'pages.Status.healthTitle',
-    defaultMessage: 'health',
+  clinicalTitle: {
+    id: 'pages.Status.clinicalTitle',
+    defaultMessage: 'clinical',
   },
   consumableTitle: {
     id: 'pages.Status.consumableTitle',

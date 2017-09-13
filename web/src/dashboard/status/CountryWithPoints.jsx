@@ -7,10 +7,15 @@ import CountryMap from '../../components/graph/CountryMap'
 
 const enhance = _.identity
 
+const randomBlue = feature =>
+  `#${feature.index % 10}${feature.index % 5}d${feature.index %
+    7}e${feature.index % 10}`
+
 const CountryWithPoints = ({
   clientWidth = 300,
   clientHeight = 300,
   countryIsoAlpha2Code,
+  fill = randomBlue,
   points = [],
   onMouseEnterPoint = _.noop,
   onMouseLeavePoint = _.noop,
@@ -41,7 +46,7 @@ const CountryWithPoints = ({
         projectionFunc={projection =>
           <Group>
             {points.map(point => {
-              const [left, top] = projection([point.lng, point.lat])
+              const [left, top] = projection([point.longitude, point.latitude])
 
               return (
                 <GlyphDot
@@ -59,9 +64,7 @@ const CountryWithPoints = ({
               )
             })}
           </Group>}
-        fill={feature =>
-          `#${feature.index % 10}${feature.index % 5}d${feature.index %
-            7}e${feature.index % 10}`}
+        fill={fill}
         stroke={_.constant('#ffffff')}
       />
     </ScaleSVG>
