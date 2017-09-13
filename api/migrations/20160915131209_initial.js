@@ -872,13 +872,11 @@ function* up(knex) {
   // this table logs any change of QC-Check checkbox on 'Result Details' page
   yield knex.schema.createTable('ResultQualityControlLog', x => {
     x.increments('id')
-    x.integer('resultId')
-      .unsigned()
-      .references('id')
-      .inTable('Result')
+    x.integer('resultId').unsigned().references('id').inTable('Result')
     x.boolean('qcCheck').notNullable().defaultTo(0)
     x.dateTime('createdOn').notNullable()
-    x.integer('createdBy')
+    x
+      .integer('createdBy')
       .notNullable()
       .unsigned()
       .index()
