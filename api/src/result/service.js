@@ -8,6 +8,7 @@ const {
   sortPageParams,
 } = require('../db')
 const { getConstraints, addConstraints } = require('../auth/constraints')
+const { getUser } = require('../auth/service')
 const {
   getCellsByValue,
   generateExcelFile,
@@ -399,7 +400,7 @@ function* updateWorkflowStatus(request) {
   const { auth, params, payload } = request
   const now = new Date()
   const { resultId } = params
-  const { id: currentUserId } = auth.credentials
+  const { id: currentUserId } = yield getUser(auth.credentials.name)
 
   // get the result so we can check access and if status changed
   const result = yield* getResultByResultId(request)
@@ -445,7 +446,7 @@ function* updateQcCheck(request) {
   const { auth, params, payload } = request
   const now = new Date()
   const { resultId } = params
-  const { id: currentUserId } = auth.credentials
+  const { id: currentUserId } = yield getUser(auth.credentials.name)
 
   // get the result so we can check access and workflow status
   const result = yield* getResultByResultId(request)
@@ -464,6 +465,14 @@ function* updateQcCheck(request) {
     qcCheck: payload.qcCheck,
     updatedBy: currentUserId,
     updatedOn: now,
+  })
+
+  // log QC-Check change in separate table
+  yield knex('ResultQualityControlLog').insert({
+    resultId,
+    qcCheck: payload.qcCheck,
+    createdBy: currentUserId,
+    createdOn: now,
   })
 
   // add device log entry so result is redelivered

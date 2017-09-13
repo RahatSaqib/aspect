@@ -869,6 +869,22 @@ function* up(knex) {
     inventoryLog.charset('utf8')
   })
 
+  // this table logs any change of QC-Check checkbox on 'Result Details' page
+  yield knex.schema.createTable('ResultQualityControlLog', x => {
+    x.increments('id')
+    x.integer('resultId').unsigned().references('id').inTable('Result')
+    x.boolean('qcCheck').notNullable().defaultTo(0)
+    x.dateTime('createdOn').notNullable()
+    x
+      .integer('createdBy')
+      .notNullable()
+      .unsigned()
+      .index()
+      .references('id')
+      .inTable('User')
+    x.charset('utf8')
+  })
+
   yield knex.raw('SET foreign_key_checks = 1')
 }
 
@@ -926,6 +942,7 @@ function* down(knex) {
   yield knex.schema.dropTableIfExists('Partner')
   yield knex.schema.dropTableIfExists('PartnerType')
   yield knex.schema.dropTableIfExists('DeviceSim')
+  yield knex.schema.dropTableIfExists('ResultQualityControlLog')
 
   yield knex.raw('SET foreign_key_checks = 1')
 }
