@@ -1534,6 +1534,12 @@ function* seed(knex) {
               city: `${lga.name} City`,
               street1: `${lgaData.id} Main Street`,
               zip: `12345-${lgaData.id}`,
+              latitude: _.has(state, 'lat')
+                ? state.lat + _.random(-0.5, 0.5, true)
+                : undefined,
+              longitude: _.has(state, 'lng')
+                ? state.lng + _.random(-0.5, 0.5, true)
+                : undefined,
             },
             auditFields
           )
