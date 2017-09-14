@@ -1169,6 +1169,11 @@ function* seed(knex) {
   })
 
   yield knex('ResultCategoryAssay').insert({
+    resultCategoryId: resultCategoryNotDetectedId,
+    assayId: assayHivVlId,
+  })
+
+  yield knex('ResultCategoryAssay').insert({
     resultCategoryId: resultCategoryInvalidId,
     assayId: assayHivVlId,
   })
@@ -1955,72 +1960,79 @@ function* seed(knex) {
     },
   }
 
-  for (const i of _.range(1, resultMtbNumber + 1)) {
+  for (const i of _.range(
+    _.random(1, resultMtbNumber + 1),
+    resultMtbNumber + 1
+  )) {
     const device = devicesGeneXpert[i % devicesGeneXpert.length]
     const siteData = siteDatas.find(site => site.id === device.siteId)
     const sample = samples[i % samples.length]
-    const result = possibleResults[i % 5]
     const randomTimespan = _.random(6000) * millisInMinute
-    resultData.resultText = result.resultText
 
-    const resultId = yield knex('Result').insert(
-      Object.assign({}, auditFields, {
-        externalId: `UQTB-${i}`,
-        assayId: assayMtbRifId,
-        partnerId: partnerOneId,
-        geographyId: siteData.geographyId,
-        siteId: siteData.id,
-        deviceId: device.id,
-        resultWorkflowStatusId: ordered,
-        longitude: -81.581222,
-        latitude: 28.419348,
-        resultSourceId: resultSourceDiagnosticId,
-        resultTypeId: resultTypePatientId,
-        sampleId: sample.id,
-        sampleRunNumber: `${i % 2 + 1}`,
-        sampleGroup: `GRP-HIV-${i % 5}`,
-        resultCategory1: result.category1,
-        resultCategory2: result.category2,
-        resultData: JSON.stringify(resultData),
-        assayVersion: '4',
-        startedOn: new Date(+now - randomTimespan - 12 * millisInHour),
-        endedOn: new Date(+now - randomTimespan - 10 * millisInHour),
-        consumableSerial: `${i}12`,
-        consumableExpirationDate: new Date(+now + 200 * i * millisInHour),
-        consumableLot: `Lot ${i % 5}`,
-        instrumentSerial: `S-1234-${i % 3}`,
-        moduleName: 'Module A',
-        moduleSerial: `M-1234-${i % 4}`,
-        researchId: `R-ID-${i}`,
-        patientData: JSON.stringify(patients[_.random(99)]),
-        senderVersion: '4.6b',
-        senderOperator: 'Marsha',
-        notes: 'This is a test... result',
-        errorCode: result.category1 === resultCategoryErrorId ? '1024' : null,
-        errorNotes:
-          result.category1 === resultCategoryErrorId
-            ? 'Exceeded cycle threshold'
-            : null,
-      })
-    )
+    for (const result of possibleResults) {
+      if (_.random(10) > 3) {
+        resultData.resultText = result.resultText
+        const resultId = yield knex('Result').insert(
+          Object.assign({}, auditFields, {
+            externalId: `UQTB-${i}`,
+            assayId: assayMtbRifId,
+            partnerId: partnerOneId,
+            geographyId: siteData.geographyId,
+            siteId: siteData.id,
+            deviceId: device.id,
+            resultWorkflowStatusId: ordered,
+            longitude: -81.581222,
+            latitude: 28.419348,
+            resultSourceId: resultSourceDiagnosticId,
+            resultTypeId: resultTypePatientId,
+            sampleId: sample.id,
+            sampleRunNumber: `${i % 2 + 1}`,
+            sampleGroup: `GRP-HIV-${i % 5}`,
+            resultCategory1: result.category1,
+            resultCategory2: result.category2,
+            resultData: JSON.stringify(resultData),
+            assayVersion: '4',
+            startedOn: new Date(+now - randomTimespan - 12 * millisInHour),
+            endedOn: new Date(+now - randomTimespan - 10 * millisInHour),
+            consumableSerial: `${i}12`,
+            consumableExpirationDate: new Date(+now + 200 * i * millisInHour),
+            consumableLot: `Lot ${i % 5}`,
+            instrumentSerial: `S-1234-${i % 3}`,
+            moduleName: 'Module A',
+            moduleSerial: `M-1234-${i % 4}`,
+            researchId: `R-ID-${i}`,
+            patientData: JSON.stringify(patients[_.random(99)]),
+            senderVersion: '4.6b',
+            senderOperator: 'Marsha',
+            notes: 'This is a test... result',
+            errorCode:
+              result.category1 === resultCategoryErrorId ? '1024' : null,
+            errorNotes:
+              result.category1 === resultCategoryErrorId
+                ? 'Exceeded cycle threshold'
+                : null,
+          })
+        )
 
-    yield knex('ResultWorkflowLog').insert({
-      resultId,
-      resultWorkflowStatusId: ordered,
-      operator: 'Marsha',
-      changedOn: new Date(+now - randomTimespan - 25 * millisInHour),
-      createdOn: new Date(+now - randomTimespan - 26 * millisInHour),
-      createdBy: adminId,
-    })
+        yield knex('ResultWorkflowLog').insert({
+          resultId,
+          resultWorkflowStatusId: ordered,
+          operator: 'Marsha',
+          changedOn: new Date(+now - randomTimespan - 25 * millisInHour),
+          createdOn: new Date(+now - randomTimespan - 26 * millisInHour),
+          createdBy: adminId,
+        })
 
-    yield knex('ResultWorkflowLog').insert({
-      resultId,
-      resultWorkflowStatusId: acknowledged,
-      operator: 'John',
-      changedOn: new Date(+now - randomTimespan - 2 * millisInHour),
-      createdOn: new Date(+now - randomTimespan - 1 * millisInHour),
-      createdBy: adminId,
-    })
+        yield knex('ResultWorkflowLog').insert({
+          resultId,
+          resultWorkflowStatusId: acknowledged,
+          operator: 'John',
+          changedOn: new Date(+now - randomTimespan - 2 * millisInHour),
+          createdOn: new Date(+now - randomTimespan - 1 * millisInHour),
+          createdBy: adminId,
+        })
+      }
+    }
   }
 
   // some Ebola samples:
@@ -2101,81 +2113,88 @@ function* seed(knex) {
     },
   }
 
-  for (const i of _.range(1, resultEbolaNumber + 1)) {
+  for (const i of _.range(
+    _.random(1, resultEbolaNumber + 1),
+    resultEbolaNumber + 1
+  )) {
     const device = devicesGeneXpert[i % devicesGeneXpert.length]
     const siteData = siteDatas.find(site => site.id === device.siteId)
     const sample = samples[i % samples.length]
-    const result = possibleResults[i % 5]
     const randomTimespan = _.random(6000) * millisInMinute
-    resultData.resultText = result.resultText
 
-    const resultId = yield knex('Result').insert(
-      Object.assign({}, auditFields, {
-        externalId: `UQEB-${i}`,
-        assayId: assayEbolaId,
-        partnerId: partnerOneId,
-        geographyId: siteData.geographyId,
-        siteId: siteData.id,
-        deviceId: device.id,
-        resultWorkflowStatusId: processed,
-        longitude: -81.581222,
-        latitude: 28.419348,
-        resultSourceId: resultSourceDiagnosticId,
-        resultTypeId: resultTypePatientId,
-        sampleId: sample.id,
-        sampleRunNumber: `${i % 2 + 1}`,
-        resultCategory1: result.category1,
-        sampleGroup: `GRP-HIV-${i % 5}`,
-        resultCategory2: result.category2,
-        resultData: JSON.stringify(resultData),
-        assayVersion: '4',
-        startedOn: new Date(+now - randomTimespan - 12 * millisInHour),
-        endedOn: new Date(+now - randomTimespan - 10 * millisInHour),
-        consumableSerial: `${i}12`,
-        consumableExpirationDate: new Date(+now + 200 * i * millisInHour),
-        consumableLot: `Lot ${i % 5}`,
-        instrumentSerial: `S-1234-${i % 3}`,
-        moduleName: 'Module A',
-        moduleSerial: `M-1234-${i % 4}`,
-        researchId: `R-ID-${i}`,
-        patientData: JSON.stringify(patients[_.random(99)]),
-        senderVersion: '4.7a',
-        senderOperator: 'Marsha',
-        notes: 'This is an Ebola test result',
-        errorCode: result.category1 === resultCategoryErrorId ? '1024' : null,
-        errorNotes:
-          result.category1 === resultCategoryErrorId
-            ? 'Exceeded cycle threshold'
-            : null,
-      })
-    )
+    for (const result of possibleResults) {
+      if (_.random(10) > 3) {
+        resultData.resultText = result.resultText
+        const resultId = yield knex('Result').insert(
+          Object.assign({}, auditFields, {
+            externalId: `UQEB-${i}`,
+            assayId: assayEbolaId,
+            partnerId: partnerOneId,
+            geographyId: siteData.geographyId,
+            siteId: siteData.id,
+            deviceId: device.id,
+            resultWorkflowStatusId: processed,
+            longitude: -81.581222,
+            latitude: 28.419348,
+            resultSourceId: resultSourceDiagnosticId,
+            resultTypeId: resultTypePatientId,
+            sampleId: sample.id,
+            sampleRunNumber: `${i % 2 + 1}`,
+            resultCategory1: result.category1,
+            sampleGroup: `GRP-HIV-${i % 5}`,
+            resultCategory2: result.category2,
+            resultData: JSON.stringify(resultData),
+            assayVersion: '4',
+            startedOn: new Date(+now - randomTimespan - 12 * millisInHour),
+            endedOn: new Date(+now - randomTimespan - 10 * millisInHour),
+            consumableSerial: `${i}12`,
+            consumableExpirationDate: new Date(+now + 200 * i * millisInHour),
+            consumableLot: `Lot ${i % 5}`,
+            instrumentSerial: `S-1234-${i % 3}`,
+            moduleName: 'Module A',
+            moduleSerial: `M-1234-${i % 4}`,
+            researchId: `R-ID-${i}`,
+            patientData: JSON.stringify(patients[_.random(99)]),
+            senderVersion: '4.7a',
+            senderOperator: 'Marsha',
+            notes: 'This is an Ebola test result',
+            errorCode:
+              result.category1 === resultCategoryErrorId ? '1024' : null,
+            errorNotes:
+              result.category1 === resultCategoryErrorId
+                ? 'Exceeded cycle threshold'
+                : null,
+          })
+        )
 
-    yield knex('ResultWorkflowLog').insert({
-      resultId,
-      resultWorkflowStatusId: ordered,
-      operator: 'Bill',
-      changedOn: new Date(+now - randomTimespan - 34 * millisInHour),
-      createdOn: new Date(+now - randomTimespan - 35 * millisInHour),
-      createdBy: adminId,
-    })
+        yield knex('ResultWorkflowLog').insert({
+          resultId,
+          resultWorkflowStatusId: ordered,
+          operator: 'Bill',
+          changedOn: new Date(+now - randomTimespan - 34 * millisInHour),
+          createdOn: new Date(+now - randomTimespan - 35 * millisInHour),
+          createdBy: adminId,
+        })
 
-    yield knex('ResultWorkflowLog').insert({
-      resultId,
-      resultWorkflowStatusId: processed,
-      operator: 'Marsha',
-      changedOn: new Date(+now - randomTimespan - 13 * millisInHour),
-      createdOn: new Date(+now - randomTimespan - 12 * millisInHour),
-      createdBy: adminId,
-    })
+        yield knex('ResultWorkflowLog').insert({
+          resultId,
+          resultWorkflowStatusId: processed,
+          operator: 'Marsha',
+          changedOn: new Date(+now - randomTimespan - 13 * millisInHour),
+          createdOn: new Date(+now - randomTimespan - 12 * millisInHour),
+          createdBy: adminId,
+        })
 
-    yield knex('ResultWorkflowLog').insert({
-      resultId,
-      resultWorkflowStatusId: acknowledged,
-      operator: 'John',
-      changedOn: new Date(+now + 41 * millisInHour),
-      createdOn: new Date(+now + 42 * millisInHour),
-      createdBy: adminId,
-    })
+        yield knex('ResultWorkflowLog').insert({
+          resultId,
+          resultWorkflowStatusId: acknowledged,
+          operator: 'John',
+          changedOn: new Date(+now + 41 * millisInHour),
+          createdOn: new Date(+now + 42 * millisInHour),
+          createdBy: adminId,
+        })
+      }
+    }
   }
 
   // some HIV VL samples:
@@ -2226,81 +2245,87 @@ function* seed(knex) {
     },
   }
 
-  for (const i of _.range(1, resultHivVlNumber + 1)) {
+  for (const i of _.range(
+    _.random(1, resultHivVlNumber + 1),
+    resultHivVlNumber + 1
+  )) {
     const device = devicesGeneXpert[i % devicesGeneXpert.length]
     const siteData = siteDatas.find(site => site.id === device.siteId)
     const sample = samples[i % samples.length]
-    const result = possibleResults[i % 5]
-    const randomTimespan = _.random(6000) * millisInMinute
-    let copies = 3200
-    let log = 5
-    if (result === possibleResults[0]) {
-      copies = Math.floor(Math.random() * 500000)
-      log = Math.round(Math.random() * 600) / 100
-    } else {
-      copies = null
-      log = null
+    for (const result of possibleResults) {
+      if (_.random(10) > 3) {
+        const randomTimespan = _.random(6000) * millisInMinute
+        let copies = 3200
+        let log = 5
+        if (result === possibleResults[0]) {
+          copies = Math.floor(Math.random() * 500000)
+          log = Math.round(Math.random() * 600) / 100
+        } else {
+          copies = null
+          log = null
+        }
+
+        resultData.copies = copies
+        resultData.log = log
+        resultData.resultText = result.resultText
+          .replace('{0}', copies)
+          .replace('{1}', log)
+
+        const resultStatus =
+          _.random(1) < 0.3
+            ? acknowledged
+            : _.random(1) < 0.5 ? validated : deliverable
+
+        const resultId = yield knex('Result').insert(
+          Object.assign({}, auditFields, {
+            externalId: `UQHIV-${i}`,
+            assayId: assayHivVlId,
+            partnerId: partnerOneId,
+            geographyId: siteData.geographyId,
+            siteId: siteData.id,
+            deviceId: device.id,
+            resultWorkflowStatusId: resultStatus,
+            longitude: -81.581222,
+            latitude: 28.419348,
+            resultSourceId: resultSourceDiagnosticId,
+            resultTypeId: resultTypePatientId,
+            sampleId: sample.id,
+            sampleRunNumber: `${i % 2 + 1}`,
+            resultCategory1: result.category1,
+            resultData: JSON.stringify(resultData),
+            assayVersion: '4',
+            startedOn: new Date(+now - randomTimespan - 12 * millisInHour),
+            endedOn: new Date(+now - randomTimespan - 10 * millisInHour),
+            consumableSerial: `${i}12`,
+            consumableExpirationDate: new Date(+now + 200 * i * millisInHour),
+            consumableLot: `Lot ${i % 5}`,
+            instrumentSerial: `S-1234-${i % 3}`,
+            moduleName: 'Module A',
+            moduleSerial: `M-1234-${i % 4}`,
+            researchId: `R-ID-${i}`,
+            patientData: JSON.stringify(patients[_.random(99)]),
+            senderVersion: '4.4',
+            senderOperator: 'Marsha',
+            notes: 'This is an HIV test result',
+            errorCode:
+              result.category1 === resultCategoryErrorId ? '1024' : null,
+            errorNotes:
+              result.category1 === resultCategoryErrorId
+                ? 'Exceeded cycle threshold'
+                : null,
+          })
+        )
+
+        yield knex('ResultWorkflowLog').insert({
+          resultId,
+          resultWorkflowStatusId: resultStatus,
+          operator: 'Marsha',
+          changedOn: new Date(+now - randomTimespan - 3 * millisInHour),
+          createdOn: new Date(+now - randomTimespan - 2 * millisInHour),
+          createdBy: adminId,
+        })
+      }
     }
-
-    resultData.copies = copies
-    resultData.log = log
-    resultData.resultText = result.resultText
-      .replace('{0}', copies)
-      .replace('{1}', log)
-
-    const resultStatus =
-      _.random(1) < 0.3
-        ? acknowledged
-        : _.random(1) < 0.5 ? validated : deliverable
-
-    const resultId = yield knex('Result').insert(
-      Object.assign({}, auditFields, {
-        externalId: `UQHIV-${i}`,
-        assayId: assayHivVlId,
-        partnerId: partnerOneId,
-        geographyId: siteData.geographyId,
-        siteId: siteData.id,
-        deviceId: device.id,
-        resultWorkflowStatusId: resultStatus,
-        longitude: -81.581222,
-        latitude: 28.419348,
-        resultSourceId: resultSourceDiagnosticId,
-        resultTypeId: resultTypePatientId,
-        sampleId: sample.id,
-        sampleRunNumber: `${i % 2 + 1}`,
-        sampleGroup: `GRP-HIV-${i % 5}`,
-        resultCategory1: result.category1,
-        resultData: JSON.stringify(resultData),
-        assayVersion: '4',
-        startedOn: new Date(+now - randomTimespan - 12 * millisInHour),
-        endedOn: new Date(+now - randomTimespan - 10 * millisInHour),
-        consumableSerial: `${i}12`,
-        consumableExpirationDate: new Date(+now + 200 * i * millisInHour),
-        consumableLot: `Lot ${i % 5}`,
-        instrumentSerial: `S-1234-${i % 3}`,
-        moduleName: 'Module A',
-        moduleSerial: `M-1234-${i % 4}`,
-        researchId: `R-ID-${i}`,
-        patientData: JSON.stringify(patients[_.random(99)]),
-        senderVersion: '4.4',
-        senderOperator: 'Marsha',
-        notes: 'This is an HIV test result',
-        errorCode: result.category1 === resultCategoryErrorId ? '1024' : null,
-        errorNotes:
-          result.category1 === resultCategoryErrorId
-            ? 'Exceeded cycle threshold'
-            : null,
-      })
-    )
-
-    yield knex('ResultWorkflowLog').insert({
-      resultId,
-      resultWorkflowStatusId: resultStatus,
-      operator: 'Marsha',
-      changedOn: new Date(+now - randomTimespan - 3 * millisInHour),
-      createdOn: new Date(+now - randomTimespan - 2 * millisInHour),
-      createdBy: adminId,
-    })
   }
 
   // some HCV samples for GeneXpert
@@ -2346,69 +2371,77 @@ function* seed(knex) {
     },
   }
 
-  for (const i of _.range(1, resultHcvNumber + 1)) {
+  for (const i of _.range(
+    _.random(1, resultHcvNumber + 1),
+    resultHcvNumber + 1
+  )) {
     const device = devicesDaktari[i % devicesDaktari.length]
     const siteData = siteDatas.find(site => site.id === device.siteId)
     const sample = samples[i % samples.length]
-    const result = possibleResults[i % 5]
-    let count = 3200
-    if (result === possibleResults[0]) {
-      count = Math.floor(Math.random() * 100000000)
-    } else {
-      count = null
+
+    for (const result of possibleResults) {
+      if (_.random(10) > 3) {
+        let count = 3200
+        if (result === possibleResults[0]) {
+          count = Math.floor(Math.random() * 100000000)
+        } else {
+          count = null
+        }
+
+        resultData.count = count
+        resultData.resultText = result.resultText.replace('{0}', count)
+
+        const resultId = yield knex('Result').insert(
+          Object.assign({}, auditFields, {
+            externalId: `UQ-GX-HCV-${i}`,
+            assayId: assayGeneXpertHcvId,
+            partnerId: partnerOneId,
+            geographyId: siteData.geographyId,
+            siteId: siteData.id,
+            deviceId: device.id,
+            resultWorkflowStatusId: processed,
+            longitude: -81.581222,
+            latitude: 28.419348,
+            resultSourceId: resultSourceDiagnosticId,
+            resultTypeId: resultTypePatientId,
+            sampleId: sample.id,
+            sampleRunNumber: `${i % 2 + 1}`,
+            sampleGroup: `GRP-HIV-${i % 5}`,
+            resultCategory1: result.category1,
+            resultData: JSON.stringify(resultData),
+            assayVersion: '4.7',
+            startedOn: new Date(+now - 12 * i * millisInHour),
+            endedOn: new Date(+now - 10 * i * millisInHour),
+            consumableSerial: `${i}12`,
+            consumableExpirationDate: new Date(+now + 200 * i * millisInHour),
+            consumableLot: `Lot ${i % 5}`,
+            instrumentSerial: `S-1234-${i % 3}`,
+            moduleName: 'Module A',
+            moduleSerial: `M-1234-${i % 4}`,
+            researchId: `R-ID-${i}`,
+            patientData: JSON.stringify(patients[_.random(99)]),
+            senderVersion: '4.7b',
+            senderOperator: 'Gene Hackman',
+            notes: 'This is an HCV test result',
+            errorCode:
+              result.category1 === resultCategoryErrorId ? '1024' : null,
+            errorNotes:
+              result.category1 === resultCategoryErrorId
+                ? 'Exceeded cycle threshold'
+                : null,
+          })
+        )
+
+        yield knex('ResultWorkflowLog').insert({
+          resultId,
+          resultWorkflowStatusId: processed,
+          operator: 'Gene Hackman',
+          changedOn: now,
+          createdOn: now,
+          createdBy: adminId,
+        })
+      }
     }
-
-    resultData.count = count
-    resultData.resultText = result.resultText.replace('{0}', count)
-
-    const resultId = yield knex('Result').insert(
-      Object.assign({}, auditFields, {
-        externalId: `UQ-GX-HCV-${i}`,
-        assayId: assayGeneXpertHcvId,
-        partnerId: partnerOneId,
-        geographyId: siteData.geographyId,
-        siteId: siteData.id,
-        deviceId: device.id,
-        resultWorkflowStatusId: processed,
-        longitude: -81.581222,
-        latitude: 28.419348,
-        resultSourceId: resultSourceDiagnosticId,
-        resultTypeId: resultTypePatientId,
-        sampleId: sample.id,
-        sampleRunNumber: `${i % 2 + 1}`,
-        sampleGroup: `GRP-HIV-${i % 5}`,
-        resultCategory1: result.category1,
-        resultData: JSON.stringify(resultData),
-        assayVersion: '4.7',
-        startedOn: new Date(+now - 12 * i * millisInHour),
-        endedOn: new Date(+now - 10 * i * millisInHour),
-        consumableSerial: `${i}12`,
-        consumableExpirationDate: new Date(+now + 200 * i * millisInHour),
-        consumableLot: `Lot ${i % 5}`,
-        instrumentSerial: `S-1234-${i % 3}`,
-        moduleName: 'Module A',
-        moduleSerial: `M-1234-${i % 4}`,
-        researchId: `R-ID-${i}`,
-        patientData: JSON.stringify(patients[_.random(99)]),
-        senderVersion: '4.7b',
-        senderOperator: 'Gene Hackman',
-        notes: 'This is an HCV test result',
-        errorCode: result.category1 === resultCategoryErrorId ? '1024' : null,
-        errorNotes:
-          result.category1 === resultCategoryErrorId
-            ? 'Exceeded cycle threshold'
-            : null,
-      })
-    )
-
-    yield knex('ResultWorkflowLog').insert({
-      resultId,
-      resultWorkflowStatusId: processed,
-      operator: 'Gene Hackman',
-      changedOn: now,
-      createdOn: now,
-      createdBy: adminId,
-    })
   }
 
   // some HIV VL samples for Daktari
@@ -2459,76 +2492,84 @@ function* seed(knex) {
     },
   }
 
-  for (const i of _.range(1, resultHivVlNumber + 1)) {
+  for (const i of _.range(
+    _.random(1, resultHivVlNumber + 1),
+    resultHivVlNumber + 1
+  )) {
     const device = devicesDaktari[i % devicesDaktari.length]
     const siteData = siteDatas.find(site => site.id === device.siteId)
     const sample = samples[i % samples.length]
-    const result = possibleResults[i % 5]
-    const randomTimespan = _.random(6000) * millisInMinute
-    let copies = 3200
-    let log = 5
-    if (result === possibleResults[0]) {
-      copies = Math.floor(Math.random() * 500000)
-      log = Math.round(Math.random() * 600) / 100
-    } else {
-      copies = null
-      log = null
+
+    for (const result of possibleResults) {
+      if (_.random(10) > 3) {
+        const randomTimespan = _.random(6000) * millisInMinute
+        let copies = 3200
+        let log = 5
+        if (result === possibleResults[0]) {
+          copies = Math.floor(Math.random() * 500000)
+          log = Math.round(Math.random() * 600) / 100
+        } else {
+          copies = null
+          log = null
+        }
+
+        resultData.copies = copies
+        resultData.log = log
+        resultData.resultText = result.resultText
+          .replace('{0}', copies)
+          .replace('{1}', log)
+
+        const resultId = yield knex('Result').insert(
+          Object.assign({}, auditFields, {
+            externalId: `UQ-DAK-HIV-${i}`,
+            assayId: assayDaktariHivVlId,
+            partnerId: partnerOneId,
+            geographyId: siteData.geographyId,
+            siteId: siteData.id,
+            deviceId: device.id,
+            resultWorkflowStatusId: acknowledged,
+            longitude: -81.581222,
+            latitude: 28.419348,
+            resultSourceId: resultSourceDiagnosticId,
+            resultTypeId: resultTypePatientId,
+            sampleId: sample.id,
+            sampleRunNumber: `${i % 2 + 1}`,
+            sampleGroup: `GRP-HIV-${i % 5}`,
+            resultCategory1: result.category1,
+            resultData: JSON.stringify(resultData),
+            assayVersion: '4',
+            startedOn: new Date(+now - randomTimespan - 12 * millisInHour),
+            endedOn: new Date(+now - randomTimespan - 11 * millisInHour),
+            consumableSerial: `${i}12`,
+            consumableExpirationDate: new Date(+now + 200 * i * millisInHour),
+            consumableLot: `Lot ${i % 5}`,
+            instrumentSerial: `S-1234-${i % 3}`,
+            moduleName: 'Module A',
+            moduleSerial: `M-1234-${i % 4}`,
+            researchId: `R-ID-${i}`,
+            patientData: JSON.stringify(patients[_.random(99)]),
+            senderVersion: '4.4',
+            senderOperator: 'Aaron',
+            notes: 'This is an HIV test result',
+            errorCode:
+              result.category1 === resultCategoryErrorId ? '1024' : null,
+            errorNotes:
+              result.category1 === resultCategoryErrorId
+                ? 'Exceeded cycle threshold'
+                : null,
+          })
+        )
+
+        yield knex('ResultWorkflowLog').insert({
+          resultId,
+          resultWorkflowStatusId: acknowledged,
+          operator: 'Aaron',
+          changedOn: new Date(+now - randomTimespan - 2 * millisInHour),
+          createdOn: new Date(+now - randomTimespan - 1 * millisInHour),
+          createdBy: adminId,
+        })
+      }
     }
-
-    resultData.copies = copies
-    resultData.log = log
-    resultData.resultText = result.resultText
-      .replace('{0}', copies)
-      .replace('{1}', log)
-
-    const resultId = yield knex('Result').insert(
-      Object.assign({}, auditFields, {
-        externalId: `UQ-DAK-HIV-${i}`,
-        assayId: assayDaktariHivVlId,
-        partnerId: partnerOneId,
-        geographyId: siteData.geographyId,
-        siteId: siteData.id,
-        deviceId: device.id,
-        resultWorkflowStatusId: acknowledged,
-        longitude: -81.581222,
-        latitude: 28.419348,
-        resultSourceId: resultSourceDiagnosticId,
-        resultTypeId: resultTypePatientId,
-        sampleId: sample.id,
-        sampleRunNumber: `${i % 2 + 1}`,
-        sampleGroup: `GRP-HIV-${i % 5}`,
-        resultCategory1: result.category1,
-        resultData: JSON.stringify(resultData),
-        assayVersion: '4',
-        startedOn: new Date(+now - randomTimespan - 12 * millisInHour),
-        endedOn: new Date(+now - randomTimespan - 11 * millisInHour),
-        consumableSerial: `${i}12`,
-        consumableExpirationDate: new Date(+now + 200 * i * millisInHour),
-        consumableLot: `Lot ${i % 5}`,
-        instrumentSerial: `S-1234-${i % 3}`,
-        moduleName: 'Module A',
-        moduleSerial: `M-1234-${i % 4}`,
-        researchId: `R-ID-${i}`,
-        patientData: JSON.stringify(patients[_.random(99)]),
-        senderVersion: '4.4',
-        senderOperator: 'Aaron',
-        notes: 'This is an HIV test result',
-        errorCode: result.category1 === resultCategoryErrorId ? '1024' : null,
-        errorNotes:
-          result.category1 === resultCategoryErrorId
-            ? 'Exceeded cycle threshold'
-            : null,
-      })
-    )
-
-    yield knex('ResultWorkflowLog').insert({
-      resultId,
-      resultWorkflowStatusId: acknowledged,
-      operator: 'Aaron',
-      changedOn: new Date(+now - randomTimespan - 2 * millisInHour),
-      createdOn: new Date(+now - randomTimespan - 1 * millisInHour),
-      createdBy: adminId,
-    })
   }
 
   // some HCV samples for Daktari
@@ -2579,76 +2620,84 @@ function* seed(knex) {
     },
   }
 
-  for (const i of _.range(1, resultHcvNumber + 1)) {
+  for (const i of _.range(
+    _.random(1, resultHcvNumber + 1),
+    resultHcvNumber + 1
+  )) {
     const device = devicesDaktari[i % devicesDaktari.length]
     const siteData = siteDatas.find(site => site.id === device.siteId)
     const sample = samples[i % samples.length]
-    const result = possibleResults[i % 5]
-    const randomTimespan = _.random(6000) * millisInMinute
-    let copies = 3200
-    let log = 5
-    if (result === possibleResults[0]) {
-      copies = Math.floor(Math.random() * 500000)
-      log = Math.round(Math.random() * 600) / 100
-    } else {
-      copies = null
-      log = null
+
+    for (const result of possibleResults) {
+      if (_.random(10) > 3) {
+        const randomTimespan = _.random(6000) * millisInMinute
+        let copies = 3200
+        let log = 5
+        if (result === possibleResults[0]) {
+          copies = Math.floor(Math.random() * 500000)
+          log = Math.round(Math.random() * 600) / 100
+        } else {
+          copies = null
+          log = null
+        }
+
+        resultData.copies = copies
+        resultData.log = log
+        resultData.resultText = result.resultText
+          .replace('{0}', copies)
+          .replace('{1}', log)
+
+        const resultId = yield knex('Result').insert(
+          Object.assign({}, auditFields, {
+            externalId: `UQ-DAK-HCV-${i}`,
+            assayId: assayDaktariHcvId,
+            partnerId: partnerOneId,
+            geographyId: siteData.geographyId,
+            siteId: siteData.id,
+            deviceId: device.id,
+            resultWorkflowStatusId: acknowledged,
+            longitude: -81.581222,
+            latitude: 28.419348,
+            resultSourceId: resultSourceDiagnosticId,
+            resultTypeId: resultTypePatientId,
+            sampleId: sample.id,
+            sampleRunNumber: `${i % 2 + 1}`,
+            sampleGroup: `GRP-HIV-${i % 5}`,
+            resultCategory1: result.category1,
+            resultData: JSON.stringify(resultData),
+            assayVersion: '4',
+            startedOn: new Date(+now - randomTimespan - 12 * millisInHour),
+            endedOn: new Date(+now - randomTimespan - 11 * millisInHour),
+            consumableSerial: `${i}12`,
+            consumableExpirationDate: new Date(+now + 200 * i * millisInHour),
+            consumableLot: `Lot ${i % 5}`,
+            instrumentSerial: `S-1234-${i % 3}`,
+            moduleName: 'Module A',
+            moduleSerial: `M-1234-${i % 4}`,
+            researchId: `R-ID-${i}`,
+            patientData: JSON.stringify(patients[_.random(99)]),
+            senderVersion: '4.4',
+            senderOperator: 'Aaron',
+            notes: 'This is an HCV test result',
+            errorCode:
+              result.category1 === resultCategoryErrorId ? '1024' : null,
+            errorNotes:
+              result.category1 === resultCategoryErrorId
+                ? 'Exceeded cycle threshold'
+                : null,
+          })
+        )
+
+        yield knex('ResultWorkflowLog').insert({
+          resultId,
+          resultWorkflowStatusId: acknowledged,
+          operator: 'Aaron',
+          changedOn: new Date(+now - randomTimespan - 1 * millisInHour),
+          createdOn: new Date(+now - randomTimespan - 2 * millisInHour),
+          createdBy: adminId,
+        })
+      }
     }
-
-    resultData.copies = copies
-    resultData.log = log
-    resultData.resultText = result.resultText
-      .replace('{0}', copies)
-      .replace('{1}', log)
-
-    const resultId = yield knex('Result').insert(
-      Object.assign({}, auditFields, {
-        externalId: `UQ-DAK-HCV-${i}`,
-        assayId: assayDaktariHcvId,
-        partnerId: partnerOneId,
-        geographyId: siteData.geographyId,
-        siteId: siteData.id,
-        deviceId: device.id,
-        resultWorkflowStatusId: acknowledged,
-        longitude: -81.581222,
-        latitude: 28.419348,
-        resultSourceId: resultSourceDiagnosticId,
-        resultTypeId: resultTypePatientId,
-        sampleId: sample.id,
-        sampleRunNumber: `${i % 2 + 1}`,
-        sampleGroup: `GRP-HIV-${i % 5}`,
-        resultCategory1: result.category1,
-        resultData: JSON.stringify(resultData),
-        assayVersion: '4',
-        startedOn: new Date(+now - randomTimespan - 12 * millisInHour),
-        endedOn: new Date(+now - randomTimespan - 11 * millisInHour),
-        consumableSerial: `${i}12`,
-        consumableExpirationDate: new Date(+now + 200 * i * millisInHour),
-        consumableLot: `Lot ${i % 5}`,
-        instrumentSerial: `S-1234-${i % 3}`,
-        moduleName: 'Module A',
-        moduleSerial: `M-1234-${i % 4}`,
-        researchId: `R-ID-${i}`,
-        patientData: JSON.stringify(patients[_.random(99)]),
-        senderVersion: '4.4',
-        senderOperator: 'Aaron',
-        notes: 'This is an HCV test result',
-        errorCode: result.category1 === resultCategoryErrorId ? '1024' : null,
-        errorNotes:
-          result.category1 === resultCategoryErrorId
-            ? 'Exceeded cycle threshold'
-            : null,
-      })
-    )
-
-    yield knex('ResultWorkflowLog').insert({
-      resultId,
-      resultWorkflowStatusId: acknowledged,
-      operator: 'Aaron',
-      changedOn: new Date(+now - randomTimespan - 1 * millisInHour),
-      createdOn: new Date(+now - randomTimespan - 2 * millisInHour),
-      createdBy: adminId,
-    })
   }
 
   // Job Functions
