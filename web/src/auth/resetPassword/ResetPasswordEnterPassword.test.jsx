@@ -1,15 +1,18 @@
 import _ from 'lodash'
 import React from 'react'
 import ReactShallowRenderer from 'react-test-renderer/shallow'
+import { IntlProvider } from 'react-intl'
 
 describe('ResetPasswordEnterPassword module', () => {
   const {
     validate,
     ResetPasswordEnterPassword,
   } = require('./ResetPasswordEnterPassword')
+  const intlProvider = new IntlProvider({ locale: 'en' }, {})
+  const { intl } = intlProvider.getChildContext()
   const renderer = ReactShallowRenderer.createRenderer()
   const props = {
-    intl: { formatMessage: message => message.defaultMessage },
+    intl,
     values: { newPassword: '' },
     meta: {
       newPassword: {},

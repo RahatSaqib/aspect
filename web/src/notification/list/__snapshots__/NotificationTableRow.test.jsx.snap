@@ -1,0 +1,37 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`NotificationTableRow module NotificationTableRow component should render correctly 1`] = `
+<ThemedTableRow
+  className="TableRow"
+  composeTheme="deeply"
+  mapThemrProps={[Function]}
+>
+  <ThemedTableCell
+    className="TableCell"
+    composeTheme="deeply"
+    mapThemrProps={[Function]}
+    numeric={false}
+    tagName="td"
+  >
+    error
+  </ThemedTableCell>
+  <ThemedTableCell
+    className="TableCell"
+    composeTheme="deeply"
+    mapThemrProps={[Function]}
+    numeric={false}
+    tagName="td"
+  >
+    Failed search devices
+  </ThemedTableCell>
+  <ThemedTableCell
+    className="TableCell"
+    composeTheme="deeply"
+    mapThemrProps={[Function]}
+    numeric={false}
+    tagName="td"
+  >
+    Assigned Contacts
+  </ThemedTableCell>
+</ThemedTableRow>
+`;

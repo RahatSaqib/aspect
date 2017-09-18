@@ -1,0 +1,12 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`App Notification SnackBar component should shallow render correctly 1`] = `
+<Snackbar
+  action="Details..."
+  autoHideDuration={4000}
+  message="Login Failed"
+  onActionTouchTap={[Function]}
+  onRequestClose={[Function]}
+  open={false}
+/>
+`;
