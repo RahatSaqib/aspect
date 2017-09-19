@@ -6,9 +6,12 @@ const {
   canViewSites,
   canViewDevices,
   canViewResults,
+  canViewInventories,
 } = require('../auth/constraints')
 const Promise = require('bluebird')
 const subDays = require('date-fns/sub_days')
+const addDays = require('date-fns/add_days')
+const isAfter = require('date-fns/is_after')
 
 const i18nKeys = {
   sitesTitle: 'sitesTitle',
@@ -30,36 +33,6 @@ const i18nKeys = {
 }
 
 const mockData = {
-  inventorySummary: {
-    TB: [
-      {
-        key: 0,
-        count: 4,
-        titleI18nKey: i18nKeys.sitesTitle,
-        subI18nKey: i18nKeys.runningLowStatus,
-      },
-      {
-        key: 1,
-        count: 2,
-        titleI18nKey: i18nKeys.sitesTitle,
-        subI18nKey: i18nKeys.expiringStockStatus,
-      },
-    ],
-    HIV: [
-      {
-        key: 2,
-        count: 3,
-        titleI18nKey: i18nKeys.sitesTitle,
-        subI18nKey: i18nKeys.runningLowStatus,
-      },
-      {
-        key: 3,
-        count: 0,
-        titleI18nKey: i18nKeys.sitesTitle,
-        subI18nKey: i18nKeys.expiringStockStatus,
-      },
-    ],
-  },
   deviceSummary: {
     operational: {
       count: 67,
@@ -301,6 +274,120 @@ function* statusDashboard(request) {
     )
     .filter(({ data }) => !_.isEmpty(data))
 
+  const [inventoryItemList] = yield Promise.all(
+    canViewInventories(auth)
+      ? [
+          knex('InventoryItem as ii')
+            .innerJoin('Site as s', 'ii.siteId', 's.id')
+            .innerJoin('Geography as g', 's.geographyId', 'g.id')
+            .innerJoin('Country as co', 'g.countryId', 'co.id')
+            .innerJoin('Consumable as c', 'ii.consumableId', 'c.id')
+            .select(
+              'co.inventoryDaysThreshold',
+              'ii.id',
+              'ii.expiresOn',
+              'ii.quantityOnHand',
+              'ii.siteId',
+              'ii.consumableId',
+              'c.name as consumableName'
+            )
+        ]
+      : [[]]
+  )
+
+  const MOCK_CURRENT_CONSUMPTION_RATE = 20
+
+  inventoryItemList.forEach(it => {
+    it.runningLow =
+      it.quantityOnHand <=
+      it.inventoryDaysThreshold * MOCK_CURRENT_CONSUMPTION_RATE
+    it.remainingDays = Math.floor(
+      it.quantityOnHand / MOCK_CURRENT_CONSUMPTION_RATE
+    )
+    if (_.isString(it.expiresOn)) {
+      it.expiring = isAfter(
+        addDays(it.expiresOn, it.remainingDays),
+        it.expiresOn
+      )
+    }
+  })
+
+  const inventorySiteSummaryList = _.sortBy(
+    _.reduce(
+      _.groupBy(inventoryItemList, 'siteId'),
+      (acc, list) => {
+        if (!_.isEmpty(list)) {
+          const minRemainingDays = _.minBy(list, 'remainingDays').remainingDays
+          const { siteId } = list[0]
+
+          acc.push({
+            siteId,
+            minRemainingDays,
+          })
+        }
+        return acc
+      },
+      []
+    ),
+    it => -1 * it.minRemainingDays
+  )
+
+  const inventoryConsumableSummaryList = _.reduce(
+    _.groupBy(inventoryItemList, 'consumableId'),
+    (acc, list) => {
+      if (!_.isEmpty(list)) {
+        const {
+          runningLowCount,
+          expiringCount,
+          affectedSiteIds,
+        } = list.reduce(
+          (result, it) => {
+            result.runningLowCount += it.runningLow ? 1 : 0
+            result.expiringCount += it.expiring ? 1 : 0
+            if (it.runningLow || it.expiring) {
+              result.affectedSiteIds.push(it.siteId)
+            }
+            return result
+          },
+          {
+            runningLowCount: 0,
+            expiringCount: 0,
+            affectedSiteIds: [],
+          }
+        )
+
+        const result = _.filter(
+          [
+            runningLowCount > 0 && {
+              key: 0,
+              count: runningLowCount,
+              titleI18nKey: i18nKeys.sitesTitle,
+              subI18nKey: i18nKeys.runningLowStatus,
+            },
+            expiringCount > 0 && {
+              key: 1,
+              count: expiringCount,
+              titleI18nKey: i18nKeys.sitesTitle,
+              subI18nKey: i18nKeys.expiringStockStatus,
+            },
+          ],
+          _.isObject
+        )
+        if (!_.isEmpty(result)) {
+          const { consumableId, consumableName } = list[0]
+          acc.push({
+            consumableId,
+            consumableName,
+            data: result,
+            affectedSiteIds,
+          })
+        }
+      }
+      return acc
+    },
+    []
+  )
+
   const result = {
     data: Object.assign({}, mockData, {
       sitesTotal: sitesTotal ? sitesTotal[0].cnt : null,
@@ -312,6 +399,8 @@ function* statusDashboard(request) {
 
       siteList,
       resultSummaryList,
+      inventorySiteSummaryList,
+      inventoryConsumableSummaryList,
     }),
   }
 

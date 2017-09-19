@@ -153,10 +153,15 @@ function canViewResults(auth) {
   return canView(auth, 'result:')
 }
 
+function canViewInventories(auth) {
+  return canView(auth, 'inventory:')
+}
+
 module.exports = {
   getConstraints,
   addConstraints,
   canViewSites,
   canViewDevices,
   canViewResults,
+  canViewInventories,
 }
