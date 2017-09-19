@@ -33,14 +33,6 @@ export const messages = defineMessages({
     id: 'pages.Status.consumableTitle',
     defaultMessage: 'consumables',
   },
-  summaryTBTitle: {
-    id: 'pages.Status.summaryTBTitle',
-    defaultMessage: 'TB',
-  },
-  summaryHIVTitle: {
-    id: 'pages.Status.summaryHIVTitle',
-    defaultMessage: 'HIV',
-  },
   summaryOperationalDevicesTitle: {
     id: 'pages.Status.summaryOperationalDevicesTitle',
     defaultMessage: 'operational devices',

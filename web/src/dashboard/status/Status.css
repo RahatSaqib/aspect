@@ -36,7 +36,7 @@
 }
 
 .Summary__Card__Title__Sub {
-  margin-left: .5em;
+  margin-left: 0.5em;
   color: var(--aspect-color-grey-4);
 }
 
@@ -88,6 +88,10 @@
   padding: 20px;
 }
 
+.SummaryItemsBlock--clickable {
+  cursor: pointer;
+}
+
 .SummaryItemsBlock__Title {
   font-weight: var(--lato-font-weight-bold);
 }
@@ -125,6 +129,13 @@
 
 .SummaryItemsBlock__Item__Messages--sub::first-letter {
   text-transform: capitalize;
+}
+
+.SummaryItemsBlocks--horizontal-scrollable {
+  height: 400px;
+  overflow-x: scroll;
+  display: flex;
+  flex-flow: column wrap;
 }
 
 .ButtonsBlock {

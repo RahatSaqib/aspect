@@ -8,8 +8,19 @@ const cssClasses = classnames.bind(require('./Status.css'))
 
 const enhance = _.identity
 
-export const SummaryItemsBlock = ({ intl, title, items }) => (
-  <div className={cssClasses('SummaryItemsBlock')}>
+export const SummaryItemsBlock = ({
+  clickable,
+  intl,
+  title,
+  items,
+  ...restProps
+}) => (
+  <div
+    {...restProps}
+    className={cssClasses('SummaryItemsBlock', {
+      'SummaryItemsBlock--clickable': clickable,
+    })}
+  >
     <div className={cssClasses('SummaryItemsBlock__Title')}>{title}</div>
     <ul className={cssClasses('SummaryItemsBlock__Items')}>
       {items.map(it => (
