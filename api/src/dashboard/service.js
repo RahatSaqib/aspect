@@ -30,24 +30,6 @@ const i18nKeys = {
 }
 
 const mockData = {
-  resultSummary: [
-    { name: 'Site1', data: [8, 1.5] },
-    { name: 'Site2', data: [7, 0.5] },
-    { name: 'Site3', data: [3, 2] },
-    { name: 'Site4', data: [4, 1] },
-    { name: 'Site5', data: [6, 2] },
-    { name: 'Site6', data: [8, 1] },
-    { name: 'Site7', data: [9, 2] },
-    { name: 'Site8', data: [6, 2] },
-    { name: 'newSite1', data: [4, 1] },
-    { name: 'newSite2', data: [7, 0.6] },
-    { name: 'newSite3', data: [9, 2] },
-    { name: 'newSite4', data: [7, 1] },
-    { name: 'newSite5', data: [6, 1.5] },
-    { name: 'newSite6', data: [4, 1] },
-    { name: 'newSite7', data: [9, 1] },
-    { name: 'newSite8', data: [8, 2] },
-  ],
   inventorySummary: {
     TB: [
       {
@@ -149,14 +131,12 @@ function* statusDashboard(request) {
   const dataConstraints = yield getConstraints(auth.credentials)
 
   const sitesTotalQuery = knex('Site as s')
-    .count('s.id as cnt')
     .leftOuterJoin('Geography as g', 's.geographyId', 'g.id')
     .leftOuterJoin('State as st', 'g.stateId', 'st.id')
     .leftOuterJoin('Lga as l', 'g.lgaId', 'l.id')
     .modify(addConstraints, dataConstraints, { site: 's', geography: 'g' })
 
   const devicesTotalQuery = knex('Device as d')
-    .count('d.id as cnt')
     .innerJoin('Site as s', 's.id', 'd.siteId')
     .innerJoin('DeviceType as dt', 'dt.id', 'd.deviceTypeId')
     .innerJoin('DeviceTypeCategory as dc', 'dc.id', 'dt.deviceTypeCategoryId')
@@ -167,7 +147,6 @@ function* statusDashboard(request) {
     .modify(addConstraints, dataConstraints, { site: 's', geography: 'g' })
 
   const resultsTotalQuery30d = knex('Result as r')
-    .count('r.id as cnt')
     .innerJoin('Site as s', 's.id', 'r.siteId')
     .innerJoin('Device as d', 'd.id', 'r.deviceId')
     .innerJoin('DeviceType as dt', 'dt.id', 'd.deviceTypeId')
@@ -183,7 +162,6 @@ function* statusDashboard(request) {
     })
 
   const resultsTotalQuery1d = knex('Result as r')
-    .count('r.id as cnt')
     .innerJoin('Site as s', 's.id', 'r.siteId')
     .innerJoin('Device as d', 'd.id', 'r.deviceId')
     .innerJoin('DeviceType as dt', 'dt.id', 'd.deviceTypeId')
@@ -208,25 +186,118 @@ function* statusDashboard(request) {
     resultsTotal1d,
     usersTotal,
   ] = yield Promise.all([
-    canViewSites(auth) ? sitesTotalQuery : null,
-    canViewDevices(auth) ? devicesTotalQuery : null,
-    canViewResults(auth) ? resultsTotalQuery30d : null,
-    canViewResults(auth) ? resultsTotalQuery1d : null,
+    canViewSites(auth) ? sitesTotalQuery.clone().count('s.id as cnt') : null,
+    canViewDevices(auth)
+      ? devicesTotalQuery.clone().count('d.id as cnt')
+      : null,
+    canViewResults(auth)
+      ? resultsTotalQuery30d.clone().count('r.id as cnt')
+      : null,
+    canViewResults(auth)
+      ? resultsTotalQuery1d.clone().count('r.id as cnt')
+      : null,
     usersTotalQuery,
   ])
 
+  const siteQuery = knex('Site as s')
+    .innerJoin('Geography as g', 's.geographyId', 'g.id')
+    .innerJoin('State as st', 'g.stateId', 'st.id')
+    .select(
+      's.id',
+      's.name',
+      'st.abbreviation as stateAbbr',
+      's.latitude',
+      's.longitude'
+    )
+    .modify(addConstraints, dataConstraints, {
+      site: 's',
+    })
+  const [siteList, resultCnt, assayTypes] = yield Promise.all(
+    canViewResults(auth)
+      ? [
+          canViewSites(auth) ? siteQuery : [],
+          resultsTotalQuery30d
+            .clone()
+            .innerJoin('Assay as a', 'r.assayId', 'a.id')
+            .innerJoin('ResultCategory as rc', 'r.resultCategory1', 'rc.id')
+            .groupBy('rc.externalId', 'a.assayTypeId', 'r.siteId')
+            .select(
+              'rc.externalId as resultCategory1ExternalId',
+              'a.assayTypeId',
+              'r.siteId'
+            )
+            .count('r.id as cnt'),
+          knex('AssayType as at')
+            .innerJoin('Assay as a', 'at.id', 'a.assayTypeId')
+            .leftJoin('ResultCategoryAssay as rca', 'a.id', 'rca.assayId')
+            .innerJoin('ResultCategory as rc', 'rca.resultCategoryId', 'rc.id')
+            .groupBy('at.id')
+            .select(
+              'at.id',
+              'at.name as assayTypeName',
+              knex.raw('GROUP_CONCAT(rc.externalId) as rawResultCategoryExternalIds'),
+              knex.raw('GROUP_CONCAT(rc.name) as rawResultCategoryNames'),
+            ),
+        ]
+      : [[], [], []]
+  )
+  const resultCntBySiteIdByAssayTypeId = _.mapValues(
+    _.groupBy(resultCnt, 'assayTypeId'),
+    it => _.groupBy(it, 'siteId')
+  )
+  const resultCntBySiteId = _.groupBy(resultCnt, 'siteId')
+  siteList.forEach(it =>
+    _.set(it, 'count', _.sum(_.map(resultCntBySiteId[it.id], 'cnt')))
+  )
+
+  const resultSummaryList = assayTypes
+    .map(({ id, assayTypeName, rawResultCategoryExternalIds, rawResultCategoryNames }) => {
+      const resultCategoryExternalIds = _.uniq(rawResultCategoryExternalIds.split(','))
+      const resultCategoryNames = _.uniq(rawResultCategoryNames.split(','))
+      const data = _.map(
+        resultCntBySiteIdByAssayTypeId[`${id}`],
+        (it, siteId) =>
+          _.reduce(
+            it,
+            (acc, { resultCategory1ExternalId, cnt }) => {
+              acc[resultCategory1ExternalId] = cnt
+              acc.total += cnt
+              return acc
+            },
+            _.reduce(
+              resultCategoryExternalIds,
+              (acc, name) => {
+                acc[name] = 0
+                return acc
+              },
+              { siteId, total: 0 }
+            )
+          )
+      )
+
+      return {
+        assayTypeName,
+        data,
+        resultCategories: _.zipWith(resultCategoryExternalIds, resultCategoryNames, (externalId, name) => ({
+          externalId,
+          name
+        }))
+      }
+    })
+    .filter(({ data }) => !_.isEmpty(data))
+
   const result = {
-    data: Object.assign(
-      {
-        sitesTotal: sitesTotal ? sitesTotal[0].cnt : null,
-        devicesTotal: devicesTotal ? devicesTotal[0].cnt : null,
-        // TODO: Remove magic numbers below when moving to "real" dashboard
-        resultsTotal30d: resultsTotal30d ? resultsTotal30d[0].cnt : null,
-        resultsTotal1d: resultsTotal1d ? resultsTotal1d[0].cnt : null,
-        usersTotal: usersTotal[0].cnt,
-      },
-      mockData
-    ),
+    data: Object.assign({}, mockData, {
+      sitesTotal: sitesTotal ? sitesTotal[0].cnt : null,
+      devicesTotal: devicesTotal ? devicesTotal[0].cnt : null,
+      // TODO: Remove magic numbers below when moving to "real" dashboard
+      resultsTotal30d: resultsTotal30d ? resultsTotal30d[0].cnt : null,
+      resultsTotal1d: resultsTotal1d ? resultsTotal1d[0].cnt : null,
+      usersTotal: usersTotal[0].cnt,
+
+      siteList,
+      resultSummaryList,
+    }),
   }
 
   return result

@@ -62,6 +62,14 @@
   dependencies:
     classnames "^2.2.5"
 
+"@vx/legend@^0.0.136":
+  version "0.0.136"
+  resolved "https://registry.yarnpkg.com/@vx/legend/-/legend-0.0.136.tgz#61cf346be1e46da007c4ccd78348b7f507c438de"
+  dependencies:
+    "@vx/group" "0.0.136"
+    classnames "^2.2.5"
+    prop-types "^15.5.10"
+
 "@vx/point@0.0.127":
   version "0.0.127"
   resolved "https://registry.yarnpkg.com/@vx/point/-/point-0.0.127.tgz#51ef7f648488feed758a6ec1cc8c71319602e3e7"

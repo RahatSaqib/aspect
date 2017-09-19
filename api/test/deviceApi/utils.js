@@ -28,6 +28,7 @@ function* deleteTestDataFromCheckpoint(knex, checkpoint, deviceIds) {
 
   yield knex('DeviceLog').whereIn('id', deviceLogIds).delete()
   yield knex('InventoryLog').whereIn('resultId', resultIds).delete()
+  yield knex('ResultQualityControlLog').whereIn('resultId', resultIds).delete()
   yield knex('ResultWorkflowLog').whereIn('resultId', resultIds).delete()
   yield knex('Result').whereIn('id', resultIds).delete()
   yield knex('DeviceOperation').whereIn('id', opIds).delete()
@@ -52,6 +53,7 @@ function* deleteDeviceAndTestData(knex, apiKeys) {
   yield knex('DeviceLog').whereIn('deviceId', deviceIds).delete()
   yield knex('DeviceSiteHistory').whereIn('deviceId', deviceIds).delete()
   yield knex('InventoryLog').whereIn('resultId', resultIds).delete()
+  yield knex('ResultQualityControlLog').whereIn('resultId', resultIds).delete()
   yield knex('ResultWorkflowLog').whereIn('resultId', resultIds).delete()
   yield knex('Result').whereIn('id', resultIds).delete()
   yield knex('DeviceOperation').whereIn('id', opIds).delete()
