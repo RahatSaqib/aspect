@@ -203,6 +203,7 @@ function* statusDashboard(request) {
     .innerJoin('Geography as g', 's.geographyId', 'g.id')
     .innerJoin('State as st', 'g.stateId', 'st.id')
     .select(
+      's.id',
       's.name',
       'st.abbreviation as stateAbbr',
       's.latitude',
@@ -219,11 +220,11 @@ function* statusDashboard(request) {
             .clone()
             .innerJoin('Assay as a', 'r.assayId', 'a.id')
             .innerJoin('ResultCategory as rc', 'r.resultCategory1', 'rc.id')
-            .groupBy('rc.name', 'a.assayTypeId', 's.name')
+            .groupBy('rc.name', 'a.assayTypeId', 'r.siteId')
             .select(
               'rc.name as resultCategory1Label',
               'a.assayTypeId',
-              's.name as siteName'
+              'r.siteId'
             )
             .count('r.id as cnt'),
           knex('AssayType as at')
@@ -239,21 +240,21 @@ function* statusDashboard(request) {
         ]
       : [[], [], []]
   )
-  const resultCntBySiteNameByAssayTypeId = _.mapValues(
+  const resultCntBySiteIdByAssayTypeId = _.mapValues(
     _.groupBy(resultCnt, 'assayTypeId'),
-    it => _.groupBy(it, 'siteName')
+    it => _.groupBy(it, 'siteId')
   )
-  const resultCntBySiteName = _.groupBy(resultCnt, 'siteName')
+  const resultCntBySiteId = _.groupBy(resultCnt, 'siteId')
   siteList.forEach(it =>
-    _.set(it, 'count', _.sum(_.map(resultCntBySiteName[it.name], 'cnt')))
+    _.set(it, 'count', _.sum(_.map(resultCntBySiteId[it.id], 'cnt')))
   )
 
   const resultSummaryList = assayTypes
     .map(({ id, assayTypeName, resultCategoryNames }) => {
       const resultCategory1LabelList = _.uniq(resultCategoryNames.split(','))
       const data = _.map(
-        resultCntBySiteNameByAssayTypeId[`${id}`],
-        (it, siteName) =>
+        resultCntBySiteIdByAssayTypeId[`${id}`],
+        (it, siteId) =>
           _.reduce(
             it,
             (acc, { resultCategory1Label, cnt }) => {
@@ -267,7 +268,7 @@ function* statusDashboard(request) {
                 acc[name] = 0
                 return acc
               },
-              { siteName, total: 0 }
+              { siteId, total: 0 }
             )
           )
       )

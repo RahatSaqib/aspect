@@ -38,7 +38,7 @@ const enhance = compose(
         keys: item.get('resultCategory1LabelList').toJS(),
         xScale: scaleBand({
           rangeRound: [0, xMax],
-          domain: data.map(it => it.get('siteName')).toJS(),
+          domain: data.map(it => it.get('siteId')).toJS(),
           padding: 0.4,
         }),
         yScale: scaleLinear({
@@ -86,7 +86,7 @@ const ResultSummaryItemBarStack = ({
         data={data}
         keys={keys}
         height={stackHeight}
-        x={it => it.siteName}
+        x={it => it.siteId}
         xScale={xScale}
         yScale={yScale}
         zScale={zScale}
