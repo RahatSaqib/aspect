@@ -220,9 +220,9 @@ function* statusDashboard(request) {
             .clone()
             .innerJoin('Assay as a', 'r.assayId', 'a.id')
             .innerJoin('ResultCategory as rc', 'r.resultCategory1', 'rc.id')
-            .groupBy('rc.name', 'a.assayTypeId', 'r.siteId')
+            .groupBy('rc.externalId', 'a.assayTypeId', 'r.siteId')
             .select(
-              'rc.name as resultCategory1Label',
+              'rc.externalId as resultCategory1ExternalId',
               'a.assayTypeId',
               'r.siteId'
             )
@@ -235,7 +235,8 @@ function* statusDashboard(request) {
             .select(
               'at.id',
               'at.name as assayTypeName',
-              knex.raw('GROUP_CONCAT(rc.name) as resultCategoryNames')
+              knex.raw('GROUP_CONCAT(rc.externalId) as rawResultCategoryExternalIds'),
+              knex.raw('GROUP_CONCAT(rc.name) as rawResultCategoryNames'),
             ),
         ]
       : [[], [], []]
@@ -250,20 +251,21 @@ function* statusDashboard(request) {
   )
 
   const resultSummaryList = assayTypes
-    .map(({ id, assayTypeName, resultCategoryNames }) => {
-      const resultCategory1LabelList = _.uniq(resultCategoryNames.split(','))
+    .map(({ id, assayTypeName, rawResultCategoryExternalIds, rawResultCategoryNames }) => {
+      const resultCategoryExternalIds = _.uniq(rawResultCategoryExternalIds.split(','))
+      const resultCategoryNames = _.uniq(rawResultCategoryNames.split(','))
       const data = _.map(
         resultCntBySiteIdByAssayTypeId[`${id}`],
         (it, siteId) =>
           _.reduce(
             it,
-            (acc, { resultCategory1Label, cnt }) => {
-              acc[resultCategory1Label] = cnt
+            (acc, { resultCategory1ExternalId, cnt }) => {
+              acc[resultCategory1ExternalId] = cnt
               acc.total += cnt
               return acc
             },
             _.reduce(
-              resultCategory1LabelList,
+              resultCategoryExternalIds,
               (acc, name) => {
                 acc[name] = 0
                 return acc
@@ -276,7 +278,10 @@ function* statusDashboard(request) {
       return {
         assayTypeName,
         data,
-        resultCategory1LabelList,
+        resultCategories: _.zipWith(resultCategoryExternalIds, resultCategoryNames, (externalId, name) => ({
+          externalId,
+          name
+        }))
       }
     })
     .filter(({ data }) => !_.isEmpty(data))

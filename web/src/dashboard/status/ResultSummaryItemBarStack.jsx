@@ -7,6 +7,15 @@ import { BarStack } from '@vx/shape'
 import { LegendOrdinal } from '@vx/legend'
 import { scaleBand, scaleLinear, scaleOrdinal } from '@vx/scale'
 
+const colorByResultCategoryExternalId = {
+  Detected: '#36AEDB',
+  NotDetected: '#69D73D',
+  Indeterminate: '#9B71B5',
+  Invalid: '#FDB100',
+  NoResult: '#90949D',
+  Error: '#EB4D62',
+}
+
 const enhance = compose(
   pure,
   withProps(
@@ -26,6 +35,7 @@ const enhance = compose(
       const yMax = height - stackTop - margin.bottom
 
       const data = item.get('data').sortBy(it => -1 * it.get('total'))
+      const keys = item.get('resultCategories').map(it => it.get('externalId'))
 
       return {
         assayTypeName: item.get('assayTypeName'),
@@ -35,7 +45,8 @@ const enhance = compose(
         stackTop,
         stackHeight: yMax,
         data: data.toJS(),
-        keys: item.get('resultCategory1LabelList').toJS(),
+        keys: keys.toJS(),
+        resultCategories: item.get('resultCategories').toJS(),
         xScale: scaleBand({
           rangeRound: [0, xMax],
           domain: data.map(it => it.get('siteId')).toJS(),
@@ -47,15 +58,11 @@ const enhance = compose(
           domain: [0, _.max(data.map(it => it.get('total')).toJS())],
         }),
         zScale: scaleOrdinal({
-          domain: item.get('resultCategory1LabelList').toJS(),
-          range: [
-            '#36AEDB',
-            '#FDB100',
-            '#90949D',
-            '#69D73D',
-            '#9B71B5',
-            '#EB4D62',
-          ],
+          domain: keys.toJS(),
+          range: item
+            .get('resultCategories')
+            .map(it => colorByResultCategoryExternalId[it.get('externalId')])
+            .toJS(),
         }),
       }
     }
@@ -71,6 +78,7 @@ const ResultSummaryItemBarStack = ({
   stackHeight,
   data,
   keys,
+  resultCategories,
   xScale,
   yScale,
   zScale,
@@ -133,7 +141,14 @@ const ResultSummaryItemBarStack = ({
       }}
     >
       <LegendOrdinal
+        domain={resultCategories}
         scale={zScale}
+        labelTransform={_.constant((datum, index) => ({
+          datum,
+          index,
+          text: datum.name,
+          value: zScale(datum.externalId),
+        }))}
         direction="column"
         labelMargin="0 15px 0 0"
       />
