@@ -54,7 +54,7 @@ class BarChart extends Component {
     // Array y holds each color bar based on data values
     const y = []
     for (let i = 0; i < maxLength; i++) {
-      y[i] = d => _.get(d, ['data', i], 0)
+      y[i] = d => _.get(d, ['data', i, 'cnt'], _.get(d, ['data', i], 0))
     }
 
     // Creates dynamic y axis

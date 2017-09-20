@@ -124,13 +124,14 @@ export const Status = ({
       </Unit>
     </div>
 
-    {status.get('resultSummary') &&
+    {status.get('resultSummaryList') &&
       <div className={cssClasses('Section')}>
         <ResultStatus
           intl={intl}
           className={cssClasses('Section__Content')}
-          title={intl.formatMessage(messages.healthTitle)}
-          data={status.get('resultSummary')}
+          title={intl.formatMessage(messages.clinicalTitle)}
+          siteList={status.get('siteList')}
+          resultSummaryList={status.get('resultSummaryList')}
         />
       </div>}
 
