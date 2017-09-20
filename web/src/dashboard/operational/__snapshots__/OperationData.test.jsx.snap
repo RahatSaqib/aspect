@@ -12,6 +12,7 @@ ShallowWrapper {
     className="Container"
 >
     <HelmetWrapper
+        defer={true}
         encodeSpecialCharacters={true}
         title="Operational Data"
     />
@@ -212,6 +213,7 @@ ShallowWrapper {
       className="Container"
 >
       <HelmetWrapper
+            defer={true}
             encodeSpecialCharacters={true}
             title="Operational Data"
       />
@@ -484,6 +486,7 @@ ShallowWrapper {
           className="Container"
 >
           <HelmetWrapper
+                    defer={true}
                     encodeSpecialCharacters={true}
                     title="Operational Data"
           />
@@ -684,6 +687,7 @@ ShallowWrapper {
           className="Container"
 >
           <HelmetWrapper
+                    defer={true}
                     encodeSpecialCharacters={true}
                     title="Operational Data"
           />

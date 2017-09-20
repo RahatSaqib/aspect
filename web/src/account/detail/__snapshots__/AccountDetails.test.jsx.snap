@@ -5,6 +5,7 @@ exports[`AccountDetails module AccountDetails component should shallow render co
   className="Container"
 >
   <HelmetWrapper
+    defer={true}
     encodeSpecialCharacters={true}
     title="Account Details"
   />
@@ -156,6 +157,7 @@ exports[`AccountDetails module AccountDetails component when loading is true sho
   className="Container"
 >
   <HelmetWrapper
+    defer={true}
     encodeSpecialCharacters={true}
     title="Account Details"
   />

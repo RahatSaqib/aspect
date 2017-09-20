@@ -5,13 +5,14 @@ exports[`NotificationList module NotificationList component should render correc
   className="Container"
 >
   <HelmetWrapper
+    defer={true}
     encodeSpecialCharacters={true}
     title="Notifications"
   />
   <Connect(lifecycle(Component))
     title="Notifications"
   />
-  <pure(withProps(withHandlers(Connect(Component))))
+  <pure(withProps(withHandlers(Connect(BrowseFilters))))
     config={
       Object {
         "contactNameOrEmail": true,

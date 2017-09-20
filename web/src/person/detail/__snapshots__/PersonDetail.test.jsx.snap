@@ -5,6 +5,7 @@ exports[`PersonDetail module Person Detail component should render correctly 1`]
   className="Container"
 >
   <HelmetWrapper
+    defer={true}
     encodeSpecialCharacters={true}
     title="Person Detail"
   />

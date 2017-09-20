@@ -48,7 +48,7 @@ ShallowWrapper {
       "_calledComponentWillUnmount": false,
       "_compositeType": 0,
       "_context": Object {},
-      "_currentElement": <withGoogleMap(Unknown)
+      "_currentElement": <withGoogleMap(Component)
         containerElement={
                 <div
                         style={
@@ -167,7 +167,7 @@ ShallowWrapper {
     "render": [Function],
   },
   "root": [Circular],
-  "unrendered": <withGoogleMap(Unknown)
+  "unrendered": <withGoogleMap(Component)
     containerElement={
         <div
             style={

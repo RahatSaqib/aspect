@@ -1,6 +1,6 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`ChartAlert component should shallow render correctly 1`] = `
+exports[`Device Status component should shallow render correctly 1`] = `
 <ThemedCard
   className={undefined}
   composeTheme="deeply"
