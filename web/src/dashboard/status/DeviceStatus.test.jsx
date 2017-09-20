@@ -3,7 +3,7 @@ import ReactShallowRenderer from 'react-test-renderer/shallow'
 import { IntlProvider } from 'react-intl'
 import { DeviceStatus } from './DeviceStatus'
 
-describe('ChartAlert component', () => {
+describe('Device Status component', () => {
   const renderer = new ReactShallowRenderer()
   const intlProvider = new IntlProvider({ locale: 'en' }, {})
   const { intl } = intlProvider.getChildContext()
