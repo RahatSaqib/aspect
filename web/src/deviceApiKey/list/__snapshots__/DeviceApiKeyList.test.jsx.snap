@@ -5,7 +5,6 @@ exports[`Device Api Key List module DeviceApiKeyList component should shallow re
   className="Container"
 >
   <HelmetWrapper
-    defer={true}
     encodeSpecialCharacters={true}
     title="Device API Keys"
   />
@@ -160,7 +159,6 @@ exports[`Device Api Key List module DeviceApiKeyList component should shallow re
   className="Container"
 >
   <HelmetWrapper
-    defer={true}
     encodeSpecialCharacters={true}
     title="Device API Keys"
   />

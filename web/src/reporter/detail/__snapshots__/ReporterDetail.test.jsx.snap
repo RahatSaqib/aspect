@@ -5,7 +5,6 @@ exports[`ReporterDetail component should shallow render correctly 1`] = `
   className="Container"
 >
   <HelmetWrapper
-    defer={true}
     encodeSpecialCharacters={true}
     title="Reporter Detail"
   />

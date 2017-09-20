@@ -5,7 +5,6 @@ exports[`NotificationList module NotificationList component should render correc
   className="Container"
 >
   <HelmetWrapper
-    defer={true}
     encodeSpecialCharacters={true}
     title="Notifications"
   />
