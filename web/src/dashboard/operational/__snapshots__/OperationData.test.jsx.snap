@@ -134,21 +134,21 @@ ShallowWrapper {
     >
         <SectionAbnormalCollection
             collection={
-                Array [
-                    Object {
-                      "isNormal": false,
-                      "key": "stock-outs",
-                      "message": "1 site with problems",
-                      "title": "Stock outs",
+                Immutable.List [
+                    Immutable.Map {
+                        key: "stock-outs",
+                        title: "Stock outs",
+                        isNormal: false,
+                        message: "1 site with problems",
                     },
-                  ]
+                ]
             }
             colorClassName="Title__Color--inventory"
             onDataReportClick={[Function]}
             title="Consumables"
         />
         <SectionAbnormalCollection
-            collection={undefined}
+            collection={Array []}
             colorClassName="Title__Color--device"
             onDataReportClick={[Function]}
             title="Devices"
@@ -185,12 +185,13 @@ ShallowWrapper {
                     />
                 </div>
                 <div>
-                    
+                    Immutable.List [
+                    ]
                 </div>
             </ThemedCard>
         </div>
         <SectionAbnormalCollection
-            collection={undefined}
+            collection={Array []}
             onDataReportClick={[Function]}
             title="Staff"
         />
@@ -333,21 +334,21 @@ ShallowWrapper {
       >
             <SectionAbnormalCollection
                   collection={
-                        Array [
-                              Object {
-                                "isNormal": false,
-                                "key": "stock-outs",
-                                "message": "1 site with problems",
-                                "title": "Stock outs",
+                        Immutable.List [
+                              Immutable.Map {
+                                    key: "stock-outs",
+                                    title: "Stock outs",
+                                    isNormal: false,
+                                    message: "1 site with problems",
                               },
-                            ]
+                        ]
                   }
                   colorClassName="Title__Color--inventory"
                   onDataReportClick={[Function]}
                   title="Consumables"
             />
             <SectionAbnormalCollection
-                  collection={undefined}
+                  collection={Array []}
                   colorClassName="Title__Color--device"
                   onDataReportClick={[Function]}
                   title="Devices"
@@ -384,12 +385,13 @@ ShallowWrapper {
                               />
                         </div>
                         <div>
-                              
+                              Immutable.List [
+                              ]
                         </div>
                   </ThemedCard>
             </div>
             <SectionAbnormalCollection
-                  collection={undefined}
+                  collection={Array []}
                   onDataReportClick={[Function]}
                   title="Staff"
             />
@@ -419,17 +421,18 @@ ShallowWrapper {
         onDataReportClick={[Function]}
         onDateRangeClick={[Function]}
         operational={
-                Map {
-                        "inventory" => Array [
-                          Object {
-                            "isNormal": false,
-                            "key": "stock-outs",
-                            "message": "1 site with problems",
-                            "title": "Stock outs",
-                          },
+                Immutable.Map {
+                        inventory: Immutable.List [
+                                Immutable.Map {
+                                        key: "stock-outs",
+                                        title: "Stock outs",
+                                        isNormal: false,
+                                        message: "1 site with problems",
+                                },
                         ],
-                        "site" => Array [],
-                      }
+                        site: Immutable.List [
+                        ],
+                }
         }
 />,
       "_debugID": 1,
@@ -444,17 +447,18 @@ ShallowWrapper {
           "onAssayTypeClick": [Function],
           "onDataReportClick": [Function],
           "onDateRangeClick": [Function],
-          "operational": Map {
-            "inventory" => Array [
-              Object {
-                "isNormal": false,
-                "key": "stock-outs",
-                "message": "1 site with problems",
-                "title": "Stock outs",
-              },
+          "operational": Immutable.Map {
+            inventory: Immutable.List [
+                        Immutable.Map {
+                                    key: "stock-outs",
+                                    title: "Stock outs",
+                                    isNormal: false,
+                                    message: "1 site with problems",
+                        },
             ],
-            "site" => Array [],
-          },
+            site: Immutable.List [
+            ],
+},
         },
         "refs": Object {},
         "state": null,
@@ -602,21 +606,21 @@ ShallowWrapper {
           >
                     <SectionAbnormalCollection
                               collection={
-                                        Array [
-                                                  Object {
-                                                    "isNormal": false,
-                                                    "key": "stock-outs",
-                                                    "message": "1 site with problems",
-                                                    "title": "Stock outs",
+                                        Immutable.List [
+                                                  Immutable.Map {
+                                                            key: "stock-outs",
+                                                            title: "Stock outs",
+                                                            isNormal: false,
+                                                            message: "1 site with problems",
                                                   },
-                                                ]
+                                        ]
                               }
                               colorClassName="Title__Color--inventory"
                               onDataReportClick={[Function]}
                               title="Consumables"
                     />
                     <SectionAbnormalCollection
-                              collection={undefined}
+                              collection={Array []}
                               colorClassName="Title__Color--device"
                               onDataReportClick={[Function]}
                               title="Devices"
@@ -653,12 +657,13 @@ ShallowWrapper {
                                                   />
                                         </div>
                                         <div>
-                                                  
+                                                  Immutable.List [
+                                                  ]
                                         </div>
                               </ThemedCard>
                     </div>
                     <SectionAbnormalCollection
-                              collection={undefined}
+                              collection={Array []}
                               onDataReportClick={[Function]}
                               title="Staff"
                     />
@@ -801,21 +806,21 @@ ShallowWrapper {
           >
                     <SectionAbnormalCollection
                               collection={
-                                        Array [
-                                                  Object {
-                                                    "isNormal": false,
-                                                    "key": "stock-outs",
-                                                    "message": "1 site with problems",
-                                                    "title": "Stock outs",
+                                        Immutable.List [
+                                                  Immutable.Map {
+                                                            key: "stock-outs",
+                                                            title: "Stock outs",
+                                                            isNormal: false,
+                                                            message: "1 site with problems",
                                                   },
-                                                ]
+                                        ]
                               }
                               colorClassName="Title__Color--inventory"
                               onDataReportClick={[Function]}
                               title="Consumables"
                     />
                     <SectionAbnormalCollection
-                              collection={undefined}
+                              collection={Array []}
                               colorClassName="Title__Color--device"
                               onDataReportClick={[Function]}
                               title="Devices"
@@ -852,12 +857,13 @@ ShallowWrapper {
                                                   />
                                         </div>
                                         <div>
-                                                  
+                                                  Immutable.List [
+                                                  ]
                                         </div>
                               </ThemedCard>
                     </div>
                     <SectionAbnormalCollection
-                              collection={undefined}
+                              collection={Array []}
                               onDataReportClick={[Function]}
                               title="Staff"
                     />
@@ -891,17 +897,18 @@ ShallowWrapper {
     onDataReportClick={[Function]}
     onDateRangeClick={[Function]}
     operational={
-        Map {
-            "inventory" => Array [
-              Object {
-                "isNormal": false,
-                "key": "stock-outs",
-                "message": "1 site with problems",
-                "title": "Stock outs",
-              },
+        Immutable.Map {
+            inventory: Immutable.List [
+                Immutable.Map {
+                    key: "stock-outs",
+                    title: "Stock outs",
+                    isNormal: false,
+                    message: "1 site with problems",
+                },
             ],
-            "site" => Array [],
-          }
+            site: Immutable.List [
+            ],
+        }
     }
 />,
 }

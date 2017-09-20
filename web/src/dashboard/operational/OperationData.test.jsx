@@ -1,3 +1,4 @@
+import Immutable from 'Immutable'
 import React from 'react'
 import { shallow } from 'enzyme'
 
@@ -10,16 +11,18 @@ describe('OperationData Component', () => {
   const shallowRenderOperationalData = () => {
     OperationalDataWrapper = shallow(<OperationalData {...props} />)
   }
-  const operational = new Map()
-    .set('inventory', [
+  const operational = Immutable.fromJS({
+    inventory: [
       {
         key: 'stock-outs',
         title: 'Stock outs',
         isNormal: false,
         message: '1 site with problems',
       },
-    ])
-    .set('site', [])
+    ],
+    site: [],
+  })
+
   beforeEach(() => {
     props = {
       loading: false,

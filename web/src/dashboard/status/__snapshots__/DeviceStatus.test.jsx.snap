@@ -1,0 +1,247 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`ChartAlert component should shallow render correctly 1`] = `
+<ThemedCard
+  className={undefined}
+  composeTheme="deeply"
+  mapThemrProps={[Function]}
+>
+  <Unknown
+    colorClassName="Title__Color--device"
+    title="Devices"
+  />
+  <div>
+    <Unknown
+      lg="1-4"
+      sm="1-2"
+    >
+      <CountryWithPoints
+        countryIsoAlpha2Code="US"
+      />
+    </Unknown>
+    <Unknown
+      lg="1-4"
+      sm="1-2"
+    >
+      <Unknown
+        intl={
+          Object {
+            "defaultFormats": Object {},
+            "defaultLocale": "en",
+            "formatDate": [Function],
+            "formatHTMLMessage": [Function],
+            "formatMessage": [Function],
+            "formatNumber": [Function],
+            "formatPlural": [Function],
+            "formatRelative": [Function],
+            "formatTime": [Function],
+            "formats": Object {},
+            "formatters": Object {
+              "getDateTimeFormat": [Function],
+              "getMessageFormat": [Function],
+              "getNumberFormat": [Function],
+              "getPluralFormat": [Function],
+              "getRelativeFormat": [Function],
+            },
+            "locale": "en",
+            "messages": Object {},
+            "now": [Function],
+            "textComponent": "span",
+          }
+        }
+        items={
+          Array [
+            Object {
+              "0": Object {
+                "count": 67,
+                "key": "operational",
+                "subI18nKey": "fullyOperationalStatus",
+                "titleI18nKey": "countOfTotalDevicesTitle",
+                "total": 83,
+              },
+            },
+          ]
+        }
+        title="operational devices"
+      />
+      <Unknown
+        intl={
+          Object {
+            "defaultFormats": Object {},
+            "defaultLocale": "en",
+            "formatDate": [Function],
+            "formatHTMLMessage": [Function],
+            "formatMessage": [Function],
+            "formatNumber": [Function],
+            "formatPlural": [Function],
+            "formatRelative": [Function],
+            "formatTime": [Function],
+            "formats": Object {},
+            "formatters": Object {
+              "getDateTimeFormat": [Function],
+              "getMessageFormat": [Function],
+              "getNumberFormat": [Function],
+              "getPluralFormat": [Function],
+              "getRelativeFormat": [Function],
+            },
+            "locale": "en",
+            "messages": Object {},
+            "now": [Function],
+            "textComponent": "span",
+          }
+        }
+        items={
+          Array [
+            Object {
+              "0": Object {
+                "count": 7,
+                "key": "qualityControl",
+                "subI18nKey": "withQCIssuesStatus",
+                "titleI18nKey": "devicesTitle",
+              },
+            },
+          ]
+        }
+        title="quality control"
+      />
+    </Unknown>
+    <Unknown
+      lg="1-4"
+      sm="1-2"
+    >
+      <Unknown
+        intl={
+          Object {
+            "defaultFormats": Object {},
+            "defaultLocale": "en",
+            "formatDate": [Function],
+            "formatHTMLMessage": [Function],
+            "formatMessage": [Function],
+            "formatNumber": [Function],
+            "formatPlural": [Function],
+            "formatRelative": [Function],
+            "formatTime": [Function],
+            "formats": Object {},
+            "formatters": Object {
+              "getDateTimeFormat": [Function],
+              "getMessageFormat": [Function],
+              "getNumberFormat": [Function],
+              "getPluralFormat": [Function],
+              "getRelativeFormat": [Function],
+            },
+            "locale": "en",
+            "messages": Object {},
+            "now": [Function],
+            "textComponent": "span",
+          }
+        }
+        items={undefined}
+        title="servicing"
+      />
+      <Unknown
+        intl={
+          Object {
+            "defaultFormats": Object {},
+            "defaultLocale": "en",
+            "formatDate": [Function],
+            "formatHTMLMessage": [Function],
+            "formatMessage": [Function],
+            "formatNumber": [Function],
+            "formatPlural": [Function],
+            "formatRelative": [Function],
+            "formatTime": [Function],
+            "formats": Object {},
+            "formatters": Object {
+              "getDateTimeFormat": [Function],
+              "getMessageFormat": [Function],
+              "getNumberFormat": [Function],
+              "getPluralFormat": [Function],
+              "getRelativeFormat": [Function],
+            },
+            "locale": "en",
+            "messages": Object {},
+            "now": [Function],
+            "textComponent": "span",
+          }
+        }
+        items={undefined}
+        title="uploading data"
+      />
+    </Unknown>
+    <Unknown
+      lg="1-4"
+      sm="1-2"
+    >
+      <Unknown
+        intl={
+          Object {
+            "defaultFormats": Object {},
+            "defaultLocale": "en",
+            "formatDate": [Function],
+            "formatHTMLMessage": [Function],
+            "formatMessage": [Function],
+            "formatNumber": [Function],
+            "formatPlural": [Function],
+            "formatRelative": [Function],
+            "formatTime": [Function],
+            "formats": Object {},
+            "formatters": Object {
+              "getDateTimeFormat": [Function],
+              "getMessageFormat": [Function],
+              "getNumberFormat": [Function],
+              "getPluralFormat": [Function],
+              "getRelativeFormat": [Function],
+            },
+            "locale": "en",
+            "messages": Object {},
+            "now": [Function],
+            "textComponent": "span",
+          }
+        }
+        items={
+          Array [
+            Object {
+              "0": Object {
+                "count": 3,
+                "key": "calibration",
+                "subI18nKey": "needCalibrationStatus",
+                "titleI18nKey": "devicesTitle",
+              },
+            },
+          ]
+        }
+        title="calibration"
+      />
+      <Unknown
+        intl={
+          Object {
+            "defaultFormats": Object {},
+            "defaultLocale": "en",
+            "formatDate": [Function],
+            "formatHTMLMessage": [Function],
+            "formatMessage": [Function],
+            "formatNumber": [Function],
+            "formatPlural": [Function],
+            "formatRelative": [Function],
+            "formatTime": [Function],
+            "formats": Object {},
+            "formatters": Object {
+              "getDateTimeFormat": [Function],
+              "getMessageFormat": [Function],
+              "getNumberFormat": [Function],
+              "getPluralFormat": [Function],
+              "getRelativeFormat": [Function],
+            },
+            "locale": "en",
+            "messages": Object {},
+            "now": [Function],
+            "textComponent": "span",
+          }
+        }
+        items={undefined}
+        title="test failures"
+      />
+    </Unknown>
+  </div>
+</ThemedCard>
+`;

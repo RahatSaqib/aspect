@@ -1,0 +1,281 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`LineChart component should shallow render correctly 1`] = `
+<ResponsiveSVG
+  height={400}
+  width={600}
+>
+  <Group
+    left={60}
+  >
+    <Grid
+      height={340}
+      numTicksRows={3}
+      width={510}
+      xScale={[Function]}
+      yScale={[Function]}
+    />
+    <LinePath
+      data={
+        Array [
+          Object {
+            "date": "Site 1",
+            "value": Array [
+              1,
+              2,
+              8,
+            ],
+          },
+          Object {
+            "date": "Site 2",
+            "value": Array [
+              2,
+              4,
+              9,
+            ],
+          },
+          Object {
+            "date": "Site 3",
+            "value": Array [
+              3,
+              9,
+              8,
+            ],
+          },
+          Object {
+            "date": "Site 4",
+            "value": Array [
+              1,
+              4,
+              7,
+            ],
+          },
+          Object {
+            "date": "Site 5",
+            "value": Array [
+              2,
+              1,
+              6,
+            ],
+          },
+          Object {
+            "date": "Site 6",
+            "value": Array [
+              3,
+              4,
+              5,
+            ],
+          },
+          Object {
+            "date": "Site 7",
+            "value": Array [
+              1,
+              1,
+              5,
+            ],
+          },
+          Object {
+            "date": "Site 8",
+            "value": Array [
+              2,
+              3,
+              8,
+            ],
+          },
+        ]
+      }
+      stroke="#e85164"
+      strokeWidth={0.4}
+      x={[Function]}
+      xScale={[Function]}
+      y={[Function]}
+      yScale={[Function]}
+    />
+    <LinePath
+      data={
+        Array [
+          Object {
+            "date": "Site 1",
+            "value": Array [
+              1,
+              2,
+              8,
+            ],
+          },
+          Object {
+            "date": "Site 2",
+            "value": Array [
+              2,
+              4,
+              9,
+            ],
+          },
+          Object {
+            "date": "Site 3",
+            "value": Array [
+              3,
+              9,
+              8,
+            ],
+          },
+          Object {
+            "date": "Site 4",
+            "value": Array [
+              1,
+              4,
+              7,
+            ],
+          },
+          Object {
+            "date": "Site 5",
+            "value": Array [
+              2,
+              1,
+              6,
+            ],
+          },
+          Object {
+            "date": "Site 6",
+            "value": Array [
+              3,
+              4,
+              5,
+            ],
+          },
+          Object {
+            "date": "Site 7",
+            "value": Array [
+              1,
+              1,
+              5,
+            ],
+          },
+          Object {
+            "date": "Site 8",
+            "value": Array [
+              2,
+              3,
+              8,
+            ],
+          },
+        ]
+      }
+      stroke="#fcb124"
+      strokeWidth={0.4}
+      x={[Function]}
+      xScale={[Function]}
+      y={[Function]}
+      yScale={[Function]}
+    />
+    <LinePath
+      data={
+        Array [
+          Object {
+            "date": "Site 1",
+            "value": Array [
+              1,
+              2,
+              8,
+            ],
+          },
+          Object {
+            "date": "Site 2",
+            "value": Array [
+              2,
+              4,
+              9,
+            ],
+          },
+          Object {
+            "date": "Site 3",
+            "value": Array [
+              3,
+              9,
+              8,
+            ],
+          },
+          Object {
+            "date": "Site 4",
+            "value": Array [
+              1,
+              4,
+              7,
+            ],
+          },
+          Object {
+            "date": "Site 5",
+            "value": Array [
+              2,
+              1,
+              6,
+            ],
+          },
+          Object {
+            "date": "Site 6",
+            "value": Array [
+              3,
+              4,
+              5,
+            ],
+          },
+          Object {
+            "date": "Site 7",
+            "value": Array [
+              1,
+              1,
+              5,
+            ],
+          },
+          Object {
+            "date": "Site 8",
+            "value": Array [
+              2,
+              3,
+              8,
+            ],
+          },
+        ]
+      }
+      stroke="#73d449"
+      strokeWidth={0.4}
+      x={[Function]}
+      xScale={[Function]}
+      y={[Function]}
+      yScale={[Function]}
+    />
+    <AxisLeft
+      hideAxisLine={true}
+      hideTicks={true}
+      hideZero={true}
+      numTicks={3}
+      scale={[Function]}
+      stroke="#1b1a1e"
+      tickLabelComponent={
+        <text
+          dy="0.25em"
+          fill="black"
+          fontFamily="arial"
+          fontSize={18}
+          textAnchor="end"
+        />
+      }
+      tickTextFill="#1b1a1e"
+    />
+    <AxisBottom
+      hideAxisLine={true}
+      hideTicks={true}
+      left={-33}
+      scale={[Function]}
+      tickLabelComponent={
+        <text
+          fill="black"
+          fontSize={15}
+          textAnchor="middle"
+        />
+      }
+      tickTextFill="#1b1a1e"
+      top={340}
+    />
+  </Group>
+</ResponsiveSVG>
+`;

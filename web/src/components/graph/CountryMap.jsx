@@ -47,7 +47,12 @@ const enhance = compose(
 
     handleLoad(countryIsoAlpha2Code) {
       this.setState({ loading: true, countryIsoAlpha2Code })
-      import(`../../../map/topo/${countryIsoAlpha2Code}.json`)
+      const topojson = new Promise(resolve => {
+        resolve(
+          require(`../../../map/topo/${countryIsoAlpha2Code}.json`) // eslint-disable-line
+        )
+      })
+      topojson
         .then(topojson => state => {
           if (state.countryIsoAlpha2Code === countryIsoAlpha2Code) {
             return {
@@ -69,7 +74,7 @@ Renders a country map with internal borders specified by `countryIsoAlpha2Code`
 
 @see [@vx/geo/Mercator](https://vx-demo.now.sh/static/docs/vx-geo.html)
 */
-const CountryMap = ({
+export const CountryMap = ({
   countryIsoAlpha2Code,
   extent,
   loading, // eslint-disable-line react/prop-types
