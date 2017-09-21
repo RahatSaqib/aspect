@@ -123,6 +123,7 @@ const enhance = compose(
   withProps(
     makeSortPageSelector({
       sortCol: 'endedOn',
+      sortDir: 'desc',
     })
   ),
   connect(
