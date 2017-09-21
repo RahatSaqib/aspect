@@ -23,10 +23,9 @@ describe('ReporterDetail component', () => {
       },
     },
   }
-  const ReporterDetailComponent = <ReporterDetail {...props} />
 
   it('should shallow render correctly', () => {
-    const element = renderer.render(ReporterDetailComponent)
+    const element = renderer.render(<ReporterDetail {...props} />)
 
     expect(element).toMatchSnapshot()
   })

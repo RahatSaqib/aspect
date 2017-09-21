@@ -1,4 +1,3 @@
-import classnames from 'classnames/bind'
 import React from 'react'
 import { shallow } from 'enzyme'
 import sinon from 'sinon'
@@ -12,7 +11,6 @@ import { DateRangeSelector } from './DateRangeSelector'
 describe('DateRangeSelector Component', () => {
   const intlProvider = new IntlProvider({ locale: 'en' }, {})
   const { intl } = intlProvider.getChildContext()
-  const cssClasses = classnames.bind(require('./FiltersPanel.css'))
 
   const props = {
     intl,
@@ -21,7 +19,7 @@ describe('DateRangeSelector Component', () => {
     onChangeDate: sinon.spy(),
     floatingLabelText: 'Date Range',
     datePickerContainer: 'dialog',
-    controlClassName: cssClasses('Control'),
+    controlClassName: 'Control',
   }
   let DateRangeSelectorWrapper
 

@@ -1,31 +1,140 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
 exports[`Login component should shallow render correctly 1`] = `
-<Connect(withStateHandlers(recomposeForm(Component)))
-  intl={
-    Object {
-      "defaultFormats": Object {},
-      "defaultLocale": "en",
-      "formatDate": [Function],
-      "formatHTMLMessage": [Function],
-      "formatMessage": [Function],
-      "formatNumber": [Function],
-      "formatPlural": [Function],
-      "formatRelative": [Function],
-      "formatTime": [Function],
-      "formats": Object {},
-      "formatters": Object {
-        "getDateTimeFormat": [Function],
-        "getMessageFormat": [Function],
-        "getNumberFormat": [Function],
-        "getPluralFormat": [Function],
-        "getRelativeFormat": [Function],
-      },
-      "locale": "en",
-      "messages": Object {},
-      "now": [Function],
-      "textComponent": "span",
-    }
-  }
-/>
+<div
+  className="Background"
+>
+  <HelmetWrapper
+    encodeSpecialCharacters={true}
+    title="Login"
+  />
+  <div>
+    <Unknown
+      lg="1-3"
+      md="1-6"
+      sm="1-24"
+      xl="1-3"
+    />
+    <Unknown
+      lg="1-3"
+      md="2-3"
+      sm="11-12"
+      xl="1-3"
+    >
+      <ThemedCard
+        composeTheme="deeply"
+        mapThemrProps={[Function]}
+      >
+        <div
+          className="Logo__Container"
+        >
+          <AspectLogo />
+        </div>
+        <form
+          className="Form"
+          onSubmit={[Function]}
+        >
+          <Reason
+            className="Form__Info"
+            intl={
+              Object {
+                "defaultFormats": Object {},
+                "defaultLocale": "en",
+                "formatDate": [Function],
+                "formatHTMLMessage": [Function],
+                "formatMessage": [Function],
+                "formatNumber": [Function],
+                "formatPlural": [Function],
+                "formatRelative": [Function],
+                "formatTime": [Function],
+                "formats": Object {},
+                "formatters": Object {
+                  "getDateTimeFormat": [Function],
+                  "getMessageFormat": [Function],
+                  "getNumberFormat": [Function],
+                  "getPluralFormat": [Function],
+                  "getRelativeFormat": [Function],
+                },
+                "locale": "en",
+                "messages": Object {},
+                "now": [Function],
+                "textComponent": "span",
+              }
+            }
+            location={undefined}
+          />
+          <ThemedInput
+            className=""
+            composeTheme="deeply"
+            disabled={false}
+            error=""
+            floating={true}
+            hint=""
+            innerRef={undefined}
+            label="Username"
+            mapThemrProps={[Function]}
+            multiline={false}
+            name="user"
+            onChange={[Function]}
+            required={false}
+            theme={
+              Object {
+                "label": "Form__Input",
+              }
+            }
+            type="text"
+            value=""
+          />
+          <ThemedInput
+            className=""
+            composeTheme="deeply"
+            disabled={false}
+            error=""
+            floating={true}
+            hint=""
+            label="Password"
+            mapThemrProps={[Function]}
+            multiline={false}
+            name="password"
+            onChange={[Function]}
+            required={false}
+            theme={
+              Object {
+                "label": "Form__Input",
+              }
+            }
+            type="password"
+            value=""
+          />
+          <div
+            className="Form__ActionRow"
+          >
+            <ThemedThemed
+              className="Button"
+              composeTheme="deeply"
+              disabled={false}
+              label="Login"
+              mapThemrProps={[Function]}
+              primary={true}
+              raised={true}
+              ripple={true}
+              rippleCentered={false}
+              rippleClassName=""
+              rippleMultiple={true}
+              rippleSpread={2}
+              type="submit"
+            />
+            <Link
+              className="Right_Align"
+              replace={false}
+              to="reset-password"
+            >
+              Forgot Password?
+            </Link>
+          </div>
+        </form>
+      </ThemedCard>
+    </Unknown>
+  </div>
+</div>
 `;

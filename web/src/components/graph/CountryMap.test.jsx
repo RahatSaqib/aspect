@@ -2,8 +2,7 @@ import React from 'react'
 import ReactShallowRenderer from 'react-test-renderer/shallow'
 
 import { CountryMap } from './CountryMap'
-
-const getTopo = () => require('../../../map/topo/KE.json')
+import topojson from '../../../map/topo/KE.json'
 
 describe('CountryMap component', () => {
   const renderer = new ReactShallowRenderer()
@@ -11,7 +10,7 @@ describe('CountryMap component', () => {
     countryIsoAlpha2Code: 'KE',
     extent: [[10, 10], [290, 290]],
     loading: false,
-    topojson: getTopo(),
+    topojson,
   }
 
   it('should shallow render correctly', () => {
