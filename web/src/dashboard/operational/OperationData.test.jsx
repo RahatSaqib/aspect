@@ -1,16 +1,12 @@
 import Immutable from 'Immutable'
 import React from 'react'
-import { shallow } from 'enzyme'
+import ReactShallowRenderer from 'react-test-renderer/shallow'
 
 import { OperationalData } from './OperationalData'
 
 describe('OperationData Component', () => {
-  let props
-  let OperationalDataWrapper
+  const renderer = new ReactShallowRenderer()
 
-  const shallowRenderOperationalData = () => {
-    OperationalDataWrapper = shallow(<OperationalData {...props} />)
-  }
   const operational = Immutable.fromJS({
     inventory: [
       {
@@ -23,19 +19,17 @@ describe('OperationData Component', () => {
     site: [],
   })
 
-  beforeEach(() => {
-    props = {
-      loading: false,
-      operational,
-      assayType: 'all',
-      onAssayTypeClick: () => {},
-      onDateRangeClick: () => {},
-      onDataReportClick: () => {},
-    }
-    shallowRenderOperationalData()
-  })
+  const props = {
+    loading: false,
+    operational,
+    assayType: 'all',
+    onAssayTypeClick: () => {},
+    onDateRangeClick: () => {},
+    onDataReportClick: () => {},
+  }
 
   it('should shallow render correctly', () => {
-    expect(OperationalDataWrapper).toMatchSnapshot()
+    const element = renderer.render(<OperationalData {...props} />)
+    expect(element).toMatchSnapshot()
   })
 })
