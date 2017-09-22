@@ -47,12 +47,7 @@ const enhance = compose(
 
     handleLoad(countryIsoAlpha2Code) {
       this.setState({ loading: true, countryIsoAlpha2Code })
-      const topojson = new Promise(resolve => {
-        resolve(
-          require(`../../../map/topo/${countryIsoAlpha2Code}.json`) // eslint-disable-line
-        )
-      })
-      topojson
+      import(`../../../map/topo/${countryIsoAlpha2Code}.json`)
         .then(topojson => state => {
           if (state.countryIsoAlpha2Code === countryIsoAlpha2Code) {
             return {
