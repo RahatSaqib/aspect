@@ -2258,6 +2258,8 @@ function* seed(knex) {
     const device = devicesGeneXpert[i % devicesGeneXpert.length]
     const siteData = siteDatas.find(site => site.id === device.siteId)
     const sample = samples[i % samples.length]
+    // make sure we have at least one result with these status
+    const ensureResultIds = [acknowledged, validated, deliverable]
     for (const result of possibleResults) {
       if (_.random(10) > 3) {
         const randomTimespan = _.random(6000) * millisInMinute
@@ -2278,7 +2280,7 @@ function* seed(knex) {
           .replace('{1}', log)
 
         const resultStatus =
-          _.random(1) < 0.3
+          ensureResultIds.shift() || _.random(1) < 0.3
             ? acknowledged
             : _.random(1) < 0.5 ? validated : deliverable
 
