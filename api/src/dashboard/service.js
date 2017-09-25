@@ -235,8 +235,10 @@ function* statusDashboard(request) {
             .select(
               'at.id',
               'at.name as assayTypeName',
-              knex.raw('GROUP_CONCAT(rc.externalId) as rawResultCategoryExternalIds'),
-              knex.raw('GROUP_CONCAT(rc.name) as rawResultCategoryNames'),
+              knex.raw(
+                'GROUP_CONCAT(rc.externalId) as rawResultCategoryExternalIds'
+              ),
+              knex.raw('GROUP_CONCAT(rc.name) as rawResultCategoryNames')
             ),
         ]
       : [[], [], []]
@@ -251,39 +253,52 @@ function* statusDashboard(request) {
   )
 
   const resultSummaryList = assayTypes
-    .map(({ id, assayTypeName, rawResultCategoryExternalIds, rawResultCategoryNames }) => {
-      const resultCategoryExternalIds = _.uniq(rawResultCategoryExternalIds.split(','))
-      const resultCategoryNames = _.uniq(rawResultCategoryNames.split(','))
-      const data = _.map(
-        resultCntBySiteIdByAssayTypeId[`${id}`],
-        (it, siteId) =>
-          _.reduce(
-            it,
-            (acc, { resultCategory1ExternalId, cnt }) => {
-              acc[resultCategory1ExternalId] = cnt
-              acc.total += cnt
-              return acc
-            },
+    .map(
+      ({
+        id,
+        assayTypeName,
+        rawResultCategoryExternalIds,
+        rawResultCategoryNames,
+      }) => {
+        const resultCategoryExternalIds = _.uniq(
+          rawResultCategoryExternalIds.split(',')
+        )
+        const resultCategoryNames = _.uniq(rawResultCategoryNames.split(','))
+        const data = _.map(
+          resultCntBySiteIdByAssayTypeId[`${id}`],
+          (it, siteId) =>
             _.reduce(
-              resultCategoryExternalIds,
-              (acc, name) => {
-                acc[name] = 0
+              it,
+              (acc, { resultCategory1ExternalId, cnt }) => {
+                acc[resultCategory1ExternalId] = cnt
+                acc.total += cnt
                 return acc
               },
-              { siteId, total: 0 }
+              _.reduce(
+                resultCategoryExternalIds,
+                (acc, name) => {
+                  acc[name] = 0
+                  return acc
+                },
+                { siteId, total: 0 }
+              )
             )
-          )
-      )
+        )
 
-      return {
-        assayTypeName,
-        data,
-        resultCategories: _.zipWith(resultCategoryExternalIds, resultCategoryNames, (externalId, name) => ({
-          externalId,
-          name
-        }))
+        return {
+          assayTypeName,
+          data,
+          resultCategories: _.zipWith(
+            resultCategoryExternalIds,
+            resultCategoryNames,
+            (externalId, name) => ({
+              externalId,
+              name,
+            })
+          ),
+        }
       }
-    })
+    )
     .filter(({ data }) => !_.isEmpty(data))
 
   const result = {
