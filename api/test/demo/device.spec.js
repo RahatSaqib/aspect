@@ -1,5 +1,6 @@
 const supertest = require('supertest')
 const chai = require('chai')
+const _ = require('lodash')
 const { createTestContext, getLastResultId } = require('../deviceApi/utils')
 
 // This agent refers to PORT where program is runninng.
@@ -37,7 +38,7 @@ describe('Demo Device routes', () => {
           assert.typeOf(assays, 'array')
           assert.isAtLeast(assays.length, 1)
 
-          const [assay] = assays
+          const assay = _.find(assays, { name: 'GeneXpert MTB/Rif' })
           assert.typeOf(assay, 'Object')
           assert.property(assay, 'id')
           assert.property(assay, 'name')
