@@ -32,6 +32,17 @@ const baseConfig = {
 
 const now = new Date()
 
+// Number of milliseconds to wait for completion of
+// asynchronous updates as acceptance criteria
+const ASYNC_TEST_ACCEPTANCE_TIME = 250
+
+// Waits acceptance time and resolves promise with optional result
+function waitAsyncComplete(result) {
+  return new Promise(resolve =>
+    setTimeout(() => resolve(result), ASYNC_TEST_ACCEPTANCE_TIME)
+  )
+}
+
 describe('Device Result API routes', () => {
   const clientBasePath = '/api/result'
 
@@ -69,9 +80,7 @@ describe('Device Result API routes', () => {
           200,
           res && res.body && res.body.message ? res.body.message : ''
         )
-        // FIXME when do we know generated result is available? Does it matter?
-        // We should get these on the next sync... but it stinks for testing
-        return new Promise(resolve => setTimeout(() => resolve(res), 220))
+        return waitAsyncComplete(res)
       })
   }
 
@@ -2588,9 +2597,7 @@ describe('Device Result API routes', () => {
             assert.equal(res.status, 200)
           })
 
-        // FIXME when do we know generated result is available? Does it matter?
-        // We should get these on the next sync... but it stinks for testing
-        yield new Promise(resolve => setTimeout(resolve, 100))
+        yield waitAsyncComplete()
 
         yield server
           .get(devicePath)
@@ -2967,9 +2974,7 @@ describe('Device Result API routes', () => {
             )
           })
 
-        // FIXME when do we know generated result is available? Does it matter?
-        // We should get these on the next sync... but it stinks for testing
-        yield new Promise(resolve => setTimeout(resolve, 100))
+        yield waitAsyncComplete()
       }))
 
     it('should set the status of a result to delivered when it is sent to a terminal', () =>
@@ -3137,9 +3142,7 @@ describe('Device Result API routes', () => {
                 assert.equal(res.status, 200)
               })
 
-            // FIXME when do we know generated result is available? Does it matter?
-            // We should get these on the next sync... but it stinks for testing
-            yield new Promise(resolve => setTimeout(resolve, 220))
+            yield waitAsyncComplete()
 
             let offset = 0
             let historicalSyncComplete = false
@@ -3278,9 +3281,7 @@ describe('Device Result API routes', () => {
                 assert.equal(res.status, 200)
               })
 
-            // FIXME when do we know generated result is available? Does it matter?
-            // We should get these on the next sync... but it stinks for testing
-            yield new Promise(resolve => setTimeout(resolve, 220))
+            yield waitAsyncComplete()
 
             let offset = 0
             let historicalSyncComplete = false
@@ -3433,9 +3434,7 @@ describe('Device Result API routes', () => {
                 assert.equal(res.status, 200)
               })
 
-            // FIXME when do we know generated result is available? Does it matter?
-            // We should get these on the next sync... but it stinks for testing
-            yield new Promise(resolve => setTimeout(resolve, 220))
+            yield waitAsyncComplete()
 
             let offset = 0
             let historicalSyncComplete = false
