@@ -240,7 +240,7 @@ function* mergeResult(
     ),
     sampleGroup: _.get(
       payload,
-      'sampleGroup',
+      'sample.group',
       _.get(existingResult, 'sampleGroup', null)
     ),
     resultCategory1: _.get(categories, '[0].id', null),
@@ -440,6 +440,9 @@ function* getResult(knex, resultId) {
   }
   if (row.sampleOriginSiteId != null) {
     sample.originSite = { id: row.sampleOriginSiteId }
+  }
+  if (row.sampleGroup != null) {
+    sample.group = row.sampleGroup
   }
   if (row.sampleRunNumber != null) {
     sample.runNumber = row.sampleRunNumber

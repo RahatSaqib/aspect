@@ -334,6 +334,7 @@ describe('Device Result API routes', () => {
             },
             sample: {
               id: `Sample${now}`,
+              group: 'Sample Group X-1',
               runNumber: '10z',
               collectedOn: '2013-11-25',
               type: {
@@ -451,6 +452,8 @@ describe('Device Result API routes', () => {
         assert.approximately(result2.longitude, -87.581222, 0.000001)
         assert.deepEqual(result2.startedOn, new Date('2013-12-01'))
         assert.deepEqual(result2.endedOn, new Date('2013-12-01T01:30:00.000Z'))
+        assert.equal(result2.sampleGroup, 'Sample Group X-1')
+        assert.equal(result2.sampleRunNumber, '10z')
         assert.equal(result2.consumableSerial, '132-44-222')
         assert.deepEqual(
           result2.consumableExpirationDate,
@@ -563,6 +566,7 @@ describe('Device Result API routes', () => {
           },
           sample: {
             id: `Sample${now}`,
+            group: 'Sample Group X-1',
             runNumber: '10z',
             collectedOn: '2013-11-25',
             type: {
