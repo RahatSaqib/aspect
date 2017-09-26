@@ -1,5 +1,3 @@
-// TODO do we want to base plugins on Message Queue/event listener?
-// TODO allow dynamic loading plugins, or is mapping a matter of provisioning?
 const { get } = require('lodash')
 
 const plugins = {

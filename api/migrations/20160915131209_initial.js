@@ -19,7 +19,6 @@ function* up(knex) {
       .inTable('PartnerType')
     partner.string('name').notNullable()
     partner.string('plugin')
-    // TODO Can we move history days and other partner config to plugin?
     partner.integer('deviceLogHistoryDays').notNullable().defaultTo(30)
     partner.integer('autoAcknowledgeOlderThanDays')
     partner.integer('numberToLeaveUnacknowledged')
