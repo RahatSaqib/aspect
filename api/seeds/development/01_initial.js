@@ -285,6 +285,37 @@ function* seed(knex) {
     token: 'decommissioned',
   })
 
+  // Result source
+  const [resultSourceDiagnosticId] = yield knex('ResultSource').insert({
+    name: 'Diagnostic Device',
+    i18nKey: 'resultSourceDiagnostic',
+    externalId: 'DiagnosticDevice',
+  })
+
+  const [resultSourceLIMSId] = yield knex('ResultSource').insert({
+    name: 'LIMS',
+    i18nKey: 'resultSourceLims',
+    externalId: 'LIMS',
+  })
+
+  yield knex('ResultSource').insert({
+    name: 'Other System',
+    i18nKey: 'resultSourceOtherSystem',
+    externalId: 'OtherSystem',
+  })
+
+  yield knex('ResultSource').insert({
+    name: 'Entered by Hand',
+    i18nKey: 'resultSourceEnteredByHand',
+    externalId: 'EnteredByHand',
+  })
+
+  yield knex('ResultSource').insert({
+    name: 'Generated',
+    i18nKey: 'resultSourceGenerated',
+    externalId: 'Generated',
+  })
+
   // Assays and AssayTypes
   const [assayTypeMTBRifId] = yield knex('AssayType').insert({
     name: 'MTB/Rif',
@@ -647,6 +678,7 @@ function* seed(knex) {
     externalId: 'MtbRif',
     assayTypeId: assayTypeMTBRifId,
     deviceTypeId: deviceTypeGeneXpertId,
+    resultSourceId: resultSourceDiagnosticId,
     resultCategory1Label: 'MTB',
     resultCategory1i18nKey: 'resultCategoryMtb',
     resultCategory2Label: 'Rif',
@@ -661,6 +693,7 @@ function* seed(knex) {
     externalId: 'HivVl',
     assayTypeId: assayTypeHivVlId,
     deviceTypeId: deviceTypeGeneXpertId,
+    resultSourceId: resultSourceDiagnosticId,
     resultCategory1Label: 'HIV',
     resultCategory1i18nKey: 'resultCategoryHiv',
     resultCategory2Label: null,
@@ -675,6 +708,7 @@ function* seed(knex) {
     externalId: 'GeneXpertHcv',
     assayTypeId: assayTypeHcvId,
     deviceTypeId: deviceTypeGeneXpertId,
+    resultSourceId: resultSourceDiagnosticId,
     resultCategory1Label: 'HCV',
     resultCategory1i18nKey: 'resultCategoryHcv',
     resultCategory2Label: null,
@@ -689,6 +723,7 @@ function* seed(knex) {
     externalId: 'DaktariHcv',
     assayTypeId: assayTypeHcvId,
     deviceTypeId: deviceTypeDaktariId,
+    resultSourceId: resultSourceDiagnosticId,
     resultCategory1Label: 'HCV',
     resultCategory1i18nKey: 'resultCategoryHcv',
     resultCategory2Label: null,
@@ -703,6 +738,7 @@ function* seed(knex) {
     externalId: 'DaktariHivVl',
     assayTypeId: assayTypeHivVlId,
     deviceTypeId: deviceTypeDaktariId,
+    resultSourceId: resultSourceDiagnosticId,
     resultCategory1Label: 'HIV',
     resultCategory1i18nKey: 'resultCategoryHiv',
     resultCategory2Label: null,
@@ -717,6 +753,7 @@ function* seed(knex) {
     externalId: 'Ebola',
     assayTypeId: assayTypeEbolaId,
     deviceTypeId: deviceTypeGeneXpertId,
+    resultSourceId: resultSourceDiagnosticId,
     resultCategory1Label: 'GP',
     resultCategory1i18nKey: 'resultCategoryEbolaGp',
     resultCategory2Label: 'NP',
@@ -731,6 +768,7 @@ function* seed(knex) {
     externalId: 'AfinionHivVl',
     assayTypeId: assayTypeHivVlId,
     deviceTypeId: deviceTypeAfinionId,
+    resultSourceId: resultSourceDiagnosticId,
     resultDataSchema: JSON.stringify({
       copies: {
         title: 'copies/mL',
@@ -750,6 +788,7 @@ function* seed(knex) {
     externalId: 'LipidPanel',
     assayTypeId: assayTypeLipidPanelId,
     deviceTypeId: deviceTypeAfinionId,
+    resultSourceId: resultSourceDiagnosticId,
     resultDataSchema: JSON.stringify({
       chol: {
         title: 'Chol (mmol/L)',
@@ -777,6 +816,7 @@ function* seed(knex) {
     externalId: 'HivVl',
     assayTypeId: assayTypeHivVlId,
     deviceTypeId: deviceTypeQId,
+    resultSourceId: resultSourceDiagnosticId,
     resultCategory1Label: 'HIV',
     resultCategory1i18nKey: 'resultCategoryHivVl',
   })
@@ -787,6 +827,7 @@ function* seed(knex) {
     externalId: 'HivVl',
     assayTypeId: assayTypeHivVlId,
     deviceTypeId: deviceTypeM2000Id,
+    resultSourceId: resultSourceDiagnosticId,
     resultCategory1Label: 'HIV',
     resultCategory1i18nKey: 'resultCategoryHivVl',
     resultDataSchema: JSON.stringify({
@@ -835,6 +876,7 @@ function* seed(knex) {
     externalId: 'EID',
     assayTypeId: assayTypeEid,
     deviceTypeId: deviceTypeM2000Id,
+    resultSourceId: resultSourceDiagnosticId,
     resultCategory1Label: 'EID',
     resultCategory1i18nKey: 'resultCategoryEid',
     resultDataSchema: JSON.stringify({
@@ -890,6 +932,7 @@ function* seed(knex) {
     externalId: 'HivVl',
     assayTypeId: assayTypeHivVlId,
     deviceTypeId: deviceTypeChaiId,
+    resultSourceId: resultSourceLIMSId,
     resultCategory1Label: 'HIV',
     resultCategory1i18nKey: 'resultCategoryHivVl',
     resultDataSchema: JSON.stringify({
@@ -953,6 +996,7 @@ function* seed(knex) {
     externalId: 'EID',
     assayTypeId: assayTypeEid,
     deviceTypeId: deviceTypeChaiId,
+    resultSourceId: resultSourceLIMSId,
     resultCategory1Label: 'EID',
     resultCategory1i18nKey: 'resultCategoryEid',
     resultDataSchema: JSON.stringify({
@@ -1013,37 +1057,6 @@ function* seed(knex) {
         order: 9,
       },
     }),
-  })
-
-  // Result source
-  const [resultSourceDiagnosticId] = yield knex('ResultSource').insert({
-    name: 'Diagnostic Device',
-    i18nKey: 'resultSourceDiagnostic',
-    externalId: 'DiagnosticDevice',
-  })
-
-  yield knex('ResultSource').insert({
-    name: 'LIMS',
-    i18nKey: 'resultSourceLims',
-    externalId: 'LIMS',
-  })
-
-  yield knex('ResultSource').insert({
-    name: 'Other System',
-    i18nKey: 'resultSourceOtherSystem',
-    externalId: 'OtherSystem',
-  })
-
-  yield knex('ResultSource').insert({
-    name: 'Entered by Hand',
-    i18nKey: 'resultSourceEnteredByHand',
-    externalId: 'EnteredByHand',
-  })
-
-  yield knex('ResultSource').insert({
-    name: 'Generated',
-    i18nKey: 'resultSourceGenerated',
-    externalId: 'Generated',
   })
 
   // Result types

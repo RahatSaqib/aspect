@@ -143,6 +143,8 @@ function* seed(knex) {
 */
 
   const assayTypes = yield rowsAsObject(knex, 'AssayType')
+  const resultSources = yield rowsAsObject(knex, 'ResultSource')
+
   // RRT Device Type
   const [deviceTypeReporterId] = yield knex('DeviceType').insert({
     externalId: 'RRT',
@@ -158,6 +160,7 @@ function* seed(knex) {
     externalId: 'HivVl',
     assayTypeId: assayTypes['HIV VL'].id,
     deviceTypeId: deviceTypeReporterId,
+    resultSourceId: resultSources.Generated.id,
     resultCategory1Label: 'HIV',
     resultCategory1i18nKey: 'resultCategoryHivVl',
     resultDataSchema: JSON.stringify({
@@ -221,6 +224,7 @@ function* seed(knex) {
     externalId: 'EID',
     assayTypeId: assayTypes.EID.id,
     deviceTypeId: deviceTypeReporterId,
+    resultSourceId: resultSources.Generated.id,
     resultCategory1Label: 'EID',
     resultCategory1i18nKey: 'resultCategoryEid',
     resultDataSchema: JSON.stringify({

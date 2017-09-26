@@ -489,6 +489,13 @@ function* up(knex) {
       .index()
       .references('id')
       .inTable('DeviceType')
+    assay
+      .integer('resultSourceId')
+      .unsigned()
+      .notNullable()
+      .index()
+      .references('id')
+      .inTable('ResultSource')
     assay.string('resultCategory1Label')
     assay.string('resultCategory1i18nKey')
     assay.string('resultCategory2Label')

@@ -39,6 +39,7 @@ function* seed(knex) {
     deviceLogHistoryDays: 365,
   })
   const deviceTypeCategories = yield rowsAsObject(knex, 'DeviceTypeCategory')
+  const resultSources = yield rowsAsObject(knex, 'ResultSource', 'externalId')
   const assayTypes = yield rowsAsObject(knex, 'AssayType')
 
   // BluSense Device Type
@@ -55,6 +56,7 @@ function* seed(knex) {
     externalId: 'Dengue',
     assayTypeId: assayTypes.Dengue.id,
     deviceTypeId,
+    resultSourceId: resultSources.DiagnosticDevice.id,
     resultCategory1Label: 'Status',
     resultDataSchema: JSON.stringify({
       resultText: {
@@ -87,6 +89,7 @@ function* seed(knex) {
     externalId: 'Zika',
     assayTypeId: assayTypes.Zika.id,
     deviceTypeId,
+    resultSourceId: resultSources.DiagnosticDevice.id,
     resultCategory1Label: 'Status',
     resultDataSchema: JSON.stringify({
       resultText: {

@@ -40,6 +40,7 @@ function* seed(knex) {
   })
   const deviceTypeCategories = yield rowsAsObject(knex, 'DeviceTypeCategory')
   const assayTypes = yield rowsAsObject(knex, 'AssayType')
+  const resultSources = yield rowsAsObject(knex, 'ResultSource', 'externalId')
 
   // MGIT Device Type
   const [deviceTypeId] = yield knex('DeviceType').insert({
@@ -55,6 +56,7 @@ function* seed(knex) {
     externalId: 'GND',
     assayTypeId: assayTypes['TB G&D'].id,
     deviceTypeId,
+    resultSourceId: resultSources.DiagnosticDevice.id,
     resultCategory1Label: 'Status',
     resultDataSchema: JSON.stringify({
       growthUnits: {
@@ -77,6 +79,7 @@ function* seed(knex) {
     externalId: 'AST',
     assayTypeId: assayTypes['TB AST'].id,
     deviceTypeId,
+    resultSourceId: resultSources.DiagnosticDevice.id,
     resultCategory1Label: 'Status',
     resultDataSchema: JSON.stringify({
       growthUnits: {
