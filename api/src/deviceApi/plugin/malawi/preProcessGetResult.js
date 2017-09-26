@@ -1,7 +1,5 @@
 const _ = require('lodash')
-const {
-  updateResultWorkflowStatus,
-} = require('../common')
+const { updateResultWorkflowStatus } = require('../common')
 const { notifyResultUpdated } = require('../../../messages')
 
 const DELIVERED_EXTERNALID = 'Delivered'

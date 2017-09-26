@@ -138,12 +138,14 @@ function* mergeResult(
       .where({ 'rs.externalId': _.get(payload, 'source.id') })
       .first('rs.id')
     if (!resultSource) {
-      throw Boom.badRequest(`Cannot find result source with id ${_.get(payload, 'source.id')}`)
+      throw Boom.badRequest(
+        `Cannot find result source with id ${_.get(payload, 'source.id')}`
+      )
     }
   } else if (existingResult) {
-    resultSource = { id : existingResult.resultSourceId }
+    resultSource = { id: existingResult.resultSourceId }
   } else {
-    resultSource = { id : assay.resultSourceId }
+    resultSource = { id: assay.resultSourceId }
   }
 
   let sampleTypeId = null
