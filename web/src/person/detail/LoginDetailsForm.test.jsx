@@ -1,11 +1,15 @@
 import _ from 'lodash'
 import React from 'react'
 import ReactShallowRenderer from 'react-test-renderer/shallow'
+import { IntlProvider } from 'react-intl'
 
 describe('LoginDetailsForm module', () => {
   const { validate, LoginDetailsForm } = require('./LoginDetailsForm')
+  const intlProvider = new IntlProvider({ locale: 'en' }, {})
+  const { intl } = intlProvider.getChildContext()
+
   const props = {
-    intl: { formatMessage: message => message.defaultMessage },
+    intl,
     loading: false,
     onSubmit: _.noop,
     values: { newPassword: '' },

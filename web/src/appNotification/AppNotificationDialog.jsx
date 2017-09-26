@@ -40,7 +40,7 @@ const genericMessages = defineMessages({
 
 const enhance = _.flowRight(connect(mapStateToProps, mapDispatchToProps))
 
-class AppNotificationDialog extends PureComponent {
+export class AppNotificationDialog extends PureComponent {
   static propTypes = {
     intl: intlShape.isRequired,
     appNotification: PropTypes.objectOf(Error),

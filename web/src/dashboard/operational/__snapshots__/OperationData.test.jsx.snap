@@ -1,0 +1,203 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`OperationData Component should shallow render correctly 1`] = `
+<div
+  className="Container"
+>
+  <HelmetWrapper
+    encodeSpecialCharacters={true}
+    title="Operational Data"
+  />
+  <div
+    className="FiltersGroup"
+  >
+    <div
+      className="FiltersGroup__Child"
+    >
+      <ThemedThemed
+        className="Button"
+        composeTheme="deeply"
+        data-assay-type="all"
+        disabled={false}
+        inverse={false}
+        label="All diseases"
+        mapThemrProps={[Function]}
+        onClick={[Function]}
+        primary={true}
+        raised={true}
+        ripple={true}
+        rippleCentered={false}
+        rippleClassName=""
+        rippleMultiple={true}
+        rippleSpread={2}
+      />
+      <ThemedThemed
+        className="Button"
+        composeTheme="deeply"
+        data-assay-type="TB"
+        disabled={false}
+        inverse={true}
+        label="TB"
+        mapThemrProps={[Function]}
+        onClick={[Function]}
+        primary={true}
+        raised={true}
+        ripple={true}
+        rippleCentered={false}
+        rippleClassName=""
+        rippleMultiple={true}
+        rippleSpread={2}
+      />
+      <ThemedThemed
+        className="Button"
+        composeTheme="deeply"
+        data-assay-type="HIV"
+        disabled={false}
+        inverse={true}
+        label="HIV"
+        mapThemrProps={[Function]}
+        onClick={[Function]}
+        primary={true}
+        raised={true}
+        ripple={true}
+        rippleCentered={false}
+        rippleClassName=""
+        rippleMultiple={true}
+        rippleSpread={2}
+      />
+      <ThemedThemed
+        className="Button"
+        composeTheme="deeply"
+        data-assay-type="HCV"
+        disabled={false}
+        inverse={true}
+        label="HCV"
+        mapThemrProps={[Function]}
+        onClick={[Function]}
+        primary={true}
+        raised={true}
+        ripple={true}
+        rippleCentered={false}
+        rippleClassName=""
+        rippleMultiple={true}
+        rippleSpread={2}
+      />
+    </div>
+    <div
+      className="FiltersGroup__Child"
+    >
+      <ThemedThemed
+        className="Button"
+        composeTheme="deeply"
+        data-date-range="30"
+        disabled={false}
+        inverse={true}
+        label="30 days"
+        mapThemrProps={[Function]}
+        onClick={[Function]}
+        primary={true}
+        raised={true}
+        ripple={true}
+        rippleCentered={false}
+        rippleClassName=""
+        rippleMultiple={true}
+        rippleSpread={2}
+      />
+      <ThemedThemed
+        className="Button"
+        composeTheme="deeply"
+        data-date-range="60"
+        disabled={false}
+        inverse={true}
+        label="60 days"
+        mapThemrProps={[Function]}
+        onClick={[Function]}
+        primary={true}
+        raised={true}
+        ripple={true}
+        rippleCentered={false}
+        rippleClassName=""
+        rippleMultiple={true}
+        rippleSpread={2}
+      />
+    </div>
+  </div>
+  <div
+    className=""
+  >
+    <SectionAbnormalCollection
+      collection={
+        Immutable.List [
+          Immutable.Map {
+            key: "stock-outs",
+            title: "Stock outs",
+            isNormal: false,
+            message: "1 site with problems",
+          },
+        ]
+      }
+      colorClassName="Title__Color--inventory"
+      onDataReportClick={[Function]}
+      title="Consumables"
+    />
+    <SectionAbnormalCollection
+      collection={Array []}
+      colorClassName="Title__Color--device"
+      onDataReportClick={[Function]}
+      title="Devices"
+    />
+    <div
+      className="Section"
+    >
+      <ThemedCard
+        className="Section__Content"
+        composeTheme="deeply"
+        mapThemrProps={[Function]}
+      >
+        <div
+          className="TitleContainer"
+        >
+          <Unknown
+            className="TitleContainer__Title"
+            colorClassName="Title__Color--site"
+            title="Sites"
+          />
+          <ThemedThemed
+            className="Button"
+            composeTheme="deeply"
+            disabled={false}
+            label="Data and reports"
+            mapThemrProps={[Function]}
+            onClick={[Function]}
+            raised={true}
+            ripple={true}
+            rippleCentered={false}
+            rippleClassName=""
+            rippleMultiple={true}
+            rippleSpread={2}
+          />
+        </div>
+        <div>
+          Immutable.List [
+          ]
+        </div>
+      </ThemedCard>
+    </div>
+    <SectionAbnormalCollection
+      collection={Array []}
+      onDataReportClick={[Function]}
+      title="Staff"
+    />
+  </div>
+  <lifecycle(ThemedProgressBar)
+    disabled={true}
+    mode="indeterminate"
+    theme={
+      Object {
+        "indeterminate": "DelayShowingProgressBar--indeterminate",
+      }
+    }
+    type="circular"
+  />
+</div>
+`;

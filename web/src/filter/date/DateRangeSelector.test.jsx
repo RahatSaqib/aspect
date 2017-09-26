@@ -3,20 +3,23 @@ import { shallow } from 'enzyme'
 import sinon from 'sinon'
 import DatePicker from 'material-ui/DatePicker'
 import MenuItem from 'material-ui/MenuItem'
+import { IntlProvider } from 'react-intl'
+
 import ForkedSelectField from '../../components/forkedMaterialUi/ForkedSelectField'
 import { DateRangeSelector } from './DateRangeSelector'
 
 describe('DateRangeSelector Component', () => {
+  const intlProvider = new IntlProvider({ locale: 'en' }, {})
+  const { intl } = intlProvider.getChildContext()
+
   const props = {
-    intl: {
-      formatMessage: message => message.defaultMessage,
-      formatDate: (date, formatOptions) =>
-        new Intl.DateTimeFormat('en-US', formatOptions).format(date),
-    },
+    intl,
     clearButtonTooltip: 'Clear',
     clearButtonStyle: {},
     onChangeDate: sinon.spy(),
     floatingLabelText: 'Date Range',
+    datePickerContainer: 'dialog',
+    controlClassName: 'Control',
   }
   let DateRangeSelectorWrapper
 

@@ -1,0 +1,38 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`ColumnChart component should shallow render correctly 1`] = `
+<div
+  className="graph"
+>
+  <ColumnChart
+    color={Array []}
+    data={
+      Array [
+        Object {
+          "data": Array [
+            7,
+            1,
+          ],
+          "name": "newSite1",
+        },
+      ]
+    }
+    hideAxes={false}
+    hideLabel={true}
+    hideTicks={true}
+    numLabelSize={18}
+    rightLabel={false}
+    spacing={0.4}
+    styleWide={false}
+  />
+  <h1
+    className="title"
+  >
+    Title
+  </h1>
+  <Alert
+    status="amber"
+    statusString="Amber Alert"
+  />
+</div>
+`;

@@ -69,7 +69,7 @@ Renders a country map with internal borders specified by `countryIsoAlpha2Code`
 
 @see [@vx/geo/Mercator](https://vx-demo.now.sh/static/docs/vx-geo.html)
 */
-const CountryMap = ({
+export const CountryMap = ({
   countryIsoAlpha2Code,
   extent,
   loading, // eslint-disable-line react/prop-types

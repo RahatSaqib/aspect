@@ -1,0 +1,32 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`ReporterDetail component should shallow render correctly 1`] = `
+<div
+  className="Container"
+>
+  <HelmetWrapper
+    encodeSpecialCharacters={true}
+    title="Reporter Detail"
+  />
+  <Connect(lifecycle(Component))
+    title="Reporter Detail"
+  />
+  <div>
+    <LinearProgress
+      max={100}
+      min={0}
+      mode="indeterminate"
+      value={0}
+    />
+  </div>
+  <requirePermissions(Link)
+    className="DemoLink"
+    extraPermissions={Array []}
+    overriddenPermissions={Array []}
+    target="_blank"
+    to="/demo/device/1"
+  >
+    Demo
+  </requirePermissions(Link)>
+</div>
+`;
