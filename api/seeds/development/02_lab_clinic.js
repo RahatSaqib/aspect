@@ -147,8 +147,8 @@ function* seed(knex) {
 
   // RRT Device Type
   const [deviceTypeReporterId] = yield knex('DeviceType').insert({
-    externalId: 'RRT',
-    name: 'RRT',
+    externalId: 'AspectReporter',
+    name: 'Aspect Reporter',
     manufacturer: 'SystemOne',
     deviceTypeCategoryId: deviceTypeCategories.Client.id,
     // configurationDataSchema: rrtConfigurationDataSchema

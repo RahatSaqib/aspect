@@ -7,6 +7,7 @@ const {
 
 const plugins = {
   default: {
+    transformNewDevicePayload,
     preProcessUpdateSite,
     postProcessUpdateSite,
     preProcessGetResult,
@@ -17,6 +18,7 @@ const plugins = {
     onResultLogged,
   },
   malawi: {
+    transformNewDevicePayload: require('./malawi/transformNewDevicePayload'),
     preProcessGetResult: require('./malawi/preProcessGetResult'),
     postProcessMergeResult: require('./malawi/postProcessMergeResult'),
     postProcessUpdateSite: require('./malawi/postProcessUpdateSite'),
@@ -35,6 +37,20 @@ const plugins = {
 function* loadPlugin(pluginName, actionName) {
   const action = get(plugins, [pluginName, actionName])
   return action != null ? action : plugins.default[actionName]
+}
+
+/**
+ * Device data is received for an API Key that does not yet have a device
+ * Tranform the payload to new payload  to process in format expected by
+ * Device API
+ *
+ * This can be used, for example, to set default device type or name
+ * with rules specific to this plugin.
+ *
+ * Default context.payload
+ */
+function* transformNewDevicePayload({ payload }) {
+  return payload
 }
 
 /**

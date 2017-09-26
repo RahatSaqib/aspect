@@ -2,8 +2,8 @@ const { notifyResultUpdated } = require('../../../messages')
 const { mergeResult, getResult } = require('../../result')
 const { addResultWorkflowLogIfChanged } = require('../common')
 
-const DEVICE_TYPE_CHAI = 'CHAI'
-const DEVICE_TYPE_REPORTER = 'RRT'
+const DEVICE_TYPE_CHAI = 'CHAILIMS'
+const DEVICE_TYPE_REPORTER = 'AspectReporter'
 
 const DELIVERABLE_EXTERNALID = 'Deliverable'
 const DELIVERED_EXTERNALID = 'Delivered'

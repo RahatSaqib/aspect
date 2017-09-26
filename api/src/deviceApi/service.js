@@ -533,9 +533,34 @@ function* createDeviceApiContext(request, handlerOptions) {
 
 function createNewDevice(request, now) {
   return transact(function*(knex) {
-    const { auth, payload } = request
+    const { auth } = request
+
+    // Find API Key to use as template for new device
+    const apiKey = yield knex('DeviceApiKey as k')
+      .where({
+        token: auth.credentials.token,
+        revoked: false,
+        deviceId: null,
+      })
+      .join('Partner as p', 'p.id', 'k.partnerId')
+      .first('k.id', 'k.partnerId', 'k.geographyId', 'k.siteId', 'p.plugin')
+    if (apiKey == null) {
+      return {
+        error: Boom.notFound(
+          'Cannot find available API Key when creating new device'
+        ),
+      }
+    }
 
     // Require Device Type when creating device
+    const transformNewDevicePayload = yield* loadPlugin(
+      apiKey.plugin,
+      'transformNewDevicePayload'
+    )
+    const payload = yield* transformNewDevicePayload({
+      payload: request.payload,
+    })
+
     const deviceTypeExternalId = _.get(payload, 'type.id', null)
     if (deviceTypeExternalId == null) {
       return {
@@ -551,22 +576,6 @@ function createNewDevice(request, now) {
       return {
         error: Boom.badRequest(
           `Cannot find DeviceType with id ${deviceTypeExternalId}`
-        ),
-      }
-    }
-
-    // Find API Key to use as template for new device
-    const apiKey = yield knex('DeviceApiKey')
-      .where({
-        token: auth.credentials.token,
-        revoked: false,
-        deviceId: null,
-      })
-      .first('id', 'partnerId', 'geographyId', 'siteId')
-    if (apiKey == null) {
-      return {
-        error: Boom.notFound(
-          'Cannot find available API Key when creating new device'
         ),
       }
     }

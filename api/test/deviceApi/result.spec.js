@@ -2019,7 +2019,7 @@ describe('Device Result API routes', () => {
         yield server
           .post(devicePath)
           .set('Authorization', deviceAuth)
-          .send({ serial, type: { id: 'CHAI' }, site: { id: 'CHIZ' } })
+          .send({ serial, type: { id: 'CHAILIMS' }, site: { id: 'CHIZ' } })
           .then(res => {
             assert.equal(res.status, 200)
           })
@@ -2042,7 +2042,7 @@ describe('Device Result API routes', () => {
           .set('Authorization', deviceAuth)
           .send({
             serial,
-            type: { id: 'CHAI' },
+            type: { id: 'CHAILIMS' },
             site: { id: 'CHIZ' },
             name: 'SHINY NEW',
             operation: { data: { a: 'basd' } },
@@ -2076,7 +2076,7 @@ describe('Device Result API routes', () => {
           .set('Authorization', deviceAuth)
           .send({
             checkpoint: 'rrt_0',
-            type: { id: 'CHAI' },
+            type: { id: 'CHAILIMS' },
             site: { id: 'CHIZ' },
           })
           .then(res => {
@@ -2112,7 +2112,7 @@ describe('Device Result API routes', () => {
           .set('Authorization', device1315Auth)
           .send({
             checkpoint: 'rrt1315_0',
-            type: { id: 'RRT' },
+            type: { id: 'AspectReporter' },
             site: { id: '1315' },
           })
           .then(res => {
@@ -2131,7 +2131,7 @@ describe('Device Result API routes', () => {
           .set('Authorization', device1723Auth)
           .send({
             checkpoint: 'rrt1723_0',
-            type: { id: 'RRT' },
+            type: { id: 'AspectReporter' },
             site: { id: '1723' },
           })
           .then(res => {
@@ -2988,7 +2988,7 @@ describe('Device Result API routes', () => {
           .set('Authorization', deviceAuth)
           .send({
             checkpoint: 'rrt_0',
-            type: { id: 'CHAI' },
+            type: { id: 'CHAILIMS' },
             site: { id: 'CHIZ' },
           })
           .then(res => {
@@ -3062,7 +3062,7 @@ describe('Device Result API routes', () => {
               .set('Authorization', deviceAuth)
               .send({
                 checkpoint: 'rrt_0',
-                type: { id: 'CHAI' },
+                type: { id: 'CHAILIMS' },
                 site: { id: 'PIH' },
               })
               .then(res => {
@@ -3135,7 +3135,7 @@ describe('Device Result API routes', () => {
               .set('Authorization', device1315Auth)
               .send({
                 checkpoint: latestCheckpoint,
-                type: { id: 'RRT' },
+                type: { id: 'AspectReporter' },
                 site: { id: '1315' },
               })
               .then(res => {
@@ -3200,7 +3200,7 @@ describe('Device Result API routes', () => {
               .set('Authorization', deviceAuth)
               .send({
                 checkpoint: 'rrt_0',
-                type: { id: 'CHAI' },
+                type: { id: 'CHAILIMS' },
                 site: { id: 'PIH' },
               })
               .then(res => {
@@ -3353,7 +3353,7 @@ describe('Device Result API routes', () => {
               .set('Authorization', deviceAuth)
               .send({
                 checkpoint: 'rrt_0',
-                type: { id: 'CHAI' },
+                type: { id: 'CHAILIMS' },
                 site: { id: 'PIH' },
               })
               .then(res => {
@@ -3427,7 +3427,7 @@ describe('Device Result API routes', () => {
               .set('Authorization', device1315Auth)
               .send({
                 checkpoint: latestCheckpoint,
-                type: { id: 'RRT' },
+                type: { id: 'AspectReporter' },
                 site: { id: '1315' },
               })
               .then(res => {
@@ -3487,7 +3487,7 @@ describe('Device Result API routes', () => {
           .set('Authorization', deviceAuth)
           .send({
             name: 'Device 123',
-            type: { id: 'CHAI' },
+            type: { id: 'CHAILIMS' },
             site: { id: 'CHIZ' },
             checkpoint: 'ck1',
             result: {
@@ -3517,7 +3517,7 @@ describe('Device Result API routes', () => {
           .set('Authorization', deviceAuth)
           .send({
             name: 'Device 123',
-            type: { id: 'CHAI' },
+            type: { id: 'CHAILIMS' },
             site: { id: 'BALAKA' },
             checkpoint: 'ck1',
             result: {
@@ -3543,7 +3543,7 @@ describe('Device Result API routes', () => {
           .set('Authorization', deviceAuth)
           .send({
             name: 'Device 123',
-            type: { id: 'CHAI' },
+            type: { id: 'CHAILIMS' },
             site: { id: 'CHIZ' },
             checkpoint: 'ck1',
             result: {
