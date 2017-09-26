@@ -27,7 +27,7 @@ function* mergeResult(
     .join('Device as d', 'a.deviceTypeId', 'd.deviceTypeId')
     .where({ 'd.id': deviceId })
     .limit(2)
-    .select('a.id', 'a.externalId')
+    .select('a.id', 'a.externalId', 'a.resultSourceId')
   const payloadAssayId = _.get(payload, 'assay.id', false)
   if (payloadAssayId) {
     assayQ.where({ 'a.externalId': payloadAssayId })
@@ -48,16 +48,6 @@ function* mergeResult(
     resultTypeQ.where({ 'rt.id': existingResult.resultTypeId })
   } else {
     resultTypeQ.where({ 'rt.externalId': 'Patient' })
-  }
-
-  // Select ResultSource if specified, otherwise Diagnostic Device
-  const resultSourceQ = knex('ResultSource as rs').first('rs.id')
-  if (_.has(payload, 'source.id')) {
-    resultSourceQ.where({ 'rs.externalId': _.get(payload, 'source.id') })
-  } else if (existingResult) {
-    resultSourceQ.where({ 'rs.id': existingResult.resultSourceId })
-  } else {
-    resultSourceQ.where({ 'rs.externalId': 'DiagnosticDevice' })
   }
 
   // Select Workflow Status if specified, otherwise Error or OK depending on error payload
@@ -101,14 +91,12 @@ function* mergeResult(
     assays,
     site,
     resultType,
-    resultSource,
     resultWorkflowStatus,
     categories,
   ] = yield Promise.all([
     assayQ,
     siteQ,
     resultTypeQ,
-    resultSourceQ,
     resultWorkflowStatusQ,
     categoryQ,
   ])
@@ -116,7 +104,6 @@ function* mergeResult(
   if (
     !site ||
     !resultType ||
-    !resultSource ||
     !resultWorkflowStatus ||
     categories.length === 0 ||
     assays.length !== 1
@@ -127,9 +114,6 @@ function* mergeResult(
     }
     if (!resultType) {
       requestErrors.push(`result type with id ${_.get(payload, 'type.id')}`)
-    }
-    if (!resultSource) {
-      requestErrors.push(`result source with id ${_.get(payload, 'source.id')}`)
     }
     if (!resultWorkflowStatus) {
       requestErrors.push(
@@ -146,6 +130,21 @@ function* mergeResult(
   }
 
   const assay = assays[0]
+
+  // Select ResultSource if specified, otherwise from Assay
+  let resultSource
+  if (_.has(payload, 'source.id')) {
+    resultSource = yield knex('ResultSource as rs')
+      .where({ 'rs.externalId': _.get(payload, 'source.id') })
+      .first('rs.id')
+    if (!resultSource) {
+      throw Boom.badRequest(`Cannot find result source with id ${_.get(payload, 'source.id')}`)
+    }
+  } else if (existingResult) {
+    resultSource = { id : existingResult.resultSourceId }
+  } else {
+    resultSource = { id : assay.resultSourceId }
+  }
 
   let sampleTypeId = null
   const payloadSampleTypeId = _.get(payload, 'sample.type.id', false)
