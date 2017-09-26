@@ -43,7 +43,7 @@ function* seed(knex) {
 
   // BluSense Device Type
   const [deviceTypeId] = yield knex('DeviceType').insert({
-    externalId: 'BluBox',
+    externalId: 'BluSenseBluBox',
     name: 'BluBox',
     manufacturer: 'BluSense',
     deviceTypeCategoryId: deviceTypeCategories.Lab.id,

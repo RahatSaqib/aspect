@@ -207,7 +207,7 @@ function* seed(knex) {
 
   // Device Types
   const [deviceTypeGeneXpertId] = yield knex('DeviceType').insert({
-    externalId: 'GeneXpert',
+    externalId: 'CepheidGeneXpert',
     name: 'GeneXpert',
     manufacturer: 'Cepheid',
     deviceTypeCategoryId: deviceTypeCategoryLab,
@@ -216,21 +216,21 @@ function* seed(knex) {
   })
 
   const [deviceTypeAfinionId] = yield knex('DeviceType').insert({
-    externalId: 'Afinion',
+    externalId: 'AlereAfinion',
     name: 'Afinion',
     manufacturer: 'Alere',
     deviceTypeCategoryId: deviceTypeCategoryLab,
   })
 
   const [deviceTypeQId] = yield knex('DeviceType').insert({
-    externalId: 'Q',
+    externalId: 'AlereQ',
     name: 'Q',
     manufacturer: 'Alere',
     deviceTypeCategoryId: deviceTypeCategoryLab,
   })
 
   const [deviceTypeM2000Id] = yield knex('DeviceType').insert({
-    externalId: 'm2000',
+    externalId: 'AbbotM2000',
     name: 'm2000',
     manufacturer: 'Abbott',
     deviceTypeCategoryId: deviceTypeCategoryLab,

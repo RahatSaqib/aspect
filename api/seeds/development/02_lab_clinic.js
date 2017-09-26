@@ -144,7 +144,6 @@ function* seed(knex) {
 
   const assayTypes = yield rowsAsObject(knex, 'AssayType')
   // RRT Device Type
-  // TODO change RRT device type to Reporter? (also need to change sync script)
   const [deviceTypeReporterId] = yield knex('DeviceType').insert({
     externalId: 'RRT',
     name: 'RRT',

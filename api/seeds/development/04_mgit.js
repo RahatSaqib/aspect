@@ -43,7 +43,7 @@ function* seed(knex) {
 
   // MGIT Device Type
   const [deviceTypeId] = yield knex('DeviceType').insert({
-    externalId: 'MGIT',
+    externalId: 'BDMGIT',
     name: 'MGIT',
     manufacturer: 'Becton Dickinson',
     deviceTypeCategoryId: deviceTypeCategories.Lab.id,
