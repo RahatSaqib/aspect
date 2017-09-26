@@ -5,6 +5,7 @@ const {
 } = require('../common')
 const { notifyResultUpdated } = require('../../../messages')
 const { mergeResult, getResult } = require('../../result')
+const preProcessGetResult = require('./preProcessGetResult')
 
 const DEVICE_TYPE_CHAI = 'CHAI'
 const DEVICE_TYPE_REPORTER = 'RRT'
@@ -39,17 +40,6 @@ const MERGEABLE_REPORTABLE_IDS = [
 ]
 
 const millisInDay = 1000 * 60 * 60 * 24
-
-function* preProcessGetResult({ knex, dispatch, resultId, query, now }) {
-  const offset = Number(query.offset)
-  yield* updateResultWorkflowStatusOnGetResult(
-    knex,
-    dispatch,
-    resultId,
-    offset,
-    now
-  )
-}
 
 function* postProcessMergeResult(context, result, previousResult) {
   const { knex, payload, now } = context
@@ -451,48 +441,6 @@ function patientDataIsComplete(patientData) {
     patientData.gender &&
     (patientData.artNumber || patientData.hccNumber)
   )
-}
-
-function* updateResultWorkflowStatusOnGetResult(
-  knex,
-  dispatch,
-  resultId,
-  offset,
-  now = new Date()
-) {
-  const row = yield knex('Result as r')
-    .leftJoin('ResultWorkflowStatus as rs', 'r.resultWorkflowStatusId', 'rs.id')
-    .leftJoin('Partner as p', 'r.partnerId', 'p.id')
-    .where('r.id', resultId)
-    .first(
-      'r.startedOn',
-      'r.endedOn',
-      'r.deviceId',
-      'r.id as resultId',
-      'rs.externalId as resultWorkflowStatusId',
-      'p.autoAcknowledgeOlderThanDays',
-      'p.numberToLeaveUnacknowledged'
-    )
-  // only set to delivered the first time and
-  // only if NOT acknowledged or flagged already
-  if (
-    row != null &&
-    _.indexOf(DONOT_LOG_DELIVERED, row.resultWorkflowStatusId) === -1
-  ) {
-    yield* updateResultWorkflowStatus(
-      knex,
-      row.resultId,
-      DELIVERED_EXTERNALID,
-      now
-    )
-    dispatch(
-      notifyResultUpdated(
-        row.resultId,
-        { resultWorkflowStatus: DELIVERED_EXTERNALID },
-        'GetResult'
-      )
-    )
-  }
 }
 
 module.exports = {
