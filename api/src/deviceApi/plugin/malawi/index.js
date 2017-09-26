@@ -2,9 +2,9 @@ const _ = require('lodash')
 const {
   addResultWorkflowLogIfChanged,
   updateResultWorkflowStatus,
-} = require('./common')
-const { notifyResultUpdated } = require('../../messages')
-const { mergeResult, getResult } = require('../result')
+} = require('../common')
+const { notifyResultUpdated } = require('../../../messages')
+const { mergeResult, getResult } = require('../../result')
 
 const DEVICE_TYPE_CHAI = 'CHAI'
 const DEVICE_TYPE_REPORTER = 'RRT'
