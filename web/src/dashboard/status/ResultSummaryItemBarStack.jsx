@@ -82,11 +82,9 @@ const ResultSummaryItemBarStack = ({
   xScale,
   yScale,
   zScale,
-}) =>
+}) => (
   <div style={{ position: 'relative' }}>
-    <h1 style={{ fontSize: 20 }}>
-      {assayTypeName}
-    </h1>
+    <h1 style={{ fontSize: 20 }}>{assayTypeName}</h1>
     <ScaleSVG width={width} height={height}>
       <BarStack
         top={margin.top + stackTop}
@@ -108,7 +106,6 @@ const ResultSummaryItemBarStack = ({
           fill: '#8e205f',
           textAnchor: 'end',
           fontSize: 20,
-          dx: '-0.25em',
           dy: '0.25em',
         })}
       />
@@ -118,16 +115,13 @@ const ResultSummaryItemBarStack = ({
         left={margin.left}
         stroke="#a44afe"
         tickFormat={_.noop}
-        label={
-          <text
-            textAnchor="middle"
-            fontFamily="Arial"
-            fontSize={20}
-            fill="black"
-          >
-            {`${data.length} Sites`}
-          </text>
-        }
+        label={`${data.length} Sites`}
+        labelProps={{
+          textAnchor: 'middle',
+          fontFamily: 'Arial',
+          fontSize: 20,
+          fill: 'black',
+        }}
       />
     </ScaleSVG>
     <div
@@ -154,5 +148,6 @@ const ResultSummaryItemBarStack = ({
       />
     </div>
   </div>
+)
 
 export default enhance(ResultSummaryItemBarStack)
