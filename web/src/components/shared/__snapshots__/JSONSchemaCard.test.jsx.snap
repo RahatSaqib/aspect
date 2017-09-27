@@ -1,6 +1,6 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`JSONSchemaCard module JSONSchemaCard component should render correctly 1`] = `
+exports[`JSONSchemaCard module JSONSchemaCard testInstance should render correctly 1`] = `
 <div
   style={
     Object {
@@ -152,7 +152,7 @@ exports[`JSONSchemaCard module JSONSchemaCard component should render correctly 
 </div>
 `;
 
-exports[`JSONSchemaCard module PropertiesSchemaCard component should handle nested field expanding correctly 1`] = `
+exports[`JSONSchemaCard module PropertiesSchemaCard testInstance should handle nested field expanding correctly 1`] = `
 <div
   style={
     Object {
@@ -296,7 +296,7 @@ exports[`JSONSchemaCard module PropertiesSchemaCard component should handle nest
 </div>
 `;
 
-exports[`JSONSchemaCard module PropertiesSchemaCard component should handle nested field expanding correctly 2`] = `
+exports[`JSONSchemaCard module PropertiesSchemaCard testInstance should handle nested field expanding correctly 2`] = `
 <div
   style={
     Object {

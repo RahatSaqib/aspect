@@ -1,16 +1,16 @@
 import _ from 'lodash'
 import Immutable from 'immutable'
 import React from 'react'
-import renderer from 'react-test-renderer'
+import ReactTestRenderer from 'react-test-renderer'
 import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider'
 
 import { ReadOnlyField } from '../../components/shared/ReadOnlyFields'
 import JSONSchemaCard, { PropertiesSchemaCard } from './JSONSchemaCard'
 
 describe('JSONSchemaCard module', () => {
-  describe('PropertiesSchemaCard component', () => {
+  describe('PropertiesSchemaCard testInstance', () => {
     it('should handle nested field expanding correctly', () => {
-      const component = renderer.create(
+      const testInstance = ReactTestRenderer.create(
         <MuiThemeProvider>
           <PropertiesSchemaCard
             title="Data"
@@ -22,21 +22,20 @@ describe('JSONSchemaCard module', () => {
           />
         </MuiThemeProvider>
       )
-      let tree = component.toJSON()
-      expect(tree).toMatchSnapshot()
+      expect(testInstance).toMatchSnapshot()
 
+      const tree = testInstance.toJSON()
       tree.children[0].props.onTouchTap({
         preventDefault: _.noop,
         stopPropagation: _.noop,
       })
-      tree = component.toJSON()
-      expect(tree).toMatchSnapshot()
+      expect(testInstance).toMatchSnapshot()
     })
   })
 
-  describe('JSONSchemaCard component', () => {
+  describe('JSONSchemaCard testInstance', () => {
     it('should render correctly', () => {
-      const component = renderer.create(
+      const testInstance = ReactTestRenderer.create(
         <MuiThemeProvider>
           <JSONSchemaCard
             title="Data"
@@ -47,8 +46,7 @@ describe('JSONSchemaCard module', () => {
           />
         </MuiThemeProvider>
       )
-      const tree = component.toJSON()
-      expect(tree).toMatchSnapshot()
+      expect(testInstance).toMatchSnapshot()
     })
   })
 })
