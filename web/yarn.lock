@@ -6,97 +6,92 @@
   version "6.0.88"
   resolved "https://registry.yarnpkg.com/@types/node/-/node-6.0.88.tgz#f618f11a944f6a18d92b5c472028728a3e3d4b66"
 
-"@vx/axis@^0.0.134":
-  version "0.0.134"
-  resolved "https://registry.yarnpkg.com/@vx/axis/-/axis-0.0.134.tgz#b6abd0f4b2f8cb80f3c7f1d95eb3a22e84d84219"
+"@vx/axis@^0.0.140":
+  version "0.0.140"
+  resolved "https://registry.yarnpkg.com/@vx/axis/-/axis-0.0.140.tgz#aad557c281c6cc21c1516977301552c7052e5224"
   dependencies:
-    "@vx/group" "0.0.127"
-    "@vx/point" "0.0.127"
-    "@vx/shape" "0.0.131"
+    "@vx/group" "0.0.140"
+    "@vx/point" "0.0.136"
+    "@vx/shape" "0.0.140"
     classnames "^2.2.5"
+    prop-types "15.5.10"
 
-"@vx/curve@0.0.127":
-  version "0.0.127"
-  resolved "https://registry.yarnpkg.com/@vx/curve/-/curve-0.0.127.tgz#f05ea9871a97e1e1d59129b847f216751ffb31c3"
+"@vx/curve@0.0.140":
+  version "0.0.140"
+  resolved "https://registry.yarnpkg.com/@vx/curve/-/curve-0.0.140.tgz#29ef388e8b3718213d66a896d569dc1ebc8edf89"
   dependencies:
     d3-shape "^1.0.6"
 
-"@vx/geo@^0.0.136":
-  version "0.0.136"
-  resolved "https://registry.yarnpkg.com/@vx/geo/-/geo-0.0.136.tgz#ea807f1c4ac747b0728d6665b5c837b3fb15c315"
+"@vx/geo@^0.0.140":
+  version "0.0.140"
+  resolved "https://registry.yarnpkg.com/@vx/geo/-/geo-0.0.140.tgz#8ae74e4800269302dc270545451b86055f0b8caf"
   dependencies:
-    "@vx/group" "0.0.136"
+    "@vx/group" "0.0.140"
     classnames "^2.2.5"
     d3-geo "^1.6.4"
     prop-types "^15.5.10"
 
-"@vx/glyph@^0.0.136":
-  version "0.0.136"
-  resolved "https://registry.yarnpkg.com/@vx/glyph/-/glyph-0.0.136.tgz#55a0fae323ad7fb4ae7c51fbbfb69ebabcbb3c31"
+"@vx/glyph@^0.0.140":
+  version "0.0.140"
+  resolved "https://registry.yarnpkg.com/@vx/glyph/-/glyph-0.0.140.tgz#f8323f82aee22192b675bef25789bbb7d74691ba"
   dependencies:
-    "@vx/group" "0.0.136"
+    "@vx/group" "0.0.140"
     classnames "^2.2.5"
     d3-shape "^1.2.0"
 
-"@vx/gradient@^0.0.129":
-  version "0.0.129"
-  resolved "https://registry.yarnpkg.com/@vx/gradient/-/gradient-0.0.129.tgz#2c6f6a41085533166ba6e1c9cdbb3e52d4dd7e85"
+"@vx/gradient@^0.0.140":
+  version "0.0.140"
+  resolved "https://registry.yarnpkg.com/@vx/gradient/-/gradient-0.0.140.tgz#56b421016cbae0dcb00190cfffb9e860a28febf4"
   dependencies:
     classnames "^2.2.5"
     prop-types "^15.5.7"
 
-"@vx/grid@^0.0.131":
-  version "0.0.131"
-  resolved "https://registry.yarnpkg.com/@vx/grid/-/grid-0.0.131.tgz#572885166f0a3e05769903f1a4002ef1ade9a252"
+"@vx/grid@^0.0.140":
+  version "0.0.140"
+  resolved "https://registry.yarnpkg.com/@vx/grid/-/grid-0.0.140.tgz#9dfd3071bc5d90d4b457dd55d7f795699233b230"
   dependencies:
-    "@vx/group" "0.0.127"
-    "@vx/point" "0.0.127"
-    "@vx/shape" "0.0.131"
+    "@vx/group" "0.0.140"
+    "@vx/point" "0.0.136"
+    "@vx/shape" "0.0.140"
     classnames "^2.2.5"
 
-"@vx/group@0.0.127", "@vx/group@^0.0.127":
-  version "0.0.127"
-  resolved "https://registry.yarnpkg.com/@vx/group/-/group-0.0.127.tgz#d607c957119cdb787aa709818532f40e7e04eb8f"
-  dependencies:
-    classnames "^2.2.5"
-
-"@vx/group@0.0.136":
-  version "0.0.136"
-  resolved "https://registry.yarnpkg.com/@vx/group/-/group-0.0.136.tgz#595211c7b04b7ba52824c07f9204f0c1b7e1da36"
+"@vx/group@0.0.140", "@vx/group@^0.0.140":
+  version "0.0.140"
+  resolved "https://registry.yarnpkg.com/@vx/group/-/group-0.0.140.tgz#cba9b0b3f2f007e5be7346f3c86f73f70e038a23"
   dependencies:
     classnames "^2.2.5"
 
-"@vx/legend@^0.0.136":
-  version "0.0.136"
-  resolved "https://registry.yarnpkg.com/@vx/legend/-/legend-0.0.136.tgz#61cf346be1e46da007c4ccd78348b7f507c438de"
+"@vx/legend@^0.0.140":
+  version "0.0.140"
+  resolved "https://registry.yarnpkg.com/@vx/legend/-/legend-0.0.140.tgz#4062c27d6bc9c4d607309d77eff12b844727ae99"
   dependencies:
-    "@vx/group" "0.0.136"
+    "@vx/group" "0.0.140"
     classnames "^2.2.5"
     prop-types "^15.5.10"
 
-"@vx/point@0.0.127":
-  version "0.0.127"
-  resolved "https://registry.yarnpkg.com/@vx/point/-/point-0.0.127.tgz#51ef7f648488feed758a6ec1cc8c71319602e3e7"
+"@vx/point@0.0.136":
+  version "0.0.136"
+  resolved "https://registry.yarnpkg.com/@vx/point/-/point-0.0.136.tgz#93b325b4b95c9d5b96df740f4204017f57396559"
 
-"@vx/responsive@^0.0.127":
-  version "0.0.127"
-  resolved "https://registry.yarnpkg.com/@vx/responsive/-/responsive-0.0.127.tgz#f0061c90e7945b587db5d97b79d6cfd4b37120a7"
+"@vx/responsive@^0.0.140":
+  version "0.0.140"
+  resolved "https://registry.yarnpkg.com/@vx/responsive/-/responsive-0.0.140.tgz#c73ec68b9e89a181605f1ac9ecc09f35216779a8"
   dependencies:
     lodash "^4.0.8"
 
-"@vx/scale@^0.0.127":
-  version "0.0.127"
-  resolved "https://registry.yarnpkg.com/@vx/scale/-/scale-0.0.127.tgz#2f81530c89b1ad837be387aaccebedd507f16549"
+"@vx/scale@^0.0.140":
+  version "0.0.140"
+  resolved "https://registry.yarnpkg.com/@vx/scale/-/scale-0.0.140.tgz#1eb087d11d0000b250c2cdc4061b9e2212edb10d"
   dependencies:
     d3-scale "^1.0.5"
 
-"@vx/shape@0.0.131", "@vx/shape@^0.0.131":
-  version "0.0.131"
-  resolved "https://registry.yarnpkg.com/@vx/shape/-/shape-0.0.131.tgz#38585e93319c9f958d317485b0b6520ff295f179"
+"@vx/shape@0.0.140", "@vx/shape@^0.0.140":
+  version "0.0.140"
+  resolved "https://registry.yarnpkg.com/@vx/shape/-/shape-0.0.140.tgz#6a282d5fdf3a5752b6e938bb3debe983e89ff6d3"
   dependencies:
-    "@vx/curve" "0.0.127"
-    "@vx/group" "0.0.127"
-    "@vx/point" "0.0.127"
+    "@vx/curve" "0.0.140"
+    "@vx/group" "0.0.140"
+    "@vx/point" "0.0.136"
     classnames "^2.2.5"
     d3-shape "^1.2.0"
     prop-types "^15.5.10"
@@ -1270,12 +1265,12 @@ babel-register@^6.24.1, babel-register@^6.26.0:
     mkdirp "^0.5.1"
     source-map-support "^0.4.15"
 
-babel-runtime@6.11.6:
-  version "6.11.6"
-  resolved "https://registry.yarnpkg.com/babel-runtime/-/babel-runtime-6.11.6.tgz#6db707fef2d49c49bfa3cb64efdb436b518b8222"
+babel-runtime@^6.11.6, babel-runtime@^6.26.0:
+  version "6.26.0"
+  resolved "https://registry.yarnpkg.com/babel-runtime/-/babel-runtime-6.26.0.tgz#965c7058668e82b55d7bfe04ff2337bc8b5647fe"
   dependencies:
     core-js "^2.4.0"
-    regenerator-runtime "^0.9.5"
+    regenerator-runtime "^0.11.0"
 
 babel-runtime@^6.18.0, babel-runtime@^6.2.0, babel-runtime@^6.20.0, babel-runtime@^6.22.0, babel-runtime@^6.23.0, babel-runtime@^6.9.2:
   version "6.25.0"
@@ -1283,13 +1278,6 @@ babel-runtime@^6.18.0, babel-runtime@^6.2.0, babel-runtime@^6.20.0, babel-runtim
   dependencies:
     core-js "^2.4.0"
     regenerator-runtime "^0.10.0"
-
-babel-runtime@^6.26.0:
-  version "6.26.0"
-  resolved "https://registry.yarnpkg.com/babel-runtime/-/babel-runtime-6.26.0.tgz#965c7058668e82b55d7bfe04ff2337bc8b5647fe"
-  dependencies:
-    core-js "^2.4.0"
-    regenerator-runtime "^0.11.0"
 
 babel-template@7.0.0-beta.0:
   version "7.0.0-beta.0"
@@ -1721,7 +1709,7 @@ camelcase@^4.1.0:
   version "4.1.0"
   resolved "https://registry.yarnpkg.com/camelcase/-/camelcase-4.1.0.tgz#d545635be1e33c542649c69173e5de6acfae34dd"
 
-can-use-dom@0.1.0:
+can-use-dom@^0.1.0:
   version "0.1.0"
   resolved "https://registry.yarnpkg.com/can-use-dom/-/can-use-dom-0.1.0.tgz#22cc4a34a0abc43950f42c6411024a3f6366b45a"
 
@@ -2259,14 +2247,6 @@ create-hmac@^1.1.0, create-hmac@^1.1.2, create-hmac@^1.1.4:
     ripemd160 "^2.0.0"
     safe-buffer "^5.0.1"
     sha.js "^2.4.8"
-
-create-react-class@15.5.3:
-  version "15.5.3"
-  resolved "https://registry.yarnpkg.com/create-react-class/-/create-react-class-15.5.3.tgz#fb0f7cae79339e9a179e194ef466efa3923820fe"
-  dependencies:
-    fbjs "^0.8.9"
-    loose-envify "^1.3.1"
-    object-assign "^4.1.1"
 
 create-react-class@^15.6.0:
   version "15.6.0"
@@ -3983,9 +3963,9 @@ glogg@^1.0.0:
   dependencies:
     sparkles "^1.0.0"
 
-google-maps-infobox@1.1.13:
-  version "1.1.13"
-  resolved "https://registry.yarnpkg.com/google-maps-infobox/-/google-maps-infobox-1.1.13.tgz#eb3a453220db4cab4e1f404e37da71e2155e24d7"
+google-maps-infobox@^1.1.13:
+  version "1.1.15"
+  resolved "https://registry.yarnpkg.com/google-maps-infobox/-/google-maps-infobox-1.1.15.tgz#22a28a97cf72a2cd8493eef755c71fc1a2995170"
 
 graceful-fs@^4.1.11, graceful-fs@^4.1.2, graceful-fs@^4.1.4, graceful-fs@^4.1.6, graceful-fs@^4.1.9:
   version "4.1.11"
@@ -4125,7 +4105,7 @@ hoist-non-react-statics@^2.2.1:
   version "2.2.2"
   resolved "https://registry.yarnpkg.com/hoist-non-react-statics/-/hoist-non-react-statics-2.2.2.tgz#c0eca5a7d5a28c5ada3107eb763b01da6bfa81fb"
 
-hoist-non-react-statics@^2.3.0:
+hoist-non-react-statics@^2.3.0, hoist-non-react-statics@^2.3.1:
   version "2.3.1"
   resolved "https://registry.yarnpkg.com/hoist-non-react-statics/-/hoist-non-react-statics-2.3.1.tgz#343db84c6018c650778898240135a1420ee22ce0"
 
@@ -4471,12 +4451,6 @@ intl-relativeformat@^2.0.0:
 intl@^1.2.4:
   version "1.2.5"
   resolved "https://registry.yarnpkg.com/intl/-/intl-1.2.5.tgz#82244a2190c4e419f8371f5aa34daa3420e2abde"
-
-invariant@2.2.1:
-  version "2.2.1"
-  resolved "https://registry.yarnpkg.com/invariant/-/invariant-2.2.1.tgz#b097010547668c7e337028ebe816ebe36c8a8d54"
-  dependencies:
-    loose-envify "^1.0.0"
 
 invariant@^2.0.0, invariant@^2.1.1, invariant@^2.2.0, invariant@^2.2.1, invariant@^2.2.2:
   version "2.2.2"
@@ -5576,15 +5550,11 @@ lodash@4.12.0:
   version "4.12.0"
   resolved "https://registry.yarnpkg.com/lodash/-/lodash-4.12.0.tgz#2bd6dc46a040f59e686c972ed21d93dc59053258"
 
-lodash@4.16.2:
-  version "4.16.2"
-  resolved "https://registry.yarnpkg.com/lodash/-/lodash-4.16.2.tgz#3e626db827048a699281a8a125226326cfc0e652"
-
 lodash@^3.2.0:
   version "3.10.1"
   resolved "https://registry.yarnpkg.com/lodash/-/lodash-3.10.1.tgz#5bf45e8e49ba4189e17d482789dfd15bd140b7b6"
 
-lodash@^4.0.0, lodash@^4.0.8, lodash@^4.11.1, lodash@^4.14.0, lodash@^4.15.0, lodash@^4.17.2, lodash@^4.17.3, lodash@^4.17.4, lodash@^4.2.0, lodash@^4.2.1, lodash@^4.3.0, lodash@^4.6.1:
+lodash@^4.0.0, lodash@^4.0.8, lodash@^4.11.1, lodash@^4.14.0, lodash@^4.15.0, lodash@^4.16.2, lodash@^4.17.2, lodash@^4.17.3, lodash@^4.17.4, lodash@^4.2.0, lodash@^4.2.1, lodash@^4.3.0, lodash@^4.6.1:
   version "4.17.4"
   resolved "https://registry.yarnpkg.com/lodash/-/lodash-4.17.4.tgz#78203a4d1c328ae1d86dca6460e369b57f4055ae"
 
@@ -5695,13 +5665,13 @@ markdown-to-jsx@^5.4.2:
     remark-parse "^4.0.0"
     unified "^6.1.5"
 
-marker-clusterer-plus@2.1.4:
+marker-clusterer-plus@^2.1.4:
   version "2.1.4"
   resolved "https://registry.yarnpkg.com/marker-clusterer-plus/-/marker-clusterer-plus-2.1.4.tgz#f8eff74d599dab3b7d0e3fed5264ea0e704f5d67"
 
-material-ui@^0.18.3:
-  version "0.18.7"
-  resolved "https://registry.yarnpkg.com/material-ui/-/material-ui-0.18.7.tgz#b87af16357e6966b36c23d489eb2ed70746d25f8"
+material-ui@^0.19.2:
+  version "0.19.2"
+  resolved "https://registry.yarnpkg.com/material-ui/-/material-ui-0.19.2.tgz#98c8898c933279b12df879d7184306aceb364cb5"
   dependencies:
     babel-runtime "^6.23.0"
     inline-style-prefixer "^3.0.2"
@@ -6606,9 +6576,9 @@ pinkie@^2.0.0:
   version "2.0.4"
   resolved "https://registry.yarnpkg.com/pinkie/-/pinkie-2.0.4.tgz#72556b80cfa0d48a974e80e77248e80ed4f7f870"
 
-piwik-react-router@^0.9.0:
-  version "0.9.0"
-  resolved "https://registry.yarnpkg.com/piwik-react-router/-/piwik-react-router-0.9.0.tgz#4b7f4cbeca94ca1ec5998cfa57c650214b1f603f"
+piwik-react-router@^0.10.0:
+  version "0.10.0"
+  resolved "https://registry.yarnpkg.com/piwik-react-router/-/piwik-react-router-0.10.0.tgz#4dc18b00cab804c759be3e23b75d5f447f105dc0"
   dependencies:
     url-join "^1.1.0"
     warning "^3.0.0"
@@ -7280,18 +7250,18 @@ prompt@^1.0.0:
     utile "0.3.x"
     winston "2.1.x"
 
-prop-types@15.5.8:
-  version "15.5.8"
-  resolved "https://registry.yarnpkg.com/prop-types/-/prop-types-15.5.8.tgz#6b7b2e141083be38c8595aa51fc55775c7199394"
-  dependencies:
-    fbjs "^0.8.9"
-
-prop-types@^15.5.10, prop-types@^15.5.4, prop-types@^15.5.6, prop-types@^15.5.7, prop-types@^15.5.9:
+prop-types@15.5.10, prop-types@^15.5.10, prop-types@^15.5.4, prop-types@^15.5.6, prop-types@^15.5.7, prop-types@^15.5.9:
   version "15.5.10"
   resolved "https://registry.yarnpkg.com/prop-types/-/prop-types-15.5.10.tgz#2797dfc3126182e3a95e3dfbb2e893ddd7456154"
   dependencies:
     fbjs "^0.8.9"
     loose-envify "^1.3.1"
+
+prop-types@15.5.8:
+  version "15.5.8"
+  resolved "https://registry.yarnpkg.com/prop-types/-/prop-types-15.5.8.tgz#6b7b2e141083be38c8595aa51fc55775c7199394"
+  dependencies:
+    fbjs "^0.8.9"
 
 prop-types@^15.5.8:
   version "15.6.0"
@@ -7500,10 +7470,6 @@ react-dev-utils@^3.0.2:
     strip-ansi "3.0.1"
     text-table "0.2.0"
 
-react-display-name@0.2.0:
-  version "0.2.0"
-  resolved "https://registry.yarnpkg.com/react-display-name/-/react-display-name-0.2.0.tgz#0e1f7086e45a32d07764df35ed32ff16f1259790"
-
 react-display-name@^0.2.0:
   version "0.2.3"
   resolved "https://registry.yarnpkg.com/react-display-name/-/react-display-name-0.2.3.tgz#f50204d430c9ca819bc0bade0306e9175d8d1987"
@@ -7544,22 +7510,20 @@ react-event-listener@^0.4.5:
     prop-types "^15.5.4"
     warning "^3.0.0"
 
-react-google-maps@^7.0.0:
-  version "7.3.0"
-  resolved "https://registry.yarnpkg.com/react-google-maps/-/react-google-maps-7.3.0.tgz#b697da0438a3aa2b7f565a2d4c4876d0ed95012c"
+react-google-maps@^8.3.0:
+  version "8.3.0"
+  resolved "https://registry.yarnpkg.com/react-google-maps/-/react-google-maps-8.3.0.tgz#2c81adb8aa5028777fb40fc6148c94d168b19972"
   dependencies:
-    babel-runtime "6.11.6"
-    can-use-dom "0.1.0"
-    create-react-class "15.5.3"
-    google-maps-infobox "1.1.13"
-    invariant "2.2.1"
-    lodash "4.16.2"
-    marker-clusterer-plus "2.1.4"
-    prop-types "15.5.8"
-    react-display-name "0.2.0"
-    react-prop-types-element-of-type "2.2.0"
-    scriptjs "2.5.8"
-    warning "3.0.0"
+    babel-runtime "^6.11.6"
+    can-use-dom "^0.1.0"
+    google-maps-infobox "^1.1.13"
+    invariant "^2.2.1"
+    lodash "^4.16.2"
+    marker-clusterer-plus "^2.1.4"
+    prop-types "^15.5.8"
+    recompose "^0.25.0"
+    scriptjs "^2.5.8"
+    warning "^3.0.0"
 
 react-group@^1.0.5:
   version "1.0.5"
@@ -7626,10 +7590,6 @@ react-loadable@^4.0.3:
     import-inspector "^2.0.0"
     is-webpack-bundle "^1.0.0"
     webpack-require-weak "^1.0.1"
-
-react-prop-types-element-of-type@2.2.0:
-  version "2.2.0"
-  resolved "https://registry.yarnpkg.com/react-prop-types-element-of-type/-/react-prop-types-element-of-type-2.2.0.tgz#bcc332d3903c2259cf68c28a81c4a663faba59ac"
 
 react-proxy@^3.0.0-alpha.0:
   version "3.0.0-alpha.1"
@@ -7898,13 +7858,22 @@ recast@~0.11.12:
     private "~0.1.5"
     source-map "~0.5.0"
 
-recompose@0.24.0, recompose@^0.24.0:
+recompose@0.24.0:
   version "0.24.0"
   resolved "https://registry.yarnpkg.com/recompose/-/recompose-0.24.0.tgz#262e93f974439eb17e7779824d88cce90492a5dd"
   dependencies:
     change-emitter "^0.1.2"
     fbjs "^0.8.1"
     hoist-non-react-statics "^1.0.0"
+    symbol-observable "^1.0.4"
+
+recompose@^0.25.0, recompose@^0.25.1:
+  version "0.25.1"
+  resolved "https://registry.yarnpkg.com/recompose/-/recompose-0.25.1.tgz#5eb9d6cf6e25a9ffad73cbbae5658b5b55d6e728"
+  dependencies:
+    change-emitter "^0.1.2"
+    fbjs "^0.8.1"
+    hoist-non-react-statics "^2.3.1"
     symbol-observable "^1.0.4"
 
 recursive-readdir@2.2.1:
@@ -7974,9 +7943,9 @@ redux-form@^7.0.3:
     lodash-es "^4.17.3"
     prop-types "^15.5.9"
 
-redux-idle-monitor@^0.6.2:
-  version "0.6.2"
-  resolved "https://registry.yarnpkg.com/redux-idle-monitor/-/redux-idle-monitor-0.6.2.tgz#192653fd2d06392080b11c8fa32b9fcd9756a297"
+redux-idle-monitor@^0.7.0:
+  version "0.7.0"
+  resolved "https://registry.yarnpkg.com/redux-idle-monitor/-/redux-idle-monitor-0.7.0.tgz#58557be71e1d912af4518f385cb393a30f36c583"
   dependencies:
     babel-runtime "^6.18.0"
     invariant "^2.2.2"
@@ -8031,10 +8000,6 @@ regenerator-runtime@^0.10.0, regenerator-runtime@^0.10.5:
 regenerator-runtime@^0.11.0:
   version "0.11.0"
   resolved "https://registry.yarnpkg.com/regenerator-runtime/-/regenerator-runtime-0.11.0.tgz#7e54fe5b5ccd5d6624ea6255c3473be090b802e1"
-
-regenerator-runtime@^0.9.5:
-  version "0.9.6"
-  resolved "https://registry.yarnpkg.com/regenerator-runtime/-/regenerator-runtime-0.9.6.tgz#d33eb95d0d2001a4be39659707c51b0cb71ce029"
 
 regenerator-transform@0.9.11:
   version "0.9.11"
@@ -8382,7 +8347,7 @@ schema-utils@^0.3.0:
   dependencies:
     ajv "^5.0.0"
 
-scriptjs@2.5.8:
+scriptjs@^2.5.8:
   version "2.5.8"
   resolved "https://registry.yarnpkg.com/scriptjs/-/scriptjs-2.5.8.tgz#d0c43955c2e6bad33b6e4edf7b53b8965aa7ca5f"
 
@@ -9463,7 +9428,7 @@ walker@~1.0.5:
   dependencies:
     makeerror "1.0.x"
 
-warning@3.0.0, warning@^3.0.0:
+warning@^3.0.0:
   version "3.0.0"
   resolved "https://registry.yarnpkg.com/warning/-/warning-3.0.0.tgz#32e5377cb572de4ab04753bdf8821c01ed605b7c"
   dependencies:
