@@ -63,7 +63,10 @@ const searchSanitizer = makeSearchParamsSanitizer({
 })
 const filtersSanitizer = sanitizeFiltersStringBy(FILTERS_CONFIG)
 const filtersFromLocation = composeSanitizer(
-  _.flowRight(filtersSanitizer, searchParams => searchParams.get('filters')),
+  _.flowRight(
+    filtersSanitizer,
+    searchParams => searchParams.get('filters') || ''
+  ),
   searchSanitizer
 )
 
@@ -126,7 +129,7 @@ const enhance = compose(
       const {
         sanitized: filtersSanitized,
         value: filtersParams,
-      } = filtersSanitizer(searchParams.get('filters'))
+      } = filtersSanitizer(searchParams.get('filters') || '')
       if (sanitized || filtersSanitized) {
         searchParams.set('filters', filtersParams)
 
@@ -162,7 +165,7 @@ export const NotificationList = ({
   pageSize,
   onHeadColumnClick,
   onRowClick,
-}) =>
+}) => (
   <div className={cssClasses('Container')}>
     <Helmet title={intl.formatMessage(messages.notificationsTitle)} />
     <NavTitle title={intl.formatMessage(messages.notificationsTitle)} />
@@ -174,9 +177,10 @@ export const NotificationList = ({
     />
     <DataTableCard>
       <DataTableProgressBar disabled={!table.loading} />
-      {items.currentIdList.isEmpty() &&
-        <BrowseEmptyList history={history} location={location} intl={intl} />}
-      {!items.currentIdList.isEmpty() &&
+      {items.currentIdList.isEmpty() && (
+        <BrowseEmptyList history={history} location={location} intl={intl} />
+      )}
+      {!items.currentIdList.isEmpty() && (
         <NotificationDataTable
           selectable={false}
           className={cssClasses('NotificationDataTable')}
@@ -204,7 +208,7 @@ export const NotificationList = ({
           />
           {items.currentIdList
             .map(id => items.byId.get(id))
-            .map(notification =>
+            .map(notification => (
               <NotificationDataTableRow
                 key={notification.get('id')}
                 intl={intl}
@@ -212,9 +216,10 @@ export const NotificationList = ({
                 onClick={onRowClick}
                 data-notification-Id="detail"
               />
-            )}
-        </NotificationDataTable>}
-      {!items.currentIdList.isEmpty() &&
+            ))}
+        </NotificationDataTable>
+      )}
+      {!items.currentIdList.isEmpty() && (
         <BrowseTablePaginator
           history={history}
           location={location}
@@ -223,8 +228,10 @@ export const NotificationList = ({
           total={table.total}
           pageAt={pageAt}
           pageSize={pageSize}
-        />}
+        />
+      )}
     </DataTableCard>
   </div>
+)
 
 export default enhance(NotificationList)

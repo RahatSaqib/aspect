@@ -71,7 +71,10 @@ const searchSanitizer = makeSearchParamsSanitizer({
 })
 const filtersSanitizer = sanitizeFiltersStringBy(FILTERS_CONFIG)
 const filtersFromLocation = composeSanitizer(
-  _.flowRight(filtersSanitizer, searchParams => searchParams.get('filters')),
+  _.flowRight(
+    filtersSanitizer,
+    searchParams => searchParams.get('filters') || ''
+  ),
   searchSanitizer
 )
 
@@ -141,7 +144,7 @@ const enhance = compose(
       const {
         sanitized: filtersSanitized,
         value: filtersParams,
-      } = filtersSanitizer(searchParams.get('filters'))
+      } = filtersSanitizer(searchParams.get('filters') || '')
       if (sanitized || filtersSanitized) {
         searchParams.set('filters', filtersParams)
 
@@ -177,7 +180,7 @@ export const RouterList = ({
   pageSize,
   onHeadColumnClick,
   onRowClick,
-}) =>
+}) => (
   <div className={cssClasses('Container')}>
     <Helmet title={intl.formatMessage(messages.routersTitle)} />
     <NavTitle title={intl.formatMessage(messages.routersTitle)} />
@@ -189,9 +192,10 @@ export const RouterList = ({
     />
     <DataTableCard>
       <DataTableProgressBar disabled={!table.loading} />
-      {items.currentIdList.isEmpty() &&
-        <BrowseEmptyList history={history} location={location} intl={intl} />}
-      {!items.currentIdList.isEmpty() &&
+      {items.currentIdList.isEmpty() && (
+        <BrowseEmptyList history={history} location={location} intl={intl} />
+      )}
+      {!items.currentIdList.isEmpty() && (
         <RouterDataTable
           selectable={false}
           className={cssClasses('RouterDataTable')}
@@ -224,7 +228,7 @@ export const RouterList = ({
           />
           {items.currentIdList
             .map(id => items.byId.get(id))
-            .map(router =>
+            .map(router => (
               <RouterDataTableRow
                 key={router.get('id')}
                 intl={intl}
@@ -232,9 +236,10 @@ export const RouterList = ({
                 onClick={onRowClick}
                 data-router-Id={router.get('id')}
               />
-            )}
-        </RouterDataTable>}
-      {!items.currentIdList.isEmpty() &&
+            ))}
+        </RouterDataTable>
+      )}
+      {!items.currentIdList.isEmpty() && (
         <BrowseTablePaginator
           history={history}
           location={location}
@@ -244,8 +249,10 @@ export const RouterList = ({
           total={table.total}
           pageAt={pageAt}
           pageSize={pageSize}
-        />}
+        />
+      )}
     </DataTableCard>
   </div>
+)
 
 export default enhance(RouterList)

@@ -131,7 +131,10 @@ const searchSanitizer = makeSearchParamsSanitizer({
 })
 const filtersSanitizer = sanitizeFiltersStringBy(FILTERS_CONFIG)
 const filtersFromLocation = composeSanitizer(
-  _.flowRight(filtersSanitizer, searchParams => searchParams.get('filters')),
+  _.flowRight(
+    filtersSanitizer,
+    searchParams => searchParams.get('filters') || ''
+  ),
   searchSanitizer
 )
 
@@ -216,7 +219,7 @@ const enhance = compose(
       const {
         sanitized: filtersSanitized,
         value: filtersParams,
-      } = filtersSanitizer(searchParams.get('filters'))
+      } = filtersSanitizer(searchParams.get('filters') || '')
       if (sanitized || filtersSanitized) {
         searchParams.set('filters', filtersParams)
 
@@ -373,7 +376,7 @@ export const DeviceApiKeyList = ({
   onSelectAllChange,
   onSelectedChange,
   onRevokedChange,
-}) =>
+}) => (
   <div className={cssClasses('Container')}>
     <Helmet title={intl.formatMessage(messages.title)} />
     <NavTitle title={intl.formatMessage(messages.title)} />
@@ -414,9 +417,10 @@ export const DeviceApiKeyList = ({
     </div>
     <DataTableCard>
       <DataTableProgressBar disabled={!table.loading} />
-      {items.currentIdList.isEmpty() &&
-        <BrowseEmptyList history={history} location={location} intl={intl} />}
-      {!items.currentIdList.isEmpty() &&
+      {items.currentIdList.isEmpty() && (
+        <BrowseEmptyList history={history} location={location} intl={intl} />
+      )}
+      {!items.currentIdList.isEmpty() && (
         <DeviceApiKeyDataTable
           selectable={false}
           className={cssClasses('DeviceApiKeyDataTable')}
@@ -477,7 +481,7 @@ export const DeviceApiKeyList = ({
           />
           {items.currentIdList
             .map(id => items.byId.get(id))
-            .map(deviceApiKey =>
+            .map(deviceApiKey => (
               <DeviceApiKeyDataTableRow
                 key={deviceApiKey.get('id')}
                 intl={intl}
@@ -491,9 +495,10 @@ export const DeviceApiKeyList = ({
                 onSelectedChange={onSelectedChange}
                 onRevokedChange={onRevokedChange}
               />
-            )}
-        </DeviceApiKeyDataTable>}
-      {!items.currentIdList.isEmpty() &&
+            ))}
+        </DeviceApiKeyDataTable>
+      )}
+      {!items.currentIdList.isEmpty() && (
         <BrowseTablePaginator
           history={history}
           location={location}
@@ -502,8 +507,10 @@ export const DeviceApiKeyList = ({
           total={table.total}
           pageAt={pageAt}
           pageSize={pageSize}
-        />}
+        />
+      )}
     </DataTableCard>
   </div>
+)
 
 export default enhance(DeviceApiKeyList)

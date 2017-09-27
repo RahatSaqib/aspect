@@ -32,7 +32,9 @@ const enhance = compose(
   withHandlers({
     onInitialLoad: ({ location, fetchOperationalStatus }) => () => {
       const searchParams = new URLSearchParams(location.search)
-      const filtersParams = new URLSearchParams(searchParams.get('filters'))
+      const filtersParams = new URLSearchParams(
+        searchParams.get('filters') || ''
+      )
 
       fetchOperationalStatus(filtersParams)
     },
@@ -41,7 +43,9 @@ const enhance = compose(
       currentTarget: { dataset: { assayType } },
     }) => {
       const searchParams = new URLSearchParams(location.search)
-      const filtersParams = new URLSearchParams(searchParams.get('filters'))
+      const filtersParams = new URLSearchParams(
+        searchParams.get('filters') || ''
+      )
       filtersParams.set('assayType', assayType)
       searchParams.set('filters', filtersParams)
 
@@ -55,7 +59,9 @@ const enhance = compose(
       currentTarget: { dataset: { dateRange } },
     }) => {
       const searchParams = new URLSearchParams(location.search)
-      const filtersParams = new URLSearchParams(searchParams.get('filters'))
+      const filtersParams = new URLSearchParams(
+        searchParams.get('filters') || ''
+      )
       filtersParams.set('dateRange', dateRange)
       searchParams.set('filters', filtersParams)
 
@@ -80,7 +86,7 @@ const enhance = compose(
   }),
   withProps(({ location }) => {
     const searchParams = new URLSearchParams(location.search)
-    const filtersParams = new URLSearchParams(searchParams.get('filters'))
+    const filtersParams = new URLSearchParams(searchParams.get('filters') || '')
 
     return {
       assayType: filtersParams.get('assayType') || 'all',
@@ -100,7 +106,7 @@ const SectionAbnormalCollection = ({
   colorClassName,
   collection,
   onDataReportClick,
-}) =>
+}) => (
   <div className={cssClasses('Section')}>
     <Card className={cssClasses('Section__Content')}>
       <div className={cssClasses('TitleContainer')}>
@@ -117,7 +123,7 @@ const SectionAbnormalCollection = ({
         />
       </div>
       <div>
-        {collection.map(c =>
+        {collection.map(c => (
           <Unit
             sm="1-2"
             lg="1-4"
@@ -132,26 +138,27 @@ const SectionAbnormalCollection = ({
               yDomainMax={30}
               fill={it => (it.abnormal ? '#EA4E62' : '#36DED6')}
             />
-            <div className={cssClasses('Graph__Title')}>
-              {c.get('title')}
-            </div>
+            <div className={cssClasses('Graph__Title')}>{c.get('title')}</div>
             <div className={cssClasses('Graph__Message')}>
-              {c.get('isNormal')
-                ? <FaCircle
-                    className={cssClasses('Graph__Message__Icon--normal')}
-                  />
-                : <FaExclamationTriangle
-                    className={cssClasses('Graph__Message__Icon--abnormal')}
-                  />}
+              {c.get('isNormal') ? (
+                <FaCircle
+                  className={cssClasses('Graph__Message__Icon--normal')}
+                />
+              ) : (
+                <FaExclamationTriangle
+                  className={cssClasses('Graph__Message__Icon--abnormal')}
+                />
+              )}
               <span className={cssClasses('Graph__Message__Text')}>
                 {c.get('message')}
               </span>
             </div>
           </Unit>
-        )}
+        ))}
       </div>
     </Card>
   </div>
+)
 
 export const OperationalData = ({
   // --- injected by recompose ---
@@ -162,7 +169,7 @@ export const OperationalData = ({
   onAssayTypeClick,
   onDateRangeClick,
   onDataReportClick,
-}) =>
+}) => (
   <div className={cssClasses('Container')}>
     <Helmet title="Operational Data" />
     <div className={cssClasses('FiltersGroup')}>
@@ -272,7 +279,7 @@ export const OperationalData = ({
             />
           </div>
           <div>
-            {operational.get('site', []).map(c =>
+            {operational.get('site', []).map(c => (
               <Unit
                 sm="1-2"
                 lg="1-4"
@@ -291,7 +298,7 @@ export const OperationalData = ({
                   hideLabel={false}
                 />
               </Unit>
-            )}
+            ))}
           </div>
         </Card>
       </div>
@@ -308,5 +315,6 @@ export const OperationalData = ({
       theme={themes.DelayShowingProgressBar}
     />
   </div>
+)
 
 export default enhance(OperationalData)
