@@ -1,9 +1,10 @@
-import sinon from 'sinon'
+/* eslint-disable no-unused-vars */
 import React from 'react'
-import { shallow } from 'enzyme'
-import recomposeForm from './index'
+import ReactTestRenderer from 'react-test-renderer'
 
 describe('recomposeForm module', () => {
+  const { default: recomposeForm } = require('./index')
+
   describe('recomposeForm HOC', () => {
     const initialValues = { name: '', email: '' }
     const validate = () => ({})
@@ -17,11 +18,11 @@ describe('recomposeForm module', () => {
         fields: ['name', 'email'],
         validate,
       })(() => <div />)
-      const ComponentWrapper = shallow(
+
+      const testInstance = ReactTestRenderer.create(
         <DecoratedComponent values={initialValues} />
       )
-
-      expect(ComponentWrapper.find('div').length).toEqual(1)
+      expect(testInstance).toMatchSnapshot()
     })
 
     it('should pass in form state from props', () => {
@@ -33,17 +34,11 @@ describe('recomposeForm module', () => {
         innerProps = props
         return <div />
       })
-      const ComponentWrapper = shallow(
+
+      const testInstance = ReactTestRenderer.create(
         <DecoratedComponent values={initialValues} />
       )
-
-      expect(ComponentWrapper.find('div').length).toEqual(1)
-      expect(innerProps.form).toEqual({
-        pristine: true,
-        valid: true,
-        submitting: false,
-        submitSucceed: false,
-      })
+      expect(innerProps.form).toMatchSnapshot()
     })
 
     it('should pass in field states from props', () => {
@@ -55,19 +50,12 @@ describe('recomposeForm module', () => {
         innerProps = props
         return <div />
       })
-      const ComponentWrapper = shallow(
+
+      const testInstance = ReactTestRenderer.create(
         <DecoratedComponent values={initialValues} />
       )
-
-      expect(ComponentWrapper.find('div').length).toEqual(1)
-      expect(innerProps.meta.name).toEqual({
-        touched: false,
-        error: null,
-      })
-      expect(innerProps.meta.email).toEqual({
-        touched: false,
-        error: null,
-      })
+      expect(innerProps.meta.name).toMatchSnapshot()
+      expect(innerProps.meta.email).toMatchSnapshot()
     })
 
     it('should pass in form handlers from props', () => {
@@ -79,12 +67,11 @@ describe('recomposeForm module', () => {
         innerProps = props
         return <div />
       })
-      const ComponentWrapper = shallow(
+
+      const testInstance = ReactTestRenderer.create(
         <DecoratedComponent values={initialValues} />
       )
-
-      expect(ComponentWrapper.find('div').length).toEqual(1)
-      expect(typeof innerProps.handleSubmit).toBe('function')
+      expect(innerProps.handleSubmit).toMatchSnapshot()
     })
 
     describe('passing onSubmit with a function returning a resolved promise', () => {
@@ -97,37 +84,22 @@ describe('recomposeForm module', () => {
           innerProps = props
           return <div />
         })
-        const ComponentWrapper = shallow(
+
+        const testInstance = ReactTestRenderer.create(
           <DecoratedComponent
             values={initialValues}
             onSubmit={() => Promise.resolve()}
           />
         )
+        expect(innerProps.form).toMatchSnapshot()
+        expect(innerProps.handleSubmit).toMatchSnapshot()
 
-        expect(ComponentWrapper.find('div').length).toEqual(1)
-        expect(innerProps.form).toEqual({
-          pristine: true,
-          valid: true,
-          submitting: false,
-          submitSucceed: false,
-        })
-        expect(typeof innerProps.handleSubmit).toBe('function')
         innerProps.handleSubmit(mockEvent)
 
-        expect(innerProps.form).toEqual({
-          pristine: false,
-          valid: true,
-          submitting: true,
-          submitSucceed: false,
-        })
+        expect(innerProps.form).toMatchSnapshot()
 
         return new Promise(resolve => setTimeout(resolve, 50)).then(() => {
-          expect(innerProps.form).toEqual({
-            pristine: true,
-            valid: true,
-            submitting: false,
-            submitSucceed: true,
-          })
+          expect(innerProps.form).toMatchSnapshot()
         })
       })
     })
@@ -142,37 +114,22 @@ describe('recomposeForm module', () => {
           innerProps = props
           return <div />
         })
-        const ComponentWrapper = shallow(
+
+        const testInstance = ReactTestRenderer.create(
           <DecoratedComponent
             values={initialValues}
-            onSubmit={() => Promise.reject()}
+            onSubmit={() => Promise.resolve()}
           />
         )
+        expect(innerProps.form).toMatchSnapshot()
+        expect(innerProps.handleSubmit).toMatchSnapshot()
 
-        expect(ComponentWrapper.find('div').length).toEqual(1)
-        expect(innerProps.form).toEqual({
-          pristine: true,
-          valid: true,
-          submitting: false,
-          submitSucceed: false,
-        })
-        expect(typeof innerProps.handleSubmit).toBe('function')
         innerProps.handleSubmit(mockEvent)
 
-        expect(innerProps.form).toEqual({
-          pristine: false,
-          valid: true,
-          submitting: true,
-          submitSucceed: false,
-        })
+        expect(innerProps.form).toMatchSnapshot()
 
         return new Promise(resolve => setTimeout(resolve, 50)).then(() => {
-          expect(innerProps.form).toEqual({
-            pristine: false,
-            valid: false,
-            submitting: false,
-            submitSucceed: false,
-          })
+          expect(innerProps.form).toMatchSnapshot()
         })
       })
     })
@@ -186,18 +143,17 @@ describe('recomposeForm module', () => {
         innerProps = props
         return <div />
       })
-      const ComponentWrapper = shallow(
+
+      const testInstance = ReactTestRenderer.create(
         <DecoratedComponent values={initialValues} />
       )
-
-      expect(ComponentWrapper.find('div').length).toEqual(1)
-      expect(typeof innerProps.onNameChange).toBe('function')
-      expect(typeof innerProps.onEmailChange).toBe('function')
+      expect(innerProps.onNameChange).toMatchSnapshot()
+      expect(innerProps.onEmailChange).toMatchSnapshot()
     })
 
     it('should call onChange when fields are changed', () => {
       let innerProps
-      const handleChange = sinon.spy()
+      const handleChange = jest.fn()
       const DecoratedComponent = recomposeForm({
         fields: ['name', 'email'],
         validate,
@@ -205,24 +161,26 @@ describe('recomposeForm module', () => {
         innerProps = props
         return <div />
       })
-      const ComponentWrapper = shallow(
+
+      const testInstance = ReactTestRenderer.create(
         <DecoratedComponent values={initialValues} onChange={handleChange} />
       )
-
-      expect(ComponentWrapper.find('div').length).toEqual(1)
-      expect(typeof innerProps.onNameChange).toBe('function')
-      expect(handleChange.called).toBe(false)
+      expect(innerProps.onNameChange).toMatchSnapshot()
+      expect(handleChange).not.toBeCalled()
 
       innerProps.onNameChange({
         target: { value: 'Jeremy' },
       })
-      expect(handleChange.called).toBe(true)
+      expect(handleChange).toBeCalled()
     })
 
     describe('calling onNameChange with valid value', () => {
       it('should update field states from props', () => {
         let innerProps
-        const handleChange = values => ComponentWrapper.setProps({ values })
+        const handleChange = values =>
+          testInstance.update(
+            <DecoratedComponent values={values} onChange={handleChange} />
+          )
         const DecoratedComponent = recomposeForm({
           fields: ['name', 'email'],
           validate(values) {
@@ -236,31 +194,27 @@ describe('recomposeForm module', () => {
           innerProps = props
           return <div />
         })
-        const ComponentWrapper = shallow(
+
+        const testInstance = ReactTestRenderer.create(
           <DecoratedComponent values={initialValues} onChange={handleChange} />
         )
-
-        expect(ComponentWrapper.find('div').length).toEqual(1)
-        expect(innerProps.meta.name).toEqual({
-          touched: false,
-          error: null,
-        })
-        expect(typeof innerProps.onNameChange).toBe('function')
+        expect(innerProps.meta.name).toMatchSnapshot()
+        expect(innerProps.onNameChange).toMatchSnapshot()
 
         innerProps.onNameChange({
           target: { value: 'Jeremy' },
         })
-        expect(innerProps.meta.name).toEqual({
-          touched: true,
-          error: null,
-        })
+        expect(innerProps.meta.name).toMatchSnapshot()
       })
     })
 
     describe('calling onNameChange with invalid value', () => {
       it('should update field states from props', () => {
         let innerProps
-        const handleChange = values => ComponentWrapper.setProps({ values })
+        const handleChange = values =>
+          testInstance.update(
+            <DecoratedComponent values={values} onChange={handleChange} />
+          )
         const DecoratedComponent = recomposeForm({
           fields: ['name', 'email'],
           validate(values) {
@@ -274,24 +228,16 @@ describe('recomposeForm module', () => {
           innerProps = props
           return <div />
         })
-        const ComponentWrapper = shallow(
+        const testInstance = ReactTestRenderer.create(
           <DecoratedComponent values={initialValues} onChange={handleChange} />
         )
-
-        expect(ComponentWrapper.find('div').length).toEqual(1)
-        expect(innerProps.meta.name).toEqual({
-          touched: false,
-          error: null,
-        })
-        expect(typeof innerProps.onNameChange).toBe('function')
+        expect(innerProps.meta.name).toMatchSnapshot()
+        expect(innerProps.onNameChange).toMatchSnapshot()
 
         innerProps.onNameChange({
           target: { value: '' },
         })
-        expect(innerProps.meta.name).toEqual({
-          touched: true,
-          error: 'Required',
-        })
+        expect(innerProps.meta.name).toMatchSnapshot()
       })
     })
   })

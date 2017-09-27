@@ -1,0 +1,124 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`recomposeForm module recomposeForm HOC calling onNameChange with invalid value should update field states from props 1`] = `
+Object {
+  "error": null,
+  "touched": false,
+}
+`;
+
+exports[`recomposeForm module recomposeForm HOC calling onNameChange with invalid value should update field states from props 2`] = `[Function]`;
+
+exports[`recomposeForm module recomposeForm HOC calling onNameChange with invalid value should update field states from props 3`] = `
+Object {
+  "error": "Required",
+  "touched": true,
+}
+`;
+
+exports[`recomposeForm module recomposeForm HOC calling onNameChange with valid value should update field states from props 1`] = `
+Object {
+  "error": null,
+  "touched": false,
+}
+`;
+
+exports[`recomposeForm module recomposeForm HOC calling onNameChange with valid value should update field states from props 2`] = `[Function]`;
+
+exports[`recomposeForm module recomposeForm HOC calling onNameChange with valid value should update field states from props 3`] = `
+Object {
+  "error": null,
+  "touched": true,
+}
+`;
+
+exports[`recomposeForm module recomposeForm HOC passing onSubmit with a function returning a rejected promise should update in form state from props 1`] = `
+Object {
+  "pristine": true,
+  "submitSucceed": false,
+  "submitting": false,
+  "valid": true,
+}
+`;
+
+exports[`recomposeForm module recomposeForm HOC passing onSubmit with a function returning a rejected promise should update in form state from props 2`] = `[Function]`;
+
+exports[`recomposeForm module recomposeForm HOC passing onSubmit with a function returning a rejected promise should update in form state from props 3`] = `
+Object {
+  "pristine": false,
+  "submitSucceed": false,
+  "submitting": true,
+  "valid": true,
+}
+`;
+
+exports[`recomposeForm module recomposeForm HOC passing onSubmit with a function returning a rejected promise should update in form state from props 4`] = `
+Object {
+  "pristine": true,
+  "submitSucceed": true,
+  "submitting": false,
+  "valid": true,
+}
+`;
+
+exports[`recomposeForm module recomposeForm HOC passing onSubmit with a function returning a resolved promise should update in form state from props 1`] = `
+Object {
+  "pristine": true,
+  "submitSucceed": false,
+  "submitting": false,
+  "valid": true,
+}
+`;
+
+exports[`recomposeForm module recomposeForm HOC passing onSubmit with a function returning a resolved promise should update in form state from props 2`] = `[Function]`;
+
+exports[`recomposeForm module recomposeForm HOC passing onSubmit with a function returning a resolved promise should update in form state from props 3`] = `
+Object {
+  "pristine": false,
+  "submitSucceed": false,
+  "submitting": true,
+  "valid": true,
+}
+`;
+
+exports[`recomposeForm module recomposeForm HOC passing onSubmit with a function returning a resolved promise should update in form state from props 4`] = `
+Object {
+  "pristine": true,
+  "submitSucceed": true,
+  "submitting": false,
+  "valid": true,
+}
+`;
+
+exports[`recomposeForm module recomposeForm HOC should call onChange when fields are changed 1`] = `[Function]`;
+
+exports[`recomposeForm module recomposeForm HOC should pass in field handlers from props 1`] = `[Function]`;
+
+exports[`recomposeForm module recomposeForm HOC should pass in field handlers from props 2`] = `[Function]`;
+
+exports[`recomposeForm module recomposeForm HOC should pass in field states from props 1`] = `
+Object {
+  "error": null,
+  "touched": false,
+}
+`;
+
+exports[`recomposeForm module recomposeForm HOC should pass in field states from props 2`] = `
+Object {
+  "error": null,
+  "touched": false,
+}
+`;
+
+exports[`recomposeForm module recomposeForm HOC should pass in form handlers from props 1`] = `[Function]`;
+
+exports[`recomposeForm module recomposeForm HOC should pass in form state from props 1`] = `
+Object {
+  "pristine": true,
+  "submitSucceed": false,
+  "submitting": false,
+  "valid": true,
+}
+`;
+
+exports[`recomposeForm module recomposeForm HOC should render WrappedComponent 1`] = `<div />`;
