@@ -37,35 +37,35 @@ import ReporterList from '../../reporter/list/ReporterList'
 import ReporterDetail from '../../reporter/detail/ReporterDetail'
 import NotFound from '../../error/notFound/NotFound'
 
-const notImplementedLoggedInFactory = compose(loggedInFactory, name => () =>
+const notImplementedLoggedInFactory = compose(loggedInFactory, name => () => (
   <div style={{ padding: 10 }}>
-    <Paper style={{ padding: 10 }}>
-      {name} is not implemented yet
-    </Paper>
+    <Paper style={{ padding: 10 }}>{name} is not implemented yet</Paper>
   </div>
-)
+))
 
 const makeRenderRedirectToLoginWithReason = _.memoize(
-  reason => ({ location }) =>
+  reason => ({ location }) => (
     <Redirect
       to={{
         pathname: '/login',
         state: { referrer: location, reason },
       }}
     />
+  )
 )
 
 const renderRedirectToLoginOr = props =>
   props.isLoggedOut &&
   makeRenderRedirectToLoginWithReason(props.loggedOutReason)
 
-const renderRedirectToDashboard = ({ location }) =>
+const renderRedirectToDashboard = ({ location }) => (
   <Redirect
     to={{
       pathname: '/dashboard',
       state: { referrer: location },
     }}
   />
+)
 
 const renderLoadableLogin = signedOutFactory(LoadableLogin)
 const renderResetPassword = signedOutFactory(ResetPassword)
@@ -100,7 +100,7 @@ const renderNotificationDetail = loggedInDetailFactory(NotificationDetail)
 const renderReportList = loggedInFactory(ReportList)
 const renderNotFound = signedOutFactory(NotFound)
 
-export const routerFactory = () => props =>
+export const routerFactory = () => props => (
   <Router history={history}>
     <Switch>
       <Route
@@ -240,11 +240,13 @@ export const routerFactory = () => props =>
         render={renderRedirectToLoginOr(props) || renderReportList}
       />
 
-      {process.env.NODE_ENV !== 'production' &&
-        <Route path="/styleguide" component={StyleguideMain} />}
+      {process.env.NODE_ENV !== 'production' && (
+        <Route path="/styleguide" component={StyleguideMain} />
+      )}
 
       <Route render={renderNotFound} />
     </Switch>
   </Router>
+)
 
 export default routerFactory

@@ -9,7 +9,7 @@ const cssClasses = classnames.bind(
 
 const enhance = _.identity
 
-const SiteTableRow = ({ intl, site, ...restProps }) =>
+const SiteTableRow = ({ intl, site, ...restProps }) => (
   <TableRow
     {...restProps}
     className={cssClasses(restProps.className, 'TableRow')}
@@ -20,12 +20,11 @@ const SiteTableRow = ({ intl, site, ...restProps }) =>
     <TableCell className={cssClasses('TableCell')}>
       {site.get('state')}
     </TableCell>
-    <TableCell className={cssClasses('TableCell')}>
-      {site.get('lga')}
-    </TableCell>
+    <TableCell className={cssClasses('TableCell')}>{site.get('lga')}</TableCell>
     <TableCell className={cssClasses('TableCell')}>
       {site.get('totalDevices')}
     </TableCell>
   </TableRow>
+)
 
 export default enhance(SiteTableRow)

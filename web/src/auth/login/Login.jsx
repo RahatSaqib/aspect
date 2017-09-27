@@ -107,12 +107,13 @@ const themes = {
   },
 }
 
-const AspectLogo = () =>
+const AspectLogo = () => (
   <img
     className={cssClasses('Logo__Image')}
     src={require('./logo_aspect.png')}
     alt="Aspect"
   />
+)
 
 export const Login = ({
   intl,
@@ -124,7 +125,7 @@ export const Login = ({
   onUserChange,
   onPasswordChange,
   handleSubmit,
-}) =>
+}) => (
   <div className={cssClasses('Background')}>
     <Helmet title="Login" />
     <div>
@@ -178,5 +179,6 @@ export const Login = ({
       </Unit>
     </div>
   </div>
+)
 
 export default enhance(Login)

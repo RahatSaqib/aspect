@@ -19,11 +19,12 @@ const enhance = compose(
   pure
 )
 
-const Link = ({ history, location, onLinkClick, ...restProps }) =>
+const Link = ({ history, location, onLinkClick, ...restProps }) => (
   <RTLink
     {...restProps}
     active={new RegExp(`^${restProps.href}`).test(location.pathname)}
     onClick={onLinkClick}
   />
+)
 
 export default enhance(Link)

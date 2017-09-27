@@ -91,14 +91,15 @@ const LineChart = props => {
   return (
     <ScaleSVG width={width} height={height}>
       <Group left={margin.left}>
-        {props.gridLines &&
+        {props.gridLines && (
           <Grid
             xScale={xScale}
             yScale={yScale}
             width={xMax}
             height={yMax}
             numTicksRows={3}
-          />}
+          />
+        )}
         {lines}
         <AxisLeft
           scale={yScale}

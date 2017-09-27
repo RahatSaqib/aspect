@@ -86,9 +86,9 @@ const enhance = compose(
 export function DeviceSelectField({ devicesSelectList, ...restProps }) {
   return (
     <ForkedSelectField {...restProps}>
-      {devicesSelectList.map(s =>
+      {devicesSelectList.map(s => (
         <MenuItem key={s.value} value={s.value} primaryText={s.text} />
-      )}
+      ))}
     </ForkedSelectField>
   )
 }

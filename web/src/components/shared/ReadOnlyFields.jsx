@@ -14,9 +14,10 @@ const enhance = compose(
 
 export { ReadOnlyField } // Backward-compatibility
 
-export const ReadOnlyFields = ({ fields, ...restProps }) =>
+export const ReadOnlyFields = ({ fields, ...restProps }) => (
   <div {...restProps}>
     {fields.map(it => <ReadOnlyField key={it.label} {...it} />)}
   </div>
+)
 
 export default enhance(ReadOnlyFields)

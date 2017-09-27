@@ -80,7 +80,7 @@ const DialCodeDropdownInput = ({
   onDialCodeChange,
   onRawNumberChange,
   ...restProps
-}) =>
+}) => (
   <div className={cssClasses(restProps.className, 'Container')}>
     <DialCodeDropdown
       value={dialCode}
@@ -95,5 +95,6 @@ const DialCodeDropdownInput = ({
       onChange={onRawNumberChange}
     />
   </div>
+)
 
 export default enhance(DialCodeDropdownInput)

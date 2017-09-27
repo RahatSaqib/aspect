@@ -63,7 +63,7 @@ export const UserPreferencesForm = ({
   onTimezoneChange,
   onCultureChange,
   handleSubmit,
-}) =>
+}) => (
   <form onSubmit={handleSubmit} className={cssClasses('Form')}>
     <div className={cssClasses('Form__Content')}>
       <Dropdown
@@ -84,14 +84,15 @@ export const UserPreferencesForm = ({
         template={({
           language_name: name,
           iso_alpha2_code: countryIsoAlpha2Code,
-        }) =>
+        }) => (
           <span>
             <FlagIcon
               withRightMargin
               countryIsoAlpha2Code={countryIsoAlpha2Code}
             />
             {name}
-          </span>}
+          </span>
+        )}
         valueKey="culture"
         source={languages}
         value={values.culture}
@@ -107,5 +108,6 @@ export const UserPreferencesForm = ({
       />
     </div>
   </form>
+)
 
 export default enhance(UserPreferencesForm)

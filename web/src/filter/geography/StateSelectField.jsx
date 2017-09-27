@@ -84,9 +84,9 @@ export class StateSelectField extends PureComponent {
         onChange={this.handleSelectFieldChange}
       >
         {allItemText && <MenuItem value="all" primaryText={allItemText} />}
-        {getSelectedCountryStates(this.props).map(s =>
+        {getSelectedCountryStates(this.props).map(s => (
           <MenuItem key={s.id} value={s.id} primaryText={s.name} />
-        )}
+        ))}
       </ForkedSelectField>
     )
   }

@@ -46,17 +46,19 @@ export default class PageableSelectField extends PureComponent {
     return (
       <SelectField {...restProps} onChange={this.handleChange}>
         {children}
-        {isLoadingMore
-          ? <MenuItem
-              key={VALUE_LOADING_MORE}
-              value={VALUE_LOADING_MORE}
-              primaryText={loadingMoreText}
-            />
-          : <MenuItem
-              key={VALUE_LOAD_MORE}
-              value={VALUE_LOAD_MORE}
-              primaryText={loadMoreText}
-            />}
+        {isLoadingMore ? (
+          <MenuItem
+            key={VALUE_LOADING_MORE}
+            value={VALUE_LOADING_MORE}
+            primaryText={loadingMoreText}
+          />
+        ) : (
+          <MenuItem
+            key={VALUE_LOAD_MORE}
+            value={VALUE_LOAD_MORE}
+            primaryText={loadMoreText}
+          />
+        )}
       </SelectField>
     )
   }

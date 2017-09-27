@@ -207,13 +207,11 @@ export class ResetPassword extends PureComponent {
                       </StepLabel>
                     </Step>
                     <Step>
-                      <StepLabel>
-                        {formatMessage(messages.finish)}
-                      </StepLabel>
+                      <StepLabel>{formatMessage(messages.finish)}</StepLabel>
                     </Step>
                   </Stepper>
                   {resettingPassword && <LinearProgress />}
-                  {stepIndex === 0 &&
+                  {stepIndex === 0 && (
                     <ResetPasswordEnterEmail
                       intl={intl}
                       action={
@@ -227,8 +225,9 @@ export class ResetPassword extends PureComponent {
                       }
                       onSubmit={this.createResetPasswordToken}
                       onShowAdminHelpDialog={this.showAdminHelpDialog}
-                    />}
-                  {stepIndex === 1 &&
+                    />
+                  )}
+                  {stepIndex === 1 && (
                     <div className={styles.Form}>
                       <FormattedHTMLMessage
                         {...messages.checkEmailContent}
@@ -240,8 +239,9 @@ export class ResetPassword extends PureComponent {
                       >
                         {formatMessage(messages.iDidntReceiveAnEmail)}
                       </a>
-                    </div>}
-                  {stepIndex === 2 &&
+                    </div>
+                  )}
+                  {stepIndex === 2 && (
                     <div>
                       <ResetPasswordEnterPassword
                         intl={intl}
@@ -260,8 +260,9 @@ export class ResetPassword extends PureComponent {
                       <br />
                       <br />
                       <br />
-                    </div>}
-                  {stepIndex === 3 &&
+                    </div>
+                  )}
+                  {stepIndex === 3 && (
                     <div className={styles.Form}>
                       <FormattedHTMLMessage {...messages.finishContent} />
                       <div className={styles.Form__ActionRow}>
@@ -274,7 +275,8 @@ export class ResetPassword extends PureComponent {
                           />
                         </Link>
                       </div>
-                    </div>}
+                    </div>
+                  )}
                 </Hidden>
                 <Hidden md lg xl>
                   {resettingPassword && <LinearProgress />}
@@ -340,9 +342,7 @@ export class ResetPassword extends PureComponent {
                       </StepContent>
                     </Step>
                     <Step>
-                      <StepLabel>
-                        {formatMessage(messages.finish)}
-                      </StepLabel>
+                      <StepLabel>{formatMessage(messages.finish)}</StepLabel>
                       <StepContent>
                         <div className={styles.Form}>
                           <FormattedHTMLMessage {...messages.finishContent} />

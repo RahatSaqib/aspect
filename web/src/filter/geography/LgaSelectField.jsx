@@ -92,9 +92,9 @@ export class LgaSelectField extends PureComponent {
         onChange={this.handleSelectFieldChange}
       >
         {allItemText && <MenuItem value="all" primaryText={allItemText} />}
-        {lgas.items.map(l =>
+        {lgas.items.map(l => (
           <MenuItem key={l.id} value={l.id} primaryText={l.name} />
-        )}
+        ))}
       </ForkedSelectField>
     )
   }

@@ -26,7 +26,8 @@ export class ScrollToTopOnUpdate extends PureComponent {
   }
 }
 
-export const intlScrollToTopOnUpdateFactory = render => delegate =>
+export const intlScrollToTopOnUpdateFactory = render => delegate => (
   <ScrollToTopOnUpdate render={render} delegate={delegate} />
+)
 
 export default intlScrollToTopOnUpdateFactory

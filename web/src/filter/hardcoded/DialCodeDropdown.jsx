@@ -25,17 +25,16 @@ const template = ({
   dial_code: dialCode,
   iso_alpha2_code: countryIsoAlpha2Code,
   country_name: countryName,
-}) =>
+}) => (
   <span>
     <FlagIcon withRightMargin countryIsoAlpha2Code={countryIsoAlpha2Code} />
-    <span className={cssClasses('Item--hidden')}>
-      {countryName} (
-    </span>
+    <span className={cssClasses('Item--hidden')}>{countryName} (</span>
     {dialCode}
     <span className={cssClasses('Item--hidden')}>)</span>
   </span>
+)
 
-export const DialCodeDropdown = props =>
+export const DialCodeDropdown = props => (
   <Dropdown
     {...props}
     template={template}
@@ -49,5 +48,6 @@ export const DialCodeDropdown = props =>
       ),
     }}
   />
+)
 
 export default enhance(DialCodeDropdown)

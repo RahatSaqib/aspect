@@ -328,7 +328,7 @@ export const FiltersPanel = ({
   onDateChange,
   onWorkflowStatusIdChange,
   onDeviceStatusIdChange,
-}) =>
+}) => (
   <div className={cssClasses('Container', className)}>
     <Button
       className={cssClasses('Button')}
@@ -392,7 +392,7 @@ export const FiltersPanel = ({
           return aboutToFillHorizontally || canFillInVertically
         }}
       >
-        {config.geography &&
+        {config.geography && (
           <div className={cssClasses('Control')}>
             <CountrySelectField
               allItemText={intl.formatMessage(messages.all)}
@@ -403,38 +403,41 @@ export const FiltersPanel = ({
               floatingLabelText={intl.formatMessage(messages.country)}
               style={{ verticalAlign: 'bottom' }}
             />
-          </div>}
+          </div>
+        )}
+        {config.geography &&
+          config.state && (
+            <div className={cssClasses('Control')}>
+              <StateSelectField
+                allItemText={intl.formatMessage(messages.all)}
+                onStateIdChange={onStateIdChange}
+                countryId={filters.countryId}
+                stateId={filters.stateId}
+                floatingLabelFixed
+                hintText={intl.formatMessage(messages.selectState)}
+                floatingLabelText={intl.formatMessage(messages.state)}
+                style={{ verticalAlign: 'bottom' }}
+              />
+            </div>
+          )}
         {config.geography &&
           config.state &&
-          <div className={cssClasses('Control')}>
-            <StateSelectField
-              allItemText={intl.formatMessage(messages.all)}
-              onStateIdChange={onStateIdChange}
-              countryId={filters.countryId}
-              stateId={filters.stateId}
-              floatingLabelFixed
-              hintText={intl.formatMessage(messages.selectState)}
-              floatingLabelText={intl.formatMessage(messages.state)}
-              style={{ verticalAlign: 'bottom' }}
-            />
-          </div>}
-        {config.geography &&
-          config.state &&
-          config.lga &&
-          <div className={cssClasses('Control')}>
-            <LgaSelectField
-              allItemText={intl.formatMessage(messages.all)}
-              onLgaIdChange={onLgaIdChange}
-              countryId={filters.countryId}
-              stateId={filters.stateId}
-              lgaId={filters.lgaId}
-              floatingLabelFixed
-              hintText={intl.formatMessage(messages.selectLga)}
-              floatingLabelText={intl.formatMessage(messages.lga)}
-              style={{ verticalAlign: 'bottom' }}
-            />
-          </div>}
-        {config.assayAndResultCategory &&
+          config.lga && (
+            <div className={cssClasses('Control')}>
+              <LgaSelectField
+                allItemText={intl.formatMessage(messages.all)}
+                onLgaIdChange={onLgaIdChange}
+                countryId={filters.countryId}
+                stateId={filters.stateId}
+                lgaId={filters.lgaId}
+                floatingLabelFixed
+                hintText={intl.formatMessage(messages.selectLga)}
+                floatingLabelText={intl.formatMessage(messages.lga)}
+                style={{ verticalAlign: 'bottom' }}
+              />
+            </div>
+          )}
+        {config.assayAndResultCategory && (
           <div className={cssClasses('Control')}>
             <AssaySelectField
               allItemText={intl.formatMessage(messages.all)}
@@ -445,8 +448,9 @@ export const FiltersPanel = ({
               floatingLabelText={intl.formatMessage(messages.assay)}
               style={{ verticalAlign: 'bottom' }}
             />
-          </div>}
-        {config.assayAndResultCategory &&
+          </div>
+        )}
+        {config.assayAndResultCategory && (
           <div className={cssClasses('Control')}>
             <ResultCategorySelectField
               allItemText={intl.formatMessage(messages.all)}
@@ -459,8 +463,9 @@ export const FiltersPanel = ({
               floatingLabelText={intl.formatMessage(messages.result)}
               style={{ verticalAlign: 'bottom' }}
             />
-          </div>}
-        {config.consumable &&
+          </div>
+        )}
+        {config.consumable && (
           <div className={cssClasses('Control')}>
             <ConsumableSelectField
               allItemText={intl.formatMessage(messages.all)}
@@ -472,8 +477,9 @@ export const FiltersPanel = ({
               style={{ verticalAlign: 'bottom' }}
               autoWidth
             />
-          </div>}
-        {config.partnerId &&
+          </div>
+        )}
+        {config.partnerId && (
           <div className={cssClasses('Control')}>
             <PartnerSelectField
               emptyId="-1"
@@ -486,8 +492,9 @@ export const FiltersPanel = ({
               style={{ verticalAlign: 'bottom' }}
               autoWidth
             />
-          </div>}
-        {config.patientOrResearchId &&
+          </div>
+        )}
+        {config.patientOrResearchId && (
           <div className={cssClasses('Control')}>
             <FocusBlurTextField
               name="patientOrResearchId"
@@ -499,8 +506,9 @@ export const FiltersPanel = ({
                 messages.patientOrResearchId
               )}
             />
-          </div>}
-        {config.sampleId &&
+          </div>
+        )}
+        {config.sampleId && (
           <div className={cssClasses('Control')}>
             <FocusBlurTextField
               name="sampleId"
@@ -510,8 +518,9 @@ export const FiltersPanel = ({
               hintText={intl.formatMessage(messages.enterSampleId)}
               floatingLabelText={intl.formatMessage(messages.sampleId)}
             />
-          </div>}
-        {config.sampleGroup &&
+          </div>
+        )}
+        {config.sampleGroup && (
           <div className={cssClasses('Control')}>
             <FocusBlurTextField
               name="sampleGroup"
@@ -521,8 +530,9 @@ export const FiltersPanel = ({
               hintText={intl.formatMessage(messages.enterSampleGroup)}
               floatingLabelText={intl.formatMessage(messages.sampleGroup)}
             />
-          </div>}
-        {config.deviceName &&
+          </div>
+        )}
+        {config.deviceName && (
           <div className={cssClasses('Control')}>
             <FocusBlurTextField
               name="deviceName"
@@ -532,8 +542,9 @@ export const FiltersPanel = ({
               hintText={intl.formatMessage(messages.enterDeviceName)}
               floatingLabelText={intl.formatMessage(messages.deviceName)}
             />
-          </div>}
-        {config.siteName &&
+          </div>
+        )}
+        {config.siteName && (
           <div className={cssClasses('Control')}>
             <SiteAutoCompleteField
               name="siteName"
@@ -543,8 +554,9 @@ export const FiltersPanel = ({
               hintText={intl.formatMessage(messages.enterSiteName)}
               floatingLabelText={intl.formatMessage(messages.site)}
             />
-          </div>}
-        {config.sampleOriginSite &&
+          </div>
+        )}
+        {config.sampleOriginSite && (
           <div className={cssClasses('Control')}>
             <SiteAutoCompleteField
               name="sampleOriginSite"
@@ -554,8 +566,9 @@ export const FiltersPanel = ({
               hintText={intl.formatMessage(messages.enterSampleOriginSite)}
               floatingLabelText={intl.formatMessage(messages.sampleOriginSite)}
             />
-          </div>}
-        {config.contactNameOrEmail &&
+          </div>
+        )}
+        {config.contactNameOrEmail && (
           <div className={cssClasses('Control')}>
             <FocusBlurTextField
               name="contactNameOrEmail"
@@ -565,8 +578,9 @@ export const FiltersPanel = ({
               hintText={intl.formatMessage(messages.setContactNameEmail)}
               floatingLabelText={intl.formatMessage(messages.contactNameEmail)}
             />
-          </div>}
-        {config.externalId &&
+          </div>
+        )}
+        {config.externalId && (
           <div className={cssClasses('Control')}>
             <FocusBlurTextField
               name="externalId"
@@ -576,8 +590,9 @@ export const FiltersPanel = ({
               hintText={intl.formatMessage(messages.enterExternalId)}
               floatingLabelText={intl.formatMessage(messages.externalId)}
             />
-          </div>}
-        {config.workflowStatus &&
+          </div>
+        )}
+        {config.workflowStatus && (
           <div className={cssClasses('Control')}>
             <ResultWorkflowStatusSelectField
               allItemText={intl.formatMessage(messages.all)}
@@ -589,8 +604,9 @@ export const FiltersPanel = ({
               style={{ verticalAlign: 'bottom' }}
               autoWidth
             />
-          </div>}
-        {config.deviceStatus &&
+          </div>
+        )}
+        {config.deviceStatus && (
           <div className={cssClasses('Control')}>
             <DeviceStatusSelectField
               allItemText={intl.formatMessage(messages.all)}
@@ -602,8 +618,9 @@ export const FiltersPanel = ({
               style={{ verticalAlign: 'bottom' }}
               autoWidth
             />
-          </div>}
-        {config.date &&
+          </div>
+        )}
+        {config.date && (
           <DateRangeSelector
             floatingLabelText={
               dateFilterLabel || intl.formatMessage(messages.date)
@@ -614,9 +631,11 @@ export const FiltersPanel = ({
             minDate={filters.minDate}
             maxDate={filters.maxDate}
             autoOk
-          />}
+          />
+        )}
       </FallbackUntilDone>
     </div>
   </div>
+)
 
 export default enhance(FiltersPanel)

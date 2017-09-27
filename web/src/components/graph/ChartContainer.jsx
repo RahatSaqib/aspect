@@ -6,20 +6,20 @@ import styles from './ChartContainer.css'
 
 const cssClasses = classnames.bind(styles)
 
-const ChartContainer = props =>
+const ChartContainer = props => (
   <div className={cssClasses(props.className, 'graph')}>
-    {!props.bottomTitle &&
-      <h1 className={cssClasses('title')}>
-        {props.title}
-      </h1>}
+    {!props.bottomTitle && (
+      <h1 className={cssClasses('title')}>{props.title}</h1>
+    )}
     {props.children}
-    {props.bottomTitle &&
-      <h1 className={cssClasses('title')}>
-        {props.title}
-      </h1>}
-    {props.alertMsg &&
-      <Alert status={props.alert} statusString={props.alertMsg} />}
+    {props.bottomTitle && (
+      <h1 className={cssClasses('title')}>{props.title}</h1>
+    )}
+    {props.alertMsg && (
+      <Alert status={props.alert} statusString={props.alertMsg} />
+    )}
   </div>
+)
 
 ChartContainer.propTypes = {
   className: PropTypes.string,

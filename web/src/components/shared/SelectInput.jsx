@@ -97,7 +97,7 @@ const renderFormField = props => {
       }}
       component={renderSelectField}
     >
-      {selectItems.map(item =>
+      {selectItems.map(item => (
         <MenuItem
           key={item.key}
           value={item.value}
@@ -109,7 +109,7 @@ const renderFormField = props => {
             />
           }
         />
-      )}
+      ))}
     </Field>
   )
 }

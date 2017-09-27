@@ -68,14 +68,15 @@ export const DeviceDetailModalForm = props => {
   const { form, meta, values, labels } = props
 
   const actions = [
-    props.onCancel &&
+    props.onCancel && (
       <FlatButton
         onClick={props.onCancel}
         type="button"
         label={labels.cancel}
         primary
         style={{ marginRight: 10 }}
-      />,
+      />
+    ),
     <FlatButton
       disabled={form.pristine || !form.valid || form.submitting}
       onClick={props.handleSubmit}
@@ -148,7 +149,7 @@ export const DeviceDetailModalForm = props => {
         </div>
         <JSONSchemaCard
           title={labels.configuration}
-          renderField={field =>
+          renderField={field => (
             <TextField
               name={field.key}
               floatingLabelText={field.label}
@@ -159,7 +160,8 @@ export const DeviceDetailModalForm = props => {
                   values.configurationData.setIn(field.path, event.target.value)
                 )}
               fullWidth
-            />}
+            />
+          )}
           formatNestedSubtitle={props.formatNestedSubtitle}
           dataSchema={props.configurationDataSchema}
           data={values.configurationData}

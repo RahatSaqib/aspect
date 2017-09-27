@@ -43,7 +43,7 @@ const CountryWithPoints = ({
           [margin.left, margin.top],
           [clientWidth - margin.right, clientHeight - margin.bottom],
         ]}
-        projectionFunc={projection =>
+        projectionFunc={projection => (
           <Group>
             {points.map(point => {
               const [left, top] = projection([point.longitude, point.latitude])
@@ -63,7 +63,8 @@ const CountryWithPoints = ({
                 />
               )
             })}
-          </Group>}
+          </Group>
+        )}
         fill={fill}
         stroke={_.constant('#ffffff')}
       />

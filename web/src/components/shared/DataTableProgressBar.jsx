@@ -14,11 +14,12 @@ const themes = {
   },
 }
 
-const DataTableProgressBar = ({ disabled }) =>
+const DataTableProgressBar = ({ disabled }) => (
   <DelayShowingProgressBar
     disabled={disabled}
     mode="indeterminate"
     theme={themes.DelayShowingProgressBar}
   />
+)
 
 export default enhance(DataTableProgressBar)

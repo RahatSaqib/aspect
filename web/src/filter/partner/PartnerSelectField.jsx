@@ -74,9 +74,9 @@ export function PartnerSelectField({
       onChange={onChangePartner}
       disabled={disabled || _fp.isEmpty(partnerList)}
     >
-      {partnerList.map(p =>
+      {partnerList.map(p => (
         <MenuItem key={p.value} value={p.value} primaryText={p.text} />
-      )}
+      ))}
     </ForkedSelectField>
   )
 }

@@ -9,7 +9,7 @@ const cssClasses = classnames.bind(
 
 const enhance = _.identity
 
-const RouterTableRow = ({ intl, router, ...restProps }) =>
+const RouterTableRow = ({ intl, router, ...restProps }) => (
   <TableRow
     {...restProps}
     className={cssClasses(restProps.className, 'TableRow')}
@@ -27,5 +27,6 @@ const RouterTableRow = ({ intl, router, ...restProps }) =>
       {intl.formatRelative(router.get('lastSeen'))}
     </TableCell>
   </TableRow>
+)
 
 export default enhance(RouterTableRow)

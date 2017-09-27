@@ -15,8 +15,9 @@ const themes = {
   },
 }
 
-export const makeThemedLink = props =>
+export const makeThemedLink = props => (
   <Link {...props} key={props.href} title={props.label} theme={themes.Link} />
+)
 
 const enhance = _.identity
 
@@ -27,7 +28,7 @@ const LinkNavigation = ({
   type,
   onClick,
   children,
-}) =>
+}) => (
   <Navigation
     type={type}
     className={cssClasses('Navigation', {
@@ -53,5 +54,6 @@ const LinkNavigation = ({
     )}
     {children}
   </Navigation>
+)
 
 export default enhance(LinkNavigation)

@@ -111,7 +111,7 @@ class BarChart extends Component {
           return (
             <Group left={margin.left} key={d.name}>
               {bars}
-              {!this.props.hideAxes &&
+              {!this.props.hideAxes && (
                 <AxisLeft
                   scale={yScale}
                   stroke={'#1b1a1e'}
@@ -128,20 +128,22 @@ class BarChart extends Component {
                       fontFamily="arial"
                     />
                   }
-                />}
-              {(!this.props.hideAxes || this.props.xOnly) &&
-                <AxisBottom
-                  scale={xScale}
-                  top={yMax}
-                  hideTicks
-                  tickLabelComponent={
-                    <text
-                      textAnchor="middle"
-                      fontSize={labelSize}
-                      fill="black"
-                    />
-                  }
-                />}
+                />
+              )}
+              {(!this.props.hideAxes || this.props.xOnly) && (
+                  <AxisBottom
+                    scale={xScale}
+                    top={yMax}
+                    hideTicks
+                    tickLabelComponent={
+                      <text
+                        textAnchor="middle"
+                        fontSize={labelSize}
+                        fill="black"
+                      />
+                    }
+                  />
+                )}
             </Group>
           )
         })}

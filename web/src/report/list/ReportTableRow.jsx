@@ -9,7 +9,7 @@ const cssClasses = classnames.bind(
 
 const enhance = _.identity
 
-const ReportTableRow = ({ intl, report, ...restProps }) =>
+const ReportTableRow = ({ intl, report, ...restProps }) => (
   <TableRow
     {...restProps}
     className={cssClasses(restProps.className, 'TableRow')}
@@ -33,5 +33,6 @@ const ReportTableRow = ({ intl, report, ...restProps }) =>
       {report.get('totalErrors')}
     </TableCell>
   </TableRow>
+)
 
 export default enhance(ReportTableRow)

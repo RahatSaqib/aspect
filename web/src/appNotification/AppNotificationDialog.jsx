@@ -157,30 +157,36 @@ export class AppNotificationDialog extends PureComponent {
         open={hasNotification && showDetails}
         onRequestClose={this.handleClose}
       >
-        {notificationOptions.severity &&
+        {notificationOptions.severity && (
           <div
             className={
               styles.AppNotificationDialogDialog__SeverityIconContainer
             }
           >
-            {notificationOptions.severity === 'info' &&
-              <InfoIcon style={iconStyle} color={lightBlue600} />}
-            {notificationOptions.severity === 'warn' &&
-              <WarningIcon style={iconStyle} color={orange500} />}
-            {notificationOptions.severity === 'error' &&
-              <ErrorIcon style={iconStyle} color={red800} />}
-          </div>}
+            {notificationOptions.severity === 'info' && (
+              <InfoIcon style={iconStyle} color={lightBlue600} />
+            )}
+            {notificationOptions.severity === 'warn' && (
+              <WarningIcon style={iconStyle} color={orange500} />
+            )}
+            {notificationOptions.severity === 'error' && (
+              <ErrorIcon style={iconStyle} color={red800} />
+            )}
+          </div>
+        )}
         <div className={styles.AppNotificationDialogDialog__ContentContainer}>
-          {message &&
+          {message && (
             <p>
               <strong>
                 <FormattedMessage {...message} values={messageValues} />
               </strong>
-            </p>}
-          {resolution &&
+            </p>
+          )}
+          {resolution && (
             <p>
               <FormattedMessage {...resolution} values={messageValues} />
-            </p>}
+            </p>
+          )}
         </div>
       </Dialog>
     )

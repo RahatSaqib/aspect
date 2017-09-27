@@ -40,9 +40,7 @@ export const IdleDialog = ({ intl, idleStatus }) => {
       modal
       open={idleStatus === 'IDLESTATUS_INACTIVE'}
     >
-      <span>
-        {formatMessage(messages.help)}
-      </span>
+      <span>{formatMessage(messages.help)}</span>
     </Dialog>
   )
 }

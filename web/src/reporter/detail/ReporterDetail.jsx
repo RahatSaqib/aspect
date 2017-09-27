@@ -305,14 +305,10 @@ export class ReporterDetail extends PureComponent {
               <ReadOnlyField
                 label=""
                 value={reporter.get('name')}
-                format={v =>
+                format={v => (
                   <div>
                     <h1 className={styles.Name}>
-                      {v}{' '}
-                      {shortname &&
-                        <small>
-                          ({shortname})
-                        </small>}
+                      {v} {shortname && <small>({shortname})</small>}
                     </h1>
                     <div className={styles.StatusText}>
                       <Link
@@ -338,7 +334,8 @@ export class ReporterDetail extends PureComponent {
                         {formatMessage(messages.fieldTotalNumberOfTests)}
                       </Link>
                     </div>
-                  </div>}
+                  </div>
+                )}
               />
             </Unit>
             <Unit sm="1-6" md="1-12">
@@ -355,12 +352,13 @@ export class ReporterDetail extends PureComponent {
               <ReadOnlyField
                 label=""
                 value
-                format={() =>
+                format={() => (
                   <img
                     alt="utilization rate"
                     src={require('../../device/detail/utilization_rate.png')}
                     style={{ width: '100%' }}
-                  />}
+                  />
+                )}
               />
             </Unit>
             <Unit sm="1-1" md="1-2">
@@ -368,12 +366,13 @@ export class ReporterDetail extends PureComponent {
               <ReadOnlyField
                 label=""
                 value
-                format={() =>
+                format={() => (
                   <img
                     alt="error rate"
                     src={require('../../device/detail/error_rates.png')}
                     style={{ width: '100%' }}
-                  />}
+                  />
+                )}
               />
             </Unit>
           </CardText>

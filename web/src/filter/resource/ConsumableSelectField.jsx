@@ -52,13 +52,13 @@ export class ConsumableSelectField extends PureComponent {
     return (
       <SelectField {...restProps} value={value} onChange={this.handleChange}>
         {allItemText && <MenuItem value="all" primaryText={allItemText} />}
-        {consumableItems.map(c =>
+        {consumableItems.map(c => (
           <MenuItem
             key={c.get('id')}
             value={c.get('id')}
             primaryText={c.get('name')}
           />
-        )}
+        ))}
       </SelectField>
     )
   }

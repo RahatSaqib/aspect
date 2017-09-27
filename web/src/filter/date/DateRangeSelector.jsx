@@ -533,13 +533,13 @@ export class DateRangeSelector extends PureComponent {
                     autoWidth
                     onChange={this.handleDateRangeChange}
                   >
-                    {dropDownSelectItems.map(dropDownSelectItem =>
+                    {dropDownSelectItems.map(dropDownSelectItem => (
                       <MenuItem
                         key={dropDownSelectItem.minDate}
                         value={dropDownSelectItem}
                         primaryText={dropDownSelectItem.label}
                       />
-                    )}
+                    ))}
                   </ForkedSelectField>
                 </div>
               )

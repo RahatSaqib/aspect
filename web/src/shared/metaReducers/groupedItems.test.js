@@ -709,7 +709,10 @@ describe('Grouped Items Reducer', () => {
         nestedData
       )
       expect(
-        newState.getIn(['byId', 76, 'visibleProperties']).toJS().sort()
+        newState
+          .getIn(['byId', 76, 'visibleProperties'])
+          .toJS()
+          .sort()
       ).toEqual([
         'consumableId',
         'consumableName',
@@ -728,7 +731,10 @@ describe('Grouped Items Reducer', () => {
         'unitShortName',
       ])
       expect(
-        newState.getIn(['byId', 75, 'visibleProperties']).toJS().sort()
+        newState
+          .getIn(['byId', 75, 'visibleProperties'])
+          .toJS()
+          .sort()
       ).toEqual([
         'consumableId',
         'consumableName',
@@ -739,10 +745,16 @@ describe('Grouped Items Reducer', () => {
         'unitShortName',
       ])
       expect(
-        newState.getIn(['byId', 79, 'visibleProperties']).toJS().sort()
+        newState
+          .getIn(['byId', 79, 'visibleProperties'])
+          .toJS()
+          .sort()
       ).toEqual(['expiresOn', 'id', 'quantityOnHand'])
       expect(
-        newState.getIn(['byId', 78, 'visibleProperties']).toJS().sort()
+        newState
+          .getIn(['byId', 78, 'visibleProperties'])
+          .toJS()
+          .sort()
       ).toEqual([
         'consumableId',
         'consumableName',
@@ -761,7 +773,10 @@ describe('Grouped Items Reducer', () => {
         'unitShortName',
       ])
       expect(
-        newState.getIn(['byId', 77, 'visibleProperties']).toJS().sort()
+        newState
+          .getIn(['byId', 77, 'visibleProperties'])
+          .toJS()
+          .sort()
       ).toEqual([
         'consumableId',
         'consumableName',
@@ -772,29 +787,10 @@ describe('Grouped Items Reducer', () => {
         'unitShortName',
       ])
       expect(
-        newState.getIn(['byId', 63, 'visibleProperties']).toJS().sort()
-      ).toEqual([
-        'consumableId',
-        'consumableName',
-        'countryId',
-        'countryName',
-        'expiresOn',
-        'id',
-        'lgaId',
-        'lgaName',
-        'manufacturer',
-        'quantityOnHand',
-        'siteId',
-        'siteName',
-        'stateId',
-        'stateName',
-        'unitShortName',
-      ])
-      expect(
-        newState.getIn(['byId', 61, 'visibleProperties']).toJS().sort()
-      ).toEqual(['expiresOn', 'id', 'quantityOnHand'])
-      expect(
-        newState.getIn(['byId', 44, 'visibleProperties']).toJS().sort()
+        newState
+          .getIn(['byId', 63, 'visibleProperties'])
+          .toJS()
+          .sort()
       ).toEqual([
         'consumableId',
         'consumableName',
@@ -813,27 +809,16 @@ describe('Grouped Items Reducer', () => {
         'unitShortName',
       ])
       expect(
-        newState.getIn(['byId', 45, 'visibleProperties']).toJS().sort()
+        newState
+          .getIn(['byId', 61, 'visibleProperties'])
+          .toJS()
+          .sort()
       ).toEqual(['expiresOn', 'id', 'quantityOnHand'])
       expect(
-        newState.getIn(['byId', 43, 'visibleProperties']).toJS().sort()
-      ).toEqual([
-        'consumableId',
-        'consumableName',
-        'expiresOn',
-        'id',
-        'manufacturer',
-        'quantityOnHand',
-        'unitShortName',
-      ])
-      expect(
-        newState.getIn(['byId', 46, 'visibleProperties']).toJS().sort()
-      ).toEqual(['expiresOn', 'id', 'quantityOnHand'])
-      expect(
-        newState.getIn(['byId', 47, 'visibleProperties']).toJS().sort()
-      ).toEqual(['expiresOn', 'id', 'quantityOnHand'])
-      expect(
-        newState.getIn(['byId', 35, 'visibleProperties']).toJS().sort()
+        newState
+          .getIn(['byId', 44, 'visibleProperties'])
+          .toJS()
+          .sort()
       ).toEqual([
         'consumableId',
         'consumableName',
@@ -852,10 +837,16 @@ describe('Grouped Items Reducer', () => {
         'unitShortName',
       ])
       expect(
-        newState.getIn(['byId', 36, 'visibleProperties']).toJS().sort()
+        newState
+          .getIn(['byId', 45, 'visibleProperties'])
+          .toJS()
+          .sort()
       ).toEqual(['expiresOn', 'id', 'quantityOnHand'])
       expect(
-        newState.getIn(['byId', 39, 'visibleProperties']).toJS().sort()
+        newState
+          .getIn(['byId', 43, 'visibleProperties'])
+          .toJS()
+          .sort()
       ).toEqual([
         'consumableId',
         'consumableName',
@@ -866,10 +857,70 @@ describe('Grouped Items Reducer', () => {
         'unitShortName',
       ])
       expect(
-        newState.getIn(['byId', 38, 'visibleProperties']).toJS().sort()
+        newState
+          .getIn(['byId', 46, 'visibleProperties'])
+          .toJS()
+          .sort()
       ).toEqual(['expiresOn', 'id', 'quantityOnHand'])
       expect(
-        newState.getIn(['byId', 37, 'visibleProperties']).toJS().sort()
+        newState
+          .getIn(['byId', 47, 'visibleProperties'])
+          .toJS()
+          .sort()
+      ).toEqual(['expiresOn', 'id', 'quantityOnHand'])
+      expect(
+        newState
+          .getIn(['byId', 35, 'visibleProperties'])
+          .toJS()
+          .sort()
+      ).toEqual([
+        'consumableId',
+        'consumableName',
+        'countryId',
+        'countryName',
+        'expiresOn',
+        'id',
+        'lgaId',
+        'lgaName',
+        'manufacturer',
+        'quantityOnHand',
+        'siteId',
+        'siteName',
+        'stateId',
+        'stateName',
+        'unitShortName',
+      ])
+      expect(
+        newState
+          .getIn(['byId', 36, 'visibleProperties'])
+          .toJS()
+          .sort()
+      ).toEqual(['expiresOn', 'id', 'quantityOnHand'])
+      expect(
+        newState
+          .getIn(['byId', 39, 'visibleProperties'])
+          .toJS()
+          .sort()
+      ).toEqual([
+        'consumableId',
+        'consumableName',
+        'expiresOn',
+        'id',
+        'manufacturer',
+        'quantityOnHand',
+        'unitShortName',
+      ])
+      expect(
+        newState
+          .getIn(['byId', 38, 'visibleProperties'])
+          .toJS()
+          .sort()
+      ).toEqual(['expiresOn', 'id', 'quantityOnHand'])
+      expect(
+        newState
+          .getIn(['byId', 37, 'visibleProperties'])
+          .toJS()
+          .sort()
       ).toEqual([
         'consumableId',
         'consumableName',
@@ -929,10 +980,16 @@ describe('Grouped Items Reducer', () => {
       )
 
       expect(
-        newState.getIn(['byId', 75, 'visibleProperties']).toJS().sort()
+        newState
+          .getIn(['byId', 75, 'visibleProperties'])
+          .toJS()
+          .sort()
       ).toEqual(['expiresOn', 'id', 'quantityOnHand'])
       expect(
-        newState.getIn(['byId', 79, 'visibleProperties']).toJS().sort()
+        newState
+          .getIn(['byId', 79, 'visibleProperties'])
+          .toJS()
+          .sort()
       ).toEqual([
         'consumableId',
         'consumableName',
@@ -943,32 +1000,16 @@ describe('Grouped Items Reducer', () => {
         'unitShortName',
       ])
       expect(
-        newState.getIn(['byId', 63, 'visibleProperties']).toJS().sort()
+        newState
+          .getIn(['byId', 63, 'visibleProperties'])
+          .toJS()
+          .sort()
       ).toEqual(['expiresOn', 'id', 'quantityOnHand'])
       expect(
-        newState.getIn(['byId', 61, 'visibleProperties']).toJS().sort()
-      ).toEqual([
-        'consumableId',
-        'consumableName',
-        'countryId',
-        'countryName',
-        'expiresOn',
-        'id',
-        'lgaId',
-        'lgaName',
-        'manufacturer',
-        'quantityOnHand',
-        'siteId',
-        'siteName',
-        'stateId',
-        'stateName',
-        'unitShortName',
-      ])
-      expect(
-        newState.getIn(['byId', 44, 'visibleProperties']).toJS().sort()
-      ).toEqual(['expiresOn', 'id', 'quantityOnHand'])
-      expect(
-        newState.getIn(['byId', 45, 'visibleProperties']).toJS().sort()
+        newState
+          .getIn(['byId', 61, 'visibleProperties'])
+          .toJS()
+          .sort()
       ).toEqual([
         'consumableId',
         'consumableName',
@@ -987,10 +1028,16 @@ describe('Grouped Items Reducer', () => {
         'unitShortName',
       ])
       expect(
-        newState.getIn(['byId', 35, 'visibleProperties']).toJS().sort()
+        newState
+          .getIn(['byId', 44, 'visibleProperties'])
+          .toJS()
+          .sort()
       ).toEqual(['expiresOn', 'id', 'quantityOnHand'])
       expect(
-        newState.getIn(['byId', 36, 'visibleProperties']).toJS().sort()
+        newState
+          .getIn(['byId', 45, 'visibleProperties'])
+          .toJS()
+          .sort()
       ).toEqual([
         'consumableId',
         'consumableName',
@@ -1009,10 +1056,44 @@ describe('Grouped Items Reducer', () => {
         'unitShortName',
       ])
       expect(
-        newState.getIn(['byId', 39, 'visibleProperties']).toJS().sort()
+        newState
+          .getIn(['byId', 35, 'visibleProperties'])
+          .toJS()
+          .sort()
       ).toEqual(['expiresOn', 'id', 'quantityOnHand'])
       expect(
-        newState.getIn(['byId', 38, 'visibleProperties']).toJS().sort()
+        newState
+          .getIn(['byId', 36, 'visibleProperties'])
+          .toJS()
+          .sort()
+      ).toEqual([
+        'consumableId',
+        'consumableName',
+        'countryId',
+        'countryName',
+        'expiresOn',
+        'id',
+        'lgaId',
+        'lgaName',
+        'manufacturer',
+        'quantityOnHand',
+        'siteId',
+        'siteName',
+        'stateId',
+        'stateName',
+        'unitShortName',
+      ])
+      expect(
+        newState
+          .getIn(['byId', 39, 'visibleProperties'])
+          .toJS()
+          .sort()
+      ).toEqual(['expiresOn', 'id', 'quantityOnHand'])
+      expect(
+        newState
+          .getIn(['byId', 38, 'visibleProperties'])
+          .toJS()
+          .sort()
       ).toEqual([
         'consumableId',
         'consumableName',
@@ -1549,25 +1630,46 @@ describe('Grouped Items Reducer', () => {
       const newState = receiveList(initialState, [], flatData)
       const allProperties = Object.keys(flatData[0])
       expect(
-        newState.getIn(['byId', 76, 'visibleProperties']).toJS().sort()
+        newState
+          .getIn(['byId', 76, 'visibleProperties'])
+          .toJS()
+          .sort()
       ).toEqual(allProperties.sort())
       expect(
-        newState.getIn(['byId', 75, 'visibleProperties']).toJS().sort()
+        newState
+          .getIn(['byId', 75, 'visibleProperties'])
+          .toJS()
+          .sort()
       ).toEqual(allProperties.sort())
       expect(
-        newState.getIn(['byId', 79, 'visibleProperties']).toJS().sort()
+        newState
+          .getIn(['byId', 79, 'visibleProperties'])
+          .toJS()
+          .sort()
       ).toEqual(allProperties.sort())
       expect(
-        newState.getIn(['byId', 78, 'visibleProperties']).toJS().sort()
+        newState
+          .getIn(['byId', 78, 'visibleProperties'])
+          .toJS()
+          .sort()
       ).toEqual(allProperties.sort())
       expect(
-        newState.getIn(['byId', 77, 'visibleProperties']).toJS().sort()
+        newState
+          .getIn(['byId', 77, 'visibleProperties'])
+          .toJS()
+          .sort()
       ).toEqual(allProperties.sort())
       expect(
-        newState.getIn(['byId', 63, 'visibleProperties']).toJS().sort()
+        newState
+          .getIn(['byId', 63, 'visibleProperties'])
+          .toJS()
+          .sort()
       ).toEqual(allProperties.sort())
       expect(
-        newState.getIn(['byId', 61, 'visibleProperties']).toJS().sort()
+        newState
+          .getIn(['byId', 61, 'visibleProperties'])
+          .toJS()
+          .sort()
       ).toEqual(allProperties.sort())
     })
 

@@ -18,7 +18,7 @@ const themes = {
   },
 }
 
-const NotificationDeliveryTableRow = ({ intl, delivery, ...restProps }) =>
+const NotificationDeliveryTableRow = ({ intl, delivery, ...restProps }) => (
   <TableRow
     {...restProps}
     className={cssClasses(restProps.className, 'TableRow')}
@@ -37,18 +37,13 @@ const NotificationDeliveryTableRow = ({ intl, delivery, ...restProps }) =>
         theme={themes.Button}
       />
     </TableCell>
-    <TableCell className={cssClasses('TableCell')}>
-      {delivery.title}
-    </TableCell>
-    <TableCell className={cssClasses('TableCell')}>
-      {delivery.site}
-    </TableCell>
+    <TableCell className={cssClasses('TableCell')}>{delivery.title}</TableCell>
+    <TableCell className={cssClasses('TableCell')}>{delivery.site}</TableCell>
     <TableCell className={cssClasses('TableCell')}>
       {intl.formatRelative(delivery.time)}
     </TableCell>
-    <TableCell className={cssClasses('TableCell')}>
-      {'…'}
-    </TableCell>
+    <TableCell className={cssClasses('TableCell')}>{'…'}</TableCell>
   </TableRow>
+)
 
 export default enhance(NotificationDeliveryTableRow)

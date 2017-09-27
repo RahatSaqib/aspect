@@ -166,9 +166,7 @@ export class StrongPasswordInput extends React.PureComponent {
           useLayerForClickAway={false}
           {...popOverProps}
         >
-          <span style={strengthMessageStyle}>
-            {strengthMessage}
-          </span>
+          <span style={strengthMessageStyle}>{strengthMessage}</span>
           <LinearProgress
             mode="determinate"
             value={passwordStrengthScore}
@@ -177,9 +175,11 @@ export class StrongPasswordInput extends React.PureComponent {
           />
           <ul className={styles.List__Unstyled}>
             <li>
-              {passwordStrengthRules.minLength
-                ? <CheckIcon style={checkIconStyle} />
-                : <CloseIcon style={crossIconStyle} />}
+              {passwordStrengthRules.minLength ? (
+                <CheckIcon style={checkIconStyle} />
+              ) : (
+                <CloseIcon style={crossIconStyle} />
+              )}
               <span style={strengthRuleStyle}>
                 {formatMessage(messages.passwordStrengthMeterMinLength, {
                   minLength: 8,
@@ -187,17 +187,21 @@ export class StrongPasswordInput extends React.PureComponent {
               </span>
             </li>
             <li>
-              {passwordStrengthRules.containsNumber
-                ? <CheckIcon style={checkIconStyle} />
-                : <CloseIcon style={crossIconStyle} />}
+              {passwordStrengthRules.containsNumber ? (
+                <CheckIcon style={checkIconStyle} />
+              ) : (
+                <CloseIcon style={crossIconStyle} />
+              )}
               <span style={strengthRuleStyle}>
                 {formatMessage(messages.passwordStrengthMeterContainsNumber)}
               </span>
             </li>
             <li>
-              {passwordStrengthRules.mixUpperAndLowerCase
-                ? <CheckIcon style={checkIconStyle} />
-                : <CloseIcon style={crossIconStyle} />}
+              {passwordStrengthRules.mixUpperAndLowerCase ? (
+                <CheckIcon style={checkIconStyle} />
+              ) : (
+                <CloseIcon style={crossIconStyle} />
+              )}
               <span style={strengthRuleStyle}>
                 {formatMessage(
                   messages.passwordStrengthMeterMixUpperAndLowerCase
@@ -205,9 +209,11 @@ export class StrongPasswordInput extends React.PureComponent {
               </span>
             </li>
             <li>
-              {passwordStrengthRules.containSpecialCharacter
-                ? <CheckIcon style={checkIconStyle} />
-                : <CloseIcon style={crossIconStyle} />}
+              {passwordStrengthRules.containSpecialCharacter ? (
+                <CheckIcon style={checkIconStyle} />
+              ) : (
+                <CloseIcon style={crossIconStyle} />
+              )}
               <span style={strengthRuleStyle}>
                 {formatMessage(
                   messages.passwordStrengthMeterContainsSpecialCharacter

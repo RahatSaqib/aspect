@@ -187,7 +187,7 @@ export const InventoryAdjustmentDialogForm = ({
   onDateAdjustedChange,
   onNotesChange,
   handleSubmit,
-}) =>
+}) => (
   <Dialog
     actions={[
       { label: intl.formatMessage(messages.cancel), onClick: onCancel },
@@ -207,7 +207,7 @@ export const InventoryAdjustmentDialogForm = ({
     <form className={cssClasses('Form')}>
       <div className={cssClasses('Form__Content')}>
         <section>
-          {_.has(values, 'consumableId') &&
+          {_.has(values, 'consumableId') && (
             <ConsumableSelectField
               name="consumableId"
               floatingLabelText={intl.formatMessage(messages.consumable)}
@@ -218,7 +218,8 @@ export const InventoryAdjustmentDialogForm = ({
               errorText={meta.consumableId.touched && meta.consumableId.error}
               fullWidth
               // style={formFieldStyle}
-            />}
+            />
+          )}
         </section>
         <section>
           <Input
@@ -231,7 +232,7 @@ export const InventoryAdjustmentDialogForm = ({
             error={meta.lotNumber.touched && meta.lotNumber.error}
             maxLength={500}
           />
-          {values.canExpire &&
+          {values.canExpire && (
             <DatePicker
               name="expiresOn"
               label={intl.formatMessage(messages.expiryDate)}
@@ -243,10 +244,11 @@ export const InventoryAdjustmentDialogForm = ({
               onChange={onExpiresOnChange}
               value={values.expiresOn}
               sundayFirstDayOfWeek
-            />}
+            />
+          )}
         </section>
         <section>
-          {_.has(values, 'fromSiteId') &&
+          {_.has(values, 'fromSiteId') && (
             <SiteSelectField
               name="fromSiteId"
               floatingLabelText={intl.formatMessage(messages.fromSiteName)}
@@ -263,8 +265,9 @@ export const InventoryAdjustmentDialogForm = ({
               fullWidth
               tabIndex="0"
               aria-haspopup
-            />}
-          {_.has(values, 'toSiteId') &&
+            />
+          )}
+          {_.has(values, 'toSiteId') && (
             <SiteSelectField
               name="toSiteId"
               floatingLabelText={intl.formatMessage(messages.toSiteName)}
@@ -281,7 +284,8 @@ export const InventoryAdjustmentDialogForm = ({
               fullWidth
               tabIndex="0"
               aria-haspopup
-            />}
+            />
+          )}
         </section>
         <section>
           <Input
@@ -297,15 +301,11 @@ export const InventoryAdjustmentDialogForm = ({
             maxLength={500}
           />
           <p className={cssClasses('Field__quantity--status')}>
-            <span>
-              {consumable.get('unitShortName')}
-            </span>
-            <span>
-              {labels.nextQuantityStatus}
-            </span>
+            <span>{consumable.get('unitShortName')}</span>
+            <span>{labels.nextQuantityStatus}</span>
           </p>
         </section>
-        {_.has(values, 'reasonId') &&
+        {_.has(values, 'reasonId') && (
           <section>
             <ConsumableReasonSelectField
               intl={intl}
@@ -318,36 +318,38 @@ export const InventoryAdjustmentDialogForm = ({
               errorText={meta.reasonId.touched && meta.reasonId.error}
               fullWidth
             />
-          </section>}
+          </section>
+        )}
         {consumableReason &&
-          consumableReason.get('i18nKey') === testConductedReasonI18nKey &&
-          <section>
-            <DatePicker
-              name="dateAdjustedFrom"
-              label={intl.formatMessage(messages.testsRunBetween)}
-              disabled={form.submitting}
-              // container="inline"
-              // mode="landscape"
-              // style={formFieldStyle}
-              value={values.dateAdjustedFrom}
-              onChange={onDateAdjustedFromChange}
-              autoOk
-              sundayFirstDayOfWeek
-            />
-            <DatePicker
-              name="dateAdjustedTo"
-              label={intl.formatMessage(messages.and)}
-              disabled={form.submitting}
-              // container="inline"
-              // mode="landscape"
-              // style={formFieldStyle}
-              value={values.dateAdjustedTo}
-              onChange={onDateAdjustedToChange}
-              autoOk
-              sundayFirstDayOfWeek
-            />
-          </section>}
-        {_.has(values, 'dateAdjusted') &&
+          consumableReason.get('i18nKey') === testConductedReasonI18nKey && (
+            <section>
+              <DatePicker
+                name="dateAdjustedFrom"
+                label={intl.formatMessage(messages.testsRunBetween)}
+                disabled={form.submitting}
+                // container="inline"
+                // mode="landscape"
+                // style={formFieldStyle}
+                value={values.dateAdjustedFrom}
+                onChange={onDateAdjustedFromChange}
+                autoOk
+                sundayFirstDayOfWeek
+              />
+              <DatePicker
+                name="dateAdjustedTo"
+                label={intl.formatMessage(messages.and)}
+                disabled={form.submitting}
+                // container="inline"
+                // mode="landscape"
+                // style={formFieldStyle}
+                value={values.dateAdjustedTo}
+                onChange={onDateAdjustedToChange}
+                autoOk
+                sundayFirstDayOfWeek
+              />
+            </section>
+          )}
+        {_.has(values, 'dateAdjusted') && (
           <section>
             <DatePicker
               name="dateAdjusted"
@@ -361,7 +363,8 @@ export const InventoryAdjustmentDialogForm = ({
               autoOk
               sundayFirstDayOfWeek
             />
-          </section>}
+          </section>
+        )}
         <section>
           <Input
             type="notes"
@@ -380,3 +383,4 @@ export const InventoryAdjustmentDialogForm = ({
       </div>
     </form>
   </Dialog>
+)

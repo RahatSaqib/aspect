@@ -54,14 +54,15 @@ const AbnormalBarChart = ({
 
   return (
     <ScaleSVG width={clientWidth} height={clientHeight}>
-      {_.isNumber(average) &&
+      {_.isNumber(average) && (
         <Line
           from={new Point({ x: xFrom, y: lineAtY })}
           to={new Point({ x: xTo, y: lineAtY })}
           stroke="#eee"
           strokeWidth="1"
-        />}
-      {data.map((d, index) =>
+        />
+      )}
+      {data.map((d, index) => (
         <Bar
           key={key(index, d)}
           x={xPoint(d)}
@@ -70,7 +71,7 @@ const AbnormalBarChart = ({
           width={xScale.bandwidth()}
           fill={fill(d)}
         />
-      )}
+      ))}
       <AxisBottom scale={xScale} top={yPointMax} hideTicks />
     </ScaleSVG>
   )

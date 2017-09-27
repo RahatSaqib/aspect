@@ -116,7 +116,7 @@ class ColumnChart extends Component {
           return (
             <Group left={margin.left} key={d.name}>
               {bars}
-              {!this.props.rightLabel &&
+              {!this.props.rightLabel && (
                 <AxisLeft
                   scale={yScale}
                   stroke={'#1b1a1e'}
@@ -134,8 +134,9 @@ class ColumnChart extends Component {
                       fontFamily="lato"
                     />
                   }
-                />}
-              {this.props.rightLabel &&
+                />
+              )}
+              {this.props.rightLabel && (
                 <AxisRight
                   scale={yScale}
                   left={xMax}
@@ -154,8 +155,9 @@ class ColumnChart extends Component {
                       fontFamily="lato"
                     />
                   }
-                />}
-              {!this.props.hideAxes &&
+                />
+              )}
+              {!this.props.hideAxes && (
                 <AxisBottom
                   scale={xScale}
                   top={yMax}
@@ -169,7 +171,8 @@ class ColumnChart extends Component {
                       fill="black"
                     />
                   }
-                />}
+                />
+              )}
             </Group>
           )
         })}

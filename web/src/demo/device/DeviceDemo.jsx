@@ -113,13 +113,13 @@ export class DeviceDemo extends PureComponent {
             fullWidth
             onChange={this.handleSelectFieldChange('assayId')}
           >
-            {assays.map(a =>
+            {assays.map(a => (
               <MenuItem
                 key={a.get('id')}
                 value={a.get('id')}
                 primaryText={a.get('name')}
               />
-            )}
+            ))}
           </SelectField>
         </div>
         <div>
@@ -129,13 +129,13 @@ export class DeviceDemo extends PureComponent {
             fullWidth
             onChange={this.handleSelectFieldChange('resultId')}
           >
-            {results.map(r =>
+            {results.map(r => (
               <MenuItem
                 key={r.get('id')}
                 value={r.get('id')}
                 primaryText={r.get('name')}
               />
-            )}
+            ))}
           </SelectField>
         </div>
         <div>
@@ -174,12 +174,8 @@ export class DeviceDemo extends PureComponent {
     return (
       <div className={styles.RowContainer}>
         <Unit lg="2-1">
-          <div>
-            {this.renderReadOnlyFields()}
-          </div>
-          <div>
-            {this.renderFormContainer()}
-          </div>
+          <div>{this.renderReadOnlyFields()}</div>
+          <div>{this.renderFormContainer()}</div>
         </Unit>
       </div>
     )

@@ -71,7 +71,7 @@ export const ConsumableReasonSelectField = ({
   consumableReasons,
   onConsumableReasonIdChange,
   ...restProps
-}) =>
+}) => (
   <SelectField
     {...restProps}
     disabled={
@@ -81,7 +81,7 @@ export const ConsumableReasonSelectField = ({
     }
   >
     {allItemText && <MenuItem value="all" primaryText={allItemText} />}
-    {consumableReasons.items.map(c =>
+    {consumableReasons.items.map(c => (
       <MenuItem
         key={c.get('id')}
         value={c.get('id')}
@@ -91,7 +91,8 @@ export const ConsumableReasonSelectField = ({
             : c.get('name')
         }
       />
-    )}
+    ))}
   </SelectField>
+)
 
 export default enhance(ConsumableReasonSelectField)

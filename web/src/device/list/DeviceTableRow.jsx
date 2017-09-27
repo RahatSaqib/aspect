@@ -9,7 +9,7 @@ const cssClasses = classnames.bind(
 
 const enhance = _.identity
 
-const DeviceTableRow = ({ intl, device, ...restProps }) =>
+const DeviceTableRow = ({ intl, device, ...restProps }) => (
   <TableRow
     {...restProps}
     className={cssClasses(restProps.className, 'TableRow')}
@@ -36,5 +36,6 @@ const DeviceTableRow = ({ intl, device, ...restProps }) =>
       {intl.formatNumber(device.get('thisMonth'))}
     </TableCell>
   </TableRow>
+)
 
 export default enhance(DeviceTableRow)

@@ -39,7 +39,7 @@ export const InventoryStatus = ({
   title,
   data,
   onInventoryClick,
-}) =>
+}) => (
   <Card className={className}>
     <Title
       colorClassName={cssClasses('Title__Color--inventory')}
@@ -89,5 +89,6 @@ export const InventoryStatus = ({
       </Unit>
     </div>
   </Card>
+)
 
 export default enhance(InventoryStatus)

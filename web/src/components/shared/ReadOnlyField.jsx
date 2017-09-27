@@ -23,7 +23,7 @@ export const ReadOnlyField = ({
   lg,
   format = _.identity,
   nullText = '-',
-}) =>
+}) => (
   <div className={cssClasses('Container', { 'Container--large': lg })}>
     <label
       htmlFor={label.replace(' ', '_')}
@@ -38,5 +38,6 @@ export const ReadOnlyField = ({
       {!value ? nullText : format ? format(value) : value}
     </div>
   </div>
+)
 
 export default enhance(ReadOnlyField)

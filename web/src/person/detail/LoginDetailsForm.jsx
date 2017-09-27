@@ -128,7 +128,7 @@ export const LoginDetailsForm = ({
   onCurrentPasswordChange,
   onCurrentPasswordKeyPress,
   handleSubmit,
-}) =>
+}) => (
   <form onSubmit={onSubmit} className={cssClasses('Form')}>
     <div className={cssClasses('Form__Content')}>
       <Input
@@ -199,9 +199,7 @@ export const LoginDetailsForm = ({
       onOverlayClick={closeCurrentPasswordInputDialog}
       title={intl.formatMessage(messages.currentPasswordDialogHeader)}
     >
-      <p>
-        {intl.formatMessage(messages.currentPasswordDialogMessage)}
-      </p>
+      <p>{intl.formatMessage(messages.currentPasswordDialogMessage)}</p>
       <Input
         type="password"
         name="currentPassword"
@@ -214,5 +212,6 @@ export const LoginDetailsForm = ({
       />
     </Dialog>
   </form>
+)
 
 export default enhance(LoginDetailsForm)

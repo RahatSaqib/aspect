@@ -110,7 +110,7 @@ const filtersOrdering = {
   externalId: 15,
 }
 
-const makeButton = labelFn => (props, filterKey) =>
+const makeButton = labelFn => (props, filterKey) => (
   <Button
     key={filterKey}
     className={cssClasses('Button')}
@@ -121,6 +121,7 @@ const makeButton = labelFn => (props, filterKey) =>
     {labelFn(props, props.filters[filterKey])}
     <MdClose className={cssClasses('Button__icon')} />
   </Button>
+)
 
 const buttonBy = {
   assayId: makeButton(({ assayItems }, assayId) =>
@@ -247,7 +248,7 @@ const buttonBy = {
   ),
 }
 
-const FiltersBtnGroup = ({ className, children, ...restProps }) =>
+const FiltersBtnGroup = ({ className, children, ...restProps }) => (
   <div className={cssClasses(className, 'FiltersBtnGroup')}>
     {Children.map(children, child =>
       React.cloneElement(child, {
@@ -259,5 +260,6 @@ const FiltersBtnGroup = ({ className, children, ...restProps }) =>
       .sortBy(filterKey => filtersOrdering[filterKey])
       .map(filterKey => buttonBy[filterKey](restProps, filterKey))}
   </div>
+)
 
 export default enhance(FiltersBtnGroup)

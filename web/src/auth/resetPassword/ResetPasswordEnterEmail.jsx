@@ -44,12 +44,10 @@ export const ResetPasswordEnterEmail = ({
   meta,
   onEmailAddressChange,
   handleSubmit,
-}) =>
+}) => (
   <form onSubmit={handleSubmit} className={cssClasses('Form')}>
     <div className={cssClasses('Form__Content')}>
-      <p>
-        {intl.formatMessage(messages.enterEmailAddressContent)}
-      </p>
+      <p>{intl.formatMessage(messages.enterEmailAddressContent)}</p>
       <a href="#showAdminHelp" onClick={onShowAdminHelpDialog}>
         {intl.formatMessage(messages.iDontHaveAnEmailAddress)}
       </a>
@@ -74,5 +72,6 @@ export const ResetPasswordEnterEmail = ({
       {action}
     </div>
   </form>
+)
 
 export default enhance(ResetPasswordEnterEmail)

@@ -20,7 +20,7 @@ const DeviceApiKeyTableRow = ({
   onSelectedChange,
   onRevokedChange,
   ...restProps
-}) =>
+}) => (
   <TableRow
     {...restProps}
     className={cssClasses(restProps.className, 'TableRow')}
@@ -62,5 +62,6 @@ const DeviceApiKeyTableRow = ({
       />
     </TableCell>
   </TableRow>
+)
 
 export default enhance(DeviceApiKeyTableRow)

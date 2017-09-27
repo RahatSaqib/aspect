@@ -51,7 +51,7 @@ const HorizontalAppBar = ({
   goToExternalHelp,
   navigateCurrentAccountDetails,
   userRequestedLogout,
-}) =>
+}) => (
   <AppBar
     leftIcon={<ConfluenceIcon />}
     onLeftIconClick={navigateRoot}
@@ -78,5 +78,6 @@ const HorizontalAppBar = ({
       <MenuItem caption="Sign out" onClick={userRequestedLogout} />
     </IconMenu>
   </AppBar>
+)
 
 export default enhance(HorizontalAppBar)
