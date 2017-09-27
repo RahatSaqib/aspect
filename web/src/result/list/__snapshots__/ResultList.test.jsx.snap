@@ -37,14 +37,14 @@ exports[`Result List component should shallow render correctly 1`] = `
   sortCol="endedOn"
   sortDir="desc"
   table={
-    Object {
-      "extraColumns": Array [],
+    Immutable.Record {
       "loading": false,
-      "page": 0,
-      "pageSize": 10,
       "sortCol": "name",
       "sortDir": "asc",
+      "page": 0,
+      "pageSize": 10,
       "total": 0,
+      "extraColumns": Immutable.List [],
     }
   }
 />

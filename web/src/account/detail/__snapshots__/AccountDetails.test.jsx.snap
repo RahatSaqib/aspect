@@ -5,6 +5,7 @@ exports[`AccountDetails module AccountDetails component should shallow render co
   className="Container"
 >
   <HelmetWrapper
+    defer={true}
     encodeSpecialCharacters={true}
     title="Account Details"
   />
@@ -42,20 +43,20 @@ exports[`AccountDetails module AccountDetails component should shallow render co
         </Visible>
         <pure(lifecycle(recomposeForm(withHandlers(Component))))
           contactDetails={
-            Object {
-              "cell": null,
-              "countryId": null,
+            Immutable.Record {
+              "id": null,
+              "name": null,
+              "title": null,
               "email": null,
               "email2": null,
-              "id": null,
-              "lastPartnerId": null,
-              "lgaId": null,
-              "name": null,
-              "notes": null,
               "phone": null,
+              "cell": null,
+              "countryId": null,
               "stateId": null,
-              "title": null,
+              "lgaId": null,
               "zip": null,
+              "notes": null,
+              "lastPartnerId": null,
             }
           }
           intl={
@@ -96,14 +97,14 @@ exports[`AccountDetails module AccountDetails component should shallow render co
           }
           loading={false}
           loginDetails={
-            Object {
+            Immutable.Record {
+              "id": null,
+              "username": null,
+              "newPassword": null,
               "confirmNewPassword": null,
               "currentPassword": null,
-              "id": null,
-              "jobFunctions": Array [],
-              "newPassword": null,
               "partnerId": null,
-              "username": null,
+              "jobFunctions": Immutable.List [],
             }
           }
           onSubmit={[Function]}
@@ -138,10 +139,10 @@ exports[`AccountDetails module AccountDetails component should shallow render co
           loading={false}
           onSubmit={[Function]}
           userPreferences={
-            Object {
-              "culture": null,
+            Immutable.Record {
               "id": null,
               "timezone": null,
+              "culture": null,
             }
           }
         />
@@ -156,6 +157,7 @@ exports[`AccountDetails module AccountDetails component when loading is true sho
   className="Container"
 >
   <HelmetWrapper
+    defer={true}
     encodeSpecialCharacters={true}
     title="Account Details"
   />
@@ -199,20 +201,20 @@ exports[`AccountDetails module AccountDetails component when loading is true sho
         </Visible>
         <pure(lifecycle(recomposeForm(withHandlers(Component))))
           contactDetails={
-            Object {
-              "cell": null,
-              "countryId": null,
+            Immutable.Record {
+              "id": null,
+              "name": null,
+              "title": null,
               "email": null,
               "email2": null,
-              "id": null,
-              "lastPartnerId": null,
-              "lgaId": null,
-              "name": null,
-              "notes": null,
               "phone": null,
+              "cell": null,
+              "countryId": null,
               "stateId": null,
-              "title": null,
+              "lgaId": null,
               "zip": null,
+              "notes": null,
+              "lastPartnerId": null,
             }
           }
           intl={
@@ -259,14 +261,14 @@ exports[`AccountDetails module AccountDetails component when loading is true sho
           }
           loading={true}
           loginDetails={
-            Object {
+            Immutable.Record {
+              "id": null,
+              "username": null,
+              "newPassword": null,
               "confirmNewPassword": null,
               "currentPassword": null,
-              "id": null,
-              "jobFunctions": Array [],
-              "newPassword": null,
               "partnerId": null,
-              "username": null,
+              "jobFunctions": Immutable.List [],
             }
           }
           onSubmit={[Function]}
@@ -307,10 +309,10 @@ exports[`AccountDetails module AccountDetails component when loading is true sho
           loading={true}
           onSubmit={[Function]}
           userPreferences={
-            Object {
-              "culture": null,
+            Immutable.Record {
               "id": null,
               "timezone": null,
+              "culture": null,
             }
           }
         />

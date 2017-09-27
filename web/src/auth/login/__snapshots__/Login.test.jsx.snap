@@ -5,6 +5,7 @@ exports[`Login component should shallow render correctly 1`] = `
   className="Background"
 >
   <HelmetWrapper
+    defer={true}
     encodeSpecialCharacters={true}
     title="Login"
   />
