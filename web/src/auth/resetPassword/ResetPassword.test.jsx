@@ -28,6 +28,7 @@ describe('ResetPassword module', () => {
         intl: {
           formatMessage: message => message.defaultMessage,
         },
+        searchParams: new URLSearchParams(),
       }
       shallowRenderResetPassword()
     })

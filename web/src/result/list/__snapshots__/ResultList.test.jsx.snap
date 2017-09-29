@@ -35,7 +35,7 @@ exports[`Result List component should shallow render correctly 1`] = `
   pageAt={0}
   pageSize={10}
   sortCol="endedOn"
-  sortDir="asc"
+  sortDir="desc"
   table={
     Object {
       "extraColumns": Array [],
