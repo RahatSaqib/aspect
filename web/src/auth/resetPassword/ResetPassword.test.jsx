@@ -34,7 +34,7 @@ describe('ResetPassword module', () => {
     })
 
     it('should be a div', () => {
-      expect(ResetPasswordWrapper.node.type).toEqual('div')
+      expect(ResetPasswordWrapper.getElement().type).toEqual('div')
     })
 
     it('should contain a vertical stepper for small screens and a horizontal stepper for large screens', () => {
