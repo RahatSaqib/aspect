@@ -10,7 +10,6 @@ jest.mock('../shared/utils/browser')
 
 describe('AccountRedux module', () => {
   let AccountRedux
-  const stubHeaders = { value: 'Stubbed Headers' }
   const accountDetailsData = {
     id: 111,
     username: 'logged-in-user',
@@ -372,7 +371,6 @@ describe('AccountRedux module', () => {
             })
 
             fetchStub = {
-              getHeaders: jest.fn(() => stubHeaders),
               aspectFetch: jest.fn(() => expectedResponseFromServer),
             }
 
@@ -404,7 +402,6 @@ describe('AccountRedux module', () => {
             fetchStub.aspectFetch
           ).toHaveBeenCalledWith('/account-details/current-contact', {
             method: 'PUT',
-            headers: stubHeaders,
             body: JSON.stringify(contactDetailsData),
             errorNotifications: {
               default: errorPleaseTryAgainInAFewMinutes({
@@ -465,7 +462,6 @@ describe('AccountRedux module', () => {
               })
 
               fetchStub = {
-                getHeaders: jest.fn(() => stubHeaders),
                 aspectFetch: jest.fn(() => expectedResponseFromServer),
               }
 
@@ -500,7 +496,6 @@ describe('AccountRedux module', () => {
             fetchStub.aspectFetch
           ).toHaveBeenCalledWith('/auth/update-login-details', {
             method: 'PUT',
-            headers: stubHeaders,
             body: JSON.stringify(requestData),
             errorNotifications: {
               409: inlineWarning({
@@ -579,7 +574,6 @@ describe('AccountRedux module', () => {
             })
 
             fetchStub = {
-              getHeaders: jest.fn(() => stubHeaders),
               aspectFetch: jest.fn(() => expectedResponseFromServer),
             }
 
@@ -611,7 +605,6 @@ describe('AccountRedux module', () => {
             fetchStub.aspectFetch
           ).toHaveBeenCalledWith('/account-details/current-preferences', {
             method: 'PUT',
-            headers: stubHeaders,
             body: JSON.stringify(userPreferencesData),
             errorNotifications: {
               default: errorPleaseTryAgainInAFewMinutes({
