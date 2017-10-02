@@ -3,7 +3,7 @@ import Immutable from 'immutable'
 import _ from 'lodash'
 import { SubmissionError } from 'redux-form/immutable'
 import { getClientName } from '../shared/utils/browser'
-import { aspectFetch, getHeaders } from '../shared/utils/fetch'
+import { aspectFetch } from '../shared/utils/fetch'
 import {
   ContactDetails,
   LoginDetails,
@@ -80,7 +80,6 @@ export function saveContactDetails(contactDetails) {
 
     return aspectFetch('/account-details/current-contact', {
       method: 'PUT',
-      headers: getHeaders(true),
       body: JSON.stringify(contactDetails),
       errorNotifications: {
         default: errorPleaseTryAgainInAFewMinutes(
@@ -118,7 +117,6 @@ export function saveLoginDetails(loginDetails) {
 
     return aspectFetch('/auth/update-login-details', {
       method: 'PUT',
-      headers: getHeaders(true),
       body: JSON.stringify({
         currentPassword: loginDetails.currentPassword,
         newUsername: loginDetails.username,
@@ -213,7 +211,6 @@ export function saveUserPreferences(userPreferences) {
     dispatch(createSaveAccountDetailsStart())
     return aspectFetch('/account-details/current-preferences', {
       method: 'PUT',
-      headers: getHeaders(true),
       body: JSON.stringify(userPreferences),
       errorNotifications: {
         default: errorPleaseTryAgainInAFewMinutes(

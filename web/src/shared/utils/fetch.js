@@ -31,22 +31,6 @@ function addAuthHeaderMiddleware(fetch, input, options = {}) {
   })
 }
 
-// adds authorization and content type headers to a request
-export function getHeaders(json) {
-  const headers = new Headers()
-
-  const token = getAspectAccess()
-  if (token) {
-    headers.append('Authorization', `Bearer ${token}`)
-  }
-
-  if (json) {
-    headers.append('Content-Type', 'application/json')
-  }
-
-  return headers
-}
-
 // using this in a fetch (ajax request) to check if request was successful
 export function handleFetchResponse(options) {
   return resp => {

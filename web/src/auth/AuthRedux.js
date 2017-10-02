@@ -6,7 +6,7 @@ import { SubmissionError } from 'redux-form/immutable'
 
 import config from '../config'
 import { getClientName } from '../shared/utils/browser'
-import { aspectFetch, getHeaders } from '../shared/utils/fetch'
+import { aspectFetch } from '../shared/utils/fetch'
 import {
   errorPleaseTryAgainInAFewMinutes,
   inlineErrorPleaseTryAgainInAFewMinutes,
@@ -89,7 +89,6 @@ export function loginStart({ user, password }) {
 
     return aspectFetch('/auth', {
       method: 'POST',
-      headers: getHeaders(),
       body: JSON.stringify({
         name: user,
         password,
@@ -210,7 +209,6 @@ export function refreshStart() {
     // try to get a new access token:
     return aspectFetch('/auth/refresh', {
       method: 'POST',
-      headers: getHeaders(),
       body: JSON.stringify({
         token: refresh,
         clientId,
@@ -238,7 +236,6 @@ export function resetPasswordEnterEmailAddress(emailAddress) {
 
     return aspectFetch(`/auth/send-reset-password-token/${emailAddress}`, {
       method: 'POST',
-      headers: getHeaders(),
       body: JSON.stringify({
         clientId,
         clientName: getClientName(),
@@ -274,7 +271,6 @@ export function resetPasswordEnterPassword(resetPasswordToken, newPassword) {
 
     return aspectFetch(`/auth/update-password/${resetPasswordToken}`, {
       method: 'PUT',
-      headers: getHeaders(),
       body: JSON.stringify({
         newPassword,
         clientId,
