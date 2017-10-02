@@ -21,45 +21,50 @@ const messages = defineMessages({
 
 const enhance = _.identity
 
-const InventoryTableRow = ({ intl, inventoryItem, children, ...restProps }) =>
+const InventoryTableRow = ({ intl, inventoryItem, children, ...restProps }) => (
   <TableRow
     {...restProps}
     className={cssClasses(restProps.className, 'TableRow')}
   >
-    {inventoryItem.get('visibleProperties').includes('siteName') &&
+    {inventoryItem.get('visibleProperties').includes('siteName') && (
       <TableCell
         className={cssClasses('TableCell')}
         rowSpan={inventoryItem.getIn(['rowSpans', 'siteName'])}
       >
         {inventoryItem.get('siteName')}
-      </TableCell>}
-    {inventoryItem.get('visibleProperties').includes('consumableName') &&
+      </TableCell>
+    )}
+    {inventoryItem.get('visibleProperties').includes('consumableName') && (
       <TableCell
         className={cssClasses('TableCell')}
         rowSpan={inventoryItem.getIn(['rowSpans', 'consumableName'])}
       >
         {inventoryItem.get('consumableName')}
-      </TableCell>}
-    {inventoryItem.get('visibleProperties').includes('quantityOnHand') &&
+      </TableCell>
+    )}
+    {inventoryItem.get('visibleProperties').includes('quantityOnHand') && (
       <TableCell
         className={cssClasses('TableCell')}
         rowSpan={inventoryItem.getIn(['rowSpans', 'quantityOnHand'])}
       >
-        {inventoryItem.get('inTransitFromSiteName')
-          ? <span>
-              {intl.formatNumber(inventoryItem.get('quantityOnHand'))}
-              &nbsp;
-              <small>
-                {intl.formatMessage(messages.inTransitFromSiteName, {
-                  inTransitFromSiteName: inventoryItem.get(
-                    'inTransitFromSiteName'
-                  ),
-                })}
-              </small>
-            </span>
-          : inventoryItem.get('quantityOnHand')}
-      </TableCell>}
-    {inventoryItem.get('visibleProperties').includes('expiresOn') &&
+        {inventoryItem.get('inTransitFromSiteName') ? (
+          <span>
+            {intl.formatNumber(inventoryItem.get('quantityOnHand'))}
+            &nbsp;
+            <small>
+              {intl.formatMessage(messages.inTransitFromSiteName, {
+                inTransitFromSiteName: inventoryItem.get(
+                  'inTransitFromSiteName'
+                ),
+              })}
+            </small>
+          </span>
+        ) : (
+          inventoryItem.get('quantityOnHand')
+        )}
+      </TableCell>
+    )}
+    {inventoryItem.get('visibleProperties').includes('expiresOn') && (
       <TableCell
         className={cssClasses('TableCell')}
         rowSpan={inventoryItem.getIn(['rowSpans', 'expiresOn'])}
@@ -69,8 +74,9 @@ const InventoryTableRow = ({ intl, inventoryItem, children, ...restProps }) =>
               format: 'user-timezone',
             })
           : 'N/A'}
-      </TableCell>}
-    {inventoryItem.get('visibleProperties').includes('expiresOn') &&
+      </TableCell>
+    )}
+    {inventoryItem.get('visibleProperties').includes('expiresOn') && (
       <TableCell
         className={cssClasses('TableCell')}
         rowSpan={inventoryItem.getIn(['rowSpans', 'expiresOn'])}
@@ -78,10 +84,10 @@ const InventoryTableRow = ({ intl, inventoryItem, children, ...restProps }) =>
         {inventoryItem.get('expiresOn')
           ? intl.formatRelative(inventoryItem.get('expiresOn'))
           : intl.formatMessage(messages.never)}
-      </TableCell>}
-    <TableCell className={cssClasses('TableCell')}>
-      {children}
-    </TableCell>
+      </TableCell>
+    )}
+    <TableCell className={cssClasses('TableCell')}>{children}</TableCell>
   </TableRow>
+)
 
 export default enhance(InventoryTableRow)

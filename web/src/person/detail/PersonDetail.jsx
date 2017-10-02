@@ -203,7 +203,7 @@ export class PersonDetail extends PureComponent {
         <Helmet title={formatMessage(messages.title)} />
         <NavTitle title={formatMessage(messages.title)} />
         <Paper>
-          {editable &&
+          {editable && (
             <Tabs>
               <Tab
                 icon={<MapsPersonPin />}
@@ -227,7 +227,7 @@ export class PersonDetail extends PureComponent {
                   onSubmit={this.saveContactDetails}
                 />
               </Tab>
-              {userIsAdmin &&
+              {userIsAdmin && (
                 <Tab
                   icon={<Lock />}
                   label={
@@ -246,7 +246,8 @@ export class PersonDetail extends PureComponent {
                     loginDetails={loginDetails}
                     onSubmit={this.saveLoginDetails}
                   />
-                </Tab>}
+                </Tab>
+              )}
               <Tab
                 icon={<Language />}
                 label={
@@ -266,7 +267,8 @@ export class PersonDetail extends PureComponent {
                   onSubmit={this.saveUserPreferences}
                 />
               </Tab>
-            </Tabs>}
+            </Tabs>
+          )}
         </Paper>
       </div>
     )

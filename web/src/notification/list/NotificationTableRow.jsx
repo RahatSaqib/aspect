@@ -9,7 +9,7 @@ const cssClasses = classnames.bind(
 
 const enhance = _.identity
 
-const NotificationTableRow = ({ intl, notification, ...restProps }) =>
+const NotificationTableRow = ({ intl, notification, ...restProps }) => (
   <TableRow
     {...restProps}
     className={cssClasses(restProps.className, 'TableRow')}
@@ -24,5 +24,6 @@ const NotificationTableRow = ({ intl, notification, ...restProps }) =>
       {notification.get('assignedContacts')}
     </TableCell>
   </TableRow>
+)
 
 export default enhance(NotificationTableRow)

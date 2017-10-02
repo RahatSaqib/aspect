@@ -6,11 +6,10 @@ import getMuiTheme from 'material-ui/styles/getMuiTheme'
 import theme from '../../../theme'
 import themedReactToolbox from '../../../components/themedReactToolbox'
 
-export const uiProvidersFactory = render => props =>
+export const uiProvidersFactory = render => props => (
   <MuiThemeProvider muiTheme={getMuiTheme(theme)}>
-    <ThemeProvider theme={themedReactToolbox}>
-      {render(props)}
-    </ThemeProvider>
+    <ThemeProvider theme={themedReactToolbox}>{render(props)}</ThemeProvider>
   </MuiThemeProvider>
+)
 
 export default uiProvidersFactory

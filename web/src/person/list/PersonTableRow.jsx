@@ -9,7 +9,7 @@ const cssClasses = classnames.bind(
 
 const enhance = _.identity
 
-const PersonTableRow = ({ intl, person, ...restProps }) =>
+const PersonTableRow = ({ intl, person, ...restProps }) => (
   <TableRow
     {...restProps}
     className={cssClasses(restProps.className, 'TableRow')}
@@ -27,5 +27,6 @@ const PersonTableRow = ({ intl, person, ...restProps }) =>
       {person.get('lga')}
     </TableCell>
   </TableRow>
+)
 
 export default enhance(PersonTableRow)

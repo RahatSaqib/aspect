@@ -57,7 +57,7 @@ export const Status = ({
   intl,
   // --- injected by recompose ---
   status,
-}) =>
+}) => (
   <div className={cssClasses('Container')}>
     <Helmet title="Status" />
     <div className={cssClasses('Section')}>
@@ -124,7 +124,7 @@ export const Status = ({
       </Unit>
     </div>
 
-    {status.get('resultSummaryList') &&
+    {status.get('resultSummaryList') && (
       <div className={cssClasses('Section')}>
         <ResultStatus
           intl={intl}
@@ -133,9 +133,10 @@ export const Status = ({
           siteList={status.get('siteList')}
           resultSummaryList={status.get('resultSummaryList')}
         />
-      </div>}
+      </div>
+    )}
 
-    {status.get('inventorySummary') &&
+    {status.get('inventorySummary') && (
       <div className={cssClasses('Section')}>
         <InventoryStatus
           history={history}
@@ -144,9 +145,10 @@ export const Status = ({
           title={intl.formatMessage(messages.consumableTitle)}
           data={status.get('inventorySummary')}
         />
-      </div>}
+      </div>
+    )}
 
-    {status.get('deviceSummary') &&
+    {status.get('deviceSummary') && (
       <div className={cssClasses('Section')}>
         <DeviceStatus
           intl={intl}
@@ -154,9 +156,10 @@ export const Status = ({
           title={intl.formatMessage(messages.devicesTitle)}
           data={status.get('deviceSummary')}
         />
-      </div>}
+      </div>
+    )}
 
-    {status.get('siteSummary') &&
+    {status.get('siteSummary') && (
       <div className={cssClasses('Section')}>
         <SiteStatus
           intl={intl}
@@ -164,7 +167,9 @@ export const Status = ({
           title={intl.formatMessage(messages.sitesTitle)}
           data={status.get('siteSummary')}
         />
-      </div>}
+      </div>
+    )}
   </div>
+)
 
 export default enhance(Status)

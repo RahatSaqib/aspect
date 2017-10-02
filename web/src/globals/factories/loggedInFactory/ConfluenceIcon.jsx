@@ -6,11 +6,12 @@ const cssClasses = classnames.bind(require('./index.css'))
 
 const enhance = _.identity
 
-export const ConfluenceIcon = () =>
+export const ConfluenceIcon = () => (
   <img
     className={cssClasses('ConfluenceIcon')}
     src={require('./logo_confluence.png')}
     alt=""
   />
+)
 
 export default enhance(ConfluenceIcon)

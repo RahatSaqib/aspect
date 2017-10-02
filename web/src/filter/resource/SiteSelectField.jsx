@@ -77,9 +77,9 @@ const enhance = compose(
 export function SiteSelectField({ sitesSelectList, ...restProps }) {
   return (
     <ForkedSelectField {...restProps}>
-      {sitesSelectList.map(s =>
+      {sitesSelectList.map(s => (
         <MenuItem key={s.value} value={s.value} primaryText={s.text} />
-      )}
+      ))}
     </ForkedSelectField>
   )
 }

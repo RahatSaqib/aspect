@@ -5,6 +5,7 @@ exports[`OperationData Component should shallow render correctly 1`] = `
   className="Container"
 >
   <HelmetWrapper
+    defer={true}
     encodeSpecialCharacters={true}
     title="Operational Data"
   />
@@ -129,10 +130,10 @@ exports[`OperationData Component should shallow render correctly 1`] = `
       collection={
         Immutable.List [
           Immutable.Map {
-            key: "stock-outs",
-            title: "Stock outs",
-            isNormal: false,
-            message: "1 site with problems",
+            "key": "stock-outs",
+            "title": "Stock outs",
+            "isNormal": false,
+            "message": "1 site with problems",
           },
         ]
       }
@@ -178,8 +179,7 @@ exports[`OperationData Component should shallow render correctly 1`] = `
           />
         </div>
         <div>
-          Immutable.List [
-          ]
+          Immutable.List []
         </div>
       </ThemedCard>
     </div>

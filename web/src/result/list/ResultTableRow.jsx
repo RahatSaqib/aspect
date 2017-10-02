@@ -17,7 +17,7 @@ const formatterByType = _.partial(
   }
 )
 
-const ResultTableRow = ({ intl, extraColumns, result, ...restProps }) =>
+const ResultTableRow = ({ intl, extraColumns, result, ...restProps }) => (
   <TableRow
     {...restProps}
     className={cssClasses(restProps.className, 'TableRow')}
@@ -46,14 +46,15 @@ const ResultTableRow = ({ intl, extraColumns, result, ...restProps }) =>
     <TableCell className={cssClasses('TableCell')}>
       {result.get('patientId')}
     </TableCell>
-    {extraColumns.map(column =>
+    {extraColumns.map(column => (
       <TableCell key={column.get('db')} className={cssClasses('TableCell')}>
         {formatterByType(column.get('type'))(
           result.get(column.get('db')),
           intl
         )}
       </TableCell>
-    )}
+    ))}
   </TableRow>
+)
 
 export default enhance(ResultTableRow)

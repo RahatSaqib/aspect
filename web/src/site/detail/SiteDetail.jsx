@@ -86,7 +86,7 @@ export class SiteDetail extends PureComponent {
         <NavTitle title={formatMessage(messages.title)} />
         <Paper>
           {!this.hasSiteWithLocation() && <LinearProgress />}
-          {this.hasSiteWithLocation() &&
+          {this.hasSiteWithLocation() && (
             <div className={styles.FieldsContainer}>
               <SiteForm
                 formatMessage={formatMessage}
@@ -94,9 +94,11 @@ export class SiteDetail extends PureComponent {
                 editable={editable}
                 site={site}
               />
-            </div>}
-          {this.hasSiteWithLocation() &&
-            <SiteLocationFormMap editable={editable} site={site} />}
+            </div>
+          )}
+          {this.hasSiteWithLocation() && (
+            <SiteLocationFormMap editable={editable} site={site} />
+          )}
         </Paper>
       </div>
     )

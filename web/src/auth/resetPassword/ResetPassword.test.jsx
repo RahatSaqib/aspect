@@ -34,7 +34,7 @@ describe('ResetPassword module', () => {
     })
 
     it('should be a div', () => {
-      expect(ResetPasswordWrapper.node.type).toEqual('div')
+      expect(ResetPasswordWrapper.getElement().type).toEqual('div')
     })
 
     it('should contain a vertical stepper for small screens and a horizontal stepper for large screens', () => {
@@ -138,16 +138,32 @@ describe('ResetPassword module', () => {
         smallScreenStep1ResetPasswordEnterEmail.props()
       )
       for (let i = 0; i < largeScreenStep2CheckInbox.children().length; i++) {
-        expect(largeScreenStep2CheckInbox.children().at(i).props()).toEqual(
-          smallScreenStep2CheckInbox.children().at(i).props()
+        expect(
+          largeScreenStep2CheckInbox
+            .children()
+            .at(i)
+            .props()
+        ).toEqual(
+          smallScreenStep2CheckInbox
+            .children()
+            .at(i)
+            .props()
         )
       }
       expect(largeScreenStep3ResetPasswordEnterPassword.props()).toEqual(
         smallScreenStep3ResetPasswordEnterPassword.props()
       )
       for (let i = 0; i < largeScreenStep4Finish.children().length; i++) {
-        expect(largeScreenStep4Finish.children().at(i).props()).toEqual(
-          smallScreenStep4Finish.children().at(i).props()
+        expect(
+          largeScreenStep4Finish
+            .children()
+            .at(i)
+            .props()
+        ).toEqual(
+          smallScreenStep4Finish
+            .children()
+            .at(i)
+            .props()
         )
       }
     })

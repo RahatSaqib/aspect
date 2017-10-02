@@ -72,7 +72,7 @@ const TablePaginator = ({
   total,
   pageSize,
   ...restProps
-}) =>
+}) => (
   <div className={cssClasses(className, 'Container')}>
     <div className={cssClasses('Left')}>
       <Button
@@ -103,7 +103,7 @@ const TablePaginator = ({
       </Button>
     </div>
     <div className={cssClasses('Right')}>
-      {pageSizeButtonKeys.map(key =>
+      {pageSizeButtonKeys.map(key => (
         <Button
           key={key}
           className={cssClasses('Right__Button')}
@@ -112,8 +112,9 @@ const TablePaginator = ({
           primary
           raised={key !== ALL_KEY ? key === pageSize : pageSize === total}
         />
-      )}
+      ))}
     </div>
   </div>
+)
 
 export default enhance(TablePaginator)

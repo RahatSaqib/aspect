@@ -16,7 +16,7 @@ const cssClasses = classnames.bind(require('./index.css'))
 
 export const loggedInFactory = compose(
   intlScrollToTopOnUpdateFactory,
-  render => props =>
+  render => props => (
     <Layout>
       <ConnectedNavDrawer history={props.history} location={props.location} />
       <Panel className={cssClasses('Panel')}>
@@ -28,7 +28,8 @@ export const loggedInFactory = compose(
         <AppNotificationDialog intl={props.intl} />
         <AppNotificationSnackBar intl={props.intl} />
       </Panel>
-    </Layout>,
+    </Layout>
+  ),
   createEagerFactory,
   pure
 )

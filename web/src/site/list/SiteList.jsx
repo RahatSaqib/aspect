@@ -75,7 +75,10 @@ const searchSanitizer = makeSearchParamsSanitizer({
 })
 const filtersSanitizer = sanitizeFiltersStringBy(FILTERS_CONFIG)
 const filtersFromLocation = composeSanitizer(
-  _.flowRight(filtersSanitizer, searchParams => searchParams.get('filters')),
+  _.flowRight(
+    filtersSanitizer,
+    searchParams => searchParams.get('filters') || ''
+  ),
   searchSanitizer
 )
 
@@ -137,7 +140,7 @@ const enhance = compose(
       const {
         sanitized: filtersSanitized,
         value: filtersParams,
-      } = filtersSanitizer(searchParams.get('filters'))
+      } = filtersSanitizer(searchParams.get('filters') || '')
       if (sanitized || filtersSanitized) {
         searchParams.set('filters', filtersParams)
 
@@ -173,7 +176,7 @@ export const SiteList = ({
   pageSize,
   onHeadColumnClick,
   onRowClick,
-}) =>
+}) => (
   <div className={cssClasses('Container')}>
     <Helmet title={intl.formatMessage(messages.sitesTitle)} />
     <NavTitle title={intl.formatMessage(messages.sitesTitle)} />
@@ -185,9 +188,10 @@ export const SiteList = ({
     />
     <DataTableCard>
       <DataTableProgressBar disabled={!table.loading} />
-      {items.currentIdList.isEmpty() &&
-        <BrowseEmptyList history={history} location={location} intl={intl} />}
-      {!items.currentIdList.isEmpty() &&
+      {items.currentIdList.isEmpty() && (
+        <BrowseEmptyList history={history} location={location} intl={intl} />
+      )}
+      {!items.currentIdList.isEmpty() && (
         <SiteDataTable
           selectable={false}
           className={cssClasses('SiteDataTable')}
@@ -220,7 +224,7 @@ export const SiteList = ({
           />
           {items.currentIdList
             .map(id => items.byId.get(id))
-            .map(site =>
+            .map(site => (
               <SiteDataTableRow
                 key={site.get('id')}
                 intl={intl}
@@ -228,9 +232,10 @@ export const SiteList = ({
                 onClick={onRowClick}
                 data-site-Id={site.get('id')}
               />
-            )}
-        </SiteDataTable>}
-      {!items.currentIdList.isEmpty() &&
+            ))}
+        </SiteDataTable>
+      )}
+      {!items.currentIdList.isEmpty() && (
         <BrowseTablePaginator
           history={history}
           location={location}
@@ -239,8 +244,10 @@ export const SiteList = ({
           total={table.total}
           pageAt={pageAt}
           pageSize={pageSize}
-        />}
+        />
+      )}
     </DataTableCard>
   </div>
+)
 
 export default enhance(SiteList)

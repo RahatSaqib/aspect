@@ -70,7 +70,10 @@ const searchSanitizer = makeSearchParamsSanitizer({
 })
 const filtersSanitizer = sanitizeFiltersStringBy(FILTERS_CONFIG)
 const filtersFromLocation = composeSanitizer(
-  _.flowRight(filtersSanitizer, searchParams => searchParams.get('filters')),
+  _.flowRight(
+    filtersSanitizer,
+    searchParams => searchParams.get('filters') || ''
+  ),
   searchSanitizer
 )
 
@@ -133,7 +136,7 @@ const enhance = compose(
       const {
         sanitized: filtersSanitized,
         value: filtersParams,
-      } = filtersSanitizer(searchParams.get('filters'))
+      } = filtersSanitizer(searchParams.get('filters') || '')
       if (sanitized || filtersSanitized) {
         searchParams.set('filters', filtersParams)
 
@@ -169,7 +172,7 @@ export const PersonList = ({
   pageSize,
   onHeadColumnClick,
   onRowClick,
-}) =>
+}) => (
   <div className={cssClasses('Container')}>
     <Helmet title={intl.formatMessage(messages.contactsTitle)} />
     <NavTitle title={intl.formatMessage(messages.contactsTitle)} />
@@ -181,9 +184,10 @@ export const PersonList = ({
     />
     <DataTableCard>
       <DataTableProgressBar disabled={!table.loading} />
-      {items.currentIdList.isEmpty() &&
-        <BrowseEmptyList history={history} location={location} intl={intl} />}
-      {!items.currentIdList.isEmpty() &&
+      {items.currentIdList.isEmpty() && (
+        <BrowseEmptyList history={history} location={location} intl={intl} />
+      )}
+      {!items.currentIdList.isEmpty() && (
         <PersonDataTable
           selectable={false}
           className={cssClasses('PersonDataTable')}
@@ -216,7 +220,7 @@ export const PersonList = ({
           />
           {items.currentIdList
             .map(id => items.byId.get(id))
-            .map(person =>
+            .map(person => (
               <PersonDataTableRow
                 key={person.get('id')}
                 intl={intl}
@@ -224,9 +228,10 @@ export const PersonList = ({
                 onClick={onRowClick}
                 data-person-Id={person.get('id')}
               />
-            )}
-        </PersonDataTable>}
-      {!items.currentIdList.isEmpty() &&
+            ))}
+        </PersonDataTable>
+      )}
+      {!items.currentIdList.isEmpty() && (
         <BrowseTablePaginator
           history={history}
           location={location}
@@ -235,8 +240,10 @@ export const PersonList = ({
           total={table.total}
           pageAt={pageAt}
           pageSize={pageSize}
-        />}
+        />
+      )}
     </DataTableCard>
   </div>
+)
 
 export default enhance(PersonList)

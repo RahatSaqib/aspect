@@ -21,8 +21,8 @@ export function aspectFetch(path, options) {
 function addAuthHeaderMiddleware(fetch, input, options = {}) {
   const token = getAspectAccess()
   if (token) {
-    ;(options.headers ||
-      (options.headers = {})).Authorization = `Bearer ${token}`
+    ;(options.headers || (options.headers = {})
+    ).Authorization = `Bearer ${token}`
   }
   return fetch(input, options).catch(() => {
     Promise.reject({

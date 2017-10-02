@@ -4,7 +4,7 @@ import React from 'react'
 import { withGoogleMap, GoogleMap, Marker } from 'react-google-maps'
 
 // Render a site position marker in a map
-const SiteMap = withGoogleMap(props =>
+const SiteMap = withGoogleMap(props => (
   <GoogleMap
     defaultZoom={14}
     center={props.position}
@@ -12,7 +12,7 @@ const SiteMap = withGoogleMap(props =>
   >
     <Marker position={props.position} />
   </GoogleMap>
-)
+))
 
 SiteMap.defaultProps = {
   // properties required by react-google-maps

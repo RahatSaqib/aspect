@@ -98,7 +98,7 @@ describe('LocationSelector module', () => {
     })
 
     it('Should be a div', () => {
-      expect(LocationSelectorWrapper.node.type).toEqual('div')
+      expect(LocationSelectorWrapper.getElement().type).toEqual('div')
     })
 
     it('Should contain three Field for country, state and LGA', () => {

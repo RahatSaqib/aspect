@@ -16,16 +16,15 @@ const messages = defineMessages({
 
 const enhance = _.identity
 
-export const EmptyList = ({ intl, onClearFilters }) =>
+export const EmptyList = ({ intl, onClearFilters }) => (
   <div style={{ textAlign: 'center' }}>
-    <p>
-      {intl.formatMessage(messages.noResultsTitle)}
-    </p>
+    <p>{intl.formatMessage(messages.noResultsTitle)}</p>
     <Button
       flat
       label={intl.formatMessage(messages.clearFilters)}
       onClick={onClearFilters}
     />
   </div>
+)
 
 export default enhance(EmptyList)

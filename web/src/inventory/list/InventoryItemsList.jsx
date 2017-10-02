@@ -145,7 +145,10 @@ const searchSanitizer = makeSearchParamsSanitizer({
 })
 const filtersSanitizer = sanitizeFiltersStringBy(FILTERS_CONFIG)
 const filtersFromLocation = composeSanitizer(
-  _.flowRight(filtersSanitizer, searchParams => searchParams.get('filters')),
+  _.flowRight(
+    filtersSanitizer,
+    searchParams => searchParams.get('filters') || ''
+  ),
   searchSanitizer
 )
 
@@ -220,7 +223,7 @@ const enhance = compose(
       const {
         sanitized: filtersSanitized,
         value: filtersParams,
-      } = filtersSanitizer(searchParams.get('filters'))
+      } = filtersSanitizer(searchParams.get('filters') || '')
       if (sanitized || filtersSanitized) {
         searchParams.set('filters', filtersParams)
 
@@ -342,7 +345,7 @@ export const InventoryItemsList = ({
   onRemoveInventorySubmit,
   onTransferInventorySubmit,
   onReceiveInventorySubmit,
-}) =>
+}) => (
   <div className={cssClasses('Container')}>
     <Helmet title={intl.formatMessage(messages.inventoryItemsTitle)} />
     <NavTitle title={intl.formatMessage(messages.inventoryItemsTitle)} />
@@ -370,9 +373,10 @@ export const InventoryItemsList = ({
     </DataTableCard>
     <DataTableCard className={cssClasses('DataTableCard--table')}>
       <DataTableProgressBar disabled={!table.loading} />
-      {items.currentIdList.isEmpty() &&
-        <BrowseEmptyList history={history} location={location} intl={intl} />}
-      {!items.currentIdList.isEmpty() &&
+      {items.currentIdList.isEmpty() && (
+        <BrowseEmptyList history={history} location={location} intl={intl} />
+      )}
+      {!items.currentIdList.isEmpty() && (
         <InventoryDataTable
           selectable={false}
           className={cssClasses('InventoryDataTable')}
@@ -414,7 +418,7 @@ export const InventoryItemsList = ({
           />
           {items.currentIdList
             .map(id => items.byId.get(id))
-            .map(inventoryItem =>
+            .map(inventoryItem => (
               <InventoryDataTableRow
                 key={inventoryItem.get('id')}
                 intl={intl}
@@ -427,36 +431,41 @@ export const InventoryItemsList = ({
                     inventoryItem.get('id')
                   )}
                 >
-                  {inventoryItem.get('inTransitFromSiteId') &&
+                  {inventoryItem.get('inTransitFromSiteId') && (
                     <MenuItem
                       value={showReceiveInventoryDialog}
                       icon={<MdDone />}
                       caption={intl.formatMessage(messages.receiveInventory)}
-                    />}
-                  {!inventoryItem.get('inTransitFromSiteId') &&
+                    />
+                  )}
+                  {!inventoryItem.get('inTransitFromSiteId') && (
                     <MenuItem
                       value={showAddInventoryDialog}
                       icon={<MdAdd />}
                       caption={intl.formatMessage(messages.addInventory)}
-                    />}
+                    />
+                  )}
 
-                  {!inventoryItem.get('inTransitFromSiteId') &&
+                  {!inventoryItem.get('inTransitFromSiteId') && (
                     <MenuItem
                       value={showTransferInventoryDialog}
                       icon={<MdTransfer />}
                       caption={intl.formatMessage(messages.transferInventory)}
-                    />}
-                  {!inventoryItem.get('inTransitFromSiteId') &&
+                    />
+                  )}
+                  {!inventoryItem.get('inTransitFromSiteId') && (
                     <MenuItem
                       value={showRemoveInventoryDialog}
                       icon={<MdRemove />}
                       caption={intl.formatMessage(messages.removeInventory)}
-                    />}
+                    />
+                  )}
                 </IconMenu>
               </InventoryDataTableRow>
-            )}
-        </InventoryDataTable>}
-      {!items.currentIdList.isEmpty() &&
+            ))}
+        </InventoryDataTable>
+      )}
+      {!items.currentIdList.isEmpty() && (
         <BrowseTablePaginator
           history={history}
           location={location}
@@ -465,7 +474,8 @@ export const InventoryItemsList = ({
           total={table.total}
           pageAt={pageAt}
           pageSize={pageSize}
-        />}
+        />
+      )}
     </DataTableCard>
     <NewInventoryDialogForm
       intl={intl}
@@ -529,5 +539,6 @@ export const InventoryItemsList = ({
       onSubmit={onReceiveInventorySubmit}
     />
   </div>
+)
 
 export default enhance(InventoryItemsList)

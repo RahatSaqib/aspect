@@ -269,7 +269,7 @@ export class ResultDetail extends PureComponent {
       )
       .sortBy(value => value.get('order'))
       .entrySeq()
-      .map(([key, value]) =>
+      .map(([key, value]) => (
         <Unit sm="1-2" md="1-2" lg="1-4" key={key}>
           {/* Todo: i18n */}
           <ReadOnlyField
@@ -278,7 +278,7 @@ export class ResultDetail extends PureComponent {
             format={value.get('type') === 'number' ? formatNumber : null}
           />
         </Unit>
-      )
+      ))
   }
 
   getDuration(startedOn, endedOn) {
@@ -288,9 +288,9 @@ export class ResultDetail extends PureComponent {
 
     const duration = new Date(endedOn) - new Date(startedOn)
 
-    const seconds = parseInt(duration / 1000 % 60, 10)
-    const minutes = parseInt(duration / (1000 * 60) % 60, 10)
-    const hours = parseInt(duration / (1000 * 60 * 60) % 24, 10)
+    const seconds = parseInt((duration / 1000) % 60, 10)
+    const minutes = parseInt((duration / (1000 * 60)) % 60, 10)
+    const hours = parseInt((duration / (1000 * 60 * 60)) % 24, 10)
 
     return `${hours}h ${minutes}m ${seconds}s`
   }
@@ -378,14 +378,15 @@ export class ResultDetail extends PureComponent {
               <ReadOnlyField
                 label={formatMessage(messages.fieldSampleOriginSite)}
                 value={result.get('sampleOriginSiteName')}
-                format={v =>
+                format={v => (
                   <div>
                     <Link
                       to={`/browse/site/${result.get('sampleOriginSiteId')}`}
                     >
                       {v}
                     </Link>
-                  </div>}
+                  </div>
+                )}
               />
             </Unit>
             <Unit sm="1-6" md="1-12">
@@ -436,7 +437,7 @@ export class ResultDetail extends PureComponent {
               <ReadOnlyField
                 label={formatMessage(messages.fieldDevice)}
                 value={result.get('deviceName')}
-                format={v =>
+                format={v => (
                   <div>
                     <Link to={`/browse/device/${result.get('deviceId')}`}>
                       {v}
@@ -445,7 +446,8 @@ export class ResultDetail extends PureComponent {
                     <Link to={`/browse/site/${result.get('siteId')}`}>
                       {result.get('siteName')}
                     </Link>
-                  </div>}
+                  </div>
+                )}
               />
             </Unit>
           </CardText>
@@ -453,20 +455,22 @@ export class ResultDetail extends PureComponent {
         {/* Result-related data (categories, resultText, probes...) */}
         <Card>
           <CardText>
-            {result.get('resultCategory1Name') &&
+            {result.get('resultCategory1Name') && (
               <Unit sm="1-2" md="1-2" lg="1-4">
                 <ReadOnlyField
                   label={assay.get('resultCategory1Label') || ''}
                   value={result.get('resultCategory1Name')}
                 />
-              </Unit>}
-            {result.get('resultCategory2Name') &&
+              </Unit>
+            )}
+            {result.get('resultCategory2Name') && (
               <Unit sm="1-2" md="1-3" lg="1-4">
                 <ReadOnlyField
                   label={assay.get('resultCategory2Label') || ''}
                   value={result.get('resultCategory2Name')}
                 />
-              </Unit>}
+              </Unit>
+            )}
             {this.getAssayFields()}
             <Unit sm="1-2" md="1-2" lg="1-2">
               <ReadOnlyField
@@ -474,22 +478,22 @@ export class ResultDetail extends PureComponent {
                 value={result.getIn(['resultData', 'resultText'])}
               />
             </Unit>
-            {result.get('errorCode')
-              ? <Unit sm="1-2" md="1-2" lg="1-4">
-                  <ReadOnlyField
-                    label={formatMessage(messages.fieldErrorCode)}
-                    value={result.get('errorCode')}
-                  />
-                </Unit>
-              : null}
-            {result.get('errorNotes')
-              ? <Unit sm="1-2" md="1-2" lg="3-4">
-                  <ReadOnlyField
-                    label={formatMessage(messages.fieldErrorNotes)}
-                    value={result.get('errorNotes')}
-                  />
-                </Unit>
-              : null}
+            {result.get('errorCode') ? (
+              <Unit sm="1-2" md="1-2" lg="1-4">
+                <ReadOnlyField
+                  label={formatMessage(messages.fieldErrorCode)}
+                  value={result.get('errorCode')}
+                />
+              </Unit>
+            ) : null}
+            {result.get('errorNotes') ? (
+              <Unit sm="1-2" md="1-2" lg="3-4">
+                <ReadOnlyField
+                  label={formatMessage(messages.fieldErrorNotes)}
+                  value={result.get('errorNotes')}
+                />
+              </Unit>
+            ) : null}
             <Unit sm="1-1" md="1-2" lg="1-4">
               <ReadOnlyField
                 label="Workflow Status"

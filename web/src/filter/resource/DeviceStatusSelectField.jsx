@@ -49,13 +49,13 @@ export class DeviceStatusSelectField extends PureComponent {
     return (
       <SelectField {...restProps} value={value} onChange={this.handleChange}>
         {allItemText && <MenuItem value="all" primaryText={allItemText} />}
-        {deviceStatusItems.map(c =>
+        {deviceStatusItems.map(c => (
           <MenuItem
             key={c.get('id')}
             value={c.get('id')}
             primaryText={c.get('name')}
           />
-        )}
+        ))}
       </SelectField>
     )
   }

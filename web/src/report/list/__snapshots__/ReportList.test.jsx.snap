@@ -29,9 +29,9 @@ exports[`ReportList component should shallow render correctly 1`] = `
     }
   }
   items={
-    Object {
-      "byId": Object {},
-      "currentIdList": Array [],
+    Immutable.Record {
+      "byId": Immutable.Map {},
+      "currentIdList": Immutable.List [],
     }
   }
   location={
@@ -44,14 +44,14 @@ exports[`ReportList component should shallow render correctly 1`] = `
   sortCol="name"
   sortDir="asc"
   table={
-    Object {
-      "extraColumns": Array [],
+    Immutable.Record {
       "loading": false,
-      "page": 0,
-      "pageSize": 10,
       "sortCol": "name",
       "sortDir": "asc",
+      "page": 0,
+      "pageSize": 10,
       "total": 0,
+      "extraColumns": Immutable.List [],
     }
   }
 />

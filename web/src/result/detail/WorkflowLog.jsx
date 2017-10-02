@@ -81,18 +81,19 @@ export const ResultWorkflowStatusLog = ({
   onHeadColumnClick,
   onPageChange,
   onPageSizeChange,
-}) =>
+}) => (
   <Card>
     <CardTitle
       title={intl.formatMessage(messages.totalWorkflowStatusLog, {
         itemCount: table.total,
       })}
     />
-    {items.currentIdList.isEmpty() &&
+    {items.currentIdList.isEmpty() && (
       <CardText className={cssClasses('CardText')}>
         {intl.formatMessage(messages.noWorkflowStatusLog)}
-      </CardText>}
-    {!items.currentIdList.isEmpty() &&
+      </CardText>
+    )}
+    {!items.currentIdList.isEmpty() && (
       <CardText>
         <DataTableProgressBar disabled={!table.loading} />
         <WorkflowLogDataTable
@@ -122,13 +123,13 @@ export const ResultWorkflowStatusLog = ({
           />
           {items.currentIdList
             .map(id => items.byId.get(id))
-            .map(workflowLog =>
+            .map(workflowLog => (
               <WorkflowLogDataTableRow
                 key={workflowLog.get('id')}
                 intl={intl}
                 workflowLog={workflowLog}
               />
-            )}
+            ))}
         </WorkflowLogDataTable>
         <TablePaginator
           className={cssClasses('TablePaginator')}
@@ -140,7 +141,9 @@ export const ResultWorkflowStatusLog = ({
           onPageChange={onPageChange}
           onPageSizeChange={onPageSizeChange}
         />
-      </CardText>}
+      </CardText>
+    )}
   </Card>
+)
 
 export default enhance(ResultWorkflowStatusLog)

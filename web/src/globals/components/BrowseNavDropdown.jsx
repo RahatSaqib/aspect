@@ -22,7 +22,7 @@ const enhance = compose(
       const searchParams = new URLSearchParams()
       searchParams.set(
         'filters',
-        new URLSearchParams(location.search).get('filters')
+        new URLSearchParams(location.search).get('filters') || ''
       )
 
       history.push({

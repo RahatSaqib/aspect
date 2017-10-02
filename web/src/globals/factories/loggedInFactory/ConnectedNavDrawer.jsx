@@ -27,7 +27,7 @@ const ConnectedNavDrawer = ({
   drawerOpen,
   toggleDrawer,
   closeDrawer,
-}) =>
+}) => (
   <NavDrawer active={drawerOpen} onOverlayClick={toggleDrawer}>
     <LinkNavigation
       history={history}
@@ -44,5 +44,6 @@ const ConnectedNavDrawer = ({
       })}
     </LinkNavigation>
   </NavDrawer>
+)
 
 export default enhance(ConnectedNavDrawer)

@@ -87,12 +87,11 @@ const mapDispatchToProps = bindActionCreators.bind(null, {
 })
 
 export const appFactory = compose(
-  render => ({ store }) =>
+  render => ({ store }) => (
     <AppContainer>
-      <Provider store={store}>
-        {render()}
-      </Provider>
-    </AppContainer>,
+      <Provider store={store}>{render()}</Provider>
+    </AppContainer>
+  ),
   uiProvidersFactory,
   render => {
     const App = ({
@@ -109,7 +108,7 @@ export const appFactory = compose(
       idleStop,
       // For render()
       ...restProps
-    }) =>
+    }) => (
       <IntlProvider
         key={/* https://git.io/viGEA */ culture}
         locale={culture === 'en-US' ? 'en' : culture}
@@ -134,6 +133,7 @@ export const appFactory = compose(
           {render(restProps)}
         </div>
       </IntlProvider>
+    )
 
     return createEagerFactory(connect(mapStateToProps, mapDispatchToProps)(App))
   },

@@ -72,7 +72,10 @@ const searchSanitizer = makeSearchParamsSanitizer({
 })
 const filtersSanitizer = sanitizeFiltersStringBy(FILTERS_CONFIG)
 const filtersFromLocation = composeSanitizer(
-  _.flowRight(filtersSanitizer, searchParams => searchParams.get('filters')),
+  _.flowRight(
+    filtersSanitizer,
+    searchParams => searchParams.get('filters') || ''
+  ),
   searchSanitizer
 )
 
@@ -129,7 +132,9 @@ const enhance = compose(
       currentTarget: { dataset: { alertType } },
     }) => {
       const searchParams = new URLSearchParams(location.search)
-      const filtersParams = new URLSearchParams(searchParams.get('filters'))
+      const filtersParams = new URLSearchParams(
+        searchParams.get('filters') || ''
+      )
       filtersParams.set('alertType', alertType)
       searchParams.set('filters', filtersParams)
 
@@ -141,7 +146,9 @@ const enhance = compose(
 
     onTopicChange: ({ history, location }) => topic => {
       const searchParams = new URLSearchParams(location.search)
-      const filtersParams = new URLSearchParams(searchParams.get('filters'))
+      const filtersParams = new URLSearchParams(
+        searchParams.get('filters') || ''
+      )
       filtersParams.set('topic', topic)
       searchParams.set('filters', filtersParams)
 
@@ -159,7 +166,7 @@ const enhance = compose(
       const {
         sanitized: filtersSanitized,
         value: filtersParams,
-      } = filtersSanitizer(searchParams.get('filters'))
+      } = filtersSanitizer(searchParams.get('filters') || '')
       if (sanitized || filtersSanitized) {
         searchParams.set('filters', filtersParams)
 
@@ -182,7 +189,7 @@ const enhance = compose(
   }),
   withProps(({ location }) => {
     const searchParams = new URLSearchParams(location.search)
-    const filtersParams = new URLSearchParams(searchParams.get('filters'))
+    const filtersParams = new URLSearchParams(searchParams.get('filters') || '')
 
     return {
       alertType: filtersParams.get('alertType') || 'all',
@@ -208,7 +215,7 @@ export const TaskList = ({
   pageAt,
   pageSize,
   onHeadColumnClick,
-}) =>
+}) => (
   <div className={cssClasses('Container')}>
     <Helmet title={intl.formatMessage(messages.tasksTitle)} />
     <div className={cssClasses('FiltersGroup')}>
@@ -310,9 +317,10 @@ export const TaskList = ({
     </div>
     <DataTableCard>
       <DataTableProgressBar disabled={!table.loading} />
-      {items.currentIdList.isEmpty() &&
-        <BrowseEmptyList history={history} location={location} intl={intl} />}
-      {!items.currentIdList.isEmpty() &&
+      {items.currentIdList.isEmpty() && (
+        <BrowseEmptyList history={history} location={location} intl={intl} />
+      )}
+      {!items.currentIdList.isEmpty() && (
         <TaskDataTable
           selectable={false}
           className={cssClasses('TaskDataTable')}
@@ -346,16 +354,17 @@ export const TaskList = ({
           />
           {items.currentIdList
             .map(id => items.byId.get(id))
-            .map(task =>
+            .map(task => (
               <TaskDataTableRow
                 key={task.get('id')}
                 intl={intl}
                 messages={messages}
                 task={task}
               />
-            )}
-        </TaskDataTable>}
-      {!items.currentIdList.isEmpty() &&
+            ))}
+        </TaskDataTable>
+      )}
+      {!items.currentIdList.isEmpty() && (
         <BrowseTablePaginator
           history={history}
           location={location}
@@ -364,8 +373,10 @@ export const TaskList = ({
           total={table.total}
           pageAt={pageAt}
           pageSize={pageSize}
-        />}
+        />
+      )}
     </DataTableCard>
   </div>
+)
 
 export default enhance(TaskList)

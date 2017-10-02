@@ -21,10 +21,18 @@ export function validate({ name, email, email2 }, { intl }) {
   if (!name) {
     errors.name = intl.formatMessage(messages.nameRequired)
   }
-  if (!validateEmailAddress(email).optional().isValid()) {
+  if (
+    !validateEmailAddress(email)
+      .optional()
+      .isValid()
+  ) {
     errors.email = intl.formatMessage(messages.invalidEmailAddress)
   }
-  if (!validateEmailAddress(email2).optional().isValid()) {
+  if (
+    !validateEmailAddress(email2)
+      .optional()
+      .isValid()
+  ) {
     errors.email2 = intl.formatMessage(messages.invalidEmailAddress)
   }
   return errors
@@ -138,7 +146,7 @@ export const ContactDetailsForm = ({
   onZipChange,
   onNotesChange,
   handleSubmit,
-}) =>
+}) => (
   <form onSubmit={handleSubmit} className={cssClasses('Form')}>
     <div className={cssClasses('Form__Content')}>
       <section>
@@ -164,9 +172,7 @@ export const ContactDetailsForm = ({
         />
       </section>
       <section>
-        <h1>
-          {intl.formatMessage(messages.emailHeader)}
-        </h1>
+        <h1>{intl.formatMessage(messages.emailHeader)}</h1>
         <Input
           type="email"
           name="email"
@@ -189,9 +195,7 @@ export const ContactDetailsForm = ({
         />
       </section>
       <section>
-        <h1>
-          {intl.formatMessage(messages.phone)}
-        </h1>
+        <h1>{intl.formatMessage(messages.phone)}</h1>
         <DialCodeDropdownInput
           name="phone"
           label={intl.formatMessage(messages.telephone)}
@@ -211,11 +215,9 @@ export const ContactDetailsForm = ({
           maxLength={40}
         />
       </section>
-      {userIsAdmin &&
+      {userIsAdmin && (
         <section>
-          <h1>
-            {intl.formatMessage(messages.partner)}
-          </h1>
+          <h1>{intl.formatMessage(messages.partner)}</h1>
           <PartnerSelectField
             name="lastPartnerId"
             floatingLabelText={intl.formatMessage(messages.partner)}
@@ -234,11 +236,10 @@ export const ContactDetailsForm = ({
             tabIndex="0"
             aria-haspopup
           />
-        </section>}
+        </section>
+      )}
       <section>
-        <h1>
-          {intl.formatMessage(messages.location)}
-        </h1>
+        <h1>{intl.formatMessage(messages.location)}</h1>
         <div className={cssClasses('GeographyDropdownGroup')}>
           <CountrySelectField
             className={cssClasses('GeographyDropdown')}
@@ -279,7 +280,7 @@ export const ContactDetailsForm = ({
           maxLength={45}
         />
       </section>
-      {showNotesField &&
+      {showNotesField && (
         <section>
           <Input
             type="text"
@@ -293,7 +294,8 @@ export const ContactDetailsForm = ({
             multiline
             rows={4}
           />
-        </section>}
+        </section>
+      )}
     </div>
     <div className={cssClasses('Form__ActionRow')}>
       <Button
@@ -305,5 +307,6 @@ export const ContactDetailsForm = ({
       />
     </div>
   </form>
+)
 
 export default enhance(ContactDetailsForm)

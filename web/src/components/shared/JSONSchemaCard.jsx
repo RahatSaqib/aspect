@@ -29,7 +29,7 @@ export const PropertiesSchemaCard = compose(
       props.setIsExpanded(!props.isExpanded)
     },
   })
-)(props =>
+)(props => (
   <Paper>
     <CardHeader
       title={props.title}
@@ -41,7 +41,7 @@ export const PropertiesSchemaCard = compose(
         onExpanding={props.handleExpanding}
       />
     </CardHeader>
-    {props.isExpanded &&
+    {props.isExpanded && (
       <CardText>
         {props.dataSchema
           .keySeq()
@@ -53,14 +53,15 @@ export const PropertiesSchemaCard = compose(
             value: props.data.get(key),
           }))
           .sortBy(({ label }) => label)
-          .map(field =>
+          .map(field => (
             <Unit key={field.key} sm="1-2" md="1-3" lg="1-3">
               {props.renderField(field)}
             </Unit>
-          )}
-      </CardText>}
+          ))}
+      </CardText>
+    )}
   </Paper>
-)
+))
 
 const enhance = compose(
   pure,
@@ -81,7 +82,7 @@ export const JSONSchemaCard = ({
   formatNestedSubtitle,
   dataSchema,
   data,
-}) =>
+}) => (
   <Card initiallyExpanded={initiallyExpanded}>
     <CardHeader title={title} actAsExpander showExpandableButton />
     <CardText actAsExpander expandable>
@@ -116,5 +117,6 @@ export const JSONSchemaCard = ({
         })}
     </CardText>
   </Card>
+)
 
 export default enhance(JSONSchemaCard)

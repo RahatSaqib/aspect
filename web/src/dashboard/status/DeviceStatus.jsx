@@ -23,7 +23,7 @@ const enhance = compose(
   })
 )
 
-export const DeviceStatus = ({ intl, className, title, data }) =>
+export const DeviceStatus = ({ intl, className, title, data }) => (
   <Card className={className}>
     <Title colorClassName={cssClasses('Title__Color--device')} title={title} />
     <div>
@@ -68,5 +68,6 @@ export const DeviceStatus = ({ intl, className, title, data }) =>
       </Unit>
     </div>
   </Card>
+)
 
 export default enhance(DeviceStatus)

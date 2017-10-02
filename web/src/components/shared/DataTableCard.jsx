@@ -7,7 +7,8 @@ const cssClasses = classnames.bind(require('./DataTableCard.css'))
 
 const enhance = _.identity
 
-const DataTableCard = props =>
+const DataTableCard = props => (
   <Card {...props} className={cssClasses(props.className, 'Card')} />
+)
 
 export default enhance(DataTableCard)

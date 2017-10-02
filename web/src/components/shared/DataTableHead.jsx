@@ -9,9 +9,9 @@ const cssClasses = classnames.bind(require('./DataTableHead.css'))
 
 const enhance = _.identity
 
-const DataTableHead = ({ sortColumnKey, sortColumnDir, columns }) =>
+const DataTableHead = ({ sortColumnKey, sortColumnDir, columns }) => (
   <TableHead className={cssClasses('TableHead')}>
-    {columns.map(({ key = index, label, ...restProps }, index) =>
+    {columns.map(({ key = index, label, ...restProps }, index) => (
       <TableCell
         key={key}
         data-column={key}
@@ -20,15 +20,14 @@ const DataTableHead = ({ sortColumnKey, sortColumnDir, columns }) =>
       >
         {label}
         {sortColumnKey === key &&
-          (sortColumnDir === 'asc'
-            ? <KeyboardArrowDown
-                className={cssClasses('TableCell__SortIcon')}
-              />
-            : <KeyboardArrowUp
-                className={cssClasses('TableCell__SortIcon')}
-              />)}
+          (sortColumnDir === 'asc' ? (
+            <KeyboardArrowDown className={cssClasses('TableCell__SortIcon')} />
+          ) : (
+            <KeyboardArrowUp className={cssClasses('TableCell__SortIcon')} />
+          ))}
       </TableCell>
-    )}
+    ))}
   </TableHead>
+)
 
 export default enhance(DataTableHead)

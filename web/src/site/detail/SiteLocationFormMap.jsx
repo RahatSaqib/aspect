@@ -127,12 +127,14 @@ export class SiteLocationFormMap extends PureComponent {
 
     return (
       <div className={styles.Container}>
-        {latLng
-          ? <SiteMap position={latLng} />
-          : <div>
-              <p>Finding location</p>
-              <CircularProgress size={2} />
-            </div>}
+        {latLng ? (
+          <SiteMap position={latLng} />
+        ) : (
+          <div>
+            <p>Finding location</p>
+            <CircularProgress size={2} />
+          </div>
+        )}
       </div>
     )
   }

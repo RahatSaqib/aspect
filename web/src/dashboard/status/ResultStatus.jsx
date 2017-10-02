@@ -42,7 +42,7 @@ export const ResultStatus = ({
   fill,
   points,
   resultSummaryList,
-}) =>
+}) => (
   <Card className={className}>
     <Title colorClassName={cssClasses('Title__Color--result')} title={title} />
     <div>
@@ -56,13 +56,14 @@ export const ResultStatus = ({
         />
       </Unit>
       <Unit md="1-2" lg="2-3">
-        {resultSummaryList.map(it =>
+        {resultSummaryList.map(it => (
           <Unit key={it.get('assayTypeName')} sm="1-2" lg="1-3">
             <ResultSummaryItemBarStack item={it} />
           </Unit>
-        )}
+        ))}
       </Unit>
     </div>
   </Card>
+)
 
 export default enhance(ResultStatus)

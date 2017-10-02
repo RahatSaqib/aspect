@@ -22,7 +22,7 @@ const enhance = compose(
   pure,
   withProps(({ location }) => {
     const searchParams = new URLSearchParams(location.search)
-    const filtersParams = new URLSearchParams(searchParams.get('filters'))
+    const filtersParams = new URLSearchParams(searchParams.get('filters') || '')
     return {
       filters: _.fromPairs([...filtersParams.entries()]),
     }
@@ -33,7 +33,7 @@ const enhance = compose(
 
       const filtersParams = mergeToFiltersParams(
         nextFilters,
-        new URLSearchParams(searchParams.get('filters'))
+        new URLSearchParams(searchParams.get('filters') || '')
       )
 
       searchParams.set('filters', filtersParams)
@@ -47,7 +47,9 @@ const enhance = compose(
 
     onRemoveFilterItem: ({ history, location }) => filterKey => {
       const searchParams = new URLSearchParams(location.search)
-      const filtersParams = new URLSearchParams(searchParams.get('filters'))
+      const filtersParams = new URLSearchParams(
+        searchParams.get('filters') || ''
+      )
 
       switch (filterKey) {
         case 'countryId':
@@ -91,7 +93,7 @@ export const BrowseFilters = ({
   intl,
   onRemoveFilterItem,
   ...restProps
-}) =>
+}) => (
   <div className={cssClasses('Container')}>
     <FiltersBtnGroup
       intl={intl}
@@ -107,5 +109,6 @@ export const BrowseFilters = ({
       {...restProps}
     />
   </div>
+)
 
 export default enhance(BrowseFilters)

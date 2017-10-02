@@ -82,7 +82,10 @@ const searchSanitizer = makeSearchParamsSanitizer({
 })
 const filtersSanitizer = sanitizeFiltersStringBy(FILTERS_CONFIG)
 const filtersFromLocation = composeSanitizer(
-  _.flowRight(filtersSanitizer, searchParams => searchParams.get('filters')),
+  _.flowRight(
+    filtersSanitizer,
+    searchParams => searchParams.get('filters') || ''
+  ),
   searchSanitizer
 )
 
@@ -141,7 +144,7 @@ const enhance = compose(
       const {
         sanitized: filtersSanitized,
         value: filtersParams,
-      } = filtersSanitizer(searchParams.get('filters'))
+      } = filtersSanitizer(searchParams.get('filters') || '')
       if (sanitized || filtersSanitized) {
         searchParams.set('filters', filtersParams)
 
@@ -176,7 +179,7 @@ export const ReportList = ({
   pageAt,
   pageSize,
   onHeadColumnClick,
-}) =>
+}) => (
   <div className={cssClasses('Container')}>
     <Helmet title={intl.formatMessage(messages.reportsTitle)} />
     <NavTitle title={intl.formatMessage(messages.reportsTitle)} />
@@ -188,9 +191,10 @@ export const ReportList = ({
     />
     <DataTableCard>
       <DataTableProgressBar disabled={!table.loading} />
-      {items.currentIdList.isEmpty() &&
-        <BrowseEmptyList history={history} location={location} intl={intl} />}
-      {!items.currentIdList.isEmpty() &&
+      {items.currentIdList.isEmpty() && (
+        <BrowseEmptyList history={history} location={location} intl={intl} />
+      )}
+      {!items.currentIdList.isEmpty() && (
         <ReportDataTable
           selectable={false}
           className={cssClasses('ReportDataTable')}
@@ -233,15 +237,16 @@ export const ReportList = ({
           />
           {items.currentIdList
             .map(id => items.byId.get(id))
-            .map(report =>
+            .map(report => (
               <ReportDataTableRow
                 key={report.get('id')}
                 intl={intl}
                 report={report}
               />
-            )}
-        </ReportDataTable>}
-      {!items.currentIdList.isEmpty() &&
+            ))}
+        </ReportDataTable>
+      )}
+      {!items.currentIdList.isEmpty() && (
         <BrowseTablePaginator
           history={history}
           location={location}
@@ -250,8 +255,10 @@ export const ReportList = ({
           total={table.total}
           pageAt={pageAt}
           pageSize={pageSize}
-        />}
+        />
+      )}
     </DataTableCard>
   </div>
+)
 
 export default enhance(ReportList)

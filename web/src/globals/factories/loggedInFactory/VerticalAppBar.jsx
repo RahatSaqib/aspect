@@ -30,7 +30,7 @@ const themes = {
   },
 }
 
-const VerticalAppBar = ({ toggleDrawer, navigateRoot }) =>
+const VerticalAppBar = ({ toggleDrawer, navigateRoot }) => (
   <AppBar
     leftIcon={<MdMenuIcon />}
     onLeftIconClick={toggleDrawer}
@@ -38,5 +38,6 @@ const VerticalAppBar = ({ toggleDrawer, navigateRoot }) =>
     onRightIconClick={navigateRoot}
     theme={themes.AppBar}
   />
+)
 
 export default enhance(VerticalAppBar)

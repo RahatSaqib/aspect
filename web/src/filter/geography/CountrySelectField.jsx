@@ -52,9 +52,9 @@ export class CountrySelectField extends PureComponent {
         onChange={this.handleSelectFieldChange}
       >
         {allItemText && <MenuItem value="all" primaryText={allItemText} />}
-        {countries.items.map(c =>
+        {countries.items.map(c => (
           <MenuItem key={c.id} value={c.id} primaryText={c.name} />
-        )}
+        ))}
       </ForkedSelectField>
     )
   }

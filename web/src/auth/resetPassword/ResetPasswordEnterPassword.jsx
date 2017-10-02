@@ -62,12 +62,10 @@ export const ResetPasswordEnterPassword = ({
   onNewPasswordChange,
   onConfirmNewPasswordChange,
   handleSubmit,
-}) =>
+}) => (
   <form onSubmit={handleSubmit} className={cssClasses('Form')}>
     <div className={cssClasses('Form__Content')}>
-      <p>
-        {intl.formatMessage(messages.enterNewPasswordContent)}
-      </p>
+      <p>{intl.formatMessage(messages.enterNewPasswordContent)}</p>
       <StrongPasswordInput
         // TODO: refactor StrongPasswordInput into react-toolbox or HOC
         intl={intl}
@@ -107,5 +105,6 @@ export const ResetPasswordEnterPassword = ({
       {action}
     </div>
   </form>
+)
 
 export default enhance(ResetPasswordEnterPassword)

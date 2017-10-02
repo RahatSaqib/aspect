@@ -297,14 +297,10 @@ export class RouterDetail extends PureComponent {
               <ReadOnlyField
                 label=""
                 value={router.get('name')}
-                format={v =>
+                format={v => (
                   <div>
                     <h1 className={styles.Name}>
-                      {v}{' '}
-                      {shortname &&
-                        <small>
-                          ({shortname})
-                        </small>}
+                      {v} {shortname && <small>({shortname})</small>}
                     </h1>
                     <div className={styles.StatusText}>
                       <Link
@@ -330,7 +326,8 @@ export class RouterDetail extends PureComponent {
                         {formatMessage(messages.fieldTotalNumberOfTests)}
                       </Link>
                     </div>
-                  </div>}
+                  </div>
+                )}
               />
             </Unit>
             <Unit sm="1-6" md="1-12">
@@ -347,12 +344,13 @@ export class RouterDetail extends PureComponent {
               <ReadOnlyField
                 label=""
                 value
-                format={() =>
+                format={() => (
                   <img
                     alt="utilization rate"
                     src={require('../../device/detail/utilization_rate.png')}
                     style={{ width: '100%' }}
-                  />}
+                  />
+                )}
               />
             </Unit>
             <Unit sm="1-1" md="1-2">
@@ -360,12 +358,13 @@ export class RouterDetail extends PureComponent {
               <ReadOnlyField
                 label=""
                 value
-                format={() =>
+                format={() => (
                   <img
                     alt="error rates"
                     src={require('../../device/detail/error_rates.png')}
                     style={{ width: '100%' }}
-                  />}
+                  />
+                )}
               />
             </Unit>
           </CardText>
@@ -382,7 +381,7 @@ export class RouterDetail extends PureComponent {
         <Card initiallyExpanded>
           <CardHeader title="Contacts" actAsExpander showExpandableButton />
           <CardText actAsExpander expandable style={{ paddingTop: 10 }}>
-            {router.get('contacts').map(c =>
+            {router.get('contacts').map(c => (
               <Link
                 key={c.get('id')}
                 to={`/browse/person/${c.get('id')}`}
@@ -390,7 +389,7 @@ export class RouterDetail extends PureComponent {
               >
                 {c.get('name')}
               </Link>
-            )}
+            ))}
           </CardText>
         </Card>
         {/* Calibration */}

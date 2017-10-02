@@ -124,9 +124,11 @@ export const requirePermissions = ({
       ])(permissionsInConfig, overriddenPermissions, extraPermissions)
       const isPermitted = isPermittedUser(userPermissions, permissionsByTypes)
 
-      return isPermitted
-        ? <WrappedComponent {...restProps} />
-        : <ForbiddenComponent />
+      return isPermitted ? (
+        <WrappedComponent {...restProps} />
+      ) : (
+        <ForbiddenComponent />
+      )
     }
   }
 

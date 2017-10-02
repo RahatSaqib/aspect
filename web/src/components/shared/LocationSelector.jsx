@@ -44,7 +44,7 @@ const styles = {
   },
 }
 
-const renderCountrySelectField = ({ input, meta, ...restProps }) =>
+const renderCountrySelectField = ({ input, meta, ...restProps }) => (
   <CountrySelectField
     {...restProps}
     onCountryIdChange={input.onChange}
@@ -58,8 +58,9 @@ const renderCountrySelectField = ({ input, meta, ...restProps }) =>
     tabIndex="0"
     aria-haspopup
   />
+)
 
-const renderStateSelectField = ({ input, meta, ...restProps }) =>
+const renderStateSelectField = ({ input, meta, ...restProps }) => (
   <StateSelectField
     {...restProps}
     onStateIdChange={input.onChange}
@@ -73,8 +74,9 @@ const renderStateSelectField = ({ input, meta, ...restProps }) =>
     tabIndex="0"
     aria-haspopup
   />
+)
 
-const renderLgaSelectField = ({ input, meta, ...restProps }) =>
+const renderLgaSelectField = ({ input, meta, ...restProps }) => (
   <LgaSelectField
     {...restProps}
     onLgaIdChange={input.onChange}
@@ -88,6 +90,7 @@ const renderLgaSelectField = ({ input, meta, ...restProps }) =>
     tabIndex="0"
     aria-haspopup
   />
+)
 
 export class LocationSelector extends PureComponent {
   componentWillReceiveProps(nextProps) {
@@ -157,8 +160,9 @@ export class LocationSelector extends PureComponent {
             style={styles.field}
             disabled={countriesDisabled}
           />
-          {countriesLoading &&
-            <LinearProgress style={styles.loadingProgress} />}
+          {countriesLoading && (
+            <LinearProgress style={styles.loadingProgress} />
+          )}
         </div>
         <div style={styles.fieldContainer}>
           <Field

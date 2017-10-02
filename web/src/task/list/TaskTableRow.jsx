@@ -20,20 +20,23 @@ const themes = {
   },
 }
 
-const TaskTableRow = ({ intl, messages, task, ...restProps }) =>
+const TaskTableRow = ({ intl, messages, task, ...restProps }) => (
   <TableRow
     {...restProps}
     className={cssClasses(restProps.className, 'TableRow')}
   >
     <TableCell className={cssClasses('TableCell')}>
-      {task.get('alertType') === 'mine' &&
-        <FaCircle className={cssClasses('FaCircle')} />}
-      {task.get('alertType') === 'normal' &&
-        <FaCircleO className={cssClasses('FaCircleO')} />}
-      {task.get('alertType') === 'snoozed' &&
+      {task.get('alertType') === 'mine' && (
+        <FaCircle className={cssClasses('FaCircle')} />
+      )}
+      {task.get('alertType') === 'normal' && (
+        <FaCircleO className={cssClasses('FaCircleO')} />
+      )}
+      {task.get('alertType') === 'snoozed' && (
         <span className={cssClasses('FaBell')}>
           <FaBell />
-        </span>}
+        </span>
+      )}
     </TableCell>
     <TableCell className={cssClasses('TableCell')}>
       <div className={cssClasses('Message')}>
@@ -55,7 +58,7 @@ const TaskTableRow = ({ intl, messages, task, ...restProps }) =>
         <span className={cssClasses('Message__Text')}>
           {task.get('message')}
         </span>
-        {task.get('alertCount') > 0 &&
+        {task.get('alertCount') > 0 && (
           <span className={cssClasses('Message__Alert')}>
             <FaExclamationTriangle
               className={cssClasses('FaExclamationTriangle')}
@@ -63,7 +66,8 @@ const TaskTableRow = ({ intl, messages, task, ...restProps }) =>
             {intl.formatMessage(messages.alertCount, {
               alertCount: task.get('alertCount'),
             })}
-          </span>}
+          </span>
+        )}
       </div>
     </TableCell>
     <TableCell className={cssClasses('TableCell')}>
@@ -75,14 +79,17 @@ const TaskTableRow = ({ intl, messages, task, ...restProps }) =>
     <TableCell
       className={cssClasses('TableCell', 'TableCell--notificationCount')}
     >
-      {task.get('notificationCount') > 0 &&
-        <MdModeComment className={cssClasses('MdModeComment')} />}
-      {task.get('notificationCount') > 0 &&
+      {task.get('notificationCount') > 0 && (
+        <MdModeComment className={cssClasses('MdModeComment')} />
+      )}
+      {task.get('notificationCount') > 0 && (
         <span className={cssClasses('NotificationCount')}>
           {task.get('notificationCount')}
-        </span>}
+        </span>
+      )}
       {task.get('notificationCount') === 0 && '…'}
     </TableCell>
   </TableRow>
+)
 
 export default enhance(TaskTableRow)

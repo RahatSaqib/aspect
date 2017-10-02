@@ -9,7 +9,7 @@ const cssClasses = classnames.bind(
 
 const enhance = _.identity
 
-const WorkflowLogTableRow = ({ intl, workflowLog, ...restProps }) =>
+const WorkflowLogTableRow = ({ intl, workflowLog, ...restProps }) => (
   <TableRow
     {...restProps}
     className={cssClasses(restProps.className, 'TableRow')}
@@ -24,5 +24,6 @@ const WorkflowLogTableRow = ({ intl, workflowLog, ...restProps }) =>
       {workflowLog.get('operator')}
     </TableCell>
   </TableRow>
+)
 
 export default enhance(WorkflowLogTableRow)

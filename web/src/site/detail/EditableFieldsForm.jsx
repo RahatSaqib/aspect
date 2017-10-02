@@ -13,7 +13,7 @@ import TextField from 'material-ui/TextField'
 import TimezoneSelect from '../../components/shared/TimezoneSelect'
 import LocationSelector from '../../components/shared/LocationSelector'
 
-const renderTextField = ({ input, meta, ...restProps }) =>
+const renderTextField = ({ input, meta, ...restProps }) => (
   <TextField
     {...restProps}
     {...input}
@@ -25,6 +25,7 @@ const renderTextField = ({ input, meta, ...restProps }) =>
     }}
     errorText={meta.touched && meta.error}
   />
+)
 
 function validate(values) {
   const errors = {}
@@ -65,7 +66,7 @@ export const EditableFieldsForm = ({
   handleSubmit,
   pristine,
   submitting,
-}) =>
+}) => (
   <form onSubmit={handleSubmit}>
     <Field
       name="name"
@@ -124,6 +125,7 @@ export const EditableFieldsForm = ({
     />
     {submitting && <LinearProgress />}
   </form>
+)
 
 export const EditableFieldsFormContainer = enhance(EditableFieldsForm)
 

@@ -37,7 +37,7 @@ const themes = {
   },
 }
 
-export const DetailBackBar = ({ onBackClick, onViewClick, onHistoryClick }) =>
+export const DetailBackBar = ({ onBackClick, onViewClick, onHistoryClick }) => (
   <div className={cssClasses('Container')}>
     <Button
       className={cssClasses('Container__Button--back')}
@@ -62,5 +62,6 @@ export const DetailBackBar = ({ onBackClick, onViewClick, onHistoryClick }) =>
       </Button>
     </div>
   </div>
+)
 
 export default enhance(DetailBackBar)

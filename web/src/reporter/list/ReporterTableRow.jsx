@@ -9,7 +9,7 @@ const cssClasses = classnames.bind(
 
 const enhance = _.identity
 
-const ReporterTableRow = ({ intl, reporter, ...restProps }) =>
+const ReporterTableRow = ({ intl, reporter, ...restProps }) => (
   <TableRow
     {...restProps}
     className={cssClasses(restProps.className, 'TableRow')}
@@ -44,5 +44,6 @@ const ReporterTableRow = ({ intl, reporter, ...restProps }) =>
       {intl.formatNumber(reporter.get('totalFlagged'))}
     </TableCell>
   </TableRow>
+)
 
 export default enhance(ReporterTableRow)

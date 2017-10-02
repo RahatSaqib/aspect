@@ -13,8 +13,6 @@ exports[`App Notification Dialog component should shallow render correctly 1`] =
 >
   <div
     className="AppNotificationDialogDialog__ContentContainer"
-  >
-    
-  </div>
+  />
 </Dialog>
 `;

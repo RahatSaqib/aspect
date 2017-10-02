@@ -78,7 +78,7 @@ export const NotificationDetail = ({
   location,
   match,
   // --- injected by recompose ---
-}) =>
+}) => (
   <div className={cssClasses('Container')}>
     <Helmet title={intl.formatMessage(messages.notificationDetailTitle)} />
     <DetailBackBar history={history} location={location} match={match} />
@@ -103,7 +103,7 @@ export const NotificationDetail = ({
             'Error',
             'Reporting',
             'Inventory',
-          ].map(label =>
+          ].map(label => (
             <MockTogglBtn
               key={label}
               className={cssClasses('Card__Button', 'Card__Button--inline')}
@@ -113,7 +113,7 @@ export const NotificationDetail = ({
               label={label}
               theme={BUTTON_THEME}
             />
-          )}
+          ))}
         </div>
       </Card>
     </section>
@@ -121,7 +121,7 @@ export const NotificationDetail = ({
       <Card className={cssClasses('Card')}>
         <h2 className={cssClasses('Card__Title')}>Disease</h2>
         <div>
-          {['TB', 'HIV', 'HCV', 'Any disease'].map(label =>
+          {['TB', 'HIV', 'HCV', 'Any disease'].map(label => (
             <MockTogglBtn
               key={label}
               className={cssClasses('Card__Button', 'Card__Button--inline')}
@@ -131,7 +131,7 @@ export const NotificationDetail = ({
               label={label}
               theme={BUTTON_THEME}
             />
-          )}
+          ))}
         </div>
       </Card>
     </section>
@@ -148,7 +148,7 @@ export const NotificationDetail = ({
             'Invalid',
             'Error',
             'No result',
-          ].map(label =>
+          ].map(label => (
             <MockTogglBtn
               key={label}
               className={cssClasses('Card__Button', 'Card__Button--inline')}
@@ -158,7 +158,7 @@ export const NotificationDetail = ({
               label={label}
               theme={BUTTON_THEME}
             />
-          )}
+          ))}
         </div>
       </Card>
     </section>
@@ -171,7 +171,7 @@ export const NotificationDetail = ({
             'Choose by state',
             'Choose by county',
             'Choose by individual devices',
-          ].map(label =>
+          ].map(label => (
             <MockTogglBtn
               key={label}
               className={cssClasses('Card__Button', 'Card__Button--inline')}
@@ -181,7 +181,7 @@ export const NotificationDetail = ({
               label={label}
               theme={BUTTON_THEME}
             />
-          )}
+          ))}
         </div>
         <hr />
         <div>
@@ -195,7 +195,7 @@ export const NotificationDetail = ({
             'State name 1 (3 devices)',
             'State name 2 (0 devices)',
             'State name 3 (2 devices)',
-          ].map(label =>
+          ].map(label => (
             <MockTogglBtn
               key={label}
               className={cssClasses('Card__Button', 'Card__Button--inline')}
@@ -204,7 +204,7 @@ export const NotificationDetail = ({
               label={label}
               theme={BUTTON_THEME}
             />
-          )}
+          ))}
         </div>
       </Card>
     </section>
@@ -221,7 +221,7 @@ export const NotificationDetail = ({
               'Users with same tag as result',
               'Patient',
               'Individual users',
-            ].map(label =>
+            ].map(label => (
               <MockTogglBtn
                 key={label}
                 className={cssClasses('Card__Button', 'Card__Button--block')}
@@ -239,7 +239,7 @@ export const NotificationDetail = ({
                 label={label}
                 theme={BUTTON_THEME}
               />
-            )}
+            ))}
           </Unit>
           <Unit sm="1-2" md="2-3" className={cssClasses('Recipients__Right')}>
             <div>
@@ -272,7 +272,7 @@ export const NotificationDetail = ({
       <Card className={cssClasses('Card')}>
         <h2 className={cssClasses('Card__Title')}>Delivery</h2>
         <div>
-          {['Web', 'Email', 'SMS', 'Web hook'].map(label =>
+          {['Web', 'Email', 'SMS', 'Web hook'].map(label => (
             <MockTogglBtn
               key={label}
               className={cssClasses('Card__Button', 'Card__Button--inline')}
@@ -282,7 +282,7 @@ export const NotificationDetail = ({
               label={label}
               theme={BUTTON_THEME}
             />
-          )}
+          ))}
         </div>
       </Card>
     </section>
@@ -322,7 +322,7 @@ export const NotificationDetail = ({
             'State name 1 (3 devices)',
             'State name 2 (0 devices)',
             'State name 3 (2 devices)',
-          ].map(label =>
+          ].map(label => (
             <MockTogglBtn
               key={label}
               className={cssClasses('Card__Button', 'Card__Button--inline')}
@@ -331,7 +331,7 @@ export const NotificationDetail = ({
               label={label}
               theme={BUTTON_THEME}
             />
-          )}
+          ))}
         </div>
         <hr />
         <div>
@@ -429,13 +429,13 @@ export const NotificationDetail = ({
               site: 'Fort Portal Lab',
               time: subDays(now, 7),
             },
-          ].map(delivery =>
+          ].map(delivery => (
             <NotificationDeliveryDataTableRow
               key={delivery.id}
               intl={intl}
               delivery={delivery}
             />
-          )}
+          ))}
         </NotificationDeliveryDataTable>
         <p>Showing 5 sample alerts matching query</p>
       </Card>
@@ -458,5 +458,6 @@ export const NotificationDetail = ({
       </Card>
     </section>
   </div>
+)
 
 export default enhance(NotificationDetail)

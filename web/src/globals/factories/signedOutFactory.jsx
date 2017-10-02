@@ -8,13 +8,14 @@ import intlScrollToTopOnUpdateFactory from './intlScrollToTopOnUpdateFactory'
 
 export const signedOutFactory = compose(
   intlScrollToTopOnUpdateFactory,
-  render => props =>
+  render => props => (
     <div>
       <Helmet titleTemplate="%s - Aspect" defaultTitle="Aspect" />
       {render(props)}
       <AppNotificationDialog intl={props.intl} />
       <AppNotificationSnackBar intl={props.intl} />
-    </div>,
+    </div>
+  ),
   createEagerFactory,
   pure
 )
