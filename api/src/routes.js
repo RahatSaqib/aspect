@@ -125,9 +125,9 @@ function asyncHandler(handler) {
       reply(result)
     } catch (err) {
       console.error(err) // eslint-disable-line no-console
-      reply(err.isBoom ? err : Boom.wrap(err, 500))
+      const err1 = err.isBoom ? err : Boom.wrap(err, 500)
       // Need to rethrow error for detection of plugins
-      throw err
+      throw err1
     }
   })
 }
