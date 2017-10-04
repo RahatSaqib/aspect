@@ -219,7 +219,7 @@ const buttonBy = {
   ),
   consumableId: makeButton(({ consumableItems }, consumableId) =>
     consumableItems
-      .find(it => it.id === consumableId, EMPTY_CONTEXT, EMPTY_MAP)
+      .find(it => it.get('id') === consumableId, EMPTY_CONTEXT, EMPTY_MAP)
       .get('name')
   ),
   workflowStatusId: makeButton(
