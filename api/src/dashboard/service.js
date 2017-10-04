@@ -282,6 +282,7 @@ function* statusDashboard(request) {
             .innerJoin('Geography as g', 's.geographyId', 'g.id')
             .innerJoin('Country as co', 'g.countryId', 'co.id')
             .innerJoin('Consumable as c', 'ii.consumableId', 'c.id')
+            .where('c.name', '!=', 'Gloves')
             .select(
               'co.inventoryDaysThreshold',
               'ii.id',
