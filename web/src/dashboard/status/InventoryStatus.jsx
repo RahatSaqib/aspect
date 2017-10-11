@@ -1,6 +1,7 @@
+import _ from 'lodash'
 import classnames from 'classnames/bind'
 import React from 'react'
-import { compose, withProps, withHandlers, pure } from 'recompose'
+import { compose, withStateHandlers, withProps, pure } from 'recompose'
 import { Card } from 'react-toolbox/lib/card'
 import { Button } from 'react-toolbox/lib/button'
 
@@ -8,18 +9,72 @@ import { Unit } from '../../components/pureGrids'
 import requirePermissions from '../../components/shared/requirePermissions'
 import Title from './Title'
 import CountryWithPoints from './CountryWithPoints'
+import InventorySiteSummaryBar from './InventorySiteSummaryBar'
 import SummaryItemsBlock from './SummaryItemsBlock'
 import messages from './messages'
 
 const cssClasses = classnames.bind(require('./Status.css'))
 
+const findKeyInTree = (target, key) => {
+  while (_.isObject(target)) {
+    if (_.has(target.dataset, key)) {
+      return target.dataset[key]
+    }
+    target = target.parentNode
+  }
+}
+
 const enhance = compose(
   pure,
-  withProps(({ data }) => ({
-    data: data.map(list => list.map((map, i) => map.set('key', i))).toJS(),
-  })),
-  withHandlers({
-    onInventoryClick: ({ history }) => () => history.push('/browse/inventory'),
+  withStateHandlers(
+    () => ({
+      activeSiteIds: [],
+    }),
+    {
+      onInventoryClick: (state, { history }) => () =>
+        history.push('/browse/inventory'),
+
+      onSummaryItemClick: (state, { history }) => ({ target }) => {
+        const searchParams = new URLSearchParams()
+        const filtersParams = new URLSearchParams()
+        filtersParams.set('consumableId', findKeyInTree(target, 'consumableId'))
+        searchParams.set('filters', filtersParams)
+
+        history.push({
+          pathname: '/browse/inventory',
+          search: searchParams.toString(),
+        })
+      },
+
+      onMouseEnter: () => ({ target }) => ({
+        activeSiteIds: JSON.parse(findKeyInTree(target, 'siteIds')),
+      }),
+      onMouseLeave: ({ activeSiteIds }) => ({ target }) => ({
+        activeSiteIds: _.isEqual(
+          JSON.parse(findKeyInTree(target, 'siteIds')),
+          activeSiteIds
+        )
+          ? []
+          : activeSiteIds,
+      }),
+    }
+  ),
+  withProps(({ siteList, activeSiteIds }) => {
+    const siteStateAbbrs = siteList.map(it => it.get('stateAbbr')).toSet()
+
+    return {
+      fill: ({ properties: { postal } }) =>
+        siteStateAbbrs.has(postal) ? '#00c4e0' : '#a4e6f2',
+      points: siteList
+        .map(it => ({
+          id: it.get('name'),
+          size: Math.max(3.5, Math.round(it.get('count') / 16)),
+          fill: _.includes(activeSiteIds, it.get('id')) ? '#EB4D62' : '#73D749',
+          latitude: it.get('latitude'),
+          longitude: it.get('longitude'),
+        }))
+        .toJS(),
+    }
   }),
   requirePermissions({
     permissions: ['inventory:admin', 'inventory:view', 'inventory:edit'],
@@ -37,8 +92,14 @@ export const InventoryStatus = ({
   intl,
   className,
   title,
-  data,
+  fill,
+  points,
+  inventorySiteSummaryList,
+  inventoryConsumableSummaryList,
   onInventoryClick,
+  onSummaryItemClick,
+  onMouseEnter,
+  onMouseLeave,
 }) => (
   <Card className={className}>
     <Title
@@ -47,21 +108,39 @@ export const InventoryStatus = ({
     />
     <div>
       <Unit sm="1-2" lg="1-4">
-        <CountryWithPoints countryIsoAlpha2Code="TZ" />
-      </Unit>
-      <Unit sm="1-2" lg="1-4">
-        <SummaryItemsBlock
-          intl={intl}
-          title={intl.formatMessage(messages.summaryMedicoTBTitle)}
-          items={data.TB}
+        <CountryWithPoints
+          countryIsoAlpha2Code="US"
+          fill={fill}
+          points={points}
         />
       </Unit>
       <Unit sm="1-2" lg="1-4">
-        <SummaryItemsBlock
-          intl={intl}
-          title={intl.formatMessage(messages.summaryHealthPlusHIVTBTitle)}
-          items={data.HIV}
-        />
+        <InventorySiteSummaryBar list={inventorySiteSummaryList} />
+      </Unit>
+      <Unit sm="1-2" lg="1-4">
+        <div
+          className={cssClasses('SummaryItemsBlocks--horizontal-scrollable')}
+        >
+          {inventoryConsumableSummaryList.map(it => (
+            <SummaryItemsBlock
+              key={it.get('consumableId')}
+              data-consumable-id={it.get('consumableId')}
+              data-site-ids={JSON.stringify(
+                it
+                  .get('affectedSiteIds')
+                  .map(_.toString)
+                  .toJS()
+              )}
+              onClick={onSummaryItemClick}
+              onMouseEnter={onMouseEnter}
+              onMouseLeave={onMouseLeave}
+              clickable
+              intl={intl}
+              title={it.get('consumableName')}
+              items={it.get('data').toJS()}
+            />
+          ))}
+        </div>
       </Unit>
       <Unit sm="1-2" lg="1-4">
         <div className={cssClasses('ButtonsBlock')}>
@@ -73,7 +152,7 @@ export const InventoryStatus = ({
             theme={themes.Button}
           />
           <Button
-            className={cssClasses('Button')}
+            className={cssClasses('Button', 'Button--discard')}
             label={intl.formatMessage(messages.discardConsumablesLabel)}
             onClick={onInventoryClick}
             raised

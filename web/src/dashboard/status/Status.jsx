@@ -136,14 +136,18 @@ export const Status = ({
       </div>
     )}
 
-    {status.get('inventorySummary') && (
+    {status.get('inventoryConsumableSummaryList') && (
       <div className={cssClasses('Section')}>
         <InventoryStatus
           history={history}
           intl={intl}
           className={cssClasses('Section__Content')}
           title={intl.formatMessage(messages.consumableTitle)}
-          data={status.get('inventorySummary')}
+          siteList={status.get('siteList')}
+          inventorySiteSummaryList={status.get('inventorySiteSummaryList')}
+          inventoryConsumableSummaryList={status.get(
+            'inventoryConsumableSummaryList'
+          )}
         />
       </div>
     )}
