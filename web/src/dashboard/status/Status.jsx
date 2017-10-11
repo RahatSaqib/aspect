@@ -13,7 +13,7 @@ import MdPermIdentity from 'react-icons/lib/md/perm-identity'
 
 import { Unit } from '../../components/pureGrids'
 import { showAcknowledgement } from '../../appNotification/AppNotificationRedux'
-import { fetchDashboardStatus } from '../DashboardRedux'
+import { fetchSummaryDashboard } from '../DashboardRedux'
 import messages from './messages'
 import DeviceStatus from './DeviceStatus'
 import InventoryStatus from './InventoryStatus'
@@ -26,16 +26,16 @@ const enhance = compose(
   connect(
     state => ({
       userName: state.user.jwt.name,
-      status: state.getIn(['dashboard', 'status']),
+      summary: state.dashboard.summary,
     }),
     bindActionCreators.bind(null, {
       showAcknowledgement,
-      fetchDashboardStatus,
+      fetchSummaryDashboard,
     })
   ),
   lifecycle({
     componentDidMount() {
-      this.props.fetchDashboardStatus()
+      this.props.fetchSummaryDashboard()
     },
 
     componentWillReceiveProps(nextProps) {
@@ -56,11 +56,11 @@ export const Status = ({
   history,
   intl,
   // --- injected by recompose ---
-  status,
+  summary,
 }) => (
   <div className={cssClasses('Container')}>
     <Helmet title="Status" />
-    <div className={cssClasses('Section')}>
+    <div className={cssClasses('Section--summary')}>
       <Unit sm="1-2" lg="1-4">
         <Link to="/browse/site" className={cssClasses('Summary')}>
           <Card className={cssClasses('Summary__Card')}>
@@ -69,7 +69,7 @@ export const Status = ({
               {intl.formatMessage(messages.sitesTitle)}
             </div>
             <div className={cssClasses('Summary__Card__Count')}>
-              {intl.formatNumber(status.get('sitesTotal', 0))}
+              {intl.formatNumber(summary.get('sitesTotal', 0))}
             </div>
           </Card>
         </Link>
@@ -84,7 +84,7 @@ export const Status = ({
               {intl.formatMessage(messages.devicesTitle)}
             </div>
             <div className={cssClasses('Summary__Card__Count')}>
-              {intl.formatNumber(status.get('devicesTotal', 0))}
+              {intl.formatNumber(summary.get('devicesTotal', 0))}
             </div>
           </Card>
         </Link>
@@ -102,7 +102,7 @@ export const Status = ({
               </span>
             </div>
             <div className={cssClasses('Summary__Card__Count')}>
-              {intl.formatNumber(status.get('resultsTotal30d', 0))}
+              {intl.formatNumber(summary.get('resultsTotal30d', 0))}
             </div>
           </Card>
         </Link>
@@ -117,61 +117,42 @@ export const Status = ({
               {intl.formatMessage(messages.usersTitle)}
             </div>
             <div className={cssClasses('Summary__Card__Count')}>
-              {intl.formatNumber(status.get('usersTotal', 0))}
+              {intl.formatNumber(summary.get('usersTotal', 0))}
             </div>
           </Card>
         </Link>
       </Unit>
     </div>
 
-    {status.get('resultSummaryList') && (
-      <div className={cssClasses('Section')}>
-        <ResultStatus
-          intl={intl}
-          className={cssClasses('Section__Content')}
-          title={intl.formatMessage(messages.clinicalTitle)}
-          siteList={status.get('siteList')}
-          resultSummaryList={status.get('resultSummaryList')}
-        />
-      </div>
+    <ResultStatus
+      intl={intl}
+      className={cssClasses('Section--withStatus')}
+      title={intl.formatMessage(messages.clinicalTitle)}
+    />
+
+    <InventoryStatus
+      history={history}
+      intl={intl}
+      className={cssClasses('Section--withStatus')}
+      title={intl.formatMessage(messages.consumableTitle)}
+    />
+
+    {summary.get('deviceSummary') && (
+      <DeviceStatus
+        intl={intl}
+        className={cssClasses('Section--withStatus')}
+        title={intl.formatMessage(messages.devicesTitle)}
+        data={summary.get('deviceSummary')}
+      />
     )}
 
-    {status.get('inventoryConsumableSummaryList') && (
-      <div className={cssClasses('Section')}>
-        <InventoryStatus
-          history={history}
-          intl={intl}
-          className={cssClasses('Section__Content')}
-          title={intl.formatMessage(messages.consumableTitle)}
-          siteList={status.get('siteList')}
-          inventorySiteSummaryList={status.get('inventorySiteSummaryList')}
-          inventoryConsumableSummaryList={status.get(
-            'inventoryConsumableSummaryList'
-          )}
-        />
-      </div>
-    )}
-
-    {status.get('deviceSummary') && (
-      <div className={cssClasses('Section')}>
-        <DeviceStatus
-          intl={intl}
-          className={cssClasses('Section__Content')}
-          title={intl.formatMessage(messages.devicesTitle)}
-          data={status.get('deviceSummary')}
-        />
-      </div>
-    )}
-
-    {status.get('siteSummary') && (
-      <div className={cssClasses('Section')}>
-        <SiteStatus
-          intl={intl}
-          className={cssClasses('Section__Content')}
-          title={intl.formatMessage(messages.sitesTitle)}
-          data={status.get('siteSummary')}
-        />
-      </div>
+    {summary.get('siteSummary') && (
+      <SiteStatus
+        intl={intl}
+        className={cssClasses('Section--withStatus')}
+        title={intl.formatMessage(messages.sitesTitle)}
+        data={summary.get('siteSummary')}
+      />
     )}
   </div>
 )

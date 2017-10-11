@@ -44,7 +44,10 @@ const enhance = compose(
         yScale: scaleLinear({
           rangeRound: [yMax, 0],
           nice: true,
-          domain: [0, _.maxBy(data, 'minRemainingDays').minRemainingDays],
+          domain: [
+            0,
+            _.get(_.maxBy(data, 'minRemainingDays'), 'minRemainingDays', 0),
+          ],
         }),
       }
     }

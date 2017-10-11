@@ -6,62 +6,142 @@ import Immutable from 'immutable'
 import { aspectFetch } from '../shared/utils/fetch'
 import { errorPleaseTryAgainInAFewMinutes } from '../error/CommonErrorNotifications'
 
-export const types = {
-  REQUEST_DASHBOARD_STATUS: 'REQUEST_DASHBOARD_STATUS',
-  RECEIVE_DASHBOARD_STATUS: 'RECEIVE_DASHBOARD_STATUS',
+export const REQUEST_SUMMARY_DASHBOARD = 'REQUEST_SUMMARY_DASHBOARD'
+export const RECEIVE_SUMMARY_DASHBOARD = 'RECEIVE_SUMMARY_DASHBOARD'
 
-  REQUEST_OPERATIONAL_STATUS: 'REQUEST_OPERATIONAL_STATUS',
-  RECEIVE_OPERATIONAL_STATUS: 'RECEIVE_OPERATIONAL_STATUS',
-}
+export const REQUEST_RESULT_DASHBOARD = 'REQUEST_RESULT_DASHBOARD'
+export const RECEIVE_RESULT_DASHBOARD = 'RECEIVE_RESULT_DASHBOARD'
+
+export const REQUEST_INVENTORY_ITEM_DASHBOARD =
+  'REQUEST_INVENTORY_ITEM_DASHBOARD'
+export const RECEIVE_INVENTORY_ITEM_DASHBOARD =
+  'RECEIVE_INVENTORY_ITEM_DASHBOARD'
+
+export const REQUEST_OPERATIONAL_STATUS = 'REQUEST_OPERATIONAL_STATUS'
+export const RECEIVE_OPERATIONAL_STATUS = 'RECEIVE_OPERATIONAL_STATUS'
 /*
  * ---------------- Action Creators -----------------
  */
-function requestDashboardStatus(requestedAt) {
+function requestSummaryDashboard(requestedAt) {
   return {
-    type: types.REQUEST_DASHBOARD_STATUS,
+    type: REQUEST_SUMMARY_DASHBOARD,
     requestedAt,
   }
 }
 
-function receiveDashboardStatus(requestedAt, data) {
+function receiveSummaryDashboard(requestedAt, data) {
   return {
-    type: types.RECEIVE_DASHBOARD_STATUS,
+    type: RECEIVE_SUMMARY_DASHBOARD,
     requestedAt,
     data,
   }
 }
 
-export function fetchDashboardStatus() {
+export function fetchSummaryDashboard() {
   return dispatch => {
     const requestedAt = Date.now()
-    dispatch(requestDashboardStatus(requestedAt))
+    dispatch(requestSummaryDashboard(requestedAt))
 
-    return aspectFetch('/dashboard', {
+    return aspectFetch('/dashboard/summary', {
       errorNotifications: {
         default: errorPleaseTryAgainInAFewMinutes(
           defineMessages({
             title: {
               id:
-                'errorResponseMessages.fetchDashboardStatus.GET.default.title',
-              defaultMessage: 'Error Loading Dashboard Status',
+                'errorResponseMessages.fetchSummaryDashboard.GET.default.title',
+              defaultMessage: 'Error Loading Dashboard Summary',
             },
           })
         ),
       },
-    }).then(json => dispatch(receiveDashboardStatus(requestedAt, json.data)))
+    }).then(json => dispatch(receiveSummaryDashboard(requestedAt, json.data)))
+  }
+}
+
+function requestResultDashboard(requestedAt) {
+  return {
+    type: REQUEST_RESULT_DASHBOARD,
+    requestedAt,
+  }
+}
+
+function receiveResultDashboard(requestedAt, data) {
+  return {
+    type: RECEIVE_RESULT_DASHBOARD,
+    requestedAt,
+    data,
+  }
+}
+
+export function fetchResultDashboard() {
+  return dispatch => {
+    const requestedAt = Date.now()
+    dispatch(requestResultDashboard(requestedAt))
+
+    return aspectFetch('/dashboard/result', {
+      errorNotifications: {
+        default: errorPleaseTryAgainInAFewMinutes(
+          defineMessages({
+            title: {
+              id:
+                'errorResponseMessages.fetchResultDashboard.GET.default.title',
+              defaultMessage: 'Error Loading Result Dashboard',
+            },
+          })
+        ),
+      },
+    }).then(json => dispatch(receiveResultDashboard(requestedAt, json.data)))
+  }
+}
+
+function requestInventoryItemDashboard(requestedAt) {
+  return {
+    type: REQUEST_INVENTORY_ITEM_DASHBOARD,
+    requestedAt,
+  }
+}
+
+function receiveInventoryItemDashboard(requestedAt, data) {
+  return {
+    type: RECEIVE_INVENTORY_ITEM_DASHBOARD,
+    requestedAt,
+    data,
+  }
+}
+
+export function fetchInventoryItemDashboard() {
+  return dispatch => {
+    const requestedAt = Date.now()
+    dispatch(requestInventoryItemDashboard(requestedAt))
+
+    return aspectFetch('/dashboard/inventory-item', {
+      errorNotifications: {
+        default: errorPleaseTryAgainInAFewMinutes(
+          defineMessages({
+            title: {
+              id:
+                'errorResponseMessages.fetchInventoryItemDashboard.GET.default.title',
+              defaultMessage: 'Error Loading InventoryItem Dashboard',
+            },
+          })
+        ),
+      },
+    }).then(json =>
+      dispatch(receiveInventoryItemDashboard(requestedAt, json.data))
+    )
   }
 }
 
 function requestOperationalStatus(requestedAt) {
   return {
-    type: types.REQUEST_OPERATIONAL_STATUS,
+    type: REQUEST_OPERATIONAL_STATUS,
     requestedAt,
   }
 }
 
 function receiveOperationalStatus(requestedAt, data) {
   return {
-    type: types.RECEIVE_OPERATIONAL_STATUS,
+    type: RECEIVE_OPERATIONAL_STATUS,
     requestedAt,
     data,
   }
@@ -97,34 +177,81 @@ export function fetchOperationalStatus(filtersParams) {
 /*
  * ---------------- Reducers -----------------
  */
-const Dashboard = Immutable.Record({
-  requestedAt: undefined,
-  status: Immutable.Map(),
+const Summary = Immutable.Record({
+  requestedAtSet: Immutable.Set(),
+  summary: Immutable.Map(),
+  resultSiteList: Immutable.List(),
+  resultSummaryList: Immutable.List(),
+  inventoryItemSiteList: Immutable.List(),
+  inventorySiteSummaryList: Immutable.List(),
+  inventoryConsumableSummaryList: Immutable.List(),
   operational: Immutable.Map(),
 })
 
-const initialState = new Dashboard()
+const initialState = new Summary()
 
 export default function dashboardReducer(state = initialState, action) {
   switch (action.type) {
-    case types.REQUEST_DASHBOARD_STATUS:
-      return state.set('requestedAt', action.requestedAt)
-    case types.RECEIVE_DASHBOARD_STATUS:
-      return state.requestedAt === action.requestedAt
-        ? state.merge({
-            requestedAt: undefined,
-            status: action.data,
-          })
-        : state
-    case types.REQUEST_OPERATIONAL_STATUS:
-      return state.set('requestedAt', action.requestedAt)
-    case types.RECEIVE_OPERATIONAL_STATUS:
-      return state.requestedAt === action.requestedAt
-        ? state.merge({
-            requestedAt: undefined,
-            operational: action.data,
-          })
-        : state
+    case REQUEST_SUMMARY_DASHBOARD:
+    case REQUEST_RESULT_DASHBOARD:
+    case REQUEST_INVENTORY_ITEM_DASHBOARD:
+    case REQUEST_OPERATIONAL_STATUS:
+      return state.set(
+        'requestedAtSet',
+        state.requestedAtSet.add(action.requestedAt)
+      )
+    case RECEIVE_SUMMARY_DASHBOARD:
+      return state.withMutations(mutState => {
+        if (mutState.hasIn(['requestedAtSet', action.requestedAt])) {
+          mutState.set(
+            'requestedAtSet',
+            mutState.requestedAtSet.delete(action.requestedAt)
+          )
+          mutState.mergeDeepIn(['summary'], action.data)
+        }
+      })
+    case RECEIVE_RESULT_DASHBOARD:
+      return state.withMutations(mutState => {
+        if (mutState.hasIn(['requestedAtSet', action.requestedAt])) {
+          mutState.set(
+            'requestedAtSet',
+            mutState.requestedAtSet.delete(action.requestedAt)
+          )
+          mutState.mergeDeepIn(['resultSiteList'], action.data.siteList)
+          mutState.mergeDeepIn(
+            ['resultSummaryList'],
+            action.data.resultSummaryList
+          )
+        }
+      })
+    case RECEIVE_INVENTORY_ITEM_DASHBOARD:
+      return state.withMutations(mutState => {
+        if (mutState.hasIn(['requestedAtSet', action.requestedAt])) {
+          mutState.set(
+            'requestedAtSet',
+            mutState.requestedAtSet.delete(action.requestedAt)
+          )
+          mutState.mergeDeepIn(['inventoryItemSiteList'], action.data.siteList)
+          mutState.mergeDeepIn(
+            ['inventorySiteSummaryList'],
+            action.data.inventorySiteSummaryList
+          )
+          mutState.mergeDeepIn(
+            ['inventoryConsumableSummaryList'],
+            action.data.inventoryConsumableSummaryList
+          )
+        }
+      })
+    case RECEIVE_OPERATIONAL_STATUS:
+      return state.withMutations(mutState => {
+        if (mutState.hasIn(['requestedAtSet', action.requestedAt])) {
+          mutState.set(
+            'requestedAtSet',
+            mutState.requestedAtSet.delete(action.requestedAt)
+          )
+          mutState.mergeDeepIn(['operational'], action.data)
+        }
+      })
     default:
       return state
   }

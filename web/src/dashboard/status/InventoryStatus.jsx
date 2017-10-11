@@ -1,12 +1,21 @@
 import _ from 'lodash'
 import classnames from 'classnames/bind'
 import React from 'react'
-import { compose, withStateHandlers, withProps, pure } from 'recompose'
+import { bindActionCreators } from 'redux'
+import {
+  compose,
+  withStateHandlers,
+  withProps,
+  lifecycle,
+  pure,
+} from 'recompose'
+import { connect } from 'react-redux'
 import { Card } from 'react-toolbox/lib/card'
 import { Button } from 'react-toolbox/lib/button'
 
 import { Unit } from '../../components/pureGrids'
 import requirePermissions from '../../components/shared/requirePermissions'
+import { fetchInventoryItemDashboard } from '../DashboardRedux'
 import Title from './Title'
 import CountryWithPoints from './CountryWithPoints'
 import InventorySiteSummaryBar from './InventorySiteSummaryBar'
@@ -26,6 +35,25 @@ const findKeyInTree = (target, key) => {
 
 const enhance = compose(
   pure,
+  requirePermissions({
+    permissions: ['inventory:admin', 'inventory:view', 'inventory:edit'],
+  }),
+  connect(
+    state => ({
+      siteList: state.dashboard.inventoryItemSiteList,
+      inventorySiteSummaryList: state.dashboard.inventorySiteSummaryList,
+      inventoryConsumableSummaryList:
+        state.dashboard.inventoryConsumableSummaryList,
+    }),
+    bindActionCreators.bind(null, {
+      fetchInventoryItemDashboard,
+    })
+  ),
+  lifecycle({
+    componentDidMount() {
+      this.props.fetchInventoryItemDashboard()
+    },
+  }),
   withStateHandlers(
     () => ({
       activeSiteIds: [],
@@ -68,16 +96,13 @@ const enhance = compose(
       points: siteList
         .map(it => ({
           id: it.get('name'),
-          size: Math.max(3.5, Math.round(it.get('count') / 16)),
+          size: 6,
           fill: _.includes(activeSiteIds, it.get('id')) ? '#EB4D62' : '#73D749',
           latitude: it.get('latitude'),
           longitude: it.get('longitude'),
         }))
         .toJS(),
     }
-  }),
-  requirePermissions({
-    permissions: ['inventory:admin', 'inventory:view', 'inventory:edit'],
   })
 )
 
