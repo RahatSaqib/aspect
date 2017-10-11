@@ -1,16 +1,36 @@
 const Joi = require('joi')
 const { asyncHandler } = require('../routes')
-const { statusDashboard, operationalDashboard } = require('./service')
+const { summaryDashboard, resultDashboard, inventoryItemDashboard, operationalDashboard } = require('./service')
 
 module.exports = [
   {
     method: 'GET',
-    path: '/dashboard',
-    handler: asyncHandler(statusDashboard),
+    path: '/dashboard/summary',
+    handler: asyncHandler(summaryDashboard),
     config: {
-      description: 'Status Dashboard',
-      notes: 'The top level dashboard status',
+      description: 'Summary Dashboard',
+      notes: 'The top level summary dashboard',
       auth: { scope: ['site', 'device'] },
+    },
+  },
+  {
+    method: 'GET',
+    path: '/dashboard/result',
+    handler: asyncHandler(resultDashboard),
+    config: {
+      description: 'Result Dashboard',
+      notes: 'The top level result dashboard',
+      auth: { scope: ['site', 'result'] },
+    },
+  },
+  {
+    method: 'GET',
+    path: '/dashboard/inventory-item',
+    handler: asyncHandler(inventoryItemDashboard),
+    config: {
+      description: 'Consumable Dashboard',
+      notes: 'The top level consumable dashboard',
+      auth: { scope: ['site', 'consumable'] },
     },
   },
   {

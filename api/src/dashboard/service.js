@@ -96,7 +96,7 @@ const mockData = {
   },
 }
 
-function* statusDashboard(request) {
+function* summaryDashboard(request) {
   const { auth } = request
   const now = new Date()
 
@@ -149,7 +149,7 @@ function* statusDashboard(request) {
       geography: 'g',
     })
 
-  // to do - limit users by job
+  // TODO: - limit users by job
   const usersTotalQuery = knex('User as u').count('u.id as cnt')
 
   const [
@@ -172,6 +172,29 @@ function* statusDashboard(request) {
     usersTotalQuery,
   ])
 
+  const result = {
+    data: Object.assign(
+      {
+        sitesTotal: sitesTotal ? sitesTotal[0].cnt : null,
+        devicesTotal: devicesTotal ? devicesTotal[0].cnt : null,
+        // TODO: Remove magic numbers below when moving to "real" dashboard
+        resultsTotal30d: resultsTotal30d ? resultsTotal30d[0].cnt : null,
+        resultsTotal1d: resultsTotal1d ? resultsTotal1d[0].cnt : null,
+        usersTotal: usersTotal[0].cnt,
+      },
+      mockData
+    ),
+  }
+
+  return result
+}
+
+function* resultDashboard(request) {
+  const { auth } = request
+
+  // get data constraints
+  const dataConstraints = yield getConstraints(auth.credentials)
+
   const siteQuery = knex('Site as s')
     .innerJoin('Geography as g', 's.geographyId', 'g.id')
     .innerJoin('State as st', 'g.stateId', 'st.id')
@@ -189,10 +212,25 @@ function* statusDashboard(request) {
     canViewResults(auth)
       ? [
           canViewSites(auth) ? siteQuery : [],
-          resultsTotalQuery30d
-            .clone()
+          knex('Result as r')
+            .innerJoin('Site as s', 's.id', 'r.siteId')
+            .innerJoin('Device as d', 'd.id', 'r.deviceId')
+            .innerJoin('DeviceType as dt', 'dt.id', 'd.deviceTypeId')
+            .innerJoin(
+              'DeviceTypeCategory as dc',
+              'dc.id',
+              'dt.deviceTypeCategoryId'
+            )
             .innerJoin('Assay as a', 'r.assayId', 'a.id')
             .innerJoin('ResultCategory as rc', 'r.resultCategory1', 'rc.id')
+            .leftOuterJoin('Geography as g', 's.geographyId', 'g.id')
+            .leftOuterJoin('State as st', 'g.stateId', 'st.id')
+            .leftOuterJoin('Lga as l', 'g.lgaId', 'l.id')
+            .modify(addConstraints, dataConstraints, {
+              device: 'd',
+              site: 's',
+              geography: 'g',
+            })
             .groupBy('rc.externalId', 'a.assayTypeId', 'r.siteId')
             .select(
               'rc.externalId as resultCategory1ExternalId',
@@ -274,6 +312,38 @@ function* statusDashboard(request) {
     )
     .filter(({ data }) => !_.isEmpty(data))
 
+  const result = {
+    data: {
+      siteList,
+      resultSummaryList,
+    },
+  }
+
+  return result
+}
+
+function* inventoryItemDashboard(request) {
+  const { auth } = request
+
+  // get data constraints
+  const dataConstraints = yield getConstraints(auth.credentials)
+
+  const siteList = canViewSites(auth)
+    ? yield knex('Site as s')
+        .innerJoin('Geography as g', 's.geographyId', 'g.id')
+        .innerJoin('State as st', 'g.stateId', 'st.id')
+        .select(
+          's.id',
+          's.name',
+          'st.abbreviation as stateAbbr',
+          's.latitude',
+          's.longitude'
+        )
+        .modify(addConstraints, dataConstraints, {
+          site: 's',
+        })
+    : []
+
   const [inventoryItemList] = yield Promise.all(
     canViewInventories(auth)
       ? [
@@ -291,7 +361,7 @@ function* statusDashboard(request) {
               'ii.siteId',
               'ii.consumableId',
               'c.name as consumableName'
-            )
+            ),
         ]
       : [[]]
   )
@@ -390,19 +460,11 @@ function* statusDashboard(request) {
   )
 
   const result = {
-    data: Object.assign({}, mockData, {
-      sitesTotal: sitesTotal ? sitesTotal[0].cnt : null,
-      devicesTotal: devicesTotal ? devicesTotal[0].cnt : null,
-      // TODO: Remove magic numbers below when moving to "real" dashboard
-      resultsTotal30d: resultsTotal30d ? resultsTotal30d[0].cnt : null,
-      resultsTotal1d: resultsTotal1d ? resultsTotal1d[0].cnt : null,
-      usersTotal: usersTotal[0].cnt,
-
+    data: {
       siteList,
-      resultSummaryList,
       inventorySiteSummaryList,
       inventoryConsumableSummaryList,
-    }),
+    },
   }
 
   return result
@@ -840,6 +902,8 @@ function* operationalDashboard(request) {
 }
 
 module.exports = {
-  statusDashboard,
+  summaryDashboard,
+  resultDashboard,
+  inventoryItemDashboard,
   operationalDashboard,
 }
