@@ -17,6 +17,9 @@ export const REQUEST_INVENTORY_ITEM_DASHBOARD =
 export const RECEIVE_INVENTORY_ITEM_DASHBOARD =
   'RECEIVE_INVENTORY_ITEM_DASHBOARD'
 
+export const REQUEST_SITE_DASHBOARD = 'REQUEST_SITE_DASHBOARD'
+export const RECEIVE_SITE_DASHBOARD = 'RECEIVE_SITE_DASHBOARD'
+
 export const REQUEST_OPERATIONAL_STATUS = 'REQUEST_OPERATIONAL_STATUS'
 export const RECEIVE_OPERATIONAL_STATUS = 'RECEIVE_OPERATIONAL_STATUS'
 /*
@@ -132,6 +135,41 @@ export function fetchInventoryItemDashboard() {
   }
 }
 
+function requestSiteDashboard(requestedAt) {
+  return {
+    type: REQUEST_SITE_DASHBOARD,
+    requestedAt,
+  }
+}
+
+function receiveSiteDashboard(requestedAt, data) {
+  return {
+    type: RECEIVE_SITE_DASHBOARD,
+    requestedAt,
+    data,
+  }
+}
+
+export function fetchSiteDashboard() {
+  return dispatch => {
+    const requestedAt = Date.now()
+    dispatch(requestSiteDashboard(requestedAt))
+
+    return aspectFetch('/dashboard/site', {
+      errorNotifications: {
+        default: errorPleaseTryAgainInAFewMinutes(
+          defineMessages({
+            title: {
+              id: 'errorResponseMessages.fetchSiteDashboard.GET.default.title',
+              defaultMessage: 'Error Loading Dashboard Site',
+            },
+          })
+        ),
+      },
+    }).then(json => dispatch(receiveSiteDashboard(requestedAt, json.data)))
+  }
+}
+
 function requestOperationalStatus(requestedAt) {
   return {
     type: REQUEST_OPERATIONAL_STATUS,
@@ -185,6 +223,8 @@ const Summary = Immutable.Record({
   inventoryItemSiteList: Immutable.List(),
   inventorySiteSummaryList: Immutable.List(),
   inventoryConsumableSummaryList: Immutable.List(),
+  siteList: Immutable.List(),
+  siteSummaryMap: Immutable.Map(),
   operational: Immutable.Map(),
 })
 
@@ -195,6 +235,7 @@ export default function dashboardReducer(state = initialState, action) {
     case REQUEST_SUMMARY_DASHBOARD:
     case REQUEST_RESULT_DASHBOARD:
     case REQUEST_INVENTORY_ITEM_DASHBOARD:
+    case REQUEST_SITE_DASHBOARD:
     case REQUEST_OPERATIONAL_STATUS:
       return state.set(
         'requestedAtSet',
@@ -222,6 +263,17 @@ export default function dashboardReducer(state = initialState, action) {
             ['resultSummaryList'],
             action.data.resultSummaryList
           )
+        }
+      })
+    case RECEIVE_SITE_DASHBOARD:
+      return state.withMutations(mutState => {
+        if (mutState.hasIn(['requestedAtSet', action.requestedAt])) {
+          mutState.set(
+            'requestedAtSet',
+            mutState.requestedAtSet.delete(action.requestedAt)
+          )
+          mutState.mergeDeepIn(['siteList'], action.data.siteList)
+          mutState.mergeDeepIn(['siteSummaryMap'], action.data.siteSummaryMap)
         }
       })
     case RECEIVE_INVENTORY_ITEM_DASHBOARD:

@@ -146,14 +146,12 @@ export const Status = ({
       />
     )}
 
-    {summary.get('siteSummary') && (
-      <SiteStatus
-        intl={intl}
-        className={cssClasses('Section--withStatus')}
-        title={intl.formatMessage(messages.sitesTitle)}
-        data={summary.get('siteSummary')}
-      />
-    )}
+    <SiteStatus
+      history={history}
+      intl={intl}
+      className={cssClasses('Section--withStatus')}
+      title={intl.formatMessage(messages.sitesTitle)}
+    />
   </div>
 )
 
