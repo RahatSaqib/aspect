@@ -13,6 +13,7 @@ import { connect } from 'react-redux'
 import { Card } from 'react-toolbox/lib/card'
 import { Button } from 'react-toolbox/lib/button'
 
+import { findKeyInTree } from '../../shared/utils/dom'
 import { Unit } from '../../components/pureGrids'
 import requirePermissions from '../../components/shared/requirePermissions'
 import { fetchInventoryItemDashboard } from '../DashboardRedux'
@@ -23,15 +24,6 @@ import SummaryItemsBlock from './SummaryItemsBlock'
 import messages from './messages'
 
 const cssClasses = classnames.bind(require('./Status.css'))
-
-const findKeyInTree = (target, key) => {
-  while (_.isObject(target)) {
-    if (_.has(target.dataset, key)) {
-      return target.dataset[key]
-    }
-    target = target.parentNode
-  }
-}
 
 const enhance = compose(
   pure,
