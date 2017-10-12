@@ -151,7 +151,6 @@ export const InventoryStatus = ({
               onClick={onSummaryItemClick}
               onMouseEnter={onMouseEnter}
               onMouseLeave={onMouseLeave}
-              clickable
               intl={intl}
               title={it.get('consumableName')}
               items={it.get('data').toJS()}
