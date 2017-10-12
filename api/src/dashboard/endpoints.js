@@ -1,6 +1,12 @@
 const Joi = require('joi')
 const { asyncHandler } = require('../routes')
-const { summaryDashboard, resultDashboard, inventoryItemDashboard, operationalDashboard } = require('./service')
+const {
+  summaryDashboard,
+  resultDashboard,
+  inventoryItemDashboard,
+  siteDashboard,
+  operationalDashboard,
+} = require('./service')
 
 module.exports = [
   {
@@ -31,6 +37,16 @@ module.exports = [
       description: 'Consumable Dashboard',
       notes: 'The top level consumable dashboard',
       auth: { scope: ['site', 'consumable'] },
+    },
+  },
+  {
+    method: 'GET',
+    path: '/dashboard/site',
+    handler: asyncHandler(siteDashboard),
+    config: {
+      description: 'Site Dashboard',
+      notes: 'The top level site dashboard',
+      auth: { scope: ['site', 'device'] },
     },
   },
   {
