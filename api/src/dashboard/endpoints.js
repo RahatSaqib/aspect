@@ -4,6 +4,7 @@ const {
   summaryDashboard,
   resultDashboard,
   inventoryItemDashboard,
+  deviceDashboard,
   siteDashboard,
   operationalDashboard,
 } = require('./service')
@@ -37,6 +38,16 @@ module.exports = [
       description: 'Consumable Dashboard',
       notes: 'The top level consumable dashboard',
       auth: { scope: ['site', 'consumable'] },
+    },
+  },
+  {
+    method: 'GET',
+    path: '/dashboard/device',
+    handler: asyncHandler(deviceDashboard),
+    config: {
+      description: 'Device Dashboard',
+      notes: 'The top level device dashboard',
+      auth: { scope: ['site', 'device'] },
     },
   },
   {
