@@ -143,10 +143,7 @@ export const InventoryStatus = ({
               key={it.get('consumableId')}
               data-consumable-id={it.get('consumableId')}
               data-site-ids={JSON.stringify(
-                it
-                  .get('affectedSiteIds')
-                  .map(_.toString)
-                  .toJS()
+                it.get('affectedSiteIds').map(_.toString)
               )}
               onClick={onSummaryItemClick}
               onMouseEnter={onMouseEnter}
