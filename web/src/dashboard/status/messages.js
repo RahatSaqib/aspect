@@ -37,21 +37,17 @@ export const messages = defineMessages({
     id: 'pages.Status.summaryOperationalDevicesTitle',
     defaultMessage: 'operational devices',
   },
-  summaryQualityControlTitle: {
-    id: 'pages.Status.summaryQualityControlTitle',
-    defaultMessage: 'quality control',
-  },
-  summaryServicingTitle: {
-    id: 'pages.Status.summaryServicingTitle',
-    defaultMessage: 'servicing',
-  },
-  summaryUploadingDataTitle: {
-    id: 'pages.Status.summaryUploadingDataTitle',
-    defaultMessage: 'uploading data',
+  summaryWarrantyExpiringTitle: {
+    id: 'pages.Status.summaryWarrantyExpiringTitle',
+    defaultMessage: 'warranty expiring',
   },
   summaryCalibrationTitle: {
     id: 'pages.Status.summaryCalibrationTitle',
     defaultMessage: 'calibration',
+  },
+  summaryUploadingDataTitle: {
+    id: 'pages.Status.summaryUploadingDataTitle',
+    defaultMessage: 'uploading data',
   },
   summaryTestFailuresTitle: {
     id: 'pages.Status.summaryTestFailuresTitle',
@@ -105,21 +101,17 @@ export const messages = defineMessages({
     id: 'pages.Status.fullyOperationalStatus',
     defaultMessage: 'fully operational',
   },
-  withQCIssuesStatus: {
-    id: 'pages.Status.withQCIssuesStatus',
-    defaultMessage: 'with QC issues',
-  },
-  needServicingStatus: {
-    id: 'pages.Status.needServicingStatus',
-    defaultMessage: 'need servicing',
-  },
-  notReportingStatus: {
-    id: 'pages.Status.notReportingStatus',
-    defaultMessage: 'not reporting',
+  warrantyExpiringStatus: {
+    id: 'pages.Status.warrantyExpiringStatus',
+    defaultMessage: 'warranty expiring',
   },
   needCalibrationStatus: {
     id: 'pages.Status.needCalibrationStatus',
     defaultMessage: 'need calibration',
+  },
+  notReportingStatus: {
+    id: 'pages.Status.notReportingStatus',
+    defaultMessage: 'not reporting',
   },
   highFailuresRatesStatus: {
     id: 'pages.Status.highFailuresRatesStatus',
@@ -141,9 +133,9 @@ export const messages = defineMessages({
     id: 'pages.Status.withQualityIssues',
     defaultMessage: 'with quality issues',
   },
-  countOfTotalDevicesTitle: {
-    id: 'pages.Status.countOfTotalDevicesTitle',
-    defaultMessage: '{count} of {total} devices',
+  ofTotalDevicesTitle: {
+    id: 'pages.Status.ofTotalDevicesTitle',
+    defaultMessage: 'of {total} devices',
   },
   ofTotalSitesTitle: {
     id: 'pages.Status.ofTotalSitesTitle',
