@@ -291,7 +291,7 @@ function* statusDashboard(request) {
               'ii.siteId',
               'ii.consumableId',
               'c.name as consumableName'
-            )
+            ),
         ]
       : [[]]
   )
