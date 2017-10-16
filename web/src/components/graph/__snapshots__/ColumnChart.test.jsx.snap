@@ -8,14 +8,14 @@ exports[`ColumnChart component should shallow render correctly 1`] = `
   <Group
     left={10}
   >
-    <Unknown
+    <Bar
       fill="#e85164"
       height={50}
       width={289}
       x={0}
       y={34}
     />
-    <Unknown
+    <Bar
       fill="#fcb124"
       height={50}
       width={41}
@@ -59,14 +59,14 @@ exports[`ColumnChart component should shallow render correctly 1`] = `
   <Group
     left={10}
   >
-    <Unknown
+    <Bar
       fill="#e85164"
       height={50}
       width={247}
       x={0}
       y={118}
     />
-    <Unknown
+    <Bar
       fill="#fcb124"
       height={50}
       width={62}
@@ -110,14 +110,14 @@ exports[`ColumnChart component should shallow render correctly 1`] = `
   <Group
     left={10}
   >
-    <Unknown
+    <Bar
       fill="#e85164"
       height={50}
       width={165}
       x={0}
       y={202}
     />
-    <Unknown
+    <Bar
       fill="#fcb124"
       height={50}
       width={41}
@@ -161,14 +161,14 @@ exports[`ColumnChart component should shallow render correctly 1`] = `
   <Group
     left={10}
   >
-    <Unknown
+    <Bar
       fill="#e85164"
       height={50}
       width={371}
       x={0}
       y={286}
     />
-    <Unknown
+    <Bar
       fill="#fcb124"
       height={50}
       width={41}
