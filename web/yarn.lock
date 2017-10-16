@@ -6,13 +6,13 @@
   version "6.0.89"
   resolved "https://registry.yarnpkg.com/@types/node/-/node-6.0.89.tgz#154be0e6a823760cd6083aa8c48f952e2e63e0b0"
 
-"@vx/axis@^0.0.140":
-  version "0.0.140"
-  resolved "https://registry.yarnpkg.com/@vx/axis/-/axis-0.0.140.tgz#aad557c281c6cc21c1516977301552c7052e5224"
+"@vx/axis@^0.0.142":
+  version "0.0.142"
+  resolved "https://registry.yarnpkg.com/@vx/axis/-/axis-0.0.142.tgz#99353d4430aa1d1136c7a5a8c7287550f21c1d12"
   dependencies:
     "@vx/group" "0.0.140"
     "@vx/point" "0.0.136"
-    "@vx/shape" "0.0.140"
+    "@vx/shape" "0.0.142"
     classnames "^2.2.5"
     prop-types "15.5.10"
 
@@ -46,13 +46,13 @@
     classnames "^2.2.5"
     prop-types "^15.5.7"
 
-"@vx/grid@^0.0.140":
-  version "0.0.140"
-  resolved "https://registry.yarnpkg.com/@vx/grid/-/grid-0.0.140.tgz#9dfd3071bc5d90d4b457dd55d7f795699233b230"
+"@vx/grid@^0.0.142":
+  version "0.0.142"
+  resolved "https://registry.yarnpkg.com/@vx/grid/-/grid-0.0.142.tgz#c2ee59522b72bf92d737dd21c37efc9fa93305da"
   dependencies:
     "@vx/group" "0.0.140"
     "@vx/point" "0.0.136"
-    "@vx/shape" "0.0.140"
+    "@vx/shape" "0.0.142"
     classnames "^2.2.5"
 
 "@vx/group@0.0.140", "@vx/group@^0.0.140":
@@ -61,9 +61,9 @@
   dependencies:
     classnames "^2.2.5"
 
-"@vx/legend@^0.0.140":
-  version "0.0.140"
-  resolved "https://registry.yarnpkg.com/@vx/legend/-/legend-0.0.140.tgz#4062c27d6bc9c4d607309d77eff12b844727ae99"
+"@vx/legend@^0.0.141":
+  version "0.0.141"
+  resolved "https://registry.yarnpkg.com/@vx/legend/-/legend-0.0.141.tgz#8d434f6eb6ec4d5d5286f61e0e4f72d942211120"
   dependencies:
     "@vx/group" "0.0.140"
     classnames "^2.2.5"
@@ -85,9 +85,9 @@
   dependencies:
     d3-scale "^1.0.5"
 
-"@vx/shape@0.0.140", "@vx/shape@^0.0.140":
-  version "0.0.140"
-  resolved "https://registry.yarnpkg.com/@vx/shape/-/shape-0.0.140.tgz#6a282d5fdf3a5752b6e938bb3debe983e89ff6d3"
+"@vx/shape@0.0.142", "@vx/shape@^0.0.142":
+  version "0.0.142"
+  resolved "https://registry.yarnpkg.com/@vx/shape/-/shape-0.0.142.tgz#3728eda292c004e61d9f88ae119b6154ccbf79e5"
   dependencies:
     "@vx/curve" "0.0.140"
     "@vx/group" "0.0.140"
@@ -4308,10 +4308,6 @@ immutable@^3.8.1:
   version "3.8.2"
   resolved "https://registry.yarnpkg.com/immutable/-/immutable-3.8.2.tgz#c2439951455bb39913daf281376f1530e104adf3"
 
-import-inspector@^2.0.0:
-  version "2.0.0"
-  resolved "https://registry.yarnpkg.com/import-inspector/-/import-inspector-2.0.0.tgz#ce75fdb6a277d2800effe097e2295bc8690b2923"
-
 imurmurhash@^0.1.4:
   version "0.1.4"
   resolved "https://registry.yarnpkg.com/imurmurhash/-/imurmurhash-0.1.4.tgz#9218b9b2b928a238b13dc4fb6b6d576f231453ea"
@@ -4694,10 +4690,6 @@ is-typedarray@~1.0.0:
 is-utf8@^0.2.0:
   version "0.2.1"
   resolved "https://registry.yarnpkg.com/is-utf8/-/is-utf8-0.2.1.tgz#4b0da1442104d1b336340e80797e865cf39f7d72"
-
-is-webpack-bundle@^1.0.0:
-  version "1.0.0"
-  resolved "https://registry.yarnpkg.com/is-webpack-bundle/-/is-webpack-bundle-1.0.0.tgz#576a50bb7c53d1d6a5c1647939c93ae2cbb90eea"
 
 is-whitespace-character@^1.0.0:
   version "1.0.1"
@@ -7591,13 +7583,9 @@ react-intl@^2.2.3:
     intl-relativeformat "^2.0.0"
     invariant "^2.1.1"
 
-react-loadable@^4.0.3:
-  version "4.0.5"
-  resolved "https://registry.yarnpkg.com/react-loadable/-/react-loadable-4.0.5.tgz#225eba40a0e67cc5698bcb5db6e783f0d3a9e729"
-  dependencies:
-    import-inspector "^2.0.0"
-    is-webpack-bundle "^1.0.0"
-    webpack-require-weak "^1.0.1"
+react-loadable@^5.2.2:
+  version "5.2.2"
+  resolved "https://registry.yarnpkg.com/react-loadable/-/react-loadable-5.2.2.tgz#1a5ad75841cacb64be12b18a86ac0bc55ccb4dc7"
 
 react-proxy@^3.0.0-alpha.0:
   version "3.0.0-alpha.1"
@@ -7876,7 +7864,7 @@ recast@~0.11.12:
     private "~0.1.5"
     source-map "~0.5.0"
 
-recompose@^0.25.0, recompose@^0.25.1:
+recompose@^0.25.0:
   version "0.25.1"
   resolved "https://registry.yarnpkg.com/recompose/-/recompose-0.25.1.tgz#5eb9d6cf6e25a9ffad73cbbae5658b5b55d6e728"
   dependencies:
@@ -9604,12 +9592,6 @@ webpack-merge@^4.1.0:
   resolved "https://registry.yarnpkg.com/webpack-merge/-/webpack-merge-4.1.0.tgz#6ad72223b3e0b837e531e4597c199f909361511e"
   dependencies:
     lodash "^4.17.4"
-
-webpack-require-weak@^1.0.1:
-  version "1.0.1"
-  resolved "https://registry.yarnpkg.com/webpack-require-weak/-/webpack-require-weak-1.0.1.tgz#a6a8e60871bebbe5b085a915ab0af633a412433f"
-  dependencies:
-    is-webpack-bundle "^1.0.0"
 
 webpack-sources@^1.0.1:
   version "1.0.1"
