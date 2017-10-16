@@ -1133,6 +1133,42 @@ function* seed(knex) {
     externalId: 'Success',
   })
 
+  yield knex('ResultCategory').insert({
+    name: 'Collect New Sample',
+    i18nkey: 'resultcategoryCollectNewSample',
+    externalId: 'CollectNewSample',
+  })
+
+  yield knex('ResultCategory').insert({
+    name: 'Discordant',
+    i18nkey: 'resultCategoryDiscordant',
+    externalId: 'Discordant',
+  })
+
+  yield knex('ResultCategory').insert({
+    name: '<1000',
+    i18nkey: 'resultCategory<1000',
+    externalId: '<1000',
+  })
+
+  yield knex('ResultCategory').insert({
+    name: '1000+',
+    i18nkey: 'resultCategory1000+',
+    externalId: '1000+',
+  })
+
+  yield knex('ResultCategory').insert({
+    name: 'Rejected',
+    i18nkey: 'resultCategoryRejected',
+    externalId: 'Rejected',
+  })
+
+  yield knex('ResultCategory').insert({
+    name: 'Missing',
+    i18nkey: 'resultCategoryMissing',
+    externalId: 'Missing',
+  })
+
   // assign categories to Assays
   yield knex('ResultCategoryAssay').insert({
     resultCategoryId: resultCategoryDetectedId,
