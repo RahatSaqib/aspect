@@ -37,7 +37,7 @@ if (!window.Intl) {
 if (process.env.NODE_ENV === 'development' && false) {
   // TODO: workaround: https://github.com/garbles/why-did-you-update/issues/45
   // eslint-disable-next-line no-unused-vars
-  let createClass = React.createClass
+  let { createClass } = React
   Object.defineProperty(React, 'createClass', {
     set: nextCreateClass => {
       createClass = nextCreateClass
