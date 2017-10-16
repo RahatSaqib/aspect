@@ -4,7 +4,7 @@
   -moz-box-sizing: border-box;
   width: 16px !important;
   height: 11px !important;
-  background: url("./flagSprites.png");
+  background: url('./flagSprites.png');
 }
 .flag-icon--with-right-margin {
   margin-right: 1em;
