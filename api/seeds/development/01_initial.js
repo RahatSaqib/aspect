@@ -1169,6 +1169,12 @@ function* seed(knex) {
     externalId: 'Missing',
   })
 
+  yield knex('ResultCategory').insert({
+    name: 'Unknown',
+    i18nkey: 'resultCategoryUnknown',
+    externalId: 'Unknown',
+  })
+
   // assign categories to Assays
   yield knex('ResultCategoryAssay').insert({
     resultCategoryId: resultCategoryDetectedId,
