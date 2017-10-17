@@ -65,6 +65,10 @@ export const messages = defineMessages({
     id: 'pages.Status.summaryStockManagementTitle',
     defaultMessage: 'stock management',
   },
+  summaryDeviceManagementTitle: {
+    id: 'pages.Status.summaryDeviceManagementTitle',
+    defaultMessage: 'device management',
+  },
   summaryTestQualityTitle: {
     id: 'pages.Status.summaryTestQualityTitle',
     defaultMessage: 'test quality',
@@ -141,9 +145,9 @@ export const messages = defineMessages({
     id: 'pages.Status.countOfTotalDevicesTitle',
     defaultMessage: '{count} of {total} devices',
   },
-  countOfTotalSitesTitle: {
-    id: 'pages.Status.countOfTotalSitesTitle',
-    defaultMessage: '{count} of {total} sites',
+  ofTotalSitesTitle: {
+    id: 'pages.Status.ofTotalSitesTitle',
+    defaultMessage: 'of {total} sites',
   },
 })
 

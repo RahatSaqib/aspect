@@ -29,7 +29,7 @@ const i18nKeys = {
   withDeviceIssues: 'withDeviceIssues',
   withQualityIssues: 'withQualityIssues',
   countOfTotalDevicesTitle: 'countOfTotalDevicesTitle',
-  countOfTotalSitesTitle: 'countOfTotalSitesTitle',
+  ofTotalSitesTitle: 'ofTotalSitesTitle',
 }
 
 const mockData = {
@@ -66,37 +66,9 @@ const mockData = {
       subI18nKey: i18nKeys.highFailuresRatesStatus,
     },
   },
-  siteSummary: {
-    onlineNow: {
-      count: 23,
-      total: 27,
-      titleI18nKey: i18nKeys.countOfTotalSitesTitle,
-      subI18nKey: i18nKeys.reportingStatus,
-    },
-    stockManagement: {
-      count: 2,
-      titleI18nKey: i18nKeys.sitesTitle,
-      subI18nKey: i18nKeys.withStockIssues,
-    },
-    servicing: {
-      count: 1,
-      titleI18nKey: i18nKeys.sitesTitle,
-      subI18nKey: i18nKeys.withDeviceIssues,
-    },
-    uploadingData: {
-      count: 3,
-      titleI18nKey: i18nKeys.sitesTitle,
-      subI18nKey: i18nKeys.notReporting,
-    },
-    testQuality: {
-      count: 7,
-      titleI18nKey: i18nKeys.sitesTitle,
-      subI18nKey: i18nKeys.withQualityIssues,
-    },
-  },
 }
 
-function* statusDashboard(request) {
+function* summaryDashboard(request) {
   const { auth } = request
   const now = new Date()
 
@@ -149,7 +121,7 @@ function* statusDashboard(request) {
       geography: 'g',
     })
 
-  // to do - limit users by job
+  // TODO: - limit users by job
   const usersTotalQuery = knex('User as u').count('u.id as cnt')
 
   const [
@@ -172,9 +144,32 @@ function* statusDashboard(request) {
     usersTotalQuery,
   ])
 
+  const result = {
+    data: Object.assign(
+      {
+        sitesTotal: sitesTotal ? sitesTotal[0].cnt : null,
+        devicesTotal: devicesTotal ? devicesTotal[0].cnt : null,
+        // TODO: Remove magic numbers below when moving to "real" dashboard
+        resultsTotal30d: resultsTotal30d ? resultsTotal30d[0].cnt : null,
+        resultsTotal1d: resultsTotal1d ? resultsTotal1d[0].cnt : null,
+        usersTotal: usersTotal[0].cnt,
+      },
+      mockData
+    ),
+  }
+
+  return result
+}
+
+function* resultDashboard(request) {
+  const { auth } = request
+
+  // get data constraints
+  const dataConstraints = yield getConstraints(auth.credentials)
+
   const siteQuery = knex('Site as s')
-    .innerJoin('Geography as g', 's.geographyId', 'g.id')
-    .innerJoin('State as st', 'g.stateId', 'st.id')
+    .leftOuterJoin('Geography as g', 's.geographyId', 'g.id')
+    .leftOuterJoin('State as st', 'g.stateId', 'st.id')
     .select(
       's.id',
       's.name',
@@ -184,15 +179,31 @@ function* statusDashboard(request) {
     )
     .modify(addConstraints, dataConstraints, {
       site: 's',
+      geography: 'g',
     })
   const [siteList, resultCnt, assayTypes] = yield Promise.all(
     canViewResults(auth)
       ? [
           canViewSites(auth) ? siteQuery : [],
-          resultsTotalQuery30d
-            .clone()
+          knex('Result as r')
+            .innerJoin('Site as s', 's.id', 'r.siteId')
+            .innerJoin('Device as d', 'd.id', 'r.deviceId')
+            .innerJoin('DeviceType as dt', 'dt.id', 'd.deviceTypeId')
+            .innerJoin(
+              'DeviceTypeCategory as dc',
+              'dc.id',
+              'dt.deviceTypeCategoryId'
+            )
             .innerJoin('Assay as a', 'r.assayId', 'a.id')
             .innerJoin('ResultCategory as rc', 'r.resultCategory1', 'rc.id')
+            .leftOuterJoin('Geography as g', 's.geographyId', 'g.id')
+            .leftOuterJoin('State as st', 'g.stateId', 'st.id')
+            .leftOuterJoin('Lga as l', 'g.lgaId', 'l.id')
+            .modify(addConstraints, dataConstraints, {
+              device: 'd',
+              site: 's',
+              geography: 'g',
+            })
             .groupBy('rc.externalId', 'a.assayTypeId', 'r.siteId')
             .select(
               'rc.externalId as resultCategory1ExternalId',
@@ -274,27 +285,39 @@ function* statusDashboard(request) {
     )
     .filter(({ data }) => !_.isEmpty(data))
 
-  const [inventoryItemList] = yield Promise.all(
-    canViewInventories(auth)
-      ? [
-          knex('InventoryItem as ii')
-            .innerJoin('Site as s', 'ii.siteId', 's.id')
-            .innerJoin('Geography as g', 's.geographyId', 'g.id')
-            .innerJoin('Country as co', 'g.countryId', 'co.id')
-            .innerJoin('Consumable as c', 'ii.consumableId', 'c.id')
-            .where('c.name', '!=', 'Gloves')
-            .select(
-              'co.inventoryDaysThreshold',
-              'ii.id',
-              'ii.expiresOn',
-              'ii.quantityOnHand',
-              'ii.siteId',
-              'ii.consumableId',
-              'c.name as consumableName'
-            )
-        ]
-      : [[]]
-  )
+  const result = {
+    data: {
+      siteList,
+      resultSummaryList,
+    },
+  }
+
+  return result
+}
+
+function* getInventoryItemList(auth, dataConstraints) {
+  if (!canViewInventories(auth)) {
+    return []
+  }
+  const inventoryItemList = yield knex('InventoryItem as ii')
+    .innerJoin('Site as s', 'ii.siteId', 's.id')
+    .innerJoin('Geography as g', 's.geographyId', 'g.id')
+    .innerJoin('Country as co', 'g.countryId', 'co.id')
+    .innerJoin('Consumable as c', 'ii.consumableId', 'c.id')
+    .where('c.name', '!=', 'Gloves')
+    .modify(addConstraints, dataConstraints, {
+      site: 's',
+      geography: 'g',
+    })
+    .select(
+      'co.inventoryDaysThreshold',
+      'ii.id',
+      'ii.expiresOn',
+      'ii.quantityOnHand',
+      'ii.siteId',
+      'ii.consumableId',
+      'c.name as consumableName'
+    )
 
   const MOCK_CURRENT_CONSUMPTION_RATE = 20
 
@@ -312,6 +335,34 @@ function* statusDashboard(request) {
       )
     }
   })
+
+  return inventoryItemList
+}
+
+function* inventoryItemDashboard(request) {
+  const { auth } = request
+
+  // get data constraints
+  const dataConstraints = yield getConstraints(auth.credentials)
+
+  const siteList = canViewSites(auth)
+    ? yield knex('Site as s')
+        .leftOuterJoin('Geography as g', 's.geographyId', 'g.id')
+        .leftOuterJoin('State as st', 'g.stateId', 'st.id')
+        .select(
+          's.id',
+          's.name',
+          'st.abbreviation as stateAbbr',
+          's.latitude',
+          's.longitude'
+        )
+        .modify(addConstraints, dataConstraints, {
+          site: 's',
+          geography: 'g',
+        })
+    : []
+
+  const inventoryItemList = yield* getInventoryItemList(auth, dataConstraints)
 
   const inventorySiteSummaryList = _.sortBy(
     _.reduce(
@@ -390,19 +441,158 @@ function* statusDashboard(request) {
   )
 
   const result = {
-    data: Object.assign({}, mockData, {
-      sitesTotal: sitesTotal ? sitesTotal[0].cnt : null,
-      devicesTotal: devicesTotal ? devicesTotal[0].cnt : null,
-      // TODO: Remove magic numbers below when moving to "real" dashboard
-      resultsTotal30d: resultsTotal30d ? resultsTotal30d[0].cnt : null,
-      resultsTotal1d: resultsTotal1d ? resultsTotal1d[0].cnt : null,
-      usersTotal: usersTotal[0].cnt,
-
+    data: {
       siteList,
-      resultSummaryList,
       inventorySiteSummaryList,
       inventoryConsumableSummaryList,
-    }),
+    },
+  }
+
+  return result
+}
+
+function* siteDashboard(request) {
+  const { auth } = request
+  const now = new Date()
+
+  // get data constraints
+  const dataConstraints = yield getConstraints(auth.credentials)
+
+  const siteQuery = knex('Site as s')
+    .leftOuterJoin('Geography as g', 's.geographyId', 'g.id')
+    .leftOuterJoin('State as st', 'g.stateId', 'st.id')
+    .modify(addConstraints, dataConstraints, {
+      site: 's',
+      geography: 'g',
+    })
+    .select(
+      's.id',
+      's.name',
+      'st.abbreviation as stateAbbr',
+      's.latitude',
+      's.longitude'
+    )
+
+  const deviceQuery = knex('Device as d')
+    .innerJoin('Site as s', 's.id', 'd.siteId')
+    .innerJoin('Partner as p', 'd.partnerId', 'p.id')
+    .leftOuterJoin('Geography as g', 's.geographyId', 'g.id')
+    .select(
+      'd.id',
+      'd.siteId',
+      'd.lastSeenOn'
+      // TODO: 'p.offlineThresholdDays',
+    )
+    .modify(addConstraints, dataConstraints, {
+      site: 's',
+      geography: 'g',
+    })
+  const [siteList, deviceList] = yield Promise.all([
+    canViewSites(auth) ? siteQuery : [],
+    canViewDevices(auth) ? deviceQuery : [],
+  ])
+  const inventoryItemList = yield* getInventoryItemList(auth, dataConstraints)
+
+  const MOCK_PARTNER_OFFLINE_THRESHOLD_DAYS = 3
+
+  const isDeviceOnline = it =>
+    isAfter(addDays(it.lastSeenOn, MOCK_PARTNER_OFFLINE_THRESHOLD_DAYS), now)
+  const isDeviceOffline = _.negate(isDeviceOnline)
+  const filteredLength = _.flowRight(_.size, _.filter)
+  const siteIdAccumulator = (acc, it, siteId) => {
+    if (it) {
+      acc.push(siteId)
+    }
+    return acc
+  }
+
+  const allDeviceOnlineBySiteId = _.mapValues(
+    _.groupBy(deviceList, 'siteId'),
+    list => _.every(list, isDeviceOnline)
+  )
+  const allDeviceOnlineSiteIds = _.reduce(
+    allDeviceOnlineBySiteId,
+    siteIdAccumulator,
+    []
+  )
+
+  const anyStockIssueBySiteId = _.mapValues(
+    _.groupBy(inventoryItemList, 'siteId'),
+    list =>
+      _.some(
+        list,
+        it => it.runningLow || it.expiring || it.quantityOnHand === 0
+      )
+  )
+  const anyStockIssueSiteIds = _.reduce(
+    anyStockIssueBySiteId,
+    siteIdAccumulator,
+    []
+  )
+
+  const oneDeviceOfflineBySiteId = _.mapValues(
+    _.groupBy(deviceList, 'siteId'),
+    list => filteredLength(list, isDeviceOffline) === 1
+  )
+  const oneDeviceOfflineSiteIds = _.reduce(
+    oneDeviceOfflineBySiteId,
+    siteIdAccumulator,
+    []
+  )
+
+  const siteSummaryMap = {
+    onlineNow: {
+      siteIds: allDeviceOnlineSiteIds,
+      items: [
+        {
+          key: 0,
+          count: allDeviceOnlineSiteIds.length,
+          total: siteList.length,
+          titleI18nKey: i18nKeys.ofTotalSitesTitle,
+          subI18nKey: i18nKeys.reportingStatus,
+        },
+      ],
+    },
+    stockManagement: {
+      siteIds: anyStockIssueSiteIds,
+      items: [
+        {
+          key: 0,
+          count: anyStockIssueSiteIds.length,
+          titleI18nKey: i18nKeys.sitesTitle,
+          subI18nKey: i18nKeys.withStockIssues,
+        },
+      ],
+    },
+    deviceManagement: {
+      siteIds: [undefined /* TODO: ASP-520 */],
+      items: [
+        {
+          key: 0,
+          count: 1 /* TODO: ASP-520 */,
+          titleI18nKey: i18nKeys.sitesTitle,
+          subI18nKey: i18nKeys.withDeviceIssues,
+        },
+      ],
+    },
+    uploadingData: {
+      siteIds: oneDeviceOfflineSiteIds,
+      items: [
+        {
+          key: 0,
+          count: oneDeviceOfflineSiteIds.length,
+          titleI18nKey: i18nKeys.sitesTitle,
+          subI18nKey: i18nKeys.notReportingStatus,
+        },
+      ],
+    },
+  }
+
+  const result = {
+    data: {
+      siteList,
+      siteSummaryMap,
+    },
   }
 
   return result
@@ -840,6 +1030,9 @@ function* operationalDashboard(request) {
 }
 
 module.exports = {
-  statusDashboard,
+  summaryDashboard,
+  resultDashboard,
+  inventoryItemDashboard,
+  siteDashboard,
   operationalDashboard,
 }

@@ -1,16 +1,20 @@
 {
-	// See http://go.microsoft.com/fwlink/?LinkId=759670
-	// for the documentation about the jsconfig.json format
-	"compilerOptions": {
-		"target": "es6"
-	},
-	"exclude": [
-		"node_modules",
-		"bower_components",
-		"jspm_packages",
-		"tmp",
-		"temp",
-		"dist",
-		"coverage"
-	]
+  // See http://go.microsoft.com/fwlink/?LinkId=759670
+  // for the documentation about the jsconfig.json format
+  "compilerOptions": {
+    "target": "es6",
+    "module": "es6",
+    "allowSyntheticDefaultImports": true,
+    // https://github.com/Microsoft/vscode/issues/13618
+    "jsx": "react"
+  },
+  "exclude": [
+    "node_modules",
+    "bower_components",
+    "jspm_packages",
+    "tmp",
+    "temp",
+    "dist",
+    "coverage"
+  ]
 }
