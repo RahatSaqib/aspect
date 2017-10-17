@@ -84,7 +84,7 @@ export class AppNotificationSnackBar extends PureComponent {
       'title',
       isError ? genericMessages.title : undefined
     )
-    const showProceed = notificationOptions.showProceed
+    const { showProceed } = notificationOptions
     const message = appNotificationMessageOrDefault(
       'message',
       isError ? genericMessages.message : undefined

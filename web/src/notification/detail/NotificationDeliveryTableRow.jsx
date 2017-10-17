@@ -42,7 +42,7 @@ const NotificationDeliveryTableRow = ({ intl, delivery, ...restProps }) => (
     <TableCell className={cssClasses('TableCell')}>
       {intl.formatRelative(delivery.time)}
     </TableCell>
-    <TableCell className={cssClasses('TableCell')}>{'…'}</TableCell>
+    <TableCell className={cssClasses('TableCell')}>…</TableCell>
   </TableRow>
 )
 

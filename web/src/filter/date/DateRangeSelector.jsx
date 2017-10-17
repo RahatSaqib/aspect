@@ -212,12 +212,13 @@ export class DateRangeSelector extends PureComponent {
         maxDate: endOfDay(now),
       },
       {
-        label: `${formatMessage(
-          messages.thisWeek
-        )} (${formatDate(thisWeekStart, {
-          day: '2-digit',
-          month: '2-digit',
-        })} - ${formatDate(thisWeekEnd, {
+        label: `${formatMessage(messages.thisWeek)} (${formatDate(
+          thisWeekStart,
+          {
+            day: '2-digit',
+            month: '2-digit',
+          }
+        )} - ${formatDate(thisWeekEnd, {
           day: '2-digit',
           month: '2-digit',
         })})`,
@@ -225,12 +226,13 @@ export class DateRangeSelector extends PureComponent {
         maxDate: thisWeekEnd,
       },
       {
-        label: `${formatMessage(
-          messages.lastWeek
-        )} (${formatDate(lastWeekStart, {
-          day: '2-digit',
-          month: '2-digit',
-        })} - ${formatDate(lastWeekEnd, {
+        label: `${formatMessage(messages.lastWeek)} (${formatDate(
+          lastWeekStart,
+          {
+            day: '2-digit',
+            month: '2-digit',
+          }
+        )} - ${formatDate(lastWeekEnd, {
           day: '2-digit',
           month: '2-digit',
         })})`,
@@ -357,16 +359,18 @@ export class DateRangeSelector extends PureComponent {
     }
     return [
       {
-        label: `${formatMessage(
-          messages.thisYear
-        )} (${formatDate(thisYearStart, { year: 'numeric' })})`,
+        label: `${formatMessage(messages.thisYear)} (${formatDate(
+          thisYearStart,
+          { year: 'numeric' }
+        )})`,
         minDate: thisYearStart,
         maxDate: thisYearEnd,
       },
       {
-        label: `${formatMessage(
-          messages.lastYear
-        )} (${formatDate(lastYearStart, { year: 'numeric' })})`,
+        label: `${formatMessage(messages.lastYear)} (${formatDate(
+          lastYearStart,
+          { year: 'numeric' }
+        )})`,
         minDate: lastYearStart,
         maxDate: lastYearEnd,
       },

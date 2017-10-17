@@ -1,6 +1,6 @@
 import _ from 'lodash'
 import React from 'react'
-import { createEagerFactory, compose } from 'recompose'
+import { compose } from 'recompose'
 import { AppContainer } from 'react-hot-loader'
 import { bindActionCreators } from 'redux'
 import { Provider, connect } from 'react-redux'
@@ -52,7 +52,7 @@ const formatsByTimezoneId = timezoneId => {
 
 const mapStateToProps = state => {
   let isLoggedOut = false
-  let loggedOutReason = state.user.loggedOutReason
+  let { loggedOutReason } = state.user
 
   const jwtExp = state.user.jwt.exp
   if (_.isNumber(jwtExp)) {
@@ -135,7 +135,9 @@ export const appFactory = compose(
       </IntlProvider>
     )
 
-    return createEagerFactory(connect(mapStateToProps, mapDispatchToProps)(App))
+    return React.createFactory(
+      connect(mapStateToProps, mapDispatchToProps)(App)
+    )
   },
   routerFactory
 )

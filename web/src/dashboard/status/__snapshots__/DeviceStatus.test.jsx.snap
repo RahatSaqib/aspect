@@ -23,7 +23,7 @@ exports[`Device Status component should shallow render correctly 1`] = `
       lg="1-4"
       sm="1-2"
     >
-      <Unknown
+      <SummaryItemsBlock
         intl={
           Object {
             "defaultFormats": Object {},
@@ -64,7 +64,7 @@ exports[`Device Status component should shallow render correctly 1`] = `
         }
         title="operational devices"
       />
-      <Unknown
+      <SummaryItemsBlock
         intl={
           Object {
             "defaultFormats": Object {},
@@ -109,7 +109,7 @@ exports[`Device Status component should shallow render correctly 1`] = `
       lg="1-4"
       sm="1-2"
     >
-      <Unknown
+      <SummaryItemsBlock
         intl={
           Object {
             "defaultFormats": Object {},
@@ -138,7 +138,7 @@ exports[`Device Status component should shallow render correctly 1`] = `
         items={undefined}
         title="servicing"
       />
-      <Unknown
+      <SummaryItemsBlock
         intl={
           Object {
             "defaultFormats": Object {},
@@ -172,7 +172,7 @@ exports[`Device Status component should shallow render correctly 1`] = `
       lg="1-4"
       sm="1-2"
     >
-      <Unknown
+      <SummaryItemsBlock
         intl={
           Object {
             "defaultFormats": Object {},
@@ -212,7 +212,7 @@ exports[`Device Status component should shallow render correctly 1`] = `
         }
         title="calibration"
       />
-      <Unknown
+      <SummaryItemsBlock
         intl={
           Object {
             "defaultFormats": Object {},

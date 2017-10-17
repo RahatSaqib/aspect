@@ -1,6 +1,6 @@
 import classnames from 'classnames/bind'
 import React from 'react'
-import { createEagerFactory, compose, pure } from 'recompose'
+import { compose, pure } from 'recompose'
 import Helmet from 'react-helmet'
 import { Layout, Panel } from 'react-toolbox/lib/layout'
 
@@ -30,7 +30,7 @@ export const loggedInFactory = compose(
       </Panel>
     </Layout>
   ),
-  createEagerFactory,
+  React.createFactory,
   pure
 )
 
