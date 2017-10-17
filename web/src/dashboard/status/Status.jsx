@@ -137,14 +137,12 @@ export const Status = ({
       title={intl.formatMessage(messages.consumableTitle)}
     />
 
-    {summary.get('deviceSummary') && (
-      <DeviceStatus
-        intl={intl}
-        className={cssClasses('Section--withStatus')}
-        title={intl.formatMessage(messages.devicesTitle)}
-        data={summary.get('deviceSummary')}
-      />
-    )}
+    <DeviceStatus
+      history={history}
+      intl={intl}
+      className={cssClasses('Section--withStatus')}
+      title={intl.formatMessage(messages.devicesTitle)}
+    />
 
     <SiteStatus
       history={history}

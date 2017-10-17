@@ -19,53 +19,16 @@ const i18nKeys = {
   runningLowStatus: 'runningLowStatus',
   expiringStockStatus: 'expiringStockStatus',
   fullyOperationalStatus: 'fullyOperationalStatus',
-  withQCIssuesStatus: 'withQCIssuesStatus',
-  needServicingStatus: 'needServicingStatus',
   notReportingStatus: 'notReportingStatus',
+  warrantyExpiringStatus: 'warrantyExpiringStatus',
   needCalibrationStatus: 'needCalibrationStatus',
   highFailuresRatesStatus: 'highFailuresRatesStatus',
   reportingStatus: 'reportingStatus',
   withStockIssues: 'withStockIssues',
   withDeviceIssues: 'withDeviceIssues',
   withQualityIssues: 'withQualityIssues',
-  countOfTotalDevicesTitle: 'countOfTotalDevicesTitle',
+  ofTotalDevicesTitle: 'ofTotalDevicesTitle',
   ofTotalSitesTitle: 'ofTotalSitesTitle',
-}
-
-const mockData = {
-  deviceSummary: {
-    operational: {
-      count: 67,
-      total: 83,
-      titleI18nKey: i18nKeys.countOfTotalDevicesTitle,
-      subI18nKey: i18nKeys.fullyOperationalStatus,
-    },
-    qualityControl: {
-      count: 7,
-      titleI18nKey: i18nKeys.devicesTitle,
-      subI18nKey: i18nKeys.withQCIssuesStatus,
-    },
-    servicing: {
-      count: 4,
-      titleI18nKey: i18nKeys.devicesTitle,
-      subI18nKey: i18nKeys.needServicingStatus,
-    },
-    uploadingData: {
-      count: 12,
-      titleI18nKey: i18nKeys.devicesTitle,
-      subI18nKey: i18nKeys.notReportingStatus,
-    },
-    calibration: {
-      count: 3,
-      titleI18nKey: i18nKeys.devicesTitle,
-      subI18nKey: i18nKeys.needCalibrationStatus,
-    },
-    testFailures: {
-      count: 4,
-      titleI18nKey: i18nKeys.devicesTitle,
-      subI18nKey: i18nKeys.highFailuresRatesStatus,
-    },
-  },
 }
 
 function* summaryDashboard(request) {
@@ -145,17 +108,14 @@ function* summaryDashboard(request) {
   ])
 
   const result = {
-    data: Object.assign(
-      {
-        sitesTotal: sitesTotal ? sitesTotal[0].cnt : null,
-        devicesTotal: devicesTotal ? devicesTotal[0].cnt : null,
-        // TODO: Remove magic numbers below when moving to "real" dashboard
-        resultsTotal30d: resultsTotal30d ? resultsTotal30d[0].cnt : null,
-        resultsTotal1d: resultsTotal1d ? resultsTotal1d[0].cnt : null,
-        usersTotal: usersTotal[0].cnt,
-      },
-      mockData
-    ),
+    data: {
+      sitesTotal: sitesTotal ? sitesTotal[0].cnt : null,
+      devicesTotal: devicesTotal ? devicesTotal[0].cnt : null,
+      // TODO: Remove magic numbers below when moving to "real" dashboard
+      resultsTotal30d: resultsTotal30d ? resultsTotal30d[0].cnt : null,
+      resultsTotal1d: resultsTotal1d ? resultsTotal1d[0].cnt : null,
+      usersTotal: usersTotal[0].cnt,
+    },
   }
 
   return result
@@ -451,14 +411,11 @@ function* inventoryItemDashboard(request) {
   return result
 }
 
-function* siteDashboard(request) {
-  const { auth } = request
-  const now = new Date()
-
-  // get data constraints
-  const dataConstraints = yield getConstraints(auth.credentials)
-
-  const siteQuery = knex('Site as s')
+function* getSiteList(auth, dataConstraints) {
+  if (!canViewSites(auth)) {
+    return []
+  }
+  return yield knex('Site as s')
     .leftOuterJoin('Geography as g', 's.geographyId', 'g.id')
     .leftOuterJoin('State as st', 'g.stateId', 'st.id')
     .modify(addConstraints, dataConstraints, {
@@ -472,8 +429,13 @@ function* siteDashboard(request) {
       's.latitude',
       's.longitude'
     )
+}
 
-  const deviceQuery = knex('Device as d')
+function* getDeviceList(auth, dataConstraints) {
+  if (!canViewDevices(auth)) {
+    return []
+  }
+  return yield knex('Device as d')
     .innerJoin('Site as s', 's.id', 'd.siteId')
     .innerJoin('Partner as p', 'd.partnerId', 'p.id')
     .leftOuterJoin('Geography as g', 's.geographyId', 'g.id')
@@ -487,10 +449,127 @@ function* siteDashboard(request) {
       site: 's',
       geography: 'g',
     })
-  const [siteList, deviceList] = yield Promise.all([
-    canViewSites(auth) ? siteQuery : [],
-    canViewDevices(auth) ? deviceQuery : [],
-  ])
+}
+
+function* deviceDashboard(request) {
+  const { auth } = request
+  const now = new Date()
+
+  // get data constraints
+  const dataConstraints = yield getConstraints(auth.credentials)
+
+  const siteList = yield* getSiteList(auth, dataConstraints)
+  const deviceList = yield* getDeviceList(auth, dataConstraints)
+
+  const siteById = _.keyBy(siteList, 'id')
+  _.forEach(deviceList, it => {
+    const site = siteById[it.siteId]
+    it.stateAbbr = site.stateAbbr
+    it.latitude = site.latitude
+    it.longitude = site.longitude
+  })
+
+  const MOCK_PARTNER_OFFLINE_THRESHOLD_DAYS = 3
+
+  const isDeviceOnline = it =>
+    isAfter(addDays(it.lastSeenOn, MOCK_PARTNER_OFFLINE_THRESHOLD_DAYS), now)
+  const isDeviceOffline = _.negate(isDeviceOnline)
+  const isDeviceWarrantyExpiring = () => /* TODO */ _.random(10) > 7
+  const isDeviceCalibrationDue = () => /* TODO */ _.random(10) > 7
+  const isDeviceHighErrorRate = () => /* TODO */ _.random(10) > 7
+  const isDeviceOperational = it =>
+    !isDeviceOffline(it) &&
+    !isDeviceWarrantyExpiring(it) &&
+    !isDeviceCalibrationDue(it) &&
+    !isDeviceHighErrorRate(it)
+
+  const warrantyExpiringDeviceList = _.filter(
+    deviceList,
+    isDeviceWarrantyExpiring
+  )
+  const calibrationDueDeviceList = _.filter(deviceList, isDeviceCalibrationDue)
+  const offlineDeviceList = _.filter(deviceList, isDeviceOffline)
+  const highErrorRateDeviceList = _.filter(deviceList, isDeviceHighErrorRate)
+  const operationalDeviceList = _.filter(deviceList, isDeviceOperational)
+
+  const deviceSummaryMap = {
+    operational: {
+      deviceIds: _.map(operationalDeviceList, 'id'),
+      items: [
+        {
+          key: 0,
+          count: operationalDeviceList.length,
+          total: deviceList.length,
+          titleI18nKey: i18nKeys.ofTotalDevicesTitle,
+          subI18nKey: i18nKeys.fullyOperationalStatus,
+        },
+      ],
+    },
+    warrantyExpiring: {
+      deviceIds: _.map(warrantyExpiringDeviceList, 'id'),
+      items: [
+        {
+          key: 0,
+          count: warrantyExpiringDeviceList.length,
+          titleI18nKey: i18nKeys.devicesTitle,
+          subI18nKey: i18nKeys.warrantyExpiringStatus,
+        },
+      ],
+    },
+    calibration: {
+      deviceIds: _.map(calibrationDueDeviceList, 'id'),
+      items: [
+        {
+          key: 0,
+          count: calibrationDueDeviceList.length,
+          titleI18nKey: i18nKeys.devicesTitle,
+          subI18nKey: i18nKeys.needCalibrationStatus,
+        },
+      ],
+    },
+    uploadingData: {
+      deviceIds: _.map(offlineDeviceList, 'id'),
+      items: [
+        {
+          key: 0,
+          count: offlineDeviceList.length,
+          titleI18nKey: i18nKeys.devicesTitle,
+          subI18nKey: i18nKeys.notReportingStatus,
+        },
+      ],
+    },
+    testFailures: {
+      deviceIds: _.map(highErrorRateDeviceList, 'id'),
+      items: [
+        {
+          key: 0,
+          count: highErrorRateDeviceList.length,
+          titleI18nKey: i18nKeys.devicesTitle,
+          subI18nKey: i18nKeys.highFailuresRatesStatus,
+        },
+      ],
+    },
+  }
+
+  const result = {
+    data: {
+      deviceList,
+      deviceSummaryMap,
+    },
+  }
+
+  return result
+}
+
+function* siteDashboard(request) {
+  const { auth } = request
+  const now = new Date()
+
+  // get data constraints
+  const dataConstraints = yield getConstraints(auth.credentials)
+
+  const siteList = yield* getSiteList(auth, dataConstraints)
+  const deviceList = yield* getDeviceList(auth, dataConstraints)
   const inventoryItemList = yield* getInventoryItemList(auth, dataConstraints)
 
   const MOCK_PARTNER_OFFLINE_THRESHOLD_DAYS = 3
@@ -1033,6 +1112,7 @@ module.exports = {
   summaryDashboard,
   resultDashboard,
   inventoryItemDashboard,
+  deviceDashboard,
   siteDashboard,
   operationalDashboard,
 }

@@ -17,6 +17,9 @@ export const REQUEST_INVENTORY_ITEM_DASHBOARD =
 export const RECEIVE_INVENTORY_ITEM_DASHBOARD =
   'RECEIVE_INVENTORY_ITEM_DASHBOARD'
 
+export const REQUEST_DEVICE_DASHBOARD = 'REQUEST_DEVICE_DASHBOARD'
+export const RECEIVE_DEVICE_DASHBOARD = 'RECEIVE_DEVICE_DASHBOARD'
+
 export const REQUEST_SITE_DASHBOARD = 'REQUEST_SITE_DASHBOARD'
 export const RECEIVE_SITE_DASHBOARD = 'RECEIVE_SITE_DASHBOARD'
 
@@ -135,6 +138,42 @@ export function fetchInventoryItemDashboard() {
   }
 }
 
+function requestDeviceDashboard(requestedAt) {
+  return {
+    type: REQUEST_DEVICE_DASHBOARD,
+    requestedAt,
+  }
+}
+
+function receiveDeviceDashboard(requestedAt, data) {
+  return {
+    type: RECEIVE_DEVICE_DASHBOARD,
+    requestedAt,
+    data,
+  }
+}
+
+export function fetchDeviceDashboard() {
+  return dispatch => {
+    const requestedAt = Date.now()
+    dispatch(requestDeviceDashboard(requestedAt))
+
+    return aspectFetch('/dashboard/device', {
+      errorNotifications: {
+        default: errorPleaseTryAgainInAFewMinutes(
+          defineMessages({
+            title: {
+              id:
+                'errorResponseMessages.fetchDeviceDashboard.GET.default.title',
+              defaultMessage: 'Error Loading Dashboard Device',
+            },
+          })
+        ),
+      },
+    }).then(json => dispatch(receiveDeviceDashboard(requestedAt, json.data)))
+  }
+}
+
 function requestSiteDashboard(requestedAt) {
   return {
     type: REQUEST_SITE_DASHBOARD,
@@ -223,6 +262,8 @@ const Summary = Immutable.Record({
   inventoryItemSiteList: Immutable.List(),
   inventorySiteSummaryList: Immutable.List(),
   inventoryConsumableSummaryList: Immutable.List(),
+  deviceList: Immutable.List(),
+  deviceSummaryMap: Immutable.Map(),
   siteList: Immutable.List(),
   siteSummaryMap: Immutable.Map(),
   operational: Immutable.Map(),
@@ -235,6 +276,7 @@ export default function dashboardReducer(state = initialState, action) {
     case REQUEST_SUMMARY_DASHBOARD:
     case REQUEST_RESULT_DASHBOARD:
     case REQUEST_INVENTORY_ITEM_DASHBOARD:
+    case REQUEST_DEVICE_DASHBOARD:
     case REQUEST_SITE_DASHBOARD:
     case REQUEST_OPERATIONAL_STATUS:
       return state.set(
@@ -262,6 +304,20 @@ export default function dashboardReducer(state = initialState, action) {
           mutState.mergeDeepIn(
             ['resultSummaryList'],
             action.data.resultSummaryList
+          )
+        }
+      })
+    case RECEIVE_DEVICE_DASHBOARD:
+      return state.withMutations(mutState => {
+        if (mutState.hasIn(['requestedAtSet', action.requestedAt])) {
+          mutState.set(
+            'requestedAtSet',
+            mutState.requestedAtSet.delete(action.requestedAt)
+          )
+          mutState.mergeDeepIn(['deviceList'], action.data.deviceList)
+          mutState.mergeDeepIn(
+            ['deviceSummaryMap'],
+            action.data.deviceSummaryMap
           )
         }
       })
