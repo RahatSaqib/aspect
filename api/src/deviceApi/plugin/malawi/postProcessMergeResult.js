@@ -3,6 +3,8 @@ const { notifyResultUpdated } = require('../../../messages')
 
 const VALIDATED_EXTERNALID = 'Validated'
 const DELIVERABLE_EXTERNALID = 'Deliverable'
+const ASSAY_TYPE_HIV_VL = 'HivVL'
+const ASSAY_TYPE_EID = 'EID'
 
 function* postProcessMergeResult(context, result, previousResult) {
   const { knex, payload, now } = context
@@ -17,7 +19,70 @@ function* postProcessMergeResult(context, result, previousResult) {
   // TODO do we want to consume in inventory in malawi plugin? (we don't use it)
   // yield* consumeInventoryForResult(knex, payload, result)
   yield* checkResultDeliverable(context, result)
+  yield* addResultCategory(context, result)
   return {}
+}
+
+// Add category to result]
+function* addResultCategory(context, result) {
+  const { knex, dispatch } = context
+  const { id: resultId, assayId, resulData: { resultText, copies } } = result
+
+  const assayExternalId = yield knex('Assay').where('assayId', assayId)
+    .externalId
+
+  // Add EID categories
+  let externalId = ''
+  if (assayExternalId === ASSAY_TYPE_EID) {
+    if (resultText === 'Collect New Sample') {
+      externalId = 'Collect New Sample'
+    } else if (resultText === 'Discordant ') {
+      externalId = 'Discordant  '
+    } else if (resultText === 'Intermediate') {
+      externalId = 'Intermediate'
+    } else if (resultText === 'Invalid') {
+      externalId = 'Invalid'
+    } else if (resultText === 'Negative') {
+      externalId = 'Not Detected'
+    } else if (resultText === 'Not Detected') {
+      externalId = 'Detected'
+    } else {
+      externalId = 'Unknown'
+    }
+  } else if (assayExternalId === ASSAY_TYPE_HIV_VL) {
+    // Add HIV VL Categories
+    if (copies) {
+      if (copies < 1000) {
+        externalId = '<1000'
+      } else {
+        externalId = '1000+'
+      }
+    } else {
+      if (resultText === 'Rejected') {
+        externalId = 'Rejected'
+      }
+      if (resultText === 'Missing') {
+        externalId = 'Missing'
+      }
+    }
+  }
+
+  const resultCategoryId = yield knex('ResultCategory')
+    .where('externalId', externalId)
+    .first('id')
+
+  // Update Result Category
+  yield knex('Result')
+    .where('id', resultId)
+    .update('resultCategoryId1', resultCategoryId)
+
+  dispatch(
+    notifyResultUpdated(
+      resultId,
+      { resultCategoryId1: resultCategoryId },
+      'MalawiPlugin'
+    )
+  )
 }
 
 function* checkResultDeliverable(context, result) {
