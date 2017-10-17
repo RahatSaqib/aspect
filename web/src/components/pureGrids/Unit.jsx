@@ -45,12 +45,13 @@ const enhance = compose(
   pure
 )
 
-export const Unit = props =>
+export const Unit = props => (
   <div
     className={getClassNames(props).join(' ')}
     {..._.omit(props, _.keys(pureGridPropTypes))}
   >
     {props.children}
   </div>
+)
 
 export default enhance(Unit)

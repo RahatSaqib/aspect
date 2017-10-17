@@ -1,3 +1,4 @@
+import _ from 'lodash'
 import PropTypes from 'prop-types'
 import React, { PureComponent } from 'react'
 import { compose, setPropTypes } from 'recompose'
@@ -284,7 +285,7 @@ export class ReporterDetail extends PureComponent {
 
     // get date for current locale, 'date' - is a Date object or string value in DateTime format
     const getFormattedDate = date =>
-      date !== null && date !== '' && isFinite(new Date(date))
+      date !== null && date !== '' && _.isFinite(new Date(date).getTime())
         ? formatDate(date)
         : date
 

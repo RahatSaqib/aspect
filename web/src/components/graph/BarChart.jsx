@@ -114,8 +114,8 @@ class BarChart extends Component {
               {!this.props.hideAxes && (
                 <AxisLeft
                   scale={yScale}
-                  stroke={'#1b1a1e'}
-                  tickTextFill={'#1b1a1e'}
+                  stroke="#1b1a1e"
+                  tickTextFill="#1b1a1e"
                   numTicks={this.props.numYTicks}
                   hideTicks={this.props.hideTicks}
                   hideZero
@@ -131,19 +131,19 @@ class BarChart extends Component {
                 />
               )}
               {(!this.props.hideAxes || this.props.xOnly) && (
-                  <AxisBottom
-                    scale={xScale}
-                    top={yMax}
-                    hideTicks
-                    tickLabelComponent={
-                      <text
-                        textAnchor="middle"
-                        fontSize={labelSize}
-                        fill="black"
-                      />
-                    }
-                  />
-                )}
+                <AxisBottom
+                  scale={xScale}
+                  top={yMax}
+                  hideTicks
+                  tickLabelComponent={
+                    <text
+                      textAnchor="middle"
+                      fontSize={labelSize}
+                      fill="black"
+                    />
+                  }
+                />
+              )}
             </Group>
           )
         })}

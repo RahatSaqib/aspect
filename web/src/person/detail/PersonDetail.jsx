@@ -1,4 +1,3 @@
-import _ from 'lodash'
 import PropTypes from 'prop-types'
 import React, { PureComponent } from 'react'
 import { compose, setPropTypes } from 'recompose'
@@ -86,58 +85,15 @@ const enhance = compose(
 )
 
 export class PersonDetail extends PureComponent {
-  state = {
-    partners: [],
-    jobFunctions: [],
-  }
-
   componentDidMount() {
     this.handleFetchPartnersAndJobFunctions(this.props)
     this.handleFetchPerson(this.props)
-    if (this.props.partnersAndJobFunctionsForSelectList.get('lastRefreshed')) {
-      this.setPartnerAndJobFunctions(
-        this.props,
-        this.props.person.get('partnerId')
-      )
-    }
   }
 
   componentWillReceiveProps(nextProps) {
     if (this.props.match.params.personId !== nextProps.match.params.personId) {
       this.handleFetchPerson(nextProps)
-    } else if (
-      nextProps.person &&
-      nextProps.partnersAndJobFunctionsForSelectList.get('lastRefreshed')
-    ) {
-      this.setPartnerAndJobFunctions(
-        nextProps,
-        nextProps.person.get('partnerId')
-      )
     }
-  }
-
-  setPartnerAndJobFunctions = (props, selectedPartnerId) => {
-    const {
-      partnersAndJobFunctionsForSelectList,
-      intl: { formatMessage },
-    } = props
-    const partners = _.map(
-      partnersAndJobFunctionsForSelectList.get('partners').toJS(),
-      partner => ({
-        id: partner.id,
-        name: partner.name || formatMessage(messages.none),
-        jobFunctions: _.map(partner.jobFunctions, jobFunction => ({
-          id: jobFunction.id,
-          name: jobFunction.name || formatMessage(messages.none),
-        })),
-      })
-    )
-    const selectedPartner = _.find(partners, { id: selectedPartnerId })
-    const jobFunctions = selectedPartner ? selectedPartner.jobFunctions : []
-    this.setState({
-      partners,
-      jobFunctions,
-    })
   }
 
   handleFetchPerson = ({ match, fetchSinglePerson }) => {
