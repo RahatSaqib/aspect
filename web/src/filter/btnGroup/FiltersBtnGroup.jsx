@@ -69,6 +69,10 @@ const messages = defineMessages({
     id: 'filter.btnGroup.whereExternalIdIncludes',
     defaultMessage: 'where externalId includes "{externalId}"',
   },
+  whereDeviceIdIsIn: {
+    id: 'filter.btnGroup.whereDeviceIdIsIn',
+    defaultMessage: 'where deviceId is in ({joinedIds})',
+  },
   whereSiteIdIsIn: {
     id: 'filter.btnGroup.whereSiteIdIsIn',
     defaultMessage: 'where siteId is in ({joinedIds})',
@@ -253,6 +257,11 @@ const buttonBy = {
     })
   ),
   // Special keys
+  deviceIds: makeButton(({ intl }, deviceIds) =>
+    intl.formatMessage(messages.whereDeviceIdIsIn, {
+      joinedIds: deviceIds,
+    })
+  ),
   siteIds: makeButton(({ intl }, siteIds) =>
     intl.formatMessage(messages.whereSiteIdIsIn, {
       joinedIds: siteIds,
