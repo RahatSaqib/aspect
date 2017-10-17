@@ -5,11 +5,3 @@
 .DeviceDataTable {
   composes: ComponentDataTable from '../../components/shared/DataTable.css';
 }
-
-.DeviceDataTableHead__Tests--left {
-  text-align: right;
-}
-
-.DeviceDataTableHead__Tests--right {
-  text-align: left;
-}

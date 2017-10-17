@@ -27,3 +27,7 @@
 .TableRow:hover .TableCell__small {
   opacity: 1;
 }
+
+.TableCell--numeric {
+  text-align: right;
+}

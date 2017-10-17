@@ -285,7 +285,6 @@ export const DeviceList = ({
               },
               {
                 key: 'lastMonth',
-                className: cssClasses('DeviceDataTableHead__Tests--left'),
                 onClick: onHeadColumnClick,
                 label: (
                   <span>
@@ -297,7 +296,6 @@ export const DeviceList = ({
               },
               {
                 key: 'thisMonth',
-                className: cssClasses('DeviceDataTableHead__Tests--right'),
                 onClick: onHeadColumnClick,
                 label: (
                   <span>
