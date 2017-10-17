@@ -3,8 +3,8 @@ const { notifyResultUpdated } = require('../../../messages')
 
 const VALIDATED_EXTERNALID = 'Validated'
 const DELIVERABLE_EXTERNALID = 'Deliverable'
-const ASSAY_TYPE_HIV_VL = 'HivVL'
-const ASSAY_TYPE_EID = 'EID'
+const EXTERNAL_ID_HIV_VL = 'HivVL'
+const EXTERNAL_ID_EID = 'EID'
 
 function* postProcessMergeResult(context, result, previousResult) {
   const { knex, payload, now } = context
@@ -33,7 +33,7 @@ function* addResultCategory(context, result) {
 
   // Add EID categories
   let externalId = ''
-  if (assayExternalId === ASSAY_TYPE_EID) {
+  if (assayExternalId === EXTERNAL_ID_EID) {
     if (resultText === 'Collect New Sample') {
       externalId = 'Collect New Sample'
     } else if (resultText === 'Discordant ') {
@@ -49,7 +49,7 @@ function* addResultCategory(context, result) {
     } else {
       externalId = 'Unknown'
     }
-  } else if (assayExternalId === ASSAY_TYPE_HIV_VL) {
+  } else if (assayExternalId === EXTERNAL_ID_HIV_VL) {
     // Add HIV VL Categories
     if (copies) {
       if (copies < 1000) {
