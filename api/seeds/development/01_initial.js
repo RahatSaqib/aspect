@@ -1135,7 +1135,7 @@ function* seed(knex) {
 
   yield knex('ResultCategory').insert({
     name: 'Collect New Sample',
-    i18nkey: 'resultcategoryCollectNewSample',
+    i18nkey: 'resultCategoryCollectNewSample',
     externalId: 'CollectNewSample',
   })
 
@@ -1146,15 +1146,15 @@ function* seed(knex) {
   })
 
   yield knex('ResultCategory').insert({
-    name: '<1000',
-    i18nkey: 'resultCategory<1000',
-    externalId: '<1000',
+    name: 'LessThan1000',
+    i18nkey: 'resultCategoryLessThan1000',
+    externalId: 'LessThan1000',
   })
 
   yield knex('ResultCategory').insert({
-    name: '1000+',
-    i18nkey: 'resultCategory1000+',
-    externalId: '1000+',
+    name: 'MoreThan1000',
+    i18nkey: 'resultCategoryMoreThan1000',
+    externalId: 'MoreThan1000',
   })
 
   yield knex('ResultCategory').insert({

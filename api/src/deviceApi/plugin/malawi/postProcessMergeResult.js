@@ -26,7 +26,7 @@ function* postProcessMergeResult(context, result, previousResult) {
 // Add category to result]
 function* addResultCategory(context, result) {
   const { knex, dispatch } = context
-  const { id: resultId, assayId, resulData: { resultText, copies } } = result
+  const { id: resultId, assayId, resultData: { resultText, copies } } = result
 
   const assayExternalId = yield knex('Assay').where('assayId', assayId)
     .externalId
@@ -36,7 +36,7 @@ function* addResultCategory(context, result) {
   if (assayExternalId === EXTERNAL_ID_EID) {
     if (resultText === 'Collect New Sample') {
       externalId = 'Collect New Sample'
-    } else if (resultText === 'Discordant ') {
+    } else if (resultText === 'Discordant') {
       externalId = 'Discordant  '
     } else if (resultText === 'Intermediate') {
       externalId = 'Intermediate'
@@ -52,10 +52,10 @@ function* addResultCategory(context, result) {
   } else if (assayExternalId === EXTERNAL_ID_HIV_VL) {
     // Add HIV VL Categories
     if (copies) {
-      if (copies < 1000) {
-        externalId = '<1000'
+      if (copies < 1000 || resultText === '< LDL') {
+        externalId = 'LessThan1000'
       } else {
-        externalId = '1000+'
+        externalId = 'MoreThan1000'
       }
     } else {
       if (resultText === 'Rejected') {
@@ -74,12 +74,12 @@ function* addResultCategory(context, result) {
   // Update Result Category
   yield knex('Result')
     .where('id', resultId)
-    .update('resultCategoryId1', resultCategoryId)
+    .update('resultCategory1', resultCategoryId)
 
   dispatch(
     notifyResultUpdated(
       resultId,
-      { resultCategoryId1: resultCategoryId },
+      { resultCategory1: resultCategoryId },
       'MalawiPlugin'
     )
   )
