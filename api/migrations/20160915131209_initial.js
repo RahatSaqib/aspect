@@ -674,7 +674,7 @@ function* up(knex) {
     result.specificType('resultData', 'JSON')
     result.string('assayVersion')
     result.dateTime('startedOn')
-    result.dateTime('endedOn')
+    result.dateTime('endedOn').index()
     result.string('consumableSerial')
     result.dateTime('consumableExpirationDate')
     result.string('consumableLot')
