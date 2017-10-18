@@ -1,5 +1,5 @@
 import React from 'react'
-import { createEagerFactory, compose, pure } from 'recompose'
+import { compose, pure } from 'recompose'
 import Helmet from 'react-helmet'
 
 import AppNotificationSnackBar from '../../appNotification/AppNotificationSnackBar'
@@ -16,7 +16,7 @@ export const signedOutFactory = compose(
       <AppNotificationSnackBar intl={props.intl} />
     </div>
   ),
-  createEagerFactory,
+  React.createFactory,
   pure
 )
 

@@ -26,6 +26,7 @@ module.exports = [
       validate: {
         query: Object.assign(
           {
+            siteIds: Joi.string().allow('').description('Filter for site ids'),
             deviceName: Joi.string()
               .allow('')
               .description('Filter for device name'),

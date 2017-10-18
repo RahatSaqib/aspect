@@ -67,6 +67,12 @@ function* getListDevices(query, auth) {
     .innerJoin('Site as s', 'd.siteId', 's.id')
     .leftJoin('Geography as g', 's.geographyId', 'g.id')
     .leftJoin('State as st', 'g.stateId', 'st.id')
+    .where(function() {
+      if (!query.deviceIds) {
+        return
+      }
+      this.whereIn('d.id', query.deviceIds.split(','))
+    })
     .modify(queryBuilder => {
       if (!query.assayId) {
         return

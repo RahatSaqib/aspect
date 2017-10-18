@@ -544,16 +544,13 @@ describe('AccountRedux module', () => {
 
         describe('when a response is received from the server', () => {
           // FIXME: provide proper response for expectedResponseFromServer
-          it.skip(
-            'Should dispatch a RECEIVE_UPDATED_LOGIN_DETAILS action with the account details received',
-            () =>
-              result.then(() => {
-                expect(dispatchStub).toHaveBeenLastCalledWith({
-                  type: AccountRedux.types.RECEIVE_UPDATED_LOGIN_DETAILS,
-                  updateDetails,
-                })
+          it.skip('Should dispatch a RECEIVE_UPDATED_LOGIN_DETAILS action with the account details received', () =>
+            result.then(() => {
+              expect(dispatchStub).toHaveBeenLastCalledWith({
+                type: AccountRedux.types.RECEIVE_UPDATED_LOGIN_DETAILS,
+                updateDetails,
               })
-          )
+            }))
         })
       })
     })

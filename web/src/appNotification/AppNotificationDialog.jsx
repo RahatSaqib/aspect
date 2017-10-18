@@ -107,7 +107,7 @@ export class AppNotificationDialog extends PureComponent {
       isError ? genericMessages.title : undefined
     )
     const actions = []
-    const showProceed = notificationOptions.showProceed
+    const { showProceed } = notificationOptions
     if (notificationOptions.showClose) {
       const closeText = appNotificationMessageOrDefault(
         'closeText',

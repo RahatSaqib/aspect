@@ -28,8 +28,7 @@ export function makeDelegateComponent(
 ) {
   const propTypes = {
     className: PropTypes.string,
-    component: PropTypes.oneOfType([PropTypes.func, PropTypes.string])
-      .isRequired,
+    component: PropTypes.oneOfType([PropTypes.func, PropTypes.string]),
     ...pureGridPropTypes,
   }
 
@@ -44,8 +43,8 @@ export function makeDelegateComponent(
     static displayName = componentName
 
     static defaultProps = {
-      component: 'div',
       className: null,
+      component: 'div',
     }
 
     static propTypes = propTypes

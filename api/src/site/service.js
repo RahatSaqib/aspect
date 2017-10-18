@@ -58,6 +58,12 @@ function* listSites(request) {
     .leftOuterJoin('State as st', 'g.stateId', 'st.id')
     .leftOuterJoin('Lga as l', 'g.lgaId', 'l.id')
     .where(function() {
+      if (!query.siteIds) {
+        return
+      }
+      this.whereIn('s.id', query.siteIds.split(','))
+    })
+    .where(function() {
       if (!query.deviceName) {
         return
       }

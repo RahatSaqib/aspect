@@ -103,8 +103,8 @@ const LineChart = props => {
         {lines}
         <AxisLeft
           scale={yScale}
-          stroke={'#1b1a1e'}
-          tickTextFill={'#1b1a1e'}
+          stroke="#1b1a1e"
+          tickTextFill="#1b1a1e"
           numTicks={props.numYTicks}
           hideTicks
           hideZero
@@ -125,7 +125,7 @@ const LineChart = props => {
           left={-shift}
           hideTicks={props.hideTicks}
           hideAxisLine={props.hideAxes}
-          tickTextFill={'#1b1a1e'}
+          tickTextFill="#1b1a1e"
           tickLabelComponent={
             <text textAnchor="middle" fontSize={labelSize} fill="black" />
           }

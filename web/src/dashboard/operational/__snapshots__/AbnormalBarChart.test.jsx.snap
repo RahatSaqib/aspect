@@ -5,7 +5,7 @@ exports[`AbnormalBarChart Component should shallow render correctly 1`] = `
   height={100}
   width={150}
 >
-  <Unknown
+  <Bar
     fill="#36DED6"
     height={100}
     width={64}

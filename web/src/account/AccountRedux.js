@@ -113,7 +113,7 @@ export function saveLoginDetails(loginDetails) {
   return (dispatch, getState) => {
     dispatch(createSaveAccountDetailsStart())
     const state = getState()
-    const clientId = state.user.clientId
+    const { clientId } = state.user
 
     return aspectFetch('/auth/update-login-details', {
       method: 'PUT',

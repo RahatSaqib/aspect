@@ -1,5 +1,5 @@
 import React from 'react'
-import { createEagerFactory, compose, pure } from 'recompose'
+import { compose, pure } from 'recompose'
 import Helmet from 'react-helmet'
 
 import IdleDialog from '../../../idle/components/IdleDialog'
@@ -18,7 +18,7 @@ export const loggedInFactory = compose(
       <AppNotificationSnackBar intl={props.intl} />
     </div>
   ),
-  createEagerFactory,
+  React.createFactory,
   pure
 )
 

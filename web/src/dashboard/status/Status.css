@@ -1,14 +1,15 @@
 @import '../../globals/variables.css';
 
 .Container {
-  padding: 10px;
+  padding: 0 10px;
 }
 
-.Section {
-  padding: 10px 0;
+.Section--summary {
+  margin: 20px 0;
 }
 
-.Section__Content {
+.Section--withStatus {
+  composes: Section--summary;
   padding: 20px;
 }
 

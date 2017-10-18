@@ -90,7 +90,7 @@
 
 .Link__active > abbr::after,
 .Link__link:hover > abbr::after {
-  content: "";
+  content: '';
   position: absolute;
   border-bottom: 1px solid var(--aspect-color-cyan);
   left: 0;

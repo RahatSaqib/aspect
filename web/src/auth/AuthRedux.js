@@ -85,7 +85,7 @@ export function loginStart({ user, password }) {
     dispatch(loginRequest(requestedAt))
 
     const state = getState()
-    const clientId = state.user.clientId
+    const { clientId } = state.user
 
     return aspectFetch('/auth', {
       method: 'POST',

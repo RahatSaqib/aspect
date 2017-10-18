@@ -34,23 +34,48 @@
     "import/no-unresolved": "off",
     "import/no-named-as-default-member": "off",
     "jsx-a11y/anchor-has-content": "off",
+    "jsx-a11y/label-has-for": "warn",
+    "jsx-a11y/anchor-is-valid": [
+      "error",
+      {
+        "specialLink": "to"
+      }
+    ],
     "linebreak-style": "off",
-    "new-cap": ["error", { "properties": false }],
+    "new-cap": [
+      "error",
+      {
+        "properties": false
+      }
+    ],
     "newline-per-chained-call": "off",
     "no-nested-ternary": "off",
     "no-param-reassign": "off",
-    "no-plusplus": ["error", { "allowForLoopAfterthoughts": true }],
+    "no-plusplus": [
+      "error",
+      {
+        "allowForLoopAfterthoughts": true
+      }
+    ],
     "no-restricted-syntax": "off",
     "no-shadow": "off",
     "no-use-before-define": "off",
-    "prettier/prettier": ["error", {
-      "semi": false,
-      "singleQuote": true,
-      "trailingComma": "es5"
-    }],
+    "prettier/prettier": [
+      "error",
+      {
+        "semi": false,
+        "singleQuote": true,
+        "trailingComma": "es5"
+      }
+    ],
     "react/no-multi-comp": "off",
     "react/no-unescaped-entities": "off",
-    "react/prop-types": ["error", { "skipUndeclared": true }],
+    "react/prop-types": [
+      "error",
+      {
+        "skipUndeclared": true
+      }
+    ],
     "react/forbid-prop-types": "warn",
     "require-yield": "off"
   }

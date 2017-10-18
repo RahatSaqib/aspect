@@ -24,11 +24,9 @@ function addAuthHeaderMiddleware(fetch, input, options = {}) {
     ;(options.headers || (options.headers = {})
     ).Authorization = `Bearer ${token}`
   }
-  return fetch(input, options).catch(() => {
-    Promise.reject({
-      statusCode: 0,
-    })
-  })
+  return fetch(input, options).catch(() => ({
+    statusCode: 0,
+  }))
 }
 
 // using this in a fetch (ajax request) to check if request was successful

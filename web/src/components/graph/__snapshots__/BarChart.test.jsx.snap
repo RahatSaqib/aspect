@@ -8,14 +8,14 @@ exports[`BarChart component should shallow render correctly 1`] = `
   <Group
     left={40}
   >
-    <Unknown
+    <Bar
       fill="#27c4e0"
       height={237}
       width={88}
       x={39}
       y={163}
     />
-    <Unknown
+    <Bar
       fill="#e85065"
       height={34}
       width={88}
@@ -55,14 +55,14 @@ exports[`BarChart component should shallow render correctly 1`] = `
   <Group
     left={40}
   >
-    <Unknown
+    <Bar
       fill="#27c4e0"
       height={204}
       width={88}
       x={164}
       y={196}
     />
-    <Unknown
+    <Bar
       fill="#e85065"
       height={51}
       width={88}
@@ -102,14 +102,14 @@ exports[`BarChart component should shallow render correctly 1`] = `
   <Group
     left={40}
   >
-    <Unknown
+    <Bar
       fill="#27c4e0"
       height={136}
       width={88}
       x={289}
       y={264}
     />
-    <Unknown
+    <Bar
       fill="#e85065"
       height={34}
       width={88}
@@ -149,14 +149,14 @@ exports[`BarChart component should shallow render correctly 1`] = `
   <Group
     left={40}
   >
-    <Unknown
+    <Bar
       fill="#27c4e0"
       height={305}
       width={88}
       x={414}
       y={95}
     />
-    <Unknown
+    <Bar
       fill="#e85065"
       height={34}
       width={88}
