@@ -33,17 +33,21 @@ const messages = defineMessages({
     id: 'pages.NotificationList.title',
     defaultMessage: 'Notifications',
   },
-  type: {
-    id: 'pages.NotificationList.type',
-    defaultMessage: 'Type',
+  lastTriggered: {
+    id: 'pages.NotificationList.lastTriggered',
+    defaultMessage: 'Last triggered',
   },
-  name: {
-    id: 'pages.NotificationList.name',
-    defaultMessage: 'Name',
+  recipients: {
+    id: 'pages.NotificationList.recipients',
+    defaultMessage: 'Recipients',
   },
-  assignedContacts: {
-    id: 'pages.NotificationList.assignedContacts',
-    defaultMessage: 'Assigned Contacts',
+  totalTriggers: {
+    id: 'pages.NotificationList.totalTriggers',
+    defaultMessage: 'Total triggers',
+  },
+  errors: {
+    id: 'pages.NotificationList.errors',
+    defaultMessage: 'Errors',
   },
   paginatorStatus: {
     id: 'pages.NotificationList.paginatorStatus',
@@ -59,7 +63,13 @@ const FILTERS_CONFIG = {
 }
 
 const searchSanitizer = makeSearchParamsSanitizer({
-  availableSortCol: ['type', 'name', 'assignedContacts'],
+  availableSortCol: [
+    'alertName',
+    'lastTriggeredOn',
+    'recipientsCount',
+    'triggersCount',
+    'errorsCount',
+  ],
 })
 const filtersSanitizer = sanitizeFiltersStringBy(FILTERS_CONFIG)
 const filtersFromLocation = composeSanitizer(
@@ -73,7 +83,8 @@ const filtersFromLocation = composeSanitizer(
 const enhance = compose(
   withProps(
     makeSortPageSelector({
-      sortCol: 'name',
+      sortCol: 'lastTriggeredOn',
+      sortDir: 'desc',
     })
   ),
   connect(
@@ -190,18 +201,30 @@ export const NotificationList = ({
             sortColumnDir={sortDir}
             columns={[
               {
-                key: 'type',
-                label: intl.formatMessage(messages.type),
+                key: 'alertType',
+              },
+              {
+                key: 'alertName',
                 onClick: onHeadColumnClick,
               },
               {
-                key: 'name',
-                label: intl.formatMessage(messages.name),
+                key: 'lastTriggeredOn',
+                label: intl.formatMessage(messages.lastTriggered),
                 onClick: onHeadColumnClick,
               },
               {
-                key: 'assignedContacts',
-                label: intl.formatMessage(messages.assignedContacts),
+                key: 'recipientsCount',
+                label: intl.formatMessage(messages.recipients),
+                onClick: onHeadColumnClick,
+              },
+              {
+                key: 'triggersCount',
+                label: intl.formatMessage(messages.totalTriggers),
+                onClick: onHeadColumnClick,
+              },
+              {
+                key: 'errorsCount',
+                label: intl.formatMessage(messages.errors),
                 onClick: onHeadColumnClick,
               },
             ]}

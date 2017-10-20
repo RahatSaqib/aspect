@@ -13,7 +13,9 @@ exports[`NotificationTableRow module NotificationTableRow component should rende
     numeric={false}
     tagName="td"
   >
-    error
+    <AlertType
+      alertType="mine"
+    />
   </ThemedTableCell>
   <ThemedTableCell
     className="TableCell"
@@ -31,7 +33,34 @@ exports[`NotificationTableRow module NotificationTableRow component should rende
     numeric={false}
     tagName="td"
   >
-    Assigned Contacts
+    now
+  </ThemedTableCell>
+  <ThemedTableCell
+    className="TableCell"
+    composeTheme="deeply"
+    mapThemrProps={[Function]}
+    numeric={false}
+    tagName="td"
+  >
+    10
+  </ThemedTableCell>
+  <ThemedTableCell
+    className="TableCell"
+    composeTheme="deeply"
+    mapThemrProps={[Function]}
+    numeric={false}
+    tagName="td"
+  >
+    10
+  </ThemedTableCell>
+  <ThemedTableCell
+    className="TableCell TableCell--errorsCount"
+    composeTheme="deeply"
+    mapThemrProps={[Function]}
+    numeric={false}
+    tagName="td"
+  >
+    10
   </ThemedTableCell>
 </ThemedTableRow>
 `;
