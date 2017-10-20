@@ -1,3 +1,4 @@
+import Immutable from 'Immutable'
 import React from 'react'
 import ReactShallowRenderer from 'react-test-renderer/shallow'
 import { IntlProvider } from 'react-intl'
@@ -12,39 +13,64 @@ describe('Device Status component', () => {
     intl,
     title: 'Devices',
     cssClasses: 'Section__Content',
-    data: {
-      calibration: [
-        {
-          0: {
-            count: 3,
-            key: 'calibration',
-            subI18nKey: 'needCalibrationStatus',
-            titleI18nKey: 'devicesTitle',
-          },
-        },
-      ],
-      operational: [
-        {
-          0: {
-            count: 67,
-            total: 83,
-            titleI18nKey: 'countOfTotalDevicesTitle',
+    deviceSummaryMap: Immutable.fromJS({
+      operational: {
+        deviceIds: [38, 86],
+        items: [
+          {
+            key: 0,
+            count: 2,
+            total: 53,
+            titleI18nKey: 'ofTotalDevicesTitle',
             subI18nKey: 'fullyOperationalStatus',
-            key: 'operational',
           },
-        },
-      ],
-      qualityControl: [
-        {
-          0: {
-            count: 7,
-            key: 'qualityControl',
-            subI18nKey: 'withQCIssuesStatus',
+        ],
+      },
+      warrantyExpiring: {
+        deviceIds: [16],
+        items: [
+          {
+            key: 0,
+            count: 16,
             titleI18nKey: 'devicesTitle',
+            subI18nKey: 'warrantyExpiringStatus',
           },
-        },
-      ],
-    },
+        ],
+      },
+      calibration: {
+        deviceIds: [20],
+        items: [
+          {
+            key: 0,
+            count: 15,
+            titleI18nKey: 'devicesTitle',
+            subI18nKey: 'needCalibrationStatus',
+          },
+        ],
+      },
+      uploadingData: {
+        deviceIds: [88, 109],
+        items: [
+          {
+            key: 0,
+            count: 50,
+            titleI18nKey: 'devicesTitle',
+            subI18nKey: 'notReportingStatus',
+          },
+        ],
+      },
+      testFailures: {
+        deviceIds: [37],
+        items: [
+          {
+            key: 0,
+            count: 11,
+            titleI18nKey: 'devicesTitle',
+            subI18nKey: 'highFailuresRatesStatus',
+          },
+        ],
+      },
+    }),
   }
 
   it('should shallow render correctly', () => {
