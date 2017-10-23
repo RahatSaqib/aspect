@@ -192,6 +192,32 @@ function* getListDevices(query, auth) {
   // return result when both queries are finished
   const [{ count: total }, data] = yield Promise.all([getCount, getItems])
 
+  data.forEach(it => {
+    // FIXME: Use actual data instead
+    it.availability = {
+      count: _.random(1, 20),
+      total: 20,
+    }
+    it.error = {
+      count: _.random(1, 875),
+      total: 875,
+    }
+    it.alerts = [
+      {
+        type: 'needs-repair',
+      },
+      {
+        type: 'warranty',
+      },
+      {
+        type: 'quality-control',
+      },
+      {
+        type: 'connectivity',
+      },
+    ].filter(() => _.random(0, 10) > 7)
+  })
+
   const result = { ok: true, total, length: data.length, data }
 
   return result
