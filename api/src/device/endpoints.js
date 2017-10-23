@@ -34,7 +34,9 @@ function listDevicesBaseConfig() {
             .description(
               'Filter for getting devices that can have connectivity'
             ),
-          deviceIds: Joi.string().allow('').description('Filter for device ids'),
+          deviceIds: Joi.string()
+            .allow('')
+            .description('Filter for device ids'),
           assayId: Joi.number().allow('').description('Assay ID'),
           resultCategoryId: Joi.number()
             .allow('')

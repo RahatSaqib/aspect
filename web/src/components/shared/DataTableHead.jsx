@@ -9,14 +9,20 @@ const cssClasses = classnames.bind(require('./DataTableHead.css'))
 
 const enhance = _.identity
 
-const DataTableHead = ({ sortColumnKey, sortColumnDir, columns }) => (
-  <TableHead className={cssClasses('TableHead')}>
+const DataTableHead = ({ compact, sortColumnKey, sortColumnDir, columns }) => (
+  <TableHead
+    className={cssClasses('TableHead', {
+      'TableHead--compact': compact,
+    })}
+  >
     {columns.map(({ key = index, label, ...restProps }, index) => (
       <TableCell
         key={key}
         data-column={key}
         {...restProps}
-        className={cssClasses(restProps.className, 'TableCell')}
+        className={cssClasses(restProps.className, 'TableCell', {
+          'TableCell--clickable': _.isFunction(restProps.onClick),
+        })}
       >
         {label}
         {sortColumnKey === key &&

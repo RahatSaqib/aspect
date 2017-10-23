@@ -1,8 +1,17 @@
 @import '../../globals/variables.css';
 
-.TableCell {
-  border-bottom: 2px solid var(--aspect-color-grey-6);
+.TableCell[colspan] {
+  text-align: center;
+}
+
+.TableCell--clickable {
   cursor: pointer;
+}
+
+.TableHead--compact > .TableCell {
+  height: 12px;
+  line-height: 12px;
+  padding-bottom: 0;
 }
 
 .TableHead > .TableCell {

@@ -29,10 +29,10 @@ const DeviceTableRow = ({ intl, device, ...restProps }) => (
     <TableCell className={cssClasses('TableCell')}>
       {intl.formatRelative(device.get('lastSeen'))}
     </TableCell>
-    <TableCell className={cssClasses('TableCell')}>
+    <TableCell className={cssClasses('TableCell', 'TableCell--numeric')}>
       {intl.formatNumber(device.get('lastMonth'))}
     </TableCell>
-    <TableCell className={cssClasses('TableCell')}>
+    <TableCell className={cssClasses('TableCell', 'TableCell--numeric')}>
       {intl.formatNumber(device.get('thisMonth'))}
     </TableCell>
   </TableRow>

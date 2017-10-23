@@ -53,13 +53,9 @@ const messages = defineMessages({
     id: 'pages.DeviceList.lastSeen',
     defaultMessage: 'Last Seen',
   },
-  numberOfTestsLeft: {
-    id: 'pages.DeviceList.numberOfTestsLeft',
-    defaultMessage: 'Number',
-  },
-  numberOfTestsRight: {
-    id: 'pages.DeviceList.numberOfTestsRight',
-    defaultMessage: 'Of Tests',
+  numberOfTests: {
+    id: 'pages.DeviceList.numberOfTests',
+    defaultMessage: 'Number of Tests',
   },
   lastMonth: {
     id: 'pages.DeviceList.lastMonth',
@@ -255,6 +251,20 @@ export const DeviceList = ({
           className={cssClasses('DeviceDataTable')}
         >
           <DeviceDataTableHead
+            compact
+            columns={[
+              {
+                key: 'empty',
+                colSpan: 5,
+              },
+              {
+                key: 'tests',
+                colSpan: 2,
+                label: intl.formatMessage(messages.numberOfTests),
+              },
+            ]}
+          />
+          <DeviceDataTableHead
             sortColumnKey={sortCol}
             sortColumnDir={sortDir}
             columns={[
@@ -285,27 +295,13 @@ export const DeviceList = ({
               },
               {
                 key: 'lastMonth',
-                className: cssClasses('DeviceDataTableHead__Tests--left'),
                 onClick: onHeadColumnClick,
-                label: (
-                  <span>
-                    {intl.formatMessage(messages.numberOfTestsLeft)}
-                    <br />
-                    {intl.formatMessage(messages.lastMonth)}
-                  </span>
-                ),
+                label: intl.formatMessage(messages.lastMonth),
               },
               {
                 key: 'thisMonth',
-                className: cssClasses('DeviceDataTableHead__Tests--right'),
                 onClick: onHeadColumnClick,
-                label: (
-                  <span>
-                    {intl.formatMessage(messages.numberOfTestsRight)}
-                    <br />
-                    {intl.formatMessage(messages.thisMonth)}
-                  </span>
-                ),
+                label: intl.formatMessage(messages.thisMonth),
               },
             ]}
           />
