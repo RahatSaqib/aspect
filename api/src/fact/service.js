@@ -3,7 +3,6 @@ const { knex } = require('../db')
 
 function* calculateResultCounts() {
   const now = new Date()
-
   const daysToCalculate = [1, 7, 30, 60, 90, 365, null]
 
   const resultCountQuery = knex('Device as d')
@@ -75,6 +74,8 @@ function* calculateResultCounts() {
           )
       )
   }
+
+  return { ok: true }
 }
 
 module.exports = {
