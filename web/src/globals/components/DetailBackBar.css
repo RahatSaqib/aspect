@@ -6,6 +6,7 @@
 
 .Container {
   display: flex;
+  padding: 0 var(--aspect-detail-horizontal-padding);
   line-height: var(--back-icon-size);
   background-color: #ffffff;
 }
@@ -17,16 +18,15 @@
   color: var(--aspect-color-grey-2);
 }
 
-.Container__BtnGroup {
-}
-
 .Container__Button--back {
+  padding: 0;
   height: var(--back-icon-size);
   font-size: var(--back-icon-size);
 }
 
 .Container__Button--back > svg {
   height: var(--back-icon-size);
+  margin: 0 -20px;
 }
 
 .Button--primary:not([disabled]).Button--flat {
