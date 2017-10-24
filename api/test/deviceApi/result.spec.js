@@ -3046,6 +3046,46 @@ describe('Device Result API routes', () => {
         assert.equal(resultWorkflowStatus.externalId, 'Delivered')
       }))
 
+    it('should set the resultCategory of a result', () =>
+      runTest(function*(knex) {
+        const { apiKey, deviceAuth } = context
+        assert.isOk(apiKey)
+
+        const device = yield* getDeviceFromApiKey(knex, apiKey)
+        assert.isNotOk(device)
+
+        yield server
+          .post(devicePath)
+          .set('Authorization', deviceAuth)
+          .send({
+            name: 'Device 0123',
+            type: { id: 'CHAILIMS' },
+            site: { id: 'CHIZ' },
+            checkpoint: 'ck1',
+            result: {
+              data: { a: 'b' },
+              assay: { id: 'HivVl' },
+            },
+          })
+          .then(res => {
+            assert.equal(res.status, 200)
+            assert.typeOf(res.body, 'Object')
+          })
+        // const { deviceAuth } = context
+
+        // yield server
+        //   .post(devicePostResultPath)
+        //   .set('Authorization', deviceAuth)
+        //   .send({
+        //     checkpoint: 'ck012',
+        //     data: { a: 'f', resultText: 'Rejected' },
+        //     assay: { id: 'HivVl' },
+        //   })
+        //   .then(res => {
+        //     assert.equal(res.status, 200)
+        //   })
+      }))
+
     describe('when auto acknowledge rules are setup for partner', () => {
       describe('and a large number of historical results are being downloaded', () => {
         it('should automatically acknowledge results based on where they are down the list and date ended on', () =>
