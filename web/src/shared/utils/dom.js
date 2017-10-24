@@ -1,6 +1,6 @@
 import _ from 'lodash'
 
-export const noop = _.noop
+export const { noop } = _
 
 export const findKeyInTree = (target, key) => {
   while (_.isObject(target)) {

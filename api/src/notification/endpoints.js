@@ -18,7 +18,13 @@ module.exports = [
               .allow('')
               .description('Filter for notification name'),
           },
-          validateSortPageParams('type', 'name', 'assignedContacts')
+          validateSortPageParams(
+            'alertName',
+            'lastTriggeredOn',
+            'recipientsCount',
+            'triggersCount',
+            'errorsCount'
+          )
         ),
       },
     },

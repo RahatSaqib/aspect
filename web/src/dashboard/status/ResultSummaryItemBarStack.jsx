@@ -2,10 +2,13 @@ import _ from 'lodash'
 import React from 'react'
 import { compose, withProps, pure } from 'recompose'
 import { ScaleSVG } from '@vx/responsive'
-import { AxisLeft, AxisBottom } from '@vx/axis'
 import { BarStack } from '@vx/shape'
 import { LegendOrdinal } from '@vx/legend'
 import { scaleBand, scaleLinear, scaleOrdinal } from '@vx/scale'
+import {
+  CustomizedAxisLeft,
+  CustomizedAxisBottom,
+} from '../../components/graph/CustomizedAxis'
 
 const colorByResultCategoryExternalId = {
   Detected: '#36AEDB',
@@ -27,7 +30,7 @@ const enhance = compose(
     }) => {
       const margin = _.assign(
         {},
-        { top: 0, bottom: 60, left: 30, right: 0 },
+        { top: 0, bottom: 60, left: 40, right: 0 },
         rawMargin
       )
       const stackTop = 150
@@ -97,11 +100,12 @@ const ResultSummaryItemBarStack = ({
         yScale={yScale}
         zScale={zScale}
       />
-      <AxisLeft
+      <CustomizedAxisLeft
         top={margin.top + stackTop}
         left={margin.left}
         scale={yScale}
         stroke="#1b1a1e"
+        tickFormat={value => (Math.floor(value) === value ? `${value}` : '')}
         tickLabelProps={() => ({
           fill: '#8e205f',
           textAnchor: 'end',
@@ -109,7 +113,7 @@ const ResultSummaryItemBarStack = ({
           dy: '0.25em',
         })}
       />
-      <AxisBottom
+      <CustomizedAxisBottom
         scale={xScale}
         top={stackTop + stackHeight}
         left={margin.left}

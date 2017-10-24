@@ -3,11 +3,9 @@ import classnames from 'classnames/bind'
 import React from 'react'
 import { TableRow, TableCell } from 'react-toolbox/lib/table'
 import { Button } from 'react-toolbox/lib/button'
-import FaBell from 'react-icons/lib/fa/bell'
-import FaCircleO from 'react-icons/lib/fa/circle-o'
-import FaCircle from 'react-icons/lib/fa/circle'
 import FaExclamationTriangle from 'react-icons/lib/fa/exclamation-triangle'
 import MdModeComment from 'react-icons/lib/md/mode-comment'
+import AlertType from '../../components/shared/AlertType'
 
 const cssClasses = classnames.bind(require('./TaskTableRow.css'))
 
@@ -26,17 +24,7 @@ const TaskTableRow = ({ intl, messages, task, ...restProps }) => (
     className={cssClasses(restProps.className, 'TableRow')}
   >
     <TableCell className={cssClasses('TableCell')}>
-      {task.get('alertType') === 'mine' && (
-        <FaCircle className={cssClasses('FaCircle')} />
-      )}
-      {task.get('alertType') === 'normal' && (
-        <FaCircleO className={cssClasses('FaCircleO')} />
-      )}
-      {task.get('alertType') === 'snoozed' && (
-        <span className={cssClasses('FaBell')}>
-          <FaBell />
-        </span>
-      )}
+      <AlertType alertType={task.get('alertType')} />
     </TableCell>
     <TableCell className={cssClasses('TableCell')}>
       <div className={cssClasses('Message')}>

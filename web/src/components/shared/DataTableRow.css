@@ -1,6 +1,10 @@
 @import '../../globals/variables.css';
 
-.TableCell {
+.TableRow:first-child > .TableCell {
+  border-top-width: 2px;
+}
+
+.TableRow:not(:first-child) > .TableCell {
   border-top: none;
 }
 
@@ -26,4 +30,8 @@
 
 .TableRow:hover .TableCell__small {
   opacity: 1;
+}
+
+.TableCell--numeric {
+  text-align: right;
 }

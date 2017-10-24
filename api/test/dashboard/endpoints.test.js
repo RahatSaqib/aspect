@@ -11,13 +11,13 @@ describe('dashboard endpoint', () => {
     return _.find(endpoints, { method, path })
   }
 
-  describe('/dashboard', () => {
+  describe('/dashboard/summary', () => {
     let endpoint
     const expectedResponse = { value: 'Expected result' }
 
     beforeEach(() => {
-      endpoint = setupRoute('GET', '/dashboard', {
-        *statusDashboard() {
+      endpoint = setupRoute('GET', '/dashboard/summary', {
+        *summaryDashboard() {
           return expectedResponse
         },
       })

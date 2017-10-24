@@ -7,7 +7,7 @@ const server = supertest.agent('http://localhost:8080')
 const assert = chai.assert
 
 describe('Dashboard routes', () => {
-  const path = '/api/dashboard'
+  const path = '/api/dashboard/summary'
 
   describe('GET', () => {
     shared.checkToken(server, path)

@@ -11,9 +11,12 @@ describe('NotificationTableRow module', () => {
   const props = {
     intl,
     notification: Immutable.fromJS({
-      type: 'error',
-      name: 'Failed search devices',
-      assignedContacts: 'Assigned Contacts',
+      alertType: 'mine',
+      alertName: 'Failed search devices',
+      lastTriggeredOn: Date.now(),
+      recipientsCount: 10,
+      triggersCount: 10,
+      errorsCount: 10,
     }),
   }
 
