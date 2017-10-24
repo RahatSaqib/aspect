@@ -911,6 +911,24 @@ function* up(knex) {
     x.charset('utf8')
   })
 
+  // facts-table for result counts by device
+  yield knex.schema.createTable('FactResultCountDevice', x => {
+    x.integer('deviceId').unsigned().references('id').inTable('Device')
+    x.integer('assayId').unsigned().references('id').inTable('Assay')
+    x
+      .integer('resultCategory1')
+      .unsigned()
+      .references('id')
+      .inTable('ResultCategory')
+    x.integer('days').unsigned()
+    x.integer('resultCount').unsigned().notNullable()
+    x.dateTime('calculatedOn').notNullable()
+    x.unique(
+      ['days', 'deviceId', 'assayId', 'resultCategory1'],
+      'factresultcountdevice_unique'
+    )
+  })
+
   yield knex.raw('SET foreign_key_checks = 1')
 }
 
@@ -970,6 +988,7 @@ function* down(knex) {
   yield knex.schema.dropTableIfExists('PartnerType')
   yield knex.schema.dropTableIfExists('DeviceSim')
   yield knex.schema.dropTableIfExists('ResultQualityControlLog')
+  yield knex.schema.dropTableIfExists('FactResultCountDevice')
 
   yield knex.raw('SET foreign_key_checks = 1')
 }
