@@ -4,7 +4,7 @@
 import ChartContainer from 'src/components/graph/ChartContainer'
 ```
 
-The ChartContainer component acts as a container for the BarChart, ColumnChart, and LineChart components. It provides an optional title, and optional alert for the chart.
+The ChartContainer component acts as a container for the BarGraph, ColumnGraph, and LineGraph components. It provides an optional title, and optional alert for the chart.
 
 ### Customization
 

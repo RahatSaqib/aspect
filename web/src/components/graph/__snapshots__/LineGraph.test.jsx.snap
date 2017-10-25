@@ -1,6 +1,6 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`LineChart component should shallow render correctly 1`] = `
+exports[`LineGraph component should shallow render correctly 1`] = `
 <ResponsiveSVG
   height={400}
   width={600}

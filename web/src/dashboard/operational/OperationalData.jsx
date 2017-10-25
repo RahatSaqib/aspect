@@ -8,7 +8,7 @@ import { Card } from 'react-toolbox/lib/card'
 import { Button } from 'react-toolbox/lib/button'
 
 import { Unit } from '../../components/pureGrids'
-import ColumnChart from '../../components/graph/ColumnChart'
+import ColumnGraph from '../../components/graph/ColumnGraph'
 import DelayShowingProgressBar from '../../components/shared/DelayShowingProgressBar'
 // import FiltersPanel from '../../filter/popover/FiltersPanel'
 import Title from '../status/Title'
@@ -264,7 +264,7 @@ export const OperationalData = ({
                 <div className={cssClasses('Graph__Title')}>
                   {c.get('title')}
                 </div>
-                <ColumnChart
+                <ColumnGraph
                   data={c.get('data').toJS()}
                   color={['#e85164', '#fcb124', '#73d449']}
                   spacing={0.4}
