@@ -3,7 +3,7 @@ const { notifyResultUpdated } = require('../../../messages')
 
 const VALIDATED_EXTERNALID = 'Validated'
 const DELIVERABLE_EXTERNALID = 'Deliverable'
-const EXTERNAL_ID_HIV_VL = 'HivVL'
+const EXTERNAL_ID_HIV_VL = 'HivVl'
 const EXTERNAL_ID_EID = 'EID'
 
 function* postProcessMergeResult(context, result, previousResult) {
@@ -26,10 +26,12 @@ function* postProcessMergeResult(context, result, previousResult) {
 // Add category to result]
 function* addResultCategory(context, result) {
   const { knex, dispatch } = context
-  const { id: resultId, assayId, resultData: { resultText, copies } } = result
+  const { id: resultId, assayId, copies, resultData } = result
+  const { resultText } = JSON.parse(resultData)
 
-  const assayExternalId = yield knex('Assay').where('assayId', assayId)
-    .externalId
+  const assayExternalId = (yield knex('Assay as a')
+    .where({ 'a.id': assayId })
+    .first('a.externalId')).externalId
 
   // Add EID categories
   let externalId = ''
@@ -46,8 +48,6 @@ function* addResultCategory(context, result) {
       externalId = 'Not Detected'
     } else if (resultText === 'Not Detected') {
       externalId = 'Detected'
-    } else {
-      externalId = 'Unknown'
     }
   } else if (assayExternalId === EXTERNAL_ID_HIV_VL) {
     // Add HIV VL Categories
@@ -67,9 +67,14 @@ function* addResultCategory(context, result) {
     }
   }
 
-  const resultCategoryId = yield knex('ResultCategory')
+  // Set to Uknown if unexpected
+  if (!externalId) {
+    externalId = 'Unknown'
+  }
+
+  const resultCategoryId = (yield knex('ResultCategory')
     .where('externalId', externalId)
-    .first('id')
+    .first('id')).id
 
   // Update Result Category
   yield knex('Result')
