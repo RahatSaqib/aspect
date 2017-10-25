@@ -8,7 +8,7 @@ import { ScaleSVG } from '@vx/responsive'
 
 const enhance = _.identity
 
-const AbnormalBarChart = ({
+const AbnormalBarGraph = ({
   clientWidth = 150,
   clientHeight = 100,
   margin: rawMargin = {},
@@ -77,4 +77,4 @@ const AbnormalBarChart = ({
   )
 }
 
-export default enhance(AbnormalBarChart)
+export default enhance(AbnormalBarGraph)
