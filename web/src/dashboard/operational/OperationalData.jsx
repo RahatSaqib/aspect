@@ -6,8 +6,6 @@ import { connect } from 'react-redux'
 import Helmet from 'react-helmet'
 import { Card } from 'react-toolbox/lib/card'
 import { Button } from 'react-toolbox/lib/button'
-import FaExclamationTriangle from 'react-icons/lib/fa/exclamation-triangle'
-import FaCircle from 'react-icons/lib/fa/circle'
 
 import { Unit } from '../../components/pureGrids'
 import ColumnChart from '../../components/graph/ColumnChart'
@@ -124,36 +122,13 @@ const SectionAbnormalCollection = ({
       </div>
       <div>
         {collection.map(c => (
-          <Unit
+          <AbnormalBarChart
+            key={c.get('key')}
+            component={Unit}
+            item={c}
             sm="1-2"
             lg="1-4"
-            className={cssClasses('Graph')}
-            key={c.get('key')}
-          >
-            <AbnormalBarChart
-              average={c.get('averageValue')}
-              data={c.get('data').toJS()}
-              x={it => it.id}
-              y={it => it.value}
-              yDomainMax={30}
-              fill={it => (it.abnormal ? '#EA4E62' : '#36DED6')}
-            />
-            <div className={cssClasses('Graph__Title')}>{c.get('title')}</div>
-            <div className={cssClasses('Graph__Message')}>
-              {c.get('isNormal') ? (
-                <FaCircle
-                  className={cssClasses('Graph__Message__Icon--normal')}
-                />
-              ) : (
-                <FaExclamationTriangle
-                  className={cssClasses('Graph__Message__Icon--abnormal')}
-                />
-              )}
-              <span className={cssClasses('Graph__Message__Text')}>
-                {c.get('message')}
-              </span>
-            </div>
-          </Unit>
+          />
         ))}
       </div>
     </Card>
