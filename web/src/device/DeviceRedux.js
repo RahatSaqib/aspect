@@ -146,25 +146,29 @@ export function fetchDevicesForSelectList(forceRefresh, filters) {
   }
 }
 
-function requestSingleDevice(deviceId) {
+function requestSingleDevice(requestedAt, deviceId) {
   return {
     type: types.REQUEST_SINGLE_DEVICE,
+    requestedAt,
     deviceId,
   }
 }
 
-function receiveSingleDevice(item) {
+function receiveSingleDevice(requestedAt, item) {
   return {
     type: types.RECEIVE_SINGLE_DEVICE,
+    requestedAt,
     item,
   }
 }
 
-export function fetchSingleDevice(deviceId) {
+export function fetchSingleDevice(deviceId, filtersParams) {
   return dispatch => {
-    dispatch(requestSingleDevice(deviceId))
+    const filters = _.fromPairs([...filtersParams.entries()])
+    const requestedAt = Date.now()
+    dispatch(requestSingleDevice(requestedAt, deviceId))
 
-    return aspectFetch(`/device/${deviceId}`, {
+    return aspectFetch(`/device/${deviceId}?${stringify(filters)}`, {
       errorNotifications: {
         404: errorNotFound(
           defineMessages({
@@ -183,28 +187,31 @@ export function fetchSingleDevice(deviceId) {
           })
         ),
       },
-    }).then(json => dispatch(receiveSingleDevice(json.data)))
+    }).then(json => dispatch(receiveSingleDevice(requestedAt, json.data)))
   }
 }
 
-function requestUpdatingSingleDevice(deviceId, data) {
+function requestUpdatingSingleDevice(requestedAt, deviceId, data) {
   return {
     type: types.REQUEST_UPDATING_SINGLE_DEVICE,
+    requestedAt,
     deviceId,
     data,
   }
 }
 
-function receiveUpdatedSingleDevice(item) {
+function receiveUpdatedSingleDevice(requestedAt, item) {
   return {
     type: types.RECEIVE_UPDATED_SINGLE_DEVICE,
+    requestedAt,
     item,
   }
 }
 
 export function updateSingleDevice(deviceId, data) {
   return dispatch => {
-    dispatch(requestUpdatingSingleDevice(deviceId, data))
+    const requestedAt = Date.now()
+    dispatch(requestUpdatingSingleDevice(requestedAt, deviceId, data))
 
     return aspectFetch(`/device/${deviceId}`, {
       method: 'PUT',
@@ -220,7 +227,9 @@ export function updateSingleDevice(deviceId, data) {
           })
         ),
       },
-    }).then(json => dispatch(receiveUpdatedSingleDevice(json.data)))
+    }).then(json =>
+      dispatch(receiveUpdatedSingleDevice(requestedAt, json.data))
+    )
   }
 }
 
@@ -281,6 +290,7 @@ const SelectListItems = Immutable.Record({
   lastRefreshed: undefined,
 })
 const Device = Immutable.Record({
+  requestedAt: undefined,
   items: new Items(),
   table: new Table(),
   selectList: new SelectListItems(),
@@ -291,16 +301,24 @@ const initialState = new Device()
 export default function deviceReducer(state = initialState, action) {
   switch (action.type) {
     case types.REQUEST_DEVICES:
-      return state.set('table', requestTable(state.table, action))
+      return state.withMutations(mutState => {
+        mutState.set('requestedAt', action.requestedAt)
+        mutState.set('table', requestTable(mutState.table, action))
+      })
     case types.RECEIVE_DEVICES:
       return state.withMutations(mutState => {
+        mutState.delete('requestedAt')
         const immutList = Immutable.fromJS(action.items)
         mutState.set('items', receiveList(mutState.items, immutList))
         mutState.set('table', receiveTableItems(mutState.table, action.total))
       })
+    case types.REQUEST_SINGLE_DEVICE:
+    case types.REQUEST_UPDATING_SINGLE_DEVICE:
+      return state.set('requestedAt', action.requestedAt)
     case types.RECEIVE_SINGLE_DEVICE:
     case types.RECEIVE_UPDATED_SINGLE_DEVICE:
       return state.withMutations(mutState => {
+        mutState.delete('requestedAt')
         const immutItem = Immutable.fromJS(action.item)
         mutState.set('items', receiveItem(mutState.items, immutItem))
       })
