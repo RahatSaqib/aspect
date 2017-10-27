@@ -10,7 +10,9 @@ import dashboard from './dashboard/DashboardRedux'
 import demo from './demo/DemoRedux'
 import device from './device/DeviceRedux'
 import deviceApiKey from './deviceApiKey/DeviceApiKeyRedux'
+import deviceOperation from './deviceOperation/DeviceOperationRedux'
 import deviceStatus from './deviceStatus/DeviceStatusRedux'
+import deviceType from './deviceType/DeviceTypeRedux'
 import site from './site/SiteRedux'
 import result from './result/ResultRedux'
 import person from './person/PersonRedux'
@@ -38,7 +40,9 @@ const appReducer = combineReducers({
   demo,
   device,
   deviceApiKey,
+  deviceOperation,
   deviceStatus,
+  deviceType,
   site,
   person,
   accountDetails,
@@ -67,7 +71,9 @@ const App = Immutable.Record({
   demo: undefined,
   device: undefined,
   deviceApiKey: undefined,
+  deviceOperation: undefined,
   deviceStatus: undefined,
+  deviceType: undefined,
   site: undefined,
   person: undefined,
   accountDetails: undefined,
