@@ -12,6 +12,12 @@ function addClientRoutes(server) {
   server.route(
     require('./deviceApiKey/endpoints').map(decorateClientAPI('deviceApiKey'))
   )
+  server.route(
+    require('./deviceOperation/endpoints').map(decorateClientAPI('device'))
+  )
+  server.route(
+    require('./deviceType/endpoints').map(decorateClientAPI('device'))
+  )
   server.route(require('./geography/endpoints').map(decorateClientAPI()))
   server.route(require('./person/endpoints').map(decorateClientAPI('person')))
   server.route(require('./site/endpoints').map(decorateClientAPI('site')))
