@@ -33,7 +33,6 @@ const i18nKeys = {
 
 function* summaryDashboard(request) {
   const { auth } = request
-  const now = new Date()
 
   // get data constraints
   const dataConstraints = yield getConstraints(auth.credentials)
@@ -54,30 +53,12 @@ function* summaryDashboard(request) {
     .where('dc.hasResults', 1)
     .modify(addConstraints, dataConstraints, { site: 's', geography: 'g' })
 
-  const resultsTotalQuery30d = knex('Result as r')
-    .innerJoin('Site as s', 's.id', 'r.siteId')
-    .innerJoin('Device as d', 'd.id', 'r.deviceId')
-    .innerJoin('DeviceType as dt', 'dt.id', 'd.deviceTypeId')
-    .innerJoin('DeviceTypeCategory as dc', 'dc.id', 'dt.deviceTypeCategoryId')
+  const resultsTotalQuery = knex('FactResultCountDevice as f')
+    .innerJoin('Device as d', 'd.id', 'f.deviceId')
+    .innerJoin('Site as s', 's.id', 'd.siteId')
     .leftOuterJoin('Geography as g', 's.geographyId', 'g.id')
-    .leftOuterJoin('State as st', 'g.stateId', 'st.id')
-    .leftOuterJoin('Lga as l', 'g.lgaId', 'l.id')
-    .whereBetween('r.endedOn', [subDays(now, 30), now])
-    .modify(addConstraints, dataConstraints, {
-      device: 'd',
-      site: 's',
-      geography: 'g',
-    })
-
-  const resultsTotalQuery1d = knex('Result as r')
-    .innerJoin('Site as s', 's.id', 'r.siteId')
-    .innerJoin('Device as d', 'd.id', 'r.deviceId')
-    .innerJoin('DeviceType as dt', 'dt.id', 'd.deviceTypeId')
-    .innerJoin('DeviceTypeCategory as dc', 'dc.id', 'dt.deviceTypeCategoryId')
-    .leftOuterJoin('Geography as g', 's.geographyId', 'g.id')
-    .leftOuterJoin('State as st', 'g.stateId', 'st.id')
-    .leftOuterJoin('Lga as l', 'g.lgaId', 'l.id')
-    .whereBetween('r.endedOn', [subDays(now, 1), now])
+    .where('assayId', null)
+    .where('resultCategory1', null)
     .modify(addConstraints, dataConstraints, {
       device: 'd',
       site: 's',
@@ -99,10 +80,13 @@ function* summaryDashboard(request) {
       ? devicesTotalQuery.clone().count('d.id as cnt')
       : null,
     canViewResults(auth)
-      ? resultsTotalQuery30d.clone().count('r.id as cnt')
+      ? resultsTotalQuery
+          .clone()
+          .where('f.days', 30)
+          .sum('f.resultCount as cnt')
       : null,
     canViewResults(auth)
-      ? resultsTotalQuery1d.clone().count('r.id as cnt')
+      ? resultsTotalQuery.clone().where('f.days', 1).sum('f.resultCount as cnt')
       : null,
     usersTotalQuery,
   ])
@@ -111,7 +95,6 @@ function* summaryDashboard(request) {
     data: {
       sitesTotal: sitesTotal ? sitesTotal[0].cnt : null,
       devicesTotal: devicesTotal ? devicesTotal[0].cnt : null,
-      // TODO: Remove magic numbers below when moving to "real" dashboard
       resultsTotal30d: resultsTotal30d ? resultsTotal30d[0].cnt : null,
       resultsTotal1d: resultsTotal1d ? resultsTotal1d[0].cnt : null,
       usersTotal: usersTotal[0].cnt,
@@ -145,32 +128,24 @@ function* resultDashboard(request) {
     canViewResults(auth)
       ? [
           canViewSites(auth) ? siteQuery : [],
-          knex('Result as r')
-            .innerJoin('Site as s', 's.id', 'r.siteId')
-            .innerJoin('Device as d', 'd.id', 'r.deviceId')
-            .innerJoin('DeviceType as dt', 'dt.id', 'd.deviceTypeId')
-            .innerJoin(
-              'DeviceTypeCategory as dc',
-              'dc.id',
-              'dt.deviceTypeCategoryId'
-            )
-            .innerJoin('Assay as a', 'r.assayId', 'a.id')
-            .innerJoin('ResultCategory as rc', 'r.resultCategory1', 'rc.id')
+          knex('FactResultCountDevice as f')
+            .innerJoin('Device as d', 'd.id', 'f.deviceId')
+            .innerJoin('Site as s', 's.id', 'd.siteId')
+            .innerJoin('Assay as a', 'a.id', 'f.assayId')
+            .innerJoin('ResultCategory as rc', 'rc.id', 'f.resultCategory1')
             .leftOuterJoin('Geography as g', 's.geographyId', 'g.id')
-            .leftOuterJoin('State as st', 'g.stateId', 'st.id')
-            .leftOuterJoin('Lga as l', 'g.lgaId', 'l.id')
             .modify(addConstraints, dataConstraints, {
               device: 'd',
               site: 's',
               geography: 'g',
             })
-            .groupBy('rc.externalId', 'a.assayTypeId', 'r.siteId')
+            .groupBy('rc.externalId', 'a.assayTypeId', 'd.siteId')
             .select(
               'rc.externalId as resultCategory1ExternalId',
               'a.assayTypeId',
-              'r.siteId'
+              'd.siteId'
             )
-            .count('r.id as cnt'),
+            .sum('f.resultCount as cnt'),
           knex('AssayType as at')
             .innerJoin('Assay as a', 'at.id', 'a.assayTypeId')
             .leftJoin('ResultCategoryAssay as rca', 'a.id', 'rca.assayId')
@@ -264,7 +239,6 @@ function* getInventoryItemList(auth, dataConstraints) {
     .innerJoin('Geography as g', 's.geographyId', 'g.id')
     .innerJoin('Country as co', 'g.countryId', 'co.id')
     .innerJoin('Consumable as c', 'ii.consumableId', 'c.id')
-    .where('c.name', '!=', 'Gloves')
     .modify(addConstraints, dataConstraints, {
       site: 's',
       geography: 'g',
