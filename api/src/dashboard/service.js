@@ -9,7 +9,6 @@ const {
   canViewInventories,
 } = require('../auth/constraints')
 const Promise = require('bluebird')
-const subDays = require('date-fns/sub_days')
 const addDays = require('date-fns/add_days')
 const isAfter = require('date-fns/is_after')
 
