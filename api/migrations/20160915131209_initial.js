@@ -913,7 +913,12 @@ function* up(knex) {
 
   // facts-table for result counts by device
   yield knex.schema.createTable('FactResultCountDevice', x => {
-    x.integer('deviceId').unsigned().references('id').inTable('Device')
+    x
+      .integer('deviceId')
+      .unsigned()
+      .references('id')
+      .inTable('Device')
+      .notNullable()
     x.integer('assayId').unsigned().references('id').inTable('Assay')
     x
       .integer('resultCategory1')
