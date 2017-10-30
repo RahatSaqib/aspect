@@ -839,6 +839,7 @@ function* deviceOperational(request) {
     {
       key: 'test-failures',
       titleI18nKey: i18nKeys.testFailures,
+      titleTooltip: "10% (20/200) 10/27/2017",
       someAbnormal: highErrorRateDeviceAbnormalList.length > 0,
       messageI18nKey: i18nKeys.deviceWithProblems,
       messageData: {

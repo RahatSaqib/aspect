@@ -1,6 +1,7 @@
 import _ from 'lodash'
 import classnames from 'classnames/bind'
 import React from 'react'
+import withTooltip from 'react-toolbox/lib/tooltip'
 import FaExclamationTriangle from 'react-icons/lib/fa/exclamation-triangle'
 import FaCircle from 'react-icons/lib/fa/circle'
 
@@ -14,6 +15,15 @@ const enhance = _.identity
 const yDomainMaxBy = {
   'days-unavailable': 14,
 }
+
+const Title = ({ title, children, ...restProps }) => (
+  <div {..._.omit(restProps, ['tooltip', 'theme'])}>
+    {title}
+    {children}
+  </div>
+)
+
+const TitleWithTooltip = withTooltip(Title)
 
 const AbnormalBarChart = ({ component, intl, item, ...restProps }) =>
   React.createElement(
@@ -30,11 +40,14 @@ const AbnormalBarChart = ({ component, intl, item, ...restProps }) =>
       yDomainMax={yDomainMaxBy[item.get('key')]}
       fill={it => (it.abnormal ? '#EA4E62' : '#36DED6')}
     />,
-    <div className={cssClasses('AbnormalBarChart__Title')}>
-      {item.get('title') ||
-        intl.formatMessage(messages[item.get('titleI18nKey')])}
-    </div>,
-    (item.get('message') || item.get('messageI18nKey')) && (
+    React.createElement(item.get('titleTooltip') ? TitleWithTooltip : Title, {
+      className: cssClasses('AbnormalBarChart__Title'),
+      title:
+        item.get('title') ||
+        intl.formatMessage(messages[item.get('titleI18nKey')]),
+      tooltip: item.get('titleTooltip'),
+    }),
+    item.get('message') && (
       <div className={cssClasses('AbnormalBarChart__Message')}>
         {item.get('someAbnormal') ? (
           <FaExclamationTriangle

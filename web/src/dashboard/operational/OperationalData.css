@@ -59,6 +59,7 @@
   line-height: 30px;
   font-size: 18px;
   font-weight: var(--lato-font-weight-black);
+  text-align: center;
 }
 
 .AbnormalBarChart__Title::first-letter {
