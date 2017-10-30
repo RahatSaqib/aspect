@@ -12,18 +12,6 @@
   composes: FaCircle from '../../task/list/TaskTableRow.css';
 }
 
-.Button {
-  composes: Button from '../../task/list/TaskTableRow.css';
-}
-
-.Button--ship-cove {
-  composes: Button--ship-cove from '../../task/list/TaskTableRow.css';
-}
-
-.Button--neutral {
-  composes: Button--neutral from '../../task/list/TaskTableRow.css';
-}
-
-.Button--raised {
-  composes: Button--raised from '../../task/list/TaskTableRow.css';
+.ColoredButton {
+  composes: ColoredButton from '../../task/list/TaskTableRow.css';
 }
