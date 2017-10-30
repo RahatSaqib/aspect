@@ -17,7 +17,7 @@ import {
 import { sanitizeFiltersStringBy } from '../../filter/utils'
 // import FiltersPanel from '../../filter/popover/FiltersPanel'
 import ButtonGroup from '../../components/themedReactToolbox/ButtonGroup'
-import NavDropdown from '../../components/shared/NavDropdown'
+import StyledDropdown from '../../components/themedReactToolbox/StyledDropdown'
 import BrowseEmptyList from '../../globals/components/BrowseEmptyList'
 import BrowseTablePaginator from '../../globals/components/BrowseTablePaginator'
 import DataTableCard from '../../components/shared/DataTableCard'
@@ -274,7 +274,7 @@ export const TaskList = ({
           'FiltersGroup__Child--dropdown'
         )}
       >
-        <NavDropdown
+        <StyledDropdown
           value={topic}
           source={[
             {

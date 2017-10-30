@@ -28,20 +28,22 @@ const AbnormalBarChart = ({ component, item, ...restProps }) =>
     <div className={cssClasses('AbnormalBarChart__Title')}>
       {item.get('title')}
     </div>,
-    <div className={cssClasses('AbnormalBarChart__Message')}>
-      {item.get('isNormal') ? (
-        <FaCircle
-          className={cssClasses('AbnormalBarChart__Message__Icon--normal')}
-        />
-      ) : (
-        <FaExclamationTriangle
-          className={cssClasses('AbnormalBarChart__Message__Icon--abnormal')}
-        />
-      )}
-      <span className={cssClasses('AbnormalBarChart__Message__Text')}>
-        {item.get('message')}
-      </span>
-    </div>
+    item.get('message') && (
+      <div className={cssClasses('AbnormalBarChart__Message')}>
+        {item.get('isNormal') ? (
+          <FaCircle
+            className={cssClasses('AbnormalBarChart__Message__Icon--normal')}
+          />
+        ) : (
+          <FaExclamationTriangle
+            className={cssClasses('AbnormalBarChart__Message__Icon--abnormal')}
+          />
+        )}
+        <span className={cssClasses('AbnormalBarChart__Message__Text')}>
+          {item.get('message')}
+        </span>
+      </div>
+    )
   )
 
 export default enhance(AbnormalBarChart)

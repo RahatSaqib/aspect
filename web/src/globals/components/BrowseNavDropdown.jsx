@@ -1,6 +1,6 @@
 import { compose, mapProps } from 'recompose'
 
-import NavDropdown from '../../components/shared/NavDropdown'
+import StyledDropdown from '../../components/themedReactToolbox/StyledDropdown'
 
 const navigations = [
   { value: '/browse/device', label: 'Devices' },
@@ -35,4 +35,4 @@ const enhance = compose(
   }))
 )
 
-export default enhance(NavDropdown)
+export default enhance(StyledDropdown)
