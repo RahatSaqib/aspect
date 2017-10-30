@@ -1,6 +1,6 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`AbnormalBarChart Component should shallow render correctly 1`] = `
+exports[`AbnormalBarGraph Component should shallow render correctly 1`] = `
 <ResponsiveSVG
   height={100}
   width={150}

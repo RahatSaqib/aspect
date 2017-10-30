@@ -1,9 +1,9 @@
 import React from 'react'
 import ReactShallowRenderer from 'react-test-renderer/shallow'
 
-import BarChart from './BarChart'
+import ColumnGraph from './ColumnGraph'
 
-describe('BarChart component', () => {
+describe('ColumnGraph component', () => {
   const renderer = new ReactShallowRenderer()
   const props = {
     data: [
@@ -24,13 +24,14 @@ describe('BarChart component', () => {
         data: [9, 1],
       },
     ],
-    color: ['#27c4e0', '#e85065'],
-    spacing: 0.3,
-    numLabelSize: 30,
+    color: ['#e85164', '#fcb124', '#73d449'],
+    spacing: 0.4,
+    hideAxes: false,
+    hideLabel: false,
   }
 
   it('should shallow render correctly', () => {
-    const element = renderer.render(<BarChart {...props} />)
+    const element = renderer.render(<ColumnGraph {...props} rightLabel />)
 
     expect(element).toMatchSnapshot()
   })

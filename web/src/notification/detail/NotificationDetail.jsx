@@ -46,6 +46,22 @@ const enhance = compose(
   ),
   withHandlers({
     onInitialLoad: () => () => {},
+
+    onBackClick: ({ history }) => () => {
+      history.goBack()
+    },
+
+    onViewClick: ({ history, location }) => () => {
+      history.push({
+        pathname: location.pathname,
+      })
+    },
+
+    onHistoryClick: ({ history, location }) => () => {
+      history.push({
+        pathname: location.pathname,
+      })
+    },
   }),
   lifecycle({
     componentDidMount() {
@@ -78,10 +94,29 @@ export const NotificationDetail = ({
   location,
   match,
   // --- injected by recompose ---
+  onBackClick,
+  onViewClick,
+  onHistoryClick,
 }) => (
-  <div className={cssClasses('Container')}>
+  <div>
     <Helmet title={intl.formatMessage(messages.notificationDetailTitle)} />
-    <DetailBackBar history={history} location={location} match={match} />
+    <DetailBackBar
+      history={history}
+      location={location}
+      match={match}
+      onBackClick={onBackClick}
+      title="TB MTB+ Rif+ in Western Region"
+    >
+      <Button onClick={onViewClick} primary>
+        View
+      </Button>
+      <Button onClick={onViewClick} primary>
+        Edit
+      </Button>
+      <Button onClick={onHistoryClick} primary>
+        History
+      </Button>
+    </DetailBackBar>
     <section className={cssClasses('Section', 'Section--first')}>
       <Card className={cssClasses('Card')}>
         <h2 className={cssClasses('Card__Title')}>Alerts title</h2>

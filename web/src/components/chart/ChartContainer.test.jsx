@@ -2,9 +2,9 @@ import React from 'react'
 import ReactShallowRenderer from 'react-test-renderer/shallow'
 
 import ChartContainer from './ChartContainer'
-import ColumnChart from './ColumnChart'
+import ColumnGraph from '../graph/ColumnGraph'
 
-describe('ColumnChart component', () => {
+describe('ColumnGraph component', () => {
   const renderer = new ReactShallowRenderer()
   const data = [
     {
@@ -15,7 +15,7 @@ describe('ColumnChart component', () => {
 
   const props = {
     title: 'Title',
-    children: <ColumnChart data={data} />,
+    children: <ColumnGraph data={data} />,
     alertMsg: 'Amber Alert',
     alert: 'amber',
   }

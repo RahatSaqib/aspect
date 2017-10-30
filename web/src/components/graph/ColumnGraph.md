@@ -2,7 +2,7 @@
 
 ```js static
 import ChartContainer from 'src/components/graph/ChartContainer'
-import ColumnChart from 'src/components/graph/ColumnChart'
+import ColumnGraph from 'src/components/graph/ColumnGraph'
 ```
 
 It's themed according to default settings, requiring only data to render. Data should be defined as follows, with each value of the data array representing a single color on the stacked bar:
@@ -26,7 +26,7 @@ Primary 3-Stack Column Chart
 
 ```
 <ChartContainer title="Title">
-  <ColumnChart
+  <ColumnGraph
     data={[
       { name: 'Site name 1', data: [3, 4, 8] },
       { name: 'Site name 2', data: [1, 4, 7] },
@@ -48,4 +48,4 @@ Primary 3-Stack Column Chart
 
 ### Customization
 
-A ColumnChart can be designed in nearly any style, by changing the value of any of its props. If color is not specified, it is based off of the following array: ['#3cc0cd', '#7d97bc', '#9874b2', '#f36283']
+A ColumnGraph can be designed in nearly any style, by changing the value of any of its props. If color is not specified, it is based off of the following array: ['#3cc0cd', '#7d97bc', '#9874b2', '#f36283']

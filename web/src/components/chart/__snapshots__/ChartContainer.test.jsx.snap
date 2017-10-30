@@ -1,10 +1,10 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`ColumnChart component should shallow render correctly 1`] = `
+exports[`ColumnGraph component should shallow render correctly 1`] = `
 <div
   className="graph"
 >
-  <ColumnChart
+  <ColumnGraph
     color={Array []}
     data={
       Array [

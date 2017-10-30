@@ -1,7 +1,7 @@
 @import '../../globals/variables.css';
 
 .Section {
-  padding: 10px 20px;
+  padding: 10px var(--aspect-detail-horizontal-padding);
 }
 
 .Section--first {

@@ -19,24 +19,6 @@
   text-align: left;
 }
 
-.BtnGroup {
-  composes: FiltersGroup__Child;
-}
-
-.BtnGroup > .Button {
-  vertical-align: middle;
-}
-
-.BtnGroup > .Button:first-child {
-  border-radius: var(--toolbox-button-border-radius) 0 0
-    var(--toolbox-button-border-radius);
-}
-
-.BtnGroup > .Button:last-child {
-  border-radius: 0 var(--toolbox-button-border-radius)
-    var(--toolbox-button-border-radius) 0;
-}
-
 .Button--mini {
   min-width: 40px;
 }

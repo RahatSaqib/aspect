@@ -1,9 +1,9 @@
 import React from 'react'
 import ReactShallowRenderer from 'react-test-renderer/shallow'
 
-import LineChart from './LineChart'
+import LineGraph from './LineGraph'
 
-describe('LineChart component', () => {
+describe('LineGraph component', () => {
   const renderer = new ReactShallowRenderer()
   const props = {
     data: [
@@ -24,7 +24,7 @@ describe('LineChart component', () => {
 
   it('should shallow render correctly', () => {
     const element = renderer.render(
-      <LineChart {...props} gridLines timeStyle />
+      <LineGraph {...props} gridLines timeStyle />
     )
 
     expect(element).toMatchSnapshot()
