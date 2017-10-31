@@ -934,6 +934,25 @@ function* up(knex) {
     )
   })
 
+  // facts-table for device flags
+  yield knex.schema.createTable('FactDeviceFlag', x => {
+    x
+      .integer('deviceId')
+      .unsigned()
+      .references('id')
+      .inTable('Device')
+      .notNullable()
+    x.boolean('offline').notNullable().defaultTo(0)
+    x.boolean('service').notNullable().defaultTo(0)
+    x.boolean('calibration').notNullable().defaultTo(0)
+    x.boolean('errorRate').notNullable().defaultTo(0)
+    x.boolean('qcProblem').notNullable().defaultTo(0)
+    x.boolean('lowInventory').notNullable().defaultTo(0)
+    x.boolean('outOfInventory').notNullable().defaultTo(0)
+    x.boolean('expiringInventory').notNullable().defaultTo(0)
+    x.dateTime('updatedOn').notNullable()
+  })
+
   yield knex.raw('SET foreign_key_checks = 1')
 }
 
@@ -994,6 +1013,7 @@ function* down(knex) {
   yield knex.schema.dropTableIfExists('DeviceSim')
   yield knex.schema.dropTableIfExists('ResultQualityControlLog')
   yield knex.schema.dropTableIfExists('FactResultCountDevice')
+  yield knex.schema.dropTableIfExists('FactDeviceFlag')
 
   yield knex.raw('SET foreign_key_checks = 1')
 }

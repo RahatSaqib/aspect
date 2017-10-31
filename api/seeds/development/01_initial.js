@@ -2882,4 +2882,22 @@ function* seed(knex) {
       geographyId: countries.US.states.MA.lgas.Suffolk.geographyId,
     },
   ])
+
+  // Fill device flags with random data
+  // TODO: Remove when we implemented the jobs that calculate these flags
+  const devices = yield knex('Device').select('id')
+  for (const device of devices) {
+    yield knex('FactDeviceFlag').insert({
+      deviceId: device.id,
+      offline: _.random(1),
+      service: _.random(1),
+      calibration: _.random(1),
+      errorRate: _.random(1),
+      qcProblem: _.random(1),
+      lowInventory: _.random(1),
+      outOfInventory: _.random(1),
+      expiringInventory: _.random(1),
+      updatedOn: now,
+    })
+  }
 }
