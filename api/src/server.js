@@ -7,8 +7,7 @@ const { version } = require('./../package.json')
 const { addClientRoutes, addDeviceRoutes } = require('./routes')
 const Hapi = require('hapi')
 const cron = require('node-cron')
-const { calculateResultCounts } = require('./fact/service')
-const { runGeneratedFunction } = require('./util')
+const { calculateResultCountsOnSchedule } = require('./fact/service')
 
 const server = new Hapi.Server()
 const port = process.env.PORT || 8080
@@ -64,9 +63,9 @@ registerCronJobs()
 
 function registerCronJobs() {
   // calculate device result counts on startup and every hour
-  runGeneratedFunction(calculateResultCounts)
+  calculateResultCountsOnSchedule()
   cron.schedule('0 * * * *', () => {
-    runGeneratedFunction(calculateResultCounts)
+    calculateResultCountsOnSchedule()
   })
 }
 

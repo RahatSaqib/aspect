@@ -1,8 +1,13 @@
 const _ = require('lodash')
 const { subDays } = require('date-fns')
 const { knex } = require('../db')
+const { runGeneratedFunction } = require('../util')
 
-function* calculateResultCounts(deviceId, assayId, resultCategory1) {
+function calculateResultCountsOnSchedule() {
+  runGeneratedFunction(calculateResultCounts, null, null, null, knex)
+}
+
+function* calculateResultCounts(deviceId, assayId, resultCategory1, knex) {
   const daysToCalculate = [1, 7, 30, 60, 90, 365, null]
 
   let deviceIds = [deviceId]
@@ -66,34 +71,39 @@ function* calculateResultCounts(deviceId, assayId, resultCategory1) {
         )
 
       // ... grouped by assay
-      yield knex
-        .from('FactResultCountDevice')
-        .insert(
-          resultCountQuery
-            .clone()
-            .groupBy('r.assayid')
-            .select(
-              knex.raw(
-                `r.deviceId, r.assayId as AssayId, null as resultCategory1, :days as days, count(r.id) as resultCount, :now as calculatedOn`,
-                { days, now }
-              )
+      yield knex.from('FactResultCountDevice').insert(
+        resultCountQuery
+          .clone()
+          .andWhereRaw('(assayId = :assayId or :assayId = -1)', {
+            assayId: assayId || -1,
+          })
+          .groupBy('r.assayid')
+          .select(
+            knex.raw(
+              `r.deviceId, r.assayId as AssayId, null as resultCategory1, :days as days, count(r.id) as resultCount, :now as calculatedOn`,
+              { days, now }
             )
-        )
+          )
+      )
 
       // ...grouped by assay, resultCategory
-      yield knex
-        .from('FactResultCountDevice')
-        .insert(
-          resultCountQuery
-            .clone()
-            .groupBy('r.assayid', 'r.resultCategory1')
-            .select(
-              knex.raw(
-                `r.deviceId, r.assayId as AssayId, r.resultCategory1 as resultCategory1, :days as days, count(r.id) as resultCount, :now as calculatedOn`,
-                { days, now }
-              )
+      yield knex.from('FactResultCountDevice').insert(
+        resultCountQuery
+          .clone()
+          .andWhereRaw('(assayId = :assayId or :assayId = -1)', {
+            assayId: assayId || -1,
+          })
+          .andWhereRaw('(resultCategory1 = :rc or :rc = -1)', {
+            rc: resultCategory1 || -1,
+          })
+          .groupBy('r.assayid', 'r.resultCategory1')
+          .select(
+            knex.raw(
+              `r.deviceId, r.assayId as AssayId, r.resultCategory1 as resultCategory1, :days as days, count(r.id) as resultCount, :now as calculatedOn`,
+              { days, now }
             )
-        )
+          )
+      )
     }
   }
 
@@ -102,4 +112,5 @@ function* calculateResultCounts(deviceId, assayId, resultCategory1) {
 
 module.exports = {
   calculateResultCounts,
+  calculateResultCountsOnSchedule,
 }
