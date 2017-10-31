@@ -122,7 +122,7 @@ const resultPayload = {
       .description('A known Assay configured within Aspect.'),
     version: Joi.string()
       .allow('', null)
-      .description('Version of assay specfied by Device'),
+      .description('Version of assay specified by Device'),
   }),
   location: Joi.object().keys({
     latitude: Joi.number().description(
