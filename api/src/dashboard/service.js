@@ -409,15 +409,11 @@ function* getDeviceList(auth, dataConstraints) {
     return []
   }
   return yield knex('Device as d')
+    .innerJoin('FactDeviceFlag as fdf', 'd.id', 'fdf.deviceId')
     .innerJoin('Site as s', 's.id', 'd.siteId')
     .innerJoin('Partner as p', 'd.partnerId', 'p.id')
     .leftOuterJoin('Geography as g', 's.geographyId', 'g.id')
-    .select(
-      'd.id',
-      'd.siteId',
-      'd.lastSeenOn'
-      // TODO: 'p.offlineThresholdDays',
-    )
+    .select('d.id', 'd.siteId', 'fdf.*')
     .modify(addConstraints, dataConstraints, {
       site: 's',
       geography: 'g',
@@ -426,7 +422,6 @@ function* getDeviceList(auth, dataConstraints) {
 
 function* deviceDashboard(request) {
   const { auth } = request
-  const now = new Date()
 
   // get data constraints
   const dataConstraints = yield getConstraints(auth.credentials)
@@ -442,28 +437,20 @@ function* deviceDashboard(request) {
     it.longitude = site.longitude
   })
 
-  const MOCK_PARTNER_OFFLINE_THRESHOLD_DAYS = 3
-
-  const isDeviceOnline = it =>
-    isAfter(addDays(it.lastSeenOn, MOCK_PARTNER_OFFLINE_THRESHOLD_DAYS), now)
-  const isDeviceOffline = _.negate(isDeviceOnline)
-  const isDeviceWarrantyExpiring = () => /* TODO */ _.random(10) > 7
-  const isDeviceCalibrationDue = () => /* TODO */ _.random(10) > 7
-  const isDeviceHighErrorRate = () => /* TODO */ _.random(10) > 7
-  const isDeviceOperational = it =>
-    !isDeviceOffline(it) &&
-    !isDeviceWarrantyExpiring(it) &&
-    !isDeviceCalibrationDue(it) &&
-    !isDeviceHighErrorRate(it)
-
-  const warrantyExpiringDeviceList = _.filter(
-    deviceList,
-    isDeviceWarrantyExpiring
-  )
-  const calibrationDueDeviceList = _.filter(deviceList, isDeviceCalibrationDue)
-  const offlineDeviceList = _.filter(deviceList, isDeviceOffline)
-  const highErrorRateDeviceList = _.filter(deviceList, isDeviceHighErrorRate)
-  const operationalDeviceList = _.filter(deviceList, isDeviceOperational)
+  const operationalDeviceList = _.filter(deviceList, {
+    offline: 0,
+    service: 0,
+    calibration: 0,
+    errorRate: 0,
+    qcProblem: 0,
+    lowInventory: 0,
+    outOfInventory: 0,
+    expiringInventory: 0,
+  })
+  const warrantyExpiringDeviceList = _.filter(deviceList, 'expiringWarranty')
+  const calibrationDueDeviceList = _.filter(deviceList, 'calibration')
+  const offlineDeviceList = _.filter(deviceList, 'offline')
+  const highErrorRateDeviceList = _.filter(deviceList, 'errorRate')
 
   const deviceSummaryMap = {
     operational: {
@@ -536,7 +523,6 @@ function* deviceDashboard(request) {
 
 function* siteDashboard(request) {
   const { auth } = request
-  const now = new Date()
 
   // get data constraints
   const dataConstraints = yield getConstraints(auth.credentials)
@@ -545,11 +531,6 @@ function* siteDashboard(request) {
   const deviceList = yield* getDeviceList(auth, dataConstraints)
   const inventoryItemList = yield* getInventoryItemList(auth, dataConstraints)
 
-  const MOCK_PARTNER_OFFLINE_THRESHOLD_DAYS = 3
-
-  const isDeviceOnline = it =>
-    isAfter(addDays(it.lastSeenOn, MOCK_PARTNER_OFFLINE_THRESHOLD_DAYS), now)
-  const isDeviceOffline = _.negate(isDeviceOnline)
   const filteredLength = _.flowRight(_.size, _.filter)
   const siteIdAccumulator = (acc, it, siteId) => {
     if (it) {
@@ -560,7 +541,7 @@ function* siteDashboard(request) {
 
   const allDeviceOnlineBySiteId = _.mapValues(
     _.groupBy(deviceList, 'siteId'),
-    list => _.every(list, isDeviceOnline)
+    list => _.every(list, { offline: 0 })
   )
   const allDeviceOnlineSiteIds = _.reduce(
     allDeviceOnlineBySiteId,
@@ -584,7 +565,7 @@ function* siteDashboard(request) {
 
   const oneDeviceOfflineBySiteId = _.mapValues(
     _.groupBy(deviceList, 'siteId'),
-    list => filteredLength(list, isDeviceOffline) === 1
+    list => filteredLength(list, 'offline') === 1
   )
   const oneDeviceOfflineSiteIds = _.reduce(
     oneDeviceOfflineBySiteId,

@@ -950,6 +950,7 @@ function* up(knex) {
     x.boolean('lowInventory').notNullable().defaultTo(0)
     x.boolean('outOfInventory').notNullable().defaultTo(0)
     x.boolean('expiringInventory').notNullable().defaultTo(0)
+    x.boolean('expiringWarranty').notNullable().defaultTo(0)
     x.dateTime('updatedOn').notNullable()
   })
 

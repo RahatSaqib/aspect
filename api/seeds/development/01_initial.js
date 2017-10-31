@@ -2889,14 +2889,15 @@ function* seed(knex) {
   for (const device of devices) {
     yield knex('FactDeviceFlag').insert({
       deviceId: device.id,
-      offline: _.random(1),
-      service: _.random(1),
-      calibration: _.random(1),
-      errorRate: _.random(1),
-      qcProblem: _.random(1),
-      lowInventory: _.random(1),
-      outOfInventory: _.random(1),
-      expiringInventory: _.random(1),
+      offline: _.random(10) === 0,
+      service: _.random(10) === 0,
+      calibration: _.random(10) === 0,
+      errorRate: _.random(10) === 0,
+      qcProblem: _.random(10) === 0,
+      lowInventory: _.random(10) === 0,
+      outOfInventory: _.random(10) === 0,
+      expiringInventory: _.random(10) === 0,
+      expiringWarranty: _.random(10) === 0,
       updatedOn: now,
     })
   }
