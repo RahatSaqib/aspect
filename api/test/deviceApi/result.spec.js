@@ -156,7 +156,7 @@ describe('Device Result API routes', () => {
             checkpoint: 'ck1',
             result: {
               data: { a: 'b' },
-              assay: { id: 'HivVl' },
+              assay: { id: 'GxHiv1Vl' },
             },
           })
           .then(res => {
@@ -230,8 +230,8 @@ describe('Device Result API routes', () => {
           .where({ id: result1.assayId })
           .first('externalId', 'name')
 
-        assert.equal(result1Assay.externalId, 'HivVl')
-        assert.equal(result1Assay.name, 'GeneXpert HIV VL')
+        assert.equal(result1Assay.externalId, 'GxHiv1Vl')
+        assert.equal(result1Assay.name, 'GeneXpert HIV-1 VL')
 
         const [result1Category1, result1Category2] = yield knex(
           'ResultCategory as rt'
@@ -252,7 +252,7 @@ describe('Device Result API routes', () => {
         assert.deepEqual(JSON.parse(log1Raw), {
           name: deviceChangedName,
           checkpoint: 'ck1',
-          result: { data: { a: 'b' }, assay: { id: 'HivVl' } },
+          result: { data: { a: 'b' }, assay: { id: 'GxHiv1Vl' } },
         })
 
         yield server
@@ -310,7 +310,7 @@ describe('Device Result API routes', () => {
               _.omit(lastResult, 'id', 'sample', 'workflow', 'location'),
               {
                 data: { a: 'b' },
-                assay: { id: 'HivVl' },
+                assay: { id: 'GxHiv1Vl' },
                 category: [{ id: 'Success' }],
                 type: { id: 'Patient' },
                 source: { id: 'DiagnosticDevice' },
@@ -819,7 +819,7 @@ describe('Device Result API routes', () => {
           .send({
             checkpoint: '3123',
             data: { a: 'b' },
-            assay: { id: 'HivVl' },
+            assay: { id: 'GxHiv1Vl' },
           })
           .then(res => {
             assert.equal(res.status, 200)
@@ -867,7 +867,7 @@ describe('Device Result API routes', () => {
             checkpoint: '312',
             data: { a: 'c' },
             error: { code: '1' },
-            assay: { id: 'HivVl' },
+            assay: { id: 'GxHiv1Vl' },
           })
           .then(res => {
             assert.equal(res.status, 200)
@@ -915,7 +915,7 @@ describe('Device Result API routes', () => {
             data: { a: 'd' },
             category: { id: 'Invalid' },
             error: { code: '1' },
-            assay: { id: 'HivVl' },
+            assay: { id: 'GxHiv1Vl' },
           })
           .then(res => {
             assert.equal(res.status, 200)
@@ -948,7 +948,7 @@ describe('Device Result API routes', () => {
             checkpoint: '31',
             data: { a: 'e' },
             category: [{ id: 'Detected' }, { id: 'NotDetected' }],
-            assay: { id: 'HivVl' },
+            assay: { id: 'GxHiv1Vl' },
           })
           .then(res => {
             assert.equal(res.status, 200)
@@ -1010,7 +1010,7 @@ describe('Device Result API routes', () => {
           .send({
             id: resultExternalIds[0],
             data: { a: 'b' },
-            assay: { id: 'HivVl' },
+            assay: { id: 'GxHiv1Vl' },
           })
           .then(res => {
             assert.equal(res.status, 200)
@@ -1031,7 +1031,7 @@ describe('Device Result API routes', () => {
           .send({
             id: resultExternalIds[0],
             data: { a: 'b', c: 'd' },
-            assay: { id: 'HivVl' },
+            assay: { id: 'GxHiv1Vl' },
           })
           .then(res => {
             assert.equal(res.status, 200)
@@ -1053,7 +1053,7 @@ describe('Device Result API routes', () => {
           .send({
             id: resultExternalIds[1],
             data: { a: 'b' },
-            assay: { id: 'HivVl' },
+            assay: { id: 'GxHiv1Vl' },
           })
           .then(res => {
             assert.equal(res.status, 200)
@@ -1307,7 +1307,7 @@ describe('Device Result API routes', () => {
             checkpoint: 'ck123',
             configuration: { data: { a: 'b' } },
             operation: { data: { a: 'c' } },
-            result: { data: { a: 'd' }, assay: { id: 'HivVl' } },
+            result: { data: { a: 'd' }, assay: { id: 'GxHiv1Vl' } },
           })
           .then(res => {
             assert.equal(res.status, 200)
@@ -1387,7 +1387,7 @@ describe('Device Result API routes', () => {
             checkpoint: 'ck234',
             configuration: { data: { a: 'c' } },
             operation: { data: { a: 'd' } },
-            result: { data: { a: 'd' }, assay: { id: 'HivVl' } },
+            result: { data: { a: 'd' }, assay: { id: 'GxHiv1Vl' } },
           })
           .then(res => {
             assert.equal(res.status, 200)

@@ -100,6 +100,7 @@ async function seed(knex) {
     hasConnectivity: 0,
     hasResults: 1,
   })
+
   const [deviceTypeCategoryConnectivity] = await knex(
     'DeviceTypeCategory'
   ).insert({
@@ -158,6 +159,7 @@ async function seed(knex) {
       },
     },
   })
+
   const m2000ConfigurationDataSchema = JSON.stringify({
     requirePrinter: {
       title: 'Require printer',
@@ -195,6 +197,7 @@ async function seed(knex) {
       },
     },
   })
+
   const daktariConfigurationDataSchema = JSON.stringify({
     requirePrinter: {
       title: 'Require printer',
@@ -209,6 +212,7 @@ async function seed(knex) {
       type: 'string',
     },
   })
+
   const commCareConfigurationDataSchema = JSON.stringify({
     requirePrinter: {
       title: 'Require printer',
@@ -306,6 +310,24 @@ async function seed(knex) {
     deviceOperationSchema,
   })
 
+  const [deviceTypeDaktariVirologyId] = await knex('DeviceType').insert({
+    externalId: 'DaktariVirology',
+    name: 'Daktari Virology',
+    manufacturer: 'Daktari',
+    deviceTypeCategoryId: deviceTypeCategoryLab,
+    configurationDataSchema: daktariConfigurationDataSchema,
+    deviceOperationSchema,
+  })
+
+  const [deviceTypeDaktariInSightId] = await knex('DeviceType').insert({
+    externalId: 'DaktariInSight',
+    name: 'Daktari InSight',
+    manufacturer: 'Daktari',
+    deviceTypeCategoryId: deviceTypeCategoryLab,
+    configurationDataSchema: daktariConfigurationDataSchema,
+    deviceOperationSchema,
+  })
+
   const [deviceTypeIdRouter] = await knex('DeviceType').insert({
     externalId: 'MetacomRouter',
     name: 'Metacom Router',
@@ -381,6 +403,11 @@ async function seed(knex) {
     i18nKey: 'assayTypeMtbRif',
   })
 
+  const [assayTypeMTBRifUltraId] = await knex('AssayType').insert({
+    name: 'MTB/Rif Ultra',
+    i18nKey: 'assayTypeMtbRifUltra',
+  })
+
   const [assayTypeEbolaId] = await knex('AssayType').insert({
     name: 'Ebola',
     i18nKey: 'assayTypeEbola',
@@ -389,6 +416,16 @@ async function seed(knex) {
   const [assayTypeHivVlId] = await knex('AssayType').insert({
     name: 'HIV VL',
     i18nKey: 'assayTypeHivVl',
+  })
+
+  const [assayTypeHivQualId] = await knex('AssayType').insert({
+    name: 'HIV Qual',
+    i18nKey: 'assayTypeHivQual',
+  })
+
+  const [assayTypeCD4Id] = await knex('AssayType').insert({
+    name: 'CD4 Count',
+    i18nKey: 'assayTypeCD4',
   })
 
   const [assayTypeEid] = await knex('AssayType').insert({
@@ -782,7 +819,7 @@ async function seed(knex) {
     },
   })
 
-  const [assayMtbRifId] = await knex('Assay').insert({
+  const [assayGeneXpertMtbRifId] = await knex('Assay').insert({
     name: 'GeneXpert MTB/Rif',
     i18nKey: 'assayGeneXpertMtbRif',
     externalId: 'MtbRif',
@@ -797,10 +834,25 @@ async function seed(knex) {
     patientDataSchema: geneXpertPatientDataSchema,
   })
 
-  const [assayHivVlId] = await knex('Assay').insert({
-    name: 'GeneXpert HIV VL',
-    i18nKey: 'assayGeneXpertHivVl',
-    externalId: 'HivVl',
+  const [assayGeneXpertMtbRifUltraId] = await knex('Assay').insert({
+    name: 'GeneXpert MTB/Rif Ultra',
+    i18nKey: 'assayGeneXpertMtbRifUltra',
+    externalId: 'MtbRifUltra',
+    assayTypeId: assayTypeMTBRifUltraId,
+    deviceTypeId: deviceTypeGeneXpertId,
+    resultSourceId: resultSourceDiagnosticId,
+    resultCategory1Label: 'MTB',
+    resultCategory1i18nKey: 'resultCategoryMtb',
+    resultCategory2Label: 'Rif',
+    resultCategory2i18nKey: 'resultCategoryRif',
+    resultDataSchema: geneXpertResultDataSchema,
+    patientDataSchema: geneXpertPatientDataSchema,
+  })
+
+  const [assayGeneXpertHiv1VlId] = await knex('Assay').insert({
+    name: 'GeneXpert HIV-1 VL',
+    i18nKey: 'assayGeneXpertHiv1Vl',
+    externalId: 'GxHiv1Vl',
     assayTypeId: assayTypeHivVlId,
     deviceTypeId: deviceTypeGeneXpertId,
     resultSourceId: resultSourceDiagnosticId,
@@ -809,6 +861,36 @@ async function seed(knex) {
     resultCategory2Label: null,
     resultCategory2i18nKey: null,
     resultDataSchema: geneXpertResultDataSchemaHiv,
+    patientDataSchema: geneXpertPatientDataSchema,
+  })
+
+  const [assayGeneXpertHiv1QualId] = await knex('Assay').insert({
+    name: 'GeneXpert HIV-1 Qual',
+    i18nKey: 'assayGeneXpertHiv1Qual',
+    externalId: 'GxHiv1Qual',
+    assayTypeId: assayTypeHivQualId,
+    deviceTypeId: deviceTypeGeneXpertId,
+    resultSourceId: resultSourceDiagnosticId,
+    resultCategory1Label: 'HIV',
+    resultCategory1i18nKey: 'resultCategoryHiv',
+    resultCategory2Label: null,
+    resultCategory2i18nKey: null,
+    resultDataSchema: geneXpertResultDataSchemaHiv,
+    patientDataSchema: geneXpertPatientDataSchema,
+  })
+
+  const [assayGeneXpertEbolaId] = await knex('Assay').insert({
+    name: 'GeneXpert Ebola',
+    i18nKey: 'assayGeneXpertEbola',
+    externalId: 'Ebola',
+    assayTypeId: assayTypeEbolaId,
+    deviceTypeId: deviceTypeGeneXpertId,
+    resultSourceId: resultSourceDiagnosticId,
+    resultCategory1Label: 'GP',
+    resultCategory1i18nKey: 'resultCategoryEbolaGp',
+    resultCategory2Label: 'NP',
+    resultCategory2i18nKey: 'resultCategoryEbolaNp',
+    resultDataSchema: geneXpertResultDataSchema,
     patientDataSchema: geneXpertPatientDataSchema,
   })
 
@@ -832,7 +914,7 @@ async function seed(knex) {
     i18nKey: 'assayDaktariHcv',
     externalId: 'DaktariHcv',
     assayTypeId: assayTypeHcvId,
-    deviceTypeId: deviceTypeDaktariId,
+    deviceTypeId: deviceTypeDaktariVirologyId,
     resultSourceId: resultSourceDiagnosticId,
     resultCategory1Label: 'HCV',
     resultCategory1i18nKey: 'resultCategoryHcv',
@@ -847,28 +929,13 @@ async function seed(knex) {
     i18nKey: 'assayDaktariHivVl',
     externalId: 'DaktariHivVl',
     assayTypeId: assayTypeHivVlId,
-    deviceTypeId: deviceTypeDaktariId,
+    deviceTypeId: deviceTypeDaktariVirologyId,
     resultSourceId: resultSourceDiagnosticId,
     resultCategory1Label: 'HIV',
     resultCategory1i18nKey: 'resultCategoryHiv',
     resultCategory2Label: null,
     resultCategory2i18nKey: null,
     resultDataSchema: geneXpertResultDataSchemaHiv,
-    patientDataSchema: geneXpertPatientDataSchema,
-  })
-
-  const [assayEbolaId] = await knex('Assay').insert({
-    name: 'GeneXpert Ebola',
-    i18nKey: 'assayGeneXpertEbola',
-    externalId: 'Ebola',
-    assayTypeId: assayTypeEbolaId,
-    deviceTypeId: deviceTypeGeneXpertId,
-    resultSourceId: resultSourceDiagnosticId,
-    resultCategory1Label: 'GP',
-    resultCategory1i18nKey: 'resultCategoryEbolaGp',
-    resultCategory2Label: 'NP',
-    resultCategory2i18nKey: 'resultCategoryEbolaNp',
-    resultDataSchema: geneXpertResultDataSchema,
     patientDataSchema: geneXpertPatientDataSchema,
   })
 
@@ -1220,6 +1287,12 @@ async function seed(knex) {
     externalId: 'Detected',
   })
 
+  const [resultCategoryTraceDetectedId] = await knex('ResultCategory').insert({
+    name: 'Trace Detected',
+    i18nKey: 'ResultCategoryTraceDetected',
+    externalId: 'Trace Detected',
+  })
+
   const [resultCategoryNotDetectedId] = await knex('ResultCategory').insert({
     name: 'Not Detected',
     i18nKey: 'resultCategoryNotDetected',
@@ -1299,86 +1372,173 @@ async function seed(knex) {
   })
 
   // assign categories to Assays
+  // GeneXpert MTB/Rif
   await knex('ResultCategoryAssay').insert({
     resultCategoryId: resultCategoryDetectedId,
-    assayId: assayMtbRifId,
+    assayId: assayGeneXpertMtbRifId,
   })
 
   await knex('ResultCategoryAssay').insert({
     resultCategoryId: resultCategoryNotDetectedId,
-    assayId: assayMtbRifId,
+    assayId: assayGeneXpertMtbRifId,
   })
 
   await knex('ResultCategoryAssay').insert({
     resultCategoryId: resultCategoryIndeterminateId,
-    assayId: assayMtbRifId,
+    assayId: assayGeneXpertMtbRifId,
   })
 
   await knex('ResultCategoryAssay').insert({
     resultCategoryId: resultCategoryInvalidId,
-    assayId: assayMtbRifId,
+    assayId: assayGeneXpertMtbRifId,
   })
 
   await knex('ResultCategoryAssay').insert({
     resultCategoryId: resultCategoryNoResultId,
-    assayId: assayMtbRifId,
+    assayId: assayGeneXpertMtbRifId,
   })
 
   await knex('ResultCategoryAssay').insert({
     resultCategoryId: resultCategoryErrorId,
-    assayId: assayMtbRifId,
+    assayId: assayGeneXpertMtbRifId,
+  })
+
+  // GeneXpert MTB/Rif Ultra
+  await knex('ResultCategoryAssay').insert({
+    resultCategoryId: resultCategoryDetectedId,
+    assayId: assayGeneXpertMtbRifUltraId,
   })
 
   await knex('ResultCategoryAssay').insert({
-    resultCategoryId: resultCategoryDetectedId,
-    assayId: assayEbolaId,
+    resultCategoryId: resultCategoryTraceDetectedId,
+    assayId: assayGeneXpertMtbRifUltraId,
   })
 
   await knex('ResultCategoryAssay').insert({
     resultCategoryId: resultCategoryNotDetectedId,
-    assayId: assayEbolaId,
+    assayId: assayGeneXpertMtbRifUltraId,
+  })
+
+  await knex('ResultCategoryAssay').insert({
+    resultCategoryId: resultCategoryIndeterminateId,
+    assayId: assayGeneXpertMtbRifUltraId,
   })
 
   await knex('ResultCategoryAssay').insert({
     resultCategoryId: resultCategoryInvalidId,
-    assayId: assayEbolaId,
+    assayId: assayGeneXpertMtbRifUltraId,
   })
 
   await knex('ResultCategoryAssay').insert({
     resultCategoryId: resultCategoryNoResultId,
-    assayId: assayEbolaId,
+    assayId: assayGeneXpertMtbRifUltraId,
   })
 
   await knex('ResultCategoryAssay').insert({
     resultCategoryId: resultCategoryErrorId,
-    assayId: assayEbolaId,
+    assayId: assayGeneXpertMtbRifUltraId,
   })
 
+  // GeneXpert HIV-1 Viral Load
   await knex('ResultCategoryAssay').insert({
     resultCategoryId: resultCategoryDetectedId,
-    assayId: assayHivVlId,
+    assayId: assayGeneXpertHiv1VlId,
   })
 
   await knex('ResultCategoryAssay').insert({
     resultCategoryId: resultCategoryNotDetectedId,
-    assayId: assayHivVlId,
+    assayId: assayGeneXpertHiv1VlId,
   })
 
   await knex('ResultCategoryAssay').insert({
     resultCategoryId: resultCategoryInvalidId,
-    assayId: assayHivVlId,
+    assayId: assayGeneXpertHiv1VlId,
   })
 
   await knex('ResultCategoryAssay').insert({
     resultCategoryId: resultCategoryNoResultId,
-    assayId: assayHivVlId,
+    assayId: assayGeneXpertHiv1VlId,
   })
 
   await knex('ResultCategoryAssay').insert({
     resultCategoryId: resultCategoryErrorId,
-    assayId: assayHivVlId,
+    assayId: assayGeneXpertHiv1VlId,
   })
 
+  // GeneXpert HIV-1 Qual
+  await knex('ResultCategoryAssay').insert({
+    resultCategoryId: resultCategoryDetectedId,
+    assayId: assayGeneXpertHiv1QualId,
+  })
+
+  await knex('ResultCategoryAssay').insert({
+    resultCategoryId: resultCategoryNotDetectedId,
+    assayId: assayGeneXpertHiv1QualId,
+  })
+
+  await knex('ResultCategoryAssay').insert({
+    resultCategoryId: resultCategoryInvalidId,
+    assayId: assayGeneXpertHiv1QualId,
+  })
+
+  await knex('ResultCategoryAssay').insert({
+    resultCategoryId: resultCategoryNoResultId,
+    assayId: assayGeneXpertHiv1QualId,
+  })
+
+  await knex('ResultCategoryAssay').insert({
+    resultCategoryId: resultCategoryErrorId,
+    assayId: assayGeneXpertHiv1QualId,
+  })
+
+  // GeneXpert Ebola
+  await knex('ResultCategoryAssay').insert({
+    resultCategoryId: resultCategoryDetectedId,
+    assayId: assayGeneXpertEbolaId,
+  })
+
+  await knex('ResultCategoryAssay').insert({
+    resultCategoryId: resultCategoryNotDetectedId,
+    assayId: assayGeneXpertEbolaId,
+  })
+
+  await knex('ResultCategoryAssay').insert({
+    resultCategoryId: resultCategoryInvalidId,
+    assayId: assayGeneXpertEbolaId,
+  })
+
+  await knex('ResultCategoryAssay').insert({
+    resultCategoryId: resultCategoryNoResultId,
+    assayId: assayGeneXpertEbolaId,
+  })
+
+  await knex('ResultCategoryAssay').insert({
+    resultCategoryId: resultCategoryErrorId,
+    assayId: assayGeneXpertEbolaId,
+  })
+
+  // GeneXpert HCV
+  await knex('ResultCategoryAssay').insert({
+    resultCategoryId: resultCategoryDetectedId,
+    assayId: assayGeneXpertHcvId,
+  })
+
+  await knex('ResultCategoryAssay').insert({
+    resultCategoryId: resultCategoryInvalidId,
+    assayId: assayGeneXpertHcvId,
+  })
+
+  await knex('ResultCategoryAssay').insert({
+    resultCategoryId: resultCategoryNoResultId,
+    assayId: assayGeneXpertHcvId,
+  })
+
+  await knex('ResultCategoryAssay').insert({
+    resultCategoryId: resultCategoryErrorId,
+    assayId: assayGeneXpertHcvId,
+  })
+
+  // Daktari HIV Viral Load
   await knex('ResultCategoryAssay').insert({
     resultCategoryId: resultCategoryDetectedId,
     assayId: assayDaktariHivVlId,
@@ -1399,6 +1559,7 @@ async function seed(knex) {
     assayId: assayDaktariHivVlId,
   })
 
+  // Daktari HCV
   await knex('ResultCategoryAssay').insert({
     resultCategoryId: resultCategoryDetectedId,
     assayId: assayDaktariHcvId,
@@ -1419,26 +1580,28 @@ async function seed(knex) {
     assayId: assayDaktariHcvId,
   })
 
+  // Daktari InSight CD4 Count
   await knex('ResultCategoryAssay').insert({
     resultCategoryId: resultCategoryDetectedId,
-    assayId: assayGeneXpertHcvId,
+    assayId: assayDaktariCD4Id,
   })
 
   await knex('ResultCategoryAssay').insert({
     resultCategoryId: resultCategoryInvalidId,
-    assayId: assayGeneXpertHcvId,
+    assayId: assayDaktariCD4Id,
   })
 
   await knex('ResultCategoryAssay').insert({
     resultCategoryId: resultCategoryNoResultId,
-    assayId: assayGeneXpertHcvId,
+    assayId: assayDaktariCD4Id,
   })
 
   await knex('ResultCategoryAssay').insert({
     resultCategoryId: resultCategoryErrorId,
-    assayId: assayGeneXpertHcvId,
+    assayId: assayDaktariCD4Id,
   })
 
+  // CommCare HIV
   await knex('ResultCategoryAssay').insert({
     resultCategoryId: resultCategoryDetectedId,
     assayId: assayCommCareHiv,
@@ -1491,17 +1654,16 @@ async function seed(knex) {
   })
 
   // Consumable types
-  // TODO: We need to discuss how shared consumables are handled
-  const [consumableGlovesId] = await knex('Consumable').insert({
-    name: 'Gloves',
-    unit: piece,
-    canExpire: 0,
-    manufacturer: 'ABC Company',
-    autoInclude: 1,
-  })
-
   const [consumableGxTbCartridgeId] = await knex('Consumable').insert({
     name: 'GeneXpert TB Cartridge',
+    unit: piece,
+    canExpire: 1,
+    manufacturer: 'Cepheid',
+    autoInclude: 0,
+  })
+
+  const [consumableGxTbUltraCartridgeId] = await knex('Consumable').insert({
+    name: 'GeneXpert TB Ultra Cartridge',
     unit: piece,
     canExpire: 1,
     manufacturer: 'Cepheid',
@@ -1516,73 +1678,76 @@ async function seed(knex) {
     autoInclude: 0,
   })
 
-  const [consumableGxHivVlCartridgeId] = await knex('Consumable').insert({
-    name: 'GeneXpert HIV Viral Load Cartridge',
+  const [consumableGxHiv1VlCartridgeId] = await knex('Consumable').insert({
+    name: 'Xpert HIV-1 Viral Load Cartridge',
     unit: piece,
     canExpire: 1,
     manufacturer: 'Cepheid',
     autoInclude: 0,
   })
 
-  const [partnerOneReagent] = await knex('Consumable').insert({
-    name: 'Partner One Reagent',
-    partnerId: partnerOneId,
-    unit: milligram,
+  const [consumableGxHcvVlCartridgeId] = await knex('Consumable').insert({
+    name: 'Xpert HCV Viral Load Cartridge',
+    unit: piece,
     canExpire: 1,
-    manufacturer: 'Unichem',
+    manufacturer: 'Cepheid',
     autoInclude: 0,
   })
 
-  const [partnerOneSwab] = await knex('Consumable').insert({
-    name: 'Partner One Swab',
-    partnerId: partnerOneId,
+  const [consumableGxHiv1QualCartridgeId] = await knex('Consumable').insert({
+    name: 'Xpert HIV-1 Qual Cartridge',
     unit: piece,
     canExpire: 1,
-    manufacturer: 'Johnson & Johnson',
+    manufacturer: 'Cepheid',
     autoInclude: 0,
   })
 
-  const [partnerTwoSwab] = await knex('Consumable').insert({
-    name: 'Partner Two Swab',
-    partnerId: partnerTwoId,
+  await knex('Consumable').insert({
+    name: 'Daktari CD4 Cartridge',
     unit: piece,
     canExpire: 1,
-    manufacturer: 'Procter & Gamble',
+    manufacturer: 'Daktari',
     autoInclude: 0,
   })
 
   // Assay Consumables
   await knex('ConsumableAssay').insert({
     consumableId: consumableGxTbCartridgeId,
-    assayId: assayMtbRifId,
+    assayId: assayGeneXpertMtbRifId,
+    quantity: 1,
+  })
+
+  await knex('ConsumableAssay').insert({
+    consumableId: consumableGxTbUltraCartridgeId,
+    assayId: assayGeneXpertMtbRifUltraId,
     quantity: 1,
   })
 
   await knex('ConsumableAssay').insert({
     consumableId: consumableGxEbolaCartridgeId,
-    assayId: assayEbolaId,
+    assayId: assayGeneXpertEbolaId,
     quantity: 1,
   })
 
   await knex('ConsumableAssay').insert({
-    consumableId: partnerOneReagent,
-    assayId: assayMtbRifId,
-    quantity: 500,
-  })
-
-  await knex('ConsumableAssay').insert({
-    consumableId: partnerOneSwab,
-    assayId: assayMtbRifId,
+    consumableId: consumableGxHcvVlCartridgeId,
+    assayId: assayGeneXpertHcvId,
     quantity: 1,
   })
 
   await knex('ConsumableAssay').insert({
-    consumableId: partnerTwoSwab,
-    assayId: assayMtbRifId,
-    quantity: 2,
+    consumableId: consumableGxHiv1VlCartridgeId,
+    assayId: assayGeneXpertHiv1VlId,
+    quantity: 1,
   })
+
+  await knex('ConsumableAssay').insert({
+    consumableId: consumableGxHiv1QualCartridgeId,
+    assayId: assayGeneXpertHiv1QualId,
+    quantity: 1,
+  })
+
   // Consumable Reasons
-
   await knex('ConsumableReason').insert({
     name: 'Test Conducted',
     i18nKey: 'ConsumableReason_TestConducted',
@@ -1981,7 +2146,7 @@ async function seed(knex) {
       const device = Object.assign({}, auditFields, {
         name: `Daktari #${i} ${siteData.shortname}`,
         shortname: `Daktari #${i}`,
-        deviceTypeId: deviceTypeDaktariId,
+        deviceTypeId: deviceTypeDaktariVirologyId,
         deviceStatusId: deviceStatusApproved,
         configurationData: JSON.stringify({
           requirePrinter: 'yes',
@@ -2107,17 +2272,6 @@ async function seed(knex) {
           )
         )
       }
-      // Gloves
-      await knex('InventoryItem').insert(
-        Object.assign(
-          {
-            consumableId: consumableGlovesId,
-            siteId: siteData.id,
-            quantityOnHand: _.random(0, 100),
-          },
-          auditFields
-        )
-      )
     })
   )
 
@@ -2235,7 +2389,7 @@ async function seed(knex) {
           const resultId = await knex('Result').insert(
             Object.assign({}, auditFields, {
               externalId: `UQTB-${i}-${j}`,
-              assayId: assayMtbRifId,
+              assayId: assayGeneXpertMtbRifId,
               partnerId: partnerOneId,
               geographyId: siteData.geographyId,
               siteId: siteData.id,
@@ -2425,7 +2579,7 @@ async function seed(knex) {
           const resultId = await knex('Result').insert(
             Object.assign({}, auditFields, {
               externalId: `UQEB-${i}-${j}`,
-              assayId: assayEbolaId,
+              assayId: assayGeneXpertEbolaId,
               partnerId: partnerOneId,
               geographyId: siteData.geographyId,
               siteId: siteData.id,
@@ -2586,7 +2740,7 @@ async function seed(knex) {
           const resultId = await knex('Result').insert(
             Object.assign({}, auditFields, {
               externalId: `UQHIV-${i}-${j}`,
-              assayId: assayHivVlId,
+              assayId: assayGeneXpertHiv1VlId,
               partnerId: partnerOneId,
               geographyId: siteData.geographyId,
               siteId: siteData.id,
