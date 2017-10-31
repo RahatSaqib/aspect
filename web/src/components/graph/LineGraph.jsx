@@ -8,7 +8,7 @@ import { AxisLeft, AxisBottom } from '@vx/axis'
 import { ScaleSVG } from '@vx/responsive'
 import { Grid } from '@vx/grid'
 
-const LineChart = props => {
+const LineGraph = props => {
   // programmed colors
   const c = ['#7d97bc', '#9874b2', '#3cc0cd', '#f36283']
 
@@ -135,7 +135,7 @@ const LineChart = props => {
   )
 }
 
-LineChart.propTypes = {
+LineGraph.propTypes = {
   data: PropTypes.arrayOf(PropTypes.object).isRequired,
   color: PropTypes.arrayOf(PropTypes.string),
   lineSize: PropTypes.number,
@@ -148,7 +148,7 @@ LineChart.propTypes = {
   gridLines: PropTypes.bool,
 }
 
-LineChart.defaultProps = {
+LineGraph.defaultProps = {
   hideLabel: true,
   hideTicks: true,
   hideAxes: true,
@@ -160,4 +160,4 @@ LineChart.defaultProps = {
   styleWide: false,
 }
 
-export default LineChart
+export default LineGraph

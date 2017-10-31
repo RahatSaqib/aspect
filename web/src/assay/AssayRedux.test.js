@@ -8,7 +8,7 @@ describe('AssayRedux module', () => {
     {
       id: 7,
       assayTypeId: 3,
-      name: 'Abbot m2000 HIV VL',
+      name: 'Abbott m2000 HIV VL',
       assayTypeName: 'HIV VL',
       deviceTypeId: 4,
       deviceTypeName: 'm2000',

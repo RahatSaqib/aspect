@@ -230,7 +230,7 @@ function* seed(knex) {
   })
 
   const [deviceTypeM2000Id] = yield knex('DeviceType').insert({
-    externalId: 'AbbotM2000',
+    externalId: 'AbbottM2000',
     name: 'm2000',
     manufacturer: 'Abbott',
     deviceTypeCategoryId: deviceTypeCategoryLab,
@@ -822,8 +822,8 @@ function* seed(knex) {
   })
 
   yield knex('Assay').insert({
-    name: 'Abbot m2000 HIV VL',
-    i18nKey: 'AssayAbbotM2000HivVl',
+    name: 'Abbott m2000 HIV VL',
+    i18nKey: 'AssayAbbottM2000HivVl',
     externalId: 'HivVl',
     assayTypeId: assayTypeHivVlId,
     deviceTypeId: deviceTypeM2000Id,
@@ -871,8 +871,8 @@ function* seed(knex) {
   })
 
   yield knex('Assay').insert({
-    name: 'Abbot m2000 EID',
-    i18nKey: 'AssayAbbotM2000Eid',
+    name: 'Abbott m2000 EID',
+    i18nKey: 'AssayAbbottM2000Eid',
     externalId: 'EID',
     assayTypeId: assayTypeEid,
     deviceTypeId: deviceTypeM2000Id,

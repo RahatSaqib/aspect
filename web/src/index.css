@@ -1,5 +1,14 @@
 @import './globals/variables.css';
 
+html {
+  box-sizing: border-box;
+}
+*,
+*:before,
+*:after {
+  box-sizing: inherit;
+}
+
 /* global styles */
 body {
   font-family: Lato, sans-serif;

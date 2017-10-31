@@ -7,7 +7,7 @@ import { Bar } from '@vx/shape'
 import { AxisLeft, AxisBottom } from '@vx/axis'
 import { ScaleSVG } from '@vx/responsive'
 
-class BarChart extends Component {
+class BarGraph extends Component {
   render() {
     function add(a, b) {
       return a + b
@@ -152,7 +152,7 @@ class BarChart extends Component {
   }
 }
 
-BarChart.propTypes = {
+BarGraph.propTypes = {
   data: PropTypes.arrayOf(PropTypes.object).isRequired,
   hideLabel: PropTypes.bool,
   color: PropTypes.arrayOf(PropTypes.string),
@@ -165,7 +165,7 @@ BarChart.propTypes = {
   numYTicks: PropTypes.number,
 }
 
-BarChart.defaultProps = {
+BarGraph.defaultProps = {
   hideLabel: true,
   hideTicks: true,
   hideAxes: false,
@@ -177,4 +177,4 @@ BarChart.defaultProps = {
   numYTicks: 4,
 }
 
-export default BarChart
+export default BarGraph

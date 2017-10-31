@@ -2,7 +2,7 @@
 
 ```js static
 import ChartContainer from 'src/components/graph/ChartContainer'
-import BarChart from 'src/components/graph/BarChart'
+import BarGraph from 'src/components/graph/BarGraph'
 ```
 
 It's themed according to default settings, requiring only data to render. Data should be defined as follows, with each value of the data array representing a single color on the stacked bar:
@@ -26,7 +26,7 @@ Primary 4-Stack Bar Chart
 
 ```
 <ChartContainer title="Test Failures Last 30 Days">
-  <BarChart
+  <BarGraph
     data={[
       { name: 'Site1', data: [2, 3, 4, 1.5] },
       { name: 'Site2', data: [1, 2, 1, 3] },
@@ -54,7 +54,7 @@ Primary 2-Stack Bar Chart
 
 ```
 <ChartContainer title="HIV">
-  <BarChart
+  <BarGraph
     data={[
       { name: 'Site1', data: [8, 1.5] },
       { name: 'Site2', data: [7, 0.5] },
@@ -84,7 +84,7 @@ Primary 2-Color Bar Chart
 
 ```
 <ChartContainer title="Stock Outs" bottomTitle>
-  <BarChart
+  <BarGraph
     data={[
       { name: 'Site1', data: [8] },
       { name: 'Site2', data: [7] },
@@ -115,7 +115,7 @@ Primary 3-Color Bar Chart
 
 ```
 <ChartContainer title="Best and Worst Performing Sites">
-  <BarChart
+  <BarGraph
     data={[
       { name: 'Site1', data: [1] },
       { name: 'Site2', data: [1.5] },
@@ -146,6 +146,6 @@ Primary 3-Color Bar Chart
 
 ### Customization
 
-A BarChart can be designed in nearly any style, by changing the value of any of its props. If color is not specified, it is based off of the following array: ['#3cc0cd', '#7d97bc', '#9874b2', '#f36283'] 
+A BarGraph can be designed in nearly any style, by changing the value of any of its props. If color is not specified, it is based off of the following array: ['#3cc0cd', '#7d97bc', '#9874b2', '#f36283'] 
  
 

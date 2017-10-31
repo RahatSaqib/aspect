@@ -1,0 +1,23 @@
+@import '../../globals/variables.css';
+
+.ButtonGroup > * {
+  vertical-align: middle;
+}
+
+.ButtonGroup--adjacent > *:not(:first-child) {
+  border-radius: 0 var(--toolbox-button-border-radius)
+    var(--toolbox-button-border-radius) 0;
+}
+
+.ButtonGroup--adjacent > *:not(:last-child) {
+  border-radius: var(--toolbox-button-border-radius) 0 0
+    var(--toolbox-button-border-radius);
+}
+
+.ButtonGroup--isolated > *:not(:first-child) {
+  margin-left: 5px;
+}
+
+.ButtonGroup--isolated > *:not(:last-child) {
+  margin-right: 5px;
+}

@@ -34,4 +34,7 @@
   /* Upper limit: 100; Because react-toolbox/NavDrawer has a 100 z-index */
 
   --toolbox-button-border-radius: 3px;
+
+  /* Layouts */
+  --aspect-detail-horizontal-padding: 20px;
 }

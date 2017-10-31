@@ -2,7 +2,7 @@
 
 ```js static
 import ChartContainer from 'src/components/graph/ChartContainer'
-import LineChart from 'src/components/graph/LineChart'
+import LineGraph from 'src/components/graph/LineGraph'
 ```
 
 It's themed according to default settings, requiring only data to render. Data should be defined as follows, with each value of the data array representing a line (all value[0] data are points on one line, all value[1] data are points on another line):
@@ -26,7 +26,7 @@ Primary 2-Line Line Chart
 
 ```
 <ChartContainer title="Title" >
-  <LineChart
+  <LineGraph
     data={[
       { date: 'Site 1', value: [1, 2, 8] },
       { date: 'Site 2', value: [2, 4, 9] },
@@ -49,4 +49,4 @@ Primary 2-Line Error Chart (with Average)
 
 ### Customization
 
-A LineChart can be designed in nearly any style, by changing the value of any of its props. If color is not specified, it is based off of the following array: ['#7d97bc', '#9874b2', '#3cc0cd', '#f36283'] 
+A LineGraph can be designed in nearly any style, by changing the value of any of its props. If color is not specified, it is based off of the following array: ['#7d97bc', '#9874b2', '#3cc0cd', '#f36283'] 

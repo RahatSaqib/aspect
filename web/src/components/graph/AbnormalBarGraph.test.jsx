@@ -1,9 +1,9 @@
 import React from 'react'
 import ReactShallowRenderer from 'react-test-renderer/shallow'
 
-import AbnormalBarChart from './AbnormalBarChart'
+import AbnormalBarGraph from './AbnormalBarGraph'
 
-describe('AbnormalBarChart Component', () => {
+describe('AbnormalBarGraph Component', () => {
   const renderer = new ReactShallowRenderer()
   const props = {
     data: [
@@ -19,7 +19,7 @@ describe('AbnormalBarChart Component', () => {
   }
 
   it('should shallow render correctly', () => {
-    const element = renderer.render(<AbnormalBarChart {...props} />)
+    const element = renderer.render(<AbnormalBarGraph {...props} />)
     expect(element).toMatchSnapshot()
   })
 })
