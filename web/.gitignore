@@ -35,3 +35,9 @@ bower_components/
 
 #IDE Generated Files
 .idea
+
+#Test screenshots
+/screenshots
+
+#Test results
+/reports
