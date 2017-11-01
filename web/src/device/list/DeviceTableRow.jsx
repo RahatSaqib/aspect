@@ -2,14 +2,23 @@ import _ from 'lodash'
 import classnames from 'classnames/bind'
 import React from 'react'
 import { TableRow, TableCell } from 'react-toolbox/lib/table'
+import ColoredButton from '../../components/themedReactToolbox/ColoredButton'
+import messages from './messages'
 
-const cssClasses = classnames.bind(
-  require('../../components/shared/DataTableRow.css')
-)
+const cssClasses = classnames.bind(require('./DeviceTableRow.css'))
 
 const enhance = _.identity
 
-const DeviceTableRow = ({ intl, device, ...restProps }) => (
+const Rate = ({ intl, it, messageId }) => (
+  <span>
+    {intl.formatNumber(it.count / it.total, { style: 'percent' })}
+    <span className={cssClasses('Rate__hover')}>
+      {intl.formatMessage(messageId, it)}
+    </span>
+  </span>
+)
+
+const DeviceTableRow = ({ intl, device, onAlertClick, ...restProps }) => (
   <TableRow
     {...restProps}
     className={cssClasses(restProps.className, 'TableRow')}
@@ -22,6 +31,37 @@ const DeviceTableRow = ({ intl, device, ...restProps }) => (
     </TableCell>
     <TableCell className={cssClasses('TableCell')}>
       {device.get('status')}
+    </TableCell>
+    <TableCell className={cssClasses('TableCell')}>
+      <Rate
+        intl={intl}
+        it={device.get('availability').toJS()}
+        messageId={messages.availabilityOfDays}
+      />
+    </TableCell>
+    <TableCell className={cssClasses('TableCell')}>
+      <Rate
+        intl={intl}
+        it={device.get('error').toJS()}
+        messageId={messages.errorOfTotal}
+      />
+    </TableCell>
+    <TableCell className={cssClasses('TableCell', 'TableCell--alerts')}>
+      {device
+        .get('alerts')
+        .map(it => (
+          <ColoredButton
+            key={it.get('type')}
+            className={cssClasses('ColoredButton--micro')}
+            shipCove={it.get('type') === 'needs-repair'}
+            shakespeare={it.get('type') === 'warranty'}
+            mountain={it.get('type') === 'quality-control'}
+            brink={it.get('type') === 'connectivity'}
+            label={_.camelCase(it.get('type'))}
+            onClick={onAlertClick}
+            data-pathname="/browse/notification/detail"
+          />
+        ))}
     </TableCell>
     <TableCell className={cssClasses('TableCell')}>
       {intl.formatRelative(device.get('createdOn'))}

@@ -1,0 +1,21 @@
+@import '../../globals/variables.css';
+
+.ColoredButton--ship-cove.ColoredButton--neutral:not([disabled]).ColoredButton--raised {
+  background-color: var(--aspect-color-ship-cove);
+  color: #ffffff;
+}
+
+.ColoredButton--shakespeare.ColoredButton--neutral:not([disabled]).ColoredButton--raised {
+  background-color: var(--aspect-color-shakespeare);
+  color: #ffffff;
+}
+
+.ColoredButton--mountain.ColoredButton--neutral:not([disabled]).ColoredButton--raised {
+  background-color: var(--aspect-color-mountain);
+  color: #ffffff;
+}
+
+.ColoredButton--brink.ColoredButton--neutral:not([disabled]).ColoredButton--raised {
+  background-color: var(--aspect-color-brink);
+  color: #ffffff;
+}

@@ -65,6 +65,8 @@ function listDevicesBaseConfig() {
           'name',
           'state',
           'status',
+          'availabilityRate',
+          'errorRate',
           'createdOn',
           'lastSeen',
           'lastMonth',
