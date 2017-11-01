@@ -304,24 +304,7 @@ function* inventoryItemDashboard(request) {
 
   // get data constraints
   const dataConstraints = yield getConstraints(auth.credentials)
-
-  const siteList = canViewSites(auth)
-    ? yield knex('Site as s')
-        .leftOuterJoin('Geography as g', 's.geographyId', 'g.id')
-        .leftOuterJoin('State as st', 'g.stateId', 'st.id')
-        .select(
-          's.id',
-          's.name',
-          'st.abbreviation as stateAbbr',
-          's.latitude',
-          's.longitude'
-        )
-        .modify(addConstraints, dataConstraints, {
-          site: 's',
-          geography: 'g',
-        })
-    : []
-
+  const siteList = yield* getSiteList(auth, dataConstraints)
   const inventoryItemList = yield* getInventoryItemList(auth, dataConstraints)
 
   const inventorySiteSummaryList = _.sortBy(
