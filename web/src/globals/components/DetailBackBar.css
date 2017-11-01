@@ -14,7 +14,6 @@
 .Container__Title {
   flex-grow: 1;
   font-size: 36px;
-  font-weight: var(--lato-font-weight-bold);
   color: var(--aspect-color-grey-2);
 }
 

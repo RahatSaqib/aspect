@@ -2,7 +2,7 @@ import classnames from 'classnames/bind'
 import { compose, mapProps } from 'recompose'
 import Dropdown from 'react-toolbox/lib/dropdown'
 
-const cssClasses = classnames.bind(require('./NavDropdown.css'))
+const cssClasses = classnames.bind(require('./StyledDropdown.css'))
 
 const enhance = compose(
   mapProps(props => ({

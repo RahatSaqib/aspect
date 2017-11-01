@@ -82,7 +82,7 @@ const renderReports = notImplementedLoggedInFactory('Reports')
 const renderManage = notImplementedLoggedInFactory('Manage')
 /* END-TODO: real components */
 const renderDeviceList = loggedInFactory(DeviceList)
-const renderDeviceDetail = loggedInFactory(DeviceDetail)
+const renderDeviceDetail = loggedInDetailFactory(DeviceDetail)
 const renderDeviceApiKeyList = loggedInFactory(DeviceApiKeyList)
 const renderRouterList = loggedInFactory(RouterList)
 const renderRouterDetail = loggedInFactory(RouterDetail)

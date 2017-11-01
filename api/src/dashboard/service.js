@@ -686,7 +686,7 @@ function* operationalDashboard(request) {
       inventory: [
         {
           key: 'stock-outs',
-          title: 'Stock outs',
+          title: 'stock outs',
           isNormal: false,
           message: '1 site with problems',
           data: [
@@ -713,7 +713,7 @@ function* operationalDashboard(request) {
         },
         {
           key: 'low-supply',
-          title: 'Low supply',
+          title: 'low supply',
           isNormal: false,
           message: '3 sites with problems',
           data: [
@@ -740,7 +740,7 @@ function* operationalDashboard(request) {
         },
         {
           key: 'expiring',
-          title: 'Expiring',
+          title: 'expiring',
           isNormal: true,
           message: '0 site with problems',
           data: [
@@ -767,7 +767,7 @@ function* operationalDashboard(request) {
         },
         {
           key: 'time-to-alert-resolution',
-          title: 'Time to alert resolution',
+          title: 'time to alert resolution',
           isNormal: false,
           message: '1 site with problems',
           data: [
@@ -796,7 +796,7 @@ function* operationalDashboard(request) {
       device: [
         {
           key: 'modules-unavailable',
-          title: 'Modules unavailable',
+          title: 'modules unavailable',
           isNormal: false,
           message: '6 site with problems',
           data: [
@@ -821,7 +821,7 @@ function* operationalDashboard(request) {
         },
         {
           key: 'days-unavailable',
-          title: 'Days unavailable',
+          title: 'days unavailable',
           isNormal: false,
           message: '8 site with problems',
           data: [
@@ -847,7 +847,7 @@ function* operationalDashboard(request) {
         },
         {
           key: 'test-failures',
-          title: 'Test failures',
+          title: 'test failures',
           isNormal: false,
           message: '4 site with problems',
           data: [
@@ -873,7 +873,7 @@ function* operationalDashboard(request) {
         },
         {
           key: 'calibration-compliance',
-          title: 'Calibration compliance',
+          title: 'calibration compliance',
           isNormal: false,
           message: '1 site with problems',
           data: [
@@ -899,7 +899,7 @@ function* operationalDashboard(request) {
         },
         {
           key: 'maintenance-compliance',
-          title: 'Maintenance compliance',
+          title: 'maintenance compliance',
           isNormal: true,
           message: '0 site with problems',
           data: [
@@ -924,7 +924,7 @@ function* operationalDashboard(request) {
         },
         {
           key: 'data-connectivity',
-          title: 'Data connectivity',
+          title: 'data connectivity',
           isNormal: false,
           message: '6 site with problems',
           data: [
@@ -950,7 +950,7 @@ function* operationalDashboard(request) {
         },
         {
           key: 'utilisation',
-          title: 'Utilisation',
+          title: 'utilisation',
           isNormal: true,
           message: '0 site with problems',
           data: [
@@ -976,7 +976,7 @@ function* operationalDashboard(request) {
         },
         {
           key: 'time-to-alert-resolution',
-          title: 'Time to alert resolution',
+          title: 'time to alert resolution',
           isNormal: false,
           message: '1 site with problems',
           data: [
@@ -1004,7 +1004,7 @@ function* operationalDashboard(request) {
       site: [
         {
           key: 'high-performing',
-          title: 'High performing',
+          title: 'high performing',
           data: [
             { id: 12, name: 'Site name 12', data: [3, 4, 8] },
             { id: 74, name: 'Site name 74', data: [1, 4, 7] },
@@ -1018,7 +1018,7 @@ function* operationalDashboard(request) {
         },
         {
           key: 'improving',
-          title: 'Improving',
+          title: 'improving',
           data: [
             { id: 25, name: 'Site name 25', data: [3, 4, 8] },
             { id: 34, name: 'Site name 34', data: [1, 4, 7] },

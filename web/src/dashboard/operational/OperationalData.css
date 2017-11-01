@@ -59,7 +59,10 @@
   line-height: 30px;
   font-size: 18px;
   font-weight: var(--lato-font-weight-black);
-  text-transform: capitalize;
+}
+
+.AbnormalBarChart__Title::first-letter {
+  text-transform: uppercase;
 }
 
 .AbnormalBarChart__Message {
