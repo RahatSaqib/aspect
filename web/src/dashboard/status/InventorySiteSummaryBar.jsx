@@ -104,7 +104,7 @@ const InventorySiteSummaryBar = ({
       labelOffset={-10}
       labelProps={{
         textAnchor: 'middle',
-        fontFamily: 'Arial',
+        fontFamily: 'lato',
         fontSize: 16,
         fill: 'black',
       }}

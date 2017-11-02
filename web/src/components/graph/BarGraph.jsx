@@ -125,7 +125,7 @@ class BarGraph extends Component {
                       fontSize={this.props.numLabelSize}
                       fill="black"
                       dy="0.25em"
-                      fontFamily="arial"
+                      fontFamily="lato"
                     />
                   }
                 />

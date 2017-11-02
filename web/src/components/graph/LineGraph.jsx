@@ -115,7 +115,7 @@ const LineGraph = props => {
               fontSize={18}
               fill="black"
               dy="0.25em"
-              fontFamily="arial"
+              fontFamily="lato"
             />
           }
         />

@@ -122,7 +122,7 @@ const ResultSummaryItemBarStack = ({
         label={`${data.length} Sites`}
         labelProps={{
           textAnchor: 'middle',
-          fontFamily: 'Arial',
+          fontFamily: 'lato',
           fontSize: 20,
           fill: 'black',
         }}

@@ -254,7 +254,7 @@ exports[`LineGraph component should shallow render correctly 1`] = `
         <text
           dy="0.25em"
           fill="black"
-          fontFamily="arial"
+          fontFamily="lato"
           fontSize={18}
           textAnchor="end"
         />
