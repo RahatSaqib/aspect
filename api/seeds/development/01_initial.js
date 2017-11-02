@@ -2007,12 +2007,14 @@ function* seed(knex) {
     const sample = samples[i % samples.length]
     const randomTimespan = _.random(6000) * millisInMinute
 
+    let j = 0
     for (const result of possibleResults) {
+      j += 1
       if (_.random(10) > 3) {
         resultData.resultText = result.resultText
         const resultId = yield knex('Result').insert(
           Object.assign({}, auditFields, {
-            externalId: `UQTB-${i}`,
+            externalId: `UQTB-${i}-${j}`,
             assayId: assayMtbRifId,
             partnerId: partnerOneId,
             geographyId: siteData.geographyId,
@@ -2160,12 +2162,14 @@ function* seed(knex) {
     const sample = samples[i % samples.length]
     const randomTimespan = _.random(6000) * millisInMinute
 
+    let j = 0
     for (const result of possibleResults) {
+      j += 1
       if (_.random(10) > 3) {
         resultData.resultText = result.resultText
         const resultId = yield knex('Result').insert(
           Object.assign({}, auditFields, {
-            externalId: `UQEB-${i}`,
+            externalId: `UQEB-${i}-${j}`,
             assayId: assayEbolaId,
             partnerId: partnerOneId,
             geographyId: siteData.geographyId,
@@ -2292,7 +2296,9 @@ function* seed(knex) {
     const sample = samples[i % samples.length]
     // make sure we have at least one result with these status
     const ensureResultIds = [acknowledged, validated, deliverable]
+    let j = 0
     for (const result of possibleResults) {
+      j += 1
       if (_.random(10) > 3) {
         const randomTimespan = _.random(6000) * millisInMinute
         let copies = 3200
@@ -2318,7 +2324,7 @@ function* seed(knex) {
 
         const resultId = yield knex('Result').insert(
           Object.assign({}, auditFields, {
-            externalId: `UQHIV-${i}`,
+            externalId: `UQHIV-${i}-${j}`,
             assayId: assayHivVlId,
             partnerId: partnerOneId,
             geographyId: siteData.geographyId,
@@ -2419,7 +2425,9 @@ function* seed(knex) {
     const siteData = siteDatas.find(site => site.id === device.siteId)
     const sample = samples[i % samples.length]
 
+    let j = 0
     for (const result of possibleResults) {
+      j += 1
       if (_.random(10) > 3) {
         let count = 3200
         if (result === possibleResults[0]) {
@@ -2433,7 +2441,7 @@ function* seed(knex) {
 
         const resultId = yield knex('Result').insert(
           Object.assign({}, auditFields, {
-            externalId: `UQ-GX-HCV-${i}`,
+            externalId: `UQ-GX-HCV-${i}-${j}`,
             assayId: assayGeneXpertHcvId,
             partnerId: partnerOneId,
             geographyId: siteData.geographyId,
@@ -2540,7 +2548,10 @@ function* seed(knex) {
     const siteData = siteDatas.find(site => site.id === device.siteId)
     const sample = samples[i % samples.length]
 
+    let j = 0
     for (const result of possibleResults) {
+      j += 1
+
       if (_.random(10) > 3) {
         const randomTimespan = _.random(6000) * millisInMinute
         let copies = 3200
@@ -2561,7 +2572,7 @@ function* seed(knex) {
 
         const resultId = yield knex('Result').insert(
           Object.assign({}, auditFields, {
-            externalId: `UQ-DAK-HIV-${i}`,
+            externalId: `UQ-DAK-HIV-${i}-${j}`,
             assayId: assayDaktariHivVlId,
             partnerId: partnerOneId,
             geographyId: siteData.geographyId,
@@ -2668,7 +2679,9 @@ function* seed(knex) {
     const siteData = siteDatas.find(site => site.id === device.siteId)
     const sample = samples[i % samples.length]
 
+    let j = 0
     for (const result of possibleResults) {
+      j += 1
       if (_.random(10) > 3) {
         const randomTimespan = _.random(6000) * millisInMinute
         let copies = 3200
@@ -2689,7 +2702,7 @@ function* seed(knex) {
 
         const resultId = yield knex('Result').insert(
           Object.assign({}, auditFields, {
-            externalId: `UQ-DAK-HCV-${i}`,
+            externalId: `UQ-DAK-HCV-${i}-${j}`,
             assayId: assayDaktariHcvId,
             partnerId: partnerOneId,
             geographyId: siteData.geographyId,
