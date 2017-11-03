@@ -69,7 +69,7 @@ const renderApp = () => render(appFactory(_.noop)({ store }), appDom)
 store.dispatch(hydrateFromLocalStorage(getAspectHydrateData()))
 
 // get new access token
-store.dispatch(refreshStart()).finally(renderApp)
+store.dispatch(refreshStart()).then(() => renderApp())
 
 if (module.hot) {
   module.hot.accept('./globals/factories/appFactory', renderApp)
