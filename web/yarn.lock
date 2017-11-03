@@ -6,94 +6,108 @@
   version "6.0.89"
   resolved "https://registry.yarnpkg.com/@types/node/-/node-6.0.89.tgz#154be0e6a823760cd6083aa8c48f952e2e63e0b0"
 
-"@vx/axis@^0.0.142":
-  version "0.0.142"
-  resolved "https://registry.yarnpkg.com/@vx/axis/-/axis-0.0.142.tgz#99353d4430aa1d1136c7a5a8c7287550f21c1d12"
+"@vx/axis@^0.0.146":
+  version "0.0.146"
+  resolved "https://registry.yarnpkg.com/@vx/axis/-/axis-0.0.146.tgz#c0ebe3bfe0c6e117f2dbae971595071f69e74bd4"
   dependencies:
-    "@vx/group" "0.0.140"
-    "@vx/point" "0.0.136"
-    "@vx/shape" "0.0.142"
+    "@vx/group" "0.0.143"
+    "@vx/point" "0.0.143"
+    "@vx/shape" "0.0.146"
     classnames "^2.2.5"
     prop-types "15.5.10"
 
-"@vx/curve@0.0.140":
-  version "0.0.140"
-  resolved "https://registry.yarnpkg.com/@vx/curve/-/curve-0.0.140.tgz#29ef388e8b3718213d66a896d569dc1ebc8edf89"
+"@vx/bounds@0.0.143":
+  version "0.0.143"
+  resolved "https://registry.yarnpkg.com/@vx/bounds/-/bounds-0.0.143.tgz#7534ff9c04412d79592697afe814fb45aaee3ed2"
+  dependencies:
+    prop-types "^15.5.10"
+
+"@vx/curve@0.0.143":
+  version "0.0.143"
+  resolved "https://registry.yarnpkg.com/@vx/curve/-/curve-0.0.143.tgz#022c6a8a07ec019ed5820f0214da21fd93645724"
   dependencies:
     d3-shape "^1.0.6"
 
-"@vx/geo@^0.0.140":
-  version "0.0.140"
-  resolved "https://registry.yarnpkg.com/@vx/geo/-/geo-0.0.140.tgz#8ae74e4800269302dc270545451b86055f0b8caf"
+"@vx/geo@^0.0.143":
+  version "0.0.143"
+  resolved "https://registry.yarnpkg.com/@vx/geo/-/geo-0.0.143.tgz#cc4ef6993567c4e796cd35a9fde1e669b9aa0171"
   dependencies:
-    "@vx/group" "0.0.140"
+    "@vx/group" "0.0.143"
     classnames "^2.2.5"
     d3-geo "^1.6.4"
     prop-types "^15.5.10"
 
-"@vx/glyph@^0.0.140":
-  version "0.0.140"
-  resolved "https://registry.yarnpkg.com/@vx/glyph/-/glyph-0.0.140.tgz#f8323f82aee22192b675bef25789bbb7d74691ba"
+"@vx/glyph@^0.0.143":
+  version "0.0.143"
+  resolved "https://registry.yarnpkg.com/@vx/glyph/-/glyph-0.0.143.tgz#71e207caed5778a736ad679536325aac20a6dd12"
   dependencies:
-    "@vx/group" "0.0.140"
+    "@vx/group" "0.0.143"
     classnames "^2.2.5"
     d3-shape "^1.2.0"
 
-"@vx/gradient@^0.0.140":
-  version "0.0.140"
-  resolved "https://registry.yarnpkg.com/@vx/gradient/-/gradient-0.0.140.tgz#56b421016cbae0dcb00190cfffb9e860a28febf4"
+"@vx/gradient@^0.0.143":
+  version "0.0.143"
+  resolved "https://registry.yarnpkg.com/@vx/gradient/-/gradient-0.0.143.tgz#9ce212db8f9add9221c8eb142c5ac1026d13cab9"
   dependencies:
     classnames "^2.2.5"
     prop-types "^15.5.7"
 
-"@vx/grid@^0.0.142":
-  version "0.0.142"
-  resolved "https://registry.yarnpkg.com/@vx/grid/-/grid-0.0.142.tgz#c2ee59522b72bf92d737dd21c37efc9fa93305da"
+"@vx/grid@^0.0.146":
+  version "0.0.146"
+  resolved "https://registry.yarnpkg.com/@vx/grid/-/grid-0.0.146.tgz#baa9e6653a36c1103dd1def54d6df3ac0edceef4"
   dependencies:
-    "@vx/group" "0.0.140"
-    "@vx/point" "0.0.136"
-    "@vx/shape" "0.0.142"
+    "@vx/group" "0.0.143"
+    "@vx/point" "0.0.143"
+    "@vx/shape" "0.0.146"
     classnames "^2.2.5"
 
-"@vx/group@0.0.140", "@vx/group@^0.0.140":
-  version "0.0.140"
-  resolved "https://registry.yarnpkg.com/@vx/group/-/group-0.0.140.tgz#cba9b0b3f2f007e5be7346f3c86f73f70e038a23"
+"@vx/group@0.0.143", "@vx/group@^0.0.143":
+  version "0.0.143"
+  resolved "https://registry.yarnpkg.com/@vx/group/-/group-0.0.143.tgz#38dbd3fa2740d573c6fdfc691ebc15e85d3eb01b"
   dependencies:
     classnames "^2.2.5"
 
-"@vx/legend@^0.0.141":
-  version "0.0.141"
-  resolved "https://registry.yarnpkg.com/@vx/legend/-/legend-0.0.141.tgz#8d434f6eb6ec4d5d5286f61e0e4f72d942211120"
+"@vx/legend@^0.0.143":
+  version "0.0.143"
+  resolved "https://registry.yarnpkg.com/@vx/legend/-/legend-0.0.143.tgz#a1b50087298123f1e65de26a3bc73a6bd9268421"
   dependencies:
-    "@vx/group" "0.0.140"
+    "@vx/group" "0.0.143"
     classnames "^2.2.5"
     prop-types "^15.5.10"
 
-"@vx/point@0.0.136":
-  version "0.0.136"
-  resolved "https://registry.yarnpkg.com/@vx/point/-/point-0.0.136.tgz#93b325b4b95c9d5b96df740f4204017f57396559"
+"@vx/point@0.0.143":
+  version "0.0.143"
+  resolved "https://registry.yarnpkg.com/@vx/point/-/point-0.0.143.tgz#7b6dfa611175ee1b74e3c392072589a79dadf265"
 
-"@vx/responsive@^0.0.140":
-  version "0.0.140"
-  resolved "https://registry.yarnpkg.com/@vx/responsive/-/responsive-0.0.140.tgz#c73ec68b9e89a181605f1ac9ecc09f35216779a8"
+"@vx/responsive@^0.0.143":
+  version "0.0.143"
+  resolved "https://registry.yarnpkg.com/@vx/responsive/-/responsive-0.0.143.tgz#3fbfc6df9ccd9b79161d9ab882d5af6522353d62"
   dependencies:
     lodash "^4.0.8"
 
-"@vx/scale@^0.0.140":
-  version "0.0.140"
-  resolved "https://registry.yarnpkg.com/@vx/scale/-/scale-0.0.140.tgz#1eb087d11d0000b250c2cdc4061b9e2212edb10d"
+"@vx/scale@^0.0.143":
+  version "0.0.143"
+  resolved "https://registry.yarnpkg.com/@vx/scale/-/scale-0.0.143.tgz#4a13ab93f4d59cb487d6278b55606f2460091d0b"
   dependencies:
     d3-scale "^1.0.5"
 
-"@vx/shape@0.0.142", "@vx/shape@^0.0.142":
-  version "0.0.142"
-  resolved "https://registry.yarnpkg.com/@vx/shape/-/shape-0.0.142.tgz#3728eda292c004e61d9f88ae119b6154ccbf79e5"
+"@vx/shape@0.0.146", "@vx/shape@^0.0.146":
+  version "0.0.146"
+  resolved "https://registry.yarnpkg.com/@vx/shape/-/shape-0.0.146.tgz#52ef410ce06737eb4591dc6fb8be4237d31a46d5"
   dependencies:
-    "@vx/curve" "0.0.140"
-    "@vx/group" "0.0.140"
-    "@vx/point" "0.0.136"
+    "@vx/curve" "0.0.143"
+    "@vx/group" "0.0.143"
+    "@vx/point" "0.0.143"
     classnames "^2.2.5"
     d3-shape "^1.2.0"
+    prop-types "^15.5.10"
+
+"@vx/tooltip@^0.0.143":
+  version "0.0.143"
+  resolved "https://registry.yarnpkg.com/@vx/tooltip/-/tooltip-0.0.143.tgz#0c14524d9450264af597cacfcc5b5c2da5c49193"
+  dependencies:
+    "@vx/bounds" "0.0.143"
+    classnames "^2.2.5"
     prop-types "^15.5.10"
 
 abab@^1.0.3:
