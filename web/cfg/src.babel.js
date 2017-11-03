@@ -13,6 +13,8 @@ import HtmlWebpackIncludeAssetsPlugin from 'html-webpack-include-assets-plugin'
 import HtmlWebpackHarddiskPlugin from 'html-webpack-harddisk-plugin'
 import CompressionPlugin from 'compression-webpack-plugin'
 
+import { customPropertiesVariables, definePluginVariables } from './variables'
+
 const postcssPlugins = () => [
   pxToRem({
     // See available options: https://github.com/cuth/postcss-pxtorem#options
@@ -21,6 +23,11 @@ const postcssPlugins = () => [
   cssImport(),
   cssNext({
     browsers: ['> 1%', 'last 2 versions'],
+    features: {
+      customProperties: {
+        variables: customPropertiesVariables,
+      },
+    },
   }),
 ]
 
@@ -164,6 +171,9 @@ export default env => {
         minimize: isProduction,
       }),
       new webpack.EnvironmentPlugin(['NODE_ENV', 'ASPECT_TARGET']),
+      new webpack.DefinePlugin({
+        ...definePluginVariables,
+      }),
 
       extractCSS,
       new FaviconsWebpackPlugin({
