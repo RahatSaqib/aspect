@@ -35,8 +35,11 @@ const enhance = compose(
       this.props.fetchResultDashboard()
     },
   }),
-  withProps(({ siteList }) => {
+  withProps(({ siteList, resultSummaryList }) => {
     const siteStateAbbrs = siteList.map(it => it.get('stateAbbr')).toSet()
+    const siteById = siteList
+      .toKeyedSeq()
+      .mapEntries(([, it]) => [it.get('id'), it])
 
     const scale = scaleLinear()
       .domain(
@@ -62,6 +65,18 @@ const enhance = compose(
           longitude: it.get('longitude'),
         }))
         .toJS(),
+      resultSummaryList: resultSummaryList
+        .map(item =>
+          item.set(
+            'data',
+            item
+              .get('data')
+              .map(it =>
+                it.set('siteName', siteById.getIn([it.get('siteId'), 'name']))
+              )
+          )
+        )
+        .toJS(),
     }
   })
 )
@@ -86,9 +101,9 @@ export const ResultStatus = ({
         />
       </Unit>
       <Unit md="1-2" lg="2-3">
-        {resultSummaryList.map(it => (
-          <Unit key={it.get('assayTypeName')} sm="1-2" lg="1-3">
-            <ResultSummaryItemBarStack item={it} />
+        {resultSummaryList.map(item => (
+          <Unit key={item.assayTypeName} sm="1-2" lg="1-3">
+            <ResultSummaryItemBarStack item={item} />
           </Unit>
         ))}
       </Unit>
