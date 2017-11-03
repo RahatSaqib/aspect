@@ -1,4 +1,5 @@
 import _ from 'lodash'
+import { scaleLinear } from 'd3-scale'
 import classnames from 'classnames/bind'
 import React from 'react'
 import { bindActionCreators } from 'redux'
@@ -37,13 +38,25 @@ const enhance = compose(
   withProps(({ siteList }) => {
     const siteStateAbbrs = siteList.map(it => it.get('stateAbbr')).toSet()
 
+    const scale = scaleLinear()
+      .domain(
+        siteList.reduce(
+          (acc, it) => [
+            Math.min(acc[0], it.get('count')),
+            Math.max(acc[1], it.get('count')),
+          ],
+          [Infinity, -Infinity]
+        )
+      )
+      .range([3, 7])
+
     return {
       fill: ({ properties: { postal } }) =>
         siteStateAbbrs.has(postal) ? '#00c4e0' : '#a4e6f2',
       points: siteList
         .map(it => ({
           id: it.get('name'),
-          size: Math.max(3.5, Math.round(it.get('count') / 16)),
+          size: scale(it.get('count')),
           fill: '#73D749',
           latitude: it.get('latitude'),
           longitude: it.get('longitude'),
