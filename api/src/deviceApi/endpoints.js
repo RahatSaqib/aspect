@@ -47,23 +47,29 @@ const devicePayload = {
   serial: Joi.string()
     .allow('', null)
     .description('The device serial number'),
-  status: Joi.object().keys({
-    id: Joi.string()
-      .required()
-      .description(
-        'The device status. Only approved devices will deliver results.'
-      ),
-  }),
-  type: Joi.object().keys({
-    id: Joi.string()
-      .required()
-      .description('The Device Type. Required on first request with API Key'),
-  }),
-  site: Joi.object().keys({
-    id: Joi.string()
-      .required()
-      .description('ID of the site where the device is located'),
-  }),
+  status: Joi.object()
+    .allow(null)
+    .keys({
+      id: Joi.string()
+        .required()
+        .description(
+          'The device status. Only approved devices will deliver results.'
+        ),
+    }),
+  type: Joi.object()
+    .allow(null)
+    .keys({
+      id: Joi.string()
+        .required()
+        .description('The Device Type. Required on first request with API Key'),
+    }),
+  site: Joi.object()
+    .allow(null)
+    .keys({
+      id: Joi.string()
+        .required()
+        .description('ID of the site where the device is located'),
+    }),
 }
 
 const configurationPayload = {
@@ -365,15 +371,19 @@ module.exports = [
               .allow('', null)
               .description('The client checkpoint'),
             log: Joi.object()
+              .allow(null)
               .keys(logPayload)
               .description('Device Log Data'),
             configuration: Joi.object()
+              .allow(null)
               .keys(configurationPayload)
               .description('Device Configuration Data'),
             operation: Joi.object()
+              .allow(null)
               .keys(operationPayload)
               .description('Device Operation Data'),
             result: Joi.object()
+              .allow(null)
               .keys(resultPayload)
               .description('Device Result Data.'),
           })
