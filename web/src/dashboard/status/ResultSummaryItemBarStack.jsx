@@ -3,7 +3,6 @@ import React from 'react'
 import { compose, withProps, withHandlers } from 'recompose'
 import { ScaleSVG } from '@vx/responsive'
 import { BarStack } from '@vx/shape'
-import { LegendOrdinal } from '@vx/legend'
 import { scaleBand, scaleLinear, scaleOrdinal } from '@vx/scale'
 import { withTooltip, Tooltip } from '@vx/tooltip'
 import {
@@ -11,7 +10,7 @@ import {
   CustomizedAxisBottom,
 } from '../../components/graph/CustomizedAxis'
 
-const colorByResultCategoryExternalId = {
+export const colorByResultCategoryExternalId = {
   Detected: process.env['--aspect-color-shakespeare'],
   NotDetected: process.env['--aspect-color-mantis'],
   Indeterminate: process.env['--aspect-color-mountain'],
@@ -24,7 +23,7 @@ const enhance = compose(
   withProps(
     ({
       clientWidth: width = 300,
-      clientHeight: height = 500,
+      clientHeight: height = 300,
       margin: rawMargin,
       item,
     }) => {
@@ -33,7 +32,7 @@ const enhance = compose(
         { top: 0, bottom: 60, left: 40, right: 0 },
         rawMargin
       )
-      const stackTop = 150
+      const stackTop = 20
       const xMax = width
       const yMax = height - stackTop - margin.bottom
 
@@ -52,7 +51,6 @@ const enhance = compose(
         keys,
         x,
         y,
-        z,
         xScale: scaleBand({
           rangeRound: [0, xMax],
           domain: item.data.map(x),
@@ -87,7 +85,7 @@ const enhance = compose(
         }
         showTooltip({
           tooltipData,
-          tooltipTop: 100,
+          tooltipTop: 0,
           tooltipLeft: 50,
         })
       },
@@ -106,7 +104,6 @@ const ResultSummaryItemBarStack = ({
   keys,
   x,
   y,
-  z,
   xScale,
   yScale,
   zScale,
@@ -163,29 +160,6 @@ const ResultSummaryItemBarStack = ({
         }}
       />
     </ScaleSVG>
-    <div
-      style={{
-        position: 'absolute',
-        top: 20,
-        width: '100%',
-        display: 'flex',
-        justifyContent: 'flex-end',
-        fontSize: '14px',
-      }}
-    >
-      <LegendOrdinal
-        domain={item.resultCategories}
-        scale={zScale}
-        labelTransform={_.constant((datum, index) => ({
-          datum,
-          index,
-          text: datum.name,
-          value: zScale(z(datum)),
-        }))}
-        direction="column"
-        labelMargin="0 15px 0 0"
-      />
-    </div>
     {tooltipOpen && (
       <Tooltip
         top={margin.top + tooltipTop}

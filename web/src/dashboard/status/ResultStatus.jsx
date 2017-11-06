@@ -6,13 +6,17 @@ import { bindActionCreators } from 'redux'
 import { compose, lifecycle, withProps, pure } from 'recompose'
 import { connect } from 'react-redux'
 import { Card } from 'react-toolbox/lib/card'
+import { scaleOrdinal } from '@vx/scale'
+import { LegendOrdinal } from '@vx/legend'
 
 import { Unit } from '../../components/pureGrids'
 import requirePermissions from '../../components/shared/requirePermissions'
 import { fetchResultDashboard } from '../DashboardRedux'
 import Title from './Title'
 import CountryWithPoints from './CountryWithPoints'
-import ResultSummaryItemBarStack from './ResultSummaryItemBarStack'
+import ResultSummaryItemBarStack, {
+  colorByResultCategoryExternalId,
+} from './ResultSummaryItemBarStack'
 
 const cssClasses = classnames.bind(require('./Status.css'))
 
@@ -40,6 +44,7 @@ const enhance = compose(
     const siteById = siteList
       .toKeyedSeq()
       .mapEntries(([, it]) => [it.get('id'), it])
+    const domain = _.keys(colorByResultCategoryExternalId)
 
     const scale = scaleLinear()
       .domain(
@@ -65,6 +70,11 @@ const enhance = compose(
           longitude: it.get('longitude'),
         }))
         .toJS(),
+      domain,
+      zScale: scaleOrdinal({
+        domain,
+        range: _.values(colorByResultCategoryExternalId),
+      }),
       resultSummaryList: resultSummaryList
         .map(item =>
           item.set(
@@ -86,6 +96,8 @@ export const ResultStatus = ({
   title,
   fill,
   points,
+  domain,
+  zScale,
   resultSummaryList,
 }) => (
   <Card className={className}>
@@ -99,6 +111,26 @@ export const ResultStatus = ({
           onMouseEnterPoint={_.noop}
           onMouseLeavePoint={_.noop}
         />
+        <div
+          style={{
+            display: 'flex',
+            flexDirection: 'column',
+            alignItems: 'flex-end',
+          }}
+        >
+          <LegendOrdinal
+            domain={domain}
+            scale={zScale}
+            labelTransform={_.constant((datum, index) => ({
+              datum,
+              index,
+              text: datum,
+              value: zScale(datum),
+            }))}
+            direction="column"
+            labelMargin="0 15px 0 0"
+          />
+        </div>
       </Unit>
       <Unit md="1-2" lg="2-3">
         {resultSummaryList.map(item => (
