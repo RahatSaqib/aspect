@@ -14,14 +14,11 @@ function* calculateResultCounts(deviceId, assayId, resultCategory1, knex) {
 
   // if device ID wasn't passed, calculate for all devices
   if (!deviceId) {
-    deviceIds = _.map(
-      yield knex('Device as d')
-        .join('DeviceType as dt', 'd.deviceTypeId', 'dt.id')
-        .join('DeviceTypeCategory as dtc', 'dt.deviceTypeCategoryId', 'dtc.id')
-        .where('dtc.hasResults', 1)
-        .select('d.id'),
-      'id'
-    )
+    deviceIds = yield knex('Device as d')
+      .join('DeviceType as dt', 'd.deviceTypeId', 'dt.id')
+      .join('DeviceTypeCategory as dtc', 'dt.deviceTypeCategoryId', 'dtc.id')
+      .where('dtc.hasResults', 1)
+      .pluck('d.id')
   }
 
   for (const devId of deviceIds) {
