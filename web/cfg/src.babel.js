@@ -52,6 +52,8 @@ export default env => {
 
   return {
     entry: []
+      // https://github.com/babel/babel/issues/2517
+      .concat(path.resolve(__dirname, '../cfg/polyfill.js'))
       .concat(
         isDevelopment
           ? [
@@ -153,6 +155,10 @@ export default env => {
       ],
     },
     plugins: [
+      new webpack.optimize.CommonsChunkPlugin({
+        names: ['polyfill'],
+        minChunks: 2,
+      }),
       new webpack.DllReferencePlugin({
         context: path.join(__dirname, '../src'),
         manifest: require('../src/template/dll.vendor.manifest.json'),
