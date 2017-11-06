@@ -79,8 +79,11 @@ const enhance = compose(
       }),
     }
   ),
-  withProps(({ siteList, activeSiteIds }) => {
+  withProps(({ siteList, activeSiteIds, inventorySiteSummaryList }) => {
     const siteStateAbbrs = siteList.map(it => it.get('stateAbbr')).toSet()
+    const siteById = siteList
+      .toKeyedSeq()
+      .mapEntries(([, it]) => [it.get('id'), it])
 
     return {
       fill: ({ properties: { postal } }) =>
@@ -93,6 +96,11 @@ const enhance = compose(
           latitude: it.get('latitude'),
           longitude: it.get('longitude'),
         }))
+        .toJS(),
+      inventorySiteSummaryList: inventorySiteSummaryList
+        .map(it =>
+          it.set('siteName', siteById.getIn([it.get('siteId'), 'name']))
+        )
         .toJS(),
     }
   })
@@ -132,7 +140,7 @@ export const InventoryStatus = ({
         />
       </Unit>
       <Unit sm="1-2" lg="1-4">
-        <InventorySiteSummaryBar list={inventorySiteSummaryList} />
+        <InventorySiteSummaryBar data={inventorySiteSummaryList} />
       </Unit>
       <Unit sm="1-2" lg="1-4">
         <div
