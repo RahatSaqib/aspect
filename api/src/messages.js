@@ -12,15 +12,6 @@ const types = {
 // ----------- Dispatch and  Listeners -----------
 
 /**
- * Dispatch an action created by an action creator
- */
-function dispatch(action) {
-  // emit is synchronous, use setImmediate so we can
-  // clear call stack and we don't rely on synchronous execution
-  setImmediate(() => emitter.emit(action.type, action))
-}
-
-/**
  * Adds a listener for the specified message type.
  * Will be invoked with action created by action
  * creators and dispatched using dispatch
@@ -34,6 +25,42 @@ function addListener(type, listener) {
  */
 function removeListener(type, listener) {
   emitter.removeListener(type, listener)
+}
+
+/**
+ * Cretes a message context to allow transactional
+ * updates and dispatch.
+ *
+ * You should normally deal with a provided context
+ * pre-created on request/response cycle.
+ */
+function createMessageContext() {
+  return new MessageContext()
+}
+
+class MessageContext {
+  constructor() {
+    this.actions = []
+  }
+
+  dispatch(action) {
+    this.actions.push(action)
+  }
+
+  commit() {
+    console.log('COMMIT')
+    console.log({ actions: this.actions })
+    this.actions.forEach(action => dispatch(action))
+  }
+}
+
+/**
+ * Dispatch an action created by an action creator
+ */
+function dispatch(action) {
+  // emit is synchronous, use setImmediate so we can
+  // clear call stack and we don't rely on synchronous execution
+  setImmediate(() => emitter.emit(action.type, action))
 }
 
 // ----------- Action Creators -------------------
@@ -82,6 +109,7 @@ function notifyResultLogged(resultId, deviceLogId) {
 
 module.exports = {
   types,
+  createMessageContext,
   dispatch,
   addListener,
   removeListener,

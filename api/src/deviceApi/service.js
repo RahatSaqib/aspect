@@ -5,6 +5,7 @@ const { asyncHandler } = require('../routes')
 const {
   addListener,
   dispatch,
+  createMessageContext,
   notifyResultUpdated,
   notifyResultLogged,
   types: { RESULT_UPDATED, RESULT_LOGGED },
@@ -134,7 +135,7 @@ function deviceApiHandler(handler, handlerOptions) {
 
     // Dispatch actions outside of transaction
     if (deviceLogUpdate != null && deviceLogUpdate.resultId != null) {
-      dispatch(
+      context.dispatch(
         notifyResultUpdated(
           deviceLogUpdate.resultId,
           { deviceLogId },
@@ -640,16 +641,14 @@ function createNewDevice(request, now) {
 class DeviceApiContext {
   constructor(props) {
     Object.assign(this, props)
-    this.actions = this.parent ? this.parent.actions : []
-    this.dispatch = action => this.actions.push(action)
+    this.messageContext = this.parent
+      ? this.parent.messageContext
+      : createMessageContext()
+    this.dispatch = this.messageContext.dispatch.bind(this.messageContext)
   }
 
   commit() {
-    if (this.parent) {
-      this.parent.commit()
-    } else {
-      this.actions.forEach(action => dispatch(action))
-    }
+    this.messageContext.commit()
   }
 
   withPayload(payload) {
@@ -796,6 +795,8 @@ function addDeviceLogResultConstraints(queryBuilder) {
     .where('rws.externalId', '<>', 'Purged')
 }
 
+// FIXME how do we dispatch this using same context??
+// need to wait until dependent transactions for this device(?) complete
 function onResultUpdated({ resultId, message, source }) {
   if (source === DEVICE_LOG_COMMON_SOURCE) {
     // we've already created device logs originating here, so ignore
