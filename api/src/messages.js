@@ -41,10 +41,7 @@ function createMessageContext() {
 class MessageContext {
   constructor() {
     this.actions = []
-  }
-
-  dispatch(action) {
-    this.actions.push(action)
+    this.dispatch = action => this.actions.push(action)
   }
 
   commit() {
@@ -60,7 +57,8 @@ class MessageContext {
 function dispatch(action) {
   // emit is synchronous, use setImmediate so we can
   // clear call stack and we don't rely on synchronous execution
-  setImmediate(() => emitter.emit(action.type, action))
+  const context = { dispatch }
+  setImmediate(() => emitter.emit(action.type, action, context))
 }
 
 // ----------- Action Creators -------------------

@@ -4,7 +4,6 @@ const { knex, transact } = require('../db')
 const { asyncHandler } = require('../routes')
 const {
   addListener,
-  dispatch,
   createMessageContext,
   notifyResultUpdated,
   notifyResultLogged,
@@ -797,10 +796,10 @@ function addDeviceLogResultConstraints(queryBuilder) {
 
 // FIXME how do we dispatch this using same context??
 // need to wait until dependent transactions for this device(?) complete
-function onResultUpdated({ resultId, message, source }) {
+function onResultUpdated({ resultId, message, source }, context) {
   if (source === DEVICE_LOG_COMMON_SOURCE) {
     // we've already created device logs originating here, so ignore
-    dispatch(notifyResultLogged(resultId, message.deviceLogId))
+    context.dispatch(notifyResultLogged(resultId, message.deviceLogId))
   } else {
     // TODO dispatch from client API using plugin so
     // senderIp, createdOn, source, etc are available
@@ -822,13 +821,12 @@ function onResultUpdated({ resultId, message, source }) {
       .first('deviceId')
       .then(updateDeviceLog)
       .then(([deviceLogId]) =>
-        dispatch(notifyResultLogged(resultId, deviceLogId))
+        context.dispatch(notifyResultLogged(resultId, deviceLogId))
       )
   }
 }
 
-function onResultLogged({ resultId }) {
-  const context = new DeviceApiContext({})
+function onResultLogged({ resultId }, context) {
   transact(function*(knex) {
     const { plugin } = yield knex('Result as r')
       .join('Partner as p', 'r.partnerId', 'p.id')
@@ -844,7 +842,7 @@ function onResultLogged({ resultId }) {
       resultId,
     }
     yield* onResultLogged(pluginContext)
-  }).then(() => context.commit())
+  })
 }
 
 addListener(RESULT_UPDATED, onResultUpdated)
