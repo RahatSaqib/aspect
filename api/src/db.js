@@ -2,8 +2,10 @@ const _ = require('lodash')
 const { getSortPageParams, getSortParams, getPageParams } = require('./routes')
 
 let knex = null // see load
+let Description = ''
 
-function query() {
+function query(description) {
+  Description = description
   return load()
 }
 
@@ -150,6 +152,7 @@ module.exports = {
   run,
   seed,
   transact,
+  description: Description,
 }
 
 Object.defineProperty(module.exports, 'knex', { get: load })
