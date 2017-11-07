@@ -335,6 +335,7 @@ async function up(knex) {
     deviceType.string('externalId').notNullable()
     deviceType.string('name').notNullable()
     deviceType.string('manufacturer').notNullable()
+    deviceType.string('plugin')
     deviceType.specificType('configurationDataSchema', 'JSON')
     deviceType.specificType('deviceOperationSchema', 'JSON')
     deviceType.charset('utf8')
@@ -378,8 +379,8 @@ async function up(knex) {
     site.string('timezoneId', 45)
     site.integer('hoursStart')
     site.integer('hoursEnd')
-    addCreateFields(site)
-    addUpdateFields(site)
+    addCreateFieldsNullable(site)
+    addUpdateFieldsNullable(site)
     site.charset('utf8')
   })
 
@@ -1148,8 +1149,8 @@ function addCreateFields(table) {
   table.dateTime('createdOn').notNullable()
   table
     .integer('createdBy')
-    .unsigned()
     .notNullable()
+    .unsigned()
     .index()
     .references('id')
     .inTable('User')
@@ -1160,8 +1161,8 @@ function addUpdateFields(table) {
   table.dateTime('updatedOn').notNullable()
   table
     .integer('updatedBy')
-    .unsigned()
     .notNullable()
+    .unsigned()
     .index()
     .references('id')
     .inTable('User')

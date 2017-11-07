@@ -25,6 +25,9 @@ const plugins = {
     postProcessUpdateSite: require('./malawi/postProcessUpdateSite'),
     onResultLogged: require('./malawi/onResultLogged'),
   },
+  gxconnect: {
+    preProcessMergeResult: require('./gxconnect/preProcessMergeResult'),
+  },
 }
 
 /**

@@ -359,6 +359,7 @@ async function mergeResultWithContext(context) {
 
   const pluginContext = {
     knex,
+    deviceId,
     dispatch,
     deviceType,
     payload,
@@ -431,6 +432,7 @@ async function createDeviceApiContext(request, handlerOptions) {
       'd.siteId',
       'ds.token as status',
       'dt.externalId as deviceType',
+      'dt.plugin as deviceTypePluginName',
       'dtc.name as deviceTypeCategory'
     )
 
@@ -466,7 +468,7 @@ async function createDeviceApiContext(request, handlerOptions) {
     query: request.query,
     deviceLogType,
     partnerId: partner.id,
-    pluginName: partner.plugin,
+    pluginName: partner.plugin || device.deviceTypePluginName,
   })
 
   // Add Device Log if requested
@@ -584,7 +586,7 @@ function createNewDevice(request, now) {
     }
     const deviceType = await knex('DeviceType')
       .where({ externalId: deviceTypeExternalId })
-      .first('id', 'name')
+      .first('id', 'name', 'plugin')
     if (deviceType == null) {
       return {
         error: Boom.badRequest(
@@ -617,6 +619,7 @@ function createNewDevice(request, now) {
       serial: payload.serial,
       status: apiKey.siteId ? 'approved' : 'provisioned',
       deviceType: deviceTypeExternalId,
+      deviceTypePluginName: deviceType.plugin,
     }
     const inserts = {
       partnerId: device.partnerId,

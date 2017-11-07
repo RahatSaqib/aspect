@@ -264,6 +264,7 @@ async function seed(knex) {
     externalId: 'CepheidGeneXpert',
     name: 'GeneXpert',
     manufacturer: 'Cepheid',
+    plugin: 'gxconnect',
     deviceTypeCategoryId: deviceTypeCategoryLab,
     configurationDataSchema: geneXpertConfigurationDataSchema,
     deviceOperationSchema,
@@ -461,6 +462,11 @@ async function seed(knex) {
   await knex('AssayType').insert({
     name: 'TB G&D',
     i18nKey: 'assayTypeTbGnd',
+  })
+
+  yield knex('AssayType').insert({
+    name: 'Unknown',
+    i18nKey: 'assayTypeUnknown',
   })
 
   // define resultData object
