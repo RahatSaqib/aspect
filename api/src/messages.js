@@ -1,3 +1,4 @@
+const { transact } = require('./db')
 // TODO switch to Message Queue? Make more Redux Like?
 const EventEmitter = require('events')
 
@@ -40,14 +41,64 @@ function createMessageContext() {
 
 class MessageContext {
   constructor() {
-    this.actions = []
-    this.dispatch = action => this.actions.push(action)
+    this.dispatch = this.dispatch.bind(this)
+    this.transact = this.transact.bind(this)
+    this.rollback = this.rollback.bind(this)
+    this.commit = this.commit.bind(this)
+
+    this.reset()
+  }
+
+  dispatch(action) {
+    if (this.transaction) {
+      console.log('Enqueue')
+      console.log(action)
+      this.actions.push(action)
+    } else {
+      console.log('Internal Dispatch')
+      emit(action, this)
+    }
+  }
+
+  transact(task) {
+    this.tasks.push(task)
+    if (!this.transaction) {
+      console.log('Begin!')
+      const context = this
+      context.transaction = transact(function*(knex) {
+        while (context.tasks.length) {
+          const task = context.tasks.shift()
+          console.log('Execute')
+          yield* task(knex)
+        }
+      })
+        .then(context.commit)
+        .then(null, err => {
+          context.rollback()
+          throw err
+        })
+    }
+    return this.transaction
   }
 
   commit() {
     console.log('COMMIT')
+    const { actions } = this
+    console.log({ actions })
+    this.reset()
+    actions.forEach(action => this.dispatch(action))
+  }
+
+  rollback() {
+    console.log('ROLLBACK')
     console.log({ actions: this.actions })
-    this.actions.forEach(action => dispatch(action))
+    this.reset()
+  }
+
+  reset() {
+    this.transaction = null
+    this.actions = []
+    this.tasks = []
   }
 }
 
@@ -55,10 +106,13 @@ class MessageContext {
  * Dispatch an action created by an action creator
  */
 function dispatch(action) {
-  // emit is synchronous, use setImmediate so we can
-  // clear call stack and we don't rely on synchronous execution
-  const context = { dispatch }
-  setImmediate(() => emitter.emit(action.type, action, context))
+  console.log('Dispatch External')
+  console.log(action)
+  emit(action, createMessageContext())
+}
+
+function emit(action, context) {
+  emitter.emit(action.type, action, context)
 }
 
 // ----------- Action Creators -------------------

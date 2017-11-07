@@ -117,7 +117,7 @@ function deviceApiHandler(handler, handlerOptions) {
 
     let response = {}
     let deviceLogUpdate = null
-    yield transact(function*(knex) {
+    yield context.messageContext.transact(function*(knex) {
       context.knex = knex
       response = yield* handler(context)
 
@@ -130,20 +130,17 @@ function deviceApiHandler(handler, handlerOptions) {
             .update(deviceLogUpdate)
         }
       }
-    })
 
-    // Dispatch actions outside of transaction
-    if (deviceLogUpdate != null && deviceLogUpdate.resultId != null) {
-      context.dispatch(
-        notifyResultUpdated(
-          deviceLogUpdate.resultId,
-          { deviceLogId },
-          DEVICE_LOG_COMMON_SOURCE
+      if (deviceLogUpdate != null && deviceLogUpdate.resultId != null) {
+        context.dispatch(
+          notifyResultUpdated(
+            deviceLogUpdate.resultId,
+            { deviceLogId },
+            DEVICE_LOG_COMMON_SOURCE
+          )
         )
-      )
-    }
-    context.commit()
-
+      }
+    })
     return response
   })
 }
@@ -646,10 +643,6 @@ class DeviceApiContext {
     this.dispatch = this.messageContext.dispatch.bind(this.messageContext)
   }
 
-  commit() {
-    this.messageContext.commit()
-  }
-
   withPayload(payload) {
     return new DeviceApiContext(
       Object.assign({}, this, { payload, parent: this })
@@ -827,7 +820,8 @@ function onResultUpdated({ resultId, message, source }, context) {
 }
 
 function onResultLogged({ resultId }, context) {
-  transact(function*(knex) {
+  console.log('onResultLogged '+resultId)
+  context.transact(function*(knex) {
     const { plugin } = yield knex('Result as r')
       .join('Partner as p', 'r.partnerId', 'p.id')
       .where({ 'r.id': resultId })
