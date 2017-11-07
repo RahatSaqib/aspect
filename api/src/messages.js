@@ -51,11 +51,8 @@ class MessageContext {
 
   dispatch(action) {
     if (this.transaction) {
-      console.log('Enqueue')
-      console.log(action)
       this.actions.push(action)
     } else {
-      console.log('Internal Dispatch')
       emit(action, this)
     }
   }
@@ -63,12 +60,10 @@ class MessageContext {
   transact(task) {
     this.tasks.push(task)
     if (!this.transaction) {
-      console.log('Begin!')
       const context = this
       context.transaction = transact(function*(knex) {
         while (context.tasks.length) {
           const task = context.tasks.shift()
-          console.log('Execute')
           yield* task(knex)
         }
       })
@@ -82,16 +77,12 @@ class MessageContext {
   }
 
   commit() {
-    console.log('COMMIT')
     const { actions } = this
-    console.log({ actions })
     this.reset()
     actions.forEach(action => this.dispatch(action))
   }
 
   rollback() {
-    console.log('ROLLBACK')
-    console.log({ actions: this.actions })
     this.reset()
   }
 
@@ -106,8 +97,6 @@ class MessageContext {
  * Dispatch an action created by an action creator
  */
 function dispatch(action) {
-  console.log('Dispatch External')
-  console.log(action)
   emit(action, createMessageContext())
 }
 

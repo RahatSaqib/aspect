@@ -787,8 +787,6 @@ function addDeviceLogResultConstraints(queryBuilder) {
     .where('rws.externalId', '<>', 'Purged')
 }
 
-// FIXME how do we dispatch this using same context??
-// need to wait until dependent transactions for this device(?) complete
 function onResultUpdated({ resultId, message, source }, context) {
   if (source === DEVICE_LOG_COMMON_SOURCE) {
     // we've already created device logs originating here, so ignore
@@ -820,7 +818,6 @@ function onResultUpdated({ resultId, message, source }, context) {
 }
 
 function onResultLogged({ resultId }, context) {
-  console.log('onResultLogged '+resultId)
   context.transact(function*(knex) {
     const { plugin } = yield knex('Result as r')
       .join('Partner as p', 'r.partnerId', 'p.id')
