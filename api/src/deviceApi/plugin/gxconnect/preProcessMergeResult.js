@@ -19,10 +19,13 @@ function* preProcessMergeResult({ knex, deviceId, payload }) {
     throw Boom.notFound(`Cannot find device ${deviceId}`)
   }
   yield* createAssayIfNotExists(knex, device, payload)
+  if (!_.isEmpty(payload.data)) {
+    payload.category = getResultCategories(payload)
+  }
 }
 
 function* createAssayIfNotExists(knex, device, payload) {
-  const payloadAssayId = _.get(payload, 'result.assay.id', false)
+  const payloadAssayId = _.get(payload, 'assay.id', false)
   const assay = yield knex
     .from('Assay as a')
     .where({ 'a.externalId': payloadAssayId })
@@ -35,17 +38,8 @@ function* createAssayIfNotExists(knex, device, payload) {
       .select('at.id')
       .first()
     if (!_.isEmpty(unknownAssayType)) {
-      if (!device.deviceTypeId) {
-        const deviceTypeExternalId = _.get(payload, 'type.id')
-        const deviceType = yield knex
-          .from('DeviceType as dt')
-          .where({ 'dt.externalid': deviceTypeExternalId })
-          .select('dt.id')
-          .first()
-        device.deviceTypeId = deviceType.id
-      }
       const resultSourceExternalId =
-        _.get(payload, 'result.source.id') || 'DiagnosticDevice'
+        _.get(payload, 'source.id') || 'DiagnosticDevice'
       const resultSource = knex
         .from('ResultSource as rs')
         .where({ 'rs.externalid': resultSourceExternalId })
@@ -78,6 +72,104 @@ function* createAssayIfNotExists(knex, device, payload) {
       )
     }
   }
+}
+
+function getResultCategories(payload) {
+  let payloadCategory = _.get(payload, 'category')
+  if (_.isEmpty(payloadCategory)) {
+    payloadCategory = []
+    const payloadResultText = _.get(payload, 'data.ResultText')
+    if (payloadResultText) {
+      const resultTextValues = payloadResultText.split('|')
+      if (resultTextValues.length > 0) {
+        const result1Text = resultTextValues[0]
+          .toLowerCase()
+          .replace(/mtb/, '')
+          .trim()
+        const result1CategoryMapping = {
+          'not detected': 'NotDetected',
+          'não detectado': 'NotDetected',
+          'не обнаружен': 'NotDetected',
+          'non détecté': 'NotDetected',
+          'no detectado': 'NotDetected',
+          'detected': 'Detected',
+          'detected very low': 'Detected',
+          'detected low': 'Detected',
+          'detected medium': 'Detected',
+          'detected high': 'Detected',
+          'detectado': 'Detected',
+          'detectado alto': 'Detected',
+          'detectado médio': 'Detected',
+          'detectado baixo': 'Detected',
+          'detectado muito baixo': 'Detected',
+          'обнаружен': 'Detected',
+          'обнаружен очень низкий': 'Detected',
+          'обнаружен низкий': 'Detected',
+          'обнаружен средний': 'Detected',
+          'обнаружен высокий': 'Detected',
+          'détecté': 'Detected',
+          'détecté très bas': 'Detected',
+          'détecté bas': 'Detected',
+          'détecté moyen': 'Detected',
+          'détecté élevé': 'Detected',
+          'detectado muy bajo': 'Detected',
+          'detectado bajo': 'Detected',
+          'detectado medio': 'Detected',
+          'invalid': 'Invalid',
+          'inválido': 'Invalid',
+          'недействительный': 'Invalid',
+          'non valide': 'Invalid',
+          'no result': 'NoResult',
+          'sem resultado': 'NoResult',
+          'безрезультатно': 'NoResult',
+          'sans résultat': 'NoResult',
+          'sin resultado': 'NoResult',
+          'error': 'Error',
+          'erro': 'Error',
+          'ошибка': 'Error',
+          'erreur': 'Error'
+        }
+        if (result1CategoryMapping[result1Text]) {
+          payloadCategory = [{ id: result1CategoryMapping[result1Text] }]
+        }
+      }
+      const mtbResult = _.isEmpty(payloadCategory)
+        ? null
+        : payloadCategory[0].id
+      if (resultTextValues.length > 1) {
+        const result2Text = resultTextValues[1]
+          .toLowerCase()
+          .replace(/rif resistance/, '')
+          .trim()
+        if (mtbResult === 'Detected') {
+          const result2CategoryMapping = {
+            'not detected': 'NotDetected',
+            'não detectado': 'NotDetected',
+            'не обнаружен': 'NotDetected',
+            'non détecté': 'NotDetected',
+            'no detectado': 'NotDetected',
+            'detected': 'Detected',
+            'detectado': 'Detected',
+            'обнаружен': 'Detected',
+            'détecté': 'Detected',
+            'indeterminate': 'Indeterminate',
+            'indeterminado': 'Indeterminate',
+            'неопределенный': 'Indeterminate',
+            'indéterminé': 'Indeterminate',
+          }
+          if (result2CategoryMapping[result2Text]) {
+            payloadCategory = [
+              ...payloadCategory,
+              { id: result2CategoryMapping[result2Text] },
+            ]
+          }
+        }
+      } else if (mtbResult === 'Detected') {
+        payloadCategory = [...payloadCategory, { id: 'Indeterminate' }]
+      }
+    }
+  }
+  return payloadCategory
 }
 
 module.exports = preProcessMergeResult

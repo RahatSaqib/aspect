@@ -210,7 +210,7 @@ const resultPayload = {
           .required()
           .description(
             'Assay dependent categorization of the Result.  Default Error if error specified,' +
-              ' otherwise OK. If the Assay supports only a single category, can send a single' +
+              ' otherwise Success. If the Assay supports only a single category, can send a single' +
               ' JSON object instead of an Array.'
           ),
       })
