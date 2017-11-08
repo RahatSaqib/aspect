@@ -149,8 +149,11 @@ function deviceApiHandler(handler, handlerOptions) {
 
 async function addDeviceDataWithContext(context) {
   const response = {}
-  const { knex, now, payload, device } = context
+  const { knex, now, payload, device, pluginName: plugin } = context
   const { name, site, result, configuration, operation } = payload
+
+  const preProcessAddDeviceData = await loadPlugin(plugin, 'preProcessAddDeviceData')
+  await preProcessAddDeviceData(context)
 
   if (name) {
     await knex('Device')
@@ -256,6 +259,7 @@ async function addDeviceOperationWithContext(context) {
 
 async function updateDeviceConfigurationWithContext(context) {
   const { knex, payload, device: { id: deviceId } } = context
+
   const config = await updateDeviceConfiguration(knex, deviceId, payload)
   context.addDeviceLogUpdate('deviceConfigurationUpdated', true)
   return config
@@ -456,7 +460,7 @@ async function createDeviceApiContext(request, handlerOptions) {
   const partner = await knex('Partner as p')
     .innerJoin('Device as d', 'd.partnerId', 'p.id')
     .where({ 'd.id': device.id })
-    .first('p.id', 'p.deviceLogHistoryDays', 'p.plugin')
+    .first('p.id', 'p.deviceLogHistoryDays', 'p.plugin as partnerPluginName')
   if (partner == null) {
     return { error: Boom.internal('Device not assigned to partner') }
   }
@@ -468,7 +472,7 @@ async function createDeviceApiContext(request, handlerOptions) {
     query: request.query,
     deviceLogType,
     partnerId: partner.id,
-    pluginName: partner.plugin || device.deviceTypePluginName,
+    pluginName: partner.partnerPluginName || device.deviceTypePluginName,
   })
 
   // Add Device Log if requested
@@ -557,8 +561,19 @@ function createNewDevice(request, now) {
         revoked: false,
         deviceId: null,
       })
-      .join('Partner as p', 'p.id', 'k.partnerId')
-      .first('k.id', 'k.partnerId', 'k.geographyId', 'k.siteId', 'p.plugin')
+      .leftJoin('Partner as p', 'p.id', 'k.partnerId')
+      .leftJoin(
+        'DeviceType as dt',
+        knex.raw(`'${_.get(request, 'payload.type.id')}'`),
+        'dt.externalId'
+      )
+      .first(
+        'k.id',
+        'k.partnerId',
+        'k.geographyId',
+        'k.siteId',
+        knex.raw('coalesce(p.plugin, dt.plugin) as plugin')
+      )
     if (apiKey == null) {
       return {
         error: Boom.notFound(
@@ -847,9 +862,11 @@ function onResultUpdated({ resultId, message, source }, context) {
 function onResultLogged({ resultId }, context) {
   context.transact(async knex => {
     const { plugin } = await knex('Result as r')
-      .join('Partner as p', 'r.partnerId', 'p.id')
+      .leftJoin('Partner as p', 'r.partnerId', 'p.id')
+      .leftJoin('Device as d', 'r.deviceId', 'd.id')
+      .leftJoin('DeviceType as dt', 'd.deviceTypeId', 'dt.id')
       .where({ 'r.id': resultId })
-      .first('p.plugin')
+      .first(knex.raw('coalesce(p.plugin, dt.plugin) as plugin'))
     const onResultLogged = await loadPlugin(plugin, 'onResultLogged')
     const now = new Date()
 

@@ -9,6 +9,7 @@ const {
 const plugins = {
   default: {
     transformNewDevicePayload,
+    preProcessAddDeviceData,
     preProcessUpdateSite,
     postProcessUpdateSite,
     preProcessGetResult,
@@ -26,6 +27,7 @@ const plugins = {
     onResultLogged: require('./malawi/onResultLogged'),
   },
   gxconnect: {
+    preProcessAddDeviceData: require('./gxconnect/preProcessAddDeviceData'),
     preProcessMergeResult: require('./gxconnect/preProcessMergeResult'),
   },
 }
@@ -62,6 +64,14 @@ async function transformNewDevicePayload({ payload }) {
  * or querying of site.
  */
 async function preProcessUpdateSite(/* context */) {
+  // nothing to do by default
+}
+
+/**
+ * Device payload has been sent to Aspect, called before
+ * any f this data has been processed
+ */
+function* preProcessAddDeviceData(/* context */) {
   // nothing to do by default
 }
 
