@@ -233,7 +233,6 @@ export class ResetPassword extends PureComponent {
                         {...messages.checkEmailContent}
                         values={{ emailAddress }}
                       />{' '}
-                      <br />
                       <a
                         href="#showAdminHelp"
                         onClick={this.showAdminHelpDialog}
