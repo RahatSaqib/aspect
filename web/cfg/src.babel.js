@@ -154,10 +154,6 @@ export default env => {
       ],
     },
     plugins: [
-      new webpack.optimize.CommonsChunkPlugin({
-        names: ['polyfill'],
-        minChunks: 2,
-      }),
       new webpack.DllReferencePlugin({
         context: path.join(__dirname, '../src'),
         manifest: require('../src/template/dll.vendor.manifest.json'),
