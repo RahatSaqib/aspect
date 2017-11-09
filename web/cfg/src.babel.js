@@ -52,11 +52,10 @@ export default env => {
 
   return {
     entry: []
-      // https://github.com/babel/babel/issues/2517
-      .concat(path.resolve(__dirname, '../cfg/polyfill.js'))
       .concat(
         isDevelopment
           ? [
+              'core-js/es6/symbol',
               'react-hot-loader/patch',
               'webpack-dev-server/client?http://localhost:8000',
               'webpack/hot/only-dev-server',
