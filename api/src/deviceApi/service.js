@@ -251,18 +251,36 @@ async function getDeviceDataWithContext(context) {
 }
 
 async function addDeviceOperationWithContext(context) {
-  const { knex, payload, device: { id: deviceId }, now } = context
+  const {
+    knex,
+    payload,
+    device: { id: deviceId },
+    now,
+    pluginName: plugin,
+  } = context
   const op = await addDeviceOperation(knex, deviceId, payload, now)
   context.addDeviceLogUpdate('deviceOperationId', op.id)
-  return {}
+
+  const postProcess = await loadPlugin(plugin, 'postProcessAddDeviceOperation')
+  return await postProcess(context)
 }
 
 async function updateDeviceConfigurationWithContext(context) {
-  const { knex, payload, device: { id: deviceId } } = context
+  const {
+    knex,
+    payload,
+    device: { id: deviceId },
+    now,
+    pluginName: plugin,
+  } = context
 
-  const config = await updateDeviceConfiguration(knex, deviceId, payload)
+  await updateDeviceConfiguration(knex, deviceId, payload, now)
   context.addDeviceLogUpdate('deviceConfigurationUpdated', true)
-  return config
+  const postProcess = await loadPlugin(
+    plugin,
+    'postProcessUpdateDeviceConfiguration'
+  )
+  return await postProcess(context)
 }
 
 async function getDeviceOperationWithContext(context) {
