@@ -55,6 +55,7 @@ export default env => {
       .concat(
         isDevelopment
           ? [
+              'core-js/es6/symbol',
               'react-hot-loader/patch',
               'webpack-dev-server/client?http://localhost:8000',
               'webpack/hot/only-dev-server',

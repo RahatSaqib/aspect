@@ -232,7 +232,7 @@ export class ResetPassword extends PureComponent {
                       <FormattedHTMLMessage
                         {...messages.checkEmailContent}
                         values={{ emailAddress }}
-                      />
+                      />{' '}
                       <a
                         href="#showAdminHelp"
                         onClick={this.showAdminHelpDialog}
