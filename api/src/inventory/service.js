@@ -522,20 +522,19 @@ async function addInventory(request) {
 
   const currentlyLoggedInUser = await getUser(auth.credentials.name)
   const now = new Date()
-  const inventoryItemId = await increaseInventory(
-    toSite.id,
+  const inventoryItemId = await increaseInventory({
+    siteId: toSite.id,
     consumableId,
     expiresOn,
     lotNumber,
     quantity,
     reasonId,
-    dateAdjusted,
-    undefined,
+    dateAdjustedFrom: dateAdjusted,
     notes,
     now,
-    'add',
-    currentlyLoggedInUser.id
-  )
+    operation: 'add',
+    userId: currentlyLoggedInUser.id,
+  })
 
   return {
     ok: true,
@@ -572,20 +571,21 @@ async function removeInventory(request) {
 
   const currentlyLoggedInUser = await getUser(auth.credentials.name)
   const now = new Date()
-  const inventoryItemId = await decreaseInventory(
-    fromSite.id,
+
+  const inventoryItemId = await decreaseInventory({
+    siteId: fromSite.id,
     consumableId,
     expiresOn,
     lotNumber,
     quantity,
     reasonId,
-    dateAdjusted || dateAdjustedFrom,
+    dateAdjustedFrom: dateAdjusted || dateAdjustedFrom,
     dateAdjustedTo,
     notes,
     now,
-    'remove',
-    currentlyLoggedInUser.id
-  )
+    operation: 'remove',
+    userId: currentlyLoggedInUser.id,
+  })
 
   return {
     ok: true,
@@ -765,100 +765,40 @@ async function receiveInventory(request) {
   }
 }
 
-async function decreaseInventory(
-  siteId,
-  consumableId,
-  expiresOn,
-  lotNumber,
-  quantity,
-  reasonId,
-  dateAdjustedFrom,
-  dateAdjustedTo,
-  notes,
-  now,
-  operation,
-  userId,
-  useKnex
-) {
+async function decreaseInventory(inventoryAjustment) {
   const inventoryItemId = await changeInventoryQuantity(
-    siteId,
-    consumableId,
-    expiresOn,
-    lotNumber,
-    -quantity,
-    reasonId,
-    dateAdjustedFrom,
-    dateAdjustedTo,
-    notes,
-    now,
-    operation,
-    userId,
-    useKnex
+    _.merge(inventoryAjustment, { quantity: -inventoryAjustment.quantity })
   )
-  return inventoryItemId
 }
 
-async function increaseInventory(
-  siteId,
-  consumableId,
-  expiresOn,
-  lotNumber,
-  quantity,
-  reasonId,
-  dateAdjustedFrom,
-  dateAdjustedTo,
-  notes,
-  now,
-  operation,
-  userId,
-  useKnex
-) {
-  const inventoryItemId = await changeInventoryQuantity(
-    siteId,
-    consumableId,
-    expiresOn,
-    lotNumber,
-    quantity,
-    reasonId,
-    dateAdjustedFrom,
-    dateAdjustedTo,
-    notes,
-    now,
-    operation,
-    userId,
-    useKnex
-  )
-  return inventoryItemId
+async function increaseInventory(inventoryAjustment) {
+  const inventoryItemId = await changeInventoryQuantity(inventoryAjustment)
 }
 
-async function changeInventoryQuantity(
-  siteId,
-  consumableId,
-  expiresOn,
-  lotNumber,
-  quantity,
-  reasonId,
-  dateAdjustedFrom,
-  dateAdjustedTo,
-  notes,
-  now,
-  operation,
-  userId,
-  useKnex
-) {
+async function changeInventoryQuantity({
+                                    siteId,
+                                    consumableId,
+                                    expiresOn,
+                                    lotNumber,
+                                    quantity,
+                                    reasonId,
+                                    dateAdjustedFrom,
+                                    dateAdjustedTo,
+                                    notes,
+                                    now,
+                                    operation,
+                                    userId,
+                                  }) {
   const inventoryItem = await findInventoryItem(
     siteId,
     consumableId,
     expiresOn,
     lotNumber
   )
-  if (!useKnex) {
-    useKnex = knex
-  }
   let inventoryItemId = -1
-  await transact(async useKnex {
+  await transact(async knex => {
     inventoryItemId = await upsertInventoryItem(
-      useKnex,
+      knex,
       inventoryItem,
       consumableId,
       siteId,
@@ -869,7 +809,7 @@ async function changeInventoryQuantity(
       userId
     )
 
-    await useKnex('InventoryLog').insert({
+    await knex('InventoryLog').insert({
       inventoryItemId,
       consumableId,
       siteId,

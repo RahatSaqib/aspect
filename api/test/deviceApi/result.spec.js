@@ -11,7 +11,6 @@ const {
   getLastResultId,
 } = require('./utils')
 
-// This agent refers to PORT where program is running.
 const server = supertest.agent('http://localhost:8080')
 const { assert } = chai
 

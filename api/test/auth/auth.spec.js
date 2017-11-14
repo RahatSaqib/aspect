@@ -5,7 +5,6 @@ const uuid = require('node-uuid')
 const config = require('../../src/config')
 const shared = require('../utils/sharedToken')
 
-// This agent refers to PORT where program is runninng.
 const server = supertest.agent('http://localhost:8080')
 const { assert } = chai
 

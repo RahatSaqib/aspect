@@ -71,18 +71,12 @@ async function listConsumableReasons(request) {
   return result
 }
 
-function* findConsumables(knownConsumableDetails, useKnex) {
-  if (!useKnex) {
-    useKnex = knex
-  }
-  return yield useKnex('Consumable').where(knownConsumableDetails).select()
+function* findConsumables(knownConsumableDetails) {
+  return yield knex('Consumable').where(knownConsumableDetails).select()
 }
 
-function* findConsumableReasons(knownConsumableReasonDetails, useKnex) {
-  if (!useKnex) {
-    useKnex = knex
-  }
-  return yield useKnex('ConsumableReason')
+function* findConsumableReasons(knownConsumableReasonDetails) {
+  return yield knex('ConsumableReason')
     .where(knownConsumableReasonDetails)
     .select()
 }
