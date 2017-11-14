@@ -913,21 +913,8 @@ async function up(knex) {
     inventoryItem.string('lotNumber')
     inventoryItem.dateTime('expiresOn')
     inventoryItem.float('quantityOnHand')
-    inventoryItem.dateTime('createdOn').notNullable()
-    inventoryItem
-      .integer('createdBy')
-      .unsigned()
-      .notNullable()
-      .index()
-      .references('id')
-      .inTable('User')
-    inventoryItem.dateTime('updatedOn').notNullable()
-    inventoryItem
-      .integer('updatedBy')
-      .unsigned()
-      .index()
-      .references('id')
-      .inTable('User')
+    addCreateFieldsNullable(inventoryItem)
+    addUpdateFieldsNullable(inventoryItem)
     inventoryItem.charset('utf8')
   })
 
@@ -968,37 +955,26 @@ async function up(knex) {
     inventoryLog.string('notes', 2000)
     inventoryLog.dateTime('adjustedFrom')
     inventoryLog.dateTime('adjustedTo')
-    inventoryLog.dateTime('createdOn').notNullable()
-    inventoryLog
-      .integer('createdBy')
-      .unsigned()
-      .index()
-      .references('id')
-      .inTable('User')
+    addCreateFieldsNullable(inventoryLog)
     inventoryLog.charset('utf8')
   })
 
   // this table logs any change of QC-Check checkbox on 'Result Details' page
-  await knex.schema.createTable('ResultQualityControlLog', x => {
-    x.increments('id')
-    x
-      .integer('resultId')
-      .unsigned()
-      .references('id')
-      .inTable('Result')
-    x
-      .boolean('qcCheck')
-      .notNullable()
-      .defaultTo(0)
-    x.dateTime('createdOn').notNullable()
-    x
-      .integer('createdBy')
-      .notNullable()
-      .unsigned()
-      .index()
-      .references('id')
-      .inTable('User')
-    x.charset('utf8')
+  await knex.schema.createTable(
+    'ResultQualityControlLog',
+    resultQualityControlLog => {
+      resultQualityControlLog.increments('id')
+      resultQualityControlLog
+        .integer('resultId')
+        .unsigned()
+        .references('id')
+        .inTable('Result')
+      resultQualityControlLog
+        .boolean('qcCheck')
+        .notNullable()
+        .defaultTo(0)
+      addCreateFields(resultQualityControlLog)
+      resultQualityControlLog.charset('utf8')
   })
 
   // facts-table for result counts by device
