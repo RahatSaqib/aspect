@@ -53,8 +53,8 @@ function* addResultCategory(context, result) {
       externalId = 'CollectNewSample'
     } else if (resultText === 'Discordant') {
       externalId = 'Discordant  '
-    } else if (resultText === 'Intermediate') {
-      externalId = 'Intermediate'
+    } else if (resultText === 'Indeterminate') {
+      externalId = 'Indeterminate'
     } else if (resultText === 'Invalid') {
       externalId = 'Invalid'
     } else if (resultText === 'Negative') {
