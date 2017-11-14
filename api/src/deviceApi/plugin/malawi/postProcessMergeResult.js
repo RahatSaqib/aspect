@@ -1,11 +1,17 @@
+const _ = require('lodash')
 const { addResultWorkflowLogIfChanged } = require('../common')
 const { notifyResultUpdated } = require('../../../messages')
 
 const VALIDATED_EXTERNALID = 'Validated'
 const DELIVERABLE_EXTERNALID = 'Deliverable'
+const EXTERNAL_ID_HIV_VL = 'HivVl'
+const EXTERNAL_ID_EID = 'EID'
+const DEVICE_TYPE_EXTERNAL_ID = 'CHAILIMS'
+const RESULT_TEXT_LDL = '< LDL'
 
 function* postProcessMergeResult(context, result, previousResult) {
   const { knex, payload, now } = context
+  const { deviceId } = result
   yield* addResultWorkflowLogIfChanged(
     knex,
     payload,
@@ -14,10 +20,78 @@ function* postProcessMergeResult(context, result, previousResult) {
     'Device API Update',
     now
   )
+
+  const deviceTypeExternalId = (yield knex('Device as d')
+    .where('d.id', deviceId)
+    .join('DeviceType as dt', 'd.deviceTypeid', 'dt.id')
+    .first('dt.externalId')).externalId
+
+  if (deviceTypeExternalId === DEVICE_TYPE_EXTERNAL_ID) {
+    yield* checkResultDeliverable(context, result)
+    yield* addResultCategory(context, result)
+  }
+
   // TODO do we want to consume in inventory in malawi plugin? (we don't use it)
   // yield* consumeInventoryForResult(knex, payload, result)
-  yield* checkResultDeliverable(context, result)
+
   return {}
+}
+
+// Add category to result]
+function* addResultCategory(context, result) {
+  const { knex, dispatch } = context
+  const { id: resultId, assayId, resultData } = result
+  const { resultText, copies } = JSON.parse(resultData)
+  const assayExternalId = (yield knex('Assay as a')
+    .where({ 'a.id': assayId })
+    .first('a.externalId')).externalId
+
+  // Add EID categories
+  let externalId = ''
+  if (assayExternalId === EXTERNAL_ID_EID) {
+    if (resultText === 'Collect New Sample') {
+      externalId = 'CollectNewSample'
+    } else if (resultText === 'Discordant') {
+      externalId = 'Discordant  '
+    } else if (resultText === 'Indeterminate') {
+      externalId = 'Indeterminate'
+    } else if (resultText === 'Invalid') {
+      externalId = 'Invalid'
+    } else if (resultText === 'Negative') {
+      externalId = 'NotDetected'
+    } else if (resultText === 'Positive') {
+      externalId = 'Detected'
+    }
+  } else if (assayExternalId === EXTERNAL_ID_HIV_VL) {
+    // Add HIV VL Categories
+    if ((copies && copies < 1000) || _.includes(resultText, RESULT_TEXT_LDL)) {
+      externalId = 'LessThan1000'
+    } else if (copies && copies >= 1000) {
+      externalId = 'MoreThan1000'
+    } else if (_.includes(resultText, 'Rejected')) {
+      externalId = 'Rejected'
+    } else if (_.includes(resultText, 'Missing')) {
+      externalId = 'Missing'
+    }
+  }
+
+  if (externalId) {
+    const resultCategoryId = (yield knex('ResultCategory')
+      .where('externalId', externalId)
+      .first('id')).id
+
+    // Update Result Category
+    yield knex('Result')
+      .where('id', resultId)
+      .update('resultCategory1', resultCategoryId)
+    dispatch(
+      notifyResultUpdated(
+        resultId,
+        { resultCategory1: resultCategoryId },
+        'MalawiPlugin'
+      )
+    )
+  }
 }
 
 function* checkResultDeliverable(context, result) {
