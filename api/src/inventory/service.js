@@ -506,6 +506,7 @@ async function addInventory(request) {
       expiresOn,
       lotNumber,
       quantity,
+      reasonId,
       dateAdjusted,
       notes,
     },
@@ -521,40 +522,20 @@ async function addInventory(request) {
 
   const currentlyLoggedInUser = await getUser(auth.credentials.name)
   const now = new Date()
-  const inventoryItem = await findInventoryItem(
-    toSiteId,
+  const inventoryItemId = await increaseInventory(
+    toSite.id,
     consumableId,
     expiresOn,
-    lotNumber
+    lotNumber,
+    quantity,
+    reasonId,
+    dateAdjusted,
+    undefined,
+    notes,
+    now,
+    'add',
+    currentlyLoggedInUser.id
   )
-  let inventoryItemId = -1
-  await transact(async knex => {
-    inventoryItemId = await upsertInventoryItem(
-      knex,
-      inventoryItem,
-      consumableId,
-      toSiteId,
-      lotNumber,
-      expiresOn,
-      quantity,
-      now,
-      currentlyLoggedInUser.id
-    )
-
-    await knex('InventoryLog').insert({
-      inventoryItemId,
-      consumableId,
-      siteId: toSiteId,
-      lotNumber,
-      expiresOn,
-      quantity,
-      operation: 'add',
-      notes,
-      adjustedFrom: dateAdjusted,
-      createdOn: now,
-      createdBy: currentlyLoggedInUser.id,
-    })
-  })
 
   return {
     ok: true,
@@ -591,42 +572,20 @@ async function removeInventory(request) {
 
   const currentlyLoggedInUser = await getUser(auth.credentials.name)
   const now = new Date()
-  const inventoryItem = await findInventoryItem(
-    fromSiteId,
+  const inventoryItemId = await decreaseInventory(
+    fromSite.id,
     consumableId,
     expiresOn,
-    lotNumber
+    lotNumber,
+    quantity,
+    reasonId,
+    dateAdjusted || dateAdjustedFrom,
+    dateAdjustedTo,
+    notes,
+    now,
+    'remove',
+    currentlyLoggedInUser.id
   )
-  let inventoryItemId = -1
-  await transact(async knex => {
-    inventoryItemId = await upsertInventoryItem(
-      knex,
-      inventoryItem,
-      consumableId,
-      fromSiteId,
-      lotNumber,
-      expiresOn,
-      -quantity,
-      now,
-      currentlyLoggedInUser.id
-    )
-
-    await knex('InventoryLog').insert({
-      inventoryItemId,
-      consumableId,
-      siteId: fromSiteId,
-      lotNumber,
-      expiresOn,
-      quantity: -quantity,
-      consumableReasonId: reasonId,
-      operation: 'remove',
-      notes,
-      adjustedFrom: dateAdjusted || dateAdjustedFrom,
-      adjustedTo: dateAdjustedTo,
-      createdOn: now,
-      createdBy: currentlyLoggedInUser.id,
-    })
-  })
 
   return {
     ok: true,
@@ -806,10 +765,136 @@ async function receiveInventory(request) {
   }
 }
 
+async function decreaseInventory(
+  siteId,
+  consumableId,
+  expiresOn,
+  lotNumber,
+  quantity,
+  reasonId,
+  dateAdjustedFrom,
+  dateAdjustedTo,
+  notes,
+  now,
+  operation,
+  userId,
+  useKnex
+) {
+  const inventoryItemId = await changeInventoryQuantity(
+    siteId,
+    consumableId,
+    expiresOn,
+    lotNumber,
+    -quantity,
+    reasonId,
+    dateAdjustedFrom,
+    dateAdjustedTo,
+    notes,
+    now,
+    operation,
+    userId,
+    useKnex
+  )
+  return inventoryItemId
+}
+
+async function increaseInventory(
+  siteId,
+  consumableId,
+  expiresOn,
+  lotNumber,
+  quantity,
+  reasonId,
+  dateAdjustedFrom,
+  dateAdjustedTo,
+  notes,
+  now,
+  operation,
+  userId,
+  useKnex
+) {
+  const inventoryItemId = await changeInventoryQuantity(
+    siteId,
+    consumableId,
+    expiresOn,
+    lotNumber,
+    quantity,
+    reasonId,
+    dateAdjustedFrom,
+    dateAdjustedTo,
+    notes,
+    now,
+    operation,
+    userId,
+    useKnex
+  )
+  return inventoryItemId
+}
+
+async function changeInventoryQuantity(
+  siteId,
+  consumableId,
+  expiresOn,
+  lotNumber,
+  quantity,
+  reasonId,
+  dateAdjustedFrom,
+  dateAdjustedTo,
+  notes,
+  now,
+  operation,
+  userId,
+  useKnex
+) {
+  const inventoryItem = await findInventoryItem(
+    siteId,
+    consumableId,
+    expiresOn,
+    lotNumber
+  )
+  if (!useKnex) {
+    useKnex = knex
+  }
+  let inventoryItemId = -1
+  await transact(async useKnex {
+    inventoryItemId = await upsertInventoryItem(
+      useKnex,
+      inventoryItem,
+      consumableId,
+      siteId,
+      lotNumber,
+      expiresOn,
+      quantity,
+      now,
+      userId
+    )
+
+    await useKnex('InventoryLog').insert({
+      inventoryItemId,
+      consumableId,
+      siteId,
+      lotNumber,
+      expiresOn,
+      quantity,
+      consumableReasonId: reasonId,
+      operation,
+      notes,
+      adjustedFrom: dateAdjustedFrom,
+      adjustedTo: dateAdjustedTo,
+      createdOn: now,
+      createdBy: userId,
+    })
+  })
+
+  return inventoryItemId
+}
+
 module.exports = {
   listInventoryItems,
   listInventoryItemsGroupedBySite,
   consumeInventoryForResult,
+  increaseInventory,
+  decreaseInventory,
   addInventory,
   removeInventory,
   transferInventory,

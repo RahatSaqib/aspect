@@ -198,7 +198,7 @@ async function mergeResult(
     }
   }
 
-  // TODO should we merge within patient or result data payload?
+  // TODO: should we merge within patient or result data payload?
   const resultData = _.has(payload, 'data')
     ? JSON.stringify(payload.data)
     : _.get(existingResult, 'resultData', null)

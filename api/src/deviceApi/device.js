@@ -1,6 +1,6 @@
 const _ = require('lodash')
 
-async function updateDeviceConfiguration(knex, deviceId, payload) {
+async function updateDeviceConfiguration(knex, deviceId, payload, now) {
   const previousConfig = await getDeviceConfiguration(knex, deviceId)
   const configurationData =
     previousConfig == null

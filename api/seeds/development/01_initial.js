@@ -464,7 +464,7 @@ async function seed(knex) {
     i18nKey: 'assayTypeTbGnd',
   })
 
-  yield knex('AssayType').insert({
+  await knex('AssayType').insert({
     name: 'Unknown',
     i18nKey: 'assayTypeUnknown',
   })
@@ -936,6 +936,21 @@ async function seed(knex) {
     externalId: 'DaktariHivVl',
     assayTypeId: assayTypeHivVlId,
     deviceTypeId: deviceTypeDaktariVirologyId,
+    resultSourceId: resultSourceDiagnosticId,
+    resultCategory1Label: 'HIV',
+    resultCategory1i18nKey: 'resultCategoryHiv',
+    resultCategory2Label: null,
+    resultCategory2i18nKey: null,
+    resultDataSchema: geneXpertResultDataSchemaHiv,
+    patientDataSchema: geneXpertPatientDataSchema,
+  })
+
+  const [assayDaktariCD4Id] = await knex('Assay').insert({
+    name: 'Daktari CD4',
+    i18nKey: 'assayDaktariCD4',
+    externalId: 'DaktariCD4',
+    assayTypeId: assayTypeCD4Id,
+    deviceTypeId: deviceTypeDaktariInSightId,
     resultSourceId: resultSourceDiagnosticId,
     resultCategory1Label: 'HIV',
     resultCategory1i18nKey: 'resultCategoryHiv',
@@ -1755,15 +1770,39 @@ async function seed(knex) {
 
   // Consumable Reasons
   await knex('ConsumableReason').insert({
+    name: 'Asserted Zero Inventory',
+    i18nKey: 'ConsumableReason_AssertedZeroInventory',
+    decrease: 0,
+  })
+
+  await knex('ConsumableReason').insert({
     name: 'Test Conducted',
     i18nKey: 'ConsumableReason_TestConducted',
     decrease: 1,
   })
 
   await knex('ConsumableReason').insert({
+    name: 'Transfer Sent',
+    i18nKey: 'ConsumableReason_TransferSent',
+    decrease: 1,
+  })
+
+  await knex('ConsumableReason').insert({
+    name: 'Transfer Received',
+    i18nKey: 'ConsumableReason_TransferReceived',
+    decrease: 0,
+  })
+
+  await knex('ConsumableReason').insert({
     name: 'Expired',
     i18nKey: 'ConsumableReason_Expired',
     decrease: 1,
+  })
+
+  await knex('ConsumableReason').insert({
+    name: 'Imported',
+    i18nKey: 'ConsumableReason_Imported',
+    decrease: 0,
   })
 
   await knex('ConsumableReason').insert({
@@ -1776,6 +1815,12 @@ async function seed(knex) {
     name: 'Lost',
     i18nKey: 'ConsumableReason_Lost',
     decrease: 1,
+  })
+
+  await knex('ConsumableReason').insert({
+    name: 'Captured',
+    i18nKey: 'ConsumableReason_Captured',
+    decrease: 0,
   })
 
   // Result Workflow Status
