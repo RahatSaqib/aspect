@@ -2381,7 +2381,7 @@ describe('Device Result API routes', () => {
           })
 
         yield server
-          .get(`${devicePath}?checkpoint=rrt_0&offset=5`)
+          .get(`${devicePath}?checkpoint=rrt_0&offset=6`)
           .set('Authorization', deviceAuth)
           .then(res => {
             assert.equal(res.status, 200)
@@ -2410,7 +2410,7 @@ describe('Device Result API routes', () => {
                   artNumber: '2341sfkj',
                 },
                 assay: { id: 'HivVl' },
-                category: [{ id: 'Success' }],
+                category: [{ id: 'MoreThan1000' }],
                 type: { id: 'Patient' },
                 source: { id: 'LIMS' },
                 notes: '154,112 Copies / mL',
@@ -2419,7 +2419,7 @@ describe('Device Result API routes', () => {
           })
 
         yield server
-          .get(`${devicePath}?checkpoint=rrt_1&offset=4`)
+          .get(`${devicePath}?checkpoint=rrt_1&offset=5`)
           .set('Authorization', deviceAuth)
           .then(res => {
             assert.equal(res.status, 200)
@@ -2447,7 +2447,7 @@ describe('Device Result API routes', () => {
                   artNumber: '2341sfkj',
                 },
                 assay: { id: 'HivVl' },
-                category: [{ id: 'Success' }],
+                category: [{ id: 'MoreThan1000' }],
                 type: { id: 'Patient' },
                 source: { id: 'LIMS' },
                 notes: '154,112 Copies / mL',
@@ -2484,7 +2484,7 @@ describe('Device Result API routes', () => {
                   artNumber: '2341sfkj',
                 },
                 assay: { id: 'HivVl' },
-                category: [{ id: 'Success' }],
+                category: [{ id: 'MoreThan1000' }],
                 type: { id: 'Patient' },
                 source: { id: 'LIMS' },
                 notes: '154,112 Copies / mL',
@@ -2493,7 +2493,7 @@ describe('Device Result API routes', () => {
           })
 
         yield server
-          .get(`${devicePath}?checkpoint=rrt_2&offset=-4`)
+          .get(`${devicePath}?checkpoint=rrt_2&offset=-5`)
           .set('Authorization', deviceAuth)
           .then(res => {
             assert.equal(res.status, 200)
@@ -2521,7 +2521,7 @@ describe('Device Result API routes', () => {
                   artNumber: '1341kjkj',
                 },
                 assay: { id: 'HivVl' },
-                category: [{ id: 'Success' }],
+                category: [{ id: 'MoreThan1000' }],
                 type: { id: 'Patient' },
                 source: { id: 'LIMS' },
                 notes: '454,112 Copies / mL',
@@ -2630,7 +2630,7 @@ describe('Device Result API routes', () => {
                   artNumber: '2341sfkj',
                 },
                 assay: { id: 'HivVl' },
-                category: [{ id: 'Success' }],
+                category: [{ id: 'MoreThan1000' }],
                 type: { id: 'Patient' },
                 source: { id: 'LIMS' },
                 notes: '154,112 Copies / mL',
@@ -2756,7 +2756,7 @@ describe('Device Result API routes', () => {
         yield approveResult(context, lastResultId)
 
         yield server
-          .get(`${devicePath}?checkpoint=rrt_0&offset=5`)
+          .get(`${devicePath}?checkpoint=rrt_0&offset=6`)
           .set('Authorization', deviceAuth)
           .then(res => {
             assert.equal(res.status, 200)
@@ -2784,7 +2784,7 @@ describe('Device Result API routes', () => {
                   artNumber: '2341sfkj',
                 },
                 assay: { id: 'HivVl' },
-                category: [{ id: 'Success' }],
+                category: [{ id: 'MoreThan1000' }],
                 type: { id: 'Patient' },
                 source: { id: 'LIMS' },
                 notes: '154,112 Copies / mL',
@@ -2793,7 +2793,7 @@ describe('Device Result API routes', () => {
           })
 
         yield server
-          .get(`${devicePath}?checkpoint=rrt_0&offset=10`)
+          .get(`${devicePath}?checkpoint=rrt_0&offset=12`)
           .set('Authorization', deviceAuth)
           .then(res => {
             assert.equal(res.status, 200)
@@ -2820,7 +2820,7 @@ describe('Device Result API routes', () => {
                   artNumber: '320113j',
                 },
                 assay: { id: 'HivVl' },
-                category: [{ id: 'Success' }],
+                category: [{ id: 'MoreThan1000' }],
                 type: { id: 'Patient' },
                 source: { id: 'LIMS' },
                 notes: '155,115 Copies / mL',
@@ -2829,7 +2829,7 @@ describe('Device Result API routes', () => {
           })
 
         yield server
-          .get(`${devicePath}?checkpoint=rrt_1&offset=4`)
+          .get(`${devicePath}?checkpoint=rrt_1&offset=5`)
           .set('Authorization', deviceAuth)
           .then(res => {
             assert.equal(res.status, 200)
@@ -2857,7 +2857,7 @@ describe('Device Result API routes', () => {
                   artNumber: '2341sfkj',
                 },
                 assay: { id: 'HivVl' },
-                category: [{ id: 'Success' }],
+                category: [{ id: 'MoreThan1000' }],
                 type: { id: 'Patient' },
                 source: { id: 'LIMS' },
                 notes: '154,112 Copies / mL',
@@ -2894,7 +2894,7 @@ describe('Device Result API routes', () => {
                   artNumber: '2341sfkj',
                 },
                 assay: { id: 'HivVl' },
-                category: [{ id: 'Success' }],
+                category: [{ id: 'MoreThan1000' }],
                 type: { id: 'Patient' },
                 source: { id: 'LIMS' },
                 notes: '154,112 Copies / mL',
@@ -2930,7 +2930,7 @@ describe('Device Result API routes', () => {
                   artNumber: '1341kjkj',
                 },
                 assay: { id: 'HivVl' },
-                category: [{ id: 'Success' }],
+                category: [{ id: 'MoreThan1000' }],
                 type: { id: 'Patient' },
                 source: { id: 'LIMS' },
                 notes: '454,112 Copies / mL',
@@ -2939,7 +2939,7 @@ describe('Device Result API routes', () => {
           })
 
         yield server
-          .get(`${devicePath}?checkpoint=rrt_3&offset=-6`)
+          .get(`${devicePath}?checkpoint=rrt_3&offset=-7`)
           .set('Authorization', deviceAuth)
           .then(res => {
             assert.equal(res.status, 200)
@@ -2966,7 +2966,7 @@ describe('Device Result API routes', () => {
                   artNumber: '1341kjkj',
                 },
                 assay: { id: 'HivVl' },
-                category: [{ id: 'Success' }],
+                category: [{ id: 'MoreThan1000' }],
                 type: { id: 'Patient' },
                 source: { id: 'LIMS' },
                 notes: '454,112 Copies / mL',
