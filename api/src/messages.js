@@ -29,7 +29,7 @@ function removeListener(type, listener) {
 }
 
 /**
- * Cretes a message context to allow transactional
+ * Creates a message context to allow transactional
  * updates and dispatch.
  *
  * You should normally deal with a provided context
