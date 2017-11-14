@@ -291,8 +291,8 @@ function* seed(knex) {
   })
 
   const [deviceTypeCommCare] = yield knex('DeviceType').insert({
-    externalId: 'CommCare',
-    name: 'CommCare',
+    externalId: 'CommCareApp',
+    name: 'CommCare App',
     manufacturer: 'CommCare',
     deviceTypeCategoryId: deviceTypeCategoryLab,
     configurationDataSchema: commCareConfigurationDataSchema,
