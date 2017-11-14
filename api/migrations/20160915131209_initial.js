@@ -975,7 +975,8 @@ async function up(knex) {
         .defaultTo(0)
       addCreateFields(resultQualityControlLog)
       resultQualityControlLog.charset('utf8')
-  })
+    }
+  )
 
   // facts-table for result counts by device
   await knex.schema.createTable('FactResultCountDevice', x => {

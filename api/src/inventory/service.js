@@ -455,18 +455,19 @@ function getInventoryItem(inventoryItemId) {
     .first(INVENTORY_ITEM_SELECT_LIST_FIELDS)
 }
 
-async function upsertInventoryItem(
-  knex,
-  inventoryItem,
-  consumableId,
-  siteId,
-  lotNumber,
-  expiresOn,
-  quantity,
-  now,
-  userId,
-  inTransitFromSiteId
-) {
+async function upsertInventoryItem({
+                                     knex,
+                                     inventoryItem,
+                                     consumableId,
+                                     siteId,
+                                     lotNumber,
+                                     expiresOn,
+                                     quantity,
+                                     quantityOnHand,
+                                     now,
+                                     userId,
+                                     inTransitFromSiteId,
+                                   }) {
   let inventoryItemId = -1
   if (_.isEmpty(inventoryItem)) {
     ;[inventoryItemId] = await knex('InventoryItem').insert({
@@ -475,7 +476,7 @@ async function upsertInventoryItem(
       siteId,
       lotNumber,
       expiresOn,
-      quantityOnHand: quantity,
+      quantityOnHand: _.isUndefined(quantityOnHand) ? quantity : quantityOnHand,
       updatedOn: now,
       updatedBy: userId,
       createdOn: now,
@@ -489,7 +490,11 @@ async function upsertInventoryItem(
         expiresOn,
         lotNumber,
         siteId,
-        quantityOnHand: knex.raw(`quantityOnHand + ${quantity}`),
+        quantityOnHand: _.isUndefined(quantityOnHand)
+          ? quantity >= 0
+            ? knex.raw(`quantityOnHand + ${quantity}`)
+            : knex.raw(`quantityOnHand - ${-quantity}`)
+          : quantityOnHand,
         updatedOn: now,
         updatedBy: userId,
       })
@@ -643,18 +648,18 @@ async function transferInventory(request) {
   )
   let destinationInventoryItemId = -1
   await transact(async knex => {
-    destinationInventoryItemId = await upsertInventoryItem(
+    destinationInventoryItemId = await upsertInventoryItem({
       knex,
-      destinationInventoryItem,
+      inventoryItem: destinationInventoryItem,
       consumableId,
-      toSiteId,
+      siteId: toSiteId,
       lotNumber,
       expiresOn,
       quantity,
       now,
-      currentlyLoggedInUser.id,
-      fromSiteId
-    )
+      userId: currentlyLoggedInUser.id,
+      inTransitFromSiteId: fromSiteId,
+    })
 
     await knex('InventoryLog').insert({
       inventoryItemId,
@@ -728,17 +733,17 @@ async function receiveInventory(request) {
   )
   let destinationInventoryItemId = -1
   await transact(async knex => {
-    destinationInventoryItemId = await upsertInventoryItem(
+    destinationInventoryItemId = await upsertInventoryItem({
       knex,
-      destinationInventoryItem,
+      inventoryItem: destinationInventoryItem,
       consumableId,
-      toSiteId,
+      siteId: toSiteId,
       lotNumber,
       expiresOn,
       quantity,
       now,
-      currentlyLoggedInUser.id
-    )
+      userId: currentlyLoggedInUser.id,
+    })
 
     await knex('InventoryLog').insert({
       inventoryItemId: destinationInventoryItemId,
@@ -769,26 +774,29 @@ async function decreaseInventory(inventoryAjustment) {
   const inventoryItemId = await changeInventoryQuantity(
     _.merge(inventoryAjustment, { quantity: -inventoryAjustment.quantity })
   )
+  return inventoryItemId
 }
 
 async function increaseInventory(inventoryAjustment) {
   const inventoryItemId = await changeInventoryQuantity(inventoryAjustment)
+  return inventoryItemId
 }
 
 async function changeInventoryQuantity({
-                                    siteId,
-                                    consumableId,
-                                    expiresOn,
-                                    lotNumber,
-                                    quantity,
-                                    reasonId,
-                                    dateAdjustedFrom,
-                                    dateAdjustedTo,
-                                    notes,
-                                    now,
-                                    operation,
-                                    userId,
-                                  }) {
+                                         siteId,
+                                         consumableId,
+                                         expiresOn,
+                                         lotNumber,
+                                         quantity,
+                                         quantityOnHand,
+                                         reasonId,
+                                         dateAdjustedFrom,
+                                         dateAdjustedTo,
+                                         notes,
+                                         now,
+                                         operation,
+                                         userId,
+                                       }) {
   const inventoryItem = await findInventoryItem(
     siteId,
     consumableId,
@@ -797,7 +805,7 @@ async function changeInventoryQuantity({
   )
   let inventoryItemId = -1
   await transact(async knex => {
-    inventoryItemId = await upsertInventoryItem(
+    inventoryItemId = await upsertInventoryItem({
       knex,
       inventoryItem,
       consumableId,
@@ -805,9 +813,10 @@ async function changeInventoryQuantity({
       lotNumber,
       expiresOn,
       quantity,
+      quantityOnHand,
       now,
-      userId
-    )
+      userId,
+    })
 
     await knex('InventoryLog').insert({
       inventoryItemId,

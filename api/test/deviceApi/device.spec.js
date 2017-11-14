@@ -148,6 +148,7 @@ describe('Device API routes', () => {
         assert.notEqual(previousOpId, currentOpId)
       }))
   })
+
   describe('add and get device data', () => {
     it('should add and return device data', () =>
       runTest(async knex => {
