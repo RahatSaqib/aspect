@@ -65,10 +65,6 @@ describe('ResetPassword module', () => {
         .at(0)
         .children()
       const smallScreenStep2Label = smallScreenStepper.find(StepLabel).at(1)
-      const smallScreenStep2CheckInbox = smallScreenStepper
-        .find(StepContent)
-        .at(1)
-        .children()
       const smallScreenStep3Label = smallScreenStepper.find(StepLabel).at(2)
       const smallScreenStep3ResetPasswordEnterPassword = smallScreenStepper
         .find(StepContent)
@@ -100,7 +96,6 @@ describe('ResetPassword module', () => {
         xs: true,
         sm: true,
       })
-      const largeScreenStep2CheckInbox = largeScreenDiv.children().at(1)
 
       ResetPasswordWrapper = ResetPasswordWrapper.setState({
         stepIndex: 2,
@@ -137,19 +132,6 @@ describe('ResetPassword module', () => {
       expect(largeScreenStep1ResetPasswordEnterEmail.props()).toEqual(
         smallScreenStep1ResetPasswordEnterEmail.props()
       )
-      for (let i = 0; i < largeScreenStep2CheckInbox.children().length; i++) {
-        expect(
-          largeScreenStep2CheckInbox
-            .children()
-            .at(i)
-            .props()
-        ).toEqual(
-          smallScreenStep2CheckInbox
-            .children()
-            .at(i)
-            .props()
-        )
-      }
       expect(largeScreenStep3ResetPasswordEnterPassword.props()).toEqual(
         smallScreenStep3ResetPasswordEnterPassword.props()
       )
