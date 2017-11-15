@@ -2370,7 +2370,6 @@ async function seed(knex) {
   )
 
   // Results section
-
   // TB results:
   let possibleResults = [
     {
