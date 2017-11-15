@@ -100,6 +100,7 @@ const themes = {
 }
 
 const SectionAbnormalCollection = ({
+  intl,
   title,
   colorClassName,
   collection,
@@ -125,6 +126,7 @@ const SectionAbnormalCollection = ({
           <AbnormalBarChart
             key={c.get('key')}
             component={Unit}
+            intl={intl}
             item={c}
             sm="1-2"
             lg="1-4"
@@ -136,6 +138,7 @@ const SectionAbnormalCollection = ({
 )
 
 export const OperationalData = ({
+  intl,
   // --- injected by recompose ---
   loading,
   operational,
@@ -227,12 +230,14 @@ export const OperationalData = ({
     </div>
     <div className={cssClasses({ 'Content--loading': loading })}>
       <SectionAbnormalCollection
+        intl={intl}
         title="Consumables"
         colorClassName={cssClasses('Title__Color--inventory')}
         collection={operational.get('inventory', [])}
         onDataReportClick={onDataReportClick}
       />
       <SectionAbnormalCollection
+        intl={intl}
         title="Devices"
         colorClassName={cssClasses('Title__Color--device')}
         collection={operational.get('device', [])}
@@ -278,6 +283,7 @@ export const OperationalData = ({
         </Card>
       </div>
       <SectionAbnormalCollection
+        intl={intl}
         title="Staff"
         collection={operational.get('staff', [])}
         onDataReportClick={onDataReportClick}

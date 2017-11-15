@@ -14,6 +14,7 @@ const addDays = require('date-fns/add_days')
 const isAfter = require('date-fns/is_after')
 
 const i18nKeys = {
+  // Dashboard
   sitesTitle: 'sitesTitle',
   devicesTitle: 'devicesTitle',
   runningLowStatus: 'runningLowStatus',
@@ -29,6 +30,10 @@ const i18nKeys = {
   withQualityIssues: 'withQualityIssues',
   ofTotalDevicesTitle: 'ofTotalDevicesTitle',
   ofTotalSitesTitle: 'ofTotalSitesTitle',
+  // Operational
+  stockOutsTitle: 'stockOutsTitle',
+  expiringTitle: 'expiringTitle',
+  siteWithProblems: 'siteWithProblems',
 }
 
 function* summaryDashboard(request) {
@@ -288,7 +293,7 @@ function* getInventoryItemList(auth, dataConstraints) {
     it.remainingDays = Math.floor(
       it.quantityOnHand / MOCK_CURRENT_CONSUMPTION_RATE
     )
-    if (_.isString(it.expiresOn)) {
+    if (_.isDate(it.expiresOn)) {
       it.expiring = isAfter(
         addDays(it.expiresOn, it.remainingDays),
         it.expiresOn
@@ -304,24 +309,7 @@ function* inventoryItemDashboard(request) {
 
   // get data constraints
   const dataConstraints = yield getConstraints(auth.credentials)
-
-  const siteList = canViewSites(auth)
-    ? yield knex('Site as s')
-        .leftOuterJoin('Geography as g', 's.geographyId', 'g.id')
-        .leftOuterJoin('State as st', 'g.stateId', 'st.id')
-        .select(
-          's.id',
-          's.name',
-          'st.abbreviation as stateAbbr',
-          's.latitude',
-          's.longitude'
-        )
-        .modify(addConstraints, dataConstraints, {
-          site: 's',
-          geography: 'g',
-        })
-    : []
-
+  const siteList = yield* getSiteList(auth, dataConstraints)
   const inventoryItemList = yield* getInventoryItemList(auth, dataConstraints)
 
   const inventorySiteSummaryList = _.sortBy(
@@ -677,127 +665,113 @@ function* siteDashboard(request) {
   return result
 }
 
+const OPERATIONAL_TAKE_LIMIT = 20
+
+const OPERATIONAL_INVENTORY_MIN_DAYS = 21
+const OPERATIONAL_INVENTORY_MIN_EXPIRING = 0.15
+
+function* inventoryItemOperational(request) {
+  const { auth } = request
+
+  // get data constraints
+  const dataConstraints = yield getConstraints(auth.credentials)
+
+  const siteList = yield* getSiteList(auth, dataConstraints)
+  const inventoryItemList = yield* getInventoryItemList(auth, dataConstraints)
+
+  const stockOutsInventoryItemList = _.sortBy(
+    _.reduce(
+      _.groupBy(inventoryItemList, 'siteId'),
+      (acc, list, siteId) => {
+        if (!_.isEmpty(list)) {
+          const minRemainingDays = _.minBy(list, 'remainingDays').remainingDays
+
+          acc.push({
+            id: siteId,
+            value: minRemainingDays,
+            abnormal: minRemainingDays < OPERATIONAL_INVENTORY_MIN_DAYS,
+          })
+        }
+        return acc
+      },
+      []
+    ),
+    'value'
+  )
+  const stockOutsAbnormalList = _.filter(stockOutsInventoryItemList, 'abnormal')
+  const expiringInventoryItemList = _.sortBy(
+    _.reduce(
+      _.groupBy(inventoryItemList, 'siteId'),
+      (acc, list, siteId) => {
+        if (!_.isEmpty(list)) {
+          const { totalQuantityOnHand, totalExpiring } = _.reduce(
+            list,
+            (total, it) => {
+              total.totalQuantityOnHand += it.quantityOnHand
+              if (it.expiring) {
+                total.totalExpiring += it.quantityOnHand
+              }
+              return total
+            },
+            { totalQuantityOnHand: 0, totalExpiring: 0 }
+          )
+          const value = totalExpiring / totalQuantityOnHand
+
+          acc.push({
+            id: siteId,
+            value,
+            abnormal: value > OPERATIONAL_INVENTORY_MIN_EXPIRING,
+          })
+        }
+        return acc
+      },
+      []
+    ),
+    'value'
+  )
+  const expiringAbnormalList = _.filter(expiringInventoryItemList, 'abnormal')
+
+  return [
+    {
+      key: 'stock-outs',
+      titleI18nKey: i18nKeys.stockOutsTitle,
+      someAbnormal: stockOutsAbnormalList.length > 0,
+      messageI18nKey: i18nKeys.siteWithProblems,
+      messageData: {
+        count: stockOutsAbnormalList.length,
+      },
+      data: _.take(stockOutsInventoryItemList, OPERATIONAL_TAKE_LIMIT),
+      averageValue:
+        _.sumBy(stockOutsInventoryItemList, 'value') /
+        stockOutsInventoryItemList.length,
+    },
+    {
+      key: 'expiring',
+      titleI18nKey: i18nKeys.expiringTitle,
+      someAbnormal: expiringAbnormalList.length > 0,
+      messageI18nKey: i18nKeys.siteWithProblems,
+      messageData: {
+        count: expiringAbnormalList.length,
+      },
+      data: _.take(expiringInventoryItemList, OPERATIONAL_TAKE_LIMIT),
+      averageValue:
+        _.sumBy(expiringInventoryItemList, 'value') /
+        expiringInventoryItemList.length,
+    },
+  ]
+}
+
 function* operationalDashboard(request) {
   const { query } = request
 
   const result = {
     ok: true,
     data: {
-      inventory: [
-        {
-          key: 'stock-outs',
-          title: 'stock outs',
-          isNormal: false,
-          message: '1 site with problems',
-          data: [
-            { id: 1, value: 4, abnormal: false },
-            { id: 2, value: 7, abnormal: false },
-            { id: 3, value: 4, abnormal: false },
-            { id: 4, value: 2, abnormal: false },
-            { id: 5, value: 5, abnormal: false },
-            { id: 6, value: 4, abnormal: false },
-            { id: 7, value: 3, abnormal: false },
-            { id: 8, value: 2, abnormal: false },
-            { id: 9, value: 6, abnormal: false },
-            { id: 10, value: 4, abnormal: false },
-            { id: 11, value: 8, abnormal: false },
-            { id: 12, value: 1, abnormal: true },
-            { id: 13, value: 4, abnormal: false },
-            { id: 14, value: 5, abnormal: false },
-            { id: 15, value: 10, abnormal: false },
-            { id: 16, value: 9, abnormal: false },
-            { id: 17, value: 7, abnormal: false },
-            { id: 18, value: 4, abnormal: false },
-          ],
-          averageValue: 1.75,
-        },
-        {
-          key: 'low-supply',
-          title: 'low supply',
-          isNormal: false,
-          message: '3 sites with problems',
-          data: [
-            { id: 1, value: 4, abnormal: false },
-            { id: 2, value: 7, abnormal: false },
-            { id: 3, value: 8, abnormal: false },
-            { id: 4, value: 9, abnormal: false },
-            { id: 5, value: 6, abnormal: false },
-            { id: 6, value: 5, abnormal: false },
-            { id: 7, value: 2, abnormal: true },
-            { id: 8, value: 10, abnormal: false },
-            { id: 9, value: 4, abnormal: false },
-            { id: 10, value: 5, abnormal: false },
-            { id: 11, value: 2, abnormal: true },
-            { id: 12, value: 3, abnormal: true },
-            { id: 13, value: 3.5, abnormal: false },
-            { id: 14, value: 4.5, abnormal: false },
-            { id: 15, value: 3.5, abnormal: false },
-            { id: 16, value: 4, abnormal: false },
-            { id: 17, value: 7, abnormal: false },
-            { id: 18, value: 4, abnormal: false },
-          ],
-          averageValue: 3.2,
-        },
-        {
-          key: 'expiring',
-          title: 'expiring',
-          isNormal: true,
-          message: '0 site with problems',
-          data: [
-            { id: 1, value: 4, abnormal: false },
-            { id: 2, value: 7, abnormal: false },
-            { id: 3, value: 4, abnormal: false },
-            { id: 4, value: 2, abnormal: false },
-            { id: 5, value: 5, abnormal: false },
-            { id: 6, value: 3.5, abnormal: false },
-            { id: 7, value: 3, abnormal: false },
-            { id: 8, value: 2, abnormal: false },
-            { id: 9, value: 5, abnormal: false },
-            { id: 10, value: 4, abnormal: false },
-            { id: 11, value: 8, abnormal: false },
-            { id: 12, value: 2, abnormal: false },
-            { id: 13, value: 5, abnormal: false },
-            { id: 14, value: 6, abnormal: false },
-            { id: 15, value: 10, abnormal: false },
-            { id: 16, value: 9, abnormal: false },
-            { id: 17, value: 7, abnormal: false },
-            { id: 18, value: 4, abnormal: false },
-          ],
-          averageValue: 12,
-        },
-        {
-          key: 'time-to-alert-resolution',
-          title: 'time to alert resolution',
-          isNormal: false,
-          message: '1 site with problems',
-          data: [
-            { id: 1, value: 4, abnormal: false },
-            { id: 2, value: 7, abnormal: false },
-            { id: 3, value: 8, abnormal: false },
-            { id: 4, value: 9, abnormal: true },
-            { id: 5, value: 6, abnormal: false },
-            { id: 6, value: 5, abnormal: false },
-            { id: 7, value: 2, abnormal: false },
-            { id: 8, value: 10, abnormal: false },
-            { id: 9, value: 4, abnormal: false },
-            { id: 10, value: 5, abnormal: false },
-            { id: 11, value: 2, abnormal: false },
-            { id: 12, value: 3, abnormal: false },
-            { id: 13, value: 3.5, abnormal: false },
-            { id: 14, value: 4.5, abnormal: false },
-            { id: 15, value: 3.5, abnormal: false },
-            { id: 16, value: 4, abnormal: false },
-            { id: 17, value: 7, abnormal: false },
-            { id: 18, value: 4, abnormal: false },
-          ],
-          averageValue: 7.5,
-        },
-      ],
       device: [
         {
           key: 'modules-unavailable',
           title: 'modules unavailable',
-          isNormal: false,
+          someAbnormal: true,
           message: '6 site with problems',
           data: [
             { id: 1, value: 2, abnormal: false },
@@ -822,7 +796,7 @@ function* operationalDashboard(request) {
         {
           key: 'days-unavailable',
           title: 'days unavailable',
-          isNormal: false,
+          someAbnormal: true,
           message: '8 site with problems',
           data: [
             { id: 1, value: 5, abnormal: false },
@@ -848,7 +822,7 @@ function* operationalDashboard(request) {
         {
           key: 'test-failures',
           title: 'test failures',
-          isNormal: false,
+          someAbnormal: true,
           message: '4 site with problems',
           data: [
             { id: 1, value: 7, abnormal: false },
@@ -874,7 +848,7 @@ function* operationalDashboard(request) {
         {
           key: 'calibration-compliance',
           title: 'calibration compliance',
-          isNormal: false,
+          someAbnormal: true,
           message: '1 site with problems',
           data: [
             { id: 1, value: 7, abnormal: false },
@@ -900,7 +874,7 @@ function* operationalDashboard(request) {
         {
           key: 'maintenance-compliance',
           title: 'maintenance compliance',
-          isNormal: true,
+          someAbnormal: false,
           message: '0 site with problems',
           data: [
             { id: 1, value: 2, abnormal: false },
@@ -925,7 +899,7 @@ function* operationalDashboard(request) {
         {
           key: 'data-connectivity',
           title: 'data connectivity',
-          isNormal: false,
+          someAbnormal: true,
           message: '6 site with problems',
           data: [
             { id: 1, value: 5, abnormal: true },
@@ -951,7 +925,7 @@ function* operationalDashboard(request) {
         {
           key: 'utilisation',
           title: 'utilisation',
-          isNormal: true,
+          someAbnormal: false,
           message: '0 site with problems',
           data: [
             { id: 1, value: 7, abnormal: false },
@@ -977,7 +951,7 @@ function* operationalDashboard(request) {
         {
           key: 'time-to-alert-resolution',
           title: 'time to alert resolution',
-          isNormal: false,
+          someAbnormal: true,
           message: '1 site with problems',
           data: [
             { id: 1, value: 7, abnormal: false },
@@ -1055,7 +1029,7 @@ function* operationalDashboard(request) {
         {
           key: 'staff-with-high-error-rates',
           title: 'staff with high error rates',
-          isNormal: false,
+          someAbnormal: true,
           message: '8 site with problems',
           data: [
             { id: 1, value: 7, abnormal: false },
@@ -1105,7 +1079,12 @@ function* operationalDashboard(request) {
     )
   }
 
-  return result
+  return {
+    ok: true,
+    data: Object.assign(result.data, {
+      inventory: yield* inventoryItemOperational(request),
+    }),
+  }
 }
 
 module.exports = {
