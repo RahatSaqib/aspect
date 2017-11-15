@@ -11,6 +11,10 @@ const cssClasses = classnames.bind(require('./OperationalData.css'))
 
 const enhance = _.identity
 
+const yDomainMaxBy = {
+  'days-unavailable': 14,
+}
+
 const AbnormalBarChart = ({ component, intl, item, ...restProps }) =>
   React.createElement(
     component,
@@ -23,6 +27,7 @@ const AbnormalBarChart = ({ component, intl, item, ...restProps }) =>
       data={item.get('data').toJS()}
       x={it => it.id}
       y={it => it.value}
+      yDomainMax={yDomainMaxBy[item.get('key')]}
       fill={it => (it.abnormal ? '#EA4E62' : '#36DED6')}
     />,
     <div className={cssClasses('AbnormalBarChart__Title')}>

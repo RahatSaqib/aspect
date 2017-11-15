@@ -13,6 +13,26 @@ export const messages = defineMessages({
     id: 'pages.OperationalData.siteWithProblems',
     defaultMessage: '{count} site with problems',
   },
+  daysUnavailable: {
+    id: 'pages.OperationalData.daysUnavailable',
+    defaultMessage: 'days unavailable',
+  },
+  testFailures: {
+    id: 'pages.OperationalData.testFailures',
+    defaultMessage: 'test failures',
+  },
+  calibrationCompliance: {
+    id: 'pages.OperationalData.calibrationCompliance',
+    defaultMessage: 'calibration compliance',
+  },
+  deviceWithProblems: {
+    id: 'pages.OperationalData.deviceWithProblems',
+    defaultMessage: '{count} device with problems',
+  },
+  deviceCalibrationsUpToDate: {
+    id: 'pages.OperationalData.deviceCalibrationsUpToDate',
+    defaultMessage: 'All device calibrations up to date',
+  },
 })
 
 export default messages

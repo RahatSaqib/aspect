@@ -12,6 +12,7 @@ const Promise = require('bluebird')
 const subDays = require('date-fns/sub_days')
 const addDays = require('date-fns/add_days')
 const isAfter = require('date-fns/is_after')
+const differenceInDays = require('date-fns/difference_in_days')
 
 const i18nKeys = {
   // Dashboard
@@ -34,6 +35,11 @@ const i18nKeys = {
   stockOutsTitle: 'stockOutsTitle',
   expiringTitle: 'expiringTitle',
   siteWithProblems: 'siteWithProblems',
+  daysUnavailable: 'daysUnavailable',
+  testFailures: 'testFailures',
+  calibrationCompliance: 'calibrationCompliance',
+  deviceWithProblems: 'deviceWithProblems',
+  deviceCalibrationsUpToDate: 'deviceCalibrationsUpToDate',
 }
 
 function* summaryDashboard(request) {
@@ -761,6 +767,104 @@ function* inventoryItemOperational(request) {
   ]
 }
 
+function* deviceOperational(request) {
+  const { auth } = request
+  const now = new Date()
+  const OPERATIONAL_DEVICE_TAKE_LIMIT = 10
+
+  // get data constraints
+  const dataConstraints = yield getConstraints(auth.credentials)
+
+  const deviceList = yield* getDeviceList(auth, dataConstraints)
+
+  const MOCK_PARTNER_OFFLINE_THRESHOLD_DAYS = 7
+  const MOCK_DEVICE_HIGH_ERROR_RATE_THRESHOLD = 0.05
+  const MOCK_DEVICE_CALIBRATION_THRESHOLD_DAYS = 60
+
+  const offlineDeviceList = _.sortBy(
+    deviceList.map(it => ({
+      id: it.id,
+      value: differenceInDays(now, it.lastSeenOn),
+      abnormal:
+        differenceInDays(now, it.lastSeenOn) >
+        MOCK_PARTNER_OFFLINE_THRESHOLD_DAYS,
+    })),
+    it => -1 * it.value
+  )
+  const offlineDeviceAbnormalList = _.filter(offlineDeviceList, 'abnormal')
+
+  const highErrorRateDeviceList = _.sortBy(
+    deviceList.map(it => {
+      const value = _.random(0, 1, true)
+
+      return {
+        id: it.id,
+        value,
+        abnormal: value > MOCK_DEVICE_HIGH_ERROR_RATE_THRESHOLD,
+      }
+    }),
+    it => -1 * it.value
+  )
+  const highErrorRateDeviceAbnormalList = _.filter(
+    highErrorRateDeviceList,
+    'abnormal'
+  )
+
+  const calibrationDeviceList = _.sortBy(
+    deviceList.map(it => {
+      const calibrationOn = addDays(now, _.random(55, 120))
+      const value = differenceInDays(calibrationOn, now)
+
+      return {
+        id: it.id,
+        value,
+        abnormal: value < MOCK_DEVICE_CALIBRATION_THRESHOLD_DAYS,
+      }
+    }),
+    it => -1 * it.value
+  )
+  const calibrationAbnormalList = _.filter(calibrationDeviceList, 'abnormal')
+
+  return [
+    {
+      key: 'days-unavailable',
+      titleI18nKey: i18nKeys.daysUnavailable,
+      someAbnormal: offlineDeviceAbnormalList.length > 0,
+      messageI18nKey: i18nKeys.deviceWithProblems,
+      messageData: {
+        count: offlineDeviceAbnormalList.length,
+      },
+      data: _.take(offlineDeviceList, OPERATIONAL_DEVICE_TAKE_LIMIT),
+    },
+    {
+      key: 'test-failures',
+      titleI18nKey: i18nKeys.testFailures,
+      someAbnormal: highErrorRateDeviceAbnormalList.length > 0,
+      messageI18nKey: i18nKeys.deviceWithProblems,
+      messageData: {
+        count: highErrorRateDeviceAbnormalList.length,
+      },
+      data: _.take(highErrorRateDeviceList, OPERATIONAL_DEVICE_TAKE_LIMIT),
+      averageValue:
+        _.sumBy(highErrorRateDeviceList, 'value') /
+        highErrorRateDeviceList.length,
+    },
+    {
+      key: 'calibration-compliance',
+      titleI18nKey: i18nKeys.calibrationCompliance,
+      someAbnormal: calibrationAbnormalList.length > 0,
+      messageI18nKey:
+        calibrationAbnormalList.length > 0
+          ? i18nKeys.deviceWithProblems
+          : i18nKeys.deviceCalibrationsUpToDate,
+      messageData: {
+        count: calibrationAbnormalList.length,
+      },
+      data: _.take(calibrationAbnormalList, OPERATIONAL_DEVICE_TAKE_LIMIT),
+    },
+  ]
+}
+
 function* operationalDashboard(request) {
   const { query } = request
 
@@ -791,84 +895,6 @@ function* operationalDashboard(request) {
             { id: 15, value: 4, abnormal: true },
             { id: 16, value: 3, abnormal: true },
             { id: 17, value: 2, abnormal: true },
-          ],
-        },
-        {
-          key: 'days-unavailable',
-          title: 'days unavailable',
-          someAbnormal: true,
-          message: '8 site with problems',
-          data: [
-            { id: 1, value: 5, abnormal: false },
-            { id: 2, value: 7, abnormal: false },
-            { id: 3, value: 8, abnormal: false },
-            { id: 4, value: 9, abnormal: true },
-            { id: 5, value: 6, abnormal: false },
-            { id: 6, value: 6.5, abnormal: true },
-            { id: 7, value: 2, abnormal: false },
-            { id: 8, value: 7, abnormal: true },
-            { id: 9, value: 5, abnormal: false },
-            { id: 10, value: 6, abnormal: false },
-            { id: 11, value: 2, abnormal: true },
-            { id: 12, value: 2.2, abnormal: false },
-            { id: 13, value: 3, abnormal: true },
-            { id: 14, value: 5, abnormal: true },
-            { id: 15, value: 2, abnormal: true },
-            { id: 16, value: 4, abnormal: true },
-            { id: 17, value: 6, abnormal: true },
-            { id: 18, value: 5, abnormal: false },
-          ],
-        },
-        {
-          key: 'test-failures',
-          title: 'test failures',
-          someAbnormal: true,
-          message: '4 site with problems',
-          data: [
-            { id: 1, value: 7, abnormal: false },
-            { id: 2, value: 10, abnormal: false },
-            { id: 3, value: 7, abnormal: false },
-            { id: 4, value: 3, abnormal: false },
-            { id: 5, value: 8, abnormal: false },
-            { id: 6, value: 6, abnormal: false },
-            { id: 7, value: 4, abnormal: false },
-            { id: 8, value: 3, abnormal: false },
-            { id: 9, value: 9, abnormal: false },
-            { id: 10, value: 7, abnormal: false },
-            { id: 11, value: 11, abnormal: false },
-            { id: 12, value: 2, abnormal: false },
-            { id: 13, value: 7, abnormal: false },
-            { id: 14, value: 8, abnormal: false },
-            { id: 15, value: 14, abnormal: true },
-            { id: 16, value: 12, abnormal: true },
-            { id: 17, value: 10, abnormal: true },
-            { id: 18, value: 7, abnormal: true },
-          ],
-        },
-        {
-          key: 'calibration-compliance',
-          title: 'calibration compliance',
-          someAbnormal: true,
-          message: '1 site with problems',
-          data: [
-            { id: 1, value: 7, abnormal: false },
-            { id: 2, value: 9, abnormal: false },
-            { id: 3, value: 10, abnormal: false },
-            { id: 4, value: 11, abnormal: false },
-            { id: 5, value: 8, abnormal: false },
-            { id: 6, value: 7.5, abnormal: false },
-            { id: 7, value: 2, abnormal: false },
-            { id: 8, value: 9.5, abnormal: false },
-            { id: 9, value: 5, abnormal: false },
-            { id: 10, value: 8, abnormal: true },
-            { id: 11, value: 2, abnormal: false },
-            { id: 12, value: 3, abnormal: false },
-            { id: 13, value: 5, abnormal: false },
-            { id: 14, value: 8, abnormal: false },
-            { id: 15, value: 2, abnormal: false },
-            { id: 16, value: 6, abnormal: false },
-            { id: 17, value: 10, abnormal: false },
-            { id: 18, value: 7, abnormal: false },
           ],
         },
         {
@@ -1083,6 +1109,7 @@ function* operationalDashboard(request) {
     ok: true,
     data: Object.assign(result.data, {
       inventory: yield* inventoryItemOperational(request),
+      device: [...(yield* deviceOperational(request)), ...result.data.device],
     }),
   }
 }
