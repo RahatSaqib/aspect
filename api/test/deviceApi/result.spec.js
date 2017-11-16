@@ -2175,8 +2175,17 @@ describe('Device Result API routes', () => {
             assert.equal(res.status, 200)
           })
 
+        yield waitAsyncComplete()
         let lastResultId = yield* getLastResultId(knex, deviceLab.id)
-        yield approveResult(context, lastResultId)
+        let lastResult = yield knex('Result as r')
+          .join(
+            'ResultWorkflowStatus as rws',
+            'r.resultWorkflowStatusId',
+            'rws.id'
+          )
+          .where({ 'r.id': lastResultId })
+          .first('r.qcCheck', 'rws.externalId as workflow')
+        assert.deepEqual(lastResult, { qcCheck: 1, workflow: 'Deliverable' })
 
         yield server
           .get(`${devicePath}?checkpoint=rrt_0`)
@@ -2334,8 +2343,17 @@ describe('Device Result API routes', () => {
             assert.equal(res.status, 200)
           })
 
+        yield waitAsyncComplete()
         lastResultId = yield* getLastResultId(knex, deviceLab.id)
-        yield approveResult(context, lastResultId)
+        lastResult = yield knex('Result as r')
+          .join(
+            'ResultWorkflowStatus as rws',
+            'r.resultWorkflowStatusId',
+            'rws.id'
+          )
+          .where({ 'r.id': lastResultId })
+          .first('r.qcCheck', 'rws.externalId as workflow')
+        assert.deepEqual(lastResult, { qcCheck: 1, workflow: 'Deliverable' })
 
         yield server
           .get(`${devicePath}?checkpoint=rrt1723_0&offset=1`)
@@ -2373,15 +2391,19 @@ describe('Device Result API routes', () => {
             )
           })
 
+        yield waitAsyncComplete()
+
         yield server
-          .get(`${devicePath}?checkpoint=rrt1723_0&offset=5`)
+          .get(`${devicePath}?checkpoint=rrt1723_0&offset=6`)
           .set('Authorization', device1723Auth)
           .then(res => {
             assert.equal(res.status, 404)
           })
 
+        yield waitAsyncComplete()
+
         yield server
-          .get(`${devicePath}?checkpoint=rrt_0&offset=6`)
+          .get(`${devicePath}?checkpoint=rrt_0&offset=5`)
           .set('Authorization', deviceAuth)
           .then(res => {
             assert.equal(res.status, 200)
@@ -2419,7 +2441,7 @@ describe('Device Result API routes', () => {
           })
 
         yield server
-          .get(`${devicePath}?checkpoint=rrt_1&offset=5`)
+          .get(`${devicePath}?checkpoint=rrt_1&offset=4`)
           .set('Authorization', deviceAuth)
           .then(res => {
             assert.equal(res.status, 200)
@@ -2493,7 +2515,7 @@ describe('Device Result API routes', () => {
           })
 
         yield server
-          .get(`${devicePath}?checkpoint=rrt_2&offset=-5`)
+          .get(`${devicePath}?checkpoint=rrt_2&offset=-4`)
           .set('Authorization', deviceAuth)
           .then(res => {
             assert.equal(res.status, 200)
@@ -2566,7 +2588,7 @@ describe('Device Result API routes', () => {
           })
 
         yield server
-          .get(`${devicePath}?checkpoint=rrt1315_0&offset=5`)
+          .get(`${devicePath}?checkpoint=rrt1315_0&offset=6`)
           .set('Authorization', device1315Auth)
           .then(res => {
             assert.equal(res.status, 404)
@@ -2752,8 +2774,7 @@ describe('Device Result API routes', () => {
             assert.equal(res.status, 200)
           })
 
-        lastResultId = yield* getLastResultId(knex, deviceLab.id)
-        yield approveResult(context, lastResultId)
+        yield waitAsyncComplete()
 
         yield server
           .get(`${devicePath}?checkpoint=rrt_0&offset=6`)
