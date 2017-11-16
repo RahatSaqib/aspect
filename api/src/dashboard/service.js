@@ -219,9 +219,8 @@ function* resultDashboard(request) {
           rawResultCategoryExternalIds.split(',')
         )
         const resultCategoryNames = _.uniq(rawResultCategoryNames.split(','))
-        const data = _.map(
-          resultCntBySiteIdByAssayTypeId[`${id}`],
-          (it, siteId) =>
+        const data = _.sortBy(
+          _.map(resultCntBySiteIdByAssayTypeId[`${id}`], (it, siteId) =>
             _.reduce(
               it,
               (acc, { resultCategory1ExternalId, cnt }) => {
@@ -238,6 +237,8 @@ function* resultDashboard(request) {
                 { siteId, total: 0 }
               )
             )
+          ),
+          it => -1 * it.total
         )
 
         return {
@@ -839,6 +840,7 @@ function* deviceOperational(request) {
     {
       key: 'test-failures',
       titleI18nKey: i18nKeys.testFailures,
+      titleTooltip: "10% (20/200) 10/27/2017",
       someAbnormal: highErrorRateDeviceAbnormalList.length > 0,
       messageI18nKey: i18nKeys.deviceWithProblems,
       messageData: {
