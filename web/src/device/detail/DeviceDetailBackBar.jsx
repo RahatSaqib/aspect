@@ -26,9 +26,7 @@ const messages = defineMessages({
 const enhance = compose(
   withHandlers({
     onBackClick: ({ history }) => () => {
-      history.push({
-        pathname: `/browse/device`,
-      })
+      history.goBack()
     },
     onPathClick: ({ history, match }) => ({
       target: { dataset: { path } },
