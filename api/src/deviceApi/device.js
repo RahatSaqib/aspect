@@ -24,7 +24,7 @@ async function updateDeviceDetails(knex, deviceId, deviceDetails, now) {
     // which field vakues are different?
     const existingDevice = await knex('Device as d')
       .where({ 'd.id': deviceId })
-      .first()
+      .select()
     const changedDetails = _.omitBy(
       deviceDetails,
       (v, k) =>

@@ -8,6 +8,7 @@ const {
 
 const plugins = {
   default: {
+    preProcessCreateDevice,
     transformNewDevicePayload,
     preProcessAddDeviceData,
     postProcessUpdateDeviceConfiguration,
@@ -29,6 +30,7 @@ const plugins = {
     onResultLogged: require('./malawi/onResultLogged'),
   },
   gxconnect: {
+    preProcessCreateDevice: require('./gxconnect/preProcessCreateDevice'),
     preProcessAddDeviceData: require('./gxconnect/preProcessAddDeviceData'),
     postProcessUpdateDeviceConfiguration: require('./gxconnect/postProcessUpdateDeviceConfiguration'),
     postProcessAddDeviceOperation: require('./gxconnect/postProcessAddDeviceOperation'),
@@ -61,6 +63,21 @@ async function loadPlugin(pluginName, actionName) {
  */
 async function transformNewDevicePayload({ payload }) {
   return payload
+}
+
+/**
+ * Device data is received with a new device API key
+ *
+ * This is called after transformNewDevicePayload but before a
+ * new device record is inserted
+ *
+ * This can be used, for example, to perform required checks on
+ * the payload and prevent duplicate devices from being created
+ *
+ * Returns a device object if as new one should not be created
+ */
+function* preProcessCreateDevice(/* request, now */) {
+  return null
 }
 
 /**

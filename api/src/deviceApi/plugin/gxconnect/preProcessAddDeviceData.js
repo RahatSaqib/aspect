@@ -17,6 +17,7 @@ function* preProcessAddDeviceData({ knex, device, payload, now }) {
       .where({ id: device.id })
       .update({ siteId: site.id, updatedOn: now, updatedBy: null })
   }
+  // TODO: Update device API key with new site ID
 }
 
 function* getOrCreateSite(knex, device, payload, now) {
@@ -27,19 +28,25 @@ function* getOrCreateSite(knex, device, payload, now) {
   if (!site.id) {
     const payloadSiteId = _.get(payload, 'site.id')
     if (payloadSiteId) {
-      const [id] = yield knex
+      const [{ id }] = yield knex
         .from('Site as s')
         .where({ 's.externalId': payloadSiteId })
         .select('s.id')
-        .first()
       site.id = id
     }
+  }
+  if (!site.id && device.id) {
+    const [{ siteId }] = yield knex
+      .from('Device as d')
+      .where({ 'd.id': device.id })
+      .select('d.siteId')
+    site.id = siteId
   }
   if (!site.id) {
     const facilityName = _.get(payload, 'name')
     const countryCode = _.get(payload, 'configuration.data.country')
     if (facilityName && countryCode) {
-      const siteIds = knex
+      const siteIds = yield knex
         .from('Site as s')
         .join('Geography as g', 's.geographyId', 'g.id')
         .join('Country as c', 'g.countryId', 'c.id')
@@ -58,26 +65,23 @@ function* getOrCreateSite(knex, device, payload, now) {
         )
       }
       if (!site.id) {
-        const country = yield knex
+        const [{ countryId }] = yield knex
           .from('Country as c')
           .where({ abbreviation: countryCode })
-          .first()
-        if (_.isEmpty(country)) {
+          .select('c.id as countryId')
+        if (!countryId) {
           throw Boom.notFound(
             `Cannot determine the country from ${countryCode}.`
           )
         }
-        const geography = yield knex
+        const [geography] = yield knex
           .from('Geography as g')
-          .where({ 'g.countryId': country.id })
+          .where({ 'g.countryId': countryId })
           .whereNull('g.stateId')
           .whereNull('g.lgaId')
           .select('g.id')
-          .first()
         if (_.isEmpty(geography)) {
-          const [id] = yield knex
-            .insert({ countryId: country.id })
-            .into('Geography')
+          const [id] = yield knex('Geography').insert({ countryId })
           geography.id = id
         }
 

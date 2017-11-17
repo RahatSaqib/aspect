@@ -10,11 +10,10 @@ function* preProcessMergeResult({ knex, deviceId, payload }) {
   if (!deviceId) {
     throw Boom.notFound('Cannot find device')
   }
-  const device = yield knex
+  const [device] = yield knex
     .from('Device as d')
     .where({ 'd.id': deviceId })
     .select('d.id', 'd.siteId', 'd.deviceTypeId')
-    .first()
   if (_.isEmpty(device)) {
     throw Boom.notFound(`Cannot find device ${deviceId}`)
   }
@@ -26,25 +25,22 @@ function* preProcessMergeResult({ knex, deviceId, payload }) {
 
 function* createAssayIfNotExists(knex, device, payload) {
   const payloadAssayId = _.get(payload, 'assay.id', false)
-  const assay = yield knex
+  const [assay] = yield knex
     .from('Assay as a')
     .where({ 'a.externalId': payloadAssayId })
     .select('a.id')
-    .first()
   if (_.isEmpty(assay)) {
-    const unknownAssayType = yield knex
+    const [unknownAssayType] = yield knex
       .from('AssayType as at')
       .where({ 'at.name': 'Unknown' })
       .select('at.id')
-      .first()
     if (!_.isEmpty(unknownAssayType)) {
       const resultSourceExternalId =
         _.get(payload, 'source.id') || 'DiagnosticDevice'
-      const resultSource = knex
+      const [resultSource] = knex
         .from('ResultSource as rs')
         .where({ 'rs.externalid': resultSourceExternalId })
         .select('rs.id')
-        .first()
       if (!_.isEmpty(resultSource)) {
         if (device.deviceTypeId) {
           yield knex

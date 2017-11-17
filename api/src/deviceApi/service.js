@@ -609,6 +609,16 @@ function createNewDevice(request, now) {
       payload: request.payload,
     })
 
+    const preProcessCreateDevice = await loadPlugin(
+      apiKey.plugin,
+      'preProcessCreateDevice'
+    )
+    const existingDevice = await preProcessCreateDevice(request, now)
+
+    if (!_.isEmpty(existingDevice)) {
+      return { device: existingDevice }
+    }
+
     const deviceTypeExternalId = _.get(payload, 'type.id', null)
     if (deviceTypeExternalId == null) {
       return {
