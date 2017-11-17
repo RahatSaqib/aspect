@@ -683,7 +683,6 @@ function* inventoryItemOperational(request) {
   // get data constraints
   const dataConstraints = yield getConstraints(auth.credentials)
 
-  const siteList = yield* getSiteList(auth, dataConstraints)
   const inventoryItemList = yield* getInventoryItemList(auth, dataConstraints)
 
   const stockOutsInventoryItemList = _.sortBy(
