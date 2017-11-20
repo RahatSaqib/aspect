@@ -1,12 +1,11 @@
 const _ = require('lodash')
-const Boom = require('boom')
 const { transact } = require('../../../db')
 /*
 The purpose of this plugin is to guard against duplicate GxConnect
 devices being created. If the macAddress and instrument serial number
 match an existing device, return that device
 */
-function* preProcessCreateDevice(request, now) {
+function* preProcessCreateDevice(request) {
   return yield transact(function*(knex) {
     const { auth, payload } = request
     const macAddress = _.get(payload, 'configuration.data.macAddress')
