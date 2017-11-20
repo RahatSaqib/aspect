@@ -732,22 +732,22 @@ function* seed(knex) {
       type: 'string',
       order: 0,
     },
-    firstName: {
+    name: {
       title: 'First Name',
       type: 'string',
       order: 1,
     },
-    lastName: {
+    surName: {
       title: 'Last Name',
       type: 'string',
       order: 2,
     },
-    motherFirstName: {
+    motherName: {
       title: 'Mother First Name',
       type: 'string',
       order: 3,
     },
-    fatherFirstName: {
+    fatherName: {
       title: 'Father First Name',
       type: 'string',
       order: 4,
@@ -994,7 +994,7 @@ function* seed(knex) {
         type: 'string',
         order: 3,
       },
-      nameMother: {
+      motherName: {
         title: "Mother's Name",
         type: 'string',
         order: 4,
