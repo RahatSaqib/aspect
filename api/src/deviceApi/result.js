@@ -332,6 +332,7 @@ async function mergeResult(
     },
     result
   )
+
   let resultId
   if (existingResult) {
     resultId = existingResult.id

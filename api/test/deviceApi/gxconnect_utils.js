@@ -49,6 +49,7 @@ function* getLastResult(knex, deviceId) {
     .leftJoin('ResultCategory as rc1', 'r.resultCategory1', 'rc1.id')
     .leftJoin('ResultCategory as rc2', 'r.resultCategory2', 'rc2.id')
     .where('dl.deviceId', deviceId)
+    .orderBy('dl.id', 'desc')
     .first(
       'r.id',
       'r.externalId',

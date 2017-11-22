@@ -8,6 +8,7 @@ const {
   createGxConnectTestContext,
   getLastResult,
 } = require('./gxconnect_utils')
+const { run } = require('../../src/db')
 
 const server = supertest.agent('http://localhost:8080')
 const assert = chai.assert
@@ -764,7 +765,68 @@ describe('Device API routes for GxConnect Devices', () => {
       }))
 
     describe('when the assay in the result payload is unknown to Aspect', () => {
-      it('should create an assay', () => {})
+      const assayName = 'New Assay Type'
+      after(() =>
+        run(function*(knex) {
+          return yield knex('Assay').where({ externalId: assayName }).delete()
+        })
+      )
+
+      it('should create an assay', () =>
+        runTest(function*(knex) {
+          const { basicDevicePayload, deviceAuth, device } = context
+
+          const resultId = 'UNIQUE-ID-NEW-ASSAY'
+          const assayVersion = '1'
+          const getAssayDetails = function*(assayName) {
+            return yield knex('Assay as a')
+              .join('AssayType as at', 'a.assayTypeId', 'at.id')
+              .join('DeviceType as dt', 'a.deviceTypeId', 'dt.id')
+              .where({ 'a.externalId': assayName })
+              .first(
+                'a.id as assayId',
+                'a.name as assayName',
+                'a.externalId as assayExternalId',
+                'at.name as assayTypeName',
+                'dt.externalId as deviceTypeExternalId'
+              )
+          }
+          const newAssayDetailsBefore = yield* getAssayDetails(assayName)
+          assert.isUndefined(newAssayDetailsBefore)
+
+          yield server
+            .post('/device')
+            .set('Authorization', deviceAuth)
+            .send(_.merge(basicDevicePayload,
+              {
+                result: _.merge(basicResultPayload.result, {
+                  id: resultId,
+                  assay: {
+                    id: assayName,
+                    version: assayVersion,
+                  },
+                }),
+              })
+            )
+            .then(res => {
+              assert.equal(res.status, 200)
+              assert.typeOf(res.body, 'Object')
+            })
+            .catch(assert.fail)
+
+          const resultDetails = yield* getLastResult(knex, device.id)
+          assert.equal(resultDetails.externalId, resultId)
+
+          const newAssayDetailsAfter = yield* getAssayDetails(assayName)
+          assert.deepEqual(_.omit(newAssayDetailsAfter, 'assayId'), {
+            assayName,
+            assayExternalId: assayName,
+            assayTypeName: 'Unknown',
+            deviceTypeExternalId: basicDevicePayload.type.id,
+          })
+
+          assert.equal(resultDetails.externalId, resultId)
+        }))
     })
 
     describe('when the assay in the result payload is mapped to a consumable', () => {

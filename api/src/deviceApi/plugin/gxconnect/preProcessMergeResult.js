@@ -37,10 +37,9 @@ function* createAssayIfNotExists(knex, device, payload) {
     if (!_.isEmpty(unknownAssayType)) {
       const resultSourceExternalId =
         _.get(payload, 'source.id') || 'DiagnosticDevice'
-      const [resultSource] = knex
-        .from('ResultSource as rs')
+      const resultSource = yield knex('ResultSource as rs')
         .where({ 'rs.externalid': resultSourceExternalId })
-        .select('rs.id')
+        .first('rs.id')
       if (!_.isEmpty(resultSource)) {
         if (device.deviceTypeId) {
           yield knex
