@@ -128,8 +128,16 @@ async function getDeviceFromApiKey(knex, apiKey) {
   return device
 }
 
-async function getLastDeviceOperation(knex, deviceId) {
-  const lastOpId = await getLastDeviceOperationId(knex, deviceId)
+async function getSiteFromDeviceId(knex, deviceId) {
+  const site = await knex('Device as d')
+    .innerJoin('Site as s', 'd.siteId', 's.id')
+    .where('d.id', deviceId)
+    .first('s.*')
+  return site
+}
+
+function* getLastDeviceOperation(knex, deviceId) {
+  const lastOpId = yield* getLastDeviceOperationId(knex, deviceId)
   if (!lastOpId) {
     return null
   }
@@ -349,8 +357,10 @@ module.exports = {
   createTestContext,
   getDeviceConfigurationData,
   getDeviceFromApiKey,
+  getSiteFromDeviceId,
   getLastDeviceOperation,
   getLastDeviceOperationData,
   getLastDeviceOperationId,
   getLastResultId,
+  deleteDeviceAndTestData,
 }

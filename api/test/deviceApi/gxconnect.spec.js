@@ -1,1566 +1,715 @@
 const _ = require('lodash')
 const supertest = require('supertest')
 const chai = require('chai')
-const Promise = require('bluebird')
-const { knex } = require('../../src/db')
+const {
+  createGxConnectTestContext,
+  getLastResult,
+} = require('./gxconnect_utils')
 
 const server = supertest.agent('http://localhost:8080')
 const assert = chai.assert
 
 describe('Device API routes for GxConnect Devices', () => {
-  describe('registration and configuration', () => {
-    const aspectAdminCredentials = {
-      adminUsername: 'admin',
-      adminPassword: 'test07',
-    }
-    const macAddress = 'MAC000000000000'
-    const basicDevicePayload = {
-      name: 'New GeneXpert Laboratory',
-      serial: null,
-      status: null,
-      type: {
-        id: 'CepheidGeneXpert',
-      },
-      site: null,
-      checkpoint: null,
-      log: null,
-      configuration: {
-        checkpoint: null,
-        data: { macAddress },
-      },
-      operation: null,
-      result: null,
-    }
+  const macAddress = 'MAC00000000FAKE'
+  const adminUsername = 'admin'
+  const adminPassword = 'test07'
+  const countryCode = 'US'
+  const deviceName = 'New GeneXpert Laboratory'
+  const instrumentSerialNumbers = ['123456']
 
+  describe('registration and configuration', () => {
     describe('when no device API key is specified', () => {
-      it('should respond with UNAUTHORIZED', done => {
-        server
-          .post('/device')
-          .set('Authorization', 'Bearer ')
-          .send(basicDevicePayload)
-          .end((err, res) => {
-            assert.equal(res.statusCode, 401)
-            done()
-          })
+      const context = createGxConnectTestContext(server, {
+        macAddress,
+        adminUsername,
+        adminPassword,
       })
+
+      const runTest = context.runTest
+
+      it('should respond with UNAUTHORIZED', () =>
+        runTest(function*() {
+          const { basicDevicePayload } = context
+          yield server
+            .post('/device')
+            .set('Authorization', 'Bearer ')
+            .send(basicDevicePayload)
+            .then(res => {
+              assert.equal(res.statusCode, 401)
+            })
+            .catch(assert.fail)
+        }))
     })
 
     describe('when unknown device API key is specified', () => {
-      it('should respond with UNAUTHORIZED', done => {
-        server
-          .post('/device')
-          .set('Authorization', 'Bearer fg2g9cjx0njzgbfmkem0')
-          .send(basicDevicePayload)
-          .end((err, res) => {
-            assert.equal(res.statusCode, 401)
-            done()
-          })
+      const context = createGxConnectTestContext(server, {
+        macAddress,
+        adminUsername,
+        adminPassword,
       })
+
+      const runTest = context.runTest
+
+      it('should respond with UNAUTHORIZED', () =>
+        runTest(function*() {
+          const { basicDevicePayload } = context
+          yield server
+            .post('/device')
+            .set('Authorization', 'Bearer fg2g9cjx0njzgbfmkem0')
+            .send(basicDevicePayload)
+            .then(res => {
+              assert.equal(res.statusCode, 401)
+            })
+            .catch(assert.fail)
+        }))
     })
 
-    let deviceApiKey
-    const countryCode = 'US'
-
     describe('when known device API key is specified', () => {
-      before(done => {
-        server
-          .post('/api/auth')
-          .send({
-            name: aspectAdminCredentials.adminUsername,
-            password: aspectAdminCredentials.adminPassword,
-            clientName: 'gx_connect',
-            clientId: `${Math.floor(Math.random() * 800000000) + 100000000}`,
-          })
-          .end((err, res) => {
-            assert.equal(res.statusCode, 200)
-            const adminAccessToken = res.body.access
-            assert.isOk(adminAccessToken)
-
-            server
-              .post('/api/demo/device/api-key')
-              .set('Authorization', `Bearer ${adminAccessToken}`)
-              .end((err, res) => {
-                assert.equal(res.statusCode, 200)
-                assert.property(res.body, 'token')
-                deviceApiKey = res.body.token
-                assert.isOk(deviceApiKey)
-                done()
-              })
-          })
-      })
-
-      after(done => {
-        knex
-          .from('DeviceApiKey as dak')
-          .leftJoin('Device as d', 'dak.deviceId', 'd.id')
-          .leftJoin('Site as s', 'd.siteId', 's.id')
-          .where({ token: deviceApiKey })
-          .first(
-            'dak.id as deviceApiKeyId',
-            'd.id as deviceId',
-            's.id as siteId'
-          )
-          .then(idsToDelete => {
-            const deleteDeviceApiKey = knex
-              .from('DeviceApiKey')
-              .where({ id: idsToDelete.deviceApiKeyId })
-              .delete()
-            const deleteDeviceLogs = knex
-              .from('DeviceLog')
-              .where({ deviceId: idsToDelete.deviceId })
-              .delete()
-            const deleteDevice = knex
-              .from('Device')
-              .where({ id: idsToDelete.deviceId })
-              .delete()
-            const deleteSite = knex
-              .from('Site')
-              .where({ id: idsToDelete.siteId })
-              .delete()
-
-            return Promise.all([
-              deleteDeviceApiKey,
-              deleteDeviceLogs,
-              deleteDevice,
-              deleteSite,
-            ]).then(() => {
-              const haveApiKeysBeenCleared = knex
-                .from('DeviceApiKey')
-                .where({ id: idsToDelete.deviceApiKeyId })
-                .select()
-
-              const haveDevicesBeenCleared = knex
-                .from('Device')
-                .where({
-                  macAddress: basicDevicePayload.configuration.data.macAddress,
-                })
-                .select()
-
-              const haveSitesBeenCleared = knex
-                .from('Site')
-                .where({
-                  name: basicDevicePayload.name,
-                })
-                .select()
-
-              return Promise.all([
-                haveApiKeysBeenCleared,
-                haveDevicesBeenCleared,
-                haveSitesBeenCleared,
-              ]).finally(() => done())
-            })
-          })
-      })
-
       describe('send new device data', () => {
         describe('before a device name and country code have been specified', () => {
-          it('should respond with NOT_FOUND', done => {
-            server
-              .post('/device')
-              .set('Authorization', `Bearer ${deviceApiKey}`)
-              .send(basicDevicePayload)
-              .end((err, res) => {
-                assert.equal(res.statusCode, 404)
-                done()
-              })
+          const context = createGxConnectTestContext(server, {
+            macAddress,
+            adminUsername,
+            adminPassword,
           })
+
+          before(context.beforeRequestNewApiKey)
+          const runTest = context.runTest
+          after(context.afterCleanUp)
+
+          it('should respond with NOT_FOUND', () =>
+            runTest(function*() {
+              const { deviceAuth, basicDevicePayload } = context
+              yield server
+                .post('/device')
+                .set('Authorization', deviceAuth)
+                .send(basicDevicePayload)
+                .then(res => {
+                  assert.equal(res.statusCode, 404)
+                })
+                .catch(assert.fail)
+            }))
         })
 
         describe('after a device name and country code have been specified', () => {
-          it('should respond with OK', done => {
-            server
+          const context = createGxConnectTestContext(server, {
+            countryAbbreviation: countryCode,
+            adminUsername,
+            adminPassword,
+            deviceName,
+            macAddress,
+          })
+
+          before(context.beforeRegisterAndSetDevice)
+          const runTest = context.runTest
+          after(context.afterCleanUp)
+
+          it('should respond with OK', () =>
+            runTest(function*() {
+              const { deviceAuth, basicDevicePayload } = context
+              yield server
+                .post('/device')
+                .set('Authorization', deviceAuth)
+                .send(basicDevicePayload)
+                .then(res => {
+                  assert.equal(res.statusCode, 200)
+                })
+                .catch(assert.fail)
+            }))
+
+          it('should have created a device and link it to the device API key', () =>
+            runTest(function*(knex) {
+              const { basicDevicePayload, apiKey } = context
+              const deviceDetials = yield knex('DeviceApiKey as dak')
+                .join('Device as d', 'dak.DeviceId', 'd.id')
+                .join('Site as s', 'd.siteId', 's.id')
+                .join('Geography as g', 's.geographyId', 'g.id')
+                .join('Country as c', 'g.countryId', 'c.id')
+                .join('DeviceType as dt', 'd.deviceTypeId', 'dt.id')
+                .where({ 'dak.token': apiKey })
+                .select(
+                  'd.name as deviceName',
+                  'd.macAddress',
+                  's.name as siteName',
+                  'c.abbreviation as countryCode',
+                  'dt.externalId as deviceType'
+                )
+              assert.deepEqual(deviceDetials, [
+                {
+                  deviceName,
+                  macAddress,
+                  siteName: deviceName,
+                  countryCode,
+                  deviceType: basicDevicePayload.type.id,
+                },
+              ])
+            }))
+        })
+      })
+    })
+
+    describe('generating a new device API key from a device with a known MAC address/instrument serial combination', () => {
+      const firstContext = createGxConnectTestContext(server, {
+        countryAbbreviation: countryCode,
+        adminUsername,
+        adminPassword,
+        deviceName,
+        macAddress,
+        instrumentSerialNumbers,
+      })
+
+      before(firstContext.beforeRegisterAndSetDevice)
+      after(firstContext.afterCleanUp)
+
+      it('should not create a duplicate device', () =>
+        firstContext.runTest(function*(knex) {
+          // Check that device exists with MAC Address and Instrument Serial
+          const firstDeviceUniqueIdentifiers = yield knex('DeviceApiKey as dak')
+            .join('Device as d', 'dak.DeviceId', 'd.id')
+            .where({ 'dak.token': firstContext.apiKey })
+            .select('d.macAddress', 'd.serial')
+
+          assert.deepEqual(firstDeviceUniqueIdentifiers, [
+            {
+              macAddress,
+              serial: instrumentSerialNumbers.join(),
+            },
+          ])
+
+          // Single device exists, now generate a new API key
+          const secondContext = createGxConnectTestContext(server, {
+            countryAbbreviation: countryCode,
+            adminUsername,
+            adminPassword,
+            deviceName,
+            macAddress,
+            instrumentSerialNumbers,
+          })
+
+          yield* secondContext.registerAndSetDevice()
+
+          yield* secondContext.runTestInline(function*(knex) {
+            assert.notEqual(secondContext.apiKey, firstContext.apiKey)
+            // Submit same device configuration with MAC address and instrument serial numbers
+            yield server
               .post('/device')
-              .set('Authorization', `Bearer ${deviceApiKey}`)
+              .set('Authorization', secondContext.deviceAuth)
               .send(
-                _.merge(basicDevicePayload, {
+                _.merge(secondContext.basicDevicePayload, {
                   configuration: {
                     checkpoint: null,
                     data: {
                       macAddress,
                       country: countryCode,
+                      instrumentSerialNumbers,
                     },
                   },
                 })
               )
-              .end((err, res) => {
-                assert.equal(res.statusCode, 200)
-                server
-                  .post('/device')
-                  .set('Authorization', `Bearer ${deviceApiKey}`)
-                  .send(basicDevicePayload)
-                  .end((err, res) => {
-                    assert.equal(res.statusCode, 200)
-                    done()
-                  })
-              })
+
+            const firstDeviceApiKeyStatus = yield knex('DeviceApiKey as dak')
+              .where({ 'dak.token': firstContext.apiKey })
+              .select('dak.deviceId', 'dak.revoked')
+
+            // Check that old API key is no longer associated with a device
+            assert.deepEqual(firstDeviceApiKeyStatus, [
+              {
+                deviceId: null,
+                revoked: 1,
+              },
+            ])
+
+            // Check that device exists with MAC Address and Instrument
+            // Serial linked to the new device API key
+            const secondDeviceUniqueIdentifiers = yield knex(
+              'DeviceApiKey as dak'
+            )
+              .join('Device as d', 'dak.DeviceId', 'd.id')
+              .where({ 'dak.token': secondContext.apiKey })
+              .select('d.macAddress', 'd.serial', 'd.id')
+            assert.deepEqual(secondDeviceUniqueIdentifiers, [
+              {
+                macAddress,
+                serial: instrumentSerialNumbers.join(),
+                id: secondContext.device.id,
+              },
+            ])
           })
 
-          it('should have created a device and link it to the device API key', done => {
-            knex('DeviceApiKey as dak')
+          yield* secondContext.cleanUp()
+        }))
+    })
+
+    describe('when MAC address changes', () => {
+      describe('and device API key changes', () => {
+        const firstContext = createGxConnectTestContext(server, {
+          countryAbbreviation: countryCode,
+          adminUsername,
+          adminPassword,
+          deviceName,
+          macAddress,
+          instrumentSerialNumbers,
+        })
+
+        before(firstContext.beforeRegisterAndSetDevice)
+        after(firstContext.afterCleanUp)
+
+        it('should create a new device', () =>
+          firstContext.runTest(function*(knex) {
+            // Check that device exists with MAC Address and Instrument Serial
+            const firstDeviceUniqueIdentifiers = yield knex(
+              'DeviceApiKey as dak'
+            )
+              .join('Device as d', 'dak.DeviceId', 'd.id')
+              .where({ 'dak.token': firstContext.apiKey })
+              .select('d.macAddress', 'd.serial')
+
+            assert.deepEqual(firstDeviceUniqueIdentifiers, [
+              {
+                macAddress,
+                serial: instrumentSerialNumbers.join(),
+              },
+            ])
+
+            // Single device exists, now generate a new API key
+            const newMacAddress = 'MAC12345678FAKE'
+            const secondContext = createGxConnectTestContext(server, {
+              countryAbbreviation: countryCode,
+              adminUsername,
+              adminPassword,
+              deviceName,
+              macAddress: newMacAddress,
+              instrumentSerialNumbers,
+            })
+
+            yield* secondContext.registerAndSetDevice()
+
+            yield* secondContext.runTestInline(function*(knex) {
+              assert.notEqual(secondContext.apiKey, firstContext.apiKey)
+
+              const firstDeviceApiKeyStatus = yield knex('DeviceApiKey as dak')
+                .where({ 'dak.token': firstContext.apiKey })
+                .select('dak.deviceId', 'dak.revoked')
+
+              // Check that old API key still associated with a device and is active
+              assert.deepEqual(firstDeviceApiKeyStatus, [
+                {
+                  deviceId: firstContext.device.id,
+                  revoked: 0,
+                },
+              ])
+
+              // Check that a new device exists with the new MAC Address and Instrument
+              // Serial linked to the new device API key
+              const secondDeviceUniqueIdentifiers = yield knex(
+                'DeviceApiKey as dak'
+              )
+                .join('Device as d', 'dak.DeviceId', 'd.id')
+                .where({ 'dak.token': secondContext.apiKey })
+                .select('d.macAddress', 'd.serial', 'd.id', 'dak.revoked')
+              assert.deepEqual(secondDeviceUniqueIdentifiers, [
+                {
+                  macAddress: newMacAddress,
+                  serial: instrumentSerialNumbers.join(),
+                  id: secondContext.device.id,
+                  revoked: 0,
+                },
+              ])
+
+              // Check that the devices are different (one API key per device
+              assert.notEqual(
+                secondDeviceUniqueIdentifiers[0].id,
+                firstDeviceApiKeyStatus[0].deviceId
+              )
+            })
+
+            yield* secondContext.cleanUp()
+          }))
+      })
+
+      describe('but device API key remains the same', () => {
+        const context = createGxConnectTestContext(server, {
+          countryAbbreviation: countryCode,
+          adminUsername,
+          adminPassword,
+          deviceName,
+          macAddress,
+          instrumentSerialNumbers,
+        })
+
+        before(context.beforeRegisterAndSetDevice)
+        const runTest = context.runTest
+        after(context.afterCleanUp)
+
+        it('should update the MAC address of the existing device', () =>
+          runTest(function*(knex) {
+            // Check that device exists with MAC Address and Instrument Serial
+            const deviceUniqueIdentifiers = yield knex('DeviceApiKey as dak')
+              .join('Device as d', 'dak.DeviceId', 'd.id')
+              .where({ 'dak.token': context.apiKey })
+              .select('d.macAddress', 'd.serial')
+
+            assert.deepEqual(deviceUniqueIdentifiers, [
+              {
+                macAddress,
+                serial: instrumentSerialNumbers.join(),
+              },
+            ])
+
+            // Single device exists, now send a new MAC address
+            const newMacAddress = 'MAC12345678FAKE'
+            yield server
+              .post('/device')
+              .set('Authorization', context.deviceAuth)
+              .send(
+                _.merge(context.basicDevicePayload, {
+                  configuration: {
+                    data: {
+                      macAddress: newMacAddress,
+                    },
+                  },
+                })
+              )
+
+            // Check that the MAC address has changed
+            const newDeviceDetails = yield knex('DeviceApiKey as dak')
               .join('Device as d', 'dak.DeviceId', 'd.id')
               .join('Site as s', 'd.siteId', 's.id')
               .join('Geography as g', 's.geographyId', 'g.id')
               .join('Country as c', 'g.countryId', 'c.id')
               .join('DeviceType as dt', 'd.deviceTypeId', 'dt.id')
-              .where({ 'dak.token': deviceApiKey })
+              .where({ 'dak.token': context.apiKey })
               .select(
+                'd.id as deviceId',
                 'd.name as deviceName',
                 'd.macAddress',
                 's.name as siteName',
                 'c.abbreviation as countryCode',
                 'dt.externalId as deviceType'
               )
-              .then(results => {
-                assert.deepEqual(results, [
-                  {
-                    deviceName: basicDevicePayload.name,
-                    macAddress:
-                      basicDevicePayload.configuration.data.macAddress,
-                    siteName: basicDevicePayload.name,
-                    countryCode,
-                    deviceType: basicDevicePayload.type.id,
-                  },
-                ])
-              })
-              .finally(() => done())
-          })
-        })
-      })
-    })
 
-    describe('generating a new device API key from a device with a known MAC address/instrument serial combination', () => {
-      const instrumentSerialNumbers = ['123456']
-      it('should not create a duplicate device', done => {
-        let firstDeviceApiKey
-        let secondDeviceApiKey
-        // Login as Aspect Admin
-        server
-          .post('/api/auth')
-          .send({
-            name: aspectAdminCredentials.adminUsername,
-            password: aspectAdminCredentials.adminPassword,
-            clientName: 'gx_connect',
-            clientId: `${Math.floor(Math.random() * 800000000) + 100000000}`,
-          })
-          .end((err, res) => {
-            // Create new Device API key
-            const adminAccessToken = res.body.access
-            server
-              .post('/api/demo/device/api-key')
-              .set('Authorization', `Bearer ${adminAccessToken}`)
-              .end((err, res) => {
-                firstDeviceApiKey = res.body.token
-                // Submit device configuration with MAC address and instrument serial numbers
-                server
-                  .post('/device')
-                  .set('Authorization', `Bearer ${firstDeviceApiKey}`)
-                  .send(
-                    _.merge(basicDevicePayload, {
-                      configuration: {
-                        checkpoint: null,
-                        data: {
-                          macAddress,
-                          country: countryCode,
-                          instrumentSerialNumbers,
-                        },
-                      },
-                    })
-                  )
-                  .end(() => {
-                    // Check that device exists with MAC Address and Instrument Serial
-                    knex('DeviceApiKey as dak')
-                      .join('Device as d', 'dak.DeviceId', 'd.id')
-                      .where({ 'dak.token': firstDeviceApiKey })
-                      .select('d.macAddress', 'd.serial')
-                      .then(results => {
-                        assert.deepEqual(results, [
-                          {
-                            macAddress,
-                            serial: instrumentSerialNumbers.join(),
-                          },
-                        ])
-                        // Single device exists, now generate a new API key
-                        server
-                          .post('/api/demo/device/api-key')
-                          .set('Authorization', `Bearer ${adminAccessToken}`)
-                          .end((err, res) => {
-                            secondDeviceApiKey = res.body.token
-                            assert.notEqual(
-                              secondDeviceApiKey,
-                              firstDeviceApiKey
-                            )
-                            // Submit same device configuration with MAC address and instrument serial numbers
-                            server
-                              .post('/device')
-                              .set(
-                                'Authorization',
-                                `Bearer ${secondDeviceApiKey}`
-                              )
-                              .send(
-                                _.merge(basicDevicePayload, {
-                                  configuration: {
-                                    checkpoint: null,
-                                    data: {
-                                      macAddress,
-                                      country: countryCode,
-                                      instrumentSerialNumbers,
-                                    },
-                                  },
-                                })
-                              )
-                              .end(() =>
-                                // Check that old API key is no longer associated with a device
-                                knex('DeviceApiKey as dak')
-                                  .where({ 'dak.token': firstDeviceApiKey })
-                                  .select('dak.deviceId', 'dak.revoked')
-                                  .then(results => {
-                                    assert.deepEqual(results, [
-                                      {
-                                        deviceId: null,
-                                        revoked: 1,
-                                      },
-                                    ])
-                                    // Check that device exists with MAC Address and Instrument
-                                    // Serial linked to the new device API key
-                                    knex('DeviceApiKey as dak')
-                                      .join(
-                                        'Device as d',
-                                        'dak.DeviceId',
-                                        'd.id'
-                                      )
-                                      .where({
-                                        'dak.token': secondDeviceApiKey,
-                                      })
-                                      .select('d.macAddress', 'd.serial')
-                                      .then(results => {
-                                        assert.deepEqual(results, [
-                                          {
-                                            macAddress,
-                                            serial: instrumentSerialNumbers.join(),
-                                          },
-                                        ])
-                                        // Single device still exists, now clean up
-                                        knex
-                                          .from('DeviceApiKey as dak')
-                                          .where({ token: firstDeviceApiKey })
-                                          .first(
-                                            'dak.id as firstDeviceApiKeyId'
-                                          )
-                                          .then(idToDelete => {
-                                            knex
-                                              .from('DeviceApiKey')
-                                              .where({
-                                                id:
-                                                  idToDelete.firstDeviceApiKeyId,
-                                              })
-                                              .delete()
-                                              .then(() => {
-                                                knex
-                                                  .from('DeviceApiKey as dak')
-                                                  .leftJoin(
-                                                    'Device as d',
-                                                    'dak.deviceId',
-                                                    'd.id'
-                                                  )
-                                                  .leftJoin(
-                                                    'Site as s',
-                                                    'd.siteId',
-                                                    's.id'
-                                                  )
-                                                  .where({
-                                                    token: secondDeviceApiKey,
-                                                  })
-                                                  .first(
-                                                    'dak.id as deviceApiKeyId',
-                                                    'd.id as deviceId',
-                                                    's.id as siteId'
-                                                  )
-                                                  .then(idsToDelete => {
-                                                    const deleteDeviceApiKey = knex
-                                                      .from('DeviceApiKey')
-                                                      .where({
-                                                        id:
-                                                          idsToDelete.deviceApiKeyId,
-                                                      })
-                                                      .delete()
-                                                    const deleteDeviceLogs = knex
-                                                      .from('DeviceLog')
-                                                      .where({
-                                                        deviceId:
-                                                          idsToDelete.deviceId,
-                                                      })
-                                                      .delete()
-                                                    const deleteDevice = knex
-                                                      .from('Device')
-                                                      .where({
-                                                        id:
-                                                          idsToDelete.deviceId,
-                                                      })
-                                                      .delete()
-                                                    const deleteSite = knex
-                                                      .from('Site')
-                                                      .where({
-                                                        id: idsToDelete.siteId,
-                                                      })
-                                                      .delete()
-                                                    return Promise.all([
-                                                      deleteDeviceApiKey,
-                                                      deleteDeviceLogs,
-                                                      deleteDevice,
-                                                      deleteSite,
-                                                    ]).then(() => {
-                                                      const haveApiKeysBeenCleared = knex
-                                                        .from('DeviceApiKey')
-                                                        .where({
-                                                          id:
-                                                            idsToDelete.deviceApiKeyId,
-                                                        })
-                                                        .select()
-                                                      const haveDevicesBeenCleared = knex
-                                                        .from('Device')
-                                                        .where({
-                                                          macAddress:
-                                                            basicDevicePayload
-                                                              .configuration
-                                                              .data.macAddress,
-                                                        })
-                                                        .select()
-                                                      const haveSitesBeenCleared = knex
-                                                        .from('Site')
-                                                        .where({
-                                                          name:
-                                                            basicDevicePayload.name,
-                                                        })
-                                                        .select()
+            assert.deepEqual(
+              _.map(newDeviceDetails, device => _.omit(device, 'deviceId')),
+              [
+                {
+                  deviceName,
+                  macAddress: newMacAddress,
+                  siteName: deviceName,
+                  countryCode,
+                  deviceType: context.basicDevicePayload.type.id,
+                },
+              ]
+            )
 
-                                                      return Promise.all([
-                                                        haveApiKeysBeenCleared,
-                                                        haveDevicesBeenCleared,
-                                                        haveSitesBeenCleared,
-                                                      ]).finally(() => done())
-                                                    })
-                                                  })
-                                              })
-                                          })
-                                      })
-                                  })
-                              )
-                          })
-                      })
-                  })
-              })
-          })
-      })
-    })
+            // Check that there are no orphaned devices with
+            // the old MAC address
+            const orphanedDevices = yield knex('Device')
+              .where({ macAddress })
+              .select()
 
-    describe('when MAC address changes', () => {
-      describe('and device API key changes', () => {
-        const instrumentSerialNumbers = ['123456']
-        it('should create a new device', done => {
-          let firstDeviceApiKey
-          let secondDeviceApiKey
-          // Login as Aspect Admin
-          server
-            .post('/api/auth')
-            .send({
-              name: aspectAdminCredentials.adminUsername,
-              password: aspectAdminCredentials.adminPassword,
-              clientName: 'gx_connect',
-              clientId: `${Math.floor(Math.random() * 800000000) + 100000000}`,
-            })
-            .end((err, res) => {
-              // Create new Device API key
-              const adminAccessToken = res.body.access
-              server
-                .post('/api/demo/device/api-key')
-                .set('Authorization', `Bearer ${adminAccessToken}`)
-                .end((err, res) => {
-                  firstDeviceApiKey = res.body.token
-                  // Submit device configuration with MAC address and instrument serial numbers
-                  server
-                    .post('/device')
-                    .set('Authorization', `Bearer ${firstDeviceApiKey}`)
-                    .send(
-                      _.merge(basicDevicePayload, {
-                        configuration: {
-                          checkpoint: null,
-                          data: {
-                            macAddress,
-                            country: countryCode,
-                            instrumentSerialNumbers,
-                          },
-                        },
-                      })
-                    )
-                    .end(() =>
-                      // Check that device exists with MAC Address and Instrument Serial
-                      knex('DeviceApiKey as dak')
-                        .join('Device as d', 'dak.DeviceId', 'd.id')
-                        .where({ 'dak.token': firstDeviceApiKey })
-                        .select('d.macAddress', 'd.serial')
-                        .then(results => {
-                          assert.deepEqual(results, [
-                            {
-                              macAddress,
-                              serial: instrumentSerialNumbers.join(),
-                            },
-                          ])
-                          // Single device exists, now generate a new API key
-                          server
-                            .post('/api/demo/device/api-key')
-                            .set('Authorization', `Bearer ${adminAccessToken}`)
-                            .end((err, res) => {
-                              secondDeviceApiKey = res.body.token
-                              assert.notEqual(
-                                secondDeviceApiKey,
-                                firstDeviceApiKey
-                              )
-                              // Submit same device configuration but with new MAC address
-                              const newMacAddress = 'MAC123456789012'
-                              server
-                                .post('/device')
-                                .set(
-                                  'Authorization',
-                                  `Bearer ${secondDeviceApiKey}`
-                                )
-                                .send(
-                                  _.merge(basicDevicePayload, {
-                                    configuration: {
-                                      checkpoint: null,
-                                      data: {
-                                        macAddress: newMacAddress,
-                                        country: countryCode,
-                                        instrumentSerialNumbers,
-                                      },
-                                    },
-                                  })
-                                )
-                                .end(() =>
-                                  // Check that old API key is still associated with a device
-                                  knex('DeviceApiKey as dak')
-                                    .join('Device as d', 'dak.DeviceId', 'd.id')
-                                    .join('Site as s', 'd.siteId', 's.id')
-                                    .join(
-                                      'Geography as g',
-                                      's.geographyId',
-                                      'g.id'
-                                    )
-                                    .join('Country as c', 'g.countryId', 'c.id')
-                                    .join(
-                                      'DeviceType as dt',
-                                      'd.deviceTypeId',
-                                      'dt.id'
-                                    )
-                                    .where({ 'dak.token': firstDeviceApiKey })
-                                    .select(
-                                      'd.id as deviceId',
-                                      'd.name as deviceName',
-                                      'd.macAddress',
-                                      's.name as siteName',
-                                      'c.abbreviation as countryCode',
-                                      'dt.externalId as deviceType'
-                                    )
-                                    .then(firstDevice => {
-                                      assert.deepEqual(
-                                        _.map(firstDevice, device =>
-                                          _.omit(device, 'deviceId')
-                                        ),
-                                        [
-                                          {
-                                            deviceName: basicDevicePayload.name,
-                                            macAddress,
-                                            siteName: basicDevicePayload.name,
-                                            countryCode,
-                                            deviceType:
-                                              basicDevicePayload.type.id,
-                                          },
-                                        ]
-                                      )
-                                      // Check that new API key is associated with a new device
-                                      knex('DeviceApiKey as dak')
-                                        .join(
-                                          'Device as d',
-                                          'dak.DeviceId',
-                                          'd.id'
-                                        )
-                                        .join('Site as s', 'd.siteId', 's.id')
-                                        .join(
-                                          'Geography as g',
-                                          's.geographyId',
-                                          'g.id'
-                                        )
-                                        .join(
-                                          'Country as c',
-                                          'g.countryId',
-                                          'c.id'
-                                        )
-                                        .join(
-                                          'DeviceType as dt',
-                                          'd.deviceTypeId',
-                                          'dt.id'
-                                        )
-                                        .where({
-                                          'dak.token': secondDeviceApiKey,
-                                        })
-                                        .select(
-                                          'd.id as deviceId',
-                                          'd.name as deviceName',
-                                          'd.macAddress',
-                                          's.name as siteName',
-                                          'c.abbreviation as countryCode',
-                                          'dt.externalId as deviceType'
-                                        )
-                                        .then(secondDevice => {
-                                          assert.deepEqual(
-                                            _.map(secondDevice, device =>
-                                              _.omit(device, 'deviceId')
-                                            ),
-                                            [
-                                              {
-                                                deviceName:
-                                                  basicDevicePayload.name,
-                                                macAddress: newMacAddress,
-                                                siteName:
-                                                  basicDevicePayload.name,
-                                                countryCode,
-                                                deviceType:
-                                                  basicDevicePayload.type.id,
-                                              },
-                                            ]
-                                          )
-                                          assert.notEqual(
-                                            firstDevice[0].deviceId,
-                                            secondDevice[0].deviceId
-                                          )
-
-                                          knex
-                                            .from('DeviceApiKey as dak')
-                                            .leftJoin(
-                                              'Device as d',
-                                              'dak.deviceId',
-                                              'd.id'
-                                            )
-                                            .leftJoin(
-                                              'Site as s',
-                                              'd.siteId',
-                                              's.id'
-                                            )
-                                            .where({ token: firstDeviceApiKey })
-                                            .first(
-                                              'dak.id as deviceApiKeyId',
-                                              'd.id as deviceId',
-                                              's.id as siteId'
-                                            )
-                                            .then(idsToDelete => {
-                                              const deleteFirstDeviceApiKey = knex
-                                                .from('DeviceApiKey')
-                                                .where({
-                                                  id:
-                                                    idsToDelete.deviceApiKeyId,
-                                                })
-                                                .delete()
-                                              const deleteFirstDeviceLogs = knex
-                                                .from('DeviceLog')
-                                                .where({
-                                                  deviceId:
-                                                    idsToDelete.deviceId,
-                                                })
-                                                .delete()
-                                              const deleteFirstDevice = knex
-                                                .from('Device')
-                                                .where({
-                                                  id: idsToDelete.deviceId,
-                                                })
-                                                .delete()
-                                              const deleteFirstSite = knex
-                                                .from('Site')
-                                                .where({
-                                                  id: idsToDelete.siteId,
-                                                })
-                                                .delete()
-
-                                              return Promise.all([
-                                                deleteFirstDeviceApiKey,
-                                                deleteFirstDeviceLogs,
-                                                deleteFirstDevice,
-                                                deleteFirstSite,
-                                              ]).then(() =>
-                                                knex
-                                                  .from('DeviceApiKey')
-                                                  .where({
-                                                    id:
-                                                      idsToDelete.deviceApiKeyId,
-                                                  })
-                                                  .select()
-                                                  .then(() =>
-                                                    knex
-                                                      .from(
-                                                        'DeviceApiKey as dak'
-                                                      )
-                                                      .leftJoin(
-                                                        'Device as d',
-                                                        'dak.deviceId',
-                                                        'd.id'
-                                                      )
-                                                      .leftJoin(
-                                                        'Site as s',
-                                                        'd.siteId',
-                                                        's.id'
-                                                      )
-                                                      .where({
-                                                        token: secondDeviceApiKey,
-                                                      })
-                                                      .first(
-                                                        'dak.id as deviceApiKeyId',
-                                                        'd.id as deviceId',
-                                                        's.id as siteId'
-                                                      )
-                                                      .then(idsToDelete => {
-                                                        const deleteSecondDeviceApiKey = knex
-                                                          .from('DeviceApiKey')
-                                                          .where({
-                                                            id:
-                                                              idsToDelete.deviceApiKeyId,
-                                                          })
-                                                          .delete()
-                                                        const deleteSecondDeviceLogs = knex
-                                                          .from('DeviceLog')
-                                                          .where({
-                                                            deviceId:
-                                                              idsToDelete.deviceId,
-                                                          })
-                                                          .delete()
-                                                        const deleteSecondDevice = knex
-                                                          .from('Device')
-                                                          .where({
-                                                            id:
-                                                              idsToDelete.deviceId,
-                                                          })
-                                                          .delete()
-                                                        const deleteSecondSite = knex
-                                                          .from('Site')
-                                                          .where({
-                                                            id:
-                                                              idsToDelete.siteId,
-                                                          })
-                                                          .delete()
-
-                                                        return Promise.all([
-                                                          deleteSecondDeviceApiKey,
-                                                          deleteSecondDeviceLogs,
-                                                          deleteSecondDevice,
-                                                          deleteSecondSite,
-                                                        ]).then(() => {
-                                                          const haveApiKeysBeenCleared = knex
-                                                            .from(
-                                                              'DeviceApiKey'
-                                                            )
-                                                            .where({
-                                                              id:
-                                                                idsToDelete.deviceApiKeyId,
-                                                            })
-                                                            .select()
-
-                                                          const haveDevicesBeenCleared = knex
-                                                            .from('Device')
-                                                            .where({
-                                                              macAddress:
-                                                                basicDevicePayload
-                                                                  .configuration
-                                                                  .data
-                                                                  .macAddress,
-                                                            })
-                                                            .select()
-
-                                                          const haveSitesBeenCleared = knex
-                                                            .from('Site')
-                                                            .where({
-                                                              name:
-                                                                basicDevicePayload.name,
-                                                            })
-                                                            .select()
-
-                                                          return Promise.all([
-                                                            haveApiKeysBeenCleared,
-                                                            haveDevicesBeenCleared,
-                                                            haveSitesBeenCleared,
-                                                          ]).finally(() =>
-                                                            done()
-                                                          )
-                                                        })
-                                                      })
-                                                  )
-                                              )
-                                            })
-                                        })
-                                    })
-                                )
-                            })
-                        })
-                    )
-                })
-            })
-        })
-      })
-
-      describe('but device API key remains the same', () => {
-        const instrumentSerialNumbers = ['123456']
-        it('should update the MAC address of the existing device', done => {
-          // Login as Aspect Admin
-          server
-            .post('/api/auth')
-            .send({
-              name: aspectAdminCredentials.adminUsername,
-              password: aspectAdminCredentials.adminPassword,
-              clientName: 'gx_connect',
-              clientId: `${Math.floor(Math.random() * 800000000) + 100000000}`,
-            })
-            .end((err, res) => {
-              // Create new Device API key
-              const adminAccessToken = res.body.access
-              server
-                .post('/api/demo/device/api-key')
-                .set('Authorization', `Bearer ${adminAccessToken}`)
-                .end((err, res) => {
-                  deviceApiKey = res.body.token
-                  // Submit device configuration with MAC address and instrument serial numbers
-                  server
-                    .post('/device')
-                    .set('Authorization', `Bearer ${deviceApiKey}`)
-                    .send(
-                      _.merge(basicDevicePayload, {
-                        configuration: {
-                          checkpoint: null,
-                          data: {
-                            macAddress,
-                            country: countryCode,
-                            instrumentSerialNumbers,
-                          },
-                        },
-                      })
-                    )
-                    .end(() =>
-                      // Check that device exists with MAC Address and Instrument Serial
-                      knex('DeviceApiKey as dak')
-                        .join('Device as d', 'dak.DeviceId', 'd.id')
-                        .where({ 'dak.token': deviceApiKey })
-                        .select('d.macAddress', 'd.serial')
-                        .then(results => {
-                          assert.deepEqual(results, [
-                            {
-                              macAddress,
-                              serial: instrumentSerialNumbers.join(),
-                            },
-                          ])
-                          // Single device exists, now send a new MAC address
-                          const newMacAddress = 'MAC123456789012'
-                          server
-                            .post('/device')
-                            .set('Authorization', `Bearer ${deviceApiKey}`)
-                            .send(
-                              _.merge(basicDevicePayload, {
-                                configuration: {
-                                  checkpoint: null,
-                                  data: {
-                                    macAddress: newMacAddress,
-                                    country: countryCode,
-                                    instrumentSerialNumbers,
-                                  },
-                                },
-                              })
-                            )
-                            .end(() =>
-                              // Check that the MAC address has changed
-                              knex('DeviceApiKey as dak')
-                                .join('Device as d', 'dak.DeviceId', 'd.id')
-                                .join('Site as s', 'd.siteId', 's.id')
-                                .join('Geography as g', 's.geographyId', 'g.id')
-                                .join('Country as c', 'g.countryId', 'c.id')
-                                .join(
-                                  'DeviceType as dt',
-                                  'd.deviceTypeId',
-                                  'dt.id'
-                                )
-                                .where({ 'dak.token': deviceApiKey })
-                                .select(
-                                  'd.id as deviceId',
-                                  'd.name as deviceName',
-                                  'd.macAddress',
-                                  's.name as siteName',
-                                  'c.abbreviation as countryCode',
-                                  'dt.externalId as deviceType'
-                                )
-                                .then(device => {
-                                  assert.deepEqual(
-                                    _.map(device, device =>
-                                      _.omit(device, 'deviceId')
-                                    ),
-                                    [
-                                      {
-                                        deviceName: basicDevicePayload.name,
-                                        macAddress: newMacAddress,
-                                        siteName: basicDevicePayload.name,
-                                        countryCode,
-                                        deviceType: basicDevicePayload.type.id,
-                                      },
-                                    ]
-                                  )
-                                  // Check that there are no orphaned devices with
-                                  // the old MAC address
-                                  knex('Device as d')
-                                    .where({
-                                      'd.macAddress': macAddress,
-                                    })
-                                    .select()
-                                    .then(orphanedDevices => {
-                                      assert.isEmpty(orphanedDevices)
-                                      // Clean up
-                                      knex
-                                        .from('DeviceApiKey as dak')
-                                        .leftJoin(
-                                          'Device as d',
-                                          'dak.deviceId',
-                                          'd.id'
-                                        )
-                                        .leftJoin(
-                                          'Site as s',
-                                          'd.siteId',
-                                          's.id'
-                                        )
-                                        .where({ token: deviceApiKey })
-                                        .first(
-                                          'dak.id as deviceApiKeyId',
-                                          'd.id as deviceId',
-                                          's.id as siteId'
-                                        )
-                                        .then(idsToDelete => {
-                                          const deleteDeviceApiKey = knex
-                                            .from('DeviceApiKey')
-                                            .where({
-                                              id: idsToDelete.deviceApiKeyId,
-                                            })
-                                            .delete()
-                                          const deleteDeviceLogs = knex
-                                            .from('DeviceLog')
-                                            .where({
-                                              deviceId: idsToDelete.deviceId,
-                                            })
-                                            .delete()
-                                          const deleteDevice = knex
-                                            .from('Device')
-                                            .where({
-                                              id: idsToDelete.deviceId,
-                                            })
-                                            .delete()
-                                          const deleteSite = knex
-                                            .from('Site')
-                                            .where({ id: idsToDelete.siteId })
-                                            .delete()
-
-                                          return Promise.all([
-                                            deleteDeviceApiKey,
-                                            deleteDeviceLogs,
-                                            deleteDevice,
-                                            deleteSite,
-                                          ]).then(() => {
-                                            const haveApiKeysBeenCleared = knex
-                                              .from('DeviceApiKey')
-                                              .where({
-                                                id: idsToDelete.deviceApiKeyId,
-                                              })
-                                              .select()
-
-                                            const haveDevicesBeenCleared = knex
-                                              .from('Device')
-                                              .where({
-                                                macAddress:
-                                                  basicDevicePayload
-                                                    .configuration.data
-                                                    .macAddress,
-                                              })
-                                              .select()
-
-                                            const haveSitesBeenCleared = knex
-                                              .from('Site')
-                                              .where({
-                                                name: basicDevicePayload.name,
-                                              })
-                                              .select()
-
-                                            return Promise.all([
-                                              haveApiKeysBeenCleared,
-                                              haveDevicesBeenCleared,
-                                              haveSitesBeenCleared,
-                                            ]).finally(() => done())
-                                          })
-                                        })
-                                    })
-                                })
-                            )
-                        })
-                    )
-                })
-            })
-        })
+            assert.isEmpty(orphanedDevices)
+          }))
       })
     })
 
     describe('when instrument serial changes', () => {
       describe('and device API key changes', () => {
-        const instrumentSerialNumbers = ['123456']
-        it('should create a new device', done => {
-          let firstDeviceApiKey
-          let secondDeviceApiKey
-          // Login as Aspect Admin
-          server
-            .post('/api/auth')
-            .send({
-              name: aspectAdminCredentials.adminUsername,
-              password: aspectAdminCredentials.adminPassword,
-              clientName: 'gx_connect',
-              clientId: `${Math.floor(Math.random() * 800000000) + 100000000}`,
-            })
-            .end((err, res) => {
-              // Create new Device API key
-              const adminAccessToken = res.body.access
-              server
-                .post('/api/demo/device/api-key')
-                .set('Authorization', `Bearer ${adminAccessToken}`)
-                .end((err, res) => {
-                  firstDeviceApiKey = res.body.token
-                  // Submit device configuration with MAC address and instrument serial numbers
-                  server
-                    .post('/device')
-                    .set('Authorization', `Bearer ${firstDeviceApiKey}`)
-                    .send(
-                      _.merge(basicDevicePayload, {
-                        configuration: {
-                          checkpoint: null,
-                          data: {
-                            macAddress,
-                            country: countryCode,
-                            instrumentSerialNumbers,
-                          },
-                        },
-                      })
-                    )
-                    .end(() =>
-                      // Check that device exists with MAC Address and Instrument Serial
-                      knex('DeviceApiKey as dak')
-                        .join('Device as d', 'dak.DeviceId', 'd.id')
-                        .where({ 'dak.token': firstDeviceApiKey })
-                        .select('d.macAddress', 'd.serial')
-                        .then(results => {
-                          assert.deepEqual(results, [
-                            {
-                              macAddress,
-                              serial: instrumentSerialNumbers.join(),
-                            },
-                          ])
-                          // Single device exists, now generate a new API key
-                          server
-                            .post('/api/demo/device/api-key')
-                            .set('Authorization', `Bearer ${adminAccessToken}`)
-                            .end((err, res) => {
-                              secondDeviceApiKey = res.body.token
-                              assert.notEqual(
-                                secondDeviceApiKey,
-                                firstDeviceApiKey
-                              )
-                              // Submit same device configuration but with new instrument serial
-                              const newInstrumentSerialNumbers = ['654321']
-                              server
-                                .post('/device')
-                                .set(
-                                  'Authorization',
-                                  `Bearer ${secondDeviceApiKey}`
-                                )
-                                .send(
-                                  _.merge(basicDevicePayload, {
-                                    configuration: {
-                                      checkpoint: null,
-                                      data: {
-                                        macAddress,
-                                        country: countryCode,
-                                        instrumentSerialNumbers: newInstrumentSerialNumbers,
-                                      },
-                                    },
-                                  })
-                                )
-                                .end(() =>
-                                  // Check that old API key is still associated with a device
-                                  knex('DeviceApiKey as dak')
-                                    .join('Device as d', 'dak.DeviceId', 'd.id')
-                                    .join('Site as s', 'd.siteId', 's.id')
-                                    .join(
-                                      'Geography as g',
-                                      's.geographyId',
-                                      'g.id'
-                                    )
-                                    .join('Country as c', 'g.countryId', 'c.id')
-                                    .join(
-                                      'DeviceType as dt',
-                                      'd.deviceTypeId',
-                                      'dt.id'
-                                    )
-                                    .where({ 'dak.token': firstDeviceApiKey })
-                                    .select(
-                                      'd.id as deviceId',
-                                      'd.name as deviceName',
-                                      'd.macAddress',
-                                      'd.serial',
-                                      's.name as siteName',
-                                      'c.abbreviation as countryCode',
-                                      'dt.externalId as deviceType'
-                                    )
-                                    .then(firstDevice => {
-                                      assert.deepEqual(
-                                        _.map(firstDevice, device =>
-                                          _.omit(device, 'deviceId')
-                                        ),
-                                        [
-                                          {
-                                            deviceName: basicDevicePayload.name,
-                                            macAddress,
-                                            serial: instrumentSerialNumbers.join(),
-                                            siteName: basicDevicePayload.name,
-                                            countryCode,
-                                            deviceType:
-                                              basicDevicePayload.type.id,
-                                          },
-                                        ]
-                                      )
-                                      // Check that new API key is associated with a new device
-                                      knex('DeviceApiKey as dak')
-                                        .join(
-                                          'Device as d',
-                                          'dak.DeviceId',
-                                          'd.id'
-                                        )
-                                        .join('Site as s', 'd.siteId', 's.id')
-                                        .join(
-                                          'Geography as g',
-                                          's.geographyId',
-                                          'g.id'
-                                        )
-                                        .join(
-                                          'Country as c',
-                                          'g.countryId',
-                                          'c.id'
-                                        )
-                                        .join(
-                                          'DeviceType as dt',
-                                          'd.deviceTypeId',
-                                          'dt.id'
-                                        )
-                                        .where({
-                                          'dak.token': secondDeviceApiKey,
-                                        })
-                                        .select(
-                                          'd.id as deviceId',
-                                          'd.name as deviceName',
-                                          'd.macAddress',
-                                          'd.serial',
-                                          's.name as siteName',
-                                          'c.abbreviation as countryCode',
-                                          'dt.externalId as deviceType'
-                                        )
-                                        .then(secondDevice => {
-                                          assert.deepEqual(
-                                            _.map(secondDevice, device =>
-                                              _.omit(device, 'deviceId')
-                                            ),
-                                            [
-                                              {
-                                                deviceName:
-                                                  basicDevicePayload.name,
-                                                macAddress,
-                                                serial: newInstrumentSerialNumbers.join(),
-                                                siteName:
-                                                  basicDevicePayload.name,
-                                                countryCode,
-                                                deviceType:
-                                                  basicDevicePayload.type.id,
-                                              },
-                                            ]
-                                          )
-                                          assert.notEqual(
-                                            firstDevice[0].deviceId,
-                                            secondDevice[0].deviceId
-                                          )
-
-                                          knex
-                                            .from('DeviceApiKey as dak')
-                                            .leftJoin(
-                                              'Device as d',
-                                              'dak.deviceId',
-                                              'd.id'
-                                            )
-                                            .leftJoin(
-                                              'Site as s',
-                                              'd.siteId',
-                                              's.id'
-                                            )
-                                            .where({ token: firstDeviceApiKey })
-                                            .first(
-                                              'dak.id as deviceApiKeyId',
-                                              'd.id as deviceId',
-                                              's.id as siteId'
-                                            )
-                                            .then(idsToDelete => {
-                                              const deleteFirstDeviceApiKey = knex
-                                                .from('DeviceApiKey')
-                                                .where({
-                                                  id:
-                                                    idsToDelete.deviceApiKeyId,
-                                                })
-                                                .delete()
-                                              const deleteFirstDeviceLogs = knex
-                                                .from('DeviceLog')
-                                                .where({
-                                                  deviceId:
-                                                    idsToDelete.deviceId,
-                                                })
-                                                .delete()
-                                              const deleteFirstDevice = knex
-                                                .from('Device')
-                                                .where({
-                                                  id: idsToDelete.deviceId,
-                                                })
-                                                .delete()
-                                              const deleteFirstSite = knex
-                                                .from('Site')
-                                                .where({
-                                                  id: idsToDelete.siteId,
-                                                })
-                                                .delete()
-
-                                              return Promise.all([
-                                                deleteFirstDeviceApiKey,
-                                                deleteFirstDeviceLogs,
-                                                deleteFirstDevice,
-                                                deleteFirstSite,
-                                              ]).then(() =>
-                                                knex
-                                                  .from('DeviceApiKey')
-                                                  .where({
-                                                    id:
-                                                      idsToDelete.deviceApiKeyId,
-                                                  })
-                                                  .select()
-                                                  .then(() =>
-                                                    knex
-                                                      .from(
-                                                        'DeviceApiKey as dak'
-                                                      )
-                                                      .leftJoin(
-                                                        'Device as d',
-                                                        'dak.deviceId',
-                                                        'd.id'
-                                                      )
-                                                      .leftJoin(
-                                                        'Site as s',
-                                                        'd.siteId',
-                                                        's.id'
-                                                      )
-                                                      .where({
-                                                        token: secondDeviceApiKey,
-                                                      })
-                                                      .first(
-                                                        'dak.id as deviceApiKeyId',
-                                                        'd.id as deviceId',
-                                                        's.id as siteId'
-                                                      )
-                                                      .then(idsToDelete => {
-                                                        const deleteSecondDeviceApiKey = knex
-                                                          .from('DeviceApiKey')
-                                                          .where({
-                                                            id:
-                                                              idsToDelete.deviceApiKeyId,
-                                                          })
-                                                          .delete()
-                                                        const deleteSecondDeviceLogs = knex
-                                                          .from('DeviceLog')
-                                                          .where({
-                                                            deviceId:
-                                                              idsToDelete.deviceId,
-                                                          })
-                                                          .delete()
-                                                        const deleteSecondDevice = knex
-                                                          .from('Device')
-                                                          .where({
-                                                            id:
-                                                              idsToDelete.deviceId,
-                                                          })
-                                                          .delete()
-                                                        const deleteSecondSite = knex
-                                                          .from('Site')
-                                                          .where({
-                                                            id:
-                                                              idsToDelete.siteId,
-                                                          })
-                                                          .delete()
-
-                                                        return Promise.all([
-                                                          deleteSecondDeviceApiKey,
-                                                          deleteSecondDeviceLogs,
-                                                          deleteSecondDevice,
-                                                          deleteSecondSite,
-                                                        ]).then(() => {
-                                                          const haveApiKeysBeenCleared = knex
-                                                            .from(
-                                                              'DeviceApiKey'
-                                                            )
-                                                            .where({
-                                                              id:
-                                                                idsToDelete.deviceApiKeyId,
-                                                            })
-                                                            .select()
-
-                                                          const haveDevicesBeenCleared = knex
-                                                            .from('Device')
-                                                            .where({
-                                                              macAddress:
-                                                                basicDevicePayload
-                                                                  .configuration
-                                                                  .data
-                                                                  .macAddress,
-                                                            })
-                                                            .select()
-
-                                                          const haveSitesBeenCleared = knex
-                                                            .from('Site')
-                                                            .where({
-                                                              name:
-                                                                basicDevicePayload.name,
-                                                            })
-                                                            .select()
-
-                                                          return Promise.all([
-                                                            haveApiKeysBeenCleared,
-                                                            haveDevicesBeenCleared,
-                                                            haveSitesBeenCleared,
-                                                          ]).finally(() =>
-                                                            done()
-                                                          )
-                                                        })
-                                                      })
-                                                  )
-                                              )
-                                            })
-                                        })
-                                    })
-                                )
-                            })
-                        })
-                    )
-                })
-            })
+        const firstContext = createGxConnectTestContext(server, {
+          countryAbbreviation: countryCode,
+          adminUsername,
+          adminPassword,
+          deviceName,
+          macAddress,
+          instrumentSerialNumbers,
         })
+
+        before(firstContext.beforeRegisterAndSetDevice)
+        after(firstContext.afterCleanUp)
+
+        it('should create a new device', () =>
+          firstContext.runTest(function*(knex) {
+            // Check that device exists with MAC Address and Instrument Serial
+            const firstDeviceUniqueIdentifiers = yield knex(
+              'DeviceApiKey as dak'
+            )
+              .join('Device as d', 'dak.DeviceId', 'd.id')
+              .where({ 'dak.token': firstContext.apiKey })
+              .select('d.macAddress', 'd.serial')
+
+            assert.deepEqual(firstDeviceUniqueIdentifiers, [
+              {
+                macAddress,
+                serial: instrumentSerialNumbers.join(),
+              },
+            ])
+
+            // Single device exists, now generate a new API key
+            const newInstrumentSerialNumbers = ['123456', '098765', '456789']
+            const secondContext = createGxConnectTestContext(server, {
+              countryAbbreviation: countryCode,
+              adminUsername,
+              adminPassword,
+              deviceName,
+              macAddress,
+              instrumentSerialNumbers: newInstrumentSerialNumbers,
+            })
+
+            yield* secondContext.registerAndSetDevice()
+
+            yield* secondContext.runTestInline(function*(knex) {
+              assert.notEqual(secondContext.apiKey, firstContext.apiKey)
+
+              const firstDeviceApiKeyStatus = yield knex('DeviceApiKey as dak')
+                .where({ 'dak.token': firstContext.apiKey })
+                .select('dak.deviceId', 'dak.revoked')
+
+              // Check that old API key still associated with a device and is active
+              assert.deepEqual(firstDeviceApiKeyStatus, [
+                {
+                  deviceId: firstContext.device.id,
+                  revoked: 0,
+                },
+              ])
+
+              // Check that a new device exists with the new MAC Address and Instrument
+              // Serial linked to the new device API key
+              const secondDeviceUniqueIdentifiers = yield knex(
+                'DeviceApiKey as dak'
+              )
+                .join('Device as d', 'dak.DeviceId', 'd.id')
+                .where({ 'dak.token': secondContext.apiKey })
+                .select('d.macAddress', 'd.serial', 'd.id', 'dak.revoked')
+              assert.deepEqual(secondDeviceUniqueIdentifiers, [
+                {
+                  macAddress,
+                  serial: newInstrumentSerialNumbers.join(),
+                  id: secondContext.device.id,
+                  revoked: 0,
+                },
+              ])
+
+              // Check that the devices are different (one API key per device
+              assert.notEqual(
+                secondDeviceUniqueIdentifiers[0].id,
+                firstDeviceApiKeyStatus[0].deviceId
+              )
+            })
+
+            yield* secondContext.cleanUp()
+          }))
       })
 
       describe('but device API key remains the same', () => {
-        const instrumentSerialNumbers = ['123456']
-        it('should update the serial of the existing device', done => {
-          // Login as Aspect Admin
-          server
-            .post('/api/auth')
-            .send({
-              name: aspectAdminCredentials.adminUsername,
-              password: aspectAdminCredentials.adminPassword,
-              clientName: 'gx_connect',
-              clientId: `${Math.floor(Math.random() * 800000000) + 100000000}`,
-            })
-            .end((err, res) => {
-              // Create new Device API key
-              const adminAccessToken = res.body.access
-              server
-                .post('/api/demo/device/api-key')
-                .set('Authorization', `Bearer ${adminAccessToken}`)
-                .end((err, res) => {
-                  deviceApiKey = res.body.token
-                  // Submit device configuration with MAC address and instrument serial numbers
-                  server
-                    .post('/device')
-                    .set('Authorization', `Bearer ${deviceApiKey}`)
-                    .send(
-                      _.merge(basicDevicePayload, {
-                        configuration: {
-                          checkpoint: null,
-                          data: {
-                            macAddress,
-                            country: countryCode,
-                            instrumentSerialNumbers,
-                          },
-                        },
-                      })
-                    )
-                    .end(() =>
-                      // Check that device exists with MAC Address and Instrument Serial
-                      knex('DeviceApiKey as dak')
-                        .join('Device as d', 'dak.DeviceId', 'd.id')
-                        .where({ 'dak.token': deviceApiKey })
-                        .select('d.macAddress', 'd.serial')
-                        .then(results => {
-                          assert.deepEqual(results, [
-                            {
-                              macAddress,
-                              serial: instrumentSerialNumbers.join(),
-                            },
-                          ])
-                          // Single device exists, now send a Instrument Serial Number
-                          const newInstrumentSerialNumbers = ['654321']
-                          server
-                            .post('/device')
-                            .set('Authorization', `Bearer ${deviceApiKey}`)
-                            .send(
-                              _.merge(basicDevicePayload, {
-                                configuration: {
-                                  checkpoint: null,
-                                  data: {
-                                    macAddress,
-                                    country: countryCode,
-                                    instrumentSerialNumbers: newInstrumentSerialNumbers,
-                                  },
-                                },
-                              })
-                            )
-                            .end(() =>
-                              // Check that the serial has changed
-                              knex('DeviceApiKey as dak')
-                                .join('Device as d', 'dak.DeviceId', 'd.id')
-                                .join('Site as s', 'd.siteId', 's.id')
-                                .join('Geography as g', 's.geographyId', 'g.id')
-                                .join('Country as c', 'g.countryId', 'c.id')
-                                .join(
-                                  'DeviceType as dt',
-                                  'd.deviceTypeId',
-                                  'dt.id'
-                                )
-                                .where({ 'dak.token': deviceApiKey })
-                                .select(
-                                  'd.id as deviceId',
-                                  'd.name as deviceName',
-                                  'd.macAddress',
-                                  'd.serial',
-                                  's.name as siteName',
-                                  'c.abbreviation as countryCode',
-                                  'dt.externalId as deviceType'
-                                )
-                                .then(device => {
-                                  assert.deepEqual(
-                                    _.map(device, device =>
-                                      _.omit(device, 'deviceId')
-                                    ),
-                                    [
-                                      {
-                                        deviceName: basicDevicePayload.name,
-                                        macAddress,
-                                        serial: newInstrumentSerialNumbers.join(),
-                                        siteName: basicDevicePayload.name,
-                                        countryCode,
-                                        deviceType: basicDevicePayload.type.id,
-                                      },
-                                    ]
-                                  )
-                                  // Check that there are no orphaned devices with
-                                  // the instrument serial
-                                  knex('Device as d')
-                                    .where({
-                                      'd.serial': instrumentSerialNumbers.join(),
-                                    })
-                                    .select()
-                                    .then(orphanedDevices => {
-                                      assert.isEmpty(orphanedDevices)
-                                      // Clean up
-                                      knex
-                                        .from('DeviceApiKey as dak')
-                                        .leftJoin(
-                                          'Device as d',
-                                          'dak.deviceId',
-                                          'd.id'
-                                        )
-                                        .leftJoin(
-                                          'Site as s',
-                                          'd.siteId',
-                                          's.id'
-                                        )
-                                        .where({ token: deviceApiKey })
-                                        .first(
-                                          'dak.id as deviceApiKeyId',
-                                          'd.id as deviceId',
-                                          's.id as siteId'
-                                        )
-                                        .then(idsToDelete => {
-                                          const deleteDeviceApiKey = knex
-                                            .from('DeviceApiKey')
-                                            .where({
-                                              id: idsToDelete.deviceApiKeyId,
-                                            })
-                                            .delete()
-                                          const deleteDeviceLogs = knex
-                                            .from('DeviceLog')
-                                            .where({
-                                              deviceId: idsToDelete.deviceId,
-                                            })
-                                            .delete()
-                                          const deleteDevice = knex
-                                            .from('Device')
-                                            .where({
-                                              id: idsToDelete.deviceId,
-                                            })
-                                            .delete()
-                                          const deleteSite = knex
-                                            .from('Site')
-                                            .where({ id: idsToDelete.siteId })
-                                            .delete()
-
-                                          return Promise.all([
-                                            deleteDeviceApiKey,
-                                            deleteDeviceLogs,
-                                            deleteDevice,
-                                            deleteSite,
-                                          ]).then(() => {
-                                            const haveApiKeysBeenCleared = knex
-                                              .from('DeviceApiKey')
-                                              .where({
-                                                id: idsToDelete.deviceApiKeyId,
-                                              })
-                                              .select()
-
-                                            const haveDevicesBeenCleared = knex
-                                              .from('Device')
-                                              .where({
-                                                macAddress:
-                                                  basicDevicePayload
-                                                    .configuration.data
-                                                    .macAddress,
-                                              })
-                                              .select()
-
-                                            const haveSitesBeenCleared = knex
-                                              .from('Site')
-                                              .where({
-                                                name: basicDevicePayload.name,
-                                              })
-                                              .select()
-
-                                            return Promise.all([
-                                              haveApiKeysBeenCleared,
-                                              haveDevicesBeenCleared,
-                                              haveSitesBeenCleared,
-                                            ]).finally(() => done())
-                                          })
-                                        })
-                                    })
-                                })
-                            )
-                        })
-                    )
-                })
-            })
+        const context = createGxConnectTestContext(server, {
+          countryAbbreviation: countryCode,
+          adminUsername,
+          adminPassword,
+          deviceName,
+          macAddress,
+          instrumentSerialNumbers,
         })
+
+        before(context.beforeRegisterAndSetDevice)
+        const runTest = context.runTest
+        after(context.afterCleanUp)
+
+        it('should update the serial of the existing device', () =>
+          runTest(function*(knex) {
+            // Check that device exists with MAC Address and Instrument Serial
+            const deviceUniqueIdentifiers = yield knex('DeviceApiKey as dak')
+              .join('Device as d', 'dak.DeviceId', 'd.id')
+              .where({ 'dak.token': context.apiKey })
+              .select('d.macAddress', 'd.serial')
+
+            assert.deepEqual(deviceUniqueIdentifiers, [
+              {
+                macAddress,
+                serial: instrumentSerialNumbers.join(),
+              },
+            ])
+
+            // Single device exists, now send a new instrument serial numbers
+            const newInstrumentSerialNumbers = ['654321', '098765']
+            yield server
+              .post('/device')
+              .set('Authorization', context.deviceAuth)
+              .send(
+                _.merge(context.basicDevicePayload, {
+                  configuration: {
+                    data: {
+                      instrumentSerialNumbers: newInstrumentSerialNumbers,
+                    },
+                  },
+                })
+              )
+
+            // Check that the instrument serial has changed
+            const newDeviceDetails = yield knex('DeviceApiKey as dak')
+              .join('Device as d', 'dak.DeviceId', 'd.id')
+              .join('Site as s', 'd.siteId', 's.id')
+              .join('Geography as g', 's.geographyId', 'g.id')
+              .join('Country as c', 'g.countryId', 'c.id')
+              .join('DeviceType as dt', 'd.deviceTypeId', 'dt.id')
+              .where({ 'dak.token': context.apiKey })
+              .select(
+                'd.id as deviceId',
+                'd.name as deviceName',
+                'd.macAddress',
+                'd.serial',
+                's.name as siteName',
+                'c.abbreviation as countryCode',
+                'dt.externalId as deviceType'
+              )
+
+            assert.deepEqual(
+              _.map(newDeviceDetails, device => _.omit(device, 'deviceId')),
+              [
+                {
+                  deviceName,
+                  macAddress,
+                  serial: newInstrumentSerialNumbers.join(),
+                  siteName: deviceName,
+                  countryCode,
+                  deviceType: context.basicDevicePayload.type.id,
+                },
+              ]
+            )
+
+            // Check that there are no orphaned devices with
+            // the instrument serial numbers
+            const orphanedDevices = yield knex('Device')
+              .where({ serial: instrumentSerialNumbers.join() })
+              .select()
+
+            assert.isEmpty(orphanedDevices)
+          }))
       })
+    })
+  })
+
+  describe('results', () => {
+    const basicResultPayload = {
+      result: {
+        id: 'UNIQUE-RESULT-ID',
+        assay: {
+          id: 'MtbRifUltra',
+          version: '2',
+        },
+        instrument: {
+          serial: '123456',
+          module: {
+            serial: '654321',
+            name: 'A1',
+          },
+        },
+        sender: {
+          version: '4.7b',
+          operator: 'Ashley Smashley',
+        },
+        patient: {
+          id: '0833223622',
+          name: 'Peta J',
+          surname: 'McAllister',
+          address: '22 Marble Road, Greenstone Hill',
+          age: 25,
+          gender: 'Female',
+          phone: '0833243682',
+        },
+        sample: { id: 'PJM0833243682' },
+        data: {
+          ProbeData: {},
+          CustomFieldData: {
+            '1': {
+              NotAvailable: false,
+              Label: 'HIV Status',
+              Value: 'Unknown',
+            },
+            '2': {
+              NotAvailable: false,
+              Label: 'Visual Analysis',
+              Value: 'Blood Stained',
+            },
+          },
+        },
+      },
+    }
+
+    const context = createGxConnectTestContext(server, {
+      countryAbbreviation: countryCode,
+      adminUsername,
+      adminPassword,
+      deviceName,
+      macAddress,
+      instrumentSerialNumbers,
+    })
+    before(context.beforeRegisterAndSetDevice)
+    const runTest = context.runTest
+    after(context.afterCleanUp)
+
+    it('should append a result if the external ID is not known', () =>
+      runTest(function*(knex) {
+        const { basicDevicePayload, deviceAuth, device, site } = context
+
+        const beforeResultDetails = yield* getLastResult(knex, device.id)
+
+        assert.isUndefined(beforeResultDetails)
+
+        yield server
+          .post('/device')
+          .set('Authorization', deviceAuth)
+          .send(_.merge(basicDevicePayload, basicResultPayload))
+          .then(res => {
+            assert.equal(res.status, 200)
+            assert.typeOf(res.body, 'Object')
+          })
+          .catch(assert.fail)
+
+        const afterResultDetails = yield* getLastResult(knex, device.id)
+        assert.deepEqual(afterResultDetails, {
+          externalId: basicResultPayload.result.id,
+          deviceId: device.id,
+          siteId: device.siteId,
+          geographyId: site.geographyId,
+          assay: basicResultPayload.result.assay.id,
+          assayVersion: basicResultPayload.result.assay.version,
+          resultWorkflowStatus: 'OK',
+          resultSource: 'DiagnosticDevice',
+          resultType: 'Patient',
+          resultCategory1: 'Success',
+          resultCategory2: null,
+          sampleId: basicResultPayload.result.sample.id,
+          sampleCollectedOn: null,
+          sampleOriginSiteId: device.siteId,
+          sampleTypeId: null,
+          resultData: basicResultPayload.result.data,
+          startedOn: null,
+          endedOn: null,
+          consumableSerial: null,
+          consumableExpirationDate: null,
+          consumableLot: null,
+          instrumentSerial: basicResultPayload.result.instrument.serial,
+          moduleName: basicResultPayload.result.instrument.module.name,
+          moduleSerial: basicResultPayload.result.instrument.module.serial,
+          patientData: basicResultPayload.result.patient,
+          senderVersion: basicResultPayload.result.sender.version,
+          senderOperator: basicResultPayload.result.sender.operator,
+          notes: null,
+          errorCode: null,
+        })
+      }))
+
+    it('should update a result if the external ID is known', () => {})
+
+    describe('when the assay in the result payload is unknown to Aspect', () => {
+      it('should create an assay', () => {})
+    })
+
+    describe('when the assay in the result payload is mapped to a consumable', () => {
+      it('should reduce inventory levels of that consumable appropriately', () => {})
+    })
+
+    describe('when the result is an instrument error', () => {
+      it('should set the workflow status of the result to error', () => {})
     })
   })
 })
