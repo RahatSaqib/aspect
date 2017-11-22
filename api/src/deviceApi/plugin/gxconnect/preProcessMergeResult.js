@@ -75,11 +75,12 @@ function getResultCategories(payload) {
     payloadCategory = []
     const payloadResultText = _.get(payload, 'data.ResultText')
     if (payloadResultText) {
-      const resultTextValues = payloadResultText.split('|')
+      const resultTextValues = _.compact(payloadResultText.split('|'))
       if (resultTextValues.length > 0) {
         const result1Text = resultTextValues[0]
           .toLowerCase()
           .replace(/mtb/, '')
+          .replace(/ebola gp/, '')
           .trim()
         const result1CategoryMapping = {
           'not detected': 'NotDetected',
@@ -123,20 +124,26 @@ function getResultCategories(payload) {
           erro: 'Error',
           ошибка: 'Error',
           erreur: 'Error',
+          'trace detected': 'Detected',
+          'null null': 'Success',
         }
         if (result1CategoryMapping[result1Text]) {
           payloadCategory = [{ id: result1CategoryMapping[result1Text] }]
         }
       }
-      const mtbResult = _.isEmpty(payloadCategory)
-        ? null
-        : payloadCategory[0].id
+      const result1 = _.isEmpty(payloadCategory) ? null : payloadCategory[0].id
+      const canHaveSecondResult =
+        ['Detected', 'Error', 'Invalid', 'NoResult', 'Success'].includes(
+          result1
+        ) || !_.includes(['MtbRif', 'MtbRifUltra'], _.get(payload, 'assay.id'))
+
       if (resultTextValues.length > 1) {
         const result2Text = resultTextValues[1]
           .toLowerCase()
           .replace(/rif resistance/, '')
+          .replace(/ebola np/, '')
           .trim()
-        if (mtbResult === 'Detected') {
+        if (canHaveSecondResult) {
           const result2CategoryMapping = {
             'not detected': 'NotDetected',
             'não detectado': 'NotDetected',
@@ -151,6 +158,10 @@ function getResultCategories(payload) {
             indeterminado: 'Indeterminate',
             неопределенный: 'Indeterminate',
             indéterminé: 'Indeterminate',
+            error: 'Error',
+            invalid: 'Invalid',
+            na: 'Indeterminate',
+            'no result': 'NoResult',
           }
           if (result2CategoryMapping[result2Text]) {
             payloadCategory = [
@@ -159,8 +170,15 @@ function getResultCategories(payload) {
             ]
           }
         }
-      } else if (mtbResult === 'Detected') {
-        payloadCategory = [...payloadCategory, { id: 'Indeterminate' }]
+      } else if (canHaveSecondResult) {
+        payloadCategory = [
+          ...payloadCategory,
+          {
+            id: ['Error', 'Invalid', 'NoResult'].includes(result1)
+              ? result1
+              : 'Indeterminate',
+          },
+        ]
       }
     }
   }

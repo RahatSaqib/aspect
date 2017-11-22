@@ -69,22 +69,24 @@ async function mergeResult(
   }
 
   // Categories if specified, otherwise Error or Success depending on error payload
-  const categoryQ = knex('ResultCategory as rc').select('rc.id')
-  const categoryIds = _.compact(_.map(payload.category, 'id'))
-  if (categoryIds.length > 0) {
-    categoryQ.whereIn('rc.externalId', categoryIds)
+  const categoryIds = _.map(payload.category, 'id')
+  const category1Q = knex('ResultCategory as rc').first('rc.id')
+  if (categoryIds.length > 0 && categoryIds[0]) {
+    category1Q.where({ 'rc.externalId': categoryIds[0] })
   } else if (payload.error) {
-    categoryQ.where({ 'rc.externalId': 'Error' })
-  } else if (existingResult) {
-    categoryQ.whereIn(
-      'rc.id',
-      _.compact([
-        existingResult.resultCategory1,
-        existingResult.resultCategory2,
-      ])
-    )
+    category1Q.where({ 'rc.externalId': 'Error' })
+  } else if (existingResult && existingResult.resultCategory1) {
+    category1Q.where({ 'rc.id': existingResult.resultCategory1 })
   } else {
-    categoryQ.where({ 'rc.externalId': 'Success' })
+    category1Q.where({ 'rc.externalId': 'Success' })
+  }
+  const category2Q = knex('ResultCategory as rc').first('rc.id')
+  if (categoryIds.length > 1 && categoryIds[1]) {
+    category2Q.where({ 'rc.externalId': categoryIds[1] })
+  } else if (existingResult && existingResult.resultCategory2) {
+    category2Q.where({ 'rc.id': existingResult.resultCategory2 })
+  } else {
+    category2Q.limit(0)
   }
 
   const [
@@ -92,20 +94,22 @@ async function mergeResult(
     site,
     resultType,
     resultWorkflowStatus,
-    categories,
+    category1,
+    category2,
   ] = await Promise.all([
     assayQ,
     siteQ,
     resultTypeQ,
     resultWorkflowStatusQ,
-    categoryQ,
+    category1Q,
+    category2Q,
   ])
 
   if (
     !site ||
     !resultType ||
     !resultWorkflowStatus ||
-    categories.length === 0 ||
+    _.isEmpty(category1) ||
     assays.length !== 1
   ) {
     const requestErrors = []
@@ -120,7 +124,7 @@ async function mergeResult(
         `result workflow status id ${_.get(payload, 'workflow.status.id')}`
       )
     }
-    if (categories.length === 0) {
+    if (_.isEmpty(category1)) {
       requestErrors.push(`result categories with ids ${categoryIds.join(' ')}`)
     }
     if (assays.length !== 1) {
@@ -246,8 +250,8 @@ async function mergeResult(
       'sample.group',
       _.get(existingResult, 'sampleGroup', null)
     ),
-    resultCategory1: _.get(categories, '[0].id', null),
-    resultCategory2: _.get(categories, '[1].id', null),
+    resultCategory1: _.get(category1, 'id', null),
+    resultCategory2: _.get(category2, 'id', null),
     resultData,
     startedOn: _.get(
       payload,
