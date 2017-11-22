@@ -36,3 +36,6 @@ mocha.json
 
 #nyc output
 .nyc_output/
+
+#Local developer helper scripts
+**/--devutil--*
