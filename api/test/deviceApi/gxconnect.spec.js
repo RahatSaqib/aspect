@@ -1,6 +1,9 @@
 const _ = require('lodash')
 const supertest = require('supertest')
 const chai = require('chai')
+const subDays = require('date-fns/sub_days')
+const addHours = require('date-fns/add_hours')
+const setMilliseconds = require('date-fns/set_milliseconds')
 const {
   createGxConnectTestContext,
   getLastResult,
@@ -665,7 +668,7 @@ describe('Device API routes for GxConnect Devices', () => {
           .catch(assert.fail)
 
         const afterResultDetails = yield* getLastResult(knex, device.id)
-        assert.deepEqual(afterResultDetails, {
+        assert.deepEqual(_.omit(afterResultDetails, 'id'), {
           externalId: basicResultPayload.result.id,
           deviceId: device.id,
           siteId: device.siteId,
@@ -698,7 +701,67 @@ describe('Device API routes for GxConnect Devices', () => {
         })
       }))
 
-    it('should update a result if the external ID is known', () => {})
+    it('should update a result if the external ID is known', () =>
+      runTest(function*(knex) {
+        const { basicDevicePayload, deviceAuth, device, site } = context
+
+        const beforeResultDetails = yield* getLastResult(knex, device.id)
+
+        assert.isNotEmpty(beforeResultDetails)
+
+        const testStartedOn = setMilliseconds(subDays(context.now, 3), 0)
+        const testEndedOn = setMilliseconds(addHours(testStartedOn, 2), 0)
+        yield server
+          .post('/device')
+          .set('Authorization', deviceAuth)
+          .send(_.merge(basicDevicePayload,
+            {
+              result: _.merge(basicResultPayload.result, {
+                startedOn: testStartedOn,
+                endedOn: testEndedOn,
+              }),
+            })
+          )
+          .then(res => {
+            assert.equal(res.status, 200)
+            assert.typeOf(res.body, 'Object')
+          })
+          .catch(assert.fail)
+
+        const afterResultDetails = yield* getLastResult(knex, device.id)
+        assert.equal(beforeResultDetails.id, afterResultDetails.id)
+        assert.deepEqual(_.omit(afterResultDetails, 'id'), {
+          externalId: basicResultPayload.result.id,
+          deviceId: device.id,
+          siteId: device.siteId,
+          geographyId: site.geographyId,
+          assay: basicResultPayload.result.assay.id,
+          assayVersion: basicResultPayload.result.assay.version,
+          resultWorkflowStatus: 'OK',
+          resultSource: 'DiagnosticDevice',
+          resultType: 'Patient',
+          resultCategory1: 'Success',
+          resultCategory2: null,
+          sampleId: basicResultPayload.result.sample.id,
+          sampleCollectedOn: null,
+          sampleOriginSiteId: device.siteId,
+          sampleTypeId: null,
+          resultData: basicResultPayload.result.data,
+          startedOn: testStartedOn,
+          endedOn: testEndedOn,
+          consumableSerial: null,
+          consumableExpirationDate: null,
+          consumableLot: null,
+          instrumentSerial: basicResultPayload.result.instrument.serial,
+          moduleName: basicResultPayload.result.instrument.module.name,
+          moduleSerial: basicResultPayload.result.instrument.module.serial,
+          patientData: basicResultPayload.result.patient,
+          senderVersion: basicResultPayload.result.sender.version,
+          senderOperator: basicResultPayload.result.sender.operator,
+          notes: null,
+          errorCode: null,
+        })
+      }))
 
     describe('when the assay in the result payload is unknown to Aspect', () => {
       it('should create an assay', () => {})
