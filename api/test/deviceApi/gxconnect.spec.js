@@ -201,7 +201,7 @@ describe('Device API routes for GxConnect Devices', () => {
               .post('/device')
               .set('Authorization', secondContext.deviceAuth)
               .send(
-                _.merge(secondContext.basicDevicePayload, {
+                _.assign({}, secondContext.basicDevicePayload, {
                   configuration: {
                     checkpoint: null,
                     data: {
@@ -368,7 +368,7 @@ describe('Device API routes for GxConnect Devices', () => {
               .post('/device')
               .set('Authorization', context.deviceAuth)
               .send(
-                _.merge(context.basicDevicePayload, {
+                _.assign({}, context.basicDevicePayload, {
                   configuration: {
                     data: {
                       macAddress: newMacAddress,
@@ -540,7 +540,7 @@ describe('Device API routes for GxConnect Devices', () => {
               .post('/device')
               .set('Authorization', context.deviceAuth)
               .send(
-                _.merge(context.basicDevicePayload, {
+                _.assign({}, context.basicDevicePayload, {
                   configuration: {
                     data: {
                       instrumentSerialNumbers: newInstrumentSerialNumbers,
@@ -663,7 +663,7 @@ describe('Device API routes for GxConnect Devices', () => {
         yield server
           .post('/device')
           .set('Authorization', deviceAuth)
-          .send(_.merge(basicDevicePayload, basicResultPayload))
+          .send(_.assign({}, basicDevicePayload, basicResultPayload))
           .then(res => {
             assert.equal(res.status, 200)
             assert.typeOf(res.body, 'Object')
@@ -718,8 +718,8 @@ describe('Device API routes for GxConnect Devices', () => {
           .post('/device')
           .set('Authorization', deviceAuth)
           .send(
-            _.merge(_.merge(basicDevicePayload, basicResultPayload), {
-              result: _.merge(basicResultPayload.result, {
+            _.assign({}, _.assign({}, basicDevicePayload, basicResultPayload), {
+              result: _.assign({}, basicResultPayload.result, {
                 startedOn: testStartedOn,
                 endedOn: testEndedOn,
               }),
@@ -1611,17 +1611,21 @@ describe('Device API routes for GxConnect Devices', () => {
             .post('/device')
             .set('Authorization', deviceAuth)
             .send(
-              _.merge(_.merge(basicDevicePayload, basicResultPayload), {
-                result: _.merge(basicResultPayload.result, {
-                  id: resultId,
-                  assay: _.merge(basicResultPayload.result.assay, {
-                    id: assay,
+              _.assign(
+                {},
+                _.assign({}, basicDevicePayload, basicResultPayload),
+                {
+                  result: _.assign({}, basicResultPayload.result, {
+                    id: resultId,
+                    assay: _.assign({}, basicResultPayload.result.assay, {
+                      id: assay,
+                    }),
+                    data: _.assign({}, basicResultPayload.result.data, {
+                      ResultText: resultText,
+                    }),
                   }),
-                  data: _.merge(basicResultPayload.result.data, {
-                    ResultText: resultText,
-                  }),
-                }),
-              })
+                }
+              )
             )
             .then(res => {
               assert.equal(res.status, 200)
@@ -1700,15 +1704,19 @@ describe('Device API routes for GxConnect Devices', () => {
             .post('/device')
             .set('Authorization', deviceAuth)
             .send(
-              _.merge(_.merge(basicDevicePayload, basicResultPayload), {
-                result: _.merge(basicResultPayload.result, {
-                  id: resultId,
-                  assay: {
-                    id: assayName,
-                    version: assayVersion,
-                  },
-                }),
-              })
+              _.assign(
+                {},
+                _.assign({}, basicDevicePayload, basicResultPayload),
+                {
+                  result: _.assign({}, basicResultPayload.result, {
+                    id: resultId,
+                    assay: {
+                      id: assayName,
+                      version: assayVersion,
+                    },
+                  }),
+                }
+              )
             )
             .then(res => {
               assert.equal(res.status, 200)
@@ -1763,15 +1771,19 @@ describe('Device API routes for GxConnect Devices', () => {
             .post('/device')
             .set('Authorization', deviceAuth)
             .send(
-              _.merge(_.merge(basicDevicePayload, basicResultPayload), {
-                result: _.merge(basicResultPayload.result, {
-                  id: deductInventoryTestResultId,
-                  assay: {
-                    id: consumableAssay.assayId,
-                    version: '2',
-                  },
-                }),
-              })
+              _.assign(
+                {},
+                _.assign({}, basicDevicePayload, basicResultPayload),
+                {
+                  result: _.assign({}, basicResultPayload.result, {
+                    id: deductInventoryTestResultId,
+                    assay: {
+                      id: consumableAssay.assayId,
+                      version: '2',
+                    },
+                  }),
+                }
+              )
             )
             .then(res => {
               assert.equal(res.status, 200)
@@ -1842,17 +1854,21 @@ describe('Device API routes for GxConnect Devices', () => {
               .post('/device')
               .set('Authorization', deviceAuth)
               .send(
-                _.merge(_.merge(basicDevicePayload, basicResultPayload), {
-                  result: _.merge(basicResultPayload.result, {
-                    id: deductInventoryTestResultId,
-                    assay: {
-                      id: consumableAssay.assayId,
-                      version: '2',
-                    },
-                    startedOn: testStartedOn,
-                    endedOn: testEndedOn,
-                  }),
-                })
+                _.assign(
+                  {},
+                  _.assign({}, basicDevicePayload, basicResultPayload),
+                  {
+                    result: _.assign({}, basicResultPayload.result, {
+                      id: deductInventoryTestResultId,
+                      assay: {
+                        id: consumableAssay.assayId,
+                        version: '2',
+                      },
+                      startedOn: testStartedOn,
+                      endedOn: testEndedOn,
+                    }),
+                  }
+                )
               )
               .then(res => {
                 assert.equal(res.status, 200)
@@ -1898,8 +1914,54 @@ describe('Device API routes for GxConnect Devices', () => {
       })
     })
 
-    describe('when the result is an instrument error', () => {
-      it('should set the workflow status of the result to error', () => {})
+    describe('when an error code has been specified in the result payload', () => {
+      it('should set the workflow status of the result to error', () =>
+        runTest(function*(knex) {
+          const { basicDevicePayload, deviceAuth, device } = context
+
+          const errorTestResultId = 'UNIQUE-ID-WITH-ERROR-RESULT'
+          const errorCode = '12345'
+
+          yield server
+            .post('/device')
+            .set('Authorization', deviceAuth)
+            .send(
+              _.assign(
+                {},
+                _.assign({}, basicDevicePayload, basicResultPayload),
+                {
+                  result: _.assign({}, basicResultPayload.result, {
+                    id: errorTestResultId,
+                    error: {
+                      code: errorCode,
+                    },
+                  }),
+                }
+              )
+            )
+            .then(res => {
+              assert.equal(res.status, 200)
+              assert.typeOf(res.body, 'Object')
+            })
+            .catch(assert.fail)
+
+          const lastResult = yield* getLastResult(knex, device.id)
+          assert.deepEqual(
+            _.pick(
+              lastResult,
+              'externalId',
+              'errorCode',
+              'resultCategory1',
+              'resultWorkflowStatus'
+            ),
+            {
+              externalId: errorTestResultId,
+              errorCode,
+              resultCategory1: 'Error',
+              resultWorkflowStatus: 'Error',
+            }
+          )
+        }))
     })
   })
 })
