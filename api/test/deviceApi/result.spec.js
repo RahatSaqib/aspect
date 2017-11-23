@@ -1722,11 +1722,6 @@ describe('Device Result API routes', () => {
                 new Date(resultDetails.expirationDate).toJSON()
           )
 
-          assert.equal(
-            cartridgeAtSiteAfter.quantityOnHand,
-            cartridgeAtSiteBefore.quantityOnHand - inventoryConsumedByTest
-          )
-
           yield knex('InventoryLog')
             .whereIn('inventoryItemId', [
               lotNumberAndExpirationDateMatch,
@@ -1741,6 +1736,11 @@ describe('Device Result API routes', () => {
               onlyExpirationDateMatches,
             ])
             .del()
+
+          assert.equal(
+            cartridgeAtSiteAfter.quantityOnHand,
+            cartridgeAtSiteBefore.quantityOnHand - inventoryConsumedByTest
+          )
         }))
 
       it('should try to deduct the correct inventory item based on expiration date over lot number', () =>
@@ -1830,6 +1830,17 @@ describe('Device Result API routes', () => {
             knex,
             siteId
           )
+
+          yield knex('InventoryLog')
+            .whereIn('inventoryItemId', [
+              onlyLotNumberMatches,
+              onlyExpirationDateMatches,
+            ])
+            .del()
+          yield knex('InventoryItem')
+            .whereIn('id', [onlyLotNumberMatches, onlyExpirationDateMatches])
+            .del()
+
           const matchingLotNumberCartridgeAtSiteAfter = _.find(
             inventoryItemsAfter,
             inventoryItem =>
@@ -1855,16 +1866,6 @@ describe('Device Result API routes', () => {
             matchingExpirationDateCartridgeAtSiteBefore.quantityOnHand -
               inventoryConsumedByTest
           )
-
-          yield knex('InventoryLog')
-            .whereIn('inventoryItemId', [
-              onlyLotNumberMatches,
-              onlyExpirationDateMatches,
-            ])
-            .del()
-          yield knex('InventoryItem')
-            .whereIn('id', [onlyLotNumberMatches, onlyExpirationDateMatches])
-            .del()
         }))
 
       it('should log inventory consumption, even when no inventory item exists for site', () =>
@@ -1916,8 +1917,6 @@ describe('Device Result API routes', () => {
             siteId
           )
 
-          assert.deepEqual(inventoryItemsAfter, inventoryItemsBefore)
-
           const inventoryConsumptionLog = yield knex('InventoryLog as il')
             .join('ConsumableReason as cr', 'il.consumableReasonId', 'cr.id')
             .where('il.consumableId', ebolaCartridgeId)
@@ -1934,6 +1933,23 @@ describe('Device Result API routes', () => {
               'il.quantity',
               'il.createdOn'
             )
+
+          const {
+            count: otherInventoryConsumptionLogsForThisTest,
+          } = yield knex('InventoryLog')
+            .whereNot({ id: inventoryConsumptionLog.id })
+            .andWhere({ siteId, createdOn: inventoryConsumptionLog.createdOn })
+            .count('id as count')
+
+          yield knex('InventoryLog')
+            .where({ resultId: inventoryConsumptionLog.resultId })
+            .del()
+
+          yield knex('InventoryItem')
+            .where({ id: inventoryConsumptionLog.inventoryItemId })
+            .del()
+
+          assert.deepEqual(inventoryItemsAfter, inventoryItemsBefore)
 
           assert.isNull(inventoryConsumptionLog.inventoryItemId)
           assert.equal(
@@ -1954,18 +1970,7 @@ describe('Device Result API routes', () => {
             -inventoryConsumedByTest
           )
 
-          const {
-            count: otherInventoryConsumptionLogsForThisTest,
-          } = yield knex('InventoryLog')
-            .whereNot({ id: inventoryConsumptionLog.id })
-            .andWhere({ siteId, createdOn: inventoryConsumptionLog.createdOn })
-            .count('id as count')
-
           assert.isNotOk(otherInventoryConsumptionLogsForThisTest)
-
-          yield knex('InventoryLog')
-            .andWhere({ resultId: inventoryConsumptionLog.resultId })
-            .del()
         }))
     })
 
