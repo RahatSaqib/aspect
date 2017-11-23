@@ -28,6 +28,17 @@ function* deleteSiteDataAndRefreshTokens(knex, apiKeys, clientId) {
     .distinct('d.siteId')
     .pluck('d.siteId')
 
+  const inventoryItemIds = yield knex('InventoryItem as ii')
+    .whereIn('ii.siteId', siteIds)
+    .distinct('ii.id')
+    .pluck('ii.id')
+
+  yield knex('InventoryLog')
+    .whereIn('inventoryItemId', inventoryItemIds)
+    .delete()
+
+  yield knex('InventoryItem').whereIn('id', inventoryItemIds).delete()
+
   yield knex('Site').whereIn('id', siteIds).delete()
 
   yield knex('RefreshToken').where({ clientId }).delete()

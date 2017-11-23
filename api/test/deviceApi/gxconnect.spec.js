@@ -3,11 +3,13 @@ const supertest = require('supertest')
 const chai = require('chai')
 const subDays = require('date-fns/sub_days')
 const addHours = require('date-fns/add_hours')
+const addYears = require('date-fns/add_years')
 const setMilliseconds = require('date-fns/set_milliseconds')
 const {
   createGxConnectTestContext,
   getLastResult,
 } = require('./gxconnect_utils')
+const { getLastResultId } = require('./utils')
 const { run } = require('../../src/db')
 
 const server = supertest.agent('http://localhost:8080')
@@ -1643,19 +1645,24 @@ describe('Device API routes for GxConnect Devices', () => {
         }
 
         for (const resultText in resultTextToResultCategoryMapping) {
-          const {
-            resultId,
-            assay,
-            resultCategory1,
-            resultCategory2,
-          } = resultTextToResultCategoryMapping[resultText]
-          yield* sendResult(
-            resultId,
-            assay,
-            resultText,
-            resultCategory1,
-            resultCategory2
-          )
+          if (
+            resultText &&
+            !_.isEmpty(resultTextToResultCategoryMapping[resultText])
+          ) {
+            const {
+              resultId,
+              assay,
+              resultCategory1,
+              resultCategory2,
+            } = resultTextToResultCategoryMapping[resultText]
+            yield* sendResult(
+              resultId,
+              assay,
+              resultText,
+              resultCategory1,
+              resultCategory2
+            )
+          }
         }
       }))
 
@@ -1725,7 +1732,170 @@ describe('Device API routes for GxConnect Devices', () => {
     })
 
     describe('when the assay in the result payload is mapped to a consumable', () => {
-      it('should reduce inventory levels of that consumable appropriately', () => {})
+      const deductInventoryTestResultId = 'UNIQUE-ID-TEST-DEDUCT-INVENTORY'
+      const initialQuantityOnHand = 100
+      let expiryDate
+      let inventoryItemId
+
+      it('should reduce inventory levels of that consumable appropriately', () =>
+        runTest(function*(knex) {
+          const { basicDevicePayload, deviceAuth, device, site, now } = context
+
+          const consumableAssay = yield knex('ConsumableAssay as ca')
+            .join('Assay as a', 'ca.assayId', 'a.id')
+            .join('deviceType as dt', 'a.deviceTypeId', 'dt.id')
+            .where({ 'dt.externalId': basicDevicePayload.type.id })
+            .andWhere('ca.quantity', '>', 0)
+            .first('ca.consumableId', 'ca.quantity', 'a.externalId as assayId')
+
+          assert.isNotEmpty(consumableAssay)
+          assert.isAbove(consumableAssay.quantity, 0)
+
+          expiryDate = setMilliseconds(addYears(now, 1), 0)
+          inventoryItemId = yield knex('InventoryItem').insert({
+            consumableId: consumableAssay.consumableId,
+            siteId: site.id,
+            expiresOn: expiryDate,
+            quantityOnHand: initialQuantityOnHand,
+          })
+
+          yield server
+            .post('/device')
+            .set('Authorization', deviceAuth)
+            .send(
+              _.merge(_.merge(basicDevicePayload, basicResultPayload), {
+                result: _.merge(basicResultPayload.result, {
+                  id: deductInventoryTestResultId,
+                  assay: {
+                    id: consumableAssay.assayId,
+                    version: '2',
+                  },
+                }),
+              })
+            )
+            .then(res => {
+              assert.equal(res.status, 200)
+              assert.typeOf(res.body, 'Object')
+            })
+            .catch(assert.fail)
+
+          const lastResultId = yield* getLastResultId(knex, device.id)
+          const inventoryItem = yield knex('InventoryItem')
+            .where({ id: inventoryItemId })
+            .first()
+          assert.equal(
+            inventoryItem.quantityOnHand,
+            initialQuantityOnHand - consumableAssay.quantity
+          )
+
+          const inventoryLogs = yield knex('InventoryLog as il')
+            .join('ConsumableReason as cr', 'il.consumableReasonId', 'cr.id')
+            .where({ inventoryItemId })
+            .select(
+              'il.consumableId',
+              'il.siteId',
+              'cr.name as consumableReason',
+              'il.resultId',
+              'il.quantity'
+            )
+          assert.deepEqual(inventoryLogs, [
+            {
+              consumableId: inventoryItem.consumableId,
+              siteId: site.id,
+              consumableReason: 'Test Conducted',
+              resultId: lastResultId,
+              quantity: -consumableAssay.quantity,
+            },
+          ])
+        }))
+
+      describe('when the test already exists in the database', () => {
+        it('should NOT reduce inventory levels of the consumable', () =>
+          runTest(function*(knex) {
+            const { basicDevicePayload, deviceAuth, device, site } = context
+
+            const consumableAssay = yield knex('ConsumableAssay as ca')
+              .join('Assay as a', 'ca.assayId', 'a.id')
+              .join('deviceType as dt', 'a.deviceTypeId', 'dt.id')
+              .where({ 'dt.externalId': basicDevicePayload.type.id })
+              .andWhere('ca.quantity', '>', 0)
+              .first(
+                'ca.consumableId',
+                'ca.quantity',
+                'a.externalId as assayId'
+              )
+
+            assert.isNotEmpty(consumableAssay)
+            assert.isAbove(consumableAssay.quantity, 0)
+
+            let inventoryItem = yield knex('InventoryItem')
+              .where({ id: inventoryItemId })
+              .first()
+            assert.equal(
+              inventoryItem.quantityOnHand,
+              initialQuantityOnHand - consumableAssay.quantity
+            )
+
+            const testStartedOn = setMilliseconds(subDays(context.now, 3), 0)
+            const testEndedOn = setMilliseconds(addHours(testStartedOn, 2), 0)
+            yield server
+              .post('/device')
+              .set('Authorization', deviceAuth)
+              .send(
+                _.merge(_.merge(basicDevicePayload, basicResultPayload), {
+                  result: _.merge(basicResultPayload.result, {
+                    id: deductInventoryTestResultId,
+                    assay: {
+                      id: consumableAssay.assayId,
+                      version: '2',
+                    },
+                    startedOn: testStartedOn,
+                    endedOn: testEndedOn,
+                  }),
+                })
+              )
+              .then(res => {
+                assert.equal(res.status, 200)
+                assert.typeOf(res.body, 'Object')
+              })
+              .catch(assert.fail)
+
+            const lastResultId = yield* getLastResultId(knex, device.id)
+            inventoryItem = yield knex('InventoryItem')
+              .where({
+                consumableId: consumableAssay.consumableId,
+                siteId: site.id,
+                expiresOn: expiryDate,
+              })
+              .first()
+
+            assert.equal(inventoryItem.id, inventoryItemId)
+            assert.equal(
+              inventoryItem.quantityOnHand,
+              initialQuantityOnHand - consumableAssay.quantity
+            )
+
+            const inventoryLogs = yield knex('InventoryLog as il')
+              .join('ConsumableReason as cr', 'il.consumableReasonId', 'cr.id')
+              .where({ inventoryItemId })
+              .select(
+                'il.consumableId',
+                'il.siteId',
+                'cr.name as consumableReason',
+                'il.resultId',
+                'il.quantity'
+              )
+            assert.deepEqual(inventoryLogs, [
+              {
+                consumableId: inventoryItem.consumableId,
+                siteId: site.id,
+                consumableReason: 'Test Conducted',
+                resultId: lastResultId,
+                quantity: -consumableAssay.quantity,
+              },
+            ])
+          }))
+      })
     })
 
     describe('when the result is an instrument error', () => {
