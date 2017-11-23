@@ -1,5 +1,6 @@
 const _ = require('lodash')
 const Boom = require('boom')
+const setMilliseconds = require('date-fns/set_milliseconds')
 const {
   findConsumables,
   findConsumableReasons,
@@ -46,13 +47,13 @@ function* postProcessAddDeviceOperation(context) {
             siteId: device.siteId,
             consumableId: matchingConsumable.id,
             expiresOn: inventoryChange.ExpirationDate
-              ? new Date(inventoryChange.ExpirationDate)
+              ? setMilliseconds(new Date(inventoryChange.ExpirationDate), 0)
               : null,
             quantity: inventoryChange.Quantity,
             quantityOnHand: inventoryChange.ResultingQuantityOnHand,
             reasonId: matchingConsumableReason.id,
             dateAdjustedFrom: inventoryChange.DateChanged
-              ? new Date(inventoryChange.DateChanged)
+              ? setMilliseconds(new Date(inventoryChange.DateChanged), 0)
               : null,
             now,
           }

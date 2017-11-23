@@ -3,6 +3,7 @@ const supertest = require('supertest')
 const chai = require('chai')
 const subDays = require('date-fns/sub_days')
 const addHours = require('date-fns/add_hours')
+const subHours = require('date-fns/sub_hours')
 const addYears = require('date-fns/add_years')
 const setMilliseconds = require('date-fns/set_milliseconds')
 const {
@@ -1963,5 +1964,170 @@ describe('Device API routes for GxConnect Devices', () => {
           )
         }))
     })
+  })
+
+  describe('inventory changes', () => {
+    const context = createGxConnectTestContext(server, {
+      countryAbbreviation: countryCode,
+      adminUsername,
+      adminPassword,
+      deviceName,
+      macAddress,
+      instrumentSerialNumbers,
+    })
+    before(context.beforeRegisterAndSetDevice)
+    const runTest = context.runTest
+    after(context.afterCleanUp)
+
+    it('should create inventory items that do not exist', () =>
+      runTest(function*(knex) {
+        const { basicDevicePayload, deviceAuth, site, now } = context
+        const inventoryItemsAtSiteBefore = yield knex('InventoryItem')
+          .where({ siteId: site.id })
+          .select()
+        assert.isEmpty(inventoryItemsAtSiteBefore)
+
+        const startedOn = subHours(subDays(now, 1), 2)
+        const endedOn = subHours(now, 2)
+        const expirationDate = setMilliseconds(addYears(now, 1), 0)
+        const consumableName = 'Xpert HIV-1 Qual Cartridge'
+        const consumableReason = 'Captured'
+        const initialQuantity = 100
+        const quantity = 5
+
+        yield server
+          .post('/device')
+          .set('Authorization', deviceAuth)
+          .send(
+            _.assign({}, basicDevicePayload, {
+              operation: {
+                startedOn,
+                endedOn,
+                data: {
+                  inventoryChanges: [
+                    {
+                      ConsumableName: consumableName,
+                      ConsumableReasonName: consumableReason,
+                      Quantity: quantity,
+                      ResultingQuantityOnHand: initialQuantity + quantity,
+                      DateChanged: startedOn,
+                      ExpirationDate: expirationDate,
+                    },
+                  ],
+                },
+              },
+            })
+          )
+          .then(res => {
+            assert.equal(res.status, 200, res.text)
+            assert.typeOf(res.body, 'Object')
+          })
+          .catch(assert.fail)
+
+        const inventoryItemsAtSiteAfter = yield knex('InventoryItem as ii')
+          .join('Consumable as c', 'ii.consumableId', 'c.id')
+          .where({ siteId: site.id })
+          .select(
+            'ii.id',
+            'c.name as consumableName',
+            'ii.inTransitFromSiteId',
+            'ii.lotNumber',
+            'ii.expiresOn',
+            'ii.quantityOnHand'
+          )
+        assert.deepEqual(
+          _.map(inventoryItemsAtSiteAfter, inventoryItem =>
+            _.omit(inventoryItem, 'id')
+          ),
+          [
+            {
+              consumableName,
+              inTransitFromSiteId: null,
+              lotNumber: null,
+              expiresOn: expirationDate,
+              quantityOnHand: initialQuantity + quantity,
+            },
+          ]
+        )
+
+        const inventoryLog = yield knex('InventoryLog as il')
+          .join('ConsumableReason as cr', 'il.consumableReasonId', 'cr.id')
+          .join('Consumable as c', 'il.consumableId', 'c.id')
+          .whereIn('il.inventoryItemId', _.map(inventoryItemsAtSiteAfter, 'id'))
+          .select(
+            'c.name as consumableName',
+            'il.siteId',
+            'cr.name as consumableReason',
+            'il.resultId',
+            'il.operation',
+            'il.lotNumber',
+            'il.expiresOn',
+            'il.quantity',
+            'il.notes',
+            'il.adjustedFrom',
+            'il.adjustedTo'
+          )
+
+        assert.deepEqual(inventoryLog, [
+          {
+            consumableName,
+            siteId: site.id,
+            consumableReason,
+            resultId: null,
+            operation: 'add from GxConnect',
+            lotNumber: null,
+            expiresOn: expirationDate,
+            quantity,
+            notes: null,
+            adjustedFrom: setMilliseconds(startedOn, 0),
+            adjustedTo: null,
+          },
+        ])
+      }))
+
+    it('will ignore changes for consumables that are unknown', () =>
+      runTest(function*(knex) {
+        const { basicDevicePayload, deviceAuth, site, now } = context
+        const inventoryItemsAtSiteBefore = yield knex('InventoryItem')
+          .where({ siteId: site.id })
+          .select()
+
+        const startedOn = subHours(subDays(now, 1), 2)
+        const endedOn = subHours(now, 2)
+
+        yield server
+          .post('/device')
+          .set('Authorization', deviceAuth)
+          .send(
+            _.assign({}, basicDevicePayload, {
+              operation: {
+                startedOn,
+                endedOn,
+                data: {
+                  inventoryChanges: [
+                    {
+                      ConsumableName: 'Unknown consumable type',
+                      ConsumableReasonName: 'Captured',
+                      Quantity: 12,
+                      ResultingQuantityOnHand: 112,
+                      DateChanged: startedOn,
+                      ExpirationDate: setMilliseconds(addYears(now, 1), 0),
+                    },
+                  ],
+                },
+              },
+            })
+          )
+          .then(res => {
+            assert.equal(res.status, 200, res.text)
+            assert.typeOf(res.body, 'Object')
+          })
+          .catch(assert.fail)
+
+        const inventoryItemsAtSiteAfter = yield knex('InventoryItem')
+          .where({ siteId: site.id })
+          .select()
+        assert.deepEqual(inventoryItemsAtSiteBefore, inventoryItemsAtSiteAfter)
+      }))
   })
 })
