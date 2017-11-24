@@ -3,7 +3,7 @@ const Boom = require('boom')
 const setMilliseconds = require('date-fns/set_milliseconds')
 const {
   findConsumables,
-  findConsumableReasons,
+  findConsumableReason,
 } = require('../../../consumable/consumableService')
 const {
   increaseInventory,
@@ -26,12 +26,14 @@ function* postProcessAddDeviceOperation(context) {
       })
       if (matchingConsumables.length === 1) {
         const matchingConsumable = matchingConsumables[0]
-        const matchingConsumableReasons = yield* findConsumableReasons({
-          name: inventoryChange.ConsumableReasonName,
-        })
-        if (matchingConsumableReasons.length === 1) {
-          const matchingConsumableReason = matchingConsumableReasons[0]
-          const changeFunction = matchingConsumableReason.decrease
+        const isDecrease = inventoryChange.Quantity < 0
+        const matchingConsumableReason = yield* findConsumableReason(
+          inventoryChange.ConsumableReasonName,
+          isDecrease
+        )
+        if (matchingConsumableReason) {
+          const absoluteQuantity = Math.abs(inventoryChange.Quantity)
+          const changeFunction = isDecrease
             ? decreaseInventory
             : increaseInventory
           if (!device.siteId && device.id) {
@@ -49,7 +51,7 @@ function* postProcessAddDeviceOperation(context) {
             expiresOn: inventoryChange.ExpirationDate
               ? setMilliseconds(new Date(inventoryChange.ExpirationDate), 0)
               : null,
-            quantity: inventoryChange.Quantity,
+            quantity: absoluteQuantity,
             quantityOnHand: inventoryChange.ResultingQuantityOnHand,
             reasonId: matchingConsumableReason.id,
             dateAdjustedFrom: inventoryChange.DateChanged
@@ -57,7 +59,7 @@ function* postProcessAddDeviceOperation(context) {
               : null,
             now,
           }
-          changeParameters.operation = matchingConsumableReason.decrease
+          changeParameters.operation = isDecrease
             ? 'remove from GxConnect'
             : 'add from GxConnect'
           yield* changeFunction(changeParameters)

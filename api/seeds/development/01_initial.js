@@ -404,11 +404,6 @@ async function seed(knex) {
     i18nKey: 'assayTypeMtbRif',
   })
 
-  const [assayTypeMTBRifUltraId] = await knex('AssayType').insert({
-    name: 'MTB/Rif Ultra',
-    i18nKey: 'assayTypeMtbRifUltra',
-  })
-
   const [assayTypeEbolaId] = await knex('AssayType').insert({
     name: 'Ebola',
     i18nKey: 'assayTypeEbola',
@@ -844,7 +839,7 @@ async function seed(knex) {
     name: 'GeneXpert MTB/Rif Ultra',
     i18nKey: 'assayGeneXpertMtbRifUltra',
     externalId: 'MtbRifUltra',
-    assayTypeId: assayTypeMTBRifUltraId,
+    assayTypeId: assayTypeMTBRifId,
     deviceTypeId: deviceTypeGeneXpertId,
     resultSourceId: resultSourceDiagnosticId,
     resultCategory1Label: 'MTB',

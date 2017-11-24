@@ -75,15 +75,18 @@ function* findConsumables(knownConsumableDetails) {
   return yield knex('Consumable').where(knownConsumableDetails).select()
 }
 
-function* findConsumableReasons(knownConsumableReasonDetails) {
+function* findConsumableReason(consumableReasonName, isDecrease) {
   return yield knex('ConsumableReason')
-    .where(knownConsumableReasonDetails)
-    .select()
+    .where({
+      name: consumableReasonName,
+      decrease: isDecrease,
+    })
+    .first()
 }
 
 module.exports = {
   listConsumableTypes,
   listConsumableReasons,
   findConsumables,
-  findConsumableReasons,
+  findConsumableReason,
 }

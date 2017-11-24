@@ -1897,6 +1897,10 @@ describe('Device Result API routes', () => {
             siteId
           )
 
+          assert.isUndefined(
+            _.find(inventoryItemsBefore, { lotNumber: resultDetails.lotNumber })
+          )
+
           yield server
             .post(devicePostResultPath)
             .set('Authorization', deviceAuth)
@@ -1949,9 +1953,11 @@ describe('Device Result API routes', () => {
             .where({ id: inventoryConsumptionLog.inventoryItemId })
             .del()
 
-          assert.deepEqual(inventoryItemsAfter, inventoryItemsBefore)
+          assert.isOk(
+            _.find(inventoryItemsAfter, { lotNumber: resultDetails.lotNumber })
+          )
+          assert.isOk(inventoryConsumptionLog.inventoryItemId)
 
-          assert.isNull(inventoryConsumptionLog.inventoryItemId)
           assert.equal(
             inventoryConsumptionLog.consumableReasonName,
             'Test Conducted'
@@ -1967,7 +1973,7 @@ describe('Device Result API routes', () => {
           )
           assert.equal(
             inventoryConsumptionLog.quantity,
-            -inventoryConsumedByTest
+            Math.abs(inventoryConsumedByTest)
           )
 
           assert.isNotOk(otherInventoryConsumptionLogsForThisTest)

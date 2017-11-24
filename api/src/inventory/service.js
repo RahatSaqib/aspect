@@ -13,6 +13,7 @@ const { getConstraints, addConstraints } = require('../auth/constraints')
 const {
   selectAssayConsumables,
 } = require('../consumable/assayConsumableService')
+const { findConsumableReason } = require('../consumable/consumableService')
 const { getUser } = require('../auth/service')
 const { getSite } = require('../site/service')
 
@@ -156,11 +157,12 @@ async function consumeInventoryForResult(
     partnerId,
     assayId
   )
-  const inventoryItemsAtSite = await selectInventoryItemsAtSite(siteId, knex)
-  const { testRunConsumableReasonId } = await knex('ConsumableReason as cr')
-    .where({ 'cr.name': 'Test Conducted', 'cr.decrease': 1 })
-    .first('cr.id as testRunConsumableReasonId')
 
+  const inventoryItemsAtSite = await selectInventoryItemsAtSite(siteId, knex)
+  const { id: testRunConsumableReasonId } = await findConsumableReason(
+    'Test Conducted',
+    true
+  )
   const firstUnknownConsumableInResult =
     _.find(
       consumablesInResultData,
@@ -186,6 +188,7 @@ async function consumeInventoryForResult(
           'ii.consumableId': assayConsumable.consumableId,
         })
         .first('ii.id')
+      // Don't double deduct inventory for the same result
       if (_.isEmpty(existingInventoryLog)) {
         // Find Inventory on hand where lot number and expiry date match
         const matchingInventoryItems = _.filter(inventoryItemsAtSite, {
@@ -538,9 +541,7 @@ async function upsertInventoryItem({
         lotNumber,
         siteId,
         quantityOnHand: _.isUndefined(quantityOnHand)
-          ? quantity >= 0
-            ? knex.raw(`quantityOnHand + ${quantity}`)
-            : knex.raw(`quantityOnHand - ${-quantity}`)
+          ? knex.raw(`quantityOnHand + (${quantity})`)
           : quantityOnHand,
         updatedOn: now,
         updatedBy: userId,
@@ -708,13 +709,19 @@ async function transferInventory(request) {
       inTransitFromSiteId: fromSiteId,
     })
 
+    const { id: transferSentConsumableReasonId } = await findConsumableReason(
+      'Transfer Sent',
+      true
+    )
+
     await knex('InventoryLog').insert({
       inventoryItemId,
       consumableId,
       siteId: fromSiteId,
+      consumableReasonId: transferSentConsumableReasonId,
       lotNumber,
       expiresOn,
-      quantity: -quantity,
+      quantity,
       operation: 'transfer from',
       notes,
       adjustedFrom: dateAdjusted,
@@ -792,10 +799,15 @@ async function receiveInventory(request) {
       userId: currentlyLoggedInUser.id,
     })
 
+    const {
+      id: transferReceivedConsumableReasonId,
+    } = await findConsumableReason('Transfer Received', false)
+
     await knex('InventoryLog').insert({
       inventoryItemId: destinationInventoryItemId,
       consumableId,
       siteId: toSiteId,
+      consumableReasonId: transferReceivedConsumableReasonId,
       lotNumber,
       expiresOn,
       quantity,
@@ -871,7 +883,7 @@ async function changeInventoryQuantity({
       siteId,
       lotNumber,
       expiresOn,
-      quantity,
+      quantity: Math.abs(quantity),
       consumableReasonId: reasonId,
       operation,
       notes,
