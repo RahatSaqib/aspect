@@ -2094,6 +2094,7 @@ describe('Device API routes for GxConnect Devices', () => {
 
         const startedOn = subHours(subDays(now, 1), 2)
         const endedOn = subHours(now, 2)
+        const expirationDate = setMilliseconds(addYears(now, 1), 0)
 
         yield server
           .post('/device')
@@ -2111,7 +2112,7 @@ describe('Device API routes for GxConnect Devices', () => {
                       Quantity: 12,
                       ResultingQuantityOnHand: 112,
                       DateChanged: startedOn,
-                      ExpirationDate: setMilliseconds(addYears(now, 1), 0),
+                      ExpirationDate: expirationDate,
                     },
                   ],
                 },
@@ -2148,7 +2149,7 @@ describe('Device API routes for GxConnect Devices', () => {
             ConsumableReasonName: consumableReason,
             Quantity: 13,
             ResultingQuantityOnHand: 86,
-            DateChanged: startedOn,
+            DateChanged: addHours(startedOn, 1),
             ExpirationDate: setMilliseconds(subDays(addYears(now, 1), 1), 0),
           },
           {
@@ -2156,7 +2157,7 @@ describe('Device API routes for GxConnect Devices', () => {
             ConsumableReasonName: consumableReason,
             Quantity: 3,
             ResultingQuantityOnHand: 21,
-            DateChanged: startedOn,
+            DateChanged: addHours(startedOn, 2),
             ExpirationDate: setMilliseconds(subDays(addYears(now, 1), 3), 0),
           },
           {
@@ -2164,7 +2165,7 @@ describe('Device API routes for GxConnect Devices', () => {
             ConsumableReasonName: consumableReason,
             Quantity: 44,
             ResultingQuantityOnHand: 50,
-            DateChanged: startedOn,
+            DateChanged: addHours(startedOn, 3),
             ExpirationDate: setMilliseconds(subDays(addYears(now, 1), 3), 0),
           },
           {
@@ -2172,7 +2173,7 @@ describe('Device API routes for GxConnect Devices', () => {
             ConsumableReasonName: consumableReason,
             Quantity: 1,
             ResultingQuantityOnHand: 13,
-            DateChanged: startedOn,
+            DateChanged: addHours(startedOn, 4),
             ExpirationDate: setMilliseconds(subDays(addYears(now, 1), 4), 0),
           },
           {
@@ -2180,7 +2181,7 @@ describe('Device API routes for GxConnect Devices', () => {
             ConsumableReasonName: consumableReason,
             Quantity: 26,
             ResultingQuantityOnHand: 41,
-            DateChanged: startedOn,
+            DateChanged: addHours(startedOn, 5),
             ExpirationDate: setMilliseconds(subDays(addYears(now, 1), 8), 0),
           },
         ]
@@ -2253,7 +2254,7 @@ describe('Device API routes for GxConnect Devices', () => {
           )
 
         assert.deepEqual(
-          _.sortBy(inventoryLog, 'consumableName'),
+          _.sortBy(inventoryLog, ['consumableName', 'consumableReason']),
           _.sortBy(
             _.map(inventoryChanges, inventoryChange => ({
               consumableName: inventoryChange.ConsumableName,
@@ -2265,10 +2266,10 @@ describe('Device API routes for GxConnect Devices', () => {
               expiresOn: inventoryChange.ExpirationDate,
               quantity: Math.abs(inventoryChange.Quantity),
               notes: null,
-              adjustedFrom: setMilliseconds(startedOn, 0),
+              adjustedFrom: setMilliseconds(inventoryChange.DateChanged, 0),
               adjustedTo: null,
             })),
-            'consumableName'
+            ['consumableName', 'consumableReason']
           )
         )
       }))
@@ -2499,8 +2500,767 @@ describe('Device API routes for GxConnect Devices', () => {
         })
       }))
 
-    // TODO: Check if GxConnect sends negative quantities?
-    // TODO: Test other consumable reasons
-    // TODO: Test variables on expiration date and lot number
+    it('should accept different reasons', () =>
+      runTest(function*(knex) {
+        const { basicDevicePayload, deviceAuth, site, now } = context
+
+        const inventoryItemsAtSiteBefore = yield knex('InventoryItem')
+          .where({ siteId: site.id })
+          .pluck('id')
+
+        const startedOn = subDays(now, 1)
+        const endedOn = addHours(startedOn, 2)
+
+        const inventoryChanges = [
+          {
+            ConsumableName: 'GeneXpert TB Cartridge',
+            ConsumableReasonName: 'Captured',
+            Quantity: 13,
+            ResultingQuantityOnHand: 73,
+            DateChanged: subHours(startedOn, 1),
+            ExpirationDate: setMilliseconds(subDays(addYears(now, 1), 5), 0),
+          },
+          {
+            ConsumableName: 'GeneXpert Ebola Cartridge',
+            ConsumableReasonName: 'Captured',
+            Quantity: -3,
+            ResultingQuantityOnHand: 18,
+            DateChanged: subHours(startedOn, 2),
+            ExpirationDate: setMilliseconds(subDays(addYears(now, 1), 6), 0),
+          },
+          {
+            ConsumableName: 'Xpert HIV-1 Qual Cartridge',
+            ConsumableReasonName: 'Transfer Sent',
+            Quantity: -4,
+            ResultingQuantityOnHand: 46,
+            DateChanged: subHours(startedOn, 3),
+            ExpirationDate: setMilliseconds(subDays(addYears(now, 1), 8), 0),
+          },
+          {
+            ConsumableName: 'Xpert HIV-1 Viral Load Cartridge',
+            ConsumableReasonName: 'Transfer Received',
+            Quantity: 11,
+            ResultingQuantityOnHand: 24,
+            DateChanged: subHours(startedOn, 4),
+            ExpirationDate: setMilliseconds(subDays(addYears(now, 1), 3), 0),
+          },
+          {
+            ConsumableName: 'GeneXpert TB Ultra Cartridge',
+            ConsumableReasonName: 'Lost',
+            Quantity: -6,
+            ResultingQuantityOnHand: 30,
+            DateChanged: subHours(startedOn, 5),
+            ExpirationDate: setMilliseconds(subDays(addYears(now, 1), 7), 0),
+          },
+          {
+            ConsumableName: 'GeneXpert TB Cartridge',
+            ConsumableReasonName: 'Expired',
+            Quantity: -6,
+            ResultingQuantityOnHand: 50,
+            DateChanged: subHours(startedOn, 6),
+            ExpirationDate: setMilliseconds(subDays(addYears(now, 1), 2), 0),
+          },
+        ]
+
+        yield server
+          .post('/device')
+          .set('Authorization', deviceAuth)
+          .send(
+            _.assign({}, basicDevicePayload, {
+              operation: {
+                startedOn,
+                endedOn,
+                data: { inventoryChanges },
+              },
+            })
+          )
+          .then(res => {
+            assert.equal(res.status, 200, res.text)
+            assert.typeOf(res.body, 'Object')
+          })
+          .catch(assert.fail)
+
+        const inventoryItemsAtSiteAfter = yield knex('InventoryItem as ii')
+          .join('Consumable as c', 'ii.consumableId', 'c.id')
+          .where({ siteId: site.id })
+          .whereNotIn('ii.id', inventoryItemsAtSiteBefore)
+          .select(
+            'ii.id',
+            'c.name as consumableName',
+            'ii.inTransitFromSiteId',
+            'ii.lotNumber',
+            'ii.expiresOn',
+            'ii.quantityOnHand'
+          )
+        assert.deepEqual(
+          _.sortBy(
+            _.map(inventoryItemsAtSiteAfter, inventoryItem =>
+              _.omit(inventoryItem, 'id')
+            ),
+            ['consumableName', 'consumableReason', 'expiresOn']
+          ),
+          _.sortBy(
+            _.map(inventoryChanges, inventoryChange => ({
+              consumableName: inventoryChange.ConsumableName,
+              inTransitFromSiteId: null,
+              lotNumber: null,
+              expiresOn: inventoryChange.ExpirationDate,
+              quantityOnHand: inventoryChange.ResultingQuantityOnHand,
+            })),
+            ['consumableName', 'consumableReason', 'expiresOn']
+          )
+        )
+
+        const inventoryLog = yield knex('InventoryLog as il')
+          .join('ConsumableReason as cr', 'il.consumableReasonId', 'cr.id')
+          .join('Consumable as c', 'il.consumableId', 'c.id')
+          .whereIn('il.inventoryItemId', _.map(inventoryItemsAtSiteAfter, 'id'))
+          .select(
+            'c.name as consumableName',
+            'il.siteId',
+            'cr.name as consumableReason',
+            'il.resultId',
+            'il.operation',
+            'il.lotNumber',
+            'il.expiresOn',
+            'il.quantity',
+            'il.notes',
+            'il.adjustedFrom',
+            'il.adjustedTo'
+          )
+
+        assert.deepEqual(
+          _.sortBy(inventoryLog, [
+            'consumableName',
+            'consumableReason',
+            'expiresOn',
+          ]),
+          _.sortBy(
+            _.map(inventoryChanges, inventoryChange => ({
+              consumableName: inventoryChange.ConsumableName,
+              siteId: site.id,
+              consumableReason: inventoryChange.ConsumableReasonName,
+              resultId: null,
+              operation:
+                inventoryChange.Quantity >= 0
+                  ? 'add from GxConnect'
+                  : 'remove from GxConnect',
+              lotNumber: null,
+              expiresOn: inventoryChange.ExpirationDate,
+              quantity: Math.abs(inventoryChange.Quantity),
+              notes: null,
+              adjustedFrom: setMilliseconds(inventoryChange.DateChanged, 0),
+              adjustedTo: null,
+            })),
+            ['consumableName', 'consumableReason', 'expiresOn']
+          )
+        )
+      }))
+
+    it('should accept identify lots based on expiration date and adjust the quantity of the correct lot', () =>
+      runTest(function*(knex) {
+        const { basicDevicePayload, deviceAuth, site, now } = context
+
+        const inventoryItemsAtSiteBefore = yield knex('InventoryItem')
+          .where({ siteId: site.id })
+          .pluck('id')
+
+        const startedOn = subDays(now, 5)
+        const endedOn = addHours(startedOn, 2)
+
+        const lot1 = {
+          ConsumableName: 'GeneXpert TB Cartridge',
+          ConsumableReasonName: 'Captured',
+          Quantity: 73,
+          ResultingQuantityOnHand: 73,
+          DateChanged: subHours(startedOn, 2),
+          ExpirationDate: setMilliseconds(subDays(addYears(now, 1), 21), 0),
+        }
+        const lot2 = {
+          ConsumableName: 'GeneXpert TB Cartridge',
+          ConsumableReasonName: 'Captured',
+          Quantity: 38,
+          ResultingQuantityOnHand: 38,
+          DateChanged: subHours(startedOn, 2),
+          ExpirationDate: setMilliseconds(subDays(addYears(now, 1), 33), 0),
+        }
+
+        yield server
+          .post('/device')
+          .set('Authorization', deviceAuth)
+          .send(
+            _.assign({}, basicDevicePayload, {
+              operation: {
+                startedOn,
+                endedOn,
+                data: { inventoryChanges: [lot1, lot2] },
+              },
+            })
+          )
+          .then(res => {
+            assert.equal(res.status, 200, res.text)
+            assert.typeOf(res.body, 'Object')
+          })
+          .catch(assert.fail)
+
+        const inventoryItemsAtSiteAfter = yield knex('InventoryItem as ii')
+          .join('Consumable as c', 'ii.consumableId', 'c.id')
+          .where({ siteId: site.id })
+          .whereNotIn('ii.id', inventoryItemsAtSiteBefore)
+          .select(
+            'ii.id',
+            'c.name as consumableName',
+            'ii.inTransitFromSiteId',
+            'ii.lotNumber',
+            'ii.expiresOn',
+            'ii.quantityOnHand'
+          )
+        assert.deepEqual(
+          _.sortBy(
+            _.map(inventoryItemsAtSiteAfter, inventoryItem =>
+              _.omit(inventoryItem, 'id')
+            ),
+            'expiresOn'
+          ),
+          _.sortBy(
+            _.map([lot1, lot2], inventoryChange => ({
+              consumableName: inventoryChange.ConsumableName,
+              inTransitFromSiteId: null,
+              lotNumber: null,
+              expiresOn: inventoryChange.ExpirationDate,
+              quantityOnHand: inventoryChange.ResultingQuantityOnHand,
+            })),
+            'expiresOn'
+          )
+        )
+
+        const inventoryLogs = yield knex('InventoryLog as il')
+          .join('ConsumableReason as cr', 'il.consumableReasonId', 'cr.id')
+          .join('Consumable as c', 'il.consumableId', 'c.id')
+          .whereIn('il.inventoryItemId', _.map(inventoryItemsAtSiteAfter, 'id'))
+          .select(
+            'il.id',
+            'c.name as consumableName',
+            'il.siteId',
+            'cr.name as consumableReason',
+            'il.resultId',
+            'il.operation',
+            'il.lotNumber',
+            'il.expiresOn',
+            'il.quantity',
+            'il.notes',
+            'il.adjustedFrom',
+            'il.adjustedTo'
+          )
+
+        assert.deepEqual(
+          _.sortBy(
+            _.map(inventoryLogs, inventoryLog => _.omit(inventoryLog, 'id')),
+            ['consumableName', 'consumableReason']
+          ),
+          _.sortBy(
+            _.map([lot1, lot2], inventoryChange => ({
+              consumableName: inventoryChange.ConsumableName,
+              siteId: site.id,
+              consumableReason: inventoryChange.ConsumableReasonName,
+              resultId: null,
+              operation:
+                inventoryChange.Quantity >= 0
+                  ? 'add from GxConnect'
+                  : 'remove from GxConnect',
+              lotNumber: null,
+              expiresOn: inventoryChange.ExpirationDate,
+              quantity: Math.abs(inventoryChange.Quantity),
+              notes: null,
+              adjustedFrom: setMilliseconds(inventoryChange.DateChanged, 0),
+              adjustedTo: null,
+            })),
+            ['consumableName', 'consumableReason']
+          )
+        )
+
+        const updateToLot1 = _.assign({}, lot1, {
+          ConsumableReasonName: 'Stolen',
+          Quantity: -3,
+          ResultingQuantityOnHand: 70,
+          DateChanged: subHours(startedOn, 1),
+        })
+
+        yield server
+          .post('/device')
+          .set('Authorization', deviceAuth)
+          .send(
+            _.assign({}, basicDevicePayload, {
+              operation: {
+                startedOn,
+                endedOn,
+                data: { inventoryChanges: [updateToLot1] },
+              },
+            })
+          )
+          .then(res => {
+            assert.equal(res.status, 200, res.text)
+            assert.typeOf(res.body, 'Object')
+          })
+          .catch(assert.fail)
+
+        const lot1InventoryItem = _.find(inventoryItemsAtSiteAfter, {
+          expiresOn: lot1.ExpirationDate,
+        })
+        const lot2InventoryItem = _.find(inventoryItemsAtSiteAfter, {
+          expiresOn: lot2.ExpirationDate,
+        })
+        const lot1InventoryItemAfterAdjustment1 = yield knex(
+          'InventoryItem as ii'
+        )
+          .join('Consumable as c', 'ii.consumableId', 'c.id')
+          .where({ 'ii.id': lot1InventoryItem.id })
+          .first(
+            'c.name as consumableName',
+            'ii.inTransitFromSiteId',
+            'ii.lotNumber',
+            'ii.expiresOn',
+            'ii.quantityOnHand'
+          )
+        const lot2InventoryItemAfterAdjustment1 = yield knex(
+          'InventoryItem as ii'
+        )
+          .join('Consumable as c', 'ii.consumableId', 'c.id')
+          .where({ 'ii.id': lot2InventoryItem.id })
+          .first(
+            'c.name as consumableName',
+            'ii.inTransitFromSiteId',
+            'ii.lotNumber',
+            'ii.expiresOn',
+            'ii.quantityOnHand'
+          )
+        assert.deepEqual(lot1InventoryItemAfterAdjustment1, {
+          consumableName: lot1.ConsumableName,
+          inTransitFromSiteId: null,
+          lotNumber: null,
+          expiresOn: lot1.ExpirationDate,
+          quantityOnHand:
+            lot1InventoryItem.quantityOnHand + updateToLot1.Quantity,
+        })
+        assert.deepEqual(lot2InventoryItemAfterAdjustment1, {
+          consumableName: lot2.ConsumableName,
+          inTransitFromSiteId: null,
+          lotNumber: null,
+          expiresOn: lot2.ExpirationDate,
+          quantityOnHand: lot2.ResultingQuantityOnHand,
+        })
+
+        const updateToLot2 = _.assign({}, lot2, {
+          ConsumableReasonName: 'Transfer Received',
+          Quantity: 100,
+          ResultingQuantityOnHand: 138,
+          DateChanged: subHours(startedOn, 1),
+        })
+
+        yield server
+          .post('/device')
+          .set('Authorization', deviceAuth)
+          .send(
+            _.assign({}, basicDevicePayload, {
+              operation: {
+                startedOn,
+                endedOn,
+                data: { inventoryChanges: [updateToLot2] },
+              },
+            })
+          )
+          .then(res => {
+            assert.equal(res.status, 200, res.text)
+            assert.typeOf(res.body, 'Object')
+          })
+          .catch(assert.fail)
+
+        const lot1InventoryItemAfterAdjustment2 = yield knex(
+          'InventoryItem as ii'
+        )
+          .join('Consumable as c', 'ii.consumableId', 'c.id')
+          .where({ 'ii.id': lot1InventoryItem.id })
+          .first(
+            'c.name as consumableName',
+            'ii.inTransitFromSiteId',
+            'ii.lotNumber',
+            'ii.expiresOn',
+            'ii.quantityOnHand'
+          )
+        const lot2InventoryItemAfterAdjustment2 = yield knex(
+          'InventoryItem as ii'
+        )
+          .join('Consumable as c', 'ii.consumableId', 'c.id')
+          .where({ 'ii.id': lot2InventoryItem.id })
+          .first(
+            'c.name as consumableName',
+            'ii.inTransitFromSiteId',
+            'ii.lotNumber',
+            'ii.expiresOn',
+            'ii.quantityOnHand'
+          )
+        assert.deepEqual(lot1InventoryItemAfterAdjustment2, {
+          consumableName: lot1.ConsumableName,
+          inTransitFromSiteId: null,
+          lotNumber: null,
+          expiresOn: lot1.ExpirationDate,
+          quantityOnHand:
+            lot1InventoryItem.quantityOnHand + updateToLot1.Quantity,
+        })
+        assert.deepEqual(lot2InventoryItemAfterAdjustment2, {
+          consumableName: lot2.ConsumableName,
+          inTransitFromSiteId: null,
+          lotNumber: null,
+          expiresOn: lot2.ExpirationDate,
+          quantityOnHand:
+            lot2InventoryItem.quantityOnHand + updateToLot2.Quantity,
+        })
+        const inventoryLogsForLot1And2 = yield knex('InventoryLog as il')
+          .join('ConsumableReason as cr', 'il.consumableReasonId', 'cr.id')
+          .join('Consumable as c', 'il.consumableId', 'c.id')
+          .whereIn('il.inventoryItemId', [
+            lot1InventoryItem.id,
+            lot2InventoryItem.id,
+          ])
+          .orderBy('il.id')
+          .select(
+            'c.name as consumableName',
+            'il.siteId',
+            'cr.name as consumableReason',
+            'il.resultId',
+            'il.operation',
+            'il.lotNumber',
+            'il.expiresOn',
+            'il.quantity',
+            'il.notes',
+            'il.adjustedFrom',
+            'il.adjustedTo'
+          )
+        assert.deepEqual(inventoryLogsForLot1And2, [
+          {
+            consumableName: lot1.ConsumableName,
+            siteId: site.id,
+            consumableReason: lot1.ConsumableReasonName,
+            resultId: null,
+            operation: 'add from GxConnect',
+            lotNumber: null,
+            expiresOn: lot1.ExpirationDate,
+            quantity: Math.abs(lot1.ResultingQuantityOnHand),
+            notes: null,
+            adjustedFrom: setMilliseconds(lot1.DateChanged, 0),
+            adjustedTo: null,
+          },
+          {
+            consumableName: lot2.ConsumableName,
+            siteId: site.id,
+            consumableReason: lot2.ConsumableReasonName,
+            resultId: null,
+            operation: 'add from GxConnect',
+            lotNumber: null,
+            expiresOn: lot2.ExpirationDate,
+            quantity: Math.abs(lot2.ResultingQuantityOnHand),
+            notes: null,
+            adjustedFrom: setMilliseconds(lot2.DateChanged, 0),
+            adjustedTo: null,
+          },
+          {
+            consumableName: lot1.ConsumableName,
+            siteId: site.id,
+            consumableReason: updateToLot1.ConsumableReasonName,
+            resultId: null,
+            operation: 'remove from GxConnect',
+            lotNumber: null,
+            expiresOn: lot1.ExpirationDate,
+            quantity: Math.abs(updateToLot1.Quantity),
+            notes: null,
+            adjustedFrom: setMilliseconds(updateToLot1.DateChanged, 0),
+            adjustedTo: null,
+          },
+          {
+            consumableName: lot2.ConsumableName,
+            siteId: site.id,
+            consumableReason: updateToLot2.ConsumableReasonName,
+            resultId: null,
+            operation: 'add from GxConnect',
+            lotNumber: null,
+            expiresOn: lot2.ExpirationDate,
+            quantity: Math.abs(updateToLot2.Quantity),
+            notes: null,
+            adjustedFrom: setMilliseconds(updateToLot2.DateChanged, 0),
+            adjustedTo: null,
+          },
+        ])
+      }))
+
+    describe('when quantity on hand is explicitly specified in the data', () => {
+      it('should overwrite the quantity on hand in the inventory record', () =>
+        runTest(function*(knex) {
+          const { basicDevicePayload, deviceAuth, site, now } = context
+
+          const inventoryItemsAtSiteBefore = yield knex('InventoryItem')
+            .where({ siteId: site.id })
+            .pluck('id')
+
+          const startedOn = subDays(now, 7)
+          const endedOn = addHours(startedOn, 2)
+          const expirationDate = setMilliseconds(
+            subDays(addYears(now, 1), 16),
+            0
+          )
+
+          const initialLotCaptured = {
+            ConsumableName: 'GeneXpert TB Cartridge',
+            ConsumableReasonName: 'Captured',
+            Quantity: 25,
+            ResultingQuantityOnHand: 25,
+            DateChanged: subHours(startedOn, 2),
+            ExpirationDate: expirationDate,
+          }
+
+          yield server
+            .post('/device')
+            .set('Authorization', deviceAuth)
+            .send(
+              _.assign({}, basicDevicePayload, {
+                operation: {
+                  startedOn,
+                  endedOn,
+                  data: { inventoryChanges: [initialLotCaptured] },
+                },
+              })
+            )
+            .then(res => {
+              assert.equal(res.status, 200, res.text)
+              assert.typeOf(res.body, 'Object')
+            })
+            .catch(assert.fail)
+
+          const inventoryItemsAtSiteAfterCapture = yield knex(
+            'InventoryItem as ii'
+          )
+            .join('Consumable as c', 'ii.consumableId', 'c.id')
+            .where({ siteId: site.id })
+            .whereNotIn('ii.id', inventoryItemsAtSiteBefore)
+            .select(
+              'ii.id',
+              'c.name as consumableName',
+              'ii.inTransitFromSiteId',
+              'ii.lotNumber',
+              'ii.expiresOn',
+              'ii.quantityOnHand'
+            )
+          assert.deepEqual(
+            _.sortBy(
+              _.map(inventoryItemsAtSiteAfterCapture, inventoryItem =>
+                _.omit(inventoryItem, 'id')
+              ),
+              'expiresOn'
+            ),
+            [
+              {
+                consumableName: initialLotCaptured.ConsumableName,
+                inTransitFromSiteId: null,
+                lotNumber: null,
+                expiresOn: initialLotCaptured.ExpirationDate,
+                quantityOnHand: initialLotCaptured.ResultingQuantityOnHand,
+              },
+            ]
+          )
+
+          const inventoryLost = {
+            ConsumableName: 'GeneXpert TB Cartridge',
+            ConsumableReasonName: 'Lost',
+            Quantity: -5,
+            ResultingQuantityOnHand: 999,
+            DateChanged: subHours(startedOn, 1),
+            ExpirationDate: expirationDate,
+          }
+
+          yield server
+            .post('/device')
+            .set('Authorization', deviceAuth)
+            .send(
+              _.assign({}, basicDevicePayload, {
+                operation: {
+                  startedOn,
+                  endedOn,
+                  data: { inventoryChanges: [inventoryLost] },
+                },
+              })
+            )
+            .then(res => {
+              assert.equal(res.status, 200, res.text)
+              assert.typeOf(res.body, 'Object')
+            })
+            .catch(assert.fail)
+
+          const inventoryItemsAtSiteAfterLoss = yield knex(
+            'InventoryItem as ii'
+          )
+            .join('Consumable as c', 'ii.consumableId', 'c.id')
+            .where({ siteId: site.id })
+            .whereNotIn('ii.id', inventoryItemsAtSiteBefore)
+            .select(
+              'ii.id',
+              'c.name as consumableName',
+              'ii.inTransitFromSiteId',
+              'ii.lotNumber',
+              'ii.expiresOn',
+              'ii.quantityOnHand'
+            )
+          assert.deepEqual(
+            _.sortBy(
+              _.map(inventoryItemsAtSiteAfterLoss, inventoryItem =>
+                _.omit(inventoryItem, 'id')
+              ),
+              'expiresOn'
+            ),
+            [
+              {
+                consumableName: inventoryLost.ConsumableName,
+                inTransitFromSiteId: null,
+                lotNumber: null,
+                expiresOn: inventoryLost.ExpirationDate,
+                quantityOnHand: inventoryLost.ResultingQuantityOnHand,
+              },
+            ]
+          )
+        }))
+    })
+
+    describe('when quantity on hand is not specified in the data', () => {
+      it('should calculate the quantity on hand in the inventory record', () =>
+        runTest(function*(knex) {
+          const { basicDevicePayload, deviceAuth, site, now } = context
+
+          const inventoryItemsAtSiteBefore = yield knex('InventoryItem')
+            .where({ siteId: site.id })
+            .pluck('id')
+
+          const startedOn = subDays(now, 9)
+          const endedOn = addHours(startedOn, 2)
+          const expirationDate = setMilliseconds(
+            subDays(addYears(now, 1), 15),
+            0
+          )
+
+          const initialLotCaptured = {
+            ConsumableName: 'GeneXpert TB Cartridge',
+            ConsumableReasonName: 'Captured',
+            Quantity: 25,
+            DateChanged: subHours(startedOn, 2),
+            ExpirationDate: expirationDate,
+          }
+
+          yield server
+            .post('/device')
+            .set('Authorization', deviceAuth)
+            .send(
+              _.assign({}, basicDevicePayload, {
+                operation: {
+                  startedOn,
+                  endedOn,
+                  data: { inventoryChanges: [initialLotCaptured] },
+                },
+              })
+            )
+            .then(res => {
+              assert.equal(res.status, 200, res.text)
+              assert.typeOf(res.body, 'Object')
+            })
+            .catch(assert.fail)
+
+          const inventoryItemsAtSiteAfterCapture = yield knex(
+            'InventoryItem as ii'
+          )
+            .join('Consumable as c', 'ii.consumableId', 'c.id')
+            .where({ siteId: site.id })
+            .whereNotIn('ii.id', inventoryItemsAtSiteBefore)
+            .select(
+              'ii.id',
+              'c.name as consumableName',
+              'ii.inTransitFromSiteId',
+              'ii.lotNumber',
+              'ii.expiresOn',
+              'ii.quantityOnHand'
+            )
+          assert.deepEqual(
+            _.sortBy(
+              _.map(inventoryItemsAtSiteAfterCapture, inventoryItem =>
+                _.omit(inventoryItem, 'id')
+              ),
+              'expiresOn'
+            ),
+            [
+              {
+                consumableName: initialLotCaptured.ConsumableName,
+                inTransitFromSiteId: null,
+                lotNumber: null,
+                expiresOn: initialLotCaptured.ExpirationDate,
+                quantityOnHand: initialLotCaptured.Quantity,
+              },
+            ]
+          )
+
+          const inventoryLost = {
+            ConsumableName: 'GeneXpert TB Cartridge',
+            ConsumableReasonName: 'Lost',
+            Quantity: -5,
+            DateChanged: subHours(startedOn, 1),
+            ExpirationDate: expirationDate,
+          }
+
+          yield server
+            .post('/device')
+            .set('Authorization', deviceAuth)
+            .send(
+              _.assign({}, basicDevicePayload, {
+                operation: {
+                  startedOn,
+                  endedOn,
+                  data: { inventoryChanges: [inventoryLost] },
+                },
+              })
+            )
+            .then(res => {
+              assert.equal(res.status, 200, res.text)
+              assert.typeOf(res.body, 'Object')
+            })
+            .catch(assert.fail)
+
+          const inventoryItemsAtSiteAfterLoss = yield knex(
+            'InventoryItem as ii'
+          )
+            .join('Consumable as c', 'ii.consumableId', 'c.id')
+            .where({ siteId: site.id })
+            .whereNotIn('ii.id', inventoryItemsAtSiteBefore)
+            .select(
+              'ii.id',
+              'c.name as consumableName',
+              'ii.inTransitFromSiteId',
+              'ii.lotNumber',
+              'ii.expiresOn',
+              'ii.quantityOnHand'
+            )
+          assert.deepEqual(
+            _.sortBy(
+              _.map(inventoryItemsAtSiteAfterLoss, inventoryItem =>
+                _.omit(inventoryItem, 'id')
+              ),
+              'expiresOn'
+            ),
+            [
+              {
+                consumableName: inventoryLost.ConsumableName,
+                inTransitFromSiteId: null,
+                lotNumber: null,
+                expiresOn: inventoryLost.ExpirationDate,
+                quantityOnHand:
+                  initialLotCaptured.Quantity + inventoryLost.Quantity,
+              },
+            ]
+          )
+        }))
+    })
   })
 })
