@@ -186,6 +186,16 @@ function* seed(knex) {
       type: 'string',
     },
   })
+  const commCareConfigurationDataSchema = JSON.stringify({
+    requirePrinter: {
+      title: 'Require printer',
+      type: 'string',
+    },
+    firmwareUpdateRequired: {
+      title: 'Firmware update required',
+      type: 'string',
+    },
+  })
 
   // define deviceOperation object
   const deviceOperationSchema = JSON.stringify({
@@ -202,6 +212,23 @@ function* seed(knex) {
       prefix: '',
       suffix: 'F',
       decimals: 1,
+    },
+  })
+
+  const commCareDeviceOperationSchema = JSON.stringify({
+    longitude: {
+      title: 'Longitude',
+      type: 'number',
+      prefix: '',
+      suffix: '',
+      decimals: 10,
+    },
+    latitude: {
+      title: 'Latitude',
+      type: 'number',
+      prefix: '',
+      suffix: '',
+      decimals: 10,
     },
   })
 
@@ -261,6 +288,15 @@ function* seed(knex) {
     name: 'Metacom Router',
     manufacturer: 'Metacom',
     deviceTypeCategoryId: deviceTypeCategoryConnectivity,
+  })
+
+  const [deviceTypeCommCare] = yield knex('DeviceType').insert({
+    externalId: 'CommCareApp',
+    name: 'CommCare App',
+    manufacturer: 'CommCare',
+    deviceTypeCategoryId: deviceTypeCategoryLab,
+    configurationDataSchema: commCareConfigurationDataSchema,
+    deviceOperationSchema: commCareDeviceOperationSchema,
   })
 
   // DeviceStatus
@@ -672,6 +708,57 @@ function* seed(knex) {
     },
   })
 
+  const commCareResultDataSchemaHiv = JSON.stringify({
+    result: {
+      title: 'Result',
+      type: 'string',
+      i18nKey: 'result',
+    },
+    qaResult: {
+      title: 'QA Result',
+      type: 'string',
+      i18nKey: 'qaResult',
+    },
+    urlPicture: {
+      title: 'Picture URL',
+      type: 'string',
+      i18nKey: 'urlPicture',
+    },
+  })
+
+  const commCarePatientDataSchema = JSON.stringify({
+    id: {
+      title: 'Patient ID',
+      type: 'string',
+      order: 0,
+    },
+    name: {
+      title: 'First Name',
+      type: 'string',
+      order: 1,
+    },
+    surName: {
+      title: 'Last Name',
+      type: 'string',
+      order: 2,
+    },
+    motherName: {
+      title: 'Mother First Name',
+      type: 'string',
+      order: 3,
+    },
+    fatherName: {
+      title: 'Father First Name',
+      type: 'string',
+      order: 4,
+    },
+    studyId: {
+      title: 'Study ID',
+      type: 'string',
+      order: 5,
+    },
+  })
+
   const [assayMtbRifId] = yield knex('Assay').insert({
     name: 'GeneXpert MTB/Rif',
     i18nKey: 'assayGeneXpertMtbRif',
@@ -907,7 +994,7 @@ function* seed(knex) {
         type: 'string',
         order: 3,
       },
-      nameMother: {
+      motherName: {
         title: "Mother's Name",
         type: 'string',
         order: 4,
@@ -1057,6 +1144,19 @@ function* seed(knex) {
         order: 9,
       },
     }),
+  })
+
+  const [assayCommCareHiv] = yield knex('Assay').insert({
+    name: 'CommCare HIV',
+    i18nKey: 'commCareHiv',
+    externalId: 'CommCareHiv',
+    assayTypeId: assayTypeEid,
+    deviceTypeId: deviceTypeCommCare,
+    resultSourceId: resultSourceDiagnosticId,
+    resultCategory1Label: 'Result',
+    resultCategory1i18nKey: 'resultCategoryEid',
+    resultDataSchema: commCareResultDataSchemaHiv,
+    patientDataSchema: commCarePatientDataSchema,
   })
 
   // Result types
@@ -1314,6 +1414,21 @@ function* seed(knex) {
   yield knex('ResultCategoryAssay').insert({
     resultCategoryId: resultCategoryErrorId,
     assayId: assayGeneXpertHcvId,
+  })
+
+  yield knex('ResultCategoryAssay').insert({
+    resultCategoryId: resultCategoryDetectedId,
+    assayId: assayCommCareHiv,
+  })
+
+  yield knex('ResultCategoryAssay').insert({
+    resultCategoryId: resultCategoryNotDetectedId,
+    assayId: assayCommCareHiv,
+  })
+
+  yield knex('ResultCategoryAssay').insert({
+    resultCategoryId: resultCategoryErrorId,
+    assayId: assayCommCareHiv,
   })
 
   // Units
