@@ -23,6 +23,7 @@ import BrowseTablePaginator from '../../../globals/components/BrowseTablePaginat
 import BrowseEmptyList from '../../../globals/components/BrowseEmptyList'
 import AbnormalBarChart from '../../../dashboard/operational/AbnormalBarChart'
 import { fetchResults, exportResults } from '../../../result/ResultRedux'
+import { tokens } from '../../../deviceStatus/DeviceStatusRedux'
 import DeviceDetailBackBar from '../DeviceDetailBackBar'
 import Summary from '../Summary'
 import {
@@ -160,6 +161,14 @@ const enhance = compose(
     })
   ),
   withHandlers({
+    onToggleDeviceStatus: ({ device, updateSingleDevice }) => () =>
+      updateSingleDevice(device.get('id'), {
+        statusToken:
+          device.get('statusToken') !== tokens.APPROVED
+            ? tokens.APPROVED
+            : tokens.ASSIGNED,
+      }),
+
     onInitialLoad: ({
       match,
       location,
@@ -259,6 +268,7 @@ export const DeviceDetailProfile = ({
   onDateRangeChange,
   device,
   // --- injected by recompose ---
+  onToggleDeviceStatus,
   table,
   items,
   sortCol,
@@ -289,7 +299,11 @@ export const DeviceDetailProfile = ({
           <Summary
             title={intl.formatMessage(messages.status)}
             description={device.get('status')}
-            action={<Button raised>Change</Button>}
+            action={
+              <Button raised onClick={onToggleDeviceStatus}>
+                Change
+              </Button>
+            }
           />
           <Summary
             title={intl.formatMessage(messages.calibration)}
@@ -352,6 +366,7 @@ export const DeviceDetailProfile = ({
             .map(c => (
               <AbnormalBarChart
                 key={c.get('key')}
+                intl={intl}
                 component={Unit}
                 item={c}
                 sm="1-2"

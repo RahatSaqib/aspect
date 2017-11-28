@@ -95,6 +95,7 @@ export const DeviceDetail = ({
               dateRange={dateRange}
               onDateRangeChange={onDateRangeChange}
               device={device}
+              updateSingleDevice={updateSingleDevice}
             />
           )}
         />
