@@ -346,8 +346,7 @@ function* updateDevice(request) {
   const updatedCount = yield knex('Device')
     .where('id', params.deviceId)
     .update({
-      hostId: payload.hostId,
-      siteId: payload.siteId,
+      siteId: device.siteId || payload.siteId,
       deviceStatusId,
       configurationData: JSON.stringify(configurationData),
     })
