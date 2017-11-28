@@ -1,5 +1,6 @@
 const _ = require('lodash')
 const Boom = require('boom')
+const { createUniqueIdForResult } = require('../../../result/service')
 /*
 The purpose of this plugin is to ensure that results are captured
 even when the assay name in the result is unknown to Aspect
@@ -9,6 +10,13 @@ If an unknown assay is detected, create it
 function* preProcessMergeResult({ knex, deviceId, payload }) {
   if (!deviceId) {
     throw Boom.notFound('Cannot find device')
+  }
+  const startedOn = _.get(payload, 'startedOn') || _.get(payload, 'endedOn')
+  const endedOn = _.get(payload, 'endedOn') || startedOn
+  if (!startedOn) {
+    throw Boom.badRequest(
+      'Start date or end date is required for a result from GxConnect'
+    )
   }
   const [device] = yield knex
     .from('Device as d')
@@ -20,6 +28,32 @@ function* preProcessMergeResult({ knex, deviceId, payload }) {
   yield* createAssayIfNotExists(knex, device, payload)
   if (!_.isEmpty(payload.data)) {
     payload.category = getResultCategories(payload)
+  } else {
+    payload.data = {}
+  }
+  const instrumentSerial = _.get(payload, 'instrument.serial')
+  const sampleId = _.get(payload, 'sample.id')
+  if (instrumentSerial && sampleId) {
+    if (payload.id) {
+      payload.data.geneXpertTestId = payload.id
+      const existingResult = yield knex
+        .from('Result as r')
+        .where({ 'r.externalId': payload.id })
+        .first('r.externalId')
+      if (existingResult) {
+        payload.id = existingResult.externalId
+      } else {
+        delete payload.id
+      }
+    }
+    if (!payload.id) {
+      payload.id = createUniqueIdForResult(
+        instrumentSerial,
+        startedOn,
+        endedOn,
+        sampleId
+      )
+    }
   }
 }
 

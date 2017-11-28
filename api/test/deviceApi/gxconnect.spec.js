@@ -1,10 +1,11 @@
 const _ = require('lodash')
 const supertest = require('supertest')
 const chai = require('chai')
+const addYears = require('date-fns/add_years')
 const subDays = require('date-fns/sub_days')
 const addHours = require('date-fns/add_hours')
 const subHours = require('date-fns/sub_hours')
-const addYears = require('date-fns/add_years')
+const addSeconds = require('date-fns/add_seconds')
 const setMilliseconds = require('date-fns/set_milliseconds')
 const {
   createGxConnectTestContext,
@@ -653,9 +654,9 @@ describe('Device API routes for GxConnect Devices', () => {
     const runTest = context.runTest
     after(context.afterCleanUp)
 
-    it('should append a result if the external ID is not known', () =>
+    it('should reject a result without a start or end date date', () =>
       runTest(function*(knex) {
-        const { basicDevicePayload, deviceAuth, device, site } = context
+        const { basicDevicePayload, deviceAuth, device } = context
 
         const beforeResultDetails = yield* getLastResult(knex, device.id)
 
@@ -666,14 +667,41 @@ describe('Device API routes for GxConnect Devices', () => {
           .set('Authorization', deviceAuth)
           .send(_.assign({}, basicDevicePayload, basicResultPayload))
           .then(res => {
+            assert.equal(res.status, 400)
+          })
+          .catch(assert.fail)
+
+        const afterResultDetails = yield* getLastResult(knex, device.id)
+        assert.isUndefined(afterResultDetails)
+      }))
+
+    it('should append a result if the external ID is not known', () =>
+      runTest(function*(knex) {
+        const { basicDevicePayload, deviceAuth, device, site } = context
+
+        const beforeResultDetails = yield* getLastResult(knex, device.id)
+
+        assert.isUndefined(beforeResultDetails)
+
+        const testStartedOn = setMilliseconds(subDays(context.now, 3), 0)
+        yield server
+          .post('/device')
+          .set('Authorization', deviceAuth)
+          .send(
+            _.assign({}, _.assign({}, basicDevicePayload, basicResultPayload), {
+              result: _.assign({}, basicResultPayload.result, {
+                startedOn: testStartedOn,
+              }),
+            })
+          )
+          .then(res => {
             assert.equal(res.status, 200)
             assert.typeOf(res.body, 'Object')
           })
           .catch(assert.fail)
 
         const afterResultDetails = yield* getLastResult(knex, device.id)
-        assert.deepEqual(_.omit(afterResultDetails, 'id'), {
-          externalId: basicResultPayload.result.id,
+        assert.deepEqual(_.omit(afterResultDetails, 'id', 'externalId'), {
           deviceId: device.id,
           siteId: device.siteId,
           geographyId: site.geographyId,
@@ -688,8 +716,10 @@ describe('Device API routes for GxConnect Devices', () => {
           sampleCollectedOn: null,
           sampleOriginSiteId: device.siteId,
           sampleTypeId: null,
-          resultData: basicResultPayload.result.data,
-          startedOn: null,
+          resultData: _.assign({}, basicResultPayload.result.data, {
+            geneXpertTestId: basicResultPayload.result.id,
+          }),
+          startedOn: testStartedOn,
           endedOn: null,
           consumableSerial: null,
           consumableExpirationDate: null,
@@ -734,8 +764,7 @@ describe('Device API routes for GxConnect Devices', () => {
 
         const afterResultDetails = yield* getLastResult(knex, device.id)
         assert.equal(beforeResultDetails.id, afterResultDetails.id)
-        assert.deepEqual(_.omit(afterResultDetails, 'id'), {
-          externalId: basicResultPayload.result.id,
+        assert.deepEqual(_.omit(afterResultDetails, 'id', 'externalId'), {
           deviceId: device.id,
           siteId: device.siteId,
           geographyId: site.geographyId,
@@ -750,7 +779,9 @@ describe('Device API routes for GxConnect Devices', () => {
           sampleCollectedOn: null,
           sampleOriginSiteId: device.siteId,
           sampleTypeId: null,
-          resultData: basicResultPayload.result.data,
+          resultData: _.assign({}, basicResultPayload.result.data, {
+            geneXpertTestId: basicResultPayload.result.id,
+          }),
           startedOn: testStartedOn,
           endedOn: testEndedOn,
           consumableSerial: null,
@@ -1606,8 +1637,17 @@ describe('Device API routes for GxConnect Devices', () => {
           assay,
           resultText,
           expectedResultCategory1,
-          expectedResultCategory2
+          expectedResultCategory2,
+          runNumber
         ) {
+          const testStartedOn = setMilliseconds(
+            addSeconds(subDays(context.now, 3), runNumber),
+            0
+          )
+          const testEndedOn = setMilliseconds(
+            addSeconds(addHours(testStartedOn, 2), runNumber),
+            0
+          )
           yield server
             .post('/device')
             .set('Authorization', deviceAuth)
@@ -1618,6 +1658,8 @@ describe('Device API routes for GxConnect Devices', () => {
                 {
                   result: _.assign({}, basicResultPayload.result, {
                     id: resultId,
+                    startedOn: testStartedOn,
+                    endedOn: testEndedOn,
                     assay: _.assign({}, basicResultPayload.result.assay, {
                       id: assay,
                     }),
@@ -1636,7 +1678,7 @@ describe('Device API routes for GxConnect Devices', () => {
 
           const resultDetails = yield* getLastResult(knex, device.id)
 
-          assert.equal(resultDetails.externalId, resultId)
+          assert.equal(resultDetails.resultData.geneXpertTestId, resultId)
           assert.equal(
             resultDetails.resultCategory1,
             expectedResultCategory1,
@@ -1649,6 +1691,7 @@ describe('Device API routes for GxConnect Devices', () => {
           )
         }
 
+        let runNumber = 1
         for (const resultText in resultTextToResultCategoryMapping) {
           if (
             resultText &&
@@ -1665,8 +1708,10 @@ describe('Device API routes for GxConnect Devices', () => {
               assay,
               resultText,
               resultCategory1,
-              resultCategory2
+              resultCategory2,
+              runNumber
             )
+            runNumber += 1
           }
         }
       }))
@@ -1701,6 +1746,7 @@ describe('Device API routes for GxConnect Devices', () => {
           const newAssayDetailsBefore = yield* getAssayDetails(assayName)
           assert.isUndefined(newAssayDetailsBefore)
 
+          const testStartedOn = setMilliseconds(subDays(context.now, 3), 0)
           yield server
             .post('/device')
             .set('Authorization', deviceAuth)
@@ -1711,6 +1757,7 @@ describe('Device API routes for GxConnect Devices', () => {
                 {
                   result: _.assign({}, basicResultPayload.result, {
                     id: resultId,
+                    startedOn: testStartedOn,
                     assay: {
                       id: assayName,
                       version: assayVersion,
@@ -1726,7 +1773,7 @@ describe('Device API routes for GxConnect Devices', () => {
             .catch(assert.fail)
 
           const resultDetails = yield* getLastResult(knex, device.id)
-          assert.equal(resultDetails.externalId, resultId)
+          assert.equal(resultDetails.resultData.geneXpertTestId, resultId)
 
           const newAssayDetailsAfter = yield* getAssayDetails(assayName)
           assert.deepEqual(_.omit(newAssayDetailsAfter, 'assayId'), {
@@ -1736,7 +1783,7 @@ describe('Device API routes for GxConnect Devices', () => {
             deviceTypeExternalId: basicDevicePayload.type.id,
           })
 
-          assert.equal(resultDetails.externalId, resultId)
+          assert.equal(resultDetails.resultData.geneXpertTestId, resultId)
         }))
     })
 
@@ -1768,6 +1815,8 @@ describe('Device API routes for GxConnect Devices', () => {
             quantityOnHand: initialQuantityOnHand,
           })
 
+          const testStartedOn = setMilliseconds(subDays(context.now, 3), 0)
+          const testEndedOn = setMilliseconds(addHours(testStartedOn, 2), 0)
           yield server
             .post('/device')
             .set('Authorization', deviceAuth)
@@ -1778,6 +1827,10 @@ describe('Device API routes for GxConnect Devices', () => {
                 {
                   result: _.assign({}, basicResultPayload.result, {
                     id: deductInventoryTestResultId,
+                    startedOn: testStartedOn,
+                    endedOn: testEndedOn,
+                    sample: { id: 'Existing Sample' },
+                    instrument: { serial: 'Existing Instrument' },
                     assay: {
                       id: consumableAssay.assayId,
                       version: '2',
@@ -1865,6 +1918,8 @@ describe('Device API routes for GxConnect Devices', () => {
                         id: consumableAssay.assayId,
                         version: '2',
                       },
+                      sample: { id: 'Existing Sample' },
+                      instrument: { serial: 'Existing Instrument' },
                       startedOn: testStartedOn,
                       endedOn: testEndedOn,
                     }),
@@ -1923,6 +1978,8 @@ describe('Device API routes for GxConnect Devices', () => {
           const errorTestResultId = 'UNIQUE-ID-WITH-ERROR-RESULT'
           const errorCode = '12345'
 
+          const testStartedOn = setMilliseconds(subDays(context.now, 3), 0)
+          const testEndedOn = setMilliseconds(addHours(testStartedOn, 2), 0)
           yield server
             .post('/device')
             .set('Authorization', deviceAuth)
@@ -1933,6 +1990,8 @@ describe('Device API routes for GxConnect Devices', () => {
                 {
                   result: _.assign({}, basicResultPayload.result, {
                     id: errorTestResultId,
+                    startedOn: testStartedOn,
+                    endedOn: testEndedOn,
                     error: {
                       code: errorCode,
                     },
@@ -1950,18 +2009,17 @@ describe('Device API routes for GxConnect Devices', () => {
           assert.deepEqual(
             _.pick(
               lastResult,
-              'externalId',
               'errorCode',
               'resultCategory1',
               'resultWorkflowStatus'
             ),
             {
-              externalId: errorTestResultId,
               errorCode,
               resultCategory1: 'Error',
               resultWorkflowStatus: 'Error',
             }
           )
+          assert.equal(lastResult.resultData.geneXpertTestId, errorTestResultId)
         }))
     })
   })

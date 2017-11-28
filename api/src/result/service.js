@@ -1,5 +1,7 @@
 const Boom = require('boom')
 const _ = require('lodash')
+const dateFormat = require('date-fns/format')
+
 const {
   knex,
   filterParams,
@@ -14,6 +16,7 @@ const {
   generateExcelFile,
   generateCsvFile,
 } = require('../shared/io')
+const { oneDirectionalMd5Hash } = require('../shared/encryption')
 
 const SELECT_LIST_FIELDS = [
   'r.id',
@@ -242,6 +245,7 @@ async function getListResults(query, auth) {
 
   return result
 }
+
 async function listResults(request) {
   const { query, auth } = request
   const result = await getListResults(query, auth)
@@ -591,6 +595,23 @@ async function getWorkflowStatusLogByResultId(request) {
   return result
 }
 
+function createUniqueIdForResult(
+  instrumentSerial,
+  testStartedOn,
+  testEndedOn,
+  sampleId
+) {
+  if (!instrumentSerial) {
+    throw new Error(
+      'Instrument Serial is required in order to generate a unique ID.'
+    )
+  }
+  const hashedSampleId = oneDirectionalMd5Hash(sampleId)
+  return `${instrumentSerial}_${dateFormat(testStartedOn, 'mmss').substr(
+    1
+  )}${dateFormat(testEndedOn, 'mmss').substr(1)}_${hashedSampleId.substr(0, 8)}`
+}
+
 module.exports = {
   listResults,
   showResult,
@@ -600,4 +621,5 @@ module.exports = {
   listWorkflowStatusTypes,
   listWorkflowStatusLog,
   exportResults,
+  createUniqueIdForResult,
 }

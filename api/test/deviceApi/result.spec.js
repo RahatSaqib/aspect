@@ -29,8 +29,6 @@ const baseConfig = {
   },
 }
 
-const now = new Date()
-
 // Number of milliseconds to wait for completion of
 // asynchronous updates as acceptance criteria
 const ASYNC_TEST_ACCEPTANCE_TIME = 250
@@ -103,7 +101,7 @@ describe('Device Result API routes', () => {
     it('should add and return device results', () =>
       runTest(function*(knex) {
         const resultIds = []
-        const { deviceId, clientAuth, deviceAuth } = context
+        const { deviceId, clientAuth, deviceAuth, now } = context
         const clientSingleResultPath = `${clientBasePath}/`
         const clientPath = `${clientBasePath}?deviceId=${deviceId}&size=1000`
 
@@ -147,16 +145,20 @@ describe('Device Result API routes', () => {
             deviceFirstName = res.body.name
           })
 
+        const resultPayload = {
+          startedOn: now,
+          data: { a: 'b' },
+          assay: { id: 'GxHiv1Vl' },
+          instrument: { serial: '1234567' },
+          sample: { id: '76543789' },
+        }
         yield server
           .post(devicePath)
           .set('Authorization', deviceAuth)
           .send({
             name: deviceChangedName,
             checkpoint: 'ck1',
-            result: {
-              data: { a: 'b' },
-              assay: { id: 'GxHiv1Vl' },
-            },
+            result: resultPayload,
           })
           .then(res => {
             assert.equal(res.status, 200)
@@ -251,7 +253,13 @@ describe('Device Result API routes', () => {
         assert.deepEqual(JSON.parse(log1Raw), {
           name: deviceChangedName,
           checkpoint: 'ck1',
-          result: { data: { a: 'b' }, assay: { id: 'GxHiv1Vl' } },
+          result: {
+            data: resultPayload.data,
+            assay: resultPayload.assay,
+            instrument: resultPayload.instrument,
+            sample: resultPayload.sample,
+            startedOn: resultPayload.startedOn.toISOString(),
+          },
         })
 
         yield server
@@ -306,13 +314,21 @@ describe('Device Result API routes', () => {
             assert.property(lastResult.workflow, 'changedOn')
 
             assert.deepEqual(
-              _.omit(lastResult, 'id', 'sample', 'workflow', 'location'),
+              _.omit(
+                lastResult,
+                'id',
+                'sample',
+                'workflow',
+                'location',
+                'startedOn'
+              ),
               {
-                data: { a: 'b' },
-                assay: { id: 'GxHiv1Vl' },
+                data: resultPayload.data,
+                assay: resultPayload.assay,
                 category: [{ id: 'Success' }],
                 type: { id: 'Patient' },
                 source: { id: 'DiagnosticDevice' },
+                instrument: resultPayload.instrument,
               }
             )
           })
@@ -810,16 +826,20 @@ describe('Device Result API routes', () => {
     it('should set default result status and categories', () =>
       runTest(function*(knex) {
         const resultIds = []
-        const { deviceId, deviceAuth } = context
+        const { deviceId, deviceAuth, now } = context
 
+        const resultPayload = {
+          startedOn: now,
+          checkpoint: '3123',
+          data: { a: 'b' },
+          assay: { id: 'GxHiv1Vl' },
+          instrument: { serial: '1234567' },
+          sample: { id: '76543789' },
+        }
         yield server
           .post(devicePostResultPath)
           .set('Authorization', deviceAuth)
-          .send({
-            checkpoint: '3123',
-            data: { a: 'b' },
-            assay: { id: 'GxHiv1Vl' },
-          })
+          .send(resultPayload)
           .then(res => {
             assert.equal(res.status, 200)
           })
@@ -859,15 +879,19 @@ describe('Device Result API routes', () => {
         assert.equal(result1Category1.externalId, 'Success')
         assert.isNotOk(result1Category2)
 
+        const resultErrorPayload = {
+          startedOn: now,
+          checkpoint: '312',
+          data: { a: 'c' },
+          error: { code: '1' },
+          assay: { id: 'GxHiv1Vl' },
+          instrument: { serial: '1234567' },
+          sample: { id: '76543788' },
+        }
         yield server
           .post(devicePostResultPath)
           .set('Authorization', deviceAuth)
-          .send({
-            checkpoint: '312',
-            data: { a: 'c' },
-            error: { code: '1' },
-            assay: { id: 'GxHiv1Vl' },
-          })
+          .send(resultErrorPayload)
           .then(res => {
             assert.equal(res.status, 200)
           })
@@ -907,15 +931,19 @@ describe('Device Result API routes', () => {
         assert.equal(result2Category1.externalId, 'Error')
         assert.isNotOk(result2Category2)
 
+        const resultInvalidErrorPayload = {
+          startedOn: now,
+          data: { a: 'd' },
+          category: { id: 'Invalid' },
+          error: { code: '1' },
+          assay: { id: 'GxHiv1Vl' },
+          instrument: { serial: '1234567' },
+          sample: { id: '76543787' },
+        }
         yield server
           .post(devicePostResultPath)
           .set('Authorization', deviceAuth)
-          .send({
-            data: { a: 'd' },
-            category: { id: 'Invalid' },
-            error: { code: '1' },
-            assay: { id: 'GxHiv1Vl' },
-          })
+          .send(resultInvalidErrorPayload)
           .then(res => {
             assert.equal(res.status, 200)
           })
@@ -940,15 +968,19 @@ describe('Device Result API routes', () => {
         assert.equal(result3Category1.externalId, 'Invalid')
         assert.isNotOk(result3Category2)
 
+        const resultDetectedNotDetectedPayload = {
+          startedOn: now,
+          checkpoint: '31',
+          data: { a: 'e' },
+          category: [{ id: 'Detected' }, { id: 'NotDetected' }],
+          assay: { id: 'GxHiv1Vl' },
+          instrument: { serial: '1234567' },
+          sample: { id: '76543786' },
+        }
         yield server
           .post(devicePostResultPath)
           .set('Authorization', deviceAuth)
-          .send({
-            checkpoint: '31',
-            data: { a: 'e' },
-            category: [{ id: 'Detected' }, { id: 'NotDetected' }],
-            assay: { id: 'GxHiv1Vl' },
-          })
+          .send(resultDetectedNotDetectedPayload)
           .then(res => {
             assert.equal(res.status, 200)
           })
@@ -992,7 +1024,7 @@ describe('Device Result API routes', () => {
 
     it('should merge results with same id', () =>
       runTest(function*(knex) {
-        const { deviceId, deviceAuth } = context
+        const { deviceId, deviceAuth, now } = context
 
         const resultIds = []
         const resultExternalIds = []
@@ -1008,6 +1040,7 @@ describe('Device Result API routes', () => {
           .set('Authorization', deviceAuth)
           .send({
             id: resultExternalIds[0],
+            startedOn: now,
             data: { a: 'b' },
             assay: { id: 'GxHiv1Vl' },
           })
@@ -1029,6 +1062,7 @@ describe('Device Result API routes', () => {
           .set('Authorization', deviceAuth)
           .send({
             id: resultExternalIds[0],
+            startedOn: now,
             data: { a: 'b', c: 'd' },
             assay: { id: 'GxHiv1Vl' },
           })
@@ -1051,6 +1085,7 @@ describe('Device Result API routes', () => {
           .set('Authorization', deviceAuth)
           .send({
             id: resultExternalIds[1],
+            startedOn: now,
             data: { a: 'b' },
             assay: { id: 'GxHiv1Vl' },
           })
@@ -1174,12 +1209,15 @@ describe('Device Result API routes', () => {
           .first()
         assert.equal(initialCount + 2, yield countResults())
         assert.equal(result2.externalId, resultExternalIds[1])
-        assert.deepEqual(JSON.parse(result2.resultData), {
-          a: 'b',
-          c: 2,
-          d: false,
-          e: { f: 'g' },
-        })
+        assert.deepEqual(
+          _.omit(JSON.parse(result2.resultData), 'geneXpertTestId'),
+          {
+            a: 'b',
+            c: 2,
+            d: false,
+            e: { f: 'g' },
+          }
+        )
         assert.equal(result2.assayVersion, '1a.c1')
         assert.approximately(result2.latitude, 30.419348, 0.000001)
         assert.approximately(result2.longitude, -87.581222, 0.000001)
@@ -1277,7 +1315,7 @@ describe('Device Result API routes', () => {
 
     it('should add and return device data', () =>
       runTest(function*(knex) {
-        const { deviceId, deviceAuth } = context
+        const { deviceId, deviceAuth, now } = context
         const resultIds = []
         const opIds = []
 
@@ -1306,7 +1344,11 @@ describe('Device Result API routes', () => {
             checkpoint: 'ck123',
             configuration: { data: { a: 'b' } },
             operation: { data: { a: 'c' } },
-            result: { data: { a: 'd' }, assay: { id: 'GxHiv1Vl' } },
+            result: {
+              startedOn: now,
+              data: { a: 'd' },
+              assay: { id: 'GxHiv1Vl' },
+            },
           })
           .then(res => {
             assert.equal(res.status, 200)
@@ -1386,7 +1428,11 @@ describe('Device Result API routes', () => {
             checkpoint: 'ck234',
             configuration: { data: { a: 'c' } },
             operation: { data: { a: 'd' } },
-            result: { data: { a: 'd' }, assay: { id: 'GxHiv1Vl' } },
+            result: {
+              startedOn: now,
+              data: { a: 'd' },
+              assay: { id: 'GxHiv1Vl' },
+            },
           })
           .then(res => {
             assert.equal(res.status, 200)
@@ -1471,16 +1517,17 @@ describe('Device Result API routes', () => {
 
       it('should deduct inventory levels from the site', () =>
         runTest(function*(knex) {
+          const { deviceId, deviceAuth, now } = context
           const results = [
             {
               assayExternalId: 'MtbRif',
               cartridgeName: 'GeneXpert TB Cartridge',
-              deviceId: context.deviceId,
+              deviceId,
             },
             {
               assayExternalId: 'Ebola',
               cartridgeName: 'GeneXpert Ebola Cartridge',
-              deviceId: context.deviceId,
+              deviceId,
             },
           ]
 
@@ -1510,8 +1557,9 @@ describe('Device Result API routes', () => {
 
             yield server
               .post(devicePostResultPath)
-              .set('Authorization', context.deviceAuth)
+              .set('Authorization', deviceAuth)
               .send({
+                startedOn: now,
                 data: { a: 'b' },
                 assay: { id: resultDetails.assayExternalId },
                 consumable: {
@@ -1548,7 +1596,7 @@ describe('Device Result API routes', () => {
 
       it('should try to deduct the correct inventory item based on expiration date and lot number', () =>
         runTest(function*(knex) {
-          const { deviceId, deviceAuth } = context
+          const { deviceId, deviceAuth, now } = context
           const { siteId } = yield knex('Device')
             .where({ id: deviceId })
             .first('siteId')
@@ -1597,6 +1645,7 @@ describe('Device Result API routes', () => {
             .post(devicePostResultPath)
             .set('Authorization', deviceAuth)
             .send({
+              startedOn: now,
               data: { a: 'b' },
               assay: { id: assayExternalId },
               consumable: {
@@ -1649,6 +1698,7 @@ describe('Device Result API routes', () => {
             .post(devicePostResultPath)
             .set('Authorization', deviceAuth)
             .send({
+              startedOn: now,
               data: { a: 'b' },
               assay: { id: assayExternalId },
               consumable: {
@@ -1703,6 +1753,7 @@ describe('Device Result API routes', () => {
             .post(devicePostResultPath)
             .set('Authorization', deviceAuth)
             .send({
+              startedOn: now,
               data: { a: 'b' },
               assay: { id: assayExternalId },
               consumable: {
@@ -1745,12 +1796,12 @@ describe('Device Result API routes', () => {
 
       it('should try to deduct the correct inventory item based on expiration date over lot number', () =>
         runTest(function*(knex) {
-          const { deviceId, deviceAuth } = context
+          const { deviceId, deviceAuth, now, auth: { user } } = context
           const { siteId } = yield knex('Device')
             .where({ id: deviceId })
             .first('siteId')
           const { id: adminId } = yield knex('User')
-            .where({ name: context.auth.user })
+            .where({ name: user })
             .first('id')
           const assayExternalId = 'MtbRif'
           const mtbRifCartridgeId = (yield knex('Consumable as c')
@@ -1815,6 +1866,7 @@ describe('Device Result API routes', () => {
             .post(devicePostResultPath)
             .set('Authorization', deviceAuth)
             .send({
+              startedOn: now,
               data: { a: 'b' },
               assay: { id: assayExternalId },
               consumable: {
@@ -1870,7 +1922,7 @@ describe('Device Result API routes', () => {
 
       it('should log inventory consumption, even when no inventory item exists for site', () =>
         runTest(function*(knex) {
-          const { deviceId, deviceAuth } = context
+          const { deviceId, deviceAuth, now } = context
           const { siteId } = yield knex('Device')
             .where({ id: deviceId })
             .first('siteId')
@@ -1905,8 +1957,11 @@ describe('Device Result API routes', () => {
             .post(devicePostResultPath)
             .set('Authorization', deviceAuth)
             .send({
+              startedOn: now,
               data: { a: 'b' },
               assay: { id: assayExternalId },
+              sample: { id: 'New Test Deduct Unknown Item' },
+              instrument: { serial: '123456789' },
               consumable: {
                 lot: resultDetails.lotNumber,
                 expirationDate: resultDetails.expirationDate,
