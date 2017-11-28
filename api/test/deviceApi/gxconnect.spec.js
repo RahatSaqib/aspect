@@ -690,6 +690,8 @@ describe('Device API routes for GxConnect Devices', () => {
           .send(
             _.assign({}, _.assign({}, basicDevicePayload, basicResultPayload), {
               result: _.assign({}, basicResultPayload.result, {
+                sample: { id: 'new sample' },
+                instrument: { serial: 'new instrument' },
                 startedOn: testStartedOn,
               }),
             })
@@ -712,7 +714,7 @@ describe('Device API routes for GxConnect Devices', () => {
           resultType: 'Patient',
           resultCategory1: 'Success',
           resultCategory2: null,
-          sampleId: basicResultPayload.result.sample.id,
+          sampleId: 'new sample',
           sampleCollectedOn: null,
           sampleOriginSiteId: device.siteId,
           sampleTypeId: null,
@@ -724,9 +726,9 @@ describe('Device API routes for GxConnect Devices', () => {
           consumableSerial: null,
           consumableExpirationDate: null,
           consumableLot: null,
-          instrumentSerial: basicResultPayload.result.instrument.serial,
-          moduleName: basicResultPayload.result.instrument.module.name,
-          moduleSerial: basicResultPayload.result.instrument.module.serial,
+          instrumentSerial: 'new instrument',
+          moduleName: null,
+          moduleSerial: null,
           patientData: basicResultPayload.result.patient,
           senderVersion: basicResultPayload.result.sender.version,
           senderOperator: basicResultPayload.result.sender.operator,
@@ -744,15 +746,15 @@ describe('Device API routes for GxConnect Devices', () => {
         assert.isNotEmpty(beforeResultDetails)
 
         const testStartedOn = setMilliseconds(subDays(context.now, 3), 0)
-        const testEndedOn = setMilliseconds(addHours(testStartedOn, 2), 0)
         yield server
           .post('/device')
           .set('Authorization', deviceAuth)
           .send(
             _.assign({}, _.assign({}, basicDevicePayload, basicResultPayload), {
               result: _.assign({}, basicResultPayload.result, {
+                sample: { id: 'new sample' },
+                instrument: { serial: 'new instrument' },
                 startedOn: testStartedOn,
-                endedOn: testEndedOn,
               }),
             })
           )
@@ -775,7 +777,7 @@ describe('Device API routes for GxConnect Devices', () => {
           resultType: 'Patient',
           resultCategory1: 'Success',
           resultCategory2: null,
-          sampleId: basicResultPayload.result.sample.id,
+          sampleId: 'new sample',
           sampleCollectedOn: null,
           sampleOriginSiteId: device.siteId,
           sampleTypeId: null,
@@ -783,13 +785,13 @@ describe('Device API routes for GxConnect Devices', () => {
             geneXpertTestId: basicResultPayload.result.id,
           }),
           startedOn: testStartedOn,
-          endedOn: testEndedOn,
+          endedOn: null,
           consumableSerial: null,
           consumableExpirationDate: null,
           consumableLot: null,
-          instrumentSerial: basicResultPayload.result.instrument.serial,
-          moduleName: basicResultPayload.result.instrument.module.name,
-          moduleSerial: basicResultPayload.result.instrument.module.serial,
+          instrumentSerial: 'new instrument',
+          moduleName: null,
+          moduleSerial: null,
           patientData: basicResultPayload.result.patient,
           senderVersion: basicResultPayload.result.sender.version,
           senderOperator: basicResultPayload.result.sender.operator,
