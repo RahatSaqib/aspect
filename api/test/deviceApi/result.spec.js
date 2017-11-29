@@ -1930,6 +1930,10 @@ describe('Device Result API routes', () => {
           const GXEbolaCartridgeId = (yield knex('Consumable as c')
             .where('c.name', 'GeneXpert Ebola Cartridge')
             .first('c.id')).id
+          // Remove inventory item if it already exists
+          yield knex('InventoryItem')
+            .where({ consumableId: GXEbolaCartridgeId, siteId })
+            .del()
           const inventoryConsumedByTest = (yield knex('ConsumableAssay as ca')
             .join('Assay as a', 'ca.assayId', 'a.id')
             .where('a.externalId', assayExternalId)
