@@ -17,6 +17,7 @@ const nightwatchConfig = {
   common_capabilities: {
     'browserstack.user': process.env['browserstack.user'],
     'browserstack.key': process.env['browserstack.key'],
+    'browserstack.local': true,
     'browserstack.debug': true,
   },
 
