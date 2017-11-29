@@ -353,7 +353,7 @@ describe('Device Result API routes', () => {
             },
             category: [{ id: 'Detected' }, { id: 'Indeterminate' }],
             assay: {
-              id: 'MtbRif',
+              id: 'GxMtbRif',
               version: '1a.c1',
             },
             sample: {
@@ -548,7 +548,7 @@ describe('Device Result API routes', () => {
         const result2Assay = yield knex('Assay as assay')
           .where({ id: result2.assayId })
           .first('externalId', 'name')
-        assert.equal(result2Assay.externalId, 'MtbRif')
+        assert.equal(result2Assay.externalId, 'GxMtbRif')
         assert.equal(result2Assay.name, 'GeneXpert MTB/Rif')
 
         const result2Sample = yield knex('Sample as s')
@@ -585,7 +585,7 @@ describe('Device Result API routes', () => {
           },
           category: [{ id: 'Detected' }, { id: 'Indeterminate' }],
           assay: {
-            id: 'MtbRif',
+            id: 'GxMtbRif',
             version: '1a.c1',
           },
           sample: {
@@ -724,7 +724,7 @@ describe('Device Result API routes', () => {
             assert.deepEqual(_.omit(lastResult, 'id', 'location', 'workflow'), {
               data: { a: 'b', c: 2, d: false, e: { f: 'g' } },
               assay: {
-                id: 'MtbRif',
+                id: 'GxMtbRif',
                 version: '1a.c1',
               },
               type: { id: 'Study' },
@@ -1122,7 +1122,7 @@ describe('Device Result API routes', () => {
             workflow: { status: { id: 'Acknowledged' } },
             category: [{ id: 'Detected' }, { id: 'Indeterminate' }],
             assay: {
-              id: 'MtbRif',
+              id: 'GxMtbRif',
               version: '1a.c1',
             },
             sample: {
@@ -1293,7 +1293,7 @@ describe('Device Result API routes', () => {
         const result2Assay = yield knex('Assay as assay')
           .where({ id: result2.assayId })
           .first('externalId', 'name')
-        assert.equal(result2Assay.externalId, 'MtbRif')
+        assert.equal(result2Assay.externalId, 'GxMtbRif')
         assert.equal(result2Assay.name, 'GeneXpert MTB/Rif')
 
         const result2Sample = yield knex('Sample as s')
@@ -1520,7 +1520,7 @@ describe('Device Result API routes', () => {
           const { deviceId, deviceAuth, now } = context
           const results = [
             {
-              assayExternalId: 'MtbRif',
+              assayExternalId: 'GxMtbRif',
               cartridgeName: 'GeneXpert TB Cartridge',
               deviceId,
             },
@@ -1603,8 +1603,8 @@ describe('Device Result API routes', () => {
           const { id: adminId } = yield knex('User')
             .where({ name: context.auth.user })
             .first('id')
-          const assayExternalId = 'MtbRif'
-          const mtbRifCartridgeId = (yield knex('Consumable as c')
+          const assayExternalId = 'GxMtbRif'
+          const GXMtbRifCartridgeId = (yield knex('Consumable as c')
             .where('c.name', 'GeneXpert TB Cartridge')
             .first('c.id')).id
 
@@ -1616,7 +1616,7 @@ describe('Device Result API routes', () => {
           const [lotNumberAndExpirationDateMatch] = yield knex(
             'InventoryItem'
           ).insert({
-            consumableId: mtbRifCartridgeId,
+            consumableId: GXMtbRifCartridgeId,
             siteId,
             lotNumber: resultDetails.lotNumber,
             expiresOn: new Date(resultDetails.expirationDate),
@@ -1630,7 +1630,7 @@ describe('Device Result API routes', () => {
           const inventoryConsumedByTest = (yield knex('ConsumableAssay as ca')
             .join('Assay as a', 'ca.assayId', 'a.id')
             .where('a.externalId', assayExternalId)
-            .andWhere('ca.consumableId', mtbRifCartridgeId)
+            .andWhere('ca.consumableId', GXMtbRifCartridgeId)
             .first('ca.quantity')).quantity
 
           let cartridgeAtSiteBefore = _.find(
@@ -1676,7 +1676,7 @@ describe('Device Result API routes', () => {
           }
           const randomExpiryDate = new Date('2017-03-05T00:00:00+00:00')
           const [onlyLotNumberMatches] = yield knex('InventoryItem').insert({
-            consumableId: mtbRifCartridgeId,
+            consumableId: GXMtbRifCartridgeId,
             siteId,
             lotNumber: resultDetails.lotNumber,
             expiresOn: randomExpiryDate,
@@ -1731,7 +1731,7 @@ describe('Device Result API routes', () => {
           const [onlyExpirationDateMatches] = yield knex(
             'InventoryItem'
           ).insert({
-            consumableId: mtbRifCartridgeId,
+            consumableId: GXMtbRifCartridgeId,
             siteId,
             lotNumber: randomLotNumber,
             expiresOn: new Date(resultDetails.expirationDate),
@@ -1803,14 +1803,14 @@ describe('Device Result API routes', () => {
           const { id: adminId } = yield knex('User')
             .where({ name: user })
             .first('id')
-          const assayExternalId = 'MtbRif'
-          const mtbRifCartridgeId = (yield knex('Consumable as c')
+          const assayExternalId = 'GxMtbRif'
+          const GXMtbRifCartridgeId = (yield knex('Consumable as c')
             .where('c.name', 'GeneXpert TB Cartridge')
             .first('c.id')).id
           const inventoryConsumedByTest = (yield knex('ConsumableAssay as ca')
             .join('Assay as a', 'ca.assayId', 'a.id')
             .where('a.externalId', assayExternalId)
-            .andWhere('ca.consumableId', mtbRifCartridgeId)
+            .andWhere('ca.consumableId', GXMtbRifCartridgeId)
             .first('ca.quantity')).quantity
 
           const resultDetails = {
@@ -1819,7 +1819,7 @@ describe('Device Result API routes', () => {
           }
           const randomExpiryDate = new Date('2017-03-05T00:00:00+00:00')
           const [onlyLotNumberMatches] = yield knex('InventoryItem').insert({
-            consumableId: mtbRifCartridgeId,
+            consumableId: GXMtbRifCartridgeId,
             siteId,
             lotNumber: resultDetails.lotNumber,
             expiresOn: randomExpiryDate,
@@ -1833,7 +1833,7 @@ describe('Device Result API routes', () => {
           const [onlyExpirationDateMatches] = yield knex(
             'InventoryItem'
           ).insert({
-            consumableId: mtbRifCartridgeId,
+            consumableId: GXMtbRifCartridgeId,
             siteId,
             lotNumber: randomLotNumber,
             expiresOn: new Date(resultDetails.expirationDate),

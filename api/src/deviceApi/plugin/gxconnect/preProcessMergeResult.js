@@ -169,7 +169,7 @@ function getResultCategories(payload) {
       const canHaveSecondResult =
         ['Detected', 'Error', 'Invalid', 'NoResult', 'Success'].includes(
           result1
-        ) || !_.includes(['MtbRif', 'MtbRifUltra'], _.get(payload, 'assay.id'))
+        ) || !_.includes(['GxMtbRif', 'MtbRifUltra'], _.get(payload, 'assay.id'))
 
       if (resultTextValues.length > 1) {
         const result2Text = resultTextValues[1]
