@@ -10,6 +10,10 @@ function* preProcessAddDeviceData({ knex, device, payload, now }) {
   if (_.isEmpty(device)) {
     throw Boom.notFound(`Cannot find device ${JSON.stringify(device)}`)
   }
+  const macAddress = _.get(payload, 'data.macAddress')
+  if (!macAddressValid(macAddress)) {
+    throw Boom.badRequest(`Invalid MAC address in request: '${macAddress}'`)
+  }
   const site = yield* getOrCreateSite(knex, device, payload, now)
   if (device.siteId !== site.id) {
     yield knex
@@ -110,6 +114,14 @@ function* getOrCreateSite(knex, device, payload, now) {
     }
   }
   return site
+}
+
+function macAddressValid(macAddress) {
+  return
+  !_.isEmpty(macAddress) &&
+    macAddress.indexOf('MAC') === 0 &&
+    macAddress.trim().length > 3 &&
+    macAddress !== 'MAC005345000000'
 }
 
 module.exports = preProcessAddDeviceData
